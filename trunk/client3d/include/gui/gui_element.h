@@ -31,8 +31,6 @@ http://www.gnu.org/licenses/licenses.html
 #include <Ogre.h>
 #include "gui_imageset.h"
 
-using namespace Ogre;
-
 /**
  ** This is the base class for a gui element.
  *****************************************************************************/
@@ -106,9 +104,9 @@ protected:
     int mHasAlpha;             /**< Graphics is using alpha values. **/
     int mFontNr, mLabelFontNr;
     int mLabelPosX, mLabelPosY;
-    String mStrLabel, mStrTooltip;
-    uint32 mFillColor;
-    uint32 *BG_Backup;         /**< Backup buffer for alpha blit. **/
+    Ogre::String mStrLabel, mStrTooltip;
+    Ogre::uint32 mFillColor;
+    Ogre::uint32 *BG_Backup;         /**< Backup buffer for alpha blit. **/
     void *mParent;             /**< Pointer to the parent window. **/
     unsigned char mLabelColor[3];
     GuiImageset::gfxPos gfxSrcPos[GuiImageset::STATE_ELEMENT_SUM];

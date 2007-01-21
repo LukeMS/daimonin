@@ -26,8 +26,6 @@ http://www.gnu.org/licenses/licenses.html
 #include "define.h"
 #include "gui_gadget_button.h"
 
-using namespace Ogre;
-
 /**
  ** This class provides a graphical dialog window.
  *****************************************************************************/
@@ -109,8 +107,8 @@ private:
 
     typedef struct
     {
-        String label;   /**< Text displayed on the button. **/
-        String command; /**< After button was pressed, this command will be send to server. **/
+        Ogre::String label;   /**< Text displayed on the button. **/
+        Ogre::String command; /**< After button was pressed, this command will be send to server. **/
     }
     Button;
     Button butAccept, butDecline;
@@ -118,44 +116,44 @@ private:
     struct _mHead
     {
         int face;           /**< ID of the picture.       **/
-        String name;        /**< Name of the picture.     **/
+        Ogre::String name;        /**< Name of the picture.     **/
         //_Sprite *picture; /**< Pointer to the gfx data. **/
-        String body_text;   /**< Title-text of the head.  **/
+        Ogre::String body_text;   /**< Title-text of the head.  **/
     }
     mHead;
 
     struct _mLink
     {
-        String link;
-        String cmd;
+        Ogre::String link;
+        Ogre::String cmd;
     }
     mLink[MAX_LINKS];
 
     struct _mWho
     {
-        String body;
+        Ogre::String body;
     }
     mWho;
 
     struct _mTextfield
     {
-        String text;
+        Ogre::String text;
     }
     mTextfield;
 
     struct _mMessage
     {
-        String title;
-        String body_text;
-        String lines[MAX_MSG_LINE];
+        Ogre::String title;
+        Ogre::String body_text;
+        Ogre::String lines[MAX_MSG_LINE];
         int line_count;
     }
     mMessage;
 
     struct _mXtended
     {
-        String title;
-        String body_text;
+        Ogre::String title;
+        Ogre::String body_text;
         int line_count;
     }
     mXtended;
@@ -167,9 +165,9 @@ private:
         int gold;
         int mithril;
         int line_count;
-        String title;
-        String body_text;
-        String lines;
+        Ogre::String title;
+        Ogre::String body_text;
+        Ogre::String lines;
     }
     mReward;
 
@@ -177,12 +175,12 @@ private:
     {
         char mode;
         int num;           /**< ID of the icon. **/
-        String title;
-        String name;       /**< Picture name. **/
+        Ogre::String title;
+        Ogre::String name;       /**< Picture name. **/
         //item element;
         //_Sprite *picture;/**< Pointer to the gfx data. **/
         char *second_line;
-        String body_text;  /**< Head title. **/
+        Ogre::String body_text;  /**< Head title. **/
     }
     mIcon[MAX_ELEMENT];
 
@@ -212,7 +210,7 @@ private:
     bool cmd_xtended  (char *data, int &pos);
     bool cmd_textfield(char *data, int &pos);
     bool cmd_button   (Button &button, char *data, int &pos);
-    bool getElement(int line, int *element, int *index, String *keyword);
+    bool getElement(int line, int *element, int *index, Ogre::String *keyword);
     char parseParameter(char *data, int &pos);
     char *get_parameter_string(char *data, int &pos);
     void format_gui_interface();

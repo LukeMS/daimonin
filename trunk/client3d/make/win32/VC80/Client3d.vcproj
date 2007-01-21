@@ -333,28 +333,6 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\source\gui\gui_container.cpp"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)\$(InputName)1.obj"
-							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)\$(InputName)1.obj"
-							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
 					RelativePath="..\..\..\source\gui\gui_cursor.cpp"
 					>
 					<FileConfiguration
@@ -466,6 +444,10 @@
 				</File>
 				<File
 					RelativePath="..\..\..\source\gui\gui_gadget_scrollbar.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\source\gui\gui_gadget_slot.cpp"
 					>
 				</File>
 				<File
@@ -752,10 +734,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\include\gui\gui_container.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\..\include\gui\gui_cursor.h"
 					>
 				</File>
@@ -777,6 +755,10 @@
 				</File>
 				<File
 					RelativePath="..\..\..\include\gui\gui_gadget_scrollbar.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\include\gui\gui_gadget_slot.h"
 					>
 				</File>
 				<File

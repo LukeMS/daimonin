@@ -29,8 +29,6 @@ http://www.gnu.org/licenses/licenses.html
 
 #include <Ogre.h>
 
-using namespace Ogre;
-
 /**
  ** This class provides a text printing on gui elements.
  *****************************************************************************/
@@ -46,9 +44,9 @@ public:
         int font;                    /**< Font number. **/
         int index;                   /**< Unique number. **/
         bool hideText;               /**< Hide the text e.g. for password input. **/
-        String text;
-        uint32 *BG_Backup;           /**< Backup buffer for dynamic text. **/
-        uint32 color;
+        Ogre::String text;
+        Ogre::uint32 *BG_Backup;           /**< Backup buffer for dynamic text. **/
+        Ogre::uint32 color;
     }
     TextLine;
 
@@ -65,14 +63,14 @@ public:
         SPECIAL_CHARS_IN_FONT  = 127,
         CHARS_IN_FONT          = STANDARD_CHARS_IN_FONT+SPECIAL_CHARS_IN_FONT,
     };
-    static const uint32 COLOR_BLACK;
-    static const uint32 COLOR_BLUE;
-    static const uint32 COLOR_GREEN;
-    static const uint32 COLOR_LBLUE;
-    static const uint32 COLOR_RED;
-    static const uint32 COLOR_PINK;
-    static const uint32 COLOR_YELLOW;
-    static const uint32 COLOR_WHITE;
+    static const Ogre::uint32 COLOR_BLACK;
+    static const Ogre::uint32 COLOR_BLUE;
+    static const Ogre::uint32 COLOR_GREEN;
+    static const Ogre::uint32 COLOR_LBLUE;
+    static const Ogre::uint32 COLOR_RED;
+    static const Ogre::uint32 COLOR_PINK;
+    static const Ogre::uint32 COLOR_YELLOW;
+    static const Ogre::uint32 COLOR_WHITE;
     static const char TXT_CMD_HIGHLIGHT;
     static const char TXT_CMD_LOWLIGHT;
     static const char TXT_CMD_LINK;
@@ -91,8 +89,8 @@ public:
     void loadRawFont(const char *filename);
     void loadTTFont (const char *filename, const char *size, const char *resolution);
     void createBuffer(int width = MAX_TEXTLINE_LEN);
-    void Print(TextLine *line, Texture *texture);
-    void PrintToBuffer(int width, int height, uint32 *dest_data, const char*text, unsigned int font, uint32 color = COLOR_WHITE);
+    void Print(TextLine *line, Ogre::Texture *texture);
+    void PrintToBuffer(int width, int height, Ogre::uint32 *dest_data, const char*text, unsigned int font, Ogre::uint32 color = COLOR_WHITE);
     int CalcTextWidth(unsigned char *text, unsigned int fontNr = 0);
     int getFontHeight(int fontNr)
     {
@@ -124,7 +122,7 @@ private:
 
     typedef struct
     {
-        uint32 *data;
+        Ogre::uint32 *data;
         unsigned short textureWidth;
         unsigned short height;
         unsigned short baseline;
@@ -135,18 +133,18 @@ private:
     typedef struct
     {
         int x, y, w, h;
-        String strGfxCode;
+        Ogre::String strGfxCode;
     }
     mSpecialChar;
 
     std::vector<mFont*>mvFont;
     std::vector<mSpecialChar*>mvSpecialChar;
-    PixelBox *mPb;
-    uint32 *mTextGfxBuffer;
+    Ogre::PixelBox *mPb;
+    Ogre::uint32 *mTextGfxBuffer;
     unsigned int mMaxFontHeight;
-    static const uint32 TXT_COLOR_DEFAULT;
-    static const uint32 TXT_COLOR_LOWLIGHT;
-    static const uint32 TXT_COLOR_HIGHLIGHT;
+    static const Ogre::uint32 TXT_COLOR_DEFAULT;
+    static const Ogre::uint32 TXT_COLOR_LOWLIGHT;
+    static const Ogre::uint32 TXT_COLOR_HIGHLIGHT;
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.
@@ -154,7 +152,7 @@ private:
     GuiTextout();
     ~GuiTextout();
     GuiTextout(const GuiTextout&); // disable copy-constructor.
-    void drawText(int width, int height, uint32 *dest_data, const char *text, bool hideText, unsigned int fontNr = 0, uint32 color = 0x00ffffff);
+    void drawText(int width, int height, Ogre::uint32 *dest_data, const char *text, bool hideText, unsigned int fontNr = 0, Ogre::uint32 color = 0x00ffffff);
 };
 
 #endif

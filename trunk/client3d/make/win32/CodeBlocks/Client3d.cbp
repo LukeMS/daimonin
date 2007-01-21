@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_project_file>
-	<FileVersion major="1" minor="5" />
+	<FileVersion major="1" minor="6" />
 	<Project>
 		<Option title="client3d" />
-		<Option default_target="" />
 		<Option compiler="gcc" />
-		<Option virtualFolders="" />
 		<Build>
 			<Target title="Debug">
 				<Option output="..\..\..\debug\client3d.exe" prefix_auto="0" extension_auto="0" />
@@ -78,736 +76,141 @@
 			<Add library="SDL" />
 			<Add directory="fmod_lib" />
 		</Linker>
-		<Unit filename="..\..\..\3rdParty\fmod\fmod.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\3rdParty\fmod\fmod.hpp">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\3rdParty\fmod\fmod_codec.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\3rdParty\fmod\fmod_dsp.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\3rdParty\fmod\fmod_errors.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\3rdParty\fmod\fmod_output.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\3rdParty\fmod\fmoddyn.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\3rdParty\fmod\wincompat.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\3rdParty\tinyxml\tinystr.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\3rdParty\tinyxml\tinystr.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\3rdParty\tinyxml\tinyxml.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\3rdParty\tinyxml\tinyxml.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\3rdParty\tinyxml\tinyxmlerror.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\3rdParty\tinyxml\tinyxmlparser.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
+		<Unit filename="..\..\..\3rdParty\fmod\fmod.h" />
+		<Unit filename="..\..\..\3rdParty\fmod\fmod.hpp" />
+		<Unit filename="..\..\..\3rdParty\fmod\fmod_codec.h" />
+		<Unit filename="..\..\..\3rdParty\fmod\fmod_dsp.h" />
+		<Unit filename="..\..\..\3rdParty\fmod\fmod_errors.h" />
+		<Unit filename="..\..\..\3rdParty\fmod\fmod_output.h" />
+		<Unit filename="..\..\..\3rdParty\fmod\fmoddyn.h" />
+		<Unit filename="..\..\..\3rdParty\fmod\wincompat.h" />
+		<Unit filename="..\..\..\3rdParty\tinyxml\tinystr.cpp" />
+		<Unit filename="..\..\..\3rdParty\tinyxml\tinystr.h" />
+		<Unit filename="..\..\..\3rdParty\tinyxml\tinyxml.cpp" />
+		<Unit filename="..\..\..\3rdParty\tinyxml\tinyxml.h" />
+		<Unit filename="..\..\..\3rdParty\tinyxml\tinyxmlerror.cpp" />
+		<Unit filename="..\..\..\3rdParty\tinyxml\tinyxmlparser.cpp" />
 		<Unit filename="..\..\..\3rdParty\zlib\adler32.c">
 			<Option compilerVar="CC" />
-			<Option target="Debug" />
-			<Option target="Release" />
 		</Unit>
 		<Unit filename="..\..\..\3rdParty\zlib\crc32.c">
 			<Option compilerVar="CC" />
-			<Option target="Debug" />
-			<Option target="Release" />
 		</Unit>
-		<Unit filename="..\..\..\3rdParty\zlib\crc32.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
+		<Unit filename="..\..\..\3rdParty\zlib\crc32.h" />
 		<Unit filename="..\..\..\3rdParty\zlib\inffast.c">
 			<Option compilerVar="CC" />
-			<Option target="Debug" />
-			<Option target="Release" />
 		</Unit>
-		<Unit filename="..\..\..\3rdParty\zlib\inffast.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
+		<Unit filename="..\..\..\3rdParty\zlib\inffast.h" />
 		<Unit filename="..\..\..\3rdParty\zlib\inflate.c">
 			<Option compilerVar="CC" />
-			<Option target="Debug" />
-			<Option target="Release" />
 		</Unit>
-		<Unit filename="..\..\..\3rdParty\zlib\inflate.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
+		<Unit filename="..\..\..\3rdParty\zlib\inflate.h" />
 		<Unit filename="..\..\..\3rdParty\zlib\inftrees.c">
 			<Option compilerVar="CC" />
-			<Option target="Debug" />
-			<Option target="Release" />
 		</Unit>
-		<Unit filename="..\..\..\3rdParty\zlib\inftrees.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
+		<Unit filename="..\..\..\3rdParty\zlib\inftrees.h" />
 		<Unit filename="..\..\..\3rdParty\zlib\uncompr.c">
 			<Option compilerVar="CC" />
-			<Option target="Debug" />
-			<Option target="Release" />
 		</Unit>
-		<Unit filename="..\..\..\3rdParty\zlib\zconf.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\3rdParty\zlib\zlib.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
+		<Unit filename="..\..\..\3rdParty\zlib\zconf.h" />
+		<Unit filename="..\..\..\3rdParty\zlib\zlib.h" />
 		<Unit filename="..\..\..\3rdParty\zlib\zutil.c">
 			<Option compilerVar="CC" />
-			<Option target="Debug" />
-			<Option target="Release" />
 		</Unit>
-		<Unit filename="..\..\..\3rdParty\zlib\zutil.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\define.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\events.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\gui\gui_animation.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\gui\gui_container.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\gui\gui_cursor.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\gui\gui_element.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\gui\gui_gadget_button.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\gui\gui_gadget_combobox.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\gui\gui_gadget_scrollbar.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\gui\gui_graphic.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\gui\gui_imageset.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\gui\gui_listbox.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\gui\gui_manager.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\gui\gui_statusbar.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\gui\gui_table.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\gui\gui_textinput.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\gui\gui_textout.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\gui\gui_window.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\gui\gui_window_dialog.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\item.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\light_manager.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\logger.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\network.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\network_serverfile.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\object_animate.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\object_equipment.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\object_hero.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\object_manager.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\object_missile.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\object_npc.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\object_static.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\object_visuals.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\option.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\particle_manager.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\sound.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\spell_manager.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\spell_range.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\tile_chunk.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\tile_interface.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\tile_manager.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\tile_map.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\tile_path.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\tile_pos.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\CodingStyle.txt">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="ReadMe.txt">
-			<Option compilerVar="" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\media\xml\GUI_ImageSet.xml">
-			<Option compilerVar="" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\media\xml\GUI_Windows.xml">
-			<Option compilerVar="" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\media\xml\NPC_Visuals.xml">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\events.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\events_user.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\gui\gui_animation.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\gui\gui_container.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\gui\gui_cursor.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\gui\gui_element.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\gui\gui_gadget_button.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\gui\gui_gadget_combobox.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\gui\gui_gadget_scrollbar.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\gui\gui_graphic.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\gui\gui_imageset.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\gui\gui_listbox.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\gui\gui_manager.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\gui\gui_statusbar.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\gui\gui_table.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\gui\gui_textout.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\gui\gui_window.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\gui\gui_window_dialog.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\item.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\light_manager.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\logger.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\main.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\network.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\network_cmd.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\network_serverfile.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\object_animate.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\object_equipment.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\object_hero.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\object_manager.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\object_missile.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\object_npc.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\object_static.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\object_visuals.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\option.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\option_init.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\particle_manager.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\sound.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\spell_manager.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\spell_range.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\tile_chunk.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\tile_interface.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\tile_manager.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\tile_map.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\tile_path.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
+		<Unit filename="..\..\..\3rdParty\zlib\zutil.h" />
+		<Unit filename="..\..\..\include\define.h" />
+		<Unit filename="..\..\..\include\events.h" />
+		<Unit filename="..\..\..\include\gui\gui_animation.h" />
+		<Unit filename="..\..\..\include\gui\gui_cursor.h" />
+		<Unit filename="..\..\..\include\gui\gui_element.h" />
+		<Unit filename="..\..\..\include\gui\gui_gadget_button.h" />
+		<Unit filename="..\..\..\include\gui\gui_gadget_combobox.h" />
+		<Unit filename="..\..\..\include\gui\gui_gadget_scrollbar.h" />
+		<Unit filename="..\..\..\include\gui\gui_gadget_slot.h" />
+		<Unit filename="..\..\..\include\gui\gui_graphic.h" />
+		<Unit filename="..\..\..\include\gui\gui_imageset.h" />
+		<Unit filename="..\..\..\include\gui\gui_listbox.h" />
+		<Unit filename="..\..\..\include\gui\gui_manager.h" />
+		<Unit filename="..\..\..\include\gui\gui_statusbar.h" />
+		<Unit filename="..\..\..\include\gui\gui_table.h" />
+		<Unit filename="..\..\..\include\gui\gui_textinput.h" />
+		<Unit filename="..\..\..\include\gui\gui_textout.h" />
+		<Unit filename="..\..\..\include\gui\gui_window.h" />
+		<Unit filename="..\..\..\include\gui\gui_window_dialog.h" />
+		<Unit filename="..\..\..\include\item.h" />
+		<Unit filename="..\..\..\include\light_manager.h" />
+		<Unit filename="..\..\..\include\logger.h" />
+		<Unit filename="..\..\..\include\network.h" />
+		<Unit filename="..\..\..\include\network_serverfile.h" />
+		<Unit filename="..\..\..\include\object_animate.h" />
+		<Unit filename="..\..\..\include\object_equipment.h" />
+		<Unit filename="..\..\..\include\object_hero.h" />
+		<Unit filename="..\..\..\include\object_manager.h" />
+		<Unit filename="..\..\..\include\object_missile.h" />
+		<Unit filename="..\..\..\include\object_npc.h" />
+		<Unit filename="..\..\..\include\object_static.h" />
+		<Unit filename="..\..\..\include\object_visuals.h" />
+		<Unit filename="..\..\..\include\option.h" />
+		<Unit filename="..\..\..\include\particle_manager.h" />
+		<Unit filename="..\..\..\include\sound.h" />
+		<Unit filename="..\..\..\include\spell_manager.h" />
+		<Unit filename="..\..\..\include\spell_range.h" />
+		<Unit filename="..\..\..\include\tile_chunk.h" />
+		<Unit filename="..\..\..\include\tile_interface.h" />
+		<Unit filename="..\..\..\include\tile_manager.h" />
+		<Unit filename="..\..\..\include\tile_map.h" />
+		<Unit filename="..\..\..\include\tile_map_wrapper.h" />
+		<Unit filename="..\..\..\include\tile_path.h" />
+		<Unit filename="..\..\..\include\tile_pos.h" />
+		<Unit filename="..\..\CodingStyle.txt" />
+		<Unit filename="ReadMe.txt" />
+		<Unit filename="..\..\..\media\xml\GUI_ImageSet.xml" />
+		<Unit filename="..\..\..\media\xml\GUI_Windows.xml" />
+		<Unit filename="..\..\..\media\xml\NPC_Visuals.xml" />
+		<Unit filename="..\..\..\source\events.cpp" />
+		<Unit filename="..\..\..\source\events_user.cpp" />
+		<Unit filename="..\..\..\source\gui\gui_animation.cpp" />
+		<Unit filename="..\..\..\source\gui\gui_cursor.cpp" />
+		<Unit filename="..\..\..\source\gui\gui_element.cpp" />
+		<Unit filename="..\..\..\source\gui\gui_gadget_button.cpp" />
+		<Unit filename="..\..\..\source\gui\gui_gadget_combobox.cpp" />
+		<Unit filename="..\..\..\source\gui\gui_gadget_scrollbar.cpp" />
+		<Unit filename="..\..\..\source\gui\gui_gadget_slot.cpp" />
+		<Unit filename="..\..\..\source\gui\gui_graphic.cpp" />
+		<Unit filename="..\..\..\source\gui\gui_imageset.cpp" />
+		<Unit filename="..\..\..\source\gui\gui_listbox.cpp" />
+		<Unit filename="..\..\..\source\gui\gui_manager.cpp" />
+		<Unit filename="..\..\..\source\gui\gui_statusbar.cpp" />
+		<Unit filename="..\..\..\source\gui\gui_table.cpp" />
+		<Unit filename="..\..\..\source\gui\gui_textout.cpp" />
+		<Unit filename="..\..\..\source\gui\gui_window.cpp" />
+		<Unit filename="..\..\..\source\gui\gui_window_dialog.cpp" />
+		<Unit filename="..\..\..\source\item.cpp" />
+		<Unit filename="..\..\..\source\light_manager.cpp" />
+		<Unit filename="..\..\..\source\logger.cpp" />
+		<Unit filename="..\..\..\source\main.cpp" />
+		<Unit filename="..\..\..\source\network.cpp" />
+		<Unit filename="..\..\..\source\network_cmd.cpp" />
+		<Unit filename="..\..\..\source\network_serverfile.cpp" />
+		<Unit filename="..\..\..\source\object_animate.cpp" />
+		<Unit filename="..\..\..\source\object_equipment.cpp" />
+		<Unit filename="..\..\..\source\object_hero.cpp" />
+		<Unit filename="..\..\..\source\object_manager.cpp" />
+		<Unit filename="..\..\..\source\object_missile.cpp" />
+		<Unit filename="..\..\..\source\object_npc.cpp" />
+		<Unit filename="..\..\..\source\object_static.cpp" />
+		<Unit filename="..\..\..\source\object_visuals.cpp" />
+		<Unit filename="..\..\..\source\option.cpp" />
+		<Unit filename="..\..\..\source\option_init.cpp" />
+		<Unit filename="..\..\..\source\particle_manager.cpp" />
+		<Unit filename="..\..\..\source\sound.cpp" />
+		<Unit filename="..\..\..\source\spell_manager.cpp" />
+		<Unit filename="..\..\..\source\spell_range.cpp" />
+		<Unit filename="..\..\..\source\tile_chunk.cpp" />
+		<Unit filename="..\..\..\source\tile_interface.cpp" />
+		<Unit filename="..\..\..\source\tile_manager.cpp" />
+		<Unit filename="..\..\..\source\tile_map.cpp" />
+		<Unit filename="..\..\..\source\tile_path.cpp" />
 		<Extensions>
 			<code_completion />
 		</Extensions>

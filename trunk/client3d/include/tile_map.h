@@ -66,8 +66,8 @@ public:
 
     struct _mMapData
     {
-        String name;
-        String music;
+        Ogre::String name;
+        Ogre::String music;
         int xlen;
         int ylen;
         int posx;

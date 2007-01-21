@@ -31,8 +31,6 @@ http://www.gnu.org/licenses/licenses.html
 #include <Ogre.h>
 #include "gui_element.h"
 
-using namespace Ogre;
-
 /**
  ** This class provides a statusbar.
  *****************************************************************************/
@@ -46,7 +44,7 @@ public:
     GuiStatusbar(TiXmlElement *xmlElement, void *parent);
     ~GuiStatusbar();
     void draw();
-    void setValue(Real value);
+    void setValue(Ogre::Real value);
 
 private:
     // ////////////////////////////////////////////////////////////////////
@@ -54,7 +52,7 @@ private:
     // ////////////////////////////////////////////////////////////////////
     bool mHorizontal;
     int mValue;
-    uint32 *mGfxBuffer;
+    Ogre::uint32 *mGfxBuffer;
 };
 
 #endif

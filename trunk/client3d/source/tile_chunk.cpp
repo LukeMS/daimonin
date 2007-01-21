@@ -31,6 +31,8 @@ http://www.gnu.org/licenses/licenses.html
 #include "tile_interface.h"
 #include "tile_manager.h"
 
+using namespace Ogre;
+
 //================================================================================================
 // Init static elements.
 //================================================================================================

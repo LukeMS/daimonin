@@ -27,10 +27,8 @@ http://www.gnu.org/licenses/licenses.html
 #ifndef ObjectEquipment_H
 #define ObjectEquipment_H
 
-#include "Ogre.h"
+#include <Ogre.h>
 #include "define.h"
-
-using namespace Ogre;
 
 class ObjectEquipment
 {
@@ -88,11 +86,11 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    ObjectEquipment(Entity *parent);
+    ObjectEquipment(Ogre::Entity *parent);
     ~ObjectEquipment();
     void freeRecources();
     void setTexture(int pos, int textureColor, int textureNr =0);
-    void drawBopyPart(sPicture &picPart, Image &image, uint32 texColor, uint32 texNumber);
+    void drawBopyPart(sPicture &picPart, Ogre::Image &image, Ogre::uint32 texColor, Ogre::uint32 texNumber);
     void dropItem(int bone);
     void equipItem(unsigned int bone, int type, int itemID, int particleID =-1);
 
@@ -101,20 +99,20 @@ private:
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     static sPicture picHands[4], picArms[4], picShoes[2], picBody[2], picLegs[2], picFace, picHair, picBelt[2];
-    static uchar *texImageBuf;
+    static unsigned char *texImageBuf;
     enum
     {
         SIDE_BACK,
         SIDE_FRONT
     };
-    TexturePtr mTexture;
+    Ogre::TexturePtr mTexture;
     struct _mItem
     {
-        Entity *entity;
-        ParticleSystem *particle;
+        Ogre::Entity *entity;
+        Ogre::ParticleSystem *particle;
     }
     mItem[BONE_SUM];
-    Entity *mParentEntity;
+    Ogre::Entity *mParentEntity;
     static unsigned long mIndex;
     // ////////////////////////////////////////////////////////////////////
     // Functions.

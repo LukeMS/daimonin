@@ -32,11 +32,10 @@ http://www.gnu.org/licenses/licenses.html
 #include "logger.h"
 #include "gui_window.h"
 
-//long i = Root::getSingleton().getTimer()->getMilliseconds()
+using namespace Ogre;
 
 const int MIN_SLIDER_SIZE = 6;
 const int SLIDER_INNER_OFFSET = 3;
-
 
 // TODO:
 // Disable slider if it doesnt fit into the window.

@@ -31,6 +31,8 @@ http://www.gnu.org/licenses/licenses.html
 #include "gui_table.h"
 #include "gui_window.h"
 
+using namespace Ogre;
+
 static const unsigned long SCROLL_SPEED = 12;
 static const Real CLOSING_SPEED  = 10.0f;  // default: 10.0f
 

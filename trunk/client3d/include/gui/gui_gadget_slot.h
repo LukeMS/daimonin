@@ -24,16 +24,48 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
-#include "gui_container.h"
+#ifndef GUI_GADGET_SLOT_H
+#define GUI_GADGET_SLOT_H
 
-//================================================================================================
-// Constuctor.
-//================================================================================================
-GuiContainer::GuiContainer(TiXmlElement *xmlElem, void *parent)
-{}
+#include <tinyxml.h>
+#include <Ogre.h>
+#include "gui_element.h"
+#include "gui_window.h"
 
-//================================================================================================
-// Destuctor.
-//================================================================================================
-GuiContainer::~GuiContainer()
-{}
+/**
+ ** This class provides an interactive button.
+ *****************************************************************************/
+class GuiGadgetSlot: public GuiElement
+{
+public:
+    typedef void (Callback) (class GuiWindow *parent, int index);
+    // ////////////////////////////////////////////////////////////////////
+    // Functions.
+    // ////////////////////////////////////////////////////////////////////
+    GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOnInit = true);
+    ~GuiGadgetSlot();
+    bool mouseEvent(int MouseAction, int x, int y);
+    void setFunction(Callback *c)
+    {
+        mCallFunc = c;
+    }
+    void activated()
+    {
+        if (mCallFunc) mCallFunc((GuiWindow *)mParent, mIndex);
+    }
+    void setLabel(const char*newText)
+    {
+        mStrLabel = newText;
+        draw();
+    }
+    void draw();
+
+private:
+    // ////////////////////////////////////////////////////////////////////
+    // Variables / Constants.
+    // ////////////////////////////////////////////////////////////////////
+    Callback *mCallFunc;
+    bool mMouseOver, mMouseButDown;
+};
+
+#endif

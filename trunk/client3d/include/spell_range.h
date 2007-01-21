@@ -27,9 +27,7 @@ http://www.gnu.org/licenses/licenses.html
 #ifndef SPELL_RANGE_H
 #define SPELL_RANGE_H
 
-#include "Ogre.h"
-
-using namespace Ogre;
+#include <Ogre.h>
 
 class SpellRange
 {

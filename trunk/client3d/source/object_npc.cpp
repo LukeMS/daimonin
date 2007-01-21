@@ -37,6 +37,8 @@ http://www.gnu.org/licenses/licenses.html
 #include "tile_manager.h"
 #include "tile_path.h"
 
+using namespace Ogre;
+
 const int   TURN_SPEED   = 400;
 const Real  WALK_PRECISON= 1.0f;
 const float BIG_LAGGING  = 0.04f;

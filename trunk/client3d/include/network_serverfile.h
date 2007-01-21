@@ -27,7 +27,6 @@ http://www.gnu.org/licenses/licenses.html
 #ifndef SERVERFILES_H
 #define SERVERFILES_H
 
-#include <string>
 #include "define.h"
 
 class ServerFile

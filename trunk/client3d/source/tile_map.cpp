@@ -33,6 +33,8 @@ http://www.gnu.org/licenses/licenses.html
 #include "object_manager.h"
 #include "particle_manager.h"
 
+using namespace Ogre;
+
 //================================================================================================
 // .
 //================================================================================================
@@ -468,5 +470,5 @@ void TileMap::display_mapscroll(int dx, int dy)
 void TileMap::map_draw_map()
 {
     TileManager::getSingleton().changeChunks();
-    TileManager::getSingleton().map_udate_flag = 0;
+    TileManager::getSingleton().map_update_flag = 0;
 }

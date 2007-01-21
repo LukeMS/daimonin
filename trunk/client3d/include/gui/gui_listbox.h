@@ -32,8 +32,6 @@ http://www.gnu.org/licenses/licenses.html
 #include "gui_element.h"
 #include "gui_gadget_scrollbar.h"
 
-using namespace Ogre;
-
 /**
  ** Scrollbar class
  ** which manages the display of scrollable text and/or graphics in a window.
@@ -55,7 +53,7 @@ public:
     void draw();
     void clear();
     bool mouseEvent(int MouseAction, int x, int y, int z);
-    int  addTextline(const char *text, uint32 color);
+    int  addTextline(const char *text, Ogre::uint32 color);
     const char *extractFirstLineOfText(const char &text);
     const char *getSelectedKeyword(); /**< Returns the keyword found in the selected line. **/
     void setFunction(Callback *c)
@@ -70,16 +68,16 @@ private:
     enum {SIZE_STRING_BUFFER = 1 << 7};  /**< MUST be power of 2. **/
     struct _row
     {
-        String str;
-        uint32 color;
+        Ogre::String str;
+        Ogre::uint32 color;
         int keyword_clipped;
         unsigned char startLine; /**< Offset to the start line of the mulitline text. **/
     }
     row[SIZE_STRING_BUFFER];
-    Real mClose;                 /**< If closed, only the headline is visible. **/
-    Real mLastHeight;            /**< The height before window was closed. **/
-    Real mMinHeight, mMaxHeight;
-    Real mFirstYPos;
+    Ogre::Real mClose;                 /**< If closed, only the headline is visible. **/
+    Ogre::Real mLastHeight;            /**< The height before window was closed. **/
+    Ogre::Real mMinHeight, mMaxHeight;
+    Ogre::Real mFirstYPos;
     bool mIsClosing, mIsOpening; /**< User pressed open/close button. **/
     bool mVisible;
     bool mDragging;
@@ -95,7 +93,7 @@ private:
     int  mGfxBufferSize;
     int  mKeyStart, mKeyCount;
 
-    uint32 *mGfxBuffer;
+    Ogre::uint32 *mGfxBuffer;
     unsigned long mTime;
     class GuiGadgetScrollbar *mScrollBarH, *mScrollBarV;
     Callback *mCallFunc;

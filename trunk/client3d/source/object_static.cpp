@@ -33,6 +33,8 @@ http://www.gnu.org/licenses/licenses.html
 #include "logger.h"
 #include "network.h"
 
+using namespace Ogre;
+
 //================================================================================================
 // Init all static Elemnts.
 //================================================================================================
@@ -70,7 +72,7 @@ ObjectStatic::ObjectStatic(sObject &obj)
     mFacing   = Degree(obj.facing);
     Logger::log().info()  << "Adding object: " << obj.meshName << ".";
 
-    string strObj = ObjectManager::ObjectID[obj.type];
+    String strObj = ObjectManager::ObjectID[obj.type];
     strObj+= "#Obj_";
     strObj+= StringConverter::toString(mIndex, 8, '0');
     mEntity =mSceneMgr->createEntity(strObj, obj.meshName);

@@ -35,6 +35,8 @@ http://www.gnu.org/licenses/licenses.html
 #include "gui_textout.h"
 #include "gui_manager.h"
 
+using namespace Ogre;
+
 //===================================================
 // Init all static Elemnts.
 //===================================================
@@ -122,7 +124,7 @@ void ObjectVisuals::Init()
     tmpMaterial->setDepthCheckEnabled(true);
     tmpMaterial->setDepthWriteEnabled(true);
 
-    mTexBuffer = new uchar[TEXTURE_SIZE * TEXTURE_SIZE * sizeof(uint32)];
+    mTexBuffer = new unsigned char[TEXTURE_SIZE * TEXTURE_SIZE * sizeof(uint32)];
     Image image;
     image.loadDynamicImage(mTexBuffer, TEXTURE_SIZE, TEXTURE_SIZE, PF_A8B8G8R8);
     TexturePtr pTexture = TextureManager::getSingleton().loadImage(TEXTURE_NAME, "General", image, TEX_TYPE_2D);

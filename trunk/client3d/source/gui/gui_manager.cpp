@@ -53,6 +53,7 @@ GuiManager::GuiWinNam GuiManager::mGuiWindowNames[GUI_WIN_SUM]=
         { "Login",         GUI_WIN_LOGIN         },
         //    { "Creation"  ,  GUI_WIN_CREATION   },
         { "DialogNPC",     GUI_WIN_NPCDIALOG     },
+        { "Win_Container", GUI_WIN_ITEM_CONTAINER},
     };
 class GuiWindow GuiManager::guiWindow[GUI_WIN_SUM];
 

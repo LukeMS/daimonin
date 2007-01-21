@@ -29,6 +29,8 @@ http://www.gnu.org/licenses/licenses.html
 #include "events.h"
 #include "option.h"
 
+using namespace Ogre;
+
 const int SUM_MIPMAPS = 0;
 
 //================================================================================================
@@ -96,7 +98,7 @@ bool parseCmdLine(const char *cmd, const char *value)
     }
     if (!options)
     {
-        cout << "\nusage:\n"
+        std::cout << "\nusage:\n"
         << "--list gui              -l  gui\n"
         << "--create rawFonts       -c  rawFonts\n"
         << "--create tileTextures   -c  tileTextures\n"
@@ -105,7 +107,7 @@ bool parseCmdLine(const char *cmd, const char *value)
         << "--fallback              -f  disable TileEngine\n"
         << "--sound off             -x  disable Sound\n"
         << "--bbox                      show bounding-boxes\n"
-        << "--flipbook <meshName>       convert a mesh into Imposters\n" << endl;
+        << "--flipbook <meshName>       convert a mesh into Imposters\n" << std::endl;
         return false;
     }
     return true;

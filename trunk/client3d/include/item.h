@@ -2,33 +2,28 @@
 This source file is part of Daimonin (http://daimonin.sourceforge.net)
 Copyright (c) 2005 The Daimonin Team
 Also see acknowledgements in Readme.html
-
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
 Foundation; either version 2 of the License, or (at your option) any later
 version.
-
 This program is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
 In addition, as a special exception, the copyright holders of client3d give
 you permission to combine the client3d program with lgpl libraries of your
 choice and/or with the fmod libraries.
 You may copy and distribute such a system following the terms of the GNU GPL
 for client3d and the licenses of the other code concerned.
-
 You should have received a copy of the GNU General Public License along with
 this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
-
 #ifndef ITEM_H
 #define ITEM_H
 
-#include <string>
 #include <list>
+#include <Ogre.h>
 
 /** Item structure keeps all information of what the
  ** player knows about items in his inventory.
@@ -41,10 +36,19 @@ public:
 // ////////////////////////////////////////////////////////////////////
     enum
     {
-        F_ETHEREAL  =0x0080,
-        F_INVISIBLE =0x0100,
+        F_APPLIED   = 0x0000F,
+        F_ETHEREAL  = 0x00080,
+        F_LOCATION  = 0x000F0,
+        F_INVISIBLE = 0x00100,
+        F_UNPAID    = 0x00200,
+        F_MAGIC     = 0x00400,
+        F_CURSED    = 0x00800,
+        F_DAMNED    = 0x01000,
+        F_OPEN      = 0x02000,
+        F_NOPICK    = 0x04000,
+        F_LOCKED    = 0x08000,
+        F_TRAPED    = 0x10000,
     };
-
     enum
     {
         TYPE_PLAYER              =  1,
@@ -206,7 +210,6 @@ public:
         TYPE_DISEASE             =158,
         TYPE_SYMPTOM             =159,
     };
-
     enum // This will replace the bitfield below...
     {
         IS_MAGICAL = 1 << 0, /**< item is magical   **/
@@ -221,20 +224,28 @@ public:
     };
     typedef struct sItem
     {
-bool magical     :1; /**< item is magical   **/
-bool cursed      :1; /**< item is cursed    **/
-bool damned      :1; /**< item is damned    **/
-bool unpaid      :1; /**< item is unpaid    **/
-bool locked      :1; /**< item is locked    **/
-bool traped      :1; /**< item is traped    **/
-bool applied     :1; /**< item is applied   **/
-bool open        :1; /**< container is open **/
-bool inv_updated :1; /**< container was updated **/
-
-        std::string d_name; /**< item's full name w/o status information **/
-        std::string s_name; /**< item's singular name as sent to us **/
-        std::string p_name; /**< item's plural name as sent to us **/
-        std::string flags;  /**< item's status information **/
+bool magical     :
+        1; /**< item is magical   **/
+bool cursed      :
+        1; /**< item is cursed    **/
+bool damned      :
+        1; /**< item is damned    **/
+bool unpaid      :
+        1; /**< item is unpaid    **/
+bool locked      :
+        1; /**< item is locked    **/
+bool traped      :
+        1; /**< item is traped    **/
+bool applied     :
+        1; /**< item is applied   **/
+bool open        :
+        1; /**< container is open **/
+bool inv_updated :
+        1; /**< container was updated **/
+        Ogre::String d_name; /**< item's full name w/o status information **/
+        Ogre::String s_name; /**< item's singular name as sent to us **/
+        Ogre::String p_name; /**< item's plural name as sent to us **/
+        Ogre::String flags;  /**< item's status information **/
         unsigned int tag;   /**< item identifier (0 = free) **/
         int nrof;           /**< number of items **/
         int weight;         /**< how much item weights **/
@@ -243,7 +254,6 @@ bool inv_updated :1; /**< container was updated **/
         unsigned short anim_speed;   /**< how often to animate **/
         unsigned short anim_state;   /**< last face in sequence drawn **/
         unsigned short last_anim;    /**< how many ticks have passed since we last animated **/
-
         /**<  when item's inventory is modified, draw routines can use this to redraw things **/
         unsigned int flagsval;    /**< unmodified flags value as sent from the server **/
         unsigned char apply_type; /**< how item is applied (worn/wield/etc) **/
@@ -258,13 +268,13 @@ bool inv_updated :1; /**< container was updated **/
     }
     sItem;
 
-
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     static Item &getSingleton()
     {
-        static Item Singleton; return Singleton;
+        static Item Singleton;
+        return Singleton;
     }
     /** A container is an item which can hold other items (e.g. chest, sack, etc).
         Every time we open a container, the server send us all containing items.
@@ -274,45 +284,30 @@ bool inv_updated :1; /**< container was updated **/
     std::list<sItem*> HeroTileGround; /**< The items on the tile our hero stands on.**/
     std::list<sItem*> HeroBackpack;   /**< The items in the backpack.**/
     std::list<sItem*> OpenContainer;  /**< The items in the container currently opened. **/
+    int mActOpenContainerID; /**< ID of the actual open container. **/
+    int mActHeroContainerID; /**< ID of hero's container (inventory). **/
+    int mActGrndContainerID; /**< ID of ground tile container. **/
     enum
     {
-        CONTAINER_UNKNOWN   = -998, /**< Currently is no container opened. **/
-        CONTAINER_INVENTORY = -1,
-        CONTAINER_TILEGROUND=  0,
+        CONTAINER_UNKNOWN   = -1, /**< Currently no container is open. **/
+    };
+    enum
+    {
+        MODE_KEEP_ITEMS = -4, /**< Keep the items. **/
+        MODE_TOGGLE_OPEN= -1  /**< Toggle the container (open/close). **/
     };
 
-    int actContainerTag, actInventoryTag;
+    // ////////////////////////////////////////////////////////////////////
+    // Functions.
+    // ////////////////////////////////////////////////////////////////////
+    void ItemXYCmd(unsigned char *data, int len, bool bflag);
     void clearContainer(int container);
-    void ItemXYCmd(unsigned char *data, int len, int bflag);
-    bool update_item(sItem *tmpItem, int loc, int bflag);
-
-
-    sItem *locate_Item(int loc, unsigned int tag);
-    sItem *locate_Item_from_inv(sItem *op, int tag);
-    sItem *locate_Item_from_Item(sItem *op, int tag);
-
-    sItem *map_Item();
-    int locate_item_nr_from_tag(sItem *op, int tag);
-    int locate_Item_tag_from_nr(sItem *op, int nr);
-    unsigned char get_type_from_name(const char *name);
-    char *get_number(int i);
-    void set_Item_values(sItem *op, char *name, int weight, unsigned short face, int flags, unsigned short anim,
-                         unsigned short animspeed, int nrof, unsigned char itype, unsigned char stype, unsigned char q, unsigned char c, unsigned char s,
-                         unsigned char l, unsigned char dir);
-    void toggle_locked(sItem *op);
-    void send_mark_obj(sItem *op);
-    void update_Item_sort(sItem *it);
-    void init_item_types();
-    void free_all_Items(sItem *op);
-    void remove_Item(sItem *op);
-    void remove_Item_inventory(sItem *op);
-    void print_inventory(sItem *op);
-    void animate_objects();
-    void fire_command(char *buf);
-    void combat_command(char *buf);
-    void dump_inv(sItem *);
-
-
+    void delItem(unsigned int item, int container);
+    void addItem(sItem *tmpItem, int container);
+    bool update(sItem *tmpItem, int newContainerID, bool bflag);
+    int  getContainerID(unsigned int ItemID);
+    sItem *locateItem(int container, unsigned int tag);
+    void printAllItems();
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
@@ -325,5 +320,4 @@ private:
     ~Item();
     Item(const Item&); // disable copy-constructor.
 };
-
 #endif

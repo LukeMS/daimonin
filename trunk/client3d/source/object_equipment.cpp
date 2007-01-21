@@ -32,6 +32,8 @@ http://www.gnu.org/licenses/licenses.html
 #include "option.h"
 #include "logger.h"
 
+using namespace Ogre;
+
 String boneName[ObjectEquipment::BONE_SUM]=
     {
         "Pelvis",
@@ -82,7 +84,7 @@ const char *meshName[][ObjectEquipment::ITEM_SUM]=
     };
 
 unsigned long ObjectEquipment::mIndex =0;
-uchar *ObjectEquipment::texImageBuf = 0;
+unsigned char *ObjectEquipment::texImageBuf = 0;
 
 const uint32 MASK_COLOR = 0xffc638db; // This is our mask. Pixel with this color will not be drawn.
 
@@ -240,7 +242,7 @@ ObjectEquipment::ObjectEquipment(Entity *parentEntity)
     Logger::log().list()  << "Adding Equipment.";
     if (!mIndex++)
     {
-        texImageBuf = new uchar[MAX_MODEL_TEXTURE_SIZE * MAX_MODEL_TEXTURE_SIZE * sizeof(uint32)];
+        texImageBuf = new unsigned char[MAX_MODEL_TEXTURE_SIZE * MAX_MODEL_TEXTURE_SIZE * sizeof(uint32)];
     }
     mParentEntity = parentEntity;
     for (int bone=0; bone < BONE_SUM; ++bone)
@@ -335,7 +337,7 @@ inline void ObjectEquipment::drawBopyPart(sPicture &picPart, Image &image, uint3
         Image img;
         uint32 *sysFontBuf = new uint32[mTexture->getWidth()*mTexture->getHeight()];
         mTexture->getBuffer()->blitToMemory(PixelBox(mTexture->getWidth(), mTexture->getHeight(), 1, PF_A8R8G8B8, sysFontBuf));
-        img = img.loadDynamicImage((uchar*)sysFontBuf, mTexture->getWidth(), mTexture->getHeight(), PF_A8R8G8B8);
+        img = img.loadDynamicImage((unsigned char*)sysFontBuf, mTexture->getWidth(), mTexture->getHeight(), PF_A8R8G8B8);
         img.save("Texture_Changed.png");
     }
 #endif

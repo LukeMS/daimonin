@@ -30,6 +30,8 @@ http://www.gnu.org/licenses/licenses.html
 #include "logger.h"
 #include "events.h"
 
+using namespace Ogre;
+
 const unsigned char TileInterface::mSubPosTable[2][32]=
     {
         {   // Format: YX (The first nibble is the y, the second the x pos).

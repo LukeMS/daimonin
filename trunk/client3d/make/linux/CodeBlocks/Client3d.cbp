@@ -256,13 +256,6 @@
 			<Option target="32bit" />
 			<Option target="64bit" />
 		</Unit>
-		<Unit filename="../../../include/gui/gui_container.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="32bit" />
-			<Option target="64bit" />
-		</Unit>
 		<Unit filename="../../../include/gui/gui_cursor.h">
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
@@ -299,6 +292,13 @@
 			<Option target="64bit" />
 		</Unit>
 		<Unit filename="../../../include/gui/gui_gadget_scrollbar.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="32bit" />
+			<Option target="64bit" />
+		</Unit>
+		<Unit filename="../../../include/gui/gui_gadget_slot.h">
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
 			<Option link="0" />
@@ -593,11 +593,6 @@
 			<Option target="32bit" />
 			<Option target="64bit" />
 		</Unit>
-		<Unit filename="../../../source/gui/gui_container.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="32bit" />
-			<Option target="64bit" />
-		</Unit>
 		<Unit filename="../../../source/gui/gui_cursor.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="32bit" />
@@ -624,6 +619,11 @@
 			<Option target="64bit" />
 		</Unit>
 		<Unit filename="../../../source/gui/gui_gadget_scrollbar.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="32bit" />
+			<Option target="64bit" />
+		</Unit>
+		<Unit filename="../../../source/gui/gui_gadget_slot.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="32bit" />
 			<Option target="64bit" />

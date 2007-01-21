@@ -28,10 +28,8 @@ http://www.gnu.org/licenses/licenses.html
 #define SPELL_MANAGER_H
 
 #include <vector>
-#include "Ogre.h"
+#include <Ogre.h>
 #include "spell_range.h"
-
-using namespace Ogre;
 
 class SpellManager
 {
@@ -55,8 +53,8 @@ public:
 
     struct _Spell
     {
-        SceneNode *node;
-        ParticleSystem* particleSys;
+        Ogre::SceneNode *node;
+        Ogre::ParticleSystem* particleSys;
     }
     Spell;
 
@@ -68,20 +66,20 @@ public:
 
         static SpellManager Singleton; return Singleton;
     }
-    bool init(SceneManager *SceneMgr);
+    bool init(Ogre::SceneManager *SceneMgr);
     bool addObject( unsigned int npc, unsigned int spell);
     void delObject(int number);
-    void update(int type, const FrameEvent& evt);
+    void update(int type, const Ogre::FrameEvent& evt);
     void keyEvent(int obj_type, int action, int val1=0, int val2=0);
-    void test(Vector3 pos);
+    void test(Ogre::Vector3 pos);
 
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    SceneManager *mSceneMgr;
-    SceneNode  *mNode;
-    std::string mDescFile;
+    Ogre::SceneManager *mSceneMgr;
+    Ogre::SceneNode  *mNode;
+    Ogre::String mDescFile;
     std::vector<SpellRange*>mvObject_range;
 
     // ////////////////////////////////////////////////////////////////////

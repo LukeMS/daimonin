@@ -24,6 +24,8 @@ http://www.gnu.org/licenses/licenses.html
 #include "gui_imageset.h"
 #include "gui_window.h"
 
+using namespace Ogre;
+
 //================================================================================================
 // Parse a gui element.
 //================================================================================================

@@ -25,7 +25,7 @@ http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
 #include "logger.h"
-#include "gui_gadget_button.h"
+#include "gui_gadget_slot.h"
 #include "gui_textout.h"
 #include "gui_window.h"
 #include "gui_manager.h"
@@ -35,7 +35,7 @@ using namespace Ogre;
 //================================================================================================
 // .
 //================================================================================================
-GuiGadgetButton::GuiGadgetButton(TiXmlElement *xmlElement, void *parent, bool drawOnInit):GuiElement(xmlElement, parent)
+GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOnInit):GuiElement(xmlElement, parent)
 {
     mCallFunc = 0;
     mMouseOver = false;
@@ -46,13 +46,13 @@ GuiGadgetButton::GuiGadgetButton(TiXmlElement *xmlElement, void *parent, bool dr
 //================================================================================================
 // .
 //================================================================================================
-GuiGadgetButton::~GuiGadgetButton()
+GuiGadgetSlot::~GuiGadgetSlot()
 {}
 
 //================================================================================================
 // Returns true if the mouse event was on this gadget (so no need to check the other gadgets).
 //================================================================================================
-bool GuiGadgetButton::mouseEvent(int MouseAction, int x, int y)
+bool GuiGadgetSlot::mouseEvent(int MouseAction, int x, int y)
 {
     if (x >= mPosX && x <= mPosX + mWidth && y >= mPosY && y <= mPosY + mHeight)
     {
@@ -94,7 +94,7 @@ bool GuiGadgetButton::mouseEvent(int MouseAction, int x, int y)
 //================================================================================================
 // Draw the guiElement.
 //================================================================================================
-void GuiGadgetButton::draw()
+void GuiGadgetSlot::draw()
 {
     // ////////////////////////////////////////////////////////////////////
     // Draw gaget.

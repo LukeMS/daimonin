@@ -27,10 +27,8 @@ http://www.gnu.org/licenses/licenses.html
 #ifndef TEXTINPUT_H
 #define TEXTINPUT_H
 
-#include <string>
+#include <Ogre.h>
 #include "sound.h"
-
-using namespace std;
 
 /**
  ** TextInput class which manages the keyboard input for the Dialog class.
@@ -57,11 +55,11 @@ public:
     {
         static GuiTextinput singleton; return singleton;
     }
-    void addString(string &addString)
+    void addString(Ogre::String &addString)
     {
         mStrTextInput+= addString;
     }
-    void setString(string &newString)
+    void setString(Ogre::String &newString)
     {
         mStrTextInput = newString;
     }
@@ -113,16 +111,16 @@ public:
      *****************************************************************************/
     const char *getText(bool hideText = false, bool showTextCursor = true)
     {
-        static clock_t time = Root::getSingleton().getTimer()->getMilliseconds();
+        static clock_t time = Ogre::Root::getSingleton().getTimer()->getMilliseconds();
         static bool cursorOn = true;
         if (!showTextCursor || mFinished || mCanceled)
         {
             return mStrTextInput.c_str();
         }
         mStrTextInputWithCursor = mStrTextInput;
-        if (Root::getSingleton().getTimer()->getMilliseconds() - time > CURSOR_FREQUENCY)
+        if (Ogre::Root::getSingleton().getTimer()->getMilliseconds() - time > CURSOR_FREQUENCY)
         {
-            time = Root::getSingleton().getTimer()->getMilliseconds();
+            time =  Ogre::Root::getSingleton().getTimer()->getMilliseconds();
             cursorOn = !cursorOn;
         }
         if (cursorOn)
@@ -278,7 +276,7 @@ private:
     bool mChange;
     bool mFinished, mCanceled, mInProgress;
     bool mBlockNumbers, mBlockWhiteSpace;
-    string mStrTextInput, mStrTextInputWithCursor;
+    Ogre::String mStrTextInput, mStrTextInputWithCursor;
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.

@@ -30,16 +30,11 @@ http://www.gnu.org/licenses/licenses.html
 //================================================================================================
 ObjectHero::ObjectHero()
 {
-    //new_player(0, "", 0, 0);
-    fire_on = 0;
-    firekey_on = 0;
-    resize_twin = 0;
-    resize_twin_marker = 0;
+    fire_on = firekey_on = 0;
     run_on = runkey_on = 0;
+    resize_twin = resize_twin_marker = 0;
     inventory_win = IWIN_BELOW;
     count_left = 0;
-    container_tag = -996;
-    container = 0;
     memset(&stats, 0, sizeof(Stats));
     stats.maxsp = 1;
     stats.maxhp = 1;
@@ -49,15 +44,12 @@ ObjectHero::ObjectHero()
     target_hp = 0;
     stats.maxgrace = 1;
     stats.speed = 1;
-
     count_left = 0;
-    stats.maxsp = 1;    /* avoid div by 0 errors */
-    stats.maxhp = 1;    /* ditto */
-    stats.maxgrace = 1; /* ditto */
-    // ditto - displayed weapon speed is weapon speed/speed.
+    stats.maxsp = 1;    // avoid div by 0 errors.
+    stats.maxhp = 1;    // avoid div by 0 errors.
+    stats.maxgrace = 1; // avoid div by 0 errors.
     stats.speed = 0;
     stats.weapon_sp = 0;
-
     last_command = "";
     input_text = "";
     alignment = "";
@@ -68,9 +60,6 @@ ObjectHero::ObjectHero()
     title = "";
     map_x = 0;
     map_y = 0;
-    container_tag = -997;
-    container = 0;
     magicmap = 0;
-
 //    RangeFireMode = 0;
 }
