@@ -295,9 +295,10 @@ void initPlugins(void)
     {
         if (strcmp(currentfile->d_name, ".."))
         {
-            /* don't load "." marker, CVS directory or all which has a .txt inside */
-            if (strcmp(currentfile->d_name, ".") && !strstr(currentfile->d_name, ".txt") && strcmp(currentfile->d_name,
-                                                                                                   "CVS"))
+            /* don't load dotfiles, CVS directory or all which has a .txt inside */
+            if (currentfile->d_name[0] != '.' && 
+                    !strstr(currentfile->d_name, ".txt") && 
+                    strcmp(currentfile->d_name, "CVS"))
             {
                 strcpy(buf2, buf);
                 strcat(buf2, currentfile->d_name);
@@ -462,8 +463,8 @@ void initPlugins(void)
         {
             if (strcmp(namelist[n]->d_name, ".."))
             {
-                /* don't load "." marker, CVS directory or all which has a .txt inside */
-                if (strcmp(namelist[n]->d_name, ".")
+                /* don't load dorfiles, CVS directory or all which has a .txt inside */
+                if (namelist[n]->d_name[0] != '.'
                  && !strstr(namelist[n]->d_name, ".txt")
                  && strcmp(namelist[n]->d_name, "CVS"))
                 {
