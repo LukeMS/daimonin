@@ -6,30 +6,39 @@ require("interface_builder")
 local pl        = event.activator
 local me        = event.me
 local msg       = string.lower(event.message)
-
-local q_mgr_1   = QuestManager(pl, "Dev Kill Item Test Quest")
-
+-- quest names must be unique, the player will store the name forever
+-- level and skill_group are optional
+local level = 1
+-- skill_group must be one of the 6 game item skill constants or use game.ITEM_SKILL_NO for main level
+local skill_group = game.ITEM_SKILL_PHYSICAL
+local q_mgr_1   = QuestManager(pl, "Dev Kill Item Test Quest", level, skill_group)
 local ib = InterfaceBuilder()
 ib:SetHeader(me, me.name)
 
 local function topicDefault()
-    if q_mgr_1:GetStatus() < game.QSTAT_DONE then
-        ib:AddMsg("[DEVMSG] The quest status is: ".. q_mgr_1:GetStatus() .."\n\n")
-        if q_mgr_1:GetStatus() == game.QSTAT_NO then
-            ib:SetTitle("Kill Item Test Quest")
-            ib:AddMsg("[INTRO] This quest is a mixture between kill and item quest: You have to kill defined mobs - instead of counting the kills you have a chance of x that you get a quest item from them.")
-            ib:AddLink("Start Kill Item Test Quest", "startq1")
-        else
-            ib:SetTitle("Kill Item Test Quest solved?")
-            ib:AddMsg("[pending] Have you done the quest?")
-            ib:AddLink("Finish Kill Item Test Quest", "checkq1")
-        end
-    else
-        pl:Write(me.name .." has nothing to say.", game.COLOR_NAVY)
-        pl:Interface(-1, "") 
+    if q_mgr_1:GetStatus() == game.QSTAT_DISALLOW then
+        pl:Write(me.name .." tells you to come back when your weapon skills are better", game.COLOR_NAVY)
+        pl:Interface(-1, "")
         return
+    else
+        if q_mgr_1:GetStatus() < game.QSTAT_DONE then
+            ib:AddMsg("[DEVMSG] The quest status is: ".. q_mgr_1:GetStatus() .."\n\n")
+            if q_mgr_1:GetStatus() == game.QSTAT_NO then
+                ib:SetTitle("Kill Item Test Quest")
+                ib:AddMsg("[INTRO] This quest is a mixture between kill and item quest: You have to kill defined mobs - instead of counting the kills you have a chance of x that you get a quest item from them.")
+                ib:AddLink("Start Kill Item Test Quest", "startq1")
+            else
+                ib:SetTitle("Kill Item Test Quest solved?")
+                ib:AddMsg("[pending] Have you done the quest?")
+                ib:AddLink("Finish Kill Item Test Quest", "checkq1")
+            end
+        else
+            pl:Write(me.name .." has nothing to say.", game.COLOR_NAVY)
+            pl:Interface(-1, "")
+            return
+        end
+        pl:Interface(1, ib:Build())
     end
-    pl:Interface(1, ib:Build())
 end
 
 -- quest body (added to player quest obj for quest list)
