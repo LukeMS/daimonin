@@ -378,6 +378,7 @@ void                        do_specials(void);
 void                        shutdown_agent(int timer, int ret, char *reason);
 int                         main(int argc, char **argv);
 void                        process_events();
+void                        iterate_main_loop();
 /* monster.c */
 object                     *get_active_waypoint(object *op);
 object                     *get_aggro_waypoint(object *op);
