@@ -28,6 +28,7 @@ http://www.gnu.org/licenses/licenses.html
 #define NETWORK_H
 
 #include <vector>
+#include <Ogre.h>
 #include <SDL.h>
 #include <SDL_thread.h>
 #include <SDL_mutex.h>
@@ -43,8 +44,6 @@ http://www.gnu.org/licenses/licenses.html
 #include <errno.h>
 #include <fcntl.h>
 #endif
-
-using namespace std;
 
 class Network
 {
@@ -68,12 +67,12 @@ public:
 
     typedef struct
     {
-        string nameip;
-        string version;
-        string desc1;
-        string desc2;
-        string desc3;
-        string desc4;
+        Ogre::String nameip;
+        Ogre::String version;
+        Ogre::String desc1;
+        Ogre::String desc2;
+        Ogre::String desc3;
+        Ogre::String desc4;
         int player;
         int port;
     }
@@ -85,8 +84,8 @@ public:
     typedef struct
     {
         int fd;
-        std::string inbuf;
-        std::string outbuf;
+        Ogre::String inbuf;
+        Ogre::String outbuf;
         int cs_version, sc_version; // Server versions of these
         // These are used for the newer 'windowing' method of commands -
         // number of last command sent, number of received confirmation
@@ -117,14 +116,14 @@ public:
     static void command_buffer_free(command_buffer *buf);
     static void command_buffer_enqueue(command_buffer *buf, command_buffer **queue_start, command_buffer **queue_end);
     static void checkFileStatus(const char *cmd, char *param, int fileNr);
-    static void AddIntToString(std::string &sl, int data, bool shortInt);
+    static void AddIntToString(Ogre::String &sl, int data, bool shortInt);
 
     static int reader_thread_loop(void *);
     static int writer_thread_loop(void *);
 
     static int send_command(const char *command, int repeat, int force);
     int send_command_binary(unsigned char cmd, unsigned char *body, unsigned int len);
-    static int send_socklist(std::string msg);
+    static int send_socklist(Ogre::String msg);
     void socket_thread_start();
     void socket_thread_stop();
     bool isInit()
@@ -203,10 +202,10 @@ private:
     // ////////////////////////////////////////////////////////////////////
     typedef struct
     {
-        std::string name;
-        std::string ip;
-        std::string version;
-        std::string desc[4];
+        Ogre::String name;
+        Ogre::String ip;
+        Ogre::String version;
+        Ogre::String desc[4];
         int player;
         int port;
     }
@@ -230,7 +229,7 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    void parse_metaserver_data(string strMetaData);
+    void parse_metaserver_data(Ogre::String strMetaData);
     Network();
     ~Network();
     Network(const Network&); // disable copy-constructor.

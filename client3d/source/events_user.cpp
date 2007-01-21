@@ -27,6 +27,7 @@ http://www.gnu.org/licenses/licenses.html
 #include <OgreKeyEvent.h>
 #include "logger.h"
 #include "option.h"
+#include "item.h"
 #include "events.h"
 #include "network.h"
 #include "gui_manager.h"
@@ -118,6 +119,15 @@ void Events::keyPressed(KeyEvent *e)
         }
 
         case KC_G:
+/*
+            char    buf[100];
+            int nrof =1;
+            int loc = Item::getSingleton().mActGrndContainerID;
+            int tag = Item::getSingleton().HeroTileGround[0]->tag;
+            sprintf(buf, "mv %d %d %d", loc, tag, nrof);
+            Network::getSingleton().cs_write_string(buf);
+*/
+
             TileManager::getSingleton().toggleGrid();
             break;
 
@@ -175,6 +185,9 @@ void Events::keyPressed(KeyEvent *e)
 
         case KC_S:
         {
+            Item::getSingleton().clearContainer(Item::getSingleton().mActOpenContainerID);
+            break;
+
             bool ready = ObjectManager::getSingleton().isSecondaryWeaponReady(ObjectNPC::HERO);
             ObjectManager::getSingleton().readySecondaryWeapon(ObjectNPC::HERO, !ready);
             break;
@@ -189,6 +202,7 @@ void Events::keyPressed(KeyEvent *e)
                 }
         */
         case KC_T:
+            Item::getSingleton().printAllItems();
             /*
                    case KEYFUNC_TARGET_ENEMY:
                      send_command("/target 0", -1, SC_NORMAL);
@@ -412,9 +426,9 @@ void Events::keyReleased(KeyEvent* e)
     mShiftDown = e->isShiftDown();
     switch (e->getKey())
     {
-        // ////////////////////////////////////////////////////////////////////
-        // Player Movemment.
-        // ////////////////////////////////////////////////////////////////////
+            // ////////////////////////////////////////////////////////////////////
+            // Player Movemment.
+            // ////////////////////////////////////////////////////////////////////
         case KC_UP:
         case KC_DOWN:
             ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_WALK, 0);

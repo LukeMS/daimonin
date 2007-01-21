@@ -30,12 +30,10 @@ http://www.gnu.org/licenses/licenses.html
 #include <Ogre.h>
 #include <OgreEventListeners.h>
 
-using namespace Ogre;
-
 //================================================================================================
 // Class.
 //================================================================================================
-class Events: public FrameListener, public KeyListener, public MouseMotionListener, public MouseListener
+class Events: public Ogre::FrameListener, public Ogre::KeyListener, public Ogre::MouseMotionListener, public Ogre::MouseListener
 {
 public:
     // ////////////////////////////////////////////////////////////////////
@@ -52,34 +50,34 @@ public:
     {
         static Events Singleton; return Singleton;
     }
-    void Init(RenderWindow* win, SceneManager *mSceneMgr);
+    void Init(Ogre::RenderWindow* win, Ogre::SceneManager *mSceneMgr);
     void freeRecources();
-    SceneManager *GetSceneManager()
+    Ogre::SceneManager *GetSceneManager()
     {
         return mSceneManager;
     }
-    SceneNode *GetWorldNode()
+    Ogre::SceneNode *GetWorldNode()
     {
         return mWorld;
     }
-    const Vector3 &getWorldPos()
+    const Ogre::Vector3 &getWorldPos()
     {
         return mWorld->getPosition();
     }
     void setWorldPos(int posX, int posZ);
-    void setLightMember(Light *light, int nr)
+    void setLightMember(Ogre::Light *light, int nr)
     {
         mLight[nr] = light;
     }
-    Camera *getCamera()
+    Ogre::Camera *getCamera()
     {
         return mCamera;
     }
-    Real getCamCornerX()
+    Ogre::Real getCamCornerX()
     {
         return mCamCornerX;
     }
-    Real getCamCornerY()
+    Ogre::Real getCamCornerY()
     {
         return mCamCornerY;
     }
@@ -101,41 +99,41 @@ private:
     bool mShiftDown;
     int mDayTime;
     int mSceneDetailIndex;
-    Real mIdleTime;
-    Real mCameraZoom;
-    Vector3 mMouse;
-    Real mCamCornerX, mCamCornerY;
-    Real mTimeUntilNextToggle; // just to stop toggles flipping too fast
-    SceneNode *mWorld;
-    SceneManager *mSceneManager;
-    EventProcessor *mEventProcessor;
-    InputReader* mInputDevice;
-    RenderWindow* mWindow;
-    Camera* mCamera;
-    Light *mLight[2];
-    Light *mSpotLight, *mVolLight;
+    Ogre::Real mIdleTime;
+    Ogre::Real mCameraZoom;
+    Ogre::Vector3 mMouse;
+    Ogre::Real mCamCornerX, mCamCornerY;
+    Ogre::Real mTimeUntilNextToggle; // just to stop toggles flipping too fast
+    Ogre::SceneNode *mWorld;
+    Ogre::SceneManager *mSceneManager;
+    Ogre::EventProcessor *mEventProcessor;
+    Ogre::InputReader* mInputDevice;
+    Ogre::RenderWindow* mWindow;
+    Ogre::Camera* mCamera;
+    Ogre::Light *mLight[2];
+    Ogre::Light *mSpotLight, *mVolLight;
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     Events() {};
     ~Events(){};
-    bool frameStarted(const FrameEvent& evt);
-    bool frameEnded  (const FrameEvent& evt);
+    bool frameStarted(const Ogre::FrameEvent& evt);
+    bool frameEnded  (const Ogre::FrameEvent& evt);
     bool checkUsername(const char *name);
-    void keyClicked (KeyEvent *e);
-    void keyPressed (KeyEvent *e);
-    void keyReleased(KeyEvent *e);
-    void mouseDragEntered(MouseEvent *) {}
-    void mouseDragExited (MouseEvent *) {}
-    void mouseDragDropped(MouseEvent *) {}
-    void mouseMoved   (MouseEvent *e);
-    void mouseDragged (MouseEvent *e);
-    void mouseClicked (MouseEvent *e);
-    void mouseEntered (MouseEvent *e);
-    void mouseExited  (MouseEvent *e);
-    void mousePressed (MouseEvent *e);
-    void mouseReleased(MouseEvent *e);
+    void keyClicked (Ogre::KeyEvent *e);
+    void keyPressed (Ogre::KeyEvent *e);
+    void keyReleased(Ogre::KeyEvent *e);
+    void mouseDragEntered(Ogre::MouseEvent *) {}
+    void mouseDragExited (Ogre::MouseEvent *) {}
+    void mouseDragDropped(Ogre::MouseEvent *) {}
+    void mouseMoved   (Ogre::MouseEvent *e);
+    void mouseDragged (Ogre::MouseEvent *e);
+    void mouseClicked (Ogre::MouseEvent *e);
+    void mouseEntered (Ogre::MouseEvent *e);
+    void mouseExited  (Ogre::MouseEvent *e);
+    void mousePressed (Ogre::MouseEvent *e);
+    void mouseReleased(Ogre::MouseEvent *e);
 };
 
 #endif

@@ -31,6 +31,8 @@ http://www.gnu.org/licenses/licenses.html
 #include "gui_imageset.h"
 #include "logger.h"
 
+using namespace Ogre;
+
 const int MAX_CURSOR_SIZE = 64;
 
 //================================================================================================

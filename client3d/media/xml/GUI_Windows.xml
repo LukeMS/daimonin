@@ -71,6 +71,38 @@
     <TextBox x= "100" y= "70" font="02" text= "0000"  width = "45" name= "Engine_SumTris" />
   </Window>
 
+
+
+  <!--#############################################-->
+  <!--WINDOW:                           -->
+  <!--#############################################-->
+  <Window name= "Win_Container">
+    <Size      width= "200" height= "240" />
+    <Alignment x= "left" />
+    <Pos       x ="0" y= "100" zOrder = "50" />
+
+    <Gadget type= "BUTTON"  name = "But_Close" image_name = "Button_01_Close">
+      <Pos x= "180" y= "1" />
+    </Gadget>
+
+    <!--=============================================-->
+    <!-- Window Body                                 -->
+    <!--=============================================-->
+    <Graphic type= "GFX_FILL"  image_name = "Item_Container">
+      <Pos x= "0" y= "0" />
+      <Range width= "200" height= "240" />
+    </Graphic>
+
+    <Gadget type= "SLOT"  image_name = "Item_Slot">
+      <!-- Numbers of cols/rows -->
+      <Sum x= "5" y="5" />
+      <!-- Position of the 1. slot. -->
+      <Pos x= "9" y= "45" />
+      <!-- Offset to the next col/row -->
+      <Offset x ="0" y ="0" />
+    </Gadget>
+  </Window>
+
   <!--#############################################-->
   <!--WINDOW: Player info                          -->
   <!--#############################################-->

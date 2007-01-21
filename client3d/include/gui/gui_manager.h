@@ -34,8 +34,6 @@ http://www.gnu.org/licenses/licenses.html
 #include "gui_cursor.h"
 #include "gui_imageset.h"
 
-using namespace Ogre;
-
 /**
  ** This is the interface to the world outside.
  ** Alawys use this class to access the gui from outside.
@@ -57,6 +55,7 @@ public:
         GUI_WIN_LOGIN,
         //  GUI_WIN_CREATION,
         GUI_WIN_NPCDIALOG,
+        GUI_WIN_ITEM_CONTAINER,
         GUI_WIN_SUM
     };
     enum
@@ -91,8 +90,8 @@ public:
     void Init(int w, int h);
     void parseImageset(const char *XML_imageset_file);
     void parseWindows (const char *XML_windows_file);
-    void update(Real);
-    bool mouseEvent(int MouseAction, Vector3 &mouse);
+    void update(Ogre::Real);
+    bool mouseEvent(int MouseAction, Ogre::Vector3 &mouse);
     bool keyEvent(const char keyChar, const unsigned char key);
     const char *sendMessage(int window, int message, int element, void *value1 = 0, void *value2 = 0);
     void setTooltip(const char *text);
@@ -141,7 +140,7 @@ public:
     {
         guiWindow[window].clearListbox(element);
     }
-    int addTextline(int window, int element, const char *text, uint32 color = 0x00ffffff);
+    int addTextline(int window, int element, const char *text, Ogre::uint32 color = 0x00ffffff);
 
     // ////////////////////////////////////////////////////////////////////
     // GUI_Button stuff.
@@ -162,18 +161,18 @@ private:
     int mDragSrcItemPosx, mDragSrcItemPosy; // Set on dragStart for moving back on false drag&drop.
     int mActiveWindow, mActiveElement;
     int mHotSpotX, mHotSpotY;
-    Vector3 mMouse;
+    Ogre::Vector3 mMouse;
     bool mTooltipRefresh;
     bool mIsDragging;
     bool mProcessingTextInput;
     unsigned int mScreenWidth, mScreenHeight;
     unsigned long mTooltipDelay;
-    Overlay *mOverlay;
-    OverlayElement *mElement;
-    MaterialPtr mMaterial;
-    TexturePtr mTexture;
-    String mStrTooltip, mBackupTextInputString;
-    String mStrTextInput;
+    Ogre::Overlay *mOverlay;
+    Ogre::OverlayElement *mElement;
+    Ogre::MaterialPtr mMaterial;
+    Ogre::TexturePtr mTexture;
+    Ogre::String mStrTooltip, mBackupTextInputString;
+    Ogre::String mStrTextInput;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////

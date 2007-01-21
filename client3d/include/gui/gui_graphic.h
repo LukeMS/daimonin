@@ -31,8 +31,6 @@ http://www.gnu.org/licenses/licenses.html
 #include <Ogre.h>
 #include "gui_element.h"
 
-using namespace Ogre;
-
 /**
  ** This class provides a graphical element, drawn into a gui element.
  *****************************************************************************/

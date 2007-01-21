@@ -31,8 +31,6 @@ http://www.gnu.org/licenses/licenses.html
 #include <Ogre.h>
 #include <vector>
 
-using namespace Ogre;
-
 /**
  ** This singleton class stores the graphic positions of all gui elements.
  ** All graphics are stored in a single gfx-file.
@@ -140,7 +138,7 @@ public:
 
     typedef struct
     {
-        String name;
+        Ogre::String name;
         int width, height;
         bool alpha;
         gfxPos state[STATE_ELEMENT_SUM];
@@ -166,7 +164,7 @@ public:
     GuiSrcEntry *getStateGfxPositions(const char* guiImage);
     void deleteStateGfxPositions(const char* guiImage);
     GuiSrcEntryMouse *getStateGfxPosMouse();
-    PixelBox &getPixelBox()
+    Ogre::PixelBox &getPixelBox()
     {
         return mSrcPixelBox;
     }
@@ -179,9 +177,9 @@ private:
     // ////////////////////////////////////////////////////////////////////
     GuiSrcEntryMouse *mSrcEntryMouse;
     std::vector<GuiSrcEntry*>mvSrcEntry;
-    String mStrImageSetGfxFile;
-    Image mImageSetImg;
-    PixelBox mSrcPixelBox;
+    Ogre::String mStrImageSetGfxFile;
+    Ogre::Image mImageSetImg;
+    Ogre::PixelBox mSrcPixelBox;
     static GuiElementNames mGuiElementNames[GUI_ELEMENTS_SUM];
 
     // ////////////////////////////////////////////////////////////////////

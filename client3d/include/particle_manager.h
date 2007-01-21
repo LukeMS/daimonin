@@ -30,8 +30,6 @@ http://www.gnu.org/licenses/licenses.html
 #include <vector>
 #include <Ogre.h>
 
-using namespace Ogre;
-
 class ParticleManager
 {
 
@@ -43,16 +41,16 @@ public:
     {
         static ParticleManager Singleton; return Singleton;
     }
-    ParticleSystem *addFreeObject(Vector3 pos, const char *particleScript, Real lifeTime);
-    ParticleSystem *addBoneObject(Entity *ent, const char *boneName, const char* particleScript, Real lifeTime);
-    ParticleSystem *addNodeObject(SceneNode *node, const char* particleScript, Real lifeTime);
+    Ogre::ParticleSystem *addFreeObject(Ogre::Vector3 pos, const char *particleScript, Ogre::Real lifeTime);
+    Ogre::ParticleSystem *addBoneObject(Ogre::Entity *ent, const char *boneName, const char* particleScript, Ogre::Real lifeTime);
+    Ogre::ParticleSystem *addNodeObject(Ogre::SceneNode *node, const char* particleScript, Ogre::Real lifeTime);
     void delNodeObject(int nr);
-    void delObject(ParticleSystem *pSystem);
-    void synchToWorldPos(Vector3 &deltaPos);
-    void update(Real time);
+    void delObject(Ogre::ParticleSystem *pSystem);
+    void synchToWorldPos(Ogre::Vector3 &deltaPos);
+    void update(Ogre::Real time);
     void pauseAll(bool pause);
-    void setColorRange (ParticleSystem *pSystem, ColourValue start, ColourValue stop);
-    void setEmitterSize(ParticleSystem *pSystem, float sizeZ, float sizeX, bool adjustEmitterRate);
+    void setColorRange (Ogre::ParticleSystem *pSystem, Ogre::ColourValue start, Ogre::ColourValue stop);
+    void setEmitterSize(Ogre::ParticleSystem *pSystem, float sizeZ, float sizeX, bool adjustEmitterRate);
 
 private:
     // ////////////////////////////////////////////////////////////////////
@@ -68,13 +66,13 @@ private:
 
     typedef struct
     {
-        Real speed;      //  0: Object has a static position.
-        Real lifeTime;   // -1: Infinity lifetime.
-        SceneNode *sceneNode;
+        Ogre::Real speed;      //  0: Object has a static position.
+        Ogre::Real lifeTime;   // -1: Infinity lifetime.
+        Ogre::SceneNode *sceneNode;
         bool delNodeOnCleanup;
         char neededSync;
-        ParticleSystem *pSystem;
-        Entity *entity;
+        Ogre::ParticleSystem *pSystem;
+        Ogre::Entity *entity;
     }
     sParticles;
     std::vector<sParticles*>mvParticle;

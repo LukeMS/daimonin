@@ -28,9 +28,7 @@ http://www.gnu.org/licenses/licenses.html
 #define LIGHT_MANAGER_H
 
 #include <vector>
-#include "Ogre.h"
-
-using namespace Ogre;
+#include <Ogre.h>
 
 class LightManager
 {
@@ -39,10 +37,10 @@ private:
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     enum { LIGHT_SPOT, LIGHT_SUM };
-    SceneManager *mSceneMgr;
-    SceneNode  *mNode;
-    std::string mDescFile;
-    std::vector<Light*>mvLightObject;
+    Ogre::SceneManager *mSceneMgr;
+    Ogre::SceneNode  *mNode;
+    Ogre::String mDescFile;
+    std::vector<Ogre::Light*>mvLightObject;
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.
@@ -60,10 +58,10 @@ public:
     {
         static LightManager Singleton; return Singleton;
     }
-    bool init(SceneManager *SceneMgr, SceneNode  *Node);
-    bool addObject(unsigned int type, const char *desc_filename, Vector3 pos);
+    bool init(Ogre::SceneManager *SceneMgr, Ogre::SceneNode  *Node);
+    bool addObject(unsigned int type, const char *desc_filename, Ogre::Vector3 pos);
     void delObject(int number);
-    void update(int type, const FrameEvent& evt);
+    void update(int type, const Ogre::FrameEvent& evt);
     void keyEvent(int obj_type, int action, int val1=0, int val2=0);
 };
 

@@ -27,12 +27,10 @@ http://www.gnu.org/licenses/licenses.html
 #ifndef OPTION_H
 #define OPTION_H
 
-#include <string>
+#include <Ogre.h>
 #include <fstream>
 #include <sstream>
 #include <iostream>
-
-using namespace std;
 
 class Option
 {
@@ -128,7 +126,7 @@ public:
         char *info1;    /**< Info text row 1    **/
         char *info2;    /**< Info text row 2    **/
         char *val_text; /**< Text-replacement (values are separated by '#') **/
-        std::string txtValue;
+        Ogre::String txtValue;
         int  intValue;
         int  minRange, maxRange, deltaRange;
         bool pageFeed;
@@ -136,14 +134,14 @@ public:
     optionStruct;
 
     static optionStruct optStruct[SEPARATOR];
-    static std::string  optValue[SUM_OPTIONS - SEPARATOR-1];
+    static Ogre::String  optValue[SUM_OPTIONS - SEPARATOR-1];
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     bool openDescFile(const char *filename);
     void closeDescFile();
-    bool getDescStr(const char *descrEntry, string &strBuffer, unsigned int nr=0);
+    bool getDescStr(const char *descrEntry, Ogre::String &strBuffer, unsigned int nr=0);
 
     static Option &getSingleton()
     {
@@ -227,9 +225,9 @@ private:
     // ////////////////////////////////////////////////////////////////////
     unsigned int mGameStatus;
     enum enumLoginType mLoginType;
-    ifstream *mDescFile;
-    string mDescBuffer;
-    string mFilename;
+    std::ifstream *mDescFile;
+    Ogre::String mDescBuffer;
+    Ogre::String mFilename;
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.

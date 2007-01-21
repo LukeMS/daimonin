@@ -30,6 +30,8 @@ http://www.gnu.org/licenses/licenses.html
 #include "gui_imageset.h"
 #include "logger.h"
 
+using namespace Ogre;
+
 const char GuiTextout::TXT_CMD_HIGHLIGHT   = '~';
 const char GuiTextout::TXT_CMD_LOWLIGHT    = -80; // prevent anjuta and codeblocks problems with the degree character.
 const char GuiTextout::TXT_CMD_LINK        = '^';
@@ -325,7 +327,7 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
         static int fontNr = -1;
         uint32 *sysFontBuf = new uint32[texture->getWidth()*texture->getHeight()];
         texture->getBuffer()->blitToMemory(PixelBox(texture->getWidth(), texture->getHeight(), 1, PF_A8R8G8B8, sysFontBuf));
-        img = img.loadDynamicImage((uchar*)sysFontBuf, texture->getWidth(), texture->getHeight(), PF_A8R8G8B8);
+        img = img.loadDynamicImage((unsigned char*)sysFontBuf, texture->getWidth(), texture->getHeight(), PF_A8R8G8B8);
         img.save("./OgreFont"+StringConverter::toString(++fontNr,3,'0')+".png");
         */
         // ////////////////////////////////////////////////////////////////////
@@ -344,7 +346,7 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
         // write font to disc.
         // This is broken in the codeblocks sdk version of ogre1.2.3 (width > 1024 will be clipped).
         // Use GNU/Linux or VC to get it done.
-        img = img.loadDynamicImage((uchar*)fnt->data, fnt->textureWidth, fnt->height, PF_A8R8G8B8);
+        img = img.loadDynamicImage((unsigned char*)fnt->data, fnt->textureWidth, fnt->height, PF_A8R8G8B8);
         String rawFilename = "./NoLonger";
         rawFilename+= filename;
         rawFilename.resize(rawFilename.size()-4); // Cut extension.
@@ -558,7 +560,7 @@ const char *GuiTextout::showUserDefinedChars(const char *XmlUserChars)
     char replacement[] = {(char)(STANDARD_CHARS_IN_FONT+32),0};
     for (unsigned int i=0; i < mvSpecialChar.size();++i)
     {
-        while ((found = txt.find(mvSpecialChar[i]->strGfxCode))!= string::npos)
+        while ((found = txt.find(mvSpecialChar[i]->strGfxCode))!= String::npos)
             txt.replace(found, mvSpecialChar[i]->strGfxCode.size(), replacement);
         ++replacement[0];
     }

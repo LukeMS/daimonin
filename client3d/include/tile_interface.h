@@ -27,8 +27,6 @@ http://www.gnu.org/licenses/licenses.html
 #include "define.h"
 #include "tile_pos.h"
 
-using namespace Ogre;
-
 /**
  ** This class provides an interface for 3d tile picking.
  *****************************************************************************/
@@ -39,14 +37,14 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    TileInterface(SceneManager* sceneManager);
+    TileInterface(Ogre::SceneManager* sceneManager);
     ~TileInterface();
     /** Returns the worldPosition of the selected tile. **/
-    const Vector3 getSelectedPos();
+    const Ogre::Vector3 getSelectedPos();
     /** Returns the tilePosition of the selected tile. **/
     const TilePos getSelectedTile();
     /** Converts a tilePosition into the worldPosition. **/
-    Vector3 tileToWorldPos(TilePos tile);
+    Ogre::Vector3 tileToWorldPos(TilePos tile);
     /** Returns the distance between 2 subtile positions. **/
     int calcTileDistance(const TilePos &pos1, const TilePos &pos2);
     /** Get the tile below the mouse cursor. **/
@@ -66,15 +64,15 @@ private:
     quadrant;
     static const unsigned char mSubPosTable[][32];
     static const unsigned char mWorldPosTable[4][8];
-    RaySceneQuery* mRaySceneQuery;
+    Ogre::RaySceneQuery* mRaySceneQuery;
     TilePos mPos;       /**< The tilePosition  of the selected tile. **/
-    Vector3 mPosVector;  /**< The worldPosition of the selected tile. **/
-    Vector3 mTris[4];    /**< Every tile is build out of 4 tris. **/
+    Ogre::Vector3 mPosVector;  /**< The worldPosition of the selected tile. **/
+    Ogre::Vector3 mTris[4];    /**< Every tile is build out of 4 tris. **/
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    bool getPickPos(Ray *mouseRay, int quadrant);
+    bool getPickPos(Ogre::Ray *mouseRay, int quadrant);
     void fillVectors(TilePos &tile, int quadrant);
 };
 

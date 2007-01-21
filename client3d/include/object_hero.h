@@ -29,11 +29,8 @@ http://www.gnu.org/licenses/licenses.html
 
 #include "item.h"
 
-
-
 #define INVITEMBELOWXLEN 8
 #define INVITEMBELOWYLEN 1
-
 #define INVITEMXLEN 7
 #define INVITEMYLEN 3
 
@@ -140,12 +137,6 @@ public:
         IWIN_INV
     } _inventory_win;
 
-    Item *ob;    // Player object
-    Item *below; // Items below the player (pl.below->inv)
-    Item *sack;  // inventory of a open container
-    Item *container; // ptr to open container
-
-    int container_tag; // tag of the container
     int weight_limit;
     int count; // Repeat count on command
     int target_mode;

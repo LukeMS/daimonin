@@ -31,6 +31,8 @@ http://www.gnu.org/licenses/licenses.html
 #include "logger.h"
 #include "gui_window.h"
 
+using namespace Ogre;
+
 // TODO
 // 3d    type hor/vert
 // plain type hor/vert

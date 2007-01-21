@@ -64,11 +64,11 @@ public:
     ObjectNPC(sObject &obj, bool spawn);
     virtual ~ObjectNPC();
     virtual void freeRecources();
-    virtual bool update(const FrameEvent& event);
+    virtual bool update(const Ogre::FrameEvent& event);
     void movePosition(int dx, int dz);
     void moveToDistantTile(TilePos pos, int precision =0);
     void faceToTile(TilePos pos);
-    void turning(Real turn, bool cursorTurn);
+    void turning(Ogre::Real turn, bool cursorTurn);
     void attackObjectOnTile(TilePos pos);
     void addToMap();
     void setEnemy();
@@ -80,9 +80,9 @@ public:
     {
         return mActHP;
     }
-    Real getHealthPercentage()
+    Ogre::Real getHealthPercentage()
     {
-        return Real(mActHP) / Real(mMaxHP);
+        return Ogre::Real(mActHP) / Ogre::Real(mMaxHP);
     }
     bool isMoving()
     {
@@ -153,9 +153,9 @@ private:
     unsigned char mBoundingRadius; /**< The radius of subtiles, the NPC stands on. Used for pathfinding. **/
     bool mAutoMoving;
     bool mTalking;
-    Real mSpawnSize;
-    Real mCursorTurning;
-    Real mDeltaDegree, mDistance;
+    Ogre::Real mSpawnSize;
+    Ogre::Real mCursorTurning;
+    Ogre::Real mDeltaDegree, mDistance;
     int mReadyWeaponStatus;
     int mType;
     int mAttack;
@@ -166,8 +166,8 @@ private:
     int mOffX, mOffZ;
     TilePos mDestStepPos;     /**< The next tile pos of a multi tile walk. **/
     TilePos mDestWalkPos;     /**< The destination pos (as tile).   **/
-    Vector3 mDestWalkVec;     /**< The destination pos (as vector). **/
-    Vector3 mWalkSpeed;
+    Ogre::Vector3 mDestWalkVec;     /**< The destination pos (as vector). **/
+    Ogre::Vector3 mWalkSpeed;
     ObjectNPC *mEnemyObject;
     // ////////////////////////////////////////////////////////////////////
     // Functions.

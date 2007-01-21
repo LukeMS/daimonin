@@ -25,6 +25,8 @@ http://www.gnu.org/licenses/licenses.html
 #include "network.h"
 #include "sound.h"
 
+using namespace Ogre;
+
 //================================================================================================
 // Find a face ID by name, request the face (find it, load it or request it) and return the ID.
 //================================================================================================
@@ -112,10 +114,7 @@ bool GuiDialog::cmd_head(char *data, int &pos)
         switch (c)
         {
             case 'f': // face for this head
-				Logger::log().error() <<  "vor:  " << data+pos;
-
-				mHead.name = get_parameter_string(data, pos);
-				Logger::log().error() <<  "nach: " << mHead.name;
+                mHead.name = get_parameter_string(data, pos);
                 break;
             case 'b': // test body
                 mHead.body_text = get_parameter_string(data, pos);

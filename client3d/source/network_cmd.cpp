@@ -37,9 +37,10 @@ http://www.gnu.org/licenses/licenses.html
 #include "gui_window_dialog.h"
 #include "network_serverfile.h"
 #include "object_manager.h"
+#include "object_hero.h"
 #include "item.h"
 
-using namespace std;
+using namespace Ogre;
 
 const int  REQUEST_FACE_MAX = 250;
 const char MAX_LEN_LOGIN_NAME = 15;
@@ -49,7 +50,10 @@ char playerName[80];
 char playerPassword[80];
 int scrolldx, scrolldy;
 
-enum {MAP_UPDATE_CMD_SAME, MAP_UPDATE_CMD_NEW, MAP_UPDATE_CMD_CONNECTED};
+enum
+{
+    MAP_UPDATE_CMD_SAME, MAP_UPDATE_CMD_NEW, MAP_UPDATE_CMD_CONNECTED
+};
 
 //================================================================================================
 // Ascii to int (32bit).
@@ -255,15 +259,16 @@ void Network::Map2Cmd(unsigned char *data, int len)
         TileMap::getSingleton().adjust_map_cache(xpos, ypos);
     }
 
-   TileMap::getSingleton().mMapData.posx = xpos; // map windows is from range to +MAPWINSIZE_X
-   TileMap::getSingleton().mMapData.posy = ypos;
+    TileMap::getSingleton().mMapData.posx = xpos; // map windows is from range to +MAPWINSIZE_X
+    TileMap::getSingleton().mMapData.posy = ypos;
     //Logger::log().info() << "MapPos x: " << xpos << " y: " << ypos << " (nflag: " << map_new_flag << ")";
     while (pos < len)
     {
         ext_flag = 0;
         ext1 = ext2 = ext3 = 0;
         // first, we get the mask flag - it decribes what we now get
-        mask = GetShort_String(data + pos); pos += 2;
+        mask = GetShort_String(data + pos);
+        pos += 2;
         x = (mask >> 11) & 0x1f;
         y = (mask >>  6) & 0x1f;
 
@@ -278,7 +283,10 @@ void Network::Map2Cmd(unsigned char *data, int len)
         }
 
         ext3 = ext2 = ext1 = -1;
-        pname1[0] = 0; pname2[0] = 0; pname3[0] = 0; pname4[0] = 0;
+        pname1[0] = 0;
+        pname2[0] = 0;
+        pname3[0] = 0;
+        pname4[0] = 0;
         // the ext flag defines special layer object assigned infos.
         // Like the Zzz for sleep, paralyze msg, etc.
         if (mask & 0x20) // catch the ext. flag...
@@ -333,22 +341,26 @@ void Network::Map2Cmd(unsigned char *data, int len)
                 ff_flag = (uint8) (data[pos++]);
                 if (ff_flag & 0x8)
                 {
-                    ff0 = GetShort_String(data + pos); pos += 2;
+                    ff0 = GetShort_String(data + pos);
+                    pos += 2;
 //                    add_anim(ANIM_KILL, 0, 0, xpos + x, ypos + y, ff0);
                 }
                 if (ff_flag & 0x4)
                 {
-                    ff1 = GetShort_String(data + pos); pos += 2;
+                    ff1 = GetShort_String(data + pos);
+                    pos += 2;
 //                   add_anim(ANIM_DAMAGE, 0, 0, xpos + x, ypos + y, ff1);
                 }
                 if (ff_flag & 0x2)
                 {
-                    ff2 = GetShort_String(data + pos); pos += 2;
+                    ff2 = GetShort_String(data + pos);
+                    pos += 2;
 //                   add_anim(ANIM_DAMAGE, 0, 0, xpos + x, ypos + y, ff2);
                 }
                 if (ff_flag & 0x1)
                 {
-                    ff3 = GetShort_String(data + pos); pos += 2;
+                    ff3 = GetShort_String(data + pos);
+                    pos += 2;
 //                    add_anim(ANIM_DAMAGE, 0, 0, xpos + x, ypos + y, ff3);
                 }
             }
@@ -393,14 +405,16 @@ void Network::Map2Cmd(unsigned char *data, int len)
         // this face in the right way (position and shift offsets)
         if (mask & 0x8) // Layer 0 (Ground tiles).
         {
-            face = GetShort_String(data + pos); pos += 2;
+            face = GetShort_String(data + pos);
+            pos += 2;
             request_face(face, 0);
             xdata = 0;
             TileMap::getSingleton().set_map_face(x, y, 0, face, xdata, -1, pname1);
         }
         if (mask & 0x4) // Layer 1 (gras, bridge, ...).
         {
-            face = GetShort_String(data + pos); pos += 2;
+            face = GetShort_String(data + pos);
+            pos += 2;
             request_face(face, 0);
             xdata = 0;
             if (ext_flag & 0x04) // we have here a multi arch, fetch head offset
@@ -412,7 +426,8 @@ void Network::Map2Cmd(unsigned char *data, int len)
         }
         if (mask & 0x2) // Layer 2 (wall, ...).
         {
-            face = GetShort_String(data + pos); pos += 2;
+            face = GetShort_String(data + pos);
+            pos += 2;
             request_face(face, 0);
             xdata = 0;
             if (ext_flag & 0x02) // we have here a multi arch, fetch head offset
@@ -424,7 +439,8 @@ void Network::Map2Cmd(unsigned char *data, int len)
         }
         if (mask & 0x1) // Layer 3 (plant, npc, chair, ...).
         {
-            face = GetShort_String(data + pos); pos += 2;
+            face = GetShort_String(data + pos);
+            pos += 2;
             request_face(face, 0);
             xdata = 0;
             if (ext_flag & 0x01) // we have here a multi arch, fetch head offset
@@ -435,7 +451,7 @@ void Network::Map2Cmd(unsigned char *data, int len)
             TileMap::getSingleton().set_map_face(x, y, 3, face, xdata, ext3, pname4);
         }
     } // more tiles
-    TileManager::getSingleton().map_udate_flag = 2;
+    TileManager::getSingleton().map_update_flag = 2;
 }
 
 //================================================================================================
@@ -646,7 +662,9 @@ void Network::SoundCmd(unsigned char *data, int len)
 //================================================================================================
 void Network::TargetObject(unsigned char *data, int len)
 {
-    String strTmp = "["; strTmp += (char*)data+3; strTmp += "] selected";
+    String strTmp = "[";
+    strTmp += (char*)data+3;
+    strTmp += "] selected";
     GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, strTmp.c_str());
     /*
         cpl.target_mode = *data++;
@@ -1072,33 +1090,28 @@ void Network::SkillRdyCmd(unsigned char *data, int len)
 void Network::PlayerCmd(unsigned char *data, int len)
 {
     Option::getSingleton().setGameStatus(Option::GAME_STATUS_PLAY);
-    /*
-    char    name[MAX_BUF];
-    int     tag, weight, face, i = 0, nlen;
-
-    InputStringEndFlag = false;
-    tag = GetInt_String(data);
+    Item::getSingleton().mActHeroContainerID = GetInt_String(data);
+    int i = 4;
+//    ObjectHero::getSingleton().weight = GetInt_String(data + i);
     i += 4;
-    weight = GetInt_String(data + i);
+    //ObjectHero.getSingleton().face = GetInt_String(data + i);
+    //request_face(face, 0);
     i += 4;
-    face = GetInt_String(data + i);
-    request_face(face, 0);
-    i += 4;
-    nlen = data[i++];
+    int nlen = data[i++];
+    char *name = new char[nlen+1];
     memcpy(name, (const char *) data + i, nlen);
-
     name[nlen] = '\0';
     i += nlen;
-
     if (i != len)
     {
         Logger::log().error() << "PlayerCmd: lengths do not match (" << len << " != " << i << ")";
     }
-    new_player(tag, name, weight, (short) face);
-    map_draw_map_clear();
-    map_transfer_flag = 1;
-    TileManager::getSingleton().map_udate_flag = 2;
-    */
+//    new_player(tag, name, weight, (short) face);
+//    map_draw_map_clear();
+//    map_transfer_flag = 1;
+//    TileManager::getSingleton().map_update_flag = 2;
+    delete[] name;
+
     static bool once = true;
     if (once)
     {
@@ -1471,7 +1484,7 @@ void Network::DataCmd(unsigned char *data, int len)
     // ////////////////////////////////////////////////////////////////////
     // Save the file.
     // ////////////////////////////////////////////////////////////////////
-    ofstream out(ServerFile::getSingleton().getFilename(data_cmd), ios::out|ios::binary);
+    std::ofstream out(ServerFile::getSingleton().getFilename(data_cmd), std::ios::out|std::ios::binary);
     if (!out)
         Logger::log().error()  << "save data cmd file : writing of file "
         << ServerFile::getSingleton().getFilename(data_cmd) << " failed.";
@@ -1642,44 +1655,44 @@ void Network::PreParseInfoStat(char *cmd)
     {
         switch (status)
         {
-            case 0:
-                GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED, GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"");
-                break;
-            case 1:
-                if (Option::getSingleton().getLoginType() == Option::LOGIN_EXISTING_PLAYER)
-                    GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
-                                                           GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000There is no character with that name!~");
-                break;
-            case 2:
+        case 0:
+            GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED, GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"");
+            break;
+        case 1:
+            if (Option::getSingleton().getLoginType() == Option::LOGIN_EXISTING_PLAYER)
                 GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
-                                                       GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name or character is in creating process or blocked!~");
-                break;
-            case 3:
-                if (Option::getSingleton().getLoginType() == Option::LOGIN_EXISTING_PLAYER)
-                    GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
-                                                           GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name is taken - choose a different one!~");
-                break;
-            case 4:
-                if (Option::getSingleton().getLoginType() == Option::LOGIN_NEW_PLAYER)
-                    GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
-                                                           GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name is taken - choose a different one!~");
-                break;
-            case 5:
+                                                       GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000There is no character with that name!~");
+            break;
+        case 2:
+            GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
+                                                   GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name or character is in creating process or blocked!~");
+            break;
+        case 3:
+            if (Option::getSingleton().getLoginType() == Option::LOGIN_EXISTING_PLAYER)
                 GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
-                                                       GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name is banned - choose a different one!~");
-                break;
-            case 6:
+                                                       GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name is taken - choose a different one!~");
+            break;
+        case 4:
+            if (Option::getSingleton().getLoginType() == Option::LOGIN_NEW_PLAYER)
                 GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
-                                                       GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name is illegal - ITS TO SHORT OR ILLEGAL SIGNS!~");
-                break;
-            case 7:
-                GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
-                                                       GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name is illegal - ITS TO SHORT OR ILLEGAL SIGNS!~");
-                break;
-            default:
-                GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
-                                                       GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Password is illegal or does not match!~");
-                break;
+                                                       GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name is taken - choose a different one!~");
+            break;
+        case 5:
+            GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
+                                                   GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name is banned - choose a different one!~");
+            break;
+        case 6:
+            GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
+                                                   GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name is illegal - ITS TO SHORT OR ILLEGAL SIGNS!~");
+            break;
+        case 7:
+            GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
+                                                   GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name is illegal - ITS TO SHORT OR ILLEGAL SIGNS!~");
+            break;
+        default:
+            GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
+                                                   GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Password is illegal or does not match!~");
+            break;
         }
         Option::getSingleton().setGameStatus(Option::GAME_STATUS_NAME_INIT);
     }
@@ -1821,7 +1834,8 @@ void Network::ItemDeleteCmd(unsigned char *data, int len)
     int pos = 0, tag;
     while (pos < len)
     {
-        tag = GetInt_String(data); pos += 4;
+        tag = GetInt_String(data);
+        pos += 4;
         //delete_item(tag);
     }
     if (pos > len)

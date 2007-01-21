@@ -24,9 +24,12 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
+#include <Ogre.h>
 #include "define.h"
 #include "option.h"
 #include "logger.h"
+
+using namespace Ogre;
 
 //================================================================================================
 // Open a description file.
@@ -34,11 +37,11 @@ http://www.gnu.org/licenses/licenses.html
 bool Option::openDescFile(const char *filename)
 {
     closeDescFile();
-    mDescFile = new ifstream(filename, ios::in);
+    mDescFile = new std::ifstream(filename, std::ios::in);
     if (!mDescFile)  return false;
     mFilename = filename;
     mDescBuffer ="";
-    string buf;
+    String buf;
     while (getline(*mDescFile, buf))
     { // skip comments.
         if (buf.find("#") > 5)  mDescBuffer+= buf;
@@ -61,12 +64,12 @@ void Option::closeDescFile()
 // Get the value of the nth (=posNr) incidence of a keyword.
 // If keyword is not found on posNr, return the first incidence.
 //================================================================================================
-bool Option::getDescStr(const char *strKeyword, string &strBuffer, unsigned int posNr)
+bool Option::getDescStr(const char *strKeyword, String &strBuffer, unsigned int posNr)
 {
     size_t pos=0, startPos=0, stopPos, entryTest;
 checkForKeyword:
     startPos = mDescBuffer.find(strKeyword, startPos);
-    if (startPos == string::npos)
+    if (startPos == String::npos)
     {
         return false;
     }

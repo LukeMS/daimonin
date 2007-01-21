@@ -32,8 +32,6 @@ http://www.gnu.org/licenses/licenses.html
 #include "object_static.h"
 #include "object_missile.h"
 
-using namespace Ogre;
-
 // ////////////////////////////////////////////////////////////////////
 // Define:
 // player:  human controlled.
@@ -105,11 +103,11 @@ public:
     void deleteMissle(int number);
     void deleteStatic(int number);
     void deleteNPC   (int number);
-    void update(int type, const FrameEvent& evt);
-    void mousePressed(MovableObject *mob, TilePos pos, bool modifier);
+    void update(int type, const Ogre::FrameEvent& evt);
+    void mousePressed(Ogre::MovableObject *mob, TilePos pos, bool modifier);
     void Event(int obj_type, int action, int val1=0, int val2=0, int val3=0);
     void setEquipment(int npcID, int bone, int type, int itemID);
-    void highlightObject(MovableObject *mob);
+    void highlightObject(Ogre::MovableObject *mob);
     void shoot(int missle, ObjectNPC *srcMob, ObjectNPC *dstMob);
     void readyPrimaryWeapon(int npc, bool ready)
     {
@@ -135,7 +133,7 @@ public:
     {
         mvNPC[npc]->castSpell(spell);
     }
-    const String &getNameNPC(int npc)
+    const Ogre::String &getNameNPC(int npc)
     {
         return mvNPC[npc]->getNickName();
     }
@@ -147,13 +145,13 @@ public:
     {
         mvNPC[npc]->setPosition(pos);
     }
-    const Vector3& getPos(int npc)
+    const Ogre::Vector3& getPos(int npc)
     {
         return mvNPC[npc]->getPosition();
     }
-    const Vector3 &synchToWorldPos(int deltaX, int deltaZ);
-    void selectObject(MovableObject *mob);
-    Vector3 getTargetedWorldPos()
+    const Ogre::Vector3 &synchToWorldPos(int deltaX, int deltaZ);
+    void selectObject(Ogre::MovableObject *mob);
+    Ogre::Vector3 getTargetedWorldPos()
     {
         return mvNPC[mSelectedObject]->getSceneNode()->getPosition();
     }
@@ -177,12 +175,12 @@ public:
     }
     void targetObjectFacingNPC(int npcIndex); // just a hack. Server will handle this.
     void targetObjectAttackNPC(int npcIndex); // just a hack. Server will handle this.
-    bool createFlipBook(String meshName, int sumRotations = 8);
+    bool createFlipBook(Ogre::String meshName, int sumRotations = 8);
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    std::string mDescFile;
+    Ogre::String mDescFile;
     std::vector<ObjectStatic*> mvStatic;
     std::vector<ObjectNPC*   > mvNPC;
     std::vector<ObjectMissile*> mvMissle;
@@ -194,7 +192,7 @@ private:
     ObjectManager() {}
     ~ObjectManager();
     ObjectManager(const ObjectManager&); // disable copy-constructor.
-    void extractObject(MovableObject *mob);
+    void extractObject(Ogre::MovableObject *mob);
 };
 
 #endif

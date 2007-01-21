@@ -19,7 +19,7 @@ this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
-#include <string>
+#include <Ogre.h>
 #include "network.h"
 #include "logger.h"
 #include "option.h"
@@ -28,6 +28,9 @@ http://www.gnu.org/licenses/licenses.html
 #include "tile_manager.h"
 #include "gui_manager.h"
 #include "option.h"
+
+using namespace Ogre;
+
 #define DEBUG_ON
 #define DEFAULT_SERVER_PORT 13327
 #define DEFAULT_METASERVER_PORT 13326
@@ -130,7 +133,7 @@ typedef int SOCKET;
 //================================================================================================
 //
 //================================================================================================
-void Network::AddIntToString(std::string &sl, int data, bool shortInt)
+void Network::AddIntToString(String &sl, int data, bool shortInt)
 {
     if (!shortInt)
     {
@@ -190,7 +193,7 @@ Network::~Network()
 void Network::clearMetaServerData()
 {
     GuiManager::getSingleton().clearTable(GuiManager::GUI_WIN_SERVERSELECT, GuiImageset::GUI_TABLE);
-    for (vector<Server*>::iterator i = mvServer.begin(); i != mvServer.end(); ++i)
+    for (std::vector<Server*>::iterator i = mvServer.begin(); i != mvServer.end(); ++i)
         delete (*i);
     mvServer.clear();
 }
@@ -262,8 +265,7 @@ void Network::update()
     // Handle all enqueued commands.
     while ((cmd = get_next_input_command()))
     {
-        Logger::log().error() << "network cmd: " << cmd->data[0] - 1 << "  " << cmd->data[0];
-
+        //Logger::log().error() << "network cmd: " << cmd->data[0] - 1 << "  " << cmd->data[0];
         if (!cmd->data[0] || cmd->data[0] >= SUM_SERVER_COMMANDS)
             Logger::log().error() << "Bad command from server " << cmd->data[0];
         else
@@ -361,7 +363,7 @@ int Network::send_command(const char *command, int repeat, int force)
         commdiff += 256;
     ++csocket.command_sent &= 0xff; // max out at 255.
 
-    std::string sl = "ncom ";
+    String sl = "ncom ";
     AddIntToString(sl, csocket.command_sent, true);
     AddIntToString(sl, repeat, false);
     sl += command;
@@ -400,7 +402,7 @@ int Network::send_command_binary(unsigned char cmd, unsigned char *body, unsigne
 //================================================================================================
 // move a command/buffer to the out buffer so it can be written to the socket.
 //================================================================================================
-int Network::send_socklist(std::string msg)
+int Network::send_socklist(String msg)
 {
     command_buffer *buf = command_buffer_new((int)msg.size() + 2, 0);
     memcpy(buf->data + 2, msg.c_str(), msg.size());
@@ -894,7 +896,7 @@ void Network::SendVersion()
 //================================================================================================
 void Network::send_reply(const char *text)
 {
-    std::string strTxt = "reply ";
+    String strTxt = "reply ";
     strTxt+= text;
     cs_write_string(strTxt.c_str());
 }
@@ -904,7 +906,7 @@ void Network::send_reply(const char *text)
 //================================================================================================
 void Network::cs_write_string(const char *buf)
 {
-    std::string sl = buf;
+    String sl = buf;
     send_socklist(sl);
 }
 
@@ -983,57 +985,57 @@ void Network::contactMetaserver()
 //================================================================================================
 // Parse the metadata.
 //================================================================================================
-void Network::parse_metaserver_data(string strMetaData)
+void Network::parse_metaserver_data(String strMetaData)
 {
-    string::size_type startPos;
-    string::size_type endPos =0;
-    string strIP, strPort, strName, strPlayer, strVersion, strDesc1, strDesc2, strDesc3, strDesc4;
+    String::size_type startPos;
+    String::size_type endPos =0;
+    String strIP, strPort, strName, strPlayer, strVersion, strDesc1, strDesc2, strDesc3, strDesc4;
     while (1)
     {
         // Server IP.
         startPos = endPos+0;
         endPos = strMetaData.find( '|',  startPos);
-        if (endPos == std::string::npos) break;
+        if (endPos == String::npos) break;
         strIP = strMetaData.substr(startPos, endPos-startPos);
         // unknown 1.
         startPos = endPos+1;
         endPos = strMetaData.find( '|',  startPos);
-        if (endPos == std::string::npos) break;
+        if (endPos == String::npos) break;
         strPort = strMetaData.substr(startPos, endPos-startPos);
         // Server name.
         startPos = endPos+1;
         endPos = strMetaData.find( '|',  startPos);
-        if (endPos == std::string::npos) break;
+        if (endPos == String::npos) break;
         strName = strMetaData.substr(startPos, endPos-startPos);
         // Number of players online.
         startPos = endPos+1;
         endPos = strMetaData.find( '|',  startPos);
-        if (endPos == std::string::npos) break;
+        if (endPos == String::npos) break;
         strPlayer = strMetaData.substr(startPos, endPos-startPos);
         // Server version.
         startPos = endPos+1;
         endPos = strMetaData.find( '|',  startPos);
-        if (endPos == std::string::npos) break;
+        if (endPos == String::npos) break;
         strVersion = strMetaData.substr(startPos, endPos-startPos);
         // Description1
         startPos = endPos+1;
         endPos = strMetaData.find( '|',  startPos);
-        if (endPos == std::string::npos) break;
+        if (endPos == String::npos) break;
         strDesc1 = strMetaData.substr(startPos, endPos-startPos);
         // Description2.
         startPos = endPos+1;
         endPos = strMetaData.find( '|',  startPos);
-        if (endPos == std::string::npos) break;
+        if (endPos == String::npos) break;
         strDesc2 = strMetaData.substr(startPos, endPos-startPos);
         startPos = endPos+1;
         // Description3.
         endPos = strMetaData.find( '|',  startPos);
-        if (endPos == std::string::npos) break;
+        if (endPos == String::npos) break;
         strDesc3 = strMetaData.substr(startPos, endPos-startPos);
         // Description4.
         startPos = endPos+1;
         endPos = strMetaData.find( '\n',  startPos);
-        if (endPos == std::string::npos) endPos = strMetaData.size();
+        if (endPos == String::npos) endPos = strMetaData.size();
         strDesc4 = strMetaData.substr(startPos, endPos -startPos);
         if (endPos < strMetaData.size()) ++endPos;
         // Add the server to the linked list.
@@ -1059,7 +1061,7 @@ void Network::add_metaserver_data(const char *ip, const char *server, int port, 
     node->desc[2]  = desc3;
     node->desc[3]  = desc4;
     mvServer.push_back(node);
-    string strRow = server;
+    String strRow = server;
     if (player <0) strRow+=",-";
     else           strRow+=","+StringConverter::toString(player);
     GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_SERVERSELECT, GuiManager::GUI_MSG_ADD_TABLEROW, GuiImageset::GUI_TABLE, (void*) strRow.c_str());

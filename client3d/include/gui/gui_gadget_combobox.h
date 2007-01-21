@@ -33,8 +33,6 @@ http://www.gnu.org/licenses/licenses.html
 #include "gui_element.h"
 #include "gui_textout.h"
 
-using namespace Ogre;
-
 /**
  ** This class provides an interactive combobox.
  *****************************************************************************/
@@ -65,7 +63,7 @@ private:
     GuiImageset::GuiSrcEntry *srcButton;
     GuiImageset::GuiSrcEntry *srcScrollbarUp;
     GuiImageset::GuiSrcEntry *srcScrollbarDown;
-    uint32 *mGfxBuffer;
+    Ogre::uint32 *mGfxBuffer;
     int mAction;
     int mFontHeight;
     int mMaxChars;
@@ -82,7 +80,7 @@ private:
     bool mUseWhitespaces;
     bool mDispDropdown;
     bool mDDButton;
-    std::vector<String> mvOption;
+    std::vector<Ogre::String> mvOption;
     std::vector<int> mvValue;
 }
 ;

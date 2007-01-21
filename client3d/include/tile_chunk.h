@@ -29,8 +29,6 @@ http://www.gnu.org/licenses/licenses.html
 
 #include "Ogre.h"
 
-using namespace Ogre;
-
 /**
  * TileEngine class which manages the tiles in a chunk.
  *****************************************************************************/
@@ -57,7 +55,7 @@ public:
         LEVEL_WATER_TOP = LEVEL_WATER_CLP -1,
     };
 
-    static AxisAlignedBox *mBounds;
+    static Ogre::AxisAlignedBox *mBounds;
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.
@@ -66,11 +64,11 @@ public:
     ~TileChunk();
     void create(int tileTextureSize);
     void change();
-    void setMaterial(String matLand, String matWater);
+    void setMaterial(Ogre::String matLand, Ogre::String matWater);
     void freeRecources();
     /** Every chunk must have a land- AND a waterSubmesh,
     if there is no Water, we make a dummy submesh. **/
-    void createDummy(SubMesh* submesh);
+    void createDummy(Ogre::SubMesh* submesh);
     /** Create the land chunk. **/
     void createLand(int tileTextureSize);
     /** Change the land chunk. **/
@@ -88,10 +86,10 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    MeshPtr mMeshWater, mMeshLand;
-    SceneNode *mNodeWater,*mNodeLand;
-    SubMesh *mSubMeshWater, *mSubMeshLand;
-    Entity *mEntityWater, *mEntityLand;
+    Ogre::MeshPtr mMeshWater, mMeshLand;
+    Ogre::SceneNode *mNodeWater,*mNodeLand;
+    Ogre::SubMesh *mSubMeshWater, *mSubMeshLand;
+    Ogre::Entity *mEntityWater, *mEntityLand;
 };
 
 #endif

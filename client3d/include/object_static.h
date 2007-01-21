@@ -32,8 +32,6 @@ http://www.gnu.org/licenses/licenses.html
 #include "tile_pos.h"
 #include "object_animate.h"
 
-using namespace Ogre;
-
 class ObjectStatic
 {
 public:
@@ -43,15 +41,15 @@ public:
     typedef struct
     {
         int type;                     /**< Type: e.g. static, npc, ... **/
-        String nickName;              /**< Ingame-Name. **/
-        String meshName;              /**< Name of the ogre3d mesh. **/
+        Ogre::String nickName;              /**< Ingame-Name. **/
+        Ogre::String meshName;              /**< Name of the ogre3d mesh. **/
         int particleNr;               /**< Number of the particle effect. **/
         unsigned int index;           /**< Unique number for this object. **/
         TilePos pos;                 /**< Tile-pos. **/
         unsigned char boundingRadius; /**< The radius of subtiles, the NPC stands on. **/
         int level;                    /**< Floor-level. **/
         char walkable[8];             /**< 8x8 bit for the walkable status of a tile. **/
-        Real facing;
+        Ogre::Real facing;
         int friendly;
         int attack;
         int defend;
@@ -67,18 +65,18 @@ public:
     ObjectStatic(sObject &obj);
     virtual ~ObjectStatic();
     virtual void freeRecources();
-    virtual bool update(const FrameEvent& event);
+    virtual bool update(const Ogre::FrameEvent& event);
     void movePosition(int dx, int dz);
-    void move(Vector3 &pos);
-    const Vector3 &getPosition()
+    void move(Ogre::Vector3 &pos);
+    const Ogre::Vector3 &getPosition()
     {
         return mNode->getPosition();
     }
-    SceneNode *getSceneNode()
+    Ogre::SceneNode *getSceneNode()
     {
         return mNode;
     }
-    Real getFacing()
+    Ogre::Real getFacing()
     {
         return mFacing.valueDegrees();
     }
@@ -86,11 +84,11 @@ public:
     {
         mAnim->toggleAnimation(animGroup, animNr);
     }
-    const String &getNickName()
+    const Ogre::String &getNickName()
     {
         return mNickName;
     }
-    void setNickName(String name)
+    void setNickName(Ogre::String name)
     {
         mNickName = name;
     }
@@ -98,7 +96,7 @@ public:
     {
         return mFriendly;
     }
-    Entity *getEntity()
+    Ogre::Entity *getEntity()
     {
         return mEntity;
     }
@@ -112,7 +110,7 @@ public:
     {
         return mIndex;
     }
-    Real getHeight()
+    Ogre::Real getHeight()
     {
         return mBoundingBox.y;
     }
@@ -120,16 +118,16 @@ protected:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    static SceneManager *mSceneMgr;
-    Vector3 mBoundingBox;
+    static Ogre::SceneManager *mSceneMgr;
+    Ogre::Vector3 mBoundingBox;
     ObjectAnimate *mAnim;
-    Degree mFacing;
+    Ogre::Degree mFacing;
     int mFriendly;
     unsigned int mIndex;
-    SceneNode *mNode;
-    Entity *mEntity;
+    Ogre::SceneNode *mNode;
+    Ogre::Entity *mEntity;
     TilePos mActPos;   /**< the actual pos in the map. **/
-    String mNickName;
+    Ogre::String mNickName;
     int mFloor;
     bool mWaitForHero;
 

@@ -32,8 +32,6 @@ http://www.gnu.org/licenses/licenses.html
 #include "tile_chunk.h"
 #include "tile_interface.h"
 
-using namespace Ogre;
-
 /**
  * TileEngine class which manages all tiles related stuff in the worldmap.
  *****************************************************************************/
@@ -52,7 +50,7 @@ public:
     enum { TILE_SIZE_Z  = 48 };
     enum { SUM_SUBTILES =  8 };
 
-    int map_udate_flag;
+    int map_update_flag;
     int map_transfer_flag;
     bool map_new_flag;
 
@@ -81,7 +79,7 @@ public:
     {
         static TileManager Singleton; return Singleton;
     }
-    SceneManager* getSceneManager()
+    Ogre::SceneManager* getSceneManager()
     {
         return mSceneManager;
     }
@@ -168,10 +166,10 @@ public:
         mMap[x][y].terrain_col = (unsigned char)col;
     }
     void setMapTextures();
-    bool loadImage(Image &image, const std::string &filename);
+    bool loadImage(Ogre::Image &image, const Ogre::String &filename);
 
-    AxisAlignedBox *GetBounds();
-    void Init(SceneManager* SceneManager, int tileTextureSize = 128);
+    Ogre::AxisAlignedBox *GetBounds();
+    void Init(Ogre::SceneManager* SceneManager, int tileTextureSize = 128);
 
     void createChunks();
     void changeChunks();
@@ -179,14 +177,14 @@ public:
     void createTexture();
     void changeTexture();
     /** Create a terrain-texture out of tile textures. **/
-    bool createTextureGroup(const std::string &terrain_type);
-    void createTextureGroupBorders(uchar* TextureGroup_data, short pix);
+    bool createTextureGroup(const Ogre::String &terrain_type);
+    void createTextureGroupBorders(unsigned char* TextureGroup_data, short pix);
     void shrinkFilter();
-    void shrinkTexture(const std::string &terrain_type);
+    void shrinkTexture(const Ogre::String &terrain_type);
     void scrollMap(int x, int z);
     void setMaterialLOD(int pix);
     void toggleGrid();
-    void addToGroupTexture(uchar* TextureGroup_data, uchar *Filter_data, Image* Texture, short pixel, short x, short y);
+    void addToGroupTexture(unsigned char* TextureGroup_data, unsigned char *Filter_data, Ogre::Image* Texture, short pixel, short x, short y);
     void setWalkablePos(const TilePos &pos, int row, unsigned char walkables);
     bool getWalkablePos(int x, int y);
 
@@ -206,7 +204,7 @@ private:
         char indoorTris;                      /**< Which triangles of the tile do have indoor gfx.    **/
     }
     mMap[CHUNK_SIZE_X+1][CHUNK_SIZE_Z+1];
-    SceneManager *mSceneManager;
+    Ogre::SceneManager *mSceneManager;
     TileChunk mMapchunk;
     TileInterface *mInterface;
     int mTileTextureSize;

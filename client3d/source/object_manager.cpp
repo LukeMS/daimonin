@@ -32,6 +32,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "object_manager.h"
 #include "object_visuals.h"
 
+using namespace Ogre;
 
 //================================================================================================
 // Defines:
@@ -52,7 +53,7 @@ char *ObjectManager::ObjectID[OBJECT_SUM] = { "S","S","P","N" };
 //================================================================================================
 bool ObjectManager::init()
 {
-    string strType, strTemp, strMesh, strNick;
+    String strType, strTemp, strMesh, strNick;
     mSelectedType  =-1;
     mSelectedObject=-1;
     //    mSelectedEnemy = false;
@@ -528,8 +529,8 @@ bool ObjectManager::createFlipBook(String meshName, int sumRotations)
     catch (...)
     {
         LogManager::getSingleton().setLogDetail(LL_LOW);
-        cout << "\n\n\n  Wrong commandline argument!\n  No mesh called '" << meshName << "' could be found.\n";
-        cout << "  Hint: Mesh-names are case sensitive." << endl;
+        std::cout << "\n\n\n  Wrong commandline argument!\n  No mesh called '" << meshName << "' could be found.\n";
+        std::cout << "  Hint: Mesh-names are case sensitive." << std::endl;
         return false;
     }
     const AxisAlignedBox &AABB = entity->getBoundingBox();

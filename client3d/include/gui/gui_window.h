@@ -30,6 +30,7 @@ http://www.gnu.org/licenses/licenses.html
 #include <vector>
 #include <Ogre.h>
 #include "gui_textout.h"
+#include "gui_gadget_slot.h"
 #include "gui_gadget_button.h"
 #include "gui_gadget_combobox.h"
 #include "gui_gadget_scrollbar.h"
@@ -38,9 +39,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "gui_listbox.h"
 #include "gui_statusbar.h"
 
-// Define: Gadget elements are interactive.
-
-using namespace Ogre;
+// Define: Gadget elements are small interactive objects.
 
 /**
  ** This class provides a graphical window.
@@ -83,7 +82,7 @@ public:
     void setVisible(bool visible);
     void Init(TiXmlElement *xmlElem);
     bool keyEvent(const char keyChar, const unsigned char key);
-    void update(Real timeSinceLastFrame);
+    void update(Ogre::Real timeSinceLastFrame);
     void getTexturseSize(int &w, int &h)
     {
         w = mWidth;
@@ -98,16 +97,16 @@ public:
         return mHeight;
     }
     const char *Message(int message, int element, void *value1, void *value2);
-    bool mouseEvent(int MouseAction, Vector3 &mouse);
+    bool mouseEvent(int MouseAction, Ogre::Vector3 &mouse);
     const char *getTooltip()
     {
         return mStrTooltip.c_str();
     }
-    Texture *getTexture()
+    Ogre::Texture *getTexture()
     {
         return mTexture.getPointer();
     }
-    PixelBox *getPixelBox()
+    Ogre::PixelBox *getPixelBox()
     {
         return &mSrcPixelBox;
     }
@@ -125,7 +124,7 @@ public:
     // GUI_Listbox stuff.
     // ////////////////////////////////////////////////////////////////////
     void clearListbox(int element);
-    int  addTextline(int element, const char *text, uint32 color);
+    int  addTextline(int element, const char *text, Ogre::uint32 color);
 
     // ////////////////////////////////////////////////////////////////////
     // GUI_Button stuff.
@@ -137,7 +136,7 @@ private:
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     static int msInstanceNr, mMouseDragging;
-    static String mStrTooltip;
+    static Ogre::String mStrTooltip;
     int mWindowNr;
     int mMousePressed, mMouseOver;
     int mPosX, mPosY, mPosZ, mWidth, mHeight;
@@ -147,21 +146,22 @@ private:
     bool mGadgetDrag;
     bool isInit;
     bool mSizeRelative;
-    SceneNode *mSceneNode;
+    Ogre::SceneNode *mSceneNode;
     std::vector<class GuiTable*>mvTable;
     std::vector<class GuiGraphic*>mvGraphic;
     std::vector<class GuiListbox*>mvListbox;
     std::vector<class GuiStatusbar*>mvStatusbar;
+    std::vector<class GuiGadgetSlot*>mvSlot;
     std::vector<class GuiGadgetButton *>mvGadgetButton;
     std::vector<class GuiGadgetCombobox*>mvGadgetCombobox;
     std::vector<class GuiGadgetScrollbar*>mvGadgetScrollbar;
     std::vector<GuiTextout::TextLine*>mvTextline;
-    Overlay *mOverlay, *mNPC_HeadOverlay;
-    OverlayElement *mElement;
-    AnimationState *mSpeakAnimState, *mManualAnimState;
-    PixelBox mSrcPixelBox;
-    MaterialPtr mMaterial;
-    TexturePtr mTexture;
+    Ogre::Overlay *mOverlay, *mNPC_HeadOverlay;
+    Ogre::OverlayElement *mElement;
+    Ogre::AnimationState *mSpeakAnimState, *mManualAnimState;
+    Ogre::PixelBox mSrcPixelBox;
+    Ogre::MaterialPtr mMaterial;
+    Ogre::TexturePtr mTexture;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////

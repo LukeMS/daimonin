@@ -69,27 +69,27 @@ GuiWindow::GuiWindow()
 void GuiWindow::freeRecources()
 {
     // Delete the buttons.
-    for (vector<GuiGadgetButton*>::iterator i = mvGadgetButton.begin(); i < mvGadgetButton.end(); ++i)
+    for (std::vector<GuiGadgetButton*>::iterator i = mvGadgetButton.begin(); i < mvGadgetButton.end(); ++i)
         delete (*i);
     mvGadgetButton.clear();
 
     // Delete the comboboxes.
-    for (vector<GuiGadgetCombobox*>::iterator i = mvGadgetCombobox.begin(); i < mvGadgetCombobox.end(); ++i)
+    for (std::vector<GuiGadgetCombobox*>::iterator i = mvGadgetCombobox.begin(); i < mvGadgetCombobox.end(); ++i)
         delete (*i);
     mvGadgetCombobox.clear();
 
     // Delete the listboxes.
-    for (vector<GuiListbox*>::iterator i = mvListbox.begin(); i < mvListbox.end(); ++i)
+    for (std::vector<GuiListbox*>::iterator i = mvListbox.begin(); i < mvListbox.end(); ++i)
         delete (*i);
     mvListbox.clear();
 
     // Delete the graphics.
-    for (vector<GuiGraphic*>::iterator i = mvGraphic.begin(); i < mvGraphic.end(); ++i)
+    for (std::vector<GuiGraphic*>::iterator i = mvGraphic.begin(); i < mvGraphic.end(); ++i)
         delete (*i);
     mvGraphic.clear();
 
     // Delete the textlines.
-    for (vector<GuiTextout::TextLine*>::iterator i = mvTextline.begin(); i < mvTextline.end(); ++i)
+    for (std::vector<GuiTextout::TextLine*>::iterator i = mvTextline.begin(); i < mvTextline.end(); ++i)
     {
         if ((*i)->index >= 0) delete[] (*i)->BG_Backup;
         delete (*i);
@@ -97,12 +97,12 @@ void GuiWindow::freeRecources()
     mvTextline.clear();
 
     // Delete the statusbars.
-    for (vector<GuiStatusbar*>::iterator i = mvStatusbar.begin(); i < mvStatusbar.end(); ++i)
+    for (std::vector<GuiStatusbar*>::iterator i = mvStatusbar.begin(); i < mvStatusbar.end(); ++i)
         delete (*i);
     mvStatusbar.clear();
 
     // Delete the tables.
-    for (vector<GuiTable*>::iterator i = mvTable.begin(); i < mvTable.end(); ++i)
+    for (std::vector<GuiTable*>::iterator i = mvTable.begin(); i < mvTable.end(); ++i)
         delete (*i);
     mvTable.clear();
 
@@ -755,7 +755,7 @@ void GuiWindow::update(Real timeSinceLastFrame)
         mSpeakAnimState->addTime(timeSinceLastFrame);
 
     // Update listboxes.
-    for (vector<GuiListbox*>::iterator i = mvListbox.begin(); i < mvListbox.end(); ++i)
+    for (std::vector<GuiListbox*>::iterator i = mvListbox.begin(); i < mvListbox.end(); ++i)
     {
         (*i)->draw();
     }

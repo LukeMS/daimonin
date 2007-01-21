@@ -30,8 +30,6 @@ http://www.gnu.org/licenses/licenses.html
 #include <Ogre.h>
 #include "define.h"
 
-using namespace Ogre;
-
 class ObjectMissile
 {
 public:
@@ -45,8 +43,8 @@ public:
         unsigned int index;           /**< Unique number for this object. **/
         enumType     type;
         enumParticle particle;
-        String meshName;              /**< Name of the ogre3d mesh. **/
-        Real facing;
+        Ogre::String meshName;              /**< Name of the ogre3d mesh. **/
+        Ogre::Real facing;
         int maxDamage;
         int minDamage;
     }
@@ -58,16 +56,16 @@ public:
     ObjectMissile(int type, ObjectNPC *src, ObjectNPC *dst);
     virtual ~ObjectMissile();
     virtual void freeRecources();
-    virtual bool update(const FrameEvent& event);
-    const Vector3 &getPosition()
+    virtual bool update(const Ogre::FrameEvent& event);
+    const Ogre::Vector3 &getPosition()
     {
         return mNode->getPosition();
     }
-    SceneNode *getSceneNode()
+    Ogre::SceneNode *getSceneNode()
     {
         return mNode;
     }
-    Real getFacing()
+    Ogre::Real getFacing()
     {
         return mFacing.valueDegrees();
     }
@@ -80,16 +78,16 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    static SceneManager *msSceneMgr;
+    static Ogre::SceneManager *msSceneMgr;
     static unsigned int msUnique;
-    Degree mFacing;
+    Ogre::Degree mFacing;
     unsigned int mIndex;
-    SceneNode *mNode;
-    Entity *mEntity;
+    Ogre::SceneNode *mNode;
+    Ogre::Entity *mEntity;
     int mType;
     int mParticle;
-    Vector3 mDestPosition;
-    Vector3 mSpeed;
+    Ogre::Vector3 mDestPosition;
+    Ogre::Vector3 mSpeed;
     bool mHasBallistic;
     bool mShow;
 

@@ -31,6 +31,8 @@ http://www.gnu.org/licenses/licenses.html
 #include "object_missile.h"
 #include "sound.h"
 
+using namespace Ogre;
+
 //================================================================================================
 // Init all static Elemnts.
 //================================================================================================
@@ -64,7 +66,6 @@ ObjectMissile::ObjectMissile(int type, ObjectNPC *srcMob, ObjectNPC *dstMob)
                           "Mob"+ StringConverter::toString(++msUnique, 6, '0'),
                           "Arrow.mesh");
     mNode->attachObject(mEntity);
-    //mNode->scale(1,4,1);
     // Set the start position.
     Vector3 pos = srcMob->getPosition();
     pos.y +=srcMob->getHeight();

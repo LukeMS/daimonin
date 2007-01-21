@@ -27,10 +27,8 @@ http://www.gnu.org/licenses/licenses.html
 #ifndef OBJECT_VISUALS_H
 #define OBJECT_VISUALS_H
 
-#include "Ogre.h"
+#include <Ogre.h>
 #include "object_npc.h"
-
-using namespace Ogre;
 
 class ObjectVisuals
 {
@@ -72,10 +70,10 @@ public:
     void highlight(ObjectStatic *obj, bool showDefaultAction, bool keyShiftDown);
     void highlightOff();                /**< Switch off highlighting **/
     void unselect();
-    void setPosLifebar(Vector3 pos);
-    void setLifebar(Real percent, int barWidth = 128);
-    void blit(const HardwarePixelBufferSharedPtr &src, const Image::Box &srcBox, const Image::Box &dstBox);
-    const AxisAlignedBox &getBoundingBox()
+    void setPosLifebar(Ogre::Vector3 pos);
+    void setLifebar(Ogre::Real percent, int barWidth = 128);
+    void blit(const Ogre::HardwarePixelBufferSharedPtr &src, const Ogre::Image::Box &srcBox, const Ogre::Image::Box &dstBox);
+    const Ogre::AxisAlignedBox &getBoundingBox()
     {
         return mAABB;
     }
@@ -83,18 +81,18 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    ParticleSystem *mPSystem; /**< If <>0 Selection is a particleSystem else Selection is a gfx. **/
-    Entity *mEntity[VISUAL_SUM];
-    SceneNode *mNode[VISUAL_SUM];
-    ColourValue particleColor[PARTICLE_COLOR_SUM];
-    HardwarePixelBufferSharedPtr mHardwarePB;
-    Image mImage;
-    PixelBox mSrcPixelBox;
-    uchar *mTexBuffer;
-    AxisAlignedBox mAABB;
+    Ogre::ParticleSystem *mPSystem; /**< If <>0 Selection is a particleSystem else Selection is a gfx. **/
+    Ogre::Entity *mEntity[VISUAL_SUM];
+    Ogre::SceneNode *mNode[VISUAL_SUM];
+    Ogre::ColourValue particleColor[PARTICLE_COLOR_SUM];
+    Ogre::HardwarePixelBufferSharedPtr mHardwarePB;
+    Ogre::Image mImage;
+    Ogre::PixelBox mSrcPixelBox;
+    unsigned char *mTexBuffer;
+    Ogre::AxisAlignedBox mAABB;
     ObjectStatic *mObjStatic;
     ObjectNPC *mObjectNPC;
-    String strMaterialNameBackup;
+    Ogre::String strMaterialNameBackup;
     int mDefaultAction;
 
     // ////////////////////////////////////////////////////////////////////

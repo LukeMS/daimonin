@@ -31,6 +31,8 @@ http://www.gnu.org/licenses/licenses.html
 #include "logger.h"
 #include "option.h"
 
+using namespace Ogre;
+
 //#define LOG_TIMING
 
 /** Pixel per tile in the terrain-texture. */
@@ -48,7 +50,7 @@ const int TEXTURES_PER_ROW = 7;
 TileManager::TileManager()
 {
     mInterface = 0;
-    map_udate_flag = 0;
+    map_update_flag = 0;
     mMapScrollX =0;
     mMapScrollZ =0;
 }
@@ -60,7 +62,7 @@ TileManager::~TileManager()
 {}
 
 //================================================================================================
-///
+//
 //================================================================================================
 void TileManager::freeRecources()
 {
@@ -299,7 +301,7 @@ void TileManager::changeTexture()
 //================================================================================================
 // If the file exists load it into an image.
 //================================================================================================
-bool TileManager::loadImage(Image &image, const std::string &strFilename)
+bool TileManager::loadImage(Image &image, const Ogre::String &strFilename)
 {
     std::string strTemp = PATH_TILE_TEXTURES + strFilename;
     std::ifstream chkFile;
@@ -322,7 +324,7 @@ bool TileManager::createTextureGroup(const std::string &terrain_type)
     // ////////////////////////////////////////////////////////////////////
     Image grid;
     uint32 *grid_data = new uint32[PIXEL_PER_TILE * PIXEL_PER_TILE];
-    grid.loadDynamicImage((uchar*)grid_data, PIXEL_PER_TILE, PIXEL_PER_TILE, PF_R8G8B8A8);
+    grid.loadDynamicImage((unsigned char*)grid_data, PIXEL_PER_TILE, PIXEL_PER_TILE, PF_R8G8B8A8);
     for (int x = 0; x < PIXEL_PER_TILE; ++x)
     {
         for (int y = 0; y < PIXEL_PER_TILE; ++y)
@@ -349,11 +351,11 @@ bool TileManager::createTextureGroup(const std::string &terrain_type)
     // ////////////////////////////////////////////////////////////////////
     int i, tx, ty;
     int pix = PIXEL_PER_TILE;
-    uchar* TextureGroup_data;
+    unsigned char* TextureGroup_data;
     Image Filter, Texture, TextureGroup;
     while (pix >= MIN_TEXTURE_PIXEL)
     {
-        TextureGroup_data = new uchar[PIXEL_PER_ROW * PIXEL_PER_ROW *4];
+        TextureGroup_data = new unsigned char[PIXEL_PER_ROW * PIXEL_PER_ROW *4];
         TextureGroup.loadDynamicImage(TextureGroup_data, pix * 8, pix * 8,PF_A8B8G8R8);
         strFilename = "filter_" + StringConverter::toString(pix/2, 3, '0') + ".png";
         if (!loadImage(Filter, strFilename))
@@ -361,7 +363,7 @@ bool TileManager::createTextureGroup(const std::string &terrain_type)
             Logger::log().error() << "Filter texture '" << strFilename << "' was not found.";
             return false;
         }
-        uchar* Filter_data = Filter.getData();
+        unsigned char* Filter_data = Filter.getData();
         i =-1;
         tx = 0;
         ty = 0;
@@ -453,12 +455,12 @@ void TileManager::shrinkFilter()
 //================================================================================================
 // Add a texture to the terrain-texture.
 //================================================================================================
-inline void TileManager::addToGroupTexture(uchar* TextureGroup_data, uchar *Filter_data, Image* Texture, short pix, short x, short y)
+inline void TileManager::addToGroupTexture(unsigned char* TextureGroup_data, unsigned char *Filter_data, Image* Texture, short pix, short x, short y)
 {
     const int RGBA = 4;
     const int RGB  = 3;
     unsigned long index1, index2, index3;
-    uchar* Texture_data = Texture->getData();
+    unsigned char* Texture_data = Texture->getData();
     int SPACE;
     if (pix <= MIN_TEXTURE_PIXEL)
     {
@@ -521,7 +523,7 @@ inline void TileManager::addToGroupTexture(uchar* TextureGroup_data, uchar *Filt
     int dstOffY = RGBA* (pix/2 + 2*SPACE) * pix * 8;
     int srcOffX = RGB * (pix/2);
     int srcOffY = RGB * (pix/2) * pix;
-    uchar alpha = 255;
+    unsigned char alpha = 255;
 
     index2 = index3 =0;
     index1 = RGBA* (pix * 8) * (pix + 4 * SPACE) * y +
@@ -566,7 +568,7 @@ inline void TileManager::addToGroupTexture(uchar* TextureGroup_data, uchar *Filt
 //================================================================================================
 // .
 //================================================================================================
-inline void TileManager::createTextureGroupBorders(uchar* TextureGroup_data, short pix)
+inline void TileManager::createTextureGroupBorders(unsigned char* TextureGroup_data, short pix)
 {
     if (pix <= MIN_TEXTURE_PIXEL)
         return;

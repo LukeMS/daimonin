@@ -30,10 +30,8 @@ http://www.gnu.org/licenses/licenses.html
 #include <tinyxml.h>
 #include <Ogre.h>
 #include "gui_element.h"
-#include "gui_gadget_button.h"
 #include "gui_listbox.h"
-
-using namespace Ogre;
+#include "gui_gadget_button.h"
 
 /**
  ** This class provides an interactive scrollbar.
@@ -77,8 +75,8 @@ private:
     int mStartX, mStopX, mStartY, mStopY;
     bool mHorizontal, mDragging;
     bool mMouseOver, mMouseButDown;
-    uint32 *mGfxBuffer;
-    uint32 mColorBackground, mColorBorderline, mColorBarPassive, mColorBarM_Over, mColorBarActive;
+    Ogre::uint32 *mGfxBuffer;
+    Ogre::uint32 mColorBackground, mColorBorderline, mColorBarPassive, mColorBarM_Over, mColorBarActive;
     float mSingleLineSize;
     class GuiGadgetButton *mButScrollUp, *mButScrollDown;
     void *mParent, *mParentElement;

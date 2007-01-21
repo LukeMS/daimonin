@@ -32,6 +32,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "gui_window.h"
 #include "logger.h"
 
+using namespace Ogre;
 
 // hi nedo, i made some changes to the gui stuff, so you have to start it all over...
 // i think the gui code is now more readable.

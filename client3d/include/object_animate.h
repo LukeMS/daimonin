@@ -29,8 +29,6 @@ http://www.gnu.org/licenses/licenses.html
 
 #include <Ogre.h>
 
-using namespace Ogre;
-
 // This will be rewritten for separted Upper/lower Body animation.
 // So it will be possible to walk and shoot arrows at same time without generating
 // Mixed Mode animations.
@@ -67,7 +65,7 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    ObjectAnimate(Entity *entity);
+    ObjectAnimate(Ogre::Entity *entity);
     ~ObjectAnimate();
     bool isMovement()
     {
@@ -89,11 +87,11 @@ public:
     {
         return StateNames[mAnimGroup];
     }
-    Real getTimeLeft()
+    Ogre::Real getTimeLeft()
     {
         return mTimeLeft;
     }
-    Real getTimeLeft2()
+    Ogre::Real getTimeLeft2()
     {
         return mTimeLeft2;
     }
@@ -101,10 +99,10 @@ public:
     {
         return mAnimGroupEntries[animGroup];
     }
-    void update(const FrameEvent& event);
+    void update(const Ogre::FrameEvent& event);
     void toggleAnimation(int animGroup, int animNr, bool loop = false, bool force = false, bool random = false, bool freezeLastFrame = false);
     void toggleAnimation2(int animGroup, int animNr, bool loop = false, bool force = false, bool random = false);
-    Real getAnimSpeed()
+    Ogre::Real getAnimSpeed()
     {
         return mAnimSpeed;
     }
@@ -122,10 +120,10 @@ private:
     bool mPause;
     bool mIsAnimated;
     bool mFreezeLastFrame; /**< false: after current anim is done play idle0, true: last frame of current anim will be freezed. */
-    Real mAnimSpeed;
-    Real mTimeLeft, mTimeLeft2;
-    AnimationState *mActState, *mActState2;
-    std::vector<AnimationState*>mAnimState;
+    Ogre::Real mAnimSpeed;
+    Ogre::Real mTimeLeft, mTimeLeft2;
+    Ogre::AnimationState *mActState, *mActState2;
+    std::vector<Ogre::AnimationState*>mAnimState;
     unsigned char mAnimGroupEntries[ANIM_GROUP_SUM];
     static const char *StateNames[ANIM_GROUP_SUM];
     // ////////////////////////////////////////////////////////////////////

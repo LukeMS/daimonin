@@ -291,6 +291,10 @@ bool Events::frameStarted(const FrameEvent& evt)
                 mWindow->resetStatistics();
                 GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_CHATWINDOW, true);
                 GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_TEXTWINDOW, true);
+                GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_ITEM_CONTAINER, true);
+
+
+
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_META);
                 break;
             }
@@ -591,6 +595,7 @@ bool Events::frameStarted(const FrameEvent& evt)
                         GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "");
                         GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Client3d commands:");
                         GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~1 ... 8~ to change cloth.");
+                        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Hold shift for a ranged attack.");
                         GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~:KeyX~ for texture quality. ");
                         GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~:KeyA~ to change Idle animation.");
                         GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~:KeyB~ to change Attack animation.");
@@ -644,7 +649,7 @@ bool Events::frameStarted(const FrameEvent& evt)
                 */
                 ParticleManager::getSingleton().update(evt.timeSinceLastFrame);
 
-                if (TileManager::getSingleton().map_udate_flag)
+                if (TileManager::getSingleton().map_update_flag)
                 {
                     TileMap::getSingleton().map_draw_map();
                 }
@@ -677,16 +682,16 @@ bool Events::frameEnded(const FrameEvent& evt)
     {
         skipFrames = 10;
         std::stringstream strBuf;
-        strBuf << fixed << setprecision(1) << stats.lastFPS;
+        strBuf << std::fixed << std::setprecision(1) << stats.lastFPS;
         GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_STATISTICS, GuiManager::GUI_MSG_TXT_CHANGED, GuiImageset::GUI_TEXTVALUE_STAT_CUR_FPS  , (void*)strBuf.str().c_str());
         strBuf.rdbuf()->str(""); // delete stringstream buffer.
-        strBuf << fixed << setprecision(1) << stats.bestFPS;
+        strBuf << std::fixed << std::setprecision(1) << stats.bestFPS;
         GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_STATISTICS, GuiManager::GUI_MSG_TXT_CHANGED, GuiImageset::GUI_TEXTVALUE_STAT_BEST_FPS , (void*)strBuf.str().c_str());
         strBuf.rdbuf()->str(""); // delete stringstream buffer.
-        strBuf << fixed << setprecision(1) << stats.worstFPS;
+        strBuf << std::fixed << std::setprecision(1) << stats.worstFPS;
         GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_STATISTICS, GuiManager::GUI_MSG_TXT_CHANGED, GuiImageset::GUI_TEXTVALUE_STAT_WORST_FPS, (void*)strBuf.str().c_str());
         strBuf.rdbuf()->str(""); // delete stringstream buffer.
-        strBuf << fixed << setprecision(1) << stats.triangleCount;
+        strBuf << std::fixed << std::setprecision(1) << stats.triangleCount;
         GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_STATISTICS, GuiManager::GUI_MSG_TXT_CHANGED, GuiImageset::GUI_TEXTVALUE_STAT_SUM_TRIS , (void*)strBuf.str().c_str());
     }
     return true;
