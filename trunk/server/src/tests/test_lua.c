@@ -110,6 +110,38 @@ START_TEST (lua_strings_endmsg)
 }
 END_TEST
 
+/** Test that yield works as expected */
+START_TEST (lua_yield)
+{
+    shstr *path = add_string("/dev/unit_tests/test_lua");
+    mapstruct *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
+
+    object *sign = locate_beacon(find_string("yield_sign"))->env;
+
+    int res = trigger_object_plugin_event(EVENT_APPLY, sign, sign, 
+            &void_container, NULL, NULL, NULL, NULL, 0);
+       
+    /* Script should check some preconditions and yield */
+    fail_if(sign->title == NULL, "sign title never was set");
+    fail_if(strcmp(sign->title, "preconditions passed") != 0, "Script didn't get to first yield");
+    
+    /* Script resumes and updates title */
+    iterate_main_loop();
+    fail_if(strcmp(sign->title, "yield passed") != 0, "Script didn't get to second yield");
+
+    /* Script removes apple and lets the garbage collection take it away */
+    iterate_main_loop();
+    fail_if(strcmp(sign->title, "test1 passed") != 0, "Script didn't pass first IsValid() tests");
+    
+    /* Now we should remove the current map to make sure IsValid(map) works */
+    delete_map(map);
+    iterate_main_loop();
+    iterate_main_loop(); /* It takes two iterations until all objects on the map are freed */
+    
+    fail_if(void_container.title == NULL || strcmp(void_container.title, "passed") != 0, "Script didn't pass second IsValid() tests");
+}
+END_TEST
+
 Suite *lua_suite(void)
 {
   Suite *s = suite_create("Lua");
@@ -122,6 +154,7 @@ Suite *lua_suite(void)
   tcase_add_test(tc_core, lua_strings_long);
   tcase_add_test(tc_core, lua_strings_newline);
   tcase_add_test(tc_core, lua_strings_endmsg);
+  tcase_add_test(tc_core, lua_yield);
 
   return s;
 }
