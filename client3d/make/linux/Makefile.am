@@ -29,10 +29,10 @@ client3d_SOURCES = \
 	../../3rdParty/zlib/uncompr.c \
 	../../3rdParty/zlib/zutil.c \
 	../../source/gui/gui_animation.cpp \
-	../../source/gui/gui_container.cpp \
 	../../source/gui/gui_cursor.cpp \
 	../../source/gui/gui_element.cpp \
 	../../source/gui/gui_gadget.cpp \
+	../../source/gui/gui_gadget_slot.cpp \
 	../../source/gui/gui_gadget_combobox.cpp \
 	../../source/gui/gui_gadget_button.cpp \
 	../../source/gui/gui_gadget_scrollbar.cpp \
