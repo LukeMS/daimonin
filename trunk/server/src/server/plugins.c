@@ -100,6 +100,7 @@ struct plugin_hooklist  hooklist    =
     /* global variables */
     &animations, &new_faces, global_darkness_table, coins_arch,
     &shstr_cons, behaviourclasses, &global_instance_id,
+    &pticks,
 
 };
 
