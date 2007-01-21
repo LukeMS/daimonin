@@ -51,8 +51,6 @@ extern void check_use_object_list(void);
 void        free_all_srv_files();
 void        free_racelist();
 
-static object   marker; /* object for proccess_obejct(); */
-
 /*
 static char     days[7][4]  =
 {
@@ -959,7 +957,6 @@ int main(int argc, char **argv)
 #endif
     compile_info();       /* its not a bad idea to show at start whats up */
 
-    memset(&marker, 0, sizeof(struct obj)); /* used from process_events() */
     STATS_EVENT(STATS_EVENT_STARTUP);
     reset_sleep(); /* init our last_time = start time - and lets go! */
 
