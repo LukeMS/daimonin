@@ -20,9 +20,30 @@ name waypoint
 end
 arch event_obj
 name Lua
-race test_lua_waypoint.lua
 sub_type 10
+race test_lua_waypoint.lua
 end
+end
+end
+arch sign
+msg
+Test script yielding and map/object invalidation
+endmsg
+x 2
+y 5
+arch beacon
+name yield_sign
+end
+arch event_obj
+sub_type 1
+race /dev/unit_tests/test_lua_yield.lua
+end
+end
+arch apple
+x 3
+y 5
+arch beacon
+name test_apple
 end
 end
 arch sign
@@ -36,6 +57,7 @@ endmsg
 x 8
 y 1
 arch event_obj
+name Lua
 sub_type 1
 race test_lua_strings.lua
 end
