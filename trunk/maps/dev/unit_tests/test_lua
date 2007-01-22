@@ -36,7 +36,7 @@ name yield_sign
 end
 arch event_obj
 sub_type 1
-race /dev/unit_tests/test_lua_yield.lua
+race test_lua_yield.lua
 end
 end
 arch apple
