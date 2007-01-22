@@ -212,8 +212,8 @@ material WaterTiles
                 //filtering none
                 texture water_00_128.png
                 // Give me alpha.
-                alpha_op_ex modulate src_texture src_manual 0.7
-                scroll_anim 0.02 0.02
+                alpha_op_ex modulate src_texture src_manual 0.65
+                scroll_anim 0.01 0.01
                 //wave_xform scale_x triangle 1.0 0.2 0.1 0.1
             }
         }

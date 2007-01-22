@@ -30,6 +30,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "gui_window.h"
 #include "gui_manager.h"
 
+#include "item.h"
 using namespace Ogre;
 
 //================================================================================================
@@ -40,6 +41,19 @@ GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOn
     mCallFunc = 0;
     mMouseOver = false;
     mMouseButDown = false;
+
+    const char *tmp;
+    TiXmlElement *xmlOpt;
+    if ((xmlOpt = xmlElement->FirstChildElement("Sum")))
+    {
+        if ((tmp = xmlOpt->Attribute("col" ))) sumCol = atoi(tmp);
+        if ((tmp = xmlOpt->Attribute("row" ))) sumRow = atoi(tmp);
+    }
+    if ((xmlOpt = xmlElement->FirstChildElement("Offset")))
+    {
+        if ((tmp = xmlOpt->Attribute("col" ))) drawOffsetCol = atoi(tmp);
+        if ((tmp = xmlOpt->Attribute("row" ))) drawOffsetRow = atoi(tmp);
+    }
     if (drawOnInit) draw();
 }
 
@@ -92,22 +106,25 @@ bool GuiGadgetSlot::mouseEvent(int MouseAction, int x, int y)
 }
 
 //================================================================================================
-// Draw the guiElement.
+// Draw a single slot.
 //================================================================================================
-void GuiGadgetSlot::draw()
+void GuiGadgetSlot::drawSlot(int pos, const char *strLabel)
 {
+    int row = pos / sumCol;
+    int col = pos - (row * sumCol);
+    int strtX = mPosX + col * (drawOffsetCol + mWidth);
+    int strtY = mPosY + row * (drawOffsetRow + mHeight);
+    Texture *texture = ((GuiWindow*) mParent)->getTexture();
     // ////////////////////////////////////////////////////////////////////
     // Draw gaget.
     // ////////////////////////////////////////////////////////////////////
-    PixelBox src;
-    Texture *texture = ((GuiWindow*) mParent)->getTexture();
+    PixelBox src = ((GuiWindow*) mParent)->getPixelBox()->getSubVolume(Box(
+                       gfxSrcPos[mState].x,
+                       gfxSrcPos[mState].y,
+                       gfxSrcPos[mState].x + mWidth,
+                       gfxSrcPos[mState].y + mHeight));
     if (mHasAlpha)
     {
-        src = ((GuiWindow*) mParent)->getPixelBox()->getSubVolume(Box(
-                    gfxSrcPos[mState].x,
-                    gfxSrcPos[mState].y,
-                    gfxSrcPos[mState].x + mWidth,
-                    gfxSrcPos[mState].y + mHeight));
         uint32 *srcData = static_cast<uint32*>(src.data);
         size_t rowSkip = ((GuiWindow*) mParent)->getPixelBox()->getWidth();
         int dSrcY = 0, dDstY =0;
@@ -121,49 +138,65 @@ void GuiGadgetSlot::draw()
             dSrcY+= (int)rowSkip;
             dDstY+= mWidth;
         }
-
-
         src = PixelBox(mWidth, mHeight, 1, PF_A8B8G8R8, BG_Backup);
-        texture->getBuffer()->blitFromMemory(src, Box(mPosX, mPosY, mPosX + mWidth, mPosY + mHeight));
     }
-    else
-    {
+    texture->getBuffer()->blitFromMemory(src, Box(strtX, strtY, strtX + mWidth,strtY + mHeight));
+    // ////////////////////////////////////////////////////////////////////
+    // Draw Item.
+    // ////////////////////////////////////////////////////////////////////
+    /*
         src = ((GuiWindow*) mParent)->getPixelBox()->getSubVolume(Box(
-                    gfxSrcPos[mState].x,
-                    gfxSrcPos[mState].y,
-                    gfxSrcPos[mState].x + mWidth,
-                    gfxSrcPos[mState].y + mHeight));
-        texture->getBuffer()->blitFromMemory(src, Box(mPosX, mPosY, mPosX + mWidth, mPosY + mHeight));
-    }
-
-    // ////////////////////////////////////////////////////////////////////
-    // Draw label.
-    // ////////////////////////////////////////////////////////////////////
-    if (mStrLabel != "")
-    {
-        GuiTextout::TextLine label;
-        label.hideText= false;
-        label.index= -1;
-        label.font = mLabelFontNr;
-        label.color= 0x00ffffff;
-        label.x1 = mPosX+ mLabelPosX;
-        label.y1 = mPosY+ mLabelPosY;
-        label.x2 = label.x1 + mWidth;
-        label.y2 = label.y1 + GuiTextout::getSingleton().getFontHeight(label.font);
-        if (mState == GuiImageset::STATE_ELEMENT_PUSHED)
+                           gfxSrcPos[mState].x,
+                           gfxSrcPos[mState].y,
+                           gfxSrcPos[mState].x + mWidth,
+                           gfxSrcPos[mState].y + mHeight));
+        if (mHasAlpha)
         {
-            ++label.x1;
-            ++label.y1;
+            uint32 *srcData = static_cast<uint32*>(src.data);
+            size_t rowSkip = ((GuiWindow*) mParent)->getPixelBox()->getWidth();
+            int dSrcY = 0, dDstY =0;
+            for (int y =0; y < mHeight; ++y)
+            {
+                for (int x =0; x < mWidth; ++x)
+                {
+                    if (srcData[dSrcY + x] <= 0xffffff) continue;
+                    BG_Backup[dDstY + x] = srcData[dSrcY + x];
+                }
+                dSrcY+= (int)rowSkip;
+                dDstY+= mWidth;
+            }
+            src = PixelBox(mWidth, mHeight, 1, PF_A8B8G8R8, BG_Backup);
         }
-        label.text = "";
-        for (unsigned int i=0; i < mStrLabel.size(); ++i)
-            if (mStrLabel[i] != '~') label.text+=mStrLabel[i];
-        label.color= 0;
-        GuiTextout::getSingleton().Print(&label, texture);
-        --label.x1;
-        --label.y1;
-        label.text = mStrLabel;
-        label.color= 0x00ffffff;
-        GuiTextout::getSingleton().Print(&label, texture);
-    }
+        texture->getBuffer()->blitFromMemory(src, Box(strtX, strtY, strtX + mWidth,strtY + mHeight));
+    */
+
+// only for testing.
+
+
+    //label.text = strLabel;
+    GuiTextout::TextLine label;
+
+
+    Item::sItem *item = Item::getSingleton().getBackpackItem(pos);
+    if (!item) return;
+    label.text = item->d_name;
+
+    label.hideText= false;
+    label.index= -1;
+    label.font = 0;
+    label.x1 = strtX + 5;
+    label.y1 = strtY + 5;
+    label.x2 = label.x1 + mWidth;
+    label.y2 = label.y1 + GuiTextout::getSingleton().getFontHeight(label.font);
+    label.color= 0x00ffffff;
+    GuiTextout::getSingleton().Print(&label, texture);
+}
+
+//================================================================================================
+// Draw the guiElement.
+//================================================================================================
+void GuiGadgetSlot::draw()
+{
+    for (int pos = 0; pos < sumRow * sumCol; ++pos)
+        drawSlot(pos, StringConverter::toString(pos).c_str());
 }
