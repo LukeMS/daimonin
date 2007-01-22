@@ -129,6 +129,7 @@ end
 local function topAskjoinG1()
     if guild_stat ~= game.GUILD_OLD then
         topicDefault()
+        return
     end
     ib:SetTitle("Rejoin our Guild?")
     ib:SetMsg("You really want rejoin our guild?\n\nWe would be proud to have you back in our ranks!")
@@ -140,6 +141,7 @@ end
 local function topRejoinG1()
     if guild_stat ~= game.GUILD_OLD then
         topicDefault()
+        return
     end
     pl:Sound(0, 0, 2, 0)
     pl:JoinGuild(guild_tag)
