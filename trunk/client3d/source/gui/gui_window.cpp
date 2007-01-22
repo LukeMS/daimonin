@@ -68,6 +68,11 @@ GuiWindow::GuiWindow()
 //================================================================================================
 void GuiWindow::freeRecources()
 {
+    // Delete the slots.
+    for (std::vector<GuiGadgetSlot*>::iterator i = mvSlot.begin(); i < mvSlot.end(); ++i)
+        delete (*i);
+    mvSlot.clear();
+
     // Delete the buttons.
     for (std::vector<GuiGadgetButton*>::iterator i = mvGadgetButton.begin(); i < mvGadgetButton.end(); ++i)
         delete (*i);
@@ -338,6 +343,12 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
             button->setFunction(this->buttonPressed);
             mvGadgetButton.push_back(button);
         }
+        else if ( !strcmp(xmlElem->Attribute("type"), "SLOT"))
+        {
+            GuiGadgetSlot *button = new GuiGadgetSlot(xmlElem, this);
+            button->setFunction(this->buttonPressed);
+            mvSlot.push_back(button);
+        }
         else if ( !strcmp(xmlElem->Attribute("type"), "COMBOBOX"))
         {
             GuiGadgetCombobox *combobox = new GuiGadgetCombobox(xmlElem, this);
@@ -497,7 +508,11 @@ bool GuiWindow::mouseEvent(int MouseAction, Vector3 &mouse)
         if (mvGadgetButton[i]->mouseEvent(MouseAction, x, y)) ++sumPressed;
     }
     if (sumPressed) return true;
-
+    for (unsigned int i = 0; i < mvSlot.size(); ++i)
+    {
+        if (mvSlot[i]->mouseEvent(MouseAction, x, y))
+            return true;
+    }
     for (unsigned int i = 0; i < mvGadgetCombobox.size(); ++i)
     {
 //        if (mvGadgetCombobox[i]->mouseEvent(MouseAction, x, y))
@@ -596,6 +611,19 @@ class GuiGadgetButton *GuiWindow::getButtonHandle(int element)
 //================================================================================================
 // .
 //================================================================================================
+class GuiGadgetSlot *GuiWindow::getSlotHandle(int element)
+{
+    for (unsigned int i = 0; i < mvSlot.size() ; ++i)
+    {
+        if (mvSlot[i]->getIndex() == element)
+            return mvSlot[i];
+    }
+    return 0;
+}
+
+//================================================================================================
+// .
+//================================================================================================
 int GuiWindow::getTableSelection(int element)
 {
     for (unsigned int i = 0; i < mvTable.size() ; ++i)
@@ -667,6 +695,13 @@ const char *GuiWindow::Message(int message, int element, void *value, void *valu
 {
     switch (message)
     {
+        case GuiManager::GUI_MSG_SLOT_REDRAW:
+            {
+                 Logger::log().error() << "hier";
+                for (unsigned int i = 0; i < mvSlot.size(); ++i)
+                    mvSlot[i]->draw();
+            }
+            break;
 
         case GuiManager::GUI_MSG_ADD_TABLEROW:
             for (unsigned int i = 0; i < mvTable.size() ; ++i)
@@ -797,3 +832,5 @@ void GuiWindow::buttonPressed(GuiWindow *me, int index)
     }
     GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "button event... ");
 }
+
+

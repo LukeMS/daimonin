@@ -203,6 +203,7 @@ void Events::keyPressed(KeyEvent *e)
         */
         case KC_T:
             Item::getSingleton().printAllItems();
+            GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_ITEM_CONTAINER, GuiManager::GUI_MSG_SLOT_REDRAW,0,0);
             /*
                    case KEYFUNC_TARGET_ENEMY:
                      send_command("/target 0", -1, SC_NORMAL);

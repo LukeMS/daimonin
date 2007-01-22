@@ -307,6 +307,7 @@ bool inv_updated :
     bool update(sItem *tmpItem, int newContainerID, bool bflag);
     int  getContainerID(unsigned int ItemID);
     sItem *locateItem(int container, unsigned int tag);
+    sItem *getBackpackItem(int slotPosition);
     void printAllItems();
 private:
     // ////////////////////////////////////////////////////////////////////

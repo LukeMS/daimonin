@@ -179,10 +179,10 @@ void TileChunk::createWater_Buffers()
 
     long o = 0;
 
-    static Real offsetWave = 0.05;
+    static Real offsetWave = 0.03;
     static Real WaveHigh = 0;
     WaveHigh+= offsetWave;
-    if (WaveHigh >1.5 || WaveHigh < -1.5) offsetWave*=-1;
+    if (WaveHigh >1.7 || WaveHigh < -1.7) offsetWave*=-1;
 
     Real* pReal = static_cast<Real*>(vbuf0->lock (HardwareBuffer::HBL_DISCARD));
     Real q1, q2;

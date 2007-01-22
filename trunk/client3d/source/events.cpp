@@ -135,7 +135,6 @@ void Events::setWorldPos(int deltaX, int deltaZ)
 //================================================================================================
 bool Events::frameStarted(const FrameEvent& evt)
 {
-    static Overlay *mOverlay;
     static String strPlayerName, strPlayerPswd;
     if (mWindow->isClosed() || mQuitGame)
         return false;
@@ -167,12 +166,12 @@ bool Events::frameStarted(const FrameEvent& evt)
                 GuiManager::getSingleton().Init(mWindow->getWidth(), mWindow->getHeight());
                 GuiTextout::getSingleton().loadRawFont(FILE_SYSTEM_FONT);
                 // Show the loading-gfx.
-                mOverlay = OverlayManager::getSingleton().getByName ("Overlay/Loading");
-                mOverlay->show();
+                Overlay *overlay = OverlayManager::getSingleton().getByName ("Overlay/Loading");
+                overlay->show();
                 if (Root::getSingleton().getTimer()->getMilliseconds() & 1)
-                    mOverlay->getChild("OverlayElement/Screen1")->hide();
+                    overlay->getChild("OverlayElement/Screen1")->hide();
                 else
-                    mOverlay->getChild("OverlayElement/Screen2")->hide();
+                    overlay->getChild("OverlayElement/Screen2")->hide();
                 GuiManager::getSingleton().displaySystemMessage("* Welcome to Daimonin *");
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_SOUND);
                 break;
@@ -246,7 +245,6 @@ bool Events::frameStarted(const FrameEvent& evt)
                 GuiManager::getSingleton().displaySystemMessage(" - Parsing Imageset.");
                 GuiImageset::getSingleton().parseXML(FILE_GUI_IMAGESET);
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_GUI_WINDOWS);
-
                 break;
             }
 
@@ -279,7 +277,9 @@ bool Events::frameStarted(const FrameEvent& evt)
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
                 // Close the loading screen.
                 GuiManager::getSingleton().displaySystemMessage("");
-                OverlayManager::getSingleton().destroy(mOverlay);
+                OverlayManager::getSingleton().destroyOverlayElement("OverlayElement/Screen1");
+                OverlayManager::getSingleton().destroyOverlayElement("OverlayElement/Screen2");
+                OverlayManager::getSingleton().destroy("Overlay/Loading");
                 GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Welcome to ~Daimonin 3D~.");
                 GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "You need a running server to start the game!");
                 break;
@@ -288,13 +288,9 @@ bool Events::frameStarted(const FrameEvent& evt)
         case Option::GAME_STATUS_INIT_NET:
             {
                 Network::getSingleton().Init();
-                mWindow->resetStatistics();
                 GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_CHATWINDOW, true);
                 GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_TEXTWINDOW, true);
                 GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_ITEM_CONTAINER, true);
-
-
-
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_META);
                 break;
             }
@@ -574,8 +570,6 @@ bool Events::frameStarted(const FrameEvent& evt)
                 break;
             }
 
-
-
         case Option::GAME_STATUS_PLAY:
             {
                 static bool once = false;
@@ -591,7 +585,7 @@ bool Events::frameStarted(const FrameEvent& evt)
                         mCamera->setPosition(Vector3(0, 450, 900));
                         GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_STATISTICS, true);
                         GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_PLAYERINFO, true);
-
+                        mWindow->resetStatistics();
                         GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "");
                         GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Client3d commands:");
                         GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~1 ... 8~ to change cloth.");

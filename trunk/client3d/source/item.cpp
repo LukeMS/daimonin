@@ -24,6 +24,8 @@ http://www.gnu.org/licenses/licenses.html
 #include "network.h"
 #include "gui_manager.h"
 #include "object_hero.h"
+#include "gui_gadget_slot.h"
+
 
 using namespace Ogre;
 
@@ -154,6 +156,21 @@ void Item::ItemXYCmd(unsigned char *data, int len, bool bflag)
     }
 
     //    map_udate_flag = 2;
+}
+
+//================================================================================================
+//
+//================================================================================================
+Item::sItem *Item::getBackpackItem(int slotPosition)
+{
+    std::list<sItem*>::iterator iter = HeroBackpack.begin();
+    while (iter != HeroBackpack.end())
+    {
+        if (!slotPosition) return (*iter);
+        --slotPosition;
+        ++iter;
+    }
+    return 0;
 }
 
 //================================================================================================

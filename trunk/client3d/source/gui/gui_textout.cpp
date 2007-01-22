@@ -133,7 +133,7 @@ void GuiTextout::loadRawFont(const char *filename)
 {
     Image image;
     image.load(filename, "General");
-    int size = (int) (image.getHeight() * image.getWidth());
+    size_t size = image.getHeight() * image.getWidth();
     mFont *fnt = new mFont;
     mvFont.push_back(fnt);
     fnt->data = new uint32[size];
@@ -344,9 +344,9 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
             }
         }
         // write font to disc.
-        // This is broken in the codeblocks sdk version of ogre1.2.3 (width > 1024 will be clipped).
+        // This is broken in the codeblocks sdk version of ogre1.2.x (width > 1024 will be clipped).
         // Use GNU/Linux or VC to get it done.
-        img = img.loadDynamicImage((unsigned char*)fnt->data, fnt->textureWidth, fnt->height, PF_A8R8G8B8);
+        img = img.loadDynamicImage((unsigned char*)fnt->data, fnt->textureWidth, fnt->height, 1, PF_A8R8G8B8);
         String rawFilename = "./NoLonger";
         rawFilename+= filename;
         rawFilename.resize(rawFilename.size()-4); // Cut extension.

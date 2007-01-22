@@ -66,6 +66,7 @@ public:
         GUI_MSG_ADD_TABLEROW,
         GUI_MSG_BUT_PRESSED,
         GUI_MSG_GET_SEL_KEY,  /**< Returns the selected keyword **/
+        GUI_MSG_SLOT_REDRAW,
         GUI_MSG_SUM
     };
     enum

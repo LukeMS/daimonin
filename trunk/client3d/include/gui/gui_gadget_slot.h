@@ -59,6 +59,7 @@ public:
         draw();
     }
     void draw();
+    void drawSlot(int pos, const char *);
 
 private:
     // ////////////////////////////////////////////////////////////////////
@@ -66,6 +67,8 @@ private:
     // ////////////////////////////////////////////////////////////////////
     Callback *mCallFunc;
     bool mMouseOver, mMouseButDown;
+    int sumCol, sumRow;
+    int drawOffsetCol, drawOffsetRow;
 };
 
 #endif

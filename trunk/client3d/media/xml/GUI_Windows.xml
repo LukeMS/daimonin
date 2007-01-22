@@ -71,15 +71,14 @@
     <TextBox x= "100" y= "70" font="02" text= "0000"  width = "45" name= "Engine_SumTris" />
   </Window>
 
-
-
-  <!--#############################################-->
+<!--#############################################-->
   <!--WINDOW:                           -->
   <!--#############################################-->
   <Window name= "Win_Container">
     <Size      width= "200" height= "240" />
     <Alignment x= "left" />
     <Pos       x ="0" y= "100" zOrder = "50" />
+    <DragArea  x= "0" y= "0" width= "200" height= "20" />
 
     <Gadget type= "BUTTON"  name = "But_Close" image_name = "Button_01_Close">
       <Pos x= "180" y= "1" />
@@ -94,12 +93,12 @@
     </Graphic>
 
     <Gadget type= "SLOT"  image_name = "Item_Slot">
-      <!-- Numbers of cols/rows -->
-      <Sum x= "5" y="5" />
       <!-- Position of the 1. slot. -->
       <Pos x= "9" y= "45" />
+      <!-- Number of cols/rows -->
+      <Sum col= "5" row="5" />
       <!-- Offset to the next col/row -->
-      <Offset x ="0" y ="0" />
+      <Offset col ="0" row ="0" />
     </Gadget>
   </Window>
 

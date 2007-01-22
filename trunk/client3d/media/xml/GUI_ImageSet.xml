@@ -279,5 +279,8 @@
           <State name= "Default" posX= "0" posY= "679" />
       </Image>
 
+      <Image name= "Item_Slot_alpha"  width= "36" height= "36" alpha= "1">
+          <State name= "Default" posX= "36" posY= "679" />
+      </Image>
 
 </ImageSet>
