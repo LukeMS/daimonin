@@ -16,7 +16,9 @@ find maps -type f -not -path "*/.svn/*" -print0 | xargs -0 $echo svn propset svn
 find maps -type f -not -path "*/.svn/*" -print0 | xargs -0 $echo svn propset svn:eol-style LF
 find maps -type d -not -path "*/.svn/*" -not -name ".svn" -print0 | xargs -0 $echo svn propset svn:ignore "$mapsIgnore"
 
-find maps arch -name "*.txt" -print0 | xargs -0 $echo svn propset svn:mime-type text/plain
-find maps arch -name "*.txt" -print0 | xargs -0 $echo svn propset svn:eol-style native
+find maps -type f -name "*.txt" -not -path "*/.svn/*" -print0 | xargs -0 $echo svn propset svn:mime-type text/plain
+find maps -type f -name "*.txt" -not -path "*/.svn/*" -print0 | xargs -0 $echo svn propset svn:eol-style native
+#find arch -type f -name "*.txt" -not -path "*/.svn/*" -print0 | xargs -0 $echo svn propset svn:mime-type text/plain
+#find arch -type f -name "*.txt" -not -path "*/.svn/*" -print0 | xargs -0 $echo svn propset svn:eol-style native
 
 svn commit -m "Fixed svn:eol-style, svn:ignore and svn:mime-type properties."
