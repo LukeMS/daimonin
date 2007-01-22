@@ -748,7 +748,7 @@ MODULEAPI int HandleEvent(CFParm *PParm)
             terminate_lua_context(context);
             return 0;
         }
-        hooks->normalize_path(outermost->map->path, (const char *) (PParm->Value[9]), buf);
+        hooks->normalize_path(outermost->map->orig_path, (const char *) (PParm->Value[9]), buf);
         context->file = hooks->add_string(buf);
 #ifdef LUA_DEBUG
         LOG(llevDebug, "LUA: normalized script path: %s\n", context->file);
