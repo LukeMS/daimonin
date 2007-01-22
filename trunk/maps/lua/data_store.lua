@@ -88,8 +88,12 @@ function _data_store._load(id, player)
         if f == nil then
             return false
         end
-        t[id] = {_changed = 0, _persist = true, _data = f()}
-        assert(t[id]._data, "Empty datastore file: "..path)
+        local data = f()
+        if data == nil then
+            print("DataStore: corrupt datastore file: "..path)
+            return nil
+        end
+        t[id] = {_changed = 0, _persist = true, _data = data}
         setmetatable(t[id]._data, _DataStore_mt)
         setmetatable(t[id], { __index = t[id]._data, __newindex = t[id]._data })
     end
@@ -97,7 +101,9 @@ function _data_store._load(id, player)
     return t[id]
 end
 
+-- Returns true if there was no error, or false if any error occured
 function _data_store._save(time, player, b_force)
+    local everything_ok = true
     local t
     if player then
         t = _data_store._players[player]
@@ -130,22 +136,32 @@ function _data_store._save(time, player, b_force)
                 end
                 local filename = "data/" .. dir .. "/" .. k .. ".dsl"
                 local f = io.open(filename, "wb")
-                assert(f, "Couldn't open " .. filename)
-                f:write(_data_store._serialize(v._data))
-                f:close()
+                if not f then
+                    print("DataStore: Couldn't open " .. filename .. " for writing")
+                    everything_ok = false
+                else                    
+                    f:write(_data_store._serialize(v._data))
+                    f:close()
+                end
             end
         end
     end
+    return everything_ok
 end
 
+-- Returns true if there was no error, or false if any error occured
 function _data_store.save(b_force)
+    local everything_ok = true
     local players, time = _data_store._players, os.time()
     _data_store._save(time, nil, b_force)
     for player in players do
         if player ~= 'n' then
-            _data_store._save(time, player, b_force)
+            if not _data_store._save(time, player, b_force) then
+                everything_ok = false
+            end
         end
     end
+    return everything_ok
 end
 
 DataStore = {}
