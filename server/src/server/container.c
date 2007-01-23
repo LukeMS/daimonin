@@ -376,12 +376,24 @@ static void pick_up_object(object *pl, object *op, object *tmp, uint32 nrof)
 		* - we are moving all the items from the container to elsewhere,
 		* so it needs to be deleted.
 		*/
-		if (!QUERY_FLAG(tmp, FLAG_REMOVED))
-		{
-			if (tmp->env && pl->type == PLAYER)
-				esrv_del_item(CONTR(pl), tmp->count, tmp->env);
-			remove_ob(tmp); /* Unlink it - no move off check */
-		}
+        if (!QUERY_FLAG(tmp, FLAG_REMOVED))
+        {
+            int result;
+            if (tmp->env && pl->type == PLAYER)
+                esrv_del_item(CONTR(pl), tmp->count, tmp->env);
+
+            /* walk_off check added 2007-01-23, Gecko */
+            remove_ob(tmp); 
+            if ((result = check_walk_off(tmp, pl, MOVE_APPLY_VANISHED)) != CHECK_WALK_OK)
+            {
+                if(result == CHECK_WALK_DESTROYED)
+                    sprintf(buf, "Trying to pick up the %s unfortunately destroyed it.\n", query_name(tmp));
+                else
+                    sprintf(buf, "You somehow lost the %s when picking it up.\n", query_name(tmp));
+                new_draw_info(NDI_UNIQUE, 0, pl, buf);
+                return;                            
+            }
+        }
 	}
 
 	new_draw_info(NDI_UNIQUE, 0, pl, buf);
