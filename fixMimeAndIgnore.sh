@@ -10,7 +10,7 @@ find arch -name "*.arc" -print0 | xargs -0 $echo svn propset svn:mime-type text/
 find arch -name "*.arc" -print0 | xargs -0 $echo svn propset svn:eol-style LF
 find arch -name "*.anim" -print0 | xargs -0 $echo svn propset svn:mime-type text/plain
 find arch -name "*.anim" -print0 | xargs -0 $echo svn propset svn:eol-style LF
-find arch -type d -not -path "*/.svn/*" -not -name ".svn" -print0 | xargs -0 $echo svn propset svn:ignore "$mapsIgnore"
+find arch -type d -not -path "*/.svn/*" -not -name ".svn" -print0 | xargs -0 $echo svn propset svn:ignore "$archIgnore"
 
 find maps -type f -not -path "*/.svn/*" -print0 | xargs -0 $echo svn propset svn:mime-type text/plain
 find maps -type f -not -path "*/.svn/*" -print0 | xargs -0 $echo svn propset svn:eol-style LF
