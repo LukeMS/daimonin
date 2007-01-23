@@ -92,8 +92,9 @@ private:
     // ////////////////////////////////////////////////////////////////////
     enum
     {
-        MIN_CAMERA_ZOOM =  20,
-        MAX_CAMERA_ZOOM = 110
+        MIN_CAMERA_ZOOM =  10,
+        STD_CAMERA_ZOOM =  30,
+        MAX_CAMERA_ZOOM = 100
     };
     bool mQuitGame;
     bool mShiftDown;

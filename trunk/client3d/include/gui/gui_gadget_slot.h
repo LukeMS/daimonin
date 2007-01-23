@@ -38,26 +38,12 @@ http://www.gnu.org/licenses/licenses.html
 class GuiGadgetSlot: public GuiElement
 {
 public:
-    typedef void (Callback) (class GuiWindow *parent, int index);
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOnInit = true);
     ~GuiGadgetSlot();
     bool mouseEvent(int MouseAction, int x, int y);
-    void setFunction(Callback *c)
-    {
-        mCallFunc = c;
-    }
-    void activated()
-    {
-        if (mCallFunc) mCallFunc((GuiWindow *)mParent, mIndex);
-    }
-    void setLabel(const char*newText)
-    {
-        mStrLabel = newText;
-        draw();
-    }
     void draw();
     void drawSlot(int pos, const char *);
 
@@ -65,10 +51,10 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    Callback *mCallFunc;
     bool mMouseOver, mMouseButDown;
-    int sumCol, sumRow;
+    int mSumCol, mSumRow;
     int drawOffsetCol, drawOffsetRow;
+    unsigned int mSlotWidth, mSlotHeight;
 };
 
 #endif
