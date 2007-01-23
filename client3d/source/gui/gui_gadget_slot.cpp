@@ -29,8 +29,8 @@ http://www.gnu.org/licenses/licenses.html
 #include "gui_textout.h"
 #include "gui_window.h"
 #include "gui_manager.h"
-
 #include "item.h"
+
 using namespace Ogre;
 
 //================================================================================================
@@ -38,7 +38,6 @@ using namespace Ogre;
 //================================================================================================
 GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOnInit):GuiElement(xmlElement, parent)
 {
-    mCallFunc = 0;
     mMouseOver = false;
     mMouseButDown = false;
 
@@ -46,14 +45,16 @@ GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOn
     TiXmlElement *xmlOpt;
     if ((xmlOpt = xmlElement->FirstChildElement("Sum")))
     {
-        if ((tmp = xmlOpt->Attribute("col" ))) sumCol = atoi(tmp);
-        if ((tmp = xmlOpt->Attribute("row" ))) sumRow = atoi(tmp);
+        if ((tmp = xmlOpt->Attribute("col" ))) mSumCol = atoi(tmp);
+        if ((tmp = xmlOpt->Attribute("row" ))) mSumRow = atoi(tmp);
     }
     if ((xmlOpt = xmlElement->FirstChildElement("Offset")))
     {
         if ((tmp = xmlOpt->Attribute("col" ))) drawOffsetCol = atoi(tmp);
         if ((tmp = xmlOpt->Attribute("row" ))) drawOffsetRow = atoi(tmp);
     }
+    mSlotWidth = (mWidth + drawOffsetCol) * mSumCol;
+    mSlotHeight= (mHeight+ drawOffsetRow) * mSumRow;
     if (drawOnInit) draw();
 }
 
@@ -68,26 +69,35 @@ GuiGadgetSlot::~GuiGadgetSlot()
 //================================================================================================
 bool GuiGadgetSlot::mouseEvent(int MouseAction, int x, int y)
 {
-    if (x >= mPosX && x <= mPosX + mWidth && y >= mPosY && y <= mPosY + mHeight)
+    x-= mPosX;
+    y-= mPosY;
+    if ((unsigned int) x < mSlotWidth && (unsigned int) y < mSlotHeight)
     {
         if (!mMouseOver)
         {
             mMouseOver = true;
+            /*
             setState(GuiImageset::STATE_ELEMENT_M_OVER);
             draw();
             GuiManager::getSingleton().setTooltip(mStrTooltip.c_str());
+            */
         }
         if (MouseAction == GuiWindow::BUTTON_PRESSED && !mMouseButDown)
         {
             mMouseButDown = true;
+            GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN,
+                StringConverter::toString(    y/(mHeight+ drawOffsetRow)*mSumCol +   x/(mWidth + drawOffsetCol)   ).c_str());
+            /*
             setState(GuiImageset::STATE_ELEMENT_PUSHED);
             draw();
+            */
         }
         if (MouseAction == GuiWindow::BUTTON_RELEASED && mMouseButDown)
         {
             mMouseButDown = false;
+            /*
             setState(GuiImageset::STATE_ELEMENT_DEFAULT);
-            activated();
+            */
         }
         return true; // No need to check other gadgets.
     }
@@ -97,7 +107,6 @@ bool GuiGadgetSlot::mouseEvent(int MouseAction, int x, int y)
         {
             mMouseOver = false;
             mMouseButDown = false;
-            setState(GuiImageset::STATE_ELEMENT_DEFAULT);
             GuiManager::getSingleton().setTooltip("");
             return true; // No need to check other gadgets.
         }
@@ -110,8 +119,8 @@ bool GuiGadgetSlot::mouseEvent(int MouseAction, int x, int y)
 //================================================================================================
 void GuiGadgetSlot::drawSlot(int pos, const char *strLabel)
 {
-    int row = pos / sumCol;
-    int col = pos - (row * sumCol);
+    int row = pos / mSumCol;
+    int col = pos - (row * mSumCol);
     int strtX = mPosX + col * (drawOffsetCol + mWidth);
     int strtY = mPosY + row * (drawOffsetRow + mHeight);
     Texture *texture = ((GuiWindow*) mParent)->getTexture();
@@ -197,6 +206,6 @@ void GuiGadgetSlot::drawSlot(int pos, const char *strLabel)
 //================================================================================================
 void GuiGadgetSlot::draw()
 {
-    for (int pos = 0; pos < sumRow * sumCol; ++pos)
+    for (int pos = 0; pos < mSumRow * mSumCol; ++pos)
         drawSlot(pos, StringConverter::toString(pos).c_str());
 }

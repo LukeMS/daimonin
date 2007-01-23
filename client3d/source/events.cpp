@@ -89,7 +89,6 @@ void Events::Init(RenderWindow* win, SceneManager *SceneMgr)
     mTimeUntilNextToggle = 0;
     mIdleTime =0;
     mDayTime = 15;
-    mCameraZoom = MAX_CAMERA_ZOOM;
     mMouse = Vector3::ZERO;
     mQuitGame = false;
     Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_VIEWPORT);
@@ -152,13 +151,17 @@ bool Events::frameStarted(const FrameEvent& evt)
                 // ////////////////////////////////////////////////////////////////////
                 // Create one viewport, entire window.
                 // ////////////////////////////////////////////////////////////////////
+                mCameraZoom = STD_CAMERA_ZOOM;
                 mCamera = mSceneManager->createCamera("PlayerCam");
                 Viewport *VP = mWindow->addViewport(mCamera);
                 mCamera->setAspectRatio(Real(VP->getActualWidth()) / Real(VP->getActualHeight()));
-                mCamera->setProjectionType(PT_ORTHOGRAPHIC);
-                mCamera->setFOVy(Degree(MAX_CAMERA_ZOOM));
-                mCamera->setPosition(Vector3(0, 0, 0));
-                mCamera->pitch(Degree(-25));
+                mCamera->setFOVy(Degree(mCameraZoom));
+                mCamera->setPosition(0,175,340);
+                mCamera->pitch(Degree(-28));
+
+                //mCamera->setPosition(Vector3(0, 175, 275));
+                //mCamera->pitch(Degree(20));
+                //mCamera->pitch(Degree(-48));
                 mWorld = mSceneManager->getRootSceneNode()->createChildSceneNode();
                 // ////////////////////////////////////////////////////////////////////
                 // Create a minimal gui for some loading infos..
@@ -582,7 +585,6 @@ bool Events::frameStarted(const FrameEvent& evt)
                     {
                         ObjectManager::getSingleton().init();
                         ObjectVisuals::getSingleton().Init();
-                        mCamera->setPosition(Vector3(0, 450, 900));
                         GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_STATISTICS, true);
                         GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_PLAYERINFO, true);
                         mWindow->resetStatistics();

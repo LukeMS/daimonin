@@ -43,7 +43,6 @@ using namespace Ogre;
 //================================================================================================
 void Events::keyPressed(KeyEvent *e)
 {
-    static Real g_pitch = 0.2;
     mIdleTime =0;
 
     // ////////////////////////////////////////////////////////////////////
@@ -119,14 +118,14 @@ void Events::keyPressed(KeyEvent *e)
         }
 
         case KC_G:
-/*
-            char    buf[100];
-            int nrof =1;
-            int loc = Item::getSingleton().mActGrndContainerID;
-            int tag = Item::getSingleton().HeroTileGround[0]->tag;
-            sprintf(buf, "mv %d %d %d", loc, tag, nrof);
-            Network::getSingleton().cs_write_string(buf);
-*/
+            /*
+                        char    buf[100];
+                        int nrof =1;
+                        int loc = Item::getSingleton().mActGrndContainerID;
+                        int tag = Item::getSingleton().HeroTileGround[0]->tag;
+                        sprintf(buf, "mv %d %d %d", loc, tag, nrof);
+                        Network::getSingleton().cs_write_string(buf);
+            */
 
             TileManager::getSingleton().toggleGrid();
             break;
@@ -353,34 +352,74 @@ void Events::keyPressed(KeyEvent *e)
             break;
 
         case KC_F1:
-            break;
+        {
+            Vector3 pos = mCamera->getPosition();
+            pos.y+= 5;
+            Logger::log().error() << "camera pos: " << pos.x << "   " <<pos.y << "   " << pos.z;
+            mCamera->setPosition(pos);
+        }
+        break;
 
         case KC_F2:
-            break;
-
-        case KC_PGUP:
         {
-            mCamera->pitch(Radian(-0.1));
-            g_pitch -= 0.1;
             Vector3 pos = mCamera->getPosition();
-            pos.y += 30;
+            pos.y-= 5;
+            Logger::log().error() << "camera pos: " << pos.x << "   " <<pos.y << "   " << pos.z;
             mCamera->setPosition(pos);
+        }
+        break;
+
+        case KC_F3:
+        {
+            Vector3 pos = mCamera->getPosition();
+            pos.z+= 5;
+            Logger::log().error() << "camera pos: " << pos.x << "   " << pos.y << "   " << pos.z;
+            mCamera->setPosition(pos);
+        }
+        break;
+
+        case KC_F4:
+        {
+            Vector3 pos = mCamera->getPosition();
+            pos.z-= 5;
+            Logger::log().error() << "camera pos: " << pos.x << "   "<< pos.y << "   " << pos.z;
+            mCamera->setPosition(pos);
+        }
+        break;
+
+        case KC_F5:
+        {
+            mCamera->yaw(Degree(-1));
+        }
+        break;
+
+        case KC_F6:
+        {
+            mCamera->yaw(Degree(+1));
+        }
+        break;
+
+        case KC_F7:
+        {
+            static int cAdd =0;
+            ++cAdd;
+            Logger::log().error() << "camera pitch add: " << cAdd;
+            mCamera->pitch(Degree(+1));
             break;
         }
 
-        case KC_PGDOWN:
+        case KC_F8:
         {
-            mCamera->pitch(Radian(+0.1));
-            g_pitch += 0.1;
-            Vector3 pos = mCamera->getPosition();
-            pos.y -= 30;
-            mCamera->setPosition(pos);
+            static int cAdd =0;
+            ++cAdd;
+            Logger::log().error() << "camera pitch sub: " << cAdd;
+            mCamera->pitch(Degree(-1));
             break;
         }
 
         case KC_SUBTRACT:
         {
-            //if (mCameraZoom < MAX_CAMERA_ZOOM)
+            if (mCameraZoom < MAX_CAMERA_ZOOM)
             mCameraZoom += 5;
             mCamera->setFOVy(Degree(mCameraZoom));
             break;
@@ -389,7 +428,7 @@ void Events::keyPressed(KeyEvent *e)
         case KC_ADD:
         {
             if (mCameraZoom > MIN_CAMERA_ZOOM)
-                mCameraZoom -= 5;
+            mCameraZoom -= 5;
             mCamera->setFOVy(Degree(mCameraZoom));
             break;
         }

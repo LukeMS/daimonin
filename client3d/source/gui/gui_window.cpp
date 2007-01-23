@@ -345,9 +345,7 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
         }
         else if ( !strcmp(xmlElem->Attribute("type"), "SLOT"))
         {
-            GuiGadgetSlot *button = new GuiGadgetSlot(xmlElem, this);
-            button->setFunction(this->buttonPressed);
-            mvSlot.push_back(button);
+            mvSlot.push_back(new GuiGadgetSlot(xmlElem, this));
         }
         else if ( !strcmp(xmlElem->Attribute("type"), "COMBOBOX"))
         {

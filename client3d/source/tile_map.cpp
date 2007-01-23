@@ -342,7 +342,7 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                 once = false;
                 TilePos pos;
                 pos.x = x;
-                pos.z = y;
+                pos.z = 17-5;
                 pos.subX  =3;
                 pos.subZ  =3;
                 ObjectManager::getSingleton().setPosition(ObjectNPC::HERO, pos);
