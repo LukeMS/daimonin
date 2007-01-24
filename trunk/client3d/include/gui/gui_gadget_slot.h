@@ -45,15 +45,17 @@ public:
     ~GuiGadgetSlot();
     bool mouseEvent(int MouseAction, int x, int y);
     void draw();
-    void drawSlot(int pos, const char *);
+    void drawSlot(int pos, int state, const char *txt = "");
 
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     bool mMouseOver, mMouseButDown;
+    bool mActiveDrag;
+    int mActiveSlot;          /**< Slot the mouse is currently over. **/
     int mSumCol, mSumRow;
-    int drawOffsetCol, drawOffsetRow;
+    int mColSpace, mRowSpace; /**< Space between the slots. **/
     unsigned int mSlotWidth, mSlotHeight;
 };
 

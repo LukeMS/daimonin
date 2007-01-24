@@ -40,6 +40,8 @@ GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOn
 {
     mMouseOver = false;
     mMouseButDown = false;
+    mActiveDrag = false;
+    mActiveSlot = -1;
 
     const char *tmp;
     TiXmlElement *xmlOpt;
@@ -50,11 +52,11 @@ GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOn
     }
     if ((xmlOpt = xmlElement->FirstChildElement("Offset")))
     {
-        if ((tmp = xmlOpt->Attribute("col" ))) drawOffsetCol = atoi(tmp);
-        if ((tmp = xmlOpt->Attribute("row" ))) drawOffsetRow = atoi(tmp);
+        if ((tmp = xmlOpt->Attribute("col" ))) mColSpace = atoi(tmp);
+        if ((tmp = xmlOpt->Attribute("row" ))) mRowSpace = atoi(tmp);
     }
-    mSlotWidth = (mWidth + drawOffsetCol) * mSumCol;
-    mSlotHeight= (mHeight+ drawOffsetRow) * mSumRow;
+    mSlotWidth = (mWidth + mColSpace) * mSumCol;
+    mSlotHeight= (mHeight+ mRowSpace) * mSumRow;
     if (drawOnInit) draw();
 }
 
@@ -73,41 +75,33 @@ bool GuiGadgetSlot::mouseEvent(int MouseAction, int x, int y)
     y-= mPosY;
     if ((unsigned int) x < mSlotWidth && (unsigned int) y < mSlotHeight)
     {
-        if (!mMouseOver)
+        int activeSlot = y/(mHeight+ mRowSpace)*mSumCol +   x/(mWidth + mColSpace);
+        if (mActiveSlot != activeSlot && !mActiveDrag)
         {
-            mMouseOver = true;
-            /*
-            setState(GuiImageset::STATE_ELEMENT_M_OVER);
-            draw();
-            GuiManager::getSingleton().setTooltip(mStrTooltip.c_str());
-            */
+            // We are no longer over this slot, so draw the defalut gfx.
+            if (mActiveSlot >=0)
+                drawSlot(mActiveSlot, GuiImageset::STATE_ELEMENT_DEFAULT);
+            mActiveSlot = activeSlot;
+            drawSlot(mActiveSlot, GuiImageset::STATE_ELEMENT_M_OVER);
         }
-        if (MouseAction == GuiWindow::BUTTON_PRESSED && !mMouseButDown)
+        if (MouseAction == GuiWindow::BUTTON_PRESSED && !mActiveDrag)
         {
-            mMouseButDown = true;
             GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN,
-                StringConverter::toString(    y/(mHeight+ drawOffsetRow)*mSumCol +   x/(mWidth + drawOffsetCol)   ).c_str());
-            /*
-            setState(GuiImageset::STATE_ELEMENT_PUSHED);
-            draw();
-            */
+                                                   StringConverter::toString(activeSlot).c_str());
+            mActiveDrag = true;
         }
-        if (MouseAction == GuiWindow::BUTTON_RELEASED && mMouseButDown)
+        if (MouseAction == GuiWindow::BUTTON_RELEASED && mActiveDrag)
         {
-            mMouseButDown = false;
-            /*
-            setState(GuiImageset::STATE_ELEMENT_DEFAULT);
-            */
+            mActiveDrag = false;
         }
         return true; // No need to check other gadgets.
     }
     else  // Mouse is no longer over the the gadget.
     {
-        if (mMouseOver)
+        if (mActiveSlot >=0)
         {
-            mMouseOver = false;
-            mMouseButDown = false;
-            GuiManager::getSingleton().setTooltip("");
+            drawSlot(mActiveSlot, GuiImageset::STATE_ELEMENT_DEFAULT);
+            mActiveSlot = -1;
             return true; // No need to check other gadgets.
         }
     }
@@ -117,21 +111,21 @@ bool GuiGadgetSlot::mouseEvent(int MouseAction, int x, int y)
 //================================================================================================
 // Draw a single slot.
 //================================================================================================
-void GuiGadgetSlot::drawSlot(int pos, const char *strLabel)
+void GuiGadgetSlot::drawSlot(int pos, int state, const char *strLabel)
 {
     int row = pos / mSumCol;
     int col = pos - (row * mSumCol);
-    int strtX = mPosX + col * (drawOffsetCol + mWidth);
-    int strtY = mPosY + row * (drawOffsetRow + mHeight);
+    int strtX = mPosX + col * (mColSpace + mWidth);
+    int strtY = mPosY + row * (mRowSpace + mHeight);
     Texture *texture = ((GuiWindow*) mParent)->getTexture();
     // ////////////////////////////////////////////////////////////////////
     // Draw gaget.
     // ////////////////////////////////////////////////////////////////////
     PixelBox src = ((GuiWindow*) mParent)->getPixelBox()->getSubVolume(Box(
-                       gfxSrcPos[mState].x,
-                       gfxSrcPos[mState].y,
-                       gfxSrcPos[mState].x + mWidth,
-                       gfxSrcPos[mState].y + mHeight));
+                       gfxSrcPos[state].x,
+                       gfxSrcPos[state].y,
+                       gfxSrcPos[state].x + mWidth,
+                       gfxSrcPos[state].y + mHeight));
     if (mHasAlpha)
     {
         uint32 *srcData = static_cast<uint32*>(src.data);
@@ -155,10 +149,10 @@ void GuiGadgetSlot::drawSlot(int pos, const char *strLabel)
     // ////////////////////////////////////////////////////////////////////
     /*
         src = ((GuiWindow*) mParent)->getPixelBox()->getSubVolume(Box(
-                           gfxSrcPos[mState].x,
-                           gfxSrcPos[mState].y,
-                           gfxSrcPos[mState].x + mWidth,
-                           gfxSrcPos[mState].y + mHeight));
+                           gfxSrcPos[state].x,
+                           gfxSrcPos[state].y,
+                           gfxSrcPos[state].x + mWidth,
+                           gfxSrcPos[state].y + mHeight));
         if (mHasAlpha)
         {
             uint32 *srcData = static_cast<uint32*>(src.data);
@@ -207,5 +201,5 @@ void GuiGadgetSlot::drawSlot(int pos, const char *strLabel)
 void GuiGadgetSlot::draw()
 {
     for (int pos = 0; pos < mSumRow * mSumCol; ++pos)
-        drawSlot(pos, StringConverter::toString(pos).c_str());
+        drawSlot(pos, GuiImageset::STATE_ELEMENT_DEFAULT, StringConverter::toString(pos).c_str());
 }
