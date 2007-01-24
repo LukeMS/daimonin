@@ -96,9 +96,15 @@ private:
         STD_CAMERA_ZOOM =  30,
         MAX_CAMERA_ZOOM = 100
     };
+    enum
+    {
+        NONE,
+        DEFAULT,
+        POSITIVE,
+        NEGATIVE,
+    } mCameraRotating;
     bool mQuitGame;
     bool mShiftDown;
-    int mDayTime;
     int mSceneDetailIndex;
     Ogre::Real mIdleTime;
     Ogre::Real mCameraZoom;

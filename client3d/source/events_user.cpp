@@ -44,7 +44,6 @@ using namespace Ogre;
 void Events::keyPressed(KeyEvent *e)
 {
     mIdleTime =0;
-
     // ////////////////////////////////////////////////////////////////////
     // GUI keyEvents.
     // ////////////////////////////////////////////////////////////////////
@@ -184,22 +183,11 @@ void Events::keyPressed(KeyEvent *e)
 
         case KC_S:
         {
-            Item::getSingleton().clearContainer(Item::getSingleton().mActOpenContainerID);
-            break;
-
             bool ready = ObjectManager::getSingleton().isSecondaryWeaponReady(ObjectNPC::HERO);
             ObjectManager::getSingleton().readySecondaryWeapon(ObjectNPC::HERO, !ready);
             break;
         }
 
-        /*
-                case KC_S:
-                {
-              bool ready = ObjectManager::getSingleton().isSecondaryWeaponReady(ObjectNPC::HERO);
-                    ObjectManager::getSingleton().readySecondaryWeapon(ObjectNPC::HERO, !ready);
-           break;
-                }
-        */
         case KC_T:
             Item::getSingleton().printAllItems();
             GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_ITEM_CONTAINER, GuiManager::GUI_MSG_SLOT_REDRAW,0,0);
@@ -222,18 +210,6 @@ void Events::keyPressed(KeyEvent *e)
         case KC_W:
             //Network::getSingleton().send_command("/apply", -1, SC_NORMAL);
             //GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "apply");
-            if (mDayTime)
-            {
-                mDayTime =0;
-                // mLight[LIGHT_VOL ]->setVisible(false);
-                // mLight[LIGHT_SPOT]->setVisible(true);
-            }
-            else
-            {
-                mDayTime =15;
-                //mLight[LIGHT_VOL ]->setVisible(true);
-                //mLight[LIGHT_SPOT]->setVisible(false);
-            }
             break;
 
         case KC_X:
@@ -353,74 +329,74 @@ void Events::keyPressed(KeyEvent *e)
 
         case KC_F1:
         {
+            /*
             Vector3 pos = mCamera->getPosition();
             pos.y+= 5;
             Logger::log().error() << "camera pos: " << pos.x << "   " <<pos.y << "   " << pos.z;
             mCamera->setPosition(pos);
+            */
         }
         break;
 
         case KC_F2:
         {
+            /*
             Vector3 pos = mCamera->getPosition();
             pos.y-= 5;
             Logger::log().error() << "camera pos: " << pos.x << "   " <<pos.y << "   " << pos.z;
             mCamera->setPosition(pos);
+            */
         }
         break;
 
         case KC_F3:
         {
+            /*
             Vector3 pos = mCamera->getPosition();
             pos.z+= 5;
             Logger::log().error() << "camera pos: " << pos.x << "   " << pos.y << "   " << pos.z;
             mCamera->setPosition(pos);
+            */
         }
         break;
 
         case KC_F4:
         {
+            /*
             Vector3 pos = mCamera->getPosition();
             pos.z-= 5;
             Logger::log().error() << "camera pos: " << pos.x << "   "<< pos.y << "   " << pos.z;
             mCamera->setPosition(pos);
+            */
         }
         break;
 
         case KC_F5:
         {
-            mCamera->yaw(Degree(-1));
-        }
-        break;
-
-        case KC_F6:
-        {
-            mCamera->yaw(Degree(+1));
-        }
-        break;
-
-        case KC_F7:
-        {
+            /*
             static int cAdd =0;
             ++cAdd;
             Logger::log().error() << "camera pitch add: " << cAdd;
             mCamera->pitch(Degree(+1));
+            */
             break;
         }
 
-        case KC_F8:
+        case KC_F6:
         {
+            /*
             static int cAdd =0;
             ++cAdd;
             Logger::log().error() << "camera pitch sub: " << cAdd;
             mCamera->pitch(Degree(-1));
+            */
             break;
         }
 
         case KC_SUBTRACT:
         {
             if (mCameraZoom < MAX_CAMERA_ZOOM)
-            mCameraZoom += 5;
+                mCameraZoom += 5;
             mCamera->setFOVy(Degree(mCameraZoom));
             break;
         }
@@ -428,10 +404,22 @@ void Events::keyPressed(KeyEvent *e)
         case KC_ADD:
         {
             if (mCameraZoom > MIN_CAMERA_ZOOM)
-            mCameraZoom -= 5;
+                mCameraZoom -= 5;
             mCamera->setFOVy(Degree(mCameraZoom));
             break;
         }
+
+        case KC_PGUP:
+            mCameraRotating = POSITIVE;
+            break;
+
+        case KC_PGDOWN:
+            mCameraRotating = NEGATIVE;
+            break;
+
+        case KC_HOME:
+            mCameraRotating = DEFAULT;
+            break;
 
         // ////////////////////////////////////////////////////////////////////
         // Screenshot.
@@ -458,12 +446,14 @@ void Events::keyPressed(KeyEvent *e)
     e->consume();
 }
 
-void Events::keyClicked(KeyEvent* )
-{}
+void Events::keyClicked(KeyEvent*e)
+{
+}
 
 void Events::keyReleased(KeyEvent* e)
 {
     mShiftDown = e->isShiftDown();
+    mCameraRotating = NONE;
     switch (e->getKey())
     {
             // ////////////////////////////////////////////////////////////////////
