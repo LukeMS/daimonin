@@ -154,6 +154,7 @@ bool Events::frameStarted(const FrameEvent& evt)
                 mCameraZoom = STD_CAMERA_ZOOM;
                 mCamera = mSceneManager->createCamera("PlayerCam");
                 Viewport *VP = mWindow->addViewport(mCamera);
+                //VP->setBackgroundColour(ColourValue(1.0, 1.0, 1.0));
                 mCamera->setAspectRatio(Real(VP->getActualWidth()) / Real(VP->getActualHeight()));
                 mCamera->setFOVy(Degree(mCameraZoom));
                 //mCamera->setPosition(0,175,340);
@@ -219,11 +220,9 @@ bool Events::frameStarted(const FrameEvent& evt)
                 setLightMember(light, 1);
                 light->setVisible(false);
                 mSceneManager->setAmbientLight(ColourValue(1.0, 1.0, 1.0));
-
-                // mSceneMgr->setFog(FOG_LINEAR , ColourValue(.7,.7,.7), 0.005, 450, 800);
-                // mSceneMgr->setFog(FOG_LINEAR , ColourValue(1,1,1), 0.005, 450, 800);
-
                 */
+                mSceneManager->setFog(FOG_LINEAR , ColourValue(0,0,0), 0, 450, 800);
+
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_SPELL);
                 break;
             }
@@ -602,7 +601,7 @@ bool Events::frameStarted(const FrameEvent& evt)
                         GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~:KeyS~ to ready/unready secondary weapon.");
                         GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~:KeyQ~ to start attack animation.");
                         GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~PGUP/PGDOWN~ to rotate camera.");
-                        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~HOME~ to reset camera rotation.");
+                        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~PAUSE~ to freeze camera rotation.");
                         GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Example of user defined chars: :( :) :D :P");
                         // Can crash the client...
                         //ObjectManager::getSingleton().setNameNPC(ObjectNPC::HERO, strPlayerName.c_str());
@@ -683,19 +682,20 @@ bool Events::frameEnded(const FrameEvent& evt)
     {
         if (mCameraRotating != NONE)
         {
-            if (mCameraRotating == DEFAULT)
+            if (mCameraRotating == TURNBACK && cameraAngle)
             {
-                mCamera->yaw(Degree(360-cameraAngle));
-                cameraAngle= 0;
+                mCamera->yaw(Degree((cameraAngle < 0)?deltaCameraAngle:-deltaCameraAngle));
+                cameraAngle+= (cameraAngle < 0)?deltaCameraAngle:-deltaCameraAngle;
                 mCamera->setPosition(340.0*Math::Sin(Degree(cameraAngle)), 175, 340.0 *Math::Cos(Degree(cameraAngle)));
+                if (!cameraAngle)  mCameraRotating = NONE;
             }
-            else if (mCameraRotating == POSITIVE)
+            else if (mCameraRotating == POSITIVE && cameraAngle < 65)
             {
                 mCamera->yaw(Degree(deltaCameraAngle));
                 cameraAngle+= deltaCameraAngle;
                 mCamera->setPosition(340.0*Math::Sin(Degree(cameraAngle)), 175, 340.0 *Math::Cos(Degree(cameraAngle)));
             }
-            else if (mCameraRotating == NEGATIVE)
+            else if (mCameraRotating == NEGATIVE && cameraAngle >-65)
             {
                 mCamera->yaw(Degree(-deltaCameraAngle));
                 cameraAngle-= deltaCameraAngle;

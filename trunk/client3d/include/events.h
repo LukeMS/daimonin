@@ -93,13 +93,14 @@ private:
     enum
     {
         MIN_CAMERA_ZOOM =  10,
-        STD_CAMERA_ZOOM =  30,
+        STD_CAMERA_ZOOM =  35,
         MAX_CAMERA_ZOOM = 100
     };
     enum
     {
         NONE,
-        DEFAULT,
+        FREEZE,
+        TURNBACK,
         POSITIVE,
         NEGATIVE,
     } mCameraRotating;
