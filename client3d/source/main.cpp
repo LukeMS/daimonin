@@ -167,7 +167,7 @@ int main(int argc, char **argv)
         {
             if (!parseCmdLine(argv[argc-1], argv[argc]))
                 return 0;
-			--argc;
+            --argc;
         }
         else
         {

@@ -44,6 +44,11 @@ using namespace Ogre;
 void Events::keyPressed(KeyEvent *e)
 {
     mIdleTime =0;
+
+    static float fogDensity = 0.05;
+    static int fogStart = 450;
+
+
     // ////////////////////////////////////////////////////////////////////
     // GUI keyEvents.
     // ////////////////////////////////////////////////////////////////////
@@ -329,69 +334,72 @@ void Events::keyPressed(KeyEvent *e)
 
         case KC_F1:
         {
-            /*
             Vector3 pos = mCamera->getPosition();
             pos.y+= 5;
             Logger::log().error() << "camera pos: " << pos.x << "   " <<pos.y << "   " << pos.z;
             mCamera->setPosition(pos);
-            */
         }
         break;
 
         case KC_F2:
         {
-            /*
             Vector3 pos = mCamera->getPosition();
             pos.y-= 5;
             Logger::log().error() << "camera pos: " << pos.x << "   " <<pos.y << "   " << pos.z;
             mCamera->setPosition(pos);
-            */
         }
         break;
 
         case KC_F3:
         {
-            /*
             Vector3 pos = mCamera->getPosition();
             pos.z+= 5;
             Logger::log().error() << "camera pos: " << pos.x << "   " << pos.y << "   " << pos.z;
             mCamera->setPosition(pos);
-            */
         }
         break;
 
         case KC_F4:
         {
-            /*
             Vector3 pos = mCamera->getPosition();
             pos.z-= 5;
             Logger::log().error() << "camera pos: " << pos.x << "   "<< pos.y << "   " << pos.z;
             mCamera->setPosition(pos);
-            */
         }
         break;
 
         case KC_F5:
         {
-            /*
             static int cAdd =0;
             ++cAdd;
             Logger::log().error() << "camera pitch add: " << cAdd;
             mCamera->pitch(Degree(+1));
-            */
-            break;
         }
+        break;
 
         case KC_F6:
         {
-            /*
             static int cAdd =0;
             ++cAdd;
             Logger::log().error() << "camera pitch sub: " << cAdd;
             mCamera->pitch(Degree(-1));
-            */
-            break;
         }
+        break;
+
+        case KC_F7:
+        {
+            fogStart+=5;
+            mSceneManager->setFog(FOG_LINEAR , ColourValue(0,0,0), 0, fogStart, 600);
+        }
+        break;
+
+        case KC_F8:
+        {
+            fogStart-=5;
+            mSceneManager->setFog(FOG_LINEAR , ColourValue(0,0,0), 0, fogStart, 600);
+        }
+        break;
+
 
         case KC_SUBTRACT:
         {
@@ -417,17 +425,17 @@ void Events::keyPressed(KeyEvent *e)
             mCameraRotating = NEGATIVE;
             break;
 
-        case KC_HOME:
-            mCameraRotating = DEFAULT;
+        case KC_PAUSE:
+            mCameraRotating = FREEZE;
             break;
 
-        // ////////////////////////////////////////////////////////////////////
-        // Screenshot.
-        // ////////////////////////////////////////////////////////////////////
+            // ////////////////////////////////////////////////////////////////////
+            // Screenshot.
+            // ////////////////////////////////////////////////////////////////////
         case KC_SYSRQ:
         {
             static int mNumScreenShots=0;
-            String strTemp = "screenshot_" + StringConverter::toString(++mNumScreenShots,2,'0') + ".png";
+            String strTemp = "Client3d_" + StringConverter::toString(++mNumScreenShots,2,'0') + ".png";
             mWindow->writeContentsToFile(strTemp.c_str());
             mTimeUntilNextToggle = 0.5;
             break;
@@ -447,13 +455,11 @@ void Events::keyPressed(KeyEvent *e)
 }
 
 void Events::keyClicked(KeyEvent*e)
-{
-}
+{}
 
 void Events::keyReleased(KeyEvent* e)
 {
     mShiftDown = e->isShiftDown();
-    mCameraRotating = NONE;
     switch (e->getKey())
     {
             // ////////////////////////////////////////////////////////////////////
@@ -476,6 +482,12 @@ void Events::keyReleased(KeyEvent* e)
 
         case KC_G:
             // ObjectManager::getSingleton().Event(ObjectManager::OBJECT_NPC, OBJ_WALK,  0);
+            break;
+
+        case KC_PGUP:
+        case KC_PGDOWN:
+        case KC_PAUSE:
+            mCameraRotating = TURNBACK;
             break;
 
         default:
