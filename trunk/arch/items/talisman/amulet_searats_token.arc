@@ -1,6 +1,6 @@
 Object amulet_searats_token
 name Searats Token
-face Searats_Emblem.101
+face searats_emblem.101
 layer 3
 type 39
 material_real 641

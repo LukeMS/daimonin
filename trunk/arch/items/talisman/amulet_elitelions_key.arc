@@ -1,6 +1,6 @@
 Object amulet_elitelions_key
 name Elitelions Key
-face Elitelions_Emblem.101
+face elitelions_emblem.101
 layer 3
 type 39
 material_real 641

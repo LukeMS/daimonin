@@ -1,6 +1,6 @@
 Object amulet_scytheswingers_key
 name Scytheswingers Scythe
-face Scytheswingers_Emblem.101
+face scytheswingers_emblem.101
 layer 3
 type 39
 material_real 641
