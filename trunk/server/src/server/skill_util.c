@@ -902,7 +902,7 @@ int attack_hth(object *pl, int dir, char *string)
                 continue;
             CLEAR_FLAG(weapon, FLAG_APPLIED);
             CLEAR_FLAG(pl, FLAG_READY_WEAPON);
-			FIX_PLAYER(pl ,"attack hth");
+            FIX_PLAYER(pl ,"attack hth");
             if (pl->type == PLAYER)
             {
                 new_draw_info(NDI_UNIQUE, 0, pl, "You unwield your weapon in order to attack.");
@@ -1137,33 +1137,33 @@ float get_skill_time(object *op, int skillnr)
  */
 int check_skill_action_time(object *op, object *skill)
 {
-	if(!skill)
-		return FALSE;
+    if(!skill)
+        return FALSE;
 
     switch (skill->stats.sp)
     {
-          /* spells */
+        /* spells */
         case SK_PRAYING:
         case SK_SPELL_CASTING:
-          if (CONTR(op)->action_casting > ROUND_TAG)
-          {
-              new_draw_info_format(NDI_UNIQUE, 0, op, "You can cast in %2.2f seconds again.",
-                                   (float) (CONTR(op)->action_casting - ROUND_TAG) / pticks_second);
-              return FALSE;
-          }
-          break;
+            if (CONTR(op)->action_casting > ROUND_TAG)
+            {
+                new_draw_info_format(NDI_UNIQUE, 0, op, "You can cast in %2.2f seconds again.",
+                        (float) (CONTR(op)->action_casting - ROUND_TAG) / pticks_second);
+                return FALSE;
+            }
+            break;
 
-          /* archery */
+            /* archery */
         case SK_SLING_WEAP:
         case SK_XBOW_WEAP:
         case SK_MISSILE_WEAPON:
-          if (CONTR(op)->action_range > ROUND_TAG)
-          {
-              new_draw_info_format(NDI_UNIQUE, 0, op, "You can shoot again in %2.2f seconds.",
-                                   (float) (CONTR(op)->action_range - ROUND_TAG) / pticks_second);
-              return FALSE;
-          }
-          break;
+            if (CONTR(op)->action_range > ROUND_TAG)
+            {
+                new_draw_info_format(NDI_UNIQUE, 0, op, "You can shoot again in %2.2f seconds.",
+                        (float) (CONTR(op)->action_range - ROUND_TAG) / pticks_second);
+                return FALSE;
+            }
+            break;
 
         case SK_USE_MAGIC_ITEM:
           if (CONTR(op)->action_range > ROUND_TAG)

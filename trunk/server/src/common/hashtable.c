@@ -265,7 +265,7 @@ void hashtable_resize_delta(hashtable *const ht,
         const hashtable_size_t delta, 
         const hashtable_size_t min_buckets_wanted)
 {
-	hashtable_size_t resize_to;
+    hashtable_size_t resize_to;
 
     if(ht->consider_shrink)
         hashtable_maybe_shrink(ht);
@@ -384,7 +384,7 @@ static void hashtable_resize(hashtable *const ht, const hashtable_size_t sz)
 {
     struct hashtable_entry *new_table;
     hashtable_size_t i;
-	hashtable_size_t bucket_count_minus_one;
+    hashtable_size_t bucket_count_minus_one;
     
     assert((sz & (sz-1)) == 0);       // sz should already be a power of two
     assert(sz >= hashtable_size(ht)); // we should never overshrink

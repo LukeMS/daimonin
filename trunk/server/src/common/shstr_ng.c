@@ -139,8 +139,8 @@ static int s_newstringlength;
 static const char *s_newstring;
 static int lstring_key_equals(const hashtable_const_key_t key1, const hashtable_const_key_t key2)
 {
-	register char __res = 1, *k1 = (char *)key1, *k2 = (char *)key2;
-	register signed int l = (key1 == s_newstring || key2 == s_newstring ? s_newstringlength : -1);
+    register char __res = 1, *k1 = (char *)key1, *k2 = (char *)key2;
+    register signed int l = (key1 == s_newstring || key2 == s_newstring ? s_newstringlength : -1);
 
     GATHER(ladd_stats.strcmps);
     // Try to find a quick answer (see guarantee given about equals() use in hashtable.c)
@@ -235,7 +235,7 @@ shstr *add_lstring(const char *str, int n)
 
 shstr *add_string(const char *str)
 {
-	struct shared_string *ss;
+    struct shared_string *ss;
 
     GATHER(add_stats.calls);
 
@@ -413,7 +413,7 @@ char * ss_dump_statistics(char *msg)
 
 static void ss_find_totals(int *entries, int *refs, int *links, int what)
 {
-	hashtable_iterator_t i;
+    hashtable_iterator_t i;
 
     *entries = hashtable_size((void *)shared_strings);
 

@@ -144,8 +144,8 @@ player *get_player(player *p)
             LOG(llevError, "ERROR: get_player(): out of memory\n");
 
         player_active++; /* increase player count */
-		if(player_active_meta < player_active)
-			player_active_meta = player_active;
+        if(player_active_meta < player_active)
+            player_active_meta = player_active;
 
         if (!last_player)
             first_player = last_player = p;
@@ -237,17 +237,17 @@ void free_player(player *pl)
     {
         SET_FLAG(pl->ob, FLAG_NO_FIX_PLAYER);
 
-		container_unlink(pl, NULL);
+        container_unlink(pl, NULL);
 
-		/* remove the player from global gmaster lists */
-		if(pl->gmaster_mode != GMASTER_MODE_NO)
-			remove_gmaster_list(pl);
+        /* remove the player from global gmaster lists */
+        if(pl->gmaster_mode != GMASTER_MODE_NO)
+            remove_gmaster_list(pl);
 
-		/* remove player from party */
-		if(pl->group_status & GROUP_STATUS_GROUP)
-			party_remove_member(pl, TRUE);
-		
-		activelist_remove(pl->ob);
+        /* remove player from party */
+        if(pl->group_status & GROUP_STATUS_GROUP)
+            party_remove_member(pl, TRUE);
+
+        activelist_remove(pl->ob);
         if (!QUERY_FLAG(pl->ob, FLAG_REMOVED))
         {
             remove_ob(pl->ob);
@@ -257,21 +257,21 @@ void free_player(player *pl)
     /* Free pet links - moved that before remove from active list */
     while(pl->pets)
         objectlink_unlink(&pl->pets, NULL, pl->pets);
-	
-	/* this is needed so we don't destroy the player queue inside the
+
+    /* this is needed so we don't destroy the player queue inside the
      * main loop. The socket loop can handle it nicely but the player
      * loop not - with this simple trick we avoid alot work.
-	 * Remember: at this point our player object is saved and removed from the game
+     * Remember: at this point our player object is saved and removed from the game
      * only for the player loop and the socket its still present.
      */
 
-	if(pl->state == ST_ZOMBIE)
-	{
-		pl->state = ST_DEAD;
-		FREE_AND_COPY_HASH(pl->ob->name, "noname"); /* we neutralize the name - we don't want find this player anymore */
-		insert_ob_in_ob(pl->ob, &void_container); /* Avoid gc of the player object */
-		return;		
-	}
+    if(pl->state == ST_ZOMBIE)
+    {
+        pl->state = ST_DEAD;
+        FREE_AND_COPY_HASH(pl->ob->name, "noname"); /* we neutralize the name - we don't want find this player anymore */
+        insert_ob_in_ob(pl->ob, &void_container); /* Avoid gc of the player object */
+        return;
+    }
 
     /* Now remove from list of players */
     if (pl->prev)
@@ -293,7 +293,7 @@ void free_player(player *pl)
     FREE_AND_CLEAR_HASH(pl->orig_savebed_map);
     FREE_AND_CLEAR_HASH(pl->maplevel );
     FREE_AND_CLEAR_HASH(pl->orig_map);
-    
+
     if(pl->socket.status != ST_SOCKET_NO)
         free_newsocket(&pl->socket);
 
@@ -301,7 +301,7 @@ void free_player(player *pl)
     {
         if (!QUERY_FLAG(pl->ob, FLAG_REMOVED)) 
             remove_ob(pl->ob);
-     
+
         /* Force an out-of-loop gc to delete the player object NOW */
         object_gc();
     }
@@ -317,8 +317,8 @@ player *add_player(NewSocket *ns)
     player *p;
 
     p = get_player(NULL);
-	if(!p)
-		return NULL;
+    if(!p)
+        return NULL;
 
     memcpy(&p->socket, ns, sizeof(NewSocket));
     /* Needed because the socket we just copied over needs to be cleared.
@@ -327,7 +327,7 @@ player *add_player(NewSocket *ns)
      */
     p->socket.pl = p;
     p->socket.status = Ns_Login; /* now, we start the login procedure! */
-	p->socket.below_clear = 0;
+    p->socket.below_clear = 0;
     p->socket.update_tile = 0;
     p->socket.look_position = 0;
 
@@ -353,58 +353,58 @@ void give_initial_items(object *pl, struct oblnk *items)
 
         /* Forces get applied per default */
         if (op->type == FORCE)
-		{
+        {
             SET_FLAG(op, FLAG_APPLIED);
-		}
+        }
         /* we never give weapons/armour if these cannot be used
-                  by this player due to race restrictions */
-		else if ((!QUERY_FLAG(pl, FLAG_USE_ARMOUR)
-				&& (op->type == ARMOUR
-				|| op->type == BOOTS
-				|| op->type == CLOAK
-                || op->type == HELMET
-                || op->type == SHOULDER
-                || op->type == LEGS
-				|| op->type == SHIELD
-				|| op->type == GLOVES
-				|| op->type == BRACERS
-				|| op->type == GIRDLE))
-				|| (!QUERY_FLAG(pl, FLAG_USE_WEAPON) && op->type == WEAPON))
-		{
-			remove_ob(op); /* inventory action */
+           by this player due to race restrictions */
+        else if ((!QUERY_FLAG(pl, FLAG_USE_ARMOUR)
+                    && (op->type == ARMOUR
+                        || op->type == BOOTS
+                        || op->type == CLOAK
+                        || op->type == HELMET
+                        || op->type == SHOULDER
+                        || op->type == LEGS
+                        || op->type == SHIELD
+                        || op->type == GLOVES
+                        || op->type == BRACERS
+                        || op->type == GIRDLE))
+                || (!QUERY_FLAG(pl, FLAG_USE_WEAPON) && op->type == WEAPON))
+        {
+            remove_ob(op); /* inventory action */
             continue;
-		}
-		else if (op->type == ABILITY)
-		{
-			CONTR(pl)->known_spells[CONTR(pl)->nrofknownspells++] = op->stats.sp;
-			remove_ob(op);
-			continue;
-		}
-		/* now we apply the stuff on default - *very* useful for real new players! */
-		else  if(op->type == WEAPON || op->type == AMULET || op->type == RING ||
-				op->type == BOOTS || op->type == HELMET || op->type == BRACERS || op->type == GIRDLE ||
-				op->type == CLOAK || op->type == ARMOUR || op->type == SHIELD || op->type == GLOVES || 
+        }
+        else if (op->type == ABILITY)
+        {
+            CONTR(pl)->known_spells[CONTR(pl)->nrofknownspells++] = op->stats.sp;
+            remove_ob(op);
+            continue;
+        }
+        /* now we apply the stuff on default - *very* useful for real new players! */
+        else  if(op->type == WEAPON || op->type == AMULET || op->type == RING ||
+                op->type == BOOTS || op->type == HELMET || op->type == BRACERS || op->type == GIRDLE ||
+                op->type == CLOAK || op->type == ARMOUR || op->type == SHIELD || op->type == GLOVES || 
                 op->type == SHIELD || op->type == GLOVES)
-		{
-			if (need_identify(op))
-			{
-				SET_FLAG(op, FLAG_IDENTIFIED);
-				CLEAR_FLAG(op, FLAG_CURSED);
-				CLEAR_FLAG(op, FLAG_DAMNED);
-			}
-			manual_apply(pl, op,0); 
-		}
+        {
+            if (need_identify(op))
+            {
+                SET_FLAG(op, FLAG_IDENTIFIED);
+                CLEAR_FLAG(op, FLAG_CURSED);
+                CLEAR_FLAG(op, FLAG_DAMNED);
+            }
+            manual_apply(pl, op,0); 
+        }
 
-		/* Give starting characters identified, uncursed, and undamned
-		* items.  Just don't identify gold or silver, or it won't be
-		* merged properly.
-		*/
-		else if (need_identify(op))
-		{
-			SET_FLAG(op, FLAG_IDENTIFIED);
-			CLEAR_FLAG(op, FLAG_CURSED);
-			CLEAR_FLAG(op, FLAG_DAMNED);
-		}
+        /* Give starting characters identified, uncursed, and undamned
+         * items.  Just don't identify gold or silver, or it won't be
+         * merged properly.
+         */
+        else if (need_identify(op))
+        {
+            SET_FLAG(op, FLAG_IDENTIFIED);
+            CLEAR_FLAG(op, FLAG_CURSED);
+            CLEAR_FLAG(op, FLAG_DAMNED);
+        }
     } /* for loop of objects in player inv */
 }
 
@@ -421,9 +421,9 @@ void give_initial_items(object *pl, struct oblnk *items)
  */
 void get_name(object *op, int value)
 {
-	char buf[8];
+    char buf[8];
 
-	sprintf(buf, "QN%d", value);
+    sprintf(buf, "QN%d", value);
     CONTR(op)->state = ST_GET_NAME;
     send_query(&CONTR(op)->socket, CS_QUERY_HIDEINPUT, buf);
 }
@@ -431,18 +431,18 @@ void get_name(object *op, int value)
 /* if we are here, the login name is valid */
 void get_password(object *op, int value)
 {
-	char buf[8];
-	
-	sprintf(buf, "QP%d", value);
+    char buf[8];
+
+    sprintf(buf, "QP%d", value);
     CONTR(op)->state = ST_GET_PASSWORD;
     send_query(&CONTR(op)->socket, CS_QUERY_HIDEINPUT, buf);
 }
 
 void confirm_password(object *op, int value)
 {
-	char buf[8];
-	
-	sprintf(buf, "QV%d", value);
+    char buf[8];
+
+    sprintf(buf, "QV%d", value);
     CONTR(op)->state = ST_CONFIRM_PASSWORD;
     send_query(&CONTR(op)->socket, CS_QUERY_HIDEINPUT, buf);
 }
@@ -476,8 +476,8 @@ void flee_player(object *op)
         if (move_ob(op, absdir(dir + diff * m), op) || (diff == 0 && move_ob(op, absdir(dir - diff * m), op)))
         {
             /*
-                 draw_client_map(op);
-            */
+               draw_client_map(op);
+             */
             return;
         }
     }
@@ -531,21 +531,21 @@ int check_pick(object *op)
             switch (CONTR(op)->mode)
             {
                 case 0:
-                  return 1; /* don't pick up */
+                    return 1; /* don't pick up */
                 case 1:
-                  pick_up(op, tmp);
-                  return 1;
+                    pick_up(op, tmp);
+                    return 1;
                 case 2:
-                  pick_up(op, tmp);
-                  return 0;
+                    pick_up(op, tmp);
+                    return 0;
                 case 3:
-                  return 0; /* stop before pickup */
+                    return 0; /* stop before pickup */
                 case 4:
-                  pick_up(op, tmp);
-                  break;
+                    pick_up(op, tmp);
+                    break;
                 case 5:
-                  pick_up(op, tmp);
-                  stop = 1;
+                    pick_up(op, tmp);
+                    stop = 1;
                   break;
                 case 6:
                   if (QUERY_FLAG(tmp, FLAG_KNOWN_MAGICAL) && !QUERY_FLAG(tmp, FLAG_KNOWN_CURSED))
@@ -1280,30 +1280,30 @@ void do_some_living(object *op)
     if (CONTR(op)->state == ST_PLAYING)
     {
         /* hp reg */
-		if(CONTR(op)->damage_timer)
-			CONTR(op)->damage_timer--;
+        if(CONTR(op)->damage_timer)
+            CONTR(op)->damage_timer--;
         else if (CONTR(op)->gen_hp)
         {
-			if (--op->last_heal < 0)
-			{
-				op->last_heal = CONTR(op)->base_hp_reg;
+            if (--op->last_heal < 0)
+            {
+                op->last_heal = CONTR(op)->base_hp_reg;
 
-				if (op->stats.hp < op->stats.maxhp)
-				{
-					int last_food   = op->stats.food;
+                if (op->stats.hp < op->stats.maxhp)
+                {
+                    int last_food   = op->stats.food;
 
-					op->stats.hp += CONTR(op)->reg_hp_num;
-					if (op->stats.hp > op->stats.maxhp)
-					    op->stats.hp = op->stats.maxhp;
+                    op->stats.hp += CONTR(op)->reg_hp_num;
+                    if (op->stats.hp > op->stats.maxhp)
+                        op->stats.hp = op->stats.maxhp;
 
-					/* faster hp reg - faster digestion... evil */
-					op->stats.food--;
-					if (CONTR(op)->digestion < 0)
-						op->stats.food += CONTR(op)->digestion;
-					else if (CONTR(op)->digestion > 0 && random_roll(0, CONTR(op)->digestion))
-					    op->stats.food = last_food;
-				}
-			}
+                    /* faster hp reg - faster digestion... evil */
+                    op->stats.food--;
+                    if (CONTR(op)->digestion < 0)
+                        op->stats.food += CONTR(op)->digestion;
+                    else if (CONTR(op)->digestion > 0 && random_roll(0, CONTR(op)->digestion))
+                        op->stats.food = last_food;
+                }
+            }
         }
 
         /* sp reg */
@@ -1635,7 +1635,7 @@ void kill_player(object *op)
                     change_attr_value(&(dep->stats), i, -1);
                     SET_FLAG(dep, FLAG_APPLIED);
                     new_draw_info(NDI_UNIQUE, 0, op, lose_msg[i]);
-					FIX_PLAYER(op ,"kill player - change attr");
+                    FIX_PLAYER(op ,"kill player - change attr");
                     lost_a_stat = 1;
                 }
             }
@@ -1680,7 +1680,7 @@ void kill_player(object *op)
     cast_heal(op, 110, op, SP_CURE_POISON);
     /*cast_heal(op, op, SP_CURE_CONFUSION);*/
     cure_disease(op, NULL);  /* remove any disease */
-	restoration(NULL, op);
+    restoration(NULL, op);
 
     apply_death_exp_penalty(op);
     if (op->stats.food < 0)

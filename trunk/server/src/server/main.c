@@ -175,9 +175,9 @@ void process_players1(mapstruct *map)
     for (pl = first_player; pl != NULL; pl = pl->next)
     {
         if (handle_newcs_player(pl) == -1) /* -1: player is invalid now */
-		{
+        {
             continue;
-		}
+        }
 
         do_some_living(pl->ob);
 
@@ -420,7 +420,7 @@ void process_events()
     gettimeofday(&start, NULL);
 #endif
 
-	process_players1(NULL);
+    process_players1(NULL);
     /* Preprocess step: move all objects in inserted_active_objects
      * into their real activelists */
     /* TODO: to make AI more efficient, keep activelist sorted with
@@ -489,8 +489,8 @@ void process_events()
         if (map->active_objects->active_next && map->in_memory == MAP_IN_MEMORY)
             process_map_events(map);
     }
-	
-	process_players2(NULL);
+
+    process_players2(NULL);
 
 #if defined TIME_PROCESS_EVENTS
     gettimeofday(&end, NULL);
@@ -712,7 +712,7 @@ void shutdown_agent(int timer, int ret, char *reason)
             {
                 LOG(llevSystem, "SERVER SHUTDOWN STARTED\n");
                 command_kick(NULL, NULL);
-				cleanup(ret_signal);
+                cleanup(ret_signal);
             }
         }
         return; /* nothing to do */
@@ -725,7 +725,7 @@ void shutdown_agent(int timer, int ret, char *reason)
         sd_timer = timer;
 
         new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "[Server]: ** SERVER SHUTDOWN STARTED **");
-		ret_signal = ret;
+        ret_signal = ret;
         if (reason)
             new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "[Server]: %s", reason);
 
@@ -786,11 +786,11 @@ void shutdown_agent(int timer, int ret, char *reason)
 #ifdef DEBUG_TRAVERSE_PLAYER_DIR
 static void traverse_player_stats(char* start_dir)
 {
-    DIR* dir;						/* pointer to the scanned directory. */
-    struct dirent* entry=NULL;		/* pointer to one directory entry.   */
-    char *fptr, cwd[HUGE_BUF+1];	/* current working directory.        */
-    static char base_cwd[HUGE_BUF+1];	/* base (start) directory        */
-    struct stat dir_stat;			/* used by stat().                   */
+    DIR* dir;                         /* pointer to the scanned directory. */
+    struct dirent* entry=NULL;        /* pointer to one directory entry.   */
+    char *fptr, cwd[HUGE_BUF+1];      /* current working directory.        */
+    static char base_cwd[HUGE_BUF+1]; /* base (start) directory        */
+    struct stat dir_stat;             /* used by stat().                   */
 
     /* first, save path of current working directory */
     if (!getcwd(cwd, HUGE_BUF+1)) {

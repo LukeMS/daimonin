@@ -81,8 +81,8 @@ struct mempool *pool_object, *pool_player, *pool_map_bfs,
     *pool_path_segment, *pool_mob_data, *pool_mob_knownobj,
     *pool_mob_behaviourset, *pool_mob_behaviour, *pool_mob_behaviourparam,
     *pool_objectlink, *pool_gmasters, *pool_bannode, *pool_tlist_tweak,
-	*pool_cmd_buf16,*pool_cmd_buf32,*pool_cmd_buf64,
-	*pool_cmd_buf128,*pool_cmd_buf256,*pool_cmd_buf1024,*pool_cmd_buf4096;
+    *pool_cmd_buf16,*pool_cmd_buf32,*pool_cmd_buf64,
+    *pool_cmd_buf128,*pool_cmd_buf256,*pool_cmd_buf1024,*pool_cmd_buf4096;
 
 /* Return the exponent exp needed to round n up to the nearest power of two, so that
  * (1 << exp) >= n and (1 << (exp -1)) < n */
@@ -120,7 +120,7 @@ void free_mempool(struct mempool *pool)
 
 struct mempool *create_mempool(const char *description, uint32 expand, uint32 size,
         uint32 flags, chunk_initialisator initialisator, chunk_deinitialisator deinitialisator,
-		chunk_constructor constructor, chunk_destructor destructor)
+        chunk_constructor constructor, chunk_destructor destructor)
 {
     int i;
     struct mempool *pool;
@@ -136,8 +136,8 @@ struct mempool *create_mempool(const char *description, uint32 expand, uint32 si
     pool->expand_size = expand;
     pool->chunksize = size;
     pool->flags = flags;
-	pool->initialisator = initialisator;
-	pool->deinitialisator = deinitialisator;
+    pool->initialisator = initialisator;
+    pool->deinitialisator = deinitialisator;
     pool->constructor = constructor;
     pool->destructor = destructor;
 
@@ -180,21 +180,21 @@ void init_mempools()
 
     pool_tlist_tweak = create_mempool("treasure list tweak", 100, sizeof(tlist_tweak), 0, NULL, NULL, NULL, NULL);
 
-	/* for testing purpose, we get everytime only 1 buffer more */
-	pool_cmd_buf16 = create_mempool("command buffer 16b", 1, sizeof(command_struct), 0, 
-		(chunk_initialisator) initialize_command_buffer16, NULL, NULL, NULL);
-	pool_cmd_buf32 = create_mempool("command buffer 32b", 1, sizeof(command_struct), 0, 
-		(chunk_initialisator) initialize_command_buffer32, NULL, NULL, NULL);
-	pool_cmd_buf64 = create_mempool("command buffer 64b", 1, sizeof(command_struct), 0, 
-		(chunk_initialisator) initialize_command_buffer64, NULL, NULL, NULL);
-	pool_cmd_buf128 = create_mempool("command buffer 128b", 1, sizeof(command_struct), 0, 
-		(chunk_initialisator) initialize_command_buffer128, NULL, NULL, NULL);
-	pool_cmd_buf256 = create_mempool("command buffer 256b", 1, sizeof(command_struct), 0, 
-		(chunk_initialisator) initialize_command_buffer256, NULL, NULL, NULL);
-	pool_cmd_buf1024 = create_mempool("command buffer 1024b", 1, sizeof(command_struct), 0, 
-		(chunk_initialisator) initialize_command_buffer1024, NULL, NULL, NULL);
-	pool_cmd_buf4096 = create_mempool("command buffer 4096b", 1, sizeof(command_struct), 0, 
-		(chunk_initialisator) initialize_command_buffer4096, NULL, NULL, NULL);
+    /* for testing purpose, we get everytime only 1 buffer more */
+    pool_cmd_buf16 = create_mempool("command buffer 16b", 1, sizeof(command_struct), 0, 
+            (chunk_initialisator) initialize_command_buffer16, NULL, NULL, NULL);
+    pool_cmd_buf32 = create_mempool("command buffer 32b", 1, sizeof(command_struct), 0, 
+            (chunk_initialisator) initialize_command_buffer32, NULL, NULL, NULL);
+    pool_cmd_buf64 = create_mempool("command buffer 64b", 1, sizeof(command_struct), 0, 
+            (chunk_initialisator) initialize_command_buffer64, NULL, NULL, NULL);
+    pool_cmd_buf128 = create_mempool("command buffer 128b", 1, sizeof(command_struct), 0, 
+            (chunk_initialisator) initialize_command_buffer128, NULL, NULL, NULL);
+    pool_cmd_buf256 = create_mempool("command buffer 256b", 1, sizeof(command_struct), 0, 
+            (chunk_initialisator) initialize_command_buffer256, NULL, NULL, NULL);
+    pool_cmd_buf1024 = create_mempool("command buffer 1024b", 1, sizeof(command_struct), 0, 
+            (chunk_initialisator) initialize_command_buffer1024, NULL, NULL, NULL);
+    pool_cmd_buf4096 = create_mempool("command buffer 4096b", 1, sizeof(command_struct), 0, 
+            (chunk_initialisator) initialize_command_buffer4096, NULL, NULL, NULL);
 
     /* Initialize end-of-list pointers and a few other values*/
     removed_objects = &end_marker;
@@ -257,16 +257,16 @@ static void expand_mempool(struct mempool *pool, uint32 arraysize_exp)
         ptr->id = chunk_tracking_id++; /* this is a real, unique object id  allows tracking beyond get/free objects */
         ptr->flags |= MEMPOOL_OBJECT_FLAG_FREE;
 #endif
-		if (pool->initialisator )
-			pool->initialisator(MEM_USERDATA(ptr));
+        if (pool->initialisator )
+            pool->initialisator(MEM_USERDATA(ptr));
 
-		ptr = ptr->next = (struct mempool_chunk *) (((char *) ptr) + chunksize_real);
+        ptr = ptr->next = (struct mempool_chunk *) (((char *) ptr) + chunksize_real);
     }
 
     /* and the last element */
     ptr->next = &end_marker;
-	if (pool->initialisator )
-		pool->initialisator(MEM_USERDATA(ptr));
+    if (pool->initialisator )
+        pool->initialisator(MEM_USERDATA(ptr));
 #ifdef DEBUG_MEMPOOL_OBJECT_TRACKING
     ptr->obj_next = ptr->obj_prev = 0; /* secure */
     ptr->pool = pool;
@@ -367,8 +367,8 @@ void return_poolchunk_array_real(void *data, uint32 arraysize_exp, struct mempoo
 
     if (pool->flags & MEMPOOL_BYPASS_POOLS)
     {
-		if (pool->deinitialisator )
-			pool->deinitialisator(MEM_USERDATA(old));
+        if (pool->deinitialisator )
+            pool->deinitialisator(MEM_USERDATA(old));
         free(old);
         pool->nrof_allocated[arraysize_exp]--;
     }

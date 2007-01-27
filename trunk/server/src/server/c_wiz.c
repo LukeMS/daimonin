@@ -59,8 +59,8 @@
 
 static object * find_object(int i)
 {
-	/* i is the count - browse ALL and return the object */
-	return NULL;
+    /* i is the count - browse ALL and return the object */
+    return NULL;
 }
 
 /* Sets the god for some objects.  params should contain two values -
@@ -166,13 +166,13 @@ int command_kick(object *ob, char *params)
         return 0;
     }
 
-	if(!ob)
-	{
-		for(pl=first_player;pl!=NULL;pl=pl->next)
-			save_player(pl->ob, 1);
-	}
-	else
-		save_player(ob,1);
+    if(!ob)
+    {
+        for(pl=first_player;pl!=NULL;pl=pl->next)
+            save_player(pl->ob, 1);
+    }
+    else
+        save_player(ob,1);
 
     for (pl = first_player; pl != NULL; pl = pl->next)
     {
@@ -181,7 +181,7 @@ int command_kick(object *ob, char *params)
             object *op;
             op = pl->ob;
             ret=1;
-			activelist_remove(op);
+            activelist_remove(op);
             remove_ob(op);
             check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
             op->direction = 0;
@@ -770,13 +770,13 @@ int command_setskill(object *op, char *params)
 
     if (params == NULL || sscanf(params, "%s %d %d", buf, &snr, &level) != 3)
     {
-		int i;
-		char buf[HUGE_BUF];
+        int i;
+        char buf[HUGE_BUF];
 
         sprintf(buf, "Usage: setskill [who] [skill nr] [level]\nSkills/Nr: ");
-		for(i=0;i<NROFSKILLS;i++)
-			sprintf(buf,"%s,%s(%d)", buf,  skills[i].name,i); 
-		new_draw_info(NDI_UNIQUE, 0, op, buf);
+        for(i=0;i<NROFSKILLS;i++)
+            sprintf(buf,"%s,%s(%d)", buf,  skills[i].name,i); 
+        new_draw_info(NDI_UNIQUE, 0, op, buf);
         return 1;
     }
 
@@ -818,12 +818,12 @@ int command_setskill(object *op, char *params)
         return 0;
     }
 
-	exp_skill->level = level;
-	exp_skill->stats.exp =  new_levels[level];
+    exp_skill->level = level;
+    exp_skill->stats.exp =  new_levels[level];
 
     /* adjust_exp has adjust the skill and all exp_obj and player exp */
     /* now lets check for level up in all categories */
-	adjust_exp(pl->ob, exp_skill, 1); /* we add one more so we get a clean call here */
+    adjust_exp(pl->ob, exp_skill, 1); /* we add one more so we get a clean call here */
     player_lvl_adj(pl->ob, exp_skill, TRUE);
     player_lvl_adj(pl->ob, exp_ob, TRUE);
     player_lvl_adj(pl->ob, NULL, TRUE);
@@ -833,70 +833,70 @@ int command_setskill(object *op, char *params)
 
 int command_addexp(object *op, char *params)
 {
-	char    buf[MAX_BUF];
-	int     exp, snr;
-	object *exp_skill, *exp_ob;
-	player *pl;
+    char    buf[MAX_BUF];
+    int     exp, snr;
+    object *exp_skill, *exp_ob;
+    player *pl;
 
-	if (params == NULL || sscanf(params, "%s %d %d", buf, &snr, &exp) != 3)
-	{
-		int i;
-		char buf[HUGE_BUF];
+    if (params == NULL || sscanf(params, "%s %d %d", buf, &snr, &exp) != 3)
+    {
+        int i;
+        char buf[HUGE_BUF];
 
-		sprintf(buf, "Usage: addexp [who] [skill nr] [exp]\nSkills/Nr: ");
-		for(i=0;i<NROFSKILLS;i++)
-			sprintf(buf,"%s%s(%d), ", buf,  skills[i].name,i); 
-		new_draw_info(NDI_UNIQUE, 0, op, buf);
-		return 1;
-	}
+        sprintf(buf, "Usage: addexp [who] [skill nr] [exp]\nSkills/Nr: ");
+        for(i=0;i<NROFSKILLS;i++)
+            sprintf(buf,"%s%s(%d), ", buf,  skills[i].name,i); 
+        new_draw_info(NDI_UNIQUE, 0, op, buf);
+        return 1;
+    }
 
-	pl = find_player(buf);
+    pl = find_player(buf);
 
-	if (pl == NULL)
-	{
-		new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
-		return 1;
-	}
+    if (pl == NULL)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
+        return 1;
+    }
 
-	/* Bug 0000100: /addexp Cher 101 100000 crashes server */
-	/* Safety check */
-	if (snr < 0 || snr >= NROFSKILLS)
-	{
-		new_draw_info(NDI_UNIQUE, 0, op, "No such skill.");
-		return 1;
-	}
+    /* Bug 0000100: /addexp Cher 101 100000 crashes server */
+    /* Safety check */
+    if (snr < 0 || snr >= NROFSKILLS)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "No such skill.");
+        return 1;
+    }
 
-	exp_skill = pl->skill_ptr[snr];
+    exp_skill = pl->skill_ptr[snr];
 
-	if (!exp_skill) /* safety check */
-	{
-		/* our player don't have this skill?
-		* This can happens when group exp is devided.
-		* We must get a useful sub or we skip the exp.
-		*/
-		LOG(llevDebug, "TODO: add_exp(): called for %s with skill nr %d / %d exp - object has not this skill.\n",
-			query_name(pl->ob), snr, exp);
-		return 0; /* TODO: groups comes later  - now we skip all times */
-	}
+    if (!exp_skill) /* safety check */
+    {
+        /* our player don't have this skill?
+         * This can happens when group exp is devided.
+         * We must get a useful sub or we skip the exp.
+         */
+        LOG(llevDebug, "TODO: add_exp(): called for %s with skill nr %d / %d exp - object has not this skill.\n",
+                query_name(pl->ob), snr, exp);
+        return 0; /* TODO: groups comes later  - now we skip all times */
+    }
 
-	pl->update_skills = 1; /* we will sure change skill exp, mark for update */
-	exp_ob = exp_skill->exp_obj;
+    pl->update_skills = 1; /* we will sure change skill exp, mark for update */
+    exp_ob = exp_skill->exp_obj;
 
-	if (!exp_ob)
-	{
-		LOG(llevBug, "BUG: add_exp() skill:%s - no exp_op found!!\n", query_name(exp_skill));
-		return 0;
-	}
+    if (!exp_ob)
+    {
+        LOG(llevBug, "BUG: add_exp() skill:%s - no exp_op found!!\n", query_name(exp_skill));
+        return 0;
+    }
 
-	exp = adjust_exp(pl->ob, exp_skill, exp);   /* first we see what we can add to our skill */
+    exp = adjust_exp(pl->ob, exp_skill, exp);   /* first we see what we can add to our skill */
 
-	/* adjust_exp has adjust the skill and all exp_obj and player exp */
-	/* now lets check for level up in all categories */
-	player_lvl_adj(pl->ob, exp_skill, TRUE);
-	player_lvl_adj(pl->ob, exp_ob, TRUE);
-	player_lvl_adj(pl->ob, NULL, TRUE);
+    /* adjust_exp has adjust the skill and all exp_obj and player exp */
+    /* now lets check for level up in all categories */
+    player_lvl_adj(pl->ob, exp_skill, TRUE);
+    player_lvl_adj(pl->ob, exp_ob, TRUE);
+    player_lvl_adj(pl->ob, NULL, TRUE);
 
-	return 1;
+    return 1;
 }
 
 int command_speed(object *op, char *params)
@@ -1003,7 +1003,7 @@ int command_abil(object *op, char *params)
         pl->ob->stats.Pow = iii,pl->orig_stats.Pow = iii;
     sprintf(buf, "%s has been altered.", pl->ob->name);
     new_draw_info(NDI_UNIQUE, 0, op, buf);
-	FIX_PLAYER(pl->ob ,"command abil");
+    FIX_PLAYER(pl->ob ,"command abil");
     return 1;
 }
 
@@ -1232,26 +1232,26 @@ int command_ban(object *op, char *params)
         new_draw_info(NDI_UNIQUE, 0, op, "ban list");
         new_draw_info(NDI_UNIQUE, 0, op, "--- --- ---");
         for(ol = ban_list_player;ol;ol=ol_tmp)
-		{
-			ol_tmp = ol->next;
+        {
+            ol_tmp = ol->next;
             if(ol->objlink.ban->ticks_init != -1 &&  pticks >= ol->objlink.ban->ticks)
                 remove_ban_entry(ol); /* is not valid anymore, gc it on the fly */
-			else
-	            new_draw_info_format(NDI_UNIQUE, 0, op, "P: %s -> %d left (of %d) sec", 
-				ol->objlink.ban->name ,(ol->objlink.ban->ticks-pticks)/8, ol->objlink.ban->ticks_init/8);
-		}
+            else
+                new_draw_info_format(NDI_UNIQUE, 0, op, "P: %s -> %d left (of %d) sec", 
+                        ol->objlink.ban->name ,(ol->objlink.ban->ticks-pticks)/8, ol->objlink.ban->ticks_init/8);
+        }
 
         for(ol = ban_list_ip;ol;ol=ol_tmp)
-		{
-			ol_tmp = ol->next;
+        {
+            ol_tmp = ol->next;
             if(ol->objlink.ban->ticks_init != -1 &&  pticks >= ol->objlink.ban->ticks)
                 remove_ban_entry(ol); /* is not valid anymore, gc it on the fly */
-			else
-			{
-	            new_draw_info_format(NDI_UNIQUE, 0, op, "IP: %s :: %d left (of %d) sec", 
-								ol->objlink.ban->ip, (ol->objlink.ban->ticks-pticks)/8, ol->objlink.ban->ticks_init/8);
-			}
-		}
+            else
+            {
+                new_draw_info_format(NDI_UNIQUE, 0, op, "IP: %s :: %d left (of %d) sec", 
+                        ol->objlink.ban->ip, (ol->objlink.ban->ticks-pticks)/8, ol->objlink.ban->ticks_init/8);
+            }
+        }
         return 1;
     }
     if (!(str = strchr(params, ' ')))
@@ -1266,83 +1266,83 @@ int command_ban(object *op, char *params)
 
         if (sscanf(str, "%s %d", name_buf, &ticks) == 2)
         {
-			ticks *=8;
-			name = cleanup_string((name = name_buf));
+            ticks *=8;
+            name = cleanup_string((name = name_buf));
             if(name && name[0]!='\0')
             {
-				if(isdigit(name[0])) /* if true, we have an IP */
-				{
-					for(ol = ban_list_ip;ol;ol=ol_tmp)
-					{
-						ol_tmp = ol->next;
-						if(!strcmp(ol->objlink.ban->ip, name_buf))
-							remove_ban_entry(ol);
-					}
-					new_draw_info_format(NDI_UNIQUE, 0, op, "IP %s is now banned for %d seconds.", name_buf, ticks/8);
-					LOG(llevSystem, "IP %s is now banned for %d seconds.\n", name_buf, ticks/8);
-					add_ban_entry(NULL, name_buf, ticks, ticks);
-				}
-				else /* we go to ban an player */
-				{
-					const char *name_hash;
-			
-					transform_name_string(name);
+                if(isdigit(name[0])) /* if true, we have an IP */
+                {
+                    for(ol = ban_list_ip;ol;ol=ol_tmp)
+                    {
+                        ol_tmp = ol->next;
+                        if(!strcmp(ol->objlink.ban->ip, name_buf))
+                            remove_ban_entry(ol);
+                    }
+                    new_draw_info_format(NDI_UNIQUE, 0, op, "IP %s is now banned for %d seconds.", name_buf, ticks/8);
+                    LOG(llevSystem, "IP %s is now banned for %d seconds.\n", name_buf, ticks/8);
+                    add_ban_entry(NULL, name_buf, ticks, ticks);
+                }
+                else /* we go to ban an player */
+                {
+                    const char *name_hash;
 
-					name_hash = find_string(name); /* we need an shared string to check ban list */						
-					for(ol = ban_list_player;ol;ol=ol_tmp)
-					{
-						ol_tmp = ol->next;
-						if(ol->objlink.ban->name == name_hash)
-							remove_ban_entry(ol);
-					}
-					new_draw_info_format(NDI_UNIQUE, 0, op, "Player %s is now banned for %d seconds.", name, ticks/8);
-					LOG(llevSystem,"Player %s is now banned for %d seconds.\n", name, ticks/8);
-					add_ban_entry(name, name_buf, ticks, ticks);
-				}
+                    transform_name_string(name);
 
-				return 1;
-			}
+                    name_hash = find_string(name); /* we need an shared string to check ban list */
+                    for(ol = ban_list_player;ol;ol=ol_tmp)
+                    {
+                        ol_tmp = ol->next;
+                        if(ol->objlink.ban->name == name_hash)
+                            remove_ban_entry(ol);
+                    }
+                    new_draw_info_format(NDI_UNIQUE, 0, op, "Player %s is now banned for %d seconds.", name, ticks/8);
+                    LOG(llevSystem,"Player %s is now banned for %d seconds.\n", name, ticks/8);
+                    add_ban_entry(name, name_buf, ticks, ticks);
+                }
+
+                return 1;
+            }
         }
     }
     else if(!strcmp(params,"remove"))
     {
-		char *name = cleanup_string(str);
+        char *name = cleanup_string(str);
 
-		if(name && name[0]!='\0')
+        if(name && name[0]!='\0')
         {
-			if(isdigit(name[0])) /* if true, we have an IP */
-			{
-				for(ol = ban_list_ip;ol;ol=ol_tmp)
-				{
-					ol_tmp = ol->next;
-					if(!strcmp(ol->objlink.ban->ip, name))
-					{
-						LOG(llevSystem,"/ban: %s unbanned the IP %s\n", query_name(op), name);
-						new_draw_info_format(NDI_UNIQUE, 0, op, "You unbanned IP %s!", name);
-						remove_ban_entry(ol);
-					}
-				}
-			}
-			else
-			{
-				const char *name_hash;
-			
-				transform_name_string(name);
+            if(isdigit(name[0])) /* if true, we have an IP */
+            {
+                for(ol = ban_list_ip;ol;ol=ol_tmp)
+                {
+                    ol_tmp = ol->next;
+                    if(!strcmp(ol->objlink.ban->ip, name))
+                    {
+                        LOG(llevSystem,"/ban: %s unbanned the IP %s\n", query_name(op), name);
+                        new_draw_info_format(NDI_UNIQUE, 0, op, "You unbanned IP %s!", name);
+                        remove_ban_entry(ol);
+                    }
+                }
+            }
+            else
+            {
+                const char *name_hash;
 
-				name_hash = find_string(name); /* we need an shared string to check ban list */						
-				for(ol = ban_list_player;ol;ol=ol_tmp)
-				{
-					ol_tmp = ol->next;
-					if(ol->objlink.ban->name == name_hash)
-					{
-						LOG(llevSystem,"/ban: %s unbanned the player %s\n", query_name(op), name);
-						new_draw_info_format(NDI_UNIQUE, 0, op, "You unbanned player %s!", name);
-						remove_ban_entry(ol);
-					}
-				}
-			}
-			return 1;
-		}
+                transform_name_string(name);
+
+                name_hash = find_string(name); /* we need an shared string to check ban list */
+                for(ol = ban_list_player;ol;ol=ol_tmp)
+                {
+                    ol_tmp = ol->next;
+                    if(ol->objlink.ban->name == name_hash)
+                    {
+                        LOG(llevSystem,"/ban: %s unbanned the player %s\n", query_name(op), name);
+                        new_draw_info_format(NDI_UNIQUE, 0, op, "You unbanned player %s!", name);
+                        remove_ban_entry(ol);
+                    }
+                }
+            }
+            return 1;
+        }
     }
 
 ban_usage:

@@ -777,30 +777,30 @@ MODULEAPI int HandleEvent(CFParm *PParm)
     if (context->parm4 == SCRIPT_FIX_ALL)
     {
         if (context->other && context->other->type == PLAYER && 
-				QUERY_FLAG(context->other, FLAG_FIX_PLAYER))
-		{
-			CLEAR_FLAG(context->other, FLAG_FIX_PLAYER);
-			hooks->FIX_PLAYER(context->other, "LUA: script fix - other");
-		}
+                QUERY_FLAG(context->other, FLAG_FIX_PLAYER))
+        {
+            CLEAR_FLAG(context->other, FLAG_FIX_PLAYER);
+            hooks->FIX_PLAYER(context->other, "LUA: script fix - other");
+        }
         if (context->self && context->self->type == PLAYER && 
-				QUERY_FLAG(context->self, FLAG_FIX_PLAYER))
-		{
-			CLEAR_FLAG(context->self, FLAG_FIX_PLAYER);
-			hooks->FIX_PLAYER(context->self, "LUA: script fix - self");
-		}
+                QUERY_FLAG(context->self, FLAG_FIX_PLAYER))
+        {
+            CLEAR_FLAG(context->self, FLAG_FIX_PLAYER);
+            hooks->FIX_PLAYER(context->self, "LUA: script fix - self");
+        }
         if (context->activator && context->activator->type == PLAYER && 
-				QUERY_FLAG(context->activator, FLAG_FIX_PLAYER))
-		{
-			CLEAR_FLAG(context->activator, FLAG_FIX_PLAYER);
-			hooks->FIX_PLAYER(context->activator, "LUA: script fix - activator");
-		}
+                QUERY_FLAG(context->activator, FLAG_FIX_PLAYER))
+        {
+            CLEAR_FLAG(context->activator, FLAG_FIX_PLAYER);
+            hooks->FIX_PLAYER(context->activator, "LUA: script fix - activator");
+        }
     }
     else if (context->parm4 == SCRIPT_FIX_ACTIVATOR &&
-				context->activator && context->activator->type == PLAYER &&
-				QUERY_FLAG(context->activator, FLAG_FIX_PLAYER))
+            context->activator && context->activator->type == PLAYER &&
+            QUERY_FLAG(context->activator, FLAG_FIX_PLAYER))
     {
-		CLEAR_FLAG(context->activator, FLAG_FIX_PLAYER);
-		hooks->FIX_PLAYER(context->activator, "LUA: script fix - activator2");
+        CLEAR_FLAG(context->activator, FLAG_FIX_PLAYER);
+        hooks->FIX_PLAYER(context->activator, "LUA: script fix - activator2");
     }
 
     ret = context->returnvalue;

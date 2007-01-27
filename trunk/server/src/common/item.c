@@ -215,14 +215,14 @@ char * query_short_name(const object *const op, const object *const caller)
         if (op->nrof != 1)
             safe_strcat(buf, " ", &len, sizeof(buf));
 
-		if(!QUERY_FLAG(op, FLAG_IS_NAMED)) /* named items has no prefix */
-		{
-			if (!IS_LIVE(op) && op->type != TYPE_BASE_INFO)
-			    safe_strcat(buf, item_race_table[op->item_race].name, &len, sizeof(buf));
+        if(!QUERY_FLAG(op, FLAG_IS_NAMED)) /* named items has no prefix */
+        {
+            if (!IS_LIVE(op) && op->type != TYPE_BASE_INFO)
+                safe_strcat(buf, item_race_table[op->item_race].name, &len, sizeof(buf));
 
-			if (op->material_real>0 && QUERY_FLAG(op, FLAG_IDENTIFIED))
-			    safe_strcat(buf, material_real[op->material_real].name, &len, sizeof(buf));
-		}
+            if (op->material_real>0 && QUERY_FLAG(op, FLAG_IDENTIFIED))
+                safe_strcat(buf, material_real[op->material_real].name, &len, sizeof(buf));
+        }
         safe_strcat(buf, op->name, &len, sizeof(buf));
         if (op->nrof != 1)
         {
@@ -248,14 +248,14 @@ char * query_short_name(const object *const op, const object *const caller)
         /* if nrof is 0, the object is not mergable, and thus, op->name
             should contain the name to be used. */
 
-		if(!QUERY_FLAG(op, FLAG_IS_NAMED)) /* named items has no prefix */
-		{
-			if (!IS_LIVE(op) && op->type != TYPE_BASE_INFO)
-			    safe_strcat(buf, item_race_table[op->item_race].name, &len, sizeof(buf));
+        if(!QUERY_FLAG(op, FLAG_IS_NAMED)) /* named items has no prefix */
+        {
+            if (!IS_LIVE(op) && op->type != TYPE_BASE_INFO)
+                safe_strcat(buf, item_race_table[op->item_race].name, &len, sizeof(buf));
 
-			if (op->material_real>0 && QUERY_FLAG(op, FLAG_IDENTIFIED))
-			    safe_strcat(buf, material_real[op->material_real].name, &len, sizeof(buf));
-		}
+            if (op->material_real>0 && QUERY_FLAG(op, FLAG_IDENTIFIED))
+                safe_strcat(buf, material_real[op->material_real].name, &len, sizeof(buf));
+        }
         safe_strcat(buf, op->name, &len, sizeof(buf));
     }
 
@@ -419,10 +419,10 @@ char  *query_name_full(const object *op, const object *caller)
     }
     safe_strcat(buf[use_buf], query_short_name(op, caller), &len, HUGE_BUF);
 
-	if (QUERY_FLAG(op, FLAG_ONE_DROP))
-		safe_strcat(buf[use_buf], " (~one-drop~)", &len, HUGE_BUF);
-	else if (QUERY_FLAG(op, FLAG_QUEST_ITEM))
-		safe_strcat(buf[use_buf], " (~quest~)", &len, HUGE_BUF);
+    if (QUERY_FLAG(op, FLAG_ONE_DROP))
+        safe_strcat(buf[use_buf], " (~one-drop~)", &len, HUGE_BUF);
+    else if (QUERY_FLAG(op, FLAG_QUEST_ITEM))
+        safe_strcat(buf[use_buf], " (~quest~)", &len, HUGE_BUF);
 
     if (QUERY_FLAG(op, FLAG_INV_LOCKED))
         safe_strcat(buf[use_buf], " *", &len, HUGE_BUF);
@@ -510,18 +510,18 @@ char *query_base_name(object *op, object *caller)
     if(op->sub_type1 == ARROW && op->type == MISC_OBJECT) /* special neutralized arrow! */
         strcat(buf, "broken ");
 
-	if(!QUERY_FLAG(op, FLAG_IS_NAMED)) /* named items has no prefix */
-	{
-		/* add the item race name */
-	    if (!IS_LIVE(op) && op->type != TYPE_BASE_INFO)
-			strcat(buf, item_race_table[op->item_race].name);
-		/* we add the real material name as prefix. Because real_material == 0 is
-		* "" (clear string) we don't must check item types for adding something here
-		* or not (artifacts for example has normally no material prefix)
-		*/
-		if (op->material_real>0 && QUERY_FLAG(op, FLAG_IDENTIFIED))
-			strcat(buf, material_real[op->material_real].name);
-	}
+    if(!QUERY_FLAG(op, FLAG_IS_NAMED)) /* named items has no prefix */
+    {
+        /* add the item race name */
+        if (!IS_LIVE(op) && op->type != TYPE_BASE_INFO)
+            strcat(buf, item_race_table[op->item_race].name);
+        /* we add the real material name as prefix. Because real_material == 0 is
+         * "" (clear string) we don't must check item types for adding something here
+         * or not (artifacts for example has normally no material prefix)
+         */
+        if (op->material_real>0 && QUERY_FLAG(op, FLAG_IDENTIFIED))
+            strcat(buf, material_real[op->material_real].name);
+    }
 
     strcat(buf, op->name);
 
@@ -1314,15 +1314,15 @@ void set_traped_flag(object *op)
 int check_magical_container(object *op, object *env)
 {
 
-	/* is op a magical container? */
-	if(!op || op->type != CONTAINER || op->weapon_speed == 1.0f)
-		return FALSE;
+    /* is op a magical container? */
+    if(!op || op->type != CONTAINER || op->weapon_speed == 1.0f)
+        return FALSE;
 
-	for(;env;env = env->env)
-	{
-		if(env->type == CONTAINER && env->weapon_speed != 1.0f)
-			return TRUE;
-	}
+    for(;env;env = env->env)
+    {
+        if(env->type == CONTAINER && env->weapon_speed != 1.0f)
+            return TRUE;
+    }
 
-	return FALSE;
+    return FALSE;
 }

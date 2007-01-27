@@ -837,7 +837,7 @@ void god_intervention(object *op, object *god)
                     if (get_attr_value(&depl->stats, i))
                         new_draw_info(NDI_UNIQUE, 0, op, restore_msg[i]);
                 remove_ob(depl);
-				FIX_PLAYER(op ,"god intervention");
+                FIX_PLAYER(op ,"god intervention");
                 return;
             }
 

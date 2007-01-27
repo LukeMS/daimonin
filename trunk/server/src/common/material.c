@@ -916,7 +916,7 @@ void material_attack_damage(object *op, int num, int chance, int base)
     object *item;
     player *pl;
     int r, i, flag_fix = FALSE;
-	char buf[HUGE_BUF];
+    char buf[HUGE_BUF];
 
     if(op->type != PLAYER || !(pl = CONTR(op)))
         return;
@@ -935,12 +935,12 @@ void material_attack_damage(object *op, int num, int chance, int base)
         for(i=0;i<PLAYER_EQUIP_MAX;i++)
         {
             if((item = pl->equipment[(r+i)%PLAYER_EQUIP_MAX]))
-			{
-				/* only damage weapons? */
-				if((base & HIT_FLAG_WEAPON) && item->type != WEAPON && item->type != SHIELD)
-					continue;
+            {
+                /* only damage weapons? */
+                if((base & HIT_FLAG_WEAPON) && item->type != WEAPON && item->type != SHIELD)
+                    continue;
                 break;
-			}
+            }
         }
 
         if(i==PLAYER_EQUIP_MAX) /* nothing there we can damage */
@@ -982,9 +982,9 @@ void material_attack_damage(object *op, int num, int chance, int base)
         if(item->item_condition > 0)
             item->item_condition--;
  
-	    sprintf(buf, "Your %s is damaged.", query_short_name(item, NULL));
+        sprintf(buf, "Your %s is damaged.", query_short_name(item, NULL));
         new_draw_info(NDI_UNIQUE, 0, op, buf);
-	    esrv_update_item(UPD_QUALITY, op, item);
+        esrv_update_item(UPD_QUALITY, op, item);
         /* broken - unapply it - even its cursed */
         if(!item->item_condition)
             apply_special(op, item, AP_UNAPPLY | AP_IGNORE_CURSE);
@@ -1004,14 +1004,14 @@ sint64 material_repair_cost(object *item, object *owner)
 
     if(item->value && item->item_quality && item->item_quality > item->item_condition)
     {
-		sint64 value = item->value;
+        sint64 value = item->value;
         /* this is a problem.. we assume, that costs (as 64 bit value) will be covered
          * by tmp as double. This will work fine if costs is not insane high - what should
          * not be. If we have here problems, then we need to split this calc in a 64 bit one
          * with high values and small one
          */
-		if(value < item->item_quality)
-			value = (sint64) item->item_quality;
+        if(value < item->item_quality)
+            value = (sint64) item->item_quality;
 
         tmp = (double) value / (double)item->item_quality; /* how much cost is 1 point of quality */
         tmp *= (double)item->item_quality - (double)item->item_condition; /* number of condition we miss */
@@ -1030,22 +1030,22 @@ void material_repair_item(object *item, int skill_value)
 
     /* skill_value will determinate the quality OF the repair source */
 
-	/* lose a quality point if the repair is heavy */
+    /* lose a quality point if the repair is heavy */
     if(item->item_quality/5 <= item->item_quality - item->item_condition && !(RANDOM()%3))
-	{
-		/* adjust item value because we lose quality */
-		if(item->value < (sint64)(item->item_quality*10000))
-		{
-			/* float to cover small changes in the value */
-			float tmp = ((float)item->value) / (float)item->item_quality;
-			item->value -= (sint64) tmp; 
-		}
-		else
-		{	
-			item->value -= (item->value / (sint64) item->item_quality);
-		}
+    {
+        /* adjust item value because we lose quality */
+        if(item->value < (sint64)(item->item_quality*10000))
+        {
+            /* float to cover small changes in the value */
+            float tmp = ((float)item->value) / (float)item->item_quality;
+            item->value -= (sint64) tmp; 
+        }
+        else
+        {
+            item->value -= (item->value / (sint64) item->item_quality);
+        }
 
         item->item_quality--;
-	}
-	item->item_condition = item->item_quality;	/* finally repair the shit */
+    }
+    item->item_condition = item->item_quality; /* finally repair the shit */
 }

@@ -408,14 +408,14 @@ void player_lvl_adj(object *who, object *op, int flag_msg)
 {
     char    buf[MAX_BUF];
 
-	SET_FLAG(who, FLAG_NO_FIX_PLAYER);
+    SET_FLAG(who, FLAG_NO_FIX_PLAYER);
     if (!op)        /* when rolling stats */
         op = who;
 
     if (op->type == SKILL && !op->last_eat) /* no exp gain for indirect skills */
     {
         LOG(llevBug, "BUG: player_lvl_adj() called for indirect skill %s (who: %s)\n", query_name(op), query_name(who));
-		CLEAR_FLAG(who, FLAG_NO_FIX_PLAYER);
+        CLEAR_FLAG(who, FLAG_NO_FIX_PLAYER);
         return;
     }
 
@@ -480,16 +480,16 @@ void player_lvl_adj(object *who, object *op, int flag_msg)
                         CONTR(who)->levgrace[op->level] = (char) who->arch->clone.stats.maxgrace;
                 }
             }
-			if(flag_msg)
-			{
-	            sprintf(buf, "You are now level %d in %s based skills.", op->level, op->name);
-				new_draw_info(NDI_UNIQUE | NDI_RED, 0, who, buf);
-			}
+            if(flag_msg)
+            {
+                sprintf(buf, "You are now level %d in %s based skills.", op->level, op->name);
+                new_draw_info(NDI_UNIQUE | NDI_RED, 0, who, buf);
+            }
         }
         else if (flag_msg && op->level > 1 && op->type == SKILL)
         {
-			sprintf(buf, "You are now level %d in the skill %s.", op->level, op->name);
-			new_draw_info(NDI_UNIQUE | NDI_RED, 0, who, buf);
+            sprintf(buf, "You are now level %d in the skill %s.", op->level, op->name);
+            new_draw_info(NDI_UNIQUE | NDI_RED, 0, who, buf);
         }
         else if(flag_msg)
         {
@@ -503,27 +503,27 @@ void player_lvl_adj(object *who, object *op, int flag_msg)
     {
         op->level--;
 
-		if(flag_msg)
-		{
-	        if (op->type == EXPERIENCE)
-		    {
-			    sprintf(buf, "-You are now level %d in %s based skills.", op->level, op->name);
-				new_draw_info(NDI_UNIQUE | NDI_RED, 0, who, buf);
-			}
-			else if (op->type == SKILL)
-			{
-				sprintf(buf, "-You are now level %d in the skill %s.", op->level, op->name);
-				new_draw_info(NDI_UNIQUE | NDI_RED, 0, who, buf);
-			}
-			else
-			{
-				sprintf(buf, "-You are now level %d.", op->level);
-				new_draw_info(NDI_UNIQUE | NDI_RED, 0, who, buf);
-			}
+        if(flag_msg)
+        {
+            if (op->type == EXPERIENCE)
+            {
+                sprintf(buf, "-You are now level %d in %s based skills.", op->level, op->name);
+                new_draw_info(NDI_UNIQUE | NDI_RED, 0, who, buf);
+            }
+            else if (op->type == SKILL)
+            {
+                sprintf(buf, "-You are now level %d in the skill %s.", op->level, op->name);
+                new_draw_info(NDI_UNIQUE | NDI_RED, 0, who, buf);
+            }
+            else
+            {
+                sprintf(buf, "-You are now level %d.", op->level);
+                new_draw_info(NDI_UNIQUE | NDI_RED, 0, who, buf);
+            }
         }
         player_lvl_adj(who, op, flag_msg); /* To decrease more levels */
     }
-	CLEAR_FLAG(who, FLAG_NO_FIX_PLAYER);
+    CLEAR_FLAG(who, FLAG_NO_FIX_PLAYER);
 }
 
 
@@ -674,7 +674,7 @@ void apply_death_exp_penalty(object *op)
             player_lvl_adj(op, tmp, FALSE); /* adjust exp objects levels */
     }
     player_lvl_adj(op, NULL, FALSE);        /* and at last adjust the player level */
-	FIX_PLAYER(op, "apply death penalty - end");
+    FIX_PLAYER(op, "apply death penalty - end");
 }
 
 /* i reworked this...

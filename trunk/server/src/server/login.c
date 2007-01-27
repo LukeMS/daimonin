@@ -52,26 +52,26 @@ void delete_character(const char *name)
 int check_name(player *me, char *name)
 {
     player     *pl;
-	int			ret = 1;
+    int         ret = 1;
     const char *name_hash;
-	char        filename[MAX_BUF];
+    char        filename[MAX_BUF];
 
     if ((name_hash = find_string(name))) /* if the name is in hash, there is a chance the name is in use */
-	{
-		for (pl = first_player; pl != NULL; pl = pl->next)
-		{
-			if(pl->ob->name == name_hash)
-			{
-				if (pl->state == ST_CREATE_CHAR )
-					return 2; /* ok, forget it in any case */
-				else
-					ret = 3;
-				break;
-			}
-		}
-	}
+    {
+        for (pl = first_player; pl != NULL; pl = pl->next)
+        {
+            if(pl->ob->name == name_hash)
+            {
+                if (pl->state == ST_CREATE_CHAR )
+                    return 2; /* ok, forget it in any case */
+                else
+                    ret = 3;
+                break;
+            }
+        }
+    }
 
-	/* now, the status is 1 or 3 
+    /* now, the status is 1 or 3 
      * 1 means is not used - lets check for player file
      * 3 means the sucker is somewhat in use:
      * NOW check there is a player file - only, and only then we will allow status 3
@@ -79,17 +79,17 @@ int check_name(player *me, char *name)
      * A new created player which gets disconnected with a ghost in system have
      * then to wait 2-3 minutes until server removes it. Safety first.
      * */
-	sprintf( filename, "%s/%s/%s/%s/%s.pl", settings.localdir, settings.playerdir, get_subdir(name), name, name);
-	if (access(filename, 0)) /* there is no player file? */
-	{
-		if(ret == 3) /* used but no player file? rare case - safety first: block it */
-			ret = 2;
-	}
-	else
-	{
-		if(ret == 1) /* it was not logged in but we have player file */
-			ret = 4;
-	}
+    sprintf( filename, "%s/%s/%s/%s/%s.pl", settings.localdir, settings.playerdir, get_subdir(name), name, name);
+    if (access(filename, 0)) /* there is no player file? */
+    {
+        if(ret == 3) /* used but no player file? rare case - safety first: block it */
+            ret = 2;
+    }
+    else
+    {
+        if(ret == 1) /* it was not logged in but we have player file */
+            ret = 4;
+    }
 
     return ret;
 }
@@ -376,130 +376,130 @@ static void reorder_inventory(object *op)
 /* QUICKHACK: traverse b3 player inv. and apply changes */
 static  mapstruct *traverse_b3_player_inv(object *pl, object *op, mapstruct *old_ptr)
 {
-	object *next_obj, *tmp;
+    object *next_obj, *tmp;
 
-	/* lets check we have the quest/one drop container - we will handle it special */
-	if(op->type == TYPE_QUEST_CONTAINER)
-	{
-		/* in b3, we have one drop items and player_info quest infos inside. we do:
+    /* lets check we have the quest/one drop container - we will handle it special */
+    if(op->type == TYPE_QUEST_CONTAINER)
+    {
+        /* in b3, we have one drop items and player_info quest infos inside. we do:
          * - remove the quest_item 1 from the one_drops
          * - remove all whats not a "real one drop"
          */
-		for (tmp = op->inv; tmp; tmp = next_obj)
-		{
-			next_obj = tmp->below;
-			if(tmp->type == MISC_OBJECT)
-			{
-				SET_FLAG(tmp,FLAG_SYS_OBJECT);
-				remove_ob(tmp);
-				continue;
-			}
-			/* lets go for secure and mark it as one drop as it should */
-			CLEAR_FLAG(tmp,FLAG_QUEST_ITEM);
-			SET_FLAG(tmp,FLAG_ONE_DROP);
-		}
-		return old_ptr;
-	}
+        for (tmp = op->inv; tmp; tmp = next_obj)
+        {
+            next_obj = tmp->below;
+            if(tmp->type == MISC_OBJECT)
+            {
+                SET_FLAG(tmp,FLAG_SYS_OBJECT);
+                remove_ob(tmp);
+                continue;
+            }
+            /* lets go for secure and mark it as one drop as it should */
+            CLEAR_FLAG(tmp,FLAG_QUEST_ITEM);
+            SET_FLAG(tmp,FLAG_ONE_DROP);
+        }
+        return old_ptr;
+    }
 
-	for (tmp = op->inv; tmp; tmp = next_obj)
-	{
-		next_obj = tmp->below;
-		/* remove all diseases because possible setting changes and kill pending old quests */
-		if ( tmp->type == DISEASE ||tmp->type == SYMPTOM || QUERY_FLAG(tmp,FLAG_QUEST_ITEM) || 
-			(tmp->arch->name == shstr_cons.player_info && !strcmp(tmp->name,"GUILD_INFO")))
-		{
-			SET_FLAG(tmp,FLAG_SYS_OBJECT);
-			remove_ob(tmp);
-			continue;
-		}
+    for (tmp = op->inv; tmp; tmp = next_obj)
+    {
+        next_obj = tmp->below;
+        /* remove all diseases because possible setting changes and kill pending old quests */
+        if ( tmp->type == DISEASE ||tmp->type == SYMPTOM || QUERY_FLAG(tmp,FLAG_QUEST_ITEM) || 
+                (tmp->arch->name == shstr_cons.player_info && !strcmp(tmp->name,"GUILD_INFO")))
+        {
+            SET_FLAG(tmp,FLAG_SYS_OBJECT);
+            remove_ob(tmp);
+            continue;
+        }
 
-		if(QUERY_FLAG(tmp, FLAG_IS_EGOITEM) && !QUERY_FLAG(tmp, FLAG_IS_EGOBOUND))
-			CLEAR_FLAG(tmp, FLAG_APPLIED);
+        if(QUERY_FLAG(tmp, FLAG_IS_EGOITEM) && !QUERY_FLAG(tmp, FLAG_IS_EGOBOUND))
+            CLEAR_FLAG(tmp, FLAG_APPLIED);
 
-		/* the one drop flag context has changed - its now a simple marker */
-		if(QUERY_FLAG(tmp,FLAG_ONE_DROP)) /* means "one drop quest item" */
-		{
-			CLEAR_FLAG(tmp,FLAG_ONE_DROP); 
-			SET_FLAG(tmp,FLAG_STARTEQUIP); /* means "NO-DROP item" */
-		}
-		/* let adjust the apartment info */
+        /* the one drop flag context has changed - its now a simple marker */
+        if(QUERY_FLAG(tmp,FLAG_ONE_DROP)) /* means "one drop quest item" */
+        {
+            CLEAR_FLAG(tmp,FLAG_ONE_DROP); 
+            SET_FLAG(tmp,FLAG_STARTEQUIP); /* means "NO-DROP item" */
+        }
+        /* let adjust the apartment info */
         if(shstr_cons.player_info == tmp->arch->name && !strcmp(tmp->name,"SGLOW_APP_INFO"))
-		{
-			mapstruct *new_ptr;
+        {
+            mapstruct *new_ptr;
             char *old_map = NULL;
             const char *old_path, *new_path;
 
-			if(!strcmp(tmp->slaying, "cheap"))
-			{
-				FREE_AND_COPY_HASH(tmp->title, "/special/appartment_1");
-				old_map = "/stoneglow/appartment_1";
-				tmp->item_level = 1;
-				tmp->item_quality = 2;
-			}
-			else if(!strcmp(tmp->slaying, "normal"))
-			{
-				FREE_AND_COPY_HASH(tmp->title, "/special/appartment_2");
-				old_map = "/stoneglow/appartment_2";
-				tmp->item_level = 1;
-				tmp->item_quality = 2;
-			}
-			else if(!strcmp(tmp->slaying, "expensive"))
-			{
-				FREE_AND_COPY_HASH(tmp->title, "/special/appartment_3");
-				old_map = "/stoneglow/appartment_3";
-				tmp->item_level = 1;
-				tmp->item_quality = 2;
-			}
-			else if(!strcmp(tmp->slaying, "luxurious"))
-			{
-				FREE_AND_COPY_HASH(tmp->title, "/special/appartment_4");
-				old_map = "/stoneglow/appartment_4";
-				tmp->item_level = 2;
-				tmp->item_quality = 1;
-			}
-			else /* donation */
-			{
-				FREE_AND_COPY_HASH(tmp->title, "/nonpub/donation/don_ap1");
-				old_map = "/nonpub/donation/ap_dona1";
-				tmp->item_level = 2;
-				tmp->item_quality = 1;
-			}
+            if(!strcmp(tmp->slaying, "cheap"))
+            {
+                FREE_AND_COPY_HASH(tmp->title, "/special/appartment_1");
+                old_map = "/stoneglow/appartment_1";
+                tmp->item_level = 1;
+                tmp->item_quality = 2;
+            }
+            else if(!strcmp(tmp->slaying, "normal"))
+            {
+                FREE_AND_COPY_HASH(tmp->title, "/special/appartment_2");
+                old_map = "/stoneglow/appartment_2";
+                tmp->item_level = 1;
+                tmp->item_quality = 2;
+            }
+            else if(!strcmp(tmp->slaying, "expensive"))
+            {
+                FREE_AND_COPY_HASH(tmp->title, "/special/appartment_3");
+                old_map = "/stoneglow/appartment_3";
+                tmp->item_level = 1;
+                tmp->item_quality = 2;
+            }
+            else if(!strcmp(tmp->slaying, "luxurious"))
+            {
+                FREE_AND_COPY_HASH(tmp->title, "/special/appartment_4");
+                old_map = "/stoneglow/appartment_4";
+                tmp->item_level = 2;
+                tmp->item_quality = 1;
+            }
+            else /* donation */
+            {
+                FREE_AND_COPY_HASH(tmp->title, "/nonpub/donation/don_ap1");
+                old_map = "/nonpub/donation/ap_dona1";
+                tmp->item_level = 2;
+                tmp->item_quality = 1;
+            }
 
-			/* as default entry we use newbie town start.*/
-			FREE_AND_COPY_HASH(tmp->race, "/relic/castle/castle_030a");
-			tmp->last_sp = 18;
-			tmp->last_grace = 1;
-			FREE_AND_COPY_HASH(tmp->name, "APARTMENT_INFO"); /* new player info tag */
+            /* as default entry we use newbie town start.*/
+            FREE_AND_COPY_HASH(tmp->race, "/relic/castle/castle_030a");
+            tmp->last_sp = 18;
+            tmp->last_grace = 1;
+            FREE_AND_COPY_HASH(tmp->name, "APARTMENT_INFO"); /* new player info tag */
 
             old_path = create_unique_path_sh(pl, old_map);
             new_path = create_unique_path_sh(pl, tmp->title);
 
-			/* ensure that we really load only the old apartment in ./players */
-			old_ptr = ready_map_name(old_path, NULL, MAP_STATUS_UNIQUE, pl->name);
+            /* ensure that we really load only the old apartment in ./players */
+            old_ptr = ready_map_name(old_path, NULL, MAP_STATUS_UNIQUE, pl->name);
             new_ptr = ready_map_name(new_path, tmp->title, MAP_STATUS_UNIQUE, pl->name);
 
             if(!new_ptr) /* problem with player files or missing apartments in /maps */
                 LOG(llevError, "FATAL: Apartment upgrade player %s! old: %s new: %s\n",
-                    query_name(op), STRING_MAP_NAME(old_ptr), STRING_MAP_NAME(new_ptr) );
+                        query_name(op), STRING_MAP_NAME(old_ptr), STRING_MAP_NAME(new_ptr) );
 
             if(!old_ptr)
                 LOG(llevDebug, "BUG: player %s - missing old apartment file! old: %s new: %s\n",
-                    query_name(op), STRING_MAP_NAME(old_ptr), STRING_MAP_NAME(new_ptr) );
+                        query_name(op), STRING_MAP_NAME(old_ptr), STRING_MAP_NAME(new_ptr) );
             else
-    			map_transfer_apartment_items(old_ptr, new_ptr, tmp->item_level, tmp->item_quality);
+                map_transfer_apartment_items(old_ptr, new_ptr, tmp->item_level, tmp->item_quality);
 
             FREE_ONLY_HASH(old_path);
             FREE_ONLY_HASH(new_path);
 
             /* save new and remove from memory - old will be deleted later */
-			new_save_map(new_ptr, 1);
+            new_save_map(new_ptr, 1);
             free_map(new_ptr, 1);
             delete_map(new_ptr);
-		}
+        }
 
-		if(tmp->inv)
-			old_ptr = traverse_b3_player_inv(pl, tmp, old_ptr);
-	}
+        if(tmp->inv)
+            old_ptr = traverse_b3_player_inv(pl, tmp, old_ptr);
+    }
     return old_ptr;
 }
 
@@ -566,7 +566,7 @@ void check_login(object *op, int mode)
          * So, lets check for the name here too
          * and check for confirm_password state
          */
-		/* The new login procedure should be able to avoid this conflict.
+        /* The new login procedure should be able to avoid this conflict.
          * But i let it in for security reasons. MT 11.2005 
          */         
         for (ptmp = first_player; ptmp != NULL; ptmp = ptmp->next)
@@ -641,9 +641,9 @@ void check_login(object *op, int mode)
                             new_draw_info(NDI_UNIQUE, 0, pl->ob, "Double login! Kicking older instance!");
                             pl->state = state_tmp;
                             fclose(fp);
-						    save_player(ptmp->ob, 1);
-						    ptmp->state = ST_ZOMBIE;
-						    ptmp->socket.status = Ns_Dead;
+                            save_player(ptmp->ob, 1);
+                            ptmp->state = ST_ZOMBIE;
+                            ptmp->socket.status = Ns_Dead;
                             remove_ns_dead_player(ptmp);/* super hard kick! */
                             kick_loop++;
                             goto kick_loop_jump;
@@ -660,32 +660,32 @@ void check_login(object *op, int mode)
         fclose(fp);
         pl->last_value = -1;
 
-		/* very simple check for stupid password guesser */
-		if(++pl->socket.pwd_try == 3)
-		{
-			/* ok - perhaps its a guesser or not.
+        /* very simple check for stupid password guesser */
+        if(++pl->socket.pwd_try == 3)
+        {
+            /* ok - perhaps its a guesser or not.
              * we just give him a 1 minutes IP tmp ban to think about it.
              * we also use addme fail as "byebye".
              */
-		    char        cmd_buf[2]  = "X";
-			char password_warning[] =
-				 "X3 You entered 3 times a wrong password.\nTry new login in 1 minute!\nConnection closed.";
+            char        cmd_buf[2]  = "X";
+            char password_warning[] =
+                "X3 You entered 3 times a wrong password.\nTry new login in 1 minute!\nConnection closed.";
 
-			LOG(llevInfo,"PWD GUESS BAN (1min): IP %s (player: %s).\n", 
-				pl->socket.ip_host, query_name(pl->ob));
-		    add_ban_entry(NULL, pl->socket.ip_host, 8*60, 8*60); /* one min temp ban for this ip */
-			Write_String_To_Socket(&pl->socket, BINARY_CMD_DRAWINFO,password_warning , strlen(password_warning));
-			Write_String_To_Socket(&pl->socket, BINARY_CMD_ADDME_FAIL, cmd_buf, 1);
-			pl->socket.login_count = ROUND_TAG+(uint32)(10.0f * pticks_second);
-			pl->socket.status = Ns_Zombie; /* we hold the socket open for a *bit* */
-			pl->socket.idle_flag = 1;
+            LOG(llevInfo,"PWD GUESS BAN (1min): IP %s (player: %s).\n", 
+                    pl->socket.ip_host, query_name(pl->ob));
+            add_ban_entry(NULL, pl->socket.ip_host, 8*60, 8*60); /* one min temp ban for this ip */
+            Write_String_To_Socket(&pl->socket, BINARY_CMD_DRAWINFO,password_warning , strlen(password_warning));
+            Write_String_To_Socket(&pl->socket, BINARY_CMD_ADDME_FAIL, cmd_buf, 1);
+            pl->socket.login_count = ROUND_TAG+(uint32)(10.0f * pticks_second);
+            pl->socket.status = Ns_Zombie; /* we hold the socket open for a *bit* */
+            pl->socket.idle_flag = 1;
 
-			/* our friend better accept the addme_fail and the one minute, or we kick really his butt
+            /* our friend better accept the addme_fail and the one minute, or we kick really his butt
              * when we find him try on with a hacked client.
              */
-		}
-		else
-	        get_name(op,7); /* (original means illegal verify) wrong password! */
+        }
+        else
+            get_name(op,7); /* (original means illegal verify) wrong password! */
 
 
         FREE_AND_COPY_HASH(op->name, "noname");
@@ -710,7 +710,7 @@ void check_login(object *op, int mode)
     pl->orig_stats.Pow = 0;
     pl->orig_stats.Wis = 0;
     pl->orig_stats.Cha = 0;
-	pl->p_ver = PLAYER_FILE_VERSION_DEFAULT;
+    pl->p_ver = PLAYER_FILE_VERSION_DEFAULT;
 
     /* Loop through the file, loading the rest of the values */
     /* we have here the classic problem with fgets():
@@ -933,32 +933,32 @@ void check_login(object *op, int mode)
     delete_loader_buffer(mybuffer);
     fclose(fp);
 
-	/* QUICKHACKS - remove for 1.0 and clean player files */
-	/* These parts will transform player files from one version
+    /* QUICKHACKS - remove for 1.0 and clean player files */
+    /* These parts will transform player files from one version
      * to another. Mainly adjusting or removing object settings.
      * If we delete the QUICKHACKS - be sure to delete the HOTFIX too.
      */
-	if(pl->p_ver == PLAYER_FILE_VERSION_DEFAULT)
-	{
-		for (tmp = op->inv; tmp; tmp = tmp->below)
-		{
-			if (tmp->type == ROD || tmp->type == HORN)
-				CLEAR_FLAG(tmp, FLAG_APPLIED);
-		}
-		pl->p_ver = PLAYER_FILE_VERSION_BETA3;
-	}
-	/* beta 3-> b4 playerfile hacks */
-	if(pl->p_ver == PLAYER_FILE_VERSION_BETA3)
-	{
-		old_ap_ptr = traverse_b3_player_inv(op, op, NULL);
+    if(pl->p_ver == PLAYER_FILE_VERSION_DEFAULT)
+    {
+        for (tmp = op->inv; tmp; tmp = tmp->below)
+        {
+            if (tmp->type == ROD || tmp->type == HORN)
+                CLEAR_FLAG(tmp, FLAG_APPLIED);
+        }
+        pl->p_ver = PLAYER_FILE_VERSION_BETA3;
+    }
+    /* beta 3-> b4 playerfile hacks */
+    if(pl->p_ver == PLAYER_FILE_VERSION_BETA3)
+    {
+        old_ap_ptr = traverse_b3_player_inv(op, op, NULL);
 
-		/* force guildhall as beta 4 start login for all players */
+        /* force guildhall as beta 4 start login for all players */
         set_mappath_by_name(pl, NULL, shstr_cons.start_mappath, MAP_STATUS_MULTI, 17, 11);
 
         /* as bind point we set old beta 3 players to castle church */
         FREE_AND_COPY_HASH(pl->orig_savebed_map, "/relic/castle/castle_0002");
         set_bindpath_by_name(pl, NULL, pl->orig_savebed_map, MAP_STATUS_MULTI, 12, 7);
-	}
+    }
 
     /* at this moment, the inventory is reverse loaded.
      * Lets exchange it here.

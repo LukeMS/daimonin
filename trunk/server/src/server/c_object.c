@@ -83,46 +83,46 @@ int command_rskill(object *pl, char *params)
 
 int command_egobind ( object *pl, char *params) 
 {
-	object *mark;
+    object *mark;
 
-	if(pl->type != PLAYER || !CONTR(pl))
-		return 0;
+    if(pl->type != PLAYER || !CONTR(pl))
+        return 0;
 
-	mark = find_marked_object(pl);
+    mark = find_marked_object(pl);
 
-	if(!mark)
-	{
-		new_draw_info(NDI_UNIQUE, 0,pl, "MARK first the ego item - then type: /egobind ");
-		return 0;
-	}
+    if(!mark)
+    {
+        new_draw_info(NDI_UNIQUE, 0,pl, "MARK first the ego item - then type: /egobind ");
+        return 0;
+    }
 
-	/* kein egoitem or previous bound */
-	if(!QUERY_FLAG(mark, FLAG_IS_EGOITEM) || QUERY_FLAG(mark, FLAG_IS_EGOBOUND))
-	{
-		new_draw_info_format(NDI_UNIQUE, 0,pl, "Your marked item %s is not an unbound ego item!", query_name(mark));
-		return 0;
-	}
+    /* kein egoitem or previous bound */
+    if(!QUERY_FLAG(mark, FLAG_IS_EGOITEM) || QUERY_FLAG(mark, FLAG_IS_EGOBOUND))
+    {
+        new_draw_info_format(NDI_UNIQUE, 0,pl, "Your marked item %s is not an unbound ego item!", query_name(mark));
+        return 0;
+    }
 
-	if(!params)
-	{
-		new_draw_info_format(NDI_UNIQUE, 0,pl, "To bind the %s type: /egobind %d", query_name(mark), mark->count);
-		return 0;
+    if(!params)
+    {
+        new_draw_info_format(NDI_UNIQUE, 0,pl, "To bind the %s type: /egobind %d", query_name(mark), mark->count);
+        return 0;
 
-	}
+    }
 
-	/* be sure we REALLY bind the marked and previous announced item! */
-	if(mark->count != (uint32) strtoul(params, NULL, 10))
-	{
-		new_draw_info_format(NDI_UNIQUE, 0,pl, "The numbers don't match!\nTo bind the %s type: /egobind %d", query_name(mark), mark->count);
-		return 0;
-	}
+    /* be sure we REALLY bind the marked and previous announced item! */
+    if(mark->count != (uint32) strtoul(params, NULL, 10))
+    {
+        new_draw_info_format(NDI_UNIQUE, 0,pl, "The numbers don't match!\nTo bind the %s type: /egobind %d", query_name(mark), mark->count);
+        return 0;
+    }
 
-	new_draw_info_format(NDI_UNIQUE, 0,pl, "You has bound the %s!", query_name(mark));
-	create_ego_item(mark, pl->name, EGO_ITEM_BOUND_PLAYER);
-	esrv_update_item (UPD_NAME, pl, mark);
-	play_sound_player_only (CONTR(pl), SOUND_LEARN_SPELL, SOUND_NORMAL, 0, 0);
+    new_draw_info_format(NDI_UNIQUE, 0,pl, "You has bound the %s!", query_name(mark));
+    create_ego_item(mark, pl->name, EGO_ITEM_BOUND_PLAYER);
+    esrv_update_item (UPD_NAME, pl, mark);
+    play_sound_player_only (CONTR(pl), SOUND_LEARN_SPELL, SOUND_NORMAL, 0, 0);
 
-	return 1;
+    return 1;
 }
 
 int command_apply(object *op, char *params)
@@ -751,7 +751,7 @@ char *examine(object *op, object *tmp, int flag)
         buf[0] = '\0';
     }
     
-	if (tmp->item_quality && !tmp->item_condition)
+    if (tmp->item_quality && !tmp->item_condition)
         strcat(buf_out, "Item is broken!\n"); 
 
     switch (tmp->type)
@@ -810,14 +810,14 @@ char *examine(object *op, object *tmp, int flag)
                                   100.0f - (tmp->weapon_speed * 100.0f));
                   }
               }
-			  if (buf[0] != '\0')
-				  strcat(buf_out, buf);
+              if (buf[0] != '\0')
+                  strcat(buf_out, buf);
           }
-			if(tmp->weapon_speed != 1.0f)
-				sprintf(buf, "It contains %.1f kg reduced to %.1f kg.\n", (float) tmp->carrying / 1000.0f,
-							(float) tmp->damage_round_tag / 1000.0f);
-			else
-				sprintf(buf, "It contains %.1f kg.\n", (float) tmp->carrying / 1000.0f);
+          if(tmp->weapon_speed != 1.0f)
+              sprintf(buf, "It contains %.1f kg reduced to %.1f kg.\n", (float) tmp->carrying / 1000.0f,
+                      (float) tmp->damage_round_tag / 1000.0f);
+          else
+              sprintf(buf, "It contains %.1f kg.\n", (float) tmp->carrying / 1000.0f);
           break;
 
         case WAND:

@@ -31,7 +31,7 @@
 #define HIT_FLAG_DMG           128
 #define HIT_FLAG_DMG_ACID      256
 #define HIT_FLAG_DMG_WMAGIC    512
-/* HIT_FLAG_WEAPON		==    1024 is defined in global.h */
+/* HIT_FLAG_WEAPON       ==    1024 is defined in global.h */
 
 #define ATTACK_HIT_DAMAGE(_op, _anum)       dam=dam*((double)_op->attack[_anum]*(double)0.01);dam>=1.0f?(damage=(int)dam):(damage=1)
 #define ATTACK_RESIST_DAMAGE(_op, _anum)    dam=dam*((double)(100-_op->resist[_anum])*(double)0.01)
@@ -145,10 +145,10 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
         roll += adj_attackroll(hitter, target);
 
 /*
-	if (hitter->type == PLAYER)
-		new_draw_info_format(NDI_ORANGE, 0, hitter, "You roll: %d - %d thac0/m: %d - %d (%d - %d)!", xxx, roll,hitter->stats.thac0,hitter->stats.thacm, target->stats.ac, base_wc);
-	if (target->type == PLAYER)
-		new_draw_info_format(NDI_PURPLE, 0, target, "Hitter roll: %d - %d thac0/m: %d - %d (%d %d)!", xxx, roll,hitter->stats.thac0,hitter->stats.thacm, target->stats.ac, base_wc);
+   if (hitter->type == PLAYER)
+   new_draw_info_format(NDI_ORANGE, 0, hitter, "You roll: %d - %d thac0/m: %d - %d (%d - %d)!", xxx, roll,hitter->stats.thac0,hitter->stats.thacm, target->stats.ac, base_wc);
+   if (target->type == PLAYER)
+   new_draw_info_format(NDI_PURPLE, 0, target, "Hitter roll: %d - %d thac0/m: %d - %d (%d %d)!", xxx, roll,hitter->stats.thac0,hitter->stats.thacm, target->stats.ac, base_wc);
 */
     if (hitter->type == PLAYER)
         CONTR(hitter)->anim_flags |= PLAYER_AFLAG_ENEMY; /* so we do one swing */
@@ -172,9 +172,9 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
         }
     }
 
-	/* don't get in hp recovery mode when something is hitting you */
-	if(target->type == PLAYER)
-		CONTR(target)->damage_timer = PLAYER_HPGEN_DELAY;
+    /* don't get in hp recovery mode when something is hitting you */
+    if(target->type == PLAYER)
+        CONTR(target)->damage_timer = PLAYER_HPGEN_DELAY;
 
     /* See if we hit the creature. Roll must be >= thacm(alus) and crit or AC hit */
     if (roll >= hitter->stats.thacm && (roll>=hitter->stats.thac0 || target->stats.ac <= base_wc + roll))
@@ -241,8 +241,8 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
     {
         if (hitter->type != ARROW)
         {
-			if (target->type == PLAYER)
-				new_draw_info_format(NDI_PURPLE, 0, target, "%s misses you!", hitter->name);
+            if (target->type == PLAYER)
+                new_draw_info_format(NDI_PURPLE, 0, target, "%s misses you!", hitter->name);
 
             if (hitter->type == PLAYER)
                 play_sound_map(hitter->map, hitter->x, hitter->y, SOUND_MISS_PLAYER, SOUND_NORMAL);
@@ -406,46 +406,46 @@ int damage_ob(object *op, int dam, object *hitter, int env_attack)
         }
     }
 
-	/* don't get in hp recovery mode when something is hitting you */
-	if(op->type == PLAYER)
-		CONTR(op)->damage_timer = PLAYER_HPGEN_DELAY;
+    /* don't get in hp recovery mode when something is hitting you */
+    if(op->type == PLAYER)
+        CONTR(op)->damage_timer = PLAYER_HPGEN_DELAY;
 
     /* attack is done - lets check we have possible item dmg */
     if(flags & HIT_FLAG_DMG)
     {
         int num = 1, chance = 2; /* base dmg chance for an dmg hit = 2% - for one item */
 
-		if(op->type == PLAYER)
-		{
-	        /* evil: bad dmg effects are stacking */
-		    if(flags & HIT_FLAG_DMG_ACID)
-			{
-				num +=2; /* base chance for dmg = 3 items */
-				chance +=4; /* increase dmg chance by +4% */
-			}
-			if(flags & HIT_FLAG_DMG_WMAGIC)
-			{
-				num +=1; /* base chance for dmg = 2 items */
-				chance +=8; /* increase dmg chance by 8%  */
-			}
-			flags &= (MATERIAL_BASE_PHYSICAL|MATERIAL_BASE_ELEMENTAL|MATERIAL_BASE_MAGICAL|MATERIAL_BASE_SPHERICAL|MATERIAL_BASE_SPECIAL);
-			material_attack_damage(op, num, chance, flags);
-		}
-		
-		/* now lets check our attacker is a player - if so, give weapon an extra chance of being damaged */
-		if(hitter->type == PLAYER)
-		{
-	        flags = (MATERIAL_BASE_PHYSICAL|MATERIAL_BASE_ELEMENTAL|MATERIAL_BASE_MAGICAL|MATERIAL_BASE_SPHERICAL|MATERIAL_BASE_SPECIAL|HIT_FLAG_WEAPON);
-		    material_attack_damage(hitter, num, chance/2, flags);
-		}
+        if(op->type == PLAYER)
+        {
+            /* evil: bad dmg effects are stacking */
+            if(flags & HIT_FLAG_DMG_ACID)
+            {
+                num +=2; /* base chance for dmg = 3 items */
+                chance +=4; /* increase dmg chance by +4% */
+            }
+            if(flags & HIT_FLAG_DMG_WMAGIC)
+            {
+                num +=1; /* base chance for dmg = 2 items */
+                chance +=8; /* increase dmg chance by 8%  */
+            }
+            flags &= (MATERIAL_BASE_PHYSICAL|MATERIAL_BASE_ELEMENTAL|MATERIAL_BASE_MAGICAL|MATERIAL_BASE_SPHERICAL|MATERIAL_BASE_SPECIAL);
+            material_attack_damage(op, num, chance, flags);
+        }
+
+        /* now lets check our attacker is a player - if so, give weapon an extra chance of being damaged */
+        if(hitter->type == PLAYER)
+        {
+            flags = (MATERIAL_BASE_PHYSICAL|MATERIAL_BASE_ELEMENTAL|MATERIAL_BASE_MAGICAL|MATERIAL_BASE_SPHERICAL|MATERIAL_BASE_SPECIAL|HIT_FLAG_WEAPON);
+            material_attack_damage(hitter, num, chance/2, flags);
+        }
     }
 
     /* we insert the aggro data in the mob, and report to the AI system */
-	SET_FLAG(op, FLAG_NO_FIX_PLAYER);
-	SET_FLAG(hitter, FLAG_NO_FIX_PLAYER);
+    SET_FLAG(op, FLAG_NO_FIX_PLAYER);
+    SET_FLAG(hitter, FLAG_NO_FIX_PLAYER);
     aggro_obj = aggro_update_info(op, target_obj, hitter, hit_obj, maxdam<op->stats.hp?maxdam:op->stats.hp, 0);
-	CLEAR_FLAG(hitter, FLAG_NO_FIX_PLAYER);
-	CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
+    CLEAR_FLAG(hitter, FLAG_NO_FIX_PLAYER);
+    CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
 
     /* this is needed to send the hit number animations to the clients */
     if (op->damage_round_tag != ROUND_TAG)
@@ -464,8 +464,8 @@ int damage_ob(object *op, int dam, object *hitter, int env_attack)
     /* Eneq(@csd.uu.se): Check to see if monster runs away. */
     /* TODO: gecko: this should go into a behaviour... */
     if ((op->stats.hp >= 0)
-     && QUERY_FLAG(op, FLAG_MONSTER)
-     && op->stats.hp < (signed short) (((float) op->run_away / 100.0f) * (float) op->stats.maxhp))
+            && QUERY_FLAG(op, FLAG_MONSTER)
+            && op->stats.hp < (signed short) (((float) op->run_away / 100.0f) * (float) op->stats.maxhp))
     {
         SET_FLAG(op, FLAG_RUN_AWAY);
     }
@@ -630,9 +630,9 @@ int hit_map(object *op, int dir)
 
          /* Can only hit live objects (for now) */
          if(!IS_LIVE(tmp))
-			continue;
+             continue;
 
-		damage_ob(tmp, op->stats.dam, op, ENV_ATTACK_CHECK);
+         damage_ob(tmp, op->stats.dam, op, ENV_ATTACK_CHECK);
         retflag |= 1;
         if (was_destroyed(op, op_tag))
             break;
@@ -1750,7 +1750,7 @@ void poison_player(object *op, object *hitter, float dam)
                     new_draw_info_format(NDI_UNIQUE, 0, op, "%s has poisoned you!", query_name(hitter));
                     insert_ob_in_ob(tmp, op);
                     SET_FLAG(tmp, FLAG_APPLIED);
-					FIX_PLAYER(op ,"attack - poison");
+                    FIX_PLAYER(op ,"attack - poison");
                 }
             }
             else /* its a mob! */
@@ -1822,7 +1822,7 @@ void slow_player(object *op, object *hitter, int dam)
         if (!QUERY_FLAG(op, FLAG_CONFUSED) && op->map)
             new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s suddenly moves slower!", STRING_SAFE(op->name));
         SET_FLAG(tmp, FLAG_APPLIED);
-		FIX_PLAYER(op ," attack - slow"); /* will set FLAG_SLOWED */
+        FIX_PLAYER(op ," attack - slow"); /* will set FLAG_SLOWED */
     }
 
 }
@@ -1862,7 +1862,7 @@ void fear_player(object *op, object *hitter, int dam)
         if (!QUERY_FLAG(op, FLAG_CONFUSED) && op->map)
             new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s suddenly looks scared!", STRING_SAFE(op->name));
         SET_FLAG(tmp, FLAG_APPLIED);
-		FIX_PLAYER(op ,"attack fear"); /* will set FLAG_FEAR */
+        FIX_PLAYER(op ,"attack fear"); /* will set FLAG_FEAR */
     }
 
 }
@@ -1923,7 +1923,7 @@ void snare_player(object *op, object *hitter, int dam)
                 new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s suddenly stops walking!", STRING_SAFE(op->name));
         }
         SET_FLAG(tmp, FLAG_APPLIED);
-		FIX_PLAYER(op ,"attack snear "); /* will set FLAG_SNEAR */
+        FIX_PLAYER(op ,"attack snear "); /* will set FLAG_SNEAR */
     }
 
 }
@@ -1994,7 +1994,7 @@ void remove_confusion(object *op)
     if (op->map)
         new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s regains his senses!", STRING_SAFE(op->name));
 
-	FIX_PLAYER(op ,"attack - remove confusion");
+    FIX_PLAYER(op ,"attack - remove confusion");
 }
 
 void blind_player(object *op, object *hitter, int dam)
@@ -2063,7 +2063,7 @@ void remove_blindness(object *op)
     if (op->map)
         new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s can see again!", STRING_SAFE(op->name));
 
-	FIX_PLAYER(op ,"attack - remove blind");
+    FIX_PLAYER(op ,"attack - remove blind");
 }
 
 
@@ -2100,7 +2100,7 @@ void paralyze_player(object *op, object *hitter, int dam)
         new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s looks paralyzed!", STRING_SAFE(op->name));
 
     SET_FLAG(tmp, FLAG_APPLIED);
-	FIX_PLAYER(op ,"attach paralyze"); /* will set FLAG_PARALYZE */
+    FIX_PLAYER(op ,"attach paralyze"); /* will set FLAG_PARALYZE */
 }
 
 /* remove paralyze effect and force (if there is one)
@@ -2134,7 +2134,7 @@ void remove_paralyze(object *op)
     if (op->map)
         new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s can move again!", STRING_SAFE(op->name));
 
-	FIX_PLAYER(op ,"attack - remove paralyze");
+    FIX_PLAYER(op ,"attack - remove paralyze");
 }
 
 /* determine if the object is an 'aimed' missile */

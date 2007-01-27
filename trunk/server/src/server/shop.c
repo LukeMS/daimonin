@@ -174,17 +174,17 @@ char * cost_string_from_value(sint64 cost, int mode)
     num = (uint32) (cost / coin->clone.value);
     cost -= num * coin->clone.value;
     /* careful - never set a coin arch to material_real = -1 ! */
-	if(mode)
-	{
-		sprintf(buf, "%d%c%c", num, material_real[coin->clone.material_real].name[0], coin->clone.name[0]);
-	}
-	else
-	{
-	    if (num == 1)
-		    sprintf(buf, "1 %s%s", material_real[coin->clone.material_real].name, coin->clone.name);
-		else
-			sprintf(buf, "%d %s%ss", num, material_real[coin->clone.material_real].name, coin->clone.name);
-	}
+    if(mode)
+    {
+        sprintf(buf, "%d%c%c", num, material_real[coin->clone.material_real].name[0], coin->clone.name[0]);
+    }
+    else
+    {
+        if (num == 1)
+            sprintf(buf, "1 %s%s", material_real[coin->clone.material_real].name, coin->clone.name);
+        else
+            sprintf(buf, "%d %s%ss", num, material_real[coin->clone.material_real].name, coin->clone.name);
+    }
     next_coin = find_next_coin(cost, &cointype);
     if (next_coin == NULL)
         return buf;
@@ -213,17 +213,17 @@ char * cost_string_from_value(sint64 cost, int mode)
         {
             strcat(endbuf, " and "); endbuf += 5;
         }
-		if(mode)
-		{
-			sprintf(endbuf, "%d%c%c", num, material_real[coin->clone.material_real].name[0], coin->clone.name[0]);
-		}
-		else
-		{
-	        if (num == 1)
-		        sprintf(endbuf, "1 %s%s", material_real[coin->clone.material_real].name, coin->clone.name);
-			else
-				sprintf(endbuf, "%d %s%ss", num, material_real[coin->clone.material_real].name, coin->clone.name);
-		}
+        if(mode)
+        {
+            sprintf(endbuf, "%d%c%c", num, material_real[coin->clone.material_real].name[0], coin->clone.name[0]);
+        }
+        else
+        {
+            if (num == 1)
+                sprintf(endbuf, "1 %s%s", material_real[coin->clone.material_real].name, coin->clone.name);
+            else
+                sprintf(endbuf, "%d %s%ss", num, material_real[coin->clone.material_real].name, coin->clone.name);
+        }
     }
     while (next_coin);
 
@@ -271,7 +271,7 @@ int pay_for_amount(sint64 to_pay, object *pl)
 
     pay_from_container(NULL, pl, to_pay);
 
-	FIX_PLAYER(pl ,"pay for amount");
+    FIX_PLAYER(pl ,"pay for amount");
     return 1;
 }
 
@@ -290,7 +290,7 @@ int pay_for_item(object *op, object *pl)
 
     pay_from_container(op, pl, to_pay);
 
-	FIX_PLAYER(pl ,"pay for item");
+    FIX_PLAYER(pl ,"pay for item");
     return 1;
 }
 

@@ -265,7 +265,7 @@ hashtable_size_t string_hash(const hashtable_const_key_t key)
 /* Key equality for strings */
 int string_key_equals(const hashtable_const_key_t key1, const hashtable_const_key_t key2)
 {    
-	register char __res, *k1 = (char *)key1, *k2 = (char *)key2;
+    register char __res, *k1 = (char *)key1, *k2 = (char *)key2;
 
     // Try to find a quick answer (see guarantee given about equals() use in hashtable.c)
     if(key2 == HASH_EMPTY_KEY) 
