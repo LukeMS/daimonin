@@ -236,7 +236,7 @@ void esrv_draw_look(object *pl)
 			}
 			else
 			{
-			    SockList_AddInt(&global_sl, WEIGHT(tmp) );
+				SockList_AddInt(&global_sl, WEIGHT(tmp) );
 			}
 		}
         if (tmp->head)
@@ -778,7 +778,7 @@ static void esrv_update_item_send(int flags, object *pl, object *op)
 		}
 		else
 		{
-		    SockList_AddInt(&global_sl, WEIGHT(op));
+			SockList_AddInt(&global_sl, WEIGHT(op));
 		}
     }
     if (flags & UPD_FACE)
@@ -1073,7 +1073,7 @@ void esrv_del_item(player *pl, int tag, object *cont)
     }
 
 	if(pl)
-	    esrv_del_item_send(pl, tag);
+		esrv_del_item_send(pl, tag);
 }
 
 
@@ -1114,11 +1114,11 @@ object * esrv_get_ob_from_count(object *pl, tag_t count)
 			for (op = get_map_ob(pl->map, pl->x, pl->y); op; op = op->above)
 			{
 				if (op->count == count)
-				    return op;
+					return op;
 				else if (op->inv)
 				{
 					if ((tmp = esrv_get_ob_from_count_DM(op->inv, count)))
-					    return tmp;
+						return tmp;
 				}
 			}
 		}
@@ -1279,12 +1279,12 @@ void MarkItem(char *data, int len, player *pl)
 	if(!op || tag == pl->mark_count)
 	{
 		pl->mark = NULL;
-	    pl->mark_count = -1;
+		pl->mark_count = -1;
 	}
 	else
 	{
 		pl->mark = op;
-	    pl->mark_count = op->count;
+		pl->mark_count = op->count;
 	}
 
     /*LOG(-1,"MARKITEM2 (%d) (%d)\n", tag, op->count);*/

@@ -177,7 +177,7 @@ object * pick_joined_wall(object *the_wall, char **layout, int i, int j, RMParms
     archetype  *wall_arch       = 0;
 
     strncpy(wall_name, the_wall->arch->name, 64);
-	wall_name[63]=0;
+    wall_name[63]=0;
 
     /* conventionally, walls are named like this:
       wallname_wallcode, where wallcode indicates

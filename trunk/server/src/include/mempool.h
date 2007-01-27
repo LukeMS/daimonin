@@ -50,9 +50,9 @@ struct mempool_chunk
 #endif
 };
 
-typedef void (* chunk_initialisator) (void *ptr);	/* Optional initialisator to be called when expanding */
-typedef void (* chunk_deinitialisator) (void *ptr);	/* Optional deinitialisator to be called when freeing */
-typedef void (* chunk_constructor) (void *ptr);		/* Optional constructor to be called when getting chunks */
+typedef void (* chunk_initialisator) (void *ptr);   /* Optional initialisator to be called when expanding */
+typedef void (* chunk_deinitialisator) (void *ptr); /* Optional deinitialisator to be called when freeing */
+typedef void (* chunk_constructor) (void *ptr);     /* Optional constructor to be called when getting chunks */
 typedef void (* chunk_destructor) (void *ptr);      /* Optional destructor to be called when returning chunks */
 
 /* Definitions used for array handling */
@@ -63,14 +63,14 @@ typedef void (* chunk_destructor) (void *ptr);      /* Optional destructor to be
 struct mempool
 {
     /* Fields that need need declaration */
-    const char             *chunk_description;            /* Description of chunks. Mostly for debugging */
+    const char             *chunk_description;           /* Description of chunks. Mostly for debugging */
     uint32                  expand_size;                 /* How many chunks to allocate at each expansion */
     uint32                  chunksize;                   /* size of chunks, excluding sizeof(mempool_chunk) and padding */
     uint32                  flags;                       /* Special handling flags. See definitions below */
-	chunk_initialisator		initialisator;			/* Optional initialisator to be called when expanding */
-	chunk_deinitialisator	deinitialisator;		/* Optional deinitialisator to be called when freeing */
-	chunk_constructor       constructor;			/* Optional constructor to be called when getting chunks */
-    chunk_destructor        destructor;				/* Optional destructor to be called when returning chunks */
+    chunk_initialisator     initialisator;               /* Optional initialisator to be called when expanding */
+    chunk_deinitialisator   deinitialisator;             /* Optional deinitialisator to be called when freeing */
+    chunk_constructor       constructor;                 /* Optional constructor to be called when getting chunks */
+    chunk_destructor        destructor;                  /* Optional destructor to be called when returning chunks */
 
     /* Runtime fields */
     struct mempool_chunk   *freelist[MEMPOOL_NROF_FREELISTS];   /* First free chunk */
@@ -114,8 +114,8 @@ extern struct mempool *pool_object, *pool_player, *pool_map_bfs,
     *pool_path_segment, *pool_mob_data, *pool_mob_knownobj,
     *pool_mob_behaviourset, *pool_mob_behaviour, *pool_mob_behaviourparam,
     *pool_objectlink, *pool_gmasters, *pool_bannode, *pool_tlist_tweak,
-	*pool_cmd_buf16,*pool_cmd_buf32,*pool_cmd_buf64,
-	*pool_cmd_buf128,*pool_cmd_buf256,*pool_cmd_buf1024,*pool_cmd_buf4096;
+    *pool_cmd_buf16,*pool_cmd_buf32,*pool_cmd_buf64,
+    *pool_cmd_buf128,*pool_cmd_buf256,*pool_cmd_buf1024,*pool_cmd_buf4096;
 
 extern int nrof_mempools;
 

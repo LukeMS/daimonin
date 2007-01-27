@@ -125,8 +125,8 @@ enum
 
 /* QUCKHACK - can be removed for 1.0 */
 #define PLAYER_FILE_VERSION_DEFAULT 0
-#define PLAYER_FILE_VERSION_BETA3	1
-#define PLAYER_FILE_VERSION_BETA4	2
+#define PLAYER_FILE_VERSION_BETA3   1
+#define PLAYER_FILE_VERSION_BETA4   2
 
 #ifdef WIN32
 #pragma pack(push,1)
@@ -167,9 +167,9 @@ typedef struct pl_player
     int                 instance_num;           /* instance_num is unique per instance */
     uint32              instance_flags;         /* status info of the instance */
 
-    int					map_update_cmd;			/* for server->client protocol */
-    int					map_update_tile;		/* for server->client protocol */
-    struct mapdef      *last_update;			/* when moving on tiled maps, player can change
+    int                 map_update_cmd;         /* for server->client protocol */
+    int                 map_update_tile;        /* for server->client protocol */
+    struct mapdef      *last_update;            /* when moving on tiled maps, player can change
                                                  * map without triggering mapevents and new_map_cmd.
                                                  * This will break client cache and script events.
                                                  * This value will used as control value.*/
@@ -185,9 +185,9 @@ typedef struct pl_player
     object             *equipment[PLAYER_EQUIP_MAX]; /* pointers to applied items in the players inventory */
     object             *skill_ptr[NROFSKILLS];       /* quick jump table to skill objects in the players inv. */
 
-	int                 base_skill_group[3];            /* guild/base exp skill groups for default exp gain */
-	int                 base_skill_group_exp[3];        /* % adjustment for exp gain */
-	object			   *guild_force;
+    int                 base_skill_group[3];            /* guild/base exp skill groups for default exp gain */
+    int                 base_skill_group_exp[3];        /* % adjustment for exp gain */
+    object             *guild_force;
     object             *highest_skill[NROFSKILLGROUPS]; /* highest skill of every skill group */
 
     object             *exp_obj_ptr[NROFSKILLGROUPS];       /* skill exp groups ptr (agility, mental,..) */
@@ -253,33 +253,33 @@ typedef struct pl_player
     uint32              exp_calc_tag;               /* used from aggro.c/exp.c */
     object             *exp_calc_obj;
     uint32              mark_count;                 /* count or mark object */
-    sint32              skill_exp[NROFSKILLS];		/* shadow register for updating skill values to client */
-    uint32              target_object_count;		/* count of target - NOTE: if we target ourself, this count it 0
+    sint32              skill_exp[NROFSKILLS];      /* shadow register for updating skill values to client */
+    uint32              target_object_count;        /* count of target - NOTE: if we target ourself, this count it 0
                                                     * this will kick us out of enemy target routines - all functions
                                                     * who handle self target know it and use only target_object -
                                                     * for our own player object the pointer will never change for us.
                                                     */
-    uint32              target_map_pos;				/* last target search position */
-    uint32              mode;						/* Mode of player for pickup. */
-    sint32              group_id;					/* unique group id number - this is a unique number like the object count */
-    sint32              group_status;				/* status of invite or group */
-	int					exp_bonus;					/* extra exp bonus */
-    int                 weapon_sp;					/* weapon speed - float *1000 for the client */
-	int					map_tile_x, map_tile_y;		/* these is our last position of map we send to client */ 
-	int					map_off_x, map_off_y;		/* scroll offset between 2 maps of client update */ 
+    uint32              target_map_pos;             /* last target search position */
+    uint32              mode;                       /* Mode of player for pickup. */
+    sint32              group_id;                   /* unique group id number - this is a unique number like the object count */
+    sint32              group_status;               /* status of invite or group */
+    int                 exp_bonus;                  /* extra exp bonus */
+    int                 weapon_sp;                  /* weapon speed - float *1000 for the client */
+    int                 map_tile_x, map_tile_y;     /* these is our last position of map we send to client */ 
+    int                 map_off_x, map_off_y;       /* scroll offset between 2 maps of client update */ 
 
     /* we don't need here the count of group object links- because the game will explicit
      * link/unlink party members when their player object change.
      * exception is group leader - its only used to confirm a invite
      */
-    object             *group_leader;				/* pointer to group leader or invite */
-    uint32              group_leader_count;			/* for invite... */
-    object             *group_prev;					/* previous member of group */
-    object             *group_next;					/* next member of group */
+    object             *group_leader;               /* pointer to group leader or invite */
+    uint32              group_leader_count;         /* for invite... */
+    object             *group_prev;                 /* previous member of group */
+    object             *group_next;                 /* next member of group */
 
-    uint32              update_ticker;				/* global_round tick where player was updated */
+    uint32              update_ticker;              /* global_round tick where player was updated */
     float               last_speed;
-    float               speed;						/* shadow speed value, set in fix_player() to cover flag effects */
+    float               speed;                      /* shadow speed value, set in fix_player() to cover flag effects */
 
     sint16              target_level;
     sint16              age;        /* the age of our player */
@@ -305,7 +305,7 @@ typedef struct pl_player
     int                 reg_hp_num;                 /* thats how much every reg tick we get */
     int                 reg_sp_num;
     int                 reg_grace_num;
-	int					damage_timer;				/* hp recovery timer for last hp */
+    int                 damage_timer;               /* hp recovery timer for last hp */
 
     sint16              map_status;                     /* type of map we have saved */
     sint16              base_hp_reg;                /* our real tick counter for hp regenerations */
@@ -326,8 +326,8 @@ typedef struct pl_player
     uint8               group_nr;                    /* player is #group_nr in his group - used for fast update */
 
 
-    int					last_weapon_sp;
-	int					p_ver;
+    int                 last_weapon_sp;
+    int                 p_ver;
 
 
     /* for smaller map sizes, only the the first elements are used (ie, upper left) */

@@ -50,8 +50,8 @@
 #include <newserver.h>
 #include "zlib.h"
 
-static int 	send_bufsize = 24*1024;
-static int 	read_bufsize = 8*1024;
+static int	send_bufsize = 24*1024;
+static int	read_bufsize = 8*1024;
 
 
 /* Initializes a connection - really, it just sets up the data structure,
@@ -115,7 +115,7 @@ void InitConnection(NewSocket *ns, char *ip)
     ns->readbuf.len = 0;
 	ns->readbuf.pos = 0;
 	if(!ns->readbuf.buf)
-	    ns->readbuf.buf = malloc(MAXSOCKBUF_IN);
+		ns->readbuf.buf = malloc(MAXSOCKBUF_IN);
     ns->readbuf.buf[0] = 0;
 
 	ns->pwd_try=0; 
@@ -270,12 +270,12 @@ int create_socket()
        LOG(llevInfo,"checking family:%d socktype:%d protocol:%d\n",ai->ai_family,ai->ai_socktype,ai->ai_protocol);  
 		fd = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
 		if (fd <= 0)
-	    	continue;
+			continue;
 
 		setsockopts(fd);
 
 		if (bind(fd, ai->ai_addr, ai->ai_addrlen) == 0)
-	    	break;
+			break;
 
 		close(fd);
 		fd = -1;

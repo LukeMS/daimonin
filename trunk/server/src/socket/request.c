@@ -656,15 +656,15 @@ void VersionCmd(char *buf, int len, NewSocket *ns)
 			char		warning[256] ="X3 Connection denied.\nYou are running a BETA 3 client!\nYou need a BETA 4 preview test client for this server.\nCheck the news & forum on http://www.daimonin.com !!\n"; 
 			char        cmd_buf[2]  = "X";
 
-		    ns->version = 0;
-			Write_String_To_Socket(ns, 3, warning, strlen(warning)); 	
-	        Write_String_To_Socket(ns, 22, cmd_buf, 1);
-	        ns->login_count = ROUND_TAG+(uint32)(10.0f * pticks_second);
+			ns->version = 0;
+			Write_String_To_Socket(ns, 3, warning, strlen(warning));	
+			Write_String_To_Socket(ns, 22, cmd_buf, 1);
+			ns->login_count = ROUND_TAG+(uint32)(10.0f * pticks_second);
 			ns->status = Ns_Zombie; /* we hold the socket open for a *bit* */
 			ns->idle_flag = 1;
 		}
 		else
-	        ns->status = Ns_Dead;
+			ns->status = Ns_Dead;
         return;
     }
     cp = strchr(buf + 1, ' ');
@@ -1096,7 +1096,7 @@ void draw_client_map(object *plobj)
 		if(!pl->last_update || !tile_map) /* we are on a new map or set? */
 		{
 			pl->map_update_cmd = MAP_UPDATE_CMD_NEW;
-		    memset(&(pl->socket.lastmap), 0, sizeof(struct Map));
+			memset(&(pl->socket.lastmap), 0, sizeof(struct Map));
 			pl->last_update = plobj->map; 
 			redraw_below=TRUE;
 		}
@@ -1241,18 +1241,18 @@ void draw_client_map2(object *pl)
     SockList_AddChar(&sl, (char) pl_ptr->map_update_cmd); /* marker */
 	if(pl_ptr->map_update_cmd != MAP_UPDATE_CMD_SAME)
 	{
-	    SockList_AddString(&sl, pl->map->name);
+		SockList_AddString(&sl, pl->map->name);
 		
 		if(pl_ptr->map_update_cmd == MAP_UPDATE_CMD_CONNECTED)
 		{
-		    SockList_AddChar(&sl, (char) pl_ptr->map_update_tile);
-		    SockList_AddChar(&sl, (char) pl_ptr->map_off_x);
-		    SockList_AddChar(&sl, (char) pl_ptr->map_off_y);
+			SockList_AddChar(&sl, (char) pl_ptr->map_update_tile);
+			SockList_AddChar(&sl, (char) pl_ptr->map_off_x);
+			SockList_AddChar(&sl, (char) pl_ptr->map_off_y);
 		}
 		else
 		{
-		    SockList_AddChar(&sl, (char) pl->map->width);
-		    SockList_AddChar(&sl, (char) pl->map->height);
+			SockList_AddChar(&sl, (char) pl->map->width);
+			SockList_AddChar(&sl, (char) pl->map->height);
 		}
 	}
 

@@ -157,7 +157,7 @@ int                         command_dm_light(object *op, char *params);
 int                         command_dm_password(object *op, char *params);
 int                         command_dumpactivelist(object *op, char *params);
 int                         command_setmaplight(object *op, char *params);
-int							command_restart(object *ob, char *params);
+int                         command_restart(object *ob, char *params);
 int                         command_start_shutdown(object *op, char *params);
 int                         command_dumpmap(object *op, char *params);
 int                         command_dumpallmaps(object *op, char *params);
@@ -182,7 +182,7 @@ int                         command_save(object *op, char *params);
 int                         command_style_map_info(object *op, char *params);
 int                         command_silent_login(object *op, char *params);
 char                        *get_subdir(const char *name);
-int							command_stuck(object *op, char *params);
+int                         command_stuck(object *op, char *params);
 /* c_move.c */
 int                         command_east(object *op, char *params);
 int                         command_north(object *op, char *params);
@@ -214,7 +214,7 @@ void                        generate_ext_title(player *pl);
 object                     *find_best_object_match(object *pl, char *params);
 int                         command_uskill(object *pl, char *params);
 int                         command_rskill(object *pl, char *params);
-int							command_egobind ( object *pl, char *params); 
+int                         command_egobind ( object *pl, char *params); 
 int                         command_apply(object *op, char *params);
 int                         command_dropall(object *op, char *params);
 int                         command_drop(object *op, char *params);
@@ -258,7 +258,7 @@ int                         command_dump(object *op, char *params);
 int                         command_patch(object *op, char *params);
 int                         command_remove(object *op, char *params);
 int                         command_free(object *op, char *params);
-int							command_setskill(object *op, char *params);
+int                         command_setskill(object *op, char *params);
 int                         command_addexp(object *op, char *params);
 int                         command_speed(object *op, char *params);
 int                         command_stats(object *op, char *params);
@@ -283,18 +283,18 @@ int                         command_unloadplugin(object *op, char *params);
 /* commands.c */
 void                        init_commands(void);
 void                        send_clear_interface(player *pl);
-void						initialize_command_buffer16(command_struct *cmdbuf);
-void						initialize_command_buffer32(command_struct *cmdbuf);
-void						initialize_command_buffer64(command_struct *cmdbuf);
-void						initialize_command_buffer128(command_struct *cmdbuf);
-void						initialize_command_buffer256(command_struct *cmdbuf);
-void						initialize_command_buffer1024(command_struct *cmdbuf);
-void						initialize_command_buffer4096(command_struct *cmdbuf);
+void                        initialize_command_buffer16(command_struct *cmdbuf);
+void                        initialize_command_buffer32(command_struct *cmdbuf);
+void                        initialize_command_buffer64(command_struct *cmdbuf);
+void                        initialize_command_buffer128(command_struct *cmdbuf);
+void                        initialize_command_buffer256(command_struct *cmdbuf);
+void                        initialize_command_buffer1024(command_struct *cmdbuf);
+void                        initialize_command_buffer4096(command_struct *cmdbuf);
 /* container.c */
 int                         container_link(player *const pl, object *const sack);
 int                         container_unlink(player *const pl, object *sack);
 int                         container_trap(object *const op, object *const container);
-int							sack_can_hold(const object *const pl, const object *const sack, const object *const op, const uint32 nrof);
+int                         sack_can_hold(const object *const pl, const object *const sack, const object *const op, const uint32 nrof);
 void                        pick_up(object *const op, object *const ori);
 void                        put_object_in_sack(object *const op, object *const sack, object *tmp, const uint32 nrof);
 void                        drop_object(object *const op, object *tmp, const uint32 nrof);
@@ -315,9 +315,9 @@ object                     *find_disease(object *victim);
 int                         cure_disease(object *sufferer, object *caster);
 int                         reduce_symptoms(object *sufferer, int reduction);
 /* egoitem.c */
-int							check_ego_item(object *pl, object *ob);
-char					   *get_ego_item_name(object *ob);
-void						create_ego_item(object *ob, const char *name, int mode);
+int                         check_ego_item(object *pl, object *ob);
+char                       *get_ego_item_name(object *ob);
+void                        create_ego_item(object *ob, const char *name, int mode);
 /* gmaster.c */
 void                        remove_gmaster_list(player *pl);
 int                            check_gmaster_file_entry(char *name, char *passwd, char *host, char *mode);
@@ -386,8 +386,8 @@ object                     *get_return_waypoint(object *op);
 object                     *find_waypoint(object *op, const char *name);
 int                         move_monster(object *op, int mode);
 void                        object_accept_path(object *op);
-void						dump_abilities(void);
-void						print_monsters(void);
+void                        dump_abilities(void);
+void                        print_monsters(void);
 /* monster_memory.c */
 void                        cleanup_mob_knowns(object *op, struct mob_known_obj **first, hashtable *ht);
 void                        clear_mob_knowns(object *op, struct mob_known_obj **first, hashtable *ht);
@@ -416,10 +416,10 @@ void                        npc_call_help(object *op);
 mapstruct                   *normalize_and_ready_map(mapstruct *defmap, const char **path);
 /* mtrand.c */
 void                        MTRand_init(const uint32 seed);
-sint32						MTRand_randComp(void);
+sint32                      MTRand_randComp(void);
 /* npc_communicate.c */
 void                        communicate(object *op, char *txt);
-void						gui_interface(object *who, int mode, const char *text, const char *tail);
+void                        gui_interface(object *who, int mode, const char *text, const char *tail);
 /* spawn_point.c */
 void                        spawn_point(object *op);
 objectlink                 *add_linked_spawn(object *spawn);
@@ -486,9 +486,9 @@ int                         is_dragon_pl(object *op);
 void                        reset_instance_data(player *pl);
 /* plugins.c */
 object                     *get_event_object(object *op, int event_nr);
-int							trigger_object_plugin_event(int event_type,
-								object *const me, object *const activator, object *const other,
-								const char *msg, int *parm1, int *parm2, int *parm3, int flags);
+int                         trigger_object_plugin_event(int event_type,
+                object *const me, object *const activator, object *const other,
+                const char *msg, int *parm1, int *parm2, int *parm3, int flags);
 int                         find_plugin_command(const char *cmd, object *op, CommArray_s *ret);
 void                        displayPluginsList(object *op);
 int                         findPlugin(const char *id);
@@ -733,7 +733,7 @@ object                     *get_pointed_target(object *op, int dir);
 int                         cast_smite_spell(object *op, object *caster, int dir, int type);
 int                         SP_lvl_dam_adjust2(object *caster, int spell_type, int base_dam);
 /* stats.c */
-void						stats_event(stats_event_type type, ...);
+void                        stats_event(stats_event_type type, ...);
 /* swamp.c */
 void                        walk_on_deep_swamp(object *op, object *victim);
 void                        move_deep_swamp(object *op);

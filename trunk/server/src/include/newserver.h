@@ -52,8 +52,8 @@ enum Sock_Status
     Ns_Wait,
     Ns_Add,
     Ns_Login,
-	Ns_Playing,
-	Ns_Zombie,
+    Ns_Playing,
+    Ns_Zombie,
     Ns_Dead
 };
 
@@ -72,67 +72,67 @@ typedef struct Buffer_struct
 typedef struct SockList_struct
 {
     int             len;
-	int			    pos;
+    int             pos;
     unsigned char  *buf;
 } SockList;
 
 /* different fixed sized command nodes */
 typedef struct _command_struct
 {
-	void			*next;
-	void			*last;
-	struct mempool  *pool;
-	int				 len;       /* the length of the data inside buf[] */
-	char			*buf;		/* buf[0] is the binary command tag */
+        void            *next;
+        void            *last;
+        struct mempool  *pool;
+        int              len;       /* the length of the data inside buf[] */
+        char            *buf;       /* buf[0] is the binary command tag */
 } command_struct;
 
 
 typedef struct NewSocket_struct
 {
-    int                 fd;
-    struct pl_player    *pl;			    /* if != NULL this socket is part of a player struct */
-	command_struct	   *cmd_start;          /* pointer to the list of incoming commands in process */
-	command_struct	   *cmd_end;
-    struct Map          lastmap;			/* Thats the VISIBLE map area of the player, used to send to client */
-    uint32              login_count;        /* if someone is to long idle in the login, we kick him here! */
-    int                 mapx, mapy;         /* How large a map the client wants */
-    int                 mapx_2, mapy_2;     /* same like above but /2 */
-    uint32              cs_version;         /*client/server versions */
-    uint32              sc_version;
-    int			pwd_try;			/* simple password guessing security */ 
-    uint32              update_tile;        /* marker to see we must update the below windows of the tile the player is */
-    char                ip_host[40];            /* IP as string */
-    enum Sock_Status    status;
-    SockList            readbuf;			/* Raw data read in from the socket  */
+        int                 fd;
+        struct pl_player    *pl;                /* if != NULL this socket is part of a player struct */
+        command_struct      *cmd_start;          /* pointer to the list of incoming commands in process */
+        command_struct      *cmd_end;
+        struct Map          lastmap;            /* Thats the VISIBLE map area of the player, used to send to client */
+        uint32              login_count;        /* if someone is to long idle in the login, we kick him here! */
+        int                 mapx, mapy;         /* How large a map the client wants */
+        int                 mapx_2, mapy_2;     /* same like above but /2 */
+        uint32              cs_version;         /*client/server versions */
+        uint32              sc_version;
+        int                 pwd_try;            /* simple password guessing security */ 
+        uint32              update_tile;        /* marker to see we must update the below windows of the tile the player is */
+        char                ip_host[40];            /* IP as string */
+        enum Sock_Status    status;
+        SockList            readbuf;            /* Raw data read in from the socket  */
 
-    Buffer              outputbuffer;				/* For undeliverable data */
-	uint32				below_clear     : 1;		/* marker to map draw/draw below */
-    uint32              idle_flag       : 1;        /* idle warning was given and we count for disconnect */
-    uint32              addme           : 1;        /* important: when set, a "connect" was initizialised as "player" */
-    uint32              facecache       : 1;        /* If true, client is caching images */
-    uint32              sound           : 1;        /* does the client want sound */
-    uint32              map2cmd         : 1;        /* Always use map2 protocol command */
-    uint32              ext_title_flag  : 1;        /* send ext title to client */
-    uint32              darkness        : 1;        /* True if client wants darkness information */
-    uint32              image2          : 1;        /* Client wants image2/face2 commands */
-    uint32              version         : 1;
-    uint32              write_overflow  : 1;
-    uint32              setup           : 1;
-    uint32              rf_settings     : 1;
-    uint32              rf_skills       : 1;
-    uint32              rf_spells       : 1;
-    uint32              rf_anims        : 1;
-    uint32              rf_bmaps        : 1;
+        Buffer              outputbuffer;       /* For undeliverable data */
+        uint32              below_clear     : 1;        /* marker to map draw/draw below */
+        uint32              idle_flag       : 1;        /* idle warning was given and we count for disconnect */
+        uint32              addme           : 1;        /* important: when set, a "connect" was initizialised as "player" */
+        uint32              facecache       : 1;        /* If true, client is caching images */
+        uint32              sound           : 1;        /* does the client want sound */
+        uint32              map2cmd         : 1;        /* Always use map2 protocol command */
+        uint32              ext_title_flag  : 1;        /* send ext title to client */
+        uint32              darkness        : 1;        /* True if client wants darkness information */
+        uint32              image2          : 1;        /* Client wants image2/face2 commands */
+        uint32              version         : 1;
+        uint32              write_overflow  : 1;
+        uint32              setup           : 1;
+        uint32              rf_settings     : 1;
+        uint32              rf_skills       : 1;
+        uint32              rf_spells       : 1;
+        uint32              rf_anims        : 1;
+        uint32              rf_bmaps        : 1;
 
-    sint16              look_position;  /* start of drawing of look window */
-    sint16              look_position_container;  /* start of drawing of look window for a container */
-    uint8               faceset;        /* Set the client is using, default 0 */
+        sint16              look_position;  /* start of drawing of look window */
+        sint16              look_position_container;  /* start of drawing of look window for a container */
+        uint8               faceset;        /* Set the client is using, default 0 */
 } NewSocket;
 
 
 typedef struct Socket_Info_struct
 {
-    struct timeval  timeout;    /* Timeout for select */
+        struct timeval  timeout;    /* Timeout for select */
     int             max_filedescriptor; /* max filedescriptor on the system */
     int             nconns;     /* Number of connections */
     int             allocated_sockets;  /* number of allocated in init_sockets */

@@ -464,15 +464,15 @@ int command_talk(object *op, char *params)
 						CONTR(op)->target_object = t_obj;
 						CONTR(op)->target_object_count = t_obj->count;
 						trigger_object_plugin_event(EVENT_TALK, t_obj, op, NULL,
-						        params, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR);
-					    return 1;
+								params, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR);
+						return 1;
 					}
 					else if(t_obj->msg)
 					{
-					    CONTR(op)->target_object = t_obj;
-					    CONTR(op)->target_object_count = t_obj->count;
+						CONTR(op)->target_object = t_obj;
+						CONTR(op)->target_object_count = t_obj->count;
 						new_draw_info(NDI_NAVY | NDI_UNIQUE, 0, op, t_obj->msg);
-					    return 1;
+						return 1;
 					}
 				}
 			}
@@ -793,7 +793,7 @@ static int basic_emote(object *op, char *params, int emotion)
         if (emotion != EMOTE_ME) {
             /* But only capitalize on those emotes that are for sure a player name param. */
 			if(op->type == PLAYER)
-	            transform_name_string(params);
+				transform_name_string(params);
         }
     }
 
