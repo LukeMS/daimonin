@@ -40,7 +40,7 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    GuiElement(TiXmlElement *xmlElement, void *parent);
+    GuiElement(TiXmlElement *xmlElement, void *parent, bool forceAlpha = false);
     virtual ~GuiElement();
     bool setState(int state);
     int getState()

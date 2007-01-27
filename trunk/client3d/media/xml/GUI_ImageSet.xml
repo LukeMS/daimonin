@@ -271,18 +271,26 @@
           <State name= "M_Over"  posX= "638" posY= "587" />
       </Image>
 
-      <Image name= "Item_Container"  width= "200" height= "240">
+      <Image name= "Item_Container"  width= "398" height= "480" alpha= "1">
           <State name= "Default" posX= "0" posY= "439" />
       </Image>
 
-      <Image name= "Item_Slot"  width= "36" height= "36">
-          <State name= "Default" posX= "0" posY= "679" />
-          <State name= "M_Over"  posX= "36" posY= "679" />
+      <Image name= "Item_Slot"  width= "72" height= "72" >
+          <State name= "Default" posX= "0" posY= "919" />
+          <State name= "M_Over"  posX= "72" posY= "919" />
       </Image>
 
-      <Image name= "Item_Slot_alpha"  width= "36" height= "36" alpha= "1">
-          <State name= "Default" posX=  "72" posY= "679" />
-          <State name= "M_Over"  posX= "108" posY= "679" />
+      <Image name= "Item_Slot_alpha"  width= "72" height= "72" >
+          <State name= "Default" posX=  "144" posY= "919" />
+          <State name= "M_Over"  posX= "216" posY= "919" />
+      </Image>
+
+      <Image name= "Item_Spear"  width= "64" height= "64">
+          <State name= "Default" posX= "0" posY= "992" />
+      </Image>
+
+      <Image name= "Item_Axe"  width= "64" height= "64" >
+          <State name= "Default" posX= "65" posY= "992" />
       </Image>
 
 </ImageSet>

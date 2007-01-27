@@ -46,7 +46,6 @@ static const unsigned int MIN_LEN_LOGIN_NAME =  2;
 static const unsigned int MAX_LEN_LOGIN_NAME = 12;
 static const unsigned int MIN_LEN_LOGIN_PSWD =  6;
 static const unsigned int MAX_LEN_LOGIN_PSWD = 17;
-const int deltaCameraAngle = 2;
 
 #define AUTO_FILL_PASWD // Delete me!!!
 
@@ -675,34 +674,45 @@ bool Events::frameEnded(const FrameEvent& evt)
     if (Option::getSingleton().getGameStatus() > Option::GAME_STATUS_CONNECT)
         Network::getSingleton().update();
 
-    const RenderTarget::FrameStats& stats = mWindow->getStatistics();
-    static int cameraAngle= 0;
-    static int skipFrames = 0;
+    // ////////////////////////////////////////////////////////////////////
+    // Update camera movement.
+    // ////////////////////////////////////////////////////////////////////
+    static Real cameraAngle= 0;
+    static const int CAMERA_TURN_DELAY = 50;
+    if (mCameraRotating != NONE)
+    {
+        Real step = CAMERA_TURN_DELAY * evt.timeSinceLastFrame;
+        if (mCameraRotating == TURNBACK)
+        {
+            if (cameraAngle >0) step*= -1;
+            if (cameraAngle < -1 || cameraAngle > 1)
+            {
+                mCamera->yaw(Degree(step));
+                cameraAngle+= step;
+                mCamera->setPosition(340.0*Math::Sin(Degree(cameraAngle)), 175, 340.0 *Math::Cos(Degree(cameraAngle)));
+            }
+            else  mCameraRotating = NONE;
+        }
+        else if (mCameraRotating == POSITIVE && cameraAngle < 65)
+        {
+            mCamera->yaw(Degree(step));
+            cameraAngle+= step;
+            mCamera->setPosition(340.0*Math::Sin(Degree(cameraAngle)), 175, 340.0 *Math::Cos(Degree(cameraAngle)));
+        }
+        else if (mCameraRotating == NEGATIVE && cameraAngle >-65)
+        {
+            mCamera->yaw(Degree(-step));
+            cameraAngle-= step;
+            mCamera->setPosition(340.0*Math::Sin(Degree(cameraAngle)), 175, 340.0 *Math::Cos(Degree(cameraAngle)));
+        }
+    }
+    // ////////////////////////////////////////////////////////////////////
+    // Update frame counter.
+    // ////////////////////////////////////////////////////////////////////
+    static int skipFrames =0;
     if (--skipFrames <= 0)
     {
-        if (mCameraRotating != NONE)
-        {
-            if (mCameraRotating == TURNBACK && cameraAngle)
-            {
-                mCamera->yaw(Degree((cameraAngle < 0)?deltaCameraAngle:-deltaCameraAngle));
-                cameraAngle+= (cameraAngle < 0)?deltaCameraAngle:-deltaCameraAngle;
-                mCamera->setPosition(340.0*Math::Sin(Degree(cameraAngle)), 175, 340.0 *Math::Cos(Degree(cameraAngle)));
-                if (!cameraAngle)  mCameraRotating = NONE;
-            }
-            else if (mCameraRotating == POSITIVE && cameraAngle < 65)
-            {
-                mCamera->yaw(Degree(deltaCameraAngle));
-                cameraAngle+= deltaCameraAngle;
-                mCamera->setPosition(340.0*Math::Sin(Degree(cameraAngle)), 175, 340.0 *Math::Cos(Degree(cameraAngle)));
-            }
-            else if (mCameraRotating == NEGATIVE && cameraAngle >-65)
-            {
-                mCamera->yaw(Degree(-deltaCameraAngle));
-                cameraAngle-= deltaCameraAngle;
-                mCamera->setPosition(340.0*Math::Sin(Degree(cameraAngle)), 175, 340.0 *Math::Cos(Degree(cameraAngle)));
-            }
-        }
-        skipFrames = 10;
+        const RenderTarget::FrameStats& stats = mWindow->getStatistics();
         std::stringstream strBuf;
         strBuf << std::fixed << std::setprecision(1) << stats.lastFPS;
         GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_STATISTICS, GuiManager::GUI_MSG_TXT_CHANGED, GuiImageset::GUI_TEXTVALUE_STAT_CUR_FPS  , (void*)strBuf.str().c_str());
@@ -715,6 +725,7 @@ bool Events::frameEnded(const FrameEvent& evt)
         strBuf.rdbuf()->str(""); // delete stringstream buffer.
         strBuf << std::fixed << std::setprecision(1) << stats.triangleCount;
         GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_STATISTICS, GuiManager::GUI_MSG_TXT_CHANGED, GuiImageset::GUI_TEXTVALUE_STAT_SUM_TRIS , (void*)strBuf.str().c_str());
+        skipFrames = 10;
     }
     return true;
 }
