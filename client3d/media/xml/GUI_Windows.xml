@@ -75,13 +75,13 @@
   <!--WINDOW:                           -->
   <!--#############################################-->
   <Window name= "Win_Container">
-    <Size      width= "200" height= "240" />
+    <Size      width= "398" height= "480" />
     <Alignment x= "left" />
     <Pos       x ="0" y= "100" zOrder = "50" />
-    <DragArea  x= "0" y= "0" width= "200" height= "20" />
+    <DragArea  x= "0" y= "0" width= "398" height= "40" />
 
     <Gadget type= "BUTTON"  name = "But_Close" image_name = "Button_01_Close">
-      <Pos x= "180" y= "1" />
+      <Pos x= "375" y= "7" />
     </Gadget>
 
     <!--=============================================-->
@@ -89,16 +89,16 @@
     <!--=============================================-->
     <Graphic type= "GFX_FILL"  image_name = "Item_Container">
       <Pos x= "0" y= "0" />
-      <Range width= "200" height= "240" />
+      <Range width= "398" height= "480" />
     </Graphic>
 
     <Gadget type= "SLOT"  image_name = "Item_Slot">
       <!-- Position of the 1. slot. -->
-      <Pos x= "9" y= "45" />
+      <Pos x= "17" y= "89" />
       <!-- Number of cols/rows -->
       <Sum col= "5" row="5" />
-      <!-- Offset to the next col/row -->
-      <Offset col ="0" row ="0" />
+      <!-- Offset to the next col/row and Item offset to the slot border -->
+      <Offset col ="0" row ="0" itemX ="4" itemY ="4"/>
     </Gadget>
   </Window>
 

@@ -247,35 +247,35 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
             {
                 once = false;
                 ObjectStatic::sObject obj;
-/*
-                obj.pos.x     = x+2;
-                obj.pos.z     = y;
-                obj.pos.subX  = 0;
-                obj.pos.subZ  = 0;
-                for (int i = 0 ; i <8; ++i)
-                {
-                    TileManager::getSingleton().setWalkablePos(obj.pos, i, 0xff);
-                }
+                /*
+                                obj.pos.x     = x+2;
+                                obj.pos.z     = y;
+                                obj.pos.subX  = 0;
+                                obj.pos.subZ  = 0;
+                                for (int i = 0 ; i <8; ++i)
+                                {
+                                    TileManager::getSingleton().setWalkablePos(obj.pos, i, 0xff);
+                                }
 
-                obj.pos.x     = x+2;
-                obj.pos.z     = y-1;
-                obj.pos.subX  = 0;
-                obj.pos.subZ  = 0;
-                for (int i = 0 ; i <8; ++i)
-                {
-                    TileManager::getSingleton().setWalkablePos(obj.pos, i, 0xff);
-                }
+                                obj.pos.x     = x+2;
+                                obj.pos.z     = y-1;
+                                obj.pos.subX  = 0;
+                                obj.pos.subZ  = 0;
+                                for (int i = 0 ; i <8; ++i)
+                                {
+                                    TileManager::getSingleton().setWalkablePos(obj.pos, i, 0xff);
+                                }
 
 
-                obj.pos.x     = x+2;
-                obj.pos.z     = y-2;
-                obj.pos.subX  = 0;
-                obj.pos.subZ  = 0;
-                for (int i = 0 ; i <8; ++i)
-                {
-                    TileManager::getSingleton().setWalkablePos(obj.pos, i, 0xff);
-                }
-*/
+                                obj.pos.x     = x+2;
+                                obj.pos.z     = y-2;
+                                obj.pos.subX  = 0;
+                                obj.pos.subZ  = 0;
+                                for (int i = 0 ; i <8; ++i)
+                                {
+                                    TileManager::getSingleton().setWalkablePos(obj.pos, i, 0xff);
+                                }
+                */
                 obj.meshName  = "Smitty.mesh";
                 obj.nickName  = "Nick_Monk";
                 obj.type      = ObjectManager::OBJECT_NPC;
@@ -349,31 +349,61 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                 //Logger::log().error() << "we got the Hero face: " << face;
             }
         }
-        else if (meshName == "wall_horizontal_botom.mesh")
+        else if (meshName.find("Wall",  1) != std::string::npos)
         {
-/*
-                sObject obj;
-                obj.meshName  = "wall_horizontal_botom.mesh";
-                obj.nickName  = "Nick_wall";
-                obj.type      = ObjectManager::OBJECT_CONTAINER;
-                obj.boundingRadius = 2;
-                obj.friendly  = 0;
-                obj.attack    = 50;
-                obj.defend    = 50;
-                obj.maxHP     = 50;
-                obj.maxMana   = 50;
-                obj.maxGrace  = 50;
-                obj.pos.x     = x;
-                obj.pos.z     = y;
-                obj.pos.subX  = 3;
-                obj.pos.subZ  = 3;
-                obj.level     = 0;
-                obj.facing    = -60;
-                obj.particleNr=-1;
-                ObjectManager::getSingleton().addMobileObject(obj);
-*/
-        }
+            ObjectStatic::sObject obj;
+            obj.meshName  = meshName.substr(1, meshName.size());
+            obj.nickName  = "Nick_wall";
+            obj.type      = ObjectManager::OBJECT_CONTAINER;
+            obj.boundingRadius = 2;
+            obj.friendly  = 0;
+            obj.attack    = 50;
+            obj.defend    = 50;
+            obj.maxHP     = 50;
+            obj.maxMana   = 50;
+            obj.maxGrace  = 50;
+            obj.pos.x     = x;
+            obj.pos.z     = y;
+            obj.pos.subX  = 7;
+            if (meshName[0] =='v')
+            {
+                obj.pos.subZ  = 0;
+                obj.facing    = 90;
+            }
+            else
+            {
+                obj.pos.subZ  = 7;
+                obj.facing    = 0;
+            }
+            obj.level     = 0;
 
+            obj.particleNr=-1;
+            ObjectManager::getSingleton().addMobileObject(obj);
+        }
+        /*
+                else if (meshName == "Wall_90")
+                {
+                        ObjectStatic::sObject obj;
+                        obj.meshName  = "Wall_H_B.mesh";
+                        obj.nickName  = "Nick_wall";
+                        obj.type      = ObjectManager::OBJECT_CONTAINER;
+                        obj.boundingRadius = 2;
+                        obj.friendly  = 0;
+                        obj.attack    = 50;
+                        obj.defend    = 50;
+                        obj.maxHP     = 50;
+                        obj.maxMana   = 50;
+                        obj.maxGrace  = 50;
+                        obj.pos.x     = x;
+                        obj.pos.z     = y;
+                        obj.pos.subX  = 7;
+                        obj.pos.subZ  = 0;
+                        obj.level     = 0;
+                        obj.facing    = 90;
+                        obj.particleNr=-1;
+                        ObjectManager::getSingleton().addMobileObject(obj);
+                }
+        */
         else if (meshName == "Sack_N.mesh")
         {
             static bool once = true;

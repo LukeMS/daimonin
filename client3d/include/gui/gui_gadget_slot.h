@@ -53,9 +53,10 @@ private:
     // ////////////////////////////////////////////////////////////////////
     bool mMouseOver, mMouseButDown;
     bool mActiveDrag;
-    int mActiveSlot;          /**< Slot the mouse is currently over. **/
+    int mActiveSlot;                /**< Slot the mouse is currently over. **/
     int mSumCol, mSumRow;
-    int mColSpace, mRowSpace; /**< Space between the slots. **/
+    int mColSpace, mRowSpace;       /**< Space between the slots. **/
+    int mItemOffsetX, mItemOffsetY; /**< Space between slot-border and item. **/
     unsigned int mSlotWidth, mSlotHeight;
 };
 

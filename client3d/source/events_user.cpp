@@ -44,10 +44,7 @@ using namespace Ogre;
 void Events::keyPressed(KeyEvent *e)
 {
     mIdleTime =0;
-
-    static float fogDensity = 0.05;
     static int fogStart = 450;
-
 
     // ////////////////////////////////////////////////////////////////////
     // GUI keyEvents.

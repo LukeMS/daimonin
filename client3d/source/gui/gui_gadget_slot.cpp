@@ -34,7 +34,7 @@ http://www.gnu.org/licenses/licenses.html
 using namespace Ogre;
 
 //================================================================================================
-// .
+// Constructor.
 //================================================================================================
 GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOnInit):GuiElement(xmlElement, parent)
 {
@@ -54,9 +54,12 @@ GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOn
     {
         if ((tmp = xmlOpt->Attribute("col" ))) mColSpace = atoi(tmp);
         if ((tmp = xmlOpt->Attribute("row" ))) mRowSpace = atoi(tmp);
+        if ((tmp = xmlOpt->Attribute("itemX" ))) mItemOffsetX = atoi(tmp);
+        if ((tmp = xmlOpt->Attribute("itemY" ))) mItemOffsetY = atoi(tmp);
     }
     mSlotWidth = (mWidth + mColSpace) * mSumCol;
     mSlotHeight= (mHeight+ mRowSpace) * mSumRow;
+    BG_Backup = new uint32[mWidth * mHeight];
     if (drawOnInit) draw();
 }
 
@@ -64,7 +67,9 @@ GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOn
 // .
 //================================================================================================
 GuiGadgetSlot::~GuiGadgetSlot()
-{}
+{
+    //delete[] BG_Backup; // done in GuiElement.cpp
+}
 
 //================================================================================================
 // Returns true if the mouse event was on this gadget (so no need to check the other gadgets).
@@ -119,80 +124,86 @@ void GuiGadgetSlot::drawSlot(int pos, int state, const char *strLabel)
     int strtY = mPosY + row * (mRowSpace + mHeight);
     Texture *texture = ((GuiWindow*) mParent)->getTexture();
     // ////////////////////////////////////////////////////////////////////
-    // Draw gaget.
+    // Slot gfx.
     // ////////////////////////////////////////////////////////////////////
-    PixelBox src = ((GuiWindow*) mParent)->getPixelBox()->getSubVolume(Box(
-                       gfxSrcPos[state].x,
-                       gfxSrcPos[state].y,
-                       gfxSrcPos[state].x + mWidth,
-                       gfxSrcPos[state].y + mHeight));
-    if (mHasAlpha)
-    {
-        uint32 *srcData = static_cast<uint32*>(src.data);
-        size_t rowSkip = ((GuiWindow*) mParent)->getPixelBox()->getWidth();
-        int dSrcY = 0, dDstY =0;
-        for (int y =0; y < mHeight; ++y)
-        {
-            for (int x =0; x < mWidth; ++x)
-            {
-                if (srcData[dSrcY + x] <= 0xffffff) continue;
-                BG_Backup[dDstY + x] = srcData[dSrcY + x];
-            }
-            dSrcY+= (int)rowSkip;
-            dDstY+= mWidth;
-        }
-        src = PixelBox(mWidth, mHeight, 1, PF_A8B8G8R8, BG_Backup);
-    }
-    texture->getBuffer()->blitFromMemory(src, Box(strtX, strtY, strtX + mWidth,strtY + mHeight));
-    // ////////////////////////////////////////////////////////////////////
-    // Draw Item.
-    // ////////////////////////////////////////////////////////////////////
-    /*
-        src = ((GuiWindow*) mParent)->getPixelBox()->getSubVolume(Box(
+    PixelBox srcSlot = ((GuiWindow*) mParent)->getPixelBox()->getSubVolume(Box(
                            gfxSrcPos[state].x,
                            gfxSrcPos[state].y,
                            gfxSrcPos[state].x + mWidth,
                            gfxSrcPos[state].y + mHeight));
-        if (mHasAlpha)
+    uint32 *srcSlotData = static_cast<uint32*>(srcSlot.data);
+    int rowSkipSlot = (int)((GuiWindow*) mParent)->getPixelBox()->getWidth();
+    // ////////////////////////////////////////////////////////////////////
+    // Item gfx.
+    // ////////////////////////////////////////////////////////////////////
+    GuiImageset::GuiSrcEntry *srcEntry;
+    if (pos > 10)
+        srcEntry = GuiImageset::getSingleton().getStateGfxPositions("Item_Axe");
+    else
+        srcEntry = GuiImageset::getSingleton().getStateGfxPositions("Item_Spear");
+
+    PixelBox srcItem = ((GuiWindow*) mParent)->getPixelBox()->getSubVolume(Box(
+                           srcEntry->state[0].x,
+                           srcEntry->state[0].y,
+                           srcEntry->state[0].x + srcEntry->width,
+                           srcEntry->state[0].y + srcEntry->height));
+    uint32 *srcItemData = static_cast<uint32*>(srcItem.data);
+    int rowSkipItem = (int)((GuiWindow*) mParent)->getPixelBox()->getWidth();
+    // ////////////////////////////////////////////////////////////////////
+    // Draw into the buffer.
+    // ////////////////////////////////////////////////////////////////////
+    int dSlotY = 0, dItemY = 0, destY =0;
+    for (int y =0; y < mHeight; ++y)
+    {
+        for (int x =0; x < mWidth; ++x)
         {
-            uint32 *srcData = static_cast<uint32*>(src.data);
-            size_t rowSkip = ((GuiWindow*) mParent)->getPixelBox()->getWidth();
-            int dSrcY = 0, dDstY =0;
-            for (int y =0; y < mHeight; ++y)
+            // First check if item has a non transparent pixel to draw.
+            if (x > mItemOffsetX && x < srcEntry->width + mItemOffsetX &&y > mItemOffsetY && y < srcEntry->height+ mItemOffsetY)
             {
-                for (int x =0; x < mWidth; ++x)
+                if (srcItemData[dItemY + x- mItemOffsetX] > 0x00ffffff)
                 {
-                    if (srcData[dSrcY + x] <= 0xffffff) continue;
-                    BG_Backup[dDstY + x] = srcData[dSrcY + x];
+                    BG_Backup[destY + x] = srcItemData[dItemY + x- mItemOffsetX];
+                    continue;
                 }
-                dSrcY+= (int)rowSkip;
-                dDstY+= mWidth;
             }
-            src = PixelBox(mWidth, mHeight, 1, PF_A8B8G8R8, BG_Backup);
+            // Now check for the background.
+            if (srcSlotData[dItemY + x] > 0x00ffffff)
+                BG_Backup[destY + x] = srcSlotData[dSlotY + x];
         }
-        texture->getBuffer()->blitFromMemory(src, Box(strtX, strtY, strtX + mWidth,strtY + mHeight));
+        if (y > mItemOffsetY)
+            dItemY+= (int)rowSkipItem;
+        dSlotY+= (int)rowSkipSlot;
+        destY+= mWidth;
+    }
+    srcSlot = PixelBox(mWidth, mHeight, 1, PF_A8B8G8R8, BG_Backup);
+    // ////////////////////////////////////////////////////////////////////
+    // Blit the buffer.
+    // ////////////////////////////////////////////////////////////////////
+    texture->getBuffer()->blitFromMemory(srcSlot, Box(strtX, strtY, strtX + mWidth, strtY + mHeight));
+    /*
+    {
+        Image img;
+        img.load("axe01.png","General");
+        img.resize((Ogre::ushort)img.getWidth()/2, (Ogre::ushort)img.getHeight()/2, Image::FILTER_BICUBIC);
+        img.save("c:\\axe01_bicubic.png");
+    }
+
+
+        // only for testing.
+        GuiTextout::TextLine label;
+        Item::sItem *item = Item::getSingleton().getBackpackItem(pos);
+        if (!item) return;
+        label.text = item->d_name;
+        label.hideText= false;
+        label.index= -1;
+        label.font = 0;
+        label.x1 = strtX + 5;
+        label.y1 = strtY + 5;
+        label.x2 = label.x1 + mWidth;
+        label.y2 = label.y1 + GuiTextout::getSingleton().getFontHeight(label.font);
+        label.color= 0x00ffffff;
+        GuiTextout::getSingleton().Print(&label, texture);
     */
-
-// only for testing.
-
-
-    //label.text = strLabel;
-    GuiTextout::TextLine label;
-
-
-    Item::sItem *item = Item::getSingleton().getBackpackItem(pos);
-    if (!item) return;
-    label.text = item->d_name;
-
-    label.hideText= false;
-    label.index= -1;
-    label.font = 0;
-    label.x1 = strtX + 5;
-    label.y1 = strtY + 5;
-    label.x2 = label.x1 + mWidth;
-    label.y2 = label.y1 + GuiTextout::getSingleton().getFontHeight(label.font);
-    label.color= 0x00ffffff;
-    GuiTextout::getSingleton().Print(&label, texture);
 }
 
 //================================================================================================

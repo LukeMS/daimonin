@@ -29,7 +29,7 @@ using namespace Ogre;
 //================================================================================================
 // Parse a gui element.
 //================================================================================================
-GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
+GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent, bool forceAlpha)
 {
     TiXmlElement *xmlGadget;
     String strValue;
@@ -53,7 +53,10 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
         {
             mSrcWidth = mWidth = srcEntry->width;
             mSrcHeight= mHeight= srcEntry->height;
-            mHasAlpha = srcEntry->alpha;
+            if (forceAlpha)
+                mHasAlpha = true;
+            else
+                mHasAlpha = srcEntry->alpha;
             memcpy(gfxSrcPos, srcEntry->state, sizeof(gfxSrcPos));
             GuiImageset::getSingleton().deleteStateGfxPositions(tmp);
         }
