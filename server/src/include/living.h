@@ -80,8 +80,8 @@ typedef struct liv
      */
     sint16          wc, ac;     /* Weapon Class and Armour Class */
 
-	sint8           thac0;		/* Every roll >= thac0 is a hit, despite of target ac */
-	sint8           thacm;      /* Every roll < thacm is a miss, despite of target ac */
+    sint8           thac0;      /* Every roll >= thac0 is a hit, despite of target ac */
+    sint8           thacm;      /* Every roll < thacm is a miss, despite of target ac */
     sint8           Str, Dex, Con, Wis, Cha, Int, Pow; /* the stats */
 } living;
 

@@ -55,7 +55,7 @@
 #define CHECK_WALK_MOVED     2
 
 
-#define ARCH_MAX_TYPES		512 /* important - this must be higher as max type number! */
+#define ARCH_MAX_TYPES       512 /* important - this must be higher as max type number! */
 /* i sorted the members of this struct in 4 byte (32 bit) groups. This will help compiler
  * and cpu to make aligned access of the members, and can (and will) make things smaller
  * and faster - but this depends on compiler & system too.

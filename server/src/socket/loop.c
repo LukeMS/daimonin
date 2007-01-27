@@ -416,7 +416,7 @@ static int socket_prepare_commands(NewSocket *ns)
 
 		cmdptr->len = toread;
 
-		if(rb->pos+toread <= MAXSOCKBUF_IN) 			
+		if(rb->pos+toread <= MAXSOCKBUF_IN)				
 		{
 			memcpy(cmdptr->buf, rb->buf+rb->pos, toread);
 			rb->pos += toread;
@@ -455,7 +455,7 @@ static int socket_prepare_commands(NewSocket *ns)
 				{
 					/* lets check its a non-system command.
 					 * With binary commands, this will ALOT easier.
-				     */
+					 */
 					for (i = 0; nscommands[i].cmdname != NULL; i++)
 					{
 						if ((int) strlen(nscommands[i].cmdname) <= ns->cmd_start->len && 
@@ -818,7 +818,7 @@ void remove_ns_dead_player(player *pl)
 		}
 
 		LOG(llevDebug, "remove_ns_dead_player(): %s leaving\n", STRING_OBJ_NAME(pl->ob));
-	    leave(pl, 1);
+		leave(pl, 1);
 	}
 
     free_player(pl); /* we *,must* do this here and not in the memory pool - it needs to be a syncron action */
@@ -871,34 +871,34 @@ static int check_ip_ban(NewSocket *sock, char *ip)
         next_tmp = pl->next;
 	if(!strcmp(pl->socket.ip_host, ip)) /* we have someone playing from same IP? */
 	{
-	    if (pl->socket.status != Ns_Playing)
-	    {
+		if (pl->socket.status != Ns_Playing)
+		{
 		pl->socket.status = Ns_Dead;
-	        remove_ns_dead_player(pl);
-	    }
-	    else /* allow 2 logged in *real* playing accounts online from same IP */
-	    {
-	        count++;
+			remove_ns_dead_player(pl);
+		}
+		else /* allow 2 logged in *real* playing accounts online from same IP */
+		{
+			count++;
 		if (!ptmp)
-	   	    ptmp = pl;
+			ptmp = pl;
 		else
 		{
-		    /* lets compare the idle time.
-		     * if needed we will kick the login with the highest idle time
+			/* lets compare the idle time.
+			 * if needed we will kick the login with the highest idle time
                      */
-		    if (ptmp->socket.login_count <= pl->socket.login_count)
-		        ptmp = pl;
+			if (ptmp->socket.login_count <= pl->socket.login_count)
+				ptmp = pl;
 
-	            /* now the tricky part: if we have to many
+				/* now the tricky part: if we have to many
                      * connects from that IP, we KICK the login
                      * with the highest idle time      
-		     */
-		    if (count > 1)
-		    {
-		        LOG(llevDebug, "check_ip_ban(): connection flood: mark player %s Ns_Dead (IP %s)\n",
+			 */
+			if (count > 1)
+			{
+				LOG(llevDebug, "check_ip_ban(): connection flood: mark player %s Ns_Dead (IP %s)\n",
 					query_name(pl->ob), ptmp->socket.ip_host);
 			ptmp->socket.status = Ns_Dead;
-		    }
+			}
 		}
             }
         }
@@ -921,7 +921,7 @@ void doeric_server(int update, struct timeval *timeout)
     struct sockaddr_storage	addr;
 #endif
     unsigned int		addrlen = sizeof(addr);
-    player             	       *pl, *next;
+    player					   *pl, *next;
 
     /* would it not be possible to use FD_CLR too and avoid the
      * reseting every time?
@@ -978,8 +978,8 @@ void doeric_server(int update, struct timeval *timeout)
 				if (!pl->socket.idle_flag && pl->socket.login_count < ROUND_TAG && !QUERY_FLAG(pl->ob, FLAG_WIZ))
 				{
 					pl->socket.login_count = ROUND_TAG + pticks_player_idle2;
-				    pl->socket.idle_flag = 1;
-				    Write_String_To_Socket(&pl->socket, BINARY_CMD_DRAWINFO, _idle_warn_text, strlen(_idle_warn_text));
+					pl->socket.idle_flag = 1;
+					Write_String_To_Socket(&pl->socket, BINARY_CMD_DRAWINFO, _idle_warn_text, strlen(_idle_warn_text));
 				}
 				else if (pl->socket.login_count < ROUND_TAG && !QUERY_FLAG(pl->ob, FLAG_WIZ))
 				{
@@ -988,8 +988,8 @@ void doeric_server(int update, struct timeval *timeout)
 					pl->socket.status = Ns_Zombie; /* we hold the socket open for a *bit* */
 					pl->socket.idle_flag = 1;
 					pl = pl->next;
-	                continue;
-	            }
+					continue;
+				}
 			}
 			else
 			{
@@ -1041,11 +1041,11 @@ void doeric_server(int update, struct timeval *timeout)
         if (newsock->fd != -1)
         {
 #if WIN32 || !HAVE_GETADDRINFO
-	    char *tmp_ip = inet_ntoa(addr.sin_addr);
+		char *tmp_ip = inet_ntoa(addr.sin_addr);
 #else
-	    char tmp_ip[NI_MAXHOST];
+		char tmp_ip[NI_MAXHOST];
 
-	    getnameinfo((struct sockaddr *) &addr, addrlen, tmp_ip, sizeof(tmp_ip), NULL, 0, NI_NUMERICHOST);
+		getnameinfo((struct sockaddr *) &addr, addrlen, tmp_ip, sizeof(tmp_ip), NULL, 0, NI_NUMERICHOST);
 #endif
             LOG(llevDebug, " ip %s (socket %d) (%x)\n", tmp_ip, newsock->fd, newsock);
             InitConnection(newsock, tmp_ip);

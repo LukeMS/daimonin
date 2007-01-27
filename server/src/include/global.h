@@ -406,7 +406,7 @@ typedef struct ban_struct
     int			 ticks_init; /* how long is the ban */
     int			 ticks_left; /* how long left */
     uint32		 ticks;		/* (starting) pticks + ticks_left */
-    char		*ip;		/* if name is == NULL, we have a ip */	    
+    char		*ip;		/* if name is == NULL, we have a ip */		
 } _ban_struct;
 
 typedef struct Settings

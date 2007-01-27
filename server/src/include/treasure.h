@@ -71,10 +71,10 @@ typedef struct _change_arch
     const char *race;
     const char *title;
     const char *slaying;
-	int			face_id;
-	New_Face   *face;
-	int			anim_id;					/* An index into the animation array */
-	int			animate;					/* if == -1: not set. 0/1 turn IS_ANIMATED */
+    int         face_id;
+    New_Face   *face;
+    int         anim_id;           /* An index into the animation array */
+    int         animate;           /* if == -1: not set. 0/1 turn IS_ANIMATED */
     int         item_race;
     int         material;                   /* the real, fixed material value */
     int         material_quality;           /* find a material matching this quality */
@@ -96,7 +96,7 @@ typedef struct _tlist_tweak
     int difficulty;
     int artifact_chance;
     int identified; /* mark the tlist items identified when generated */
-    int break_list;	/* if TRUE, stop treasure generation IF this list has generated something */
+    int break_list; /* if TRUE, stop treasure generation IF this list has generated something */
     _change_arch c_arch;
 } tlist_tweak;
 

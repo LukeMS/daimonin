@@ -156,7 +156,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define MMISSILE                25
 #define TIMED_GATE              26
 #define TRIGGER                 27 /* triggered when applied, resets after interval */
-#define TYPE_FLOORMASK			28
+#define TYPE_FLOORMASK          28
 #define MAGIC_EAR               29
 #define TRIGGER_BUTTON          30
 #define TRIGGER_ALTAR           31
@@ -317,12 +317,12 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define TYPE_ENV_SENSOR         133     /* Triggers depending on environment (TOD, brightness etc) */
 #define TYPE_CONN_SENSOR        134     /* Triggers on other connections */
 #define TYPE_PEARL              135        /* gem/jewel type pearl */
-#define TYPE_QUEST_INFO			136
+#define TYPE_QUEST_INFO         136
 #define TYPE_BEACON             137     /* Beacons are used mostly to locate objects by scripts */
 
 #define DEEP_SWAMP              138
 #define IDENTIFY_ALTAR          139
-#define TYPE_GUILD_FORCE		140
+#define TYPE_GUILD_FORCE        140
 #define CANCELLATION            141
 #define SHOULDER                142     /* armour... */
 #define LEGS                    143     /* armour... */
@@ -466,7 +466,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define ST1_QUEST_TRIGGER_NORMAL      0
 #define ST1_QUEST_TRIGGER_KILL        1
 #define ST1_QUEST_TRIGGER_KILL_ITEM   2
-#define ST1_QUEST_TRIGGER_ITEM		  3
+#define ST1_QUEST_TRIGGER_ITEM        3
 
 /* for guild force */
 #define ST1_GUILD_IN        1
@@ -724,7 +724,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_FEARED          48 /* player or monster is feared - attacks and acts alot more worse */
 /* was FLAG_UNIQUE */
 #define FLAG_NO_DROP         50 /* Object can't be dropped */
-#define FLAG_FIGHT_HPREG	 51 /* monster (player - not implemented): mob can reg hp when fighting! */
+#define FLAG_FIGHT_HPREG     51 /* monster (player - not implemented): mob can reg hp when fighting! */
 #define FLAG_READY_SPELL     52 /* (Monster) can learn and cast spells */
 #define FLAG_SURRENDERED     53 /* (Monster) has surrendered and count not as "targetable enemy" */
 #define FLAG_ROOTED          54 /* monster or player is rooted/snared - can't move but fight */
@@ -855,10 +855,10 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_NO_SAVE            134     /* don't save this object - remove it before we save */
 #define FLAG_PASS_ETHEREAL      135     /* can_pass light for ethereal */
 
-#define FLAG_IS_EGOITEM			136		/* item MUST be bound before applyable */
-#define FLAG_IS_EGOBOUND		137		/* item is bound to player or clan */
-#define FLAG_IS_EGOCLAN         138		/* item is bound to clan (if not set, always to player (not implemented) */
-#define FLAG_IS_EGOLOCK			139		/* the bound is permanent - can't be remove (not implemented) */
+#define FLAG_IS_EGOITEM         136     /* item MUST be bound before applyable */
+#define FLAG_IS_EGOBOUND        137     /* item is bound to player or clan */
+#define FLAG_IS_EGOCLAN         138     /* item is bound to clan (if not set, always to player (not implemented) */
+#define FLAG_IS_EGOLOCK         139     /* the bound is permanent - can't be remove (not implemented) */
 
 /* FREE flag: 59, 109, 11*/
 

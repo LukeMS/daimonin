@@ -27,11 +27,11 @@ extern void             add_arch(archetype *at);
 extern archetype       *type_to_archetype(int type);
 extern object          *clone_arch(int type);
 /* artifact.c */
-extern void				load_artifacts(int mode);
+extern void             load_artifacts(int mode);
 extern inline artifactlist *find_artifactlist(int type);
-extern artifact		   *find_artifact(const char *name);
+extern artifact        *find_artifact(const char *name);
 extern void             dump_artifacts(void);
-extern void				add_artifact_archtype(void);
+extern void             add_artifact_archtype(void);
 extern void             give_artifact_abilities(object *op, artifact *art);
 extern int              generate_artifact(object *op, int difficulty, int t_style, int a_chance);
 extern void             free_artifactlist(artifactlist *al);
@@ -63,9 +63,9 @@ extern float            calc_level_difference(int who_lvl, int op_lvl);
 extern int              calc_skill_exp(object *who, object *op, float mod, int level, int *real);
 extern void             init_new_exp_system(void);
 /* guild.c */
-extern object		   *guild_get(player *pl, char *name);
-extern object		   *guild_join(player *pl, char *name, int s1_group, int s1_value, int s2_group, int s2_value, int s3_group, int s3_value);
-extern void				guild_leave(player *pl);
+extern object          *guild_get(player *pl, char *name);
+extern object          *guild_join(player *pl, char *name, int s1_group, int s1_value, int s2_group, int s2_value, int s3_group, int s3_value);
+extern void             guild_leave(player *pl);
 /* holy.c */
 extern void             init_gods(void);
 extern void             add_god_to_list(archetype *god_arch);
@@ -91,7 +91,7 @@ extern char            *describe_item(const object *const op);
 extern int              need_identify(const object *const op);
 extern void             identify(object *op);
 extern void             set_traped_flag(object *op);
-extern int				check_magical_container(object *op, object *env);
+extern int              check_magical_container(object *op, object *env);
 /* links.c */
 extern objectlink      *get_objectlink(int id);
 extern oblinkpt        *get_objectlinkpt(void);
@@ -207,7 +207,7 @@ extern int              get_rangevector_full(object *op1, mapstruct *map1, int x
 extern int              on_same_map(object *op1, object *op2);
 extern int              on_same_tileset(object *op1, object *op2);
 extern int              in_same_instance(mapstruct *m1, mapstruct *m2);
-extern void				map_transfer_apartment_items(mapstruct *map_old, mapstruct * map_new, int x, int y);
+extern void             map_transfer_apartment_items(mapstruct *map_old, mapstruct * map_new, int x, int y);
 /* material.c */
 extern void             material_attack_damage(object *op, int num, int chance, int base);
 extern sint64           material_repair_cost(object *item, object *owner);
@@ -218,8 +218,8 @@ extern void             init_mempools();
 extern void             cleanup_mempools();
 extern void             free_mempool(struct mempool *pool);
 extern struct mempool * (create_mempool)(const char *description, uint32 expand, uint32 size,
-						uint32 flags, chunk_initialisator initialisator, chunk_deinitialisator deinitialisator,
-						chunk_constructor constructor, chunk_destructor destructor);
+                uint32 flags, chunk_initialisator initialisator, chunk_deinitialisator deinitialisator,
+                chunk_constructor constructor, chunk_destructor destructor);
 extern void             free_empty_puddles(struct mempool *pool);
 extern void             return_poolchunk_array_real(void *data, uint32 arraysize_exp, struct mempool *pool);
 extern void            *get_poolchunk_array_real(struct mempool *pool, uint32 arraysize_exp);
@@ -228,7 +228,7 @@ extern void             dump_mempool_statistics(object *op, int *sum_used, int *
 extern void             mark_object_removed(object *ob);
 extern int              CAN_MERGE(object *ob1, object *ob2);
 extern object          *merge_ob(object *op, object *top);
-extern sint32			sum_weight(object *op);
+extern sint32           sum_weight(object *op);
 extern object          *is_player_inv(object *op);
 extern void             dump_object2(const object *op);
 extern void             dump_object(const object *op);

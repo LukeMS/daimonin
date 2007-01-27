@@ -82,12 +82,12 @@
 #define MAP_ENTER_Y(m)      (m)->enter_y
 
 /* flags passed to enter_map_xx(), ready_map_name, load_map and other map related functions */
-#define MAP_STATUS_MULTI		    0x01 /* normal multiuser map (saved in /tmp) */
-#define MAP_STATUS_UNIQUE		    0x02 /* like apartment - (map is inside /players folder) */
-#define MAP_STATUS_INSTANCE		    0x04 /* this is an instance (map is inside /instance) */
-#define MAP_STATUS_STYLE		    0x08 /* we load a special random map style map - we don't set speed for objects inside! */
+#define MAP_STATUS_MULTI			0x01 /* normal multiuser map (saved in /tmp) */
+#define MAP_STATUS_UNIQUE			0x02 /* like apartment - (map is inside /players folder) */
+#define MAP_STATUS_INSTANCE			0x04 /* this is an instance (map is inside /instance) */
+#define MAP_STATUS_STYLE			0x08 /* we load a special random map style map - we don't set speed for objects inside! */
 
-#define MAP_STATUS_ORIGINAL		    0x10 /* map is an original map - generate treasures! */
+#define MAP_STATUS_ORIGINAL			0x10 /* map is an original map - generate treasures! */
 #define MAP_STATUS_FIXED_POS        0x20 /* enter map with fixed postion, don't search for a free spot */
 #define MAP_STATUS_RANDOM_POS       0x40 /* search for a random free spot around our insertation point */
 #define MAP_STATUS_FREE_POS_ONLY    0x80 /* only execute enter_map_xx() when there is a free spot! */
