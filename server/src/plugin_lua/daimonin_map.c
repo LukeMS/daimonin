@@ -310,14 +310,14 @@ static int Map_Save(lua_State *L)
 
     get_lua_args(L, "M|i", &map, &flags);
 
-	if (!map->data.map || map->data.map->in_memory != MAP_IN_MEMORY)
-		return 0;
+    if (!map->data.map || map->data.map->in_memory != MAP_IN_MEMORY)
+        return 0;
 
-	if (hooks->new_save_map(map->data.map, 0) == -1)
-		LOG(llevDebug, "MapSave(): failed to save map %s\n", STRING_SAFE(map->data.map->path));
+    if (hooks->new_save_map(map->data.map, 0) == -1)
+        LOG(llevDebug, "MapSave(): failed to save map %s\n", STRING_SAFE(map->data.map->path));
 
-	if (flags)
-		map->data.map->in_memory = MAP_IN_MEMORY;
+    if (flags)
+        map->data.map->in_memory = MAP_IN_MEMORY;
 
     return 0;
 }

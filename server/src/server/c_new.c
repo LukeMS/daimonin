@@ -247,12 +247,12 @@ void send_target_command(player *pl)
 /* send quest list */
 int command_questlist(object *op, char *params)
 {
-	if (!op || op->type != PLAYER || !CONTR(op))
-		return 1;
+    if (!op || op->type != PLAYER || !CONTR(op))
+        return 1;
 
-	send_quest_list(op);
+    send_quest_list(op);
 
-	return 1;
+    return 1;
 }
 
 int command_combat(object *op, char *params)
@@ -260,7 +260,7 @@ int command_combat(object *op, char *params)
     if (!op || !op->map || op->type != PLAYER || !CONTR(op))
         return 1;
 
-	CONTR(op)->damage_timer = PLAYER_HPGEN_DELAY;
+    CONTR(op)->damage_timer = PLAYER_HPGEN_DELAY;
     if (CONTR(op)->combat_mode)
         CONTR(op)->combat_mode = 0;
     else
@@ -559,10 +559,10 @@ static _new_char_template   new_char_template[] =
 {
     {"human_male", 5, 12, 14, 12, 14, 12 ,14, 12, 14 ,12, 14 , 12, 14 ,12 ,14},
     {"human_female", 5, 12, 14, 12, 14, 12 ,14, 12, 14 ,12, 14 , 12, 14 ,12 ,14},
-	{"half_elf_male", 5, 12, 14, 13, 15, 11 ,13, 12, 14 ,11, 13 , 13, 15 ,12 ,14},
-	{"half_elf_female", 5, 12, 14, 13, 15, 11 ,13, 12, 14 ,11, 13 , 13, 15 ,12 ,14},
-	{"dwarf_male", 5, 13, 15, 11, 13, 13, 15, 12, 14, 12, 14, 11, 13, 12, 14},
-	{"dwarf_female", 5, 13, 15, 11, 13, 13, 15, 12, 14, 12, 14, 11, 13, 12, 14},
+    {"half_elf_male", 5, 12, 14, 13, 15, 11 ,13, 12, 14 ,11, 13 , 13, 15 ,12 ,14},
+    {"half_elf_female", 5, 12, 14, 13, 15, 11 ,13, 12, 14 ,11, 13 , 13, 15 ,12 ,14},
+    {"dwarf_male", 5, 13, 15, 11, 13, 13, 15, 12, 14, 12, 14, 11, 13, 12, 14},
+    {"dwarf_female", 5, 13, 15, 11, 13, 13, 15, 12, 14, 12, 14, 11, 13, 12, 14},
     {NULL, 5, 12, 14, 12, 14, 12 ,14, 12, 14 ,12, 14 , 12, 14 ,12 ,14}
 };
 
@@ -577,7 +577,7 @@ static _new_char_template   new_char_template[] =
  */
 void command_new_char(char *params, int len, player *pl)
 {
-	int					skillnr[]       = {SK_SLASH_WEAP, SK_MELEE_WEAPON, SK_CLEAVE_WEAP, SK_PIERCE_WEAP};
+    int                 skillnr[]       = {SK_SLASH_WEAP, SK_MELEE_WEAPON, SK_CLEAVE_WEAP, SK_PIERCE_WEAP};
     archetype          *p_arch          = NULL;
     const char         *name_tmp        = NULL;
     object             *objtmp, *op;
@@ -589,17 +589,17 @@ void command_new_char(char *params, int len, player *pl)
 #endif
     char                name[HUGE_BUF]  = "";
     char                buf[HUGE_BUF]   = "";
-	char				*skillitem[] = {"shortsword", "mstar_small", "axe_small", "dagger_large"};
+    char               *skillitem[] = {"shortsword", "mstar_small", "axe_small", "dagger_large"};
 
-	if (!pl || pl->socket.status == Ns_Dead)
-	{
-		if(pl)
-			pl->socket.status = Ns_Dead;
-		return;
-	}
+    if (!pl || pl->socket.status == Ns_Dead)
+    {
+        if(pl)
+            pl->socket.status = Ns_Dead;
+        return;
+    }
 
-	op = pl->ob;
-	if (pl->state != ST_CREATE_CHAR)
+    op = pl->ob;
+    if (pl->state != ST_CREATE_CHAR)
     {
         LOG(llevDebug, "SHACK:: %s: command_new_char send at from time\n", query_name(pl->ob));
         pl->socket.status = Ns_Dead; /* killl socket */
@@ -613,7 +613,7 @@ void command_new_char(char *params, int len, player *pl)
     }
 
     sscanf(params, "%s %d %d %d %d %d %d %d %d\n", name, &stats[0], &stats[1], &stats[2], &stats[3], &stats[4], &stats[5],
-           &stats[6],&stats[7]);
+            &stats[6],&stats[7]);
 
     /* now: we have to verify every *bit* of what the client has send us */
     /* invalid player arch? */
@@ -626,7 +626,7 @@ void command_new_char(char *params, int len, player *pl)
 
 
     LOG(llevDebug, "NewChar: %s:: ARCH: %s (%d %d %d %d %d %d %d %d)\n", query_name(pl->ob), name, stats[0], stats[1],
-        stats[2], stats[3], stats[4], stats[5], stats[6],stats[7]);
+            stats[2], stats[3], stats[4], stats[5], stats[6],stats[7]);
 
 
     for (i = 0; new_char_template[i].name != NULL; i++)
@@ -643,8 +643,8 @@ void command_new_char(char *params, int len, player *pl)
     }
 
     v = new_char_template[i].min_Str
-      + new_char_template[i].min_Dex
-      + new_char_template[i].min_Con
+        + new_char_template[i].min_Dex
+        + new_char_template[i].min_Con
       + new_char_template[i].min_Int
       + new_char_template[i].min_Wis
       + new_char_template[i].min_Pow
@@ -687,12 +687,12 @@ void command_new_char(char *params, int len, player *pl)
         return;
     }
 
-	if(stats[7] < 0 || stats[7] > 3) /* selected weapon skill */
-	{
+    if(stats[7] < 0 || stats[7] > 3) /* selected weapon skill */
+    {
         LOG(llevDebug, "SHACK:: %s: tried to hack NewChar! (weapon skill %d)\n", query_name(pl->ob), stats[6]);
         pl->socket.status = Ns_Dead; /* killl socket */
         return;
-	}
+    }
 
     /* all is ok - now lets create this sucker */
     /* the stats of a player a saved in pl struct and copied to the object */
@@ -734,7 +734,7 @@ void command_new_char(char *params, int len, player *pl)
     GlobalEvent(&CFP);
 #endif
 
-	pl->p_ver = PLAYER_FILE_VERSION_BETA4;
+    pl->p_ver = PLAYER_FILE_VERSION_BETA4;
     pl->state = ST_PLAYING;
     FREE_AND_CLEAR_HASH2(op->msg);
 
@@ -770,21 +770,21 @@ void command_new_char(char *params, int len, player *pl)
     CLEAR_FLAG(op, FLAG_WIZ);
     give_initial_items(op, op->randomitems);
     link_player_skills(op);
-	learn_skill(op, NULL, NULL, skillnr[stats[7]], 0);
+    learn_skill(op, NULL, NULL, skillnr[stats[7]], 0);
 
-	/* give the player his initial weapon based on the selected skill */
-	objtmp = get_archetype(skillitem[stats[7]]);
+    /* give the player his initial weapon based on the selected skill */
+    objtmp = get_archetype(skillitem[stats[7]]);
     objtmp = insert_ob_in_ob(objtmp, op);
     SET_FLAG(objtmp, FLAG_IDENTIFIED);
     SET_FLAG(objtmp, FLAG_KNOWN_MAGICAL);
     SET_FLAG(objtmp, FLAG_KNOWN_CURSED);
-	manual_apply(op, objtmp, 0);
-	objtmp->value = 1;
+    manual_apply(op, objtmp, 0);
+    objtmp->value = 1;
 
     CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
     pl->last_stats.exp = 1;          /* force send of skill exp data to client */
-	op->carrying = sum_weight(op);			/* sanity calc to ensure right inventory weight for new player */
-	FIX_PLAYER(op ,"command new char - first fix"); /* THATS our first fix_player() when we create a new char
+    op->carrying = sum_weight(op);   /* sanity calc to ensure right inventory weight for new player */
+    FIX_PLAYER(op ,"command new char - first fix"); /* THATS our first fix_player() when we create a new char
                                                      * add this time, hp and sp will be set */
     esrv_update_item(UPD_FACE, op, op);
     esrv_send_inventory(op, op);
@@ -830,14 +830,14 @@ void command_fire(char *params, int len, player *pl)
     int     dir = 0, type=0, tag1=-1, tag2=-1;
     object *op  = pl->ob;
 
-	if (!pl || pl->socket.status == Ns_Dead)
-	{
-		if(pl)
-			pl->socket.status = Ns_Dead;
-		return;
-	}
+    if (!pl || pl->socket.status == Ns_Dead)
+    {
+        if(pl)
+            pl->socket.status = Ns_Dead;
+        return;
+    }
 
-	if (!params || !len)
+    if (!params || !len)
         return;
 
     CONTR(op)->fire_on = 1;

@@ -79,14 +79,14 @@ mapstruct *has_been_loaded_sh(const char *name)
  */
 char * create_mapdir_pathname(const char *name)
 {
-	static char buf[MAXPATHLEN];
+    static char buf[MAXPATHLEN];
 
-	/* double "//" would be a problem for comparing path strings */
-	if (*name == '/')
-		sprintf(buf, "%s%s", settings.mapdir, name);
-	else
-		sprintf(buf, "%s/%s", settings.mapdir, name);
-	return (buf);
+    /* double "//" would be a problem for comparing path strings */
+    if (*name == '/')
+        sprintf(buf, "%s%s", settings.mapdir, name);
+    else
+        sprintf(buf, "%s/%s", settings.mapdir, name);
+    return (buf);
 }
 
 /*
@@ -936,7 +936,7 @@ int new_save_map(mapstruct *m, int flag)
 static void free_all_objects(mapstruct *m)
 {
     int     i, j;
-	int		yl=MAP_HEIGHT(m), xl=MAP_WIDTH(m);
+    int     yl=MAP_HEIGHT(m), xl=MAP_WIDTH(m);
     object *op;
 
     /*LOG(llevDebug,"FAO-start: map:%s ->%d\n", m->name?m->name:(m->tmpname?m->tmpname:""),m->in_memory);*/
@@ -1132,11 +1132,11 @@ void free_all_maps()
  */
 const char *create_unique_path_sh(const object * const op, const char * const name)
 {
-	char path[1024];
+     char path[1024];
 
-	sprintf(path, "%s/%s/%s/%s/%s", settings.localdir, settings.playerdir, get_subdir(op->name), op->name, path_to_name(name));
+     sprintf(path, "%s/%s/%s/%s/%s", settings.localdir, settings.playerdir, get_subdir(op->name), op->name, path_to_name(name));
 
-	return add_string(path);
+     return add_string(path);
 }
 
 /* same as above but more complex: helper function to create from a normal map a instanced map.
@@ -1330,16 +1330,16 @@ mapstruct *ready_inherited_map(mapstruct *orig_map, shstr *new_map_path, int fla
  */
 mapstruct * ready_map_name(const char *name_path, const char *src_path, int flags, shstr *reference)
 {
-	mapstruct  *m;
-		
+     mapstruct  *m;
+     
     /* Map is good to go? so just return it */
-	m = has_been_loaded_sh( name_path ? name_path : src_path );
-	if (m && (m->in_memory == MAP_LOADING || m->in_memory == MAP_IN_MEMORY))
-		return m;
+     m = has_been_loaded_sh( name_path ? name_path : src_path );
+     if (m && (m->in_memory == MAP_LOADING || m->in_memory == MAP_IN_MEMORY))
+     return m;
 
-	/* unique maps always get loaded from their original location, and never from a temp location. */
-	if (!m || (flags & (MAP_STATUS_UNIQUE|MAP_STATUS_INSTANCE)) )
-	{
+     /* unique maps always get loaded from their original location, and never from a temp location. */
+     if (!m || (flags & (MAP_STATUS_UNIQUE|MAP_STATUS_INSTANCE)) )
+     {
         /* tricky check - if we have '/' starting part, its a multi map we have here.
          * if called without src_path, we only check it in memory OR in tmp.
          * if we are here its not there or its not an multi map.
@@ -1347,48 +1347,48 @@ mapstruct * ready_map_name(const char *name_path, const char *src_path, int flag
         if(!src_path && *name_path == '/')
             return  NULL;
 
-		if (m)
-		{
+     if (m)
+     {
             /* after the instance map patch we should look in the map swap system...
              * it seems unique maps are not 100% right implemented there
              */
             LOG(llevDebug, "NOTE: ready_map_name(): unique/instanced map as tmp map? (stats:%d) (%s) (%s)", 
                             m->in_memory, STRING_SAFE(name_path), STRING_SAFE(src_path) );
-			clean_tmp_map(m);
-			delete_map(m);
-			m = NULL;
-		}
+     clean_tmp_map(m);
+     delete_map(m);
+     m = NULL;
+     }
         
         /* we are loading now a src map from /maps or an instance/unique from /instance or /players */
         if(!(m = load_map(name_path, src_path, MAP_STATUS_TYPE(flags), reference)))
             return NULL;
-  	}
-	else
-	{
-		/* If in this loop, we found a temporary map, so load it up. */
-		m = load_temporary_map(m);
-		if (m == NULL)
-			return NULL;
+       }
+     else
+     {
+         /* If in this loop, we found a temporary map, so load it up. */
+         m = load_temporary_map(m);
+         if (m == NULL)
+             return NULL;
 
-		LOG(llevDebug, "clean. ");
-		clean_tmp_map(m);
-		m->in_memory = MAP_IN_MEMORY;
-	}
+         LOG(llevDebug, "clean. ");
+         clean_tmp_map(m);
+         m->in_memory = MAP_IN_MEMORY;
+     }
 
-	/* Below here is stuff common to both first time loaded maps and
-	* temp maps.
-	*/
+     /* Below here is stuff common to both first time loaded maps and
+      * temp maps.
+      */
 
-	/* In case other objects press some buttons down.
-	* We handle here all kind of "triggers" which are triggered
-	* permanent by objects like buttons or inventory checkers.
-	* We don't check here instant stuff like sacrificing altars.
-	* Because this should be handled on map making side.
-	*/
-	LOG(llevDebug, "buttons. ");
-	update_buttons(m);
-	LOG(llevDebug, "end ready-map_name(%s)\n", m->path ? m->path : "<nopath>");
-	return m;
+     /* In case other objects press some buttons down.
+      * We handle here all kind of "triggers" which are triggered
+      * permanent by objects like buttons or inventory checkers.
+      * We don't check here instant stuff like sacrificing altars.
+      * Because this should be handled on map making side.
+      */
+     LOG(llevDebug, "buttons. ");
+     update_buttons(m);
+     LOG(llevDebug, "end ready-map_name(%s)\n", m->path ? m->path : "<nopath>");
+     return m;
 }
 
 
@@ -1406,23 +1406,23 @@ mapstruct * ready_map_name(const char *name_path, const char *src_path, int flag
 */
 mapstruct * load_map(const char *filename, const char *src_name, int flags, shstr *reference)
 {
-	FILE       *fp;
-	mapstruct  *m;
-	char       pathname[MAX_BUF];
+    FILE       *fp;
+    mapstruct  *m;
+    char       pathname[MAX_BUF];
 
     flags &= ~MAP_STATUS_ORIGINAL;
 
-	/* this IS a bug - because string compare will fail when it checks the loaded maps - 
+    /* this IS a bug - because string compare will fail when it checks the loaded maps - 
      * this can lead in a double load and break the server!
-	 * a '.' signs unique maps in fixed directories.
+     * a '.' signs unique maps in fixed directories.
      * We don't fix it here anymore - this MUST be done by the calling functions or our 
      * inheritanced map system is already broken somewhere before this call.
-	 */
-	if ((filename && *filename != '/' && *filename != '.') || (src_name && *src_name != '/' && *src_name != '.'))
-	{
-		LOG(llevDebug, "DEBUG: load_map: filename without start '/' or '.' (%s) (%s)\n", STRING_SAFE(filename), STRING_SAFE(src_name));
+     */
+    if ((filename && *filename != '/' && *filename != '.') || (src_name && *src_name != '/' && *src_name != '.'))
+    {
+        LOG(llevDebug, "DEBUG: load_map: filename without start '/' or '.' (%s) (%s)\n", STRING_SAFE(filename), STRING_SAFE(src_name));
         return NULL;
-	}
+    }
 
     /* Here is our only "file path analyzing" trick. Our map model itself don't need it, but
      * it allows us to call this function with the DM commands like "/goto ./players/a/aa/Aa/$demo"
@@ -1432,23 +1432,23 @@ mapstruct * load_map(const char *filename, const char *src_name, int flags, shst
      */     
     if(filename)
     {
-	    if (*filename == '.') /* pathes to /instance and /players always start with a '.'! */
-	    {
-		    LOG(llevDebug, "load_map: %s (%x)\n", filename, flags);
-		    strcpy(pathname, filename);
+        if (*filename == '.') /* pathes to /instance and /players always start with a '.'! */
+        {
+            LOG(llevDebug, "load_map: %s (%x)\n", filename, flags);
+            strcpy(pathname, filename);
         }
-    	else /* we have an normalized map here and the map start ALWAYS with a '/' */
-    	{
-    		LOG(llevDebug, "load_map (orig): %s (%x) ", filename, flags);
-    		strcpy(pathname, create_mapdir_pathname(filename)); /* we add the (...)/maps prefix path part */
+        else /* we have an normalized map here and the map start ALWAYS with a '/' */
+        {
+            LOG(llevDebug, "load_map (orig): %s (%x) ", filename, flags);
+            strcpy(pathname, create_mapdir_pathname(filename)); /* we add the (...)/maps prefix path part */
 
             if(filename == src_name)
                 flags |= MAP_STATUS_ORIGINAL;
-    	}
+        }
     }
 
-	if (!filename || (fp = fopen(pathname, "r")) == NULL)
-	{
+    if (!filename || (fp = fopen(pathname, "r")) == NULL)
+    {
         /* this was usually a try to load a unique or instance map
          * This is RIGHT because we use fopen() here as an implicit access()
          * check. If it fails, we know we have to load the map from /maps!
@@ -1471,12 +1471,12 @@ mapstruct * load_map(const char *filename, const char *src_name, int flags, shst
             LOG(llevBug, "Debug: Can't open map file %s (%s)\n", STRING_SAFE(filename), STRING_SAFE(src_name));
             return (NULL);
         }
-	}
+    }
 
-	LOG(llevDebug, "link map. ");
-	m = get_linked_map();
+    LOG(llevDebug, "link map. ");
+    m = get_linked_map();
 
-	LOG(llevDebug, "header: ");
+    LOG(llevDebug, "header: ");
 
     if(filename)
     {
@@ -1489,15 +1489,15 @@ mapstruct * load_map(const char *filename, const char *src_name, int flags, shst
     if(src_name) /* invalid src_name can happens when we force an explicit load of an unique map! */ 
         FREE_AND_COPY_HASH(m->orig_path, src_name); /* orig_path will be loaded in load_map_header()! */
 
-	m->map_tag = ++global_map_tag;    /* every map has an unique tag */
-	if (load_map_header(fp, m, flags))
-	{
-		LOG(llevBug, "BUG: Failure loading map header for %s, flags=%d\n", 
-                     flags&MAP_STATUS_ORIGINAL?m->orig_path:m->path, flags);
-		delete_map(m);
-		fclose(fp);
-		return NULL;
-	}
+    m->map_tag = ++global_map_tag;    /* every map has an unique tag */
+    if (load_map_header(fp, m, flags))
+    {
+        LOG(llevBug, "BUG: Failure loading map header for %s, flags=%d\n", 
+                flags&MAP_STATUS_ORIGINAL?m->orig_path:m->path, flags);
+        delete_map(m);
+        fclose(fp);
+        return NULL;
+    }
 
     /* Set up the reference string from function call if not stored with map */
     if((MAP_UNIQUE(m) || MAP_INSTANCE(m)) && m->reference == NULL)
@@ -1511,24 +1511,24 @@ mapstruct * load_map(const char *filename, const char *src_name, int flags, shst
         }
     }
 
-	LOG(llevDebug, "alloc. ");
-	allocate_map(m);
+    LOG(llevDebug, "alloc. ");
+    allocate_map(m);
 
-	m->in_memory = MAP_LOADING;
+    m->in_memory = MAP_LOADING;
 
-	LOG(llevDebug, "load objs:");
-	load_objects(m, fp, flags & (MAP_STATUS_STYLE|MAP_STATUS_ORIGINAL));
-	LOG(llevDebug, "close. ");
-	fclose(fp);
-	LOG(llevDebug, "post set. ");
-	if (!MAP_DIFFICULTY(m))
-	{
-		/*LOG(llevBug, "BUG: Map %s has difficulty 0. Changing to 1 (non special item area).\n", filename);*/
-		MAP_DIFFICULTY(m) = 1;
-	}
-	set_map_reset_time(m);
-	LOG(llevDebug, "done!\n");
-	return (m);
+    LOG(llevDebug, "load objs:");
+    load_objects(m, fp, flags & (MAP_STATUS_STYLE|MAP_STATUS_ORIGINAL));
+    LOG(llevDebug, "close. ");
+    fclose(fp);
+    LOG(llevDebug, "post set. ");
+    if (!MAP_DIFFICULTY(m))
+    {
+        /*LOG(llevBug, "BUG: Map %s has difficulty 0. Changing to 1 (non special item area).\n", filename);*/
+        MAP_DIFFICULTY(m) = 1;
+    }
+    set_map_reset_time(m);
+    LOG(llevDebug, "done!\n");
+    return (m);
 }
 
 
@@ -1723,7 +1723,7 @@ void load_objects(mapstruct *m, FILE *fp, int mapflags)
         }
 
         if(op->inv && !QUERY_FLAG(op,FLAG_SYS_OBJECT) )
-            op->carrying = sum_weight(op);			/* ensure right weight for inventories */
+            op->carrying = sum_weight(op);              /* ensure right weight for inventories */
         else
             op->carrying = 0; /* sanity setting... this means too - NO double use of ->carrying! */
 
@@ -1863,7 +1863,7 @@ next:
 void save_objects(mapstruct *m, FILE *fp, int flag)
 {
     static object *floor_g=NULL, *fmask_g=NULL;
-    int		yl=MAP_HEIGHT(m), xl=MAP_WIDTH(m);
+    int    yl=MAP_HEIGHT(m), xl=MAP_WIDTH(m);
     int     i, j = 0;
     object *head, *op, *otmp, *tmp, *last_valid;
 
@@ -2132,7 +2132,7 @@ void save_objects(mapstruct *m, FILE *fp, int flag)
                 fmask_g->face = mp->mask_face;
                 fmask_g->x = i;
                 fmask_g->y = j;
-                save_object(fp, fmask_g, 3);				
+                save_object(fp, fmask_g, 3);
             }
 
             for (op = mp->first; op; op = otmp)

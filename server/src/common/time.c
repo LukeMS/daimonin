@@ -136,17 +136,17 @@ void sleep_delta()
 void set_pticks_time(long t)
 {
     pticks_ums = t;
-	pticks_second = 1000000.0f;
-	if(t)
-	    pticks_second = 1000000.0f/(float) t;
+    pticks_second = 1000000.0f;
+    if(t)
+        pticks_second = 1000000.0f/(float) t;
 
-	pticks_socket_idle = (uint32) ((60.0f * 3.0f) * pticks_second);
-	pticks_player_idle1 = (uint32) ((60.0f * 8.0f) * pticks_second);
-	pticks_player_idle2 = (uint32) ((60.0f * 2.0f) * pticks_second);
+    pticks_socket_idle = (uint32) ((60.0f * 3.0f) * pticks_second);
+    pticks_player_idle1 = (uint32) ((60.0f * 8.0f) * pticks_second);
+    pticks_player_idle2 = (uint32) ((60.0f * 2.0f) * pticks_second);
 
-	/* LOG(llevDebug,"set_pticks_time(): t=%d ums:%d pticks_second:%f sock:%d idle1:%d idle2:%d\n", 
-		t, pticks_ums, pticks_second, pticks_socket_idle, pticks_player_idle1, pticks_player_idle2);
-    */
+    /* LOG(llevDebug,"set_pticks_time(): t=%d ums:%d pticks_second:%f sock:%d idle1:%d idle2:%d\n", 
+       t, pticks_ums, pticks_second, pticks_socket_idle, pticks_player_idle1, pticks_player_idle2);
+     */
 }
 
 void get_tod(timeofday_t *tod)

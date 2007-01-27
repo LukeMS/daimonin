@@ -200,7 +200,7 @@ struct obj *aggro_update_info(struct obj *target, struct obj *target_owner,
          *  In any case, we use the owner.
          */
         if(hitter && hitter_owner)
-			LOG(llevDebug,"TODO: hitter %s and owner %s passed aggro_update_check. Pet aggro handling not finished...\n", query_name(hitter), query_name(hitter_owner));
+            LOG(llevDebug,"TODO: hitter %s and owner %s passed aggro_update_check. Pet aggro handling not finished...\n", query_name(hitter), query_name(hitter_owner));
         if(hitter_owner)
             hitter=hitter_owner; /* TODO: change when we do pet/owner handling */
 
@@ -323,17 +323,17 @@ static inline int add_aggro_exp(object *hitter, int exp, int skillnr)
 {
     if (exp)
     {
-		if(CONTR(hitter)->exp_bonus)
-		{
-			int exp_bonus = (int)(((double)exp/100.0)*(double)CONTR(hitter)->exp_bonus);
-			new_draw_info_format(NDI_UNIQUE, 0,hitter, "You got %d (+%d bonus) exp in %s.",
-				add_exp(hitter, exp+exp_bonus, skillnr), exp_bonus, skills[skillnr].name);
-		}
-		else
-		{
-			new_draw_info_format(NDI_UNIQUE, 0,hitter, "You got %d exp in %s.",
-				add_exp(hitter, exp, skillnr), skills[skillnr].name);
-		}
+        if(CONTR(hitter)->exp_bonus)
+        {
+            int exp_bonus = (int)(((double)exp/100.0)*(double)CONTR(hitter)->exp_bonus);
+            new_draw_info_format(NDI_UNIQUE, 0,hitter, "You got %d (+%d bonus) exp in %s.",
+                    add_exp(hitter, exp+exp_bonus, skillnr), exp_bonus, skills[skillnr].name);
+        }
+        else
+        {
+            new_draw_info_format(NDI_UNIQUE, 0,hitter, "You got %d exp in %s.",
+                    add_exp(hitter, exp, skillnr), skills[skillnr].name);
+        }
         return TRUE;
     }
     /*
@@ -379,30 +379,30 @@ static inline int aggro_exp_single(object *victim, object *aggro, int base)
         if((tmp = pl->highest_skill[pl->base_skill_group[0]]))
         {
             e1 = calc_skill_exp(hitter, victim, 0.55f, tmp->level, &exp);
-			if(pl->base_skill_group_exp[0] != 100)
-				e1 = (e1 * pl->base_skill_group_exp[0])/100;
+            if(pl->base_skill_group_exp[0] != 100)
+                e1 = (e1 * pl->base_skill_group_exp[0])/100;
             ret |=add_aggro_exp(hitter, e1, tmp->stats.sp);
         }
         if((tmp = pl->highest_skill[pl->base_skill_group[1]]))
         {
             e2 = calc_skill_exp(hitter, victim, 0.30f, tmp->level, &exp);
-			if(pl->base_skill_group_exp[1] != 100)
-				e2 = (e2 * pl->base_skill_group_exp[1])/100;
+            if(pl->base_skill_group_exp[1] != 100)
+                e2 = (e2 * pl->base_skill_group_exp[1])/100;
             ret |=add_aggro_exp(hitter, e2, tmp->stats.sp);
         }
         if((tmp = pl->highest_skill[pl->base_skill_group[2]]))
         {
             e3 = calc_skill_exp(hitter, victim, 0.15f, tmp->level, &exp);
-			if(pl->base_skill_group_exp[2] != 100)
-				e3 = (e3 * pl->base_skill_group_exp[2])/100;
+            if(pl->base_skill_group_exp[2] != 100)
+                e3 = (e3 * pl->base_skill_group_exp[2])/100;
             ret |=add_aggro_exp(hitter, e3, tmp->stats.sp);
         }
     }
     else if(s2 == -1) /* 100% exp in skill s1 */
     {
         e1 = calc_skill_exp(hitter, victim, 1.0f, pl->skill_ptr[s1]->level, &exp);
-		if(pl->base_skill_group_exp[0] != 100)
-			e1 = (e1 * pl->base_skill_group_exp[0])/100;
+        if(pl->base_skill_group_exp[0] != 100)
+            e1 = (e1 * pl->base_skill_group_exp[0])/100;
         ret |= add_aggro_exp(hitter, e1, s1);
 #ifdef DEBUG_AGGRO
         LOG(-1,".. 100%% to skill %s (%d)\n", STRING_SAFE(pl->skill_ptr[s1]->name), e1);
@@ -411,31 +411,31 @@ static inline int aggro_exp_single(object *victim, object *aggro, int base)
     else if(s3 == -1) /* 65% s1, 35% in s2 */
     {
         e1 = calc_skill_exp(hitter, victim, 0.65f, pl->skill_ptr[s1]->level, &exp);
-		if(pl->base_skill_group_exp[0] != 100)
-			e1 = (e1 * pl->base_skill_group_exp[0])/100;
+        if(pl->base_skill_group_exp[0] != 100)
+            e1 = (e1 * pl->base_skill_group_exp[0])/100;
         ret |=add_aggro_exp(hitter, e1, s1);
         e2 = calc_skill_exp(hitter, victim, 0.35f, pl->skill_ptr[s2]->level, &exp);
-		if(pl->base_skill_group_exp[1] != 100)
-			e2 = (e2 * pl->base_skill_group_exp[1])/100;
+        if(pl->base_skill_group_exp[1] != 100)
+            e2 = (e2 * pl->base_skill_group_exp[1])/100;
         ret |=add_aggro_exp(hitter, e2, s2);
 #ifdef DEBUG_AGGRO
         LOG(-1,".. 65%% to skill %s (%d), 35%% to %s (%d)\n", STRING_SAFE(pl->skill_ptr[s1]->name), e1,
-            STRING_SAFE(pl->skill_ptr[s2]->name),e2);
+                STRING_SAFE(pl->skill_ptr[s2]->name),e2);
 #endif
     }
     else /* 50% in s1, 30% in s2, 20% in s3 */
     {
         e1 = calc_skill_exp(hitter, victim, 0.55f, pl->skill_ptr[s1]->level, &exp);
-		if(pl->base_skill_group_exp[0] != 100)
-			e1 = (e1 * pl->base_skill_group_exp[0])/100;
+        if(pl->base_skill_group_exp[0] != 100)
+            e1 = (e1 * pl->base_skill_group_exp[0])/100;
         ret |=add_aggro_exp(hitter, e1, s1);
         e2 = calc_skill_exp(hitter, victim, 0.30f, pl->skill_ptr[s2]->level, &exp);
-		if(pl->base_skill_group_exp[1] != 100)
-			e2 = (e2 * pl->base_skill_group_exp[1])/100;
+        if(pl->base_skill_group_exp[1] != 100)
+            e2 = (e2 * pl->base_skill_group_exp[1])/100;
         ret |=add_aggro_exp(hitter, e2, s2);
         e3 = calc_skill_exp(hitter, victim, 0.15f, pl->skill_ptr[s3]->level, &exp);
-		if(pl->base_skill_group_exp[2] != 100)
-			e3 = (e3 * pl->base_skill_group_exp[2])/100;
+        if(pl->base_skill_group_exp[2] != 100)
+            e3 = (e3 * pl->base_skill_group_exp[2])/100;
         ret |=add_aggro_exp(hitter, e3, s3);
 #ifdef DEBUG_AGGRO
         LOG(-1,".. 65%% to skill %s (%d), 35%% to %s (%d), 20%% to %s (%d)\n",
@@ -582,13 +582,13 @@ static inline int aggro_exp_group(object *victim, object *aggro, char *kill_msg)
     /* at last ... part the exp to the group members */
     for(tmp=leader;tmp;tmp=CONTR(tmp)->group_next)
     {
-		player *pl = CONTR(tmp);
+        player *pl = CONTR(tmp);
         /* skip exp when we are not in range to victim/hitter.
          * mark group_status as NO_EXP - thats important and used
          * from the quest item function (= no quest item for leecher)
          */
 #ifdef DEBUG_AGGRO
-		LOG(-1,"GROUP_MEMBER: %s (%x)\n", query_name(tmp), pl);
+        LOG(-1,"GROUP_MEMBER: %s (%x)\n", query_name(tmp), pl);
 #endif
         if(!in_group_exp_range(victim, aggro->enemy == tmp?NULL:aggro->enemy, tmp))
         {
@@ -616,22 +616,22 @@ static inline int aggro_exp_group(object *victim, object *aggro, char *kill_msg)
             if((member = CONTR(tmp)->highest_skill[pl->base_skill_group[0]]))
             {
                 e = calc_skill_exp(tmp, victim, 0.50f, member->level, &exp);
-				if(pl->base_skill_group_exp[0] != 100)
-					e = (e * pl->base_skill_group_exp[0])/100;
+                if(pl->base_skill_group_exp[0] != 100)
+                    e = (e * pl->base_skill_group_exp[0])/100;
                 ret |=add_aggro_exp(tmp, e, member->stats.sp);
             }
             if((member = pl->highest_skill[pl->base_skill_group[1]]))
             {
                 e = calc_skill_exp(tmp, victim, 0.30f, member->level, &exp);
-				if(pl->base_skill_group_exp[1] != 100)
-					e = (e * pl->base_skill_group_exp[1])/100;
+                if(pl->base_skill_group_exp[1] != 100)
+                    e = (e * pl->base_skill_group_exp[1])/100;
                 ret |=add_aggro_exp(tmp, e, member->stats.sp);
             }
             if((member = pl->highest_skill[pl->base_skill_group[2]]))
             {
                 e = calc_skill_exp(tmp, victim, 0.20f, member->level, &exp);
-				if(pl->base_skill_group_exp[2] != 100)
-					e = (e * pl->base_skill_group_exp[2])/100;
+                if(pl->base_skill_group_exp[2] != 100)
+                    e = (e * pl->base_skill_group_exp[2])/100;
                 ret |=add_aggro_exp(tmp, e, member->stats.sp);
             }
         }

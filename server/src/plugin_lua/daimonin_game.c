@@ -67,7 +67,7 @@ static struct constant_decl     Game_constants[]    =
     {"COLOR_ORANGE", NDI_ORANGE}, {"COLOR_WHITE", NDI_WHITE}, {"COLOR_NAVY", NDI_NAVY}, {"COLOR_YELLOW", NDI_YELLOW},
     {"COLOR_BLUE", NDI_BLUE}, {"COLOR_RED", NDI_RED}, {"COLOR_GREY", NDI_GREY},{"COLOR_GREEN", NDI_GREEN},
 
-	/* equipment slots of the player->equipment array */
+    /* equipment slots of the player->equipment array */
     {"EQUIP_MAIL", PLAYER_EQUIP_MAIL},
     {"EQUIP_GAUNTLET", PLAYER_EQUIP_GAUNTLET},
     {"EQUIP_BRACER", PLAYER_EQUIP_BRACER},
@@ -86,20 +86,20 @@ static struct constant_decl     Game_constants[]    =
     {"EQUIP_MTOOL", PLAYER_EQUIP_MTOOL},
     {"EQUIP_MAX", PLAYER_EQUIP_MAX},
 
-	{"ITEM_SKILL_NO", 0},
-	{"ITEM_SKILL_AGILITY", 1},
-	{"ITEM_SKILL_PERSONALITY", 2},
-	{"ITEM_SKILL_MENTAL", 3},
-	{"ITEM_SKILL_PHYSICAL", 4},
-	{"ITEM_SKILL_MAGIC", 5},
-	{"ITEM_SKILL_WISDOM", 6},
+    {"ITEM_SKILL_NO", 0},
+    {"ITEM_SKILL_AGILITY", 1},
+    {"ITEM_SKILL_PERSONALITY", 2},
+    {"ITEM_SKILL_MENTAL", 3},
+    {"ITEM_SKILL_PHYSICAL", 4},
+    {"ITEM_SKILL_MAGIC", 5},
+    {"ITEM_SKILL_WISDOM", 6},
 
-	{"SKILLGROUP_AGILITY", 0},
-	{"SKILLGROUP_PERSONALITY", 1},
-	{"SKILLGROUP_MENTAL", 2},
-	{"SKILLGROUP_PHYSIQUE", 3},
-	{"SKILLGROUP_MAGIC", 4},
-	{"SKILLGROUP_WISDOM", 5},
+    {"SKILLGROUP_AGILITY", 0},
+    {"SKILLGROUP_PERSONALITY", 1},
+    {"SKILLGROUP_MENTAL", 2},
+    {"SKILLGROUP_PHYSIQUE", 3},
+    {"SKILLGROUP_MAGIC", 4},
+    {"SKILLGROUP_WISDOM", 5},
 
     {"MAP_CHECK", PLUGIN_MAP_CHECK},
     {"MAP_NEW", PLUGIN_MAP_NEW},
@@ -113,22 +113,22 @@ static struct constant_decl     Game_constants[]    =
     {"MFLAG_LOAD_ONLY", MAP_STATUS_LOAD_ONLY},
     {"MFLAG_FIXED_LOGIN", MAP_STATUS_FIXED_LOGIN},
 
-	/* quest type */
-	{"QUEST_NORMAL", ST1_QUEST_TRIGGER_NORMAL},
-	{"QUEST_KILL", ST1_QUEST_TRIGGER_KILL},
-	{"QUEST_KILLITEM", ST1_QUEST_TRIGGER_KILL_ITEM},
-	{"QUEST_ITEM", ST1_QUEST_TRIGGER_ITEM},
+    /* quest type */
+    {"QUEST_NORMAL", ST1_QUEST_TRIGGER_NORMAL},
+    {"QUEST_KILL", ST1_QUEST_TRIGGER_KILL},
+    {"QUEST_KILLITEM", ST1_QUEST_TRIGGER_KILL_ITEM},
+    {"QUEST_ITEM", ST1_QUEST_TRIGGER_ITEM},
 
-	/* quest steps */	
-	{"QSTAT_NO", 1},
-	{"QSTAT_ACTIVE", 2},
-	{"QSTAT_SOLVED", 3},
-	{"QSTAT_DONE", 4},
-	{"QSTAT_DISALLOW", 5},
+    /* quest steps */
+    {"QSTAT_NO", 1},
+    {"QSTAT_ACTIVE", 2},
+    {"QSTAT_SOLVED", 3},
+    {"QSTAT_DONE", 4},
+    {"QSTAT_DISALLOW", 5},
 
-	{"GUILD_NO", 0},
-	{"GUILD_IN", ST1_GUILD_IN},
-	{"GUILD_OLD", ST1_GUILD_OLD},
+    {"GUILD_NO", 0},
+    {"GUILD_IN", ST1_GUILD_IN},
+    {"GUILD_OLD", ST1_GUILD_OLD},
 
     {"SOUNDTYPE_NORMAL", SOUND_NORMAL},
     {"SOUNDTYPE_SPELL", SOUND_SPELL},
@@ -295,12 +295,12 @@ static int Game_UpgradeApartment(lua_State *L)
 
     get_lua_args(L, "GMMii", &self, &map_old, &map_new, &x, &y);
 
-	if( !map_new->data.map || !map_old->data.map || x<= 0 || y<=0 
-		|| x>=map_new->data.map->width || y>=map_new->data.map->height)
-		return 0;
+    if( !map_new->data.map || !map_old->data.map || x<= 0 || y<=0 
+            || x>=map_new->data.map->width || y>=map_new->data.map->height)
+        return 0;
 
-	/* transfer the items */
-	hooks->map_transfer_apartment_items(map_old->data.map, map_new->data.map, x, y);
+    /* transfer the items */
+    hooks->map_transfer_apartment_items(map_old->data.map, map_new->data.map, x, y);
 
     return 0;
 }

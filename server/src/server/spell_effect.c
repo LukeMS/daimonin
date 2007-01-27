@@ -1445,7 +1445,7 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
         if(tmp->type == PLAYER)
             change_abil(tmp, force); /* Mostly to display any messages */
         else
-			FIX_PLAYER(tmp ,"cast change attr - bug? bogus call - fix monster?"); /* fix monster? */
+            FIX_PLAYER(tmp ,"cast change attr - bug? bogus call - fix monster?"); /* fix monster? */
     }
 
     return 1;
@@ -2032,7 +2032,7 @@ int remove_depletion(object *op, object *target)
             }
         }
         remove_ob(depl);
-		FIX_PLAYER(target ,"remove depletion");
+        FIX_PLAYER(target ,"remove depletion");
     }
 
     if (op != target && op->type == PLAYER)
@@ -2052,62 +2052,62 @@ int remove_depletion(object *op, object *target)
 
 int restoration(object *caster, object *target)
 {
-	int success = 0;
-	object *force;
-	static archetype  *at = NULL;
+    int success = 0;
+    object *force;
+    static archetype  *at = NULL;
 
-	if (!at)
-	{
-		at = find_archetype("drain");
-		if (!at)
-		{
-			LOG(llevBug, "BUG: Couldn't find archetype drain.\n");
-			return 0;
-		}
-	}
+    if (!at)
+    {
+        at = find_archetype("drain");
+        if (!at)
+        {
+            LOG(llevBug, "BUG: Couldn't find archetype drain.\n");
+            return 0;
+        }
+    }
 
-	/* try to find and remove the draining forces */
-	SET_FLAG(target, FLAG_NO_FIX_PLAYER);
-	force = present_arch_in_ob(at, target);
-	if(force)
-	{
-		success = 1;
-		remove_ob(force);
-	}
-	force = present_arch_in_ob_temp(at, target);
-	if(force)
-	{
-		success = 1;
-		remove_ob(force);
-	}
-	CLEAR_FLAG(target, FLAG_NO_FIX_PLAYER);
+    /* try to find and remove the draining forces */
+    SET_FLAG(target, FLAG_NO_FIX_PLAYER);
+    force = present_arch_in_ob(at, target);
+    if(force)
+    {
+        success = 1;
+        remove_ob(force);
+    }
+    force = present_arch_in_ob_temp(at, target);
+    if(force)
+    {
+        success = 1;
+        remove_ob(force);
+    }
+    CLEAR_FLAG(target, FLAG_NO_FIX_PLAYER);
 
-	if(caster)
-	{
-		if (caster->type == PLAYER)
-		{
-			if(caster == target)
-				new_draw_info(NDI_UNIQUE, 0, caster, "You cast restoration on yourself.");
-			else
-				new_draw_info_format(NDI_UNIQUE, 0, caster, "You cast restoration on %s.", query_base_name(target, caster));
-		}
-		if (caster != target && target->type == PLAYER)
-		{
-			new_draw_info_format(NDI_UNIQUE, 0, target, "%s cast restoration on you.", query_base_name(caster, target));
-		}
-	}
+    if(caster)
+    {
+        if (caster->type == PLAYER)
+        {
+            if(caster == target)
+                new_draw_info(NDI_UNIQUE, 0, caster, "You cast restoration on yourself.");
+            else
+                new_draw_info_format(NDI_UNIQUE, 0, caster, "You cast restoration on %s.", query_base_name(target, caster));
+        }
+        if (caster != target && target->type == PLAYER)
+        {
+            new_draw_info_format(NDI_UNIQUE, 0, target, "%s cast restoration on you.", query_base_name(caster, target));
+        }
+    }
 
-	if(success)
-	{
+    if(success)
+    {
 
-		FIX_PLAYER(target ,"restoration");
-		if(target->type == PLAYER)
-			new_draw_info(NDI_UNIQUE, 0, target, "Your level is restored!");
-		if (caster && caster != target && target->type == PLAYER)
-			new_draw_info_format(NDI_UNIQUE, 0, caster, "You restored %s.", query_base_name(caster, target));
-	}
+        FIX_PLAYER(target ,"restoration");
+        if(target->type == PLAYER)
+            new_draw_info(NDI_UNIQUE, 0, target, "Your level is restored!");
+        if (caster && caster != target && target->type == PLAYER)
+            new_draw_info_format(NDI_UNIQUE, 0, caster, "You restored %s.", query_base_name(caster, target));
+    }
 
-	return success;
+    return success;
 }
 
 int remove_deathsick(object *op, object *target)
@@ -2155,7 +2155,7 @@ int remove_deathsick(object *op, object *target)
             }
         }
         remove_ob(depl);
-		FIX_PLAYER(target, "remove deathsick");
+        FIX_PLAYER(target, "remove deathsick");
     }
 
     if (op != target && op->type == PLAYER)

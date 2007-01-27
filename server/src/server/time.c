@@ -343,7 +343,7 @@ void remove_force(object *op)
     if(env->type == PLAYER)
         change_abil(env, op);
     else
-		FIX_PLAYER(env ,"remove force - bug? fix monster?");
+        FIX_PLAYER(env ,"remove force - bug? fix monster?");
     check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
 }
 
@@ -383,7 +383,7 @@ void poison_more(object *op)
         if (op->env->type == PLAYER)
         {
             CLEAR_FLAG(op, FLAG_APPLIED);
-			FIX_PLAYER(op->env ,"poison more");
+            FIX_PLAYER(op->env ,"poison more");
             new_draw_info(NDI_UNIQUE, 0, op->env, "You feel much better now.");
         }
         remove_ob(op);
@@ -1128,7 +1128,7 @@ void change_object(object *op)
                             new_draw_info_format(NDI_UNIQUE, 0, op->env, "The %s burnt out.", query_name(op));
                             op->glow_radius = 0;
                             esrv_send_item(op->env, op);
-							FIX_PLAYER(op->env ,"change object");
+                            FIX_PLAYER(op->env ,"change object");
                         }
                         else /* atm, lights inside other inv as players don't set light masks */
                         {

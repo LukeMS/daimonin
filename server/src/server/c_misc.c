@@ -493,22 +493,22 @@ int command_wizpass(object *op, char *params)
 int command_dumpallobjects(object *op, char *params)
 {
 #ifdef MEMPOOL_TRACKING    
-	struct puddle_info *puddle = pool_object->first_puddle_info;
-	unsigned int i;
-	object *obj;
-	while(puddle)
-	{
-		for(i=0; i<pool_object->expand_size; i++)
-		{
-			obj = MEM_USERDATA((char *)puddle->first_chunk + i * (sizeof(struct mempool_chunk) + pool_object->chunksize));
-			if(! OBJECT_FREE(obj))
-				LOG(llevDebug, "obj '%s'-(%s) %x (%d)(%s) #=%d\n", STRING_OBJ_NAME(obj), 
-				STRING_OBJ_ARCH_NAME(obj), obj, obj->count, 
-				QUERY_FLAG(obj, FLAG_REMOVED) ? "removed" : "in use",
-				obj->nrof);
-		}
-		puddle = puddle->next;
-	}
+    struct puddle_info *puddle = pool_object->first_puddle_info;
+    unsigned int i;
+    object *obj;
+    while(puddle)
+    {
+        for(i=0; i<pool_object->expand_size; i++)
+        {
+            obj = MEM_USERDATA((char *)puddle->first_chunk + i * (sizeof(struct mempool_chunk) + pool_object->chunksize));
+            if(! OBJECT_FREE(obj))
+                LOG(llevDebug, "obj '%s'-(%s) %x (%d)(%s) #=%d\n", STRING_OBJ_NAME(obj), 
+                        STRING_OBJ_ARCH_NAME(obj), obj, obj->count, 
+                        QUERY_FLAG(obj, FLAG_REMOVED) ? "removed" : "in use",
+                        obj->nrof);
+        }
+        puddle = puddle->next;
+    }
 #endif     
     return 0;
 }
@@ -565,80 +565,80 @@ int command_dm_light(object *op, char *params)
 
 int command_dm_password (object *op, char *params)
 {
-	player *pl;
-	FILE *fp, *fpout;
-	const char *name_hash;
-	char pfile[MAX_BUF], bufall[MAX_BUF], outfile[MAX_BUF];
-	char name[MAX_BUF]="", pwd[MAX_BUF]="";
+    player *pl;
+    FILE *fp, *fpout;
+    const char *name_hash;
+    char pfile[MAX_BUF], bufall[MAX_BUF], outfile[MAX_BUF];
+    char name[MAX_BUF]="", pwd[MAX_BUF]="";
 
-	if(params==NULL || !sscanf(params, "%s %s", name, pwd) || name[0] == 0 || pwd[0]== 0)
-	{
-		new_draw_info(NDI_UNIQUE, 0,op, "dm_pwd: missing/invalid parameter\nUsage: /dm_pwd <playername> <new password>");
-		return 0;
-	}
-	transform_name_string(name);
+    if(params==NULL || !sscanf(params, "%s %s", name, pwd) || name[0] == 0 || pwd[0]== 0)
+    {
+        new_draw_info(NDI_UNIQUE, 0,op, "dm_pwd: missing/invalid parameter\nUsage: /dm_pwd <playername> <new password>");
+        return 0;
+    }
+    transform_name_string(name);
 
-	/* we have now 2 strings - name and password - lets check there is a player file for that name */
-	sprintf(pfile, "%s/%s/%s/%s/%s.pl", settings.localdir, settings.playerdir, get_subdir(name), name, name);
-	if (access(pfile, F_OK)==-1)
-	{
-		new_draw_info_format(NDI_UNIQUE, 0,op, "dm_pwd: player %s don't exists or has no player file!", name);
-		return 0;	
-	}
+    /* we have now 2 strings - name and password - lets check there is a player file for that name */
+    sprintf(pfile, "%s/%s/%s/%s/%s.pl", settings.localdir, settings.playerdir, get_subdir(name), name, name);
+    if (access(pfile, F_OK)==-1)
+    {
+        new_draw_info_format(NDI_UNIQUE, 0,op, "dm_pwd: player %s don't exists or has no player file!", name);
+        return 0;
+    }
 
-	/* All ok - player exists and player file can be altered - load in the player file */
-	strcpy(outfile, pfile);
-	strcat(outfile, ".tmp");
+    /* All ok - player exists and player file can be altered - load in the player file */
+    strcpy(outfile, pfile);
+    strcat(outfile, ".tmp");
 
-	/* lets do a safe read/write in a temp. file */
-	if((fp=fopen(pfile,"r"))==NULL)
-	{
-		new_draw_info_format(NDI_UNIQUE, 0,op, "dm_pwd: error open file %s!", pfile);
-		return 0;	
-	}
+    /* lets do a safe read/write in a temp. file */
+    if((fp=fopen(pfile,"r"))==NULL)
+    {
+        new_draw_info_format(NDI_UNIQUE, 0,op, "dm_pwd: error open file %s!", pfile);
+        return 0;
+    }
 
-	if((fpout=fopen(outfile,"w"))==NULL)
-	{
-		new_draw_info_format(NDI_UNIQUE, 0,op, "dm_pwd: error open file %s!", outfile);
-		return 0;	
-	}
+    if((fpout=fopen(outfile,"w"))==NULL)
+    {
+        new_draw_info_format(NDI_UNIQUE, 0,op, "dm_pwd: error open file %s!", outfile);
+        return 0;
+    }
 
-	while (fgets(bufall,MAX_BUF-1,fp) != NULL)
-	{
-		if(!strncmp(bufall,"password ",9))
-			fprintf(fpout,"password %s\n", crypt_string(pwd,NULL));
-		else
-			fputs(bufall, fpout);
-	}
+    while (fgets(bufall,MAX_BUF-1,fp) != NULL)
+    {
+        if(!strncmp(bufall,"password ",9))
+            fprintf(fpout,"password %s\n", crypt_string(pwd,NULL));
+        else
+            fputs(bufall, fpout);
+    }
 
-	/* now, this is important - perhaps the player is online!
-	* be sure we change the password in the player struct too!
-	*/
-	if((name_hash = find_string(name)))
-	{
-		for(pl=first_player;pl!=NULL;pl=pl->next)
-		{
-			/* we don't care about removed or such - just force to be sure the change
-			* in the player* struct. 
-			*/
-			if(pl->ob && pl->ob->name == name_hash)
-			{
-				strcpy(pl->password,crypt_string(pwd,NULL));
-				break;
-			}
-		}
-	}
+    /* now, this is important - perhaps the player is online!
+     * be sure we change the password in the player struct too!
+     */
+    if((name_hash = find_string(name)))
+    {
+        for(pl=first_player;pl!=NULL;pl=pl->next)
+        {
+            /* we don't care about removed or such - just force to be sure the change
+             * in the player* struct. 
+             */
+            if(pl->ob && pl->ob->name == name_hash)
+            {
+                strcpy(pl->password,crypt_string(pwd,NULL));
+                break;
+            }
+        }
+    }
 
-	fclose(fp);
-	fclose(fpout);
+    fclose(fp);
+    fclose(fpout);
 
-	/* delete the original file and move the tmp file */
-	unlink(pfile);
-	rename(outfile, pfile);
+    /* delete the original file and move the tmp file */
+    unlink(pfile);
+    rename(outfile, pfile);
 
-	new_draw_info_format(NDI_UNIQUE, 0,op, "Done. Changed password of %s to %s!", name, pwd);
+    new_draw_info_format(NDI_UNIQUE, 0,op, "Done. Changed password of %s to %s!", name, pwd);
 
-	return 0;
+    return 0;
 }
 
 int command_dumpactivelist(object *op, char *params)
@@ -667,14 +667,14 @@ int command_dumpactivelist(object *op, char *params)
  */
 int command_restart(object *ob, char *params)
 {
-	if(ob && CONTR(ob)->gmaster_mode < GMASTER_MODE_VOL)
-		return 0;
+    if(ob && CONTR(ob)->gmaster_mode < GMASTER_MODE_VOL)
+        return 0;
 
-	LOG(llevSystem, "Shutdown Agent started with /restart!\n");
-	shutdown_agent(30, EXIT_RESETMAP, "30 second shutdown - server will update maps!" );
-	new_draw_info_format(NDI_UNIQUE | NDI_GREEN, 0, ob, "shutdown agent started! (timer set to %d seconds).", 30);
+    LOG(llevSystem, "Shutdown Agent started with /restart!\n");
+    shutdown_agent(30, EXIT_RESETMAP, "30 second shutdown - server will update maps!" );
+    new_draw_info_format(NDI_UNIQUE | NDI_GREEN, 0, ob, "shutdown agent started! (timer set to %d seconds).", 30);
 
-	return 0;
+    return 0;
 }
 
 
@@ -823,7 +823,7 @@ int command_statistics(object *pl, char *params)
 
 int command_fix_me(object *op, char *params)
 {
-	FIX_PLAYER(op ,"command fix_me");
+    FIX_PLAYER(op ,"command fix_me");
     return 1;
 }
 
@@ -1215,77 +1215,77 @@ int command_sound(object *op, char *params)
  */
 void receive_player_name(object *op, char k, char *write_buf)
 {
-	const char *name_hash = NULL;
-	int status=0;
+    const char *name_hash = NULL;
+    int status=0;
 
     /* be sure the player name is like "Xxxxx" */
     unsigned int name_len = transform_name_string(write_buf + 1);
 
-	/* we have a hacker? */
-	if(CONTR(op)->socket.pwd_try >= 3)
-	{
-		/* someone ignored the addme_fail and the 1min ban for 3 wrong pwd guesses? BAD idea */
-		add_ban_entry(NULL, CONTR(op)->socket.ip_host, 8*60*24*31, 8*60*24*31); /* one month ban */
-		/* no need to be nice and tell him whats going on - kick this sucker HARD */
-		CONTR(op)->socket.status = Ns_Dead;
-		return;
-	}
+    /* we have a hacker? */
+    if(CONTR(op)->socket.pwd_try >= 3)
+    {
+        /* someone ignored the addme_fail and the 1min ban for 3 wrong pwd guesses? BAD idea */
+        add_ban_entry(NULL, CONTR(op)->socket.ip_host, 8*60*24*31, 8*60*24*31); /* one month ban */
+        /* no need to be nice and tell him whats going on - kick this sucker HARD */
+        CONTR(op)->socket.status = Ns_Dead;
+        return;
+    }
 
     LOG(llevDebug, "Got name from client: %s\n", write_buf + 1);
 
-	/* is the name legal? */
+    /* is the name legal? */
     if ( name_len <= 1 || name_len > MAX_PLAYER_NAME || !playername_ok(write_buf + 1))
     {
-		get_name(op, 6); /* nice try - illegal name */
-		return;
+        get_name(op, 6); /* nice try - illegal name */
+        return;
     }
 
     /* we got a legal name... NOW check this named is banned */
-	if((name_hash = find_string(write_buf+1))) /* if the name is not in the hash list, it can't be in the ban list too */
-	{
-		if (check_banned(&CONTR(op)->socket, name_hash, 0)) //* this can remove the ref count from name_hash - it is then invalid */
-		{
-			LOG(llevInfo, "Banned player %s tried to add. [%s]\n", write_buf+1, CONTR(op)->socket.ip_host);
-			if(CONTR(op)->socket.status < Ns_Zombie)
-				get_name(op, 5); /* tells client the name is banned - ask for a new name! */
-			return;
-		}
-	}
-
-	/* ok, we have a legal and unbanned name - now check how it is or was in use */
-	if((status = check_name(CONTR(op), write_buf + 1)) == 2)
+    if((name_hash = find_string(write_buf+1))) /* if the name is not in the hash list, it can't be in the ban list too */
     {
-		get_name(op, 2); /* means: Name denied: Name is in create, login or logout transfer */
-		return;
+        if (check_banned(&CONTR(op)->socket, name_hash, 0)) //* this can remove the ref count from name_hash - it is then invalid */
+        {
+            LOG(llevInfo, "Banned player %s tried to add. [%s]\n", write_buf+1, CONTR(op)->socket.ip_host);
+            if(CONTR(op)->socket.status < Ns_Zombie)
+                get_name(op, 5); /* tells client the name is banned - ask for a new name! */
+            return;
+        }
     }
-	
-	/* status is now 1,3 or 4 
+
+    /* ok, we have a legal and unbanned name - now check how it is or was in use */
+    if((status = check_name(CONTR(op), write_buf + 1)) == 2)
+    {
+        get_name(op, 2); /* means: Name denied: Name is in create, login or logout transfer */
+        return;
+    }
+
+    /* status is now 1,3 or 4 
      * Note: we don't trust the client! 
      * The L/C parameter don't effect the login procedure - we only use
      * it to hold the client in sync with our login. If the client tries to
      * cheat, IT will be out of sync - not the server.
      */
-	if(write_buf[0]=='C')
-	{
-		if(status != 1)
-	    {
-		    get_name(op, status); /* its 3 or 4 = taken */
-			return;
-		}
-	}
-	else /* means write_buf[0]=='L' */
-	{
-		if(status == 1) /* this name/character don't exits */
-	    {
-		    get_name(op, status); /* 1 means - don't exists for normal login */
-			return;
-		}
-	}
+    if(write_buf[0]=='C')
+    {
+        if(status != 1)
+        {
+            get_name(op, status); /* its 3 or 4 = taken */
+            return;
+        }
+    }
+    else /* means write_buf[0]=='L' */
+    {
+        if(status == 1) /* this name/character don't exits */
+        {
+            get_name(op, status); /* 1 means - don't exists for normal login */
+            return;
+        }
+    }
 
-	/* ok, login seems fine. now ask for password.
+    /* ok, login seems fine. now ask for password.
      * Note again: The server don't care about old or new char at this point.
      */
-	FREE_AND_COPY_HASH(op->name, write_buf + 1);
+    FREE_AND_COPY_HASH(op->name, write_buf + 1);
     CONTR(op)->name_changed = 1;
     get_password(op, 0);
 }
@@ -1299,30 +1299,30 @@ void receive_player_name(object *op, char k, char *write_buf)
 void receive_player_password(object *op, char k, char *write_buf)
 {
     unsigned int pwd_len = strlen(write_buf+1);
-	    
-	if (CONTR(op)->state == ST_CONFIRM_PASSWORD)
-	{
-	    if (pwd_len < 6 || pwd_len > 17)
-		{
-			get_password(op, 7); /* confirm password has not matched */
-	        return;
-		}
-	}
-	else
-	{
-	    if (pwd_len < 1 || pwd_len > 17)
-		{
-			get_password(op, 6); /* password is illegal */
-			return;
-		}
-	}
+
+    if (CONTR(op)->state == ST_CONFIRM_PASSWORD)
+    {
+        if (pwd_len < 6 || pwd_len > 17)
+        {
+            get_password(op, 7); /* confirm password has not matched */
+            return;
+        }
+    }
+    else
+    {
+        if (pwd_len < 1 || pwd_len > 17)
+        {
+            get_password(op, 6); /* password is illegal */
+            return;
+        }
+    }
     if (CONTR(op)->state == ST_CONFIRM_PASSWORD)
     {
         char    cmd_buf[4]   = "X";
 
         if (!check_password(write_buf + 1, CONTR(op)->password))
         {
-			get_password(op, 7); /* confirm password has not matched */
+            get_password(op, 7); /* confirm password has not matched */
             return;
         }
         esrv_new_player(CONTR(op), 0);
@@ -1347,7 +1347,7 @@ int command_save(object *op, char *params)
     else if (!op->stats.exp)
     {
         new_draw_info(NDI_UNIQUE, 0, op,
-                      "To avoid to much unused player accounts you must get some exp before you can save!");
+                "To avoid to much unused player accounts you must get some exp before you can save!");
     }
     else
     {
@@ -1435,9 +1435,9 @@ char *get_subdir(const char *name)
 
 int command_stuck(object *op, char *params)
 {
-	if (op->type == PLAYER && CONTR(op))
-	{
-		command_goto(op, "/relic/castle/castle_030a 5 11");
-	}
-	return 0;
+    if (op->type == PLAYER && CONTR(op))
+    {
+        command_goto(op, "/relic/castle/castle_030a 5 11");
+    }
+    return 0;
 }

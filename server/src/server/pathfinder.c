@@ -481,9 +481,9 @@ path_node * find_path(object *op, mapstruct *map1, int x1, int y1, mapstruct *ma
 
     static uint32   traversal_id    = 0;
 
-	/* sanity check */
-	if(!map1 || !map2)
-		return NULL;
+    /* sanity check */
+    if(!map1 || !map2)
+        return NULL;
 
     /* Avoid overflow of traversal_id */
     if (traversal_id == 4294967295U /* UINT_MAX */)

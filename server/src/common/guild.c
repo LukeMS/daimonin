@@ -30,122 +30,122 @@ static archetype *at_guild_force = NULL;
 /* get the guild object from a player */
 object *guild_get(player *pl, char *name)
 {
-	object     *walk = pl->guild_force;
+    object     *walk = pl->guild_force;
 
-	if(!pl->ob)
-		return NULL;
-	
-	if (walk && name) /* we have a guild force - check its our guild name */
-	{
-		if (!walk->slaying || strcmp(walk->slaying, name)) /* we are not in this guild - search old guild info */
-		{
-			for (walk = walk->inv; walk != NULL; walk = walk->below)
-			{
-				if (walk->slaying && !strcmp(walk->slaying, name)) /* thats the old guild info */
-					break;
-			}
-		}
-	} 
+    if(!pl->ob)
+        return NULL;
 
-	return walk;
+    if (walk && name) /* we have a guild force - check its our guild name */
+    {
+        if (!walk->slaying || strcmp(walk->slaying, name)) /* we are not in this guild - search old guild info */
+        {
+            for (walk = walk->inv; walk != NULL; walk = walk->below)
+            {
+                if (walk->slaying && !strcmp(walk->slaying, name)) /* thats the old guild info */
+                    break;
+            }
+        }
+    } 
+
+    return walk;
 }
 
 /* join a guild and return the new and/or updated guild object */
 object *guild_join(player *pl, char *name, int s1_group, int s1_value, int s2_group, int s2_value, int s3_group, int s3_value)
 {
-	object *guild;
+    object *guild;
 
-	if(!pl->ob)
-		return NULL;
-	
-	if(pl->guild_force && pl->guild_force->slaying)	/* some sanity checks */
-	{
-		if(!strcmp(pl->guild_force->slaying, name) ) /* double join?? */
-			return pl->guild_force;
-		
-		guild_leave(pl); /* force a guild leave of previous guild */
-	}
+    if(!pl->ob)
+        return NULL;
 
-	if((guild = guild_get(pl, name))) /* we have an old guild, was in a guild or want/must we rejoin ? */
-	{
-		if(guild->sub_type1 == ST1_GUILD_OLD) /* rejoin */
-		{
-			copy_object(guild, pl->guild_force);
-			guild = pl->guild_force;
-		}
-	}
-	else /* our first guild or new guild - we are ALWAYS guildless on this point */
-	{	
-		if(!pl->guild_force)
-		{
-			if(!at_guild_force)
-				at_guild_force = find_archetype(shstr_cons.guild_force);
-			pl->guild_force = insert_ob_in_ob(arch_to_object(at_guild_force), pl->ob);
-		}
-			
-		guild = pl->guild_force;
-	}
+    if(pl->guild_force && pl->guild_force->slaying) /* some sanity checks */
+    {
+        if(!strcmp(pl->guild_force->slaying, name) ) /* double join?? */
+            return pl->guild_force;
 
-	if(guild->sub_type1 != ST1_GUILD_OLD)
-	{
-		if(name)
-		{
-			FREE_AND_COPY_HASH(guild->slaying, name);
-		}
-		else
-		{
-			FREE_AND_CLEAR_HASH(guild->slaying);
-		}
+        guild_leave(pl); /* force a guild leave of previous guild */
+    }
 
-		guild->last_eat = s1_group;
-		guild->last_sp = s2_group;
-		guild->last_heal = s3_group;
+    if((guild = guild_get(pl, name))) /* we have an old guild, was in a guild or want/must we rejoin ? */
+    {
+        if(guild->sub_type1 == ST1_GUILD_OLD) /* rejoin */
+        {
+            copy_object(guild, pl->guild_force);
+            guild = pl->guild_force;
+        }
+    }
+    else /* our first guild or new guild - we are ALWAYS guildless on this point */
+    {
+        if(!pl->guild_force)
+        {
+            if(!at_guild_force)
+                at_guild_force = find_archetype(shstr_cons.guild_force);
+            pl->guild_force = insert_ob_in_ob(arch_to_object(at_guild_force), pl->ob);
+        }
 
-		guild->last_grace = s1_value;
-		guild->magic = s2_value;
-		guild->state = s3_value;
-	}
+        guild = pl->guild_force;
+    }
 
-	guild->sub_type1 = ST1_GUILD_IN;
-	pl->socket.ext_title_flag = 1;
+    if(guild->sub_type1 != ST1_GUILD_OLD)
+    {
+        if(name)
+        {
+            FREE_AND_COPY_HASH(guild->slaying, name);
+        }
+        else
+        {
+            FREE_AND_CLEAR_HASH(guild->slaying);
+        }
 
-	return guild;
+        guild->last_eat = s1_group;
+        guild->last_sp = s2_group;
+        guild->last_heal = s3_group;
+
+        guild->last_grace = s1_value;
+        guild->magic = s2_value;
+        guild->state = s3_value;
+    }
+
+    guild->sub_type1 = ST1_GUILD_IN;
+    pl->socket.ext_title_flag = 1;
+
+    return guild;
 }
 
 /* leave your current guild, move the guild info in the guild object inventory and neutralize the force */
 void guild_leave(player *pl)
 {
-	object	*old, *walk= pl->guild_force;
+    object *old, *walk= pl->guild_force;
 
-	if(!pl->ob)
-		return;
+    if(!pl->ob)
+        return;
 
-	if(!walk || !walk->slaying) /* we can't leave where we are not in */
-		return;
+    if(!walk || !walk->slaying) /* we can't leave where we are not in */
+        return;
 
-	for (old = walk->inv; old != NULL; old = old->below)
-	{
-		if (old->slaying == walk->slaying) /* thats the old guild info */
-			break;
-	}
-	
-	if(!old)
-	{	
-		if(!at_guild_force)
-			at_guild_force = find_archetype(shstr_cons.guild_force);
-		old= insert_ob_in_ob(arch_to_object(at_guild_force), walk);
-	}
-	
-	/* we have now an old or new created guild force inside the main info */
-	copy_object(walk,old);
-	old->sub_type1 = ST1_GUILD_OLD;
+    for (old = walk->inv; old != NULL; old = old->below)
+    {
+        if (old->slaying == walk->slaying) /* thats the old guild info */
+            break;
+    }
 
-	/* neutralize the guild and update the infos */
-	FREE_AND_CLEAR_HASH(walk->slaying); /* no name, no guild */
-	walk->sub_type1 = ST1_GUILD_IN; /* we are "in guild of nothing" - slaying is NULL and the tag */
-	walk->last_eat = SKILLGROUP_PHYSIQUE; /* fix_player() should be called after this */
-	walk->last_sp = SKILLGROUP_AGILITY;
-	walk->last_heal = SKILLGROUP_WISDOM;
-	walk->last_grace = walk->magic = walk->state = 100;
-	pl->socket.ext_title_flag = 1;
+    if(!old)
+    {
+        if(!at_guild_force)
+            at_guild_force = find_archetype(shstr_cons.guild_force);
+        old= insert_ob_in_ob(arch_to_object(at_guild_force), walk);
+    }
+
+    /* we have now an old or new created guild force inside the main info */
+    copy_object(walk,old);
+    old->sub_type1 = ST1_GUILD_OLD;
+
+    /* neutralize the guild and update the infos */
+    FREE_AND_CLEAR_HASH(walk->slaying); /* no name, no guild */
+    walk->sub_type1 = ST1_GUILD_IN; /* we are "in guild of nothing" - slaying is NULL and the tag */
+    walk->last_eat = SKILLGROUP_PHYSIQUE; /* fix_player() should be called after this */
+    walk->last_sp = SKILLGROUP_AGILITY;
+    walk->last_heal = SKILLGROUP_WISDOM;
+    walk->last_grace = walk->magic = walk->state = 100;
+    pl->socket.ext_title_flag = 1;
 }

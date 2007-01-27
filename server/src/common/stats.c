@@ -46,7 +46,7 @@ void stats_event(stats_event_type type, ...)
         "\t%d",     /* stats event id */
         ""          /* LAST */
     };
-	
+
     if((type <= STATS_EVENT_FIRST) || (type >= STATS_EVENT_LAST))
     {
         LOG(llevBug, "BUG: Unknown stats_event_type: %d\n", type);

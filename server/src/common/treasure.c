@@ -35,7 +35,7 @@
 
 #include <global.h>
 
-static archetype	*ring_arch = NULL, *ring_arch_normal = NULL, *amulet_arch = NULL;
+static archetype *ring_arch = NULL, *ring_arch_normal = NULL, *amulet_arch = NULL;
 
 
 /* static functions */
@@ -53,18 +53,18 @@ static void             postparse_treasurelist(treasure *t, treasurelist *tl);
 */
 static void init_archetype_pointers()
 {
-	if (ring_arch_normal == NULL)
-		ring_arch_normal = find_archetype("ring_normal");
-	if (!ring_arch_normal)
-		LOG(llevBug, "BUG: Cant'find 'ring_normal' arch (from artifacts)\n");
-	if (ring_arch == NULL)
-		ring_arch = find_archetype("ring_generic");
-	if (!ring_arch)
-		LOG(llevBug, "BUG: Cant'find 'ring_generic' arch\n");
-	if (amulet_arch == NULL)
-		amulet_arch = find_archetype("amulet_generic");
-	if (!amulet_arch)
-		LOG(llevBug, "BUG: Cant'find 'amulet_generic' arch\n");
+    if (ring_arch_normal == NULL)
+        ring_arch_normal = find_archetype("ring_normal");
+    if (!ring_arch_normal)
+        LOG(llevBug, "BUG: Cant'find 'ring_normal' arch (from artifacts)\n");
+    if (ring_arch == NULL)
+        ring_arch = find_archetype("ring_generic");
+    if (!ring_arch)
+        LOG(llevBug, "BUG: Cant'find 'ring_generic' arch\n");
+    if (amulet_arch == NULL)
+        amulet_arch = find_archetype("amulet_generic");
+    if (!amulet_arch)
+        LOG(llevBug, "BUG: Cant'find 'amulet_generic' arch\n");
 }
 
 /*
@@ -74,9 +74,9 @@ static void init_archetype_pointers()
 
 static void init_treasures(FILE *fp)
 {
-	static treasurelist	   *previous = NULL; /* important, we call this now recursive */
+    static treasurelist    *previous = NULL; /* important, we call this now recursive */
     char                    buf[MAX_BUF], name[MAX_BUF];
-	treasurelist		   *tl_tmp;
+    treasurelist           *tl_tmp;
     treasure               *t;
     int                     t_style, a_chance;
     char                    dummy[10];
@@ -148,120 +148,120 @@ static void init_treasures(FILE *fp)
 */
 static void traverse_treasures_files(char* start_dir)
 {
-	DIR* dir;						/* pointer to the scanned directory. */
-	struct dirent* entry=NULL;		/* pointer to one directory entry.   */
-	char *fptr, cwd[HUGE_BUF+1];	/* current working directory.        */
-	struct stat dir_stat;			/* used by stat().                   */
+    DIR* dir;                    /* pointer to the scanned directory. */
+    struct dirent* entry=NULL;   /* pointer to one directory entry.   */
+    char *fptr, cwd[HUGE_BUF+1]; /* current working directory.        */
+    struct stat dir_stat;        /* used by stat().                   */
 
-	/* first, save path of current working directory */
-	if (!getcwd(cwd, HUGE_BUF+1)) {
-		perror("getcwd:");
-		return;
-	}
+    /* first, save path of current working directory */
+    if (!getcwd(cwd, HUGE_BUF+1)) {
+        perror("getcwd:");
+        return;
+    }
 
-	/* open the directory for reading */
-	if(start_dir)
-	{
-		dir = opendir(start_dir);
-		chdir(start_dir);
-	}
-	else
-		dir = opendir(".");
+    /* open the directory for reading */
+    if(start_dir)
+    {
+        dir = opendir(start_dir);
+        chdir(start_dir);
+    }
+    else
+        dir = opendir(".");
 
-	if (!dir) {
-		fprintf(stderr, "Cannot read directory '%s': ", cwd);
-		perror("");
-		return;
-	}
+    if (!dir) {
+        fprintf(stderr, "Cannot read directory '%s': ", cwd);
+        perror("");
+        return;
+    }
 
-	/* scan the directory, traversing each sub-directory, and */
-	/* matching the pattern for each file name.               */
-	while ((entry = readdir(dir))) 
-	{
-		/* check if the given entry is a directory. */
-		/* skip all ".*" entries, to avoid loops and forbidden directories. */
-		if (entry->d_name[0] == '.')
-			continue;
+    /* scan the directory, traversing each sub-directory, and */
+    /* matching the pattern for each file name.               */
+    while ((entry = readdir(dir))) 
+    {
+        /* check if the given entry is a directory. */
+        /* skip all ".*" entries, to avoid loops and forbidden directories. */
+        if (entry->d_name[0] == '.')
+            continue;
 
-		if (stat(entry->d_name, &dir_stat) == -1) 
-		{
-			perror("stat:");
-			continue;
-		}
+        if (stat(entry->d_name, &dir_stat) == -1) 
+        {
+            perror("stat:");
+            continue;
+        }
 
-		/* is this a directory? */
-		if (S_ISDIR(dir_stat.st_mode))
-		{
-			/* Change into the new directory */
-			if (chdir(entry->d_name) == -1) 
-			{
-				fprintf(stderr, "Cannot chdir into '%s': ", entry->d_name);
-				perror("");
-				continue;
-			}
-			/* check this directory */
-			traverse_treasures_files(NULL);
+        /* is this a directory? */
+        if (S_ISDIR(dir_stat.st_mode))
+        {
+            /* Change into the new directory */
+            if (chdir(entry->d_name) == -1) 
+            {
+                fprintf(stderr, "Cannot chdir into '%s': ", entry->d_name);
+                perror("");
+                continue;
+            }
+            /* check this directory */
+            traverse_treasures_files(NULL);
 
-			/* finally, restore the original working directory. */
-			if (chdir("..") == -1) 
-			{
-				fprintf(stderr, "Cannot chdir back to '%s': ", cwd);
-				perror("");
-			}
-		}
-		else
-		{
-			/* lets check its a valid, local artifacts file */
-			if(entry->d_name[0] != '.' && (fptr = strrchr(entry->d_name, '.')) && !strcmp(fptr, ".tl") )
-			{
-				FILE *fp;
+            /* finally, restore the original working directory. */
+            if (chdir("..") == -1) 
+            {
+                fprintf(stderr, "Cannot chdir back to '%s': ", cwd);
+                perror("");
+            }
+        }
+        else
+        {
+            /* lets check its a valid, local artifacts file */
+            if(entry->d_name[0] != '.' && (fptr = strrchr(entry->d_name, '.')) && !strcmp(fptr, ".tl") )
+            {
+                FILE *fp;
 
-				LOG(llevDebug, " adding local treasures from %s...", entry->d_name);
-				if ((fp = fopen(entry->d_name, "r")) == NULL)
-				{
-					LOG(llevError, "ERROR: Can't open %s.\n", entry->d_name);
-					exit(global_exit_return);
-				}
+                LOG(llevDebug, " adding local treasures from %s...", entry->d_name);
+                if ((fp = fopen(entry->d_name, "r")) == NULL)
+                {
+                    LOG(llevError, "ERROR: Can't open %s.\n", entry->d_name);
+                    exit(global_exit_return);
+                }
 
-				init_treasures(fp);
-				fclose(fp);
-				LOG(llevDebug, "done.\n");
-			}
-		}
-	}
+                init_treasures(fp);
+                fclose(fp);
+                LOG(llevDebug, "done.\n");
+            }
+        }
+    }
 
-	closedir(dir);
+    closedir(dir);
 
-	if(start_dir) /* clean restore */
-		chdir(cwd);
+    if(start_dir) /* clean restore */
+        chdir(cwd);
 }
 
 
 void load_treasures(void)
 {
-	FILE                   *fp;
-	char                    filename[MAX_BUF];
-	treasurelist		   *previous = NULL;
+    FILE                   *fp;
+    char                    filename[MAX_BUF];
+    treasurelist           *previous = NULL;
 
-	/* load default treasure list file from /lib */
-	sprintf(filename, "%s/%s", settings.datadir, settings.treasures);
-	if ((fp = fopen(filename,"r")) == NULL)
-	{
-		LOG(llevError, "ERROR: Can't open treasure file.\n");
-		return;
-	}
-	init_treasures(fp);
-	fclose(fp);
+    /* load default treasure list file from /lib */
+    sprintf(filename, "%s/%s", settings.datadir, settings.treasures);
+    if ((fp = fopen(filename,"r")) == NULL)
+    {
+        LOG(llevError, "ERROR: Can't open treasure file.\n");
+        return;
+    }
+    init_treasures(fp);
+    fclose(fp);
 
-	/* traverse the /maps folder and load every file with .tl extension as local treasure list */
-	traverse_treasures_files(settings.mapdir);
+    /* traverse the /maps folder and load every file with .tl extension as local treasure list */
+    traverse_treasures_files(settings.mapdir);
 
-	LOG(llevInfo, " link treasure lists pass 2...\n");
-	for (previous = first_treasurelist; previous != NULL; previous = previous->next)
-		postparse_treasurelist(previous->items, previous);
+    LOG(llevInfo, " link treasure lists pass 2...\n");
+    for (previous = first_treasurelist; previous != NULL; previous = previous->next)
+        postparse_treasurelist(previous->items, previous);
 
-	create_money_table();
-	init_archetype_pointers(); /* Setup global pointers to archetypes */
+    create_money_table();
+    init_archetype_pointers(); /* Setup global pointers to archetypes */
 }
 
 
@@ -303,19 +303,19 @@ static void postparse_treasurelist(treasure *t, treasurelist *tl)
  * we collect the archt for it out of the arch name for faster access.
  */
 static void create_money_table(void)
-{	
-	coins_arch[0] = find_archetype("mitcoin");
-	coins_arch[1] = find_archetype("goldcoin");
-	coins_arch[2] = find_archetype("silvercoin");
-	coins_arch[3] = find_archetype("coppercoin");
-	coins_arch[4] = NULL;
+{
+    coins_arch[0] = find_archetype("mitcoin");
+    coins_arch[1] = find_archetype("goldcoin");
+    coins_arch[2] = find_archetype("silvercoin");
+    coins_arch[3] = find_archetype("coppercoin");
+    coins_arch[4] = NULL;
 
-	if (!coins_arch[0] || !coins_arch[1] || !coins_arch[2] || !coins_arch[3])
-	{
-		LOG(llevError, "create_money_table(): Can't find money.\n (mit: %x - gold: %x - silver: %x - copper: %x)", 
-			coins_arch[0],coins_arch[1],coins_arch[2],coins_arch[3]);
-		return;
-	}
+    if (!coins_arch[0] || !coins_arch[1] || !coins_arch[2] || !coins_arch[3])
+    {
+        LOG(llevError, "create_money_table(): Can't find money.\n (mit: %x - gold: %x - silver: %x - copper: %x)", 
+                coins_arch[0],coins_arch[1],coins_arch[2],coins_arch[3]);
+        return;
+    }
 }
 
 
@@ -387,34 +387,34 @@ static treasure * load_treasure(FILE *fp, int *t_style, int *a_chance)
         {
             FREE_AND_COPY_HASH(t->change_arch.slaying, cp + 8);
         }
-		else if (sscanf(cp, "face %s", variable))
-		{
-			if (strcmp (cp+5, "NONE") == 0)
-			{
-				t->change_arch.face_id = 0;
-				t->change_arch.face = NULL;
-			}
-			else
-			{
-				int face_id = FindFace(cp+5, 0);
+        else if (sscanf(cp, "face %s", variable))
+        {
+            if (strcmp (cp+5, "NONE") == 0)
+            {
+                t->change_arch.face_id = 0;
+                t->change_arch.face = NULL;
+            }
+            else
+            {
+                int face_id = FindFace(cp+5, 0);
 
-				if(!face_id) 
-					LOG(llevBug,"BUG: TLIST can't find face %s.\n", cp+5);
-				else
-				{
-					t->change_arch.face_id = face_id;
-					t->change_arch.face = &new_faces[face_id];
-				}
-			}
-		}
-		else if (sscanf(cp, "anim %s", variable))
-		{
-			if (strcmp (cp+5, "NONE") == 0)
-				t->change_arch.anim_id = 0;
-			else
-				t->change_arch.anim_id = find_animation (cp+5);
-		}
-		else if (sscanf(cp, "item_race %d", &value))
+                if(!face_id) 
+                    LOG(llevBug,"BUG: TLIST can't find face %s.\n", cp+5);
+                else
+                {
+                    t->change_arch.face_id = face_id;
+                    t->change_arch.face = &new_faces[face_id];
+                }
+            }
+        }
+        else if (sscanf(cp, "anim %s", variable))
+        {
+            if (strcmp (cp+5, "NONE") == 0)
+                t->change_arch.anim_id = 0;
+            else
+                t->change_arch.anim_id = find_animation (cp+5);
+        }
+        else if (sscanf(cp, "item_race %d", &value))
             t->change_arch.item_race = value;
         else if (sscanf(cp, "quality %d", &value))
             t->change_arch.quality = value;
@@ -503,11 +503,11 @@ static treasurelist * get_empty_treasurelist(void)
 
 static inline void set_change_arch(_change_arch *ca)
 {
-	ca->face = NULL;
-	ca->face_id = -1;
-	ca->anim_id = -1;
-	ca->animate = -1;
-	ca->item_race = -1;
+    ca->face = NULL;
+    ca->face_id = -1;
+    ca->anim_id = -1;
+    ca->animate = -1;
+    ca->item_race = -1;
     ca->name = NULL;
     ca->race = NULL;
     ca->slaying = NULL;
@@ -922,19 +922,19 @@ void create_treasure_list(struct oblnk *t, object *op, int flag, int difficulty,
             magic_chance = T_MAGIC_CHANCE_UNSET;
 
         }
-		/* if we have a breakpoint set here, stop creating treasures for this list */
+        /* if we have a breakpoint set here, stop creating treasures for this list */
         if( create_treasure(t->objlink.tl, op, flag, difficulty, t_style, a_chance, magic, magic_chance, tries, captr) &&
-						(t->parmlink.tl_tweak && t->parmlink.tl_tweak->break_list))
-			return;
+                (t->parmlink.tl_tweak && t->parmlink.tl_tweak->break_list))
+            return;
 
         t = t->next;
     }
 }
 
 int create_treasure(treasurelist *t, object *op, int flag, int difficulty, int t_style, int a_chance,
-                     int magic, int magic_chance, int tries, struct _change_arch *arch_change)
+        int magic, int magic_chance, int tries, struct _change_arch *arch_change)
 {
-	int ret = FALSE;
+    int ret = FALSE;
 
     if (tries++ > 100)
     {
@@ -952,7 +952,7 @@ int create_treasure(treasurelist *t, object *op, int flag, int difficulty, int t
     else
         ret = create_all_treasures(t->items, op, flag, difficulty, t_style, a_chance, magic, magic_chance,tries, arch_change);
 
-	return ret;
+    return ret;
 }
 
 
@@ -971,7 +971,7 @@ int create_treasure(treasurelist *t, object *op, int flag, int difficulty, int t
 int create_all_treasures(treasure *t, object *op, int flag, int difficulty, int t_style, int a_chance,
                           int magic, int magic_chance, int tries, struct _change_arch *change_arch)
 {
-	int		ret = FALSE;
+    int     ret = FALSE;
     object *tmp;
 
     /*  LOG(-1,"-CAT-: %s (%d)\n", STRING_SAFE(t->name),change_arch?t->change_arch.material_quality:9999); */
@@ -998,7 +998,7 @@ int create_all_treasures(treasure *t, object *op, int flag, int difficulty, int 
         {
             if (IS_SYS_INVISIBLE(&t->item->clone) || !(flag & GT_INVISIBLE))
             {
-				ret = TRUE; /* we have generated an item! */
+                ret = TRUE; /* we have generated an item! */
                 if (t->item->clone.type != TYPE_WEALTH)
                 {
                     /*LOG(-1,"*CAT*: %s (%d)\n", t->item->clone.name,change_arch?t->change_arch.material_quality:9999); */
@@ -1006,16 +1006,16 @@ int create_all_treasures(treasure *t, object *op, int flag, int difficulty, int 
                     if (t->nrof && tmp->nrof <= 1)
                         tmp->nrof = RANDOM() % ((int) t->nrof) + 1;
 
-					set_material_real(tmp, &t->change_arch);
-					change_treasure(&t->change_arch, tmp);
-					if(change_arch)
-					{
-						set_material_real(tmp, change_arch);
-						change_treasure(change_arch, tmp);
-					}
-					fix_generated_item(&tmp, op, difficulty, a_chance, t_style,
-                        (t->magic==T_MAGIC_UNSET)?magic:t->magic,
-                        (t->magic_chance==T_MAGIC_CHANCE_UNSET)?magic_chance:t->magic_chance, flag);
+                    set_material_real(tmp, &t->change_arch);
+                    change_treasure(&t->change_arch, tmp);
+                    if(change_arch)
+                    {
+                        set_material_real(tmp, change_arch);
+                        change_treasure(change_arch, tmp);
+                    }
+                    fix_generated_item(&tmp, op, difficulty, a_chance, t_style,
+                            (t->magic==T_MAGIC_UNSET)?magic:t->magic,
+                            (t->magic_chance==T_MAGIC_CHANCE_UNSET)?magic_chance:t->magic_chance, flag);
                     put_treasure(tmp, op, flag);
                     /* if treasure is "identified", created items are too */
                     if (op->type == TREASURE && QUERY_FLAG(op, FLAG_IDENTIFIED))
@@ -1068,13 +1068,13 @@ int create_all_treasures(treasure *t, object *op, int flag, int difficulty, int 
                              (t->magic!=T_MAGIC_UNSET)?t->next->magic:magic,
                              (t->magic_chance!=T_MAGIC_CHANCE_UNSET)?t->next->magic_chance:magic,
                              tries, change_arch);
-	return ret;
+    return ret;
 }
 
 int create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty, int t_style, int a_chance,
                          int magic, int magic_chance,int tries,struct _change_arch *change_arch)
 {
-	int			ret = FALSE, value, diff_tries = 0;
+    int         ret = FALSE, value, diff_tries = 0;
     treasure   *t;
     object     *tmp;
 
@@ -1158,7 +1158,7 @@ int create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty, 
 
     if (t->item && t->item->name != shstr_cons.none && (IS_SYS_INVISIBLE(&t->item->clone) || flag != GT_INVISIBLE))
     {
-		ret = TRUE;
+        ret = TRUE;
         if (t->item->clone.type != TYPE_WEALTH)
         {
             /*LOG(-1,"*COT*: %s (%d)\n", t->item->clone.name,change_arch?t->change_arch.material_quality:9999); */
@@ -1166,13 +1166,13 @@ int create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty, 
             if (t->nrof && tmp->nrof <= 1)
                 tmp->nrof = RANDOM() % ((int) t->nrof) + 1;
 
-			set_material_real(tmp, &t->change_arch);
-			change_treasure(&t->change_arch, tmp);
-			if(change_arch)
-			{
-				set_material_real(tmp, change_arch);
-				change_treasure(change_arch, tmp);
-			}
+            set_material_real(tmp, &t->change_arch);
+            change_treasure(&t->change_arch, tmp);
+            if(change_arch)
+            {
+                set_material_real(tmp, change_arch);
+                change_treasure(change_arch, tmp);
+            }
             fix_generated_item(&tmp, op, difficulty, a_chance,
                                     (t->t_style == T_STYLE_UNSET) ? t_style : t->t_style,(t->magic!=T_MAGIC_UNSET)?t->magic:magic,
                                     (t->magic_chance!=T_MAGIC_CHANCE_UNSET)?t->magic_chance:magic_chance, flag);
@@ -1207,7 +1207,7 @@ int create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty, 
             }
         }
     }
-	return ret;
+    return ret;
 }
 
 
@@ -1240,21 +1240,21 @@ static void put_treasure(object *op, object *creator, int flags)
  */
 static void change_treasure(struct _change_arch *ca, object *op)
 {
-	if(ca->face_id != -1)
-		op->face = ca->face;
+    if(ca->face_id != -1)
+        op->face = ca->face;
 
-	if(ca->anim_id != -1)
-		op->animation_id = ca->anim_id;
+    if(ca->anim_id != -1)
+        op->animation_id = ca->anim_id;
 
-	if(ca->animate != -1)
-	{
-		if(ca->animate) 
-			SET_FLAG(op, FLAG_ANIMATE);
-		else
-			CLEAR_FLAG(op, FLAG_ANIMATE);
-	}
+    if(ca->animate != -1)
+    {
+        if(ca->animate) 
+            SET_FLAG(op, FLAG_ANIMATE);
+        else
+            CLEAR_FLAG(op, FLAG_ANIMATE);
+    }
 
-	if (ca->name)
+    if (ca->name)
         FREE_AND_COPY_HASH(op->name, ca->name);
 
     if (ca->race)
@@ -1990,7 +1990,7 @@ int fix_generated_item(object **op_ptr, object *creator, int difficulty, int a_c
                   /* books w/ info are worth more! */
                   op->value += (int)((float)(((op->level > 10 ? op->level : (op->level + 1) / 2) * ((strlen(op->msg) / 45) + 1)))*1.11);
                   /* creator related stuff */
-				  /* for library, chained books! */
+                  /* for library, chained books! */
                   /*if (QUERY_FLAG(creator, FLAG_NO_PICK))
                       SET_FLAG(op, FLAG_NO_PICK);*/
                   if (creator->slaying && !op->slaying) /* for check_inv floors */

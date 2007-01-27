@@ -31,57 +31,57 @@
 */
 char *get_ego_item_name(object *ob)
 {
-	char *cptr;
-	static char name_buf[MAX_BUF];
+    char *cptr;
+    static char name_buf[MAX_BUF];
 
-	if(!ob || !ob->name || !(cptr = strchr(ob->name, '\'')))
-		return NULL;
+    if(!ob || !ob->name || !(cptr = strchr(ob->name, '\'')))
+        return NULL;
 
 
-	strncpy(name_buf, ob->name, (int) (cptr-ob->name));
-	name_buf[cptr-ob->name]=0;
+    strncpy(name_buf, ob->name, (int) (cptr-ob->name));
+    name_buf[cptr-ob->name]=0;
 
-	return(name_buf);
+    return(name_buf);
 }
 
 /* check the item is an ego item which can be applied
-* return: 0 = OK, 1= EGO unbound, 2= bound wrong person, 3= bound wrong clan
-*/
+ * return: 0 = OK, 1= EGO unbound, 2= bound wrong person, 3= bound wrong clan
+ */
 int check_ego_item(object *pl, object *ob)
 {
-	if(QUERY_FLAG(ob, FLAG_IS_EGOCLAN))
-		return EGO_ITEM_BOUND_CLAN;
+    if(QUERY_FLAG(ob, FLAG_IS_EGOCLAN))
+        return EGO_ITEM_BOUND_CLAN;
 
-	if(QUERY_FLAG(ob, FLAG_IS_EGOBOUND))
-	{	
-		char *tmp_char = get_ego_item_name(ob);
+    if(QUERY_FLAG(ob, FLAG_IS_EGOBOUND))
+    {
+        char *tmp_char = get_ego_item_name(ob);
 
-		if(tmp_char && !strcmp(pl->name, tmp_char))
-			return EGO_ITEM_BOUND_OK; /* its the right player */		
+        if(tmp_char && !strcmp(pl->name, tmp_char))
+            return EGO_ITEM_BOUND_OK; /* its the right player */
 
-		return EGO_ITEM_BOUND_PLAYER;
-	}
+        return EGO_ITEM_BOUND_PLAYER;
+    }
 
-	if(QUERY_FLAG(ob, FLAG_IS_EGOITEM))
-		return EGO_ITEM_BOUND_UNBOUND;
+    if(QUERY_FLAG(ob, FLAG_IS_EGOITEM))
+        return EGO_ITEM_BOUND_UNBOUND;
 
-	return EGO_ITEM_BOUND_OK;
+    return EGO_ITEM_BOUND_OK;
 }
 
 /* create an ego item by changing the name of the object
-* and setting the right flags.
-* mode: EGO_ITEM_BOUND_CLAN or EGO_ITEM_BOUND_PLAYER
-*/
+ * and setting the right flags.
+ * mode: EGO_ITEM_BOUND_CLAN or EGO_ITEM_BOUND_PLAYER
+ */
 void create_ego_item(object *ob, const char *name, int mode)
 {
-	char buf[MAX_BUF];
+    char buf[MAX_BUF];
 
-	if(mode == EGO_ITEM_BOUND_CLAN)
-		SET_FLAG(ob, FLAG_IS_EGOCLAN);
+    if(mode == EGO_ITEM_BOUND_CLAN)
+        SET_FLAG(ob, FLAG_IS_EGOCLAN);
 
-	SET_FLAG(ob, FLAG_IS_EGOBOUND);
+    SET_FLAG(ob, FLAG_IS_EGOBOUND);
 
-	sprintf(buf, "%s's %s", name, ob->name);
-	FREE_AND_COPY_HASH(ob->name, buf);
+    sprintf(buf, "%s's %s", name, ob->name);
+    FREE_AND_COPY_HASH(ob->name, buf);
 }
 

@@ -65,8 +65,8 @@ CommArray_s Commands[]                  =
     {"/shout",        command_shout,          1.0f},
     {"/tell",         command_tell,           1.0f},
     {"/talk",         command_talk,           1.0f},
-	{"/who",          command_who,            5.0f},
-	{"/qlist",        command_questlist,      5.0f},
+    {"/who",          command_who,            5.0f},
+    {"/qlist",        command_questlist,      5.0f},
     {"/mapinfo",      command_mapinfo,        5.0f},
     {"/motd",         command_motd,           5.0f},
     {"/usekeys",      command_usekeys,        1.0f},
@@ -77,10 +77,10 @@ CommArray_s Commands[]                  =
     {"/use_skill",    command_uskill,         0.1f},
     {"/ready_skill",  command_rskill,         0.1f},
     {"/silent_login", command_silent_login,   0.0f},
-	{"/egobind",	  command_egobind,		  1.0f},
+    {"/egobind",      command_egobind,        1.0f},
 
 #ifdef _TESTSERVER
-	{"/stuck",		command_stuck,0.0},
+    {"/stuck",        command_stuck,          0.0},
 #endif
     /* group commands */
     {"/invite",        command_party_invite,    4.0f},
@@ -98,7 +98,7 @@ CommArray_s Commands[]                  =
     {"/kick",            command_kickcmd, 0.0},            /* kick with a 1m temp login ban */
 
 #ifdef _TESTSERVER
-	{"/restart",         command_restart,0.0},
+    {"/restart",         command_restart,0.0},
 #endif
 
     {"/mute",            command_mute,1.0f},            /* max 5 min for VOL */
@@ -169,15 +169,15 @@ CommArray_s WizCommands[]           =
     {"/resetmap", command_reset,0.0},
     {"/plugout",command_unloadplugin,0.0},
     {"/create", command_create,0.0},
-	{"/addexp", command_addexp,0.0},
-	{"/setskill", command_setskill,0.0},
+    {"/addexp", command_addexp,0.0},
+    {"/setskill", command_setskill,0.0},
     {"/maps", command_maps,   0.0},
     {"/dump", command_dump,0.0}, /* dump info of object nr. x */
 
     {"/dm_stealth", command_dm_stealth,0.0},
     {"/dm_dev", command_dm_dev,0.0},
     {"/dm_light", command_dm_light,0.0},
-	{"/dm_pwd", command_dm_password,0.0},
+    {"/dm_pwd", command_dm_password,0.0},
     {"/d_active", command_dumpactivelist,0.0},
     {"/d_arches", command_dumpallarchetypes,0.0},
     {"/d_maps", command_dumpallmaps,0.0},
@@ -244,29 +244,29 @@ void send_clear_interface(player *pl)
 
 void initialize_command_buffer16(command_struct *cmdbuf)
 {
-	cmdbuf->buf = (char*)malloc(16);	
+    cmdbuf->buf = (char*)malloc(16);
 }
 void initialize_command_buffer32(command_struct *cmdbuf)
 {
-	cmdbuf->buf = (char*)malloc(32);	
+    cmdbuf->buf = (char*)malloc(32);
 }
 void initialize_command_buffer64(command_struct *cmdbuf)
 {
-	cmdbuf->buf = (char*)malloc(64);	
+    cmdbuf->buf = (char*)malloc(64);
 }
 void initialize_command_buffer128(command_struct *cmdbuf)
 {
-	cmdbuf->buf = (char*)malloc(128);	
+    cmdbuf->buf = (char*)malloc(128);
 }
 void initialize_command_buffer256(command_struct *cmdbuf)
 {
-	cmdbuf->buf = (char*)malloc(256);	
+    cmdbuf->buf = (char*)malloc(256);
 }
 void initialize_command_buffer1024(command_struct *cmdbuf)
 {
-	cmdbuf->buf = (char*)malloc(1024);	
+    cmdbuf->buf = (char*)malloc(1024);
 }
 void initialize_command_buffer4096(command_struct *cmdbuf)
 {
-	cmdbuf->buf = (char*)malloc(4096);	
+    cmdbuf->buf = (char*)malloc(4096);
 }

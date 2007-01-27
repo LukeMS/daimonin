@@ -94,11 +94,11 @@ void communicate(object *op, char *txt)
     strncat(buf, txt, MAX_BUF - strlen(buf) - 1);
     buf[MAX_BUF - 1] = 0;
 
-	flags = NDI_WHITE;
-	if(op->type == PLAYER)
-		flags |= (NDI_SAY | NDI_PLAYER);
+    flags = NDI_WHITE;
+    if(op->type == PLAYER)
+        flags |= (NDI_SAY | NDI_PLAYER);
 
-	new_info_map(flags, op->map, op->x, op->y, MAP_INFO_NORMAL, buf);
+    new_info_map(flags, op->map, op->x, op->y, MAP_INFO_NORMAL, buf);
 
     /* Players can chat with a marked object in their inventory */
     if(op->type == PLAYER && (npc = find_marked_object(op)))
@@ -117,8 +117,8 @@ void communicate(object *op, char *txt)
                 for (npc = get_map_ob(m, xt, yt); npc != NULL; npc = npc->above)
                 {
                     /* search but avoid talking to self */
-					if ((npc->type == MAGIC_EAR || QUERY_FLAG(npc, FLAG_ALIVE)) && op != npc)
-						talk_to_object(op, npc, txt);
+                    if ((npc->type == MAGIC_EAR || QUERY_FLAG(npc, FLAG_ALIVE)) && op != npc)
+                        talk_to_object(op, npc, txt);
                 }
             }
         }
@@ -128,20 +128,20 @@ void communicate(object *op, char *txt)
 /* open a (npc) gui communication interface */
 void gui_interface(object *who, int mode, const char *text, const char *tail)
 {
-	SOCKET_SET_BINARY_CMD(&global_sl, BINARY_CMD_INTERFACE);
+    SOCKET_SET_BINARY_CMD(&global_sl, BINARY_CMD_INTERFACE);
 
-	/* NPC_INTERFACE_MODE_NO will send a clear body = remove interface to the client */
-	if(mode != NPC_INTERFACE_MODE_NO)
-	{
-		SockList_AddChar(&global_sl, (char)mode);
-		strcpy((char *)global_sl.buf+global_sl.len, text);
-		global_sl.len += strlen(text)+1;
-		if(tail)
-		{
-			strcpy((char *)global_sl.buf+global_sl.len, tail);
-			global_sl.len += strlen(tail)+1;
-		}
-	}
+    /* NPC_INTERFACE_MODE_NO will send a clear body = remove interface to the client */
+    if(mode != NPC_INTERFACE_MODE_NO)
+    {
+        SockList_AddChar(&global_sl, (char)mode);
+        strcpy((char *)global_sl.buf+global_sl.len, text);
+        global_sl.len += strlen(text)+1;
+        if(tail)
+        {
+            strcpy((char *)global_sl.buf+global_sl.len, tail);
+            global_sl.len += strlen(tail)+1;
+        }
+    }
 
-	Send_With_Handling(&CONTR(who)->socket, &global_sl);
+    Send_With_Handling(&CONTR(who)->socket, &global_sl);
 }

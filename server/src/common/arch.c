@@ -434,7 +434,7 @@ void second_arch_pass(FILE *fp_start)
 {
     FILE           *fp  = fp_start;
     char            buf[MAX_BUF], *variable = buf, *argument, *cp;
-    archetype	   *at =  NULL, *other;
+    archetype      *at =  NULL, *other;
 
     while (fgets(buf, MAX_BUF, fp) != NULL)
     {
@@ -537,9 +537,9 @@ void load_archetypes()
     load_treasures();
     LOG(llevDebug, " done\n arch-pass 2...\n");
     second_arch_pass(fp);
-	/* now reparse the artifacts file too! */
-	LOG(llevDebug, " done\n artifact-pass 2...\n");
-	load_artifacts(ARTIFACTS_SECOND_PASS);
+    /* now reparse the artifacts file too! */
+    LOG(llevDebug, " done\n artifact-pass 2...\n");
+    load_artifacts(ARTIFACTS_SECOND_PASS);
     LOG(llevDebug, " done.\n");
     fclose(fp);
     LOG(llevDebug, "Reading archetypes done.\n");

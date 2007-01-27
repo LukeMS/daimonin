@@ -181,11 +181,11 @@ static void init_globals()
     nrofartifacts = 0;
     nrofallowedstr = 0;
 
-	/* thats used in socket/loop.c right after we have a connect */	
-	sprintf(global_version_msg, "X%d %d %s", VERSION_CS, VERSION_SC, VERSION_INFO);
-	global_version_msg[0] = BINARY_CMD_VERSION;
-	global_version_sl.buf = (unsigned char *)global_version_msg;
-	global_version_sl.len = strlen(global_version_msg);
+    /* thats used in socket/loop.c right after we have a connect */
+    sprintf(global_version_msg, "X%d %d %s", VERSION_CS, VERSION_SC, VERSION_INFO);
+    global_version_msg[0] = BINARY_CMD_VERSION;
+    global_version_sl.buf = (unsigned char *)global_version_msg;
+    global_version_sl.len = strlen(global_version_msg);
 
     init_strings();
 

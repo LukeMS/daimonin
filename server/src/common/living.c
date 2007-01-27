@@ -701,7 +701,7 @@ int change_abil(object *op, object *tmp)
             success = 1;
             if (op->resist[i] > refop.resist[i])
             {
-	            sprintf(message, "Your resistance to %s rises to %d%%.", attack_name[i], op->resist[i]);
+                sprintf(message, "Your resistance to %s rises to %d%%.", attack_name[i], op->resist[i]);
                 new_draw_info(NDI_UNIQUE | NDI_GREEN, 0, op, message);
             }
             else
@@ -889,11 +889,11 @@ void fix_player(object *op)
     if (QUERY_FLAG(op, FLAG_MONSTER) && op->type != PLAYER)
     {
 #ifdef DEBUG_FIX_PLAYER
-		LOG(llevDebug, "fix_player(%s [%x]): >> non player - redirect to fix_monster (%s)\n", 
-			query_name(op),op->count, debug_msg);
+        LOG(llevDebug, "fix_player(%s [%x]): >> non player - redirect to fix_monster (%s)\n", 
+                query_name(op),op->count, debug_msg);
 #else
-		LOG(llevDebug, "fix_player(%s [%x]): >> non player - redirect to fix_monster\n", 
-			query_name(op),op->count);
+        LOG(llevDebug, "fix_player(%s [%x]): >> non player - redirect to fix_monster\n", 
+                query_name(op),op->count);
 #endif
         fix_monster(op);
         return;
@@ -904,16 +904,16 @@ void fix_player(object *op)
     {
 #ifdef DEBUG_FIX_PLAYER
         LOG(llevDebug, "fix_player(): called from non Player/Mob object: %s [%x] (type %d) (%s)\n", 
-				query_name(op), op->count, op->type, debug_msg);
+                query_name(op), op->count, op->type, debug_msg);
 #else
-		LOG(llevDebug, "fix_player(): called from non Player/Mob object: %s [%x] (type %d)\n", 
-			query_name(op), op->count, op->type);
+        LOG(llevDebug, "fix_player(): called from non Player/Mob object: %s [%x] (type %d)\n", 
+                query_name(op), op->count, op->type);
 #endif
         return;
     }
 
 #ifdef DEBUG_FIX_PLAYER
-	LOG(llevDebug, "FIX_PLAYER(%s [%x]): >> %s\n", query_name(op), op->count, debug_msg);
+    LOG(llevDebug, "FIX_PLAYER(%s [%x]): >> %s\n", query_name(op), op->count, debug_msg);
 #endif
 
     pl = CONTR(op);
@@ -927,21 +927,21 @@ void fix_player(object *op)
     op->stats.Pow = pl->orig_stats.Pow;
     op->stats.Cha = pl->orig_stats.Cha;
 
-	pl->guild_force = pl->selected_weapon = pl->skill_weapon = NULL;
-	pl->quest_one_drop = pl->quests_done = pl->quests_type_kill = pl->quests_type_normal = NULL;
+    pl->guild_force = pl->selected_weapon = pl->skill_weapon = NULL;
+    pl->quest_one_drop = pl->quests_done = pl->quests_type_kill = pl->quests_type_normal = NULL;
     pl->digestion = 3;
     pl->gen_hp = 1;
     pl->gen_sp = 1;
     pl->gen_grace = 1;
     pl->gen_sp_armour = 0;
-	pl->exp_bonus = 0;
-	pl->encumbrance = 0;
+    pl->exp_bonus = 0;
+    pl->encumbrance = 0;
     pl->set_skill_weapon = pl->set_skill_archery = NO_SKILL_READY;
-	/* the default skill groups for non guild players */
-	pl->base_skill_group[0]=SKILLGROUP_PHYSIQUE;
-	pl->base_skill_group[1]=SKILLGROUP_AGILITY;
-	pl->base_skill_group[2]=SKILLGROUP_WISDOM;
-	pl->base_skill_group_exp[0]=pl->base_skill_group_exp[1]=pl->base_skill_group_exp[2]=100;
+    /* the default skill groups for non guild players */
+    pl->base_skill_group[0]=SKILLGROUP_PHYSIQUE;
+    pl->base_skill_group[1]=SKILLGROUP_AGILITY;
+    pl->base_skill_group[2]=SKILLGROUP_WISDOM;
+    pl->base_skill_group_exp[0]=pl->base_skill_group_exp[1]=pl->base_skill_group_exp[2]=100;
 
 
     /* for players, we adjust with the values */
@@ -1068,19 +1068,19 @@ void fix_player(object *op)
              || tmp->type == WAND
              || tmp->type == MONSTER)
             continue;
-		else if(tmp->type == TYPE_GUILD_FORCE)
-		{
-			pl->guild_force = tmp;
-			pl->base_skill_group[0]=tmp->last_eat;
-			pl->base_skill_group[1]=tmp->last_sp;
-			pl->base_skill_group[2]=tmp->last_heal;
+        else if(tmp->type == TYPE_GUILD_FORCE)
+        {
+            pl->guild_force = tmp;
+            pl->base_skill_group[0]=tmp->last_eat;
+            pl->base_skill_group[1]=tmp->last_sp;
+            pl->base_skill_group[2]=tmp->last_heal;
 
-			pl->base_skill_group_exp[0]=tmp->last_grace;
-			pl->base_skill_group_exp[1]=tmp->magic;
-			pl->base_skill_group_exp[2]=tmp->state;
-		}
-		else if(tmp->type == TYPE_QUEST_CONTAINER)
-		{
+            pl->base_skill_group_exp[0]=tmp->last_grace;
+            pl->base_skill_group_exp[1]=tmp->magic;
+            pl->base_skill_group_exp[2]=tmp->state;
+        }
+        else if(tmp->type == TYPE_QUEST_CONTAINER)
+        {
             /* one drop container */
             /* TODO: this should be replaced with a switch statement */
             if(tmp->sub_type1 == ST1_QUEST_ONE_DROP)
@@ -1130,25 +1130,25 @@ void fix_player(object *op)
             }
         }
 
-		/* this is needed, because our applied light can be overruled by a light giving
-		* object like holy glowing aura force or something
-		*/
-		if (tmp->glow_radius > light)
-		{
-			/* don't use this item when it is a 'not applied TYPE_LIGHT_APPLY' */
-			if (tmp->type != TYPE_LIGHT_APPLY || QUERY_FLAG(tmp, FLAG_APPLIED))
-				light = tmp->glow_radius;
-		}
+       /* this is needed, because our applied light can be overruled by a light giving
+        * object like holy glowing aura force or something
+        */
+       if (tmp->glow_radius > light)
+       {
+           /* don't use this item when it is a 'not applied TYPE_LIGHT_APPLY' */
+           if (tmp->type != TYPE_LIGHT_APPLY || QUERY_FLAG(tmp, FLAG_APPLIED))
+               light = tmp->glow_radius;
+       }
 
         /* this checks all applied items in the inventory */
         if (QUERY_FLAG(tmp, FLAG_APPLIED))
         {
             switch (tmp->type) /* still applied stuff */
             {
-				case ROD:
-				case HORN:
-					pl->equipment[PLAYER_EQUIP_MTOOL] = tmp;
-				break;
+                case ROD:
+                case HORN:
+                    pl->equipment[PLAYER_EQUIP_MTOOL] = tmp;
+                    break;
 
                 case TYPE_LIGHT_APPLY:
                   if (tmp->glow_radius > light)
@@ -1194,8 +1194,8 @@ void fix_player(object *op)
                   pl->gen_grace += tmp->stats.grace;
                   pl->gen_hp += tmp->stats.hp;
                   pl->gen_sp_armour += tmp->last_heal;
-				  thac0 += tmp->stats.thac0;
-				  thacm += tmp->stats.thacm;
+                  thac0 += tmp->stats.thac0;
+                  thacm += tmp->stats.thacm;
 
                   for (i = 0; i < 7; i++)
                       change_attr_value(&(op->stats), i, get_attr_value(&(tmp->stats), i));
@@ -1208,8 +1208,8 @@ void fix_player(object *op)
                   goto fix_player_no_armour;
                 case AMULET:
                   pl->equipment[PLAYER_EQUIP_AMULET] = tmp;
-				  if(tmp->last_grace)
-					  pl->exp_bonus += tmp->last_grace;
+                  if(tmp->last_grace)
+                      pl->exp_bonus += tmp->last_grace;
                   goto fix_player_no_armour;
 
                 case BRACERS:
@@ -1262,8 +1262,8 @@ void fix_player(object *op)
                   pl->gen_grace += tmp->stats.grace;
                   pl->gen_hp += tmp->stats.hp;
                   pl->gen_sp_armour += tmp->last_heal;
-				  thac0 += tmp->stats.thac0;
-				  thacm += tmp->stats.thacm;
+                  thac0 += tmp->stats.thac0;
+                  thacm += tmp->stats.thacm;
 
                   for (i = 0; i < 7; i++)
                       change_attr_value(&(op->stats), i, get_attr_value(&(tmp->stats), i));
@@ -1301,8 +1301,8 @@ void fix_player(object *op)
                   /* collect highest boni & malus - only highest one count,
                              * no adding potion effects of same resist!
                              */
-				  thac0 += tmp->stats.thac0;
-				  thacm += tmp->stats.thacm;
+                  thac0 += tmp->stats.thac0;
+                  thacm += tmp->stats.thacm;
                   for (i = 0; i < NROFATTACKS; i++)
                   {
                       /* collect highest/lowest resistance */
@@ -1321,8 +1321,8 @@ void fix_player(object *op)
 
                 case SKILL:
                   /* skills modifying the character -b.t. */
-				  thac0 += tmp->stats.thac0;
-				  thacm += tmp->stats.thacm;
+                  thac0 += tmp->stats.thac0;
+                  thacm += tmp->stats.thacm;
                   if (tmp->stats.dam > 0)   /* skill is a 'weapon' */
                   {
                       wc += tmp->stats.wc;
@@ -1333,7 +1333,7 @@ void fix_player(object *op)
                   }
                   else
                   {
-					  op->stats.dam += tmp->stats.dam;
+                      op->stats.dam += tmp->stats.dam;
                       wc += tmp->stats.wc;
                       ac += tmp->stats.ac;
                   }
@@ -1410,26 +1410,26 @@ void fix_player(object *op)
                   speed_reduce_from_disease = (float) tmp->last_sp / 100.0f;
                   if (speed_reduce_from_disease == 0.0f)
                       speed_reduce_from_disease = 1.0f;
-				
+
                 case POISONING:
                   for (i = 0; i < 7; i++)
                       change_attr_value(&(op->stats), i, get_attr_value(&(tmp->stats), i));
 
                 fix_player_jump_resi:
 
-				  thac0 += tmp->stats.thac0;
-				  thacm += tmp->stats.thacm;
-					/* calculate resistance and attacks */
+                  thac0 += tmp->stats.thac0;
+                  thacm += tmp->stats.thacm;
+                  /* calculate resistance and attacks */
                   for (i = 0; i < NROFATTACKS; i++)
                   {
                       /* we add resists boni/mali */
                       if (tmp->resist[i] > 0)
-					  {
-						  if(tmp->resist[i]>=100)
-							  resists_boni[i] = 100;
-						  else if(resists_boni[i]<100)
-	                          resists_boni[i] += ((100 - resists_boni[i]) * tmp->resist[i]) / 100;
-					  }
+                      {
+                          if(tmp->resist[i]>=100)
+                              resists_boni[i] = 100;
+                          else if(resists_boni[i]<100)
+                              resists_boni[i] += ((100 - resists_boni[i]) * tmp->resist[i]) / 100;
+                      }
                       else if (tmp->resist[i] < 0)
                           resists_mali[i] += ((100 - resists_mali[i]) * (-tmp->resist[i])) / 100;
 
@@ -1498,10 +1498,10 @@ void fix_player(object *op)
                 if (!QUERY_FLAG(op, FLAG_WIZ))
                     max = 1;
             }
-			
-			
-			op->stats.thac0-=thac0;
-			op->stats.thacm+=thacm;
+
+
+            op->stats.thac0-=thac0;
+            op->stats.thacm+=thacm;
 
             /* slow penalty .. careful with this! might be changing */
             if (tmp->stats.exp && tmp->type != EXPERIENCE && tmp->type != SKILL)
@@ -1539,10 +1539,10 @@ void fix_player(object *op)
                 if (tmp->resist[i] > 0 && resists_boni[i]<100)
                 {
                     tmp_item = (int) ((float) tmp->resist[i] * tmp_con);
-					if(tmp_item>=100)
-						resists_boni[i]=100;
-					else
-	                    resists_boni[i] += ((100 - resists_boni[i]) * tmp_item) / 100;
+                    if(tmp_item>=100)
+                        resists_boni[i]=100;
+                    else
+                        resists_boni[i] += ((100 - resists_boni[i]) * tmp_item) / 100;
                 }
                 else if (tmp->resist[i] < 0)
                     resists_mali[i] += ((100 - resists_mali[i]) * (-tmp->resist[i])) / 100;
@@ -1589,12 +1589,12 @@ void fix_player(object *op)
 
         /* add in the potion resists boni/mali */
         if (potion_resist_boni[i] > 0 && resists_boni[i] <100)
-		{
-			if(potion_resist_boni[i]>=100)
-				resists_boni[i] = 100;
-			else
-	            resists_boni[i] += ((100 - resists_boni[i]) * potion_resist_boni[i]) / 100;
-		}
+        {
+            if(potion_resist_boni[i]>=100)
+                resists_boni[i] = 100;
+            else
+                resists_boni[i] += ((100 - resists_boni[i]) * potion_resist_boni[i]) / 100;
+        }
 
         if (potion_resist_mali[i] < 0)
             resists_mali[i] += ((100 - resists_mali[i]) * (-potion_resist_mali[i])) / 100;
@@ -2080,10 +2080,10 @@ void fix_monster(object *op)
         return;
 
 #ifdef DEBUG_FIX_MONSTER
-	LOG(llevDebug, "FIX_MONSTER(%s [%x]): called\n", query_name(op), op->count);
+    LOG(llevDebug, "FIX_MONSTER(%s [%x]): called\n", query_name(op), op->count);
 #endif
 
-	base = insert_base_info_object(op); /* will insert or/and return base info */
+    base = insert_base_info_object(op); /* will insert or/and return base info */
     op->level = base->level;
 
     if (!QUERY_FLAG(&op->arch->clone, FLAG_BLIND))
@@ -2174,14 +2174,14 @@ void fix_monster(object *op)
 
     /* pre adjust */
     op->stats.maxhp = (base->stats.maxhp * (op->level + 3) + (op->level / 2) * base->stats.maxhp) / 10;
-	if(op->stats.maxhp <= 0)
-		op->stats.maxhp = 1;
+    if(op->stats.maxhp <= 0)
+        op->stats.maxhp = 1;
     op->stats.maxsp = base->stats.maxsp * (op->level + 1);
-	if(op->stats.maxsp <= 0)
-		op->stats.maxsp = 1;
+    if(op->stats.maxsp <= 0)
+        op->stats.maxsp = 1;
     op->stats.maxgrace = base->stats.maxgrace * (op->level + 1);
-	if(op->stats.maxgrace <= 0)
-		op->stats.maxgrace = 1;
+    if(op->stats.maxgrace <= 0)
+        op->stats.maxgrace = 1;
 
     /* remember: -1 is a place holder - if == -1, we fill in max value.
      * if the value is != -1, object has explicit set to a different value
