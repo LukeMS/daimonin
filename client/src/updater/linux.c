@@ -27,38 +27,38 @@ int check_tools(char *name)
 {
     struct stat stat_buf;
     int res;
-	res = stat(name, &stat_buf);
-	if (res < 0) 
-	{
+    res = stat(name, &stat_buf);
+    if (res < 0) 
+    {
         fprintf(stderr, "Can't find %s\n", name);
-		return FALSE;
-	}
+        return FALSE;
+    }
         return TRUE;
 }
 
 int execute_process(char *p_path, char *exe_name, char *parms, char *output, int seconds_to_wait) 
 {
-	int ret = 0;
-	char cmd[BUFSIZ];
-	char buf[BUFSIZ];
-	FILE *ptr;
+    int ret = 0;
+    char cmd[BUFSIZ];
+    char buf[BUFSIZ];
+    FILE *ptr;
 
-	sprintf(cmd, "%s %s", exe_name, parms);
-	if(output)
-	        *output='\0';	
+    sprintf(cmd, "%s %s", exe_name, parms);
+    if(output)
+            *output='\0';   
  
-	if ((ptr = popen(cmd, "r")) != NULL)
-	{
-		while (fgets(buf, BUFSIZ, ptr) != NULL)
-		{
-			if(output)
-				strcat(output, buf);
-			else
-				printf("%s", buf);
-		}
-	  
-		pclose(ptr);
-	}
-	
-	return ret;
+    if ((ptr = popen(cmd, "r")) != NULL)
+    {
+        while (fgets(buf, BUFSIZ, ptr) != NULL)
+        {
+            if(output)
+                strcat(output, buf);
+            else
+                printf("%s", buf);
+        }
+      
+        pclose(ptr);
+    }
+    
+    return ret;
 }
