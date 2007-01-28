@@ -48,18 +48,18 @@ layer 4
 end
 Object bench2.111
 name bench
-face bench2.111
+face bench2.131
 anim
 facings 9
 dummy.111
 bench2.111
 bench2.111
-bench2.111
+bench2.131
+bench2.131
+bench2.151
+bench2.151
 bench2.171
 bench2.171
-bench2.171
-bench2.171
-bench2.111
 mina
 is_animated 0
 anim_speed 0
@@ -96,18 +96,18 @@ layer 4
 end
 Object bench4.111
 name outdoor bench
-face bench4.111
+face bench4.131
 anim
 facings 9
 dummy.111
 bench4.111
 bench4.111
-bench4.111
+bench4.131
+bench4.131
+bench4.151
+bench4.151
 bench4.171
 bench4.171
-bench4.171
-bench4.171
-bench4.111
 mina
 is_animated 0
 anim_speed 0
@@ -120,18 +120,18 @@ layer 4
 end
 Object bench5.111
 name outdoor bench
-face bench5.111
+face bench5.131
 anim
 facings 9
 dummy.111
 bench5.111
 bench5.111
-bench5.111
+bench5.131
+bench5.131
+bench5.151
+bench5.151
 bench5.171
 bench5.171
-bench5.171
-bench5.171
-bench5.111
 mina
 is_animated 0
 anim_speed 0
