@@ -183,7 +183,7 @@ public:
 
     const char *getMeshName(unsigned int objectNr)
     {
-        if (objectNr >= mvBmpEntry.size()) return 0;
+        if (objectNr >= mvBmpEntry.size()) return "";
         return mvBmpEntry[objectNr]->name3d.c_str();
     }
 

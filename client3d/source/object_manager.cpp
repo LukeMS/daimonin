@@ -328,7 +328,7 @@ void ObjectManager::freeRecources()
     }
     mvStatic.clear();
 
-	for (std::vector<ObjectMissile*>::iterator i = mvMissle.begin(); i < mvMissle.end(); ++i)
+    for (std::vector<ObjectMissile*>::iterator i = mvMissle.begin(); i < mvMissle.end(); ++i)
     {
         (*i)->freeRecources();
         delete (*i);

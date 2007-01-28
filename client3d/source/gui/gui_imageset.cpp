@@ -82,7 +82,11 @@ GuiImageset::GuiElementNames GuiImageset::mGuiElementNames[GUI_ELEMENTS_SUM]=
         // Table
         { "Table_Server",       GUI_TABLE },
         // Combobox.
-        { "ComboBoxTest"      , GUI_COMBOBOX_TEST  },
+        { "ComboBoxTest",       GUI_COMBOBOX_TEST  },
+        // Gadget_Slot
+        { "Slot_Container",     GUI_SLOT_CONTAINER  },
+
+
     };
 
 // Mouse states.

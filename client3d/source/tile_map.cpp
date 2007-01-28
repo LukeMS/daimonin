@@ -204,7 +204,7 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
 
     if (layer == LAYER_OBJECTS)
     {
-        //  Logger::log().error() << "object: " << ObjectWrapper::getSingleton().getMeshName(face & ~0x8000) << "  " << (int) (face & ~0x8000);
+        //Logger::log().error() << "object: " << ObjectWrapper::getSingleton().getMeshName(face & ~0x8000) << "  " << (int) (face & ~0x8000);
         String meshName = ObjectWrapper::getSingleton().getMeshName(face & ~0x8000);
         if (meshName.empty())
         {

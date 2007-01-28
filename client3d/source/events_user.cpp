@@ -136,6 +136,7 @@ void Events::keyPressed(KeyEvent *e)
             break;
 
         case KC_I:
+            GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_ITEM_CONTAINER, true);
             // ObjectManager::getSingleton().setPlayerEquipment(ObjectManager::OBJECT_PLAYER, ObjectNPC::BONE_HEAD, 1);
             break;
 
@@ -506,9 +507,7 @@ void Events::mouseMoved (MouseEvent *e)
     mMouse.z = e->getRelZ();
     if (GuiManager::getSingleton().mouseEvent(GuiWindow::MOUSE_MOVEMENT, mMouse))
         return;
-
-    if (Option::getSingleton().getGameStatus() >= Option::GAME_STATUS_PLAY)
-    {}}
+}
 
 void Events::mousePressed (MouseEvent *e)
 {

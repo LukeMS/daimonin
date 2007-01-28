@@ -19,20 +19,21 @@ this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
+
+#include "define.h"
 #include "item.h"
 #include "logger.h"
 #include "network.h"
 #include "gui_manager.h"
 #include "object_hero.h"
 #include "gui_gadget_slot.h"
-
+#include "tile_map_wrapper.h"
 
 using namespace Ogre;
 
 //================================================================================================
 // Init all static Elemnts.
 //================================================================================================
-
 
 //================================================================================================
 // Constructor.
@@ -91,11 +92,11 @@ void Item::ItemXYCmd(unsigned char *data, int len, bool bflag)
     int mode= Network::getSingleton().GetInt_String(data);
     int container = Network::getSingleton().GetInt_String(data + pos);
     pos+= 4;
-/*
-    char buf[400];
-    sprintf(buf, "%d %d", container, mode);
-    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, buf);
-*/
+    /*
+        char buf[400];
+        sprintf(buf, "%d %d", container, mode);
+        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, buf);
+    */
     if (mode == MODE_TOGGLE_OPEN)
     {
         if (container == CONTAINER_UNKNOWN)
@@ -151,10 +152,9 @@ void Item::ItemXYCmd(unsigned char *data, int len, bool bflag)
         tmpItem->anim_speed = data[pos++];
         tmpItem->nrof = Network::getSingleton().GetInt_String(data + pos);
         pos += 4;
-
         update(tmpItem, container, bflag);
     }
-
+    //printAllItems();
     //    map_udate_flag = 2;
 }
 
@@ -265,6 +265,11 @@ void Item::addItem(sItem *tmpItem, int container)
 {
     if (container == mActHeroContainerID)
     {
+        GuiManager::getSingleton().updateItemSlot(
+            GuiManager::GUI_WIN_ITEM_CONTAINER,
+            GuiImageset::GUI_SLOT_CONTAINER,
+            (int)HeroBackpack.size(),
+            tmpItem->face & ~0x8000);
         HeroBackpack.push_back(tmpItem);
         return;
     }
@@ -318,7 +323,7 @@ void Item::printAllItems()
     else
         for (iter = HeroBackpack.begin(); iter!= HeroBackpack.end(); ++iter)
         {
-            strTmp = (*iter)->d_name +" [" + StringConverter::toString((*iter)->tag) + "]";
+            strTmp = (*iter)->d_name +" [" + StringConverter::toString((*iter)->tag) + "]"+" [" + ObjectWrapper::getSingleton().getMeshName((*iter)->face & ~0x8000) + "]";
             GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, strTmp.c_str());
         }
     GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Container:", 0x00ff0000);
@@ -327,7 +332,7 @@ void Item::printAllItems()
     else
         for (iter = OpenContainer.begin(); iter!= OpenContainer.end(); ++iter)
         {
-            strTmp = (*iter)->d_name +" [" + StringConverter::toString((*iter)->tag) + "]";
+            strTmp = (*iter)->d_name +" [" + StringConverter::toString((*iter)->tag) + "]"+" [" + StringConverter::toString((*iter)->face) + "]";
             GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, strTmp.c_str());
         }
     GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Ground:", 0x00ff0000);
@@ -336,7 +341,7 @@ void Item::printAllItems()
     else
         for (iter = HeroTileGround.begin(); iter!= HeroTileGround.end(); ++iter)
         {
-            strTmp = (*iter)->d_name +" [" + StringConverter::toString((*iter)->tag) + "]";
+            strTmp = (*iter)->d_name +" [" + StringConverter::toString((*iter)->tag) + "]"+" [" + StringConverter::toString((*iter)->face) + "]";
             GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, strTmp.c_str());
         }
 }
