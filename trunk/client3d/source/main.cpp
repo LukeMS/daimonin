@@ -59,6 +59,12 @@ bool parseCmdLine(const char *cmd, const char *value)
             Option::getSingleton().setIntValue(Option::CMDLINE_CREATE_RAW_FONTS, true);
             ++options;
         }
+        if ((cmd[1] == 'c' || !stricmp(cmd, "--create")) && !stricmp(value, "items"))
+        {
+            Logger::log().info() << "You told me to create the items-texture-atlas." << FILE_GUI_WINDOWS;
+            Option::getSingleton().setIntValue(Option::CMDLINE_CREATE_ITEMS, true);
+            ++options;
+        }
         if ((cmd[1] == 'c' || !stricmp(cmd, "--create")) && !stricmp(value, "tileTextures"))
         {
             Logger::log().info() << "You told me to create all textures for the TileEngine.";
@@ -101,6 +107,7 @@ bool parseCmdLine(const char *cmd, const char *value)
         std::cout << "\nusage:\n"
         << "--list gui              -l  gui\n"
         << "--create rawFonts       -c  rawFonts\n"
+        << "--create items          -c  items\n"
         << "--create tileTextures   -c  tileTextures\n"
         << "--server <name>         -s  <name>\n"
         << "--port   <num>          -p  <num>\n"

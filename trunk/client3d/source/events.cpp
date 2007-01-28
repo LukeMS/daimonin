@@ -285,6 +285,7 @@ bool Events::frameStarted(const FrameEvent& evt)
                 OverlayManager::getSingleton().destroy("Overlay/Loading");
                 GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Welcome to ~Daimonin 3D~.");
                 GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "You need a running server to start the game!");
+                TileMap::getSingleton().clear_map();
                 break;
             }
 
@@ -293,7 +294,6 @@ bool Events::frameStarted(const FrameEvent& evt)
                 Network::getSingleton().Init();
                 GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_CHATWINDOW, true);
                 GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_TEXTWINDOW, true);
-                GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_ITEM_CONTAINER, true);
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_META);
                 break;
             }
@@ -601,6 +601,7 @@ bool Events::frameStarted(const FrameEvent& evt)
                         GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~:KeyQ~ to start attack animation.");
                         GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~PGUP/PGDOWN~ to rotate camera.");
                         GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~PAUSE~ to freeze camera rotation.");
+                        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~:KeyI~ for Inventory.");
                         GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Example of user defined chars: :( :) :D :P");
                         // Can crash the client...
                         //ObjectManager::getSingleton().setNameNPC(ObjectNPC::HERO, strPlayerName.c_str());
@@ -622,7 +623,7 @@ bool Events::frameStarted(const FrameEvent& evt)
                     mRaySceneQuery->setRay(mCamera->getCameraToViewportRay(mMouse.x, mMouse.y));
                     mRaySceneQuery->setQueryMask(ObjectManager::QUERY_NPC_MASK | ObjectManager::QUERY_CONTAINER);
                     RaySceneQueryResult &result = mRaySceneQuery->execute();
-                    if (!result.empty())
+                    if (!result.empty() && !GuiManager::getSingleton().mouseInsideGui())
                     {
                         // Mouse is over an object.
                         RaySceneQueryResult::iterator itr = result.begin();

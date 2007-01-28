@@ -414,7 +414,7 @@ coif_chain
 coif_scale
 combat_boots
 cookie01
-coppercoin
+coppercoin                item_coinCopper.png
 corpse_default
 corpse_goblinoid
 corpse_golem
@@ -865,7 +865,7 @@ fmask_ruin1_s3
 fmask_ruin1_s4
 fmask_ruin1a
 fog
-food
+food               item_food.png
 forc
 forc_military
 force
@@ -1235,7 +1235,7 @@ lcrystal_lit1
 lcrystal_unlit
 leather_ar
 leather_cuirass
-leather_padded
+leather_padded           item_leatherArmor.png
 leather_spiked
 leather_studded
 leggings_chain
@@ -1704,7 +1704,7 @@ sand_dm6
 sand_dm7
 sand_dm8
 sand_dm9
-sandals
+sandals                     item_sandals.png
 sandals2
 santa
 santahat
@@ -1782,7 +1782,7 @@ shield_war
 shootingstar
 shop_def
 shop_empty
-shortsword
+shortsword                    item_shortsword.png
 shovel
 shovel_dirt
 shrine1
@@ -1993,7 +1993,7 @@ tootsie_pop3
 tootsie_roll
 torch_burnt
 torch_lit1
-torch_unlit
+torch_unlit             item_torchUnlit.png
 torch_wall
 trans
 trapdoor_1
@@ -2176,7 +2176,7 @@ wall_stone9_w
 wall_stone9_w1
 wall_stone9_w2
 wall_stone_fence
-wall_stone_w                      wall_horizontal_botom.mesh
+wall_stone_w                      hWall_H_B.mesh
 wall_well
 wall_white1
 wall_white1_red

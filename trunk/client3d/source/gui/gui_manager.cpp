@@ -65,6 +65,7 @@ void GuiManager::Init(int w, int h)
     Logger::log().headline("Init GUI");
     mScreenWidth   = w;
     mScreenHeight  = h;
+    mMouseInside   = true;
     // ////////////////////////////////////////////////////////////////////
     // Create the tooltip overlay.
     // ////////////////////////////////////////////////////////////////////
@@ -282,9 +283,11 @@ bool GuiManager::mouseEvent(int mouseAction, Vector3 &mouse)
         if (guiWindow[i].mouseEvent(mouseAction, mMouse))
         {
             mActiveWindow = i;
+            mMouseInside = true;
             return true;
         }
     }
+    mMouseInside = false;
     return false;
 }
 

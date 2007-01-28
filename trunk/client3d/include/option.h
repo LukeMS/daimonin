@@ -103,6 +103,7 @@ public:
         CMDLINE_OFF_SOUND,
         CMDLINE_SHOW_BOUNDING_BOX,
         CMDLINE_CREATE_IMPOSTERS,
+        CMDLINE_CREATE_ITEMS,
         SUM_OPTIONS
     };
     enum enumLoginType

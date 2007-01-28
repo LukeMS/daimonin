@@ -92,7 +92,7 @@
       <Range width= "398" height= "480" />
     </Graphic>
 
-    <Gadget type= "SLOT"  image_name = "Item_Slot">
+    <Gadget type= "SLOT"  name = "Slot_Container" image_name = "Item_Slot">
       <!-- Position of the 1. slot. -->
       <Pos x= "17" y= "89" />
       <!-- Number of cols/rows -->
@@ -555,7 +555,7 @@
 
     <Gadget type= "BUTTON"  name = "But_NPC_Decline" image_name = "Button_01_Std">
       <Label x= "5" y= "5" font="02" text= "" />
-      <Pos x= "238" y= 320" />
+      <Pos x= "238" y= "320" />
     </Gadget>
 
   </Window>

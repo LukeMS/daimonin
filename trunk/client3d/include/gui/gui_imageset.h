@@ -91,6 +91,8 @@ public:
         GUI_TABLE,
         // Combobox
         GUI_COMBOBOX_TEST,
+        // Slots
+        GUI_SLOT_CONTAINER,
         // Sum of all entries.
         GUI_ELEMENTS_SUM
     };

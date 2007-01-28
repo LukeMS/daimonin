@@ -87,6 +87,10 @@ public:
     {
         static GuiManager singleton; return singleton;
     }
+    bool mouseInsideGui()
+    {
+        return mMouseInside;
+    }
     void freeRecources();
     void Init(int w, int h);
     void parseImageset(const char *XML_imageset_file);
@@ -151,6 +155,14 @@ public:
         return guiWindow[window].getButtonHandle(element);
     }
 
+    // ////////////////////////////////////////////////////////////////////
+    // GUI_gadget_Slot stuff.
+    // ////////////////////////////////////////////////////////////////////
+    void updateItemSlot(int window, int element, int slotNr, int gfxNr)
+    {
+        guiWindow[window].updateItemSlot(element, slotNr, gfxNr);
+    }
+
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
@@ -163,6 +175,7 @@ private:
     int mActiveWindow, mActiveElement;
     int mHotSpotX, mHotSpotY;
     Ogre::Vector3 mMouse;
+    bool mMouseInside;       /**< Mouse is used for gui related stuff at the moment. **/
     bool mTooltipRefresh;
     bool mIsDragging;
     bool mProcessingTextInput;

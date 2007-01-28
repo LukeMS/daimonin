@@ -23,15 +23,23 @@ this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
-
+#ifdef WIN32
+#include <windows.h>
+#else
+#include <dirent.h>
+#endif
 #include "logger.h"
 #include "gui_gadget_slot.h"
 #include "gui_textout.h"
 #include "gui_window.h"
 #include "gui_manager.h"
 #include "item.h"
+#include "option.h"
+#include "tile_map_wrapper.h"
 
 using namespace Ogre;
+
+const unsigned int ITEM_SIZE = 64;
 
 //================================================================================================
 // Constructor.
@@ -42,6 +50,7 @@ GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOn
     mMouseButDown = false;
     mActiveDrag = false;
     mActiveSlot = -1;
+    std::string filename;
 
     const char *tmp;
     TiXmlElement *xmlOpt;
@@ -60,6 +69,108 @@ GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOn
     mSlotWidth = (mWidth + mColSpace) * mSumCol;
     mSlotHeight= (mHeight+ mRowSpace) * mSumRow;
     BG_Backup = new uint32[mWidth * mHeight];
+    mGfxNr = new int[mSumCol*mSumRow];
+    // ////////////////////////////////////////////////////////////////////
+    // Create the item texture atlas.
+    // ////////////////////////////////////////////////////////////////////
+    if (Option::getSingleton().getIntValue(Option::CMDLINE_CREATE_ITEMS))
+    {
+        std::vector<std::string> itemFilename;
+#ifdef WIN32
+        String filename = PATH_ITEM_TEXTURES;
+        filename+="\\*.png";
+        BOOL found = true;
+        WIN32_FIND_DATA FindFileData;
+        HANDLE handle=FindFirstFile(filename.c_str(), &FindFileData);
+        while (handle && found)
+        {
+            if (!strstr(FindFileData.cFileName, FILE_ITEM_TEXTURE_ATLAS))
+                itemFilename.push_back(FindFileData.cFileName);
+            found = FindNextFile(handle, &FindFileData);
+        }
+#else
+        struct dirent *dir_entry;
+        DIR *dir = opendir(PATH_ITEM_TEXTURES); // Open the current directory
+        while ((dir_entry = readdir(dir)))
+        {
+            if (strstr(dir_entry->d_name, ".png") && !strstr(dir_entry->d_name, FILE_ITEM_TEXTURE_ATLAS))
+                itemFilename.push_back(dir_entry->d_name);
+        }
+        closedir(dir);
+#endif
+        if (itemFilename.empty())
+        {
+            Logger::log().error() << "Could not find any item graphics in " << PATH_ITEM_TEXTURES;
+            return;
+        }
+        Image itemImage, itemAtlas;
+        uint32 *itemBuffer = new uint32[ITEM_SIZE * ITEM_SIZE * itemFilename.size()];
+        uint32 *nextPos = itemBuffer;
+        itemAtlas = itemAtlas.loadDynamicImage((unsigned char*)itemBuffer, ITEM_SIZE, ITEM_SIZE * itemFilename.size(), 1, PF_A8B8G8R8);
+        for (unsigned int i = 0; i < itemFilename.size(); ++i)
+        {
+            itemImage.load(itemFilename[i], "General");
+            if (itemImage.getHeight() != ITEM_SIZE || itemImage.getWidth() != ITEM_SIZE)
+            {
+                Logger::log().warning() << "You tried to use and item with unsoprted image size. Only Items of "
+                << ITEM_SIZE << " * " << ITEM_SIZE << " pixel are allowed "<< "[" << itemFilename[i] << "].";
+                break;
+            }
+            if (itemImage.getFormat() != PF_A8B8G8R8)
+            {
+                Logger::log().warning() << "You tried to use and item with unsoprted format ("<< itemImage.getFormat() <<")."
+                << " Only 32bit png format is allowed "<< "[" << itemFilename[i] << "].";
+                break;
+            }
+            memcpy(nextPos, itemImage.getData(), ITEM_SIZE * ITEM_SIZE * sizeof(uint32));
+            nextPos+=ITEM_SIZE * ITEM_SIZE;
+        }
+        filename = PATH_ITEM_TEXTURES;
+        filename+= "/";
+        filename+= FILE_ITEM_TEXTURE_ATLAS;
+        filename+= ".png";
+        itemAtlas.save(filename);
+        delete[] itemBuffer;
+        // Write the textfile.
+        filename.replace(filename.find(".png"), 4, ".txt");
+        std::ofstream txtFile(filename.c_str(), std::ios::out | std::ios::binary);
+        txtFile << "# This file holds the content of the image-texture-atlas." << std::endl;
+        if (txtFile)
+        {
+            for (unsigned int i = 0; i < itemFilename.size(); ++i)
+                txtFile << itemFilename[i] << std::endl;
+        }
+        txtFile.close();
+        itemFilename.clear();
+    }
+    // ////////////////////////////////////////////////////////////////////
+    // Read in the gfxpos of the items.
+    // ////////////////////////////////////////////////////////////////////
+    filename = PATH_ITEM_TEXTURES;
+    filename+= "/";
+    filename+= FILE_ITEM_TEXTURE_ATLAS;
+    filename+= ".txt";
+    std::ifstream txtFile;
+    txtFile.open(filename.c_str(), std::ios::in | std::ios::binary);
+    if (!txtFile)
+    {
+        Logger::log().error() << "Error on file " << filename;
+    }
+    getline(txtFile, filename); // skip the comment.
+    while (getline(txtFile, filename))
+    {
+        mvGfxPositions.push_back(filename);
+    }
+    txtFile.close();
+    // ////////////////////////////////////////////////////////////////////
+    // Read in the texture atlas.
+    // ////////////////////////////////////////////////////////////////////
+    filename = FILE_ITEM_TEXTURE_ATLAS;
+    filename+= ".png";
+    mAtlasTexture.load(filename, "General");
+    // ////////////////////////////////////////////////////////////////////
+    // Draw the container.
+    // ////////////////////////////////////////////////////////////////////
     if (drawOnInit) draw();
 }
 
@@ -68,6 +179,8 @@ GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOn
 //================================================================================================
 GuiGadgetSlot::~GuiGadgetSlot()
 {
+    mvGfxPositions.clear();
+    delete[] mGfxNr;
     //delete[] BG_Backup; // done in GuiElement.cpp
 }
 
@@ -85,9 +198,9 @@ bool GuiGadgetSlot::mouseEvent(int MouseAction, int x, int y)
         {
             // We are no longer over this slot, so draw the defalut gfx.
             if (mActiveSlot >=0)
-                drawSlot(mActiveSlot, GuiImageset::STATE_ELEMENT_DEFAULT);
+                drawSlot(mActiveSlot, SLOT_UPDATE,GuiImageset::STATE_ELEMENT_DEFAULT);
             mActiveSlot = activeSlot;
-            drawSlot(mActiveSlot, GuiImageset::STATE_ELEMENT_M_OVER);
+            drawSlot(mActiveSlot, SLOT_UPDATE, GuiImageset::STATE_ELEMENT_M_OVER);
         }
         if (MouseAction == GuiWindow::BUTTON_PRESSED && !mActiveDrag)
         {
@@ -105,7 +218,7 @@ bool GuiGadgetSlot::mouseEvent(int MouseAction, int x, int y)
     {
         if (mActiveSlot >=0)
         {
-            drawSlot(mActiveSlot, GuiImageset::STATE_ELEMENT_DEFAULT);
+            drawSlot(mActiveSlot, SLOT_UPDATE, GuiImageset::STATE_ELEMENT_DEFAULT);
             mActiveSlot = -1;
             return true; // No need to check other gadgets.
         }
@@ -116,13 +229,28 @@ bool GuiGadgetSlot::mouseEvent(int MouseAction, int x, int y)
 //================================================================================================
 // Draw a single slot.
 //================================================================================================
-void GuiGadgetSlot::drawSlot(int pos, int state, const char *strLabel)
+void GuiGadgetSlot::drawSlot(int slotNr, int gfxNr, int state)
 {
-    int row = pos / mSumCol;
-    int col = pos - (row * mSumCol);
+    int row = slotNr / mSumCol;
+    int col = slotNr - (row * mSumCol);
     int strtX = mPosX + col * (mColSpace + mWidth);
     int strtY = mPosY + row * (mRowSpace + mHeight);
     Texture *texture = ((GuiWindow*) mParent)->getTexture();
+
+    //if (slotNr >=
+    if (gfxNr != SLOT_UPDATE)
+    {
+        mGfxNr[slotNr] = -1;
+        String gfxName = ObjectWrapper::getSingleton().getMeshName(gfxNr);
+        for (unsigned int i =0; i < mvGfxPositions.size(); ++i)
+        {
+            if (mvGfxPositions[i] == gfxName)
+            {
+                mGfxNr[slotNr] = i;
+                break;
+            }
+        }
+    }
     // ////////////////////////////////////////////////////////////////////
     // Slot gfx.
     // ////////////////////////////////////////////////////////////////////
@@ -136,19 +264,17 @@ void GuiGadgetSlot::drawSlot(int pos, int state, const char *strLabel)
     // ////////////////////////////////////////////////////////////////////
     // Item gfx.
     // ////////////////////////////////////////////////////////////////////
-    GuiImageset::GuiSrcEntry *srcEntry;
-    if (pos > 10)
-        srcEntry = GuiImageset::getSingleton().getStateGfxPositions("Item_Axe");
-    else
-        srcEntry = GuiImageset::getSingleton().getStateGfxPositions("Item_Spear");
-
-    PixelBox srcItem = ((GuiWindow*) mParent)->getPixelBox()->getSubVolume(Box(
-                           srcEntry->state[0].x,
-                           srcEntry->state[0].y,
-                           srcEntry->state[0].x + srcEntry->width,
-                           srcEntry->state[0].y + srcEntry->height));
-    uint32 *srcItemData = static_cast<uint32*>(srcItem.data);
-    int rowSkipItem = (int)((GuiWindow*) mParent)->getPixelBox()->getWidth();
+    PixelBox srcItem;
+    uint32 *srcItemData;
+    if (mGfxNr[slotNr] >=0)
+    {
+        srcItem = mAtlasTexture.getPixelBox().getSubVolume(Box(
+                      0,
+                      ITEM_SIZE * mGfxNr[slotNr],
+                      ITEM_SIZE,
+                      ITEM_SIZE *(mGfxNr[slotNr]+1)));
+        srcItemData = static_cast<uint32*>(srcItem.data);
+    }
     // ////////////////////////////////////////////////////////////////////
     // Draw into the buffer.
     // ////////////////////////////////////////////////////////////////////
@@ -158,7 +284,7 @@ void GuiGadgetSlot::drawSlot(int pos, int state, const char *strLabel)
         for (int x =0; x < mWidth; ++x)
         {
             // First check if item has a non transparent pixel to draw.
-            if (x > mItemOffsetX && x < srcEntry->width + mItemOffsetX &&y > mItemOffsetY && y < srcEntry->height+ mItemOffsetY)
+            if (mGfxNr[slotNr] >=0 && x > mItemOffsetX && x < (int)ITEM_SIZE + mItemOffsetX &&y > mItemOffsetY && y < (int)ITEM_SIZE+ mItemOffsetY)
             {
                 if (srcItemData[dItemY + x- mItemOffsetX] > 0x00ffffff)
                 {
@@ -167,11 +293,11 @@ void GuiGadgetSlot::drawSlot(int pos, int state, const char *strLabel)
                 }
             }
             // Now check for the background.
-            if (srcSlotData[dItemY + x] > 0x00ffffff)
+            if (srcSlotData[dSlotY + x] > 0x00ffffff)
                 BG_Backup[destY + x] = srcSlotData[dSlotY + x];
         }
         if (y > mItemOffsetY)
-            dItemY+= (int)rowSkipItem;
+            dItemY+= ITEM_SIZE;
         dSlotY+= (int)rowSkipSlot;
         destY+= mWidth;
     }
@@ -207,10 +333,10 @@ void GuiGadgetSlot::drawSlot(int pos, int state, const char *strLabel)
 }
 
 //================================================================================================
-// Draw the guiElement.
+// Only used to CLEAR the slots. For drawing use drawSlot(...)
 //================================================================================================
 void GuiGadgetSlot::draw()
 {
-    for (int pos = 0; pos < mSumRow * mSumCol; ++pos)
-        drawSlot(pos, GuiImageset::STATE_ELEMENT_DEFAULT, StringConverter::toString(pos).c_str());
+    for (int slotNr = 0; slotNr < mSumRow * mSumCol; ++slotNr)
+        drawSlot(slotNr, SLOT_CLEAR, GuiImageset::STATE_ELEMENT_DEFAULT);
 }

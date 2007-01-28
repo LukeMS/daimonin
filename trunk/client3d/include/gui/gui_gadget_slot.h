@@ -39,24 +39,35 @@ class GuiGadgetSlot: public GuiElement
 {
 public:
     // ////////////////////////////////////////////////////////////////////
+    // Variables / Constants.
+    // ////////////////////////////////////////////////////////////////////
+    enum
+    {
+        SLOT_CLEAR  = -2,
+        SLOT_UPDATE = -1,
+    };
+    // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOnInit = true);
     ~GuiGadgetSlot();
     bool mouseEvent(int MouseAction, int x, int y);
     void draw();
-    void drawSlot(int pos, int state, const char *txt = "");
+    void drawSlot(int slotNr, int intgfxNr, int state);
 
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
+    Ogre::Image mAtlasTexture;
+    std::vector<Ogre::String> mvGfxPositions;
     bool mMouseOver, mMouseButDown;
     bool mActiveDrag;
     int mActiveSlot;                /**< Slot the mouse is currently over. **/
     int mSumCol, mSumRow;
     int mColSpace, mRowSpace;       /**< Space between the slots. **/
-    int mItemOffsetX, mItemOffsetY; /**< Space between slot-border and item. **/
+    int mItemOffsetX, mItemOffsetY; /**< Space between slot-border and item.    **/
+    int *mGfxNr;                    /**< The gfxNr currently shown in the slot. **/
     unsigned int mSlotWidth, mSlotHeight;
 };
 

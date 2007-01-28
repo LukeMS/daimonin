@@ -29,8 +29,9 @@ http://www.gnu.org/licenses/licenses.html
 
 const char PRG_NAME[] =  "Daimonin Ogre3d Client";
 
-const char OVERLAY_TYPE_NAME[] = "Panel"; // defined in OverlayElementFactory.h
-const char FILE_SYSTEM_FONT[]  = "SystemFont.png";
+const char OVERLAY_TYPE_NAME[]       = "Panel"; // defined in OverlayElementFactory.h
+const char FILE_SYSTEM_FONT[]        = "SystemFont.png";
+const char FILE_ITEM_TEXTURE_ATLAS[] = "ItemTextureAtlas";
 
 //================================================================================================
 // All pathes MUST be placed here!
@@ -42,6 +43,7 @@ const char FILE_NPC_VISUALS[]           = "./media/xml/NPC_Visuals.xml";
 
 const char PATH_TEXTURES[]              = "./media/textures/";
 const char PATH_TILE_TEXTURES[]         = "./media/textures/tiles/";
+const char PATH_ITEM_TEXTURES[]         = "./media/textures/items/";
 
 const char FILE_CLIENT_SPELLS[]         = "./srv_files/client_spells";
 const char FILE_CLIENT_SKILLS[]         = "./srv_files/client_skills";
@@ -73,6 +75,7 @@ const char FILE_NPC_VISUALS[]           = "../media/xml/NPC_Visuals.xml";
 
 const char PATH_TEXTURES[]              = "../media/textures/";
 const char PATH_TILE_TEXTURES[]         = "../media/textures/tiles/";
+const char PATH_ITEM_TEXTURES[]         = "../media/textures/items/";
 
 const char FILE_CLIENT_SPELLS[]         = "../srv_files/client_spells";
 const char FILE_CLIENT_SKILLS[]         = "../srv_files/client_skills";

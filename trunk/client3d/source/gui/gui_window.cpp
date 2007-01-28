@@ -539,11 +539,6 @@ bool GuiWindow::mouseEvent(int MouseAction, Vector3 &mouse)
                 mMouseDragging = mWindowNr;
                 return true;
             }
-            // Mouse over this window?
-            if (rx >= mPosX && rx <= mPosX + mWidth && ry >= mPosY && ry <= mPosY + mHeight)
-            {
-                return true;
-            }
         }
         case MOUSE_MOVEMENT:
             if (mMouseDragging == mWindowNr)
@@ -576,6 +571,9 @@ bool GuiWindow::mouseEvent(int MouseAction, Vector3 &mouse)
         default:
             break;
     }
+    // Mouse over this window?
+    if (rx >= mPosX && rx <= mPosX + mWidth && ry >= mPosY && ry <= mPosY + mHeight)
+        return true;
     return false;
 }
 
@@ -687,20 +685,27 @@ void GuiWindow::clearListbox(int element)
 }
 
 //================================================================================================
+// Update an ItemSlot.
+//================================================================================================
+void GuiWindow::updateItemSlot(int element, int slotNr, int gfxNr)
+{
+    for (unsigned int i = 0; i < mvSlot.size(); ++i)
+    {
+        if (mvSlot[i]->getIndex() == element)
+        {
+            mvSlot[i]->drawSlot(slotNr, gfxNr, GuiImageset::STATE_ELEMENT_DEFAULT);
+            return;
+        }
+    }
+}
+
+//================================================================================================
 // Parse a message.
 //================================================================================================
 const char *GuiWindow::Message(int message, int element, void *value, void *value2)
 {
     switch (message)
     {
-        case GuiManager::GUI_MSG_SLOT_REDRAW:
-            {
-                 Logger::log().error() << "hier";
-                for (unsigned int i = 0; i < mvSlot.size(); ++i)
-                    mvSlot[i]->draw();
-            }
-            break;
-
         case GuiManager::GUI_MSG_ADD_TABLEROW:
             for (unsigned int i = 0; i < mvTable.size() ; ++i)
             {
