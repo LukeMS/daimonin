@@ -144,18 +144,18 @@ layer 4
 end
 Object kiddy_bench.111
 name kiddy bench
-face kiddy_bench.111
+face kiddy_bench.131
 anim
 facings 9
 dummy.111
 kiddy_bench.111
 kiddy_bench.111
-kiddy_bench.111
+kiddy_bench.131
+kiddy_bench.131
+kiddy_bench.151
+kiddy_bench.151
 kiddy_bench.171
 kiddy_bench.171
-kiddy_bench.171
-kiddy_bench.171
-kiddy_bench.111
 mina
 is_animated 0
 anim_speed 0
