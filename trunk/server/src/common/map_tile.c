@@ -1423,3 +1423,4 @@ void map_transfer_apartment_items(mapstruct *map_old, mapstruct * map_new, int x
         }
     }
 }
+

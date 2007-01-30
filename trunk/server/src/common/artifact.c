@@ -761,3 +761,5 @@ void dump_artifacts()
     }
     LOG(llevInfo, "\n");
 }
+
+/*** end of artifact.c ***/
