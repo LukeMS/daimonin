@@ -23,8 +23,7 @@
     The author can be reached via e-mail to daimonin@nord-com.net
 */
 
-/**
- * @file aggro.c
+/* aggro.c
  * In this module we check and maintain the "aggro/damage history" object.
  * In that object the server stores damage and "aggressive action"
  * information done to a object (normally a non player, living object).
@@ -54,12 +53,10 @@ static uint32 exp_calc_tag=1; /* used to tag the player/group */
  *  one is the "real" damage we use for exp, one is the "counted" exp we use for aggro.
  */
 
-/**
- * Returns a damage object from target for damage source hitter.
- * This is used for AoE spells and other target synchronized damage dealers.
- * @param target  Target of the damage.
- * @param hitter  Hitter that performs the damage.
- * @return NULL or damage info object for hitter.
+/* aggro_get_damage()
+ * Get a damage object from target for damage source hitter.
+ * This is used for AoE spells and other target synchronized damage dealers
+ * Return: NULL or damage info object for hitter.
  */
 struct obj *aggro_get_damage(struct obj *target, struct obj *hitter)
 {
@@ -94,11 +91,8 @@ struct obj *aggro_get_damage(struct obj *target, struct obj *hitter)
     return tmp;
 }
 
-/**
- * Creates and inserts a new damage object.
- * @param target  Target of the damage.
- * @param hitter  Hitter that performs the damage.
- * @return Newly created damage object.
+/*
+ *
  */
 struct obj *aggro_insert_damage(struct obj *target, struct obj *hitter)
 {
@@ -132,17 +126,11 @@ struct obj *aggro_insert_damage(struct obj *target, struct obj *hitter)
     return tmp;
 }
 
-/**
+
+/*
  * aggro_update_info()
  * This is the main setting function to update for a target the damage & aggro marker AFTER aggro and damage
  * is done from the hitter to the
- * @param target        Target of the damage.
- * @param target_owner  Owner of the target.
- * @param hitter        Hitter that performs the damage.
- * @param hitter_owner  Owner of the hitter.
- * @param dmg           TODO
- * @param flags         TODO
- * @return TODO
  */
 struct obj *aggro_update_info(struct obj *target, struct obj *target_owner,
                               struct obj *hitter, struct obj *hitter_owner, int dmg, int flags)
@@ -280,13 +268,9 @@ struct obj *aggro_update_info(struct obj *target, struct obj *target_owner,
     return aggro;
 }
 
-/**
- * Calculates the damage for the active skill.
+
+/* calc active skill dmg.
  * Analyze the dmg done by skills and return the most used 1-3 skills.
- * @param op      TODO
- * @param skill1  TODO
- * @param skill2  TODO
- * @param skill3  TODO
  */
 static inline void calc_active_skill_dmg(object *op, int *skill1, int *skill2, int *skill3)
 {
@@ -334,13 +318,7 @@ static inline void calc_active_skill_dmg(object *op, int *skill1, int *skill2, i
     }
 }
 
-/**
- * Adds aggro and tells the player about it.
- * @param hitter   The hitter that does damage.
- * @param exp      TODO
- * @param skillnr  TODO
- * @return TODO
- */
+/* add aggro and tell the player about it */
 static inline int add_aggro_exp(object *hitter, int exp, int skillnr)
 {
     if (exp)
@@ -366,12 +344,7 @@ static inline int add_aggro_exp(object *hitter, int exp, int skillnr)
     return FALSE;
 }
 
-/**
- * Calculates the experience for a single player.
- * @param victim  The target that was killed.
- * @param aggro   Aggro information.
- * @param base    TODO
- * @return TODO
+/* calc exp for a single player.
  */
 static inline int aggro_exp_single(object *victim, object *aggro, int base)
 {
@@ -479,16 +452,10 @@ static inline int aggro_exp_single(object *victim, object *aggro, int base)
     return ret;
 }
 
-/**
- * We test a group member in "in range" aka near the kill spot.
+
+/* we test a group member in "in range" aka near the kill spot.
  * If the group member is not near, it gets no exp.
- * We avoid in this way multi spot farming.
- * @param victim  The target that was killed.
- * @param hitter  The killer of the target.
- * @param member  The group member that maybe should get shared experience.
- * @return Whether the group member should get shared experience.
- * @retval TRUE if the group member should get shared experience.
- * @retval FALSE if the group member should not get shared experience, e.g. because he's too far away.
+ * We avoid in this way multi spot farming
  */
 static inline int in_group_exp_range(object *victim, object *hitter, object *member)
 {
@@ -557,13 +524,9 @@ static inline int in_group_exp_range(object *victim, object *hitter, object *mem
     return FALSE;
 }
 
-/**
- * Calculates the experience for a group.
- * CONTR() will access here always players.
- * @param victim    The target that was killed.
- * @param aggro     TODO
- * @param kill_msg  TODO
- * @return TODO
+
+/* calc exp for a group
+ * CONTR() will access here always players
  */
 static inline int aggro_exp_group(object *victim, object *aggro, char *kill_msg)
 {
@@ -680,17 +643,13 @@ static inline int aggro_exp_group(object *victim, object *aggro, char *kill_msg)
 #endif
 }
 
-/**
- * Analyze all aggro info in this object and give player exp basing on this info.
- * Well, if we ever merge libcross.a with the server we should merge all in one exp.c module
- * If slayer is != NULL we use it to determinate we have kill steal or a NPC kill.
- * We decide here what we will do in that cases.
- * @param victim    The target that was killed.
- * @param slayer    The killer of the target.
- * @param kill_msg  TODO
- * @return The corpse owner or <code>NULL</code>
- * @retval object* The corpse owner if there is a corpse.
- * @retval NULL if there is no owner, e.g. because the target was too low or killed by NPC.
+
+/*
+ *  Analyze all aggro info in this object and give player exp basing on this info.
+ *    Well, if we ever merge libcross.a with the server we should merge all in one exp.c module
+ *  If slayer is != NULL we use it to determinate we have kill steal or a NPC kill.
+ *  We decide here what we will do in that cases.
+ *  Return: The corpse owner (NULL: There is no owner, target was to low, NPC kill...)
  */
 object *aggro_calculate_exp(struct obj *victim, struct obj *slayer, char *kill_msg)
 {

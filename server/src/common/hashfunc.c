@@ -340,3 +340,4 @@ hashtable *pointer_hashtable_new(hashtable_size_t num_buckets)
     
     return hashtable_new(pointer_hash, pointer_key_equals, &empty, &deleted, num_buckets);
 }
+

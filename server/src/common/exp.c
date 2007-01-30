@@ -832,3 +832,5 @@ int calc_skill_exp(object *who, object *op, float mod, int level, int *real)
 
     return op_exp;
 }
+
+
