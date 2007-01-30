@@ -27,6 +27,9 @@
 #include <global.h>
 #include <stdio.h>
 
+/**
+ * Frees all animations.
+ */
 void free_all_anim()
 {
     int i;
@@ -40,6 +43,10 @@ void free_all_anim()
     free(animations);
 }
 
+/**
+ * Initializes the animation system.
+ * Loads the animatinos from a file named "animations" in the configured data directory.
+ */
 void init_anim()
 {
     char        buf[MAX_BUF];
@@ -137,13 +144,22 @@ void init_anim()
     LOG(llevDebug, "done. (got %d)\n", num_animations);
 }
 
+/**
+ * Compares two Animations structures.
+ * @param a  Animation to compare with <var>b</var>.
+ * @param b  Animation to compare with <var>a</var>.
+ * @return comparison result, see {@link strcmp(char*,char*)}.
+ */
 static int anim_compare(Animations *a, Animations *b)
 {
     return strcmp(a->name, b->name);
 }
 
-/* Tries to find the animation id that matches name.  Returns an integer match
- * 0 if no match found (animation 0 is initialized as the 'bug' face
+/**
+ * Tries to find the animation id that matches name.  Returns an integer match
+ * 0 if no match found (animation 0 is initialized as the 'bug' face.
+ * @param name  TOOD
+ * @return TODO
  */
 int find_animation(char *name)
 {
@@ -161,12 +177,12 @@ int find_animation(char *name)
     return 0;
 }
 
-
-/*
+/**
  * animate_object(object, count) updates the face-variable of an object.
  * If the object is the head of a multi-object, all objects are animated.
+ * @param op     TODO
+ * @param count  TODO
  */
-
 void animate_object(object *op, int count)
 {
     int numfacing, numanim;
@@ -380,4 +396,3 @@ void animate_object(object *op, int count)
      */
     /* update_object(op, UP_OBJ_FACE); */
 }
-

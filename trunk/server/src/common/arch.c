@@ -36,10 +36,8 @@ static hashtable *arch_table;
  * It does not use the hashtable system, but browse the whole archlist each time.
  * I suggest not to use it unless you really need it because of performance issue.
  * It is currently used by scripting extensions (create-object).
- * Params:
- * - name: the name we're searching for (ex: "writing pen");
- * Return value:
- * - the archetype found or null if nothing was found.
+ * @param name  The name we're searching for (ex: "writing pen").
+ * @return the archetype found or <code>null</code> if nothing was found.
  */
 archetype * find_archetype_by_object_name(const char *name)
 {
@@ -60,9 +58,8 @@ archetype * find_archetype_by_object_name(const char *name)
  * GROS - this returns a new object given the name that appears during the game
  * (for example, "writing pen" instead of "stylus").
  * Params:
- * - name: The name we're searching for (ex: "writing pen");
- * Return value:
- * - a corresponding object if found; a singularity object if not found.
+ * @param name  The name we're searching for (ex: "writing pen").
+ * @return A corresponding object if found; a singularity object if not found.
  */
 object * get_archetype_by_object_name(const char *name)
 {
@@ -84,9 +81,12 @@ object * get_archetype_by_object_name(const char *name)
     return create_singularity(name);
 }
 
-/* get the skill object of skill nr. x.
+/**
+ * Get the skill object of skill nr. x.
  * i don't have included artifacts file search here -
  * if ever skills are defined in artifacts file, add it here.
+ * @param skillnr  TODO
+ * @return TODO
  */
 archetype * get_skill_archetype(int skillnr)
 {
@@ -100,7 +100,8 @@ archetype * get_skill_archetype(int skillnr)
     return NULL;
 }
 
-/* This is a subset of the parse_id command.  Basically, name can be
+/**
+ * This is a subset of the parse_id command.  Basically, name can be
  * a string seperated lists of things to match, with certain keywords.
  * pl is the player (only needed to set count properly)
  * op is the item we are trying to match.  Calling function takes care
@@ -116,6 +117,11 @@ archetype * get_skill_archetype(int skillnr)
  * If count is 1, make a quick check on the name.
  * IF count is >1, we need to make plural name.  Return if match.
  * Last, make a check on the full name.
+ * 
+ * @param pl    TODO
+ * @param op    TODO
+ * @param name  TODO
+ * @return TODO
  */
 int item_matched_string(object *pl, object *op, const char *name)
 {
@@ -199,13 +205,12 @@ int item_matched_string(object *pl, object *op, const char *name)
     return 0;
 }
 
-/*
+/**
  * Initialises the internal linked list of archetypes (read from file).
  * Then the global "empty_archetype" pointer is initialised.
  * Then the global "base_info" pointer is initialised.
  * Then the blocksview[] array is initialised.
  */
-
 void init_archetypes()
 {
     /* called from add_player() and edit() */
@@ -234,30 +239,28 @@ void init_archetypes()
         LOG(llevError, "FATAL: no dmg_info arch. Check the arch set!\n");
 }
 
-/*
+/**
  * Stores debug-information about how efficient the hashtable
  * used for archetypes has been in the static errmsg array.
+ * @param op  TODO
  */
-
 void arch_info(object *op)
 {
     sprintf(errmsg, "%d searches and %d strcmp()'s", arch_search, arch_cmp);
     new_draw_info(NDI_WHITE, 0, op, errmsg);
 }
 
-/*
+/**
  * Initialise the hashtable used by the archetypes.
  */
-
 void clear_archetable()
 {
     arch_table = string_hashtable_new(8192);
 }
 
-/*
+/**
  * An alternative way to init the hashtable which is slower, but _works_...
  */
-
 void init_archetable()
 {
     archetype  *at;
@@ -267,21 +270,20 @@ void init_archetable()
     LOG(llevDebug, "done\n");
 }
 
-/*
+/**
  * Dumps an archetype to debug-level output.
+ * @param at  TODO
  */
-
 void dump_arch(archetype *at)
 {
     dump_object(&at->clone);
 }
 
-/*
+/**
  * Dumps _all_ archetypes to debug-level output.
  * If you run crossfire with debug, and enter DM-mode, you can trigger
  * this with the O key.
  */
-
 void dump_all_archetypes()
 {
     archetype      *at;
@@ -311,6 +313,9 @@ void dump_all_archetypes()
     }
 }
 
+/**
+ * Frees all archetypes.
+ */
 void free_all_archs()
 {
     archetype  *at, *next;
@@ -334,10 +339,10 @@ void free_all_archs()
     LOG(llevDebug, "Freed %d archetypes, %d faces\n", i, f);
 }
 
-/*
+/**
  * Allocates, initialises and returns the pointer to an archetype structure.
+ * @return TODO
  */
-
 archetype * get_archetype_struct()
 {
     archetype *new;
@@ -351,9 +356,10 @@ archetype * get_archetype_struct()
     return new;
 }
 
-/*
+/**
  * Reads/parses the archetype-file, and copies into a linked list
  * of archetype-structures.
+ * @param fp  TODO
  */
 void first_arch_pass(FILE *fp)
 {
@@ -425,11 +431,11 @@ void first_arch_pass(FILE *fp)
     free(at);
 }
 
-/*
+/**
  * Reads the archetype file once more, and links all pointers between
  * archetypes.
+ * @param fp_start  TODO
  */
-
 void second_arch_pass(FILE *fp_start)
 {
     FILE           *fp  = fp_start;
@@ -474,13 +480,12 @@ void second_arch_pass(FILE *fp_start)
     }
 }
 
-/*
+/**
  * First initialises the archtype hash-table (init_archetable()).
  * Reads and parses the archetype file (with the first and second-pass
  * functions).
  * Then initialises treasures by calling load_treasures().
  */
-
 void load_archetypes()
 {
     FILE           *fp;
@@ -545,11 +550,12 @@ void load_archetypes()
     LOG(llevDebug, "Reading archetypes done.\n");
 }
 
-/*
+/**
  * Creates and returns a new object which is a copy of the given archetype.
  * This function returns NULL on failure.
+ * @param at  TODO
+ * @return TODO
  */
-
 object * arch_to_object(archetype *at)
 {
     object *op;
@@ -568,13 +574,14 @@ object * arch_to_object(archetype *at)
     return op;
 }
 
-/*
+/**
  * Creates an object.  This function is called by get_archetype()
  * if it fails to find the appropriate archetype.
  * Thus get_archetype() will be guaranteed to always return
  * an object, and never NULL.
+ * @param name  TODO
+ * @return TODO
  */
-
 object * create_singularity(const char *name)
 {
     object *op;
@@ -591,11 +598,12 @@ object * create_singularity(const char *name)
     return op;
 }
 
-/*
+/**
  * Finds which archetype matches the given name, and returns a new
  * object containing a copy of the archetype.
+ * @param name  TODO
+ * @return TODO
  */
-
 object * get_archetype(const char *name)
 {
     archetype  *at;
@@ -605,11 +613,12 @@ object * get_archetype(const char *name)
     return arch_to_object(at);
 }
 
-/*
+/**
  * Finds, using the hashtable, which archetype matches the given name.
  * returns a pointer to the found archetype, otherwise NULL.
+ * @param name  TODO
+ * @return TODO
  */
-
 archetype * find_archetype(const char *name)
 {
     if (name == NULL)
@@ -618,10 +627,10 @@ archetype * find_archetype(const char *name)
     return (archetype *)hashtable_find(arch_table, name);
 }
 
-/*
+/**
  * Adds an archetype to the hashtable.
+ * @param at  TODO
  */
-
 void add_arch(archetype *at)
 {
     if (! hashtable_insert(arch_table, at->name, at))
@@ -630,11 +639,12 @@ void add_arch(archetype *at)
     }
 }
 
-/*
+/**
  * Returns the first archetype using the given type.
  * Used in treasure-generation.
+ * @param type  TODO
+ * @return TODO
  */
-
 archetype * type_to_archetype(int type)
 {
     archetype  *at;
@@ -645,12 +655,13 @@ archetype * type_to_archetype(int type)
     return NULL;
 }
 
-/*
+/**
  * Returns a new object copied from the first archetype matching
  * the given type.
  * Used in treasure-generation.
+ * @param type  TODO
+ * @return TODO
  */
-
 object * clone_arch(int type)
 {
     archetype  *at;
@@ -664,5 +675,3 @@ object * clone_arch(int type)
     copy_object(&at->clone, op);
     return op;
 }
-
-/*** end of arch.c ***/

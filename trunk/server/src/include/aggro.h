@@ -25,8 +25,10 @@
 #ifndef __AGGRO_H
 #define __AGGRO_H
 
-/* lets say that 1000 ticks is a maximum range for damage.
- * if a damage info is older, is automatically invalid.
+/**
+ * DEFAULT_DMG_INVALID_TIME determins the maximum number of ticks for a damage to stay valid.
+ * If the age of a damage exceeds DEFAULT_DMG_INVALID_TIME, the damage is invalid.
+ * Currently, it's regarded that 1000 ticks is the maximum age for a damage.
  */
 #define DEFAULT_DMG_INVALID_TIME 1000
 
