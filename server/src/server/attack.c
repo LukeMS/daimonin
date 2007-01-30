@@ -41,8 +41,16 @@ static int  abort_attack(object *target, object *hitter, int env_attack);
 static void send_attack_msg(object *op, object *hitter, int attacknum, int dam, int damage);
 static int  hit_player_attacktype(object *op, object *hitter, int *flags, int damage, uint32 attacknum, int magic);
 
-/* check and adjust all pre-attack issues like checking attack is valid,
- * attack objects are in the right state and such.
+// TODO: Unify parameter order - some functions take hitter then target, some functions take target then hitter.
+//       There is no obvious concept behind this.
+
+/**
+ * Checks and adjusts all pre-attack issues like whether the attack is valid,
+ * the attack objects are in the right state and such.
+ * @param target      TODO
+ * @param hitter      TODO
+ * @param env_attack  TODO
+ * @return TODO
  */
 static int get_attack_mode(object **target, object **hitter, int *env_attack)
 {
@@ -73,9 +81,14 @@ static int get_attack_mode(object **target, object **hitter, int *env_attack)
     return 0;
 }
 
-/* compare the attacker and target and adjust the attack roll.
+
+/**
+ * Compares the attacker and the target and adjusts the attack roll.
  * Like the attacker is invisible - adjust the roll depending on the
- * fact the target can see invisible or not - just as a example.
+ * fact the target can see invisible or not - just as an example.
+ * @param hitter  TODO
+ * @param target  TODO
+ * @return TODO
  */
 static int adj_attackroll(object *hitter, object *target)
 {
@@ -110,8 +123,14 @@ static int adj_attackroll(object *hitter, object *target)
     return adjust;
 }
 
-/* here we decide a attack will happen and how. blocking, parry, missing is handled
+
+/**
+ * Here we decide a attack will happen and how. blocking, parry, missing is handled
  * here inclusive the sounds. All whats needed before we count damage and say "hit you".
+ * @param target   TODO
+ * @param hitter   TODO
+ * @param hit_obj  TODO
+ * @return TODO
  */
 int attack_ob(object *target, object *hitter, object *hit_obj)
 {
@@ -259,8 +278,15 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
     leave : return dam;
 }
 
-/* damage_ob() (old: hit_player()) is called to generate damage - its the main hit function 
+
+/**
+ * damage_ob() (old: hit_player()) is called to generate damage - its the main hit function 
  * when a monster, player or other "attackable" object is really damaged in terms of hp.
+ * @param op          TODO
+ * @param dam         TODO
+ * @param hitter      TODO
+ * @param env_attack  TODO
+ * @return TODO
  */
 int damage_ob(object *op, int dam, object *hitter, int env_attack)
 {
@@ -538,9 +564,14 @@ int damage_ob(object *op, int dam, object *hitter, int env_attack)
     return maxdam;
 }
 
-/* if we drop for example a spell object like a fireball to the map,
+
+/**
+ * if we drop for example a spell object like a fireball to the map,
  * they move from tile to tile. Every time they check the object they
  * "hit on this map tile". If they find some - we are here.
+ * @param op   TODO
+ * @param dir  TODO
+ * @return TODO
  */
 int hit_map(object *op, int dir)
 {
@@ -641,12 +672,22 @@ int hit_map(object *op, int dir)
     return 0;
 }
 
-/* This returns the amount of damage hitter does to op with the
+
+/**
+ * This returns the amount of damage hitter does to op with the
  * appropriate attacktype.  Only 1 attacktype should be set at a time.
  * This doesn't damage the player, but returns how much it should
  * take.  However, it will do other effects (paralyzation, slow, etc.)
  * Note - changed for PR code - we now pass the attack number and not
- * the attacktype.  Makes it easier for the PR code.  */
+ * the attacktype.  Makes it easier for the PR code.
+ * @param op         TODO
+ * @param hitter     TODO
+ * @param flags      TODO
+ * @param damage     TODO
+ * @param attacknum  TODO
+ * @param magic      TODO
+ * @return TODO
+ */
 static int hit_player_attacktype(object *op, object *hitter, int *flags, int damage, uint32 attacknum, int magic)
 {
     double  dam         = (double) damage;
@@ -1211,8 +1252,14 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
 }
 
 
-/* we need this called spread in the function before because sometimes we want drop
+/**
+ * we need this called spread in the function before because sometimes we want drop
  * a message BEFORE we tell the damage and sometimes we want a message after it.
+ * @param op         TODO
+ * @param hitter     TODO
+ * @param attacknum  TODO
+ * @param dam        TODO
+ * @param damage     TODO
  */
 static void send_attack_msg(object *op, object *hitter, int attacknum, int dam, int damage)
 {
@@ -1232,14 +1279,20 @@ static void send_attack_msg(object *op, object *hitter, int attacknum, int dam, 
 }
 
 
-/* GROS: This code comes from damage_ob. It has been made external to
+/**
+ * GROS: This code comes from damage_ob. It has been made external to
  * allow script procedures to "kill" objects in a combat-like fashion.
  * It was initially used by (kill-object) developed for the Collector's
  * Sword. Note that nothing has been changed from the original version
  * of the following code.
- */
-/* ok, when i have finished the different attacks i must clean this up here too
+ *
+ * ok, when i have finished the different attacks i must clean this up here too
  * looks like some artifact code in here - MT-2003
+ * @param op      TODO
+ * @param dam     TODO
+ * @param hitter  TODO
+ * @param typeX   TODO
+ * @return TODO
  */
 int kill_object(object *op, int dam, object *hitter, int typeX)
 {
@@ -1405,6 +1458,12 @@ int kill_object(object *op, int dam, object *hitter, int typeX)
 }
 
 
+/**
+ * @param target      TODO
+ * @param hitter      TODO
+ * @param env_attack  TODO
+ * @return TODO
+ */
 static int abort_attack(object *target, object *hitter, int env_attack)
 {
     /* Check if target and hitter are still in a relation similar to the one
@@ -1424,9 +1483,13 @@ static int abort_attack(object *target, object *hitter, int env_attack)
     return new_mode != env_attack;
 }
 
-/* op is the arrow, tmp is what is stopping the arrow.
+/**
+ * op is the arrow, tmp is what is stopping the arrow.
  *
  * Returns 1 if op was inserted into tmp's inventory, 0 otherwise.
+ * @param op   TODO
+ * @param tmp  TODO
+ * @return TODO
  */
 static int stick_arrow(object *op, object *tmp)
 {
@@ -1452,11 +1515,17 @@ static int stick_arrow(object *op, object *tmp)
         return 0;
 }
 
-/* hit_with_arrow() disassembles the missile, attacks the victim and
+
+/**
+ * hit_with_arrow() disassembles the missile, attacks the victim and
  * reassembles the missile.
  *
  * It returns a pointer to the reassembled missile, or NULL if the missile
  * isn't available anymore.
+ * 
+ * @param op      TODO
+ * @param victim  TODO
+ * @return TODO
  */
 object * hit_with_arrow(object *op, object *victim)
 {
@@ -1574,7 +1643,11 @@ object * hit_with_arrow(object *op, object *victim)
     return op;
 }
 
-/* ATM no tear down wall in the game, function must be checked first MT -09.2005 */
+
+/**
+ * ATM no tear down wall in the game, function must be checked first MT -09.2005
+ * @param op  TODO
+ */
 void tear_down_wall(object *op)
 {
     int perc    = 0;
@@ -1615,12 +1688,17 @@ void tear_down_wall(object *op)
 }
 
 
-/* TODO: i have not the time now - but later we should do this: a marker value
+/**
+ * TODO: i have not the time now - but later we should do this: a marker value
  * in the poison force flags kind of poison - food/poison force or weapon/spell
  * poison. Weapon/spell force will block now poisoning, but will not be blocked
  * by food/poison forces - and food/poison forces can stack. MT-2003
  * NOTE: only poison now insert a poison force - food&drink insert different forces.
  * For Poison objects, we use simply the base dam * level
+ * 
+ * @param op      TODO
+ * @param hitter  TODO
+ * @param dam     TODO
  */
 void poison_player(object *op, object *hitter, float dam)
 {
@@ -1778,6 +1856,12 @@ void poison_player(object *op, object *hitter, float dam)
         tmp->stats.food++;
 }
 
+
+/**
+ * @param op      TODO
+ * @param hitter  TODO
+ * @param dam     TODO
+ */
 void slow_player(object *op, object *hitter, int dam)
 {
     static archetype  *at  = NULL;
@@ -1827,6 +1911,12 @@ void slow_player(object *op, object *hitter, int dam)
 
 }
 
+
+/**
+ * @param op      TODO
+ * @param hitter  TODO
+ * @param dam     TODO
+ */
 void fear_player(object *op, object *hitter, int dam)
 {
     static archetype  *at  = NULL;
@@ -1867,6 +1957,12 @@ void fear_player(object *op, object *hitter, int dam)
 
 }
 
+
+/**
+ * @param op      TODO
+ * @param hitter  TODO
+ * @param dam     TODO
+ */
 void snare_player(object *op, object *hitter, int dam)
 {
     static archetype  *at  = NULL;
@@ -1928,6 +2024,12 @@ void snare_player(object *op, object *hitter, int dam)
 
 }
 
+
+/**
+ * @param op      TODO
+ * @param hitter  TODO
+ * @param ticks   TODO
+ */
 void confuse_player(object *op, object *hitter, int ticks)
 {
     static archetype  *at  = NULL;
@@ -1963,10 +2065,12 @@ void confuse_player(object *op, object *hitter, int ticks)
     SET_FLAG(op, FLAG_CONFUSED);
 }
 
-/* remove confusion effect and force (if there is one)
-* Note: This is for explicit remove - in time.c the force can 
-* auto destruct itself without calling this function. This.
-*/
+
+/** remove confusion effect and force (if there is one)
+ * Note: This is for explicit remove - in time.c the force can 
+ * auto destruct itself without calling this function. This.
+ * @param op  TODO
+ */
 void remove_confusion(object *op)
 {
     static archetype  *at  = NULL;
@@ -1997,6 +2101,12 @@ void remove_confusion(object *op)
     FIX_PLAYER(op ,"attack - remove confusion");
 }
 
+
+/**
+ * @param op      TODO
+ * @param hitter  TODO
+ * @param dam     TODO
+ */
 void blind_player(object *op, object *hitter, int dam)
 {
     static archetype  *at  = NULL;
@@ -2032,10 +2142,13 @@ void blind_player(object *op, object *hitter, int dam)
     SET_FLAG(op, FLAG_BLIND);
 }
 
-/* remove blindness effect and force (if there is one)
-* Note: This is for explicit remove - in time.c the force can 
-* auto destruct itself without calling this function. This.
-*/
+
+/**
+ * remove blindness effect and force (if there is one)
+ * Note: This is for explicit remove - in time.c the force can 
+ * auto destruct itself without calling this function. This.
+ * @param op  TODO
+ */
 void remove_blindness(object *op)
 {
     static archetype  *at  = NULL;
@@ -2067,6 +2180,11 @@ void remove_blindness(object *op)
 }
 
 
+/**
+ * @param op      TODO
+ * @param hitter  TODO
+ * @param dam     TODO
+ */
 void paralyze_player(object *op, object *hitter, int dam)
 {
     static archetype  *at  = NULL;
@@ -2103,10 +2221,13 @@ void paralyze_player(object *op, object *hitter, int dam)
     FIX_PLAYER(op ,"attach paralyze"); /* will set FLAG_PARALYZE */
 }
 
-/* remove paralyze effect and force (if there is one)
+
+/**
+ * remove paralyze effect and force (if there is one)
  * Note: This is for explicit remove - in time.c the force can 
  * auto destruct itself without calling this function. This.
-*/
+ * @param op  TODO
+ */
 void remove_paralyze(object *op)
 {
     static archetype  *at  = NULL;
@@ -2137,7 +2258,12 @@ void remove_paralyze(object *op)
     FIX_PLAYER(op ,"attack - remove paralyze");
 }
 
-/* determine if the object is an 'aimed' missile */
+
+/**
+ * determine if the object is an 'aimed' missile
+ * @param op  TODO
+ * @return TODO
+ */
 int is_aimed_missile(object *op)
 {
     if (op
@@ -2147,7 +2273,9 @@ int is_aimed_missile(object *op)
     return 0;
 }
 
-/* improved melee test function.
+
+/**
+ * improved melee test function.
  * test for objects are in range for melee attack.
  * used from attack() functions but also from animation().
  * Return:
@@ -2156,6 +2284,9 @@ int is_aimed_missile(object *op)
  * TODO: 2: target is range but not in front.
  * TODO: 3: target is in back
  * NOTE: check for valid target outside here.
+ * @param hitter  TODO
+ * @param enemy   TODO
+ * @return TODO
  */
 int is_melee_range(object *hitter, object *enemy)
 {

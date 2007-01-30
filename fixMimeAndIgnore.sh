@@ -1,6 +1,7 @@
 #!/bin/sh
 # Shell script for fixing the properties of files in arch/ and maps/.
 
+nice -n 19 bash <<END
 mapsIgnore=".dedit"
 archIgnore="Thumbs.db"
 echo=
@@ -13,8 +14,11 @@ find arch -name "*.anim" -print0 | xargs -0 $echo svn propset svn:eol-style LF
 find arch -type d -not -path "*/.svn/*" -not -name ".svn" -print0 | xargs -0 $echo svn propset svn:ignore "$archIgnore"
 
 find arch -name "Thumbs.db" >fMAI$$
-xargs rm <fMAI$$
-xargs svn rm <fMAI$$
+if [[ -s fMAI$$ ]]
+then
+    xargs rm <fMAI$$
+    xargs svn rm <fMAI$$
+fi
 rm fMAI$$
 
 find maps -type f -not -path "*/.svn/*" -print0 | xargs -0 $echo svn propset svn:mime-type text/plain
@@ -27,3 +31,4 @@ find maps -type f -name "*.txt" -not -path "*/.svn/*" -print0 | xargs -0 $echo s
 #find arch -type f -name "*.txt" -not -path "*/.svn/*" -print0 | xargs -0 $echo svn propset svn:eol-style native
 
 svn commit -m "Fixed svn:eol-style, svn:ignore and svn:mime-type properties."
+END
