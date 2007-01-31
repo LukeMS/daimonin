@@ -209,7 +209,7 @@ void draw_info(char *str, int flags)
      */
     for (i = 0; buf2[i] != 0; i++)
     {
-        if (buf2[i] < 32 && buf2[i] != 0x0a && buf2[i] != '@')
+        if (buf2[i] < 32 && buf2[i] != 0x0a && buf2[i] != '§')
             buf2[i] = 32;
     }
 

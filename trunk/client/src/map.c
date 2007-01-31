@@ -167,7 +167,7 @@ void UpdateMapName(char *name)
     if (name == NULL)
         return;
 
-    if ((tmp = strchr(name, '@')))
+    if ((tmp = strchr(name, '§')))
     {
         strcpy(MapData.music, tmp);
         if (init_media_tag(tmp))
