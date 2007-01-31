@@ -255,7 +255,7 @@ void current_map_info(object *op)
         return;
 
     strcpy(buf, m->name);
-    tmp = strchr(buf, '§');
+    tmp = strchr(buf, '@');
     if (tmp)
         *tmp = 0;
     new_draw_info_format(NDI_UNIQUE, 0, op, "%s (%s)", buf, m->path);
