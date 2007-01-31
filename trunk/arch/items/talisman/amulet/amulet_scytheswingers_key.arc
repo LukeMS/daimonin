@@ -2,7 +2,7 @@ Object amulet_scytheswingers_key
 name Scytheswingers Scythe
 face scytheswingers_emblem.101
 layer 3
-type 39
+type 21
 material_real 641
 material 1024
 slaying scytheswingers_member_key

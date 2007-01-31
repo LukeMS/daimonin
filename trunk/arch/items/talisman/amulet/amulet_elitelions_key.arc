@@ -2,7 +2,7 @@ Object amulet_elitelions_key
 name Elitelions Key
 face elitelions_emblem.101
 layer 3
-type 39
+type 21
 material_real 641
 material 1024
 slaying elitelions_member_key

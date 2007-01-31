@@ -1,8 +1,8 @@
 Object amulet_theomen_key
-name TheOmen key
-face omen_amulet_dark.101
+name The Omen key
+face omen_amulet.101
 layer 3
-type 39
+type 21
 material_real 641
 material 1024
 slaying theomen_member_key
