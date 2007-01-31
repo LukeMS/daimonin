@@ -143,7 +143,7 @@ type 79
 layer 4
 end
 Object kiddy_bench.111
-name kiddy bench
+name bench
 face kiddy_bench.131
 anim
 facings 9
