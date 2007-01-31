@@ -30,7 +30,7 @@
  * a legal string - if not, return NULL  - if return string*
  * - remove all whitespace in front (if all are whitespace
  *   we return NULL)
- * - change and/or process all our control chars like '^' or '§'
+ * - change and/or process all our control chars like '^' or '@'
  */
 static char * cleanup_chat_string(char *ustring)
 {
@@ -56,7 +56,7 @@ static char * cleanup_chat_string(char *ustring)
             case '°':
             case '~':
             case '^':
-            case '§':
+            case '@':
                 *ptr = ' ';
                 break;
             default:
