@@ -1,5 +1,5 @@
 Object bank1.111
-name bank
+name counter
 face bank1.111
 anim
 facings 9

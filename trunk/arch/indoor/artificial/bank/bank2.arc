@@ -1,5 +1,5 @@
 Object bank2a
-name bank
+name counter
 face bank2a.111
 anim
 facings 9
@@ -22,7 +22,7 @@ type 79
 layer 4
 end
 Object bank2b
-name bank
+name counter
 face bank2b.111
 anim
 facings 9
@@ -45,7 +45,7 @@ type 79
 layer 4
 end
 Object bank2c
-name bank
+name counter
 face bank2c.111
 anim
 facings 9
