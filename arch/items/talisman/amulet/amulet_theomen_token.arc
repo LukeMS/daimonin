@@ -1,5 +1,5 @@
 Object amulet_theomen_token
-name TheOmen Token
+name The Omen Token
 face omen_amulet.101
 layer 3
 type 39
