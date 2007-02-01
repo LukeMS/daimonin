@@ -117,8 +117,6 @@ demon_armour.313
 demon_armour.321
 demon_armour.322
 demon_armour.323
-
-
 mina
 is_animated 1
 anim_speed 4
