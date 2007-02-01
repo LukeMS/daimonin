@@ -26,8 +26,8 @@ end
 arch teleporter
 connected 2
 slaying ../testmaps/testmap_main
-hp 0
-sp 0
+hp 2
+sp 2
 speed 0
 x 1
 y 3

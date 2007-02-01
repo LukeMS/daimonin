@@ -84,6 +84,29 @@ START_TEST (bad_teleporter_without_path)
 }
 END_TEST
 
+START_TEST (simple_teleporter_with_path)
+{
+    shstr *path = add_string("/dev/unit_tests/test_teleporter");
+    mapstruct *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
+    shstr *path2 = add_string("/dev/testmaps/testmap_main");
+    mapstruct *map2 = ready_map_name(path2, path2, MAP_STATUS_MULTI, NULL);
+
+    object *lever = locate_beacon(find_string("lever_2"))->env;
+    object *apple = locate_beacon(find_string("apple_2"))->env;
+ 
+    fail_unless(apple->x == 1 && apple->y == 3, "Apple initially in incorrect spot");
+    fail_unless(apple->map == map, "Apple initially in incorrect map");
+
+    /* Switch the lever and make sure the inverse is true */
+    manual_apply(lever, lever, 0);
+    
+    fail_if(apple->x == 1 && apple->y == 1 && apple->map == map, "Apple wasn't teleported");
+    fail_unless(apple->x == 2 && apple->y == 2, "Apple teleported to incorrect spot. Ended up on (%d, %d)", apple->x, apple->y);
+    fail_unless(apple->map == map2, "Apple teleported to incorrect map");
+}
+END_TEST
+
+
 Suite *teleporter_suite(void)
 {
   Suite *s = suite_create("Teleporter");
@@ -94,6 +117,7 @@ Suite *teleporter_suite(void)
   suite_add_tcase (s, tc_core);
   tcase_add_test(tc_core, simple_teleporter_without_path);
   tcase_add_test(tc_core, bad_teleporter_without_path);
+  tcase_add_test(tc_core, simple_teleporter_with_path);
 
   return s;
 }
