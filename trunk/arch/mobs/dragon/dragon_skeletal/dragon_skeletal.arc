@@ -105,3 +105,40 @@ is_animated 1
 anim_speed 5
 no_pick 1
 end
+More
+Object dragon_skeletal_d_b
+name skeletal dragon
+layer 6
+terrain_flag 1
+mpart_id 3
+mpart_nr 1
+x 1
+monster 1
+alive 1
+no_pick 1
+end
+More
+Object dragon_skeletal_d_c
+name skeletal dragon
+layer 6
+terrain_flag 1
+mpart_id 3
+mpart_nr 2
+y 1
+monster 1
+alive 1
+no_pick 1
+end
+More
+Object dragon_skeletal_d_d
+name skeletal dragon
+layer 6
+terrain_flag 1
+mpart_id 3
+mpart_nr 3
+y 1
+x 1
+monster 1
+alive 1
+no_pick 1
+end

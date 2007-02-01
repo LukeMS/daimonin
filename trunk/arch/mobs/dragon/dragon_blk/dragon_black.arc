@@ -36,14 +36,15 @@ ac 14
 wc 6
 thac0 18
 thacm 1
-resist_fire -30
-resist_pierce 25
-resist_slash 25
-resist_impact 25
-resist_cleave 25
+resist_fire 30
+resist_pierce 30
+resist_slash 30
+resist_impact 30
+resist_cleave 30
 resist_fear 80
 resist_confusion 40
-resist_cold 100
+resist_cold 30
+resist_acid 100
 dam 82
 weapon_speed 3.5
 attack_pierce 50
@@ -106,5 +107,42 @@ dragon_blk.152
 mina
 is_animated 1
 anim_speed 5
+no_pick 1
+end
+More
+Object dragon_blk_d_b
+name black dragon
+layer 6
+terrain_flag 1
+mpart_id 3
+mpart_nr 1
+x 1
+monster 1
+alive 1
+no_pick 1
+end
+More
+Object dragon_blk_d_c
+name black dragon
+layer 6
+terrain_flag 1
+mpart_id 3
+mpart_nr 2
+y 1
+monster 1
+alive 1
+no_pick 1
+end
+More
+Object dragon_blk_d_d
+name black dragon
+layer 6
+terrain_flag 1
+mpart_id 3
+mpart_nr 3
+y 1
+x 1
+monster 1
+alive 1
 no_pick 1
 end
