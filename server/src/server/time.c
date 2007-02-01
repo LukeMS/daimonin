@@ -1234,7 +1234,7 @@ void move_teleporter(object *op)
         else if (EXIT_X(op) != -1 && EXIT_Y(op) != -1) /* teleport inside this map */
         {
             /* use OUT_OF_REAL_MAP() - we want be truly on THIS map */
-            if (!OUT_OF_REAL_MAP(op->map, EXIT_X(op), EXIT_Y(op)))
+            if(OUT_OF_REAL_MAP(op->map, EXIT_X(op), EXIT_Y(op)))
             {
                 LOG(llevBug, "BUG: Removed illegal teleporter (map: %s (%d,%d)) -> (%d,%d)\n", op->map->name, op->x,
                     op->y, EXIT_X(op), EXIT_Y(op));
