@@ -1,0 +1,64 @@
+arch map
+name Teleporter tests
+msg
+Creator: gecko
+Date:    2007-02-01
+endmsg
+width 24
+height 24
+difficulty 1
+end
+arch teleporter
+connected 1
+speed 0
+hp 0
+sp 0
+x 1
+y 1
+end
+arch apple
+x 1
+y 1
+arch beacon
+name apple_1
+end
+end
+arch teleporter
+connected 2
+slaying ../testmaps/testmap_main
+hp 0
+sp 0
+speed 0
+x 1
+y 3
+end
+arch apple
+x 1
+y 3
+arch beacon
+name apple_2
+end
+end
+arch handle_lever
+msg
+Test if teleportation into the current map works
+(Bug #0000578: Test for illegal teleporter is wrong sense)
+endmsg
+connected 1
+x 2
+y 1
+arch beacon
+name lever_1
+end
+end
+arch handle_lever
+msg
+Test if teleportation into another map works
+endmsg
+connected 2
+x 2
+y 3
+arch beacon
+name lever_2
+end
+end

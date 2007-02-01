@@ -163,6 +163,11 @@ static void signal_connection(object *op, oblinkpt *olp, object *activator, obje
               break;
 
             case TELEPORTER:
+              /* Ignore map loading triggers 
+               * Rationale: connected teleports should only trigger
+               * at connection state changes. */
+              if(ignore_trigger_events)
+                  break;
               move_teleporter(tmp);
               break;
 
