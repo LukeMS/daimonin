@@ -2,7 +2,7 @@ Object candle_large
 name large candle
 other_arch candle2_large
 other_arch candle3_large
-face large1_candle.101
+face large1_candle1.101
 blocksview 1
 layer 3
 type 74
