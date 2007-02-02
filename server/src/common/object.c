@@ -2988,8 +2988,17 @@ static void beacon_initializer(object *op)
     }
 }
 
+static void monster_initializer(object *op)
+{
+    /* We only want to initialize monsters inside objects here. Monsters on maps
+     * are handled by map.c:load_objects() after they have been inserted onto the map */
+    if(op->env)
+        fix_monster(op);
+}
+
 /** Initialize the table of object initializers. */
 void init_object_initializers()
 {
     object_initializers[TYPE_BEACON] = beacon_initializer;
+    object_initializers[MONSTER] = monster_initializer;
 }

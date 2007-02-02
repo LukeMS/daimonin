@@ -2282,6 +2282,7 @@ object * insert_base_info_object(object *op)
 {
     object     *tmp, *head;
     objectlink *ol;
+    object     *outermost;
 
     op->head != NULL ? (head = op->head) : (head = op);
 
@@ -2320,15 +2321,19 @@ object * insert_base_info_object(object *op)
 
     /* Store position (for returning home after aggro is lost...) */
     /* Has to be done after insert_ob_in_ob() */
-    if (op->map)
+    outermost = head;
+    while(outermost != NULL && outermost->map == NULL)
+        outermost = outermost->env;
+    if(outermost && outermost->map)
     {
-        tmp->x = op->x;
-        tmp->y = op->y;
-        FREE_AND_ADD_REF_HASH(tmp->slaying, op->map->path);
+        tmp->x = outermost->x;
+        tmp->y = outermost->y;
+        FREE_AND_ADD_REF_HASH(tmp->slaying, outermost->map->path);
     }
     else
     {
         FREE_AND_CLEAR_HASH(tmp->slaying);
+        LOG(llevDebug, "insert_base_info_object(): Can't set up home location for '%s' - not even close to a map.\n", query_name(head));
     }
 
     return tmp;
