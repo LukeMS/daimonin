@@ -3,6 +3,7 @@ name switch
 layer 3
 type 93
 no_pick 1
+no_teleport 1
 face switch_wall.111
 anim
 facings 9
