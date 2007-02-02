@@ -3553,6 +3553,10 @@
     This setting only has effect if the monster doesn't have an AI object.
   </attribute>
 </section>
+  <attribute arch_begin="msg" arch_end="endmsg" editor="default message" type="text"> 	 
+    The default message is used as the reply if a player tries to talk to an NPC that doesn't have a script.
+    You can use it to get some variation on the otherwise standard "NN has nothing to say".
+  </attribute>
 </type>
 
 <!--####################################################################-->
@@ -4023,6 +4027,10 @@
     health points drops below this percentage of max health.
 
     This setting only has effect if the monster doesn't have an AI object.
+  </attribute>
+  <attribute arch_begin="msg" arch_end="endmsg" editor="default message" type="text"> 	 
+    The default message is used as the reply if a player tries to talk to an NPC that doesn't have a script.
+    You can use it to get some variation on the otherwise standard "NN has nothing to say".
   </attribute>
 </section>
 </type>
