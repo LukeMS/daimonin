@@ -129,7 +129,7 @@ void init_anim()
         else
         {
             if (!(faces[num_frames++] = FindFace(buf, 0)))
-                LOG(llevBug, "BUG: Could not find face %s for animation %s\n", STRING_SAFE(buf),
+                LOG(llevMapbug, "ARCHBUG: Could not find face %s for animation %s\n", STRING_SAFE(buf),
                     STRING_SAFE(animations[num_animations].name));
         }
     }
