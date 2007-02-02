@@ -60,6 +60,7 @@ Item::~Item()
 //================================================================================================
 void Item::clearContainer(int container)
 {
+GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "-- del container");
     std::list<sItem*>::const_iterator iter;
     if (container == mActOpenContainerID)
     {
@@ -152,6 +153,13 @@ void Item::ItemXYCmd(unsigned char *data, int len, bool bflag)
         tmpItem->anim_speed = data[pos++];
         tmpItem->nrof = Network::getSingleton().GetInt_String(data + pos);
         pos += 4;
+
+    char buf[256];
+    sprintf(buf, "upd: %d %d %s", container, mActHeroContainerID, tmpItem->d_name.c_str());
+    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, buf);
+
+
+
         update(tmpItem, container, bflag);
     }
     //printAllItems();
@@ -228,11 +236,20 @@ int Item::getContainerID(unsigned int ItemID)
 //================================================================================================
 void Item::delItem(unsigned int item, int container)
 {
+    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "-- del-- del Item");
+/*
+    char buf[256];
+    sprintf(buf, "%d", mActHeroContainerID);
+    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, buf);
+    sprintf(buf, "%d", container);
+    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, buf);
+*/
     std::list<sItem*>::iterator iter;
     if (container == mActHeroContainerID || mActOpenContainerID == CONTAINER_UNKNOWN)
     {
         for (iter = HeroBackpack.begin(); iter!= HeroBackpack.end(); ++iter)
         {
+            GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN,(*iter)->d_name.c_str() );
             if ((*iter)->tag != item) continue;
             delete (*iter);
             HeroBackpack.erase(iter);
@@ -263,6 +280,14 @@ void Item::delItem(unsigned int item, int container)
 //================================================================================================
 void Item::addItem(sItem *tmpItem, int container)
 {
+    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "-- add Item");
+/*
+    char buf[256];
+    sprintf(buf, "%d", mActHeroContainerID);
+    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, buf);
+    sprintf(buf, "%d", container);
+    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, buf);
+*/
     if (container == mActHeroContainerID)
     {
         GuiManager::getSingleton().updateItemSlot(
@@ -284,6 +309,86 @@ void Item::addItem(sItem *tmpItem, int container)
         return;
     }
     Logger::log().error() << "Unknown item container ID: " << container;
+}
+
+//================================================================================================
+// .
+//================================================================================================
+void Item::dropInventoryItemToFloor(int slotNr)
+{
+    return;
+    /*
+        if (cpl.inventory_win == IWIN_INV) // drop from inventory
+        {
+            tag = cpl.win_inv_tag;
+            loc = cpl.below->tag;
+            if (cpl.win_inv_ctag == -1 && cpl.container && cpl.below)
+            {
+                for (tmp = cpl.below->inv; tmp; tmp = tmp->next)
+                {
+                    if (tmp->tag == cpl.container->tag)
+                    {
+                        tag = cpl.win_inv_tag;
+                        loc = cpl.container->tag;
+                        break;
+                    }
+                }
+            }
+        }
+        else
+        {
+            GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "The item is already on the floor.");
+            return;
+        }
+        if (tag == -1 || !locate_item(tag))
+            return FALSE;
+
+        nrof = 1;
+        if ((it = locate_item(tag)))
+            nrof = it->nrof;
+        else
+            return FALSE;
+
+        if (it->locked)
+        {
+            sound_play_effect(SOUND_CLICKFAIL, 0, 0, 100);
+            draw_info("unlock item first!", COLOR_DGOLD);
+            return FALSE;
+        }
+
+        if (nrof == 1)
+            nrof = 0;
+        else
+        {
+            reset_keys();
+            cpl.input_mode = INPUT_MODE_NUMBER;
+            open_input_mode(22);
+            cpl.loc = loc;
+            cpl.tag = tag;
+            cpl.nrof = nrof;
+            cpl.nummode = NUM_MODE_DROP;
+            sprintf(buf, "%d", nrof);
+            textwin_putstring(buf);
+            strncpy(cpl.num_text, it->s_name, 250);
+            cpl.num_text[250] = 0;
+            return FALSE;
+        }
+    */
+
+    int nrof = 1;
+    //sound_play_effect(SOUND_DROP, 0, 0, 100);
+    std::list<sItem*>::iterator iter;
+    for (iter = HeroBackpack.begin(); slotNr-- && iter != HeroBackpack.end(); )  ++iter;
+    char buf[256];
+    sprintf(buf, "drop %s", (*iter)->d_name.c_str());
+    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, buf);
+
+    // move item TO Ground.
+    sprintf(buf, "mv %d %d %d", mActGrndContainerID,(*iter)->tag, (*iter)->nrof);
+    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, buf);
+    Network::getSingleton().cs_write_string(buf);
+    delete (*iter);
+    HeroBackpack.erase(iter);
 }
 
 //================================================================================================

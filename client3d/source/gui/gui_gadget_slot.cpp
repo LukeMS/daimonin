@@ -41,6 +41,12 @@ using namespace Ogre;
 
 const unsigned int ITEM_SIZE = 64;
 
+Overlay *GuiGadgetSlot::mDnDOverlay =0;
+OverlayElement *GuiGadgetSlot::mDnDElement =0;
+Image GuiGadgetSlot::mAtlasTexture;
+MaterialPtr GuiGadgetSlot::mDnDMaterial;
+TexturePtr GuiGadgetSlot::mDnDTexture;
+
 //================================================================================================
 // Constructor.
 //================================================================================================
@@ -70,104 +76,137 @@ GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOn
     mSlotHeight= (mHeight+ mRowSpace) * mSumRow;
     BG_Backup = new uint32[mWidth * mHeight];
     mGfxNr = new int[mSumCol*mSumRow];
-    // ////////////////////////////////////////////////////////////////////
-    // Create the item texture atlas.
-    // ////////////////////////////////////////////////////////////////////
-    if (Option::getSingleton().getIntValue(Option::CMDLINE_CREATE_ITEMS))
+    // This stuff is static, so we have to do it only once.
+    if (!mDnDOverlay)
     {
-        std::vector<std::string> itemFilename;
+        // ////////////////////////////////////////////////////////////////////
+        // Create the item texture atlas.
+        // ////////////////////////////////////////////////////////////////////
+        //if (Option::getSingleton().getIntValue(Option::CMDLINE_CREATE_ITEMS))
+        {
+            std::vector<std::string> itemFilename;
 #ifdef WIN32
-        String filename = PATH_ITEM_TEXTURES;
-        filename+="\\*.png";
-        BOOL found = true;
-        WIN32_FIND_DATA FindFileData;
-        HANDLE handle=FindFirstFile(filename.c_str(), &FindFileData);
-        while (handle && found)
-        {
-            if (!strstr(FindFileData.cFileName, FILE_ITEM_TEXTURE_ATLAS))
-                itemFilename.push_back(FindFileData.cFileName);
-            found = FindNextFile(handle, &FindFileData);
-        }
+            String filename = PATH_ITEM_TEXTURES;
+            filename+="\\*.png";
+            BOOL found = true;
+            WIN32_FIND_DATA FindFileData;
+            HANDLE handle=FindFirstFile(filename.c_str(), &FindFileData);
+            while (handle && found)
+            {
+                if (!strstr(FindFileData.cFileName, FILE_ITEM_TEXTURE_ATLAS))
+                    itemFilename.push_back(FindFileData.cFileName);
+                found = FindNextFile(handle, &FindFileData);
+            }
 #else
-        struct dirent *dir_entry;
-        DIR *dir = opendir(PATH_ITEM_TEXTURES); // Open the current directory
-        while ((dir_entry = readdir(dir)))
-        {
-            if (strstr(dir_entry->d_name, ".png") && !strstr(dir_entry->d_name, FILE_ITEM_TEXTURE_ATLAS))
-                itemFilename.push_back(dir_entry->d_name);
-        }
-        closedir(dir);
+            struct dirent *dir_entry;
+            DIR *dir = opendir(PATH_ITEM_TEXTURES); // Open the current directory
+            while ((dir_entry = readdir(dir)))
+            {
+                if (strstr(dir_entry->d_name, ".png") && !strstr(dir_entry->d_name, FILE_ITEM_TEXTURE_ATLAS))
+                    itemFilename.push_back(dir_entry->d_name);
+            }
+            closedir(dir);
 #endif
-        if (itemFilename.empty())
-        {
-            Logger::log().error() << "Could not find any item graphics in " << PATH_ITEM_TEXTURES;
-            return;
-        }
-        Image itemImage, itemAtlas;
-        uint32 *itemBuffer = new uint32[ITEM_SIZE * ITEM_SIZE * itemFilename.size()];
-        uint32 *nextPos = itemBuffer;
-        itemAtlas = itemAtlas.loadDynamicImage((unsigned char*)itemBuffer, ITEM_SIZE, ITEM_SIZE * itemFilename.size(), 1, PF_A8B8G8R8);
-        for (unsigned int i = 0; i < itemFilename.size(); ++i)
-        {
-            itemImage.load(itemFilename[i], "General");
-            if (itemImage.getHeight() != ITEM_SIZE || itemImage.getWidth() != ITEM_SIZE)
+            if (itemFilename.empty())
             {
-                Logger::log().warning() << "You tried to use and item with unsoprted image size. Only Items of "
-                << ITEM_SIZE << " * " << ITEM_SIZE << " pixel are allowed "<< "[" << itemFilename[i] << "].";
-                break;
+                Logger::log().error() << "Could not find any item graphics in " << PATH_ITEM_TEXTURES;
+                return;
             }
-            if (itemImage.getFormat() != PF_A8B8G8R8)
+            Image itemImage, itemAtlas;
+            uint32 *itemBuffer = new uint32[ITEM_SIZE * ITEM_SIZE * itemFilename.size()];
+            uint32 *nextPos = itemBuffer;
+            itemAtlas = itemAtlas.loadDynamicImage((unsigned char*)itemBuffer, ITEM_SIZE, ITEM_SIZE * itemFilename.size(), 1, PF_A8B8G8R8);
+            for (unsigned int i = 0; i < itemFilename.size(); ++i)
             {
-                Logger::log().warning() << "You tried to use and item with unsoprted format ("<< itemImage.getFormat() <<")."
-                << " Only 32bit png format is allowed "<< "[" << itemFilename[i] << "].";
-                break;
+                itemImage.load(itemFilename[i], "General");
+                if (itemImage.getHeight() != ITEM_SIZE || itemImage.getWidth() != ITEM_SIZE)
+                {
+                    Logger::log().warning() << "You tried to use and item with unsupported image size. Only Items of "
+                    << ITEM_SIZE << " * " << ITEM_SIZE << " pixel are allowed "<< "[" << itemFilename[i] << "].";
+                    break;
+                }
+                if (itemImage.getFormat() != PF_A8B8G8R8)
+                {
+                    Logger::log().warning() << "You tried to use and item with unsupported format ("<< itemImage.getFormat() <<")."
+                    << " Only 32bit png format is allowed "<< "[" << itemFilename[i] << "].";
+                    break;
+                }
+                memcpy(nextPos, itemImage.getData(), ITEM_SIZE * ITEM_SIZE * sizeof(uint32));
+                nextPos+=ITEM_SIZE * ITEM_SIZE;
             }
-            memcpy(nextPos, itemImage.getData(), ITEM_SIZE * ITEM_SIZE * sizeof(uint32));
-            nextPos+=ITEM_SIZE * ITEM_SIZE;
+            // ////////////////////////////////////////////////////////////////////
+            // Write the hires version.
+            // ////////////////////////////////////////////////////////////////////
+            filename = PATH_ITEM_TEXTURES;
+            filename+= "/";
+            filename+= FILE_ITEM_TEXTURE_ATLAS;
+            filename+= ".png";
+            itemAtlas.save(filename);
+            // Write the textfile.
+            filename.replace(filename.find(".png"), 4, ".txt");
+            std::ofstream txtFile(filename.c_str(), std::ios::out | std::ios::binary);
+            txtFile << "# This file holds the content of the image-texture-atlas." << std::endl;
+            if (txtFile)
+            {
+                for (unsigned int i = 0; i < itemFilename.size(); ++i)
+                    txtFile << itemFilename[i] << std::endl;
+            }
+            txtFile.close();
+            itemFilename.clear();
+            // ////////////////////////////////////////////////////////////////////
+            // Write the lores version (for 800x600 resolution)..
+            // ////////////////////////////////////////////////////////////////////
+            /*
+            itemAtlas.resize((ushort)itemAtlas.getWidth()/2, (ushort)itemAtlas.getHeight()/2, Image::FILTER_BICUBIC);
+            filename = PATH_ITEM_TEXTURES;
+            filename+= "/";
+            filename+= FILE_ITEM_TEXTURE_ATLAS;
+            filename+= "_32.png";
+            itemAtlas.save(filename);
+            */
+            delete[] itemBuffer;
         }
+        // ////////////////////////////////////////////////////////////////////
+        // Read in the gfxpos of the items.
+        // ////////////////////////////////////////////////////////////////////
         filename = PATH_ITEM_TEXTURES;
         filename+= "/";
         filename+= FILE_ITEM_TEXTURE_ATLAS;
-        filename+= ".png";
-        itemAtlas.save(filename);
-        delete[] itemBuffer;
-        // Write the textfile.
-        filename.replace(filename.find(".png"), 4, ".txt");
-        std::ofstream txtFile(filename.c_str(), std::ios::out | std::ios::binary);
-        txtFile << "# This file holds the content of the image-texture-atlas." << std::endl;
-        if (txtFile)
+        filename+= ".txt";
+        std::ifstream txtFile;
+        txtFile.open(filename.c_str(), std::ios::in | std::ios::binary);
+        if (!txtFile)
         {
-            for (unsigned int i = 0; i < itemFilename.size(); ++i)
-                txtFile << itemFilename[i] << std::endl;
+            Logger::log().error() << "Error on file " << filename;
+        }
+        getline(txtFile, filename); // skip the comment.
+        while (getline(txtFile, filename))
+        {
+            mvGfxPositions.push_back(filename);
         }
         txtFile.close();
-        itemFilename.clear();
+        // ////////////////////////////////////////////////////////////////////
+        // Read in the texture atlas.
+        // ////////////////////////////////////////////////////////////////////
+        filename = FILE_ITEM_TEXTURE_ATLAS;
+        filename+= ".png";
+        mAtlasTexture.load(filename, "General");
+        // ////////////////////////////////////////////////////////////////////
+        // Create drag'n'drop overlay.
+        // ////////////////////////////////////////////////////////////////////
+        mDnDTexture = TextureManager::getSingleton().createManual("GUI_SlotDnD_Texture", "General",
+                      TEX_TYPE_2D, ITEM_SIZE, ITEM_SIZE, 0, PF_A8R8G8B8, TU_STATIC_WRITE_ONLY);
+        mDnDOverlay = OverlayManager::getSingleton().create("GUI_SlotDnD_Overlay");
+        mDnDOverlay->setZOrder(500);
+        mDnDElement = OverlayManager::getSingleton().createOverlayElement(GuiWindow::OVERLAY_ELEMENT_TYPE, "GUI_SlotDnD_Frame");
+        mDnDElement->setMetricsMode(GMM_PIXELS);
+        mDnDElement->setDimensions (ITEM_SIZE, ITEM_SIZE);
+        MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName("GUI/Window");
+        mDnDMaterial = tmpMaterial->clone("GUI_SlotDnD_Material");
+        mDnDMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName("GUI_SlotDnD_Texture");
+        mDnDElement->setMaterialName("GUI_SlotDnD_Material");
+        mDnDOverlay->add2D(static_cast<OverlayContainer*>(mDnDElement));
     }
-    // ////////////////////////////////////////////////////////////////////
-    // Read in the gfxpos of the items.
-    // ////////////////////////////////////////////////////////////////////
-    filename = PATH_ITEM_TEXTURES;
-    filename+= "/";
-    filename+= FILE_ITEM_TEXTURE_ATLAS;
-    filename+= ".txt";
-    std::ifstream txtFile;
-    txtFile.open(filename.c_str(), std::ios::in | std::ios::binary);
-    if (!txtFile)
-    {
-        Logger::log().error() << "Error on file " << filename;
-    }
-    getline(txtFile, filename); // skip the comment.
-    while (getline(txtFile, filename))
-    {
-        mvGfxPositions.push_back(filename);
-    }
-    txtFile.close();
-    // ////////////////////////////////////////////////////////////////////
-    // Read in the texture atlas.
-    // ////////////////////////////////////////////////////////////////////
-    filename = FILE_ITEM_TEXTURE_ATLAS;
-    filename+= ".png";
-    mAtlasTexture.load(filename, "General");
     // ////////////////////////////////////////////////////////////////////
     // Draw the container.
     // ////////////////////////////////////////////////////////////////////
@@ -179,6 +218,8 @@ GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOn
 //================================================================================================
 GuiGadgetSlot::~GuiGadgetSlot()
 {
+    mDnDMaterial.setNull();
+    mDnDTexture.setNull();
     mvGfxPositions.clear();
     delete[] mGfxNr;
     //delete[] BG_Backup; // done in GuiElement.cpp
@@ -187,11 +228,11 @@ GuiGadgetSlot::~GuiGadgetSlot()
 //================================================================================================
 // Returns true if the mouse event was on this gadget (so no need to check the other gadgets).
 //================================================================================================
-bool GuiGadgetSlot::mouseEvent(int MouseAction, int x, int y)
+int GuiGadgetSlot::mouseEvent(int MouseAction, int x, int y)
 {
     x-= mPosX;
     y-= mPosY;
-    if ((unsigned int) x < mSlotWidth && (unsigned int) y < mSlotHeight)
+    if ((unsigned int) x < mSlotWidth && (unsigned int) y < mSlotHeight || mActiveDrag)
     {
         int activeSlot = y/(mHeight+ mRowSpace)*mSumCol +   x/(mWidth + mColSpace);
         if (mActiveSlot != activeSlot && !mActiveDrag)
@@ -202,17 +243,30 @@ bool GuiGadgetSlot::mouseEvent(int MouseAction, int x, int y)
             mActiveSlot = activeSlot;
             drawSlot(mActiveSlot, SLOT_UPDATE, GuiImageset::STATE_ELEMENT_M_OVER);
         }
-        if (MouseAction == GuiWindow::BUTTON_PRESSED && !mActiveDrag)
+        if (MouseAction == GuiWindow::BUTTON_PRESSED && !mActiveDrag && mGfxNr[mActiveSlot] >=0)
         {
-            GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN,
-                                                   StringConverter::toString(activeSlot).c_str());
             mActiveDrag = true;
+            mDragSlot = mActiveSlot;
+            drawDragItem(0);
         }
         if (MouseAction == GuiWindow::BUTTON_RELEASED && mActiveDrag)
         {
+            if ((unsigned int)x > mSlotWidth || (unsigned int)y > mSlotHeight)
+            {
+                Item::getSingleton().dropInventoryItemToFloor(mDragSlot);
+            }
+            else
+                GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, StringConverter::toString(activeSlot).c_str());
+            drawDragItem(-1);
             mActiveDrag = false;
         }
-        return true; // No need to check other gadgets.
+        if (MouseAction == GuiWindow::MOUSE_MOVEMENT && mActiveDrag)
+        {
+            Real x, y;
+            GuiCursor::getSingleton().getPos(x, y);
+            mDnDElement->setPosition(x, y);
+        }
+        return 0; // No need to check other gadgets.
     }
     else  // Mouse is no longer over the the gadget.
     {
@@ -220,10 +274,11 @@ bool GuiGadgetSlot::mouseEvent(int MouseAction, int x, int y)
         {
             drawSlot(mActiveSlot, SLOT_UPDATE, GuiImageset::STATE_ELEMENT_DEFAULT);
             mActiveSlot = -1;
-            return true; // No need to check other gadgets.
+            return 0; // No need to check other gadgets.
         }
     }
-    return false; // No action here, check the other gadgets.
+    if (mActiveDrag) return 1;
+    return -1; // No action here, check the other gadgets.
 }
 
 //================================================================================================
@@ -307,14 +362,6 @@ void GuiGadgetSlot::drawSlot(int slotNr, int gfxNr, int state)
     // ////////////////////////////////////////////////////////////////////
     texture->getBuffer()->blitFromMemory(srcSlot, Box(strtX, strtY, strtX + mWidth, strtY + mHeight));
     /*
-    {
-        Image img;
-        img.load("axe01.png","General");
-        img.resize((Ogre::ushort)img.getWidth()/2, (Ogre::ushort)img.getHeight()/2, Image::FILTER_BICUBIC);
-        img.save("c:\\axe01_bicubic.png");
-    }
-
-
         // only for testing.
         GuiTextout::TextLine label;
         Item::sItem *item = Item::getSingleton().getBackpackItem(pos);
@@ -339,4 +386,35 @@ void GuiGadgetSlot::draw()
 {
     for (int slotNr = 0; slotNr < mSumRow * mSumCol; ++slotNr)
         drawSlot(slotNr, SLOT_CLEAR, GuiImageset::STATE_ELEMENT_DEFAULT);
+}
+
+//================================================================================================
+//
+//================================================================================================
+void GuiGadgetSlot::drawDragItem(int gfxNr)
+{
+    // Hide DnD overlay.
+    if (gfxNr < 0)
+    {
+        mDnDOverlay->hide();
+        return;
+    }
+    // Draw dragged item.
+    PixelBox srcItem;
+    uint32 *srcItemData;
+
+    if (mGfxNr[mDragSlot] >=0)
+    {
+        srcItem = mAtlasTexture.getPixelBox().getSubVolume(Box(
+                      0,
+                      ITEM_SIZE * mGfxNr[mDragSlot],
+                      ITEM_SIZE,
+                      ITEM_SIZE *(mGfxNr[mDragSlot]+1)));
+        srcItemData = static_cast<uint32*>(srcItem.data);
+    }
+    mDnDTexture->getBuffer()->blitFromMemory(srcItem);
+    Real x, y;
+    GuiCursor::getSingleton().getPos(x, y);
+    mDnDElement->setPosition(x, y);
+    mDnDOverlay->show();
 }

@@ -75,7 +75,7 @@ void GuiManager::Init(int w, int h)
                TEX_TYPE_2D, TOOLTIP_SIZE_X, TOOLTIP_SIZE_Y, 0, PF_A8R8G8B8, TU_STATIC_WRITE_ONLY);
     mOverlay = OverlayManager::getSingleton().create("GUI_Tooltip_Overlay");
     mOverlay->setZOrder(500);
-    mElement = OverlayManager::getSingleton().createOverlayElement(OVERLAY_TYPE_NAME, "GUI_Tooltip_Frame");
+    mElement = OverlayManager::getSingleton().createOverlayElement(GuiWindow::OVERLAY_ELEMENT_TYPE, "GUI_Tooltip_Frame");
     mElement->setMetricsMode(GMM_PIXELS);
     mElement->setDimensions (TOOLTIP_SIZE_X, TOOLTIP_SIZE_Y);
     mElement->setPosition((mScreenWidth-mTexture->getWidth())/3*2, (mScreenHeight-mTexture->getHeight())/2);

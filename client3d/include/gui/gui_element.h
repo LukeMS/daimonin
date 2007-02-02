@@ -96,7 +96,6 @@ protected:
     // ////////////////////////////////////////////////////////////////////
     int mIndex;                /**< Unique number. **/
     int mPosX, mPosY;          /**< Position of this element. **/
-    int mMaxX, mMaxY;          /**< Texture size of the parent window. **/
     int mSrcWidth, mSrcHeight; /**< Dimension of the graphics source. **/
     int mWidth, mHeight;       /**< Dimension of this element. **/
     int mState;                /**< Actual state of this element. **/

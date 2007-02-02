@@ -67,6 +67,7 @@ public:
         DRAG_ENTER,
         DRAG_EXIT,
     };
+    static const char *OVERLAY_ELEMENT_TYPE;
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.
@@ -148,7 +149,7 @@ private:
     int mHeadPosX, mHeadPosY;
     int mDragPosX1, mDragPosX2, mDragPosY1, mDragPosY2, mDragOldMousePosX, mDragOldMousePosY;
     int mMinimized, mDefaultHeight;
-    bool mGadgetDrag;
+    int mGadgetDrag;
     bool isInit;
     bool mSizeRelative;
     Ogre::SceneNode *mSceneNode;

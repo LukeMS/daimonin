@@ -31,7 +31,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "gui_imageset.h"
 
 /**
- ** This singleton class provides the mouse cursor.
+ ** This singleton class provides the mouse cursor (as an ogre3d overlay).
  *****************************************************************************/
 class GuiCursor
 {
@@ -40,6 +40,11 @@ public:
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     void setPos(int x, int y);
+    void getPos(Ogre::Real &x, Ogre::Real &y)
+    {
+        y = mElement->getTop () - mHeight/2;
+        x = mElement->getLeft() - mWidth/2;
+    }
     void setState(unsigned int state);
     int  getState()
     {
@@ -58,14 +63,11 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    unsigned int mScreenWidth, mScreenHeight;
+    int mWidth, mHeight;
     unsigned int mState;
     GuiImageset::gfxPos gfxSrcPos[GuiImageset::STATE_MOUSE_SUM];
-    int mWidth, mHeight;
-    Ogre::Overlay *mOverlay;
     Ogre::OverlayElement *mElement;
     Ogre::TexturePtr mTexture;
-    Ogre::MaterialPtr mMaterial;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////

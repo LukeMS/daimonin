@@ -423,7 +423,7 @@ void Events::keyPressed(KeyEvent *e)
             mCameraRotating = NEGATIVE;
             break;
 
-        case KC_PAUSE:
+        case KC_HOME:
             mCameraRotating = FREEZE;
             break;
 
@@ -484,7 +484,7 @@ void Events::keyReleased(KeyEvent* e)
 
         case KC_PGUP:
         case KC_PGDOWN:
-        case KC_PAUSE:
+        case KC_HOME:
             mCameraRotating = TURNBACK;
             break;
 

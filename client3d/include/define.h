@@ -29,7 +29,6 @@ http://www.gnu.org/licenses/licenses.html
 
 const char PRG_NAME[] =  "Daimonin Ogre3d Client";
 
-const char OVERLAY_TYPE_NAME[]       = "Panel"; // defined in OverlayElementFactory.h
 const char FILE_SYSTEM_FONT[]        = "SystemFont.png";
 const char FILE_ITEM_TEXTURE_ATLAS[] = "ItemTextureAtlas";
 

@@ -304,6 +304,7 @@ bool inv_updated :
     void clearContainer(int container);
     void delItem(unsigned int item, int container);
     void addItem(sItem *tmpItem, int container);
+    void dropInventoryItemToFloor(int slotNr);
     bool update(sItem *tmpItem, int newContainerID, bool bflag);
     int  getContainerID(unsigned int ItemID);
     sItem *locateItem(int container, unsigned int tag);
