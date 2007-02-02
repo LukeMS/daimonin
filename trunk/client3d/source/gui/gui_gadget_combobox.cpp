@@ -65,6 +65,8 @@ GuiGadgetCombobox::GuiGadgetCombobox(TiXmlElement *xmlElement, void *parent) :Gu
     mVirtualHeight = GuiTextout::getSingleton().getFontHeight(mLabelFontNr) * ((int)mvOption.size()-1);
     mScrollPos = 0;
 
+    int mMaxY = 0;
+
     if ( mPosY + mEntryHeight + mVirtualHeight > mMaxY )
     {
         printf("The dropdown needs a scroll\n");

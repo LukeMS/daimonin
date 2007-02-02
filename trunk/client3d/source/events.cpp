@@ -285,7 +285,6 @@ bool Events::frameStarted(const FrameEvent& evt)
                 OverlayManager::getSingleton().destroy("Overlay/Loading");
                 GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Welcome to ~Daimonin 3D~.");
                 GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "You need a running server to start the game!");
-                TileMap::getSingleton().clear_map();
                 break;
             }
 
@@ -423,6 +422,7 @@ bool Events::frameStarted(const FrameEvent& evt)
 
         case Option::GAME_STATUS_ADDME:
             {
+                TileMap::getSingleton().clear_map();
                 Network::getSingleton().cs_write_string("addme");
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN);
                 break;
@@ -600,7 +600,7 @@ bool Events::frameStarted(const FrameEvent& evt)
                         GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~:KeyS~ to ready/unready secondary weapon.");
                         GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~:KeyQ~ to start attack animation.");
                         GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~PGUP/PGDOWN~ to rotate camera.");
-                        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~PAUSE~ to freeze camera rotation.");
+                        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~HOME~ to freeze camera rotation.");
                         GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~:KeyI~ for Inventory.");
                         GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Example of user defined chars: :( :) :D :P");
                         // Can crash the client...

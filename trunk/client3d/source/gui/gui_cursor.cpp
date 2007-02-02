@@ -25,30 +25,28 @@ http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
 #include <OgreHardwarePixelBuffer.h>
-#include <tinyxml.h>
-#include "define.h"
 #include "gui_cursor.h"
+#include "gui_window.h"
 #include "gui_imageset.h"
-#include "logger.h"
 
 using namespace Ogre;
 
 const int MAX_CURSOR_SIZE = 64;
 
 //================================================================================================
-// .
+// Constructor.
 //================================================================================================
 GuiCursor::GuiCursor()
 {}
 
 //================================================================================================
-// .
+// Destructor.
 //================================================================================================
 GuiCursor::~GuiCursor()
 {}
 
 //================================================================================================
-// .
+// Create an overlay for the mouse-cursor.
 //================================================================================================
 void GuiCursor::Init(int w, int h, int screenWidth, int screenHeight)
 {
@@ -56,52 +54,57 @@ void GuiCursor::Init(int w, int h, int screenWidth, int screenHeight)
     mWidth = w;
     mHeight= h;
     if (mWidth < 4) mWidth = 4;
+    else if (mWidth > MAX_CURSOR_SIZE) mWidth = MAX_CURSOR_SIZE;
     if (mHeight< 4) mHeight= 4;
-    if (mWidth > MAX_CURSOR_SIZE) mWidth = MAX_CURSOR_SIZE;
-    if (mHeight> MAX_CURSOR_SIZE) mHeight= MAX_CURSOR_SIZE;
-    // ////////////////////////////////////////////////////////////////////
-    // Create the overlay element.
-    // ////////////////////////////////////////////////////////////////////
+    else if (mHeight> MAX_CURSOR_SIZE) mHeight= MAX_CURSOR_SIZE;
     mTexture = TextureManager::getSingleton().createManual("GUI_Cursor_Texture", "General",
                TEX_TYPE_2D, MAX_CURSOR_SIZE, MAX_CURSOR_SIZE, 0, PF_A8R8G8B8, TU_STATIC_WRITE_ONLY);
-    uint32 *dest = (uint32*)mTexture->getBuffer()->lock (0,MAX_CURSOR_SIZE * MAX_CURSOR_SIZE *sizeof(uint32), HardwareBuffer::HBL_DISCARD);
-    for (int y = MAX_CURSOR_SIZE * MAX_CURSOR_SIZE; y; --y)  *dest++ = 0;
+    // We must clear the whole texture (textures have always 2^n size while cursor-gfx can be smaller).
+    memset(mTexture->getBuffer()->lock(HardwareBuffer::HBL_DISCARD), 0x00, MAX_CURSOR_SIZE * MAX_CURSOR_SIZE * sizeof(uint32));
     mTexture->getBuffer()->unlock();
-    mOverlay = OverlayManager::getSingleton().create("GUI_MouseCursor");
-    mOverlay->setZOrder(550);
-    mElement = OverlayManager::getSingleton().createOverlayElement(OVERLAY_TYPE_NAME, "GUI_Cursor");
+    // Create the overlay element.
+    Overlay *overlay= OverlayManager::getSingleton().create("GUI_MouseCursor");
+    overlay->setZOrder(550);
+    mElement = OverlayManager::getSingleton().createOverlayElement(GuiWindow::OVERLAY_ELEMENT_TYPE, "GUI_Cursor");
     mElement->setMetricsMode(GMM_PIXELS);
     mElement->setPosition(screenWidth/2, screenHeight/2);
     mElement->setDimensions (mTexture->getWidth(), mTexture->getHeight());
     MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName("GUI/Window");
-    mMaterial = tmpMaterial->clone("GUI_Cursor_Material");
-    mMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName("GUI_Cursor_Texture");
-    mMaterial->load();
+    tmpMaterial = tmpMaterial->clone("GUI_Cursor_Material");
+    tmpMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName("GUI_Cursor_Texture");
+    tmpMaterial->load();
     mElement->setMaterialName("GUI_Cursor_Material");
-    mOverlay->add2D(static_cast<OverlayContainer*>(mElement));
-    mOverlay->show();
+    overlay->add2D(static_cast<OverlayContainer*>(mElement));
+    overlay->show();
 }
 
 //================================================================================================
-// .
+// Free all used memory (must be called before destructor).
 //================================================================================================
 void GuiCursor::freeRecources()
 {
-    mMaterial.setNull();
     mTexture.setNull();
 }
 
 //================================================================================================
-// .
+// Copy the state informations to the private part of the class.
+//================================================================================================
+void GuiCursor::setStateImagePos(GuiImageset::gfxPos *Entry)
+{
+    memcpy(gfxSrcPos, Entry, sizeof(gfxSrcPos));
+}
+
+//================================================================================================
+// Set the position of the mouse-cursor.
 //================================================================================================
 void GuiCursor::setPos(int x, int y)
 {
-    mElement->setTop (y);
+    mElement->setTop(y);
     mElement->setLeft(x);
 }
 
 //================================================================================================
-// Set the state of the mouse pointer.
+// Set the state of the mouse-cursor.
 //================================================================================================
 void GuiCursor::setState(unsigned int state)
 {
@@ -113,23 +116,14 @@ void GuiCursor::setState(unsigned int state)
 }
 
 //================================================================================================
-// .
-//================================================================================================
-void GuiCursor::setStateImagePos(GuiImageset::gfxPos *Entry)
-{
-    memcpy(gfxSrcPos, Entry, sizeof(gfxSrcPos));
-}
-
-//================================================================================================
-// .
+// Draw a new state into the mouse-cursor texture.
 //================================================================================================
 void GuiCursor::draw()
 {
-    PixelBox src = GuiImageset::getSingleton().getPixelBox().getSubVolume(Box(
-                       gfxSrcPos[mState].x,
-                       gfxSrcPos[mState].y,
-                       gfxSrcPos[mState].x + mWidth,
-                       gfxSrcPos[mState].y + mHeight));
-    mTexture->getBuffer()->blitFromMemory(src, Box(0, 0, mWidth, mHeight));
+    mTexture->getBuffer()->blitFromMemory(GuiImageset::getSingleton().getPixelBox().getSubVolume(
+                                              Box(gfxSrcPos[mState].x,
+                                                  gfxSrcPos[mState].y,
+                                                  gfxSrcPos[mState].x + mWidth,
+                                                  gfxSrcPos[mState].y + mHeight)),
+                                          Box(0, 0, mWidth, mHeight));
 }
-

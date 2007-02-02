@@ -43,7 +43,8 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent, bool forceAlpha)
     mHeight= 0;
     mParent= parent;
     GuiImageset::GuiSrcEntry *srcEntry;
-    ((GuiWindow*)mParent)->getTexturseSize(mMaxX, mMaxY);
+    int maxX, maxY;
+    ((GuiWindow*)mParent)->getTexturseSize(maxX, maxY);
     // ////////////////////////////////////////////////////////////////////
     // Parse the element.
     // ////////////////////////////////////////////////////////////////////
@@ -94,8 +95,8 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent, bool forceAlpha)
         if ((tmp = xmlGadget->Attribute("x"))) mPosX = atoi(tmp);
         if ((tmp = xmlGadget->Attribute("y"))) mPosY = atoi(tmp);
     }
-    if (mPosX > mMaxX-2) mPosX = mMaxX-2;
-    if (mPosY > mMaxY-2) mPosY = mMaxY-2;
+    if (mPosX > maxX-2) mPosX = maxX-2;
+    if (mPosY > maxY-2) mPosY = maxY-2;
     // ////////////////////////////////////////////////////////////////////
     // Parse the size (if given).
     // ////////////////////////////////////////////////////////////////////
@@ -110,8 +111,8 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent, bool forceAlpha)
             mHeight= atoi(tmp);
         }
     }
-    if (mPosX + mWidth > mMaxX) mWidth = mMaxX-mPosX-1;
-    if (mPosY + mHeight >mMaxY) mHeight= mMaxY-mPosY-1;
+    if (mPosX + mWidth > maxX) mWidth = maxX-mPosX-1;
+    if (mPosY + mHeight >maxY) mHeight= maxY-mPosY-1;
     // ////////////////////////////////////////////////////////////////////
     // Parse the color (if given).
     // ////////////////////////////////////////////////////////////////////

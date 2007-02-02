@@ -49,6 +49,7 @@ const int MIN_GFX_SIZE = 4;
 //================================================================================================
 // Init all static Elemnts.
 //================================================================================================
+const char *GuiWindow::OVERLAY_ELEMENT_TYPE = "Panel"; // defined in Ogre::OverlayElementFactory.h
 int GuiWindow::msInstanceNr = -1;
 int GuiWindow::mMouseDragging = -1;
 std::string GuiWindow::mStrTooltip ="";
@@ -59,7 +60,7 @@ std::string GuiWindow::mStrTooltip ="";
 GuiWindow::GuiWindow()
 {
     isInit = false;
-    mGadgetDrag = false;
+    mGadgetDrag = -1;
     mElement = 0;
 }
 
@@ -443,7 +444,7 @@ inline void GuiWindow::createWindow()
                TEX_TYPE_2D, mWidth, mHeight, 0, PF_A8R8G8B8, TU_STATIC_WRITE_ONLY);
     mOverlay = OverlayManager::getSingleton().create("GUI_Overlay_"+strNum);
     mOverlay->setZOrder(msInstanceNr);
-    mElement = OverlayManager::getSingleton().createOverlayElement (OVERLAY_TYPE_NAME, "GUI_Frame_" + strNum);
+    mElement = OverlayManager::getSingleton().createOverlayElement (OVERLAY_ELEMENT_TYPE, "GUI_Frame_" + strNum);
     mElement->setMetricsMode(GMM_PIXELS);
     // Texture is always a power of 2. set this size also for the overlay.
     mElement->setDimensions (mTexture->getWidth(), mTexture->getHeight());
@@ -454,11 +455,8 @@ inline void GuiWindow::createWindow()
     mMaterial->load();
     mElement->setMaterialName("GUI_Material_"+ strNum);
     mOverlay->add2D(static_cast<OverlayContainer*>(mElement));
-    // If the window is smaller then the texture - we have to set the delta-size to transparent.
-    PixelBox pb = mTexture->getBuffer()->lock (Box(0,0, mTexture->getWidth(), mTexture->getHeight()), HardwareBuffer::HBL_DISCARD);
-    uint32 *dest_data = (uint32*)pb.data;
-    for (unsigned int y = 0; y < mTexture->getWidth() * mTexture->getHeight(); ++y)
-        *dest_data++ = 0;
+    // We must clear the whole texture (textures have always 2^n size while windows can be smaller).
+    memset(mTexture->getBuffer()->lock(HardwareBuffer::HBL_DISCARD), 0x00, mTexture->getWidth() * mTexture->getHeight() * sizeof(uint32));
     mTexture->getBuffer()->unlock();
 }
 
@@ -494,8 +492,14 @@ bool GuiWindow::mouseEvent(int MouseAction, Vector3 &mouse)
     if (!mOverlay->isVisible()) return false;
     int rx = (int) mouse.x;
     int ry = (int) mouse.y;
-    // No gadget dragging && not within this window. No need for further checks.
-    if (!mGadgetDrag && (rx < mPosX && rx > mPosX + mWidth && ry < mPosY && ry > mPosY + mHeight)) return false;
+    if (mGadgetDrag >=0)
+    {
+        int ret = (mvSlot[mGadgetDrag]->mouseEvent(MouseAction, rx - mPosX, ry - mPosY));
+        if (!ret) return true;
+        mGadgetDrag = -1;
+        return true;
+    }
+    if (rx < mPosX && rx > mPosX + mWidth && ry < mPosY && ry > mPosY + mHeight) return false;
     int x = rx - mPosX;
     int y = ry - mPosY;
 
@@ -508,8 +512,13 @@ bool GuiWindow::mouseEvent(int MouseAction, Vector3 &mouse)
     if (sumPressed) return true;
     for (unsigned int i = 0; i < mvSlot.size(); ++i)
     {
-        if (mvSlot[i]->mouseEvent(MouseAction, x, y))
+        int ret = (mvSlot[i]->mouseEvent(MouseAction, x, y));
+        if (!ret) return true;
+        if (ret >0) // Drag action was reported.
+        {
+            mGadgetDrag = i;
             return true;
+        }
     }
     for (unsigned int i = 0; i < mvGadgetCombobox.size(); ++i)
     {
