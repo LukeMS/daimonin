@@ -89,8 +89,9 @@ typedef struct _Font
 }
 _Font;
 
-#define ANIM_DAMAGE 1
-#define ANIM_KILL   2
+#define ANIM_DAMAGE         1
+#define ANIM_KILL           2
+#define ANIM_SELF_DAMAGE    3
 
 typedef struct _anim
 {

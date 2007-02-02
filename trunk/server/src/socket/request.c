@@ -81,7 +81,7 @@ void SetUp(char *buf, int len, NewSocket *ns)
         LOG(llevInfo, "HACKBUG: setup command before version %s\n", STRING_SAFE(ns->ip_host));
         ns->status = Ns_Dead;
         return;
-	} 
+	}
     if (ns->setup)
     {
         LOG(llevInfo, "HACKBUG: double call of setup cmd from socket %s\n", STRING_SAFE(ns->ip_host));
@@ -653,11 +653,11 @@ void VersionCmd(char *buf, int len, NewSocket *ns)
 		if(ns->cs_version <= 991019) /* beta 3 client */
 		{
 			/*char		warning[256] ="X3 Connection denied.\nYou are running a BETA 3 client!\nYour client is OUTDATED!!\n**UPDATE** your client from http://www.daimonin.com !!\n"; */
-			char		warning[256] ="X3 Connection denied.\nYou are running a BETA 3 client!\nYou need a BETA 4 preview test client for this server.\nCheck the news & forum on http://www.daimonin.com !!\n"; 
+			char		warning[256] ="X3 Connection denied.\nYou are running a BETA 3 client!\nYou need a BETA 4 preview test client for this server.\nCheck the news & forum on http://www.daimonin.com !!\n";
 			char        cmd_buf[2]  = "X";
 
 			ns->version = 0;
-			Write_String_To_Socket(ns, 3, warning, strlen(warning));	
+			Write_String_To_Socket(ns, 3, warning, strlen(warning));
 			Write_String_To_Socket(ns, 22, cmd_buf, 1);
 			ns->login_count = ROUND_TAG+(uint32)(10.0f * pticks_second);
 			ns->status = Ns_Zombie; /* we hold the socket open for a *bit* */
@@ -1033,7 +1033,7 @@ static inline int get_tiled_map_id(player *pl, struct mapdef *map)
 
     if (!pl->last_update)
 		return 0;
-	
+
 	/* we assume that last_update, if != NULL, is not swaped out or something.
      * IF we ever put a player on a longer sleep, be sure to nullify last_update
      */
@@ -1065,7 +1065,7 @@ static inline void copy_lastmap(NewSocket *ns, int dx, int dy)
         }
     }
     memcpy(&(ns->lastmap), &newmap, sizeof(struct Map));
-} 
+}
 
 
 /* do some checks, map name and LOS and then draw the map */
@@ -1097,7 +1097,7 @@ void draw_client_map(object *plobj)
 		{
 			pl->map_update_cmd = MAP_UPDATE_CMD_NEW;
 			memset(&(pl->socket.lastmap), 0, sizeof(struct Map));
-			pl->last_update = plobj->map; 
+			pl->last_update = plobj->map;
 			redraw_below=TRUE;
 		}
 		else /* because tile_map can never != 0 if pl->last_update is NULL, tile_map always valid here */
@@ -1105,7 +1105,7 @@ void draw_client_map(object *plobj)
 			pl->map_update_cmd = MAP_UPDATE_CMD_CONNECTED;
 			pl->map_update_tile = tile_map;
 			redraw_below=TRUE;
-			/* be here means, we have moved to a known, connected map related to our last position! 
+			/* be here means, we have moved to a known, connected map related to our last position!
 			 * lets calculate the offsets to our last position,
              * which is: pl->last_update - pos: map_tile_x,map_tile_y
              */
@@ -1153,7 +1153,7 @@ void draw_client_map(object *plobj)
 			}
 			/*LOG(llevDebug, "**** Connected: %d - %d,%d\n",  tile_map-1, pl->map_off_x, pl->map_off_y);*/
 			copy_lastmap(&pl->socket, pl->map_off_x, pl->map_off_y);
-			pl->last_update = plobj->map; 
+			pl->last_update = plobj->map;
 		}
 	}
 	else /* check still on the same postion */
@@ -1242,7 +1242,7 @@ void draw_client_map2(object *pl)
 	if(pl_ptr->map_update_cmd != MAP_UPDATE_CMD_SAME)
 	{
 		SockList_AddString(&sl, pl->map->name);
-		
+
 		if(pl_ptr->map_update_cmd == MAP_UPDATE_CMD_CONNECTED)
 		{
 			SockList_AddChar(&sl, (char) pl_ptr->map_update_tile);
@@ -1520,9 +1520,19 @@ void draw_client_map2(object *pl)
                     tmph = tmp;
                     face = tmp->face;
 
-                    if ((dmg_layer1 = tmp->last_damage) != -1 && tmp->damage_round_tag == ROUND_TAG)
-                        dmg_flag |= 0x2;
-
+                    if (tmp->last_damage != 0 && tmp->damage_round_tag == ROUND_TAG)
+                    {
+                        if (tmp==pl)
+                        {
+                            dmg_flag |= 0x4;
+                            dmg_layer2 = tmp->last_damage;
+                        }
+                        else
+                        {
+                            dmg_flag |= 0x2;
+                            dmg_layer1 = tmp->last_damage;
+                        }
+                    }
                     quick_pos_2 = tmp->quick_pos;
                     if (quick_pos_2) /* if we have a multipart object */
                     {
@@ -1613,9 +1623,19 @@ void draw_client_map2(object *pl)
                     flag_tmp = GET_CLIENT_FLAGS(tmp);
                     face = tmp->face;
                     tmph = tmp;
-                    if ((dmg_layer0 = tmp->last_damage) != -1 && tmp->damage_round_tag == ROUND_TAG)
-                        dmg_flag |= 0x1;
-
+                    if (tmp->last_damage != 0 && tmp->damage_round_tag == ROUND_TAG)
+                    {
+                        if (tmp==pl)
+                        {
+                            dmg_flag |= 0x4;
+                            dmg_layer2 = tmp->last_damage;
+                        }
+                        else
+                        {
+                            dmg_flag |= 0x1;
+                            dmg_layer0 = tmp->last_damage;
+                        }
+                    }
                     quick_pos_3 = tmp->quick_pos;
                     if (quick_pos_3) /* if we have a multipart object */
                     {
@@ -1731,7 +1751,7 @@ void draw_client_map2(object *pl)
                 /* fire & forget layer animation tags */
                 if (dmg_flag)
                 {
-                    /* LOG(llevDebug,"Send dmg_flag(%d) (%x): %x (%d %d %d)\n", count++, mask,dmg_flag,dmg_layer2,dmg_layer1,dmg_layer0); */
+                    /*LOG(llevDebug,"Send dmg_flag (%x): %x (%d %d %d) (%s)\n", mask,dmg_flag,dmg_layer2,dmg_layer1,dmg_layer0,pl->name);*/
                     SockList_AddChar(&sl, (char) dmg_flag);
                     /*thats the special one - the red kill spot the client shows */
                     /* remember we put the damage value in the map because at the time
@@ -1847,4 +1867,5 @@ void send_plugin_custom_message(object *pl, char *buf)
 {
     /* we must add here binary_cmd! */
 }
+
 
