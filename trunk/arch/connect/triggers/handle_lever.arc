@@ -3,6 +3,7 @@ name big lever
 layer 3
 type 93
 no_pick 1
+no_teleport 1
 face lever.111
 anim
 facings 9

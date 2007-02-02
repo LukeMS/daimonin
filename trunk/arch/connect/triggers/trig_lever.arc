@@ -3,6 +3,7 @@ name lever
 type 27
 layer 3
 no_pick 1
+no_teleport 1
 face lever.111
 anim
 facings 9

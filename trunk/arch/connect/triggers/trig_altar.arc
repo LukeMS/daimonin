@@ -34,5 +34,6 @@ anim_speed 0
 is_turnable 1
 direction 1
 no_pick 1
+no_teleport 1
 walk_on 1
 end
