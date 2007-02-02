@@ -500,7 +500,7 @@ int move_monster(object *op, int mode)
         LOG(llevBug, "BUG: move_monster(): Called for non-monster object '%s'\n", STRING_OBJ_NAME(op));
         if(op->type == SPAWN_POINT_MOB)
         {
-            LOG(llevBug, "BUG: move_monster(): Found Spawn Point Mob on map! Removing '%s'\n", STRING_OBJ_NAME(op));
+            LOG(llevMapbug, "MAPBUG: move_monster(): Found Spawn Point Mob on map! Removing '%s'\n", STRING_OBJ_NAME(op));
             remove_ob(op);
         }
         return 0;
