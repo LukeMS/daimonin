@@ -693,6 +693,11 @@ struct _anim * add_anim(int type, int x, int y, int mapx, int mapy, int value)
             anim->last_tick = anim->start_tick + num_ticks;
             anim->yoff = (25.0f / 850.0f); /* 850 ticks 25 pixel move up */
             break;
+        case ANIM_SELF_DAMAGE:
+            num_ticks = 850;  /* how many ticks to display */
+            anim->last_tick = anim->start_tick + num_ticks;
+            anim->yoff = (25.0f / 850.0f); /* 850 ticks 25 pixel move up */
+            break;
         case ANIM_KILL:
             num_ticks = 850;  /* how many ticks to display */
             anim->last_tick = anim->start_tick + num_ticks;
@@ -778,13 +783,18 @@ void play_anims(int mx, int my)
                                + (anim->mapx - MapData.posx) * MAP_TILE_XOFF
                                + (anim->mapy - MapData.posy - 1) * MAP_TILE_XOFF
                                - 34;
-                        sprintf(buf, "%d", anim->value);
-                        if (xpos == 396 && ypos == 289)
-                            StringBlt(ScreenSurface, &SystemFontOut, buf, xpos + anim->x, ypos + tmp_y, COLOR_RED, NULL,
-                                      NULL);
+                        if (anim->value<0)
+                        {
+                            sprintf(buf, "%d", abs(anim->value));
+                            StringBlt(ScreenSurface, &SystemFontOut, buf, xpos + anim->x, ypos + tmp_y, COLOR_GREEN, NULL,
+                                          NULL);
+                        }
                         else
-                            StringBlt(ScreenSurface, &SystemFontOut, buf, xpos + anim->x, ypos + tmp_y, COLOR_ORANGE,
-                                      NULL, NULL);
+                        {
+                            sprintf(buf, "%d", anim->value);
+                            StringBlt(ScreenSurface, &SystemFontOut, buf, xpos + anim->x, ypos + tmp_y, COLOR_ORANGE, NULL,
+                                          NULL);
+                        }
                     }
                     break;
                 case ANIM_KILL:
@@ -821,6 +831,21 @@ void play_anims(int mx, int my)
                                   COLOR_ORANGE, NULL, NULL);
                     }
                     break;
+                case ANIM_SELF_DAMAGE:
+                    tmp_y = anim->y-(int)( (float)num_ticks * anim->yoff ); /*   * num_ticks ); */
+                    if (anim->value<0)
+                    {
+                        sprintf(buf, "%d", abs(anim->value));
+                        StringBlt(ScreenSurface, &SystemFontOut, buf, anim->mapx + anim->x, anim->mapy + tmp_y, COLOR_GREEN, NULL,
+                                NULL);
+                    }
+                    else
+                    {
+                        sprintf(buf, "%d", anim->value);
+                        StringBlt(ScreenSurface, &SystemFontOut, buf, anim->mapx + anim->x, anim->mapy + tmp_y, COLOR_RED, NULL,
+                                          NULL);
+                    }
+                break;
 
                 default:
                     LOG(LOG_ERROR, "WARNING: Unknown animation type\n");

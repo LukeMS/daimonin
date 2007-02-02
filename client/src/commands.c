@@ -1400,7 +1400,7 @@ void Map2Cmd(unsigned char *data, int len)
                 if (ff_flag & 0x4)
                 {
                     ff1 = GetShort_String(data + pos); pos += 2;
-                    add_anim(ANIM_DAMAGE, 0, 0, xpos + x, ypos + y, ff1);
+                    add_anim(ANIM_SELF_DAMAGE, 0, 0, 396, 289, ff1);
                 }
                 if (ff_flag & 0x2)
                 {

@@ -1025,6 +1025,13 @@ int cast_heal(object *op, int level, object *target, int spell_type)
             if (target->stats.hp > target->stats.maxhp)
                 target->stats.hp = target->stats.maxhp;
         }
+    /* although last_damage is unsigned, wo put an negative value in it, in draw_client_map2 we convert back to signed int */
+        if (target->damage_round_tag != ROUND_TAG)
+        {
+            target->last_damage = 0;
+            target->damage_round_tag = ROUND_TAG;
+        }
+        target->last_damage -= heal;
     }
 
     if (success)
@@ -4251,4 +4258,5 @@ int cast_cause_conflict(object *op, object *caster, archetype *spellarch, int ty
     return 1;
 #endif
 }
+
 
