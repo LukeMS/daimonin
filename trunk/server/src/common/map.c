@@ -90,32 +90,6 @@ char * create_mapdir_pathname(const char *name)
 }
 
 /*
- * This makes absolute path to the itemfile where unique objects
- * will be saved. Converts '/' to '@'. I think it's essier maintain
- * files than full directory structure, but if this is problem it can
- * be changed.
- */
-static char * create_items_path(const char *s)
-{
-    static char buf[MAX_BUF];
-    char       *t;
-
-    if (*s == '/')
-        s++;
-
-    sprintf(buf, "%s/%s/", settings.localdir, settings.uniquedir);
-
-    for (t = buf + strlen(buf); *s; s++,t++)
-        if (*s == '/')
-            *t = '@';
-        else
-            *t = *s;
-    *t = 0;
-    return (buf);
-}
-
-
-/*
  * This function checks if a file with the given path exists.
  * -1 is returned if it fails, otherwise the mode of the file
  * is returned.
