@@ -123,9 +123,11 @@ int check_path(const char *name, int prepend_dir)
  * If dst was not already absolute, the directory part of src will be used
  * as the base path and dst will be added to it.
  * Any "parent directory" ("..") references are removed from the resulting path
- * @param src template file name for finding absolute path
- * @param dst path to normalize
- * @param path storage for normalized path
+ * @param[in] src already normalized file name for finding absolute path
+ * @param[in] dst path to normalize. Should be either an absolute path or a path 
+ * relative to src. It must be a true "source" map path, and not a path into the 
+ * "./data" or "./players" directory.
+ * @param[in,out] path storage for normalized path
  * @return pointer to path
  */
 const char *normalize_path(const char *src, const char *dst, char *path)
@@ -148,7 +150,7 @@ const char *normalize_path(const char *src, const char *dst, char *path)
     if (*dst == '/')
     {
         /* Already absolute path */
-            strcpy(buf, dst);
+        strcpy(buf, dst);
     }
     else
     {
@@ -204,7 +206,7 @@ char *normalize_path_direct(const char *src, const char *dst, char *path)
 
     if(!src)
     {
-        LOG(llevBug,"normalize_path(): Called with src path = NULL! (dst:%s)\n", STRING_SAFE(dst));
+        LOG(llevBug,"normalize_path_direct(): Called with src path = NULL! (dst:%s)\n", STRING_SAFE(dst));
         path[0] = '\0';
         return path;
     }
@@ -1233,8 +1235,9 @@ static mapstruct * load_temporary_map(mapstruct *m)
  * same instance if applicable.
  *
  * @param orig_map map to inherit type and instance from
- * @param new_map_path the path to the map to ready. This can be both an absolute path, 
- *                     or a path relative to orig_map->path
+ * @param new_map_path the path to the map to ready. This can be either an absolute path, 
+ *        or a path relative to orig_map->path. It must be a true "source" map path, 
+ *        and not a path into the "./data" or "./players" directory.
  * @param flags        1 to never load unloaded or swapped map, i.e. only return maps
  *                     already in memory.
  * @return pointer to loaded map, or NULL
@@ -2244,11 +2247,17 @@ void map_to_player_link(mapstruct *m, int x, int y, int flag)
     }
 }
 
-/* this is called by scripts or any other source where we must ensure 
+/* FIXME: what is the relevance of the use of the word "mapname" instead
+ * of map path here? Gecko 2007-02-03. */
+/** Validate and normalize a map name.
+ * This is called by scripts or any other source where we must ensure 
  * that our mapname is legal. We do some sanity tests to ensure we
  * have a valid and working name.
- * We return a hash string (perhaps we have normalized the name?)
- * RETURN: hash string or NULL when the mapname is illegal
+ * Note that mapnames beginning with "." should already have been normalized 
+ * and won't be normalized by this function.
+ * @param mapname the mapname to validate and normalize. Doesn't have to be a shared string.
+ * Should be an absolute path (or an instance/unique path).
+ * @return normalized legal map name as shared string, or NULL if the mapname is illegal
  */
 const char* create_safe_mapname_sh(char const *mapname)
 {
@@ -2270,19 +2279,19 @@ const char* create_safe_mapname_sh(char const *mapname)
             if(isspace(*p) || iscntrl(*p) || *p=='\\')
                return NULL;
 
-            /* tricky check for a valid '.' use - we skip if
-             * - we have in a path starting with '.' another '.' ("./...." pathes are always normlaized)
-             * - if we have after a '.' something different as another '.' or a '/'
+            /* check for valid '.' use - we mark as invalid if either:
+             * - in a path starting with '.' another '.' is found ("./xxx" pathes are always normalized)
+             * - after a '.' anything but another '.' or a '/' is found
              */
             if(*p == '.' && p != mapname)
             {
-                if(*mapname =='.' ||( *(p+1)!='.' && *(p+1)!='/'))
+                if(*mapname == '.' || (*(p+1) != '.' && *(p+1) != '/'))
                     return NULL; 
             }
         }
     }
  
-    if(*mapname == '.') /* direct unique or instance string - don't normalize (because previous handled) */
+    if(*mapname == '.') /* direct unique or instance string - should already be normalized */
         p = add_string(mapname);
     else
         p = add_string(normalize_path(mapname, NULL, path));
