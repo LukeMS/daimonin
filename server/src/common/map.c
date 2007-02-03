@@ -1347,22 +1347,22 @@ mapstruct * ready_map_name(const char *name_path, const char *src_path, int flag
         if(!src_path && *name_path == '/')
             return  NULL;
 
-     if (m)
-     {
+        if (m)
+        {
             /* after the instance map patch we should look in the map swap system...
              * it seems unique maps are not 100% right implemented there
              */
             LOG(llevDebug, "NOTE: ready_map_name(): unique/instanced map as tmp map? (stats:%d) (%s) (%s)", 
-                            m->in_memory, STRING_SAFE(name_path), STRING_SAFE(src_path) );
-     clean_tmp_map(m);
-     delete_map(m);
-     m = NULL;
-     }
-        
+                    m->in_memory, STRING_SAFE(name_path), STRING_SAFE(src_path) );
+            clean_tmp_map(m);
+            delete_map(m);
+            m = NULL;
+        }
+
         /* we are loading now a src map from /maps or an instance/unique from /instance or /players */
         if(!(m = load_map(name_path, src_path, MAP_STATUS_TYPE(flags), reference)))
             return NULL;
-       }
+     }
      else
      {
          /* If in this loop, we found a temporary map, so load it up. */
