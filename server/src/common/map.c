@@ -57,8 +57,8 @@ mapstruct *has_been_loaded_sh(const char *name)
      */
     if (*name != '/' && *name != '.')
     {
-            LOG(llevDebug, "DEBUG: has_been_loaded_sh: filename without start '/' or '.' (%s)\n", name);
-            return NULL;
+        LOG(llevDebug, "DEBUG: has_been_loaded_sh: filename without start '/' or '.' (%s)\n", name);
+        return NULL;
     }
 
     for (map = first_map; map; map = map->next)
