@@ -604,14 +604,14 @@ int enter_map_by_exit(object *op, object *exit_ob)
     */
     if(MAP_STATUS_TYPE(exit_ob->last_eat)) 
     {
+        reference = op->name;
+
         if(exit_ob->last_eat & (MAP_STATUS_MULTI|MAP_STATUS_STYLE))
             file_path = exit_ob->race; /* multi == original map path */
         else /* dynamic path */
         {
             if(op->type != PLAYER || !CONTR(op))
                 return FALSE;
-
-            reference = op->name;
 
             if(exit_ob->last_eat & MAP_STATUS_UNIQUE) 
                 file_path = dyn_path = create_unique_path_sh(op, exit_ob->race);
@@ -643,6 +643,8 @@ int enter_map_by_exit(object *op, object *exit_ob)
     }
     else /* dst path is static and stored in exit_ob->title */
     {
+        reference = exit_ob->map->reference;
+
         if(!exit_ob->title) /* first call, generate the static path first */
         {
             if(exit_ob->map->map_status & (MAP_STATUS_MULTI|MAP_STATUS_STYLE))
@@ -660,8 +662,6 @@ int enter_map_by_exit(object *op, object *exit_ob)
                 */
                 exit_ob->title = add_string(normalize_path_direct( exit_ob->map->path, 
                     path_to_name(exit_ob->race), tmp_path));
-
-                /* TODO: No way to get the reference here. Can we be sure it will be loaded with the map? */
             }
             else /* this should never happen and will break the inheritance system - so kill the server */
                 LOG(llevError, "FATAL ERROR: enter_map_by_exit(): Map %s loaded without valid map status (%d)!\n", 

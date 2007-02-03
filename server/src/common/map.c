@@ -880,7 +880,7 @@ int new_save_map(mapstruct *m, int flag)
         if(m->reference)
             fprintf(fp, "reference %s\n", m->reference);
         else
-            LOG(llevBug, "save_map(): instance/unique map with NULL reference!\n");
+            LOG(llevBug, "BUG save_map(): instance/unique map with NULL reference!\n");
     }
     if (MAP_OUTDOORS(m))
         fputs("outdoor 1\n", fp);
