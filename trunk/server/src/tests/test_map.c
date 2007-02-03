@@ -63,6 +63,44 @@ START_TEST (map_loading)
 }
 END_TEST
 
+#define TEST_NORMALIZE(src, dst, expect) \
+    memset(buf, 0, sizeof(buf)); \
+    res = normalize_path(src, dst, buf); \
+    fail_if(strcmp(res, expect) != 0, \
+            "normalize_path('%s','%s', buf) returned '%s' but '%s' was expected", \
+            STRING_SAFE(src), STRING_SAFE(dst), STRING_SAFE(res), STRING_SAFE(expect)); \
+    fail_if(res != buf, \
+            "normalize_path('%s','%s', buf) didn't return pointer to buf", \
+            STRING_SAFE(src), STRING_SAFE(dst));
+
+START_TEST (path_normalizing)
+{
+    char buf[MAXPATHLEN], *res;
+
+    /* Those are some normal cases */
+    TEST_NORMALIZE("/some/path/map", "../other/path/map", "/some/other/path/map");
+    TEST_NORMALIZE("/some/path/map", "../../other_path/map2", "/other_path/map2");
+    TEST_NORMALIZE("/some/path/map", "/other_path/map2", "/other_path/map2");
+    TEST_NORMALIZE("/some/path/map", "../other_path/../map2", "/some/map2");
+    TEST_NORMALIZE("/some/path/map", "/other_path/../map2", "/map2");
+    TEST_NORMALIZE("/some/path/map", "map2", "/some/path/map2");
+
+    /* Test handling of "./" elements */
+    TEST_NORMALIZE("/path/map", "./not_a_very_bad_path/../bar", "/path/bar");
+    TEST_NORMALIZE("/path/to/map", "some/./path/bar", "/path/to/some/path/bar");
+    TEST_NORMALIZE("/path/to/map", "./map2", "/path/to/map2");
+
+    /* special paths are not touched */
+    TEST_NORMALIZE("/some/path/map", "./data/players/very_bad_path/foo", "./data/players/very_bad_path/foo");
+    TEST_NORMALIZE("/some/path/map", "./data/instance/very_bad_path/bar", "./data/instance/very_bad_path/bar");
+    TEST_NORMALIZE("/some/path/map", "./data/players/very_bad_path/../foo", "./data/players/very_bad_path/../foo");
+
+    /* Some error checking */
+    TEST_NORMALIZE("/some/path/map", "../../../other_path/map2", "");
+    TEST_NORMALIZE(NULL, "/other_path/map2", "");
+}
+END_TEST
+
 Suite *map_suite(void)
 {
   Suite *s = suite_create("Maps");
@@ -72,6 +110,7 @@ Suite *map_suite(void)
   
   suite_add_tcase (s, tc_core);
   tcase_add_test(tc_core, map_loading);
+  tcase_add_test(tc_core, path_normalizing);
 
   return s;
 }
