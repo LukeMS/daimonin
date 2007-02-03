@@ -75,6 +75,9 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define ABS(x) ((x)<0?-(x):(x))
 #endif
 
+/** Length of string literal. Don't even think about using this on a pointer */
+#define LSTRLEN(s) ((sizeof(s)/sizeof(char))-1)
+
 #define MAX_STAT        30  /* The maximum legal value of any stat */
 #define MIN_STAT        1   /* The minimum legal value of any stat */
 

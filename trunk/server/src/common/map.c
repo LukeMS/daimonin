@@ -118,19 +118,21 @@ int check_path(const char *name, int prepend_dir)
     return(access(name, 0));
 }
 
-/** Make path absolute and remove ".." entries.
- * path will become a normalized (absolute) version of the path in dst. 
+/** Make path absolute and remove ".." and "." entries.
+ * path will become a normalized (absolute) version of the path in dst, with all
+ * relative path references (".." and "." - parent directory and same directory)
+ * resolved (path will not contain any ".." or "." elements, even if dst did).
  * If dst was not already absolute, the directory part of src will be used
  * as the base path and dst will be added to it.
- * Any "parent directory" ("..") references are removed from the resulting path
  * @param[in] src already normalized file name for finding absolute path
  * @param[in] dst path to normalize. Should be either an absolute path or a path 
  * relative to src. It must be a true "source" map path, and not a path into the 
- * "./data" or "./players" directory.
- * @param[in,out] path storage for normalized path
+ * "./instance" or "./players" directory.
+ * If dst is NULL, src is used for dst too.
+ * @param[out] destination buffer for normalized path. Should be at least MAXPATHLEN big.
  * @return pointer to path
  */
-const char *normalize_path(const char *src, const char *dst, char *path)
+char *normalize_path(const char *src, const char *dst, char *path)
 {
     char   *p, *q;
     char    buf[MAXPATHLEN*2];
@@ -141,7 +143,7 @@ const char *normalize_path(const char *src, const char *dst, char *path)
         dst = src;
     if(!src)
     {
-        LOG(llevBug,"normalize_path(): Called with src path = NULL! (dst:%s)\n", STRING_SAFE(dst));
+        LOG(llevBug,"BUG: normalize_path(): Called with src path = NULL! (dst:%s)\n", STRING_SAFE(dst));
         path[0] = '\0';
         return path;
     }
@@ -154,6 +156,21 @@ const char *normalize_path(const char *src, const char *dst, char *path)
     }
     else
     {
+        /* Extra safety check. Never normalize unique/instance map paths */
+        if(strncmp(dst, "./", 2) == 0)
+        {
+            /* (Only works with default directory paths) */
+            /* Actually, a settings.localdir that doesn't start with "." will probalbly 
+             * break instanced and unique maps... */
+            if(strncmp(dst, LOCALDIR "/" INSTANCEDIR, LSTRLEN(LOCALDIR "/" INSTANCEDIR)) == 0 
+                    || strncmp(dst, LOCALDIR "/" PLAYERDIR, LSTRLEN(LOCALDIR "/" PLAYERDIR)) == 0)
+            {
+                LOG(llevBug,"BUG: normalize_path(): Called with unique/instance dst: %s\n", dst);
+                strcpy(path, dst);
+                return path;
+            }
+        }
+
         /* Combine directory part of src with dst to create absolute path */
         strcpy(buf, src);
         if ((p = strrchr(buf, '/')))
@@ -166,23 +183,36 @@ const char *normalize_path(const char *src, const char *dst, char *path)
     /* Hmm.. This looks buggy. Meant to remove initial double slashes? 
      * There will be problems if there are double slashes anywhere else in the
      * path. Gecko 2006-09-24. */
+    /* Disabled to see if anything breaks. Gecko 2007-02-03 */
+#if 0
     q = p = buf;
     while ((q = strstr(q, "//")))
         p = ++q;
-
+#else
+    p = buf;
+    if(strstr(p, "//"))
+        LOG(llevBug, "BUG: map path with unhandled '//' element: %s\n", buf); 
+#endif    
+    
     *path = '\0';
     p = strtok(p, "/");
     while (p)
     {
-        if (!strcmp(p, ".."))
+        if(strcmp(p, ".") == 0)
         {
+            /* Just ignore "./" path elements */
+        }
+        else if(strcmp(p, "..") == 0)
+        {
+            /* Remove last inserted path element from 'path' */
             char *separator = strrchr(path, '/');
             if (separator)
                 *separator = '\0';
             else
             {
+                LOG(llevBug, "BUG: Illegal path (too many \"..\" entries): %s\n", dst);
                 *path = '\0';
-                LOG(llevBug, "BUG: Illegal path.\n");
+                return path; /* Don't continue normalization */
             }
         }
         else
@@ -1237,7 +1267,7 @@ static mapstruct * load_temporary_map(mapstruct *m)
  * @param orig_map map to inherit type and instance from
  * @param new_map_path the path to the map to ready. This can be either an absolute path, 
  *        or a path relative to orig_map->path. It must be a true "source" map path, 
- *        and not a path into the "./data" or "./players" directory.
+ *        and not a path into the "./instance" or "./players" directory.
  * @param flags        1 to never load unloaded or swapped map, i.e. only return maps
  *                     already in memory.
  * @return pointer to loaded map, or NULL
