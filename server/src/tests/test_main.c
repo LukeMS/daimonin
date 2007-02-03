@@ -76,7 +76,7 @@ void run_unit_tests(void)
     srunner_add_suite(sr, holy_suite());
     srunner_add_suite(sr, buttons_suite());
     srunner_add_suite(sr, lua_suite());
-    srunner_add_suite(sr, teleporter_suite());
+    srunner_add_suite(sr, teleporter_suite()); 
     
     fprintf(stderr, "Running Daimonin Test Suites\n");
     
