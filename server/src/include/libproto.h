@@ -156,7 +156,7 @@ extern int              obj_in_line_of_sight(object *op, object *obj, rv_vector 
 extern mapstruct       *has_been_loaded_sh(const char *name);
 extern char            *create_mapdir_pathname(const char *name);
 extern int              check_path(const char *name, int prepend_dir);
-extern const char      *normalize_path(const char *src, const char *dst, char *path);
+extern char            *normalize_path(const char *src, const char *dst, char *path);
 extern char            *normalize_path_direct(const char *src, const char *dst, char *path);
 extern mapstruct       *ready_inherited_map(mapstruct *orig_map, shstr *new_map_path, int flags);
 extern void             dump_map(mapstruct *m);
