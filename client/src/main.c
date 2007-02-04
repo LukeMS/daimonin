@@ -162,7 +162,7 @@ static _bitmap_name bitmap_name[BITMAP_INIT]    =
         {"group_spot.png", PIC_TYPE_DEFAULT}, {"target_spot.png", PIC_TYPE_DEFAULT}, {"below.png", PIC_TYPE_DEFAULT},
         {"frame_line.png", PIC_TYPE_DEFAULT}, {"help_start.png", PIC_TYPE_DEFAULT}, {"target_attack.png", PIC_TYPE_TRANS},
         {"target_talk.png", PIC_TYPE_TRANS}, {"target_normal.png", PIC_TYPE_TRANS}, {"loading.png", PIC_TYPE_TRANS},
-        {"warn_hp.png", PIC_TYPE_DEFAULT}, {"warn_food.png", PIC_TYPE_DEFAULT},
+        {"warn_hp.png", PIC_TYPE_DEFAULT}, {"warn_food.png", PIC_TYPE_DEFAULT}, {"warn_weight.png", PIC_TYPE_DEFAULT},
         {"logo270.png", PIC_TYPE_DEFAULT}, {"dialog_bg.png", PIC_TYPE_DEFAULT},
         {"dialog_title_options.png", PIC_TYPE_DEFAULT}, {"dialog_title_keybind.png", PIC_TYPE_DEFAULT},
         {"dialog_title_skill.png", PIC_TYPE_DEFAULT}, {"dialog_title_spell.png", PIC_TYPE_DEFAULT},
@@ -1384,6 +1384,8 @@ int main(int argc, char *argv[])
                     {
                         if (options.warning_food && ((float) cpl.stats.food / 1000.0f) * 100 <= options.warning_food) /* low food */
                             sprite_blt(Bitmaps[BITMAP_WARN_FOOD], 390, 294, NULL, NULL);
+                        else if (options.warning_weight && ((float) cpl.real_weight / cpl.weight_limit) * 100 >= options.warning_weight)
+                            sprite_blt(Bitmaps[BITMAP_WARN_WEIGHT], 387, 285, NULL, NULL);
                     }
                 }
                 show_quickslots(SKIN_POS_QUICKSLOT_X, SKIN_POS_QUICKSLOT_Y);

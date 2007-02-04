@@ -116,6 +116,7 @@ _option             opt[]                           =
         {"Show yourself targeted:", "Show your name in the target area instead of blank.","", "",SEL_CHECKBOX, 0,1,1, 0, &options.show_target_self, VAL_BOOL},
         {"Low health warning:", "Shows a low health warning above your head","Activatetd if health is less than the given percent value.","", SEL_RANGE, 0,100,5, 0, &options.warning_hp, VAL_INT},
         {"Low food warning:", "Shows a low food warning above your head.","Activatetd if food is less than the given percent value.","", SEL_RANGE, 0,100,5, 5, &options.warning_food, VAL_INT},
+        {"Overload warning:", "Shows a overload warning above your head.","Activatetd if loading is greater than the given percent value.","", SEL_RANGE, 0,100,5, 85, &options.warning_weight, VAL_INT},
         {"Graphic Statusbars:", "Show for HP, Mana and others a graphical layout.","Instead of horizontal lines.", "",SEL_CHECKBOX, 0,1,1, 1, &options.gfx_statusbars, VAL_BOOL},
         {"Show Tooltips:", "Show tooltips when hovering with the mouse over items.","", "",SEL_CHECKBOX, 0,1,1, 1, &options.show_tooltips, VAL_BOOL},
         {"Key-info in Dialog menus:", "","", "",SEL_CHECKBOX, 0,1,1, 1, &options.show_d_key_infos, VAL_BOOL},
