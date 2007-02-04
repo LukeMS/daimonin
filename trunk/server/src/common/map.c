@@ -1677,7 +1677,6 @@ void load_objects(mapstruct *m, FILE *fp, int mapflags)
             /* be sure that floor is a.) always single arch and b.) always use "in map" offsets (no multi arch tricks) */
             MapSpace *msp = GET_MAP_SPACE_PTR(m,op->x,op->y);
 
-            msp->floor_arch = op->arch;
             msp->floor_terrain = op->terrain_type;
             msp->floor_light = op->last_sp;
 
@@ -1685,6 +1684,22 @@ void load_objects(mapstruct *m, FILE *fp, int mapflags)
                 msp->floor_flags |= MAP_FLOOR_FLAG_NO_PASS;
             if(QUERY_FLAG(op,FLAG_PLAYER_ONLY))
                 msp->floor_flags |= MAP_FLOOR_FLAG_PLAYER_ONLY;
+            
+            /* we don't animate floors at the moment. But perhaps turnable for adjustable pictures */
+            if (QUERY_FLAG(op, FLAG_IS_TURNABLE) || QUERY_FLAG(op, FLAG_ANIMATE))
+            {
+                if(NUM_FACINGS(op) == 0)
+                {
+                    LOG(llevDebug, "BUG:load_objects(%s): object %s (%d)- NUM_FACINGS == 0. Bad animation? (pos:%d,%d)\n",
+                        m->path ? m->path : ">no map<", query_short_name(op, NULL), op->type, op->x, op->y);
+                    goto next;
+                }
+                SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction + op->state);
+            }
+            /* we save floor masks direct over a generic mask arch/object and don't need to store the direction.
+            * a mask will not turn ingame - thats just for the editor and to have one arch
+            */
+            msp->floor_face = op->face;
 
             goto next;
         }
@@ -2109,11 +2124,11 @@ void save_objects(mapstruct *m, FILE *fp, int flag)
             MapSpace *mp = &m->spaces[i + m->width * j];
 
             /* save first the floor and mask from the node */
-            if(mp->floor_arch)
+            if(mp->floor_face)
             {
-                floor_g->arch = mp->floor_arch;
                 floor_g->terrain_type = mp->floor_terrain;
                 floor_g->last_sp = mp->floor_light;
+                floor_g->face = mp->floor_face;
                 floor_g->x = i;
                 floor_g->y = j;
 
@@ -2128,11 +2143,7 @@ void save_objects(mapstruct *m, FILE *fp, int flag)
                     CLEAR_FLAG(floor_g, FLAG_PLAYER_ONLY);
 
                 /* black object magic... don't do this in the "normal" server code */
-                floor_g->name = floor_g->arch->clone.name;
-                floor_g->face = floor_g->arch->clone.face;
-                floor_g->animation_id = floor_g->arch->clone.animation_id;
                 save_object(fp, floor_g, 3);
-                floor_g->name = NULL;
             }
 
             if(mp->mask_face)

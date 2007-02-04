@@ -1411,8 +1411,8 @@ void draw_client_map2(object *pl)
 
                 /* floor layer */
                 face_num0 = 0;
-				if(msp->floor_arch)
-					face_num0 = msp->floor_arch->clone.face->number;
+				if(msp->floor_face)
+					face_num0 = msp->floor_face->number;
 				/* layer 1 (floor) is really free now - we only have here
                  * type 68 SHOP_FLOOR left using layer 1. That special floor
                  * will be removed when we add real shop interfaces.

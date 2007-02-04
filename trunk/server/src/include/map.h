@@ -278,12 +278,10 @@ typedef struct MapSpace_s
     sint32              light_source;                   /* light source counter - as higher as brighter light source here */
     sint32              light_value;                    /* how much light is in this tile. 0 = total dark
                                                          * 255+ = full daylight.
-                                                        */
-	archetype           *floor_arch;					/* thats the default arch from the floor object in this node.
-                                                         * we will grap from it too the face
-                                                         */	
-    New_Face            *mask_face;						/* here we need the face for masks, because it can be turnable */
+                                                         */
+    New_Face           *mask_face;						/* here we need the face for masks, because it can be turnable */
     int                 flags;                          /* flags about this space (see the P_ values above) */
+    New_Face           *floor_face;						/* here we need the face for the floor because it can be turnable */
 	uint16				floor_terrain;
 	sint16				floor_light;
     uint16              last_damage;                    /* last_damage tmp backbuffer */
