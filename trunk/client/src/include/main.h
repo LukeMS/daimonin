@@ -193,6 +193,7 @@ typedef struct _options
     int                     show_target_self;
     int                     warning_hp;
     int                     warning_food;
+    int                     warning_weight;
     Boolean                 gfx_statusbars;
     Boolean                 show_tooltips;
     Boolean                 show_d_key_infos; /* key-infos in dialog-wins. */
@@ -549,6 +550,7 @@ typedef enum _bitmap_index
     BITMAP_LOADING,
     BITMAP_WARN_HP,
     BITMAP_WARN_FOOD,
+    BITMAP_WARN_WEIGHT,
     BITMAP_LOGO270,
     BITMAP_DIALOG_BG,
     BITMAP_DIALOG_TITLE_OPTIONS,
