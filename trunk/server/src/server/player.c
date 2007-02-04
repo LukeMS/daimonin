@@ -405,6 +405,8 @@ void give_initial_items(object *pl, struct oblnk *items)
             CLEAR_FLAG(op, FLAG_CURSED);
             CLEAR_FLAG(op, FLAG_DAMNED);
         }
+
+        SET_FLAG(op, FLAG_STARTEQUIP);
     } /* for loop of objects in player inv */
 }
 
@@ -2027,12 +2029,9 @@ int player_can_view(object *pl, object *op)
          * code, so we need to restrict ourselves to that range of values
          * for any meaningful values.
          */
-        if (FABS(dx)
-         <= (CONTR(pl)->socket.mapx_2)
-         && FABS(dy)
-         <= (CONTR(pl)->socket.mapy_2)
-         && CONTR(pl)->blocked_los[dx + (CONTR(pl)->socket.mapx_2)][dy + (CONTR(pl)->socket.mapy_2)]
-         <= BLOCKED_LOS_BLOCKSVIEW)
+        if (FABS(dx) <= (CONTR(pl)->socket.mapx_2)
+         && FABS(dy) <= (CONTR(pl)->socket.mapy_2)
+         && CONTR(pl)->blocked_los[dx + (CONTR(pl)->socket.mapx_2)][dy + (CONTR(pl)->socket.mapy_2)] <= BLOCKED_LOS_BLOCKSVIEW)
             return 1;
         op = op->more;
     }
