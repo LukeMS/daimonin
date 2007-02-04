@@ -780,7 +780,6 @@ void command_new_char(char *params, int len, player *pl)
     SET_FLAG(objtmp, FLAG_KNOWN_CURSED);
     manual_apply(op, objtmp, 0);
     objtmp->value = 1;
-    SET_FLAG(objtmp, FLAG_STARTEQUIP);
 
     CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
     pl->last_stats.exp = 1;          /* force send of skill exp data to client */
