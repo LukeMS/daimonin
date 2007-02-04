@@ -103,7 +103,7 @@ material_real_struct    material_real[NROFMATERIALS *NROFMATERIALS_REAL + 1]    
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
-    /* IRON (= Metal) */
+    /* IRON (= Metal) (65) */
     {"iron ",                100,    80,   0,0,0,          M_IRON,         RACE_TYPE_NONE},
     {"hardened iron ",       95,     81,   0,0,0,          M_IRON,         RACE_TYPE_NONE},
     {"forged iron ",         90,     82,   0,0,0,          M_IRON,         RACE_TYPE_NONE},
@@ -168,7 +168,7 @@ material_real_struct    material_real[NROFMATERIALS *NROFMATERIALS_REAL + 1]    
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
-    /* Crystals/breakable/glass */
+    /* Crystals/breakable/glass (129) */
     {"glass ",       100,80,       0,0,0,   M_GLASS, RACE_TYPE_NONE}, /* 129 */
     {"zircon ",     100,80,       0,0,0,    M_GLASS, RACE_TYPE_NONE}, /* 130 */
     {"pearl ",       75,83,       0,0,0,    M_GLASS, RACE_TYPE_NONE}, /* 131 */
@@ -233,7 +233,7 @@ material_real_struct    material_real[NROFMATERIALS *NROFMATERIALS_REAL + 1]    
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
-    /* LEATHER */
+    /* LEATHER (193) */
     {"soft leather ",               100,    80,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"hardened leather ",           70,     81,       0,0,0,      M_LEATHER,         RACE_TYPE_NONE},
     {"stone leather ",              70,     82,       0,0,0,      M_LEATHER,         RACE_TYPE_NONE},
@@ -298,7 +298,7 @@ material_real_struct    material_real[NROFMATERIALS *NROFMATERIALS_REAL + 1]    
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
-    /* WOOD */
+    /* WOOD (257) */
     {"pine ",        100,80,       0,0,0,         M_WOOD,         RACE_TYPE_NONE},
     {"pine ",        100,81,       0,0,0,         M_WOOD,         RACE_TYPE_NONE},
     {"pine ",        100,82,       0,0,0,         M_WOOD,         RACE_TYPE_NONE},
@@ -363,7 +363,7 @@ material_real_struct    material_real[NROFMATERIALS *NROFMATERIALS_REAL + 1]    
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
-    /* ORGANIC */
+    /* ORGANIC (321) */
     {"animal ",       100,80,       0,0,0,      M_ORGANIC,       RACE_TYPE_NONE}, /* 321 used for misc organics */
     {"dragon ",      50,96,       0,0,0,      M_ORGANIC,         RACE_TYPE_NONE}, /* 322 */
     {"chitin "              , 50,82,       0,0,0,      M_ORGANIC,         RACE_TYPE_NONE}, /* 323 */
@@ -428,7 +428,7 @@ material_real_struct    material_real[NROFMATERIALS *NROFMATERIALS_REAL + 1]    
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
-    /* STONE */
+    /* STONE (385) */
     {"flint ",       100,80,       0,0,0,      M_STONE,         RACE_TYPE_NONE},
     {"pearl ",       100,85,       0,0,0,      M_STONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
@@ -493,7 +493,7 @@ material_real_struct    material_real[NROFMATERIALS *NROFMATERIALS_REAL + 1]    
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
-    /* CLOTH */
+    /* CLOTH (449) */
     {"wool ",       100,80,       0,0,0,      M_CLOTH,         RACE_TYPE_NONE},
     {"linen ",      90,80,        0,0,0,      M_CLOTH,         RACE_TYPE_NONE},
     {"silk ",       25,95,        0,0,0,      M_CLOTH,         RACE_TYPE_NONE},
@@ -558,7 +558,7 @@ material_real_struct    material_real[NROFMATERIALS *NROFMATERIALS_REAL + 1]    
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
-    /* ADAMANT (= magic metals) */
+    /* ADAMANT (= magic metals) (513) */
     {"magic silk ",  1,99,       0,0,0,      M_ADAMANT,         RACE_TYPE_NONE},
     {"mithril ",     1,99,       0,0,0,      M_ADAMANT,         RACE_TYPE_NONE},
     {"adamant ",     10,99,      0,0,0,      M_ADAMANT,         RACE_TYPE_NONE},
@@ -623,7 +623,7 @@ material_real_struct    material_real[NROFMATERIALS *NROFMATERIALS_REAL + 1]    
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
-    /* Liquid */
+    /* Liquid (577) */
     /* some like ice... the kind of liquid/potions in game don't depend
     * or even handle the liquid base type*/
     {"",       100,80,       0,0,0,      M_LIQUID,         RACE_TYPE_NONE},
@@ -690,7 +690,7 @@ material_real_struct    material_real[NROFMATERIALS *NROFMATERIALS_REAL + 1]    
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
-    /* Soft Metal */
+    /* Soft Metal (641) */
     {"tin ",         100,80,       0,0,0,   M_SOFT_METAL,   RACE_TYPE_NONE}, /* 641 */
     {"brass ",       100,80,       0,0,0,   M_SOFT_METAL,   RACE_TYPE_NONE}, /* 642 */
     {"copper ",      100,80,       0,0,0,   M_SOFT_METAL,   RACE_TYPE_NONE}, /* 643 */
@@ -698,6 +698,7 @@ material_real_struct    material_real[NROFMATERIALS *NROFMATERIALS_REAL + 1]    
     {"silver ",      50, 90,       0,0,0,   M_SOFT_METAL,   RACE_TYPE_NONE}, /* 645 */
     {"gold ",        20, 95,       0,0,0,   M_SOFT_METAL,   RACE_TYPE_NONE}, /* 646 */
     {"platinum ",    10, 99,       0,0,0,   M_SOFT_METAL,   RACE_TYPE_NONE}, /* 647 */
+    {"lead ",        100, 80,      0,0,0,   M_SOFT_METAL,   RACE_TYPE_NONE}, /* 648 */
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
@@ -754,8 +755,7 @@ material_real_struct    material_real[NROFMATERIALS *NROFMATERIALS_REAL + 1]    
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
-    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
-    /* Bone */
+    /* Bone (705) */
     {"",        100,80,       0,0,0,      M_BONE,         RACE_TYPE_NONE}, /* for misc bones*/
     {"human ",          100,80,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"elven ",          100,80,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
@@ -820,7 +820,7 @@ material_real_struct    material_real[NROFMATERIALS *NROFMATERIALS_REAL + 1]    
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
-    /* Ice */
+    /* Ice (769) */
     /* not sure about the sense to put here different elements in...*/
     {"",         100,80,       0,0,0,      M_ICE,         RACE_TYPE_NONE}, /* water */
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
