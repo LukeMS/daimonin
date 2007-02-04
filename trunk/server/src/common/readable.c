@@ -142,7 +142,7 @@ static char        *path_book_name[]            =
 static char        *path_author[]               =
 {
     "aether", "astral byways", "connections", "the Grey Council", "deep pathways", "knowledge", "magic", "mystic ways",
-    "pathways", "power", "spells", "transmutation", "the mystic veil", "unknown spells"
+    "pathways", "power", "spells", "transform", "the mystic veil", "unknown spells"
 };
 
 /*
