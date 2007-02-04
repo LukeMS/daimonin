@@ -134,7 +134,8 @@ int check_path(const char *name, int prepend_dir)
  */
 char *normalize_path(const char *src, const char *dst, char *path)
 {
-    char   *p, *q;
+    char   *p;
+    /* char *q; */
     char    buf[MAXPATHLEN*2];
 
     /*LOG(llevDebug,"path before normalization >%s< >%s<\n", src, dst?dst:"<no dst>");*/
