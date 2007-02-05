@@ -1850,7 +1850,7 @@ void DataCmd(unsigned char *data, int len)
             }
             request_file_chain++;
             save_data_cmd_file(FILE_CLIENT_SETTINGS, data, len);
-            /*read_settings();*/
+            read_settings();
             break;
 
         case DATA_CMD_BMAP_LIST:
@@ -1864,6 +1864,7 @@ void DataCmd(unsigned char *data, int len)
             request_file_chain++;
             save_data_cmd_file(FILE_CLIENT_BMAPS, data, len);
             request_file_flags |= SRV_CLIENT_FLAG_BMAP;
+            read_bmaps();
             break;
 
         case DATA_CMD_ANIM_LIST:
@@ -1877,6 +1878,7 @@ void DataCmd(unsigned char *data, int len)
             request_file_chain++;
             save_data_cmd_file(FILE_CLIENT_ANIMS, data, len);
             request_file_flags |= SRV_CLIENT_FLAG_ANIM;
+            read_anims();
             break;
 
         default:
