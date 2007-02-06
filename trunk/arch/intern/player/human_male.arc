@@ -9,15 +9,16 @@ no_pick 1
 direction 4
 identified 1
 is_neutral 1
+container 105000
 weapon_speed 3.5
 speed 0.95
 terrain_flag 1
 anim
 facings 25
-trans.101
-trans.101
-trans.101
-trans.101
+human_m.f.r.111
+human_m.f.r.111
+human_m.f.r.111
+human_m.f.r.111
 human_m.ine.111
 human_m.ine.112
 human_m.ine.113
@@ -119,10 +120,10 @@ is_animated 1
 anim_speed 3
 type 1
 level 1
-ac 3
-wc 0
-thac0 18
-thacm 1
+ac 1
+wc 1
+thac0 92
+thacm 5
 hp -1
 maxhp 8
 sp -1

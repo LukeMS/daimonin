@@ -155,6 +155,8 @@ name   CDATA #REQUIRED>
 <type number="141" name="CANCELLATION"/>
 <type number="142" name="SHOULDER"/>
 <type number="143" name="LEGS"/>
+<type number="144" name="TYPE_FOOD_FORCE"/>
+<type number="145" name="TYPE_FOOD_BUFF_FORCE"/>
 
 <type number="150" name="MENU"/>
 <type number="151" name="BALL_LIGHTNING"/>

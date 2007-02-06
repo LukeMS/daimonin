@@ -1,9 +1,10 @@
 Object whitewine
 name white wine
 face whitewine.101
-food 100
-item_quality 100
-item_condition 100
+last_eat 12
+hp 2
+sp 10
+grace 10
 nrof 1
 layer 3
 type 6
@@ -16,9 +17,10 @@ end
 Object redwine
 name red wine
 face redwine.101
-food 120
-item_quality 100
-item_condition 100
+last_eat 12
+hp 2
+sp 10
+grace 10
 nrof 1
 layer 3
 type 6
@@ -31,9 +33,10 @@ end
 Object champagne
 name champagne
 face champagne.101
-food 90
-item_quality 100
-item_condition 100
+last_eat 12
+hp 2
+sp 10
+grace 10
 nrof 1
 layer 3
 type 6

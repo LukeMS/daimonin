@@ -5,7 +5,7 @@ layer 3
 weapon_speed 3.25
 attack_impact 100
 dam 40
-wc 5
+wc 14
 type 15
 sub_type 0
 material 18

@@ -7,7 +7,7 @@ attack_pierce 100
 item_level 3
 item_skill 4
 dam 50
-wc 5
+wc 14
 type 15
 sub_type 2
 material 2

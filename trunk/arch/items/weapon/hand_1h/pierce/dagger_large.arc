@@ -5,7 +5,7 @@ face dagger_large.101
 weapon_speed 3.25
 attack_pierce 100
 dam 40
-wc 5
+wc 13
 type 15
 sub_type 2
 material 2

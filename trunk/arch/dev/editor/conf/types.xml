@@ -1152,16 +1152,6 @@
     Negative decrease them (decrease can't reduce the total
     grace of the wearer below 1).
   </attribute>
-  <attribute arch="food" editor="food bonus" type="int">
-    Positive &lt;food bonus&gt; slows down the player's digestion,
-    thus he consumes less food. Negative values speed it up.
-
-    Note that food is consumed not only for "being alive", but
-    also for healing and mana-regeneration.
-    &lt;food bonus&gt; only affects the amount of food consumed
-    for "being alive". Hence, even with high &lt;food bonus&gt;,
-    during a fight a player can run out of food quickly.
-  </attribute>
   <attribute arch="make_invisible" editor="make invisible" type="bool">
    When applied the user gets invisible. He can't be seen from player 
    or monster except they have "see invisible" power.
@@ -1340,9 +1330,9 @@
     Feel free to create your own special artifacts. However, it is very
     important that you keep your artifact in balance with existing maps. ]]>
   </use>
-  <attribute arch="last_heal" editor="spellpoint penalty" type="int">
-    This poses a penalty to spell regeneration speed, for wearing the armour.
-    The bigger the spellpoint penalty, the worse.
+  <attribute arch="last_heal" editor="spellcasting penalty" type="int">
+    This poses a penalty to spellcasting in %, for wearing the armour.
+    The bigger the spellcasting penalty, the worse.
   </attribute>
   <attribute arch="last_sp" editor="slowdown" type="int">
     Slowdown penalty reduces the player's walking speed when wearing the
@@ -1386,9 +1376,10 @@
     Feel free to create your own special artifacts. However, it is very
     important that you keep your artifact in balance with existing maps. ]]>
   </use>
-  <attribute arch="last_heal" editor="spellpoint penalty" type="int">
-    This poses a penalty to spell regeneration speed, for wearing the boots.
-    The bigger the spellpoint penalty, the worse.
+  <attribute arch="last_heal" editor="spellcasting penalty" type="int">
+    This poses a penalty to spellcasting, for wearing the boots.
+    The bigger the spellcarting penalty, the worse. 
+    The spell will fail then.
   </attribute>
   <attribute arch="last_sp" editor="slowdown" type="int">
     Slowdown penalty reduces the player's walking speed when wearing the
@@ -1931,7 +1922,8 @@
   </attribute>
   <attribute arch="last_sp" editor="slowdown" type="int">
     If set, the disease imposes a &lt;slowdown&gt; penatly while being infected.
-    The player's speed is reduced by &lt;slowdown&gt; % of normal value.
+    The player's speed is reduced by &lt;slowdown&gt; % diveded by 10 of normal value.
+    Example: A value of 100 means 10% slowdown.
   </attribute>
   <attribute arch="exp" editor="exp. for curing" type="int">
     When the player manages to cure this disease (with a curing spell),
@@ -2205,70 +2197,25 @@
   </ignore>
   <description><![CDATA[
     By eating/drinking food-objects, the player can fill his
-    stomache and gain a little health and/or mana bonus.
-    Temporary are stat gain or loses and resistance gain
-    or loses possible. Cursed and damned food can increase
-    and/or negate positive effects. ]]>
+    stomache.
+    They restore over time helath, mana and/or grace.]]>
   </description>
-  <attribute arch="food" editor="foodpoints" type="int">
-    The player's stomache will get filled with this amount of foodpoints.
-    The player's health will increase by &lt;foodpoints&gt;/50 hp.
+  <attribute arch="last_eat" editor="eating time" type="int">
+    The player's stomache will get filled in eating time second.
+    The player will restore &lt;foodpoints&gt; * hp/sp/grace.
   </attribute>
-  <attribute arch="hp" editor="health bonus" type="int">
+  <attribute arch="hp" editor="restore health" type="int">
     Positive &lt;health&gt; bonus added to player's 
-    hp when food eaten. Negative values will reduce hp.
-    Curse will double amd damned will triple it. In both 
-    cases are positive values negated.
+    hp when food eaten.
   </attribute>
-  <attribute arch="sp" editor="mana bonus" type="int">
+  <attribute arch="sp" editor="restore mana" type="int">
     Positive &lt;mana&gt; bonus added to player's mana
-    when food eaten. Negative values will reduce mana.
-    Curse will double amd damned will triple it. In both 
-    cases are positive values negated.
+    when food eaten.
   </attribute>
-  <attribute arch="cursed" editor="cursed food" type="bool">
-    Turn positive effects negative and then double all
-    negative effects.
+  <attribute arch="grace" editor="restore grace" type="int">
+    Positive &lt;grace&gt; bonus added to player's mana
+    when food eaten.
   </attribute>
-  <attribute arch="damned" editor="damned food" type="bool">
-    Turn positive effects negative and then trible all
-    negative effects.
-  </attribute>
-  <attribute arch="speed_left" editor="force time" type="float">
-    The &lt;speed&gt; determines how long a force will stay
-    it gets created from food effects. Only used when food has effects
-    and then copied to force speed.
-  </attribute>
-<section name="Force Effects">
-  <attribute arch="str" editor="strength" type="int">
-    The player's strength will rise/fall by the given value
-    while wearing this piece of equipment.
-  </attribute>
-  <attribute arch="dex" editor="dexterity" type="int">
-    The player's dexterity will rise/fall by the given value
-    while wearing this piece of equipment.
-  </attribute>
-  <attribute arch="con" editor="constitution" type="int">
-    The player's constitution will rise/fall by the given value
-    while wearing this piece of equipment.
-  </attribute>
-  <attribute arch="int" editor="intelligence" type="int">
-    The player's intelligence will rise/fall by the given value
-    while wearing this piece of equipment.
-  </attribute>
-  <attribute arch="pow" editor="power" type="int">
-    The player's power will rise/fall by the given value
-    while wearing this piece of equipment.
-  </attribute>
-  <attribute arch="wis" editor="wisdom" type="int">
-    The player's wisdom will rise/fall by the given value while
-    wearing this piece of equipment.
-  </attribute>
-  <attribute arch="cha" editor="charisma" type="int">
-    The player's charisma will rise/fall by the given value
-    while wearing this piece of equipment.
-  </attribute>
-</section>
 </type>
 <!--####################################################################-->
 <type number="54" name="Drink">
@@ -2281,71 +2228,24 @@
   <description><![CDATA[
     DRINK Objects are like food objects - just liquids instead
     of organics.
-    Consuming drink objects, the player can fill his
-    stomache and gain a little health and/or mana bonus.
-    Temporary are stat gain or loses and resistance gain
-    or loses possible. Cursed and damned drink can increase
-    and/or negate positive effects. ]]>
+    They restore over time helath, mana and/or grace.]]>
   </description>
-  <attribute arch="food" editor="foodpoints" type="int">
-    The player's stomache will get filled with this amount of foodpoints.
-    The player's health will increase by &lt;foodpoints&gt;/50 hp.
+  <attribute arch="last_eat" editor="eating time" type="int">
+    The player's stomache will get filled in eating time second.
+    The player will restore &lt;foodpoints&gt; * hp/sp/grace.
   </attribute>
-  <attribute arch="hp" editor="health bonus" type="int">
+  <attribute arch="hp" editor="restore health" type="int">
     Positive &lt;health&gt; bonus added to player's 
-    hp when consumed. Negative values will reduce hp.
-    Curse will double amd damned will triple it. In both 
-    cases are positive values negated.
+    hp when food eaten.
   </attribute>
-  <attribute arch="sp" editor="mana bonus" type="int">
+  <attribute arch="sp" editor="restore mana" type="int">
     Positive &lt;mana&gt; bonus added to player's mana
-    when consumed. Negative values will reduce mana.
-    Curse will double amd damned will triple it. In both 
-    cases are positive values negated.
+    when food eaten.
   </attribute>
-  <attribute arch="cursed" editor="cursed food" type="bool">
-    Turn positive effects negative and then double all
-    negative effects.
+  <attribute arch="grace" editor="restore grace" type="int">
+    Positive &lt;grace&gt; bonus added to player's mana
+    when food eaten.
   </attribute>
-  <attribute arch="damned" editor="damned food" type="bool">
-    Turn positive effects negative and then trible all
-    negative effects.
-  </attribute>
-  <attribute arch="speed_left" editor="force time" type="float">
-    The &lt;speed&gt; determines how long a force will stay when
-    it gets created from food/drink effects. Only used when drink 
-    has effects which gets copied to a force.
-  </attribute>
-<section name="Force Effects">
-  <attribute arch="str" editor="strength" type="int">
-    The player's strength will rise/fall by the given value
-    while wearing this piece of equipment.
-  </attribute>
-  <attribute arch="dex" editor="dexterity" type="int">
-    The player's dexterity will rise/fall by the given value
-    while wearing this piece of equipment.
-  </attribute>
-  <attribute arch="con" editor="constitution" type="int">
-    The player's constitution will rise/fall by the given value
-    while wearing this piece of equipment.
-  </attribute>
-  <attribute arch="int" editor="intelligence" type="int">
-    The player's intelligence will rise/fall by the given value
-    while wearing this piece of equipment.
-  </attribute>
-  <attribute arch="pow" editor="power" type="int">
-    The player's power will rise/fall by the given value
-    while wearing this piece of equipment.
-  </attribute>
-  <attribute arch="wis" editor="wisdom" type="int">
-    The player's wisdom will rise/fall by the given value while
-    wearing this piece of equipment.
-  </attribute>
-  <attribute arch="cha" editor="charisma" type="int">
-    The player's charisma will rise/fall by the given value
-    while wearing this piece of equipment.
-  </attribute>
-</section>
 </type>
 
 <!--####################################################################-->
@@ -2553,9 +2453,10 @@
     Feel free to create your own special artifacts. However, it is very
     important that you keep your artifact in balance with existing maps. ]]>
   </use>
-  <attribute arch="last_heal" editor="spellpoint penalty" type="int">
-    This poses a penalty to spell regeneration speed, for wearing the helmet.
-    The bigger the spellpoint penalty, the worse.
+  <attribute arch="last_heal" editor="spellcasting penalty" type="int">
+    This poses a penalty to spellcasting, for wearing the boots.
+    The bigger the spellcarting penalty, the worse. 
+    The spell will fail then.
   </attribute>
   <attribute arch="last_sp" editor="slowdown" type="int">
     Slowdown penalty reduces the player's walking speed when wearing the
@@ -2589,9 +2490,10 @@
     Feel free to create your own special artifacts. However, it is very
     important that you keep your artifact in balance with existing maps. ]]>
   </use>
-  <attribute arch="last_heal" editor="spellpoint penalty" type="int">
-    This poses a penalty to spell regeneration speed, for wearing the shoulder.
-    The bigger the spellpoint penalty, the worse.
+  <attribute arch="last_heal" editor="spellcasting penalty" type="int">
+    This poses a penalty to spellcasting, for wearing the boots.
+    The bigger the spellcarting penalty, the worse. 
+    The spell will fail then.
   </attribute>
   <attribute arch="last_sp" editor="slowdown" type="int">
     Slowdown penalty reduces the player's walking speed when wearing the
@@ -2625,9 +2527,10 @@
     Feel free to create your own special artifacts. However, it is very
     important that you keep your artifact in balance with existing maps. ]]>
   </use>
-  <attribute arch="last_heal" editor="spellpoint penalty" type="int">
-    This poses a penalty to spell regeneration speed, for wearing the legs.
-    The bigger the spellpoint penalty, the worse.
+  <attribute arch="last_heal" editor="spellcasting penalty" type="int">
+    This poses a penalty to spellcasting, for wearing the boots.
+    The bigger the spellcarting penalty, the worse. 
+    The spell will fail then.
   </attribute>
   <attribute arch="last_sp" editor="slowdown" type="int">
     Slowdown penalty reduces the player's walking speed when wearing the
@@ -6186,5 +6089,4 @@ that food.]]>
 <type available="no" number="153" name="SWARM_SPELL"/>
 <type available="no" number="157" name="CORPSE"/>
 <type available="no" number="159" name="SYMPTOM"/>
-
 </types>

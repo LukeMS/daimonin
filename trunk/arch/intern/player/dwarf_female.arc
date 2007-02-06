@@ -10,13 +10,14 @@ identified 1
 direction 4
 terrain_flag 1
 weapon_speed 3.5
+container 110000
 speed 0.95
 face dwarf.111
 anim
 facings 25
-trans.101
-trans.101
-trans.101
+dwarf.m.f.r.111
+dwarf.m.f.r.111
+dwarf.m.f.r.111
 dwarf.181
 dwarf.182
 dwarf.183
@@ -100,10 +101,10 @@ sp -1
 maxsp 3
 grace -1
 maxgrace 3
-ac 4
+ac 2
 wc 0
-thac0 18
-thacm 1
+thac0 92
+thacm 5
 can_use_armour 1
 can_use_weapon 1
 is_player 1

@@ -1,8 +1,9 @@
 Object steak
 face steak01.101
-food 200
-item_quality 100
-item_condition 100
+last_eat 10
+hp 20
+sp 3
+grace 2
 nrof 1
 layer 3
 type 6
@@ -15,9 +16,10 @@ end
 Object steak2
 name steak
 face steak02.101
-food 200
-item_quality 100
-item_condition 100
+last_eat 10
+hp 20
+sp 3
+grace 2
 nrof 1
 layer 3
 type 6

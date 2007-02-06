@@ -10,8 +10,8 @@ sub_type 5
 face sword_great.101
 material 2
 material_real 65
-dam 80
-wc 6
+dam 91
+wc 24
 weight 2150
 value 750
 end

@@ -6,8 +6,8 @@ weapon_speed 4.25
 attack_impact 100
 item_level 10
 item_skill 4
-dam 80
-wc 6
+dam 91
+wc 24
 type 15
 sub_type 4
 material 16

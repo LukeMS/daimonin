@@ -10,8 +10,8 @@ item_skill 4
 face no_dachi.101
 material 2
 material_real 65
-dam 80
-wc 7
+dam 95
+wc 26
 weight 2150
 value 750
 end

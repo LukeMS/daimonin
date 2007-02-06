@@ -5,7 +5,7 @@ face whip.101
 attack_cleave 100
 weapon_speed 3.25
 dam 40
-wc 5
+wc 11
 type 15
 sub_type 3
 material 8
