@@ -1125,10 +1125,10 @@ void make_sure_not_seen(object *op)
 {
 }
 
-/** Tests if an object is in the line of sight of another object. 
+/** Tests if an object is in the line of sight of another object.
  * Relatively slow. Do not use for players, since they always have
  * a precalculated area of sight which can be used instead.
- * @param op the looking object 
+ * @param op the looking object
  * @param obj the object to look for
  * @param rv pre-calculated rv from op to obj
  * @return TRUE if there's an unblocked line of sight from op to obj, FALSE otherwise

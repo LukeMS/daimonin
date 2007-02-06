@@ -55,7 +55,7 @@ void new_draw_info(const int flags, const int pri, const object *const pl, const
     if (!buf) /* should not happen - generate save string and LOG it */
     {
         LOG(llevBug, "BUG:: new_draw_info: NULL string send! %s (%x - %d)\n", query_name(pl), flags, pri);
-		return;
+        return;
     }
 
     /* here we handle global messages - still not sure i want this here */
@@ -63,14 +63,14 @@ void new_draw_info(const int flags, const int pri, const object *const pl, const
     {
         player *tmppl;
         for (tmppl = first_player; tmppl != NULL; tmppl = tmppl->next)
-		{
-			if(tmppl->state != ST_DEAD && tmppl->state != ST_ZOMBIE && tmppl->socket.status != Ns_Dead)
-				new_draw_info((flags & ~NDI_ALL), pri, tmppl->ob, buf);
-		}
+        {
+            if(tmppl->state != ST_DEAD && tmppl->state != ST_ZOMBIE && tmppl->socket.status != Ns_Dead)
+                new_draw_info((flags & ~NDI_ALL), pri, tmppl->ob, buf);
+        }
         return;
     }
-    
-    /* Silently refuse messages not to players. 
+
+    /* Silently refuse messages not to players.
      * This lets us skip all ob->type == PLAYER checks all over the code */
     if (!pl || pl->type != PLAYER)
         return;
@@ -117,7 +117,7 @@ void new_draw_info_format(const int flags, const int pri, const object *const pl
 /* we want give msg to all people on one, specific map
  */
 static void new_info_map_all_except(const int color, const mapstruct *const map, const object *const op1,
-									const object *const op, const char *const str)
+                                    const object *const op, const char *const str)
 {
     object *tmp;
 
@@ -242,7 +242,7 @@ void new_info_map(const int color, const mapstruct *const map, const int x, cons
  * write to everyone on the map *except* op and op1.  This is useful for emotions.
  */
 void new_info_map_except(const int color, const mapstruct *const map, const int x, const int y, const int dist,
-						 const  object *const op1, const object *const op, const char *const str)
+                         const  object *const op1, const object *const op, const char *const str)
 {
     int     xt, yt, d;
     object *tmp;

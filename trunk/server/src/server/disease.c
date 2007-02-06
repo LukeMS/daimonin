@@ -521,7 +521,7 @@ int move_symptom(object *symptom)
     if (symptom->stats.dam > 0)
         damage_ob(victim, symptom->stats.dam, symptom, ENV_ATTACK_CHECK);
     else
-        damage_ob(victim, (int) MAX((float) 1, 
+        damage_ob(victim, (int) MAX((float) 1,
                     (float) - victim->stats.maxhp * (float) symptom->stats.dam / (float) 100.0), symptom, ENV_ATTACK_CHECK);
     if (symptom->stats.maxsp > 0)
         sp_reduce = symptom->stats.maxsp;

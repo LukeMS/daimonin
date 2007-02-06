@@ -920,7 +920,7 @@ void material_attack_damage(object *op, int num, int chance, int base)
 
     if(op->type != PLAYER || !(pl = CONTR(op)))
         return;
-   
+
     /*new_draw_info_format(NDI_UNIQUE, 0, op, "num: %d chance:%d base:%d", num,chance,base);*/
     flag_fix = FALSE;
     while(num--)
@@ -930,7 +930,7 @@ void material_attack_damage(object *op, int num, int chance, int base)
             continue;
 
         r = RANDOM() % PLAYER_EQUIP_MAX; /* get a random slot */
- 
+
         /* get the first slot with something in using random start slot */
         for(i=0;i<PLAYER_EQUIP_MAX;i++)
         {
@@ -981,7 +981,7 @@ void material_attack_damage(object *op, int num, int chance, int base)
         /* sanity check */
         if(item->item_condition > 0)
             item->item_condition--;
- 
+
         sprintf(buf, "Your %s is damaged.", query_short_name(item, NULL));
         new_draw_info(NDI_UNIQUE, 0, op, buf);
         esrv_update_item(UPD_QUALITY, op, item);
@@ -1024,7 +1024,7 @@ sint64 material_repair_cost(object *item, object *owner)
 /* repair the item */
 void material_repair_item(object *item, int skill_value)
 {
-    
+
     if(!item->item_quality || item->item_quality <= item->item_condition)
         return;
 
@@ -1038,7 +1038,7 @@ void material_repair_item(object *item, int skill_value)
         {
             /* float to cover small changes in the value */
             float tmp = ((float)item->value) / (float)item->item_quality;
-            item->value -= (sint64) tmp; 
+            item->value -= (sint64) tmp;
         }
         else
         {

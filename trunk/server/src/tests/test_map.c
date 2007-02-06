@@ -23,7 +23,7 @@
     The author can be reached via e-mail to daimonin@nord-com.net
 */
 
-/* test_map.c 
+/* test_map.c
  * Copyright (C) 2005 Björn Axelsson
  */
 
@@ -44,21 +44,21 @@ START_TEST (map_loading)
 {
     const char *path = add_string("/dev/unit_tests/test_maploader");
     mapstruct *map;
-    
+
 
     fail_unless(has_been_loaded_sh(path) == NULL, "Map already loaded");
-    
+
     map = ready_map_name(NULL, path, MAP_STATUS_MULTI, NULL);
     fail_unless(has_been_loaded_sh(path) != NULL, "Map not loaded");
     fail_unless(map != NULL, "Couldn't load %s", path);
     fail_unless(strcmp(map->path, path) == 0, "Wierd path");
     fail_unless(map->path == path, "non-shared path");
     fail_if(strcmp(map->name, "Testmap") != 0, "Not the testmap");
-    
+
     delete_map(map);
     fail_unless(has_been_loaded_sh(path) == NULL, "Map still loaded");
     FREE_ONLY_HASH(path);
-    
+
     fail_if(memleak_detected(), "Memory leak detected");
 }
 END_TEST
@@ -107,7 +107,7 @@ Suite *map_suite(void)
   TCase *tc_core = tcase_create("Core");
 
   tcase_add_checked_fixture(tc_core, setup, dummy_teardown);
-  
+
   suite_add_tcase (s, tc_core);
   tcase_add_test(tc_core, map_loading);
   tcase_add_test(tc_core, path_normalizing);

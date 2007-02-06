@@ -23,7 +23,7 @@
     The author can be reached via e-mail to daimonin@nord-com.net
 */
 
-/* this module is mostly unused from Daimonin. 
+/* this module is mostly unused from Daimonin.
  * We serve pictures a bit different, have only one set
  * and in future we will drop sending faces because we have
  * for that with the autoupdater a better system
@@ -309,13 +309,13 @@ void SendFaceCmd(char *buff, int len, NewSocket *ns)
     long    tmpnum;
     short   facenum;
 
-	if (!buff || !len)
-		return;
+    if (!buff || !len)
+        return;
 
-	tmpnum  = atoi(buff);
-	facenum = (short)(tmpnum & 0xffff);
+    tmpnum  = atoi(buff);
+    facenum = (short)(tmpnum & 0xffff);
 
-	if (facenum != 0)
+    if (facenum != 0)
         esrv_send_face(ns, facenum, 1);
 }
 

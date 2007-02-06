@@ -129,7 +129,7 @@ player *get_player(player *p)
     object *op  = NULL;
     int     i;
 
-    /* we need this to assign a "standard player object" - at this 
+    /* we need this to assign a "standard player object" - at this
      * moment a player is login in we have not loaded the player file
      * and no idea about the true object
      */
@@ -299,7 +299,7 @@ void free_player(player *pl)
 
     if (pl->ob)
     {
-        if (!QUERY_FLAG(pl->ob, FLAG_REMOVED)) 
+        if (!QUERY_FLAG(pl->ob, FLAG_REMOVED))
             remove_ob(pl->ob);
 
         /* Force an out-of-loop gc to delete the player object NOW */
@@ -383,7 +383,7 @@ void give_initial_items(object *pl, struct oblnk *items)
         /* now we apply the stuff on default - *very* useful for real new players! */
         else  if(op->type == WEAPON || op->type == AMULET || op->type == RING ||
                 op->type == BOOTS || op->type == HELMET || op->type == BRACERS || op->type == GIRDLE ||
-                op->type == CLOAK || op->type == ARMOUR || op->type == SHIELD || op->type == GLOVES || 
+                op->type == CLOAK || op->type == ARMOUR || op->type == SHIELD || op->type == GLOVES ||
                 op->type == SHIELD || op->type == GLOVES)
         {
             if (need_identify(op))
@@ -392,7 +392,7 @@ void give_initial_items(object *pl, struct oblnk *items)
                 CLEAR_FLAG(op, FLAG_CURSED);
                 CLEAR_FLAG(op, FLAG_DAMNED);
             }
-            manual_apply(pl, op,0); 
+            manual_apply(pl, op,0);
         }
 
         /* Give starting characters identified, uncursed, and undamned
@@ -409,7 +409,7 @@ void give_initial_items(object *pl, struct oblnk *items)
 }
 
 
-/* 
+/*
  * value can be:
  * 0= name is not taken, no player with that name in the system
  * 1= name is blocked and login to this name is not allowed (is in creating or system use)

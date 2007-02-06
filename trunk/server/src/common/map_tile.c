@@ -86,7 +86,7 @@ void update_position(mapstruct *m, MapSpace *mspace, int x, int y)
             if (QUERY_FLAG(tmp, FLAG_ALIVE))
             {
                 flags |= P_IS_ALIVE;
-                if(tmp->type==MONSTER && OBJECT_VALID(tmp->owner, tmp->owner_count) && 
+                if(tmp->type==MONSTER && OBJECT_VALID(tmp->owner, tmp->owner_count) &&
                     tmp->owner->type == PLAYER)
                     flags |= P_IS_PLAYER_PET;
             }
@@ -138,7 +138,7 @@ void update_position(mapstruct *m, MapSpace *mspace, int x, int y)
             /* This is set by the floor to node code now
             if (QUERY_FLAG(tmp, FLAG_IS_FLOOR))
             move_flags |= tmp->terrain_type;
-            */ 
+            */
         } /* for stack of objects */
 
         if (((oldflags & ~(P_FLAGS_UPDATE | P_FLAGS_ONLY | P_NO_ERROR)) != flags) && (!(oldflags & P_NO_ERROR)))
@@ -162,7 +162,7 @@ void update_position(mapstruct *m, MapSpace *mspace, int x, int y)
     mp->client_mlayer[0] = 0; /* ALWAYS is client layer 0 (cl0) a floor. force it */
     mp->client_mlayer_inv[0] = 0;
 
-    /* disabled my floor/mask node patch 
+    /* disabled my floor/mask node patch
     if (mp->mask)
     {
     mp->client_mlayer[1] = 1;
@@ -225,7 +225,7 @@ void update_position(mapstruct *m, MapSpace *mspace, int x, int y)
     }
 
     /* clear out all need update flags */
-    SET_MAP_FLAGS(m, x, y, GET_MAP_FLAGS(m, x, y) & ~(P_NEED_UPDATE | P_FLAGS_UPDATE)); 
+    SET_MAP_FLAGS(m, x, y, GET_MAP_FLAGS(m, x, y) & ~(P_NEED_UPDATE | P_FLAGS_UPDATE));
 }
 
 /*
@@ -637,9 +637,9 @@ static inline mapstruct * load_and_link_tiled_map(mapstruct *orig_map, int tile_
 {
     /* Nowadays the loader keeps track of tiling. Gecko 2006-12-31 */
     mapstruct *map = ready_map_name( orig_map->tile_path[tile_num],
-           orig_map->orig_tile_path[tile_num], MAP_STATUS_TYPE(orig_map->map_status), 
+           orig_map->orig_tile_path[tile_num], MAP_STATUS_TYPE(orig_map->map_status),
            orig_map->reference);
-    
+
     /* If loading or linking failed */
     if(map == NULL || map != orig_map->tile_map[tile_num])
     {
@@ -660,9 +660,9 @@ static inline mapstruct * load_and_link_tiled_map(mapstruct *orig_map, int tile_
 *
 * This function does not work well with assymetrically tiled maps.
 *
-* To increase efficiency, maps can have precalculated tileset_id:s and 
+* To increase efficiency, maps can have precalculated tileset_id:s and
 * coordinates, which are used if available. If one or more of the two
-* maps lack this data, a slow non-exhaustive breadth-first search 
+* maps lack this data, a slow non-exhaustive breadth-first search
 * is attempted.
 */
 static int relative_tile_position(mapstruct *map1, mapstruct *map2, int *x, int *y)
@@ -1114,8 +1114,8 @@ mapstruct * out_of_map2(mapstruct *m, int *x, int *y)
     return NULL;
 }
 
-/** Get distance and direction between two objects. 
-* TODO: this should probably be replaced with a macro or an inline function 
+/** Get distance and direction between two objects.
+* TODO: this should probably be replaced with a macro or an inline function
 * Note: this function was changed from always calculating euclidian distance to
 * defaulting to calculating manhattan distance. Gecko 20050714
 * @see get_rangevector_full
@@ -1130,7 +1130,7 @@ int get_rangevector(object *op1, object *op2, rv_vector *retval, int flags)
 
 /** Get distance and direction between two coordinates.
 * Never adjusts for multipart objects (since objects are unknown)
-* TODO: this should probably be replaced with a macro or an inline function 
+* TODO: this should probably be replaced with a macro or an inline function
 * @see get_rangevector_full
 */
 int get_rangevector_from_mapcoords(
@@ -1141,7 +1141,7 @@ int get_rangevector_from_mapcoords(
     return get_rangevector_full(NULL, map1, x1, y1, NULL, map2, x2, y2, retval, flags);
 }
 
-/** Get distance and direction between two points. 
+/** Get distance and direction between two points.
 * This is the base for all get_rangevector_* functions. It can compute the
 * rangevector between any two points on any maps, with or without adjusting
 * for multipart objects.
@@ -1301,7 +1301,7 @@ int get_rangevector_full(
 int on_same_tileset(object *op1, object *op2)
 {
     if (!op1->map || !op2->map)
-        return FALSE;   
+        return FALSE;
 
     /* This is the fallback in case the tileset data is
     * unavailable */
@@ -1355,7 +1355,7 @@ int in_same_instance(mapstruct *m1, mapstruct *m2)
         else
             return FALSE;
     }
-    
+
     /* Unique maps? */
     if(MAP_UNIQUE(m1) && MAP_UNIQUE(m2))
     {
@@ -1365,13 +1365,13 @@ int in_same_instance(mapstruct *m1, mapstruct *m2)
         else
             return FALSE;
     }
-    
+
     /* Different types */
     return FALSE;
 }
 
 /* transfer all items from one instance apartment to another.
-* put them on spot x,y 
+* put them on spot x,y
 */
 void map_transfer_apartment_items(mapstruct *map_old, mapstruct * map_new, int x, int y)
 {

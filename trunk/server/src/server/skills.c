@@ -759,7 +759,7 @@ int use_oratory(object *pl, int dir)
 {
     LOG(llevBug, "BUG: unimplemented oratory skill used\n");
     /* TODO: update for the new AI and pet systems. Gecko 2006-04-30 */
-#if 0        
+#if 0
     int x = pl->x + freearr_x[dir], y = pl->y + freearr_y[dir], chance;
     int             stat1   = get_skill_stat1(pl);
     object         *tmp;
@@ -800,7 +800,7 @@ int use_oratory(object *pl, int dir)
             new_draw_info_format(NDI_UNIQUE, 0, pl, "Too bad the %s isn't listening!\n", query_name(tmp));
             return 0;
         }
-        
+
         /* it's already allied! */
         if (QUERY_FLAG(tmp, FLAG_FRIENDLY) && (tmp->move_type == PETMOVE))
         {
@@ -848,7 +848,7 @@ int use_oratory(object *pl, int dir)
             CLEAR_FLAG(tmp, FLAG_UNAGGRESSIVE);
         }
     } /* For loop cyclign through the objects on this space */
-#endif        
+#endif
     return 0;   /* Fall through - if we get here, we didn't charm anything */
 }
 
@@ -867,7 +867,7 @@ int singing(object *pl, int dir)
     LOG(llevBug, "BUG: unimplemented singing skill used\n");
     return 0;
     /* TODO: update for the new AI and pet systems. Gecko 2006-05-01 */
-#if 0        
+#if 0
     int         xt, yt, i, exp = 0, stat1 = get_skill_stat1(pl), chance;
     object     *tmp;
     mapstruct  *m;
@@ -937,7 +937,7 @@ int singing(object *pl, int dir)
         }
     }
     return exp;
-#endif    
+#endif
 }
 
 /* This skill allows the player to regain a few sp or hp for a
@@ -1517,11 +1517,11 @@ object * find_throw_tag(object *op, tag_t tag)
         /* can't toss invisible items */
         if (IS_SYS_INVISIBLE(tmp))
             continue;
-        
+
         if (tmp->count == tag)
         {
             /* Can't throw locked items */
-            if(QUERY_FLAG(tmp, FLAG_INV_LOCKED)) 
+            if(QUERY_FLAG(tmp, FLAG_INV_LOCKED))
             {
                 new_draw_info_format(NDI_UNIQUE, 0, op, "You can't throw %s. It is locked.", query_base_name(tmp, op));
                 return NULL;
@@ -1914,7 +1914,7 @@ void do_throw(object *op, object *toss_item, int dir)
         {
             op->chosen_skill->stats.maxsp = throw_ob->last_grace;
             /* i don't want overpower the throwing - so dam_bonus/2 */
-            throw_ob->stats.dam = 
+            throw_ob->stats.dam =
                 FABS((int)(((float)(throw_ob->stats.dam + (dam_bonus[op->stats.Str]/2))* lev_damage[SK_level(op)])/10.0f));
 
             /* hm, i want not give to much boni for str */

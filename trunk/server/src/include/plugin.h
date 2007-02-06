@@ -257,8 +257,8 @@ struct plugin_hooklist
     void (*new_draw_info)(const int, const int, const object *const , const char *const);
     void (*new_draw_info_format)(const int, const int, const object *const, const char *const, ...);
     void (*new_info_map)(const int, const mapstruct *const, const int, const int, const int, const char *const);
-    void (*new_info_map_except)(const int, const mapstruct *const, const int, const int, const int, 
-		  const object *const, const object *const, const char *const);
+    void (*new_info_map_except)(const int, const mapstruct *const, const int, const int, const int,
+          const object *const, const object *const, const char *const);
     int (*map_brightness)(mapstruct *, int, int);
     int (*wall)(mapstruct *, int, int);
     void (*free_string_shared)(const char *);
@@ -267,7 +267,7 @@ struct plugin_hooklist
 #ifdef DEBUG_FIX_PLAYER
     void (*fix_player)(object *, char *msg);
 #else
-	void (*fix_player)(object *);
+    void (*fix_player)(object *);
 #endif
     void (*esrv_send_item)(object *, object *);
     void (*esrv_send_inventory)(object *, object *);
@@ -278,9 +278,9 @@ struct plugin_hooklist
     object*(*insert_ob_in_map)(object * const, mapstruct *, object *const, const int);
     int (*move_ob)(object *, int, object *);
     void (*free_mempool)(struct mempool *);
-	struct mempool * (*create_mempool)(const char *description, uint32 expand, uint32 size,
-		uint32 flags, chunk_initialisator initialisator, chunk_deinitialisator deinitialisator,
-		chunk_constructor constructor, chunk_destructor destructor);
+    struct mempool * (*create_mempool)(const char *description, uint32 expand, uint32 size,
+        uint32 flags, chunk_initialisator initialisator, chunk_deinitialisator deinitialisator,
+        chunk_constructor constructor, chunk_destructor destructor);
     uint32 (*nearest_pow_two_exp)(uint32);
     void (*return_poolchunk_array_real)(void *, uint32, struct mempool *);
     void*(*get_poolchunk_array_real)(struct mempool *, uint32);
@@ -316,30 +316,30 @@ struct plugin_hooklist
     sint64 (*remove_money_type)(object *, object *, sint64, sint64);
     void (*insert_money_in_player)(object *, object *, uint32);
     int (*add_pet)(object *, object *, int);
-	sint64 (*material_repair_cost)(object *, object *);
-	void (*material_repair_item)(object *, int);
-	char * (*query_short_name)(const object *const, const object *const);
-	artifact * (*find_artifact)(const char *);
-	void (*give_artifact_abilities)(object *, artifact *);
-	const char * (*find_string)(const char *);
-	uint32 (*get_nrof_quest_item)(const struct obj *, const char *, const char *, const char *);
-	object * (*is_player_inv)(object *);
-	void (*gui_interface)(object *, int, const char *, const char *);
-	int (*quest_count_pending)(const struct obj *);
-	struct obj *(*quest_find_name)(const struct obj *, const char *);
-	object * (*guild_get)(player *, char *);
-	object * (*guild_join)(player *, char *, int, int, int, int, int, int);
-	void (*guild_leave)(player *);
+    sint64 (*material_repair_cost)(object *, object *);
+    void (*material_repair_item)(object *, int);
+    char * (*query_short_name)(const object *const, const object *const);
+    artifact * (*find_artifact)(const char *);
+    void (*give_artifact_abilities)(object *, artifact *);
+    const char * (*find_string)(const char *);
+    uint32 (*get_nrof_quest_item)(const struct obj *, const char *, const char *, const char *);
+    object * (*is_player_inv)(object *);
+    void (*gui_interface)(object *, int, const char *, const char *);
+    int (*quest_count_pending)(const struct obj *);
+    struct obj *(*quest_find_name)(const struct obj *, const char *);
+    object * (*guild_get)(player *, char *);
+    object * (*guild_join)(player *, char *, int, int, int, int, int, int);
+    void (*guild_leave)(player *);
     object *(*locate_beacon)(shstr *);
-	void (*free_map)(mapstruct *m, int flag);
-	void (*delete_map)(mapstruct *m);
-	void (*map_transfer_apartment_items)(mapstruct *map_old, mapstruct * map_new, int x, int y);
-	int (*new_save_map)(mapstruct *m, int flag);
-	mapstruct* (*ready_map_name)(const char *name_path,const char *src_path, int flags, shstr *reference);
-	const char* (*create_unique_path_sh)(const object *op, const char *name);
+    void (*free_map)(mapstruct *m, int flag);
+    void (*delete_map)(mapstruct *m);
+    void (*map_transfer_apartment_items)(mapstruct *map_old, mapstruct * map_new, int x, int y);
+    int (*new_save_map)(mapstruct *m, int flag);
+    mapstruct* (*ready_map_name)(const char *name_path,const char *src_path, int flags, shstr *reference);
+    const char* (*create_unique_path_sh)(const object *op, const char *name);
     void  (*reload_behaviours)(object *op);
     void  (*clear_mob_knowns)(object *op, struct mob_known_obj **first, hashtable *ht);
-    
+
     hashtable *(*hashtable_new)(hashtable_size_t (*hash_func)(const hashtable_const_key_t), int (*equals_func)(const hashtable_const_key_t, const hashtable_const_key_t), hashtable_const_key_t deleted_key, hashtable_const_key_t empty_key, hashtable_size_t num_buckets);
     void (*hashtable_delete)(hashtable *ht);
     void (*hashtable_clear)(hashtable *ht);

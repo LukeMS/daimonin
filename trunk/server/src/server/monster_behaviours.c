@@ -202,12 +202,12 @@ void monster_check_apply(object *mon, object *item)
 }
 
 /** Callback function for successful moves toward a waypoint.
- * Updates the monster's "home" position to its current position, 
+ * Updates the monster's "home" position to its current position,
  * if it got closer to the waypoint than it has been before */
 static void update_home_position_for_wp_move(object *op, int last_movement_dir)
 {
     /* TODO: this needs more testing */
-//    LOG(llevDebug, "%s: best dist %d, last best: %d\n", STRING_OBJ_NAME(op),MOB_PATHDATA(op)->best_distance, MOB_PATHDATA(op)->last_best_distance); 
+//    LOG(llevDebug, "%s: best dist %d, last best: %d\n", STRING_OBJ_NAME(op),MOB_PATHDATA(op)->best_distance, MOB_PATHDATA(op)->last_best_distance);
     if(MOB_PATHDATA(op)->best_distance <= 1
             || MOB_PATHDATA(op)->last_best_distance == -1
             || MOB_PATHDATA(op)->best_distance <  MOB_PATHDATA(op)->last_best_distance)
@@ -228,12 +228,12 @@ static void update_home_position_for_wp_move(object *op, int last_movement_dir)
  * op's attributes should matter a lot here, for example:
  * - lower level lifeforms shouldn't do any estimation at all
  *   (e.g. puddings, insects, etc)
- * - most animals should only consider physical attributes such 
+ * - most animals should only consider physical attributes such
  *   as apparent size and strength
  * - more intelligent mobs should also consider equipment and
  *   use of magic.
- * @return estimated combat strength, always => 0. 
- *  A defenseless tiny creature (smoething like a real-life fly) 
+ * @return estimated combat strength, always => 0.
+ *  A defenseless tiny creature (smoething like a real-life fly)
  *  should have a combat strength of 0.
  */
 int estimate_combat_strength(object *op, object *other)
@@ -241,7 +241,7 @@ int estimate_combat_strength(object *op, object *other)
     int level = other->level;
     int health = (op->stats.hp * 100) / op->stats.maxhp; /* health in % */
     int cs;
-    
+
 /* TODO: need an efficient way of detecting poison or (deadly) sickness
  * if(QUERY_FLAG(other, FLAG_POISONED))
         other->health -= 10;
@@ -255,10 +255,10 @@ int estimate_combat_strength(object *op, object *other)
 
 /** Give the relative perceived combat strength between
  * op and other in percent.
- * @return around 100 - matching combat strength, 
- *   >100 other is stronger (200: other is twice as strong as op), 
+ * @return around 100 - matching combat strength,
+ *   >100 other is stronger (200: other is twice as strong as op),
  *   <100 op is stronger (50: op is twice as strong as other).
- */ 
+ */
 int relative_combat_strength(object *op, object *other)
 {
     /* Update own combat strength if needed */
@@ -268,7 +268,7 @@ int relative_combat_strength(object *op, object *other)
         /* Make sure never <= 0 */
         MOB_DATA(op)->combat_strength = MAX(MOB_DATA(op)->combat_strength, 1);
     }
-        
+
     return estimate_combat_strength(op, other) * 100 / MOB_DATA(op)->combat_strength;
 }
 
@@ -277,7 +277,7 @@ int relative_combat_strength(object *op, object *other)
  * @param op object to calculate the center for
  * @param dx return variable for relative x location of attraction center
  * @param dy return variable for relative y location of attraction center
- * @return attraction sum. if negative, the coordinate is dangerous. 
+ * @return attraction sum. if negative, the coordinate is dangerous.
  *         if positive, the coordinate is safe. The size of the value
  *         indicates the relative combat strength around the point.
  */
@@ -285,12 +285,12 @@ int assess_tactical_situation(object *op, int *dx, int *dy)
 {
     struct mob_known_obj *tmp;
     int weight_sum = 0;
-    
+
     unsigned int max_distance = 10; /* TODO: parameterize? */
-    
+
     *dx = 0;
     *dy = 0;
-    
+
     for(tmp = MOB_DATA(op)->known_mobs; tmp; tmp = tmp->next)
     {
         rv_vector *rv = get_known_obj_rv(op, tmp, MAX_KNOWN_OBJ_RV_AGE);
@@ -300,7 +300,7 @@ int assess_tactical_situation(object *op, int *dx, int *dy)
             int weight = tmp->tmp_attraction - (tmp->tmp_attraction * (int)(rv->distance * rv->distance)) / (max_distance * max_distance);
             *dx += rv->distance_x * weight;
             *dy += rv->distance_y * weight;
-            LOG(llevDebug, "%s -> %s, attraction: %d, distance: %d, weight: %d\n", 
+            LOG(llevDebug, "%s -> %s, attraction: %d, distance: %d, weight: %d\n",
                     STRING_OBJ_NAME(op), STRING_OBJ_NAME(tmp->obj), tmp->tmp_attraction, rv->distance, weight);
             weight_sum += weight;
         }
@@ -311,7 +311,7 @@ int assess_tactical_situation(object *op, int *dx, int *dy)
         *dx /= weight_sum;
         *dy /= weight_sum;
     }
-    
+
     return weight_sum;
 }
 
@@ -321,11 +321,11 @@ int assess_tactical_situation(object *op, int *dx, int *dy)
  */
 
 /** Pseudobehaviour to calculate the attraction/repulsion of one monster towards another object.
- * Attraction is controlled by the "attraction" behaviour. 
+ * Attraction is controlled by the "attraction" behaviour.
  * @param op the monster to calculate attraction for
  * @param other the object to calculate attraction towards
  * @return a positive (attraction) or negative (repulsion) value, or zero (indifference / "don't care")
- * @todo there's much duplicated code between this and get_npc_mob_attitude(). 
+ * @todo there's much duplicated code between this and get_npc_mob_attitude().
  * Any suggestions?
  * @see the "attraction" behaviour.
  */
@@ -343,7 +343,7 @@ int get_npc_object_attraction(object *op, object *other)
         LOG(llevBug, "BUG: get_npc_object_attraction() object %s is not a monster (type=%d)\n",
                 STRING_OBJ_NAME(op), op->type);
     }
-        
+
     attractions = MOB_DATA(op)->behaviours->attractions;
 
     if(attractions == NULL)
@@ -370,7 +370,7 @@ int get_npc_object_attraction(object *op, object *other)
                 attraction += tmp->intvalue;
         }
     }
-    
+
     /* Numbered type attitude */
     if(attractions[AIPARAM_ATTRACTION_TYPE].flags & AI_PARAM_PRESENT)
     {
@@ -381,7 +381,7 @@ int get_npc_object_attraction(object *op, object *other)
                 attraction += tmp->intvalue;
         }
     }
-    
+
     /* cursed object attitude */
     if(attractions[AIPARAM_ATTRACTION_CURSEDTYPE].flags & AI_PARAM_PRESENT)
     {
@@ -409,12 +409,12 @@ int get_npc_object_attraction(object *op, object *other)
 
 
 /** Help function to calculate the base friendship/hate ("attitude") of one monster towards another.
- * Attitude is partly controlled by the "friendship" behaviour parameters, but also 
- * by "petness". If there's no "friendship" behaviour to get parameters from, it falls back to 
+ * Attitude is partly controlled by the "friendship" behaviour parameters, but also
+ * by "petness". If there's no "friendship" behaviour to get parameters from, it falls back to
  * the alignment ("friendly"/"non-friendly" flag).
- * Friendship is also dynamically modified by mobs' actions, so this function is only part of 
+ * Friendship is also dynamically modified by mobs' actions, so this function is only part of
  * the puzzle.
- * 
+ *
  * @param op the monster/player to calculate friendship for
  * @param other the object to calculate friendship towards
  * @return a positive (friendship) or negative (hate) value, or zero (neutral)
@@ -432,51 +432,51 @@ int get_npc_attitude(object *op, object *other)
                 STRING_OBJ_NAME(op), STRING_OBJ_NAME(other));
         return 0;
     }
-    
+
     if(op->head)
         op = op->head;
     if(other->head)
-        other = other->head;    
-        
+        other = other->head;
+
     /* If we are asked about a player's attitude to something,
      * see if we can do a reverse lookup */
     if(op->type != MONSTER)
-    {   
+    {
         LOG(llevBug, "BUG: get_npc_attitude('%s','%s') called for non-monster\n",
                 STRING_OBJ_NAME(op), STRING_OBJ_NAME(other));
-    } 
+    }
     else if(MOB_DATA(op) == NULL)
     {
         LOG(llevDebug, "Warning: AI not initialized when requesting attitude of monster '%s' towards '%s'.\n",
                 STRING_OBJ_NAME(op), STRING_OBJ_NAME(other));
         return 0;
     }
-        
+
     /* pet to pet and pet to owner attitude */
     if(op->owner && op->owner == other->owner && op->owner_count == other->owner_count)
         friendship += FRIENDSHIP_HELP;
     else if(op->owner == other && op->owner_count == other->count)
         friendship += FRIENDSHIP_PET;
-    
+
     attitudes = MOB_DATA(op)->behaviours->attitudes;
 
-    if(attitudes == NULL) 
+    if(attitudes == NULL)
     {
         /* Default alignment handling */
         if (QUERY_FLAG(op, FLAG_FRIENDLY) == QUERY_FLAG(other, FLAG_FRIENDLY))
             friendship += FRIENDSHIP_HELP;
-        else 
+        else
             friendship += FRIENDSHIP_ATTACK;
-        
+
         return friendship;
     }
 
     /* Configurable alignment attitudes */
     if (QUERY_FLAG(op, FLAG_FRIENDLY) == QUERY_FLAG(other, FLAG_FRIENDLY))
         friendship += attitudes[AIPARAM_FRIENDSHIP_SAME_ALIGNMENT].intvalue;
-    else 
+    else
         friendship += attitudes[AIPARAM_FRIENDSHIP_OPPOSITE_ALIGNMENT].intvalue;
-    
+
     /* Race attitude */
     if(attitudes[AIPARAM_FRIENDSHIP_RACE].flags & AI_PARAM_PRESENT)
     {
@@ -568,7 +568,7 @@ int get_npc_attitude(object *op, object *other)
 
 
 /** Request the friendship between op and other.
-* Calculates the friendship between any two players, npcs and/or 
+* Calculates the friendship between any two players, npcs and/or
 * monsters. Takes monster memory, AI settings, pet status and PvP status
 * in consideration.
 * @param op object to calculate friendship for
@@ -591,14 +591,14 @@ int get_friendship(object *op, object *other)
     if(op->head)
         op = op->head;
     if(other->head)
-        other = other->head;    
+        other = other->head;
 
     if(op->type == MONSTER)
     {
         struct mob_known_obj *known;
 
         /* Do we know anything? */
-        if(MOB_DATA(op) == NULL) 
+        if(MOB_DATA(op) == NULL)
         {
             LOG(llevDebug, "Warning: AI not initialized when requesting friendship of monster '%s' towards '%s'.\n",
                     STRING_OBJ_NAME(op), STRING_OBJ_NAME(other));
@@ -612,7 +612,7 @@ int get_friendship(object *op, object *other)
 
         /* Calculate it then */
         return get_npc_attitude(op, other);
-    } 
+    }
     else if (op->type == PLAYER)
     {
         /* Try reverse lookup */
@@ -621,13 +621,13 @@ int get_friendship(object *op, object *other)
         else if (other->type == PLAYER)
         {
             /* Check for PvP. TODO: group PvP */
-            if ((GET_MAP_FLAGS(op->map, op->x, op->y) & P_IS_PVP || op->map->map_flags & MAP_FLAG_PVP) 
+            if ((GET_MAP_FLAGS(op->map, op->x, op->y) & P_IS_PVP || op->map->map_flags & MAP_FLAG_PVP)
                     && ((GET_MAP_FLAGS(other->map, other->x, other->y) & P_IS_PVP) || (other->map->map_flags & MAP_FLAG_PVP)))
                 return FRIENDSHIP_NEUTRAL;
             else
                 return FRIENDSHIP_HELP;
-        } 
-        else 
+        }
+        else
         {
 #ifdef DEBUG_FRIENDSHIP_WARNING
             LOG(llevDebug, "Warning: get_friendship('%s':player, '%s') with non-player/monster other.\n",
@@ -636,10 +636,10 @@ int get_friendship(object *op, object *other)
             return 0;
         }
     }
-    
+
     /* Unhandled op types are for example POISON, DISEASE */
 
-    return 0; 
+    return 0;
 }
 
 
@@ -695,12 +695,12 @@ void ai_move_randomly(object *op, struct mob_behaviour_param *params, move_respo
             if(!get_rangevector_full(NULL, basemap, base->x, base->y, op, op->map, op->x, op->y, &rv, RV_NO_DISTANCE))
                 basemap = NULL;
     }
-    
+
     /* Give up to 8 chances for a monster to move randomly */
     for (i = 0; i < 8; i++)
     {
         int t = dirs[i];
-        
+
         /* Perform a single random shuffle of the remaining directions */
         r = i+(RANDOM() % (8-i));
         dirs[i] = dirs[r];
@@ -750,8 +750,8 @@ void ai_move_towards_owner(object *op, struct mob_behaviour_param *params, move_
 
     rv = get_known_obj_rv(op, MOB_DATA(op)->owner, MAX_KNOWN_OBJ_RV_AGE);
     if(! rv)
-        return;    
-    
+        return;
+
     /* TODO: parameterize */
     if(rv->distance < 8)
     {
@@ -759,20 +759,20 @@ void ai_move_towards_owner(object *op, struct mob_behaviour_param *params, move_
         if(rv->distance < 4)
         {
             int rest_chance;
-            if(op->anim_moving_dir == -1) 
+            if(op->anim_moving_dir == -1)
                 /* Already resting? high chance of staying. */
                 rest_chance = 85;
             else
                 rest_chance = 40 - rv->distance * 10;
 
-            if((RANDOM() % 100) < rest_chance) 
+            if((RANDOM() % 100) < rest_chance)
             {
                 response->type = MOVE_RESPONSE_DIR;
                 response->data.direction = 0;
                 return;
             }
         }
-        
+
         /* The further from owner, the lesser chance to
          * stroll randomly */
         if((RANDOM() % (8-rv->distance)) > 2)
@@ -790,7 +790,7 @@ void ai_move_towards_owner(object *op, struct mob_behaviour_param *params, move_
     /* Update the pet's home position to the owner's current position */
     base->x = op->owner->x;
     base->y = op->owner->y;
-    FREE_AND_ADD_REF_HASH(base->slaying, op->owner->map->orig_path); 
+    FREE_AND_ADD_REF_HASH(base->slaying, op->owner->map->orig_path);
 }
 
 void ai_move_towards_home(object *op, struct mob_behaviour_param *params, move_response *response)
@@ -825,10 +825,10 @@ void ai_investigate_attraction(object *op, struct mob_behaviour_param *params, m
 {
     int max_attraction = 0;
     struct mob_known_obj *max_attractor = NULL, *tmp;
-    
+
     if(MOB_DATA(op)->known_objs == NULL)
         return;
-    
+
     /* Find known_obj with highest attraction. TODO: consider distance too */
     for(tmp = MOB_DATA(op)->known_objs; tmp; tmp = tmp->next)
     {
@@ -843,7 +843,7 @@ void ai_investigate_attraction(object *op, struct mob_behaviour_param *params, m
     {
         rv_vector  *rv  = get_known_obj_rv(op, max_attractor, MAX_KNOWN_OBJ_RV_AGE);
         LOG(llevDebug, "  %s investigating %s\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(max_attractor->obj));
-        
+
         if(rv)
         {
             if (rv->distance <= 1)
@@ -853,8 +853,8 @@ void ai_investigate_attraction(object *op, struct mob_behaviour_param *params, m
 
                 if(MOB_DATA(op)->idle_time > 4)
                     max_attractor->attraction = 0;
-            } 
-            else 
+            }
+            else
             {
                 response->type = MOVE_RESPONSE_OBJECT;
                 response->data.target.obj = max_attractor->obj;
@@ -870,7 +870,7 @@ void ai_investigate_attraction(object *op, struct mob_behaviour_param *params, m
 void ai_avoid_repulsive_items(object *op, struct mob_behaviour_param *params, move_response *response)
 {
     struct mob_known_obj *tmp;
-    
+
     /* Find nearby repulsive known_objs */
     for(tmp = MOB_DATA(op)->known_objs; tmp; tmp = tmp->next)
     {
@@ -885,7 +885,7 @@ void ai_avoid_repulsive_items(object *op, struct mob_behaviour_param *params, mo
     }
 }
 
-/** Useful if mob is much slower than enemy? 
+/** Useful if mob is much slower than enemy?
  * @note experimental. not finished, tested or used */
 void ai_step_back_after_swing(object *op, struct mob_behaviour_param *params, move_response *response)
 {
@@ -1206,7 +1206,7 @@ void ai_move_towards_waypoint(object *op, struct mob_behaviour_param *params, mo
         if(WP_BEACON(wp))
         {
             target = locate_beacon(WP_BEACON(wp));
-            if(target) 
+            if(target)
             {
                 while(target->env)
                     target = target->env;
@@ -1222,11 +1222,11 @@ void ai_move_towards_waypoint(object *op, struct mob_behaviour_param *params, mo
                 try_next_wp = 1;
             }
         }
-        else 
+        else
         {
             wp_x = WP_X(wp);
             wp_y = WP_Y(wp);
-            if(WP_MAP(wp) && *WP_MAP(wp) != '\0') 
+            if(WP_MAP(wp) && *WP_MAP(wp) != '\0')
             {
                 destmap = ready_inherited_map(op->map, WP_MAP(wp), 0);
                 if(destmap && destmap->orig_path != WP_MAP(wp))
@@ -1235,7 +1235,7 @@ void ai_move_towards_waypoint(object *op, struct mob_behaviour_param *params, mo
             else
                 destmap = op->map;
         }
-        
+
 #ifdef DEBUG_AI_WAYPOINT
         LOG(llevDebug, "FOUND waypoint(): '%s' has active waypoint '%s'\n",
                 STRING_OBJ_NAME(op), STRING_OBJ_NAME(wp));
@@ -1442,7 +1442,7 @@ void ai_look_for_objects(object *op, struct mob_behaviour_param *params)
     int dx, dy, x, y;
     int sense_range;
     mapstruct *m;
-    
+
     /* initialize hashtable if needed */
     if(MOB_DATA(op)->known_objs_ht == NULL)
         MOB_DATA(op)->known_objs_ht = pointer_hashtable_new(32);
@@ -1468,7 +1468,7 @@ void ai_look_for_objects(object *op, struct mob_behaviour_param *params)
                 for(; tmp; tmp = tmp->above)
                 {
                     struct mob_known_obj *known;
-                    /* TODO: filter out pointless objects 
+                    /* TODO: filter out pointless objects
                      * (monster, player, sys_invisible, decoration, etc) */
                     if(tmp->type == MONSTER || tmp->type == PLAYER ||
                             QUERY_FLAG(tmp, FLAG_SYS_OBJECT))
@@ -1482,11 +1482,11 @@ void ai_look_for_objects(object *op, struct mob_behaviour_param *params)
                         if(attraction) {
                             register_npc_known_obj(op, tmp, 0, attraction);
 #if defined DEBUG_AI
-                            LOG(llevDebug, "attraction of '%s' -> '%s': %d\n", 
+                            LOG(llevDebug, "attraction of '%s' -> '%s': %d\n",
                                     STRING_OBJ_NAME(op), STRING_OBJ_NAME(tmp), attraction);
-#endif                            
+#endif
                         }
-    
+
                     } else
                         update_npc_known_obj(known, 0, 0);
                 }
@@ -1644,7 +1644,7 @@ void ai_attraction(object *op, struct mob_behaviour_param *params)
         /* Undeads don't deal with dynamic attractions or fears */
         if(op->race == shstr_cons.undead)
             continue;
-        
+
         /* pets are attracted to owners */
         if(op->owner == tmp->obj && op->owner_count == tmp->obj->count)
             tmp->tmp_attraction += ATTRACTION_HOME;
@@ -1659,7 +1659,7 @@ void ai_attraction(object *op, struct mob_behaviour_param *params)
 #if 0
         LOG(llevDebug, "ai_attraction(): %s attraction towards %s: %d\n",
                 STRING_OBJ_NAME(op), STRING_OBJ_NAME(tmp->obj), tmp->tmp_attraction);
-#endif        
+#endif
     }
 
     /* Tactical awareness work-in-progress temporarily disabled. Gecko 2006-04-19 */
@@ -1670,7 +1670,7 @@ void ai_attraction(object *op, struct mob_behaviour_param *params)
         LOG(llevDebug, "ai_attraction(): %s (%d) tacsit: %d@%d,%d\n",
                 STRING_OBJ_NAME(op), op->count, sum, dx, dy);
     }
-#endif        
+#endif
 }
 
 /* TODO: parameterize MAX_IDLE_TIME */
@@ -1680,8 +1680,8 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
 {
     object                 *oldenemy    = op->enemy;
     struct mob_known_obj   *tmp, *worst_enemy = NULL;
-    int antilure_dist_2 = AIPARAM_INT(AIPARAM_CHOOSE_ENEMY_ANTILURE_DISTANCE); 
-    object *base = NULL; 
+    int antilure_dist_2 = AIPARAM_INT(AIPARAM_CHOOSE_ENEMY_ANTILURE_DISTANCE);
+    object *base = NULL;
     mapstruct *base_map = NULL;
 
     /* We won't look for enemies if we are unaggressive */
@@ -1698,13 +1698,13 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
         /* Try to find a legal home map */
         base = find_base_info_object(op);
 
-        /* crashed on testserver - give log mesg */ 
+        /* crashed on testserver - give log mesg */
         if(!base)
             LOG(llevDebug, "BUG: ai_choose_enemy(%s)> no base info object!\n", query_name(op));
         else
         {
             if(base->slaying)
-                if ((base_map = has_been_loaded_sh(base->slaying))) 
+                if ((base_map = has_been_loaded_sh(base->slaying)))
                     if (base_map->in_memory != MAP_IN_MEMORY)
                         base_map = NULL;
 
@@ -1712,7 +1712,7 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
             antilure_dist_2 = antilure_dist_2 * antilure_dist_2;
         }
     }
-        
+
     /* Go through list of known mobs and choose the most hated
      * that we can get to.
      */
@@ -1740,7 +1740,7 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
                             MOB_DATA(op)->antiluring_timer--;
                             if(MOB_DATA(op)->antiluring_timer <= 0)
                             {
-#ifdef DEBUG_AI                            
+#ifdef DEBUG_AI
                                 LOG(llevDebug, "ai_choose_enemy() '%s' ignoring '%s' - too far from home\n",
                                         query_name(op), query_name(tmp->obj));
 #endif
@@ -1782,7 +1782,7 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
     if (op->enemy != oldenemy)
     {
         MOB_DATA(op)->idle_time = 0;
-        
+
         if (op->enemy)
         {
             if (!QUERY_FLAG(op, FLAG_FRIENDLY) && op->map)
@@ -1791,7 +1791,7 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
             /* Notify player about target */
             if(op->type == MONSTER && OBJECT_VALID(op->owner, op->owner_count) && op->owner->type == PLAYER)
                 new_draw_info_format(NDI_UNIQUE, 0, op->owner, "Your %s is attacking %s", query_name(op), query_name(op->enemy));
-            
+
             /* The unaggressives look after themselves 8) */
             /* TODO: Make a separate behaviour... */
             //            if(QUERY_FLAG(op,FLAG_UNAGGRESSIVE)) {

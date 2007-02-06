@@ -1839,7 +1839,7 @@ int nrof_readable_titles()
     titlelist      *tlist;
     title          *title1;
 
-    int nr = 0; 
+    int nr = 0;
     for (tlist = booklist; tlist != NULL; tlist = tlist->next)
         for (title1 = tlist->first_book; title1; title1 = title1->next)
             nr++;

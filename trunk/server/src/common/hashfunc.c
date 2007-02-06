@@ -15,45 +15,45 @@
  * SuperFastHash
  * (C) Copyright 2004 by Paul Hsieh
  *
- * NOTE: This function's license is _probably_ not GPL compatible. 
+ * NOTE: This function's license is _probably_ not GPL compatible.
  * It is therefore not allowed to include it in binary redistributions
- * of any GPL software. 
+ * of any GPL software.
  * Another, GPL-compatible but slower algorithm is supplied below
  *
  * See http://www.azillionmonkeys.com/qed/hash.html
  *
- * The basic idea of this hash function is to walk the string 16 bits at 
+ * The basic idea of this hash function is to walk the string 16 bits at
  * a time, mixing with a 32-bit internal state; most other hash functions
- * go only 8 bits at a time. This function does only a small amount of 
+ * go only 8 bits at a time. This function does only a small amount of
  * mixing at each step, and then applies some final scrambling at the end.
  * [http://webkit.opendarwin.org/blog/?p=8]
  *
  * Paul Hsieh exposition license
  * The content of all text, figures, tables and displayed layout is copyrighted
- * by its author and owner Paul Hsieh unless specifically denoted otherwise. 
+ * by its author and owner Paul Hsieh unless specifically denoted otherwise.
  * Redistribution is limited to the following conditions:
- * * The redistributor must fully attribute the content's authorship and make 
+ * * The redistributor must fully attribute the content's authorship and make
  *   a good faith effort to cite the original location of the original content.
- * * The content may not be modified via excerpt or otherwise with the 
- *   exception of additional citations such as described above without prior 
+ * * The content may not be modified via excerpt or otherwise with the
+ *   exception of additional citations such as described above without prior
  *   consent of Paul Hsieh.
- * * The content may not be subject to a change in license without prior 
+ * * The content may not be subject to a change in license without prior
  *   consent of Paul Hsieh.
  * * The content may be used for commercial purposes.
  *
  * Paul Hsieh derivative license
- * The derivative content includes raw computer source code, ideas, opinions, 
- * and excerpts whose original source is covered under another license and 
- * transformations of such derivatives. Note that mere excerpts by themselves 
+ * The derivative content includes raw computer source code, ideas, opinions,
+ * and excerpts whose original source is covered under another license and
+ * transformations of such derivatives. Note that mere excerpts by themselves
  * (with the exception of raw source code) are not considered derivative works
- * under this license. Use and redistribution is limited to the following 
+ * under this license. Use and redistribution is limited to the following
  * conditions:
  *
- * * One may not create a derivative work which, in any way, violates the 
+ * * One may not create a derivative work which, in any way, violates the
  *   Paul Hsieh exposition license described above on the original content.
- * * One may not apply a license to a derivative work that precludes anyone 
+ * * One may not apply a license to a derivative work that precludes anyone
  *   else from using and redistributing derivative content.
- * * One may not attribute any derivative content to authors not involved in 
+ * * One may not attribute any derivative content to authors not involved in
  *   the creation of the content, though an attribution to the author is not
  *   necessary.
  */
@@ -118,8 +118,8 @@ uint32_t generic_hash (const char *data, uint32_t len) {
 #else
 
 /* Bob Jenkin's Hash Function
- * Not as fast as SuperFastHash (roughly 50% slower), but with a 
- * more relaxed license 
+ * Not as fast as SuperFastHash (roughly 50% slower), but with a
+ * more relaxed license
  */
 
 typedef  uint32_t ub4;    /* unsigned 4-byte quantities */
@@ -138,16 +138,16 @@ For every delta with one or two bits set, and the deltas of all three
   have at least 1/4 probability of changing.
 * If mix() is run forward, every bit of c will change between 1/3 and
   2/3 of the time.  (Well, 22/100 and 78/100 for some 2-bit deltas.)
-mix() was built out of 36 single-cycle latency instructions in a 
+mix() was built out of 36 single-cycle latency instructions in a
   structure that could supported 2x parallelism, like so:
-      a -= b; 
+      a -= b;
       a -= c; x = (c>>13);
       b -= c; a ^= x;
       b -= a; x = (a<<8);
       c -= a; b ^= x;
       c -= b; x = (b>>13);
       ...
-  Unfortunately, superscalar Pentiums and Sparcs can't take advantage 
+  Unfortunately, superscalar Pentiums and Sparcs can't take advantage
   of that parallelism.  They've also turned some of those single-cycle
   latency instructions into multi-cycle latency instructions.  Still,
   this is the fastest good hash I could find.  There were about 2^^68
@@ -195,7 +195,7 @@ acceptable.  Do NOT use for cryptographic purposes.
 --------------------------------------------------------------------
 */
 
-uint32_t generic_hash (const char *k, uint32_t length) 
+uint32_t generic_hash (const char *k, uint32_t length)
 {
 //    static ub4 initval = 0xdeadbeef; // Just a semi-random initialization
     register ub4 a,b,c, len;
@@ -248,30 +248,30 @@ hashtable *string_hashtable_new(hashtable_size_t num_buckets)
 }
 
 /*
- * Wrapper for string hashing using the above algorithm. 
+ * Wrapper for string hashing using the above algorithm.
  *
  * Hopefully, at least the strlen() call is inlined
- * 
+ *
  * this is limited to generating 32-bit hashes, but that should be ok
  * as long as we don't have more than 2^31 entries in the hash table
  *
  * Unfortunately about 1/5 of the time of this function is the strlen() call
  */
-hashtable_size_t string_hash(const hashtable_const_key_t key) 
+hashtable_size_t string_hash(const hashtable_const_key_t key)
 {
     return generic_hash(key, strlen((const char *)key));
 }
 
 /* Key equality for strings */
 int string_key_equals(const hashtable_const_key_t key1, const hashtable_const_key_t key2)
-{    
+{
     register char __res, *k1 = (char *)key1, *k2 = (char *)key2;
 
     // Try to find a quick answer (see guarantee given about equals() use in hashtable.c)
-    if(key2 == HASH_EMPTY_KEY) 
-        return key1 == HASH_EMPTY_KEY;   
-    else if(key2 == HASH_DELETED_KEY) 
-        return key1 == HASH_DELETED_KEY;   
+    if(key2 == HASH_EMPTY_KEY)
+        return key1 == HASH_EMPTY_KEY;
+    else if(key2 == HASH_DELETED_KEY)
+        return key1 == HASH_DELETED_KEY;
 
     // Fast strcmp() implementation adapted from Linux kernel source (sys/lib/string.c)
     // Copyright (C) 1991, 1992  Linus Torvalds
@@ -288,7 +288,7 @@ int string_key_equals(const hashtable_const_key_t key1, const hashtable_const_ke
  *
  * assumes that the 32 bit value was stored directly in the key
  * (i.e. not pointed to)
- * 
+ *
  * this is limited to generating 32-bit hashes, but that should be ok
  * as long as we don't have more than 2^31 entries in the hash table
  */
@@ -310,7 +310,7 @@ int int32_key_equals(const hashtable_const_key_t key1, const hashtable_const_key
     return key1 == key2;
 }
 
-/* 64-bit hash by Thomas Wang 
+/* 64-bit hash by Thomas Wang
  * Assumes that the key points to something 64-bit wide
  */
 hashtable_size_t int64_hash(const hashtable_const_key_t ptr)
@@ -337,7 +337,7 @@ int int64_key_equals(const hashtable_const_key_t key1, const hashtable_const_key
 hashtable *pointer_hashtable_new(hashtable_size_t num_buckets)
 {
     static int empty = 0, deleted = 0; /* Anchors for deleted/empty keys */
-    
+
     return hashtable_new(pointer_hash, pointer_key_equals, &empty, &deleted, num_buckets);
 }
 

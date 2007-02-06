@@ -163,7 +163,7 @@ static void signal_connection(object *op, oblinkpt *olp, object *activator, obje
               break;
 
             case TELEPORTER:
-              /* Ignore map loading triggers 
+              /* Ignore map loading triggers
                * Rationale: connected teleports should only trigger
                * at connection state changes. */
               if(ignore_trigger_events)
@@ -338,7 +338,7 @@ void update_buttons(mapstruct *m)
                 case TYPE_CONN_SENSOR:
                     move_conn_sensor(ol->objlink.ob);
                     break;
-                
+
                 case TYPE_ENV_SENSOR:
                     move_environment_sensor(ol->objlink.ob);
                     break;
@@ -543,7 +543,7 @@ int check_trigger(object *op, object *cause, object *originator)
               {
                   object   *head    = tmp->head ? tmp->head : tmp;
                   if(((!QUERY_FLAG(head, FLAG_FLYING)&&!QUERY_FLAG(head, FLAG_LEVITATE)) || QUERY_FLAG(op, FLAG_FLY_ON))
-                   && (head->race == op->slaying || (op->slaying == shstr_cons.player && head->type == PLAYER)) 
+                   && (head->race == op->slaying || (op->slaying == shstr_cons.player && head->type == PLAYER))
                    && tmp != op)
                   {
                       push = 1;

@@ -38,7 +38,7 @@ struct plugin_hooklist  hooklist    =
     new_draw_info, new_draw_info_format,
     new_info_map, new_info_map_except, map_brightness, wall,
     free_string_shared, add_string, add_refcount,
-    fix_player, 
+    fix_player,
     esrv_send_item, esrv_send_inventory, esrv_update_item,
     lookup_skill_by_name, look_up_spell_name,
     insert_ob_in_ob, insert_ob_in_map, move_ob,
@@ -60,30 +60,30 @@ struct plugin_hooklist  hooklist    =
     get_word_from_string,get_money_from_string,sell_item,
     query_money_type, remove_money_type,insert_money_in_player,
     add_pet, material_repair_cost, material_repair_item,
-	query_short_name,
-	find_artifact,
-	give_artifact_abilities,
-	find_string,
-	get_nrof_quest_item,
-	is_player_inv,
-	gui_interface,
-	quest_count_pending,
-	quest_find_name,
-	guild_get,
-	guild_join,
-	guild_leave,
+    query_short_name,
+    find_artifact,
+    give_artifact_abilities,
+    find_string,
+    get_nrof_quest_item,
+    is_player_inv,
+    gui_interface,
+    quest_count_pending,
+    quest_find_name,
+    guild_get,
+    guild_join,
+    guild_leave,
     locate_beacon,
-	free_map,
-	delete_map,
-	map_transfer_apartment_items,
-	new_save_map,
-	ready_map_name,
-	create_unique_path_sh,
+    free_map,
+    delete_map,
+    map_transfer_apartment_items,
+    new_save_map,
+    ready_map_name,
+    create_unique_path_sh,
     reload_behaviours,
     clear_mob_knowns,
-    hashtable_new, hashtable_delete, hashtable_clear, 
-    hashtable_find, hashtable_insert, hashtable_erase, 
-    hashtable_iterator, hashtable_iterator_next,    
+    hashtable_new, hashtable_delete, hashtable_clear,
+    hashtable_find, hashtable_insert, hashtable_erase,
+    hashtable_iterator, hashtable_iterator_next,
     normalize_path,
     enter_map_by_name,
     enter_map_by_exit,
@@ -218,7 +218,7 @@ int find_plugin_command(const char *cmd, object *op, CommArray_s *RTNCmd)
     CFParm              CmdParm;
     int                 i;
     char               *cmdchar = "command?";
-    
+
     CmdParm.Value[0] = cmdchar;
     CmdParm.Value[1] = (char *) cmd;
     CmdParm.Value[2] = op;
@@ -297,8 +297,8 @@ void initPlugins(void)
         if (strcmp(currentfile->d_name, ".."))
         {
             /* don't load dotfiles, CVS directory or all which has a .txt inside */
-            if (currentfile->d_name[0] != '.' && 
-                    !strstr(currentfile->d_name, ".txt") && 
+            if (currentfile->d_name[0] != '.' &&
+                    !strstr(currentfile->d_name, ".txt") &&
                     strcmp(currentfile->d_name, "CVS"))
             {
                 strcpy(buf2, buf);
@@ -417,7 +417,7 @@ void removeOnePlugin(const char *id)
         return;
     if (PlugList[plid].removefunc != NULL)
         PlugList[plid].removefunc(NULL);
-    
+
     FREE_ONLY_HASH(PlugList[plid].id);
     FREE_ONLY_HASH(PlugList[plid].fullname);
 
@@ -492,7 +492,7 @@ void removeOnePlugin(const char *id)
         return;
     if (PlugList[plid].removefunc != NULL)
         PlugList[plid].removefunc(NULL);
-    
+
     FREE_ONLY_HASH(PlugList[plid].id);
     FREE_ONLY_HASH(PlugList[plid].fullname);
 
@@ -610,7 +610,7 @@ void removePlugins(void)
                 removeOnePlugin(ids[i]);
     }
 }
-/* TODO: remove all this old style plugin functions and move them to hooks-> 
+/* TODO: remove all this old style plugin functions and move them to hooks->
  * This will also remove this ugly mallocs here . MT-11.2005
  */
 
@@ -1165,7 +1165,7 @@ CFParm * CFWCreateObject(CFParm *PParm)
 
     if(newobj->type == MONSTER)
         fix_monster(newobj);
-    
+
     newobj = insert_ob_in_map(newobj, (mapstruct *) (PParm->Value[1]), NULL, 0);
 
     CFP->Value[0] = newobj;

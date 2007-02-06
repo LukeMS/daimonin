@@ -802,9 +802,9 @@ error - Your ANSI C compiler should be defining __STDC__;
                                      * below and inventory look.
                                      */
 #define FLAG_PROOF_PHYSICAL     104
-#define FLAG_PROOF_ELEMENTAL    105 
-#define FLAG_PROOF_MAGICAL      106 
-#define FLAG_PROOF_SPHERICAL    107 
+#define FLAG_PROOF_ELEMENTAL    105
+#define FLAG_PROOF_MAGICAL      106
+#define FLAG_PROOF_SPHERICAL    107
 #define FLAG_NO_INVENTORY       108 /* special flag to avoid load/save of the inventory of an object */
 /* flag 109 is free */
 #define FLAG_SYS_OBJECT         110 /* thats old invisible - now sys_object (which are invisible) */

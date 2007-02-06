@@ -35,8 +35,8 @@
      (pet_ol)->objlink.ob->owner == (_owner_) && (pet_ol)->objlink.ob->owner_count == (_owner_)->count)
 
 /* force: 1 to force, 0 for normal usage
-   If force is 0, a normal pet addition is done, which may fail for 
-   several reasons. If force is 1, the pet is forced which may still 
+   If force is 0, a normal pet addition is done, which may fail for
+   several reasons. If force is 1, the pet is forced which may still
    fail but not as often.
    Normally you should use 0, but in some cases where for example a
    quest requires a specific pet you could try 1.
@@ -64,7 +64,7 @@ int add_pet(object *owner, object *pet, int force)
         new_draw_info_format(NDI_UNIQUE, 0, owner, "%s is already taken", query_name(pet));
         return -1;
     }
-        
+
     /* Count number of pets, remove invalid links */
     for(ol = CONTR(owner)->pets; ol; ol = next_ol)
     {
@@ -109,7 +109,7 @@ int add_pet(object *owner, object *pet, int force)
 
     /* Follow owner combat mode */
     SET_OR_CLEAR_FLAG(pet, FLAG_UNAGGRESSIVE, !CONTR(owner)->combat_mode);
-    
+
     /* Insert link in owner's pet list */
     ol = get_objectlink(OBJLNK_FLAG_OB);
     ol->objlink.ob = pet;
@@ -131,7 +131,7 @@ int add_pet(object *owner, object *pet, int force)
         MOB_DATA(pet)->spawn_info = NULL;
         CLEAR_MULTI_FLAG(pet, FLAG_SPAWN_MOB);
     }
-    
+
     return 0;
 }
 
@@ -157,7 +157,7 @@ void save_pet(object *pet)
             return;
         }
     }
-    
+
     SET_FLAG(pet, FLAG_SYS_OBJECT);
     insert_ob_in_ob(pet, pet->owner);
 }
@@ -200,15 +200,15 @@ void pet_follow_owner(object *pet)
         save_pet(pet);
         return;
     }
-    
-    if (pet->owner->map->in_memory != MAP_IN_MEMORY)        
+
+    if (pet->owner->map->in_memory != MAP_IN_MEMORY)
     {
 //        new_draw_info_format(NDI_UNIQUE, 0, pet->owner, "Your %s has disappeared (map not loaded).", query_name(pet));
 //        LOG(llevBug, "BUG: Owner of the pet not on a map in memory!?\n");
         save_pet(pet);
         return;
     }
-    
+
     dir = find_free_spot(pet->arch, pet->owner->map, pet->owner->x, pet->owner->y, 1, SIZEOFFREE + 1);
     if (dir == -1)
     {
@@ -225,7 +225,7 @@ void pet_follow_owner(object *pet)
     }
 
     CLEAR_FLAG(pet, FLAG_SYS_OBJECT);
-    
+
     if (!insert_ob_in_map(pet, pet->owner->map, NULL, 0))
         new_draw_info_format(NDI_UNIQUE, 0, pet->owner, "Your %s has disappeared.", query_name(pet));
     else
@@ -286,13 +286,13 @@ void terminate_all_pets(object *owner)
 void save_all_pets(FILE *fp, object *owner, int flag)
 {
     objectlink *ol;
- 
+
     for(ol = CONTR(owner)->pets; ol; ol = ol->next)
     {
-        if(PET_VALID(ol, owner)) 
+        if(PET_VALID(ol, owner))
         {
             object *pet = ol->objlink.ob;
- 
+
             /* Don't save twice */
             if(pet->env == owner)
                 continue;

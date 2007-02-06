@@ -176,14 +176,14 @@ static void traverse_treasures_files(char* start_dir)
 
     /* scan the directory, traversing each sub-directory, and */
     /* matching the pattern for each file name.               */
-    while ((entry = readdir(dir))) 
+    while ((entry = readdir(dir)))
     {
         /* check if the given entry is a directory. */
         /* skip all ".*" entries, to avoid loops and forbidden directories. */
         if (entry->d_name[0] == '.')
             continue;
 
-        if (stat(entry->d_name, &dir_stat) == -1) 
+        if (stat(entry->d_name, &dir_stat) == -1)
         {
             perror("stat:");
             continue;
@@ -193,7 +193,7 @@ static void traverse_treasures_files(char* start_dir)
         if (S_ISDIR(dir_stat.st_mode))
         {
             /* Change into the new directory */
-            if (chdir(entry->d_name) == -1) 
+            if (chdir(entry->d_name) == -1)
             {
                 fprintf(stderr, "Cannot chdir into '%s': ", entry->d_name);
                 perror("");
@@ -203,7 +203,7 @@ static void traverse_treasures_files(char* start_dir)
             traverse_treasures_files(NULL);
 
             /* finally, restore the original working directory. */
-            if (chdir("..") == -1) 
+            if (chdir("..") == -1)
             {
                 fprintf(stderr, "Cannot chdir back to '%s': ", cwd);
                 perror("");
@@ -312,7 +312,7 @@ static void create_money_table(void)
 
     if (!coins_arch[0] || !coins_arch[1] || !coins_arch[2] || !coins_arch[3])
     {
-        LOG(llevError, "create_money_table(): Can't find money.\n (mit: %x - gold: %x - silver: %x - copper: %x)", 
+        LOG(llevError, "create_money_table(): Can't find money.\n (mit: %x - gold: %x - silver: %x - copper: %x)",
                 coins_arch[0],coins_arch[1],coins_arch[2],coins_arch[3]);
         return;
     }
@@ -398,7 +398,7 @@ static treasure * load_treasure(FILE *fp, int *t_style, int *a_chance)
             {
                 int face_id = FindFace(cp+5, 0);
 
-                if(!face_id) 
+                if(!face_id)
                     LOG(llevBug,"BUG: TLIST can't find face %s.\n", cp+5);
                 else
                 {
@@ -752,7 +752,7 @@ objectlink * link_treasurelists(char *liststring, uint32 flags)
             liststring = tmp + 1;
     }
     while (tmp);
-    
+
     return list_start;
 }
 
@@ -941,7 +941,7 @@ int create_treasure(treasurelist *t, object *op, int flag, int difficulty, int t
         LOG(llevDebug, "create_treasure(): tries >100 for t-list %s.", t->listname ? t->listname : "<noname>");
         return ret;
     }
-        
+
     if (t->t_style != T_STYLE_UNSET)
         t_style = t->t_style;
     if (t->artifact_chance != ART_CHANCE_UNSET)
@@ -1214,7 +1214,7 @@ int create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty, 
 static void put_treasure(object *op, object *creator, int flags)
 {
     object *tmp;
-    
+
     if (flags & GT_ENVIRONMENT)
     {
         op->x = creator->x;
@@ -1248,7 +1248,7 @@ static void change_treasure(struct _change_arch *ca, object *op)
 
     if(ca->animate != -1)
     {
-        if(ca->animate) 
+        if(ca->animate)
             SET_FLAG(op, FLAG_ANIMATE);
         else
             CLEAR_FLAG(op, FLAG_ANIMATE);

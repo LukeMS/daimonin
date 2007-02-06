@@ -2394,7 +2394,7 @@ int check_walk_on(object *const op, object *const originator, int flags)
     for (tmp = GET_BOTTOM_MAP_OB(op); tmp != NULL; tmp = tmp->above)
     {
         if (tmp == op)
-            continue;    /* Can't apply yourself */        
+            continue;    /* Can't apply yourself */
 
         if (fly ? QUERY_FLAG(tmp, FLAG_FLY_ON) : QUERY_FLAG(tmp, FLAG_WALK_ON))
         {

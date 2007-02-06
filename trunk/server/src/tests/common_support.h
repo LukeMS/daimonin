@@ -13,7 +13,7 @@ void dump_inventory(object *op);
 void dump_objects();
 void dump_objlinks();
 void dump_treasurelist_tweaks();
-    
+
 static void dummy_teardown() /* Usable as a fixture teardown */
 {
 }

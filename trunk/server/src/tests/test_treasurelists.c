@@ -23,7 +23,7 @@
     The author can be reached via e-mail to daimonin@nord-com.net
 */
 
-/* test_treasurelists.c 
+/* test_treasurelists.c
  * Copyright (C) 2006 Björn Axelsson
  */
 
@@ -47,10 +47,10 @@ START_TEST (treasurelist_memleak)
 {
     const char *path = add_string("/dev/unit_tests/test_treasurelists");
     mapstruct *map;
-    
+
     map = ready_map_name(path, NULL, MAP_STATUS_MULTI, NULL);
 
-/*    
+/*
     dump_inventory(locate_beacon(find_string("beacon1"))->env);
     dump_inventory(locate_beacon(find_string("beacon2"))->env);
     dump_inventory(locate_beacon(find_string("beacon3"))->env);
@@ -59,10 +59,10 @@ START_TEST (treasurelist_memleak)
     dump_inventory(locate_beacon(find_string("beacon6"))->env);
     dump_inventory(locate_beacon(find_string("beacon7"))->env);
     dump_inventory(locate_beacon(find_string("beacon8"))->env);
-*/    
+*/
     delete_map(map);
     FREE_ONLY_HASH(path);
-    
+
     fail_if(memleak_detected(), "Memory leak detected");
 }
 END_TEST
@@ -73,7 +73,7 @@ Suite *treasurelists_suite(void)
   TCase *tc_core = tcase_create("Core");
 
   tcase_add_checked_fixture(tc_core, setup, teardown);
-  
+
   suite_add_tcase (s, tc_core);
   tcase_add_test(tc_core, treasurelist_memleak);
 

@@ -23,7 +23,7 @@
     The author can be reached via e-mail to daimonin@nord-com.net
 */
 
-/* test_readable.c 
+/* test_readable.c
  * Copyright (C) 2006 Björn Axelsson
  */
 
@@ -85,7 +85,7 @@ Suite *readable_suite(void)
   TCase *tc_core = tcase_create("Core");
 
   tcase_add_checked_fixture(tc_core, setup, dummy_teardown);
-  
+
   suite_add_tcase (s, tc_core);
   tcase_add_test(tc_core, readable_god_info_msg);
   tcase_add_test(tc_core, readable_god_info_msg_memleak);

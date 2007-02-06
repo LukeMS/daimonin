@@ -139,7 +139,7 @@ typedef struct pl_player
 
     struct pl_player   *prev;               /* Pointer to the prev player. if NULL, this is the first one */
     struct pl_player   *next;               /* Pointer to next player, NULL if this is last */
-    
+
     NewSocket           socket;             /* Socket information for this player */
 
     /* all this is set to 0 with memset */
@@ -265,8 +265,8 @@ typedef struct pl_player
     sint32              group_status;               /* status of invite or group */
     int                 exp_bonus;                  /* extra exp bonus */
     int                 weapon_sp;                  /* weapon speed - float *1000 for the client */
-    int                 map_tile_x, map_tile_y;     /* these is our last position of map we send to client */ 
-    int                 map_off_x, map_off_y;       /* scroll offset between 2 maps of client update */ 
+    int                 map_tile_x, map_tile_y;     /* these is our last position of map we send to client */
+    int                 map_off_x, map_off_y;       /* scroll offset between 2 maps of client update */
 
     /* we don't need here the count of group object links- because the game will explicit
      * link/unlink party members when their player object change.

@@ -23,7 +23,7 @@
     The author can be reached via e-mail to daimonin@nord-com.net
 */
 
-/* test_shstr.c 
+/* test_shstr.c
  * Copyright (C) 2005 Björn Axelsson
  */
 
@@ -57,14 +57,14 @@ START_TEST (shstr_add_string)
 {
     int entries, refs, links;
     const char *a, *b;
-    
+
     a = add_string("hello");
     b = add_string("world");
     ss_get_totals(&entries, &refs, &links);
     fail_unless(entries == 2 && refs == 2, "Insertion failed");
     fail_unless(strcmp(a, "hello") == 0, "String was modified");
     fail_unless(strcmp(b, "world") == 0, "String was modified");
-    
+
     a = add_string("hello");
     b = add_string("world");
     ss_get_totals(&entries, &refs, &links);
@@ -79,14 +79,14 @@ START_TEST (shstr_add_lstring)
 {
     int entries, refs, links;
     const char *a, *b;
-    
+
     a = add_lstring("hello foobar", 5);
     b = add_lstring("world snafu", 5);
     ss_get_totals(&entries, &refs, &links);
     fail_unless(entries == 2 && refs == 2, "Insertion failed");
     fail_unless(strcmp(a, "hello") == 0, "String was modified");
     fail_unless(strcmp(b, "world") == 0, "String was modified");
-    
+
     a = add_lstring("hello foobar", 5);
     b = add_lstring("world snafu", 5);
     ss_get_totals(&entries, &refs, &links);
@@ -100,12 +100,12 @@ END_TEST
 START_TEST (shstr_query_refcount)
 {
     const char *a, *b;
-    
+
     a = add_string("hello");
     b = add_string("world");
     fail_unless(query_refcount(a) == 1, "String refcount mismatches");
     fail_unless(query_refcount(b) == 1, "String refcount mismatches");
-    
+
     a = add_string("hello");
     b = add_string("world");
     fail_unless(query_refcount(a) == 2, "String refcount mismatches");
@@ -117,10 +117,10 @@ END_TEST
 START_TEST (shstr_find_string)
 {
     const char *a, *b;
-    
+
     a = add_string("hello");
     b = add_string("world");
-    
+
     fail_unless(find_string("hello") == a, "find_string failed");
     fail_unless(find_string("world") == b, "find_string failed");
 }
@@ -131,10 +131,10 @@ START_TEST (shstr_add_refcount)
 {
     int entries, refs, links;
     const char *a, *b;
-    
+
     a = add_string("hello");
     b = add_string("world");
-    
+
     a = add_refcount(a);
     b = add_refcount(b);
     fail_unless(query_refcount(a) == 2, "String refcount mismatches");
@@ -149,18 +149,18 @@ START_TEST (shstr_free_string_shared)
 {
     int entries, refs, links;
     const char *a, *b;
-    
+
     a = add_string("hello");
-    b = add_string("world");    
+    b = add_string("world");
     a = add_string("hello");
 
     ss_get_totals(&entries, &refs, &links);
     fail_unless(entries == 2 && refs == 3, "Strings are not shared");
-    
+
     free_string_shared(a);
     ss_get_totals(&entries, &refs, &links);
     fail_unless(entries == 2 && refs == 2, "Strings are not unrefed");
-    
+
     free_string_shared(b);
     ss_get_totals(&entries, &refs, &links);
     fail_unless(entries == 1 && refs == 1, "Strings are not unrefed");
@@ -176,7 +176,7 @@ Suite *shstr_suite(void)
   TCase *tc_core = tcase_create("Core");
 
   tcase_add_checked_fixture(tc_core, setup, teardown);
-  
+
   suite_add_tcase (s, tc_core);
   tcase_add_test(tc_core, shstr_init);
   tcase_add_test(tc_core, shstr_add_string);

@@ -23,7 +23,7 @@
     The author can be reached via e-mail to daimonin@nord-com.net
 */
 
-/* benchmark_main.c 
+/* benchmark_main.c
  *
  * We use the check framework for benchmarks too, to take advantage
  * of the "checked fxitures"
@@ -50,7 +50,7 @@ void print_delta_time(struct timeval *start, struct timeval *stop, int nops)
 
 Suite *shstr_benchmark_suite(void);
 Suite *hashtable_benchmark_suite(void);
-    
+
 void run_benchmarks(void)
 {
     /* See http://check.sourceforge.net/doc/ for a check tutorial */

@@ -35,10 +35,10 @@ static struct method_decl       Map_methods[]       =
     {"GetFirstObjectOnSquare", Map_GetFirstObjectOnSquare},
     {"GetBrightnessOnSquare", Map_GetBrightnessOnSquare},
     {"IsWallOnSquare", Map_IsWallOnSquare},
-    {"PlaySound", Map_PlaySound}, 
-    {"Message", Map_Message}, 
+    {"PlaySound", Map_PlaySound},
+    {"Message", Map_Message},
     {"MapTileAt",  Map_MapTileAt},
-    {"CreateObject", Map_CreateObject}, 
+    {"CreateObject", Map_CreateObject},
     {NULL, NULL}
 };
 
@@ -107,12 +107,12 @@ static int Map_ReadyInheritedMap(lua_State *L)
         {
             char tmp_path[MAXPATHLEN];
 
-            path_sh = hooks->add_string( hooks->normalize_path_direct(map->path, 
+            path_sh = hooks->add_string( hooks->normalize_path_direct(map->path,
                                          hooks->path_to_name(orig_path_sh), tmp_path));
         }
 
         new_map = hooks->ready_map_name(path_sh?path_sh:orig_path_sh, orig_path_sh, MAP_STATUS_TYPE(map->map_status), map->reference);
-        
+
         FREE_ONLY_HASH(orig_path_sh);
         if(path_sh)
             FREE_ONLY_HASH(path_sh);
@@ -450,7 +450,7 @@ static int Map_toString(lua_State *L)
 
 /* Tests if a Map object is valid */
 static int Map_isValid(lua_State *L, lua_object *obj)
-{    
+{
     /* TODO: convert maps to use real weak reference tags and mempools */
     return (obj->tag == ROUND_TAG && obj->data.map->in_memory == MAP_IN_MEMORY);
 }

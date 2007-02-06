@@ -82,12 +82,12 @@
 #define MAP_ENTER_Y(m)      (m)->enter_y
 
 /* flags passed to enter_map_xx(), ready_map_name, load_map and other map related functions */
-#define MAP_STATUS_MULTI			0x01 /* normal multiuser map (saved in /tmp) */
-#define MAP_STATUS_UNIQUE			0x02 /* like apartment - (map is inside /players folder) */
-#define MAP_STATUS_INSTANCE			0x04 /* this is an instance (map is inside /instance) */
-#define MAP_STATUS_STYLE			0x08 /* we load a special random map style map - we don't set speed for objects inside! */
+#define MAP_STATUS_MULTI            0x01 /* normal multiuser map (saved in /tmp) */
+#define MAP_STATUS_UNIQUE           0x02 /* like apartment - (map is inside /players folder) */
+#define MAP_STATUS_INSTANCE         0x04 /* this is an instance (map is inside /instance) */
+#define MAP_STATUS_STYLE            0x08 /* we load a special random map style map - we don't set speed for objects inside! */
 
-#define MAP_STATUS_ORIGINAL			0x10 /* map is an original map - generate treasures! */
+#define MAP_STATUS_ORIGINAL         0x10 /* map is an original map - generate treasures! */
 #define MAP_STATUS_FIXED_POS        0x20 /* enter map with fixed postion, don't search for a free spot */
 #define MAP_STATUS_RANDOM_POS       0x40 /* search for a random free spot around our insertation point */
 #define MAP_STATUS_FREE_POS_ONLY    0x80 /* only execute enter_map_xx() when there is a free spot! */
@@ -96,7 +96,7 @@
 #define MAP_STATUS_LOAD_ONLY        0x200 /* signal for map loader func to return after successful read_map_name() */
 #define MAP_STATUS_FIXED_LOGIN      0x400 /* same as MAP_FIXEDLOGIN() - useful for dynamic setting */
 
-#define MAP_STATUS_ARTIFACT		0x1000 /* unusued: tells load_object we load a artifact object/block */
+#define MAP_STATUS_ARTIFACT     0x1000 /* unusued: tells load_object we load a artifact object/block */
 /* used to mask out map_status to get the map type */
 #define MAP_STATUS_TYPE(_f)     (_f&(MAP_STATUS_MULTI|MAP_STATUS_UNIQUE|MAP_STATUS_INSTANCE|MAP_STATUS_STYLE))
 
@@ -234,7 +234,7 @@
                                      * does not complain if the flags are different.
                                      */
 
-#define P_NO_TERRAIN    0x80000000 /* DON'T USE THIS WITH SET_MAP_FLAGS... this is just to mark for 
+#define P_NO_TERRAIN    0x80000000 /* DON'T USE THIS WITH SET_MAP_FLAGS... this is just to mark for
                                     * return values of blocked()...
                                     */
 
@@ -279,18 +279,18 @@ typedef struct MapSpace_s
     sint32              light_value;                    /* how much light is in this tile. 0 = total dark
                                                          * 255+ = full daylight.
                                                          */
-    New_Face           *mask_face;						/* here we need the face for masks, because it can be turnable */
+    New_Face           *mask_face;                      /* here we need the face for masks, because it can be turnable */
     int                 flags;                          /* flags about this space (see the P_ values above) */
-    New_Face           *floor_face;						/* here we need the face for the floor because it can be turnable */
-	uint16				floor_terrain;
-	sint16				floor_light;
+    New_Face           *floor_face;                     /* here we need the face for the floor because it can be turnable */
+    uint16              floor_terrain;
+    sint16              floor_light;
     uint16              last_damage;                    /* last_damage tmp backbuffer */
     uint16              move_flags;                     /* terrain type flags (water, underwater,...) */
-    sint16              mask;							/* picture/object ID for the floor mask of this tile */
+    sint16              mask;                           /* picture/object ID for the floor mask of this tile */
     sint8               client_mlayer[MAP_LAYERS];      /* index for layer[] - this will send to player */
     sint8               client_mlayer_inv[MAP_LAYERS];  /* same for invisible objects */
     uint8               light;                          /* How much light this space provides */
-	uint8				floor_flags;					/* floor data: flags */
+    uint8               floor_flags;                    /* floor data: flags */
 } MapSpace;
 
 #ifdef WIN32
@@ -414,7 +414,7 @@ typedef struct mapdef
 
     uint32          tileset_id;              /* All map tiles that are connected to each other with tiling
                                                 are on the same tileset. 0 means unknown */
-    sint16          tileset_x, tileset_y;    /* This maps coordinates in the tileset. Only valid if tileset_id > 0 */    
+    sint16          tileset_x, tileset_y;    /* This maps coordinates in the tileset. Only valid if tileset_id > 0 */
 } mapstruct;
 
 /* This is used by get_rangevector to determine where the other

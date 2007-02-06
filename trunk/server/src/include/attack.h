@@ -81,7 +81,7 @@ typedef enum _attacks
     ATNR_COUNTERMAGIC,
     ATNR_CANCELLATION,
     ATNR_CONFUSION,
-    ATNR_FEAR,    
+    ATNR_FEAR,
     ATNR_SLOW,
     ATNR_PARALYZE,
     ATNR_SNARE,
@@ -106,10 +106,10 @@ EXTERN char    *attack_name[NROFATTACKS];
 /* resist use the same names as attacks - they map 1:1 to it */
 EXTERN char    *attack_name[NROFATTACKS]            =
 {
-    "impact", "slash", "cleave", "pierce", 
+    "impact", "slash", "cleave", "pierce",
     "fire", "cold", "electricity", "poison", "acid", "sonic",
     "magic", "psionic", "light", "shadow", "lifesteal",
-    "aether", "nether", "chaos", "death", 
+    "aether", "nether", "chaos", "death",
     "weaponmagic", "godpower",
     "drain", "depletion", "corruption",
     "countermagic", "cancellation", "confusion",

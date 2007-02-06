@@ -51,8 +51,8 @@
  * of the game server itself. MT-2005
  */
 
-static char *ban_buf_name_def = "X3 You are banned from Daimonin.\nGoodbye."; 
-static char *ban_buf_ip_def = "X3 IP is banned from Daimonin.\nGoodbye."; 
+static char *ban_buf_name_def = "X3 You are banned from Daimonin.\nGoodbye.";
+static char *ban_buf_ip_def = "X3 IP is banned from Daimonin.\nGoodbye.";
 
 /* returns a objectlink with ban_struct
  * we use for both the memorypool system
@@ -166,12 +166,12 @@ struct objectlink *add_ban_entry(char *banned, char *ip, int ticks, int ticks_le
     ol->objlink.ban->ticks_left = ticks_left;
     ol->objlink.ban->ticks = pticks+ticks_left;
     ol->objlink.ban->ip = malloc(strlen(ip) + 1);
-    strcpy(ol->objlink.ban->ip, ip); 
+    strcpy(ol->objlink.ban->ip, ip);
     if(banned)
         FREE_AND_COPY_HASH(ol->objlink.ban->name, banned);
 
-    LOG(-1,"Banning: %s (IP: %s) for %d seconds (%d sec left).\n", STRING_SAFE(ol->objlink.ban->name), 
-            STRING_SAFE(ip), ticks/8,ol->objlink.ban->ticks_init==-1?-1:(ol->objlink.ban->ticks-pticks)/8); 
+    LOG(-1,"Banning: %s (IP: %s) for %d seconds (%d sec left).\n", STRING_SAFE(ol->objlink.ban->name),
+            STRING_SAFE(ip), ticks/8,ol->objlink.ban->ticks_init==-1?-1:(ol->objlink.ban->ticks-pticks)/8);
 
     if(banned) /* add to name list */
         objectlink_link(&ban_list_player, NULL, NULL, ban_list_player, ol);
@@ -213,7 +213,7 @@ int check_banned(NewSocket *ns, const char *name, char *ip)
         {
             ol_tmp = ol->next;
             /* lets check the entry is still valid */
-            /*LOG(-1,"CHECK-NAME: %s with %s (pticks: %d to %d)\n", name, STRING_SAFE(ol->objlink.ban->name), 
+            /*LOG(-1,"CHECK-NAME: %s with %s (pticks: %d to %d)\n", name, STRING_SAFE(ol->objlink.ban->name),
               pticks, ol->objlink.ban->ticks);*/
             if(ol->objlink.ban->ticks_init != -1 &&  pticks >= ol->objlink.ban->ticks)
                 remove_ban_entry(ol); /* is not valid anymore, gc it on the fly */
@@ -249,7 +249,7 @@ int check_banned(NewSocket *ns, const char *name, char *ip)
                     ban_buf_name = buf;
                 }
 
-                Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, ban_buf_name, strlen(ban_buf_name)); 
+                Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, ban_buf_name, strlen(ban_buf_name));
 
                 /* someone is trying to login again & again to banned char? Lets teach him to avoid it */
                 if(++ns->pwd_try == 3)
@@ -274,7 +274,7 @@ int check_banned(NewSocket *ns, const char *name, char *ip)
         for(ol = ban_list_ip;ol;ol=ol_tmp)
         {
             ol_tmp = ol->next;
-            /*LOG( -1,"CHECK-IP: %d with %d - pticks: %d left: %d (%d)\n", ip, ol->objlink.ban->ip, 
+            /*LOG( -1,"CHECK-IP: %d with %d - pticks: %d left: %d (%d)\n", ip, ol->objlink.ban->ip,
               pticks, ol->objlink.ban->ticks,ol->objlink.ban->ticks_init);*/
 
             if(ol->objlink.ban->ticks_init != -1 &&  pticks >= ol->objlink.ban->ticks)
@@ -322,7 +322,7 @@ int check_banned(NewSocket *ns, const char *name, char *ip)
                 }
 
                 LOG(-1,"***BANNED IP Login: %s\n", ns->ip_host);
-                Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, ban_buf_ip, strlen(ban_buf_ip)); 
+                Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, ban_buf_ip, strlen(ban_buf_ip));
                 Write_String_To_Socket(ns, BINARY_CMD_ADDME_FAIL, cmd_buf, 1);
                 ns->login_count = ROUND_TAG+(uint32)(5.0f * pticks_second);
                 ns->status = Ns_Zombie; /* we hold the socket open for a *bit* */

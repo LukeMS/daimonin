@@ -71,7 +71,7 @@ int check_name(player *me, char *name)
         }
     }
 
-    /* now, the status is 1 or 3 
+    /* now, the status is 1 or 3
      * 1 means is not used - lets check for player file
      * 3 means the sucker is somewhat in use:
      * NOW check there is a player file - only, and only then we will allow status 3
@@ -222,7 +222,7 @@ int save_player(object *op, int flag)
     if(pl->savebed_map != pl->orig_savebed_map)
         fprintf(fp, "o_bed %s\n", pl->orig_savebed_map);
 
-    fprintf(fp, "map_s %d\nbed_s %d\nmap_x %d\nmap_y %d\nbed_x %d\nbed_y %d\n", 
+    fprintf(fp, "map_s %d\nbed_s %d\nmap_x %d\nmap_y %d\nbed_x %d\nbed_y %d\n",
                 MAP_STATUS_TYPE(pl->map_status), MAP_STATUS_TYPE(pl->bed_status), pl->map_x, pl->map_y, pl->bed_x, pl->bed_y);
 
     if(pl->instance_name)
@@ -230,7 +230,7 @@ int save_player(object *op, int flag)
         fprintf(fp, "iname %s\ninum %d\niid %ld\niflags %d\n", pl->instance_name, pl->instance_num, pl->instance_id,pl->instance_flags);
     }
 
-    fprintf(fp, "Str %d\nDex %d\nCon %d\nInt %d\nPow %d\nWis %d\nCha %d\n", 
+    fprintf(fp, "Str %d\nDex %d\nCon %d\nInt %d\nPow %d\nWis %d\nCha %d\n",
                 pl->orig_stats.Str, pl->orig_stats.Dex, pl->orig_stats.Con, pl->orig_stats.Int,
                 pl->orig_stats.Pow, pl->orig_stats.Wis, pl->orig_stats.Cha);
 
@@ -405,7 +405,7 @@ static  mapstruct *traverse_b3_player_inv(object *pl, object *op, mapstruct *old
     {
         next_obj = tmp->below;
         /* remove all diseases because possible setting changes and kill pending old quests */
-        if ( tmp->type == DISEASE ||tmp->type == SYMPTOM || QUERY_FLAG(tmp,FLAG_QUEST_ITEM) || 
+        if ( tmp->type == DISEASE ||tmp->type == SYMPTOM || QUERY_FLAG(tmp,FLAG_QUEST_ITEM) ||
                 (tmp->arch->name == shstr_cons.player_info && !strcmp(tmp->name,"GUILD_INFO")))
         {
             SET_FLAG(tmp,FLAG_SYS_OBJECT);
@@ -419,7 +419,7 @@ static  mapstruct *traverse_b3_player_inv(object *pl, object *op, mapstruct *old
         /* the one drop flag context has changed - its now a simple marker */
         if(QUERY_FLAG(tmp,FLAG_ONE_DROP)) /* means "one drop quest item" */
         {
-            CLEAR_FLAG(tmp,FLAG_ONE_DROP); 
+            CLEAR_FLAG(tmp,FLAG_ONE_DROP);
             SET_FLAG(tmp,FLAG_STARTEQUIP); /* means "NO-DROP item" */
         }
         /* let adjust the apartment info */
@@ -567,8 +567,8 @@ void check_login(object *op, int mode)
          * and check for confirm_password state
          */
         /* The new login procedure should be able to avoid this conflict.
-         * But i let it in for security reasons. MT 11.2005 
-         */         
+         * But i let it in for security reasons. MT 11.2005
+         */
         for (ptmp = first_player; ptmp != NULL; ptmp = ptmp->next)
         {
             if (ptmp != pl && ptmp->state >= ST_CONFIRM_PASSWORD && ptmp->ob->name == op->name)
@@ -671,7 +671,7 @@ void check_login(object *op, int mode)
             char password_warning[] =
                 "X3 You entered 3 times a wrong password.\nTry new login in 1 minute!\nConnection closed.";
 
-            LOG(llevInfo,"PWD GUESS BAN (1min): IP %s (player: %s).\n", 
+            LOG(llevInfo,"PWD GUESS BAN (1min): IP %s (player: %s).\n",
                     pl->socket.ip_host, query_name(pl->ob));
             add_ban_entry(NULL, pl->socket.ip_host, 8*60, 8*60); /* one min temp ban for this ip */
             Write_String_To_Socket(&pl->socket, BINARY_CMD_DRAWINFO,password_warning , strlen(password_warning));
@@ -1131,7 +1131,7 @@ void check_login(object *op, int mode)
 
     pl->state = ST_PLAYING;
 
-    // QUICKHACK: to avoid problems after conversion, we have to force a save here 
+    // QUICKHACK: to avoid problems after conversion, we have to force a save here
     if(pl->p_ver != PLAYER_FILE_VERSION_BETA4)
     {
         pl->p_ver = PLAYER_FILE_VERSION_BETA4;

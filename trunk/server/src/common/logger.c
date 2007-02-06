@@ -70,11 +70,11 @@ void LOG(LogLevel logLevel, char *format, ...)
 #ifdef _TESTSERVER
         if(logLevel == llevMapbug)
             new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_RED, 5, NULL, log_buf);
-#endif        
+#endif
     }
 
     va_end(ap);
-    
+
     if (logLevel == llevBug)
         ++nroferrors;
 

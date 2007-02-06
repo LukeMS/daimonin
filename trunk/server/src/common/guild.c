@@ -45,7 +45,7 @@ object *guild_get(player *pl, char *name)
                     break;
             }
         }
-    } 
+    }
 
     return walk;
 }

@@ -326,7 +326,7 @@ void free_all_archs()
 
         if(at->clone.inv)
             LOG(llevDebug, "free_all_archs(): archetype clone %s has inv %s\n", STRING_OBJ_NAME(&at->clone), STRING_OBJ_NAME(at->clone.inv));
-        free_object_data(&at->clone, TRUE);        
+        free_object_data(&at->clone, TRUE);
 
         free(at);
         i++;
@@ -582,7 +582,7 @@ object * create_singularity(const char *name)
     LOG(llevDebug, "created Singularity: %s\n", name);
     op = arch_to_object(empty_archetype);
     FREE_AND_COPY_HASH(op->name, name);
-    FREE_AND_COPY_HASH(op->title, " (removed object)"); 
+    FREE_AND_COPY_HASH(op->title, " (removed object)");
     SET_FLAG(op, FLAG_IDENTIFIED);
     SET_FLAG(op, FLAG_SYS_OBJECT);
     SET_FLAG(op, FLAG_NO_SAVE); /* remove them automatically - good for player inventory */

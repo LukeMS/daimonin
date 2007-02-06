@@ -23,7 +23,7 @@
     The author can be reached via e-mail to daimonin@nord-com.net
 */
 
-/* benchmark_shstr.c 
+/* benchmark_shstr.c
  * Copyright (C) 2005 Björn Axelsson
  */
 
@@ -53,7 +53,7 @@ START_TEST(shstr_benchmark_insert_1)
             add_string(words[j]);
         }
     }
-    timer_stop(num_words * benchmark_repetitions); 
+    timer_stop(num_words * benchmark_repetitions);
 }
 END_TEST
 
@@ -70,7 +70,7 @@ START_TEST(shstr_benchmark_insert_2)
         }
         init_hash_table(); // Leaks memory like crazy
     }
-    timer_stop(num_words * benchmark_repetitions); 
+    timer_stop(num_words * benchmark_repetitions);
 }
 END_TEST
 
@@ -79,17 +79,17 @@ START_TEST(shstr_benchmark_search)
 {
     int i,j;
     printf("\nBenchmarking %d x %d shstr find_string\n", benchmark_repetitions, num_words);
-        
-    for(j=0; j<num_words; j++) 
+
+    for(j=0; j<num_words; j++)
         add_string(words[j]);
 
     timer_start();
-    for(i=0; i<benchmark_repetitions; i++) 
+    for(i=0; i<benchmark_repetitions; i++)
     {
-        for(j=0; j<num_words; j++) 
+        for(j=0; j<num_words; j++)
             find_string(words[j]);
     }
-    timer_stop(num_words * benchmark_repetitions); 
+    timer_stop(num_words * benchmark_repetitions);
 }
 END_TEST
 
@@ -100,7 +100,7 @@ Suite *shstr_benchmark_suite(void)
 
   tcase_add_unchecked_fixture(tc_core, read_words, dummy_teardown);
   tcase_add_checked_fixture(tc_core, setup, dummy_teardown);
-  
+
   suite_add_tcase (s, tc_core);
   tcase_add_test(tc_core, shstr_benchmark_insert_1);
   tcase_add_test(tc_core, shstr_benchmark_insert_2);

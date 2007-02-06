@@ -214,7 +214,7 @@ void                        generate_ext_title(player *pl);
 object                     *find_best_object_match(object *pl, char *params);
 int                         command_uskill(object *pl, char *params);
 int                         command_rskill(object *pl, char *params);
-int                         command_egobind ( object *pl, char *params); 
+int                         command_egobind ( object *pl, char *params);
 int                         command_apply(object *op, char *params);
 int                         command_dropall(object *op, char *params);
 int                         command_drop(object *op, char *params);

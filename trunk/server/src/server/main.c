@@ -216,7 +216,7 @@ void process_players2(mapstruct *map)
         /* look our target is still valid - if not, update client
              * we handle op->enemy for the player here too!
              */
-        if (pl->ob->map 
+        if (pl->ob->map
          && (!pl->target_object
           || (pl->target_object != pl->ob && pl->target_object_count != pl->target_object->count)
           || !OBJECT_ACTIVE(pl->target_object)
@@ -227,7 +227,7 @@ void process_players2(mapstruct *map)
         /* now use the new target system to hit our target... Don't hit non
         * friendly objects, ourself or when we are not in combat mode.
         */
-        if (pl->ob->weapon_speed_left <= 0 
+        if (pl->ob->weapon_speed_left <= 0
             && pl->ob->map
             && pl->target_object
             && pl->combat_mode
@@ -602,7 +602,7 @@ void leave(player *pl, int draw_exit)
             GlobalEvent(&CFP);
         };
 #endif
-#endif        
+#endif
 
         /* be sure we have closed container when we leave */
         container_unlink(pl, NULL);
@@ -775,7 +775,7 @@ void shutdown_agent(int timer, int ret, char *reason)
 
 /* we traverse through the *all* saved player files in /data
 * and collect statistic data from them.
-* DEBUG & DEVELOPLEMT only. 
+* DEBUG & DEVELOPLEMT only.
 * We use this for player transformation for version changes but
 * this is also useful for statistic analyzes.
 * Why is it here and not in a extern script?
@@ -816,14 +816,14 @@ static void traverse_player_stats(char* start_dir)
 
     /* scan the directory, traversing each sub-directory, and */
     /* matching the pattern for each file name.               */
-    while ((entry = readdir(dir))) 
+    while ((entry = readdir(dir)))
     {
         /* check if the given entry is a directory. */
         /* skip all ".*" entries, to avoid loops and forbidden directories. */
         if (entry->d_name[0] == '.')
             continue;
 
-        if (stat(entry->d_name, &dir_stat) == -1) 
+        if (stat(entry->d_name, &dir_stat) == -1)
         {
             perror("stat:");
             continue;
@@ -833,7 +833,7 @@ static void traverse_player_stats(char* start_dir)
         if (S_ISDIR(dir_stat.st_mode))
         {
             /* Change into the new directory */
-            if (chdir(entry->d_name) == -1) 
+            if (chdir(entry->d_name) == -1)
             {
                 fprintf(stderr, "Cannot chdir into '%s': ", entry->d_name);
                 perror("");
@@ -843,7 +843,7 @@ static void traverse_player_stats(char* start_dir)
             traverse_player_stats(NULL);
 
             /* finally, restore the original working directory. */
-            if (chdir("..") == -1) 
+            if (chdir("..") == -1)
             {
                 fprintf(stderr, "Cannot chdir back to '%s': ", cwd);
                 perror("");
@@ -870,7 +870,7 @@ static void traverse_player_stats(char* start_dir)
                     check_login(pl->ob, FALSE);
                     /* player is now loaded, do something with it - after it, release player & object */
 
-                    /* ........... */                    
+                    /* ........... */
 
                     /* lets remove the player and its objects and enviroment */
                     free_player(pl);

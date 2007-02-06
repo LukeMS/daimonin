@@ -105,7 +105,7 @@ spell spells[NROFREALSPELLS]          =
     4,      5,      4,      4, 9,   SOUND_MAGIC_SUMMON1,
     SPELL_USE_CAST | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_BOOK,
     SPELL_DESC_DIRECTION,
-	PATH_CONJURATION, "golem",SPELL_DEACTIVE     /* NOT ACTIVE */
+    PATH_CONJURATION, "golem",SPELL_DEACTIVE     /* NOT ACTIVE */
     },
     {"remove depletion",            SPELL_TYPE_PRIEST, 1, 5, 8.0f, 3, 6,0, 1.0,
     0,       0,     0,      0,0,    SOUND_MAGIC_STAT,
@@ -125,14 +125,14 @@ spell spells[NROFREALSPELLS]          =
     SPELL_DESC_SELF | SPELL_DESC_TOWN | SPELL_DESC_WIS,
     PATH_LIFE, "meffect_purple",SPELL_ACTIVE
     },
-	{"restoration",            SPELL_TYPE_PRIEST, 1, 5, 8.0f, 3, 6,0, 1.0,
-	0,       0,     0,      0,0,    SOUND_MAGIC_STAT,
-	SPELL_USE_CAST | SPELL_USE_SCROLL | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD, /* npc/god only atm */
-	SPELL_DESC_SELF | SPELL_DESC_TOWN | SPELL_DESC_WIS,
-	PATH_LIFE, "meffect_purple",SPELL_ACTIVE
-	},
+    {"restoration",            SPELL_TYPE_PRIEST, 1, 5, 8.0f, 3, 6,0, 1.0,
+    0,       0,     0,      0,0,    SOUND_MAGIC_STAT,
+    SPELL_USE_CAST | SPELL_USE_SCROLL | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD, /* npc/god only atm */
+    SPELL_DESC_SELF | SPELL_DESC_TOWN | SPELL_DESC_WIS,
+    PATH_LIFE, "meffect_purple",SPELL_ACTIVE
+    },
 
-	/* next we need a debuff - curse for example */
+    /* next we need a debuff - curse for example */
 };
 
 /*

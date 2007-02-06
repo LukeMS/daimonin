@@ -63,12 +63,12 @@ void SockList_AddString(SockList *sl, const char *data)
 */
 void Write_String_To_Socket(NewSocket *ns, char cmd, char *buf, int len)
 {
-	SockList    sl;
+    SockList    sl;
 
-	sl.len = len;
-	sl.buf = (uint8 *) buf;
-	*((char *) buf) = cmd;
-	Send_With_Handling(ns, &sl);
+    sl.len = len;
+    sl.buf = (uint8 *) buf;
+    *((char *) buf) = cmd;
+    Send_With_Handling(ns, &sl);
 }
 
 /* Send With Handling - calls Write_To_Socket to send data to the client.
@@ -77,63 +77,63 @@ void Write_String_To_Socket(NewSocket *ns, char cmd, char *buf, int len)
 */
 void Send_With_Handling  (NewSocket *ns, SockList *msg)
 {
-	unsigned char sbuf[4];
+    unsigned char sbuf[4];
 
-	if (ns->status == Ns_Dead || !msg)
-		return;
+    if (ns->status == Ns_Dead || !msg)
+        return;
 
-	/* Almost certainly we've overflowed a buffer, so quite now to make
-	* it easier to debug.
-	*/
-	if (msg->len >= MAXSOCKBUF)
-		LOG(llevError, "Trying to send a buffer beyond properly size, len =%d\n", msg->len);
+    /* Almost certainly we've overflowed a buffer, so quite now to make
+    * it easier to debug.
+    */
+    if (msg->len >= MAXSOCKBUF)
+        LOG(llevError, "Trying to send a buffer beyond properly size, len =%d\n", msg->len);
 
-	if(msg->len > 32*1024-1) /* if > 32kb use 3 bytes header and set the high bit to show it client */
-	{
-		sbuf[0] = ((uint32) (msg->len) >> 16) & 0xFF;
-		sbuf[0] |= 0x80; /* high bit marker for the client */
-		sbuf[1] = ((uint32) (msg->len) >> 8) & 0xFF;
-		sbuf[2] = ((uint32) (msg->len)) & 0xFF;
-		Write_To_Socket(ns, sbuf, 3);
-	}
-	else
-	{
-		sbuf[0] = ((uint32) (msg->len) >> 8) & 0xFF;
-		sbuf[1] = ((uint32) (msg->len)) & 0xFF;
-		Write_To_Socket(ns, sbuf, 2);
-	}
-	Write_To_Socket(ns, msg->buf, msg->len);
+    if(msg->len > 32*1024-1) /* if > 32kb use 3 bytes header and set the high bit to show it client */
+    {
+        sbuf[0] = ((uint32) (msg->len) >> 16) & 0xFF;
+        sbuf[0] |= 0x80; /* high bit marker for the client */
+        sbuf[1] = ((uint32) (msg->len) >> 8) & 0xFF;
+        sbuf[2] = ((uint32) (msg->len)) & 0xFF;
+        Write_To_Socket(ns, sbuf, 3);
+    }
+    else
+    {
+        sbuf[0] = ((uint32) (msg->len) >> 8) & 0xFF;
+        sbuf[1] = ((uint32) (msg->len)) & 0xFF;
+        Write_To_Socket(ns, sbuf, 2);
+    }
+    Write_To_Socket(ns, msg->buf, msg->len);
 }
 
 /* This function will write to our socket buffer but not the "real* OS socket */
 void    Write_To_Socket (NewSocket *ns, unsigned char *buf, int len)
 {
-	int avail, end;
+    int avail, end;
 
-	if ((len + ns->outputbuffer.len) > MAXSOCKBUF)
-	{
-		LOG(llevDebug, "Socket host %s has overrun internal buffer - marking as dead (bl:%d l:%d)\n",
-			STRING_SAFE(ns->ip_host), ns->outputbuffer.len, len);
-		ns->status = Ns_Dead;
-		return;
-	}
+    if ((len + ns->outputbuffer.len) > MAXSOCKBUF)
+    {
+        LOG(llevDebug, "Socket host %s has overrun internal buffer - marking as dead (bl:%d l:%d)\n",
+            STRING_SAFE(ns->ip_host), ns->outputbuffer.len, len);
+        ns->status = Ns_Dead;
+        return;
+    }
 
-	/* data + end is where we start putting the new data.  The last byte
-	* currently in use is actually data + end -1
-	*/
-	end = ns->outputbuffer.start + ns->outputbuffer.len;
-	/* The buffer is already in a wrapped state, so adjust end */
-	if (end >= MAXSOCKBUF)
-		end -= MAXSOCKBUF;
-	avail = MAXSOCKBUF - end;
+    /* data + end is where we start putting the new data.  The last byte
+    * currently in use is actually data + end -1
+    */
+    end = ns->outputbuffer.start + ns->outputbuffer.len;
+    /* The buffer is already in a wrapped state, so adjust end */
+    if (end >= MAXSOCKBUF)
+        end -= MAXSOCKBUF;
+    avail = MAXSOCKBUF - end;
 
-	/* We can all fit it behind the current data without wrapping */
-	if (avail >= len)
-		memcpy(ns->outputbuffer.data + end, buf, len);
-	else
-	{
-		memcpy(ns->outputbuffer.data + end, buf, avail);
-		memcpy(ns->outputbuffer.data, buf + avail, len - avail);
-	}
-	ns->outputbuffer.len += len;
+    /* We can all fit it behind the current data without wrapping */
+    if (avail >= len)
+        memcpy(ns->outputbuffer.data + end, buf, len);
+    else
+    {
+        memcpy(ns->outputbuffer.data + end, buf, avail);
+        memcpy(ns->outputbuffer.data, buf + avail, len - avail);
+    }
+    ns->outputbuffer.len += len;
 }

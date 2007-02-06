@@ -93,19 +93,19 @@
 // Private functions
 static void hashtable_reset_thresholds(hashtable *const ht);
 static void hashtable_resize(hashtable *const ht, const hashtable_size_t sz);
-static hashtable_size_t hashtable_min_size(const hashtable_size_t num_elts, 
+static hashtable_size_t hashtable_min_size(const hashtable_size_t num_elts,
         const hashtable_size_t min_buckets_wanted);
 static void hashtable_maybe_shrink(hashtable *const ht);
-static int hashtable_insert_noresize(hashtable *const ht, 
-        const hashtable_const_key_t key, 
+static int hashtable_insert_noresize(hashtable *const ht,
+        const hashtable_const_key_t key,
         const hashtable_value_t obj);
-static void hashtable_find_position(const hashtable *const ht, const hashtable_const_key_t key, 
+static void hashtable_find_position(const hashtable *const ht, const hashtable_const_key_t key,
         hashtable_size_t *const found_position, hashtable_size_t *const insert_position);
 
 /* Notes on the equals(a,b) function usage:
  * 1. If a is empty_key or deleted_key, b is guaranteed to be empty_key or
  *     deleted key.
- *     (This can speed up some equality functions like string 
+ *     (This can speed up some equality functions like string
  *     comparision with special empty/deleted values)
  * 2. b is always empty_key, deleted_key or a key already stored in the hash
  *     (b is never a "key" parameter from calls like find() or erase())
@@ -144,7 +144,7 @@ hashtable *hashtable_new(
     ht->num_buckets = hashtable_min_size(0, num_buckets);
     ht->table = malloc(sizeof(struct hashtable_entry) * ht->num_buckets);
     assert(ht->table);
-    
+
     hashtable_reset_thresholds(ht);
 
     ht->empty_key = empty_key;
@@ -152,7 +152,7 @@ hashtable *hashtable_new(
 
     for(i=0; i<ht->num_buckets; i++)
         ht->table[i].key = empty_key;
-    
+
     return ht;
 }
 
@@ -180,7 +180,7 @@ void hashtable_delete(hashtable *ht)
  * @param ht hasthtable to erase
  */
 void hashtable_clear(hashtable *ht)
-{   
+{
     assert(NULL);
     // Not implemented (yet)
 #if 0
@@ -221,9 +221,9 @@ hashtable_value_t hashtable_find(const hashtable *const ht, const hashtable_cons
  * @param ht hashtable to insert in.
  * @param key of entry to insert
  * @param obj value of entry to insert
- * @return 1 if the entry was inserted, 0 if key already existed 
+ * @return 1 if the entry was inserted, 0 if key already existed
  */
-int hashtable_insert(hashtable *const ht, 
+int hashtable_insert(hashtable *const ht,
         const hashtable_const_key_t key, const hashtable_value_t obj)
 {
     hashtable_resize_delta(ht, 1, 0); // Make room if needed
@@ -243,14 +243,14 @@ int hashtable_erase(hashtable *const ht, const hashtable_const_key_t key)
     hashtable_find_position(ht, key, &found_pos, &insert_pos);
     if(found_pos == HASHTABLE_ILLEGAL_BUCKET)
         return 0;
-    else 
+    else
     {
         assert(ht->num_deleted == 0 || !ht->equals(ht->table[found_pos].key, ht->deleted_key));
         ht->table[found_pos].key = ht->deleted_key;
         ht->num_deleted++;
         ht->consider_shrink = 1;
         return 1;
-    }        
+    }
 }
 
 /** Force a resize of the hashtable.
@@ -261,8 +261,8 @@ int hashtable_erase(hashtable *const ht, const hashtable_const_key_t key)
  * @param delta relative size change (or 0)
  * @param min_buckets_wanted minimum size wanted
  */
-void hashtable_resize_delta(hashtable *const ht, 
-        const hashtable_size_t delta, 
+void hashtable_resize_delta(hashtable *const ht,
+        const hashtable_size_t delta,
         const hashtable_size_t min_buckets_wanted)
 {
     hashtable_size_t resize_to;
@@ -286,7 +286,7 @@ void hashtable_resize_delta(hashtable *const ht,
 /** Get the number of probes needed to find the key.
  * @param ht hashtable to operate on.
  * @param key key to search for.
- * @return number of probes needed to find the key, or HASHTABLE_ILLEGAL_BUCKET if the key isn't in the table) 
+ * @return number of probes needed to find the key, or HASHTABLE_ILLEGAL_BUCKET if the key isn't in the table)
  */
 hashtable_size_t hashtable_num_probes_needed(const hashtable *const ht, const hashtable_const_key_t key)
 {
@@ -297,9 +297,9 @@ hashtable_size_t hashtable_num_probes_needed(const hashtable *const ht, const ha
     {
         if(ht->equals(ht->table[bucknum].key, ht->empty_key))
             return HASHTABLE_ILLEGAL_BUCKET;
-        else if (ht->equals(key, ht->table[bucknum].key)) 
+        else if (ht->equals(key, ht->table[bucknum].key))
             return num_probes + 1;
-        
+
         num_probes++;
         bucknum = (bucknum + JUMP_(key, num_probes)) & bucket_count_minus_one;
     }
@@ -309,25 +309,25 @@ hashtable_size_t hashtable_num_probes_needed(const hashtable *const ht, const ha
 /** Get an iterator for the hashtable.
  * The iterator will indicate the first available element of the
  * hashtable.
- * 
+ *
  * Any iterator obtained before an insert or remove operation is
  * invalid after the operation. The result of accessing an invalid
  * iterator is undefined (but expect crashes).
- * 
+ *
  * If the hashtable was empty, the returned iterator will be equal to
  * hashtable_iterator_last(ht).
- * 
+ *
  * @param ht hasthable to get an iterator for. May be NULL.
  * @return an iterator indicating the first available element of ht,
  * or hashtable_iterator_last(ht) if none was found.
  */
 hashtable_iterator_t hashtable_iterator(const hashtable *const ht)
 {
-    hashtable_iterator_t i;    
+    hashtable_iterator_t i;
 
     if(ht == NULL || ht->num_elements - ht->num_deleted == 0)
         return HASHTABLE_ITERATOR_END;
-    
+
     for(i=0; i<ht->num_buckets; i++)
     {
         if(! ht->equals(ht->table[i].key, ht->empty_key) &&
@@ -348,7 +348,7 @@ hashtable_iterator_t hashtable_iterator_next(const hashtable *const ht, hashtabl
 {
     for(++i; i<ht->num_buckets; i++)
     {
-        if(! ht->equals(ht->table[i].key, ht->empty_key) && 
+        if(! ht->equals(ht->table[i].key, ht->empty_key) &&
                 (ht->num_deleted == 0 || !ht->equals(ht->table[i].key, ht->deleted_key)))
             return i;
     }
@@ -366,11 +366,11 @@ static void hashtable_reset_thresholds(hashtable *const ht)
     ht->consider_shrink = 0;
 }
 
-/* 
- * Note: storing the hash value in the hashtable_entry might seem like a good 
- * idea, since rehashing e.g. 16384 strings might take a while. 
- * The cost is of course memory, especially since some value types might want 
- * to cache their hashvalue themselves anyways. 
+/*
+ * Note: storing the hash value in the hashtable_entry might seem like a good
+ * idea, since rehashing e.g. 16384 strings might take a while.
+ * The cost is of course memory, especially since some value types might want
+ * to cache their hashvalue themselves anyways.
  * But, if the table is created big enough from the start we probably only have
  * to resize it a few times during its lifetime.
  */
@@ -385,10 +385,10 @@ static void hashtable_resize(hashtable *const ht, const hashtable_size_t sz)
     struct hashtable_entry *new_table;
     hashtable_size_t i;
     hashtable_size_t bucket_count_minus_one;
-    
+
     assert((sz & (sz-1)) == 0);       // sz should already be a power of two
     assert(sz >= hashtable_size(ht)); // we should never overshrink
-    
+
     new_table = malloc(sizeof(struct hashtable_entry) * sz);
     assert(new_table);
     for(i=0; i<sz; i++)
@@ -402,13 +402,13 @@ static void hashtable_resize(hashtable *const ht, const hashtable_size_t sz)
         hashtable_size_t num_probes = 0;     // how many times we've probed
         hashtable_size_t bucknum;
 
-        if(ht->equals(ht->table[i].key, ht->empty_key) || 
+        if(ht->equals(ht->table[i].key, ht->empty_key) ||
                 (ht->num_deleted > 0 && ht->equals(ht->table[i].key, ht->deleted_key)))
             continue;
 
         for (bucknum = ht->hash(ht->table[i].key) & bucket_count_minus_one;
                 !ht->equals(new_table[bucknum].key, ht->empty_key); // not empty
-                bucknum = (bucknum + JUMP_(key, num_probes)) & bucket_count_minus_one) 
+                bucknum = (bucknum + JUMP_(key, num_probes)) & bucket_count_minus_one)
         {
             ++num_probes;
             assert(num_probes < sz); // or else the hashtable is full
@@ -432,8 +432,8 @@ static void hashtable_resize(hashtable *const ht, const hashtable_size_t sz)
  * @param min_buckets_wanted suggested minimum number of buckets
  */
 static hashtable_size_t hashtable_min_size(
-        const hashtable_size_t num_elts, 
-        const hashtable_size_t min_buckets_wanted) 
+        const hashtable_size_t num_elts,
+        const hashtable_size_t min_buckets_wanted)
 {
     hashtable_size_t sz = HASHTABLE_MIN_BUCKETS;             // min buckets allowed
     while ( sz < min_buckets_wanted || num_elts >= sz * HASHTABLE_OCCUPANCY_FLT )
@@ -442,14 +442,14 @@ static hashtable_size_t hashtable_min_size(
 }
 
 /** Used after a string of deletes */
-static void hashtable_maybe_shrink(hashtable *const ht) 
+static void hashtable_maybe_shrink(hashtable *const ht)
 {
     assert(ht->num_elements >= ht->num_deleted);
     assert((ht->num_buckets & (ht->num_buckets-1)) == 0); // is a power of two
     assert(ht->num_buckets >= HASHTABLE_MIN_BUCKETS);
 
     if ( (ht->num_elements-ht->num_deleted) <= ht->shrink_threshold &&
-         ht->num_buckets > HASHTABLE_MIN_BUCKETS ) 
+         ht->num_buckets > HASHTABLE_MIN_BUCKETS )
     {
         hashtable_size_t sz = ht->num_buckets / 2;    // find how much we should shrink
         while ( sz > HASHTABLE_MIN_BUCKETS &&
@@ -464,13 +464,13 @@ static void hashtable_maybe_shrink(hashtable *const ht)
 /** Returns a pair of positions.
  * Note: because of deletions where-to-insert is not trivial: it's the
  * first deleted bucket we see, as long as we don't find the key later
- * 
+ *
  * @param ht hashtable to search/insert in
  * @param key key to search for/insert
  * @param found_position where the object is, or ILLEGAL_BUCKET if object is not found
  * @param insert_position where it would go if you wanted to insert it, or ILLEGAL_BUCKET if it was already in the table.
  */
-static void hashtable_find_position(const hashtable *const ht, const hashtable_const_key_t key, 
+static void hashtable_find_position(const hashtable *const ht, const hashtable_const_key_t key,
         hashtable_size_t *const found_position, hashtable_size_t *const insert_position)
 {
     hashtable_size_t num_probes = 0;              // how many times we've probed
@@ -481,23 +481,23 @@ static void hashtable_find_position(const hashtable *const ht, const hashtable_c
     {
         if(ht->equals(ht->table[bucknum].key, ht->empty_key))
         {
-            *found_position = HASHTABLE_ILLEGAL_BUCKET;            
-            if(*insert_position == HASHTABLE_ILLEGAL_BUCKET) 
+            *found_position = HASHTABLE_ILLEGAL_BUCKET;
+            if(*insert_position == HASHTABLE_ILLEGAL_BUCKET)
                 *insert_position = bucknum;
             return;
-        } 
-        else if (ht->num_deleted > 0 && ht->equals(ht->table[bucknum].key, ht->deleted_key)) 
+        }
+        else if (ht->num_deleted > 0 && ht->equals(ht->table[bucknum].key, ht->deleted_key))
         {
-            if(*insert_position == HASHTABLE_ILLEGAL_BUCKET) 
+            if(*insert_position == HASHTABLE_ILLEGAL_BUCKET)
                 *insert_position = bucknum;
-        } 
-        else if (ht->equals(key, ht->table[bucknum].key)) 
+        }
+        else if (ht->equals(key, ht->table[bucknum].key))
         {
             *insert_position = HASHTABLE_ILLEGAL_BUCKET;
             *found_position = bucknum;
             return;
         }
-        
+
         num_probes++;
         bucknum = (bucknum + JUMP_(key, num_probes)) & bucket_count_minus_one;
         assert(num_probes < ht->num_buckets); // don't probe too many times!
@@ -506,8 +506,8 @@ static void hashtable_find_position(const hashtable *const ht, const hashtable_c
 
 /** If you know the hashtable is big enough to hold obj, use this routine */
 static int hashtable_insert_noresize(
-        hashtable *const ht, 
-        const hashtable_const_key_t key, 
+        hashtable *const ht,
+        const hashtable_const_key_t key,
         const hashtable_value_t obj)
 {
     hashtable_size_t found_position, insert_position;
@@ -516,9 +516,9 @@ static int hashtable_insert_noresize(
         return 0;
     else
     {
-        if(ht->equals(ht->table[insert_position].key, ht->deleted_key)) 
+        if(ht->equals(ht->table[insert_position].key, ht->deleted_key))
             ht->num_deleted--;
-        else 
+        else
             ht->num_elements++;
         ht->table[insert_position].value = obj;
         ht->table[insert_position].key = key;

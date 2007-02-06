@@ -20,7 +20,7 @@ enum
     AI_STRINGINT_TYPE
 };
 /** TYPEINTs are just STRINGINTs where the string is a type number */
-#define AI_TYPEINT_TYPE AI_STRINGINT_TYPE 
+#define AI_TYPEINT_TYPE AI_STRINGINT_TYPE
 
 /* Attributes for parameter specifications */
 #define AI_OPTIONAL_PARAM  0 /**< default: param is optional */

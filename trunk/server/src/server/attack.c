@@ -209,7 +209,7 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
                 || abort_attack(target, hitter, env_attack))
                 goto leave;
 
-            /* from old thrown_item_effect() - pretty sure thats not needed 
+            /* from old thrown_item_effect() - pretty sure thats not needed
             case POISON:
             if (IS_LIVE(victim) && !QUERY_FLAG(victim, FLAG_UNDEAD))
             apply_poison(victim, hitter);
@@ -236,7 +236,7 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
         dam = damage_ob(target, random_roll(hitdam / 2 + 1, hitdam), hitter, env_attack);
         if (was_destroyed(target, op_tag) || was_destroyed(hitter, hitter_tag) || abort_attack(target, hitter, env_attack))
             goto leave;
-    }    
+    }
     else /* we missed, dam=0 */
     {
         if (hitter->type != ARROW)
@@ -259,7 +259,7 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
     leave : return dam;
 }
 
-/* damage_ob() (old: hit_player()) is called to generate damage - its the main hit function 
+/* damage_ob() (old: hit_player()) is called to generate damage - its the main hit function
  * when a monster, player or other "attackable" object is really damaged in terms of hp.
  */
 int damage_ob(object *op, int dam, object *hitter, int env_attack)
@@ -307,7 +307,7 @@ int damage_ob(object *op, int dam, object *hitter, int env_attack)
 
     /* New (but still very basic) code for avoiding mobs (and players) on
      * the same side to damage each other. */
-    if(get_friendship(hit_obj, target_obj) >= FRIENDSHIP_HELP) 
+    if(get_friendship(hit_obj, target_obj) >= FRIENDSHIP_HELP)
     {
         LOG(llevDebug, "DEBUG: damage_ob(): friendly hit ('%s' => '%s' / '%s' => '%s') ignored\n",
                 query_name(hitter), query_name(op),
@@ -747,7 +747,7 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
 
             case ATNR_MAGIC:
             case ATNR_LIGHT:
-            case ATNR_SHADOW: 
+            case ATNR_SHADOW:
             case ATNR_PSIONIC:
             case ATNR_LIFESTEAL:
                 *flags |=HIT_FLAG_DMG|MATERIAL_BASE_MAGICAL; /* we are maybe immun - but some items not */
@@ -967,7 +967,7 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
             /* TODO: add special effects */
             break;
         case ATNR_GODPOWER:
-            *flags |=HIT_FLAG_DMG|MATERIAL_BASE_SPECIAL; 
+            *flags |=HIT_FLAG_DMG|MATERIAL_BASE_SPECIAL;
             ATTACK_HIT_DAMAGE(hitter, attacknum);       /* get % of dam from this attack form */
             if (op->resist[attacknum])
                 ATTACK_RESIST_DAMAGE(op, attacknum);    /* reduce to % resistance */
@@ -1342,15 +1342,15 @@ int kill_object(object *op, int dam, object *hitter, int typeX)
             {
                 if(hitter->type == MONSTER && OBJECT_VALID(hitter->owner, hitter->owner_count))
                 {
-                    sprintf(buf, "Your %s killed %s.", query_name(hitter), query_name(op));                
+                    sprintf(buf, "Your %s killed %s.", query_name(hitter), query_name(op));
                     sprintf(buf2, "%s's %s killed %s.", query_name(owner), query_name(hitter), query_name(op));
-                } 
+                }
                 else
                 {
-                    sprintf(buf, "You killed %s with %s.", query_name(op), query_name(hitter));                
+                    sprintf(buf, "You killed %s with %s.", query_name(op), query_name(hitter));
                     sprintf(buf2, "%s killed %s with %s.", query_name(owner), query_name(op), query_name(hitter));
                 }
-                
+
                 old_hitter = hitter;
                 owner->exp_obj = hitter->exp_obj;
             }
@@ -1473,7 +1473,7 @@ object * hit_with_arrow(object *op, object *victim)
         hitter->x = op->x;
         hitter->y = op->y;
         remove_ob(hitter);
-        insert_ob_in_map(hitter, container->map, OBJECT_VALID(hitter->owner, hitter->owner_count) ? hitter->owner : hitter, 
+        insert_ob_in_map(hitter, container->map, OBJECT_VALID(hitter->owner, hitter->owner_count) ? hitter->owner : hitter,
                 INS_NO_MERGE | INS_NO_WALK_ON);
         /* Note that we now have an empty THROWN_OBJ on the map.  Code that
          * might be called until this THROWN_OBJ is either reassembled or
@@ -1964,7 +1964,7 @@ void confuse_player(object *op, object *hitter, int ticks)
 }
 
 /* remove confusion effect and force (if there is one)
-* Note: This is for explicit remove - in time.c the force can 
+* Note: This is for explicit remove - in time.c the force can
 * auto destruct itself without calling this function. This.
 */
 void remove_confusion(object *op)
@@ -2033,7 +2033,7 @@ void blind_player(object *op, object *hitter, int dam)
 }
 
 /* remove blindness effect and force (if there is one)
-* Note: This is for explicit remove - in time.c the force can 
+* Note: This is for explicit remove - in time.c the force can
 * auto destruct itself without calling this function. This.
 */
 void remove_blindness(object *op)
@@ -2093,7 +2093,7 @@ void paralyze_player(object *op, object *hitter, int dam)
         /* paralyze effects don't stack - means don't increase when hit. */
         return;
     }
-    
+
     if (op->type == PLAYER)
         new_draw_info(NDI_UNIQUE, 0, op, "You suddenly feel paralyzed!");
     if (!QUERY_FLAG(op, FLAG_CONFUSED) && op->map)
@@ -2104,7 +2104,7 @@ void paralyze_player(object *op, object *hitter, int dam)
 }
 
 /* remove paralyze effect and force (if there is one)
- * Note: This is for explicit remove - in time.c the force can 
+ * Note: This is for explicit remove - in time.c the force can
  * auto destruct itself without calling this function. This.
 */
 void remove_paralyze(object *op)
