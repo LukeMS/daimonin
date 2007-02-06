@@ -375,6 +375,7 @@ arch wall_stone1_1
 x 3
 end
 arch floor_ostone1
+face floor_ostone9.101
 x 3
 y 1
 end
