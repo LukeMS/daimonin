@@ -1241,13 +1241,50 @@ arch floor_ostone1
 x 10
 y 3
 end
+arch check_inv
+slaying shortsword
+race shortsword
+hp 15
+confused 1
+last_sp 0
+last_grace 1
+last_heal 1
+x 10
+y 3
+arch beacon
+name c2_8
+end
+end
 arch floor_ostone1
 x 10
 y 4
 end
+arch check_inv
+slaying shortsword
+race shortsword
+hp 15
+confused 1
+last_grace 1
+last_heal 1
+x 10
+y 4
+arch beacon
+name c2_7
+end
+end
 arch floor_ostone1
 x 10
 y 5
+end
+arch check_inv
+hp 15
+last_sp 0
+last_grace 1
+x 10
+y 5
+arch beacon
+name c2_6
+end
 end
 arch floor_ostone1
 x 10
@@ -1343,13 +1380,39 @@ arch floor_ostone1
 x 11
 y 3
 end
-arch floor_ostone1
+arch check_inv
+race shortsword
+last_grace 1
+x 11
+y 3
+arch beacon
+name c2_1
+end
+end
+arch grassd_1
 x 11
 y 4
+end
+arch shortsword
+nrof 10
+x 11
+y 4
+arch beacon
+name shortsword
+end
 end
 arch floor_ostone1
 x 11
 y 5
+end
+arch check_inv
+hp 15
+last_grace 1
+x 11
+y 5
+arch beacon
+name c2_5
+end
 end
 arch floor_ostone1
 x 11
@@ -1445,13 +1508,42 @@ arch floor_ostone1
 x 12
 y 3
 end
+arch check_inv
+race shortsword
+last_sp 0
+last_grace 1
+x 12
+y 3
+arch beacon
+name c2_2
+end
+end
 arch floor_ostone1
 x 12
 y 4
 end
+arch check_inv
+slaying shortsword
+last_grace 1
+x 12
+y 4
+arch beacon
+name c2_3
+end
+end
 arch floor_ostone1
 x 12
 y 5
+end
+arch check_inv
+slaying shortsword
+last_sp 0
+last_grace 1
+x 12
+y 5
+arch beacon
+name c2_4
+end
 end
 arch floor_ostone1
 x 12
