@@ -898,7 +898,7 @@ object * check_inv_recursive(object *op, object *trig)
                 match_arch = 1;
 
         /* AND or OR logic? */
-        if (trig->last_heal)
+        if (QUERY_FLAG(trig, FLAG_CONFUSED))
         {
             if((trig->stats.hp == 0 || match_type) &&
                     (trig->slaying == NULL || match_slaying) &&
