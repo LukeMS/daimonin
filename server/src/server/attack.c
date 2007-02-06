@@ -1218,7 +1218,7 @@ static void send_attack_msg(object *op, object *hitter, int attacknum, int dam, 
 {
     if (op->type == PLAYER)
     {
-        new_draw_info_format(NDI_PURPLE, 0, op, "%s hits you for %d (%d) damage.", hitter->name, (int) dam,
+        new_draw_info_format(NDI_PURPLE, 0, op, "%s hits you for %d (%+d) damage.", hitter->name, (int) dam,
                              ((int) dam) - damage);
     }
     if (hitter->type == PLAYER)
@@ -1226,7 +1226,7 @@ static void send_attack_msg(object *op, object *hitter, int attacknum, int dam, 
 /*        new_draw_info_format(NDI_ORANGE, 0, hitter, "You use %s and hit %s for %d (%d).", attack_name[attacknum], op->name,
                              (int) dam, ((int) dam) - damage);
  */
-        new_draw_info_format(NDI_ORANGE, 0, hitter, "You hit %s for %d (%d) with %s.", op->name, (int) dam,
+        new_draw_info_format(NDI_ORANGE, 0, hitter, "You hit %s for %d (%+d) with %s.", op->name, (int) dam,
                              ((int) dam) - damage, attack_name[attacknum]);
     }
 }
