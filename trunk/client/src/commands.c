@@ -613,11 +613,11 @@ void StatsCmd(unsigned char *data, int len)
                     }
                     break;
                 case CS_STAT_WC:
-                    cpl.stats.wc = (char) GetShort_String(data + i);
+                    cpl.stats.wc = (uint8) GetShort_String(data + i);
                     i += 2;
                     break;
                 case CS_STAT_AC:
-                    cpl.stats.ac = (char) GetShort_String(data + i);
+                    cpl.stats.ac = (uint8) GetShort_String(data + i);
                     i += 2;
                     break;
                 case CS_STAT_DAM:
