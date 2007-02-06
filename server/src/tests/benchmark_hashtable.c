@@ -23,7 +23,7 @@
     The author can be reached via e-mail to daimonin@nord-com.net
 */
 
-/* benchmark_hashtable.c 
+/* benchmark_hashtable.c
  * Copyright (C) 2005 Björn Axelsson
  */
 
@@ -44,7 +44,7 @@ START_TEST (benchmark_raw_hash)
            generic_hash(words[j], word_lengths[j]);
        }
    }
-   timer_stop(num_words * benchmark_repetitions); 
+   timer_stop(num_words * benchmark_repetitions);
 }
 END_TEST
 
@@ -59,7 +59,7 @@ START_TEST (benchmark_string_hash)
            string_hash(words[j]);
        }
    }
-   timer_stop(num_words * benchmark_repetitions); 
+   timer_stop(num_words * benchmark_repetitions);
 }
 END_TEST
 
@@ -67,7 +67,7 @@ START_TEST(benchmark_hashtable_insert)
 {
    int i,j;
    hashtable *ht = string_hashtable_new(32);
-    
+
    printf("\nBenchmarking %d x %d hashtable insertions\n", benchmark_repetitions, num_words);
 
    timer_start();
@@ -76,7 +76,7 @@ START_TEST(benchmark_hashtable_insert)
            hashtable_insert(ht, words[j], words[j]);
        }
    }
-   timer_stop(num_words * benchmark_repetitions); 
+   timer_stop(num_words * benchmark_repetitions);
 }
 END_TEST
 
@@ -84,21 +84,21 @@ START_TEST (benchmark_hashtable_insert_erase)
 {
    int i,j;
    hashtable *ht;
-    
+
    printf("\nBenchmarking %d x %d hashtable insertions, erasing after every repetition\n", benchmark_repetitions, num_words);
 
    timer_start();
    for(i=0; i<benchmark_repetitions; i++) {
        /* TODO: replace with hashtable_erase when implemented */
        ht = string_hashtable_new(10000);
-       
+
        for(j=0; j<num_words; j++) {
            hashtable_insert(ht, words[j], words[j]);
        }
 
        hashtable_delete(ht);
    }
-   timer_stop(num_words * benchmark_repetitions); 
+   timer_stop(num_words * benchmark_repetitions);
 }
 END_TEST
 
@@ -106,7 +106,7 @@ START_TEST (benchmark_hashtable_find)
 {
    int i,j;
    hashtable *ht = string_hashtable_new(32);
-    
+
    printf("\nBenchmarking %d x %d hashtable finds\n", benchmark_repetitions, num_words);
 
    // Populate the hashtable
@@ -120,13 +120,13 @@ START_TEST (benchmark_hashtable_find)
            hashtable_find(ht, words[j]);
        }
    }
-   timer_stop(num_words * benchmark_repetitions); 
+   timer_stop(num_words * benchmark_repetitions);
 }
 END_TEST
 
 /*
  * Comparative benchmarks. Helps finding out when using a hashtable
- * is better than a simple linked list 
+ * is better than a simple linked list
  */
 
 /* This benchmark shows that iterating over a hashtable is about 5-10 times slower than
@@ -136,7 +136,7 @@ START_TEST (benchmark_hashtable_iterate)
    int i,j = 0;
    hashtable *ht = string_hashtable_new(32);
    hashtable_iterator_t curr;
-    
+
    printf("\nBenchmarking %d x %d string hashtable iterator iterations\n", benchmark_repetitions, num_words);
 
    // Populate the hashtable
@@ -155,7 +155,7 @@ START_TEST (benchmark_hashtable_iterate)
                j++;
        }
    }
-   timer_stop(num_words * benchmark_repetitions); 
+   timer_stop(num_words * benchmark_repetitions);
 }
 END_TEST
 
@@ -164,7 +164,7 @@ START_TEST (benchmark_hashtable_iterate_2)
    int i,j = 0;
    hashtable *ht = pointer_hashtable_new(32);
    hashtable_iterator_t curr;
-    
+
    printf("\nBenchmarking %d x %d pointer hashtable iterator iterations\n", benchmark_repetitions, num_words);
 
    // Populate the hashtable
@@ -183,7 +183,7 @@ START_TEST (benchmark_hashtable_iterate_2)
                j++;
        }
    }
-   timer_stop(num_words * benchmark_repetitions); 
+   timer_stop(num_words * benchmark_repetitions);
 }
 END_TEST
 
@@ -197,7 +197,7 @@ START_TEST (benchmark_linked_list_iterate)
     };
 
     struct ll *first = NULL, *curr;
-    
+
     printf("\nBenchmarking %d x %d linked list iterations\n", benchmark_repetitions, num_words);
 
     /* Populate the list */
@@ -209,7 +209,7 @@ START_TEST (benchmark_linked_list_iterate)
     }
 
    timer_start();
-   for(i=0; i<benchmark_repetitions; i++) 
+   for(i=0; i<benchmark_repetitions; i++)
    {
        for(curr = first; curr; curr = curr->next)
        {
@@ -218,7 +218,7 @@ START_TEST (benchmark_linked_list_iterate)
                j++;
        }
    }
-   timer_stop(num_words * benchmark_repetitions); 
+   timer_stop(num_words * benchmark_repetitions);
 }
 END_TEST
 
@@ -229,7 +229,7 @@ START_TEST (benchmark_hashtable_sizes)
 {
     int power;
     printf("\n");
-   
+
     for(power = 3; (1 << power) < num_words; power++)
     {
         int i,j = 0;
@@ -239,18 +239,18 @@ START_TEST (benchmark_hashtable_sizes)
         for(j=0; j<(1<<power); j++) {
             hashtable_insert(ht, words[j], words[j]);
         }
-        
+
         printf("Benchmarking %d x %d hashtable string find with table size %d\n", benchmark_repetitions, num_words, hashtable_size(ht));
-        
+
         timer_start();
-        for(i=0; i<benchmark_repetitions; i++) 
+        for(i=0; i<benchmark_repetitions; i++)
         {
             for(j=0; j<num_words; j++)
             {
                 hashtable_find(ht, words[j]);
             }
         }
-        timer_stop(num_words * benchmark_repetitions); 
+        timer_stop(num_words * benchmark_repetitions);
 
         hashtable_delete(ht);
     }
@@ -265,7 +265,7 @@ START_TEST (benchmark_linked_list_sizes)
         char *value;
     };
 
-    
+
     printf("\n");
 
     for(power = 3; power < 8; power++)
@@ -280,11 +280,11 @@ START_TEST (benchmark_linked_list_sizes)
             curr->value = words[j];
             first = curr;
         }
-   
+
         printf("Benchmarking %d x %d linear string find with list size %d\n", benchmark_repetitions, num_words, 1 << power);
-        
+
         timer_start();
-        for(i=0; i<benchmark_repetitions; i++) 
+        for(i=0; i<benchmark_repetitions; i++)
         {
             for(j=0; j<num_words; j++)
             {
@@ -293,7 +293,7 @@ START_TEST (benchmark_linked_list_sizes)
                         break;
             }
         }
-        timer_stop(num_words * benchmark_repetitions); 
+        timer_stop(num_words * benchmark_repetitions);
 
         for(curr = first; curr; curr = next)
         {
@@ -311,7 +311,7 @@ START_TEST (benchmark_hashtable_sizes_2)
 {
     int power;
     printf("\n");
-   
+
     for(power = 3; (1 << power) < num_words; power++)
     {
         int i,j = 0;
@@ -321,18 +321,18 @@ START_TEST (benchmark_hashtable_sizes_2)
         for(j=0; j<(1<<power); j++) {
             hashtable_insert(ht, words[j], words[j]);
         }
-        
+
         printf("Benchmarking %d x %d hashtable pointer find with table size %d\n", benchmark_repetitions, num_words, hashtable_size(ht));
-        
+
         timer_start();
-        for(i=0; i<benchmark_repetitions; i++) 
+        for(i=0; i<benchmark_repetitions; i++)
         {
             for(j=0; j<num_words; j++)
             {
                 hashtable_find(ht, words[j]);
             }
         }
-        timer_stop(num_words * benchmark_repetitions); 
+        timer_stop(num_words * benchmark_repetitions);
 
         hashtable_delete(ht);
     }
@@ -346,7 +346,7 @@ START_TEST (benchmark_linked_list_sizes_2)
         struct ll * next;
         char *value;
     };
-    
+
     printf("\n");
 
     for(power = 3; power < 8; power++)
@@ -361,11 +361,11 @@ START_TEST (benchmark_linked_list_sizes_2)
             curr->value = words[j];
             first = curr;
         }
-   
+
         printf("Benchmarking %d x %d linear pointer find with list size %d\n", benchmark_repetitions, num_words, 1 << power);
-        
+
         timer_start();
-        for(i=0; i<benchmark_repetitions; i++) 
+        for(i=0; i<benchmark_repetitions; i++)
         {
             for(j=0; j<num_words; j++)
             {
@@ -374,7 +374,7 @@ START_TEST (benchmark_linked_list_sizes_2)
                         break;
             }
         }
-        timer_stop(num_words * benchmark_repetitions); 
+        timer_stop(num_words * benchmark_repetitions);
 
         for(curr = first; curr; curr = next)
         {
@@ -391,7 +391,7 @@ Suite *hashtable_benchmark_suite(void)
   TCase *tc_core = tcase_create("Core");
 
   tcase_add_unchecked_fixture(tc_core, read_words, dummy_teardown);
-  
+
   suite_add_tcase (s, tc_core);
   tcase_add_test(tc_core, benchmark_raw_hash);
   tcase_add_test(tc_core, benchmark_string_hash);

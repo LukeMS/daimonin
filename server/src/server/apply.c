@@ -55,7 +55,7 @@ static int apply_id_altar(object *money, object *altar, object *pl)
      */
     if (!check_altar_sacrifice(altar, money) || money->type != MONEY)
         return 0;
-    
+
     /* Event trigger and quick exit */
     if(trigger_object_plugin_event(EVENT_TRIGGER,
                 altar, pl, money,
@@ -866,7 +866,7 @@ int convert_item(object *item, object *converter, object *originator)
          || CONV_FROM(converter) != item->arch->name
          || (CONV_NEED(converter) && CONV_NEED(converter) > item->nrof))
             return 0;
-        
+
         if(trigger_object_plugin_event(EVENT_TRIGGER,
                 converter, item, originator,
                 NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
@@ -919,7 +919,7 @@ int esrv_apply_container(object *op, object *sack)
     /*
      * TODO: add support for cursed containers that can't be unreadied?
      */
-    
+
     if (op->type != PLAYER)
     {
         LOG(llevBug, "BUG: esrv_apply_container: called from non player: <%s>!\n", query_name(op));
@@ -1024,7 +1024,7 @@ int esrv_apply_container(object *op, object *sack)
             /* No need for recursive search, since only top-level containers may be applied */
             for(tmp = op->inv; tmp; tmp = tmp->below)
             {
-                if(QUERY_FLAG(tmp, FLAG_APPLIED) && tmp->type == CONTAINER && 
+                if(QUERY_FLAG(tmp, FLAG_APPLIED) && tmp->type == CONTAINER &&
                         tmp->race == sack->race && tmp != sack)
                 {
                     CLEAR_FLAG(tmp, FLAG_APPLIED);
@@ -1033,7 +1033,7 @@ int esrv_apply_container(object *op, object *sack)
                     esrv_update_item(UPD_FLAGS, op, tmp);
                 }
             }
-            
+
             new_draw_info_format(NDI_UNIQUE, 0, op, "You readied %s.", query_name(sack));
             SET_FLAG(sack, FLAG_APPLIED);
             update_object(sack, UP_OBJ_FACE);
@@ -1132,7 +1132,7 @@ static int apply_shop_mat(object *shop_mat, object *op)
 {
     int     rv  = 0;
     object *tmp;
-    
+
     /* Event trigger and quick exit */
     if(trigger_object_plugin_event(EVENT_TRIGGER,
                 shop_mat, op, NULL,
@@ -1433,9 +1433,9 @@ void move_apply(object *const trap_obj, object *const victim, object *const orig
               check_fired_arch(trap);
           goto leave;
 
-          /* FIXME: this doesn't look correct. 
-           * This function will be called once for every object on the square (I think), 
-           * but the code below also goes through the first 100 objects on the square) 
+          /* FIXME: this doesn't look correct.
+           * This function will be called once for every object on the square (I think),
+           * but the code below also goes through the first 100 objects on the square)
            * Gecko 2006-11-14. */
         case TRAPDOOR:
           {
@@ -2453,7 +2453,7 @@ int dragon_eat_flesh(object *op, object *meal)
 static void apply_savebed(object *pl, object *bed)
 {
     player *p_ptr =CONTR(pl);
- 
+
     if (!p_ptr || !p_ptr->name_changed || !pl->stats.exp)
     {
         new_draw_info(NDI_UNIQUE, 0, pl, "You don't deserve to save your character yet.");
@@ -2848,7 +2848,7 @@ int player_apply(object *pl, object *op, int aflag, int quiet)
             return 0;
         }
     }
-    
+
     /* skip not needed fix_player() calls for trivial action */
     SET_FLAG(pl, FLAG_NO_FIX_PLAYER);
     tmp = manual_apply(pl, op, aflag);

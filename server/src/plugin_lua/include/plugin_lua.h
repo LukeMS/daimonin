@@ -72,7 +72,7 @@ extern CFParm          *PlugProps;
 extern f_plugin         PlugHooks[1024];
 extern int              cache_ref;
 
-/* macros for ReadyMap, ReadyUnique and ReadyInstance */ 
+/* macros for ReadyMap, ReadyUnique and ReadyInstance */
 #define PLUGIN_MAP_CHECK 1
 #define PLUGIN_MAP_NEW 2
 

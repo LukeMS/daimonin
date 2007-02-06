@@ -52,7 +52,7 @@ mapstruct *has_been_loaded_sh(const char *name)
         return NULL;
 
     /* this IS a bug starting without '/' or '.' - this can lead in double loaded maps!
-     * We don't fix it here anymore - this MUST be done by the calling functions or our 
+     * We don't fix it here anymore - this MUST be done by the calling functions or our
      * inheritanced map system is already broken somewhere before this call.
      */
     if (*name != '/' && *name != '.')
@@ -125,8 +125,8 @@ int check_path(const char *name, int prepend_dir)
  * If dst was not already absolute, the directory part of src will be used
  * as the base path and dst will be added to it.
  * @param[in] src already normalized file name for finding absolute path
- * @param[in] dst path to normalize. Should be either an absolute path or a path 
- * relative to src. It must be a true "source" map path, and not a path into the 
+ * @param[in] dst path to normalize. Should be either an absolute path or a path
+ * relative to src. It must be a true "source" map path, and not a path into the
  * "./instance" or "./players" directory.
  * If dst is NULL, src is used for dst too.
  * @param[out] destination buffer for normalized path. Should be at least MAXPATHLEN big.
@@ -161,9 +161,9 @@ char *normalize_path(const char *src, const char *dst, char *path)
         if(strncmp(dst, "./", 2) == 0)
         {
             /* (Only works with default directory paths) */
-            /* Actually, a settings.localdir that doesn't start with "." will probalbly 
+            /* Actually, a settings.localdir that doesn't start with "." will probalbly
              * break instanced and unique maps... */
-            if(strncmp(dst, LOCALDIR "/" INSTANCEDIR, LSTRLEN(LOCALDIR "/" INSTANCEDIR)) == 0 
+            if(strncmp(dst, LOCALDIR "/" INSTANCEDIR, LSTRLEN(LOCALDIR "/" INSTANCEDIR)) == 0
                     || strncmp(dst, LOCALDIR "/" PLAYERDIR, LSTRLEN(LOCALDIR "/" PLAYERDIR)) == 0)
             {
                 LOG(llevBug,"BUG: normalize_path(): Called with unique/instance dst: %s\n", dst);
@@ -181,7 +181,7 @@ char *normalize_path(const char *src, const char *dst, char *path)
         strcat(buf, dst);
     }
 
-    /* Hmm.. This looks buggy. Meant to remove initial double slashes? 
+    /* Hmm.. This looks buggy. Meant to remove initial double slashes?
      * There will be problems if there are double slashes anywhere else in the
      * path. Gecko 2006-09-24. */
     /* Disabled to see if anything breaks. Gecko 2007-02-03 */
@@ -192,9 +192,9 @@ char *normalize_path(const char *src, const char *dst, char *path)
 #else
     p = buf;
     if(strstr(p, "//"))
-        LOG(llevBug, "BUG: map path with unhandled '//' element: %s\n", buf); 
-#endif    
-    
+        LOG(llevBug, "BUG: map path with unhandled '//' element: %s\n", buf);
+#endif
+
     *path = '\0';
     p = strtok(p, "/");
     while (p)
@@ -349,7 +349,7 @@ mapstruct * get_linked_map()
      * work later */
     map->active_objects = get_object();
     insert_ob_in_ob(map->active_objects, &void_container); /* Avoid gc of the sentinel object */
-    
+
     return map;
 }
 
@@ -655,7 +655,7 @@ static int load_map_header(FILE *fp, mapstruct *m, int flags)
 
             if (tile<1 || tile>TILED_MAPS)
             {
-                LOG(llevError,  "ERROR: load_map_header: orig tile location %d out of bounds (%s) (%s)\n", 
+                LOG(llevError,  "ERROR: load_map_header: orig tile location %d out of bounds (%s) (%s)\n",
                                 tile, STRING_MAP_PATH(m), STRING_SAFE(value));
             }
             else
@@ -663,7 +663,7 @@ static int load_map_header(FILE *fp, mapstruct *m, int flags)
                 *end = 0;
                 if (m->orig_tile_path[tile - 1])
                 {
-                    LOG(llevError, "ERROR: load_map_header: orig tile location %d duplicated (%s) (%s)\n", 
+                    LOG(llevError, "ERROR: load_map_header: orig tile location %d duplicated (%s) (%s)\n",
                                    tile, STRING_MAP_PATH(m), STRING_SAFE(value));
                 }
 
@@ -678,7 +678,7 @@ static int load_map_header(FILE *fp, mapstruct *m, int flags)
 
             if (tile<1 || tile>TILED_MAPS)
             {
-                LOG(llevError, "ERROR: load_map_header: tile location %d out of bounds (%s) (%s)\n", 
+                LOG(llevError, "ERROR: load_map_header: tile location %d out of bounds (%s) (%s)\n",
                                tile, STRING_MAP_PATH(m), STRING_SAFE(value));
             }
             else
@@ -686,7 +686,7 @@ static int load_map_header(FILE *fp, mapstruct *m, int flags)
                 *end = 0;
                 if (m->tile_path[tile - 1])
                 {
-                    LOG(llevError, "ERROR: load_map_header: tile location %d duplicated (%s) (%s)\n", 
+                    LOG(llevError, "ERROR: load_map_header: tile location %d duplicated (%s) (%s)\n",
                                    tile, STRING_MAP_PATH(m), STRING_SAFE(value));
                 }
 
@@ -713,7 +713,7 @@ static int load_map_header(FILE *fp, mapstruct *m, int flags)
                     }
                     else /* for multi maps, orig_path is the same path */
                         path_sh = add_refcount(m->orig_tile_path[tile - 1]);
-                 
+
                 }
                 else /* non original map - all the things above was done before - just load */
                     path_sh = add_string(value);
@@ -728,10 +728,10 @@ static int load_map_header(FILE *fp, mapstruct *m, int flags)
                     {
                         /* Refuse tiling if anything looks suspicious, since that may leave dangling pointers and crash the server */
                         LOG(llevMapbug, "MAPBUG: map tiles incorrecly connected: %s->%s but %s->%s. Refusing to connect them!\n",
-                                STRING_SAFE(m->orig_path), path_sh ? path_sh : "(no map)", 
-                                STRING_SAFE(neighbour->orig_path), neighbour->orig_tile_path[dest_tile] ? neighbour->orig_tile_path[dest_tile] : "(no map)" ); 
+                                STRING_SAFE(m->orig_path), path_sh ? path_sh : "(no map)",
+                                STRING_SAFE(neighbour->orig_path), neighbour->orig_tile_path[dest_tile] ? neighbour->orig_tile_path[dest_tile] : "(no map)" );
                         /* Disable map linking */
-                        FREE_AND_CLEAR_HASH(path_sh); 
+                        FREE_AND_CLEAR_HASH(path_sh);
                         FREE_AND_CLEAR_HASH(m->orig_tile_path[tile - 1]);
                     }
                     else
@@ -750,11 +750,11 @@ static int load_map_header(FILE *fp, mapstruct *m, int flags)
             m->tileset_x = atoi(value);
         else if (!strcmp(key, "tileset_y"))
             m->tileset_y = atoi(value);
-        else if (!strcmp(key, "end")) 
+        else if (!strcmp(key, "end"))
         {
             got_end = 1;
             break;
-        } 
+        }
         else
         {
             LOG(llevBug, "BUG: Got unknown value in map header: %s %s\n", key, value);
@@ -767,7 +767,7 @@ static int load_map_header(FILE *fp, mapstruct *m, int flags)
         if(!MAP_STATUS_TYPE(m->map_status)) /* still zero? then force _MULTI */
             m->map_status |= MAP_STATUS_MULTI;
     }
-    m->map_status |= (flags & MAP_STATUS_ORIGINAL); 
+    m->map_status |= (flags & MAP_STATUS_ORIGINAL);
 
     if (! got_end)
     {
@@ -821,7 +821,7 @@ int new_save_map(mapstruct *m, int flag)
     else
     {
         /* create tmpname if we don't have one or our old one was used by a different map */
-        if (!m->tmpname || access(m->tmpname, F_OK) ==-1 ) 
+        if (!m->tmpname || access(m->tmpname, F_OK) ==-1 )
         {
             FREE_AND_NULL_PTR(m->tmpname);
             tempnam_local_ext(settings.tmpdir, NULL, filename);
@@ -927,7 +927,7 @@ int new_save_map(mapstruct *m, int flag)
     }
 
     fprintf(fp, "end\n");
-    
+
     save_objects(m, fp, 0);
 
     fclose(fp);
@@ -1039,7 +1039,7 @@ void free_map(mapstruct *m, int flag)
 
     FREE_AND_NULL_PTR(m->spaces);
     FREE_AND_NULL_PTR(m->bitmap);
-    
+
     for (i = 0; i < TILED_MAPS; i++)
     {
         /* delete the backlinks in other tiled maps to our map */
@@ -1057,7 +1057,7 @@ void free_map(mapstruct *m, int flag)
         FREE_AND_CLEAR_HASH(m->tile_path[i]);
         FREE_AND_CLEAR_HASH(m->orig_tile_path[i]);
     }
-    
+
     FREE_AND_CLEAR_HASH(m->name);
     FREE_AND_CLEAR_HASH(m->msg);
     FREE_AND_CLEAR_HASH(m->cached_dist_map);
@@ -1105,7 +1105,7 @@ void delete_map(mapstruct *m)
     FREE_AND_CLEAR_HASH(m->path);
     FREE_AND_CLEAR_HASH(m->orig_path);
     FREE_AND_NULL_PTR(m->tmpname); /* malloc() string */
-    
+
     free(m);
 }
 
@@ -1134,7 +1134,7 @@ void free_all_maps()
 }
 
 
-/* helper function to create from a normal map a unique (apartment) like map inside the player directory 
+/* helper function to create from a normal map a unique (apartment) like map inside the player directory
  * changed it to return hash strings because we always use the generated string as hash strings.
  */
 const char *create_unique_path_sh(const object * const op, const char * const name)
@@ -1157,7 +1157,7 @@ const char *create_unique_path_sh(const object * const op, const char * const na
 const char *create_instance_path_sh(player * const pl, const char * const name, int flags)
 {
     int instance_num = pl->instance_num;
-    const char *mapname, *path_sh = NULL; 
+    const char *mapname, *path_sh = NULL;
     char path[1024];
 
     mapname = path_to_name(name); /* create the instance map name with '$' instead of '/' */
@@ -1170,12 +1170,12 @@ const char *create_instance_path_sh(player * const pl, const char * const name, 
             instance_num = MAP_INSTANCE_NUM_INVALID;
         else
         {
-            sprintf(path, "%s/%s/%ld/%d/%d/%s", settings.localdir, settings.instancedir, pl->instance_id, 
+            sprintf(path, "%s/%s/%ld/%d/%d/%s", settings.localdir, settings.instancedir, pl->instance_id,
                 instance_num/10000, instance_num, mapname);
         }
     }
 
-    if (instance_num == MAP_INSTANCE_NUM_INVALID) 
+    if (instance_num == MAP_INSTANCE_NUM_INVALID)
     {
         instance_num = get_new_instance_num();
         /* create new instance directory for this instance */
@@ -1205,7 +1205,7 @@ const char *create_instance_path_sh(player * const pl, const char * const name, 
 * option if we can't find the original map)
 * note: load_map() is called with (NULL, <src_name>, MAP_STATUS_MULTI, NULL) when
 * tmp map loading fails because a tmp map is ALWAYS a MULTI map and when fails its
-* reloaded from /maps as new original map. 
+* reloaded from /maps as new original map.
 */
 static mapstruct * load_temporary_map(mapstruct *m)
 {
@@ -1266,8 +1266,8 @@ static mapstruct * load_temporary_map(mapstruct *m)
  * same instance if applicable.
  *
  * @param orig_map map to inherit type and instance from
- * @param new_map_path the path to the map to ready. This can be either an absolute path, 
- *        or a path relative to orig_map->path. It must be a true "source" map path, 
+ * @param new_map_path the path to the map to ready. This can be either an absolute path,
+ *        or a path relative to orig_map->path. It must be a true "source" map path,
  *        and not a path into the "./instance" or "./players" directory.
  * @param flags        1 to never load unloaded or swapped map, i.e. only return maps
  *                     already in memory.
@@ -1279,7 +1279,7 @@ mapstruct *ready_inherited_map(mapstruct *orig_map, shstr *new_map_path, int fla
     shstr *new_path = NULL;
     shstr *normalized_path = NULL;
     char tmp_path[MAXPATHLEN];
-    
+
     /* Try some quick exits first */
     if(orig_map == NULL || new_map_path == NULL || *new_map_path == '\0')
         return NULL;
@@ -1301,10 +1301,10 @@ mapstruct *ready_inherited_map(mapstruct *orig_map, shstr *new_map_path, int fla
     /* create the path prefix (./players/.. or ./instance/.. ) for non multi maps */
     if(orig_map->map_status & (MAP_STATUS_UNIQUE|MAP_STATUS_INSTANCE))
     {
-        new_path = add_string(normalize_path_direct(orig_map->path, 
+        new_path = add_string(normalize_path_direct(orig_map->path,
                     path_to_name(normalized_path), tmp_path));
     }
-   
+
     if(flags & 1)
     {
         /* Just check if it has in memory */
@@ -1314,7 +1314,7 @@ mapstruct *ready_inherited_map(mapstruct *orig_map, shstr *new_map_path, int fla
     } else
     {
         /* Load map if necesseary */
-        new_map = ready_map_name(new_path?new_path:normalized_path, normalized_path, 
+        new_map = ready_map_name(new_path?new_path:normalized_path, normalized_path,
                 MAP_STATUS_TYPE(orig_map->map_status), orig_map->reference);
     }
 
@@ -1339,7 +1339,7 @@ mapstruct *ready_inherited_map(mapstruct *orig_map, shstr *new_map_path, int fla
 mapstruct * ready_map_name(const char *name_path, const char *src_path, int flags, shstr *reference)
 {
      mapstruct  *m;
-     
+
     /* Map is good to go? so just return it */
      m = has_been_loaded_sh( name_path ? name_path : src_path );
      if (m && (m->in_memory == MAP_LOADING || m->in_memory == MAP_IN_MEMORY))
@@ -1360,7 +1360,7 @@ mapstruct * ready_map_name(const char *name_path, const char *src_path, int flag
             /* after the instance map patch we should look in the map swap system...
              * it seems unique maps are not 100% right implemented there
              */
-            LOG(llevDebug, "NOTE: ready_map_name(): unique/instanced map as tmp map? (stats:%d) (%s) (%s)", 
+            LOG(llevDebug, "NOTE: ready_map_name(): unique/instanced map as tmp map? (stats:%d) (%s) (%s)",
                     m->in_memory, STRING_SAFE(name_path), STRING_SAFE(src_path) );
             clean_tmp_map(m);
             delete_map(m);
@@ -1420,10 +1420,10 @@ mapstruct * load_map(const char *filename, const char *src_name, int flags, shst
 
     flags &= ~MAP_STATUS_ORIGINAL;
 
-    /* this IS a bug - because string compare will fail when it checks the loaded maps - 
+    /* this IS a bug - because string compare will fail when it checks the loaded maps -
      * this can lead in a double load and break the server!
      * a '.' signs unique maps in fixed directories.
-     * We don't fix it here anymore - this MUST be done by the calling functions or our 
+     * We don't fix it here anymore - this MUST be done by the calling functions or our
      * inheritanced map system is already broken somewhere before this call.
      */
     if ((filename && *filename != '/' && *filename != '.') || (src_name && *src_name != '/' && *src_name != '.'))
@@ -1437,7 +1437,7 @@ mapstruct * load_map(const char *filename, const char *src_name, int flags, shst
      * without pre-guessing the map_status. In fact map_status CAN be here invalid with 0!
      * IF map_status is zero here, load_map() will set it dynamic!
      * Checkup load_map() & load_map_header() how it works.
-     */     
+     */
     if(filename)
     {
         if (*filename == '.') /* pathes to /instance and /players always start with a '.'! */
@@ -1494,13 +1494,13 @@ mapstruct * load_map(const char *filename, const char *src_name, int flags, shst
     {
         FREE_AND_COPY_HASH(m->path, src_name);
     }
-    if(src_name) /* invalid src_name can happens when we force an explicit load of an unique map! */ 
+    if(src_name) /* invalid src_name can happens when we force an explicit load of an unique map! */
         FREE_AND_COPY_HASH(m->orig_path, src_name); /* orig_path will be loaded in load_map_header()! */
 
     m->map_tag = ++global_map_tag;    /* every map has an unique tag */
     if (load_map_header(fp, m, flags))
     {
-        LOG(llevBug, "BUG: Failure loading map header for %s, flags=%d\n", 
+        LOG(llevBug, "BUG: Failure loading map header for %s, flags=%d\n",
                 flags&MAP_STATUS_ORIGINAL?m->orig_path:m->path, flags);
         delete_map(m);
         fclose(fp);
@@ -1570,7 +1570,7 @@ void set_mappath_by_default(player *pl)
 void set_mappath_by_map(object* op)
 {
     player *pl = CONTR(op);
-    
+
     if(!pl)
         return;
 
@@ -1615,7 +1615,7 @@ void set_bindpath_by_name(player *pl, const char *dst, const char *src, int stat
 }
 
 /* helper func for load_objects()
-* This help function will loop through the map and set the nodes 
+* This help function will loop through the map and set the nodes
 */
 static inline void update_map_tiles(mapstruct *m)
 {
@@ -1684,7 +1684,7 @@ void load_objects(mapstruct *m, FILE *fp, int mapflags)
                 msp->floor_flags |= MAP_FLOOR_FLAG_NO_PASS;
             if(QUERY_FLAG(op,FLAG_PLAYER_ONLY))
                 msp->floor_flags |= MAP_FLOOR_FLAG_PLAYER_ONLY;
-            
+
             /* we don't animate floors at the moment. But perhaps turnable for adjustable pictures */
             if (QUERY_FLAG(op, FLAG_IS_TURNABLE) || QUERY_FLAG(op, FLAG_ANIMATE))
             {
@@ -1890,7 +1890,7 @@ void save_objects(mapstruct *m, FILE *fp, int flag)
     int     i, j = 0;
     object *head, *op, *otmp, *tmp, *last_valid;
 
-    /* ensure we have our "template" objects for saving floors & masks */ 
+    /* ensure we have our "template" objects for saving floors & masks */
     if(!floor_g)
     {
         floor_g = get_archetype("floor_g");
@@ -2039,7 +2039,7 @@ void save_objects(mapstruct *m, FILE *fp, int flag)
                             op->stats.sp = op->last_sp; /* force a pre spawn setting */
                             op->speed_left += 1.0f;
                             /* and delete the spawn */
-                            /* note: because a spawn point always is on a map, its safe to 
+                            /* note: because a spawn point always is on a map, its safe to
                             * have the activelist_remove() inside here
                             */
                             activelist_remove(op->enemy);
@@ -2292,10 +2292,10 @@ void map_to_player_link(mapstruct *m, int x, int y, int flag)
 /* FIXME: what is the relevance of the use of the word "mapname" instead
  * of map path here? Gecko 2007-02-03. */
 /** Validate and normalize a map name.
- * This is called by scripts or any other source where we must ensure 
+ * This is called by scripts or any other source where we must ensure
  * that our mapname is legal. We do some sanity tests to ensure we
  * have a valid and working name.
- * Note that mapnames beginning with "." should already have been normalized 
+ * Note that mapnames beginning with "." should already have been normalized
  * and won't be normalized by this function.
  * @param mapname the mapname to validate and normalize. Doesn't have to be a shared string.
  * Should be an absolute path (or an instance/unique path).
@@ -2328,11 +2328,11 @@ const char* create_safe_mapname_sh(char const *mapname)
             if(*p == '.' && p != mapname)
             {
                 if(*mapname == '.' || (*(p+1) != '.' && *(p+1) != '/'))
-                    return NULL; 
+                    return NULL;
             }
         }
     }
- 
+
     if(*mapname == '.') /* direct unique or instance string - should already be normalized */
         p = add_string(mapname);
     else

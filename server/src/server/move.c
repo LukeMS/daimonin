@@ -267,7 +267,7 @@ int roll_ob(object *op, int dir, object *pusher)
         if (IS_LIVE(tmp) || (QUERY_FLAG(tmp, FLAG_NO_PASS) && !roll_ob(tmp, dir, pusher)))
             return 0;
     }
-    
+
     if(blocked_link(op, freearr_x[dir], freearr_y[dir]))
         return 0;
 
@@ -436,21 +436,21 @@ mapstruct *enter_map_by_name(object *op, const char *path, const char *src_path,
     {
         if(!src_path)
             return NULL;
-        
+
         if(flags & (MAP_STATUS_UNIQUE|MAP_STATUS_INSTANCE))
         {
             if(!op || op->type != PLAYER || !CONTR(op)) /* just some sanity checks */
                 return NULL;
 
-            if(flags & MAP_STATUS_UNIQUE) 
+            if(flags & MAP_STATUS_UNIQUE)
                 path = dyn_path = create_unique_path_sh(op, src_path);
             else /* ATM we always get here a new instance... can't see the sense to use an old one in this case */
             {
                 /* a forced instance... this is for example done by a script forcing a player in an instance! */
                 CONTR(op)->instance_num = MAP_INSTANCE_NUM_INVALID;
                 /* the '0' as flags are right: enter_map_by_exit() will automatically use
-                 * the exit_ob settings for this flags. 
-                 * enter_map_by_name() is called at this point only 
+                 * the exit_ob settings for this flags.
+                 * enter_map_by_name() is called at this point only
                  * from scripts or other controllers which will do the setup after the call.
                  */
                 path = dyn_path = create_instance_path_sh(CONTR(op), src_path, 0);
@@ -505,7 +505,7 @@ mapstruct *enter_map_by_name(object *op, const char *path, const char *src_path,
 
             if(!newmap)
             {
-                /* something is wrong with our bind point... reset */    
+                /* something is wrong with our bind point... reset */
                 set_bindpath_by_default(CONTR(op));
                 newmap = ready_map_name(shstr_cons.emergency_mappath, shstr_cons.emergency_mappath, MAP_STATUS_MULTI, reference);
 
@@ -544,7 +544,7 @@ mapstruct *enter_map_by_name(object *op, const char *path, const char *src_path,
 
 /* Tries to move 'op' to exit_ob.  op is the character or monster that is
 * using the exit, where exit_ob is the exit object (boat, door, teleporter,
-* etc.) 
+* etc.)
 * This is now the one and only "use an exit" function. Every object from type EXIT
 * or TELEPORTER will handled here. Beside the instance maps is the biggest change in
 * map handling that we get the type of maps now with a "inheritance" concept from the
@@ -569,7 +569,7 @@ int enter_map_by_exit(object *op, object *exit_ob)
         LOG(llevBug, "BUG: enter_map_by_exit(): called with object %s but without exit ob!\n", query_name(op));
         return FALSE;
     }
-    
+
     /* Event trigger and quick exit */
     if(trigger_object_plugin_event(EVENT_TRIGGER,
                 exit_ob, op, NULL,
@@ -587,7 +587,7 @@ int enter_map_by_exit(object *op, object *exit_ob)
     * To know path/map A is the same like B we need to normalize the path & name.
     * in ->race *can* be the normalized src path, *if* the exit was used before.
     * if not, we have to process it now first.
-    */    
+    */
     if(!exit_ob->race)
     {
         char tmp_path[MAXPATHLEN];
@@ -597,12 +597,12 @@ int enter_map_by_exit(object *op, object *exit_ob)
     }
 
     /* now we have some choices:
-    * If the new map type is inheritanced from exit_ob->map , we can generate 
+    * If the new map type is inheritanced from exit_ob->map , we can generate
     * a static path which will not change for this map/exit anymore.
     * For an explicit _INSTANCE and _UNIQUE we have always to use a dynamic path.
     * For MAP_STATUS_MULTI we can simply copy the ob->race ptr.
     */
-    if(MAP_STATUS_TYPE(exit_ob->last_eat)) 
+    if(MAP_STATUS_TYPE(exit_ob->last_eat))
     {
         reference = op->name;
 
@@ -613,17 +613,17 @@ int enter_map_by_exit(object *op, object *exit_ob)
             if(op->type != PLAYER || !CONTR(op))
                 return FALSE;
 
-            if(exit_ob->last_eat & MAP_STATUS_UNIQUE) 
+            if(exit_ob->last_eat & MAP_STATUS_UNIQUE)
                 file_path = dyn_path = create_unique_path_sh(op, exit_ob->race);
             else if(exit_ob->last_eat & MAP_STATUS_INSTANCE)
             {
                 player *pl = CONTR(op);
- 
+
                 /* we give here a player a "temporary" instance directory inside /instance
                 * which is identified by global_instance_num (directory name  = itoa(num)).
                 * we use the normalized original map path of the exit_ob as identifier of the
                 * instanced map or map set itself.
-                */  
+                */
                 if( pl->instance_name == exit_ob->race && pl->instance_id == global_instance_id)
                 {
                     /* add here the instance validation checks for this player */
@@ -634,7 +634,7 @@ int enter_map_by_exit(object *op, object *exit_ob)
                 /* create_instance..() will try to load an old instance, will fallback to
                 * a new one if needed and setup all what need be done to start the instance.
                 */
-                file_path = dyn_path = create_instance_path_sh(pl, exit_ob->race, 
+                file_path = dyn_path = create_instance_path_sh(pl, exit_ob->race,
                                         QUERY_FLAG(exit_ob, FLAG_IS_MALE)?INSTANCE_FLAG_NO_REENTER:0);
             }
             else
@@ -653,18 +653,18 @@ int enter_map_by_exit(object *op, object *exit_ob)
             {
                 char tmp_path[MAXPATHLEN];
 
-                /* we have now this: 
+                /* we have now this:
                 * - in map->path a normalized path to /players or /instance
                 * - in exit_ob->race the normalized path + name to the original map
                 * we create now a new path out of it by using the root from ->path
-                * and use path_to_name() to exchange all '/' through '$' to have a unique map name. 
+                * and use path_to_name() to exchange all '/' through '$' to have a unique map name.
                 * NOTE: the path to /maps is always part of the unique/instance map name.
                 */
-                exit_ob->title = add_string(normalize_path_direct( exit_ob->map->path, 
+                exit_ob->title = add_string(normalize_path_direct( exit_ob->map->path,
                     path_to_name(exit_ob->race), tmp_path));
             }
             else /* this should never happen and will break the inheritance system - so kill the server */
-                LOG(llevError, "FATAL ERROR: enter_map_by_exit(): Map %s loaded without valid map status (%d)!\n", 
+                LOG(llevError, "FATAL ERROR: enter_map_by_exit(): Map %s loaded without valid map status (%d)!\n",
                     STRING_MAP_PATH(exit_ob->map),exit_ob->map->map_status);
         }
         file_path = exit_ob->title;
@@ -684,11 +684,11 @@ int enter_map_by_exit(object *op, object *exit_ob)
         return FALSE;
     }
 
-    /* Now we got for sure transported away. 
-     * IF this exit has the "neutralize instance" flag set AND the old map type 
+    /* Now we got for sure transported away.
+     * IF this exit has the "neutralize instance" flag set AND the old map type
      * was instance and the new one NOT - then neutralize the instance now.
      */
-    if(exit_ob->map->map_status & MAP_STATUS_INSTANCE && QUERY_FLAG(exit_ob, FLAG_IS_FEMALE) 
+    if(exit_ob->map->map_status & MAP_STATUS_INSTANCE && QUERY_FLAG(exit_ob, FLAG_IS_FEMALE)
         && !(mstatus & MAP_STATUS_INSTANCE))
         reset_instance_data(CONTR(op));
 
@@ -725,7 +725,7 @@ int enter_map_by_exit(object *op, object *exit_ob)
 /* Random maps are disabled ATM.
 * TODO: reactivate the module, implement it as a threaded instance and add it to the
 * map instance patch
-* This function should then be merged into enter_map(). 
+* This function should then be merged into enter_map().
 * I leaved it here as example.
 */
 /* The player is trying to enter a randomly generated map.  In this case, generate the

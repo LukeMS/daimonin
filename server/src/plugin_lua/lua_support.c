@@ -105,8 +105,8 @@ static int toString_generic(struct lua_State *L)
 static int eq_generic(struct lua_State *L)
 {
     lua_object *obj1 = lua_touserdata(L, 1);
-    lua_object *obj2 = lua_touserdata(L, 2);    
-    
+    lua_object *obj2 = lua_touserdata(L, 2);
+
     if (!obj1 || !obj2)
         luaL_error(L, "eq: Not an object");
 
@@ -665,7 +665,7 @@ int init_class(struct lua_State *L, lua_class *class)
     lua_pushstring(L, "__newindex");
     lua_pushcclosure(L, setObjectMember, 0);
     lua_rawset(L, -3);     /* stack: metatable */
-    
+
     lua_pushstring(L, "__eq");
     lua_pushcclosure(L, eq_generic, 0);
     lua_rawset(L, -3);     /* stack: metatable */

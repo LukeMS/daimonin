@@ -51,18 +51,18 @@ static struct method_decl       Game_methods[]      =
 /* Useful constants */
 static struct constant_decl     Game_constants[]    =
 {
-    {"NORTH", 1}, {"NORTHEAST", 2}, {"EAST", 3}, {"SOUTHEAST", 4}, 
-    {"SOUTH", 5}, {"SOUTHWEST", 6}, {"WEST", 7}, {"NORTHWEST", 8}, 
-    {"MAP_INFO_NORMAL", MAP_INFO_NORMAL}, {"MAP_INFO_ALL", MAP_INFO_ALL}, 
-    {"COST_TRUE", F_TRUE}, {"COST_BUY", F_BUY}, {"COST_SELL", F_SELL}, 
+    {"NORTH", 1}, {"NORTHEAST", 2}, {"EAST", 3}, {"SOUTHEAST", 4},
+    {"SOUTH", 5}, {"SOUTHWEST", 6}, {"WEST", 7}, {"NORTHWEST", 8},
+    {"MAP_INFO_NORMAL", MAP_INFO_NORMAL}, {"MAP_INFO_ALL", MAP_INFO_ALL},
+    {"COST_TRUE", F_TRUE}, {"COST_BUY", F_BUY}, {"COST_SELL", F_SELL},
     {"APPLY_TOGGLE", 0}, {"APPLY_ALWAYS", AP_APPLY},
     {"UNAPPLY_ALWAYS", AP_UNAPPLY}, {"UNAPPLY_NO_MERGE", AP_NO_MERGE}, {"UNAPPLY_IGNORE_CURSE", AP_IGNORE_CURSE},
-    {"NEUTER", 0}, {"MALE", 1}, {"FEMALE", 2}, {"HERMAPHRODITE", 3}, 
+    {"NEUTER", 0}, {"MALE", 1}, {"FEMALE", 2}, {"HERMAPHRODITE", 3},
     {"CAST_NORMAL", 0}, {"CAST_POTION", 1},
-    {"LEARN", 0}, {"UNLEARN", 1}, 
-    {"UNIDENTIFIED", 0}, {"IDENTIFIED", 1}, 
-    {"IDENTIFY_NORMAL", 0}, {"IDENTIFY_ALL", 1}, {"IDENTIFY_MARKED", 2}, 
-    {"CLONE_WITH_INVENTORY", 0}, {"CLONE_WITHOUT_INVENTORY", 1}, 
+    {"LEARN", 0}, {"UNLEARN", 1},
+    {"UNIDENTIFIED", 0}, {"IDENTIFIED", 1},
+    {"IDENTIFY_NORMAL", 0}, {"IDENTIFY_ALL", 1}, {"IDENTIFY_MARKED", 2},
+    {"CLONE_WITH_INVENTORY", 0}, {"CLONE_WITHOUT_INVENTORY", 1},
     {"EXP_AGILITY", 0}, {"EXP_PERSONAL", 1}, {"EXP_MENTAL", 2}, {"EXP_PHYSICAL", 3}, {"EXP_MAGICAL", 4}, {"EXP_WISDOM", 5},
     {"COLOR_ORANGE", NDI_ORANGE}, {"COLOR_WHITE", NDI_WHITE}, {"COLOR_NAVY", NDI_NAVY}, {"COLOR_YELLOW", NDI_YELLOW},
     {"COLOR_BLUE", NDI_BLUE}, {"COLOR_RED", NDI_RED}, {"COLOR_GREY", NDI_GREY},{"COLOR_GREEN", NDI_GREEN},
@@ -132,7 +132,7 @@ static struct constant_decl     Game_constants[]    =
 
     {"SOUNDTYPE_NORMAL", SOUND_NORMAL},
     {"SOUNDTYPE_SPELL", SOUND_SPELL},
-    
+
     {"SOUND_LEVEL_UP", SOUND_LEVEL_UP},
     {"SOUND_FIRE_ARROW", SOUND_FIRE_ARROW},
     {"SOUND_LEARN_SPELL", SOUND_LEARN_SPELL},
@@ -167,7 +167,7 @@ static struct constant_decl     Game_constants[]    =
     {"SOUND_DOOR_CLOSE", SOUND_DOOR_CLOSE},
     {"SOUND_TELEPORT", SOUND_TELEPORT},
     {"SOUND_CLICK", SOUND_CLICK},
-    
+
     /* Argh, the object types. Make sure to keep up-to date if any are added/removed */
     {"TYPE_PLAYER"                  ,PLAYER}, {"TYPE_BULLET"                  ,BULLET},
     {"TYPE_ROD"                     ,ROD}, {"TYPE_TREASURE"                ,TREASURE},
@@ -233,7 +233,7 @@ static struct constant_decl     Game_constants[]    =
     {"TYPE_CLOSE_CON"               ,CLOSE_CON}, {"TYPE_CONTAINER"               ,CONTAINER},
     {"TYPE_ARMOUR_IMPROVER"         ,ARMOUR_IMPROVER}, {"TYPE_WEAPON_IMPROVER"        ,WEAPON_IMPROVER},
     {"TYPE_WEALTH"                  ,TYPE_WEALTH}, {"TYPE_AI"                   ,TYPE_AI},
-    {"TYPE_AGGRO_HISTORY"           ,TYPE_AGGRO_HISTORY}, 
+    {"TYPE_AGGRO_HISTORY"           ,TYPE_AGGRO_HISTORY},
     {"TYPE_DAMAGE_INFO"             ,TYPE_DAMAGE_INFO},
     {"TYPE_SKILLSCROLL"             ,SKILLSCROLL},
     {"TYPE_QUEST_OBJECT"            ,TYPE_QUEST_OBJECT},
@@ -242,15 +242,15 @@ static struct constant_decl     Game_constants[]    =
     {"TYPE_CONN_SENSOR"             ,TYPE_CONN_SENSOR},
     {"TYPE_PEARL"                   ,TYPE_PEARL},
     {"TYPE_DEEP_SWAMP"              ,DEEP_SWAMP},
-    {"TYPE_IDENTIFY_ALTAR"          ,IDENTIFY_ALTAR}, 
+    {"TYPE_IDENTIFY_ALTAR"          ,IDENTIFY_ALTAR},
     {"TYPE_CANCELLATION"            ,CANCELLATION},
-    {"TYPE_MENU"                    ,MENU}, 
+    {"TYPE_MENU"                    ,MENU},
     {"TYPE_BALL_LIGHTNING"          ,BALL_LIGHTNING},
-    {"TYPE_SWARM_SPELL"             ,SWARM_SPELL}, 
+    {"TYPE_SWARM_SPELL"             ,SWARM_SPELL},
     {"TYPE_RUNE"                    ,RUNE},
-    {"TYPE_POWER_CRYSTAL"           ,POWER_CRYSTAL}, 
+    {"TYPE_POWER_CRYSTAL"           ,POWER_CRYSTAL},
     {"TYPE_CORPSE"                  ,CORPSE},
-    {"TYPE_DISEASE"                 ,DISEASE}, 
+    {"TYPE_DISEASE"                 ,DISEASE},
     {"TYPE_SYMPTOM"                 ,SYMPTOM},
     {"TYPE_QUEST_TRIGGER"           ,TYPE_QUEST_TRIGGER},
     {"TYPE_QUEST_OBJECT"            ,TYPE_QUEST_OBJECT},
@@ -295,7 +295,7 @@ static int Game_UpgradeApartment(lua_State *L)
 
     get_lua_args(L, "GMMii", &self, &map_old, &map_new, &x, &y);
 
-    if( !map_new->data.map || !map_old->data.map || x<= 0 || y<=0 
+    if( !map_new->data.map || !map_old->data.map || x<= 0 || y<=0
             || x>=map_new->data.map->width || y>=map_new->data.map->height)
         return 0;
 
@@ -380,7 +380,7 @@ static int Game_ReadyMap(lua_State *L)
     {
         path_sh = hooks->create_safe_mapname_sh(mapname);
 
-        if(path_sh) /* we MUST have now a path - we assume first it is the DESTINATION path */ 
+        if(path_sh) /* we MUST have now a path - we assume first it is the DESTINATION path */
         {
             /* NOTE: this call will do this:
              * - checking loaded maps for path (type independent)
@@ -391,7 +391,7 @@ static int Game_ReadyMap(lua_State *L)
             */
             map = hooks->ready_map_name(path_sh, NULL, 0, NULL); /* try load only */
 
-            if(*path_sh != '.') 
+            if(*path_sh != '.')
             {
                 if(map && (flags & PLUGIN_MAP_NEW)) /* reset the maps - if it loaded */
                 {
@@ -532,7 +532,7 @@ static int Game_LocateBeacon(lua_State *L)
     FREE_AND_COPY_HASH(id_s, id);
     foundob = hooks->locate_beacon(id_s);
     FREE_ONLY_HASH(id_s);
-    
+
     return push_object(L, &GameObject, foundob);
 }
 

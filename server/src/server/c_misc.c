@@ -60,7 +60,7 @@ void map_info(object *op)
                 m->in_memory ? (m->in_memory == MAP_IN_MEMORY ? 'm' : 's') : 'X', players_on_map(m), m->in_memory,
                 m->timeout, m->difficulty);
 #else
-        LOG(llevSystem, "%s (%s) pom:%d status:%c timeout:%d diff:%d  reset:%02d:%02d:%02d\n", 
+        LOG(llevSystem, "%s (%s) pom:%d status:%c timeout:%d diff:%d  reset:%02d:%02d:%02d\n",
             m->path, m->orig_path, players_on_map(m),
             m->in_memory ? (m->in_memory == MAP_IN_MEMORY ? 'm' : 's') : 'X', m->timeout, m->difficulty,
             (MAP_WHEN_RESET(m) % 86400) / 3600, (MAP_WHEN_RESET(m) % 3600) / 60, MAP_WHEN_RESET(m) % 60);
@@ -492,7 +492,7 @@ int command_wizpass(object *op, char *params)
 
 int command_dumpallobjects(object *op, char *params)
 {
-#ifdef MEMPOOL_TRACKING    
+#ifdef MEMPOOL_TRACKING
     struct puddle_info *puddle = pool_object->first_puddle_info;
     unsigned int i;
     object *obj;
@@ -502,14 +502,14 @@ int command_dumpallobjects(object *op, char *params)
         {
             obj = MEM_USERDATA((char *)puddle->first_chunk + i * (sizeof(struct mempool_chunk) + pool_object->chunksize));
             if(! OBJECT_FREE(obj))
-                LOG(llevDebug, "obj '%s'-(%s) %x (%d)(%s) #=%d\n", STRING_OBJ_NAME(obj), 
-                        STRING_OBJ_ARCH_NAME(obj), obj, obj->count, 
+                LOG(llevDebug, "obj '%s'-(%s) %x (%d)(%s) #=%d\n", STRING_OBJ_NAME(obj),
+                        STRING_OBJ_ARCH_NAME(obj), obj, obj->count,
                         QUERY_FLAG(obj, FLAG_REMOVED) ? "removed" : "in use",
                         obj->nrof);
         }
         puddle = puddle->next;
     }
-#endif     
+#endif
     return 0;
 }
 
@@ -619,7 +619,7 @@ int command_dm_password (object *op, char *params)
         for(pl=first_player;pl!=NULL;pl=pl->next)
         {
             /* we don't care about removed or such - just force to be sure the change
-             * in the player* struct. 
+             * in the player* struct.
              */
             if(pl->ob && pl->ob->name == name_hash)
             {
@@ -1259,8 +1259,8 @@ void receive_player_name(object *op, char k, char *write_buf)
         return;
     }
 
-    /* status is now 1,3 or 4 
-     * Note: we don't trust the client! 
+    /* status is now 1,3 or 4
+     * Note: we don't trust the client!
      * The L/C parameter don't effect the login procedure - we only use
      * it to hold the client in sync with our login. If the client tries to
      * cheat, IT will be out of sync - not the server.

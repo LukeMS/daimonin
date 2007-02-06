@@ -23,7 +23,7 @@
     The author can be reached via e-mail to daimonin@nord-com.net
 */
 
-/* test_lua.c 
+/* test_lua.c
  * Copyright (C) 2006 Björn Axelsson
  */
 
@@ -54,7 +54,7 @@ START_TEST (lua_null_map)
 
     trigger_object_plugin_event(EVENT_TRIGGER, waypoint, cube, NULL,
             NULL, NULL, NULL, NULL, 0);
-    
+
     fail_if(strcmp(cube->title, "after") == 0, "Script didn't abort");
     fail_if(strcmp(cube->title, "before") == 0, "Script crashed early");
     fail_if(strcmp(cube->title, "checkpoint") != 0, "Script didn't run(?)");
@@ -65,19 +65,19 @@ END_TEST
 START_TEST (lua_strings_long)
 {
     shstr *path = add_string("/dev/unit_tests/test_lua");
-    mapstruct *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);    
+    mapstruct *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
 
     object *sign = locate_beacon(find_string("strings"))->env;
 
     /* This will simply crash if there's no overwflow check for long strings */
     int res = trigger_object_plugin_event(EVENT_APPLY, sign, sign, NULL,
-            "long", NULL, NULL, NULL, 0); 
+            "long", NULL, NULL, NULL, 0);
 
     fail_unless(strcmp(sign->name,"init") == 0, "script didn't pass init point");
     fail_unless(res == 0, "Script returned non-zero");
 }
 END_TEST
-    
+
 START_TEST (lua_strings_newline)
 {
     shstr *path = add_string("/dev/unit_tests/test_lua");
@@ -85,15 +85,15 @@ START_TEST (lua_strings_newline)
 
     object *sign = locate_beacon(find_string("strings"))->env;
 
-    int res = trigger_object_plugin_event(EVENT_APPLY, sign, sign, NULL, 
+    int res = trigger_object_plugin_event(EVENT_APPLY, sign, sign, NULL,
             "newline", NULL, NULL, NULL, 0);
-    
+
     fail_unless(strcmp(sign->name,"init") == 0, "script didn't pass init point");
     fail_unless(res == 0, "Script returned non-zero");
     fail_unless(strcmp(sign->slaying,"success") == 0, "script didn't work as expected");
 }
 END_TEST
-   
+
 START_TEST (lua_strings_endmsg)
 {
     shstr *path = add_string("/dev/unit_tests/test_lua");
@@ -101,9 +101,9 @@ START_TEST (lua_strings_endmsg)
 
     object *sign = locate_beacon(find_string("strings"))->env;
 
-    int res = trigger_object_plugin_event(EVENT_APPLY, sign, sign, NULL, 
+    int res = trigger_object_plugin_event(EVENT_APPLY, sign, sign, NULL,
             "endmsg", NULL, NULL, NULL, 0);
-    
+
     fail_unless(strcmp(sign->name,"init") == 0, "script didn't pass init point");
     fail_unless(res == 0, "Script returned non-zero");
     fail_unless(strcmp(sign->slaying,"success") == 0, "script didn't work as expected");
@@ -118,13 +118,13 @@ START_TEST (lua_yield)
 
     object *sign = locate_beacon(find_string("yield_sign"))->env;
 
-    int res = trigger_object_plugin_event(EVENT_APPLY, sign, sign, 
+    int res = trigger_object_plugin_event(EVENT_APPLY, sign, sign,
             &void_container, NULL, NULL, NULL, NULL, 0);
-       
+
     /* Script should check some preconditions and yield */
     fail_if(sign->title == NULL, "sign title never was set");
     fail_if(strcmp(sign->title, "preconditions passed") != 0, "Script didn't get to first yield");
-    
+
     /* Script resumes and updates title */
     iterate_main_loop();
     fail_if(strcmp(sign->title, "yield passed") != 0, "Script didn't get to second yield");
@@ -132,12 +132,12 @@ START_TEST (lua_yield)
     /* Script removes apple and lets the garbage collection take it away */
     iterate_main_loop();
     fail_if(strcmp(sign->title, "test1 passed") != 0, "Script didn't pass first IsValid() tests");
-    
+
     /* Now we should remove the current map to make sure IsValid(map) works */
     delete_map(map);
     iterate_main_loop();
     iterate_main_loop(); /* It takes two iterations until all objects on the map are freed */
-    
+
     fail_if(void_container.title == NULL || strcmp(void_container.title, "passed") != 0, "Script didn't pass second IsValid() tests");
 }
 END_TEST
@@ -148,7 +148,7 @@ Suite *lua_suite(void)
   TCase *tc_core = tcase_create("Core");
 
   tcase_add_checked_fixture(tc_core, setup, teardown);
-  
+
   suite_add_tcase (s, tc_core);
   tcase_add_test(tc_core, lua_null_map);
   tcase_add_test(tc_core, lua_strings_long);

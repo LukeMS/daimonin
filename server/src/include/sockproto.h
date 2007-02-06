@@ -8,18 +8,18 @@ int             esrv_send_face(NewSocket *ns, short face_num, int nocache);
 void            send_image_info(NewSocket *ns, char *params);
 void            send_image_sums(NewSocket *ns, char *params);
 /* info.c */
-void			new_draw_info(const int flags, const int pri, const object *const pl, const char *const buf);
+void            new_draw_info(const int flags, const int pri, const object *const pl, const char *const buf);
 void            new_draw_info_format(const int flags, const int pri, const object *const pl, const char *const format, ...);
-void            new_info_map(const int color, const mapstruct *const map, const int x, const int y, const 
-							 int dist, const char *const str);
+void            new_info_map(const int color, const mapstruct *const map, const int x, const int y, const
+                             int dist, const char *const str);
 void            new_info_map_except(const int color, const mapstruct *const map, const int x, const int y,
-									const int dist, const object *const op1, const object *const op, 
-									const char *const str);
-void            new_info_map_format(const int color, const mapstruct *const map, const int x, const int y, 
-									const int dist, const char *const format, ...);
+                                    const int dist, const object *const op1, const object *const op,
+                                    const char *const str);
+void            new_info_map_format(const int color, const mapstruct *const map, const int x, const int y,
+                                    const int dist, const char *const format, ...);
 void            new_info_map_except_format(const int color, const mapstruct *const map, const int x, const int y,
-											const int dist, const object *const op1, const object *const op,
-											const char *const format, ...);
+                                            const int dist, const object *const op1, const object *const op,
+                                            const char *const format, ...);
 /* init.c */
 void            InitConnection(NewSocket *ns, char *str_ip);
 void            init_ericserver(void);
@@ -46,10 +46,10 @@ void            look_at(object *op, int dx, int dy);
 void            LookAt(char *buf, int len, player *pl);
 void            esrv_move_object(object *pl, tag_t to, tag_t tag, long nrof);
 /* loop.c */
-void			command_talk_ex(char *data, int len, player *pl);
+void            command_talk_ex(char *data, int len, player *pl);
 void            remove_ns_dead_player(player *pl);
 void            RequestInfo(char *buf, int len, NewSocket *ns);
-void			clear_read_buffer_queue(NewSocket *ns);
+void            clear_read_buffer_queue(NewSocket *ns);
 int             fill_command_buffer(NewSocket *ns, int len);
 void            HandleClient(NewSocket *ns, player *pl);
 void            doeric_server(int update, struct timeval *timeout);

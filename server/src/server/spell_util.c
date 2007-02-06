@@ -471,9 +471,9 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
             success = remove_deathsick(op, target);
         break;
 
-		case SP_RESTORATION:
-			success = restoration(op, target);
-			break;
+        case SP_RESTORATION:
+            success = restoration(op, target);
+            break;
 
         case SP_REMOVE_CURSE:
         case SP_REMOVE_DAMNATION:
@@ -957,7 +957,7 @@ int summon_monster(object *op, object *caster, int dir, archetype *at, int spell
     LOG(llevBug, "BUG: unimplemented function 'summon monster'\n");
     return 0;
     /* TODO: update for the new AI and pet systems. Gecko 2006-04-30 */
-#if 0        
+#if 0
     object     *tmp;
     mapstruct  *mt;
     int         xt, yt;
@@ -1044,7 +1044,7 @@ int summon_monster(object *op, object *caster, int dir, archetype *at, int spell
     tmp->direction = dir;
     insert_ob_in_map(tmp, mt, op, 0);
     return 1;
-#endif    
+#endif
 }
 
 
@@ -1192,7 +1192,7 @@ int fire_arch_from_position(object *op, object *caster, sint16 x, sint16 y, int 
     {
         if (magic)
             tmp->attacktype |= AT_MAGIC;
-        
+
     }
 */
     if (QUERY_FLAG(tmp, FLAG_IS_TURNABLE))
@@ -2215,11 +2215,11 @@ int find_target_for_spell(object *op, object *item, object **target, int dir, ui
             {
                 if (get_friendship(op, tmp) < FRIENDSHIP_HELP)
                 {
-                    *target = tmp; 
+                    *target = tmp;
                     return TRUE;
                 }
             }
-            
+
             /* Self spells are always allowed */
             if (flags & SPELL_DESC_SELF)
             {

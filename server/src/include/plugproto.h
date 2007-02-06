@@ -28,9 +28,9 @@
 f_plugin    HookList[NR_OF_HOOKS]   =
 {
     NULL,
-    CFWSendCustomCommand, 
+    CFWSendCustomCommand,
     CFWRemoveObject ,
-    CFWCreateObject, 
+    CFWCreateObject,
     CFWOutOfMap,
     CFWCmdRSkill, CFWBecomeFollower, CFWPickup,
     CFWGetMapObject, CFWCommunicate,
@@ -42,7 +42,7 @@ f_plugin    HookList[NR_OF_HOOKS]   =
     CFWUpdateSpeed, CFWUpdateObject, CFWFindAnimation,
     CFWDoLearnSkill,
     CFWDumpObject, CFWAddExp, CFWDetermineGod, CFWFindGod, RegisterGlobalEvent,
-    UnregisterGlobalEvent 
+    UnregisterGlobalEvent
 };
 
 #endif /*PLUGPROTO_H_*/

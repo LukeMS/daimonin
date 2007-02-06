@@ -302,8 +302,8 @@ int command_summon(object *op, char *params)
     i = find_free_spot(op->arch, op->map, op->x, op->y, 1, 8);
     if (i == -1)
         i = 0;
-    
-    if(enter_map_by_name( pl->ob, op->map->path, op->map->orig_path, 
+
+    if(enter_map_by_name( pl->ob, op->map->path, op->map->orig_path,
                        op->x + freearr_x[i], op->y + freearr_y[i], MAP_STATUS_TYPE(op->map->map_status)))
     {
         new_draw_info(NDI_UNIQUE, 0, pl->ob, "You are summoned.");
@@ -353,7 +353,7 @@ int command_teleport(object *op, char *params)
     if (i == -1)
         i = 0;
 
-    if(enter_map_by_name(op, pl->ob->map->path, pl->ob->map->orig_path, 
+    if(enter_map_by_name(op, pl->ob->map->path, pl->ob->map->orig_path,
               pl->ob->x + freearr_x[i], pl->ob->y + freearr_y[i], MAP_STATUS_TYPE(pl->ob->map->map_status) ))
         new_draw_info(NDI_UNIQUE, 0, op, "OK.");
 
@@ -775,7 +775,7 @@ int command_setskill(object *op, char *params)
 
         sprintf(buf, "Usage: setskill [who] [skill nr] [level]\nSkills/Nr: ");
         for(i=0;i<NROFSKILLS;i++)
-            sprintf(buf,"%s,%s(%d)", buf,  skills[i].name,i); 
+            sprintf(buf,"%s,%s(%d)", buf,  skills[i].name,i);
         new_draw_info(NDI_UNIQUE, 0, op, buf);
         return 1;
     }
@@ -845,7 +845,7 @@ int command_addexp(object *op, char *params)
 
         sprintf(buf, "Usage: addexp [who] [skill nr] [exp]\nSkills/Nr: ");
         for(i=0;i<NROFSKILLS;i++)
-            sprintf(buf,"%s%s(%d), ", buf,  skills[i].name,i); 
+            sprintf(buf,"%s%s(%d), ", buf,  skills[i].name,i);
         new_draw_info(NDI_UNIQUE, 0, op, buf);
         return 1;
     }
@@ -1237,7 +1237,7 @@ int command_ban(object *op, char *params)
             if(ol->objlink.ban->ticks_init != -1 &&  pticks >= ol->objlink.ban->ticks)
                 remove_ban_entry(ol); /* is not valid anymore, gc it on the fly */
             else
-                new_draw_info_format(NDI_UNIQUE, 0, op, "P: %s -> %d left (of %d) sec", 
+                new_draw_info_format(NDI_UNIQUE, 0, op, "P: %s -> %d left (of %d) sec",
                         ol->objlink.ban->name ,(ol->objlink.ban->ticks-pticks)/8, ol->objlink.ban->ticks_init/8);
         }
 
@@ -1248,7 +1248,7 @@ int command_ban(object *op, char *params)
                 remove_ban_entry(ol); /* is not valid anymore, gc it on the fly */
             else
             {
-                new_draw_info_format(NDI_UNIQUE, 0, op, "IP: %s :: %d left (of %d) sec", 
+                new_draw_info_format(NDI_UNIQUE, 0, op, "IP: %s :: %d left (of %d) sec",
                         ol->objlink.ban->ip, (ol->objlink.ban->ticks-pticks)/8, ol->objlink.ban->ticks_init/8);
             }
         }

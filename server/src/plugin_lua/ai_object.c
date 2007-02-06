@@ -539,7 +539,7 @@ static int AI_GetBehaviourlist(lua_State *L)
     {
         struct mob_behaviour *behaviour;
         int behaviour_idx = 1;
-    
+
         /* Create the table for this class */
         lua_pushvalue(L, string_lower_idx);
         lua_pushstring(L, hooks->behaviourclasses[class].name); /* Key */
@@ -550,7 +550,7 @@ static int AI_GetBehaviourlist(lua_State *L)
         for(behaviour = MOB_DATA(self->data.object)->behaviours->behaviours[class]; behaviour; behaviour = behaviour->next)
         {
             unsigned int param;
-            
+
             /* Create the table for this behaviour (key is both idx and name) */
             lua_pushvalue(L, string_lower_idx);
             lua_pushstring(L, behaviour->declaration->name);
@@ -581,7 +581,7 @@ static int AI_GetBehaviourlist(lua_State *L)
 
                 for(value = &behaviour->parameters[param]; value; value = value->next)
                 {
-                    /* Skip optional multi parameters that wasn't given. Those are usually considered 
+                    /* Skip optional multi parameters that wasn't given. Those are usually considered
                      * empty, not default */
                     if((behaviour->declaration->params[param].attribs & AI_MANDATORY_PARAM) == 0 &&
                             (behaviour->declaration->params[param].attribs & AI_MULTI_PARAM) &&
@@ -597,7 +597,7 @@ static int AI_GetBehaviourlist(lua_State *L)
                         char buf[HUGE_BUF];
                         sprintf(buf, "%s:%ld", value->stringvalue, value->intvalue);
                         lua_pushstring(L, buf);
-                    } else 
+                    } else
                         lua_pushnil(L); /* Just to avoid stack crashes */
                     lua_rawseti(L, -2, parameter_idx++);
                 }
@@ -612,7 +612,7 @@ static int AI_GetBehaviourlist(lua_State *L)
             /* key = index, value = behaviour table */
             lua_pushvalue(L, -1); /* Duplicate behaviour table */
             lua_rawseti(L, class_tbl_idx, behaviour_idx++);
-            
+
             /* key = name, value = behaviour table */
             lua_rawset(L, class_tbl_idx);
         }

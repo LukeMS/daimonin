@@ -139,7 +139,7 @@ unsigned int query_flags(object *op)
 
 void esrv_draw_look(object *pl)
 {
-	NewSocket  *ns = &CONTR(pl)->socket;
+    NewSocket  *ns = &CONTR(pl)->socket;
     char       *tmp_sp;
     object     *head, *tmp, *last;
     int         len, flags, got_one = 0, anim_speed, start_look = 0, end_look = 0;
@@ -224,21 +224,21 @@ void esrv_draw_look(object *pl)
         SockList_AddInt(&global_sl, tmp->count);
         SockList_AddInt(&global_sl, flags);
 
-		if(QUERY_FLAG(tmp, FLAG_NO_PICK))
-		{
-			SockList_AddInt(&global_sl, -1);
-		}
-		else
-		{
-			if(tmp->type == CONTAINER && tmp->weapon_speed != 1.0f) /* magical containers */
-			{
-				SockList_AddInt(&global_sl, tmp->damage_round_tag + tmp->weight);
-			}
-			else
-			{
-				SockList_AddInt(&global_sl, WEIGHT(tmp) );
-			}
-		}
+        if(QUERY_FLAG(tmp, FLAG_NO_PICK))
+        {
+            SockList_AddInt(&global_sl, -1);
+        }
+        else
+        {
+            if(tmp->type == CONTAINER && tmp->weapon_speed != 1.0f) /* magical containers */
+            {
+                SockList_AddInt(&global_sl, tmp->damage_round_tag + tmp->weight);
+            }
+            else
+            {
+                SockList_AddInt(&global_sl, WEIGHT(tmp) );
+            }
+        }
         if (tmp->head)
         {
             if (tmp->head->inv_face && QUERY_FLAG(tmp, FLAG_IDENTIFIED))
@@ -332,10 +332,10 @@ void esrv_draw_look(object *pl)
     } /* for loop */
 
     if (got_one || (!got_one && !ns->below_clear))
-	{
+    {
         Send_With_Handling(ns, &global_sl);
-		ns->below_clear=0;
-	}
+        ns->below_clear=0;
+    }
 }
 
 
@@ -369,21 +369,21 @@ int esrv_draw_DM_inv(object *pl, SockList *sl, object *op)
         SockList_AddInt(sl, tmp->count);
         SockList_AddInt(sl, flags);
 
-		if(QUERY_FLAG(tmp, FLAG_NO_PICK))
-		{
-			SockList_AddInt(&global_sl, -1);
-		}
-		else
-		{
-			if(tmp->type == CONTAINER && tmp->weapon_speed != 1.0f)
-			{
-				SockList_AddInt(&global_sl, tmp->damage_round_tag + tmp->weight);
-			}
-			else
-			{
-				SockList_AddInt(&global_sl, WEIGHT(tmp) );
-			}
-		}
+        if(QUERY_FLAG(tmp, FLAG_NO_PICK))
+        {
+            SockList_AddInt(&global_sl, -1);
+        }
+        else
+        {
+            if(tmp->type == CONTAINER && tmp->weapon_speed != 1.0f)
+            {
+                SockList_AddInt(&global_sl, tmp->damage_round_tag + tmp->weight);
+            }
+            else
+            {
+                SockList_AddInt(&global_sl, WEIGHT(tmp) );
+            }
+        }
 
         if (tmp->head)
         {
@@ -496,21 +496,21 @@ static int esrv_send_inventory_DM(object *pl, SockList *sl, object *op)
         SockList_AddInt(sl, tmp->count);
         SockList_AddInt(sl, flags);
 
-		if(QUERY_FLAG(tmp, FLAG_NO_PICK))
-		{
-			SockList_AddInt(&global_sl, -1);
-		}
-		else
-		{
-			if(tmp->type == CONTAINER && tmp->weapon_speed != 1.0f)
-			{
-				SockList_AddInt(&global_sl, tmp->damage_round_tag + tmp->weight);
-			}
-			else
-			{
-				SockList_AddInt(&global_sl, WEIGHT(tmp) );
-			}
-		}
+        if(QUERY_FLAG(tmp, FLAG_NO_PICK))
+        {
+            SockList_AddInt(&global_sl, -1);
+        }
+        else
+        {
+            if(tmp->type == CONTAINER && tmp->weapon_speed != 1.0f)
+            {
+                SockList_AddInt(&global_sl, tmp->damage_round_tag + tmp->weight);
+            }
+            else
+            {
+                SockList_AddInt(&global_sl, WEIGHT(tmp) );
+            }
+        }
 
         if (tmp->inv_face && QUERY_FLAG(tmp, FLAG_IDENTIFIED))
         {
@@ -642,21 +642,21 @@ void esrv_send_inventory(object *pl, object *op)
             SockList_AddInt(&global_sl, tmp->count);
             SockList_AddInt(&global_sl, flags);
 
-			if(QUERY_FLAG(tmp, FLAG_NO_PICK))
-			{
-				SockList_AddInt(&global_sl, -1);
-			}
-			else
-			{
-				if(tmp->type == CONTAINER && tmp->weapon_speed != 1.0f)
-				{
-					SockList_AddInt(&global_sl, tmp->damage_round_tag  + tmp->weight);
-				}
-				else
-				{
-					SockList_AddInt(&global_sl, WEIGHT(tmp) );
-				}
-			}
+            if(QUERY_FLAG(tmp, FLAG_NO_PICK))
+            {
+                SockList_AddInt(&global_sl, -1);
+            }
+            else
+            {
+                if(tmp->type == CONTAINER && tmp->weapon_speed != 1.0f)
+                {
+                    SockList_AddInt(&global_sl, tmp->damage_round_tag  + tmp->weight);
+                }
+                else
+                {
+                    SockList_AddInt(&global_sl, WEIGHT(tmp) );
+                }
+            }
 
             if (tmp->inv_face && QUERY_FLAG(tmp, FLAG_IDENTIFIED))
             {
@@ -757,7 +757,7 @@ static void esrv_update_item_send(int flags, object *pl, object *op)
         if (!LOOK_OBJ(op) && !QUERY_FLAG(pl, FLAG_WIZ))
             return;
     }
- 
+
     SOCKET_SET_BINARY_CMD(&global_sl, BINARY_CMD_UPITEM);
     SockList_AddShort(&global_sl, (uint16) flags);
     SockList_AddInt(&global_sl, op->count);
@@ -772,14 +772,14 @@ static void esrv_update_item_send(int flags, object *pl, object *op)
     }
     if (flags & UPD_WEIGHT)
     {
-		if(op->type == CONTAINER && op->weapon_speed != 1.0f)
-		{
-			SockList_AddInt(&global_sl, op->damage_round_tag  + op->weight);
-		}
-		else
-		{
-			SockList_AddInt(&global_sl, WEIGHT(op));
-		}
+        if(op->type == CONTAINER && op->weapon_speed != 1.0f)
+        {
+            SockList_AddInt(&global_sl, op->damage_round_tag  + op->weight);
+        }
+        else
+        {
+            SockList_AddInt(&global_sl, WEIGHT(op));
+        }
     }
     if (flags & UPD_FACE)
     {
@@ -855,8 +855,8 @@ static void esrv_update_item_send(int flags, object *pl, object *op)
     }
     if (flags & UPD_QUALITY)
     {
-		SockList_AddChar(&global_sl, op->item_quality);
-		SockList_AddChar(&global_sl, op->item_condition);
+        SockList_AddChar(&global_sl, op->item_quality);
+        SockList_AddChar(&global_sl, op->item_condition);
     }
     Send_With_Handling(&CONTR(pl)->socket, &global_sl);
 }
@@ -881,7 +881,7 @@ void esrv_update_item(int flags, object *pl, object *op)
     }
 
     /* Integrating the is_player_inv() test here saves us many tests in the code.
-     * TODO: remove the "pl" parameter for this function call 
+     * TODO: remove the "pl" parameter for this function call
      * Gecko 2007-01-19 */
     if((tmp = is_player_inv(op)))
         esrv_update_item_send(flags, tmp, op);
@@ -894,8 +894,8 @@ static void esrv_send_item_send(object *pl, object *op)
     char        item_n[MAX_BUF];
 
 
-	if(!pl ||!op)
-		return;
+    if(!pl ||!op)
+        return;
 
     /* If this is not the player object, do some more checks */
     if (op != pl)
@@ -913,14 +913,14 @@ static void esrv_send_item_send(object *pl, object *op)
     SockList_AddInt(&global_sl, op->count);
     SockList_AddInt(&global_sl, query_flags(op));
 
-	if(op->type == CONTAINER && op->weapon_speed != 1.0f)
-	{
-		SockList_AddInt(&global_sl, op->damage_round_tag  + op->weight);
-	}
-	else
-	{
-		SockList_AddInt(&global_sl, WEIGHT(op));
-	}
+    if(op->type == CONTAINER && op->weapon_speed != 1.0f)
+    {
+        SockList_AddInt(&global_sl, op->damage_round_tag  + op->weight);
+    }
+    else
+    {
+        SockList_AddInt(&global_sl, WEIGHT(op));
+    }
 
     if (op->head)
     {
@@ -1014,8 +1014,8 @@ void esrv_send_item(object *pl, object *op)
 {
     object *tmp;
 
-	if(!pl ||!op)
-		return;
+    if(!pl ||!op)
+        return;
 
     /* special case: update something in a container.
      * we don't care about where the container is,
@@ -1027,9 +1027,9 @@ void esrv_send_item(object *pl, object *op)
             esrv_send_item_send(tmp, op);
         return;
     }
-    
+
     /* Integrating the is_player_inv() test here saves us many tests in the code.
-     * TODO: remove the "pl" parameter for this function call 
+     * TODO: remove the "pl" parameter for this function call
      * Gecko 2007-01-19 */
     if((tmp = is_player_inv(op)))
         esrv_send_item_send(tmp, op);
@@ -1072,8 +1072,8 @@ void esrv_del_item(player *pl, int tag, object *cont)
         return;
     }
 
-	if(pl)
-		esrv_del_item_send(pl, tag);
+    if(pl)
+        esrv_del_item_send(pl, tag);
 }
 
 
@@ -1109,19 +1109,19 @@ object * esrv_get_ob_from_count(object *pl, tag_t count)
                     return tmp;
             }
         }
-		if(pl->map)
-		{
-			for (op = get_map_ob(pl->map, pl->x, pl->y); op; op = op->above)
-			{
-				if (op->count == count)
-					return op;
-				else if (op->inv)
-				{
-					if ((tmp = esrv_get_ob_from_count_DM(op->inv, count)))
-						return tmp;
-				}
-			}
-		}
+        if(pl->map)
+        {
+            for (op = get_map_ob(pl->map, pl->x, pl->y); op; op = op->above)
+            {
+                if (op->count == count)
+                    return op;
+                else if (op->inv)
+                {
+                    if ((tmp = esrv_get_ob_from_count_DM(op->inv, count)))
+                        return tmp;
+                }
+            }
+        }
         return NULL;
     }
 
@@ -1133,16 +1133,16 @@ object * esrv_get_ob_from_count(object *pl, tag_t count)
                 if (tmp->count == count)
                     return tmp;
 
-	if(pl->map)
-	{
-		for (op = get_map_ob(pl->map, pl->x, pl->y); op; op = op->above)
-			if (op->count == count)
-				return op;
-			else if (op->type == CONTAINER && CONTR(pl)->container == op)
-				for (tmp = op->inv; tmp; tmp = tmp->below)
-					if (tmp->count == count)
-						return tmp;
-	}
+    if(pl->map)
+    {
+        for (op = get_map_ob(pl->map, pl->x, pl->y); op; op = op->above)
+            if (op->count == count)
+                return op;
+            else if (op->type == CONTAINER && CONTR(pl)->container == op)
+                for (tmp = op->inv; tmp; tmp = tmp->below)
+                    if (tmp->count == count)
+                        return tmp;
+    }
     return NULL;
 }
 
@@ -1171,15 +1171,15 @@ void ExamineCmd(char *buf, int len, player *pl)
     long    tag;
     object *op;
 
-	if (!buf || !len || !pl || pl->socket.status == Ns_Dead)
-	{
-		if(pl)
-			pl->socket.status = Ns_Dead;
-		return;
-	}
+    if (!buf || !len || !pl || pl->socket.status == Ns_Dead)
+    {
+        if(pl)
+            pl->socket.status = Ns_Dead;
+        return;
+    }
 
-	tag = atoi(buf);
-	op  = esrv_get_ob_from_count(pl->ob, tag);
+    tag = atoi(buf);
+    op  = esrv_get_ob_from_count(pl->ob, tag);
 
     if (!op)
     {
@@ -1195,20 +1195,20 @@ void ApplyCmd(char *buf, int len, player *pl)
     uint32  tag;
     object *op;
 
-	if (!buf || !len || !pl || pl->socket.status == Ns_Dead)
-	{
-		if(pl)
-			pl->socket.status = Ns_Dead;
-		return;
-	}
+    if (!buf || !len || !pl || pl->socket.status == Ns_Dead)
+    {
+        if(pl)
+            pl->socket.status = Ns_Dead;
+        return;
+    }
     /* sort of a hack, but if the player saves and the player then manually
      * applies a savebed (or otherwise tries to do stuff), we run into trouble.
      */
     if (QUERY_FLAG(pl->ob, FLAG_REMOVED))
         return;
 
-	tag = atoi(buf);
-	op  = esrv_get_ob_from_count(pl->ob, tag);
+    tag = atoi(buf);
+    op  = esrv_get_ob_from_count(pl->ob, tag);
 
     /* If the high bit is set, player applied a pseudo object. */
     if (tag & 0x80000000)
@@ -1232,14 +1232,14 @@ void LockItem(char *data, int len, player *pl)
     int     flag, tag;
     object *op;
 
-	if (!data || !len || !pl || pl->socket.status == Ns_Dead)
-	{
-		if(pl)
-			pl->socket.status = Ns_Dead;
-		return;
-	}
+    if (!data || !len || !pl || pl->socket.status == Ns_Dead)
+    {
+        if(pl)
+            pl->socket.status = Ns_Dead;
+        return;
+    }
 
-	flag = data[0];
+    flag = data[0];
     tag = GetInt_String((uint8 *) data + 1);
     op = esrv_get_ob_from_count(pl->ob, tag);
 
@@ -1266,26 +1266,26 @@ void MarkItem(char *data, int len, player *pl)
     int     tag;
     object *op;
 
-	if (!data || !len || !pl || pl->socket.status == Ns_Dead)
-	{
-		if(pl)
-			pl->socket.status = Ns_Dead;
-		return;
-	}
+    if (!data || !len || !pl || pl->socket.status == Ns_Dead)
+    {
+        if(pl)
+            pl->socket.status = Ns_Dead;
+        return;
+    }
 
-	tag = GetInt_String((uint8 *) data);
+    tag = GetInt_String((uint8 *) data);
     op = esrv_get_ob_from_count(pl->ob, tag);
-	
-	if(!op || tag == pl->mark_count)
-	{
-		pl->mark = NULL;
-		pl->mark_count = -1;
-	}
-	else
-	{
-		pl->mark = op;
-		pl->mark_count = op->count;
-	}
+
+    if(!op || tag == pl->mark_count)
+    {
+        pl->mark = NULL;
+        pl->mark_count = -1;
+    }
+    else
+    {
+        pl->mark = op;
+        pl->mark_count = op->count;
+    }
 
     /*LOG(-1,"MARKITEM2 (%d) (%d)\n", tag, op->count);*/
 
@@ -1361,14 +1361,14 @@ void LookAt(char *buf, int len, player *pl)
     int     dx, dy;
     char   *cp;
 
-	if (!buf || !len || !pl || pl->socket.status == Ns_Dead)
-	{
-		if(pl)
-			pl->socket.status = Ns_Dead;
-		return;
-	}
+    if (!buf || !len || !pl || pl->socket.status == Ns_Dead)
+    {
+        if(pl)
+            pl->socket.status = Ns_Dead;
+        return;
+    }
 
-	dx = atoi(buf);
+    dx = atoi(buf);
     if (!(cp = strchr(buf, ' ')))
     {
         return;

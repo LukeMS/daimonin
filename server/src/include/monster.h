@@ -35,34 +35,34 @@
 #define MAX_KNOWN_OBJ_AGE 80 /* 80 = 10 seconds */
 
 /** A path request has been enqueued for this mob */
-#define PATHFINDFLAG_PATH_REQUESTED 0 
+#define PATHFINDFLAG_PATH_REQUESTED 0
 /** Last pathfinding failed */
-#define PATHFINDFLAG_PATH_FAILED    1 
+#define PATHFINDFLAG_PATH_FAILED    1
 /** Number of defined pathfinding flags */
 #define NROF_PATHFIND_FLAGS         2
 
 /** Struct for pathfinding related data. Each mob has one of these */
 struct mobdata_pathfinding
 {
-    /** either an obj on map or a waypoint 
+    /** either an obj on map or a waypoint
      * (or a mob base info object) (or NULL)
      * @{ */
-    object                 *target_obj;  
-    tag_t                   target_count; 
-    /** @} */
-    
-    /** target is those coords if target_obj is NULL 
-     * @{ */
-    const char             *target_map; 
-    int                     target_x, target_y;  
+    object                 *target_obj;
+    tag_t                   target_count;
     /** @} */
 
-    /** Original goal. Used to keep track of moving objects 
-     * @{ */    
-    const char             *goal_map; 
-    int                     goal_x, goal_y;  
+    /** target is those coords if target_obj is NULL
+     * @{ */
+    const char             *target_map;
+    int                     target_x, target_y;
     /** @} */
-    
+
+    /** Original goal. Used to keep track of moving objects
+     * @{ */
+    const char             *goal_map;
+    int                     goal_x, goal_y;
+    /** @} */
+
     struct path_segment    *path; /**< Precomputed path from pathfinder.c   */
 
     uint16                  goal_delay_counter; /**< compared to wp->goal_delay */
@@ -70,11 +70,11 @@ struct mobdata_pathfinding
     sint16                  last_best_distance; /**< to subgoal */
     uint8                   tried_steps; /**< steps that didn't get us closer to subgoal */
 
-    uint32                  flags[ (NROF_PATHFIND_FLAGS/32)+1 ]; 
+    uint32                  flags[ (NROF_PATHFIND_FLAGS/32)+1 ];
 };
 
 /** The object is known to make use of distance attacks */
-#define AI_OBJFLAG_USES_DISTANCE_ATTACK 0 
+#define AI_OBJFLAG_USES_DISTANCE_ATTACK 0
 /** Total number of flags in the mob_known_obj struct */
 #define NROF_AI_KNOWN_OBJ_FLAGS 1
 
@@ -86,39 +86,39 @@ struct mob_known_obj
 {
     struct mob_known_obj   *next, *prev; /** < linked list */
 
-    /** The actual object we remember 
+    /** The actual object we remember
      * @{ */
     object                 *obj;
-    tag_t                   obj_count; 
+    tag_t                   obj_count;
     /** @} */
 
     uint32                  last_seen;  /**< tick that this thing was last seen. Used for timeout */
     /** Last known position.
      * @{ */
-    const char             *last_map; 
+    const char             *last_map;
     int                     last_x, last_y;
     /** @} */
 
     /** this stored rv saves some CPU at the cost of some memory, is it really worth it? */
-    rv_vector               rv;    
+    rv_vector               rv;
     uint32                  rv_time;  /**< Last time the rv was recalculated (or 0 for invalid) */
 
     /** Cumulative friendship and fear values
      * (negative friendship is enemosity and negative attraction is fear) */
-    int                     friendship, attraction;    
+    int                     friendship, attraction;
     /** Temporary values recalculated every now and then */
-    int                     tmp_friendship, tmp_attraction; 
+    int                     tmp_friendship, tmp_attraction;
 
     /** Knowledge bits */
     uint32                  flags[ (NROF_AI_KNOWN_OBJ_FLAGS/32)+1 ];
 };
 
-/** Convenience macros for accessing parameters in behaviour functions 
+/** Convenience macros for accessing parameters in behaviour functions
  * @{ */
 #define AI_PARAM_PRESENT   1 /* The parameter is present */
 
 /** Is the param present? */
-#define AIPARAM_PRESENT(param) (params[(param)].flags & AI_PARAM_PRESENT) 
+#define AIPARAM_PRESENT(param) (params[(param)].flags & AI_PARAM_PRESENT)
 /** Retrieve the param integer value */
 #define AIPARAM_INT(param) params[(param)].intvalue
 /** Retrieve the param string value */
@@ -151,7 +151,7 @@ struct mob_behaviourset
     uint32                      bghash;      /**< Hash for generated behaviours */
 
     /** one linked list of behaviours for each behaviour class */
-    struct mob_behaviour       *behaviours[NROF_BEHAVIOURCLASSES]; 
+    struct mob_behaviour       *behaviours[NROF_BEHAVIOURCLASSES];
 
     struct mob_behaviour_param *attitudes;  /**< Quicklink to behaviours["ATTITUDE"]->parameters */
     struct mob_behaviour_param *attractions;/**< Quicklink to behaviours["ATTRACTION"]->parameters */
@@ -163,21 +163,21 @@ struct mobdata
 {
     struct mobdata_pathfinding  pathfinding;   /**< Pathfinding data */
 
-    struct mob_known_obj       *known_mobs;    /**< List of recently detected mobs */ 
+    struct mob_known_obj       *known_mobs;    /**< List of recently detected mobs */
     struct mob_known_obj       *known_objs;    /**< List of recently detected objects */
-    hashtable                  *known_objs_ht; /**< another view of known_objs. @note can be NULL */    
+    hashtable                  *known_objs_ht; /**< another view of known_objs. @note can be NULL */
 
     struct mob_known_obj       *owner, *enemy; /**< Important other mobs */
 
     struct mob_behaviourset    *behaviours;    /**< This mob's behaviours */
 
     object                     *spawn_info;    /**< quick pointer to spawn info (and so to its spawn point - if one) */
- 
+
     /** Antilure timer */
-    int antiluring_timer; 
+    int antiluring_timer;
 
     /** Self-estimated combat strength */
-    int combat_strength; 
+    int combat_strength;
 
     uint8 idle_time;            /**< How long have we been standing still not doing anything */
     uint8 move_speed_factor;    /**< Wanted speed factor. 2 is normal speed. @see set_mobile_speed() */
@@ -189,7 +189,7 @@ struct mobdata
 #define MOB_DATA(ob) ((struct mobdata *)((ob)->custom_attrset))
 #define MOB_PATHDATA(ob) (&(((struct mobdata *)((ob)->custom_attrset))->pathfinding))
 
-/** A few friendship delta values 
+/** A few friendship delta values
  * @{ */
 #define FRIENDSHIP_ENEMY_BONUS  -50 /**< Bonus to help focus current enemy */
 #define FRIENDSHIP_ATTACK      -100 /**< Added if attacked */
@@ -217,9 +217,9 @@ typedef enum
     /** move towards a (permanent) waypoint */
     MOVE_RESPONSE_WAYPOINT,
     /** move towards a generic coordinate */
-    MOVE_RESPONSE_COORD,       
+    MOVE_RESPONSE_COORD,
     /** move towards a (possibly moving) object */
-    MOVE_RESPONSE_OBJECT  
+    MOVE_RESPONSE_OBJECT
 }    move_response_type;
 
 /** Data for movement behaviour responses */

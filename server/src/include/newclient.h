@@ -161,7 +161,7 @@
 #define NDI_TELL    0x0400
 #define NDI_GSAY    0x0800
 #define NDI_EMOTE   0x01000
-#define NDI_GM		0x02000 /* Its from a staff member */
+#define NDI_GM      0x02000 /* Its from a staff member */
 #define NDI_PLAYER  0x04000 /* this comes from a player */
 #define NDI_SYSTEM  0x08000 /* if this is set, its a "system" message */
 
@@ -249,10 +249,10 @@ enum
 };
 
 typedef enum client_cmd {
-	CLIENT_CMD_GENERIC,
-	CLIENT_CMD_STOP,
+    CLIENT_CMD_GENERIC,
+    CLIENT_CMD_STOP,
 
-	CLIENT_CMD_MAX_NROF
+    CLIENT_CMD_MAX_NROF
 } _client_cmd;
 
 #define SOCKET_SET_BINARY_CMD(__s__, __bc__) (__s__)->buf[0]=__bc__;(__s__)->len=1

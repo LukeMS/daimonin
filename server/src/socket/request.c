@@ -73,15 +73,15 @@ void SetUp(char *buf, int len, NewSocket *ns)
     int     s;
     char   *cmd, *param, tmpbuf[MAX_BUF], cmdback[HUGE_BUF];
 
-	if (!buf || !len)
-		return;
+    if (!buf || !len)
+        return;
 
-	if(!ns->version)
-	{
+    if(!ns->version)
+    {
         LOG(llevInfo, "HACKBUG: setup command before version %s\n", STRING_SAFE(ns->ip_host));
         ns->status = Ns_Dead;
         return;
-	}
+    }
     if (ns->setup)
     {
         LOG(llevInfo, "HACKBUG: double call of setup cmd from socket %s\n", STRING_SAFE(ns->ip_host));
@@ -346,10 +346,10 @@ void SetUp(char *buf, int len, NewSocket *ns)
  */
 void AddMeCmd(char *buf, int len, NewSocket *ns)
 {
-	player     *pl=NULL;
+    player     *pl=NULL;
     char        cmd_buf[2]  = "X";
 
-	/* add_player() will move the login to the next step - adding a "connect"
+    /* add_player() will move the login to the next step - adding a "connect"
      * as a uninitialized player AND send a get_name() which is "tell me your name".
      * ->addme flag is only a temp flag for the socket loop - because we close here
      * the socket or, when all is ok, we change to Ns_Login mode.
@@ -358,23 +358,23 @@ void AddMeCmd(char *buf, int len, NewSocket *ns)
     {
         Write_String_To_Socket(ns, BINARY_CMD_ADDME_FAIL, cmd_buf, 1);
         ns->login_count = ROUND_TAG+(uint32)(10.0f * pticks_second);
-		ns->status = Ns_Zombie; /* we hold the socket open for a *bit* */
-		ns->idle_flag = 1;
+        ns->status = Ns_Zombie; /* we hold the socket open for a *bit* */
+        ns->idle_flag = 1;
 
     }
     else
     {
-		/* lets preset our old socket so it can be given back */
-		ns->addme = 1;
-		ns = &pl->socket; /* map us to our copied socket - command queue was copied too! */
+        /* lets preset our old socket so it can be given back */
+        ns->addme = 1;
+        ns = &pl->socket; /* map us to our copied socket - command queue was copied too! */
 
-		/* remove now the FIRST command in the command queue - that MUST be our addme.
-		 * don't remove the poolchunk, thats done in the caller functio´n */
-		ns->cmd_start = ns->cmd_start->next;
-		if(!ns->cmd_start)
-			ns->cmd_end = NULL;
+        /* remove now the FIRST command in the command queue - that MUST be our addme.
+         * don't remove the poolchunk, thats done in the caller functio´n */
+        ns->cmd_start = ns->cmd_start->next;
+        if(!ns->cmd_start)
+            ns->cmd_end = NULL;
 
-		Write_String_To_Socket(ns, BINARY_CMD_ADDME_SUC, cmd_buf, 1);
+        Write_String_To_Socket(ns, BINARY_CMD_ADDME_SUC, cmd_buf, 1);
         LOG(llevDebug, "addme_cmd(): socket %d\n", ns->fd);
     }
 }
@@ -385,19 +385,19 @@ void AddMeCmd(char *buf, int len, NewSocket *ns)
  */
 void PlayerCmd(char *buf, int len, player *pl)
 {
-	if (!buf || !len || !pl || pl->socket.status == Ns_Dead)
-	{
-		if(pl)
-			pl->socket.status = Ns_Dead;
-		return;
-	}
+    if (!buf || !len || !pl || pl->socket.status == Ns_Dead)
+    {
+        if(pl)
+            pl->socket.status = Ns_Dead;
+        return;
+    }
 
-	/* The following should never happen with a proper or honest client.
+    /* The following should never happen with a proper or honest client.
      * Therefore, the error message doesn't have to be too clear - if
      * someone is playing with a hacked/non working client, this gives them
      * an idea of the problem, but they deserve what they get
      */
-	if (pl->state != ST_PLAYING)
+    if (pl->state != ST_PLAYING)
     {
         new_draw_info_format(NDI_UNIQUE, 0, pl->ob, "You can not issue commands - state is not ST_PLAYING (%s)", buf);
         return;
@@ -448,14 +448,14 @@ void NewPlayerCmd(char *buf, int len, player *pl)
     char    command[MAX_BUF];
     /*    SockList sl;*/
 
-	if (!buf || !len || !pl || pl->socket.status == Ns_Dead)
-	{
-		if(pl)
-			pl->socket.status = Ns_Dead;
-		return;
-	}
+    if (!buf || !len || !pl || pl->socket.status == Ns_Dead)
+    {
+        if(pl)
+            pl->socket.status = Ns_Dead;
+        return;
+    }
 
-	if (len < 7)
+    if (len < 7)
     {
         /*LOG(llevBug,"BUG: Corrupt ncom command from player %s - not long enough (len: %d)- discarding\n", pl->ob->name,len);*/
         return;
@@ -506,12 +506,12 @@ void ReplyCmd(char *buf, int len, player *pl)
      * function then does not try to do additional input.
      */
 
-	if (!buf || !len || !pl || pl->socket.status == Ns_Dead)
-	{
-		if(pl)
-			pl->socket.status = Ns_Dead;
-		return;
-	}
+    if (!buf || !len || !pl || pl->socket.status == Ns_Dead)
+    {
+        if(pl)
+            pl->socket.status = Ns_Dead;
+        return;
+    }
 
     strcpy(write_buf, ":");
     strncat(write_buf, buf, 250);
@@ -647,24 +647,24 @@ void VersionCmd(char *buf, int len, NewSocket *ns)
     if (VERSION_CS != ns->cs_version)
     {
         LOG(llevInfo, "CS: csversion mismatch (%d,%d)\n", VERSION_CS, ns->cs_version);
-		/* our old beta 3 client has a broken version interaction - we need to trick here
+        /* our old beta 3 client has a broken version interaction - we need to trick here
          * so the client gets a valid update string. This is important!
          */
-		if(ns->cs_version <= 991019) /* beta 3 client */
-		{
-			/*char		warning[256] ="X3 Connection denied.\nYou are running a BETA 3 client!\nYour client is OUTDATED!!\n**UPDATE** your client from http://www.daimonin.com !!\n"; */
-			char		warning[256] ="X3 Connection denied.\nYou are running a BETA 3 client!\nYou need a BETA 4 preview test client for this server.\nCheck the news & forum on http://www.daimonin.com !!\n";
-			char        cmd_buf[2]  = "X";
+        if(ns->cs_version <= 991019) /* beta 3 client */
+        {
+            /*char      warning[256] ="X3 Connection denied.\nYou are running a BETA 3 client!\nYour client is OUTDATED!!\n**UPDATE** your client from http://www.daimonin.com !!\n"; */
+            char        warning[256] ="X3 Connection denied.\nYou are running a BETA 3 client!\nYou need a BETA 4 preview test client for this server.\nCheck the news & forum on http://www.daimonin.com !!\n";
+            char        cmd_buf[2]  = "X";
 
-			ns->version = 0;
-			Write_String_To_Socket(ns, 3, warning, strlen(warning));
-			Write_String_To_Socket(ns, 22, cmd_buf, 1);
-			ns->login_count = ROUND_TAG+(uint32)(10.0f * pticks_second);
-			ns->status = Ns_Zombie; /* we hold the socket open for a *bit* */
-			ns->idle_flag = 1;
-		}
-		else
-			ns->status = Ns_Dead;
+            ns->version = 0;
+            Write_String_To_Socket(ns, 3, warning, strlen(warning));
+            Write_String_To_Socket(ns, 22, cmd_buf, 1);
+            ns->login_count = ROUND_TAG+(uint32)(10.0f * pticks_second);
+            ns->status = Ns_Zombie; /* we hold the socket open for a *bit* */
+            ns->idle_flag = 1;
+        }
+        else
+            ns->status = Ns_Dead;
         return;
     }
     cp = strchr(buf + 1, ' ');
@@ -697,10 +697,10 @@ void VersionCmd(char *buf, int len, NewSocket *ns)
 
 void SetSound(char *buf, int len, NewSocket *ns)
 {
-	if (!buf || !len)
-		return;
+    if (!buf || !len)
+        return;
 
-	ns->sound = atoi(buf);
+    ns->sound = atoi(buf);
 }
 
 /* Moves an object (typically, container to inventory
@@ -710,12 +710,12 @@ void MoveCmd(char *buf, int len, player *pl)
 {
     int vals[3], i;
 
-	if (!buf || !len || !pl || pl->socket.status == Ns_Dead)
-	{
-		if(pl)
-			pl->socket.status = Ns_Dead;
-		return;
-	}
+    if (!buf || !len || !pl || pl->socket.status == Ns_Dead)
+    {
+        if(pl)
+            pl->socket.status = Ns_Dead;
+        return;
+    }
 
     /* A little funky here.  We only cycle for 2 records, because
      * we obviously am not going to find a space after the third
@@ -941,7 +941,7 @@ void esrv_update_stats(player *pl)
         flags |= SF_INFRAVISION;
     AddIfShort(pl->last_flags, flags, CS_STAT_FLAGS);
 
-	/* TODO: Add a fix_player marker here for all values who MUST be altered in fix_player */
+    /* TODO: Add a fix_player marker here for all values who MUST be altered in fix_player */
     for (i = 0; i < NROFATTACKS; i++)
         AddIfChar(pl->last_resist[i], pl->ob->resist[i], CS_STAT_RES_START+i);
 
@@ -1029,20 +1029,20 @@ void esrv_send_animation(NewSocket *ns, short anim_num)
 /* helper functions for draw_client_map */
 static inline int get_tiled_map_id(player *pl, struct mapdef *map)
 {
-	int i;
+    int i;
 
     if (!pl->last_update)
-		return 0;
+        return 0;
 
-	/* we assume that last_update, if != NULL, is not swaped out or something.
+    /* we assume that last_update, if != NULL, is not swaped out or something.
      * IF we ever put a player on a longer sleep, be sure to nullify last_update
      */
-	for (i = 0; i < TILED_MAPS; i++)
+    for (i = 0; i < TILED_MAPS; i++)
     {
             if (pl->last_update-> tile_path[i] == map->path)
-				return i+1;
-	}
-	return 0;
+                return i+1;
+    }
+    return 0;
 }
 
 static inline void copy_lastmap(NewSocket *ns, int dx, int dy)
@@ -1071,8 +1071,8 @@ static inline void copy_lastmap(NewSocket *ns, int dx, int dy)
 /* do some checks, map name and LOS and then draw the map */
 void draw_client_map(object *plobj)
 {
-	player *pl = CONTR(plobj);
-	int redraw_below=FALSE;
+    player *pl = CONTR(plobj);
+    int redraw_below=FALSE;
 
     if (plobj->type != PLAYER)
     {
@@ -1088,92 +1088,92 @@ void draw_client_map(object *plobj)
         return;
 
     /* if we has changed somewhere the map - prepare map data */
-	pl->map_update_cmd = MAP_UPDATE_CMD_SAME;
+    pl->map_update_cmd = MAP_UPDATE_CMD_SAME;
     if (pl->last_update != plobj->map)
-	{
-		int tile_map = get_tiled_map_id(pl, plobj->map);
+    {
+        int tile_map = get_tiled_map_id(pl, plobj->map);
 
-		if(!pl->last_update || !tile_map) /* we are on a new map or set? */
-		{
-			pl->map_update_cmd = MAP_UPDATE_CMD_NEW;
-			memset(&(pl->socket.lastmap), 0, sizeof(struct Map));
-			pl->last_update = plobj->map;
-			redraw_below=TRUE;
-		}
-		else /* because tile_map can never != 0 if pl->last_update is NULL, tile_map always valid here */
-		{
-			pl->map_update_cmd = MAP_UPDATE_CMD_CONNECTED;
-			pl->map_update_tile = tile_map;
-			redraw_below=TRUE;
-			/* be here means, we have moved to a known, connected map related to our last position!
-			 * lets calculate the offsets to our last position,
+        if(!pl->last_update || !tile_map) /* we are on a new map or set? */
+        {
+            pl->map_update_cmd = MAP_UPDATE_CMD_NEW;
+            memset(&(pl->socket.lastmap), 0, sizeof(struct Map));
+            pl->last_update = plobj->map;
+            redraw_below=TRUE;
+        }
+        else /* because tile_map can never != 0 if pl->last_update is NULL, tile_map always valid here */
+        {
+            pl->map_update_cmd = MAP_UPDATE_CMD_CONNECTED;
+            pl->map_update_tile = tile_map;
+            redraw_below=TRUE;
+            /* be here means, we have moved to a known, connected map related to our last position!
+             * lets calculate the offsets to our last position,
              * which is: pl->last_update - pos: map_tile_x,map_tile_y
              */
-			switch(tile_map-1)
-			{
-				case 0:
-					pl->map_off_x = plobj->x - pl->map_tile_x;
-					pl->map_off_y = -(pl->map_tile_y + (MAP_HEIGHT(plobj->map) - plobj->y));
-				break;
+            switch(tile_map-1)
+            {
+                case 0:
+                    pl->map_off_x = plobj->x - pl->map_tile_x;
+                    pl->map_off_y = -(pl->map_tile_y + (MAP_HEIGHT(plobj->map) - plobj->y));
+                break;
 
-				case 1:
-					pl->map_off_y = plobj->y - pl->map_tile_y;
-					pl->map_off_x = (MAP_WIDTH(plobj->map) - pl->map_tile_x) + plobj->x;
-				break;
+                case 1:
+                    pl->map_off_y = plobj->y - pl->map_tile_y;
+                    pl->map_off_x = (MAP_WIDTH(plobj->map) - pl->map_tile_x) + plobj->x;
+                break;
 
-				case 2:
-					pl->map_off_x = plobj->x - pl->map_tile_x;
-					pl->map_off_y = (MAP_HEIGHT(plobj->map) - pl->map_tile_y) + plobj->y;
-				break;
+                case 2:
+                    pl->map_off_x = plobj->x - pl->map_tile_x;
+                    pl->map_off_y = (MAP_HEIGHT(plobj->map) - pl->map_tile_y) + plobj->y;
+                break;
 
-				case 3:
-					pl->map_off_y = plobj->y - pl->map_tile_y;
-					pl->map_off_x = -(pl->map_tile_x + (MAP_WIDTH(plobj->map) - plobj->x));
-				break;
+                case 3:
+                    pl->map_off_y = plobj->y - pl->map_tile_y;
+                    pl->map_off_x = -(pl->map_tile_x + (MAP_WIDTH(plobj->map) - plobj->x));
+                break;
 
-				case 4:
-					pl->map_off_y = -(pl->map_tile_y + (MAP_HEIGHT(plobj->map) - plobj->y));
-					pl->map_off_x = (MAP_WIDTH(plobj->map) - pl->map_tile_x) + plobj->x;
-				break;
+                case 4:
+                    pl->map_off_y = -(pl->map_tile_y + (MAP_HEIGHT(plobj->map) - plobj->y));
+                    pl->map_off_x = (MAP_WIDTH(plobj->map) - pl->map_tile_x) + plobj->x;
+                break;
 
-				case 5:
-					pl->map_off_x = (MAP_WIDTH(plobj->map) - pl->map_tile_x) + plobj->x;
-					pl->map_off_y = (MAP_HEIGHT(plobj->map) - pl->map_tile_y) + plobj->y;
-				break;
+                case 5:
+                    pl->map_off_x = (MAP_WIDTH(plobj->map) - pl->map_tile_x) + plobj->x;
+                    pl->map_off_y = (MAP_HEIGHT(plobj->map) - pl->map_tile_y) + plobj->y;
+                break;
 
-				case 6:
-					pl->map_off_y = (MAP_HEIGHT(plobj->map) - pl->map_tile_y) + plobj->y;
-					pl->map_off_x = -(pl->map_tile_x + (MAP_WIDTH(plobj->map) - plobj->x));
-				break;
+                case 6:
+                    pl->map_off_y = (MAP_HEIGHT(plobj->map) - pl->map_tile_y) + plobj->y;
+                    pl->map_off_x = -(pl->map_tile_x + (MAP_WIDTH(plobj->map) - plobj->x));
+                break;
 
-				case 7:
-					pl->map_off_x = -(pl->map_tile_x + (MAP_WIDTH(plobj->map) - plobj->x));
-					pl->map_off_y = -(pl->map_tile_y + (MAP_HEIGHT(plobj->map) - plobj->y));
-				break;
-			}
-			/*LOG(llevDebug, "**** Connected: %d - %d,%d\n",  tile_map-1, pl->map_off_x, pl->map_off_y);*/
-			copy_lastmap(&pl->socket, pl->map_off_x, pl->map_off_y);
-			pl->last_update = plobj->map;
-		}
-	}
-	else /* check still on the same postion */
-	{
-			if(pl->map_tile_x != plobj->x || pl->map_tile_y != plobj->y)
-			{
-				copy_lastmap(&pl->socket, plobj->x-pl->map_tile_x, plobj->y-pl->map_tile_y);
-				redraw_below=TRUE;
-			}
-	}
+                case 7:
+                    pl->map_off_x = -(pl->map_tile_x + (MAP_WIDTH(plobj->map) - plobj->x));
+                    pl->map_off_y = -(pl->map_tile_y + (MAP_HEIGHT(plobj->map) - plobj->y));
+                break;
+            }
+            /*LOG(llevDebug, "**** Connected: %d - %d,%d\n",  tile_map-1, pl->map_off_x, pl->map_off_y);*/
+            copy_lastmap(&pl->socket, pl->map_off_x, pl->map_off_y);
+            pl->last_update = plobj->map;
+        }
+    }
+    else /* check still on the same postion */
+    {
+            if(pl->map_tile_x != plobj->x || pl->map_tile_y != plobj->y)
+            {
+                copy_lastmap(&pl->socket, plobj->x-pl->map_tile_x, plobj->y-pl->map_tile_y);
+                redraw_below=TRUE;
+            }
+    }
 
-	if(redraw_below) /* redraw below windows? (and backbuffer now position) */
-	{
-		/* backbuffer position so we can determinate we have moved or not */
-		pl->map_tile_x = plobj->x;
-		pl->map_tile_y = plobj->y;
-		pl->socket.below_clear = 1; /* draw_client_map2() has implicit cleared belowed - don't send a clear again */
-		pl->socket.update_tile = 0; /* redraw it */
+    if(redraw_below) /* redraw below windows? (and backbuffer now position) */
+    {
+        /* backbuffer position so we can determinate we have moved or not */
+        pl->map_tile_x = plobj->x;
+        pl->map_tile_y = plobj->y;
+        pl->socket.below_clear = 1; /* draw_client_map2() has implicit cleared belowed - don't send a clear again */
+        pl->socket.update_tile = 0; /* redraw it */
         pl->socket.look_position = 0; /* reset the "show only x items of all items belows" counter */
-	}
+    }
 
     /* do LOS after calls to update_position */
     if (!QUERY_FLAG(plobj, FLAG_WIZ) && pl->update_los)
@@ -1209,7 +1209,7 @@ void draw_client_map2(object *pl)
     MapSpace       *msp;
     New_Face       *face;
     mapstruct      *m;
-	player		   *pl_ptr = CONTR(pl);
+    player         *pl_ptr = CONTR(pl);
     object         *tmp = NULL, *tmph = NULL, *pname2 = NULL, *pname3 = NULL, *pname4 = NULL;
     int             x, y, ax, ay, d, nx, ny, probe_tmp;
     int             x_start, dm_light = 0;
@@ -1239,22 +1239,22 @@ void draw_client_map2(object *pl)
     SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_MAP2); /* sets sl.len too */
 
     SockList_AddChar(&sl, (char) pl_ptr->map_update_cmd); /* marker */
-	if(pl_ptr->map_update_cmd != MAP_UPDATE_CMD_SAME)
-	{
-		SockList_AddString(&sl, pl->map->name);
+    if(pl_ptr->map_update_cmd != MAP_UPDATE_CMD_SAME)
+    {
+        SockList_AddString(&sl, pl->map->name);
 
-		if(pl_ptr->map_update_cmd == MAP_UPDATE_CMD_CONNECTED)
-		{
-			SockList_AddChar(&sl, (char) pl_ptr->map_update_tile);
-			SockList_AddChar(&sl, (char) pl_ptr->map_off_x);
-			SockList_AddChar(&sl, (char) pl_ptr->map_off_y);
-		}
-		else
-		{
-			SockList_AddChar(&sl, (char) pl->map->width);
-			SockList_AddChar(&sl, (char) pl->map->height);
-		}
-	}
+        if(pl_ptr->map_update_cmd == MAP_UPDATE_CMD_CONNECTED)
+        {
+            SockList_AddChar(&sl, (char) pl_ptr->map_update_tile);
+            SockList_AddChar(&sl, (char) pl_ptr->map_off_x);
+            SockList_AddChar(&sl, (char) pl_ptr->map_off_y);
+        }
+        else
+        {
+            SockList_AddChar(&sl, (char) pl->map->width);
+            SockList_AddChar(&sl, (char) pl->map->height);
+        }
+    }
 
     SockList_AddChar(&sl, (char) pl->x);
     SockList_AddChar(&sl, (char) pl->y);
@@ -1411,21 +1411,21 @@ void draw_client_map2(object *pl)
 
                 /* floor layer */
                 face_num0 = 0;
-				if(msp->floor_face)
-					face_num0 = msp->floor_face->number;
-				/* layer 1 (floor) is really free now - we only have here
+                if(msp->floor_face)
+                    face_num0 = msp->floor_face->number;
+                /* layer 1 (floor) is really free now - we only have here
                  * type 68 SHOP_FLOOR left using layer 1. That special floor
                  * will be removed when we add real shop interfaces.
                  */
-				else
-				{
-					if (inv_flag)
-						tmp = GET_MAP_SPACE_CL(msp, 0);
-					else
-						tmp = GET_MAP_SPACE_CL_INV(msp, 0);
-					if (tmp)
-						face_num0 = tmp->face->number ;
-				}
+                else
+                {
+                    if (inv_flag)
+                        tmp = GET_MAP_SPACE_CL(msp, 0);
+                    else
+                        tmp = GET_MAP_SPACE_CL_INV(msp, 0);
+                    if (tmp)
+                        face_num0 = tmp->face->number ;
+                }
                 if (mp->faces[3] != face_num0)
                 {
                     mask |= 0x8;    /* this is the floor layer - 0x8 is floor bit */
@@ -1443,9 +1443,9 @@ void draw_client_map2(object *pl)
 */
                 flag_tmp = 0;
                 probe_tmp = 0;
-				tmp = tmph = NULL;
+                tmp = tmph = NULL;
                 quick_pos_1 = 0;
-				face = msp->mask_face;
+                face = msp->mask_face;
 
                 /* if we have no legal visual to send, skip it */
                 if (!face || face == blank_face)
@@ -1849,7 +1849,7 @@ void draw_client_map2(object *pl)
     } /* for y loop */
 
     /* Verify that we in fact do need to send this */
-	if (sl.len > 4)
+    if (sl.len > 4)
     {
         Send_With_Handling(&pl_ptr->socket, &sl);
 #ifdef DEBUG_CORE_MAP

@@ -889,10 +889,10 @@ void fix_player(object *op)
     if (QUERY_FLAG(op, FLAG_MONSTER) && op->type != PLAYER)
     {
 #ifdef DEBUG_FIX_PLAYER
-        LOG(llevDebug, "fix_player(%s [%x]): >> non player - redirect to fix_monster (%s)\n", 
+        LOG(llevDebug, "fix_player(%s [%x]): >> non player - redirect to fix_monster (%s)\n",
                 query_name(op),op->count, debug_msg);
 #else
-        LOG(llevDebug, "fix_player(%s [%x]): >> non player - redirect to fix_monster\n", 
+        LOG(llevDebug, "fix_player(%s [%x]): >> non player - redirect to fix_monster\n",
                 query_name(op),op->count);
 #endif
         fix_monster(op);
@@ -903,10 +903,10 @@ void fix_player(object *op)
     if (op->type != PLAYER)
     {
 #ifdef DEBUG_FIX_PLAYER
-        LOG(llevDebug, "fix_player(): called from non Player/Mob object: %s [%x] (type %d) (%s)\n", 
+        LOG(llevDebug, "fix_player(): called from non Player/Mob object: %s [%x] (type %d) (%s)\n",
                 query_name(op), op->count, op->type, debug_msg);
 #else
-        LOG(llevDebug, "fix_player(): called from non Player/Mob object: %s [%x] (type %d)\n", 
+        LOG(llevDebug, "fix_player(): called from non Player/Mob object: %s [%x] (type %d)\n",
                 query_name(op), op->count, op->type);
 #endif
         return;
@@ -1376,12 +1376,12 @@ void fix_player(object *op)
                         SET_FLAG(op, FLAG_FEARED);
                     else if(tmp->sub_type1 == ST1_FORCE_SLOWED) /* slowness */
                     {
-                        slow_penalty += tmp->last_heal; 
+                        slow_penalty += tmp->last_heal;
                         SET_FLAG(op, FLAG_SLOWED);
                     }
                     else if(tmp->sub_type1 == ST1_FORCE_DRAIN) /* level drain */
                     {
-                            skill_level_drain += tmp->level; 
+                            skill_level_drain += tmp->level;
                     }
                     else
                     {
@@ -2113,14 +2113,14 @@ void fix_monster(object *op)
             }
             else if(tmp->sub_type1 == ST1_FORCE_SNARE)
             {
-                snare_penalty += tmp->last_heal; 
+                snare_penalty += tmp->last_heal;
 
                 if(snare_penalty >= 100)
                     SET_FLAG(op, FLAG_ROOTED);
             }
             else if(tmp->sub_type1 == ST1_FORCE_SLOWED)
             {
-                slow_penalty += tmp->last_heal; 
+                slow_penalty += tmp->last_heal;
                 SET_FLAG(op, FLAG_SLOWED);
             }
             else if(tmp->sub_type1 == ST1_FORCE_PARALYZE)
@@ -2356,11 +2356,11 @@ object * find_base_info_object(object *op)
 }
 
 /** Set set the movement speed of a mobile.
- * 
+ *
  * The base speed of a mob is stored in base->speed_left.
  * The actual speed is stored in op->speed as base->speed_left * factor.
  *
- * Possible factors: 
+ * Possible factors:
  * 1 = mob is slowed (by magic) (minimum factor)
  * 2 = normal mob speed - moving normal
  * 3 = mob is moving fast
@@ -2386,7 +2386,7 @@ void set_mobile_speed(object *op, int factor)
     else /* we will generate the speed by setting of the mobile */
     {
         /* TODO: more logic when we add haste/slow spells */
-        
+
         if(op->type == MONSTER && MOB_DATA(op))
             actual_factor = MOB_DATA(op)->move_speed_factor; /* AI-selected speed */
         else if (OBJECT_VALID(op->enemy, op->enemy_count))
@@ -2394,9 +2394,9 @@ void set_mobile_speed(object *op, int factor)
         else
             actual_factor = 2; /* Backup */
     }
-        
+
     op->speed = base->speed_left * CLAMP(actual_factor, 1, 5);
-    
+
      LOG(-1,"SET SPEED: %s ->%f (=%d*%f) o:%f\n", query_name(op), op->speed, actual_factor, base->speed_left, old_speed);
     /* update speed if needed */
     if ((old_speed && !op->speed) || (!old_speed && op->speed))

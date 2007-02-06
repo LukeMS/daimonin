@@ -81,7 +81,7 @@ static int calc_direction_towards(object *op, object *target, mapstruct *map, in
         else
             return target_rv.direction;
     }
-    
+
     pf->last_best_distance = pf->best_distance;
 
 #ifdef DEBUG_PATHFINDING
@@ -105,16 +105,16 @@ static int calc_direction_towards(object *op, object *target, mapstruct *map, in
     if (pf->path == NULL)
     {
         /* TODO: here we can see if an earlier pathfinding attempt failed
-         * and decide whether or not it is worth trying again. 
-         * We need some way to see if anything changed 
+         * and decide whether or not it is worth trying again.
+         * We need some way to see if anything changed
          * (our position, the target position etc).
-         * Also (or alternatively), we should use a nice backoff algo like 
-         * the TCP backoff to exponentially increase the time between 
+         * Also (or alternatively), we should use a nice backoff algo like
+         * the TCP backoff to exponentially increase the time between
          * pathfinding attempts */
         /*if(QUERY_FLAG(pf, PATHFINDFLAG_PATH_FAILED))
         {
         }*/
-        
+
         if (!QUERY_FLAG(pf, PATHFINDFLAG_PATH_REQUESTED))
         {
             /* request new path */
@@ -234,7 +234,7 @@ static int calc_direction_towards_object(object *op, object *target)
     {
         rv_vector   rv_goal, rv_target;
         mapstruct  *goal_map    = ready_inherited_map(op->map, MOB_PATHDATA(op)->goal_map, 1);
-        
+
         /* TODO if we can't see the object, goto its last known position
          * (also have to separate between well-known objects that we can find
          * without seeing, and other objects that we have to search or track */
@@ -293,7 +293,7 @@ static int calc_direction_towards_waypoint(object *op, object *wp)
         else
             return 0; /* TODO: what to do? */
     } else
-    {    
+    {
         mapstruct *map;
 
         if(WP_MAP(wp) && *WP_MAP(wp) != '\0')
@@ -390,7 +390,7 @@ static inline void regenerate_stats(object *op)
     if (op->stats.Con && op->stats.hp < op->stats.maxhp)
     {
         /* only reg when mob has no ememy or hp reg in fight is set */
-        if(QUERY_FLAG(op, FLAG_FIGHT_HPREG) || 
+        if(QUERY_FLAG(op, FLAG_FIGHT_HPREG) ||
                 (!op->enemy && !QUERY_FLAG(op, FLAG_NO_ATTACK) && !QUERY_FLAG(op, FLAG_SURRENDERED)))
         {
             if (++op->last_heal > 5)
@@ -453,7 +453,7 @@ object * get_return_waypoint(object *op)
     return wp;
 }
 
-/** Find a monster's waypoint by name (used for getting the next waypoint). 
+/** Find a monster's waypoint by name (used for getting the next waypoint).
  * @param op operand mob
  * @param name must be a shared string or NULL to find any waypoint */
 object * find_waypoint(object *op, const char *name)
@@ -516,13 +516,13 @@ int move_monster(object *op, int mode)
         op->custom_attrset = get_poolchunk(pool_mob_data);
         MOB_DATA(op)->behaviours = setup_behaviours(op);
     }
-    
+
     old_speed_factor = MOB_DATA(op)->move_speed_factor;
 
     /* we only have a valid weapon swing - no move */
     if(mode == FALSE)
         goto jump_move_monster_action;
-    
+
     MOB_DATA(op)->move_speed_factor = 2;
 
     /*
@@ -535,7 +535,7 @@ int move_monster(object *op, int mode)
         if(op->owner == NULL)
             if(add_pet(op->env, op, 0))
                 return 0;
-        
+
         pet_follow_owner(op);
 
         /* We won't do anything with them unless they actually got out */
@@ -551,7 +551,7 @@ int move_monster(object *op, int mode)
 
     /* Mark own combat strength as needing recalculation */
     MOB_DATA(op)->combat_strength = -1;
-    
+
     /*
      * Internal thought and sensing behaviours
      * All of those are always executed
@@ -595,7 +595,7 @@ int move_monster(object *op, int mode)
         {
             success = do_move_monster(op, dir, response.forbidden);
             /* TODO: handle success=0 and precomputed paths/giving up */
-        } 
+        }
 
         /* Try to avoid standing still if we aren't allowed to */
         if((dir == 0 || success == 0) && (response.forbidden & (1 << 0)))
@@ -643,12 +643,12 @@ jump_move_monster_action:
 
     /* Enable/disable attack animation */
     if(MOB_DATA(op)->enemy == NULL)
-        op->anim_enemy_dir = -1;  
+        op->anim_enemy_dir = -1;
 
     /* Change gears? */
     if(MOB_DATA(op)->move_speed_factor != old_speed_factor)
         set_mobile_speed(op, 0);
-    
+
     return 0;
 }
 
@@ -713,7 +713,7 @@ void object_accept_path(object *op)
     {
         goal_object = target;
     }
-    
+
     if(goal_object)
     {
         if (goal_object->type == TYPE_BASE_INFO)
@@ -766,7 +766,7 @@ void object_accept_path(object *op)
 #ifdef DEBUG_PATHFINDING
         {
             path_node  *tmp;
-            LOG(llevDebug, "object_accept_path(): '%s' new path -> [object '%s' / coordinate %d:%d@%s])\n", 
+            LOG(llevDebug, "object_accept_path(): '%s' new path -> [object '%s' / coordinate %d:%d@%s])\n",
                 STRING_OBJ_NAME(op),
                 STRING_OBJ_NAME(MOB_PATHDATA(op)->target_obj),
                 MOB_PATHDATA(op)->target_x, MOB_PATHDATA(op)->target_y,
@@ -790,12 +790,12 @@ void object_accept_path(object *op)
     }
     else
     {
-        LOG(llevDebug, "object_accept_path(): no path to destination ('%s' -> [object '%s' / coordinate %d:%d@%s])\n", 
+        LOG(llevDebug, "object_accept_path(): no path to destination ('%s' -> [object '%s' / coordinate %d:%d@%s])\n",
                 STRING_OBJ_NAME(op),
                 STRING_OBJ_NAME(MOB_PATHDATA(op)->target_obj),
                 MOB_PATHDATA(op)->target_x, MOB_PATHDATA(op)->target_y,
                 STRING_SAFE(MOB_PATHDATA(op)->target_map));
-        LOG(llevDebug, "  last movement behaviour of '%s': '%s'\n", 
+        LOG(llevDebug, "  last movement behaviour of '%s': '%s'\n",
                 STRING_OBJ_NAME(op), MOB_DATA(op)->last_movement_behaviour->name);
         SET_FLAG(MOB_PATHDATA(op), PATHFINDFLAG_PATH_FAILED);
     }

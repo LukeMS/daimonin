@@ -224,7 +224,7 @@ void free_gmaster_list()
     objectlink *ol;
 
     LOG(llevDebug, "Freeing all gmaster entries\n");
-       
+
     for(ol = gmaster_list; ol; ol=ol->next)
         free_gmaster_node(ol);
 }

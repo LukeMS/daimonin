@@ -34,7 +34,7 @@
 /* Those are pseudobehaviours in monster_behaviour.c */
 extern int get_npc_object_attraction(object *op, object *other);
 extern int get_npc_attitude(object *op, object *other);
-    
+
 /** Purge a single object from list of known mobs/objects */
 static inline void remove_mob_known(struct mob_known_obj *tmp, struct mob_known_obj **first, hashtable *ht)
 {
@@ -83,7 +83,7 @@ void clear_mob_knowns(object *op, struct mob_known_obj **first, hashtable *ht)
     }
 }
 
-/** Update known_obj fields to indicate new knowledge about an object or mob. 
+/** Update known_obj fields to indicate new knowledge about an object or mob.
  * @param known the already known object we have new info about
  * @param delta_friendship friendship change towards other (for example if other is helping or attacking npc)
  * @param delta_attraction attraction change towards other
@@ -102,7 +102,7 @@ void update_npc_known_obj(struct mob_known_obj *known, int delta_friendship, int
             FREE_AND_ADD_REF_HASH(known->last_map, known->obj->map->orig_path);
         known->last_x = known->obj->x;
         known->last_y = known->obj->y;
-    } 
+    }
 }
 
 /** register a new enemy, friend or interesting object for the NPC.
@@ -133,9 +133,9 @@ struct mob_known_obj *register_npc_known_obj(object *npc, object *other, int fri
 
     /* TODO: keep count of objects and push out less
      * important if lists grow too big */
-        
+
     /* The following code handles new, previously unknown objects */
-    
+
     /* Special handling of mobs inside containers or not on maps */
     if(other->map == NULL || other->env != NULL || npc->map == NULL || npc->env != NULL)
     {
@@ -143,8 +143,8 @@ struct mob_known_obj *register_npc_known_obj(object *npc, object *other, int fri
         LOG(llevDebug, "register_npc_known_obj(): '%s' trying to register object '%s' and at least one not on a map\n", STRING_OBJ_NAME(npc), STRING_OBJ_NAME(other));
 #endif
         nomap = 1;
-    } 
-    else 
+    }
+    else
     {
         if(! get_rangevector(npc, other, &rv, RV_EUCLIDIAN_DISTANCE) || !rv.part)
         {
@@ -153,37 +153,37 @@ struct mob_known_obj *register_npc_known_obj(object *npc, object *other, int fri
         }
 
         /* We check LOS here, only if we are registering a new object */
-        /* Also, we only check against players, and not if we have 
-         * been hit or helped by them, or if they own us */        
+        /* Also, we only check against players, and not if we have
+         * been hit or helped by them, or if they own us */
         if(other->type == PLAYER && friendship == 0 && npc->owner != other)
             if(!obj_in_line_of_sight(npc, other, &rv))
                 return NULL;
     }
 
     /* Calculate attitude and/or attraction if needed */
-    if(attraction == 0) 
+    if(attraction == 0)
         attraction = get_npc_object_attraction(npc, other);
     if(!is_object && friendship == 0)
         friendship = get_npc_attitude(npc, other);
 
-    /* We do a last attempt at LOS test here, for mob to mob detection, 
+    /* We do a last attempt at LOS test here, for mob to mob detection,
      * but only if the two are enemies */
-    if(nomap == 0 && !is_object && other->type != PLAYER && friendship < 0) 
+    if(nomap == 0 && !is_object && other->type != PLAYER && friendship < 0)
     {
-        if(!obj_in_line_of_sight(npc, other, &rv)) 
+        if(!obj_in_line_of_sight(npc, other, &rv))
         {
 #ifdef DEBUG_AI_NPC_KNOWN
             LOG(llevDebug,"register_npc_known_obj(): '%s' can't see '%s'. friendship: %d, attraction: %d\n",  STRING_OBJ_NAME(npc), STRING_OBJ_NAME(other), friendship, attraction);
-#endif            
+#endif
             return NULL;
         }
     }
-    
+
     /* Initialize the known_obj at last */
     known = get_poolchunk(pool_mob_knownobj);
     known->next = NULL;
     known->prev = NULL;
-    
+
     known->last_map = NULL;
 
     known->obj = other;
@@ -197,7 +197,7 @@ struct mob_known_obj *register_npc_known_obj(object *npc, object *other, int fri
     for(i=0; i<=NROF_AI_KNOWN_OBJ_FLAGS/32; i++)
         known->flags[i] = 0;
 
-    if(nomap) 
+    if(nomap)
         known->rv_time = 0; /* No cached rv */
     else
     {
@@ -207,7 +207,7 @@ struct mob_known_obj *register_npc_known_obj(object *npc, object *other, int fri
 
     /* Initial friendship and attitude */
     update_npc_known_obj(known, friendship, attraction);
-    
+
     /* Add to list and possibly hashtable */
     if(is_object)
     {
@@ -217,7 +217,7 @@ struct mob_known_obj *register_npc_known_obj(object *npc, object *other, int fri
         MOB_DATA(npc)->known_objs = known;
 
         hashtable_insert(MOB_DATA(npc)->known_objs_ht, other, known);
-    } 
+    }
     else
     {
         if(MOB_DATA(npc)->known_mobs)
@@ -242,7 +242,7 @@ struct mob_known_obj *update_npc_knowledge(object *npc, object *other, int delta
 {
     int is_object = 0; /* We differ between objects and mobs */
     struct mob_known_obj *known = NULL; /* Did we already know this other */
-    
+
     if (npc == NULL)
     {
 #ifdef DEBUG_AI_NPC_KNOWN
@@ -284,7 +284,7 @@ struct mob_known_obj *update_npc_knowledge(object *npc, object *other, int delta
 #endif
         return NULL;
     }
-    
+
     /* never register anything when surrendered.
      * A surrendered mob doesn't deal in friends, enemies or objects.
      */
@@ -296,7 +296,7 @@ struct mob_known_obj *update_npc_knowledge(object *npc, object *other, int delta
         is_object = 1;
 
     /* Does npc already know this other? In that case known = old_known_obj */
-    if(is_object && MOB_DATA(npc)->known_objs_ht) 
+    if(is_object && MOB_DATA(npc)->known_objs_ht)
         known = (struct mob_known_obj *)hashtable_find(MOB_DATA(npc)->known_objs_ht, other);
     else if(! is_object)
     {
@@ -308,11 +308,11 @@ struct mob_known_obj *update_npc_knowledge(object *npc, object *other, int delta
     }
 
     /* Previously unknown other */
-    if(known == NULL) 
+    if(known == NULL)
         known = register_npc_known_obj(npc, other, 0, 0);
-    
+
     /* Update values */
-    if(known) 
+    if(known)
     {
         update_npc_known_obj(known, delta_friendship, delta_attraction);
 

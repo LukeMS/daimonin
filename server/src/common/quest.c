@@ -278,7 +278,7 @@ void add_quest_trigger(struct obj *who, struct obj *trigger)
 
     if(trigger->sub_type1 == ST1_QUEST_TRIGGER_NORMAL || trigger->sub_type1 == ST1_QUEST_TRIGGER_ITEM)
         insert_ob_in_ob(trigger, CONTR(who)->quests_type_normal);
-    else if(trigger->sub_type1 == ST1_QUEST_TRIGGER_KILL || 
+    else if(trigger->sub_type1 == ST1_QUEST_TRIGGER_KILL ||
             trigger->sub_type1 == ST1_QUEST_TRIGGER_KILL_ITEM) /* kill */
         insert_ob_in_ob(trigger, CONTR(who)->quests_type_kill);
     else
@@ -354,7 +354,7 @@ void check_kill_quest_event(struct obj *pl, struct obj *op)
                     /* Its real: give the item inside the quest_info the player */
                     if(!tmp_info->inv)
                     {
-                        LOG(llevBug,"BUG: check_kill_quest_event:: tmp_info has no inventory item (quest %s)\n", 
+                        LOG(llevBug,"BUG: check_kill_quest_event:: tmp_info has no inventory item (quest %s)\n",
                                 query_name(tmp));
                         continue;
                     }
@@ -381,7 +381,7 @@ void check_kill_quest_event(struct obj *pl, struct obj *op)
                             nrof = 1;
                     }
 
-                    new_draw_info_format(NDI_NAVY, 0, pl, "Quest %s\n%s: %d/%d", 
+                    new_draw_info_format(NDI_NAVY, 0, pl, "Quest %s\n%s: %d/%d",
                             STRING_SAFE(tmp->name), query_short_name(tmp_info->inv, NULL),
                             nrof, (tmp_info->inv->nrof?tmp_info->inv->nrof:1));
                 }
@@ -437,7 +437,7 @@ static inline int check_quest_complete(struct obj *target, struct obj *quest)
     object *tmp;
 
     /* FIXME: Is this test really correct? The following seems more correct:
-     * if(!quest || quest->magic < quest->state || quest->last_eat == -1)  
+     * if(!quest || quest->magic < quest->state || quest->last_eat == -1)
      * (state stores the "finish" step for "normal" quests, quest->magic is the counter)
      * Gecko 2006-11-15 */
     if(!quest || quest->magic < quest->last_heal || quest->last_eat == -1)
@@ -566,7 +566,7 @@ void send_quest_list(struct obj *pl)
                 tmp->item_skill = 0;
             }
 
-            sprintf(msg,"<lt=\"%s °(%s%d) %s°\" c=\"#%d\">",STRING_SAFE(tmp->name), 
+            sprintf(msg,"<lt=\"%s °(%s%d) %s°\" c=\"#%d\">",STRING_SAFE(tmp->name),
                     skill_group_name[tmp->item_skill], tmp->item_level,
                     check_quest_complete(pl, tmp)?"(complete)":"", ++count);
             strcat(buf, msg);

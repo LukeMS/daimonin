@@ -62,7 +62,7 @@ BehaviourClass(PROCESSES,
         /** Attitude against the followers of a named god */
         Parameter(FRIENDSHIP, GOD, STRINGINT, MULTI | OPTIONAL, "X:0")
     )
-    
+
     /** Determines the initial attraction of a mob towards another object or mob.
      * (The parameters here modifies initial attraction value at first sight)
      * Should always come after look_for_other_mobs and
@@ -91,18 +91,18 @@ BehaviourClass(PROCESSES,
 
     /** Simply look around for other mobs nearby */
     Behaviour(LOOK_FOR_OTHER_MOBS, ai_look_for_other_mobs, NIL)
-    
+
     /** Look around for interesting objects nearby
      * (see ATTRACTION for the definition of interesting) */
     Behaviour(LOOK_FOR_OBJECTS, ai_look_for_objects, NIL)
 
     /** Choose the known mob with the lowest negative friendship as the current enemy
      * should always come after friendship */
-    Behaviour(CHOOSE_ENEMY, ai_choose_enemy, 
+    Behaviour(CHOOSE_ENEMY, ai_choose_enemy,
             /** The anti-luring protection works by ignoring any
              * enemy at a specific distance from the "home" point.
-             * In most cases "home" is the starting point of the mob, 
-             * but for mobs following wayponts it is the last recently 
+             * In most cases "home" is the starting point of the mob,
+             * but for mobs following wayponts it is the last recently
              * treaded square on a path towards the current waypoint.
              * For pets "home" is the current position of the owner.
              * Deactivate by using a distance setting of -1.
@@ -167,14 +167,14 @@ BehaviourClass(MOVES,
 
     /** Move towards the current active waypoint if any */
     Behaviour(MOVE_TOWARDS_WAYPOINT, ai_move_towards_waypoint, NIL)
-  
+
     /** Avoid stepping on repulsive items. Hint: put early in list
      * for high strictness (won't cross repulsive items even to attack)
      * or late for more relaxed avoidance. */
     Behaviour(AVOID_REPULSIVE_ITEMS, ai_avoid_repulsive_items, NIL)
-    
+
     /** Move towards a nearby attractive item, investigate it and then continue */
-    Behaviour(INVESTIGATE_ATTRACTION, ai_investigate_attraction, 
+    Behaviour(INVESTIGATE_ATTRACTION, ai_investigate_attraction,
         /** Investigate an archetype */
 //        Parameter(INVESTIGATE_ATTRACTION, ARCH, STRING, MULTI | OPTIONAL, NULL)
         /** Investigate a named object/mob/player */

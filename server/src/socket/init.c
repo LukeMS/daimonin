@@ -50,8 +50,8 @@
 #include <newserver.h>
 #include "zlib.h"
 
-static int	send_bufsize = 24*1024;
-static int	read_bufsize = 8*1024;
+static int  send_bufsize = 24*1024;
+static int  read_bufsize = 8*1024;
 
 
 /* Initializes a connection - really, it just sets up the data structure,
@@ -69,17 +69,17 @@ void InitConnection(NewSocket *ns, char *ip)
     if (ioctlsocket(ns->fd, FIONBIO, &temp) == -1)
         LOG(llevDebug, "InitConnection:  Error on ioctlsocket.\n");
 #else
-	LOG(llevDebug, "InitConnection:  fcntl(%x %x) %x.\n", O_NDELAY, O_NONBLOCK, fcntl(ns->fd, F_GETFL));
+    LOG(llevDebug, "InitConnection:  fcntl(%x %x) %x.\n", O_NDELAY, O_NONBLOCK, fcntl(ns->fd, F_GETFL));
     if (fcntl(ns->fd, F_SETFL, fcntl(ns->fd, F_GETFL) | O_NDELAY | O_NONBLOCK ) == -1)
         LOG(llevError, "InitConnection:  Error on fcntl %x.\n", fcntl(ns->fd, F_GETFL));
-	LOG(llevDebug, "InitConnection:  fcntl %x.\n", fcntl(ns->fd, F_GETFL));
+    LOG(llevDebug, "InitConnection:  fcntl %x.\n", fcntl(ns->fd, F_GETFL));
 #endif /* end win32 */
 
 #ifdef ESRV_DEBUG
-	getsockopt(ns->fd, SOL_SOCKET, SO_SNDBUF, (char *) &oldbufsize, &buflen);
-	LOG(llevDebug, "InitConnection: Socket send buffer size is %d bytes\n", oldbufsize);
-	getsockopt(ns->fd, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, &buflen);
-	LOG(llevDebug, "InitConnection: Socket read buffer size is %d bytes\n", oldbufsize);
+    getsockopt(ns->fd, SOL_SOCKET, SO_SNDBUF, (char *) &oldbufsize, &buflen);
+    LOG(llevDebug, "InitConnection: Socket send buffer size is %d bytes\n", oldbufsize);
+    getsockopt(ns->fd, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, &buflen);
+    LOG(llevDebug, "InitConnection: Socket read buffer size is %d bytes\n", oldbufsize);
 #endif
 
     ns->login_count = ROUND_TAG + pticks_socket_idle;
@@ -105,20 +105,20 @@ void InitConnection(NewSocket *ns, char *ip)
     ns->rf_bmaps = 0;
     ns->write_overflow = 0;
 
-	ns->cmd_start = NULL;
-	ns->cmd_end = NULL;
+    ns->cmd_start = NULL;
+    ns->cmd_end = NULL;
     /* we should really do some checking here - if total clients overflows
      * we need to do something more intelligent, because client id's will start
      * duplicating (not likely in normal cases, but malicous attacks that
      * just open and close connections could get this total up.
      */
     ns->readbuf.len = 0;
-	ns->readbuf.pos = 0;
-	if(!ns->readbuf.buf)
-		ns->readbuf.buf = malloc(MAXSOCKBUF_IN);
+    ns->readbuf.pos = 0;
+    if(!ns->readbuf.buf)
+        ns->readbuf.buf = malloc(MAXSOCKBUF_IN);
     ns->readbuf.buf[0] = 0;
 
-	ns->pwd_try=0; 
+    ns->pwd_try=0;
 
     memset(&ns->lastmap, 0, sizeof(struct Map));
 
@@ -132,36 +132,36 @@ void InitConnection(NewSocket *ns, char *ip)
 void setsockopts(int fd)
 {
     struct linger       linger_opt;
-	int tmp = 1;
+    int tmp = 1;
 
 #ifdef WIN32 /* ***WIN32 SOCKET: init win32 non blocking socket */
     u_long tmp2 = 1;
-	if (ioctlsocket(fd, FIONBIO, &tmp2) == -1)
-		LOG(llevDebug, "InitConnection:  Error on ioctlsocket.\n");
+    if (ioctlsocket(fd, FIONBIO, &tmp2) == -1)
+        LOG(llevDebug, "InitConnection:  Error on ioctlsocket.\n");
 #else
-	LOG(llevDebug, "setsockets():  fcntl %x.\n", fcntl(fd, F_GETFL));
-	if (fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) | O_NDELAY | O_NONBLOCK ) == -1)
-		LOG(llevError, "InitConnection:  Error on fcntl %x.\n", fcntl(fd, F_GETFL));
-	LOG(llevDebug, "setsockets():  fcntl %x.\n", fcntl(fd, F_GETFL));
+    LOG(llevDebug, "setsockets():  fcntl %x.\n", fcntl(fd, F_GETFL));
+    if (fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) | O_NDELAY | O_NONBLOCK ) == -1)
+        LOG(llevError, "InitConnection:  Error on fcntl %x.\n", fcntl(fd, F_GETFL));
+    LOG(llevDebug, "setsockets():  fcntl %x.\n", fcntl(fd, F_GETFL));
 #endif /* end win32 */
 
-	/* Turn LINGER off (don't send left data in background if socket get closed) */
-	linger_opt.l_onoff = 0;
+    /* Turn LINGER off (don't send left data in background if socket get closed) */
+    linger_opt.l_onoff = 0;
     linger_opt.l_linger = 0;
     if (setsockopt(fd, SOL_SOCKET, SO_LINGER, (char *) &linger_opt, sizeof(struct linger)))
         LOG(llevError, "BUG: Error on setsockopt LINGER\n");
 
-	if (setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, (char *) &tmp, sizeof(tmp)))
-		LOG(llevError, "error on setsockopt TCP_NODELAY\n");
+    if (setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, (char *) &tmp, sizeof(tmp)))
+        LOG(llevError, "error on setsockopt TCP_NODELAY\n");
 
-	if (setsockopt(fd, SOL_SOCKET, SO_SNDBUF, (char *) &send_bufsize, sizeof(send_bufsize)))
-		LOG(llevError, "error on setsockopt SO_SNDBUF\n");
+    if (setsockopt(fd, SOL_SOCKET, SO_SNDBUF, (char *) &send_bufsize, sizeof(send_bufsize)))
+        LOG(llevError, "error on setsockopt SO_SNDBUF\n");
 
-	if (setsockopt(fd, SOL_SOCKET, SO_RCVBUF, (char *) &read_bufsize, sizeof(read_bufsize)))
-		LOG(llevError, "error on setsockopt SO_RCVBUF\n");
+    if (setsockopt(fd, SOL_SOCKET, SO_RCVBUF, (char *) &read_bufsize, sizeof(read_bufsize)))
+        LOG(llevError, "error on setsockopt SO_RCVBUF\n");
 
 
-	/* Would be nice to have an autoconf check for this.  It appears that
+    /* Would be nice to have an autoconf check for this.  It appears that
      * these functions are both using the same calling syntax, just one
      * of them needs extra valus passed.
      */
@@ -240,15 +240,15 @@ int create_socket()
 #else
 int create_socket()
 {
-    /* 
+    /*
      * this function create a socket on the first available protocol. If there
      * is only one available it is no problem at all. But for IPv6 system it
      * requires that IPv6 sockets can handle IPv4 connections too, which is the
      * case on most system. It would be better to try to create sockets for all
-     * protocols, but that requires that the server can handle multiple listen 
-     * sockets (coming soon). Creating a IPv4 socket will fail when an IPv6 
+     * protocols, but that requires that the server can handle multiple listen
+     * sockets (coming soon). Creating a IPv4 socket will fail when an IPv6
      * socket that handles IPv4 already has been create, so failures will have
-     * to be ignored as long as at least one socket is created.     
+     * to be ignored as long as at least one socket is created.
      */
     int fd = -1;
     struct addrinfo hints, *res, *ai;
@@ -263,30 +263,30 @@ int create_socket()
 
     sprintf(portstr, "%d", settings.csport);
     if (getaddrinfo(NULL, portstr, &hints, &res) != 0)
-		return -1;
+        return -1;
 
-    for (ai = res; ai != NULL; ai = ai->ai_next) 
+    for (ai = res; ai != NULL; ai = ai->ai_next)
     {
-       LOG(llevInfo,"checking family:%d socktype:%d protocol:%d\n",ai->ai_family,ai->ai_socktype,ai->ai_protocol);  
-		fd = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
-		if (fd <= 0)
-			continue;
+       LOG(llevInfo,"checking family:%d socktype:%d protocol:%d\n",ai->ai_family,ai->ai_socktype,ai->ai_protocol);
+        fd = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
+        if (fd <= 0)
+            continue;
 
-		setsockopts(fd);
+        setsockopts(fd);
 
-		if (bind(fd, ai->ai_addr, ai->ai_addrlen) == 0)
-			break;
+        if (bind(fd, ai->ai_addr, ai->ai_addrlen) == 0)
+            break;
 
-		close(fd);
-		fd = -1;
+        close(fd);
+        fd = -1;
     }
 
     freeaddrinfo(res);
 
-    if (listen(fd, QUEUE_LEN) < 0) 
+    if (listen(fd, QUEUE_LEN) < 0)
     {
-		close(fd);
-		return -1;
+        close(fd);
+        return -1;
     }
 
     return fd;
@@ -296,8 +296,8 @@ int create_socket()
 /* This sets up the socket and reads all the image information into memory. */
 void init_ericserver()
 {
-	int oldbufsize;
-	unsigned int buflen  = sizeof(int);
+    int oldbufsize;
+    unsigned int buflen  = sizeof(int);
 #ifndef WIN32 /* non windows */
 
 #ifdef HAVE_SYSCONF
@@ -326,7 +326,7 @@ void init_ericserver()
 
     LOG(llevDebug, "Initialize new client/server data\n");
     init_sockets = malloc(sizeof(NewSocket));
-	memset(init_sockets,0,sizeof(NewSocket));
+    memset(init_sockets,0,sizeof(NewSocket));
     socket_info.allocated_sockets = 1;
 
     init_sockets[0].fd = create_socket();
@@ -334,27 +334,27 @@ void init_ericserver()
         LOG(llevError, "ERROR: init_ericserver(): Error creating socket on port\n");
     init_sockets[0].status = Ns_Wait;
 
-	/* under some OS the send and read buffer size will 2 times our default size. */
-	getsockopt(init_sockets[0].fd, SOL_SOCKET, SO_SNDBUF, (char *) &oldbufsize, &buflen);
-	if(oldbufsize > send_bufsize)
-	{
-		send_bufsize = (int)((float)send_bufsize*((float)send_bufsize/(float)oldbufsize));
+    /* under some OS the send and read buffer size will 2 times our default size. */
+    getsockopt(init_sockets[0].fd, SOL_SOCKET, SO_SNDBUF, (char *) &oldbufsize, &buflen);
+    if(oldbufsize > send_bufsize)
+    {
+        send_bufsize = (int)((float)send_bufsize*((float)send_bufsize/(float)oldbufsize));
 
-		if (setsockopt(init_sockets[0].fd, SOL_SOCKET, SO_SNDBUF, (char *) &send_bufsize, sizeof(send_bufsize)))
-			LOG(llevError, "error on setsockopt SO_SNDBUF\n");
-		LOG(llevDebug, "InitSocket: send buffer adjusted to %d bytes! (old value: %d bytes)\n", send_bufsize, oldbufsize);
-	}
+        if (setsockopt(init_sockets[0].fd, SOL_SOCKET, SO_SNDBUF, (char *) &send_bufsize, sizeof(send_bufsize)))
+            LOG(llevError, "error on setsockopt SO_SNDBUF\n");
+        LOG(llevDebug, "InitSocket: send buffer adjusted to %d bytes! (old value: %d bytes)\n", send_bufsize, oldbufsize);
+    }
 
-	getsockopt(init_sockets[0].fd, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, &buflen);
-	if(oldbufsize > read_bufsize)
-	{
-		read_bufsize = (int)((float)read_bufsize*((float)read_bufsize/(float)oldbufsize));
+    getsockopt(init_sockets[0].fd, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, &buflen);
+    if(oldbufsize > read_bufsize)
+    {
+        read_bufsize = (int)((float)read_bufsize*((float)read_bufsize/(float)oldbufsize));
 
-		if (setsockopt(init_sockets[0].fd, SOL_SOCKET, SO_RCVBUF, (char *) &read_bufsize, sizeof(read_bufsize)))
-			LOG(llevError, "error on setsockopt SO_RCVBUF\n");
+        if (setsockopt(init_sockets[0].fd, SOL_SOCKET, SO_RCVBUF, (char *) &read_bufsize, sizeof(read_bufsize)))
+            LOG(llevError, "error on setsockopt SO_RCVBUF\n");
 
-		LOG(llevDebug, "InitSocket: read buffer adjusted to %d bytes! (old value: %d bytes)\n", read_bufsize, oldbufsize);
-	}
+        LOG(llevDebug, "InitSocket: read buffer adjusted to %d bytes! (old value: %d bytes)\n", read_bufsize, oldbufsize);
+    }
 
 
     read_client_images();
@@ -373,7 +373,7 @@ void free_all_newserver()
 {
     LOG(llevDebug, "Freeing all new client/server information.\n");
     free_socket_images();
-	/* for clean memory remove we must loop init_sockets to free the buffers */
+    /* for clean memory remove we must loop init_sockets to free the buffers */
     free(init_sockets);
 }
 
@@ -385,7 +385,7 @@ void free_all_newserver()
 void close_newsocket(NewSocket *ns)
 {
 #ifdef WIN32
-	WSAAsyncSelect(ns->fd, NULL, 0, FD_CLOSE);
+    WSAAsyncSelect(ns->fd, NULL, 0, FD_CLOSE);
     shutdown(ns->fd, SD_SEND);
     if (closesocket(ns->fd))
 #else
@@ -405,12 +405,12 @@ void    free_newsocket  (NewSocket *ns)
     LOG(llevDebug, "Closing socket %d\n", ns->fd);
     close_newsocket(ns);
 
-	/* clearout the socket but don't restore the buffers.
+    /* clearout the socket but don't restore the buffers.
      * no need to malloc them again & again.
      */
-	clear_read_buffer_queue(ns); /* give back the blocks to the mempools */
-	memset(ns, 0, sizeof(ns));
-	ns->readbuf.buf = tmp_read; 
+    clear_read_buffer_queue(ns); /* give back the blocks to the mempools */
+    memset(ns, 0, sizeof(ns));
+    ns->readbuf.buf = tmp_read;
 }
 
 /* as long the server don't have a autoupdate/login server

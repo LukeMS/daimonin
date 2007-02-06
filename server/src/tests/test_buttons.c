@@ -23,7 +23,7 @@
     The author can be reached via e-mail to daimonin@nord-com.net
 */
 
-/* test_buttons.c 
+/* test_buttons.c
  * Copyright (C) 2006 Björn Axelsson
  */
 
@@ -52,7 +52,7 @@ START_TEST (buttons_check_inv_recursive)
     object *check5 = locate_beacon(find_string("check5"))->env;
     object *check8 = locate_beacon(find_string("check8"))->env;
     object *check9 = locate_beacon(find_string("check9"))->env;
-    
+
     object *key1 = locate_beacon(find_string("key1"))->env;
     object *key2 = locate_beacon(find_string("key2"))->env;
     object *key3 = locate_beacon(find_string("key3"))->env;
@@ -62,7 +62,7 @@ START_TEST (buttons_check_inv_recursive)
     object *cont2 = arch_to_object(find_archetype("chest"));
     object *cont3 = arch_to_object(find_archetype("chest"));
     object *cont4 = arch_to_object(find_archetype("chest"));
-   
+
     remove_ob(key1);
     key1 = insert_ob_in_ob(key1, cont1);
     remove_ob(key2);
@@ -79,7 +79,7 @@ START_TEST (buttons_check_inv_recursive)
     fail_if(check_inv_recursive(cont1, check5) != NULL, "key1 check5 failed");
     fail_if(check_inv_recursive(cont1, check8) == NULL, "key1 check8 failed");
     fail_if(check_inv_recursive(cont1, check9) != NULL, "key1 check9 failed");
-    
+
     fail_if(check_inv_recursive(cont2, check1) != NULL, "key2 check1 failed");
     fail_if(check_inv_recursive(cont2, check2) == NULL, "key2 check2 failed");
     fail_if(check_inv_recursive(cont2, check3) != NULL, "key2 check3 failed");
@@ -87,7 +87,7 @@ START_TEST (buttons_check_inv_recursive)
     fail_if(check_inv_recursive(cont2, check5) != NULL, "key2 check5 failed");
     fail_if(check_inv_recursive(cont2, check8) != NULL, "key2 check8 failed");
     fail_if(check_inv_recursive(cont2, check9) == NULL, "key2 check9 failed");
-    
+
     fail_if(check_inv_recursive(cont3, check1) == NULL, "key3 check1 failed");
     fail_if(check_inv_recursive(cont3, check2) != NULL, "key3 check2 failed");
     fail_if(check_inv_recursive(cont3, check3) == NULL, "key3 check3 failed");
@@ -95,7 +95,7 @@ START_TEST (buttons_check_inv_recursive)
     fail_if(check_inv_recursive(cont3, check5) == NULL, "key3 check5 failed");
     fail_if(check_inv_recursive(cont3, check8) == NULL, "key3 check8 failed");
     fail_if(check_inv_recursive(cont3, check9) == NULL, "key3 check9 failed");
-    
+
     fail_if(check_inv_recursive(cont4, check1) != NULL, "key4 check1 failed");
     fail_if(check_inv_recursive(cont4, check2) == NULL, "key4 check2 failed");
     fail_if(check_inv_recursive(cont4, check3) != NULL, "key4 check3 failed");
@@ -113,13 +113,13 @@ START_TEST (buttons_check_mapload)
     mapstruct *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
 
     object *lever = locate_beacon(find_string("lever"))->env;
-    
+
     object *creator1 = locate_beacon(find_string("creator1"))->env;
     object *creator2 = locate_beacon(find_string("creator2"))->env;
     object *creator3 = locate_beacon(find_string("creator3"))->env;
     object *creator4 = locate_beacon(find_string("creator4"))->env;
     object *creator5 = locate_beacon(find_string("creator5"))->env;
-    
+
     object *fire1a = locate_beacon(find_string("fire1a"))->env;
     object *fire1b = locate_beacon(find_string("fire1b"))->env;
     object *fire2a = locate_beacon(find_string("fire2a"))->env;
@@ -152,7 +152,7 @@ START_TEST (buttons_check_mapload)
 
     /* Switch the lever and make sure the inverse is true */
     manual_apply(lever, lever, 0);
-    
+
     fail_unless(creator1->above || creator1->below, "creator1 created nothing");
     fail_unless(creator2->above || creator2->below, "creator2 created nothing");
     fail_if(creator3->above || creator3->below, "creator3 created something");
@@ -183,7 +183,7 @@ START_TEST (buttons_check_env_sensor)
     object *light1 = locate_beacon(find_string("gravelight_beacon"))->env; // applyable light connected to sensor
     object *light2 = locate_beacon(find_string("light_beacon"))->env; // light source connected to sensor
     object *light3 = locate_beacon(find_string("light_beacon_2"))->env;
-    
+
     /* Give the env sensor a chance to sense */
     process_events();
     process_events();
@@ -197,7 +197,7 @@ START_TEST (buttons_check_env_sensor)
     /* Switch the lever and make sure the inverse is true */
     manual_apply(lever, lever, 0);
     fail_if(!light3->glow_radius, "light source 2 doesn't glow");
-    
+
     /* The new light should activate the env sensor, let it sense... */
     process_events();
     process_events();
@@ -205,7 +205,7 @@ START_TEST (buttons_check_env_sensor)
     fail_if(!light1->glow_radius, "applyable light doesn't glow");
     fail_if(!light2->glow_radius, "light source 1 doesn't glow");
     fail_if(!sensor->weight_limit, "env sensor doesn't sense");
-    
+
     /* Switch the lever and make sure the inverse is true */
     manual_apply(lever, lever, 0);
     process_events();
@@ -218,7 +218,7 @@ START_TEST (buttons_check_env_sensor)
 END_TEST
 
 /* Test pedestals
- * Related bugs: 
+ * Related bugs:
  *   - 0000480: Invisible pedestal does not fire connection
  */
 START_TEST (buttons_check_pedestal)
@@ -226,14 +226,14 @@ START_TEST (buttons_check_pedestal)
     shstr *path = add_string("/dev/unit_tests/test_pedestal");
     mapstruct *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
 
-    object *lever = locate_beacon(find_string("lever"))->env; 
+    object *lever = locate_beacon(find_string("lever"))->env;
     object *pedestal1 = locate_beacon(find_string("visible_pedestal"))->env;
-    object *pedestal2 = locate_beacon(find_string("invisible_pedestal"))->env; 
+    object *pedestal2 = locate_beacon(find_string("invisible_pedestal"))->env;
     object *pedestal3 = locate_beacon(find_string("sys_invisible_pedestal"))->env;
     object *pedestal4 = locate_beacon(find_string("visible_pedestal_2"))->env;
-    object *pedestal5 = locate_beacon(find_string("invisible_pedestal_2"))->env; 
+    object *pedestal5 = locate_beacon(find_string("invisible_pedestal_2"))->env;
     object *pedestal6 = locate_beacon(find_string("sys_invisible_pedestal_2"))->env;
- 
+
     fail_if(pedestal1->weight_limit, "visible pedestal 1 is triggered");
     fail_if(pedestal2->weight_limit, "invisible pedestal 1 is triggered");
     fail_if(pedestal3->weight_limit, "sys. invisible pedestal 1 is triggered");
@@ -243,7 +243,7 @@ START_TEST (buttons_check_pedestal)
 
     /* Switch the lever and make sure the inverse is true */
     manual_apply(lever, lever, 0);
-    
+
     fail_unless(pedestal1->weight_limit, "visible pedestal 1 is not triggered");
     fail_unless(pedestal2->weight_limit, "invisible pedestal 1 is not triggered"); /* Bug 0000480 fails here */
     fail_unless(pedestal3->weight_limit, "sys. invisible pedestal 1 is not triggered");
@@ -254,23 +254,23 @@ START_TEST (buttons_check_pedestal)
 END_TEST
 
 /* Test creator with mover inside
- * Related bugs: 
+ * Related bugs:
  * 0000482: Creator with mover in inventory crashes server
  */
 START_TEST (buttons_creator_with_mover)
 {
     shstr *path = add_string("/dev/unit_tests/test_creator");
-    mapstruct *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL); 
+    mapstruct *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
 
-    object *lever = locate_beacon(find_string("lever"))->env; 
+    object *lever = locate_beacon(find_string("lever"))->env;
     object *beacon = locate_beacon(find_string("beacon_square"));
- 
+
 
     process_events();
     process_events(); /* Bug 000482 crashes here */
 
     manual_apply(lever, lever, 0);
-    
+
     object *mover = NULL;
     for(mover = GET_BOTTOM_MAP_OB(beacon); mover; mover = mover->above)
         if(mover->type == PLAYERMOVER)
@@ -286,7 +286,7 @@ Suite *buttons_suite(void)
   TCase *tc_core = tcase_create("Core");
 
   tcase_add_checked_fixture(tc_core, setup, teardown);
-  
+
   suite_add_tcase (s, tc_core);
   tcase_add_test(tc_core, buttons_check_inv_recursive);
   tcase_add_test(tc_core, buttons_check_mapload);

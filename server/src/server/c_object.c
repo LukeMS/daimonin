@@ -81,7 +81,7 @@ int command_rskill(object *pl, char *params)
 }
 
 
-int command_egobind ( object *pl, char *params) 
+int command_egobind ( object *pl, char *params)
 {
     object *mark;
 
@@ -684,7 +684,7 @@ char *examine(object *op, object *tmp, int flag)
             int tmp_flag = 0;
 
             sprintf(buf, "Qua: %d Con: %d.\n", tmp->item_quality, tmp->item_condition);
-            strcat(buf_out, buf); 
+            strcat(buf_out, buf);
 
             if (QUERY_FLAG(tmp, FLAG_PROOF_PHYSICAL))
                 tmp_flag +=1;
@@ -746,13 +746,13 @@ char *examine(object *op, object *tmp, int flag)
         if (tmp->item_quality)
         {
             sprintf(buf, "Qua: ?? Con: %d.\n", tmp->item_condition);
-            strcat(buf_out, buf); 
+            strcat(buf_out, buf);
         }
         buf[0] = '\0';
     }
-    
+
     if (tmp->item_quality && !tmp->item_condition)
-        strcat(buf_out, "Item is broken!\n"); 
+        strcat(buf_out, "Item is broken!\n");
 
     switch (tmp->type)
     {

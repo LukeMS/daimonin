@@ -23,7 +23,7 @@
     The author can be reached via e-mail to daimonin@nord-com.net
 */
 
-/* test_hashtable.c 
+/* test_hashtable.c
  * Copyright (C) 2005 Björn Axelsson
  */
 
@@ -36,9 +36,9 @@ START_TEST(hashtable_basic_operations)
 {
     char **ptr;
     char *strings1[] = { "hello", "world", "this", "is", "working", NULL };
-    
+
     hashtable *ht = string_hashtable_new(32);
-    
+
     for(ptr = strings1; *ptr; ptr++)
         hashtable_insert(ht, *ptr, *ptr);
     fail_unless(hashtable_size(ht) == 5, "Size didn't increase after insert");
@@ -57,7 +57,7 @@ START_TEST(hashtable_basic_operations)
     hashtable_delete(ht);
 }
 END_TEST
-     
+
 /* Make sure hash table actually shrinks when elements are deleted */
 /* This test is a little shaky since it depends on the word list not
  * containing duplicate words and not being to small */
@@ -76,10 +76,10 @@ START_TEST(hashtable_shrinkage)
     maxbuckets = ht->num_buckets;
     fail_unless(hashtable_size(ht) >= num_words, "More words in list than in hashtable. Duplicate words?");
     fail_unless(ht->num_buckets >= num_words, "Hashtable didn't expand");
-    
+
     /* Remove half the objects. When we go below ~6550 objects the hash should be shrinkable */
 
-    for(j=0; j<num_words/2; j++) 
+    for(j=0; j<num_words/2; j++)
         hashtable_erase(ht, words[j]);
 
     fail_unless(ht->num_buckets == maxbuckets, "Hashtable shrunk too early");
@@ -88,14 +88,14 @@ START_TEST(hashtable_shrinkage)
 
     /* Test shrinkage through insert */
     maxbuckets = ht->num_buckets;
-    
+
     /* Remove the rest */
-    for(j=num_words/2; j<num_words; j++) 
+    for(j=num_words/2; j<num_words; j++)
         hashtable_erase(ht, words[j]);
-    
+
     fail_unless(ht->num_buckets == maxbuckets, "Hashtable shrunk too early");
     hashtable_insert(ht, "test1234","test1234"); /* indirect shrinkage */
-    
+
     fail_unless(ht->num_buckets < maxbuckets, "Hashtable didn't shrink (expected < %d buckets. Got %d)", maxbuckets, ht->num_buckets);
 }
 END_TEST
@@ -107,7 +107,7 @@ START_TEST (hashtable_iterators)
     hashtable_iterator_t i;
     int count = 0;
 
-    for(j=0; j<num_words; j++) 
+    for(j=0; j<num_words; j++)
         hashtable_insert(ht, words[j], (void *)j);
 
     /* Iterate through the hash table and make sure we can
@@ -137,16 +137,16 @@ START_TEST (hashtable_efficiency)
     hashtable *ht = string_hashtable_new(32);
     int j, probesum= 0;
 
-    for(j=0; j<num_words; j++) 
+    for(j=0; j<num_words; j++)
         hashtable_insert(ht, words[j], (void *)j);
-            
-    for(j=0; j<num_words; j++) 
+
+    for(j=0; j<num_words; j++)
         probesum += hashtable_num_probes_needed(ht, words[j]);
 
     fail_unless(probesum >= num_words, "Finding words need less probes than words?");
-    
+
     fail_if((double)probesum / (double)num_words > 3.0, "Find needs more than 3.0 probes per average!");
-    
+
     // fprintf(stderr, "  Total number of probes: %d. Average per key: %0.2f\n", probesum, (double)probesum / (double)num_words);
 }
 END_TEST

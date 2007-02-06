@@ -102,7 +102,7 @@ void stats_event(stats_event_type type, ...)
         if(counter < 99)
         {
             sprintf(&filename_base[12], "%.2d.stats", ++counter);
-        } 
+        }
         else
         {
             /* Too many restarts of server in this hour */
@@ -147,7 +147,7 @@ void stats_event(stats_event_type type, ...)
         last_day   = ts->tm_mday;
         last_month = ts->tm_mon;
         last_year  = ts->tm_year;
-    }    
+    }
     va_start(ap, type);
     vsprintf(buf, format[type], ap);
     va_end(ap);

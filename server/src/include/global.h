@@ -239,7 +239,7 @@ typedef signed long long         sint64;
 #define SEND_FACE_NO_DATA 2
 
 /* for attack.c and material.c - item damage */
-#define HIT_FLAG_WEAPON		   1024
+#define HIT_FLAG_WEAPON        1024
 
 /* group define stuff */
 #define GROUP_NO (-1)
@@ -402,11 +402,11 @@ typedef struct _money_block
 /* ban node - see ban.c */
 typedef struct ban_struct
 {
-    const char *name;		/* if != NULL, we have banned an name */
-    int			 ticks_init; /* how long is the ban */
-    int			 ticks_left; /* how long left */
-    uint32		 ticks;		/* (starting) pticks + ticks_left */
-    char		*ip;		/* if name is == NULL, we have a ip */		
+    const char *name;       /* if != NULL, we have banned an name */
+    int          ticks_init; /* how long is the ban */
+    int          ticks_left; /* how long left */
+    uint32       ticks;     /* (starting) pticks + ticks_left */
+    char        *ip;        /* if name is == NULL, we have a ip */
 } _ban_struct;
 
 typedef struct Settings
@@ -509,7 +509,7 @@ EXTERN uint32                   global_map_tag; /* our global map_tag value for 
 EXTERN New_Face                *new_faces;
 EXTERN archetype               *coins_arch[NUM_COINS+1];
 EXTERN char                     global_version_msg[32];
-EXTERN SockList					global_version_sl;
+EXTERN SockList                 global_version_sl;
 
 
 /* arch.c - sysinfo for lowlevel */
@@ -539,9 +539,9 @@ EXTERN long                     nroferrors;     /* If it exceeds MAX_ERRORS, cal
 EXTERN unsigned long            pticks;                 /* this is the global round counter. Every main loop pticks=pticks+1 */
 EXTERN long                     pticks_ums;             /* how many micro seconds has one pticks */
 EXTERN float                    pticks_second;          /* how many pticks in one second */
-EXTERN uint32					pticks_socket_idle;		/* 3 idle counter we use for idle sockets in socket/loop.c */
-EXTERN uint32					pticks_player_idle1;
-EXTERN uint32					pticks_player_idle2;
+EXTERN uint32                   pticks_socket_idle;     /* 3 idle counter we use for idle sockets in socket/loop.c */
+EXTERN uint32                   pticks_player_idle1;
+EXTERN uint32                   pticks_player_idle2;
 /*
  * Misc global variables:
  */

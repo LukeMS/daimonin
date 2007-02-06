@@ -776,19 +776,19 @@ MODULEAPI int HandleEvent(CFParm *PParm)
 
     if (context->parm4 == SCRIPT_FIX_ALL)
     {
-        if (context->other && context->other->type == PLAYER && 
+        if (context->other && context->other->type == PLAYER &&
                 QUERY_FLAG(context->other, FLAG_FIX_PLAYER))
         {
             CLEAR_FLAG(context->other, FLAG_FIX_PLAYER);
             hooks->FIX_PLAYER(context->other, "LUA: script fix - other");
         }
-        if (context->self && context->self->type == PLAYER && 
+        if (context->self && context->self->type == PLAYER &&
                 QUERY_FLAG(context->self, FLAG_FIX_PLAYER))
         {
             CLEAR_FLAG(context->self, FLAG_FIX_PLAYER);
             hooks->FIX_PLAYER(context->self, "LUA: script fix - self");
         }
-        if (context->activator && context->activator->type == PLAYER && 
+        if (context->activator && context->activator->type == PLAYER &&
                 QUERY_FLAG(context->activator, FLAG_FIX_PLAYER))
         {
             CLEAR_FLAG(context->activator, FLAG_FIX_PLAYER);
@@ -1044,7 +1044,7 @@ MODULEAPI void init_Daimonin_Lua()
     lua_pushliteral(global_state, "game");
     push_object(global_state, &Game, "Daimonin");
     lua_rawset(global_state, LUA_GLOBALSINDEX);
-    
+
     /* Add our own 'type' function */
     lua_pushstring(global_state, "type");
     lua_pushcclosure(global_state, luaType, 0);

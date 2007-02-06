@@ -23,7 +23,7 @@
     The author can be reached via e-mail to daimonin@nord-com.net
 */
 
-/* common_support.c 
+/* common_support.c
  * Copyright (C) 2006 Björn Axelsson
  */
 
@@ -43,7 +43,7 @@ void read_words(void)
     char buf[1024], *ptr;
     num_words = 0;
     if(f) {
-        while(num_words < MAX_WORDS && fgets(buf, 1023, f)) {            
+        while(num_words < MAX_WORDS && fgets(buf, 1023, f)) {
             ptr = malloc(strlen(buf)+1);
             strcpy(ptr, buf);
             word_lengths[num_words] = strlen(ptr);
@@ -75,7 +75,7 @@ void read_words(void)
 /* Dump all non-free objects in memory */
 void dump_objects()
 {
-#ifdef MEMPOOL_TRACKING    
+#ifdef MEMPOOL_TRACKING
     struct puddle_info *puddle = pool_object->first_puddle_info;
     int i;
     object *obj;
@@ -85,19 +85,19 @@ void dump_objects()
         {
             obj = MEM_USERDATA((char *)puddle->first_chunk + i * (sizeof(struct mempool_chunk) + pool_object->chunksize));
             if(! OBJECT_FREE(obj))
-                LOG(llevDebug, "obj '%s'(%d)(%s) #=%d\n", STRING_OBJ_NAME(obj),  obj->count, 
+                LOG(llevDebug, "obj '%s'(%d)(%s) #=%d\n", STRING_OBJ_NAME(obj),  obj->count,
                         QUERY_FLAG(obj, FLAG_REMOVED) ? "removed" : "in use",
                         obj->nrof);
         }
         puddle = puddle->next;
     }
-#endif    
+#endif
 }
 
 /* Dump all non-free treasurelist tweaks in memory */
 void dump_treasurelist_tweaks()
 {
-#ifdef MEMPOOL_TRACKING    
+#ifdef MEMPOOL_TRACKING
     struct puddle_info *puddle = pool_tlist_tweak->first_puddle_info;
     struct mempool * pool = pool_tlist_tweak;
     int i;
@@ -112,13 +112,13 @@ void dump_treasurelist_tweaks()
         }
         puddle = puddle->next;
     }
-#endif    
+#endif
 }
 
 /* Dump all non-free objlinks in memory */
 void dump_objlinks()
 {
-#ifdef MEMPOOL_TRACKING    
+#ifdef MEMPOOL_TRACKING
     struct mempool * pool = pool_objectlink;
     struct puddle_info *puddle = pool->first_puddle_info;
     int i;
@@ -140,7 +140,7 @@ void dump_objlinks()
         }
         puddle = puddle->next;
     }
-#endif    
+#endif
 }
 
 
@@ -151,13 +151,13 @@ void dump_inventory(object *op)
     LOG(llevDebug, "inventory of %s:\n", STRING_OBJ_NAME(op));
     for(tmp = op->inv; tmp; tmp = tmp->below)
     {
-        LOG(llevDebug, "    '%s'(%d)(%s) #=%d\n", STRING_OBJ_NAME(tmp),  tmp->count, 
+        LOG(llevDebug, "    '%s'(%d)(%s) #=%d\n", STRING_OBJ_NAME(tmp),  tmp->count,
                 QUERY_FLAG(tmp, FLAG_REMOVED) ? "removed" : "in use",
                 tmp->nrof);
     }
 }
 
-/* Useful functions for detecting memory leaks 
+/* Useful functions for detecting memory leaks
  * (string reference leaks, object leaks etc)
  */
 
@@ -172,7 +172,7 @@ int memleak_detected()
 
     cleanup_without_exit();
     ss_get_totals(&entries2, &refs2, &links2);
- 
+
     for(i=0; i<nrof_mempools; i++)
         for (k = 0; k < MEMPOOL_NROF_FREELISTS; k++)
             if (mempools[i] != pool_puddle

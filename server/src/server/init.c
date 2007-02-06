@@ -988,20 +988,20 @@ struct Command_Line_Options options[]   =
     */
     {"-h", 0, 1, help},
     /* Honor -help also, since it is somewhat common */
-    {"-help", 0, 1, help}, 
-    {"-v", 0, 1, call_version}, 
-    {"-d", 0, 1, set_debug}, 
+    {"-help", 0, 1, help},
+    {"-v", 0, 1, call_version},
+    {"-d", 0, 1, set_debug},
     {"+d", 0, 1, unset_debug},
     {"-mon", 0, 1, set_mondebug},
 #ifndef SECURE
-    {"-data",1,1, set_datadir}, 
+    {"-data",1,1, set_datadir},
     {"-local",1,1, set_localdir},
     {"-maps", 1, 1, set_mapdir},
-    {"-arch", 1, 1, set_archetypes}, 
-    {"-playerdir", 1, 1, set_playerdir}, 
-    {"-instancedir", 1, 1, set_instancedir}, 
+    {"-arch", 1, 1, set_archetypes},
+    {"-playerdir", 1, 1, set_playerdir},
+    {"-instancedir", 1, 1, set_instancedir},
     {"-treasures", 1, 1, set_treasures},
-    {"-uniquedir", 1, 1, set_uniquedir}, 
+    {"-uniquedir", 1, 1, set_uniquedir},
     {"-tmpdir", 1, 1, set_tmpdir},
 #endif
     {"-log", 1, 1, set_logfile},
@@ -1009,7 +1009,7 @@ struct Command_Line_Options options[]   =
     /* Pass 2 functions.  Most of these could probably be in pass 1,
     * as they don't require much of anything to bet set up.
     */
-    {"-csport", 1, 2, set_csport}, 
+    {"-csport", 1, 2, set_csport},
     {"-detach", 0, 2, set_daemon},
 
     /* Start of pass 3 information. In theory, by pass 3, all data paths
@@ -1022,7 +1022,7 @@ struct Command_Line_Options options[]   =
     {"-m9", 0, 3, set_dumpmon9}, {"-mA", 0, 3, set_dumpmonA}, {"-mt", 1, 3, set_dumpmont},
 #endif
     {"-stat_loss_on_death", 0, 3, stat_loss_on_death_true},
-    {"+stat_loss_on_death", 0, 3, stat_loss_on_death_false}, 
+    {"+stat_loss_on_death", 0, 3, stat_loss_on_death_false},
     {"-balanced_stat_loss", 0, 3, balanced_stat_loss_true},
     {"+balanced_stat_loss", 0, 3, balanced_stat_loss_false},
     {"-test", 0, 4, run_unit_tests},
@@ -1161,7 +1161,7 @@ static void init_instance_system(void)
 
     global_instance_num = 0; /* every instance has an unique tag/number */
 
-    LOG(llevInfo,"Init instance system:  set ID:%d num:%d\n", global_instance_id, global_instance_num); 
+    LOG(llevInfo,"Init instance system:  set ID:%d num:%d\n", global_instance_id, global_instance_num);
 }
 
 /*
@@ -1247,7 +1247,7 @@ void init_library()
     ReadBmapNames();
     init_anim();        /* Must be after we read in the bitmaps */
     init_archetypes();  /* Reads all archetypes from file */
-    init_clocks();    
+    init_clocks();
 
     init_lists_and_tables(); /* Initializes some global lists and tables */
 }

@@ -23,7 +23,7 @@
     The author can be reached via e-mail to daimonin@nord-com.net
 */
 
-/* test_object.c 
+/* test_object.c
  * Copyright (C) 2005 Björn Axelsson
  */
 
@@ -88,7 +88,7 @@ START_TEST (object_strings)
     int nrof_refs;
 
     ss_get_totals(&entries1, &refs1, &links1);
-    
+
     FREE_AND_COPY_HASH(obj->name, "qwerty1234");
     FREE_AND_COPY_HASH(obj->title, "qwerty1234");
     FREE_AND_COPY_HASH(obj->race, "qwerty1234");
@@ -100,7 +100,7 @@ START_TEST (object_strings)
     fail_unless(nrof_refs == 5, "Test setup failed");
     fail_unless(entries2 == entries1 + 1, "Test setup failed");
     fail_unless(refs2 == refs1 + 5, "Test setup failed");
-    
+
     object_gc();
 
     ss_get_totals(&entries2, &refs2, &links2);
@@ -110,7 +110,7 @@ START_TEST (object_strings)
 END_TEST
 
 /*
- * Tests for specific object types and their related 
+ * Tests for specific object types and their related
  * support functions
  */
 
@@ -119,31 +119,31 @@ START_TEST (object_type_beacon)
     shstr *path = add_string("/dev/testmaps/testmap_plugin");
     shstr *b1_name = add_string("script_tester_beacon_1");
     shstr *b2_name = add_string("script_tester_beacon_2");
-    
+
     mapstruct *map;
     object *beacon1, *beacon2, *lostsoul;
 
     fail_if(beacon_table == NULL, "Beacon hashtable not initialized\n");
     fail_if(locate_beacon(b1_name) != NULL, "Inv beacon available before test");
     fail_if(locate_beacon(b2_name) != NULL, "Map beacon available before test");
-    
+
     map = ready_map_name(NULL, path, MAP_STATUS_MULTI, NULL);
     fail_unless(map != NULL, "Couldn't load %s", path);
-    
+
     /* Locate the two beacons by hardcoded coordinates */
     lostsoul = present(MONSTER, map, 8, 3);
     fail_unless(lostsoul != NULL, "Couldn't find lost soul on %s", path);
     beacon1 = present_in_ob(TYPE_BEACON, lostsoul);
     fail_unless(beacon1 != NULL, "Couldn't find beacon in lost soul on %s", path);
     beacon2 = present(TYPE_BEACON, map, 8, 16);
-    fail_unless(beacon2 != NULL, "Couldn't find beacon 2 on %s", path);    
+    fail_unless(beacon2 != NULL, "Couldn't find beacon 2 on %s", path);
 
     fail_if(locate_beacon(b1_name) != beacon1, "Inventory beacon not available");
     fail_if(locate_beacon(b2_name) != beacon2, "Map beacon not available");
-    
+
     delete_map(map);
     object_gc();
-    
+
     fail_if(locate_beacon(b1_name) != NULL, "Inventory beacon available after garbage collection");
     fail_if(locate_beacon(b2_name) != NULL, "Map beacon available after garbage collection");
 }
@@ -165,20 +165,20 @@ START_TEST (object_type_check_inv)
     fail_if(blocked_tile(cont1, map, check1->x, check1->y), "inv_check doesn't allow pass through");
     fail_unless(blocked_tile(cont1, map, check2->x, check2->y), "inv_check doesn't block pass through");
     fail_unless(blocked_tile(cont2, map, check1->x, check1->y), "inv_check doesn't block pass through");
- 
+
     /* Test inversed match */
     check1->last_sp = 0;
     check2->last_sp = 0;
-    
+
     fail_unless(blocked_tile(cont1, map, check1->x, check1->y), "inv_check doesn't block pass through");
     fail_if(blocked_tile(cont1, map, check2->x, check2->y), "inv_check doesn't allow pass through");
     fail_if(blocked_tile(cont2, map, check1->x, check1->y), "inv_check doesn't allow pass through");
-    
+
     /* Turn off blockage (need to update map flags) */
     check1->last_grace = 0;
     update_object(check1, UP_OBJ_ALL);
     fail_if(blocked_tile(cont1, map, check1->x, check1->y), "inv_check doesn't allow pass through");
-    
+
     /* TODO: test script triggering */
 }
 END_TEST
@@ -209,7 +209,7 @@ START_TEST (object_merge_memleak)
     coin3 = insert_ob_in_ob(coin2, container);
     fail_unless(container->inv != NULL, "Container emptied?");
     fail_if(container->inv->above || container->inv->below, "Coins didn't merge");
-    
+
     fail_unless(coin3 == container->inv, "insert_ob_in_ob didn't return correct object");
     fail_unless(coin3->nrof == 30, "Coins doesn't add up correctly");
 
@@ -220,7 +220,7 @@ START_TEST (object_merge_memleak)
 }
 END_TEST
 
-/* 
+/*
  * More tests for object insertion. Make sure the inserted object
  * is removed from its original place in case of a merge.
  */
@@ -254,7 +254,7 @@ Suite *object_suite(void)
   TCase *tc_core = tcase_create("Core");
 
   tcase_add_checked_fixture(tc_core, setup, teardown);
-  
+
   suite_add_tcase (s, tc_core);
   tcase_add_test(tc_core, object_creation);
   tcase_add_test(tc_core, arch_creation);

@@ -47,16 +47,16 @@ static struct method_decl   GameObject_methods[]            =
     {"SetSaveBed",  (lua_CFunction) GameObject_SetSaveBed},
     {"DecreaseNrOf",  (lua_CFunction) GameObject_DecreaseNrOf},
     {"GetSkill",  (lua_CFunction) GameObject_GetSkill},
-    {"SetSkill",  (lua_CFunction) GameObject_SetSkill}, 
+    {"SetSkill",  (lua_CFunction) GameObject_SetSkill},
     {"ActivateRune",  (lua_CFunction) GameObject_ActivateRune},
-    {"InsertInside",  (lua_CFunction) GameObject_InsertInside}, 
+    {"InsertInside",  (lua_CFunction) GameObject_InsertInside},
     {"GetGod",  (lua_CFunction) GameObject_GetGod},
-    {"SetGod",  (lua_CFunction) GameObject_SetGod}, 
-    {"Apply",  (lua_CFunction) GameObject_Apply}, 
+    {"SetGod",  (lua_CFunction) GameObject_SetGod},
+    {"Apply",  (lua_CFunction) GameObject_Apply},
     {"PickUp",  (lua_CFunction) GameObject_PickUp},
-    {"Drop",  (lua_CFunction) GameObject_Drop}, 
+    {"Drop",  (lua_CFunction) GameObject_Drop},
     {"Take",  (lua_CFunction) GameObject_Take},
-    {"Fix", (lua_CFunction) GameObject_Fix}, 
+    {"Fix", (lua_CFunction) GameObject_Fix},
     {"Kill", (lua_CFunction) GameObject_Kill},
     {"CastSpell", (lua_CFunction) GameObject_CastSpell},
     {"DoKnowSpell", (lua_CFunction) GameObject_DoKnowSpell},
@@ -69,8 +69,8 @@ static struct method_decl   GameObject_methods[]            =
     {"CheckQuestLevel", (lua_CFunction) GameObject_CheckQuestLevel},
     {"AddQuestTarget", (lua_CFunction) GameObject_AddQuestTarget},
     {"AddQuestItem", (lua_CFunction) GameObject_AddQuestItem},
-    {"NrofQuestItem", (lua_CFunction) GameObject_NrofQuestItem}, 
-    {"RemoveQuestItem", (lua_CFunction) GameObject_RemoveQuestItem}, 
+    {"NrofQuestItem", (lua_CFunction) GameObject_NrofQuestItem},
+    {"RemoveQuestItem", (lua_CFunction) GameObject_RemoveQuestItem},
     {"SetQuestStatus", (lua_CFunction) GameObject_SetQuestStatus},
     {"CheckOneDropQuest", (lua_CFunction) GameObject_CheckOneDropQuest},
     {"AddOneDropQuest", (lua_CFunction) GameObject_AddOneDropQuest},
@@ -82,17 +82,17 @@ static struct method_decl   GameObject_methods[]            =
     {"CreateInvisibleObjectInside", (lua_CFunction) GameObject_CreateInvisibleInside},
     {"CreateObjectInside", (lua_CFunction) GameObject_CreateObjectInside},
     {"CreateObjectInsideEx", (lua_CFunction) GameObject_CreateObjectInsideEx},
-    {"CheckInventory", (lua_CFunction) GameObject_CheckInventory}, 
+    {"CheckInventory", (lua_CFunction) GameObject_CheckInventory},
     {"Remove", (lua_CFunction) GameObject_Remove},
-    {"Destruct", (lua_CFunction) GameObject_Destruct}, 
+    {"Destruct", (lua_CFunction) GameObject_Destruct},
     {"IdentifyItem", (lua_CFunction) GameObject_IdentifyItem},
-    {"Deposit",  (lua_CFunction) GameObject_Deposit}, 
+    {"Deposit",  (lua_CFunction) GameObject_Deposit},
     {"Withdraw",  (lua_CFunction) GameObject_Withdraw},
-    {"Communicate",  (lua_CFunction) GameObject_Communicate}, 
+    {"Communicate",  (lua_CFunction) GameObject_Communicate},
     {"Say",  (lua_CFunction) GameObject_Say},
-    {"SayTo",  (lua_CFunction) GameObject_SayTo}, 
+    {"SayTo",  (lua_CFunction) GameObject_SayTo},
     {"Write", (lua_CFunction) GameObject_Write},
-    {"SetGender",  (lua_CFunction) GameObject_SetGender}, 
+    {"SetGender",  (lua_CFunction) GameObject_SetGender},
     {"SetRank",  (lua_CFunction) GameObject_SetRank},
     {"SetAlignment",  (lua_CFunction) GameObject_SetAlignment},
     {"GetAlignmentForce",  (lua_CFunction) GameObject_GetAlignmentForce},
@@ -100,18 +100,18 @@ static struct method_decl   GameObject_methods[]            =
     {"CheckGuild",  (lua_CFunction) GameObject_CheckGuild},
     {"JoinGuild",  (lua_CFunction) GameObject_JoinGuild},
     {"LeaveGuild",  (lua_CFunction) GameObject_LeaveGuild},
-    {"Save", (lua_CFunction) GameObject_Save}, 
+    {"Save", (lua_CFunction) GameObject_Save},
     {"GetIP", (lua_CFunction) GameObject_GetIP},
-    {"GetArchName", (lua_CFunction) GameObject_GetArchName}, 
+    {"GetArchName", (lua_CFunction) GameObject_GetArchName},
     {"ShowCost",  (lua_CFunction) GameObject_ShowCost},
     {"GetItemCost",  (lua_CFunction) GameObject_GetItemCost},
     {"AddMoney",  (lua_CFunction) GameObject_AddMoney},
     {"AddMoneyEx",  (lua_CFunction) GameObject_AddMoneyEx},
     {"GetMoney",  (lua_CFunction) GameObject_GetMoney},
-    {"PayForItem", (lua_CFunction) GameObject_PayForItem}, 
+    {"PayForItem", (lua_CFunction) GameObject_PayForItem},
     {"PayAmount", (lua_CFunction) GameObject_PayAmount},
     {"SendCustomCommand",(lua_CFunction) GameObject_SendCustomCommand},
-    {"CheckTrigger", (lua_CFunction) GameObject_CheckTrigger}, 
+    {"CheckTrigger", (lua_CFunction) GameObject_CheckTrigger},
     {"Clone", (lua_CFunction) GameObject_Clone},
     {"Move", (lua_CFunction) GameObject_Move},
     {"GetAI", (lua_CFunction) GameObject_GetAI},
@@ -401,7 +401,7 @@ static int GameObject_ReadyUniqueMap(lua_State *L)
 
         FREE_ONLY_HASH(path_sh);
     }
-    
+
     FREE_ONLY_HASH(orig_path_sh);
 
     return push_object(L, &Map, map);
@@ -445,7 +445,7 @@ static int GameObject_StartNewInstance(lua_State *L)
     /* we only allow the creation of instance maps in context with players */
     if(WHO->type != PLAYER || CONTR(WHO) == NULL)
         luaL_error(L, "StartNewInstance(): Only players can have instances.");
-    
+
     /* this is a bit critical. Be SURE you call it with a valid, normalized instance
      * name because this is put also as instance ID in the player struct.
      */
@@ -454,24 +454,24 @@ static int GameObject_StartNewInstance(lua_State *L)
 
     /* ensure only valid flags */
     iflag &= INSTANCE_FLAG_NO_REENTER;
-    
+
     pl = CONTR(WHO);
 
     /* lets check we have a instance we can reenter */
     if(!(flags & PLUGIN_MAP_NEW))
     {
         /* the instance data are inside the player struct */
-        if( pl->instance_name == orig_path_sh && 
+        if( pl->instance_name == orig_path_sh &&
             pl->instance_id == *hooks->global_instance_id &&
             pl->instance_num != MAP_INSTANCE_NUM_INVALID &&
             !(pl->instance_flags & INSTANCE_FLAG_NO_REENTER))
         {
             path_sh = hooks->create_instance_path_sh(pl, orig_path_sh, iflag);
         }
-    }            
+    }
 
     /* no path? force a new instance... note that create_instance_path_sh() will setup the
-    * player struct data automatically when creating the path data 
+    * player struct data automatically when creating the path data
     */
     if(!path_sh && !(flags & PLUGIN_MAP_CHECK))
     {
@@ -515,7 +515,7 @@ static int GameObject_CheckInstance(lua_State *L)
     /* we only allow the creation of instance maps in context with players */
     if(WHO->type != PLAYER || CONTR(WHO) == NULL)
         luaL_error(L, "CheckInstance(): Only players can have instances.");
-    
+
     if(! (orig_path_sh = hooks->create_safe_mapname_sh(mapname)))
         luaL_error(L, "Illegal map path: %s", mapname);
 
@@ -524,7 +524,7 @@ static int GameObject_CheckInstance(lua_State *L)
     LOG(llevDebug, "pl->instance_num: %ld\n", CONTR(WHO)->instance_num);
 
     /* the instance data are inside the player struct */
-    if( CONTR(WHO)->instance_name == orig_path_sh && 
+    if( CONTR(WHO)->instance_name == orig_path_sh &&
             CONTR(WHO)->instance_id == *hooks->global_instance_id &&
             CONTR(WHO)->instance_num != MAP_INSTANCE_NUM_INVALID)
     {
@@ -555,7 +555,7 @@ static int GameObject_DeleteInstance(lua_State *L)
     int         ret = 0;
 
     get_lua_args(L, "Os", &self, &mapname);
-    
+
     /* we only allow the creation of instance maps in context with players */
     if(WHO->type != PLAYER || CONTR(WHO) == NULL)
         luaL_error(L, "DeleteInstance(): Only players can have instances.");
@@ -564,7 +564,7 @@ static int GameObject_DeleteInstance(lua_State *L)
         luaL_error(L, "Illegal map path: %s", mapname);
 
     /* the instance data are inside the player struct */
-    if( CONTR(WHO)->instance_name == orig_path_sh && 
+    if( CONTR(WHO)->instance_name == orig_path_sh &&
             CONTR(WHO)->instance_id == *hooks->global_instance_id &&
             CONTR(WHO)->instance_num != MAP_INSTANCE_NUM_INVALID)
     {
@@ -889,7 +889,7 @@ static int GameObject_GetGod(lua_State *L)
     CFParm         *CFR, CFP;
     static char    *value;
     lua_object     *self;
-    get_lua_args(L, "O", &self);    
+    get_lua_args(L, "O", &self);
 
     CFP.Value[0] = (void *) (WHO);
     CFR = (PlugHooks[HOOK_DETERMINEGOD]) (&CFP);
@@ -1105,7 +1105,7 @@ static int GameObject_Deposit(lua_State *L)
 
     hooks->get_word_from_string(text, &pos);
     hooks->get_money_from_string(text + pos, &money);
-    
+
     if (!money.mode)
     {
         val = -1;
@@ -1122,14 +1122,14 @@ static int GameObject_Deposit(lua_State *L)
          * payment calls. This means you can deposit
          * 10 copper even if you don't have any copper.
          * To make change, its still possible to withdraw
-         * lots of copper, for example 
+         * lots of copper, for example
          * /Gecko 2005-10-08 */
         sint64 amount = money.mithril * hooks->coins_arch[0]->clone.value
             + money.gold    * hooks->coins_arch[1]->clone.value
             + money.silver  * hooks->coins_arch[2]->clone.value
             + money.copper  * hooks->coins_arch[3]->clone.value;
-           
-        if(hooks->pay_for_amount(amount, WHO)) 
+
+        if(hooks->pay_for_amount(amount, WHO))
         {
             bank->value += amount;
             hooks->FIX_PLAYER(WHO, "LUA: deposit - pay for amount");
@@ -1459,7 +1459,7 @@ static int GameObject_GetAlignmentForce(lua_State *L)
 
     for (walk = WHO->inv; walk != NULL; walk = walk->below)
     {
-        if (walk->name && walk->name == hooks->shstr_cons->ALIGNMENT_FORCE && 
+        if (walk->name && walk->name == hooks->shstr_cons->ALIGNMENT_FORCE &&
                 walk->arch->name == hooks->shstr_cons->alignment_force)
             return push_object(L, &GameObject, walk);
     }
@@ -1982,7 +1982,7 @@ static int GameObject_AddQuestTarget(lua_State *L)
     myob->last_grace = chance;
     myob->last_sp = nrof; /* can be overruled by ->inv objects */
 
-    /* to be sure we get the right mob we use the arch object name */ 
+    /* to be sure we get the right mob we use the arch object name */
     if(*kill_arch!='\0')
     {
         FREE_AND_COPY_HASH(myob->race, kill_arch);
@@ -2580,7 +2580,7 @@ static int GameObject_SetSaveBed(lua_State *L)
     if (WHO->type == PLAYER)
     {
         player *pl = CONTR(WHO);
-    
+
        /* set_bindpath_by_name(...); exchange later  */
         FREE_AND_ADD_REF_HASH(pl->savebed_map, map->data.map->path);
         FREE_AND_ADD_REF_HASH(pl->orig_savebed_map, map->data.map->orig_path);
@@ -3275,7 +3275,7 @@ static int GameObject_MakePet(lua_State *L)
     get_lua_args(L, "OO|i", &self, &owner, &mode);
 
     result = hooks->add_pet(owner->data.object, WHO, mode);
-   
+
     lua_pushboolean(L, !result);
     return 1;
 }
@@ -3300,7 +3300,7 @@ static int GameObject_GetPets(lua_State *L)
     lua_newtable(L);
     if(WHO->type == PLAYER)
     {
-        objectlink *ol;        
+        objectlink *ol;
         for(ol = CONTR(WHO)->pets; ol; ol = ol->next)
             if(PET_VALID(ol, WHO))
             {

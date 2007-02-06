@@ -259,7 +259,7 @@ void spring_trap(object *trap, object *victim)
     */
     if (!IS_LIVE(victim) && !trap->stats.sp)
         return;
-    
+
     /* Event trigger and quick exit */
     if(trigger_object_plugin_event(EVENT_TRIGGER,
                 trap, victim, NULL,

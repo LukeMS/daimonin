@@ -181,19 +181,19 @@ void init_mempools()
     pool_tlist_tweak = create_mempool("treasure list tweak", 100, sizeof(tlist_tweak), 0, NULL, NULL, NULL, NULL);
 
     /* for testing purpose, we get everytime only 1 buffer more */
-    pool_cmd_buf16 = create_mempool("command buffer 16b", 1, sizeof(command_struct), 0, 
+    pool_cmd_buf16 = create_mempool("command buffer 16b", 1, sizeof(command_struct), 0,
             (chunk_initialisator) initialize_command_buffer16, NULL, NULL, NULL);
-    pool_cmd_buf32 = create_mempool("command buffer 32b", 1, sizeof(command_struct), 0, 
+    pool_cmd_buf32 = create_mempool("command buffer 32b", 1, sizeof(command_struct), 0,
             (chunk_initialisator) initialize_command_buffer32, NULL, NULL, NULL);
-    pool_cmd_buf64 = create_mempool("command buffer 64b", 1, sizeof(command_struct), 0, 
+    pool_cmd_buf64 = create_mempool("command buffer 64b", 1, sizeof(command_struct), 0,
             (chunk_initialisator) initialize_command_buffer64, NULL, NULL, NULL);
-    pool_cmd_buf128 = create_mempool("command buffer 128b", 1, sizeof(command_struct), 0, 
+    pool_cmd_buf128 = create_mempool("command buffer 128b", 1, sizeof(command_struct), 0,
             (chunk_initialisator) initialize_command_buffer128, NULL, NULL, NULL);
-    pool_cmd_buf256 = create_mempool("command buffer 256b", 1, sizeof(command_struct), 0, 
+    pool_cmd_buf256 = create_mempool("command buffer 256b", 1, sizeof(command_struct), 0,
             (chunk_initialisator) initialize_command_buffer256, NULL, NULL, NULL);
-    pool_cmd_buf1024 = create_mempool("command buffer 1024b", 1, sizeof(command_struct), 0, 
+    pool_cmd_buf1024 = create_mempool("command buffer 1024b", 1, sizeof(command_struct), 0,
             (chunk_initialisator) initialize_command_buffer1024, NULL, NULL, NULL);
-    pool_cmd_buf4096 = create_mempool("command buffer 4096b", 1, sizeof(command_struct), 0, 
+    pool_cmd_buf4096 = create_mempool("command buffer 4096b", 1, sizeof(command_struct), 0,
             (chunk_initialisator) initialize_command_buffer4096, NULL, NULL, NULL);
 
     /* Initialize end-of-list pointers and a few other values*/
@@ -334,7 +334,7 @@ void return_poolchunk_array_real(void *data, uint32 arraysize_exp, struct mempoo
 {
     struct mempool_chunk   *old = MEM_POOLDATA(data);
 
-    if (CHUNK_FREE(data)) 
+    if (CHUNK_FREE(data))
     {
         /* When this happens we can choose to ignore it and return or stop and
          * make finding the original error easier. */
@@ -380,7 +380,7 @@ void return_poolchunk_array_real(void *data, uint32 arraysize_exp, struct mempoo
     }
 }
 
-/** Gather mempool statistics and write details to the log and the give player. 
+/** Gather mempool statistics and write details to the log and the give player.
  * @param player to send detailed info to (optional)
  * @param sum_used total number of bytes actively in use from mempools (OUTPUT)
  * @param sum_alloc total number of bytes allocated by the mempool system (OUTPUT)
@@ -388,7 +388,7 @@ void return_poolchunk_array_real(void *data, uint32 arraysize_exp, struct mempoo
 void dump_mempool_statistics(object *op, int *sum_used, int *sum_alloc)
 {
     int j, k;
-    
+
     for (j = 0; j < nrof_mempools; j++)
     {
         for (k = 0; k < MEMPOOL_NROF_FREELISTS; k++)
@@ -406,7 +406,7 @@ void dump_mempool_statistics(object *op, int *sum_used, int *sum_alloc)
                     new_draw_info(NDI_UNIQUE, 0, op, errmsg);
                 LOG(llevSystem, "%s\n", errmsg);
                 if(sum_used)
-                    *sum_used += mem_used;  
+                    *sum_used += mem_used;
                 if(sum_alloc)
                     *sum_alloc += mem_used + mem_free;
             }

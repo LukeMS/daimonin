@@ -364,14 +364,14 @@ static void traverse_artifact_files(char* start_dir, int mode)
 
     /* scan the directory, traversing each sub-directory, and */
     /* matching the pattern for each file name.               */
-    while ((entry = readdir(dir))) 
+    while ((entry = readdir(dir)))
     {
         /* check if the given entry is a directory. */
         /* skip all ".*" entries, to avoid loops and forbidden directories. */
         if (entry->d_name[0] == '.')
             continue;
 
-        if (stat(entry->d_name, &dir_stat) == -1) 
+        if (stat(entry->d_name, &dir_stat) == -1)
         {
             perror("stat:");
             continue;
@@ -381,7 +381,7 @@ static void traverse_artifact_files(char* start_dir, int mode)
         if (S_ISDIR(dir_stat.st_mode))
         {
             /* Change into the new directory */
-            if (chdir(entry->d_name) == -1) 
+            if (chdir(entry->d_name) == -1)
             {
                 fprintf(stderr, "Cannot chdir into '%s': ", entry->d_name);
                 perror("");
@@ -391,7 +391,7 @@ static void traverse_artifact_files(char* start_dir, int mode)
             traverse_artifact_files(NULL, mode);
 
             /* finally, restore the original working directory. */
-            if (chdir("..") == -1) 
+            if (chdir("..") == -1)
             {
                 fprintf(stderr, "Cannot chdir back to '%s': ", cwd);
                 perror("");

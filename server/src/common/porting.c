@@ -89,7 +89,7 @@ char *tempnam_local_ext(char *dir, char *pfx, char *name)
      */
     if ((f = (char *)dir)!=NULL)
     {
-        do 
+        do
         {
 #ifdef HAVE_SNPRINTF
             snprintf(name, MAXPATHLEN, "%s/%s%hx.%d", f, pfx, pid, curtmp);

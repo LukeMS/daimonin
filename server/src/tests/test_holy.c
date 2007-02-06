@@ -23,7 +23,7 @@
     The author can be reached via e-mail to daimonin@nord-com.net
 */
 
-/* test_holy.c 
+/* test_holy.c
  * Copyright (C) 2006 Björn Axelsson
  */
 
@@ -54,7 +54,7 @@ Suite *holy_suite(void)
   TCase *tc_core = tcase_create("Core");
 
   tcase_add_checked_fixture(tc_core, setup, teardown);
-  
+
   suite_add_tcase (s, tc_core);
   tcase_add_test(tc_core, holy_get_rand_god);
 

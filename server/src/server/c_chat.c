@@ -62,7 +62,7 @@ static char * cleanup_chat_string(char *ustring)
             default:
                 break;
         }
-    }   
+    }
     return ustring;
 }
 
@@ -78,13 +78,13 @@ static int check_mute(object *op, int mode)
     if(op->type != PLAYER || CONTR(op)==NULL)
         return TRUE;
 
-	if(mode != MUTE_MODE_SAY && op->level < 2)
-	{
-		new_draw_info( NDI_UNIQUE|NDI_ORANGE, 0, op, "You need be level 2 or higher for shout/tell!");
-		new_draw_info( NDI_UNIQUE|NDI_ORANGE, 0, op, "for help press F12 or read the GAME GUIDES at");
-		new_draw_info( NDI_UNIQUE|NDI_ORANGE, 0, op, "HTTP://WWW.DAIMONIN.NET");
-		return FALSE;		
-	}
+    if(mode != MUTE_MODE_SAY && op->level < 2)
+    {
+        new_draw_info( NDI_UNIQUE|NDI_ORANGE, 0, op, "You need be level 2 or higher for shout/tell!");
+        new_draw_info( NDI_UNIQUE|NDI_ORANGE, 0, op, "for help press F12 or read the GAME GUIDES at");
+        new_draw_info( NDI_UNIQUE|NDI_ORANGE, 0, op, "HTTP://WWW.DAIMONIN.NET");
+        return FALSE;
+    }
 
     if(CONTR(op)->mute_counter)
     {
@@ -405,7 +405,7 @@ int command_talk(object *op, char *params)
     }
 
     t_obj = CONTR(op)->target_object;
-	/* lets see we have a target which CAN respond to our talk cmd */
+    /* lets see we have a target which CAN respond to our talk cmd */
     if (t_obj && CONTR(op)->target_object_count == t_obj->count)
     {
         /* why i do this and not direct distance calculation?
@@ -430,24 +430,24 @@ int command_talk(object *op, char *params)
                     trigger_object_plugin_event(EVENT_TALK, t_obj, op, NULL,
                             params, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR);
                 else
-				{
+                {
                     send_clear_interface(CONTR(op));
-					if(t_obj->msg)
-						new_draw_info(NDI_NAVY | NDI_UNIQUE, 0, op, t_obj->msg);
-					else
-						new_draw_info_format(NDI_NAVY | NDI_UNIQUE, 0, op, "%s has nothing to say.", query_name(t_obj));		
-				}
+                    if(t_obj->msg)
+                        new_draw_info(NDI_NAVY | NDI_UNIQUE, 0, op, t_obj->msg);
+                    else
+                        new_draw_info_format(NDI_NAVY | NDI_UNIQUE, 0, op, "%s has nothing to say.", query_name(t_obj));
+                }
 
                 return 1;
             }
         }
 
-		/* our target is out of the response area - tell it the player and close the interface */
+        /* our target is out of the response area - tell it the player and close the interface */
         new_draw_info(NDI_UNIQUE, 0, op, "Your talk target is not in range.");
         send_clear_interface(CONTR(op));
     }
-	else /* we have target nothing or an invalid /talk target - lets fire up auto-target selection */
-	{
+    else /* we have target nothing or an invalid /talk target - lets fire up auto-target selection */
+    {
         for (i = 0; i <= SIZEOFFREE; i++)
         {
             xt = op->x + freearr_x[i];
@@ -455,29 +455,29 @@ int command_talk(object *op, char *params)
             if (!(m = out_of_map(op->map, &xt, &yt)))
                 continue;
 
-			for (t_obj = get_map_ob(m, xt, yt); t_obj; t_obj = t_obj->above)
-			{
-				if((IS_LIVE(t_obj) || t_obj->type == MONSTER) && t_obj->type != PLAYER) /* be sure we can target it! */
-				{
-					if (t_obj->event_flags & EVENT_FLAG_TALK)
-					{
-						CONTR(op)->target_object = t_obj;
-						CONTR(op)->target_object_count = t_obj->count;
-						trigger_object_plugin_event(EVENT_TALK, t_obj, op, NULL,
-								params, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR);
-						return 1;
-					}
-					else if(t_obj->msg)
-					{
-						CONTR(op)->target_object = t_obj;
-						CONTR(op)->target_object_count = t_obj->count;
-						new_draw_info(NDI_NAVY | NDI_UNIQUE, 0, op, t_obj->msg);
-						return 1;
-					}
-				}
-			}
+            for (t_obj = get_map_ob(m, xt, yt); t_obj; t_obj = t_obj->above)
+            {
+                if((IS_LIVE(t_obj) || t_obj->type == MONSTER) && t_obj->type != PLAYER) /* be sure we can target it! */
+                {
+                    if (t_obj->event_flags & EVENT_FLAG_TALK)
+                    {
+                        CONTR(op)->target_object = t_obj;
+                        CONTR(op)->target_object_count = t_obj->count;
+                        trigger_object_plugin_event(EVENT_TALK, t_obj, op, NULL,
+                                params, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR);
+                        return 1;
+                    }
+                    else if(t_obj->msg)
+                    {
+                        CONTR(op)->target_object = t_obj;
+                        CONTR(op)->target_object_count = t_obj->count;
+                        new_draw_info(NDI_NAVY | NDI_UNIQUE, 0, op, t_obj->msg);
+                        return 1;
+                    }
+                }
+            }
         }
-	}
+    }
 
     send_clear_interface(CONTR(op));
     return 1;
@@ -649,12 +649,12 @@ static void emote_other(object *op, object *target, char *str, char *buf, char *
 static void emote_self(object *op, char *buf, char *buf2, int emotion)
 {
     char *self, *own;
-    if(QUERY_FLAG(op, FLAG_IS_MALE) == QUERY_FLAG(op, FLAG_IS_FEMALE)) 
+    if(QUERY_FLAG(op, FLAG_IS_MALE) == QUERY_FLAG(op, FLAG_IS_FEMALE))
     {
         self = "itself"; /* neuter or hermaphrodite */
         own = "its";
-    } 
-    else if (QUERY_FLAG(op, FLAG_IS_MALE)) 
+    }
+    else if (QUERY_FLAG(op, FLAG_IS_MALE))
     {
         self = "himself";
         own = "his";
@@ -664,7 +664,7 @@ static void emote_self(object *op, char *buf, char *buf2, int emotion)
         self = "herself";
         own = "her";
     }
-    
+
     switch (emotion)
     {
         case EMOTE_DANCE:
@@ -792,8 +792,8 @@ static int basic_emote(object *op, char *params, int emotion)
         /* name is ok but be sure we have something like "Xxxxx" */
         if (emotion != EMOTE_ME) {
             /* But only capitalize on those emotes that are for sure a player name param. */
-			if(op->type == PLAYER)
-				transform_name_string(params);
+            if(op->type == PLAYER)
+                transform_name_string(params);
         }
     }
 
@@ -821,12 +821,12 @@ static int basic_emote(object *op, char *params, int emotion)
             return 0;
         }
 
-        if(QUERY_FLAG(op, FLAG_IS_MALE) == QUERY_FLAG(op, FLAG_IS_FEMALE)) 
+        if(QUERY_FLAG(op, FLAG_IS_MALE) == QUERY_FLAG(op, FLAG_IS_FEMALE))
         {
             self = "itself"; /* neuter or hermaphrodite */
             own = "its";
-        } 
-        else if (QUERY_FLAG(op, FLAG_IS_MALE)) 
+        }
+        else if (QUERY_FLAG(op, FLAG_IS_MALE))
         {
             self = "himself";
             own = "his";
@@ -1077,7 +1077,7 @@ static int basic_emote(object *op, char *params, int emotion)
                 for (pl = first_player; pl != NULL; pl = pl->next)
                 {
                     if (pl->ob->name == name_hash && pl->state == ST_PLAYING && !
-						QUERY_FLAG(pl->ob,FLAG_REMOVED) && !pl->dm_stealth)
+                        QUERY_FLAG(pl->ob,FLAG_REMOVED) && !pl->dm_stealth)
                     {
                         rv_vector   rv; /* lets check range */
                         get_rangevector(op, pl->ob, &rv, 0);

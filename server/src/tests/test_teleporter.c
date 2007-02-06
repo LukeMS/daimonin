@@ -23,7 +23,7 @@
     The author can be reached via e-mail to daimonin@nord-com.net
 */
 
-/* test_teleporter.c 
+/* test_teleporter.c
  * Copyright (C) 2006 Björn Axelsson
  */
 
@@ -47,13 +47,13 @@ START_TEST (simple_teleporter_without_path)
 
     object *lever = locate_beacon(find_string("lever_1"))->env;
     object *apple = locate_beacon(find_string("apple_1"))->env;
- 
+
     fail_unless(apple->x == 1 && apple->y == 1, "Apple initially in incorrect spot");
     fail_unless(apple->map == map, "Apple initially in incorrect map");
 
     /* Switch the lever and make sure the inverse is true */
     manual_apply(lever, lever, 0);
-    
+
     fail_if(apple->x == 1 && apple->y == 1 && apple->map == map, "Apple wasn't teleported");
     fail_unless(apple->x == 0 && apple->y == 0, "Apple teleported to incorrect spot");
     fail_unless(apple->map == map, "Apple teleported to incorrect map");
@@ -68,7 +68,7 @@ START_TEST (bad_teleporter_without_path)
     object *lever = locate_beacon(find_string("lever_1"))->env;
     object *apple = locate_beacon(find_string("apple_1"))->env;
     object *teleport = apple->below ? apple->below : apple->above;
- 
+
     fail_unless(apple->x == 1 && apple->y == 1, "Apple initially in incorrect spot");
     fail_unless(apple->map == map, "Apple initially in incorrect map");
 
@@ -78,7 +78,7 @@ START_TEST (bad_teleporter_without_path)
 
     /* Switch the lever and make sure the inverse is true */
     manual_apply(lever, lever, 0);
-    
+
     fail_unless(apple->x == 1 && apple->y == 1 && apple->map == map, "Apple was teleported with bad teleporter");
     fail_unless(QUERY_FLAG(teleport, FLAG_REMOVED), "Bad teleporter wasn't removed");
 }
@@ -93,13 +93,13 @@ START_TEST (simple_teleporter_with_path)
 
     object *lever = locate_beacon(find_string("lever_2"))->env;
     object *apple = locate_beacon(find_string("apple_2"))->env;
- 
+
     fail_unless(apple->x == 1 && apple->y == 3, "Apple initially in incorrect spot");
     fail_unless(apple->map == map, "Apple initially in incorrect map");
 
     /* Switch the lever and make sure the inverse is true */
     manual_apply(lever, lever, 0);
-    
+
     fail_if(apple->x == 1 && apple->y == 1 && apple->map == map, "Apple wasn't teleported");
     fail_unless(apple->x == 2 && apple->y == 2, "Apple teleported to incorrect spot. Ended up on (%d, %d)", apple->x, apple->y);
     fail_unless(apple->map == map2, "Apple teleported to incorrect map");
@@ -113,7 +113,7 @@ Suite *teleporter_suite(void)
   TCase *tc_core = tcase_create("Core");
 
   tcase_add_checked_fixture(tc_core, setup, teardown);
-  
+
   suite_add_tcase (s, tc_core);
   tcase_add_test(tc_core, simple_teleporter_without_path);
   tcase_add_test(tc_core, bad_teleporter_without_path);
