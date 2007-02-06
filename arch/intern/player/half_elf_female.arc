@@ -9,15 +9,16 @@ is_neutral 1
 identified 1
 direction 4
 terrain_flag 1
+container 100000
 weapon_speed 3.5
 speed 0.95
 face halfelf_f.isw.111
 anim
 facings 25
-trans.101
-trans.101
-trans.101
-trans.101
+halfelf_f.f.r.111
+halfelf_f.f.r.111
+halfelf_f.f.r.111
+halfelf_f.f.r.111
 halfelf_f.ine.111
 halfelf_f.ine.112
 halfelf_f.ine.113
@@ -125,10 +126,10 @@ sp -1
 maxsp 3
 grace -1
 maxgrace 3
-ac 3
-wc 0
-thac0 18
-thacm 1
+ac 0
+wc 2
+thac0 92
+thacm 5
 can_use_armour 1
 can_use_weapon 1
 is_player 1

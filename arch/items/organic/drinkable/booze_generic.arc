@@ -1,9 +1,11 @@
 Object booze_generic
 name booze
 face booze.101
-food 175
-item_quality 100
-item_condition 100
+last_eat 10
+hp 20
+sp 3
+grace 10
+item_quality 0
 nrof 1
 layer 3
 type 6

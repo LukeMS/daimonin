@@ -1,9 +1,10 @@
 Object figpud2
 name Fig Pudding
-food 250
+last_eat 10
+hp 10
+sp 10
+grace 10
 layer 3
-item_quality 100
-item_condition 100
 face figpud2.101
 anim
 figpud2.101

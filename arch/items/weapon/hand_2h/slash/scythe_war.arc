@@ -10,8 +10,8 @@ sub_type 5
 face scythe_war.101
 material 18
 material_real 65
-dam 80
-wc 7
+dam 95
+wc 26
 weight 2150
 value 750
 end

@@ -7,7 +7,7 @@ weapon_speed 3.25
 item_level 3
 item_skill 4
 dam 50
-wc 5
+wc 12
 type 15
 sub_type 3
 material 18

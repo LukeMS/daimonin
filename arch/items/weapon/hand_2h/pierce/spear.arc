@@ -10,8 +10,8 @@ sub_type 6
 face spear.101
 material 18
 material_real 65
-dam 80
-wc 7
+dam 90
+wc 24
 weight 2250
 value 750
 end

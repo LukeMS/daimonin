@@ -7,8 +7,8 @@ item_skill 4
 attack_cleave 100
 weapon_speed 4.5
 dam 80
-wc 5
-ac 2
+wc 22
+ac 6
 type 15
 sub_type 11
 material 18

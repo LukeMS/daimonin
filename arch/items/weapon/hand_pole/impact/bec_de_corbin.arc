@@ -7,8 +7,8 @@ attack_impact 100
 item_level 11
 item_skill 4
 dam 80
-wc 5
-ac 2
+wc 22
+ac 6
 type 15
 sub_type 8
 material 18

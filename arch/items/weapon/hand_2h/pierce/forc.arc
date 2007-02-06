@@ -10,8 +10,8 @@ sub_type 6
 face forc.101
 material 18
 material_real 65
-dam 80
-wc 6
+dam 90
+wc 22
 weight 2250
 value 750
 end

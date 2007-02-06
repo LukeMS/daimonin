@@ -11,8 +11,8 @@ face naginata.101
 material 18
 material_real 65
 dam 80
-wc 5
-ac 2
+wc 22
+ac 6
 weight 4500
 value 875
 end

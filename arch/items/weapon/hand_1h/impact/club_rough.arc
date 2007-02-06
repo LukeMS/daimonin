@@ -7,7 +7,7 @@ attack_impact 100
 item_level 3
 item_skill 4
 dam 40
-wc 3
+wc 10
 type 15
 sub_type 0
 material 16
