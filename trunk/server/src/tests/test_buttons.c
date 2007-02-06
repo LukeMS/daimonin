@@ -40,6 +40,53 @@ static void teardown()
 {
 }
 
+/* Bah, this shouldn't be in this file, perhaps */
+START_TEST (buttons_check_blocked_tile)
+{
+    shstr *path = add_string("/dev/unit_tests/test_check_inv");
+    mapstruct *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
+
+    object *c1 = locate_beacon(find_string("c2_1"))->env;
+    object *c2 = locate_beacon(find_string("c2_2"))->env;
+    object *c3 = locate_beacon(find_string("c2_3"))->env;
+    object *c4 = locate_beacon(find_string("c2_4"))->env;
+    object *c5 = locate_beacon(find_string("c2_5"))->env;
+    object *c6 = locate_beacon(find_string("c2_6"))->env;
+    object *c7 = locate_beacon(find_string("c2_7"))->env;
+    object *c8 = locate_beacon(find_string("c2_8"))->env;
+
+    object *sword = locate_beacon(find_string("shortsword"))->env;
+
+    object *cont1 = arch_to_object(find_archetype("chest")); /* "player" with sword */
+    object *cont2 = arch_to_object(find_archetype("chest")); /* "player" without sword */
+
+    cont1->type = cont2->type = PLAYER;
+
+    remove_ob(sword);
+    sword = insert_ob_in_ob(sword, cont1);
+
+    fail_if( blocked_tile(cont1, map, c1->x, c1->y), "checker 1 blocked cont with sword");
+    fail_if(!blocked_tile(cont1, map, c2->x, c2->y), "checker 2 didn't block cont with sword");
+    fail_if( blocked_tile(cont1, map, c3->x, c3->y), "checker 3 blocked cont with sword");
+    fail_if(!blocked_tile(cont1, map, c4->x, c4->y), "checker 4 didn't block cont with sword");
+    fail_if( blocked_tile(cont1, map, c5->x, c5->y), "checker 5 blocked cont with sword");
+    fail_if(!blocked_tile(cont1, map, c6->x, c6->y), "checker 6 didn't block cont with sword");
+    fail_if( blocked_tile(cont1, map, c7->x, c7->y), "checker 7 blocked cont with sword");
+    fail_if(!blocked_tile(cont1, map, c8->x, c8->y), "checker 8 didn't block cont with sword");
+    
+    fail_if(!blocked_tile(cont2, map, c1->x, c1->y), "checker 1 didn't block cont without sword");
+    fail_if( blocked_tile(cont2, map, c2->x, c2->y), "checker 2 blocked cont without sword");
+    fail_if(!blocked_tile(cont2, map, c3->x, c3->y), "checker 3 didn't block cont without sword");
+    fail_if( blocked_tile(cont2, map, c4->x, c4->y), "checker 4 blocked cont without sword");
+    fail_if(!blocked_tile(cont2, map, c5->x, c5->y), "checker 5 didn't block cont without sword");
+    fail_if( blocked_tile(cont2, map, c6->x, c6->y), "checker 6 blocked cont without sword");
+    fail_if(!blocked_tile(cont2, map, c7->x, c7->y), "checker 7 didn't block cont without sword");
+    fail_if( blocked_tile(cont2, map, c8->x, c8->y), "checker 8 blocked cont without sword");
+    
+    cont1->type = cont2->type = CONTAINER;
+}
+END_TEST
+
 START_TEST (buttons_check_inv_recursive)
 {
     shstr *path = add_string("/dev/unit_tests/test_check_inv");
@@ -288,6 +335,7 @@ Suite *buttons_suite(void)
   tcase_add_checked_fixture(tc_core, setup, teardown);
 
   suite_add_tcase (s, tc_core);
+  tcase_add_test(tc_core, buttons_check_blocked_tile);
   tcase_add_test(tc_core, buttons_check_inv_recursive);
   tcase_add_test(tc_core, buttons_check_mapload);
   tcase_add_test(tc_core, buttons_check_env_sensor);
