@@ -905,7 +905,7 @@ object * check_inv_recursive(object *op, object *trig)
                     (trig->race == NULL || match_arch))
                 return tmp;
         }
-        else if(match_arch || match_slaying || match_arch)
+        else if(match_arch || match_slaying || match_type)
             return tmp;
     }
     return NULL;
