@@ -87,6 +87,59 @@ START_TEST (buttons_check_blocked_tile)
 }
 END_TEST
 
+/* Bah, this shouldn't be in this file, perhaps */
+START_TEST (buttons_move_apply_check_inv)
+{
+    shstr *path = add_string("/dev/unit_tests/test_check_inv");
+    mapstruct *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
+
+    object *c7 = locate_beacon(find_string("c2_7"))->env;
+    object *c8 = locate_beacon(find_string("c2_8"))->env;
+
+    object *sword = locate_beacon(find_string("shortsword"))->env;
+
+    /* Create a fake player (yes, this is dangerous...) */
+    object *cont1 = arch_to_object(find_archetype("chest")); /* "player" with sword */
+    player *fake_contr = calloc(1, sizeof(player));
+    cont1->type = PLAYER;
+    cont1->arch->clone.terrain_flag = 127;
+    cont1->custom_attrset = fake_contr;
+    CONTR(cont1)->exp_obj_ptr[SKILLGROUP_MAGIC] = cont1;
+    CONTR(cont1)->exp_obj_ptr[SKILLGROUP_WISDOM] = cont1;
+    insert_ob_in_ob(arch_to_object(find_archetype("skill_punching")), cont1);
+
+    remove_ob(sword);    
+    sword = insert_ob_in_ob(sword, cont1);
+    
+    cont1->x = sword->x;
+    cont1->y = sword->y;
+    insert_ob_in_map(cont1, map, NULL, 0);
+    fail_if(cont1->x != c7->x+1 || cont1->y != c7->y, "insertion missed");
+    fail_if(sword->nrof != 10, "sword nrof wrong before test");
+    fail_if(move_ob(cont1, 7, cont1) != 1, "checker 7 blocked cont with sword");
+    fail_if(sword->nrof > 9, "sword nrof not reduced"); 
+    fail_if(sword->nrof < 9, "sword nrof reduced too much (got %d, expected 9)",sword->nrof); 
+    remove_ob(cont1);
+    check_walk_off(cont1, cont1, 0);
+    fail_if(sword->nrof > 8, "sword nrof not reduced"); 
+    fail_if(sword->nrof < 8, "sword nrof reduced too much (got %d, expected 8)",sword->nrof); 
+
+    cont1->x = sword->x;
+    cont1->y = sword->y;
+    insert_ob_in_map(cont1, map, NULL, 0);
+    fail_if(cont1->x != c8->x+1 || cont1->y != c8->y+1, "insertion missed");
+    fail_if(sword->nrof != 8, "sword nrof changed (got %d)", sword->nrof); 
+    fail_if(move_ob(cont1, 8, cont1) != 0, "checker 8 didn't block cont with sword");
+    fail_if(sword->nrof != 8, "sword nrof changed (got %d)", sword->nrof); 
+    remove_ob(cont1);
+    check_walk_off(cont1, cont1, 0);
+    fail_if(sword->nrof != 8, "sword nrof changed (got %d)", sword->nrof); 
+
+    cont1->type = CONTAINER;
+}
+END_TEST
+
+
 START_TEST (buttons_check_inv_recursive)
 {
     shstr *path = add_string("/dev/unit_tests/test_check_inv");
@@ -337,11 +390,11 @@ Suite *buttons_suite(void)
   suite_add_tcase (s, tc_core);
   tcase_add_test(tc_core, buttons_check_blocked_tile);
   tcase_add_test(tc_core, buttons_check_inv_recursive);
+  tcase_add_test(tc_core, buttons_move_apply_check_inv);
   tcase_add_test(tc_core, buttons_check_mapload);
   tcase_add_test(tc_core, buttons_check_env_sensor);
   tcase_add_test(tc_core, buttons_check_pedestal);
   tcase_add_test(tc_core, buttons_creator_with_mover);
-
   return s;
 }
 
