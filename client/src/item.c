@@ -649,6 +649,13 @@ void update_item(int tag, int loc, char *name, int weight, int face, int flags, 
     ip = locate_item(tag);
     env = locate_item(loc);
 
+    /* for below_items we change the order
+     * first test shows it works that corpses are always left
+     * but needs some more intensive testing
+     */
+    if ((loc==0) && bflag)
+        bflag=FALSE;
+
     /* Need to do some special handling if this is the player that is
      * being updated.
      */
