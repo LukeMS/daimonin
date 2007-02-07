@@ -689,7 +689,7 @@ arch check_inv
 name key_string=test_key_string && arch=key_blue
 slaying test_key_string
 race key_blue
-confused 1
+see_invisible 1
 last_grace 1
 x 5
 y 6
@@ -815,7 +815,7 @@ name slaying=test_key_slaying && arch=key_blue
 slaying test_key_slaying
 sp 1
 race key_blue
-confused 1
+see_invisible 1
 last_grace 1
 x 6
 y 6
@@ -1245,7 +1245,7 @@ arch check_inv
 slaying shortsword
 race shortsword
 hp 15
-confused 1
+see_invisible 1
 last_sp 0
 last_grace 1
 last_heal 1
@@ -1263,7 +1263,7 @@ arch check_inv
 slaying shortsword
 race shortsword
 hp 15
-confused 1
+see_invisible 1
 last_grace 1
 last_heal 1
 x 10

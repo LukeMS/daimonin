@@ -2704,7 +2704,7 @@
     kind of melee weapon. To pass, a player is forced to leave behind all
     his weaponry... bad news for a warrior. ;)
   </attribute>
-  <attribute arch="confused" editor="match all fields" type="bool">
+  <attribute arch="see_invisible" editor="match all fields" type="bool">
     Normally matching any of the above fields ("match key string", "match 
     arch name", "match type") is enough to accept an object. 
     If &lt;match all fields&gt; is checked, all non-empty fields are 

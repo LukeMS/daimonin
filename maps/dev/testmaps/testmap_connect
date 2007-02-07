@@ -1132,7 +1132,7 @@ slaying For the CHECK_INV
 race chain_mail
 connected 104
 last_grace 1
-confused 1
+see_invisible 1
 direction 3
 x 9
 y 8
