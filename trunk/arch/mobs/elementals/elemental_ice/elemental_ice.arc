@@ -2,20 +2,40 @@ Object elemental_ice
 name Ice Elemental
 face elemental_ice.141
 race elemental
-is_male 1
-wc_range 20
-corpse 1
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+type 80
 layer 6
 direction 5
-is_evil 1
 item_race 255
 item_level 255
+corpse 1
+alive 1
+monster 1
+is_evil 1
 terrain_flag 1
-weapon_speed 0.035
-attack_cold 100
-type 80
-Wis 6
-randomitems loot&s2;wealth_normal&D65;loot_base&D17,s2;loot_misc&d27,s2
+can_see_in_dark 1
+can_use_weapon 1
+int 10
+wis 6
+dex 3
+con 15
+exp 95
+magic 1
+pow 10
+sp -1
+maxsp 15
+hp -1
+maxhp 66
+ac 28
+wc 15
+thac0 85
+thacm 5
+dam 52
+weapon_speed 3.5
+attack_cleave 100
+speed -0.061
+level 1
+weight 35500
 anim
 facings 25
 trans.101
@@ -95,22 +115,6 @@ elemental_ice.282
 elemental_ice.283
 mina
 is_animated 1
-anim_speed 4
-monster 1
+anim_speed 5
 no_pick 1
-alive 1
-can_see_in_dark 1
-exp 106
-ac 10
-wc 5
-dam 65
-hp -1
-maxhp 82
-sp -1
-maxsp 6
-Pow 2
-magic 5
-level 1
-speed -0.041
-weight 52500
 end
