@@ -2174,7 +2174,7 @@ int remove_deathsick(object *op, object *target)
     }
 
     if (op != target && target->type == PLAYER && !success) /* if success, target got infos before */
-        new_draw_info(NDI_UNIQUE, 0, target, "There is no death síckness.");
+        new_draw_info(NDI_UNIQUE, 0, target, "There is no death sickness.");
 
     insert_spell_effect(spells[SP_REMOVE_DEATHSICK].archname, target->map, target->x, target->y);
     return success;
