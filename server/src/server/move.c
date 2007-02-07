@@ -111,7 +111,7 @@ int move_ob(object *op, int dir, object *originator)
 
         return 1;
     }
-
+ 
     /* single arch */
     if (!QUERY_FLAG(op, FLAG_WIZPASS))
     {

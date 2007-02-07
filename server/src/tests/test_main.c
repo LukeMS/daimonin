@@ -79,6 +79,10 @@ void run_unit_tests(void)
     srunner_add_suite(sr, teleporter_suite());
 
     fprintf(stderr, "Running Daimonin Test Suites\n");
+    
+    /* Use something like this to debug a single suite */
+    /* srunner_set_fork_status (sr, CK_NOFORK);
+    srunner_add_suite(sr, buttons_suite()); */
 
     srunner_run_all(sr, CK_NORMAL);
     failed += srunner_ntests_failed(sr);
