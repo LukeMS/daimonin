@@ -1299,6 +1299,7 @@ void Map2Cmd(unsigned char *data, int len)
         if ((xpos - mx || ypos - my))
         {
             remove_item_inventory(locate_item(0)); /* implicit clear below */
+            cpl.win_below_slot = 0;
             if (cpl.menustatus != MENU_NO)
                 reset_menu_status();
         }
