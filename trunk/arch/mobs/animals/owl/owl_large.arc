@@ -1,5 +1,5 @@
 Object owl_snow_large
-name large snow owl
+name large Snow Owl
 face owl_snow_large.161
 race bird
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27

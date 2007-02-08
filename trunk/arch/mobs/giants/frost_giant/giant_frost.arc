@@ -1,7 +1,7 @@
-Object giant_fire
-name Fire Giant
+Object giant_frost
+name Frost Giant
 race giant
-face giant_fire.150
+face frost_giant.211
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
 layer 6
@@ -37,40 +37,40 @@ thacm 5
 dam 64
 weapon_speed 3.5
 attack_cleave 50
-attack_fire 50
+attack_cold 50
 resist_acid 25
-resist_fire 100
-resist_cold -25
+resist_cold 100
+resist_fire -25
 speed -0.054
 level 1
 weight 652500
 anim
 facings 25
 trans.101
-giant_fire.110
-giant_fire.120
-giant_fire.130
-giant_fire.140
-giant_fire.150
-giant_fire.160
-giant_fire.170
-giant_fire.180
-giant_fire.110
-giant_fire.120
-giant_fire.130
-giant_fire.140
-giant_fire.150
-giant_fire.160
-giant_fire.170
-giant_fire.180
-giant_fire.110
-giant_fire.120
-giant_fire.130
-giant_fire.140
-giant_fire.150
-giant_fire.160
-giant_fire.170
-giant_fire.180
+frost_giant.211
+frost_giant.221
+frost_giant.231
+frost_giant.241
+frost_giant.251
+frost_giant.261
+frost_giant.271
+frost_giant.281
+frost_giant.211
+frost_giant.221
+frost_giant.231
+frost_giant.241
+frost_giant.251
+frost_giant.261
+frost_giant.271
+frost_giant.281
+frost_giant.211
+frost_giant.221
+frost_giant.231
+frost_giant.241
+frost_giant.251
+frost_giant.261
+frost_giant.271
+frost_giant.281
 mina
 is_animated 1
 anim_speed 4

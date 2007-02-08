@@ -31,10 +31,10 @@ sp -1
 maxsp 15
 hp -1
 maxhp 85
-ac 13
-wc 7
-thac0 18
-thacm 1
+ac 28
+wc 15
+thac0 85
+thacm 5
 resist_fire 30
 resist_pierce 25
 resist_slash 25

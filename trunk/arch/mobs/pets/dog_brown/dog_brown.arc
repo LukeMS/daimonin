@@ -11,15 +11,34 @@ item_level 255
 corpse 1
 alive 1
 monster 1
-is_female 1
-no_pick 1
-identified 1
+is_male 1
+is_neutral 1
 friendly 1
-weapon_speed 3.5
-speed -0.1
 terrain_flag 1
 can_use_weapon 1
-can_open_door 1
+int 10
+wis 6
+dex 3
+con 5
+exp 102
+magic 1
+pow 10
+sp -1
+maxsp 19
+hp -1
+maxhp 67
+ac 28
+wc 15
+thac0 85
+thacm 5
+resist_impact 10
+dam 52
+attack_cleave 100
+weapon_speed 3.5
+speed -0.06
+run_away 10
+level 1
+weight 325000
 anim
 facings 25
 trans.101
@@ -124,17 +143,6 @@ dog.fn.113
 dog.fn.113
 mina
 is_animated 1
-anim_speed 3
-level 1
-ac 3
-wc 0
-thac0 18
-thacm 1
-hp -1
-maxhp 8
-sp -1
-maxsp 3
-grace -1
-maxgrace 3
-weight 70000
+anim_speed 4
+no_pick 1
 end

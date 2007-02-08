@@ -1,5 +1,5 @@
 Object woman_old
-name old woman
+name Old Woman
 race human
 face woman_old.131
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -31,10 +31,10 @@ sp -1
 maxsp 25
 hp -1
 maxhp 52
-ac 7
-wc 2
-thac0 18
-thacm 1
+ac 28
+wc 15
+thac0 85
+thacm 5
 dam 35
 weapon_speed 3.5
 attack_slash 100
