@@ -108,6 +108,34 @@ altar.131
 altar.131
 altar.131
 mina
+anim angel_warrior
+facings 25
+trans.101
+angel_warrior.211
+angel_warrior.221
+angel_warrior.231
+angel_warrior.241
+angel_warrior.251
+angel_warrior.261
+angel_warrior.271
+angel_warrior.281
+angel_warrior.211
+angel_warrior.221
+angel_warrior.231
+angel_warrior.241
+angel_warrior.251
+angel_warrior.261
+angel_warrior.271
+angel_warrior.281
+angel_warrior.211
+angel_warrior.221
+angel_warrior.231
+angel_warrior.241
+angel_warrior.251
+angel_warrior.261
+angel_warrior.271
+angel_warrior.281
+mina
 anim ant_queen
 facings 25
 trans.101
@@ -2688,6 +2716,34 @@ curtain1.132
 curtain1.131
 curtain1.132
 mina
+anim cyclops
+facings 25
+trans.101
+cyclops.111
+cyclops.121
+cyclops.131
+cyclops.141
+cyclops.151
+cyclops.161
+cyclops.171
+cyclops.181
+cyclops.111
+cyclops.121
+cyclops.131
+cyclops.141
+cyclops.151
+cyclops.161
+cyclops.171
+cyclops.181
+cyclops.111
+cyclops.121
+cyclops.131
+cyclops.141
+cyclops.151
+cyclops.161
+cyclops.171
+cyclops.181
+mina
 anim dancerf1
 facings 25
 trans.101
@@ -3328,6 +3384,59 @@ demon_lord.151
 demon_lord.151
 demon_lord.151
 demon_lord.151
+mina
+anim demon_pumpkin
+facings 25
+trans.101
+trans.101
+demon_pumpkin.211
+demon_pumpkin.211
+demon_pumpkin.221
+demon_pumpkin.222
+demon_pumpkin.231
+demon_pumpkin.232
+demon_pumpkin.241
+demon_pumpkin.242
+demon_pumpkin.251
+demon_pumpkin.252
+demon_pumpkin.261
+demon_pumpkin.262
+demon_pumpkin.271
+demon_pumpkin.271
+demon_pumpkin.281
+demon_pumpkin.281
+demon_pumpkin.211
+demon_pumpkin.211
+demon_pumpkin.221
+demon_pumpkin.222
+demon_pumpkin.231
+demon_pumpkin.232
+demon_pumpkin.241
+demon_pumpkin.242
+demon_pumpkin.251
+demon_pumpkin.252
+demon_pumpkin.261
+demon_pumpkin.262
+demon_pumpkin.271
+demon_pumpkin.271
+demon_pumpkin.281
+demon_pumpkin.281
+demon_pumpkin.211
+demon_pumpkin.211
+demon_pumpkin.221
+demon_pumpkin.222
+demon_pumpkin.231
+demon_pumpkin.232
+demon_pumpkin.241
+demon_pumpkin.242
+demon_pumpkin.251
+demon_pumpkin.252
+demon_pumpkin.261
+demon_pumpkin.262
+demon_pumpkin.271
+demon_pumpkin.271
+demon_pumpkin.281
+demon_pumpkin.281
 mina
 anim demon_sfire
 facings 25
@@ -6227,6 +6336,34 @@ giant_fire.150
 giant_fire.160
 giant_fire.170
 giant_fire.180
+mina
+anim giant_frost
+facings 25
+trans.101
+frost_giant.211
+frost_giant.221
+frost_giant.231
+frost_giant.241
+frost_giant.251
+frost_giant.261
+frost_giant.271
+frost_giant.281
+frost_giant.211
+frost_giant.221
+frost_giant.231
+frost_giant.241
+frost_giant.251
+frost_giant.261
+frost_giant.271
+frost_giant.281
+frost_giant.211
+frost_giant.221
+frost_giant.231
+frost_giant.241
+frost_giant.251
+frost_giant.261
+frost_giant.271
+frost_giant.281
 mina
 anim giant_hill
 facings 25
@@ -9581,6 +9718,84 @@ lich.172
 lich.180
 lich.181
 lich.182
+mina
+anim lich_lord
+facings 25
+trans.101
+trans.101
+trans.101
+lich_lord.111
+lich_lord.112
+lich_lord.113
+lich_lord.121
+lich_lord.122
+lich_lord.123
+lich_lord.131
+lich_lord.132
+lich_lord.133
+lich_lord.141
+lich_lord.142
+lich_lord.143
+lich_lord.151
+lich_lord.152
+lich_lord.153
+lich_lord.161
+lich_lord.162
+lich_lord.163
+lich_lord.171
+lich_lord.172
+lich_lord.173
+lich_lord.181
+lich_lord.182
+lich_lord.183
+lich_lord.211
+lich_lord.212
+lich_lord.213
+lich_lord.221
+lich_lord.222
+lich_lord.223
+lich_lord.231
+lich_lord.232
+lich_lord.233
+lich_lord.241
+lich_lord.242
+lich_lord.243
+lich_lord.251
+lich_lord.252
+lich_lord.253
+lich_lord.261
+lich_lord.262
+lich_lord.263
+lich_lord.271
+lich_lord.272
+lich_lord.273
+lich_lord.281
+lich_lord.282
+lich_lord.283
+lich_lord.311
+lich_lord.312
+lich_lord.313
+lich_lord.321
+lich_lord.322
+lich_lord.323
+lich_lord.331
+lich_lord.332
+lich_lord.333
+lich_lord.341
+lich_lord.342
+lich_lord.343
+lich_lord.351
+lich_lord.352
+lich_lord.353
+lich_lord.361
+lich_lord.362
+lich_lord.363
+lich_lord.371
+lich_lord.372
+lich_lord.373
+lich_lord.381
+lich_lord.382
+lich_lord.383
 mina
 anim lo_wall1
 facings 9
@@ -13977,6 +14192,34 @@ scarecrow.131
 scarecrow.131
 scarecrow.111
 mina
+anim seether
+facings 25
+trans.101
+seether.101
+seether.101
+seether.101
+seether.101
+seether.101
+seether.101
+seether.101
+seether.101
+seether.101
+seether.101
+seether.101
+seether.101
+seether.101
+seether.101
+seether.101
+seether.101
+seether.101
+seether.101
+seether.101
+seether.101
+seether.101
+seether.101
+seether.101
+seether.101
+mina
 anim sewer_wall
 facings 9
 dummy.111
@@ -15196,10 +15439,6 @@ spinner.161
 spinner.171
 spinner.181
 mina
-anim sr_ring2
-sr_ring2.101
-sr_ring2.102
-mina
 anim sr_scepter1
 sr_scepter1.101
 sr_scepter2.101
@@ -15210,10 +15449,6 @@ sr_scepter6.101
 sr_scepter7.101
 sr_scepter8.101
 sr_scepter9.101
-mina
-anim sr_solewhip
-sr_solewhip.101
-sr_solewhip.102
 mina
 anim sstone
 facings 9
