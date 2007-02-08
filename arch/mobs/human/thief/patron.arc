@@ -1,5 +1,5 @@
 Object patron
-name patron
+name Patron
 face patron.131
 race human
 randomitems skill_bow;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -31,10 +31,10 @@ sp -1
 maxsp 20
 hp -1
 maxhp 80
-ac 11
-wc 6
-thac0 18
-thacm 1
+ac 28
+wc 15
+thac0 85
+thacm 5
 resist_impact 15
 resist_cleave 15
 resist_pierce 15

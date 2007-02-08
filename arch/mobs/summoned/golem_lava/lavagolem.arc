@@ -26,10 +26,10 @@ sp -1
 maxsp 20
 hp -1
 maxhp 66
-ac 13
-wc 4
-thac0 18
-thacm 1
+ac 28
+wc 15
+thac0 85
+thacm 5
 dam 55
 weapon_speed 3.5
 resist_cold -35
