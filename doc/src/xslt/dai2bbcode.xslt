@@ -6,11 +6,12 @@
 
     <xsl:output method="text" encoding="utf-8" indent="no"/>
 
-<!-- Use daiml/@title as a header and a note about DaiML/modification time as a footer -->
+    <xsl:strip-space elements="*"/>
+
+<!-- If daiml/@autotoc create the ToC as a header. Insert a note about DaiML/modification time as a footer -->
     <xsl:template match="/daiml">
-        <xsl:text>[size=24][b]</xsl:text> <xsl:value-of select="@title"/> <xsl:text>[/b][/size]</xsl:text>
         <xsl:if test="@autotoc and section">
-            <xsl:text>&#xA;&#xA;[b]</xsl:text>
+            <xsl:text>[b]</xsl:text>
             <xsl:choose>
                 <xsl:when test="@autotoc='autotoc'">
                      <xsl:text>Table of Contents</xsl:text>
@@ -19,11 +20,11 @@
                      <xsl:value-of select="@autotoc"/>
                 </xsl:otherwise>
             </xsl:choose>
-            <xsl:text>[/b]&#xA;</xsl:text>
+            <xsl:text>[/b]&#xA;&#xA;</xsl:text>
             <xsl:apply-templates select="section" mode="toc"/>
         </xsl:if>
         <xsl:apply-templates/>
-        <xsl:text>&#xA;&#xA;&#xA;[size=10][color=gray][i]</xsl:text> <xsl:text>This document was automatically generated from DaiML source.&#xA;</xsl:text> <xsl:text>Last modified: </xsl:text><xsl:value-of select="current-dateTime()"/> <xsl:text>[/i][/color][/size]</xsl:text>
+        <xsl:text>&#xA;[size=10][color=gray][i]</xsl:text> <xsl:text>This document was automatically generated from DaiML source.&#xA;</xsl:text> <xsl:text>Last modified: </xsl:text><xsl:value-of select="current-dateTime()"/> <xsl:text>[/i][/color][/size]</xsl:text>
     </xsl:template>
 
 <!-- Creates the ToC, skipping those sections with @toc='exclude' -->
@@ -41,9 +42,9 @@
         </xsl:choose>
     </xsl:template>
 
-<!-- Level 1 section -->
-    <xsl:template match="/daiml/section">
-        <xsl:text>&#xA;&#xA;&#xA;[list]</xsl:text>
+<!-- Section -->
+    <xsl:template match="section">
+        <xsl:text>[list]</xsl:text>
         <xsl:apply-templates/>
         <xsl:text>[/list]&#xA;</xsl:text>
     </xsl:template>
@@ -52,42 +53,34 @@
     <xsl:template match="/daiml/section/title">
         <xsl:text>[size=24][b]</xsl:text>
         <xsl:apply-templates/>
-        <xsl:text>[/b][/size]&#xA;</xsl:text>
-    </xsl:template>
-
-<!-- Level 2+ section -->
-    <xsl:template match="section/section">
-        <xsl:text>&#xA;[list]</xsl:text>
-        <xsl:apply-templates/>
-        <xsl:text>[/list]&#xA;</xsl:text>
+        <xsl:text>[/b][/size]&#xA;&#xA;</xsl:text>
     </xsl:template>
 
 <!-- Level 2 section/title -->
     <xsl:template match="/daiml/section/section/title">
         <xsl:text>[size=20][b]</xsl:text>
         <xsl:apply-templates/>
-        <xsl:text>[/b][/size]&#xA;</xsl:text>
+        <xsl:text>[/b][/size]&#xA;&#xA;</xsl:text>
     </xsl:template>
 
 <!-- Level 3 section/title -->
     <xsl:template match="/daiml/section/section/section/title">
         <xsl:text>[size=16][b]</xsl:text>
         <xsl:apply-templates/>
-        <xsl:text>[/b][/size]&#xA;</xsl:text>
+        <xsl:text>[/b][/size]&#xA;&#xA;</xsl:text>
     </xsl:template>
 
 <!-- Level 4+ section/title -->
     <xsl:template match="section/section/section/section/title">
         <xsl:text>[size=12][b]</xsl:text>
         <xsl:apply-templates/>
-        <xsl:text>[/b][/size]&#xA;</xsl:text>
+        <xsl:text>[/b][/size]&#xA;&#xA;</xsl:text>
     </xsl:template>
 
-<!-- Insert line feed before and after new paragraph -->
+<!-- Insert two LFs after new paragraph -->
     <xsl:template match="p">
-        <xsl:text>&#xA;</xsl:text>
         <xsl:apply-templates/>
-        <xsl:text>&#xA;</xsl:text>
+        <xsl:text>&#xA;&#xA;</xsl:text>
     </xsl:template>
 
 <!-- Line break -->
@@ -180,14 +173,15 @@
 
 <!-- Definitions transform to indented paragraphs -->
     <xsl:template match="dd">
-        <xsl:text>&#xA;</xsl:text>
         <xsl:apply-templates/>
+        <xsl:text>&#xA;&#xA;</xsl:text>
     </xsl:template>
 
 <!-- Definition titles and list items transform to bulleted (or numbered in an ordered list) paragraphs -->
     <xsl:template match="dt|li">
         <xsl:text>[*]</xsl:text>
         <xsl:apply-templates/>
+        <xsl:text>&#xA;&#xA;</xsl:text>
     </xsl:template>
 
 <!-- Tables are currently not rendered -->
