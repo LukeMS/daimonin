@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE daiml SYSTEM "../../dtd/daiml.dtd">
+<daiml title="Detailed Explanation of Game Rule 1a">
+    <section id="summary">
+        <title>
+            Summary
+        </title>
+        <p>
+            [Abuse of the game] <strong>Do not use bots, scripts, or other software, or otherwise interfere with the server.</strong>
+        </p>
+    </section>
+    <section id="description">
+        <title>
+            Description
+        </title>
+        <p>
+            Bots -- software-controlled 'players' -- must not be used in Daimonin.
+        </p>
+        <p>
+            Scripts and other software intended to give any player(s) an advantage or disadvantage in the game are explicitly prohibited and may not be used. This does not include software designed only to compensate for a real world disability and the devteam would like to hear about the successful (or otherwise) employment of such software and any suggestions as to how Daimonin could be modified to accommodate players with such needs.
+        </p>
+        <p>
+            Considerable time, energy, and thought has been spent on developing the gameplay of Daimonin. It is designed to be both entertaining and challenging. Certain goals in the game are intended to take (real world) skill, intelligence, perserverance, and dedication to achieve. Much of any MMORPG's <em>fun</em> is derived from this <em>difficulty</em> (here is a link to an <a href="http://www.thenoobcomic.com/daily/strip235.html">illustration</a> of this point). Therefore, using a bot, script, or other software to circumvent this challenge is both disrespectful to the designers and other players who overcome the challenges via legitimate means and ultimately, though admittedly arguably, harmful to your own enjoyment.
+        </p>
+        <p>
+            While connecting to the server with an unofficial client -- whether wholly new or modified -- is not specifically prohibited, Daimonin does not encourage such action. This policy is quite liberal compared to many MMORPGs, both free and commercial. One reason for this is that a <em>goal</em> of the Daimonin client-server protocol and communication model is that the client should not be able to give any unfair advantages to the user or put at risk the stability of the server in any way. Daimonin is designed to be secure and the devteam has confidence in that design and its implementation. If you do connect in such a way and find bugs or weaknesses in the server the devteam would be very grateful to know about them so they may be fixed <em>before</em> they are released to the public.
+        </p>
+        <p>
+            Unofficial clients must be clearly marked as such. In addition, Daimonin is a free software (open source) project so all clients used to connect to the server should also follow the <a href="http://www.gnu.org/philosophy/">free software philosophy</a> and be accompanied by a <a href="http://www.fsf.org/licensing/licenses/index_html">GPL-compatible license</a>. As the official client is licensed under the <a href="http://www.fsf.org/licensing/licenses/gpl.txt">GNU General Public License</a> all modified unofficial clients must also follow the terms of that license.
+        </p>
+        <p>
+            Bugs in unofficial clients are <em>not</em> the responsibility of the Daimonin devteam or even particularly interesting to them. They should be reported to the author of the unofficial client and <em>not</em> the Daimonin devteam.
+        </p>
+        <p>
+            Security is also a reason for insisting on source distributions of unofficial clients. It would be quite easy to, for example, include hidden password-stealing, trojan, or other harmful code in a binary-only distribution.
+        </p>
+    </section>
+    <section id="penalties">
+        <title>
+            Penalties
+        </title>
+        <p>
+            The precise nature of a penalty, and whether it is preceded by a warning, will be determined by the Vols on a case-by-case basis. See the stickies 'Enforcement of the Game Rules' and 'General Interpretation of the Game Rules' for further explanation of these issues.
+        </p>
+        <p>
+            Otherwise isolated violations of this rule will likely result in any combination of:
+        </p>
+        <ul>
+            <li>
+                <strong>multiple kicks;</strong>
+            </li>
+            <li>
+                <strong>very long or permanent mute;</strong>
+            </li>
+            <li>
+                <strong>long, very long, or permanent character and/or IP ban.</strong>
+            </li>
+        </ul>
+        <p>
+            The exception to this is any attempt to directly manipulate, copy, or otherwise access data stored on the server, particularly player data files and maps, or to 'hack' the server in any way. This will always result in a <strong>permanent character and IP ban</strong>. No warning will be given or excuses entertained.
+        </p>
+    </section>
+</daiml>

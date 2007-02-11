@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE daiml SYSTEM "../../dtd/daiml.dtd">
+<daiml title="Detailed Explanation of Game Rule 3a">
+    <section id="summary">
+        <title>
+            Summary
+        </title>
+        <p>
+            [Abuse of the rules] <strong>Respect the Vols, GMs, and DMs, the devteam, and their decisions.</strong>
+        </p>
+    </section>
+    <section id="description">
+        <title>
+            Description
+        </title>
+        <p>
+            This does not mean you have to loves, or even like, individuals Vols and devs. Nor does it mean you have to agree with their decisions. However, it does mean you have to respect their positions and their right to make those decisions.
+        </p>
+        <p>
+            Specifically, Vol decisions are <em>never</em> open to challenge in public discussion and ideally should not be discussed in-game at all. Nor should you address an individual Vol about a decision in private communication. The decision will <em>not</em> be changed based on in-game dissent and opposition and you are likely to receive a penalty under this rule.
+        </p>
+        <p>
+            If you disagree with the way things are handled in-game there are two options:
+        </p>
+        <ol>
+            <li>
+                if you feel the rule itself is at fault you should make your feeling known in this board, following the guidance in the announcement 'READ ME FIRST: About this Board';
+            </li>
+            <li>
+                if you feel the fault lies with the Vol's enforcement of the rule (or feel that the Vol is not applying the rules at all) you should make an official complaint to the Complaint Department. (TO BE LINKED)
+            </li>
+        </ol>
+        <p>
+            In a similar way, suggestions of features of the game and other development issues are not appropriate for in-game discussion. Rather such discussion should take place in the forum where, amongst other things, the debate is recorded permanently, is accessible to those not online at the time, and more detailed and considered input can be made by both players <em>and</em> devs.
+        </p>
+    </section>
+    <section id="penalties">
+        <title>
+            Penalties
+        </title>
+        <p>
+            The precise nature of a penalty, and whether it is preceded by a warning, will be determined by the Vols on a case-by-case basis. See the stickies 'Enforcement of the Game Rules' and 'General Interpretation of the Game Rules' for further explanation of these issues.
+        </p>
+        <p>
+            Otherwise isolated violations of this rule will likely result in any combination of:
+        </p>
+        <ul>
+            <li>
+                <strong>single kick;</strong>
+            </li>
+            <li>
+                <strong>short, medium, or long mute.</strong>
+            </li>
+        </ul>
+    </section>
+</daiml>

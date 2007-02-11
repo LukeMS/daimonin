@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE daiml SYSTEM "../../dtd/daiml.dtd">
+<daiml title="Detailed Explanation of Game Rule 3b">
+    <section id="summary">
+        <title>
+            Summary
+        </title>
+        <p>
+            [Abuse of the rules] <strong>Do not make false claims to be a Vol, GM, or DM, or member of the devteam.</strong>
+        </p>
+    </section>
+    <section id="description">
+        <title>
+            Description
+        </title>
+        <p>
+            Never say you're a Vol, GM, DM, or dev unless you actually are. Equally, if you area Vol, GM, or DM and a player shouts for a Vol, etc or a situation arises where a Vol is needed (eg, rules are being broken) you have a responsibility to step in (see 'Code of ethics' in the sticky 'Enforcement of the Game Rules').
+        </p>
+    </section>
+    <section id="penalties">
+        <title>
+            Penalties
+        </title>
+        <p>
+            The precise nature of a penalty, and whether it is preceded by a warning, will be determined by the Vols on a case-by-case basis. See the stickies 'Enforcement of the Game Rules' and 'General Interpretation of the Game Rules' for further explanation of these issues.
+        </p>
+        <p>
+            Otherwise isolated violations of this rule will always result in:
+        </p>
+        <ul>
+            <li>
+                <strong>long, very long, or permanent mute</strong>; <em>and</em>
+            </li>
+            <li>
+                <strong>long, very long, or permanent character ban</strong>.
+            </li>
+        </ul>
+        <p>
+            In addition the offending IP may face a <strong>short IP ban</strong>.
+        </p>
+    </section>
+</daiml>

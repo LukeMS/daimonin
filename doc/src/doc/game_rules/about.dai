@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE daiml SYSTEM "../../dtd/daiml.dtd">
+<daiml title="READ ME FIRST: About this board">
+    <section id="status">
+        <title>
+            Status of the Game Rules and this board
+        </title>
+        <p>
+            <strong>Due to some foreseen and some unforeseen real life circumstances the Game Rule and this board are being released to players in a less finished state than originally intended. This is not necessarily all bad as it allows greater scope for community input.</strong>
+        </p>
+        <p>
+            <strong>However, please note that the Game Rules presented here are <em>not</em> the ones currently enforced in-game. These rules and this board should be currently considered a request for comments.</strong>
+        </p>
+    </section>
+    <section id="purpose">
+        <title>
+            The purpose of this board
+        </title>
+        <p>
+            This board serves two main purposes.
+        </p>
+        <p>
+            Firstly, it documents and explains all the Game Rules which players are expected to follow in Daimonin.
+        </p>
+        <p>
+            Secondly, it provides a platform for players to voice their concerns, opinions, and suggestions on those rules.
+        </p>
+        <p>
+            This board is <em>not</em> for complaints about the enforcement of the rules or other conduct of the Vols, GMs, and DMs. Such complaints should be sent to the Complaints Department (TO BE LINKED).
+        </p>
+        <section id="firstpurpose">
+            <title>
+                About the first purpose
+            </title>
+            <p>
+                Many people will appreciate a little general background to the rules of Daimonin and a few words on the system which is in place to enforce them. This is all covered in the stickies 'Overview: the Game, the Community, and Why We Have Rules' and 'Enforcement of the Game Rules'.
+            </p>
+            <p>
+                A complete list of rules is found in the announcement 'List of Game Rules'. All players must familiarise themselves with these. They are publically available and accessible, so claiming ignorance is no excuse or mitigation for breaking the rules.
+            </p>
+            <p>
+                However, after reading the list, you may find yourself enraged/disappointed/bewildered at the apparent repressive nature of one or more of the rules. In this case, be sure to also read the sticky 'General Interpretation of the Game Rules' and the detailed explanation sticky of the specific rule.
+            </p>
+        </section>
+        <section id="secondpurpose">
+            <title>
+                About the second purpose
+            </title>
+            <p>
+                Criticism and intelligent discussion of the rules are encouraged -- we <em>want</em> to hear the opinions of the community and we <em>want</em> these rules and their interpretation to be as representative as possible of the wishes of the community (note that this specifically means that individual players -- regardless of their ingame level, when they first started playing Daimonin, how 'loud', funny, rude, or eloquent their posts are, and so on -- will <em>not</em> necessarily get their way). Whining and meritless rants against the rules are not wanted. They will likely be ignored and the posts may simply be deleted.
+            </p>
+            <p>
+                Although player's opinions will be considered with the same seriousness as they are expressed, the final decision on the inclusion or otherwise and exact form of each rule will be made by the devteam.
+            </p>
+            <p>
+                All announcements and stickies in this board are locked, to prevent clutter and confusion. The correct way to comment on a rule or any aspect of these locked topics is to post to a (possibly new) normal topic and quote the relevant passage from the announcement or sticky. Attribute the quote to the topic from which it was taken, not to the poster of that topic, and make your comment underneath. Be sure to check for older topics which already address your point before posting a new one. Do not be frightened to use the search function.
+            </p>
+            <p>
+                Remember that the rules list in the announcement 'List of Game Rules' is a <em>summary</em>. Summarising a rule in a single sentence often makes it seem artificially black and white. Therefore, before you post an outraged comment that such and such a rule is too strict, unfair, or just plain ridiculous, be sure to read the sticky 'General Interpretation of the Game Rules' and the detailed explanation sticky of that specific rule. If you do not you will probably misunderstand the rule and look like a fool. Such a post where you obviously haven't done your background reading will be regarded as a meritless rant.
+            </p>
+        </section>
+    </section>
+    <section id="note">
+        <title>
+            Important note
+        </title>
+        <p>
+            Please remember that it is very unusual for players of a MMORPG to be given this much say in the rules of the game. Be aware that such access, via this board, is a privelege, not a right. As such all posters are expected to exercise greater responsibility in posting to this board than is expected in others. The moderators will be less tolerant of idiotic and spam posts in general. Excessive and widespread abuse of this board will result in it being closed and the rules being transferred to a format where they can be read but player input is not taken.
+        </p>
+        <p>
+            The Vols, GMs, and DMs, and the devteam hope this will not be necessary. We <em>want</em> this experiment to succeed. We <em>want</em> the community to be able to help shape the game of which it is a vital part.
+        </p>
+    </section>
+</daiml>

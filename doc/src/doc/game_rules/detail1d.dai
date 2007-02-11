@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE daiml SYSTEM "../../dtd/daiml.dtd">
+<daiml title="Detailed Explanation of Game Rule 1d">
+    <section id="summary">
+        <title>
+            Summary
+        </title>
+        <p>
+            [Abuse of the game] <strong>Do not 'share' passwords in private or external communication.</strong>
+        </p>
+    </section>
+    <section id="description">
+        <title>
+            Description
+        </title>
+        <p>
+            Password sharing is when two or more players have access (know the password) to a single character.
+        </p>
+        <p>
+            While this is not prohibited outright in Daimonin it is <em>strongly discouraged</em>. It frequently goes wrong, resulting in misery for one or more of the sharers, disruption to the game in general, and the creation of an unholy mess which the Vols are then expected to sort out.
+        </p>
+        <p>
+            It should therefore be noted that if you choose to share and this causes you problems, those are <em>your problems</em>; it is <em>your fault</em>. If you then disrupt the game, for example by whining about it in public communication, or make an issue of it with the Vols your complaint will not be received sympathetically.
+        </p>
+        <p>
+            In addition to being penalised under this rule, the logs will be checked for the actual communications where the password was shared. If these cannot be found or the password was communicated in public the whole matter will also be dealt with under Game Rule 1c (see the sticky 'Detailed Explanation of Game Rule 1c').
+        </p>
+        <p>
+            You will <em>never</em> need to give your password to any Vol or dev and if asked this should always be reported.
+        </p>
+    </section>
+    <section id="penalties">
+        <title>
+            Penalties
+        </title>
+        <p>
+            The precise nature of a penalty, and whether it is preceded by a warning, will be determined by the Vols on a case-by-case basis. See the stickies 'Enforcement of the Game Rules' and 'General Interpretation of the Game Rules' for further explanation of these issues.
+        </p>
+        <p>
+            A violation of this rule will <em>usually</em> not result in a penalty of itself. Rather, offenders will be deemed to have implicitly waived all rights to 'protection' of the <em>characters</em> involved under the Game Rules.
+        </p>
+        <p>
+            If these characters/IPs continue to cause the Vols problems or to disrupt the game for other players they will face a <strong>permanent character and/or IP ban</strong>.
+        </p>
+    </section>
+</daiml>

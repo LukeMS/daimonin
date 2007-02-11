@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE daiml SYSTEM "../../dtd/daiml.dtd">
+<daiml title="Overview: the Game, the Community, and Why We Have Rules">
+    <section id="introduction">
+        <title>
+            Introduction: Welcome to Daimonin!
+        </title>
+        <p>
+            Daimonin is a great game (well, what do you expect me to say?) and new players are encouraged to join (to get started, read the <a href="http://www.daimonin.net/modules.php?op=modload&amp;name=phpWiki&amp;file=index&amp;pagename=Windows%20Client%20Install">client installation notes</a> and <a href="http://www.daimonin.net/index.php?name=PNphpBB2&amp;file=viewtopic&amp;t=1494">Player's Guides &amp; Gameplay Documentation</a>).
+        </p>
+        <p>
+            However, Daimonin has a particularly strong and, to a large extent, cohesive community and if you stumble into the game blindly you are likely to get on a lot of people's nerves and as a result not have an enjoyable time yourself.
+        </p>
+        <p>
+            Depending on the nature of your stumbling you may also find yourself on the receiving end of a Vol or GM.
+        </p>
+    </section>
+    <section id="prevention">
+        <title>
+            So how does one prevent this?
+        </title>
+        <p>
+            Well, consider the type of game this is. Daimonin is a Massively Multiplayer Online Role-Playing Game (MMORPG).
+        </p>
+        <p>
+            The first thing to note is that it's a <em>game</em> and the object is for players to have fun. Daimonin is not real life and certain real life concepts, such as democracy and unfettered freedom of speech, do not translate directly or easily into the game. Also remember that many players spend many hundreds of hours both playing the game and posting to the forums, and the developers and contributors have invested enormous energies and resources into producing this game to which you have been given free access; as a result expect people to defend 'their' game with passion and vigour.
+        </p>
+        <p>
+            The next thing is the <em>massively multiplayer</em> aspect. This means there is a real person behind each character you see on the screen. Players come from nearly every conceivable background (within reason) -- in terms of wealth, gender, sexuality, ethnicity, disability, political and religious outlook, and so on, and ages range, almost literally, from 8 to 80. Respect this. It also means that in-game everyone is struggling for more-or-less the same goals (basically to gain experience and items/money). To facilitate this, communication, compromise, and agreement are necessary.
+        </p>
+        <p>
+            The final point is that Daimonin is a <em>role-playing</em> game. This means that some players may act in certain ways with which you personally disagree (eg, they may be dishonest, they may renege on an agreement, or they may steal). As long as they do not infringe the game rules this behaviour is allowed. That's not to say it is condoned by the community, and reasonable action -- again, observing the game rules -- may be taken by players in retaliation.
+        </p>
+        <section id="shortanswer">
+            <title>
+                The short answer
+            </title>
+            <p>
+                Use your common sense, respect the game and its makers, and treat other players with the same respect you would like them to show you.
+            </p>
+            <p>
+                Seems simple, no? Apparently, no, hence the long answer.
+            </p>
+        </section>
+        <section id="longanswer">
+            <title>
+                The long answer
+            </title>
+            <p>
+                The long answer is so long that it is spread over several posts, but it can be summarised here as: we have documented, publicised, accessible, and enforced rules; follow them. Please note that if you can behave in accordance with the short answer you should be safe not to read the entirety of this long answer. That in no way provides an excuse for any player to ignore the rules and all players should familiarise themselves with them, at least in overview, by reading the announcement 'List of Game Rules'.
+            </p>
+            <p>
+                Daimonin did function quite happily according to the short answer above in it's early years. Unfortunately, and perhaps unsurprisingly, as the player base grew some vocal elements of the community refused, or were unable, to follow those three simple requests and increasingly demanded explicit and precise rules. This is the result.
+            </p>
+            <p>
+                The Game Rules are deliberately few and cover only the bare minimum to allow for a balance between freedom of expression and behaviour and protection from abuse and exploitation which creates a vibrant and enjoyable gameplay experience for all players.
+            </p>
+            <p>
+                The Game Rules should be thought of as a contract between you and the other players and developers of Daimonin. By logging in to the game you agree to behave in accordance with those rules. In return you are allowed to play the game and receive the same protection offered by the Game Rules to all players. If you choose not to follow the Game Rules, to which you have agreed, you will be penalised according to the detailed explanation stickies of this board. As a last resort, for very serious or continual violations, you will be banned and not allowed to play Daimonin any more.
+            </p>
+            <p>
+                Changes may be made at any time and for any reason. They will be documented and publicised in the Daimonin SVN repository on www.sourceforge.net, this board, and in books in-game. Every effort will be made to keep those three sources concurrent with each other. Until a rule is documented on this board it will not be valid in-game. As soon as it is documented on this board it will be valid and enforced in-game.
+            </p>
+            <p>
+                Players will not be penalised for violating rules which were not in force at the time of the 'violation'. Players will be warned at the time of the alleged violation and then penalised at the earliest convenience for violating rules where it is impossible to fully investigate immediately (for example, logs need to be checked).
+            </p>
+            <p>
+                Note that these rules are in no way legally binding in a real world sense. Threats of legal action on the basis of a player's treatmment under the Game Rules have in the past given us all a good laugh. However, this amusement factor palls quickly. Therefore such threats are likely to meet with quite harsh penalties under one or more of the category 3 rules, <em>in addition</em> to the penalty which initiated the complaint.
+            </p>
+        </section>
+    </section>
+</daiml>

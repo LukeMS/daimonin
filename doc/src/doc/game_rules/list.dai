@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE daiml SYSTEM "../../dtd/daiml.dtd">
+<daiml title="List of the Game Rules">
+    <section id="introduction">
+        <title>
+            Introduction
+        </title>
+        <p>
+            Below is a list of the rules in overview. They have been split into three categories to reflect their triple purpose. Although some attempt has been made to organise the rules within their category this should not be read as an order of importance or precedence. All rules are included for a reason and all rules should be regarded as mandatory.
+        </p>
+        <p>
+            Each rule is further explained in it's own sticky in this forum: you will find precise details of what the rule means and why we have it, examples of violations and non-violations, and possible punishments for violations.
+        </p>
+    </section>
+    <section id="gamerules">
+        <title>
+            List of the Game Rules
+        </title>
+        <dl>
+            <dt>
+                1. <strong>Abuse of the game</strong> -- These rules are designed to protect the game itself from abuse and exploitation. This means the server itself and everything to which the client has direct access. That is everything which you ever see on screen, and all content (such as maps and arches and player data files). The importance of this category cannot be stressed too much. This category, and thus the rules within, protects the environment without which the other two categories could not exist.
+            </dt>
+            <dd>
+                <ul>
+                    <li>
+                        a. <strong>Do not use bots, scripts, or other software, or otherwise interfere with the server.</strong>
+                    </li>
+                    <li>
+                        b. <strong>Do not exploit bugs with the intention of giving any player(s) either an advantage or disadvantage over any other player(s), harming the game economy, or otherwise disrupting the game.</strong>
+                    </li>
+                    <li>
+                        c. <strong>Do not attempt to password guess, announce any character's password in public communication, or log into any character other than your own.</strong>
+                    </li>
+                    <li>
+                        d. <strong>Do not 'share' passwords in private or external communication.</strong>
+                    </li>
+                    <li>
+                        e. <strong>Do not engage in alt theft or other alt trickery.</strong>
+                    </li>
+                    <li>
+                        f. <strong>Do not discuss other games in public communication.</strong>
+                    </li>
+                    <li>
+                        g. <strong>Do not sell or trade Daimonin items, money, or experience for perks, goods, or money in real life or other games.</strong>
+                    </li>
+                    <li>
+                        h. <strong>Do not 'spam' the public communication channels.</strong>
+                    </li>
+                </ul>
+            </dd>
+            <dt>
+               2. <strong>Abuse of the community</strong> -- It is recognised that the community of players is vital to Daimonin. Therefore this category of rules exists. This category, and thus the rules within, protects the <em>players</em> of Daimonin, both as individuals and together as a community.
+            </dt>
+            <dd>
+                <ul>
+                    <li>
+                        a. <strong>Do not intentionally harass, intimidate, bully, or defame, threaten, incite, or promote real life violence or prejudice, or otherwise indulge in abuse or bigotry against any real life social group or player in either public or private communication.</strong>
+                    </li>
+                    <li>
+                        b. <strong>Do not pass on personal, real life information about another player in either public or private communication without that player's express permission.</strong>
+                    </li>
+                    <li>
+                        c. <strong>Do not discuss 'controversial' topics in public communication.</strong>
+                    </li>
+                    <li>
+                        d. <strong>Do not use profane, obscene, or explicit language in public communication.</strong>
+                    </li>
+                </ul>
+            </dd>
+            <dt>
+                3. <strong>Abuse of the rules</strong> -- The final category, while of no lesser importance than the previous two, essentially exists only to link those two. This category, and thus the rules within, provides a solid basis for the existance and TODO
+            </dt>
+            <dd>
+                <ul>
+                    <li>
+                        a. <strong>Respect the Vols, GMs, and DMs, the devteam, and their decisions.</strong>
+                    </li>
+                    <li>
+                        b. <strong>Do not make false claims to be a Vol, GM, or DM, or member of the devteam.</strong>
+                    </li>
+                    <li>
+                        c. <strong>Do not make false or vexatious claims that these rules have been broken.</strong>
+                    </li>
+                    <li>
+                        d. <strong>Do not be a troublemaker or attempt to 'bend' these rules.</strong>
+                    </li>
+                </ul>
+            </dd>
+        </dl>
+    </section>
+</daiml>
