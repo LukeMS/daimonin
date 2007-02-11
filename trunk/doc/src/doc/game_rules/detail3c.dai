@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE daiml SYSTEM "../../dtd/daiml.dtd">
+<daiml title="Detailed Explanation of Game Rule 3c">
+    <section id="summary">
+        <title>
+            Summary
+        </title>
+        <p>
+            [Abuse of the rules] <strong>Do not make false or vexatious claims that these rules have been broken.</strong>
+        </p>
+    </section>
+    <section id="description">
+        <title>
+            Description
+        </title>
+        <p>
+            The Game Rules have been designed to protect the community and preserve the integrity of the game. As the intention of their presentation is chiefly accessibility (see the sticky 'Overview') there should be little in-game confusion about when the rules are violated and when they are not.
+        </p>
+    </section>
+    <section id="penalties">
+        <title>
+            Penalties
+        </title>
+        <p>
+            The precise nature of a penalty, and whether it is preceded by a warning, will be determined by the Vols on a case-by-case basis. See the stickies 'Enforcement of the Game Rules' and 'General Interpretation of the Game Rules' for further explanation of these issues.
+        </p>
+        <p>
+            Otherwise isolated violations of this rule may result in any combination of:
+        </p>
+        <ul>
+            <li>
+                <strong>single kick;</strong>
+            </li>
+            <li>
+                <strong>short, medium, or long mute;</strong>
+            </li>
+            <li>
+                <strong>short IP ban.</strong>
+            </li>
+        </ul>
+    </section>
+</daiml>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE daiml SYSTEM "../../dtd/daiml.dtd">
+<daiml title="Detailed Explanation of Game Rule 2c">
+    <section id="summary">
+        <title>
+            Summary
+        </title>
+        <p>
+            [Abuse of the community] <strong>Do not discuss 'controversial' topics in public communication.</strong>
+        </p>
+    </section>
+    <section id="description">
+        <title>
+            Description
+        </title>
+        <p>
+            Certain topics are simply not appropriate for Daimonin public chat. Broadly these can be categorised as sex, drugs, politics, and religion.
+        </p>
+        <p>
+            It is important to note that these topics are not prohibited outright from being discussed in Daimonin; social interaction, with peopple of different nationalities, experiences, beliefs, and values, is an important element of a MMORPG. However, it is also recognised that discussions of these 'controversial' topics are particularly likely to lead to disagreement and conflict due to their emotive natures, questions of morality and/or legality central to each, and so on.
+        </p>
+        <p>
+            You should remember that participants in such discussions all have their own personal opinions on the topic at hand. <em>Each person's opinion is as valid as your own regardless of how different it is, whether it is the only example of such an opinion while you have ten people to back you up, etc.</em> The exception to this is where the other person violates Game Rule 2a either through what they say or how they say it.
+        </p>
+        <p>
+            As has been noted, such discussions tend to lead to conflict. That is, disruption of the game (see the sticky 'General Interpretation of the Game Rules'). It is impossible, apart from outright prohibition of such discussions, to write a general rule preventing this possibility. Therefore each discussion will be judged on a case-by-case basis and the Vols will ask for the discussion to be removed from public chat if it seems to be getting out of hand.
+        </p>
+        <p>
+            General warnings that the discussion risks straying too far across the limits of this rule may be given at any time. Do not take these warnings personally; they are simply reminders.
+        </p>
+    </section>
+    <section id="penalties">
+        <title>
+            Penalties
+        </title>
+        <p>
+            The precise nature of a penalty, and whether it is preceded by a warning, will be determined by the Vols on a case-by-case basis. See the stickies 'Enforcement of the Game Rules' and 'General Interpretation of the Game Rules' for further explanation of these issues.
+        </p>
+        <p>
+            For this rule a warning should always be given before a penalty is imposed. A penalty will only be imposed on people who continue the discussion in public chat after a Vol requests that it be stopped.
+        </p>
+        <p>
+            Otherwise isolated violations of this rule will likely result in any combination of:
+        </p>
+        <ul>
+            <li>
+                <strong>single kick;</strong>
+            </li>
+            <li>
+                <strong>short or medium mute.</strong>
+            </li>
+        </ul>
+    </section>
+</daiml>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE daiml SYSTEM "../../dtd/daiml.dtd">
+<daiml title="Detailed Explanation of Game Rule 1h">
+    <section id="summary">
+        <title>
+            Summary
+        </title>
+        <p>
+            [Abuse of the game] <strong>Do not 'spam' the public communication channels.</strong>
+        </p>
+    </section>
+    <section id="description">
+        <title>
+            Description
+        </title>
+        <p>
+            <strong>Spam</strong> is broadly defined as a message which, by way of its presentation, attempts to draw undue attention to itself.
+        </p>
+        <p>
+            This includes frequently repeated messages, very long messages, and messages in all capitals, that use symbols to represent letters, that use excessive punctuation, that use excessive repetion within a single message.
+        </p>
+        <p>
+            It is recognised that certain 'spam' messages are customary to MMORPGs. The following is a complete list of such messages which objectively fit the above definition of spam, but are in fact allowed so long as they observe the limits given below:
+        </p>
+        <dl>
+            <dt>
+                <strong>Congratulatory messages</strong>
+            </dt>
+            <dd>
+                When someone levels a skill it is common for there to be a chorus of congratulatory messages, classically 'grats!'. Many players like to personalise this message in some way, so it is unique to them, for example '-==*C*O*N*G*R*A*T*U*L*A*T*I*O*N*S*==-'. This is acceptable so long as the message does not take up more than one line of the text window. Within that one line, be as creative as you like.
+            </dd>
+            <dt>
+                <strong>Auctions</strong>
+            </dt>
+            <dd>
+                Most player to player sales and trades are made by public auction. That is A declares she is selling an item and anyone interested shouts out a bid. Obviously this bidding can go on for some time if, for example, it is a popular item and there is a lot of interest. It is not possible to write exact rules for this bidding; there will always be exceptions and borderline cases. So instead bidders are expected to be <em>reasonable</em> with a view to allowing the auction to reach it's natural conclusion in a sensible amount of time. This means, for example, not bidding in petty increments -- if someone is auctioning a storm rod, an exchange such as the following is not acceptable:<br/>
+                B shouts: I bid 240g<br/>
+                C shouts: I bid 240g 1c<br/>
+                B shouts: I bid 240g 2c<br/>
+            </dd>
+            <dd>
+                Equally, the auctioneer must be reasonable. It is widely understood that auctions follow a pattern along these lines:
+                <ol>
+                    <li>
+                        A offers an item for sale;
+                    </li>
+                    <li>
+                        anyone interested bids;
+                    </li>
+                    <li>
+                        when the bids have stopped flowing A shouts something like 'going once to B for &lt;bid&gt;';
+                    </li>
+                    <li>
+                        go back to step 2 and replace 'once' with 'twice' in step 3; and
+                    </li>
+                    <li>
+                        go back to step 2 and replace 'once' with 'sold' in step 3.
+                    </li>
+                </ol>
+                A controls the auction and must progress between steps 2-5 within a sensible amount of time. A is entirely within her rights to not accept bids from any particular player(s)/character(s) though she should make this clear by shouting it. A may also decide not to sell if she does not receive an acceptable bid. This should be indicated in step 1 by putting a minimum bid on the item. To call off an auction in progress because the bids aren't high enough is considered extremely bad form and may relegate the entire process to nothing more than spam.
+            </dd>
+            <dt>
+                <strong>Clan advertisements</strong>
+            </dt>
+            <dd>
+                Naturally many clans want to advertise themselves for the purposes of recruitment and their own reputation. Such advertisers should always remember that the majority of players are <em>not interested in your clan</em>. Nevertheless, this advertising is acceptable so long as the following criteria are observed:
+                <ul>
+                    <li>
+                        the length of the message is kept to a single shout (256 characters);
+                    </li>
+                    <li>
+                        advertisements for a single clan do not appear more frequently than approximately once per hour (this is not restricted to a particular message or a particular advertiser);
+                    </li>
+                    <li>
+                        advertisements for different clans are reasonably spaced (if A advertises his clan wait a few minutes beforre advertising yours); and
+                    </li>
+                    <li>
+                        all other general rules on spamming (above) are observed.
+                    </li>
+                </ul>
+            </dd>
+        </dl>
+    </section>
+    <section id="penalties">
+        <title>
+            Penalties
+        </title>
+        <p>
+            The precise nature of a penalty, and whether it is preceded by a warning, will be determined by the Vols on a case-by-case basis. See the stickies 'Enforcement of the Game Rules' and 'General Interpretation of the Game Rules' for further explanation of these issues.
+        </p>
+        <p>
+            Otherwise isolated violations of this rule will likely result in any combination of:
+        </p>
+        <ul>
+            <li>
+                <strong>single kick;</strong>
+            </li>
+            <li>
+                <strong>short, medium, or long mute.</strong>
+            </li>
+        </ul>
+    </section>
+</daiml>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE daiml SYSTEM "../../dtd/daiml.dtd">
+<daiml title="Detailed Explanation of Game Rule 2b">
+    <section id="summary">
+        <title>
+            Summary
+        </title>
+        <p>
+            [Abuse of the community] <strong>Do not pass on personal, real life information about another player in either public or private communication without that player's express permission.</strong>
+        </p>
+    </section>
+    <section id="description">
+        <title>
+            Description
+        </title>
+        <p>
+            If any player tells you something in confidence, respect that as you would in real life and do not spread it around unless they give you permission to do so.
+        </p>
+        <p>
+            If you happen to have extra-game knowledge of any <em>player</em> do not share that knowledge with anyone in-game unless they give you permission to do so.
+        </p>
+        <p>
+            At the same time, think before you give out personal information about yourself to another player -- how well do you really know this person? how upset would you be if this information did become public knowledge?
+        </p>
+        <p>
+            Remember that there is no reason why you would ever have to share any real life information with anyone in the game -- player, Vol, or dev -- if you do not want to.
+        </p>
+        <p>
+            As for passing on information and gving permission, if the Vols receive a valid complaint that this rule has been violated they will check the logs. Unless the alleged violation can be traced in the logs, <em>no penalty will be imposed</em>. The Vols can not help with things outside of Daimonin.
+        </p>
+    </section>
+    <section id="penalties">
+        <title>
+            Penalties
+        </title>
+        <p>
+            The precise nature of a penalty, and whether it is preceded by a warning, will be determined by the Vols on a case-by-case basis. See the stickies 'Enforcement of the Game Rules' and 'General Interpretation of the Game Rules' for further explanation of these issues.
+        </p>
+        <p>
+            Otherwise isolated violations of this rule will likely result in any combination of:
+        </p>
+        <ul>
+            <li>
+                <strong>multiple kicks;</strong>
+            </li>
+            <li>
+                <strong>short, medium, long, very long, or permanent mute;</strong>
+            </li>
+            <li>
+                <strong>short, medium, long, very long, or permanent character and/or IP ban.</strong>
+            </li>
+        </ul>
+    </section>
+</daiml>

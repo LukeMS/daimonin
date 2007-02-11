@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE daiml SYSTEM "../../dtd/daiml.dtd">
+<daiml title="Detailed Explanation of Game Rule 1c">
+    <section id="summary">
+        <title>
+            Summary
+        </title>
+        <p>
+            [Abuse of the game] <strong>Do not attempt to password guess, announce any character's password in public communication, or log into any character other than your own.</strong>
+        </p>
+    </section>
+    <section id="description">
+        <title>
+            Description
+        </title>
+        <p>
+            Password <strong>guessing</strong> is quite simply trying to guess the password of a character in order to gain access to that character. It is often mistermed 'hacking'. Password guessing is not hacking. While both tend to have equally deceitful and disruptive purposes and be indulged in for equally selfish reasons, hacking usually requires some level of ingenuity and technical competence. Password guessing does not require such intelligence.
+        </p>
+        <p>
+            Password <strong>announcing</strong> involves communicating a password to other players in public communication.
+        </p>
+        <p>
+            That the guessing was not successful or the announced password was incorrect is irrelevant. The rule prohibits the <em>attempt</em> itself. All attempts will be seen as malicious efforts to gain, or facilitate others to gain, unauthorised access to a character, and therefore to indirectly compromise the security of Daiimonin itself.
+        </p>
+        <p>
+            In all cases of guessing/announcing the guesser/announcer will receive a penalty. The character whose password was guessed/announced will also be temporarily character banned while its true owner is traced. If this turns out to be the guesser/announcer that ban will likely be made permanent. If the true owner turns out to be someone else the password will likely be reset and given to the true owner, although suspicions about password sharing will be raised (see the sticky 'Detailed Explanation of Game Rule 1d').
+        </p>
+        <p>
+            Where a player successfully logs into a character other than their own -- be it through successful guessing, using a publically announce password, or some other means -- they will also be penalised and the disputed character temporarily banned as above. The exception to this policy is for shared characters (see the sticky 'Detailed Explanation of Game Rule 1d').
+        </p>
+    </section>
+    <section id="penalties">
+        <title>
+            Penalties
+        </title>
+        <p>
+            The precise nature of a penalty, and whether it is preceded by a warning, will be determined by the Vols on a case-by-case basis. See the stickies 'Enforcement of the Game Rules' and 'General Interpretation of the Game Rules' for further explanation of these issues.
+        </p>
+        <p>
+            Otherwise isolated violations of this rule will likely result in any combination of:
+        </p>
+        <ul>
+            <li>
+                <strong>multiple kicks;</strong>
+            </li>
+            <li>
+                <strong>very long or permanent mute;</strong>
+            </li>
+            <li>
+                <strong>long, very long, or permanent character and/or IP ban.</strong>
+            </li>
+        </ul>
+        <p>
+            Where the password guessed or announced is that of a known Vol, GM, or DM, or member of the devteam the penalty given will be far more severe as this will be interpreted as preliminary to an attempt to cause widespread disruption in the game and an attack on Daimonin itself.
+        </p>
+    </section>
+</daiml>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE daiml SYSTEM "../../dtd/daiml.dtd">
+<daiml title="Detailed Explanation of Game Rule 2a">
+    <section id="summary">
+        <title>
+            Summary
+        </title>
+        <p>
+            [Abuse of the community] <strong>Do not intentionally harass, intimidate, bully, or defame, threaten, incite, or promote real life violence or prejudice, or otherwise indulge in abuse or bigotry against any real life social group or player in either public or private communication.</strong>
+        </p>
+    </section>
+    <section id="description">
+        <title>
+            Description
+        </title>
+        <p>
+            Hate speech and any form of systematic abuse will <strong>not</strong> be tolerated in Daimonin; there is never an excuse. If you cannot deal with the fact that the world is full of people who have different opinions and beliefs than you then perhaps a multiplayer game is not right for you; certainly there is no place in Daimonin for that sort of attitude.
+        </p>
+        <p>
+            That said, don't be over-sensitive. Players tend to get quite emotionally involved in this sort of game and may lash out with less guarded language than they would otherwise use in the heat of the moment. If this happens, give them a moment to calm down and apologise. If you don't receive an apology ask for one, perhaps in private communication. Try to sort things out between you without disrupting the entire game for everyone else.
+        </p>
+        <p>
+            If you feel genuinely aggrieved by what another player has said or done and your own efforts to sort it out have come to nothing, feel free to contact a Vol. The Vol will do their best to resolve the situation, but remember that they cannot access your private communications ingame and that their resolution may not correspond with your ideal resolution. In some cases it may be necessary to check the server logs. This will show <em>exactly</em> what everyone said, but this may take several days.
+       </p>
+       <p>
+           Verbal violations of this rule include not only chat and emote messages sent but also character names. For example, shouting 'kill all jews' is exactly as prohibited as having a character named Killalljews. Additionally, violations may be by word, as above, or by deed. For example, repeatedly luring or killstealing a particular player or character is prohibited.
+        </p>
+    </section>
+    <section id="penalties">
+        <title>
+            Penalties
+        </title>
+        <p>
+            The precise nature of a penalty, and whether it is preceded by a warning, will be determined by the Vols on a case-by-case basis. See the stickies 'Enforcement of the Game Rules' and 'General Interpretation of the Game Rules' for further explanation of these issues.
+        </p>
+        <p>
+            Otherwise isolated violations of this rule will likely result in any combination of:
+        </p>
+        <ul>
+            <li>
+                <strong>multiple kicks;</strong>
+            </li>
+            <li>
+                <strong>medium, long, very long, or permanent mute;</strong>
+            </li>
+            <li>
+                <strong>medium, long, very long, or permanent character and/or IP ban.</strong>
+            </li>
+        </ul>
+    </section>
+</daiml>

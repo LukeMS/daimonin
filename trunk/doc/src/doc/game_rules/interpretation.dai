@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE daiml SYSTEM "../../dtd/daiml.dtd">
+<daiml title="General Interpretation of the Game Rules">
+    <section id="introduction">
+        <title>
+            Introduction
+        </title>
+        <p>
+            This document describes how the Vols will <em>generally</em> interpret and enforce the Game Rules.
+        </p>
+        <p>
+            It is not intended to be a hard and fast reference work and it is inevitable that different Vols will handle matters in slightly different ways. It is not possible to strictly regulate human behaviour (no, lets not talk about '1984' ;)).
+        </p>
+        <p>
+            That said, the following is intended as far as possible to allow both the conflicting ideals of certainty and flexibility within the Game Rules. Therefore, if you feel that a Vol decision has blatantly contradicted the spirit or letter of a rule, as expressed in that rule's detailed explanation sticky, or has gone against the intention of this document, you should make an official complaint to the Complaint Department (TO BE LINKED).
+        </p>
+    </section>
+    <section id="bycategory">
+        <title>
+            General approach by category
+        </title>
+        <p>
+            TODO
+        </p>
+        <section id ="abuseofthegame">
+            <title>
+                Abuse of the game
+            </title>
+            <p>
+                TODO
+            </p>
+            <section id="disruption">
+                <title>
+                    Disruption of the game
+                </title>
+                <p>
+                    TODO
+                </p>
+            </section>
+        </section>
+        <section id ="abuseofthecommunity">
+            <title>
+                Abuse of the community
+            </title>
+            <p>
+                TODO
+            </p>
+            <section id="offense">
+                <title>
+                    Offensive behaviour
+                </title>
+                <p>
+                    TODO
+                </p>
+            </section>
+        </section>
+        <section id ="abuseoftherules">
+            <title>
+                Abuse of the rules
+            </title>
+            <p>
+                TODO
+            </p>
+            <section id="criticism">
+                <title>
+                    Criticism vs. ranting
+                </title>
+                <p>
+                    TODO
+                </p>
+            </section>
+        </section>
+    </section>
+    <section id="typesofaction">
+        <title>
+            Types of disciplinary action that may be taken
+        </title>
+        <p>
+            For most rules a warning will generally be given before any penalty is enforced.
+        </p>
+        <p>
+            TODO
+        </p>
+        <section id="warnings">
+            <title>
+                Warnings
+            </title>
+            <p>
+                Ideally a warning will be in a form which tells you which rule is being violated or is likely to be violated if the current behaviour continues and exactly what that violating behaviour is. However, there is no required form for a warning: the reality is that sometimes situations, particularly those involving multiple participants, develop faster than a Vol can type. Therefore in the interests of utility the warning may not contain all of this ideal information and may appear somewhat terse. Try not to get too precious about this.
+            </p>
+            <p>
+                Warnings are always optional. If given, they may be privately communicated (eg, via /tell) or publically communicated (eg, via /shout) according to the discretion of the Vols. They may be directed towards an individual, a group, or everyone. However they are communicated they are equally valid and should be respected.
+            </p>
+            <p>
+                A warning does not 'mark' you as a troublemaker and if it is heeded that is the end of the matter (although see below). However, it is exactly what it says it is: a warning that if the present course of action continues it will result in a penalty being imposed.
+            </p>
+            <p>
+                TODO
+            </p>
+        </section>
+        <section id="penalties">
+            <title>
+                Penalties
+            </title>
+            <p>
+                TODO
+            </p>
+            <section id="kick">
+                <title>
+                    Kick
+                </title>
+                <p>
+                    A kick forcibly disconnects a particular character from the game. You will not be able to log back in straight away, but after about a minute you can.
+                </p>
+                <p>
+                    A kick is often used simply to get your attention; a kind of glorified warning. Kicks are valid penalties for all rules. The detailed explanation sticky for the individual rule will specify whether you should expect a <strong>single</strong> kick or <strong>multiple</strong> kicks for an otherwise isolated violation of that rule.
+                </p>
+            </section>
+            <section id="mute">
+                <title>
+                    Mute
+                </title>
+                <p>
+                    A mute prevents a particular character from communicating in <em>any</em> way in the game for a certain period of time.
+                </p>
+                <p>
+                    The detailed explanation sticky for an individual rule will specify the approximate recommended length of time of a mute for an otherwise isolated violation of that rule. This is done by classifying the suggested mute times as follows:
+                </p>
+                <ul>
+                    <li>
+                        A <strong>very short</strong> mute is anything up to 5 minutes;
+                    </li>
+                    <li>
+                        A <strong>short</strong> mute is anything up to 20 minutes;
+                    </li>
+                    <li>
+                        A <strong>medium</strong> mute is anything up to 1 hour;
+                    </li>
+                    <li>
+                        A <strong>long</strong> mute is anything up to 3 hours;
+                    </li>
+                    <li>
+                        A <strong>very long</strong> mute is anything up to 12 hours;
+                    </li>
+                    <li>
+                        A <strong>permanent</strong> mute is anything longer than 12 hours, although it may be topped up at any time at the discretion of the Vols.
+                    </li>
+                </ul>
+            </section>
+            <section id="ban">
+                <title>
+                    Ban
+                </title>
+                <p>
+                    A ban can be either a <strong>character</strong> ban or an <strong>IP</strong> ban.
+                </p>
+                <p>
+                    A character ban prevents anyone from logging into a particular character for a certain period of time.
+                </p>
+                <p>
+                    An IP ban prevents a specific IP or range of IPs from logging into Daimonin <em>at all</em> for a certain period of time.
+                </p>
+                <p>
+                    The detailed explanation sticky for an individual rule will specify the approximate recommended length of time of a ban for an otherwise isolated violation of that rule. This is done by classifying the suggested ban times as follows:
+                </p>
+                <ul>
+                    <li>
+                        A <strong>very short</strong> ban is anything up to 3 hours;
+                    </li>
+                    <li>
+                        A <strong>short</strong> ban is anything up to 1 day;
+                    </li>
+                    <li>
+                        A <strong>medium</strong> ban is anything up to 1 week;
+                    </li>
+                    <li>
+                        A <strong>long</strong> ban is anything up to 1 month;
+                    </li>
+                    <li>
+                        A <strong>very long</strong> ban is anything up to 1 year;
+                    </li>
+                    <li>
+                        A <strong>permanent</strong> ban is anything longer than 1 year, usually literally meaning permanent.
+                    </li>
+                </ul>
+            </section>
+        </section>
+    </section>
+</daiml>

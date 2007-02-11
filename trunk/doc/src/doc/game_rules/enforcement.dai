@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE daiml SYSTEM "../../dtd/daiml.dtd">
+<daiml title="Enforcement of the Game Rules">
+    <section id="introduction">
+        <title>
+            Introduction
+        </title>
+        <p>
+            Vols, GMs, and DMs (usually referred to simply as 'Vols') are Volunteers, Game Masters, and Dungeon Masters. They fulfil several roles in the game. Amongst these:
+        </p>
+        <ul>
+            <li>
+                they enforce the Game Rules;
+            </li>
+            <li>
+                they deal with technical issues surrounding the functioning of the server; and
+            </li>
+            <li>
+                they liaise with the devteam, acting as a filter between the devteam and the community to transfer relevant issues and information between the one and the other.
+            </li>
+        </ul>
+    </section>
+    <section id="codeofethics">
+        <title>
+            Code of ethics
+        </title>
+        <p>
+            The Vols have been granted considerable power and discretion to use that power. They therefore follow a strict code of ethics to deter abuse of this power:
+        </p>
+        <dl>
+            <dt>
+                <strong>Follow all Game Rules as any other player.</strong>
+            </dt>
+            <dd>
+            </dd>
+            <dt>
+                <strong>Do not share confidential information.</strong>
+            </dt>
+            <dd>
+                For example, alt and IP information or personal real world information. Players often confide in a Vol under the implicit expectation that that confidence will not be broken. Respect this. By the same token, players should expect alt and IP information to be shared between and accessible to <em>all</em> Vols and should be aware that <em>everything</em> said, by whatever means, in-game is logged.
+            </dd>
+            <dt>
+                <strong>Do not use your enforcement powers for personal reasons.</strong>
+            </dt>
+            <dd>
+            </dd>
+            <dt>
+                <strong>Try to separate your personal character(s) from your Vol persona.</strong>
+            </dt>
+            <dd>
+                This should not be read as restricting a Vol from issuing warnings about or punishments for violations of the Game Rules via their personal character(s).
+            </dd>
+            <dt>
+                <strong>Be fair in the use of your enforcement powers.</strong>
+            </dt>
+            <dd>
+                Enforce the Game Rules equally and reasonably, for example, without regard to personal friendships and antagonisms. If you find yourself unable to do so, ask another Vol or GM to take the decision for you. It is the responsibility of the GMs togive assistance when asked and make the difficfult decisions where necessary.
+            </dd>
+        </dl>
+    </section>
+    <section id="complaints">
+        <title>
+            Complaints
+        </title>
+        <p>
+            Complaints about the <em>enforcement</em> of the Game Rules or the conduct of one or more Vols should be sent to the Complaints Department (TO BE LINKED). Such complaints should <em>not</em> be posted to this board.
+        </p>
+    </section>
+</daiml>

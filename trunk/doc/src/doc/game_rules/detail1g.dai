@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE daiml SYSTEM "../../dtd/daiml.dtd">
+<daiml title="Detailed Explanation of Game Rule 1g">
+    <section id="summary">
+        <title>
+            Summary
+        </title>
+        <p>
+            [Abuse of the game] <strong>Do not sell or trade Daimonin items, money, or experience for perks, goods, or money in real life or other games.</strong>
+        </p>
+    </section>
+    <section id="description">
+        <title>
+            Description
+        </title>
+        <p>
+            This is very straightforward. In fact, so straightforward is it, it maybe defies further description.
+        </p>
+        <p>
+            Some examples of prohibited behaviour under this rule include:
+        </p>
+        <ul>
+            <li>
+                A character shouts out that he is selling a collection of storm devices on eBay for $1 per level.
+            </li>
+            <li>
+                A player pays someone else $50 to level her character for a week.
+            </li>
+            <li>
+                Two players agree that if A gives B his ring of Yordan in Daimonin B will give A some currency in another MMORPG.
+            </li>
+        </ul>
+    </section>
+    <section id="penalties">
+        <title>
+            Penalties
+        </title>
+        <p>
+            The precise nature of a penalty, and whether it is preceded by a warning, will be determined by the Vols on a case-by-case basis. See the stickies 'Enforcement of the Game Rules' and 'General Interpretation of the Game Rules' for further explanation of these issues.
+        </p>
+        <p>
+            Otherwise isolated violations of this rule will likely result in any combination of:
+        </p>
+        <ul>
+            <li>
+                <strong>single kick;</strong>
+            </li>
+            <li>
+                <strong>short, medium, or long mute.</strong>
+            </li>
+            <li>
+                <strong>short character and/or IP ban</strong>
+            </li>
+        </ul>
+    </section>
+</daiml>

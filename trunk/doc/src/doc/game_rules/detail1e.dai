@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE daiml SYSTEM "../../dtd/daiml.dtd">
+<daiml title="Detailed Explanation of Game Rule 1e">
+    <section id="summary">
+        <title>
+            Summary
+        </title>
+        <p>
+            [Abuse of the game] <strong>Do not engage in alt theft or other alt trickery.</strong>
+        </p>
+    </section>
+    <section id="description">
+        <title>
+            Description
+        </title>
+        <p>
+            An <strong>alt</strong> (short for alternative character) is technically any of the characters controlled by a player with more than one character. In practice such players usually have a <strong>main</strong> character as well, although this is really just a term of convenience.
+        </p>
+        <p>
+            Daimonin does not limit the number of alts a player may have, nor is there a restriction on those alts <em>legitimately</em> interacting with each other.
+        </p>
+        <p>
+            However, the phenomena of 'alt theft' is specifically not tolerated. At its simplest level, this is where a player creates an alt, steals an item or money from another player, and then transfers the stolen property to their main. Various levels of complexity can be put on this basic scenario, including the use of 'middlemen', and alt theft 'rings' where A steals for B and B steals for A for example. But the basic concept and intent remains the same.
+        </p>
+        <p>
+            As can be quite easily surmised from this, alt theft can be very difficult to investigate and detect. Therefore if the Vols think that a player has been so indulging, it is on that player to prove their innocence to the satisfaction of the Vols.
+        </p>
+        <p>
+            Other alt trickery would include creating alts for the purposes of deception, impersonation, or causing offence. Examples would be logging in as 'Game_master' or 'Michteon' or 'Longir_twat'. Such trickery may also violate other Game Rules.
+        </p>
+    </section>
+    <section id="penalties">
+        <title>
+            Penalties
+        </title>
+        <p>
+            The precise nature of a penalty, and whether it is preceded by a warning, will be determined by the Vols on a case-by-case basis. See the stickies 'Enforcement of the Game Rules' and 'General Interpretation of the Game Rules' for further explanation of these issues.
+        </p>
+        <p>
+            Otherwise isolated violations of this rule will likely result in any combination of:
+        </p>
+        <ul>
+            <li>
+                <strong>multiple kicks;</strong>
+            </li>
+            <li>
+                <strong>very long or permanent mute;</strong>
+            </li>
+            <li>
+                <strong>long, very long, or permanent character and/or IP ban.</strong>
+            </li>
+        </ul>
+    </section>
+</daiml>

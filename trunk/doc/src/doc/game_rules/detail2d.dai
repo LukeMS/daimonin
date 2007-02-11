@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE daiml SYSTEM "../../dtd/daiml.dtd">
+<daiml title="Detailed Explanation of Game Rule 2d">
+    <section id="summary">
+        <title>
+            Summary
+        </title>
+        <p>
+            [Abuse of the community] <strong>Do not use profane, obscene, or explicit language in public communication.</strong>
+        </p>
+    </section>
+    <section id="description">
+        <title>
+            Description
+        </title>
+        <p>
+            Basically, don't swear. For all sorts of reasons the community in general does not wish to hear it, so respect that wish and don't do it.
+        </p>
+        <p>
+            But the community in general must be aware that people swear. Daimonin follows a policy of after-the-fact moderation, not per-emptive censorship. Therefore rude words <em>will</em> appear on your screen. If you (or someone who may be looking over your shoulder) are too sensitive, young, morally centered, etc. to handle this, consider one of the options detailed under 'Disruption of the game' in the sticky 'General Interpretation of the Game Rules'.
+        </p>
+        <p>
+            Context is very important to this rule. Shouting 'F***! I'm so bored' will be judged more harshly than shouting 'F***! I was three exp points from levelling and I was killed'.
+        </p>
+        <p>
+            Nevertheless, a single, otherwise isolated incident is unlikely to earn you more than a warning.
+        </p>
+    </section>
+    <section id="penalties">
+        <title>
+            Penalties
+        </title>
+        <p>
+            The precise nature of a penalty, and whether it is preceded by a warning, will be determined by the Vols on a case-by-case basis. See the stickies 'Enforcement of the Game Rules' and 'General Interpretation of the Game Rules' for further explanation of these issues.
+        </p>
+        <p>
+            For this rule a warning should always be given before a penalty is imposed.
+        </p>
+        <p>
+            Otherwise isolated violations of this rule will likely result in any combination of:
+        </p>
+        <ul>
+            <li>
+                <strong>single kick;</strong>
+            </li>
+            <li>
+                <strong>short mute.</strong>
+            </li>
+        </ul>
+    </section>
+</daiml>

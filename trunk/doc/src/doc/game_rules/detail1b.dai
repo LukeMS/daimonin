@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE daiml SYSTEM "../../dtd/daiml.dtd">
+<daiml title="Detailed Explanation of Game Rule 1b">
+    <section id="summary">
+        <title>
+            Summary
+        </title>
+        <p>
+            [Abuse of the game] <strong>Do not exploit bugs with the intention of giving any player(s) either an advantage or disadvantage over any other player(s), harming the game economy, or otherwise disrupting the game.</strong>
+        </p>
+    </section>
+    <section id="description">
+        <title>
+            Description
+        </title>
+        <p>
+            TODO
+        </p>
+    </section>
+    <section id="penalties">
+        <title>
+            Penalties
+        </title>
+        <p>
+            The precise nature of a penalty, and whether it is preceded by a warning, will be determined by the Vols on a case-by-case basis. See the stickies 'Enforcement of the Game Rules' and 'General Interpretation of the Game Rules' for further explanation of these issues.
+        </p>
+        <p>
+            Otherwise isolated violations of this rule will likely result in any combination of:
+        </p>
+        <ul>
+            <li>
+                <strong>multiple kicks;</strong>
+            </li>
+            <li>
+                <strong>very long or permanent mute;</strong>
+            </li>
+            <li>
+                <strong>long, very long, or permanent character and/or IP ban.</strong>
+            </li>
+        </ul>
+    </section>
+</daiml>
