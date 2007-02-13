@@ -39,7 +39,7 @@ http://www.gnu.org/licenses/licenses.html
 
 using namespace Ogre;
 
-const unsigned int ITEM_SIZE = 64;
+const unsigned int ITEM_SIZE = 64; // Only 64 or 32 are allowed!
 
 Overlay *GuiGadgetSlot::mDnDOverlay =0;
 OverlayElement *GuiGadgetSlot::mDnDElement =0;
@@ -52,12 +52,12 @@ TexturePtr GuiGadgetSlot::mDnDTexture;
 //================================================================================================
 GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOnInit):GuiElement(xmlElement, parent)
 {
-    mMouseOver = false;
-    mMouseButDown = false;
-    mActiveDrag = false;
     mActiveSlot = -1;
+    mlIconContainer =0;
+    mMouseOver = false;
+    mActiveDrag = false;
+    mMouseButDown = false;
     std::string filename;
-
     const char *tmp;
     TiXmlElement *xmlOpt;
     if ((xmlOpt = xmlElement->FirstChildElement("Sum")))
@@ -75,7 +75,6 @@ GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOn
     mSlotWidth = (mWidth + mColSpace) * mSumCol;
     mSlotHeight= (mHeight+ mRowSpace) * mSumRow;
     BG_Backup = new uint32[mWidth * mHeight];
-    mGfxNr = new int[mSumCol*mSumRow];
     // This stuff is static, so we have to do it only once.
     if (!mDnDOverlay)
     {
@@ -221,7 +220,6 @@ GuiGadgetSlot::~GuiGadgetSlot()
     mDnDMaterial.setNull();
     mDnDTexture.setNull();
     mvGfxPositions.clear();
-    delete[] mGfxNr;
     //delete[] BG_Backup; // done in GuiElement.cpp
 }
 
@@ -239,15 +237,14 @@ int GuiGadgetSlot::mouseEvent(int MouseAction, int x, int y)
         {
             // We are no longer over this slot, so draw the defalut gfx.
             if (mActiveSlot >=0)
-                drawSlot(mActiveSlot, SLOT_UPDATE,GuiImageset::STATE_ELEMENT_DEFAULT);
+                updateSlot(mActiveSlot, GuiImageset::STATE_ELEMENT_DEFAULT);
             mActiveSlot = activeSlot;
-            drawSlot(mActiveSlot, SLOT_UPDATE, GuiImageset::STATE_ELEMENT_M_OVER);
+            updateSlot(mActiveSlot, GuiImageset::STATE_ELEMENT_M_OVER);
         }
-        if (MouseAction == GuiWindow::BUTTON_PRESSED && !mActiveDrag && mGfxNr[mActiveSlot] >=0)
+        if (MouseAction == GuiWindow::BUTTON_PRESSED && !mActiveDrag)
         {
-            mActiveDrag = true;
             mDragSlot = mActiveSlot;
-            drawDragItem(0);
+            mActiveDrag = drawDragItem();
         }
         if (MouseAction == GuiWindow::BUTTON_RELEASED && mActiveDrag)
         {
@@ -257,7 +254,7 @@ int GuiGadgetSlot::mouseEvent(int MouseAction, int x, int y)
             }
             else
                 GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, StringConverter::toString(activeSlot).c_str());
-            drawDragItem(-1);
+            mDnDOverlay->hide();
             mActiveDrag = false;
         }
         if (MouseAction == GuiWindow::MOUSE_MOVEMENT && mActiveDrag)
@@ -272,7 +269,7 @@ int GuiGadgetSlot::mouseEvent(int MouseAction, int x, int y)
     {
         if (mActiveSlot >=0)
         {
-            drawSlot(mActiveSlot, SLOT_UPDATE, GuiImageset::STATE_ELEMENT_DEFAULT);
+            updateSlot(mActiveSlot, GuiImageset::STATE_ELEMENT_DEFAULT);
             mActiveSlot = -1;
             return 0; // No need to check other gadgets.
         }
@@ -282,139 +279,159 @@ int GuiGadgetSlot::mouseEvent(int MouseAction, int x, int y)
 }
 
 //================================================================================================
-// Draw a single slot.
+// Get the item pos inthe item-texture-atlas.
 //================================================================================================
-void GuiGadgetSlot::drawSlot(int slotNr, int gfxNr, int state)
+int GuiGadgetSlot::getTextureAtlasPos(int itemFace)
 {
-    int row = slotNr / mSumCol;
-    int col = slotNr - (row * mSumCol);
-    int strtX = mPosX + col * (mColSpace + mWidth);
-    int strtY = mPosY + row * (mRowSpace + mHeight);
-    Texture *texture = ((GuiWindow*) mParent)->getTexture();
+    String gfxName = ObjectWrapper::getSingleton().getMeshName(itemFace);
+    for (unsigned int i =0; i < mvGfxPositions.size(); ++i)
+    {
+        if (mvGfxPositions[i] == gfxName) return i;
+    }
+    return -1; // Not found.
+}
 
-    //if (slotNr >=
-    if (gfxNr != SLOT_UPDATE)
+//================================================================================================
+// Draws the slots.
+//================================================================================================
+void GuiGadgetSlot::updateSlot(int slot, int state)
+{
+    if (!mlIconContainer) return;
+    static GuiTextout::TextLine label;
+    std::list<Item::sItem*>::iterator iter = mlIconContainer->begin();
+    int slotNr = 0;
+    if (slot != UPDATE_ALL_SLOTS)
     {
-        mGfxNr[slotNr] = -1;
-        String gfxName = ObjectWrapper::getSingleton().getMeshName(gfxNr);
-        for (unsigned int i =0; i < mvGfxPositions.size(); ++i)
+        slotNr = slot;
+        for (int i =0; i < slot; ++i)
+            if (iter != mlIconContainer->end()) ++iter;
+    }
+    for (; slotNr < mSumCol * mSumRow; ++slotNr)
+    {
+        int row = slotNr / mSumCol;
+        int col = slotNr - (row * mSumCol);
+        int strtX = mPosX + col * (mColSpace + mWidth);
+        int strtY = mPosY + row * (mRowSpace + mHeight);
+        Texture *texture = ((GuiWindow*) mParent)->getTexture();
+        // ////////////////////////////////////////////////////////////////////
+        // Slot gfx.
+        // ////////////////////////////////////////////////////////////////////
+        PixelBox srcSlot = ((GuiWindow*) mParent)->getPixelBox()->getSubVolume(Box(
+                               gfxSrcPos[state].x,
+                               gfxSrcPos[state].y,
+                               gfxSrcPos[state].x + mWidth,
+                               gfxSrcPos[state].y + mHeight));
+        uint32 *srcSlotData = static_cast<uint32*>(srcSlot.data);
+        int rowSkipSlot = (int)((GuiWindow*) mParent)->getPixelBox()->getWidth();
+        // ////////////////////////////////////////////////////////////////////
+        // Item gfx.
+        // ////////////////////////////////////////////////////////////////////
+        PixelBox srcItem;
+        uint32 *srcItemData;
+        int gfxNr = (slotNr >= (int)mlIconContainer->size())?-1:getTextureAtlasPos((*iter)->face & ~0x8000);
+        if (gfxNr >=0)
         {
-            if (mvGfxPositions[i] == gfxName)
-            {
-                mGfxNr[slotNr] = i;
-                break;
-            }
+            srcItem = mAtlasTexture.getPixelBox().getSubVolume(Box(
+                          0,
+                          ITEM_SIZE * gfxNr,
+                          ITEM_SIZE,
+                          ITEM_SIZE *(gfxNr+1)));
+            srcItemData = static_cast<uint32*>(srcItem.data);
         }
-    }
-    // ////////////////////////////////////////////////////////////////////
-    // Slot gfx.
-    // ////////////////////////////////////////////////////////////////////
-    PixelBox srcSlot = ((GuiWindow*) mParent)->getPixelBox()->getSubVolume(Box(
-                           gfxSrcPos[state].x,
-                           gfxSrcPos[state].y,
-                           gfxSrcPos[state].x + mWidth,
-                           gfxSrcPos[state].y + mHeight));
-    uint32 *srcSlotData = static_cast<uint32*>(srcSlot.data);
-    int rowSkipSlot = (int)((GuiWindow*) mParent)->getPixelBox()->getWidth();
-    // ////////////////////////////////////////////////////////////////////
-    // Item gfx.
-    // ////////////////////////////////////////////////////////////////////
-    PixelBox srcItem;
-    uint32 *srcItemData;
-    if (mGfxNr[slotNr] >=0)
-    {
-        srcItem = mAtlasTexture.getPixelBox().getSubVolume(Box(
-                      0,
-                      ITEM_SIZE * mGfxNr[slotNr],
-                      ITEM_SIZE,
-                      ITEM_SIZE *(mGfxNr[slotNr]+1)));
-        srcItemData = static_cast<uint32*>(srcItem.data);
-    }
-    // ////////////////////////////////////////////////////////////////////
-    // Draw into the buffer.
-    // ////////////////////////////////////////////////////////////////////
-    int dSlotY = 0, dItemY = 0, destY =0;
-    for (int y =0; y < mHeight; ++y)
-    {
-        for (int x =0; x < mWidth; ++x)
+        // ////////////////////////////////////////////////////////////////////
+        // Draw into the buffer.
+        // ////////////////////////////////////////////////////////////////////
+        int dSlotY = 0, dItemY = 0, destY =0;
+        for (int y =0; y < mHeight; ++y)
         {
-            // First check if item has a non transparent pixel to draw.
-            if (mGfxNr[slotNr] >=0 && x > mItemOffsetX && x < (int)ITEM_SIZE + mItemOffsetX &&y > mItemOffsetY && y < (int)ITEM_SIZE+ mItemOffsetY)
+            for (int x =0; x < mWidth; ++x)
             {
-                if (srcItemData[dItemY + x- mItemOffsetX] > 0x00ffffff)
+                // First check if item has a non transparent pixel to draw.
+                if (gfxNr >=0 && x > mItemOffsetX && x < (int)ITEM_SIZE + mItemOffsetX &&y > mItemOffsetY && y < (int)ITEM_SIZE+ mItemOffsetY)
                 {
-                    BG_Backup[destY + x] = srcItemData[dItemY + x- mItemOffsetX];
-                    continue;
+                    if (srcItemData[dItemY + x- mItemOffsetX] > 0x00ffffff)
+                    {
+                        BG_Backup[destY + x] = srcItemData[dItemY + x- mItemOffsetX];
+                        continue;
+                    }
                 }
+                // Now check for the background.
+                if (srcSlotData[dSlotY + x] > 0x00ffffff)
+                    BG_Backup[destY + x] = srcSlotData[dSlotY + x];
             }
-            // Now check for the background.
-            if (srcSlotData[dSlotY + x] > 0x00ffffff)
-                BG_Backup[destY + x] = srcSlotData[dSlotY + x];
+            if (y > mItemOffsetY)
+                dItemY+= ITEM_SIZE;
+            dSlotY+= (int)rowSkipSlot;
+            destY+= mWidth;
         }
-        if (y > mItemOffsetY)
-            dItemY+= ITEM_SIZE;
-        dSlotY+= (int)rowSkipSlot;
-        destY+= mWidth;
+        srcSlot = PixelBox(mWidth, mHeight, 1, PF_A8B8G8R8, BG_Backup);
+        // ////////////////////////////////////////////////////////////////////
+        // Blit the buffer.
+        // ////////////////////////////////////////////////////////////////////
+        texture->getBuffer()->blitFromMemory(srcSlot, Box(strtX, strtY, strtX + mWidth, strtY + mHeight));
+        if (slotNr < (int)mlIconContainer->size() && (*iter)->nrof)
+        {
+            //label.text = (*iter)->d_name;
+            label.text = StringConverter::toString((*iter)->nrof);
+            label.hideText= false;
+            label.index= -1;
+            label.font = 2;
+            label.x1 = strtX + 9;
+            label.y1 = strtY + 9;
+            label.x2 = label.x1 + mWidth;
+            label.y2 = label.y1 + GuiTextout::getSingleton().getFontHeight(label.font);
+            label.color= 0x00888888;
+            GuiTextout::getSingleton().Print(&label, texture);
+        }
+        if (slot != UPDATE_ALL_SLOTS) break;
+        if (iter != mlIconContainer->end()) ++iter;
     }
-    srcSlot = PixelBox(mWidth, mHeight, 1, PF_A8B8G8R8, BG_Backup);
-    // ////////////////////////////////////////////////////////////////////
-    // Blit the buffer.
-    // ////////////////////////////////////////////////////////////////////
-    texture->getBuffer()->blitFromMemory(srcSlot, Box(strtX, strtY, strtX + mWidth, strtY + mHeight));
+
     /*
-        // only for testing.
-        GuiTextout::TextLine label;
-        Item::sItem *item = Item::getSingleton().getBackpackItem(pos);
-        if (!item) return;
-        label.text = item->d_name;
-        label.hideText= false;
-        label.index= -1;
-        label.font = 0;
-        label.x1 = strtX + 5;
-        label.y1 = strtY + 5;
-        label.x2 = label.x1 + mWidth;
-        label.y2 = label.y1 + GuiTextout::getSingleton().getFontHeight(label.font);
-        label.color= 0x00ffffff;
-        GuiTextout::getSingleton().Print(&label, texture);
+        long time = Root::getSingleton().getTimer()->getMilliseconds();
+        for (int z = 0; z < 500; ++z)
+        {
+        }
+        Logger::log().error() <<"time: "<<  Root::getSingleton().getTimer()->getMilliseconds() - time;
     */
 }
 
 //================================================================================================
-// Only used to CLEAR the slots. For drawing use drawSlot(...)
+// Only called once. Draws the empty slots to the background.
 //================================================================================================
 void GuiGadgetSlot::draw()
 {
-    for (int slotNr = 0; slotNr < mSumRow * mSumCol; ++slotNr)
-        drawSlot(slotNr, SLOT_CLEAR, GuiImageset::STATE_ELEMENT_DEFAULT);
+    int state = GuiImageset::STATE_ELEMENT_DEFAULT;
+    int strtX, strtY = mPosY;
+    Texture *texture = ((GuiWindow*) mParent)->getTexture();
+    PixelBox srcSlot = ((GuiWindow*) mParent)->getPixelBox()->getSubVolume(Box(
+                           gfxSrcPos[state].x, gfxSrcPos[state].y,
+                           gfxSrcPos[state].x + mWidth, gfxSrcPos[state].y + mHeight));
+    for (int y = 0; y < mSumCol; ++y)
+    {
+        strtX = mPosX;
+        for (int x = 0; x < mSumCol; ++x)
+        {
+            texture->getBuffer()->blitFromMemory(srcSlot, Box(strtX, strtY, strtX + mWidth, strtY + mHeight));
+            strtX += mWidth;
+        }
+        strtY += mHeight;
+    }
 }
 
 //================================================================================================
 //
 //================================================================================================
-void GuiGadgetSlot::drawDragItem(int gfxNr)
+bool GuiGadgetSlot::drawDragItem()
 {
-    // Hide DnD overlay.
-    if (gfxNr < 0)
-    {
-        mDnDOverlay->hide();
-        return;
-    }
-    // Draw dragged item.
-    PixelBox srcItem;
-    uint32 *srcItemData;
-
-    if (mGfxNr[mDragSlot] >=0)
-    {
-        srcItem = mAtlasTexture.getPixelBox().getSubVolume(Box(
-                      0,
-                      ITEM_SIZE * mGfxNr[mDragSlot],
-                      ITEM_SIZE,
-                      ITEM_SIZE *(mGfxNr[mDragSlot]+1)));
-        srcItemData = static_cast<uint32*>(srcItem.data);
-    }
-    mDnDTexture->getBuffer()->blitFromMemory(srcItem);
+    if (mDragSlot >= (int)mlIconContainer->size()) return false;
+    std::list<Item::sItem*>::iterator iter = mlIconContainer->begin();
+    for (int i = 0; i < mDragSlot; ++i) ++iter;
+    int gfxNr = getTextureAtlasPos((*iter)->face & ~0x8000);
+    mDnDTexture->getBuffer()->blitFromMemory(mAtlasTexture.getPixelBox().getSubVolume(Box(0, ITEM_SIZE * gfxNr, ITEM_SIZE, ITEM_SIZE *(gfxNr+1))));
     Real x, y;
     GuiCursor::getSingleton().getPos(x, y);
     mDnDElement->setPosition(x, y);
     mDnDOverlay->show();
+    return true;
 }
