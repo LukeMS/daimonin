@@ -158,9 +158,14 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // GUI_gadget_Slot stuff.
     // ////////////////////////////////////////////////////////////////////
-    void updateItemSlot(int window, int element, int slotNr, int gfxNr)
+    void setItemReference(int window, int element, std::list<Item::sItem*> *itemContainer)
     {
-        guiWindow[window].updateItemSlot(element, slotNr, gfxNr);
+        guiWindow[window].setItemReference(element, itemContainer);
+    }
+
+    void updateItemSlot(int window, int element, int slotNr, int state = GuiImageset::STATE_ELEMENT_DEFAULT)
+    {
+        guiWindow[window].updateItemSlot(element, slotNr, state);
     }
 
 private:

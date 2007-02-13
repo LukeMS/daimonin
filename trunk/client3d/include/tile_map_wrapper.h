@@ -237,18 +237,24 @@ private:
             return;
         }
         char *name = new char[256];
+        char *nameT = new char[256];
+        std::string strTmp;
         while (getline(fbmapIn, mStrBuf))
         {
             bmpType *entry = new bmpType;
-            sscanf(mStrBuf.c_str(), "%s %s %s", name, name, name);
-            // Cut the animation number.
+            sscanf(mStrBuf.c_str(), "%s %s %s", nameT, nameT, name);
             entry->name2d = name;
-            entry->name2d = entry->name2d.substr(0, entry->name2d.find( '.'));
+            if (entry->name2d.find("wall",  0) == std::string::npos && entry->name2d.find("door",  0) == std::string::npos)
+            {
+                // Cut the animation number.
+               entry->name2d = entry->name2d.substr(0, entry->name2d.find( '.'));
+            }
             mvBmpEntry.push_back(entry);
             entry->name3d = "";
         }
         fbmapIn.close();
         delete[] name;
+        delete[] nameT;
     }
 };
 

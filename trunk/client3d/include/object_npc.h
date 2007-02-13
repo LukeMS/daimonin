@@ -65,7 +65,7 @@ public:
     virtual ~ObjectNPC();
     virtual void freeRecources();
     virtual bool update(const Ogre::FrameEvent& event);
-    void movePosition(int dx, int dz);
+    bool movePosition(int dx, int dz);
     void moveToDistantTile(TilePos pos, int precision =0);
     void faceToTile(TilePos pos);
     void turning(Ogre::Real turn, bool cursorTurn);

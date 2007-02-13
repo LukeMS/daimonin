@@ -182,7 +182,7 @@ bool TileInterface::getPickPos(Ray *mouseRay, int quadrant)
 }
 
 //================================================================================================
-// Converts a tile pos into the world pos.
+// Converts a tile pos into the special pos for walls.
 //================================================================================================
 Vector3 TileInterface::tileToWorldPos(TilePos tile)
 {
@@ -217,6 +217,18 @@ Vector3 TileInterface::tileToWorldPos(TilePos tile)
     }
     mTris[3]= (mTris[0] + mTris[1]) /2;
     return mTris[3];
+}
+
+//================================================================================================
+// Converts a tile pos into the world pos.
+//================================================================================================
+Vector3 TileInterface::tileToWallPos(TilePos tile)
+{
+   mTris[0].x = (tile.x + tile.subX)*TileManager::TILE_SIZE_X;
+   mTris[0].y = TileManager::getSingleton().getMapHeight(tile.x,tile.z);
+   mTris[0].z = (tile.z + tile.subZ)*TileManager::TILE_SIZE_Z;
+
+    return mTris[0];
 }
 
 //================================================================================================

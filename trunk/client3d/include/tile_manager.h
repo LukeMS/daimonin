@@ -41,8 +41,8 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    enum { CHUNK_SIZE_X = 17 }; //11; /**< Number of tiles in the worldmap (on x-axis). */
-    enum { CHUNK_SIZE_Z = 17 }; //23; /**< Number of tiles in the worldmap (on z-axis). */
+    enum { CHUNK_SIZE_X = 17 };      /**< Number of tiles in the worldmap (on x-axis). */
+    enum { CHUNK_SIZE_Z = 17 };      /**< Number of tiles in the worldmap (on z-axis). */
     enum { MIN_TEXTURE_PIXEL = 16 }; /**< Minimal size of tile in the terrain texture. */
 
     /** Size of a tile. */
@@ -63,12 +63,12 @@ public:
     };
 
     enum
-    { // Which triangles of the tile are indoor.
-        INNER_TOP_LEFT,
-        INNER_BOT_LEFT,
-        INNER_TOP_RIGHT,
-        INNER_BOT_RIGHT,
-        INNER_ALL
+    {   // Pos of a wall within a tile.
+        WALL_POS_BOTTOM,
+        WALL_POS_TOP,
+        WALL_POS_RIGHT,
+        WALL_POS_LEFT,
+        WALL_POS_SUM
     };
 
     // ////////////////////////////////////////////////////////////////////
@@ -91,7 +91,6 @@ public:
     {
         return mMap[x][y].height;
     }
-
     float getAvgMapHeight(short x, short y)
     {
         return ((mMap[x  ][y].height + mMap[x  ][y+1].height +
@@ -99,44 +98,23 @@ public:
     }
     char getMapTextureRow(short x, short z)
     {
-        if (x > CHUNK_SIZE_X) x = CHUNK_SIZE_X;
-        else  if (x <0) x =0;
-        if (z > CHUNK_SIZE_Z) z = CHUNK_SIZE_Z;
-        else if (z <0) z =0;
+        if ((unsigned short)x > CHUNK_SIZE_X) x = CHUNK_SIZE_X;
+        if ((unsigned short)z > CHUNK_SIZE_Z) z = CHUNK_SIZE_Z;
         return mMap[x][z].terrain_row;
     }
     char getMapTextureCol(short x, short z)
     {
-        if (x > CHUNK_SIZE_X) x = CHUNK_SIZE_X;
-        else  if (x <0) x =0;
-        if (z > CHUNK_SIZE_Z) z = CHUNK_SIZE_Z;
-        else if (z <0) z =0;
+        if ((unsigned short)x > CHUNK_SIZE_X) x = CHUNK_SIZE_X;
+        if ((unsigned short)z > CHUNK_SIZE_Z) z = CHUNK_SIZE_Z;
         return mMap[x][z].terrain_col;
     }
-
-    char getMapIndoorRow(short x, short z)
+    bool getIndoor(short x, short z)
     {
-        if (x > CHUNK_SIZE_X) x = CHUNK_SIZE_X;
-        else  if (x <0) x =0;
-        if (z > CHUNK_SIZE_Z) z = CHUNK_SIZE_Z;
-        else if (z <0) z =0;
-        return mMap[x][z].indoor_row;
-    }
-    char getMapIndoorCol(short x, short z)
-    {
-        if (x > CHUNK_SIZE_X) x = CHUNK_SIZE_X;
-        else  if (x <0) x =0;
-        if (z > CHUNK_SIZE_Z) z = CHUNK_SIZE_Z;
-        else if (z <0) z =0;
-        return mMap[x][z].indoor_col;
-    }
-    char getIndoorTris(short x, short z)
-    {
-        if (x > CHUNK_SIZE_X) x = CHUNK_SIZE_X;
-        else  if (x <0) x =0;
-        if (z > CHUNK_SIZE_Z) z = CHUNK_SIZE_Z;
-        else if (z <0) z =0;
-        return mMap[x][z].indoorTris;
+        if ((unsigned short)x > CHUNK_SIZE_X) x = CHUNK_SIZE_X;
+        if ((unsigned short)z > CHUNK_SIZE_Z) z = CHUNK_SIZE_Z;
+        // ATM only map position 2,4 is an indoor tile.
+        if (mMap[x][z].terrain_col == 2 && mMap[x][z].terrain_row == 4) return true;
+        return false;
     }
     TileInterface* getTileInterface()
     {
@@ -187,6 +165,8 @@ public:
     void addToGroupTexture(unsigned char* TextureGroup_data, unsigned char *Filter_data, Ogre::Image* Texture, short pixel, short x, short y);
     void setWalkablePos(const TilePos &pos, int row, unsigned char walkables);
     bool getWalkablePos(int x, int y);
+    void addWall(int level, int tileX, int tileZ, int pos, const char *meshName);
+    void syncWalls(Ogre::Vector3 &deltaPos);
 
 private:
     // ////////////////////////////////////////////////////////////////////
@@ -195,13 +175,11 @@ private:
     /**  TileEngine struct which holds the worldmap. **/
     struct _mMap
     {
-        unsigned char height;                 /**< Average height. **/
-        unsigned char walkable[SUM_SUBTILES]; /**< Walkable status for each subtile (8 bit * 8 rows)  **/
-        char terrain_col;                     /**< Column of the tile-texture in the terrain-texture. **/
-        char terrain_row;                     /**< Row    of the tile-texture in the terrain-texture. **/
-        char indoor_col;                      /**< Column of the tile-texture in the terrain-texture. **/
-        char indoor_row;                      /**< Row    of the tile-texture in the terrain-texture. **/
-        char indoorTris;                      /**< Which triangles of the tile do have indoor gfx.    **/
+        unsigned char height;                     /**< Average height. **/
+        unsigned char walkable[SUM_SUBTILES];     /**< Walkable status for each subtile (8 bit * 8 rows)  **/
+        char terrain_col;                         /**< Column of the tile-texture in the terrain-texture. **/
+        char terrain_row;                         /**< Row    of the tile-texture in the terrain-texture. **/
+        Ogre::Entity *entity[WALL_POS_SUM];
     }
     mMap[CHUNK_SIZE_X+1][CHUNK_SIZE_Z+1];
     Ogre::SceneManager *mSceneManager;
@@ -211,9 +189,16 @@ private:
     int mMapScrollX, mMapScrollZ;
     bool mGrid;
 
+    // ////////////////////////////////////////////////////////////////////
+    // Functions.
+    // ////////////////////////////////////////////////////////////////////
     TileManager();
     ~TileManager();
-    TileManager(const TileManager&); // disable copy-constructor.
+    TileManager(const TileManager&); /**< disable copy-constructor. **/
+    void delRowOfWalls(int row);     /**< Delete all walls that are scrolling out of the tile map.**/
+    void delColOfWalls(int col);     /**< Delete all walls that are scrolling out of the tile map.**/
+    void clsRowOfWalls(int row);     /**< Set all walls to 0 that are scrolling into the tile map.**/
+    void clsColOfWalls(int col);     /**< Set all walls to 0 that are scrolling into the tile map.**/
 };
 
 #endif

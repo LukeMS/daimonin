@@ -41,134 +41,20 @@ using namespace Ogre;
 // * player: controlled by a human player.
 //================================================================================================
 
-
-
 //================================================================================================
 // Init all static Elemnts.
 //================================================================================================
-char *ObjectManager::ObjectID[OBJECT_SUM] = { "S","S","P","N" };
+// Prefix for the object name (S)tatic, (P)layer, (N)PC
+char *ObjectManager::ObjectID[OBJECT_SUM] = { "S","S","S","P","N" };
 
 //================================================================================================
 // Init the model from the description file.
 //================================================================================================
-bool ObjectManager::init()
+void ObjectManager::init()
 {
-    String strType, strTemp, strMesh, strNick;
     mSelectedType  =-1;
     mSelectedObject=-1;
-    //    mSelectedEnemy = false;
-    int i=0;
-    // Default values.
-
-    while (1)
-    {
-        if (!(Option::getSingleton().openDescFile(FILE_WORLD_DESC)))
-        {
-            Logger::log().info() << "Parse description file " << FILE_WORLD_DESC << ".";
-            return false;
-        }
-
-        if (!(Option::getSingleton().getDescStr("Type", strType, ++i)))
-            break;
-        ObjectStatic::sObject obj;
-        Option::getSingleton().getDescStr("MeshName", obj.meshName,i);
-        Option::getSingleton().getDescStr("NickName", obj.nickName,i);
-
-        Option::getSingleton().getDescStr("BoundingRadius", strTemp,i);
-        obj.boundingRadius = (unsigned char) StringConverter::parseInt(strTemp);
-
-        if (Option::getSingleton().getDescStr("WalkableRow0", strTemp,i))
-            obj.walkable[0] = (unsigned char) StringConverter::parseInt(strTemp);
-        else
-            obj.walkable[0] = 0;
-        if (Option::getSingleton().getDescStr("WalkableRow1", strTemp,i))
-            obj.walkable[1] = (unsigned char) StringConverter::parseInt(strTemp);
-        else
-            obj.walkable[1] = 0;
-        if (Option::getSingleton().getDescStr("WalkableRow2", strTemp,i))
-            obj.walkable[2] = (unsigned char) StringConverter::parseInt(strTemp);
-        else
-            obj.walkable[2] = 0;
-        if (Option::getSingleton().getDescStr("WalkableRow3", strTemp,i))
-            obj.walkable[3] = (unsigned char) StringConverter::parseInt(strTemp);
-        else
-            obj.walkable[3] = 0;
-        if (Option::getSingleton().getDescStr("WalkableRow4", strTemp,i))
-            obj.walkable[4] = (unsigned char) StringConverter::parseInt(strTemp);
-        else
-            obj.walkable[4] = 0;
-        if (Option::getSingleton().getDescStr("WalkableRow5", strTemp,i))
-            obj.walkable[5] = (unsigned char) StringConverter::parseInt(strTemp);
-        else
-            obj.walkable[5] = 0;
-        if (Option::getSingleton().getDescStr("WalkableRow6", strTemp,i))
-            obj.walkable[6] = (unsigned char) StringConverter::parseInt(strTemp);
-        else
-            obj.walkable[6] = 0;
-        if (Option::getSingleton().getDescStr("WalkableRow7", strTemp,i))
-            obj.walkable[7] = (unsigned char) StringConverter::parseInt(strTemp);
-        else
-            obj.walkable[7] = 0;
-
-        Option::getSingleton().getDescStr("Friendly", strTemp,i);
-        obj.friendly= StringConverter::parseInt(strTemp);
-
-        Option::getSingleton().getDescStr("Attack", strTemp,i);
-        obj.attack  = StringConverter::parseInt(strTemp);
-
-        Option::getSingleton().getDescStr("Defend", strTemp,i);
-        obj.defend  = StringConverter::parseInt(strTemp);
-
-        Option::getSingleton().getDescStr("MaxHP", strTemp,i);
-        obj.maxHP  = StringConverter::parseInt(strTemp);
-
-        Option::getSingleton().getDescStr("MaxMana", strTemp,i);
-        obj.maxMana  = StringConverter::parseInt(strTemp);
-
-        Option::getSingleton().getDescStr("MaxGrace", strTemp,i);
-        obj.maxGrace  = StringConverter::parseInt(strTemp);
-
-        Option::getSingleton().getDescStr("PosX", strTemp,i);
-        obj.pos.x  = StringConverter::parseInt(strTemp);
-        Option::getSingleton().getDescStr("PosY", strTemp,i);
-        obj.pos.z  = StringConverter::parseInt(strTemp);
-        if (Option::getSingleton().getDescStr("PosSubX", strTemp,i))
-            obj.pos.subX  = StringConverter::parseInt(strTemp);
-        else
-            obj.pos.subX  = 3;
-        if (Option::getSingleton().getDescStr("PosSubY", strTemp,i))
-            obj.pos.subZ  = StringConverter::parseInt(strTemp);
-        else
-            obj.pos.subZ  = 3;
-
-        if (Option::getSingleton().getDescStr("Level", strTemp,i))
-            obj.level= StringConverter::parseInt(strTemp);
-        else
-            obj.level= 0;
-
-        Option::getSingleton().getDescStr("Facing", strTemp,i);
-        obj.facing= StringConverter::parseReal(strTemp);
-
-        Option::getSingleton().getDescStr("Particles", strTemp,i);
-        obj.particleNr  = StringConverter::parseInt(strTemp);
-
-        if (strType == "player")
-        {
-            obj.type = OBJECT_PLAYER;
-            addMobileObject(obj);
-        }
-        else if (strType == "npc")
-        {
-            obj.type = OBJECT_NPC;
-            addMobileObject(obj);
-        }
-        else if (strType == "static")
-        {
-            obj.type = OBJECT_CONTAINER;
-            addMobileObject(obj);
-        }
-    }
-    return true;
+    // mSelectedEnemy = false;
 }
 
 //================================================================================================
@@ -177,21 +63,9 @@ bool ObjectManager::init()
 void ObjectManager::addMobileObject(ObjectStatic::sObject &obj)
 {
     if (obj.type < OBJECT_NPC)
-    {
-        static unsigned int index=0;
-        obj.index = index++;
-        ObjectStatic *obj_static = new ObjectStatic(obj);
-        if (obj_static)
-            mvStatic.push_back(obj_static);
-    }
+        mvStatic.push_back(new ObjectStatic(obj));
     else
-    {
-        static unsigned int index=0;
-        obj.index = index++;
-        ObjectNPC *obj_npc = new ObjectNPC(obj, true);
-        if (obj_npc)
-            mvNPC.push_back(obj_npc);
-    }
+        mvNPC.push_back(new ObjectNPC(obj, true));
 }
 
 //================================================================================================
@@ -199,15 +73,15 @@ void ObjectManager::addMobileObject(ObjectStatic::sObject &obj)
 //================================================================================================
 void ObjectManager::update(int obj_type, const FrameEvent& evt)
 {
-    for (unsigned int i = 0; i < mvMissle.size(); ++i)
+    for (unsigned int i = 0; i < mvMissile.size(); ++i)
     {
-        if (!mvMissle[i]->update(evt))
-            deleteMissle(i);
+        if (!mvMissile[i]->update(evt))
+            deleteMissile(i);
     }
     for (unsigned int i = 0; i < mvStatic.size(); ++i)
     {
-        if (!mvStatic [i]->update(evt) )
-            deleteNPC(i);
+        if (!mvStatic [i]->update(evt))
+            deleteStatic(i);
     }
     for (unsigned int i = 0; i < mvNPC.size(); ++i)
     {
@@ -224,13 +98,15 @@ const Vector3 &ObjectManager::synchToWorldPos(int deltaX, int deltaZ)
     static Vector3 pos;
     for (unsigned int i = 0; i < mvStatic.size(); ++i)
     {
-        mvStatic[i]->movePosition(deltaX, deltaZ);
+        if (!mvStatic[i]->movePosition(deltaX, deltaZ))
+            deleteStatic(i);
     }
     pos = mvNPC[0]->getPosition();
     for (unsigned int i = 0; i < mvNPC.size(); ++i)
     {
         // Sync the actual position.
-        mvNPC[i]->movePosition(deltaX, deltaZ);
+        if (!mvNPC[i]->movePosition(deltaX, deltaZ))
+            deleteNPC(i);
     }
     pos-= mvNPC[0]->getPosition();
     return pos;
@@ -298,15 +174,15 @@ void ObjectManager::deleteStatic(int index)
 }
 
 //================================================================================================
-// Delete a Static-Object.
+// Delete a Missile-Object.
 //================================================================================================
-void ObjectManager::deleteMissle(int index)
+void ObjectManager::deleteMissile(int index)
 {
-    mvMissle[index]->freeRecources();
-    delete mvMissle[index];
-    std::vector<ObjectMissile*>::iterator i = mvMissle.begin();
+    mvMissile[index]->freeRecources();
+    delete mvMissile[index];
+    std::vector<ObjectMissile*>::iterator i = mvMissile.begin();
     while (index--) ++i;
-    mvMissle.erase(i);
+    mvMissile.erase(i);
 }
 
 //================================================================================================
@@ -328,12 +204,12 @@ void ObjectManager::freeRecources()
     }
     mvStatic.clear();
 
-    for (std::vector<ObjectMissile*>::iterator i = mvMissle.begin(); i < mvMissle.end(); ++i)
+    for (std::vector<ObjectMissile*>::iterator i = mvMissile.begin(); i < mvMissile.end(); ++i)
     {
         (*i)->freeRecources();
         delete (*i);
     }
-    mvMissle.clear();
+    mvMissile.clear();
 }
 
 //================================================================================================
@@ -480,15 +356,7 @@ void ObjectManager::extractObject(MovableObject *mob)
 void ObjectManager::shoot(int type, ObjectNPC *srcMob, ObjectNPC *dstMob)
 {
     ObjectMissile *obj_missle = new ObjectMissile(type, srcMob, dstMob);
-    if (obj_missle)  mvMissle.push_back(obj_missle);
-}
-
-//================================================================================================
-//
-//================================================================================================
-void ObjectManager::targetObjectFacingNPC(int npcIndex)
-{
-    mvNPC[mSelectedObject]->turning(mvNPC[npcIndex]->getFacing() -180, false);
+    if (obj_missle)  mvMissile.push_back(obj_missle);
 }
 
 //================================================================================================
@@ -496,8 +364,8 @@ void ObjectManager::targetObjectFacingNPC(int npcIndex)
 //================================================================================================
 void ObjectManager::targetObjectAttackNPC(int npcIndex)
 {
-    if (mSelectedObject <0) return;
-    targetObjectFacingNPC(npcIndex);
+    if (mSelectedObject <0 || mSelectedObject == npcIndex) return;
+    mvNPC[mSelectedObject]->turning(mvNPC[npcIndex]->getFacing() -180, false);
     mvNPC[mSelectedObject]->attack();
 }
 

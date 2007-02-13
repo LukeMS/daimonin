@@ -46,7 +46,7 @@ public:
     Ogre::ParticleSystem *addNodeObject(Ogre::SceneNode *node, const char* particleScript, Ogre::Real lifeTime);
     void delNodeObject(int nr);
     void delObject(Ogre::ParticleSystem *pSystem);
-    void synchToWorldPos(Ogre::Vector3 &deltaPos);
+    void syncToWorldPos(Ogre::Vector3 &deltaPos);
     void update(Ogre::Real time);
     void pauseAll(bool pause);
     void setColorRange (Ogre::ParticleSystem *pSystem, Ogre::ColourValue start, Ogre::ColourValue stop);

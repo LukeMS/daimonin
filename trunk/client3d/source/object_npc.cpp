@@ -195,7 +195,7 @@ void ObjectNPC::attackObjectOnTile(TilePos pos)
 //================================================================================================
 void ObjectNPC::moveToDistantTile(TilePos pos, int precision)
 {
-    if (mActPos == pos || mAutoTurning || mAutoMoving) return;
+    if (mActTilePos == pos || mAutoTurning || mAutoMoving) return;
     mEnemyObject= 0; // After this move, we have to check again if enemy is in attack range.
     mDestWalkPos= pos;
     mAutoMoving = true;
@@ -214,7 +214,7 @@ void ObjectNPC::moveToNeighbourTile(int precision)
     {
         mOffX = 0;
         mOffZ = 0;
-        tp.FindPath(mActPos, mDestWalkPos, precision);
+        tp.FindPath(mActTilePos, mDestWalkPos, precision);
     }
     // We reached the destination pos.
     if (!tp.ReadPath())
@@ -224,7 +224,7 @@ void ObjectNPC::moveToNeighbourTile(int precision)
         step = 0;
         // For attack we dont move onto the destination tile, but some subtiles before.
         // So we have to do another faceToTile().
-        if (mActPos != mDestWalkPos) faceToTile(mDestWalkPos);
+        if (mActTilePos != mDestWalkPos) faceToTile(mDestWalkPos);
         return;
     }
     mDestStepPos.x = tp.xPath;
@@ -239,8 +239,8 @@ void ObjectNPC::moveToNeighbourTile(int precision)
     // ////////////////////////////////////////////////////////////////////
     // If the player has moved over a tile border, we have to sync the world.
     // ////////////////////////////////////////////////////////////////////
-    int dx = mActPos.x - mDestStepPos.x;
-    int dz = mActPos.z - mDestStepPos.z;
+    int dx = mActTilePos.x - mDestStepPos.x;
+    int dz = mActTilePos.z - mDestStepPos.z;
     if (!mIndex && (dx || dz))
     {
         Events::getSingleton().setWorldPos(dx, -dz);
@@ -250,7 +250,8 @@ void ObjectNPC::moveToNeighbourTile(int precision)
         mDestStepPos.z += dz;
         TileManager::getSingleton().scrollMap(-dx, -dz);
         Vector3 deltaPos = ObjectManager::getSingleton().synchToWorldPos(dx, dz);
-        ParticleManager::getSingleton().synchToWorldPos(deltaPos);
+        TileManager::getSingleton().syncWalls(deltaPos);
+        ParticleManager::getSingleton().syncToWorldPos(deltaPos);
     }
 
     // Turn the head into the moving direction.
@@ -404,7 +405,7 @@ bool ObjectNPC::update(const FrameEvent& event)
         // We have reached a waypoint || we went too far.
         if (squaredLength < WALK_PRECISON || squaredLength > squaredLengthPrev)
         {
-            mActPos = mDestStepPos;
+            mActTilePos = mDestStepPos;
             mNode->setPosition(mDestWalkVec); // Set the exact position.
             squaredLengthPrev = 1000.0;       // Somthing big.
             moveToNeighbourTile(0);           // Move to next waypoint.
@@ -510,12 +511,14 @@ bool ObjectNPC::update(const FrameEvent& event)
 //================================================================================================
 // Move to a new tile pos.
 //================================================================================================
-void ObjectNPC::movePosition(int deltaX, int deltaZ)
+bool ObjectNPC::movePosition(int deltaX, int deltaZ)
 {
-    mActPos.x += deltaX;
-    mActPos.z += deltaZ;
-    setPosition(mActPos);
+    mActTilePos.x += deltaX;
+    mActTilePos.z += deltaZ;
+    setPosition(mActTilePos);
     if (mActHP <=0) mNode->translate(Vector3(0, -mSpawnSize, 0));
+    // if (pos out of playfield) return false;
+    return true;
 }
 
 //================================================================================================
@@ -592,8 +595,8 @@ void ObjectNPC::turning(Real facing, bool cursorTurn)
 //================================================================================================
 void ObjectNPC::faceToTile(TilePos pos)
 {
-    float deltaZ = (pos.z - mActPos.z) * TileManager::SUM_SUBTILES  +  (pos.subZ - mActPos.subZ);
-    float deltaX = (pos.x - mActPos.x) * TileManager::SUM_SUBTILES  +  (pos.subX - mActPos.subX);
+    float deltaZ = (pos.z - mActTilePos.z) * TileManager::SUM_SUBTILES  +  (pos.subZ - mActTilePos.subZ);
+    float deltaX = (pos.x - mActTilePos.x) * TileManager::SUM_SUBTILES  +  (pos.subX - mActTilePos.subX);
 
     // We need the Distance (in sub-Tiles) for a constant walk speed.
     mDistance = Math::Abs(deltaZ) > Math::Abs(deltaX)?Math::Abs(deltaZ)/8:Math::Abs(deltaX)/8;

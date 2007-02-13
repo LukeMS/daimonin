@@ -45,6 +45,8 @@ public:
     const TilePos getSelectedTile();
     /** Converts a tilePosition into the worldPosition. **/
     Ogre::Vector3 tileToWorldPos(TilePos tile);
+    /** Converts a tilePosition into the worldPosition (Special case for walls). **/
+    Ogre::Vector3 tileToWallPos(TilePos tile);
     /** Returns the distance between 2 subtile positions. **/
     int calcTileDistance(const TilePos &pos1, const TilePos &pos2);
     /** Get the tile below the mouse cursor. **/

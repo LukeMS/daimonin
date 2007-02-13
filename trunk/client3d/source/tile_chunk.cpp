@@ -389,9 +389,9 @@ void TileChunk::createLand_Buffers()
 
     vdata->vertexBufferBinding->setBinding(0, vbuf0);
 
-    char indoorTris;
+    bool indoor;
     long o = 0;
-    Real g, h, d, f, row, col, rowIndoor =0, colIndoor=0;
+    Real g, h, d, f, row, col;
     Real average;
     Real* pReal1 = static_cast<Real*>(vbuf0->lock (HardwareBuffer::HBL_DISCARD));
     const Real MIPMAP_SPACE = 4;
@@ -502,102 +502,47 @@ void TileChunk::createLand_Buffers()
             TileManager::getSingleton().getMapScroll(mapX, mapZ);
             mapX-=x;
             mapZ-=z;
-            if ((indoorTris = TileManager::getSingleton().getIndoorTris(x,z)))
-            {
-                colIndoor = (128 + 4 * MIPMAP_SPACE) /1024.0 * TileManager::getSingleton().getMapIndoorCol(x,z) + MIPMAP_SPACE/1024;
-                rowIndoor = (128 + 4 * MIPMAP_SPACE) /1024.0 * TileManager::getSingleton().getMapIndoorRow(x,z) + MIPMAP_SPACE/1024;
-                if ((mapX&1)) colIndoor+= SUB_POS;
-                if ((mapZ&1)) rowIndoor+= SUB_POS;
-            }
             col = (128 + 4 * MIPMAP_SPACE) /1024.0 * TileManager::getSingleton().getMapTextureCol(x,z)+ MIPMAP_SPACE/1024;
             row = (128 + 4 * MIPMAP_SPACE) /1024.0 * TileManager::getSingleton().getMapTextureRow(x,z)+ MIPMAP_SPACE/1024;
             if ((mapX&1)) col+= SUB_POS;
             if ((mapZ&1)) row+= SUB_POS;
             // 1. Triangle
-            if (indoorTris & TileManager::TRIANGLE_LEFT)
-            {   // Inodoor
-                pReal1[o+  6] = colIndoor;
-                pReal1[o+  7] = rowIndoor;
-                pReal1[o+ 18] = colIndoor;
-                pReal1[o+ 19] = rowIndoor + 64.0 /1024.0;
-                pReal1[o+ 30] = colIndoor + 32.0 /1024.0;
-                pReal1[o+ 31] = rowIndoor + 32.0 /1024.0;
-            }
-            else
-            {
-                pReal1[o+  6] = col;
-                pReal1[o+  7] = row;
-                pReal1[o+ 18] = col;
-                pReal1[o+ 19] = row + 64.0 /1024.0;
-                pReal1[o+ 30] = col + 32.0 /1024.0;
-                pReal1[o+ 31] = row + 32.0 /1024.0;
-            }
+            pReal1[o+  6] = col;
+            pReal1[o+  7] = row;
+            pReal1[o+ 18] = col;
+            pReal1[o+ 19] = row + 64.0 /1024.0;
+            pReal1[o+ 30] = col + 32.0 /1024.0;
+            pReal1[o+ 31] = row + 32.0 /1024.0;
             // 2. Triangle
-            if (indoorTris & TileManager::TRIANGLE_TOP)
-            {   // Inodoor
-                pReal1[o+ 42] = colIndoor;
-                pReal1[o+ 43] = rowIndoor + 64.0 /1024.0;
-                pReal1[o+ 54] = colIndoor + 64.0 /1024.0;
-                pReal1[o+ 55] = rowIndoor + 64.0 /1024.0;
-                pReal1[o+ 66] = colIndoor + 32.0 /1024.0;
-                pReal1[o+ 67] = rowIndoor + 32.0 /1024.0;
-            }
-            else
-            {
-                pReal1[o+ 42] = col;
-                pReal1[o+ 43] = row + 64.0 /1024.0;
-                pReal1[o+ 54] = col + 64.0 /1024.0;
-                pReal1[o+ 55] = row + 64.0 /1024.0;
-                pReal1[o+ 66] = col + 32.0 /1024.0;
-                pReal1[o+ 67] = row + 32.0 /1024.0;
-            }
+            pReal1[o+ 42] = col;
+            pReal1[o+ 43] = row + 64.0 /1024.0;
+            pReal1[o+ 54] = col + 64.0 /1024.0;
+            pReal1[o+ 55] = row + 64.0 /1024.0;
+            pReal1[o+ 66] = col + 32.0 /1024.0;
+            pReal1[o+ 67] = row + 32.0 /1024.0;
             // 3. Triangle (right)
-            if (indoorTris & TileManager::TRIANGLE_RIGHT)
-            {   // Inodoor
-                pReal1[o+ 78] = colIndoor + 64.0 /1024.0;
-                pReal1[o+ 79] = rowIndoor + 64.0 /1024.0;
-                pReal1[o+ 90] = colIndoor + 64.0 /1024.0;
-                pReal1[o+ 91] = rowIndoor;
-                pReal1[o+102] = colIndoor + 32.0 /1024.0;
-                pReal1[o+103] = rowIndoor + 32.0 /1024.0;
-            }
-            else
-            {
-                pReal1[o+ 78] = col + 64.0 /1024.0;
-                pReal1[o+ 79] = row + 64.0 /1024.0;
-                pReal1[o+ 90] = col + 64.0 /1024.0;
-                pReal1[o+ 91] = row;
-                pReal1[o+102] = col + 32.0 /1024.0;
-                pReal1[o+103] = row + 32.0 /1024.0;
-            }
-            // 4. Triangle (bottom)
-            if (indoorTris & TileManager::TRIANGLE_BOTTOM)
-            {   // Inodoor
-                pReal1[o+114] = colIndoor + 64.0 /1024.0;
-                pReal1[o+115] = rowIndoor;
-                pReal1[o+126] = colIndoor;
-                pReal1[o+127] = rowIndoor;
-                pReal1[o+138] = colIndoor + 32.0 /1024.0;
-                pReal1[o+139] = rowIndoor + 32.0 /1024.0;
-            }
-            else
-            {
-                pReal1[o+114] = col + 64.0 /1024.0;
-                pReal1[o+115] = row;
-                pReal1[o+126] = col;
-                pReal1[o+127] = row;
-                pReal1[o+138] = col + 32.0 /1024.0;
-                pReal1[o+139] = row + 32.0 /1024.0;
-            }
+            pReal1[o+ 78] = col + 64.0 /1024.0;
+            pReal1[o+ 79] = row + 64.0 /1024.0;
+            pReal1[o+ 90] = col + 64.0 /1024.0;
+            pReal1[o+ 91] = row;
+            pReal1[o+102] = col + 32.0 /1024.0;
+            pReal1[o+103] = row + 32.0 /1024.0;
+            // 4. Triangle (left)
+            pReal1[o+114] = col + 64.0 /1024.0;
+            pReal1[o+115] = row;
+            pReal1[o+126] = col;
+            pReal1[o+127] = row;
+            pReal1[o+138] = col + 32.0 /1024.0;
+            pReal1[o+139] = row + 32.0 /1024.0;
             // ////////////////////////////////////////////////////////////////////
             // Filter-Texture.
             // ////////////////////////////////////////////////////////////////////
             // 1. Triangle (left)
-            indoorTris = TileManager::getSingleton().getIndoorTris(x,z);
-            if (indoorTris & TileManager::TRIANGLE_LEFT)
+            indoor = TileManager::getSingleton().getIndoor(x,z);
+            if (indoor || TileManager::getSingleton().getIndoor(x-1,z))
             {   // Inodoor
-                col = (128 + 4 * MIPMAP_SPACE) /1024.0 * TileManager::getSingleton().getMapIndoorCol(x, z)+ MIPMAP_SPACE/1024;
-                row = (128 + 4 * MIPMAP_SPACE) /1024.0 * TileManager::getSingleton().getMapIndoorRow(x, z)+ MIPMAP_SPACE/1024;
+                col = (128 + 4 * MIPMAP_SPACE) /1024.0 * TileManager::getSingleton().getMapTextureCol(x,z)+ MIPMAP_SPACE/1024;
+                row = (128 + 4 * MIPMAP_SPACE) /1024.0 * TileManager::getSingleton().getMapTextureRow(x,z)+ MIPMAP_SPACE/1024;
             }
             else
             {
@@ -613,11 +558,10 @@ void TileChunk::createLand_Buffers()
             pReal1[o+ 32] = col + 32.0 /1024.0;
             pReal1[o+ 33] = row + 32.0 /1024.0;
             // 2. Triangle
-            indoorTris = TileManager::getSingleton().getIndoorTris(x,z);
-            if (indoorTris & TileManager::TRIANGLE_TOP)
+            if (indoor|| TileManager::getSingleton().getIndoor(x,z-1))
             {   // Inodoor
-                col = (128 + 4 * MIPMAP_SPACE) /1024.0 * TileManager::getSingleton().getMapIndoorCol(x, z)+ MIPMAP_SPACE/1024;
-                row = (128 + 4 * MIPMAP_SPACE) /1024.0 * TileManager::getSingleton().getMapIndoorRow(x, z)+ MIPMAP_SPACE/1024;
+                col = (128 + 4 * MIPMAP_SPACE) /1024.0 * TileManager::getSingleton().getMapTextureCol(x,z)+ MIPMAP_SPACE/1024;
+                row = (128 + 4 * MIPMAP_SPACE) /1024.0 * TileManager::getSingleton().getMapTextureRow(x,z)+ MIPMAP_SPACE/1024;
             }
             else
             {
@@ -633,11 +577,10 @@ void TileChunk::createLand_Buffers()
             pReal1[o+ 68] = col + 32.0 /1024.0;
             pReal1[o+ 69] = row + 32.0 /1024.0;
             // 3. Triangle
-            indoorTris = TileManager::getSingleton().getIndoorTris(x,z);
-            if (indoorTris & TileManager::TRIANGLE_RIGHT)
+            if (indoor|| TileManager::getSingleton().getIndoor(x+1,z))
             {   // Inodoor
-                col = (128 + 4 * MIPMAP_SPACE) /1024.0 * TileManager::getSingleton().getMapIndoorCol(x, z)+ MIPMAP_SPACE/1024;
-                row = (128 + 4 * MIPMAP_SPACE) /1024.0 * TileManager::getSingleton().getMapIndoorRow(x, z)+ MIPMAP_SPACE/1024;
+                col = (128 + 4 * MIPMAP_SPACE) /1024.0 * TileManager::getSingleton().getMapTextureCol(x,z)+ MIPMAP_SPACE/1024;
+                row = (128 + 4 * MIPMAP_SPACE) /1024.0 * TileManager::getSingleton().getMapTextureRow(x,z)+ MIPMAP_SPACE/1024;
             }
             else
             {
@@ -653,11 +596,10 @@ void TileChunk::createLand_Buffers()
             pReal1[o+104] = col + 32.0 /1024.0;
             pReal1[o+105] = row + 32.0 /1024.0;
             // 4. Triangle
-            indoorTris = TileManager::getSingleton().getIndoorTris(x,z);
-            if (indoorTris & TileManager::TRIANGLE_BOTTOM)
+            if (indoor || TileManager::getSingleton().getIndoor(x,z+1))
             {   // Inodoor
-                col = (128 + 4 * MIPMAP_SPACE) /1024.0 * TileManager::getSingleton().getMapIndoorCol(x, z)+ MIPMAP_SPACE/1024;
-                row = (128 + 4 * MIPMAP_SPACE) /1024.0 * TileManager::getSingleton().getMapIndoorRow(x, z)+ MIPMAP_SPACE/1024;
+                col = (128 + 4 * MIPMAP_SPACE) /1024.0 * TileManager::getSingleton().getMapTextureCol(x,z)+ MIPMAP_SPACE/1024;
+                row = (128 + 4 * MIPMAP_SPACE) /1024.0 * TileManager::getSingleton().getMapTextureRow(x,z)+ MIPMAP_SPACE/1024;
             }
             else
             {
