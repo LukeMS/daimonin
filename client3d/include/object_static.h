@@ -66,8 +66,7 @@ public:
     virtual ~ObjectStatic();
     virtual void freeRecources();
     virtual bool update(const Ogre::FrameEvent& event);
-    void movePosition(int dx, int dz);
-    void move(Ogre::Vector3 &pos);
+    bool movePosition(int dx, int dz);
     const Ogre::Vector3 &getPosition()
     {
         return mNode->getPosition();
@@ -102,7 +101,7 @@ public:
     }
     TilePos getTilePos()
     {
-        return mActPos;
+        return mActTilePos;
     }
     void setPosition(TilePos pos);
     void activate(bool waitForHero = true);
@@ -126,7 +125,7 @@ protected:
     unsigned int mIndex;
     Ogre::SceneNode *mNode;
     Ogre::Entity *mEntity;
-    TilePos mActPos;   /**< the actual pos in the map. **/
+    TilePos mActTilePos;   /**< the actual pos in the map. **/
     Ogre::String mNickName;
     int mFloor;
     bool mWaitForHero;

@@ -25,9 +25,10 @@ http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
 #include <iostream>
-#include "OgreHardwarePixelBuffer.h"
+#include <OgreHardwarePixelBuffer.h>
 #include "tile_chunk.h"
 #include "tile_manager.h"
+#include "object_manager.h"
 #include "logger.h"
 #include "option.h"
 
@@ -53,6 +54,8 @@ TileManager::TileManager()
     map_update_flag = 0;
     mMapScrollX =0;
     mMapScrollZ =0;
+    for (int z =0; z <= CHUNK_SIZE_Z; ++z)
+        clsRowOfWalls(z);
 }
 
 //================================================================================================
@@ -66,6 +69,8 @@ TileManager::~TileManager()
 //================================================================================================
 void TileManager::freeRecources()
 {
+    for (int z =0; z <= CHUNK_SIZE_Z; ++z)
+        delRowOfWalls(z);
     mMapchunk.freeRecources();
     delete mInterface;
 }
@@ -112,33 +117,124 @@ void TileManager::scrollMap(int dx, int dz)
     if (dx >0)
     {
         --mMapScrollX;
+        delColOfWalls(0); // Delete walls leaving the view.
         for (int x = 0; x < CHUNK_SIZE_X; ++x)
             for (int y = 0; y <= CHUNK_SIZE_Z; ++y)
                 mMap[x][y] = mMap[x+1][y];
+        clsColOfWalls(CHUNK_SIZE_X); // Set all Entities to 0.
     }
     else if (dx <0)
     {
         ++mMapScrollX;
+        delColOfWalls(CHUNK_SIZE_X); // Delete walls leaving the view.
         for (int x = CHUNK_SIZE_X; x >0; --x)
             for (int y = 0; y <= CHUNK_SIZE_Z; ++y)
                 mMap[x][y] = mMap[x-1][y];
+        clsColOfWalls(0); // Set all Entities to 0.
     }
     if (dz >0)
     {
         --mMapScrollZ;
+        delRowOfWalls(0); // Delete walls leaving the view.
         for (int x = 0; x <= CHUNK_SIZE_X; ++x)
             for (int y = 0; y < CHUNK_SIZE_Z; ++y)
                 mMap[x][y] = mMap[x][y+1];
+        clsRowOfWalls(CHUNK_SIZE_Z); // Set all Entities to 0.
     }
     else if (dz <0)
     {
         ++mMapScrollZ;
+        delRowOfWalls(CHUNK_SIZE_Z); // Delete walls leaving the view.
         for (int x = 0; x <= CHUNK_SIZE_X; ++x)
             for (int y = CHUNK_SIZE_Z; y > 0; --y)
                 mMap[x][y] = mMap[x][y-1];
+        clsRowOfWalls(0); // Set all Entities to 0.
     }
-
     mMapchunk.change();
+}
+
+//================================================================================================
+// Add a wall to a tile quadrant.
+// Walls are the only non-moveable objects taht are not centered on a subtile.
+//================================================================================================
+void TileManager::addWall(int level, int x, int z, int pos, const char *meshName)
+{
+    if (mMap[x][z].entity[pos]) return; // Add only 1 wall per tile quadrant.
+    static unsigned int index = 0;
+    String strObj = "Wall_" + StringConverter::toString(++index);
+    mMap[x][z].entity[pos] = mSceneManager->createEntity(strObj, meshName);
+    mMap[x][z].entity[pos]->setQueryFlags(ObjectManager::QUERY_ENVIRONMENT_MASK);
+    TilePos tpos;
+    tpos.x     = x;
+    tpos.z     = z;
+    tpos.subX  = (pos==WALL_POS_LEFT)?0:1;
+    tpos.subZ  = (pos==WALL_POS_TOP )?0:1;
+    SceneNode *sceneNode = mSceneManager->getRootSceneNode()->createChildSceneNode();
+    sceneNode->attachObject(mMap[x][z].entity[pos]);
+    sceneNode->yaw(Degree((pos >WALL_POS_TOP )?90:180));
+    sceneNode->setPosition(getTileInterface()->tileToWallPos(tpos));
+}
+
+//================================================================================================
+// Delete all walls that are scrolling out of the tile map.
+//================================================================================================
+void TileManager::delRowOfWalls(int row)
+{
+    for (int x = 0; x <= CHUNK_SIZE_X; ++x)
+        for (int pos = 0; pos < WALL_POS_SUM; ++pos)
+            if (mMap[x][row].entity[pos])
+            {
+                mSceneManager->destroySceneNode(mMap[x][row].entity[pos]->getParentSceneNode()->getName());
+                mSceneManager->destroyEntity(mMap[x][row].entity[pos]);
+                mMap[x][row].entity[pos] =0;
+            }
+}
+
+//================================================================================================
+// Set all wall-entities, that are scrolling into the tile map, to 0.
+//================================================================================================
+void TileManager::clsRowOfWalls(int row)
+{
+    for (int x = 0; x <= CHUNK_SIZE_X; ++x)
+        for (int pos = 0; pos < WALL_POS_SUM; ++pos)
+            mMap[x][row].entity[pos] =0;
+}
+
+//================================================================================================
+// Delete all walls that are scrolling out of the tile map.
+//================================================================================================
+void TileManager::delColOfWalls(int col)
+{
+    for (int z = 0; z <= CHUNK_SIZE_X; ++z)
+        for (int pos = 0; pos < WALL_POS_SUM; ++pos)
+            if (mMap[col][z].entity[pos])
+            {
+                mSceneManager->destroySceneNode(mMap[col][z].entity[pos]->getParentSceneNode()->getName());
+                mSceneManager->destroyEntity(mMap[col][z].entity[pos]);
+                mMap[col][z].entity[pos] =0;
+            }
+}
+
+//================================================================================================
+// Set all wall-entities, that are scrolling into the tile map, to 0.
+//================================================================================================
+void TileManager::clsColOfWalls(int col)
+{
+    for (int z = 0; z <= CHUNK_SIZE_X; ++z)
+        for (int pos = 0; pos < WALL_POS_SUM; ++pos)
+            mMap[col][z].entity[pos] =0;
+}
+
+//================================================================================================
+// When player moves over a tile border, the world scrolls.
+//================================================================================================
+void TileManager::syncWalls(Ogre::Vector3 &deltaPos)
+{
+    for (int z =0; z <= CHUNK_SIZE_Z; ++z)
+        for (int x =0; x <= CHUNK_SIZE_X; ++x)
+            for (int pos = 0; pos < WALL_POS_SUM; ++pos)
+                if (mMap[x][z].entity[pos])
+                    mMap[x][z].entity[pos]->getParentSceneNode()->translate(-deltaPos);
 }
 
 //================================================================================================
@@ -171,14 +267,6 @@ void TileManager::setMapTextures()
             // ////////////////////////////////////////////////////////////////////
             // Highland.
             // ////////////////////////////////////////////////////////////////////
-            /*
-                        if (mMap[x][y].indoor)
-                        {
-                            mMap[x][y].terrain_col = INDOOR_COL;
-                            mMap[x][y].terrain_row = INDOOR_ROW;
-                        }
-                        else
-            */
             if (height > TileChunk::LEVEL_MOUNTAIN_TOP)
             {
                 mMap[x][y].terrain_col = 0;
@@ -676,4 +764,3 @@ void TileManager::toggleGrid()
     mGrid = !mGrid;
     setMaterialLOD(mTileTextureSize);
 }
-

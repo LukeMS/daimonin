@@ -187,7 +187,7 @@ void ParticleManager::pauseAll(bool pause)
 //================================================================================================
 // Workaround for a ogre bug (Attached particles wont get updeted after a position change).
 //================================================================================================
-void ParticleManager::synchToWorldPos(Vector3 &deltaPos)
+void ParticleManager::syncToWorldPos(Vector3 &deltaPos)
 {
     Particle* p;
     for (std::vector<sParticles*>::iterator i = mvParticle.begin(); i < mvParticle.end(); ++i)

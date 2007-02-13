@@ -39,6 +39,10 @@ http://www.gnu.org/licenses/licenses.html
 // monster: ai controlled.
 // ////////////////////////////////////////////////////////////////////
 
+/**
+ ** This singleton class handles all interactive objects.
+ ** For non-interactive object the TileManager is used.
+ *****************************************************************************/
 class ObjectManager
 {
 public:
@@ -81,10 +85,11 @@ public:
     /** Independant Object types. **/
     enum
     {
-        // Static objects.
-        OBJECT_ENVIRONMENT,
+        // Static positon objects.
+        OBJECT_ENVIRONMENT, /**< Non interactive element. **/
+        OBJECT_WALL,        /**< Non interactive element (special placement on tile). **/
         OBJECT_CONTAINER,   /**< Chest, Sack, ... **/
-        // Dynamic objects.
+        // Dynamic positon objects.
         OBJECT_NPC,         /**< Server contolled character. **/
         OBJECT_PLAYER,      /**< Human controlled character. **/
         OBJECT_SUM,
@@ -98,9 +103,9 @@ public:
         static ObjectManager Singleton; return Singleton;
     }
     void freeRecources();
-    bool init();
+    void init();
     void addMobileObject(ObjectStatic::sObject &obj);
-    void deleteMissle(int number);
+    void deleteMissile(int number);
     void deleteStatic(int number);
     void deleteNPC   (int number);
     void update(int type, const Ogre::FrameEvent& evt);
@@ -173,7 +178,6 @@ public:
     {
         return mSelectedPos;
     }
-    void targetObjectFacingNPC(int npcIndex); // just a hack. Server will handle this.
     void targetObjectAttackNPC(int npcIndex); // just a hack. Server will handle this.
     bool createFlipBook(Ogre::String meshName, int sumRotations = 8);
 private:
@@ -183,7 +187,7 @@ private:
     Ogre::String mDescFile;
     std::vector<ObjectStatic*> mvStatic;
     std::vector<ObjectNPC*   > mvNPC;
-    std::vector<ObjectMissile*> mvMissle;
+    std::vector<ObjectMissile*> mvMissile;
     int mSelectedType, mSelectedObject, mSelectedFriendly;
     TilePos mSelectedPos;
     // ////////////////////////////////////////////////////////////////////

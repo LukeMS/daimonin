@@ -136,7 +136,9 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // GUI_Gadget_Slot stuff.
     // ////////////////////////////////////////////////////////////////////
-    void updateItemSlot(int element, int slotNr, int gfxNr);
+    void updateItemSlot(int element, int slotNr, int state);
+    void setItemReference(int element, std::list<Item::sItem*> *itemContainer);
+
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.

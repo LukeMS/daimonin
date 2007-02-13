@@ -60,13 +60,13 @@ ObjectStatic::~ObjectStatic()
 //================================================================================================
 ObjectStatic::ObjectStatic(sObject &obj)
 {
+    static unsigned int index =0;
     if (!mSceneMgr)
     {
         mSceneMgr = Events::getSingleton().GetSceneManager();
         Logger::log().headline("Init Actor Models");
     }
-    mIndex    = obj.index;
-    mActPos   = obj.pos;
+    mIndex    = index++;
     mNickName = obj.nickName;
     mFloor    = obj.level;
     mFacing   = Degree(obj.facing);
@@ -74,13 +74,11 @@ ObjectStatic::ObjectStatic(sObject &obj)
 
     String strObj = ObjectManager::ObjectID[obj.type];
     strObj+= "#Obj_";
-    strObj+= StringConverter::toString(mIndex, 8, '0');
+    strObj+= StringConverter::toString(mIndex, 10, '0');
     mEntity =mSceneMgr->createEntity(strObj, obj.meshName);
     switch (obj.type)
     {
-
         case ObjectManager::OBJECT_CONTAINER:
-        case ObjectManager::OBJECT_ENVIRONMENT:
             mEntity->setQueryFlags(ObjectManager::QUERY_CONTAINER);
             break;
 
@@ -99,12 +97,10 @@ ObjectStatic::ObjectStatic(sObject &obj)
     mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
     mNode->attachObject(mEntity);
     mNode->yaw(mFacing);
-    setPosition(mActPos);
+    setPosition(obj.pos);
 
     if (Option::getSingleton().getIntValue(Option::CMDLINE_SHOW_BOUNDING_BOX))
-    {
         mNode->showBoundingBox(true);
-    }
 
     // Create the animations.
     mAnim = new ObjectAnimate(mEntity);
@@ -114,7 +110,7 @@ ObjectStatic::ObjectStatic(sObject &obj)
     {
         for (int row =0; row< 8; ++row)
         {
-            TileManager::getSingleton().setWalkablePos(mActPos, row, obj.walkable[row]);
+            TileManager::getSingleton().setWalkablePos(mActTilePos, row, obj.walkable[row]);
         }
     }
     mAction = ACTION_NONE;
@@ -125,11 +121,13 @@ ObjectStatic::ObjectStatic(sObject &obj)
 //================================================================================================
 // Moves the object (instantly) onto a new positon.
 //================================================================================================
-void ObjectStatic::movePosition(int deltaX, int deltaZ)
+bool ObjectStatic::movePosition(int deltaX, int deltaZ)
 {
-    mActPos.x += deltaX;
-    mActPos.z += deltaZ;
-    setPosition(mActPos);
+    mActTilePos.x += deltaX;
+    mActTilePos.z += deltaZ;
+    setPosition(mActTilePos);
+    // if (pos is out of playfield) return false;
+    return true;
 }
 
 //================================================================================================
@@ -137,12 +135,11 @@ void ObjectStatic::movePosition(int deltaX, int deltaZ)
 //================================================================================================
 void ObjectStatic::setPosition(TilePos pos)
 {
-    mActPos = pos;
-    Vector3 posV = TileManager::getSingleton().getTileInterface()->tileToWorldPos(pos);
+    mActTilePos = pos;
+    Vector3 posV;
+    posV = TileManager::getSingleton().getTileInterface()->tileToWorldPos(pos);
     if (mFloor)
-    {
         posV.y += mBoundingBox.y * mFloor;
-    }
     mNode->setPosition(posV);
 }
 
@@ -177,14 +174,6 @@ bool ObjectStatic::update(const FrameEvent& event)
         mAction = ACTION_NONE;
     }
     return true;
-}
-
-//================================================================================================
-// Move the object to the given position.
-//================================================================================================
-void ObjectStatic::move(Vector3 &pos)
-{
-    mNode->setPosition(mNode->getPosition() + pos);
 }
 
 //================================================================================================

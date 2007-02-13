@@ -64,9 +64,12 @@ void Events::keyPressed(KeyEvent *e)
     {
         case KC_A:
         {
+            Item::getSingleton().getInventoryItemFromFloor(0);
+            /*
             static int animNr= 0;
             ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_IDLE, animNr);
             if (++animNr >= 16) animNr= 0;
+            */
             break;
         }
 

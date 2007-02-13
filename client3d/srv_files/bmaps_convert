@@ -39,6 +39,22 @@ a_sword
 a_sword2h_gold
 a_sword_black
 a_sword_white
+abbys_stone1
+abbys_stone10
+abbys_stone11
+abbys_stone12
+abbys_stone13
+abbys_stone14
+abbys_stone15
+abbys_stone16
+abbys_stone2
+abbys_stone3
+abbys_stone4
+abbys_stone5
+abbys_stone6
+abbys_stone7
+abbys_stone8
+abbys_stone9
 abomination_small
 ah
 ai
@@ -46,6 +62,7 @@ altar
 altar2
 altar3
 altar4
+altar5
 altar_default
 amphora1
 amphora1_rain
@@ -61,8 +78,8 @@ ancus
 ant_queen
 ant_red
 ant_soldier
-anvil                        Object_Anvil.mesh
-anvil_big                    Object_Anvil.mesh
+anvil              Object_Anvil.mesh
+anvil_big          Object_Anvil.mesh
 apple01
 apple_tree
 apricot01
@@ -96,7 +113,9 @@ bank2a
 bank2b
 bank2c
 bar1
+bar1_flower
 bardiche
+barmaid
 barrel
 barrel2
 barrel_water
@@ -124,6 +143,7 @@ bed_2b
 bed_save
 bee_killer
 beef_jerky01
+beer
 beer_barrel
 beholder_dread
 belt
@@ -178,6 +198,25 @@ boots_snow
 boots_white
 boots_yellow
 booze
+border_top_e1
+border_top_n1
+border_top_ne1
+border_top_ne2
+border_top_nw1
+border_top_nw2
+border_top_s1
+border_top_se1
+border_top_se2
+border_top_sw1
+border_top_sw2
+border_top_w1
+border_wall_n1.101
+border_wall_n2.101
+border_wall_nw1.101
+border_wall_nw2.101
+border_wall_w1.101
+border_wall_w2.101
+bottle_soul
 boulder
 bow
 bow_long
@@ -209,6 +248,7 @@ bridge_wood_EW
 bridge_wood_NS
 bridge_wood_corner
 brigandine
+brnbat
 broadsword
 broom
 buckler
@@ -222,6 +262,7 @@ cactus2
 cactus3
 cactus4
 cactus5
+candle_purp
 candlelight1
 candlelight2
 candlelight3
@@ -308,9 +349,16 @@ carpet7i
 carpet7j
 carpet7k
 carrot01
+cat_black
 cat_wild
-catacomb_wall01a
-catacomb_wall01b
+catacomb_wall01a.d.111
+catacomb_wall01a.d.131
+catacomb_wall01a.d.151
+catacomb_wall01a.d.171
+catacomb_wall01b.d.111
+catacomb_wall01b.d.131
+catacomb_wall01b.d.151
+catacomb_wall01b.d.171
 cauldron
 cauldron_open
 cave_deco
@@ -347,10 +395,12 @@ chair1_drop
 chair2
 chair_small
 chair_small2
+chairn
 champagne
 char_throne
 check_inv
 cheese01
+chef
 cherries01
 chest_black_s
 chest_lm_closed
@@ -385,6 +435,7 @@ cleaver_battle
 cleaver_war
 cloak_energy
 cloak_green
+cloak_halloween
 cloak_leather
 close_bag
 close_dbox
@@ -414,7 +465,7 @@ coif_chain
 coif_scale
 combat_boots
 cookie01
-coppercoin                item_coinCopper.png
+coppercoin                     item_coinCopper.png
 corpse_default
 corpse_goblinoid
 corpse_golem
@@ -449,12 +500,6 @@ dagger
 dagger_ceremonial
 dagger_large
 dagger_small
-dancerf1
-dancerf2
-dancerf3
-dancerm1
-dancerm2
-dancerm3
 deer
 deerhorn
 degen
@@ -467,6 +512,7 @@ demon_sfire
 depositbox
 desert
 desert_fmask
+desert_trap
 desk1
 desk2
 devil_lord
@@ -484,13 +530,47 @@ dmg
 dog
 dog_wild
 dolmen01
-door_bar1
-door_lock1
-door_lock1_wreath
-door_wood1
-door_wood2
-door_wood4
-doorway_wood1
+door_bar1.111
+door_bar1.112
+door_bar1.131
+door_bar1.132
+door_bar1.151
+door_bar1.152
+door_bar1.171
+door_bar1.172
+door_lock1.111
+door_lock1.112
+door_lock1.131
+door_lock1.132
+door_lock1.151
+door_lock1.152
+door_lock1.171
+door_lock1.172
+door_lock1_wreath.111
+door_lock1_wreath.112
+door_lock1_wreath.131
+door_lock1_wreath.132
+door_lock1_wreath.151
+door_lock1_wreath.152
+door_lock1_wreath.171
+door_lock1_wreath.172
+door_redcross.111
+door_redcross.112
+door_wood1.111
+door_wood1.112
+door_wood1.131               rWall1_Bottom_Door.mesh
+door_wood1.132
+door_wood2.111
+door_wood2.112
+door_wood2.131
+door_wood2.132
+door_wood4.111
+door_wood4.112
+door_wood4.131
+door_wood4.132
+doorway_wood1.111
+doorway_wood1.131
+dragon_blk
 dragon_blu
 dragon_demonic
 dragon_green
@@ -499,6 +579,9 @@ dragon_skeletal
 dragon_water
 drawers1
 dress
+dress_evening_black
+dress_evening_blue
+dress_evening_red
 dress_midnight
 drow_annihilator
 drow_captain
@@ -518,6 +601,7 @@ dummy
 dust_gen
 dwarf
 dwarf_fighter
+dwarf_noble
 earth_brown1
 earth_brown2
 earth_brown3
@@ -555,6 +639,7 @@ effect1_yellow
 egg01
 eggnog
 elf_toytable
+elven_merchant
 engage_ring_gift
 ettin
 event
@@ -570,6 +655,8 @@ fauchard
 female1
 female2
 fence_01
+fence_01_gate
+fence_01_gate_closed
 fencing_boots
 fighting_boots
 figpud
@@ -584,10 +671,15 @@ flag_04
 flag_05
 flag_06
 flag_07
-flagwall_short_brick1
+flag_drows
+flagwall_short_brick1.111
+flagwall_short_brick1.131
+flagwall_short_brick1.141
+flagwall_short_brick1.181
 flail_war
 flamberge
 flashcross
+flat_wagon
 floor_black1a
 floor_black1b
 floor_black1c
@@ -612,6 +704,25 @@ floor_cave3
 floor_cave4
 floor_cave5
 floor_cave6
+floor_cave_dropoff1a
+floor_cave_dropoff1b
+floor_cave_dropoff1c
+floor_cave_dropoff1d
+floor_cave_dropoff1e
+floor_cave_dropoff1f
+floor_cave_dropoff1g
+floor_cave_dropoff1h
+floor_cave_dropoff1i
+floor_cave_dropoff1j
+floor_cave_dropoff1k
+floor_cave_dropoff1l
+floor_cave_dropoff1m
+floor_cave_dropoff1n
+floor_cave_dropoff1o
+floor_cave_dropoff1p
+floor_cave_dropoff1q
+floor_cave_dropoff1r
+floor_cave_dropoff1s
 floor_dark1a
 floor_dark1b
 floor_dungeon1a
@@ -644,10 +755,10 @@ floor_farm2b
 floor_fire1a
 floor_fire1b
 floor_fire1c
-floor_flagm1            TilePos_0,0,3
-floor_flagm2            TilePos_0,0,3
-floor_flagm3            TilePos_0,0,3
-floor_flagm4            TilePos_0,0,3
+floor_flagm1       TilePos_0,0,3
+floor_flagm2       TilePos_0,0,3
+floor_flagm3       TilePos_0,0,3
+floor_flagm4       TilePos_0,0,3
 floor_flagstone1a
 floor_flagstone1b
 floor_flagstone1c
@@ -794,10 +905,10 @@ floor_ruin3
 floor_ruin4
 floor_ruin5
 floor_ruin6
-floor_sand_d1             TilePos_3,3,3
-floor_sand_d2             TilePos_3,3,3
-floor_sand_d3             TilePos_3,3,3
-floor_sand_d4             TilePos_3,3,3
+floor_sand_d1         TilePos_3,3,3
+floor_sand_d2         TilePos_3,3,3
+floor_sand_d3         TilePos_3,3,3
+floor_sand_d4         TilePos_3,3,3
 floor_sblack1
 floor_sblack1b
 floor_sblack2
@@ -836,26 +947,26 @@ floor_white3a
 floor_white3b
 floor_white3c
 floor_white3d
-floor_wood1
-floor_wood1b
-floor_wood2              TilePos_2,2,3
-floor_wood2_d1           TilePos_2,2,3
-floor_wood2_d2           TilePos_2,2,3
-floor_wood2_l1           TilePos_2,2,3
-floor_wood2_l2           TilePos_2,2,3
-floor_wood2b             TilePos_2,2,3
-floor_wood3a             TilePos_2,2,3
-floor_wood3b             TilePos_2,2,3
-floor_wood3c             TilePos_2,2,3
-floor_wood3d             TilePos_2,2,3
-floor_wood3e             TilePos_2,2,3
-floor_wood3f             TilePos_2,2,3
-floor_wood3g             TilePos_2,2,3
-floor_wood3h             TilePos_2,2,3
-floor_wood4a             TilePos_2,2,3
-floor_wood4b             TilePos_2,2,3
-floor_wood4c             TilePos_2,2,3
-floor_wood4d             TilePos_2,2,3
+floor_wood1       TilePos_2,4,3
+floor_wood1b      TilePos_2,4,3
+floor_wood2      TilePos_2,4,3
+floor_wood2_d1      TilePos_2,4,3
+floor_wood2_d2      TilePos_2,4,3
+floor_wood2_l1      TilePos_2,4,3
+floor_wood2_l2      TilePos_2,4,3
+floor_wood2b      TilePos_2,4,3
+floor_wood3a      TilePos_2,4,3
+floor_wood3b      TilePos_2,4,3
+floor_wood3c      TilePos_2,4,3
+floor_wood3d      TilePos_2,4,3
+floor_wood3e      TilePos_2,4,3
+floor_wood3f      TilePos_2,4,3
+floor_wood3g      TilePos_2,4,3
+floor_wood3h      TilePos_2,4,3
+floor_wood4a      TilePos_2,4,3
+floor_wood4b      TilePos_2,4,3
+floor_wood4c      TilePos_2,4,3
+floor_wood4d      TilePos_2,4,3
 floor_wood_hole1
 floor_yellow1
 floor_yellow2
@@ -865,7 +976,7 @@ fmask_ruin1_s3
 fmask_ruin1_s4
 fmask_ruin1a
 fog
-food               item_food.png
+food                item_food.png
 forc
 forc_military
 force
@@ -888,77 +999,79 @@ fstone1b
 fstone1c
 fullhelmet
 fungus
-fwall_brown1
-fwall_cave1a
-fwall_cave1b
-fwall_cave1c
-fwall_fire1a
-fwall_fire1b
-fwall_fire1c
-fwall_flagstone1a
-fwall_flagstone2a
-fwall_fstone1a
-fwall_fstone1b
-fwall_fstone1c
-fwall_fstone2
-fwall_fstone2a
-fwall_fstone2b
-fwall_fstone2c
-fwall_fstone2d
-fwall_grey1
-fwall_grey2
-fwall_grit1a
-fwall_grit1b
-fwall_grit1c
-fwall_grit2a
-fwall_grit2b
-fwall_marble1a
-fwall_marble1b
-fwall_marble1c
-fwall_marble2a
-fwall_marble2b
-fwall_marble2c
-fwall_marble3a
-fwall_marble3b
-fwall_marble3c
-fwall_pattern1
-fwall_pattern10
-fwall_pattern11
-fwall_pattern12
-fwall_pattern13
-fwall_pattern14
-fwall_pattern15
-fwall_pattern16
-fwall_pattern17
-fwall_pattern18
-fwall_pattern19
-fwall_pattern2
-fwall_pattern3
-fwall_pattern4
-fwall_pattern5
-fwall_pattern6
-fwall_pattern7
-fwall_pattern8
-fwall_pattern9
-fwall_plant
-fwall_rock1
-fwall_rock2
-fwall_rock3
-fwall_ruin1a
-fwall_ruin1b
-fwall_ruin1c
-fwall_sand1a
-fwall_sand1b
-fwall_sstone1a
-fwall_sstone1b
-fwall_sstone1c
-fwall_stucco1a
-fwall_stucco2a
-fwall_wood1a
-fwall_wood1b
-fwall_wood1c
+fungus_spore
+fwall_brown1.d.101
+fwall_cave1a.d.101
+fwall_cave1b.d.101
+fwall_cave1c.d.101
+fwall_fire1a.d.101
+fwall_fire1b.d.101
+fwall_fire1c.d.101
+fwall_flagstone1a.d.101
+fwall_flagstone2a.d.101
+fwall_fstone1a.d.101
+fwall_fstone1b.d.101
+fwall_fstone1c.d.101
+fwall_fstone2.d.101
+fwall_fstone2a.d.101
+fwall_fstone2b.d.101
+fwall_fstone2c.d.101
+fwall_fstone2d.d.101
+fwall_grey1.d.101
+fwall_grey2.d.101
+fwall_grit1a.d.101
+fwall_grit1b.d.101
+fwall_grit1c.d.101
+fwall_grit2a.d.101
+fwall_grit2b.d.101
+fwall_marble1a.d.101
+fwall_marble1b.d.101
+fwall_marble1c.d.101
+fwall_marble2a.d.101
+fwall_marble2b.d.101
+fwall_marble2c.d.101
+fwall_marble3a.d.101
+fwall_marble3b.d.101
+fwall_marble3c.d.101
+fwall_pattern1.d.101
+fwall_pattern10.d.101
+fwall_pattern11.d.101
+fwall_pattern12.d.101
+fwall_pattern13.d.101
+fwall_pattern14.d.101
+fwall_pattern15.d.101
+fwall_pattern16.d.101
+fwall_pattern17.d.101
+fwall_pattern18.d.101
+fwall_pattern19.d.101
+fwall_pattern2.d.101
+fwall_pattern3.d.101
+fwall_pattern4.d.101
+fwall_pattern5.d.101
+fwall_pattern6.d.101
+fwall_pattern7.d.101
+fwall_pattern8.d.101
+fwall_pattern9.d.101
+fwall_plant.d.101
+fwall_rock1.d.101
+fwall_rock2.d.101
+fwall_rock3.d.101
+fwall_ruin1a.d.101
+fwall_ruin1b.d.101
+fwall_ruin1c.d.101
+fwall_sand1a.d.101
+fwall_sand1b.d.101
+fwall_sstone1a.d.101
+fwall_sstone1b.d.101
+fwall_sstone1c.d.101
+fwall_stucco1a.d.101
+fwall_stucco2a.d.101
+fwall_wood1a.d.101
+fwall_wood1b.d.101
+fwall_wood1c.d.101
 gate_door1
 gate_lock1
+gauntlet_halloween
 gauntlet_warmage
 gauntlets_chain
 gauntlets_gold
@@ -1009,6 +1122,8 @@ grass
 grass_flowers1
 grass_flowers2
 grass_flowers3
+grass_fullmask1
+grass_fullmask2
 grass_leaf1
 grass_leaf2
 grass_leafm1
@@ -1050,20 +1165,20 @@ grassd_5             TilePos_1,2,3
 grassd_6             TilePos_1,2,3
 grassd_7             TilePos_1,2,3
 grassd_8             TilePos_1,2,3
-grassd_m1            TilePos_1,2,3
-grassd_m10           TilePos_1,2,3
-grassd_m11           TilePos_1,2,3
-grassd_m12           TilePos_1,2,3
-grassd_m13           TilePos_1,2,3
-grassd_m14           TilePos_1,2,3
-grassd_m2            TilePos_1,2,3
-grassd_m3            TilePos_1,2,3
-grassd_m4            TilePos_1,2,3
-grassd_m5            TilePos_1,2,3
-grassd_m6            TilePos_1,2,3
-grassd_m7            TilePos_1,2,3
-grassd_m8            TilePos_1,2,3
-grassd_m9            TilePos_1,2,3
+grassd_m1             TilePos_1,2,3
+grassd_m10             TilePos_1,2,3
+grassd_m11             TilePos_1,2,3
+grassd_m12             TilePos_1,2,3
+grassd_m13             TilePos_1,2,3
+grassd_m14             TilePos_1,2,3
+grassd_m2             TilePos_1,2,3
+grassd_m3             TilePos_1,2,3
+grassd_m4             TilePos_1,2,3
+grassd_m5             TilePos_1,2,3
+grassd_m6             TilePos_1,2,3
+grassd_m7             TilePos_1,2,3
+grassd_m8             TilePos_1,2,3
+grassd_m9             TilePos_1,2,3
 grate1
 grate1_end
 grate_door1
@@ -1076,8 +1191,9 @@ grave_fire_on
 grave_open
 gravestone
 gray_ooze
-great_pumpkin
 green_jelly
+greenexit
+ground_blacklava
 guard1
 guard2
 guard_pole
@@ -1095,6 +1211,7 @@ hammer_swar_giant
 hammer_war
 hammer_war_giant
 hat_feather
+hat_witch
 hat_wiz
 haybailsmall
 haypilesmall
@@ -1105,6 +1222,7 @@ helm_demon
 helm_dwarf
 helm_field
 helm_guard
+helm_halloween
 helm_horn
 helm_iron
 helm_leather
@@ -1119,8 +1237,8 @@ hole
 hole1
 honeycomb01
 horn
-human_f              Hero.mesh
-human_m              Hero.mesh
+human_f     Hero.mesh
+human_m     Hero.mesh
 icecave_deco
 icecave_deco1
 icecave_deco2
@@ -1173,11 +1291,19 @@ key_blue
 key_branch
 key_brown
 key_elements
+key_eretomb
 key_gold
+key_gold_blue
+key_gold_gold
+key_gold_green
+key_gold_purple
+key_gold_red
 key_green
 key_ice
+key_rebeldrow
 key_red
 key_ring
+key_yervas
 kicking_boots
 kiddy_bench
 king
@@ -1206,6 +1332,7 @@ kobold_big
 kobold_fighter
 kobold_guard
 kobold_shaman
+koboldflag
 lab_cauld_brk
 ladder_down
 ladder_down_01
@@ -1217,14 +1344,18 @@ ladder_round_down_02
 ladder_round_down_03
 ladder_round_down_04
 ladder_up
-lake                      TilePos_3,3,1
-lake_deep                 TilePos_5,3,1
-lake_deepest              TilePos_4,3,0
+lake            TilePos_3,3,1
+lake_deep            TilePos_3,3,1
+lake_deepest            TilePos_3,3,1
 lamellar_mail
 lamp_lit1
+lamp_pole
 lamp_post
 lamp_unlit
-lamp_wall
+lamp_wall.110
+lamp_wall.111
+lamp_wall.170
+lamp_wall.171
 lantern2_magic
 lantern_magic
 large_candle
@@ -1235,12 +1366,15 @@ lcrystal_lit1
 lcrystal_unlit
 leather_ar
 leather_cuirass
-leather_padded           item_leatherArmor.png
+leather_padded         item_leatherArmor.png
 leather_spiked
 leather_studded
 leggings_chain
 leggings_leather
 leggings_plate
+legs_chain
+legs_leather
+legs_plate
 lemon01
 letter
 lever
@@ -1254,6 +1388,93 @@ light_bulb_6
 light_bulb_7
 light_bulb_8
 light_bulb_9
+lo_floor1
+lo_floor2
+lo_floor_water1
+lo_floor_water2
+lo_floor_water3
+lo_floor_water4
+lo_floor_water5
+lo_floor_water6
+lo_wall1.111
+lo_wall1.131
+lo_wall1.151
+lo_wall1.171
+lo_wall2.111
+lo_wall2.131
+lo_wall2.151
+lo_wall2.171
+lo_wall2a.111
+lo_wall2a.121
+lo_wall2a.131
+lo_wall2a.141
+lo_wall2a.151
+lo_wall2a.171
+lo_wall3.111
+lo_wall3.131
+lo_wall3.151
+lo_wall3.171
+lo_wall3a.111
+lo_wall3a.121
+lo_wall3a.131
+lo_wall3a.141
+lo_wall3a.151
+lo_wall3a.161
+lo_wall3a.171
+lo_wall3a.181
+lo_wall4.101
+lo_wall4a.111
+lo_wall4a.131
+lo_wall4a.151
+lo_wall4a.171
+lo_wall4b.111
+lo_wall4b.121
+lo_wall4b.131
+lo_wall4b.141
+lo_wall4b.151
+lo_wall4b.161
+lo_wall4b.171
+lo_wall4b.181
+lo_wall4c.111
+lo_wall4c.131
+lo_wall4c.151
+lo_wall4c.171
+lo_wall5.111
+lo_wall5.131
+lo_wall5.151
+lo_wall5.171
+lo_wall5a.111
+lo_wall5a.121
+lo_wall5a.131
+lo_wall5a.141
+lo_wall5a.151
+lo_wall5a.161
+lo_wall5a.171
+lo_wall5a.181
+lo_wall6.111
+lo_wall6.131
+lo_wall6.151
+lo_wall6.171
+lo_wall6.d.111
+lo_wall6.d.131
+lo_wall6.d.151
+lo_wall6.d.171
+lo_wall6a.111
+lo_wall6a.121
+lo_wall6a.131
+lo_wall6a.141
+lo_wall6a.151
+lo_wall6a.171
+lo_wall7.111
+lo_wall7.131
+lo_wall7.151
+lo_wall7.171
+lo_wall8.101
+lo_wall8.d.101
+lo_wall9.111
+lo_wall9.131
+lo_wall9.151
+lo_wall9.171
 locker1
 locker2
 locker3
@@ -1271,7 +1492,10 @@ mace_battle
 mace_spiked
 mace_spiked_war
 mace_war
+mage_amulet
 mage_old
+mage_robe
+magestaff
 magic_ear
 magic_mail1
 magic_mail2
@@ -1279,7 +1503,15 @@ magic_mail3
 magic_mail4
 magic_ringmail1
 magic_ringmail2
-magic_wall
+magic_wall.101
+magic_wall.111
+magic_wall.121
+magic_wall.131
+magic_wall.141
+magic_wall.151
+magic_wall.161
+magic_wall.171
+magic_wall.181
 magicmouth
 mail_elemental
 mailbox
@@ -1289,7 +1521,10 @@ marker1
 marker2
 marker3
 marker4
+marker_atrillia
 marker_empty
+mask_lizard
+mask_skelly
 mattock
 melon01
 menorah_wagon
@@ -1304,7 +1539,7 @@ mithril_armour
 mithril_coat
 mithril_coat_santa
 mithril_ring
-monk                        Monk.mesh
+monk         Monk.mesh
 mover
 mstar
 mstar_2h
@@ -1342,6 +1577,7 @@ nugget_silver_l
 nugget_silver_s
 nunchacu
 nunchacu_war
+oarman
 obelisk
 ochre_jelly
 ogre
@@ -1350,6 +1586,7 @@ olive_oil
 open_flame
 orange01
 orange_tree
+orc_archer
 orc_berserker
 orc_captain
 orc_fighter
@@ -1361,8 +1598,11 @@ orc_warrior
 oty
 pair_human
 pallasch
+pants
 panzerstecher
+parrot
 partisan
+patron
 pdragon_mail
 peach01
 pear01
@@ -1376,11 +1616,16 @@ ped_black_h1
 ped_black_hs1
 ped_black_hw1
 ped_black_hws1
+ped_magic1
 ped_white
 ped_white_h1
 ped_white_hs1
 ped_white_hw1
+ped_white_hw2
+ped_white_hw3
 ped_white_hws1
+ped_white_ww1
+ped_white_ww2
 pedestal
 penguin
 pick_axe
@@ -1458,6 +1703,10 @@ pineapple01
 pinkrose
 pinkrosebunch
 pipe
+pirate
+pirate_2
+pirate_3
+pirate_sorceress
 pitchfork
 plant1
 plant10
@@ -1470,12 +1719,14 @@ plant16
 plant17
 plant18
 plant19
-plant1_wall
+plant1_wall.131
+plant1_wall.151
 plant2
 plant20
 plant21
 plant22
-plant2_wall
+plant2_wall.131
+plant2_wall.151
 plant3
 plant4
 plant5
@@ -1512,11 +1763,13 @@ pool_poison
 portal_big
 portal_red
 portal_yellow
-pot_wall
+pot_wall.u.131
+pot_wall.u.151
 potion_brown
 potion_gen
 potion_green
 potion_grey
+potion_magic
 potion_orange
 potion_pink
 potion_red
@@ -1554,6 +1807,7 @@ presents
 prev_item
 priest_church
 priest_green
+priest_robed
 prison_deco1
 prison_deco2
 prison_deco3
@@ -1587,14 +1841,22 @@ ranger
 ranseur
 rapier
 rat
+rattle_snake
 razor_bracers
+red_flower
+red_flowers
 redrose
 redrosebunch
-redwall_wood
-redwall_wood1
-redwall_wood2
-redwall_wood3
-redwall_wood_w
+redwall_wood.d.141
+redwall_wood.d.181
+redwall_wood1.d.111
+redwall_wood1.d.131
+redwall_wood2.d.111
+redwall_wood2.d.131
+redwall_wood3.d.111
+redwall_wood3.d.131
+redwall_wood_w.111
+redwall_wood_w.131
 redwine
 reed_small_m1
 reed_small_m10
@@ -1619,6 +1881,7 @@ ring_magic3
 ring_magic4
 ring_mail
 ring_mithril
+ring_peril
 ring_platinum
 ring_silver
 ring_silver_black
@@ -1630,7 +1893,8 @@ ring_silver_white
 ring_silver_yellow
 ring_silver_yellow2
 ring_tin
-ring_wall
+ring_wall.131
+ring_wall.151
 roast01
 robe_black
 robe_lblue
@@ -1661,23 +1925,36 @@ rock_big6
 rock_big7
 rock_big8
 rock_big9
-rock_wall1
-rock_wall2
-rock_wall3
-rock_wall4
-rock_wall5
-rock_wall6
-rock_wall7
-rock_wall8
+rock_lake
+rock_lake2
+rock_lake3
+rock_step1
+rock_step2
+rock_step3
+rock_wall1.101
+rock_wall2.101
+rock_wall3.101
+rock_wall3_exit.131
+rock_wall3_exit.151
+rock_wall4.101
+rock_wall5.101
+rock_wall6.101
+rock_wall7.101
+rock_wall8.101
 rod_heavy
 rod_light
 ropeladder_down
 ropeladder_down2
+row_boat_a
+row_boat_b
 rows
 rubbish
 rune_fire
 saber
-sack                   Sack_N.mesh
+sack               Sack_N.mesh
+saddle
+saddle_close
+saddle_riding
 sadpriest
 sai
 salad01
@@ -1704,9 +1981,8 @@ sand_dm6
 sand_dm7
 sand_dm8
 sand_dm9
-sandals                     item_sandals.png
+sandals            item_sandals.png
 sandals2
-santa
 santahat
 sausage01
 saw
@@ -1732,26 +2008,39 @@ sewer_hole2
 sewer_plate
 sewer_plate2
 sewer_plate3
-sewer_wall
+sewer_wall.131
+sewer_wall.151
+sewer_wall1on.131
+sewer_wall2on.131
 shelf1
-shelf1_wall
+shelf1_wall.111
+shelf1_wall.171
 shelf2
-shelf2_wall
+shelf2_wall.111
+shelf2_wall.171
 shelf3
 shelf3_dem1
 shelf3_dem2
 shelf3_dem3
-shelf3_wall
+shelf3_wall.111
+shelf3_wall.171
 shelf3a
 shelf3b
 shelf3c
-shelf4_wall
-shelf5_wall
-shelf6_wall
-shelf_wall
-shelf_wall_dem1
-shelf_wall_dem2
-shelf_wall_dem3
+shelf4_wall.111
+shelf4_wall.171
+shelf5_wall.111
+shelf5_wall.171
+shelf6_wall.111
+shelf6_wall.171
+shelf_wall.111
+shelf_wall.171
+shelf_wall_dem1.111
+shelf_wall_dem1.171
+shelf_wall_dem2.111
+shelf_wall_dem2.171
+shelf_wall_dem3.111
+shelf_wall_dem3.171
 shiavona
 shield
 shield_battle
@@ -1779,10 +2068,16 @@ shield_scale_yellow
 shield_skull
 shield_uw
 shield_war
+ship_captain
+ship_rail
 shootingstar
 shop_def
 shop_empty
-shortsword                    item_shortsword.png
+shortsword               item_shortsword.png
+shoulder_chain
+shoulder_leather
+shoulder_plate
+shoulder_scale
 shovel
 shovel_dirt
 shrine1
@@ -1790,7 +2085,7 @@ sign
 silvercoin
 skel_fighter1
 skel_fighter2
-skel_fighter3#
+skel_fighter3
 skel_mage
 skeleton
 skill
@@ -1808,8 +2103,9 @@ slug_giant
 small_fence1
 small_shie
 small_stones
-smith                         Smitty.mesh
+smith                 Smitty.mesh
 snake
+snake_skin
 snow
 snow_fmask
 snow_path
@@ -1831,8 +2127,6 @@ snow_path_wide_sw
 snow_path_wide_wl
 snowball
 snowball2
-snowman_evil
-snowman_evil2
 snowman_lg
 snowman_sm
 snowy_autree2
@@ -1842,12 +2136,12 @@ snowy_pinetree1
 snowy_pinetree2
 snowy_rock_big1
 snowy_rock_big2
-snowy_rock_wall2
-snowy_rock_wall3
-snowy_rock_wall4
-snowy_rock_wall5
-snowy_rock_wall6
-snowy_rock_wall8
+snowy_rock_wall2.101
+snowy_rock_wall3.101
+snowy_rock_wall4.101
+snowy_rock_wall5.101
+snowy_rock_wall6.101
+snowy_rock_wall8.101
 snowy_tree1
 snowy_tree2
 snowy_tree_big1
@@ -1863,13 +2157,27 @@ spawn_point
 spear
 spetum
 spider
+spider_fangs
 spider_web
 spider_widow
+spike_flower
 spiked_boots
 spiked_pit
 spinner
 splint_mail
 spotted_jelly
+sr_2himpact
+sr_2hslash
+sr_booze
+sr_cleavepole
+sr_girdle
+sr_helmet
+sr_piercepole
+sr_ragesword
+sr_ring1
+sr_ring2
+sr_shield
+sr_solewhip
 sstone
 stairs_red_down
 stairs_red_up
@@ -1877,6 +2185,7 @@ stairs_stone_down
 stairs_stone_up
 stairs_wood_down
 stairs_wood_up
+star_jewel
 starsdavid
 starsofdavid
 statue_black1
@@ -1892,6 +2201,8 @@ statue_white2
 statue_white3
 steak01
 steak02
+sticks1
+sticks2
 stocking
 stocking_bow
 stone1
@@ -1904,6 +2215,8 @@ stonehenge
 straw1
 straw2
 strawberry01
+strawbig
+strawbig_pole
 sultana01
 swamp1
 swamp1m1
@@ -1916,7 +2229,10 @@ swamp1m6
 swamp1m7
 swamp1m8
 swamp1m9
-switch_wall
+switch_wall.111
+switch_wall.112
+switch_wall.171
+switch_wall.172
 sword
 sword2h
 sword_curved
@@ -1931,8 +2247,10 @@ t_star
 table_lab1
 table_lab2
 table_lab3
+table_large
 table_menorah1
 table_menorah2
+table_plant1
 table_poker1
 table_poker2
 table_round1
@@ -1943,6 +2261,7 @@ table_wood1
 tabletree1
 tabletree2
 tabletree3
+tailor
 tanto
 target
 teddy
@@ -1993,8 +2312,18 @@ tootsie_pop3
 tootsie_roll
 torch_burnt
 torch_lit1
-torch_unlit             item_torchUnlit.png
-torch_wall
+torch_unlit          item_torchUnlit.png
+torch_wall.110
+torch_wall.111
+torch_wall.112
+torch_wall.113
+torch_wall.114
+torch_wall.170
+torch_wall.171
+torch_wall.172
+torch_wall.173
+torch_wall.174
+tracks
 trans
 trapdoor_1
 trash_wood1
@@ -2064,133 +2393,503 @@ tree_c
 tree_cut1
 tree_small
 tree_smalld
+tree_stone1
 trident
 troll
+troll_bracers
 tspikes
 tsurugi
 tulwar
 urn
+vampire
+vampire_lord
 voulge
 wagon_big
 wagon_small
 wakizashi
-wall_black1
-wall_black1_d1
-wall_black1_d2
-wall_black1_w
-wall_black1a
-wall_black1b
-wall_black1win
-wall_blood1
-wall_blood2
-wall_blood3
-wall_blood4
-wall_blue1
-wall_blue1_w
-wall_blue2
-wall_blue2_w
-wall_cave1
-wall_cave1b
-wall_dark1
-wall_dark1_w
-wall_dark1a
-wall_dark1b
-wall_drain1
-wall_drain2
-wall_drain3
-wall_drain4
-wall_dungeon1
-wall_dungeon2
-wall_dungeon2b
-wall_flagstone1
-wall_flagstone1_w
-wall_flagstone1_w2
-wall_flagstone1b
-wall_flagstone1b_w
-wall_flagstone2
-wall_flagstone2_w
-wall_fstone
-wall_fstone_corner
-wall_fstone_half
-wall_fstone_pillar
-wall_fstone_round
-wall_marble1
-wall_marble1_w
-wall_marble1_w2
-wall_marble1_wb
-wall_marble1a
-wall_pattern1
-wall_pattern1_w
-wall_pattern2
-wall_pattern2_w
-wall_pattern3
-wall_pattern3_w
-wall_pattern4
-wall_pattern4_w
-wall_ruin1a
-wall_ruin1b
-wall_ruin1c
-wall_ruin1d
-wall_ruin1e
-wall_ruin_c1
-wall_ruin_c2
-wall_ruin_c3
-wall_stone
-wall_stone1
-wall_stone10
-wall_stone10_w
-wall_stone10_w1
-wall_stone10_w2
-wall_stone11
-wall_stone11_w
-wall_stone12
-wall_stone12_w
-wall_stone12_w1
-wall_stone12_w2
-wall_stone13
-wall_stone13_w
-wall_stone14
-wall_stone14_w
-wall_stone15
-wall_stone15_w
-wall_stone16
-wall_stone16_w
-wall_stone17
-wall_stone17_w
-wall_stone1_w
-wall_stone2
-wall_stone3
-wall_stone3_w
-wall_stone4
-wall_stone4_w
-wall_stone5
-wall_stone5_w
-wall_stone6
-wall_stone6_w
-wall_stone7
-wall_stone7_w
-wall_stone8
-wall_stone8_w
-wall_stone9
-wall_stone9_w
-wall_stone9_w1
-wall_stone9_w2
-wall_stone_fence
-wall_stone_w                      hWall_H_B.mesh
-wall_well
-wall_white1
-wall_white1_red
-wall_white1_red_inside_w
-wall_white1_red_outside_w
-wall_white1_red_w
-wall_white1_w
-wall_white2
-wall_white2_w
-wall_wood
-wall_wood1
-wall_wood2
-wall_wood3
-wall_wood_w
+wall_black1.d.111
+wall_black1.d.131
+wall_black1.d.141
+wall_black1.d.181
+wall_black1_d1.111
+wall_black1_d1.131
+wall_black1_d2.111
+wall_black1_d2.131
+wall_black1_w.111
+wall_black1_w.131
+wall_black1a.d.111
+wall_black1a.d.131
+wall_black1b.d.111
+wall_black1b.d.131
+wall_black1win.111
+wall_black1win.131
+wall_blood1.u.131
+wall_blood1.u.151
+wall_blood2.u.131
+wall_blood2.u.151
+wall_blood3.u.131
+wall_blood3.u.151
+wall_blood4.u.131
+wall_blood4.u.151
+wall_blue1.d.111
+wall_blue1.d.131
+wall_blue1.d.141
+wall_blue1.d.181
+wall_blue1_w.111
+wall_blue1_w.131
+wall_blue2.d.111
+wall_blue2.d.131
+wall_blue2.d.141
+wall_blue2.d.181
+wall_blue2_w.111
+wall_blue2_w.131
+wall_cave1.101
+wall_cave1.111
+wall_cave1.121
+wall_cave1.131
+wall_cave1.141
+wall_cave1.151
+wall_cave1.161
+wall_cave1.171
+wall_cave1.181
+wall_cave1b.121
+wall_cave1b.141
+wall_cave1b.161
+wall_dark1.d.141
+wall_dark1.d.181
+wall_dark1_w.111
+wall_dark1_w.131
+wall_dark1a.d.111
+wall_dark1a.d.131
+wall_dark1b.d.111
+wall_dark1b.d.131
+wall_drain1.131
+wall_drain1.151
+wall_drain2.131
+wall_drain2.151
+wall_drain3.131
+wall_drain3.151
+wall_drain4.131
+wall_drain4.151
+wall_dungeon1.d.111
+wall_dungeon1.d.131
+wall_dungeon1.d.141
+wall_dungeon1.d.181
+wall_dungeon2.d.111
+wall_dungeon2.d.131
+wall_dungeon2.d.141
+wall_dungeon2.d.181
+wall_dungeon2b.d.111
+wall_dungeon2b.d.131
+wall_dungeon2b.d.141
+wall_flagstone1.d.111
+wall_flagstone1.d.131
+wall_flagstone1.d.141
+wall_flagstone1.d.181
+wall_flagstone1_w.111
+wall_flagstone1_w.131
+wall_flagstone1_w2.111
+wall_flagstone1_w2.131
+wall_flagstone1b.d.111
+wall_flagstone1b.d.131
+wall_flagstone1b.d.141
+wall_flagstone1b_w.111
+wall_flagstone1b_w.131
+wall_flagstone2.d.111
+wall_flagstone2.d.131
+wall_flagstone2.d.141
+wall_flagstone2.d.181
+wall_flagstone2_w.111
+wall_flagstone2_w.131
+wall_fstone.100
+wall_fstone.d.100
+wall_fstone_corner.101
+wall_fstone_corner.d.101
+wall_fstone_half.101
+wall_fstone_half.d.101
+wall_fstone_pillar.101
+wall_fstone_round.102
+wall_fstone_round.104
+wall_fstone_round.106
+wall_fstone_round.108
+wall_marble1.d.111
+wall_marble1.d.111-01
+wall_marble1.d.111-02
+wall_marble1.d.111-03
+wall_marble1.d.111-04
+wall_marble1.d.111-05
+wall_marble1.d.111-06
+wall_marble1.d.111-07
+wall_marble1.d.111-c-00-01
+wall_marble1.d.111-c-00-02
+wall_marble1.d.111-c-00-03
+wall_marble1.d.111-c-00-04
+wall_marble1.d.111-c-00-05
+wall_marble1.d.111-c-00-06
+wall_marble1.d.111-c-00-07
+wall_marble1.d.111-c-01-00
+wall_marble1.d.111-c-01-02
+wall_marble1.d.111-c-01-03
+wall_marble1.d.111-c-01-04
+wall_marble1.d.111-c-01-05
+wall_marble1.d.111-c-01-06
+wall_marble1.d.111-c-01-07
+wall_marble1.d.111-c-02-00
+wall_marble1.d.111-c-02-01
+wall_marble1.d.111-c-02-03
+wall_marble1.d.111-c-02-04
+wall_marble1.d.111-c-02-05
+wall_marble1.d.111-c-02-06
+wall_marble1.d.111-c-02-07
+wall_marble1.d.111-c-03-00
+wall_marble1.d.111-c-03-01
+wall_marble1.d.111-c-03-02
+wall_marble1.d.111-c-03-04
+wall_marble1.d.111-c-03-05
+wall_marble1.d.111-c-03-06
+wall_marble1.d.111-c-03-07
+wall_marble1.d.111-c-04-00
+wall_marble1.d.111-c-04-01
+wall_marble1.d.111-c-04-02
+wall_marble1.d.111-c-04-03
+wall_marble1.d.111-c-04-05
+wall_marble1.d.111-c-04-06
+wall_marble1.d.111-c-04-07
+wall_marble1.d.111-c-05-00
+wall_marble1.d.111-c-05-01
+wall_marble1.d.111-c-05-02
+wall_marble1.d.111-c-05-03
+wall_marble1.d.111-c-05-04
+wall_marble1.d.111-c-05-06
+wall_marble1.d.111-c-05-07
+wall_marble1.d.111-c-06-00
+wall_marble1.d.111-c-06-01
+wall_marble1.d.111-c-06-02
+wall_marble1.d.111-c-06-03
+wall_marble1.d.111-c-06-04
+wall_marble1.d.111-c-06-05
+wall_marble1.d.111-c-06-07
+wall_marble1.d.111-c-07-00
+wall_marble1.d.111-c-07-01
+wall_marble1.d.111-c-07-02
+wall_marble1.d.111-c-07-03
+wall_marble1.d.111-c-07-04
+wall_marble1.d.111-c-07-05
+wall_marble1.d.111-c-07-06
+wall_marble1.d.131
+wall_marble1.d.131-01
+wall_marble1.d.131-02
+wall_marble1.d.131-03
+wall_marble1.d.131-04
+wall_marble1.d.131-05
+wall_marble1.d.131-06
+wall_marble1.d.131-07
+wall_marble1.d.131-c-00-01
+wall_marble1.d.131-c-00-02
+wall_marble1.d.131-c-00-03
+wall_marble1.d.131-c-00-04
+wall_marble1.d.131-c-00-05
+wall_marble1.d.131-c-00-06
+wall_marble1.d.131-c-00-07
+wall_marble1.d.131-c-01-00
+wall_marble1.d.131-c-01-02
+wall_marble1.d.131-c-01-03
+wall_marble1.d.131-c-01-04
+wall_marble1.d.131-c-01-05
+wall_marble1.d.131-c-01-06
+wall_marble1.d.131-c-01-07
+wall_marble1.d.131-c-02-00
+wall_marble1.d.131-c-02-01
+wall_marble1.d.131-c-02-03
+wall_marble1.d.131-c-02-04
+wall_marble1.d.131-c-02-05
+wall_marble1.d.131-c-02-06
+wall_marble1.d.131-c-02-07
+wall_marble1.d.131-c-03-00
+wall_marble1.d.131-c-03-01
+wall_marble1.d.131-c-03-02
+wall_marble1.d.131-c-03-04
+wall_marble1.d.131-c-03-05
+wall_marble1.d.131-c-03-06
+wall_marble1.d.131-c-03-07
+wall_marble1.d.131-c-04-00
+wall_marble1.d.131-c-04-01
+wall_marble1.d.131-c-04-02
+wall_marble1.d.131-c-04-03
+wall_marble1.d.131-c-04-05
+wall_marble1.d.131-c-04-06
+wall_marble1.d.131-c-04-07
+wall_marble1.d.131-c-05-00
+wall_marble1.d.131-c-05-01
+wall_marble1.d.131-c-05-02
+wall_marble1.d.131-c-05-03
+wall_marble1.d.131-c-05-04
+wall_marble1.d.131-c-05-06
+wall_marble1.d.131-c-05-07
+wall_marble1.d.131-c-06-00
+wall_marble1.d.131-c-06-01
+wall_marble1.d.131-c-06-02
+wall_marble1.d.131-c-06-03
+wall_marble1.d.131-c-06-04
+wall_marble1.d.131-c-06-05
+wall_marble1.d.131-c-06-07
+wall_marble1.d.131-c-07-00
+wall_marble1.d.131-c-07-01
+wall_marble1.d.131-c-07-02
+wall_marble1.d.131-c-07-03
+wall_marble1.d.131-c-07-04
+wall_marble1.d.131-c-07-05
+wall_marble1.d.131-c-07-06
+wall_marble1.d.141
+wall_marble1.d.141-01
+wall_marble1.d.141-02
+wall_marble1.d.141-03
+wall_marble1.d.141-04
+wall_marble1.d.141-05
+wall_marble1.d.141-06
+wall_marble1.d.141-07
+wall_marble1.d.181
+wall_marble1.d.181-01
+wall_marble1.d.181-02
+wall_marble1.d.181-03
+wall_marble1.d.181-04
+wall_marble1.d.181-05
+wall_marble1.d.181-06
+wall_marble1.d.181-07
+wall_marble1_w.111
+wall_marble1_w.111-01
+wall_marble1_w.111-02
+wall_marble1_w.111-03
+wall_marble1_w.111-04
+wall_marble1_w.111-05
+wall_marble1_w.111-06
+wall_marble1_w.111-07
+wall_marble1_w.131
+wall_marble1_w.131-01
+wall_marble1_w.131-02
+wall_marble1_w.131-03
+wall_marble1_w.131-04
+wall_marble1_w.131-05
+wall_marble1_w.131-06
+wall_marble1_w.131-07
+wall_marble1_w2.111
+wall_marble1_w2.131
+wall_marble1_wb.111
+wall_marble1_wb.131
+wall_marble1a.d.111
+wall_marble1a.d.111-01
+wall_marble1a.d.111-02
+wall_marble1a.d.111-03
+wall_marble1a.d.111-04
+wall_marble1a.d.111-05
+wall_marble1a.d.111-06
+wall_marble1a.d.111-07
+wall_marble1a.d.131
+wall_marble1a.d.131-01
+wall_marble1a.d.131-02
+wall_marble1a.d.131-03
+wall_marble1a.d.131-04
+wall_marble1a.d.131-05
+wall_marble1a.d.131-06
+wall_marble1a.d.131-07
+wall_mousehole1.131
+wall_mousehole1.151
+wall_pattern1.d.111
+wall_pattern1.d.131
+wall_pattern1.d.141
+wall_pattern1.d.181
+wall_pattern1_w.111
+wall_pattern1_w.131
+wall_pattern2.d.111
+wall_pattern2.d.131
+wall_pattern2.d.141
+wall_pattern2.d.181
+wall_pattern2_w.111
+wall_pattern2_w.131
+wall_pattern3.d.111
+wall_pattern3.d.131
+wall_pattern3.d.141
+wall_pattern3.d.181
+wall_pattern3_w.111
+wall_pattern3_w.131
+wall_pattern4.d.111
+wall_pattern4.d.131
+wall_pattern4.d.141
+wall_pattern4.d.181
+wall_pattern4_w.111
+wall_pattern4_w.131
+wall_ruin1a.d.111
+wall_ruin1a.d.131
+wall_ruin1a.d.141
+wall_ruin1a.d.181
+wall_ruin1b.d.111
+wall_ruin1b.d.131
+wall_ruin1b.d.141
+wall_ruin1c.d.111
+wall_ruin1c.d.131
+wall_ruin1d.d.111
+wall_ruin1d.d.131
+wall_ruin1e.d.111
+wall_ruin_c1.111
+wall_ruin_c1.131
+wall_ruin_c2.111
+wall_ruin_c2.131
+wall_ruin_c3.111
+wall_ruin_c3.131
+wall_stone.d.111          bWall1_Bottom.mesh
+wall_stone.d.131          rWall1_Bottom.mesh
+wall_stone.d.141          cWall1_Bottom.mesh
+wall_stone.d.181
+wall_stone1.d.111
+wall_stone1.d.131
+wall_stone1.d.141
+wall_stone1.d.181
+wall_stone10.d.111
+wall_stone10.d.131
+wall_stone10.d.141
+wall_stone10.d.181
+wall_stone10_w.111
+wall_stone10_w.131
+wall_stone10_w1.111
+wall_stone10_w1.131
+wall_stone10_w2.111
+wall_stone10_w2.131
+wall_stone11.d.111
+wall_stone11.d.131
+wall_stone11.d.141
+wall_stone11.d.181
+wall_stone11_w.111
+wall_stone11_w.131
+wall_stone12.d.111
+wall_stone12.d.131
+wall_stone12.d.141
+wall_stone12.d.181
+wall_stone12_w.111
+wall_stone12_w.131
+wall_stone12_w1.111
+wall_stone12_w1.131
+wall_stone12_w2.111
+wall_stone12_w2.131
+wall_stone13.d.111
+wall_stone13.d.131
+wall_stone13.d.141
+wall_stone13.d.181
+wall_stone13_w.111
+wall_stone13_w.131
+wall_stone14.d.111
+wall_stone14.d.131
+wall_stone14.d.141
+wall_stone14.d.181
+wall_stone14_w.111
+wall_stone14_w.131
+wall_stone15.d.111
+wall_stone15.d.131
+wall_stone15.d.141
+wall_stone15.d.181
+wall_stone15_w.111
+wall_stone15_w.131
+wall_stone16.d.111
+wall_stone16.d.131
+wall_stone16.d.141
+wall_stone16.d.181
+wall_stone16_w.111
+wall_stone16_w.131
+wall_stone17.d.111
+wall_stone17.d.131
+wall_stone17.d.141
+wall_stone17.d.181
+wall_stone17_w.111
+wall_stone17_w.131
+wall_stone1_w.111
+wall_stone1_w.131
+wall_stone2.d.111
+wall_stone2.d.131
+wall_stone2.d.141
+wall_stone2.d.181
+wall_stone3.d.111
+wall_stone3.d.131
+wall_stone3.d.141        cWall1_Bottom.mesh
+wall_stone3.d.181
+wall_stone3_w.111
+wall_stone3_w.131
+wall_stone4.d.111
+wall_stone4.d.131
+wall_stone4.d.141
+wall_stone4.d.181
+wall_stone4_w.111
+wall_stone4_w.131
+wall_stone5.d.111
+wall_stone5.d.131
+wall_stone5.d.141
+wall_stone5.d.181
+wall_stone5_w.111
+wall_stone5_w.131
+wall_stone6.d.111
+wall_stone6.d.131
+wall_stone6.d.141
+wall_stone6.d.181
+wall_stone6_w.111
+wall_stone6_w.131
+wall_stone7.d.111
+wall_stone7.d.131
+wall_stone7.d.141
+wall_stone7.d.181
+wall_stone7_w.111
+wall_stone7_w.131
+wall_stone8.d.111
+wall_stone8.d.131
+wall_stone8.d.141
+wall_stone8.d.181
+wall_stone8_w.111
+wall_stone8_w.131
+wall_stone9.d.111
+wall_stone9.d.131
+wall_stone9.d.141
+wall_stone9.d.181
+wall_stone9_w.111
+wall_stone9_w.131
+wall_stone9_w1.111
+wall_stone9_w1.131
+wall_stone9_w2.111
+wall_stone9_w2.131
+wall_stone_fence.111
+wall_stone_fence.131
+wall_stone_w.111          bWall_Window_full.mesh
+wall_stone_w.131          rWall_Window_full.mesh
+wall_well.131
+wall_well.151
+wall_white1.d.111
+wall_white1.d.131
+wall_white1.d.141
+wall_white1.d.181
+wall_white1_red.d.111
+wall_white1_red.d.131
+wall_white1_red.d.141
+wall_white1_red.d.181
+wall_white1_red_inside_w.111
+wall_white1_red_inside_w.131
+wall_white1_red_outside_w.111
+wall_white1_red_outside_w.131
+wall_white1_red_w.111
+wall_white1_red_w.131
+wall_white1_w.111
+wall_white1_w.131
+wall_white2.d.111
+wall_white2.d.131
+wall_white2.d.141
+wall_white2.d.181
+wall_white2_w.111
+wall_white2_w.131
+wall_wood.d.141
+wall_wood.d.181
+wall_wood1.d.111
+wall_wood1.d.131
+wall_wood2.d.111
+wall_wood2.d.131
+wall_wood3.d.111
+wall_wood3.d.131
+wall_wood_w.111
+wall_wood_w.131
 wand
 wasp_giant
 water
@@ -2207,6 +2906,7 @@ water_plant6
 watertrough
 waypoint
 wealth
+weapon_smith
 well_stone
 whip
 whip_war
@@ -2223,6 +2923,7 @@ wmask_fire_off
 wmask_fire_on
 wmask_ruin1a
 wmask_ruin1b
+wmask_shipwheel
 wmask_wanted
 wolf
 woman_old
@@ -2234,6 +2935,7 @@ wraith
 wreath
 wrench
 wyvern
+xmark
 xmas_present_green_close
 xmas_present_green_open
 xmas_present_red_close
@@ -2246,4 +2948,5 @@ xmastree
 xmastreeinside
 yellowrose
 yellowrosebunch
+yervas_flag
 zombie
