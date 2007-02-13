@@ -456,7 +456,7 @@ inline void GuiWindow::createWindow()
     mElement->setMaterialName("GUI_Material_"+ strNum);
     mOverlay->add2D(static_cast<OverlayContainer*>(mElement));
     // We must clear the whole texture (textures have always 2^n size while windows can be smaller).
-    memset(mTexture->getBuffer()->lock(HardwareBuffer::HBL_DISCARD), 0x00, mTexture->getWidth() * mTexture->getHeight() * sizeof(uint32));
+    memset(mTexture->getBuffer()->lock (HardwareBuffer::HBL_DISCARD), 0x00, mTexture->getWidth() * mTexture->getHeight() * sizeof(uint32));
     mTexture->getBuffer()->unlock();
 }
 
@@ -616,19 +616,6 @@ class GuiGadgetButton *GuiWindow::getButtonHandle(int element)
 //================================================================================================
 // .
 //================================================================================================
-class GuiGadgetSlot *GuiWindow::getSlotHandle(int element)
-{
-    for (unsigned int i = 0; i < mvSlot.size() ; ++i)
-    {
-        if (mvSlot[i]->getIndex() == element)
-            return mvSlot[i];
-    }
-    return 0;
-}
-
-//================================================================================================
-// .
-//================================================================================================
 int GuiWindow::getTableSelection(int element)
 {
     for (unsigned int i = 0; i < mvTable.size() ; ++i)
@@ -694,18 +681,33 @@ void GuiWindow::clearListbox(int element)
 }
 
 //================================================================================================
-// Update an ItemSlot.
+// Search for the correct element in this window.
 //================================================================================================
-void GuiWindow::updateItemSlot(int element, int slotNr, int gfxNr)
+class GuiGadgetSlot *GuiWindow::getSlotHandle(int element)
 {
-    for (unsigned int i = 0; i < mvSlot.size(); ++i)
+    for (unsigned int i = 0; i < mvSlot.size() ; ++i)
     {
         if (mvSlot[i]->getIndex() == element)
-        {
-            mvSlot[i]->drawSlot(slotNr, gfxNr, GuiImageset::STATE_ELEMENT_DEFAULT);
-            return;
-        }
+            return mvSlot[i];
     }
+    Logger::log().error() << "BUG [gui_window.cpp -> getSlotHandle()]: Can't find Slot handle for element nr: "<< element;
+    return 0;
+}
+
+//================================================================================================
+// Update an ItemSlot.
+//================================================================================================
+void GuiWindow::updateItemSlot(int element, int slotNr, int state)
+{
+    getSlotHandle(element)->updateSlot(slotNr, state);
+}
+
+//================================================================================================
+// .
+//================================================================================================
+void GuiWindow::setItemReference(int element, std::list<Item::sItem*> *itemContainer)
+{
+    getSlotHandle(element)->setItemReference(itemContainer);
 }
 
 //================================================================================================
