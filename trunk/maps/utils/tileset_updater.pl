@@ -1,5 +1,7 @@
 #!/usr/bin/perl -w
 
+use Data::Dumper;
+
 # Analyzes all maps in the map directory and calculates 
 # and udpates the maps' tileset information
 
@@ -14,23 +16,29 @@ if (scalar(@ARGV) && $ARGV[0] eq '-n') {
 
 my $mapdir = $ARGV[0] || die "Usage: $0 [-n] <path-to-map-directory>\n -n: Don't modify any files.\n";
 
-my %maps = ();
-my %tilesets = ();
+my %maps = ();          # path -> $map
+my %tilesets = ();      # id   -> array($map, ...)
+my %old_tilesets = ();  # id   -> array($map, ...)
 
-# Scan all subdirs except utils, unofficial and nonpub
-scan_maps($mapdir, $mapdir, \%maps, ["^/utils/*", "^/unofficial/*", "^/nonpub/*"]);
+# Scan all subdirs with some exceptions
+scan_maps($mapdir, $mapdir, \%maps, [
+    "^/scripts/", "^/lua/", "^/utils/*",         # Not map directories
+    "^/unofficial/*", "^/_old/",                 # Not on main server
+#    "^/lost_worlds/", "^/relic/castle/marsh/"    # Temporarily disabled due to linking errors
+    ]);
 validate_linking(\%maps);
-find_tilesets(\%maps, \%tilesets, 1);
+relabel_old_tilesets(\%maps, \%tilesets);
+find_tilesets(\%maps, \%tilesets);
 update_map_files(\%maps, \%tilesets, $modify_files);
 
 # Scan nonpub last to avoid any changes there having effect on main maps
-$nrof_public_tilesets = scalar keys %tilesets;
-%maps = ();
-%tilesets = ();
-scan_maps("$mapdir/nonpub", $mapdir, \%maps, []);
-validate_linking(\%maps);
-find_tilesets(\%maps, \%tilesets, $nrof_public_tilesets + 1);
-update_map_files(\%maps, \%tilesets, $modify_files);
+#$nrof_public_tilesets = scalar keys %tilesets;
+#%maps = ();
+#%tilesets = ();
+#scan_maps("$mapdir/nonpub", $mapdir, \%maps, []);
+#validate_linking(\%maps);
+#find_tilesets(\%maps, \%tilesets, $nrof_public_tilesets + 1);
+#update_map_files(\%maps, \%tilesets, $modify_files);
 
 # Go through all map files and update them with tileset_id, tileset_x and tileset_y
 sub update_map_files
@@ -42,7 +50,15 @@ sub update_map_files
         print "Tileset $tileset (".(scalar @{$tilesets->{$tileset}})." tiles):\n";
         foreach my $map (@{$tilesets->{$tileset}})
         {
-            print "  $map->{path} ($map->{x}, $map->{y})\n";
+            print "  $map->{path} ($map->{x}, $map->{y})";
+            if(defined($map->{old_tileset}) && $map->{old_tileset} != $map->{tileset})
+            { print " (changed from tileset $map->{old_tileset})"; } 
+            elsif(! defined($map->{old_tileset}))
+            { print " (no previous tileset id)"; }
+            elsif($map->{old_x} ne $map->{x} || $map->{old_y} ne $map->{y})
+            { print " (changed from ($map->{old_x}, $map->{old_y}))"; } 
+                
+            print "\n";
 
             next unless $modify;
             
@@ -76,16 +92,30 @@ sub update_map_files
     }
 }
 
+sub relabel_old_tilesets
+{
+    my ($maps, $tilesets) = @_;
+        
+    foreach my $path (keys %$maps) {
+        next if defined $maps->{$path}->{'tileset'};      # Skip already marked maps
+        next if !defined $maps->{$path}->{'old_tileset'}; # Skip maps with no previous tileset ID
+        next if defined $tilesets->{$maps->{$path}->{'old_tileset'}};  # Skip tilesets with already marked maps
+        
+        $tilesets->{$maps->{$path}->{'old_tileset'}} = label_tileset($maps->{$path}, $maps, 
+            $maps->{$path}->{'old_tileset'}, $maps->{$path}->{'old_x'}, $maps->{$path}->{'old_y'});
+    }
+}
+
 # Traverse the graph and label all unique unconnected subgraphs
 sub find_tilesets
 {
-    my ($maps, $tilesets, $label) = @_;
+    my ($maps, $tilesets) = @_;
         
+    my $label = 1;
     foreach my $path (keys %$maps) {
-        next if defined $maps->{$path}->{'tileset'};
-
+        next if defined $maps->{$path}->{'tileset'}; # Skip already marked map
+        $label++ while defined $tilesets->{$label};  # Find next free label
         $tilesets->{$label} = label_tileset($maps->{$path}, $maps, $label, 0, 0);
-        $label++;
     }
 }
 
@@ -238,6 +268,12 @@ sub scan_maps
                     $map->{'width'} = $1;
                 } elsif ($line =~ /^height (\d+)$/) {
                     $map->{'height'} = $1;
+                } elsif ($line =~ /^tileset_id (\d+)$/) {
+                    $map->{'old_tileset'} = $1;
+                } elsif ($line =~ /^tileset_x (-?\d+)$/) {
+                    $map->{'old_x'} = $1;
+                } elsif ($line =~ /^tileset_y (-?\d+)$/) {
+                    $map->{'old_y'} = $1;
                 } elsif ($line eq 'end') {
                     last;
                 }
