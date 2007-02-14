@@ -3,6 +3,7 @@
 /gods/gods_lesser/altar
 /gods/gods_lesser/tabernacle/altar_tabernacle
 /connect/triggers/altar_trigger
+/mobs/demihumans/angel_warrior/angel_warrior
 /mobs/insects/ants/ant_queen
 /mobs/insects/ants/ant_red
 /mobs/insects/ants/ant_soldier
@@ -103,6 +104,7 @@
 /items/light/handheld/crystal_light
 /mobs/amoeboid/gelatinous_cube/cube_gel
 /walls/doors/curtain1
+/mobs/giants/cyclops/cyclops
 /mobs/theme/vday/dancerf1
 /mobs/theme/vday/dancerf2
 /mobs/theme/vday/dancerf3
@@ -113,9 +115,10 @@
 /items/magic_tools/deerhorn
 /mobs/undead/demilich/demilich
 /mobs/demon/demon_armour/demon_armour
-/mobs/demon/bone_devil/demon_goat
-/mobs/demon/bone_devil/demon_green
+/mobs/demon/demon_goat/demon_goat
+/mobs/demon/demon_green/demon_green
 /mobs/demon/demon_lord/demon_lord
+/mobs/theme/halloween/demon_pumpkin/demon_pumpkin
 /mobs/demon/demon_sfire/demon_sfire
 /items/container/desks/desk1.111
 /items/container/desks/desk2
@@ -198,6 +201,7 @@
 /connect/gates/gate_open
 /mobs/undead/ghoul/ghoul
 /mobs/giants/fire_giant/giant_fire
+/mobs/giants/frost_giant/giant_frost
 /mobs/giants/hill_giant/giant_hill
 /mobs/giants/stone_giant/giant_stone
 /traps/glue
@@ -275,6 +279,7 @@
 /mobs/summoned/golem_lava/lavagolem
 /misc/effects/level_up
 /mobs/undead/lich/lich
+/mobs/undead/lich_lord/lich_lord
 /walls/lo_walls/lo_wall1
 /walls/lo_walls/lo_wall2
 /walls/lo_walls/lo_wall2a
@@ -434,6 +439,7 @@
 /mobs/misc/salamander/salamand
 /mobs/theme/xmas/santa
 /outdoor/artificial/scarecrow/scarecrow.111
+/mobs/human/mages/seether
 /indoor/artificial/masks_wall/sewer_wall
 /items/container/shelves/shelf1.111
 /items/container/shelves/shelf1_wall.111
@@ -476,9 +482,7 @@
 /traps/spider_web
 /mobs/insects/spiders/spider_widow
 /special/spinner/spinner
-/items/talisman/ring/sr_ring2
 /items/magic_tools/sr_scepter1
-/items/weapon/hand_1h/cleave/sr_solewhip
 /items/weapon/missile/amun/sstone
 /connect/exits/stairs_red_down
 /connect/exits/stairs_red_up
