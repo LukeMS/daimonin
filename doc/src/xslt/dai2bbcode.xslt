@@ -101,6 +101,11 @@
                 <xsl:apply-templates/>
                 <xsl:text>[/u]</xsl:text>
             </xsl:when>
+            <xsl:when test="matches(@href, '^file=')"> <!-- Internal forum references: prefixed to become clickable links -->
+                <xsl:text>[url=http://www.daimonin.net/index.php?name=PNphpBB2&amp;</xsl:text> <xsl:value-of select="@href"/> <xsl:text>]</xsl:text>
+                <xsl:apply-templates/>
+                <xsl:text>[/url]</xsl:text>
+            </xsl:when>
             <xsl:otherwise> <!-- Relative links: underlined as visual indicator but non-clickable -->
                 <xsl:text>[u]</xsl:text>
                 <xsl:apply-templates/>
