@@ -40,23 +40,23 @@
             </dd>
             <dd>
                 Equally, the auctioneer must be reasonable. It is widely understood that auctions follow a pattern along these lines:
-                <ol>
+                <ul>
                     <li>
-                        A offers an item for sale;
+                        1. A offers an item for sale;
                     </li>
                     <li>
-                        anyone interested bids;
+                        2. anyone interested bids;
                     </li>
                     <li>
-                        when the bids have stopped flowing A shouts something like 'going once to B for &lt;bid&gt;';
+                        3. when the bids have stopped flowing A shouts something like 'going once to B for &lt;bid&gt;';
                     </li>
                     <li>
-                        go back to step 2 and replace 'once' with 'twice' in step 3; and
+                        4. go back to step 2 and replace 'once' with 'twice' in step 3; and
                     </li>
                     <li>
-                        go back to step 2 and replace 'once' with 'sold' in step 3.
+                        5. go back to step 2 and replace 'once' with 'sold' in step 3.
                     </li>
-                </ol>
+                </ul>
                 A controls the auction and must progress between steps 2-5 within a sensible amount of time. A is entirely within her rights to not accept bids from any particular player(s)/character(s) though she should make this clear by shouting it. A may also decide not to sell if she does not receive an acceptable bid. This should be indicated in step 1 by putting a minimum bid on the item. To call off an auction in progress because the bids aren't high enough is considered extremely bad form and may relegate the entire process to nothing more than spam.
             </dd>
             <dt>
