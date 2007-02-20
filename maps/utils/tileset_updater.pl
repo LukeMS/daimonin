@@ -24,7 +24,6 @@ my %old_tilesets = ();  # id   -> array($map, ...)
 scan_maps($mapdir, $mapdir, \%maps, [
     "^/scripts/", "^/lua/", "^/utils/*",         # Not map directories
     "^/unofficial/*", "^/_old/",                 # Not on main server
-#    "^/lost_worlds/", "^/relic/castle/marsh/"    # Temporarily disabled due to linking errors
     ]);
 validate_linking(\%maps);
 relabel_old_tilesets(\%maps, \%tilesets);
