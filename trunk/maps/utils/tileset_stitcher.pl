@@ -24,7 +24,7 @@ my %maps = ();
 my %tilesets = ();
 
 # Scan all subdirs except utils
-scan_maps($mapdir, $mapdir, \%maps, ["^/utils/*", "^/rendered_overviews/*", "^/unofficial/*"]);
+scan_maps($mapdir, $mapdir, \%maps, ["^/utils/*", "^/rendered_overviews/*", "^/unofficial/*", "^/_old/*"]);
 validate_linking(\%maps);
 
 # Find the base map
