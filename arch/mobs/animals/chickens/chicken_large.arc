@@ -1,6 +1,6 @@
 Object chicken_large
 name chicken
-face chicken_large
+face chicken_large.131
 race chicken
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
@@ -15,13 +15,13 @@ is_female 1
 is_neutral 1
 terrain_flag 1
 can_use_weapon 1
-Int 10
-Wis 6
-Dex 3
-Con 5
+int 10
+wis 6
+dex 3
+con 5
 exp 102
 magic 1
-Pow 10
+pow 10
 sp -1
 maxsp 19
 hp -1
