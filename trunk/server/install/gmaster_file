@@ -2,4 +2,3 @@
 # entry <name>:*:*:GM will allow player <name> to be DM, GM or VOL
 # Example to allow Gecko to become a DM from any IP:
 # Gecko:*:*:DM
-Gecko:*:*:DM
