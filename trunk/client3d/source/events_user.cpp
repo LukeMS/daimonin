@@ -139,7 +139,14 @@ void Events::keyPressed(KeyEvent *e)
             break;
 
         case KC_I:
-            GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_ITEM_CONTAINER, true);
+            GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_EQUIPMENT, true);
+            GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_INVENTORY, true);
+            GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_TRADE, true);
+            GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_SHOP, true);
+//            GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_GROUND, true);
+//            GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_CONTAINER, true);
+
+
             // ObjectManager::getSingleton().setPlayerEquipment(ObjectManager::OBJECT_PLAYER, ObjectNPC::BONE_HEAD, 1);
             break;
 
@@ -196,7 +203,6 @@ void Events::keyPressed(KeyEvent *e)
 
         case KC_T:
             Item::getSingleton().printAllItems();
-            GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_ITEM_CONTAINER, GuiManager::GUI_MSG_SLOT_REDRAW,0,0);
             /*
                    case KEYFUNC_TARGET_ENEMY:
                      send_command("/target 0", -1, SC_NORMAL);

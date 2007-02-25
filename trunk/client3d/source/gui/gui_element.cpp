@@ -68,7 +68,7 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent, bool forceAlpha)
         }
     }
 
-    if ((tmp = xmlElem->Attribute("type")))
+    if ((tmp = xmlElem->Attribute("fill")))
     {
              if (!stricmp(tmp, "GFX_FILL"))   mFillType = FILL_GFX;
         else if (!stricmp(tmp, "COLOR_FILL")) mFillType = FILL_COLOR;

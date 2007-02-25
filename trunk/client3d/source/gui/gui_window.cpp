@@ -120,7 +120,7 @@ void GuiWindow::freeRecources()
 //================================================================================================
 // Build a window out of a xml description file.
 //================================================================================================
-void GuiWindow::Init(TiXmlElement *xmlElem)
+void GuiWindow::Init(TiXmlElement *xmlElem, int zOrder)
 {
     mMousePressed  =-1;
     mMouseOver     =-1;
@@ -128,7 +128,7 @@ void GuiWindow::Init(TiXmlElement *xmlElem)
     mHeight = MIN_GFX_SIZE;
     mWidth  = MIN_GFX_SIZE;
     mSrcPixelBox = GuiImageset::getSingleton().getPixelBox();
-    parseWindowData(xmlElem);
+    parseWindowData(xmlElem, zOrder);
     isInit = true;
 }
 
@@ -137,6 +137,7 @@ void GuiWindow::Init(TiXmlElement *xmlElem)
 //================================================================================================
 void GuiWindow::setVisible(bool visible)
 {
+    if (!isInit) return;
     if (!visible) mOverlay->hide();
     else          mOverlay->show();
 }
@@ -144,7 +145,7 @@ void GuiWindow::setVisible(bool visible)
 //================================================================================================
 // Parse the xml window data..
 //================================================================================================
-void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
+void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, int zOrder)
 {
     TiXmlElement *xmlElem;
     const char *strTmp;
@@ -235,7 +236,7 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
     // ////////////////////////////////////////////////////////////////////
     // Now we have all datas to create the window..
     // ////////////////////////////////////////////////////////////////////
-    createWindow();
+    createWindow(zOrder);
     // ////////////////////////////////////////////////////////////////////
     // Parse the graphics.
     // ////////////////////////////////////////////////////////////////////
@@ -436,14 +437,14 @@ inline void GuiWindow::printParsedTextline(TiXmlElement *xmlElem)
 //================================================================================================
 // Create the window.
 //================================================================================================
-inline void GuiWindow::createWindow()
+inline void GuiWindow::createWindow(int zOrder)
 {
     mWindowNr = ++msInstanceNr;
     std::string strNum = StringConverter::toString(msInstanceNr);
     mTexture = TextureManager::getSingleton().createManual("GUI_Texture_" + strNum, "General",
                TEX_TYPE_2D, mWidth, mHeight, 0, PF_A8R8G8B8, TU_STATIC_WRITE_ONLY);
     mOverlay = OverlayManager::getSingleton().create("GUI_Overlay_"+strNum);
-    mOverlay->setZOrder(msInstanceNr);
+    mOverlay->setZOrder(400-zOrder);
     mElement = OverlayManager::getSingleton().createOverlayElement (OVERLAY_ELEMENT_TYPE, "GUI_Frame_" + strNum);
     mElement->setMetricsMode(GMM_PIXELS);
     // Texture is always a power of 2. set this size also for the overlay.
@@ -459,7 +460,6 @@ inline void GuiWindow::createWindow()
     memset(mTexture->getBuffer()->lock (HardwareBuffer::HBL_DISCARD), 0x00, mTexture->getWidth() * mTexture->getHeight() * sizeof(uint32));
     mTexture->getBuffer()->unlock();
 }
-
 
 //================================================================================================
 // .
@@ -489,7 +489,7 @@ bool GuiWindow::keyEvent(const char keyChar, const unsigned char key)
 //================================================================================================
 bool GuiWindow::mouseEvent(int MouseAction, Vector3 &mouse)
 {
-    if (!mOverlay->isVisible()) return false;
+    if (!isInit || !mOverlay->isVisible()) return false;
     int rx = (int) mouse.x;
     int ry = (int) mouse.y;
     if (mGadgetDrag >=0)
@@ -691,6 +691,7 @@ class GuiGadgetSlot *GuiWindow::getSlotHandle(int element)
             return mvSlot[i];
     }
     Logger::log().error() << "BUG [gui_window.cpp -> getSlotHandle()]: Can't find Slot handle for element nr: "<< element;
+    if (!isInit) Logger::log().error() << "Hint: The Window was never initialized";
     return 0;
 }
 
@@ -699,7 +700,8 @@ class GuiGadgetSlot *GuiWindow::getSlotHandle(int element)
 //================================================================================================
 void GuiWindow::updateItemSlot(int element, int slotNr, int state)
 {
-    getSlotHandle(element)->updateSlot(slotNr, state);
+    if (!mvSlot.empty())
+        getSlotHandle(element)->updateSlot(slotNr, state);
 }
 
 //================================================================================================
@@ -707,7 +709,8 @@ void GuiWindow::updateItemSlot(int element, int slotNr, int state)
 //================================================================================================
 void GuiWindow::setItemReference(int element, std::list<Item::sItem*> *itemContainer)
 {
-    getSlotHandle(element)->setItemReference(itemContainer);
+    if (!mvSlot.empty())
+        getSlotHandle(element)->setItemReference(itemContainer);
 }
 
 //================================================================================================
@@ -796,7 +799,7 @@ void GuiWindow::setHeight(int newHeight)
 //================================================================================================
 void GuiWindow::update(Real timeSinceLastFrame)
 {
-    if (!mOverlay->isVisible()) return;
+    if (!isInit || !mOverlay->isVisible()) return;
     // Update drag animation (move back on wrong drag).
     ;
     // Speak Animation.

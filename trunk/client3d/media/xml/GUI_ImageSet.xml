@@ -77,58 +77,64 @@
     </Image>
 
     <!--#############################################-->
-    <!-- Dialog Style RED                            -->
+    <!-- Dialog                                      -->
     <!--#############################################-->
       <!--=============================================-->
       <!-- Backgrounds                                 -->
       <!--=============================================-->
-      <Image name= "Red_Background" width= "250" height= "249">
-          <State name= "Default" posX= "0" posY= "108" />
+      <Image name= "General_Background" width= "256" height= "256">
+          <State name= "Default" posX= "1044" posY= "0" />
       </Image>
-      <Image name= "Blue_Background" width= "250" height= "250">
-          <State name= "Default" posX= "250" posY= "108" />
+
+      <Image name= "Equipment_Info_Background" width= "154" height= "233">
+          <State name= "Default" posX= "815" posY= "136" />
+      </Image>
+
+      <Image name= "Icons_Background" width= "321" height= "49" alpha= "1">
+          <State name= "Default" posX= "1" posY= "107" />
+      </Image>
+
+      <Image name= "Tab_Background" width= "71" height= "27" alpha ="1">
+          <State name= "Default" posX= "204" posY= "79" />
       </Image>
       <!--=============================================-->
-      <!-- Ornaments                                   -->
+      <!-- Ornaments and edges                         -->
       <!--=============================================-->
-      <Image name= "Red_TL_Edge" width= "9" height= "9">
-          <State name= "Default" posX= "1" posY= "1" />
+
+      <Image name= "TL_Edge" width= "9" height= "9">
+          <State name= "Default" posX= "149" posY= "23" />
       </Image>
 
-      <Image name= "Red_TR_Edge" width= "9" height= "9">
-          <State name= "Default" posX= "1" posY= "1" />
+      <Image name= "TR_Edge" width= "9" height= "9">
+          <State name= "Default" posX= "169" posY= "23" />
       </Image>
 
-      <Image name= "Red_BL_Edge" width= "9" height= "9">
-          <State name= "Default" posX= "1" posY= "1" />
+      <Image name= "BL_Edge" width= "9" height= "9">
+          <State name= "Default" posX= "159" posY= "23" />
       </Image>
 
-      <Image name= "Red_BR_Edge" width= "9" height= "9">
-          <State name= "Default" posX= "1" posY= "1" />
+      <Image name= "BR_Edge" width= "9" height= "9">
+          <State name= "Default" posX= "179" posY= "23" />
       </Image>
 
-      <Image name= "Red_Line_H" width= "24" height= "5">
-          <State name= "Default" posX= "171" posY= "16" />
+      <Image name= "Line_H_Bottom" width= "25" height= "4">
+          <State name= "Default" posX= "171" posY= "6" />
       </Image>
 
-      <Image name= "Red_Line_V" width= "5" height= "24">
-          <State name= "Default" posX= "197" posY= "1" />
+      <Image name= "Line_H_Top" width= "25" height= "4">
+          <State name= "Default" posX= "171" posY= "11" />
       </Image>
 
-      <Image name= "Health_Pilar" width= "12" height= "72">
-          <State name= "Default" posX= "484" posY= "363" />
+      <Image name= "Line_V_Left" width= "4" height= "25">
+          <State name= "Default" posX= "203" posY= "1" />
       </Image>
 
-      <Image name= "Grace_Pilar " width= "12" height= "62">
-          <State name= "Default" posX= "481" posY= "431" />
+      <Image name= "Line_V_Right" width= "4" height= "25">
+          <State name= "Default" posX= "203" posY= "27" />
       </Image>
 
-      <Image name= "Mana_Pilar" width= "13" height= "55">
-          <State name= "Default" posX= "494" posY= "432" />
-      </Image>
-
-      <Image name= "Food_Pilar" width= "12" height= "52">
-          <State name= "Default" posX= "494" posY= "379" />
+      <Image name= "Icon_Holder" width= "36" height= "37" alpha ="1">
+          <State name= "Default" posX= "208" posY= "1" />
       </Image>
 
       <Image name= "Status_Player_Face" width= "72" height= "72">
@@ -137,18 +143,6 @@
       <!--=============================================-->
       <!-- StatusBars                                  -->
       <!--=============================================-->
-      <Image name= "Lines_Botom_Left" width= "435" height="146">
-          <State name= "Default" posX= "0" posY=  "358 " />
-      </Image>
-
-      <Image name= "Lines_Botom_Right" width= "435" height="146">
-          <State name= "Default" posX= "0" posY=  "505" />
-      </Image>
-
-      <Image name= "Pilar" width= "44" height="139">
-          <State name= "Default" posX= "436" posY=  "358" />
-      </Image>
-
       <Image name= "Status_Player" width= "348" height="88">
           <State name= "Default" posX= "436" posY=  "498" />
       </Image>
@@ -163,7 +157,7 @@
       </Image>
 
       <Image name= "Button_01_Close" width= "15" height= "15">
-          <State name= "Default" posX= "115" posY= "1" />
+          <State name= "Default" posX= "115" posY = "1" />
           <State name= "Pushed"   posX= "115" posY= "18" />
           <State name= "M_Over"   posX= "115" posY= "35" />
       </Image>
@@ -172,8 +166,24 @@
           <State name= "Default"   posX= "149" posY= "35" />
       </Image>
 
-      <Image name= "ScrollButton_01_Down" width= "10" height= "7">
-          <State name= "Default"   posX= "166" posY= "101" />
+      <Image name= "Tab_01_Std" width= "64" height= "21">
+          <State name= "Default" posX= "701" posY= "41" />
+          <State name= "Pushed"   posX= "701" posY= "85" />
+          <State name= "M_Over"   posX= "701" posY= "63" />
+      </Image>
+
+      <Image name= "Prev_Page_01" width= "20" height= "22" alpha ="1">
+          <State name= "Default"   posX= "792" posY= "16" />
+          <State name= "Pushed"   posX= "813" posY= "16" />
+      </Image>
+
+      <Image name= "Next_Page_01" width= "20" height= "22" alpha ="1">
+          <State name= "Default"   posX= "792" posY= "39" />
+          <State name= "Pushed"   posX= "813" posY= "39" />
+      </Image>
+
+      <Image name=  "ScrollButton_01_Down" width= "10" height= "7">
+          <State name= "Default"   posX= "16 6" posY= "101" />
       </Image>
 
       <Image name= "ScrollButton_01_Up" width= "10" height= "7">
@@ -204,49 +214,9 @@
           <State name= "M_Over"   posX= "175" posY= "86" />
       </Image>
 
-      <Image name= "Lines_Button_01" width= "66" height= "48" alpha= "1">
-          <State name= "Default" posX= "204" posY= "1" />
-          <State name= "Pushed"   posX= "204" posY= "50" />
-      </Image>
-
-      <Image name= "Lines_Button_02" width= "66" height= "48" alpha= "1">
-          <State name= "Default" posX= "271" posY= "1" />
-          <State name= "Pushed"   posX= "271" posY= "50" />
-      </Image>
-
-      <Image name= "Lines_Button_03" width= "75" height= "39" alpha= "1">
-          <State name= "Default" posX= "339" posY= "1" />
-          <State name= "Pushed"   posX= "339" posY= "41" />
-      </Image>
-
-      <Image name= "Lines_Button_04" width= "75" height= "39" alpha= "1">
-          <State name= "Default" posX= "415" posY= "1" />
-          <State name= "Pushed"   posX= "415" posY= "41" />
-      </Image>
-
-      <Image name= "Lines_Button_05" width= "52" height= "62" alpha= "1">
-          <State name= "Default" posX= "501" posY= "107" />
-          <State name= "Pushed"   posX= "501" posY= "170" />
-      </Image>
-
-      <Image name= "Lines_Button_06" width= "52" height= "62" alpha= "1">
-          <State name= "Default" posX= "554" posY= "107" />
-          <State name= "Pushed"   posX= "554" posY= "170" />
-      </Image>
-
-      <Image name= "Lines_Button_07" width= "42" height= "72" alpha= "1">
-          <State name= "Default" posX= "501" posY= "233" />
-          <State name= "Pushed"   posX= "501" posY= "306" />
-      </Image>
-
-      <Image name= "Lines_Button_08" width= "42" height= "72" alpha= "1">
-          <State name= "Default" posX= "544" posY= "233" />
-          <State name= "Pushed"   posX= "544" posY= "306" />
-      </Image>
-
       <Image name= "Status_Player_Buton" width= "209" height= "52" alpha= "1">
-          <State name= "Default" posX= "491" posY= "1" />
-          <State name= "Pushed"   posX= "491" posY= "54" />
+          <State name= "Default" posX= "491" posY= "54" />
+          <State name= "Pushed"   posX= "491" posY= "1" />
       </Image>
 
       <Image name= "Player_Pic"  width= "71" height= "71" alpha= "1">
@@ -271,26 +241,132 @@
           <State name= "M_Over"  posX= "638" posY= "587" />
       </Image>
 
-      <Image name= "Item_Container"  width= "398" height= "480" alpha= "1">
-          <State name= "Default" posX= "0" posY= "439" />
+      <Image name= "Item_Slot"  width= "72" height= "72">
+          <State name= "Default" posX= "245" posY= "1" />
+          <State name= "M_Over"  posX= "391" posY= "74" />
+      </Image>
+      <!--   <State name= "M_Over_Wrong" 	posX= "318" posY= "1" /> -->
+      <!--   <State name= "M_Over_Right" 	posX= "319" posY= "1" /> -->
+      <!--=============================================-->
+      <!-- Items                                       -->
+      <!--=============================================-->
+      <Image name= "Item_Spear"  width= "64" height= "64" alpha= "1">
+          <State name= "Default" posX= "787" posY= "127" />
       </Image>
 
-      <Image name= "Item_Slot"  width= "72" height= "72" >
-          <State name= "Default" posX= "0" posY= "919" />
-          <State name= "M_Over"  posX= "72" posY= "919" />
+      <Image name= "Item_Axe"  width= "64" height= "64" alpha= "1">
+          <State name= "Default" posX= "787" posY= "127" />
       </Image>
 
-      <Image name= "Item_Slot_alpha"  width= "72" height= "72" >
-          <State name= "Default" posX=  "144" posY= "919" />
-          <State name= "M_Over"  posX= "216" posY= "919" />
+      <!--=============================================-->
+      <!-- Icons                                       -->
+      <!--=============================================-->
+      <Image name= "Monney_Copper"  width= "27" height= "21" alpha= "1">
+          <State name= "Default" posX= "862" posY= "1" />
       </Image>
 
-      <Image name= "Item_Spear"  width= "64" height= "64">
-          <State name= "Default" posX= "0" posY= "992" />
+      <Image name= "Monney_Silver"  width= "23" height= "17" alpha= "1">
+          <State name= "Default" posX= "892" posY= "1" />
       </Image>
 
-      <Image name= "Item_Axe"  width= "64" height= "64" >
-          <State name= "Default" posX= "65" posY= "992" />
+      <Image name= "Monney_Gold"  width= "25" height= "21" alpha= "1">
+          <State name= "Default" posX= "918" posY= "1" />
+      </Image>
+
+      <Image name= "Monney_Mithrill"  width= "22" height= "14" alpha= "1">
+          <State name= "Default" posX= "946" posY= "1" />
+      </Image>
+
+      <Image name= "Weight_Anvil"  width= "86" height= "28" alpha= "1">
+          <State name= "Default" posX= "705" posY= "9" />
+      </Image>
+
+      <Image name= "Icon_Anvil"  width= "24" height= "23" alpha= "1">
+          <State name= "Default" posX= "835" posY= "1" />
+      </Image>
+
+      <Image name= "Icon_Shop"  width= "27" height= "27" alpha= "1">
+          <State name= "Default" posX= "866" posY= "29" />
+      </Image>
+
+      <Image name= "Icon_Equipment"  width= "22" height= "25" alpha= "1">
+          <State name= "Default" posX= "894" posY= "26" />
+      </Image>
+
+       <Image name= "Icon_Trade"  width= "27" height= "27" alpha= "1">
+          <State name= "Default" posX= "917" posY= "29" />
+      </Image>
+
+      <Image name= "Icon_Inventory"  width= "24" height= "25" alpha= "1">
+          <State name= "Default" posX= "945" posY= "22" />
+      </Image>
+
+      <Image name= "Equipment_Amulet"  width= "22" height= "30" alpha= "1">
+          <State name= "Default" posX= "894" posY= "52" />
+      </Image>
+
+      <Image name= "Equipment_Bracers"  width= "42" height= "39" alpha= "1">
+          <State name= "Default" posX= "766" posY= "67" />
+      </Image>
+
+      <Image name= "Equipment_Gloves"  width= "43" height= "33" alpha= "1">
+          <State name= "Default" posX= "926" posY= "73" />
+      </Image>
+
+      <Image name= "Equipment_Sword"  width= "39" height= "39" alpha= "1">
+          <State name= "Default" posX= "775" posY= "136" />
+      </Image>
+
+      <Image name= "Equipment_Crossbow"  width= "39" height= "39" alpha= "1">
+          <State name= "Default" posX= "735" posY= "136" />
+      </Image>
+
+       <Image name= "Equipment_Ring"  width= "28" height= "27" alpha= "1">
+          <State name= "Default" posX= "834" posY= "29" />
+      </Image>
+
+      <Image name= "Equipment_Cloack"  width= "36" height= "40" alpha= "1">
+          <State name= "Default" posX= "809" posY= "66" />
+      </Image>
+
+      <Image name= "Equipment_Spellbook"  width= "40" height= "36" alpha= "1">
+          <State name= "Default" posX= "736" posY= "208" />
+      </Image>
+
+      <Image name= "Equipment_Scroll"  width= "37" height= "38" alpha= "1">
+          <State name= "Default" posX= "777" posY= "209" />
+      </Image>
+
+      <Image name= "Equipment_Helmet"  width= "23" height= "23" alpha= "1">
+          <State name= "Default" posX= "768" posY= "38" />
+      </Image>
+
+      <Image name= "Equipment_Boots"  width= "37" height= "40" alpha= "1">
+          <State name= "Default" posX= "697" posY= "136" />
+      </Image>
+
+      <Image name= "Equipment_Lantern"  width= "31" height= "32" alpha= "1">
+          <State name= "Default" posX= "783" posY= "176" />
+      </Image>
+
+      <Image name= "Equipment_Armor"  width= "43" height= "49" alpha= "1">
+          <State name= "Default" posX= "846" posY= "57" />
+      </Image>
+
+      <Image name= "Equipment_Shield"  width= "37" height= "44" alpha= "1">
+          <State name= "Default" posX= "659" posY= "136" />
+      </Image>
+
+       <Image name= "Equipment_Belt"  width= "38" height= "22" alpha= "1">
+          <State name= "Default" posX= "713" posY= "177" />
+      </Image>
+
+       <Image name= "Equipment_Quiver"  width= "30" height= "31" alpha= "1">
+          <State name= "Default" posX= "752" posY= "176" />
+      </Image>
+
+       <Image name= "alpha_test"  width= "64" height= "64" alpha= "1">
+          <State name= "Default" posX= "80" posY= "157" />
       </Image>
 
 </ImageSet>

@@ -44,18 +44,24 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
+    /** Window ids (sorted by zOrder). **/
     enum
     {
-        GUI_WIN_STATISTICS,
+        GUI_WIN_LOGIN,
+        GUI_WIN_SERVERSELECT,
+        // GUI_WIN_CREATION,
+        GUI_WIN_EQUIPMENT,
+        GUI_WIN_INVENTORY,
+        GUI_WIN_SHOP,
+        GUI_WIN_TRADE,
+        GUI_WIN_CONTAINER,
+
         GUI_WIN_PLAYERINFO,
         GUI_WIN_PLAYERCONSOLE,
+        GUI_WIN_NPCDIALOG,
         GUI_WIN_TEXTWINDOW,
         GUI_WIN_CHATWINDOW,
-        GUI_WIN_SERVERSELECT,
-        GUI_WIN_LOGIN,
-        //  GUI_WIN_CREATION,
-        GUI_WIN_NPCDIALOG,
-        GUI_WIN_ITEM_CONTAINER,
+        GUI_WIN_STATISTICS,
         GUI_WIN_SUM
     };
     enum

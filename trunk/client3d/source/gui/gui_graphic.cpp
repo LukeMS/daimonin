@@ -33,9 +33,9 @@ using namespace Ogre;
 //================================================================================================
 // .
 //================================================================================================
-GuiGraphic::GuiGraphic(TiXmlElement *xmlElement, void *parent):GuiElement(xmlElement, parent)
+GuiGraphic::GuiGraphic(TiXmlElement *xmlElement, void *parent, bool drawOnInit):GuiElement(xmlElement, parent)
 {
-    draw();
+    if (drawOnInit) draw();
 }
 
 //================================================================================================
@@ -46,6 +46,24 @@ GuiGraphic::~GuiGraphic()
 
 //================================================================================================
 // .
+//================================================================================================
+inline uint32 GuiGraphic::alphaBlend(const uint32 bg, const uint32 gfx)
+{
+    uint32 alpha = gfx >> 24;
+    if (!alpha)
+        return bg;
+    else if (alpha == 0xff)
+        return gfx;
+    // We need 1 byte of free space before each color (because of the alpha multiplication),
+    // so we need 2 operations on the 3 colors.
+    uint32 rb = (((gfx & 0x00ff00ff) * alpha) + ((bg & 0x00ff00ff) * (0xff - alpha))) & 0xff00ff00;
+    uint32 g  = (((gfx & 0x0000ff00) * alpha) + ((bg & 0x0000ff00) * (0xff - alpha))) & 0x00ff0000;
+    return (bg & 0xff000000) | ((rb | g) >> 8);
+}
+
+//================================================================================================
+// Draws a graphic.
+// If the gfx is bigger than the source image, the source image will be repeated.
 //================================================================================================
 void GuiGraphic::draw()
 {
@@ -58,8 +76,6 @@ void GuiGraphic::draw()
     {
         // ////////////////////////////////////////////////////////////////////
         // The gfx has alpha.
-        // TODO: Repeat the gfx, if the gfx is bigger than the src gfx.
-        //       Remember: BG_Backup has the size of the src image.
         // ////////////////////////////////////////////////////////////////////
         if (mHasAlpha)
         {
@@ -69,25 +85,26 @@ void GuiGraphic::draw()
                         gfxSrcPos[mState].x + mSrcWidth,
                         gfxSrcPos[mState].y + mSrcHeight));
             uint32 *srcData = static_cast<uint32*>(src.data);
-            int rowSkip = (int) ((GuiWindow*) mParent)->getPixelBox()->getWidth();
-            int dSrcY = 0, dDstY =0;
-            for (int y =0; y < mSrcHeight; ++y)
+            int srcRowSkip = (int) ((GuiWindow*) mParent)->getPixelBox()->getWidth();
+            uint32 *dst = BG_Backup;
+            int srcX, dSrcY = 0, srcY =0;
+            for (int y =0; y < mHeight; ++y)
             {
-                for (int x =0; x < mSrcWidth; ++x)
+                srcX = 0;
+                for (int x =0; x < mWidth; ++x)
                 {
-                    if (srcData[dSrcY + x] <= 0xffffff) continue;
-                    BG_Backup[dDstY + x] = srcData[dSrcY + x];
+                    *dst = alphaBlend(*dst, srcData[dSrcY + srcX]);
+                    ++dst;
+                    if (++srcX >= mSrcWidth) srcX = 0; // Repeat the image.
                 }
-                dSrcY+= rowSkip;
-                dDstY+= mSrcWidth;
+                dSrcY+= srcRowSkip;
+            if (++srcY >= mSrcHeight) { srcY = 0; dSrcY =0; } // Repeat the image.
             }
             src = PixelBox(mWidth, mHeight, 1, PF_A8B8G8R8, BG_Backup);
-            texture->getBuffer()->blitFromMemory(src, Box(mPosX, mPosY, mPosX + mSrcWidth, mPosY + mSrcHeight));
+            texture->getBuffer()->blitFromMemory(src, Box(mPosX, mPosY, mPosX + mWidth, mPosY + mHeight));
         }
         // ////////////////////////////////////////////////////////////////////
         // The gfx has no alpha.
-        // If the gfx is bigger than the source image, just repeat the gfx.
-        // TODO: This needs a cleanup & speedup.
         // ////////////////////////////////////////////////////////////////////
         else
         {
