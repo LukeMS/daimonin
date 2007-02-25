@@ -81,7 +81,7 @@ public:
         return mOverlay->isVisible();
     }
     void setVisible(bool visible);
-    void Init(TiXmlElement *xmlElem);
+    void Init(TiXmlElement *xmlElem, int zOrder);
     bool keyEvent(const char keyChar, const unsigned char key);
     void update(Ogre::Real timeSinceLastFrame);
     void getTexturseSize(int &w, int &h)
@@ -175,10 +175,10 @@ private:
     // ////////////////////////////////////////////////////////////////////
     static void buttonPressed(GuiWindow *me, int index);
     static void listboxPressed(GuiWindow *me, int index, int line);
-    void createWindow();
+    void createWindow(int zOrder);
     void setHeight(int h);
     void delGadget(int number);
-    void parseWindowData(TiXmlElement *xmlElem);
+    void parseWindowData(TiXmlElement *xmlElem, int zOrder);
     void printParsedTextline(TiXmlElement *xmlElem);
 };
 

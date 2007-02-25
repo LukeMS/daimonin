@@ -401,13 +401,14 @@ void GuiGadgetSlot::updateSlot(int slot, int state)
 //================================================================================================
 void GuiGadgetSlot::draw()
 {
+    /*
     int state = GuiImageset::STATE_ELEMENT_DEFAULT;
     int strtX, strtY = mPosY;
     Texture *texture = ((GuiWindow*) mParent)->getTexture();
     PixelBox srcSlot = ((GuiWindow*) mParent)->getPixelBox()->getSubVolume(Box(
                            gfxSrcPos[state].x, gfxSrcPos[state].y,
                            gfxSrcPos[state].x + mWidth, gfxSrcPos[state].y + mHeight));
-    for (int y = 0; y < mSumCol; ++y)
+    for (int y = 0; y < mSumRow; ++y)
     {
         strtX = mPosX;
         for (int x = 0; x < mSumCol; ++x)
@@ -417,6 +418,7 @@ void GuiGadgetSlot::draw()
         }
         strtY += mHeight;
     }
+    */
 }
 
 //================================================================================================

@@ -35,7 +35,7 @@ using namespace Ogre;
 //================================================================================================
 // .
 //================================================================================================
-GuiGadgetButton::GuiGadgetButton(TiXmlElement *xmlElement, void *parent, bool drawOnInit):GuiElement(xmlElement, parent)
+GuiGadgetButton::GuiGadgetButton(TiXmlElement *xmlElement, void *parent, bool drawOnInit):GuiGraphic(xmlElement, parent, drawOnInit)
 {
     mCallFunc = 0;
     mMouseOver = false;
@@ -96,51 +96,13 @@ bool GuiGadgetButton::mouseEvent(int MouseAction, int x, int y)
 //================================================================================================
 void GuiGadgetButton::draw()
 {
-    // ////////////////////////////////////////////////////////////////////
-    // Draw gaget.
-    // ////////////////////////////////////////////////////////////////////
-    PixelBox src;
-    Texture *texture = ((GuiWindow*) mParent)->getTexture();
-    if (mHasAlpha)
-    {
-        src = ((GuiWindow*) mParent)->getPixelBox()->getSubVolume(Box(
-                    gfxSrcPos[mState].x,
-                    gfxSrcPos[mState].y,
-                    gfxSrcPos[mState].x + mWidth,
-                    gfxSrcPos[mState].y + mHeight));
-        uint32 *srcData = static_cast<uint32*>(src.data);
-        size_t rowSkip = ((GuiWindow*) mParent)->getPixelBox()->getWidth();
-        int dSrcY = 0, dDstY =0;
-        for (int y =0; y < mHeight; ++y)
-        {
-            for (int x =0; x < mWidth; ++x)
-            {
-                if (srcData[dSrcY + x] <= 0xffffff) continue;
-                BG_Backup[dDstY + x] = srcData[dSrcY + x];
-            }
-            dSrcY+= (int)rowSkip;
-            dDstY+= mWidth;
-        }
-
-
-        src = PixelBox(mWidth, mHeight, 1, PF_A8B8G8R8, BG_Backup);
-        texture->getBuffer()->blitFromMemory(src, Box(mPosX, mPosY, mPosX + mWidth, mPosY + mHeight));
-    }
-    else
-    {
-        src = ((GuiWindow*) mParent)->getPixelBox()->getSubVolume(Box(
-                    gfxSrcPos[mState].x,
-                    gfxSrcPos[mState].y,
-                    gfxSrcPos[mState].x + mWidth,
-                    gfxSrcPos[mState].y + mHeight));
-        texture->getBuffer()->blitFromMemory(src, Box(mPosX, mPosY, mPosX + mWidth, mPosY + mHeight));
-    }
-
+    GuiGraphic::draw();
     // ////////////////////////////////////////////////////////////////////
     // Draw label.
     // ////////////////////////////////////////////////////////////////////
     if (mStrLabel != "")
     {
+        Texture *texture = ((GuiWindow*) mParent)->getTexture();
         GuiTextout::TextLine label;
         label.hideText= false;
         label.index= -1;

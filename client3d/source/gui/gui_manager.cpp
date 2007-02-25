@@ -44,16 +44,23 @@ static const unsigned long TOOLTIP_DELAY = 2000; // Wait x ms before showing the
 
 GuiManager::GuiWinNam GuiManager::mGuiWindowNames[GUI_WIN_SUM]=
     {
-        { "Statistics",    GUI_WIN_STATISTICS    },
+        { "Login",         GUI_WIN_LOGIN         },
+        { "ServerSelect",  GUI_WIN_SERVERSELECT  },
+      //{ "Creation",      GUI_WIN_CREATION      },
+
+        { "Win_Equipment", GUI_WIN_EQUIPMENT     },
+        { "Win_Inventory", GUI_WIN_INVENTORY     },
+        { "Win_Shop",      GUI_WIN_SHOP          },
+        { "Win_Trade",     GUI_WIN_TRADE         },
+        { "Win_Container", GUI_WIN_CONTAINER     },
+
         { "PlayerInfo",    GUI_WIN_PLAYERINFO    },
         { "PlayerConsole", GUI_WIN_PLAYERCONSOLE },
+
+        { "DialogNPC",     GUI_WIN_NPCDIALOG     },
         { "TextWindow",    GUI_WIN_TEXTWINDOW    },
         { "ChatWindow",    GUI_WIN_TEXTWINDOW    },
-        { "ServerSelect",  GUI_WIN_SERVERSELECT  },
-        { "Login",         GUI_WIN_LOGIN         },
-        //    { "Creation"  ,  GUI_WIN_CREATION   },
-        { "DialogNPC",     GUI_WIN_NPCDIALOG     },
-        { "Win_Container", GUI_WIN_ITEM_CONTAINER},
+        { "Statistics",    GUI_WIN_STATISTICS    },
     };
 class GuiWindow GuiManager::guiWindow[GUI_WIN_SUM];
 
@@ -205,7 +212,7 @@ bool GuiManager::parseWindowsData(const char *fileWindows)
         {
             if (!stricmp(mGuiWindowNames[i].name, valString))
             {
-                guiWindow[i].Init(xmlElem);
+                guiWindow[i].Init(xmlElem, i);
                 break;
             }
         }

@@ -29,13 +29,13 @@ http://www.gnu.org/licenses/licenses.html
 
 #include <tinyxml.h>
 #include <Ogre.h>
-#include "gui_element.h"
+#include "gui_graphic.h"
 #include "gui_window.h"
 
 /**
  ** This class provides an interactive button.
  *****************************************************************************/
-class GuiGadgetButton: public GuiElement
+class GuiGadgetButton: public GuiGraphic
 {
 public:
     typedef void (Callback) (class GuiWindow *parent, int index);

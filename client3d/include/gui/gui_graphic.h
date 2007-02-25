@@ -37,9 +37,11 @@ http://www.gnu.org/licenses/licenses.html
 class GuiGraphic : public GuiElement
 {
 public:
-    GuiGraphic(TiXmlElement *xmlElement, void *parent);
+    GuiGraphic(TiXmlElement *xmlElement, void *parent, bool drawOnInit = true);
     ~GuiGraphic();
     void draw();
+private:
+    Ogre::uint32 alphaBlend(const Ogre::uint32 bg, const Ogre::uint32 gfx);
 };
 
 #endif
