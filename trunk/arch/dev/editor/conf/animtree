@@ -80,6 +80,7 @@
 /items/container/chests/chest_sm_1
 /items/container/chests/chest_sw_1
 /items/container/chests/chest_w1
+/mobs/animals/chickens/chicken_large
 /mobs/human/childs/childf1
 /mobs/human/childs/childf2
 /mobs/human/childs/childf3
@@ -161,7 +162,6 @@
 /indoor/artificial/xmas/elf_toytable
 /indoor/artificial/xmas/elf_toytable2
 /mobs/elves/elf_merchant/elven_merchant
-/mobs/plants/ent1/ent1
 /mobs/giants/ettin/ettin
 /items/gifts/evilelf
 /connect/exits/exit
@@ -232,6 +232,7 @@
 /mobs/demihumans/hobgoblin/hobgoblin
 /mobs/human/peasant/hobo_old
 /items/magic_tools/horn
+/mobs/animals/horses/horse_white
 /intern/player/human_female
 /intern/player/human_male
 /indoor/natural/icecave/icecave_deco1
@@ -535,7 +536,8 @@
 /traps/trapdoor
 /mobs/human/peasant/traveller_parka
 /mobs/human/peasant/traveller_wife
-/mobs/plants/treant/treant_evil
+/mobs/plants/treant/treant_ancient/treant_ancient
+/mobs/plants/treant/treant_evil/treant_evil
 /connect/triggers/trigger_lever
 /mobs/trolls/troll
 /mobs/undead/vampire/vampire
