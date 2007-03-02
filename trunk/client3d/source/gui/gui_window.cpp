@@ -487,19 +487,22 @@ bool GuiWindow::keyEvent(const char keyChar, const unsigned char key)
 //================================================================================================
 // Mouse Event.
 //================================================================================================
-bool GuiWindow::mouseEvent(int MouseAction, Vector3 &mouse)
+int GuiWindow::mouseEvent(int MouseAction, Vector3 &mouse)
 {
-    if (!isInit || !mOverlay->isVisible()) return false;
+    if (!isInit || !mOverlay->isVisible()) return GuiManager::EVENT_CHECK_NEXT;
     int rx = (int) mouse.x;
     int ry = (int) mouse.y;
     if (mGadgetDrag >=0)
     {
-        int ret = (mvSlot[mGadgetDrag]->mouseEvent(MouseAction, rx - mPosX, ry - mPosY));
-        if (!ret) return true;
-        mGadgetDrag = -1;
-        return true;
+        if (mvSlot[mGadgetDrag]->mouseEvent(MouseAction, rx - mPosX, ry - mPosY) == GuiManager::EVENT_DRAG_DONE)
+        {
+            mGadgetDrag = -1;
+            return GuiManager::EVENT_DRAG_DONE;
+        }
+        return GuiManager::EVENT_CHECK_DONE;
     }
-    if (rx < mPosX && rx > mPosX + mWidth && ry < mPosY && ry > mPosY + mHeight) return false;
+    if (rx < mPosX && rx > mPosX + mWidth && ry < mPosY && ry > mPosY + mHeight)
+        return GuiManager::EVENT_CHECK_NEXT;
     int x = rx - mPosX;
     int y = ry - mPosY;
 
@@ -509,15 +512,13 @@ bool GuiWindow::mouseEvent(int MouseAction, Vector3 &mouse)
         // This will still happen when their gfx is overlapping.
         if (mvGadgetButton[i]->mouseEvent(MouseAction, x, y)) ++sumPressed;
     }
-    if (sumPressed) return true;
+    if (sumPressed) return GuiManager::EVENT_CHECK_DONE;
     for (unsigned int i = 0; i < mvSlot.size(); ++i)
     {
-        int ret = (mvSlot[i]->mouseEvent(MouseAction, x, y));
-        if (!ret) return true;
-        if (ret >0) // Drag action was reported.
+        if (mvSlot[i]->mouseEvent(MouseAction, x, y) == GuiManager::EVENT_DRAG_STRT)
         {
             mGadgetDrag = i;
-            return true;
+            return GuiManager::EVENT_DRAG_STRT;
         }
     }
     for (unsigned int i = 0; i < mvGadgetCombobox.size(); ++i)
@@ -528,12 +529,12 @@ bool GuiWindow::mouseEvent(int MouseAction, Vector3 &mouse)
     for (unsigned int i = 0; i < mvListbox.size(); ++i)
     {
         if (mvListbox[i]->mouseEvent(MouseAction, x, y, (int) mouse.z))
-            return true;
+            return GuiManager::EVENT_CHECK_DONE;
     }
     for (unsigned int i = 0; i < mvTable.size(); ++i)
     {
         if (mvTable[i]->mouseEvent(MouseAction, x, y))
-            return true;
+            return GuiManager::EVENT_CHECK_DONE;
     }
 
     switch (MouseAction)
@@ -546,7 +547,7 @@ bool GuiWindow::mouseEvent(int MouseAction, Vector3 &mouse)
                 mDragOldMousePosX = rx;
                 mDragOldMousePosY = ry;
                 mMouseDragging = mWindowNr;
-                return true;
+                return GuiManager::EVENT_CHECK_DONE;
             }
         }
         case MOUSE_MOVEMENT:
@@ -582,8 +583,8 @@ bool GuiWindow::mouseEvent(int MouseAction, Vector3 &mouse)
     }
     // Mouse over this window?
     if (rx >= mPosX && rx <= mPosX + mWidth && ry >= mPosY && ry <= mPosY + mHeight)
-        return true;
-    return false;
+        return GuiManager::EVENT_CHECK_DONE;
+    return GuiManager::EVENT_CHECK_NEXT;
 }
 
 
@@ -850,4 +851,19 @@ void GuiWindow::buttonPressed(GuiWindow *me, int index)
     GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "button event... ");
 }
 
+//================================================================================================
+// .
+//================================================================================================
+int GuiWindow::getDragSlot()
+{
+    int slot, group = 0;
+    for (unsigned int i = 0; i < mvSlot.size(); ++i)
+    {
+        slot = mvSlot[i]->getDragSlot();
+        if (slot >=0) break;
+        ++group;
+    }
+
+
+}
 

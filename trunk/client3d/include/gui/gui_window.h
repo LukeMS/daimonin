@@ -98,7 +98,13 @@ public:
         return mHeight;
     }
     const char *Message(int message, int element, void *value1, void *value2);
-    bool mouseEvent(int MouseAction, Ogre::Vector3 &mouse);
+    int mouseEvent(int MouseAction, Ogre::Vector3 &mouse);
+    bool mouseWithin(int x, int y)
+    {
+        if (!isInit || !isVisible() || x < mPosX || x > mPosX + mWidth || y < mPosY || y > mPosY + mHeight)
+            return false;
+        return true;
+    }
     const char *getTooltip()
     {
         return mStrTooltip.c_str();
@@ -138,6 +144,7 @@ public:
     // ////////////////////////////////////////////////////////////////////
     void updateItemSlot(int element, int slotNr, int state);
     void setItemReference(int element, std::list<Item::sItem*> *itemContainer);
+    int getDragSlot();
 
 private:
     // ////////////////////////////////////////////////////////////////////

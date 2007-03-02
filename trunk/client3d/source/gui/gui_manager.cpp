@@ -46,12 +46,12 @@ GuiManager::GuiWinNam GuiManager::mGuiWindowNames[GUI_WIN_SUM]=
     {
         { "Login",         GUI_WIN_LOGIN         },
         { "ServerSelect",  GUI_WIN_SERVERSELECT  },
-      //{ "Creation",      GUI_WIN_CREATION      },
+        //{ "Creation",      GUI_WIN_CREATION      },
 
         { "Win_Equipment", GUI_WIN_EQUIPMENT     },
         { "Win_Inventory", GUI_WIN_INVENTORY     },
-        { "Win_Shop",      GUI_WIN_SHOP          },
         { "Win_Trade",     GUI_WIN_TRADE         },
+        { "Win_Shop",      GUI_WIN_SHOP          },
         { "Win_Container", GUI_WIN_CONTAINER     },
 
         { "PlayerInfo",    GUI_WIN_PLAYERINFO    },
@@ -73,6 +73,7 @@ void GuiManager::Init(int w, int h)
     mScreenWidth   = w;
     mScreenHeight  = h;
     mMouseInside   = true;
+    mDragSrcWin    = -1;
     // ////////////////////////////////////////////////////////////////////
     // Create the tooltip overlay.
     // ////////////////////////////////////////////////////////////////////
@@ -285,12 +286,43 @@ bool GuiManager::mouseEvent(int mouseAction, Vector3 &mouse)
     mMouse.x+= mHotSpotX;
     mMouse.y+= mHotSpotY;
     mMouse.z = mouse.z;
+    // ////////////////////////////////////////////////////////////////////
+    // Do we have an active drag from a slot?
+    // ////////////////////////////////////////////////////////////////////
+    if (mDragSrcWin >= 0)
+    {
+        if (guiWindow[mDragSrcWin].mouseEvent(mouseAction, mMouse) == EVENT_DRAG_DONE)
+        {
+            for (unsigned int w = 0; w < GUI_WIN_SUM; ++w)
+            {
+                if (guiWindow[w].mouseWithin((int)mMouse.x, (int)mMouse.y))
+                {
+                    // Drop into another window/slot.
+                    Item::getSingleton().dragItem(mDragSrcWin, w);
+                    return true;
+                }
+            }
+            // Drop to the ground.
+            Item::getSingleton().dragItem(mDragSrcWin, -1);
+            mDragSrcWin = -1;
+        }
+        return true;
+    }
+    // ////////////////////////////////////////////////////////////////////
+    // Check for mouse action in all windows.
+    // ////////////////////////////////////////////////////////////////////
     for (unsigned int i=0; i < GUI_WIN_SUM; ++i)
     {
-        if (guiWindow[i].mouseEvent(mouseAction, mMouse))
+        int ret = guiWindow[i].mouseEvent(mouseAction, mMouse);
+        if (ret == EVENT_CHECK_DONE)
         {
             mActiveWindow = i;
             mMouseInside = true;
+            return true;
+        }
+        if (ret == EVENT_DRAG_STRT)
+        {
+            mDragSrcWin = i;
             return true;
         }
     }

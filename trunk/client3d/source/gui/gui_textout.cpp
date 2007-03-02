@@ -87,7 +87,29 @@ GuiTextout::GuiTextout()
             if ((strTemp = xmlState->Attribute("posY"  ))) Entry->y = atoi(strTemp);
             if ((strTemp = xmlState->Attribute("width" ))) Entry->w = atoi(strTemp);
             if ((strTemp = xmlState->Attribute("height"))) Entry->h = atoi(strTemp);
-            if ((strTemp = xmlState->Attribute("name"  ))) Entry->strGfxCode = strTemp;
+            if ((strTemp = xmlState->Attribute("name"  )))
+            {
+                for (unsigned int i=0; i < strlen(strTemp); ++i)
+                {
+                    // Numers enclosed in [] will be comverted to an ascii char.
+                    if (strTemp[i] == '[')
+                    {
+                        int j =0;
+                        char number[4];
+                        while (j < 3)
+                        {
+                            if (strTemp[++i] == ']') break;
+                            number[j] = strTemp[i];
+                            ++j;
+                        }
+                        number[j] = 0;
+                        Entry->strGfxCode+= (char) atoi(number);
+                    }
+                    else
+                        Entry->strGfxCode+= strTemp[i];
+                }
+                Logger::log().error() << Entry->strGfxCode;
+            }
             if (mvSpecialChar.size() == SPECIAL_CHARS_IN_FONT-1)
             {
                 Logger::log().warning() << "Maximum of user defined chars was reached.";
