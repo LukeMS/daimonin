@@ -48,7 +48,7 @@
       <Range width= "148" height= "17" />
     </Graphic>
     <Label  x= "35" y= "4" font="02" text= "Statistics" />
-    <Gadget type= "BUTTON"  name = "But_Close" fill= "GFX_FILL" image_name = "Button_01_Close">
+    <Gadget type= "BUTTON"  name = "But_Close" fill= "GFX_FILL" image_name = "Button-01-Close">
       <Pos x= "132" y= "1" />
     </Gadget>
     <!--=============================================-->
@@ -82,43 +82,20 @@
     <!--=============================================-->
     <!-- Window Body                                 -->
     <!--=============================================-->
-    <Graphic fill= "GFX_FILL"  image_name = "Status_Player">
+    <Graphic fill= "GFX_FILL"  image_name = "Player-Info">
       <Pos x= "0" y= "0" />
       <Range width= "348" height= "88" />
     </Graphic>
     <!--=============================================-->
     <!-- Window Tiltle                               -->
     <!--=============================================-->
-    <Gadget type= "BUTTON"  name = "Buton_info" fill= "GFX_FILL" image_name = "Status_Player_Buton">
+    <Gadget type= "BUTTON"  name = "Buton_info" fill= "GFX_FILL" image_name = "Player-Info-Button">
       <Pos x= "70" y= "8" />
     </Gadget>
-    <Graphic fill= "GFX_FILL"  image_name = "Player_Pic">
+    <Graphic fill= "GFX_FILL"  image_name = "Player-Portrait">
       <Pos x= "8" y= "9" />
       <Range width= "71" height= "71" />
     </Graphic>
-  </Window>
-
-
-
-  <!--#############################################-->
-  <!--WINDOW: Player Console                       -->
-  <!--#############################################-->
-  <Window name= "PlayerConsole">
-    <Size     width= "128" height= "128" />
-    <Alignment x= "center" y= "top"/>
-    <Pos       x= "50" y= "80" zOrder = "250" />
-    <DragArea  x= "0" y= "0" width= "0" height= "0" />
-    <Tooltip  text= "Player console" />
-
-    <Gadget type= "BUTTON"  name = "ButInteractTalk" fill= "GFX_FILL" image_name = "Intract_Menu_Talk">
-      <Pos x= "48" y= "0" />
-    </Gadget>
-    <Gadget type= "BUTTON"  name = "ButInteractAttack" fill= "GFX_FILL" image_name = "Intract_Menu_Attack">
-      <Pos x= "14" y= "16" />
-    </Gadget>
-    <Gadget type= "BUTTON"  name = "ButInteractOpen" fill= "GFX_FILL" image_name = "Intract_Menu_Open">
-      <Pos x= "81" y= "16" />
-    </Gadget>
   </Window>
 
 
@@ -133,31 +110,31 @@
     <DragArea  x= "0"    y= "0" width= "280" height= "18" />
     <Tooltip  text= "Chat Window." />
 
-    <Graphic fill= "GFX_FILL"  image_name = "General_Background">
+    <Graphic fill= "GFX_FILL"  image_name = "Background-General">
       <Pos x= "0" y= "0" />
       <Range width= "280" height= "18" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "TL_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-NW">
       <Pos x= "0" y= "0" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Line_H_Top">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Horizontal-Top">
       <Pos x= "10" y= "0" />
       <Range width= "260" height= "5" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "TR_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-NE">
       <Pos x= "271" y= "0" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "BL_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-SW">
       <Pos x= "0" y= "9" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Line_H_Bottom">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Horizontal-Bottom">
       <Pos x= "10" y= "13" />
       <Range width= "260" height= "5" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "BR_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-SE">
       <Pos x= "271" y= "9" />
       <Range width= "9" height= "9" />
     </Graphic>
@@ -174,8 +151,8 @@
          <Color type= "BAR_PASSIVE" red=   "0" green=   "0" blue=  "0" alpha = "255" />
          <Color type= "BAR_M_OVER"  red= "188" green= "158" blue= "81" alpha = "255" />
          <Color type= "BAR_ACTIVE"  red=  "80" green= "100" blue= "60" alpha = "255" />
-         <Gadget type= "BUTTON" name = "But_ScrollUp"   fill= "GFX_FILL" image_name = "ScrollButton_02_Up" />
-         <Gadget type= "BUTTON" name = "But_ScrollDown" fill= "GFX_FILL" image_name = "ScrollButton_02_Down"/>
+         <Gadget type= "BUTTON" name = "But_ScrollUp"   fill= "GFX_FILL" image_name = "Button-01-Up" />
+         <Gadget type= "BUTTON" name = "But_ScrollDown" fill= "GFX_FILL" image_name = "Button-01-Down"/>
       </Gadget>
     </Listbox>
   </Window>
@@ -192,31 +169,31 @@
     <DragArea  x= "0"    y= "0" width= "280" height= "18" />
     <Tooltip  text= "Message Window." />
 
-    <Graphic fill= "GFX_FILL"  image_name = "General_Background">
+    <Graphic fill= "GFX_FILL"  image_name = "Background-General">
       <Pos x= "0" y= "0" />
       <Range width= "280" height= "18" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "TL_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-NW">
       <Pos x= "0" y= "0" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Line_H_Top">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Horizontal-Top">
       <Pos x= "10" y= "0" />
       <Range width= "260" height= "5" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "TR_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-NE">
       <Pos x= "271" y= "0" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "BL_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-SW">
       <Pos x= "0" y= "9" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Line_H_Bottom">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Horizontal-Bottom">
       <Pos x= "10" y= "13" />
       <Range width= "260" height= "5" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "BR_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-SE">
       <Pos x= "271" y= "9" />
       <Range width= "9" height= "9" />
     </Graphic>
@@ -233,8 +210,8 @@
          <Color type= "BAR_PASSIVE" red=   "0" green=   "0" blue=  "0" alpha = "255" />
          <Color type= "BAR_M_OVER"  red= "188" green= "158" blue= "81" alpha = "255" />
          <Color type= "BAR_ACTIVE"  red=  "80" green= "100" blue= "60" alpha = "255" />
-         <Gadget type= "BUTTON" name = "But_ScrollUp"   fill= "GFX_FILL" image_name = "ScrollButton_02_Up" />
-         <Gadget type= "BUTTON" name = "But_ScrollDown" fill= "GFX_FILL" image_name = "ScrollButton_02_Down"/>
+         <Gadget type= "BUTTON" name = "But_ScrollUp"   fill= "GFX_FILL" image_name = "Button-01-Up" />
+         <Gadget type= "BUTTON" name = "But_ScrollDown" fill= "GFX_FILL" image_name = "Button-01-Down"/>
       </Gadget>
     </Listbox>
   </Window>
@@ -252,75 +229,75 @@
     <!--=============================================-->
     <!-- Seamless Background                         -->
     <!--=============================================-->
-    <Graphic fill= "GFX_FILL"  image_name = "General_Background">
+    <Graphic fill= "GFX_FILL"  image_name = "Background-General">
       <Pos x= "0" y= "0" />
       <Range width= "512" height= "512" />
     </Graphic>
     <!--=============================================-->
     <!-- Layer 0                                     -->
     <!--=============================================-->
-    <Graphic fill= "GFX_FILL"  image_name = "Line_H_Top">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Horizontal-Top">
       <Pos x= "9" y= "0" />
       <Range width= "508" height= "4" />
     </Graphic>
     <Label x=  "225" y= "8" font="04" text= "Login" />
-    <Graphic fill= "GFX_FILL"  image_name = "Line_H_Bottom">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Horizontal-Bottom">
       <Pos x= "4" y= "30" />
       <Range width= "503" height= "4" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Line_H_Bottom">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Horizontal-Bottom">
       <Pos x= "4" y= "34" />
       <Range width= "503" height= "4" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Line_H_Top">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Horizontal-Top">
       <Pos x= "9" y= "508" />
       <Range width= "493" height= "4" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Line_V_Left">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Vertical-Left">
       <Pos x= "0" y= "9" />
       <Range width= "4" height= "493" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Line_V_Right">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Vertical-Right">
       <Pos x= "508" y= "9" />
       <Range width= "4" height= "493" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "TL_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-NW">
       <Pos x= "0" y= "0" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "BR_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-SE">
       <Pos x= "503" y= "503" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "TR_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-NE">
       <Pos x= "503" y= "0" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "TR_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-NE">
       <Pos x= "503" y= "0" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "BL_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-SW">
       <Pos x= "0" y= "503" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "TL_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-NW">
       <Pos x= "0" y= "34" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "BR_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-SE">
       <Pos x= "503" y= "25" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "TR_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-NE">
       <Pos x= "503" y= "34" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "TR_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-NE">
       <Pos x= "503" y= "0" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "BL_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-SW">
       <Pos x= "0" y= "25" />
       <Range width= "9" height= "9" />
     </Graphic>
@@ -354,47 +331,47 @@
     <!--=============================================-->
     <!-- Seamless Background                         -->
     <!--=============================================-->
-    <Graphic fill= "GFX_FILL"  image_name = "General_Background">
+    <Graphic fill= "GFX_FILL"  image_name = "Background-General">
       <Pos x= "0" y= "0" />
       <Range width= "512" height= "512" />
     </Graphic>
     <!--=============================================-->
     <!-- Layer 0                                     -->
     <!--=============================================-->
-    <Graphic fill= "GFX_FILL"  image_name = "TL_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-NW">
       <Pos x= "0" y= "0" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Line_H_Top">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Horizontal-Top">
       <Pos x= "10" y= "0" />
       <Range width= "494" height= "6" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "TR_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-NE">
       <Pos x= "503" y= "0" />
       <Range width= "9" height= "9" />
     </Graphic>
     <Label x=  "225" y= "8" font="04" text= "Login" />
-    <Graphic fill= "GFX_FILL"  image_name = "Line_H_Top">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Horizontal-Top">
       <Pos x= "5" y= "30" />
       <Range width= "502" height= "6" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "BL_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-SW">
       <Pos x= "0" y= "503" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Line_H_Bottom">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Horizontal-Bottom">
       <Pos x= "10" y= "507" />
       <Range width= "492" height= "6" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "BR_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-SE">
       <Pos x= "503" y= "503" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Line_V_Left">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Vertical-Left">
       <Pos x= "0" y= "10" />
       <Range width= "6" height= "492" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Line_V_Right">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Vertical-Right">
       <Pos x= "507" y= "10" />
       <Range width= "65" height= "492" />
     </Graphic>
@@ -426,46 +403,46 @@
     <!--=============================================-->
     <!-- Seamless Background                         -->
     <!--=============================================-->
-    <Graphic fill= "GFX_FILL"  image_name = "General_Background">
+    <Graphic fill= "GFX_FILL"  image_name = "Background-General">
       <Pos x= "0" y= "0" />
       <Range width= "303" height= "350" />
     </Graphic>
     <!--=============================================-->
     <!-- Layer 0                                     -->
     <!--=============================================-->
-    <Graphic fill= "GFX_FILL"  image_name = "TL_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-NW">
       <Pos x= "0" y= "0" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Line_H_Top">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Horizontal-Top">
       <Pos x= "10" y= "0" />
       <Range width= "494" height= "4" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "TR_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-NE">
       <Pos x= "294" y= "0" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Line_H_Bottom">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Horizontal-Bottom">
       <Pos x= "5" y= "30" />
       <Range width= "293" height= "4" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "BL_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-SW">
       <Pos x= "0" y= "341" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Line_H_Bottom">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Horizontal-Bottom">
       <Pos x= "10" y= "345" />
       <Range width= "283" height= "4" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "BR_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-SE">
       <Pos x= "294" y= "341" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Line_V_Left">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Vertical-Left">
       <Pos x= "0" y= "10" />
       <Range width= "5" height= "283" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Line_V_Right">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Vertical-Right">
       <Pos x= "298" y= "10" />
       <Range width= "5" height= "283" />
     </Graphic>
@@ -473,7 +450,7 @@
     <!-- Layer 1                                     -->
     <!--=============================================-->
     <TextBox x= "55" y= "8" font="04" text= "Dialog Window" width = "230" name= "NPC_Headline" />
-    <Gadget type= "BUTTON"  name = "But_Close" fill= "GFX_FILL" image_name = "Button_01_Close">
+    <Gadget type= "BUTTON"  name = "But_Close" fill= "GFX_FILL" image_name = "Button-01-Close">
       <Pos x= "285" y= "1" />
     </Gadget>
     <Listbox type= "GFX_FILL" name= "List_NPC" font="02">
@@ -487,16 +464,16 @@
          <Color type= "BAR_PASSIVE" red=   "0" green=   "0" blue=  "0" alpha = "255" />
          <Color type= "BAR_M_OVER"  red= "188" green= "158" blue= "81" alpha = "255" />
          <Color type= "BAR_ACTIVE"  red=  "80" green= "100" blue= "60" alpha = "255" />
-         <Gadget type= "BUTTON" name = "But_ScrollUp"   fill= "GFX_FILL" image_name = "ScrollButton_02_Up" />
-         <Gadget type= "BUTTON" name = "But_ScrollDown" fill= "GFX_FILL" image_name = "ScrollButton_02_Down"/>
+         <Gadget type= "BUTTON" name = "But_ScrollUp"   fill= "GFX_FILL" image_name = "Button-01-Up" />
+         <Gadget type= "BUTTON" name = "But_ScrollDown" fill= "GFX_FILL" image_name = "Button-01-Down"/>
       </Gadget>
     </Listbox>
-    <Gadget type= "BUTTON"  name = "But_NPC_Accept" fill= "GFX_FILL" image_name = "Button_01_Std">
+    <Gadget type= "BUTTON"  name = "But_NPC_Accept" fill= "GFX_FILL" image_name = "Button-01-Standard">
       <Pos   x= "10" y= "320" />
       <Label x= "5" y= "5" font="02" text= "" />
     </Gadget>
     <TextBox x= "70" y= "325" font="02" hide ="0" text= "Enter your text here..." width = "222" name= "Input_NPC_Dialog" />
-    <Gadget type= "BUTTON"  name = "But_NPC_Decline" fill= "GFX_FILL" image_name = "Button_01_Std">
+    <Gadget type= "BUTTON"  name = "But_NPC_Decline" fill= "GFX_FILL" image_name = "Button-01-Standard">
       <Label x= "5" y= "5" font="02" text= "" />
       <Pos x= "238" y= "320" />
     </Gadget>
@@ -516,174 +493,174 @@
     <!--=============================================-->
     <!-- Seamless Background                         -->
     <!--=============================================-->
-    <Graphic fill= "GFX_FILL"  image_name = "General_Background">
+    <Graphic fill= "GFX_FILL"  image_name = "Background-General">
       <Pos x= "0" y= "0" />
       <Range width= "330" height= "580" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Equipment_Info_Background">
+    <Graphic fill= "GFX_FILL"  image_name = "Background-Equipment">
       <Pos x= "88" y= "122" />
       <Range width= "154" height= "233" />
     </Graphic>
     <!--=============================================-->
     <!-- Layer 0                                     -->
     <!--=============================================-->
-    <Graphic fill= "GFX_FILL"  image_name = "TL_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-NW">
       <Pos x= "0" y= "0" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Line_H_Top">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Horizontal-Top">
       <Pos x= "10" y= "0" />
       <Range width= "320" height= "4" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "TR_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-NE">
       <Pos x= "321" y= "0" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "BL_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-SW">
       <Pos x= "0" y= "571" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Line_H_Bottom">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Horizontal-Bottom">
       <Pos x= "10" y= "576" />
       <Range width= "320" height= "4" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "BR_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-SE">
       <Pos x= "321" y= "571" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Line_V_Left">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Vertical-Left">
       <Pos x= "0" y= "10" />
       <Range width= "4" height= "570" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Line_V_Right">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Vertical-Right">
       <Pos x= "326" y= "0" />
       <Range width= "4" height= "570" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Icon_Holder">
+    <Graphic fill= "GFX_FILL"  image_name = "Icon-Holder">
       <Pos x= "294" y= "0" />
       <Range width= "36" height= "37" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Icon_Equipment">
+    <Graphic fill= "GFX_FILL"  image_name = "Icon-Equipment">
       <Pos x= "301" y= "6" />
       <Range width= "22" height= "25" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Weight_Anvil">
+    <Graphic fill= "GFX_FILL"  image_name = "Weight-Anvil">
       <Pos x= "11" y= "11" />
       <Range width= "86" height= "28" />
     </Graphic>
     <!--=============================================-->
     <!-- Layer 1 slots and icons                     -->
     <!--=============================================-->
-    <Graphic fill= "GFX_FILL"  image_name = "Equipment_Amulet">
+    <Graphic fill= "GFX_FILL"  image_name = "Equipment-Amulet">
       <Pos x= "30" y= "60" />
       <Range width= "22" height= "30" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Equipment_Bracers">
+    <Graphic fill= "GFX_FILL"  image_name = "Equipment-Bracers">
       <Pos x= "20" y= "140" />
       <Range width= "42" height= "39" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Equipment_Gloves">
+    <Graphic fill= "GFX_FILL"  image_name = "Equipment-Gloves">
       <Pos x= "22" y= "220" />
       <Range width= "43" height= "33" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Equipment_Sword">
+    <Graphic fill= "GFX_FILL"  image_name = "Equipment-Sword">
       <Pos x= "23" y= "297" />
       <Range width= "39" height= "39" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Equipment_Crossbow">
+    <Graphic fill= "GFX_FILL"  image_name = "Equipment-Crossbow">
       <Pos x= "23" y= "383" />
       <Range width= "39" height= "39" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Equipment_Ring">
+    <Graphic fill= "GFX_FILL"  image_name = "Equipment-Ring">
       <Pos x= "29" y= "464" />
       <Range width= "28" height= "27" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Equipment_Cloack">
+    <Graphic fill= "GFX_FILL"  image_name = "Equipment-Cloack">
       <Pos x= "108" y= "60" />
       <Range width= "36" height= "40" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Equipment_Spellbook">
+    <Graphic fill= "GFX_FILL"  image_name = "Equipment-Spellbook">
       <Pos x= "105" y= "384" />
       <Range width= "40" height= "36" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Equipment_Scroll">
+    <Graphic fill= "GFX_FILL"  image_name = "Equipment-Scroll">
       <Pos x= "105" y= "465" />
       <Range width= "37" height= "38" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Equipment_Helmet">
+    <Graphic fill= "GFX_FILL"  image_name = "Equipment-Helmet">
       <Pos x= "194" y= "66" />
       <Range width= "23" height= "23" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Equipment_Boots">
+    <Graphic fill= "GFX_FILL"  image_name = "Equipment-Boots">
       <Pos x= "186" y= "380" />
       <Range width= "37" height= "40" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Equipment_Lantern">
+    <Graphic fill= "GFX_FILL"  image_name = "Equipment-Lantern">
       <Pos x= "191" y= "466" />
       <Range width= "31" height= "32" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Equipment_Amulet">
+    <Graphic fill= "GFX_FILL"  image_name = "Equipment-Amulet">
       <Pos x= "274" y= "60" />
       <Range width= "22" height= "30" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Equipment_Armor">
+    <Graphic fill= "GFX_FILL"  image_name = "Equipment-Armor">
       <Pos x= "261" y= "133" />
       <Range width= "43" height= "49" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Equipment_Belt">
+    <Graphic fill= "GFX_FILL"  image_name = "Equipment-Belt">
       <Pos x= "267" y= "227" />
       <Range width= "38" height= "22" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Equipment_Shield">
+    <Graphic fill= "GFX_FILL"  image_name = "Equipment-Shield">
       <Pos x= "265" y= "295" />
       <Range width= "37" height= "44" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Equipment_Quiver">
+    <Graphic fill= "GFX_FILL"  image_name = "Equipment-Quiver">
       <Pos x= "274" y= "388" />
       <Range width= "30" height= "31" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Equipment_Ring">
+    <Graphic fill= "GFX_FILL"  image_name = "Equipment-Ring">
       <Pos x= "270" y= "464" />
       <Range width= "28" height= "27" />
     </Graphic>
     <!--=============================================-->
     <!-- Layer 2 tabs                                -->
     <!--=============================================-->
-    <Graphic fill= "GFX_FILL"  image_name = "Tab_Background">
+    <Graphic fill= "GFX_FILL"  image_name = "Button-02-Outline">
       <Pos x= "10" y= "535" />
       <Range width= "71" height= "27" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Tab_Background">
+    <Graphic fill= "GFX_FILL"  image_name = "Button-02-Outline">
       <Pos x= "90" y= "535" />
       <Range width= "71" height= "27" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Tab_Background">
+    <Graphic fill= "GFX_FILL"  image_name = "Button-02-Outline">
       <Pos x= "170" y= "535" />
       <Range width= "71" height= "27" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Tab_Background">
+    <Graphic fill= "GFX_FILL"  image_name = "Button-02-Outline">
       <Pos x= "250" y= "535" />
       <Range width= "71" height= "27" />
     </Graphic>
-    <Gadget type= "BUTTON"   name = "Tab_Stats" fill= "GFX_FILL" image_name = "Tab_01_Std">
+    <Gadget type= "BUTTON"   name = "Tab_Stats" fill= "GFX_FILL" image_name = "Button-01-Standard">
       <Pos   x= "13" y= "538" />
       <Label x= "10" y= "8" font="02" text= "Stats" />
     </Gadget>
-    <Gadget type= "BUTTON"  name = "Tab_Skills" fill= "GFX_FILL" image_name = "Tab_01_Std">
+    <Gadget type= "BUTTON"  name = "Tab_Skills" fill= "GFX_FILL" image_name = "Button-01-Standard">
       <Pos   x= "93" y= "538" />
       <Label x= "10" y= "8" font="02" text= "Skills" />
     </Gadget>
-    <Gadget type= "BUTTON"  name = "Tab_Protection" fill= "GFX_FILL" image_name = "Tab_01_Std">
+    <Gadget type= "BUTTON"  name = "Tab_Protection" fill= "GFX_FILL" image_name = "Button-01-Standard">
       <Pos   x= "173" y= "538" />
       <Label x= "10" y= "8" font="02" text= "Stats" />
     </Gadget>
-    <Gadget type= "BUTTON"  name = "Tab_Experience" fill= "GFX_FILL" image_name = "Tab_01_Std">
+    <Gadget type= "BUTTON"  name = "Tab_Experience" fill= "GFX_FILL" image_name = "Button-01-Standard">
       <Pos   x= "253" y= "538" />
       <Label x= "10" y= "8" font="02" text= "Stats" />
     </Gadget>
     <TextBox x= "60" y= "8" font="03" text= "Equipment Window" width = "230" name= "Equipment" />
     <TextBox x= "40" y= "24" font="02" text= "999 kg" width = "54" name= "Wight" />
-    <Gadget type= "BUTTON"  name = "But_Close" fill= "GFX_FILL" image_name = "Button_01_Close">
+    <Gadget type= "BUTTON"  name = "But_Close" fill= "GFX_FILL" image_name = "Button-01-Close">
       <Pos x= "280" y= "4" />
     </Gadget>
   </Window>
@@ -702,61 +679,61 @@
     <!--=============================================-->
     <!-- Seamless Background                         -->
     <!--=============================================-->
-    <Graphic fill= "GFX_FILL"  image_name = "General_Background">
+    <Graphic fill= "GFX_FILL"  image_name = "Background-General">
       <Pos x= "0" y= "0" />
       <Range width= "330" height= "580" />
     </Graphic>
     <!--=============================================-->
     <!-- Layer 0                                     -->
     <!--=============================================-->
-    <Graphic fill= "GFX_FILL"  image_name = "TL_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-NW">
       <Pos x= "0" y= "0" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Line_H_Top">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Horizontal-Top">
       <Pos x= "10" y= "0" />
       <Range width= "320" height= "4" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "TR_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-NE">
       <Pos x= "321" y= "0" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "BL_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-SW">
       <Pos x= "0" y= "571" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Line_H_Bottom">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Horizontal-Bottom">
       <Pos x= "10" y= "576" />
       <Range width= "320" height= "4" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "BR_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-SE">
       <Pos x= "321" y= "571" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Line_V_Left">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Vertical-Left">
       <Pos x= "0" y= "10" />
       <Range width= "4" height= "570" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Line_V_Right">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Vertical-Right">
       <Pos x= "326" y= "0" />
       <Range width= "4" height= "570" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Icon_Holder">
+    <Graphic fill= "GFX_FILL"  image_name = "Icon-Holder">
       <Pos x= "294" y= "0" />
       <Range width= "36" height= "37" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Icon_Inventory">
+    <Graphic fill= "GFX_FILL"  image_name = "Icon-Inventory">
       <Pos x= "301" y= "6" />
       <Range width= "24" height= "25" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Icons_Background">
+    <Graphic fill= "GFX_FILL"  image_name = "Icons-Background">
       <Pos x= "7" y= "7" />
       <Range width= "321" height= "50" />
     </Graphic>
     <!--=============================================-->
     <!-- Layer 1 slots and icons                     -->
     <!--=============================================-->
-    <Gadget type= "SLOT"  name = "Slot_Container" image_name = "Item_Slot">
+    <Gadget type= "SLOT"  name = "Slot_Container" image_name = "Item-Slot">
       <!-- Position of the 1. slot. -->
       <Pos x= "17" y= "89" />
       <!-- Number of cols/rows -->
@@ -764,89 +741,89 @@
       <!-- Offset to the next col/row and Item offset to the slot border -->
       <Offset col ="2" row ="2" itemX ="4" itemY ="4"/>
     </Gadget>
-    <Graphic fill= "GFX_FILL"  image_name = "Monney_Copper">
+    <Graphic fill= "GFX_FILL"  image_name = "Monney-Copper">
       <Pos x= "11" y= "11" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Monney_Silver">
+    <Graphic fill= "GFX_FILL"  image_name = "Monney-Silver">
       <Pos x= "71" y= "14" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Monney_Gold">
+    <Graphic fill= "GFX_FILL"  image_name = "Monney-Gold">
       <Pos x= "130" y= "11" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Monney_Mithrill">
+    <Graphic fill= "GFX_FILL"  image_name = "Monney-Mithrill">
       <Pos x= "190" y= "18" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Icon_Anvil">
+    <Graphic fill= "GFX_FILL"  image_name = "Icon-Anvil">
       <Pos x= "250" y= "13" />
     </Graphic>
     <!--=============================================-->
     <!-- Layer 2 tabs                                -->
     <!--=============================================-->
-    <Graphic fill= "GFX_FILL"  image_name = "Tab_Background">
+    <Graphic fill= "GFX_FILL"  image_name = "Button-02-Outline">
       <Pos x= "10" y= "470" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Tab_Background">
+    <Graphic fill= "GFX_FILL"  image_name = "Button-02-Outline">
       <Pos x= "90" y= "470" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Tab_Background">
+    <Graphic fill= "GFX_FILL"  image_name = "Button-02-Outline">
       <Pos x= "170" y= "470" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Tab_Background">
+    <Graphic fill= "GFX_FILL"  image_name = "Button-02-Outline">
       <Pos x= "250" y= "470" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Tab_Background">
+    <Graphic fill= "GFX_FILL"  image_name = "Button-02-Outline">
       <Pos x= "10" y= "500" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Tab_Background">
+    <Graphic fill= "GFX_FILL"  image_name = "Button-02-Outline">
       <Pos x= "90" y= "500" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Tab_Background">
+    <Graphic fill= "GFX_FILL"  image_name = "Button-02-Outline">
       <Pos x= "170" y= "500" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Tab_Background">
+    <Graphic fill= "GFX_FILL"  image_name = "Button-02-Outline">
       <Pos x= "250" y= "500" />
     </Graphic>
-    <Gadget type= "BUTTON"   name = "Tab_Stats" fill= "GFX_FILL" image_name = "Tab_01_Std">
+    <Gadget type= "BUTTON"   name = "Tab_Stats" fill= "GFX_FILL" image_name = "Button-01-Standard">
       <Pos   x= "13" y= "473" />
       <Label x= "10" y= "8" font="02" text= "Weapons" />
     </Gadget>
-    <Gadget type= "BUTTON"  name = "Tab_Skills" fill= "GFX_FILL" image_name = "Tab_01_Std">
+    <Gadget type= "BUTTON"  name = "Tab_Skills" fill= "GFX_FILL" image_name = "Button-01-Standard">
       <Pos   x= "93" y= "473" />
       <Label x= "10" y= "8" font="02" text= "Shields" />
     </Gadget>
-    <Gadget type= "BUTTON"  name = "Tab_Protection" fill= "GFX_FILL" image_name = "Tab_01_Std">
+    <Gadget type= "BUTTON"  name = "Tab_Protection" fill= "GFX_FILL" image_name = "Button-01-Standard">
       <Pos   x= "173" y= "473" />
       <Label x= "10" y= "8" font="02" text= "Polyveg's" />
     </Gadget>
-    <Gadget type= "BUTTON"  name = "Tab_Experience" fill= "GFX_FILL" image_name = "Tab_01_Std">
+    <Gadget type= "BUTTON"  name = "Tab_Experience" fill= "GFX_FILL" image_name = "Button-01-Standard">
       <Pos   x= "253" y= "473" />
       <Label x= "10" y= "8" font="02" text= "Potions" />
     </Gadget>
-    <Gadget type= "BUTTON"   name = "Tab_Stats" fill= "GFX_FILL" image_name = "Tab_01_Std">
+    <Gadget type= "BUTTON"   name = "Tab_Stats" fill= "GFX_FILL" image_name = "Button-01-Standard">
       <Pos   x= "13" y= "503" />
       <Label x= "10" y= "8" font="02" text= "Cats" />
     </Gadget>
-    <Gadget type= "BUTTON"  name = "Tab_Skills" fill= "GFX_FILL" image_name = "Tab_01_Std">
+    <Gadget type= "BUTTON"  name = "Tab_Skills" fill= "GFX_FILL" image_name = "Button-01-Standard">
       <Pos   x= "93" y= "503" />
       <Label x= "10" y= "8" font="02" text= "Dogs" />
     </Gadget>
-    <Gadget type= "BUTTON"  name = "Tab_Protection" fill= "GFX_FILL" image_name = "Tab_01_Std">
+    <Gadget type= "BUTTON"  name = "Tab_Protection" fill= "GFX_FILL" image_name = "Button-01-Standard">
       <Pos   x= "173" y= "503" />
       <Label x= "10" y= "8" font="02" text= "Time" />
     </Gadget>
-    <Gadget type= "BUTTON"  name = "Tab_Experience" fill= "GFX_FILL" image_name = "Tab_01_Std">
+    <Gadget type= "BUTTON"  name = "Tab_Experience" fill= "GFX_FILL" image_name = "Button-01-Standard">
       <Pos   x= "253" y= "503" />
       <Label x= "10" y= "8" font="02" text= "one11!!!!" />
     </Gadget>
-    <Gadget type= "BUTTON"  name = "Next_page" fill= "GFX_FILL" image_name = "Next_Page_01">
+    <Gadget type= "BUTTON"  name = "Next_page" fill= "GFX_FILL" image_name = "Button-01-Next">
       <Pos   x= "301" y= "543" />
       <Label x= "10" y= "8" font="02" text= "" />
     </Gadget>
-    <Gadget type= "BUTTON"  name = "Prev_Page" fill= "GFX_FILL" image_name = "Prev_Page_01">
+    <Gadget type= "BUTTON"  name = "Prev_Page" fill= "GFX_FILL" image_name = "Button-01-Prev">
       <Pos   x= "6" y= "543" />
       <Label x= "10" y= "8" font="02" text= "" />
     </Gadget>
-    <Gadget type= "BUTTON"  name = "But_Close" fill= "GFX_FILL" image_name = "Button_01_Close">
+    <Gadget type= "BUTTON"  name = "But_Close" fill= "GFX_FILL" image_name = "Button-01-Close">
       <Pos x= "280" y= "4" />
     </Gadget>
   </Window>
@@ -865,144 +842,144 @@
     <!--=============================================-->
     <!-- Seamless Background                         -->
     <!--=============================================-->
-    <Graphic fill= "GFX_FILL"  image_name = "General_Background">
+    <Graphic fill= "GFX_FILL"  image_name = "Background-General">
       <Pos x= "0" y= "0" />
       <Range width= "330" height= "505" />
     </Graphic>
     <!--=============================================-->
     <!-- Layer 0                                     -->
     <!--=============================================-->
-    <Graphic fill= "GFX_FILL"  image_name = "TL_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-NW">
       <Pos x= "0" y= "0" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Line_H_Top">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Horizontal-Top">
       <Pos x= "10" y= "0" />
       <Range width= "320" height= "4" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "TR_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-NE">
       <Pos x= "321" y= "0" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "BL_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-SW">
       <Pos x= "0" y= "496" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Line_H_Bottom">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Horizontal-Bottom">
       <Pos x= "9" y= "501" />
       <Range width= "320" height= "4" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "BR_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-SE">
       <Pos x= "321" y= "496" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Line_V_Left">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Vertical-Left">
       <Pos x= "0" y= "10" />
       <Range width= "4" height= "595" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Line_V_Right">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Vertical-Right">
       <Pos x= "326" y= "0" />
       <Range width= "4" height= "595" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Icon_Holder">
+    <Graphic fill= "GFX_FILL"  image_name = "Icon-Holder">
       <Pos x= "294" y= "0" />
       <Range width= "36" height= "37" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Icon_Trade">
+    <Graphic fill= "GFX_FILL"  image_name = "Icon-Trade">
       <Pos x= "299" y= "5" />
       <Range width= "27" height= "27" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Icons_Background">
+    <Graphic fill= "GFX_FILL"  image_name = "Icons-Background">
       <Pos x= "7" y= "7" />
       <Range width= "321" height= "50" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Icons_Background">
+    <Graphic fill= "GFX_FILL"  image_name = "Icons-Background">
       <Pos x= "7" y= "270" />
       <Range width= "321" height= "50" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "TL_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-NW">
       <Pos x= "0" y= "263" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "BR_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-SE">
       <Pos x= "321" y= "254" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "TR_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-NE">
       <Pos x= "321" y= "263" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "BL_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-SW">
       <Pos x= "0" y= "254" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Line_H_Bottom">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Horizontal-Bottom">
       <Pos x= "9" y= "259" />
       <Range width= "320" height= "4" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Line_H_Top">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Horizontal-Top">
       <Pos x= "9" y= "263" />
       <Range width= "320" height= "4" />
     </Graphic>
     <!--=============================================-->
     <!-- Layer 1 slots and icons                     -->
     <!--=============================================-->
-    <Graphic fill= "GFX_FILL"  image_name = "Monney_Copper">
+    <Graphic fill= "GFX_FILL"  image_name = "Monney-Copper">
       <Pos x= "11" y= "11" />
       <Range width= "27" height= "21" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Monney_Silver">
+    <Graphic fill= "GFX_FILL"  image_name = "Monney-Silver">
       <Pos x= "71" y= "14" />
       <Range width= "23" height= "17" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Monney_Gold">
+    <Graphic fill= "GFX_FILL"  image_name = "Monney-Gold">
       <Pos x= "130" y= "11" />
       <Range width= "25" height= "21" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Monney_Mithrill">
+    <Graphic fill= "GFX_FILL"  image_name = "Monney-Mithrill">
       <Pos x= "190" y= "18" />
       <Range width= "22" height= "14" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Icon_Anvil">
+    <Graphic fill= "GFX_FILL"  image_name = "Icon-Anvil">
       <Pos x= "250" y= "13" />
       <Range width= "24" height= "23" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Monney_Copper">
+    <Graphic fill= "GFX_FILL"  image_name = "Monney-Copper">
       <Pos x= "11" y= "274" />
       <Range width= "27" height= "21" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Monney_Silver">
+    <Graphic fill= "GFX_FILL"  image_name = "Monney-Silver">
       <Pos x= "71" y= "277" />
       <Range width= "23" height= "17" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Monney_Gold">
+    <Graphic fill= "GFX_FILL"  image_name = "Monney-Gold">
       <Pos x= "130" y= "274" />
       <Range width= "25" height= "21" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Monney_Mithrill">
+    <Graphic fill= "GFX_FILL"  image_name = "Monney-Mithrill">
       <Pos x= "190" y= "281" />
       <Range width= "22" height= "14" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Icon_Anvil">
+    <Graphic fill= "GFX_FILL"  image_name = "Icon-Anvil">
       <Pos x= "250" y= "276" />
       <Range width= "24" height= "23" />
     </Graphic>
     <!--=============================================-->
     <!-- Layer 2 tabs                                -->
     <!--=============================================-->
-    <Graphic fill= "GFX_FILL"  image_name = "Tab_Background">
+    <Graphic fill= "GFX_FILL"  image_name = "Button-02-Outline">
       <Pos x= "210" y= "227" />
       <Range width= "71" height= "27" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Tab_Background">
+    <Graphic fill= "GFX_FILL"  image_name = "Button-02-Outline">
       <Pos x= "50" y= "227" />
       <Range width= "71" height= "27" />
     </Graphic>
-    <Gadget type= "BUTTON"   name = "Tab_Lock" fill= "GFX_FILL" image_name = "Tab_01_Std">
+    <Gadget type= "BUTTON"   name = "Tab_Lock" fill= "GFX_FILL" image_name = "Button-01-Standard">
       <Pos   x= "53" y= "230" />
       <Label x= "10" y= "8" font="02" text= "Lock" />
     </Gadget>
-    <Gadget type= "BUTTON"  name = "Tab_Trade" fill= "GFX_FILL" image_name = "Tab_01_Std">
+    <Gadget type= "BUTTON"  name = "Tab_Trade" fill= "GFX_FILL" image_name = "Button-01-Standard">
       <Pos   x= "213" y= "230" />
       <Label x= "10" y= "8" font="02" text= "Trade" />
     </Gadget>
@@ -1018,7 +995,7 @@
     <TextBox x= "195" y= "305" font="02" text= "10000" width = "60" name= "Engine_SumTris" />
     <TextBox x= "255" y= "305" font="02" text= "10.25612 kg" width = "60" name= "Engine_SumTris" />
 
-    <Gadget type= "BUTTON"  name = "But_Close" fill= "GFX_FILL" image_name = "Button_01_Close">
+    <Gadget type= "BUTTON"  name = "But_Close" fill= "GFX_FILL" image_name = "Button-01-Close">
       <Pos x= "280" y= "4" />
     </Gadget>
   </Window>
@@ -1037,104 +1014,104 @@
     <!--=============================================-->
     <!-- Seamless Background                         -->
     <!--=============================================-->
-    <Graphic fill= "GFX_FILL"  image_name = "General_Background">
+    <Graphic fill= "GFX_FILL"  image_name = "Background-General">
       <Pos x= "0" y= "0" />
       <Range width= "330" height= "580" />
     </Graphic>
     <!--=============================================-->
     <!-- Layer 0                                     -->
     <!--=============================================-->
-    <Graphic fill= "GFX_FILL"  image_name = "TL_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-NW">
       <Pos x= "0" y= "0" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Line_H_Top">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Horizontal-Top">
       <Pos x= "10" y= "0" />
       <Range width= "320" height= "4" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "TR_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-NE">
       <Pos x= "321" y= "0" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "BL_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-SW">
       <Pos x= "0" y= "571" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Line_H_Bottom">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Horizontal-Bottom">
       <Pos x= "10" y= "576" />
       <Range width= "320" height= "4" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "BR_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-SE">
       <Pos x= "321" y= "571" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Line_V_Left">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Vertical-Left">
       <Pos x= "0" y= "10" />
       <Range width= "4" height= "570" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Line_V_Right">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Vertical-Right">
       <Pos x= "326" y= "0" />
       <Range width= "4" height= "570" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Icon_Holder">
+    <Graphic fill= "GFX_FILL"  image_name = "Icon-Holder">
       <Pos x= "294" y= "0" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Icon_Shop">
+    <Graphic fill= "GFX_FILL"  image_name = "Icon-Shop">
       <Pos x= "301" y= "6" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Icons_Background">
+    <Graphic fill= "GFX_FILL"  image_name = "Icons-Background">
       <Pos x= "7" y= "7" />
       <Range width= "321" height= "50" />
     </Graphic>
     <!--=============================================-->
     <!-- Layer 1 slots and icons                     -->
     <!--=============================================-->
-    <Graphic fill= "GFX_FILL"  image_name = "Monney_Copper">
+    <Graphic fill= "GFX_FILL"  image_name = "Monney-Copper">
       <Pos x= "10" y= "10" />
       <Range width= "27" height= "21" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Monney_Silver">
+    <Graphic fill= "GFX_FILL"  image_name = "Monney-Silver">
       <Pos x= "70" y= "13" />
       <Range width= "23" height= "17" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Monney_Gold">
+    <Graphic fill= "GFX_FILL"  image_name = "Monney-Gold">
       <Pos x= "129" y= "10" />
       <Range width= "25" height= "21" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Monney_Mithrill">
+    <Graphic fill= "GFX_FILL"  image_name = "Monney-Mithrill">
       <Pos x= "189" y= "17" />
       <Range width= "22" height= "14" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Icon_Anvil">
+    <Graphic fill= "GFX_FILL"  image_name = "Icon-Anvil">
       <Pos x= "249" y= "12" />
       <Range width= "24" height= "23" />
     </Graphic>
     <!--=============================================-->
     <!-- Layer 2 tabs                                -->
     <!--=============================================-->
-    <Graphic fill= "GFX_FILL"  image_name = "Tab_Background">
+    <Graphic fill= "GFX_FILL"  image_name = "Button-02-Outline">
       <Pos x= "49" y= "480" />
       <Range width= "71" height= "27" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Tab_Background">
+    <Graphic fill= "GFX_FILL"  image_name = "Button-02-Outline">
       <Pos x= "210" y= "480" />
       <Range width= "71" height= "27" />
     </Graphic>
-    <Gadget type= "BUTTON"   name = "Tab_Buy" fill= "GFX_FILL" image_name = "Tab_01_Std">
+    <Gadget type= "BUTTON"   name = "Tab_Buy" fill= "GFX_FILL" image_name = "Button-01-Standard">
       <Pos   x= "52" y= "483" />
       <Label x= "10" y= "8" font="02" text= "Buy" />
     </Gadget>
-    <Gadget type= "BUTTON"  name = "Tab_Sell" fill= "GFX_FILL" image_name = "Tab_01_Std">
+    <Gadget type= "BUTTON"  name = "Tab_Sell" fill= "GFX_FILL" image_name = "Button-01-Standard">
       <Pos   x= "213" y= "483 " />
       <Label x= "10" y= "8" font="02" text= "Sell" />
     </Gadget>
-    <Gadget type= "BUTTON"  name = "Next_page" fill= "GFX_FILL" image_name = "Next_Page_01">
+    <Gadget type= "BUTTON"  name = "Next_page" fill= "GFX_FILL" image_name = "Button-01-Next">
       <Pos   x= "301" y= "543" />
     </Gadget>
-    <Gadget type= "BUTTON"  name = "Prev_Page" fill= "GFX_FILL" image_name = "Prev_Page_01">
+    <Gadget type= "BUTTON"  name = "Prev_Page" fill= "GFX_FILL" image_name = "Button-01-Prev">
       <Pos   x= "6" y= "543" />
     </Gadget>
-    <Gadget type= "BUTTON"  name = "But_Close" fill= "GFX_FILL" image_name = "Button_01_Close">
+    <Gadget type= "BUTTON"  name = "But_Close" fill= "GFX_FILL" image_name = "Button-01-Close">
       <Pos x= "280" y= "4" />
     </Gadget>
   </Window>
@@ -1153,87 +1130,87 @@
     <!--=============================================-->
     <!-- Seamless Background                         -->
     <!--=============================================-->
-    <Graphic fill= "GFX_FILL"  image_name = "General_Background">
+    <Graphic fill= "GFX_FILL"  image_name = "Background-General">
       <Pos x= "0" y= "0" />
       <Range width= "330" height= "340" />
     </Graphic>
     <!--=============================================-->
     <!-- Layer 0                                     -->
     <!--=============================================-->
-    <Graphic fill= "GFX_FILL"  image_name = "TL_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-NW">
       <Pos x= "0" y= "0" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Line_H_Top">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Horizontal-Top">
       <Pos x= "10" y= "0" />
       <Range width= "320" height= "4" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "TR_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-NE">
       <Pos x= "321" y= "0" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Line_H_Bottom">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Horizontal-Bottom">
       <Pos x= "9" y= "316" />
       <Range width= "320" height= "4" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Line_V_Left">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Vertical-Left">
       <Pos x= "0" y= "10" />
       <Range width= "4" height= "311" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Line_V_Right">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Vertical-Right">
       <Pos x= "326" y= "0" />
       <Range width= "4" height= "311" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Icon_Holder">
+    <Graphic fill= "GFX_FILL"  image_name = "Icon-Holder">
       <Pos x= "294" y= "0" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Icon_Inventory">
+    <Graphic fill= "GFX_FILL"  image_name = "Icon-Inventory">
       <Pos x= "299" y= "5" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Icons_Background">
+    <Graphic fill= "GFX_FILL"  image_name = "Icons-Background">
       <Pos x= "7" y= "7" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "BR_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-SE">
       <Pos x= "321" y= "254" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "BL_Edge">
+    <Graphic fill= "GFX_FILL"  image_name = "Corner-SW">
       <Pos x= "0" y= "254" />
       <Range width= "9" height= "9" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Line_H_Bottom">
+    <Graphic fill= "GFX_FILL"  image_name = "Bar-Horizontal-Bottom">
       <Pos x= "9" y= "259" />
       <Range width= "320" height= "4" />
     </Graphic>
     <!--=============================================-->
     <!-- Layer 1 slots and icons                     -->
     <!--=============================================-->
-    <Graphic fill= "GFX_FILL"  image_name = "Monney_Copper">
+    <Graphic fill= "GFX_FILL"  image_name = "Monney-Copper">
       <Pos x= "11" y= "11" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Monney_Silver">
+    <Graphic fill= "GFX_FILL"  image_name = "Monney-Silver">
       <Pos x= "71" y= "14" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Monney_Gold">
+    <Graphic fill= "GFX_FILL"  image_name = "Monney-Gold">
       <Pos x= "130" y= "11" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Monney_Mithrill">
+    <Graphic fill= "GFX_FILL"  image_name = "Monney-Mithrill">
       <Pos x= "190" y= "18" />
     </Graphic>
-    <Graphic fill= "GFX_FILL"  image_name = "Icon_Anvil">
+    <Graphic fill= "GFX_FILL"  image_name = "Icon-Anvil">
       <Pos x= "250" y= "13" />
     </Graphic>
     <!--=============================================-->
     <!-- Layer 2 tabs                                -->
     <!--=============================================-->
-    <Graphic fill= "GFX_FILL"  image_name = "Tab_Background">
+    <Graphic fill= "GFX_FILL"  image_name = "Button-02-Outline">
       <Pos x= "127" y= "317" />
     </Graphic>
-    <Gadget type= "BUTTON"  name = "Tab_12" fill= "GFX_FILL" image_name = "Tab_01_Std">
+    <Gadget type= "BUTTON"  name = "Tab_12" fill= "GFX_FILL" image_name = "Button-01-Standard">
       <Pos   x= "130" y= "310" />
       <Label x= "10" y= "8" font="02" text= "Take all" />
     </Gadget>
-    <Gadget type= "BUTTON"  name = "But_Close" fill= "GFX_FILL" image_name = "Button_01_Close">
+    <Gadget type= "BUTTON"  name = "But_Close" fill= "GFX_FILL" image_name = "Button-01-Close">
       <Pos x= "280" y= "4" />
     </Gadget>
   </Window>

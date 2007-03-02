@@ -300,6 +300,7 @@ bool inv_updated :
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
+    void dragItem(int srcWindow, int dstWindow);
     void ItemXYCmd(unsigned char *data, int len, bool bflag);
     void clearContainer(int container);
     void delItem(unsigned int item, int container);

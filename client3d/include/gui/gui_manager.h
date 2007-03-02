@@ -52,8 +52,8 @@ public:
         // GUI_WIN_CREATION,
         GUI_WIN_EQUIPMENT,
         GUI_WIN_INVENTORY,
-        GUI_WIN_SHOP,
         GUI_WIN_TRADE,
+        GUI_WIN_SHOP,
         GUI_WIN_CONTAINER,
 
         GUI_WIN_PLAYERINFO,
@@ -74,6 +74,14 @@ public:
         GUI_MSG_GET_SEL_KEY,  /**< Returns the selected keyword **/
         GUI_MSG_SLOT_REDRAW,
         GUI_MSG_SUM
+    };
+    enum
+    {
+        EVENT_DRAG_STRT,
+        EVENT_DRAG_DONE,
+        EVENT_CHECK_NEXT,
+        EVENT_CHECK_DONE,
+        EVENT_SUM
     };
     enum
     {
@@ -102,7 +110,7 @@ public:
     void parseImageset(const char *XML_imageset_file);
     void parseWindows (const char *XML_windows_file);
     void update(Ogre::Real);
-    bool mouseEvent(int MouseAction, Ogre::Vector3 &mouse);
+    bool  mouseEvent(int MouseAction, Ogre::Vector3 &mouse);
     bool keyEvent(const char keyChar, const unsigned char key);
     const char *sendMessage(int window, int message, int element, void *value1 = 0, void *value2 = 0);
     void setTooltip(const char *text);
@@ -168,10 +176,13 @@ public:
     {
         guiWindow[window].setItemReference(element, itemContainer);
     }
-
     void updateItemSlot(int window, int element, int slotNr, int state = GuiImageset::STATE_ELEMENT_DEFAULT)
     {
         guiWindow[window].updateItemSlot(element, slotNr, state);
+    }
+    int getDragSlot(int window)
+    {
+        return guiWindow[window].getDragSlot();
     }
 
 private:

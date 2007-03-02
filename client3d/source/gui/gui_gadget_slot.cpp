@@ -245,17 +245,13 @@ int GuiGadgetSlot::mouseEvent(int MouseAction, int x, int y)
         {
             mDragSlot = mActiveSlot;
             mActiveDrag = drawDragItem();
+            return GuiManager::EVENT_DRAG_STRT;
         }
         if (MouseAction == GuiWindow::BUTTON_RELEASED && mActiveDrag)
         {
-            if ((unsigned int)x > mSlotWidth || (unsigned int)y > mSlotHeight)
-            {
-                Item::getSingleton().dropInventoryItemToFloor(mDragSlot);
-            }
-            else
-                GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, StringConverter::toString(activeSlot).c_str());
             mDnDOverlay->hide();
             mActiveDrag = false;
+            return GuiManager::EVENT_DRAG_DONE;
         }
         if (MouseAction == GuiWindow::MOUSE_MOVEMENT && mActiveDrag)
         {
@@ -263,19 +259,18 @@ int GuiGadgetSlot::mouseEvent(int MouseAction, int x, int y)
             GuiCursor::getSingleton().getPos(x, y);
             mDnDElement->setPosition(x, y);
         }
-        return 0; // No need to check other gadgets.
+        return GuiManager::EVENT_CHECK_DONE; // No need to check other gadgets.
     }
-    else  // Mouse is no longer over the the gadget.
+    else  // Mouse is no longer over this slot.
     {
         if (mActiveSlot >=0)
         {
             updateSlot(mActiveSlot, GuiImageset::STATE_ELEMENT_DEFAULT);
             mActiveSlot = -1;
-            return 0; // No need to check other gadgets.
+            return GuiManager::EVENT_CHECK_DONE;
         }
     }
-    if (mActiveDrag) return 1;
-    return -1; // No action here, check the other gadgets.
+    return GuiManager::EVENT_CHECK_NEXT;
 }
 
 //================================================================================================

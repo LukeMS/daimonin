@@ -376,6 +376,28 @@ bool Item::update(sItem *tmpItem, int newContainerID, bool bflag)
     return false;
 }
 
+
+//================================================================================================
+// .
+//================================================================================================
+void Item::dragItem(int srcWindow, int dstWindow)
+{
+    Logger::log().error() << "window: drag: " << srcWindow << "  drop:  " << dstWindow;
+
+    if (dstWindow <0)
+        dropInventoryItemToFloor(GuiManager::getSingleton().getDragSlot(srcWindow));
+
+    /*
+        if ((unsigned int)x > mSlotWidth || (unsigned int)y > mSlotHeight)
+        {
+            Item::getSingleton().dropInventoryItemToFloor(mDragSlot);
+        }
+        else
+            GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, StringConverter::toString(activeSlot).c_str());
+    */
+}
+
+
 //================================================================================================
 // Just for debug.
 //================================================================================================

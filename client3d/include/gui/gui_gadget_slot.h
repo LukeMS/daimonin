@@ -55,6 +55,10 @@ public:
     {
         mlIconContainer = IconContainer;
     }
+    int getDragSlot() const
+    {
+        return mDragSlot;
+    }
 
 private:
     // ////////////////////////////////////////////////////////////////////
