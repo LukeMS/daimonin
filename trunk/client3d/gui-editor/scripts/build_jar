@@ -1,0 +1,3 @@
+#!/bin/bash
+
+jar cfM ../editor3d.jar -C ../classes/ .
