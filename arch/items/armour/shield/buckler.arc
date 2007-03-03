@@ -3,7 +3,7 @@ name buckler
 type 33
 layer 3
 face buckler.101
-ac 1
+ac 6
 wc 1
 resist_impact 5
 resist_cleave 5

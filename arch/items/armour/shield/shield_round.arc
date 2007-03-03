@@ -3,7 +3,7 @@ name round shield
 type 33
 layer 3
 face shield_round.101
-ac 2
+ac 8
 item_level 3
 item_skill 4
 last_heal 5

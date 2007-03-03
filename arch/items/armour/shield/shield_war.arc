@@ -3,7 +3,7 @@ name war shield
 type 33
 layer 3
 face shield_war.101
-ac 4
+ac 12
 item_skill 4
 item_level 19
 last_heal 15

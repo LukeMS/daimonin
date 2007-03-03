@@ -3,7 +3,7 @@ name small shield
 face small_shie.101
 type 33
 layer 3
-ac 2
+ac 8
 material_real 65
 material 2
 resist_impact 6
