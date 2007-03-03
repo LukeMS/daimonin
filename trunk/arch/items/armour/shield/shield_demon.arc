@@ -3,7 +3,7 @@ name demon shield
 type 33
 layer 3
 face shield_demon.101
-ac 4
+ac 12
 item_level 19
 last_heal 15
 item_skill 4

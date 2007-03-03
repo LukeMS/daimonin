@@ -3,7 +3,7 @@ name blade stopper
 type 33
 layer 3
 face blade_stopper.101
-ac 4
+ac 12
 item_level 19
 item_skill 4
 last_heal 15

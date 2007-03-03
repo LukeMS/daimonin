@@ -3,8 +3,8 @@ name ball and chain
 type 33
 layer 3
 face ball_and_chain.101
-ac 2
-wc 1
+ac 6
+wc 2
 item_level 4
 item_skill 4
 last_heal 5

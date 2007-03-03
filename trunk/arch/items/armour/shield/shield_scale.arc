@@ -3,7 +3,7 @@ name shield
 type 33
 layer 3
 face shield_scale_white.101
-ac 3
+ac 10
 item_level 9
 item_skill 4
 last_heal 10

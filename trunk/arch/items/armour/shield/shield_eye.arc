@@ -3,7 +3,7 @@ name eye shield
 type 33
 layer 3
 face shield_eye.101
-ac 3
+ac 10
 item_level 9
 last_heal 10
 item_skill 4
