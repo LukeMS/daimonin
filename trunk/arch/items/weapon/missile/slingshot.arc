@@ -3,7 +3,7 @@ name slingshot
 layer 3
 race sling stones
 type 14
-sub_type 2
+sub_type 3
 material 8
 material_real 193
 item_level 7

@@ -3,10 +3,10 @@ name throwing star
 race rock
 face t_star.101
 layer 3
-weapon_speed 2.5
 attack_slash 100
-dam 30
-last_grace 11
+dam 42
+wc 45
+last_grace 22
 last_sp 7
 nrof 1
 type 13
@@ -29,6 +29,6 @@ is_turnable 1
 is_thrown 1
 material 2
 material_real 65
-weight 200
-value 35
+weight 50
+value 1
 end

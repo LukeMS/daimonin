@@ -1,7 +1,9 @@
 Object skill_throwing
 name throwing
 type 43
-wc 5
+# last_grace = action timer adjustment
+last_grace 0
+wc 0
 sub_type 0
 item_quality 100
 item_condition 100
