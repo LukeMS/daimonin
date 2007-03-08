@@ -2,7 +2,7 @@ Object map
 layer 0
 sys_object 1
 type 22
-slaying /relic/castle/castle_030a
+slaying /planes/human_plane/castle/castle_030a
 face info.101
 x 16
 y 16
