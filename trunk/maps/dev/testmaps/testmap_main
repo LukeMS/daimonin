@@ -132,7 +132,7 @@ x 1
 y 1
 end
 arch exit
-slaying /relic/castle/castle_040a
+slaying ../../planes/human_plane/castle/castle_040a
 hp 0
 sp 11
 x 1
@@ -767,8 +767,8 @@ x 6
 y 8
 arch event_obj
 name Lua
-race /dev/testmaps/skills.lua
 sub_type 6
+race /dev/testmaps/skills.lua
 end
 end
 arch floor_ostone1
@@ -868,8 +868,8 @@ x 7
 y 7
 arch event_obj
 name Lua
-race /dev/testmaps/ScriptTest.lua
 sub_type 6
+race /dev/testmaps/ScriptTest.lua
 end
 end
 arch floor_ostone1
@@ -979,8 +979,8 @@ x 8
 y 8
 arch event_obj
 name Lua
-race /dev/testmaps/spells.lua
 sub_type 6
+race /dev/testmaps/spells.lua
 end
 end
 arch floor_ostone1
