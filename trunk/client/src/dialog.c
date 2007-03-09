@@ -125,7 +125,7 @@ _option             opt[]                           =
         /* End of Page */
 
         /* Client */
-        {"Fullscreen:", "Toogle fullscreen to windowed mode.","NOTE: You need to restart the server.","", SEL_CHECKBOX, 0,1,1, 1, &options.fullscreen, VAL_BOOL},
+        {"Fullscreen:", "Toggle fullscreen to windowed mode.","NOTE: You need to restart the server.","", SEL_CHECKBOX, 0,1,1, 1, &options.fullscreen, VAL_BOOL},
         {"Automatic bpp:", "Use always the same bits per pixel like your default windows.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,1, &options.auto_bpp_flag, VAL_BOOL},
         {"Colordeep:", "Use this bpp for fullscreen mode. Overruled by automatic bpp.","NOTE: You need to restart the server.","8 bpp#16 bpp#32 bpp", SEL_RANGE, 0,2,1, 1, &options.video_bpp, VAL_INT},
         {"Textwindow splitted:", "Split your text windows in chat & action messages.","","", SEL_CHECKBOX, 0,1,1, 1, &options.use_TextwinSplit, VAL_BOOL},
@@ -1690,8 +1690,8 @@ void show_login_server(void)
                 StringBlt(ScreenSurface, &SystemFont, "                             ~is NOT your character name !~",x+2, y+70, COLOR_WHITE, NULL, NULL);
                 StringBlt(ScreenSurface, &SystemFont, "                             ~Select a different one WITHOUT~",x+1, y+81, COLOR_BLACK, NULL, NULL);
                 StringBlt(ScreenSurface, &SystemFont, "                             ~Select a different one WITHOUT~",x+2, y+80, COLOR_WHITE, NULL, NULL);
-                StringBlt(ScreenSurface, &SystemFont, "                             ~numbers and special signs in it.~",x+1, y+91, COLOR_BLACK, NULL, NULL);
-                StringBlt(ScreenSurface, &SystemFont, "                             ~numbers and special signs in it.~",x+2, y+90, COLOR_WHITE, NULL, NULL);
+                StringBlt(ScreenSurface, &SystemFont, "                             ~numbers and special chars in it.~",x+1, y+91, COLOR_BLACK, NULL, NULL);
+                StringBlt(ScreenSurface, &SystemFont, "                             ~numbers and special chars in it.~",x+2, y+90, COLOR_WHITE, NULL, NULL);
             }
         }
         goto login_jmp;
@@ -1769,9 +1769,9 @@ login_jmp:
                       x+2, y+110  , COLOR_ORANGE, NULL, NULL);
             break;
         case DIALOG_LOGIN_WARNING_NAME_WRONG:
-            StringBlt(ScreenSurface, &SystemFont, "Name is illegal - ITS TO SHORT OR ILLEGAL SIGNS!",
+            StringBlt(ScreenSurface, &SystemFont, "Name is illegal - IT'S TOO SHORT OR HAS ILLEGAL CHARS!",
                       x+1, y+111  , COLOR_BLACK, NULL, NULL);
-            StringBlt(ScreenSurface, &SystemFont, "Name is illegal - ITS TO SHORT OR ILLEGAL SIGNS!",
+            StringBlt(ScreenSurface, &SystemFont, "Name is illegal - IT'S TOO SHORT OR HAS ILLEGAL CHARS!",
                       x+2, y+110  , COLOR_ORANGE, NULL, NULL);
             break;
         case DIALOG_LOGIN_WARNING_PWD_WRONG:
@@ -1781,9 +1781,9 @@ login_jmp:
                       x+2, y+110  , COLOR_ORANGE, NULL, NULL);
             break;
         case DIALOG_LOGIN_WARNING_PWD_SHORT:
-            StringBlt(ScreenSurface, &SystemFont, "Password is to short - it must be 6 signs or longer!",
+            StringBlt(ScreenSurface, &SystemFont, "Password is too short - it must be six chars or longer!",
                       x+1, y+111  , COLOR_BLACK, NULL, NULL);
-            StringBlt(ScreenSurface, &SystemFont, "Password is to short - it must be 6 signs or longer!",
+            StringBlt(ScreenSurface, &SystemFont, "Password is too short - it must be six chars or longer!",
                       x+2, y+110  , COLOR_ORANGE, NULL, NULL);
             break;
         case DIALOG_LOGIN_WARNING_PWD_NAME:
