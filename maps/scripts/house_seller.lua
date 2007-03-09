@@ -19,6 +19,14 @@ pinfo = pl:GetPlayerInfo(sglow_app_tag)
 local ib = InterfaceBuilder()
 ib:SetHeader(me, me.name)
 
+-- me.name is "Xxxxx, the apartment keeper", so extract the proper name
+-- for use in the dialogs.
+local sname = me.name
+local spos = string.find(sname, ",")
+if spos then
+    sname = string.sub(sname, 1, spos - 1)
+end
+
 function topicGreeting()
     ib:SetTitle("At the apartments")
     ib:AddMsg("Welcome to the apartment house.\n")
@@ -31,7 +39,7 @@ function create_info(id, path, x, y)
     if pinfo == nil then
     	pinfo = pl:CreatePlayerInfo(sglow_app_tag)
     end
-   	pinfo.race = "/relic/castle/castle_030a"
+   	pinfo.race = "/planes/human_plane/castle/castle_030a"
 	pinfo.last_sp = 18
 	pinfo.last_grace = 1 
 	pinfo.slaying = id
@@ -43,7 +51,7 @@ end
 function updateAp(ap_old, ap_new, pid, x, y)
     ib:SetTitle("Upgrading finished")
     ib:AddMsg("You pay the money.\n", 0)
-    ib:AddMsg("~Darlin is casting some strange magic.~\n")
+    ib:AddMsg("~"..sname.." is casting some strange magic.~\n")
     map_old = pl:ReadyUniqueMap(ap_old)
     map_new = pl:ReadyUniqueMap(ap_new)
     if map_old == nil or map_new == nil then
@@ -267,17 +275,21 @@ function topicConfirmAgain()
     pl:Interface(1, ib:Build())
 end
 
+local function sellMessages()
+    ib:AddMsg(sname.." is casting some strange magic.\n")
+    ib:AddMsg("Congratulations! That was all!\n");
+    ib:AddMsg("I have summoned your apartment right now.\n")
+    ib:AddMsg("Enter the teleporter and you will be there!\n")
+    ib:AddMsg("Have a good day.\n")
+end
+
 function topicSellCheap()
     ib:SetTitle("Apartment sale results")
     if pinfo == nil then -- no app - all ok
         if pl:PayAmount(3000) == 1 then
             ib:AddMsg("You pay the money.\n")
             create_info(appid_cheap, ap_1, 1, 2)
-            ib:AddMsg("Darlin is casting some strange magic.\n")
-            ib:AddMsg("Congratulations! That was all!\n");
-            ib:AddMsg("I have summoned your apartment right now.\n")
-            ib:AddMsg("Enter the teleporter and you will be there!\n")
-            ib:AddMsg("Have a good day.\n")
+            sellMessages()
         else
             ib:AddMsg("Sorry, you don't have enough money!\n")
         end
@@ -296,11 +308,7 @@ function topicSellNormal()
         if pl:PayAmount(25000) == 1 then
             ib:AddMsg("You pay the money.\n")
             create_info(appid_normal, ap_2, 1, 2)
-            ib:AddMsg("Darlin is casting some strange magic.\n")
-            ib:AddMsg("Congratulations! That was all!\n");
-            ib:AddMsg("I have summoned your apartment right now.\n")
-            ib:AddMsg("Enter the teleporter and you will be there!\n")
-            ib:AddMsg("Have a good day.\n")
+            sellMessages()
         else
             ib:AddMsg("Sorry, you don't have enough money!\n")
         end
@@ -319,11 +327,7 @@ function topicSellExpensive()
         if pl:PayAmount(150000) == 1 then
             ib:AddMsg("You pay the money.\n")
             create_info(appid_expensive, ap_3, 1, 2)
-            ib:AddMsg("Darlin is casting some strange magic.\n")
-            ib:AddMsg("Congratulations! That was all!\n");
-            ib:AddMsg("I have summoned your apartment right now.\n")
-            ib:AddMsg("Enter the teleporter and you will be there!\n")
-            ib:AddMsg("Have a good day.\n")
+            sellMessages()
         else
             ib:AddMsg("Sorry, you don't have enough money!\n")
         end
@@ -342,11 +346,7 @@ function topicSellLuxurious()
         if pl:PayAmount(2000000) == 1 then
             ib:AddMsg("You pay the money.\n")
             create_info(appid_luxurious, ap_4, 2, 1)
-            ib:AddMsg("Darlin is casting some strange magic.\n")
-            ib:AddMsg("Congratulations! That was all!\n");
-            ib:AddMsg("I have summoned your apartment right now.\n")
-            ib:AddMsg("Enter the teleporter and you will be there!\n")
-            ib:AddMsg("Have a good day.\n")
+            sellMessages()
         else
             ib:AddMsg("Sorry, you don't have enough money!\n")
         end
