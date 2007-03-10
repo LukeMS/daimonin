@@ -1,4 +1,7 @@
-This is the first release of the DAIMONIN editor for the new 3D client.
+This is the DAIMONIN gui-editor for the new 3D client. See http://www.daimonin.net
+Daimonin developers may access the gui-editor's SVN folder at daimonin/client3d/gui-editor.
+This software is distributed under the terms of the GPL 2, see LICENSE for details.
+
 
 Configuration
 ==============
@@ -34,9 +37,7 @@ Operation mode 'xml':   XML file with meta information is read, PNG containing a
 TODO's
 ==============
 
-* the packing algo is not very effective. it still wastes too much space.
 * a nice GUI.
-* some more options (i.e. surrounding images with a frame).
 * more testing
 
 
@@ -47,4 +48,3 @@ Rumbuff
 rumbuff@gmx.de
 
 Please feel free too email me some feedback.
-When this gets more stable I will create a project at sourceforge.net.
