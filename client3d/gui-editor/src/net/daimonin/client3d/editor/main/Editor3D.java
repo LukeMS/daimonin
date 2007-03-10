@@ -21,8 +21,10 @@
  */
 package net.daimonin.client3d.editor.main;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.renderable.ParameterBlock;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -33,6 +35,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.imageio.ImageIO;
+import javax.media.jai.BorderExtenderConstant;
+import javax.media.jai.JAI;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -60,7 +64,7 @@ public class Editor3D {
 	/**
 	 * Current version number.
 	 */
-	private static final String VERSION = "0.1.6";
+	private static final String VERSION = "0.1.7";
 	
 	/**
 	 * Number of command line arguments.
@@ -76,6 +80,16 @@ public class Editor3D {
 	 * Operation mode 'read XML'.
 	 */
 	private static final String ARGSMODEXML = "xml";
+	
+	/**
+	 * Maximum border size.
+	 */
+	private static final int BORDERSIZEMAX = 3;
+	
+	/**
+	 * Maximum border color.
+	 */
+	private static final int BORDERCOLORMAX = 255;
 
 	/**
 	 * ImageSetImages, all read PNGs.
@@ -88,7 +102,6 @@ public class Editor3D {
 	public static void main(final String[] args) {
 		
 		try {
-			
 			Editor3D app = new Editor3D();			
 						
 			// check command line args
@@ -99,6 +112,10 @@ public class Editor3D {
 			final String imageset = conf.getString("imageset.filename");
 			final String imagesetxml = conf.getString("imageset.filename.xml");
 			final String startingDir = conf.getString("images.dir");
+			final String borderSize = conf.getString("imageset.border.size");
+			final String borderColorR = conf.getString("imageset.border.color.red");
+			final String borderColorG = conf.getString("imageset.border.color.green");
+			final String borderColorB = conf.getString("imageset.border.color.blue");
 			int[] dimension = null;
 			if (conf.getBoolean("imageset.restrictSize")) {
 				dimension = new int[]{conf.getInt("imageset.maxWidth"), conf.getInt("imageset.maxHeight")};
@@ -110,7 +127,7 @@ public class Editor3D {
 			System.out.println("Daimonin client3d gui-editor " + VERSION);
 			if (ARGSMODEALL.equals(args[0])) {
 				System.out.println("Running in all mode...");
-				app.readImages(startingDir);				
+				app.readImages(startingDir, borderSize, borderColorR, borderColorG, borderColorB);				
 				dimension = app.packImages(dimension);				
 				app.writeXML(imageset, imagesetxml);
 				app.writeImageSet(imageset, dimension);
@@ -136,18 +153,19 @@ public class Editor3D {
 	 * @param confFile	Name of the config file.
 	 * @return 						The editor's configuration.
 	 */
-	private PropertiesConfiguration readConfig(String confFile) {
+	private PropertiesConfiguration readConfig(final String confFile) {
+		String myConfig = confFile;
 		try {
-			if ("default".equals(confFile)) {
-				confFile = "editor3d.config";
+			if ("default".equals(myConfig)) {
+				myConfig = "editor3d.config";
 			}		
 			
 			// test if confFile exists
-			if (! new File(confFile).exists()) {
-				exit(1, "Configuration file '" + confFile + "' does not exist!");
+			if (! new File(myConfig).exists()) {
+				exit(1, "Configuration file '" + myConfig + "' does not exist!");
 			}
 			
-			return new PropertiesConfiguration(confFile);
+			return new PropertiesConfiguration(myConfig);
 		} catch (ConfigurationException e) {			
 			e.printStackTrace();
 			return null;
@@ -185,20 +203,39 @@ public class Editor3D {
 	 * Builds a single PNG out of all ImageSetImages, considering their calculated coordinates. 
 	 * @param fileNameImageSet	Name of resulting PNG.
 	 * @param dimension					[width, height] of the resulting PNG.
+	 *													where 0 is maximum compression, 1 is no compression at all.
 	 * @throws IOException			IOException.
 	 */
 	private void writeImageSet(final String fileNameImageSet, final int[] dimension) throws IOException {
 		
-		BufferedImage bigImg = new BufferedImage(dimension[0], dimension[1], BufferedImage.TYPE_INT_ARGB);
+		BufferedImage bigImg = new BufferedImage(dimension[0], dimension[1], BufferedImage.TYPE_INT_ARGB);				
 		Graphics2D big = bigImg.createGraphics();
 		for (int i = 0; i < images.size(); i++) {
-			big.drawImage(images.get(i).getImage(), images.get(i).getPosX(),
+			if (images.get(i).getBorderSize() > 0) {				
+				ParameterBlock params = new ParameterBlock();
+				params.addSource(images.get(i).getImage());					
+				params.add(images.get(i).getBorderSize());  // left pad
+				params.add(images.get(i).getBorderSize());  // right pad
+				params.add(images.get(i).getBorderSize());  // top pad
+				params.add(images.get(i).getBorderSize());  // bottom pad
+				params.add(new BorderExtenderConstant(new double[] {
+					images.get(i).getBorderColor().getRed(),
+					images.get(i).getBorderColor().getGreen(),
+					images.get(i).getBorderColor().getBlue(), BORDERCOLORMAX}));
+				
+				big.drawImage(JAI.create("border", params).getAsBufferedImage(),
+					images.get(i).getPosX(), images.get(i).getPosY(), null);						
+				
+			} else {			
+				big.drawImage(images.get(i).getImage(), images.get(i).getPosX(),
 					images.get(i).getPosY(), null);
-		}		
+			}
+		}
+		
 		big.dispose();
 		ImageIO.write(bigImg, "png", new File(fileNameImageSet));
 	}
-
+	
 	/**
 	 * Reads the XML and all PNGs in startingDir to create ImageSetImages.
 	 * All former ImageSetImages get overwritten.
@@ -336,8 +373,8 @@ public class Editor3D {
 			Element category = root.addElement("ImageFntExt").addAttribute("name", fntex.get(0).getName());				
 			for (int i = 0; i < fntex.size(); i++) {
 				category.addElement("State").addAttribute("name", fntex.get(i).getState())
-				  .addAttribute("posX", String.valueOf(fntex.get(i).getPosX()))
-				  .addAttribute("posY", String.valueOf(fntex.get(i).getPosY()))
+				  .addAttribute("posX", String.valueOf(fntex.get(i).getPosX() + fntex.get(i).getBorderSize()))
+				  .addAttribute("posY", String.valueOf(fntex.get(i).getPosY() + fntex.get(i).getBorderSize()))
 				  .addAttribute("width", String.valueOf(fntex.get(i).getWidth()))
 					.addAttribute("height", String.valueOf(fntex.get(i).getHeight()));					
 			}
@@ -356,8 +393,8 @@ public class Editor3D {
 				checkImageSameDimension(mouse.get(0), mouse.get(i), "Images of same category have different dimension");
 				checkImageSameAlpha(mouse.get(0), mouse.get(i), "Images of same category have different alpha");				
 				category.addElement("State").addAttribute("name", mouse.get(i).getState())
-				  .addAttribute("posX", String.valueOf(mouse.get(i).getPosX()))
-				  .addAttribute("posY", String.valueOf(mouse.get(i).getPosY()));											
+				  .addAttribute("posX", String.valueOf(mouse.get(i).getPosX() + mouse.get(i).getBorderSize()))
+				  .addAttribute("posY", String.valueOf(mouse.get(i).getPosY() + mouse.get(i).getBorderSize()));											
 			}
 			names.remove("mousecursor");
 		}
@@ -375,8 +412,8 @@ public class Editor3D {
 				checkImageSameDimension(img.get(0), img.get(i), "Images of same category have different dimension");
 				checkImageSameAlpha(img.get(0), img.get(i), "Images of same category have different alpha");
 				category.addElement("State").addAttribute("name", img.get(i).getState())
-				  .addAttribute("posX", String.valueOf(img.get(i).getPosX()))
-				  .addAttribute("posY", String.valueOf(img.get(i).getPosY()));											
+				  .addAttribute("posX", String.valueOf(img.get(i).getPosX() + img.get(i).getBorderSize()))
+				  .addAttribute("posY", String.valueOf(img.get(i).getPosY() + img.get(i).getBorderSize()));											
 			}			
 		}
 		
@@ -455,10 +492,20 @@ public class Editor3D {
 	/**
 	 * Reads all PNG files recursively from the starting dir and creates ImageSetImages. 
 	 * @param startingDir		starting dir to read PNGs recursively.
+	 * @param borderSize		border size, 0 for no border.
+	 * @param borderColorR	border color, Red value.
+	 * @param borderColorG	border color, Green value.
+	 * @param borderColorB	border color, Blue value.
 	 */
-	private void readImages(final String startingDir) {
+	private void readImages(final String startingDir, final String borderSize,
+			final String borderColorR, final String borderColorG, final String borderColorB) {
 		List<File> gfxFiles = new ArrayList<File>();		
 		readFilesRecursively(new File(startingDir), gfxFiles);
+		
+		// check if there are files to process
+		if (gfxFiles.size() == 0) {
+			exit(1, "No PNG files found in directory '" + startingDir + "'. Nothing to do.");
+		}		
 		images = new ArrayList<ImageSetImage>(gfxFiles.size());
 		
 		// check the PNGs for correct file names		
@@ -466,8 +513,39 @@ public class Editor3D {
 			exit(1, "Invalid format of image file name. I have to exit.");			
 		}
 		
+		// check border size/color values
+		int lBorderSize = Integer.valueOf(borderSize);
+		if (lBorderSize < 0) {
+			lBorderSize = 0;
+		} else if (lBorderSize > BORDERSIZEMAX) {
+			lBorderSize = BORDERSIZEMAX;
+		}
+		int lBorderColorR = Integer.valueOf(borderColorR);
+		int lBorderColorG = Integer.valueOf(borderColorG);
+		int lBorderColorB = Integer.valueOf(borderColorB);
+		if (lBorderColorR < 0) {
+			lBorderColorR = 0;
+		} else if (lBorderColorR > BORDERCOLORMAX) {
+			lBorderColorR = BORDERCOLORMAX;
+		}
+		if (lBorderColorG < 0) {
+			lBorderColorG = 0;
+		} else if (lBorderColorG > BORDERCOLORMAX) {
+			lBorderColorG = BORDERCOLORMAX;
+		}
+		if (lBorderColorB < 0) {
+			lBorderColorB = 0;
+		} else if (lBorderColorB > BORDERCOLORMAX) {
+			lBorderColorB = BORDERCOLORMAX;
+		}		
+		
 		for (int i = 0; i < gfxFiles.size(); i++) {
-			images.add(new ImageSetImage(gfxFiles.get(i)));
+			ImageSetImage image = new ImageSetImage(gfxFiles.get(i));
+			if (lBorderSize > 0) {
+				image.setBorderSize(lBorderSize);
+				image.setBorderColor(new Color(lBorderColorR, lBorderColorG, lBorderColorB));
+			}
+			images.add(image);
 		}
 	}
 	
@@ -496,7 +574,8 @@ public class Editor3D {
    * @return		BinPacker rectangle with the ImageSetImage's width and height.	
    */
   private Rect createRect(final ImageSetImage img) {
-  	return new Rect(img.toString(), img.getWidth(), img.getHeight());
+  	return new Rect(img.toString(), img.getWidth() + img.getBorderSize() * 2,
+  		img.getHeight() + img.getBorderSize() * 2);
   }  
   
   /**
@@ -504,7 +583,7 @@ public class Editor3D {
    * @param status  The exit status (0 = regular, 1 = error).
    * @param message	Message to print out.
    */
-  private void exit(int status, String message) {
+  private void exit(final int status, final String message) {
   	if (status == 0) {
   		System.out.println(message);
   		System.exit(0);
