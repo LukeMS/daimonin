@@ -21,6 +21,7 @@
  */
 package net.daimonin.client3d.editor.object;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -49,6 +50,16 @@ public class ImageSetImage {
 	 * Height.
 	 */
 	private int height;
+	
+	/**
+	 * Size/thickness of the border, 0 for no border.
+	 */
+	private int borderSize;
+	
+	/**
+	 * Border color.
+	 */
+	private Color borderColor;
 	
 	/**
 	 * Name.
@@ -219,5 +230,37 @@ public class ImageSetImage {
 	 */
 	public final String toString() {
 		return name + SEPARATOR + state + ".png";
+	}
+
+	/**
+	 * Gets the border size.
+	 * @return the borderSize
+	 */
+	public final int getBorderSize() {
+		return borderSize;
+	}
+
+	/**
+	 * Sets the border size.
+	 * @param aBorderSize the borderSize to set
+	 */
+	public final void setBorderSize(final int aBorderSize) {
+		borderSize = aBorderSize;
+	}
+
+	/**
+	 * Gets the border color. 
+	 * @return the borderColor
+	 */
+	public final Color getBorderColor() {
+		return borderColor;
+	}
+
+	/**
+	 * Sets the border color.
+	 * @param aBorderColor the borderColor to set
+	 */
+	public final void setBorderColor(final Color aBorderColor) {
+		borderColor = aBorderColor;
 	}
 }
