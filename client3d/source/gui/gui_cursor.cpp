@@ -48,7 +48,7 @@ GuiCursor::~GuiCursor()
 //================================================================================================
 // Create an overlay for the mouse-cursor.
 //================================================================================================
-void GuiCursor::Init(int w, int h, int screenWidth, int screenHeight)
+void GuiCursor::Init(int w, int h)
 {
     mState = GuiImageset::STATE_MOUSE_DEFAULT;
     mWidth = w;
@@ -67,7 +67,7 @@ void GuiCursor::Init(int w, int h, int screenWidth, int screenHeight)
     overlay->setZOrder(550);
     mElement = OverlayManager::getSingleton().createOverlayElement(GuiWindow::OVERLAY_ELEMENT_TYPE, "GUI_Cursor");
     mElement->setMetricsMode(GMM_PIXELS);
-    mElement->setPosition(screenWidth/2, screenHeight/2);
+    mElement->setPosition(0, 0);
     mElement->setDimensions (mTexture->getWidth(), mTexture->getHeight());
     MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName("GUI/Window");
     tmpMaterial = tmpMaterial->clone("GUI_Cursor_Material");
@@ -76,6 +76,7 @@ void GuiCursor::Init(int w, int h, int screenWidth, int screenHeight)
     mElement->setMaterialName("GUI_Cursor_Material");
     overlay->add2D(static_cast<OverlayContainer*>(mElement));
     overlay->show();
+    mState = GuiImageset::STATE_MOUSE_DEFAULT;
 }
 
 //================================================================================================
@@ -92,15 +93,7 @@ void GuiCursor::freeRecources()
 void GuiCursor::setStateImagePos(GuiImageset::gfxPos *Entry)
 {
     memcpy(gfxSrcPos, Entry, sizeof(gfxSrcPos));
-}
-
-//================================================================================================
-// Set the position of the mouse-cursor.
-//================================================================================================
-void GuiCursor::setPos(int x, int y)
-{
-    mElement->setTop(y);
-    mElement->setLeft(x);
+    draw();
 }
 
 //================================================================================================

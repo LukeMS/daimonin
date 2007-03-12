@@ -19,6 +19,8 @@ this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
+
+#include <OISKeyboard.h>
 #include "logger.h"
 #include "gui_window_dialog.h"
 #include "gui_manager.h"
@@ -893,7 +895,7 @@ void GuiDialog::show()
 bool GuiDialog::keyEvent(const char keyChar, const unsigned char key)
 {
     if (!mVisible || mStatus == GUI_INTERFACE_STATUS_WAIT) return false;
-    if (key == KC_ESCAPE)
+    if (key == OIS::KC_ESCAPE)
     {
         GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_NPCDIALOG, false);
         mVisible = false;

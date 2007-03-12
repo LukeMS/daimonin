@@ -28,6 +28,7 @@ http://www.gnu.org/licenses/licenses.html
 #define TEXTINPUT_H
 
 #include <Ogre.h>
+#include <OISKeyboard.h>
 #include "sound.h"
 
 /**
@@ -177,14 +178,14 @@ public:
      ** @param keyChar The ascii value of the pressed key.
      ** @param key The The keycode of the key.
      *****************************************************************************/
-    void keyEvent(const char keyChar, const unsigned char key)
+    void keyEvent(const int key, const unsigned int keyChar)
     {
-        if (key == KEY_RETURN || key == KEY_TAB)
+        if (key == OIS::KC_RETURN || key == OIS::KC_TAB)
         {
             finished();
             return;
         }
-        if (key == KEY_ESCAPE)
+        if (key == OIS::KC_ESCAPE)
         {
             canceled();
             return;
@@ -194,29 +195,29 @@ public:
         // ////////////////////////////////////////////////////////////////////
         if (mInputMode == INPUT_MODE_TEXT)
         {
-            if (key == KEY_BACKSPACE && mCursorPos > 0)
+            if (key == OIS::KC_BACK && mCursorPos > 0)
             {
                 mStrTextInput.erase(--mCursorPos, 1);
                 return;
             }
-            if (key == KEY_DELETE)
+            if (key == OIS::KC_DELETE)
             {
                 mStrTextInput.erase(mCursorPos, 1);
                 return;
             }
-            if (key == KEY_LEFT && mCursorPos > 0)
+            if (key == OIS::KC_LEFT && mCursorPos > 0)
             {
                 --mCursorPos;
                 return;
             }
-            if (key == KEY_RIGHT && mCursorPos < mStrTextInput.size())
+            if (key == OIS::KC_RIGHT && mCursorPos < mStrTextInput.size())
             {
                 ++mCursorPos;
                 return;
             }
             if ((!keyChar || mStrTextInput.size() >= mMaxChars)
                     || (mBlockNumbers  && (keyChar >= '0' && keyChar <= '9'))
-                    || (mBlockWhiteSpace && (keyChar <'A' || keyChar > 'z' || (keyChar >'Z' && keyChar < 'a'))))
+                    || (mBlockWhiteSpace && (keyChar <'A' || keyChar > 'z')))
             {
                 Sound::getSingleton().playStream(Sound::BUTTON_CLICK);
                 return;
@@ -230,9 +231,9 @@ public:
         else
         {
             unsigned int oldValue = mActValue;
-            if (key == KEY_UP && mActValue > 0)
+            if (key == OIS::KC_UP && mActValue > 0)
                 --mActValue;
-            else if (key == KEY_DOWN && mActValue < mMaxValue)
+            else if (key == OIS::KC_DOWN && mActValue < mMaxValue)
                 ++mActValue;
             if (oldValue != mActValue) mChange =true;
         }
@@ -264,11 +265,6 @@ private:
     // ////////////////////////////////////////////////////////////////////
     /** The maximum number of selectable entries for a selection field. **/
     static const unsigned int MAX_SELECTION_ENTRIES = 20;
-    enum
-    {
-        KEY_RETURN = 0x1C, KEY_TAB = 0x0F, KEY_DELETE= 0xD3, KEY_BACKSPACE = 0x0E,
-        KEY_ESCAPE = 0x01, KEY_LEFT= 0xCB, KEY_RIGHT = 0xCD, KEY_UP =0xC8,  KEY_DOWN =0xD0
-    };
     unsigned int mActValue, mMaxValue;
     unsigned int mMaxChars;
     unsigned int mCursorPos;

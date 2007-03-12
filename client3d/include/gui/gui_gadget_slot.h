@@ -30,12 +30,12 @@ http://www.gnu.org/licenses/licenses.html
 #include <tinyxml.h>
 #include <Ogre.h>
 #include "item.h"
-#include "gui_element.h"
+#include "gui_graphic.h"
 
 /**
  ** This class provides an interactive button.
  *****************************************************************************/
-class GuiGadgetSlot: public GuiElement
+class GuiGadgetSlot: public GuiGraphic
 {
 public:
     // ////////////////////////////////////////////////////////////////////
@@ -43,6 +43,12 @@ public:
     // ////////////////////////////////////////////////////////////////////
     enum { UPDATE_ALL_SLOTS = -1 };
     enum { SLOT_IS_EMPTY    = -1 };
+    typedef struct
+    {
+        int group;
+        int index;
+    }
+    SlotID;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
@@ -69,20 +75,19 @@ private:
     static Ogre::OverlayElement *mDnDElement;
     static Ogre::MaterialPtr mDnDMaterial;
     static Ogre::TexturePtr mDnDTexture;
+    static std::vector<SlotID>mvSlotID;
+    static std::list<Item::sItem*> *mlIconContainer;
+    static int mDragSlot;                  /**< Slot where the drag was started. **/
+    static int mActiveSlot;                /**< Slot the mouse is currently over. **/
     std::vector<Ogre::String> mvGfxPositions;
-    std::list<Item::sItem*> *mlIconContainer;
+    int mSlotNr;                           /**< Unique number. **/
+    int mItemInSlot;                       /**< The Item which is currently in the slot. **/
     bool mMouseOver, mMouseButDown;
-    bool mActiveDrag;
-    int mDragSlot;                  /**< Slot where the drag was started. **/
-    int mActiveSlot;                /**< Slot the mouse is currently over. **/
-    int mSumCol, mSumRow;
-    int mColSpace, mRowSpace;       /**< Space between the slots. **/
-    int mItemOffsetX, mItemOffsetY; /**< Space between slot-border and item.    **/
     unsigned int mSlotWidth, mSlotHeight;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    bool drawDragItem();
+    void drawDragItem();
     int getTextureAtlasPos(int itemFace);
 };
 

@@ -60,14 +60,14 @@ bool GuiGadgetButton::mouseEvent(int MouseAction, int x, int y)
         {
             mMouseOver = true;
             setState(GuiImageset::STATE_ELEMENT_M_OVER);
-            draw();
             GuiManager::getSingleton().setTooltip(mStrTooltip.c_str());
+            return true;
         }
         if (MouseAction == GuiWindow::BUTTON_PRESSED && !mMouseButDown)
         {
             mMouseButDown = true;
             setState(GuiImageset::STATE_ELEMENT_PUSHED);
-            draw();
+            return true;
         }
         if (MouseAction == GuiWindow::BUTTON_RELEASED && mMouseButDown)
         {
@@ -77,9 +77,9 @@ bool GuiGadgetButton::mouseEvent(int MouseAction, int x, int y)
         }
         return true; // No need to check other gadgets.
     }
-    else  // Mouse is no longer over the the gadget.
+    else // Mouse is no longer over the the gadget.
     {
-        if (mMouseOver)
+        if (getState() != GuiImageset::STATE_ELEMENT_DEFAULT)
         {
             mMouseOver = false;
             mMouseButDown = false;

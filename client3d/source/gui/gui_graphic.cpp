@@ -100,7 +100,7 @@ void GuiGraphic::draw()
                 dSrcY+= srcRowSkip;
             if (++srcY >= mSrcHeight) { srcY = 0; dSrcY =0; } // Repeat the image.
             }
-            src = PixelBox(mWidth, mHeight, 1, PF_A8B8G8R8, BG_Backup);
+            src = PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8, BG_Backup);
             texture->getBuffer()->blitFromMemory(src, Box(mPosX, mPosY, mPosX + mWidth, mPosY + mHeight));
         }
         // ////////////////////////////////////////////////////////////////////
@@ -171,7 +171,7 @@ void GuiGraphic::draw()
             {
                 dest_data[posY+x] = mFillColor;
             }
-            posY+=texture->getWidth();
+            posY+=(int)texture->getWidth();
         }
         texture->getBuffer()->unlock();
     }

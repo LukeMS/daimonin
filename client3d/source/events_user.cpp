@@ -24,7 +24,6 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
-#include <OgreKeyEvent.h>
 #include "logger.h"
 #include "option.h"
 #include "item.h"
@@ -41,7 +40,7 @@ using namespace Ogre;
 //================================================================================================
 // Buffered Key Events.
 //================================================================================================
-void Events::keyPressed(KeyEvent *e)
+bool Events::keyPressed( const OIS::KeyEvent &e)
 {
     mIdleTime =0;
     static int fogStart = 450;
@@ -49,79 +48,81 @@ void Events::keyPressed(KeyEvent *e)
     // ////////////////////////////////////////////////////////////////////
     // GUI keyEvents.
     // ////////////////////////////////////////////////////////////////////
-    if (GuiManager::getSingleton().keyEvent(e->getKeyChar(), e->getKey()))
+    if (GuiManager::getSingleton().keyEvent(e.key, e.text))
     {
-        e->consume();
-        return;
+        //e->consume();
+        return true;
+
     }
 
     // ////////////////////////////////////////////////////////////////////
     // InGame keyEvent.
     // ////////////////////////////////////////////////////////////////////
-    if (Option::getSingleton().getGameStatus() < Option::GAME_STATUS_PLAY) return;
-    mShiftDown = e->isShiftDown();
-    switch (e->getKey())
+    if (Option::getSingleton().getGameStatus() < Option::GAME_STATUS_PLAY) return true;
+    ;
+    //mShiftDown = e->isShiftDown();
+    switch (e.key)
     {
-        case KC_A:
-        {
-            Item::getSingleton().getInventoryItemFromFloor(0);
-            /*
-            static int animNr= 0;
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_IDLE, animNr);
-            if (++animNr >= 16) animNr= 0;
-            */
-            break;
-        }
+        case OIS::KC_A:
+            {
+                Item::getSingleton().getInventoryItemFromFloor(0);
+                /*
+                static int animNr= 0;
+                ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_IDLE, animNr);
+                if (++animNr >= 16) animNr= 0;
+                */
+                break;
+            }
 
-        case KC_B:
-        {
-            static int animNr= 0;
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_ATTACK, animNr);
-            if (++animNr >= 16) animNr= 0;
-            break;
-        }
+        case OIS::KC_B:
+            {
+                static int animNr= 0;
+                ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_ATTACK, animNr);
+                if (++animNr >= 16) animNr= 0;
+                break;
+            }
 
-        case KC_C:
-        {
-            static int animNr= 0;
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_ABILITY, animNr);
-            if (++animNr >= 16) animNr= 0;
+        case OIS::KC_C:
+            {
+                static int animNr= 0;
+                ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_ABILITY, animNr);
+                if (++animNr >= 16) animNr= 0;
 
-            //ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, 0,ObjectAnimate::STATE_CAST1);
-            break;
-        }
+                //ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, 0,ObjectAnimate::STATE_CAST1);
+                break;
+            }
 
-        case KC_D:
+        case OIS::KC_D:
             //ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, 0,ObjectAnimate::STATE_DEATH1);
             break;
 
-        case KC_F:
-        {
-            static TextureFilterOptions mFiltering = TFO_BILINEAR;
-            static int mAniso = 1;
-            switch (mFiltering)
+        case OIS::KC_F:
             {
-                case TFO_BILINEAR:
-                    mFiltering = TFO_TRILINEAR;
-                    mAniso = 1;
-                    break;
-                case TFO_TRILINEAR:
-                    mFiltering = TFO_ANISOTROPIC;
-                    mAniso = 8;
-                    break;
-                case TFO_ANISOTROPIC:
-                    mFiltering = TFO_BILINEAR;
-                    mAniso = 1;
-                    break;
-                default:
-                    break;
+                static TextureFilterOptions mFiltering = TFO_BILINEAR;
+                static int mAniso = 1;
+                switch (mFiltering)
+                {
+                    case TFO_BILINEAR:
+                        mFiltering = TFO_TRILINEAR;
+                        mAniso = 1;
+                        break;
+                    case TFO_TRILINEAR:
+                        mFiltering = TFO_ANISOTROPIC;
+                        mAniso = 8;
+                        break;
+                    case TFO_ANISOTROPIC:
+                        mFiltering = TFO_BILINEAR;
+                        mAniso = 1;
+                        break;
+                    default:
+                        break;
+                }
+                MaterialManager::getSingleton().setDefaultTextureFiltering(mFiltering);
+                MaterialManager::getSingleton().setDefaultAnisotropy(mAniso);
+                break;
             }
-            MaterialManager::getSingleton().setDefaultTextureFiltering(mFiltering);
-            MaterialManager::getSingleton().setDefaultAnisotropy(mAniso);
-            break;
-        }
 
-        case KC_G:
+        case OIS::KC_G:
             /*
                         char    buf[100];
                         int nrof =1;
@@ -134,11 +135,11 @@ void Events::keyPressed(KeyEvent *e)
             TileManager::getSingleton().toggleGrid();
             break;
 
-        case KC_H:
+        case OIS::KC_H:
             //ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, 0,ObjectAnimate::STATE_HIT1);
             break;
 
-        case KC_I:
+        case OIS::KC_I:
             GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_EQUIPMENT, true);
             GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_INVENTORY, true);
             GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_TRADE, true);
@@ -150,58 +151,58 @@ void Events::keyPressed(KeyEvent *e)
             // ObjectManager::getSingleton().setPlayerEquipment(ObjectManager::OBJECT_PLAYER, ObjectNPC::BONE_HEAD, 1);
             break;
 
-        case KC_J:
+        case OIS::KC_J:
             // ObjectManager::getSingleton().keyEvent(OBJECT_NPC, OBJ_TURN,  1);
             //mCamera->yaw(Degree(10));
-        {
-            /*
-                        Vector3 pos = TileManager::getSingleton().getTileInterface()->get_Selection();
-                        sObject obj;
-                        obj.meshName = "tree1.mesh";
-                        obj.nickName = "tree";
-                        obj.type = ObjectManager::OBJECT_STATIC;
-                        obj.posX = (int)pos.x;
-                        obj.posY = (int)pos.z;
-                        obj.facing = 0;
-                        ObjectManager::getSingleton().addMobileObject(obj);
-            */
-        }
-        break;
-
-        case KC_K:
-        {
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_HIT,0, 5);
+            {
+                /*
+                            Vector3 pos = TileManager::getSingleton().getTileInterface()->get_Selection();
+                            sObject obj;
+                            obj.meshName = "tree1.mesh";
+                            obj.nickName = "tree";
+                            obj.type = ObjectManager::OBJECT_STATIC;
+                            obj.posX = (int)pos.x;
+                            obj.posY = (int)pos.z;
+                            obj.facing = 0;
+                            ObjectManager::getSingleton().addMobileObject(obj);
+                */
+            }
             break;
-        }
 
-        case KC_O:
+        case OIS::KC_K:
+            {
+                ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_HIT,0, 5);
+                break;
+            }
+
+        case OIS::KC_O:
             // ObjectManager::getSingleton().setPlayerEquipment(ObjectManager::OBJECT_PLAYER, ObjectNPC::BONE_SHIELD_HAND, 1);
             break;
 
-        case KC_P:
-        {
-            bool ready = ObjectManager::getSingleton().isPrimaryWeaponReady(ObjectNPC::HERO);
-            ObjectManager::getSingleton().readyPrimaryWeapon(ObjectNPC::HERO, !ready);
-            break;
-        }
+        case OIS::KC_P:
+            {
+                bool ready = ObjectManager::getSingleton().isPrimaryWeaponReady(ObjectNPC::HERO);
+                ObjectManager::getSingleton().readyPrimaryWeapon(ObjectNPC::HERO, !ready);
+                break;
+            }
 
-        case KC_Q:
-        {
-            if (ObjectManager::getSingleton().isPrimaryWeaponReady(ObjectNPC::HERO))
-                ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_ATTACK, 1);
-            else if (ObjectManager::getSingleton().isSecondaryWeaponReady(ObjectNPC::HERO))
-                ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_ATTACK, 6);
-            break;
-        }
+        case OIS::KC_Q:
+            {
+                if (ObjectManager::getSingleton().isPrimaryWeaponReady(ObjectNPC::HERO))
+                    ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_ATTACK, 1);
+                else if (ObjectManager::getSingleton().isSecondaryWeaponReady(ObjectNPC::HERO))
+                    ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_ATTACK, 6);
+                break;
+            }
 
-        case KC_S:
-        {
-            bool ready = ObjectManager::getSingleton().isSecondaryWeaponReady(ObjectNPC::HERO);
-            ObjectManager::getSingleton().readySecondaryWeapon(ObjectNPC::HERO, !ready);
-            break;
-        }
+        case OIS::KC_S:
+            {
+                bool ready = ObjectManager::getSingleton().isSecondaryWeaponReady(ObjectNPC::HERO);
+                ObjectManager::getSingleton().readySecondaryWeapon(ObjectNPC::HERO, !ready);
+                break;
+            }
 
-        case KC_T:
+        case OIS::KC_T:
             Item::getSingleton().printAllItems();
             /*
                    case KEYFUNC_TARGET_ENEMY:
@@ -219,24 +220,24 @@ void Events::keyPressed(KeyEvent *e)
             */
             break;
 
-        case KC_W:
+        case OIS::KC_W:
             //Network::getSingleton().send_command("/apply", -1, SC_NORMAL);
             //GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "apply");
             break;
 
-        case KC_X:
-        {
-            static int pixel =128;
-            //change pixel size of terrain textures
-            pixel /= 2; // shrink pixel value
-            if (pixel < TileManager::MIN_TEXTURE_PIXEL)
-                pixel = 128; // if value is too low resize to maximum
-            TileManager::getSingleton().setMaterialLOD(pixel);
-            mTimeUntilNextToggle = .5;
-            break;
-        }
+        case OIS::KC_X:
+            {
+                static int pixel =128;
+                //change pixel size of terrain textures
+                pixel /= 2; // shrink pixel value
+                if (pixel < TileManager::MIN_TEXTURE_PIXEL)
+                    pixel = 128; // if value is too low resize to maximum
+                TileManager::getSingleton().setMaterialLOD(pixel);
+                //mTimeUntilNextToggle = .5;
+                break;
+            }
 
-        case KC_Y:
+        case OIS::KC_Y:
             mSceneDetailIndex = (mSceneDetailIndex+1)%3;
             switch (mSceneDetailIndex)
             {
@@ -252,320 +253,308 @@ void Events::keyPressed(KeyEvent *e)
             }
             break;
 
-        case KC_1:
+        case OIS::KC_1:
             //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_WEAPON_HAND, 1);
-        {
-            static int color =0;
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_TEXTURE, 0, ObjectNPC::TEXTURE_POS_SKIN, color++);
-            break;
-        }
+            {
+                static int color =0;
+                ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_TEXTURE, 0, ObjectNPC::TEXTURE_POS_SKIN, color++);
+                break;
+            }
 
-        case KC_2:
+        case OIS::KC_2:
             //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_SHIELD_HAND, 1);
-        {
-            static int color =0;
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_TEXTURE, 0,ObjectNPC::TEXTURE_POS_FACE, color++);
-            break;
-        }
+            {
+                static int color =0;
+                ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_TEXTURE, 0,ObjectNPC::TEXTURE_POS_FACE, color++);
+                break;
+            }
 
-        case KC_3:
+        case OIS::KC_3:
             //ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_TEXTURE,0, -1);
-        {
-            static int color =0;
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_TEXTURE, 0,ObjectNPC::TEXTURE_POS_HAIR, color++);
-            break;
-        }
+            {
+                static int color =0;
+                ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_TEXTURE, 0,ObjectNPC::TEXTURE_POS_HAIR, color++);
+                break;
+            }
 
-        case KC_4:
-        {
-            static int color =0;
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_TEXTURE,0, ObjectNPC::TEXTURE_POS_BODY, color++);
-            break;
-        }
+        case OIS::KC_4:
+            {
+                static int color =0;
+                ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_TEXTURE,0, ObjectNPC::TEXTURE_POS_BODY, color++);
+                break;
+            }
 
-        case KC_5:
-        {
-            static int color =0;
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_TEXTURE,0, ObjectNPC::TEXTURE_POS_LEGS, color++);
-            break;
-        }
+        case OIS::KC_5:
+            {
+                static int color =0;
+                ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_TEXTURE,0, ObjectNPC::TEXTURE_POS_LEGS, color++);
+                break;
+            }
 
-        case KC_6:
-        {
-            static int color =0;
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_TEXTURE,0, ObjectNPC::TEXTURE_POS_BELT, color++);
-            break;
-        }
+        case OIS::KC_6:
+            {
+                static int color =0;
+                ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_TEXTURE,0, ObjectNPC::TEXTURE_POS_BELT, color++);
+                break;
+            }
 
-        case KC_7:
-        {
-            static int color =0;
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_TEXTURE,0, ObjectNPC::TEXTURE_POS_SHOES, color++);
-            break;
-        }
+        case OIS::KC_7:
+            {
+                static int color =0;
+                ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_TEXTURE,0, ObjectNPC::TEXTURE_POS_SHOES, color++);
+                break;
+            }
 
-        case KC_8:
-        {
-            static int color =0;
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_TEXTURE, 0,ObjectNPC::TEXTURE_POS_HANDS, color++);
-            //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_HEAD, 1);
-            break;
-        }
+        case OIS::KC_8:
+            {
+                static int color =0;
+                ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_TEXTURE, 0,ObjectNPC::TEXTURE_POS_HANDS, color++);
+                //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_HEAD, 1);
+                break;
+            }
 
-        case KC_9:
+        case OIS::KC_9:
             //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_BODY, 1);
             break;
 
             // ////////////////////////////////////////////////////////////////////
             // Player Movemment.
             // ////////////////////////////////////////////////////////////////////
-        case KC_UP:
+        case OIS::KC_UP:
             //      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_WALK, 0, 1);
             //mCamera->  moveRelative (Vector3(0,100,0));
             break;
 
-        case KC_DOWN:
+        case OIS::KC_DOWN:
             //      ObjectManager::getSingleton().Event(OBJECT_PLAYER, 9, OBJ_WALK,0, -1);
             //mCamera->  moveRelative (Vector3(0,-100,0));
             break;
 
-        case KC_RIGHT:
+        case OIS::KC_RIGHT:
             //mCamera->  moveRelative (Vector3(100,0,0));
             ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_CURSOR_TURN, 0, -1);
             break;
 
-        case KC_LEFT:
+        case OIS::KC_LEFT:
             ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_CURSOR_TURN, 0,  1);
             //mCamera->  moveRelative (Vector3(-100,0,0));
             break;
 
-        case KC_F1:
-        {
-            Vector3 pos = mCamera->getPosition();
-            pos.y+= 5;
-            Logger::log().error() << "camera pos: " << pos.x << "   " <<pos.y << "   " << pos.z;
-            mCamera->setPosition(pos);
-        }
-        break;
-
-        case KC_F2:
-        {
-            Vector3 pos = mCamera->getPosition();
-            pos.y-= 5;
-            Logger::log().error() << "camera pos: " << pos.x << "   " <<pos.y << "   " << pos.z;
-            mCamera->setPosition(pos);
-        }
-        break;
-
-        case KC_F3:
-        {
-            Vector3 pos = mCamera->getPosition();
-            pos.z+= 5;
-            Logger::log().error() << "camera pos: " << pos.x << "   " << pos.y << "   " << pos.z;
-            mCamera->setPosition(pos);
-        }
-        break;
-
-        case KC_F4:
-        {
-            Vector3 pos = mCamera->getPosition();
-            pos.z-= 5;
-            Logger::log().error() << "camera pos: " << pos.x << "   "<< pos.y << "   " << pos.z;
-            mCamera->setPosition(pos);
-        }
-        break;
-
-        case KC_F5:
-        {
-            static int cAdd =0;
-            ++cAdd;
-            Logger::log().error() << "camera pitch add: " << cAdd;
-            mCamera->pitch(Degree(+1));
-        }
-        break;
-
-        case KC_F6:
-        {
-            static int cAdd =0;
-            ++cAdd;
-            Logger::log().error() << "camera pitch sub: " << cAdd;
-            mCamera->pitch(Degree(-1));
-        }
-        break;
-
-        case KC_F7:
-        {
-            fogStart+=5;
-            mSceneManager->setFog(FOG_LINEAR , ColourValue(0,0,0), 0, fogStart, 600);
-        }
-        break;
-
-        case KC_F8:
-        {
-            fogStart-=5;
-            mSceneManager->setFog(FOG_LINEAR , ColourValue(0,0,0), 0, fogStart, 600);
-        }
-        break;
-
-
-        case KC_SUBTRACT:
-        {
-            if (mCameraZoom < MAX_CAMERA_ZOOM)
-                mCameraZoom += 5;
-            mCamera->setFOVy(Degree(mCameraZoom));
+        case OIS::KC_F1:
+            {
+                Vector3 pos = mCamera->getPosition();
+                pos.y+= 5;
+                Logger::log().error() << "camera pos: " << pos.x << "   " <<pos.y << "   " << pos.z;
+                mCamera->setPosition(pos);
+            }
             break;
-        }
 
-        case KC_ADD:
-        {
-            if (mCameraZoom > MIN_CAMERA_ZOOM)
-                mCameraZoom -= 5;
-            mCamera->setFOVy(Degree(mCameraZoom));
+        case OIS::KC_F2:
+            {
+                Vector3 pos = mCamera->getPosition();
+                pos.y-= 5;
+                Logger::log().error() << "camera pos: " << pos.x << "   " <<pos.y << "   " << pos.z;
+                mCamera->setPosition(pos);
+            }
             break;
-        }
 
-        case KC_PGUP:
+        case OIS::KC_F3:
+            {
+                Vector3 pos = mCamera->getPosition();
+                pos.z+= 5;
+                Logger::log().error() << "camera pos: " << pos.x << "   " << pos.y << "   " << pos.z;
+                mCamera->setPosition(pos);
+            }
+            break;
+
+        case OIS::KC_F4:
+            {
+                Vector3 pos = mCamera->getPosition();
+                pos.z-= 5;
+                Logger::log().error() << "camera pos: " << pos.x << "   "<< pos.y << "   " << pos.z;
+                mCamera->setPosition(pos);
+            }
+            break;
+
+        case OIS::KC_F5:
+            {
+                static int cAdd =0;
+                ++cAdd;
+                Logger::log().error() << "camera pitch add: " << cAdd;
+                mCamera->pitch(Degree(+1));
+            }
+            break;
+
+        case OIS::KC_F6:
+            {
+                static int cAdd =0;
+                ++cAdd;
+                Logger::log().error() << "camera pitch sub: " << cAdd;
+                mCamera->pitch(Degree(-1));
+            }
+            break;
+
+        case OIS::KC_F7:
+            {
+                fogStart+=5;
+                mSceneManager->setFog(FOG_LINEAR , ColourValue(0,0,0), 0, fogStart, 600);
+            }
+            break;
+
+        case OIS::KC_F8:
+            {
+                fogStart-=5;
+                mSceneManager->setFog(FOG_LINEAR , ColourValue(0,0,0), 0, fogStart, 600);
+            }
+            break;
+
+
+        case OIS::KC_SUBTRACT:
+            {
+                if (mCameraZoom < MAX_CAMERA_ZOOM)
+                    mCameraZoom += 5;
+                mCamera->setFOVy(Degree(mCameraZoom));
+                break;
+            }
+
+        case OIS::KC_ADD:
+            {
+                if (mCameraZoom > MIN_CAMERA_ZOOM)
+                    mCameraZoom -= 5;
+                mCamera->setFOVy(Degree(mCameraZoom));
+                break;
+            }
+
+        case OIS::KC_PGUP:
             mCameraRotating = POSITIVE;
             break;
 
-        case KC_PGDOWN:
+        case OIS::KC_PGDOWN:
             mCameraRotating = NEGATIVE;
             break;
 
-        case KC_HOME:
+        case OIS::KC_HOME:
             mCameraRotating = FREEZE;
             break;
 
             // ////////////////////////////////////////////////////////////////////
             // Screenshot.
             // ////////////////////////////////////////////////////////////////////
-        case KC_SYSRQ:
-        {
-            static int mNumScreenShots=0;
-            String strTemp = "Client3d_" + StringConverter::toString(++mNumScreenShots,2,'0') + ".png";
-            mWindow->writeContentsToFile(strTemp.c_str());
-            mTimeUntilNextToggle = 0.5;
-            break;
-        }
+        case OIS::KC_SYSRQ:
+            {
+                static int mNumScreenShots=0;
+                String strTemp = "Client3d_" + StringConverter::toString(++mNumScreenShots,2,'0') + ".png";
+                mWindow->writeContentsToFile(strTemp.c_str());
+                //mTimeUntilNextToggle = 0.5;
+                break;
+            }
 
-        // ////////////////////////////////////////////////////////////////////
-        // Exit game.
-        // ////////////////////////////////////////////////////////////////////
-        case KC_ESCAPE:
+            // ////////////////////////////////////////////////////////////////////
+            // Exit game.
+            // ////////////////////////////////////////////////////////////////////
+        case OIS::KC_ESCAPE:
             mQuitGame = true;
             break;
 
         default:
             break;
     }
-    e->consume();
+    return true;
+    //e->consume();
 }
 
-void Events::keyClicked(KeyEvent*e)
-{}
-
-void Events::keyReleased(KeyEvent* e)
+bool Events::keyReleased( const OIS::KeyEvent &e )
 {
-    mShiftDown = e->isShiftDown();
-    switch (e->getKey())
+    //mShiftDown = e->isShiftDown();
+    switch (e.key)
     {
             // ////////////////////////////////////////////////////////////////////
             // Player Movemment.
             // ////////////////////////////////////////////////////////////////////
-        case KC_UP:
-        case KC_DOWN:
+        case OIS::KC_UP:
+        case OIS::KC_DOWN:
             ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_WALK, 0);
             break;
 
-        case KC_RIGHT:
-        case KC_LEFT:
+        case OIS::KC_RIGHT:
+        case OIS::KC_LEFT:
             ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_CURSOR_TURN, 0);
             break;
 
-        case KC_J:
-        case KC_K:
+        case OIS::KC_J:
+        case OIS::KC_K:
             // ObjectManager::getSingleton().Event(ObjectManager::OBJECT_NPC, OBJ_TURN,  0);
             break;
 
-        case KC_G:
+        case OIS::KC_G:
             // ObjectManager::getSingleton().Event(ObjectManager::OBJECT_NPC, OBJ_WALK,  0);
             break;
 
-        case KC_PGUP:
-        case KC_PGDOWN:
-        case KC_HOME:
+        case OIS::KC_PGUP:
+        case OIS::KC_PGDOWN:
+        case OIS::KC_HOME:
             mCameraRotating = TURNBACK;
             break;
 
         default:
             break;
     }
+    return true;
+
 }
 
 //================================================================================================
 // Buffered Mouse Events.
 //================================================================================================
-void Events::mouseMoved (MouseEvent *e)
+bool Events::mouseMoved(const OIS::MouseEvent &e)
 {
-    mMouse.x = e->getX();
-    if (mMouse.x > 0.998)
-        mMouse.x = 0.998;
-    mMouse.y = e->getY();
-    if (mMouse.y > 0.995)
-        mMouse.y = 0.995;
-    mMouse.z = e->getRelZ();
-    if (GuiManager::getSingleton().mouseEvent(GuiWindow::MOUSE_MOVEMENT, mMouse))
-        return;
+    mMouse.x = e.state.X.abs;  if (mMouse.x >= e.state.width - 10) mMouse.x-= 10;
+    mMouse.y = e.state.Y.abs;  if (mMouse.y >= e.state.height- 10) mMouse.y-= 10;
+    mMouse.z = e.state.Z.abs;
+    GuiManager::getSingleton().mouseEvent(GuiWindow::MOUSE_MOVEMENT, mMouse);
+    return true;
 }
 
-void Events::mousePressed (MouseEvent *e)
+bool Events::mousePressed(const OIS::MouseEvent &e, OIS::MouseButtonID button)
 {
-    // ////////////////////////////////////////////////////////////////////
-    // Right button for selection and menu.
-    // ////////////////////////////////////////////////////////////////////
-    if (Option::getSingleton().getGameStatus() < Option::GAME_STATUS_PLAY) return; // TODO: ServerSelection by mouse.
-    mMouse.x = e->getX();
-    mMouse.y = e->getY();
-    if (GuiManager::getSingleton().mouseEvent(GuiWindow::BUTTON_PRESSED, mMouse)) return;
+    if (Option::getSingleton().getGameStatus() < Option::GAME_STATUS_PLAY) return true; // TODO: ServerSelection by mouse.
+    if (GuiManager::getSingleton().mouseEvent(GuiWindow::BUTTON_PRESSED, mMouse)) return true;
 
     // ////////////////////////////////////////////////////////////////////
     // Right button for selection and menu.
     // ////////////////////////////////////////////////////////////////////
-    if (Option::getSingleton().getGameStatus() < Option::GAME_STATUS_PLAY) return;
-    int button = e->getButtonID();
-#ifdef WIN32
-    if (button & MouseEvent::BUTTON1_MASK )
-#else
-    if (button & MouseEvent::BUTTON2_MASK )
-#endif
+    if (button == OIS::MB_Right)
     {
-        RaySceneQuery *mRaySceneQuery = mSceneManager->createRayQuery(Ray());
-        mRaySceneQuery->setRay(mCamera->getCameraToViewportRay(mMouse.x, mMouse.y));
-        mRaySceneQuery->setQueryMask(ObjectManager::QUERY_NPC_MASK | ObjectManager::QUERY_CONTAINER);
-        RaySceneQueryResult &result = mRaySceneQuery->execute();
-        if (!result.empty())
+        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Right");
+        if (Option::getSingleton().getGameStatus() < Option::GAME_STATUS_PLAY) return true;
         {
-            //Logger::log().info() << result.size();
-            RaySceneQueryResult::iterator itr = result.begin();
-            ObjectManager::getSingleton().selectObject(itr->movable);
+            RaySceneQuery *mRaySceneQuery = mSceneManager->createRayQuery(Ray());
+            mRaySceneQuery->setRay(mCamera->getCameraToViewportRay(mMouse.x, mMouse.y));
+            mRaySceneQuery->setQueryMask(ObjectManager::QUERY_NPC_MASK | ObjectManager::QUERY_CONTAINER);
+            RaySceneQueryResult &result = mRaySceneQuery->execute();
+            if (!result.empty())
+            {
+                //Logger::log().info() << result.size();
+                RaySceneQueryResult::iterator itr = result.begin();
+                ObjectManager::getSingleton().selectObject(itr->movable);
+            }
+            else
+            {
+                // nothing selected, but if we are in attack mode -> attack selected enemy.
+                //ObjectManager::getSingleton().selectObject(0);
+            }
+            mSceneManager->destroyQuery(mRaySceneQuery);
+            mIdleTime =0;
         }
-        else
-        {
-            // nothing selected, but if we are in attack mode -> attack selected enemy.
-            //ObjectManager::getSingleton().selectObject(0);
-        }
-        mSceneManager->destroyQuery(mRaySceneQuery);
-        mIdleTime =0;
     }
-
     // ////////////////////////////////////////////////////////////////////
     // Left button for movement & standard action.
     // ////////////////////////////////////////////////////////////////////
-    else if (button & MouseEvent::BUTTON0_MASK ) // LeftButton.
+    else if (button == OIS::MB_Left)
     {
-        TileManager::getSingleton().getTileInterface()->pickTile(mMouse.x, mMouse.y);
+        TileManager::getSingleton().getTileInterface()->pickTile(mMouse.x / e.state.width, mMouse.y / e.state.height);
         RaySceneQuery *mRaySceneQuery = mSceneManager->createRayQuery(Ray());
-        mRaySceneQuery->setRay(mCamera->getCameraToViewportRay(mMouse.x, mMouse.y));
+        mRaySceneQuery->setRay(mCamera->getCameraToViewportRay(mMouse.x / e.state.width, mMouse.y / e.state.height));
         mRaySceneQuery->setQueryMask(ObjectManager::QUERY_NPC_MASK | ObjectManager::QUERY_CONTAINER);
         RaySceneQueryResult &result = mRaySceneQuery->execute();
         if (!result.empty())
@@ -581,35 +570,16 @@ void Events::mousePressed (MouseEvent *e)
         mSceneManager->destroyQuery(mRaySceneQuery);
         mIdleTime =0;
     }
-    e->consume();
+    //e->consume();
+    return true;
+
 }
 
-void Events::mouseDragged(MouseEvent *e)
-{
-    mouseMoved(e);
-    e->consume();
-}
-
-void Events::mouseClicked (MouseEvent *e)
-{
-    mouseMoved(e);
-    e->consume();
-}
-
-void Events::mouseEntered (MouseEvent *e)
-{
-    mouseMoved(e);
-    e->consume();
-}
-
-void Events::mouseExited  (MouseEvent *e)
-{
-    mouseMoved(e);
-    e->consume();
-}
-
-void Events::mouseReleased(MouseEvent *e)
+bool Events::mouseReleased(const OIS::MouseEvent &e, OIS::MouseButtonID id)
 {
     GuiManager::getSingleton().mouseEvent(GuiWindow::BUTTON_RELEASED, mMouse);
-    e->consume();
+    //e->consume();
+    return true;
+
 }
+

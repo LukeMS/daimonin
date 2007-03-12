@@ -41,11 +41,13 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\ogre_inc;..\..\..\include;..\..\..\include\gui;..\..\..\source;..\..\..\source\gui;..\..\..\3rdParty\fmod;..\..\..\3rdParty\zlib;..\..\..\3rdParty\tinyxml;..\..\..\3rdParty\SDL"
+				AdditionalIncludeDirectories=".\ogre_inc\;.\ogre_inc\WIN32;.\ogre_inc\OIS;..\..\..\include;..\..\..\include\gui;..\..\..\source;..\..\..\source\gui;..\..\..\3rdParty\fmod;..\..\..\3rdParty\zlib;..\..\..\3rdParty\tinyxml;..\..\..\3rdParty\SDL"
 				PreprocessorDefinitions="WIN32;TIXML_USE_STL;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;_DEBUG"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
+				EnableFunctionLevelLinking="true"
+				FloatingPointModel="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
@@ -62,8 +64,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="/NOENTRY"
-				AdditionalDependencies="OgreMain_d.lib fmodex_vc.lib wsock32.lib SDL.lib  SDLmain.lib"
+				AdditionalDependencies="OgreMain_d.lib OIS_d.lib fmodex_vc.lib WS2_32.lib SDL.lib SDLmain.lib"
 				OutputFile="$(OutDir)/Client3d.exe"
 				Version="0.99"
 				LinkIncremental="2"
@@ -129,7 +130,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories=".\ogre_inc;..\..\..\include;..\..\..\include\gui;..\..\..\source;..\..\..\source\gui;..\..\..\3rdParty\fmod;..\..\..\3rdParty\zlib;..\..\..\3rdParty\tinyxml;..\..\..\3rdParty\SDL"
+				AdditionalIncludeDirectories=".\ogre_inc;.\ogre_inc\OIS;..\..\..\include;..\..\..\include\gui;..\..\..\source;..\..\..\source\gui;..\..\..\3rdParty\fmod;..\..\..\3rdParty\zlib;..\..\..\3rdParty\tinyxml;..\..\..\3rdParty\SDL"
 				PreprocessorDefinitions="WIN32;TIXML_USE_STL;_CONSOLE;_CRT_SECURE_NO_DEPRECATE"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -150,7 +151,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="OgreMain.lib user32.lib Uuid.lib fmodex_vc.lib WS2_32.Lib  SDL.lib  SDLmain.lib"
+				AdditionalDependencies="OgreMain.lib OIS.lib fmodex_vc.lib WS2_32.Lib SDL.lib SDLmain.lib"
 				OutputFile="$(OutDir)/Client3d.exe"
 				Version="0.99"
 				LinkIncremental="1"
@@ -905,14 +906,6 @@
 			<Filter
 				Name="tinyxml"
 				>
-				<File
-					RelativePath="..\..\..\3rdParty\tinyxml\tinystr.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\3rdParty\tinyxml\tinystr.h"
-					>
-				</File>
 				<File
 					RelativePath="..\..\..\3rdParty\tinyxml\tinyxml.cpp"
 					>

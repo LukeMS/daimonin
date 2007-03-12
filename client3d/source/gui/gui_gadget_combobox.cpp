@@ -198,7 +198,7 @@ void GuiGadgetCombobox::draw()
             // If the text need clipping and if so dont continue throw the list
             if ( label.y2 > texture->getSrcHeight())
             {
-                label.y2 = texture->getSrcHeight();
+                label.y2 = (int)texture->getSrcHeight();
                 GuiTextout::getSingleton().Print(&label, texture);
                 break;
             }

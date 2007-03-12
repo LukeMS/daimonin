@@ -120,7 +120,8 @@ void ObjectVisuals::Init()
         tmpMaterial->setDepthCheckEnabled(false);
         tmpMaterial->setDepthWriteEnabled(false);
     */
-    tmpMaterial->setDepthBias(false);
+    //tmpMaterial->setDepthBias(false);
+    tmpMaterial->setDepthBias(0.0f, 0.0f);
     tmpMaterial->setDepthCheckEnabled(true);
     tmpMaterial->setDepthWriteEnabled(true);
 
