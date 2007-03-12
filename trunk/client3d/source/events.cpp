@@ -24,7 +24,6 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
-#include <OgreKeyEvent.h>
 #include "events.h"
 #include "sound.h"
 #include "option.h"
@@ -82,11 +81,23 @@ void Events::Init(RenderWindow* win, SceneManager *SceneMgr)
     // ////////////////////////////////////////////////////////////////////
     mSceneManager = SceneMgr;
     mWindow = win;
-    mEventProcessor = new EventProcessor();
-    mEventProcessor->initialise(win);
-    mEventProcessor->startProcessingEvents();
-    mInputDevice =  mEventProcessor->getInputReader();
-    mTimeUntilNextToggle = 0;
+    size_t windowHnd =0;
+    mWindow->getCustomAttribute("WINDOW", &windowHnd);
+    std::ostringstream windowHndStr;
+    windowHndStr << windowHnd;
+    OIS::ParamList pl;
+    pl.insert(std::make_pair(std::string("WINDOW"), windowHndStr.str()));
+    mInputManager = OIS::InputManager::createInputSystem(pl);
+    mInputKeyboard= static_cast<OIS::Keyboard*>(mInputManager->createInputObject(OIS::OISKeyboard, true));
+    mInputKeyboard->setEventCallback(this);
+    mInputMouse= static_cast<OIS::Mouse*>(mInputManager->createInputObject(OIS::OISMouse, true));
+    mInputMouse->setEventCallback(this);
+    unsigned int width, height, depth;
+    int left, top;
+    mWindow->getMetrics(width, height, depth, left, top);
+    const OIS::MouseState &ms = mInputMouse->getMouseState();
+    ms.width = width;
+    ms.height = height;
     mIdleTime =0;
     mMouse = Vector3::ZERO;
     mQuitGame = false;
@@ -98,7 +109,12 @@ void Events::Init(RenderWindow* win, SceneManager *SceneMgr)
 //================================================================================================
 void Events::freeRecources()
 {
-    delete mEventProcessor;
+    if (mInputManager)
+    {
+        mInputManager->destroyInputObject(mInputMouse);
+        mInputManager->destroyInputObject(mInputKeyboard);
+        OIS::InputManager::destroyInputSystem(mInputManager);
+    }
     TileManager  ::getSingleton().freeRecources();
     ObjectManager::getSingleton().freeRecources();
     GuiManager   ::getSingleton().freeRecources();
@@ -262,11 +278,6 @@ bool Events::frameStarted(const FrameEvent& evt)
         case Option::GAME_STATUS_INIT_EVENT_LISTENER:
             {
                 GuiManager::getSingleton().displaySystemMessage("Starting the event-listener...");
-                // Because events are handled in the gui.
-                // The Listeners must be added after gui was init.
-                mEventProcessor->addKeyListener(this);
-                mEventProcessor->addMouseMotionListener(this);
-                mEventProcessor->addMouseListener(this);
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_TILE);
             }
 
@@ -671,6 +682,9 @@ bool Events::frameEnded(const FrameEvent& evt)
 {
     if (Option::getSingleton().getGameStatus() <= Option::GAME_STATUS_INIT_NET)
         return true;
+    mInputMouse->capture();
+    mInputKeyboard->capture();
+
     GuiManager::getSingleton().update(evt.timeSinceLastFrame);
     if (Option::getSingleton().getGameStatus() > Option::GAME_STATUS_CONNECT)
         Network::getSingleton().update();

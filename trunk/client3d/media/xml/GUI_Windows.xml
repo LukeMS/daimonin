@@ -733,14 +733,18 @@
     <!--=============================================-->
     <!-- Layer 1 slots and icons                     -->
     <!--=============================================-->
-    <Gadget type= "SLOT"  name = "Slot_Container" image_name = "Item-Slot">
-      <!-- Position of the 1. slot. -->
+    <Gadget type= "SLOT"  name = "Slot_Inventory" fill= "GFX_FILL" image_name = "Item-Slot">
       <Pos x= "17" y= "89" />
-      <!-- Number of cols/rows -->
-      <Sum col= "4" row="5" />
-      <!-- Offset to the next col/row and Item offset to the slot border -->
-      <Offset col ="2" row ="2" itemX ="4" itemY ="4"/>
     </Gadget>
+
+    <Gadget type= "SLOT"  name = "Slot_Inventory" fill= "GFX_FILL" image_name = "Item-Slot">
+      <Pos x= "90" y= "89" />
+    </Gadget>
+
+    <Gadget type= "SLOT"  name = "Slot_Equipment" fill= "GFX_FILL" image_name = "Item-Slot" bg_image_name ="equipment-lantern">
+      <Pos x= "163" y= "89" />
+    </Gadget>
+
     <Graphic fill= "GFX_FILL"  image_name = "Monney-Copper">
       <Pos x= "11" y= "11" />
     </Graphic>

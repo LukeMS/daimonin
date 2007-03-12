@@ -23,7 +23,6 @@ http://www.gnu.org/licenses/licenses.html
 #include <OgreHardwareBuffer.h>
 #include <OgreHardwarePixelBuffer.h>
 #include <OgreFontManager.h>
-#include <tinyxml.h>
 #include "define.h"
 #include "option.h"
 #include "gui_textout.h"
@@ -108,7 +107,6 @@ GuiTextout::GuiTextout()
                     else
                         Entry->strGfxCode+= strTemp[i];
                 }
-                Logger::log().error() << Entry->strGfxCode;
             }
             if (mvSpecialChar.size() == SPECIAL_CHARS_IN_FONT-1)
             {
@@ -214,25 +212,24 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
     // ////////////////////////////////////////////////////////////////////
     // Calculate the Char position and size.
     // ////////////////////////////////////////////////////////////////////
-    int texW  = texture->getWidth();
-    int texH  = texture->getHeight();
+    int texW = (int)texture->getWidth();
+    int texH = (int)texture->getHeight();
     // Calculate Size for the RAW buffer.
     mFont *fnt = new mFont;
     mvFont.push_back(fnt);
-    Real u1, u2, v1, v2;
     // Space char.
-    pFont->getGlyphTexCoords(33, u1, v1, u2, v2);
+    FloatRect rect = pFont->getGlyphTexCoords(33);
     fnt->height =0;
-    fnt->charWidth[0] = (unsigned char)((u2-u1)*texW)+1; // 1 extra pixel for the endOfChar sign.
+    fnt->charWidth[0] = (unsigned char)((rect.right-rect.left)*texW)+1; // 1 extra pixel for the endOfChar sign.
     fnt->charStart[0] = 0;
     // Standard chars.
     for (unsigned int i=1; i < STANDARD_CHARS_IN_FONT-1; ++i)
     {
-        pFont->getGlyphTexCoords(32+i, u1, v1, u2, v2);
-        fnt->charWidth[i]= (unsigned char) ((u2-u1)*texW)+1; // 1 extra pixel for the endOfChar sign.
+        rect = pFont->getGlyphTexCoords(32+i);
+        fnt->charWidth[i]= (unsigned char) ((rect.right-rect.left)*texW)+1; // 1 extra pixel for the endOfChar sign.
         fnt->charStart[i] = fnt->charStart[i-1] + fnt->charWidth[i-1];
-        if (fnt->height< (unsigned int) ((v2-v1)*texH))
-            fnt->height= (unsigned int) ((v2-v1)*texH);
+        if (fnt->height< (unsigned int) ((rect.bottom-rect.top)*texH))
+            fnt->height= (unsigned int) ((rect.bottom-rect.top)*texH);
     }
     // TextCursour char.
     fnt->charWidth[STANDARD_CHARS_IN_FONT-1] = fnt->charWidth[0];
@@ -271,9 +268,9 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
     int x1, y1, yPos;
     for (unsigned int i=1; i < STANDARD_CHARS_IN_FONT-1; ++i)
     {
-        pFont->getGlyphTexCoords(i+32, u1, v1, u2, v2);
-        x1 = (unsigned int)(u1 * texW)-1;
-        y1 = (unsigned int)(v1 * texH);
+        rect = pFont->getGlyphTexCoords(i+32);
+        x1 = (unsigned int)(rect.left * texW)-1;
+        y1 = (unsigned int)(rect.top * texH);
         for (int x = 0; x <= fnt->charWidth[i]; ++x)
         {
             yPos=0;
@@ -319,10 +316,7 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
         {
             for (int x =0; x < mvSpecialChar[k]->w; ++x)
             {
-                fnt->data[fnt->charStart[STANDARD_CHARS_IN_FONT+k]+x + dDstY]
-                =  (srcData[dSrcY + x] & 0xff00ff00)
-                   + ((srcData[dSrcY + x] <<16) & 0xff0000)
-                   + ((srcData[dSrcY + x] >>16) & 0x0000ff);
+                fnt->data[fnt->charStart[STANDARD_CHARS_IN_FONT+k]+x + dDstY] =  srcData[dSrcY + x];
             }
             dSrcY+= rowSkip;
             dDstY+= fnt->textureWidth;

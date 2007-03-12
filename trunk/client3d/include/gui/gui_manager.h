@@ -110,8 +110,8 @@ public:
     void parseImageset(const char *XML_imageset_file);
     void parseWindows (const char *XML_windows_file);
     void update(Ogre::Real);
-    bool  mouseEvent(int MouseAction, Ogre::Vector3 &mouse);
-    bool keyEvent(const char keyChar, const unsigned char key);
+    bool mouseEvent(int MouseAction, Ogre::Vector3 &mouse);
+    bool keyEvent(const int keyChar, const unsigned int key);
     const char *sendMessage(int window, int message, int element, void *value1 = 0, void *value2 = 0);
     void setTooltip(const char *text);
     void displaySystemMessage(const char*text);

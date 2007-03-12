@@ -2,6 +2,7 @@
 
 <ImageSet file="Imageset.png">
   <ImageFntExt name="fontextensions">
+    <State name="!key-esc" posX="433" posY="536" width="19" height="8"/>
     <State name="!key-spc" posX="472" posY="536" width="29" height="8"/>
     <State name="!key-strg" posX="511" posY="537" width="29" height="8"/>
     <State name="!keya" posX="493" posY="381" width="9" height="8"/>
@@ -9,7 +10,6 @@
     <State name="!keyc" posX="475" posY="381" width="9" height="8"/>
     <State name="!keyd" posX="534" posY="381" width="9" height="8"/>
     <State name="!keye" posX="525" posY="381" width="9" height="8"/>
-    <State name="!keyesc" posX="433" posY="536" width="19" height="8"/>
     <State name="!keyf" posX="516" posY="381" width="9" height="8"/>
     <State name="!keyg" posX="507" posY="381" width="9" height="8"/>
     <State name="!keyh" posX="417" posY="433" width="9" height="8"/>
@@ -33,7 +33,7 @@
     <State name="!keyz" posX="501" posY="536" width="9" height="8"/>
     <State name="[58](" posX="384" posY="536" width="10" height="10"/>
     <State name="[58])" posX="374" posY="536" width="10" height="10"/>
-    <State name="[58][179]" posX="364" posY="536" width="10" height="10"/>
+    <State name="[58][124]" posX="364" posY="536" width="10" height="10"/>
     <State name="[58][68]" posX="354" posY="536" width="10" height="10"/>
     <State name="[58][79]" posX="462" posY="536" width="10" height="10"/>
     <State name="[58][80]" posX="452" posY="536" width="10" height="10"/>

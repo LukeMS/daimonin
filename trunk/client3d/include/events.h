@@ -28,12 +28,14 @@ http://www.gnu.org/licenses/licenses.html
 #define EVENTS_H
 
 #include <Ogre.h>
-#include <OgreEventListeners.h>
+#include <OISMouse.h>
+#include <OISKeyboard.h>
+#include <OISInputManager.h>
 
 //================================================================================================
 // Class.
 //================================================================================================
-class Events: public Ogre::FrameListener, public Ogre::KeyListener, public Ogre::MouseMotionListener, public Ogre::MouseListener
+class Events: public Ogre::FrameListener, public OIS::KeyListener, OIS::MouseListener
 {
 public:
     // ////////////////////////////////////////////////////////////////////
@@ -107,15 +109,15 @@ private:
     bool mQuitGame;
     bool mShiftDown;
     int mSceneDetailIndex;
+    OIS::InputManager *mInputManager;
+    OIS::Keyboard     *mInputKeyboard;
+    OIS::Mouse        *mInputMouse;
     Ogre::Real mIdleTime;
     Ogre::Real mCameraZoom;
     Ogre::Vector3 mMouse;
     Ogre::Real mCamCornerX, mCamCornerY;
-    Ogre::Real mTimeUntilNextToggle; // just to stop toggles flipping too fast
     Ogre::SceneNode *mWorld;
     Ogre::SceneManager *mSceneManager;
-    Ogre::EventProcessor *mEventProcessor;
-    Ogre::InputReader* mInputDevice;
     Ogre::RenderWindow* mWindow;
     Ogre::Camera* mCamera;
     Ogre::Light *mLight[2];
@@ -129,19 +131,11 @@ private:
     bool frameStarted(const Ogre::FrameEvent& evt);
     bool frameEnded  (const Ogre::FrameEvent& evt);
     bool checkUsername(const char *name);
-    void keyClicked (Ogre::KeyEvent *e);
-    void keyPressed (Ogre::KeyEvent *e);
-    void keyReleased(Ogre::KeyEvent *e);
-    void mouseDragEntered(Ogre::MouseEvent *) {}
-    void mouseDragExited (Ogre::MouseEvent *) {}
-    void mouseDragDropped(Ogre::MouseEvent *) {}
-    void mouseMoved   (Ogre::MouseEvent *e);
-    void mouseDragged (Ogre::MouseEvent *e);
-    void mouseClicked (Ogre::MouseEvent *e);
-    void mouseEntered (Ogre::MouseEvent *e);
-    void mouseExited  (Ogre::MouseEvent *e);
-    void mousePressed (Ogre::MouseEvent *e);
-    void mouseReleased(Ogre::MouseEvent *e);
+    bool keyPressed(const OIS::KeyEvent &e);
+    bool keyReleased(const OIS::KeyEvent &e);
+    bool mouseMoved(const OIS::MouseEvent &e);
+    bool mousePressed(const OIS::MouseEvent &e, OIS::MouseButtonID id);
+    bool mouseReleased(const OIS::MouseEvent &e, OIS::MouseButtonID id);
 };
 
 #endif

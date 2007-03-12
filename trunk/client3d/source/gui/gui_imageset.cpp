@@ -84,9 +84,13 @@ GuiImageset::GuiElementNames GuiImageset::mGuiElementNames[GUI_ELEMENTS_SUM]=
         // Combobox.
         { "ComboBoxTest",       GUI_COMBOBOX_TEST  },
         // Gadget_Slot
-        { "Slot_Container",     GUI_SLOT_CONTAINER  },
-
-
+        { "Slot_Quickslot",     GUI_SLOT_QUICKSLOT    },
+        { "Slot_Equipment",     GUI_SLOT_EQUIPMENT    },
+        { "Slot_Inventory",     GUI_SLOT_INVENTORY    },
+        { "Slot_Container",     GUI_SLOT_CONTAINER    },
+        { "Slot_TradeOffer",    GUI_SLOT_TRADE_OFFER  },
+        { "Slot_TradeReturn",   GUI_SLOT_TRADE_RETURN },
+        { "Slot_Shop",          GUI_SLOT_SHOP         },
     };
 
 // Mouse states.

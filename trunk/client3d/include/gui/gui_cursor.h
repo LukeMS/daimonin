@@ -39,7 +39,10 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    void setPos(int x, int y);
+    void setPos(int x, int y)
+    {
+        mElement->setPosition(x, y);
+    }
     void getPos(Ogre::Real &x, Ogre::Real &y)
     {
         y = mElement->getTop () - mHeight/2;
@@ -50,8 +53,7 @@ public:
     {
         return mState;
     }
-    void draw();
-    void Init(int w, int h, int screenHeight, int screenWidth);
+    void Init(int w, int h);
     void freeRecources();
     static GuiCursor &getSingleton()
     {
@@ -74,6 +76,7 @@ private:
     GuiCursor();
     ~GuiCursor();
     GuiCursor(const GuiCursor&); // disable copy-constructor.
+    void draw();
 };
 
 #endif

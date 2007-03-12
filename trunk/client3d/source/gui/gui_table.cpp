@@ -25,6 +25,7 @@ http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
 #include <tinyxml.h>
+#include <OISKeyboard.h>
 #include <OgreHardwarePixelBuffer.h>
 #include "define.h"
 #include "logger.h"
@@ -92,26 +93,26 @@ GuiTable::~GuiTable()
 //================================================================================================
 bool GuiTable::keyEvent(const char keyChar, const unsigned char key)
 {
-    if (key == KC_UP)
+    if (key == OIS::KC_UP)
     {
         if (mSelectedRow <= 0)  return true;
         drawSelection(mSelectedRow-1);
         mRowChanged = true;
         return true;
     }
-    if (key == KC_DOWN)
+    if (key == OIS::KC_DOWN)
     {
         if (mSelectedRow+1 >= (int)mvRow.size())  return true;
         drawSelection(mSelectedRow+1);
         mRowChanged = true;
         return true;
     }
-    if (key == KC_RETURN)
+    if (key == OIS::KC_RETURN)
     {
         mRowActivated = true;
         return true;
     }
-    if (key == KC_ESCAPE)
+    if (key == OIS::KC_ESCAPE)
     {
         mUserBreak = true;
         return true;

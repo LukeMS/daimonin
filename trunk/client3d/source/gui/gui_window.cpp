@@ -466,8 +466,8 @@ inline void GuiWindow::createWindow(int zOrder)
 //================================================================================================
 void GuiWindow::centerWindowOnMouse(int x, int y)
 {
-    mPosX = x-mTexture->getWidth()/2;
-    mPosY = y-mTexture->getHeight()/2 - 50;
+    mPosX = (int)(x-mTexture->getWidth())/2;
+    mPosY = (int)(y-mTexture->getHeight())/2 - 50;
     mElement->setPosition(mPosX, mPosY);
 }
 
@@ -701,8 +701,12 @@ class GuiGadgetSlot *GuiWindow::getSlotHandle(int element)
 //================================================================================================
 void GuiWindow::updateItemSlot(int element, int slotNr, int state)
 {
-    if (!mvSlot.empty())
-        getSlotHandle(element)->updateSlot(slotNr, state);
+    if (mvSlot.empty()) return;
+    if (state == GuiGadgetSlot::UPDATE_ALL_SLOTS)
+    {
+
+    }
+    else getSlotHandle(element)->updateSlot(slotNr, state);
 }
 
 //================================================================================================
@@ -791,7 +795,7 @@ void GuiWindow::setHeight(int newHeight)
     if (newHeight < mDragPosY2)
         newHeight = mDragPosY2;
     if (newHeight > (int)mTexture->getHeight())
-        newHeight = mTexture->getHeight();
+        newHeight = (int)mTexture->getHeight();
     mElement->setHeight(newHeight);
 }
 
@@ -863,7 +867,6 @@ int GuiWindow::getDragSlot()
         if (slot >=0) break;
         ++group;
     }
-
-
+	return 1234;
 }
 

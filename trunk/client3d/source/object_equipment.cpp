@@ -293,7 +293,7 @@ inline void ObjectEquipment::drawBopyPart(sPicture &picPart, Image &image, uint3
     texColor+= (srcColor & 0x000000ff) << 16;
     texColor+= (srcColor & 0x00ff0000) >> 16;
     // Get the current model-texture fragment.
-    PixelBox pb(picPart.w, picPart.h, 1, PF_A8R8G8B8 , buffer);
+    PixelBox pb(picPart.w, picPart.h, 1, PF_A8B8G8R8 , buffer);
     mTexture->getBuffer()->blitToMemory(
         Box(picPart.dstX,
             picPart.dstY,

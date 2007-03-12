@@ -43,7 +43,7 @@ Item::Item()
     mActGrndContainerID = 0; // Ground tile container ID is always 0.
     mActHeroContainerID = CONTAINER_UNKNOWN;
     mActOpenContainerID = CONTAINER_UNKNOWN;
-    GuiManager::getSingleton().setItemReference(GuiManager::GUI_WIN_INVENTORY, GuiImageset::GUI_SLOT_CONTAINER, &HeroBackpack);
+    GuiManager::getSingleton().setItemReference(GuiManager::GUI_WIN_INVENTORY, GuiImageset::GUI_SLOT_INVENTORY, &HeroBackpack);
 }
 
 //================================================================================================
@@ -163,7 +163,7 @@ void Item::ItemXYCmd(unsigned char *data, int len, bool bflag)
 
         update(tmpItem, container, bflag);
     }
-    GuiManager::getSingleton().updateItemSlot(GuiManager::GUI_WIN_INVENTORY, GuiImageset::GUI_SLOT_CONTAINER, GuiGadgetSlot::UPDATE_ALL_SLOTS);
+    GuiManager::getSingleton().updateItemSlot(GuiManager::GUI_WIN_INVENTORY, GuiImageset::GUI_SLOT_INVENTORY, GuiGadgetSlot::UPDATE_ALL_SLOTS);
     //    map_udate_flag = 2;
 }
 

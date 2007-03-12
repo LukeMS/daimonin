@@ -92,7 +92,13 @@ public:
         // Combobox
         GUI_COMBOBOX_TEST,
         // Slots
+        GUI_SLOT_QUICKSLOT,
+        GUI_SLOT_EQUIPMENT,
+        GUI_SLOT_INVENTORY,
         GUI_SLOT_CONTAINER,
+        GUI_SLOT_TRADE_OFFER,
+        GUI_SLOT_TRADE_RETURN,
+        GUI_SLOT_SHOP,
         // Sum of all entries.
         GUI_ELEMENTS_SUM
     };

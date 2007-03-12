@@ -24,6 +24,10 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
+#include <tinyxml.h>
+#include <OISKeyboard.h>
+#include <Ogre.h>
+#include <OgreFontManager.h>
 #include "define.h"
 #include "gui_manager.h"
 #include "gui_window_dialog.h"
@@ -32,9 +36,6 @@ http://www.gnu.org/licenses/licenses.html
 #include "gui_textinput.h"
 #include "option.h"
 #include "logger.h"
-#include <Ogre.h>
-#include <OgreFontManager.h>
-#include <tinyxml.h>
 
 using namespace Ogre;
 
@@ -190,9 +191,8 @@ bool GuiManager::parseWindowsData(const char *fileWindows)
                 if ((valString = xmlElem->Attribute("x"))) mHotSpotX = atoi(valString);
                 if ((valString = xmlElem->Attribute("y"))) mHotSpotY = atoi(valString);
             }
-            GuiCursor::getSingleton().Init(srcEntry->width, srcEntry->height, mScreenWidth, mScreenHeight);
+            GuiCursor::getSingleton().Init(srcEntry->width, srcEntry->height);
             GuiCursor::getSingleton().setStateImagePos(srcEntry->state);
-            GuiCursor::getSingleton().draw();
         }
         else
         {
@@ -244,21 +244,21 @@ void GuiManager::freeRecources()
 // KeyEvent was reported.
 // The decision if a keypress belongs to gui is made in events.cpp.
 //================================================================================================
-bool GuiManager::keyEvent(const char keyChar, const unsigned char key)
+bool GuiManager::keyEvent(const int key, const unsigned int keyChar)
 {
     // Key event in npc-dialog window.
-    if (GuiDialog::getSingleton().keyEvent(keyChar, key)) return true;
+    if (GuiDialog::getSingleton().keyEvent(key, keyChar)) return true;
     // We have an active Textinput.
     if (mProcessingTextInput)
     {
-        if (key == KC_ESCAPE)
+        if (key == OIS::KC_ESCAPE)
         {
             sendMessage(mActiveWindow, GUI_MSG_TXT_CHANGED, mActiveElement, (void*)mBackupTextInputString.c_str());
             GuiTextinput::getSingleton().canceled();
             mProcessingTextInput = false;
             return true;
         }
-        GuiTextinput::getSingleton().keyEvent(keyChar, key);
+        GuiTextinput::getSingleton().keyEvent(key, keyChar);
         if (GuiTextinput::getSingleton().wasFinished())
         {
             mStrTextInput = GuiTextinput::getSingleton().getText();
@@ -269,7 +269,7 @@ bool GuiManager::keyEvent(const char keyChar, const unsigned char key)
         return true;
     }
     // Activate the next window.
-    if (key == KC_TAB)
+    if (key == OIS::KC_TAB)
     {}
     // Key event in active window.
     return guiWindow[mActiveWindow].keyEvent(keyChar, key);
@@ -280,12 +280,12 @@ bool GuiManager::keyEvent(const char keyChar, const unsigned char key)
 //================================================================================================
 bool GuiManager::mouseEvent(int mouseAction, Vector3 &mouse)
 {
-    mMouse.x = (int) (mouse.x * mScreenWidth);
-    mMouse.y = (int) (mouse.y * mScreenHeight);
-    GuiCursor::getSingleton().setPos((int)mMouse.x,(int)mMouse.y);
+    mMouse.x = mouse.x;
+    mMouse.y = mouse.y;
+    mMouse.z = mouse.z;
+    GuiCursor::getSingleton().setPos((int)mMouse.x, (int)mMouse.y);
     mMouse.x+= mHotSpotX;
     mMouse.y+= mHotSpotY;
-    mMouse.z = mouse.z;
     // ////////////////////////////////////////////////////////////////////
     // Do we have an active drag from a slot?
     // ////////////////////////////////////////////////////////////////////
@@ -469,7 +469,7 @@ void GuiManager::displaySystemMessage(const char *text)
     label.y1 = fontH * row;
     label.y2 = label.y1 + fontH;
     label.x1 = 0;
-    label.x2 = mTexture->getWidth()-1;
+    label.x2 = (int)mTexture->getWidth()-1;
     label.text = text;
     label.color= 0x00ffffff;
     //  clearTooltip();
@@ -505,7 +505,7 @@ void GuiManager::clearTooltip()
 {
     PixelBox pb = mTexture->getBuffer()->lock (Box(0,0, mTexture->getWidth(), mTexture->getHeight()), HardwareBuffer::HBL_DISCARD);
     uint32 *dest_data = (uint32*)pb.data;
-    for (int y = mTexture->getWidth() * mTexture->getHeight(); y; --y)
+    for (int y = (int)mTexture->getWidth() * (int)mTexture->getHeight(); y; --y)
     {
         *dest_data++ = 0x884444ff;
     }

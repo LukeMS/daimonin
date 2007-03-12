@@ -19,6 +19,7 @@
 				</Compiler>
 				<Linker>
 					<Add library="OgreMain_d" />
+					<Add library="OIS_d" />
 					<Add directory="..\..\..\debug\" />
 				</Linker>
 				<ExtraCommands>
@@ -40,6 +41,7 @@
 				<Linker>
 					<Add option="-s" />
 					<Add library="OgreMain" />
+					<Add library="OIS" />
 					<Add directory="..\..\..\" />
 				</Linker>
 				<ExtraCommands>
@@ -59,6 +61,7 @@
 			<Add option="-pipe" />
 			<Add option="-DWIN32" />
 			<Add directory="ogre_inc" />
+			<Add directory="ogre_inc\OIS" />
 			<Add directory="..\..\..\source" />
 			<Add directory="..\..\..\source\gui" />
 			<Add directory="..\..\..\include" />
