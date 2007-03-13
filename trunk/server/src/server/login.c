@@ -466,7 +466,7 @@ static  mapstruct *traverse_b3_player_inv(object *pl, object *op, mapstruct *old
             }
 
             /* as default entry we use newbie town start.*/
-            FREE_AND_COPY_HASH(tmp->race, "/relic/castle/castle_030a");
+            FREE_AND_COPY_HASH(tmp->race, "/planes/human_plane/castle/castle_030a");
             tmp->last_sp = 18;
             tmp->last_grace = 1;
             FREE_AND_COPY_HASH(tmp->name, "APARTMENT_INFO"); /* new player info tag */
@@ -956,7 +956,7 @@ void check_login(object *op, int mode)
         set_mappath_by_name(pl, NULL, shstr_cons.start_mappath, MAP_STATUS_MULTI, 17, 11);
 
         /* as bind point we set old beta 3 players to castle church */
-        FREE_AND_COPY_HASH(pl->orig_savebed_map, "/relic/castle/castle_0002");
+        FREE_AND_COPY_HASH(pl->orig_savebed_map, "/planes/human_plane/castle/castle_0002");
         set_bindpath_by_name(pl, NULL, pl->orig_savebed_map, MAP_STATUS_MULTI, 12, 7);
     }
 
