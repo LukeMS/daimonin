@@ -1437,7 +1437,7 @@ int command_stuck(object *op, char *params)
 {
     if (op->type == PLAYER && CONTR(op))
     {
-        command_goto(op, "/relic/castle/castle_030a 5 11");
+        command_goto(op, "/planes/human_plane/castle/castle_030a 5 11");
     }
     return 0;
 }
