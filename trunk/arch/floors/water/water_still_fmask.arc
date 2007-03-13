@@ -62,3 +62,35 @@ layer 2
 type 28
 no_pick 1
 end
+Object water_still_fmask.201
+name water_still
+face lake_fmask.201
+no_teleport 1
+layer 2
+type 28
+no_pick 1
+end
+Object water_still_fmask.203
+name water_still
+face lake_fmask.203
+no_teleport 1
+layer 2
+type 28
+no_pick 1
+end
+Object water_still_fmask.205
+name water_still
+face lake_fmask.205
+no_teleport 1
+layer 2
+type 28
+no_pick 1
+end
+Object water_still_fmask.207
+name water_still
+face lake_fmask.207
+no_teleport 1
+layer 2
+type 28
+no_pick 1
+end
