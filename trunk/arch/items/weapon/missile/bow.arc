@@ -5,7 +5,7 @@ race arrows
 type 14
 wc 5
 last_sp 4
-sub_type 1
+sub_type 0
 item_level 7
 item_skill 1
 material 16

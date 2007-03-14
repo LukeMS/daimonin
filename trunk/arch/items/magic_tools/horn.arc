@@ -18,4 +18,5 @@ anim_speed 5
 value 40
 weight 800
 material 2
+level 1
 end

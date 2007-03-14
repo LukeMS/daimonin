@@ -3372,7 +3372,7 @@ no_pick 1
 end
 Object grass_fullmask1
 name grass
-type 79
+type 28
 editor_folder floors/grass
 face grass_fullmask1.101
 no_teleport 1
@@ -3381,7 +3381,7 @@ no_pick 1
 end
 Object grass_fullmask2
 name grass
-type 79
+type 28
 editor_folder floors/grass
 face grass_fullmask2.101
 no_teleport 1
@@ -6744,6 +6744,114 @@ layer 1
 terrain_type 2
 no_pick 1
 end
+Object water_still_deep_fmask.101
+name water_still_deep
+type 28
+editor_folder floors/water
+face lake_deep_fmask.101
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object water_still_deep_fmask.102
+name water_still_deep
+type 28
+editor_folder floors/water
+face lake_deep_fmask.102
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object water_still_deep_fmask.103
+name water_still_deep
+type 28
+editor_folder floors/water
+face lake_deep_fmask.103
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object water_still_deep_fmask.104
+name water_still_deep
+type 28
+editor_folder floors/water
+face lake_deep_fmask.104
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object water_still_deep_fmask.105
+name water_still_deep
+type 28
+editor_folder floors/water
+face lake_deep_fmask.105
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object water_still_deep_fmask.106
+name water_still_deep
+type 28
+editor_folder floors/water
+face lake_deep_fmask.106
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object water_still_deep_fmask.107
+name water_still_deep
+type 28
+editor_folder floors/water
+face lake_deep_fmask.107
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object water_still_deep_fmask.108
+name water_still_deep
+type 28
+editor_folder floors/water
+face lake_deep_fmask.108
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object water_still_deep_fmask.201
+name water_still_deep
+type 28
+editor_folder floors/water
+face lake_deep_fmask.201
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object water_still_deep_fmask.203
+name water_still_deep
+type 28
+editor_folder floors/water
+face lake_deep_fmask.203
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object water_still_deep_fmask.205
+name water_still_deep
+type 28
+editor_folder floors/water
+face lake_deep_fmask.205
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object water_still_deep_fmask.207
+name water_still_deep
+type 28
+editor_folder floors/water
+face lake_deep_fmask.207
+no_teleport 1
+layer 2
+no_pick 1
+end
 Object water_still_deepest
 name deepest water
 type 71
@@ -6756,6 +6864,114 @@ anim_speed 10
 no_teleport 1
 layer 1
 terrain_type 2
+no_pick 1
+end
+Object water_still_fmask.101
+name water_still
+type 28
+editor_folder floors/water
+face lake_fmask.101
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object water_still_fmask.102
+name water_still
+type 28
+editor_folder floors/water
+face lake_fmask.102
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object water_still_fmask.103
+name water_still
+type 28
+editor_folder floors/water
+face lake_fmask.103
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object water_still_fmask.104
+name water_still
+type 28
+editor_folder floors/water
+face lake_fmask.104
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object water_still_fmask.105
+name water_still
+type 28
+editor_folder floors/water
+face lake_fmask.105
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object water_still_fmask.106
+name water_still
+type 28
+editor_folder floors/water
+face lake_fmask.106
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object water_still_fmask.107
+name water_still
+type 28
+editor_folder floors/water
+face lake_fmask.107
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object water_still_fmask.108
+name water_still
+type 28
+editor_folder floors/water
+face lake_fmask.108
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object water_still_fmask.201
+name water_still
+type 28
+editor_folder floors/water
+face lake_fmask.201
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object water_still_fmask.203
+name water_still
+type 28
+editor_folder floors/water
+face lake_fmask.203
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object water_still_fmask.205
+name water_still
+type 28
+editor_folder floors/water
+face lake_fmask.205
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object water_still_fmask.207
+name water_still
+type 28
+editor_folder floors/water
+face lake_fmask.207
+no_teleport 1
+layer 2
 no_pick 1
 end
 Object floor_white1a
@@ -7922,6 +8138,72 @@ direction 1
 no_pick 1
 no_pass 1
 layer 4
+end
+Object blood_spatter_heavy_a_fmask
+type 28
+editor_folder indoor/artificial
+face fmask_blood_spatter_heavy_a.101
+layer 2
+no_pick 1
+no_teleport 1
+is_turnable 1
+direction 0
+animation blood_spatter_heavy_a_fmask
+end
+Object blood_spatter_heavy_a_wmask
+type 77
+editor_folder indoor/artificial
+face wmask_blood_spatter_heavy_a.u.131
+layer 7
+no_pick 1
+no_teleport 1
+is_turnable 1
+direction 3
+animation blood_spatter_heavy_a_wmask
+end
+Object blood_spatter_light_a_fmask
+type 28
+editor_folder indoor/artificial
+face fmask_blood_spatter_light_a.101
+layer 2
+no_pick 1
+no_teleport 1
+is_turnable 1
+direction 0
+animation blood_spatter_light_a_fmask
+end
+Object blood_spatter_light_a_wmask
+type 77
+editor_folder indoor/artificial
+face wmask_blood_spatter_light_a.u.131
+layer 7
+no_pick 1
+no_teleport 1
+is_turnable 1
+direction 3
+animation blood_spatter_light_a_wmask
+end
+Object blood_spatter_medium_a_fmask
+type 28
+editor_folder indoor/artificial
+face fmask_blood_spatter_medium_a.101
+layer 2
+no_pick 1
+no_teleport 1
+is_turnable 1
+direction 0
+animation blood_spatter_medium_a_fmask
+end
+Object blood_spatter_medium_a_wmask
+type 77
+editor_folder indoor/artificial
+face wmask_blood_spatter_medium_a.u.131
+layer 7
+no_pick 1
+no_teleport 1
+is_turnable 1
+direction 3
+animation blood_spatter_medium_a_wmask
 end
 Object chair1_111
 name chair
@@ -11748,7 +12030,7 @@ y 16
 type 22
 layer 0
 sys_object 1
-slaying /relic/castle/castle_030a
+slaying /planes/human_plane/castle/castle_030a
 face info.101
 hp 18
 sp 1
@@ -12923,7 +13205,8 @@ Object skill_throwing
 name throwing
 type 43
 editor_folder intern
-wc 5
+last_grace 0
+wc 0
 sub_type 0
 item_quality 100
 item_condition 100
@@ -14426,8 +14709,8 @@ type 33
 editor_folder items/armour
 layer 3
 face ball_and_chain.101
-ac 2
-wc 1
+ac 6
+wc 2
 item_level 4
 item_skill 4
 last_heal 5
@@ -14446,7 +14729,7 @@ type 33
 editor_folder items/armour
 layer 3
 face blade_stopper.101
-ac 4
+ac 12
 item_level 19
 item_skill 4
 last_heal 15
@@ -14465,7 +14748,7 @@ type 33
 editor_folder items/armour
 layer 3
 face buckler.101
-ac 1
+ac 6
 wc 1
 resist_impact 5
 resist_cleave 5
@@ -14482,7 +14765,7 @@ type 33
 editor_folder items/armour
 layer 3
 face shield.101
-ac 2
+ac 8
 item_level 3
 item_skill 4
 last_heal 5
@@ -14501,7 +14784,7 @@ type 33
 editor_folder items/armour
 layer 3
 face shield_battle.101
-ac 4
+ac 12
 last_heal 15
 item_skill 4
 item_level 19
@@ -14520,7 +14803,7 @@ type 33
 editor_folder items/armour
 layer 3
 face shield_bone.101
-ac 3
+ac 10
 item_level 9
 item_skill 4
 last_heal 10
@@ -14539,7 +14822,7 @@ type 33
 editor_folder items/armour
 layer 3
 face shield_chitin.101
-ac 3
+ac 10
 item_level 9
 item_skill 4
 last_heal 10
@@ -14558,7 +14841,7 @@ type 33
 editor_folder items/armour
 layer 3
 face shield_defender.101
-ac 4
+ac 12
 last_heal 15
 item_level 19
 item_skill 4
@@ -14577,7 +14860,7 @@ type 33
 editor_folder items/armour
 layer 3
 face shield_demon.101
-ac 4
+ac 12
 item_level 19
 last_heal 15
 item_skill 4
@@ -14597,7 +14880,7 @@ type 33
 editor_folder items/armour
 layer 3
 face shield_eye.101
-ac 3
+ac 10
 item_level 9
 last_heal 10
 item_skill 4
@@ -14616,7 +14899,7 @@ type 33
 editor_folder items/armour
 layer 3
 face shield_heater.101
-ac 3
+ac 10
 item_level 9
 item_skill 4
 last_heal 10
@@ -14635,7 +14918,7 @@ type 33
 editor_folder items/armour
 layer 3
 face shield_high.101
-ac 3
+ac 10
 last_heal 10
 item_skill 4
 item_level 9
@@ -14654,7 +14937,7 @@ type 33
 editor_folder items/armour
 layer 3
 face shield_kite.101
-ac 2
+ac 8
 item_level 3
 item_skill 4
 last_heal 5
@@ -14673,7 +14956,7 @@ type 33
 editor_folder items/armour
 layer 3
 face shield_protector.101
-ac 4
+ac 12
 last_heal 15
 item_skill 4
 item_level 19
@@ -14692,7 +14975,7 @@ type 33
 editor_folder items/armour
 layer 3
 face shield_round.101
-ac 2
+ac 8
 item_level 3
 item_skill 4
 last_heal 5
@@ -14711,7 +14994,7 @@ type 33
 editor_folder items/armour
 layer 3
 face shield_scale_white.101
-ac 3
+ac 10
 item_level 9
 item_skill 4
 last_heal 10
@@ -14730,7 +15013,7 @@ type 33
 editor_folder items/armour
 layer 3
 face shield_war.101
-ac 4
+ac 12
 item_skill 4
 item_level 19
 last_heal 15
@@ -14749,7 +15032,7 @@ type 33
 editor_folder items/armour
 face small_shie.101
 layer 3
-ac 2
+ac 8
 material_real 65
 material 2
 resist_impact 6
@@ -16766,6 +17049,7 @@ anim_speed 5
 value 50
 weight 600
 material 2
+level 1
 end
 Object horn
 type 35
@@ -16783,6 +17067,7 @@ anim_speed 5
 value 40
 weight 800
 material 2
+level 1
 end
 Object power_crystal
 name Glowing Crystal
@@ -16815,6 +17100,7 @@ weight 1250
 material 70
 hp 20
 maxhp 20
+level 1
 end
 Object rod_light
 name rod
@@ -16833,6 +17119,7 @@ weight 925
 material 70
 hp 5
 maxhp 5
+level 1
 end
 Object sr_scepter1
 name rod
@@ -17123,6 +17410,52 @@ material_real -1
 value 15
 weight 200
 end
+Object cup_coffee
+name cup of coffee
+type 6
+editor_folder items/organic
+face cup_coffee.101
+last_eat 10
+hp 20
+sp 3
+grace 2
+nrof 1
+layer 3
+speed_left 0.002
+material 32
+material_real -1
+value 15
+weight 200
+end
+Object cup_empty
+name empty cup
+type 79
+editor_folder items/organic
+face cup_empty.101
+nrof 1
+layer 3
+material 32
+material_real -1
+value 5
+weight 100
+end
+Object cup_tea
+name cup of tea
+type 6
+editor_folder items/organic
+face cup_tea.101
+last_eat 10
+hp 20
+sp 3
+grace 2
+nrof 1
+layer 3
+speed_left 0.002
+material 32
+material_real -1
+value 15
+weight 200
+end
 Object drink_generic
 name water
 type 54
@@ -17156,6 +17489,40 @@ material 32
 material_real -1
 value 45
 weight 300
+end
+Object teabag
+name teabag
+type 6
+editor_folder items/organic
+face teabag.101
+last_eat 10
+hp 20
+sp 3
+grace 2
+nrof 1
+layer 3
+speed_left 0.002
+material 32
+material_real -1
+value 15
+weight 50
+end
+Object drink_water
+name water
+type 6
+editor_folder items/organic
+face water2.101
+last_eat 10
+hp 20
+sp 3
+grace 2
+nrof 1
+layer 3
+speed_left 0.002
+material 32
+material_real -1
+value 15
+weight 50
 end
 Object whitewine
 name white wine
@@ -18112,6 +18479,7 @@ nrof 1
 material 1
 weight 20
 value 3
+level 1
 end
 Object amulet_generic
 name amulet
@@ -20458,10 +20826,10 @@ editor_folder items/weapon
 race rock
 face t_star.101
 layer 3
-weapon_speed 2.5
 attack_slash 100
-dam 30
-last_grace 11
+dam 42
+wc 45
+last_grace 22
 last_sp 7
 nrof 1
 sub_type 129
@@ -20472,8 +20840,8 @@ is_turnable 1
 is_thrown 1
 material 2
 material_real 65
-weight 200
-value 35
+weight 50
+value 1
 end
 Object snow_ball
 name snow ball
@@ -22145,6 +22513,53 @@ is_animated 1
 anim_speed 4
 no_pick 1
 end
+Object chicken_large
+name chicken
+type 80
+editor_folder mobs/animals
+face chicken_large.131
+race chicken
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+layer 6
+direction 5
+item_race 255
+item_level 255
+corpse 1
+alive 1
+monster 1
+is_female 1
+is_neutral 1
+terrain_flag 1
+can_use_weapon 1
+int 10
+wis 6
+dex 3
+con 5
+exp 102
+magic 1
+pow 10
+sp -1
+maxsp 19
+hp -1
+maxhp 67
+ac 12
+wc 4
+thac0 18
+thacm 1
+resist_impact 10
+dam 52
+attack_pierce 50
+attack_impact 50
+weapon_speed 3.5
+speed -0.06
+run_away 10
+level 1
+weight 42000
+animation chicken_large
+is_animated 1
+anim_speed 4
+no_pick 1
+end
 Object deer
 name Reindeer
 type 80
@@ -22326,6 +22741,52 @@ run_away 10
 level 1
 weight 325000
 animation frog
+is_animated 1
+anim_speed 4
+no_pick 1
+end
+Object horse_white
+name white horse
+type 80
+editor_folder mobs/animals
+face horse_white.131
+race horse
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+layer 6
+direction 5
+item_race 255
+item_level 255
+corpse 1
+alive 1
+monster 1
+is_neutral 1
+terrain_flag 1
+can_use_weapon 1
+int 10
+wis 6
+dex 3
+con 5
+exp 102
+magic 1
+pow 10
+sp -1
+maxsp 19
+hp -1
+maxhp 67
+ac 12
+wc 4
+thac0 18
+thacm 1
+resist_impact 10
+dam 52
+attack_pierce 50
+attack_impact 50
+weapon_speed 3.5
+speed -0.06
+run_away 10
+level 1
+weight 42000
+animation horse_white
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -22826,10 +23287,10 @@ sp -1
 maxsp 19
 hp -1
 maxhp 78
-ac 28
-wc 15
-thac0 85
-thacm 5
+ac 12
+wc 7
+thac0 18
+thacm 1
 dam 52
 resist_pierce 25
 resist_slash 25
@@ -22979,7 +23440,7 @@ end
 Object corpse_default
 name decaying corpse
 type 122
-editor_folder mobs/corpse
+editor_folder mobs/corpses
 layer 3
 face corpse_default.101
 sub_type 1
@@ -22997,7 +23458,7 @@ end
 Object corpse_goblinoid
 name decaying goblinoid corpse
 type 122
-editor_folder mobs/corpse
+editor_folder mobs/corpses
 race goblin
 layer 3
 identified 1
@@ -23013,10 +23474,29 @@ food 20
 speed 0.01
 is_used_up 1
 end
+Object corpse_demon
+name demon corpse
+type 122
+editor_folder mobs/corpses
+race demon
+layer 3
+face corpse_demon.101
+sub_type 1
+material 32
+weapon_speed 1.0
+container 350000
+weight 120000
+food 20
+is_used_up 1
+speed 0.01
+identified 1
+no_pick 1
+invulnerable 1
+end
 Object corpse_golem
 name golem corpse
 type 122
-editor_folder mobs/corpse
+editor_folder mobs/corpses
 race golem
 layer 3
 face corpse_golem.101
@@ -23035,7 +23515,7 @@ end
 Object corpse_half_elf
 name decaying half-elf corpse
 type 122
-editor_folder mobs/corpse
+editor_folder mobs/corpses
 race half-elf
 layer 3
 identified 1
@@ -23054,7 +23534,7 @@ end
 Object corpse_human
 name decaying human corpse
 type 122
-editor_folder mobs/corpse
+editor_folder mobs/corpses
 race human
 layer 3
 identified 1
@@ -23073,7 +23553,7 @@ end
 Object corpse_ice_golem
 name ice golem corpse
 type 122
-editor_folder mobs/corpse
+editor_folder mobs/corpses
 race golem_ice
 layer 3
 face corpse_ice_golem.101
@@ -23092,7 +23572,7 @@ end
 Object corpse_insect
 name decaying insect corpse
 type 122
-editor_folder mobs/corpse
+editor_folder mobs/corpses
 race ant
 layer 3
 face corpse_insect.101
@@ -23111,7 +23591,7 @@ end
 Object corpse_nest
 name destroyed nest
 type 122
-editor_folder mobs/corpse
+editor_folder mobs/corpses
 race nest
 layer 3
 identified 1
@@ -28165,52 +28645,6 @@ is_animated 1
 anim_speed 4
 no_pick 1
 end
-Object fungus
-name Giant Fungus
-type 80
-editor_folder mobs/misc
-face fungus.131
-race mushroom
-randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
-layer 6
-direction 5
-item_race 255
-item_level 255
-corpse 1
-alive 1
-monster 1
-is_male 1
-is_neutral 1
-terrain_flag 1
-can_use_weapon 1
-int 10
-wis 6
-dex 3
-con 5
-exp 102
-magic 1
-pow 10
-sp -1
-maxsp 19
-hp -1
-maxhp 67
-ac 28
-wc 15
-thac0 85
-thacm 5
-resist_impact 10
-dam 52
-attack_cleave 100
-weapon_speed 3.5
-speed -0.06
-run_away 10
-level 1
-weight 325000
-animation fungus
-is_animated 1
-anim_speed 4
-no_pick 1
-end
 Object salamand
 name Salamand
 type 80
@@ -28886,51 +29320,6 @@ is_animated 1
 anim_speed 4
 no_pick 1
 end
-Object ent1
-name Ent
-type 80
-editor_folder mobs/plants
-face ent1.231
-race tree
-randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
-layer 6
-direction 5
-item_race 255
-item_level 255
-corpse 1
-alive 1
-monster 1
-is_evil 1
-terrain_flag 1
-can_open_door 1
-can_see_in_dark 1
-can_use_weapon 1
-int 10
-wis 6
-dex 3
-con 15
-exp 105
-magic 1
-pow 10
-sp -1
-maxsp 20
-hp -1
-maxhp 71
-ac 28
-wc 15
-thac0 85
-thacm 5
-dam 53
-weapon_speed 3.5
-attack_impact 100
-speed -0.048
-level 1
-weight 355000
-animation ent1
-is_animated 1
-anim_speed 4
-no_pick 1
-end
 Object quickwood
 name Quickwood
 type 80
@@ -28971,6 +29360,51 @@ speed -0.048
 level 1
 weight 355000
 animation quickwood
+is_animated 1
+anim_speed 4
+no_pick 1
+end
+Object treant_ancient
+name Ancient Treant
+type 80
+editor_folder mobs/plants
+face treant_ancient.231
+race tree
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+layer 6
+direction 5
+item_race 255
+item_level 255
+corpse 1
+alive 1
+monster 1
+is_evil 1
+terrain_flag 1
+can_open_door 1
+can_see_in_dark 1
+can_use_weapon 1
+int 10
+wis 6
+dex 3
+con 15
+exp 105
+magic 1
+pow 10
+sp -1
+maxsp 20
+hp -1
+maxhp 71
+ac 28
+wc 15
+thac0 85
+thacm 5
+dam 53
+weapon_speed 3.5
+attack_impact 100
+speed -0.048
+level 1
+weight 355000
+animation treant_ancient
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -33307,6 +33741,18 @@ weight 1500000
 no_pass 1
 no_pick 1
 end
+Object rock_big11
+name rock
+type 79
+editor_folder outdoor/natural
+layer 5
+face rock_big11.101
+material 64
+weight 1500000
+no_pass 1
+blocksview 1
+no_pick 1
+end
 Object rock_big12
 name rock
 type 79
@@ -33319,12 +33765,48 @@ weight 1500000
 no_pass 1
 no_pick 1
 end
-Object rock_big11
+Object rock_big13
 name rock
 type 79
 editor_folder outdoor/natural
 layer 5
-face rock_big11.101
+face rock_big13.101
+material 64
+weight 1500000
+no_pass 1
+blocksview 1
+no_pick 1
+end
+Object rock_big14
+name rock
+type 79
+editor_folder outdoor/natural
+layer 5
+face rock_big14.101
+material 64
+weight 1500000
+no_pass 1
+blocksview 1
+no_pick 1
+end
+Object rock_big15
+name rock
+type 79
+editor_folder outdoor/natural
+layer 5
+face rock_big15.101
+material 64
+weight 1500000
+no_pass 1
+blocksview 1
+no_pick 1
+end
+Object rock_big16
+name rock
+type 79
+editor_folder outdoor/natural
+layer 5
+face rock_big16.101
 material 64
 weight 1500000
 no_pass 1

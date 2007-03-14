@@ -18,4 +18,5 @@ weight 1250
 material 70
 hp 20
 maxhp 20
+level 1
 end
