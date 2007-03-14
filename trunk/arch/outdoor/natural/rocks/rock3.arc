@@ -73,6 +73,17 @@ weight 1500000
 no_pass 1
 no_pick 1
 end
+Object rock_big11
+name rock
+layer 5
+type 79
+face rock_big11.101
+material 64
+weight 1500000
+no_pass 1
+blocksview 1
+no_pick 1
+end
 Object rock_big12
 name rock
 layer 5
@@ -84,11 +95,44 @@ weight 1500000
 no_pass 1
 no_pick 1
 end
-Object rock_big11
+Object rock_big13
 name rock
 layer 5
 type 79
-face rock_big11.101
+face rock_big13.101
+material 64
+weight 1500000
+no_pass 1
+blocksview 1
+no_pick 1
+end
+Object rock_big14
+name rock
+layer 5
+type 79
+face rock_big14.101
+material 64
+weight 1500000
+no_pass 1
+blocksview 1
+no_pick 1
+end
+Object rock_big15
+name rock
+layer 5
+type 79
+face rock_big15.101
+material 64
+weight 1500000
+no_pass 1
+blocksview 1
+no_pick 1
+end
+Object rock_big16
+name rock
+layer 5
+type 79
+face rock_big16.101
 material 64
 weight 1500000
 no_pass 1
