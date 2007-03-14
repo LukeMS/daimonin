@@ -9,4 +9,5 @@ type 111
 material 1
 weight 20
 value 3
+level 1
 end

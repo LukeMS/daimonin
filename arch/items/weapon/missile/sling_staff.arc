@@ -3,7 +3,7 @@ name staff sling
 layer 3
 race sling stones
 type 14
-sub_type 3
+sub_type 2
 item_level 19
 item_skill 1
 material 8

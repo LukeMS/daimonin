@@ -3,7 +3,7 @@ name crossbow
 layer 3
 race crossbow bolts
 type 14
-sub_type 2
+sub_type 1
 item_level 7
 item_skill 1
 material 16

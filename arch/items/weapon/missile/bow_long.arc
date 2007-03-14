@@ -7,7 +7,7 @@ wc 6
 item_level 19
 item_skill 1
 last_sp 5
-sub_type 1
+sub_type 0
 material 16
 material_real 258
 face bow_long.101
