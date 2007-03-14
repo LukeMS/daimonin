@@ -1708,8 +1708,9 @@ void kill_player(object *op)
     /* position (usually last savebed)      */
     /*                                      */
     /****************************************/
+    /* JG (aka Grommit) 14-Mar-2007 - changed map_status to bed_status */
 
-    enter_map_by_name(op, pl->savebed_map, pl->orig_savebed_map, pl->bed_x, pl->bed_y, pl->map_status);
+    enter_map_by_name(op, pl->savebed_map, pl->orig_savebed_map, pl->bed_x, pl->bed_y, pl->bed_status);
 
     /**************************************/
     /*                                    */
