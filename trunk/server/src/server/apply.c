@@ -2466,7 +2466,8 @@ static void apply_savebed(object *pl, object *bed)
         return;
 
     /* update respawn position */
-    set_bindpath_by_default(p_ptr);
+    /*set_bindpath_by_default(p_ptr);*/
+    set_bindpath_by_name(p_ptr, pl->map->path, pl->map->orig_path, pl->map->map_status, pl->x, pl->y);
 
     new_draw_info(NDI_UNIQUE, 0, pl, "You save and quit the game. Bye!\nleaving...");
     p_ptr->socket.status = Ns_Dead;
