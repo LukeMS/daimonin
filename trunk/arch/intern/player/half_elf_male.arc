@@ -15,10 +15,10 @@ speed 0.95
 terrain_flag 1
 anim
 facings 25
-halfelf_f.f.r.111
-halfelf_f.f.r.111
-halfelf_f.f.r.111
-halfelf_f.f.r.111
+human_m.f.r.111
+human_m.f.r.111
+human_m.f.r.111
+human_m.f.r.111
 human_m.ine.111
 human_m.ine.112
 human_m.ine.113

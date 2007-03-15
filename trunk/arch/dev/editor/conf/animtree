@@ -37,6 +37,12 @@
 /mobs/amoeboid/blobs/blob_acid
 /mobs/amoeboid/blobs/blob_poison
 /mobs/amoeboid/blobs/blob_quivering
+/indoor/artificial/blood/spatter_heavy/blood_spatter_heavy_a_fmask
+/indoor/artificial/blood/spatter_heavy/blood_spatter_heavy_a_wmask
+/indoor/artificial/blood/spatter_light/blood_spatter_light_a_fmask
+/indoor/artificial/blood/spatter_light/blood_spatter_light_a_wmask
+/indoor/artificial/blood/spatter_medium/blood_spatter_medium_a_fmask
+/indoor/artificial/blood/spatter_medium/blood_spatter_medium_a_wmask
 /items/weapon/missile/amun/bolt
 /mobs/demon/bone_devil/bone_devil
 /items/organic/drinkable/bottle_soul
@@ -192,7 +198,6 @@
 /indoor/artificial/smithy/forge_111
 /mobs/animals/frogs/frog
 /items/gifts/full_xmas_tree
-/mobs/misc/fungus/fungus
 /mobs/theme/halloween/great_pumpkin/g_pumpkin
 /walls/doors/gate1_locked
 /connect/gates/gateTrg1
