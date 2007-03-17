@@ -7,6 +7,22 @@ type 77
 no_pick 1
 no_pass 1
 end
+Object fwall_fstone2_w.131
+name wall
+face fwall_fstone2_w.131
+type 77
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_fstone2_w.151
+name wall
+face fwall_fstone2_w.151
+type 77
+layer 5
+no_pick 1
+no_pass 1
+end
 Object fwall_fstone2a
 name wall
 face fwall_fstone2a.d.101
