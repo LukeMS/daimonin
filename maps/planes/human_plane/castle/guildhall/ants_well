@@ -3361,6 +3361,11 @@ arch ant_queen
 type 83
 level 3
 wis 3
+arch quest_trigger
+name Water Well Ant Queen
+sub_type 3
+last_heal 1
+end
 end
 end
 arch light5
