@@ -1821,7 +1821,6 @@ x 14
 y 10
 end
 arch fwall_fstone2
-no_pass 0
 x 14
 y 10
 end
@@ -3153,7 +3152,6 @@ name Jail Guard Sahrel
 type 83
 level 25
 unaggressive 1
-attack_movement 176
 arch waypoint
 name wp3
 title wp1
@@ -3171,6 +3169,7 @@ hp 2
 sp 6
 grace 1
 arch event_obj
+name Lua
 sub_type 10
 race guildhall/sahrel.lua
 end

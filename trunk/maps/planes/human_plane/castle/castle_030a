@@ -1565,22 +1565,32 @@ x 9
 y 13
 end
 arch stairs_wood_down
-slaying guildhall/merc_up
-hp 1
-sp 8
+last_eat 1
+slaying castle_030a
+hp 10
+sp 13
 x 9
 y 13
+arch event_obj
+sub_type 1
+race guildhall/gh_merc_stairs.lua
+end
 end
 arch floor_wood2_l1
 x 9
 y 14
 end
 arch stairs_wood_down
-slaying guildhall/merc_up
-hp 1
-sp 9
+last_eat 1
+slaying castle_030a
+hp 10
+sp 14
 x 9
 y 14
+arch event_obj
+sub_type 1
+race guildhall/gh_merc_stairs.lua
+end
 end
 arch floor_wood2_l1
 x 9

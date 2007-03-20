@@ -27,9 +27,11 @@ local function topicDefault()
     if q_mgr_1:GetStatus() < game.QSTAT_DONE then
         if q_mgr_1:GetStatus() == game.QSTAT_NO then
             ib:SetTitle("Welcome to the Mercenary Guild")
-            ib:AddMsg("Hello!\nWelcome to the Mercenary Guild of Thraal!\n\nYou need a job?\n")
-            ib:AddMsg("You really would be welcome in our ranks. Our ^troops^ are an important part ")
-            ib:AddMsg("of the imperial defence.\n\nYou want to join our guild?")
+            ib:AddMsg("Hello!\nWelcome to the Mercenary Guild of Thraal!\n")
+            ib:AddMsg("\nYou need a job?")
+            ib:AddMsg("\nYou really would be welcome in our ranks. ")
+            ib:AddMsg("Our ^troops^ are an important part of the imperial defence.\n")
+            ib:AddMsg("\nYou want to join our guild?")
             ib:AddLink("Start the Mercenary Guild Quest", "startq1")
         else
             ib:SetTitle("You Solved the Quest?")
@@ -54,11 +56,13 @@ local function quest_icons1()
 end
 
 local function quest_body1()
-    ib:SetMsg("Before you can join the guild I have a small task for you.\n\n")
-    ib:AddMsg("We have a problem with giant ants for some time now.\n")
-    ib:AddMsg("See this hole to the old guild cellar on my side?\n\n")
-    ib:AddMsg("One of those silly ants has stolen my old helmet!\nEnter the hole and kill the ants there!\n")
-    ib:AddMsg("No fear, they are weak.\n\nBring me the helm back and you can join the guild.")
+    ib:SetMsg("Before you can join the guild I have a small task for you.\n")
+    ib:AddMsg("\nWe have a problem with giant ants for some time now.")
+    ib:AddMsg("\nSee this hole to the old guild cellar on my side?\n")
+    ib:AddMsg("\nOne of those silly ants has stolen my old helmet!")
+    ib:AddMsg("\nEnter the hole and kill the ants there!")
+    ib:AddMsg("\nNo fear, they are weak.\n")
+    ib:AddMsg("\nBring me the helm back and you can join the guild./n")
     ib:SetDesc("You can join the mercenary guild when you recover the helm for Cashin.", 0, 0, 0, 0)
 end
 
@@ -67,12 +71,12 @@ local function topStartQ1()
     if q_mgr_1:GetStatus() ~= game.QSTAT_NO then
         topicDefault()
     else
-        ib:SetTitle(q_mgr_1.name)
-        quest_body1()
-        quest_icons1()
-        ib:SetAccept(nil, "acceptq1") 
-        ib:SetDecline(nil, "hi") 
-        pl:Interface(1, ib:Build())
+    ib:SetTitle(q_mgr_1.name)
+    quest_body1()
+    quest_icons1()
+    ib:SetAccept(nil, "acceptq1") 
+    ib:SetDecline(nil, "hi") 
+    pl:Interface(1, ib:Build())
     end
 end
 
@@ -91,7 +95,6 @@ local function topAcceptQ1()
     end
     pl:Interface(-1, ib:Build())
 end
-
 -- try to finish: check the quest
 local function topCheckQ1()
     if q_mgr_1:GetStatus() == game.QSTAT_NO then
@@ -99,13 +102,15 @@ local function topCheckQ1()
         return
     end
     ib:SetTitle("Join the Mercenary Guild")
-    ib:SetMsg("[DEVMSG] The quest status is: ".. q_mgr_1:GetStatus() .."\n\n")
+    ib:SetMsg("The quest status is: ".. q_mgr_1:GetStatus() .."\n\n")
     if q_mgr_1:GetStatus() ~= game.QSTAT_SOLVED then
         ib:AddMsg("Where is my helm???\n\nCome back if you have found it!\n")
         ib:AddQuestChecklist(q_mgr_1)
         ib:SetButton("Back", "hi") 
     else
-        ib:AddMsg("Very well done! You found the helm.\n\nYou can keep the helm.\nIt will protect you well.\n")
+        ib:AddMsg("Very well done! You found the helm.\n")
+        ib:AddMsg("\nYou can keep the helm.\n")
+        ib:AddMsg("It will protect you well.\n")
         ib:SetDesc("Join the Mercenary Guild and take the Helm.", 0, 0, 0, 0)
         quest_icons1()
         ib:AddQuestChecklist(q_mgr_1)
@@ -114,7 +119,6 @@ local function topCheckQ1()
     end
     pl:Interface(1, ib:Build())
 end
-
 -- done: finish quest and give reward
 local function topFinishQ1()
     if q_mgr_1:GetStatus() ~= game.QSTAT_SOLVED then
@@ -130,7 +134,8 @@ local function topFinishQ1()
         pl:JoinGuild(guild_tag, game.SKILLGROUP_PHYSIQUE, 100, game.SKILLGROUP_AGILITY, 100, game.SKILLGROUP_WISDOM, 100)
         setGuild()
         ib:SetTitle("Welcome Mercenary!")
-        ib:SetMsg("Very well done!\n\nYou are now a member of the Mercenary Guild!")
+        ib:SetMsg("Very well done!\n")
+        ib:AddMsg("\nYou are now a member of the Mercenary Guild!")
         ib:SetButton("Ok", "hi") 
         pl:Interface(1, ib:Build())
     end
@@ -138,11 +143,12 @@ end
 
 local function topAskjoinG1()
     if guild_stat ~= game.GUILD_OLD then
-        topicDefault()
-        return
+    topicDefault()
+    return
     end
     ib:SetTitle("Rejoin our Guild?")
-    ib:SetMsg("You really want rejoin our guild?\n\nWe would be proud to have you back in our ranks!")
+    ib:SetMsg("You really want rejoin our guild?\n")
+    ib:AddMsg("\nWe would be proud to have you back in our ranks!")
     ib:SetAccept(nil, "rejoing1") 
     ib:SetDecline(nil, "hi") 
     pl:Interface(1, ib:Build())
@@ -150,36 +156,47 @@ end
 
 local function topRejoinG1()
     if guild_stat ~= game.GUILD_OLD then
-        topicDefault()
-        return
+    topicDefault()
+    return
     end
     pl:Sound(0, 0, 2, 0)
     pl:JoinGuild(guild_tag)
     setGuild()
     ib:SetTitle("Welcome Back!")
-    ib:SetMsg("Welcome back to our guild!")
+    ib:SetMsg("\nWelcome back to our guild!")
     ib:SetButton("Ok", "hi") 
     pl:Interface(1, ib:Build())
 end
 
 local function topTroops()
     ib:SetTitle("The Mercenary Troops")
-    ib:SetMsg("We, as part of the the Thraal army corps, are invading the abandoned areas after the defeat of Moroch.\n\n")
-    ib:AddMsg("Well, the chronomancers ensured us after they created the portal that we are still ")
-    ib:AddMsg("in the galactic main sphere.\n\n")
-    ib:AddMsg("But it seems to me that these lands have many wormholes to other places...\n\n")
-    ib:AddMsg("Perhaps the long time under Morochs influence has weakened the borders between the planes. ")
+    ib:SetMsg("\nWe, as part of the the Thraal army corps, are invading the abandoned areas after the defeat of Moroch.\n")
+    ib:AddMsg("\nWell, the chronomancers ensured us after they created the portal that we are still in the galactic main sphere.\n")
+    ib:AddMsg("\nBut it seems to me that these lands have many wormholes to other places...\n")
+    ib:AddMsg("\nPerhaps the long time under Morochs influence has weakened the borders between the planes. ")
     ib:AddMsg("You should ask ^Jahrlen^ about it.")
+    ib:AddMsg("\n\nYou should also talk to our senior members, like ^Chereth^ downstairs, ")
+    ib:AddMsg("they can provide valuable assistance to you.\n")
     ib:SetButton("Ok", "hi") 
     pl:Interface(1, ib:Build())
 end
 
 local function topJahrlen()
     ib:SetTitle("Jahrlen the Chronomancer")
-    ib:SetMsg("Jahrlen is our guild mage.\n\nWell, normally we don't have a guild mage.\n")
-    ib:AddMsg("But we are at war here and he was assigned to us.\n\n")
-    ib:AddMsg("In fact, he is a high level chronomancer and we are honored to have him help us.\n\n")
-    ib:AddMsg("He is in our guild rooms. Talk to him when you meet him! He often has tasks and quests for newbies.")
+    ib:SetMsg("\nJahrlen is our guild mage.\n")
+    ib:AddMsg("\nWell, normally we don't have a guild mage.")
+    ib:AddMsg("\nBut we are at war here and he was assigned to us.\n")
+    ib:AddMsg("\nIn fact, he is a high level chronomancer and we are honored to have him help us.\n")
+    ib:AddMsg("\nHe is in our guild rooms or maybe in one of our branch guildhalls.\n")
+    ib:AddMsg("\nTalk to him when you meet him! He often has tasks and quests for newbies.\n")
+    ib:SetButton("Ok", "hi") 
+    pl:Interface(1, ib:Build())
+end
+
+local function topChereth()
+    ib:SetTitle("Supply Chief Chereth")
+    ib:SetMsg("\nFormer Achery Commander Chereth is our Supply Chief.\n")
+    ib:AddMsg("\nAlthough she was seriously wounded in battle, she is still a great expert in archery.\n")
     ib:SetButton("Ok", "hi") 
     pl:Interface(1, ib:Build())
 end
@@ -192,11 +209,14 @@ if q_mgr_1:GetStatus() < game.QSTAT_DONE then
     tl:AddTopics("acceptq1", topAcceptQ1) 
     tl:AddTopics("checkq1", topCheckQ1)
     tl:AddTopics("finishq1", topFinishQ1)
-end 
+end
+ 
 if guild_stat == game.GUILD_OLD then
     tl:AddTopics("askjoing1", topAskjoinG1)
     tl:AddTopics("rejoing1", topRejoinG1)
 end
+
 tl:AddTopics("troops", topTroops)
 tl:AddTopics("jahrlen", topJahrlen)
+tl:AddTopics("chereth", topChereth)
 tl:CheckMessage(event)

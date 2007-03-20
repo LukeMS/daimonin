@@ -2731,6 +2731,11 @@ name kobold clan chief
 type 83
 wis 2
 level 3
+arch quest_trigger
+name Ogre Chief Frah'aks Letter
+sub_type 3
+last_heal 1
+end
 end
 end
 arch floor_grit4a
