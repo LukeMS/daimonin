@@ -11,12 +11,17 @@ ib:SetHeader(me, me.name)
 local sum
 local spell
 
+-- Note: "cause light wounds" is now taught through a quest in the village (Endar)
+--       so teaching for payment is removed here. The code is however left in,
+--       as a prototype should teaching other spells for payment needs to be added later.
+--       Just the link is commented out.
+
 local function topicDefault()
     ib:SetTitle("The Church of the Tabernacle")
     ib:SetMsg("Hello! I am " .. me.name ..".\n\nWelcome to the church of the Tabernacle!\n\n")
     ib:AddMsg("If you are confused by my services, I can ^explain^ it.\nYou need some of our services?")
     ib:AddLink("Teach Minor Healing", "teach healing")
-    ib:AddLink("Teach Cause Light Wounds", "teach wounds")
+--    ib:AddLink("Teach Cause Light Wounds", "teach wounds")
     ib:AddLink("", "")
     ib:AddLink("Remove Death Sickness", "cast sick")
     ib:AddLink("Remove Depletion", "cast deplete")
