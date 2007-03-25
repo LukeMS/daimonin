@@ -4827,7 +4827,7 @@
     Hence, when you create a new ammunition class, choose an
     intuitive name like "missiles", "spirit bolts" - whatever.
   </attribute>
-  <attribute arch="sp" editor="shooting speed" type="int">
+  <attribute arch="last_grace" editor="shooting speed" type="int">
   After shooting the player can't do a 2nd shoot for some time.
   This value + the arrow shooting delay (different arrows can have
   different delay) will terminate the time the player must wait.

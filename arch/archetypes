@@ -732,6 +732,102 @@ maxsp 1
 hp 20
 container 1
 end
+Object portcullis_open
+name portcullis
+type 91
+editor_folder connect/gates
+layer 5
+no_teleport 1
+attack_impact 100
+level 1
+no_pick 1
+face portcullis.114
+animation portcullis_open
+direction 1
+is_turnable 1
+pass_thru 1
+anim_speed 0
+is_animated 0
+wc 0
+dam 5
+maxsp 1
+ac 1
+end
+Object portcullis_closed
+name portcullis
+type 91
+editor_folder connect/gates
+no_teleport 1
+layer 5
+level 1
+no_pick 1
+face portcullis.111
+animation portcullis_closed
+anim_speed 0
+direction 1
+state 7
+is_turnable 1
+is_animated 0
+no_pass 1
+wc 7
+maxsp 0
+dam 5
+attack_impact 100
+ac 1
+pass_thru 1
+end
+Object portcullisTrg
+name gate
+type 26
+editor_folder connect/gates
+attack_impact 100
+layer 5
+level 1
+no_pick 1
+no_teleport 1
+face portcullis.111
+animation portcullisTrg
+is_turnable 1
+direction 1
+state 7
+anim_speed 0
+is_animated 0
+no_pass 1
+pass_thru 1
+wc 7
+ac 1
+maxsp 0
+dam 1
+maxhp 20
+hp 20
+end
+Object portcullisTrg_open
+name gate
+type 26
+editor_folder connect/gates
+attack_impact 100
+layer 5
+level 1
+no_pick 1
+no_teleport 1
+pass_thru 1
+face portcullis.114
+animation portcullisTrg_open
+is_turnable 1
+direction 1
+state 0
+anim_speed 0
+is_animated 0
+last_heal 1
+wc 0
+ac 1
+sp 0
+dam 1
+maxhp 20
+maxsp 1
+hp 20
+container 1
+end
 Object pit_closed
 name pit
 type 94
@@ -3094,6 +3190,158 @@ no_teleport 1
 layer 2
 no_pick 1
 end
+Object border_lava_n1
+name lavaborder
+type 28
+editor_folder floors/fmasks
+face border_lava_n1.101
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object border_lava_s1
+name lavaborder
+type 28
+editor_folder floors/fmasks
+face border_lava_s1.101
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object border_lava_e1
+name lavaborder
+type 28
+editor_folder floors/fmasks
+face border_lava_e1.101
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object border_lava_w1
+name lavaborder
+type 28
+editor_folder floors/fmasks
+face border_lava_w1.101
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object border_lava_ne1
+name lavaborder
+type 28
+editor_folder floors/fmasks
+face border_lava_ne1.101
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object border_lava_ne21
+name lavaborder
+type 28
+editor_folder floors/fmasks
+face border_lava_ne2.101
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object border_lava_se1
+name lavaborder
+type 28
+editor_folder floors/fmasks
+face border_lava_se1.101
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object border_lava_se2
+name lavaborder
+type 28
+editor_folder floors/fmasks
+face border_lava_se2.101
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object border_lava_nw1
+name lavaborder
+type 28
+editor_folder floors/fmasks
+face border_lava_nw1.101
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object border_lava_nw2
+name lavaborder
+type 28
+editor_folder floors/fmasks
+face border_lava_nw2.101
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object border_lava_sw1
+name lavaborder
+type 28
+editor_folder floors/fmasks
+face border_lava_sw1.101
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object border_lava_sw2
+name lavaborder
+type 28
+editor_folder floors/fmasks
+face border_lava_sw2.101
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object fmask_lava_wall_n
+name lava_wall_border
+type 28
+editor_folder floors/fmasks
+face fmask_lava_wall_n.101
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object fmask_lava_wall_w
+name lava_wall_border
+type 28
+editor_folder floors/fmasks
+face fmask_lava_wall_w.101
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object fmask_lava_wall.151
+name lavawall
+type 77
+editor_folder floors/fmasks
+face fmask_lava_wall.151
+animation fmask_lava_wall.151
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 7
+end
+Object fmask_lava_blob
+name lavablob
+type 79
+editor_folder floors/fmasks
+face fmask_lava_blob.101
+layer 5
+glow_radius 6
+animation fmask_lava_blob
+is_animated 1
+anim_speed 3
+speed 1
+no_pick 1
+end
 Object reed_sm1
 name reed
 type 28
@@ -4383,6 +4631,50 @@ face knot_4d.111
 no_teleport 1
 layer 2
 no_pick 1
+end
+Object floor_lava_1
+name lava
+type 71
+editor_folder floors/lava
+face floor_lava_1.101
+layer 1
+no_teleport 1
+terrain_type 8
+no_pick 1
+no_pass 1
+end
+Object floor_lava_2
+name lava
+type 71
+editor_folder floors/lava
+face floor_lava_2.101
+layer 1
+no_teleport 1
+terrain_type 8
+no_pick 1
+no_pass 1
+end
+Object floor_lava_3
+name lava
+type 71
+editor_folder floors/lava
+face floor_lava_3.101
+layer 1
+no_teleport 1
+terrain_type 8
+no_pick 1
+no_pass 1
+end
+Object floor_lava_4
+name lava
+type 71
+editor_folder floors/lava
+face floor_lava_4.101
+layer 1
+no_teleport 1
+terrain_type 8
+no_pick 1
+no_pass 1
 end
 Object border_top_n1
 name border
@@ -6648,6 +6940,42 @@ editor_folder floors/swamp
 face swamp1m10.101
 no_teleport 1
 layer 2
+no_pick 1
+end
+Object floor_volcano_1
+name floor
+type 71
+editor_folder floors/volcano
+face floor_volcano_1.101
+layer 1
+terrain_type 1
+no_pick 1
+end
+Object floor_volcano_2
+name floor
+type 71
+editor_folder floors/volcano
+face floor_volcano_2.101
+layer 1
+terrain_type 1
+no_pick 1
+end
+Object floor_volcano_3
+name floor
+type 71
+editor_folder floors/volcano
+face floor_volcano_3.101
+layer 1
+terrain_type 1
+no_pick 1
+end
+Object floor_volcano_4
+name floor
+type 71
+editor_folder floors/volcano
+face floor_volcano_4.101
+layer 1
+terrain_type 1
 no_pick 1
 end
 Object lo_floor_water1
@@ -12984,6 +13312,8 @@ name bow archery
 type 43
 editor_folder intern
 face skill.101
+last_grace 0
+wc 0
 sub_type 0
 item_quality 100
 item_condition 100
@@ -13005,6 +13335,8 @@ name sling archery
 type 43
 editor_folder intern
 face skill.101
+last_grace 0
+wc 0
 sub_type 0
 sys_object 1
 no_drop 1
@@ -13027,6 +13359,8 @@ type 43
 editor_folder intern
 sub_type 0
 face skill.101
+last_grace 0
+wc 0
 sys_object 1
 item_quality 100
 item_condition 100
@@ -15469,6 +15803,21 @@ container 250000
 weapon_speed 1.5
 value 5
 end
+Object kettle
+name kettle
+type 122
+editor_folder items/container
+face kettle.101
+layer 3
+identified 1
+no_pick 1
+material 2
+material_real 65
+weight 800
+container 2500
+weapon_speed 1.0
+value 25
+end
 Object desk1.111
 name desk
 type 122
@@ -17337,6 +17686,20 @@ editor_folder items/organic
 layer 3
 identified 1
 face head_ant_queen.101
+item_quality 100
+item_condition 100
+material_real -1
+material 32
+weight 450
+value 120
+end
+Object tail_rat
+name rat's tail
+type 86
+editor_folder items/organic
+layer 3
+identified 1
+face tail_rat.101
 item_quality 100
 item_condition 100
 material_real -1
@@ -20424,9 +20787,6 @@ editor_folder items/weapon
 layer 3
 race arrows
 face arrow.101
-last_grace 7
-dam 30
-wc 0
 last_sp 5
 attack_pierce 100
 sub_type 1
@@ -20435,7 +20795,7 @@ anim_speed 1
 is_animated 0
 is_turnable 1
 nrof 1
-weight 75
+weight 15
 value 20
 material 16
 material_real 257
@@ -20447,9 +20807,6 @@ editor_folder items/weapon
 layer 3
 race crossbow bolts
 attack_cleave 100
-last_grace 8
-dam 40
-wc 0
 last_sp 4
 sub_type 2
 face bolt.101
@@ -20458,7 +20815,7 @@ anim_speed 1
 is_animated 0
 is_turnable 1
 nrof 1
-weight 95
+weight 17
 value 20
 material 2
 material_real 65
@@ -20470,9 +20827,6 @@ editor_folder items/weapon
 race sling stones
 layer 3
 face sstone.101
-last_grace 7
-dam 30
-wc 0
 last_sp 4
 attack_impact 100
 animation sstone
@@ -20481,7 +20835,7 @@ is_animated 0
 is_turnable 1
 sub_type 3
 nrof 1
-weight 85
+weight 12
 value 15
 material 64
 material_real 385
@@ -20492,9 +20846,11 @@ type 14
 editor_folder items/weapon
 layer 3
 race arrows
-wc 5
+dam 34
+wc 45
 last_sp 4
-sub_type 0
+last_grace 8
+sub_type 1
 item_level 7
 item_skill 1
 material 16
@@ -20502,7 +20858,6 @@ material_real 258
 face bow.101
 weight 1300
 value 450
-sp 6
 end
 Object bow_long
 name long bow
@@ -20510,17 +20865,18 @@ type 14
 editor_folder items/weapon
 layer 3
 race arrows
-wc 6
+last_grace 8
+dam 36
+wc 45
 item_level 19
 item_skill 1
 last_sp 5
-sub_type 0
+sub_type 1
 material 16
 material_real 258
 face bow_long.101
 weight 1700
 value 1450
-sp 7
 end
 Object bow_short
 name short bow
@@ -20528,15 +20884,16 @@ type 14
 editor_folder items/weapon
 layer 3
 race arrows
-wc 4
+last_grace 8
+dam 32
+wc 45
 last_sp 4
-sub_type 0
+sub_type 1
 material 16
 material_real 258
 face bow_short.101
 weight 1300
 value 350
-sp 5
 end
 Object crossbow
 name crossbow
@@ -20544,15 +20901,16 @@ type 14
 editor_folder items/weapon
 layer 3
 race crossbow bolts
-sub_type 1
+sub_type 2
 item_level 7
 item_skill 1
 material 16
 material_real 258
 face crossbow.101
 weight 2500
-sp 7
-wc 5
+last_grace 10
+dam 44
+wc 45
 last_sp 5
 value 450
 end
@@ -20562,15 +20920,16 @@ type 14
 editor_folder items/weapon
 layer 3
 race crossbow bolts
-sub_type 1
+sub_type 2
 item_level 19
 item_skill 1
 material 16
 material_real 258
 face crossbow_large.101
 weight 4250
-sp 8
-wc 6
+last_grace 11
+dam 46
+wc 45
 last_sp 5
 value 1450
 end
@@ -20580,13 +20939,14 @@ type 14
 editor_folder items/weapon
 layer 3
 race crossbow bolts
-sub_type 1
+sub_type 2
 material 16
 material_real 258
 face crossbow_small.101
 weight 1250
-sp 6
-wc 4
+dam 42
+last_grace 10
+wc 45
 last_sp 4
 value 250
 end
@@ -20596,17 +20956,17 @@ type 14
 editor_folder items/weapon
 layer 3
 race sling stones
-sub_type 2
+sub_type 3
 material 8
 material_real 193
 item_level 7
 item_skill 1
 face sling.101
+dam 34
 wc 5
 last_sp 4
 weight 300
 value 350
-sp 5
 end
 Object sling_heavy
 name heavy sling
@@ -20614,17 +20974,18 @@ type 14
 editor_folder items/weapon
 layer 3
 race sling stones
-sub_type 2
+sub_type 3
 item_level 19
 item_skill 1
 material 8
 material_real 193
 face sling_heavy.101
-wc 6
+last_grace 8
+dam 36
+wc 45
 last_sp 5
 weight 400
 value 850
-sp 6
 end
 Object sling_small
 name small sling
@@ -20632,15 +20993,16 @@ type 14
 editor_folder items/weapon
 layer 3
 race sling stones
-sub_type 2
+sub_type 3
 material 8
 material_real 193
 face sling_small.101
-wc 4
+last_grace 8
+dam 30
+wc 45
 last_sp 3
 weight 250
 value 250
-sp 4
 end
 Object sling_staff
 name staff sling
@@ -20648,13 +21010,15 @@ type 14
 editor_folder items/weapon
 layer 3
 race sling stones
-sub_type 2
+sub_type 3
 item_level 19
 item_skill 1
 material 8
 material_real 193
 face sling_staff.101
-wc 6
+last_grace 8
+dam 32
+wc 45
 last_sp 5
 weight 1700
 value 950
@@ -20666,17 +21030,18 @@ type 14
 editor_folder items/weapon
 layer 3
 race sling stones
-sub_type 2
+sub_type 3
 material 8
 material_real 193
 item_level 7
 item_skill 1
 face slingshot.101
-wc 2
+last_grace 8
+dam 26
+wc 40
 last_sp 4
 weight 550
 value 200
-sp 5
 end
 Object ball
 name ball
@@ -20687,9 +21052,10 @@ layer 3
 material_real 193
 material 8
 value 3
-weight 150
+weight 15
 weapon_speed 2.5
 last_grace 13
+wc 99
 last_sp 7
 dam 0
 sub_type 132
@@ -20706,10 +21072,10 @@ editor_folder items/weapon
 race rock
 face t_axe.101
 layer 3
-weapon_speed 2.5
 attack_cleave 100
-dam 30
-last_grace 11
+dam 32
+wc 45
+last_grace 10
 last_sp 7
 nrof 1
 sub_type 131
@@ -20720,7 +21086,7 @@ is_turnable 1
 is_thrown 1
 material 2
 material_real 65
-weight 220
+weight 22
 value 35
 end
 Object t_hammer
@@ -20730,11 +21096,11 @@ editor_folder items/weapon
 race rock
 layer 3
 face hammer_2.101
-weapon_speed 2.5
 attack_impact 100
-last_grace 11
+dam 32
+wc 45
+last_grace 10
 last_sp 7
-dam 30
 nrof 1
 sub_type 128
 animation t_hammer
@@ -20744,7 +21110,7 @@ is_turnable 1
 is_thrown 1
 material 80
 material_real 65
-weight 250
+weight 22
 value 35
 end
 Object t_dagger
@@ -20754,10 +21120,10 @@ editor_folder items/weapon
 race rock
 layer 3
 face t_dagger.101
-weapon_speed 2.5
 attack_pierce 100
-dam 30
-last_grace 11
+dam 32
+wc 45
+last_grace 10
 last_sp 7
 nrof 1
 sub_type 130
@@ -20768,7 +21134,7 @@ is_turnable 1
 is_thrown 1
 material 2
 material_real 65
-weight 200
+weight 20
 value 35
 end
 Object starsdavid2
@@ -20778,10 +21144,10 @@ editor_folder items/weapon
 face starsofdavid.101
 race rock
 layer 3
-weapon_speed 2.5
 attack_slash 100
-dam 42
-last_grace 11
+dam 36
+wc 45
+last_grace 10
 last_sp 7
 nrof 1
 sub_type 129
@@ -20792,7 +21158,7 @@ is_turnable 1
 is_thrown 1
 material 2
 material_real 65
-weight 220
+weight 20
 value 75
 end
 Object starsdavid
@@ -20802,10 +21168,10 @@ editor_folder items/weapon
 face starsdavid.101
 race rock
 layer 3
-weapon_speed 2.5
 attack_slash 100
-dam 33
-last_grace 11
+dam 34
+wc 45
+last_grace 10
 last_sp 7
 nrof 1
 sub_type 129
@@ -20816,7 +21182,7 @@ is_turnable 1
 is_thrown 1
 material 2
 material_real 65
-weight 200
+weight 20
 value 35
 end
 Object t_star
@@ -20827,9 +21193,9 @@ race rock
 face t_star.101
 layer 3
 attack_slash 100
-dam 42
+dam 32
 wc 45
-last_grace 22
+last_grace 10
 last_sp 7
 nrof 1
 sub_type 129
@@ -20840,7 +21206,7 @@ is_turnable 1
 is_thrown 1
 material 2
 material_real 65
-weight 50
+weight 20
 value 1
 end
 Object snow_ball
@@ -20850,10 +21216,10 @@ editor_folder items/weapon
 face snowball.101
 race rock
 layer 3
-weapon_speed 4.0
 attack_impact 100
 dam 10
-last_grace 11
+wc 55
+last_grace 8
 last_sp 7
 sub_type 132
 nrof 1
@@ -20861,7 +21227,7 @@ animation snow_ball
 anim_speed 5
 is_animated 0
 is_thrown 1
-weight 300
+weight 30
 value 1
 end
 Object snow_ball2
@@ -20871,11 +21237,12 @@ editor_folder items/weapon
 face snowball2.101
 race rock
 layer 3
-weapon_speed 3.0
 attack_impact 100
 last_grace 15
 last_sp 7
+weight 100
 dam 50
+wc 35
 sub_type 132
 nrof 1
 weight 120000
@@ -20892,11 +21259,11 @@ editor_folder items/weapon
 race rock
 layer 3
 face t_boulder.101
-weapon_speed 2.5
 attack_impact 100
-last_grace 13
 last_sp 7
 dam 30
+wc 45
+last_grace 14
 sub_type 132
 nrof 1
 weight 20000
@@ -20915,11 +21282,11 @@ editor_folder items/weapon
 race rock
 layer 3
 face t_lboulder.101
-weapon_speed 3.0
 attack_impact 100
-last_grace 15
+last_grace 18
 last_sp 7
 dam 50
+wc 48
 sub_type 132
 nrof 1
 weight 120000
@@ -20937,10 +21304,10 @@ editor_folder items/weapon
 race rock
 layer 3
 face t_rock.101
-weapon_speed 4.0
 attack_impact 100
 dam 10
-last_grace 11
+last_grace 10
+wc 40
 last_sp 7
 sub_type 132
 nrof 1
@@ -21348,6 +21715,19 @@ editor_folder misc/signs
 face sign.111
 layer 4
 no_pick 1
+end
+Object bluebottles
+name bluebottles
+type 79
+editor_folder misc/swarms
+face bluebottles.101
+layer 7
+no_pick 1
+is_animated 1
+anim_speed 1
+speed -0.1
+speed_left -1.0
+animation bluebottles
 end
 Object chtree_big5b
 name tree
@@ -32738,6 +33118,77 @@ face snowman_sm.101
 no_pick 1
 layer 4
 end
+Object obstacle_volcano_1
+name volcano obstacle
+type 79
+editor_folder outdoor/natural
+face obstacle_volcano_1.101
+material 64
+layer 5
+no_pick 1
+no_pass 1
+end
+Object obstacle_volcano_2
+name volcano obstacle
+type 79
+editor_folder outdoor/natural
+face obstacle_volcano_2.101
+material 64
+layer 5
+no_pick 1
+no_pass 1
+animation obstacle_volcano_2
+is_animated 1
+anim_speed 3
+speed 1
+end
+Object obstacle_volcano_3
+name volcano obstacle
+type 79
+editor_folder outdoor/natural
+face obstacle_volcano_3.101
+material 64
+glow_radius 3
+layer 5
+no_pick 1
+no_pass 1
+end
+Object obstacle_volcano_4
+name volcano obstacle
+type 79
+editor_folder outdoor/natural
+face obstacle_volcano_4.101
+material 64
+layer 5
+no_pick 1
+no_pass 1
+end
+Object obstacle_volcano_5
+name volcano obstacle
+type 79
+editor_folder outdoor/natural
+face obstacle_volcano_5.101
+material 64
+layer 5
+no_pick 1
+no_pass 1
+glow_radius 3
+animation obstacle_volcano_5
+is_animated 1
+anim_speed 3
+speed 1
+end
+Object obstacle_volcano_6
+name volcano obstacle
+type 79
+editor_folder outdoor/natural
+face obstacle_volcano_6.101
+material 64
+layer 5
+glow_radius 3
+no_pick 1
+no_pass 1
+end
 Object cactus
 name cactus
 type 79
@@ -37697,6 +38148,24 @@ layer 5
 no_pick 1
 no_pass 1
 end
+Object fwall_fstone2_w.131
+name wall
+type 77
+editor_folder walls/fwalls
+face fwall_fstone2_w.131
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_fstone2_w.151
+name wall
+type 77
+editor_folder walls/fwalls
+face fwall_fstone2_w.151
+layer 5
+no_pick 1
+no_pass 1
+end
 Object fwall_fstone2a
 name wall
 type 77
@@ -37806,6 +38275,94 @@ blocksview 1
 layer 5
 no_pick 1
 no_pass 1
+end
+Object fwall_lava1a
+name wall
+type 77
+editor_folder walls/fwalls
+face fwall_lava1a.d.101
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+glow_radius 3
+end
+Object fwall_lava1b
+name wall
+type 77
+editor_folder walls/fwalls
+face fwall_lava1b.d.101
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+glow_radius 3
+end
+Object fwall_lava1c
+name wall
+type 77
+editor_folder walls/fwalls
+face fwall_lava1c.d.101
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+glow_radius 3
+end
+Object fwall_lava1d
+name wall
+type 77
+editor_folder walls/fwalls
+face fwall_lava1d.d.101
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+glow_radius 4
+end
+Object fwall_lava1e
+name wall
+type 77
+editor_folder walls/fwalls
+face fwall_lava1e.d.101
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+glow_radius 4
+end
+Object fwall_lava1f
+name wall
+type 77
+editor_folder walls/fwalls
+face fwall_lava1f.d.101
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+glow_radius 4
+end
+Object fwall_lava1g
+name wall
+type 77
+editor_folder walls/fwalls
+face fwall_lava1g.d.101
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+glow_radius 5
+end
+Object fwall_lava1h
+name wall
+type 77
+editor_folder walls/fwalls
+face fwall_lava1h.d.101
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+glow_radius 5
 end
 Object fwall_marble1a
 name wall

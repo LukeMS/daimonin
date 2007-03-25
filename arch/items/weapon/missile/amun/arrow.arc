@@ -3,9 +3,6 @@ name arrow
 layer 3
 race arrows
 face arrow.101
-last_grace 7
-dam 30
-wc 0
 last_sp 5
 attack_pierce 100
 type 13
@@ -26,7 +23,7 @@ anim_speed 1
 is_animated 0
 is_turnable 1
 nrof 1
-weight 75
+weight 15
 value 20
 material 16
 material_real 257

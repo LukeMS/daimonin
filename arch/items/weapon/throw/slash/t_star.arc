@@ -4,9 +4,9 @@ race rock
 face t_star.101
 layer 3
 attack_slash 100
-dam 42
+dam 32
 wc 45
-last_grace 22
+last_grace 10
 last_sp 7
 nrof 1
 type 13
@@ -29,6 +29,6 @@ is_turnable 1
 is_thrown 1
 material 2
 material_real 65
-weight 50
+weight 20
 value 1
 end
