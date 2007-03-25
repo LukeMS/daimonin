@@ -16,16 +16,31 @@ require("data_store")
 -- A couple of extensions to the string library
 --
 
-function string.capitalize(s, b_keep)
-    local s1, s2 = string.sub(s,1,1), string.sub(s,2)
-    if s2 then
-        if not b_keep then
-            s2 = string.lower(s2)
-        end
-        return string.upper(s1) .. s2
-    else
-        return string.upper(s1)
+function string.capitalize(s, b_keep, b_all)
+    local t = {}
+    if type(s) == "string" then
+        table.insert(t, s)
+    elseif type(s) == "table" then
+        t = s
     end
+    local words = table.getn(t)
+    if not b_all then
+        words = 1
+    end
+    for i= 1, words do
+        if type(t[i]) == "string" and t[i] ~= "" then
+            local s1, s2 = string.sub(t[i],1,1), string.sub(t[i],2)
+            if s2 then
+                if not b_keep then
+                    s2 = string.lower(s2)
+                end
+                t[i] = string.upper(s1) .. s2
+            else
+                t[i] = string.upper(s1)
+            end
+        end
+    end
+    return table.concat(t," ")
 end
 
 -- string.split() function
