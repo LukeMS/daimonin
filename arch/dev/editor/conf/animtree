@@ -43,6 +43,7 @@
 /indoor/artificial/blood/spatter_light/blood_spatter_light_a_wmask
 /indoor/artificial/blood/spatter_medium/blood_spatter_medium_a_fmask
 /indoor/artificial/blood/spatter_medium/blood_spatter_medium_a_wmask
+/misc/swarms/bluebottles/bluebottles
 /items/weapon/missile/amun/bolt
 /mobs/demon/bone_devil/bone_devil
 /items/organic/drinkable/bottle_soul
@@ -191,6 +192,8 @@
 /indoor/artificial/masks_wall/flags/flag_05
 /indoor/artificial/masks_wall/flags/flag_06
 /indoor/artificial/masks_wall/flags/flag_07
+/floors/fmasks/lava/fmask_lava_blob
+/floors/fmasks/lava/fmask_lava_wall.151
 /outdoor/artificial/ruin/fmask_ruin1a.111
 /misc/fog/fog
 /misc/fog/fog_glow1
@@ -331,6 +334,8 @@
 /mobs/human/nobles/noble
 /outdoor/artificial/sign_big/npsign
 /mobs/human/pirates/oarman
+/outdoor/natural/deco_lava/obstacle_volcano_2
+/outdoor/natural/deco_lava/obstacle_volcano_5
 /mobs/beholder/oclunus/oclunus
 /mobs/giants/ogre/ogre
 /items/light/flame/open_flame
@@ -403,6 +408,10 @@
 /connect/exits/portal_big
 /connect/exits/portal_red
 /connect/exits/portal_yellow
+/connect/gates/portcullisTrg
+/connect/gates/portcullisTrg_open
+/connect/gates/portcullis_closed
+/connect/gates/portcullis_open
 /indoor/artificial/masks_wall/kitchen/pot_wall.131
 /items/magic_tools/power_crystal
 /mobs/human/priests/priest_church
