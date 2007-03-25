@@ -2,6 +2,9 @@ Object skill_bow_archery
 name bow archery
 type 43
 face skill.101
+# last_grace = action timer adjustment
+last_grace 0
+wc 0
 sub_type 0
 item_quality 100
 item_condition 100

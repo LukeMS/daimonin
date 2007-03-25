@@ -3,11 +3,11 @@ race rock
 name boulder
 layer 3
 face t_boulder.101
-weapon_speed 2.5
 attack_impact 100
-last_grace 13
 last_sp 7
 dam 30
+wc 45
+last_grace 14
 type 13
 sub_type 132
 nrof 1

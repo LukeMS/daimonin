@@ -3,9 +3,6 @@ name sling stone
 race sling stones
 layer 3
 face sstone.101
-last_grace 7
-dam 30
-wc 0
 last_sp 4
 attack_impact 100
 anim
@@ -26,7 +23,7 @@ is_turnable 1
 type 13
 sub_type 3
 nrof 1
-weight 85
+weight 12
 value 15
 material 64
 material_real 385

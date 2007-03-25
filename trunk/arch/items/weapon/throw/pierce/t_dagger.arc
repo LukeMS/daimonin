@@ -3,10 +3,10 @@ name throwing dagger
 race rock
 layer 3
 face t_dagger.101
-weapon_speed 2.5
 attack_pierce 100
-dam 30
-last_grace 11
+dam 32
+wc 45
+last_grace 10
 last_sp 7
 nrof 1
 type 13
@@ -29,6 +29,6 @@ is_turnable 1
 is_thrown 1
 material 2
 material_real 65
-weight 200
+weight 20
 value 35
 end

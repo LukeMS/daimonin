@@ -3,6 +3,9 @@ name crossbow archery
 type 43
 sub_type 0
 face skill.101
+# last_grace = action timer adjustment
+last_grace 0
+wc 0
 sys_object 1
 item_quality 100
 item_condition 100

@@ -3,10 +3,10 @@ name snow ball
 face snowball.101
 race rock
 layer 3
-weapon_speed 4.0
 attack_impact 100
 dam 10
-last_grace 11
+wc 55
+last_grace 8
 last_sp 7
 type 13
 sub_type 132
@@ -26,6 +26,6 @@ mina
 anim_speed 5
 is_animated 0
 is_thrown 1
-weight 300
+weight 30
 value 1
 end

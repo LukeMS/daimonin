@@ -2,6 +2,9 @@ Object skill_sling_archery
 name sling archery
 type 43
 face skill.101
+# last_grace = action timer adjustment
+last_grace 0
+wc 0
 sub_type 0
 sys_object 1
 no_drop 1

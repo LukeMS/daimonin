@@ -3,11 +3,11 @@ name throwing hammer
 race rock
 layer 3
 face hammer_2.101
-weapon_speed 2.5
 attack_impact 100
-last_grace 11
+dam 32
+wc 45
+last_grace 10
 last_sp 7
-dam 30
 nrof 1
 type 13
 sub_type 128
@@ -29,6 +29,6 @@ is_turnable 1
 is_thrown 1
 material 80
 material_real 65
-weight 250
+weight 22
 value 35
 end
