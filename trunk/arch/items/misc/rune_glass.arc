@@ -9,10 +9,13 @@ rune_glass.004
 rune_glass.001
 rune_glass.001
 rune_glass.001
+rune_glass.001
+rune_glass.001
+rune_glass.001
 mina
 is_animated 1
 anim_speed 1
-speed -.25
+speed 1
 type 79
 layer 3
 material_real 65
