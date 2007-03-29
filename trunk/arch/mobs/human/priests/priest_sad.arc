@@ -1,7 +1,7 @@
 Object sadpriest
 name Sad Priest
 race human
-face sadpriest.121
+face sadpriest.161
 randomitems spells_priest;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
 layer 6

@@ -1,7 +1,7 @@
 Object guard
 name Guard
 race human
-face guard1.131
+face guard1.151
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
 layer 6

@@ -1,6 +1,6 @@
 Object drow_captain
 name Drow Captain
-face drow_captain.131
+face drow_captain.151
 race drow
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

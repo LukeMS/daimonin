@@ -1,7 +1,7 @@
 Object guard_pole
 name Guard
 race human
-face guard_pole.131
+face guard_pole.151
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
 layer 6

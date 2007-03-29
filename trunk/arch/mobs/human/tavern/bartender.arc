@@ -1,7 +1,7 @@
 Object bartender
 name Bartender
 race human
-face bartender.131
+face bartender.151
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
 layer 6

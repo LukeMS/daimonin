@@ -1,7 +1,7 @@
 Object traveller_parka
 name Traveller
 race human
-face traveller_parka.131
+face traveller_parka.151
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
 layer 6

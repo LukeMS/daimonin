@@ -1,7 +1,7 @@
 Object mage_old
 name Old Mage
 race human
-face mage_old.131
+face mage_old.151
 randomitems spells_mage;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
 layer 6

@@ -1,6 +1,6 @@
 Object drow_annihilator
 name Drow Annihilator
-face drow_annihilator.131
+face drow_annihilator.151
 race drow
 randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

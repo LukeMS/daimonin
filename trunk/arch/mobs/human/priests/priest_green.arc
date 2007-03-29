@@ -1,7 +1,7 @@
 Object priest_green
 name Priest
 race human
-face priest_green.131
+face priest_green.151
 randomitems spells_priest;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
 layer 6
