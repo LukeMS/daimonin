@@ -1,6 +1,6 @@
 Object dragon_red
 name Red Dragon
-face dragon_red.131
+face dragon_red.151
 race dragon
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
@@ -56,6 +56,12 @@ facings 25
 trans.101
 trans.101
 trans.101
+dragon_red.111
+dragon_red.112
+dragon_red.113
+dragon_red.121
+dragon_red.122
+dragon_red.123
 dragon_red.131
 dragon_red.132
 dragon_red.133
@@ -74,36 +80,36 @@ dragon_red.173
 dragon_red.181
 dragon_red.182
 dragon_red.183
-dragon_red.111
-dragon_red.112
-dragon_red.113
-dragon_red.121
-dragon_red.122
-dragon_red.123
-dragon_red.331
-dragon_red.332
-dragon_red.332
-dragon_red.341
-dragon_red.342
-dragon_red.342
-dragon_red.351
-dragon_red.352
-dragon_red.352
-dragon_red.361
-dragon_red.362
-dragon_red.362
-dragon_red.371
-dragon_red.372
-dragon_red.372
-dragon_red.381
-dragon_red.382
-dragon_red.382
+dragon_red.211
+dragon_red.212
+dragon_red.213
+dragon_red.221
+dragon_red.222
+dragon_red.223
+dragon_red.231
+dragon_red.232
+dragon_red.233
+dragon_red.241
+dragon_red.242
+dragon_red.243
+dragon_red.251
+dragon_red.252
+dragon_red.253
+dragon_red.261
+dragon_red.262
+dragon_red.263
+dragon_red.271
+dragon_red.272
+dragon_red.273
+dragon_red.281
+dragon_red.282
+dragon_red.283
 dragon_red.311
 dragon_red.312
-dragon_red.312
+dragon_red.313
 dragon_red.321
 dragon_red.322
-dragon_red.322
+dragon_red.323
 dragon_red.331
 dragon_red.332
 dragon_red.333
@@ -122,12 +128,6 @@ dragon_red.373
 dragon_red.381
 dragon_red.382
 dragon_red.383
-dragon_red.311
-dragon_red.312
-dragon_red.313
-dragon_red.321
-dragon_red.322
-dragon_red.323
 mina
 is_animated 1
 anim_speed 5
