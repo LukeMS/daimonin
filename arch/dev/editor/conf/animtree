@@ -351,7 +351,7 @@
 /mobs/demon/oty/oty
 /mobs/animals/owl/owl_snow
 /mobs/animals/owl/owl_snow_large
-/outdoor/artificial/people/pair_human
+/mobs/human/town/pair_human
 /mobs/animals/birds/parrot
 /mobs/human/thief/patron
 /mobs/human/peasant/peasant
@@ -478,6 +478,8 @@
 /mobs/human/pirates/ship_captain
 /connect/exits/shop_mat
 /gods/gods_lesser/shrine/shrine1.111
+/outdoor/artificial/sign_big/sign_generic
+/outdoor/artificial/sign_big/sign_pub
 /mobs/undead/skeleton/skel_fighter1/skel_fighter1
 /mobs/undead/skeleton/skel_fighter2/skel_fighter2
 /mobs/undead/skeleton/skel_fighter3/skel_fighter3

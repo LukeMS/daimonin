@@ -17544,7 +17544,7 @@ face rune_glass.001
 animation rune_glass
 is_animated 1
 anim_speed 1
-speed -.25
+speed 1
 layer 3
 material_real 65
 material 2
@@ -24581,7 +24581,7 @@ Object demon_armour
 name Armoured Demon
 type 80
 editor_folder mobs/demon
-face demon_armour.131
+face demon_armour.151
 race demon
 randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -24629,7 +24629,7 @@ Object demon_goat
 name Goat Demon
 type 80
 editor_folder mobs/demon
-face demon_goat.131
+face demon_goat.151
 race demon
 randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -24677,7 +24677,7 @@ Object demon_green
 name Green Demon
 type 80
 editor_folder mobs/demon
-face demon_green.131
+face demon_green.151
 race demon
 randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -24773,7 +24773,7 @@ Object demon_sfire
 name Shadow Fire Demon
 type 80
 editor_folder mobs/demon
-face demon_sfire.131
+face demon_sfire.151
 race demon
 randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -24821,7 +24821,7 @@ Object devil_lord
 name Devil Lord
 type 80
 editor_folder mobs/demon
-face devil_lord.131
+face devil_lord.151
 race demon
 randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -25208,7 +25208,7 @@ name Green Dragon
 type 80
 mpart_id 3
 editor_folder mobs/dragon
-face dragon_green.131
+face dragon_grn.151
 race dragon
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -25305,7 +25305,7 @@ name Red Dragon
 type 80
 mpart_id 3
 editor_folder mobs/dragon
-face dragon_red.131
+face dragon_red.151
 race dragon
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -25646,7 +25646,7 @@ Object elemental_ice
 name Ice Elemental
 type 80
 editor_folder mobs/elementals
-face elemental_ice.141
+face elemental_ice.151
 race elemental
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -26031,7 +26031,7 @@ Object cyclops
 name Cyclops
 type 80
 editor_folder mobs/giants
-face cyclops.131
+face cyclops.151
 race giant
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -28511,6 +28511,21 @@ is_animated 1
 anim_speed 4
 no_pick 1
 end
+Object pair_human
+name Lovebirds
+type 79
+editor_folder mobs/human
+face pair_human.131
+layer 5
+is_turnable 1
+is_animated 1
+anim_speed 4
+speed -0.025
+direction 5
+animation pair_human
+no_pass 1
+no_pick 1
+end
 Object woman_old
 name Old Woman
 type 80
@@ -28792,7 +28807,7 @@ Object krillen
 name Krillen
 type 80
 editor_folder mobs/insects
-face krillen.131
+face krillen.151
 race insect
 randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -28886,7 +28901,7 @@ Object spider
 name Giant Spider
 type 80
 editor_folder mobs/insects
-face spider.131
+face spider.151
 race insect
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -28932,7 +28947,7 @@ Object spider_widow
 name Giant Black Widow
 type 80
 editor_folder mobs/insects
-face spider_widow.131
+face spider_widow.151
 race insect
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -29793,7 +29808,7 @@ Object treant_evil
 name Evil Treant
 type 80
 editor_folder mobs/plants
-face treant_evil.131
+face treant_evil.151
 race tree
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -30847,7 +30862,7 @@ Object lich_lord
 name Lich Lord
 type 80
 editor_folder mobs/undead
-face lich_lord.131
+face lich_lord.151
 race lich
 randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -30955,7 +30970,7 @@ Object skel_fighter1
 name Skeleton Fighter
 type 80
 editor_folder mobs/undead
-face skel_fighter1.131
+face skel_fighter1.151
 race skeleton
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -31004,7 +31019,7 @@ Object skel_fighter2
 name Skeleton Fighter
 type 80
 editor_folder mobs/undead
-face skel_fighter2.131
+face skel_fighter2.151
 race skeleton
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -31053,7 +31068,7 @@ Object skel_fighter3
 name Skeleton Fighter
 type 80
 editor_folder mobs/undead
-face skel_fighter3.131
+face skel_fighter3.151
 race skeleton
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -31363,7 +31378,7 @@ Object zombie
 name Zombie
 type 80
 editor_folder mobs/undead
-face zombie.131
+face zombie.151
 race zombie
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -31754,21 +31769,6 @@ anim_speed 0
 is_turnable 1
 direction 1
 layer 5
-no_pick 1
-end
-Object pair_human
-name Lovebirds
-type 79
-editor_folder outdoor/artificial
-face pair_human.131
-layer 5
-is_turnable 1
-is_animated 1
-anim_speed 4
-speed -0.025
-direction 5
-animation pair_human
-no_pass 1
 no_pick 1
 end
 Object ped_magic1
@@ -32838,6 +32838,32 @@ type 98
 editor_folder outdoor/artificial
 face npsign.161
 animation npsign
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+layer 4
+no_pick 1
+end
+Object sign_generic
+name big sign ('a'pply to read)
+type 98
+editor_folder outdoor/artificial
+face sign_generic.111
+animation sign_generic
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+layer 4
+no_pick 1
+end
+Object sign_pub
+name big sign ('a'pply to read)
+type 98
+editor_folder outdoor/artificial
+face sign_pub.111
+animation sign_pub
 is_animated 0
 anim_speed 0
 is_turnable 1
