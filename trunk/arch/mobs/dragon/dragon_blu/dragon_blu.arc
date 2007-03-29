@@ -1,6 +1,6 @@
 Object dragon_blu
 name Blue Dragon
-face dragon_blu.231
+face dragon_blu.251
 race dragon
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

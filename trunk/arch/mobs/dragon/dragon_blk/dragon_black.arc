@@ -1,6 +1,6 @@
 Object dragon_black
 name Black Dragon 
-face dragon_blk.131
+face dragon_blk.151
 race dragon
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

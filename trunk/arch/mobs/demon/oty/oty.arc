@@ -1,6 +1,6 @@
 Object oty
 name Oty
-face oty.131
+face oty.151
 race demon
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

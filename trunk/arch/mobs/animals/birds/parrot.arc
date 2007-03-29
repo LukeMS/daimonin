@@ -1,6 +1,6 @@
 Object parrot
 name Parrot
-face parrot.131
+face parrot.151
 race bird
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

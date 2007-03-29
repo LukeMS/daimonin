@@ -1,6 +1,6 @@
 Object newt
 name Giant Newt
-face newt.131
+face newt.151
 race reptile
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

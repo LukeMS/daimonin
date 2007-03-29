@@ -1,6 +1,6 @@
 Object kobold
 name Kobold
-face kobold.131
+face kobold.151
 race kobold
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

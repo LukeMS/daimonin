@@ -1,6 +1,6 @@
 Object larva
 name Big Larva
-face larva.131
+face larva.151
 race larva
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

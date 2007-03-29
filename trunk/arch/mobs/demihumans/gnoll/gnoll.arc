@@ -1,6 +1,6 @@
 Object gnoll
 name Gnoll
-face gnoll.131
+face gnoll.151
 race gnoll
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

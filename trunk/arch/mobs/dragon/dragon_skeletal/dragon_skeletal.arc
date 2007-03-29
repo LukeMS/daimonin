@@ -1,6 +1,6 @@
 Object dragon_skeletal
 name Skeletal Dragon
-face dragon_skeletal.131
+face dragon_skeletal.151
 race dragon
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

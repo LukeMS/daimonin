@@ -1,6 +1,6 @@
 Object dog_wild
 name Wild Dog
-face dog_wild.131
+face dog_wild.151
 race dog
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

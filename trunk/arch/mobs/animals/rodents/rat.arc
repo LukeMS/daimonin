@@ -1,6 +1,6 @@
 Object rat
 name Big Rat
-face rat.131
+face rat.151
 race rat
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

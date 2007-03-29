@@ -1,6 +1,6 @@
 Object brnbat
 name Brown Bat
-face brnbat.131
+face brnbat.151
 race animal
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

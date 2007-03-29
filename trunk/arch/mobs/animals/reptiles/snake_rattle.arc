@@ -1,6 +1,6 @@
 Object rattle_snake
 name Rattle Snake
-face rattle_snake.131
+face rattle_snake.151
 race reptile
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

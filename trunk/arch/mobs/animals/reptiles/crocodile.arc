@@ -1,6 +1,6 @@
 Object crocodile
 name Crocodile
-face crocodile.131
+face crocodile.151
 race reptile
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

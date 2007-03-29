@@ -1,6 +1,6 @@
 Object oclunus
 name Oclunus
-face oclunus.131
+face oclunus.151
 race beholder
 randomitems spells_beholder;loot;wealth_normal&D67;loot_base&D15;loot_misc&d25
 mpart_id 3

@@ -1,6 +1,6 @@
 Object chicken_large
 name chicken
-face chicken_large.131
+face chicken_large.151
 race chicken
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

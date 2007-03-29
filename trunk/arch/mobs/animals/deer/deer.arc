@@ -1,6 +1,6 @@
 Object deer
 name Reindeer
-face deer.121
+face deer.161
 race deer
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
