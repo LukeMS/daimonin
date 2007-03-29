@@ -1,6 +1,6 @@
 Object dwarf_noble
 name Dwarf Noble
-face dwarf_noble.131
+face dwarf_noble.151
 race dwarf
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

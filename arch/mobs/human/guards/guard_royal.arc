@@ -1,7 +1,7 @@
 Object guard_royal
 name Royal Guard
 race human
-face guard_royal.131
+face guard_royal.151
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
 layer 6

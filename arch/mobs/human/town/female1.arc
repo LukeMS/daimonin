@@ -1,7 +1,7 @@
 Object female1
 name Woman
 race human
-face female1.131
+face female1.151
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
 layer 6

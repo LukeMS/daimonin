@@ -1,7 +1,7 @@
 Object peasant
 name Peasant
 race human
-face peasant.131
+face peasant.151
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
 layer 6

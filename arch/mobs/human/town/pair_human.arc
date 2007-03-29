@@ -1,6 +1,6 @@
 Object pair_human
 name Lovebirds
-face pair_human.131
+face pair_human.151
 layer 5
 type 79
 is_turnable 1

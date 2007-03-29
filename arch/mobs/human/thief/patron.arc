@@ -1,7 +1,6 @@
 Object patron
 name Patron
-face patron.131
-race human
+face patron.151
 randomitems skill_bow;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
 layer 6

@@ -1,7 +1,7 @@
 Object wizard_fm
 name Wizard
 race human
-face wizard_fm.131
+face wizard_fm.151
 randomitems spells_mage;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
 layer 6

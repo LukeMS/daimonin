@@ -1,7 +1,7 @@
 Object queen
 name Queen
 race human
-face queen.131
+face queen.151
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
 layer 6

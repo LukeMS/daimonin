@@ -1,7 +1,7 @@
 Object hobo_old
 name Old Hobo
 race human
-face hobo_old.131
+face hobo_old.151
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
 layer 6

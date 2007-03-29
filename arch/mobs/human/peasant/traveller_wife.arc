@@ -1,7 +1,7 @@
 Object traveller_wife
 name Traveller
 race human
-face traveller_wife.131
+face traveller_wife.151
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
 layer 6

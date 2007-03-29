@@ -1,6 +1,6 @@
 Object drow_guard
 name Drow Guard
-face drow_guard.131
+face drow_guard.151
 race drow
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

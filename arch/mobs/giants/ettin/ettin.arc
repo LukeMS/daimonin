@@ -1,6 +1,6 @@
 Object ettin
 name Ettin
-face ettin.131
+face ettin.151
 race giant
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
@@ -78,38 +78,6 @@ ettin.181
 ettin.182
 ettin.183
 ettin.184
-ettin.311
-ettin.312
-ettin.313
-ettin.314
-ettin.321
-ettin.322
-ettin.323
-ettin.324
-ettin.331
-ettin.332
-ettin.333
-ettin.334
-ettin.341
-ettin.342
-ettin.343
-ettin.344
-ettin.351
-ettin.352
-ettin.353
-ettin.354
-ettin.361
-ettin.362
-ettin.363
-ettin.364
-ettin.371
-ettin.372
-ettin.373
-ettin.374
-ettin.381
-ettin.382
-ettin.383
-ettin.384
 ettin.211
 ettin.212
 ettin.213
@@ -142,6 +110,38 @@ ettin.281
 ettin.282
 ettin.283
 ettin.284
+ettin.311
+ettin.312
+ettin.313
+ettin.314
+ettin.321
+ettin.322
+ettin.323
+ettin.324
+ettin.331
+ettin.332
+ettin.333
+ettin.334
+ettin.341
+ettin.342
+ettin.343
+ettin.344
+ettin.351
+ettin.352
+ettin.353
+ettin.354
+ettin.361
+ettin.362
+ettin.363
+ettin.364
+ettin.371
+ettin.372
+ettin.373
+ettin.374
+ettin.381
+ettin.382
+ettin.383
+ettin.384
 mina
 is_animated 1
 anim_speed 4

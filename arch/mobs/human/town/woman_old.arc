@@ -1,7 +1,7 @@
 Object woman_old
 name Old Woman
 race human
-face woman_old.131
+face woman_old.151
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
 layer 6

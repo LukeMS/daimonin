@@ -1,7 +1,7 @@
 Object childm2
 name Child
 race human
-face childm2.161
+face childm2.151
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
 layer 6
