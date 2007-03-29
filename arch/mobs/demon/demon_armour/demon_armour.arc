@@ -1,6 +1,6 @@
 Object demon_armour
 name Armoured Demon
-face demon_armour.131
+face demon_armour.151
 race demon
 randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
@@ -45,6 +45,12 @@ facings 25
 trans.101
 trans.101
 trans.101
+demon_armour.111
+demon_armour.112
+demon_armour.113
+demon_armour.121
+demon_armour.122
+demon_armour.123
 demon_armour.131
 demon_armour.132
 demon_armour.133
@@ -63,12 +69,12 @@ demon_armour.173
 demon_armour.181
 demon_armour.182
 demon_armour.183
-demon_armour.111
-demon_armour.112
-demon_armour.113
-demon_armour.121
-demon_armour.122
-demon_armour.123
+demon_armour.211
+demon_armour.212
+demon_armour.213
+demon_armour.221
+demon_armour.222
+demon_armour.223
 demon_armour.231
 demon_armour.232
 demon_armour.233
@@ -87,12 +93,12 @@ demon_armour.273
 demon_armour.281
 demon_armour.282
 demon_armour.283
-demon_armour.211
-demon_armour.212
-demon_armour.213
-demon_armour.221
-demon_armour.222
-demon_armour.223
+demon_armour.311
+demon_armour.312
+demon_armour.313
+demon_armour.321
+demon_armour.322
+demon_armour.323
 demon_armour.331
 demon_armour.332
 demon_armour.333
@@ -111,12 +117,6 @@ demon_armour.373
 demon_armour.381
 demon_armour.382
 demon_armour.383
-demon_armour.311
-demon_armour.312
-demon_armour.313
-demon_armour.321
-demon_armour.322
-demon_armour.323
 mina
 is_animated 1
 anim_speed 4
