@@ -1,6 +1,6 @@
 Object worm
 name Big Worm
-face worm.131
+face worm.151
 race worm
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

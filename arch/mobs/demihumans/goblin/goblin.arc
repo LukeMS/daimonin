@@ -1,6 +1,6 @@
 Object goblin
 name Goblin
-face goblin.131
+face goblin.151
 race goblin
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

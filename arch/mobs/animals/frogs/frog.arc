@@ -1,6 +1,6 @@
 Object frog
 name Giant Frog
-face frog_giant.131
+face frog_giant.151
 race frog
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

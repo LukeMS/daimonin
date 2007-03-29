@@ -1,6 +1,6 @@
 Object abomination_small
 name Abomination
-face abomination_small.130
+face abomination_small.150
 race demon
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

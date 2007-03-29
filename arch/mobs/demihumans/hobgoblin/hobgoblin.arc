@@ -1,6 +1,6 @@
 Object hobgoblin
 name Hobgoblin
-face hobgoblin.131
+face hobgoblin.151
 race hobgoblin
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

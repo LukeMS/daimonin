@@ -1,6 +1,6 @@
 Object horse_white
 name white horse
-face horse_white.131
+face horse_white.151
 race horse
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

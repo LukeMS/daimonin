@@ -1,6 +1,6 @@
 Object penguin
 name Penguin
-face penguin.131
+face penguin.151
 race penguin
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

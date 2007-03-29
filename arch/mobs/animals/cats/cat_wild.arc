@@ -1,6 +1,6 @@
 Object cat_wild
 name Wild Cat
-face cat_wild.131
+face cat_wild.151
 race cat
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

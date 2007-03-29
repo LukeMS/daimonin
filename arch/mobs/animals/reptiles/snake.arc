@@ -1,6 +1,6 @@
 Object snake
 name Giant Snake
-face snake.131
+face snake.151
 race reptile
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

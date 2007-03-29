@@ -1,6 +1,6 @@
 Object demon_lord
 name Demon Lord
-face demon_lord.131
+face demon_lord.151
 race demon
 randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

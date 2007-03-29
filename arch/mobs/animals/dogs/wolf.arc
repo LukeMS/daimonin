@@ -1,6 +1,6 @@
 Object wolf
 name Wolf
-face wolf.131
+face wolf.151
 race dog
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
