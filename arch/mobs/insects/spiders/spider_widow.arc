@@ -1,6 +1,6 @@
 Object spider_widow
 name Giant Black Widow
-face spider_widow.131
+face spider_widow.151
 race insect
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

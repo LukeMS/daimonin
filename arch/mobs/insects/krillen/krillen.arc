@@ -1,6 +1,6 @@
 Object krillen
 name Krillen
-face krillen.131
+face krillen.151
 race insect
 randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
@@ -45,6 +45,12 @@ facings 25
 trans.101
 trans.101
 trans.101
+krillen.111
+krillen.112
+krillen.113
+krillen.121
+krillen.122
+krillen.123
 krillen.131
 krillen.132
 krillen.133
@@ -63,12 +69,12 @@ krillen.173
 krillen.181
 krillen.182
 krillen.183
-krillen.111
-krillen.112
-krillen.113
-krillen.121
-krillen.122
-krillen.123
+krillen.211
+krillen.212
+krillen.213
+krillen.221
+krillen.222
+krillen.223
 krillen.231
 krillen.232
 krillen.233
@@ -87,12 +93,12 @@ krillen.273
 krillen.281
 krillen.282
 krillen.283
-krillen.211
-krillen.212
-krillen.213
-krillen.221
-krillen.222
-krillen.223
+krillen.311
+krillen.312
+krillen.313
+krillen.321
+krillen.322
+krillen.323
 krillen.331
 krillen.332
 krillen.333
@@ -111,12 +117,6 @@ krillen.373
 krillen.381
 krillen.382
 krillen.383
-krillen.311
-krillen.312
-krillen.313
-krillen.321
-krillen.322
-krillen.323
 mina
 is_animated 1
 anim_speed 4

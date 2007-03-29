@@ -1,6 +1,6 @@
 Object elemental_ice
 name Ice Elemental
-face elemental_ice.141
+face elemental_ice.151
 race elemental
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
