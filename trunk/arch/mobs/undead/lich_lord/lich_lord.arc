@@ -1,6 +1,6 @@
 Object lich_lord
 name Lich Lord
-face lich_lord.131
+face lich_lord.151
 race lich
 randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

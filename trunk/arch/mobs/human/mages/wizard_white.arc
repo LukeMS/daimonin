@@ -1,7 +1,7 @@
 Object wizard_white
 name Wizard
 race human
-face wizard.131
+face wizard.151
 randomitems spells_mage;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
 layer 6
