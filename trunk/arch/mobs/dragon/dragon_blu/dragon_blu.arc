@@ -57,6 +57,12 @@ facings 25
 trans.101
 trans.101
 trans.101
+dragon_blu.211
+dragon_blu.212
+dragon_blu.213
+dragon_blu.221
+dragon_blu.222
+dragon_blu.223
 dragon_blu.231
 dragon_blu.232
 dragon_blu.233
@@ -77,10 +83,10 @@ dragon_blu.282
 dragon_blu.283
 dragon_blu.211
 dragon_blu.212
-dragon_blu.213
+dragon_blu.212
 dragon_blu.221
 dragon_blu.222
-dragon_blu.223
+dragon_blu.222
 dragon_blu.231
 dragon_blu.232
 dragon_blu.232
@@ -101,10 +107,10 @@ dragon_blu.282
 dragon_blu.282
 dragon_blu.211
 dragon_blu.212
-dragon_blu.212
+dragon_blu.213
 dragon_blu.221
 dragon_blu.222
-dragon_blu.222
+dragon_blu.223
 dragon_blu.231
 dragon_blu.232
 dragon_blu.233
@@ -123,12 +129,6 @@ dragon_blu.273
 dragon_blu.281
 dragon_blu.282
 dragon_blu.283
-dragon_blu.211
-dragon_blu.212
-dragon_blu.213
-dragon_blu.221
-dragon_blu.222
-dragon_blu.223
 mina
 is_animated 1
 anim_speed 5
