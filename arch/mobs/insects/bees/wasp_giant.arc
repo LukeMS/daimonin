@@ -1,6 +1,6 @@
 Object wasp_giant
 name Giant Wasp
-face wasp_giant.131
+face wasp_giant.151
 race insect
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

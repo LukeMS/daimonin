@@ -1,6 +1,6 @@
 Object wraith
 name Wraith
-face wraith.131
+face wraith.151
 race ghost
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

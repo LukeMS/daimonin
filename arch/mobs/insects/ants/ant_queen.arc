@@ -1,6 +1,6 @@
 Object ant_queen
 name Ant Queen
-face ant_queen.131
+face ant_queen.151
 race insect
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

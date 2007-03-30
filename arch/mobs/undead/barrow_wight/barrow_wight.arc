@@ -1,6 +1,6 @@
 Object barrow_wight
 name Barrow Wight
-face barrow_wight.130
+face barrow_wight.150
 race lich
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

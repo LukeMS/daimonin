@@ -1,7 +1,7 @@
 Object snowman_evil2
 name Big Snowman
 race snowcreature
-face snowman_evil2.121
+face snowman_evil2.151
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
 layer 6
@@ -43,54 +43,54 @@ anim
 facings 25
 trans.101
 trans.101
-snowman_evil2.121
-snowman_evil2.122
-snowman_evil2.121
-snowman_evil2.122
-snowman_evil2.121
-snowman_evil2.122
-snowman_evil2.121
-snowman_evil2.122
-snowman_evil2.161
-snowman_evil2.162
-snowman_evil2.161
-snowman_evil2.162
-snowman_evil2.161
-snowman_evil2.162
-snowman_evil2.161
-snowman_evil2.162
-snowman_evil2.121
-snowman_evil2.122
-snowman_evil2.121
-snowman_evil2.122
-snowman_evil2.121
-snowman_evil2.122
-snowman_evil2.121
-snowman_evil2.122
-snowman_evil2.161
-snowman_evil2.162
-snowman_evil2.161
-snowman_evil2.162
-snowman_evil2.161
-snowman_evil2.162
-snowman_evil2.161
-snowman_evil2.162
-snowman_evil2.121
-snowman_evil2.122
-snowman_evil2.121
-snowman_evil2.122
-snowman_evil2.121
-snowman_evil2.122
-snowman_evil2.121
-snowman_evil2.122
-snowman_evil2.161
-snowman_evil2.162
-snowman_evil2.161
-snowman_evil2.162
-snowman_evil2.161
-snowman_evil2.162
-snowman_evil2.161
-snowman_evil2.162
+snowman_evil2.131
+snowman_evil2.132
+snowman_evil2.131
+snowman_evil2.132
+snowman_evil2.131
+snowman_evil2.132
+snowman_evil2.131
+snowman_evil2.132
+snowman_evil2.151
+snowman_evil2.152
+snowman_evil2.151
+snowman_evil2.152
+snowman_evil2.151
+snowman_evil2.152
+snowman_evil2.151
+snowman_evil2.152
+snowman_evil2.131
+snowman_evil2.132
+snowman_evil2.131
+snowman_evil2.132
+snowman_evil2.131
+snowman_evil2.132
+snowman_evil2.131
+snowman_evil2.132
+snowman_evil2.151
+snowman_evil2.152
+snowman_evil2.151
+snowman_evil2.152
+snowman_evil2.151
+snowman_evil2.152
+snowman_evil2.151
+snowman_evil2.152
+snowman_evil2.131
+snowman_evil2.132
+snowman_evil2.131
+snowman_evil2.132
+snowman_evil2.131
+snowman_evil2.132
+snowman_evil2.131
+snowman_evil2.132
+snowman_evil2.151
+snowman_evil2.152
+snowman_evil2.151
+snowman_evil2.152
+snowman_evil2.151
+snowman_evil2.152
+snowman_evil2.151
+snowman_evil2.152
 mina
 is_animated 1
 anim_speed 4

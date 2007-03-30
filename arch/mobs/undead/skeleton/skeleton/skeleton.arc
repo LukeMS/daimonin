@@ -1,6 +1,6 @@
 Object skeleton
 name Skeleton
-face skeleton.131
+face skeleton.151
 race skeleton
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

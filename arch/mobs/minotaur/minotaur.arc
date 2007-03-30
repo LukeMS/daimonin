@@ -1,6 +1,6 @@
 Object minotaur
 name Minotaur
-face minotaur.131
+face minotaur.151
 race minotaur
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

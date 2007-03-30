@@ -1,6 +1,6 @@
 Object ant_soldier
 name Ant Soldier
-face ant_soldier.131
+face ant_soldier.151
 race insect
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

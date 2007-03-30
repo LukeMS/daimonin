@@ -1,6 +1,6 @@
 Object orc_captain
 name Orc Captain
-face orc_captain.131
+face orc_captain.151
 race orc
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

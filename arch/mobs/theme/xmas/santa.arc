@@ -1,6 +1,6 @@
 Object santa
 name Santa
-face santa.131
+face santa.151
 race human
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
@@ -64,18 +64,18 @@ santa.133
 santa.131
 santa.132
 santa.133
-santa.111
-santa.112
-santa.113
-santa.111
-santa.112
-santa.113
-santa.111
-santa.112
-santa.113
-santa.111
-santa.112
-santa.113
+santa.151
+santa.152
+santa.153
+santa.151
+santa.152
+santa.153
+santa.151
+santa.152
+santa.153
+santa.151
+santa.152
+santa.153
 santa.131
 santa.132
 santa.133
@@ -88,18 +88,18 @@ santa.133
 santa.131
 santa.132
 santa.133
-santa.111
-santa.112
-santa.113
-santa.111
-santa.112
-santa.113
-santa.111
-santa.112
-santa.113
-santa.111
-santa.112
-santa.113
+santa.151
+santa.152
+santa.153
+santa.151
+santa.152
+santa.153
+santa.151
+santa.152
+santa.153
+santa.151
+santa.152
+santa.153
 santa.131
 santa.132
 santa.133
@@ -112,18 +112,18 @@ santa.133
 santa.131
 santa.132
 santa.133
-santa.111
-santa.112
-santa.113
-santa.111
-santa.112
-santa.113
-santa.111
-santa.112
-santa.113
-santa.111
-santa.112
-santa.113
+santa.151
+santa.152
+santa.153
+santa.151
+santa.152
+santa.153
+santa.151
+santa.152
+santa.153
+santa.151
+santa.152
+santa.153
 mina
 is_animated 1
 anim_speed 4
