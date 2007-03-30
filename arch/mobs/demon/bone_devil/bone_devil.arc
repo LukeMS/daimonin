@@ -1,6 +1,6 @@
 Object bone_devil
 name Bone Devil
-face bone_devil.150
+face bone_devil.151
 race demon
 randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
@@ -43,30 +43,30 @@ weight 162500
 anim
 facings 25
 trans.101
-bone_devil.110
-bone_devil.120
-bone_devil.130
-bone_devil.140
-bone_devil.150
-bone_devil.160
-bone_devil.170
-bone_devil.180
-bone_devil.110
-bone_devil.120
-bone_devil.130
-bone_devil.140
-bone_devil.150
-bone_devil.160
-bone_devil.170
-bone_devil.180
-bone_devil.110
-bone_devil.120
-bone_devil.130
-bone_devil.140
-bone_devil.150
-bone_devil.160
-bone_devil.170
-bone_devil.180
+bone_devil.111
+bone_devil.121
+bone_devil.131
+bone_devil.141
+bone_devil.151
+bone_devil.161
+bone_devil.171
+bone_devil.181
+bone_devil.111
+bone_devil.121
+bone_devil.131
+bone_devil.141
+bone_devil.151
+bone_devil.161
+bone_devil.171
+bone_devil.181
+bone_devil.111
+bone_devil.121
+bone_devil.131
+bone_devil.141
+bone_devil.151
+bone_devil.161
+bone_devil.171
+bone_devil.181
 mina
 is_animated 1
 anim_speed 4

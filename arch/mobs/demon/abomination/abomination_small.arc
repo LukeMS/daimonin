@@ -1,6 +1,6 @@
 Object abomination_small
 name Abomination
-face abomination_small.150
+face abomination_small.151
 race demon
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
@@ -43,30 +43,30 @@ weight 162500
 anim
 facings 25
 trans.101
-abomination_small.110
-abomination_small.120
-abomination_small.130
-abomination_small.140
-abomination_small.150
-abomination_small.160
-abomination_small.170
-abomination_small.180
-abomination_small.110
-abomination_small.120
-abomination_small.130
-abomination_small.140
-abomination_small.150
-abomination_small.160
-abomination_small.170
-abomination_small.180
-abomination_small.110
-abomination_small.120
-abomination_small.130
-abomination_small.140
-abomination_small.150
-abomination_small.160
-abomination_small.170
-abomination_small.180
+abomination_small.111
+abomination_small.121
+abomination_small.131
+abomination_small.141
+abomination_small.151
+abomination_small.161
+abomination_small.171
+abomination_small.181
+abomination_small.111
+abomination_small.121
+abomination_small.131
+abomination_small.141
+abomination_small.151
+abomination_small.161
+abomination_small.171
+abomination_small.181
+abomination_small.111
+abomination_small.121
+abomination_small.131
+abomination_small.141
+abomination_small.151
+abomination_small.161
+abomination_small.171
+abomination_small.181
 mina
 is_animated 1
 anim_speed 4
