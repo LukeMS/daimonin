@@ -75,21 +75,21 @@ ant_queen.152
 ant_queen.151
 ant_queen.152
 ant_queen.131
-ant_queen.232
+ant_queen.332
 ant_queen.131
-ant_queen.232
+ant_queen.332
 ant_queen.131
-ant_queen.232
+ant_queen.332
 ant_queen.131
-ant_queen.232
+ant_queen.332
 ant_queen.151
-ant_queen.252
+ant_queen.352
 ant_queen.151
-ant_queen.252
+ant_queen.352
 ant_queen.151
-ant_queen.252
+ant_queen.352
 ant_queen.151
-ant_queen.252
+ant_queen.352
 mina
 is_animated 1
 anim_speed 4

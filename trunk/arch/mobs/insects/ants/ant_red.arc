@@ -76,21 +76,21 @@ ant_red.152
 ant_red.151
 ant_red.152
 ant_red.131
-ant_red.232
+ant_red.332
 ant_red.131
-ant_red.232
+ant_red.332
 ant_red.131
-ant_red.232
+ant_red.332
 ant_red.131
-ant_red.232
+ant_red.332
 ant_red.151
-ant_red.252
+ant_red.352
 ant_red.151
-ant_red.252
+ant_red.352
 ant_red.151
-ant_red.252
+ant_red.352
 ant_red.151
-ant_red.252
+ant_red.352
 mina
 is_animated 1
 anim_speed 4
