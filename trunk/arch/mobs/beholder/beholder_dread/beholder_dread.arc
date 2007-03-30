@@ -102,28 +102,28 @@ beholder_dread.152
 beholder_dread.151
 beholder_dread.131
 beholder_dread.132
-beholder_dread.231
+beholder_dread.331
 beholder_dread.131
 beholder_dread.132
-beholder_dread.231
+beholder_dread.331
 beholder_dread.131
 beholder_dread.132
-beholder_dread.231
+beholder_dread.331
 beholder_dread.131
 beholder_dread.132
-beholder_dread.231
+beholder_dread.331
 beholder_dread.151
 beholder_dread.152
-beholder_dread.251
+beholder_dread.351
 beholder_dread.151
 beholder_dread.152
-beholder_dread.251
+beholder_dread.351
 beholder_dread.151
 beholder_dread.152
-beholder_dread.251
+beholder_dread.351
 beholder_dread.151
 beholder_dread.152
-beholder_dread.251
+beholder_dread.351
 mina
 is_animated 1
 anim_speed 4
