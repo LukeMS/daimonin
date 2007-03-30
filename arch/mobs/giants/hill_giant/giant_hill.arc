@@ -1,6 +1,6 @@
 Object giant_hill
 name Hill Giant
-face giant_hill.131
+face giant_hill.151
 race giant
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
