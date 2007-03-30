@@ -1,6 +1,6 @@
 Object treant_ancient
 name Ancient Treant
-face treant_ancient.231
+face treant_ancient.251
 race tree
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

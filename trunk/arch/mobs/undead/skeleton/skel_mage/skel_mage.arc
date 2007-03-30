@@ -1,6 +1,6 @@
 Object skel_mage
 name Skeleton Mage
-face skel_mage.131
+face skel_mage.151
 race skeleton
 randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

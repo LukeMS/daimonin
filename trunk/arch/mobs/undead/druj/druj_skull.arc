@@ -1,5 +1,6 @@
 Object druj_skull
 name Skull Druj
+face skull01.151
 race druj
 randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
@@ -48,7 +49,6 @@ attack_cleave 100
 speed -0.054
 level 1
 weight 7500
-face skull01.131
 anim
 facings 25
 trans.101

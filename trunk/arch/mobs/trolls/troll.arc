@@ -1,6 +1,6 @@
 Object troll
 name Troll
-face troll.131
+face troll.151
 race troll
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 mpart_id 3

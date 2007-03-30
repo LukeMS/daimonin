@@ -1,6 +1,6 @@
 Object orc_fighter
 name Orc Fighter
-face orc_fighter.131
+face orc_fighter.151
 race orc
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

@@ -1,7 +1,7 @@
 Object g_pumpkin
 name evil pumpkin
 race pumpkin
-face great_pumpkin.131
+face great_pumpkin.151
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
 layer 6

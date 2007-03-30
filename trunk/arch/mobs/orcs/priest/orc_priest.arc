@@ -1,6 +1,6 @@
 Object orc_priest
 name Orc Priest
-face orc_priest.131
+face orc_priest.151
 race orc
 randomitems spells_priest;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

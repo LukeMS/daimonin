@@ -1,6 +1,6 @@
 Object worm_purple
 name Purple Worm
-face worm_purple.131
+face worm_purple.151
 race worm
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 mpart_id 3

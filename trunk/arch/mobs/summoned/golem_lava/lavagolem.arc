@@ -1,6 +1,6 @@
 Object lavagolem
 name Lava Golem
-face lavagolem.031
+face lavagolem.051
 race golem
 randomitems loot&s1;wealth_normal&D65;loot_base&D17,s1;loot_misc&d27,s1
 type 80

@@ -1,7 +1,7 @@
 Object snowman_evil
 name Snowman
 race snowcreature
-face snowman_evil.131
+face snowman_evil.151
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
 layer 6

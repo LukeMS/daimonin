@@ -1,6 +1,6 @@
 Object bee_killer
 name Killer Bee
-face bee_killer.131
+face bee_killer.151
 race insect
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80

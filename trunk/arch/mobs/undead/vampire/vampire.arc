@@ -1,6 +1,6 @@
 Object vampire
 name Vampire
-face vampire.131
+face vampire.151
 race undead
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
