@@ -1,7 +1,7 @@
 Object giant_fire
 name Fire Giant
 race giant
-face giant_fire.150
+face giant_fire.151
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
 layer 6
@@ -47,30 +47,30 @@ weight 652500
 anim
 facings 25
 trans.101
-giant_fire.110
-giant_fire.120
-giant_fire.130
-giant_fire.140
-giant_fire.150
-giant_fire.160
-giant_fire.170
-giant_fire.180
-giant_fire.110
-giant_fire.120
-giant_fire.130
-giant_fire.140
-giant_fire.150
-giant_fire.160
-giant_fire.170
-giant_fire.180
-giant_fire.110
-giant_fire.120
-giant_fire.130
-giant_fire.140
-giant_fire.150
-giant_fire.160
-giant_fire.170
-giant_fire.180
+giant_fire.111
+giant_fire.121
+giant_fire.131
+giant_fire.141
+giant_fire.151
+giant_fire.161
+giant_fire.171
+giant_fire.181
+giant_fire.111
+giant_fire.121
+giant_fire.131
+giant_fire.141
+giant_fire.151
+giant_fire.161
+giant_fire.171
+giant_fire.181
+giant_fire.111
+giant_fire.121
+giant_fire.131
+giant_fire.141
+giant_fire.151
+giant_fire.161
+giant_fire.171
+giant_fire.181
 mina
 is_animated 1
 anim_speed 4
