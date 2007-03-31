@@ -1,7 +1,7 @@
 Object priest_robed
 name Robed Priest
 race human
-face priest_robed.151
+face priest_robed.131
 randomitems spells_priest;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
 layer 6
