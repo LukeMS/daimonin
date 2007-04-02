@@ -1,5 +1,5 @@
 Object core_lava_golem
-name Lava Golem Core
+name lava golem core
 face core_lava_golem.101
 anim
 core_lava_golem.101
