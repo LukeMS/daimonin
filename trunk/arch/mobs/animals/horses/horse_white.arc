@@ -40,8 +40,8 @@ level 1
 weight 42000
 anim
 facings 25
-trans.101
-trans.101
+dummy.111
+dummy.111
 horse_white.131
 horse_white.132
 horse_white.131

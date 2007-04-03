@@ -40,8 +40,8 @@ level 1
 weight 325000
 anim
 facings 25
-trans.101
-trans.101
+dummy.111
+dummy.111
 mugwump.111
 mugwump.112
 mugwump.121

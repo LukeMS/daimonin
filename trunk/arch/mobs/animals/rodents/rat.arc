@@ -40,7 +40,7 @@ level 1
 weight 325000
 anim
 facings 25
-trans.101
+dummy.111
 rat.131
 rat.131
 rat.131

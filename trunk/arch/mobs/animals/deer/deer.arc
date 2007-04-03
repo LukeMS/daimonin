@@ -41,9 +41,9 @@ level 1
 weight 142500
 anim
 facings 25
-trans.101
-trans.101
-trans.101
+dummy.111
+dummy.111
+dummy.111
 deer.121
 deer.122
 deer.123
