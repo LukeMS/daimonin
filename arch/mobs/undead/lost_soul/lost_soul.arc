@@ -48,9 +48,9 @@ level 1
 weight 2500
 anim
 facings 25
-trans.101
-trans.101
-trans.101
+dummy.111
+dummy.111
+dummy.111
 lost_soul.131
 lost_soul.132
 lost_soul.131

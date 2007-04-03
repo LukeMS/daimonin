@@ -43,9 +43,9 @@ level 1
 weight 27500
 anim
 facings 25
-trans.101
-trans.101
-trans.101
+dummy.111
+dummy.111
+dummy.111
 zombie.111
 zombie.112
 zombie.113

@@ -47,9 +47,9 @@ level 1
 weight 425000
 anim
 facings 25
-trans.101
-trans.101
-trans.101
+dummy.111
+dummy.111
+dummy.111
 knome.331
 knome.332
 knome.333

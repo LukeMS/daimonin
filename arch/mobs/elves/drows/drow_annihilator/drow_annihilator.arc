@@ -44,9 +44,9 @@ level 1
 weight 62500
 anim
 facings 25
-trans.101
-trans.101
-trans.101
+dummy.111
+dummy.111
+dummy.111
 drow_annihilator.131
 drow_annihilator.132
 drow_annihilator.131

@@ -51,8 +51,8 @@ level 1
 weight 75000
 anim
 facings 25
-trans.101
-trans.101
+dummy.111
+dummy.111
 ranger.131
 ranger.132
 ranger.131

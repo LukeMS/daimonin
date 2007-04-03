@@ -50,10 +50,10 @@ level 1
 weight 75000
 anim
 facings 25
-trans.101
-trans.101
-trans.101
-trans.101
+dummy.111
+dummy.111
+dummy.111
+dummy.111
 ship_captain.131
 ship_captain.132
 ship_captain.133

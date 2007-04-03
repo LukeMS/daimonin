@@ -43,9 +43,9 @@ level 1
 weight 62500
 anim
 facings 25
-trans.101
-trans.101
-trans.101
+dummy.111
+dummy.111
+dummy.111
 hobgoblin.131
 hobgoblin.132
 hobgoblin.131

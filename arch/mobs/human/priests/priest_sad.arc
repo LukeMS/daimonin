@@ -51,8 +51,8 @@ level 1
 weight 65000
 anim
 facings 25
-trans.101
-trans.101
+dummy.111
+dummy.111
 sadpriest.121
 sadpriest.121
 sadpriest.121

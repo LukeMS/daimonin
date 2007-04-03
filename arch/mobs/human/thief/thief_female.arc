@@ -50,7 +50,7 @@ level 1
 weight 75000
 anim
 facings 25
-trans.101
+dummy.111
 thief_female.110
 thief_female.120
 thief_female.130

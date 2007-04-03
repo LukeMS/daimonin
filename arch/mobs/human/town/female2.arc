@@ -43,8 +43,8 @@ level 1
 weight 48500
 anim
 facings 25
-trans.101
-trans.101
+dummy.111
+dummy.111
 female2.131
 female2.132
 female2.131

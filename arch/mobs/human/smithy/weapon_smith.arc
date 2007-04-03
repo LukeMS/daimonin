@@ -49,8 +49,8 @@ level 1
 weight 65500
 anim
 facings 25
-trans.101
-trans.101
+dummy.111
+dummy.111
 weapon_smith.141
 weapon_smith.142
 weapon_smith.141

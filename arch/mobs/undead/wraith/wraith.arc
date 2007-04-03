@@ -48,9 +48,9 @@ level 1
 weight 12500
 anim
 facings 25
-trans.101
-trans.101
-trans.101
+dummy.111
+dummy.111
+dummy.111
 wraith.131
 wraith.132
 wraith.131

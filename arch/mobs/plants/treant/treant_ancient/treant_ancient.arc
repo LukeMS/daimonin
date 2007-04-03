@@ -39,9 +39,9 @@ level 1
 weight 355000
 anim
 facings 25
-trans.101
-trans.101
-trans.101
+dummy.111
+dummy.111
+dummy.111
 treant_ancient.231
 treant_ancient.232
 treant_ancient.233

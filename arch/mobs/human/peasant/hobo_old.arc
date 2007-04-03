@@ -43,9 +43,9 @@ level 1
 weight 93500
 anim
 facings 25
-trans.101
-trans.101
-trans.101
+dummy.111
+dummy.111
+dummy.111
 hobo_old.131
 hobo_old.132
 hobo_old.133

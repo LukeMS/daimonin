@@ -50,8 +50,8 @@ level 1
 weight 75000
 anim
 facings 25
-trans.101
-trans.101
+dummy.111
+dummy.111
 oarman.131
 oarman.132
 oarman.131

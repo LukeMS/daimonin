@@ -43,9 +43,9 @@ level 1
 weight 473250
 anim
 facings 25
-trans.101
-trans.101
-trans.101
+dummy.111
+dummy.111
+dummy.111
 giant_hill.111
 giant_hill.112
 giant_hill.113

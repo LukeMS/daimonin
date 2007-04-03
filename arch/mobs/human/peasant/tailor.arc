@@ -43,10 +43,10 @@ level 1
 weight 93500
 anim
 facings 25
-trans.101
-trans.101
-trans.101
-trans.101
+dummy.111
+dummy.111
+dummy.111
+dummy.111
 tailor.131
 tailor.132
 tailor.133

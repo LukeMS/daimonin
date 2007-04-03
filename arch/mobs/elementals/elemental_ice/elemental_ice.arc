@@ -38,9 +38,9 @@ level 1
 weight 35500
 anim
 facings 25
-trans.101
-trans.101
-trans.101
+dummy.111
+dummy.111
+dummy.111
 elemental_ice.111
 elemental_ice.112
 elemental_ice.111

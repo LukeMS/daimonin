@@ -41,10 +41,10 @@ level 1
 weight 325000
 anim
 facings 25
-trans.101
-trans.101
-trans.101
-trans.101
+dummy.111
+dummy.111
+dummy.111
+dummy.111
 dog.ine.111
 dog.ine.112
 dog.ine.113

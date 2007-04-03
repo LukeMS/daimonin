@@ -43,8 +43,8 @@ level 1
 weight 93500
 anim
 facings 25
-trans.101
-trans.101
+dummy.111
+dummy.111
 childf2.181
 childf2.182
 childf2.111

@@ -50,8 +50,8 @@ level 1
 weight 75000
 anim
 facings 25
-trans.101
-trans.101
+dummy.111
+dummy.111
 pirate.131
 pirate.132
 pirate.131

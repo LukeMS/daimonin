@@ -44,8 +44,8 @@ level 1
 weight 12750
 anim
 facings 25
-trans.101
-trans.101
+dummy.111
+dummy.111
 blob_poison.111
 blob_poison.112
 blob_poison.111

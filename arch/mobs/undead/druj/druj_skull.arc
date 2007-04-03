@@ -51,10 +51,10 @@ level 1
 weight 7500
 anim
 facings 25
-trans.101
-trans.101
-trans.101
-trans.101
+dummy.111
+dummy.111
+dummy.111
+dummy.111
 skull01.111
 skull01.112
 skull01.113

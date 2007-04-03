@@ -43,9 +43,9 @@ level 1
 weight 52500
 anim
 facings 25
-trans.101
-trans.101
-trans.101
+dummy.111
+dummy.111
+dummy.111
 goblin.131
 goblin.132
 goblin.131

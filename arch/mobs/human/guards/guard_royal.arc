@@ -50,9 +50,9 @@ level 1
 weight 87000
 anim
 facings 25
-trans.101
-trans.101
-trans.101
+dummy.111
+dummy.111
+dummy.111
 guard_royal.131
 guard_royal.132
 guard_royal.133

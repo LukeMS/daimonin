@@ -42,9 +42,9 @@ level 1
 weight 97000
 anim
 facings 25
-trans.101
-trans.101
-trans.101
+dummy.111
+dummy.111
+dummy.111
 orc_warrior.131
 orc_warrior.132
 orc_warrior.131

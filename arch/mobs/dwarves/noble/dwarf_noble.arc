@@ -47,7 +47,7 @@ level 1
 weight 82250
 anim
 facings 25
-trans.101
+dummy.111
 dwarf_noble.131
 dwarf_noble.131
 dwarf_noble.131

@@ -49,8 +49,8 @@ level 1
 weight 65500
 anim
 facings 25
-trans.101
-trans.101
+dummy.111
+dummy.111
 smith.141
 smith.142
 smith.141

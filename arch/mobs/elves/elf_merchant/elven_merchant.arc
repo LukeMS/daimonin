@@ -44,9 +44,9 @@ level 1
 weight 61250
 anim
 facings 25
-trans.101
-trans.101
-trans.101
+dummy.111
+dummy.111
+dummy.111
 elven_merchant.131
 elven_merchant.132
 elven_merchant.133

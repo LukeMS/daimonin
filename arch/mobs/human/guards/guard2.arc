@@ -50,9 +50,9 @@ level 1
 weight 85000
 anim
 facings 25
-trans.101
-trans.101
-trans.101
+dummy.111
+dummy.111
+dummy.111
 guard2.111
 guard2.112
 guard2.113

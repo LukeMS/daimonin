@@ -42,7 +42,7 @@ level 1
 weight 162500
 anim
 facings 25
-trans.101
+dummy.111
 bone_devil.111
 bone_devil.121
 bone_devil.131

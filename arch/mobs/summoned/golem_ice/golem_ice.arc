@@ -43,12 +43,12 @@ level 1
 weight 320000
 anim
 facings 25
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
+dummy.111
+dummy.111
+dummy.111
+dummy.111
+dummy.111
+dummy.111
 golem_ice.111
 golem_ice.111
 golem_ice.112

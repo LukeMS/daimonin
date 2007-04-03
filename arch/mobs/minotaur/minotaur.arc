@@ -45,8 +45,8 @@ level 1
 weight 483250
 anim
 facings 25
-trans.101
-trans.101
+dummy.111
+dummy.111
 minotaur.131
 minotaur.132
 minotaur.131

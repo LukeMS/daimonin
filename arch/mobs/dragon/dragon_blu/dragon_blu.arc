@@ -54,9 +54,9 @@ level 1
 weight 950000
 anim
 facings 25
-trans.101
-trans.101
-trans.101
+dummy.111
+dummy.111
+dummy.111
 dragon_blu.211
 dragon_blu.212
 dragon_blu.213
