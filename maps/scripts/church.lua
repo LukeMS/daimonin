@@ -15,13 +15,14 @@ local spell
 --       so teaching for payment is removed here. The code is however left in,
 --       as a prototype should teaching other spells for payment needs to be added later.
 --       Just the link is commented out.
+--
+--       Well, Cleo (who else?) found an exploit. So the clw code is now removed.
 
 local function topicDefault()
     ib:SetTitle("The Church of the Tabernacle")
     ib:SetMsg("Hello! I am " .. me.name ..".\n\nWelcome to the church of the Tabernacle!\n\n")
     ib:AddMsg("If you are confused by my services, I can ^explain^ it.\nYou need some of our services?")
     ib:AddLink("Teach Minor Healing", "teach healing")
---    ib:AddLink("Teach Cause Light Wounds", "teach wounds")
     ib:AddLink("", "")
     ib:AddLink("Remove Death Sickness", "cast sick")
     ib:AddLink("Remove Depletion", "cast deplete")
@@ -110,50 +111,28 @@ local function topicDoCast(what)
     pl:Interface(1, ib:Build())
 end
 
-local function topicTeach(what)
-    if what == "healing" then
-        ib:SetMsg("I can teach you °Minor Healing° for no charge.")
-    else
-        ib:SetMsg("I can teach you °Cause Light Wounds° for 2 silver.")
-        ib:AddMsg(".\n\nYou have " .. pl:ShowCost(pl:GetMoney()) .. ".")
-    end
+local function topicTeachHealing()
+    ib:SetMsg("I can teach you °Minor Healing° for no charge.")
     ib:AddMsg("\n\nDo you want me to do it now?") 
-    ib:SetAccept(nil, "doteach " .. what) 
+    ib:SetAccept(nil, "doteach healing") 
     ib:SetDecline(nil, "hi")
     pl:Interface(1, ib:Build())
 end
 
-local function topicDoTeach(what)
-    local ok = false
-    if what == "healing" then
-        spell = "minor healing"
-        ok = true
-    else
-        spell = "cause light wounds"
-    end
+local function topicDoTeachHealing()
+    spell = "minor healing"
     local spellno = game:GetSpellNr(spell)
     if pl:DoKnowSpell(spellno) then
         ib:SetMsg("You already know the spell '"..spell.."'!" )
     else
-        if (what == "wounds") then
-            if pl:PayAmount(200) == 1 then
-                ok = true
-                ib:SetMsg("°** " .. me.name .. " takes your money **°\n\n")
-            else
-                ib:SetMsg("You don't have enough money!")
-            end
+        ib:SetTitle("Teaching "..spell)
+        local skill = game:GetSkillNr("divine prayers")
+        if pl:FindSkill(skill) == nil then
+            ib:AddMsg("First I will teach you the skill 'divine prayers'\nYou need this skill to cast prayer spells.\n\n")
+            pl:AcquireSkill(skill, game.LEARN)
         end
-
-        if ok then
-            ib:SetTitle("Teaching "..spell)
-            local skill = game:GetSkillNr("divine prayers")
-            if pl:FindSkill(skill) == nil then
-                ib:AddMsg("First I will teach you the skill 'divine prayers'\nYou need this skill to cast prayer spells.\n\n")
-                pl:AcquireSkill(skill, game.LEARN)
-            end
-            pl:AcquireSpell(spellno, game.LEARN)
-            ib:AddMsg("You learn the spell '"..spell.."'")
-        end
+        pl:AcquireSpell(spellno, game.LEARN)
+        ib:AddMsg("You learn the spell '"..spell.."'")
     end
     ib:SetButton("Back", "Hi") 
     pl:Interface(1, ib:Build())
@@ -166,6 +145,6 @@ tl:AddTopics("explain", topicExplain)
 tl:AddTopics("food", topicFood) 
 tl:AddTopics("cast (.*)", topicCast) 
 tl:AddTopics("docast (.*)", topicDoCast) 
-tl:AddTopics("teach (.*)", topicTeach) 
-tl:AddTopics("doteach (.*)", topicDoTeach) 
+tl:AddTopics("teach healing", topicTeachHealing) 
+tl:AddTopics("doteach healing", topicDoTeachHealing) 
 tl:CheckMessage(event)
