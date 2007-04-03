@@ -41,8 +41,8 @@ level 1
 weight 42000
 anim
 facings 25
-trans.101
-trans.101
+dummy.111
+dummy.111
 penguin.131
 penguin.132
 penguin.131

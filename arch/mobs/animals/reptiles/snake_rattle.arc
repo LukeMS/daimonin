@@ -40,8 +40,8 @@ level 1
 weight 325000
 anim
 facings 25
-trans.101
-trans.101
+dummy.111
+dummy.111
 rattle_snake.131
 rattle_snake.132
 rattle_snake.131

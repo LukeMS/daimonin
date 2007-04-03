@@ -41,9 +41,9 @@ level 1
 weight 42000
 anim
 facings 25
-trans.101
-trans.101
-trans.101
+dummy.111
+dummy.111
+dummy.111
 owl_snow_large.111
 owl_snow_large.112
 owl_snow_large.113
