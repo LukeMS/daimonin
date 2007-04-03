@@ -45,8 +45,8 @@ level 1
 weight 17250
 anim
 facings 25
-trans.101
-trans.101
+dummy.111
+dummy.111
 ochre_jelly.111
 ochre_jelly.112
 ochre_jelly.111

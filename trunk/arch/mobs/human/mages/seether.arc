@@ -50,7 +50,7 @@ level 1
 weight 65000
 anim
 facings 25
-trans.101
+dummy.111
 seether.101
 seether.101
 seether.101

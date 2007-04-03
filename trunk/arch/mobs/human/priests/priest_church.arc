@@ -51,9 +51,9 @@ level 1
 weight 65000
 anim
 facings 25
-trans.101
-trans.101
-trans.101
+dummy.111
+dummy.111
+dummy.111
 priest_church.131
 priest_church.132
 priest_church.133

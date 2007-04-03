@@ -44,9 +44,9 @@ level 1
 weight 82500
 anim
 facings 25
-trans.101
-trans.101
-trans.101
+dummy.111
+dummy.111
+dummy.111
 orc_sorcerer.131
 orc_sorcerer.132
 orc_sorcerer.131

@@ -43,8 +43,8 @@ level 1
 weight 42500
 anim
 facings 25
-trans.101
-trans.101
+dummy.111
+dummy.111
 kobold.131
 kobold.132
 kobold.131

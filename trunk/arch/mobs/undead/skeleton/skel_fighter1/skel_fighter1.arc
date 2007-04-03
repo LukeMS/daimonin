@@ -43,9 +43,9 @@ level 1
 weight 27500
 anim
 facings 25
-trans.101
-trans.101
-trans.101
+dummy.111
+dummy.111
+dummy.111
 skel_fighter1.111
 skel_fighter1.112
 skel_fighter1.113

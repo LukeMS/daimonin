@@ -43,9 +43,9 @@ level 1
 weight 95500
 anim
 facings 25
-trans.101
-trans.101
-trans.101
+dummy.111
+dummy.111
+dummy.111
 gnoll.131
 gnoll.132
 gnoll.131

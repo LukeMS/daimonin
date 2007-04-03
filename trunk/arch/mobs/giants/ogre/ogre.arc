@@ -44,9 +44,9 @@ level 1
 weight 153250
 anim
 facings 25
-trans.101
-trans.101
-trans.101
+dummy.111
+dummy.111
+dummy.111
 ogre.131
 ogre.132
 ogre.131

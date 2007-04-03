@@ -43,7 +43,7 @@ level 1
 weight 27500
 anim
 facings 25
-trans.101
+dummy.111
 skeleton.131
 skeleton.131
 skeleton.131

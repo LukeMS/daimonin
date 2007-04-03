@@ -43,9 +43,9 @@ level 1
 weight 91500
 anim
 facings 25
-trans.101
-trans.101
-trans.101
+dummy.111
+dummy.111
+dummy.111
 orc_archer.131
 orc_archer.132
 orc_archer.131

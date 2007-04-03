@@ -45,8 +45,8 @@ level 1
 weight 14500
 anim
 facings 25
-trans.101
-trans.101
+dummy.111
+dummy.111
 pudding_blue.111
 pudding_blue.112
 pudding_blue.111

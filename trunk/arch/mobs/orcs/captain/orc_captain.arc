@@ -43,9 +43,9 @@ level 1
 weight 92000
 anim
 facings 25
-trans.101
-trans.101
-trans.101
+dummy.111
+dummy.111
+dummy.111
 orc_captain.131
 orc_captain.132
 orc_captain.131

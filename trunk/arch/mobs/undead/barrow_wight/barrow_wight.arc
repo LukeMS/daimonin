@@ -46,7 +46,7 @@ level 1
 weight 62500
 anim
 facings 25
-trans.101
+dummy.111
 barrow_wight.110
 barrow_wight.120
 barrow_wight.130

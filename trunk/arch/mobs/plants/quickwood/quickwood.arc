@@ -38,8 +38,8 @@ level 1
 weight 355000
 anim
 facings 25
-trans.101
-trans.101
+dummy.111
+dummy.111
 quickwood.131
 quickwood.132
 quickwood.131

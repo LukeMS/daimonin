@@ -43,7 +43,7 @@ level 1
 weight 95500
 anim
 facings 25
-trans.101
+dummy.111
 angel_warrior.211
 angel_warrior.221
 angel_warrior.231

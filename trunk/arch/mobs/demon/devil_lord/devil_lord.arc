@@ -42,8 +42,8 @@ level 1
 weight 162500
 anim
 facings 25
-trans.101
-trans.101
+dummy.111
+dummy.111
 devil_lord.111
 devil_lord.112
 devil_lord.121

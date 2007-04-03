@@ -41,8 +41,8 @@ level 1
 weight 22500
 anim
 facings 25
-trans.101
-trans.101
+dummy.111
+dummy.111
 ant_red.131
 ant_red.132
 ant_red.131

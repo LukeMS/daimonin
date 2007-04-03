@@ -42,7 +42,7 @@ level 1
 weight 162500
 anim
 facings 25
-trans.101
+dummy.111
 abomination_small.111
 abomination_small.121
 abomination_small.131

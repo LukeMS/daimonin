@@ -42,9 +42,9 @@ level 1
 weight 122000
 anim
 facings 25
-trans.101
-trans.101
-trans.101
+dummy.111
+dummy.111
+dummy.111
 orc_berserker.131
 orc_berserker.132
 orc_berserker.131

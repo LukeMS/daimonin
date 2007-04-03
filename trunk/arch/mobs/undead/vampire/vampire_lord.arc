@@ -46,9 +46,9 @@ level 1
 weight 62500
 anim
 facings 25
-trans.101
-trans.101
-trans.101
+dummy.111
+dummy.111
+dummy.111
 vampire_lord.181
 vampire_lord.181
 vampire_lord.181

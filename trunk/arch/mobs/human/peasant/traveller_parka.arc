@@ -43,8 +43,8 @@ level 1
 weight 68500
 anim
 facings 25
-trans.101
-trans.101
+dummy.111
+dummy.111
 traveller_parka.131
 traveller_parka.132
 traveller_parka.131

@@ -42,9 +42,9 @@ level 1
 weight 162500
 anim
 facings 25
-trans.101
-trans.101
-trans.101
+dummy.111
+dummy.111
+dummy.111
 demon_goat.111
 demon_goat.112
 demon_goat.113

@@ -45,8 +45,8 @@ level 1
 weight 16450
 anim
 facings 25
-trans.101
-trans.101
+dummy.111
+dummy.111
 spotted_jelly.111
 spotted_jelly.112
 spotted_jelly.111

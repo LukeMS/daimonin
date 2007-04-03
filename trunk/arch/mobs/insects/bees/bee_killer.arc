@@ -39,8 +39,8 @@ level 1
 weight 8500
 anim
 facings 25
-trans.101
-trans.101
+dummy.111
+dummy.111
 bee_killer.131
 bee_killer.132
 bee_killer.131

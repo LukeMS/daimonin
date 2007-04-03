@@ -43,8 +43,8 @@ level 1
 weight 15750
 anim
 facings 25
-trans.101
-trans.101
+dummy.111
+dummy.111
 quivering_blob.111
 quivering_blob.112
 quivering_blob.111

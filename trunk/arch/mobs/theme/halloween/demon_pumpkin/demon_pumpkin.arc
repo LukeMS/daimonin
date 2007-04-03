@@ -43,8 +43,8 @@ level 1
 weight 732500
 anim
 facings 25
-trans.101
-trans.101
+dummy.111
+dummy.111
 demon_pumpkin.211
 demon_pumpkin.211
 demon_pumpkin.221

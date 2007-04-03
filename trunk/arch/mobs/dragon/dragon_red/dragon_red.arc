@@ -53,9 +53,9 @@ level 1
 weight 950000
 anim
 facings 25
-trans.101
-trans.101
-trans.101
+dummy.111
+dummy.111
+dummy.111
 dragon_red.111
 dragon_red.112
 dragon_red.113

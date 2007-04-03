@@ -50,8 +50,8 @@ level 1
 weight 850000
 anim
 facings 25
-trans.101
-trans.101
+dummy.111
+dummy.111
 dragon_skeletal.131
 dragon_skeletal.132
 dragon_skeletal.131

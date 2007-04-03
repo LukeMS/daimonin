@@ -40,7 +40,7 @@ level 1
 weight 295500
 anim
 facings 25
-trans.101
+dummy.111
 dragon_water.131
 dragon_water.131
 dragon_water.131

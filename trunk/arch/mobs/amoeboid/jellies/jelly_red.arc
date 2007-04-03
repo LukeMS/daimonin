@@ -45,8 +45,8 @@ level 1
 weight 14250
 anim
 facings 25
-trans.101
-trans.101
+dummy.111
+dummy.111
 jelly_red.111
 jelly_red.112
 jelly_red.111

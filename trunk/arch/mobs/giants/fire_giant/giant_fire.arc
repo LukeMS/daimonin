@@ -46,7 +46,7 @@ level 1
 weight 652500
 anim
 facings 25
-trans.101
+dummy.111
 giant_fire.111
 giant_fire.121
 giant_fire.131

@@ -39,8 +39,8 @@ level 1
 weight 11500
 anim
 facings 25
-trans.101
-trans.101
+dummy.111
+dummy.111
 wasp_giant.131
 wasp_giant.132
 wasp_giant.131

@@ -49,9 +49,9 @@ level 1
 weight 1350000
 anim
 facings 25
-trans.101
-trans.101
-trans.101
+dummy.111
+dummy.111
+dummy.111
 beholder_dread.131
 beholder_dread.132
 beholder_dread.131

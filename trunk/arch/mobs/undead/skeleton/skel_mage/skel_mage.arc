@@ -48,8 +48,8 @@ level 1
 weight 28500
 anim
 facings 25
-trans.101
-trans.101
+dummy.111
+dummy.111
 skel_mage.131
 skel_mage.132
 skel_mage.131

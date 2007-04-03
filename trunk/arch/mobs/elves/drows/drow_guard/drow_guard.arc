@@ -43,9 +43,9 @@ level 1
 weight 61500
 anim
 facings 25
-trans.101
-trans.101
-trans.101
+dummy.111
+dummy.111
+dummy.111
 drow_guard.131
 drow_guard.132
 drow_guard.131
