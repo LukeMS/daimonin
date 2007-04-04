@@ -1,7 +1,7 @@
 Object thief_female
 name Thief
 race human
-face thief_female.130
+face thief_female.151
 randomitems skill_bow;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
 layer 6
@@ -51,30 +51,30 @@ weight 75000
 anim
 facings 25
 dummy.111
-thief_female.110
-thief_female.120
-thief_female.130
-thief_female.140
-thief_female.150
-thief_female.160
-thief_female.170
-thief_female.180
-thief_female.110
-thief_female.120
-thief_female.130
-thief_female.140
-thief_female.150
-thief_female.160
-thief_female.170
-thief_female.180
-thief_female.110
-thief_female.120
-thief_female.130
-thief_female.140
-thief_female.150
-thief_female.160
-thief_female.170
-thief_female.180
+thief_female.111
+thief_female.121
+thief_female.131
+thief_female.141
+thief_female.151
+thief_female.161
+thief_female.171
+thief_female.181
+thief_female.111
+thief_female.121
+thief_female.131
+thief_female.141
+thief_female.151
+thief_female.161
+thief_female.171
+thief_female.181
+thief_female.111
+thief_female.121
+thief_female.131
+thief_female.141
+thief_female.151
+thief_female.161
+thief_female.171
+thief_female.181
 mina
 is_animated 1
 anim_speed 4
