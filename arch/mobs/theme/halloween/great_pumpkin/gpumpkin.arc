@@ -78,21 +78,21 @@ great_pumpkin.152
 great_pumpkin.151
 great_pumpkin.152
 great_pumpkin.131
-great_pumpkin.231
+great_pumpkin.331
 great_pumpkin.131
-great_pumpkin.231
+great_pumpkin.331
 great_pumpkin.131
-great_pumpkin.231
+great_pumpkin.331
 great_pumpkin.131
-great_pumpkin.231
+great_pumpkin.331
 great_pumpkin.151
-great_pumpkin.251
+great_pumpkin.351
 great_pumpkin.151
-great_pumpkin.251
+great_pumpkin.351
 great_pumpkin.151
-great_pumpkin.251
+great_pumpkin.351
 great_pumpkin.151
-great_pumpkin.251
+great_pumpkin.351
 mina
 is_animated 1
 anim_speed 4
