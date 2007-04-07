@@ -3398,7 +3398,7 @@
     &lt;unaggressive&gt; monsters do not attack unless attacked first. If attacked at any time, the unaggressive status will be removed forever.
   </attribute>
   <attribute arch="surrendered" editor="surrendered" type="bool">
-    &lt;surrendered&gt; monsters do not attack and don't count as target.
+    &lt;surrendered&gt; monsters do not attack and don't count as target for friendly NPC.
   </attribute>
   <attribute arch="friendly" editor="friendly" type="bool">
     &lt;friendly&gt; monsters help the player, attacking any
@@ -3874,7 +3874,7 @@
     &lt;unaggressive&gt; monsters do not attack unless attacked first. If attacked at any time, the unaggressive status will be removed forever.
   </attribute>
   <attribute arch="surrendered" editor="surrendered" type="bool">
-    &lt;surrendered&gt; monsters do not attack and don't count as target.
+    &lt;surrendered&gt; monsters do not attack and don't count as target for friendly NPC.
   </attribute>
   <attribute arch="friendly" editor="friendly" type="bool">
     &lt;friendly&gt; monsters help the player, attacking any
