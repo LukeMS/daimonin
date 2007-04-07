@@ -24,7 +24,7 @@ end
 
 Object honey_deco_3_1
 name honey
-face honey_deco_3.111
+face honey_deco3.111
 anim
 facings 9
 dummy.111
