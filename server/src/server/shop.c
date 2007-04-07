@@ -560,7 +560,7 @@ void sell_item(object *op, object *pl, sint64 value)
                         w = 1;    /* Prevent divide by zero */
                     if (n > 0 && (!pouch->weight_limit || pouch->carrying + w <=  pouch->weight_limit))
                     {
-                        if ((uint32)(pouch->weight_limit && (pouch->weight_limit - pouch->carrying) / w) < n)
+                        if (pouch->weight_limit && (((pouch->weight_limit - pouch->carrying) / w) < (sint32)n))
                         {
                             n = (pouch->weight_limit - pouch->carrying) / w;
                         }
