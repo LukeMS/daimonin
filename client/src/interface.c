@@ -1062,7 +1062,7 @@ int get_interface_line(int *element, int *index, char **keyword, int x, int y, i
 
     if (gui_interface_npc->used_flag&GUI_INTERFACE_MESSAGE)
     {
-        yoff+=26;
+        yoff+=25;
 
         for (i=0;i<gui_interface_npc->message.line_count;i++,yoff+=15)
         {
@@ -1082,7 +1082,7 @@ int get_interface_line(int *element, int *index, char **keyword, int x, int y, i
                     else
                     {
                         if (gui_interface_npc->message.lines[i][s] != '~' &&
-                                gui_interface_npc->message.lines[i][s] != '°')
+                                gui_interface_npc->message.lines[i][s] != '°' && gui_interface_npc->message.lines[i][s] != '|')
                             xt += MediumFont.c[(unsigned char)gui_interface_npc->message.lines[i][s]].w + MediumFont.char_offset;
 
                         if (flag && mx>=xs && mx <=xt) /* only when we have a active keyword part */
@@ -1108,11 +1108,75 @@ int get_interface_line(int *element, int *index, char **keyword, int x, int y, i
                 return FALSE;
             }
         }
+        yoff+=15;
+    }
+
+    /* reward is also used as "objective" */
+    if (gui_interface_npc->used_flag&GUI_INTERFACE_REWARD)
+    {
+        yoff +=25;
+
+        for (i=0;i<gui_interface_npc->reward.line_count;i++)
+            yoff+=15;
+
+        if (gui_interface_npc->reward.copper || gui_interface_npc->reward.gold ||
+                gui_interface_npc->reward.silver || gui_interface_npc->reward.mithril ||
+                gui_interface_npc->icon_count)
+        {
+            if (gui_interface_npc->reward.line_count)
+                yoff+=5;
+            yoff+=30;
+        }
+        yoff+=15;
+    }
+
+    if (gui_interface_npc->icon_count)
+    {
+        int flag_s=FALSE;
+        for (i=0;i<gui_interface_npc->icon_count;i++)
+        {
+            if (gui_interface_npc->icon[i].mode == 's' )
+                flag_s=TRUE;
+            else if (gui_interface_npc->icon[i].mode == 'G' )
+                yoff+=44;
+        }
+
+        if (flag_s)
+        {
+            yoff+=20;
+            for (i=0;i<gui_interface_npc->icon_count;i++)
+            {
+                if (gui_interface_npc->icon[i].mode == 's' )
+                    yoff+=44;
+            }
+        }
+        if (gui_interface_npc->icon_select)
+        {
+            int t;
+     
+            yoff+=20;
+            for (t=1,i=0;i<gui_interface_npc->icon_count;i++)
+            {
+     
+                if (gui_interface_npc->icon[i].mode == 'S' )
+                {
+                    if (my >= yoff && my <=yoff+32 && mx >=x+40 && mx<=x+72)
+                    {
+                        *element = GUI_INTERFACE_ICON;
+                        *index = t;
+                        *keyword = gui_interface_npc->icon[i].title;
+                        return TRUE;
+                    }
+                    yoff+=44;
+                    t++;
+                }
+            }
+        }
+        yoff+=15;
     }
 
     if (gui_interface_npc->link_count)
     {
-        yoff+=15;
         for (i=0;i<gui_interface_npc->link_count;i++,yoff+=15)
             if (my >= yoff && my <=yoff+15)
             {
@@ -1132,71 +1196,6 @@ int get_interface_line(int *element, int *index, char **keyword, int x, int y, i
             }
     }
 
-    /* reward is also used as "objective" */
-    if (gui_interface_npc->used_flag&GUI_INTERFACE_REWARD)
-    {
-        yoff +=51;
-
-        for (i=0;i<gui_interface_npc->reward.line_count;i++)
-            yoff+=15;
-
-        if (gui_interface_npc->reward.copper || gui_interface_npc->reward.gold ||
-                gui_interface_npc->reward.silver || gui_interface_npc->reward.mithril ||
-                gui_interface_npc->icon_count)
-        {
-            if (gui_interface_npc->reward.line_count)
-                yoff+=15;
-            yoff+=15;
-        }
-    }
-
-    yoff+=5;
-    if (gui_interface_npc->icon_count)
-    {
-        int flag_s=FALSE;
-        yoff+=25;
-        for (i=0;i<gui_interface_npc->icon_count;i++)
-        {
-            if (gui_interface_npc->icon[i].mode == 's' )
-                flag_s=TRUE;
-            else if (gui_interface_npc->icon[i].mode == 'G' )
-                yoff+=44;
-        }
-
-        if (flag_s)
-        {
-            yoff+=20;
-            for (i=0;i<gui_interface_npc->icon_count;i++)
-            {
-                if (gui_interface_npc->icon[i].mode == 's' )
-                    yoff+=44;
-            }
-        }
-    }
-
-    if (gui_interface_npc->icon_select)
-    {
-        int t;
-
-        yoff+=20;
-        for (t=1,i=0;i<gui_interface_npc->icon_count;i++)
-        {
-
-            if (gui_interface_npc->icon[i].mode == 'S' )
-            {
-                if (my >= yoff && my <=yoff+32 && mx >=x+40 && mx<=x+72)
-                {
-                    *element = GUI_INTERFACE_ICON;
-                    *index = t;
-                    *keyword = gui_interface_npc->icon[i].title;
-                    return TRUE;
-                }
-                yoff+=44;
-                t++;
-            }
-        }
-    }
-
     return FALSE;
 }
 
@@ -1207,44 +1206,33 @@ int precalc_interface_npc(void)
     yoff = 5;
     if (gui_interface_npc->used_flag&GUI_INTERFACE_MESSAGE)
     {
-        yoff+=26;
-
+        yoff+=25;
         for (i=0;i<gui_interface_npc->message.line_count;i++)
             yoff+=15;
+        yoff+=15;
     }
 
-    if (gui_interface_npc->link_count)
-    {
-        yoff+=15;
-        for (i=0;i<gui_interface_npc->link_count;i++)
-            yoff+=15;
-    }
 
     /* reward is also used as "objective" */
     if (gui_interface_npc->used_flag&GUI_INTERFACE_REWARD)
     {
-        yoff +=51;
-
+        yoff +=25;
         for (i=0;i<gui_interface_npc->reward.line_count;i++,yoff+=15)
             ;
-
-        yoff+=15;
-
         if (gui_interface_npc->reward.copper || gui_interface_npc->reward.gold ||
                 gui_interface_npc->reward.silver || gui_interface_npc->reward.mithril ||
                 gui_interface_npc->icon_count)
         {
             if (gui_interface_npc->reward.line_count)
-                yoff+=15;
-            yoff+=15;
+                yoff+=5;
+            yoff+=30;
         }
+        yoff+=15;
     }
 
-    yoff+=5;
     if (gui_interface_npc->icon_count)
     {
         int flag_s=FALSE;
-        yoff+=25;
         for (i=0;i<gui_interface_npc->icon_count;i++)
         {
             if (gui_interface_npc->icon[i].mode == 's' )
@@ -1262,17 +1250,23 @@ int precalc_interface_npc(void)
                     yoff+=44;
             }
         }
+        if (gui_interface_npc->icon_select)
+        {
+            yoff+=20;
+            for (i=0;i<gui_interface_npc->icon_count;i++)
+            {
+     
+                if (gui_interface_npc->icon[i].mode == 'S' )
+                    yoff+=44;
+            }
+        }
+        yoff+=15;
     }
 
-    if (gui_interface_npc->icon_select)
+    if (gui_interface_npc->link_count)
     {
-        yoff+=20;
-        for (i=0;i<gui_interface_npc->icon_count;i++)
-        {
-
-            if (gui_interface_npc->icon[i].mode == 'S' )
-                yoff+=44;
-        }
+        for (i=0;i<gui_interface_npc->link_count;i++)
+            yoff+=15;
     }
 
     return yoff;
@@ -1353,22 +1347,10 @@ void show_interface_npc(int mark)
         StringBlt(ScreenSurface, &BigFont, gui_interface_npc->message.title, x+width2-len/2, y+yoff, COLOR_WHITE, NULL, NULL);
         */
         StringBlt(ScreenSurface, &BigFont, gui_interface_npc->message.title, x+40, y+yoff, COLOR_HGOLD, NULL, NULL);
-        yoff+=26;
-
+        yoff+=25;
         for (i=0;i<gui_interface_npc->message.line_count;i++,yoff+=15)
             StringBlt(ScreenSurface, &MediumFont, gui_interface_npc->message.lines[i], x+40, y+yoff, COLOR_WHITE, NULL, NULL);
-    }
-
-    if (gui_interface_npc->link_count)
-    {
         yoff+=15;
-        for (i=0;i<gui_interface_npc->link_count;i++,yoff+=15)
-        {
-            if (gui_interface_npc->link_selected == i+1)
-                StringBlt(ScreenSurface, &MediumFont, gui_interface_npc->link[i].link, x+40, y+yoff, COLOR_DK_NAVY, NULL, NULL);
-            else
-                StringBlt(ScreenSurface, &MediumFont, gui_interface_npc->link[i].link, x+40, y+yoff, COLOR_GREEN, NULL, NULL);
-        }
     }
 
     /* reward is also used as "objective" */
@@ -1377,11 +1359,9 @@ void show_interface_npc(int mark)
         /*char xbuf[256];
         sprintf(xbuf, "len: %d yoff: %d (%d)", gui_interface_npc->win_length,gui_interface_npc->yoff,INTERFACE_WINLEN_NPC-gui_interface_npc->win_length);
         */
-        yoff +=25;
         StringBlt(ScreenSurface, &BigFont, gui_interface_npc->reward.title, x+40, y+yoff, COLOR_HGOLD, NULL, NULL);
         /*StringBlt(ScreenSurface, &BigFont, xbuf, x+40, y+yoff, COLOR_WHITE, NULL, NULL);*/
-        yoff+=26;
-
+        yoff+=25;
 
         for (i=0;i<gui_interface_npc->reward.line_count;i++,yoff+=15)
             StringBlt(ScreenSurface, &MediumFont, gui_interface_npc->reward.lines[i], x+40, y+yoff, COLOR_WHITE, NULL, NULL);
@@ -1394,46 +1374,44 @@ void show_interface_npc(int mark)
             char buf[64];
 
             if (gui_interface_npc->reward.line_count)
-                yoff+=15;
+                yoff+=5;
 
-            StringBlt(ScreenSurface, &MediumFont, "Your rewards:", x+40, y+yoff+5, COLOR_WHITE, NULL, NULL);
+	    StringBlt(ScreenSurface, &MediumFont, "Your rewards:", x+40, y+yoff+5, COLOR_HGOLD, NULL, NULL);
 
-            if (gui_interface_npc->reward.copper)
+            if (gui_interface_npc->reward.mithril)
             {
-                sprite_blt(Bitmaps[BITMAP_COIN_COPPER], x + 110, y + yoff, NULL, NULL);
-                sprintf(buf, "%d", gui_interface_npc->reward.copper);
-                StringBlt(ScreenSurface, &SystemFont, buf, x+128, y+yoff+18, COLOR_WHITE, NULL, NULL);
-            }
-            if (gui_interface_npc->reward.silver)
-            {
-                sprite_blt(Bitmaps[BITMAP_COIN_SILVER], x + 140, y + yoff+6, NULL, NULL);
-                sprintf(buf, "%d", gui_interface_npc->reward.silver);
-                StringBlt(ScreenSurface, &SystemFont, buf, x+160, y+yoff+18, COLOR_WHITE, NULL, NULL);
+                sprite_blt(Bitmaps[BITMAP_COIN_MITHRIL], x + 110, y + yoff+9, NULL, NULL);
+                sprintf(buf, "%d", gui_interface_npc->reward.mithril);
+                StringBlt(ScreenSurface, &SystemFont, buf, x+130, y+yoff+18, COLOR_WHITE, NULL, NULL);
             }
             if (gui_interface_npc->reward.gold)
             {
-                sprite_blt(Bitmaps[BITMAP_COIN_GOLD], x + 170, y + yoff+6, NULL, NULL);
+                sprite_blt(Bitmaps[BITMAP_COIN_GOLD], x + 140, y + yoff+6, NULL, NULL);
                 sprintf(buf, "%d", gui_interface_npc->reward.gold);
+                StringBlt(ScreenSurface, &SystemFont, buf, x+160, y+yoff+18, COLOR_WHITE, NULL, NULL);
+            }
+            if (gui_interface_npc->reward.silver)
+            {
+                sprite_blt(Bitmaps[BITMAP_COIN_SILVER], x + 170, y + yoff+6, NULL, NULL);
+                sprintf(buf, "%d", gui_interface_npc->reward.silver);
                 StringBlt(ScreenSurface, &SystemFont, buf, x+190, y+yoff+18, COLOR_WHITE, NULL, NULL);
             }
-            if (gui_interface_npc->reward.mithril)
+            if (gui_interface_npc->reward.copper)
             {
-                sprite_blt(Bitmaps[BITMAP_COIN_MITHRIL], x + 200, y + yoff+9, NULL, NULL);
-                sprintf(buf, "%d", gui_interface_npc->reward.mithril);
+                sprite_blt(Bitmaps[BITMAP_COIN_COPPER], x + 200, y + yoff+6, NULL, NULL);
+                sprintf(buf, "%d", gui_interface_npc->reward.copper);
                 StringBlt(ScreenSurface, &SystemFont, buf, x+220, y+yoff+18, COLOR_WHITE, NULL, NULL);
             }
-
-            yoff+=15;
+            yoff+=30;
         }
+        yoff+=15;
     }
 
-    yoff+=5;
     /* present now the icons for rewards or whats searched */
     if (gui_interface_npc->icon_count)
     {
         int flag_s = FALSE;
 
-        yoff+=25;
         for (i=0;i<gui_interface_npc->icon_count;i++)
         {
             /* we have a 's' to announce a 'S' selection for real rewards? */
@@ -1524,6 +1502,18 @@ void show_interface_npc(int mark)
                     t++;
                 }
             }
+        }
+    yoff+=15;
+    }
+
+    if (gui_interface_npc->link_count)
+    {
+        for (i=0;i<gui_interface_npc->link_count;i++,yoff+=15)
+        {
+            if (gui_interface_npc->link_selected == i+1)
+                StringBlt(ScreenSurface, &MediumFont, gui_interface_npc->link[i].link, x+40, y+yoff, COLOR_DK_NAVY, NULL, NULL);
+            else
+                StringBlt(ScreenSurface, &MediumFont, gui_interface_npc->link[i].link, x+40, y+yoff, COLOR_GREEN, NULL, NULL);
         }
     }
 
