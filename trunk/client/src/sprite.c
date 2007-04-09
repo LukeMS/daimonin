@@ -315,9 +315,10 @@ int StringWidth(_Font *font, char *text)
     {
         switch (text[i])
         {
-            case '°':
-            case '~':
-            case '^':
+            case '°': // yellow (strong)
+            case '|': // -------"-------
+            case '~': // green (emphasis)
+            case '^': // blue (clickable keyword)
                 break;
 
             default:
@@ -337,9 +338,10 @@ int StringWidthOffset(_Font *font, char *text, int *line, int len)
     {
         switch (text[i])
         {
-            case '°':
-            case '~':
-            case '^':
+            case '°': // yellow (strong)
+            case '|': // -------"-------
+            case '~': // green (emphasis)
+            case '^': // blue (clickable keyword)
                 break;
 
             default:
@@ -390,7 +392,7 @@ void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col
         actChar = text[i];
         dst.x=dst_tmp.x;
         dst.y=dst_tmp.y;
-        if (actChar == (unsigned char)'°' || actChar == (unsigned char)'~') /* change text color */
+        if (actChar == (unsigned char)'°' || actChar == (unsigned char)'|' || actChar == (unsigned char)'~') /* change text color */
         {
             if (col == COLOR_BLACK)
                 continue; /* no highlighting in blak text */
@@ -405,7 +407,7 @@ void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col
             {
                 color.g = 0xff;
                 color.b = 0x00;
-                if (actChar == (unsigned char)'°')
+                if (actChar == (unsigned char)'°' || actChar == (unsigned char)'|')
                     color.r = 0xff;
                 else
                     color.r = 0x00;
@@ -414,7 +416,7 @@ void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col
             colorToggle = (colorToggle + 1) & 1;
             continue;
         }
-        if (actChar == '^')
+        if (actChar == (unsigned char)'^')
         {
             if (gflag)
             {
@@ -430,7 +432,7 @@ void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col
         }
 
         /* lets look for smilies in the text. */
-        if (actChar == ':')
+        if (actChar == (unsigned char)':')
         {
             if (text[i+1] == '\0') break;
             else if (text[i+1] == ')') actChar = 128;
