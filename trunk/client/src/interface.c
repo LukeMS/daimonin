@@ -1064,51 +1064,57 @@ int get_interface_line(int *element, int *index, char **keyword, int x, int y, i
     {
         yoff+=25;
 
-        for (i=0;i<gui_interface_npc->message.line_count;i++,yoff+=15)
+        for (i=0;i<gui_interface_npc->message.line_count;i++)
         {
-            if (my >= yoff && my <=yoff+15)
+            if (!strcmp(gui_interface_npc->message.lines[i], "\0"))
+                yoff += 5;
+            else
             {
-                int st=0, xt, xs=x+40, s, flag=FALSE;
-
-                xt=xs;
-                for (s=0;s<(int)strlen(gui_interface_npc->message.lines[i]);s++)
+                if (my >= yoff && my <=yoff+15)
                 {
-                    if (gui_interface_npc->message.lines[i][s]=='^')
+                    int st=0, xt, xs=x+40, s, flag=FALSE;
+     
+                    xt=xs;
+                    for (s=0;s<(int)strlen(gui_interface_npc->message.lines[i]);s++)
                     {
-                        flag?(flag=FALSE):(flag=TRUE);
-                        xs = xt;
-                        st =s+1;
-                    }
-                    else
-                    {
-                        if (gui_interface_npc->message.lines[i][s] != '~' &&
-                                gui_interface_npc->message.lines[i][s] != '°' && gui_interface_npc->message.lines[i][s] != '|')
-                            xt += MediumFont.c[(unsigned char)gui_interface_npc->message.lines[i][s]].w + MediumFont.char_offset;
-
-                        if (flag && mx>=xs && mx <=xt) /* only when we have a active keyword part */
+                        if (gui_interface_npc->message.lines[i][s]=='^')
                         {
-                            char *ptr = strchr(&gui_interface_npc->message.lines[i][s], '^');
-
-                            *element = GUI_INTERFACE_MESSAGE;
-                            *index = i;
-                            if (!ptr)
-                                strcpy(key, &gui_interface_npc->message.lines[i][st]);
-                            else
-                            {
-                                /* eat that, mueslifresser ;)= */
-                                strncpy(key, &gui_interface_npc->message.lines[i][st],ptr-&gui_interface_npc->message.lines[i][st]);
-                                key[ptr-&gui_interface_npc->message.lines[i][st]]='\0';
-                            }
-                            *keyword = key;
-                            return TRUE;
+                            flag?(flag=FALSE):(flag=TRUE);
+                            xs = xt;
+                            st =s+1;
                         }
+                        else
+                        {
+                            if (gui_interface_npc->message.lines[i][s] != '~' &&
+                                    gui_interface_npc->message.lines[i][s] != '°' && gui_interface_npc->message.lines[i][s] != '|')
+                                xt += MediumFont.c[(unsigned char)gui_interface_npc->message.lines[i][s]].w + MediumFont.char_offset;
+     
+                            if (flag && mx>=xs && mx <=xt) /* only when we have a active keyword part */
+                            {
+                                char *ptr = strchr(&gui_interface_npc->message.lines[i][s], '^');
+     
+                                *element = GUI_INTERFACE_MESSAGE;
+                                *index = i;
+                                if (!ptr)
+                                    strcpy(key, &gui_interface_npc->message.lines[i][st]);
+                                else
+                                {
+                                    /* eat that, mueslifresser ;)= */
+                                    strncpy(key, &gui_interface_npc->message.lines[i][st],ptr-&gui_interface_npc->message.lines[i][st]);
+                                    key[ptr-&gui_interface_npc->message.lines[i][st]]='\0';
+                                }
+                                *keyword = key;
+                                return TRUE;
+                            }
+                        }
+     
                     }
-
+                    return FALSE;
                 }
-                return FALSE;
+                yoff += 15;
             }
-        }
-        yoff+=15;
+	}
+        yoff += 15;
     }
 
     /* reward is also used as "objective" */
@@ -1117,7 +1123,12 @@ int get_interface_line(int *element, int *index, char **keyword, int x, int y, i
         yoff +=25;
 
         for (i=0;i<gui_interface_npc->reward.line_count;i++)
-            yoff+=15;
+        {
+            if (!strcmp(gui_interface_npc->reward.lines[i], "\0"))
+                yoff += 5;
+            else
+                yoff += 15;
+        }
 
         if (gui_interface_npc->reward.copper || gui_interface_npc->reward.gold ||
                 gui_interface_npc->reward.silver || gui_interface_npc->reward.mithril ||
@@ -1206,28 +1217,36 @@ int precalc_interface_npc(void)
     yoff = 5;
     if (gui_interface_npc->used_flag&GUI_INTERFACE_MESSAGE)
     {
-        yoff+=25;
-        for (i=0;i<gui_interface_npc->message.line_count;i++)
-            yoff+=15;
-        yoff+=15;
+        yoff += 25;
+        for (i = 0; i < gui_interface_npc->message.line_count; i++)
+            if (!strcmp(gui_interface_npc->message.lines[i], "\0"))
+                yoff += 5;
+            else
+                yoff += 15;
+        yoff += 15;
     }
 
 
     /* reward is also used as "objective" */
     if (gui_interface_npc->used_flag&GUI_INTERFACE_REWARD)
     {
-        yoff +=25;
-        for (i=0;i<gui_interface_npc->reward.line_count;i++,yoff+=15)
-            ;
+        yoff += 25;
+        for (i = 0; i < gui_interface_npc->reward.line_count; i++)
+        {
+            if (!strcmp(gui_interface_npc->reward.lines[i], "\0"))
+                yoff += 5;
+            else
+                yoff += 15;
+        }
         if (gui_interface_npc->reward.copper || gui_interface_npc->reward.gold ||
                 gui_interface_npc->reward.silver || gui_interface_npc->reward.mithril ||
                 gui_interface_npc->icon_count)
         {
             if (gui_interface_npc->reward.line_count)
-                yoff+=5;
-            yoff+=30;
+                yoff += 5;
+            yoff += 30;
         }
-        yoff+=15;
+        yoff += 15;
     }
 
     if (gui_interface_npc->icon_count)
@@ -1348,9 +1367,19 @@ void show_interface_npc(int mark)
         */
         StringBlt(ScreenSurface, &BigFont, gui_interface_npc->message.title, x+40, y+yoff, COLOR_HGOLD, NULL, NULL);
         yoff+=25;
-        for (i=0;i<gui_interface_npc->message.line_count;i++,yoff+=15)
-            StringBlt(ScreenSurface, &MediumFont, gui_interface_npc->message.lines[i], x+40, y+yoff, COLOR_WHITE, NULL, NULL);
-        yoff+=15;
+
+	for (i=0;i<gui_interface_npc->message.line_count;i++)
+        {
+            if (!strcmp(gui_interface_npc->message.lines[i], "\0"))
+                yoff += 5;
+            else
+            {
+                StringBlt(ScreenSurface, &MediumFont, gui_interface_npc->message.lines[i], x+40, y+yoff, COLOR_WHITE, NULL, NULL);
+                yoff += 15;
+            }
+        }
+
+	yoff+=15;
     }
 
     /* reward is also used as "objective" */
@@ -1363,20 +1392,28 @@ void show_interface_npc(int mark)
         /*StringBlt(ScreenSurface, &BigFont, xbuf, x+40, y+yoff, COLOR_WHITE, NULL, NULL);*/
         yoff+=25;
 
-        for (i=0;i<gui_interface_npc->reward.line_count;i++,yoff+=15)
-            StringBlt(ScreenSurface, &MediumFont, gui_interface_npc->reward.lines[i], x+40, y+yoff, COLOR_WHITE, NULL, NULL);
+        for (i=0;i<gui_interface_npc->reward.line_count;i++)
+        {
+            if (!strcmp(gui_interface_npc->reward.lines[i], "\0"))
+                yoff += 5;
+            else
+            {
+                StringBlt(ScreenSurface, &MediumFont, gui_interface_npc->reward.lines[i], x+40, y+yoff, COLOR_WHITE, NULL, NULL);
+                yoff += 15;
+            }
+        }
 
         /* only print the "Your rewards:" message when there is one */
         if (gui_interface_npc->reward.copper || gui_interface_npc->reward.gold ||
                 gui_interface_npc->reward.silver || gui_interface_npc->reward.mithril ||
                 gui_interface_npc->icon_count)
-        {
+	{
             char buf[64];
 
             if (gui_interface_npc->reward.line_count)
                 yoff+=5;
 
-	    StringBlt(ScreenSurface, &MediumFont, "Your rewards:", x+40, y+yoff+5, COLOR_HGOLD, NULL, NULL);
+            StringBlt(ScreenSurface, &MediumFont, "Your rewards:", x+40, y+yoff+5, COLOR_HGOLD, NULL, NULL);
 
             if (gui_interface_npc->reward.mithril)
             {
@@ -1738,7 +1775,12 @@ void show_interface_npc(int mark)
             SDL_FillRect(ScreenSurface, &box, COLOR_GREY);
 
             if (gui_interface_npc->link_selected)
-                StringBlt(ScreenSurface, &MediumFont, gui_interface_npc->link[gui_interface_npc->link_selected-1].link, box.x+5, box.y-1, COLOR_DK_NAVY, NULL, NULL);
+            {
+                int cmdoff = 0;
+                if (!strncmp(gui_interface_npc->link[gui_interface_npc->link_selected-1].cmd, "/talk ", 6))
+                    cmdoff = 6;
+                StringBlt(ScreenSurface, &MediumFont, (gui_interface_npc->link[gui_interface_npc->link_selected-1].cmd)+cmdoff, box.x+5, box.y-1, COLOR_DK_NAVY, NULL, NULL);
+            }
         }
     }
 }
