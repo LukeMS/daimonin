@@ -1419,7 +1419,7 @@ void show_interface_npc(int mark)
             {
                 sprite_blt(Bitmaps[BITMAP_COIN_MITHRIL], x + 110, y + yoff+9, NULL, NULL);
                 sprintf(buf, "%d", gui_interface_npc->reward.mithril);
-                StringBlt(ScreenSurface, &SystemFont, buf, x+131, y+yoff+10, COLOR_BLACK, NULL, NULL);
+                StringBlt(ScreenSurface, &SystemFont, buf, x+131, y+yoff+19, COLOR_BLACK, NULL, NULL);
                 StringBlt(ScreenSurface, &SystemFont, buf, x+130, y+yoff+18, COLOR_WHITE, NULL, NULL);
             }
             if (gui_interface_npc->reward.gold)
