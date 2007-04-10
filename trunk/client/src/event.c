@@ -2719,7 +2719,9 @@ void check_menu_keys(int menu, int key)
         case SDLK_TAB:
             if (gui_interface_npc->link_count)
             {
-                if (++gui_interface_npc->link_selected > gui_interface_npc->link_count)
+                if (shiftPressed && (--gui_interface_npc->link_selected<0))
+                    gui_interface_npc->link_selected = gui_interface_npc->link_count;
+                if ((!shiftPressed) && (++gui_interface_npc->link_selected > gui_interface_npc->link_count))
                     gui_interface_npc->link_selected = 0;
                 sound_play_effect(SOUND_GET, 0, 0, 100);
             }
