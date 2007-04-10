@@ -1419,24 +1419,28 @@ void show_interface_npc(int mark)
             {
                 sprite_blt(Bitmaps[BITMAP_COIN_MITHRIL], x + 110, y + yoff+9, NULL, NULL);
                 sprintf(buf, "%d", gui_interface_npc->reward.mithril);
+                StringBlt(ScreenSurface, &SystemFont, buf, x+131, y+yoff+10, COLOR_BLACK, NULL, NULL);
                 StringBlt(ScreenSurface, &SystemFont, buf, x+130, y+yoff+18, COLOR_WHITE, NULL, NULL);
             }
             if (gui_interface_npc->reward.gold)
             {
                 sprite_blt(Bitmaps[BITMAP_COIN_GOLD], x + 140, y + yoff+6, NULL, NULL);
                 sprintf(buf, "%d", gui_interface_npc->reward.gold);
+                StringBlt(ScreenSurface, &SystemFont, buf, x+161, y+yoff+19, COLOR_BLACK, NULL, NULL);
                 StringBlt(ScreenSurface, &SystemFont, buf, x+160, y+yoff+18, COLOR_WHITE, NULL, NULL);
             }
             if (gui_interface_npc->reward.silver)
             {
                 sprite_blt(Bitmaps[BITMAP_COIN_SILVER], x + 170, y + yoff+6, NULL, NULL);
                 sprintf(buf, "%d", gui_interface_npc->reward.silver);
+                StringBlt(ScreenSurface, &SystemFont, buf, x+191, y+yoff+19, COLOR_BLACK, NULL, NULL);
                 StringBlt(ScreenSurface, &SystemFont, buf, x+190, y+yoff+18, COLOR_WHITE, NULL, NULL);
             }
             if (gui_interface_npc->reward.copper)
             {
                 sprite_blt(Bitmaps[BITMAP_COIN_COPPER], x + 200, y + yoff+6, NULL, NULL);
                 sprintf(buf, "%d", gui_interface_npc->reward.copper);
+                StringBlt(ScreenSurface, &SystemFont, buf, x+221, y+yoff+19, COLOR_BLACK, NULL, NULL);
                 StringBlt(ScreenSurface, &SystemFont, buf, x+220, y+yoff+18, COLOR_WHITE, NULL, NULL);
             }
             yoff+=30;
