@@ -141,7 +141,7 @@ function topicDetect(what)
     else
         ib:SetMsg("I can °Identify One Item° for 150 copper")
     end
-    ib:AddMsg("coins.\n\nYou have " .. pl:ShowCost(pl:GetMoney()) .. ".\n\nYou want me to do it now?") 
+    ib:AddMsg(" coins.\n\nYou have " .. pl:ShowCost(pl:GetMoney()) .. ".\n\nYou want me to do it now?")
     ib:SetAccept(nil, "cast " .. what) 
     ib:SetDecline(nil, "identify") 
     pl:Interface(1, ib:Build())
