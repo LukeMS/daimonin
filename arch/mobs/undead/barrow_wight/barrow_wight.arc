@@ -1,6 +1,6 @@
 Object barrow_wight
 name Barrow Wight
-face barrow_wight.150
+face barrow_wight.151
 race lich
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
@@ -47,30 +47,30 @@ weight 62500
 anim
 facings 25
 dummy.111
-barrow_wight.110
-barrow_wight.120
-barrow_wight.130
-barrow_wight.140
-barrow_wight.150
-barrow_wight.160
-barrow_wight.170
-barrow_wight.180
-barrow_wight.110
-barrow_wight.120
-barrow_wight.130
-barrow_wight.140
-barrow_wight.150
-barrow_wight.160
-barrow_wight.170
-barrow_wight.180
-barrow_wight.110
-barrow_wight.120
-barrow_wight.130
-barrow_wight.140
-barrow_wight.150
-barrow_wight.160
-barrow_wight.170
-barrow_wight.180
+barrow_wight.111
+barrow_wight.121
+barrow_wight.131
+barrow_wight.141
+barrow_wight.151
+barrow_wight.161
+barrow_wight.171
+barrow_wight.181
+barrow_wight.111
+barrow_wight.121
+barrow_wight.131
+barrow_wight.141
+barrow_wight.151
+barrow_wight.161
+barrow_wight.171
+barrow_wight.181
+barrow_wight.111
+barrow_wight.121
+barrow_wight.131
+barrow_wight.141
+barrow_wight.151
+barrow_wight.161
+barrow_wight.171
+barrow_wight.181
 mina
 is_animated 1
 anim_speed 4
