@@ -2,16 +2,57 @@ Object wmask_fire_on_1
 name fire place
 face wmask_fire_on.151
 anim
-facings 9
+facings 25
+dummy.111
 dummy.111
 wmask_fire_on.151
+wmask_fire_on.152
 wmask_fire_on.151
+wmask_fire_on.152
 wmask_fire_on.151
+wmask_fire_on.152
 wmask_fire_on.131
+wmask_fire_on.132
 wmask_fire_on.131
+wmask_fire_on.132
 wmask_fire_on.131
+wmask_fire_on.132
 wmask_fire_on.131
+wmask_fire_on.132
 wmask_fire_on.151
+wmask_fire_on.152
+wmask_fire_on.151
+wmask_fire_on.152
+wmask_fire_on.151
+wmask_fire_on.152
+wmask_fire_on.151
+wmask_fire_on.152
+wmask_fire_on.131
+wmask_fire_on.132
+wmask_fire_on.131
+wmask_fire_on.132
+wmask_fire_on.131
+wmask_fire_on.132
+wmask_fire_on.131
+wmask_fire_on.132
+wmask_fire_on.151
+wmask_fire_on.152
+wmask_fire_on.151
+wmask_fire_on.152
+wmask_fire_on.151
+wmask_fire_on.152
+wmask_fire_on.151
+wmask_fire_on.152
+wmask_fire_on.131
+wmask_fire_on.132
+wmask_fire_on.131
+wmask_fire_on.132
+wmask_fire_on.131
+wmask_fire_on.132
+wmask_fire_on.131
+wmask_fire_on.132
+wmask_fire_on.151
+wmask_fire_on.152
 mina
 is_animated 1
 anim_speed 3
