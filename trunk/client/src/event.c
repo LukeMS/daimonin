@@ -1231,21 +1231,67 @@ static void key_string_event(SDL_KeyboardEvent *key)
                     if ((key->keysym.unicode & 0xFF80) == 0)
                         c = key->keysym.unicode & 0x7F;
                     c = key->keysym.unicode & 0xff;
-                    if (c >= 32 && c != '^' && c != '~' && c != '§' && c != '°')
+                    if (c >= 32 && c != '^' && c != '~' && c != '§' && c != '°' && c != '|')
                     {
-                        if (key->keysym.mod & KMOD_SHIFT)
+                        if (GameStatus == GAME_STATUS_NAME)
+                        {
+                            switch (key->keysym.sym)
+                            {
+                                case SDLK_UNDERSCORE:
+                                case SDLK_MINUS:
+                                case SDLK_a:
+                                case SDLK_b:
+                                case SDLK_c:
+                                case SDLK_d:
+                                case SDLK_e:
+                                case SDLK_f:
+                                case SDLK_g:
+                                case SDLK_h:
+                                case SDLK_i:
+                                case SDLK_j:
+                                case SDLK_k:
+                                case SDLK_l:
+                                case SDLK_m:
+                                case SDLK_n:
+                                case SDLK_o:
+                                case SDLK_p:
+                                case SDLK_q:
+                                case SDLK_r:
+                                case SDLK_s:
+                                case SDLK_t:
+                                case SDLK_u:
+                                case SDLK_v:
+                                case SDLK_w:
+                                case SDLK_x:
+                                case SDLK_y:
+                                case SDLK_z:
+                                    if (CurrentCursorPos == 0)
+                                        c = toupper(c);
+                                    else
+                                        c = tolower(c);
+                                    break;
+                                default:
+                                    c = 0;
+                            }
+                        }
+                        else if (key->keysym.mod & KMOD_SHIFT)
                             c = toupper(c);
 
-                        i = InputCount;
-                        while (i >= CurrentCursorPos)
+                        if (c == 0)
+                            sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                        else
                         {
-                            InputString[i + 1] = InputString[i];
-                            i--;
+                            i = InputCount;
+                            while (i >= CurrentCursorPos)
+                            {
+                                InputString[i + 1] = InputString[i];
+                                i--;
+                            }
+                            InputString[CurrentCursorPos] = c;
+                            CurrentCursorPos++;
+                            InputCount++;
+                            InputString[InputCount] = 0;
                         }
-                        InputString[CurrentCursorPos] = c;
-                        CurrentCursorPos++;
-                        InputCount++;
-                        InputString[InputCount] = 0;
                     }
                 }
             }
