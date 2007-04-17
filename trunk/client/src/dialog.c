@@ -1769,9 +1769,9 @@ login_jmp:
                       x+2, y+110  , COLOR_ORANGE, NULL, NULL);
             break;
         case DIALOG_LOGIN_WARNING_NAME_WRONG:
-            StringBlt(ScreenSurface, &SystemFont, "Name is illegal - IT'S TOO SHORT OR HAS ILLEGAL CHARS!",
+            StringBlt(ScreenSurface, &SystemFont, "Name is too short - it must be two chars or longer!",
                       x+1, y+111  , COLOR_BLACK, NULL, NULL);
-            StringBlt(ScreenSurface, &SystemFont, "Name is illegal - IT'S TOO SHORT OR HAS ILLEGAL CHARS!",
+            StringBlt(ScreenSurface, &SystemFont, "Name is too short - it must be two chars or longer!",
                       x+2, y+110  , COLOR_ORANGE, NULL, NULL);
             break;
         case DIALOG_LOGIN_WARNING_PWD_WRONG:
