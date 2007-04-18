@@ -434,8 +434,12 @@ void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col
         /* lets look for smilies in the text. */
         if (actChar == (unsigned char)':')
         {
-            if (text[i+1] == '\0') break;
-            else if (text[i+1] == ')') actChar = 128;
+            /* We don't need this line (correct me please if im wrong
+             * This line 'swallows' all colons at the end of a line
+             */
+            /* if (text[i+1] == '\0') break; */
+
+            if (text[i+1] == ')') actChar = 128;
             else if (text[i+1] == '(') actChar = 129;
             else if (text[i+1] == 'D') actChar = 130;
             else if (text[i+1] == '|') actChar = 131;
