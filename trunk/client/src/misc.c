@@ -163,18 +163,33 @@ char *get_parameter_string(char *data, int *pos)
 {
     char *start_ptr, *end_ptr;
     static char buf[4024];
+    int done=FALSE;
+    int offset=0;
 
     /* we assume a " after the =... don't be to shy, we search for a '"' */
     start_ptr = strchr(data+*pos,'"');
     if (!start_ptr)
         return NULL; /* error */
 
-    end_ptr = strchr(++start_ptr,'"');
-    if (!end_ptr)
-        return NULL; /* error */
+    buf[0]='\0'; // sanity 0
+    while (!done)
+    {
+        end_ptr = strchr(++start_ptr,'"');
+        if (!end_ptr)
+            return NULL; /* error */
 
-    strncpy(buf, start_ptr, end_ptr-start_ptr);
-    buf[end_ptr-start_ptr]=0;
+        if ((*(end_ptr-1))=='\\') //We have a escaped " which is NOT the end-"
+        {
+            strncat(buf,start_ptr-offset,(end_ptr-start_ptr-1)+offset);
+            start_ptr = end_ptr;
+            offset=1; //after the first loop we have to catch the " which is message not endtag
+        }
+        else //we have the end "-tag
+        {
+            strncat(buf, start_ptr-offset, (end_ptr-start_ptr)+offset);
+            done=TRUE;
+        }
+    }
 
     /* ahh... ptr arithmetic... eat that, high level language fans ;) */
     *pos += ++end_ptr-(data+*pos);
