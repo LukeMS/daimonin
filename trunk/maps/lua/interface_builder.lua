@@ -11,32 +11,32 @@ function InterfaceBuilder:SetHeader(face, title)
     if type(face) == 'GameObject' then
         face = face:GetFace()
     end
-    self.header = { face = string.sub(face,1,127), title = string.sub(title,1,127) }
+    self.header = { face = face, title = title }
 end
 
 -- Set message title
 function InterfaceBuilder:SetTitle(title)
-    self.message.title = string.sub(title,1,127)
+    self.message.title = title
 end
 
 -- Replace message body
 function InterfaceBuilder:SetMsg(body)
-    self.message.body = string.sub(body,1,4095)
+    self.message.body = body
 end
 
 -- Append text to message body
 function InterfaceBuilder:AddMsg(text)
-    self.message.body = string.sub(self.message.body .. text,1,4095)
+    self.message.body = self.message.body .. text
 end
 
 -- Add a link line
 function InterfaceBuilder:AddLink(title, command)
-    table.insert(self.tags, { type = 'link', title = string.sub(title,1,127), command = string.sub(command,1,127) })
+    table.insert(self.tags, { type = 'link', title = title, command = command })
 end
 
 -- Set description & reward
 function InterfaceBuilder:SetDesc(body, copper, silver, gold, mithril, title)
-    self.reward = {body = string.sub(body,1,4095), copper = copper,  silver = silver, gold = gold, mithril = mithril, title = string.sub(title,1,127) }
+    self.reward = {body = body, copper = copper,  silver = silver, gold = gold, mithril = mithril, title = title }
 end
 
 -- Add a (reward) icon
@@ -44,7 +44,7 @@ function InterfaceBuilder:AddIcon(title, face, body)
     if type(face) == 'GameObject' then
         face = face:GetFace()
     end
-    table.insert(self.tags, { type = 'icon', title = string.sub(title,1,127), face = string.sub(face,1,127), body = string.sub(body,1,127)})
+    table.insert(self.tags, { type = 'icon', title = title, face = face, body = body})
 end
 
 -- Add a (reward) selectable icon
@@ -52,7 +52,7 @@ function InterfaceBuilder:AddSelect(title, face, body)
     if type(face) == 'GameObject' then
         face = face:GetFace()
     end
-    table.insert(self.tags, { type = 'select', title = string.sub(title,1,127), face = string.sub(face,1,127), body = string.sub(body,1,127)})
+    table.insert(self.tags, { type = 'select', title = title, face = face, body = body})
 end
 
 -- Set (reward) selectable icon mode to unselectable
@@ -67,22 +67,22 @@ end
 
 -- Set single button
 function InterfaceBuilder:SetButton(title, command)
-    self.button = { title = string.sub(title,1,63), command = string.sub(command,1,127) }
+    self.button = { title = title, command = command }
 end
 
 -- Set accept button
 function InterfaceBuilder:SetAccept(title, command)
-    self.accept = { title = string.sub(title,1,63), command = string.sub(command,1,127) }
+    self.accept = { title = title, command = command }
 end
 
 -- Set decline button
 function InterfaceBuilder:SetDecline(title, command)
-    self.decline = { title = string.sub(title,1,63), command = string.sub(command,1,127) }
+    self.decline = { title = title, command = command }
 end
 
 -- Set textfield contents
 function InterfaceBuilder:SetTextfield(contents)
-    self.textfield = { contents = string.sub(contents,1,127) }
+    self.textfield = { contents = contents }
 end
 
 -- Add Item/Kill list from a Quest Manager
