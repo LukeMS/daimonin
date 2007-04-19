@@ -301,7 +301,7 @@ void init_game_data(void)
     argServerPort = DEFAULT_SERVER_PORT;
     SoundSystem = SOUND_SYSTEM_OFF;
     GameStatus = GAME_STATUS_INIT;
-    GameStatusLogin = FALSE;
+    GameStatusLogin = TRUE;     /* most of the time we have a login, not a new char */
     CacheStatus = CF_FACE_CACHE;
     SoundStatus = 1;
     MapStatusX = MAP_MAX_SIZE;
@@ -466,7 +466,7 @@ Boolean game_status_chain(void)
     if (GameStatus == GAME_STATUS_INIT)
     {
         cpl.mark_count = -1;
-        GameStatusLogin = FALSE;
+        GameStatusLogin = TRUE;     /* most of the time we have a login, not a new char */
         interface_mode = INTERFACE_MODE_NO;
         clear_group();
         map_udate_flag = 2;
@@ -705,7 +705,7 @@ Boolean game_status_chain(void)
             sprintf(buf, "Break Login.");
             draw_info(buf, COLOR_RED);
             SOCKET_CloseClientSocket(&csocket);
-            GameStatusLogin = FALSE;
+            GameStatusLogin = TRUE;     /* most of the time we have a login, not a new char */
         }
         reset_input_mode();
     }
