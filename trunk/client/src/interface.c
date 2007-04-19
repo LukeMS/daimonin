@@ -35,10 +35,13 @@
 #define INTERFACE_CMD_WHO       512
 #define INTERFACE_CMD_XTENDED  1024
 
+#define OF_WARN
+
 
 static int interface_cmd_head(_gui_interface_head *head, char *data, int *pos)
 {
     char *buf, c;
+    int tmp;
     memset(head, 0, sizeof(_gui_interface_head));
 
     (*pos)++;
@@ -73,6 +76,14 @@ static int interface_cmd_head(_gui_interface_head *head, char *data, int *pos)
                 if (!(buf = get_parameter_string(data, pos)))
                     return -1;
                 strcpy(head->body_text, buf);
+                if (StringWidthOffset(&MediumFont, head->body_text, &tmp, 260))
+                {
+#ifdef OF_WARN
+                    draw_info_format(COLOR_RED,"Script-Warning: Too long header title:\n%s\nHeader-Title will be truancated!\n",head->body_text);
+#endif
+                    head->body_text[tmp-2]='\0';
+                    strcat(head->body_text,"...");
+                }
                 break;
 
             default:
@@ -85,6 +96,7 @@ static int interface_cmd_head(_gui_interface_head *head, char *data, int *pos)
 static int interface_cmd_link(_gui_interface_link *head, char *data, int *pos)
 {
     char *buf, c;
+    int tmp;
     memset(head, 0, sizeof(_gui_interface_link));
 
     (*pos)++;
@@ -113,6 +125,13 @@ static int interface_cmd_link(_gui_interface_link *head, char *data, int *pos)
                 if (!(buf = get_parameter_string(data, pos)))
                     return -1;
                 strcpy(head->link, buf);
+                if (StringWidthOffset(&MediumFont, head->link, &tmp, 295))
+                {
+#ifdef OF_WARN
+                    draw_info_format(COLOR_RED,"Script-Warning: Too long Link-Title:\n%s\nLink-Title will be truancated!\n",head->link);
+#endif
+                    /* We dont need to trancate the string SetClipRect will do it for us...*/
+                }
                 break;
 
             case 'c': /* link command */
@@ -176,6 +195,7 @@ static int interface_cmd_who(_gui_interface_who *head, char *data, int *pos)
 static int interface_cmd_reward(_gui_interface_reward *head, char *data, int *pos)
 {
     char *buf, c;
+    int tmp;
     memset(head, 0, sizeof(_gui_interface_reward));
     strcpy(head->title, "Description"); /* default title */
 
@@ -203,6 +223,14 @@ static int interface_cmd_reward(_gui_interface_reward *head, char *data, int *po
                 if (!(buf = get_parameter_string(data, pos)))
                     return -1;
                 strcpy(head->title, buf);
+                if (StringWidthOffset(&BigFont, head->title, &tmp, 295))
+                {
+#ifdef OF_WARN
+                    draw_info_format(COLOR_RED,"Script-Warning: Too long Reward-Title:\n%s\nReward-Title will be truancated!\n",head->title);
+#endif
+                    /* We dont need to trancate the string SetClipRect will do it for us...*/
+
+                }
                 break;
 
             case 'b': /* reward body */
@@ -245,6 +273,7 @@ static int interface_cmd_reward(_gui_interface_reward *head, char *data, int *po
 static int interface_cmd_message(_gui_interface_message *msg, char *data, int *pos)
 {
     char *buf, c;
+    int tmp;
     memset(msg, 0, sizeof(_gui_interface_message));
 
     (*pos)++;
@@ -270,6 +299,13 @@ static int interface_cmd_message(_gui_interface_message *msg, char *data, int *p
                 if (!(buf = get_parameter_string(data, pos)))
                     return -1;
                 strcpy(msg->title, buf);
+                if (StringWidthOffset(&BigFont, msg->title, &tmp, 295))
+                {
+#ifdef OF_WARN
+                    draw_info_format(COLOR_RED,"Script-Warning: Too long Message-Title:\n%s\nMessage-Title will be truancated!\n",msg->title);
+#endif
+                    /* We dont need to trancate the string SetClipRect will do it for us...*/
+                }
                 break;
 
             case 'b': /* message body */
@@ -385,6 +421,7 @@ static int interface_cmd_icon(_gui_interface_icon *head, char *data, int *pos)
 static int interface_cmd_button(_gui_interface_button *head, char *data, int *pos)
 {
     char *buf, c;
+    int tmp;
     memset(head, 0, sizeof(_gui_interface_button));
 
     (*pos)++;
@@ -413,6 +450,14 @@ static int interface_cmd_button(_gui_interface_button *head, char *data, int *po
                 if (!(buf = get_parameter_string(data, pos)))
                     return -1;
                 strcpy(head->title, buf);
+                if (StringWidthOffset(&SystemFont, head->title, &tmp, 55))
+                {
+#ifdef OF_WARN
+                    draw_info_format(COLOR_RED,"Script-Warning: Too long Button-Title:\n%s\nButton-Title will be truancated!\n",head->title);
+#endif
+                    head->title[tmp-2]='\0';
+                    strcat(head->title,"...");
+                }
                 break;
 
             case 'c': /* button command */
@@ -1073,7 +1118,7 @@ int get_interface_line(int *element, int *index, char **keyword, int x, int y, i
                 if (my >= yoff && my <=yoff+15)
                 {
                     int st=0, xt, xs=x+40, s, flag=FALSE;
-     
+
                     xt=xs;
                     for (s=0;s<(int)strlen(gui_interface_npc->message.lines[i]);s++)
                     {
@@ -1088,11 +1133,11 @@ int get_interface_line(int *element, int *index, char **keyword, int x, int y, i
                             if (gui_interface_npc->message.lines[i][s] != '~' &&
                                     gui_interface_npc->message.lines[i][s] != '°' && gui_interface_npc->message.lines[i][s] != '|')
                                 xt += MediumFont.c[(unsigned char)gui_interface_npc->message.lines[i][s]].w + MediumFont.char_offset;
-     
+
                             if (flag && mx>=xs && mx <=xt) /* only when we have a active keyword part */
                             {
                                 char *ptr = strchr(&gui_interface_npc->message.lines[i][s], '^');
-     
+
                                 *element = GUI_INTERFACE_MESSAGE;
                                 *index = i;
                                 if (!ptr)
@@ -1107,7 +1152,7 @@ int get_interface_line(int *element, int *index, char **keyword, int x, int y, i
                                 return TRUE;
                             }
                         }
-     
+
                     }
                     return FALSE;
                 }
@@ -1164,11 +1209,11 @@ int get_interface_line(int *element, int *index, char **keyword, int x, int y, i
         if (gui_interface_npc->icon_select)
         {
             int t;
-     
+
             yoff+=20;
             for (t=1,i=0;i<gui_interface_npc->icon_count;i++)
             {
-     
+
                 if (gui_interface_npc->icon[i].mode == 'S' )
                 {
                     if (my >= yoff && my <=yoff+32 && mx >=x+40 && mx<=x+72)
@@ -1274,7 +1319,7 @@ int precalc_interface_npc(void)
             yoff+=20;
             for (i=0;i<gui_interface_npc->icon_count;i++)
             {
-     
+
                 if (gui_interface_npc->icon[i].mode == 'S' )
                     yoff+=44;
             }
@@ -1783,7 +1828,8 @@ void show_interface_npc(int mark)
                 int cmdoff = 0;
                 if (!strncmp(gui_interface_npc->link[gui_interface_npc->link_selected-1].cmd, "/talk ", 6))
                     cmdoff = 6;
-                StringBlt(ScreenSurface, &MediumFont, (gui_interface_npc->link[gui_interface_npc->link_selected-1].cmd)+cmdoff, box.x+5, box.y-1, COLOR_DK_NAVY, NULL, NULL);
+                box.w=175;
+                StringBlt(ScreenSurface, &MediumFont, (gui_interface_npc->link[gui_interface_npc->link_selected-1].cmd)+cmdoff, box.x+3, box.y-1, COLOR_DK_NAVY, &box, NULL);
             }
         }
     }
