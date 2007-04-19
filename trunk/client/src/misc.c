@@ -158,13 +158,14 @@ int read_substr_char(char *srcstr, char *desstr, int *sz, char ct)
 /* this function gets a ="xxxxxxx" string from a
  * line. It removes the =" and the last " and returns
  * the string in a static buffer.
+ * maxlen !!inclusive!! terminating \0
  */
-char *get_parameter_string(char *data, int *pos)
+char *get_parameter_string(char *data, int *pos, int maxlen)
 {
     char *start_ptr, *end_ptr;
-    static char buf[4024];
+    static char buf[4096];
     int done=FALSE;
-    int offset=0;
+    int offset=0, cpysize=0;
 
     /* we assume a " after the =... don't be to shy, we search for a '"' */
     start_ptr = strchr(data+*pos,'"');
@@ -180,19 +181,37 @@ char *get_parameter_string(char *data, int *pos)
 
         if ((*(end_ptr-1))=='\\') //We have a escaped " which is NOT the end-"
         {
-            strncat(buf,start_ptr-offset,(end_ptr-start_ptr-1)+offset);
+            /* sanity checks against buffer overflow */
+            cpysize=(end_ptr-start_ptr-1)+offset;
+            if ((strlen(buf)+cpysize)>4095)
+                cpysize=4095-strlen(buf);
+
+            strncat(buf,start_ptr-offset,cpysize);
             start_ptr = end_ptr;
             offset=1; //after the first loop we have to catch the " which is message not endtag
         }
         else //we have the end "-tag
         {
-            strncat(buf, start_ptr-offset, (end_ptr-start_ptr)+offset);
+            /* sanity checks against buffer overflow */
+            cpysize=(end_ptr-start_ptr)+offset;
+            if ((strlen(buf)+cpysize)>4095)
+                cpysize=4095-strlen(buf);
+
+            strncat(buf, start_ptr-offset, cpysize);
             done=TRUE;
         }
     }
 
     /* ahh... ptr arithmetic... eat that, high level language fans ;) */
     *pos += ++end_ptr-(data+*pos);
+
+    /* sanity truncate string to maxlen */
+    if (maxlen>0)
+    {
+        if (strlen(buf)>maxlen)
+            draw_info_format(COLOR_RED,"FixMe: Interface parameter string out of bounds!");
+        buf[maxlen-1]='\0';
+    }
 
     return buf;
 }

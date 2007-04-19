@@ -67,13 +67,13 @@ static int interface_cmd_head(_gui_interface_head *head, char *data, int *pos)
         switch (c)
         {
             case 'f': /* face for this head */
-                if (!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos, 128)))
                     return -1;
                 strcpy(head->name, buf);
                 break;
 
             case 'b': /* test body */
-                if (!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos, 128)))
                     return -1;
                 strcpy(head->body_text, buf);
                 if (StringWidthOffset(&MediumFont, head->body_text, &tmp, 260))
@@ -122,7 +122,7 @@ static int interface_cmd_link(_gui_interface_link *head, char *data, int *pos)
         switch (c)
         {
             case 't': /* link title/text */
-                if (!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos, 128)))
                     return -1;
                 strcpy(head->link, buf);
                 if (StringWidthOffset(&MediumFont, head->link, &tmp, 295))
@@ -135,12 +135,12 @@ static int interface_cmd_link(_gui_interface_link *head, char *data, int *pos)
                 break;
 
             case 'c': /* link command */
-                if (!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos, 128)))
                     return -1;
                 head->cmd[0]=0;
                 if (buf[0] != '/')
                     strcpy(head->cmd, "/talk ");
-                strcat(head->cmd, buf);
+                strncat(head->cmd, buf, 121);
                 break;
 
             default:
@@ -179,7 +179,7 @@ static int interface_cmd_who(_gui_interface_who *head, char *data, int *pos)
         switch (c)
         {
             case 'b': /* link title/text */
-                if (!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos, 128)))
                     return -1;
                 strcpy(head->body, buf);
                 break;
@@ -220,7 +220,7 @@ static int interface_cmd_reward(_gui_interface_reward *head, char *data, int *po
         {
 
             case 't': /* title of the reward */
-                if (!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos, 128)))
                     return -1;
                 strcpy(head->title, buf);
                 if (StringWidthOffset(&BigFont, head->title, &tmp, 295))
@@ -234,31 +234,31 @@ static int interface_cmd_reward(_gui_interface_reward *head, char *data, int *po
                 break;
 
             case 'b': /* reward body */
-                if (!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos, 4096)))
                     return -1;
                 strcpy(head->body_text, buf);
                 break;
 
             case 'c': /* copper cash */
-                if (!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos, 0)))
                     return -1;
                 head->copper =atoi(buf);
                 break;
 
             case 's': /* silver cash */
-                if (!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos, 0)))
                     return -1;
                 head->silver =atoi(buf);
                 break;
 
             case 'g': /* gold cash */
-                if (!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos, 0)))
                     return -1;
                 head->gold =atoi(buf);
                 break;
 
             case 'm': /* mithril cash */
-                if (!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos, 0)))
                     return -1;
                 head->mithril =atoi(buf);
                 break;
@@ -296,7 +296,7 @@ static int interface_cmd_message(_gui_interface_message *msg, char *data, int *p
         switch (c)
         {
             case 't': /* title of the message */
-                if (!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos, 128)))
                     return -1;
                 strcpy(msg->title, buf);
                 if (StringWidthOffset(&BigFont, msg->title, &tmp, 295))
@@ -309,7 +309,7 @@ static int interface_cmd_message(_gui_interface_message *msg, char *data, int *p
                 break;
 
             case 'b': /* message body */
-                if (!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos, 4096)))
                     return -1;
                 strcpy(msg->body_text, buf);
                 break;
@@ -346,13 +346,13 @@ static int interface_cmd_xtended(_gui_interface_xtended *msg, char *data, int *p
         switch (c)
         {
             case 't': /* title of the message */
-                if (!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos, 128)))
                     return -1;
                 strcpy(msg->title, buf);
                 break;
 
             case 'b': /* message body */
-                if (!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos, 4096)))
                     return -1;
                 strcpy(msg->body_text, buf);
                 break;
@@ -388,25 +388,25 @@ static int interface_cmd_icon(_gui_interface_icon *head, char *data, int *pos)
         switch (c)
         {
             case 'f': /* face for this icon */
-                if (!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos, 128)))
                     return -1;
                 strcpy(head->name, buf);
                 break;
 
             case 't': /* title of the icon */
-                if (!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos, 128)))
                     return -1;
                 strcpy(head->title, buf);
                 break;
 
             case 'm': /* mode for this icon */
-                if (!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos,0)))
                     return -1;
                 head->mode = buf[0];
                 break;
 
             case 'b': /* test body */
-                if (!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos, 128)))
                     return -1;
                 strcpy(head->body_text, buf);
                 break;
@@ -447,7 +447,7 @@ static int interface_cmd_button(_gui_interface_button *head, char *data, int *po
         switch (c)
         {
             case 't': /* button title */
-                if (!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos, 64)))
                     return -1;
                 strcpy(head->title, buf);
                 if (StringWidthOffset(&SystemFont, head->title, &tmp, 55))
@@ -461,13 +461,13 @@ static int interface_cmd_button(_gui_interface_button *head, char *data, int *po
                 break;
 
             case 'c': /* button command */
-                if (!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos, 128)))
                     return -1;
 
                 head->command[0]=0;
                 if (buf[0] != '/')
                     strcpy(head->command, "/talk ");
-                strcat(head->command, buf);
+                strncat(head->command, buf, 121);
                 break;
 
             default:
@@ -506,7 +506,7 @@ static int interface_cmd_textfield(_gui_interface_textfield *textfield, char *da
         switch (c)
         {
             case 'b': /* Textfield text */
-                if (!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos, 128)))
                     return -1;
                 strcpy(textfield->text, buf);
                 break;
