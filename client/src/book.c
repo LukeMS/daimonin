@@ -53,7 +53,7 @@ static _gui_book_line *get_page_tag(char *data, int len, int *pos)
         switch (c)
         {
             case 't':
-                if (!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos, BOOK_LINES_CHAR+1)))
                     return NULL;
                 book_line.mode |= BOOK_LINE_TITLE;
                 strncpy(book_line.line, buf,BOOK_LINES_CHAR);
@@ -90,7 +90,7 @@ static _gui_book_line *get_title_tag(char *data, int len, int *pos)
         switch (c)
         {
             case 't':
-                if (!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos, BOOK_LINES_CHAR+1)))
                     return NULL;
                 strncpy(book_line.line, buf,BOOK_LINES_CHAR);
                 buf[BOOK_LINES_CHAR]=0;
@@ -126,7 +126,7 @@ static _gui_book_line *get_name_tag(char *data, int len, int *pos)
         switch (c)
         {
             case 't':
-                if (!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos, BOOK_LINES_CHAR+1)))
                     return NULL;
                 strncpy(book_line.line, buf,BOOK_LINES_CHAR);
                 buf[BOOK_LINES_CHAR]=0;
