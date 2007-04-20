@@ -432,7 +432,7 @@ void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col
         }
 
         /* lets look for smilies in the text. */
-        if (actChar == (unsigned char)':')
+        if (font == &SystemFont && actChar == (unsigned char)':') // Only SystemFont has smileys defined
         {
             /* We don't need this line (correct me please if im wrong
              * This line 'swallows' all colons at the end of a line
