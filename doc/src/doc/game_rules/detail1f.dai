@@ -6,7 +6,7 @@
             Summary
         </title>
         <p>
-            [Abuse of the game] <strong>Do not discuss other games in public communication.</strong>
+            [Abuse of the game] <strong>Do not discuss other games in public or advertise other games in public or private communication.</strong>
         </p>
     </section>
     <section id="description">
@@ -21,9 +21,12 @@
         </p>
         <p>
             Topic drift recognises that conversations, particularly those involving many parties, are not static. The focus of the conversation tends to shift within broad parameters defined by the comments at the start of the conversation and modified by, amongst other things, the environment in which the conversation takes place. For example, a discussion of a wholly different genre of computer game, say FPSs, withing the context of the Daimonin shoutbox often drifts to a discussion of Daimonin itself/other MMORPGs.
-       </p>
-       <p>
-           Freedom of opinion/expression is always a delicate subject. In the context of this rule we are thinking about intelligent and constructive criticsm as opposed to useless rants and bad-tempered vents. For example, comments such as 'I don't like X because of Y. A better way to do it would be Z' will be better received than comments such as 'this game sux!' Nevertheless, even the first comment is not really appropriate for ingame chat and you will likely be asked to post your complaint/suggestion to the forum instead.
+        </p>
+        <p>
+            Freedom of opinion/expression is always a delicate subject. In the context of this rule we are thinking about intelligent and constructive criticsm as opposed to useless rants and bad-tempered vents. For example, comments such as 'I don't like X because of Y. A better way to do it would be Z' will be better received than comments such as 'this game sux!' Nevertheless, even the first comment is not really appropriate for ingame chat and you will likely be asked to post your complaint/suggestion to the forum instead.
+        </p>
+        <p>
+            While we have no desire to censor players private communication (such as, /tell and clan chat) there have been determined attempts to circumvent this rule in particular by sending out bulk unsolicited tells advertising other games and misusing clan chat for the same purpose. Such advertising is specifically prohibited under this rule.
         </p>
     </section>
     <section id="penalties">
@@ -44,5 +47,8 @@
                 <strong>short mute.</strong>
             </li>
         </ul>
+        <p>
+            Outright advertising will be penalised more strongly than simple discussion. Violations of this rule are also likely to be penalised under <a href="file=viewtopic&amp;t=4196">Game Rule 1h</a> and <a href="file=viewtopic&amp;t=4188">Game Rule 3d</a>, at the discretion of the Vols.
+        </p>
     </section>
 </daiml>
