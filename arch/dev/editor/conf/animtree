@@ -20,7 +20,7 @@
 /mobs/human/tavern/barmaid
 /mobs/undead/barrow_wight/barrow_wight
 /mobs/human/tavern/bartender
-/mobs/animals/bears/bear_grey
+/mobs/animals/bears/bear_grey/bear_grey
 /indoor/artificial/beds/bed_1a.111
 /indoor/artificial/beds/bed_1b.111
 /indoor/artificial/beds/bed_2a.111
@@ -106,9 +106,15 @@
 /intern/items/container/close_chest_w1_1
 /outdoor/artificial/grave/coffin_stone.111
 /outdoor/artificial/grave/coffin_wood.111
+/items/organic/bodyparts/core_ice_golem
+/items/organic/bodyparts/core_lava_golem
+/items/organic/bodyparts/core_stone_golem
+/items/organic/bodyparts/core_water_golem
 /indoor/artificial/beds/couch1a
 /indoor/artificial/beds/couch1b
+/mobs/animals/cows/cow_small/cow_small
 /mobs/animals/reptiles/crocodile
+/items/magic_tools/crystal_ball
 /items/light/handheld/crystal_light
 /mobs/amoeboid/gelatinous_cube/cube_gel
 /walls/doors/curtain1
@@ -134,8 +140,8 @@
 /mobs/demon/devil_lord/devil_lord
 /outdoor/artificial/sign_big/dir_sign
 /special/director/director
-/mobs/pets/dog_brown/dog_brown
-/mobs/animals/dogs/dog_wild
+/mobs/animals/dogs/dog_brown/dog_brown
+/mobs/animals/dogs/dog_wild/dog_wild
 /walls/doors/door1_locked
 /walls/doors/door1_locked_wreath
 /indoor/artificial/bar/bar_door/door_bar1
@@ -152,11 +158,11 @@
 /mobs/dragon/dragon_skeletal/dragon_skeletal
 /mobs/dragon/dragon_water/dragon_water_small
 /items/container/drawers/drawers1.111
-/mobs/elves/drows/drow_annihilator
-/mobs/elves/drows/drow_captain
-/mobs/elves/drows/drow_fighter
-/mobs/elves/drows/drow_guard
-/mobs/elves/drows/drow_sorcerer
+/mobs/elves/drows/drow_annihilator/drow_annihilator
+/mobs/elves/drows/drow_captain/drow_captain
+/mobs/elves/drows/drow_fighter/drow_fighter
+/mobs/elves/drows/drow_guard/drow_guard
+/mobs/elves/drows/drow_sorcerer/drow_sorcerer
 /indoor/artificial/masks_wall/flags/drowflag
 /mobs/undead/druj/druj_skull
 /intern/player/dwarf_female
@@ -237,9 +243,13 @@
 /connect/triggers/handle_lever
 /outdoor/artificial/hay/haybailsmall
 /outdoor/artificial/hay/haypilesmall
+/items/organic/bodyparts/heart_beating
 /mobs/demihumans/hobgoblin/hobgoblin
 /mobs/human/peasant/hobo_old
+/walls/honeycomb/honey_deco_2_1
+/walls/honeycomb/honey_deco_3_1
 /items/magic_tools/horn
+/mobs/insects/bees/hornet
 /mobs/animals/horses/horse_white
 /intern/player/human_female
 /intern/player/human_male
@@ -261,6 +271,8 @@
 /mobs/amoeboid/jellies/jelly_ochre
 /mobs/amoeboid/jellies/jelly_red
 /mobs/amoeboid/jellies/jelly_spotted
+/items/container/cookware/kettle
+/indoor/artificial/tables/kettle table
 /indoor/artificial/benches/kiddy_bench.111
 /mobs/human/nobles/king
 /mobs/human/nobles/king1
@@ -556,8 +568,8 @@
 /mobs/plants/treant/treant_evil/treant_evil
 /connect/triggers/trigger_lever
 /mobs/trolls/troll
-/mobs/undead/vampire/vampire
-/mobs/undead/vampire/vampire_lord
+/mobs/undead/vampire/vampire/vampire
+/mobs/undead/vampire/vampire_lord/vampire_lord
 /outdoor/artificial/wagons/wagon_big
 /items/container/wagon/wagon_flat
 /items/container/wagon/wagon_small.111
@@ -589,7 +601,7 @@
 /items/readable/posters/wmask_wanted
 /indoor/artificial/masks_wall/wmask_water_a
 /indoor/artificial/masks_wall/wmask_water_b
-/mobs/animals/dogs/wolf
+/mobs/animals/dogs/wolf/wolf
 /mobs/human/town/woman_old
 /mobs/animals/worms/worm
 /mobs/misc/worm_purple/worm_purple
