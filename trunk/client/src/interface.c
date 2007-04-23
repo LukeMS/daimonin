@@ -35,8 +35,6 @@
 #define INTERFACE_CMD_WHO       512
 #define INTERFACE_CMD_XTENDED  1024
 
-#define OF_WARN
-
 
 static int interface_cmd_head(_gui_interface_head *head, char *data, int *pos)
 {
@@ -78,7 +76,7 @@ static int interface_cmd_head(_gui_interface_head *head, char *data, int *pos)
                 strcpy(head->body_text, buf);
                 if (StringWidthOffset(&MediumFont, head->body_text, &tmp, 260))
                 {
-#ifdef OF_WARN
+#ifdef DEVELOPMENT
                     draw_info_format(COLOR_RED,"Script-Warning: Too long header title:\n%s\nHeader-Title will be truancated!\n",head->body_text);
 #endif
                     head->body_text[tmp-2]='\0';
@@ -127,7 +125,7 @@ static int interface_cmd_link(_gui_interface_link *head, char *data, int *pos)
                 strcpy(head->link, buf);
                 if (StringWidthOffset(&MediumFont, head->link, &tmp, 295))
                 {
-#ifdef OF_WARN
+#ifdef DEVELOPMENT
                     draw_info_format(COLOR_RED,"Script-Warning: Too long Link-Title:\n%s\nLink-Title will be truancated!\n",head->link);
 #endif
                     /* We dont need to trancate the string SetClipRect will do it for us...*/
@@ -225,7 +223,7 @@ static int interface_cmd_reward(_gui_interface_reward *head, char *data, int *po
                 strcpy(head->title, buf);
                 if (StringWidthOffset(&BigFont, head->title, &tmp, 295))
                 {
-#ifdef OF_WARN
+#ifdef DEVELOPMENT
                     draw_info_format(COLOR_RED,"Script-Warning: Too long Reward-Title:\n%s\nReward-Title will be truancated!\n",head->title);
 #endif
                     /* We dont need to trancate the string SetClipRect will do it for us...*/
@@ -301,7 +299,7 @@ static int interface_cmd_message(_gui_interface_message *msg, char *data, int *p
                 strcpy(msg->title, buf);
                 if (StringWidthOffset(&BigFont, msg->title, &tmp, 295))
                 {
-#ifdef OF_WARN
+#ifdef DEVELOPMENT
                     draw_info_format(COLOR_RED,"Script-Warning: Too long Message-Title:\n%s\nMessage-Title will be truancated!\n",msg->title);
 #endif
                     /* We dont need to trancate the string SetClipRect will do it for us...*/
@@ -452,7 +450,7 @@ static int interface_cmd_button(_gui_interface_button *head, char *data, int *po
                 strcpy(head->title, buf);
                 if (StringWidthOffset(&SystemFont, head->title, &tmp, 55))
                 {
-#ifdef OF_WARN
+#ifdef DEVELOPMENT
                     draw_info_format(COLOR_RED,"Script-Warning: Too long Button-Title:\n%s\nButton-Title will be truancated!\n",head->title);
 #endif
                     head->title[tmp-2]='\0';

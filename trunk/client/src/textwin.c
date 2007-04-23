@@ -199,7 +199,9 @@ void draw_info(char *str, int flags)
     char *buf2 = malloc(strlen(str)+1);
     strcpy(buf2, str);
 
+#ifdef DEVELOPMENT
     LOG(LOG_MSG,"DRAW_INFO: >%s<\n", buf2);
+#endif
     color = flags & 0xff;
     mode = flags;
     /*

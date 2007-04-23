@@ -1096,7 +1096,9 @@ void InterfaceCmd(unsigned char *data, int len)
         mode = *data;
         pos ++;
 
+#ifdef DEVELOPMENT
         LOG(LOG_DEBUG, "Interface command: %s\n", (char*)(data+pos));
+#endif
         gui_interface_npc = load_gui_interface(mode, (char*)data, len, pos);
         if (!gui_interface_npc)
             draw_info("INVALID GUI CMD", COLOR_RED);
