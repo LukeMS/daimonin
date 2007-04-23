@@ -241,6 +241,12 @@ typedef struct _options
     Uint8                   real_video_bpp;
     uint32                  videoflags_full;
     uint32                  videoflags_win;
+
+#ifdef DEVELOPMENT
+    char                    cli_name[40];
+    char                    cli_pass[40];
+    int                     cli_server;
+#endif
 }
 _options;
 
