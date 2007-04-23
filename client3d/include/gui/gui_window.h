@@ -29,6 +29,7 @@ http://www.gnu.org/licenses/licenses.html
 
 #include <vector>
 #include <Ogre.h>
+#include "item.h"
 #include "gui_textout.h"
 #include "gui_gadget_slot.h"
 #include "gui_gadget_button.h"
@@ -142,9 +143,21 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // GUI_Gadget_Slot stuff.
     // ////////////////////////////////////////////////////////////////////
-    void updateItemSlot(int element, int slotNr, int state);
-    void setItemReference(int element, std::list<Item::sItem*> *itemContainer);
-    int getDragSlot();
+    void addItem(Item::sItem *item);
+    void delItem(Item::sItem *item);
+    void clrItem();
+    int getDragSlot()
+    {
+        return mGadgetDrag;
+    }
+    void hideDragOverlay()
+    {
+        mvSlot[0]->hideDragOverlay();
+    }
+    void moveDragOverlay()
+    {
+        mvSlot[0]->moveDragOverlay();
+    }
 
 private:
     // ////////////////////////////////////////////////////////////////////
@@ -159,6 +172,7 @@ private:
     int mDragPosX1, mDragPosX2, mDragPosY1, mDragPosY2, mDragOldMousePosX, mDragOldMousePosY;
     int mMinimized, mDefaultHeight;
     int mGadgetDrag;
+    unsigned int mSumUsedSlots;
     bool isInit;
     bool mSizeRelative;
     Ogre::SceneNode *mSceneNode;

@@ -393,7 +393,7 @@ void GuiTextout::Print(TextLine *line, Texture *texture)
         {
             for (unsigned int x=0; x < line->x2- line->x1; ++x)
             {
-                mTextGfxBuffer[x + y] = line->BG_Backup[x + y];
+                mTextGfxBuffer[x + y] = line->LayerWindowBG[x + y];
             }
             y += line->x2- line->x1;
         }

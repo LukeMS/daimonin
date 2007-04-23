@@ -733,16 +733,36 @@
     <!--=============================================-->
     <!-- Layer 1 slots and icons                     -->
     <!--=============================================-->
-    <Gadget type= "SLOT"  name = "Slot_Inventory" fill= "GFX_FILL" image_name = "Item-Slot">
+    <Gadget type= "SLOT"  name = "Slot" fill= "GFX_FILL" image_name = "Item-Slot">
       <Pos x= "17" y= "89" />
     </Gadget>
 
-    <Gadget type= "SLOT"  name = "Slot_Inventory" fill= "GFX_FILL" image_name = "Item-Slot">
+    <Gadget type= "SLOT"  name = "Slot" fill= "GFX_FILL" image_name = "Item-Slot">
       <Pos x= "90" y= "89" />
     </Gadget>
 
-    <Gadget type= "SLOT"  name = "Slot_Equipment" fill= "GFX_FILL" image_name = "Item-Slot" bg_image_name ="equipment-lantern">
+    <Gadget type= "SLOT"  name = "Slot" fill= "GFX_FILL" image_name = "Item-Slot" bg_image_name ="equipment-lantern">
       <Pos x= "163" y= "89" />
+    </Gadget>
+
+    <Gadget type= "SLOT"  name = "Slot" fill= "GFX_FILL" image_name = "Item-Slot" bg_image_name ="equipment-lantern">
+      <Pos x= "236" y= "89" />
+    </Gadget>
+
+    <Gadget type= "SLOT"  name = "Slot" fill= "GFX_FILL" image_name = "Item-Slot">
+      <Pos x= "17" y= "162" />
+    </Gadget>
+
+    <Gadget type= "SLOT"  name = "Slot" fill= "GFX_FILL" image_name = "Item-Slot">
+      <Pos x= "90" y= "162" />
+    </Gadget>
+
+    <Gadget type= "SLOT"  name = "Slot" fill= "GFX_FILL" image_name = "Item-Slot" >
+      <Pos x= "163" y= "162" />
+    </Gadget>
+
+    <Gadget type= "SLOT"  name = "Slot" fill= "GFX_FILL" image_name = "Item-Slot" >
+      <Pos x= "236" y= "162" />
     </Gadget>
 
     <Graphic fill= "GFX_FILL"  image_name = "Monney-Copper">
@@ -1189,6 +1209,13 @@
     <!--=============================================-->
     <!-- Layer 1 slots and icons                     -->
     <!--=============================================-->
+    <Gadget type= "SLOT"  name = "Slot" fill= "GFX_FILL" image_name = "Item-Slot">
+      <Pos x= "17" y= "89" />
+    </Gadget>
+
+
+
+
     <Graphic fill= "GFX_FILL"  image_name = "Monney-Copper">
       <Pos x= "11" y= "11" />
     </Graphic>

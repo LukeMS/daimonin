@@ -107,7 +107,7 @@ bool GuiTable::keyEvent(const char keyChar, const unsigned char key)
         mRowChanged = true;
         return true;
     }
-    if (key == OIS::KC_RETURN)
+    if (key == OIS::KC_RETURN) // || key == OIS::KC_NUMPADENTER)
     {
         mRowActivated = true;
         return true;
@@ -213,7 +213,7 @@ void GuiTable::draw()
     GuiTextout::TextLine textline;
     textline.index = -1;
     textline.hideText= false;
-    textline.BG_Backup = 0;
+    textline.LayerWindowBG = 0;
     textline.color =0x00ffffff;
     textline.font = mFontNr;
     textline.x1 = mPosX;
@@ -271,7 +271,7 @@ void GuiTable::drawRow(int row, uint32 color)
     GuiTextout::TextLine textline;
     textline.index = -1;
     textline.hideText= false;
-    textline.BG_Backup = 0;
+    textline.LayerWindowBG = 0;
     textline.font = mFontNr;
     textline.color =0x00ffffff;
     textline.x1 = mPosX +3;

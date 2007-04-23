@@ -60,6 +60,7 @@ std::string GuiWindow::mStrTooltip ="";
 GuiWindow::GuiWindow()
 {
     isInit = false;
+    mSumUsedSlots = 0;
     mGadgetDrag = -1;
     mElement = 0;
 }
@@ -97,7 +98,7 @@ void GuiWindow::freeRecources()
     // Delete the textlines.
     for (std::vector<GuiTextout::TextLine*>::iterator i = mvTextline.begin(); i < mvTextline.end(); ++i)
     {
-        if ((*i)->index >= 0) delete[] (*i)->BG_Backup;
+        if ((*i)->index >= 0) delete[] (*i)->LayerWindowBG;
         delete (*i);
     }
     mvTextline.clear();
@@ -296,16 +297,16 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, int zOrder)
         if ((strTmp = xmlElem->Attribute("text")))   textline->text = strTmp;
         if ((strTmp = xmlElem->Attribute("hide")))   textline->hideText= (atoi(strTmp)==1);
 
-        // Fill the BG_Backup buffer with Window background, before printing.
+        // Fill the LayerWindowBG buffer with Window background, before printing.
         mvTextline.push_back(textline);
-        textline->BG_Backup = new uint32[(textline->x2- textline->x1) * (textline->y2- textline->y1)];
+        textline->LayerWindowBG = new uint32[(textline->x2- textline->x1) * (textline->y2- textline->y1)];
         mTexture.getPointer()->getBuffer()->blitToMemory(Box(
                     textline->x1, textline->y1,
                     textline->x2, textline->y2),
                 PixelBox(
                     textline->x2- textline->x1,
                     textline->y2- textline->y1,
-                    1, PF_A8R8G8B8, textline->BG_Backup));
+                    1, PF_A8R8G8B8, textline->LayerWindowBG));
         GuiTextout::getSingleton().Print(textline, mTexture.getPointer());
     }
     // ////////////////////////////////////////////////////////////////////
@@ -421,7 +422,7 @@ inline void GuiWindow::printParsedTextline(TiXmlElement *xmlElem)
     GuiTextout::TextLine textline;
     textline.index = -1;
     textline.hideText= false;
-    textline.BG_Backup = 0;
+    textline.LayerWindowBG = 0;
     textline.color = 0x00ffffff;
     if ((strTmp = xmlElem->Attribute("x")))    textline.x1   = atoi(strTmp);
     if ((strTmp = xmlElem->Attribute("y")))    textline.y1   = atoi(strTmp);
@@ -492,15 +493,7 @@ int GuiWindow::mouseEvent(int MouseAction, Vector3 &mouse)
     if (!isInit || !mOverlay->isVisible()) return GuiManager::EVENT_CHECK_NEXT;
     int rx = (int) mouse.x;
     int ry = (int) mouse.y;
-    if (mGadgetDrag >=0)
-    {
-        if (mvSlot[mGadgetDrag]->mouseEvent(MouseAction, rx - mPosX, ry - mPosY) == GuiManager::EVENT_DRAG_DONE)
-        {
-            mGadgetDrag = -1;
-            return GuiManager::EVENT_DRAG_DONE;
-        }
-        return GuiManager::EVENT_CHECK_DONE;
-    }
+
     if (rx < mPosX && rx > mPosX + mWidth && ry < mPosY && ry > mPosY + mHeight)
         return GuiManager::EVENT_CHECK_NEXT;
     int x = rx - mPosX;
@@ -513,6 +506,7 @@ int GuiWindow::mouseEvent(int MouseAction, Vector3 &mouse)
         if (mvGadgetButton[i]->mouseEvent(MouseAction, x, y)) ++sumPressed;
     }
     if (sumPressed) return GuiManager::EVENT_CHECK_DONE;
+
     for (unsigned int i = 0; i < mvSlot.size(); ++i)
     {
         if (mvSlot[i]->mouseEvent(MouseAction, x, y) == GuiManager::EVENT_DRAG_STRT)
@@ -697,25 +691,41 @@ class GuiGadgetSlot *GuiWindow::getSlotHandle(int element)
 }
 
 //================================================================================================
-// Update an ItemSlot.
+// Adds an item to the slots.
 //================================================================================================
-void GuiWindow::updateItemSlot(int element, int slotNr, int state)
+void GuiWindow::addItem(Item::sItem *item)
 {
-    if (mvSlot.empty()) return;
-    if (state == GuiGadgetSlot::UPDATE_ALL_SLOTS)
+    if (mSumUsedSlots < mvSlot.size())
     {
-
+        mvSlot[mSumUsedSlots++]->setItem(item);
     }
-    else getSlotHandle(element)->updateSlot(slotNr, state);
 }
 
 //================================================================================================
 // .
 //================================================================================================
-void GuiWindow::setItemReference(int element, std::list<Item::sItem*> *itemContainer)
+void GuiWindow::delItem(Item::sItem *item)
 {
-    if (!mvSlot.empty())
-        getSlotHandle(element)->setItemReference(itemContainer);
+    for (unsigned int i = 0; i < mSumUsedSlots; ++i)
+    {
+        if (item == mvSlot[i]->getItem())
+        {
+            // Found the item that will be deleted.
+            for (; i < mSumUsedSlots; ++i)
+                mvSlot[i]->setItem(mvSlot[i+1]->getItem());
+        }
+    }
+    mvSlot[--mSumUsedSlots]->setItem(0);
+}
+
+//================================================================================================
+// Set all slots to empty.
+//================================================================================================
+void GuiWindow::clrItem()
+{
+    for (unsigned int i = 0; i < mvSlot.size(); ++i)
+        mvSlot[i]->setItem(0);
+    mSumUsedSlots = 0;
 }
 
 //================================================================================================
@@ -853,20 +863,5 @@ void GuiWindow::buttonPressed(GuiWindow *me, int index)
             return;
     }
     GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "button event... ");
-}
-
-//================================================================================================
-// .
-//================================================================================================
-int GuiWindow::getDragSlot()
-{
-    int slot, group = 0;
-    for (unsigned int i = 0; i < mvSlot.size(); ++i)
-    {
-        slot = mvSlot[i]->getDragSlot();
-        if (slot >=0) break;
-        ++group;
-    }
-	return 1234;
 }
 

@@ -55,6 +55,7 @@ public:
         GUI_WIN_TRADE,
         GUI_WIN_SHOP,
         GUI_WIN_CONTAINER,
+        GUI_WIN_TILEGROUND,
 
         GUI_WIN_PLAYERINFO,
         GUI_WIN_PLAYERCONSOLE,
@@ -172,17 +173,17 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // GUI_gadget_Slot stuff.
     // ////////////////////////////////////////////////////////////////////
-    void setItemReference(int window, int element, std::list<Item::sItem*> *itemContainer)
+    void addItem(int window, Item::sItem *item)
     {
-        guiWindow[window].setItemReference(element, itemContainer);
+        guiWindow[window].addItem(item);
     }
-    void updateItemSlot(int window, int element, int slotNr, int state = GuiImageset::STATE_ELEMENT_DEFAULT)
+    void delItem(int window, Item::sItem *item)
     {
-        guiWindow[window].updateItemSlot(element, slotNr, state);
+        guiWindow[window].delItem(item);
     }
-    int getDragSlot(int window)
+    void clrItem(int window)
     {
-        return guiWindow[window].getDragSlot();
+        guiWindow[window].clrItem();
     }
 
 private:
@@ -191,7 +192,8 @@ private:
     // ////////////////////////////////////////////////////////////////////
     static GuiWinNam mGuiWindowNames[GUI_WIN_SUM];
     static class GuiWindow guiWindow[GUI_WIN_SUM];
-    int mDragSrcWin, mDragDestWin;
+    int mDragSrcWin, mDragSrcSlot;
+    int mDragDstWin, mDragDstSlot;
     int mDragSrcContainer, mDragDestContainer;
     int mDragSrcItemPosx, mDragSrcItemPosy; // Set on dragStart for moving back on false drag&drop.
     int mActiveWindow, mActiveElement;

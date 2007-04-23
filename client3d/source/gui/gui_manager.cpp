@@ -54,6 +54,7 @@ GuiManager::GuiWinNam GuiManager::mGuiWindowNames[GUI_WIN_SUM]=
         { "Win_Trade",     GUI_WIN_TRADE         },
         { "Win_Shop",      GUI_WIN_SHOP          },
         { "Win_Container", GUI_WIN_CONTAINER     },
+        { "Win_TileGround",GUI_WIN_TILEGROUND    },
 
         { "PlayerInfo",    GUI_WIN_PLAYERINFO    },
         { "PlayerConsole", GUI_WIN_PLAYERCONSOLE },
@@ -291,21 +292,24 @@ bool GuiManager::mouseEvent(int mouseAction, Vector3 &mouse)
     // ////////////////////////////////////////////////////////////////////
     if (mDragSrcWin >= 0)
     {
-        if (guiWindow[mDragSrcWin].mouseEvent(mouseAction, mMouse) == EVENT_DRAG_DONE)
+        if (mouseAction == GuiWindow::BUTTON_RELEASED) // End of dragging.
+        //if (guiWindow[mDragSrcWin].mouseEvent(mouseAction, mMouse) == EVENT_DRAG_DONE)
         {
+            guiWindow[0].hideDragOverlay();
+            mDragDstWin = -1;
             for (unsigned int w = 0; w < GUI_WIN_SUM; ++w)
             {
                 if (guiWindow[w].mouseWithin((int)mMouse.x, (int)mMouse.y))
                 {
-                    // Drop into another window/slot.
-                    Item::getSingleton().dragItem(mDragSrcWin, w);
-                    return true;
+                    mDragDstWin = w;
+                    break;
                 }
             }
-            // Drop to the ground.
-            Item::getSingleton().dragItem(mDragSrcWin, -1);
+            // Drop the item.
+            Item::getSingleton().dropItem(mDragSrcWin, mDragSrcSlot, mDragDstWin);
             mDragSrcWin = -1;
         }
+        guiWindow[0].moveDragOverlay();
         return true;
     }
     // ////////////////////////////////////////////////////////////////////
@@ -323,6 +327,7 @@ bool GuiManager::mouseEvent(int mouseAction, Vector3 &mouse)
         if (ret == EVENT_DRAG_STRT)
         {
             mDragSrcWin = i;
+            mDragSrcSlot= guiWindow[i].getDragSlot();
             return true;
         }
     }

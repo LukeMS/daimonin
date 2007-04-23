@@ -1090,7 +1090,7 @@ void Network::SkillRdyCmd(unsigned char *data, int len)
 void Network::PlayerCmd(unsigned char *data, int len)
 {
     Option::getSingleton().setGameStatus(Option::GAME_STATUS_PLAY);
-    Item::getSingleton().mActHeroContainerID = GetInt_String(data);
+    Item::getSingleton().setBackpackID(GetInt_String(data));
     int i = 4;
 //    ObjectHero::getSingleton().weight = GetInt_String(data + i);
     i += 4;

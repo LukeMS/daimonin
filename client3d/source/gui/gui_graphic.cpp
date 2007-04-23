@@ -35,6 +35,10 @@ using namespace Ogre;
 //================================================================================================
 GuiGraphic::GuiGraphic(TiXmlElement *xmlElement, void *parent, bool drawOnInit):GuiElement(xmlElement, parent)
 {
+    if (mHasAlpha)
+        mBuildBuffer = new uint32[mWidth*mHeight];
+    else
+        mBuildBuffer = 0;
     if (drawOnInit) draw();
 }
 
@@ -42,7 +46,9 @@ GuiGraphic::GuiGraphic(TiXmlElement *xmlElement, void *parent, bool drawOnInit):
 // .
 //================================================================================================
 GuiGraphic::~GuiGraphic()
-{}
+{
+    delete[] mBuildBuffer;
+}
 
 //================================================================================================
 // .
@@ -84,23 +90,23 @@ void GuiGraphic::draw()
                         gfxSrcPos[mState].y,
                         gfxSrcPos[mState].x + mSrcWidth,
                         gfxSrcPos[mState].y + mSrcHeight));
-            uint32 *srcData = static_cast<uint32*>(src.data);
+            uint32 *LayerState = static_cast<uint32*>(src.data);
             int srcRowSkip = (int) ((GuiWindow*) mParent)->getPixelBox()->getWidth();
-            uint32 *dst = BG_Backup;
+            uint32 *dst = LayerWindowBG;
+            uint32 *buf = mBuildBuffer;
             int srcX, dSrcY = 0, srcY =0;
             for (int y =0; y < mHeight; ++y)
             {
                 srcX = 0;
                 for (int x =0; x < mWidth; ++x)
                 {
-                    *dst = alphaBlend(*dst, srcData[dSrcY + srcX]);
-                    ++dst;
+                    *buf++ = alphaBlend(*dst++, LayerState[dSrcY + srcX]);
                     if (++srcX >= mSrcWidth) srcX = 0; // Repeat the image.
                 }
                 dSrcY+= srcRowSkip;
-            if (++srcY >= mSrcHeight) { srcY = 0; dSrcY =0; } // Repeat the image.
+            if (++srcY >= mSrcHeight){ srcY = 0; dSrcY =0; } // Repeat the image.
             }
-            src = PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8, BG_Backup);
+            src = PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8, mBuildBuffer);
             texture->getBuffer()->blitFromMemory(src, Box(mPosX, mPosY, mPosX + mWidth, mPosY + mHeight));
         }
         // ////////////////////////////////////////////////////////////////////
