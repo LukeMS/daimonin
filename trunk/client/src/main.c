@@ -713,7 +713,7 @@ Boolean game_status_chain(void)
         /* the choices are in event.c */
         map_transfer_flag = 0;
 #ifdef DEVELOPMENT
-        if (options.cli_name[0] || options.cli_pass || options.cli_server)
+        if (options.cli_name[0] || options.cli_pass[0] || options.cli_server)
             GameStatus=GAME_STATUS_ADDME;
 #endif
     }
