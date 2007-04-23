@@ -142,10 +142,10 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
         case OIS::KC_I:
             GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_EQUIPMENT, true);
             GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_INVENTORY, true);
-            GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_TRADE, true);
-            GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_SHOP, true);
-//            GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_GROUND, true);
-//            GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_CONTAINER, true);
+            //GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_TRADE, true);
+            //GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_SHOP, true);
+//            GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_TILEGROUND, true);
+            GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_CONTAINER, true);
 
 
             // ObjectManager::getSingleton().setPlayerEquipment(ObjectManager::OBJECT_PLAYER, ObjectNPC::BONE_HEAD, 1);

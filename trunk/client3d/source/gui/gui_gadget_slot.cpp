@@ -40,14 +40,13 @@ http://www.gnu.org/licenses/licenses.html
 using namespace Ogre;
 
 const unsigned int ITEM_SIZE = 64; // Only 64 or 32 are allowed!
-
+const int BITS_FACEFILTER = ~0x8000;
 Overlay *GuiGadgetSlot::mDnDOverlay =0;
 OverlayElement *GuiGadgetSlot::mDnDElement =0;
 Image GuiGadgetSlot::mAtlasTexture;
 MaterialPtr GuiGadgetSlot::mDnDMaterial;
 TexturePtr GuiGadgetSlot::mDnDTexture;
-std::vector<GuiGadgetSlot::SlotID> GuiGadgetSlot::mvSlotID;
-std::list<Item::sItem*> *GuiGadgetSlot::mlIconContainer;
+std::vector<Ogre::String> GuiGadgetSlot::mvAtlasGfxName;
 int GuiGadgetSlot::mDragSlot = -1;
 int GuiGadgetSlot::mActiveSlot= -1;
 int uid = 0;
@@ -57,32 +56,9 @@ int uid = 0;
 //================================================================================================
 GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOnInit):GuiGraphic(xmlElement, parent, drawOnInit)
 {
-    mlIconContainer =0;
-    mMouseOver = false;
-    mMouseButDown = false;
     std::string filename;
     mSlotNr = uid++;
-    mItemInSlot = -1;
-    // ////////////////////////////////////////////////////////////////////
-    // Assign the slot group and the slot index for the current slot.
-    // ////////////////////////////////////////////////////////////////////
-    bool found = false;
-    for (unsigned int i =0; i< mvSlotID.size(); ++i)
-    {
-        if (mvSlotID[i].group == mIndex)
-        {
-            ++mvSlotID[i].index;
-            found = true;
-            break;
-        }
-    }
-    if (!found)
-    {
-        SlotID current;
-        current.group = mIndex;
-        current.index = 0;
-        mvSlotID.push_back(current);
-    }
+    mItem = 0;
 
     const char *tmp;
     if ((tmp = xmlElement->Attribute("bg_image_name" )))
@@ -90,7 +66,7 @@ GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOn
     else
         Logger::log().error() << "none bg_image_name";
 
-    BG_Backup = new uint32[mWidth * mHeight];
+    LayerWindowBG = new uint32[mWidth * mHeight];
     // This stuff is static, so we have to do it only once.
     if (!mDnDOverlay)
     {
@@ -130,7 +106,7 @@ GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOn
             Image itemImage, itemAtlas;
             uint32 *itemBuffer = new uint32[ITEM_SIZE * ITEM_SIZE * itemFilename.size()];
             uint32 *nextPos = itemBuffer;
-            itemAtlas = itemAtlas.loadDynamicImage((unsigned char*)itemBuffer, ITEM_SIZE, ITEM_SIZE * itemFilename.size(), 1, PF_A8B8G8R8);
+            itemAtlas = itemAtlas.loadDynamicImage((unsigned char*)itemBuffer, ITEM_SIZE, ITEM_SIZE * itemFilename.size(), 1, PF_A8R8G8B8);
             for (unsigned int i = 0; i < itemFilename.size(); ++i)
             {
                 itemImage.load(itemFilename[i], "General");
@@ -140,17 +116,17 @@ GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOn
                     << ITEM_SIZE << " * " << ITEM_SIZE << " pixel are allowed "<< "[" << itemFilename[i] << "].";
                     break;
                 }
-                if (itemImage.getFormat() != PF_A8B8G8R8)
+                if (itemImage.getFormat() != PF_A8R8G8B8)
                 {
                     Logger::log().warning() << "You tried to use and item with unsupported format ("<< itemImage.getFormat() <<")."
-                    << " Only 32bit png format is allowed "<< "[" << itemFilename[i] << "].";
+                    << " Only 32bit [ARGB] png format is allowed "<< "[" << itemFilename[i] << "].";
                     break;
                 }
                 memcpy(nextPos, itemImage.getData(), ITEM_SIZE * ITEM_SIZE * sizeof(uint32));
                 nextPos+=ITEM_SIZE * ITEM_SIZE;
             }
             // ////////////////////////////////////////////////////////////////////
-            // Write the hires version.
+            // Write the hires version (32x32 pix).
             // ////////////////////////////////////////////////////////////////////
             filename = PATH_ITEM_TEXTURES;
             filename+= "/";
@@ -169,7 +145,7 @@ GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOn
             txtFile.close();
             itemFilename.clear();
             // ////////////////////////////////////////////////////////////////////
-            // Write the lores version (for 800x600 resolution)..
+            // Write the lores version (32x32 pix).
             // ////////////////////////////////////////////////////////////////////
             /*
             itemAtlas.resize((ushort)itemAtlas.getWidth()/2, (ushort)itemAtlas.getHeight()/2, Image::FILTER_BICUBIC);
@@ -197,7 +173,7 @@ GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOn
         getline(txtFile, filename); // skip the comment.
         while (getline(txtFile, filename))
         {
-            mvGfxPositions.push_back(filename);
+            mvAtlasGfxName.push_back(filename);
         }
         txtFile.close();
         // ////////////////////////////////////////////////////////////////////
@@ -235,29 +211,15 @@ GuiGadgetSlot::~GuiGadgetSlot()
 {
     mDnDMaterial.setNull();
     mDnDTexture.setNull();
-    mvGfxPositions.clear();
-    //delete[] BG_Backup; // done in GuiElement.cpp
+    mvAtlasGfxName.clear();
+    //delete[] LayerWindowBG; // done in GuiElement.cpp
 }
 
 //================================================================================================
-// Returns true if the mouse event was on this gadget (so no need to check the other gadgets).
+// .
 //================================================================================================
 int GuiGadgetSlot::mouseEvent(int MouseAction, int x, int y)
 {
-    // Active drag
-    if (mDragSlot >=0)
-    {
-        if (MouseAction == GuiWindow::BUTTON_RELEASED)
-        {
-            mDragSlot = -1;
-            mDnDOverlay->hide();
-            return GuiManager::EVENT_DRAG_DONE;
-        }
-        Real x, y;
-        GuiCursor::getSingleton().getPos(x, y);
-        mDnDElement->setPosition(x, y);
-        return GuiManager::EVENT_CHECK_DONE;
-    }
     if (x >= mPosX && x <= mPosX + mWidth && y >= mPosY && y <= mPosY + mHeight)
     {
         if (mActiveSlot != mSlotNr)
@@ -289,44 +251,34 @@ int GuiGadgetSlot::mouseEvent(int MouseAction, int x, int y)
 }
 
 //================================================================================================
-// Get the item pos inthe item-texture-atlas.
+// Get the item pos in the item-texture-atlas.
 //================================================================================================
 int GuiGadgetSlot::getTextureAtlasPos(int itemFace)
 {
-    String gfxName = ObjectWrapper::getSingleton().getMeshName(itemFace);
-    for (unsigned int i =0; i < mvGfxPositions.size(); ++i)
+    String gfxName = ObjectWrapper::getSingleton().getMeshName(itemFace & BITS_FACEFILTER);
+    for (unsigned int i =0; i < mvAtlasGfxName.size(); ++i)
     {
-        if (mvGfxPositions[i] == gfxName) return i;
+        if (mvAtlasGfxName[i] == gfxName) return i;
     }
     return -1; // Not found.
 }
 
 //================================================================================================
-// Draws the slots.
-//================================================================================================
-void GuiGadgetSlot::updateSlot(int slot, int state)
-{
-    mItemInSlot = slot;
-    draw();
-}
-
-//================================================================================================
-// Only called once. Draws the empty slots to the background.
+// .
 //================================================================================================
 void GuiGadgetSlot::draw()
 {
-//    GuiGraphic::draw();
-
-    // draw item gfx.
-
-    if (mItemInSlot < 0) return;
-
-    std::list<Item::sItem*>::iterator iter = mlIconContainer->begin();
-    for (int i =0; i < mItemInSlot; ++i)
-        if (iter != mlIconContainer->end()) ++iter;
-
-
-
+    // ////////////////////////////////////////////////////////////////////
+    // Empty Slot.
+    // ////////////////////////////////////////////////////////////////////
+    if (!mItem)
+    {
+        GuiGraphic::draw();
+        return;
+    }
+    // ////////////////////////////////////////////////////////////////////
+    // Slot holds an item.
+    // ////////////////////////////////////////////////////////////////////
     int strtX = mPosX;
     int strtY = mPosY;
     Texture *texture = ((GuiWindow*) mParent)->getTexture();
@@ -340,12 +292,13 @@ void GuiGadgetSlot::draw()
                            gfxSrcPos[mState].y + mHeight));
     uint32 *srcSlotData = static_cast<uint32*>(srcSlot.data);
     int rowSkipSlot = (int)((GuiWindow*) mParent)->getPixelBox()->getWidth();
+    texture->getBuffer()->blitFromMemory(srcSlot, Box(strtX, strtY, strtX + mWidth, strtY + mHeight));
     // ////////////////////////////////////////////////////////////////////
     // Item gfx.
     // ////////////////////////////////////////////////////////////////////
     PixelBox srcItem;
     uint32 *srcItemData;
-    int gfxNr = (mItemInSlot >= (int)mlIconContainer->size())?-1:getTextureAtlasPos((*iter)->face & ~0x8000);
+    int gfxNr = getTextureAtlasPos(mItem->face);
     if (gfxNr >=0)
     {
         srcItem = mAtlasTexture.getPixelBox().getSubVolume(Box(
@@ -368,28 +321,28 @@ void GuiGadgetSlot::draw()
             {
                 if (srcItemData[dItemY + x] > 0x00ffffff)
                 {
-                    BG_Backup[destY + x] = srcItemData[dItemY + x];
+                    LayerWindowBG[destY + x] = srcItemData[dItemY + x];
                     continue;
                 }
             }
             // Now check for the background.
             if (srcSlotData[dSlotY + x] > 0x00ffffff)
-                BG_Backup[destY + x] = srcSlotData[dSlotY + x];
+                LayerWindowBG[destY + x] = srcSlotData[dSlotY + x];
         }
         dItemY+= ITEM_SIZE;
         dSlotY+= (int)rowSkipSlot;
         destY+= mWidth;
     }
-    srcSlot = PixelBox(mWidth, mHeight, 1, PF_A8B8G8R8, BG_Backup);
+    srcSlot = PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8, LayerWindowBG);
     // ////////////////////////////////////////////////////////////////////
     // Blit the buffer.
     // ////////////////////////////////////////////////////////////////////
     texture->getBuffer()->blitFromMemory(srcSlot, Box(strtX, strtY, strtX + mWidth, strtY + mHeight));
     static GuiTextout::TextLine label;
-    if (mItemInSlot < (int)mlIconContainer->size() && (*iter)->nrof)
+    if (mItem->nrof)
     {
-        //label.text = (*iter)->d_name;
-        label.text = StringConverter::toString((*iter)->nrof);
+        //label.text = mItem->d_name;
+        label.text = StringConverter::toString(mItem->nrof);
         label.hideText= false;
         label.index= -1;
         label.font = 2;
@@ -401,12 +354,12 @@ void GuiGadgetSlot::draw()
         GuiTextout::getSingleton().Print(&label, texture);
     }
 
-
+/*
     long time = Root::getSingleton().getTimer()->getMilliseconds();
     for (int z = 0; z < 500; ++z)
     {}
     Logger::log().error() <<"time: "<<  Root::getSingleton().getTimer()->getMilliseconds() - time;
-
+*/
 }
 
 //================================================================================================
@@ -414,13 +367,9 @@ void GuiGadgetSlot::draw()
 //================================================================================================
 void GuiGadgetSlot::drawDragItem()
 {
-    std::list<Item::sItem*>::iterator iter = mlIconContainer->begin();
-    for (int i = 0; i < mDragSlot; ++i) ++iter;
-    int gfxNr = getTextureAtlasPos((*iter)->face & ~0x8000);
+    int gfxNr = getTextureAtlasPos(mItem->face);
     mDnDTexture->getBuffer()->blitFromMemory(mAtlasTexture.getPixelBox().getSubVolume(Box(0, ITEM_SIZE * gfxNr, ITEM_SIZE, ITEM_SIZE *(gfxNr+1))));
-    Real x, y;
-    GuiCursor::getSingleton().getPos(x, y);
-    mDnDElement->setPosition(x, y);
+    moveDragOverlay();
     mDnDOverlay->show();
 }
 

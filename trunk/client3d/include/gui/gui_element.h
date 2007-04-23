@@ -105,7 +105,7 @@ protected:
     int mLabelPosX, mLabelPosY;
     Ogre::String mStrLabel, mStrTooltip;
     Ogre::uint32 mFillColor;
-    Ogre::uint32 *BG_Backup;         /**< Backup buffer for alpha blit. **/
+    Ogre::uint32 *LayerWindowBG;         /**< Backup buffer for alpha blit. **/
     void *mParent;             /**< Pointer to the parent window. **/
     unsigned char mLabelColor[3];
     GuiImageset::gfxPos gfxSrcPos[GuiImageset::STATE_ELEMENT_SUM];

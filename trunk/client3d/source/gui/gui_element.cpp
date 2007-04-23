@@ -150,12 +150,12 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent, bool forceAlpha)
     if (mHasAlpha)
     {
         Texture *texture = ((GuiWindow*) mParent)->getTexture();
-        BG_Backup = new uint32[mWidth*mHeight];
+        LayerWindowBG = new uint32[mWidth*mHeight];
         texture->getBuffer()->blitToMemory(
             Box(mPosX, mPosY, mPosX+mWidth, mPosY+mHeight),
-            PixelBox(mWidth, mHeight, 1, PF_A8B8G8R8, BG_Backup));
+            PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8, LayerWindowBG));
     }
-    else BG_Backup = 0;
+    else LayerWindowBG = 0;
 }
 
 //================================================================================================
@@ -177,5 +177,5 @@ bool GuiElement::setState(int state)
 //================================================================================================
 GuiElement::~GuiElement()
 {
-    delete[] BG_Backup;
+    delete[] LayerWindowBG;
 }

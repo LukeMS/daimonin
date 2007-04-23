@@ -31,6 +31,7 @@ http://www.gnu.org/licenses/licenses.html
 #include <Ogre.h>
 #include "item.h"
 #include "gui_graphic.h"
+#include "gui_cursor.h"
 
 /**
  ** This class provides an interactive button.
@@ -41,14 +42,7 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    enum { UPDATE_ALL_SLOTS = -1 };
-    enum { SLOT_IS_EMPTY    = -1 };
-    typedef struct
-    {
-        int group;
-        int index;
-    }
-    SlotID;
+
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
@@ -56,14 +50,28 @@ public:
     ~GuiGadgetSlot();
     int mouseEvent(int MouseAction, int x, int y);
     void draw();
-    void updateSlot(int slotNr, int state);
-    void setItemReference(std::list<Item::sItem*> *IconContainer)
+    void setItem(Item::sItem *item)
     {
-        mlIconContainer = IconContainer;
+        mItem = item;
+        draw();
     }
-    int getDragSlot() const
+    Item::sItem *getItem()
+    {
+        return mItem;
+    }
+    static int getDragSlot()
     {
         return mDragSlot;
+    }
+    static void hideDragOverlay()
+    {
+        mDnDOverlay->hide();
+    }
+    static void moveDragOverlay()
+    {
+        Ogre::Real x, y;
+        GuiCursor::getSingleton().getPos(x, y);
+        mDnDElement->setPosition(x, y);
     }
 
 private:
@@ -75,14 +83,11 @@ private:
     static Ogre::OverlayElement *mDnDElement;
     static Ogre::MaterialPtr mDnDMaterial;
     static Ogre::TexturePtr mDnDTexture;
-    static std::vector<SlotID>mvSlotID;
-    static std::list<Item::sItem*> *mlIconContainer;
+    static std::vector<Ogre::String> mvAtlasGfxName;
     static int mDragSlot;                  /**< Slot where the drag was started. **/
     static int mActiveSlot;                /**< Slot the mouse is currently over. **/
-    std::vector<Ogre::String> mvGfxPositions;
     int mSlotNr;                           /**< Unique number. **/
-    int mItemInSlot;                       /**< The Item which is currently in the slot. **/
-    bool mMouseOver, mMouseButDown;
+    Item::sItem *mItem;                    /**< The Item which is currently in the slot. **/
     unsigned int mSlotWidth, mSlotHeight;
     // ////////////////////////////////////////////////////////////////////
     // Functions.

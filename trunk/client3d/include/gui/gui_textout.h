@@ -45,7 +45,7 @@ public:
         int index;                   /**< Unique number. **/
         bool hideText;               /**< Hide the text e.g. for password input. **/
         Ogre::String text;
-        Ogre::uint32 *BG_Backup;           /**< Backup buffer for dynamic text. **/
+        Ogre::uint32 *LayerWindowBG;           /**< Backup buffer for dynamic text. **/
         Ogre::uint32 color;
     }
     TextLine;
