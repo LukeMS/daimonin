@@ -1869,14 +1869,14 @@ void gui_interface_mouse(SDL_Event *e)
     mx = mxr-gui_interface_npc->startx;
     my = myr-gui_interface_npc->starty;
 
-    if (mx >= 345 && mx <= 354 && my >=32 && my <= 41)
+    if (mx >= 345 && mx <= 354 && my >=32 && my <= 41) // close button
     {
         sound_play_effect(SOUND_SCROLL, 0, 0, 100);
         reset_gui_interface();
     }
-    else if (mx >= 339 && mx <= 350)
+    else if (mx >= 339 && mx <= 350) // scroll buttons
     {
-        if (my >=73 && my <= 84)
+        if (my >=73 && my <= 84) // scroll up
         {
             gui_interface_npc->yoff +=12;
             if (gui_interface_npc->yoff < INTERFACE_WINLEN_NPC-gui_interface_npc->win_length)
@@ -1888,7 +1888,7 @@ void gui_interface_mouse(SDL_Event *e)
                 gui_interface_npc->yoff=0;
             }
         }
-        else if (my >=428 && my <= 437)
+        else if (my >=428 && my <= 437) // scroll down
         {
             gui_interface_npc->yoff -=12;
             if (gui_interface_npc->yoff < INTERFACE_WINLEN_NPC-gui_interface_npc->win_length)
@@ -1901,6 +1901,11 @@ void gui_interface_mouse(SDL_Event *e)
             }
         }
         return;
+    }
+    else if (mx >= 95 && mx <= 275 && my >= 449 && my <= 461) // textfield
+    {
+        if (!gui_interface_npc->input_flag)
+            check_menu_keys(MENU_NPC, SDLK_RETURN);
     }
     else
     {
