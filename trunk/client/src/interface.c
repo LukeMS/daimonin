@@ -647,6 +647,30 @@ static _gui_interface_struct *format_gui_interface(_gui_interface_struct *gui_in
                 break;
             }
         }
+        /* lets sort out the keywords */
+        gui_int->keyword_count=0;
+        gui_int->keyword_selected=0;
+        c=0;                        /* i misuse c as keyword flag */
+        for (i=0;gui_int->message.body_text[i]!='\0';i++)
+        {
+            if (gui_int->message.body_text[i] == (unsigned char)'^')
+            {
+                if (c)
+                {
+                    gui_int->keywords[gui_int->keyword_count++][len]='\0';
+                    c = 0;
+                }
+                else
+                {
+                    len=0;
+                    c = 1;
+                }
+                continue;
+            }
+            if (c)
+                gui_int->keywords[gui_int->keyword_count][len++]=gui_int->message.body_text[i];
+        }
+
     }
 
     if (gui_int->used_flag&GUI_INTERFACE_REWARD)
@@ -1838,8 +1862,10 @@ void show_interface_npc(int mark)
                     strncpy(cmd_tmp,(gui_interface_npc->link[gui_interface_npc->link_selected-1].cmd)+cmdoff,tmp-2);
                     cmd_tmp[tmp-2]='\0';
                     strcat(cmd_tmp,"...");
+                    StringBlt(ScreenSurface, &MediumFont, cmd_tmp, box.x+3, box.y-1, COLOR_DK_NAVY, &box, NULL);
                 }
-                StringBlt(ScreenSurface, &MediumFont, cmd_tmp, box.x+3, box.y-1, COLOR_DK_NAVY, &box, NULL);
+                else
+                    StringBlt(ScreenSurface, &MediumFont, (gui_interface_npc->link[gui_interface_npc->link_selected-1].cmd)+cmdoff, box.x+3, box.y-1, COLOR_DK_NAVY, &box, NULL);
             }
         }
     }

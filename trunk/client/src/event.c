@@ -2763,12 +2763,50 @@ void check_menu_keys(int menu, int key)
             break;
 
         case SDLK_TAB:
-            if (gui_interface_npc->link_count)
+            if ((gui_interface_npc->link_count) || (gui_interface_npc->keyword_count))
             {
-                if (shiftPressed && (--gui_interface_npc->link_selected<0))
-                    gui_interface_npc->link_selected = gui_interface_npc->link_count;
-                if ((!shiftPressed) && (++gui_interface_npc->link_selected > gui_interface_npc->link_count))
-                    gui_interface_npc->link_selected = 0;
+                if (shiftPressed)
+                {
+                    if (!gui_interface_npc->link_selected && !gui_interface_npc->keyword_selected)
+                    {
+                        if (!(gui_interface_npc->link_selected=gui_interface_npc->link_count))
+                            gui_interface_npc->keyword_selected=gui_interface_npc->keyword_count;
+                    }
+                    else if(gui_interface_npc->link_selected)
+                    {
+                        if (!(--gui_interface_npc->link_selected))
+                            gui_interface_npc->keyword_selected=gui_interface_npc->keyword_count;
+                    }
+                    else
+                    {
+                        if (--gui_interface_npc->keyword_selected<0)
+                            gui_interface_npc->link_selected=gui_interface_npc->link_count;
+                    }
+                }
+                else
+                {
+                    if (!gui_interface_npc->link_selected && !gui_interface_npc->keyword_selected)
+                    {
+                        if (!(gui_interface_npc->keyword_count))
+                            gui_interface_npc->link_selected++;
+                        else
+                            gui_interface_npc->keyword_selected++;
+                    }
+                    else if(gui_interface_npc->keyword_selected)
+                    {
+                        if(++gui_interface_npc->keyword_selected>gui_interface_npc->keyword_count)
+                        {
+                            gui_interface_npc->keyword_selected=0;
+                            if (gui_interface_npc->link_count)
+                                gui_interface_npc->link_selected=1;
+                        }
+                    }
+                    else
+                    {
+                        if (++gui_interface_npc->link_selected>gui_interface_npc->link_count)
+                            gui_interface_npc->link_selected=0;
+                    }
+                }
                 sound_play_effect(SOUND_GET, 0, 0, 100);
             }
             else
