@@ -377,8 +377,8 @@ void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col
     dst_tmp.x = x; /* .w/h are not used from BlitSurface to draw*/
     dst_tmp.y = y;
 
-    color_g.r = 96;
-    color_g.g = 160;
+    color_g.r = 0;
+    color_g.g = 255;
     color_g.b = 255;
 
     color.r = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[col].r;

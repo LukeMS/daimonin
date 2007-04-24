@@ -534,6 +534,8 @@ enum
 #define COLOR_DGOLD 65
 #define COLOR_DBROWN  44
 
+#define COLOR_TURQUOISE 210
+
 #define COLOR_BLACK 255
 extern void     DoClient(ClientSocket *csocket);
 extern void     SockList_Init(SockList *sl);
