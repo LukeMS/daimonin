@@ -1,5 +1,5 @@
 arch map
-name Emergency Map
+name Emergency Map - This is a bug! Call DM!
 msg
 Creator: Daimonin Map Editor
 Date:    10/27/2003
@@ -8,11 +8,14 @@ width 1
 height 1
 difficulty 1
 fixed_login 1
+tileset_id 88
+tileset_x 0
+tileset_y 0
 end
 arch floor_ostone1
 end
 arch exit
-slaying /relic/castle/castle_0002
+slaying /planes/human_plane/castle/castle_0002
 hp 12
 sp 5
 end
