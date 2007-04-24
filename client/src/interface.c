@@ -77,7 +77,7 @@ static int interface_cmd_head(_gui_interface_head *head, char *data, int *pos)
                 if (StringWidthOffset(&MediumFont, head->body_text, &tmp, 260))
                 {
 #ifdef DEVELOPMENT
-                    draw_info_format(COLOR_RED,"Script-Warning: Too long header title:\n%s\nHeader-Title will be truancated!\n",head->body_text);
+                    draw_info_format(COLOR_RED,"Script-Warning: Too long header title:\n%s\nHeader-Title will be truncated!\n",head->body_text);
 #endif
                     head->body_text[tmp-2]='\0';
                     strcat(head->body_text,"...");
@@ -126,9 +126,10 @@ static int interface_cmd_link(_gui_interface_link *head, char *data, int *pos)
                 if (StringWidthOffset(&MediumFont, head->link, &tmp, 295))
                 {
 #ifdef DEVELOPMENT
-                    draw_info_format(COLOR_RED,"Script-Warning: Too long Link-Title:\n%s\nLink-Title will be truancated!\n",head->link);
+                    draw_info_format(COLOR_RED,"Script-Warning: Too long Link-Title:\n%s\nLink-Title will be truncated!\n",head->link);
 #endif
-                    /* We dont need to trancate the string SetClipRect will do it for us...*/
+                    head->link[tmp-2]='\0';
+                    strcat(head->link,"...");
                 }
                 break;
 
@@ -224,9 +225,10 @@ static int interface_cmd_reward(_gui_interface_reward *head, char *data, int *po
                 if (StringWidthOffset(&BigFont, head->title, &tmp, 295))
                 {
 #ifdef DEVELOPMENT
-                    draw_info_format(COLOR_RED,"Script-Warning: Too long Reward-Title:\n%s\nReward-Title will be truancated!\n",head->title);
+                    draw_info_format(COLOR_RED,"Script-Warning: Too long Reward-Title:\n%s\nReward-Title will be truncated!\n",head->title);
 #endif
-                    /* We dont need to trancate the string SetClipRect will do it for us...*/
+                    head->title[tmp-2]='\0';
+                    strcat(head->title,"...");
 
                 }
                 break;
@@ -300,9 +302,10 @@ static int interface_cmd_message(_gui_interface_message *msg, char *data, int *p
                 if (StringWidthOffset(&BigFont, msg->title, &tmp, 295))
                 {
 #ifdef DEVELOPMENT
-                    draw_info_format(COLOR_RED,"Script-Warning: Too long Message-Title:\n%s\nMessage-Title will be truancated!\n",msg->title);
+                    draw_info_format(COLOR_RED,"Script-Warning: Too long Message-Title:\n%s\nMessage-Title will be truncated!\n",msg->title);
 #endif
-                    /* We dont need to trancate the string SetClipRect will do it for us...*/
+                    msg->title[tmp-2]='\0';
+                    strcat(msg->title,"...");
                 }
                 break;
 
@@ -451,7 +454,7 @@ static int interface_cmd_button(_gui_interface_button *head, char *data, int *po
                 if (StringWidthOffset(&SystemFont, head->title, &tmp, 55))
                 {
 #ifdef DEVELOPMENT
-                    draw_info_format(COLOR_RED,"Script-Warning: Too long Button-Title:\n%s\nButton-Title will be truancated!\n",head->title);
+                    draw_info_format(COLOR_RED,"Script-Warning: Too long Button-Title:\n%s\nButton-Title will be truncated!\n",head->title);
 #endif
                     head->title[tmp-2]='\0';
                     strcat(head->title,"...");
@@ -1147,6 +1150,7 @@ int get_interface_line(int *element, int *index, char **keyword, int x, int y, i
                                     key[ptr-&gui_interface_npc->message.lines[i][st]]='\0';
                                 }
                                 *keyword = key;
+//                                draw_info_format(COLOR_GREEN,"Element: %d, index: %d, key: %s",*element, *index, *keyword);
                                 return TRUE;
                             }
                         }
@@ -1597,7 +1601,7 @@ void show_interface_npc(int mark)
             if (gui_interface_npc->link_selected == i+1)
                 StringBlt(ScreenSurface, &MediumFont, gui_interface_npc->link[i].link, x+40, y+yoff, COLOR_DK_NAVY, NULL, NULL);
             else
-                StringBlt(ScreenSurface, &MediumFont, gui_interface_npc->link[i].link, x+40, y+yoff, COLOR_GREEN, NULL, NULL);
+                StringBlt(ScreenSurface, &MediumFont, gui_interface_npc->link[i].link, x+40, y+yoff, COLOR_TURQUOISE, NULL, NULL);
         }
     }
 
@@ -1824,10 +1828,18 @@ void show_interface_npc(int mark)
             if (gui_interface_npc->link_selected)
             {
                 int cmdoff = 0;
+                char cmd_tmp[128];
+                int tmp;
                 if (!strncmp(gui_interface_npc->link[gui_interface_npc->link_selected-1].cmd, "/talk ", 6))
                     cmdoff = 6;
                 box.w=175;
-                StringBlt(ScreenSurface, &MediumFont, (gui_interface_npc->link[gui_interface_npc->link_selected-1].cmd)+cmdoff, box.x+3, box.y-1, COLOR_DK_NAVY, &box, NULL);
+                if (StringWidthOffset(&MediumFont, (gui_interface_npc->link[gui_interface_npc->link_selected-1].cmd)+cmdoff, &tmp, 175))
+                {
+                    strncpy(cmd_tmp,(gui_interface_npc->link[gui_interface_npc->link_selected-1].cmd)+cmdoff,tmp-2);
+                    cmd_tmp[tmp-2]='\0';
+                    strcat(cmd_tmp,"...");
+                }
+                StringBlt(ScreenSurface, &MediumFont, cmd_tmp, box.x+3, box.y-1, COLOR_DK_NAVY, &box, NULL);
             }
         }
     }
