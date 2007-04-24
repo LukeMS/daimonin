@@ -110,6 +110,7 @@ typedef struct gui_interface_button
 }
 _gui_interface_button;
 
+#define MAX_INTERFACE_KEYWORDS 25
 #define MAX_INTERFACE_ICON 15
 #define MAX_INTERFACE_LINKS 25
 
@@ -147,6 +148,9 @@ typedef struct gui_interface_struct
     int icon_select;
     int selected;
     int link_selected;
+    int keyword_selected;
+    int keyword_count;
+    char keywords[MAX_INTERFACE_KEYWORDS][128];
     _gui_interface_head head;
     _gui_interface_link link[MAX_INTERFACE_LINKS];
     _gui_interface_message message;

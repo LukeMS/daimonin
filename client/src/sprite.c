@@ -368,7 +368,7 @@ void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col
     register Boolean gflag;
     int         colorToggle = 0;
     SDL_Rect    src, dst, dst_tmp;
-    SDL_Color   color, color_g;
+    SDL_Color   color, color_g, color_s;
     unsigned char actChar =0;
 
     if (area)
@@ -380,6 +380,10 @@ void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col
     color_g.r = 0;
     color_g.g = 255;
     color_g.b = 255;
+
+    color_s.r = 204; /* highlight color for selected keywords */
+    color_s.g = 102;
+    color_s.b = 255;
 
     color.r = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[col].r;
     color.g = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[col].g;
@@ -425,7 +429,11 @@ void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col
             }
             else
             {
-                SDL_SetPalette(font->sprite->bitmap, SDL_LOGPAL | SDL_PHYSPAL, &color_g, 1, 1);
+                if ((cpl.menustatus == MENU_NPC) && (gui_interface_npc->keyword_selected>0) && !strncmp(text+i+1,gui_interface_npc->keywords[gui_interface_npc->keyword_selected-1],strlen(gui_interface_npc->keywords[gui_interface_npc->keyword_selected-1])))
+                    SDL_SetPalette(font->sprite->bitmap, SDL_LOGPAL | SDL_PHYSPAL, &color_s, 1, 1);
+                else
+                    SDL_SetPalette(font->sprite->bitmap, SDL_LOGPAL | SDL_PHYSPAL, &color_g, 1, 1);
+
                 gflag = TRUE;
             }
             continue;
