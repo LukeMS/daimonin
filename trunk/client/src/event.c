@@ -518,6 +518,17 @@ int Event_PollInputDevice(void)
             */
 
             /* textWindow: slider/resize event */
+
+            if (cpl.menustatus == MENU_NPC)
+            {
+                if (event.button.button ==0)
+                {
+                    gui_interface_mousemove(&event);
+                    break;
+                }
+
+            }
+
             textwin_event(TW_CHECK_MOVE, &event);
 
             /* scrollbar-sliders */

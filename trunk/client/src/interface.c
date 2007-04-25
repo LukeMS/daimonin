@@ -1174,7 +1174,6 @@ int get_interface_line(int *element, int *index, char **keyword, int x, int y, i
                                     key[ptr-&gui_interface_npc->message.lines[i][st]]='\0';
                                 }
                                 *keyword = key;
-//                                draw_info_format(COLOR_GREEN,"Element: %d, index: %d, key: %s",*element, *index, *keyword);
                                 return TRUE;
                             }
                         }
@@ -1972,3 +1971,47 @@ void gui_interface_mouse(SDL_Event *e)
         }
     }
 }
+void gui_interface_mousemove(SDL_Event *e)
+{
+    int element, index;
+    char *keyword=NULL;
+    int mx, my, mxr=e->motion.x,myr=e->motion.y;
+    int i;
+
+    if (!gui_interface_npc)
+        return;
+    mx = mxr-gui_interface_npc->startx;
+    my = myr-gui_interface_npc->starty;
+
+
+    if (get_interface_line(&element, &index, &keyword, gui_interface_npc->startx, gui_interface_npc->starty, mxr, myr))
+    {
+//        if (element == GUI_INTERFACE_ICON)
+//        {
+//            sound_play_effect(SOUND_GET, 0, 0, 100);
+//            gui_interface_npc->selected = index;
+//        }
+        if (element == GUI_INTERFACE_MESSAGE)
+        {
+            for (i=0;i<gui_interface_npc->keyword_count;i++)
+            {
+                if (!strcmp(gui_interface_npc->keywords[i],keyword))
+                {
+                        gui_interface_npc->keyword_selected=i+1;
+                        gui_interface_npc->link_selected=0;
+                }
+            }
+        }
+        else if (element == GUI_INTERFACE_LINK)
+        {
+            gui_interface_npc->link_selected=index+1;
+            gui_interface_npc->keyword_selected=0;
+        }
+    }
+    else
+    {
+        gui_interface_npc->link_selected=0;
+        gui_interface_npc->keyword_selected=0;
+    }
+}
+
