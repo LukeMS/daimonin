@@ -120,6 +120,7 @@ _option             opt[]                           =
         {"Graphic Statusbars:", "Show for HP, Mana and others a graphical layout.","Instead of horizontal lines.", "",SEL_CHECKBOX, 0,1,1, 1, &options.gfx_statusbars, VAL_BOOL},
         {"Show Tooltips:", "Show tooltips when hovering with the mouse over items.","", "",SEL_CHECKBOX, 0,1,1, 1, &options.show_tooltips, VAL_BOOL},
         {"Key-info in Dialog menus:", "","", "",SEL_CHECKBOX, 0,1,1, 1, &options.show_d_key_infos, VAL_BOOL},
+        {"Enable Smileys:", "","", "",SEL_CHECKBOX, 0,1,1, 1, &options.smileys, VAL_BOOL},
         /*{"Collect All Items:", "Don't ask for number of items to get, just get all of them.","", "",SEL_CHECKBOX, 0,1,1, 0,&options.collectAll, VAL_BOOL},   */
         {"#"},
         /* End of Page */
