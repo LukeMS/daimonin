@@ -766,8 +766,7 @@ stand_still 1
 x 6
 y 8
 arch event_obj
-name Lua
-sub_type 6
+sub_type 13
 race /dev/testmaps/skills.lua
 end
 end
@@ -963,6 +962,12 @@ arch floor_ostone1
 x 8
 y 6
 end
+arch horn
+sp 13
+identified 1
+x 8
+y 6
+end
 arch floor_ostone1
 x 8
 y 7
@@ -978,8 +983,7 @@ friendly 1
 x 8
 y 8
 arch event_obj
-name Lua
-sub_type 6
+sub_type 13
 race /dev/testmaps/spells.lua
 end
 end
@@ -1079,6 +1083,13 @@ arch floor_ostone1
 x 9
 y 6
 end
+arch horn
+sp 13
+level 10
+identified 1
+x 9
+y 6
+end
 arch floor_ostone1
 x 9
 y 7
@@ -1171,6 +1182,13 @@ x 10
 y 5
 end
 arch floor_ostone1
+x 10
+y 6
+end
+arch horn
+sp 13
+level 25
+identified 1
 x 10
 y 6
 end
@@ -1277,6 +1295,13 @@ arch floor_ostone1
 x 11
 y 6
 end
+arch horn
+sp 13
+level 50
+identified 1
+x 11
+y 6
+end
 arch floor_ostone1
 x 11
 y 7
@@ -1355,6 +1380,13 @@ x 12
 y 5
 end
 arch floor_ostone1
+x 12
+y 6
+end
+arch horn
+sp 13
+level 75
+identified 1
 x 12
 y 6
 end
@@ -1462,6 +1494,13 @@ x 13
 y 5
 end
 arch floor_ostone1
+x 13
+y 6
+end
+arch horn
+sp 13
+level 110
+identified 1
 x 13
 y 6
 end
