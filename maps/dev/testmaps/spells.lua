@@ -1,7 +1,18 @@
 require("topic_list");
+require("interface_builder")
 
-activator = event.activator
-whoami = event.me
+local pl 		= event.activator
+local me        = event.me
+local msg       = string.lower(event.message)
+
+local ib = InterfaceBuilder()
+ib:SetHeader(me, me.name)
+
+local function topicDefault()
+    ib:SetTitle("Add Skills to Player")
+    ib:AddMsg("I am the Spellgiver.\nSay ^learn <spellname>^ or ^unlearn <spellname>^")
+    pl:Interface(1, ib:Build())
+end
 
 tl = TopicList()
 
@@ -10,14 +21,15 @@ tl:AddTopics("learn (.*)",
     function(spellname)
         spell = game:GetSpellNr(spellname)
         if spell == -1 then
-            whoami:SayTo(activator,"Unknown spell \""..spellname.."\"" )
+            me:SayTo(pl,"Unknown spell \""..spellname.."\"" )
         else
-            if activator:DoKnowSpell(spell) then
-                whoami:SayTo(activator,"You already learned this spell." )
+            if pl:DoKnowSpell(spell) then
+                me:SayTo(pl,"You already learned this spell." )
             else
-                activator:AcquireSpell(spell, game.LEARN)
+                pl:AcquireSpell(spell, game.LEARN)
             end
         end
+        topicDefault()
     end
 )
 
@@ -25,18 +37,19 @@ tl:AddTopics("unlearn (.*)",
     function(spellname)
         spell = game:GetSpellNr(spellname)
         if spell == -1 then
-            whoami:SayTo(activator,"Unknown spell \""..spellname.."\"" )
+            me:SayTo(pl,"Unknown spell \""..spellname.."\"" )
         else
-            if not activator:DoKnowSpell(spell) then
-                whoami:SayTo(activator,"You don't know this spell." )
+            if not pl:DoKnowSpell(spell) then
+                me:SayTo(pl,"You don't know this spell." )
             else
-                activator:AcquireSpell(spell, game.UNLEARN)
+                pl:AcquireSpell(spell, game.UNLEARN)
             end
         end
+        topicDefault()
     end
 )
 
-tl:SetDefault(
-"\nI am the Spellgiver.\nSay ^learn <spellname>^ or ^unlearn <spellname>^");
+tl:AddGreeting(nil, topicDefault)
+tl:SetDefault(topicDefault)
 
 tl:CheckMessage(event)
