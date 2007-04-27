@@ -17,10 +17,9 @@ anim_speed 3
 terrain_flag 32767
 attack_cold 100
 speed 1.0
-wc 200
-dam 5
-thac0 18
-thacm 1
+dam 75
+thac0 0
+thacm 0
 flying 1
 fly_on 1
 walk_on 1

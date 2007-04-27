@@ -18,10 +18,9 @@ no_pick 1
 walk_on 1
 fly_on 1
 speed 1
-wc 200
-dam 5
-thac0 18
-thacm 1
+dam 95
+thac0 0
+thacm 0
 level 1
 attack_weaponmagic 100
 terrain_flag 32767
