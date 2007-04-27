@@ -4140,6 +4140,86 @@ layer 1
 terrain_type 1
 no_pick 1
 end
+Object grassline_a_1
+name grass
+type 71
+editor_folder floors/grass
+face grassline_a.111
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+end
+Object grassline_a_2
+name grass
+type 71
+editor_folder floors/grass
+face grassline_a.131
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+end
+Object grassline_a_3
+name grass
+type 71
+editor_folder floors/grass
+face grassline_a.151
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+end
+Object grassline_a_4
+name grass
+type 71
+editor_folder floors/grass
+face grassline_a.171
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+end
+Object grassline_end_a_1
+name grass
+type 71
+editor_folder floors/grass
+face grassline_end_a.121
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+end
+Object grassline_end_a_2
+name grass
+type 71
+editor_folder floors/grass
+face grassline_end_a.141
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+end
+Object grassline_end_a_3
+name grass
+type 71
+editor_folder floors/grass
+face grassline_end_a.161
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+end
+Object grassline_end_a_4
+name grass
+type 71
+editor_folder floors/grass
+face grassline_end_a.181
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+end
 Object floor_grey1a1
 name floor
 type 71
@@ -6057,9 +6137,10 @@ layer 2
 no_pick 1
 end
 Object shop_floor
-name shop floor (drop items to sell)
+name shop floor
 type 68
 editor_folder floors/shop
+sys_object 1
 layer 1
 no_teleport 1
 face shop_empty.111
@@ -7180,6 +7261,33 @@ no_teleport 1
 layer 2
 no_pick 1
 end
+Object water_still_deep_fmask.301
+name water_still_deep
+type 28
+editor_folder floors/water
+face lake_deep_fmask.301
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object water_still_deep_fmask.302
+name water_still_deep
+type 28
+editor_folder floors/water
+face lake_deep_fmask.302
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object water_still_deep_fmask.309
+name water_still_deep
+type 28
+editor_folder floors/water
+face lake_deep_fmask.309
+no_teleport 1
+layer 2
+no_pick 1
+end
 Object water_still_deepest
 name deepest water
 type 71
@@ -7298,6 +7406,33 @@ name water_still
 type 28
 editor_folder floors/water
 face lake_fmask.207
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object water_still_fmask.301
+name water_still
+type 28
+editor_folder floors/water
+face lake_fmask.301
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object water_still_fmask.302
+name water_still
+type 28
+editor_folder floors/water
+face lake_fmask.302
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object water_still_fmask.309
+name water_still
+type 28
+editor_folder floors/water
+face lake_fmask.309
 no_teleport 1
 layer 2
 no_pick 1
@@ -7821,8 +7956,8 @@ sys_object 1
 attack_internal 100
 dam 1
 wc 1
-thac0 18
-thacm 1
+thac0 0
+thacm 0
 magic 1
 dex -3
 identified 1
@@ -7848,8 +7983,8 @@ sys_object 1
 face force.101
 other_arch disgusting_puddle
 wc 0
-thac0 18
-thacm 1
+thac0 0
+thacm 0
 magic 0
 maxhp 1
 identified 1
@@ -7870,8 +8005,8 @@ editor_folder forces/disease
 layer 3
 face dia_icor.101
 identified 1
-thac0 18
-thacm 1
+thac0 0
+thacm 0
 no_pick 1
 food 15
 speed 0.01
@@ -7907,8 +8042,8 @@ face force.101
 attack_internal 100
 dam 1
 wc 1
-thac0 18
-thacm 1
+thac0 0
+thacm 0
 magic 1
 maxhp 1
 maxgrace -1
@@ -7935,8 +8070,8 @@ face force.101
 attack_internal 100
 dam 1
 wc 1
-thac0 18
-thacm 1
+thac0 0
+thacm 0
 magic 1
 identified 1
 cha -4
@@ -9560,8 +9695,9 @@ type 77
 editor_folder indoor/artificial
 face wmask_fire_on.151
 animation wmask_fire_on_1
-is_animated 0
-anim_speed 0
+is_animated 1
+anim_speed 3
+speed -.25
 is_turnable 1
 direction 1
 no_pick 1
@@ -10447,6 +10583,23 @@ layer 4
 no_pass 1
 no_pick 1
 y 1
+end
+Object kettle table
+name kettle table
+type 79
+editor_folder indoor/artificial
+face table_round_kettle.101
+animation kettle table
+is_animated 1
+anim_speed 1
+speed 1
+layer 4
+material_real 0
+material 0
+value 0
+weight 150
+no_pick 1
+no_pass 1
 end
 Object table_wood1.111
 name table
@@ -13103,14 +13256,14 @@ editor_folder intern
 weapon_speed 3.0
 attack_impact 100
 face skill.101
-dam 3
+dam 75
 item_quality 100
 item_condition 100
 nrof 1
 identified 1
 known_magical 1
 known_cursed 1
-wc 7
+wc 30
 sub_type 0
 sys_object 1
 last_sp 2
@@ -13290,14 +13443,14 @@ editor_folder intern
 weapon_speed 4.0
 face skill.101
 attack_impact 100
-dam 1
+dam 50
 item_quality 100
 item_condition 100
 nrof 1
 identified 1
 known_magical 1
 known_cursed 1
-wc 5
+wc 25
 sub_type 0
 magic 3
 sys_object 1
@@ -13732,6 +13885,47 @@ sys_object 1
 no_pick 1
 layer 0
 end
+Object ash
+name pile
+type 73
+editor_folder items/alchemy
+title of ash
+nrof 1
+item_quality 100
+item_condition 100
+face ash.101
+layer 3
+material 16
+is_dust 1
+weight 100
+value 400
+end
+Object eye_newt
+name newt's eye
+type 73
+editor_folder items/alchemy
+nrof 1
+item_quality 100
+item_condition 100
+face eye_newt.101
+layer 3
+material 32
+weight 150
+value 300
+end
+Object feather
+name feather
+type 73
+editor_folder items/alchemy
+nrof 1
+item_quality 100
+item_condition 100
+face feather.101
+layer 3
+material 32
+weight 10
+value 100
+end
 Object gravedirt
 name pile
 type 73
@@ -13746,6 +13940,73 @@ material 64
 is_dust 1
 weight 100
 value 300
+end
+Object pulp_yew
+name yew tree pulp
+type 73
+editor_folder items/alchemy
+nrof 1
+item_quality 100
+item_condition 100
+face pulp_yew.101
+layer 3
+material 64
+weight 200
+value 300
+end
+Object root_mandrake
+name mandrake root
+type 73
+editor_folder items/alchemy
+nrof 1
+item_quality 100
+item_condition 100
+face root_mandrake.101
+layer 3
+material 64
+weight 200
+value 500
+end
+Object seed_a
+name seeds
+type 73
+editor_folder items/alchemy
+nrof 1
+item_quality 100
+item_condition 100
+face seed_a.101
+layer 3
+material 32
+weight 100
+value 300
+end
+Object seed_b
+name seed
+type 73
+editor_folder items/alchemy
+nrof 1
+item_quality 100
+item_condition 100
+face seed_b.101
+layer 3
+material 32
+weight 120
+value 350
+end
+Object sulfur
+name pile
+type 73
+editor_folder items/alchemy
+title of sulfur
+nrof 1
+item_quality 100
+item_condition 100
+face sulfur.101
+layer 3
+material 64
+is_dust 1
+weight 100
+value 400
 end
 Object combat_boots
 name combat boots
@@ -15808,6 +16069,10 @@ name kettle
 type 122
 editor_folder items/container
 face kettle.101
+animation kettle
+is_animated 1
+anim_speed 1
+speed 1
 layer 3
 identified 1
 no_pick 1
@@ -17382,6 +17647,21 @@ weight 1250
 material 144
 food 1
 end
+Object crystal_ball
+name Crystal Ball
+type 79
+editor_folder items/magic_tools
+face crystal_ball.101
+animation crystal_ball
+is_animated 1
+anim_speed 1
+speed 1
+layer 3
+material_real 65
+material 2
+value 10
+weight 150
+end
 Object deerhorn
 type 35
 editor_folder items/magic_tools
@@ -17503,6 +17783,17 @@ value 7
 weight 450
 material 16
 end
+Object badge
+name badge
+type 79
+editor_folder items/misc
+face badge.101
+layer 3
+material_real 65
+material 2
+value 10
+weight 100
+end
 Object bauble_a
 name bauble
 type 79
@@ -17524,6 +17815,17 @@ material_real 65
 material 2
 value 10
 weight 150
+end
+Object box_tinder
+name tinder box
+type 79
+editor_folder items/misc
+face box_tinder.101
+layer 3
+material_real -1
+material 18
+value 100
+weight 400
 end
 Object dice
 name dice
@@ -17665,6 +17967,94 @@ material_real -1
 speed_left 0.002
 nrof 1
 end
+Object claw_demon
+name demon's claw
+type 86
+editor_folder items/organic
+layer 3
+identified 1
+face claw_demon.101
+item_quality 100
+item_condition 100
+material_real -1
+material 32
+weight 450
+value 180
+end
+Object core_ice_golem
+name ice golem core
+type 79
+editor_folder items/organic
+face core_ice_golem.101
+animation core_ice_golem
+is_animated 1
+anim_speed .9
+speed 1
+layer 3
+material_real -1
+material 57
+value 150
+weight 300
+end
+Object core_lava_golem
+name lava golem core
+type 79
+editor_folder items/organic
+face core_lava_golem.101
+animation core_lava_golem
+is_animated 1
+anim_speed .9
+speed 1
+layer 3
+material_real -1
+material 57
+value 150
+weight 300
+end
+Object core_stone_golem
+name stone golem core
+type 79
+editor_folder items/organic
+face core_stone_golem.101
+animation core_stone_golem
+is_animated 1
+anim_speed 1
+speed 1
+layer 3
+material_real -1
+material 64
+value 150
+weight 320
+end
+Object core_water_golem
+name water golem core
+type 79
+editor_folder items/organic
+face core_water_golem.101
+animation core_water_golem
+is_animated 1
+anim_speed .9
+speed 1
+layer 3
+material_real -1
+material 57
+value 150
+weight 300
+end
+Object eye
+name eye
+type 86
+editor_folder items/organic
+layer 3
+identified 1
+face eye.101
+item_quality 100
+item_condition 100
+material_real -1
+material 32
+weight 300
+value 120
+end
 Object eye_beholder
 name beholder eye
 type 86
@@ -17686,6 +18076,51 @@ editor_folder items/organic
 layer 3
 identified 1
 face head_ant_queen.101
+item_quality 100
+item_condition 100
+material_real -1
+material 32
+weight 450
+value 120
+end
+Object heart
+name heart
+type 86
+editor_folder items/organic
+layer 3
+identified 1
+face heart.101
+item_quality 100
+item_condition 100
+material_real -1
+material 32
+weight 500
+value 200
+end
+Object heart_beating
+name beating heart
+type 86
+editor_folder items/organic
+face heart.102
+animation heart_beating
+is_animated 1
+anim_speed .3
+speed 1
+item_quality 100
+item_condition 100
+layer 3
+material_real -1
+material 32
+weight 500
+value 200
+end
+Object horns_demon
+name demon's horns
+type 86
+editor_folder items/organic
+layer 3
+identified 1
+face horns_demon.101
 item_quality 100
 item_condition 100
 material_real -1
@@ -18902,15 +19337,6 @@ editor_folder items/tools
 face shovel.101
 no_pick 1
 layer 4
-end
-Object shovel_dirt
-name shovel
-type 79
-editor_folder items/tools
-face shovel_dirt.101
-layer 3
-no_teleport 1
-no_pick 1
 end
 Object wrench
 name wrench
@@ -21339,10 +21765,9 @@ no_pick 1
 walk_on 1
 fly_on 1
 speed 1
-wc 200
-dam 6
-thac0 18
-thacm 1
+dam 95
+thac0 0
+thacm 0
 flying 1
 end
 Object burnout
@@ -21393,14 +21818,43 @@ anim_speed 3
 terrain_flag 32767
 attack_cold 100
 speed 1.0
-wc 200
-dam 5
-thac0 18
-thacm 1
+dam 75
+thac0 0
+thacm 0
 flying 1
 fly_on 1
 walk_on 1
 no_pick 1
+end
+Object firebolt
+name firebolt
+type 12
+editor_folder magic/fire
+layer 7
+face fire.101
+level 1
+no_save 1
+attack_fire 100
+animation firebolt
+anim_speed 1
+terrain_flag 32767
+last_sp 12
+speed 1.0
+is_animated 1
+is_turnable 1
+is_missile 1
+no_pick 1
+last_heal 12
+use_dmg_info 1
+glow_radius 1
+walk_on 1
+fly_on 1
+speed 1
+wc 80
+dam 85
+thac0 0
+thacm 0
+flying 1
 end
 Object firebreath
 name fire
@@ -21418,10 +21872,9 @@ animation firebreath
 is_animated 1
 anim_speed 4
 speed 1.0
-wc 200
-dam 5
-thac0 18
-thacm 1
+dam 75
+thac0 0
+thacm 0
 level 1
 attack_fire 100
 terrain_flag 32767
@@ -21443,6 +21896,8 @@ terrain_flag 32767
 walk_on 1
 fly_on 1
 speed 1
+thac0 0
+thacm 0
 hp 14
 flying 1
 no_pick 1
@@ -21539,10 +21994,9 @@ no_pick 1
 walk_on 1
 fly_on 1
 speed 1
-wc 200
-dam 5
-thac0 18
-thacm 1
+dam 95
+thac0 0
+thacm 0
 level 1
 attack_weaponmagic 100
 terrain_flag 32767
@@ -21957,7 +22411,7 @@ anim_speed 4
 no_pick 1
 end
 Object cube_gel
-name Gelantinous Cube
+name Gelatinous Cube
 type 80
 editor_folder mobs/amoeboid
 race slime
@@ -22618,7 +23072,7 @@ Object brnbat
 name Brown Bat
 type 80
 editor_folder mobs/animals
-face brnbat.131
+face brnbat.151
 race animal
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -22665,7 +23119,7 @@ Object bear_grey
 name Grey Bear
 type 80
 editor_folder mobs/animals
-face bear_grey.131
+face bear_grey.151
 race bear
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -22711,7 +23165,7 @@ Object parrot
 name Parrot
 type 80
 editor_folder mobs/animals
-face parrot.131
+face parrot.151
 race bird
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -22758,7 +23212,7 @@ Object penguin
 name Penguin
 type 80
 editor_folder mobs/animals
-face penguin.131
+face penguin.151
 race penguin
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -22805,7 +23259,7 @@ Object cat_black
 name Black Cat
 type 80
 editor_folder mobs/animals
-face cat_black.131
+face cat_black.151
 race cat
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -22851,7 +23305,7 @@ Object cat_wild
 name Wild Cat
 type 80
 editor_folder mobs/animals
-face cat_wild.131
+face cat_wild.151
 race cat
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -22897,7 +23351,7 @@ Object chicken_large
 name chicken
 type 80
 editor_folder mobs/animals
-face chicken_large.131
+face chicken_large.151
 race chicken
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -22922,10 +23376,10 @@ sp -1
 maxsp 19
 hp -1
 maxhp 67
-ac 12
-wc 4
-thac0 18
-thacm 1
+ac 28
+wc 15
+thac0 85
+thacm 5
 resist_impact 10
 dam 52
 attack_pierce 50
@@ -22940,11 +23394,58 @@ is_animated 1
 anim_speed 4
 no_pick 1
 end
+Object cow_small
+name Cow
+type 80
+editor_folder mobs/animals
+face cow_small.151
+race bovine
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+layer 6
+direction 5
+item_race 255
+item_level 255
+corpse 1
+alive 1
+monster 1
+is_female 1
+is_neutral 1
+terrain_flag 1
+can_use_weapon 1
+int 10
+wis 6
+dex 3
+con 5
+exp 102
+magic 1
+pow 10
+sp -1
+maxsp 19
+hp -1
+maxhp 67
+ac 28
+wc 15
+thac0 85
+thacm 5
+resist_impact 10
+dam 52
+attack_cleave 50
+attack_impact 50
+weapon_speed 3.5
+speed -0.06
+run_away 10
+level 1
+weight 142500
+animation cow_small
+is_animated 1
+anim_speed 4
+no_pick 1
+end
 Object deer
 name Reindeer
 type 80
 editor_folder mobs/animals
-face deer.121
+face deer.161
 race deer
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -22987,11 +23488,58 @@ is_animated 1
 anim_speed 4
 no_pick 1
 end
+Object dog_brown
+name Doggie
+type 80
+editor_folder mobs/animals
+face dog_brown.151
+race dog
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+layer 6
+direction 5
+item_race 255
+item_level 255
+corpse 1
+alive 1
+monster 1
+is_male 1
+is_neutral 1
+friendly 1
+terrain_flag 1
+can_use_weapon 1
+int 10
+wis 6
+dex 3
+con 5
+exp 102
+magic 1
+pow 10
+sp -1
+maxsp 19
+hp -1
+maxhp 67
+ac 28
+wc 15
+thac0 85
+thacm 5
+resist_impact 10
+dam 52
+attack_cleave 100
+weapon_speed 3.5
+speed -0.06
+run_away 10
+level 1
+weight 325000
+animation dog_brown
+is_animated 1
+anim_speed 4
+no_pick 1
+end
 Object dog_wild
 name Wild Dog
 type 80
 editor_folder mobs/animals
-face dog_wild.131
+face dog_wild.151
 race dog
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -23037,7 +23585,7 @@ Object wolf
 name Wolf
 type 80
 editor_folder mobs/animals
-face wolf.131
+face wolf.151
 race dog
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -23083,7 +23631,7 @@ Object frog
 name Giant Frog
 type 80
 editor_folder mobs/animals
-face frog_giant.131
+face frog_giant.151
 race frog
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -23129,7 +23677,7 @@ Object horse_white
 name white horse
 type 80
 editor_folder mobs/animals
-face horse_white.131
+face horse_white.151
 race horse
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -23153,10 +23701,10 @@ sp -1
 maxsp 19
 hp -1
 maxhp 67
-ac 12
-wc 4
-thac0 18
-thacm 1
+ac 28
+wc 15
+thac0 85
+thacm 5
 resist_impact 10
 dam 52
 attack_pierce 50
@@ -23175,7 +23723,7 @@ Object larva
 name Big Larva
 type 80
 editor_folder mobs/animals
-face larva.131
+face larva.151
 race larva
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -23221,7 +23769,7 @@ Object mugwump
 name Mugwump
 type 80
 editor_folder mobs/animals
-face mugwump.141
+face mugwump.151
 race rodent
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -23361,7 +23909,7 @@ Object crocodile
 name Crocodile
 type 80
 editor_folder mobs/animals
-face crocodile.131
+face crocodile.151
 race reptile
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -23407,7 +23955,7 @@ Object newt
 name Giant Newt
 type 80
 editor_folder mobs/animals
-face newt.131
+face newt.151
 race reptile
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -23453,7 +24001,7 @@ Object snake
 name Giant Snake
 type 80
 editor_folder mobs/animals
-face snake.131
+face snake.151
 race reptile
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -23499,7 +24047,7 @@ Object rattle_snake
 name Rattle Snake
 type 80
 editor_folder mobs/animals
-face rattle_snake.131
+face rattle_snake.151
 race reptile
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -23545,7 +24093,7 @@ Object rat
 name Big Rat
 type 80
 editor_folder mobs/animals
-face rat.131
+face rat.151
 race rat
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -23591,7 +24139,7 @@ Object worm
 name Big Worm
 type 80
 editor_folder mobs/animals
-face worm.131
+face worm.151
 race worm
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -23638,7 +24186,7 @@ name Dread Beholder
 type 80
 mpart_id 3
 editor_folder mobs/beholder
-face beholder_dread.131
+face beholder_dread.151
 race beholder
 randomitems spells_beholder;loot;wealth_normal&D67;loot_base&D15;loot_misc&d25
 layer 6
@@ -23667,10 +24215,10 @@ sp -1
 maxsp 19
 hp -1
 maxhp 78
-ac 12
-wc 7
-thac0 18
-thacm 1
+ac 28
+wc 15
+thac0 85
+thacm 5
 dam 52
 resist_pierce 25
 resist_slash 25
@@ -23730,7 +24278,7 @@ name Oclunus
 type 80
 mpart_id 3
 editor_folder mobs/beholder
-face oclunus.131
+face oclunus.151
 race beholder
 randomitems spells_beholder;loot;wealth_normal&D67;loot_base&D15;loot_misc&d25
 layer 6
@@ -24040,7 +24588,7 @@ Object gnoll
 name Gnoll
 type 80
 editor_folder mobs/demihumans
-face gnoll.131
+face gnoll.151
 race gnoll
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -24089,7 +24637,7 @@ Object goblin
 name Goblin
 type 80
 editor_folder mobs/demihumans
-face goblin.131
+face goblin.151
 race goblin
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -24138,7 +24686,7 @@ Object hobgoblin
 name Hobgoblin
 type 80
 editor_folder mobs/demihumans
-face hobgoblin.131
+face hobgoblin.151
 race hobgoblin
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -24239,7 +24787,7 @@ Object kobold
 name Kobold
 type 80
 editor_folder mobs/demihumans
-face kobold.131
+face kobold.151
 race kobold
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -24288,7 +24836,7 @@ Object kobold_big
 name Big Kobold
 type 80
 editor_folder mobs/demihumans
-face kobold_big.131
+face kobold_big.151
 race kobold
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -24337,7 +24885,7 @@ Object kobold_fighter
 name Kobold Fighter
 type 80
 editor_folder mobs/demihumans
-face kobold_fighter.131
+face kobold_fighter.151
 race kobold
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -24386,7 +24934,7 @@ Object kobold_guard
 name Kobold Guard
 type 80
 editor_folder mobs/demihumans
-face kobold_guard.131
+face kobold_guard.151
 race kobold
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -24435,7 +24983,7 @@ Object kobold_shaman
 name Kobold Shaman
 type 80
 editor_folder mobs/demihumans
-face kobold_shaman.131
+face kobold_shaman.151
 race kobold
 randomitems spells_priest;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -24485,7 +25033,7 @@ Object abomination_small
 name Abomination
 type 80
 editor_folder mobs/demon
-face abomination_small.130
+face abomination_small.151
 race demon
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -24533,7 +25081,7 @@ Object bone_devil
 name Bone Devil
 type 80
 editor_folder mobs/demon
-face bone_devil.130
+face bone_devil.151
 race demon
 randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -24658,10 +25206,10 @@ sp -1
 maxsp 17
 hp -1
 maxhp 85
-ac 15
-wc 5
-thac0 18
-thacm 1
+ac 28
+wc 15
+thac0 85
+thacm 5
 dam 66
 weapon_speed 3.5
 attack_cleave 100
@@ -24706,10 +25254,10 @@ sp -1
 maxsp 17
 hp -1
 maxhp 85
-ac 15
-wc 5
-thac0 18
-thacm 1
+ac 28
+wc 15
+thac0 85
+thacm 5
 dam 66
 weapon_speed 3.5
 attack_cleave 100
@@ -24725,7 +25273,7 @@ Object demon_lord
 name Demon Lord
 type 80
 editor_folder mobs/demon
-face demon_lord.131
+face demon_lord.151
 race demon
 randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -24869,7 +25417,7 @@ Object lom_lobon
 name Lom Lobon
 type 80
 editor_folder mobs/demon
-face lom_lobon.131
+face lom_lobon.151
 race drow
 randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -24917,7 +25465,7 @@ Object oty
 name Oty
 type 80
 editor_folder mobs/demon
-face oty.131
+face oty.151
 race demon
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -24965,7 +25513,7 @@ Object raas
 name Raas
 type 80
 editor_folder mobs/demon
-face raas.131
+face raas.151
 race demon
 randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -25014,7 +25562,7 @@ name Black Dragon
 type 80
 mpart_id 3
 editor_folder mobs/dragon
-face dragon_blk.131
+face dragon_blk.151
 race dragon
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -25111,7 +25659,7 @@ name Blue Dragon
 type 80
 mpart_id 3
 editor_folder mobs/dragon
-face dragon_blu.231
+face dragon_blu.251
 race dragon
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -25401,7 +25949,7 @@ name Skeletal Dragon
 type 80
 mpart_id 3
 editor_folder mobs/dragon
-face dragon_skeletal.131
+face dragon_skeletal.151
 race dragon
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -25494,7 +26042,7 @@ Object dragon_water_small
 name Small Water Dragon
 type 80
 editor_folder mobs/dragon
-face dragon_water.131
+face dragon_water.151
 race dragon
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -25593,7 +26141,7 @@ Object dwarf_noble
 name Dwarf Noble
 type 80
 editor_folder mobs/dwarves
-face dwarf_noble.131
+face dwarf_noble.151
 race dwarf
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -25690,7 +26238,7 @@ Object mud_hand
 name Mud Hand
 type 80
 editor_folder mobs/elementals
-face mud_hand.101
+face mud_hand.141
 race mud elemental
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -25734,7 +26282,7 @@ Object drow_annihilator
 name Drow Annihilator
 type 80
 editor_folder mobs/elves
-face drow_annihilator.131
+face drow_annihilator.151
 race drow
 randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -25784,7 +26332,7 @@ Object drow_captain
 name Drow Captain
 type 80
 editor_folder mobs/elves
-face drow_captain.131
+face drow_captain.151
 race drow
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -25833,7 +26381,7 @@ Object drow_fighter
 name Drow Fighter
 type 80
 editor_folder mobs/elves
-face drow_fighter.131
+face drow_fighter.151
 race drow
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -25882,7 +26430,7 @@ Object drow_guard
 name Drow Guard
 type 80
 editor_folder mobs/elves
-face drow_guard.131
+face drow_guard.151
 race drow
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -25931,7 +26479,7 @@ Object drow_sorcerer
 name Drow Sorcerer
 type 80
 editor_folder mobs/elves
-face drow_sorcerer.131
+face drow_sorcerer.151
 race drow
 randomitems spells_sorcerer;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -26079,7 +26627,7 @@ Object ettin
 name Ettin
 type 80
 editor_folder mobs/giants
-face ettin.131
+face ettin.151
 race giant
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -26128,7 +26676,7 @@ name Fire Giant
 type 80
 editor_folder mobs/giants
 race giant
-face giant_fire.150
+face giant_fire.151
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
@@ -26180,7 +26728,7 @@ name Frost Giant
 type 80
 editor_folder mobs/giants
 race giant
-face frost_giant.211
+face frost_giant.353
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
@@ -26231,7 +26779,7 @@ Object giant_hill
 name Hill Giant
 type 80
 editor_folder mobs/giants
-face giant_hill.131
+face giant_hill.151
 race giant
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -26280,7 +26828,7 @@ Object ogre
 name Ogre
 type 80
 editor_folder mobs/giants
-face ogre.131
+face ogre.151
 race giant
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -26330,7 +26878,7 @@ Object giant_stone
 name Stone Giant
 type 80
 editor_folder mobs/giants
-face giant_stone.131
+face giant_stone.151
 race giant
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -26380,7 +26928,7 @@ name Archer
 type 80
 editor_folder mobs/human
 race human
-face archer.131
+face archer.151
 randomitems skill_bow;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
@@ -26437,7 +26985,7 @@ name Child
 type 80
 editor_folder mobs/human
 race human
-face childf1.161
+face childf1.151
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
@@ -26486,7 +27034,7 @@ name Child
 type 80
 editor_folder mobs/human
 race human
-face childf2.161
+face childf2.151
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
@@ -26535,7 +27083,7 @@ name Child
 type 80
 editor_folder mobs/human
 race human
-face childm1.161
+face childm1.151
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
@@ -26584,7 +27132,7 @@ name Child
 type 80
 editor_folder mobs/human
 race human
-face childm2.161
+face childm2.151
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
@@ -26633,7 +27181,7 @@ name Guard
 type 80
 editor_folder mobs/human
 race human
-face guard1.131
+face guard1.151
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
@@ -26689,7 +27237,7 @@ name Guard
 type 80
 editor_folder mobs/human
 race human
-face guard2.131
+face guard2.151
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
@@ -26745,7 +27293,7 @@ name Guard
 type 80
 editor_folder mobs/human
 race human
-face guard_pole.131
+face guard_pole.151
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
@@ -26801,7 +27349,7 @@ name Royal Guard
 type 80
 editor_folder mobs/human
 race human
-face guard_royal.131
+face guard_royal.151
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
@@ -26857,7 +27405,7 @@ name Old Mage
 type 80
 editor_folder mobs/human
 race human
-face mage_old.131
+face mage_old.151
 randomitems spells_mage;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
@@ -26969,7 +27517,7 @@ name Monk
 type 80
 editor_folder mobs/human
 race human
-face monk.131
+face monk.151
 layer 6
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 direction 5
@@ -27024,7 +27572,7 @@ name King
 type 80
 editor_folder mobs/human
 race human
-face king.131
+face king.151
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
@@ -27077,7 +27625,7 @@ name Noble
 type 80
 editor_folder mobs/human
 race human
-face noble.131
+face noble.151
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
@@ -27130,7 +27678,7 @@ name Queen
 type 80
 editor_folder mobs/human
 race human
-face queen.131
+face queen.151
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
@@ -27183,7 +27731,7 @@ name Old Hobo
 type 80
 editor_folder mobs/human
 race human
-face hobo_old.131
+face hobo_old.151
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
@@ -27232,7 +27780,7 @@ name Peasant
 type 80
 editor_folder mobs/human
 race human
-face peasant.131
+face peasant.151
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
@@ -27330,7 +27878,7 @@ name Traveller
 type 80
 editor_folder mobs/human
 race human
-face traveller_parka.131
+face traveller_parka.151
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
@@ -27379,7 +27927,7 @@ name Traveller
 type 80
 editor_folder mobs/human
 race human
-face traveller_wife.131
+face traveller_wife.151
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
@@ -27764,7 +28312,7 @@ name Church Priest
 type 80
 editor_folder mobs/human
 race human
-face priest_church.131
+face priest_church.151
 randomitems spells_priest;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
@@ -27821,7 +28369,7 @@ name Priest
 type 80
 editor_folder mobs/human
 race human
-face priest_green.131
+face priest_green.151
 randomitems spells_priest;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
@@ -27935,7 +28483,7 @@ name Sad Priest
 type 80
 editor_folder mobs/human
 race human
-face sadpriest.121
+face sadpriest.161
 randomitems spells_priest;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
@@ -27992,7 +28540,7 @@ name Ranger
 type 80
 editor_folder mobs/human
 race human
-face ranger.131
+face ranger.151
 randomitems skill_bow;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
@@ -28208,7 +28756,7 @@ name Bartender
 type 80
 editor_folder mobs/human
 race human
-face bartender.131
+face bartender.151
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
@@ -28305,8 +28853,7 @@ Object patron
 name Patron
 type 80
 editor_folder mobs/human
-face patron.131
-race human
+face patron.151
 randomitems skill_bow;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
@@ -28362,7 +28909,7 @@ name Thief
 type 80
 editor_folder mobs/human
 race human
-face thief_female.130
+face thief_female.151
 randomitems skill_bow;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
@@ -28418,7 +28965,7 @@ name Woman
 type 80
 editor_folder mobs/human
 race human
-face female1.131
+face female1.151
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
@@ -28467,7 +29014,7 @@ name Woman
 type 80
 editor_folder mobs/human
 race human
-face female2.131
+face female2.151
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
@@ -28515,7 +29062,7 @@ Object pair_human
 name Lovebirds
 type 79
 editor_folder mobs/human
-face pair_human.131
+face pair_human.151
 layer 5
 is_turnable 1
 is_animated 1
@@ -28531,7 +29078,7 @@ name Old Woman
 type 80
 editor_folder mobs/human
 race human
-face woman_old.131
+face woman_old.151
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
@@ -28579,7 +29126,7 @@ Object ant_queen
 name Ant Queen
 type 80
 editor_folder mobs/insects
-face ant_queen.131
+face ant_queen.151
 race insect
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -28625,7 +29172,7 @@ Object ant_red
 name Red Ant
 type 80
 editor_folder mobs/insects
-face ant_red.131
+face ant_red.151
 race insect
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -28672,7 +29219,7 @@ Object ant_soldier
 name Ant Soldier
 type 80
 editor_folder mobs/insects
-face ant_soldier.131
+face ant_soldier.151
 race insect
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -28717,7 +29264,7 @@ Object bee_killer
 name Killer Bee
 type 80
 editor_folder mobs/insects
-face bee_killer.131
+face bee_killer.151
 race insect
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -28758,11 +29305,57 @@ is_animated 1
 anim_speed 4
 no_pick 1
 end
+Object hornet
+name Hornet
+type 80
+editor_folder mobs/insects
+face hornet.151
+race insect
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+layer 6
+direction 5
+item_race 255
+item_level 255
+corpse 1
+alive 1
+monster 1
+is_female 1
+is_neutral 1
+terrain_flag 1
+can_use_weapon 1
+flying 1
+int 10
+wis 6
+dex 3
+con 15
+exp 99
+magic 1
+pow 10
+sp -1
+maxsp 20
+hp -1
+maxhp 63
+ac 28
+wc 15
+thac0 85
+thacm 5
+dam 53
+weapon_speed 3.5
+attack_pierce 90
+attack_poison 10
+speed -0.053
+level 1
+weight 11500
+animation hornet
+is_animated 1
+anim_speed 4
+no_pick 1
+end
 Object wasp_giant
 name Giant Wasp
 type 80
 editor_folder mobs/insects
-face wasp_giant.131
+face wasp_giant.151
 race insect
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -28855,7 +29448,7 @@ Object skorpion
 name Giant Skorpion
 type 80
 editor_folder mobs/insects
-face skorpion.131
+face skorpion.151
 race insect
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -28993,7 +29586,7 @@ Object minotaur
 name Minotaur
 type 80
 editor_folder mobs/minotaur
-face minotaur.131
+face minotaur.151
 race minotaur
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -29044,7 +29637,7 @@ Object salamand
 name Salamand
 type 80
 editor_folder mobs/misc
-face salamand.131
+face salamand.151
 race salamand
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -29090,7 +29683,7 @@ Object slug_giant
 name Giant Slug
 type 80
 editor_folder mobs/misc
-face slug_giant.131
+face slug_giant.151
 race slug
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -29141,7 +29734,7 @@ name Purple Worm
 type 80
 mpart_id 3
 editor_folder mobs/misc
-face worm_purple.131
+face worm_purple.151
 race worm
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -29232,7 +29825,7 @@ Object orc_archer
 name Orc Archer
 type 80
 editor_folder mobs/orcs
-face orc_archer.131
+face orc_archer.151
 race orc
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -29281,7 +29874,7 @@ Object orc_berserker
 name Orc Berserker
 type 80
 editor_folder mobs/orcs
-face orc_berserker.131
+face orc_berserker.151
 race orc
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -29329,7 +29922,7 @@ Object orc_captain
 name Orc Captain
 type 80
 editor_folder mobs/orcs
-face orc_captain.131
+face orc_captain.151
 race orc
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -29378,7 +29971,7 @@ Object orc_fighter
 name Orc Fighter
 type 80
 editor_folder mobs/orcs
-face orc_fighter.131
+face orc_fighter.151
 race orc
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -29427,7 +30020,7 @@ Object orc_warrior
 name Orc Warrior
 type 80
 editor_folder mobs/orcs
-face orc_warrior.131
+face orc_warrior.151
 race orc
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -29475,7 +30068,7 @@ Object orc_outlaw
 name Orc Outlaw
 type 80
 editor_folder mobs/orcs
-face orc_outlaw.131
+face orc_outlaw.151
 race orc
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -29524,7 +30117,7 @@ Object orc_priest
 name Orc Priest
 type 80
 editor_folder mobs/orcs
-face orc_priest.131
+face orc_priest.151
 race orc
 randomitems spells_priest;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -29574,7 +30167,7 @@ Object orc_sorcerer
 name Orc Sorcerer
 type 80
 editor_folder mobs/orcs
-face orc_sorcerer.131
+face orc_sorcerer.151
 race orc
 randomitems spells_sorcerer;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -29624,7 +30217,7 @@ Object orc_warlord
 name Orc Warlord
 type 80
 editor_folder mobs/orcs
-face orc_warlord.131
+face orc_warlord.151
 race orc
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -29668,58 +30261,11 @@ is_animated 1
 anim_speed 4
 no_pick 1
 end
-Object dog_brown
-name Doggie
-type 80
-editor_folder mobs/pets
-face dog.ise.111
-race dog
-randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
-layer 6
-direction 5
-item_race 255
-item_level 255
-corpse 1
-alive 1
-monster 1
-is_male 1
-is_neutral 1
-friendly 1
-terrain_flag 1
-can_use_weapon 1
-int 10
-wis 6
-dex 3
-con 5
-exp 102
-magic 1
-pow 10
-sp -1
-maxsp 19
-hp -1
-maxhp 67
-ac 28
-wc 15
-thac0 85
-thacm 5
-resist_impact 10
-dam 52
-attack_cleave 100
-weapon_speed 3.5
-speed -0.06
-run_away 10
-level 1
-weight 325000
-animation dog_brown
-is_animated 1
-anim_speed 4
-no_pick 1
-end
 Object quickwood
 name Quickwood
 type 80
 editor_folder mobs/plants
-face quickwood.131
+face quickwood.151
 race tree
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -29763,7 +30309,7 @@ Object treant_ancient
 name Ancient Treant
 type 80
 editor_folder mobs/plants
-face treant_ancient.231
+face treant_ancient.251
 race tree
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -29867,7 +30413,7 @@ Object golem
 name Golem
 type 80
 editor_folder mobs/summoned
-face golem.131
+face golem.151
 race golem
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -29914,7 +30460,7 @@ Object icegolem
 name Ice Golem
 type 80
 editor_folder mobs/summoned
-face icegolem.031
+face golem_ice.151
 race golem
 randomitems loot&s2;wealth_normal&D65;loot_base&D17,s2;loot_misc&d27,s2
 layer 6
@@ -29963,7 +30509,7 @@ Object lavagolem
 name Lava Golem
 type 80
 editor_folder mobs/summoned
-face lavagolem.031
+face golem_lava.151
 race golem
 randomitems loot&s1;wealth_normal&D65;loot_base&D17,s1;loot_misc&d27,s1
 layer 6
@@ -30012,7 +30558,7 @@ Object black_golem_mage
 name Black Mage Golem
 type 80
 editor_folder mobs/summoned
-face black_golem_mage.131
+face black_golem_mage.151
 race golem
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -30059,7 +30605,7 @@ Object golem_mage
 name Mage Golem
 type 80
 editor_folder mobs/summoned
-face golem_mage.131
+face golem_mage.151
 race golem
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -30106,7 +30652,7 @@ Object sparkle_black_golem_mage
 name Black Sparkle Mage Golem
 type 80
 editor_folder mobs/summoned
-face sparkle_black_golem_mage.131
+face sparkle_black_golem_mage.151
 race golem
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -30153,7 +30699,7 @@ Object demon_pumpkin
 name demonic pumpkin
 type 80
 editor_folder mobs/theme
-face demon_pumpkin.211
+face demon_pumpkin.251
 race pumpkin
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -30203,7 +30749,7 @@ name evil pumpkin
 type 80
 editor_folder mobs/theme
 race pumpkin
-face great_pumpkin.131
+face great_pumpkin.151
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
@@ -30349,7 +30895,7 @@ Object santa
 name Santa
 type 80
 editor_folder mobs/theme
-face santa.131
+face santa.151
 race human
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -30405,7 +30951,7 @@ name Snowman
 type 80
 editor_folder mobs/theme
 race snowcreature
-face snowman_evil.131
+face snowman_evil.151
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
@@ -30452,7 +30998,7 @@ name Big Snowman
 type 80
 editor_folder mobs/theme
 race snowcreature
-face snowman_evil2.121
+face snowman_evil2.151
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
@@ -30499,7 +31045,7 @@ name Troll
 type 80
 mpart_id 3
 editor_folder mobs/trolls
-face troll.131
+face troll.151
 race troll
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -30592,7 +31138,7 @@ Object barrow_wight
 name Barrow Wight
 type 80
 editor_folder mobs/undead
-face barrow_wight.130
+face barrow_wight.151
 race lich
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -30644,7 +31190,7 @@ Object demilich
 name Demilich
 type 80
 editor_folder mobs/undead
-face demilich.131
+face demilich.151
 race lich
 randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -30699,6 +31245,7 @@ Object druj_skull
 name Skull Druj
 type 80
 editor_folder mobs/undead
+face druj_skull.151
 race druj
 randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -30746,7 +31293,6 @@ attack_cleave 100
 speed -0.054
 level 1
 weight 7500
-face skull01.131
 animation druj_skull
 is_animated 1
 anim_speed 4
@@ -30756,7 +31302,7 @@ Object ghoul
 name Ghoul
 type 80
 editor_folder mobs/undead
-face ghoul.131
+face ghoul.151
 race ghoul
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -30808,7 +31354,7 @@ Object lich
 name Lich
 type 80
 editor_folder mobs/undead
-face lich.131
+face lich.151
 race lich
 randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -30916,7 +31462,7 @@ Object lost_soul
 name Lost Soul
 type 80
 editor_folder mobs/undead
-face lost_soul.131
+face lost_soul.151
 race ghost
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -31117,7 +31663,7 @@ Object skel_mage
 name Skeleton Mage
 type 80
 editor_folder mobs/undead
-face skel_mage.131
+face skel_mage.151
 race skeleton
 randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -31171,7 +31717,7 @@ Object skeleton
 name Skeleton
 type 80
 editor_folder mobs/undead
-face skeleton.131
+face skeleton.151
 race skeleton
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -31220,7 +31766,7 @@ Object vampire
 name Vampire
 type 80
 editor_folder mobs/undead
-face vampire.131
+face vampire.151
 race undead
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -31272,7 +31818,7 @@ Object vampire_lord
 name Vampire Lord
 type 80
 editor_folder mobs/undead
-face vampire_lord.131
+face vampire_lord.151
 race undead
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -31324,7 +31870,7 @@ Object wraith
 name Wraith
 type 80
 editor_folder mobs/undead
-face wraith.131
+face wraith.151
 race ghost
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -32810,6 +33356,15 @@ no_pass 1
 no_pick 1
 x 1
 y 1
+end
+Object shovel_dirt
+name shovel
+type 79
+editor_folder outdoor/artificial
+face shovel_dirt.101
+layer 3
+no_teleport 1
+no_pick 1
 end
 Object dir_sign
 name big sign ('a'pply to read)
@@ -38873,6 +39428,81 @@ face grate1_end.131
 layer 5
 no_pick 1
 no_pass 1
+end
+Object honey_floor1
+name honey
+type 28
+editor_folder walls/honeycomb
+face honey_deco_1.101
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object honeycomb_wall.111
+name wall
+type 77
+editor_folder walls/honeycomb
+face wall_honey.a.111
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object honeycomb_wall.131
+name wall
+type 77
+editor_folder walls/honeycomb
+face wall_honey.a.131
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object honeycomb_wall.141
+name wall
+type 77
+editor_folder walls/honeycomb
+face wall_honey.a.141
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object honeycomb_wall.181
+name wall
+type 77
+editor_folder walls/honeycomb
+face wall_honey.a.181
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object honey_deco_2_1
+name honey
+type 77
+editor_folder walls/honeycomb
+face honey_deco_2.u.151
+animation honey_deco_2_1
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 7
+end
+Object honey_deco_3_1
+name honey
+type 77
+editor_folder walls/honeycomb
+face honey_deco3.111
+animation honey_deco_3_1
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 7
 end
 Object lo_wall1
 name Wall

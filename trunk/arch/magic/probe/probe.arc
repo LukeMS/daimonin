@@ -16,6 +16,8 @@ terrain_flag 32767
 walk_on 1
 fly_on 1
 speed 1
+thac0 0
+thacm 0
 hp 14
 flying 1
 no_pick 1

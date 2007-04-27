@@ -82,9 +82,9 @@ p c 2 si_148.png
 "This is a bullet spell."
 " "
 " "
-"confuse"
-w c 5 si_148.png
-"This spell will confuse the target for some time."
+"firebolt"
+w g 3 si_020.png
+"A bolt of fire reaching out from the hands of the caster."
 " "
 " "
 " "

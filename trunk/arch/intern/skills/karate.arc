@@ -3,14 +3,14 @@ name karate
 weapon_speed 3.0
 attack_impact 100
 face skill.101
-dam 3
+dam 75
 item_quality 100
 item_condition 100
 nrof 1
 identified 1
 known_magical 1
 known_cursed 1
-wc 7
+wc 30
 type 43
 sub_type 0
 sys_object 1
