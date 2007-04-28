@@ -55,7 +55,7 @@ CommArray_s Commands[]                  =
     /* should be variable */
     {"/target",       command_target,         0.1f}, /* enter combat and attack object in reach */
     {"/combat",       command_combat,         0.1f}, /* toggle attack mode of player */
-    {"/pray",         command_praying,        0.2f},
+    {"/rest",         command_resting,        1.0f},
     {"/run",          command_run,            1.0f},
     {"/run_stop",     command_run_stop,       0.01f},
     {"/cast",         command_cast_spell,     0.0f},
@@ -112,7 +112,6 @@ CommArray_s Commands[]                  =
 
     /*  {"/sound",        command_sound,          1.0},*/
     /*  {"/delete",     command_quit,           1.0},*/
-    /*  {"/pickup",     command_pickup,         1.0}, we don't want and need this anymore */
     /*  {"/dropall",        command_dropall,        1.0}, */
 
     /* temporary disabled commands

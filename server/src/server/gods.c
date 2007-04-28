@@ -162,7 +162,7 @@ void pray_at_altar(object *pl, object *altar)
         {
             /* toss this player off the altar.  He can try again. */
             new_draw_info_format(NDI_UNIQUE | NDI_NAVY, 0, pl, "A divine force pushes you off the altar.");
-            move_player(pl, absdir(pl->facing + 4)); /* back him off the way he came. */
+            move_player(pl, absdir(pl->facing + 4), TRUE); /* back him off the way he came. */
         } /* didn't successfully change, so forced off altar. */
     } /* If prayed at altar to other god */
 }

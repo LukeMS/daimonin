@@ -23,9 +23,6 @@
     The author can be reached via e-mail to daimonin@nord-com.net
 */
 
-extern int  turn_bonus[]; /* chance array for stat values */
-extern int  cleric_chance[];
-
 #define SPELL_USE_INTERN 0x00 /* special spells - don't list them as avaible spell */
 #define SPELL_USE_CAST   0x01 /* spell can be casted normal */
 #define SPELL_USE_BALM   0x02
@@ -67,30 +64,20 @@ typedef struct spell_struct
     int     type;                /* Type of spell: wizard, priest, ... */
     int     level;           /* Level required to cast this spell */
     int     sp;              /* Spellpoint-cost to cast it */
-    float   time;            /* How many ticks it takes to cast the spell */
+    int		time;            /* How many ticks it takes to cast the spell */
     int     scrolls;         /* thats from 1 to <scrolls> nrof we will generate for potions/scrolls... */
     int     charges;         /* If it can be used in wands, max # of charges */
     int     range;         /* if target spell, this is max range to target */
     float   value_mul;      /* used when we have a item of tihs spell kind.
                              * a magic potion has vaule x. We do: (x * value_mul)*level
                              */
-
-    /*
-        bdam:  base damage or hp of spell or summoned monster
-      bdur:  base duration of spell or base range
-      ldam:  levels you need over the min for the spell to gain one dam
-      ldur:  levels you need over the min for the spell to gain one dur
-      spl:   number of levels beyond minimum for spell point cost to
-         increase by amount equal to base cost.  i.e. if base cost
-         is 10 at level 2 and spl is 5, cost will increase by 2 per
-         level.  if base cost is 5 and spl is 10, cost increases by
-         1 every 2 levels.
-    */
-    int     bdam;  /*  base damage  */
-    int     bdur;  /*  base duration  */
-    int     ldam;  /*  damage adjustment for level  */
-    int     ldur;  /*  duration adjustment for level  */
-    int     spl;
+	int     bdam;		/*  base damage  */
+    int     bdur;		/*  base duration  */
+    int     ldam;		/*  damage adjustment for level  */
+    int     ldur;		/*  duration adjustment for level  */
+	int     spl;		/*  we add spl points to sp */
+	int     spl_level;	/*  every spl_level until */
+	int     spl_max;	/*  as long its lower as spl_max */
     int     sound; /* number of sound id for this sound */
 
     int     spell_use;       /* Define to what items this spell can be bound (potion, rod,,, ) */
@@ -122,7 +109,7 @@ enum spellnrs
     SP_REMOVE_CURSE,
     SP_REMOVE_DAMNATION,
     SP_CAUSE_LIGHT,
-    SP_CONFUSION,
+	SP_FIREBOLT,
     SP_BULLET,
     SP_GOLEM,
     SP_REMOVE_DEPLETION,
@@ -218,7 +205,7 @@ enum spellnrs
     SP_DETECT_EVIL,
     SP_HEROISM,
     SP_AGGRAVATION,
-    SP_FIREBOLT,
+	SP_CONFUSION,
     /*80*/
     SP_FROSTBOLT,
     SP_SHOCKWAVE,
@@ -375,10 +362,12 @@ enum spellnrs
 #define IS_SUMMON_SPELL(spell) (spells[type].flags&SPELL_DESC_SUMMON)
 
 
-#define PATH_SP_MULT(op,spell) (((op->path_attuned & s->path) ? 0.8 : 1) * \
-                ((op->path_repelled & s->path) ? 1.25 : 1))
-#define PATH_TIME_MULT(op,spell) (((op->path_attuned & s->path) ? 0.8 : 1) * \
-                ((op->path_repelled & s->path) ? 1.25 : 1))
+#define PATH_DMG_MULT(__op,__spell) (((__op->path_attuned & __spell->path) ? 0.7 : 1) * \
+	((__op->path_repelled & __spell->path) ? 1.25 : 1))
+#define PATH_SP_MULT(__op,__spell) (((__op->path_attuned & __spell->path) ? 0.8 : 1) * \
+                ((__op->path_repelled & __spell->path) ? 1.25 : 1))
+#define PATH_TIME_MULT(__op,__spell) (((__op->path_attuned & __spell->path) ? 0.8 : 1) * \
+                ((__op->path_repelled & __spell->path) ? 1.25 : 1))
 
 extern char        *spellpathnames[NRSPELLPATHS];
 extern archetype   *spellarch[NROFREALSPELLS];

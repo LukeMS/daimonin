@@ -304,7 +304,6 @@
  *  powerful at high level cost more.  The damage/time of
  *  characters increases though.
  */
-
 #define SPELLPOINT_LEVEL_DEPEND
 
 

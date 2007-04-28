@@ -99,6 +99,11 @@
 #define CS_STAT_REG_MANA 29
 #define CS_STAT_REG_GRACE 30
 #define CS_STAT_TARGET_HP 31
+#define CS_STAT_SPELL_FUMBLE 32
+
+#define CS_STAT_DIST_WC 33
+#define CS_STAT_DIST_DPS 34
+#define CS_STAT_DIST_TIME 35
 
 /* Start & end of skill experience + skill level, inclusive. */
 #define CS_STAT_SKILLEXP_START 118
@@ -122,7 +127,6 @@
 /* These are used with CS_STAT_FLAGS above to communicate S->C what the
  * server thinks the fireon & runon states are.
  */
-#define SF_FIREON           1
 #define SF_RUNON            2
 #define SF_BLIND            4
 #define SF_XRAYS            8

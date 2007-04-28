@@ -38,7 +38,7 @@ void spell_failure(object *op, int failure, int power)
     if (failure <= -20 && failure > -40) /* wonder */
     {
         new_draw_info(NDI_UNIQUE, 0, op, "Your spell causes an unexpected effect.");
-        cast_cone(op, op, 0, 10, SP_WOW, spellarch[SP_WOW], 0);
+        cast_cone(op, op, 0, 10, SP_WOW, spellarch[SP_WOW], SK_level(op),, 0);
     }
     else if (failure <= -40 && failure > -60) /* confusion */
     {
@@ -93,7 +93,7 @@ void prayer_failure(object *op, int failure, int power)
     if (failure <= -20 && failure > -40) /* wonder */
     {
         new_draw_info_format(NDI_UNIQUE, 0, op, "%s gives a sign to renew your faith.", godname);
-        cast_cone(op, op, 0, 10, SP_WOW, spellarch[SP_WOW], 0);
+        cast_cone(op, op, 0, 10, SP_WOW, spellarch[SP_WOW], SK_level(op), 0);
     }
     else if (failure <= -40 && failure > -60) /* confusion */
     {
@@ -201,66 +201,7 @@ int recharge(object *op)
     If stringarg is NULL, it will create food dependent on level  --PeterM*/
 int cast_create_food(object *op, object *caster, int dir, char *stringarg)
 {
-    int         food_value;
-    archetype  *at  = NULL;
-    object     *new_op;
-
-    food_value = spells[SP_CREATE_FOOD].bdam + 50 * SP_level_dam_adjust(op, caster, SP_CREATE_FOOD);
-
-    if (stringarg)
-    {
-        at = find_archetype(stringarg);
-        if (at == NULL || ((at->clone.type != FOOD && at->clone.type != DRINK) || (at->clone.stats.food > food_value)))
-            stringarg = NULL;
-    }
-
-    if (!stringarg)
-    {
-        archetype  *at_tmp;
-        /* We try to find the archetype with the maximum food value.
-         * This removes the dependancy of hard coded food values in this
-         * function, and addition of new food types is automatically added.
-         * We don't use flesh types because the weight values of those need
-         * to be altered from the donor.
-         */
-
-        /* We assume the food items don't have multiple parts */
-        for (at_tmp = first_archetype; at_tmp != NULL; at_tmp = at_tmp->next)
-        {
-            if (at_tmp->clone.type == FOOD || at_tmp->clone.type == DRINK)
-            {
-                /* Basically, if the food value is something that is creatable
-                     * under the limits of the spell and it is higher than
-                     * the item we have now, take it instead.
-                     */
-                if (at_tmp->clone.stats.food <= food_value && (!at || at_tmp->clone.stats.food > at->clone.stats.food))
-                    at = at_tmp;
-            }
-        }
-    }
-    /* Pretty unlikely (there are some very low food items), but you never
-     * know
-     */
-    if (!at)
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "You don't have enough experience to create any food.");
-        return 0;
-    }
-
-    food_value /= at->clone.stats.food;
-    new_op = get_object();
-    copy_object(&at->clone, new_op);
-    new_op->nrof = food_value;
-    /* lighten the food a little with increasing level. */
-    if (food_value > 1)
-        new_op->weight = (int) (new_op->weight * 2.0 / (2.0 + food_value));
-    new_op->value = 0;
-    SET_FLAG(new_op, FLAG_STARTEQUIP);
-    if (new_op->nrof < 1)
-        new_op->nrof = 1;
-
-    cast_create_obj(op, caster, new_op, dir);
-    return 1;
+    return 0;
 }
 
 
@@ -330,23 +271,11 @@ int cast_invisible(object *op, object *caster, int spell_type)
     {
         case SP_INVIS:
           CLEAR_FLAG(op, FLAG_UNDEAD);
-          /*op->invisible+=spells[spell_type].bdur;*/  /* set the base */
-          /*op->invisible+=spells[spell_type].ldam *
-                        SP_level_strength_adjust(op,caster,spell_type);*/  /*  set the level bonus */
           break;
         case SP_INVIS_UNDEAD:
           SET_FLAG(op, FLAG_UNDEAD);
-          /*
-             op->invisible+=spells[spell_type].bdur;
-             op->invisible+=spells[spell_type].ldam *
-                           SP_level_strength_adjust(op,caster,spell_type);
-          */
           break;
         case SP_IMPROVED_INVIS:
-          /*    op->invisible+=spells[spell_type].bdur;
-              op->invisible+=spells[spell_type].ldam *
-                            SP_level_strength_adjust(op,caster,spell_type);
-            */
           break;
     }
     new_draw_info(NDI_UNIQUE, 0, op, "You can't see your hands!");
@@ -434,7 +363,7 @@ int cast_wow(object *op, int dir, int ability, SpellTypeFrom item)
     /*
       int sp;
       if(!random_roll(0, 3))
-        return cast_cone(op,op,0,10,SP_WOW,spellarch[SP_WOW],0);
+        return cast_cone(op,op,0,10,SP_WOW,spellarch[SP_WOW],SK_level(op),0);
       do
       {
         sp=random_roll(0, NROFREALSPELLS-1);
@@ -1157,7 +1086,7 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
         case SP_DEXTERITY:
           if (tmp->type != PLAYER)
               break;
-          if (!(random_roll(0, (MAX(1, (10 - MAX_STAT + tmp->stats.Dex))) - 1)))
+          if (!(random_roll(0, (MAX(1, (10 - 30 + tmp->stats.Dex))) - 1)))
           {
               for (i = 20,force->stats.Dex = 1; i > tmp->stats.Dex; i -= 2)
                   force->stats.Dex++;
@@ -1171,7 +1100,7 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
         case SP_CONSTITUTION:
           if (tmp->type != PLAYER)
               break;
-          if (!(random_roll(0, (MAX(1, (10 - MAX_STAT + tmp->stats.Con))) - 1)))
+          if (!(random_roll(0, (MAX(1, (10 - 30 + tmp->stats.Con))) - 1)))
           {
               for (i = 20,force->stats.Con = 1; i > tmp->stats.Con; i -= 2)
                   force->stats.Con++;
@@ -1185,7 +1114,7 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
         case SP_CHARISMA:
           if (tmp->type != PLAYER)
               break;
-          if (!(random_roll(0, (MAX(1, (10 - MAX_STAT + tmp->stats.Cha))) - 1)))
+          if (!(random_roll(0, (MAX(1, (10 - 30 + tmp->stats.Cha))) - 1)))
           {
               for (i = 20,force->stats.Cha = 1; i > tmp->stats.Cha; i -= 2)
                   force->stats.Cha++;
@@ -1678,7 +1607,7 @@ void animate_bomb(object *op)
     }
     if (at)
         for (i = 1; i < 9; i++)
-            fire_arch(op, op, i, at, 0, 0);
+            fire_arch(op, op, op->x, op->y, i, at, 0, op->level, 0);
 
     explode_object(op);
 }
@@ -2832,7 +2761,7 @@ int cast_transfer(object *op, int dir)
         if (sp >= maxsp * 2)
         {
             new_draw_info(NDI_UNIQUE, 0, plyr, "Your head explodes!");
-            fire_arch(op, plyr, 0, spellarch[SP_L_FIREBALL], SP_L_FIREBALL, 0);
+            fire_arch(op, plyr, op->x, op->y ,0, spellarch[SP_L_FIREBALL], SP_L_FIREBALL, op->level,0);
             /* Explodes a large fireball centered at player */
             /* damage_ob(plyr, 9998, op, ENV_ATTACK_CHECK);*/
             plyr->stats.sp = 2 * maxsp;
@@ -3594,9 +3523,8 @@ int finger_of_death(object *op, object *caster, int dir)
 
     /* we create a hitter object -- the spell */
     hitter = get_archetype("face_of_death");
-    hitter->level = path_level_mod(caster,
-                                   spells[SP_FINGER_DEATH].bdam + 3 * SP_level_dam_adjust(op, caster, SP_FINGER_DEATH),
-                                   SP_FINGER_DEATH);
+    hitter->level = casting_level(caster, SP_FINGER_DEATH);
+		
     set_owner(hitter, op);
     hitter->x = target->x;
     hitter->y = target->y;

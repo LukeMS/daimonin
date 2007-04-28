@@ -83,7 +83,7 @@ static struct constant_decl     Game_constants[]    =
     {"EQUIP_AMULET", PLAYER_EQUIP_AMULET},
     {"EQUIP_WEAPON1", PLAYER_EQUIP_WEAPON1},
     {"EQUIP_BOW", PLAYER_EQUIP_BOW},
-    {"EQUIP_MTOOL", PLAYER_EQUIP_MTOOL},
+    {"EQUIP_AMUN", PLAYER_EQUIP_AMUN},
     {"EQUIP_MAX", PLAYER_EQUIP_MAX},
 
     {"ITEM_SKILL_NO", 0},
@@ -244,6 +244,12 @@ static struct constant_decl     Game_constants[]    =
     {"TYPE_DEEP_SWAMP"              ,DEEP_SWAMP},
     {"TYPE_IDENTIFY_ALTAR"          ,IDENTIFY_ALTAR},
     {"TYPE_CANCELLATION"            ,CANCELLATION},
+
+    {"TYPE_SHOULDER"                ,SHOULDER},
+    {"TYPE_LEGS"                    ,LEGS},
+    {"TYPE_FOOD_FORCE"              ,TYPE_FOOD_FORCE},
+    {"TYPE_FOOD_BUFF_FORCE"         ,TYPE_FOOD_BUFF_FORCE},
+
     {"TYPE_MENU"                    ,MENU},
     {"TYPE_BALL_LIGHTNING"          ,BALL_LIGHTNING},
     {"TYPE_SWARM_SPELL"             ,SWARM_SPELL},

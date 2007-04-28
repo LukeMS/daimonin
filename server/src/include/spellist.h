@@ -25,108 +25,172 @@
 
 spell spells[NROFREALSPELLS]          =
 {
-    {"firestorm",                   SPELL_TYPE_WIZARD, 1, 5, 8.0f, 3, 6,0, 1.0,
-    4,      5,      4,      4, 9,   SOUND_MAGIC_FIRE,
+    {"firestorm",                   SPELL_TYPE_WIZARD, 10, 
+	4, 12, 3, 6,0, 1.0,
+    50,      6,      4,      0,  
+	1, 4, 0,  SOUND_MAGIC_FIRE,
     SPELL_USE_CAST | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_DUST | SPELL_USE_BOOK | SPELL_USE_POTION,
     SPELL_DESC_DIRECTION,
     PATH_ELEMENTAL, "firebreath",SPELL_ACTIVE
     },
-    {"icestorm",                    SPELL_TYPE_WIZARD, 1, 5, 8.0f, 3, 6,0,1.0,
-    4,      5,      4,      4,  9,  SOUND_MAGIC_ICE,
+
+    {"icestorm",                    SPELL_TYPE_WIZARD, 10, 
+	4, 12, 3, 6,0,1.0,
+    50,      6,      4,      0,  
+	1, 4, 0,  SOUND_MAGIC_ICE,
     SPELL_USE_CAST | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_BOOK | SPELL_USE_POTION | SPELL_USE_DUST,
     SPELL_DESC_DIRECTION,
     PATH_ELEMENTAL, "icestorm",SPELL_ACTIVE
-    }, {"minor healing",               SPELL_TYPE_PRIEST, 1, 4, 8.0f, 3, 6,3,1.0,
-    0,       0,     0,      0, 0, SOUND_MAGIC_STAT,
+    }, 
+
+	{"minor healing",               SPELL_TYPE_PRIEST, 1, 
+	4, 8, 3, 6,3,1.0,
+    0,       0,     0,      0, 
+	0, 0, 0, SOUND_MAGIC_STAT,
     SPELL_USE_CAST | SPELL_USE_BALM | SPELL_USE_SCROLL | SPELL_USE_ROD | SPELL_USE_POTION | SPELL_USE_BOOK,
     SPELL_DESC_SELF | SPELL_DESC_FRIENDLY | SPELL_DESC_WIS | SPELL_DESC_TOWN,
     PATH_LIFE, "meffect_green",SPELL_ACTIVE
-    }, {"cure poison",                 SPELL_TYPE_PRIEST, 1, 5, 8.0f, 3, 6,4, 1.0,/* potion only */
-    0,       0,     0,      0,0,    SOUND_MAGIC_STAT,
+    }, 
+
+	{"cure poison",                 SPELL_TYPE_PRIEST, 1, 
+	5, 16, 3, 6,4, 1.0,/* potion only */
+    0,       0,     0,      0,
+	0, 0, 0,    SOUND_MAGIC_STAT,
     SPELL_USE_CAST | SPELL_USE_POTION | SPELL_USE_BOOK,
     SPELL_DESC_SELF | SPELL_DESC_FRIENDLY | SPELL_DESC_WIS | SPELL_DESC_TOWN,
     PATH_LIFE, "meffect_purple",SPELL_ACTIVE
-    }, {"cure disease",                SPELL_TYPE_PRIEST, 1, 5, 8.0f, 3, 6,4, 1.0,/* balm only */
-    0,       0,     0,      0,0,    SOUND_MAGIC_STAT,
+    }, 
+
+	{"cure disease",                SPELL_TYPE_PRIEST, 1, 
+	5, 16, 3, 6,4, 1.0,/* balm only */
+    0,       0,     0,      0,
+	0, 0, 0,    SOUND_MAGIC_STAT,
     SPELL_USE_CAST | SPELL_USE_BALM | SPELL_USE_BOOK,
     SPELL_DESC_SELF | SPELL_DESC_FRIENDLY | SPELL_DESC_WIS | SPELL_DESC_TOWN,
     PATH_LIFE,"meffect_purple",SPELL_ACTIVE
     },
-    {"strength self",               SPELL_TYPE_WIZARD, 1, 5, 8.0f, 3, 6,0,1.0,
-    0,       0,     0,      4, 0,   SOUND_MAGIC_STAT,
+
+    {"strength self",               SPELL_TYPE_WIZARD, 1, 
+	5, 12, 3, 6,0,1.0,
+    0,       0,     0,      4, 
+	0, 0, 0,   SOUND_MAGIC_STAT,
     SPELL_USE_CAST | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_POTION | SPELL_USE_ROD | SPELL_USE_SCROLL | SPELL_USE_BOOK,
     SPELL_DESC_SELF | SPELL_DESC_TOWN,
     PATH_NATURE, "meffect_yellow",SPELL_ACTIVE
-    }, {"identify",                    SPELL_TYPE_WIZARD, 1, 5, 8.0f, 3, 6,2,1.0,
-    0,       0,     0,      0,0,    SOUND_MAGIC_DEFAULT,
+    }, 
+
+	{"identify",                    SPELL_TYPE_WIZARD, 1, 
+	5, 24, 3, 6,2,1.0,
+    0,       0,     0,      0,
+	0, 0, 0,   SOUND_MAGIC_DEFAULT,
     SPELL_USE_CAST | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_SCROLL | SPELL_USE_BOOK,
     SPELL_DESC_SELF | SPELL_DESC_TOWN,
     PATH_TRANSMUTATION, "meffect_pink",SPELL_ACTIVE
-    }, {"detect magic",                SPELL_TYPE_WIZARD, 1, 5, 1.0f, 3, 6,0,1.0,
-    0,       0,     0,      0,0,    SOUND_MAGIC_DEFAULT,
+    }, 
+
+	{"detect magic",                SPELL_TYPE_WIZARD, 1, 
+	5, 8, 3, 6,0,1.0,
+    0,       0,     0,      0,
+	0, 0, 0,    SOUND_MAGIC_DEFAULT,
     SPELL_USE_CAST | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_SCROLL | SPELL_USE_BOOK,
     SPELL_DESC_SELF | SPELL_DESC_TOWN,
     PATH_ABJURATION, "meffect_pink",SPELL_ACTIVE
-    }, {"detect curse",                SPELL_TYPE_PRIEST, 1, 5, 8.0f, 3, 6,0,1.0,
-    0,       0,     0,      0,0,    SOUND_MAGIC_DEFAULT,
+    }, 
+
+	{"detect curse",                SPELL_TYPE_PRIEST, 1, 
+	5, 8, 3, 6,0,1.0,
+    0,       0,     0,      0,
+	0, 0, 0,    SOUND_MAGIC_DEFAULT,
     SPELL_USE_CAST | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_SCROLL | SPELL_USE_BOOK,
     SPELL_DESC_SELF | SPELL_DESC_TOWN | SPELL_DESC_WIS,
     PATH_ABJURATION, "meffect_pink",SPELL_ACTIVE
-    }, {"remove curse",                SPELL_TYPE_PRIEST, 1, 5, 8.0f, 3, 6,2,1.0,
-    0,       0,     0,      0,0, SOUND_MAGIC_DEFAULT,
+    },
+
+	{"remove curse",                SPELL_TYPE_PRIEST, 1, 
+	5, 24, 3, 6,2,1.0,
+    0,       0,     0,      0,
+	0, 0, 0, SOUND_MAGIC_DEFAULT,
     SPELL_USE_CAST | SPELL_USE_SCROLL | SPELL_USE_BOOK,     /* scroll */
     SPELL_DESC_SELF | SPELL_DESC_TOWN | SPELL_DESC_FRIENDLY | SPELL_DESC_WIS,
     PATH_ARCANE, "meffect_blue",SPELL_ACTIVE
-    }, {"remove damnation",            SPELL_TYPE_PRIEST, 1, 5, 8.0f, 3, 6,2,1.0,
-    0,       0,     0,      0,0,    SOUND_MAGIC_DEFAULT,
+    }, 
+
+	{"remove damnation",            SPELL_TYPE_PRIEST, 1, 
+	5, 36, 3, 6,2,1.0,
+    0,       0,     0,      0,
+	0, 0, 0, SOUND_MAGIC_DEFAULT,
     SPELL_USE_CAST | SPELL_USE_SCROLL | SPELL_USE_BOOK, /* scroll*/
     SPELL_DESC_SELF | SPELL_DESC_TOWN | SPELL_DESC_FRIENDLY | SPELL_DESC_WIS,
     PATH_ARCANE, "meffect_blue",SPELL_ACTIVE
-    }, {"cause light wounds",          SPELL_TYPE_PRIEST, 1, 4, 8.0f, 3, 6,0,  1.0,/* scroll*/
-    4,      5,      4,      4,  9,  SOUND_MAGIC_WOUND,
+    }, 
+
+	{"cause light wounds",          SPELL_TYPE_PRIEST, 1, 
+	3, 14, 3, 6,0,  1.0,/* scroll*/
+    60,      5,      4,      4,  
+	1, 6, 0,  SOUND_MAGIC_WOUND,
     SPELL_USE_CAST | SPELL_USE_SCROLL | SPELL_USE_BOOK,
     SPELL_DESC_DIRECTION | SPELL_DESC_WIS,
     PATH_DEATH,"cause_wounds",SPELL_ACTIVE
     },
 
-    /* NOT ACTIVE */
-    {"confuse",                     SPELL_TYPE_WIZARD, 1, 5, 8.0f, 3, 6,0,  1.0,/* dust effect */
-    4,      5,      4,      4,  9,  SOUND_MAGIC_CONFUSION,
-    SPELL_USE_CAST | SPELL_USE_DUST | SPELL_USE_BOOK,
-    SPELL_DESC_DIRECTION,
-    PATH_SPIRIT,NULL,SPELL_DEACTIVE
-    }, {"magic bullet",                SPELL_TYPE_WIZARD, 1, 4, 8.0f, 3, 6,0,1.0,
-    4,      5,      4,      4, 9,   SOUND_MAGIC_BULLET1,
+	{"firebolt",                   SPELL_TYPE_WIZARD, 10, 
+	4, 12, 3, 6,0, 1.0,
+	85,      7,      4,      0,  
+	1, 4, 0,  SOUND_MAGIC_FIRE,
+	SPELL_USE_CAST | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_DUST | SPELL_USE_BOOK | SPELL_USE_POTION,
+	SPELL_DESC_DIRECTION,
+	PATH_ELEMENTAL, "firebolt", SPELL_ACTIVE
+	},
+
+	{"magic bullet",                SPELL_TYPE_WIZARD, 1, 
+	3, 14, 3, 6,0,1.0,
+    60,      5,      4,      4, 
+	1, 6, 0,   SOUND_MAGIC_BULLET1,
     SPELL_USE_CAST | SPELL_USE_SCROLL | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_BOOK,
     SPELL_DESC_DIRECTION,
     PATH_EARTH, "bullet",SPELL_ACTIVE
     },
-    {"summon golem",                SPELL_TYPE_WIZARD, 1, 5, 8.0f, 3, 6,0,1.0,
-    4,      5,      4,      4, 9,   SOUND_MAGIC_SUMMON1,
+
+    {"summon golem",                SPELL_TYPE_WIZARD, 1, 
+	5, 12, 3, 6,0,1.0,
+    4,      5,      4,      4, 
+	1, 4, 0,   SOUND_MAGIC_SUMMON1,
     SPELL_USE_CAST | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_BOOK,
     SPELL_DESC_DIRECTION,
     PATH_CONJURATION, "golem",SPELL_DEACTIVE     /* NOT ACTIVE */
     },
-    {"remove depletion",            SPELL_TYPE_PRIEST, 1, 5, 8.0f, 3, 6,0, 1.0,
-    0,       0,     0,      0,0,    SOUND_MAGIC_STAT,
+
+    {"remove depletion",            SPELL_TYPE_PRIEST, 1, 
+	5, 24, 3, 6,0, 1.0,
+    0,       0,     0,      0,
+	0, 0, 0,    SOUND_MAGIC_STAT,
     SPELL_USE_CAST,
     SPELL_DESC_SELF | SPELL_DESC_TOWN | SPELL_DESC_WIS,
     PATH_LIFE, "meffect_purple",SPELL_ACTIVE
     },
-    {"probe",                       SPELL_TYPE_WIZARD, 1, 5, 8.0f, 3, 6,0,1.0,
-    4,      5,      4,      4, 9,   SOUND_MAGIC_DEFAULT,
+
+    {"probe",                       SPELL_TYPE_WIZARD, 1, 
+	5, 8, 3, 6,0,1.0,
+    1,      5,      4,      4, 
+	0, 0, 0, SOUND_MAGIC_DEFAULT,
     SPELL_USE_CAST | SPELL_USE_SCROLL | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_BOOK,
     SPELL_DESC_TOWN | SPELL_DESC_DIRECTION,
     PATH_SPIRIT, "probebullet",SPELL_ACTIVE
     },
-    {"remove death sickness",            SPELL_TYPE_PRIEST, 1, 5, 8.0f, 3, 6,0, 1.0,
-    0,       0,     0,      0,0,    SOUND_MAGIC_STAT,
+
+    {"remove death sickness",            SPELL_TYPE_PRIEST, 1, 
+	5, 24, 3, 6,0, 1.0,
+    0,       0,     0,      0,
+	0,  0, 0, SOUND_MAGIC_STAT,
     SPELL_USE_CAST, /* npc/god only atm */
     SPELL_DESC_SELF | SPELL_DESC_TOWN | SPELL_DESC_WIS,
     PATH_LIFE, "meffect_purple",SPELL_ACTIVE
     },
-    {"restoration",            SPELL_TYPE_PRIEST, 1, 5, 8.0f, 3, 6,0, 1.0,
-    0,       0,     0,      0,0,    SOUND_MAGIC_STAT,
+
+    {"restoration",            SPELL_TYPE_PRIEST, 1, 
+	5, 16, 3, 6,0, 1.0,
+    0,       0,     0,      0,
+	0, 0, 0, SOUND_MAGIC_STAT,
     SPELL_USE_CAST | SPELL_USE_SCROLL | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD, /* npc/god only atm */
     SPELL_DESC_SELF | SPELL_DESC_TOWN | SPELL_DESC_WIS,
     PATH_LIFE, "meffect_purple",SPELL_ACTIVE

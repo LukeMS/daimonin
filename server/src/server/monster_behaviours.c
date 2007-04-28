@@ -1880,7 +1880,6 @@ int ai_bow_attack_enemy(object *op, struct mob_behaviour_param *params)
 {
     object*bow =    NULL, *arrow = NULL, *target = op->enemy;
     rv_vector      *rv;
-    int             tag;
     int             direction;
 
     if (!OBJECT_VALID(op->enemy, op->enemy_count)
@@ -1948,35 +1947,9 @@ int ai_bow_attack_enemy(object *op, struct mob_behaviour_param *params)
     else
         arrow = get_split_ob(arrow, 1);
 
-    /* ugly nasty arrow-setting-upping block */
-    set_owner(arrow, op);
-    arrow->direction = direction;
-    arrow->x = rv->part->x,arrow->y = rv->part->y;
-    arrow->speed = 1;
-    update_ob_speed(arrow);
-    arrow->speed_left = 0;
-    SET_ANIMATION(arrow, (NUM_ANIMATIONS(arrow) / NUM_FACINGS(arrow)) * rv->direction);
-    arrow->level = op->level;
-    arrow->last_heal = arrow->stats.wc; /* save original wc and dam */
-    arrow->stats.hp = arrow->stats.dam;
-    arrow->stats.dam += bow->stats.dam + bow->magic + arrow->magic; /* NO_STRENGTH */
-    arrow->stats.dam = FABS((int) ((float) (arrow->stats.dam * lev_damage[op->level])));
-    arrow->stats.wc = 10 + (bow->magic + bow->stats.wc + arrow->magic + arrow->stats.wc + op->level);
-    arrow->map = op->map;
-    arrow->last_sp = 12; /* we use fixed value for mobs */
-    SET_FLAG(arrow, FLAG_FLYING);
-    SET_FLAG(arrow, FLAG_IS_MISSILE);
-    SET_FLAG(arrow, FLAG_FLY_ON);
-    SET_FLAG(arrow, FLAG_WALK_ON);
-    tag = arrow->count;
-    arrow->stats.grace = arrow->last_sp;
-    arrow->stats.maxgrace = 60 + (RANDOM() % 12);
-
-    if (insert_ob_in_map(arrow, op->map, op, 0))
-    {
-        play_sound_map(arrow->map, arrow->x, arrow->y, SOUND_THROW, SOUND_NORMAL);
-        move_arrow(arrow);
-    }
+	/* setup arrow stats basing on the mob op */
+	if(!(arrow = create_missile(op, bow, arrow, rv->direction)))
+		return 0;
 
     op->weapon_speed_left += FABS(op->weapon_speed);
 

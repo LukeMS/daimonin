@@ -1696,8 +1696,6 @@ extern void do_learn_spell(object *op, int spell, int special_prayer)
     }
     play_sound_player_only(CONTR(op), SOUND_LEARN_SPELL, SOUND_NORMAL, 0, 0);
     CONTR(op)->known_spells[CONTR(op)->nrofknownspells++] = spell;
-    if (CONTR(op)->nrofknownspells == 1)
-        CONTR(op)->chosen_spell = spell;
 
     /* For godgiven spells the player gets a reminder-mark inserted,
        that this spell must be removed on changing cults! */
@@ -1820,10 +1818,7 @@ static void apply_spellbook(object *op, object *tmp)
         /* this needs to be a - number [garbled] */
         scroll_failure(op, 0 - random_roll(0, spells[tmp->stats.sp].level), spells[tmp->stats.sp].sp);
     }
-    else if (QUERY_FLAG(tmp, FLAG_STARTEQUIP)
-          || random_roll(0, 149)
-           - (2 * SK_level(op))
-           < learn_spell[spells[tmp->stats.sp].flags & SPELL_DESC_WIS ? op->stats.Wis : op->stats.Int])
+    else if (QUERY_FLAG(tmp, FLAG_STARTEQUIP))
     {
         new_draw_info(NDI_UNIQUE, 0, op, "You succeed in learning the spell!");
         do_learn_spell(op, tmp->stats.sp, 0);
@@ -1844,8 +1839,7 @@ static void apply_spellbook(object *op, object *tmp)
 static void apply_scroll(object *op, object *tmp)
 {
     /*object *old_skill;*/
-    int scroll_spell = tmp->stats.  sp, old_spell = 0;
-    rangetype                       old_shoot   = range_none;
+    int scroll_spell = tmp->stats.  sp;
 
     if (QUERY_FLAG(op, FLAG_BLIND) && !QUERY_FLAG(op, FLAG_WIZ))
     {
@@ -1884,14 +1878,6 @@ static void apply_scroll(object *op, object *tmp)
             return;
         }
 
-        /* Now, call here so the right skill is readied -- literacy
-        * isnt necesarily connected to the exp obj to which the xp
-        * will go (for kills made by the magic of the scroll)
-        */
-        old_shoot = CONTR(op)->shoottype;
-        old_spell = CONTR(op)->chosen_spell;
-        CONTR(op)->shoottype = range_scroll;
-        CONTR(op)->chosen_spell = scroll_spell;
     }
 
     if(trigger_object_plugin_event(EVENT_APPLY, tmp, op, NULL,
@@ -1909,15 +1895,6 @@ static void apply_scroll(object *op, object *tmp)
 
     cast_spell(op, tmp, op->facing ? op->facing : 4, scroll_spell, 0, spellScroll, NULL);
     decrease_ob(tmp);
-    if (op->type == PLAYER)
-    {
-        if (CONTR(op)->golem == NULL)
-        {
-            CONTR(op)->shoottype = old_shoot;
-            CONTR(op)->chosen_spell = old_spell;
-        }
-        /*op->chosen_skill=old_skill;*/
-    }
 }
 
 /* op opens treasure chest tmp */
@@ -2017,439 +1994,6 @@ void apply_poison(object *op, object *tmp)
     decrease_ob(tmp);
 }
 
-static void apply_food(object *op, object *tmp)
-{
-    if (op->type != PLAYER)
-    {
-        if(trigger_object_plugin_event(
-                    EVENT_APPLY, tmp, op, NULL,
-                    NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
-            return;
-        op->stats.hp = op->stats.maxhp;
-    }
-    else
-    {
-        char    buf[MAX_BUF];
-
-        /* check if this is a dragon (player), eating some flesh */
-        if (tmp->type == FLESH && is_dragon_pl(op) && dragon_eat_flesh(op, tmp))
-        {
-        }
-        else
-        {
-            /* i don't want power eating - this disallow stacking effects
-             * for food or flesh.
-             */
-
-            if (op->stats.food + tmp->stats.food > 999)
-            {
-                if ((op->stats.food + tmp->stats.food) - 999 > tmp->stats.food / 5)
-                {
-                    new_draw_info(NDI_UNIQUE, 0, op, "You are to full to eat this right now!");
-                    return;
-                }
-            }
-
-            if(trigger_object_plugin_event(
-                        EVENT_APPLY, tmp, op, NULL,
-                        NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
-                return;
-
-            if (op->stats.food + tmp->stats.food > 999)
-            {
-                if (tmp->type == FOOD || tmp->type == FLESH)
-                    new_draw_info(NDI_UNIQUE, 0, op, "You feel full, but what a waste of food!");
-                else
-                    new_draw_info(NDI_UNIQUE, 0, op, "Most of the drink goes down your face not your throat!");
-            }
-
-            if (!QUERY_FLAG(tmp, FLAG_CURSED) && !QUERY_FLAG(tmp, FLAG_DAMNED))
-            {
-                if (!is_dragon_pl(op))
-                {
-                    /* eating message for normal players*/
-                    if (tmp->type == DRINK)
-                        sprintf(buf, "Ahhh...that %s tasted good.", tmp->name);
-                    else /* tasted "good" if food - tasted "terrible" for flesh for all non dragon players */
-                        sprintf(buf, "The %s tasted %s", tmp->name, tmp->type == FLESH ? "terrible!" : "good.");
-                }
-                else /* eating message for dragon players - they like it bloody */
-                    sprintf(buf, "The %s tasted terrible!", tmp->name);
-
-                op->stats.food += tmp->stats.food;
-            }
-            else /* cursed/damned = food is decreased instead of increased */
-            {
-                int ft  = tmp->stats.food;
-
-                sprintf(buf, "The %s tasted terrible!", tmp->name);
-                if (ft > 0)
-                    ft = -ft;
-                op->stats.food += ft;
-            }
-            new_draw_info(NDI_UNIQUE, 0, op, buf);
-
-            /* adjust food to borders when needed */
-            if (op->stats.food > 999)
-                op->stats.food = 999;
-            else if (op->stats.food < 0)
-                op->stats.food = 0;
-
-            /* special food hack -b.t. */
-            if (tmp->title || QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))
-                eat_special_food(op, tmp);
-        }
-    }
-    decrease_ob(tmp);
-}
-
-/* this is used from DRINK, FOOD & POISON forces now - to include buff/debuff
- * effects of stats & resists to the player. Cursed & damned effects are in too
- */
-void create_food_force(object *who, object *food, object *force)
-{
-    int i;
-
-    force->stats.Str = food->stats.Str;
-    force->stats.Pow = food->stats.Pow;
-    force->stats.Dex = food->stats.Dex;
-    force->stats.Con = food->stats.Con;
-    force->stats.Int = food->stats.Int;
-    force->stats.Wis = food->stats.Wis;
-    force->stats.Cha = food->stats.Cha;
-
-    for (i = 0; i < NROFATTACKS; i++)
-        force->resist[i] = food->resist[i];
-
-    /* if damned, set all negative if not and double or triple them */
-    if (QUERY_FLAG(food, FLAG_CURSED))
-    {
-        if (force->stats.Str > 0)
-            force->stats.Str = -force->stats.Str;
-        force->stats.Str *= 2;
-        if (force->stats.Dex > 0)
-            force->stats.Dex = -force->stats.Dex;
-        force->stats.Dex *= 2;
-        if (force->stats.Con > 0)
-            force->stats.Con = -force->stats.Con;
-        force->stats.Con *= 2;
-        if (force->stats.Int > 0)
-            force->stats.Int = -force->stats.Int;
-        force->stats.Int *= 2;
-        if (force->stats.Wis > 0)
-            force->stats.Wis = -force->stats.Wis;
-        force->stats.Wis *= 2;
-        if (force->stats.Pow > 0)
-            force->stats.Pow = -force->stats.Pow;
-        force->stats.Pow *= 2;
-        if (force->stats.Cha > 0)
-            force->stats.Cha = -force->stats.Cha;
-        force->stats.Cha *= 2;
-        for (i = 0; i < NROFATTACKS; i++)
-        {
-            if (force->resist[i] > 0)
-                force->resist[i] = -force->resist[i];
-            force->resist[i] *= 2;
-        }
-    }
-    if (QUERY_FLAG(food, FLAG_DAMNED))
-    {
-        if (force->stats.Pow > 0)
-            force->stats.Pow = -force->stats.Pow;
-        force->stats.Pow *= 3;
-        if (force->stats.Str > 0)
-            force->stats.Str = -force->stats.Str;
-        force->stats.Str *= 3;
-        if (force->stats.Dex > 0)
-            force->stats.Dex = -force->stats.Dex;
-        force->stats.Dex *= 3;
-        if (force->stats.Con > 0)
-            force->stats.Con = -force->stats.Con;
-        force->stats.Con *= 3;
-        if (force->stats.Int > 0)
-            force->stats.Int = -force->stats.Int;
-        force->stats.Int *= 3;
-        if (force->stats.Wis > 0)
-            force->stats.Wis = -force->stats.Wis;
-        force->stats.Wis *= 3;
-        if (force->stats.Cha > 0)
-            force->stats.Cha = -force->stats.Cha;
-        force->stats.Cha *= 3;
-        for (i = 0; i < NROFATTACKS; i++)
-        {
-            if (force->resist[i] > 0)
-                force->resist[i] = -force->resist[i];
-            force->resist[i] *= 3;
-        }
-    }
-    if (food->speed_left)
-        force->speed = food->speed_left;
-
-    SET_FLAG(force, FLAG_APPLIED);
-    force = insert_ob_in_ob(force, who);
-    if(who->type == PLAYER)
-        change_abil(who, force); /* Mostly to display any messages */
-    else
-        FIX_PLAYER(who ,"create food force (bug? can't be fix_player. fix_monster?"); /* huch? should be fix_monster, right? */
-}
-
-/* OUTDATED: eat_special_food() - some food may (temporarily) alter
- * player status. We do it w/ this routine and cast_change_attr().
- * Note the dircection is set to "99"  so that cast_change_attr()
- * will only modify the user's status. We shouldnt be able to
- * effect others by eating food!
- * -b.t.
- */
-/* NEW: if we are here, the food gives specials. +-hp or sp,
- * resistance or stats.
- * Food can be good or bad (means good effect or bad effects) and
- * cursed or not. If a food is "good" (for example Str+1 and Dex+1),
- * then it put this effects as force in the player for some time.
- * If a good effect food is cursed, all '+' values are turned to '-'.
- * Is a bad food (Str -1, Dex -1) is uncursed, it gives just this values.
- * Is a bad food is cursed, all '-' are doubled.
- * sp/hp will be add/sub directly. It will no poison effect inflicted -
- * for this POISON food should be used.
- * All bad effect food should be generated on default as cursed.
- * food effects can stack. For really powerful food, a high food value should
- * be used - a player can't eat it then when he is full and he will be full
- * fast.
- * For DAMNED food, its the same like cursed - except the negative effects are 3 times worser.
- * On the other side include for a "remove poison" herb a food of 1 to avoid
- * that the player can't eat it when full. MT-2003
- */
-void eat_special_food(object *who, object *food)
-{
-    /* if there is any stat or resist value - create force for the object! */
-    if (food->stats.Pow
-     || food->stats.Str
-     || food->stats.Dex
-     || food->stats.Con
-     || food->stats.Int
-     || food->stats.Wis
-     || food->stats.Cha)
-        create_food_force(who, food, get_archetype("force"));
-    else
-    {
-        int i;
-        for (i = 0; i < NROFATTACKS; i++)
-        {
-            if (food->resist[i] > 0)
-            {
-                create_food_force(who, food, get_archetype("force"));
-                break;
-            }
-        }
-    }
-    /* check for hp, sp change */
-    if (food->stats.hp != 0)
-    {
-        if (QUERY_FLAG(food, FLAG_CURSED) || QUERY_FLAG(food, FLAG_DAMNED))
-        {
-            int tmp = food->stats.hp;
-
-            if (tmp > 0)
-                tmp = -tmp;
-            FREE_AND_ADD_REF_HASH(CONTR(who)->killer, food->name);
-            if (QUERY_FLAG(food, FLAG_CURSED))
-                who->stats.hp += tmp * 2;
-            else
-                who->stats.hp += tmp * 3;
-            new_draw_info(NDI_UNIQUE, 0, who, "Eck!...that was rotten food!");
-        }
-        else
-        {
-            if (food->stats.hp > 0)
-                new_draw_info(NDI_UNIQUE, 0, who, "You begin to feel better.");
-            else
-                new_draw_info(NDI_UNIQUE, 0, who, "Eck!...that was rotten food!");
-            who->stats.hp += food->stats.hp;
-        }
-    }
-
-    if (food->stats.sp != 0)
-    {
-        if (QUERY_FLAG(food, FLAG_CURSED) || QUERY_FLAG(food, FLAG_DAMNED))
-        {
-            int tmp = food->stats.sp;
-
-            if (tmp > 0)
-                tmp = -tmp;
-
-            new_draw_info(NDI_UNIQUE, 0, who, "You are drained of mana!");
-            if (QUERY_FLAG(food, FLAG_CURSED))
-                who->stats.sp += tmp * 2;
-            else
-                who->stats.sp += tmp * 3;
-            if (who->stats.sp < 0)
-                who->stats.sp = 0;
-        }
-        else
-        {
-            new_draw_info(NDI_UNIQUE, 0, who, "You feel a rush of magical energy!");
-            who->stats.sp += food->stats.sp;
-            /* place limit on max sp from food? */
-        }
-    }
-}
-
-/*
- * A dragon is eating some flesh. If the flesh contains resistances,
- * there is a chance for the dragon's skin to get improved.
- *
- * attributes:
- *     object *op        the object (dragon player) eating the flesh
- *     object *meal      the flesh item, getting chewed in dragon's mouth
- * return:
- *     int               1 if eating successful, 0 if it doesn't work
- */
-int dragon_eat_flesh(object *op, object *meal)
-{
-    object *skin        = NULL;    /* pointer to dragon skin force*/
-    object *abil        = NULL;    /* pointer to dragon ability force*/
-    object *tmp         = NULL;     /* tmp. object */
-
-    char    buf[MAX_BUF];            /* tmp. string buffer */
-    double  chance;                /* improvement-chance of one resistance type */
-    double  maxchance   = 0;           /* highest chance of any type */
-    double  bonus       = 0;               /* level bonus (improvement is easier at lowlevel) */
-    double  mbonus      = 0;              /* monster bonus */
-    int     atnr_winner[NROFATTACKS]; /* winning candidates for resistance improvement */
-    int     winners     = 0;                /* number of winners */
-    int     i;                        /* index */
-
-    /* let's make sure and doublecheck the parameters */
-    if (meal->type != FLESH || !is_dragon_pl(op))
-        return 0;
-
-    /* now grab the 'dragon_skin'- and 'dragon_ability'-forces
-       from the player's inventory */
-    for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
-    {
-        if (tmp->type == FORCE)
-        {
-            if (tmp->arch->name == shstr_cons.dragon_skin_force)
-                skin = tmp;
-            else if (tmp->arch->name == shstr_cons.dragon_ability_force)
-                abil = tmp;
-        }
-    }
-
-    /* if either skin or ability are missing, this is an old player
-       which is not to be considered a dragon -> bail out */
-    if (skin == NULL || abil == NULL)
-        return 0;
-
-    /* now start by filling stomache and health, according to food-value */
-    if ((999 - op->stats.food) < meal->stats.food)
-        op->stats.hp += (999 - op->stats.food) / 50;
-    else
-        op->stats.hp += meal->stats.food / 50;
-    if (op->stats.hp > op->stats.maxhp)
-        op->stats.hp = op->stats.maxhp;
-
-    op->stats.food = MIN(999, op->stats.food + meal->stats.food);
-
-    /*printf("-> player: %d, flesh: %d\n", op->level, meal->level);*/
-
-    /* on to the interesting part: chances for adding resistance */
-    for (i = 0; i < NROFATTACKS; i++)
-    {
-        if (meal->resist[i] > 0 && atnr_is_dragon_enabled(i))
-        {
-            /* got positive resistance, now calculate improvement chance (0-100) */
-
-            /* this bonus makes resistance increase easier at lower levels */
-            bonus = (MAXLEVEL - op->level) * 30. / ((double) MAXLEVEL);
-            if (i == abil->stats.exp)
-                bonus += 5;  /* additional bonus for resistance of ability-focus */
-
-            /* monster bonus increases with level, because high-level
-               flesh is too rare */
-            mbonus = op->level * 20. / ((double) MAXLEVEL);
-
-            chance = (((double) MIN(op->level + bonus, meal->level + bonus + mbonus)) * 100. / ((double) MAXLEVEL))
-                   - skin->resist[i];
-
-            if (chance >= 0.)
-                chance += 1.;
-            else
-                chance = (chance < -12) ? 0. : 1. / pow(2., -chance);
-
-            /* chance is proportional to amount of resistance (max. 50) */
-            chance *= ((double) (MIN(meal->resist[i], 50))) / 50.;
-
-            /* doubled chance for resistance of ability-focus */
-            if (i == abil->stats.exp)
-                chance = MIN(100., chance * 2.);
-
-            /* now make the throw and save all winners (Don't insert luck bonus here!) */
-            if (RANDOM() % 10000 < (int) (chance * 100))
-            {
-                atnr_winner[winners] = i;
-                winners++;
-            }
-
-            if (chance > maxchance)
-                maxchance = chance;
-
-            /*printf("   %s: bonus %.1f, chance %.1f\n", attacks[i], bonus, chance);*/
-        }
-    }
-
-    /* print message according to maxchance */
-    if (maxchance > 50.)
-        sprintf(buf, "Hmm! The %s tasted delicious!", meal->name);
-    else if (maxchance > 10.)
-        sprintf(buf, "The %s tasted very good.", meal->name);
-    else if (maxchance > 1.)
-        sprintf(buf, "The %s tasted good.", meal->name);
-    else if (maxchance > 0.0001)
-        sprintf(buf, "The %s had a boring taste.", meal->name);
-    else if (meal->last_eat > 0 && atnr_is_dragon_enabled(meal->last_eat))
-        sprintf(buf, "The %s tasted strange.", meal->name);
-    else
-        sprintf(buf, "The %s had no taste.", meal->name);
-    new_draw_info(NDI_UNIQUE, 0, op, buf);
-
-    /* now choose a winner if we have any */
-    i = -1;
-    if (winners > 0)
-        i = atnr_winner[RANDOM() % winners];
-
-    if (i >= 0 && i < NROFATTACKS && skin->resist[i] < 95)
-    {
-        /* resistance increased! */
-        skin->resist[i]++;
-        FIX_PLAYER(op ,"dragon eat flesh - resist");
-
-        sprintf(buf, "Your skin is now more resistant to %s!", attack_name[i]);
-        new_draw_info(NDI_UNIQUE | NDI_RED, 0, op, buf);
-    }
-
-    /* if this flesh contains a new ability focus, we mark it
-       into the ability_force and it will take effect on next level */
-    if (meal->last_eat > 0 && atnr_is_dragon_enabled(meal->last_eat) && meal->last_eat != abil->last_eat)
-    {
-        abil->last_eat = meal->last_eat; /* write: last_eat <new attnr focus> */
-
-        if (meal->last_eat != abil->stats.exp)
-        {
-            sprintf(buf, "Your metabolism prepares to focus on %s!", attack_name[meal->last_eat]);
-            new_draw_info(NDI_UNIQUE, 0, op, buf);
-            sprintf(buf, "The change will happen at level %d", abil->level + 1);
-            new_draw_info(NDI_UNIQUE, 0, op, buf);
-        }
-        else
-        {
-            sprintf(buf, "Your metabolism will continue to focus on %s.", attack_name[meal->last_eat]);
-            new_draw_info(NDI_UNIQUE, 0, op, buf);
-            abil->last_eat = 0;
-        }
-    }
-    return 1;
-}
-
 static void apply_savebed(object *pl, object *bed)
 {
     player *p_ptr =CONTR(pl);
@@ -2466,7 +2010,6 @@ static void apply_savebed(object *pl, object *bed)
         return;
 
     /* update respawn position */
-    /*set_bindpath_by_default(p_ptr);*/
     set_bindpath_by_name(p_ptr, pl->map->path, pl->map->orig_path, pl->map->map_status, pl->x, pl->y);
 
     new_draw_info(NDI_UNIQUE, 0, pl, "You save and quit the game. Bye!\nleaving...");
@@ -2514,11 +2057,12 @@ static void apply_armour_improver(object *op, object *tmp)
 
 
 
-/* Return value:
+/* Return value (or bits):
  *   0: player or monster can't apply objects of that type
- *   2: objects of that type can't be applied if not in inventory
  *   1: has been applied, or there was an error applying the object
+ *   2: objects of that type can't be applied if not in inventory
  *   4: no fix_player() needed.
+ *   8: apply action will NOT break sitting/resting (like eating food)
  *
  * op is the object that is causing object to be applied, tmp is the object
  * being applied.
@@ -2533,9 +2077,6 @@ int manual_apply(object *op, object *tmp, int aflag)
 
     if (tmp->head)
         tmp = tmp->head;
-
-    if(op->type == PLAYER && CONTR(op))
-        CONTR(op)->praying = 0;
 
     if (QUERY_FLAG(tmp, FLAG_UNPAID) && !QUERY_FLAG(tmp, FLAG_APPLIED))
     {
@@ -2685,7 +2226,7 @@ int manual_apply(object *op, object *tmp, int aflag)
                       NULL, &aflag, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
               return 1; /* 1 = do not write an error message to the player */
           (void) apply_potion(op, tmp);
-          return 1;
+          return (1+8);
 
         case TYPE_LIGHT_APPLY:
           apply_player_light(op, tmp);
@@ -2739,21 +2280,22 @@ int manual_apply(object *op, object *tmp, int aflag)
         case ROD:
         case HORN:
         case SKILL:
-        case BOW:
+		case BOW:
+		case ARROW:
           if (tmp->env != op)
               return 2;   /* not in inventory */
-          (void) apply_special(op, tmp, aflag);
+          apply_special(op, tmp, aflag);
           return 1;
 
         case DRINK:
         case FOOD:
         case FLESH:
           apply_food(op, tmp);
-          return 1;
+          return (1+8);
 
         case POISON:
           apply_poison(op, tmp);
-          return 1;
+          return (1+8);
 
         case SAVEBED:
           if (op->type == PLAYER)
@@ -2854,7 +2396,11 @@ int player_apply(object *pl, object *op, int aflag, int quiet)
     SET_FLAG(pl, FLAG_NO_FIX_PLAYER);
     tmp = manual_apply(pl, op, aflag);
     CLEAR_FLAG(pl, FLAG_NO_FIX_PLAYER);
-    if(tmp == 1)
+
+    /* we have applied something which makes us standing up */
+    if(CONTR(pl) && CONTR(pl)->rest_sitting && !(tmp & 8))
+        CONTR(pl)->rest_sitting = CONTR(pl)->rest_mode = 0;
+    if(tmp & 1)
         FIX_PLAYER(pl ,"player apply ");
 
     if (!quiet)
@@ -2936,7 +2482,8 @@ void player_apply_below(object *pl)
 int apply_special(object *who, object *op, int aflags)
 {
     /* wear/wield */
-    int     ego_mode, basic_flag  = aflags &AP_BASIC_FLAGS;
+	player *pl = CONTR(who);
+	int     ego_mode, basic_flag  = aflags &AP_BASIC_FLAGS;
     int     tmp_flag    = 0;
     object *tmp;
     char    buf[HUGE_BUF];
@@ -3002,15 +2549,8 @@ int apply_special(object *who, object *op, int aflags)
                 break;
 
             case SKILL:
-                /* allows objects to impart skills */
-                if (op != who->chosen_skill)
-                {
-                    LOG(llevBug, "BUG: apply_special(): applied skill is not chosen skill\n");
-                }
                 if (who->type == PLAYER)
                 {
-                    CONTR(who)->shoottype = range_none;
-                    CONTR(who)->last_value = -1;
                     if (!IS_INVISIBLE(op, who))
                     {
                         /* its a tool, need to unlink it */
@@ -3043,7 +2583,9 @@ int apply_special(object *who, object *op, int aflags)
                 else
                     sprintf(buf, "You unwear %s.", query_name(op));
                 break;
-            case BOW:
+
+			case ARROW:
+			case BOW:
             case WAND:
             case ROD:
             case HORN:
@@ -3051,15 +2593,13 @@ int apply_special(object *who, object *op, int aflags)
                     sprintf(buf, "Your %s is broken!", query_name(op));
                 else
                     sprintf(buf, "You unready %s.", query_name(op));
-                if (who->type == PLAYER)
-                {
-                    CONTR(who)->shoottype = range_none;
-                    CONTR(who)->last_value = -1;
-                }
-                else
-                {
-                    CLEAR_FLAG(who, FLAG_READY_BOW); break;
-                }
+				if(op->type != ARROW || op->sub_type1 >= 128)
+				{
+					if (who->type != PLAYER)
+					{
+						CLEAR_FLAG(who, FLAG_READY_BOW); break;
+					}
+				}
                 break;
             default:
                 sprintf(buf, "You unapply %s.", query_name(op));
@@ -3086,7 +2626,7 @@ int apply_special(object *who, object *op, int aflags)
                 if (tmp)
                 {
                     /* it was merged */
-                    esrv_del_item(CONTR(who), del_tag, cont);
+                    esrv_del_item(pl, del_tag, cont);
                     op = tmp;
                 }
                 esrv_send_item(who, op);
@@ -3101,16 +2641,13 @@ int apply_special(object *who, object *op, int aflags)
     /* This goes through and checks to see if the player already has something
      * of that type applied - if so, unapply it.
      */
-    if (op->type == WAND || op->type == ROD || op->type == HORN)
+    if (op->type == WAND || op->type == ROD || op->type == HORN || op->type == BOW || (op->type == ARROW && op->sub_type1 >128))
         tmp_flag = 1;
 
     for (tmp = who->inv; tmp != NULL; tmp = tmp->below)
     {
-        if ((tmp->type == op->type || (tmp_flag && (tmp->type == WAND || tmp->type == ROD || tmp->type == HORN)))
-                && QUERY_FLAG(tmp,
-                    FLAG_APPLIED)
-                && tmp
-                != op)
+        if ((tmp->type == op->type || (tmp_flag && (tmp->type == WAND || tmp->type == ROD || tmp->type == HORN || tmp->type == BOW || (tmp->type == ARROW && tmp->sub_type1 >128))))
+                && QUERY_FLAG(tmp, FLAG_APPLIED) && tmp != op)
         {
             if (tmp->type == RING && !i)
                 i = 1;
@@ -3126,6 +2663,7 @@ int apply_special(object *who, object *op, int aflags)
         case RING:
         case AMULET:
         case BOW:
+		case ARROW:
             if(!op->item_condition)
             {
                 sprintf(buf, "The %s is broken and can't be applied.", query_name(op));
@@ -3163,8 +2701,8 @@ int apply_special(object *who, object *op, int aflags)
             /* if we have applied a shield, don't allow apply of polearm or 2hand weapon */
             if ((op->sub_type1 >= WEAP_POLE_IMPACT || op->sub_type1 >= WEAP_2H_IMPACT)
                     && who->type == PLAYER
-                    && CONTR(who)
-                    && CONTR(who)->equipment[PLAYER_EQUIP_SHIELD])
+                    && pl
+                    && pl->equipment[PLAYER_EQUIP_SHIELD])
             {
                 new_draw_info(NDI_UNIQUE, 0, who, "You can't wield this weapon and a shield.");
                 return 1;
@@ -3181,9 +2719,9 @@ int apply_special(object *who, object *op, int aflags)
                 new_draw_info(NDI_UNIQUE, 0, who, buf);
                 return 1;
             }
-            if ((who->type == PLAYER && CONTR(who) && CONTR(who)->equipment[PLAYER_EQUIP_WEAPON1])
-                    && (CONTR(who)->equipment[PLAYER_EQUIP_WEAPON1]->sub_type1 >= WEAP_POLE_IMPACT
-                        || CONTR(who)->equipment[PLAYER_EQUIP_WEAPON1]->sub_type1 >= WEAP_2H_IMPACT))
+            if ((who->type == PLAYER && pl && pl->equipment[PLAYER_EQUIP_WEAPON1])
+                    && (pl->equipment[PLAYER_EQUIP_WEAPON1]->sub_type1 >= WEAP_POLE_IMPACT
+                        || pl->equipment[PLAYER_EQUIP_WEAPON1]->sub_type1 >= WEAP_2H_IMPACT))
             {
                 new_draw_info(NDI_UNIQUE, 0, who, "You can't wield this shield and a weapon.");
                 return 1;
@@ -3230,7 +2768,7 @@ int apply_special(object *who, object *op, int aflags)
                 NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
         return 1; /* 1 = do not write an error message to the player */
 
-    if (op->nrof > 1)
+    if (op->nrof > 1 && op->type != ARROW)
         tmp = get_split_ob(op, op->nrof - 1);
     else
         tmp = NULL;
@@ -3265,7 +2803,6 @@ int apply_special(object *who, object *op, int aflags)
         case SKILL:
             if (who->type == PLAYER)
             {
-                CONTR(who)->shoottype = range_skill;
                 if (!IS_INVISIBLE(op, who))
                 {
                     /* for tools */
@@ -3285,6 +2822,21 @@ int apply_special(object *who, object *op, int aflags)
             buf[0] = '\0';
             break;
 
+		case ARROW:
+			/* an arrow can be a.) a throw item (= distance weapon) or b.) ammunition for a distance weapon
+			* as throw item we handle it like a bow/wand/etc...
+			* as normal arrow special - we test first we have applied the right distance weapon for it
+			*/
+			if(op->sub_type1 <= 128) /* its amunition */
+			{
+				/* we want apply amun. Lets only allow to apply amun fitting the applied bow! */
+				if(!pl->equipment[PLAYER_EQUIP_BOW] || pl->equipment[PLAYER_EQUIP_BOW]->type != BOW 
+										|| pl->equipment[PLAYER_EQUIP_BOW]->sub_type1 != op->sub_type1)
+				{
+					new_draw_info_format(NDI_UNIQUE, 0, who, "You can't use %s with applied range weapon.", query_short_name(op, NULL));
+					return 1;
+				}
+			}
         case WAND:
         case ROD:
         case HORN:
@@ -3302,15 +2854,9 @@ int apply_special(object *who, object *op, int aflags)
             new_draw_info_format(NDI_UNIQUE, 0, who, "You ready %s.", query_name(op));
             if (who->type == PLAYER)
             {
-                if (op->type == BOW)
+                if (op->type != BOW)
                 {
-                    new_draw_info_format(NDI_UNIQUE, 0, who, "You will now fire %s with %s.",
-                            op->race ? op->race : "nothing", query_name(op));
-                }
-                else
-                {
-                    CONTR(who)->chosen_item_spell = op->stats.sp;
-                    CONTR(who)->known_spell = (QUERY_FLAG(op, FLAG_BEEN_APPLIED) || QUERY_FLAG(op, FLAG_IDENTIFIED));
+                    pl->known_spell = (QUERY_FLAG(op, FLAG_BEEN_APPLIED) || QUERY_FLAG(op, FLAG_IDENTIFIED));
                 }
             }
             else
@@ -3792,7 +3338,7 @@ void scroll_failure(object *op, int failure, int power)
     if (failure <= -1 && failure > -15) /* wonder */
     {
         new_draw_info(NDI_UNIQUE, 0, op, "Your spell warps!.");
-        cast_cone(op, op, 0, 10, SP_WOW, spellarch[SP_WOW], 0);
+        cast_cone(op, op, 0, 10, SP_WOW, spellarch[SP_WOW], SK_level(op), 0);
     }
     else if (failure <= -15 && failure > -35) /* drain mana */
     {

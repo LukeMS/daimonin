@@ -28,11 +28,6 @@
 #include <pwd.h>
 #endif
 
-
-/* i left find_arrow - find_arrow() and find_arrow()_ext should merge
-   when the server sided range mode is removed at last from source */
-static object  *find_arrow_ext(object *op, const char *type, int tag);
-
 /* find a player name for a NORMAL string.
  * we use the hash table system.
  */
@@ -180,8 +175,6 @@ player *get_player(player *p)
     p->mute_counter=0;
     p->mute_msg_count=0;
 
-    p->firemode_type = p->firemode_tag1 = p->firemode_tag2 = -1;
-
     op  = arch_to_object(p_arch);
     op->custom_attrset = p; /* this is where we set up initial CONTR(op) */
     p->ob = op;
@@ -195,12 +188,10 @@ player *get_player(player *p)
 
     p->target_hp = -1;
     p->target_hp_p = -1;
-    p->gen_sp_armour = 0;
-    p->last_speed = -1;
-    p->shoottype = range_none;
     p->listening = 9;
     p->last_weapon_sp = -1;
-    p->last_speed = 0;
+    p->last_speed_enc = 0;
+    p->last_spell_fumble = 0;
     p->update_los = 1;
 
     FREE_AND_COPY_HASH(op->race, op->arch->clone.race);
@@ -208,8 +199,6 @@ player *get_player(player *p)
     /* Would be better of '0' was not a defined spell */
     for (i = 0; i < NROFREALSPELLS; i++)
         p->known_spells[i] = -1;
-
-    p->chosen_spell = -1;
 
     /* we need to clear these to -1 and not zero - otherwise,
      * if a player quits and starts a new character, we wont
@@ -463,7 +452,7 @@ void flee_player(object *op)
         CLEAR_FLAG(op, FLAG_SCARED);
         return;
     }
-    if (!(random_roll(0, 4)) && random_roll(1, 20) >= savethrow[op->level])
+    if (!random_roll(0, 4))
     {
         op->enemy = NULL;
         CLEAR_FLAG(op, FLAG_SCARED);
@@ -486,623 +475,30 @@ void flee_player(object *op)
     op->enemy = NULL;
 }
 
-
-/* check_pick sees if there is stuff to be picked up/picks up stuff.
- * IT returns 1 if the player should keep on moving, 0 if he should
- * stop.
+/* For B4 i redesigned move_player(). 
+ * move_player() was always in sense of a "move" not a "walk".
+ * The walking is only one part if this function. The main use
+ * is to determinate a player can do a move (and moving to another
+ * tile = walking is a move).
+ * A glitch was, that move_player() can change the direction of the move
+ * invoked for example by confusion. 
+ * In the past, firing was included in this function, i removed it now from
+ * it and added some senseful return values.
+ * if flag is TRUE, the function will do a step/walk and call move_ob(),
+ * if FALSE (used from fire/range code), the function will return with status.
+ * Return values: 
+ * -1 = doing the move failed (rotted, paralyzed...)
+ * 0-x = move will go in that direction
  */
-int check_pick(object *op)
+int move_player(object * const op, int dir, const int flag)
 {
-    object *tmp, *next;
-    tag_t   next_tag = 0, op_tag;
-    int     stop    = 0;
-    int     j, k, wvratio;
-    char    putstring[128], tmpstr[16];
+    player *pl = CONTR(op);
 
-
-    /* if you're flying, you can't pick up anything */
-    if (QUERY_FLAG(op, FLAG_FLYING))
-        return 1;
-
-    op_tag = op->count;
-
-    next = op->below;
-    if (next)
-        next_tag = next->count;
-
-    /* loop while there are items on the floor that are not marked as
-     * destroyed */
-    while (next && !was_destroyed(next, next_tag))
-    {
-        tmp = next;
-        next = tmp->below;
-        if (next)
-            next_tag = next->count;
-
-        if (was_destroyed(op, op_tag))
-            return 0;
-
-        if (!can_pick(op, tmp))
-            continue;
-
-        /* high bit set?  We're using the new autopickup model */
-        if (!(CONTR(op)->mode & PU_NEWMODE))
-        {
-            switch (CONTR(op)->mode)
-            {
-                case 0:
-                    return 1; /* don't pick up */
-                case 1:
-                    pick_up(op, tmp);
-                    return 1;
-                case 2:
-                    pick_up(op, tmp);
-                    return 0;
-                case 3:
-                    return 0; /* stop before pickup */
-                case 4:
-                    pick_up(op, tmp);
-                    break;
-                case 5:
-                    pick_up(op, tmp);
-                    stop = 1;
-                  break;
-                case 6:
-                  if (QUERY_FLAG(tmp, FLAG_KNOWN_MAGICAL) && !QUERY_FLAG(tmp, FLAG_KNOWN_CURSED))
-                      pick_up(op, tmp);
-                  break;
-
-                case 7:
-                  if (tmp->type == MONEY || tmp->type == GEM || tmp->type == TYPE_PEARL || tmp->type == TYPE_JEWEL || tmp->type == TYPE_NUGGET)
-                      pick_up(op, tmp);
-                  break;
-
-                default:
-                  /* use value density */
-                  if (!QUERY_FLAG(tmp, FLAG_UNPAID)
-                   && ((double)query_cost(tmp, op, F_TRUE) * 100.0 / ((double) tmp->weight * (double) (MAX(tmp->nrof, 1))))
-                   >= (double) CONTR(op)->mode)
-                      pick_up(op, tmp);
-            }
-        } /* old model */
-        else
-        {
-            /* NEW pickup handling */
-            if (CONTR(op)->mode & PU_DEBUG)
-            {
-                /* some debugging code to figure out item information */
-                if (tmp->name != NULL)
-                    sprintf(putstring, "item name: %s    item type: %d    weight/value: %d", tmp->name, tmp->type,
-                            (int) ((double)query_cost(tmp, op, F_TRUE) * 100 / (tmp->weight * MAX(tmp->nrof, 1))));
-                else
-                    sprintf(putstring, "item name: %s    item type: %d    weight/value: %d", tmp->arch->name, tmp->type,
-                            (int) ((double)query_cost(tmp, op, F_TRUE) * 100 / (tmp->weight * MAX(tmp->nrof, 1))));
-                new_draw_info(NDI_UNIQUE, 0, op, putstring);
-
-                sprintf(putstring, "...flags: ");
-                for (k = 0; k < 4; k++)
-                {
-                    for (j = 0; j < 32; j++)
-                    {
-                        if ((tmp->flags[k] >> j) & 0x01)
-                        {
-                            sprintf(tmpstr, "%d ", k * 32 + j);
-                            strcat(putstring, tmpstr);
-                        }
-                    }
-                }
-                new_draw_info(NDI_UNIQUE, 0, op, putstring);
-
-#if 0
-    /* print the flags too */
-    for(k=0;k<4;k++)
-    {
-      LOG(llevInfo ,"%d [%d] ", k, k*32+31);
-      for(j=0;j<32;j++)
-      {
-        LOG(llevInfo ,"%d",tmp->flags[k]>>(31-j)&0x01);
-        if(!((j+1)%4))LOG(llevInfo ," ");
-      }
-      LOG(llevInfo ," [%d]\n", k*32);
-    }
-#endif
-            }
-            /* philosophy:
-            * It's easy to grab an item type from a pile, as long as it's
-            * generic.  This takes no game-time.  For more detailed pickups
-            * and selections, select-items shoul dbe used.  This is a
-            * grab-as-you-run type mode that's really useful for arrows for
-            * example.
-            * The drawback: right now it has no frontend, so you need to
-            * stick the bits you want into a calculator in hex mode and then
-            * convert to decimal and then 'pickup <#>
-            */
-
-            /* the first two modes are exclusive: if NOTHING we return, if
-             * STOP then we stop.  All the rest are applied sequentially,
-             * meaning if any test passes, the item gets picked up. */
-
-            /* if mode is set to pick nothing up, return */
-            if (CONTR(op)->mode & PU_NOTHING)
-                return 1;
-            /* if mode is set to stop when encountering objects, return */
-            /* take STOP before INHIBIT since it doesn't actually pick
-             * anything up */
-            if (CONTR(op)->mode & PU_STOP)
-                return 0;
-            /* useful for going into stores and not losing your settings... */
-            /* and for battles wher you don't want to get loaded down while
-             * fighting */
-            if (CONTR(op)->mode & PU_INHIBIT)
-                return 1;
-
-            /* prevent us from turning into auto-thieves :) */
-            if (QUERY_FLAG(tmp, FLAG_UNPAID))
-                continue;
-
-            /* all food and drink if desired */
-            /* question: don't pick up known-poisonous stuff? */
-            if (CONTR(op)->mode & PU_FOOD)
-                if (tmp->type == FOOD)
-                {
-                    pick_up(op, tmp); /*LOG(llevInfo ,"FOOD\n");*/ continue;
-                }
-            if (CONTR(op)->mode & PU_DRINK)
-                if (tmp->type == DRINK)
-                {
-                    pick_up(op, tmp); /*LOG(llevInfo ,"DRINK\n");*/ continue;
-                }
-            if (CONTR(op)->mode & PU_POTION)
-                if (tmp->type == POTION)
-                {
-                    pick_up(op, tmp); /*LOG(llevInfo ,"POTION\n");*/ continue;
-                }
-
-            /* pick up all magical items */
-            if (CONTR(op)->mode & PU_MAGICAL)
-                if (QUERY_FLAG(tmp, FLAG_KNOWN_MAGICAL) && !QUERY_FLAG(tmp, FLAG_KNOWN_CURSED))
-                {
-                    pick_up(op, tmp); /*LOG(llevInfo ,"MAGICAL\n");*/ continue;
-                }
-
-            if (CONTR(op)->mode & PU_VALUABLES)
-            {
-                if (tmp->type == MONEY || tmp->type == GEM || tmp->type == TYPE_PEARL || tmp->type == TYPE_JEWEL || tmp->type == TYPE_NUGGET)
-                {
-                    pick_up(op, tmp); /*LOG(llevInfo ,"MONEY/GEM\n");*/ continue;
-                }
-            }
-
-            /* bows and arrows. Bows are good for selling! */
-            if (CONTR(op)->mode & PU_BOW)
-                if (tmp->type == BOW)
-                {
-                    pick_up(op, tmp); /*LOG(llevInfo ,"BOW\n");*/ continue;
-                }
-            if (CONTR(op)->mode & PU_ARROW)
-                if (tmp->type == ARROW)
-                {
-                    pick_up(op, tmp); /*LOG(llevInfo ,"ARROW\n");*/ continue;
-                }
-
-            /* all kinds of armor etc. */
-            if (CONTR(op)->mode & PU_ARMOUR)
-                if (tmp->type == ARMOUR)
-                {
-                    pick_up(op, tmp); /*LOG(llevInfo ,"ARMOUR\n");*/ continue;
-                }
-            if (CONTR(op)->mode & PU_HELMET)
-                if (tmp->type == HELMET)
-                {
-                    pick_up(op, tmp); /*LOG(llevInfo ,"HELMET\n");*/ continue;
-                }
-            if (CONTR(op)->mode & PU_SHIELD)
-                if (tmp->type == SHIELD)
-                {
-                    pick_up(op, tmp); /*LOG(llevInfo ,"SHIELD\n");*/ continue;
-                }
-            if (CONTR(op)->mode & PU_BOOTS)
-                if (tmp->type == BOOTS)
-                {
-                    pick_up(op, tmp); /*LOG(llevInfo ,"BOOTS\n");*/ continue;
-                }
-            if (CONTR(op)->mode & PU_GLOVES)
-                if (tmp->type == GLOVES)
-                {
-                    pick_up(op, tmp); /*LOG(llevInfo ,"GLOVES\n");*/ continue;
-                }
-            if (CONTR(op)->mode & PU_CLOAK)
-                if (tmp->type == CLOAK)
-                {
-                    pick_up(op, tmp); /*LOG(llevInfo ,"CLOAK\n");*/ continue;
-                }
-
-            /* hoping to catch throwing daggers here */
-            if (CONTR(op)->mode & PU_MISSILEWEAPON)
-                if (tmp->type == WEAPON && QUERY_FLAG(tmp, FLAG_IS_THROWN))
-                {
-                    pick_up(op, tmp); /*LOG(llevInfo ,"MISSILEWEAPON\n");*/ continue;
-                }
-
-            /* misc stuff that's useful */
-            if (CONTR(op)->mode & PU_KEY)
-                if (tmp->type == KEY || tmp->type == SPECIAL_KEY)
-                {
-                    pick_up(op, tmp); /*LOG(llevInfo ,"KEY\n");*/ continue;
-                }
-
-            /* any of the last 4 bits set means we use the ratio for value
-             * pickups */
-            if (CONTR(op)->mode & PU_RATIO)
-            {
-                /* use value density to decide what else to grab */
-                /* >=7 was >= CONTR(op)->mode */
-                /* >=7 is the old standard setting.  Now we take the last 4 bits
-                 * and multiply them by 5, giving 0..15*5== 5..75 */
-                wvratio = (CONTR(op)->mode & PU_RATIO) * 5;
-                if (((double)query_cost(tmp, op, F_TRUE) * 100 / (tmp->weight * MAX((signed long) tmp->nrof, 1))) >= wvratio)
-                {
-                    pick_up(op, tmp);
-
-                    /*
-                      LOG(llevInfo ,"HIGH WEIGHT/VALUE [");
-                      if(tmp->name!=NULL) {
-                        LOG(llevInfo ,"%s", tmp->name);
-                      }
-                      else
-                      LOG(llevInfo ,"%s",tmp->arch->name);
-                      LOG(llevInfo ,",%d] = ", tmp->type);
-                      LOG(llevInfo ,"%d\n",(int)(query_cost(tmp,op,F_TRUE)*100 / (tmp->weight * MAX(tmp->nrof,1))));
-                      */
-                    continue;
-                }
-            }
-        } /* the new pickup model */
-    }
-    return !stop;
-}
-
-/*
- *  Find an arrow in the inventory and after that
- *  in the right type container (quiver). Pointer to the
- *  found object is returned.
- */
-object * find_arrow(object *op, const char *type)
-{
-    object *tmp = NULL;
-
-    for (op = op->inv; op; op = op->below)
-        if (!tmp && op->type == CONTAINER && op->race == type && QUERY_FLAG(op, FLAG_APPLIED))
-            tmp = find_arrow(op, type);
-        else if (op->type == ARROW && op->race == type)
-            return op;
-    return tmp;
-}
-
-/*
- *  Player fires a bow.
- */
-static void fire_bow(object *op, int dir)
-{
-    object *left_cont, *bow, *arrow = NULL, *left, *tmp_op;
-    float dmg_tmp;
-    tag_t   left_tag;
-
-    if (!dir)
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "You can't shoot yourself!");
-        return;
-    }
-
-    bow = CONTR(op)->equipment[PLAYER_EQUIP_BOW];
-    if (!bow)
-        LOG(llevBug, "BUG: Range: bow without activated bow (%s - %d).\n", op->name, dir);
-
-    if (!bow->race)
-    {
-        new_draw_info_format(NDI_UNIQUE, 0, op, "Your %s is broken.", bow->name);
-        return;
-    }
-    if ((arrow = find_arrow_ext(op, bow->race, CONTR(op)->firemode_tag2)) == NULL)
-    {
-        new_draw_info_format(NDI_UNIQUE, 0, op, "You have no %s left.", bow->race);
-        return;
-    }
-    if (wall(op->map, op->x + freearr_x[dir], op->y + freearr_y[dir]))
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "Something is in the way.");
-        return;
-    }
-    /* this should not happen, but sometimes does */
-    if (arrow->nrof == 0)
-    {
-        LOG(llevDebug, "BUG?: arrow->nrof == 0 in fire_bow() (%s)\n", query_name(arrow));
-        remove_ob(arrow);
-        return;
-    }
-    left = arrow; /* these are arrows left to the player */
-    left_tag = left->count;
-    left_cont = left->env;
-    arrow = get_split_ob(arrow, 1);
-    set_owner(arrow, op);
-    arrow->direction = dir;
-    arrow->x = op->x;
-    arrow->y = op->y;
-    arrow->speed = 1;
-
-    /* now the trick: we transfer the shooting speed in the used
-     * skill - that will allow us to use "set_skill_speed() as global
-     * function.
-     */
-    op->chosen_skill->stats.maxsp = bow->stats.sp + arrow->last_grace;
-    update_ob_speed(arrow);
-    arrow->speed_left = 0;
-    SET_ANIMATION(arrow, (NUM_ANIMATIONS(arrow) / NUM_FACINGS(arrow)) * dir);
-    arrow->last_heal = arrow->stats.wc; /* save original wc and dam */
-    arrow->stats.hp = arrow->stats.dam; /* will be put back in fix_arrow() */
-
-    /* now we do this: arrow wc = wc base from skill + (wc arrow + magic) + (wc range weapon boni + magic) */
-    if ((tmp_op = SK_skill(op)))
-        arrow->stats.wc = tmp_op->last_heal; /* wc is in last heal */
-    else
-        arrow->stats.wc = 10;
-
-    /* now we determinate how many tiles the arrow will fly.
-     * again we use the skill base and add arrow + weapon values - but no magic add here.
-     */
-    arrow->last_sp = tmp_op->last_sp + bow->last_sp + arrow->last_sp;
-
-    /* add in all our wc boni */
-    arrow->stats.wc += (bow->magic + arrow->magic + SK_level(op) + thaco_bonus[op->stats.Dex] + bow->stats.wc);
-
-    /* monster.c 970 holds the arrow code for monsters */
-    /* moving dmg code to dmg/10 */
-    dmg_tmp = ((float)arrow->stats.dam + (float)bow->stats.dam + ((float)dam_bonus[op->stats.Str]/2.0f)/10.0f)
-              + (float)bow->magic + (float)arrow->magic;
-    arrow->stats.dam = (int) FABS(arrow->stats.dam * lev_damage[SK_level(op)]);
-
-    /* adjust with the lower of condition */
-    if (bow->item_condition > arrow->item_condition)
-        arrow->stats.dam = (sint16) (((float) arrow->stats.dam / 100.0f) * (float) arrow->item_condition);
-    else
-        arrow->stats.dam = (sint16) (((float) arrow->stats.dam / 100.0f) * (float) bow->item_condition);
-
-
-    arrow->level = SK_level(op); /* this is used temporary when fired, arrow has
-                                  * no level use elsewhere.
-                                  */
-    arrow->map = op->map;
-    SET_MULTI_FLAG(arrow, FLAG_FLYING);
-    SET_FLAG(arrow, FLAG_IS_MISSILE);
-    SET_FLAG(arrow, FLAG_FLY_ON);
-    SET_FLAG(arrow, FLAG_WALK_ON);
-    arrow->stats.grace = arrow->last_sp; /* temp. buffer for "tiles to fly" */
-    arrow->stats.maxgrace = 60 + (RANDOM() % 12); /* reflection timer */
-    play_sound_map(op->map, op->x, op->y, SOUND_FIRE_ARROW, SOUND_NORMAL);
-    if (insert_ob_in_map(arrow, op->map, op, 0))
-        move_arrow(arrow);
-    if (was_destroyed(left, left_tag))
-        esrv_del_item(CONTR(op), left_tag, left_cont);
-    else
-        esrv_send_item(op, left);
-}
-
-
-void fire(object *op, int dir)
-{
-    object *weap        = NULL;
-    int     spellcost   = 0;
-
-    /* check for loss of invisiblity/hide */
-    if (action_makes_visible(op))
-        make_visible(op);
-
-    /* a check for players, make sure things are groovy. This routine
-     * will change the skill of the player as appropriate in order to
-     * fire whatever is requested. In the case of spells (range_magic)
-     * it handles whether cleric or mage spell is requested to be cast.
-     * -b.t.
-     */
-
-    /* ext. fire mode - first step. We map the client side action to a server action. */
-    /* forcing the shoottype var from player object to our needed range mode */
-    if (op->type == PLAYER)
-    {
-        if (CONTR(op)->firemode_type == FIRE_MODE_NONE)
-            return;
-
-        if (CONTR(op)->firemode_type == FIRE_MODE_BOW)
-            CONTR(op)->shoottype = range_bow;
-        else if (CONTR(op)->firemode_type == FIRE_MODE_THROW)
-        {
-            object *tmp;
-
-            /* insert here test for more throwing skills */
-            if (!change_skill(op, SK_THROWING))
-                return;
-            /* special case - we must redirect the fire cmd to throwing something */
-            tmp = find_throw_tag(op, (tag_t) CONTR(op)->firemode_tag1);
-            if (tmp)
-            {
-                if (!check_skill_action_time(op, op->chosen_skill))
-                    return;
-                do_throw(op, tmp, dir);
-                get_skill_time(op, op->chosen_skill->stats.sp);
-            }
-            return;
-        }
-        else if (CONTR(op)->firemode_type == FIRE_MODE_SPELL)
-            CONTR(op)->shoottype = range_magic;
-        else if (CONTR(op)->firemode_type == FIRE_MODE_WAND)
-        {
-            CONTR(op)->shoottype = range_wand; /* we do a jump in fire wand if we haven one */
-        }
-        else if (CONTR(op)->firemode_type == FIRE_MODE_SKILL)
-        {
-            command_rskill(op, CONTR(op)->firemode_name);
-            CONTR(op)->shoottype = range_skill;
-        }
-        else if (CONTR(op)->firemode_type == FIRE_MODE_SUMMON)
-            CONTR(op)->shoottype = range_scroll;
-        else
-            CONTR(op)->shoottype = range_none;
-
-        if (!check_skill_to_fire(op))
-            return;
-    }
-
-    switch (CONTR(op)->shoottype)
-    {
-        case range_none:
-          return;
-
-        case range_bow:
-          if (CONTR(op)->firemode_tag2 != -1)
-          {
-              /* we still recover from range action? */
-              if (!check_skill_action_time(op, op->chosen_skill))
-                  return;
-
-              fire_bow(op, dir);
-              get_skill_time(op, op->chosen_skill->stats.sp);
-              /* op->speed_left -= get_skill_time(op,op->chosen_skill->stats.sp); */
-          }
-          return;
-
-        case range_magic:
-          /* Casting spells */
-
-          if (!check_skill_action_time(op, op->chosen_skill))
-              return;
-          spellcost = cast_spell(op, op, dir, CONTR(op)->chosen_spell, 0, spellNormal, NULL);
-
-          if (spells[CONTR(op)->chosen_spell].flags & SPELL_DESC_WIS)
-              op->stats.grace -= spellcost;
-          else
-              op->stats.sp -= spellcost;
-
-          get_skill_time(op, op->chosen_skill->stats.sp);
-          return;
-
-        case range_wand:
-          for (weap = op->inv; weap != NULL; weap = weap->below)
-              if (weap->type == WAND && QUERY_FLAG(weap, FLAG_APPLIED))
-                  break;
-          if (weap == NULL)
-          {
-              CONTR(op)->shoottype = range_rod;
-              goto trick_jump;
-          }
-
-          if (!check_skill_action_time(op, op->chosen_skill))
-              return;
-          if (weap->stats.food <= 0)
-          {
-              play_sound_player_only(CONTR(op), SOUND_WAND_POOF, SOUND_NORMAL, 0, 0);
-              new_draw_info(NDI_UNIQUE, 0, op, "The wand says poof.");
-              /*op->speed_left -= get_skill_time(op,op->chosen_skill->stats.sp);*/
-              return;
-          }
-
-          new_draw_info(NDI_UNIQUE, 0, op, "fire wand");
-          if (cast_spell(op, weap, dir, weap->stats.sp, 0, spellWand, NULL))
-          {
-              SET_FLAG(op, FLAG_BEEN_APPLIED); /* You now know something about it */
-              if (!(--weap->stats.food))
-              {
-                  object   *tmp;
-                  if (weap->arch)
-                  {
-                      CLEAR_FLAG(weap, FLAG_ANIMATE);
-                      weap->face = weap->arch->clone.face;
-                      weap->speed = 0;
-                      update_ob_speed(weap);
-                  }
-                  if ((tmp = is_player_inv(weap)))
-                      esrv_update_item(UPD_ANIM, tmp, weap);
-              }
-          }
-          get_skill_time(op, op->chosen_skill->stats.sp);
-          /*op->speed_left -= get_skill_time(op,op->chosen_skill->stats.sp);*/
-          return;
-        case range_rod:
-        case range_horn:
-          trick_jump:
-          for (weap = op->inv; weap != NULL; weap = weap->below)
-              if (QUERY_FLAG(weap, FLAG_APPLIED) && weap->type == (CONTR(op)->shoottype == range_rod ? ROD : HORN))
-                  break;
-          if (weap == NULL)
-          {
-              if (CONTR(op)->shoottype == range_rod)
-              {
-                  CONTR(op)->shoottype = range_horn;
-                  goto trick_jump;
-              }
-              else
-              {
-                  char      buf[MAX_BUF];
-                  sprintf(buf, "You have no tool readied.");
-                  new_draw_info(NDI_UNIQUE, 0, op, buf);
-                  return;
-              }
-          }
-          if (!check_skill_action_time(op, op->chosen_skill))
-              return;
-          if (weap->stats.hp < spells[weap->stats.sp].sp)
-          {
-              play_sound_player_only(CONTR(op), SOUND_WAND_POOF, SOUND_NORMAL, 0, 0);
-              if (CONTR(op)->shoottype == range_rod)
-                  new_draw_info(NDI_UNIQUE, 0, op, "The rod whines for a while, but nothing happens.");
-              else
-                  new_draw_info(NDI_UNIQUE, 0, op, "No matter how hard you try you can't get another note out.");
-              return;
-          }
-          /*new_draw_info_format(NDI_ALL|NDI_UNIQUE,5,NULL,"Use %s - cast spell %d\n",weap->name,weap->stats.sp);*/
-          if (cast_spell(op, weap, dir, weap->stats.sp, 0, CONTR(op)->shoottype == range_rod ? spellRod : spellHorn,
-                         NULL))
-          {
-              SET_FLAG(op, FLAG_BEEN_APPLIED); /* You now know something about it */
-              drain_rod_charge(weap);
-          }
-          get_skill_time(op, op->chosen_skill->stats.sp);
-          return;
-        case range_scroll:
-          /* Control summoned monsters from scrolls */
-          if (CONTR(op)->golem == NULL)
-          {
-              CONTR(op)->shoottype = range_none;
-              CONTR(op)->chosen_spell = -1;
-          }
-          else
-              control_golem(CONTR(op)->golem, dir);
-          return;
-
-        case range_skill:
-          if (!op->chosen_skill)
-          {
-              if (op->type == PLAYER)
-                  new_draw_info(NDI_UNIQUE, 0, op, "You have no applicable skill to use.");
-              return;
-          }
-          if (op->chosen_skill->sub_type1 != ST1_SKILL_USE)
-              new_draw_info(NDI_UNIQUE, 0, op, "You can't use this skill in this way.");
-          else
-              (void) do_skill(op, dir, NULL);
-          return;
-        default:
-          new_draw_info(NDI_UNIQUE, 0, op, "Illegal shoot type.");
-          return;
-    }
-}
-
-int move_player(object *op, int dir)
-{
-
-    CONTR(op)->praying = 0;
+    pl->rest_sitting = pl->rest_mode = 0;
 
     if (op->map == NULL || op->map->in_memory != MAP_IN_MEMORY ||
         QUERY_FLAG(op,FLAG_PARALYZED) || QUERY_FLAG(op,FLAG_ROOTED))
-        return 0;
+        return -1;
 
     if (dir)
         op->facing = dir;
@@ -1120,23 +516,13 @@ int move_player(object *op, int dir)
         do_hidden_move(op);
     }
 
-    /* firemode is set from client command fire xx xx xx */
-    if (CONTR(op)->firemode_type != -1)
-    {
-        fire(op, dir);
-        if (dir)
-            op->anim_enemy_dir = dir;
-        else
-            op->anim_enemy_dir = op->facing;
-        CONTR(op)->fire_on = 0;
-    }
-    else
-    {
-        if (!move_ob(op, dir, op))
-            op->anim_enemy_dir = dir;
-        else
-            op->anim_moving_dir = dir;
-    }
+    if (!flag)
+		return dir;
+
+	if (!move_ob(op, dir, op))
+		op->anim_enemy_dir = dir;
+	else
+		op->anim_moving_dir = dir;
 
     /* But I need pushing for the Fluffy quest! -- Gecko :-( */
     /* Thats what the /push command will be for... ;-) */
@@ -1159,28 +545,14 @@ int move_player(object *op, int dir)
                 make_visible(op);
         }
     */
-    /* i disabled automatically pickup - This is a needed option
-     * in a rogue like game but its a exploit in a modern MMORPG.
-     * we really DON'T want that people run around picking automatically
-     * all up - because we don't want junk items they will then always pickup
-     * valuable things.
-     */
-    /*pick = check_pick(op);*/
 
-    /* running/firing is now handled different.
-       if (CONTR(op)->fire_on || (CONTR(op)->run_on && pick!=0)) {
-    op->direction = dir;
-       } else {
-    op->direction=0;
-       }
-       */
     if (QUERY_FLAG(op, FLAG_ANIMATE)) /* hm, should be not needed - players always animated */
     {
         if (op->anim_enemy_dir == -1 && op->anim_moving_dir == -1)
             op->anim_last_facing = dir;
         animate_object(op, 0);
     }
-    return 0;
+    return dir;
 }
 
 
@@ -1210,10 +582,10 @@ int handle_newcs_player(player *pl)
      * basically we will go for a "steps per ticks"
      */
 
-    if (op->direction && (CONTR(op)->run_on || CONTR(op)->fire_on))     /* automove or fire */
+    if (op->direction && CONTR(op)->run_on)     /* automove */
     {
         /* All move commands take 1 tick, at least for now */
-        move_player(op, op->direction);
+        move_player(op, op->direction, TRUE);
         op->speed_left--;
     }
 
@@ -1274,171 +646,118 @@ void remove_unpaid_objects(object *op, object *env)
     }
 }
 
-
-void do_some_living(object *op)
+/* regeneration helper functions - cleaner as a macro */
+static inline void do_reg_hp(player *pl, object *op)
 {
-    if (CONTR(op)->state == ST_PLAYING)
+    if(op->stats.hp < op->stats.maxhp)
     {
-        /* hp reg */
-        if(CONTR(op)->damage_timer)
-            CONTR(op)->damage_timer--;
-        else if (CONTR(op)->gen_hp)
-        {
-            if (--op->last_heal < 0)
-            {
-                op->last_heal = CONTR(op)->base_hp_reg;
-
-                if (op->stats.hp < op->stats.maxhp)
-                {
-                    int last_food   = op->stats.food;
-
-                    op->stats.hp += CONTR(op)->reg_hp_num;
-                    if (op->stats.hp > op->stats.maxhp)
-                        op->stats.hp = op->stats.maxhp;
-
-                    /* faster hp reg - faster digestion... evil */
-                    op->stats.food--;
-                    if (CONTR(op)->digestion < 0)
-                        op->stats.food += CONTR(op)->digestion;
-                    else if (CONTR(op)->digestion > 0 && random_roll(0, CONTR(op)->digestion))
-                        op->stats.food = last_food;
-                }
-            }
-        }
-
-        /* sp reg */
-        if (CONTR(op)->gen_sp)
-        {
-            if (--op->last_sp < 0)
-            {
-                op->last_sp = CONTR(op)->base_sp_reg;
-                if (op->stats.sp < op->stats.maxsp)
-                {
-                    op->stats.sp += CONTR(op)->reg_sp_num;
-                    if (op->stats.sp > op->stats.maxsp)
-                        op->stats.sp = op->stats.maxsp;
-                }
-            }
-        }
-
-        /* "stay and pray" mechanism */
-        if (CONTR(op)->praying && !CONTR(op)->was_praying)
-        {
-            if (op->stats.grace < op->stats.maxgrace)
-            {
-                object *god = find_god(determine_god(op));
-                if (god)
-                {
-                    if (CONTR(op)->combat_mode)
-                    {
-                        new_draw_info_format(NDI_UNIQUE, 0, op, "You stop combat and start praying to %s...", god->name);
-                        CONTR(op)->combat_mode = 0;
-                        update_pets_combat_mode(op);
-                        send_target_command(CONTR(op));
-                    }
-                    else
-                        new_draw_info_format(NDI_UNIQUE, 0, op, "You start praying to %s...", god->name);
-                    CONTR(op)->was_praying = 1;
-                }
-                else
-                {
-                    new_draw_info(NDI_UNIQUE, 0, op, "You worship no deity to pray to!");
-                    CONTR(op)->praying = 0;
-                }
-                op->last_grace = CONTR(op)->base_grace_reg;
-            }
-            else
-            {
-                CONTR(op)->praying = 0;
-                CONTR(op)->was_praying = 0;
-            }
-        }
-        else if (!CONTR(op)->praying && CONTR(op)->was_praying)
-        {
-            new_draw_info(NDI_UNIQUE, 0, op, "You stop praying.");
-            CONTR(op)->was_praying = 0;
-            op->last_grace = CONTR(op)->base_grace_reg;
-        }
-
-        /* grace reg */
-        if (CONTR(op)->praying && CONTR(op)->gen_grace)
-        {
-            if (--op->last_grace < 0)
-            {
-                if (op->stats.grace < op->stats.maxgrace)
-                    op->stats.grace += CONTR(op)->reg_grace_num;
-                if (op->stats.grace >= op->stats.maxgrace)
-                {
-                    op->stats.grace = op->stats.maxgrace;
-                    new_draw_info(NDI_UNIQUE, 0, op, "Your are full of grace and stop praying.");
-                    CONTR(op)->was_praying = 0;
-                }
-                op->last_grace = CONTR(op)->base_grace_reg;
-            }
-        }
-
-        /* Digestion */
-        if (--op->last_eat < 0)
-        {
-            int bonus   = CONTR(op)->digestion > 0 ? CONTR(op)->digestion : 0,
-                        penalty = CONTR(op)->digestion < 0 ? -CONTR(op)->digestion : 0;
-            if (CONTR(op)->gen_hp > 0)
-                op->last_eat = 25 * (1 + bonus) / (CONTR(op)->gen_hp + penalty + 1);
-            else
-                op->last_eat = 25 * (1 + bonus) / (penalty + 1);
-            op->stats.food--;
-        }
-
-        if (op->stats.food < 0 && op->stats.hp >= 0)
-        {
-            object *tmp, *flesh = NULL;
-
-            for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
-            {
-                if (!QUERY_FLAG(tmp, FLAG_UNPAID))
-                {
-                    if (tmp->type == FOOD || tmp->type == DRINK || tmp->type == POISON)
-                    {
-                        new_draw_info(NDI_UNIQUE, 0, op, "You blindly grab for a bite of food.");
-                        manual_apply(op, tmp, 0);
-                        if (op->stats.food >= 0 || op->stats.hp < 0)
-                            break;
-                    }
-                    else if (tmp->type == FLESH)
-                        flesh = tmp;
-                } /* End if paid for object */
-            } /* end of for loop */
-
-            /* If player is still starving, it means they don't have any food, so
-                    * eat flesh instead.
-                    */
-            if (op->stats.food < 0 && op->stats.hp >= 0 && flesh)
-            {
-                new_draw_info(NDI_UNIQUE, 0, op, "You blindly grab for a bite of food.");
-                manual_apply(op, flesh, 0);
-            }
-        } /* end if player is starving */
-
-        while (op->stats.food<0 && op->stats.hp>0)
-        {
-            op->stats.food++;
-            /* new: no dying from food. hp will fall to 1 but not under it.
-                     * we must check here for negative because we don't want ADD here
-                     */
-            if (op->stats.hp)
-            {
-                op->stats.hp--;
-                if (!op->stats.hp)
-                    op->stats.hp = 1;
-            }
-        };
-
-        /* we can't die by no food but perhaps by poisoned food? */
-        if ((op->stats.hp <= 0 || op->stats.food < 0) && !QUERY_FLAG(op, FLAG_WIZ))
-            kill_player(op);
+        op->stats.hp += pl->reg_hp_num;
+        if(op->stats.hp > op->stats.maxhp)
+            op->stats.hp = op->stats.maxhp;
+    }
+}
+static inline void do_reg_sp(player *pl, object *op)
+{
+    if(op->stats.sp < op->stats.maxsp)
+    {
+        op->stats.sp += pl->reg_sp_num;
+        if(op->stats.sp > op->stats.maxsp)
+            op->stats.sp = op->stats.maxsp;
+    }
+}
+static inline void do_reg_grace(player *pl, object *op)
+{
+    if(op->stats.grace < op->stats.maxgrace)
+    {
+        op->stats.grace += pl->reg_grace_num;
+        if(op->stats.grace > op->stats.maxgrace)
+            op->stats.grace = op->stats.maxgrace;
     }
 }
 
+
+/* Handles regenerations (hp, sp and grace) and "resting". Player only!
+ * Reworked for beta 4 - food and digestion are removed.
+ * When not in combat the player is automatically regenerating a small
+ * amount of hp/sp/grace. When in combat, the player only recoveres sp and grace.
+ * When resting, the server is counting down a "prepare resting" timer (usually 10-15 sec)
+ * until rapid healing will start, so the player is fully healed and filled up with sp/grace
+ * after 30-45 sec.
+ * Alternative ways to regenerate are potions (will give INSTANT hp/sp/grace) or food, which
+ * will give a set amount of hp/sp/grace in a given time (usually 8-x sec too).
+ * So, the regeneration will be potion (instant), food (direct in 8-x sec) or resting (8-x sec + 30-45 sec).
+ */
+void do_some_living(object *op)
+{
+    player *pl = CONTR(op);
+
+    /* food_status < 0 marks an active food force - we don't want double regeneration! */
+    if (pl && pl->state == ST_PLAYING && pl->food_status>=0) /* be sure we are active and playing */
+    {
+        pl->food_status = 0;
+
+        pl->reg_timer = 8; /* timer so we call this all 8 ticks = one per second */
+
+        /* automatic rengeneration. If we are combat flagged, only regenerate sp/grace */
+        if(pl->damage_timer > 0)
+        {
+            pl->damage_timer--;
+
+            /* as long we are "in combat" there is no resting - reset the resting counter if we sit */
+            if(pl->rest_sitting)
+                pl->resting_reg_timer = RESTING_DEFAULT_SEC_TIMER;
+
+             if(pl->normal_reg_timer > 0) /* only give back all x seconds some points */
+                --pl->normal_reg_timer;
+             else
+             {
+                 /*new_draw_info(NDI_UNIQUE, 0, op, "reg - combat sp/gr");*/
+                 pl->normal_reg_timer = REG_DEFAULT_SEC_TIMER;
+                 do_reg_sp(pl, op);
+                 do_reg_grace(pl, op);
+             }
+        }
+        else /* not in combat - regenerate or rest fully */
+        {
+            if(pl->rest_sitting) /* player is sitting && resting */
+            {
+                /* no rest mode? well, can happen... we got interrupted... reenter but with fresh set timer */
+                if(!pl->rest_mode)
+                {
+                    pl->rest_mode = 1;
+                    pl->resting_reg_timer = RESTING_DEFAULT_SEC_TIMER;
+                }
+                else if(pl->resting_reg_timer > 0)
+                {
+                    /*new_draw_info_format(NDI_UNIQUE, 0, op, "reg - prepare %d", pl->resting_reg_timer);*/
+                    --pl->resting_reg_timer; /* player is still in rest preparing phase */
+                    pl->food_status = (1000/RESTING_DEFAULT_SEC_TIMER)*(pl->resting_reg_timer+1);
+                }
+                else /* all ok - we rest and regenerate with full speed */
+                {
+                    /*new_draw_info(NDI_UNIQUE, 0, op, "reg - full rest");*/
+                    pl->food_status = 999; /* "resting is active" marker */
+                    do_reg_hp(pl, op);
+                    do_reg_sp(pl, op);
+                    do_reg_grace(pl, op);
+                }
+            }
+            else /* normal regeneration, no combat... slowly bring the values up */
+            {
+                if(pl->normal_reg_timer > 0) /* only give back all x seconds some points */
+                    --pl->normal_reg_timer;
+                else
+                {
+                    /*new_draw_info(NDI_UNIQUE, 0, op, "reg - normal tick");*/
+                    pl->normal_reg_timer = REG_DEFAULT_SEC_TIMER;
+                    do_reg_hp(pl, op);
+                    do_reg_sp(pl, op);
+                    do_reg_grace(pl, op);
+                }
+            }
+        }
+    }
+}
 
 /* If the player should die (lack of hp, food, etc), we call this.
  * op is the player in jeopardy.  If the player can not be saved (not
@@ -1707,7 +1026,7 @@ void kill_player(object *op)
     /* Move player to his current respawn-  */
     /* position (usually last savebed)      */
     /*                                      */
-    /****************************************/
+    /****************************************/ 
     /* JG (aka Grommit) 14-Mar-2007 - changed map_status to bed_status */
 
     enter_map_by_name(op, pl->savebed_map, pl->orig_savebed_map, pl->bed_x, pl->bed_y, pl->bed_status);
@@ -1848,11 +1167,11 @@ void cast_dust(object *op, object *throw_ob, int dir)
 
 
     if (throw_ob->type == POTION && arch != NULL)
-        cast_cone(op, throw_ob, dir, 10, throw_ob->stats.sp, arch, 1);
+        cast_cone(op, throw_ob, dir, 10, throw_ob->stats.sp, arch, throw_ob->level, 1);
     else if ((arch = find_archetype("dust_effect")) != NULL)
     {
         /* dust_effect */
-        cast_cone(op, throw_ob, dir, 1, 0, arch, 0);
+        cast_cone(op, throw_ob, dir, 1, 0, arch, throw_ob->level, 0);
     }
     else /* problem occured! */
         LOG(llevBug, "BUG: cast_dust() can't find an archetype to use!\n");
@@ -2055,7 +1374,7 @@ int action_makes_visible(object *op)
         else if(op->hide) {
           new_draw_info_format(NDI_UNIQUE, 0,op,"You become %!",op->hide?"unhidden":"visible");
           return 1;
-        } else if(CONTR(op) && !CONTR(op)->shoottype==range_magic) {
+        } else if(CONTR(op) && !CONTR(op)->shottype==range_magic) {
               new_draw_info(NDI_UNIQUE, 0,op,"Your invisibility spell is broken!");
               return 1;
         }
@@ -2268,48 +1587,6 @@ void dragon_ability_gain(object *who, int atnr, int level)
 }
 
 
-/*  extended find arrow version, using tag and containers.
- *  Find an arrow in the inventory and after that
- *  in the right type container (quiver). Pointer to the
- *  found object is returned.
- */
-static object * find_arrow_ext(object *op, const char *type, int tag)
-{
-    object *tmp = NULL;
-
-    if (tag == -2)
-    {
-        for (op = op->inv; op; op = op->below)
-            if (!tmp && op->type == CONTAINER && op->race == type && QUERY_FLAG(op, FLAG_APPLIED))
-                tmp = find_arrow_ext(op, type, -2);
-            else if (op->type == ARROW && op->race == type)
-                return op;
-        return tmp;
-    }
-    else
-    {
-        if (tag == -1)
-            return tmp;
-        for (op = op->inv; op; op = op->below)
-        {
-            if (op->count == (tag_t) tag)
-            {
-                /* the simple task: we have a arrow marked */
-                if (op->race == type && op->type == ARROW)
-                    return op;
-                /* we have container marked as missile source. Skip search when there is
-                nothing in. Use the standard search now */
-                /* because we don't want container in container, we don't care abvout applied */
-                if (op->race == type && op->type == CONTAINER)
-                {
-                    tmp = find_arrow_ext(op, type, -2);
-                    return tmp;
-                }
-            }
-        }
-        return tmp;
-    }
-}
 
 /* Determine if the attacktype represented by the
  * specified attack-number is enabled for dragon players.

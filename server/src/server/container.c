@@ -282,11 +282,10 @@ static void pick_up_object(object *pl, object *op, object *tmp, uint32 nrof)
     */
     char    buf[HUGE_BUF];
     object *env         = tmp->env;
-    uint32  effective_weight_limit;
     uint32  tmp_nrof    = tmp->nrof ? tmp->nrof : 1;
 
     if (pl->type == PLAYER)
-        CONTR(pl)->praying = 0;
+        CONTR(pl)->rest_mode = 0;
 
     /* IF the player is flying & trying to take the item out of a container
     * that is in his inventory, let him.  tmp->env points to the container
@@ -306,12 +305,9 @@ static void pick_up_object(object *pl, object *op, object *tmp, uint32 nrof)
 
     if (nrof > tmp_nrof || nrof == 0)
         nrof = tmp_nrof;
+
     /* Figure out how much weight this object will add to the player */
-    if (pl->stats.Str <= MAX_STAT)
-        effective_weight_limit = weight_limit[pl->stats.Str];
-    else
-        effective_weight_limit = weight_limit[MAX_STAT];
-    if (!QUERY_FLAG(pl, FLAG_WIZ) && (pl->carrying + (tmp->weight * nrof) + tmp->carrying) > effective_weight_limit)
+    if (!QUERY_FLAG(pl, FLAG_WIZ) && (pl->carrying + (tmp->weight * nrof) + tmp->carrying) > CONTR(pl)->weight_limit)
     {
         object *tmp_pl = is_player_inv(tmp);
 
@@ -461,7 +457,7 @@ int sack_can_hold(const object *const pl, const object *const sack, const object
 
 void pick_up(object *const op, object *const ori)
 {
-    int         ego_mode, need_fix_tmp    = 0;
+    int         ego_mode;
     object     *alt = ori, *tmp             = NULL;
     mapstruct  *tmp_map         = NULL;
     int         count;
@@ -504,11 +500,8 @@ void pick_up(object *const op, object *const ori)
 
     /* Try to catch it. */
     tmp_map = tmp->map;
-    tmp = stop_item(tmp);
-    if (tmp == NULL)
-        goto leave;
-    need_fix_tmp = 1;
-    if (!can_pick(op, tmp))
+
+	if (!can_pick(op, tmp))
         goto leave;
 
     if (op->type == PLAYER)
@@ -568,15 +561,11 @@ void pick_up(object *const op, object *const ori)
 
     tag = tmp->count;
     pick_up_object(op, alt, tmp, count);
-    if (was_destroyed(tmp, tag) || tmp->env)
-        need_fix_tmp = 0;
     if (op->type == PLAYER)
         CONTR(op)->count = 0;
-    goto leave;
 
-leave:
-    if (need_fix_tmp)
-        fix_stopped_item(tmp, tmp_map, op);
+leave:;
+
 }
 
 
@@ -723,7 +712,7 @@ void drop_object(object *const op, object *tmp, const uint32 nrof)
     }
 
     if (op->type == PLAYER)
-        CONTR(op)->praying = 0;
+        CONTR(op)->rest_mode = 0;
 
     if (QUERY_FLAG(tmp, FLAG_APPLIED))
     {

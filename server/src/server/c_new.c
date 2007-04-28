@@ -135,7 +135,8 @@ int execute_newserver_command(object *pl, char *command)
 int command_run(object *op, char *params)
 {
     CONTR(op)->run_on = 1;
-    return (move_player(op, params ? atoi(params) : 0));
+	move_player(op, params ? atoi(params) : 0, TRUE);
+	return 1;
 }
 
 int command_run_stop(object *op, char *params)
@@ -260,19 +261,20 @@ int command_combat(object *op, char *params)
     if (!op || !op->map || op->type != PLAYER || !CONTR(op))
         return 1;
 
-    CONTR(op)->damage_timer = PLAYER_HPGEN_DELAY;
+    CONTR(op)->rest_sitting = CONTR(op)->rest_mode = 0;
+
     if (CONTR(op)->combat_mode)
         CONTR(op)->combat_mode = 0;
     else
-    {
+
         CONTR(op)->combat_mode = 1;
-        CONTR(op)->praying = 0;
-    }
+
     update_pets_combat_mode(op);
 
     send_target_command(CONTR(op));
     return 1;
 }
+
 
 /** Filter for valid targets */
 static int valid_new_target(object *op, object *candidate)
@@ -701,7 +703,6 @@ void command_new_char(char *params, int len, player *pl)
     copy_object(&p_arch->clone, op);
     op->custom_attrset = pl;
     pl->ob = op;
-    pl->last_value = -1;
     FREE_AND_CLEAR_HASH2(op->name);
     op->name = name_tmp;
     op->x = x;
@@ -823,72 +824,6 @@ void command_face_request(char *params, int len, NewSocket *ns)
             return;
         }
     }
-}
-
-void command_fire(char *params, int len, player *pl)
-{
-    int     dir = 0, type=0, tag1=-1, tag2=-1;
-    object *op  = pl->ob;
-
-    if (!pl || pl->socket.status == Ns_Dead)
-    {
-        if(pl)
-            pl->socket.status = Ns_Dead;
-        return;
-    }
-
-    if (!params || !len)
-        return;
-
-    CONTR(op)->fire_on = 1;
-
-    /* i submit all this as string for testing. if stable, we change this to a short
-    * and fancy binary format. MT-11-2002
-    */
-    sscanf(params, "%d %d %d %d", &dir, &type, &tag1, &tag2);
-
-    if (type == FIRE_MODE_SPELL)
-    {
-        char   *tmp;
-        tag2 = -1;
-        tmp = strchr(params, ' ');
-        tmp = strchr(tmp + 1, ' ');
-        tmp = strchr(tmp + 1, ' ');
-        if (strlen(tmp + 1) > 60)
-        {
-            LOG(llevDebug, "DEBUG: Player %s has send to long fire command: %s\n", query_name(pl->ob), tmp + 1);
-            return;
-        }
-        strncpy(CONTR(op)->firemode_name, tmp + 1, 60);
-        if (!fire_cast_spell(op, CONTR(op)->firemode_name))
-        {
-            CONTR(op)->fire_on = 0;
-            CONTR(op)->firemode_type = -1; /* marks no client fire action */
-            return;
-        }
-    }
-    else if (type == FIRE_MODE_SKILL)
-    {
-        char   *tmp;
-        tag2 = -1;
-        tmp = strchr(params, ' ');
-        tmp = strchr(tmp + 1, ' ');
-        tmp = strchr(tmp + 1, ' ');
-        if (strlen(tmp + 1) > 60)
-        {
-            LOG(llevDebug, "DEBUG: Player %s has send to long fire command: %s\n", query_name(pl->ob), tmp + 1);
-            return;
-        }
-        strncpy(CONTR(op)->firemode_name, tmp + 1, 60);
-    }
-
-    CONTR(op)->firemode_type = type; /* only here will this value be set */
-    CONTR(op)->firemode_tag1 = tag1;
-    CONTR(op)->firemode_tag2 = tag2;
-
-    move_player(op, dir);
-    CONTR(op)->fire_on = 0;
-    CONTR(op)->firemode_type = -1; /* marks no client fire action */
 }
 
 void send_spelllist_cmd(object *op, char *spellname, int mode)

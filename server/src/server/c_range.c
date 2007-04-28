@@ -29,6 +29,214 @@
 
 #include <global.h>
 
+/* this command is triggered when we use the CTRL key in the client and invoke the
+ * range/firing system there.
+ * we have ATM 3 types of action: 
+ * a.) we fire an applied object (throw item, bow/arrow, rod...)
+ * b.) we fire an spell icon
+ * c.) we fire an skill icon
+ * Options b.) and c.) will invoke to cast the spell or use the skill
+ */	  
+
+void command_fire(char *params, int len, player *pl)
+{
+	int     dir = 0, type=0, tag1=-1, tag2=-1;
+	object *op  = pl->ob;
+
+	if (!pl || pl->socket.status == Ns_Dead || !params || !len) 
+		return;
+
+	/* i submit all this as string for testing. if stable, we change this to a short
+	* and fancy binary format. MT-11-2002
+	*/
+	sscanf(params, "%d %d %d %d", &dir, &type, &tag1, &tag2);
+
+	/* first, call move_player() to determinate we CAN move.
+	 * have in mind we are perhaps confused - so dir can change!
+	 */
+	dir = 	move_player(op, dir, FALSE);
+
+	if(dir == -1) /* move_player() disallow our move! */
+		return;
+
+	if (type == FIRE_MODE_SPELL)
+	{
+		char   *tmp;
+		tag2 = -1;
+		tmp = strchr(params, ' ');
+		tmp = strchr(tmp + 1, ' ');
+		tmp = strchr(tmp + 1, ' ');
+		if (strlen(tmp + 1) > 60)
+		{
+			LOG(llevDebug, "DEBUG: Player %s :: invalid fire command: %s\n", query_name(pl->ob), tmp + 1);
+			return;
+		}
+		command_cast_spell(op, tmp + 1);
+	}
+	else if (type == FIRE_MODE_SKILL)
+	{
+		char   *tmp;
+		tag2 = -1;
+		tmp = strchr(params, ' ');
+		tmp = strchr(tmp + 1, ' ');
+		tmp = strchr(tmp + 1, ' ');
+		if (strlen(tmp + 1) > 60)
+		{
+			LOG(llevDebug, "DEBUG: Player %s has send to long fire command: %s\n", query_name(pl->ob), tmp + 1);
+			return;
+		}
+		command_uskill(op, tmp +1);
+	}
+	else /* arrow, rod... */
+	{
+		fire(op, dir);
+	}
+
+	if (dir)
+		op->anim_enemy_dir = dir;
+	else
+		op->anim_enemy_dir = op->facing;
+}
+
+/* fire what the player has applied as range weapon.
+* The new apply system makes it easy for us to decide what
+* we have to fire and how - fix_player() and the apply functions
+* will ALWAYS take care about it. We just get the items and control
+* the skills
+*/
+void fire(object *op, int dir)
+{
+	object *weap;
+	int ticks;
+	player *pl			= CONTR(op);
+
+	/* NOT IMPLEMENTED IN B4: check for loss of invisiblity/hide */
+	if (action_makes_visible(op))
+		make_visible(op);
+
+	/* get our range weapon. Its always here */
+	if(!pl || !(weap = pl->equipment[PLAYER_EQUIP_BOW]))
+		return;
+
+	/* ATM we can have here a bow, arrows (AKA special throw items), rod, horns and wands */
+
+	if(weap->type == BOW)
+	{
+		/* ok, a bow... a bow needs arrows.. quick sanity check */
+		if(!pl->equipment[PLAYER_EQUIP_AMUN])
+			return;
+
+		if (weap->sub_type1 == RANGE_WEAP_BOW)
+			ticks = SK_MISSILE_WEAPON;
+		else if (weap->sub_type1 == RANGE_WEAP_XBOWS)
+			ticks = SK_XBOW_WEAP;
+		else
+			ticks = SK_SLING_WEAP;
+
+		if (!change_skill(op, ticks)) /* we have a skill to throw? */
+			return;
+
+		if (!check_skill_action_time(op, op->chosen_skill)) /* are we idle from other action? */
+			return;
+
+		/* there should no need to control the arrows type and stuff.
+		* whatever is applied here SHOULD be usable for bow, or fix_player()
+		* and apply functions has failed.
+		*/
+		ticks = fire_bow(op, dir);
+
+	}
+	else if(weap->type == ARROW)
+	{
+		if (!change_skill(op, SK_THROWING)) /* we have a skill to throw? */
+			return;
+
+		if (!check_skill_action_time(op, op->chosen_skill)) /* are we idle from other action? */
+			return;
+
+		ticks = do_throw(op, dir);
+	}
+	else /* we fire a rod, horn or wand */
+	{
+		if (!change_skill(op, SK_USE_MAGIC_ITEM)) /* we have a skill to use them? */
+			return;
+
+		if (!check_skill_action_time(op, op->chosen_skill))
+			return;
+
+		ticks = fire_magic_tool(op, weap, dir);
+	}
+
+	/* finally, our action above has cost time... */
+	set_action_time(op, ticks);
+}
+
+/* owner fires op (which is a rod, horn or wand)
+*/
+int fire_magic_tool(object *op, object *weap, int dir)
+{
+	int ticks = 0;
+
+	switch(weap->type)
+	{
+	case WAND:
+		/* a wand can be used up but still applied... */
+		if (weap->stats.food <= 0)
+		{
+			play_sound_player_only(CONTR(op), SOUND_WAND_POOF, SOUND_NORMAL, 0, 0);
+			new_draw_info(NDI_UNIQUE, 0, op, "The wand says poof.");
+		}
+		else /* the wands fire the spell */
+		{
+			new_draw_info(NDI_UNIQUE, 0, op, "fire wand");
+			if (cast_spell(op, weap, dir, weap->stats.sp, 0, spellWand, NULL))
+			{
+				SET_FLAG(op, FLAG_BEEN_APPLIED); /* You now know something about it */
+				if (!(--weap->stats.food))
+				{
+					object   *tmp;
+					if (weap->arch)
+					{
+						CLEAR_FLAG(weap, FLAG_ANIMATE);
+						weap->face = weap->arch->clone.face;
+						weap->speed = 0;
+						update_ob_speed(weap);
+					}
+					if ((tmp = is_player_inv(weap)))
+						esrv_update_item(UPD_ANIM, tmp, weap);
+				}
+			}
+		}
+		break;
+
+	case ROD:
+	case HORN:
+		if (weap->stats.hp < spells[weap->stats.sp].sp)
+		{
+			play_sound_player_only(CONTR(op), SOUND_WAND_POOF, SOUND_NORMAL, 0, 0);
+			if (weap->type == ROD)
+				new_draw_info(NDI_UNIQUE, 0, op, "The rod whines for a while, but nothing happens.");
+			else
+				new_draw_info(NDI_UNIQUE, 0, op, "No matter how hard you try you can't get another note out.");
+		}
+		else
+		{
+			/*new_draw_info_format(NDI_ALL|NDI_UNIQUE,5,NULL,"Use %s - cast spell %d\n",weap->name,weap->stats.sp);*/
+			if (cast_spell(op, weap, dir, weap->stats.sp, 0, weap->type == ROD ? spellRod : spellHorn, NULL))
+			{
+				SET_FLAG(op, FLAG_BEEN_APPLIED); /* You now know something about it */
+				drain_rod_charge(weap);
+			}
+		}
+		break;
+	}
+
+	ticks = op->chosen_skill->stats.sp;
+
+	return ticks;
+}
+
+
 /* object *op is the caster, params is the spell name.  We return the index
  * value of the spell in the spells array for a match, -1 if there is no
  * match, -2 if there are multiple matches.  Note that 0 is a valid entry, so
@@ -127,8 +335,6 @@ static void show_matching_spells(object *op, char *params, int cleric)
 int command_cast_spell(object *op, char *params)
 {
     char       *cp              = NULL;
-    rangetype   orig_rangetype  = CONTR(op)->shoottype;
-    int         orig_spn        = CONTR(op)->chosen_spell;
     int         spnum = -1, spnum2 = -1;  /* number of spell that is being cast */
     int         value;
 
@@ -178,19 +384,12 @@ int command_cast_spell(object *op, char *params)
         return 0;
     }
 
-    CONTR(op)->shoottype = range_magic;
-    CONTR(op)->chosen_spell = spnum;
 
-    if (!check_skill_to_fire(op))
-    {
+	if (!change_skill(op, (spells[spnum].type == SPELL_TYPE_PRIEST ? SK_PRAYING : SK_SPELL_CASTING)))
+	{
         if (!QUERY_FLAG(op, FLAG_WIZ))
-        {
-            CONTR(op)->chosen_spell = orig_spn;
-            return 0;
-        }
+			return 0;
     }
-    CONTR(op)->chosen_spell = orig_spn;
-    CONTR(op)->shoottype = orig_rangetype;
 
     /* we still recover from a casted spell before */
     if (!check_skill_action_time(op, op->chosen_skill))
@@ -200,7 +399,7 @@ int command_cast_spell(object *op, char *params)
 
     if (value)
     {
-        get_skill_time(op, op->chosen_skill->stats.sp);
+        set_action_time(op, spells[spnum].time);
 
         if (spells[spnum].flags & SPELL_DESC_WIS)
             op->stats.grace -= value;
@@ -208,214 +407,5 @@ int command_cast_spell(object *op, char *params)
             op->stats.sp -= value;
     }
     return 1;
-}
-
-/* thats from fire command - i put it in here because its very similiar to
- * above. mirror changes from above here too.
- */
-int fire_cast_spell(object *op, char *params)
-{
-    char       *cp              = NULL;
-    rangetype   orig_rangetype  = CONTR(op)->shoottype;
-    int         orig_spn        = CONTR(op)->chosen_spell;
-    int         spnum = -1, spnum2 = -1;  /* number of spell that is being cast */
-
-    if (!CONTR(op)->nrofknownspells && !QUERY_FLAG(op, FLAG_WIZ))
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "You don't know any spells.");
-        return 0;
-    }
-
-    if (params == NULL)
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "Cast which spell?");
-        return 0;
-    }
-
-    /* When we control a golem we can't cast again - if we do, it breaks control */
-    if (CONTR(op)->golem != NULL)
-    {
-        send_golem_control(CONTR(op)->golem, GOLEM_CTR_RELEASE);
-        destruct_ob(CONTR(op)->golem);
-        CONTR(op)->golem = NULL;
-    }
-
-    /* This assumes simply that if the name of
-        * the spell being cast as input by the player is shorter than or
-        * equal to the length of the spell name, then there is no options
-        * but if it is longer, then everything after the spell name is
-        * an option.  It determines if the spell name is shorter or
-        * longer by first iterating through the actual spell names, checking
-        * to the length of the typed in name.  If that fails, then it checks
-        * to the length of each spell name.  If that passes, it assumes that
-        * anything after the length of the actual spell name is extra options
-        * typed in by the player (ie: marking rune Hello there)
-     */
-    if (((spnum2 = spnum = find_spell_byname(op, params, 0)) < 0) && ((spnum = find_spell_byname(op, params, 1)) >= 0))
-    {
-        params[strlen(spells[spnum].name)] = '\0';
-        cp = &params[strlen(spells[spnum].name) + 1];
-        if (strncmp(cp, "of ", 3) == 0)
-            cp += 3;
-    }
-
-    /* we don't know this spell name */
-    if (spnum == -1)
-    {
-        new_draw_info_format(NDI_UNIQUE, 0, op, "You don't know the spell %s.", params);
-        return 0;
-    }
-
-    CONTR(op)->shoottype = range_magic;
-    CONTR(op)->chosen_spell = spnum;
-
-    if (!QUERY_FLAG(op, FLAG_WIZ))
-    {
-        if (!check_skill_to_fire(op))
-        {
-            CONTR(op)->chosen_spell = orig_spn;
-            CONTR(op)->shoottype = orig_rangetype;
-            return 0;
-        }
-    }
-
-    return 1;
-}
-/**************************************************************************/
-
-/* Returns TRUE if the range specified (int r) is legal - that is,
- * the character has an item that is equipped for that range type.
- * return 0 if there is no item of that range type that is usable.
- */
-
-int legal_range(object *op, int r)
-{
-    int     i;
-    object *tmp;
-
-    switch (r)
-    {
-        case range_none:
-          /* "Nothing" is always legal */
-          return 1;
-        case range_bow:
-          /* bows */
-          for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
-              if (tmp->type == BOW && QUERY_FLAG(tmp, FLAG_APPLIED))
-                  return 1;
-          return 0;
-        case range_magic:
-          /* cast spells */
-          if (CONTR(op)->nrofknownspells == 0)
-              return 0;
-          for (i = 0; i < CONTR(op)->nrofknownspells; i++)
-              if (CONTR(op)->known_spells[i] == CONTR(op)->chosen_spell)
-                  return 1;
-          CONTR(op)->chosen_spell = CONTR(op)->known_spells[0];
-          return 1;
-        case range_wand:
-          /* use wands */
-          for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
-              if (tmp->type == WAND && QUERY_FLAG(tmp, FLAG_APPLIED))
-              {
-                  if (QUERY_FLAG(tmp, FLAG_BEEN_APPLIED) || QUERY_FLAG(tmp, FLAG_IDENTIFIED))
-                      CONTR(op)->known_spell = 1;
-                  else
-                      CONTR(op)->known_spell = 0;
-                  CONTR(op)->chosen_item_spell = tmp->stats.sp;
-                  return 1;
-              }
-          return 0;
-        case range_rod:
-          for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
-              if (tmp->type == ROD && QUERY_FLAG(tmp, FLAG_APPLIED))
-              {
-                  if (QUERY_FLAG(tmp, FLAG_BEEN_APPLIED) || QUERY_FLAG(tmp, FLAG_IDENTIFIED))
-                      CONTR(op)->known_spell = 1;
-                  else
-                      CONTR(op)->known_spell = 0;
-                  CONTR(op)->chosen_item_spell = tmp->stats.sp;
-                  return 1;
-              }
-          return 0;
-        case range_horn:
-          for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
-              if (tmp->type == HORN && QUERY_FLAG(tmp, FLAG_APPLIED))
-              {
-                  if (QUERY_FLAG(tmp, FLAG_BEEN_APPLIED) || QUERY_FLAG(tmp, FLAG_IDENTIFIED))
-                      CONTR(op)->known_spell = 1;
-                  else
-                      CONTR(op)->known_spell = 0;
-                  CONTR(op)->chosen_item_spell = tmp->stats.sp;
-                  return 1;
-              }
-          return 0;
-        case range_scroll:
-          /* Use scrolls */
-          return 0;
-        case range_skill:
-          if (op->chosen_skill)
-              return 1;
-          else
-              return 0;
-    }
-    return 0;
-}
-
-/* this should not trigger in daimonin, but i added send_golem_control() for secure */
-void change_spell(object *op, char k)
-{
-    char    buf[MAX_BUF];
-    if (CONTR(op)->golem != NULL)
-    {
-        send_golem_control(CONTR(op)->golem, GOLEM_CTR_RELEASE);
-        destruct_ob(CONTR(op)->golem);
-        CONTR(op)->golem = NULL;
-    }
-    do
-    {
-        CONTR(op)->shoottype += ((k == '+') ? 1 : -1);
-        if (CONTR(op)->shoottype >= range_size)
-            CONTR(op)->shoottype = range_none;
-        else if (CONTR(op)->shoottype <= range_bottom)
-            CONTR(op)->shoottype = (rangetype) (range_size - 1);
-    }
-    while (!legal_range(op, CONTR(op)->shoottype));
-    switch (CONTR(op)->shoottype)
-    {
-        case range_none:
-          strcpy(buf, "No ranged attack chosen.");
-          break;
-        case range_bow:
-          {
-              object   *tmp;
-              for (tmp = op->inv; tmp; tmp = tmp->below)
-                  if (tmp->type == BOW && QUERY_FLAG(tmp, FLAG_APPLIED))
-                      break;
-              sprintf(buf, "Switched to %s and %s.", query_name(tmp), tmp && tmp->race ? tmp->race : "nothing");
-          }
-          break;
-        case range_magic:
-          sprintf(buf, "Switched to spells (%s).", spells[CONTR(op)->chosen_spell].name);
-          break;
-        case range_wand:
-          sprintf(buf, "Switched to wand (%s).",
-                  CONTR(op)->known_spell ? spells[CONTR(op)->chosen_item_spell].name : "unknown");
-          break;
-        case range_rod:
-          sprintf(buf, "Switched to rod (%s).",
-                  CONTR(op)->known_spell ? spells[CONTR(op)->chosen_item_spell].name : "unknown");
-          break;
-        case range_horn:
-          sprintf(buf, "Switched to horn (%s).",
-                  CONTR(op)->known_spell ? spells[CONTR(op)->chosen_item_spell].name : "unknown");
-          break;
-        case range_skill:
-          sprintf(buf, "Switched to skill: %s", op->chosen_skill ? op->chosen_skill->name : "none");
-          break;
-        default:
-          break;
-    }
-    new_draw_info(NDI_UNIQUE, 0, op, buf);
 }
 

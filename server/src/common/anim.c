@@ -314,6 +314,12 @@ void animate_object(object *op, int count)
                 if (dir <= 0)   /* special case, same spot will be mapped to south dir */
                     op->anim_last_facing = dir = 4;
             }
+
+            if(CONTR(op)->rest_sitting)
+            {
+                op->facing = op->direction = op->anim_last_facing = dir = 0;
+            }
+
             base_state = dir * max_state;
 
             /* If beyond drawable states, reset */

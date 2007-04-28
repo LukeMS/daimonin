@@ -916,17 +916,17 @@ int set_variable(object *op,char *buf) {
  * If an entry is NULL, that is a flag not to loaded/saved.
  */
 static const char *flag_names[NUM_FLAGS+1] = {
-"sleep", "confused", "paralyzed", "scared", "is_blind","is_invisible" , "is_ethereal" ,
+"sleep", "confused", "paralyzed", "scared", NULL /*eating flag */,"is_invisible" , "is_ethereal" ,
 "is_good", "no_pick", "walk_on", "no_pass",		/* 10 */
 "is_animated", NULL /*free*/, "flying", "monster", "friendly",
-NULL /*is_removed*/,"been_applied", "auto_apply", "treasure", "is_neutral",	/* 20 */
+NULL /*is_removed*/,"been_applied", NULL /* internal flag: HAS_MOVED */, "treasure", "is_neutral",	/* 20 */
 "see_invisible", "can_roll", "generator", "is_turnable", "walk_off",
 "fly_on", "fly_off", "is_used_up", "identified", "reflecting",	/* 30 */
 "changing", "splitting", "hitback", "startequip",
 "blocksview", "undead", NULL /*fix_player*/, "unaggressive",
 "reflect_missile", "reflect_spell",				/* 40 */
 "no_magic", "no_fix_player", "is_evil", "tear_down", "run_away",
-"pass_thru", "can_pass_thru", "feared", NULL /**/, "no_drop",	/* 50 */
+"pass_thru", "can_pass_thru", "feared", "is_blind", "no_drop",	/* 50 */
  "reg_f", "has_ready_spell", "surrendered", "rooted",
  "slowed", "can_use_armour", "can_use_weapon",
 "can_use_ring", NULL /* in_activlist*/, "has_ready_bow",		/* 60 */
@@ -945,7 +945,7 @@ NULL /*free*/,"unpaid","is_aged","make_invisible" , "make_ethereal","is_player",
 "is_named",NULL /* spawn mob flag */, "no_teleport", "corpse", "corpse_forced",
 "player_only", "no_cleric", "one_drop", "cursed_perm", "damned_perm", "door_closed",
 "was_reflected", "is_missile","can_reflect_missile","can_reflect_spell","is_assassin",
-NULL /* internal flag: HAS_MOVED */, "no_save", "pass_ethereal",
+"auto_apply", "no_save", "pass_ethereal",
 "ego", "egobound", "egoclan", "egolock"
 };
 

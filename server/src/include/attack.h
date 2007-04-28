@@ -91,6 +91,9 @@ typedef enum _attacks
     NROFATTACKS /* index (= 32 ATM) */
 }_attacks;
 
+/* defines the last real damage attack in array above */
+#define LAST_ATNR_ATTACK (ATNR_GODPOWER)
+
 /* only the damage dealing attacks are covered by armour protections.
  * all attacks in the second part are effects and only covered from
  * resistance.
