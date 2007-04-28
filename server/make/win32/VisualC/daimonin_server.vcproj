@@ -61,7 +61,7 @@
 				ProgramDataBaseFileName="$(IntDir)\"
 				XMLDocumentationFileName=""
 				WarningLevel="3"
-				WarnAsError="false"
+				WarnAsError="true"
 				SuppressStartupBanner="true"
 				CallingConvention="0"
 				CompileAs="1"
@@ -161,7 +161,7 @@
 				XMLDocumentationFileName=""
 				BrowseInformation="0"
 				WarningLevel="3"
-				WarnAsError="false"
+				WarnAsError="true"
 				SuppressStartupBanner="true"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
@@ -1632,6 +1632,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\src\common\food.c"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\src\common\guild.c"
 					>
 				</File>
@@ -1711,6 +1715,10 @@
 				</File>
 				<File
 					RelativePath="..\..\..\src\common\mempool.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\common\missile.c"
 					>
 				</File>
 				<File
