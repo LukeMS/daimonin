@@ -6,7 +6,6 @@
 Player Names: 2
 Show yourself targeted: 0
 Low health warning: 0
-Low food warning: 5
 Overload warning: 85
 Graphic Statusbars: 0
 Show Tooltips: 1
@@ -54,6 +53,6 @@ Win No frame: 0
 Win RLE accel: 1
 
 # Debug
-Show Framerate: 0
+Show Framerate: 1
 Force Redraw: 0
 Use Update Rect: 0

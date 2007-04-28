@@ -192,7 +192,6 @@ typedef struct _options
     int                     player_names;
     int                     show_target_self;
     int                     warning_hp;
-    int                     warning_food;
     int                     warning_weight;
     Boolean                 gfx_statusbars;
     Boolean                 show_tooltips;
@@ -356,10 +355,7 @@ typedef enum _fire_mode_id
 {
     FIRE_MODE_BOW,
     FIRE_MODE_SPELL,
-    FIRE_MODE_WAND,
     FIRE_MODE_SKILL,
-    FIRE_MODE_THROW,
-    FIRE_MODE_SUMMON,
     FIRE_MODE_INIT
 }   _fire_mode_id;
 
@@ -490,6 +486,8 @@ typedef enum _bitmap_index
     BITMAP_GRACE_BACK2,
     BITMAP_FOOD_BACK2,
     BITMAP_APPLY,
+    BITMAP_FOOD2,
+    BITMAP_FOOD_BACK3,
     BITMAP_UNPAID,
     BITMAP_CURSED,
     BITMAP_DAMNED,

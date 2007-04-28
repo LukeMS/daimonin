@@ -494,94 +494,15 @@ void examine_range_inv(void)
     if (!op->inv)
         return;
     fire_mode_tab[FIRE_MODE_BOW].item = FIRE_ITEM_NO;
-    fire_mode_tab[FIRE_MODE_WAND].item = FIRE_ITEM_NO;
+	fire_mode_tab[FIRE_MODE_BOW].amun = FIRE_ITEM_NO;
 
     for (tmp = op->inv; tmp; tmp = tmp->next)
     {
-        if (tmp->applied && tmp->itype == TYPE_BOW)
-        {
+        if (tmp->applied && (tmp->itype == TYPE_BOW || (tmp->itype == TYPE_ARROW && tmp->stype >= 128) 
+			|| tmp->itype == TYPE_WAND || tmp->itype == TYPE_ROD || tmp->itype == TYPE_HORN))
             fire_mode_tab[FIRE_MODE_BOW].item = tmp->tag;
-        }
-        else if (tmp->applied && (tmp->itype == TYPE_WAND || tmp->itype == TYPE_ROD || tmp->itype == TYPE_HORN))
-        {
-            fire_mode_tab[FIRE_MODE_WAND].item = tmp->tag;
-        }
-    }
-}
-
-/* for throwing and amun, we need a "ready/apply/use" mechanism. */
-/* i used the mark cmd, because we can include this selection mechanism */
-/* inside the old cmd structure. Also, the mark cmd is extended with it. */
-/* Notice, that the range part of the mark cmd is client side only... */
-/* the server has no knowledge about this double use. He mark the item too */
-/* but we don't care about it. Thats because we have to mark always in only very */
-/* special cases (like ignite something or mark a item for enchanting) */
-/* here are the only double effects, that we want server side mark something */
-/* but we set the item then too as throw/amun on client side. */
-/* here the player must took care and remark the right range item */
-/* because range selection is a fight action and marking items server side */
-/* is it not, we will have no bad game play effects. MT. */
-void examine_range_marks(int tag)
-{
-    register item * op, * tmp;
-    char    buf[256];
-
-    op = cpl.ob;
-    if (!op->inv)
-        return;
-
-    /* lets check the inventory for the marked item */
-    for (tmp = op->inv; tmp; tmp = tmp->next)
-    {
-        /* if item is in inventory, check the stats and adjust the range table */
-        if (tmp->tag == tag)
-        {
-            /*sprintf(buf,"GO ready %s (%d %d).", tmp->s_name,tmp->stype,tmp->stype&128);
-                                draw_info(buf,COLOR_WHITE);
-             */           if ((tmp->itype == TYPE_ARROW && !(tmp->stype & 128)) || tmp->itype == TYPE_CONTAINER)
-            {
-                /*sprintf(buf,"GO1 ready %s.", tmp->s_name);
-                                    draw_info(buf,COLOR_WHITE);
-                */                if (fire_mode_tab[FIRE_MODE_BOW].amun == tmp->tag)
-                {
-                    sprintf(buf, "Unready %s.", tmp->s_name);
-                    draw_info(buf, COLOR_WHITE);
-                    fire_mode_tab[FIRE_MODE_BOW].amun = FIRE_ITEM_NO;
-                }
-                else if (fire_mode_tab[FIRE_MODE_BOW].item != FIRE_ITEM_NO)
-                {
-                    sprintf(buf, "Ready %s as ammunition.", tmp->s_name);
-                    draw_info(buf, COLOR_WHITE);
-                    fire_mode_tab[FIRE_MODE_BOW].amun = tmp->tag;
-                }
-                return;
-            }
-            else if ((tmp->itype == TYPE_POTION && tmp->stype & 128)
-                     || (tmp->stype & 128 && tmp->itype != TYPE_WEAPON)
-                     || (tmp->itype == TYPE_WEAPON && tmp->applied))
-            {
-                /* sprintf(buf,"GO2 ready %s. (%d)", tmp->s_name,tmp->stype&128);
-                  draw_info(buf,COLOR_WHITE);
-                */                if (fire_mode_tab[FIRE_MODE_THROW].item == tmp->tag)
-                {
-                    sprintf(buf, "Unready %s.", tmp->s_name);
-                    draw_info(buf, COLOR_WHITE);
-                    fire_mode_tab[FIRE_MODE_THROW].item = FIRE_ITEM_NO;
-                }
-                else
-                {
-                    sprintf(buf, "Ready %s for throwing.", tmp->s_name);
-                    draw_info(buf, COLOR_WHITE);
-                    fire_mode_tab[FIRE_MODE_THROW].item = tmp->tag;
-                }
-                return;
-            }
-            if (tmp->itype == TYPE_WEAPON && !(tmp->applied))
-                sprintf(buf, "Can't ready unapplied weapon %s", tmp->s_name);
-            else
-                sprintf(buf, "Can't throw %s.", tmp->s_name);
-            draw_info(buf, COLOR_WHITE);
-        }
+		else if(tmp->applied && tmp->itype == TYPE_ARROW && tmp->stype < 128)
+			fire_mode_tab[FIRE_MODE_BOW].amun = tmp->tag;
     }
 }
 

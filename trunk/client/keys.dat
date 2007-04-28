@@ -39,11 +39,10 @@
 
 +"Targetting"
 009 0 "tab" "?M_RANGE"
-102 0 "f" "?M_FIRE_READY"
 099 0 "c" "?M_COMBAT_TOGGLE"
 120 0 "x" "?M_TARGET_ENEMY"
 115 0 "s" "?M_TARGET_FRIEND"
-112 0 "p" "/pray"
+114 0 "r" "/rest"
 116 0 "t" "/talk hello"
 
 +"Debug"

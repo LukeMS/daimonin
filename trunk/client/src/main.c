@@ -140,6 +140,7 @@ static _bitmap_name bitmap_name[BITMAP_INIT]    =
         {"hp_back.png", PIC_TYPE_DEFAULT}, {"sp_back.png", PIC_TYPE_DEFAULT}, {"grace_back.png", PIC_TYPE_DEFAULT},
         {"food_back.png", PIC_TYPE_DEFAULT}, {"hp_back2.png", PIC_TYPE_TRANS}, {"sp_back2.png", PIC_TYPE_TRANS},
         {"grace_back2.png", PIC_TYPE_TRANS}, {"food_back2.png", PIC_TYPE_TRANS}, {"apply.png", PIC_TYPE_DEFAULT},
+        {"food2.png", PIC_TYPE_TRANS},{"food_back3.png", PIC_TYPE_TRANS},
         {"unpaid.png", PIC_TYPE_DEFAULT}, {"cursed.png", PIC_TYPE_DEFAULT}, {"damned.png", PIC_TYPE_DEFAULT},
         {"lock.png", PIC_TYPE_DEFAULT}, {"magic.png", PIC_TYPE_DEFAULT}, {"range.png", PIC_TYPE_TRANS},
         {"range_marker.png", PIC_TYPE_TRANS}, {"range_ctrl.png", PIC_TYPE_TRANS}, {"range_ctrl_no.png", PIC_TYPE_TRANS},
@@ -1048,10 +1049,6 @@ void open_input_mode(int maxchar)
 
 static void play_action_sounds(void)
 {
-    if (!cpl.stats.food)
-    {
-        sound_play_one_repeat(SOUND_WARN_FOOD, SPECIAL_SOUND_FOOD);
-    }
     if (cpl.warn_hp)
     {
         if (cpl.warn_hp == 2) /* more as 10% damage */
@@ -1452,13 +1449,6 @@ int main(int argc, char *argv[])
                         if (options.warning_hp
                                 && ((float) cpl.stats.hp / (float) cpl.stats.maxhp) * 100 <= options.warning_hp)
                             sprite_blt(Bitmaps[BITMAP_WARN_HP], 393, 298, NULL, NULL);
-                    }
-                    else
-                    {
-                        if (options.warning_food && ((float) cpl.stats.food / 1000.0f) * 100 <= options.warning_food) /* low food */
-                            sprite_blt(Bitmaps[BITMAP_WARN_FOOD], 390, 294, NULL, NULL);
-                        else if (options.warning_weight && ((float) cpl.real_weight / cpl.weight_limit) * 100 >= options.warning_weight)
-                            sprite_blt(Bitmaps[BITMAP_WARN_WEIGHT], 387, 285, NULL, NULL);
                     }
                 }
                 show_quickslots(SKIN_POS_QUICKSLOT_X, SKIN_POS_QUICKSLOT_Y);

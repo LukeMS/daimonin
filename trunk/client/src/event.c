@@ -60,10 +60,7 @@ _key_macro      defkey_macro[]          =
         {"?M_RANGE_BACK",     "cycle fire mode backwards",    KEYFUNC_RANGE_BACK,0, SC_NORMAL, MENU_NO},
         {"?M_RANGE_BOW",      "fire mode: bow",     KEYFUNC_RANGE_SELECT,FIRE_MODE_BOW, SC_NORMAL, MENU_NO},
         {"?M_RANGE_SPELL",    "fire mode: spell",   KEYFUNC_RANGE_SELECT,FIRE_MODE_SPELL, SC_NORMAL, MENU_NO},
-        {"?M_RANGE_WAND",     "fire mode: wand",    KEYFUNC_RANGE_SELECT,FIRE_MODE_WAND, SC_NORMAL, MENU_NO},
         {"?M_RANGE_SKILL",    "fire mode: skill",   KEYFUNC_RANGE_SELECT,FIRE_MODE_SKILL, SC_NORMAL, MENU_NO},
-        {"?M_RANGE_THROW",    "fire mode: throw",   KEYFUNC_RANGE_SELECT,FIRE_MODE_THROW, SC_NORMAL, MENU_NO},
-        {"?M_RANGE_SUMMON",   "fire mode: summon",  KEYFUNC_RANGE_SELECT,FIRE_MODE_SUMMON, SC_NORMAL, MENU_NO},
         {"?M_APPLY",          "apply <tag>",      KEYFUNC_APPLY,0, SC_NORMAL, MENU_NO},
         {"?M_EXAMINE",      "examine <tag>",    KEYFUNC_EXAMINE,0, SC_NORMAL, MENU_NO},
         {"?M_DROP",           "drop <tag>",       KEYFUNC_DROP,0, SC_NORMAL, MENU_NO},
@@ -77,7 +74,6 @@ _key_macro      defkey_macro[]          =
         {"?M_SPELL_LIST",   "spell list",       KEYFUNC_SPELL,        0, SC_NORMAL, MENU_ALL},
         {"?M_PAGEUP",           "scroll up",        KEYFUNC_PAGEUP,       0, SC_NORMAL, MENU_NO},
         {"?M_PAGEDOWN",     "scroll down",      KEYFUNC_PAGEDOWN,     0, SC_NORMAL, MENU_NO},
-        {"?M_FIRE_READY",   "fire_ready <tag>", KEYFUNC_FIREREADY,    0, SC_NORMAL, MENU_NO},
         {"?M_LAYER0",           "l0",               KEYFUNC_LAYER0,       0, SC_NORMAL, MENU_NO},
         {"?M_LAYER1",           "l1",               KEYFUNC_LAYER1,       0, SC_NORMAL, MENU_NO},
         {"?M_LAYER2",           "l2",               KEYFUNC_LAYER2,       0, SC_NORMAL, MENU_NO},
@@ -422,8 +418,8 @@ int Event_PollInputDevice(void)
                 /* range field */
                 if (draggingInvItem(DRAG_GET_STATUS) == DRAG_IWIN_INV && x <90 && y> 400 && y < 440)
                 {
-                    RangeFireMode = 4;
-                    process_macro_keys(KEYFUNC_FIREREADY, 0); /* drop to player-doll */
+                    RangeFireMode = FIRE_MODE_BOW;
+					process_macro_keys(KEYFUNC_APPLY, 0); /* drop to player-doll */
                 }
 
 
@@ -674,8 +670,8 @@ int Event_PollInputDevice(void)
             /* Prayer button */
             if (x > 85 && x < 115 && y <435 && y> 410)
             {
-                if (!client_command_check("/pray"))
-                    send_command("/pray", -1, SC_NORMAL);
+                if (!client_command_check("/rest"))
+                    send_command("/rest", -1, SC_NORMAL);
                 break;
             }
 
@@ -1664,13 +1660,6 @@ Boolean process_macro_keys(int id, int value)
 
     switch (id)
     {
-    case KEYFUNC_FIREREADY:
-        if (cpl.inventory_win == IWIN_BELOW)
-            tag = cpl.win_below_tag;
-        else
-            tag = cpl.win_inv_tag;
-        examine_range_marks(tag);
-        break;
     case KEYFUNC_PAGEUP:
         if (options.use_TextwinSplit)
             txtwin[TW_MSG].scroll++;
@@ -2229,7 +2218,7 @@ static void quickslot_key(SDL_KeyboardEvent *key, int slot)
             if (quick_slots[slot].shared.is_spell == TRUE)
             {
                 fire_mode_tab[FIRE_MODE_SPELL].spell = &spell_list[quick_slots[slot].spell.groupNr].entry[quick_slots[slot].spell.classNr][quick_slots[slot].shared.tag];
-                RangeFireMode = 1;
+                RangeFireMode = FIRE_MODE_SPELL;
                 spell_list_set.group_nr = quick_slots[slot].spell.groupNr;
                 spell_list_set.class_nr = quick_slots[slot].spell.classNr;
                 spell_list_set.entry_nr = quick_slots[slot].shared.tag;
@@ -2315,38 +2304,11 @@ static void move_keys(int num)
                 draw_info("no range weapon selected.", COLOR_WHITE);
                 return;
             }
-            if (fire_mode_tab[FIRE_MODE_BOW].amun == FIRE_ITEM_NO)
-            {
-                draw_info("no ammo selected.", COLOR_WHITE);
-                return;
-            }
             sprintf(msg, "fire %s", directions_name[num]);
         }
-        else if (RangeFireMode == FIRE_MODE_THROW)
-        {
-            if (fire_mode_tab[FIRE_MODE_THROW].item == FIRE_ITEM_NO)
-            {
-                draw_info("no item selected.", COLOR_WHITE);
-                return;
-            }
-            sprintf(msg, "throw %s", directions_name[num]);
-        }
-        else if (RangeFireMode == FIRE_MODE_WAND)
-        {
-            if (fire_mode_tab[FIRE_MODE_WAND].item == FIRE_ITEM_NO)
-            {
-                draw_info("no device selected.", COLOR_WHITE);
-                return;
-            }
-            sprintf(msg, "fire device %s", directions_name[num]);
-        }
-        else if (RangeFireMode == FIRE_MODE_SUMMON)
-        {
-            sprintf(msg, "cmd golem %s", directions_name[num]);
-        }
 
-        fire_command(buf);
-        /*draw_info(msg,COLOR_DGOLD);*/
+		fire_command(buf);
+        draw_info(msg,COLOR_DGOLD);
         return;
     }
     else
