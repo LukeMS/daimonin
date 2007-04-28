@@ -57,14 +57,14 @@ typedef enum _player_doll_enum
     PDOLL_LHAND,
     PDOLL_RRING,
     PDOLL_LRING,
-    PDOLL_SHOULDER,
+    PDOLL_BRACER,
     PDOLL_ROBE,
     PDOLL_AMULET,
-    PDOLL_BOW,
-    PDOLL_WAND,
+    PDOLL_DISTANCE,
+    PDOLL_AMUN,
     PDOLL_GIRDLE,
     PDOLL_GAUNTLET,
-    PDOLL_BRACER,
+    PDOLL_SHOULDER,
     PDOLL_LIGHT,
     PDOLL_INIT /* must be last element */
 }   _player_doll_enum;
@@ -255,7 +255,8 @@ void init_player_data(void)
     cpl.target_hp = 0;
 
     cpl.stats.maxgrace = 1;
-    cpl.stats.speed = 1;
+    cpl.stats.speed = 100.0f;
+    cpl.stats.spell_fumble = 0.0f;
     cpl.input_text[0] = '\0';
 
     cpl.title[0] = '\0';
@@ -282,7 +283,8 @@ void init_player_data(void)
     cpl.stats.maxhp = 1;    /* ditto */
     cpl.stats.maxgrace = 1; /* ditto */
     /* ditto - displayed weapon speed is weapon speed/speed */
-    cpl.stats.speed = 0;
+    cpl.stats.speed = 100.0f;
+    cpl.stats.spell_fumble = 0.0f;
     cpl.stats.weapon_sp = 0;
     cpl.input_text[0] = '\0';
     cpl.range[0] = '\0';
@@ -510,23 +512,39 @@ void show_player_stats(int x, int y)
             sprite_blt(Bitmaps[BITMAP_GRACE], x + 57, y + 71, &box, NULL);
         }
 
-        StringBlt(ScreenSurface, &SystemFont, "Food", x + 58, y + 84, COLOR_WHITE, NULL, NULL);
         sprite_blt(Bitmaps[BITMAP_FOOD_BACK], x + 87, y + 88, NULL, NULL);
         if (cpl.stats.food)
         {
+            int bar = BITMAP_FOOD2;
             int tmp = cpl.stats.food;
+
+            if (tmp < 1)
+            {
+                StringBlt(ScreenSurface, &SystemFont, "Food", x + 58, y + 84, COLOR_WHITE, NULL, NULL);
+                tmp *= -1;
+            }
+            else if (tmp == 999)
+            {
+                StringBlt(ScreenSurface, &SystemFont, "Rest", x + 58, y + 84, COLOR_WHITE, NULL, NULL);
+            }
+            else
+            {
+                bar = BITMAP_FOOD;
+                StringBlt(ScreenSurface, &SystemFont, "Wait", x + 58, y + 84, COLOR_WHITE, NULL, NULL);
+            }
+
             if (tmp < 0)
                 tmp = 0;
             temp = (double) tmp / 1000;
             box.x = 0;
             box.y = 0;
-            box.h = Bitmaps[BITMAP_FOOD]->bitmap->h;
-            box.w = (int) (Bitmaps[BITMAP_FOOD]->bitmap->w * temp);
+            box.h = Bitmaps[bar]->bitmap->h;
+            box.w = (int) (Bitmaps[bar]->bitmap->w * temp);
             if (tmp && !box.w)
                 box.w = 1;
-            if (box.w > Bitmaps[BITMAP_FOOD]->bitmap->w)
-                box.w = Bitmaps[BITMAP_FOOD]->bitmap->w;
-            sprite_blt(Bitmaps[BITMAP_FOOD], x + 87, y + 88, &box, NULL);
+            if (box.w > Bitmaps[bar]->bitmap->w)
+                box.w = Bitmaps[bar]->bitmap->w;
+            sprite_blt(Bitmaps[bar], x + 87, y + 88, &box, NULL);
         }
     }
 
@@ -676,29 +694,52 @@ void show_player_doll(int x, int y)
     StringBlt(ScreenSurface, &SystemFont, "AC", x + 8, y + 90, COLOR_HGOLD, NULL, NULL);
     sprintf(buf, "%02d", cpl.stats.ac);
     StringBlt(ScreenSurface, &SystemFont, buf, x + 25, y + 90, COLOR_WHITE, NULL, NULL);
+    StringBlt(ScreenSurface, &SystemFont, "SF", x + 8, y + 100, COLOR_HGOLD, NULL, NULL);
+    sprintf(buf, "%.1f", cpl.stats.spell_fumble);
+    StringBlt(ScreenSurface, &SystemFont, buf, x + 25, y + 100, COLOR_WHITE, NULL, NULL);
 
-    StringBlt(ScreenSurface, &SystemFont, "WC", x + 150, y + 90, COLOR_HGOLD, NULL, NULL);
-    StringBlt(ScreenSurface, &SystemFont, "DMG", x + 150, y + 100, COLOR_HGOLD, NULL, NULL);
-    StringBlt(ScreenSurface, &SystemFont, "WS", x + 150, y + 110, COLOR_HGOLD, NULL, NULL);
+	StringBlt(ScreenSurface, &SystemFont, "Speed", x + 8, y + 113, COLOR_HGOLD, NULL, NULL);
+	sprintf(buf, "%.1f %%", cpl.stats.speed);
+	StringBlt(ScreenSurface, &SystemFont, buf, x + 8, y + 123, COLOR_WHITE, NULL, NULL);
+
+	StringBlt(ScreenSurface, &Font6x3Out, "Melee", x + 153, y + 83, COLOR_HGOLD, NULL, NULL);
+	StringBlt(ScreenSurface, &SystemFont, "WC", x + 153, y + 95, COLOR_HGOLD, NULL, NULL);
+    StringBlt(ScreenSurface, &SystemFont, "DPS", x + 153, y + 105, COLOR_HGOLD, NULL, NULL);
 
     sprintf(buf, "%02d", cpl.stats.wc);
-    StringBlt(ScreenSurface, &SystemFont, buf, x + 173, y + 90, COLOR_WHITE, NULL, NULL);
-    sprintf(buf, "%02d", cpl.stats.dam);
-    StringBlt(ScreenSurface, &SystemFont, buf, x + 173, y + 100, COLOR_WHITE, NULL, NULL);
-
+    StringBlt(ScreenSurface, &SystemFont, buf, x + 173, y + 95, COLOR_WHITE, NULL, NULL);
+    sprintf(buf, "%.1f", cpl.stats.dps);
+    StringBlt(ScreenSurface, &SystemFont, buf, x + 173, y + 105, COLOR_WHITE, NULL, NULL);
     sprintf(buf, "%1.2f sec", cpl.stats.weapon_sp);
-    StringBlt(ScreenSurface, &SystemFont, buf, x + 173, y + 110, COLOR_WHITE, NULL, NULL);
+    StringBlt(ScreenSurface, &SystemFont, buf, x + 173, y + 115, COLOR_WHITE, NULL, NULL);
 
-    StringBlt(ScreenSurface, &SystemFont, "Speed ", x + 45, x + 232, COLOR_HGOLD, NULL, NULL);
-    sprintf(buf, "%3.2f", (float) cpl.stats.speed / FLOAT_MULTF);
-    StringBlt(ScreenSurface, &SystemFont, buf, x + 75, y + 232, COLOR_WHITE, NULL, NULL);
+	StringBlt(ScreenSurface, &Font6x3Out, "Distance", x + 45, y + 205, COLOR_HGOLD, NULL, NULL);
+	StringBlt(ScreenSurface, &SystemFont, "WC", x + 45, y + 217, COLOR_HGOLD, NULL, NULL);
+	StringBlt(ScreenSurface, &SystemFont, "DPS", x + 45, y + 227, COLOR_HGOLD, NULL, NULL);
 
-    /* i disabled this info... running by only use the ALT key should be prefered
-       if(cpl.run_on || cpl.runkey_on)
-           StringBlt(ScreenSurface, &SystemFont,"run",x+44, x+242,COLOR_WHITE, NULL, NULL);
-       else
-           StringBlt(ScreenSurface, &SystemFont,"walk",x+44, x+242,COLOR_WHITE, NULL, NULL);
-       */
+	if(cpl.stats.dist_dps == -0.1f)
+	{
+		StringBlt(ScreenSurface, &SystemFont, "--", x + 65, y + 217, COLOR_WHITE, NULL, NULL);
+		StringBlt(ScreenSurface, &SystemFont, "--", x + 65, y + 227, COLOR_WHITE, NULL, NULL);
+	}
+	else if(cpl.stats.dist_dps == -0.2f) /* marks rods/wands/horns */
+	{
+		StringBlt(ScreenSurface, &SystemFont, "**", x + 65, y + 217, COLOR_WHITE, NULL, NULL);
+		StringBlt(ScreenSurface, &SystemFont, "**", x + 65, y + 227, COLOR_WHITE, NULL, NULL);
+		sprintf(buf, "%1.2f sec", cpl.stats.dist_time);
+		StringBlt(ScreenSurface, &SystemFont, buf, x + 65, y + 237, COLOR_WHITE, NULL, NULL);
+	}
+	else
+	{
+		sprintf(buf, "%02d", cpl.stats.dist_wc);
+		StringBlt(ScreenSurface, &SystemFont, buf, x + 65, y + 217, COLOR_WHITE, NULL, NULL);
+		sprintf(buf, "%.1f", cpl.stats.dist_dps);
+		StringBlt(ScreenSurface, &SystemFont, buf, x + 65, y + 227, COLOR_WHITE, NULL, NULL);
+		sprintf(buf, "%1.2f sec", cpl.stats.dist_time);
+		StringBlt(ScreenSurface, &SystemFont, buf, x + 65, y + 237, COLOR_WHITE, NULL, NULL);
+	}
+
+
     for (tmp = cpl.ob->inv; tmp; tmp = tmp->next)
     {
         if (tmp->applied)
@@ -726,16 +767,17 @@ void show_player_doll(int x, int y)
                 index = PDOLL_SHOULDER;
             else if (tmp->itype == TYPE_LEGS)
                 index = PDOLL_LEGS;
-            else if (tmp->itype == TYPE_BOW)
-                index = PDOLL_BOW;
+            else if (tmp->itype == TYPE_BOW || tmp->itype == TYPE_WAND ||
+					 tmp->itype == TYPE_ROD || tmp->itype == TYPE_HORN || (tmp->itype == TYPE_ARROW && tmp->stype >= 128))
+                index = PDOLL_DISTANCE;
             else if (tmp->itype == TYPE_GLOVES)
                 index = PDOLL_GAUNTLET;
             else if (tmp->itype == TYPE_CLOAK)
                 index = PDOLL_ROBE;
             else if (tmp->itype == TYPE_LIGHT_APPLY)
                 index = PDOLL_LIGHT;
-            else if (tmp->itype == TYPE_WAND || tmp->itype == TYPE_ROD || tmp->itype == TYPE_HORN)
-                index = PDOLL_WAND;
+            else if (tmp->itype == TYPE_ARROW && tmp->stype < 128)
+                index = PDOLL_AMUN;
 
             if (index == PDOLL_RRING)
                 index += ++ring_flag & 1;

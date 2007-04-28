@@ -184,14 +184,6 @@ int client_command_check(char *cmd)
         }
         return TRUE;
     }
-    else if (!strnicmp(cmd, "/pray", strlen("/pray")))
-    {
-        /* give out "you are at full grace." when needed -
-             * server will not send us anything when this happens
-             */
-        if (cpl.stats.grace == cpl.stats.maxgrace)
-            draw_info("You are at full grace. You stop praying.", COLOR_WHITE);
-    }
     else if (!strnicmp(cmd, "/setwinalpha", strlen("/setwinalpha")))
     {
         int wrong   = 0;
@@ -524,7 +516,6 @@ void show_range(int x, int y)
     char        buf[256];
     SDL_Rect    rec_range;
     SDL_Rect    rec_item;
-    item       *op;
     item       *tmp;
 
     rec_range.w = 160;
@@ -571,46 +562,6 @@ void show_range(int x, int y)
             sprite_blt(Bitmaps[BITMAP_RANGE_MARKER], x + 3, y + 2, NULL, NULL);
             break;
 
-            /* wands, staffs, rods and horns */
-        case FIRE_MODE_WAND:
-            if (!locate_item_from_item(cpl.ob, fire_mode_tab[FIRE_MODE_WAND].item))
-                fire_mode_tab[FIRE_MODE_WAND].item = FIRE_ITEM_NO;
-            if (fire_mode_tab[FIRE_MODE_WAND].item != FIRE_ITEM_NO)
-            {
-                sprintf(buf, "%s", get_range_item_name(fire_mode_tab[FIRE_MODE_WAND].item));
-                StringBlt(ScreenSurface, &SystemFont, buf, x + 3, y + 49, COLOR_WHITE, &rec_item, NULL);
-                sprite_blt(Bitmaps[BITMAP_RANGE_TOOL], x + 3, y + 2, NULL, NULL);
-                blt_inventory_face_from_tag(fire_mode_tab[FIRE_MODE_WAND].item, x + 43, y + 2);
-            }
-            else
-            {
-                sprite_blt(Bitmaps[BITMAP_RANGE_TOOL_NO], x + 3, y + 2, NULL, NULL);
-                sprintf(buf, "nothing applied");
-                StringBlt(ScreenSurface, &SystemFont, buf, x + 3, y + 49, COLOR_WHITE, &rec_item, NULL);
-            }
-
-            sprintf(buf, "use range tool");
-            StringBlt(ScreenSurface, &SystemFont, buf, x + 3, y + 38, COLOR_WHITE, &rec_range, NULL);
-            break;
-
-            /* the summon range ctrl will come from server only after the player casted a summon spell */
-        case FIRE_MODE_SUMMON:
-            if (fire_mode_tab[FIRE_MODE_SUMMON].item != FIRE_ITEM_NO)
-            {
-                sprite_blt(Bitmaps[BITMAP_RANGE_CTRL], x + 3, y + 2, NULL, NULL);
-                StringBlt(ScreenSurface, &SystemFont, fire_mode_tab[FIRE_MODE_SUMMON].name, x + 3, y + 49, COLOR_WHITE,
-                          NULL, NULL);
-                blt_face_centered(fire_mode_tab[FIRE_MODE_SUMMON].item, x + 43, y + 2);
-            }
-            else
-            {
-                sprite_blt(Bitmaps[BITMAP_RANGE_CTRL_NO], x + 3, y + 2, NULL, NULL);
-                sprintf(buf, "no golem summoned");
-                StringBlt(ScreenSurface, &SystemFont, buf, x + 3, y + 49, COLOR_WHITE, &rec_item, NULL);
-            }
-            sprintf(buf, "mind control");
-            StringBlt(ScreenSurface, &SystemFont, buf, x + 3, y + 38, COLOR_WHITE, &rec_item, NULL);
-            break;
 
             /* these are client only, no server signal needed */
         case FIRE_MODE_SKILL:
@@ -657,37 +608,6 @@ void show_range(int x, int y)
                 StringBlt(ScreenSurface, &SystemFont, buf, x + 3, y + 49, COLOR_WHITE, &rec_item, NULL);
             }
             sprintf(buf, "cast spell");
-            StringBlt(ScreenSurface, &SystemFont, buf, x + 3, y + 38, COLOR_WHITE, &rec_range, NULL);
-
-            break;
-        case FIRE_MODE_THROW:
-            if (!(op = locate_item_from_item(cpl.ob, fire_mode_tab[FIRE_MODE_THROW].item)))
-                fire_mode_tab[FIRE_MODE_THROW].item = FIRE_ITEM_NO;
-            if (fire_mode_tab[FIRE_MODE_THROW].item != FIRE_ITEM_NO)
-            {
-                sprite_blt(Bitmaps[BITMAP_RANGE_THROW], x + 3, y + 2, NULL, NULL);
-                blt_inventory_face_from_tag(fire_mode_tab[FIRE_MODE_THROW].item, x + 43, y + 2);
-                if (op->nrof > 1)
-                {
-                    if (op->nrof > 9999)
-                        strcpy(buf, "many");
-                    else
-                        sprintf(buf, "%d", op->nrof);
-                    StringBlt(ScreenSurface, &Font6x3Out, buf,
-                              x + 43 + (ICONDEFLEN / 2) - (get_string_pixel_length(buf, &Font6x3Out) / 2), y + 22,
-                              COLOR_WHITE, NULL, NULL);
-                }
-
-                sprintf(buf, "%s", get_range_item_name(fire_mode_tab[FIRE_MODE_THROW].item));
-                StringBlt(ScreenSurface, &SystemFont, buf, x + 3, y + 49, COLOR_WHITE, &rec_item, NULL);
-            }
-            else
-            {
-                sprite_blt(Bitmaps[BITMAP_RANGE_THROW_NO], x + 3, y + 2, NULL, NULL);
-                sprintf(buf, "no item ready");
-                StringBlt(ScreenSurface, &SystemFont, buf, x + 3, y + 49, COLOR_WHITE, &rec_item, NULL);
-            }
-            sprintf(buf, "throw item");
             StringBlt(ScreenSurface, &SystemFont, buf, x + 3, y + 38, COLOR_WHITE, &rec_range, NULL);
 
             break;

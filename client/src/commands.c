@@ -495,7 +495,7 @@ void StatsCmd(unsigned char *data, int len)
 
                 case CS_STAT_HP:
                     temp = GetInt_String(data + i);
-                    if (temp < cpl.stats.hp && cpl.stats.food)
+                    if (temp < cpl.stats.hp)
                     {
                         cpl.warn_hp = 1;
                         if (cpl.stats.maxhp / 12 <= cpl.stats.hp - temp)
@@ -622,10 +622,28 @@ void StatsCmd(unsigned char *data, int len)
                     break;
                 case CS_STAT_DAM:
                     cpl.stats.dam = GetShort_String(data + i);
+                    cpl.stats.dps = (float)cpl.stats.dam/10.0f;
                     i += 2;
                     break;
+				case CS_STAT_DIST_DPS:
+					cpl.stats.dist_dam = GetShort_String(data + i);
+					cpl.stats.dist_dps = (float)cpl.stats.dist_dam/10.0f;
+					i += 2;
+					break;
+				case CS_STAT_DIST_WC:
+					cpl.stats.dist_wc = GetShort_String(data + i);
+					i += 2;
+					break;
+				case CS_STAT_DIST_TIME:
+					cpl.stats.dist_time = ((float)GetInt_String(data + i))/1000.0f;
+					i += 4;
+					break;
                 case CS_STAT_SPEED:
-                    cpl.stats.speed = GetInt_String(data + i);
+                    cpl.stats.speed = (float)GetInt_String(data + i)/10.0f;
+                    i += 4;
+                    break;
+                case CS_STAT_SPELL_FUMBLE:
+                    cpl.stats.spell_fumble = (float)GetInt_String(data + i)/10.0f;
                     i += 4;
                     break;
                 case CS_STAT_FOOD:
@@ -1756,8 +1774,6 @@ void GolemCmd(unsigned char *data, int len)
         sprintf(buf, "You lose control of %s.", tmp + 1);
         draw_info(buf, COLOR_WHITE);
 
-        fire_mode_tab[FIRE_MODE_SUMMON].item = FIRE_ITEM_NO;
-        fire_mode_tab[FIRE_MODE_SUMMON].name[0] = 0;
     }
     else
     {
@@ -1767,9 +1783,6 @@ void GolemCmd(unsigned char *data, int len)
         tmp = strchr(tmp + 1, ' '); /* find start of a name */
         sprintf(buf, "You get control of %s.", tmp + 1);
         draw_info(buf, COLOR_WHITE);
-        fire_mode_tab[FIRE_MODE_SUMMON].item = face;
-        strncpy(fire_mode_tab[FIRE_MODE_SUMMON].name, tmp + 1, 100);
-        RangeFireMode = FIRE_MODE_SUMMON;
     }
 }
 

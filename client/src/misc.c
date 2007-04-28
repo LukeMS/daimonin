@@ -209,7 +209,7 @@ char *get_parameter_string(char *data, int *pos, int maxlen)
     if (maxlen>0)
     {
 #ifdef DEVELOPMENT
-        if (strlen(buf)>maxlen)
+        if ((int)strlen(buf)>maxlen)
             draw_info_format(COLOR_RED,"FixMe: Interface parameter string out of bounds!");
 #endif
         buf[maxlen-1]='\0';

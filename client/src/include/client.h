@@ -92,7 +92,7 @@ typedef enum _attacks
 #define FFLAG_CONFUSED  0x02        /* object is confused */
 #define FFLAG_PARALYZED 0x04        /* object is paralyzed */
 #define FFLAG_SCARED    0x08        /* object is scared    */
-#define FFLAG_BLINDED   0x10        /* object is blinded */
+#define FFLAG_EATING    0x10        /* object is eating */
 #define FFLAG_INVISIBLE 0x20        /* object is invisible (but when send, player can see it) */
 #define FFLAG_ETHEREAL  0x40        /* object is etheral - but when send, object can be seen */
 #define FFLAG_PROBE     0x80        /* object is target of player */
@@ -210,10 +210,16 @@ typedef struct Stat_struct
     int  maxgrace;       /* Max spell points. */
     int  exp_level;
     int  exp;            /* Experience */
-    int  food;       /* How much food in stomach.  0 = starved. */
+    int  food;       /* food and resting heartbeat*/
     int  dam;            /* How much damage this object does when hitting */
-    int  speed;      /* Gets converted to a float for display*/
-    float     weapon_sp;      /* Gets converted to a float for display */
+	int  dist_dam;
+	int  dist_wc;
+    float   speed;       /* speed encumbrance in %.1f format */
+    float   spell_fumble;  /* base chance to fumble a spell */
+	float   weapon_sp;      /* Gets converted to a float for display */
+	float   dist_time;      /* Gets converted to a float for display */
+	float   dps;        /* thats damage / 10 */
+	float   dist_dps;        /* thats damage / 10 */
     uint16  flags;      /* contains fire on/run on flags */
     sint16  protection[NROFATTACKS];     /* Resistant values */
 uint32  protection_change   : 1; /* Resistant value has changed */
@@ -425,6 +431,11 @@ extern char        *resists_name[NUM_RESISTS];
 #define CS_STAT_REG_MANA 29
 #define CS_STAT_REG_GRACE 30
 #define CS_STAT_TARGET_HP 31
+#define CS_STAT_SPELL_FUMBLE 32
+
+#define CS_STAT_DIST_WC 33
+#define CS_STAT_DIST_DPS 34
+#define CS_STAT_DIST_TIME 35
 
 /* Start & end of skill experience + skill level, inclusive. */
 #define CS_STAT_SKILLEXP_START 118
