@@ -286,13 +286,30 @@ int CAN_MERGE(object *ob1, object *ob2)
         return 0;
 
 
+	/* very special check... we have to ignore the applied flag
+	 * for stacked items like arrows. This will be enhanced perhaps
+	 * in the future for more stacked and applyable items.
+	 */
+	if(ob1->flags[2] != ob2->flags[2])
+	{
+		if(ob1->type == ARROW)
+		{
+			if((ob1->flags[2] | 0x200000) != (ob2->flags[2] | 0x200000))
+				return 0;
+
+		}
+		else
+			return 0;
+	}
+
+
     if (ob1->randomitems != ob2->randomitems
      || ob1->other_arch != ob2->other_arch
-     || (ob1->flags[0] | 0x300) != (ob2->flags[0] | 0x300)
+     || (ob1->flags[0] | 0x70000) != (ob2->flags[0] | 0x70000)
    ||   /* we ignore REMOVED and BEEN_APPLIED */
         ob1->flags[1] != ob2->flags[1]
-     || ob1->flags[2] != ob2->flags[2]
-     || ob1->flags[3] != ob2->flags[3]
+	|| ob1->flags[3] != ob2->flags[3]
+	|| ob1->flags[4] != ob2->flags[4]
      || ob1->path_attuned != ob2->path_attuned
      || ob1->path_repelled != ob2->path_repelled
      || ob1->path_denied != ob2->path_denied
@@ -680,7 +697,7 @@ static void set_owner_simple(object *op, object *owner)
  * Sets the owner and sets the skill and exp pointers to owner's current
  * skill and experience objects.
  */
-void set_owner(object *op, object *owner)
+void set_owner(object * const op, object * const owner)
 {
     if (owner == NULL || op == NULL)
         return;
@@ -1517,12 +1534,7 @@ void remove_ob(object *op)
         if(! QUERY_FLAG(op, FLAG_SYS_OBJECT))
                 sub_weight(op, op->nrof);
 
-        /* NO_FIX_PLAYER is set when a great many changes are being
-         * made to players inventory.  If set, avoiding the call to save cpu time.
-         * the flag is set from outside... perhaps from a drop_all() function.
-         */
-        if ((otmp = is_player_inv(op->env)) != NULL && CONTR(otmp) && !QUERY_FLAG(otmp, FLAG_NO_FIX_PLAYER))
-            FIX_PLAYER(otmp,"remove_ob: env remove");
+		otmp = is_player_inv(op->env); /* get first otmp but do fix_player AFTER op is removed! */
 
         if (op->above != NULL)
             op->above->below = op->below;
@@ -1539,7 +1551,15 @@ void remove_ob(object *op)
         op->above = NULL,op->below = NULL;
         op->map = NULL;
         op->env = NULL;
-        return;
+
+		/* NO_FIX_PLAYER is set when a great many changes are being
+		* made to players inventory.  If set, avoiding the call to save cpu time.
+		* the flag is set from outside... perhaps from a drop_all() function.
+		*/
+		if (otmp && CONTR(otmp) && !QUERY_FLAG(otmp, FLAG_NO_FIX_PLAYER))
+			FIX_PLAYER(otmp,"remove_ob: env remove");
+
+		return;
     }
 
     /* If we get here, we are removing it from a map */
@@ -2076,22 +2096,33 @@ void replace_insert_ob_in_map(char *arch_string, object *op)
  * get_split_ob(ob,nr) splits up ob into two parts.  The part which
  * is returned contains nr objects, and the remaining parts contains
  * the rest (or is removed and freed if that number is 0).
- * On failure, NULL is returned, and the reason put into the
- * global static errmsg array.
+ * On failure, NULL is returned.
  */
 
 object * get_split_ob(object *orig_ob, uint32 nr)
 {
     object *newob;
     object *tmp, *event;
-    int     is_removed  = (QUERY_FLAG(orig_ob, FLAG_REMOVED) != 0);
+    int     is_removed;
+
+	if(!orig_ob)
+		return NULL;
+
+	is_removed  = (QUERY_FLAG(orig_ob, FLAG_REMOVED) != 0);
 
     if (orig_ob->nrof < nr)
     {
-        sprintf(errmsg, "There are only %d %ss.", orig_ob->nrof ? orig_ob->nrof : 1, query_name(orig_ob));
+		LOG(llevDebug, "get_split_ob(): There are only %d %ss.", orig_ob->nrof ? orig_ob->nrof : 1, query_name(orig_ob));
         return NULL;
     }
-    newob = get_object();
+
+	if (orig_ob->env == NULL && orig_ob->map->in_memory != MAP_IN_MEMORY)
+	{
+		LOG(llevDebug, "get_split_ob(): Tried to split object whose map is not in memory.\n");
+		return NULL;
+	}
+
+	newob = get_object();
     copy_object(orig_ob, newob);
 
     /* Gecko: copy inventory (event objects)  */
@@ -2104,30 +2135,59 @@ object * get_split_ob(object *orig_ob, uint32 nr)
             insert_ob_in_ob(event, newob);
         }
     }
-    /*    if(QUERY_FLAG(orig_ob, FLAG_UNPAID) && QUERY_FLAG(orig_ob, FLAG_NO_PICK))*/
-    /*      ;*/ /* clone objects .... */
-    /*  else*/
     orig_ob->nrof -= nr;
+	newob->nrof = nr;
 
     if (orig_ob->nrof < 1)
     {
         if (!is_removed)
+		{
+			if(orig_ob->env->type == PLAYER) /* update client view */
+				esrv_del_item(CONTR(orig_ob->env), orig_ob->count, orig_ob->env);
             remove_ob(orig_ob);
+		}
         check_walk_off(orig_ob, NULL, MOVE_APPLY_VANISHED);
     }
     else if (!is_removed)
     {
-        if (orig_ob->env != NULL && !QUERY_FLAG(orig_ob, FLAG_SYS_OBJECT))
-            sub_weight(orig_ob, nr);
-        if (orig_ob->env == NULL && orig_ob->map->in_memory != MAP_IN_MEMORY)
-        {
-            strcpy(errmsg, "Tried to split object whose map is not in memory.");
-            LOG(llevDebug, "Error, Tried to split object whose map is not in memory.\n");
-            return NULL;
-        }
+		if (orig_ob->env != NULL && !QUERY_FLAG(orig_ob, FLAG_SYS_OBJECT))
+		{
+			/* sub weight will not call fix_player for players - its to low level! */
+			sub_weight(orig_ob, nr);
+			fix_player_weight(is_player_inv(orig_ob->env));
+		}
+
+		esrv_update_item(UPD_NROF|UPD_WEIGHT, orig_ob->env, orig_ob);
+
+		/* will a stack in a chest where you remove one from the stack trigger
+		* a button under the chest because the weight of the chest has changed now?
+		* we have to check it!
+		* Doing a ->env loop will work.. but is there no more clever way?
+		* Also ensure the below view is updated right.
+		*/
+		if(orig_ob->map)
+		{
+			tmp = orig_ob;
+			GET_MAP_SPACE_PTR(tmp->map, tmp->x, tmp->y)->update_tile++;
+		}
+		else
+		{
+			for(tmp = orig_ob->env;tmp;tmp = tmp->env)
+			{
+				if(tmp->map && tmp->map->in_memory == MAP_IN_MEMORY) /* we are on a map */
+					break;
+			}
+		}
+
+		/* force an update of the map spot facking a insertation */
+		if(tmp)
+		{
+			/* force a weight check for buttons */
+			update_object(tmp, UP_OBJ_INSERT); 
+			check_walk_on(tmp, tmp, 0);
+		}
     }
 
-    newob->nrof = nr;
     return newob;
 }
 

@@ -62,6 +62,12 @@ extern void             apply_death_exp_penalty(object *op);
 extern float            calc_level_difference(int who_lvl, int op_lvl);
 extern int              calc_skill_exp(object *who, object *op, float mod, int level, int *real);
 extern void             init_new_exp_system(void);
+/* food.c */
+extern void             apply_food(object *op, object *tmp);
+extern void             remove_food_force(object *op);
+extern void             food_force_reg(object *op);
+extern void             create_food_buf_force(object *who, object *food, object *force);
+extern int              dragon_eat_flesh(object *op, object *meal);
 /* guild.c */
 extern object          *guild_get(player *pl, char *name);
 extern object          *guild_join(player *pl, char *name, int s1_group, int s1_value, int s2_group, int s2_value, int s3_group, int s3_value);
@@ -112,6 +118,8 @@ extern void             corrupt_stat(object *op);
 extern void             drain_stat(object *op);
 extern void             drain_specific_stat(object *op, int deplete_stats);
 extern void             drain_level(object *op, int level, int mode, int ticks);
+extern float            get_player_stat_bonus(int value);
+void					fix_player_weight(object *op);
 #ifdef DEBUG_FIX_PLAYER
 extern void             fix_player(object *op, char *msg);
 #else
@@ -224,6 +232,14 @@ extern void             free_empty_puddles(struct mempool *pool);
 extern void             return_poolchunk_array_real(void *data, uint32 arraysize_exp, struct mempool *pool);
 extern void            *get_poolchunk_array_real(struct mempool *pool, uint32 arraysize_exp);
 extern void             dump_mempool_statistics(object *op, int *sum_used, int *sum_alloc);
+/* missile.c */
+extern int				do_throw(object *op, int dir);
+extern int				fire_bow(object *op, int dir);
+extern object          *find_arrow(object *op, const char *type);
+extern object		   *create_missile(object * const owner, const object * const bow, 
+											  object *const missile, const int dir);
+extern void             move_missile(object *op);
+extern void             stop_missile(object *op);
 /* object.c */
 extern void             mark_object_removed(object *ob);
 extern int              CAN_MERGE(object *ob1, object *ob2);
@@ -237,7 +253,7 @@ extern void             dump_all_objects(void);
 extern void             free_all_object_data(void);
 extern object          *get_owner(object *op);
 extern void             clear_owner(object *op);
-extern void             set_owner(object *op, object *owner);
+extern void             set_owner(object * const op, object * const owner);
 extern void             copy_owner(object *op, object *clone);
 extern void             initialize_object(object *op);
 extern void             copy_object(object *op2, object *op);

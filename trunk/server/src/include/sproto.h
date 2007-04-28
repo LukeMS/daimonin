@@ -1,4 +1,4 @@
-/* alchemy.c */
+/* alchemy.c */	
 char                       *cauldron_sound(void);
 void                        attempt_do_alchemy(object *caster, object *cauldron);
 int                         content_recipe_value(object *op);
@@ -29,9 +29,6 @@ void                        move_apply(object *const trap, object *const victim,
 void                        do_learn_spell(object *op, int spell, int special_prayer);
 void                        do_forget_spell(object *op, int spell);
 void                        apply_poison(object *op, object *tmp);
-void                        create_food_force(object *who, object *food, object *force);
-void                        eat_special_food(object *who, object *food);
-int                         dragon_eat_flesh(object *op, object *meal);
 int                         manual_apply(object *op, object *tmp, int aflag);
 int                         player_apply(object *pl, object *op, int aflag, int quiet);
 void                        player_apply_below(object *pl);
@@ -171,7 +168,7 @@ int                         command_players(object *op, char *paramss);
 int                         command_logs(object *op, char *params);
 int                         command_usekeys(object *op, char *params);
 int                         command_resistances(object *op, char *params);
-int                         command_praying(object *op, char *params);
+int                         command_resting(object *op, char *params);
 int                         command_help(object *op, char *params);
 int                         onoff_value(char *line);
 int                         command_quit(object *op, char *params);
@@ -204,7 +201,6 @@ int                         command_combat(object *op, char *params);
 int                         command_target(object *op, char *params);
 void                        command_face_request(char *params, int len, NewSocket *ns);
 void                        command_new_char(char *params, int len, player *pl);
-void                        command_fire(char *params, int len, player *pl);
 void                        send_spelllist_cmd(object *op, char *spellname, int mode);
 void                        send_skilllist_cmd(object *op, object *skillp, int mode);
 void                        send_ready_skill(object *op, char *skillname);
@@ -224,8 +220,6 @@ char                       *examine_monster(object *op, object *tmp, char *buf, 
 char                       *long_desc(object *tmp, object *caller);
 char                       *examine(object *op, object *tmp, int flag);
 void                        inventory(object *op, object *inv);
-int                         command_pickup(object *op, char *params);
-void                        set_pickup_mode(object *op, int i);
 /* c_party.c */
 int                         command_party_invite ( object *pl, char *params);
 int                         command_party_join ( object *pl, char *params);
@@ -239,10 +233,10 @@ void                        party_client_group_status(object *member);
 void                        party_client_group_kill(object *member);
 void                        party_client_group_update(object *member, int flag);
 /* c_range.c */
+void                        command_fire(char *params, int len, player *pl);
+void                        fire(object *op, int dir);
+int							fire_magic_tool(object *owner, object *op, int dir);
 int                         command_cast_spell(object *op, char *params);
-int                         fire_cast_spell(object *op, char *params);
-int                         legal_range(object *op, int r);
-void                        change_spell(object *op, char k);
 /* c_wiz.c */
 int                         command_setgod(object *op, char *params);
 int                         command_kickcmd(object *op, char *params);
@@ -460,10 +454,7 @@ void                        get_name(object *op, int value);
 void                        get_password(object *op, int value);
 void                        confirm_password(object *op, int value);
 void                        flee_player(object *op);
-int                         check_pick(object *op);
-object                     *find_arrow(object *op, const char *type);
-void                        fire(object *op, int dir);
-int                         move_player(object *op, int dir);
+int                         move_player(object *const op, int dir, const int flag);
 int                         handle_newcs_player(player *pl);
 int                         save_life(object *op);
 void                        remove_unpaid_objects(object *op, object *env);
@@ -588,11 +579,6 @@ int                         write_on_item(object *pl, char *params);
 int                         write_note(object *pl, object *item, char *msg);
 int                         write_scroll(object *pl, object *scroll);
 int                         remove_trap(object *op, int dir, int level);
-int                         skill_throw(object *op, int dir, char *params);
-object                     *find_throw_ob(object *op, char *request);
-object                     *find_throw_tag(object *op, tag_t tag);
-object                     *make_throw_ob(object *orig);
-void                        do_throw(object *op, object *toss_item, int dir);
 /* skill_util.c */
 void                        link_player_skills(object *pl);
 object                     *find_skill(object *op, int skillnr);
@@ -601,7 +587,6 @@ int                         get_weighted_skill_stat_sum(object *who, int sk);
 void                        dump_skills(void);
 void                        read_skill_params(void);
 int                         lookup_skill_by_name(char *string);
-int                         check_skill_to_fire(object *who);
 int                         check_skill_to_apply(object *who, object *item);
 void                        unlink_skill(object *skillop);
 int                         link_player_skill(object *pl, object *skillop);
@@ -614,8 +599,7 @@ int                         attack_hth(object *pl, int dir, char *string);
 int                         skill_attack(object *tmp, object *pl, int dir, char *string);
 int                         do_skill_attack(object *tmp, object *op, char *string);
 int                         SK_level(object *op);
-object                     *SK_skill(object *op);
-float                       get_skill_time(object *op, int skillnr);
+void                        set_action_time(object *op, int ticks);
 int                         check_skill_action_time(object *op, object *skill);
 int                         get_skill_stat1(object *op);
 int                         get_skill_stat2(object *op);
@@ -686,19 +670,16 @@ void                        init_spells(void);
 void                        dump_spells(void);
 int                         insert_spell_effect(char *archname, mapstruct *m, int x, int y);
 spell                      *find_spell(int spelltype);
-int                         path_level_mod(object *caster, int base_level, int spell_type);
-int                         casting_level(object *caster, int spell_type);
 int                         check_spell_known(object *op, int spell_type);
 int                         cast_spell(object *op, object *caster, int dir, int type, int ability, SpellTypeFrom item,
                                        char *stringarg);
 int                         cast_create_obj(object *op, object *caster, object *new_op, int dir);
 int                         summon_monster(object *op, object *caster, int dir, archetype *at, int spellnum);
 int                         fire_bolt(object *op, object *caster, int dir, int type, int magic);
-int                         fire_arch(object *op, object *caster, int dir, archetype *at, int type, int magic);
-int                         fire_arch_from_position(object *op, object *caster, sint16 x, sint16 y, int dir,
-                                                    archetype *at, int type, int magic);
+int                         fire_arch(object *op, object *caster, sint16 x, sint16 y, int dir,
+                                                    archetype *at, int type, int level, int magic);
 int                         cast_cone(object *op, object *caster, int dir, int strength, int spell_type,
-                                      archetype *spell_arch, int magic);
+                                      archetype *spell_arch, int level, int magic);
 void                        check_cone_push(object *op);
 void                        cone_drop(object *op);
 void                        move_cone(object *op);
@@ -709,7 +690,7 @@ int                         reflwall(mapstruct *m, int x, int y, object *sp_op);
 void                        move_bolt(object *op);
 void                        move_golem(object *op);
 void                        control_golem(object *op, int dir);
-void                        move_missile(object *op);
+void                        move_magic_missile(object *op);
 void                        explode_object(object *op);
 void                        check_fired_arch(object *op);
 void                        move_fired_arch(object *op);
@@ -731,7 +712,7 @@ void                        put_a_monster(object *op, const char *monstername);
 void                        shuffle_attack(object *op, int change_face);
 object                     *get_pointed_target(object *op, int dir);
 int                         cast_smite_spell(object *op, object *caster, int dir, int type);
-int                         SP_lvl_dam_adjust2(object *caster, int spell_type, int base_dam);
+int                         SP_lvl_dam_adjust(int level, int spell_type, int base_dam, int stats_bonus);
 /* stats.c */
 void                        stats_event(stats_event_type type, ...);
 /* swamp.c */
@@ -765,11 +746,6 @@ void                        move_conn_sensor(object *op);
 void                        move_environment_sensor(object *op);
 void                        animate_trigger(object *op);
 void                        move_pit(object *op);
-object                     *stop_item(object *op);
-void                        fix_stopped_item(object *op, mapstruct *map, object *originator);
-object                     *fix_stopped_arrow(object *op);
-void                        stop_arrow(object *op);
-void                        move_arrow(object *op);
 void                        change_object(object *op);
 void                        move_teleporter(object *op);
 void                        move_firewall(object *op);

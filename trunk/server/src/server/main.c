@@ -179,7 +179,13 @@ void process_players1(mapstruct *map)
             continue;
         }
 
-        do_some_living(pl->ob);
+        /* we call do_some_living now in a interval of 1 sec.
+         * That will save us some cpu time per player
+         * to avoid one big tick event we use a player based timer which
+         * will automatically balance the calls over the pticks timer
+         */
+        if(--pl->reg_timer <= 0)
+            do_some_living(pl->ob);
 
 #ifdef AUTOSAVE
         /* check for ST_PLAYING state so that we don't try to save off when
@@ -253,7 +259,7 @@ void process_players2(mapstruct *map)
                 {
                     /* tell our enemy we swing at him now */
                     update_npc_knowledge(pl->ob->enemy, pl->ob, FRIENDSHIP_TRY_ATTACK, 0);
-                    pl->praying = 0;
+                    pl->rest_mode = 0;
                     skill_attack(pl->ob->enemy, pl->ob, 0, NULL);
                     pl->ob->weapon_speed_left += FABS(pl->ob->weapon_speed);
                 }
@@ -263,7 +269,7 @@ void process_players2(mapstruct *map)
             pl->ob->speed_left = pl->ob->speed;
     }
 }
-#define WEAPON_SWING_TIME (0.125f)
+
 static void process_map_events(mapstruct *map)
 {
     object *op, *first_obj;

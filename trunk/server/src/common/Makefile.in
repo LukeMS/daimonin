@@ -32,6 +32,7 @@ SRCS = \
 	artifact.c\
 	button.c\
 	exp.c\
+	food.c\
 	guild.c\
 	hashtable.c \
 	hashfunc.c \
@@ -46,7 +47,8 @@ SRCS = \
 	map.c\
 	map_tile.c\
 	material.c\
-	mempool.c\
+    mempool.c\
+    missile.c\
 	object.c\
 	porting.c\
 	quest.c\

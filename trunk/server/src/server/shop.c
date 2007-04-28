@@ -108,25 +108,11 @@ sint64 query_cost(object *tmp, object *who, int flag)
      * This value can be altered from charisma and skills to.
      */
 
-    /* first, we adjust charisma for players and count skills in */
-    if (who != NULL && who->type == PLAYER)
-    {
-        charisma = who->stats.Cha;  /* used for SK_BARGAINING modification */
-
-        /* this skill give us a charisma boost */
-        if (find_skill(who, SK_BARGAINING))
-        {
-            charisma += 4;
-            if (charisma > 30)
-                charisma = 30;
-        }
-    }
-
     /* now adjust for sell or buy the multiplier */
     if (flag == F_BUY)
-        diff = 1.0 - (double) cha_bonus[charisma];
+        diff = 1.0;
     else
-        diff = 0.20 + (double) cha_bonus[charisma];
+        diff = 0.20;
 
     val = (sint64) ((double)val*diff); /* our real value */
 
@@ -560,7 +546,7 @@ void sell_item(object *op, object *pl, sint64 value)
                         w = 1;    /* Prevent divide by zero */
                     if (n > 0 && (!pouch->weight_limit || pouch->carrying + w <=  pouch->weight_limit))
                     {
-                        if (pouch->weight_limit && (((pouch->weight_limit - pouch->carrying) / w) < (sint32)n))
+			if (pouch->weight_limit && (((pouch->weight_limit - pouch->carrying) / w) < (sint32)n))
                         {
                             n = (pouch->weight_limit - pouch->carrying) / w;
                         }

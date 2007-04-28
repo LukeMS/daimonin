@@ -133,6 +133,8 @@ typedef signed long long         sint64;
 
 #define ROUND_TAG            pticks /* put this here because the DIFF */
 
+#define WEAPON_SWING_TIME (0.125f)
+
 #define query_name(_op_) query_name_full(_op_, NULL)
 
 #define ARTIFACTS_FIRST_PASS 1
@@ -141,6 +143,11 @@ typedef signed long long         sint64;
 /* Give 1 re-roll attempt per artifact and treasure */
 #define ARTIFACT_TRIES 2
 #define CHANCE_FIX (-1)
+
+/* progressive level damage increase */
+
+#define LEVEL_DAMAGE_MULTIPLIER (0.25f)
+#define LEVEL_DAMAGE(__l_) ((((float)(__l_)) * LEVEL_DAMAGE_MULTIPLIER) + 1.0f)
 
 /* to access strings from objects, maps, arches or other system objects,
  * for printf() or others use only this macros to avoid NULL pointer exceptions.
@@ -184,6 +191,9 @@ typedef signed long long         sint64;
 
 #define GET_LEVEL_EXP(_level_) new_levels[_level_]
 
+#define RESTING_DEFAULT_SEC_TIMER 7    /* start rapid regeneration x second after sitting down */
+#define REG_DEFAULT_SEC_TIMER 10         /* reg normal over the time all x seconds some points */
+
 /* used for eric_server() */
 #define SOCKET_UPDATE_PLAYER 1
 #define SOCKET_UPDATE_CLIENT 2
@@ -209,6 +219,8 @@ typedef signed long long         sint64;
 #define FREE_ONLY_HASH(_nv_) if(_nv_)free_string_shared(_nv_);
 
 #define ADD_REF_NOT_NULL_HASH(_nv_) if(_nv_!=NULL)add_refcount(_nv_);
+
+#define casting_level(__caster_, __spell_type_) SK_level(__caster_)
 
 /* special macro with no {} ! if() FREE_AND_CLEAR_HASH2 will FAIL! */
 #define FREE_AND_CLEAR_HASH2(_nv_) if(_nv_){free_string_shared(_nv_);_nv_ =NULL;}

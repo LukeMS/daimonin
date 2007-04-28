@@ -28,18 +28,6 @@
 #include <global.h>
 #include "skillist.h"
 
-/* table for stat modification of exp */
-float   stat_exp_mult[MAX_STAT + 1] =
-{
-    0.0f, 0.01f, 0.1f, 0.3f, 0.5f,          /* 1 - 4 */
-    0.6f, 0.7f, 0.8f,                       /* 5 - 7 */
-    0.85f, 0.9f, 0.95f, 0.96f,              /* 8 - 11 */
-    0.97f, 0.98f, 0.99f,                    /* 12 - 14 */
-    1.0f, 1.01f, 1.02f, 1.03f, 1.04f,       /* 15 - 19 */
-    1.05f, 1.07f, 1.09f, 1.12f, 1.15f,      /* 20 - 24 */
-    1.2f, 1.3f, 1.4f, 1.5f, 1.7f, 2.0f
-};
-
 static char *exp_group_arch_name[NROFSKILLGROUPS] = {
     "experience_agility",
     "experience_charisma",
@@ -231,7 +219,6 @@ int do_skill(object *op, int dir, char *string)
         case SK_THROWING:
           new_draw_info(NDI_UNIQUE, 0, op, "This skill is not usable in this way.");
           return success;
-          /*success = skill_throw(op,dir,string);*/
           break;
 
         case SK_SET_TRAP:
@@ -266,10 +253,7 @@ int do_skill(object *op, int dir, char *string)
      */
 
     if (op->type == PLAYER)
-    {
-        op->speed_left -= get_skill_time(op, skill);
-        /*LOG(-1,"SKILL TIME: skill %s ->%d\n", op->chosen_skill->name, get_skill_time(op,skill));*/
-    }
+		set_action_time(op, skills[skill].time);
 
     /* this is a good place to add experience for successfull use of skills.
      * Note that add_exp() will figure out player/monster experience
@@ -436,61 +420,6 @@ int lookup_skill_by_name(char *string)
     return -1;
 }
 
-/* check_skill_to_fire() -  */
-
-int check_skill_to_fire(object *who)
-{
-    int         skillnr     = 0;
-    object     *tmp;
-    rangetype   shoottype   = range_none;
-
-    if (who->type != PLAYER)
-        return 1;
-
-    switch ((shoottype = CONTR(who)->shoottype))
-    {
-        case range_bow:
-          if (!(tmp = CONTR(who)->equipment[PLAYER_EQUIP_BOW]))
-              return 0;
-          if (tmp->sub_type1 == 2)
-              skillnr = SK_SLING_WEAP;
-          else if (tmp->sub_type1 == 1)
-              skillnr = SK_XBOW_WEAP;
-          else
-              skillnr = SK_MISSILE_WEAPON;
-          break;
-        case range_none:
-        case range_skill:
-          return 1;
-          break;
-        case range_magic:
-          if (spells[CONTR(who)->chosen_spell].flags & SPELL_DESC_WIS)
-              skillnr = SK_PRAYING;
-          else
-              skillnr = SK_SPELL_CASTING;
-          break;
-        case range_scroll:
-        case range_rod:
-        case range_horn:
-        case range_wand:
-          skillnr = SK_USE_MAGIC_ITEM;
-          break;
-        default:
-          LOG(llevBug, "BUG: bad call of check_skill_to_fire() from %s\n", query_name(who));
-          return 0;
-    }
-    if (change_skill(who, skillnr))
-    {
-#ifdef SKILL_UTIL_DEBUG
-        LOG(llevDebug, "check_skill_to_fire(): got skill:%s for %s\n", skills[skillnr].name, who->name);
-#endif
-        CONTR(who)->shoottype = shoottype;
-        return 1;
-    }
-    else
-        return 0;
-}
-
 /* check_skill_to_apply() - When a player tries to use an
  * object which requires a skill this function is called.
  * (examples are weapons like swords and bows)
@@ -541,6 +470,13 @@ int check_skill_to_apply(object *who, object *item)
           else if (tmp == WEAP_1H_PIERCE)
               skill = SK_PIERCE_WEAP;
           break;
+		case ARROW:
+			if(item->sub_type1 >= 128)
+			{
+				skill = SK_THROWING;
+				break;
+			}
+
         case BOW:
           tmp = item->sub_type1;
           if (tmp == RANGE_WEAP_BOW)
@@ -687,12 +623,7 @@ int learn_skill(object *pl, object *scroll, char *name, int skillnr, int scroll_
         return 2;
     }
     /* now a random change to learn, based on player Int */
-    if (scroll_flag) /* only check when a scroll - add here god given check later */
-                        /* god given scrolls should never fail to learn */
-    {
-        if (random_roll(0, 99) > learn_spell[pl->stats.Int])
-            return 2; /* failure :< */
-    }
+
     /* Everything is cool. Give'em the skill */
     insert_ob_in_ob(tmp, pl);
     CONTR(pl)->skill_ptr[tmp->stats.sp] = tmp;
@@ -782,8 +713,14 @@ int use_skill(object *op, char *string)
     {
         if (op->chosen_skill->sub_type1 != ST1_SKILL_USE)
             new_draw_info(NDI_UNIQUE, 0, op, "You can't use this skill in this way.");
-        else if (do_skill(op, op->facing, string))
+        else
+		{
+			if (!check_skill_action_time(op, op->chosen_skill)) /* are we idle from other action? */
+				return 0;
+
+			if (do_skill(op, op->facing, string))
             return 1;
+		}
     }
     return 0;
 }
@@ -803,12 +740,7 @@ int change_skill(object *who, int sk_index)
     object *tmp;
 
     if (who->chosen_skill && who->chosen_skill->stats.sp == sk_index)
-    {
-        /* optimization for changing skill to current skill */
-        if (who->type == PLAYER)
-            CONTR(who)->shoottype = range_skill;
         return 1;
-    }
 
     if (sk_index >= 0 && sk_index < NROFSKILLS && (tmp = find_skill(who, sk_index)) != NULL)
     {
@@ -840,12 +772,7 @@ int change_skill_to_skill(object *who, object *skl)
         return 1;       /* Quick sanity check */
 
     if (who->chosen_skill == skl)
-    {
-        /* optimization for changing skill to current skill */
-        if (who->type == PLAYER)
-            CONTR(who)->shoottype = range_skill;
         return 0;
-    }
 
     if (skl->env != who)
     {
@@ -950,10 +877,7 @@ int skill_attack(object *tmp, object *pl, int dir, char *string)
         for (tmp = get_map_ob(m, xt, yt); tmp; tmp = tmp->above)
         {
             if ((IS_LIVE(tmp) && (tmp->head == NULL ? tmp->stats.hp > 0 : tmp->head->stats.hp > 0))
-             || QUERY_FLAG(tmp,
-                           FLAG_CAN_ROLL)
-             || tmp->type
-             == LOCKED_DOOR)
+             || QUERY_FLAG(tmp, FLAG_CAN_ROLL) || tmp->type == LOCKED_DOOR)
             {
                 /* lets skip pvp outside battleground (pvp area) */
                 if (pl->type == PLAYER && tmp->type == PLAYER && !op_on_battleground(tmp, NULL, NULL))
@@ -1056,78 +980,14 @@ int SK_level(object *op)
     return level;
 }
 
-
-/* get choosen skill ptr */
-object * SK_skill(object *op)
+/* sets the action timer for skills like throwing, archery, casting... */
+void set_action_time(object *op, int t)
 {
-    object *head    = op->head ? op->head : op;
+	if (op->type != PLAYER)
+		return;
 
-    if (head->type == PLAYER && head->chosen_skill)
-        return head->chosen_skill;
-
-    return NULL;
-}
-
-/* returns the amount of time it takes to use a skill.
- * We allow for stats, and level to modify the amount
- * of time. Monsters have no skill use time because of
- * the random nature in which use_monster_skill is called
- * already simulates this. -b.t.
- */
-/* I reworked this function. The original idea was
- * very basic just adding a value to the global
- * (player) object speed value. Thats the old style
- * way from crossfire, but not what we want. I addding
- * here now the "skill action timer" and a modified
- * speed thingy.- MT 2004
- */
-float get_skill_time(object *op, int skillnr)
-{
-    float   time    = skills[skillnr].time;
-
-    if (op->type != PLAYER)
-        return 0;
-
-    /* tis is only temp! Cast delay fixed to 1 seconds - this will
-     * be more senseful values for different spells in the future.
-     */
-    if (skillnr == SK_SPELL_CASTING || skillnr == SK_PRAYING)
-    {
-        CONTR(op)->action_casting = ROUND_TAG + 8;
-        return 0;
-    }
-    /* these are skills using the "fire/range" menu - throwing, archery
-     * and use of rods/wands...
-     */
-    else if (skillnr == SK_USE_MAGIC_ITEM
-          || skillnr == SK_MISSILE_WEAPON
-          || skillnr == SK_THROWING
-          || skillnr == SK_XBOW_WEAP
-          || skillnr == SK_SLING_WEAP)
-    {
-        CONTR(op)->action_range = ROUND_TAG + op->chosen_skill->stats.maxsp;
-        return 0;
-    }
-
-    if (!time)
-        return 0.0f;
-    else
-    {
-        /*int sum = get_weighted_skill_stat_sum (op,skillnr);*/
-        int level   = SK_level(op) / 10;
-
-        /*time *= 1/(1+(sum/15)+level);*/
-
-        /* now this should be MUCH harder */
-        if (time > 1.0f)
-        {
-            time -= (level / 3) * 0.1f;
-            if (time < 1.0f)
-                time = 1.0f;
-        }
-    }
-
-    return FABS(time);
+	CONTR(op)->action_timer = ROUND_TAG + t;
+	LOG(llevDebug, "ActionTimer for %s: +%d\n", query_name(op), t);
 }
 
 /* player only: we check the action time for a skill.
@@ -1145,10 +1005,10 @@ int check_skill_action_time(object *op, object *skill)
         /* spells */
         case SK_PRAYING:
         case SK_SPELL_CASTING:
-            if (CONTR(op)->action_casting > ROUND_TAG)
+            if (CONTR(op)->action_timer > ROUND_TAG)
             {
                 new_draw_info_format(NDI_UNIQUE, 0, op, "You can cast in %2.2f seconds again.",
-                        (float) (CONTR(op)->action_casting - ROUND_TAG) / pticks_second);
+                        (float) (CONTR(op)->action_timer - ROUND_TAG) / pticks_second);
                 return FALSE;
             }
             break;
@@ -1157,30 +1017,36 @@ int check_skill_action_time(object *op, object *skill)
         case SK_SLING_WEAP:
         case SK_XBOW_WEAP:
         case SK_MISSILE_WEAPON:
-            if (CONTR(op)->action_range > ROUND_TAG)
+            if (CONTR(op)->action_timer > ROUND_TAG)
             {
                 new_draw_info_format(NDI_UNIQUE, 0, op, "You can shoot again in %2.2f seconds.",
-                        (float) (CONTR(op)->action_range - ROUND_TAG) / pticks_second);
+                        (float) (CONTR(op)->action_timer - ROUND_TAG) / pticks_second);
                 return FALSE;
             }
             break;
 
         case SK_USE_MAGIC_ITEM:
-          if (CONTR(op)->action_range > ROUND_TAG)
+          if (CONTR(op)->action_timer > ROUND_TAG)
           {
               new_draw_info_format(NDI_UNIQUE, 0, op, "You can use a device again in %2.2f seconds.",
-                                   (float) (CONTR(op)->action_range - ROUND_TAG) / pticks_second);
+                                   (float) (CONTR(op)->action_timer - ROUND_TAG) / pticks_second);
               return FALSE;
           }
 
         case SK_THROWING:
-          if (CONTR(op)->action_range > ROUND_TAG)
+          if (CONTR(op)->action_timer > ROUND_TAG)
           {
               new_draw_info_format(NDI_UNIQUE, 0, op, "You can throw again in %2.2f seconds.",
-                                   (float) (CONTR(op)->action_range - ROUND_TAG) / pticks_second);
+                                   (float) (CONTR(op)->action_timer - ROUND_TAG) / pticks_second);
               return FALSE;
           }
         default:
+			if (CONTR(op)->action_timer > ROUND_TAG)
+			{
+				new_draw_info_format(NDI_UNIQUE, 0, op, "You can use this skill in %2.2f seconds again.",
+					(float) (CONTR(op)->action_timer - ROUND_TAG) / pticks_second);
+				return FALSE;
+			}
           break;
     }
 

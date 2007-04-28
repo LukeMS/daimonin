@@ -69,7 +69,7 @@ char * describe_resistance(const object *const op, int newline)
             if (flag)
             {
                 if (!newline)
-                    strcat(buf, "(Resists: ");
+                    strcat(buf, "(resists: ");
             }
             if (!newline)
             {
@@ -733,29 +733,23 @@ char * describe_item(const object *const op)
     /* we start with living objects like mobs */
     if (op->type == PLAYER)
     {
+        player *pl = CONTR(op);
+
         describe_terrain(op, retbuf);
 
-        if (CONTR(op)->digestion)
+        if (pl->gen_grace)
         {
-            if (CONTR(op)->digestion > 0)
-                sprintf(buf, "(sustenance%+d)", CONTR(op)->digestion);
-            else if (CONTR(op)->digestion < 0)
-                sprintf(buf, "(hunger%+d)", -CONTR(op)->digestion);
+            sprintf(buf, "(grace gain%+d%%)", pl->gen_grace);
             strcat(retbuf, buf);
         }
-        if (CONTR(op)->gen_grace)
+        if (pl->gen_sp)
         {
-            sprintf(buf, "(grace reg.%+d)", CONTR(op)->gen_grace);
+            sprintf(buf, "(mana gain%+d%%)", pl->gen_sp);
             strcat(retbuf, buf);
         }
-        if (CONTR(op)->gen_sp)
+        if (pl->gen_hp)
         {
-            sprintf(buf, "(mana reg.%+d)", CONTR(op)->gen_sp);
-            strcat(retbuf, buf);
-        }
-        if (CONTR(op)->gen_hp)
-        {
-            sprintf(buf, "(regeneration%+d)", CONTR(op)->gen_hp);
+            sprintf(buf, "(regeneration%+d%%)", pl->gen_hp);
             strcat(retbuf, buf);
         }
     }
@@ -862,7 +856,7 @@ char * describe_item(const object *const op)
             case HORN:
               if (id_true)
               {
-                  sprintf(buf, "(delay%+2.1fs)", ((float) op->last_grace / pticks_second));
+                  sprintf(buf, "(%1.2f sec)", ((float) op->last_grace / pticks_second));
                   strcat(retbuf, buf);
               }
               break;
@@ -882,7 +876,7 @@ char * describe_item(const object *const op)
               {
                   if (ARMOUR_SPEED(op))
                   {
-                      sprintf(buf, "(speed cap %1.2f)", ARMOUR_SPEED(op) / 10.0);
+                      sprintf(buf, "(encumbrance%+.1f%%)", ARMOUR_SPEED(op) / 10.0);
                       strcat(retbuf, buf);
                   }
                   /* Do this in all cases - otherwise it gets confusing - does that
@@ -890,7 +884,7 @@ char * describe_item(const object *const op)
                              */
                   if (ARMOUR_SPELLS(op))
                   {
-                      sprintf(buf, "(mana reg %d)", -1 * ARMOUR_SPELLS(op));
+                      sprintf(buf, "(casting penalty%+.1f%%)", ARMOUR_SPELLS(op)/10.0);
                       strcat(retbuf, buf);
                   }
               }
@@ -904,46 +898,74 @@ char * describe_item(const object *const op)
             case ARROW:
               if (id_true)
               {
-                  if (op->type == BOW)
-                  {
-                      sprintf(buf, "(delay%+2.1fs)", ((float) op->stats.sp / pticks_second));
-                      strcat(retbuf, buf);
-                  }
-                  else if (op->type == ARROW)
-                  {
-                      sprintf(buf, "(delay%+2.1fs)", ((float) op->last_grace / pticks_second));
-                      strcat(retbuf, buf);
-                  }
+                  float dps_swing = 0.0f;
 
-                  if (op->last_sp)
+				  if (op->type == BOW || op->type == ARROW)
+					  dps_swing = ((float) op->last_grace * WEAPON_SWING_TIME);
+
+				  if (op->stats.dam)
                   {
-                      sprintf(buf, "(range%+d)", op->last_sp);
-                      strcat(retbuf, buf);
-                  }
-                  if (op->stats.wc)
-                  {
-                      sprintf(buf, "(wc%+d)", op->stats.wc);
-                      strcat(retbuf, buf);
-                  }
-                  if (op->stats.dam)
-                  {                      /* all what a player can apply has dam*10 value */
-                      if(op->type == WEAPON || op->type == ARROW || op->type == AMULET || op->type == RING ||
-                            op->type == BOOTS || op->type == HELMET || op->type == BRACERS || op->type == GIRDLE ||
-                            op->type == CLOAK || op->type == ARMOUR || op->type == SHIELD || op->type == GLOVES ||
-                            op->type == SHOULDER || op->type == LEGS)
+                      int i, tmp_dam=0;
+
+                      /* Show DPS */
+                      /* These are "direct" damage dealers where we have a swing speed & dmg */
+                      if(op->type == WEAPON || (op->type == ARROW && op->sub_type1 > 127) || op->type == BOW ||
+                          op->type == PLAYER || op->type == MONSTER)
+                      {
+                          float dps = (float)op->stats.dam;
+
+                          /* adjust damage with quality. DON'T adjust by /10 - this will
+                          * give us a better value. Docs has to explain that the DPS of weapons
+                          * is shown for a (ideal) level 10 char. Note that ->magic will be added
+                          * to dam AND wc - for dam it will be handled as 0.1 additional damage.
+                          * For this items this is only the "base DPS"
+                          */
+                          if(op->type == WEAPON || op->type == ARROW || op->type == BOW)
+                              dps = (dps * (op->item_quality / 100.0f)) + op->magic;
+
+                          if(!dps_swing) /* not a bow or arrow then use weapon_speed as swing speed */
+                              dps_swing = op->weapon_speed;
+
+                          if(dps_swing)
+                              dps /= dps_swing;
+
+                          /* we can have more as one attack - and so more as 100% damage (or less)
+                          * so we need to "collect" and multiply the attack damage
+                          * ONLY use the real damage attack forms
+                          */
+                          for(i=0;i<=LAST_ATNR_ATTACK;i++)
+                              tmp_dam += op->attack[i];
+                          tmp_dam += op->attack[ATNR_INTERNAL];
+
+                          if(tmp_dam)
+                              dps *= ((float)tmp_dam)/100.0f;
+
+                          sprintf(buf, "(dps %.1f)", dps);
+                      }
+                      /* all what a player can apply has dam*10 value */
+                      else if( op->type == AMULET || op->type == RING ||
+                          op->type == BOOTS || op->type == HELMET || op->type == BRACERS || op->type == GIRDLE ||
+                          op->type == CLOAK || op->type == ARMOUR || op->type == SHIELD || op->type == GLOVES ||
+                          op->type == SHOULDER || op->type == LEGS || (op->type == ARROW && op->sub_type1 < 127))
                           sprintf(buf, "(dam%+.1f)", ((float)op->stats.dam)/10.0f);
                       else
                           sprintf(buf, "(dam%+d)", op->stats.dam);
                       strcat(retbuf, buf);
                   }
+
+                  if (op->stats.wc)
+                  {
+                      sprintf(buf, "(wc%+d)", op->stats.wc);
+                      strcat(retbuf, buf);
+                  }
                   if (op->stats.thac0)
                   {
-                      sprintf(buf, "(hit%+d)", op->stats.thac0);
+                      sprintf(buf, "(hit chancet%+d)", op->stats.thac0);
                       strcat(retbuf, buf);
                   }
                   if (op->stats.thacm)
                   {
-                      sprintf(buf, "(miss%+d)", op->stats.thacm);
+                      sprintf(buf, "(fumble%+d)", op->stats.thacm);
                       strcat(retbuf, buf);
                   }
                   if (op->stats.ac)
@@ -952,7 +974,21 @@ char * describe_item(const object *const op)
                       strcat(retbuf, buf);
                   }
 
-                  if (op->type == WEAPON)
+				  if (op->type == ARROW || op->type == BOW)
+				  {
+					  if(op->last_grace)
+					  {
+						  sprintf(buf, "(%1.2f sec)", dps_swing);
+						  strcat(retbuf, buf);
+					  }
+
+					  if (op->last_sp)
+					  {
+						  sprintf(buf, "(range%+d)", op->last_sp);
+						  strcat(retbuf, buf);
+					  }
+				  }
+                  else if (op->type == WEAPON)
                   {
                       sprintf(buf, "(%1.2f sec)", op->weapon_speed);
                       strcat(retbuf, buf);
@@ -971,8 +1007,6 @@ char * describe_item(const object *const op)
             case DRINK:
               if (id_true)
               {
-                  sprintf(buf, "(food+%d)", op->stats.food);
-                  strcat(retbuf, buf);
                   if (op->type == FLESH && op->last_eat > 0 && atnr_is_dragon_enabled(op->last_eat))
                   {
                       sprintf(buf, "(%s metabolism)", attack_name[op->last_eat]);
@@ -988,19 +1022,28 @@ char * describe_item(const object *const op)
                       sprintf(buf, "(miss%+d)", op->stats.thacm);
                       strcat(retbuf, buf);
                   }
-                  if (!QUERY_FLAG(op, FLAG_CURSED))
+                  sprintf(buf, "\nIf eaten it will restore in %d seconds\n", op->last_eat);
+                  strcat(retbuf, buf);
+
+                  if (op->stats.hp)
                   {
-                      if (op->stats.hp)
-                          strcat(retbuf, "(heals)");
-                      if (op->stats.sp)
-                          strcat(retbuf, "(spellpoint regen)");
+                      sprintf(buf, "%d hp", op->last_eat*op->stats.hp);
+                      strcat(retbuf, buf);
                   }
-                  else
+                  if (op->stats.sp)
                   {
                       if (op->stats.hp)
-                          strcat(retbuf, "(damages)");
-                      if (op->stats.sp)
-                          strcat(retbuf, "(spellpoint depletion)");
+                          strcat(retbuf, " and ");
+                      sprintf(buf, "%d sp", op->last_eat*op->stats.sp);
+                      strcat(retbuf, buf);
+
+                  }
+                  if (op->stats.grace)
+                  {
+                      if (op->stats.hp || op->stats.sp)
+                          strcat(retbuf, " and ");
+                      sprintf(buf, "%d grace", op->last_eat*op->stats.grace);
+                      strcat(retbuf, buf);
                   }
               }
               break;
@@ -1055,25 +1098,17 @@ char * describe_item(const object *const op)
     {
         if (op->stats.sp)
         {
-            sprintf(buf, "(mana reg.%+d)", op->stats.sp);
+            sprintf(buf, "(mana gain%+d%%)", op->stats.sp);
             strcat(retbuf, buf);
         }
         if (op->stats.grace)
         {
-            sprintf(buf, "(grace reg.%+d)", op->stats.grace);
+            sprintf(buf, "(grace gain%+d%%)", op->stats.grace);
             strcat(retbuf, buf);
         }
         if (op->stats.hp)
         {
-            sprintf(buf, "(regeneration%+d)", op->stats.hp);
-            strcat(retbuf, buf);
-        }
-        if (op->stats.food)
-        {
-            if (op->stats.food > 0)
-                sprintf(buf, "(sustenance%+d)", op->stats.food);
-            else if (op->stats.food < 0)
-                sprintf(buf, "(hunger%+d)", -op->stats.food);
+            sprintf(buf, "(regeneration%+d%%)", op->stats.hp);
             strcat(retbuf, buf);
         }
     }

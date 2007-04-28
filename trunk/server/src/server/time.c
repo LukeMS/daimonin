@@ -703,390 +703,10 @@ void move_pit(object *op)
 }
 
 
-/* stop_item() returns a pointer to the stopped object.  The stopped object
- * may or may not have been removed from maps or inventories.  It will not
- * have been merged with other items.
- *
- * This function assumes that only items on maps need special treatment.
- *
- * If the object can't be stopped, or it was destroyed while trying to stop
- * it, NULL is returned.
- *
- * fix_stopped_item() should be used if the stopped item should be put on
- * the map.
- */
-object * stop_item(object *op)
-{
-    if (op->map == NULL)
-        return op;
-
-    switch (op->type)
-    {
-        case THROWN_OBJ:
-          {
-              object   *payload = op->inv;
-              if (payload == NULL)
-                  return NULL;
-              remove_ob(payload);
-              check_walk_off(payload, NULL, MOVE_APPLY_VANISHED);
-              remove_ob(op);
-              check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
-              return payload;
-          }
-
-        case ARROW:
-          if (op->speed >= MIN_ACTIVE_SPEED)
-              op = fix_stopped_arrow(op);
-          return op;
-
-        case CONE:
-          if (op->speed < MIN_ACTIVE_SPEED)
-          {
-              return op;
-          }
-          else
-          {
-              return NULL;
-          }
-
-        default:
-          return op;
-    }
-}
-
-/* fix_stopped_item() - put stopped item where stop_item() had found it.
- * Inserts item into the old map, or merges it if it already is on the map.
- *
- * 'map' must be the value of op->map before stop_item() was called.
- */
-void fix_stopped_item(object *op, mapstruct *map, object *originator)
-{
-    if (map == NULL)
-        return;
-    if (QUERY_FLAG(op, FLAG_REMOVED))
-        insert_ob_in_map(op, map, originator, 0);
-    else if (op->type == ARROW)
-        merge_ob(op, NULL);   /* only some arrows actually need this */
-}
-
-
-object * fix_stopped_arrow(object *op)
-{
-    object *tmp;
-
-    if (op->type != ARROW)
-        return op;
-    /* Small chance of breaking */
-    /*
-       if(random_roll(0, 99) < op->stats.food) {
-           remove_ob (op);
-    return NULL;
-       }*/
-
-    trigger_object_plugin_event(EVENT_STOP,
-            op, NULL, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL);
-
-    /* used as temp. vars to control reflection/move speed */
-    op->stats.grace = 0;
-    op->stats.maxgrace = 0;
-
-    op->direction = 0;
-    CLEAR_FLAG(op, FLAG_WALK_ON);
-    CLEAR_FLAG(op, FLAG_FLY_ON);
-    CLEAR_MULTI_FLAG(op, FLAG_FLYING);
-
-    /* food is a self destruct marker - that long the item will need to be destruct! */
-    if ((!(tmp = get_owner(op)) || tmp->type != PLAYER) && op->stats.food && op->type == ARROW)
-    {
-        SET_FLAG(op, FLAG_IS_USED_UP);
-        SET_FLAG(op, FLAG_NO_PICK);
-        op->type = MISC_OBJECT; /* important to neutralize the arrow! */
-        op->sub_type1 = ARROW;  /* so we still can identify the arrow! */
-        op->speed = 0.1f;
-        op->speed_left = 0.0f;
-    }
-    else
-    {
-        op->last_sp = op->arch->clone.last_sp;
-        op->level = op->arch->clone.level;
-        op->stats.food = op->arch->clone.stats.food;
-        op->speed = 0;
-    }
-    update_ob_speed(op);
-    op->stats.wc = op->last_heal;
-    op->stats.dam = op->stats.hp;
-    /* Reset these to zero, so that CAN_MERGE will work properly */
-    op->last_heal = 0;
-    op->stats.hp = 0;
-    op->face = op->arch->clone.face;
-    op->owner = NULL; /* So that stopped arrows will be saved */
-    update_object(op, UP_OBJ_FACE);
-    return op;
-}
-
-/* stop_arrow() - what to do when a non-living flying object
- * has to stop. Sept 96 - I added in thrown object code in
- * here too. -b.t.
- *
- */
-
-void stop_arrow(object *op)
-{
-    play_sound_map(op->map, op->x, op->y, SOUND_DROP_THROW, SOUND_NORMAL);
-    CLEAR_FLAG(op, FLAG_IS_MISSILE);
-    if (op->inv)
-    {
-        object *payload = op->inv;
-
-        remove_ob(payload);
-        check_walk_off(payload, NULL, MOVE_APPLY_VANISHED);
-
-        trigger_object_plugin_event(EVENT_STOP,
-                payload, NULL, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL);
-
-        /* Insert the payload in the map (only if the script didn't put it somewhere else) */
-        if (!payload->env && !OBJECT_FREE(payload))
-        {
-            payload->x = op->x;
-            payload->y = op->y;
-            insert_ob_in_map(payload, op->map, payload, 0);
-        }
-
-        /* we have a thrown potion here.
-         * This potion has NOT hit a target.
-         * it has hitten a wall or just dropped to the ground.
-         * 1.) its a AE spell... detonate it.
-         * 2.) its something else - shatter the potion.
-         */
-        if (payload->type == POTION)
-        {
-            if (payload->stats.sp != SP_NO_SPELL && spells[payload->stats.sp].flags & SPELL_DESC_DIRECTION)
-                cast_spell(payload, payload, payload->direction, payload->stats.sp, 1, spellPotion, NULL); /* apply potion ALWAYS fire on the spot the applier stands - good for healing - bad for firestorm */
-            remove_ob(payload);
-        }
-        else
-        {
-            clear_owner(payload);
-        }
-        remove_ob(op);
-        check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
-    }
-    else
-    {
-        op = fix_stopped_arrow(op);
-        if (op)
-            merge_ob(op, NULL);
-    }
-}
-
-/* Move an arrow along its course.  op is the arrow or thrown object.
- */
-
-void move_arrow(object *op)
-{
-    object*tmp =    NULL, *hitter;
-    int             new_x, new_y;
-    int             flag_tmp;
-    int             was_reflected;
-    mapstruct      *m   = op->map;
-
-    if (op->map == NULL)
-    {
-        LOG(llevBug, "BUG: Arrow %s had no map.\n", query_name(op));
-        remove_ob(op);
-        check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
-        return;
-    }
-
-    /* we need to stop thrown objects and arrows at some point. Like here. */
-    if (op->type == THROWN_OBJ)
-    {
-        if (op->inv == NULL)
-            return;
-    }
-
-    if (op->last_sp-- < 0)
-    {
-        stop_arrow(op);
-        return;
-    }
-
-    /* Calculate target map square */
-    if (op->stats.grace == 666)
-    {
-        /* Experimental target throwing hack. Using bresenham line algo */
-
-        int dx  = op->stats.hp;
-        int dy  = op->stats.sp;
-
-        if (dx > dy)
-        {
-            if (op->stats.exp >= 0)
-            {
-                new_y = op->y + op->stats.maxsp;
-                op->stats.exp -= dx;                           /* same as fraction -= 2*dx */
-            }
-            else
-                new_y = op->y;
-            new_x = op->x + op->stats.maxhp;
-            op->stats.exp += dy;                           /* same as fraction -= 2*dy */
-        }
-        else
-        {
-            if (op->stats.exp >= 0)
-            {
-                new_x = op->x + op->stats.maxhp;
-                op->stats.exp -= dy;
-            }
-            else
-                new_x = op->x;
-            new_y = op->y + op->stats.maxsp;
-            op->stats.exp += dx;
-        }
-    }
-    else
-    {
-        new_x = op->x + DIRX(op);
-        new_y = op->y + DIRY(op);
-    }
-    was_reflected = 0;
-
-    /* check we are legal */
-    if (!(m = out_of_map(op->map, &new_x, &new_y)))
-    {
-        stop_arrow(op); /* out of map... here is the end */
-        return;
-    }
-
-    if (!(hitter = get_owner(op)))
-        hitter = op;
-
-    /* ok, lets check there is something we can hit */
-    if ((flag_tmp = GET_MAP_FLAGS(m, new_x, new_y)) & (P_IS_ALIVE | P_IS_PLAYER))
-    {
-        /* search for a vulnerable object */
-        for (tmp = GET_MAP_OB_LAYER(m, new_x, new_y, 5); tmp != NULL; tmp = tmp->above)
-        {
-            /* Can only damage live objects (for now) */
-            if (!IS_LIVE(tmp))
-                continue;
-
-            /* Let friends fire through friends */
-            /* TODO: shouldn't do this if on pvp map, but that
-             * also requires smarter mob/npc archers */
-            if (tmp == hitter || get_friendship(hitter, tmp) >= FRIENDSHIP_HELP)
-            {
-                /* Gecko: testing to let friends fire through friendly
-                 * reflectors */
-                if (QUERY_FLAG(tmp, FLAG_CAN_REFL_MISSILE))
-                    flag_tmp &= ~P_REFL_MISSILE;
-                continue;
-            }
-
-            if ((!QUERY_FLAG(tmp, FLAG_CAN_REFL_MISSILE) || (random_roll(0, 99)) < 90 - op->level / 10))
-            {
-                /* Attack the object. */
-                op = hit_with_arrow(op, tmp);
-                if (op == NULL) /* the arrow has hit and is destroyed! */
-                    return;
-            }
-        }
-    }
-
-    /* if we are here, there is no target and/or we have not hit.
-     * now we do a simple reflection test.
-     */
-    if (flag_tmp & P_REFL_MISSILE)
-    {
-        missile_reflection_adjust(op, QUERY_FLAG(op, FLAG_WAS_REFLECTED));
-
-        op->direction = absdir(op->direction + 4);
-        op->state = 0;
-        if (GET_ANIM_ID(op))
-            SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction);
-        if (wall(m, new_x, new_y))
-        {
-            /* Target is standing on a wall.  Let arrow turn around before
-                      * the wall. */
-            new_x = op->x;
-            new_y = op->y;
-        }
-        SET_FLAG(op, FLAG_WAS_REFLECTED);
-        was_reflected = 1;   /* skip normal movement calculations */
-    }
-
-    if (!was_reflected && wall(m, new_x, new_y))
-    {
-        /* if the object doesn't reflect, stop the arrow from moving */
-        if (!QUERY_FLAG(op, FLAG_REFLECTING) || !(random_roll(0, 19)))
-        {
-            stop_arrow(op);
-            return;
-        }
-        else
-        {
-            /* object is reflected */
-            /* If one of the major directions (n,s,e,w), just reverse it */
-            if (op->direction & 1)
-            {
-                op->direction = absdir(op->direction + 4);
-            }
-            else
-            {
-                /* The below is just logic for figuring out what direction
-                 * the object should now take.
-                 */
-
-                int left = wall(op->map,op->x+freearr_x[absdir(op->direction-1)],              op->y+   freearr_y[absdir(op->direction - 1)]),
-                right = wall(op->map, op->x + freearr_x[absdir(op->direction + 1)],
-                                                                                                        op->y + freearr_y[absdir(op->direction + 1)]);
-
-                if (left == right)
-                    op->direction = absdir(op->direction + 4);
-                else if (left)
-                    op->direction = absdir(op->direction + 2);
-                else if (right)
-                    op->direction = absdir(op->direction - 2);
-            }
-            /* Is the new direction also a wall?  If show, shuffle again */
-            if (wall(op->map, op->x + DIRX(op), op->y + DIRY(op)))
-            {
-                int left = wall(op->map,op->x+freearr_x[absdir(op->direction-1)],            op->y+ freearr_y[absdir(op->direction - 1)]),
-                right = wall(op->map, op->x + freearr_x[absdir(op->direction + 1)],
-                                                                                                    op->y + freearr_y[absdir(op->direction + 1)]);
-
-                if (!left)
-                    op->direction = absdir(op->direction - 1);
-                else if (!right)
-                    op->direction = absdir(op->direction + 1);
-                else
-                {
-                    /* is this possible? */
-                    stop_arrow(op);
-                    return;
-                }
-            }
-            /* update object image for new facing */
-            /* many thrown objects *don't* have more than one face */
-            if (GET_ANIM_ID(op))
-                SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction);
-        } /* object is reflected */
-    } /* object ran into a wall */
-
-    /* Move the arrow. */
-    remove_ob(op);
-    if (check_walk_off(op, NULL, MOVE_APPLY_VANISHED) == CHECK_WALK_OK)
-    {
-        op->x = new_x;
-        op->y = new_y;
-        insert_ob_in_map(op, m, op, 0);
-    }
-}
-
 /* This routine doesnt seem to work for "inanimate" objects that
  * are being carried, ie a held torch leaps from your hands!.
- * Modified this routine to allow held objects. b.t. */
-
+ * Modified this routine to allow held objects. b.t. 
+ */
 void change_object(object *op)
 {
     /* Doesn`t handle linked objs yet */
@@ -1342,9 +962,8 @@ void move_player_mover(object *op)
                          * place.  This can happen if the player used a spell to
                          * get to this space.
                          */
-                    CONTR(victim)->fire_on = 0;
                     victim->speed_left = -FABS(victim->speed);
-                    move_player(victim, dir);
+                    move_player(victim, dir, TRUE);
                 }
                 else
                     return;
@@ -1765,15 +1384,19 @@ int process_object(object *op)
         change_object(op);
         return 1;
     }
-    /* no generator in ATM */
-    /*
-    if(QUERY_FLAG(op, FLAG_GENERATOR))
-      generate_monster(op);
-    */
+
     if (QUERY_FLAG(op, FLAG_IS_USED_UP) && --op->stats.food <= 0)
     {
+        if (op->type == TYPE_FOOD_FORCE && op->env && op->env->type == PLAYER && CONTR(op->env))
+        {
+            CLEAR_FLAG(op->env, FLAG_EATING);
+            CONTR(op->env)->food_status = 0;
+            new_draw_info(NDI_UNIQUE| NDI_NAVY, 0, op->env, "You finished eating.");
+        }
+
         if (QUERY_FLAG(op, FLAG_APPLIED) && op->type != CONTAINER)
         {
+
             /* give out some useful message - very nice when a mob lose a effect */
             if(IS_LIVE(op->env)&&op->env->map)
             {
@@ -1925,15 +1548,18 @@ int process_object(object *op)
           execute_wor(op);
           return 0;
           */
+        case TYPE_FOOD_FORCE:
+          food_force_reg(op);
+        return 0;
         case BULLET:
           move_fired_arch(op);
           return 0;
         case MMISSILE:
-          move_missile(op);
+          move_magic_missile(op);
           return 0;
         case THROWN_OBJ:
         case ARROW:
-          move_arrow(op);
+          move_missile(op);
           return 0;
         case FBULLET:
           move_fired_arch(op);

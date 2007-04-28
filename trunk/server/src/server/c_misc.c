@@ -1025,9 +1025,31 @@ static void show_commands(object *op, int what)
     new_draw_info(NDI_UNIQUE, 0, op, line);
 }
 
-int command_praying(object *op, char *params)
+int command_resting(object *op, char *params)
 {
-    CONTR(op)->praying = 1;
+    player *pl = CONTR(op);
+
+    /* sitting is the way we enter resting */
+    if (pl->rest_sitting) /* we allready sit? stand up! */
+    {
+        new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, "You stop resting.");
+        pl->rest_mode = pl->rest_sitting = 0;
+        pl->resting_reg_timer = 0;
+    }
+    else
+    {
+        new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, "You start resting.");
+        remove_food_force(op); /* sitting will interrupt our eating - we enter resting */
+        pl->food_status = 1000;
+        pl->damage_timer = 0;
+
+        /* force a combat mode leave... we don't fight when sitting on our butt! */
+        pl->combat_mode = 1;
+        command_combat(op, NULL);
+
+        pl->rest_mode = pl->rest_sitting = 1;
+        pl->resting_reg_timer = RESTING_DEFAULT_SEC_TIMER;
+    }
     return 0;
 }
 
@@ -1437,7 +1459,7 @@ int command_stuck(object *op, char *params)
 {
     if (op->type == PLAYER && CONTR(op))
     {
-        command_goto(op, "/planes/human_plane/castle/castle_030a 5 11");
-    }
+        command_goto(op, "/planes/human_plane/castle/castle_030a 5 11");    
+	}
     return 0;
 }

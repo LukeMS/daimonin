@@ -43,21 +43,11 @@
 
 extern char    *attacks[NROFATTACKS];
 extern char    *spellpathnames[NRSPELLPATHS];
-
-extern float    cha_bonus[MAX_STAT + 1];
-extern int      thaco_bonus[MAX_STAT + 1];
-extern int      turn_bonus[MAX_STAT + 1];
-extern int      dam_bonus[MAX_STAT + 1]; /* real boni in *10 form */
-extern int      savethrow[111];
-extern int      turn_bonus[MAX_STAT + 1];
-extern int      learn_prayer_chance[MAX_STAT + 1];
-extern int      learn_spell[];
+extern float    stats_penalty[10];
 extern char    *restore_msg[NUM_STATS];
 extern char    *statname[NUM_STATS];
 extern char    *short_stat_name[NUM_STATS];
 extern char    *lose_msg[NUM_STATS];
-extern float    speed_bonus[MAX_STAT + 1];
-extern uint32   weight_limit[MAX_STAT + 1];
 
 #ifdef WIN32
 #pragma pack(push,1)
@@ -84,8 +74,6 @@ typedef struct liv
     sint8           thacm;      /* Every roll < thacm is a miss, despite of target ac */
     sint8           Str, Dex, Con, Wis, Cha, Int, Pow; /* the stats */
 } living;
-
-extern float    lev_damage[MAXLEVEL + 1];
 
 #ifdef WIN32
 #pragma pack(pop)

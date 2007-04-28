@@ -78,7 +78,12 @@ error - Your ANSI C compiler should be defining __STDC__;
 /** Length of string literal. Don't even think about using this on a pointer */
 #define LSTRLEN(s) ((sizeof(s)/sizeof(char))-1)
 
-#define MAX_STAT        30  /* The maximum legal value of any stat */
+/* defines the stat range for strength and such for PLAYERS
+ * to avoid the signed 8 bit border, we should assume to
+ * mirror the with fix_player() altered stats to player struct
+ */
+
+#define MAX_STAT        125  /* The maximum legal value of any stat */
 #define MIN_STAT        1   /* The minimum legal value of any stat */
 
 #define MAX_BUF         256 /* Used for all kinds of things */
@@ -330,6 +335,9 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define SHOULDER                142     /* armour... */
 #define LEGS                    143     /* armour... */
 
+#define TYPE_FOOD_FORCE         144
+#define TYPE_FOOD_BUFF_FORCE    145
+
 /* More free type values here =) */
 #define MENU                    150 /* Mark Wedel (mark@pyramid.com) Shop inventories */
 #define BALL_LIGHTNING          151 /* peterm:  ball lightning and color spray */
@@ -415,10 +423,10 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define WEAP_POLE_PIERCE    10  /* pierce: rapier */
 #define WEAP_POLE_CLEAVE    11  /* cleave: axes */
 
-#define RANGE_WEAP_BOW      0  /* range weapons - bows */
-#define RANGE_WEAP_XBOWS    1  /* crossbows */
-#define RANGE_WEAP_SLINGS   2  /* slings */
-#define RANGE_WEAP_FIREARMS 3  /* firearms - not implemented */
+#define RANGE_WEAP_BOW      1  /* range weapons - bows */
+#define RANGE_WEAP_XBOWS    2  /* crossbows */
+#define RANGE_WEAP_SLINGS   3  /* slings */
+#define RANGE_WEAP_FIREARMS 4  /* firearms - not implemented */
 
 /* some skills are auto-used, some should not be able to use with fire xxx (use_skill) */
 #define ST1_SKILL_NORMAL    0   /* normal skill but not direct usable with use_skill() */
@@ -493,41 +501,6 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define ST1_FORCE_BLIND     8
 
 /* END SUB TYPE 1 DEFINE */
-
-/* definitions for detailed pickup descriptions.
- *   The objective is to define intelligent groups of items that the
- *   user can pick up or leave as he likes. */
-
-/* high bit as flag for new pickup options */
-#define PU_NOTHING      0x00000000
-
-#define PU_DEBUG        0x10000000
-#define PU_INHIBIT      0x20000000
-#define PU_STOP         0x40000000
-#define PU_NEWMODE      0x80000000
-
-#define PU_RATIO        0x0000000F
-
-#define PU_FOOD         0x00000010
-#define PU_DRINK        0x00000020
-#define PU_VALUABLES        0x00000040
-#define PU_BOW          0x00000080
-
-#define PU_ARROW        0x00000100
-#define PU_HELMET       0x00000200
-#define PU_SHIELD       0x00000400
-#define PU_ARMOUR       0x00000800
-
-#define PU_BOOTS        0x00001000
-#define PU_GLOVES       0x00002000
-#define PU_CLOAK        0x00004000
-#define PU_KEY          0x00008000
-
-#define PU_MISSILEWEAPON    0x00010000
-#define PU_ALLWEAPON        0x00020000
-#define PU_MAGICAL      0x00040000
-#define PU_POTION       0x00080000
-
 
 /* Instead of using arbitrary constants for indexing the
  * freearr, add these values.  <= SIZEOFFREE1 will get you
@@ -660,7 +633,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_CONFUSED       1 /* confused... random dir when moving and problems to do actions */
 #define FLAG_PARALYZED      2 /* Object is paralyzed */
 #define FLAG_SCARED         3 /* Monster is scared. This is "run away" panic - don't confuse it with fear */
-#define FLAG_BLIND          4 /* If set, object cannot see (the map) with eyes */
+#define FLAG_EATING         4 /* target is eating/resting */
 #define FLAG_IS_INVISIBLE   5 /* only THIS invisible can be seen with seen_invisible */
 #define FLAG_IS_ETHEREAL    6 /* object is etheral  - means transparent and special protected */
 #define FLAG_IS_GOOD        7 /* NOT USED from map2. alignment flag */
@@ -679,12 +652,12 @@ error - Your ANSI C compiler should be defining __STDC__;
                                 */
 #define FLAG_FRIENDLY       15 /* Will help players */
 /*
- *  REMOVED and BEEN_APPLIED are direct used from CAN_MERGE - change it too when
- * you move this flag!
+ *  FLAG_OBJECT_WAS_MOVED, REMOVED and BEEN_APPLIED are direct used from CAN_MERGE - change it too when
+ * you move this flag! See also FLAG_APPLIED
  */
 #define FLAG_REMOVED        16 /* Object is not in any map or invenory */
 #define FLAG_BEEN_APPLIED   17 /* The object has been applied in the past - its "identified by using" */
-#define FLAG_AUTO_APPLY     18 /* Will be applied when created */
+#define FLAG_OBJECT_WAS_MOVED 18     /* internal used from remove_ob() und insert_xx() */
 #define FLAG_TREASURE       19 /* Will generate treasure when applied */
 #define FLAG_IS_NEUTRAL     20 /* alignment of this object: we need the explicit neutral setting for items */
 #define FLAG_SEE_INVISIBLE  21 /* Will see invisible player */
@@ -725,7 +698,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_CAN_PASS_THRU  47 /* Can pass thru... */
 
 #define FLAG_FEARED          48 /* player or monster is feared - attacks and acts alot more worse */
-/* was FLAG_UNIQUE */
+#define FLAG_BLIND           49 /* If set, object cannot see (the map) with eyes */
 #define FLAG_NO_DROP         50 /* Object can't be dropped */
 #define FLAG_FIGHT_HPREG     51 /* monster (player - not implemented): mob can reg hp when fighting! */
 #define FLAG_READY_SPELL     52 /* (Monster) can learn and cast spells */
@@ -768,6 +741,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 /* flag 82 is free */
 #define FLAG_IS_MALE        83 /* gender flags. it effects only player & mobs */
 #define FLAG_IS_FEMALE      84 /* is not female nor male, it is a neuter */
+/* don't move flag_applied without adjusting CAN_MERGE! */
 #define FLAG_APPLIED        85 /* Object is ready for use by living */
 #define FLAG_INV_LOCKED     86 /* Item will not be dropped from inventory */
 #define FLAG_IS_WOODED      87 /* Item is wooded terrain */
@@ -848,13 +822,15 @@ error - Your ANSI C compiler should be defining __STDC__;
                                        * is to trigger the right map flags, so a moving objects
                                        * know that spot is blocked by a door and he must open it first->
                                        */
+
+/* Start of values in flags[4] */
 #define FLAG_WAS_REFLECTED      128   /* object was reflected (arrow, throw object...) */
 #define FLAG_IS_MISSILE         129   /* object is used as missile (arrow, potion, magic bullet, ...) */
 #define FLAG_CAN_REFL_MISSILE   130     /* Arrows WILL reflect from object (most times) */
 #define FLAG_CAN_REFL_SPELL     131     /* Spells WILL reflect from object (most times) */
 
 #define FLAG_IS_ASSASSINATION   132     /* If a attacking force and slaying is set, this is 3 times damage */
-#define FLAG_OBJECT_WAS_MOVED   133     /* internal used from remove_ob() und insert_xx() */
+#define FLAG_AUTO_APPLY			133		/* Will be applied when created */
 #define FLAG_NO_SAVE            134     /* don't save this object - remove it before we save */
 #define FLAG_PASS_ETHEREAL      135     /* can_pass light for ethereal */
 

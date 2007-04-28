@@ -883,13 +883,14 @@ void esrv_update_stats(player *pl)
         }
     }
 
-    AddIfShort(pl->last_gen_hp, pl->gen_client_hp, CS_STAT_REG_HP);
-    AddIfShort(pl->last_gen_sp, pl->gen_client_sp, CS_STAT_REG_MANA);
-    AddIfShort(pl->last_gen_grace, pl->gen_client_grace, CS_STAT_REG_GRACE);
+    AddIfShort(pl->last_gen_hp, pl->gen_hp, CS_STAT_REG_HP);
+    AddIfShort(pl->last_gen_sp, pl->gen_sp, CS_STAT_REG_MANA);
+    AddIfShort(pl->last_gen_grace, pl->gen_grace, CS_STAT_REG_GRACE);
     AddIfCharFlag(pl->last_level, pl->ob->level, group_update, GROUP_UPDATE_LEVEL, CS_STAT_LEVEL);
-    AddIfInt(pl->last_weight_limit, weight_limit[pl->ob->stats.Str], CS_STAT_WEIGHT_LIM);
+    AddIfInt(pl->last_weight_limit, pl->weight_limit, CS_STAT_WEIGHT_LIM);
     AddIfInt(pl->last_weapon_sp, pl->weapon_sp, CS_STAT_WEAP_SP);
-    AddIfFloat(pl->last_speed, pl->speed, CS_STAT_SPEED);
+    AddIfInt(pl->last_speed_enc, pl->speed_enc, CS_STAT_SPEED);
+    AddIfInt(pl->last_spell_fumble, pl->spell_fumble, CS_STAT_SPELL_FUMBLE);
 
     if (pl->ob != NULL)
     {
@@ -912,8 +913,12 @@ void esrv_update_stats(player *pl)
         AddIfInt(pl->last_stats.exp, pl->ob->stats.exp, CS_STAT_EXP);
         AddIfShort(pl->last_stats.wc, pl->ob->stats.wc, CS_STAT_WC);
         AddIfShort(pl->last_stats.ac, pl->ob->stats.ac, CS_STAT_AC);
-        AddIfShort(pl->last_stats.dam, pl->ob->stats.dam, CS_STAT_DAM);
-        AddIfShort(pl->last_stats.food, pl->ob->stats.food, CS_STAT_FOOD);
+        AddIfShort(pl->last_dps, pl->dps, CS_STAT_DAM);
+        AddIfShort(pl->last_food_status, pl->food_status, CS_STAT_FOOD);
+
+		AddIfShort(pl->dist_last_wc, pl->dist_wc, CS_STAT_DIST_WC);
+		AddIfShort(pl->dist_last_dps, pl->dist_dps, CS_STAT_DIST_DPS);
+		AddIfInt(pl->dist_last_action_time, pl->dist_action_time, CS_STAT_DIST_TIME);
     }
 
     for (i = 0; i < NROFSKILLGROUPS_ACTIVE; i++)
@@ -923,8 +928,6 @@ void esrv_update_stats(player *pl)
     }
 
     flags = 0;
-    if (pl->fire_on)
-        flags |= SF_FIREON; /* TODO: remove fire and run server sided mode */
     if (pl->run_on)
         flags |= SF_RUNON;
     /* we add additional player status flags - in old style, you got a msg

@@ -23,11 +23,6 @@
     The author can be reached via e-mail to daimonin@nord-com.net
 */
 
-/*
- * End of non-DM commands.  DM-only commands below.
- * (This includes commands directly from socket)
- */
-
 #include <global.h>
 
 #ifndef WIN32 /* ---win32 exclude unix headers */
@@ -634,13 +629,22 @@ int command_create(object *op, char *params)
                 tmp->head = head,prev->more = tmp;
             prev = tmp;
         }
-        if (IS_LIVE(head))
+
+		if (at->clone.randomitems)
+			create_treasure_list(at->clone.randomitems, head, GT_APPLY, 
+				head->type == MONSTER?head->level:get_enviroment_level(head),ART_CHANCE_UNSET, 0);
+
+		if (IS_LIVE(head))
+		{
+			if(head->type == MONSTER)
+				fix_monster(head);
             insert_ob_in_map(head, op->map, op, INS_NO_MERGE | INS_NO_WALK_ON);
+		}
         else
+		{
             head = insert_ob_in_ob(head, op);
-        if (at->clone.randomitems)
-            create_treasure_list(at->clone.randomitems, head, GT_APPLY, get_enviroment_level(head),ART_CHANCE_UNSET, 0);
-        esrv_send_item(op, head);
+			esrv_send_item(op, head);
+		}
     }
     return 1;
 }
@@ -760,6 +764,8 @@ int command_free(object *op, char *params)
 }
 
 /* same like addexp, but we set here the skill level explicit
+ * If the player don't has the skill we add it.
+ * if level is 0 we remove the skill (careful!!)
 */
 int command_setskill(object *op, char *params)
 {
@@ -797,15 +803,33 @@ int command_setskill(object *op, char *params)
     }
 
     exp_skill = pl->skill_ptr[snr];
+	if (!exp_skill) /* we don't have the skill - learn it*/
+	{
+		learn_skill(op, NULL, NULL, snr, 0);
+		exp_skill = pl->skill_ptr[snr];
+		fix_player(op, "setskill");
+	}
+	else if(!level)/* if level is 0 we unlearn the skill! */
+	{
+		new_draw_info(NDI_UNIQUE, 0, op, "removed skill!");
+		exp_ob = exp_skill->exp_obj;
+		remove_ob(exp_skill);
+		player_lvl_adj(op, exp_ob, TRUE);
+		player_lvl_adj(op, NULL, TRUE);
+		fix_player(op,"setskill");
+		return 1;
+	}
 
     if (!exp_skill) /* safety check */
     {
-        /* our player don't have this skill?
+
+		/* our player don't have this skill?
          * This can happens when group exp is devided.
          * We must get a useful sub or we skip the exp.
          */
+		new_draw_info(NDI_UNIQUE, 0, op, "No such skill!");
         LOG(llevDebug, "TODO: command_setskill(): called for %s with skill nr %d / %d level - object has not this skill.\n",
-            query_name(pl->ob), snr, level);
+            query_name(op), snr, level);
         return 0; /* TODO: groups comes later  - now we skip all times */
     }
 
@@ -823,10 +847,11 @@ int command_setskill(object *op, char *params)
 
     /* adjust_exp has adjust the skill and all exp_obj and player exp */
     /* now lets check for level up in all categories */
-    adjust_exp(pl->ob, exp_skill, 1); /* we add one more so we get a clean call here */
-    player_lvl_adj(pl->ob, exp_skill, TRUE);
-    player_lvl_adj(pl->ob, exp_ob, TRUE);
-    player_lvl_adj(pl->ob, NULL, TRUE);
+    adjust_exp(op, exp_skill, 1); /* we add one more so we get a clean call here */
+    player_lvl_adj(op, exp_skill, TRUE);
+    player_lvl_adj(op, exp_ob, TRUE);
+    player_lvl_adj(op, NULL, TRUE);
+	fix_player(op,"setskill");
 
     return 1;
 }

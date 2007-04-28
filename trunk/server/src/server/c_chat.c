@@ -337,7 +337,6 @@ int command_tell(object *op, char *params)
                 sprintf(buf2, "%s tells %s: ", op->name, pl->ob->name);
                 strncat(buf2, msg, MAX_BUF - strlen(buf2) - 1);
                 buf2[MAX_BUF - 1] = 0;
-
                 for(ol = gmaster_list_DM;ol;ol=ol->next)
                 {
                     if (pl->ob != ol->objlink.ob && op != ol->objlink.ob)

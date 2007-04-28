@@ -198,9 +198,9 @@ int save_player(object *op, int flag)
     if(pl->mute_counter > pticks)
         fprintf(fp, "mute %d\n", (int)(pl->mute_counter-pticks)); /* should be not THAT long */
 
-    fprintf(fp, "dm_stealth %d\nsilent_login %d\np_ver %d\ngen_hp %d\ngen_sp %d\ngen_grace %d\nlistening %d\nspell %d\nshoottype %d\ndigestion %d\npickup %d\nskill_group %d %d %d\n",
-                 pl->dm_stealth, pl->silent_login, pl->p_ver, pl->gen_hp, pl->gen_sp, pl->gen_grace,
-                 pl->listening, pl->chosen_spell, pl->shoottype, pl->digestion, pl->mode,
+    fprintf(fp, "dm_stealth %d\nsilent_login %d\np_ver %d\nlistening %d\npickup %d\nskill_group %d %d %d\n",
+                 pl->dm_stealth, pl->silent_login, pl->p_ver,
+                 pl->listening, pl->mode,
                  pl->base_skill_group[0],pl->base_skill_group[1],pl->base_skill_group[2]);
 
     /* Match the enumerations but in string form */
@@ -466,7 +466,7 @@ static  mapstruct *traverse_b3_player_inv(object *pl, object *op, mapstruct *old
             }
 
             /* as default entry we use newbie town start.*/
-            FREE_AND_COPY_HASH(tmp->race, "/planes/human_plane/castle/castle_030a");
+			FREE_AND_COPY_HASH(tmp->race, "/planes/human_plane/castle/castle_030a");
             tmp->last_sp = 18;
             tmp->last_grace = 1;
             FREE_AND_COPY_HASH(tmp->name, "APARTMENT_INFO"); /* new player info tag */
@@ -576,7 +576,6 @@ void check_login(object *op, int mode)
                 LOG(llevInfo, "create char double login!\n");
                 new_draw_info(NDI_UNIQUE, 0, pl->ob, "Someone else creates a char with that name just now!");
                 FREE_AND_COPY_HASH(op->name, "noname");
-                pl->last_value = -1;
                 get_name(op,2);
                 return;
             }
@@ -658,7 +657,6 @@ void check_login(object *op, int mode)
     {
         LOG(llevInfo, "wrong pswd!\n");
         fclose(fp);
-        pl->last_value = -1;
 
         /* very simple check for stupid password guesser */
         if(++pl->socket.pwd_try == 3)
@@ -749,20 +747,8 @@ void check_login(object *op, int mode)
             pl->silent_login = value;
         else if (!strcmp(buf, "p_ver"))
             pl->p_ver = value;
-        else if (!strcmp(buf, "gen_hp"))
-            pl->gen_hp = value;
-        else if (!strcmp(buf, "shoottype"))
-            pl->shoottype = (rangetype) value;
-        else if (!strcmp(buf, "gen_sp"))
-            pl->gen_sp = value;
-        else if (!strcmp(buf, "gen_grace"))
-            pl->gen_grace = value;
-        else if (!strcmp(buf, "spell"))
-            pl->chosen_spell = value;
         else if (!strcmp(buf, "listening"))
             pl->listening = value;
-        else if (!strcmp(buf, "digestion"))
-            pl->digestion = value;
         else if (!strcmp(buf, "pickup"))
             pl->mode = value;
         else if (!strcmp(buf, "iflags"))
@@ -956,7 +942,7 @@ void check_login(object *op, int mode)
         set_mappath_by_name(pl, NULL, shstr_cons.start_mappath, MAP_STATUS_MULTI, 17, 11);
 
         /* as bind point we set old beta 3 players to castle church */
-        FREE_AND_COPY_HASH(pl->orig_savebed_map, "/planes/human_plane/castle/castle_0002");
+		FREE_AND_COPY_HASH(pl->orig_savebed_map, "/planes/human_plane/castle/castle_0002");
         set_bindpath_by_name(pl, NULL, pl->orig_savebed_map, MAP_STATUS_MULTI, 12, 7);
     }
 
@@ -1098,10 +1084,6 @@ void check_login(object *op, int mode)
         }
     }  /* end of lev_array_flag */
 
-
-    if (!legal_range(op, pl->shoottype))
-        pl->shoottype = range_none;
-
     /* if it's a dragon player, set the correct title here */
     if (is_dragon_pl(op) && op->inv != NULL)
     {
@@ -1226,8 +1208,6 @@ void check_login(object *op, int mode)
      */
     esrv_new_player(pl, op->weight + op->carrying);
     esrv_send_inventory(op, op);
-
-    pl->last_value = -1;
 
     /* This seems to compile without warnings now.  Don't know if it works
      * on SGI's or not, however.

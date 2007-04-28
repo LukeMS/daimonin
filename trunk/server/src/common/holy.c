@@ -263,10 +263,6 @@ void dump_gods()
         {
             gifts = 1; LOG(llevInfo, "\n  sp regenerate at %d", god->last_sp);
         }
-        if (god->last_eat)
-        {
-            gifts = 1; LOG(llevInfo, "\n  digestion is %s (%d)", god->last_eat < 0 ? "slowed" : "faster",god->last_eat);
-        }
         if (god->last_grace)
         {
             gifts = 1; LOG(llevInfo, "\n  grace regenerates at %d", god->last_grace);

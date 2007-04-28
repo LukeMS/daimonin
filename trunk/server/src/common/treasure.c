@@ -1493,13 +1493,7 @@ int set_ring_bonus(object *op, int bonus, int level)
           break;
 
         case 9:
-          op->stats.food += bonus; /* hunger/sustenance */
-          if (bonus > 0 && (RANDOM() % 20) > 16)
-          {
-              op->value = (int) ((float) op->value * 1.2f);
-              op->stats.food++;
-          }
-          break;
+        /* was food/hunger */
 
         case 10:
           op->stats.ac += bonus;

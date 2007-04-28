@@ -56,7 +56,7 @@ int command_uskill(object *pl, char *params)
         return 0;
     }
     if (pl->type == PLAYER)
-        CONTR(pl)->praying = 0;
+        CONTR(pl)->rest_mode = 0;
     return use_skill(pl, params);
 }
 
@@ -70,7 +70,7 @@ int command_rskill(object *pl, char *params)
         return 0;
     }
     if (pl->type == PLAYER)
-        CONTR(pl)->praying = 0;
+        CONTR(pl)->rest_mode = 0;
     skillno = lookup_skill_by_name(params);
     if (skillno == -1)
     {
@@ -128,7 +128,7 @@ int command_egobind ( object *pl, char *params)
 int command_apply(object *op, char *params)
 {
     if (op->type == PLAYER)
-        CONTR(op)->praying = 0;
+        CONTR(op)->rest_mode = 0;
     if (!params)
     {
         player_apply_below(op);
@@ -325,7 +325,7 @@ int command_drop(object *op, char *params)
 int command_examine(object *op, char *params)
 {
     if (op->type == PLAYER)
-        CONTR(op)->praying = 0;
+        CONTR(op)->rest_mode = 0;
     if (!params)
     {
         object *tmp = op->below;
@@ -412,6 +412,7 @@ object * find_marked_object(object *op)
 char *examine_monster(object *op, object *tmp, char *buf, int flag)
 {
     object *mon = tmp->head ? tmp->head : tmp;
+    float   dps;
     char   *gender, *att;
     int     val, val2, i;
     char    buf2[MAX_BUF];
@@ -477,9 +478,26 @@ char *examine_monster(object *op, object *tmp, char *buf, int flag)
         }
     }
 
-    sprintf(buf2,"%s has a base damage of %d and hp of %d", att, mon->stats.dam, mon->stats.maxhp);
+    if (mon->type == PLAYER)
+        dps = ((float)CONTR(mon)->dps)/10.0f;
+    else /* calc it for a monster */
+    {
+        int tmp_dam=0;
+
+        dps = (float)mon->stats.dam;
+        if(mon->weapon_speed)
+            dps /= mon->weapon_speed;
+        for(i=0;i<=LAST_ATNR_ATTACK;i++)
+            tmp_dam += mon->attack[i];
+        tmp_dam += mon->attack[ATNR_INTERNAL];
+
+        if(tmp_dam)
+            dps *= ((float)tmp_dam)/100.0f;
+    }
+
+    sprintf(buf2,"%s attacks with %.1f dps and has %d hp", att, dps, mon->stats.maxhp);
     strcat(buf,buf2);
-    if(QUERY_FLAG(mon,FLAG_READY_SPELL))
+    if(QUERY_FLAG(mon,FLAG_READY_SPELL) || mon->type == PLAYER)
     {
         sprintf(buf2,",\nsp of %d and a sp recovery of %d", mon->stats.maxsp, mon->stats.Pow);
         strcat(buf,buf2);
@@ -647,7 +665,7 @@ char *examine(object *op, object *tmp, int flag)
     strcat(buf_out, "\n");
     buf[0] = '\0';
 
-    if (QUERY_FLAG(tmp, FLAG_MONSTER))
+    if (QUERY_FLAG(tmp, FLAG_MONSTER) || (tmp && tmp->type == PLAYER))
     {
         strcat(buf_out, describe_item(tmp->head ? tmp->head : tmp));
         strcat(buf_out, "\n");
@@ -898,17 +916,8 @@ char *examine(object *op, object *tmp, int flag)
             dirty_little_jump1 : floor = GET_MAP_OB_LAYER(op->map, op->x, op->y, 0);
             if (floor && floor->type == SHOP_FLOOR && tmp->type != MONEY)
             {
-                int charisma    = op->stats.Cha;  /* used for SK_BARGAINING modification */
-
-                /* this skill give us a charisma boost */
-                if (find_skill(op, SK_BARGAINING))
-                {
-                    charisma += 4;
-                    if (charisma > 30)
-                        charisma = 30;
-                }
                 sprintf(buf, "This shop will pay you %s (%0.1f%%).",
-                                     query_cost_string(tmp, op, F_SELL), 20.0f + 100.0f * cha_bonus[charisma]);
+                                     query_cost_string(tmp, op, F_SELL), 20.0f + 100.0f);
                 strcat(buf_out, buf);
             }
         }
@@ -1022,154 +1031,5 @@ void inventory(object *op, object *inv)
     if (!inv && op)
     {
         new_draw_info_format(NDI_UNIQUE, 0, op, "%-*s %-8s", 41, "Total weight :", query_weight(op));
-    }
-}
-
-
-int command_pickup(object *op, char *params)
-{
-    uint32  i;
-    char    putstring[128];
-
-    if (op->type != PLAYER)
-    {
-        LOG(llevDebug, "command_pickup: op not a player\n");
-        return 1;
-    }
-
-    if (!params)
-    {
-        /* if the new mode is used, just print the settings */
-        /* yes, a GOTO is ugly, but its simpple and should stay until this
-         * mode is cleanly integrated and the old one deprecated */
-        if (CONTR(op)->mode & PU_NEWMODE)
-        {
-            i = CONTR(op)->mode;
-            goto NEWPICKUP;
-        }
-        LOG(llevDebug, "command_pickup: !params\n");
-        set_pickup_mode(op, (CONTR(op)->mode > 6) ? 0 : CONTR(op)->mode + 1);
-        return 0;
-    }
-    if (params == NULL || !sscanf(params, "%ud", &i) || i < 0)
-    {
-        LOG(llevDebug, "command_pickup: params==NULL\n");
-        new_draw_info(NDI_UNIQUE, 0, op, "Usage: pickup <0-7> or <value_density> .");
-        return 1;
-    }
-    set_pickup_mode(op, i);
-
-    /* To me, all this output is meaningless - it certainly is not
-     * humanly readable, and if anything will create more questions/bugs
-     * as people will ask 'what does this strange message mean'.
-     */
-
-#if 0
-  sprintf(putstring,"command_pickup: set_pickup_mode\ndec %u, 0x%x", i, i);
-  new_draw_info(NDI_UNIQUE, 0,op,putstring);
-  sprintf(putstring,"0b");
-
-  for(j=0;j<32;j++)
-  {
-    strcat(putstring,((i>>(31-j))&0x01)?"1":"0");
-    if(!((j+1)%4))strcat(putstring," ");
-  }
-  new_draw_info(NDI_UNIQUE, 0,op,putstring);
-#endif
-
-    NEWPICKUP:
-#if 1
-    if (!(i & PU_NEWMODE))
-        return 1;
-
-    sprintf(putstring, "%d NEWMODE", i & PU_NEWMODE ? 1 : 0);
-    new_draw_info(NDI_UNIQUE, 0, op, putstring);
-    sprintf(putstring, "%d DEBUG", i & PU_DEBUG ? 1 : 0);
-    new_draw_info(NDI_UNIQUE, 0, op, putstring);
-    sprintf(putstring, "%d INHIBIT", i & PU_INHIBIT ? 1 : 0);
-    new_draw_info(NDI_UNIQUE, 0, op, putstring);
-    sprintf(putstring, "%d STOP", i & PU_STOP ? 1 : 0);
-    new_draw_info(NDI_UNIQUE, 0, op, putstring);
-
-    sprintf(putstring, "%d <= x pickup weight/value RATIO (0==off)", (i & PU_RATIO) * 5);
-    new_draw_info(NDI_UNIQUE, 0, op, putstring);
-
-    sprintf(putstring, "%d FOOD", i & PU_FOOD ? 1 : 0);
-    new_draw_info(NDI_UNIQUE, 0, op, putstring);
-    sprintf(putstring, "%d DRINK", i & PU_DRINK ? 1 : 0);
-    new_draw_info(NDI_UNIQUE, 0, op, putstring);
-    sprintf(putstring, "%d VALUABLES", i & PU_VALUABLES ? 1 : 0);
-    new_draw_info(NDI_UNIQUE, 0, op, putstring);
-
-    sprintf(putstring, "%d BOW", i & PU_BOW ? 1 : 0);
-    new_draw_info(NDI_UNIQUE, 0, op, putstring);
-    sprintf(putstring, "%d ARROW", i & PU_ARROW ? 1 : 0);
-    new_draw_info(NDI_UNIQUE, 0, op, putstring);
-
-    sprintf(putstring, "%d HELMET", i & PU_HELMET ? 1 : 0);
-    new_draw_info(NDI_UNIQUE, 0, op, putstring);
-    sprintf(putstring, "%d SHIELD", i & PU_SHIELD ? 1 : 0);
-    new_draw_info(NDI_UNIQUE, 0, op, putstring);
-    sprintf(putstring, "%d ARMOUR", i & PU_ARMOUR ? 1 : 0);
-    new_draw_info(NDI_UNIQUE, 0, op, putstring);
-
-    sprintf(putstring, "%d BOOTS", i & PU_BOOTS ? 1 : 0);
-    new_draw_info(NDI_UNIQUE, 0, op, putstring);
-    sprintf(putstring, "%d GLOVES", i & PU_GLOVES ? 1 : 0);
-    new_draw_info(NDI_UNIQUE, 0, op, putstring);
-    sprintf(putstring, "%d CLOAK", i & PU_CLOAK ? 1 : 0);
-    new_draw_info(NDI_UNIQUE, 0, op, putstring);
-    sprintf(putstring, "%d KEY", i & PU_KEY ? 1 : 0);
-    new_draw_info(NDI_UNIQUE, 0, op, putstring);
-
-    sprintf(putstring, "%d MISSILEWEAPON", i & PU_MISSILEWEAPON ? 1 : 0);
-    new_draw_info(NDI_UNIQUE, 0, op, putstring);
-    sprintf(putstring, "%d ALLWEAPON", i & PU_ALLWEAPON ? 1 : 0);
-    new_draw_info(NDI_UNIQUE, 0, op, putstring);
-    sprintf(putstring, "%d MAGICAL", i & PU_MAGICAL ? 1 : 0);
-    new_draw_info(NDI_UNIQUE, 0, op, putstring);
-    sprintf(putstring, "%d POTION", i & PU_POTION ? 1 : 0);
-    new_draw_info(NDI_UNIQUE, 0, op, putstring);
-
-    new_draw_info(NDI_UNIQUE, 0, op, "");
-#endif
-
-    return 1;
-}
-
-void set_pickup_mode(object *op, int i)
-{
-    if (op->type != PLAYER)
-    {
-        LOG(llevDebug, "set_pickup_mode: op not a player\n");
-        return;
-    }
-
-    switch (CONTR(op)->mode = i)
-    {
-        case 0:
-          new_draw_info(NDI_UNIQUE, 0, op, "Mode: Don't pick up.");
-          break;
-        case 1:
-          new_draw_info(NDI_UNIQUE, 0, op, "Mode: Pick up one item.");
-          break;
-        case 2:
-          new_draw_info(NDI_UNIQUE, 0, op, "Mode: Pick up one item and stop.");
-          break;
-        case 3:
-          new_draw_info(NDI_UNIQUE, 0, op, "Mode: Stop before picking up.");
-          break;
-        case 4:
-          new_draw_info(NDI_UNIQUE, 0, op, "Mode: Pick up all items.");
-          break;
-        case 5:
-          new_draw_info(NDI_UNIQUE, 0, op, "Mode: Pick up all items and stop.");
-          break;
-        case 6:
-          new_draw_info(NDI_UNIQUE, 0, op, "Mode: Pick up all magic items.");
-          break;
-        case 7:
-          new_draw_info(NDI_UNIQUE, 0, op, "Mode: Pick up all coins and jewels");
-          break;
     }
 }
