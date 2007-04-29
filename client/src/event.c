@@ -2563,7 +2563,18 @@ void check_menu_keys(int menu, int key)
                 reset_input_mode();
                 break;
             }
-
+            if (gui_interface_npc->keyword_selected)
+            {
+                gui_interface_send_command(0, gui_interface_npc->keywords[gui_interface_npc->keyword_selected-1]);
+                /*
+                send_command(gui_interface_npc->link[gui_interface_npc->link_selected-1].cmd, -1, SC_NORMAL);
+                draw_info_format(COLOR_WHITE, "Talking about: %s", gui_interface_npc->link[gui_interface_npc->link_selected-1].link);
+                */
+                gui_interface_npc->keyword_selected=0;
+                sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+                reset_input_mode();
+                break;
+            }
             /* disable quest tag (ugly code...) */
             if (gui_interface_npc->who.body[0] == 'Q')
                 break;
