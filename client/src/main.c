@@ -1450,6 +1450,11 @@ int main(int argc, char *argv[])
                                 && ((float) cpl.stats.hp / (float) cpl.stats.maxhp) * 100 <= options.warning_hp)
                             sprite_blt(Bitmaps[BITMAP_WARN_HP], 393, 298, NULL, NULL);
                     }
+                    else
+                    {
+                       if (options.warning_weight && ((float) cpl.real_weight / cpl.weight_limit) * 100 >= options.warning_weight)
+                            sprite_blt(Bitmaps[BITMAP_WARN_WEIGHT], 387, 285, NULL, NULL);
+                    }
                 }
                 show_quickslots(SKIN_POS_QUICKSLOT_X, SKIN_POS_QUICKSLOT_Y);
                 sprite_blt(Bitmaps[BITMAP_BORDER1], 0, 351, NULL, NULL);
