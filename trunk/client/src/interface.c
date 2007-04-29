@@ -1866,6 +1866,21 @@ void show_interface_npc(int mark)
                 else
                     StringBlt(ScreenSurface, &MediumFont, (gui_interface_npc->link[gui_interface_npc->link_selected-1].cmd)+cmdoff, box.x+3, box.y-1, COLOR_DK_NAVY, &box, NULL);
             }
+            if (gui_interface_npc->keyword_selected)
+            {
+                char cmd_tmp[128];
+                int tmp;
+                box.w=175;
+                if (StringWidthOffset(&MediumFont, gui_interface_npc->keywords[gui_interface_npc->keyword_selected-1], &tmp, 175))
+                {
+                    strncpy(cmd_tmp,gui_interface_npc->keywords[gui_interface_npc->keyword_selected-1],tmp-2);
+                    cmd_tmp[tmp-2]='\0';
+                    strcat(cmd_tmp,"...");
+                    StringBlt(ScreenSurface, &MediumFont, cmd_tmp, box.x+3, box.y-1, COLOR_DK_NAVY, &box, NULL);
+                }
+                else
+                    StringBlt(ScreenSurface, &MediumFont, gui_interface_npc->keywords[gui_interface_npc->keyword_selected-1], box.x+3, box.y-1, COLOR_DK_NAVY, &box, NULL);
+            }
         }
     }
 }
