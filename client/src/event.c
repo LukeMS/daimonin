@@ -2877,34 +2877,40 @@ void check_menu_keys(int menu, int key)
         }
 
         /* lets check we have a named button pressed or clicked inside the npc gui */
-        if (gui_npc_decline)
-        {
-            sound_play_effect(SOUND_SCROLL, 0, 0, 100);
-            if (gui_interface_npc->decline.command[0]!='\0')
-                gui_interface_send_command(1, gui_interface_npc->decline.command);
-            else
-                reset_gui_interface();
-        }
-        else if (gui_npc_accept)
+        if (gui_npc_accept)
         {
             sound_play_effect(SOUND_SCROLL, 0, 0, 100);
             if (gui_interface_npc->accept.command[0]!='\0')
             {
                 char cmd[1024];
-
-                /* if we have accept, we must check selected for possible slot selection */
+                /* check selected for possible slot selection */
                 if (gui_interface_npc->icon_select)
-                    sprintf(cmd,"%s #%d", gui_interface_npc->accept.command,gui_interface_npc->selected);
+                    sprintf(cmd, "%s #%d", gui_interface_npc->accept.command, gui_interface_npc->selected);
                 else
                     strcpy(cmd, gui_interface_npc->accept.command);
-
                 gui_interface_send_command(1, cmd);
             }
             else
                 reset_gui_interface();
         }
+        else if (gui_npc_decline)
+        {
+            sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+            if (gui_interface_npc->decline.command[0]!='\0')
+            {
+                char cmd[1024];
+                /* check selected for possible slot selection */
+                if (gui_interface_npc->icon_select)
+                    sprintf(cmd, "%s #%d", gui_interface_npc->decline.command, gui_interface_npc->selected);
+                else
+                    strcpy(cmd, gui_interface_npc->decline.command);
+                gui_interface_send_command(1, cmd);
+            }
+            else
+                reset_gui_interface();
+        }
+	break;
 
-        break;
     case MENU_OPTION:
         switch (key)
         {
