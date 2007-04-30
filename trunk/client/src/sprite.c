@@ -284,24 +284,29 @@ void CreateNewFont(_Sprite *sprite, _Font *font, int xlen, int ylen, int c32len)
         font->c[i].x = (i % 32) * (xlen + 1) + 1;
         font->c[i].y = (i / 32) * (ylen + 1) + 1;
         font->c[i].h = ylen;
-        font->c[i].w = xlen;
-        flag = 0;
-
-        while (1) /* better no error in font bitmap... or this will lock up*/
+	if (i == 32) // space
+            font->c[i].w = (c32len < 0) ? 0 - c32len : c32len;
+        else
         {
-            for (y = font->c[i].h - 1; y >= 0; y--)
+            font->c[i].w = xlen;
+            flag = 0;
+            while (1) /* better no error in font bitmap... or this will lock up*/
             {
-                if (GetSurfacePixel(sprite->bitmap, font->c[i].x + font->c[i].w - 1, font->c[i].y + y))
+                for (y = font->c[i].h - 1; y >= 0; y--)
                 {
-                    flag = 1;
-                    break;
+                    if (GetSurfacePixel(sprite->bitmap, font->c[i].x + font->c[i].w - 1, font->c[i].y + y))
+                    {
+                        flag = 1;
+                        break;
+                    }
                 }
+                if (flag)
+                    break;
+                font->c[i].w--;
             }
-            if (flag)
-                break;
-            font->c[i].w--;
         }
     }
+
     SDL_UnlockSurface(sprite->bitmap);
     font->char_offset = c32len;
 }
