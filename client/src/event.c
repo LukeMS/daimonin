@@ -1431,13 +1431,14 @@ int key_event(SDL_KeyboardEvent *key)
                 {
                     show_help_screen_new = FALSE;
                     draw_info("QUICK HELP REMINDER", COLOR_GREEN);
-                    draw_info("- you move with NUMPAD keys", COLOR_GREEN);
-                    draw_info("- you target NPC's with the 'S' key", COLOR_GREEN);
-                    draw_info("- you speak to NPC's with the 'T' key", COLOR_GREEN);
-                    draw_info("- hold SHIFT pressed for your IVENTORY", COLOR_GREEN);
-                    draw_info("- use cursor keys to select an item", COLOR_GREEN);
-                    draw_info("- use 'A' key to use an item or 'E' to examine it", COLOR_GREEN);
-                    draw_info("- visit the daimonin website: °www.daimonin.net°", COLOR_GREEN);
+                    draw_info("- move with the NUMPAD keys", COLOR_GREEN);
+                    draw_info("- target NPC's with the 'S' key", COLOR_GREEN);
+                    draw_info("- speak to NPC's with the 'T' key", COLOR_GREEN);
+                    draw_info("- hold SHIFT pressed for your INVENTORY", COLOR_GREEN);
+                    draw_info("- select an item with use cursor keys", COLOR_GREEN);
+                    draw_info("- apply (use) an item with the 'A' key", COLOR_GREEN);
+                    draw_info("- examine an item with the 'E' key", COLOR_GREEN);
+                    draw_info("- visit the daimonin website: |www.daimonin.net|", COLOR_GREEN);
                     break;
                 }
                 if (esc_menu_flag == FALSE)
