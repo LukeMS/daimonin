@@ -284,26 +284,21 @@ void CreateNewFont(_Sprite *sprite, _Font *font, int xlen, int ylen, int c32len)
         font->c[i].x = (i % 32) * (xlen + 1) + 1;
         font->c[i].y = (i / 32) * (ylen + 1) + 1;
         font->c[i].h = ylen;
-	if (i == 32) // space
-            font->c[i].w = (c32len < 0) ? 0 - c32len : c32len;
-        else
+        font->c[i].w = xlen;
+        flag = 0;
+        while (1) /* better no error in font bitmap... or this will lock up*/
         {
-            font->c[i].w = xlen;
-            flag = 0;
-            while (1) /* better no error in font bitmap... or this will lock up*/
+            for (y = font->c[i].h - 1; y >= 0; y--)
             {
-                for (y = font->c[i].h - 1; y >= 0; y--)
+                if (GetSurfacePixel(sprite->bitmap, font->c[i].x + font->c[i].w - 1, font->c[i].y + y))
                 {
-                    if (GetSurfacePixel(sprite->bitmap, font->c[i].x + font->c[i].w - 1, font->c[i].y + y))
-                    {
-                        flag = 1;
-                        break;
-                    }
-                }
-                if (flag)
+                    flag = 1;
                     break;
-                font->c[i].w--;
+                }
             }
+            if (flag)
+                break;
+            font->c[i].w--;
         }
     }
 
