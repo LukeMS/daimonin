@@ -466,7 +466,7 @@ static int interface_cmd_button(_gui_interface_button *head, char *data, int *po
                     return -1;
 
                 head->command[0]=0;
-                if (buf[0] != '/')
+                if (buf[0] != '/' && buf[0] != '\0')
                     strcpy(head->command, "/talk ");
                 strncat(head->command, buf, 121);
                 break;
