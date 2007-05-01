@@ -523,7 +523,7 @@ char *examine_monster(object *op, object *tmp, char *buf, int flag)
         strcat(buf,buf2);
     }
 
-    if(flag) /* we use this also for general arch description */
+    if(flag && (mon->stats.hp + 1)) /* we use this also for general arch description */
     {
         switch ((mon->stats.hp + 1) * 4 / (mon->stats.maxhp + 1))
         {
