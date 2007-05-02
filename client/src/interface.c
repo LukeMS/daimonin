@@ -196,7 +196,6 @@ static int interface_cmd_reward(_gui_interface_reward *head, char *data, int *po
     char *buf, c;
     int tmp;
     memset(head, 0, sizeof(_gui_interface_reward));
-    strcpy(head->title, "Description"); /* default title */
 
     (*pos)++;
     while ((c= *(data+*pos)) != '\0' && c  != 0)
@@ -1196,16 +1195,19 @@ int get_interface_line(int *element, int *index, char **keyword, int x, int y, i
     /* reward is also used as "objective" */
     if (gui_interface_npc->used_flag&GUI_INTERFACE_REWARD)
     {
-        yoff +=25;
-
-        for (i=0;i<gui_interface_npc->reward.line_count;i++)
+        if (gui_interface_npc->reward.body_text[0] != '\0')
         {
-            if (!strcmp(gui_interface_npc->reward.lines[i], "\0"))
-                yoff += 5;
-            else
-                yoff += 15;
+            yoff +=25;
+            for (i = 0; i < gui_interface_npc->reward.line_count; i++)
+            {
+                if (gui_interface_npc->reward.lines[i][0] != '\0')
+                    yoff += 15;
+                else
+                    yoff += 5;
+            }
         }
-
+        else if (gui_interface_npc->reward.title[0] != '\0')
+            yoff += 25;
         if (gui_interface_npc->reward.copper || gui_interface_npc->reward.gold ||
                 gui_interface_npc->reward.silver || gui_interface_npc->reward.mithril ||
                 gui_interface_npc->icon_count)
@@ -1306,14 +1308,19 @@ int precalc_interface_npc(void)
     /* reward is also used as "objective" */
     if (gui_interface_npc->used_flag&GUI_INTERFACE_REWARD)
     {
-        yoff += 25;
-        for (i = 0; i < gui_interface_npc->reward.line_count; i++)
+        if (gui_interface_npc->reward.body_text[0] != '\0')
         {
-            if (!strcmp(gui_interface_npc->reward.lines[i], "\0"))
-                yoff += 5;
-            else
-                yoff += 15;
+            yoff +=25;
+            for (i = 0; i < gui_interface_npc->reward.line_count; i++)
+            {
+                if (gui_interface_npc->reward.lines[i][0] != '\0')
+                    yoff += 15;
+                else
+                    yoff += 5;
+            }
         }
+        else if (gui_interface_npc->reward.title[0] != '\0')
+            yoff += 25;
         if (gui_interface_npc->reward.copper || gui_interface_npc->reward.gold ||
                 gui_interface_npc->reward.silver || gui_interface_npc->reward.mithril ||
                 gui_interface_npc->icon_count)
@@ -1461,22 +1468,34 @@ void show_interface_npc(int mark)
     /* reward is also used as "objective" */
     if (gui_interface_npc->used_flag&GUI_INTERFACE_REWARD)
     {
-        /*char xbuf[256];
-        sprintf(xbuf, "len: %d yoff: %d (%d)", gui_interface_npc->win_length,gui_interface_npc->yoff,INTERFACE_WINLEN_NPC-gui_interface_npc->win_length);
-        */
-        StringBlt(ScreenSurface, &BigFont, gui_interface_npc->reward.title, x+40, y+yoff, COLOR_HGOLD, NULL, NULL);
-        /*StringBlt(ScreenSurface, &BigFont, xbuf, x+40, y+yoff, COLOR_WHITE, NULL, NULL);*/
-        yoff+=25;
-
-        for (i=0;i<gui_interface_npc->reward.line_count;i++)
+        if (gui_interface_npc->reward.body_text[0] != '\0')
         {
-            if (!strcmp(gui_interface_npc->reward.lines[i], "\0"))
-                yoff += 5;
+            /*char xbuf[256];
+            sprintf(xbuf, "len: %d yoff: %d (%d)", gui_interface_npc->win_length,gui_interface_npc->yoff,INTERFACE_WINLEN_NPC-gui_interface_npc->win_length);
+            */
+            char buf[64];
+            if (gui_interface_npc->reward.title[0] != '\0')
+                strcpy(buf, gui_interface_npc->reward.title);
             else
+                strcpy(buf, "Description"); /* default title */
+            StringBlt(ScreenSurface, &BigFont, buf, x + 40, y + yoff, COLOR_HGOLD, NULL, NULL);
+            /*StringBlt(ScreenSurface, &BigFont, xbuf, x+40, y+yoff, COLOR_WHITE, NULL, NULL);*/
+            yoff += 25;
+            for (i=0;i<gui_interface_npc->reward.line_count;i++)
             {
-                StringBlt(ScreenSurface, &MediumFont, gui_interface_npc->reward.lines[i], x+40, y+yoff, COLOR_WHITE, NULL, NULL);
-                yoff += 15;
+                if (gui_interface_npc->reward.lines[i][0] != '\0')
+                {
+                    StringBlt(ScreenSurface, &MediumFont, gui_interface_npc->reward.lines[i], x+40, y+yoff, COLOR_WHITE, NULL, NULL);
+                    yoff += 15;
+                }
+                else
+                    yoff += 5;
             }
+        }
+        else if (gui_interface_npc->reward.title[0] != '\0')
+        {
+            StringBlt(ScreenSurface, &BigFont, gui_interface_npc->reward.title, x + 40, y + yoff, COLOR_HGOLD, NULL, NULL);
+            yoff += 25;
         }
 
         if (gui_interface_npc->reward.copper || gui_interface_npc->reward.gold ||
