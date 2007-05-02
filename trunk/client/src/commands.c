@@ -1127,6 +1127,18 @@ void InterfaceCmd(unsigned char *data, int len)
             cpl.menustatus = MENU_NPC;
             gui_interface_npc->startx = 400-(Bitmaps[BITMAP_NPC_INTERFACE]->bitmap->w / 2);
             gui_interface_npc->starty = 50;
+            if (gui_interface_npc->icon_count > 0)
+            {
+                int i;
+                for (i = 0; i <= gui_interface_npc->icon_count; i++)
+                {
+                    if (gui_interface_npc->icon[i].mode == 'S')
+                    {
+                        gui_interface_npc->selected = 1;
+                        break;
+                    }
+                }
+            }
             mb_clicked=0;
             /* Prefilled (and focused) textfield */
             if (gui_interface_npc->used_flag&GUI_INTERFACE_TEXTFIELD)

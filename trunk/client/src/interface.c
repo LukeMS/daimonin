@@ -412,6 +412,12 @@ static int interface_cmd_icon(_gui_interface_icon *head, char *data, int *pos)
                 strcpy(head->body_text, buf);
                 break;
 
+            case 'r': /* remove flag */
+                if (!(buf = get_parameter_string(data, pos, 0)))
+                    return -1;
+                head->remove = buf[0];
+                break;
+
             default:
                 return -1; /* error */
         }
@@ -1332,7 +1338,7 @@ int precalc_interface_npc(void)
 
         if (flag_s)
         {
-            yoff+=20;
+            yoff+=10;
             for (i=0;i<gui_interface_npc->icon_count;i++)
             {
                 if (gui_interface_npc->icon[i].mode == 's' )
@@ -1341,7 +1347,7 @@ int precalc_interface_npc(void)
         }
         if (gui_interface_npc->icon_select)
         {
-            yoff+=20;
+            yoff+=10;
             for (i=0;i<gui_interface_npc->icon_count;i++)
             {
 
@@ -1473,7 +1479,6 @@ void show_interface_npc(int mark)
             }
         }
 
-        /* only print the "Your rewards:" message when there is one */
         if (gui_interface_npc->reward.copper || gui_interface_npc->reward.gold ||
                 gui_interface_npc->reward.silver || gui_interface_npc->reward.mithril ||
                 gui_interface_npc->icon_count)
@@ -1483,35 +1488,61 @@ void show_interface_npc(int mark)
             if (gui_interface_npc->reward.line_count)
                 yoff+=5;
 
-            StringBlt(ScreenSurface, &MediumFont, "Your rewards:", x+40, y+yoff+5, COLOR_HGOLD, NULL, NULL);
-
             if (gui_interface_npc->reward.mithril)
             {
-                sprite_blt(Bitmaps[BITMAP_COIN_MITHRIL], x + 110, y + yoff+9, NULL, NULL);
-                sprintf(buf, "%d", gui_interface_npc->reward.mithril);
-                StringBlt(ScreenSurface, &SystemFont, buf, x+131, y+yoff+19, COLOR_BLACK, NULL, NULL);
-                StringBlt(ScreenSurface, &SystemFont, buf, x+130, y+yoff+18, COLOR_WHITE, NULL, NULL);
+                sprite_blt(Bitmaps[BITMAP_COIN_MITHRIL], x + 50, y + yoff+9, NULL, NULL);
+                if (gui_interface_npc->reward.mithril < 0)
+                {
+                    sprintf(buf, "%d", gui_interface_npc->reward.mithril);
+                    StringBlt(ScreenSurface, &SystemFontOut, buf, x+65, y+yoff+18, COLOR_RED, NULL, NULL);
+                }
+                else
+                {
+                    sprintf(buf, "+%d", gui_interface_npc->reward.mithril);
+                    StringBlt(ScreenSurface, &SystemFontOut, buf, x+65, y+yoff+18, COLOR_GREEN, NULL, NULL);
+                }
             }
             if (gui_interface_npc->reward.gold)
             {
-                sprite_blt(Bitmaps[BITMAP_COIN_GOLD], x + 140, y + yoff+6, NULL, NULL);
-                sprintf(buf, "%d", gui_interface_npc->reward.gold);
-                StringBlt(ScreenSurface, &SystemFont, buf, x+161, y+yoff+19, COLOR_BLACK, NULL, NULL);
-                StringBlt(ScreenSurface, &SystemFont, buf, x+160, y+yoff+18, COLOR_WHITE, NULL, NULL);
+                sprite_blt(Bitmaps[BITMAP_COIN_GOLD], x + 110, y + yoff+6, NULL, NULL);
+                if (gui_interface_npc->reward.gold < 0)
+                {
+                    sprintf(buf, "%d", gui_interface_npc->reward.gold);
+                    StringBlt(ScreenSurface, &SystemFontOut, buf, x+125, y+yoff+18, COLOR_RED, NULL, NULL);
+                }
+                else
+                {
+                    sprintf(buf, "+%d", gui_interface_npc->reward.gold);
+                    StringBlt(ScreenSurface, &SystemFontOut, buf, x+125, y+yoff+18, COLOR_GREEN, NULL, NULL);
+                }
             }
             if (gui_interface_npc->reward.silver)
             {
                 sprite_blt(Bitmaps[BITMAP_COIN_SILVER], x + 170, y + yoff+6, NULL, NULL);
-                sprintf(buf, "%d", gui_interface_npc->reward.silver);
-                StringBlt(ScreenSurface, &SystemFont, buf, x+191, y+yoff+19, COLOR_BLACK, NULL, NULL);
-                StringBlt(ScreenSurface, &SystemFont, buf, x+190, y+yoff+18, COLOR_WHITE, NULL, NULL);
+                if (gui_interface_npc->reward.silver < 0)
+                {
+                    sprintf(buf, "%d", gui_interface_npc->reward.silver);
+                    StringBlt(ScreenSurface, &SystemFontOut, buf, x+185, y+yoff+18, COLOR_RED, NULL, NULL);
+                }
+                else
+                {
+                    sprintf(buf, "+%d", gui_interface_npc->reward.silver);
+                    StringBlt(ScreenSurface, &SystemFontOut, buf, x+185, y+yoff+18, COLOR_GREEN, NULL, NULL);
+                }
             }
             if (gui_interface_npc->reward.copper)
             {
-                sprite_blt(Bitmaps[BITMAP_COIN_COPPER], x + 200, y + yoff+6, NULL, NULL);
-                sprintf(buf, "%d", gui_interface_npc->reward.copper);
-                StringBlt(ScreenSurface, &SystemFont, buf, x+221, y+yoff+19, COLOR_BLACK, NULL, NULL);
-                StringBlt(ScreenSurface, &SystemFont, buf, x+220, y+yoff+18, COLOR_WHITE, NULL, NULL);
+                sprite_blt(Bitmaps[BITMAP_COIN_COPPER], x + 230, y + yoff+6, NULL, NULL);
+                if (gui_interface_npc->reward.copper < 0)
+                {
+                    sprintf(buf, "%d", gui_interface_npc->reward.copper);
+                    StringBlt(ScreenSurface, &SystemFontOut, buf, x+245, y+yoff+18, COLOR_RED, NULL, NULL);
+                }
+                else
+                {
+                    sprintf(buf, "+%d", gui_interface_npc->reward.copper);
+                    StringBlt(ScreenSurface, &SystemFontOut, buf, x+245, y+yoff+18, COLOR_GREEN, NULL, NULL);
+                }
             }
             yoff+=30;
         }
@@ -1534,6 +1565,14 @@ void show_interface_npc(int mark)
 
             if (gui_interface_npc->icon[i].mode == 'G' )
             {
+                box.x = x + 38;
+                box.y = y + yoff - 2;
+                box.w = 36;
+                box.h = 36;
+                if (gui_interface_npc->icon[i].remove == 'R')
+                    SDL_FillRect(ScreenSurface, &box, sdl_dred);
+                else
+                    SDL_FillRect(ScreenSurface, &box, sdl_dgreen);
                 sprite_blt(Bitmaps[BITMAP_INVSLOT], x + 40, y + yoff, NULL, NULL);
 
                 if (gui_interface_npc->icon[i].element.face>0)
@@ -1553,12 +1592,20 @@ void show_interface_npc(int mark)
 
         if (flag_s)
         {
-            StringBlt(ScreenSurface, &MediumFont, "And one of these:", x+40, y+yoff, COLOR_WHITE, NULL, NULL);
-            yoff+=20;
+/*
+ *            StringBlt(ScreenSurface, &MediumFont, "And one of these:", x+40, y+yoff, COLOR_WHITE, NULL, NULL);
+ *            yoff+=20;
+ */
+            yoff += 15;
             for (i=0;i<gui_interface_npc->icon_count;i++)
             {
                 if (gui_interface_npc->icon[i].mode == 's' )
                 {
+                    box.x = x + 38;
+                    box.y = y + yoff - 2;
+                    box.w = 36;
+                    box.h = 36;
+                    SDL_FillRect(ScreenSurface, &box, sdl_gray1);
                     sprite_blt(Bitmaps[BITMAP_INVSLOT], x + 40, y + yoff, NULL, NULL);
 
                     if (gui_interface_npc->icon[i].element.face>0)
@@ -1580,9 +1627,12 @@ void show_interface_npc(int mark)
         if (gui_interface_npc->icon_select)
         {
             int t;
-
-            StringBlt(ScreenSurface, &MediumFont, "And one of these (select one):", x+40, y+yoff, COLOR_WHITE, NULL, NULL);
-            yoff+=20;
+/*
+ *             StringBlt(ScreenSurface, &MediumFont, "And one of these (select one):", x+40, y+yoff, COLOR_WHITE, NULL, NULL);
+ *             yoff+=20;
+ */
+            StringBlt(ScreenSurface, &Font6x3Out, "--- Select an item below ---", x + 120, y + yoff - 5, COLOR_GREEN, NULL, NULL);
+            yoff += 15;
             for (t=1,i=0;i<gui_interface_npc->icon_count;i++)
             {
                 if (gui_interface_npc->icon[i].mode == 'S' )
@@ -1593,7 +1643,10 @@ void show_interface_npc(int mark)
                         box.y=y+yoff-2;
                         box.w=36;
                         box.h=36;
-                        SDL_FillRect(ScreenSurface, &box, sdl_dgreen);
+                        if (gui_interface_npc->icon[i].remove == 'R')
+                            SDL_FillRect(ScreenSurface, &box, sdl_dred);
+                        else
+                            SDL_FillRect(ScreenSurface, &box, sdl_dgreen);
                     }
 
                     sprite_blt(Bitmaps[BITMAP_INVSLOT], x + 40, y + yoff, NULL, NULL);
@@ -1613,6 +1666,7 @@ void show_interface_npc(int mark)
                     t++;
                 }
             }
+            StringBlt(ScreenSurface, &Font6x3Out, "--- Select an item above ---", x + 120, y + yoff - 5, COLOR_GREEN, NULL, NULL);
         }
     yoff+=15;
     }
