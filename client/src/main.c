@@ -37,7 +37,7 @@ struct sockaddr_in  insock; /* Server's attributes */
 ClientSocket        csocket;
 int                 SocketStatusErrorNr;        /* if an socket error, this is it */
 
-Uint32              sdl_dgreen, sdl_gray1, sdl_gray2, sdl_gray3, sdl_gray4, sdl_blue1;
+Uint32              sdl_dgreen, sdl_dred, sdl_gray1, sdl_gray2, sdl_gray3, sdl_gray4, sdl_blue1;
 
 int                 music_global_fade   = FALSE;
 int                 show_help_screen;
@@ -1277,6 +1277,7 @@ int main(int argc, char *argv[])
 
     /* 60, 70*/
     sdl_dgreen = SDL_MapRGB(ScreenSurface->format, 0x00, 0x80, 0x00);
+    sdl_dred = SDL_MapRGB(ScreenSurface->format, 0x80, 0x00, 0x00);
     sdl_gray1 = SDL_MapRGB(ScreenSurface->format, 0x45, 0x45, 0x45);
     sdl_gray2 = SDL_MapRGB(ScreenSurface->format, 0x55, 0x55, 0x55);
 

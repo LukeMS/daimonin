@@ -99,6 +99,7 @@ typedef struct gui_interface_icon
     _Sprite *picture;      /* the real picture */
     char *second_line;
     char body_text[128]; /* head title */
+    char remove;
 }
 _gui_interface_icon;
 
