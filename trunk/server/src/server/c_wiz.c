@@ -1612,14 +1612,21 @@ int command_listplugins(object *op, char *params)
 /* than once at a time, or bad things could happen.                          */
 int command_loadplugin(object *op, char *params)
 {
-    char    buf[MAX_BUF];
+	char    buf[MAX_BUF];
 
-    strcpy(buf, DATADIR);
-    strcat(buf, "/../plugins/");
-    strcat(buf, params);
-    printf("Requested plugin file is %s\n", buf);
-    initOnePlugin(buf);
-    return 1;
+	if (CONTR(op)->gmaster_mode != GMASTER_MODE_DM)
+		return 1;
+
+	if (!params) /* fix crash bug with no paramaters -- Gramlath 3/30/2007 */
+	{
+		new_draw_info(NDI_UNIQUE, 0, op, "Usage: plugin [file name]");
+		return 1;
+	}
+
+	sprintf(buf, "%s/../plugins/%s", DATADIR, params);
+	printf("Requested plugin file is %s\n", buf);
+	initOnePlugin(buf);
+	return 1;
 }
 /* GROS */
 /* Unloads the given plugin. The DM specified the ID of the library to       */
@@ -1627,7 +1634,15 @@ int command_loadplugin(object *op, char *params)
 /* are not loaded.                                                           */
 int command_unloadplugin(object *op, char *params)
 {
-    removeOnePlugin(params);
-    return 1;
-}
+	if (CONTR(op)->gmaster_mode != GMASTER_MODE_DM)
+		return 1;
 
+	if (!params) /* fix crash bug with no paramaters -- Gramlath 3/30/2007 */
+	{
+		new_draw_info(NDI_UNIQUE, 0, op, "Usage: plugout [plugin name]");
+		return 1;
+	}
+
+	removeOnePlugin(params);
+	return 1;
+}
