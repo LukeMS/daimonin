@@ -103,6 +103,7 @@ typedef enum _sound_id
     SOUND_GET,
     SOUND_BOOK,
     SOUND_PAGE,
+    SOUND_HEARTBEAT,
     SOUND_MAX
 }
 _sound_id1;

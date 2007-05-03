@@ -60,7 +60,7 @@ static char        *sound_files[SOUND_MAX]              =
         "teleport.wav", "scroll.wav", "step1.wav" /* here starts client side sounds */, "step2.wav", "pray.wav",
         "console.wav", "click_fail.wav", "change1.wav", "warning_food.wav", "warning_drain.wav", "warning_statup.wav",
         "warning_statdown.wav", "warning_hp.wav", "warning_hp2.wav", "weapon_attack.wav", "weapon_hold.wav", "get.wav",
-        "book.wav", "page.wav"
+        "book.wav", "page.wav", "heartbeat.wav"
 
     };
 
