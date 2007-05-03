@@ -875,7 +875,7 @@ void load_bitmaps(void)
     CreateNewFont(Bitmaps[BITMAP_FONTMEDIUM], &MediumFont, 16, 16, 1);
     CreateNewFont(Bitmaps[BITMAP_FONT1OUT], &SystemFontOut, 16, 16, 1);
     CreateNewFont(Bitmaps[BITMAP_FONT6x3OUT], &Font6x3Out, 16, 16, -1);
-    CreateNewFont(Bitmaps[BITMAP_BIGFONT], &BigFont, 11, 16, 3);
+    CreateNewFont(Bitmaps[BITMAP_BIGFONT], &BigFont, 11, 16, 2);
 }
 
 Boolean load_bitmap(int index)
@@ -1047,8 +1047,41 @@ void open_input_mode(int maxchar)
 }
 
 
+static void play_heartbeat_sound(void)
+{
+    static uint32 firsttick = 0, lasttick = 0;
+    int interval, volume = 0;
+
+    // Interval (ticks) between heartbeats is determined by hp %
+    interval = 20 * (((float) cpl.stats.hp / (float) cpl.stats.maxhp) * 100);
+    // 100% hp = 1 beat per 2000 ticks = 30 bpm (mercenaries are fit!)
+    // 1% hp = 1 beat per 500 ticks = 120 bpm
+    if (interval > 2000) interval = 2000;
+    if (interval < 500)  interval = 500;
+
+    // If <interval> ticks have passed since the last beat, do another
+    if ((lasttick = SDL_GetTicks()) - firsttick >= interval)
+    {
+        // Volume depends on enemy's 'colour'
+             if (cpl.target_color == COLOR_GREEN)  volume = 50;
+        else if (cpl.target_color == COLOR_BLUE)   volume = 60;
+        else if (cpl.target_color == COLOR_YELLOW) volume = 70;
+        else if (cpl.target_color == COLOR_ORANGE) volume = 80;
+        else if (cpl.target_color == COLOR_RED)    volume = 90;
+        else                                       volume = 100;
+        sound_play_effect(SOUND_HEARTBEAT, 0, 0, volume);
+        firsttick = lasttick;
+    }
+}
+
+
 static void play_action_sounds(void)
 {
+    // Heartbeat only audible if player's hp% is below threshold set in options,
+    //  an enemy is targetted, player is in attack mode, and mob is not grey
+    if (((float) cpl.stats.hp / (float) cpl.stats.maxhp) * 100 < options.heartbeat &&
+        cpl.target_code == 1 && cpl.target_mode && cpl.target_color != COLOR_GREY)
+        play_heartbeat_sound();
     if (cpl.warn_hp)
     {
         if (cpl.warn_hp == 2) /* more as 10% damage */

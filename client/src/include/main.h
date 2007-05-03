@@ -191,6 +191,7 @@ typedef struct _options
     /* Look & Feel */
     int                     player_names;
     int                     show_target_self;
+    int                     heartbeat;
     int                     warning_hp;
     int                     warning_weight;
     Boolean                 gfx_statusbars;
