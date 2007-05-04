@@ -188,7 +188,7 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
             if (target->type == PLAYER)
                 new_draw_info_format(NDI_PURPLE, 0, target, "%s fumbles!", hitter->name);
             if (hitter->type == PLAYER)
-                new_draw_info(NDI_ORANGE, 0, hitter, "you fumble!");
+                new_draw_info(NDI_ORANGE, 0, hitter, "You fumble!");
 
             if (hitter->type == PLAYER)
                 play_sound_map(hitter->map, hitter->x, hitter->y, SOUND_MISS_PLAYER, SOUND_NORMAL);
