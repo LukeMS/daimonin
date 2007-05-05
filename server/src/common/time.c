@@ -172,8 +172,8 @@ void get_tod(timeofday_t *tod)
         tod->season = 4;
 
     tod->dayofweek_name = weekdays[tod->dayofweek];
-    tod->month_name = month_name[tod->dayofweek];
-    tod->season_name = season_name[tod->dayofweek];
+    tod->month_name = month_name[tod->month];
+    tod->season_name = season_name[tod->season];
 }
 
 void print_tod(object *op)
