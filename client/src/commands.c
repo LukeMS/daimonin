@@ -1134,7 +1134,7 @@ void InterfaceCmd(unsigned char *data, int len)
                 {
                     if (gui_interface_npc->icon[i].mode == 'S')
                     {
-                        gui_interface_npc->selected = 1;
+                        gui_interface_npc->selected = i+1;
                         break;
                     }
                 }
