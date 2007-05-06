@@ -1645,18 +1645,17 @@ void show_interface_npc(int mark)
 
         if (gui_interface_npc->icon_select)
         {
-            int t;
 /*
  *             StringBlt(ScreenSurface, &MediumFont, "And one of these (select one):", x+40, y+yoff, COLOR_WHITE, NULL, NULL);
  *             yoff+=20;
  */
             StringBlt(ScreenSurface, &Font6x3Out, "--- Select an item below ---", x + 120, y + yoff - 5, COLOR_GREEN, NULL, NULL);
             yoff += 15;
-            for (t=1,i=0;i<gui_interface_npc->icon_count;i++)
+            for (i=0;i<gui_interface_npc->icon_count;i++)
             {
                 if (gui_interface_npc->icon[i].mode == 'S' )
                 {
-                    if (gui_interface_npc->selected == t)
+                    if (gui_interface_npc->selected == i+1)
                     {
                         box.x=x+38;
                         box.y=y+yoff-2;
@@ -1682,7 +1681,6 @@ void show_interface_npc(int mark)
                     if (gui_interface_npc->icon[i].second_line)
                         StringBlt(ScreenSurface, &SystemFont, gui_interface_npc->icon[i].second_line, x+78, y+yoff, COLOR_WHITE, NULL, NULL);
                     yoff+=24;
-                    t++;
                 }
             }
             StringBlt(ScreenSurface, &Font6x3Out, "--- Select an item above ---", x + 120, y + yoff - 5, COLOR_GREEN, NULL, NULL);
@@ -2041,7 +2039,7 @@ void gui_interface_mouse(SDL_Event *e)
             if (element == GUI_INTERFACE_ICON)
             {
                 sound_play_effect(SOUND_GET, 0, 0, 100);
-                gui_interface_npc->selected = index;
+                gui_interface_npc->selected = index+1;
             }
             else if (element == GUI_INTERFACE_MESSAGE)
             {
