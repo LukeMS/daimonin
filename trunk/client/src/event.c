@@ -2805,15 +2805,17 @@ void check_menu_keys(int menu, int key)
                 do
                 {
                     if (++i >gui_interface_npc->icon_count)
+                    {
                         i = 1;
-                    if (gui_interface_npc->icon[i].mode == 'S' )
+                    }
+                    if (gui_interface_npc->icon[i-1].mode == 'S' )
                     {
                         gui_interface_npc->selected = i;
                         sound_play_effect(SOUND_GET, 0, 0, 100);
                         break;
                     }
                 }
-                while (i!=gui_interface_npc->selected);
+                while ((i!=gui_interface_npc->selected) && (i!=gui_interface_npc->icon_count));
             }
             break;
 
@@ -2825,14 +2827,14 @@ void check_menu_keys(int menu, int key)
                 {
                     if (--i < 1)
                         i = gui_interface_npc->icon_count;
-                    if (gui_interface_npc->icon[i].mode == 'S' )
+                    if (gui_interface_npc->icon[i-1].mode == 'S' )
                     {
                         gui_interface_npc->selected = i;
                         sound_play_effect(SOUND_GET, 0, 0, MENU_SOUND_VOL);
                         break;
                     }
                 }
-                while (i!=gui_interface_npc->selected);
+                while ((i!=gui_interface_npc->selected) && (i!=gui_interface_npc->icon_count));
             }
             break;
 
