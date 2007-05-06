@@ -1624,7 +1624,7 @@ void show_interface_npc(int mark)
                     box.y = y + yoff - 2;
                     box.w = 36;
                     box.h = 36;
-                    SDL_FillRect(ScreenSurface, &box, sdl_gray1);
+                    SDL_FillRect(ScreenSurface, &box, sdl_gray2);
                     sprite_blt(Bitmaps[BITMAP_INVSLOT], x + 40, y + yoff, NULL, NULL);
 
                     if (gui_interface_npc->icon[i].element.face>0)
