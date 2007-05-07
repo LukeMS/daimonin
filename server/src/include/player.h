@@ -207,8 +207,9 @@ typedef struct pl_player
 
 	int			        state;				/* player system state... PLAYING, LOGIN IN... */
     uint32              anim_enemy_count;   /* hm, this can be kicked now - i do it for a quick hack to
-                                                 * implement the animations. use is_melee_range() instead.
-    /* for the client: skill/weapon values for the distance weapon - calculated in fix_player() */
+                                             * implement the animations. use is_melee_range() instead.
+                                             * for the client: skill/weapon values for the distance weapon 
+                                             * - calculated in fix_player() */
 	int                 dist_dps;
 	int                 dist_last_dps;
 	int                 dist_wc;
