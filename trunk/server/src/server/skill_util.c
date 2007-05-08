@@ -471,7 +471,7 @@ int check_skill_to_apply(object *who, object *item)
               skill = SK_PIERCE_WEAP;
           break;
 		case ARROW:
-			if(item->sub_type1 >= 128)
+			if(item->sub_type1 > 127)
 			{
 				skill = SK_THROWING;
 				break;
