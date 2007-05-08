@@ -315,7 +315,7 @@ static const char          *GameObject_flags[NUM_FLAGS + 1 + 1] =
 /*****************************************************************************/
 static int GameObject_SetPosition(lua_State *L)
 {
-    int         x, y, flags, ret=0;
+    int         x, y, flags=0, ret=0;
     lua_object *self, *where;
     mapstruct *new_map = NULL;
 
