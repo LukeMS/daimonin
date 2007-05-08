@@ -764,8 +764,12 @@ void free_racelists()
     {
         next = list->next;
         FREE_ONLY_HASH(list->name);
+		/* we use free_objectlink_simple() because our race
+		 * list ius sorting the arch list object which are not used
+		 * as normal allocated objects 
+		 */
         for (tmp = list->member; tmp; tmp = tmp->next)
-            free_objectlink(tmp);
+			free_objectlink_simple(tmp);
         free(list);
     }
 }
