@@ -602,10 +602,14 @@ void removePlugins(void)
         int i;
         shstr *ids[32];
 
-        LOG(llevInfo, "Unloading plugins:\n");
+		for (i = 0; i != 32; ++i)
+			ids[i] = NULL;
+
+			LOG(llevInfo, "Unloading plugins:\n");
         for (i = 0; i != PlugNR; ++i)
             ids[i] = PlugList[i].id;
-        for (i = 0; i != 32; ++i)
+
+		for (i = 0; i != 32; ++i)
             if (ids[i] != NULL)
                 removeOnePlugin(ids[i]);
     }
