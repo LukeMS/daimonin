@@ -13,7 +13,7 @@ alive 1
 monster 1
 is_male 1
 is_neutral 1
-terrain_flag 1
+terrain_flag 3
 can_use_weapon 1
 int 10
 wis 6
