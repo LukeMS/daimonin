@@ -1049,7 +1049,7 @@ void open_input_mode(int maxchar)
 
 static void play_heartbeat_sound(void)
 {
-    static uint32 firsttick = 0, lasttick = 0;
+    static uint32 tick = 0;
     int interval, volume = 0;
 
     // Interval (ticks) between heartbeats is determined by hp %
@@ -1060,7 +1060,7 @@ static void play_heartbeat_sound(void)
     if (interval < 500)  interval = 500;
 
     // If <interval> ticks have passed since the last beat, do another
-    if ((lasttick = SDL_GetTicks()) - firsttick >= interval)
+    if (LastTick - tick >= interval)
     {
         // Volume depends on enemy's 'colour'
              if (cpl.target_color == COLOR_GREEN)  volume = 50;
@@ -1070,7 +1070,7 @@ static void play_heartbeat_sound(void)
         else if (cpl.target_color == COLOR_RED)    volume = 90;
         else                                       volume = 100;
         sound_play_effect(SOUND_HEARTBEAT, 0, 0, volume);
-        firsttick = lasttick;
+        tick = LastTick;
     }
 }
 
