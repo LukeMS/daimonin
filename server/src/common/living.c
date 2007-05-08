@@ -1138,7 +1138,7 @@ void fix_player(object *op)
 
 				/* throw/arrow dam & wc are dynmically calculated in the do_throw() function */
 			    case ARROW:
-					if(tmp->sub_type1 < 128) /* its amun, not a throw weapon */
+					if(tmp->sub_type1 < 127) /* its amun, not a throw weapon */
 					{
 						if(!set_player_equipment(pl, tmp, PLAYER_EQUIP_AMUN))
 							continue;
@@ -1587,14 +1587,6 @@ void fix_player(object *op)
 		if (skill_weapon)
 		{
 			pl->skill_weapon = skill_weapon;
-
-			/* lets set at last a default fighting skill applied */
-			if(applied_skill != skill_weapon)
-			{
-				SET_FLAG(op, FLAG_NO_FIX_PLAYER);
-				change_skill(op, pl->skill_weapon->stats.sp);
-				CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
-			}
 
 			op->weapon_speed = skill_weapon->weapon_speed;
 

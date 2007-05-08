@@ -2593,7 +2593,7 @@ int apply_special(object *who, object *op, int aflags)
                     sprintf(buf, "Your %s is broken!", query_name(op));
                 else
                     sprintf(buf, "You unready %s.", query_name(op));
-				if(op->type != ARROW || op->sub_type1 >= 128)
+				if(op->type != ARROW || op->sub_type1 > 127)
 				{
 					if (who->type != PLAYER)
 					{
@@ -2638,15 +2638,16 @@ int apply_special(object *who, object *op, int aflags)
     if (basic_flag == AP_UNAPPLY)
         return 0;
     i = 0;
+
     /* This goes through and checks to see if the player already has something
      * of that type applied - if so, unapply it.
      */
-    if (op->type == WAND || op->type == ROD || op->type == HORN || op->type == BOW || (op->type == ARROW && op->sub_type1 >128))
+    if (op->type == WAND || op->type == ROD || op->type == HORN || op->type == BOW || (op->type == ARROW && op->sub_type1 >127))
         tmp_flag = 1;
 
     for (tmp = who->inv; tmp != NULL; tmp = tmp->below)
     {
-        if ((tmp->type == op->type || (tmp_flag && (tmp->type == WAND || tmp->type == ROD || tmp->type == HORN || tmp->type == BOW || (tmp->type == ARROW && tmp->sub_type1 >128))))
+        if ((tmp->type == op->type || (tmp_flag && (tmp->type == WAND || tmp->type == ROD || tmp->type == HORN || tmp->type == BOW || (tmp->type == ARROW && tmp->sub_type1 >127))))
                 && QUERY_FLAG(tmp, FLAG_APPLIED) && tmp != op)
         {
             if (tmp->type == RING && !i)
@@ -2827,7 +2828,7 @@ int apply_special(object *who, object *op, int aflags)
 			* as throw item we handle it like a bow/wand/etc...
 			* as normal arrow special - we test first we have applied the right distance weapon for it
 			*/
-			if(op->sub_type1 <= 128) /* its amunition */
+			if(op->sub_type1 < 127) /* its amunition */
 			{
 				/* we want apply amun. Lets only allow to apply amun fitting the applied bow! */
 				if(!pl->equipment[PLAYER_EQUIP_BOW] || pl->equipment[PLAYER_EQUIP_BOW]->type != BOW 
