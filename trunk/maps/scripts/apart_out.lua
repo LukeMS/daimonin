@@ -4,6 +4,10 @@ local me = event.me
 local pinfo = ac:GetPlayerInfo("APARTMENT_INFO")
 local path
 
+-- 7 may 2007 added yield as work around for intermittent apartment access and exit - tehill
+event.returnvalue = 1
+coroutine.yield(.05)
+
 if pinfo == nil then
 	ac:SetPosition(game:ReadyMap("/emergency"), -1, -1)
 else
