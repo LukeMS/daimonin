@@ -31,8 +31,6 @@ local function topicDefault()
     ib:AddLink("Cure Poison", "cast poison")
     ib:AddLink("Remove Curse from items", "cast curse")
     ib:AddLink("Remove Damnation from items", "cast damn")
-    ib:AddLink("", "")
-    ib:AddLink("Please share some food", "food")
     pl:Interface(1, ib:Build())
 end
 
@@ -43,16 +41,6 @@ local function topicExplain()
     ib:AddMsg("Deathsick is a stronger form of depletion.\nEverytime you die stats are depleted by death sickness.")
     ib:SetButton("Back", "hi")
     pl:Interface(1, ib:Build())
-end
-
-local function topicFood()
-    if pl.food < 150 then
-        pl.food = 500
-        me:SayTo(pl, "\nYour stomach is filled again.")
-    else
-        me:SayTo(pl, "\nYou don't look very hungry.")
-    end
-    topicDefault()
 end
 
 local function topicCast(what)
@@ -141,10 +129,9 @@ end
 tl = TopicList()
 tl:AddGreeting(nil, topicDefault)
 tl:SetDefault(topicDefault)
-tl:AddTopics("explain", topicExplain) 
-tl:AddTopics("food", topicFood) 
-tl:AddTopics("cast (.*)", topicCast) 
-tl:AddTopics("docast (.*)", topicDoCast) 
-tl:AddTopics("teach healing", topicTeachHealing) 
-tl:AddTopics("doteach healing", topicDoTeachHealing) 
+tl:AddTopics("explain", topicExplain)
+tl:AddTopics("cast (.*)", topicCast)
+tl:AddTopics("docast (.*)", topicDoCast)
+tl:AddTopics("teach healing", topicTeachHealing)
+tl:AddTopics("doteach healing", topicDoTeachHealing)
 tl:CheckMessage(event)
