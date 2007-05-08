@@ -304,7 +304,7 @@ void sound_play_music(char *fname, int vol, int fade, int loop, int flags, int m
         vol2 = 100;
 
     /* same sound? */
-    if (!strcmp(fname,music.name))
+    if (music.data && !strcmp(fname, music.name))
     {
         music.fade = fade;
         music.loop = loop;
@@ -323,7 +323,7 @@ void sound_play_music(char *fname, int vol, int fade, int loop, int flags, int m
         music_new.fade = fade;
         music_new.vol = vol;
         strcpy(music_new.name, fname);
-        sound_fadeout_music(music_new.flag);        /* lets fade out old music */
+        sound_fadeout_music(music.flag);        /* lets fade out old music */
         /* the music_new will be fired in the music hook function after fadeout */
     }
     else /* no playing music, we fire our new music up */
