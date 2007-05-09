@@ -92,7 +92,7 @@ int command_egobind ( object *pl, char *params)
 
     if(!mark)
     {
-        new_draw_info(NDI_UNIQUE, 0,pl, "MARK first the ego item - then type: /egobind ");
+        new_draw_info(NDI_UNIQUE, 0,pl, "First MARK an ego item, then type: /egobind ");
         return 0;
     }
 
@@ -117,7 +117,7 @@ int command_egobind ( object *pl, char *params)
         return 0;
     }
 
-    new_draw_info_format(NDI_UNIQUE, 0,pl, "You has bound the %s!", query_name(mark));
+    new_draw_info_format(NDI_UNIQUE, 0,pl, "You have bound the %s!", query_name(mark));
     create_ego_item(mark, pl->name, EGO_ITEM_BOUND_PLAYER);
     esrv_update_item (UPD_NAME, pl, mark);
     play_sound_player_only (CONTR(pl), SOUND_LEARN_SPELL, SOUND_NORMAL, 0, 0);
