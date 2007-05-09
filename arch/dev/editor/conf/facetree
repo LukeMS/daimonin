@@ -2598,6 +2598,7 @@
 /intern/player/dwarf.382
 /intern/player/dwarf.383
 /intern/player/dwarf.m.f.r.111
+/intern/player/dwarf.m.f.r.112
 /mobs/dwarves/fighter/dwarf_fighter.131
 /mobs/dwarves/fighter/dwarf_fighter.132
 /mobs/dwarves/fighter/dwarf_fighter.133
@@ -3995,6 +3996,7 @@
 /items/weapon/hand_pole/pierce/guisarme.101
 /items/weapon/hand_pole/cleave/halberd.101
 /intern/player/halfelf_f.f.r.111
+/intern/player/halfelf_f.f.r.112
 /intern/player/halfelf_f.fe.111
 /intern/player/halfelf_f.fe.112
 /intern/player/halfelf_f.fe.113
@@ -4229,6 +4231,7 @@
 /mobs/animals/horses/horse_white.151
 /mobs/animals/horses/horse_white.152
 /intern/player/human_f.f.r.111
+/intern/player/human_f.f.r.112
 /intern/player/human_f.fe.111
 /intern/player/human_f.fe.112
 /intern/player/human_f.fe.113
@@ -4302,6 +4305,7 @@
 /intern/player/human_f.mw.112
 /intern/player/human_f.mw.113
 /intern/player/human_m.f.r.111
+/intern/player/human_m.f.r.112
 /intern/player/human_m.fe.111
 /intern/player/human_m.fe.112
 /intern/player/human_m.fe.113
@@ -6156,6 +6160,7 @@
 /walls/ship_rail.116
 /walls/ship_rail.117
 /walls/ship_rail.118
+/items/armour/mail/shirt.101
 /items/weapon/hand_1h/impact/shootingstar.101
 /floors/shop/shop_def.111
 /floors/shop/shop_empty.111

@@ -23,6 +23,7 @@ is_animated 1
 anim_speed .9
 speed 1
 type 79
+can_stack 1
 layer 3
 material_real -1
 material 57

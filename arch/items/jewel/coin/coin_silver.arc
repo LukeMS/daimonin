@@ -3,6 +3,7 @@ name coin
 identified 1
 layer 3
 race gold and jewels
+can_stack 1
 face silvercoin.101
 nrof 1
 type 36

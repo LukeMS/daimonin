@@ -8,6 +8,7 @@ last_grace 15
 last_sp 7
 weight 100
 dam 50
+can_stack 1
 wc 35
 type 13
 sub_type 132

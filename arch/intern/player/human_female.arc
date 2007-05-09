@@ -16,9 +16,9 @@ face human_f.isw.111
 anim
 facings 25
 human_f.f.r.111
+human_f.f.r.112
 human_f.f.r.111
-human_f.f.r.111
-human_f.f.r.111
+human_f.f.r.112
 human_f.ine.111
 human_f.ine.112
 human_f.ine.113

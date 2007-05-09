@@ -8,6 +8,7 @@ dam 32
 wc 45
 last_grace 10
 last_sp 7
+can_stack 1
 nrof 1
 type 13
 sub_type 129
@@ -30,5 +31,5 @@ is_thrown 1
 material 2
 material_real 65
 weight 20
-value 1
+value 2
 end

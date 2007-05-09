@@ -10,6 +10,7 @@ large_candle.101
 large_candle.102
 large_candle.103
 mina
+can_stack 1
 is_animated 0
 anim_speed 4
 speed 0.15

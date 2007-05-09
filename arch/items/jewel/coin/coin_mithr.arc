@@ -4,6 +4,7 @@ identified 1
 layer 3
 race gold and jewels
 face mit_coin.101
+can_stack 1
 nrof 1
 type 36
 item_quality 100

@@ -4,6 +4,7 @@ race gold and jewels
 layer 3
 type 60
 face gem_clear.101
+can_stack 1
 nrof 1
 value 3
 item_quality 100

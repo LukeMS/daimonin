@@ -8,6 +8,7 @@ dam 10
 last_grace 10
 wc 40
 last_sp 7
+can_stack 1
 type 13
 sub_type 132
 nrof 1

@@ -4,6 +4,7 @@ nrof 1
 face skin.101
 item_quality 100
 item_condition 100
+can_stack 1
 material 32
 layer 3
 type 72

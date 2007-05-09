@@ -6,6 +6,7 @@ face nugget_silver_s.101
 type 117
 nrof 1
 material 1024
+can_stack 1
 material_real 641
 item_quality 100
 item_condition 100

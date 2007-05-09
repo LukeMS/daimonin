@@ -713,7 +713,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_READY_BOW      60 /* mob or player has a bow readied */
 #define FLAG_XRAYS          61 /* X-ray vision */
 #define FLAG_NO_APPLY       62 /* Avoids step_on/fly_on to this object */
-/* flag 63 is free (was FLAG_IS_FLOOR) */
+#define FLAG_CAN_STACK		63 /* a clean flag to mark stackable items */
 
 /* Start of values in flags[2] */
 #define FLAG_LIFESAVE       64 /* Saves a players' life once, then destr. */

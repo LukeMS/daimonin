@@ -268,7 +268,7 @@ static const char          *GameObject_flags[NUM_FLAGS + 1 + 1] =
     "?f_feared", "f_is_blind", "f_no_drop", /* 50 */
     "f_reg_f", "f_has_ready_spell", "f_surrendered", "?f_rooted", "?f_slowed",
     "f_can_use_armour", "f_can_use_weapon", "f_can_use_ring", NULL /* unused */, "f_has_ready_bow",       /* 60 */
-    "f_xrays", "?f_no_apply", NULL, "f_lifesave", "f_is_magical", "f_alive", "f_stand_still", "f_random_move",
+    "f_xrays", "?f_no_apply", "f_can_stack", "f_lifesave", "f_is_magical", "f_alive", "f_stand_still", "f_random_move",
     "f_only_attack", "?f_wiz", /* 70 */
     "f_stealth", "?f_wizpass", "?f_is_linked", "f_cursed", "f_damned", "f_see_anywhere", "f_known_magical", "f_known_cursed",
     "f_can_use_skill", "f_is_thrown",               /* 80 */

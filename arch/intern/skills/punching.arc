@@ -3,7 +3,7 @@ name punching
 weapon_speed 4.0
 face skill.101
 attack_impact 100
-dam 50
+dam 38
 item_quality 100
 item_condition 100
 nrof 1

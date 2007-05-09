@@ -4,6 +4,7 @@ other_arch candle2_large
 other_arch candle3_large
 face large1_candle1.101
 blocksview 1
+can_stack 1
 layer 3
 type 74
 no_pick 1
@@ -28,6 +29,7 @@ Object candle2_large
 name large candle
 face large2_candle1.101
 other_arch candle3_large
+can_stack 1
 blocksview 1
 layer 3
 type 74
@@ -51,6 +53,7 @@ end
 Object candle3_large
 name large candle
 face large3_candle1.101
+can_stack 1
 blocksview 1
 layer 3
 type 74

@@ -16,9 +16,9 @@ face halfelf_f.isw.111
 anim
 facings 25
 halfelf_f.f.r.111
+halfelf_f.f.r.112
 halfelf_f.f.r.111
-halfelf_f.f.r.111
-halfelf_f.f.r.111
+halfelf_f.f.r.112
 halfelf_f.ine.111
 halfelf_f.ine.112
 halfelf_f.ine.113

@@ -6,6 +6,7 @@ item_quality 100
 item_condition 100
 face dirt.101
 layer 3
+can_stack 1
 type 73
 material 64
 is_dust 1

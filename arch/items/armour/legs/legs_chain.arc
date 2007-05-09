@@ -3,7 +3,7 @@ name chain legs
 layer 3
 face legs_chain.101
 type 143
-ac 1
+ac 2
 last_heal 3
 item_level 5
 resist_impact 8

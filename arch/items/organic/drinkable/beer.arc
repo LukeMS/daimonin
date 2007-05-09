@@ -2,6 +2,7 @@ Object beer
 name beer
 face beer.101
 last_eat 10
+can_stack 1
 hp 20
 sp 3
 grace 2

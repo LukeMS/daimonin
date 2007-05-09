@@ -5,6 +5,7 @@ hp 10
 sp 10
 grace 10
 layer 3
+can_stack 1
 face figpud2.101
 anim
 figpud2.101

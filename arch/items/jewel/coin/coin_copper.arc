@@ -4,6 +4,7 @@ race gold and jewels
 layer 3
 identified 1
 face coppercoin.101
+can_stack 1
 nrof 1
 type 36
 item_quality 100

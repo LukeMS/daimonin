@@ -197,6 +197,11 @@
     appears lit up on dark maps. &lt;glow radius&gt; can be a value
     between 0 and 9, the higher, the more light does the object emmit.
   </attribute>
+  <attribute arch="can_stack" editor="stackable" type="bool">
+    If set, the item can be stacked. Careful, don't use on
+    rings or other applyable items, it will lead to side effects.
+    Arrows are designed to be used as stack.
+  </attribute>
   <attribute arch="no_pick" editor="non-pickable" type="bool">
     If set, the object cannot be picked up (Neither by players nor monsters).
   </attribute>

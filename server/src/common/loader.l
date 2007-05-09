@@ -329,6 +329,7 @@ op->ox= op->x;
 op->oy= op->y;
 #endif
 }
+^can_stack{S}				SET_OR_CLEAR_FLAG(op, FLAG_CAN_STACK, IVAL);
 ^nrof{S}					op->nrof= atol(yval());
 ^level{S}					op->level = IVAL;
 ^direction{S}				op->facing=op->anim_last_facing =op->direction = (IVAL%9);
@@ -930,7 +931,7 @@ NULL /*is_removed*/,"been_applied", NULL /* internal flag: HAS_MOVED */, "treasu
  "reg_f", "has_ready_spell", "surrendered", "rooted",
  "slowed", "can_use_armour", "can_use_weapon",
 "can_use_ring", NULL /* in_activlist*/, "has_ready_bow",		/* 60 */
-"xrays", NULL /*no_apply*/, NULL /**/, "lifesave", "is_magical", "alive",
+"xrays", NULL /*no_apply*/, "can_stack", "lifesave", "is_magical", "alive",
 "stand_still", "random_move", "only_attack", "wiz",	/* 70 */
  "stealth", NULL /*wizpass*/, NULL /*linked*/, "cursed", "damned",
 "see_anywhere", "known_magical", "known_cursed", "can_open_door", "is_thrown",				/* 80 */

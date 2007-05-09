@@ -7,6 +7,7 @@ sp 3
 grace 2
 nrof 1
 layer 3
+can_stack 1
 type 6
 speed_left 0.002
 material 32

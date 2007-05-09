@@ -669,7 +669,7 @@ char *examine(object *op, object *tmp, int flag)
     {
         strcat(buf_out, describe_item(tmp->head ? tmp->head : tmp));
         strcat(buf_out, "\n");
-        examine_monster(op, tmp, buf_out, flag);
+        examine_monster(NULL, tmp, buf_out, flag);
     }
     /* we don't double use the item_xxx arch commands, so they are always valid */
     else if (QUERY_FLAG(tmp, FLAG_IDENTIFIED))
@@ -915,9 +915,11 @@ char *examine(object *op, object *tmp, int flag)
             object *floor;
             dirty_little_jump1 : floor = GET_MAP_OB_LAYER(op->map, op->x, op->y, 0);
             if (floor && floor->type == SHOP_FLOOR && tmp->type != MONEY)
-            {
-                sprintf(buf, "This shop will pay you %s (%0.1f%%).",
-                                     query_cost_string(tmp, op, F_SELL), 20.0f + 100.0f);
+            {/* disabled CHA effect for b4
+				sprintf(buf, "This shop will pay you %s (%0.1f%%).",
+					query_cost_string(tmp, op, F_SELL), 20.0f + 100.0f);
+			  */
+				sprintf(buf, "This shop will pay you %s.", query_cost_string(tmp, op, F_SELL));
                 strcat(buf_out, buf);
             }
         }

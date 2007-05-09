@@ -5315,7 +5315,7 @@ mina
 anim dwarf_female
 facings 25
 dwarf.m.f.r.111
-dwarf.m.f.r.111
+dwarf.m.f.r.112
 dwarf.m.f.r.111
 dwarf.181
 dwarf.182
@@ -5471,7 +5471,7 @@ mina
 anim dwarf_male
 facings 25
 dwarf.m.f.r.111
-dwarf.m.f.r.111
+dwarf.m.f.r.112
 dwarf.m.f.r.111
 dwarf.181
 dwarf.182
@@ -7991,9 +7991,9 @@ mina
 anim half_elf_female
 facings 25
 halfelf_f.f.r.111
+halfelf_f.f.r.112
 halfelf_f.f.r.111
-halfelf_f.f.r.111
-halfelf_f.f.r.111
+halfelf_f.f.r.112
 halfelf_f.ine.111
 halfelf_f.ine.112
 halfelf_f.ine.113
@@ -8094,9 +8094,9 @@ mina
 anim half_elf_male
 facings 25
 human_m.f.r.111
+human_m.f.r.112
 human_m.f.r.111
-human_m.f.r.111
-human_m.f.r.111
+human_m.f.r.112
 human_m.ine.111
 human_m.ine.112
 human_m.ine.113
@@ -8543,9 +8543,9 @@ mina
 anim human_female
 facings 25
 human_f.f.r.111
+human_f.f.r.112
 human_f.f.r.111
-human_f.f.r.111
-human_f.f.r.111
+human_f.f.r.112
 human_f.ine.111
 human_f.ine.112
 human_f.ine.113
@@ -8646,9 +8646,9 @@ mina
 anim human_male
 facings 25
 human_m.f.r.111
+human_m.f.r.112
 human_m.f.r.111
-human_m.f.r.111
-human_m.f.r.111
+human_m.f.r.112
 human_m.ine.111
 human_m.ine.112
 human_m.ine.113

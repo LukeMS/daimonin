@@ -4,6 +4,7 @@ race gold and jewels
 layer 3
 type 116
 face jewel_clear.101
+can_stack 1
 item_quality 100
 item_condition 100
 material_real 129

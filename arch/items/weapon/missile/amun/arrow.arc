@@ -7,6 +7,7 @@ last_sp 5
 attack_pierce 100
 type 13
 sub_type 1
+can_stack 1
 anim
 facings 9
 arrow.101
@@ -24,7 +25,7 @@ is_animated 0
 is_turnable 1
 nrof 1
 weight 15
-value 20
+value 1
 material 16
 material_real 257
 end

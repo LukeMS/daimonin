@@ -3,6 +3,7 @@ name tootsie roll
 face tootsie_roll.101
 last_eat 10
 hp 20
+can_stack 1
 sp 3
 grace 2
 nrof 1

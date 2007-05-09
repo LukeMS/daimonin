@@ -6,6 +6,7 @@ attack_cleave 100
 last_sp 4
 type 13
 sub_type 2
+can_stack 1
 face bolt.101
 anim
 facings 9
@@ -24,7 +25,7 @@ is_animated 0
 is_turnable 1
 nrof 1
 weight 17
-value 20
+value 1
 material 2
 material_real 65
 end

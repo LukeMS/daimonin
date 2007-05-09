@@ -1,6 +1,7 @@
 Object bread
 face bread01.101
 last_eat 10
+can_stack 1
 hp 20
 sp 3
 grace 2
@@ -16,6 +17,7 @@ weight 125
 end
 Object bread1
 name bread
+can_stack 1
 face bread02.101
 last_eat 10
 hp 20

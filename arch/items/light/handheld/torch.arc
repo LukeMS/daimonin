@@ -2,6 +2,8 @@ Object torch
 name torch
 other_arch torch_burnt
 face torch_unlit.101
+can_stack 1
+nrof 1
 layer 3
 type 74
 anim
@@ -23,6 +25,7 @@ Object torch_burnt
 name burnt out torch
 layer 3
 face torch_burnt.101
+can_stack 1
 type 74
 sub_type 2
 material 144

@@ -67,7 +67,11 @@ end
 # PLAYER
 #
 treasure player_human_male
-arch padded_armour
+arch shirt
+magic_chance 0
+artifact_chance 0
+more
+arch pants
 magic_chance 0
 artifact_chance 0
 more
@@ -91,8 +95,6 @@ more
 list player_starting_wealth
 magic_chance 0
 artifact_chance 0
-more
-arch skill_praying
 more
 arch skill_use_magic_item
 more
@@ -112,7 +114,11 @@ more
 arch guild_force
 end
 treasure player_human_female
-arch padded_armour
+arch dress
+magic_chance 0
+artifact_chance 0
+more
+arch pants
 magic_chance 0
 artifact_chance 0
 more
@@ -136,8 +142,6 @@ more
 list player_starting_wealth
 magic_chance 0
 artifact_chance 0
-more
-arch skill_praying
 more
 arch skill_use_magic_item
 more
@@ -157,7 +161,11 @@ more
 arch guild_force
 end
 treasure player_half_elf_male
-arch padded_armour
+arch shirt
+magic_chance 0
+artifact_chance 0
+more
+arch pants
 magic_chance 0
 artifact_chance 0
 more
@@ -181,8 +189,6 @@ more
 list player_starting_wealth
 magic_chance 0
 artifact_chance 0
-more
-arch skill_praying
 more
 arch skill_use_magic_item
 more
@@ -202,7 +208,11 @@ more
 arch guild_force
 end
 treasure player_half_elf_female
-arch padded_armour
+arch dress
+magic_chance 0
+artifact_chance 0
+more
+arch pants
 magic_chance 0
 artifact_chance 0
 more
@@ -226,8 +236,6 @@ more
 list player_starting_wealth
 magic_chance 0
 artifact_chance 0
-more
-arch skill_praying
 more
 arch skill_use_magic_item
 more
@@ -247,7 +255,11 @@ more
 arch guild_force
 end
 treasure player_dwarf_male
-arch padded_armour
+arch shirt
+magic_chance 0
+artifact_chance 0
+more
+arch pants
 magic_chance 0
 artifact_chance 0
 more
@@ -271,8 +283,6 @@ more
 list player_starting_wealth
 magic_chance 0
 artifact_chance 0
-more
-arch skill_praying
 more
 arch skill_use_magic_item
 more
@@ -292,7 +302,11 @@ more
 arch guild_force
 end
 treasure player_dwarf_female
-arch padded_armour
+arch dress
+magic_chance 0
+artifact_chance 0
+more
+arch pants
 magic_chance 0
 artifact_chance 0
 more
@@ -316,8 +330,6 @@ more
 list player_starting_wealth
 magic_chance 0
 artifact_chance 0
-more
-arch skill_praying
 more
 arch skill_use_magic_item
 more

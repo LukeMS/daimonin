@@ -6,6 +6,7 @@ face hammer_2.101
 attack_impact 100
 dam 32
 wc 45
+can_stack 1
 last_grace 10
 last_sp 7
 nrof 1
@@ -30,5 +31,5 @@ is_thrown 1
 material 80
 material_real 65
 weight 22
-value 35
+value 2
 end
