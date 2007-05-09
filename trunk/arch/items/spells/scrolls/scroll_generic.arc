@@ -6,6 +6,7 @@ inv_face inv_s_generic.101
 layer 3
 nrof 1
 type 111
+can_stack 1
 material 1
 weight 20
 value 3

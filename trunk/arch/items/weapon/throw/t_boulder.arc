@@ -6,6 +6,7 @@ face t_boulder.101
 attack_impact 100
 last_sp 7
 dam 30
+can_stack 1
 wc 45
 last_grace 14
 type 13

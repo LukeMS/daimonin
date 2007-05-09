@@ -3,6 +3,7 @@ name candy
 face candy1.101
 last_eat 10
 hp 20
+can_stack 1
 sp 3
 grace 2
 nrof 1
@@ -19,6 +20,7 @@ name candy
 face candy2.101
 last_eat 10
 hp 20
+can_stack 1
 sp 3
 grace 2
 nrof 1
@@ -36,6 +38,7 @@ face candy3.101
 last_eat 10
 hp 20
 sp 3
+can_stack 1
 grace 2
 nrof 1
 layer 3
@@ -49,6 +52,7 @@ end
 Object candy_4
 name candy
 face candy4.101
+can_stack 1
 food 70
 item_quality 100
 item_condition 100

@@ -8,6 +8,7 @@ con -5
 int -5
 cha -6
 level 1
+can_stack 1
 last_heal 6
 speed_left 0.015
 attack_poison 100

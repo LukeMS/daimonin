@@ -209,9 +209,12 @@ void object_gc()
 
 int CAN_MERGE(object *ob1, object *ob2)
 {
-    /* just some quick hack */
-    if (ob1->type == MONEY && ob1->type == ob2->type && ob1->arch == ob2->arch)
-        return 1;
+    /* just some quick hack checks */
+	if (!QUERY_FLAG(ob1, FLAG_CAN_STACK))
+		return 0;
+
+	if (ob1->type == MONEY && ob1->type == ob2->type && ob1->arch == ob2->arch)
+		return 1;
 
     /* just a brain dead long check for things NEVER NEVER should be different
      * this is true under all circumstances for all objects.
@@ -2328,11 +2331,14 @@ object * insert_ob_in_ob(object *op, object *where)
     }
 
     /* Merge objects? */
-    if (op->nrof)
+    if (QUERY_FLAG(op, FLAG_CAN_STACK))
     {
         for (tmp = where->inv; tmp != NULL; tmp = tmp->below)
         {
-            if (CAN_MERGE(tmp, op))
+			/* tricky: only really "same" objects can merge.
+			 * if the ->arch is different, it can be never the same object
+			 */
+            if (tmp->arch == op->arch && CAN_MERGE(tmp, op))
             {
                 remove_ob(tmp); /* and fix old object's links (we will insert it further down)*/
                 tmp->nrof += op->nrof;

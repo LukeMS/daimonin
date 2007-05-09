@@ -4,6 +4,7 @@ nrof 1
 item_quality 100
 item_condition 100
 face pulp_yew.101
+can_stack 1
 layer 3
 type 73
 material 64

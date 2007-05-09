@@ -16,9 +16,9 @@ terrain_flag 1
 anim
 facings 25
 human_m.f.r.111
+human_m.f.r.112
 human_m.f.r.111
-human_m.f.r.111
-human_m.f.r.111
+human_m.f.r.112
 human_m.ine.111
 human_m.ine.112
 human_m.ine.113

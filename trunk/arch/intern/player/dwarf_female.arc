@@ -16,7 +16,7 @@ face dwarf.111
 anim
 facings 25
 dwarf.m.f.r.111
-dwarf.m.f.r.111
+dwarf.m.f.r.112
 dwarf.m.f.r.111
 dwarf.181
 dwarf.182

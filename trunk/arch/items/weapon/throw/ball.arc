@@ -5,6 +5,7 @@ layer 3
 material_real 193
 material 8
 value 3
+can_stack 1
 weight 15
 weapon_speed 2.5
 last_grace 13

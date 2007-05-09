@@ -13443,7 +13443,7 @@ editor_folder intern
 weapon_speed 4.0
 face skill.101
 attack_impact 100
-dam 50
+dam 38
 item_quality 100
 item_condition 100
 nrof 1
@@ -13890,6 +13890,7 @@ name pile
 type 73
 editor_folder items/alchemy
 title of ash
+can_stack 1
 nrof 1
 item_quality 100
 item_condition 100
@@ -13908,6 +13909,7 @@ nrof 1
 item_quality 100
 item_condition 100
 face eye_newt.101
+can_stack 1
 layer 3
 material 32
 weight 150
@@ -13920,6 +13922,7 @@ editor_folder items/alchemy
 nrof 1
 item_quality 100
 item_condition 100
+can_stack 1
 face feather.101
 layer 3
 material 32
@@ -13936,6 +13939,7 @@ item_quality 100
 item_condition 100
 face dirt.101
 layer 3
+can_stack 1
 material 64
 is_dust 1
 weight 100
@@ -13949,6 +13953,7 @@ nrof 1
 item_quality 100
 item_condition 100
 face pulp_yew.101
+can_stack 1
 layer 3
 material 64
 weight 200
@@ -13961,6 +13966,7 @@ editor_folder items/alchemy
 nrof 1
 item_quality 100
 item_condition 100
+can_stack 1
 face root_mandrake.101
 layer 3
 material 64
@@ -13976,6 +13982,7 @@ item_quality 100
 item_condition 100
 face seed_a.101
 layer 3
+can_stack 1
 material 32
 weight 100
 value 300
@@ -13985,6 +13992,7 @@ name seed
 type 73
 editor_folder items/alchemy
 nrof 1
+can_stack 1
 item_quality 100
 item_condition 100
 face seed_b.101
@@ -14000,6 +14008,7 @@ editor_folder items/alchemy
 title of sulfur
 nrof 1
 item_quality 100
+can_stack 1
 item_condition 100
 face sulfur.101
 layer 3
@@ -14710,7 +14719,7 @@ type 143
 editor_folder items/armour
 layer 3
 face legs_chain.101
-ac 1
+ac 2
 last_heal 3
 item_level 5
 resist_impact 8
@@ -14744,7 +14753,7 @@ type 143
 editor_folder items/armour
 layer 3
 face legs_plate.101
-ac 1
+ac 3
 last_heal 5
 item_level 10
 resist_impact 10
@@ -15277,6 +15286,22 @@ resist_cleave 17
 resist_pierce 35
 weight 19500
 value 2550
+end
+Object shirt
+name shirt
+type 16
+editor_folder items/armour
+layer 3
+face shirt.101
+ac 1
+resist_impact 4
+resist_slash 4
+resist_cleave 4
+resist_pierce 4
+weight 500
+value 20
+material 128
+material_real 450
 end
 Object splint_mail
 name splint mail
@@ -16887,6 +16912,7 @@ name engagement ring gift
 type 79
 editor_folder items/gifts
 face engage_ring_gift.101
+can_stack 1
 nrof 1
 layer 3
 material 64
@@ -16967,6 +16993,7 @@ name a single pink rose
 type 79
 editor_folder items/gifts
 face pinkrose.101
+can_stack 1
 nrof 1
 layer 3
 material 256
@@ -16979,6 +17006,7 @@ name a pink rose bunch
 type 79
 editor_folder items/gifts
 face pinkrosebunch.101
+can_stack 1
 nrof 1
 layer 3
 material 256
@@ -16991,6 +17019,7 @@ name a single red rose
 type 79
 editor_folder items/gifts
 face redrose.101
+can_stack 1
 nrof 1
 layer 3
 material 256
@@ -17003,6 +17032,7 @@ name a red rose bunch
 type 79
 editor_folder items/gifts
 face redrosebunch.101
+can_stack 1
 nrof 1
 layer 3
 material 256
@@ -17015,6 +17045,7 @@ name a single white rose
 type 79
 editor_folder items/gifts
 face whiterose.101
+can_stack 1
 nrof 1
 layer 3
 material 256
@@ -17027,6 +17058,7 @@ name a white rose bunch
 type 79
 editor_folder items/gifts
 face whiterosebunch.101
+can_stack 1
 nrof 1
 layer 3
 material 256
@@ -17039,6 +17071,7 @@ name a single yellow rose
 type 79
 editor_folder items/gifts
 face yellowrose.101
+can_stack 1
 nrof 1
 layer 3
 material 256
@@ -17051,6 +17084,7 @@ name a yellow rose bunch
 type 79
 editor_folder items/gifts
 face yellowrosebunch.101
+can_stack 1
 nrof 1
 layer 3
 material 256
@@ -17096,6 +17130,7 @@ race gold and jewels
 layer 3
 identified 1
 face coppercoin.101
+can_stack 1
 nrof 1
 item_quality 100
 item_condition 100
@@ -17112,6 +17147,7 @@ identified 1
 race gold and jewels
 layer 3
 face goldcoin.101
+can_stack 1
 nrof 1
 item_quality 100
 item_condition 100
@@ -17128,6 +17164,7 @@ identified 1
 layer 3
 race gold and jewels
 face mit_coin.101
+can_stack 1
 nrof 1
 item_quality 100
 item_condition 100
@@ -17143,6 +17180,7 @@ editor_folder items/jewel
 identified 1
 layer 3
 race gold and jewels
+can_stack 1
 face silvercoin.101
 nrof 1
 item_quality 100
@@ -17159,6 +17197,7 @@ editor_folder items/jewel
 race gold and jewels
 layer 3
 face gem_clear.101
+can_stack 1
 nrof 1
 value 3
 item_quality 100
@@ -17174,6 +17213,7 @@ editor_folder items/jewel
 race gold and jewels
 layer 3
 face jewel_clear.101
+can_stack 1
 item_quality 100
 item_condition 100
 material_real 129
@@ -17191,6 +17231,7 @@ layer 3
 face nugget_silver_s.101
 nrof 1
 material 1024
+can_stack 1
 material_real 641
 item_quality 100
 item_condition 100
@@ -17205,6 +17246,7 @@ race gold and jewels
 layer 3
 face pearl.101
 item_quality 100
+can_stack 1
 item_condition 100
 material_real -1
 material 64
@@ -17272,6 +17314,7 @@ other_arch candle2_large
 other_arch candle3_large
 face large1_candle1.101
 blocksview 1
+can_stack 1
 layer 3
 no_pick 1
 no_pass 1
@@ -17294,6 +17337,7 @@ type 74
 editor_folder items/light
 face large2_candle1.101
 other_arch candle3_large
+can_stack 1
 blocksview 1
 layer 3
 no_pick 1
@@ -17315,6 +17359,7 @@ name large candle
 type 74
 editor_folder items/light
 face large3_candle1.101
+can_stack 1
 blocksview 1
 layer 3
 no_pick 1
@@ -17338,6 +17383,7 @@ editor_folder items/light
 other_arch candle_purp
 face candle_purp.104
 layer 3
+can_stack 1
 animation candle_purp
 is_animated 0
 anim_speed 4
@@ -17356,6 +17402,7 @@ type 74
 editor_folder items/light
 layer 3
 face candle_purp.103
+can_stack 1
 sub_type 2
 material 144
 value 0
@@ -17374,6 +17421,7 @@ layer 3
 item_quality 100
 item_condition 100
 animation large_candle
+can_stack 1
 is_animated 0
 anim_speed 4
 speed 0.15
@@ -17493,6 +17541,8 @@ type 74
 editor_folder items/light
 other_arch torch_burnt
 face torch_unlit.101
+can_stack 1
+nrof 1
 layer 3
 animation torch
 is_animated 0
@@ -17512,6 +17562,7 @@ type 74
 editor_folder items/light
 layer 3
 face torch_burnt.101
+can_stack 1
 sub_type 2
 material 144
 value 0
@@ -17880,6 +17931,7 @@ type 6
 editor_folder items/organic
 face bread01.101
 last_eat 10
+can_stack 1
 hp 20
 sp 3
 grace 2
@@ -17896,6 +17948,7 @@ Object bread1
 name bread
 type 6
 editor_folder items/organic
+can_stack 1
 face bread02.101
 last_eat 10
 hp 20
@@ -17917,6 +17970,7 @@ face cookie01.101
 last_eat 10
 hp 20
 sp 3
+can_stack 1
 grace 2
 item_quality 0
 nrof 1
@@ -17934,6 +17988,7 @@ editor_folder items/organic
 last_eat 10
 hp 10
 sp 10
+can_stack 1
 grace 10
 layer 3
 face figpud.101
@@ -17956,6 +18011,7 @@ hp 10
 sp 10
 grace 10
 layer 3
+can_stack 1
 face figpud2.101
 animation figpud2
 is_animated 1
@@ -17974,6 +18030,7 @@ editor_folder items/organic
 layer 3
 identified 1
 face claw_demon.101
+can_stack 1
 item_quality 100
 item_condition 100
 material_real -1
@@ -17990,6 +18047,7 @@ animation core_ice_golem
 is_animated 1
 anim_speed .9
 speed 1
+can_stack 1
 layer 3
 material_real -1
 material 57
@@ -18006,6 +18064,7 @@ is_animated 1
 anim_speed .9
 speed 1
 layer 3
+can_stack 1
 material_real -1
 material 57
 value 150
@@ -18036,6 +18095,7 @@ is_animated 1
 anim_speed .9
 speed 1
 layer 3
+can_stack 1
 material_real -1
 material 57
 value 150
@@ -18066,6 +18126,7 @@ item_quality 100
 item_condition 100
 material_real -1
 material 32
+can_stack 1
 weight 600
 value 150
 end
@@ -18080,6 +18141,7 @@ item_quality 100
 item_condition 100
 material_real -1
 material 32
+can_stack 1
 weight 450
 value 120
 end
@@ -18125,6 +18187,7 @@ item_quality 100
 item_condition 100
 material_real -1
 material 32
+can_stack 1
 weight 450
 value 120
 end
@@ -18151,6 +18214,7 @@ face tooth.101
 item_quality 100
 item_condition 100
 identified 1
+can_stack 1
 nrof 1
 material 32
 material_real -1
@@ -18163,6 +18227,7 @@ type 6
 editor_folder items/organic
 face beer.101
 last_eat 10
+can_stack 1
 hp 20
 sp 3
 grace 2
@@ -18180,6 +18245,7 @@ editor_folder items/organic
 face booze.101
 last_eat 10
 hp 20
+can_stack 1
 sp 3
 grace 10
 item_quality 0
@@ -18216,6 +18282,7 @@ face cup_coffee.101
 last_eat 10
 hp 20
 sp 3
+can_stack 1
 grace 2
 nrof 1
 layer 3
@@ -18234,6 +18301,7 @@ nrof 1
 layer 3
 material 32
 material_real -1
+can_stack 1
 value 5
 weight 100
 end
@@ -18263,6 +18331,7 @@ last_eat 10
 hp 20
 sp 3
 grace 2
+can_stack 1
 item_quality 0
 layer 3
 nrof 1
@@ -18295,6 +18364,7 @@ editor_folder items/organic
 face teabag.101
 last_eat 10
 hp 20
+can_stack 1
 sp 3
 grace 2
 nrof 1
@@ -18313,6 +18383,7 @@ face water2.101
 last_eat 10
 hp 20
 sp 3
+can_stack 1
 grace 2
 nrof 1
 layer 3
@@ -18381,6 +18452,7 @@ nrof 1
 face skin.101
 item_quality 100
 item_condition 100
+can_stack 1
 material 32
 layer 3
 food 75
@@ -18399,6 +18471,7 @@ con -5
 int -5
 cha -6
 level 1
+can_stack 1
 last_heal 6
 speed_left 0.015
 attack_poison 100
@@ -18418,6 +18491,7 @@ face apple01.101
 last_eat 10
 hp 20
 sp 3
+can_stack 1
 grace 2
 nrof 1
 layer 3
@@ -18436,6 +18510,7 @@ hp 20
 sp 3
 grace 2
 nrof 1
+can_stack 1
 layer 3
 speed_left 0.002
 material 32
@@ -18452,6 +18527,7 @@ hp 20
 sp 3
 grace 2
 nrof 1
+can_stack 1
 layer 3
 speed_left 0.002
 material 32
@@ -18467,6 +18543,7 @@ last_eat 10
 hp 20
 sp 3
 grace 2
+can_stack 1
 nrof 1
 layer 3
 speed_left 0.002
@@ -18517,6 +18594,7 @@ hp 20
 sp 3
 grace 2
 nrof 1
+can_stack 1
 layer 3
 speed_left 0.002
 material 32
@@ -18532,6 +18610,7 @@ last_eat 10
 hp 20
 sp 3
 grace 2
+can_stack 1
 nrof 1
 layer 3
 speed_left 0.002
@@ -18564,6 +18643,7 @@ last_eat 10
 hp 20
 sp 3
 grace 2
+can_stack 1
 nrof 1
 layer 3
 speed_left 0.002
@@ -18614,6 +18694,7 @@ hp 20
 sp 3
 grace 2
 nrof 1
+can_stack 1
 layer 3
 speed_left 0.002
 material 32
@@ -18631,6 +18712,7 @@ sp 3
 grace 2
 nrof 1
 layer 3
+can_stack 1
 speed_left 0.002
 material 32
 material_real -1
@@ -18646,6 +18728,7 @@ hp 20
 sp 3
 grace 2
 nrof 1
+can_stack 1
 layer 3
 speed_left 0.002
 material 32
@@ -18660,6 +18743,7 @@ face sultana01.101
 last_eat 10
 hp 20
 sp 3
+can_stack 1
 grace 2
 nrof 1
 layer 3
@@ -18676,6 +18760,7 @@ face bacon01.101
 last_eat 10
 hp 20
 sp 3
+can_stack 1
 grace 2
 nrof 1
 layer 3
@@ -18693,6 +18778,7 @@ face beef_jerky01.101
 last_eat 10
 hp 20
 sp 3
+can_stack 1
 grace 2
 nrof 1
 layer 3
@@ -18726,6 +18812,7 @@ last_eat 10
 hp 20
 sp 3
 grace 2
+can_stack 1
 nrof 1
 layer 3
 speed_left 0.002
@@ -18743,6 +18830,7 @@ hp 20
 sp 3
 grace 2
 nrof 1
+can_stack 1
 layer 3
 speed_left 0.002
 material 32
@@ -18757,6 +18845,7 @@ face steak01.101
 last_eat 10
 hp 20
 sp 3
+can_stack 1
 grace 2
 nrof 1
 layer 3
@@ -18771,6 +18860,7 @@ name steak
 type 6
 editor_folder items/organic
 face steak02.101
+can_stack 1
 last_eat 10
 hp 20
 sp 3
@@ -18790,6 +18880,7 @@ face egg01.101
 last_eat 10
 hp 20
 sp 3
+can_stack 1
 grace 2
 nrof 1
 layer 3
@@ -18809,6 +18900,7 @@ sp 3
 grace 2
 nrof 1
 layer 3
+can_stack 1
 speed_left 0.002
 material_real -1
 material 32
@@ -18824,6 +18916,7 @@ last_eat 10
 hp 20
 sp 3
 grace 2
+can_stack 1
 nrof 1
 layer 3
 speed_left 0.002
@@ -18839,6 +18932,7 @@ editor_folder items/organic
 face candy1.101
 last_eat 10
 hp 20
+can_stack 1
 sp 3
 grace 2
 nrof 1
@@ -18856,6 +18950,7 @@ editor_folder items/organic
 face candy2.101
 last_eat 10
 hp 20
+can_stack 1
 sp 3
 grace 2
 nrof 1
@@ -18874,6 +18969,7 @@ face candy3.101
 last_eat 10
 hp 20
 sp 3
+can_stack 1
 grace 2
 nrof 1
 layer 3
@@ -18888,6 +18984,7 @@ name candy
 type 6
 editor_folder items/organic
 face candy4.101
+can_stack 1
 food 70
 item_quality 100
 item_condition 100
@@ -18907,6 +19004,7 @@ last_eat 10
 hp 20
 sp 3
 grace 2
+can_stack 1
 nrof 1
 layer 3
 speed_left 0.002
@@ -18923,6 +19021,7 @@ last_eat 10
 hp 20
 sp 3
 grace 2
+can_stack 1
 layer 3
 face olive_oil.101
 identified 1
@@ -18939,6 +19038,7 @@ editor_folder items/organic
 face tootsie_pop1.101
 last_eat 10
 hp 20
+can_stack 1
 sp 3
 grace 2
 nrof 1
@@ -18955,6 +19055,7 @@ type 6
 editor_folder items/organic
 face tootsie_pop2.101
 last_eat 10
+can_stack 1
 hp 20
 sp 3
 grace 2
@@ -18973,6 +19074,7 @@ editor_folder items/organic
 face tootsie_pop3.101
 last_eat 10
 hp 20
+can_stack 1
 sp 3
 grace 2
 nrof 1
@@ -18990,6 +19092,7 @@ editor_folder items/organic
 face tootsie_roll.101
 last_eat 10
 hp 20
+can_stack 1
 sp 3
 grace 2
 nrof 1
@@ -19009,6 +19112,7 @@ last_eat 10
 hp 20
 sp 3
 grace 2
+can_stack 1
 item_quality 0
 nrof 1
 layer 3
@@ -19027,6 +19131,7 @@ last_eat 10
 hp 20
 sp 3
 grace 2
+can_stack 1
 nrof 1
 layer 3
 speed_left 0.002
@@ -19043,6 +19148,7 @@ face choko01.101
 last_eat 10
 hp 20
 sp 3
+can_stack 1
 grace 2
 nrof 1
 layer 3
@@ -19061,6 +19167,7 @@ last_eat 10
 hp 20
 sp 3
 grace 2
+can_stack 1
 nrof 1
 layer 3
 speed_left 0.002
@@ -19080,6 +19187,7 @@ sp 3
 grace 2
 nrof 1
 layer 3
+can_stack 1
 speed_left 0.002
 material 32
 material_real -1
@@ -19096,6 +19204,7 @@ sp 3
 grace 2
 nrof 1
 layer 3
+can_stack 1
 speed_left 0.002
 material 32
 material_real -1
@@ -19111,6 +19220,7 @@ hp 20
 sp 3
 grace 2
 nrof 1
+can_stack 1
 layer 3
 speed_left 0.002
 material 32
@@ -19229,6 +19339,7 @@ layer 3
 sp -1
 face balm_gen.101
 material 512
+can_stack 1
 weight 250
 value 5
 end
@@ -19241,6 +19352,7 @@ layer 3
 sp -1
 face dust_gen.101
 last_grace 13
+can_stack 1
 last_sp 7
 sub_type 129
 material 4
@@ -19258,6 +19370,7 @@ sp -1
 face potion_gen.101
 inv_face potion_gen.101
 last_grace 13
+can_stack 1
 last_sp 7
 sub_type 128
 is_thrown 1
@@ -19274,6 +19387,7 @@ sp -1
 inv_face inv_s_generic.101
 layer 3
 nrof 1
+can_stack 1
 material 1
 weight 20
 value 3
@@ -21216,13 +21330,14 @@ face arrow.101
 last_sp 5
 attack_pierce 100
 sub_type 1
+can_stack 1
 animation arrow
 anim_speed 1
 is_animated 0
 is_turnable 1
 nrof 1
 weight 15
-value 20
+value 1
 material 16
 material_real 257
 end
@@ -21235,6 +21350,7 @@ race crossbow bolts
 attack_cleave 100
 last_sp 4
 sub_type 2
+can_stack 1
 face bolt.101
 animation bolt
 anim_speed 1
@@ -21242,7 +21358,7 @@ is_animated 0
 is_turnable 1
 nrof 1
 weight 17
-value 20
+value 1
 material 2
 material_real 65
 end
@@ -21254,6 +21370,7 @@ race sling stones
 layer 3
 face sstone.101
 last_sp 4
+can_stack 1
 attack_impact 100
 animation sstone
 anim_speed 10
@@ -21262,7 +21379,7 @@ is_turnable 1
 sub_type 3
 nrof 1
 weight 12
-value 15
+value 1
 material 64
 material_real 385
 end
@@ -21478,6 +21595,7 @@ layer 3
 material_real 193
 material 8
 value 3
+can_stack 1
 weight 15
 weapon_speed 2.5
 last_grace 13
@@ -21501,6 +21619,7 @@ layer 3
 attack_cleave 100
 dam 32
 wc 45
+can_stack 1
 last_grace 10
 last_sp 7
 nrof 1
@@ -21513,7 +21632,7 @@ is_thrown 1
 material 2
 material_real 65
 weight 22
-value 35
+value 2
 end
 Object t_hammer
 name throwing hammer
@@ -21525,6 +21644,7 @@ face hammer_2.101
 attack_impact 100
 dam 32
 wc 45
+can_stack 1
 last_grace 10
 last_sp 7
 nrof 1
@@ -21537,7 +21657,7 @@ is_thrown 1
 material 80
 material_real 65
 weight 22
-value 35
+value 2
 end
 Object t_dagger
 name throwing dagger
@@ -21549,6 +21669,7 @@ face t_dagger.101
 attack_pierce 100
 dam 32
 wc 45
+can_stack 1
 last_grace 10
 last_sp 7
 nrof 1
@@ -21561,7 +21682,7 @@ is_thrown 1
 material 2
 material_real 65
 weight 20
-value 35
+value 2
 end
 Object starsdavid2
 name throwing goldstar
@@ -21575,6 +21696,7 @@ dam 36
 wc 45
 last_grace 10
 last_sp 7
+can_stack 1
 nrof 1
 sub_type 129
 animation starsdavid2
@@ -21599,6 +21721,7 @@ dam 34
 wc 45
 last_grace 10
 last_sp 7
+can_stack 1
 nrof 1
 sub_type 129
 animation starsdavid
@@ -21623,6 +21746,7 @@ dam 32
 wc 45
 last_grace 10
 last_sp 7
+can_stack 1
 nrof 1
 sub_type 129
 animation t_star
@@ -21633,7 +21757,7 @@ is_thrown 1
 material 2
 material_real 65
 weight 20
-value 1
+value 2
 end
 Object snow_ball
 name snow ball
@@ -21644,6 +21768,7 @@ race rock
 layer 3
 attack_impact 100
 dam 10
+can_stack 1
 wc 55
 last_grace 8
 last_sp 7
@@ -21668,6 +21793,7 @@ last_grace 15
 last_sp 7
 weight 100
 dam 50
+can_stack 1
 wc 35
 sub_type 132
 nrof 1
@@ -21688,6 +21814,7 @@ face t_boulder.101
 attack_impact 100
 last_sp 7
 dam 30
+can_stack 1
 wc 45
 last_grace 14
 sub_type 132
@@ -21713,6 +21840,7 @@ last_grace 18
 last_sp 7
 dam 50
 wc 48
+can_stack 1
 sub_type 132
 nrof 1
 weight 120000
@@ -21735,6 +21863,7 @@ dam 10
 last_grace 10
 wc 40
 last_sp 7
+can_stack 1
 sub_type 132
 nrof 1
 animation t_rock
@@ -23643,7 +23772,7 @@ alive 1
 monster 1
 is_male 1
 is_neutral 1
-terrain_flag 1
+terrain_flag 3
 can_use_weapon 1
 int 10
 wis 6
@@ -23921,7 +24050,7 @@ alive 1
 monster 1
 is_male 1
 is_neutral 1
-terrain_flag 1
+terrain_flag 3
 can_use_weapon 1
 int 10
 wis 6
@@ -23967,7 +24096,7 @@ alive 1
 monster 1
 is_male 1
 is_neutral 1
-terrain_flag 1
+terrain_flag 3
 can_use_weapon 1
 int 10
 wis 6

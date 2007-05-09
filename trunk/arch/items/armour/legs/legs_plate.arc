@@ -3,7 +3,7 @@ name plate legs
 layer 3
 face legs_plate.101
 type 143
-ac 1
+ac 3
 last_heal 5
 item_level 10
 resist_impact 10

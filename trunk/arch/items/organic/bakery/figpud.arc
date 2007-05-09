@@ -3,6 +3,7 @@ name Fig Pudding
 last_eat 10
 hp 10
 sp 10
+can_stack 1
 grace 10
 layer 3
 face figpud.101

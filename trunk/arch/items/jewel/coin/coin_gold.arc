@@ -4,6 +4,7 @@ identified 1
 race gold and jewels
 layer 3
 face goldcoin.101
+can_stack 1
 nrof 1
 type 36
 item_quality 100

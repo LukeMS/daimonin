@@ -3,6 +3,7 @@ face cookie01.101
 last_eat 10
 hp 20
 sp 3
+can_stack 1
 grace 2
 item_quality 0
 nrof 1

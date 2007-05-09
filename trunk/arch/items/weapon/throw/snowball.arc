@@ -5,6 +5,7 @@ race rock
 layer 3
 attack_impact 100
 dam 10
+can_stack 1
 wc 55
 last_grace 8
 last_sp 7

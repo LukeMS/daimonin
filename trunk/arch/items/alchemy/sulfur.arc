@@ -3,6 +3,7 @@ title of sulfur
 name pile
 nrof 1
 item_quality 100
+can_stack 1
 item_condition 100
 face sulfur.101
 layer 3

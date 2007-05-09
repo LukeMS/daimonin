@@ -5,6 +5,7 @@ face tooth.101
 item_quality 100
 item_condition 100
 identified 1
+can_stack 1
 nrof 1
 material 32
 material_real -1

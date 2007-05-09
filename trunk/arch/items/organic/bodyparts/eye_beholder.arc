@@ -7,6 +7,7 @@ item_quality 100
 item_condition 100
 material_real -1
 material 32
+can_stack 1
 type 86
 weight 600
 value 150

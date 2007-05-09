@@ -739,7 +739,10 @@ int change_skill(object *who, int sk_index)
 {
     object *tmp;
 
-    if (who->chosen_skill && who->chosen_skill->stats.sp == sk_index)
+	/* new_draw_info_format(NDI_UNIQUE, 0, who, "cs: You change %s to %s.",
+			who->chosen_skill ?skills[who->chosen_skill->stats.sp].name :"NOTHING" , skills[sk_index].name);
+	*/
+	if (who->chosen_skill && who->chosen_skill->stats.sp == sk_index)
         return 1;
 
     if (sk_index >= 0 && sk_index < NROFSKILLS && (tmp = find_skill(who, sk_index)) != NULL)
@@ -771,7 +774,10 @@ int change_skill_to_skill(object *who, object *skl)
     if (!skl)
         return 1;       /* Quick sanity check */
 
-    if (who->chosen_skill == skl)
+/*	new_draw_info_format(NDI_UNIQUE, 0, who, "csts: You change %s to %s.",
+		who->chosen_skill ?skills[who->chosen_skill->stats.sp].name :"NOTHING" , query_name(skl));*/
+
+	if (who->chosen_skill == skl)
         return 0;
 
     if (skl->env != who)
