@@ -1054,7 +1054,7 @@ static void play_heartbeat_sound(void)
     int volume = 0;
 
     // Interval (ticks) between heartbeats is determined by hp %
-    interval = (uint32) (20 * (((float) cpl.stats.hp / (float) cpl.stats.maxhp) * 100));
+    interval = (uint32) (20 * (((float) cpl.stats.hp / (float) cpl.stats.maxhp) * 100.0f));
     // 100% hp = 1 beat per 2000 ticks = 30 bpm (mercenaries are fit!)
     // 1% hp = 1 beat per 500 ticks = 120 bpm
     if (interval > 2000) interval = 2000;
