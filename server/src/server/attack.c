@@ -1442,7 +1442,10 @@ int kill_object(object *op, int dam, object *hitter, int typeX)
                 SET_FLAG(op, FLAG_STARTEQUIP);
             }
 
-            destruct_ob(op);
+			/* here "remove" the killed object, drop the items inside and add
+			 * quests and quest items/one drops to group of corpse_owner 
+			 */
+            destruct_ob(op); 
         }
    }
 

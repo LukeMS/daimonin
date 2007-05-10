@@ -490,7 +490,7 @@ void party_message(int mode, int flags, int pri,object *leader, object *source, 
 
     for(tmp=CONTR(leader)->group_leader;tmp;tmp=CONTR(tmp)->group_next)
     {
-        if(tmp != source && (!(mode&PMSG_MODE_NOEXP) || !(CONTR(tmp)->group_status &GROUP_STATUS_NOEXP)) )
+        if(tmp != source && (!(mode&PMSG_MODE_NOTEXT) || !(CONTR(tmp)->group_status &GROUP_STATUS_NOQUEST)) )
             new_draw_info(flags, pri, tmp, buf);
     }
 }

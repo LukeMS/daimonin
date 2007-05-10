@@ -739,11 +739,10 @@ int change_skill(object *who, int sk_index)
 {
     object *tmp;
 
-	/* new_draw_info_format(NDI_UNIQUE, 0, who, "cs: You change %s to %s.",
-			who->chosen_skill ?skills[who->chosen_skill->stats.sp].name :"NOTHING" , skills[sk_index].name);
-	*/
 	if (who->chosen_skill && who->chosen_skill->stats.sp == sk_index)
         return 1;
+
+	LOG(llevDebug, "APPLYcs: %s change %s to %s.\n", query_name(who), query_name(who->chosen_skill), skills[sk_index].name);
 
     if (sk_index >= 0 && sk_index < NROFSKILLS && (tmp = find_skill(who, sk_index)) != NULL)
     {
@@ -756,8 +755,11 @@ int change_skill(object *who, int sk_index)
     }
 
     if (who->chosen_skill)
+	{
         if (apply_special(who, who->chosen_skill, AP_UNAPPLY))
             LOG(llevBug, "BUG: change_skill(): can't unapply old skill (%s - %d)\n", who->name, sk_index);
+		fix_player(who, "change_skill AP_UNAPPLY");
+	}
     if (sk_index >= 0)
         new_draw_info_format(NDI_UNIQUE, 0, who, "You have no knowledge of %s.", skills[sk_index].name);
     return 0;
@@ -774,13 +776,13 @@ int change_skill_to_skill(object *who, object *skl)
     if (!skl)
         return 1;       /* Quick sanity check */
 
-/*	new_draw_info_format(NDI_UNIQUE, 0, who, "csts: You change %s to %s.",
-		who->chosen_skill ?skills[who->chosen_skill->stats.sp].name :"NOTHING" , query_name(skl));*/
 
 	if (who->chosen_skill == skl)
         return 0;
 
-    if (skl->env != who)
+	LOG(llevDebug, "APPLYcsts: %s change %s to %s.\n", query_name(who), query_name(who->chosen_skill), query_name(skl));
+
+	if (skl->env != who)
     {
         LOG(llevBug, "BUG: change_skill_to_skill: skill is not in players inventory (%s - %s)\n", query_name(who),
             query_name(skl));
@@ -993,7 +995,7 @@ void set_action_time(object *op, int t)
 		return;
 
 	CONTR(op)->action_timer = ROUND_TAG + t;
-	LOG(llevDebug, "ActionTimer for %s: +%d\n", query_name(op), t);
+	LOG(llevDebug, "ActionTimer for %s (skill %s): +%d\n", query_name(op), query_name(op->chosen_skill), t);
 }
 
 /* player only: we check the action time for a skill.

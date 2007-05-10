@@ -1209,7 +1209,7 @@ void drop_ob_inv(object *ob)
                     for(gtmp=pl->group_leader;gtmp;gtmp=CONTR(gtmp)->group_next)
                     {
                         /* check for out of (kill) range */
-                        if(!(CONTR(gtmp)->group_status & GROUP_STATUS_NOEXP))
+                        if(!(CONTR(gtmp)->group_status & GROUP_STATUS_NOQUEST))
                            insert_quest_item(tmp_op, gtmp); /* give it to member */
                     }
                 }
