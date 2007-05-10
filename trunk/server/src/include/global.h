@@ -256,21 +256,22 @@ typedef signed long long         sint64;
 /* group define stuff */
 #define GROUP_NO (-1)
 
-#define PMSG_MODE_NOEXP     1   /* check GROUP_STATUS_NOEXP in party_message broadcast.
-                                 * We simply want avoid kill messages & fighting related
-                                 * info to group members out of range.
-                                 */
+#define PMSG_MODE_NOTEXT     1   /* check GROUP_STATUS_NOQUEST, which means "outside maprang" 
+                                  * in party_message broadcast.
+                                  * We simply want avoid kill messages & fighting related
+                                  * info to group members out of range.
+                                  */
 
-#define GROUP_MAX_MEMBER    6   /* max # of members of a group */
+#define GROUP_MAX_MEMBER		6   /* max # of members of a group */
 
-#define GROUP_MODE_JOIN        0    /* allow /invite from all */
-#define GROUP_MODE_DENY        1    /* deny /invite from everyone */
-#define GROUP_MODE_INVITE    2    /* allow deny from selected player */
+#define GROUP_MODE_JOIN			0    /* allow /invite from all */
+#define GROUP_MODE_DENY			1    /* deny /invite from everyone */
+#define GROUP_MODE_INVITE		2    /* allow deny from selected player */
 
-#define GROUP_STATUS_FREE    0   /* no group, no pending invite */
-#define GROUP_STATUS_INVITE 1    /* pending invite */
-#define GROUP_STATUS_GROUP    2    /* player is in group group_id */
-#define GROUP_STATUS_NOEXP  4   /* member get no exp/no quest items/etc */
+#define GROUP_STATUS_FREE		0   /* no group, no pending invite */
+#define GROUP_STATUS_INVITE		1	/* pending invite */
+#define GROUP_STATUS_GROUP		2	/* player is in group group_id */
+#define GROUP_STATUS_NOQUEST	4   /* member get no quests, one drop items ... */
 
 #define GROUP_UPDATE_HP         1
 #define GROUP_UPDATE_MAXHP      2

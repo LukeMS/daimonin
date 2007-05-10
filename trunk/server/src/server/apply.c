@@ -2560,8 +2560,13 @@ int apply_special(object *who, object *op, int aflags)
                                 skills[op->stats.sp].name);
                     }
                 }
-                change_abil(who, op);
-                who->chosen_skill = NULL;
+				/* i disabled here change_abil - because skill changing is somewhat often called
+				 * AND automatically done. We simply don't give out change_abil() messages here
+				 * and safe alot cpu (include a fix_player() inside change_abil())
+				 */
+                /*change_abil(who, op);*/
+				LOG(llevBug, "UNAPPLY SKILL: %s change %s (%s) to NULL\n", query_name(who), query_name(op), query_name(who->chosen_skill) );
+				who->chosen_skill = NULL;
                 buf[0] = '\0';
                 break;
 
@@ -2605,7 +2610,7 @@ int apply_special(object *who, object *op, int aflags)
                 sprintf(buf, "You unapply %s.", query_name(op));
                 break;
         }
-        if (buf[0] != '\0')
+        if (buf[0] != '\0') /* urgh... what use of buf */
         {
             if (who->type == PLAYER)
             {
@@ -2629,9 +2634,11 @@ int apply_special(object *who, object *op, int aflags)
                     esrv_del_item(pl, del_tag, cont);
                     op = tmp;
                 }
-                esrv_send_item(who, op);
             }
         }
+
+		if (who->type == PLAYER)
+			esrv_send_item(who, op);
 
         return 0;
     }
@@ -2641,6 +2648,7 @@ int apply_special(object *who, object *op, int aflags)
 
     /* This goes through and checks to see if the player already has something
      * of that type applied - if so, unapply it.
+	 * This is a VERY important part -it ensures 
      */
     if (op->type == WAND || op->type == ROD || op->type == HORN || op->type == BOW || (op->type == ARROW && op->sub_type1 >127))
         tmp_flag = 1;
@@ -2818,7 +2826,8 @@ int apply_special(object *who, object *op, int aflags)
                     send_ready_skill(who, skills[op->stats.sp].name);
             }
             SET_FLAG(op, FLAG_APPLIED);
-            change_abil(who, op);
+            /* change_abil(who, op); */
+			LOG(llevBug, "APPLY SKILL: %s change %s to %s\n", query_name(who), query_name(who->chosen_skill), query_name(op) );
             who->chosen_skill = op;
             buf[0] = '\0';
             break;
