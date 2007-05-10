@@ -749,9 +749,7 @@ void object_accept_path(object *op)
     }
 
     /* Make sure we aren't already close enough */
-    get_rangevector_full(op, op->map, op->x, op->y,
-            NULL, goal_map, goal_x, goal_y,
-            &v, RV_DIAGONAL_DISTANCE);
+    get_rangevector_full(op, op->map, op->x, op->y, NULL, goal_map, goal_x, goal_y, &v, RV_DIAGONAL_DISTANCE);
     if(v.distance <= 1)
         return;
 
