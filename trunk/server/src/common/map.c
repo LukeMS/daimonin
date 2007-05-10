@@ -1738,10 +1738,23 @@ void load_objects(mapstruct *m, FILE *fp, int mapflags)
             /* If a bad animation is set, we will get div by zero */
             if(NUM_FACINGS(op) == 0)
             {
-                LOG(llevDebug, "BUG:load_objects(%s): object %s (%d)- NUM_FACINGS == 0. Bad animation? (pos:%d,%d)\n",
+                LOG(llevDebug, "\n**BUG:load_objects(%s): object %s (%d)- NUM_FACINGS == 0. Bad animation? (pos:%d,%d)\n",
                     m->path ? m->path : ">no map<", query_short_name(op, NULL), op->type, op->x, op->y);
                 goto next;
             }
+			else if((op->direction + op->state) < 0 || (op->direction + op->state) >= NUM_FACINGS(op))
+			{
+				LOG(llevDebug, "\n**BUG:load_objects(%s): object %s (%d)- NUM_FACINGS < op->direction(%d) + op->state(%d) - (pos:%d,%d)\n",
+					m->path ? m->path : ">no map<", query_short_name(op, NULL), op->type, op->direction, op->state, op->x, op->y);
+				/* its an invalid animation offset (can trigger wrong memory access)
+				 * we try to repair it. This is a wrong setting in the arch file or, 
+				 * more common, a map maker bug.
+				 */
+				op->direction = NUM_FACINGS(op)-1;
+				op->state = 0;
+
+			}
+
             SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction + op->state);
         }
 
