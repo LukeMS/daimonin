@@ -316,11 +316,11 @@ void init_game_data(void)
     gui_interface_npc = NULL;
     gui_interface_book = NULL;
 
-#ifdef DEVELOPMENT
     options.cli_name[0]='\0';
-    options.cli_pass[0]='\0';
     options.cli_server=0;
-#endif
+
+    options.cli_pass[0]='\0';
+
     memset(media_file, 0, sizeof(_media_file) * MEDIA_MAX);
     media_count = 0;    /* buffered media files*/
     media_show = MEDIA_SHOW_NO; /* show this media file*/
@@ -533,7 +533,7 @@ Boolean game_status_chain(void)
         reset_keys();
         free_faces();
         GameStatus = GAME_STATUS_WAITLOOP;
-#ifdef DEVELOPMENT
+
         switch (options.cli_server)
         {
             case 1:
@@ -553,7 +553,6 @@ Boolean game_status_chain(void)
                 break;
         }
         options.cli_server=0; /* only try once */
-#endif
     }
     else if (GameStatus == GAME_STATUS_STARTCONNECT)
     {
@@ -713,10 +712,9 @@ Boolean game_status_chain(void)
     {
         /* the choices are in event.c */
         map_transfer_flag = 0;
-#ifdef DEVELOPMENT
+
         if (options.cli_name[0] || options.cli_pass[0] || options.cli_server)
             GameStatus=GAME_STATUS_ADDME;
-#endif
     }
     else if (GameStatus == GAME_STATUS_ADDME)
     {
@@ -744,14 +742,13 @@ Boolean game_status_chain(void)
     {
         map_transfer_flag = 0;
         /* we have a fininshed console input*/
-#ifdef DEVELOPMENT
         if (options.cli_name[0])
         {
             strcpy(InputString,options.cli_name);
             InputStringFlag = FALSE;
             InputStringEndFlag = TRUE;
+            options.cli_name[0]=0;
         }
-#endif
         if (InputStringEscFlag)
             GameStatus = GAME_STATUS_LOGIN;
         else if (InputStringFlag == FALSE && InputStringEndFlag == TRUE)
@@ -787,15 +784,13 @@ Boolean game_status_chain(void)
         map_transfer_flag = 0;
         /* we have a fininshed console input*/
         textwin_clearhistory();
-#ifdef DEVELOPMENT
-        if (options.cli_name[0] && options.cli_pass[0])
+        if (options.cli_pass[0])
         {
             strcpy(InputString,options.cli_pass);
             options.cli_pass[0] = '\0';             /* pass is only tried once, since we won't get in an endless-loop and get banned */
             InputStringFlag=FALSE;
             InputStringEndFlag=TRUE;
         }
-#endif
         if (InputStringEscFlag)
             GameStatus = GAME_STATUS_LOGIN;
         else if (InputStringFlag == FALSE && InputStringEndFlag == TRUE)
@@ -1218,25 +1213,25 @@ int main(int argc, char *argv[])
             argServerPort = atoi(argv[argc]);
             --argc;
         }
-#ifdef DEVELOPMENT
         else if (strcmp(argv[argc-1], "-player") == 0)
         {
             strncpy(options.cli_name,argv[argc],39);
             options.cli_name[39]='\0'; /* sanity \0 */
             --argc;
         }
+#if (1)
         else if (strcmp(argv[argc-1], "-pass") == 0)
         {
             strncpy(options.cli_pass,argv[argc],39);
             options.cli_pass[39]='\0'; /* sanity \0 */
             --argc;
         }
+#endif
         else if (strcmp(argv[argc-1], "-server") == 0)
         {
             options.cli_server=atoi(argv[argc]);
             --argc;
         }
-#endif
         /*        else if (strcmp(argv[argc - 1], "-server") == 0)
                 {
                     strcpy(argServerName, argv[argc]);
