@@ -1179,6 +1179,7 @@ int get_rangevector_full(
     /* Common calculations for almost all cases */
     retval->distance_x = x2 - x1;
     retval->distance_y = y2 - y1;
+	retval->distance = -1; /* we need a "legal" return value like in monster.c/753 */
 
     if (map1 == map2)
     {
