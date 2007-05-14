@@ -135,7 +135,7 @@ bool inv_updated :
         static Item Singleton;
         return Singleton;
     }
-    void dropItem(int srcWindow, int srcSlot, int dstWindow);
+    void dropItem(int srcWindow, int srcSlot, int dstWindow, int dstSlot);
     void ItemXYCmd(unsigned char *data, int len, bool bflag);
     void clearContainer(int container);
     void delItem(unsigned int item, int container);

@@ -676,18 +676,16 @@ void GuiWindow::clearListbox(int element)
 }
 
 //================================================================================================
-// Search for the correct element in this window.
+// .
 //================================================================================================
-class GuiGadgetSlot *GuiWindow::getSlotHandle(int element)
+int GuiWindow::getMouseOverSlot(int x, int y)
 {
-    for (unsigned int i = 0; i < mvSlot.size() ; ++i)
+    for (unsigned int i = 0; i < mvSlot.size(); ++i)
     {
-        if (mvSlot[i]->getIndex() == element)
-            return mvSlot[i];
+        if (mvSlot[i]->mouseWithin(x - mPosX, y - mPosY))
+            return i;
     }
-    Logger::log().error() << "BUG [gui_window.cpp -> getSlotHandle()]: Can't find Slot handle for element nr: "<< element;
-    if (!isInit) Logger::log().error() << "Hint: The Window was never initialized";
-    return 0;
+    return -1;
 }
 
 //================================================================================================
@@ -820,7 +818,11 @@ void GuiWindow::update(Real timeSinceLastFrame)
     // Speak Animation.
     if (mSpeakAnimState)
         mSpeakAnimState->addTime(timeSinceLastFrame);
-
+    // Update slots.
+    for (unsigned int i = 0; i < mvSlot.size(); ++i)
+    {
+        mvSlot[i]->update(timeSinceLastFrame);
+    }
     // Update listboxes.
     for (std::vector<GuiListbox*>::iterator i = mvListbox.begin(); i < mvListbox.end(); ++i)
     {

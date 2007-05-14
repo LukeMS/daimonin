@@ -51,7 +51,6 @@ const int TEXTURES_PER_ROW = 7;
 TileManager::TileManager()
 {
     mInterface = 0;
-    map_update_flag = 0;
     mMapScrollX =0;
     mMapScrollZ =0;
     for (int z =0; z <= CHUNK_SIZE_Z; ++z)

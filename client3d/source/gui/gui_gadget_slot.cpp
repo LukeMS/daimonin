@@ -40,7 +40,7 @@ http://www.gnu.org/licenses/licenses.html
 using namespace Ogre;
 
 const unsigned int ITEM_SIZE = 64; // Only 64 or 32 are allowed!
-const int BITS_FACEFILTER = ~0x8000;
+const int BITS_FACEFILTER = ~0x8000; // Filter to extract the face number (gfx).
 Overlay *GuiGadgetSlot::mDnDOverlay =0;
 OverlayElement *GuiGadgetSlot::mDnDElement =0;
 Image GuiGadgetSlot::mAtlasTexture;
@@ -59,6 +59,7 @@ GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOn
     std::string filename;
     mSlotNr = uid++;
     mItem = 0;
+    mBusyTime = 0;
 
     const char *tmp;
     if ((tmp = xmlElement->Attribute("bg_image_name" )))
@@ -216,6 +217,32 @@ GuiGadgetSlot::~GuiGadgetSlot()
 }
 
 //================================================================================================
+// TODO: draw something like a watchlike gfx over the slot to show the busy status.
+//================================================================================================
+void GuiGadgetSlot::drawBusy(Real dTime)
+{
+    mBusyTimeExpired+= dTime;
+    int degree = (int) ((360 * mBusyTimeExpired) / mBusyTime);
+    if (degree > 360)
+    {
+        mBusyTime = 0;
+        draw();  // Clear the busy gfx.
+        return;
+    }
+    // TODO: draw the busy gfx...
+}
+
+//================================================================================================
+// .
+//================================================================================================
+bool GuiGadgetSlot::mouseWithin(int x, int y)
+{
+    if (x < mPosX || x > mPosX + mWidth || y < mPosY || y > mPosY + mHeight)
+        return false;
+    return true;
+}
+
+//================================================================================================
 // .
 //================================================================================================
 int GuiGadgetSlot::mouseEvent(int MouseAction, int x, int y)
@@ -292,7 +319,6 @@ void GuiGadgetSlot::draw()
                            gfxSrcPos[mState].y + mHeight));
     uint32 *srcSlotData = static_cast<uint32*>(srcSlot.data);
     int rowSkipSlot = (int)((GuiWindow*) mParent)->getPixelBox()->getWidth();
-    texture->getBuffer()->blitFromMemory(srcSlot, Box(strtX, strtY, strtX + mWidth, strtY + mHeight));
     // ////////////////////////////////////////////////////////////////////
     // Item gfx.
     // ////////////////////////////////////////////////////////////////////
@@ -309,7 +335,7 @@ void GuiGadgetSlot::draw()
         srcItemData = static_cast<uint32*>(srcItem.data);
     }
     // ////////////////////////////////////////////////////////////////////
-    // Draw into the buffer.
+    // Draw slot + item into the buffer.
     // ////////////////////////////////////////////////////////////////////
     int dSlotY = 0, dItemY = 0, destY =0;
     for (int y =0; y < mHeight; ++y)
@@ -333,11 +359,44 @@ void GuiGadgetSlot::draw()
         dSlotY+= (int)rowSkipSlot;
         destY+= mWidth;
     }
-    srcSlot = PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8, LayerWindowBG);
+    // ////////////////////////////////////////////////////////////////////
+    // Draw busy-gfx into the buffer.
+    // ////////////////////////////////////////////////////////////////////
+/*
+    int busy = 15;
+
+    int x1 = mWidth/2;
+    int x2 = x1 + busy;
+    int y1 = mHeight;
+    int y2 = mHeight/2;
+
+
+    int x = x1;
+    int dx = x2-x1; if (dx < 0) dx*=-1;
+    int y = y1;
+    int dy = x2-x1; if (dx < 0) dx*=-1;
+    int delta = dx - dy;
+    int xStep, yStep;
+
+    if (x2 > x1) xStep = 1; else xStep = -1;
+    if (y2 > y1) yStep = 1; else yStep = -1;
+    while (x != x2 || y != y2)
+    {
+        if (delta >=0) x+= xStep; delta-= dy;
+        if (delta < 0) y+= yStep; delta+= dx;
+
+        //for (int posX = x1; posX < x; ++posX) LayerWindowBG[posX + mWidth * y] = 0x00ffffff;
+    }
+*/
+
+
+
     // ////////////////////////////////////////////////////////////////////
     // Blit the buffer.
     // ////////////////////////////////////////////////////////////////////
-    texture->getBuffer()->blitFromMemory(srcSlot, Box(strtX, strtY, strtX + mWidth, strtY + mHeight));
+    texture->getBuffer()->blitFromMemory(
+        PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8, LayerWindowBG),
+        Box(strtX, strtY, strtX + mWidth, strtY + mHeight));
     static GuiTextout::TextLine label;
     if (mItem->nrof)
     {
@@ -354,12 +413,12 @@ void GuiGadgetSlot::draw()
         GuiTextout::getSingleton().Print(&label, texture);
     }
 
-/*
-    long time = Root::getSingleton().getTimer()->getMilliseconds();
-    for (int z = 0; z < 500; ++z)
-    {}
-    Logger::log().error() <<"time: "<<  Root::getSingleton().getTimer()->getMilliseconds() - time;
-*/
+    /*
+        long time = Root::getSingleton().getTimer()->getMilliseconds();
+        for (int z = 0; z < 500; ++z)
+        {}
+        Logger::log().error() <<"time: "<<  Root::getSingleton().getTimer()->getMilliseconds() - time;
+    */
 }
 
 //================================================================================================

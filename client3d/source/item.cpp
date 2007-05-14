@@ -292,7 +292,7 @@ void Item::dropInventoryItemToFloor(int slotNr)
 //================================================================================================
 // End of Drag'n'Drop.
 //================================================================================================
-void Item::dropItem(int srcWindow, int srcItemSlot, int dstWindow)
+void Item::dropItem(int srcWindow, int srcItemSlot, int dstWindow, int dstItemSlot)
 {
     // ////////////////////////////////////////////////////////////////////
     // Drop outside a window -> drop this item to the floor.
@@ -309,7 +309,7 @@ void Item::dropItem(int srcWindow, int srcItemSlot, int dstWindow)
 // TODO
 
     char buf[256];
-    sprintf(buf, "drag and drop src: %d, %d dest: %d", srcWindow, srcItemSlot, dstWindow);
+    sprintf(buf, "drag and drop src: %d, %d dest: %d, %d", srcWindow, srcItemSlot, dstWindow, dstItemSlot);
     GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, buf);
     return;
 }

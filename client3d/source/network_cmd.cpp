@@ -235,7 +235,7 @@ void Network::Map2Cmd(unsigned char *data, int len)
             mx = xpos;
             my = ypos;
 //            remove_item_inventory(locate_item(0)); // implicit clear below
-            TileMap::getSingleton().display_mapscroll(xoff, yoff);
+            TileMap::getSingleton().scroll(xoff, yoff);
         }
     }
     else
@@ -249,7 +249,7 @@ void Network::Map2Cmd(unsigned char *data, int len)
 //            remove_item_inventory(locate_item(0)); // implicit clear below
 //            if (cpl.menustatus != MENU_NO) reset_menu_status();
         }
-        TileMap::getSingleton().display_mapscroll(xpos - mx, ypos - my);
+        TileMap::getSingleton().scroll(xpos - mx, ypos - my);
         mx = xpos;
         my = ypos;
     }
@@ -451,7 +451,6 @@ void Network::Map2Cmd(unsigned char *data, int len)
             TileMap::getSingleton().set_map_face(x, y, 3, face, xdata, ext3, pname4);
         }
     } // more tiles
-    TileManager::getSingleton().map_update_flag = 2;
 }
 
 //================================================================================================
