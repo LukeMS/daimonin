@@ -22,6 +22,11 @@ AC_SUBST(OGRE_CFLAGS)
 AC_SUBST(OGRE_LIBS)
 AC_SUBST(OGRE_PLUGINDIR, `pkg-config --variable=plugindir OGRE`)
 
+dnl Find the Object-oriented input system
+PKG_CHECK_MODULES(OIS, OIS)
+AC_SUBST(OIS_CFLAGS)
+AC_SUBST(OIS_LIBS)
+
 # Find tinyxml stuff
 #AC_SUBST(TXML_CFLAGS, "-I3rdParty/tinyxml")
 
