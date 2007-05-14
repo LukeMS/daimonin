@@ -1589,7 +1589,7 @@ void move_bolt(object *op)
             update_turn_face(op); /* A bolt *must* be IS_TURNABLE */
             return;
         }
-		/* disabling this line allows back bouncing! *
+		/* disabling this line allows back bouncing! */
 /*		else if(!check_spell_instance(op->map, op->x, op->y, op) ) */
 		else
         {
