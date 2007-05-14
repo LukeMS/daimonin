@@ -635,9 +635,11 @@ static int GameObject_GetName(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_GetEquipment                                          */
-/* Lua    : object:GetEquipment(idnum)                                       */
-/* Info   : Only works for player objects                                    */
-/* Status : Tested                                                           */
+/* Lua    : object:GetEquipment(slot)                                        */
+/* Info   : Get a player's current equipment for a given slot. slot must be  */
+/*          one of the Game.EQUIP_xxx constants, e.g. Game.EQUIP_GAUNTLET    */
+/*          If the selected slot is empty, this method will return nil.      */
+/* Status : Untested                                                         */
 /*****************************************************************************/
 static int GameObject_GetEquipment(lua_State *L)
 {
@@ -645,11 +647,14 @@ static int GameObject_GetEquipment(lua_State *L)
     lua_object *self;
 
     get_lua_args(L, "Oi", &self, &num);
+    
+    if(WHO->type != PLAYER || CONTR(WHO) == NULL)
+        luaL_error(L, "GetEquipment(): Only works for players.");
 
-    if(CONTR(WHO) && num >= 0 && num < PLAYER_EQUIP_MAX && CONTR(WHO)->equipment[num])
-        return push_object(L, &GameObject, CONTR(WHO)->equipment[num]);
-    else
-        return 0;
+    if(num < 0 || num >= PLAYER_EQUIP_MAX)
+        luaL_error(L, "GetEquipment(): illegal slot number: %d\n", num);
+
+    return push_object(L, &GameObject, CONTR(WHO)->equipment[num]);
 }
 
 /*****************************************************************************/
@@ -663,13 +668,9 @@ static int GameObject_GetRepairCost(lua_State *L)
 
     get_lua_args(L, "O", &self);
 
-    /* the sint64 to uint32 cast should be ok - can't think about that high repair costs */
-    if(WHO)
-    {
-        lua_pushnumber(L, (uint32)hooks->material_repair_cost(WHO, NULL));
-        return 1;
-    } else
-        return 0;
+    /* the sint64 to double cast should be ok - can't think about that high repair costs */
+    lua_pushnumber(L, (double)hooks->material_repair_cost(WHO, NULL));
+    return 1;
 }
 
 /*****************************************************************************/

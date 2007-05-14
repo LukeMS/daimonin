@@ -55,7 +55,7 @@ typedef enum usekeytype
 /* used for item damage system */
 enum
 {
-    PLAYER_EQUIP_MAIL,
+    PLAYER_EQUIP_MAIL = 0, /* First entry should always be 0 */
     PLAYER_EQUIP_GAUNTLET,
     PLAYER_EQUIP_BRACER,
     PLAYER_EQUIP_HELM,
