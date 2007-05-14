@@ -24,6 +24,7 @@
 */
 
 #include <global.h>
+#include <limits.h>
 
 
 /*
@@ -1114,6 +1115,15 @@ mapstruct * out_of_map2(mapstruct *m, int *x, int *y)
     return NULL;
 }
 
+/** Initializes a rv to sane values if no vector could be found. */
+static inline int fail_rangevector(rv_vector *rv)
+{
+    rv->distance_x = rv->distance_y = rv->distance = UINT_MAX;
+    rv->direction = 0;
+    rv->part = NULL;
+    return FALSE;
+}
+
 /** Get distance and direction between two objects.
 * TODO: this should probably be replaced with a macro or an inline function
 * Note: this function was changed from always calculating euclidian distance to
@@ -1179,7 +1189,6 @@ int get_rangevector_full(
     /* Common calculations for almost all cases */
     retval->distance_x = x2 - x1;
     retval->distance_y = y2 - y1;
-	retval->distance = -1; /* we need a "legal" return value like in monster.c/753 */
 
     if (map1 == map2)
     {
@@ -1191,8 +1200,9 @@ int get_rangevector_full(
         {
             retval->distance_x += map2->tileset_x - map1->tileset_x;
             retval->distance_y += map2->tileset_y - map1->tileset_y;
-        } else
-            return FALSE;
+        } 
+        else
+            return fail_rangevector(retval);
     }
     else if (map1->tile_map[0] == map2) /* North */
         retval->distance_y -= MAP_HEIGHT(map2);
@@ -1227,13 +1237,13 @@ int get_rangevector_full(
         if (!relative_tile_position(map1, map2, &(retval->distance_x), &(retval->distance_y)))
         {
             /*LOG(llevDebug,"DBUG: get_rangevector_from_mapcoords: No tileset path between maps '%s' and '%s'\n", map1->path, map2->path);*/
-            return FALSE;
+            return fail_rangevector(retval);
         }
     }
     else
     {
         /*LOG(llevDebug,"DBUG: get_rangevector_from_mapcoords: objects not on adjacent maps\n");*/
-        return FALSE;
+        return fail_rangevector(retval);
     }
 
     retval->part = op1;
@@ -1289,7 +1299,7 @@ int get_rangevector_full(
         retval->distance = MAX(abs(retval->distance_x), abs(retval->distance_y));
         break;
     case RV_NO_DISTANCE:
-        retval->distance = -1;
+        retval->distance = UINT_MAX;
         break;
     }
 
