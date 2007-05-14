@@ -65,12 +65,12 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
     {
         case OIS::KC_A:
             {
-                Item::getSingleton().getInventoryItemFromFloor(0);
-                /*
+                //Item::getSingleton().getInventoryItemFromFloor(0);
+
                 static int animNr= 0;
                 ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_IDLE, animNr);
                 if (++animNr >= 16) animNr= 0;
-                */
+
                 break;
             }
 
@@ -525,11 +525,9 @@ bool Events::mousePressed(const OIS::MouseEvent &e, OIS::MouseButtonID button)
     // ////////////////////////////////////////////////////////////////////
     if (button == OIS::MB_Right)
     {
-        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Right");
-        if (Option::getSingleton().getGameStatus() < Option::GAME_STATUS_PLAY) return true;
         {
             RaySceneQuery *mRaySceneQuery = mSceneManager->createRayQuery(Ray());
-            mRaySceneQuery->setRay(mCamera->getCameraToViewportRay(mMouse.x, mMouse.y));
+            mRaySceneQuery->setRay(mCamera->getCameraToViewportRay(mMouse.x / e.state.width, mMouse.y / e.state.height));
             mRaySceneQuery->setQueryMask(ObjectManager::QUERY_NPC_MASK | ObjectManager::QUERY_CONTAINER);
             RaySceneQueryResult &result = mRaySceneQuery->execute();
             if (!result.empty())

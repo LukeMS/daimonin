@@ -34,7 +34,8 @@ http://www.gnu.org/licenses/licenses.html
 #include "gui_cursor.h"
 
 /**
- ** This class provides an interactive button.
+ ** This class provides an slot that can hold an item.
+    Drag'n'Drop is supported.
  *****************************************************************************/
 class GuiGadgetSlot: public GuiGraphic
 {
@@ -50,18 +51,40 @@ public:
     ~GuiGadgetSlot();
     int mouseEvent(int MouseAction, int x, int y);
     void draw();
+    /**
+     ** Put an item into the slot.
+     ** @param item 0 to empty the slot.
+     *****************************************************************************/
     void setItem(Item::sItem *item)
     {
         mItem = item;
         draw();
     }
+    /**
+     ** Get the item within the slot.
+     *****************************************************************************/
     Item::sItem *getItem()
     {
         return mItem;
     }
-    static int getDragSlot()
+    /**
+     ** Sets the time where the slot cannot be accessed.
+     *****************************************************************************/
+    void setBusy(Ogre::Real time)
     {
-        return mDragSlot;
+        mBusyTime = time;
+        mBusyTimeExpired = 0;
+    }
+    /**
+     ** Gets the remaing busy time of the slot.
+     *****************************************************************************/
+    Ogre::Real getBusy()
+    {
+        return mBusyTime;
+    }
+    void update(Ogre::Real dTime)
+    {
+        if (mBusyTime) drawBusy(dTime);
     }
     static void hideDragOverlay()
     {
@@ -73,6 +96,7 @@ public:
         GuiCursor::getSingleton().getPos(x, y);
         mDnDElement->setPosition(x, y);
     }
+    bool mouseWithin(int x, int y);
 
 private:
     // ////////////////////////////////////////////////////////////////////
@@ -89,10 +113,15 @@ private:
     int mSlotNr;                           /**< Unique number. **/
     Item::sItem *mItem;                    /**< The Item which is currently in the slot. **/
     unsigned int mSlotWidth, mSlotHeight;
+    Ogre::Real mBusyTime, mBusyTimeExpired;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     void drawDragItem();
+    /**
+     ** Draws an inactive gfx over the slot for recognizing the busy status.
+     *****************************************************************************/
+    void drawBusy(Ogre::Real dTime);
     int getTextureAtlasPos(int itemFace);
 };
 

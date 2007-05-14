@@ -631,7 +631,7 @@ bool Events::frameStarted(const FrameEvent& evt)
                 if (Root::getSingleton().getTimer()->getMilliseconds() - time > 180.0)
                 {
                     RaySceneQuery *mRaySceneQuery = mSceneManager->createRayQuery(Ray());
-                    mRaySceneQuery->setRay(mCamera->getCameraToViewportRay(mMouse.x, mMouse.y));
+                    mRaySceneQuery->setRay(mCamera->getCameraToViewportRay(mMouse.x / mWindow->getWidth(), mMouse.y / mWindow->getHeight()));
                     mRaySceneQuery->setQueryMask(ObjectManager::QUERY_NPC_MASK | ObjectManager::QUERY_CONTAINER);
                     RaySceneQueryResult &result = mRaySceneQuery->execute();
                     if (!result.empty() && !GuiManager::getSingleton().mouseInsideGui())
@@ -658,12 +658,7 @@ bool Events::frameStarted(const FrameEvent& evt)
                         }
                 */
                 ParticleManager::getSingleton().update(evt.timeSinceLastFrame);
-
-                if (TileManager::getSingleton().map_update_flag)
-                {
-                    TileMap::getSingleton().map_draw_map();
-                }
-
+                TileMap::getSingleton().update();
                 break;
             }
 

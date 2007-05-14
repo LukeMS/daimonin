@@ -46,11 +46,10 @@ public:
     enum { MIN_TEXTURE_PIXEL = 16 }; /**< Minimal size of tile in the terrain texture. */
 
     /** Size of a tile. */
-    enum { TILE_SIZE_X  = 48 };
-    enum { TILE_SIZE_Z  = 48 };
-    enum { SUM_SUBTILES =  8 };
+    enum { TILE_SIZE_X  = 48 }; /**< Size in pixel. */
+    enum { TILE_SIZE_Z  = 48 }; /**< Size in pixel. */
+    enum { SUM_SUBTILES =  8 }; /**< Sum of subtiles in x/z direction. */
 
-    int map_update_flag;
     int map_transfer_flag;
     bool map_new_flag;
 
@@ -98,20 +97,14 @@ public:
     }
     char getMapTextureRow(short x, short z)
     {
-        if ((unsigned short)x > CHUNK_SIZE_X) x = CHUNK_SIZE_X;
-        if ((unsigned short)z > CHUNK_SIZE_Z) z = CHUNK_SIZE_Z;
         return mMap[x][z].terrain_row;
     }
     char getMapTextureCol(short x, short z)
     {
-        if ((unsigned short)x > CHUNK_SIZE_X) x = CHUNK_SIZE_X;
-        if ((unsigned short)z > CHUNK_SIZE_Z) z = CHUNK_SIZE_Z;
         return mMap[x][z].terrain_col;
     }
     bool getIndoor(short x, short z)
     {
-        if ((unsigned short)x > CHUNK_SIZE_X) x = CHUNK_SIZE_X;
-        if ((unsigned short)z > CHUNK_SIZE_Z) z = CHUNK_SIZE_Z;
         // ATM only map position 2,4 is an indoor tile.
         if (mMap[x][z].terrain_col == 2 && mMap[x][z].terrain_row == 4) return true;
         return false;

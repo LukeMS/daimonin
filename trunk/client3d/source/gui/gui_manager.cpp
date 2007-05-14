@@ -302,11 +302,12 @@ bool GuiManager::mouseEvent(int mouseAction, Vector3 &mouse)
                 if (guiWindow[w].mouseWithin((int)mMouse.x, (int)mMouse.y))
                 {
                     mDragDstWin = w;
+                    mDragDstSlot = guiWindow[w].getMouseOverSlot((int)mMouse.x, (int)mMouse.y);
                     break;
                 }
             }
             // Drop the item.
-            Item::getSingleton().dropItem(mDragSrcWin, mDragSrcSlot, mDragDstWin);
+            Item::getSingleton().dropItem(mDragSrcWin, mDragSrcSlot, mDragDstWin, mDragDstSlot);
             mDragSrcWin = -1;
         }
         guiWindow[0].moveDragOverlay();

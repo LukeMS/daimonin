@@ -453,7 +453,7 @@
     <Gadget type= "BUTTON"  name = "But_Close" fill= "GFX_FILL" image_name = "Button-01-Close">
       <Pos x= "285" y= "1" />
     </Gadget>
-    <Listbox type= "GFX_FILL" name= "List_NPC" font="02">
+    <Listbox fill= "GFX_FILL" name= "List_NPC" font="02">
       <Pos x= "10" y= "60" />
       <Range width= "270" height= "248" />
       <Gadget type= "SCROLLER" name = "VScrollbar">
@@ -764,6 +764,14 @@
     <Gadget type= "SLOT"  name = "Slot" fill= "GFX_FILL" image_name = "Item-Slot" >
       <Pos x= "236" y= "162" />
     </Gadget>
+
+
+    <Gadget type= "SLOT"  name = "Slot" fill= "GFX_FILL" image_name = "Item-Slot" >
+      <Pos x= "236" y= "200" />
+    </Gadget>
+
+
+
 
     <Graphic fill= "GFX_FILL"  image_name = "Monney-Copper">
       <Pos x= "11" y= "11" />

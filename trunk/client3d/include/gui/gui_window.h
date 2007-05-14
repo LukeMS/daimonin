@@ -158,6 +158,7 @@ public:
     {
         mvSlot[0]->moveDragOverlay();
     }
+    int getMouseOverSlot(int x, int y);
 
 private:
     // ////////////////////////////////////////////////////////////////////
@@ -175,6 +176,7 @@ private:
     unsigned int mSumUsedSlots;
     bool isInit;
     bool mSizeRelative;
+    bool mLockSlots; /**< TODO: Lock all slots, so no item can accidental be removed. **/
     Ogre::SceneNode *mSceneNode;
     std::vector<class GuiTable*>mvTable;
     std::vector<class GuiGraphic*>mvGraphic;

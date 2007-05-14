@@ -35,6 +35,8 @@ http://www.gnu.org/licenses/licenses.html
 
 using namespace Ogre;
 
+// Will be replaced by TileManager.
+
 //================================================================================================
 // .
 //================================================================================================
@@ -401,6 +403,7 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
         the_map.cells[x][y].ext[layer] = ext;
     the_map.cells[x][y].pos[layer] = pos;
     strcpy(the_map.cells[x][y].pname[layer], name);
+    mNeedsRedraw = true;
 }
 
 //================================================================================================
@@ -420,19 +423,18 @@ void TileMap::display_map_clearcell(long x, long y)
 }
 
 //================================================================================================
-// .
+// ATM this func is .
 //================================================================================================
-void TileMap::display_mapscroll(int dx, int dy)
+void TileMap::scroll(int dx, int dy)
 {
-    if (!dx && !dy)
-        TileManager::getSingleton().changeChunks();
+    if (dx || dy) mNeedsRedraw = true;
 }
 
 //================================================================================================
 // .
 //================================================================================================
-void TileMap::map_draw_map()
+void TileMap::draw()
 {
     TileManager::getSingleton().changeChunks();
-    TileManager::getSingleton().map_update_flag = 0;
+    mNeedsRedraw = false;
 }
