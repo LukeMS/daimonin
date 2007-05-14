@@ -652,6 +652,28 @@ static _gui_interface_struct *format_gui_interface(_gui_interface_struct *gui_in
                 break;
             }
         }
+
+        char tempbuf[INTERFACE_MAX_CHAR+1];
+        for (i=0;i<gui_int->message.line_count;i++)
+        {
+            if (strchr(gui_int->message.lines[i],'|')==strrchr(gui_int->message.lines[i],'|')
+                && strchr(gui_int->message.lines[i],'|'))
+            {
+                strcat(gui_int->message.lines[i],"|");
+                strcpy(tempbuf,"|");
+                strcat(tempbuf,gui_int->message.lines[i+1]);
+                strcpy(gui_int->message.lines[i+1],tempbuf);
+            }
+            if (strchr(gui_int->message.lines[i],'°')==strrchr(gui_int->message.lines[i],'°')
+                && strchr(gui_int->message.lines[i],'°'))
+            {
+                strcat(gui_int->message.lines[i],"°");
+                strcpy(tempbuf,"°");
+                strcat(tempbuf,gui_int->message.lines[i+1]);
+                strcpy(gui_int->message.lines[i+1],tempbuf);
+            }
+        }
+
         /* lets sort out the keywords */
         gui_int->keyword_count=0;
         gui_int->keyword_selected=0;
@@ -1188,7 +1210,7 @@ int get_interface_line(int *element, int *index, char **keyword, int x, int y, i
                 }
                 yoff += 15;
             }
-	}
+    }
         yoff += 15;
     }
 
@@ -1451,7 +1473,7 @@ void show_interface_npc(int mark)
         StringBlt(ScreenSurface, &BigFont, gui_interface_npc->message.title, x+40, y+yoff, COLOR_HGOLD, NULL, NULL);
         yoff+=25;
 
-	for (i=0;i<gui_interface_npc->message.line_count;i++)
+    for (i=0;i<gui_interface_npc->message.line_count;i++)
         {
             if (!strcmp(gui_interface_npc->message.lines[i], "\0"))
                 yoff += 5;
@@ -1462,7 +1484,7 @@ void show_interface_npc(int mark)
             }
         }
 
-	yoff+=15;
+    yoff+=15;
     }
 
     /* reward is also used as "objective" */
@@ -1501,7 +1523,7 @@ void show_interface_npc(int mark)
         if (gui_interface_npc->reward.copper || gui_interface_npc->reward.gold ||
                 gui_interface_npc->reward.silver || gui_interface_npc->reward.mithril ||
                 gui_interface_npc->icon_count)
-	{
+    {
             char buf[64];
 
             if (gui_interface_npc->reward.line_count)
