@@ -10,6 +10,7 @@ INCLUDES = \
 AM_CXXFLAGS =\
 	@SDL_CFLAGS@ \
 	${OGRE_CFLAGS} \
+	${OIS_CFLAGS} \
 	-Wall \
 	-g
 
@@ -79,6 +80,7 @@ client3d_LDFLAGS = \
 
 client3d_LDADD = \
 	${FMOD_LIBS} \
+	${OIS_LIBS} \
 	@SDL_LIBS@
 
 AUTOMAKE_OPTIONS = \
