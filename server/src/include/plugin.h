@@ -349,7 +349,7 @@ struct plugin_hooklist
     hashtable_iterator_t (*hashtable_iterator)(const hashtable *const ht);
     hashtable_iterator_t (*hashtable_iterator_next)(const hashtable *const ht, hashtable_iterator_t i);
 
-    const char *(*normalize_path)(const char *src, const char *dst, char *path);
+    char *(*normalize_path)(const char *src, const char *dst, char *path);
     mapstruct *(*enter_map_by_name)(object *op, const char *path, const char *src_path, int x, int y, int flags);
     int (*enter_map_by_exit)(object *op, object *exit_ob);
     int (*enter_map)(object *op, object *originator, mapstruct *newmap, int x, int y, int flags);
