@@ -654,34 +654,20 @@ void command_new_char(char *params, int len, player *pl)
       + new_char_template[i].max_p;
 
     if (v != (stats[0] + stats[1] + stats[2] + stats[3] + stats[4] + stats[5] + stats[6]) /* all boni put on the player? */
-     || stats[0]
-      < new_char_template[i].min_Str
-     || stats[0]
-      > new_char_template[i].max_Str
-     || stats[1]
-      < new_char_template[i].min_Dex
-     || stats[1]
-      > new_char_template[i].max_Dex
-     || stats[2]
-      < new_char_template[i].min_Con
-     || stats[2]
-      > new_char_template[i].max_Con
-     || stats[3]
-      < new_char_template[i].min_Int
-     || stats[3]
-      > new_char_template[i].max_Int
-     || stats[4]
-      < new_char_template[i].min_Wis
-     || stats[4]
-      > new_char_template[i].max_Wis
-     || stats[5]
-      < new_char_template[i].min_Pow
-     || stats[5]
-      > new_char_template[i].max_Pow
-     || stats[6]
-      < new_char_template[i].min_Cha
-     || stats[6]
-      > new_char_template[i].max_Cha)
+     || stats[0] < new_char_template[i].min_Str
+     || stats[0] > new_char_template[i].max_Str
+     || stats[1] < new_char_template[i].min_Dex
+     || stats[1] > new_char_template[i].max_Dex
+     || stats[2] < new_char_template[i].min_Con
+     || stats[2] > new_char_template[i].max_Con
+     || stats[3] < new_char_template[i].min_Int
+     || stats[3] > new_char_template[i].max_Int
+     || stats[4] < new_char_template[i].min_Wis
+     || stats[4] > new_char_template[i].max_Wis
+     || stats[5] < new_char_template[i].min_Pow
+     || stats[5] > new_char_template[i].max_Pow
+     || stats[6] < new_char_template[i].min_Cha
+     || stats[6] > new_char_template[i].max_Cha)
     {
         LOG(llevDebug, "SHACK:: %s: tried to hack NewChar! (%d - %d)\n", query_name(pl->ob), i,
             stats[0] + stats[1] + stats[2] + stats[3] + stats[4] + stats[5] + stats[6]);
