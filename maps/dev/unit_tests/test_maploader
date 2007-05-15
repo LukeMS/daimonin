@@ -165,7 +165,7 @@ x 1
 y 1
 end
 arch stairs_wood_up
-slaying testmap_main
+slaying ../testmaps/testmap_main
 hp 11
 sp 4
 x 1
