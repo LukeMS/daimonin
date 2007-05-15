@@ -2946,9 +2946,6 @@
 	If set and a connected object without "last_eat 1" gives
       signal, the magic wall turns this steps.
   </attribute>
-  <attribute arch="no_pass" editor="blocking passage" type="bool">
-    If set, the object cannot be passed by players nor monsters.
-  </attribute>
 <section name="destroyable">
   <attribute arch="alive" editor="is destroyable" type="bool">
     Walls with &lt;is destroyable&gt; enabled can be attacked and (eventually)
@@ -3112,7 +3109,7 @@
     receive some. :-) ]]>
   </use>
   <attribute arch="alive" value="1" type="fixed" />
-  <attribute arch="randomitems" editor="treasurelist" type="treasurelist">
+  <attribute arch="randomitems" editor="treasurelist" type="string">
     When the monster is killed, items from the treasurelist will
     drop to the ground. This is a common way to reward players
     for killing (masses of) monsters.
@@ -3586,7 +3583,7 @@
     receive some. :-) ]]>
   </use>
   <attribute arch="alive" value="1" type="fixed" />
-  <attribute arch="randomitems" editor="treasurelist" type="treasurelist">
+  <attribute arch="randomitems" editor="treasurelist" type="string">
     When the monster is killed, items from the treasurelist will
     drop to the ground. This is a common way to reward players
     for killing (masses of) monsters.
@@ -5011,7 +5008,7 @@
     You need to specify a &lt;treasurelist&gt; to define what kinds of items
     are generated. The items will be unpaid.
   </attribute>
-  <attribute arch="randomitems" editor="treasurelist" type="treasurelist">
+  <attribute arch="randomitems" editor="treasurelist" type="string">
     This entry determines what kind of treasure will appear, when
     &lt;generate goods&gt; is enabled. Look into /crossfire/share/crossfire/treasures
     for details about existing treasurelists.
@@ -5493,7 +5490,7 @@
     My advice: Don't use it! Attract players with good fighting experience
     (from monsters), potions, spellbooks, money, and non-random artifacts.  ]]>
   </use>
-  <attribute arch="randomitems" editor="treasurelist" type="treasurelist">
+  <attribute arch="randomitems" editor="treasurelist" type="string">
     This entry determines what kind of treasure will appear. Look into
     /crossfire/share/crossfire/treasures for details about existing
     treasurelists.
