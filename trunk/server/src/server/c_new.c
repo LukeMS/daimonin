@@ -582,7 +582,7 @@ void command_new_char(char *params, int len, player *pl)
     int                 skillnr[]       = {SK_SLASH_WEAP, SK_MELEE_WEAPON, SK_CLEAVE_WEAP, SK_PIERCE_WEAP};
     archetype          *p_arch          = NULL;
     const char         *name_tmp        = NULL;
-    object             *objtmp, *op;
+    object             /* *objtmp,*/ *op;
     int x = pl->ob->    x, y = pl->ob->y;
     int                 stats[8], i, v;
 #ifdef PLUGINS
@@ -604,13 +604,13 @@ void command_new_char(char *params, int len, player *pl)
     if (pl->state != ST_CREATE_CHAR)
     {
         LOG(llevDebug, "SHACK:: %s: command_new_char send at from time\n", query_name(pl->ob));
-        pl->socket.status = Ns_Dead; /* killl socket */
+        pl->socket.status = Ns_Dead; /* kill socket */
         return;
     }
 
     if (!params || !len || len > MAX_BUF)
     {
-        pl->socket.status = Ns_Dead; /* killl socket */
+        pl->socket.status = Ns_Dead; /* kill socket */
         return;
     }
 
@@ -774,6 +774,7 @@ void command_new_char(char *params, int len, player *pl)
     learn_skill(op, NULL, NULL, skillnr[stats[7]], 0);
 
     /* give the player his initial weapon based on the selected skill */
+	/*
     objtmp = get_archetype(skillitem[stats[7]]);
     objtmp = insert_ob_in_ob(objtmp, op);
     SET_FLAG(objtmp, FLAG_IDENTIFIED);
@@ -781,6 +782,7 @@ void command_new_char(char *params, int len, player *pl)
     SET_FLAG(objtmp, FLAG_KNOWN_CURSED);
     manual_apply(op, objtmp, 0);
     objtmp->value = 1;
+	*/
 
     CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
     pl->last_stats.exp = 1;          /* force send of skill exp data to client */
