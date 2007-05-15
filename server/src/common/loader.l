@@ -310,7 +310,11 @@ WS	[ \t]*{NL}?
 ^maxgrace{S}	op->stats.maxgrace = IVAL;
 ^exp{S}			op->stats.exp = atol(yval());
 ^food{S}		op->stats.food = IVAL;
-^dam{S}			op->stats.dam = IVAL;
+^dam{S}			{
+					op->stats.dam = IVAL;
+					if(op->stats.dam < 9)
+						op->stats.dam *= 10;
+				}
 ^dam_add{S}		op->stats.dam += IVAL;
 ^wc{S}			op->stats.wc = IVAL;
 ^wc_add{S}		op->stats.wc += IVAL;
