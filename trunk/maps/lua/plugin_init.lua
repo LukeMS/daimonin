@@ -8,7 +8,19 @@
 -- Also note that this script is _only_ loaded at server startup
 --]]
 
-if game == nil then require "plugin_emulate.lua" end
+if game == nil then require "plugin_emulate" end
+
+-- Functions that need to be declared before we load the security system:
+local orig_io_open = io.open
+io.exists = function(filename)
+    file = orig_io_open(filename, "r")
+    if file ~= nil then
+        io.close(file)
+        return true
+    end
+    return false
+end
+
 require("security")
 require("data_store")
 
