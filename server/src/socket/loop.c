@@ -288,7 +288,7 @@ void command_talk_ex(char *data, int len, player *pl)
     else
     {
         data[len]='\0'; /* sanity string end */
-        LOG(-1,"TX-CMD: unknown tag (len %d) from player %s: %s\n", len, query_name(pl->ob),*data);
+        LOG(-1,"TX-CMD: unknown tag (len %d) from player %s: %c\n", len, query_name(pl->ob),*data);
     }
 }
 
