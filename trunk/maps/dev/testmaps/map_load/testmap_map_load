@@ -170,9 +170,8 @@ arch monk
 name ReadyMap Tester
 type 83
 arch event_obj
-name Lua
-race /dev/testmaps/map_load/map_ready.lua
 sub_type 13
+race map_ready.lua
 end
 end
 end
