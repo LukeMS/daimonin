@@ -25,28 +25,19 @@
 
 #include <global.h>
 
-/* WARNING: the whole module must rewritten to fix it for the new money
- * system in daimonin. 32bit will be broken when a player has ~250 mithril coins.
- *
- * Value is now set to int64. The source compiles without error but this module
- * functions needs be tested.
- */
+sint64 pay_from_container(object *op, object *pouch, sint64 to_pay);
 
-
-/* i reworked this function in most parts. I removed every part which try to recalculate
- * the item value. Now we always use the real value or the clone value and only adjust
- * it by charisma or buy/sell base modifiers.
+/* query_cost() will return the real value of an item
+ * Thats not always ->value - and in some cases the value 
+ * is calced using the default arch
  */
 sint64 query_cost(object *tmp, object *who, int flag)
 {
     sint64  val;
-    double  diff;
     int     number; /* used to better calculate value */
-    int     charisma    = 11; /* thas a neutral base value */
 
     if ((number = tmp->nrof) == 0)
         number = 1;
-
 
     if (tmp->type == MONEY) /* money is always identified */
         return(number * tmp->value);
@@ -98,35 +89,13 @@ sint64 query_cost(object *tmp, object *who, int flag)
     else if (tmp->type == ROD || tmp->type == HORN || tmp->type == POTION || tmp->type == SCROLL)
         val += val * tmp->level;
 
-    /* we are done if we only want get the real value */
-    if (flag == F_TRUE)
-        return val;
-
-    /* ok, we handle buy or sell values.
-     * If we buy, the price is nearly true value.
-     * If we sell, its about20% of the true value.
-     * This value can be altered from charisma and skills to.
-     */
-
-    /* now adjust for sell or buy the multiplier */
-    if (flag == F_BUY)
-        diff = 1.0;
-    else
-        diff = 0.20;
-
-    val = (sint64) ((double)val*diff); /* our real value */
-
-    /* we want give at last 1 copper for items which has any value */
-    if (val == 0 && ( val > 0 || tmp->value > 0))
-        val = 1;
-
     return val;
 }
 
 /* Find the coin type that is worth more the 'c'.  Starts at the
  * cointype placement.
  */
-static archetype * find_next_coin(sint64 c, int *cointype)
+static inline archetype * find_next_coin(sint64 c, int *cointype)
 {
     archetype  *coin;
 
@@ -221,6 +190,9 @@ char * query_cost_string(object *tmp, object *who, int flag)
     return cost_string_from_value(query_cost(tmp, who, flag), 0);
 }
 
+
+
+
 /* This function finds out how much money the player is carrying,   *
  * and returns that value                       */
 /* Now includes any coins in active containers -- DAMN          */
@@ -244,6 +216,8 @@ sint64 query_money(object *op)
     }
     return total;
 }
+
+
 /* TCHIZE: This function takes the amount of money from the             *
  * the player inventory and from it's various pouches using the         *
  * pay_from_container function.                                         *
@@ -255,7 +229,7 @@ int pay_for_amount(sint64 to_pay, object *pl)
     if (to_pay > query_money(pl))
         return 0;
 
-    pay_from_container(NULL, pl, to_pay);
+    pay_from_container(pl, pl, to_pay);
 
     FIX_PLAYER(pl ,"pay for amount");
     return 1;
@@ -274,7 +248,7 @@ int pay_for_item(object *op, object *pl)
     if (to_pay > query_money(pl))
         return 0;
 
-    pay_from_container(op, pl, to_pay);
+    pay_from_container(pl, pl, to_pay);
 
     FIX_PLAYER(pl ,"pay for item");
     return 1;
@@ -289,7 +263,7 @@ int pay_for_item(object *op, object *pl)
  */
 /* DAMN: This function is used for the player, then for any active  *
  * containers that can hold money, until the op is paid for.        */
-sint64 pay_from_container(object *op, object *pouch, sint64 to_pay)
+static sint64 pay_from_container(object *op, object *pouch, sint64 to_pay)
 {
     sint64        remain;
     int         count, i;
@@ -316,30 +290,43 @@ sint64 pay_from_container(object *op, object *pouch, sint64 to_pay)
                 if (coins_arch[NUM_COINS - 1 - i]->name  == tmp->arch->name && (tmp->value == tmp->arch->clone.value))
                 {
                     /* This should not happen, but if it does, just merge the two */
-                    if (coin_objs[i] != NULL)
+					if(tmp->env)
+					{
+						if (tmp->env->type == PLAYER)
+							esrv_del_item(CONTR(tmp->env), tmp->count, tmp->env);
+						if (tmp->env->type == CONTAINER)
+							esrv_del_item(NULL, tmp->count, tmp->env);
+					}
+					remove_ob(tmp);
+					if (coin_objs[i] != NULL)
                     {
                         LOG(llevBug, "BUG: %s has two money entries of (%s)\n", query_name(pouch),
                             coins_arch[NUM_COINS - 1 - i]->name);
-                        remove_ob(tmp);
                         coin_objs[i]->nrof += tmp->nrof;
-                        esrv_del_item(CONTR(pouch), tmp->count, tmp->env);
                     }
                     else
                     {
-                        remove_ob(tmp);
-                        if (pouch->type == PLAYER)
-                            esrv_del_item(CONTR(pouch), tmp->count, tmp->env);
                         coin_objs[i] = tmp;
                     }
+
                     break;
                 }
             }
             if (i == NUM_COINS)
                 LOG(llevBug, "BUG: in pay_for_item: Did not find string match for %s\n", tmp->arch->name);
         }
-        else if (tmp->type == CONTAINER)
-            remain = pay_from_container(op, tmp, remain);
     }
+
+	/* ugly, but in this way we ensure the whole root ->inv is searched,
+	 * before we go recursive inside the containers
+	 */
+	for (tmp = pouch->inv; tmp; tmp = next)
+	{
+		next = tmp->below;
+
+		if (tmp->type == CONTAINER)
+			remain = pay_from_container(op, tmp, remain);
+	}
 
     /* Fill in any gaps in the coin_objs array - needed to make change. */
     /* Note that the coin_objs array goes from least value to greatest value */
