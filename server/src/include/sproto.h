@@ -548,7 +548,6 @@ char                       *query_cost_string(object *tmp, object *who, int flag
 sint64                      query_money(object *op);
 int                         pay_for_amount(sint64 to_pay, object *pl);
 int                         pay_for_item(object *op, object *pl);
-sint64                      pay_from_container(object *op, object *pouch, sint64 to_pay);
 int                         get_payment2(object *pl, object *op);
 int                         get_payment(object *pl);
 void                        sell_item(object *op, object *pl, sint64 value);
