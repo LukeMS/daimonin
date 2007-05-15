@@ -75,15 +75,6 @@ arch pants
 magic_chance 0
 artifact_chance 0
 more
-arch sandals
-magic_chance 0
-artifact_chance 0
-more
-arch food_generic
-magic_chance 0
-artifact_chance 0
-nrof 4
-more
 arch torch
 magic_chance 0
 artifact_chance 0
@@ -121,15 +112,6 @@ more
 arch pants
 magic_chance 0
 artifact_chance 0
-more
-arch sandals
-magic_chance 0
-artifact_chance 0
-more
-arch food_generic
-magic_chance 0
-artifact_chance 0
-nrof 4
 more
 arch torch
 magic_chance 0
@@ -169,15 +151,6 @@ arch pants
 magic_chance 0
 artifact_chance 0
 more
-arch sandals
-magic_chance 0
-artifact_chance 0
-more
-arch food_generic
-magic_chance 0
-artifact_chance 0
-nrof 4
-more
 arch torch
 magic_chance 0
 artifact_chance 0
@@ -215,15 +188,6 @@ more
 arch pants
 magic_chance 0
 artifact_chance 0
-more
-arch sandals
-magic_chance 0
-artifact_chance 0
-more
-arch food_generic
-magic_chance 0
-artifact_chance 0
-nrof 4
 more
 arch torch
 magic_chance 0
@@ -263,15 +227,6 @@ arch pants
 magic_chance 0
 artifact_chance 0
 more
-arch sandals
-magic_chance 0
-artifact_chance 0
-more
-arch food_generic
-magic_chance 0
-artifact_chance 0
-nrof 4
-more
 arch torch
 magic_chance 0
 artifact_chance 0
@@ -309,15 +264,6 @@ more
 arch pants
 magic_chance 0
 artifact_chance 0
-more
-arch sandals
-magic_chance 0
-artifact_chance 0
-more
-arch food_generic
-magic_chance 0
-artifact_chance 0
-nrof 4
 more
 arch torch
 magic_chance 0
