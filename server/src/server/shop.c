@@ -25,7 +25,7 @@
 
 #include <global.h>
 
-sint64 pay_from_container(object *op, object *pouch, sint64 to_pay);
+static sint64 pay_from_container(object *op, object *pouch, sint64 to_pay);
 
 /* query_cost() will return the real value of an item
  * Thats not always ->value - and in some cases the value 
