@@ -221,6 +221,7 @@ enum
 #define UPD_NROF    0x80
 #define UPD_DIRECTION   0x100
 #define UPD_QUALITY   0x200
+#define UPD_ALL     0xffff
 
 typedef struct _srv_client_files
 {

@@ -2417,6 +2417,7 @@ static int GameObject_CreateInvisibleInside(lua_State *L)
 static object *CreateObjectInside_body(lua_State *L, object *where, char *archname, int id, int nrof, int value)
 {
     object *myob = hooks->get_archetype(archname);
+    object *retobj;
     if (!myob || strncmp(STRING_OBJ_NAME(myob), "singularity", 11) == 0)
     {
         LOG(llevDebug, "BUG GameObject_CreateObjectInside(): ob:>%s< = NULL!\n", STRING_OBJ_NAME(myob));
@@ -2434,7 +2435,9 @@ static object *CreateObjectInside_body(lua_State *L, object *where, char *archna
     if (nrof > 1)
         myob->nrof = nrof;
 
-    return hooks->insert_ob_in_ob(myob, where);
+    retobj = hooks->insert_ob_in_ob(myob, where);
+    hooks->esrv_update_item(UPD_ALL, NULL, retobj);
+    return retobj;
 }
 
 /*****************************************************************************/
@@ -2457,8 +2460,6 @@ static int GameObject_CreateObjectInside(lua_State *L)
     get_lua_args(L, "Osii|i", &whereptr, &txt, &id, &nrof, &value);
 
     myob = CreateObjectInside_body(L, WHERE, txt, id, nrof, value);
-
-    hooks->esrv_send_item(hooks->is_player_inv(myob), myob);
 
     return push_object(L, &GameObject, myob);
 }
@@ -2488,7 +2489,6 @@ static int GameObject_CreateObjectInsideEx(lua_State *L)
     pl = hooks->is_player_inv(myob);
     if(pl)
     {
-        hooks->esrv_send_item(pl, myob);
         hooks->new_draw_info_format(NDI_WHITE, 0, pl, "you got %d %s",
                 myob->nrof?myob->nrof:1, hooks->query_short_name(myob, NULL));
     }
