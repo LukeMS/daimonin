@@ -149,8 +149,8 @@ arch monk
 name Map:Load Tester
 type 83
 arch event_obj
-race /dev/testmaps/map_load/map_load.lua
 sub_type 13
+race map_load.lua
 end
 end
 end
