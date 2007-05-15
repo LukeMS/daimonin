@@ -2436,7 +2436,7 @@ static object *CreateObjectInside_body(lua_State *L, object *where, char *archna
         myob->nrof = nrof;
 
     retobj = hooks->insert_ob_in_ob(myob, where);
-    hooks->esrv_update_item(UPD_ALL, NULL, retobj);
+    hooks->esrv_send_item(where, retobj);
     return retobj;
 }
 
@@ -2453,11 +2453,11 @@ static object *CreateObjectInside_body(lua_State *L, object *where, char *archna
 static int GameObject_CreateObjectInside(lua_State *L)
 {
     object *myob;
-    int         value = -1, id, nrof = 1;
+    int         value = -1, id = 0, nrof = 1;
     char       *txt;
     lua_object *whereptr;
 
-    get_lua_args(L, "Osii|i", &whereptr, &txt, &id, &nrof, &value);
+    get_lua_args(L, "Os|iii", &whereptr, &txt, &id, &nrof, &value);
 
     myob = CreateObjectInside_body(L, WHERE, txt, id, nrof, value);
 
@@ -2478,11 +2478,11 @@ static int GameObject_CreateObjectInside(lua_State *L)
 static int GameObject_CreateObjectInsideEx(lua_State *L)
 {
     object     *myob, *pl;
-    int         value = -1, id, nrof = 1;
+    int         value = -1, id = 0, nrof = 1;
     char       *txt;
     lua_object *whereptr;
 
-    get_lua_args(L, "Osii|i", &whereptr, &txt, &id, &nrof, &value);
+    get_lua_args(L, "Os|iii", &whereptr, &txt, &id, &nrof, &value);
 
     myob = CreateObjectInside_body(L, WHERE, txt, id, nrof, value);
 
