@@ -647,11 +647,11 @@ void command_new_char(char *params, int len, player *pl)
     v = new_char_template[i].min_Str
         + new_char_template[i].min_Dex
         + new_char_template[i].min_Con
-      + new_char_template[i].min_Int
-      + new_char_template[i].min_Wis
-      + new_char_template[i].min_Pow
-      + new_char_template[i].min_Cha
-      + new_char_template[i].max_p;
+        + new_char_template[i].min_Int
+        + new_char_template[i].min_Wis
+        + new_char_template[i].min_Pow
+        + new_char_template[i].min_Cha
+        + new_char_template[i].max_p;
 
     if (v != (stats[0] + stats[1] + stats[2] + stats[3] + stats[4] + stats[5] + stats[6]) /* all boni put on the player? */
      || stats[0] < new_char_template[i].min_Str
