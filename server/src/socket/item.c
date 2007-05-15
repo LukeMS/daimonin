@@ -801,15 +801,11 @@ static void esrv_update_item_send(int flags, object *pl, object *op)
         if (CONTR(pl)->socket.sc_version >= 1024)
         {
             int     len;
-            char   *item_p, item_n[MAX_BUF];
+            char    item_n[MAX_BUF];
 
             strncpy(item_n, query_base_name(op, pl), 127);
             item_n[127] = 0;
             len = strlen(item_n);
-            item_p = query_base_name(op, pl);
-            strncpy(item_n + len + 1, item_p, 127);
-            item_n[254] = 0;
-            len += strlen(item_n + 1 + len) + 1;
             SockList_AddChar(&global_sl, (char) len);
             memcpy(global_sl.buf + global_sl.len, item_n, len);
             global_sl.len += len;
