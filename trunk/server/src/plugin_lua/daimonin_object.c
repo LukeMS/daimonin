@@ -126,6 +126,7 @@ static struct method_decl   GameObject_methods[]            =
     {"SetInvAnimation", (lua_CFunction) GameObject_SetInvAnimation},
     {"MakePet", (lua_CFunction) GameObject_MakePet},
     {"GetPets", (lua_CFunction) GameObject_GetPets},
+    {"GetGmasterMode", (lua_CFunction) GameObject_GetGmasterMode},
 
     // {"GetUnmodifiedAttribute", (lua_CFunction)GameObject_GetUnmodifiedAttribute},
     {NULL, NULL}
@@ -3310,6 +3311,25 @@ static int GameObject_GetPets(lua_State *L)
             }
     }
 
+    return 1;
+}
+
+/*****************************************************************************/
+/* Name   : GameObject_GetGmasterMode                                        */
+/* Lua    : object:GetGmasterMode()                                          */
+/* Info   : Only works for player objects                                    */
+/* Status : Untested                                                         */
+/*****************************************************************************/
+static int GameObject_GetGmasterMode(lua_State *L)
+{
+    lua_object *self;
+
+    get_lua_args(L, "O", &self);
+
+    if (WHO->type != PLAYER || CONTR(WHO) == NULL)
+        luaL_error(L, "GetGmasterMode() can only be called on a legal player object.");
+
+    lua_pushnumber(L, CONTR(WHO)->gmaster_mode);
     return 1;
 }
 

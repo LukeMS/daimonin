@@ -270,6 +270,11 @@ static struct constant_decl     Game_constants[]    =
     {"LOG_DEBUG"                    ,llevDebug},
     {"LOG_MONSTER"                  ,llevMonster},
 
+    {"GMASTER_MODE_NO"              ,GMASTER_MODE_NO},
+    {"GMASTER_MODE_VOL"             ,GMASTER_MODE_VOL},
+    {"GMASTER_MODE_GM"              ,GMASTER_MODE_GM},
+    {"GMASTER_MODE_DM"              ,GMASTER_MODE_DM},
+
     {NULL, 0}
 };
 
