@@ -212,7 +212,7 @@ static void update_home_position_for_wp_move(object *op, int last_movement_dir)
             || MOB_PATHDATA(op)->last_best_distance == -1
             || MOB_PATHDATA(op)->best_distance <  MOB_PATHDATA(op)->last_best_distance)
     {
-        object *base = find_base_info_object(op);
+        object *base = insert_base_info_object(op);
         base->x = op->x;
         base->y = op->y;
         FREE_AND_ADD_REF_HASH(base->slaying, op->map->orig_path);
@@ -687,7 +687,7 @@ void ai_move_randomly(object *op, struct mob_behaviour_param *params, move_respo
         return;
     }
 
-    base = find_base_info_object(op);
+    base = insert_base_info_object(op);
     if ((params[AIPARAM_MOVE_RANDOMLY_XLIMIT].flags & AI_PARAM_PRESENT)
             || (params[AIPARAM_MOVE_RANDOMLY_YLIMIT].flags & AI_PARAM_PRESENT))
     {
@@ -739,7 +739,7 @@ void ai_move_randomly(object *op, struct mob_behaviour_param *params, move_respo
 void ai_move_towards_owner(object *op, struct mob_behaviour_param *params, move_response *response)
 {
     rv_vector *rv;
-    object *base = find_base_info_object(op);
+    object *base = insert_base_info_object(op);
 
     if(! OBJECT_VALID(op->owner, op->owner_count) || MOB_DATA(op)->owner == NULL)
     {
@@ -1696,7 +1696,7 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
     if(antilure_dist_2 >= 0)
     {
         /* Try to find a legal home map */
-        base = find_base_info_object(op);
+        base = insert_base_info_object(op);
 
         /* crashed on testserver - give log mesg */
         if(!base)
