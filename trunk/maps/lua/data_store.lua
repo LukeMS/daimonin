@@ -110,6 +110,9 @@ function _data_store._save(time, player, b_force)
     else
         t = _data_store._global
     end
+    -- Nothing to save?
+    if not t then return true end
+
     for k, v in pairs(t) do
         if k ~= 'n' then
             local b_save = false
@@ -148,6 +151,7 @@ function _data_store._save(time, player, b_force)
                         print("DataStore: Couldn't open " .. filename .. " for writing")
                         everything_ok = false
                     else                    
+                        print("DataStore: saving stored data for player "..player.." in "..filename)
                         f:write(_data_store._serialize(v._data))
                         f:close()
                     end
@@ -156,6 +160,19 @@ function _data_store._save(time, player, b_force)
         end
     end
     return everything_ok
+end
+
+-- Remove's the player's datastore from memory
+function _data_store.forget_player(player)
+    _data_store._players[player] = nil
+end
+
+-- Returns true if there was no error, or false if any error occured
+function _data_store.save_player(player, b_force)
+    -- Nothing to save?
+    if _data_store._players[player] == nil then return true end
+
+    return _data_store._save(os.time(), player, b_force)
 end
 
 -- Returns true if there was no error, or false if any error occured
