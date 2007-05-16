@@ -1049,7 +1049,7 @@ void doeric_server(int update, struct timeval *timeout)
 #endif
             LOG(llevDebug, " ip %s (socket %d) (%x)\n", tmp_ip, newsock->fd, newsock);
             InitConnection(newsock, tmp_ip);
-            check_ip_ban(newsock, tmp_ip);
+            /*check_ip_ban(newsock, tmp_ip);*/
             if(newsock->status != Ns_Zombie) /* set from ban check */
             {
                 newsock->status = Ns_Add;
