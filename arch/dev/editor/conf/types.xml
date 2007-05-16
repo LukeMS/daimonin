@@ -6034,7 +6034,7 @@ that food.]]>
 <type available="no" number="23" name="DOOR"/>
 <type available="no" number="24" name="KEY"/>
 <type available="no" number="25" name="MMISSILE"/>
-<type available="no" number="28" name="FLOORMASK"/>
+<type available="yes" number="28" name="FLOORMASK"/>
 <type available="no" number="37" name="CLASS"/>
 <type available="no" number="38" name="GRAVESTONE"/>
 <type available="no" number="43" name="SKILL"/>
