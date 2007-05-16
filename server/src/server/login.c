@@ -152,15 +152,15 @@ int save_player(object *op, int flag)
 #ifdef BACKUP_SAVE_AT_HOME
     sint16  backup_x, backup_y;
 #endif
+    
+    /* Sanity check - some stuff changes this when player is exiting */
+    if (op->type != PLAYER || pl == NULL)
+        return 0;
 
-    if (!op->stats.exp && (!CONTR(op) || !CONTR(op)->player_loaded))
+    if (op->stats.exp == 0 && !pl->player_loaded)
         return 0;   /* no experience, no save */
 
     flag &= 1;
-
-    /* Sanity check - some stuff changes this when player is exiting */
-    if (op->type != PLAYER)
-        return 0;
 
     /* Prevent accidental saves if connection is reset after player has
      * mostly exited.
