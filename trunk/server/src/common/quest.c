@@ -343,7 +343,7 @@ void check_kill_quest_event(struct obj *pl, struct obj *op)
                     || (tmp_info->slaying && tmp_info->slaying == op->name))
             {
                 /* the drop/kill chance can be random ... */
-                if(tmp_info->last_grace && (RANDOM() % (tmp_info->last_grace+1)))
+                if(tmp_info->last_grace > 1 && (RANDOM() % tmp_info->last_grace))
                     continue; /* good kill, bad luck, no item */
 
                 /* ok, we have a hit... now lets check what we have - kill or kill item */
