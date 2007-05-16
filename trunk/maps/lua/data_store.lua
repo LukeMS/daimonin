@@ -151,7 +151,7 @@ function _data_store._save(time, player, b_force)
                         print("DataStore: Couldn't open " .. filename .. " for writing")
                         everything_ok = false
                     else                    
-                        print("DataStore: saving stored data for player "..player.." in "..filename)
+                        -- print("DataStore: saving stored data for player "..player.." in "..filename)
                         f:write(_data_store._serialize(v._data))
                         f:close()
                     end
