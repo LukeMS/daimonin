@@ -172,7 +172,7 @@ void insert_quest_item(struct obj *quest_trigger, struct obj *target)
                         sprintf(auto_buf, "You found the one drop %s!", query_short_name(tmp, target));
                     else
                         sprintf(auto_buf, "You found the special drop %s!", query_short_name(tmp, target));
-                    new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, target, auto_buf);
+                    new_draw_info(NDI_UNIQUE | NDI_NAVY | NDI_VIM, 0, target, auto_buf);
                 }
             }
         }
@@ -189,14 +189,14 @@ void insert_quest_item(struct obj *quest_trigger, struct obj *target)
                 {
                     flag = TRUE;
                     add_quest_item(target, tmp);
-                    new_draw_info_format(NDI_UNIQUE | NDI_NAVY, 0, target, "You found the quest item %s!", query_short_name(tmp, target));
+                    new_draw_info_format(NDI_UNIQUE | NDI_NAVY | NDI_VIM, 0, target, "You found the quest item %s!", query_short_name(tmp, target));
                 }
             }
 
             if(quest->magic != (sint8) quest_trigger->last_heal ||flag)
             {
                 if(!flag)
-                    new_draw_info_format(NDI_UNIQUE | NDI_NAVY, 0, target, "You completed the quest '%s'!", query_short_name(quest, target));
+                    new_draw_info_format(NDI_UNIQUE | NDI_NAVY | NDI_VIM, 0, target, "You completed the quest '%s'!", query_short_name(quest, target));
 
                 if(quest_trigger->msg)
                     new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, target, quest_trigger->msg);
