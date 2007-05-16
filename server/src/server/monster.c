@@ -365,6 +365,7 @@ static int do_move_monster(object *op, int dir, uint16 forbidden)
         forbidden = 0;
     }
 
+    /* NOTE: remember that the monster may die during move_object */
     if (!(forbidden & (1 << dir)) && move_object(op, dir)) /* Can the monster move directly toward waypoint? */
         return TRUE;
 
@@ -598,9 +599,17 @@ int move_monster(object *op, int mode)
         }
 
         /* Try to avoid standing still if we aren't allowed to */
-        if((dir == 0 || success == 0) && (response.forbidden & (1 << 0)))
+        if((dir == 0 || success == 0) && (response.forbidden & (1 << 0)) 
+                && !QUERY_FLAG(op, FLAG_REMOVED))
         {
             success = do_move_monster(op, (RANDOM()%8)+1, response.forbidden);
+        }
+
+        /* Moving may have killed the monster */
+        if(QUERY_FLAG(op, FLAG_REMOVED))
+        {
+            LOG(llevDebug, "move_monster(): %s (%d) died when moving.\n",  STRING_OBJ_NAME(op), op->count);
+            return 0;
         }
 
         if(success) {
@@ -633,6 +642,13 @@ jump_move_monster_action:
             did_action = 1;
             break;
         }
+    }
+        
+    /* The action may have killed the monster */
+    if(QUERY_FLAG(op, FLAG_REMOVED))
+    {
+        LOG(llevDebug, "move_monster(): %s (%d) died when performing action.\n",  STRING_OBJ_NAME(op), op->count);
+        return 0;
     }
 
     /* Update the idle counter */
