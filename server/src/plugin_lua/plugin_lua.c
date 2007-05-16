@@ -540,11 +540,18 @@ MODULEAPI int triggerEvent(CFParm *PParm)
 /*****************************************************************************/
 MODULEAPI int HandleGlobalEvent(CFParm *PParm)
 {
+    CFParm parm;
 
     switch(*(int *)(PParm->Value[0]))
     {
         case EVENT_CLOCK:
             resume_detached_contexts();
+            break;
+
+        case EVENT_LOGOUT:
+            memcpy(&parm, PParm, sizeof(parm));
+            parm.Value[9] = "/lua/event_logout.lua";
+            HandleEvent(&parm);
             break;
 
         default:
@@ -957,14 +964,23 @@ MODULEAPI CFParm * postinitPlugin(CFParm *PParm)
     * code to give us a warning free build... without using any #ifdef
     * or pragma.
     */
+    /*
     struct timeval  new_time;
     (void) GETTIMEOFDAY(&new_time);
+    */
+    CFParm CFP;
+    int i;
 
     LOG(llevDebug, "LUA - Start postinitPlugin.\n");
 
-    /*    GCFP.Value[1] = (void *)(add_string_hook(PLUGIN_NAME));*/
+    CFP.Value[1] = (void *)PLUGIN_NAME;
+    
+    /* Register for logout events (needed by the datastore system) */
+    i = EVENT_LOGOUT;
+    CFP.Value[0] = (void *)(&i);
+    (PlugHooks[HOOK_REGISTEREVENT])(&CFP);
+
     /*
-    GCFP.Value[1] = (void *) PLUGIN_NAME;
        i = EVENT_BORN;
        GCFP.Value[0] = (void *)(&i);
        (PlugHooks[HOOK_REGISTEREVENT])(&GCFP);

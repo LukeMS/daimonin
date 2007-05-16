@@ -594,20 +594,18 @@ void leave(player *pl, int draw_exit)
          * of the data.
          */
 
-#if 0
 #ifdef PLUGINS
-        if (draw_exit == 0)
-        {
-            int     evtid;
-            CFParm  CFP;
-            /* GROS : Here we handle the LOGOUT global event */
-            evtid = EVENT_LOGOUT;
-            CFP.Value[0] = (void *) (&evtid);
-            CFP.Value[1] = (void *) (pl);
-            CFP.Value[2] = (void *) (pl->socket.ip_host);
-            GlobalEvent(&CFP);
-        };
-#endif
+        int     evtid;
+        CFParm  CFP;
+        evtid = EVENT_LOGOUT;
+        CFP.Value[0] = (void *) (&evtid);
+        CFP.Value[1] = (void *) (pl->ob);
+        CFP.Value[2] = CFP.Value[3] = CFP.Value[4] = NULL;
+        CFP.Value[5] = (void *) (&draw_exit);
+        CFP.Value[6] = CFP.Value[7] = CFP.Value[8] = 
+            CFP.Value[9] = CFP.Value[10] = NULL;
+        CFP.Value[11] = (void *) (pl);
+        GlobalEvent(&CFP);
 #endif
 
         /* be sure we have closed container when we leave */
