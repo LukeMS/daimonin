@@ -65,7 +65,7 @@ end
 
 -- Build a path to a player directory
 function _data_store._player_path(player)
-    return "players/" .. string.lower(string.sub(player,1,1) .. "/" .. string.sub(player, 1, 2)) .. "/" .. player
+    return "data/players/" .. string.lower(string.sub(player,1,1) .. "/" .. string.sub(player, 1, 2)) .. "/" .. player
 end
 
 function _data_store._load(id, player)
@@ -78,10 +78,10 @@ function _data_store._load(id, player)
             _data_store._players[player] = t
         end
     else
-        path = "global"
+        path = "data/global"
         t = _data_store._global
     end
-    path = "data/" .. path .. "/" .. id .. ".dsl"
+    path = path .. "/" .. id .. ".dsl"
 
     if not t[id] then
         local f = loadfile(path)
@@ -131,17 +131,26 @@ function _data_store._save(time, player, b_force)
                 local dir
                 if player then
                     dir = _data_store._player_path(player)
+
+                    -- Don't save datastore if player file doesn't exist
+                    -- (that is normally a player without exp)
+                    if not io.exists(dir.."/"..player..".pl") then
+                        print("DataStore: Not saving stored data for player "..player.." - "..dir.."/"..player..".pl file missing")
+                        dir = nil
+                    end
                 else
-                    dir = "global"
+                    dir = "data/global"
                 end
-                local filename = "data/" .. dir .. "/" .. k .. ".dsl"
-                local f = io.open(filename, "wb")
-                if not f then
-                    print("DataStore: Couldn't open " .. filename .. " for writing")
-                    everything_ok = false
-                else                    
-                    f:write(_data_store._serialize(v._data))
-                    f:close()
+                if dir then
+                    local filename = dir .. "/" .. k .. ".dsl"
+                    local f = io.open(filename, "wb")
+                    if not f then
+                        print("DataStore: Couldn't open " .. filename .. " for writing")
+                        everything_ok = false
+                    else                    
+                        f:write(_data_store._serialize(v._data))
+                        f:close()
+                    end
                 end
             end
         end
