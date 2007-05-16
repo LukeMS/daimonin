@@ -1523,6 +1523,8 @@ void remove_ob(object *op)
     mark_object_removed(op);
     SET_FLAG(op, FLAG_OBJECT_WAS_MOVED);
 
+    if(op->type == CONTAINER && op->attacked_by)
+        container_unlink(NULL, op);
     /*
      * In this case, the object to be removed is in someones
      * inventory.
