@@ -4,8 +4,8 @@
 # see also command_new_char() in server code!
 char Human
 human_m.isw.111 8 3 3 0 0 0
-1 human_male human_m.isw.111
-1 human_female human_f.isw.111
+1 human_male human_male.141
+1 human_female human_female.141
 0 x x
 0 x x
 5 12 12 14 12 12 14 12 12 14 12 12 14 12 12 14 12 12 14 12 12 14
@@ -15,7 +15,7 @@ their parents in addition to what they've learned as apprentices
 in their craft. Females has the same stats as males.
 char Half-Elf
 human_m.isw.111 8 3 3 0 0 0
-1 half_elf_male human_m.isw.111
+1 half_elf_male	human_male.141
 1 half_elf_female halfelf_f.isw.111
 0 x x
 0 x x
