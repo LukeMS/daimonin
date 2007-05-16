@@ -3,6 +3,8 @@
 #
 # Creates an overview miniature map of a full tileset.
 #
+# Requires the perl GD library 2.0+
+#
 # Example use:
 # - First, use the editor's "Autogenerate thumbnails" function to generate thumbnails in
 #   all directories you want to create maps for.
