@@ -108,6 +108,8 @@ void    init_game_data(void);
 Boolean game_status_chain(void);
 Boolean load_bitmap(int index);
 
+struct vimmsg vim;
+
 #define NCOMMANDS (sizeof(commands)/sizeof(struct CmdMapping))
 
 _server            *start_server, *end_server;
@@ -190,7 +192,7 @@ static _bitmap_name bitmap_name[BITMAP_INIT]    =
         {"group_hp.png", PIC_TYPE_DEFAULT}, {"npc_interface.png", PIC_TYPE_TRANS},{"coin_copper.png", PIC_TYPE_TRANS},
         {"coin_silver.png", PIC_TYPE_TRANS},{"coin_gold.png", PIC_TYPE_TRANS},
         {"coin_mithril.png", PIC_TYPE_TRANS},{"npc_int_slider.png", PIC_TYPE_DEFAULT},
-        {"journal.png", PIC_TYPE_TRANS}, {"invslot_marked.png", PIC_TYPE_TRANS}
+        {"journal.png", PIC_TYPE_TRANS}, {"invslot_marked.png", PIC_TYPE_TRANS}, {"vimmsg_mask.png", PIC_TYPE_DEFAULT},
     };
 
 #define BITMAP_MAX (sizeof(bitmap_name)/sizeof(struct _bitmap_name))
@@ -1675,6 +1677,30 @@ int main(int argc, char *argv[])
                 rec.w = 225;
                 StringBlt(ScreenSurface, &SystemFont, buf, rec.x, rec.y, COLOR_DEFAULT, NULL, NULL);
             }
+        }
+
+        if ((GameStatus == GAME_STATUS_PLAY) && vim.active)
+        {
+            if ((LastTick-vim.starttick)<3000)
+            {
+                SDL_Rect    bmbox;
+                _BLTFX      bmbltfx;
+                bmbltfx.alpha = 128;
+                bmbltfx.flags = BLTFX_FLAG_SRCALPHA;
+                bmbox.x = bmbox.y = 0;
+                bmbox.w = StringWidth(&BigFont,vim.msg)+10;
+                bmbox.h = 19;
+                int bmoff = 0;
+
+                bmoff = (int)(200.0f*((float)(LastTick-vim.starttick)/3000.0f));
+
+                sprite_blt(Bitmaps[BITMAP_VIMMASK], 400-(StringWidth(&BigFont,vim.msg)/2)-7 , 300-3-bmoff, &bmbox, &bmbltfx);
+
+                StringBlt(ScreenSurface, &BigFont, vim.msg, 400-(StringWidth(&BigFont,vim.msg)/2) , 300-bmoff, COLOR_BLACK, NULL, NULL);
+                StringBlt(ScreenSurface, &BigFont, vim.msg, 400-(StringWidth(&BigFont,vim.msg)/2)-2 , 300-2-bmoff, COLOR_GREEN, NULL, NULL);
+            }
+            else
+                vim.active = FALSE;
         }
 
         flip_screen();
