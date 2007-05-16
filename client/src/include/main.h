@@ -101,6 +101,14 @@ typedef struct _server
 }
 _server;
 
+typedef struct vimmsg {
+    char    msg[128];
+    uint32  starttick;
+    Boolean active;
+} _vimmsg;
+
+extern struct vimmsg vim;
+
 typedef struct  _bmaptype_table
 {
     char           *name;
@@ -617,6 +625,7 @@ typedef enum _bitmap_index
     BITMAP_NPC_INT_SLIDER,
     BITMAP_JOURNAL,
     BITMAP_INVSLOT_MARKED,
+    BITMAP_VIMMASK,
     BITMAP_INIT
 }
 _bitmap_index;

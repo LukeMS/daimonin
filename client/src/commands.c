@@ -424,6 +424,13 @@ void DrawInfoCmd2(char *data, int len)
         if (tmp)
             *tmp = 0;
     }
+    if (flags & NDI_VIM)
+    {
+        strncpy(vim.msg,buf,128);
+        vim.msg[127]='\0';
+        vim.starttick = LastTick;
+        vim.active = TRUE;
+    }
     /* we have communication input */
     if (tmp && flags & (NDI_PLAYER|NDI_SAY|NDI_SHOUT|NDI_TELL|NDI_GSAY|NDI_EMOTE))
     {

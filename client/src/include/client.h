@@ -473,7 +473,7 @@ extern char        *resists_name[NUM_RESISTS];
 #define NDI_EMOTE   0x01000
 #define NDI_GM  0x02000 /* Its from a staff member */
 #define NDI_PLAYER  0x04000 /* this comes from a player */
-#define NDI_SYSTEM  0x08000 /* if this is set, its a "system" message */
+#define NDI_VIM     0x08000 /* VIM-Messages */
 
 
 #define NDI_UNIQUE  0x10000 /* Print this out immediately, don't buffer */
