@@ -1954,13 +1954,13 @@ void show_interface_npc(int mark)
         box.w = 180;
         if (gui_interface_npc->input_flag)
         {
+            StringBlt(ScreenSurface, &SystemFont, "~Return~ to send, ~ESC~ to cancel", x+130, y+437, COLOR_WHITE, NULL, NULL);
             SDL_FillRect(ScreenSurface, &box, 0);
             StringBlt(ScreenSurface, &MediumFont, show_input_string(InputString, &MediumFont,box.w-10),box.x+5 ,box.y, COLOR_WHITE, NULL, NULL);
         }
         else
         {
             StringBlt(ScreenSurface, &SystemFont, "~Return~ to talk", x+155, y+437, COLOR_WHITE, NULL, NULL);
-            SDL_FillRect(ScreenSurface, &box, COLOR_GREY);
 
             if (gui_interface_npc->link_selected)
             {
