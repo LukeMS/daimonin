@@ -196,7 +196,10 @@ void insert_quest_item(struct obj *quest_trigger, struct obj *target)
             if(quest->magic != (sint8) quest_trigger->last_heal ||flag)
             {
                 if(!flag)
+                {
                     new_draw_info_format(NDI_UNIQUE | NDI_NAVY | NDI_VIM, 0, target, "You completed the quest '%s'!", query_short_name(quest, target));
+                    flag = TRUE;
+                }
 
                 if(quest_trigger->msg)
                     new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, target, quest_trigger->msg);
@@ -381,13 +384,13 @@ void check_kill_quest_event(struct obj *pl, struct obj *op)
                             nrof = 1;
                     }
 
-                    new_draw_info_format(NDI_NAVY, 0, pl, "Quest %s\n%s: %d/%d",
+                    new_draw_info_format(NDI_NAVY | NDI_VIM, 0, pl, "Quest %s\n%s: %d/%d",
                             STRING_SAFE(tmp->name), query_short_name(tmp_info->inv, NULL),
                             nrof, (tmp_info->inv->nrof?tmp_info->inv->nrof:1));
                 }
                 else if(tmp_info->level < tmp_info->last_sp) /* pure kill quest - alot easier */
                 {
-                    new_draw_info_format(NDI_NAVY, 0, pl, "Quest %s\n%s: %d/%d",STRING_SAFE(tmp->name),
+                    new_draw_info_format(NDI_NAVY | NDI_VIM, 0, pl, "Quest %s\n%s: %d/%d",STRING_SAFE(tmp->name),
                             query_name(op), ++tmp_info->level, tmp_info->last_sp);
                 }
             }
