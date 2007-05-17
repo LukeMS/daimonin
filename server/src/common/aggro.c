@@ -571,11 +571,11 @@ static inline int aggro_exp_group(object *victim, object *aggro, char *kill_msg)
 #endif
 
 	/* exp is 0 - one member used a to high skill to kill */
-    if(!exp) 
+    if(!exp)
     {
-		party_message(0,NDI_UNIQUE, 0, leader, NULL, "Your enemy was to low for exp.");
+		party_message(0,NDI_UNIQUE, 0, leader, NULL, "%s has too high level for exp.",query_name(high));
 
-		/* No exp don't means no quests... So, we check it here - and we fake 
+		/* No exp don't means no quests... So, we check it here - and we fake
 		 * a in_group_exp_range() check, so we set NOEXP right for the quest trigger
 		 * check when we drop the vicitim inventory (even when we skip normal
 		 * loot with startequip flag)
