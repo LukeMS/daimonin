@@ -595,9 +595,9 @@ void map_draw_map(void)
                                 if (map->ext[k] & FFLAG_CONFUSED)
                                     sprite_blt(Bitmaps[BITMAP_CONFUSE], xl + face_sprite->bitmap->w / 2 - 1, yl - 4,
                                                NULL, NULL);
-                                if (map->ext[k] & FFLAG_SCARED)
-                                    sprite_blt(Bitmaps[BITMAP_SCARED], xl + face_sprite->bitmap->w / 2 + 10, yl - 4,
-                                               NULL, NULL);
+//                                if (map->ext[k] & FFLAG_SCARED)
+//                                    sprite_blt(Bitmaps[BITMAP_SCARED], xl + face_sprite->bitmap->w / 2 + 10, yl - 4,
+//                                               NULL, NULL);
                                 if (map->ext[k] & FFLAG_EATING)
                                     sprite_blt(Bitmaps[BITMAP_WARN_FOOD], xpos + 17, yl - 13, NULL,
                                                NULL);

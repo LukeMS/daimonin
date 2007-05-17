@@ -29,7 +29,7 @@
 #define INTERFACE_MAX_LINE 100
 #define INTERFACE_MAX_CHAR 256
 
-#define INTERFACE_MAX_REWARD_LINE 15
+#define INTERFACE_MAX_REWARD_LINE 100
 
 typedef struct gui_interface_head
 {
