@@ -547,6 +547,7 @@ void reset_gui_interface(void)
 static _gui_interface_struct *format_gui_interface(_gui_interface_struct *gui_int)
 {
     int s;
+	char tempbuf[INTERFACE_MAX_CHAR+1];
 
     interface_mode = INTERFACE_MODE_NPC;
     if (gui_int->used_flag&GUI_INTERFACE_WHO)
@@ -653,7 +654,6 @@ static _gui_interface_struct *format_gui_interface(_gui_interface_struct *gui_in
             }
         }
 
-        char tempbuf[INTERFACE_MAX_CHAR+1];
         for (i=0;i<gui_int->message.line_count;i++)
         {
             if (strchr(gui_int->message.lines[i],'|')==strrchr(gui_int->message.lines[i],'|')
@@ -757,8 +757,8 @@ static _gui_interface_struct *format_gui_interface(_gui_interface_struct *gui_in
                 break;
             }
         }
-        char tempbuf[INTERFACE_MAX_CHAR+1];
-        for (i=0;i<gui_int->reward.line_count;i++)
+
+		for (i=0;i<gui_int->reward.line_count;i++)
         {
             if (strchr(gui_int->reward.lines[i],'|')==strrchr(gui_int->reward.lines[i],'|')
                 && strchr(gui_int->reward.lines[i],'|'))
