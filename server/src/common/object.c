@@ -1523,8 +1523,6 @@ void remove_ob(object *op)
     mark_object_removed(op);
     SET_FLAG(op, FLAG_OBJECT_WAS_MOVED);
 
-    if(op->type == CONTAINER && op->attacked_by)
-        container_unlink(NULL, op);
     /*
      * In this case, the object to be removed is in someones
      * inventory.
@@ -2188,8 +2186,8 @@ object * get_split_ob(object *orig_ob, uint32 nr)
 		if(tmp)
 		{
 			/* force a weight check for buttons */
-			update_object(tmp, UP_OBJ_INSERT); 
-			check_walk_on(tmp, tmp, 0);
+			update_object(orig_ob, UP_OBJ_INSERT); 
+			check_walk_on(orig_ob, tmp, 0);
 		}
     }
 
