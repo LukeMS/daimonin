@@ -2854,7 +2854,7 @@ int apply_special(object *who, object *op, int aflags)
             if (!check_skill_to_apply(who, op))
                 return 1;
 
-            if((op->type == ROD || op->type == HORN) && who->chosen_skill->level+10+who->chosen_skill->level/12 < op->level)
+            if((op->type == ROD || op->type == HORN) && who->chosen_skill->level < op->level)
             {
                 new_draw_info_format(NDI_UNIQUE, 0, who, "Your %s skill level is to low!", query_short_name(who->chosen_skill, who));
                 return 1;
