@@ -1742,7 +1742,7 @@ void load_objects(mapstruct *m, FILE *fp, int mapflags)
                     m->path ? m->path : ">no map<", query_short_name(op, NULL), op->type, op->x, op->y);
                 goto next;
             }
-			else if((op->direction + op->state) < 0 || (op->direction + op->state) >= NUM_FACINGS(op))
+			else if( op->direction < 0 || op->direction >= NUM_FACINGS(op))
 			{
 				LOG(llevDebug, "\n**BUG:load_objects(%s): object %s (%d)- NUM_FACINGS < op->direction(%d) + op->state(%d) - (pos:%d,%d)\n",
 					m->path ? m->path : ">no map<", query_short_name(op, NULL), op->type, op->direction, op->state, op->x, op->y);
@@ -1751,8 +1751,6 @@ void load_objects(mapstruct *m, FILE *fp, int mapflags)
 				 * more common, a map maker bug.
 				 */
 				op->direction = NUM_FACINGS(op)-1;
-				op->state = 0;
-
 			}
 
             SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction + op->state);
