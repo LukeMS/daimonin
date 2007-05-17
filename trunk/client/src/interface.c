@@ -751,7 +751,7 @@ static _gui_interface_struct *format_gui_interface(_gui_interface_struct *gui_in
                     c++;
             }
 
-            if (gui_int->reward.line_count>=INTERFACE_REWARD_LINE || c>=INTERFACE_MAX_CHAR )
+            if (gui_int->reward.line_count>=INTERFACE_MAX_REWARD_LINE || c>=INTERFACE_MAX_CHAR )
             {
                 LOG(LOG_ERROR, "ERROR: interface call out of borders: %s\n", gui_int->reward.body_text);
                 break;

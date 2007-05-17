@@ -137,12 +137,11 @@ static _bitmap_name bitmap_name[BITMAP_INIT]    =
         {"font_big.png", PIC_TYPE_PALETTE}, {"font7x4out.png", PIC_TYPE_PALETTE}, {"font11x15.png", PIC_TYPE_PALETTE},
         {"intro.png", PIC_TYPE_DEFAULT},
         {"player_doll1.png", PIC_TYPE_TRANS}, {"black_tile.png", PIC_TYPE_DEFAULT}, {"textwin.png", PIC_TYPE_DEFAULT},
-        {"login_inp.png", PIC_TYPE_DEFAULT}, {"invslot.png", PIC_TYPE_TRANS}, {"testtubes.png", PIC_TYPE_TRANS},
+        {"login_inp.png", PIC_TYPE_DEFAULT}, {"invslot.png", PIC_TYPE_TRANS},
         {"hp.png", PIC_TYPE_TRANS}, {"sp.png", PIC_TYPE_TRANS}, {"grace.png", PIC_TYPE_TRANS}, {"food.png", PIC_TYPE_TRANS},
         {"hp_back.png", PIC_TYPE_DEFAULT}, {"sp_back.png", PIC_TYPE_DEFAULT}, {"grace_back.png", PIC_TYPE_DEFAULT},
-        {"food_back.png", PIC_TYPE_DEFAULT}, {"hp_back2.png", PIC_TYPE_TRANS}, {"sp_back2.png", PIC_TYPE_TRANS},
-        {"grace_back2.png", PIC_TYPE_TRANS}, {"food_back2.png", PIC_TYPE_TRANS}, {"apply.png", PIC_TYPE_DEFAULT},
-        {"food2.png", PIC_TYPE_TRANS},{"food_back3.png", PIC_TYPE_TRANS},
+        {"food_back.png", PIC_TYPE_DEFAULT}, {"apply.png", PIC_TYPE_DEFAULT},
+        {"food2.png", PIC_TYPE_TRANS},
         {"unpaid.png", PIC_TYPE_DEFAULT}, {"cursed.png", PIC_TYPE_DEFAULT}, {"damned.png", PIC_TYPE_DEFAULT},
         {"lock.png", PIC_TYPE_DEFAULT}, {"magic.png", PIC_TYPE_DEFAULT}, {"range.png", PIC_TYPE_TRANS},
         {"range_marker.png", PIC_TYPE_TRANS}, {"range_ctrl.png", PIC_TYPE_TRANS}, {"range_ctrl_no.png", PIC_TYPE_TRANS},
@@ -304,7 +303,7 @@ void init_game_data(void)
     argServerPort = DEFAULT_SERVER_PORT;
     SoundSystem = SOUND_SYSTEM_OFF;
     GameStatus = GAME_STATUS_INIT;
-    GameStatusLogin = TRUE;     /* most of the time we have a login, not a new char */
+    GameStatusLogin = FALSE;
     CacheStatus = CF_FACE_CACHE;
     SoundStatus = 1;
     MapStatusX = MAP_MAX_SIZE;
@@ -322,6 +321,8 @@ void init_game_data(void)
     options.cli_server=0;
 
     options.cli_pass[0]='\0';
+
+    options.firststart = TRUE;
 
     memset(media_file, 0, sizeof(_media_file) * MEDIA_MAX);
     media_count = 0;    /* buffered media files*/
@@ -347,6 +348,14 @@ void save_options_dat(void)
     fputs("###############################################\n", stream);
     fputs("# This is the Daimonin SDL client option file #\n", stream);
     fputs("###############################################\n", stream);
+    fputs("\n",stream);
+
+    if (!options.firststart)
+    {
+        sprintf(txtBuffer,"* %c",'0');
+        fputs(txtBuffer,stream);
+    }
+
     while (opt_tab[++i])
     {
         fputs("\n# ", stream);
@@ -417,6 +426,11 @@ void load_options_dat(void)
     {
         if (line[0] == '#' || line[0] == '\n')
             continue;
+        if (line[0] == '*')
+        {
+            if (line[2]=='0')
+                options.firststart=FALSE;
+        }
         i = 0;
         while (line[i] && line[i] != ':')
             i++;
@@ -474,7 +488,7 @@ Boolean game_status_chain(void)
     if (GameStatus == GAME_STATUS_INIT)
     {
         cpl.mark_count = -1;
-        GameStatusLogin = TRUE;     /* most of the time we have a login, not a new char */
+        GameStatusLogin = !options.firststart;
         interface_mode = INTERFACE_MODE_NO;
         clear_group();
         map_udate_flag = 2;
@@ -736,7 +750,7 @@ Boolean game_status_chain(void)
             sprintf(buf, "Break Login.");
             draw_info(buf, COLOR_RED);
             SOCKET_CloseClientSocket(&csocket);
-            GameStatusLogin = TRUE;     /* most of the time we have a login, not a new char */
+            GameStatusLogin = !options.firststart;
         }
         reset_input_mode();
     }
@@ -1687,12 +1701,13 @@ int main(int argc, char *argv[])
             {
                 SDL_Rect    bmbox;
                 _BLTFX      bmbltfx;
+                int bmoff = 0;
+
                 bmbltfx.alpha = 150;
                 bmbltfx.flags = BLTFX_FLAG_SRCALPHA;
                 bmbox.x = bmbox.y = 0;
                 bmbox.w = StringWidth(&BigFont,vim.msg)+10;
                 bmbox.h = 19;
-                int bmoff = 0;
 
                 bmoff = (int)((50.0f/3.0f)*((float)(LastTick-vim.starttick)/1000.0f)*((float)(LastTick-vim.starttick)/1000.0f)+((int)(150.0f*((float)(LastTick-vim.starttick)/3000.0f))));
 
