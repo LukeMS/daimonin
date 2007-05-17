@@ -97,7 +97,7 @@ type 1
 level 1
 ac 1
 wc 1
-thac0 92
+thac0 85
 thacm 5
 hp -1
 maxhp 8
