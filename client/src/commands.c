@@ -508,15 +508,21 @@ void StatsCmd(unsigned char *data, int len)
                         if (cpl.stats.maxhp / 12 <= cpl.stats.hp - temp)
                             cpl.warn_hp = 2;
                     }
+                    cpl.stats.temphp = temp-cpl.stats.hp;
+                    cpl.stats.hptick=LastTick;
                     cpl.stats.hp = temp;
                     i += 4;
                     break;
                 case CS_STAT_MAXHP:
+
                     cpl.stats.maxhp = GetInt_String(data + i);
                     i += 4;
                     break;
                 case CS_STAT_SP:
-                    cpl.stats.sp = GetShort_String(data + i);
+                    temp = (int) GetShort_String(data + i);
+                    cpl.stats.tempsp = temp-cpl.stats.sp;
+                    cpl.stats.sptick = LastTick;
+                    cpl.stats.sp = temp;
                     i += 2;
                     break;
                 case CS_STAT_MAXSP:
@@ -524,7 +530,10 @@ void StatsCmd(unsigned char *data, int len)
                     i += 2;
                     break;
                 case CS_STAT_GRACE:
-                    cpl.stats.grace = GetShort_String(data + i);
+                    temp = (int) GetShort_String(data + i);
+                    cpl.stats.tempgrace = temp-cpl.stats.grace;
+                    cpl.stats.gracetick = LastTick;
+                    cpl.stats.grace = temp;
                     i += 2;
                     break;
                 case CS_STAT_MAXGRACE:
@@ -884,6 +893,7 @@ void PlayerCmd(unsigned char *data, int len)
     char    name[MAX_BUF];
     int     tag, weight, face, i = 0, nlen;
 
+    options.firststart = FALSE;
     GameStatus = GAME_STATUS_PLAY;
     InputStringEndFlag = FALSE;
     tag = GetInt_String(data);
@@ -910,6 +920,7 @@ void PlayerCmd(unsigned char *data, int len)
 
     LOG(LOG_MSG, "Loading quickslot settings for server\n");
     load_quickslots_entrys();
+    save_options_dat();
 }
 
 

@@ -202,7 +202,6 @@ typedef struct _options
     int                     heartbeat;
     int                     warning_hp;
     int                     warning_weight;
-    Boolean                 gfx_statusbars;
     Boolean                 show_tooltips;
     Boolean                 show_d_key_infos; /* key-infos in dialog-wins. */
     Boolean                 smileys;
@@ -251,11 +250,11 @@ typedef struct _options
     uint32                  videoflags_full;
     uint32                  videoflags_win;
 
-#ifdef DEVELOPMENT
     char                    cli_name[40];
     char                    cli_pass[40];
     int                     cli_server;
-#endif
+
+    Boolean                 firststart;
 }
 _options;
 
@@ -481,7 +480,6 @@ typedef enum _bitmap_index
     BITMAP_LOGIN_INP,
     BITMAP_INVSLOT,
     /* Status bars */
-    BITMAP_TESTTUBES,
     BITMAP_HP,
     BITMAP_SP,
     BITMAP_GRACE,
@@ -490,13 +488,8 @@ typedef enum _bitmap_index
     BITMAP_SP_BACK,
     BITMAP_GRACE_BACK,
     BITMAP_FOOD_BACK,
-    BITMAP_HP_BACK2,
-    BITMAP_SP_BACK2,
-    BITMAP_GRACE_BACK2,
-    BITMAP_FOOD_BACK2,
     BITMAP_APPLY,
     BITMAP_FOOD2,
-    BITMAP_FOOD_BACK3,
     BITMAP_UNPAID,
     BITMAP_CURSED,
     BITMAP_DAMNED,

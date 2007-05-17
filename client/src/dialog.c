@@ -117,7 +117,6 @@ _option             opt[]                           =
         {"Audible heartbeat:", "Hear your heart pumping during combat.", "Activated if health is less than the given percent value.", "", SEL_RANGE, 0, 100, 5, 50, &options.heartbeat, VAL_INT},
         {"Low health warning:", "Shows a low health warning above your head","Activatetd if health is less than the given percent value.","", SEL_RANGE, 0,100,5, 0, &options.warning_hp, VAL_INT},
         {"Overload warning:", "Shows a overload warning above your head.","Activatetd if loading is greater than the given percent value.","", SEL_RANGE, 0,100,5, 85, &options.warning_weight, VAL_INT},
-        {"Graphic Statusbars:", "Show for HP, Mana and others a graphical layout.","Instead of horizontal lines.", "",SEL_CHECKBOX, 0,1,1, 1, &options.gfx_statusbars, VAL_BOOL},
         {"Show Tooltips:", "Show tooltips when hovering with the mouse over items.","", "",SEL_CHECKBOX, 0,1,1, 1, &options.show_tooltips, VAL_BOOL},
         {"Key-info in Dialog menus:", "","", "",SEL_CHECKBOX, 0,1,1, 1, &options.show_d_key_infos, VAL_BOOL},
         {"Enable Smileys:", "","", "",SEL_CHECKBOX, 0,1,1, 1, &options.smileys, VAL_BOOL},

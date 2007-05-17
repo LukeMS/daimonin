@@ -204,10 +204,16 @@ typedef struct Stat_struct
     int   level;
     int  hp;         /* Hit Points. */
     int  maxhp;
+    int  temphp;
+    uint32 hptick;
     int  sp;         /* Spell points.  Used to cast spells. */
     int  maxsp;      /* Max spell points. */
+    int  tempsp;
+    uint32 sptick;
     int  grace;      /* Spell points.  Used to cast spells. */
     int  maxgrace;       /* Max spell points. */
+    int  tempgrace;
+    uint32 gracetick;
     int  exp_level;
     int  exp;            /* Experience */
     int  food;       /* food and resting heartbeat*/
