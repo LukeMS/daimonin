@@ -1678,26 +1678,35 @@ int main(int argc, char *argv[])
                 StringBlt(ScreenSurface, &SystemFont, buf, rec.x, rec.y, COLOR_DEFAULT, NULL, NULL);
             }
         }
-
+        /* TODO: This should be moved to the anim functions, but for that we
+         * have to rewrite the anim stuff to handle strings, and different speeds, and so on...
+         */
         if ((GameStatus == GAME_STATUS_PLAY) && vim.active)
         {
             if ((LastTick-vim.starttick)<3000)
             {
                 SDL_Rect    bmbox;
                 _BLTFX      bmbltfx;
-                bmbltfx.alpha = 128;
+                bmbltfx.alpha = 150;
                 bmbltfx.flags = BLTFX_FLAG_SRCALPHA;
                 bmbox.x = bmbox.y = 0;
                 bmbox.w = StringWidth(&BigFont,vim.msg)+10;
                 bmbox.h = 19;
                 int bmoff = 0;
 
-                bmoff = (int)(200.0f*((float)(LastTick-vim.starttick)/3000.0f));
+                bmoff = (int)((50.0f/3.0f)*((float)(LastTick-vim.starttick)/1000.0f)*((float)(LastTick-vim.starttick)/1000.0f)+((int)(150.0f*((float)(LastTick-vim.starttick)/3000.0f))));
+
+                if (LastTick-vim.starttick>2000)
+                    bmbltfx.alpha -= (int)(150.0f*((float)(LastTick-vim.starttick-2000)/1000.0f));
 
                 sprite_blt(Bitmaps[BITMAP_VIMMASK], 400-(StringWidth(&BigFont,vim.msg)/2)-7 , 300-3-bmoff, &bmbox, &bmbltfx);
 
-                StringBlt(ScreenSurface, &BigFont, vim.msg, 400-(StringWidth(&BigFont,vim.msg)/2) , 300-bmoff, COLOR_BLACK, NULL, NULL);
-                StringBlt(ScreenSurface, &BigFont, vim.msg, 400-(StringWidth(&BigFont,vim.msg)/2)-2 , 300-2-bmoff, COLOR_GREEN, NULL, NULL);
+                bmbltfx.alpha = 255;
+                if (LastTick-vim.starttick>2000)
+                    bmbltfx.alpha -= (int)(255.0f*((float)(LastTick-vim.starttick-2000)/1000.0f));
+
+                StringBlt(ScreenSurface, &BigFont, vim.msg, 400-(StringWidth(&BigFont,vim.msg)/2) , 300-bmoff, COLOR_BLACK, NULL, &bmbltfx);
+                StringBlt(ScreenSurface, &BigFont, vim.msg, 400-(StringWidth(&BigFont,vim.msg)/2)-2 , 300-2-bmoff, COLOR_GREEN, NULL, &bmbltfx);
             }
             else
                 vim.active = FALSE;

@@ -390,6 +390,12 @@ void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col
     color.b = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[col].b;
 
     SDL_SetPalette(font->sprite->bitmap, SDL_LOGPAL | SDL_PHYSPAL, &color, 1, 1);
+
+    if (bltfx && bltfx->flags & BLTFX_FLAG_SRCALPHA)
+        SDL_SetAlpha(font->sprite->bitmap,SDL_SRCALPHA,bltfx->alpha);
+    else
+       SDL_SetAlpha(font->sprite->bitmap,SDL_RLEACCEL,255);
+
     gflag = FALSE;
     for (i = 0; text[i] != '\0'; i++)
     {
