@@ -33,8 +33,6 @@
 int dialog_new_char_warn    = 0;
 int dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
 
-int add_rangebox(int x, int y, int id, int text_x, int text_, char *text, int text_color);
-
 enum
 {
     SEL_BUTTON,
@@ -430,7 +428,7 @@ int add_rangebox(int x, int y, int id, int text_w, int text_x, char *text, int c
     {
         if (mx < x + width / 2)
         {
-            if (mb && active < 0)
+            if (mb)
                 active = id;
             if (active == id)
             {
@@ -444,7 +442,7 @@ int add_rangebox(int x, int y, int id, int text_w, int text_x, char *text, int c
         }
         else if (mx < x + width)
         {
-            if (mb && active < 0)
+            if (mb)
                 active = id + 1; /* a rangebox has 2 buttons */
             if (active == id + 1)
             {

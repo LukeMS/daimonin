@@ -73,6 +73,7 @@ enum
 
 void add_close_button(int x, int y, int menu);
 int add_button(int x, int y, int id, int gfxNr, char *text, char *text_h);
+int add_rangebox(int x, int y, int id, int text_w, int text_x, char *text, int color);
 extern void show_optwin(void);
 extern void show_newplayer_server(void);
 extern void show_login_server(void);
