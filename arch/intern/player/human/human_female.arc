@@ -103,7 +103,7 @@ grace -1
 maxgrace 3
 ac 1
 wc 1
-thac0 92
+thac0 85
 thacm 5
 can_use_armour 1
 can_use_weapon 1
