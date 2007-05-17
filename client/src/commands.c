@@ -1286,6 +1286,7 @@ void DeleteInventory(unsigned char *data, int len)
 void Map2Cmd(unsigned char *data, int len)
 {
     static int     map_w=0, map_h=0,mx=0,my=0;
+    static int      step=0;
     int     mask, x, y, pos = 0, ext_flag, xdata;
     int     mapstat, ext1, ext2, ext3, probe;
     int     map_new_flag    = FALSE;
@@ -1341,9 +1342,14 @@ void Map2Cmd(unsigned char *data, int len)
             cpl.win_below_slot = 0;
             if (cpl.menustatus != MENU_NO)
                 reset_menu_status();
-        }
-        display_mapscroll(xpos - mx, ypos - my);
 
+            display_mapscroll(xpos - mx, ypos - my);
+
+            if(++step%2)
+                    sound_play_effect(SOUND_STEP1,0,0,100);
+            else
+                    sound_play_effect(SOUND_STEP2,0,0,100);
+        }
         mx = xpos;
         my = ypos;
     }
