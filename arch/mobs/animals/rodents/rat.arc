@@ -34,7 +34,7 @@ resist_impact 10
 dam 52
 attack_cleave 100
 weapon_speed 3.5
-speed -0.06
+speed -0.03
 run_away 10
 level 1
 weight 325000
@@ -106,7 +106,7 @@ resist_impact 10
 dam 52
 attack_cleave 100
 weapon_speed 3.5
-speed -0.06
+speed -0.03
 run_away 10
 level 1
 weight 325000
@@ -178,7 +178,7 @@ resist_impact 10
 dam 52
 attack_cleave 100
 weapon_speed 3.5
-speed -0.06
+speed -0.03
 run_away 10
 level 1
 weight 325000
@@ -250,7 +250,7 @@ resist_impact 10
 dam 52
 attack_cleave 100
 weapon_speed 3.5
-speed -0.06
+speed -0.03
 run_away 10
 level 1
 weight 325000
