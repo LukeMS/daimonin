@@ -1299,8 +1299,9 @@ int get_interface_line(int *element, int *index, char **keyword, int x, int y, i
                         return TRUE;
                     }
                     yoff+=44;
-                    t++;
+
                 }
+                t++;
             }
         }
         yoff+=15;
@@ -2081,7 +2082,7 @@ void gui_interface_mouse(SDL_Event *e)
             if (element == GUI_INTERFACE_ICON)
             {
                 sound_play_effect(SOUND_GET, 0, 0, 100);
-                gui_interface_npc->selected = index+1;
+                gui_interface_npc->selected = index;
             }
             else if (element == GUI_INTERFACE_MESSAGE)
             {
