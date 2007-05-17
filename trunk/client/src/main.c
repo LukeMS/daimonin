@@ -819,7 +819,7 @@ Boolean game_status_chain(void)
                 cpl.password[0] = 0;   /* insanity 0 */
                 open_input_mode(12);
             }
-            else if (!GameStatusLogin && !strcmp(cpl.name, cpl.password))
+            else if (!GameStatusLogin && !stricmp(cpl.name, cpl.password))
             {
                 dialog_login_warning_level = DIALOG_LOGIN_WARNING_PWD_NAME;
                 cpl.password[0] = 0;   /* insanity 0 */
