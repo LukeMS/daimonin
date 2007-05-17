@@ -1226,7 +1226,15 @@ void drop_ob_inv(object *ob)
 
             /* if we have a corpse put the item in it */
             if (corpse)
+			{
+				if(!tmp_op->level)
+				{
+					SET_FLAG(tmp_op, FLAG_IDENTIFIED);
+					SET_FLAG(tmp_op, FLAG_KNOWN_CURSED);
+					SET_FLAG(tmp_op, FLAG_KNOWN_MAGICAL);
+				}
                 insert_ob_in_ob(tmp_op, corpse);
+			}
             else
             {
                 /* don't drop traps from a container to the floor.
@@ -1236,6 +1244,12 @@ void drop_ob_inv(object *ob)
                  */
                 if (tmp_op->type != RUNE)
                 {
+					if(!tmp_op->level)
+					{
+						SET_FLAG(tmp_op, FLAG_IDENTIFIED);
+						SET_FLAG(tmp_op, FLAG_KNOWN_CURSED);
+						SET_FLAG(tmp_op, FLAG_KNOWN_MAGICAL);
+					}
                     if (ob->env)
                     {
                         insert_ob_in_ob(tmp_op, ob->env);
