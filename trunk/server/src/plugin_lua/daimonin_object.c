@@ -648,7 +648,7 @@ static int GameObject_GetEquipment(lua_State *L)
     lua_object *self;
 
     get_lua_args(L, "Oi", &self, &num);
-    
+
     if(WHO->type != PLAYER || CONTR(WHO) == NULL)
         luaL_error(L, "GetEquipment(): Only works for players.");
 
@@ -2491,7 +2491,7 @@ static int GameObject_CreateObjectInsideEx(lua_State *L)
     if(pl)
     {
         hooks->new_draw_info_format(NDI_WHITE, 0, pl, "you got %d %s",
-                myob->nrof?myob->nrof:1, hooks->query_short_name(myob, NULL));
+                nrof?nrof:1, hooks->query_base_name(myob, NULL));
     }
 
     return push_object(L, &GameObject, myob);
