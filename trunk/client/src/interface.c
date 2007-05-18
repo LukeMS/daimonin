@@ -1242,10 +1242,53 @@ int get_interface_line(int *element, int *index, char **keyword, int x, int y, i
             yoff +=25;
             for (i = 0; i < gui_interface_npc->reward.line_count; i++)
             {
-                if (gui_interface_npc->reward.lines[i][0] != '\0')
-                    yoff += 15;
-                else
+                if (!strcmp(gui_interface_npc->reward.lines[i], "\0"))
                     yoff += 5;
+                else
+                {
+                    if (my >= yoff && my <=yoff+15)
+                    {
+                        int st=0, xt, xs=x+40, s, flag=FALSE;
+
+                        xt=xs;
+                        for (s=0;s<(int)strlen(gui_interface_npc->reward.lines[i]);s++)
+                        {
+                            if (gui_interface_npc->reward.lines[i][s]=='^')
+                            {
+                                flag?(flag=FALSE):(flag=TRUE);
+                                xs = xt;
+                                st =s+1;
+                            }
+                            else
+                            {
+                                if (gui_interface_npc->reward.lines[i][s] != '~' &&
+                                        gui_interface_npc->reward.lines[i][s] != '°' && gui_interface_npc->reward.lines[i][s] != '|')
+                                    xt += MediumFont.c[(unsigned char)gui_interface_npc->reward.lines[i][s]].w + MediumFont.char_offset;
+
+                                if (flag && mx>=xs && mx <=xt) /* only when we have a active keyword part */
+                                {
+                                    char *ptr = strchr(&gui_interface_npc->reward.lines[i][s], '^');
+
+                                    *element = GUI_INTERFACE_REWARD;
+                                    *index = i;
+                                    if (!ptr)
+                                        strcpy(key, &gui_interface_npc->reward.lines[i][st]);
+                                    else
+                                    {
+                                        /* eat that, mueslifresser ;)= */
+                                        strncpy(key, &gui_interface_npc->reward.lines[i][st],ptr-&gui_interface_npc->reward.lines[i][st]);
+                                        key[ptr-&gui_interface_npc->reward.lines[i][st]]='\0';
+                                    }
+                                    *keyword = key;
+                                    return TRUE;
+                                }
+                            }
+
+                        }
+                        return FALSE;
+                    }
+                    yoff += 15;
+                }
             }
         }
         else if (gui_interface_npc->reward.title[0] != '\0')
@@ -2089,6 +2132,11 @@ void gui_interface_mouse(SDL_Event *e)
                 sound_play_effect(SOUND_GET, 0, 0, 100);
                 gui_interface_send_command(0, keyword);
             }
+            else if (element == GUI_INTERFACE_REWARD)
+            {
+                sound_play_effect(SOUND_GET, 0, 0, 100);
+                gui_interface_send_command(0, keyword);
+            }
             else if (element == GUI_INTERFACE_LINK)
             {
                 sound_play_effect(SOUND_GET, 0, 0, 100);
@@ -2121,6 +2169,17 @@ void gui_interface_mousemove(SDL_Event *e)
 //            gui_interface_npc->selected = index;
 //        }
         if (element == GUI_INTERFACE_MESSAGE)
+        {
+            for (i=0;i<gui_interface_npc->keyword_count;i++)
+            {
+                if (!strcmp(gui_interface_npc->keywords[i],keyword))
+                {
+                        gui_interface_npc->keyword_selected=i+1;
+                        gui_interface_npc->link_selected=0;
+                }
+            }
+        }
+        if (element == GUI_INTERFACE_REWARD)
         {
             for (i=0;i<gui_interface_npc->keyword_count;i++)
             {
