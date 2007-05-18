@@ -1784,7 +1784,7 @@ void fix_player(object *op)
     if(pl->reg_grace_num < 1)
         pl->reg_grace_num = 1;
 
-     LOG(llevDebug, "fix_player: REG(%s): hp:%d sp:%d grace:%d\n", query_name(op),pl->reg_hp_num,pl->reg_sp_num,pl->reg_grace_num);
+    // LOG(llevDebug, "fix_player: REG(%s): hp:%d sp:%d grace:%d\n", query_name(op),pl->reg_hp_num,pl->reg_sp_num,pl->reg_grace_num);
 
     /* when this is set, this object comes fresh in game.
      * we must adjust now hp,sp and grace with the max values.
@@ -2368,7 +2368,7 @@ void set_mobile_speed(object *op, int factor)
 
     op->speed = base->speed_left * CLAMP(actual_factor, 1, 5);
 
-     LOG(-1,"SET SPEED: %s ->%f (=%d*%f) o:%f\n", query_name(op), op->speed, actual_factor, base->speed_left, old_speed);
+     //LOG(-1,"SET SPEED: %s ->%f (=%d*%f) o:%f\n", query_name(op), op->speed, actual_factor, base->speed_left, old_speed);
     /* update speed if needed */
     if ((old_speed && !op->speed) || (!old_speed && op->speed))
         update_ob_speed(op);
