@@ -29,10 +29,10 @@ function topicRepair()
     ib:SetMsg("Let me check your equipment...\nPerhaps an item needs a fix.\nI will tell you how much each will cost.")
     tmp = pl:FindMarkedObject()
     if tmp ~= nil and tmp.item_quality > 0 and tmp.item_condition < tmp.item_quality then
-        ib:AddLink("°*M*° ".. tmp:GetName() .. '  ('.. tmp.item_condition .. '/' ..tmp.item_quality .. ')  costs: ' .. pl:ShowCost(repairCost(tmp), 1), "itemfix ".. -1)
+        ib:AddLink("~*M*~ ".. tmp:GetName() .. '  ('.. tmp.item_condition .. '/' ..tmp.item_quality .. ')  costs: ' .. pl:ShowCost(repairCost(tmp), 1), "itemfix ".. -1)
         flag = true
     end
-    for i=0,game.EQUIP_MAX,1 do
+    for i=0,game.EQUIP_MAX-1 do
         tmp = pl:GetEquipment(i)
         if tmp ~= nil and tmp.item_quality > 0 and tmp.item_condition < tmp.item_quality then
             ib:AddLink(tmp:GetName() .. '  ('.. tmp.item_condition .. '/' ..tmp.item_quality .. ')  costs: ' .. pl:ShowCost(repairCost(tmp), 1), "itemfix ".. i)
@@ -40,7 +40,7 @@ function topicRepair()
         end
     end
     if flag == false then
-        ib:AddMsg("\n\n°Your equipment doesn't need any repair°")
+        ib:AddMsg("\n\n~Your equipment doesn't need any repair~")
     end
     ib:SetButton("Back", "hi") 
     pl:Interface(1, ib:Build())
@@ -61,7 +61,7 @@ function topicItemFix(what)
             ib:SetMsg("Will cost you " .. pl:ShowCost(repairCost(tmp),0))
             ib:AddMsg(".\n\nYou have " .. pl:ShowCost(pl:GetMoney()) .. ".\n\n") 
             ib:AddMsg("Should i repair it now?")
-            ib:AddIcon(tmp:GetName(), tmp:GetFace(), 'Condition: °'.. tmp.item_condition .. '°    Quality: °' ..tmp.item_quality .. '°')
+            ib:AddIcon(tmp:GetName(), tmp:GetFace(), 'Condition: ~'.. tmp.item_condition .. '~    Quality: ~' ..tmp.item_quality .. '~')
             ib:SetAccept("Repair", "fix " .. what)
             ib:SetDecline(nil, "repair") 
         else
@@ -91,8 +91,8 @@ function topicFix(what)
             local qua = tmp.item_quality
             if pl:PayAmount(repairCost(tmp)) == 1 then
                 tmp:Repair()
-                ib:SetMsg("°** ".. me.name .." takes your money and the item **°\n")
-                ib:AddMsg("°** after some time he returns **°\n\n")
+                ib:SetMsg("~** ".. me.name .." takes your money and the item **~\n")
+                ib:AddMsg("~** after some time he returns **~\n\n")
                 if tmp.item_quality < qua then
                     ib:AddMsg("Here is your repaired equipment!\nSadly it has lost a bit in quality!\nAnything else I can do for you?\n")
                 else
@@ -104,7 +104,7 @@ function topicFix(what)
         else
             ib:SetMsg("The item doesn't need any repair.")
         end
-        ib:AddIcon(tmp:GetName(), tmp:GetFace(), 'Condition: °'.. tmp.item_condition .. '°    Quality: °' .. tmp.item_quality .. '°')
+        ib:AddIcon(tmp:GetName(), tmp:GetFace(), 'Condition: ~'.. tmp.item_condition .. '~    Quality: ~' .. tmp.item_quality .. '~')
     end
     ib:SetButton("Back", "repair") 
     pl:Interface(1, ib:Build())
@@ -112,15 +112,15 @@ end
 
 function topicIdentify()
     ib:SetTitle("Item Identification")
-    ib:SetMsg("Lets see what i can do for you.\nI can °identify° a single item or all.\nI can °detect magic° or °detect curse°.\nRember you must mark the single item first.\n\n")
+    ib:SetMsg("Lets see what i can do for you.\nI can ~identify~ a single item or all.\nI can ~detect magic~ or ~detect curse~.\nRember you must mark the single item first.\n\n")
     ib:AddMsg(".You have " .. pl:ShowCost(pl:GetMoney()) .. ".\n\n") 
     ib:AddMsg("What would you like to do?\n")
     tmp = pl:FindMarkedObject()
     if tmp ~= nil then
         if tmp.f_identified ~= true then
-            ib:AddLink("°*M*° Identify ".. tmp:GetName() .. " for 150 copper", "detect single")
+            ib:AddLink("~*M*~ Identify ".. tmp:GetName() .. " for 150 copper", "detect single")
         else
-            ib:AddMsg("\n°*M*° Your marked item is already identified.")
+            ib:AddMsg("\n~*M*~ Your marked item is already identified.")
         end
     end
     ib:AddLink("Identify all for 5 silver", "detect all")
@@ -133,13 +133,13 @@ end
 function topicDetect(what)
     ib:SetTitle("It will cost you")
     if what=="magic" then
-        ib:SetMsg("I can cast °Detect Magic° for 50 copper")
+        ib:SetMsg("I can cast ~Detect Magic~ for 50 copper")
     elseif what == "all" then
-        ib:SetMsg("I can °Identify all° for 5 silver")
+        ib:SetMsg("I can ~Identify all~ for 5 silver")
     elseif what == "curse" then
-        ib:SetMsg("I can cast °Detect Curse° for 50 copper")
+        ib:SetMsg("I can cast ~Detect Curse~ for 50 copper")
     else
-        ib:SetMsg("I can °Identify One Item° for 150 copper")
+        ib:SetMsg("I can ~Identify One Item~ for 150 copper")
     end
     ib:AddMsg(" coins.\n\nYou have " .. pl:ShowCost(pl:GetMoney()) .. ".\n\nYou want me to do it now?")
     ib:SetAccept(nil, "cast " .. what) 
@@ -173,7 +173,7 @@ function topicCast(what)
         else
             me:CastSpell(pl, game:GetSpellNr(spell), 1, 0, "")
         end
-        ib:SetMsg("°**" .. me.name .. " takes your money **°\n\ndone!")
+        ib:SetMsg("~**" .. me.name .. " takes your money **~\n\ndone!")
     else
         ib:SetMsg("You don't have enough money!")
     end
