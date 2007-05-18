@@ -50,7 +50,7 @@ local function topicConfirm(what)
     local data = for_sale[what]
     if data == nil then
         ib:SetTitle("Sorry, we don't have that")
-        ib:SetMsg("Sorry, but we don't server that here. Can I get you something else")
+        ib:SetMsg("Sorry, but we don't serve that here. Can I get you something else?")
         ib:SetDecline("No")
         ib:SetAccept("Yes", "hello")
     elseif pl:PayAmount(data.price) == 1 then
