@@ -618,7 +618,6 @@ typedef enum _bitmap_index
     BITMAP_NPC_INT_SLIDER,
     BITMAP_JOURNAL,
     BITMAP_INVSLOT_MARKED,
-    BITMAP_VIMMASK,
     BITMAP_INIT
 }
 _bitmap_index;
