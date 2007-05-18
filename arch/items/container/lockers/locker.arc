@@ -6,12 +6,12 @@ facings 9
 dummy.111
 locker1.111
 locker1.111
-locker1.111
+locker1.131
+locker1.131
+locker1.151
+locker1.151
 locker1.171
 locker1.171
-locker1.171
-locker1.171
-locker1.111
 mina
 is_animated 0
 anim_speed 0
@@ -35,12 +35,12 @@ facings 9
 dummy.111
 locker2.111
 locker2.111
-locker2.111
+locker2.131
+locker2.131
+locker2.151
+locker2.151
 locker2.171
 locker2.171
-locker2.171
-locker2.171
-locker2.111
 mina
 is_animated 0
 anim_speed 0
