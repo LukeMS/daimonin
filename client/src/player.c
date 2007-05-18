@@ -373,7 +373,7 @@ void show_player_stats(int x, int y)
         if ((LastTick-cpl.stats.hptick)<=1000)
         {
             if (cpl.stats.temphp>0)
-                tmp += (double)((cpl.stats.temphp)*((double)(LastTick-cpl.stats.hptick)/1000.0f));
+                tmp -= (double)((cpl.stats.temphp)*(1.0f-(double)(LastTick-cpl.stats.hptick)/1000.0f));
             else
                 tmp += (double)(abs(cpl.stats.temphp)*(1.0f-(double)(LastTick-cpl.stats.hptick)/1000.0f));
         }
@@ -404,7 +404,7 @@ void show_player_stats(int x, int y)
         if ((LastTick-cpl.stats.sptick)<=1000)
         {
             if (cpl.stats.tempsp>0)
-                tmp += (double)((cpl.stats.tempsp)*((double)(LastTick-cpl.stats.sptick)/1000.0f));
+                tmp -= (double)((cpl.stats.tempsp)*(1.0f-(double)(LastTick-cpl.stats.sptick)/1000.0f));
             else
                 tmp += (double)(abs(cpl.stats.tempsp)*(1.0f-(double)(LastTick-cpl.stats.sptick)/1000.0f));
         }
@@ -434,7 +434,7 @@ void show_player_stats(int x, int y)
         if ((LastTick-cpl.stats.gracetick)<=1000)
         {
             if (cpl.stats.temphp>0)
-                tmp += (double)((cpl.stats.tempgrace)*((double)(LastTick-cpl.stats.gracetick)/1000.0f));
+                tmp -= (double)((cpl.stats.tempgrace)*(1.0f-(double)(LastTick-cpl.stats.gracetick)/1000.0f));
             else
                 tmp += (double)(abs(cpl.stats.tempgrace)*(1.0f-(double)(LastTick-cpl.stats.gracetick)/1000.0f));
         }
