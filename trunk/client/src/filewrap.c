@@ -24,7 +24,7 @@
 
 #ifdef __WIN_32
 
-static char *file_path(const char *fname, const char *mode)
+char *file_path(const char *fname, const char *mode)
 {
     static char tmp[256];
     sprintf(tmp, "%s%s", SYSPATH, fname);
@@ -63,7 +63,7 @@ static int mkdir_recurse(const char *path)
     return 0;
 }
 
-static char *file_path(const char *fname, const char *mode)
+char *file_path(const char *fname, const char *mode)
 {
     static char tmp[256];
     char *stmp;
