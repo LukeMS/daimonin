@@ -1973,7 +1973,7 @@ static int readNextQuickSlots(FILE *fp, char *server, int *port, char *name, _qu
  Restore quickslots from last game.
 ******************************************************************/
 #define QUICKSLOT_FILE "quick.dat"
-#define QUICKSLOT_FILE_VERSION 1
+#define QUICKSLOT_FILE_VERSION 2
 #define QUICKSLOT_FILE_HEADER ((QUICKSLOT_FILE_VERSION << 24) | 0x53 << 16 | 0x51 << 8 | 0x44)
 void load_quickslots_entrys()
 {
@@ -1989,7 +1989,7 @@ void load_quickslots_entrys()
     if (header != QUICKSLOT_FILE_HEADER)
     {
         fclose(stream);
-        remove(QUICKSLOT_FILE);
+        remove(file_path(QUICKSLOT_FILE, ""));
         return;
     }
     while (readNextQuickSlots(stream, server, &port, name, quickslots))
