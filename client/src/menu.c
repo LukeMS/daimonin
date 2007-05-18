@@ -2110,7 +2110,7 @@ void save_quickslots_entrys()
     }
     /* readNextQuickSlots has problems with wb+ and rb+ opened files */
     n = ftell(stream);
-    freopen(QUICKSLOT_FILE,"rb",stream);
+    freopen(file_path(QUICKSLOT_FILE, "rb"),"rb",stream);
     fseek(stream,n,SEEK_SET);
     while ((size = readNextQuickSlots(stream, server, &n, name, quickslots)) != 0)
     {
@@ -2120,7 +2120,7 @@ void save_quickslots_entrys()
             {
                 char *buf;
                 long  pos = ftell(stream);
-                freopen(QUICKSLOT_FILE,"rb+",stream);
+                freopen(file_path(QUICKSLOT_FILE, "rb+"),"rb+",stream);
                 fseek(stream, 0, SEEK_END);
                 w = ftell(stream) - pos;
                 buf = (char *)malloc(w);
@@ -2134,7 +2134,7 @@ void save_quickslots_entrys()
                     rewind(stream);
                     buf = (char *)realloc(buf, w);
                     fread(buf, 1, w, stream);
-                    freopen(QUICKSLOT_FILE, "wb+", stream);
+                    freopen(file_path(QUICKSLOT_FILE, "wb+"), "wb+", stream);
                     fwrite(buf, 1, w, stream);
                 }
                 free(buf);
@@ -2161,7 +2161,7 @@ void save_quickslots_entrys()
             return;
         }
     }
-    freopen(QUICKSLOT_FILE,"rb+",stream);
+    freopen(file_path(QUICKSLOT_FILE, "rb+"),"rb+",stream);
     fseek(stream, 0, SEEK_END);
     fwrite(&ServerName, sizeof(char), strlen(ServerName) + 1, stream);
     fwrite(&ServerPort, sizeof(int), 1, stream);

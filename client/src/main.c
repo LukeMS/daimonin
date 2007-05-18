@@ -886,7 +886,7 @@ void load_bitmaps(void)
     CreateNewFont(Bitmaps[BITMAP_FONTMEDIUM], &MediumFont, 16, 16, 1);
     CreateNewFont(Bitmaps[BITMAP_FONT1OUT], &SystemFontOut, 16, 16, 1);
     CreateNewFont(Bitmaps[BITMAP_FONT6x3OUT], &Font6x3Out, 16, 16, -1);
-    CreateNewFont(Bitmaps[BITMAP_BIGFONT], &BigFont, 11, 16, 2);
+    CreateNewFont(Bitmaps[BITMAP_BIGFONT], &BigFont, 11, 16, 1);
 }
 
 Boolean load_bitmap(int index)
