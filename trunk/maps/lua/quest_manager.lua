@@ -201,7 +201,10 @@ function QuestManager:RegisterQuest(mode, ib)
     assert(self.quest_trigger == nil, "This quest was already registered?")
     assert(self.name ~= nil, "The quest doesn't have a name.")
 
-    self.quest_trigger = self.player:AddQuest(self.name, mode, self.step, self.end_step, self.level, self.skill, ib:Build())
+    -- Remove any clickable keywords from the interface. They won't work anyway.
+    local qlist_text = string.gsub(ib:Build(), "%^", "")
+
+    self.quest_trigger = self.player:AddQuest(self.name, mode, self.step, self.end_step, self.level, self.skill, qlist_text)
     self.status = nil -- clear cache
 
     return self.quest_trigger ~= nil
