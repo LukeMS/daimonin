@@ -7857,6 +7857,19 @@ no_drop 1
 hp 3
 maxsp 5
 end
+Object ability_firebolt
+name ability firebolt
+type 110
+editor_folder forces/ability
+face force.101
+identified 1
+sys_object 1
+is_magical 1
+no_drop 1
+last_grace 10
+no_pick 1
+sp 12
+end
 Object ability_firestorm
 name ability firestorm
 type 110
@@ -7868,6 +7881,19 @@ is_magical 1
 no_drop 1
 last_grace 10
 no_pick 1
+end
+Object ability_frostbolt
+name ability frostbolt
+type 110
+editor_folder forces/ability
+face force.101
+identified 1
+sys_object 1
+is_magical 1
+no_drop 1
+last_grace 10
+no_pick 1
+sp 14
 end
 Object ability_icestorm
 name ability icestorm
@@ -7881,6 +7907,19 @@ no_drop 1
 last_grace 10
 no_pick 1
 sp 1
+end
+Object ability_lightning
+name ability lightning
+type 110
+editor_folder forces/ability
+face force.101
+identified 1
+sys_object 1
+is_magical 1
+no_drop 1
+last_grace 10
+no_pick 1
+sp 19
 end
 Object ability_mbullet
 name ability magic bullet
@@ -21970,6 +22009,36 @@ food 9
 is_used_up 1
 no_pick 1
 end
+Object frostbolt
+name frostbolt
+type 12
+editor_folder magic/cold
+layer 7
+face icestorm.101
+level 1
+no_save 1
+attack_cold 100
+animation frostbolt
+anim_speed 1
+terrain_flag 32767
+last_sp 12
+speed 1.0
+is_animated 1
+is_turnable 1
+is_missile 1
+no_pick 1
+last_heal 12
+use_dmg_info 1
+glow_radius 1
+walk_on 1
+fly_on 1
+speed 1
+wc 80
+dam 85
+thac0 0
+thacm 0
+flying 1
+end
 Object icestorm
 name ice
 type 88
@@ -22049,6 +22118,37 @@ attack_fire 100
 terrain_flag 32767
 flying 1
 no_pick 1
+end
+Object lightning
+name lightning
+type 12
+editor_folder magic/lightning
+layer 7
+face lightning.111
+level 1
+no_save 1
+attack_electricity 100
+animation lightning
+anim_speed 1
+terrain_flag 32767
+last_sp 12
+speed 1.0
+is_animated 1
+is_turnable 1
+is_missile 1
+no_pick 1
+last_heal 12
+use_dmg_info 1
+glow_radius 1
+walk_on 1
+fly_on 1
+reflecting 1
+speed 1
+wc 80
+dam 85
+thac0 0
+thacm 0
+flying 1
 end
 Object probebullet
 type 2
@@ -25436,7 +25536,7 @@ type 80
 editor_folder mobs/demon
 face bone_devil.151
 race demon
-randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems spells_demilich;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -25580,7 +25680,7 @@ type 80
 editor_folder mobs/demon
 face demon_green.151
 race demon
-randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems spells_demilich;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -31545,7 +31645,7 @@ type 80
 editor_folder mobs/undead
 face demilich.151
 race lich
-randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems spells_demilich;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -31600,7 +31700,7 @@ type 80
 editor_folder mobs/undead
 face druj_skull.151
 race druj
-randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems spells_demilich;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255

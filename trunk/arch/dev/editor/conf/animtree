@@ -165,9 +165,9 @@
 /mobs/elves/drows/drow_sorcerer/drow_sorcerer
 /indoor/artificial/masks_wall/flags/drowflag
 /mobs/undead/druj/druj_skull
-/intern/player/dwarf_female
+/intern/player/dwarf/dwarf_female
 /mobs/dwarves/fighter/dwarf_fighter
-/intern/player/dwarf_male
+/intern/player/dwarf/dwarf_male
 /mobs/dwarves/noble/dwarf_noble
 /outdoor/artificial/water_wheels/dwarf_wheel
 /outdoor/artificial/water_wheels/dwarf_wheelb
@@ -207,6 +207,7 @@
 /misc/fog/fog_glow2
 /indoor/artificial/smithy/forge_111
 /mobs/animals/frogs/frog
+/magic/cold/frostbolt
 /items/gifts/full_xmas_tree
 /mobs/theme/halloween/great_pumpkin/g_pumpkin
 /walls/doors/gate1_locked
@@ -239,8 +240,8 @@
 /mobs/human/guards/guard2
 /mobs/human/guards/guard_pole
 /mobs/human/guards/guard_royal
-/intern/player/half_elf_female
-/intern/player/half_elf_male
+/intern/player/half_elf/half_elf_female
+/intern/player/half_elf/half_elf_male
 /connect/triggers/handle_lever
 /outdoor/artificial/hay/haybailsmall
 /outdoor/artificial/hay/haypilesmall
@@ -252,8 +253,8 @@
 /items/magic_tools/horn
 /mobs/insects/bees/hornet
 /mobs/animals/horses/horse_white
-/intern/player/human_female
-/intern/player/human_male
+/intern/player/human/human_female
+/intern/player/human/human_male
 /indoor/natural/icecave/icecave_deco1
 /indoor/natural/icecave/icecave_deco2
 /indoor/natural/icecave/icecave_deco3
@@ -302,6 +303,7 @@
 /misc/effects/level_up
 /mobs/undead/lich/lich
 /mobs/undead/lich_lord/lich_lord
+/magic/lightning/lightning
 /walls/lo_walls/lo_wall1
 /walls/lo_walls/lo_wall2
 /walls/lo_walls/lo_wall2a
@@ -339,6 +341,7 @@
 /mobs/minotaur/minotaur
 /indoor/artificial/misc/mirror_big.111
 /mobs/human/monk/monk
+/mobs/animals/rodents/mouse
 /indoor/artificial/masks_wall/mousehole1
 /special/mover/mover
 /mobs/elementals/mud_hand/mud_hand
@@ -447,7 +450,10 @@
 /items/container/chests/treasure_chests/random_chest_metal
 /items/container/chests/treasure_chests/random_chest_wood
 /mobs/human/rangers/ranger
-/mobs/animals/rodents/rat
+/mobs/animals/rodents/rat_a
+/mobs/animals/rodents/rat_b
+/mobs/animals/rodents/rat_c
+/mobs/animals/rodents/rat_d
 /mobs/animals/reptiles/rattle_snake
 /indoor/artificial/masks_wall/ring_wall.151
 /outdoor/natural/rocks/rock_big2_waterfall

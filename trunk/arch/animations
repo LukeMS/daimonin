@@ -6300,6 +6300,36 @@ frog_giant.152
 frog_giant.153
 frog_giant.152
 mina
+anim frostbolt
+facings 9
+icestorm.101
+icestorm.102
+icestorm.103
+icestorm.101
+icestorm.102
+icestorm.103
+icestorm.101
+icestorm.102
+icestorm.103
+icestorm.101
+icestorm.102
+icestorm.103
+icestorm.101
+icestorm.102
+icestorm.103
+icestorm.101
+icestorm.102
+icestorm.103
+icestorm.101
+icestorm.102
+icestorm.103
+icestorm.101
+icestorm.102
+icestorm.103
+icestorm.101
+icestorm.102
+icestorm.103
+mina
 anim full_xmas_tree
 chtree_big5b.101
 chtree_big5b.102
@@ -10344,6 +10374,18 @@ lich_lord.373
 lich_lord.381
 lich_lord.382
 lich_lord.383
+mina
+anim lightning
+facings 9
+lightning.111
+lightning.121
+lightning.131
+lightning.141
+lightning.151
+lightning.161
+lightning.171
+lightning.181
+lightning.111
 mina
 anim lo_wall1
 facings 9

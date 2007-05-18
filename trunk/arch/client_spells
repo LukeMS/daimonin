@@ -94,9 +94,15 @@ w c 11 si_017.png
 "flies in one direction until it hits something. "
 " "
 " " 
-"summon golem" 
-w b 13 si_038.png
-"A golem will appear, which you can control.  You can send him in various "
-"directions by using the fire <dir> keys. "
-"** You get all experience from your golems kills **"
-"** so stay safe and let him fight. **"
+"frostbolt"
+w f 3 si_026.png
+"A bolt of cold reaching out from the hands of the caster."
+" "
+" "
+" " 
+"lightning"
+w i 3 si_001.png
+"A lightning is reaching out from the hands of the caster."
+" "
+" "
+" "

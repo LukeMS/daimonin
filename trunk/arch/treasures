@@ -1774,22 +1774,36 @@ end
 ##################
 treasure spells_mage
 arch ability_mbullet
+more
+arch ability_lightning
 end
 treasure spells_wizard
 arch ability_mbullet
 more
 arch ability_firestorm
+more
+arch ability_firebolt
+more
+arch ability_lightning
 end
 treasure spells_sorcerer
 arch ability_mbullet
 more
 arch ability_icestorm
+more
+arch ability_frostbolt
+more
+arch ability_lightning
 end
 treasure spells_fire
 arch ability_firestorm
+more
+arch ability_firebolt
 end
 treasure spells_ice
 arch ability_icestorm
+more
+arch ability_frostbolt
 end
 treasure spells_priest
 arch ability_cause_lig_wound
@@ -1801,7 +1815,14 @@ arch ability_firestorm
 more
 arch ability_icestorm
 more
-arch ability_cause_lig_wound
+arch ability_lightning
+end
+treasure spells_demilich
+arch ability_mbullet
+more
+arch ability_frostbolt
+more
+arch ability_lightning
 end
 ##############################################################
 #
