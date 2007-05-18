@@ -150,16 +150,14 @@ spell spells[NROFREALSPELLS]          =
     SPELL_DESC_DIRECTION,
     PATH_EARTH, "bullet",SPELL_ACTIVE
     },
-
-    {"summon golem",                SPELL_TYPE_WIZARD, 1, 
-	5, 12, 3, 6,0,1.0,
-    4,      5,      4,      4, 
-	1, 4, 0,   SOUND_MAGIC_SUMMON1,
-    SPELL_USE_CAST | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_BOOK,
-    SPELL_DESC_DIRECTION,
-    PATH_CONJURATION, "golem",SPELL_DEACTIVE     /* NOT ACTIVE */
-    },
-
+	{"frostbolt",                   SPELL_TYPE_WIZARD, 10, 
+	4, 12, 3, 6,0, 1.0,
+	85,      7,      4,      0,  
+	1, 4, 0,  SOUND_MAGIC_ICE,
+	SPELL_USE_CAST | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_DUST | SPELL_USE_BOOK | SPELL_USE_POTION,
+	SPELL_DESC_DIRECTION,
+	PATH_ELEMENTAL, "frostbolt", SPELL_ACTIVE
+	},
     {"remove depletion",            SPELL_TYPE_PRIEST, 1, 
 	5, 24, 3, 6,0, 1.0,
     0,       0,     0,      0,
@@ -195,8 +193,14 @@ spell spells[NROFREALSPELLS]          =
     SPELL_DESC_SELF | SPELL_DESC_TOWN | SPELL_DESC_WIS,
     PATH_LIFE, "meffect_purple",SPELL_ACTIVE
     },
-
-    /* next we need a debuff - curse for example */
+	{"lightning",                   SPELL_TYPE_WIZARD, 10, 
+	4, 12, 3, 6,0, 1.0,
+	85,      7,      4,      0,  
+	1, 4, 0, SOUND_MAGIC_ELEC,
+	SPELL_USE_CAST | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_DUST | SPELL_USE_BOOK | SPELL_USE_POTION,
+	SPELL_DESC_DIRECTION,
+	PATH_ELEMENTAL, "lightning", SPELL_ACTIVE
+	}
 };
 
 /*

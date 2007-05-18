@@ -319,7 +319,7 @@ struct plugin_hooklist
     sint64 (*material_repair_cost)(object *, object *);
     void (*material_repair_item)(object *, int);
     char * (*query_short_name)(const object *const, const object *const);
-    char * (*query_base_name)(const object *const, const object *const);
+    char * (*query_base_name)(object *, object *);
     artifact * (*find_artifact)(const char *);
     void (*give_artifact_abilities)(object *, artifact *);
     const char * (*find_string)(const char *);

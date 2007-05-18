@@ -111,11 +111,12 @@ enum spellnrs
     SP_CAUSE_LIGHT,
 	SP_FIREBOLT,
     SP_BULLET,
-    SP_GOLEM,
+    SP_FROSTBOLT,
     SP_REMOVE_DEPLETION,
     SP_PROBE,
     SP_REMOVE_DEATHSICK,
     SP_RESTORATION,
+	SP_S_LIGHTNING,
 
     NROFREALSPELLS, /* LAST ENTRY */
 
@@ -124,7 +125,6 @@ enum spellnrs
     SP_M_FIREBALL,
     /*0*/
     SP_L_FIREBALL,
-    SP_S_LIGHTNING,
     SP_L_LIGHTNING,
     SP_M_MISSILE,
     /*5*/
@@ -207,7 +207,7 @@ enum spellnrs
     SP_AGGRAVATION,
 	SP_CONFUSION,
     /*80*/
-    SP_FROSTBOLT,
+    SP_GOLEM,
     SP_SHOCKWAVE,
     SP_COLOR_SPRAY,
     SP_HASTE,

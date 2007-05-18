@@ -1417,7 +1417,13 @@ void move_apply(object *const trap_obj, object *const victim, object *const orig
               damage_ob(victim, trap->stats.dam, trap, ENV_ATTACK_CHECK);
           goto leave;
 
-        case CONE:
+		case CONE:
+		case LIGHTNING: /* bolt */
+			/*
+			if ((IS_LIVE(victim) && trap->speed) && trap->owner != victim)
+				damage_ob(victim, trap->stats.dam, trap, ENV_ATTACK_CHECK);
+			goto leave;
+			*/
           /*
            if(IS_LIVE(victim)&&trap->speed) {
              uint32 attacktype = trap->attacktype & ~AT_COUNTERSPELL;
@@ -1425,7 +1431,7 @@ void move_apply(object *const trap_obj, object *const victim, object *const orig
                damage_ob(victim,trap->stats.dam, ENV_ATTACK_CHECK);
            }
           */
-          goto leave;
+          //goto leave;
 
         case FBULLET:
         case BULLET:

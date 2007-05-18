@@ -426,7 +426,9 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
           success = fire_arch(op, caster,op->x, op->y, dir, spellarch[type], type, casting_level(caster, type), 1);
           break;
 
+		case SP_FROSTBOLT:
 		case SP_FIREBOLT:
+		case SP_S_LIGHTNING:
 			success = fire_bolt(op,caster,dir,type,!ability);
 		break;
 
@@ -1557,7 +1559,7 @@ void move_bolt(object *op)
         if (!op->direction)
             return;
 
-        if (blocks_view(op->map, op->x + DIRX(op), op->y + DIRY(op)))
+        if (blocks_magic(op->map, op->x + DIRX(op), op->y + DIRY(op)))
             return;
         w = wall(op->map, op->x + DIRX(op), op->y + DIRY(op));
         r = reflwall(op->map, op->x + DIRX(op), op->y + DIRY(op), op);
