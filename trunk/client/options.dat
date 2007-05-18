@@ -23,7 +23,7 @@ Textwindow Default Size: 10
 Textwindow Body Size: 10
 Textwindow Top Size: 10
 Save CPU time with sleep(): 1
-Sleep time in ms: 25
+Sleep time in ms: 15
 
 # Sound
 Sound volume: 100
