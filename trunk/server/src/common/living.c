@@ -2211,6 +2211,27 @@ void fix_monster(object *op)
     op->stats.dam = (sint16) (((float) op->stats.dam * ((LEVEL_DAMAGE((op->level < 0) ? 0 : op->level) + tmp_add)
                      * (0.925f + 0.05 * (op->level / 10)))) / 10.0f);
 
+	/* this will add an special decrease in power to mobs from level 1 to 5 */
+	if(op->level <= 5)
+	{
+		/* this should range from 0.8xx to near 1.0 */
+		float d = 1.0f - ( (0.2f/5.0f) * (float)(6-op->level));
+
+		op->stats.dam = (int) ((float)op->stats.dam * d);
+		if(op->stats.dam < 1)
+			op->stats.dam = 1;
+
+		op->stats.maxhp = (int) ((float)op->stats.maxhp * d);
+		if(op->stats.maxhp < 1)
+			op->stats.maxhp = 1;
+
+		/* cap the pools to <=max */
+		if (op->stats.hp > op->stats.maxhp)
+			op->stats.hp = op->stats.maxhp;
+
+
+
+	}
     /* Set up AI in op->custom_attrset */
     if(! MOB_DATA(op))
     {
