@@ -574,8 +574,8 @@
 
 #define BIND_MAP_MAPPATH   "/planes/human_plane/castle/castle_040a"
 #define BIND_MAP_STATUS    (MAP_STATUS_MULTI)
-#define BIND_MAP_X         (8)
-#define BIND_MAP_Y         (7)
+#define BIND_MAP_X         (7)
+#define BIND_MAP_Y         (17)
 
 /*
  * These defines tells where,
