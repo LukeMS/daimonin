@@ -522,7 +522,7 @@ void show_range(int x, int y)
     rec_item.w = 185;
     examine_range_inv();
 
-    sprite_blt(Bitmaps[BITMAP_RANGE], x - 2, y, NULL, NULL);
+//    sprite_blt(Bitmaps[BITMAP_RANGE], x - 2, y, NULL, NULL);
 
     switch (RangeFireMode)
     {

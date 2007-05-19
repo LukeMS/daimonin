@@ -251,17 +251,14 @@ char * get_value(void *value, int type)
 void add_close_button(int x, int y, int menu)
 {
     int mx, my, mb;
-
     mb = SDL_GetMouseState(&mx, &my) & SDL_BUTTON(SDL_BUTTON_LEFT);
-    StringBlt(ScreenSurface, &SystemFont, "X", x + 463, y + 28, COLOR_BLACK, NULL, NULL);
-    if (mx > x + 459 && mx <x + 469 && my> y + 27 && my < y + 39)
+    if (mx > x + 460 && mx <x + 474 && my> y + 26 && my < y + 40)
     {
-        StringBlt(ScreenSurface, &SystemFont, "X", x + 462, y + 27, COLOR_HGOLD, NULL, NULL);
+        sprite_blt(Bitmaps[BITMAP_CLOSEBUTTON], x+463, y+28, NULL,NULL);
         if (mb && mb_clicked)
             check_menu_keys(menu, SDLK_ESCAPE);
     }
-    else
-        StringBlt(ScreenSurface, &SystemFont, "X", x + 462, y + 27, COLOR_WHITE, NULL, NULL);
+
 }
 
 /******************************************************************
@@ -419,7 +416,7 @@ int add_rangebox(int x, int y, int id, int text_w, int text_x, char *text, int c
     box.y = y + 1;
     box.w = text_w + 2;
     box.h = 16;
-    SDL_FillRect(ScreenSurface, &box, sdl_gray1);
+    SDL_FillRect(ScreenSurface, &box, 0);
     StringBlt(ScreenSurface, &SystemFont, text, text_x + 1, y + 3, COLOR_BLACK, NULL, NULL);
     StringBlt(ScreenSurface, &SystemFont, text, text_x, y + 2, color, NULL, NULL);
 
@@ -808,9 +805,9 @@ void show_skilllist(void)
         if (i != skill_list_set.entry_nr)
         {
             if (i & 1)
-                SDL_FillRect(ScreenSurface, &box, sdl_gray2);
+                SDL_FillRect(ScreenSurface, &box, SDL_MapRGB(ScreenSurface->format, 67, 57, 30));
             else
-                SDL_FillRect(ScreenSurface, &box, sdl_gray1);
+                SDL_FillRect(ScreenSurface, &box, SDL_MapRGB(ScreenSurface->format, 57, 59, 39));
         }
         else
             SDL_FillRect(ScreenSurface, &box, sdl_blue1);
@@ -966,9 +963,9 @@ void show_spelllist(void)
         if (i != spell_list_set.entry_nr)
         {
             if (i & 1)
-                SDL_FillRect(ScreenSurface, &box, sdl_gray2);
+                SDL_FillRect(ScreenSurface, &box, SDL_MapRGB(ScreenSurface->format, 67, 57, 30));
             else
-                SDL_FillRect(ScreenSurface, &box, sdl_gray1);
+                SDL_FillRect(ScreenSurface, &box, SDL_MapRGB(ScreenSurface->format, 57, 59, 39));
         }
         else
             SDL_FillRect(ScreenSurface, &box, sdl_blue1);
@@ -1159,9 +1156,9 @@ void show_keybind()
         if (i != bindkey_list_set.entry_nr)
         {
             if (i & 1)
-                SDL_FillRect(ScreenSurface, &box, sdl_gray2);
+                SDL_FillRect(ScreenSurface, &box, SDL_MapRGB(ScreenSurface->format, 67, 57, 30));
             else
-                SDL_FillRect(ScreenSurface, &box, sdl_gray1);
+                SDL_FillRect(ScreenSurface, &box, SDL_MapRGB(ScreenSurface->format, 57, 59, 39));
         }
         else
             SDL_FillRect(ScreenSurface, &box, sdl_blue1);
@@ -1573,10 +1570,10 @@ void show_login_server(void)
     StringBlt(ScreenSurface, &BigFont, buf, t + 1, y - 21, COLOR_BLACK, NULL, NULL);
     StringBlt(ScreenSurface, &BigFont, buf, t, y - 22, COLOR_HGOLD, NULL, NULL);
 
-    SDL_FillRect(ScreenSurface, &box, sdl_gray3);
+    SDL_FillRect(ScreenSurface, &box, SDL_MapRGB(ScreenSurface->format, 67, 57, 30));
     box.y = y + 15;
     box.h = 150;
-    SDL_FillRect(ScreenSurface, &box, sdl_gray4);
+    SDL_FillRect(ScreenSurface, &box, SDL_MapRGB(ScreenSurface->format, 57, 59, 39));
     StringBlt(ScreenSurface, &SystemFont, "- UPDATING FILES- ", x + 58, y + 1, COLOR_BLACK, NULL, NULL);
     StringBlt(ScreenSurface, &SystemFont, "- UPDATING FILES -", x + 57, y, COLOR_WHITE, NULL, NULL);
     if (request_file_chain >= 0)
@@ -1879,9 +1876,9 @@ void show_meta_server(_server *node, int metaserver_start, int metaserver_sel)
     {
         box.y += 12;
         if (i & 1)
-            SDL_FillRect(ScreenSurface, &box, sdl_gray2);
+            SDL_FillRect(ScreenSurface, &box, SDL_MapRGB(ScreenSurface->format, 67, 57, 30));
         else
-            SDL_FillRect(ScreenSurface, &box, sdl_gray1);
+            SDL_FillRect(ScreenSurface, &box, SDL_MapRGB(ScreenSurface->format, 57, 59, 39));
     }
 
     for (i = 0; node && i < metaserver_start; i++)

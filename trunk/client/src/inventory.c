@@ -151,7 +151,7 @@ void show_inventory_window(int x, int y)
     invylen = INVITEMYLEN;
 
 
-    sprite_blt(Bitmaps[BITMAP_INVENTORY], x, y, NULL, NULL);
+    sprite_blt(Bitmaps[BITMAP_INVENTORY], x-6, y-7, NULL, NULL);
 
     y += 26;
     blt_window_slider(Bitmaps[BITMAP_INV_SCROLL], ((cpl.win_inv_count - 1) / invxlen) + 1, invylen,
@@ -498,7 +498,7 @@ void examine_range_inv(void)
 
     for (tmp = op->inv; tmp; tmp = tmp->next)
     {
-        if (tmp->applied && (tmp->itype == TYPE_BOW || (tmp->itype == TYPE_ARROW && tmp->stype >= 128) 
+        if (tmp->applied && (tmp->itype == TYPE_BOW || (tmp->itype == TYPE_ARROW && tmp->stype >= 128)
 			|| tmp->itype == TYPE_WAND || tmp->itype == TYPE_ROD || tmp->itype == TYPE_HORN))
             fire_mode_tab[FIRE_MODE_BOW].item = tmp->tag;
 		else if(tmp->applied && tmp->itype == TYPE_ARROW && tmp->stype < 128)

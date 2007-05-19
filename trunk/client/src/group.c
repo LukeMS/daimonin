@@ -98,7 +98,7 @@ void show_group(int x, int y)
             /* sprite_blt(Bitmaps[BITMAP_GROUP], x + group_pos[s][0] + 2, y + group_pos[s][1] + 1, NULL, NULL); */
             if (group[s].name[0] != '\0')
             {
-                sprite_blt(Bitmaps[BITMAP_GROUP], x + group_pos[s][0] + 2, y + group_pos[s][1] + 1, NULL, NULL);
+//                sprite_blt(Bitmaps[BITMAP_GROUP], x + group_pos[s][0] + 2, y + group_pos[s][1] + 1, NULL, NULL);
                 StringBlt(ScreenSurface, &SystemFont, group[s].name, x + group_pos[s][0] + 33, y + group_pos[s][1] + 1,COLOR_DEFAULT, NULL, NULL);
                 sprintf(buf, "%3d", group[s].level);
                 StringBlt(ScreenSurface, &Font6x3Out, buf, x + group_pos[s][0] + 8, y + group_pos[s][1], COLOR_DEFAULT, NULL, NULL);
