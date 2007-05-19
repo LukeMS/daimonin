@@ -1374,11 +1374,7 @@ int main(int argc, char *argv[])
             SYSTEM_End();
             return(0);
         }
-        if (event.type == SDL_KEYUP || event.type == SDL_KEYDOWN || event.type == SDL_MOUSEBUTTONDOWN
-#ifdef DEVELOPMENT
-            || options.cli_server
-#endif
-            )
+        if (event.type == SDL_KEYUP || event.type == SDL_KEYDOWN || event.type == SDL_MOUSEBUTTONDOWN || options.cli_server)
         {
             reset_keys();
             break;
