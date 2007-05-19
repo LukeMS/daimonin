@@ -1242,7 +1242,7 @@ static void key_string_event(SDL_KeyboardEvent *key)
                     {
                         if (GameStatus == GAME_STATUS_NAME)
                         {
-                            switch (key->keysym.sym)
+                            switch (tolower(c))
                             {
                                 case SDLK_UNDERSCORE:
                                 case SDLK_MINUS:
