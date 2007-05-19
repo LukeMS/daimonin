@@ -209,7 +209,7 @@ static int is_username_valid(const char *name)
 
     for (i=0; i< (int)strlen(name); i++)
     {
-        if (name[i]!= '_' && !(((name[i] <= 90) && (name[i]>=65))||((name[i] >= 97) && (name[i]<=122))))
+        if (name[i]!= '-' && name[i]!= '_' && !(((name[i] <= 90) && (name[i]>=65))||((name[i] >= 97) && (name[i]<=122))))
             return 0;
     }
     return 1;
