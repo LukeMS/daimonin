@@ -2,9 +2,12 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="4" />
 	<Project>
-		<Option title="Client" />
-		<Option pch_mode="0" />
-		<Option compiler="gcc" />
+		<Option title="Client"/>
+		<Option makefile="Makefile"/>
+		<Option makefile_is_custom="0"/>
+		<Option default_target="1"/>
+		<Option active_target="0"/>
+		<Option compiler="0"/>
 		<Build>
 			<Target title="Release">
 				<Option output="..\..\..\client.exe" />
@@ -47,6 +50,12 @@
 			<Option link="0" />
 			<Option target="Release" />
 			<Option target="Debug" />
+		</Unit>
+		<Unit filename="client.rc">
+			<Option compilerVar="WINDRES"/>
+			<Option objectName="make\win32\CodeBlocks\client.res"/>
+			<Option target="Release"/>
+			<Option target="Debug"/>
 		</Unit>
 		<Unit filename="..\..\..\src\adler32.c">
 			<Option compilerVar="CC" />
