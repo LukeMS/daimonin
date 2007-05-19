@@ -127,6 +127,7 @@ static struct method_decl   GameObject_methods[]            =
     {"MakePet", (lua_CFunction) GameObject_MakePet},
     {"GetPets", (lua_CFunction) GameObject_GetPets},
     {"GetGmasterMode", (lua_CFunction) GameObject_GetGmasterMode},
+    {"GetPlayerWeightLimit", (lua_CFunction) GameObject_GetPlayerWeightLimit},
 
     // {"GetUnmodifiedAttribute", (lua_CFunction)GameObject_GetUnmodifiedAttribute},
     {NULL, NULL}
@@ -3338,8 +3339,29 @@ static int GameObject_GetGmasterMode(lua_State *L)
     return 1;
 }
 
+/*****************************************************************************/
+/* Name   : GameObject_GetPlayerWeightLimit                                  */
+/* Lua    : object:GetPlayerWeightLimit()                                    */
+/* Info   : Only works for player objects. Returns the real weight limit     */
+/*        : of a player including stat bonus                                 */
+/* Status : Untested                                                         */
+/*****************************************************************************/
+static int GameObject_GetPlayerWeightLimit(lua_State *L)
+{
+    lua_object *self;
+
+    get_lua_args(L, "O", &self);
+
+    if (WHO->type != PLAYER || CONTR(WHO) == NULL)
+        luaL_error(L, "GetPlayerWeightLimit() can only be called on a legal player object.");
+
+    lua_pushnumber(L, CONTR(WHO)->weight_limit);
+    return 1;
+}
+
 
 /* FUNCTIONEND -- End of the GameObject methods. */
+
 
 #if 0
 /*****************************************************************************/
