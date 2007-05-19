@@ -543,7 +543,7 @@ int Event_PollInputDevice(void)
                     break;
                 }
                 /* IWIN_INV Slider */
-                else if (active_scrollbar == 2 || (cpl.menustatus == MENU_NPC && y >= 136 && y <=474 && x>=561 && x <= 568))
+                else if (active_scrollbar == 2 || (cpl.menustatus == MENU_NPC && y >= 140 && y <=478 && x>=566 && x <= 573))
                 {
                     active_scrollbar = 2;
 

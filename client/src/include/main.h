@@ -495,7 +495,6 @@ typedef enum _bitmap_index
     BITMAP_DAMNED,
     BITMAP_LOCK,
     BITMAP_MAGIC,
-    BITMAP_RANGE,
     BITMAP_RANGE_MARKER,
     BITMAP_RANGE_CTRL,
     BITMAP_RANGE_CTRL_NO,
@@ -600,7 +599,6 @@ typedef enum _bitmap_index
     BITMAP_BUTTONQ_DOWN,
     BITMAP_NCHAR_MARKER,
     BITMAP_TRAPED,
-    BITMAP_PRAY,
     BITMAP_WAND,
     BITMAP_GROUP_INVITE,
     BITMAP_BUTTON_BLACK_UP,
@@ -618,6 +616,7 @@ typedef enum _bitmap_index
     BITMAP_NPC_INT_SLIDER,
     BITMAP_JOURNAL,
     BITMAP_INVSLOT_MARKED,
+    BITMAP_CLOSEBUTTON,
     BITMAP_INIT
 }
 _bitmap_index;
