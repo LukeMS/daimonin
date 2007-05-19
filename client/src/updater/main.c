@@ -358,11 +358,12 @@ int main(int argc, char *argv[])
     else
         printf("No new patches found...\n");
 
-
-    //printf("Starting client...\n");
-
-    printf("Starting client...\n(debug mode: press RETURN to confirm)\n");
-    getchar();
+#ifdef _DEBUG
+	printf("Starting client...\n(debug mode: press RETURN to confirm)\n");
+	getchar();
+#else
+	printf("Starting client...\n");
+#endif
 
     start_client_and_close(prg_path);
 
