@@ -17,15 +17,13 @@ local spell
 --       Just the link is commented out.
 --
 --       Well, Cleo (who else?) found an exploit. So the clw code is now removed.
---
--- Note: "Minor healing" also moved to village
 
 local function topicDefault()
     ib:SetTitle("The Church of the Tabernacle")
     ib:SetMsg("Hello! I am " .. me.name ..".\n\nWelcome to the church of the Tabernacle!\n\n")
     ib:AddMsg("If you are confused by my services, I can ^explain^ it.\nYou need some of our services?")
---    ib:AddLink("Teach Minor Healing", "teach healing")
---    ib:AddLink("", "")
+    ib:AddLink("Teach Minor Healing", "teach healing")
+    ib:AddLink("", "")
     ib:AddLink("Remove Death Sickness", "cast sick")
     ib:AddLink("Remove Depletion", "cast deplete")
     ib:AddLink("Restoration", "cast restore")
@@ -38,8 +36,8 @@ end
 
 local function topicExplain()
     ib:SetTitle("About our Services")
---    ib:SetMsg("\n\nI can teach you basic spells that you can cast yourself.\n\n")
-    ib:AddMsg("I can also cure various things by casting the named spells on you when you pay me the money.\n\n")
+    ib:SetMsg("\n\nI can teach you basic spells that you can cast yourself.\n\n")
+    ib:AddMsg("I can cure various things by casting the named spells on you when you pay me the money.\n\n")
     ib:AddMsg("Deathsick is a stronger form of depletion.\nEverytime you die stats are depleted by death sickness.")
     ib:SetButton("Back", "hi")
     pl:Interface(1, ib:Build())
@@ -101,7 +99,6 @@ local function topicDoCast(what)
     pl:Interface(1, ib:Build())
 end
 
---[[
 local function topicTeachHealing()
     ib:SetMsg("I can teach you °Minor Healing° for no charge.")
     ib:AddMsg("\n\nDo you want me to do it now?") 
@@ -128,7 +125,6 @@ local function topicDoTeachHealing()
     ib:SetButton("Back", "Hi") 
     pl:Interface(1, ib:Build())
 end
---]]
 
 tl = TopicList()
 tl:AddGreeting(nil, topicDefault)
@@ -136,6 +132,6 @@ tl:SetDefault(topicDefault)
 tl:AddTopics("explain", topicExplain)
 tl:AddTopics("cast (.*)", topicCast)
 tl:AddTopics("docast (.*)", topicDoCast)
---tl:AddTopics("teach healing", topicTeachHealing)
---tl:AddTopics("doteach healing", topicDoTeachHealing)
+tl:AddTopics("teach healing", topicTeachHealing)
+tl:AddTopics("doteach healing", topicDoTeachHealing)
 tl:CheckMessage(event)
