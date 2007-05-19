@@ -242,6 +242,18 @@
 			Name="Ressourcendateien"
 			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 			>
+			<File
+				RelativePath="..\..\daimonin.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\resource.h"
+				>
+			</File>
+			<File
+				RelativePath=".\updater.rc"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>
