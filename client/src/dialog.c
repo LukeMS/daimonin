@@ -805,7 +805,7 @@ void show_skilllist(void)
         if (i != skill_list_set.entry_nr)
         {
             if (i & 1)
-                SDL_FillRect(ScreenSurface, &box, SDL_MapRGB(ScreenSurface->format, 67, 57, 30));
+                SDL_FillRect(ScreenSurface, &box, SDL_MapRGB(ScreenSurface->format, 100, 57, 30));
             else
                 SDL_FillRect(ScreenSurface, &box, SDL_MapRGB(ScreenSurface->format, 57, 59, 39));
         }
@@ -963,7 +963,7 @@ void show_spelllist(void)
         if (i != spell_list_set.entry_nr)
         {
             if (i & 1)
-                SDL_FillRect(ScreenSurface, &box, SDL_MapRGB(ScreenSurface->format, 67, 57, 30));
+                SDL_FillRect(ScreenSurface, &box, SDL_MapRGB(ScreenSurface->format, 100, 57, 30));
             else
                 SDL_FillRect(ScreenSurface, &box, SDL_MapRGB(ScreenSurface->format, 57, 59, 39));
         }
@@ -1156,7 +1156,7 @@ void show_keybind()
         if (i != bindkey_list_set.entry_nr)
         {
             if (i & 1)
-                SDL_FillRect(ScreenSurface, &box, SDL_MapRGB(ScreenSurface->format, 67, 57, 30));
+                SDL_FillRect(ScreenSurface, &box, SDL_MapRGB(ScreenSurface->format, 100, 57, 30));
             else
                 SDL_FillRect(ScreenSurface, &box, SDL_MapRGB(ScreenSurface->format, 57, 59, 39));
         }
@@ -1570,7 +1570,7 @@ void show_login_server(void)
     StringBlt(ScreenSurface, &BigFont, buf, t + 1, y - 21, COLOR_BLACK, NULL, NULL);
     StringBlt(ScreenSurface, &BigFont, buf, t, y - 22, COLOR_HGOLD, NULL, NULL);
 
-    SDL_FillRect(ScreenSurface, &box, SDL_MapRGB(ScreenSurface->format, 67, 57, 30));
+    SDL_FillRect(ScreenSurface, &box, SDL_MapRGB(ScreenSurface->format, 100, 57, 30));
     box.y = y + 15;
     box.h = 150;
     SDL_FillRect(ScreenSurface, &box, SDL_MapRGB(ScreenSurface->format, 57, 59, 39));
@@ -1876,7 +1876,7 @@ void show_meta_server(_server *node, int metaserver_start, int metaserver_sel)
     {
         box.y += 12;
         if (i & 1)
-            SDL_FillRect(ScreenSurface, &box, SDL_MapRGB(ScreenSurface->format, 67, 57, 30));
+            SDL_FillRect(ScreenSurface, &box, SDL_MapRGB(ScreenSurface->format, 100, 57, 30));
         else
             SDL_FillRect(ScreenSurface, &box, SDL_MapRGB(ScreenSurface->format, 57, 59, 39));
     }
