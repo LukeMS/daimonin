@@ -472,6 +472,18 @@
 			Name="Ressourcendateien"
 			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 			>
+			<File
+				RelativePath=".\client.rc"
+				>
+			</File>
+			<File
+				RelativePath="..\daimonin.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\resource.h"
+				>
+			</File>
 		</Filter>
 		<File
 			RelativePath=".\sdl_lib\SDL.lib"
