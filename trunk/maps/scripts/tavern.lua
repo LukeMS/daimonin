@@ -13,8 +13,8 @@ if event.options then tavern = event.options end
 
 local for_sale = 
 {
-    water = {title = "water", price = 2, icon = "water.101", arch = "drink_generic", weight = 250},
-    booze = {title = "booze", price = 7, icon = "booze.101", arch = "booze_generic", weight = 300},
+    water = {title = "water", price = 5, icon = "water.101", arch = "drink_generic", weight = 250},
+    booze = {title = "booze", price = 8, icon = "booze.101", arch = "booze_generic", weight = 300},
     food =  {title = "food",  price =10, icon = "food.101", arch = "food_generic", weight = 400}
 }
 
