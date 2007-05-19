@@ -23,7 +23,7 @@ my %old_tilesets = ();  # id   -> array($map, ...)
 # Scan all subdirs with some exceptions
 scan_maps($mapdir, $mapdir, \%maps, [
     "^/scripts/", "^/lua/", "^/utils/*",         # Not map directories
-    "^/unofficial/*", "^/_old/",                 # Not on main server
+    "^/unofficial/*", "^/_old/", "^/reuseables/*" # Not on main server
     ]);
 validate_linking(\%maps);
 relabel_old_tilesets(\%maps, \%tilesets);
