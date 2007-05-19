@@ -138,38 +138,38 @@ function QuestManager:AddItemList(_ib)
     local _ic
     local _qobj = self.quest_trigger
 
-    _ib:AddMsg("\n°STATUS:°")
+    _ib:AddMsg("\n|Quest Status|~\n")
     if _qobj.sub_type_1 == game.QUEST_KILL then
         for _kcount in obj_inventory(_qobj) do
             if _kcount.last_sp > _kcount.level then
-                _ib:AddMsg("\n".. _kcount.name ..": " .. _kcount.level .. "/" .. _kcount.last_sp)
+                _ib:AddMsg("  ".._kcount.name ..": " .. _kcount.level .. "/" .. _kcount.last_sp.."\n")
             else
-                _ib:AddMsg("\n°".. _kcount.name ..": " .. _kcount.level .. "/" .. _kcount.last_sp .. " (complete)°")
+                _ib:AddMsg("  ~".. _kcount.name ..": " .. _kcount.level .. "/" .. _kcount.last_sp .. " (complete)~\n")
             end
         end
     elseif _qobj.sub_type_1 == game.QUEST_ITEM then
         for _kcount in obj_inventory(_qobj) do
             _ic = _kcount:NrofQuestItem()
             if _kcount.quantity > _ic then
-                _ib:AddMsg("\n".. _kcount.name ..": " .. _ic .. "/" .. _kcount.quantity)
+                _ib:AddMsg("  ".._kcount.name ..": " .. _ic .. "/" .. _kcount.quantity.."\n")
             else
-                _ib:AddMsg("\n°".. _kcount.name ..": " .. _ic .. "/" .. _kcount.quantity .. " (complete)°")
+                _ib:AddMsg("  ~".. _kcount.name ..": " .. _ic .. "/" .. _kcount.quantity .. " (complete)~\n")
             end
         end
     elseif _qobj.sub_type_1 == game.QUEST_KILLITEM then
         for _kcount in obj_inventory(_qobj) do
             _ic = _kcount:NrofQuestItem()
             if _kcount.inventory.quantity > _ic then
-                _ib:AddMsg("\n".. _kcount.inventory.name ..": " .. _ic .. "/" .. _kcount.last_sp)
+                _ib:AddMsg("  ".. _kcount.inventory.name ..": " .. _ic .. "/" .. _kcount.last_sp.."\n")
             else
-                _ib:AddMsg("\n°".. _kcount.inventory.name ..": " .. _ic .. "/" .. _kcount.last_sp .. " (complete)°")
+                _ib:AddMsg("  ~".. _kcount.inventory.name ..": " .. _ic .. "/" .. _kcount.last_sp .. " (complete)~\n")
             end
         end
     else
         if _qobj.state == _qobj.magic then
-            _ib:AddMsg("\n°Complete!°")
+            _ib:AddMsg("  ~Complete!~\n")
         else
-            _ib:AddMsg("\nIncomplete")
+            _ib:AddMsg("  Incomplete\n")
         end
     end
 end
