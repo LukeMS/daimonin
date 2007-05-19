@@ -2215,7 +2215,7 @@ void fix_monster(object *op)
 	if(op->level <= 5)
 	{
 		/* this should range from 0.8xx to near 1.0 */
-		float d = 1.0f - ( (0.2f/5.0f) * (float)(6-op->level));
+		float d = 1.0f - ( (0.35f/5.0f) * (float)(6-op->level));
 
 		op->stats.dam = (int) ((float)op->stats.dam * d);
 		if(op->stats.dam < 1)
