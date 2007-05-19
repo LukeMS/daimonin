@@ -123,9 +123,9 @@ _option             opt[]                           =
         /* End of Page */
 
         /* Client */
-        {"Fullscreen:", "Toggle fullscreen to windowed mode.","NOTE: You need to restart the server.","", SEL_CHECKBOX, 0,1,1, 1, &options.fullscreen, VAL_BOOL},
-        {"Automatic bpp:", "Use always the same bits per pixel like your default windows.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,1, &options.auto_bpp_flag, VAL_BOOL},
-        {"Colordeep:", "Use this bpp for fullscreen mode. Overruled by automatic bpp.","NOTE: You need to restart the server.","8 bpp#16 bpp#32 bpp", SEL_RANGE, 0,2,1, 1, &options.video_bpp, VAL_INT},
+        {"Fullscreen:", "Toggle fullscreen to windowed mode.","NOTE: You need to restart the client.","", SEL_CHECKBOX, 0,1,1, 1, &options.fullscreen, VAL_BOOL},
+        {"Automatic bpp:", "Use always the same bits per pixel like your default windows.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,1, &options.auto_bpp_flag, VAL_BOOL},
+        {"Colordeep:", "Use this bpp for fullscreen mode. Overruled by automatic bpp.","NOTE: You need to restart the client.","8 bpp#16 bpp#32 bpp", SEL_RANGE, 0,2,1, 1, &options.video_bpp, VAL_INT},
         {"Textwindow splitted:", "Split your text windows in chat & action messages.","","", SEL_CHECKBOX, 0,1,1, 1, &options.use_TextwinSplit, VAL_BOOL},
         {"Textwindows use alpha:", "Make the text window transparent.","WARNING: Don't use this if you have a very slow computer","", SEL_CHECKBOX, 0,1,1, 1, &options.use_TextwinAlpha, VAL_INT},
         {"Textwindows alpha value:", "Transparent value. higher = darker","","", SEL_RANGE, 0,255,5, 110, &options.textwin_alpha, VAL_INT},
@@ -143,30 +143,30 @@ _option             opt[]                           =
         /* End of Page */
 
         /* Fullscreen Flags */
-        {"Hardware Surface:", "Don't change until you know what you do.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1, 0, &options.Full_HWSURFACE, VAL_BOOL},
-        {"Software Surface:", "Don't change until you know what you do.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,1, &options.Full_SWSURFACE, VAL_BOOL},
-        {"Hardware Accel:", "Don't change until you know what you do.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,1, &options.Full_HWACCEL, VAL_BOOL},
-        {"Doublebuffer:", "Don't change until you know what you do.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,0, &options.Full_DOUBLEBUF, VAL_BOOL},
-        {"Any format:", "Don't change until you know what you do.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,0, &options.Full_ANYFORMAT, VAL_BOOL},
-        {"Async blit:", "Don't change until you know what you do.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,0, &options.Full_ASYNCBLIT, VAL_BOOL},
-        {"Hardware Palette:", "Don't change until you know what you do.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,1, &options.Full_HWPALETTE, VAL_BOOL},
-        {"Resizeable:", "Don't change until you know what you do.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,0, &options.Full_RESIZABLE, VAL_BOOL},
-        {"No frame:", "Don't change until you know what you do.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,0, &options.Full_NOFRAME, VAL_BOOL},
-        {"RLE accel:", "Don't change until you know what you do.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,1, &options.Full_RLEACCEL, VAL_BOOL},
+        {"Hardware Surface:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1, 0, &options.Full_HWSURFACE, VAL_BOOL},
+        {"Software Surface:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,1, &options.Full_SWSURFACE, VAL_BOOL},
+        {"Hardware Accel:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,1, &options.Full_HWACCEL, VAL_BOOL},
+        {"Doublebuffer:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,0, &options.Full_DOUBLEBUF, VAL_BOOL},
+        {"Any format:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,0, &options.Full_ANYFORMAT, VAL_BOOL},
+        {"Async blit:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,0, &options.Full_ASYNCBLIT, VAL_BOOL},
+        {"Hardware Palette:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,1, &options.Full_HWPALETTE, VAL_BOOL},
+        {"Resizeable:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,0, &options.Full_RESIZABLE, VAL_BOOL},
+        {"No frame:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,0, &options.Full_NOFRAME, VAL_BOOL},
+        {"RLE accel:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,1, &options.Full_RLEACCEL, VAL_BOOL},
         {"#"},
         /* End of Page */
 
         /* Windowed flags*/
-        {"Win Hardware Surface:", "Don't change until you know what you do.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,0, &options.Win_HWSURFACE, VAL_BOOL},
-        {"Win Software Surface:", "Don't change until you know what you do.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,1, &options.Win_SWSURFACE, VAL_BOOL},
-        {"Win Hardware Accel:", "Don't change until you know what you do.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,0, &options.Win_HWACCEL, VAL_BOOL},
-        {"Win Doublebuffer:", "Don't change until you know what you do.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,0, &options.Win_DOUBLEBUF, VAL_BOOL},
-        {"Win Any format:", "Don't change until you know what you do.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,1, &options.Win_ANYFORMAT, VAL_BOOL},
-        {"Win Async blit:", "Don't change until you know what you do.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,0, &options.Win_ASYNCBLIT, VAL_BOOL},
-        {"Win Hardware Palette:", "Don't change until you know what you do.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,1, &options.Win_HWPALETTE, VAL_BOOL},
-        {"Win Resizeable:", "Don't change until you know what you do.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,0, &options.Win_RESIZABLE, VAL_BOOL},
-        {"Win No frame:", "Don't change until you know what you do.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,0, &options.Win_NOFRAME, VAL_BOOL},
-        {"Win RLE accel:", "Don't change until you know what you do.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,1, &options.Win_RLEACCEL, VAL_BOOL},
+        {"Win Hardware Surface:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,0, &options.Win_HWSURFACE, VAL_BOOL},
+        {"Win Software Surface:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,1, &options.Win_SWSURFACE, VAL_BOOL},
+        {"Win Hardware Accel:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,0, &options.Win_HWACCEL, VAL_BOOL},
+        {"Win Doublebuffer:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,0, &options.Win_DOUBLEBUF, VAL_BOOL},
+        {"Win Any format:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,1, &options.Win_ANYFORMAT, VAL_BOOL},
+        {"Win Async blit:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,0, &options.Win_ASYNCBLIT, VAL_BOOL},
+        {"Win Hardware Palette:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,1, &options.Win_HWPALETTE, VAL_BOOL},
+        {"Win Resizeable:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,0, &options.Win_RESIZABLE, VAL_BOOL},
+        {"Win No frame:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,0, &options.Win_NOFRAME, VAL_BOOL},
+        {"Win RLE accel:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,1, &options.Win_RLEACCEL, VAL_BOOL},
         {"#"}, /* End of Page */
 
         /* Debug */
