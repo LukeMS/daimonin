@@ -240,7 +240,7 @@ static void mouse_moveHero()
     int         x, y, tx, ty;
     static int  delta   = 0;
 
-    if (1)
+    if (0)
         return; /* disable until we have smooth moving - people think this IS the real mouse moving */
     if (delta++ & 7)
         return; /* dont move to fast */
@@ -2966,7 +2966,10 @@ void check_menu_keys(int menu, int key)
             if (cpl.menustatus == MENU_KEYBIND)
                 save_keybind_file(KEYBIND_FILE);
             if (cpl.menustatus == MENU_OPTION)
+            {
                 save_options_dat();
+                Mix_VolumeMusic(options.music_volume);
+            }
             cpl.menustatus = MENU_NO;
             reset_keys();
             break;
