@@ -13,9 +13,9 @@ if event.options then tavern = event.options end
 
 local for_sale = 
 {
-    water = {title = "water", price = 2, icon = "water.101", arch = "drink_generic"},
-    booze = {title = "booze", price = 7, icon = "booze.101", arch = "booze_generic"},
-    food =  {title = "food",  price =10, icon = "food.101", arch = "food_generic"}
+    water = {title = "water", price = 2, icon = "water.101", arch = "drink_generic", weight = 250},
+    booze = {title = "booze", price = 7, icon = "booze.101", arch = "booze_generic", weight = 300},
+    food =  {title = "food",  price =10, icon = "food.101", arch = "food_generic", weight = 400}
 }
 
 local function topicDefault()
@@ -37,21 +37,26 @@ local function topicBuy(nrof, what)
         ib:SetDecline("No")
         ib:SetAccept("Yes", "hello")
     else 
-    	if nrof == nil then 
-    	    nrof=1 
-    	end
-        ib:SetTitle("Here is my offer")
-        ib:SetMsg(nrof.." ~"..data.title.."~ will cost you "..pl:ShowCost(data.price*nrof))    
-        ib:SetAccept(nil, "confirm "..nrof.." "..data.title) 
-        ib:AddIcon(data.title, data.icon)
-        ib:SetDecline(nil, "hi")
+        if nrof == nil then 
+            nrof=1 
+        end
+        if nrof <= "50" then
+            ib:SetTitle("Here is my offer")
+            ib:SetMsg(nrof.." ~"..data.title.."~ will cost you "..pl:ShowCost(data.price*nrof))    
+            ib:SetAccept(nil, "confirm "..nrof.." "..data.title) 
+            ib:AddIcon(data.title, data.icon)
+            ib:SetDecline(nil, "hi")
+            ib:AddMsg(".\n\nYou have " .. pl:ShowCost(pl:GetMoney()) .. ".\n\nYou want to buy it?") 
+        else
+            ib:SetTitle("Tavern")
+            ib:SetMsg("Sorry but we aren't a wholesale, you can only buy small amounts.\n\n")
+        end
     end
-    ib:AddMsg(".\n\nYou have " .. pl:ShowCost(pl:GetMoney()) .. ".\n\nYou want to buy it?") 
     pl:Interface(1, ib:Build())
 end
 
 local function topicConfirm(nrof, what)
-    ib:SetTitle("Buying some Water")
+    ib:SetTitle("Buying some Stuff")
     local data = for_sale[what]
     if nrof == nil then
         nrof = 1
@@ -61,6 +66,10 @@ local function topicConfirm(nrof, what)
         ib:SetMsg("Sorry, but we don't serve that here. Can I get you something else?")
         ib:SetDecline("No")
         ib:SetAccept("Yes", "hello")
+    elseif nrof > "50" then
+        ib:SetMsg("Sorry, but we aren't a wholesale, you can only buy small amounts.\n\n")        
+    elseif pl.carrying+(nrof*data.weight)>=pl:GetPlayerWeightLimit() then
+        ib:SetMsg("Can you explain me, how you would carry all that stuff, without collapsing?")
     elseif pl:PayAmount(data.price*nrof) == 1 then
         ib:SetMsg("~** " .. me.name .. " takes your money **~\n\nOk, here is your "..data.title.."!")
         tmp = pl:CreateObjectInsideEx(data.arch, 1, nrof) 
