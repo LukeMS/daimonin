@@ -47,8 +47,15 @@ sint64 query_cost(object *tmp, object *who, int flag)
     {
         if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))
             return 0;
+		else if (tmp->type == GEM || tmp->type == TYPE_JEWEL || tmp->type == TYPE_PEARL || tmp->type == TYPE_NUGGET) /* selling unidentified gems is *always* stupid */
+			val = tmp->value * number;
         else
-            val = tmp->value * number;
+		{
+			if (flag == F_BUY)
+				val = (sint64)((float)(tmp->value * number) *1.0f);
+			else
+				val = (sint64)((float)(tmp->value * number) *0.8f);
+		}
     }
     else /* This area deals with objects that are not identified, but can be */
     {
@@ -66,7 +73,12 @@ sint64 query_cost(object *tmp, object *who, int flag)
                 else if (tmp->type == POTION)
                     val = number * 50; /* Don't want to give anything away */
                 else
-                    val = number * tmp->arch->clone.value;
+				{
+					if (flag == F_BUY)
+						val = (sint64)((float)(tmp->arch->clone.value * number) *1.0f);
+					else
+						val = (sint64)((float)(tmp->arch->clone.value * number) *0.8f);
+				}
             }
         }
         else
