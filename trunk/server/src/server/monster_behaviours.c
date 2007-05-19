@@ -1306,8 +1306,8 @@ void ai_move_towards_waypoint(object *op, struct mob_behaviour_param *params, mo
     {
         if (WP_NEXTWP(wp) && (wp = find_waypoint(op, WP_NEXTWP(wp))))
         {
-#ifdef DEBUG_AI
-            LOG(llevDebug, "ai_move_towards_waypoint(): '%s' next WP: '%s'\n", STRING_OBJ_NAME(op), STRING_WP_NEXTWP(wp));
+#ifdef DEBUG_AI_WAYPOINT
+            LOG(llevDebug, "ai_move_towards_waypoint(): '%s' next WP: '%s'\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(wp));
 #endif
             SET_FLAG(wp, WP_FLAG_ACTIVE); /* activate new waypoint */
             MOB_PATHDATA(op)->best_distance = -1;
