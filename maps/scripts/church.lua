@@ -11,19 +11,12 @@ ib:SetHeader(me, me.name)
 local sum
 local spell
 
--- Note: "cause light wounds" is now taught through a quest in the village (Endar)
---       so teaching for payment is removed here. The code is however left in,
---       as a prototype should teaching other spells for payment needs to be added later.
---       Just the link is commented out.
---
---       Well, Cleo (who else?) found an exploit. So the clw code is now removed.
+-- Note: all spell teaching disabled and moved to quests in the stonehaven village.
 
 local function topicDefault()
     ib:SetTitle("The Church of the Tabernacle")
     ib:SetMsg("Hello! I am " .. me.name ..".\n\nWelcome to the church of the Tabernacle!\n\n")
     ib:AddMsg("If you are confused by my services, I can ^explain^ it.\nYou need some of our services?")
-    ib:AddLink("Teach Minor Healing", "teach healing")
-    ib:AddLink("", "")
     ib:AddLink("Remove Death Sickness", "cast sick")
     ib:AddLink("Remove Depletion", "cast deplete")
     ib:AddLink("Restoration", "cast restore")
@@ -36,7 +29,6 @@ end
 
 local function topicExplain()
     ib:SetTitle("About our Services")
-    ib:SetMsg("\n\nI can teach you basic spells that you can cast yourself.\n\n")
     ib:AddMsg("I can cure various things by casting the named spells on you when you pay me the money.\n\n")
     ib:AddMsg("Deathsick is a stronger form of depletion.\nEverytime you die stats are depleted by death sickness.")
     ib:SetButton("Back", "hi")
@@ -99,39 +91,10 @@ local function topicDoCast(what)
     pl:Interface(1, ib:Build())
 end
 
-local function topicTeachHealing()
-    ib:SetMsg("I can teach you °Minor Healing° for no charge.")
-    ib:AddMsg("\n\nDo you want me to do it now?") 
-    ib:SetAccept(nil, "doteach healing") 
-    ib:SetDecline(nil, "hi")
-    pl:Interface(1, ib:Build())
-end
-
-local function topicDoTeachHealing()
-    spell = "minor healing"
-    local spellno = game:GetSpellNr(spell)
-    if pl:DoKnowSpell(spellno) then
-        ib:SetMsg("You already know the spell '"..spell.."'!" )
-    else
-        ib:SetTitle("Teaching "..spell)
-        local skill = game:GetSkillNr("divine prayers")
-        if pl:FindSkill(skill) == nil then
-            ib:AddMsg("First I will teach you the skill 'divine prayers'\nYou need this skill to cast prayer spells.\n\n")
-            pl:AcquireSkill(skill, game.LEARN)
-        end
-        pl:AcquireSpell(spellno, game.LEARN)
-        ib:AddMsg("You learn the spell '"..spell.."'")
-    end
-    ib:SetButton("Back", "Hi") 
-    pl:Interface(1, ib:Build())
-end
-
 tl = TopicList()
 tl:AddGreeting(nil, topicDefault)
 tl:SetDefault(topicDefault)
 tl:AddTopics("explain", topicExplain)
 tl:AddTopics("cast (.*)", topicCast)
 tl:AddTopics("docast (.*)", topicDoCast)
-tl:AddTopics("teach healing", topicTeachHealing)
-tl:AddTopics("doteach healing", topicDoTeachHealing)
 tl:CheckMessage(event)
