@@ -27,8 +27,8 @@
 
 #include <global.h>
 
-#define MAX_PETS 10      /* Maximum number of pets at any time */
-#define MAX_PERMAPETS 5  /* Maximum number of non-temporary pets */
+#define MAX_PETS 2      /* Maximum number of pets at any time */
+#define MAX_PERMAPETS 2 /* Maximum number of non-temporary pets */
 
 #define PET_VALID(pet_ol, _owner_) \
     (OBJECT_VALID((pet_ol)->objlink.ob, (pet_ol)->id) && \
