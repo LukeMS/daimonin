@@ -2,7 +2,7 @@ Object mace_battle
 name battle mace
 face mace_battle.101
 layer 3
-weapon_speed 3.25
+weapon_speed 3.75
 attack_impact 100
 item_level 7
 item_skill 4

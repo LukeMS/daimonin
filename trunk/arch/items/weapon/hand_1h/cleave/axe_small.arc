@@ -3,7 +3,7 @@ name small axe
 layer 3
 face axe_small.101
 attack_cleave 100
-weapon_speed 3.25
+weapon_speed 3.75
 dam 40
 wc 10
 type 15

@@ -2,7 +2,7 @@ Object club
 name small club
 face club.101
 layer 3
-weapon_speed 3.25
+weapon_speed 3.75
 attack_impact 100
 dam 40
 wc 12
