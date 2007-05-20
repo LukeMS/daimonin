@@ -148,7 +148,7 @@ int ignore_check(char *name)
 
     for (node = ignore_list_start;node;node = node->next)
     {
-        draw_info_format(COLOR_WHITE, "compare >%s< with >%s<", name, node->name);
+//        draw_info_format(COLOR_WHITE, "compare >%s< with >%s<", name, node->name);
         if (!stricmp(name, node->name))
             return TRUE;
     }
