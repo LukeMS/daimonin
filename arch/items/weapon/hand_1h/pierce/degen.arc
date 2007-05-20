@@ -2,11 +2,11 @@ Object degen
 name degen
 layer 3
 face degen.101
-weapon_speed 3.25
+weapon_speed 2.75
 attack_pierce 100
 item_level 7
 item_skill 4
-dam 60
+dam 37
 wc 13
 type 15
 sub_type 2

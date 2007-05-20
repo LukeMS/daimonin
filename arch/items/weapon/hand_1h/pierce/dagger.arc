@@ -2,9 +2,9 @@ Object dagger
 name dagger
 layer 3
 face dagger.101
-weapon_speed 3.25
+weapon_speed 2.75
 attack_pierce 100
-dam 40
+dam 30
 wc 11
 type 15
 sub_type 2

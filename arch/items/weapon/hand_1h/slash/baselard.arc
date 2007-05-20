@@ -2,9 +2,9 @@ Object baselard
 name baselard
 layer 3
 face baselard.101
-weapon_speed 3.25
+weapon_speed 2.75
 attack_slash 100
-dam 40
+dam 30
 wc 14
 type 15
 sub_type 1

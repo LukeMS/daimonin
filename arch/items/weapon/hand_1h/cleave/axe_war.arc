@@ -3,7 +3,7 @@ name war axe
 layer 3
 face axe_war.101
 attack_cleave 100
-weapon_speed 3.25
+weapon_speed 3.75
 item_level 3
 item_skill 4
 dam 50
