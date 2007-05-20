@@ -597,6 +597,8 @@ int Event_PollInputDevice(void)
 
             if (cpl.menustatus == MENU_NPC)
             {
+                if (y >= 51 && y <= 74) /* quest list */
+                    cpl.menustatus = MENU_NO;
                 if (event.button.button ==4 || event.button.button ==5 || event.button.button == SDL_BUTTON_LEFT)
                 {
                     gui_interface_mouse(&event);
@@ -638,7 +640,7 @@ int Event_PollInputDevice(void)
                     check_menu_macros("?M_SPELL_LIST");
                 else if (y >= 26 && y <= 49) /* skill list */
                     check_menu_macros("?M_SKILL_LIST");
-                else if (y >= 51 && y <= 74) /* quest list */
+                else if (y >= 51 && y <= 74 && cpl.menustatus != MENU_NPC) /* quest list */
                     send_command("/qlist", -1, SC_NORMAL);
                 else if (y >= 76 && y <= 99) /* online help */
                     process_macro_keys(KEYFUNC_HELP, 0);
