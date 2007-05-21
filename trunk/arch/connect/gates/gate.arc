@@ -185,5 +185,5 @@ state 7
 blocksview 1
 wc 7
 maxsp 0
-dam 1
+dam 10
 end

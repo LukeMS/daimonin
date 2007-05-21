@@ -92,7 +92,7 @@ pass_thru 1
 wc 7
 blocksview 1
 maxsp 0
-dam 1
+dam 10
 maxhp 20
 hp 20
 end
@@ -190,7 +190,7 @@ last_heal 1
 wc 0
 blocksview 1
 sp 0
-dam 1
+dam 10
 maxhp 20
 maxsp 1
 hp 20

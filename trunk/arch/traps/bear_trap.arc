@@ -18,6 +18,6 @@ layer 0
 no_pick 1
 walk_on 1
 attack_cleave 100
-dam 8
+dam 80
 cha 20
 end
