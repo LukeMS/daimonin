@@ -89,8 +89,6 @@
 /indoor/artificial/containers/amphora2.101
 /indoor/artificial/containers/amphora2_rain.101
 /indoor/artificial/containers/amphora2_rain_full.101
-/_nonpub/donations/talisman/amu_green.101
-/_nonpub/donations/talisman/amu_yellow.101
 /items/talisman/amulet/amulet.101
 /items/talisman/amulet/amulet_lif.101
 /items/weapon/hand_1h/impact/ancus.101
@@ -435,6 +433,14 @@
 /indoor/artificial/beds/bed_2a.171
 /indoor/artificial/beds/bed_2b.111
 /indoor/artificial/beds/bed_2b.171
+/indoor/artificial/beds/bed_3a.111
+/indoor/artificial/beds/bed_3a.171
+/indoor/artificial/beds/bed_3b.111
+/indoor/artificial/beds/bed_3b.171
+/indoor/artificial/beds/bed_4a.111
+/indoor/artificial/beds/bed_4a.171
+/indoor/artificial/beds/bed_4b.111
+/indoor/artificial/beds/bed_4b.171
 /special/savebed/bed_save.111
 /mobs/insects/bees/bee_killer.131
 /mobs/insects/bees/bee_killer.132
@@ -503,14 +509,12 @@
 /floors/blocked.111
 /indoor/artificial/masks_floor/blood_floor1.101
 /indoor/artificial/masks_floor/blood_floor2.101
-/_nonpub/donations/weapon/bloodstream.101
 /mobs/amoeboid/jellies/blue_jelly.111
 /mobs/amoeboid/jellies/blue_jelly.112
 /misc/swarms/bluebottles/bluebottles.101
 /misc/swarms/bluebottles/bluebottles.102
 /misc/swarms/bluebottles/bluebottles.103
 /misc/swarms/bluebottles/bluebottles.104
-/_nonpub/donations/weapon/bluerage.101
 /items/weapon/hand_2h/impact/bo.101
 /items/weapon/missile/amun/bolt.101
 /items/weapon/missile/amun/bolt.111
@@ -533,7 +537,6 @@
 /mobs/demon/bone_devil/bone_devil.171
 /mobs/demon/bone_devil/bone_devil.181
 /misc/bones/bone_skull.101
-/_nonpub/donations/weapon/bonecurse.101
 /misc/bones/bones1.101
 /misc/bones/bones2.101
 /misc/bones/bones3.101
@@ -550,7 +553,6 @@
 /items/readable/books/book_red.101
 /items/spells/books/book_spell.101
 /items/armour/boots/boots_blue.101
-/_nonpub/donations/armour/boots_energetic.101
 /items/armour/boots/boots_green.101
 /items/armour/boots/boots_quality.101
 /items/armour/boots/boots_red.101
@@ -1208,7 +1210,6 @@
 /items/weapon/hand_2h/slash/claymore.101
 /items/weapon/hand_1h/cleave/cleaver_battle.101
 /items/weapon/hand_1h/cleave/cleaver_war.101
-/_nonpub/donations/armour/cloak_energy.101
 /items/armour/cloak/cloak_green.101
 /items/armour/cloak/cloak_halloween.101
 /items/armour/cloak/cloak_leather.101
@@ -1904,7 +1905,6 @@
 /mobs/demon/devil_lord/devil_lord.372
 /mobs/demon/devil_lord/devil_lord.381
 /mobs/demon/devil_lord/devil_lord.382
-/_nonpub/donations/weapon/devilwing.101
 /forces/disease/dia_icor.101
 /items/misc/dice.101
 /items/readable/papers/diploma.101
@@ -2812,7 +2812,6 @@
 /items/gifts/evilelf.101
 /items/gifts/evilelf.102
 /items/gifts/evilelf.103
-/_nonpub/donations/weapon/executioner.101
 /connect/exits/exit.101
 /connect/exits/exit.102
 /connect/exits/exit_green.101
@@ -2823,7 +2822,6 @@
 /items/alchemy/eye_newt.101
 /items/weapon/hand_1h/slash/falchion.101
 /traps/falling_rocks.101
-/_nonpub/donations/fan_light.101
 /items/weapon/hand_pole/slash/fauchard.101
 /items/alchemy/feather.101
 /mobs/human/town/female1.131
@@ -2869,7 +2867,6 @@
 /magic/fire/fire.103
 /indoor/artificial/lab/fire_cauld.131
 /indoor/artificial/lab/fire_cauld.151
-/_nonpub/donations/weapon/firebird.101
 /indoor/artificial/lights/fireplace_left.101
 /indoor/artificial/lights/fireplace_left.102
 /indoor/artificial/lights/fireplace_left.103
@@ -2900,7 +2897,6 @@
 /indoor/artificial/flagwall/flagwall_short_brick1.181
 /items/weapon/hand_1h/impact/flail_war.101
 /items/weapon/hand_1h/pierce/flamberge.101
-/_nonpub/donations/weapon/flashcross.101
 /items/container/wagon/flat_wagon.101
 /floors/black/floor_black1a.101
 /floors/black/floor_black1b.101
@@ -3396,7 +3392,6 @@
 /walls/doors/gate_lock1.131
 /walls/doors/gate_lock1.132
 /items/armour/gauntlets/gauntlet_halloween.101
-/_nonpub/donations/armour/gauntlet_warmage.101
 /items/armour/gauntlets/gauntlets_chain.101
 /items/armour/gauntlets/gauntlets_gold.101
 /items/armour/gauntlets/gauntlets_heavy.101
@@ -4115,7 +4110,6 @@
 /items/armour/helmet/helm_leather.101
 /items/armour/helmet/helm_magic.101
 /items/armour/helmet/helm_plate.101
-/_nonpub/donations/armour/helm_power.101
 /items/armour/helmet/helm_war.101
 /items/armour/boots/high_boots.101
 /mobs/demihumans/hobgoblin/hobgoblin.131
@@ -4418,7 +4412,6 @@
 /floors/ice/icefloor_cave4.101
 /floors/ice/icefloor_cave5.101
 /floors/ice/icefloor_cave6.101
-/_nonpub/donations/weapon/icemoon.101
 /magic/cold/icestorm.101
 /magic/cold/icestorm.102
 /magic/cold/icestorm.103
@@ -4968,10 +4961,14 @@
 /walls/lo_walls/lo_wall9.171
 /items/container/lockers/locker1.111
 /items/container/lockers/locker1.112
+/items/container/lockers/locker1.131
+/items/container/lockers/locker1.151
 /items/container/lockers/locker1.171
 /items/container/lockers/locker1.172
 /items/container/lockers/locker2.111
 /items/container/lockers/locker2.112
+/items/container/lockers/locker2.131
+/items/container/lockers/locker2.151
 /items/container/lockers/locker2.171
 /items/container/lockers/locker2.172
 /items/container/lockers/locker3.111
@@ -5054,7 +5051,6 @@
 /special/magic_walls/magic_wall.171
 /special/magic_walls/magic_wall.181
 /special/communicate/magicmouth.111
-/_nonpub/donations/armour/mail_elemental.101
 /items/container/postal/mailbox.101
 /items/weapon/hand_1h/impact/manrikigusari.101
 /outdoor/artificial/sign_big/marker.111
@@ -5092,7 +5088,6 @@
 /mobs/minotaur/minotaur.351
 /indoor/artificial/misc/mirror_big.111
 /indoor/artificial/misc/mirror_big.171
-/_nonpub/donations/mirror_light.101
 /items/gifts/mistletoe.111
 /items/jewel/coin/mit_coin.101
 /items/armour/mail/mithril_armour.101
@@ -5786,7 +5781,6 @@
 /items/magic_tools/power_crystal.102
 /items/magic_tools/power_crystal.103
 /items/magic_tools/power_crystal.104
-/_nonpub/donations/weapon/powerball.101
 /indoor/artificial/xmas/presents.101
 /intern/prev_item.101
 /mobs/human/priests/priest_church.131
@@ -6144,7 +6138,6 @@
 /items/armour/shield/shield_chitin.101
 /items/armour/shield/shield_defender.101
 /items/armour/shield/shield_demon.101
-/_nonpub/donations/armour/shield_elemental.101
 /items/armour/shield/shield_eye.101
 /items/armour/shield/shield_heater.101
 /items/armour/shield/shield_high.101
@@ -7670,7 +7663,6 @@
 /items/gifts/whiterose.101
 /items/gifts/whiterosebunch.101
 /items/organic/drinkable/whitewine.101
-/_nonpub/donations/weapon/wildsting.101
 /items/armour/helmet/winged_helmet.101
 /mobs/human/mages/wizard.111
 /mobs/human/mages/wizard.112

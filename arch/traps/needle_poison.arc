@@ -18,6 +18,6 @@ layer 0
 no_pick 1
 walk_on 1
 attack_poison 100
-dam 4
+dam 40
 cha 20
 end

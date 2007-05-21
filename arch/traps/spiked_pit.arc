@@ -19,6 +19,6 @@ layer 0
 no_pick 1
 walk_on 1
 attack_impact 100
-dam 9
+dam 90
 cha 15
 end

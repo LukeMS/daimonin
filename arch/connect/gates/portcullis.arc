@@ -88,7 +88,7 @@ pass_thru 1
 anim_speed 0
 is_animated 0
 wc 0
-dam 5
+dam 50
 maxsp 1
 ac 1
 end
@@ -183,7 +183,7 @@ is_animated 0
 no_pass 1
 wc 7
 maxsp 0
-dam 5
+dam 50
 attack_impact 100
 ac 1
 pass_thru 1
