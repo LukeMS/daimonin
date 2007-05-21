@@ -194,8 +194,13 @@ int command_say(object *op, char *params)
 int command_gsay(object *op, char *params)
 {
     char    buf[MAX_BUF];
+	objectlink *ol;
+	object *tmp;
 
-    if (!params)
+	if(!check_mute(op, MUTE_MODE_SAY))
+		return 0;
+
+	if (!params)
         return 0;
 
     /* message: client sided */
@@ -215,7 +220,22 @@ int command_gsay(object *op, char *params)
     strncat(buf, params, MAX_BUF - 30);
     buf[MAX_BUF - 30] = '\0';
 
-    party_message(0,NDI_GSAY | NDI_PLAYER | NDI_UNIQUE | NDI_YELLOW, 0, CONTR(op)->group_leader, NULL, buf);
+	for(ol = gmaster_list_DM;ol;ol=ol->next)
+	{
+		if (op != ol->objlink.ob && CONTR(op)->group_leader != CONTR(ol->objlink.ob)->group_leader)
+			new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf);
+	}
+
+	for(ol = gmaster_list_GM;ol;ol=ol->next)
+	{
+		if (op != ol->objlink.ob && CONTR(op)->group_leader != CONTR(ol->objlink.ob)->group_leader)
+			new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf);
+	}
+
+	for(tmp=CONTR(op)->group_leader;tmp;tmp=CONTR(tmp)->group_next)
+	{
+			new_draw_info(NDI_GSAY | NDI_PLAYER | NDI_UNIQUE | NDI_YELLOW, 0, tmp, buf);
+	}
 
     return 1;
 }
