@@ -28,12 +28,18 @@ p g 1 si_081.png
 " "
 " "
 " "
+"restoration"
+p o 1 si_094.png
+"This prayer removes level depletion from a player."
+" "
+" "
+" "
 "remove depletion"
 p p 1 si_080.png
 "This prayer removes stats depletion from a player."
 " "
 " "
-" " 
+" "
 "remove curse"
 p f 16 si_082.png
 "This prayer removes all curses from *wielded* or *worn*"

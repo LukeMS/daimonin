@@ -582,7 +582,7 @@ state 7
 blocksview 1
 wc 7
 maxsp 0
-dam 10
+dam 1
 end
 Object gateTrg1
 name gate
@@ -605,7 +605,7 @@ pass_thru 1
 wc 7
 blocksview 1
 maxsp 0
-dam 10
+dam 1
 maxhp 20
 hp 20
 end
@@ -630,7 +630,7 @@ last_heal 1
 wc 0
 blocksview 1
 sp 0
-dam 10
+dam 1
 maxhp 20
 maxsp 1
 hp 20
@@ -653,7 +653,7 @@ pass_thru 1
 anim_speed 0
 is_animated 0
 wc 0
-dam 50
+dam 5
 maxsp 1
 ac 1
 end
@@ -675,7 +675,7 @@ is_animated 0
 no_pass 1
 wc 7
 maxsp 0
-dam 50
+dam 5
 attack_impact 100
 ac 1
 pass_thru 1
@@ -701,7 +701,7 @@ pass_thru 1
 wc 7
 ac 1
 maxsp 0
-dam 10
+dam 1
 maxhp 20
 hp 20
 end
@@ -726,7 +726,7 @@ last_heal 1
 wc 0
 ac 1
 sp 0
-dam 10
+dam 1
 maxhp 20
 maxsp 1
 hp 20
@@ -749,7 +749,7 @@ pass_thru 1
 anim_speed 0
 is_animated 0
 wc 0
-dam 50
+dam 5
 maxsp 1
 ac 1
 end
@@ -771,7 +771,7 @@ is_animated 0
 no_pass 1
 wc 7
 maxsp 0
-dam 50
+dam 5
 attack_impact 100
 ac 1
 pass_thru 1
@@ -797,7 +797,7 @@ pass_thru 1
 wc 7
 ac 1
 maxsp 0
-dam 10
+dam 1
 maxhp 20
 hp 20
 end
@@ -822,7 +822,7 @@ last_heal 1
 wc 0
 ac 1
 sp 0
-dam 10
+dam 1
 maxhp 20
 maxsp 1
 hp 20
@@ -37787,7 +37787,7 @@ layer 0
 no_pick 1
 walk_on 1
 attack_cleave 100
-dam 80
+dam 8
 cha 20
 end
 Object trap_blades
@@ -37808,7 +37808,7 @@ layer 0
 no_pick 1
 walk_on 1
 attack_slash 100
-dam 80
+dam 8
 cha 20
 end
 Object trap_rocks
@@ -37829,7 +37829,7 @@ layer 0
 no_pick 1
 walk_on 1
 attack_impact 100
-dam 100
+dam 10
 cha 20
 end
 Object glue
@@ -37880,7 +37880,7 @@ layer 0
 no_pick 1
 walk_on 1
 attack_poison 100
-dam 40
+dam 4
 cha 20
 end
 Object rune_fire
@@ -37901,7 +37901,7 @@ is_invisible 1
 no_pick 1
 walk_on 1
 attack_fire 100
-dam 80
+dam 8
 cha 20
 end
 Object spider_web
@@ -37936,7 +37936,7 @@ layer 0
 no_pick 1
 walk_on 1
 attack_impact 100
-dam 90
+dam 9
 cha 15
 end
 Object trapdoor
