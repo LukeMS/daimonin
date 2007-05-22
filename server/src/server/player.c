@@ -222,6 +222,7 @@ player *get_player(player *p)
 void free_player(player *pl)
 {
     /* first, we removing the player from map or whatever */
+	LOG(llevDebug, "FREE_PLAYER(%s): state:%d g_status:%x\n", query_name(pl->ob), pl->state, pl->group_status);
     if (pl->ob)
     {
         SET_FLAG(pl->ob, FLAG_NO_FIX_PLAYER);
@@ -257,6 +258,7 @@ void free_player(player *pl)
     if(pl->state == ST_ZOMBIE)
     {
         pl->state = ST_DEAD;
+		LOG(llevDebug, "FREE_PLAYER(%s) --> ST_DEAD\n", query_name(pl->ob));
         FREE_AND_COPY_HASH(pl->ob->name, "noname"); /* we neutralize the name - we don't want find this player anymore */
         insert_ob_in_ob(pl->ob, &void_container); /* Avoid gc of the player object */
         return;

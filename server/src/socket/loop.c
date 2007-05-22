@@ -784,6 +784,8 @@ static void block_until_new_connection()
 void remove_ns_dead_player(player *pl)
 {
 
+	LOG(llevDebug, "remove_ns_dead_player(%s): state:%d gmaster:%d g_status:%d\n", STRING_OBJ_NAME(pl->ob),pl->state,
+		pl->gmaster_mode, pl->group_status);
     if (pl->state != ST_DEAD)
     {
         /* remove the player from global gmaster lists */
