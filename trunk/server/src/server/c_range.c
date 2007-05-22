@@ -168,6 +168,7 @@ void fire(object *op, int dir)
 	}
 
 	/* finally, our action above has cost time... */
+	LOG(llevDebug, "AC-fire: %d\n", ticks);
 	set_action_time(op, ticks);
 }
 
@@ -399,6 +400,7 @@ int command_cast_spell(object *op, char *params)
 
     if (value)
     {
+		LOG(llevDebug, "AC-spells(%d): %d\n", spnum, spells[spnum].time);
         set_action_time(op, spells[spnum].time);
 
         if (spells[spnum].flags & SPELL_DESC_WIS)

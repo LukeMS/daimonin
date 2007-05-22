@@ -253,7 +253,10 @@ int do_skill(object *op, int dir, char *string)
      */
 
     if (op->type == PLAYER)
+	{
+		LOG(llevDebug, "AC-skills(%d): %d\n", skill, skills[skill].time);
 		set_action_time(op, skills[skill].time);
+	}
 
     /* this is a good place to add experience for successfull use of skills.
      * Note that add_exp() will figure out player/monster experience
@@ -742,7 +745,8 @@ int change_skill(object *who, int sk_index)
 	if (who->chosen_skill && who->chosen_skill->stats.sp == sk_index)
         return 1;
 
-	LOG(llevDebug, "APPLYcs: %s change %s to %s.\n", query_name(who), query_name(who->chosen_skill), skills[sk_index].name);
+	LOG(llevDebug, "APPLYcs: %s change %s to %s.\n", query_name(who), query_name(who->chosen_skill), 
+																sk_index>=0?skills[sk_index].name:"INVALID");
 
     if (sk_index >= 0 && sk_index < NROFSKILLS && (tmp = find_skill(who, sk_index)) != NULL)
     {
