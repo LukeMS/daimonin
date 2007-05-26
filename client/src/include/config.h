@@ -23,7 +23,7 @@
 /* This is a config file for the client.
  */
 
-//#define DEVELOPMENT
+#define DEVELOPMENT
 
 #define DEFAULT_SERVER_PORT 13327
 #define DEFAULT_METASERVER_PORT 13326
