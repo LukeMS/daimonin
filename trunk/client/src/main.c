@@ -533,8 +533,10 @@ Boolean game_status_chain(void)
                 draw_info("metaserver failed! using default list.", COLOR_GREEN);
         }
 
-        add_metaserver_data("127.0.0.1", DEFAULT_SERVER_PORT, -1, "local", "localhost. Start server before you try to connect.", "",
-                            "", "");
+#ifdef DEVELOPMENT
+		add_metaserver_data("test-server.game-server.cc", DEFAULT_SERVER_PORT, -1, "test", "Daimonin test server", "", "", "");
+#endif
+		add_metaserver_data("127.0.0.1", DEFAULT_SERVER_PORT, -1, "local", "localhost. Start server before you try to connect.", "", "", "");
         count_meta_server();
         draw_info("select a server.", COLOR_GREEN);
         GameStatus = GAME_STATUS_START;
