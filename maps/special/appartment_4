@@ -9,7 +9,7 @@ height 14
 difficulty 1
 no_summon 1
 no_harm 1
-tileset_id 74
+tileset_id 81
 tileset_x 0
 tileset_y 0
 end
@@ -122,8 +122,8 @@ x 1
 y 1
 arch event_obj
 name Lua
-race /scripts/apart_out.lua
 sub_type 10
+race /scripts/apart_out.lua
 end
 end
 arch floor_ostone1
@@ -175,7 +175,7 @@ x 1
 y 6
 end
 arch bench2.111
-direction 5
+direction 3
 x 1
 y 6
 end
@@ -1375,7 +1375,7 @@ x 10
 y 11
 end
 arch locker1.111
-direction 5
+direction 7
 x 10
 y 11
 end
