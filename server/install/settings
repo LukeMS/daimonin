@@ -8,6 +8,14 @@
 # spaces after the setting.
 #
 
+# login_allow & login_ip
+# Default value for login_allow is true
+# if set to false, every login is rejected except
+# it the login IP match login_ip
+
+login_allow true
+login_ip 127.0.0.1
+
 # metaserver values.  
 # notification on/off controls the notification to the metaserver.
 # server and port is the metaserver host and port to connect to.
