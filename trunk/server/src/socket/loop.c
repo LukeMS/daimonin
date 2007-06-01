@@ -836,7 +836,6 @@ static int check_ip_ban(NewSocket *sock, char *ip)
     int         count, i;
     player      *next_tmp, *pl, *ptmp = NULL;
 
-    /*return FALSE;*/ /* this will disable the IP check */
     /* lets first check sensless connected sockets
      * from same IP.
      * Mark all from same IP as dead.
@@ -845,6 +844,20 @@ static int check_ip_ban(NewSocket *sock, char *ip)
      * We search from last socket to first.
      * So we skip the oldest login automatically.
      */
+
+	/* check we have limited server access */
+	if(!settings.login_allow)
+	{
+		if(strcmp(settings.login_ip, ip))
+		{
+			LOG(llevDebug, "login_allow-failed: IP don't match login_ip:%s\n", settings.login_ip);
+			sock->status = Ns_Dead;
+			return FALSE;
+		}
+		else
+			LOG(llevDebug, "login_allow-OK: IP match login_ip:%s\n", settings.login_ip);
+	}
+
     count = 0;
     for (i = socket_info.allocated_sockets - 1; i > 0; i--)
     {
@@ -1051,8 +1064,8 @@ void doeric_server(int update, struct timeval *timeout)
 #endif
             LOG(llevDebug, " ip %s (socket %d) (%x)\n", tmp_ip, newsock->fd, newsock);
             InitConnection(newsock, tmp_ip);
-            /*check_ip_ban(newsock, tmp_ip);*/
-            if(newsock->status != Ns_Zombie) /* set from ban check */
+            check_ip_ban(newsock, tmp_ip);
+            if(newsock->status <= Ns_Zombie) /* set from ban check */
             {
                 newsock->status = Ns_Add;
                 Send_With_Handling(newsock, &global_version_sl);

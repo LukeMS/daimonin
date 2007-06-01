@@ -664,15 +664,26 @@ int command_dumpactivelist(object *op, char *params)
 
 /* special test server/ map wizard server command to shutdown the server
  * using the shutdown command with special signal for map update
+ * On a test server the command is avaible for GMs and on a 30 sec
+ * counter. On a normal server its a DM command and on a 5 min counter.
  */
 int command_restart(object *ob, char *params)
 {
-    if(ob && CONTR(ob)->gmaster_mode < GMASTER_MODE_VOL)
+#ifdef _TESTSERVER
+	int t = 30;
+
+	if(ob && CONTR(ob)->gmaster_mode < GMASTER_MODE_VOL)
         return 0;
+#else
+	int t = 300;
+
+	if(ob && CONTR(ob)->gmaster_mode < GMASTER_MODE_GM)
+		return 0;
+#endif
 
     LOG(llevSystem, "Shutdown Agent started with /restart!\n");
-    shutdown_agent(30, EXIT_RESETMAP, "30 second shutdown - server will update maps!" );
-    new_draw_info_format(NDI_UNIQUE | NDI_GREEN, 0, ob, "shutdown agent started! (timer set to %d seconds).", 30);
+    shutdown_agent(t, EXIT_RESETMAP, "restart shutdown - server will update maps!" );
+    new_draw_info_format(NDI_UNIQUE | NDI_GREEN, 0, ob, "shutdown agent started! (timer set to %d seconds).", t);
 
     return 0;
 }

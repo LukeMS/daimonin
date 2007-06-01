@@ -424,6 +424,8 @@ typedef struct ban_struct
 
 typedef struct Settings
 {
+	int								login_allow;	/* if set to FALSE, login_ip is checked */
+	char						   *login_ip;		/* ip for login_allow */
     char                           *logfilename;   /* logfile to use */
     uint16                          csport;     /* port for new client/server */
     LogLevel                        debug;      /* Default debugging level */

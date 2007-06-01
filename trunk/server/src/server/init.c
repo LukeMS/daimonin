@@ -30,6 +30,7 @@
 
 struct Settings settings    =
 {
+	TRUE,"",							/* login_allow & login_ip */
     "",                                 /* Logfile */
     CSPORT,                             /* Client/server port */
     GLOBAL_LOG_LEVEL, 0, NULL, 0,       /* dumpvalues, dumparg, daemonmode */
@@ -284,8 +285,25 @@ static void load_settings()
             has_val = 0;
         }
 
-        if (!strcasecmp(buf, "metaserver_notification"))
-        {
+		/* default value of settings.login_allow is TRUE.
+		 * if set to FALSE, settings.login_ip is checked against
+		 * the login IP. If they match, login_allow is ignored.
+		 * This allows to setup admin login when testing a installed server.
+		 */
+		if (!strcasecmp(buf, "login_allow"))
+		{
+			if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true"))
+				settings.login_allow = TRUE;
+			else
+				settings.login_allow = FALSE;
+		}
+		else if (!strcasecmp(buf, "login_ip"))
+		{
+			if(*cp)
+				settings.login_ip = strdup_local(cp);
+		}
+		else if (!strcasecmp(buf, "metaserver_notification"))
+		{
             if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true"))
             {
                 settings.meta_on = TRUE;
