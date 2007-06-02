@@ -3715,7 +3715,6 @@ face ring_silver_white.101
 type 70
 value 225000
 resist_cold 30
-resist_cold 20
 path_attuned 4
 msg
 This elemental ring is one of those made at 
@@ -3746,7 +3745,6 @@ face ring_silver_red.101
 is_magical 1
 type 70
 value 225000
-resist_fire 20
 resist_fire 30
 path_attuned 4
 msg
@@ -3780,7 +3778,6 @@ face ring_silver_blue.101
 type 70
 is_magical 1
 value 225000
-resist_electricity 20
 resist_electricity 30
 path_attuned 4
 msg
@@ -3815,7 +3812,6 @@ type 70
 is_magical 1
 value 325000
 attack_electricity 20
-resist_electricity 20
 resist_electricity 30
 path_attuned 4
 msg
