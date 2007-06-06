@@ -2,7 +2,7 @@ Object cat_black
 name Black Cat
 face cat_black.151
 race cat
-randomitems loot;wealth_normal&D65;loot_magic&d27;loot_melee&d22
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
 type 80
 layer 6
 direction 5
