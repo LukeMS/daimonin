@@ -1952,6 +1952,23 @@ end
 # Wealth & money
 #
 ##################
+treasureone wealth_money
+  list wealth_very_low
+  difficulty 1
+  chance 80
+  more
+  list wealth_low
+  difficulty 15
+  chance 65
+  more
+  list wealth
+  difficulty 30
+  chance 50
+  more
+  list wealth_rich
+  difficulty 50
+  chance 35
+  end
 treasure wealth_very_low
   arch wealth
     magic 1
@@ -2401,7 +2418,7 @@ end
 ##################7
 # special loot to create always a loot
 treasure loot
-  list wealth_very_low
+  list wealth_money
     chance 90
   more
 # diseased traps are currently disabled
