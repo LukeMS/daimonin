@@ -2403,7 +2403,7 @@ value 9500
 end
 #
 Allowed all
-chance 20
+chance 17
 t_style 1
 artifact armour_less_fire
 def_arch chain_mail
@@ -2413,11 +2413,11 @@ title of lesser fire protection
 type 16
 resist_fire 10
 is_magical 1
-value 9500
+value 10450
 end
 #
 Allowed all
-chance 20
+chance 17
 t_style 2
 artifact armour_less_cold
 def_arch chain_mail
@@ -2427,11 +2427,11 @@ title of lesser cold protection
 type 16
 resist_cold 10
 is_magical 1
-value 9500
+value 10450
 end
 #
 Allowed all
-chance 20
+chance 17
 t_style 3
 artifact armour_less_elec
 def_arch chain_mail
@@ -2441,11 +2441,11 @@ title of lesser electricity protection
 type 16
 resist_electricity 10
 is_magical 1
-value 9500
+value 10450
 end
 #
 Allowed all
-chance 20
+chance 17
 t_style 4
 artifact armour_less_poison
 def_arch chain_mail
@@ -2455,11 +2455,11 @@ title of lesser poison protection
 type 16
 resist_poison 10
 is_magical 1
-value 9500
+value 10450
 end
 #
 Allowed all
-chance 20
+chance 17
 t_style 5
 artifact armour_less_acid
 def_arch chain_mail
@@ -2469,11 +2469,11 @@ title of lesser acid protection
 type 16
 resist_acid 10
 is_magical 1
-value 9500
+value 10450
 end
 #
 Allowed all
-chance 20
+chance 15
 t_style 1
 artifact armour_sm_fire
 def_arch chain_mail
@@ -2483,11 +2483,11 @@ title of small fire protection
 type 16
 resist_fire 15
 is_magical 1
-value 9500
+value 11455
 end
 #
 Allowed all
-chance 20
+chance 15
 t_style 2
 artifact armour_sm_cold
 def_arch chain_mail
@@ -2497,11 +2497,11 @@ title of small cold protection
 type 16
 resist_cold 15
 is_magical 1
-value 9500
+value 11455
 end
 #
 Allowed all
-chance 20
+chance 15
 t_style 3
 artifact armour_sm_elec
 def_arch chain_mail
@@ -2511,11 +2511,11 @@ title of small electricity protection
 type 16
 resist_electricity 15
 is_magical 1
-value 9500
+value 11455
 end
 #
 Allowed all
-chance 20
+chance 15
 t_style 4
 artifact armour_sm_poison
 def_arch chain_mail
@@ -2525,11 +2525,11 @@ title of small poison protection
 type 16
 resist_poison 15
 is_magical 1
-value 9500
+value 11455
 end
 #
 Allowed all
-chance 20
+chance 15
 t_style 5
 artifact armour_sm_acid
 def_arch chain_mail
@@ -2539,11 +2539,11 @@ title of small acid protection
 type 16
 resist_acid 15
 is_magical 1
-value 9500
+value 11455
 end
 #
 Allowed all
-chance 20
+chance 13
 t_style 1
 artifact armour_med_fire
 def_arch chain_mail
@@ -2553,11 +2553,11 @@ title of medium fire protection
 type 16
 resist_fire 20
 is_magical 1
-value 9500
+value 12600
 end
 #
 Allowed all
-chance 20
+chance 13
 t_style 2
 artifact armour_med_cold
 def_arch chain_mail
@@ -2567,11 +2567,11 @@ title of medium cold protection
 type 16
 resist_cold 20
 is_magical 1
-value 9500
+value 12600
 end
 #
 Allowed all
-chance 20
+chance 13
 t_style 3
 artifact armour_med_elec
 def_arch chain_mail
@@ -2581,11 +2581,11 @@ title of medium electricity protection
 type 16
 resist_electricity 20
 is_magical 1
-value 9500
+value 12600
 end
 #
 Allowed all
-chance 20
+chance 13
 t_style 4
 artifact armour_med_poison
 def_arch chain_mail
@@ -2595,11 +2595,11 @@ title of medium poison protection
 type 16
 resist_poison 20
 is_magical 1
-value 9500
+value 12600
 end
 #
 Allowed all
-chance 20
+chance 13
 t_style 5
 artifact armour_med_acid
 def_arch chain_mail
@@ -2609,7 +2609,7 @@ title of medium acid protection
 type 16
 resist_acid 20
 is_magical 1
-value 9500
+value 12600
 end
 #
 #
@@ -2686,7 +2686,7 @@ value 3500
 end
 #
 Allowed all
-chance 20
+chance 17
 t_style 1
 artifact shoulder_less_fire
 def_arch shoulder_leather
@@ -2696,11 +2696,11 @@ title of lesser fire protection
 type 142
 resist_fire 10
 is_magical 1
-value 3500
+value 3850
 end
 #
 Allowed all
-chance 20
+chance 17
 t_style 2
 artifact shoulder_less_cold
 def_arch shoulder_leather
@@ -2710,11 +2710,11 @@ title of lesser cold protection
 type 142
 resist_cold 10
 is_magical 1
-value 3500
+value 3850
 end
 #
 Allowed all
-chance 20
+chance 17
 t_style 3
 artifact shoulder_less_elec
 def_arch shoulder_leather
@@ -2724,11 +2724,11 @@ title of lesser electricity protection
 type 142
 resist_electricity 10
 is_magical 1
-value 3500
+value 3850
 end
 #
 Allowed all
-chance 20
+chance 17
 t_style 4
 artifact shoulder_less_poison
 def_arch shoulder_leather
@@ -2738,11 +2738,11 @@ title of lesser poison protection
 type 142
 resist_poison 10
 is_magical 1
-value 3500
+value 3850
 end
 #
 Allowed all
-chance 20
+chance 17
 t_style 5
 artifact shoulder_less_acid
 def_arch shoulder_leather
@@ -2752,12 +2752,12 @@ title of lesser acid protection
 type 142
 resist_acid 10
 is_magical 1
-value 3500
+value 3850
 end
 #
 #
 Allowed all
-chance 20
+chance 15
 t_style 1
 artifact shoulder_sm_fire
 def_arch shoulder_leather
@@ -2767,11 +2767,11 @@ title of small fire protection
 type 142
 resist_fire 15
 is_magical 1
-value 3500
+value 4230
 end
 #
 Allowed all
-chance 20
+chance 15
 t_style 2
 artifact shoulder_sm_cold
 def_arch shoulder_leather
@@ -2781,11 +2781,11 @@ title of small cold protection
 type 142
 resist_cold 15
 is_magical 1
-value 3500
+value 4230
 end
 #
 Allowed all
-chance 20
+chance 15
 t_style 3
 artifact shoulder_sm_elec
 def_arch shoulder_leather
@@ -2795,11 +2795,11 @@ title of small electricity protection
 type 142
 resist_electricity 15
 is_magical 1
-value 3500
+value 4230
 end
 #
 Allowed all
-chance 20
+chance 15
 t_style 4
 artifact shoulder_sm_poison
 def_arch shoulder_leather
@@ -2809,11 +2809,11 @@ title of small poison protection
 type 142
 resist_poison 15
 is_magical 1
-value 3500
+value 4230
 end
 #
 Allowed all
-chance 20
+chance 15
 t_style 5
 artifact shoulder_sm_acid
 def_arch shoulder_leather
@@ -2823,12 +2823,12 @@ title of small acid protection
 type 142
 resist_acid 15
 is_magical 1
-value 3500
+value 4230
 end
 #
 #
 Allowed all
-chance 20
+chance 13
 t_style 1
 artifact shoulder_med_fire
 def_arch shoulder_leather
@@ -2838,11 +2838,11 @@ title of medium fire protection
 type 142
 resist_fire 20
 is_magical 1
-value 3500
+value 4653
 end
 #
 Allowed all
-chance 20
+chance 13
 t_style 2
 artifact shoulder_med_cold
 def_arch shoulder_leather
@@ -2852,11 +2852,11 @@ title of medium cold protection
 type 142
 resist_cold 20
 is_magical 1
-value 3500
+value 4653
 end
 #
 Allowed all
-chance 20
+chance 13
 t_style 3
 artifact shoulder_med_elec
 def_arch shoulder_leather
@@ -2866,11 +2866,11 @@ title of medium electricity protection
 type 142
 resist_electricity 20
 is_magical 1
-value 3500
+value 4653
 end
 #
 Allowed all
-chance 20
+chance 13
 t_style 4
 artifact shoulder_med_poison
 def_arch shoulder_leather
@@ -2880,11 +2880,11 @@ title of medium poison protection
 type 142
 resist_poison 20
 is_magical 1
-value 3500
+value 4653
 end
 #
 Allowed all
-chance 20
+chance 13
 t_style 5
 artifact shoulder_med_acid
 def_arch shoulder_leather
@@ -2894,7 +2894,7 @@ title of medium acid protection
 type 142
 resist_acid 15
 is_magical 1
-value 3500
+value 4653
 end
 #
 #
@@ -2972,7 +2972,7 @@ value 3500
 end
 #
 Allowed all
-chance 20
+chance 17
 t_style 1
 artifact legs_less_fire
 def_arch legs_leather
@@ -2982,11 +2982,11 @@ title of lesser fire protection
 type 143
 resist_fire 10
 is_magical 1
-value 3500
+value 3750
 end
 #
 Allowed all
-chance 20
+chance 17
 t_style 2
 artifact legs_less_cold
 def_arch legs_leather
@@ -2996,11 +2996,11 @@ title of lesser cold protection
 type 143
 resist_cold 10
 is_magical 1
-value 3500
+value 3850
 end
 #
 Allowed all
-chance 20
+chance 17
 t_style 3
 artifact legs_less_elec
 def_arch legs_leather
@@ -3010,11 +3010,11 @@ title of lesser electricity protection
 type 143
 resist_electricity 10
 is_magical 1
-value 3500
+value 3850
 end
 #
 Allowed all
-chance 20
+chance 17
 t_style 4
 artifact legs_less_poison
 def_arch legs_leather
@@ -3024,11 +3024,11 @@ title of lesser poison protection
 type 143
 resist_poison 10
 is_magical 1
-value 3500
+value 3850
 end
 #
 Allowed all
-chance 20
+chance 17
 t_style 5
 artifact legs_less_acid
 def_arch legs_leather
@@ -3038,11 +3038,11 @@ title of lesser acid protection
 type 143
 resist_acid 10
 is_magical 1
-value 3500
+value 3850
 end
 #
 Allowed all
-chance 20
+chance 15
 t_style 1
 artifact legs_sm_fire
 def_arch legs_leather
@@ -3052,11 +3052,11 @@ title of small fire protection
 type 143
 resist_fire 15
 is_magical 1
-value 3500
+value 4230
 end
 #
 Allowed all
-chance 20
+chance 15
 t_style 2
 artifact legs_sm_cold
 def_arch legs_leather
@@ -3066,11 +3066,11 @@ title of small cold protection
 type 143
 resist_cold 15
 is_magical 1
-value 3500
+value 4230
 end
 #
 Allowed all
-chance 20
+chance 15
 t_style 3
 artifact legs_sm_elec
 def_arch legs_leather
@@ -3080,11 +3080,11 @@ title of small electricity protection
 type 143
 resist_electricity 15
 is_magical 1
-value 3500
+value 4230
 end
 #
 Allowed all
-chance 20
+chance 15
 t_style 4
 artifact legs_sm_poison
 def_arch legs_leather
@@ -3094,11 +3094,11 @@ title of small poison protection
 type 143
 resist_poison 15
 is_magical 1
-value 3500
+value 4230
 end
 #
 Allowed all
-chance 20
+chance 15
 t_style 5
 artifact legs_sm_acid
 def_arch legs_leather
@@ -3108,11 +3108,11 @@ title of small acid protection
 type 143
 resist_acid 15
 is_magical 1
-value 3500
+value 4230
 end
 #
 Allowed all
-chance 20
+chance 13
 t_style 1
 artifact legs_med_fire
 def_arch legs_leather
@@ -3122,11 +3122,11 @@ title of medium fire protection
 type 143
 resist_fire 20
 is_magical 1
-value 3500
+value 4653
 end
 #
 Allowed all
-chance 20
+chance 13
 t_style 2
 artifact legs_med_cold
 def_arch legs_leather
@@ -3136,11 +3136,11 @@ title of medium cold protection
 type 143
 resist_cold 20
 is_magical 1
-value 3500
+value 4653
 end
 #
 Allowed all
-chance 20
+chance 13
 t_style 3
 artifact legs_med_elec
 def_arch legs_leather
@@ -3150,11 +3150,11 @@ title of medium electricity protection
 type 143
 resist_electricity 20
 is_magical 1
-value 3500
+value 4653
 end
 #
 Allowed all
-chance 20
+chance 13
 t_style 4
 artifact legs_med_poison
 def_arch legs_leather
@@ -3164,11 +3164,11 @@ title of medium poison protection
 type 143
 resist_poison 20
 is_magical 1
-value 3500
+value 4653
 end
 #
 Allowed all
-chance 20
+chance 13
 t_style 5
 artifact legs_med_acid
 def_arch legs_leather
@@ -3178,7 +3178,7 @@ title of medium acid protection
 type 143
 resist_acid 20
 is_magical 1
-value 3500
+value 4653
 end
 #
 #
@@ -3270,7 +3270,7 @@ value 2400
 end
 #
 Allowed all
-chance 20
+chance 17
 t_style 1
 artifact shield_less_fire
 def_arch shield
@@ -3280,11 +3280,11 @@ title of lesser fire protection
 type 33
 is_magical 1
 resist_fire 10
-value 2400
+value 2640
 end
 #
 Allowed all
-chance 20
+chance 17
 t_style 2
 artifact shield_less_cold
 def_arch shield
@@ -3294,11 +3294,11 @@ title of lesser cold protection
 type 33
 is_magical 1
 resist_cold 10
-value 2400
+value 2640
 end
 #
 Allowed all
-chance 20
+chance 17
 t_style 3
 artifact shield_less_elec
 def_arch shield
@@ -3308,11 +3308,11 @@ title of lesser electricity protection
 type 33
 is_magical 1
 resist_electricity 10
-value 2400
+value 2640
 end
 #
 Allowed all
-chance 20
+chance 17
 t_style 4
 artifact shield_less_poison
 def_arch shield
@@ -3322,11 +3322,11 @@ title of lesser poison protection
 type 33
 is_magical 1
 resist_poison 10
-value 2400
+value 2640
 end
 #
 Allowed all
-chance 20
+chance 17
 t_style 5
 artifact shield_less_acid
 def_arch shield
@@ -3336,11 +3336,11 @@ title of lesser acid protection
 type 33
 is_magical 1
 resist_acid 10
-value 2400
+value 2640
 end
 #
 Allowed all
-chance 20
+chance 15
 t_style 1
 artifact shield_sm_fire
 def_arch shield
@@ -3350,11 +3350,11 @@ title of small fire protection
 type 33
 is_magical 1
 resist_fire 15
-value 2400
+value 2904
 end
 #
 Allowed all
-chance 20
+chance 15
 t_style 2
 artifact shield_sm_cold
 def_arch shield
@@ -3364,11 +3364,11 @@ title of small cold protection
 type 33
 is_magical 1
 resist_cold 15
-value 2400
+value 2904
 end
 #
 Allowed all
-chance 20
+chance 15
 t_style 3
 artifact shield_sm_elec
 def_arch shield
@@ -3378,11 +3378,11 @@ title of small electricity protection
 type 33
 is_magical 1
 resist_electricity 15
-value 2400
+value 2904
 end
 #
 Allowed all
-chance 20
+chance 15
 t_style 4
 artifact shield_sm_poison
 def_arch shield
@@ -3392,11 +3392,11 @@ title of small poison protection
 type 33
 is_magical 1
 resist_poison 15
-value 2400
+value 2904
 end
 #
 Allowed all
-chance 20
+chance 15
 t_style 5
 artifact shield_sm_acid
 def_arch shield
@@ -3406,11 +3406,11 @@ title of small acid protection
 type 33
 is_magical 1
 resist_acid 15
-value 2400
+value 2904
 end
 #
 Allowed all
-chance 20
+chance 13
 t_style 1
 artifact shield_med_fire
 def_arch shield
@@ -3420,11 +3420,11 @@ title of medium fire protection
 type 33
 is_magical 1
 resist_fire 20
-value 2400
+value 3194
 end
 #
 Allowed all
-chance 20
+chance 13
 t_style 2
 artifact shield_med_cold
 def_arch shield
@@ -3434,11 +3434,11 @@ title of medium cold protection
 type 33
 is_magical 1
 resist_cold 20
-value 2400
+value 3194
 end
 #
 Allowed all
-chance 20
+chance 13
 t_style 3
 artifact shield_med_elec
 def_arch shield
@@ -3448,11 +3448,11 @@ title of medium electricity protection
 type 33
 is_magical 1
 resist_electricity 20
-value 2400
+value 3194
 end
 #
 Allowed all
-chance 20
+chance 13
 t_style 4
 artifact shield_med_poison
 def_arch shield
@@ -3462,11 +3462,11 @@ title of medium poison protection
 type 33
 is_magical 1
 resist_poison 20
-value 2400
+value 3194
 end
 #
 Allowed all
-chance 20
+chance 13
 t_style 5
 artifact shield_med_acid
 def_arch shield
@@ -3476,7 +3476,7 @@ title of medium acid protection
 type 33
 is_magical 1
 resist_acid 20
-value 2400
+value 3194
 end
 #
 #
@@ -3674,7 +3674,140 @@ value 5000
 end
 #
 Allowed all
-chance 20
+chance 17
+difficulty 2
+artifact girdle_sm_str
+def_arch girdle
+editor 3:items/armour/girdle
+Object
+title of small strength
+str 2
+resist_paralyze 6
+resist_drain 6
+ego 1
+item_level_art 20
+face girdle3.101
+type 113
+is_magical 1
+value 5500
+end
+#
+Allowed all
+chance 17
+difficulty 2
+artifact girdle_sm_dex
+def_arch girdle
+editor 3:items/armour/girdle
+Object
+title of small dexterity
+dex 2
+resist_slow 6
+resist_snare 6
+ego 1
+face girdle3.101
+item_level_art 20
+type 113
+is_magical 1
+value 5500
+end
+#
+Allowed all
+chance 17
+difficulty 2
+artifact girdle_sm_con
+def_arch girdle
+editor 3:items/armour/girdle
+Object
+title of small constitution
+face girdle3.101
+con 2
+resist_poison 6
+maxhp 20
+ego 1
+item_level_art 20
+type 113
+is_magical 1
+value 5500
+end
+#
+Allowed all
+chance 17
+difficulty 2
+artifact girdle_sm_int
+def_arch girdle
+editor 3:items/armour/girdle
+Object
+title of small intelligence
+int 2
+ego 1
+resist_psionic 6
+resist_fear 6
+item_level_art 20
+face a_girdle2.101
+type 113
+is_magical 1
+value 5500
+end
+#
+Allowed all
+chance 17
+difficulty 2
+artifact girdle_sm_pow
+def_arch girdle
+editor 3:items/armour/girdle
+Object
+title of small power
+pow 2
+maxsp 20
+resist_magic 6
+ego 1
+item_level_art 20
+face a_girdle2.101
+type 113
+is_magical 1
+value 5500
+end
+#
+Allowed all
+chance 17
+difficulty 2
+artifact girdle_sm_wis
+def_arch girdle
+editor 3:items/armour/girdle
+Object
+title of small wisdom
+wis 2
+ego 1
+maxgrace 20
+resist_corruption 6
+item_level_art 20
+face a_girdle2.101
+type 113
+is_magical 1
+value 5500
+end
+#
+Allowed all
+chance 17
+difficulty 2
+artifact girdle_sm_cha
+def_arch girdle
+editor 3:items/armour/girdle
+Object
+title of small charisma
+cha 2
+ego 1
+resist_confusion 6
+resist_fear 6
+item_level_art 20
+face a_girdle2.101
+type 113
+is_magical 1
+value 5500
+end
+#
+Allowed all
+chance 15
 difficulty 2
 artifact girdle_med_str
 def_arch girdle
@@ -3686,11 +3819,11 @@ item_level_art 2
 face girdle3.101
 type 113
 is_magical 1
-value 5000
+value 6050
 end
 #
 Allowed all
-chance 20
+chance 15
 difficulty 2
 artifact girdle_med_dex
 def_arch girdle
@@ -3702,11 +3835,11 @@ face girdle3.101
 item_level_art 2
 type 113
 is_magical 1
-value 5000
+value 6050
 end
 #
 Allowed all
-chance 20
+chance 15
 difficulty 2
 artifact girdle_med_con
 def_arch girdle
@@ -3718,11 +3851,11 @@ con 3
 item_level_art 2
 type 113
 is_magical 1
-value 5000
+value 6050
 end
 #
 Allowed all
-chance 20
+chance 15
 difficulty 2
 artifact girdle_med_int
 def_arch girdle
@@ -3734,11 +3867,11 @@ item_level_art 2
 face a_girdle2.101
 type 113
 is_magical 1
-value 5000
+value 6050
 end
 #
 Allowed all
-chance 20
+chance 15
 difficulty 2
 artifact girdle_med_pow
 def_arch girdle
@@ -3750,11 +3883,11 @@ item_level_art 2
 face a_girdle2.101
 type 113
 is_magical 1
-value 5000
+value 6050
 end
 #
 Allowed all
-chance 20
+chance 15
 difficulty 2
 artifact girdle_med_wis
 def_arch girdle
@@ -3766,11 +3899,11 @@ item_level_art 2
 face a_girdle2.101
 type 113
 is_magical 1
-value 5000
+value 6050
 end
 #
 Allowed all
-chance 20
+chance 15
 difficulty 2
 artifact girdle_med_cha
 def_arch girdle
@@ -3782,11 +3915,11 @@ item_level_art 2
 face a_girdle2.101
 type 113
 is_magical 1
-value 5000
+value 6050
 end
 #
 Allowed all
-chance 20
+chance 13
 difficulty 2
 artifact girdle_str
 def_arch girdle
@@ -3798,11 +3931,11 @@ item_level_art 2
 face girdle3.101
 type 113
 is_magical 1
-value 5000
+value 6655
 end
 #
 Allowed all
-chance 20
+chance 13
 difficulty 2
 artifact girdle_dex
 def_arch girdle
@@ -3814,11 +3947,11 @@ face girdle3.101
 item_level_art 2
 type 113
 is_magical 1
-value 5000
+value 6655
 end
 #
 Allowed all
-chance 20
+chance 13
 difficulty 2
 artifact girdle_con
 def_arch girdle
@@ -3830,11 +3963,11 @@ con 4
 item_level_art 2
 type 113
 is_magical 1
-value 5000
+value 6655
 end
 #
 Allowed all
-chance 20
+chance 13
 difficulty 2
 artifact girdle_int
 def_arch girdle
@@ -3846,11 +3979,11 @@ item_level_art 2
 face a_girdle2.101
 type 113
 is_magical 1
-value 5000
+value 6655
 end
 #
 Allowed all
-chance 20
+chance 13
 difficulty 2
 artifact girdle_pow
 def_arch girdle
@@ -3862,11 +3995,11 @@ item_level_art 2
 face a_girdle2.101
 type 113
 is_magical 1
-value 5000
+value 6655
 end
 #
 Allowed all
-chance 20
+chance 13
 difficulty 2
 artifact girdle_wis
 def_arch girdle
@@ -3878,11 +4011,11 @@ item_level_art 2
 face a_girdle2.101
 type 113
 is_magical 1
-value 5000
+value 6655
 end
 #
 Allowed all
-chance 20
+chance 13
 difficulty 2
 artifact girdle_cha
 def_arch girdle
@@ -3894,7 +4027,7 @@ item_level_art 2
 face a_girdle2.101
 type 113
 is_magical 1
-value 5000
+value 6655
 end
 #
 #
@@ -4038,7 +4171,7 @@ value 6500
 end
 #
 Allowed !gloves, all
-chance 20
+chance 17
 difficulty 24
 artifact gauntlet_sm_precision
 def_arch gauntlets
@@ -4050,11 +4183,11 @@ wc 2
 item_level_art 8
 type 100
 is_magical 1
-value 82500
+value 13000
 end
 #
 Allowed all
-chance 20
+chance 17
 difficulty 2
 artifact gauntlet_sm_str
 def_arch gauntlets
@@ -4065,11 +4198,11 @@ str 2
 item_level_art 2
 type 100
 is_magical 1
-value 5000
+value 5500
 end
 #
 Allowed all
-chance 20
+chance 17
 difficulty 2
 artifact gauntlet_sm_dex
 def_arch gauntlets
@@ -4080,11 +4213,11 @@ title of small dexterity
 dex 2
 type 100
 is_magical 1
-value 5000
+value 5500
 end
 #
 Allowed all
-chance 20
+chance 17
 difficulty 2
 artifact gauntlet_sm_con
 def_arch gauntlets
@@ -4095,11 +4228,11 @@ con 2
 item_level_art 2
 type 100
 is_magical 1
-value 5000
+value 5500
 end
 #
 Allowed all
-chance 20
+chance 17
 difficulty 2
 artifact gauntlet_sm_int
 def_arch gauntlets
@@ -4110,11 +4243,11 @@ int 2
 type 100
 item_level_art 2
 is_magical 1
-value 5000
+value 5500
 end
 #
 Allowed all
-chance 20
+chance 17
 difficulty 2
 artifact gauntlet_sm_pow
 def_arch gauntlets
@@ -4125,11 +4258,11 @@ pow 2
 item_level_art 2
 type 100
 is_magical 1
-value 5000
+value 5500
 end
 #
 Allowed all
-chance 20
+chance 17
 difficulty 2
 artifact gauntlet_sm_wis
 def_arch gauntlets
@@ -4140,11 +4273,11 @@ wis 2
 item_level_art 2
 type 100
 is_magical 1
-value 5000
+value 5500
 end
 #
 Allowed all
-chance 20
+chance 17
 difficulty 2
 artifact gauntlet_sm_cha
 def_arch gauntlets
@@ -4155,11 +4288,11 @@ item_level_art 2
 cha 2
 type 100
 is_magical 1
-value 5000
+value 5500
 end
 #
 Allowed !gloves, all
-chance 20
+chance 17
 difficulty 14
 artifact gauntlet_sm_dam
 def_arch gauntlets
@@ -4170,11 +4303,11 @@ dam 20
 item_level_art 7
 type 100
 is_magical 1
-value 6500
+value 13000
 end
 #
 Allowed !gloves, all
-chance 20
+chance 15
 difficulty 14
 artifact gauntlet_med_prec
 def_arch gauntlets
@@ -4185,11 +4318,11 @@ wc 3
 item_level_art 7
 type 100
 is_magical 1
-value 6500
+value 39000
 end
 #
 Allowed !gloves, all
-chance 20
+chance 13
 difficulty 24
 artifact gauntlet_precision
 def_arch gauntlets
@@ -4205,7 +4338,7 @@ value 82500
 end
 #
 Allowed all
-chance 20
+chance 15
 difficulty 2
 artifact gauntlet_med_str
 def_arch gauntlets
@@ -4216,11 +4349,11 @@ str 3
 item_level_art 2
 type 100
 is_magical 1
-value 5000
+value 6050
 end
 #
 Allowed all
-chance 20
+chance 15
 difficulty 2
 artifact gauntlet_med_dex
 def_arch gauntlets
@@ -4231,11 +4364,11 @@ title of medium dexterity
 dex 3
 type 100
 is_magical 1
-value 5000
+value 6050
 end
 #
 Allowed all
-chance 20
+chance 15
 difficulty 2
 artifact gauntlet_med_con
 def_arch gauntlets
@@ -4246,11 +4379,11 @@ con 3
 item_level_art 2
 type 100
 is_magical 1
-value 5000
+value 6050
 end
 #
 Allowed all
-chance 20
+chance 15
 difficulty 2
 artifact gauntlet_med_int
 def_arch gauntlets
@@ -4261,11 +4394,11 @@ int 3
 type 100
 item_level_art 2
 is_magical 1
-value 5000
+value 6050
 end
 #
 Allowed all
-chance 20
+chance 15
 difficulty 2
 artifact gauntlet_med_pow
 def_arch gauntlets
@@ -4276,11 +4409,11 @@ pow 3
 item_level_art 2
 type 100
 is_magical 1
-value 5000
+value 6050
 end
 #
 Allowed all
-chance 20
+chance 15
 difficulty 2
 artifact gauntlet_med_wis
 def_arch gauntlets
@@ -4291,11 +4424,11 @@ wis 3
 item_level_art 2
 type 100
 is_magical 1
-value 5000
+value 6050
 end
 #
 Allowed all
-chance 20
+chance 15
 difficulty 2
 artifact gauntlet_med_cha
 def_arch gauntlets
@@ -4306,11 +4439,11 @@ item_level_art 2
 cha 3
 type 100
 is_magical 1
-value 5000
+value 6050
 end
 #
 Allowed !gloves, all
-chance 20
+chance 15
 difficulty 14
 artifact gauntlet_med_dam
 def_arch gauntlets
@@ -4321,11 +4454,11 @@ dam 30
 item_level_art 7
 type 100
 is_magical 1
-value 6500
+value 26000
 end
 #
 Allowed all
-chance 20
+chance 13
 difficulty 2
 artifact gauntlet_str
 def_arch gauntlets
@@ -4336,11 +4469,11 @@ str 4
 item_level_art 2
 type 100
 is_magical 1
-value 5000
+value 6655
 end
 #
 Allowed all
-chance 20
+chance 13
 difficulty 2
 artifact gauntlet_dex
 def_arch gauntlets
@@ -4351,11 +4484,11 @@ title of dexterity
 dex 4
 type 100
 is_magical 1
-value 5000
+value 6655
 end
 #
 Allowed all
-chance 20
+chance 13
 difficulty 2
 artifact gauntlet_con
 def_arch gauntlets
@@ -4366,11 +4499,11 @@ con 4
 item_level_art 2
 type 100
 is_magical 1
-value 5000
+value 6655
 end
 #
 Allowed all
-chance 20
+chance 13
 difficulty 2
 artifact gauntlet_int
 def_arch gauntlets
@@ -4381,11 +4514,11 @@ int 4
 type 100
 item_level_art 2
 is_magical 1
-value 5000
+value 6655
 end
 #
 Allowed all
-chance 20
+chance 13
 difficulty 2
 artifact gauntlet_pow
 def_arch gauntlets
@@ -4396,11 +4529,11 @@ pow 4
 item_level_art 2
 type 100
 is_magical 1
-value 5000
+value 6655
 end
 #
 Allowed all
-chance 20
+chance 13
 difficulty 2
 artifact gauntlet_wis
 def_arch gauntlets
@@ -4411,11 +4544,11 @@ wis 4
 item_level_art 2
 type 100
 is_magical 1
-value 5000
+value 6655
 end
 #
 Allowed all
-chance 20
+chance 13
 difficulty 2
 artifact gauntlet_cha
 def_arch gauntlets
@@ -4426,11 +4559,11 @@ item_level_art 2
 cha 4
 type 100
 is_magical 1
-value 5000
+value 6655
 end
 #
 Allowed !gloves, all
-chance 20
+chance 13
 difficulty 14
 artifact gauntlet_dam
 def_arch gauntlets
@@ -4441,7 +4574,7 @@ dam 40
 item_level_art 7
 type 100
 is_magical 1
-value 6500
+value 82500
 end
 #
 #
@@ -4662,8 +4795,114 @@ resist_acid 5
 value 2100
 end
 #
+#
 Allowed all
-chance 30
+chance 25
+difficulty 5
+artifact helm_sm_str
+def_arch helm_iron
+editor 2:items/armour/helmet
+Object
+title of small strength
+type 34
+is_magical 1
+str 2
+item_level_art 3
+value 5500
+end
+#
+Allowed all
+chance 25
+difficulty 5
+artifact helm_sm_dex
+def_arch helm_iron
+editor 2:items/armour/helmet
+Object
+title of small dexterity
+type 34
+is_magical 1
+item_level_art 3
+dex 2
+value 5500
+end
+#
+Allowed all
+chance 25
+difficulty 5
+artifact helm_sm_int
+def_arch helm_iron
+editor 2:items/armour/helmet
+Object
+title of small intelligence
+item_level_art 3
+type 34
+is_magical 1
+int 2
+value 5500
+end
+#
+Allowed all
+chance 25
+difficulty 5
+artifact helm_sm_wis
+def_arch helm_iron
+editor 2:items/armour/helmet
+Object
+title of small wisdom
+item_level_art 3
+type 34
+is_magical 1
+wis 2
+value 5500
+end
+#
+Allowed all
+chance 25
+difficulty 5
+artifact helm_sm_pow
+def_arch helm_iron
+editor 2:items/armour/helmet
+Object
+title of small power
+item_level_art 3
+type 34
+is_magical 1
+pow 2
+value 5500
+end
+#
+Allowed all
+chance 25
+difficulty 5
+artifact helm_sm_cha
+def_arch helm_iron
+editor 2:items/armour/helmet
+Object
+title of small charisma
+item_level_art 3
+type 34
+is_magical 1
+cha 2
+value 5500
+end
+#
+Allowed all
+chance 25
+difficulty 5
+artifact helm_sm_con
+def_arch helm_iron
+editor 2:items/armour/helmet
+Object
+title of small constitution
+item_level_art 3
+type 34
+is_magical 1
+con 2
+value 5500
+end
+#
+Allowed all
+chance 20
 difficulty 5
 artifact helm_med_str
 def_arch helm_iron
@@ -4674,11 +4913,11 @@ type 34
 is_magical 1
 str 3
 item_level_art 3
-value 3000
+value 3630
 end
 #
 Allowed all
-chance 30
+chance 20
 difficulty 5
 artifact helm_med_dex
 def_arch helm_iron
@@ -4689,11 +4928,11 @@ type 34
 is_magical 1
 item_level_art 3
 dex 3
-value 3000
+value 3630
 end
 #
 Allowed all
-chance 30
+chance 20
 difficulty 5
 artifact helm_med_int
 def_arch helm_iron
@@ -4704,11 +4943,11 @@ item_level_art 3
 type 34
 is_magical 1
 int 3
-value 3000
+value 3630
 end
 #
 Allowed all
-chance 30
+chance 20
 difficulty 5
 artifact helm_med_wis
 def_arch helm_iron
@@ -4719,11 +4958,11 @@ item_level_art 3
 type 34
 is_magical 1
 wis 3
-value 3000
+value 3630
 end
 #
 Allowed all
-chance 30
+chance 20
 difficulty 5
 artifact helm_med_pow
 def_arch helm_iron
@@ -4734,11 +4973,11 @@ item_level_art 3
 type 34
 is_magical 1
 pow 3
-value 3000
+value 3630
 end
 #
 Allowed all
-chance 30
+chance 20
 difficulty 5
 artifact helm_med_cha
 def_arch helm_iron
@@ -4749,11 +4988,11 @@ item_level_art 3
 type 34
 is_magical 1
 cha 3
-value 3000
+value 3630
 end
 #
 Allowed all
-chance 30
+chance 20
 difficulty 5
 artifact helm_med_con
 def_arch helm_iron
@@ -4764,11 +5003,11 @@ item_level_art 3
 type 34
 is_magical 1
 con 3
-value 3000
+value 3630
 end
 #
 Allowed all
-chance 30
+chance 25
 difficulty 2
 t_style 1
 artifact helm_less_fire
@@ -4780,11 +5019,11 @@ item_level_art 2
 type 34
 is_magical 1
 resist_fire 10
-value 2100
+value 2310
 end
 #
 Allowed all
-chance 30
+chance 25
 difficulty 2
 t_style 2
 artifact helm_less_cold
@@ -4796,11 +5035,11 @@ item_level_art 2
 type 34
 is_magical 1
 resist_cold 10
-value 2100
+value 2310
 end
 #
 Allowed all
-chance 30
+chance 25
 t_style 3
 difficulty 2
 artifact helm_less_elec
@@ -4812,11 +5051,11 @@ item_level_art 2
 type 34
 is_magical 1
 resist_electricity 10
-value 2100
+value 231
 end
 #
 Allowed all
-chance 30
+chance 25
 t_style 4
 difficulty 2
 artifact helm_less_poison
@@ -4828,11 +5067,11 @@ item_level_art 2
 type 34
 is_magical 1
 resist_poison 10
-value 2100
+value 2310
 end
 #
 Allowed all
-chance 30
+chance 25
 t_style 5
 difficulty 2
 artifact helm_less_acid
@@ -4844,11 +5083,11 @@ item_level_art 2
 type 34
 is_magical 1
 resist_acid 10
-value 2100
+value 2310
 end
 #
 Allowed all
-chance 30
+chance 15
 difficulty 5
 artifact helm_str
 def_arch helm_iron
@@ -4859,11 +5098,11 @@ type 34
 is_magical 1
 str 4
 item_level_art 3
-value 3000
+value 4000
 end
 #
 Allowed all
-chance 30
+chance 15
 difficulty 5
 artifact helm_dex
 def_arch helm_iron
@@ -4874,11 +5113,11 @@ type 34
 is_magical 1
 item_level_art 3
 dex 4
-value 3000
+value 4000
 end
 #
 Allowed all
-chance 30
+chance 15
 difficulty 5
 artifact helm_int
 def_arch helm_iron
@@ -4889,11 +5128,11 @@ item_level_art 3
 type 34
 is_magical 1
 int 4
-value 3000
+value 4000
 end
 #
 Allowed all
-chance 30
+chance 15
 difficulty 5
 artifact helm_wis
 def_arch helm_iron
@@ -4904,11 +5143,11 @@ item_level_art 3
 type 34
 is_magical 1
 wis 4
-value 3000
+value 4000
 end
 #
 Allowed all
-chance 30
+chance 15
 difficulty 5
 artifact helm_pow
 def_arch helm_iron
@@ -4919,11 +5158,11 @@ item_level_art 3
 type 34
 is_magical 1
 pow 4
-value 3000
+value 4000
 end
 #
 Allowed all
-chance 30
+chance 15
 difficulty 5
 artifact helm_cha
 def_arch helm_iron
@@ -4934,11 +5173,11 @@ item_level_art 3
 type 34
 is_magical 1
 cha 4
-value 3000
+value 4000
 end
 #
 Allowed all
-chance 30
+chance 15
 difficulty 5
 artifact helm_con
 def_arch helm_iron
@@ -4949,11 +5188,11 @@ item_level_art 3
 type 34
 is_magical 1
 con 4
-value 3000
+value 4000
 end
 #
 Allowed all
-chance 30
+chance 20
 difficulty 2
 t_style 1
 artifact helm_sm_fire
@@ -4965,11 +5204,11 @@ item_level_art 2
 type 34
 is_magical 1
 resist_fire 15
-value 2100
+value 2541
 end
 #
 Allowed all
-chance 30
+chance 20
 difficulty 2
 t_style 2
 artifact helm_sm_cold
@@ -4981,11 +5220,11 @@ item_level_art 2
 type 34
 is_magical 1
 resist_cold 15
-value 2100
+value 2541
 end
 #
 Allowed all
-chance 30
+chance 20
 t_style 3
 difficulty 2
 artifact helm_sm_elec
@@ -4997,11 +5236,11 @@ item_level_art 2
 type 34
 is_magical 1
 resist_electricity 15
-value 2100
+value 2541
 end
 #
 Allowed all
-chance 30
+chance 20
 t_style 4
 difficulty 2
 artifact helm_sm_poison
@@ -5013,11 +5252,11 @@ item_level_art 2
 type 34
 is_magical 1
 resist_poison 15
-value 2100
+value 2541
 end
 #
 Allowed all
-chance 30
+chance 20
 t_style 5
 difficulty 2
 artifact helm_sm_acid
@@ -5029,11 +5268,11 @@ item_level_art 2
 type 34
 is_magical 1
 resist_acid 15
-value 2100
+value 2541
 end
 #
 Allowed all
-chance 30
+chance 15
 difficulty 2
 t_style 1
 artifact helm_med_fire
@@ -5045,11 +5284,11 @@ item_level_art 2
 type 34
 is_magical 1
 resist_fire 20
-value 2100
+value 2800
 end
 #
 Allowed all
-chance 30
+chance 15
 difficulty 2
 t_style 2
 artifact helm_med_cold
@@ -5061,11 +5300,11 @@ item_level_art 2
 type 34
 is_magical 1
 resist_cold 20
-value 2100
+value 2800
 end
 #
 Allowed all
-chance 30
+chance 15
 t_style 3
 difficulty 2
 artifact helm_med_elec
@@ -5077,11 +5316,11 @@ item_level_art 2
 type 34
 is_magical 1
 resist_electricity 20
-value 2100
+value 2800
 end
 #
 Allowed all
-chance 30
+chance 15
 t_style 4
 difficulty 2
 artifact helm_med_poison
@@ -5093,11 +5332,11 @@ item_level_art 2
 type 34
 is_magical 1
 resist_poison 20
-value 2100
+value 2800
 end
 #
 Allowed all
-chance 30
+chance 15
 t_style 5
 difficulty 2
 artifact helm_med_acid
@@ -5109,7 +5348,7 @@ item_level_art 2
 type 34
 is_magical 1
 resist_acid 20
-value 2100
+value 2800
 end
 #
 #
@@ -5227,8 +5466,131 @@ is_magical 1
 value 5000
 end
 #
+#
 Allowed all
-chance 20
+chance 17
+difficulty 2
+artifact bracers_sm_dex
+def_arch bracers_ac
+editor 3:items/armour/bracers
+Object
+title of small dexterity
+face bracers2.101
+item_level_art 30
+type 104
+dex 2
+ac 2
+is_magical 1
+value 5500
+end
+#
+Allowed all
+chance 17
+difficulty 2
+artifact bracers_sm_str
+def_arch bracers_ac
+editor 3:items/armour/bracers
+Object
+title of sm strength
+face bracers3.101
+item_level_art 30
+str 2
+ac 2
+type 104
+is_magical 1
+value 5500
+end
+#
+Allowed all
+chance 17
+difficulty 2
+artifact bracers_sm_con
+def_arch bracers_ac
+editor 3:items/armour/bracers
+Object
+title of small constitution
+face bracers4.101
+item_level_art 30
+con 2
+maxhp 50
+ac 2
+type 104
+is_magical 1
+value 5500
+end
+#
+Allowed all
+chance 17
+difficulty 2
+artifact bracers_sm_int
+def_arch bracers_ac
+editor 3:items/armour/bracers
+Object
+title of small intelligence
+face bracers5.101
+item_level_art 30
+int 2
+ac 2
+type 104
+is_magical 1
+value 5500
+end
+#
+Allowed all
+chance 17
+difficulty 2
+artifact bracers_sm_cha
+def_arch bracers_ac
+editor 3:items/armour/bracers
+Object
+title of small charisma
+face bracers5.101
+item_level_art 30
+cha 2
+ac 2
+type 104
+is_magical 1
+value 5500
+end
+#
+Allowed all
+chance 17
+difficulty 2
+artifact bracers_sm_pow
+def_arch bracers_ac
+editor 3:items/armour/bracers
+Object
+title of small power
+face bracers6.101
+pow 2
+maxsp 50
+ac 2
+item_level_art 30
+type 104
+is_magical 1
+value 5500
+end
+#
+Allowed all
+chance 17
+difficulty 2
+artifact bracers_sm_wis
+def_arch bracers_ac
+editor 3:items/armour/bracers
+Object
+title of small wisdom
+face bracers6.101
+item_level_art 30
+wis 2
+ac 2
+maxgrace 50
+type 104
+is_magical 1
+value 5500
+end
+#
+Allowed all
+chance 15
 difficulty 2
 artifact bracers_med_dex
 def_arch bracers_ac
@@ -5240,11 +5602,11 @@ item_level_art 2
 type 104
 dex 3
 is_magical 1
-value 5000
+value 6050
 end
 #
 Allowed all
-chance 20
+chance 15
 difficulty 2
 artifact bracers_med_str
 def_arch bracers_ac
@@ -5256,11 +5618,11 @@ item_level_art 2
 str 3
 type 104
 is_magical 1
-value 5000
+value 6050
 end
 #
 Allowed all
-chance 20
+chance 15
 difficulty 2
 artifact bracers_med_con
 def_arch bracers_ac
@@ -5272,11 +5634,11 @@ item_level_art 2
 con 3
 type 104
 is_magical 1
-value 5000
+value 6050
 end
 #
 Allowed all
-chance 20
+chance 15
 difficulty 2
 artifact bracers_med_int
 def_arch bracers_ac
@@ -5288,11 +5650,11 @@ item_level_art 2
 int 3
 type 104
 is_magical 1
-value 5000
+value 6050
 end
 #
 Allowed all
-chance 20
+chance 15
 difficulty 2
 artifact bracers_med_cha
 def_arch bracers_ac
@@ -5304,11 +5666,11 @@ item_level_art 2
 cha 3
 type 104
 is_magical 1
-value 5000
+value 6050
 end
 #
 Allowed all
-chance 20
+chance 15
 difficulty 2
 artifact bracers_med_pow
 def_arch bracers_ac
@@ -5320,11 +5682,11 @@ item_level_art 2
 pow 3
 type 104
 is_magical 1
-value 5000
+value 6050
 end
 #
 Allowed all
-chance 20
+chance 15
 difficulty 2
 artifact bracers_med_wis
 def_arch bracers_ac
@@ -5336,11 +5698,11 @@ item_level_art 2
 wis 3
 type 104
 is_magical 1
-value 5000
+value 6050
 end
 #
 Allowed all
-chance 20
+chance 13
 difficulty 2
 artifact bracers_dex
 def_arch bracers_ac
@@ -5352,11 +5714,11 @@ item_level_art 2
 type 104
 dex 4
 is_magical 1
-value 5000
+value 6655
 end
 #
 Allowed all
-chance 20
+chance 13
 difficulty 2
 artifact bracers_str
 def_arch bracers_ac
@@ -5368,11 +5730,11 @@ item_level_art 2
 str 4
 type 104
 is_magical 1
-value 5000
+value 6655
 end
 #
 Allowed all
-chance 20
+chance 13
 difficulty 2
 artifact bracers_con
 def_arch bracers_ac
@@ -5384,11 +5746,11 @@ item_level_art 2
 con 4
 type 104
 is_magical 1
-value 5000
+value 6655
 end
 #
 Allowed all
-chance 20
+chance 13
 difficulty 2
 artifact bracers_int
 def_arch bracers_ac
@@ -5400,11 +5762,11 @@ item_level_art 2
 int 4
 type 104
 is_magical 1
-value 5000
+value 6655
 end
 #
 Allowed all
-chance 20
+chance 13
 difficulty 2
 artifact bracers_cha
 def_arch bracers_ac
@@ -5416,11 +5778,11 @@ item_level_art 2
 cha 4
 type 104
 is_magical 1
-value 5000
+value 6655
 end
 #
 Allowed all
-chance 20
+chance 13
 difficulty 2
 artifact bracers_pow
 def_arch bracers_ac
@@ -5432,11 +5794,11 @@ item_level_art 2
 pow 4
 type 104
 is_magical 1
-value 5000
+value 6655
 end
 #
 Allowed all
-chance 20
+chance 13
 difficulty 2
 artifact bracers_wis
 def_arch bracers_ac
@@ -5448,7 +5810,7 @@ item_level_art 2
 wis 4
 type 104
 is_magical 1
-value 5000
+value 6655
 end
 #
 #
@@ -5643,7 +6005,7 @@ end
 #
 Allowed !sandals,!leggings_plate,!leggings_chain,!leggings_leather,all
 artifact boots_less_fire
-chance 20
+chance 17
 t_style 1
 def_arch low_boots
 editor 2:items/armour/boots
@@ -5652,12 +6014,12 @@ title of lesser fire protection
 type 99
 is_magical 1
 resist_fire 9
-value 2000
+value 2200
 end
 #
 Allowed !sandals,!leggings_plate,!leggings_chain,!leggings_leather,all
 artifact boots_less_cold
-chance 20
+chance 17
 t_style 2
 def_arch low_boots
 editor 2:items/armour/boots
@@ -5666,12 +6028,12 @@ title of lesser cold protection
 type 99
 is_magical 1
 resist_cold 9
-value 2000
+value 2200
 end
 #
 Allowed !sandals,!leggings_plate,!leggings_chain,!leggings_leather,all
 artifact boots_less_elec
-chance 20
+chance 17
 t_style 3
 def_arch low_boots
 editor 2:items/armour/boots
@@ -5680,12 +6042,12 @@ title of lesser electricity protection
 type 99
 is_magical 1
 resist_electricity 9
-value 2000
+value 2200
 end
 #
 Allowed !sandals,!leggings_plate,!leggings_chain,!leggings_leather,all
 artifact boots_less_poison
-chance 20
+chance 17
 t_style 4
 editor 2:items/armour/boots
 def_arch low_boots
@@ -5694,12 +6056,12 @@ title of lesser poison protection
 type 99
 is_magical 1
 resist_poison 9
-value 2000
+value 2200
 end
 #
 Allowed !sandals,!leggings_plate,!leggings_chain,!leggings_leather,all
 artifact boots_less_acid
-chance 20
+chance 17
 t_style 5
 editor 2:items/armour/boots
 def_arch low_boots
@@ -5708,13 +6070,13 @@ title of lesser acid protection
 type 99
 is_magical 1
 resist_acid 9
-value 2000
+value 2200
 end
 #
 #
 Allowed leggings_plate,leggings_chain,leggings_leather
 artifact leggings_less_fire
-chance 20
+chance 17
 difficulty 3
 t_style 1
 def_arch leggings_leather
@@ -5725,12 +6087,12 @@ type 99
 item_level_art 3
 is_magical 1
 resist_fire 10
-value 3000
+value 3300
 end
 #
 Allowed leggings_plate,leggings_chain,leggings_leather
 artifact leggings_less_cold
-chance 20
+chance 17
 difficulty 3
 t_style 2
 def_arch leggings_leather
@@ -5741,12 +6103,12 @@ type 99
 item_level_art 3
 is_magical 1
 resist_cold 10
-value 3000
+value 3300
 end
 #
 Allowed leggings_plate,leggings_chain,leggings_leather
 artifact leggings_less_electricity
-chance 20
+chance 17
 difficulty 3
 t_style 3
 def_arch leggings_leather
@@ -5757,12 +6119,12 @@ type 99
 item_level_art 3
 is_magical 1
 resist_electricity 10
-value 3000
+value 3300
 end
 #
 Allowed leggings_plate,leggings_chain,leggings_leather
 artifact leggings_less_poison
-chance 20
+chance 17
 difficulty 3
 t_style 4
 def_arch leggings_leather
@@ -5773,12 +6135,12 @@ title of lesser poison protection
 type 99
 is_magical 1
 resist_poison 10
-value 3000
+value 3300
 end
 #
 Allowed leggings_plate,leggings_chain,leggings_leather
 artifact leggings_less_acid
-chance 20
+chance 17
 difficulty 3
 t_style 5
 def_arch leggings_leather
@@ -5789,12 +6151,12 @@ type 99
 item_level_art 3
 is_magical 1
 resist_acid 10
-value 3000
+value 3300
 end
 #
 Allowed !sandals,!leggings_plate,!leggings_chain,!leggings_leather,all
 artifact boots_sm_fire
-chance 20
+chance 15
 t_style 1
 def_arch low_boots
 editor 2:items/armour/boots
@@ -5803,12 +6165,12 @@ title of small fire protection
 type 99
 is_magical 1
 resist_fire 14
-value 2000
+value 2420
 end
 #
 Allowed !sandals,!leggings_plate,!leggings_chain,!leggings_leather,all
 artifact boots_sm_cold
-chance 20
+chance 15
 t_style 2
 def_arch low_boots
 editor 2:items/armour/boots
@@ -5817,12 +6179,12 @@ title of small cold protection
 type 99
 is_magical 1
 resist_cold 14
-value 2000
+value 2420
 end
 #
 Allowed !sandals,!leggings_plate,!leggings_chain,!leggings_leather,all
 artifact boots_sm_elec
-chance 20
+chance 15
 t_style 3
 def_arch low_boots
 editor 2:items/armour/boots
@@ -5831,12 +6193,12 @@ title of small electricity protection
 type 99
 is_magical 1
 resist_electricity 14
-value 2000
+value 2420
 end
 #
 Allowed !sandals,!leggings_plate,!leggings_chain,!leggings_leather,all
 artifact boots_sm_poison
-chance 20
+chance 15
 t_style 4
 editor 2:items/armour/boots
 def_arch low_boots
@@ -5845,12 +6207,12 @@ title of small poison protection
 type 99
 is_magical 1
 resist_poison 14
-value 2000
+value 2420
 end
 #
 Allowed !sandals,!leggings_plate,!leggings_chain,!leggings_leather,all
 artifact boots_sm_acid
-chance 20
+chance 15
 t_style 5
 editor 2:items/armour/boots
 def_arch low_boots
@@ -5859,13 +6221,13 @@ title of small acid protection
 type 99
 is_magical 1
 resist_acid 14
-value 2000
+value 2420
 end
 #
 #
 Allowed leggings_plate,leggings_chain,leggings_leather
 artifact leggings_sm_fire
-chance 20
+chance 15
 difficulty 3
 t_style 1
 def_arch leggings_leather
@@ -5876,12 +6238,12 @@ type 99
 item_level_art 3
 is_magical 1
 resist_fire 15
-value 3000
+value 3630
 end
 #
 Allowed leggings_plate,leggings_chain,leggings_leather
 artifact leggings_sm_cold
-chance 20
+chance 15
 difficulty 3
 t_style 2
 def_arch leggings_leather
@@ -5892,12 +6254,12 @@ type 99
 item_level_art 3
 is_magical 1
 resist_cold 15
-value 3000
+value 3630
 end
 #
 Allowed leggings_plate,leggings_chain,leggings_leather
 artifact leggings_sm_electricity
-chance 20
+chance 15
 difficulty 3
 t_style 3
 def_arch leggings_leather
@@ -5908,12 +6270,12 @@ type 99
 item_level_art 3
 is_magical 1
 resist_electricity 15
-value 3000
+value 3630
 end
 #
 Allowed leggings_plate,leggings_chain,leggings_leather
 artifact leggings_sm_poison
-chance 20
+chance 15
 difficulty 3
 t_style 4
 def_arch leggings_leather
@@ -5924,12 +6286,12 @@ title of small poison protection
 type 99
 is_magical 1
 resist_poison 15
-value 3000
+value 3630
 end
 #
 Allowed leggings_plate,leggings_chain,leggings_leather
 artifact leggings_sm_acid
-chance 20
+chance 15
 difficulty 3
 t_style 5
 def_arch leggings_leather
@@ -5940,12 +6302,12 @@ type 99
 item_level_art 3
 is_magical 1
 resist_acid 15
-value 3000
+value 3630
 end
 #
 Allowed !sandals,!leggings_plate,!leggings_chain,!leggings_leather,all
 artifact boots_med_fire
-chance 20
+chance 13
 t_style 1
 def_arch low_boots
 editor 2:items/armour/boots
@@ -5954,12 +6316,12 @@ title of medium fire protection
 type 99
 is_magical 1
 resist_fire 19
-value 2000
+value 2662
 end
 #
 Allowed !sandals,!leggings_plate,!leggings_chain,!leggings_leather,all
 artifact boots_med_cold
-chance 20
+chance 13
 t_style 2
 def_arch low_boots
 editor 2:items/armour/boots
@@ -5968,12 +6330,12 @@ title of medium cold protection
 type 99
 is_magical 1
 resist_cold 19
-value 2000
+value 2662
 end
 #
 Allowed !sandals,!leggings_plate,!leggings_chain,!leggings_leather,all
 artifact boots_med_elec
-chance 20
+chance 13
 t_style 3
 def_arch low_boots
 editor 2:items/armour/boots
@@ -5982,12 +6344,12 @@ title of medium electricity protection
 type 99
 is_magical 1
 resist_electricity 19
-value 2000
+value 2662
 end
 #
 Allowed !sandals,!leggings_plate,!leggings_chain,!leggings_leather,all
 artifact boots_med_poison
-chance 20
+chance 13
 t_style 4
 editor 2:items/armour/boots
 def_arch low_boots
@@ -5996,12 +6358,12 @@ title of medium poison protection
 type 99
 is_magical 1
 resist_poison 19
-value 2000
+value 2662
 end
 #
 Allowed !sandals,!leggings_plate,!leggings_chain,!leggings_leather,all
 artifact boots_med_acid
-chance 20
+chance 13
 t_style 5
 editor 2:items/armour/boots
 def_arch low_boots
@@ -6010,13 +6372,13 @@ title of medium acid protection
 type 99
 is_magical 1
 resist_acid 19
-value 2000
+value 2662
 end
 #
 #
 Allowed leggings_plate,leggings_chain,leggings_leather
 artifact leggings_med_fire
-chance 20
+chance 13
 difficulty 3
 t_style 1
 def_arch leggings_leather
@@ -6027,12 +6389,12 @@ type 99
 item_level_art 3
 is_magical 1
 resist_fire 20
-value 3000
+value 4000
 end
 #
 Allowed leggings_plate,leggings_chain,leggings_leather
 artifact leggings_med_cold
-chance 20
+chance 13
 difficulty 3
 t_style 2
 def_arch leggings_leather
@@ -6043,12 +6405,12 @@ type 99
 item_level_art 3
 is_magical 1
 resist_cold 20
-value 3000
+value 4000
 end
 #
 Allowed leggings_plate,leggings_chain,leggings_leather
 artifact leggings_med_electricity
-chance 20
+chance 13
 difficulty 3
 t_style 3
 def_arch leggings_leather
@@ -6059,12 +6421,12 @@ type 99
 item_level_art 3
 is_magical 1
 resist_electricity 20
-value 3000
+value 4000
 end
 #
 Allowed leggings_plate,leggings_chain,leggings_leather
 artifact leggings_med_poison
-chance 20
+chance 13
 difficulty 3
 t_style 4
 def_arch leggings_leather
@@ -6075,12 +6437,12 @@ title of medium poison protection
 type 99
 is_magical 1
 resist_poison 20
-value 3000
+value 4000
 end
 #
 Allowed leggings_plate,leggings_chain,leggings_leather
 artifact leggings_med_acid
-chance 20
+chance 13
 difficulty 3
 t_style 5
 def_arch leggings_leather
@@ -6091,7 +6453,7 @@ type 99
 item_level_art 3
 is_magical 1
 resist_acid 20
-value 3000
+value 4000
 end
 #
 # Weapons
@@ -6310,7 +6672,7 @@ ac_add 2
 item_level_art 3
 type 15
 is_magical 1
-value 4500
+value 4950
 end
 #
 Allowed all
@@ -6325,7 +6687,7 @@ item_level_art 7
 wc_add 2
 type 15
 is_magical 1
-value 5500
+value 6050
 end
 #
 Allowed all
@@ -6340,11 +6702,11 @@ dam_add 20
 item_level_art 5
 type 15
 is_magical 1
-value 7500
+value 8250
 end
 #
 Allowed all
-chance 20
+chance 17
 artifact weapon_sm_strength
 def_arch sword
 editor 2:items/weapon
@@ -6353,11 +6715,11 @@ title of small strength
 str 2
 type 15
 is_magical 1
-value 4500
+value 4950
 end
 #
 Allowed all
-chance 20
+chance 17
 artifact weapon_sm_dexterity
 def_arch sword
 editor 2:items/weapon
@@ -6366,11 +6728,11 @@ title of small dexterity
 dex 2
 type 15
 is_magical 1
-value 4500
+value 4950
 end
 #
 Allowed all
-chance 20
+chance 17
 artifact weapon_sm_const
 def_arch sword
 editor 2:items/weapon
@@ -6379,11 +6741,11 @@ title of small constitution
 con 2
 type 15
 is_magical 1
-value 4500
+value 4950
 end
 #
 Allowed all
-chance 20
+chance 17
 artifact weapon_sm_wisdom
 def_arch sword
 editor 2:items/weapon
@@ -6392,11 +6754,11 @@ title of small wisdom
 wis 2
 type 15
 is_magical 1
-value 4500
+value 4950
 end
 #
 Allowed all
-chance 20
+chance 17
 artifact weapon_sm_int
 def_arch sword
 editor 2:items/weapon
@@ -6405,11 +6767,11 @@ title of small intelligence
 int 2
 type 15
 is_magical 1
-value 4500
+value 4950
 end
 #
 Allowed all
-chance 20
+chance 17
 artifact weapon_sm_power
 def_arch sword
 editor 2:items/weapon
@@ -6418,11 +6780,11 @@ title of small power
 pow 2
 type 15
 is_magical 1
-value 4500
+value 4950
 end
 #
 Allowed all
-chance 20
+chance 17
 artifact weapon_sm_charisma
 def_arch sword
 editor 2:items/weapon
@@ -6431,11 +6793,11 @@ title of charisma
 cha 2
 type 15
 is_magical 1
-value 4500
+value 4950
 end
 #
 Allowed all
-chance 20
+chance 17
 t_style 1
 difficulty 7
 artifact weapon_less_fire
@@ -6447,11 +6809,11 @@ attack_fire 10
 item_level_art 7
 type 15
 is_magical 1
-value 5000
+value 5500
 end
 #
 Allowed all
-chance 20
+chance 17
 t_style 2
 difficulty 7
 artifact weapon_less_cold
@@ -6463,11 +6825,11 @@ attack_cold 10
 type 15
 item_level_art 3
 is_magical 1
-value 5000
+value 5500
 end
 #
 Allowed all
-chance 20
+chance 17
 t_style 3
 difficulty 7
 artifact weapon_less_elec
@@ -6479,7 +6841,7 @@ attack_electricity 10
 type 15
 is_magical 1
 item_level_art 3
-value 5000
+value 5500
 end
 #
 Allowed all
@@ -6494,7 +6856,7 @@ ac_add 3
 item_level_art 3
 type 15
 is_magical 1
-value 4500
+value 5500
 end
 #
 Allowed all
@@ -6509,7 +6871,7 @@ item_level_art 7
 wc_add 3
 type 15
 is_magical 1
-value 5500
+value 6500
 end
 #
 Allowed all
@@ -6524,11 +6886,11 @@ dam_add 30
 item_level_art 5
 type 15
 is_magical 1
-value 7500
+value 8500
 end
 #
 Allowed all
-chance 20
+chance 15
 artifact weapon_med_strength
 def_arch sword
 editor 2:items/weapon
@@ -6537,11 +6899,11 @@ title of medium strength
 str 3
 type 15
 is_magical 1
-value 4500
+value 5500
 end
 #
 Allowed all
-chance 20
+chance 15
 artifact weapon_med_dexterity
 def_arch sword
 editor 2:items/weapon
@@ -6550,11 +6912,11 @@ title of medium dexterity
 dex 3
 type 15
 is_magical 1
-value 4500
+value 5500
 end
 #
 Allowed all
-chance 20
+chance 15
 artifact weapon_med_const
 def_arch sword
 editor 2:items/weapon
@@ -6563,11 +6925,11 @@ title of medium constitution
 con 3
 type 15
 is_magical 1
-value 4500
+value 5500
 end
 #
 Allowed all
-chance 20
+chance 15
 artifact weapon_med_wisdom
 def_arch sword
 editor 2:items/weapon
@@ -6576,11 +6938,11 @@ title of medium wisdom
 wis 3
 type 15
 is_magical 1
-value 4500
+value 5500
 end
 #
 Allowed all
-chance 20
+chance 15
 artifact weapon_med_int
 def_arch sword
 editor 2:items/weapon
@@ -6589,11 +6951,11 @@ title of medium intelligence
 int 3
 type 15
 is_magical 1
-value 4500
+value 5500
 end
 #
 Allowed all
-chance 20
+chance 15
 artifact weapon_med_power
 def_arch sword
 editor 2:items/weapon
@@ -6602,11 +6964,11 @@ title of medium power
 pow 3
 type 15
 is_magical 1
-value 4500
+value 5500
 end
 #
 Allowed all
-chance 20
+chance 15
 artifact weapon_med_charisma
 def_arch sword
 editor 2:items/weapon
@@ -6615,11 +6977,11 @@ title of medium charisma
 cha 3
 type 15
 is_magical 1
-value 4500
+value 5500
 end
 #
 Allowed all
-chance 20
+chance 15
 t_style 1
 difficulty 7
 artifact weapon_sm_fire
@@ -6631,11 +6993,11 @@ attack_fire 15
 item_level_art 7
 type 15
 is_magical 1
-value 5000
+value 5500
 end
 #
 Allowed all
-chance 20
+chance 15
 t_style 2
 difficulty 7
 artifact weapon_sm_cold
@@ -6647,11 +7009,11 @@ attack_cold 15
 type 15
 item_level_art 3
 is_magical 1
-value 5000
+value 5500
 end
 #
 Allowed all
-chance 20
+chance 15
 t_style 3
 difficulty 7
 artifact weapon_sm_elec
@@ -6663,7 +7025,7 @@ attack_electricity 15
 type 15
 is_magical 1
 item_level_art 3
-value 5000
+value 5500
 end
 #
 Allowed all
@@ -6678,7 +7040,7 @@ ac_add 4
 item_level_art 3
 type 15
 is_magical 1
-value 4500
+value 6000
 end
 #
 Allowed all
@@ -6693,7 +7055,7 @@ item_level_art 7
 wc_add 4
 type 15
 is_magical 1
-value 5500
+value 7000
 end
 #
 Allowed all
@@ -6708,11 +7070,11 @@ dam_add 40
 item_level_art 5
 type 15
 is_magical 1
-value 7500
+value 10500
 end
 #
 Allowed all
-chance 20
+chance 13
 artifact weapon_strength
 def_arch sword
 editor 2:items/weapon
@@ -6721,11 +7083,11 @@ title of strength
 str 4
 type 15
 is_magical 1
-value 4500
+value 6500
 end
 #
 Allowed all
-chance 20
+chance 13
 artifact weapon_dexterity
 def_arch sword
 editor 2:items/weapon
@@ -6734,11 +7096,11 @@ title of dexterity
 dex 4
 type 15
 is_magical 1
-value 4500
+value 6500
 end
 #
 Allowed all
-chance 20
+chance 13
 artifact weapon_const
 def_arch sword
 editor 2:items/weapon
@@ -6747,11 +7109,11 @@ title of constitution
 con 4
 type 15
 is_magical 1
-value 4500
+value 6500
 end
 #
 Allowed all
-chance 20
+chance 13
 artifact weapon_wisdom
 def_arch sword
 editor 2:items/weapon
@@ -6760,11 +7122,11 @@ title of wisdom
 wis 4
 type 15
 is_magical 1
-value 4500
+value 6500
 end
 #
 Allowed all
-chance 20
+chance 13
 artifact weapon_int
 def_arch sword
 editor 2:items/weapon
@@ -6773,11 +7135,11 @@ title of intelligence
 int 4
 type 15
 is_magical 1
-value 4500
+value 6500
 end
 #
 Allowed all
-chance 20
+chance 13
 artifact weapon_power
 def_arch sword
 editor 2:items/weapon
@@ -6786,11 +7148,11 @@ title of power
 pow 4
 type 15
 is_magical 1
-value 4500
+value 6500
 end
 #
 Allowed all
-chance 20
+chance 13
 artifact weapon_charisma
 def_arch sword
 editor 2:items/weapon
@@ -6799,11 +7161,11 @@ title of charisma
 cha 4
 type 15
 is_magical 1
-value 4500
+value 6500
 end
 #
 Allowed all
-chance 20
+chance 13
 t_style 1
 difficulty 7
 artifact weapon_med_fire
@@ -6815,11 +7177,11 @@ attack_fire 20
 item_level_art 7
 type 15
 is_magical 1
-value 5000
+value 7000
 end
 #
 Allowed all
-chance 20
+chance 13
 t_style 2
 difficulty 7
 artifact weapon_med_cold
@@ -6831,11 +7193,11 @@ attack_cold 20
 type 15
 item_level_art 3
 is_magical 1
-value 5000
+value 7000
 end
 #
 Allowed all
-chance 20
+chance 13
 t_style 3
 difficulty 7
 artifact weapon_med_elec
@@ -6847,7 +7209,7 @@ attack_electricity 20
 type 15
 is_magical 1
 item_level_art 3
-value 5000
+value 7000
 end
 #
 #
