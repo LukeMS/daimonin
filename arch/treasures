@@ -2275,7 +2275,7 @@ treasureone book_misc
     magic 0
   more
   arch book
-    chance 55
+    chance 65
     magic 0
 end
 #
@@ -2310,19 +2310,14 @@ end
 #
 ##################
 treasure magic_useup
-  arch potion_improve
-    difficulty 6
-    chance_fix 501
+  list magic_scroll
+    chance 40
   no
-    list magic_scroll
-      chance 40
+    list magic_potion
+      chance 70
     no
-      list magic_potion
-        chance 70
-      no
-        arch wand
-          chance 100
-      end
+      arch wand
+        chance 100
     end
   end
 end
@@ -2366,11 +2361,11 @@ end
 #
 treasureone magic_device
   arch wand
-    chance 90
+    chance 93
   more
   arch rod_light
     difficulty 15
-    chance 5
+    chance 3
   more
   arch horn
     difficulty 25
@@ -2378,7 +2373,15 @@ treasureone magic_device
   more
   arch rod_heavy
     difficulty 40
-    chance 2
+    chance 1
+end
+#
+treasureone magic_device_talisman
+  list magic_device
+    chance 46
+  more
+  list magic_talisman
+    chance 54
 end
 #
 treasureone magic_rand
@@ -2397,12 +2400,17 @@ end
 #
 ##################7
 # special loot to create always a loot
-treasureone loot
+treasure loot
   list wealth_very_low
     chance 90
   more
+# diseased traps are currently disabled
+  list traps_pm
+    chance 9
+  more
   arch torch
-    chance 7
+    magic 0
+    chance 2
   more
   list food_misc
     chance 3
@@ -2526,9 +2534,17 @@ treasureone loot_range
     chance 60
 end
 #
-treasureone loot_magic
-  list food_misc
-    chance 60
+treasure loot_magic
+  list magic_device_talisman
+    chance 30
+  no
+    list magic_useup
+      chance 81
+    no
+      arch potion_improve
+        difficulty 6
+    end
+  end
 end
 #
 treasureone loot_device
