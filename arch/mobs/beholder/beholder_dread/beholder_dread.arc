@@ -2,7 +2,7 @@ Object beholder_dread
 name Dread Beholder
 face beholder_dread.151
 race beholder
-randomitems spells_beholder;loot;wealth_normal&D67;loot_base&D15;loot_misc&d25
+randomitems spells_beholder;loot;wealth_normal&D67;loot_base&D15;loot_magic&d11;loot_melee&d22
 mpart_id 3
 type 80
 layer 6

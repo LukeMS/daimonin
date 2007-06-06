@@ -2,7 +2,7 @@ Object giant_fire
 name Fire Giant
 race giant
 face giant_fire.151
-randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot&s1;wealth_normal&D65;loot_base&D17,s1;loot_magic&d27,s1;loot_melee&d20,s1
 type 80
 layer 6
 direction 5

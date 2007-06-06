@@ -2,7 +2,7 @@ Object skel_fighter1
 name Skeleton Fighter
 face skel_fighter1.151
 race skeleton
-randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
 type 80
 layer 6
 direction 5

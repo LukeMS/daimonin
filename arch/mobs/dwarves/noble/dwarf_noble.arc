@@ -2,7 +2,7 @@ Object dwarf_noble
 name Dwarf Noble
 face dwarf_noble.151
 race dwarf
-randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d28;loot_melee&d17
 type 80
 layer 6
 direction 5

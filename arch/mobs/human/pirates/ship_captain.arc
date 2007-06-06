@@ -2,7 +2,7 @@ Object ship_captain
 name Ship Captain
 race human
 face ship_captain.131
-randomitems skill_bow;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems skill_bow;loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
 type 80
 layer 6
 direction 5

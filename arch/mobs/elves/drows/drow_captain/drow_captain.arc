@@ -2,7 +2,7 @@ Object drow_captain
 name Drow Captain
 face drow_captain.151
 race drow
-randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d12;loot_melee&d20
 type 80
 layer 6
 direction 5

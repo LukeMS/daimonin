@@ -2,7 +2,7 @@ Object lost_soul
 name Lost Soul
 face lost_soul.151
 race ghost
-randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d19;loot_melee&d22
 type 80
 layer 6
 direction 5

@@ -2,7 +2,7 @@ Object bee_killer
 name Killer Bee
 face bee_killer.151
 race insect
-randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d80;loot_melee&d17
 type 80
 layer 6
 direction 5
