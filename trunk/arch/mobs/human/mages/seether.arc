@@ -2,7 +2,7 @@ Object seether
 name Seether
 race human
 face seether.101
-randomitems spells_mage;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems spells_mage;loot;wealth_normal&D65;loot_base&D17;loot_magic&d11;loot_melee&d37
 type 80
 layer 6
 direction 5

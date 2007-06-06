@@ -2,7 +2,7 @@ Object lavagolem
 name Lava Golem
 face golem_lava.151
 race golem
-randomitems loot&s1;wealth_normal&D65;loot_base&D17,s1;loot_misc&d27,s1
+randomitems loot&s1;wealth_normal&D65;loot_base&D17,s1;loot_magic&d27,s1;loot_melee&d22,s1
 type 80
 layer 6
 direction 5

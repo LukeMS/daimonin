@@ -2,7 +2,7 @@ Object ant_queen
 name Ant Queen
 face ant_queen.151
 race insect
-randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d51;loot_melee&d17
 type 80
 layer 6
 direction 5

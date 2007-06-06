@@ -2,7 +2,7 @@ Object icegolem
 name Ice Golem
 face golem_ice.151
 race golem
-randomitems loot&s2;wealth_normal&D65;loot_base&D17,s2;loot_misc&d27,s2
+randomitems loot&s2;wealth_normal&D65;loot_base&D17,s2;loot_magic&d27,s2;loot_melee&d22,s2
 type 80
 layer 6
 direction 5

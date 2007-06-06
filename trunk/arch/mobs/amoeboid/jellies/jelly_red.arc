@@ -2,7 +2,7 @@ Object jelly_red
 name Red Jelly
 face jelly_red.111
 race slime
-randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d28
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d64;loot_melee&d18
 type 80
 layer 6
 direction 5

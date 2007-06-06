@@ -2,7 +2,7 @@ Object dwarf_fighter
 name Dwarf Fighter
 face dwarf_fighter.131
 race dwarf
-randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d28;loot_melee&d17
 type 80
 layer 6
 direction 5

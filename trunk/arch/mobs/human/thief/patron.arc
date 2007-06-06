@@ -1,7 +1,7 @@
 Object patron
 name Patron
 face patron.151
-randomitems skill_bow;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems skill_bow;loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
 type 80
 layer 6
 direction 5
