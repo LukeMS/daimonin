@@ -1958,16 +1958,16 @@ treasureone wealth_money
   chance 80
   more
   list wealth_low
-  difficulty 15
-  chance 65
+  difficulty 25
+  chance 55
   more
   list wealth_normal
-  difficulty 30
-  chance 50
+  difficulty 50
+  chance 40
   more
   list wealth_rich
-  difficulty 50
-  chance 35
+  difficulty 80
+  chance 25
   end
 treasure wealth_very_low
   arch wealth
