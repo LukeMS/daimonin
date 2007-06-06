@@ -1961,7 +1961,7 @@ treasureone wealth_money
   difficulty 15
   chance 65
   more
-  list wealth
+  list wealth_normal
   difficulty 30
   chance 50
   more
