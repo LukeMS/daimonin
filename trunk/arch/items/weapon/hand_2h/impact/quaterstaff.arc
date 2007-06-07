@@ -2,12 +2,12 @@ Object quaterstaff
 layer 3
 name quaterstaff
 face quaterstaff.101
-weapon_speed 4.25
+weapon_speed 3.95
 attack_impact 100
-dam 95
-item_level 10
+dam 90
+item_level 15
 item_skill 4
-wc 26
+wc 27
 type 15
 sub_type 4
 material 16

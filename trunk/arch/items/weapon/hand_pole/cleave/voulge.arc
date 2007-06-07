@@ -3,12 +3,12 @@ name voulge
 layer 3
 face voulge.101
 attack_cleave 100
-item_level 11
+item_level 17
 item_skill 4
-weapon_speed 4.5
-dam 80
-wc 22
-ac 6
+weapon_speed 4.15
+dam 90
+wc 26
+ac 5
 type 15
 sub_type 11
 material 18

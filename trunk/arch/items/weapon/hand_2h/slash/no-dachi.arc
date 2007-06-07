@@ -1,11 +1,11 @@
 Object no_dachi
 name no-dachi
 layer 3
-weapon_speed 4.25
+weapon_speed 4.05
 attack_slash 100
 type 15
 sub_type 5
-item_level 10
+item_level 15
 item_skill 4
 face no_dachi.101
 material 2

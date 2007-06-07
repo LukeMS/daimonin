@@ -4,8 +4,8 @@ name giant club
 face club_giant.101
 weapon_speed 4.25
 attack_impact 100
-dam 80
-item_level 10
+dam 91
+item_level 15
 item_skill 4
 wc 23
 type 15

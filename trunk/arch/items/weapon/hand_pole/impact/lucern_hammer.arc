@@ -5,10 +5,10 @@ face lucern_hammer.101
 weapon_speed 4.5
 attack_impact 100
 dam 80
-item_level 11
+item_level 17
 item_skill 4
-wc 22
-ac 6
+wc 23
+ac 7
 type 15
 sub_type 8
 material 18

@@ -4,9 +4,9 @@ layer 3
 face axe_2h.101
 attack_cleave 100
 weapon_speed 4.25
-item_level 10
+item_level 15
 item_skill 4
-dam 95
+dam 105
 wc 26
 type 15
 sub_type 7

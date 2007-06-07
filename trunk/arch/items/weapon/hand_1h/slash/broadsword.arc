@@ -4,10 +4,10 @@ layer 3
 face broadsword.101
 weapon_speed 2.75
 attack_slash 100
-item_level 7
+item_level 10
 item_skill 4
-dam 40
-wc 14
+dam 58
+wc 16
 type 15
 sub_type 1
 material 2
