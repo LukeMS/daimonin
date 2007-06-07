@@ -2,9 +2,9 @@ Object hammer_giant
 layer 3
 name giant hammer
 face hammer_giant.101
-weapon_speed 4.25
+weapon_speed 4.15
 attack_impact 100
-item_level 10
+item_level 15
 item_skill 4
 dam 95
 wc 26

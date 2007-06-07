@@ -2,12 +2,12 @@ Object hammer_battle
 name battle hammer
 face hammer_battle.101
 layer 3
-weapon_speed 3.75
+weapon_speed 3.7
 attack_impact 100
-item_level 7
+item_level 10
 item_skill 4
-dam 60
-wc 14
+dam 70
+wc 15
 type 15
 sub_type 0
 material 18

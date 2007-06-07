@@ -2,12 +2,12 @@ Object bardiche
 name bardiche
 layer 3
 face bardiche.101
-item_level 11
+item_level 17
 item_skill 4
 attack_cleave 100
-weapon_speed 4.5
+weapon_speed 4.35
 dam 80
-wc 22
+wc 23
 ac 6
 type 15
 sub_type 11

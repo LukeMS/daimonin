@@ -2,12 +2,12 @@ Object flamberge
 name flamberge
 layer 3
 face flamberge.101
-weapon_speed 2.75
+weapon_speed 2.65
 attack_pierce 100
-item_level 7
+item_level 10
 item_skill 4
-dam 40
-wc 14
+dam 45
+wc 15
 type 15
 sub_type 2
 material 2

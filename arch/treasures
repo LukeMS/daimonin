@@ -580,37 +580,37 @@ end
 #
 treasureone weapon_2h
   list weapon_cleave_2h
-    difficulty 9
+    difficulty 11
     chance 25
   more
   list weapon_slash_2h
-    difficulty 9
+    difficulty 11
     chance 25
   more
   list weapon_impact_2h
-    difficulty 9
+    difficulty 11
     chance 25
   more
   list weapon_pierce_2h
-    difficulty 9
+    difficulty 11
     chance 25
 end
 #
 treasureone weapon_pole
   list weapon_cleave_pole
-    difficulty 9
+    difficulty 12
     chance 25
   more
   list weapon_slash_pole
-    difficulty 9
+    difficulty 12
     chance 25
   more
   list weapon_impact_pole
-    difficulty 9
+    difficulty 12
     chance 25
   more
   list weapon_pierce_pole
-    difficulty 9
+    difficulty 12
     chance 25
 end
 #
@@ -619,11 +619,11 @@ treasureone weapon_cleave
     chance 60
   more
   list weapon_cleave_2h
-    difficulty 9
+    difficulty 11
     chance 25
   more
   list weapon_cleave_pole
-    difficulty 9
+    difficulty 12
     chance 15
 end
 #
@@ -645,7 +645,7 @@ treasureone weapon_cleave_1h
     chance 10
   more
   arch axe_great
-    difficulty 6
+    difficulty 8
     chance 10
   more
   arch axe_hand
@@ -660,7 +660,7 @@ treasureone weapon_cleave_1h
     chance 10
   more
   arch cleaver_battle
-    difficulty 6
+    difficulty 8
     chance 10
   more
   arch cleaver_war
@@ -714,11 +714,11 @@ treasureone weapon_slash
     chance 60
   more
   list weapon_slash_2h
-    difficulty 9
+    difficulty 11
     chance 25
   more
   list weapon_slash_pole
-    difficulty 9
+    difficulty 12
     chance 15
 end
 #
@@ -731,11 +731,11 @@ treasureone weapon_slash_1h
     chance 20
   more
   arch broadsword
-    difficulty 6
+    difficulty 9
     chance 20
   more
   arch falchion
-    difficulty 6
+    difficulty 9
     chance 20
   more
   arch gladius
@@ -824,17 +824,17 @@ treasureone weapon_impact
     chance 60
   more
   list weapon_impact_2h
-    difficulty 9
+    difficulty 11
     chance 25
   more
   list weapon_impact_pole
-    difficulty 9
+    difficulty 12
     chance 15
 end
 #
 treasureone weapon_impact_1h
   arch ancus
-    difficulty 6
+    difficulty 9
     chance 20
   more
   arch club
@@ -860,7 +860,7 @@ treasureone weapon_impact_1h
     chance 20
   more
   arch hammer_battle
-    difficulty 6
+    difficulty 9
     chance 20
   more
   arch manrikigusari
@@ -960,11 +960,11 @@ treasureone weapon_pierce
     chance 60
   more
   list weapon_pierce_2h
-    difficulty 9
+    difficulty 11
     chance 25
   more
   list weapon_pierce_pole
-    difficulty 9
+    difficulty 12
     chance 15
 end
 #
@@ -991,7 +991,7 @@ treasureone weapon_pierce_1h
     chance 20
   more
   arch flamberge
-    difficulty 6
+    difficulty 9
     chance 20
   more
   arch pallasch
@@ -1007,7 +1007,7 @@ treasureone weapon_pierce_1h
     chance 20
   more
   arch shiavona
-    difficulty 6
+    difficulty 9
     chance 20
   more
   arch tanto
@@ -1955,19 +1955,19 @@ end
 treasureone wealth_money
   list wealth_very_low
   difficulty 1
-  chance 80
+  chance 90
   more
   list wealth_low
   difficulty 25
-  chance 55
+  chance 45
   more
   list wealth_normal
   difficulty 50
-  chance 40
+  chance 30
   more
   list wealth_rich
   difficulty 80
-  chance 25
+  chance 15
   end
 treasure wealth_very_low
   arch wealth
