@@ -25,15 +25,40 @@
 #ifndef __AGGRO_H
 #define __AGGRO_H
 
-/* lets say that 1000 ticks is a maximum range for damage.
+/** lets say that 1000 ticks is a maximum range for damage.
  * if a damage info is older, is automatically invalid.
  */
 #define DEFAULT_DMG_INVALID_TIME 1000
 
+/** Returns the damage from a target for a damage source hitter.
+ * This is used for AoE spells and other target synchronized damage dealers.
+ * @param target Target.
+ * @param hitter Hitter.
+ * @return damage info object for hitter or <code>NULL</code>
+ */
 extern struct obj *aggro_get_damage(struct obj *target, struct obj *hitter);
+
 extern struct obj *aggro_insert_damage(struct obj *target, struct obj *hitter);
+
+/** Updates the damage and aggro marker for a target after the aggro and damage is done from the hitter to the target.
+ * @param target Target to update.
+ * @param target_owner Owner of the target.
+ * @param hitter Hitter to get information from.
+ * @param hitter_object Object the hitter used to cause the damage (?).
+ * @param dmg Damage that was done.
+ * @param flags Flags.
+ * @return aggro or <code>NULL</code> if not available.
+ */
 extern struct obj *aggro_update_info(struct obj *target, struct obj *target_owner,
                                      struct obj *hitter, struct obj *hitter_object, int dmg, int flags);
+
+/** Calculates the experience for an aggro.
+ * Analyzes all aggro info in the supplied object and gives the player experience based on this information.
+ * @param victim
+ * @param slayer
+ * @param kill_msg
+ * @return
+ */
 extern struct obj *aggro_calculate_exp(struct obj *victim, struct obj *slayer, char *kill_msg);
 
 #endif
