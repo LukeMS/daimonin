@@ -25,6 +25,18 @@ require("security")
 require("data_store")
 
 --
+-- Tables of gender-specific nouns and pronouns.
+-- Use eg, "blah " .. gender_possessive[obj:GetGender()] .. " item." for "blah his item."
+-- Note that the possessive is in the sense of, eg, "that is her item" rather than "that item is hers". I think this form will prove the more useful.
+--
+
+gender_noun       = { [game.NEUTER] = "neuter", [game.MALE] = "male", [game.FEMALE] = "female", [game.HERMAPHRODITE] = "hermaphrodite" }
+gender_objective  = { [game.NEUTER] = "it",     [game.MALE] = "he",   [game.FEMALE] = "she",    [game.HERMAPHRODITE] = "they" }
+gender_subjective = { [game.NEUTER] = "it",     [game.MALE] = "him",  [game.FEMALE] = "her",    [game.HERMAPHRODITE] = "them" }
+gender_possessive = { [game.NEUTER] = "its",    [game.MALE] = "his",  [game.FEMALE] = "her",    [game.HERMAPHRODITE] = "their" }
+
+
+--
 -- A couple of extensions to the string library
 --
 

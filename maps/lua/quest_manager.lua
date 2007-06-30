@@ -138,40 +138,41 @@ function QuestManager:AddItemList(_ib)
     local _ic
     local _qobj = self.quest_trigger
 
-    _ib:AddMsg("\n|Quest Status|~\n")
+    _ib:AddMsg("\n|Quest Status|\n")
     if _qobj.sub_type_1 == game.QUEST_KILL then
         for _kcount in obj_inventory(_qobj) do
             if _kcount.last_sp > _kcount.level then
-                _ib:AddMsg("  ".._kcount.name ..": " .. _kcount.level .. "/" .. _kcount.last_sp.."\n")
+                _ib:AddMsg("\n  ".._kcount.name ..": " .. _kcount.level .. "/" .. _kcount.last_sp)
             else
-                _ib:AddMsg("  ~".. _kcount.name ..": " .. _kcount.level .. "/" .. _kcount.last_sp .. " (complete)~\n")
+                _ib:AddMsg("\n  ~".. _kcount.name ..": " .. _kcount.level .. "/" .. _kcount.last_sp .. " (complete)~")
             end
         end
     elseif _qobj.sub_type_1 == game.QUEST_ITEM then
         for _kcount in obj_inventory(_qobj) do
             _ic = _kcount:NrofQuestItem()
             if _kcount.quantity > _ic then
-                _ib:AddMsg("  ".._kcount.name ..": " .. _ic .. "/" .. _kcount.quantity.."\n")
+                _ib:AddMsg("\n  ".._kcount.name ..": " .. _ic .. "/" .. _kcount.quantity)
             else
-                _ib:AddMsg("  ~".. _kcount.name ..": " .. _ic .. "/" .. _kcount.quantity .. " (complete)~\n")
+                _ib:AddMsg("\n  ~".. _kcount.name ..": " .. _ic .. "/" .. _kcount.quantity .. " (complete)~")
             end
         end
     elseif _qobj.sub_type_1 == game.QUEST_KILLITEM then
         for _kcount in obj_inventory(_qobj) do
             _ic = _kcount:NrofQuestItem()
             if _kcount.inventory.quantity > _ic then
-                _ib:AddMsg("  ".. _kcount.inventory.name ..": " .. _ic .. "/" .. _kcount.last_sp.."\n")
+                _ib:AddMsg("\n  ".. _kcount.inventory.name ..": " .. _ic .. "/" .. _kcount.last_sp)
             else
-                _ib:AddMsg("  ~".. _kcount.inventory.name ..": " .. _ic .. "/" .. _kcount.last_sp .. " (complete)~\n")
+                _ib:AddMsg("\n  ~".. _kcount.inventory.name ..": " .. _ic .. "/" .. _kcount.last_sp .. " (complete)~")
             end
         end
     else
         if _qobj.state == _qobj.magic then
-            _ib:AddMsg("  ~Complete!~\n")
+            _ib:AddMsg("\n  ~Complete!~")
         else
-            _ib:AddMsg("  Incomplete\n")
+            _ib:AddMsg("\n  Incomplete")
         end
     end
+    _ib:AddMsg("\n")
 end
 
 -- Set the finish "step" for QUEST_NORMAL

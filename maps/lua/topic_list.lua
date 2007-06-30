@@ -53,7 +53,7 @@ function TopicList:CheckMessage(event_param)
     for i in pairs(self.topics) do
         local topics = self.topics[i]
         for j in pairs(topics.topics) do
-            local captures = {string.find(msg, "^".. topics.topics[j] .."$")}
+            local captures = {string.find(msg, "^%s*".. topics.topics[j] .."%s*$")}
             if captures[1] then
                 table.remove(captures,1) -- get rid of indices
                 table.remove(captures,1)
