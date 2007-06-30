@@ -1,4 +1,18 @@
 # GMASTER_FILE (file is changed from server at runtime)
-# entry <name>:*:*:GM will allow player <name> to be DM, GM or VOL
-# Example to allow Gecko to become a DM from any IP:
-# Gecko:*:*:DM
+#
+# <name>:<password>:<host>:<mode>
+#
+# <name> is a character name. May be '*' for any name. Must not contain the ':'
+# character.
+#
+# <password> is a login password. May be '*' for any password. Must not
+# contain the ':' character.
+#
+# <host> is an IP address. May be '*' for any host. Must not contain the ':'
+# character. THIS DOES NOT WORK AS IPv6 USES ':' IN THE HOST NAME.
+#
+# <mode> is one of VOL, GM, or DM.
+#
+# The following (which allows any player to be any type of gmaster) is useful
+# on local servers for testing. Just uncomment the next line:
+#*:*:*:DM

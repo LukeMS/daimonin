@@ -1,5 +1,5 @@
 Object ropeladder_down
-name rope ladder going down
+name rope ladder going up
 face ropeladder_down.131
 anim
 facings 9
@@ -25,7 +25,7 @@ layer 5
 no_pick 1
 end
 Object ropeladder_down2
-name rope ladder going down
+name rope ladder going up
 face ropeladder_down2.131
 anim
 facings 9

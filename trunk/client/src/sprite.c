@@ -158,6 +158,12 @@ _Sprite * sprite_tryload_file(char *fname, uint32 flag, SDL_RWops *rwop)
                         r = (Uint8) ((double) r * dark_value[s]);
                         g = (Uint8) ((double) g * dark_value[s]);
                         b = (Uint8) ((double) b * dark_value[s]);
+                        if (r==255 && g==255 && b==255)
+                            r = g = b = 254;
+                    }
+                    else
+                    {
+                        r = g = b = 255;
                     }
 
                     /* store color information in our new palette */
@@ -166,10 +172,12 @@ _Sprite * sprite_tryload_file(char *fname, uint32 flag, SDL_RWops *rwop)
                     dark[i].b = b;
                 }
                 SDL_SetColors(bitmap, dark, 0, ncol);
+                SDL_SetColorKey(bitmap, SDL_SRCCOLORKEY | SDL_RLEACCEL, SDL_MapRGB(bitmap->format,255,255,255));
                 sprite->dark_level[s] = SDL_DisplayFormat(bitmap);
             }
             grey_scale(colors, dark, ncol, ckey.r, ckey.g, ckey.b);
             SDL_SetColors(bitmap, dark, 0, ncol);
+            SDL_SetColorKey(bitmap, SDL_SRCCOLORKEY | SDL_RLEACCEL, SDL_MapRGB(bitmap->format,255,255,255));
             sprite->grey = SDL_DisplayFormat(bitmap);
             red_scale(colors, dark, ncol, ckey.r, ckey.g, ckey.b);
             SDL_SetColors(bitmap, dark, 0, ncol);
@@ -252,6 +260,12 @@ static void grey_scale(SDL_Color *col_tab, SDL_Color *grey_tab, int numcol, int 
         if (r != rcol || g != gcol || b != bcol)
         {
             r = b = g = 0.212671 * r + 0.715160 * g + 0.072169 * b;
+            if (((uint8) r==255) && ((uint8) g==255) && ((uint8) b==255))
+                r = g = b = 254;
+        }
+        else
+        {
+            r = g = b = 255;
         }
         grey_tab[i].r = (int) r;
         grey_tab[i].g = (int) g;
@@ -445,22 +459,26 @@ void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col
             continue;
         }
 
-        /* lets look for smilies in the text. */
-        if (font == &SystemFont && actChar == (unsigned char)':' && options.smileys) // Only SystemFont has smileys defined
-        {
-            /* We don't need this line (correct me please if im wrong
-             * This line 'swallows' all colons at the end of a line
-             */
-            /* if (text[i+1] == '\0') break; */
+        /* Alderan: i disable this here, converting HERE to smileys will cause problems
+         * now we only show smileys in the chatboxes, even not in the commandline
+         */
 
-            if (text[i+1] == ')') actChar = 128;
-            else if (text[i+1] == '(') actChar = 129;
-            else if (text[i+1] == 'D') actChar = 130;
-            else if (text[i+1] == '|') actChar = 131;
-            else if (text[i+1] == 'o') actChar = 132;
-            else if (text[i+1] == 'p') actChar = 133;
-            if (actChar > 127) ++i;
-        }
+//        /* lets look for smilies in the text. */
+//        if (font == &SystemFont && actChar == (unsigned char)':' && options.smileys) // Only SystemFont has smileys defined
+//        {
+//            /* We don't need this line (correct me please if im wrong
+//             * This line 'swallows' all colons at the end of a line
+//             */
+//            /* if (text[i+1] == '\0') break; */
+//
+//            if (text[i+1] == ')') actChar = 128;
+//            else if (text[i+1] == '(') actChar = 129;
+//            else if (text[i+1] == 'D') actChar = 130;
+//            else if (text[i+1] == '|') actChar = 131;
+//            else if (text[i+1] == 'o') actChar = 132;
+//            else if (text[i+1] == 'p') actChar = 133;
+//            if (actChar > 127) ++i;
+//        }
 
         tmp = font->c[actChar].w + font->char_offset;
 

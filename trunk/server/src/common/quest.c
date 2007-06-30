@@ -684,7 +684,7 @@ void quest_list_command(struct obj *pl, char *cmd)
 
                 object *tmp;
 
-                strcat(buf,"b=\"\n\n°STATUS:°");
+                strcat(buf,"b=\"\n\n|Quest Status:|\n");
                 for (tmp = quest->inv; tmp; tmp = tmp->below)
                 {
                     if((c = get_nrof_quest_item(pl, tmp->arch->name, tmp->name, tmp->title)) < tmp->nrof)
@@ -693,17 +693,17 @@ void quest_list_command(struct obj *pl, char *cmd)
                     }
                     else
                     {
-                        sprintf(msg, "\n°%s: %d/%d (complete)°", STRING_SAFE(tmp->name), c, tmp->nrof);
+                        sprintf(msg, "\n~%s: %d/%d (complete)~", STRING_SAFE(tmp->name), c, tmp->nrof);
                     }
                     strcat(buf, msg);
                 }
-                strcat(buf, "\"");
+                strcat(buf, "\n\"");
             }
             else if(quest->sub_type1 == ST1_QUEST_TRIGGER_KILL)
             {
                 object *tmp;
 
-                strcat(buf,"b=\"\n\n°STATUS:°");
+                strcat(buf,"b=\"\n\n|Quest Status:|\n");
                 for (tmp = quest->inv; tmp; tmp = tmp->below)
                 {
                     if(tmp->last_sp > tmp->level) /* not done */
@@ -712,18 +712,18 @@ void quest_list_command(struct obj *pl, char *cmd)
                     }
                     else
                     {
-                        sprintf(msg, "\n°%s: %d/%d (complete)°", STRING_SAFE(tmp->name), tmp->level, tmp->last_sp);
+                        sprintf(msg, "\n~%s: %d/%d (complete)~", STRING_SAFE(tmp->name), tmp->level, tmp->last_sp);
                     }
                     strcat(buf, msg);
                 }
-                strcat(buf, "\"");
+                strcat(buf, "\n\"");
             }
             else if(quest->sub_type1 == ST1_QUEST_TRIGGER_KILL_ITEM)
             {
                 uint32 c;
                 object *tmp;
 
-                strcat(buf,"b=\"\n\n°STATUS:°");
+                strcat(buf,"b=\"\n\n|Quest Status:|\n");
                 for (tmp = quest->inv; tmp; tmp = tmp->below)
                 {
                     if(!tmp->inv)
@@ -735,19 +735,19 @@ void quest_list_command(struct obj *pl, char *cmd)
                     }
                     else
                     {
-                        sprintf(msg, "\n°%s: %d/%d (complete)°", STRING_SAFE(tmp->inv->name), c, tmp->inv->nrof);
+                        sprintf(msg, "\n~%s: %d/%d (complete)~", STRING_SAFE(tmp->inv->name), c, tmp->inv->nrof);
                     }
                     strcat(buf, msg);
                 }
-                strcat(buf, "\"");
+                strcat(buf, "\n\"");
 
             }
             else /* normal */
             {
                 if(quest->state == quest->magic)
-                    strcat(buf,"b=\"\n\n°STATUS:°\n°Complete!°\"");
+                    strcat(buf,"b=\"\n\n|Quest Status:|\n\n~Complete!~\n\"");
                 else
-                    strcat(buf,"b=\"\n\n°STATUS:°\nIncomplete\"");
+                    strcat(buf,"b=\"\n\n|Quest Status:|\n\nIncomplete\n\"");
             }
             strcat(buf,"><wb=\"Q\">");
             gui_interface(pl, NPC_INTERFACE_MODE_NPC, quest->msg, buf);

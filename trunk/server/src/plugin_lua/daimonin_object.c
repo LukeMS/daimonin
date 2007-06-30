@@ -92,6 +92,7 @@ static struct method_decl   GameObject_methods[]            =
     {"Say",  (lua_CFunction) GameObject_Say},
     {"SayTo",  (lua_CFunction) GameObject_SayTo},
     {"Write", (lua_CFunction) GameObject_Write},
+    {"GetGender",  (lua_CFunction) GameObject_GetGender},
     {"SetGender",  (lua_CFunction) GameObject_SetGender},
     {"SetRank",  (lua_CFunction) GameObject_SetRank},
     {"SetAlignment",  (lua_CFunction) GameObject_SetAlignment},
@@ -1337,6 +1338,33 @@ static int GameObject_Write(lua_State *L)
 }
 
 /*****************************************************************************/
+/* Name   : GameObject_GetGender                                             */
+/* Lua    : object:GetGender()                                               */
+/* Info   : Gets the gender of object. Returns game.NEUTER, game.MALE,       */
+/*          game.FEMALE, or game.HERMAPHRODITE.                              */
+/* Status : Untested                                                         */
+/*****************************************************************************/
+static int GameObject_GetGender(lua_State *L)
+{
+    int         gender;
+    lua_object *self;
+
+    get_lua_args(L, "O", &self);
+
+    if (!QUERY_FLAG(WHO, FLAG_IS_MALE) && !QUERY_FLAG(WHO, FLAG_IS_FEMALE))
+        gender = 0; // neuter
+    else if (QUERY_FLAG(WHO, FLAG_IS_MALE) && !QUERY_FLAG(WHO, FLAG_IS_FEMALE))
+        gender = 1; // male
+    else if (!QUERY_FLAG(WHO, FLAG_IS_MALE) && QUERY_FLAG(WHO, FLAG_IS_FEMALE))
+        gender = 2; // female
+    else // if (QUERY_FLAG(WHO, FLAG_IS_MALE) && QUERY_FLAG(WHO, FLAG_IS_FEMALE))
+        gender = 3; // hermaphrodite
+
+    lua_pushnumber(L, gender);
+    return 1;
+}
+
+/*****************************************************************************/
 /* Name   : GameObject_SetGender                                             */
 /* Lua    : object:SetGender(gender)                                         */
 /* Info   : Changes the gender of object. gender_string should be one of     */
@@ -1903,9 +1931,11 @@ static int GameObject_AddQuest(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_GetQuest                                              */
-/* Lua    : object:GetQuest(archetype, name)                                 */
+/* Lua    : object:GetQuest(name)                                            */
 /* Status : Stable                                                           */
-/* Info   : We browse the quest object container for a quest_trigger object  */
+/* Info   : Browses all quest containers in the object for a quest trigger   */
+/*          with the name specified. If such a trigger is found its object is*/
+/*          returned.                                                        */
 /*****************************************************************************/
 static int GameObject_GetQuest(lua_State *L)
 {
@@ -3323,7 +3353,7 @@ static int GameObject_GetPets(lua_State *L)
 /*              Game.GMASTER_MODE_NO    if the object is not a Vol/GM/DM     */
 /*              Game.GMASTER_MODE_VOL   if the object is a Vol               */
 /*              Game.GMASTER_MODE_GM    if the object is a GM                */
-/*              Game.GMASTER_MODE_NO    if the object is a DM                */
+/*              Game.GMASTER_MODE_DM    if the object is a DM                */
 /* Status : Untested                                                         */
 /*****************************************************************************/
 static int GameObject_GetGmasterMode(lua_State *L)
