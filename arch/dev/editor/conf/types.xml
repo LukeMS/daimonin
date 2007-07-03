@@ -25,7 +25,8 @@
 # about the 'type' elements:                                         #
 #                                                                    #
 # <type number="15" name="Type Name">                                #
-# <import_type name="Type Name" />   import attributes of this type  #
+# <import_type name="Type Name" />   import attributes of this type; #
+#    Attributes explicitly defined in a type are not imported.       #
 # <required>                                                         #
 #    list of required attributes to identifying this type            #
 # </required>                                                        #
@@ -83,7 +84,8 @@
 <!--
   The attributes of the default_type get added to all other types by default.
   Every type can have an 'ignore' element however, which is used to specify
-  default attributes *not* to inherit.
+  default attributes *not* to inherit. Attributes explicitly defined in a type
+  are not inherited.
   -->
 <default_type>
   <attribute arch="name" editor="name" type="string">
