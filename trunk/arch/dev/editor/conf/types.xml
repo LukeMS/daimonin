@@ -1,17 +1,17 @@
 <?xml version="1.0" standalone="no" ?>
 <!--
 ######################################################################
-# types.xml - This is the defintitions-file for all the different    #
+# types.xml - This is the definitions-file for all the different     #
 # Daimonin object types and their attributes.                        #
 #                                                                    #
 # The server code of the Daimonin game is always changing and        #
-# evlolving. From time to time, object-attributes change in purpose, #
+# evolving. From time to time, object-attributes change in purpose,  #
 # or new ones are created.                                           #
 # Therefore, it is important that an Editor is flexible and          #
 # easy to "upgrade" to handle such new features. That's why the      #
 # DaimoninEditor reads the type-definitions from this xml file.      #
 #                                                                    #
-# If you encounter bugs, typos or missing entrys in the LATEST       #
+# If you encounter bugs, typos or missing entries in the LATEST      #
 # VERSION of this file - Don't hesitate to improve it, contact me    #
 # and eventually send the improved file to me: <red.blaze@gmx.net>.  #
 # I will put it into the "official version" of the DaimoninEditor    #
@@ -47,17 +47,17 @@
 # bool         - This attribute can only be set to '1' or '0'        #
 # int          - This attribute contains a 32 Bit decimal number     #
 # long         - This attribute contains a 64 Bit decimal number     #
-# float        - This attr. contains a floating point number         #
+# float        - This attribute contains a floating point number     #
 # string       - This attribute contains a string                    #
 # facename     - This attribute contains a string which is           #
 #                a face name                                         #
 # animname     - This attribute contains a string which is           #
 #                an animation name                                   #
 # text         - This attribute contains a text ("text" can have     #
-#                linebreaks, unlike "string")                        #
+#                line breaks, unlike "string")                       #
 # fixed        - This attribute is always set to a fixed 'value'     #
 #                (There is no user-input for this attribute)         #
-# spell        - This attribute contains a spell. The mapmaker can   #
+# spell        - This attribute contains a spell. The map maker can  #
 #                choose spells from a combo box.                     #
 # nz_spell     - works just like 'spell', except that the            #
 #                spell-value zero is always interpreted as <none>,   #
@@ -93,7 +93,7 @@
   </attribute>
   <attribute arch="title" editor="title" type="string">
     This is the object's title. Once an object is identified the title is
-    attached to the name. Typical titels are "of mostrai", "of xray vision" etc.
+    attached to the name. Typical titles are "of mostrai", "of xray vision" etc.
   </attribute>
   <attribute arch="amask" editor="artifact mask" type="string">
 	This is the name of a artifact mask which alters the original arch with the
@@ -165,13 +165,13 @@
   </attribute>
   <attribute arch="nrof" editor="number" type="int">
     This value determines the number of objects in one stack (for example:
-    100 goldcoins =&gt; "number = 100"). You should set this at least to one, for
+    100 gold coins =&gt; "number = 100"). You should set this at least to one, for
     any pickable object - otherwise it won't be mergeable into a stack.
   </attribute>
   <attribute arch="weight" editor="weight" type="int">
-    This value defines the object's weight in gramm (1000g is 1kg). Objects with
+    This value defines the object's weight in grams (1000g is 1kg). Objects with
     zero weight are not pickable for players. Still, set the "non-pickable"-flag
-    for explicitly non-pickable objects (hey, this is opensource.. you
+    for explicitly non-pickable objects (hey, this is open source.. you
     never know ;) ).
   </attribute>
   <attribute arch="value" editor="value" type="long">
@@ -197,7 +197,7 @@
   <attribute arch="glow_radius" editor="glow radius" type="int">
     If &lt;glow radius&gt; is set to a value greater zero, the object
     appears lit up on dark maps. &lt;glow radius&gt; can be a value
-    between 0 and 9, the higher, the more light does the object emmit.
+    between 0 and 9, the higher, the more light does the object emit.
   </attribute>
   <attribute arch="can_stack" editor="stackable" type="bool">
     If set, the item can be stacked. Careful, don't use on
@@ -212,11 +212,11 @@
   </attribute>
   <attribute arch="blocksview" editor="block view" type="bool">
     If an item is set to block view, players (and monsters) cannot
-    see byond it unless they cross it or manage to stand ontop.
+    see beyond it unless they cross it or manage to stand on top.
   </attribute>
   <attribute arch="pass_ethereal" editor="etheral can pass" type="bool">
     If no_pass (blocking passage) is set, no one can pass. If this
-    flag is set too, etheral flaged objects and CAN_PASS_THRU flag can pass.
+    flag is set too, ethereal flagged objects and CAN_PASS_THRU flag can pass.
   </attribute>
   <attribute arch="pass_thru" editor="can pass (no ethereal)" type="bool">
     If no_pass (blocking passage) is set, no one can pass. If this
@@ -364,7 +364,7 @@
     It belongs to the group of physical attacks.
   </attribute>
   <attribute arch="attack_cleave" editor="cleave (physical)" length="15" type="int">
-    "Cleave" is axe and halbard damage.
+    "Cleave" is axe and halberd damage.
     It belongs to the group of physical attacks.
   </attribute>
   <attribute arch="attack_pierce" editor="pierce (physical)" length="15" type="int">
@@ -448,7 +448,7 @@
     uncontrolled actions.
   </attribute>
   <attribute arch="attack_fear" editor="fear (effect)" length="15" type="int">
-    Fear is a effect attack (no damage). It will reduce the attack and defence abilities.
+    Fear is a effect attack (no damage). It will reduce the attack and defense abilities.
   </attribute>
   <attribute arch="attack_slow" editor="slow (effect)" length="15" type="int">
     Slow is a effect attack (no damage). A slowed target will move and fight slower.
@@ -471,7 +471,7 @@
     It belongs to the group of physical attacks.
   </attribute>
   <attribute arch="resist_cleave" editor="cleave (physical)" length="15" type="int">
-    "Cleave" is axe and halbard damage.
+    "Cleave" is axe and halberd damage.
     It belongs to the group of physical attacks.
   </attribute>
   <attribute arch="resist_pierce" editor="pierce (physical)" length="15" type="int">
@@ -554,7 +554,7 @@
     uncontrolled actions.
   </attribute>
   <attribute arch="resist_fear" editor="fear (effect)" length="15" type="int">
-    Fear is a effect attack (no damage). It will reduce the attack and defence abilities.
+    Fear is a effect attack (no damage). It will reduce the attack and defense abilities.
   </attribute>
   <attribute arch="resist_slow" editor="slow (effect)" length="15" type="int">
     Slow is a effect attack (no damage). A slowed target will move and fight slower.
@@ -574,16 +574,16 @@
   <import_type name="default_flags" />
   <description><![CDATA[
     AI objects define how a mob behaves in the game. By select and fine-tuning low-level
-    behaviours many different kinds of high-level behaviours can be achieved.
+    behaviors many different kinds of high-level behaviors can be achieved.
     For now it may be a good idea to start out with a predefined AI and change some
     of the parameters.
     <br>
-    We aim to create a better behaviour editor in the future. Contact the devteam if
+    We aim to create a better behavior editor in the future. Contact the devteam if
     you are interested in implementing it.
     ]]>
   </description>
-  <attribute arch_begin="msg" arch_end="endmsg" editor="behaviour list" type="text">
-    This is where behaviours are defined. A behaviour belongs to one of the predefined classes,
+  <attribute arch_begin="msg" arch_end="endmsg" editor="behavior list" type="text">
+    This is where behaviors are defined. A behavior belongs to one of the predefined classes,
     and may take parameters.
   </attribute>
 </type>
@@ -632,7 +632,7 @@
   <attribute arch="last_sp" editor="glow radius" type="int">
     If &lt;glow radius&gt; is set to a value not zero, the object
     appears lit up on dark maps. &lt;glow radius&gt; As higher as
-    more light does the object emmit. The current senseful max value is 9.
+    more light does the object emit. The current sensible max value is 9.
     If the value is 0, the light can't be lighten and can't be applied.
     If the value is negative, this object will invoke darkness!
     A value of 0 means, that this light can't be lighten. This will
@@ -704,7 +704,7 @@
     eventually destroy it.
   </attribute>
   <attribute arch="proof_ele" editor="condition proof: elemental" type="bool">
-    Elemental attacks are able to reduce the conditon of the item
+    Elemental attacks are able to reduce the condition of the item
     and eventually destroy it.
   </attribute>
   <attribute arch="proof_mag" editor="condition proof: magical" type="bool">
@@ -728,7 +728,7 @@
     <attribute arch="speed_left" />
   </ignore>
   <description><![CDATA[
-	Light Sources are system objects which u]]>
+  Light Sources are system objects which u]]>
   </description>
   <attribute arch="race" editor="light type" type="string">
   Defines the light type which can we refill with this refill
@@ -778,7 +778,7 @@
     eventually destroy it.
   </attribute>
   <attribute arch="proof_ele" editor="condition proof: elemental" type="bool">
-    Elemental attacks are able to reduce the conditon of the item
+    Elemental attacks are able to reduce the condition of the item
     and eventually destroy it.
   </attribute>
   <attribute arch="proof_mag" editor="condition proof: magical" type="bool">
@@ -799,12 +799,12 @@
     <!-- this is a special case: The "misc" type with type number 0 is
          the fallback for all types which don't match any other defined types.
          The required attribute "misc x" prevents that it gets confused with
-         other types like "monster & npc" which also have type number 0. -->
+         other types like "monster & NPC" which also have type number 0. -->
     <attribute arch="misc" value="x" />
   </required>
   <description><![CDATA[
-	WARNING: Type 0 is a invalid type setting in Daimonin and
-      will cause a warning for the server. ]]>
+    WARNING: Type 0 is a invalid type setting in Daimonin and
+    will cause a warning for the server. ]]>
   </description>
   <attribute arch="no_pass" editor="blocking passage" type="bool">
     If set, the object cannot be passed by players nor monsters.
@@ -846,7 +846,7 @@
     You should keep in mind that magic abilities allow players
     to get better resistance. You can turn off the magic part to
     make the spells more dangerous. However, this really shouldn't
-    be neccessary unless you work on very high level maps.
+    be necessary unless you work on very high level maps.
     And what fun is a magic resistance cloak when it has no effect? ]]>
   </use>
   <attribute arch="no_drop" value="1" type="fixed" />
@@ -878,7 +878,7 @@
   This is cumulative added to the monster default casting delay.
   </attribute>
   <attribute arch="is_magical" editor="is magical" type="bool">
-    This flag specifies wether the ability &lt;is magical&gt; in nature.
+    This flag specifies whether the ability &lt;is magical&gt; in nature.
     This should always be set for spell-like abilities. "Natural"
     abilities like a dragon's firebreath are an exception.
     Note that non-magical abilities are more dangerous because
@@ -897,7 +897,7 @@
     When a player puts a defined number of certain items on the altar,
     then either a spell is casted (on the player) or a connector is
     triggered. If the latter is the case, the altar works only once.
-    Either way, the sacrificed item dissapears. ]]>
+    Either way, the sacrificed item disappears. ]]>
   </description>
   <attribute arch="no_pick" value="1" type="fixed" />
   <attribute arch="slaying" editor="match item name" type="string">
@@ -930,7 +930,7 @@
   <attribute arch="sp" editor="spell" type="spell">
     When activated, the selected &lt;spell&gt; will be casted (once, on the
     player). This should work for any given spell. The altar will work
-    infinitly in this way. Don't set both &lt;spell&gt; and &lt;connection&gt; for
+    infinitely in this way. Don't set both &lt;spell&gt; and &lt;connection&gt; for
     one altar.
   </attribute>
   <attribute arch="level" editor="spell level" type="int">
@@ -959,7 +959,7 @@
   <description><![CDATA[
     Altar_triggers work pretty much like normal altars
     (drop sacrifice -&gt; connection activated), except for the fact that
-    they reset after usage. Hence, altar_triggers can be used infinitly. ]]>
+    they reset after usage. Hence, altar_triggers can be used infinitely. ]]>
   </description>
   <use><![CDATA[
     Altar_triggers are very useful if you want to charge a price for...
@@ -1028,7 +1028,7 @@
 <type number="39" name="Amulet">
   <import_type name="combat_values" />
   <ignore>
-	<section name="resistance" />
+    <section name="resistance" />
     <attribute arch="material" />
     <attribute arch="material_real" />
   </ignore>
@@ -1040,10 +1040,10 @@
     Feel free to create your own special artifacts. However, it is very
     important that you keep your artifact in balance with existing maps. ]]>
   </use>
-  <attribute arch="ac" editor="armour class" type="int">
-    This value defines the amount of armour-class bonus for wearing
-    this item. &lt;Armour class&gt; lessens the chance of being hit. Higher
-    values are better. It should usually be set only for armour-like equipment.
+  <attribute arch="ac" editor="armor class" type="int">
+    This value defines the amount of armor-class bonus for wearing
+    this item. &lt;Armor class&gt; lessens the chance of being hit. Higher
+    values are better. It should usually be set only for armor-like equipment.
   </attribute>
   <attribute arch="wc" editor="weapon class" type="int">
     The weapon class value adds to the overall weapon class of the player's
@@ -1051,26 +1051,26 @@
   </attribute>
   <attribute arch="item_level" editor="required level" type="int">
     If &lt;required level&gt; is set to a value greater zero, players cannot
-    wear this item unless they meet this level in the skill cathegory
+    wear this item unless they meet this level in the skill category
     specified by &lt;level required in&gt;.
 
     For example: &lt;required level&gt; = 15, &lt;level required in&gt; = physical
     means the player cannot wear the item unless he is equal or greater
-    level 15 in the physical skill cathegory.
+    level 15 in the physical skill category.
   </attribute>
   <attribute arch="item_skill" editor="level required in" type="list_item_skill">
-    This attribute specifies in which skill cathegory the player
+    This attribute specifies in which skill category the player
     must meet the &lt;required level&gt; in order to wear the item.
     It is meaningless when &lt;required level&gt; is zero/unset.
 
     For example: &lt;required level&gt; = 15, &lt;level required in&gt; = physical
     means the player cannot wear the item unless he is equal or greater
-    level 15 in the physical skill cathegory.
+    level 15 in the physical skill category.
   </attribute>
   <attribute arch="lifesave" editor="save life" type="bool">
     An item with this flag enabled will save the players life
     for one time: When the player is wearing this item and his
-    healthpoints reach zero, the item dissapears, replenishing
+    healthpoints reach zero, the item disappears, replenishing
     half of the player's health.
 
     An item with &lt;save life&gt; should not have
@@ -1127,8 +1127,8 @@
   </attribute>
   <attribute arch="exp" editor="speed bonus" type="int">
     Divide by ten to get the player's speed bonus from wearing
-	this item. (The real formula to calcuate speed bonus is
-	more advanced, but this description will do for now. /Gecko)
+    this item. (The real formula to calculate speed bonus is
+    more advanced, but this description will do for now. /Gecko)
   </attribute>
   <attribute arch="hp" editor="health regen." type="int">
     Positive &lt;health regen.&gt; bonus speeds up the
@@ -1218,7 +1218,7 @@
     The bearer of this item can move in every terrain that
     is set by &lt;support terrain&gt;. Such abilities like
     "water walking", "fire walking" etc are almost priceless
-    as they open access to an entire new plane of the daimonin
+    as they open access to an entire new plane of the Daimonin
     world.
 
     Artifacts with &lt;support terrain&gt; attributes are VERY
@@ -1278,7 +1278,7 @@
     eventually destroy it.
   </attribute>
   <attribute arch="proof_ele" editor="condition proof: elemental" type="bool">
-    Elemental attacks are able to reduce the conditon of the item
+    Elemental attacks are able to reduce the condition of the item
     and eventually destroy it.
   </attribute>
   <attribute arch="proof_mag" editor="condition proof: magical" type="bool">
@@ -1306,7 +1306,7 @@
     <attribute arch="material_real" />
   </ignore>
   <description><![CDATA[
-    Bracers are armour-plates worn around the wrists.
+    Bracers are armor-plates worn around the wrists.
     Wearing bracer, the object's stats will directly be inherited to
     the player. Usually enhancing his defense. ]]>
   </description>
@@ -1317,20 +1317,20 @@
   <attribute arch="magic" editor="magic bonus" type="int">
     &lt;magic bonus&gt; works just like ac, except that it can be improved by
     "scrolls of Enchant Armour" or reduced by acid. It is less useful
-    than direct armour-class bonus on the bracers.
+    than direct armor-class bonus on the bracers.
   </attribute>
 
 </type>
 
 <!--####################################################################-->
-<type number="16" name="Breastplate Armour">
+<type number="16" name="Breastplate Armor">
   <import_type name="Amulet" />
   <ignore>
     <attribute arch="material" />
     <attribute arch="material_real" />
   </ignore>
   <description><![CDATA[
-    Wearing an armour, the object's stats will directly be inherited to
+    Wearing an armor, the object's stats will directly be inherited to
     the player. Usually enhancing his defense. ]]>
   </description>
   <use><![CDATA[
@@ -1338,17 +1338,17 @@
     important that you keep your artifact in balance with existing maps. ]]>
   </use>
   <attribute arch="last_heal" editor="spellcasting penalty" type="int">
-    This poses a penalty to spellcasting in %, for wearing the armour.
+    This poses a penalty to spellcasting in %, for wearing the armor.
     The bigger the spellcasting penalty, the worse.
   </attribute>
   <attribute arch="last_sp" editor="slowdown" type="int">
     Slowdown penalty reduces the player's walking speed when wearing the
-    armour. Bigger values are worse - zero is best.
+    armor. Bigger values are worse - zero is best.
   </attribute>
   <attribute arch="magic" editor="magic bonus" type="int">
     &lt;magic bonus&gt; works just like ac, except that it can be improved by
     "scrolls of Enchant Armour" or reduced by acid. It is less useful
-    than direct armour-class bonus on the armour.
+    than direct armor-class bonus on the armor.
   </attribute>
 </type>
 
@@ -1385,7 +1385,7 @@
   </use>
   <attribute arch="last_heal" editor="spellcasting penalty" type="int">
     This poses a penalty to spellcasting, for wearing the boots.
-    The bigger the spellcarting penalty, the worse.
+    The bigger the spellcasting penalty, the worse.
     The spell will fail then.
   </attribute>
   <attribute arch="last_sp" editor="slowdown" type="int">
@@ -1403,10 +1403,10 @@
   <attribute arch="magic" editor="magic bonus" type="int">
     &lt;magic bonus&gt; works just like ac, except that it can be improved by
     "scrolls of Enchant Armour" or reduced by acid. It is less useful
-    than direct armour-class bonus on the boots.
+    than direct armor-class bonus on the boots.
 
     Important: &lt;magic bonus&gt; on boots has no effect if there is no
-    &lt;armour class&gt; set. It only works in combination with &lt;armour class&gt;.
+    &lt;armor class&gt; set. It only works in combination with &lt;armor class&gt;.
   </attribute>
 </type>
 
@@ -1421,14 +1421,14 @@
     When a predefined amount of weight is placed on a button, the
     &lt;connection&gt; value is triggered. In most cases this happens when a
     player or monster steps on it. When the button is "released", the
-    &lt;connection&gt; value get's triggered a second time. ]]>
+    &lt;connection&gt; value gets triggered a second time. ]]>
   </description>
   <attribute arch="walk_on" value="1" type="fixed" />
   <attribute arch="walk_off" value="1" type="fixed" />
   <attribute arch="no_pick" value="1" type="fixed" />
   <attribute arch="weight" editor="press weight" type="string">
     The button is pressed (triggered), as soon as
-    &lt;press weigh&gt; gram are placed ontop of it.
+    &lt;press weigh&gt; gram are placed on top of it.
   </attribute>
   <attribute arch="connected" editor="connection" type="int">
     Every time the button is pressed or released, all objects
@@ -1467,7 +1467,7 @@
   <attribute arch="no_pick" value="1" type="fixed" />
   <attribute arch="weight" editor="press weight" type="string">
     The button is pressed (triggered), as soon as
-    &lt;press weigh&gt; gram are placed ontop of it.
+    &lt;press weigh&gt; gram are placed on top of it.
   </attribute>
   <attribute arch="connected" editor="connection" type="int">
     Every time the button is pressed or released, all objects
@@ -1493,7 +1493,7 @@
   </ignore>
   <description><![CDATA[
     Wearing a cloak, the object's stats will directly be inherited to
-    the player. Cloaks usually add minor &lt;armour class&gt; and
+    the player. Cloaks usually add minor &lt;armor class&gt; and
     sometimes a bit of resistance. ]]>
   </description>
   <use><![CDATA[
@@ -1503,10 +1503,10 @@
   <attribute arch="magic" editor="magic bonus" type="int">
     &lt;magic bonus&gt; works just like ac, except that it can be improved by
     "scrolls of Enchant Armour" or reduced by acid. It is less useful
-    than direct armour-class bonus on the cloak.
+    than direct armor-class bonus on the cloak.
 
     Important: &lt;magic bonus&gt; on cloaks has no effect if there is no
-    &lt;armour class&gt; set. It only works in combination with &lt;armour class&gt;.
+    &lt;armor class&gt; set. It only works in combination with &lt;armor class&gt;.
   </attribute>
 </type>
 
@@ -1534,7 +1534,7 @@
     container, depending on the settings.
     <br><br>
     A special feature of containers is the "cauldron",
-    capable of mixing alchemical receipes. ]]>
+    capable of mixing alchemical recipes. ]]>
   </description>
   <use><![CDATA[
     Note on chests - There are two types of chests:
@@ -1570,7 +1570,7 @@
     This value determines how much the weight of items is reduced in
     percent, when put inside the container. &lt;reduce weight %&gt; 1.0 means no
     reduction, &lt;reduce weight %&gt; 0 means items are weightless inside.
-    0.5 means weight is halfed.
+    0.5 means weight is halved.
   </attribute>
   <attribute arch="other_arch" editor="animation arch" type="string">
     This is used for a certain kind of... "animation" when
@@ -1617,7 +1617,7 @@
     eventually destroy it.
   </attribute>
   <attribute arch="proof_ele" editor="condition proof: elemental" type="bool">
-    Elemental attacks are able to reduce the conditon of the item
+    Elemental attacks are able to reduce the condition of the item
     and eventually destroy it.
   </attribute>
   <attribute arch="proof_mag" editor="condition proof: magical" type="bool">
@@ -1697,7 +1697,7 @@
   </description>
   <use><![CDATA[
     Don't hesitate to hide your creators under the floor.
-    The created items will still always appear ontop of the floor. ]]>
+    The created items will still always appear on top of the floor. ]]>
   </use>
   <attribute arch="no_pick" value="1" type="fixed" />
   <attribute arch="other_arch" editor="create arch" type="string">
@@ -1705,7 +1705,7 @@
     You can choose any of the existing arches.
 
     If you leave this empty, the creator will clone any non-system objects
-    from its inventory instead (sortof like the spawn point).
+    from its inventory instead (sort of like the spawn point).
 
     Creators can't create mobs, use spawn points for that.
   </attribute>
@@ -1719,17 +1719,17 @@
     Whenever the connection value is activated,
     the creator gets triggered.
   </attribute>
-  <attribute arch="lifesave" editor="infinit uses" type="bool">
-    If &lt;infinit uses&gt; is set, the creator will work
-    infinitly, regardless of the value in &lt;number of uses&gt;.
+  <attribute arch="lifesave" editor="infinite uses" type="bool">
+    If &lt;infinite uses&gt; is set, the creator will work
+    infinitely, regardless of the value in &lt;number of uses&gt;.
   </attribute>
   <attribute arch="one_drop" editor="check before creation" type="bool">
     Makes the creator check for already existing objects on top of it before
-    creating. Avoids creating lots of duplicates if noone picks the items up.
+    creating. Avoids creating lots of duplicates if no-one picks the items up.
   </attribute>
   <attribute arch="hp" editor="number of uses" type="int">
     The creator can be triggered &lt;number of uses&gt; times, thus
-    creating that many objects, before it dissappears.
+    creating that many objects, before it disappears.
     Default is &lt;number of uses&gt; 1 (-&gt; one-time usage).
   </attribute>
   <attribute arch="slaying" editor="name of creation" type="string">
@@ -1765,7 +1765,7 @@
   <use><![CDATA[
     There is one major speciality about detectors: You can detect spells
     blown over a detector! To detect a lighting bolt for example, set
-    "slaying ligthing" and "speed 1.0". In combination with spellcasting
+    "slaying lighting" and "speed 1.0". In combination with spellcasting
     walls, this can be very useful for map-mechanisms. ]]>
   </use>
   <attribute arch="no_pick" value="1" type="fixed" />
@@ -1808,7 +1808,7 @@
     Directors are rarely used in maps. Sometimes they are placed to
     change the direction of spells coming out of magic walls,
     "channeling" spell-projectiles in some direction. When doing this,
-    <B>never place directors facing each other with magic walls fireing
+    <B>never place directors facing each other with magic walls firing
     into them!</B> The spell-projectiles bouncing between the directors
     would accumulate to huge numbers and at some point slow down the
     server by eating memory- and CPU-time.
@@ -1840,7 +1840,7 @@
     <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
-    Diseases are an intersting form of spellcraft in Daimonin.
+    Diseases are an interesting form of spellcraft in Daimonin.
     Once casted, they can spread out and infect creatures in a large
     area. Being infected can have various effects, from amusing farts
     to horrible damage - almost everything is possible. ]]>
@@ -1855,7 +1855,7 @@
   <attribute arch="level" editor="plague level" type="int">
     The &lt;plague level&gt; is proportional to the disease's deadliness.
     This mainly reflects in the &lt;damage&gt;. It has no effect on
-    most other symptoms. Neverthless, it is a very important value for
+    most other symptoms. Nevertheless, it is a very important value for
     all damage-inflicting diseases.
   </attribute>
   <attribute arch="race" editor="infect race" type="string">
@@ -1864,19 +1864,19 @@
   </attribute>
   <attribute arch="ac" editor="progressiveness" type="int">
     Every time the disease "moves" the severity of the symptoms are increased
-    by &lt;progressiveness&gt;/100. (severity = 1 + (accumlated progression)/100)
+    by &lt;progressiveness&gt;/100. (severity = 1 + (accumulated progression)/100)
   </attribute>
 <section name="spreading">
-  <attribute arch="wc" editor="infectiosness" type="int">
-    The &lt;infectiosness&gt; defines the chance of new creatures getting
+  <attribute arch="wc" editor="infectiousness" type="int">
+    The &lt;infectiousness&gt; defines the chance of new creatures getting
     infected. If you set this too high, the disease is very likely to
     be too effective.
 
-    &lt;infectiosness&gt;/127 is the chance of someone in range catching it.
+    &lt;infectiousness&gt;/127 is the chance of someone in range catching it.
   </attribute>
   <attribute arch="last_grace" editor="attenuation" type="int">
-    The &lt;attenuation&gt; value reduces the diseases' &lt;infectiosness&gt;
-    everytime it infects someone new. This limits how many generations
+    The &lt;attenuation&gt; value reduces the diseases' &lt;infectiousness&gt;
+    every time it infects someone new. This limits how many generations
     a disease can propagate.
   </attribute>
   <attribute arch="magic" editor="infection range" type="int">
@@ -1928,8 +1928,8 @@
     disease where some exotic stuff like money/gems is created.
   </attribute>
   <attribute arch="last_sp" editor="slowdown" type="int">
-    If set, the disease imposes a &lt;slowdown&gt; penatly while being infected.
-    The player's speed is reduced by &lt;slowdown&gt; % diveded by 10 of normal value.
+    If set, the disease imposes a &lt;slowdown&gt; penalty while being infected.
+    The player's speed is reduced by &lt;slowdown&gt; % divided by 10 of normal value.
     Example: A value of 100 means 10% slowdown.
   </attribute>
   <attribute arch="exp" editor="exp. for curing" type="int">
@@ -2010,19 +2010,19 @@
     detected with the show_invisible spell.
     <br><br>
     You can be quite creative with the outlook of secret exits (their "face").
-    Don't forget to give the player relyable hints about them though. ]]>
+    Don't forget to give the player reliable hints about them though. ]]>
   </use>
   <attribute arch="last_eat" editor="map type" type="list_maptype">
-	This most important setting defines as which type of map the destination map
+    This most important setting defines as which type of map the destination map
     will be handled from the server.
     The default exit leads to normal multiplayer maps. Which are loaded
-	from the (read only) default /maps folder and saved/swaped to /tmp.
+    from the (read only) default /maps folder and saved/swaped to /tmp.
     Instances are maps which are "unique" for a single player. Means for every
     player is an own instance is loaded. This kind of maps exists only temporary
-	and if the instance is changed or newly loaded, the old instance is skipped.
+    and if the instance is changed or newly loaded, the old instance is skipped.
     Unique maps are apartments which are permanent saved inside the players folder
-    and permanent proberity of the player.
-    Instances and unique maps will be avaible in later daimonin version for groups
+    and permanent property of the player.
+    Instances and unique maps will be available in later Daimonin version for groups
     and clans too.
   </attribute>
   <attribute arch="slaying" editor="exit path" type="string">
@@ -2062,12 +2062,12 @@
     If set, the player will be put exactly on the position we defined above.
     If not set, the server will check the surrounding for a free space.
     Fixed spot will overrule the search for a free spot AND will force
-    an insertation even when the spot is not free. Use careful.
+    an insertion even when the spot is not free. Use careful.
   </attribute>
   <attribute arch="last_grace" editor="insert at free spot only" type="bool">
-    If set, the player will be put ONLY on a free spot or insertation will fail.
+    If set, the player will be put ONLY on a free spot or insertion will fail.
     If not set, the server will still look for a free spot (if fixed spot is
-    not set) but will do a forced insertation to x,y when there is no free spot
+    not set) but will do a forced insertion to x,y when there is no free spot
     (thats default mode).
     Insert at free spot only can be used in combination with fixed or random
     spot flag.
@@ -2095,7 +2095,7 @@
   <attribute arch_begin="msg" arch_end="endmsg" editor="exit message" type="text">
     If set, this message will be displayed to the player when he applies the exit.
     This is quite useful to throw in some "role-play feeling": "As you enter the
-    dark cave you hear the sound of rustling dragonscales...". Well, my english
+    dark cave you hear the sound of rustling dragonscales...". Well, my English
     is poor, but you get the point. =)
   </attribute>
 </type>
@@ -2105,10 +2105,10 @@
   <import_type name="combat_values" />
   <description><![CDATA[
     By eating/drinking food-objects, the player can fill his
-    stomache and gain a little health. ]]>
+    stomach and gain a little health. ]]>
   </description>
   <attribute arch="food" editor="foodpoints" type="int">
-    The player's stomache will get filled with this amount of foodpoints.
+    The player's stomach will get filled with this amount of foodpoints.
     The player's health will increase by &lt;foodpoints&gt;/50 hp.
   </attribute>
   <attribute arch="level" editor="flesh level" type="int">
@@ -2204,11 +2204,11 @@
   </ignore>
   <description><![CDATA[
     By eating/drinking food-objects, the player can fill his
-    stomache.
-    They restore over time helath, mana and/or grace.]]>
+    stomach.
+    They restore over time health, mana and/or grace.]]>
   </description>
   <attribute arch="last_eat" editor="eating time" type="int">
-    The player's stomache will get filled in eating time second.
+    The player's stomach will get filled in eating time second.
     The player will restore &lt;foodpoints&gt; * hp/sp/grace.
   </attribute>
   <attribute arch="hp" editor="restore health" type="int">
@@ -2235,10 +2235,10 @@
   <description><![CDATA[
     DRINK Objects are like food objects - just liquids instead
     of organics.
-    They restore over time helath, mana and/or grace.]]>
+    They restore over time health, mana and/or grace.]]>
   </description>
   <attribute arch="last_eat" editor="eating time" type="int">
-    The player's stomache will get filled in eating time second.
+    The player's stomach will get filled in eating time second.
     The player will restore &lt;foodpoints&gt; * hp/sp/grace.
   </attribute>
   <attribute arch="hp" editor="restore health" type="int">
@@ -2271,7 +2271,7 @@
     passed, which makes them more practical in many cases. ]]>
   </description>
   <use><![CDATA[
-    Use gates to divide your maps into seperated areas. After solving
+    Use gates to divide your maps into separated areas. After solving
     area A, the player gains access to area B, and so on. Make your
     maps more complex than "one-way". ]]>
   </use>
@@ -2313,7 +2313,7 @@
     gates. ]]>
   </description>
   <use><![CDATA[
-    Use timed gates to divide your maps into seperated areas. After solving
+    Use timed gates to divide your maps into separated areas. After solving
     area A, the player gains access to area B, and so on. Make your
     maps more complex than "one-way". U can use the auto close feature for
     many tricks. You can force your player after trigger the gate to do a choice
@@ -2361,10 +2361,10 @@
   <attribute arch="magic" editor="magic bonus" type="int">
     &lt;magic bonus&gt; works just like ac, except that it can be improved by
     "scrolls of Enchant Armour" or reduced by acid. It is less useful
-    than direct armour-class bonus on the helmet.
+    than direct armor-class bonus on the helmet.
 
     Important: &lt;magic bonus&gt; on girdles has no effect if there is no
-    &lt;armour class&gt; set. Girdles shouldn't have &lt;armour class&gt;, thus
+    &lt;armor class&gt; set. Girdles shouldn't have &lt;armor class&gt;, thus
     &lt;magic bonus&gt; is pointless here.
   </attribute>
 </type>
@@ -2385,7 +2385,7 @@
     important that you keep your artifact in balance with existing maps. ]]>
   </use>
   <attribute arch="magic" editor="magic bonus" type="int">
-    If the gloves provide &lt;armour class&gt;, &lt;magic bonus&gt; will increase it.
+    If the gloves provide &lt;armor class&gt;, &lt;magic bonus&gt; will increase it.
     If the gloves have &lt;weapon class&gt; instead, then &lt;magic bonus&gt;
     will increase that.
   </attribute>
@@ -2462,7 +2462,7 @@
   </use>
   <attribute arch="last_heal" editor="spellcasting penalty" type="int">
     This poses a penalty to spellcasting, for wearing the boots.
-    The bigger the spellcarting penalty, the worse.
+    The bigger the spellcasting penalty, the worse.
     The spell will fail then.
   </attribute>
   <attribute arch="last_sp" editor="slowdown" type="int">
@@ -2472,10 +2472,10 @@
   <attribute arch="magic" editor="magic bonus" type="int">
     &lt;magic bonus&gt; works just like ac, except that it can be improved by
     "scrolls of Enchant Armour" or reduced by acid. It is less useful
-    than direct armour-class bonus on the helmet.
+    than direct armor-class bonus on the helmet.
 
     Important: &lt;magic bonus&gt; on helmets has no effect if there is no
-    &lt;armour class&gt; set. It only works in combination with &lt;armour class&gt;.
+    &lt;armor class&gt; set. It only works in combination with &lt;armor class&gt;.
     Crowns for instance typically provide no &lt;amour class&gt;.
   </attribute>
 </type>
@@ -2499,7 +2499,7 @@
   </use>
   <attribute arch="last_heal" editor="spellcasting penalty" type="int">
     This poses a penalty to spellcasting, for wearing the boots.
-    The bigger the spellcarting penalty, the worse.
+    The bigger the spellcasting penalty, the worse.
     The spell will fail then.
   </attribute>
   <attribute arch="last_sp" editor="slowdown" type="int">
@@ -2509,10 +2509,10 @@
   <attribute arch="magic" editor="magic bonus" type="int">
     &lt;magic bonus&gt; works just like ac, except that it can be improved by
     "scrolls of Enchant Armour" or reduced by acid. It is less useful
-    than direct armour-class bonus on the shoulder.
+    than direct armor-class bonus on the shoulder.
 
     Important: &lt;magic bonus&gt; on shoulders has no effect if there is no
-    &lt;armour class&gt; set. It only works in combination with &lt;armour class&gt;.
+    &lt;armor class&gt; set. It only works in combination with &lt;armor class&gt;.
   </attribute>
 </type>
 
@@ -2536,7 +2536,7 @@
   </use>
   <attribute arch="last_heal" editor="spellcasting penalty" type="int">
     This poses a penalty to spellcasting, for wearing the boots.
-    The bigger the spellcarting penalty, the worse.
+    The bigger the spellcasting penalty, the worse.
     The spell will fail then.
   </attribute>
   <attribute arch="last_sp" editor="slowdown" type="int">
@@ -2546,10 +2546,10 @@
   <attribute arch="magic" editor="magic bonus" type="int">
     &lt;magic bonus&gt; works just like ac, except that it can be improved by
     "scrolls of Enchant Armour" or reduced by acid. It is less useful
-    than direct armour-class bonus on the legs.
+    than direct armor-class bonus on the legs.
 
     Important: &lt;magic bonus&gt; on legs has no effect if there is no
-    &lt;armour class&gt; set. It only works in combination with &lt;armour class&gt;.
+    &lt;armor class&gt; set. It only works in combination with &lt;armor class&gt;.
   </attribute>
 </type>
 
@@ -2649,7 +2649,7 @@
   <import_type name="combat_values" />
   <description><![CDATA[
     Inorganic materials are generally used as ingredients for
-    alchemical receipes. By themselves, they have no special
+    alchemical recipes. By themselves, they have no special
     functionalities. ]]>
   </description>
   <attribute arch="is_dust" editor="is dust" type="bool">
@@ -2680,7 +2680,7 @@
     Putting a check_inventory space in front of a gate (one below) and
     one on the opposite side works reasonably well as a control mechanism.
     Unlike the key/door-combo, this one works infinite since it is
-    independant from map reset. Use it to put a "structure" into your
+    independent from map reset. Use it to put a "structure" into your
     maps: Player must solve area A to gain access to area B. This concept
     can be found in nearly every RPG - simple but effective. ]]>
   </use>
@@ -2700,7 +2700,7 @@
   </attribute>
   <attribute arch="race" editor="match arch name" type="string">
     This string specifies the object we are looking for: We have a match
-    if the player does/don't carry an object of archtype &lt;match arch name&gt;.
+    if the player does/don't carry an object of archetype &lt;match arch name&gt;.
   </attribute>
   <attribute arch="hp" editor="match type" type="int">
     This value specifies the object we are looking for: We have a match
@@ -2821,7 +2821,7 @@
   </description>
   <use><![CDATA[
     If you want to create a locked door that cannot be opened (no key),
-    set a &lt;key string&gt; like "no_key_available". This will clearify things
+    set a &lt;key string&gt; like "no_key_available". This will clarify things
     and only a fool would create a key matching that string.
 
     Door-objects can not only be used for "doors". In many maps these
@@ -2836,12 +2836,12 @@
     The &lt;key string&gt; in the door must be identical with the
     &lt;key string&gt; in the special key, then the door is unlocked.
     It is VERY important to set the &lt;key string&gt; to something that
-    is unique among the mapset.
+    is unique among the map set.
 
-    DONT EVER USE the default string "set_individual_value".
+    DON'T EVER USE the default string "set_individual_value".
   </attribute>
   <attribute arch="other_arch" editor="change to object" type="string">
-    If set, the door will when opened changed permantly to this object.
+    If set, the door will when opened changed permanently to this object.
     If not set, the door will be used as "auto-closing" door, using the
     open counter value.
   </attribute>
@@ -2877,7 +2877,7 @@
   <description>Magic ears trigger a plugin event when the player speaks.</description>
   <use><![CDATA[
     Whenever you put magic ears on your maps, make sure there are
-    CLEAR and RELYABLE hints about the keywords somewhere. Don't make
+    CLEAR and RELIABLE hints about the keywords somewhere. Don't make
     something like a gate that is opened by speaking "open" or
     "sesame", expecting the player to figure this out all by himself.
     <br><br>
@@ -2923,8 +2923,8 @@
     walls' spell(s).]]>
   </use>
   <attribute arch="last_eat" editor="casting on/off" type="bool">
-	If set the wall is "on" and cast spells - if not set the
-      wall is "off" and don't cast spells (but can be turned).
+    If set the wall is "on" and cast spells - if not set the
+    wall is "off" and don't cast spells (but can be turned).
   </attribute>
   <attribute arch="dam" editor="spell" type="spell">
     The magic wall will cast this &lt;spell&gt;.
@@ -2945,8 +2945,8 @@
     have much visible effect.
   </attribute>
   <attribute arch="maxsp" editor="turn steps" type="int">
-	If set and a connected object without "last_eat 1" gives
-      signal, the magic wall turns this steps.
+    If set and a connected object without "last_eat 1" gives
+    signal, the magic wall turns this steps.
   </attribute>
 <section name="destroyable">
   <attribute arch="alive" editor="is destroyable" type="bool">
@@ -2962,9 +2962,9 @@
     &lt;max hitpoints&gt; are the maximum amount of hitpoints the wall
     can have. This only makes sense if the wall can regain health.
   </attribute>
-  <attribute arch="ac" editor="armour class" type="int">
-    A magic wall of high &lt;armour class&gt; is less likely to get hit from
-    an opponent. &lt;armour class&gt; can be considered the "counterpiece"
+  <attribute arch="ac" editor="armor class" type="int">
+    A magic wall of high &lt;armor class&gt; is less likely to get hit from
+    an opponent. &lt;armor class&gt; can be considered the "counterpiece"
     to &lt;weapon class&gt;.
   </attribute>
 </section>
@@ -3023,7 +3023,7 @@
     When the player steps onto the marker, all existing forces in
     the players inventory with a &lt;key string&gt; matching &lt;delete mark&gt;
     will be removed. If you don't want to remove any marks, leave
-    this textfield empty.
+    this text field empty.
 
     Note that the string &lt;delete mark&gt; is set as the name of
     this marker. So don't be confused, and remember changing the
@@ -3071,7 +3071,7 @@
     Monsters can behave in various kinds of ways.
     They can be aggressive, attacking the player. Or peaceful,
     helping the player - maybe joining him as pet.
-    The unagressive creatures who communicate with players are
+    The unaggressive creatures who communicate with players are
     usually called "NPCs" (Non Player Character), a well-known
     term in role-play environments. ]]>
   </description>
@@ -3096,7 +3096,7 @@
     <LI> Create your own monsters, especially for "boss"-type monsters.
          Having stage-bosses guarding treasure is a lot of fun when done right.
          Avoid to create monsters with completely non-intuitive abilities:
-         Don't give ice-spells to firedragons or vice versa. Don't add
+         Don't give ice-spells to fire dragons or vice versa. Don't add
          draining attack to trolls, etc. Additionally, you should inform the
          player before he bumps right into some very special/unusual monster.
     <LI> Last but not least: Always keep an eye on the experience your monsters
@@ -3125,17 +3125,17 @@
     &lt;level&gt; affects the power of a monster in various ways.
   </attribute>
   <attribute arch="race" editor="race" type="string">
-    Every monster should have a race set to cathegorize it.
+    Every monster should have a race set to categorize it.
     The monster's &lt;race&gt; can have different effects:
-    Slaying weapons inflict tripple damage against enemy races
+    Slaying weapons inflict triple damage against enemy races
     and holy word kills only enemy races of the god.
   </attribute>
   <attribute arch="exp" editor="experience" type="int">
     When a player kills this monster, he will get exactly this
     amount of &lt;experience&gt;. The experience will flow into
-    the skill-cathegory the player used for the kill.
+    the skill-category the player used for the kill.
 
-    If you create special monsters of tweaked strenght/abilities,
+    If you create special monsters of tweaked strength/abilities,
     always make sure that the &lt;experience&gt; is set to a
     reasonable value. Compare with existing arches to get a feeling
     what reasonable means. Keep in mind that spellcasting monsters
@@ -3146,13 +3146,13 @@
     and fight. High &lt;speed&gt; makes a monster considerably stronger.
     If the start value is negative (like -0.1) then the speed is set to
     0.1 but the speed counter becomes a random start value. This will avoid
-    for generated objects of same type thats they act totally synchron.
+    for generated objects of same type thats they act totally synchronously.
   </attribute>
   <attribute arch="other_arch" editor="breed monster" type="string">
     This only takes effect if &lt;multiply&gt; or &lt;splits&gt; is enabled.
-	The monster will create a &lt;breed monster&gt; every once in a while.
-	&lt;breed monster&gt; can be set to any valid arch-name of a monster.
-	Multipart monster should not be used.
+    The monster will create a &lt;breed monster&gt; every once in a while.
+    &lt;breed monster&gt; can be set to any valid arch-name of a monster.
+    Multipart monster should not be used.
   </attribute>
   <attribute arch="generator" editor="multiply" type="bool">
     Monsters with &lt;multiply&gt; enabled will create a &lt;breed monster&gt;
@@ -3161,14 +3161,14 @@
   </attribute>
   <attribute arch="food" editor="split number" type="int">
     This is the number of new monsters generated when this monster
-	is split. This only takes effect if &lt;split&gt; and &lt;breed monster&gt;
-	is set.
+    is split. This only takes effect if &lt;split&gt; and &lt;breed monster&gt;
+    is set.
   </attribute>
   <attribute arch="splitting" editor="split" type="bool">
     Monsters with &lt;split&gt; enabled will split into one or more
-	&lt;breed monster&gt; whenever they're hit. The number of new monsters
-	is controlled by &lt;split number&gt;.
-	If enabled, you must also set &lt;breed monster&gt; and &lt;split number&gt;.
+    &lt;breed monster&gt; whenever they're hit. The number of new monsters
+    is controlled by &lt;split number&gt;.
+    If enabled, you must also set &lt;breed monster&gt; and &lt;split number&gt;.
   </attribute>
   <attribute arch="invulnerable" editor="invulnerable" type="bool">
     This mob will NEVER take any damage - so it can't die by damage.
@@ -3179,7 +3179,7 @@
     flag is set, the monster can pass through all no_pass objects
     which has pass_thru set.
     This is used for example from ghosts who moves through doors.
-    Be careful! This is a extrem powerful ability! Use it in context!
+    Be careful! This is a extremely powerful ability! Use it in context!
     Orcs who moves without reason through walls are not senseful.
     NOTE: can_pass_thru is a sub-effect from ethereality. See below.
   </attribute>
@@ -3222,7 +3222,7 @@
     Being &lt;asleep&gt;, a monster won't move unless a player enters the
     &lt;sensing range&gt; of the monster. Usually the sensing range is
     larger than the players line of sight. Due to that, in most cases
-    the player won't ever notice weither a monster was asleep or not.
+    the player won't ever notice hwether a monster was asleep or not.
   </attribute>
 
 <section name="melee">
@@ -3246,7 +3246,7 @@
   <attribute arch="wc" editor="weapon class" type="int">
     Monsters of low &lt;weapon class&gt; are more likely to really hit
     their opponent. &lt;weapon class&gt; can be considered the "counterpiece"
-    to &lt;armour class&gt;.
+    to &lt;armor class&gt;.
     Note that the monster's level further improves weapon class:
     "real weapon class" = &lt;weapon class&gt; - &lt;level&gt;
   </attribute>
@@ -3270,13 +3270,13 @@
     A value of 50 will be handled as 5.0, a value of 55 = 5.5.
     "real max health" = (&lt;max health&gt; * (&lt;level&gt; + 3))/10
   </attribute>
-  <attribute arch="ac" editor="armour class" type="int">
-    Monsters of low &lt;armour class&gt; are less likely to get hit from
-    their opponent. &lt;armour class&gt; can be considered the "counterpiece"
+  <attribute arch="ac" editor="armor class" type="int">
+    Monsters of low &lt;armor class&gt; are less likely to get hit from
+    their opponent. &lt;armor class&gt; can be considered the "counterpiece"
     to &lt;weapon class&gt;.
     Values typically range between +20 (very bad) to -20 (quite good).
-    Note that the monster's level further improves armour class:
-    "real armour class" = &lt;armour class&gt; - &lt;level&gt;
+    Note that the monster's level further improves armor class:
+    "real armor class" = &lt;armor class&gt; - &lt;level&gt;
   </attribute>
   <attribute arch="con" editor="healing (reg.) rate" type="int">
     Monsters regenerate this many hit points each move. Each time the
@@ -3296,7 +3296,7 @@
     Acid spheres for example use this feature.
   </attribute>
   <attribute arch="one_hit" editor="one hit only" type="bool">
-    Monsters with &lt;one hit only&gt; dissapear after one successful hit
+    Monsters with &lt;one hit only&gt; disappear after one successful hit
     to a player.
   </attribute>
   <attribute arch="str" editor="Strength" type="int">
@@ -3371,7 +3371,7 @@
     throwing, etc.
   </attribute>
   <attribute arch="int" editor="detect hidden" type="int">
-    The &lt;detect hidden&gt; value gives monsters the abiltity to find
+    The &lt;detect hidden&gt; value gives monsters the ability to find
     hidden/invisible creatures. Higher values make for better
     detection-skills. Enabling &lt;see invisible&gt; makes this value
     obsolete.
@@ -3399,16 +3399,19 @@
 
 <section name="behave">
   <attribute arch="unaggressive" editor="unaggressive" type="bool">
-    &lt;unaggressive&gt; monsters do not attack unless attacked first. If attacked at any time, the unaggressive status will be removed forever.
+    &lt;unaggressive&gt; monsters do not attack unless attacked first. If
+    attacked at any time, the unaggressive status will be removed forever.
   </attribute>
   <attribute arch="surrendered" editor="surrendered" type="bool">
-    &lt;surrendered&gt; monsters do not attack and don't count as target for friendly NPC.
+    &lt;surrendered&gt; monsters do not attack and don't count as target for
+    friendly NPC.
   </attribute>
   <attribute arch="friendly" editor="friendly" type="bool">
     &lt;friendly&gt; monsters help the player, attacking any
     non-friendly monsters in range.
 
-    This sets the basic monster/NPC alignment. The "friendship" AI behaviour gives more detailed control over whom to consider friends or enemies.
+    This sets the basic monster/NPC alignment. The "friendship" AI behavior
+    gives more detailed control over whom to consider friends or enemies.
   </attribute>
   <attribute arch="no_attack" editor="never attack" type="bool">
     This mob will NEVER attack or fight back. It's permanently unaggressive.
@@ -3416,14 +3419,15 @@
     This setting only has effect if the monster doesn't have an AI object.
   </attribute>
   <attribute arch="has_ready_weapon" editor="forced melee" type="bool">
-    This mob will primarily do melee attacks, even if it has range weapons or spells available.
+    This mob will primarily do melee attacks, even if it has range weapons or
+    spells available.
 
     This setting only has effect if the monster doesn't have an AI object.
   </attribute>
   <attribute arch="random_move" editor="random movement" type="bool">
     Monsters with this flag enabled move around at random.
     Specifically, that means they do not approach enemy players
-    when agressive, but they never stand still either.
+    when aggressive, but they never stand still either.
 
     This setting only has effect if the monster doesn't have an AI object.
   </attribute>
@@ -3443,8 +3447,8 @@
 
   <attribute arch="stand_still" editor="stand still" type="bool">
     Monsters which &lt;stand still&gt; won't move to leave their position.
-    When agressive, they will attack all enemies who get close to
-    them. This behaviour is commonly known from castle guards.
+    When aggressive, they will attack all enemies who get close to
+    them. This behavior is commonly known from castle guards.
 
     When lining up &lt;stand still&gt;-monster in order to "defend"
     something: Be aware that such monsters are rather easy to kill.
@@ -3461,8 +3465,9 @@
   </attribute>
 </section>
   <attribute arch_begin="msg" arch_end="endmsg" editor="default message" type="text">
-    The default message is used as the reply if a player tries to talk to an NPC that doesn't have a script.
-    You can use it to get some variation on the otherwise standard "NN has nothing to say".
+    The default message is used as the reply if a player tries to talk to an
+    NPC that doesn't have a script. You can use it to get some variation on the
+    otherwise standard "NN has nothing to say".
   </attribute>
 </type>
 
@@ -3482,7 +3487,7 @@
     After the spawn point is set, one or more
     mobs can be added to the spawn points inventory.
     By changing the monster type from MONSTER to
-    SPAWN POINT MOB, the mob will used as prototyp
+    SPAWN POINT MOB, the mob will used as prototype
     for a spawn. The map maker can set some options,
     like chance to spawn. Is a spawn monster is generate
     and then slain, the spawn point will try to generate
@@ -3545,7 +3550,7 @@
   </ignore>
   <description><![CDATA[
     Spawn Point Mobs are Monsters, put in the inventory
-    of a spawn point and used as prototyp for map spawn.
+    of a spawn point and used as prototype for map spawn.
     The spawn point will set a copy of this object on the map,
     reseting it to a normal MONSTER. ]]>
   </description>
@@ -3570,7 +3575,7 @@
     <LI> Create your own monsters, especially for "boss"-type monsters.
          Having stage-bosses guarding treasure is a lot of fun when done right.
          Avoid to create monsters with completely non-intuitive abilities:
-         Don't give ice-spells to firedragons or vice versa. Don't add
+         Don't give ice-spells to fire dragons or vice versa. Don't add
          draining attack to trolls, etc. Additionally, you should inform the
          player before he bumps right into some very special/unusual monster.
     <LI> Last but not least: Always keep an eye on the experience your monsters
@@ -3599,17 +3604,17 @@
     &lt;level&gt; affects the power of a monster in various ways.
   </attribute>
   <attribute arch="race" editor="race" type="string">
-    Every monster should have a race set to cathegorize it.
+    Every monster should have a race set to categorize it.
     The monster's &lt;race&gt; can have different effects:
-    Slaying weapons inflict tripple damage against enemy races
+    Slaying weapons inflict triple damage against enemy races
     and holy word kills only enemy races of the god.
   </attribute>
   <attribute arch="exp" editor="experience" type="int">
     When a player kills this monster, he will get exactly this
     amount of &lt;experience&gt;. The experience will flow into
-    the skill-cathegory the player used for the kill.
+    the skill-category the player used for the kill.
 
-    If you create special monsters of tweaked strenght/abilities,
+    If you create special monsters of tweaked strength/abilities,
     always make sure that the &lt;experience&gt; is set to a
     reasonable value. Compare with existing arches to get a feeling
     what reasonable means. Keep in mind that spellcasting monsters
@@ -3620,7 +3625,7 @@
     and fight. High &lt;speed&gt; makes a monster considerably stronger.
     If the start value is negative but the speed counter becomes a
     random start value. This will avoid for generated objects of same
-    type thats they act totally synchron.
+    type thats they act totally synchronous.
   </attribute>
   <attribute arch="other_arch" editor="breed monster" type="string">
     This only takes effect if &lt;multiply&gt; is enabled. The monster will
@@ -3637,7 +3642,7 @@
     flag is set, the monster can pass through all no_pass objects
     which has pass_thru set.
     This is used for example from ghosts who moves through doors.
-    Be careful! This is a extrem powerful ability! Use it in context!
+    Be careful! This is a extremely powerful ability! Use it in context!
     Orcs who moves without reason through walls are not senseful.
     NOTE: can_pass_thru is a sub-effect from ethereality. See below.
   </attribute>
@@ -3647,7 +3652,7 @@
     flag is set, the monster can pass through all no_pass objects
     which has pass_thru set.
     This is used for example from ghosts who moves through doors.
-    Be careful! This is a extrem powerful ability! Use it in context!
+    Be careful! This is a extremely powerful ability! Use it in context!
     Orcs who moves without reason through walls are not senseful.
     NOTE: ethereal has special abilities. It has the same effect
     like can_pass_thru flag but its special. Its like the difference
@@ -3671,16 +3676,18 @@
     the carried weight.
   </attribute>
   <attribute arch="is_male" editor="male" type="bool">
-    This monster is male. You can create male, female, hermaphroditic or neuter monsters.
+    This monster is male. You can create male, female, hermaphroditic or neuter
+    monsters.
   </attribute>
   <attribute arch="is_female" editor="female" type="bool">
-    This monster is female. You can create male, female, hermaphroditic or neuter monsters.
+    This monster is female. You can create male, female, hermaphroditic or
+    neuter monsters.
   </attribute>
   <attribute arch="sleep" editor="asleep" type="bool">
     Being &lt;asleep&gt;, a monster won't move unless a player enters the
     &lt;sensing range&gt; of the monster. Usually the sensing range is
     larger than the players line of sight. Due to that, in most cases
-    the player won't ever notice weither a monster was asleep or not.
+    the player won't ever notice whether a monster was asleep or not.
   </attribute>
 <section name="spawn-settings">
   <attribute arch="object_int1" editor="chance to spawn" type="int">
@@ -3707,8 +3714,8 @@
     A value of 50 will be handled as 5.0, a value of 55 = 5.5.
     Among other parameters, &lt;damage&gt; affects how much melee damage
     a monster inflicts. &lt;damage&gt; is used as base value for damage per
-    hit. &lt;level&gt;, &lt;speed&gt;, &lt;weapon class&gt; and resistances also
-    take effect on the melee damage of a monster.
+    hit. &lt;level&gt;, &lt;speed&gt;, &lt;weapon class&gt; and resistances
+    also take effect on the melee damage of a monster.
   </attribute>
   <attribute arch="thac0" editor="thac0" type="int">
     A attack roll is done with a w20. Every value bigger
@@ -3723,7 +3730,7 @@
   <attribute arch="wc" editor="weapon class" type="int">
     Monsters of low &lt;weapon class&gt; are more likely to really hit
     their opponent. &lt;weapon class&gt; can be considered the "counterpiece"
-    to &lt;armour class&gt;.
+    to &lt;armor class&gt;.
     Note that the monster's level further improves weapon class:
     "real weapon class" = &lt;weapon class&gt; - &lt;level&gt;
   </attribute>
@@ -3747,13 +3754,13 @@
     The in-game value is (roughly) calculated as follows:
     "real max health" = &lt;max health&gt; * (&lt;level&gt; + 3)/10
   </attribute>
-  <attribute arch="ac" editor="armour class" type="int">
-    Monsters of low &lt;armour class&gt; are less likely to get hit from
-    their opponent. &lt;armour class&gt; can be considered the "counterpiece"
+  <attribute arch="ac" editor="armor class" type="int">
+    Monsters of low &lt;armor class&gt; are less likely to get hit from
+    their opponent. &lt;armor class&gt; can be considered the "counterpiece"
     to &lt;weapon class&gt;.
     Values typically range between +20 (very bad) to -20 (quite good).
-    Note that the monster's level further improves armour class:
-    "real armour class" = &lt;armour class&gt; - &lt;level&gt;
+    Note that the monster's level further improves armor class:
+    "real armor class" = &lt;armor class&gt; - &lt;level&gt;
   </attribute>
   <attribute arch="con" editor="healing (reg.) rate" type="int">
     Monsters regenerate this many hit points each move. Each time the
@@ -3773,7 +3780,7 @@
     Acid spheres for example use this feature.
   </attribute>
   <attribute arch="one_hit" editor="one hit only" type="bool">
-    Monsters with &lt;one hit only&gt; dissapear after one successful hit
+    Monsters with &lt;one hit only&gt; disappear after one successful hit
     to a player.
   </attribute>
   <attribute arch="str" editor="Strength" type="int">
@@ -3847,7 +3854,7 @@
     throwing, etc.
   </attribute>
   <attribute arch="int" editor="detect hidden" type="int">
-    The &lt;detect hidden&gt; value gives monsters the ablitity to find
+    The &lt;detect hidden&gt; value gives monsters the ability to find
     hidden/invisible creatures. Higher values make for better
     detection-skills. Enabling &lt;see invisible&gt; makes this value
     obsolete.
@@ -3875,26 +3882,30 @@
 
 <section name="behave">
   <attribute arch="unaggressive" editor="unaggressive" type="bool">
-    &lt;unaggressive&gt; monsters do not attack unless attacked first. If attacked at any time, the unaggressive status will be removed forever.
+    &lt;unaggressive&gt; monsters do not attack unless attacked first. If
+    attacked at any time, the unaggressive status will be removed forever.
   </attribute>
   <attribute arch="surrendered" editor="surrendered" type="bool">
-    &lt;surrendered&gt; monsters do not attack and don't count as target for friendly NPC.
+    &lt;surrendered&gt; monsters do not attack and don't count as target for
+    friendly NPC.
   </attribute>
   <attribute arch="friendly" editor="friendly" type="bool">
     &lt;friendly&gt; monsters help the player, attacking any
     non-friendly monsters in range.
 
-    This sets the basic monster/NPC alignment. The "friendship" AI behaviour gives more detailed control over whom to consider friends or enemies.
+    This sets the basic monster/NPC alignment. The "friendship" AI behavior
+    gives more detailed control over whom to consider friends or enemies.
   </attribute>
   <attribute arch="has_ready_weapon" editor="forced melee" type="bool">
-    This mob will primarily do melee attacks, even if it has range weapons or spells available.
+    This mob will primarily do melee attacks, even if it has range weapons or
+    spells available.
 
     This setting only has effect if the monster doesn't have an AI object.
   </attribute>
   <attribute arch="random_move" editor="random movement" type="bool">
     Monsters with this flag enabled move around at random.
     Specifically, that means they do not approach enemy players
-    when agressive, but they never stand still either.
+    when aggressive, but they never stand still either.
 
     This setting only has effect if the monster doesn't have an AI object.
   </attribute>
@@ -3914,8 +3925,8 @@
 
   <attribute arch="stand_still" editor="stand still" type="bool">
     Monsters which &lt;stand still&gt; won't move to leave their position.
-    When agressive, they will attack all enemies who get close to
-    them. This behaviour is commonly known from castle guards.
+    When aggressive, they will attack all enemies who get close to
+    them. This behavior is commonly known from castle guards.
 
     When lining up &lt;stand still&gt;-monster in order to "defend"
     something: Be aware that such monsters are rather easy to kill.
@@ -3931,8 +3942,9 @@
     This setting only has effect if the monster doesn't have an AI object.
   </attribute>
   <attribute arch_begin="msg" arch_end="endmsg" editor="default message" type="text">
-    The default message is used as the reply if a player tries to talk to an NPC that doesn't have a script.
-    You can use it to get some variation on the otherwise standard "NN has nothing to say".
+    The default message is used as the reply if a player tries to talk to an
+    NPC that doesn't have a script. You can use it to get some variation on the
+    otherwise standard "NN has nothing to say".
   </attribute>
 </section>
 </type>
@@ -3946,8 +3958,8 @@
   </ignore>
   <description><![CDATA[
     As the name implies, mood floors can change the "mood" of
-    a monsters/NPC. For example, an unagressive monster could be
-    turned mad to start attacking. Similar, an agressive monster
+    a monsters/NPC. For example, an unaggressive monster could be
+    turned mad to start attacking. Similar, an aggressive monster
     could be calmed. ]]>
   </description>
   <use><![CDATA[
@@ -3979,7 +3991,7 @@
 
     &lt;mood&gt; 'charm': Turns monster into a pet of person
                     who triggers the square. This setting is not
-                    enabled for continous operation, you need to
+                    enabled for continuous operation, you need to
                     insert a &lt;connection&gt; value!
   </attribute>
   <attribute arch="connected" editor="connection" type="int">
@@ -4006,14 +4018,14 @@
     are affected (monsters/NPCs always, players optional). Movers have
     a direction, so players can be made to move in a pattern, and so
     can monsters. Motion is involuntary. Additionally, players or
-    monsters can be "frozen" while ontop of movers so that they MUST
+    monsters can be "frozen" while on top of movers so that they MUST
     move along a chain of them.
     <br><br>
     Multisquare monsters can be moved as well, given
     enough space. Movers are usually invisible. ]]>
   </description>
   <use><![CDATA[
-    NEVER EVER consider a mover being unpassable in the backwards
+    NEVER EVER consider a mover being impassable in the backwards
     direction. Setting force movement makes it seemingly impossible
     but there is still a trick: One player can push a second player
     past the mover, in opposite to the mover's direction! The more
@@ -4024,7 +4036,7 @@
     below the floor. Moreover, movers that are set to be invisible
     cannot be discovered with the show_invisible spell.
     <br><br>
-    Note that Movers and Directors are seperate objects, even though
+    Note that Movers and Directors are separate objects, even though
     they look and act similar. Directors only do spells/missiles,
     while movers only do living creatures (depending on how it
     is set: monsters and players). ]]>
@@ -4041,7 +4053,8 @@
   </attribute>
   <attribute arch="lifesave" editor="gets used up" type="bool">
     If enabled, the mover gets "used up" after a certain number of moves
-    (specified by &lt;number of uses&gt;). If disabled, the mover works infinitly.
+    (specified by &lt;number of uses&gt;). If disabled, the mover works
+    infinitely.
   </attribute>
   <attribute arch="hp" editor="number of uses" type="int">
     This value has only a meaning if &lt;gets used up&gt; is set:
@@ -4100,10 +4113,10 @@
   </use>
   <attribute arch="no_pick" value="1" type="fixed" />
   <attribute arch="slaying" editor="match text" type="string">
-    the &lt;match race&gt; defines the object we're looking for. If &lt;match race&gt;
-    matches the monster's or the player's race, we have a match.
-    Yes, pedestals can detect a player's race! E.g. you could create a
-    place where only fireborns can enter, by setting "slaying unnatural".
+    the &lt;match race&gt; defines the object we're looking for. If &lt;match
+    race&gt; matches the monster's or the player's race, we have a match. Yes,
+    pedestals can detect a player's race! E.g. you could create a place where
+    only fireborns can enter, by setting "slaying unnatural".
 
     If it is set to "player", any player stepping on the pedestal
     is a match. Very useful if you want to open a gate for players
@@ -4130,8 +4143,8 @@
     <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
-    Trigger Pedestals are like normal Pedestal but they reset after they got triggered
-    automatically. In the reset time they can't be triggered again.
+    Trigger Pedestals are like normal Pedestal but they reset after they got
+    triggered automatically. In the reset time they can't be triggered again.
     They are designed to detect certain types of living objects or keys.
     When a predefined type of living creature steps on the pedestal, the
     connected value is triggered.
@@ -4206,16 +4219,16 @@
     mess with this value - Leave the default in place.
   </attribute>
   <attribute arch="last_eat" editor="map type" type="list_maptype">
-	This most important setting defines as which type of map the destination map
+    This most important setting defines as which type of map the destination map
     will be handled from the server.
     The default exit leads to normal multiplayer maps. Which are loaded
-	from the (read only) default /maps folder and saved/swaped to /tmp.
+    from the (read only) default /maps folder and saved/swaped to /tmp.
     Instances are maps which are "unique" for a single player. Means for every
     player is an own instance is loaded. This kind of maps exists only temporary
-	and if the instance is changed or newly loaded, the old instance is skipped.
+    and if the instance is changed or newly loaded, the old instance is skipped.
     Unique maps are apartments which are permanent saved inside the players folder
-    and permanent proberity of the player.
-    Instances and unique maps will be avaible in later daimonin version for groups
+    and permanent property of the player.
+    Instances and unique maps will be available in later Daimonin version for groups
     and clans too.
   </attribute>
   <attribute arch="slaying" editor="exit path" type="string">
@@ -4248,12 +4261,12 @@
     If set, the player will be put exactly on the position we defined above.
     If not set, the server will check the surrounding for a free space.
     Fixed spot will overrule the search for a free spot AND will force
-    an insertation even when the spot is not free. Use careful.
+    an insertion even when the spot is not free. Use careful.
   </attribute>
   <attribute arch="last_grace" editor="insert at free spot only" type="bool">
-    If set, the player will be put ONLY on a free spot or insertation will fail.
+    If set, the player will be put ONLY on a free spot or insertion will fail.
     If not set, the server will still look for a free spot (if fixed spot is
-    not set) but will do a forced insertation to x,y when there is no free spot
+    not set) but will do a forced insertion to x,y when there is no free spot
     (thats default mode).
     Insert at free spot only can be used in combination with fixed or random
     spot flag.
@@ -4289,7 +4302,7 @@
     <attribute arch="speed_left" />
   </ignore>
   <description><![CDATA[
-    When eating, the player's stomache is drained by 1/4 of food
+    When eating, the player's stomach is drained by 1/4 of food
     and the player is poisoned (a DOT poisoned force is inserted
     in the player). Until the DOT (DOT = Damage Over Time) force
     wears out, the player gets damage all x ticks.
@@ -4485,10 +4498,10 @@
   </description>
   <use><![CDATA[
     If you want to create new kinds of projectiles, you could
-    add an alchemical receipe to create these.
+    add an alchemical recipe to create these.
 
     Don't create new pairs of weapons &amp; projectiles unless
-    they really fullfill a useful purpose. In fact, even bows
+    they really fulfill a useful purpose. In fact, even bows
     and crossbows are rarely ever used. ]]>
   </use>
   <attribute arch="sub_type" editor="ammunition type" type="list_projectile_st">
@@ -4511,10 +4524,10 @@
     by setting the &lt;container class&gt; to match your &lt;ammunition class&gt;.
   </attribute>
   <attribute arch="slaying" editor="slaying race" type="string">
-    Slaying means the weapon does tripple (3x) damage to monsters
+    Slaying means the weapon does triple (3x) damage to monsters
     of the specified race. If &lt;slaying race&gt; matches an arch name,
-    only monsters of that archtype receive tripple damage.
-    Tripple damage is very effective.
+    only monsters of that archetype receive triple damage.
+    Triple damage is very effective.
   </attribute>
   <attribute arch="dam" editor="damage" type="int">
     The projectile &lt;damage&gt; significantly affects the damage
@@ -4581,7 +4594,7 @@
     eventually destroy it.
   </attribute>
   <attribute arch="proof_ele" editor="condition proof: elemental" type="bool">
-    Elemental attacks are able to reduce the conditon of the item
+    Elemental attacks are able to reduce the condition of the item
     and eventually destroy it.
   </attribute>
   <attribute arch="proof_mag" editor="condition proof: magical" type="bool">
@@ -4686,7 +4699,7 @@
     <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
-    A rune is a magical enscription on the dungeon floor. Traps are just
+    A rune is a magical inscription on the dungeon floor. Traps are just
     like runes except they are not magical in nature, and generally have
     a physical attack.
     <br><br>
@@ -4775,12 +4788,12 @@
   </description>
   <use><![CDATA[
     Put savebed locations in towns, do not put them into dungeons.
-    It is absolutely neccessary that a place with savebeds is 100% secure.
+    It is absolutely necessary that a place with savebeds is 100% secure.
     That means:
     <UL>
     <LI> Monsters must not be able to reach the savebeds under any circumstances!
     <LI> If there are NPCs around, make sure they have the friendly-flag set.
-    <LI> Insert a relyable exit! Make sure there is no possibility that
+    <LI> Insert a reliable exit! Make sure there is no possibility that
          players get trapped in a savebed location.
     <LI> If possible, mark the whole site as no-spell area (Insert this
          arch called "dungeon_magic" everywhere). This is not required,
@@ -4814,7 +4827,7 @@
     Shooting weapons should not add bonuses in general. There's already
     enough "equipment-slots" doing that: swords, rings, amulets, girdles etc.
     Schooting weapons should especially not add bonuses to the player
-    that have nothing to do with schooting. A Wisdom bonus on a bow
+    that have nothing to do with shooting. A Wisdom bonus on a bow
     is crap for example! A name like "Longbow of great Wisdom" doesn't help
     - still crap. ]]>
   </use>
@@ -4854,21 +4867,21 @@
   </attribute>
   <attribute arch="item_level" editor="required level" type="int">
     If &lt;required level&gt; is set to a value greater zero, players cannot
-    use the weapon unless they meet this level in the skill cathegory
+    use the weapon unless they meet this level in the skill category
     specified by &lt;level required in&gt;.
 
     For example: &lt;required level&gt; = 15, &lt;level required in&gt; = physical
     means the player cannot use the weapon unless he is equal or greater
-    level 15 in the physical skill cathegory.
+    level 15 in the physical skill category.
   </attribute>
   <attribute arch="item_skill" editor="level required in" type="list_item_skill">
-    This attribute specifies in which skill cathegory the player
+    This attribute specifies in which skill category the player
     must meet the &lt;required level&gt; in order to use the weapon.
     It is meaningless when &lt;required level&gt; is zero/unset.
 
     For example: &lt;required level&gt; = 15, &lt;level required in&gt; = physical
     means the player cannot use the weapon unless he is equal or greater
-    level 15 in the physical skill cathegory.
+    level 15 in the physical skill category.
   </attribute>
   <attribute arch="no_strength" editor="ignore strength" type="bool">
     Usually the player's strength takes effect on the damage
@@ -4923,7 +4936,7 @@
   </attribute>
 </section>
   <attribute arch_begin="msg" arch_end="endmsg" editor="description" type="text">
-    This text describes the weapons's "story". Every decent artifact weapon
+    This text describes the weapon's "story". Every decent artifact weapon
     should have such a description.
   </attribute>
 </type>
@@ -4966,7 +4979,7 @@
   <description><![CDATA[
     Wearing a shield, the object's stats will directly be inherited to
     the player. Shields usually provide good defense, only surpassed
-    by brestplate armour. Resistances on shields aren't uncommon either. ]]>
+    by breastplate armor. Resistances on shields aren't uncommon either. ]]>
   </description>
   <use><![CDATA[
     Feel free to create your own special artifacts. However, it is very
@@ -4975,7 +4988,7 @@
   <attribute arch="magic" editor="magic bonus" type="int">
     &lt;magic bonus&gt; works just like ac, except that it can be improved by
     "scrolls of Enchant Armour" or reduced by acid. It is less useful
-    than direct armour-class bonus on the shield.
+    than direct armor-class bonus on the shield.
   </attribute>
 </type>
 
@@ -4989,12 +5002,12 @@
   <description><![CDATA[
     Shop floor is used for shops. It acts like a combination of the
     common floor- and the treasure type: When the map is loaded,
-    randomitems (depending on the setings) are generated on it.
+    randomitems (depending on the settings) are generated on it.
     These items are all flagged as unpaid.
     When a player drops an item onto shop floor, the item becomes
     unpaid and the player receives payment according to the item's
     selling-value.
-    Shopfloor always prevents magic (To hinder players from burning
+    Shop floor always prevents magic (To hinder players from burning
     or freezing the goods). ]]>
   </description>
   <use><![CDATA[
@@ -5019,7 +5032,7 @@
     The &lt;quality level&gt; will be used for the quality of the generated
     goods. If zero/unset, &lt;quality level&gt; 5 is used. Usually this value
     doesn't need to be set, unless you want extraordinarily good/bad
-    quality. If you want to make a shop with very high quality, meaybe
+    quality. If you want to make a shop with very high quality, maybe
     charge an entrance fee, or make the shop hard-to-come-by.
     Note that &lt;quality level&gt; mainly affects chance of magic bonus
     and appearance of artifact-items.
@@ -5037,11 +5050,11 @@
     Shop mats are used for entering/leaving shops. You should always
     have exactly TWO shop mats on your shop-map: One inside the
     "shopping-area" and one outside. Shop mats don't use exit paths/
-    or -destinations. When stepping onto a shopmat the player gets beamed
+    or -destinations. When stepping onto a shop mat the player gets beamed
     to the nearest other mat. If the player has unpaid items in his
     inventory, the price gets charged from his coins automatically.
     If the player has insufficient coins to buy his unpaid items, he
-    is unable to pass any shopmat (So he has to drop unpaid items). ]]>
+    is unable to pass any shop mat (So he has to drop unpaid items). ]]>
   </description>
   <use><![CDATA[
     As stated above, always place TWO shop mats into your shop.
@@ -5089,14 +5102,14 @@
     printed to one player, but all players on the current map.
   </attribute>
   <attribute arch="walk_on" editor="activate by walking" type="bool">
-    If set, the player gets the message when walking ontop of the object.
+    If set, the player gets the message when walking on top of the object.
     This is the typical configuration
     for a "magic_mouth": The player walks through a dungeon and suddenly he
     gets a message. Use this to create some roleplay atmosphere, and to inform
     the player about possible dangers or secrets.
   </attribute>
   <attribute arch="fly_on" editor="activate by flying" type="bool">
-    If set, the player gets the message when flying (=levitating) ontop
+    If set, the player gets the message when flying (=levitating) on top
     of the object. Usually this should be set together with walk_on.
   </attribute>
   <attribute arch="food" editor="counter" type="int">
@@ -5125,17 +5138,17 @@
   </ignore>
   <description><![CDATA[
     When carrying the appropriate special key, a locked door can
-    be opened. The key will dissapear.
+    be opened. The key will disappear.
     <br><br>
     This object-type can also be used for "passport"-like items:
-    When walking onto an invetory checker, a gate for example might
+    When walking onto an inventory checker, a gate for example might
     get opened. The "passport" will stay in the player's inventory. ]]>
   </description>
   <use><![CDATA[
     How to make a "passport": You take the special key arch
     (archetype name is "key2"), set the face to something like
     card.111 and the name to "passport" - that's all. The &lt;key string&gt;
-    certainly must match with the appropiate inventory checker.
+    certainly must match with the appropriate inventory checker.
     <br><br>
     Of course you can be creative with names and faces of
     key-objects. A "mysterious crystal" or a "big dragon claw"
@@ -5262,16 +5275,16 @@
     button/handle/magic_ear/etc, you must set &lt;activation speed&gt; to zero!
   </attribute>
   <attribute arch="last_eat" editor="map type" type="list_maptype">
-	This most important setting defines as which type of map the destination map
+    This most important setting defines as which type of map the destination map
     will be handled from the server.
     The default exit leads to normal multiplayer maps. Which are loaded from
-	the (read only) default /maps folder and saved/swaped to /tmp.
+    the (read only) default /maps folder and saved/swaped to /tmp.
     Instances are maps which are "unique" for a single player. Means for every
     player is an own instance is loaded. This kind of maps exists only temporary
-	and if the instance is changed or newly loaded, the old instance is skipped.
+    and if the instance is changed or newly loaded, the old instance is skipped.
     Unique maps are apartments which are permanent saved inside the players folder
-    and permanent proberity of the player.
-    Instances and unique maps will be avaible in later daimonin version for groups
+    and permanent property of the player.
+    Instances and unique maps will be available in later Daimonin version for groups
     and clans too.
   </attribute>
   <attribute arch="slaying" editor="exit path" type="string">
@@ -5327,12 +5340,12 @@
     If set, the player will be put exactly on the position we defined above.
     If not set, the server will check the surrounding for a free space.
     Fixed spot will overrule the search for a free spot AND will force
-    an insertation even when the spot is not free. Use careful.
+    an insertion even when the spot is not free. Use careful.
   </attribute>
   <attribute arch="last_grace" editor="insert at free spot only" type="bool">
-    If set, the player will be put ONLY on a free spot or insertation will fail.
+    If set, the player will be put ONLY on a free spot or insertion will fail.
     If not set, the server will still look for a free spot (if fixed spot is
-    not set) but will do a forced insertation to x,y when there is no free spot
+    not set) but will do a forced insertion to x,y when there is no free spot
     (thats default mode).
     Insert at free spot only can be used in combination with fixed or random
     spot flag.
@@ -5369,7 +5382,7 @@
   <description><![CDATA[
     Trapdoors are very similar to pits. The difference is that they
     can not be closed. Instead, the weight of the object on the
-    trapdoor determines weither it slams the trapdoor open and falls through
+    trapdoor determines whether it slams the trapdoor open and falls through
     or not.<br>
     Once a trapdoor has been opened (by a creature or items of sufficient
     weight,) it remains open, acting like an opened pit. ]]>
@@ -5388,16 +5401,16 @@
     open and things start falling through.
   </attribute>
   <attribute arch="last_eat" editor="map type" type="list_maptype">
-	This most important setting defines as which type of map the destination map
+    This most important setting defines as which type of map the destination map
     will be handled from the server.
     The default exit leads to normal multiplayer maps. Which are loaded
-	from the (read only) default /maps folder and saved/swaped to /tmp.
+    from the (read only) default /maps folder and saved/swaped to /tmp.
     Instances are maps which are "unique" for a single player. Means for every
     player is an own instance is loaded. This kind of maps exists only temporary
-	and if the instance is changed or newly loaded, the old instance is skipped.
+    and if the instance is changed or newly loaded, the old instance is skipped.
     Unique maps are apartments which are permanent saved inside the players folder
-    and permanent proberity of the player.
-    Instances and unique maps will be avaible in later daimonin version for groups
+    and permanent property of the player.
+    Instances and unique maps will be available in later Daimonin version for groups
     and clans too.
   </attribute>
   <attribute arch="slaying" editor="exit path" type="string">
@@ -5434,12 +5447,12 @@
     If set, the player will be put exactly on the position we defined above.
     If not set, the server will check the surrounding for a free space.
     Fixed spot will overrule the search for a free spot AND will force
-    an insertation even when the spot is not free. Use careful.
+    an insertion even when the spot is not free. Use careful.
   </attribute>
   <attribute arch="last_grace" editor="insert at free spot only" type="bool">
-    If set, the player will be put ONLY on a free spot or insertation will fail.
+    If set, the player will be put ONLY on a free spot or insertion will fail.
     If not set, the server will still look for a free spot (if fixed spot is
-    not set) but will do a forced insertation to x,y when there is no free spot
+    not set) but will do a forced insertion to x,y when there is no free spot
     (thats default mode).
     Insert at free spot only can be used in combination with fixed or random
     spot flag.
@@ -5528,7 +5541,7 @@
   </description>
   <use><![CDATA[
     If you create artifacts (equipment) with stats- or resistance-bonus:
-    Keep playbalance in mind! Such items mustn't be reachable without hard
+    Keep play balance in mind! Such items mustn't be reachable without hard
     fighting AND questing. ]]>
   </use>
   <attribute arch="sub_type" editor="weapon type" type="list_weapon_st">
@@ -5544,13 +5557,13 @@
     to get a feel for the range of weapon damage values.
   </attribute>
   <attribute arch="slaying" editor="slaying race" type="string">
-    Slaying means the weapon does tripple (3x) damage to monsters of the
+    Slaying means the weapon does triple (3x) damage to monsters of the
     specified race. If &lt;slaying race&gt; matches an arch name (e.g. "big_dragon"),
-    only monsters of that archtype are hit with tripple damage.
+    only monsters of that archetype are hit with triple damage.
 
     No god blessings are possible for weapons with a race set in this entry
-    (That's because god blessings add tripple damage against their own
-    enemy races). Tripple damage is very effective.
+    (That's because god blessings add triple damage against their own
+    enemy races). Triple damage is very effective.
   </attribute>
   <attribute arch="weapon_speed" editor="weapon speed" type="float">
     The weapon speed determines how often the wielder can swing the weapon
@@ -5585,7 +5598,7 @@
     Put in the inventory of a spawn mobs (the "copy" inside
     the spawn point) there will be a random check against
     this object. This check will be from 0-x. If the check
-    is higher the the value of "drop chance" of this object,
+    is higher the value of "drop chance" of this object,
     the items INSIDE this object (set in the map editor) are
     given the mob. This is checked every time a mob is spawned.
     Different mobs inside a spawn point can hold different and
@@ -5593,7 +5606,7 @@
     drop containers is not allowed. ]]>
   </description>
   <attribute arch="container" editor="drop chance" type="int">
-    Set to a range from 0 to x. 0 means droped always.
+    Set to a range from 0 to x. 0 means dropped always.
     999999 means a chance from 1/999999 to drop.
   </attribute>
 </type>
@@ -5608,9 +5621,9 @@
     charging, but usually that isn't worth the cost. ]]>
   </description>
   <use><![CDATA[
-    Wands are quite seldomly used. The reason prolly is that they're
+    Wands are quite seldomly used. The reason probably is that they're
     generally not cost-efficient. Handing out high-level wands with
-    powerfull special spells isn't a good idea either, because of
+    powerful special spells isn't a good idea either, because of
     the recharge ability.
     <br><br>
     For low levels, staffs of healing/cure and word of recall are
@@ -5682,14 +5695,14 @@
     <attribute arch="sub_type" />
     <attribute arch="one_drop" />
   </ignore>
-  <description><![CDATA[ The Quest trigger is used to syncronize and
+  <description><![CDATA[ The Quest trigger is used to synchronize and
 drive quests. If the player/trigger has a quest trigger with same
 settings, the item is triggered. Inside a mob inventory the quest
 trigger works as a container for the real quest objects.]]>
   </description>
   <attribute arch="sub_type" editor="quest trigger" type="list_q_trigger">
     Type of the quest trigger event. Default normal setting works is for
-    'normal' quests which are controled by scripts.
+    'normal' quests which are controlled by scripts.
     Kill events are quests like 'kill 10 goblins and come back'.
     Container events need a trigger object inside the container.
   </attribute>
@@ -5705,8 +5718,8 @@ trigger works as a container for the real quest objects.]]>
     (not used for one drop quests)
   </attribute>
   <attribute arch="last_grace" editor="drop chance" type="int">
-    (one drop/special only): If set, there is 1/drop_chance that the trigger is triggered.
-    0 is the default value and means "always".
+    (one drop/special only): If set, there is 1/drop_chance that the trigger is
+    triggered. 0 is the default value and means "always".
   </attribute>
   <attribute arch="one_drop" editor="one drop quest" type="bool">
     If set, the trigger is not connected to a quest but its a one drop quest.
@@ -5714,18 +5727,18 @@ trigger works as a container for the real quest objects.]]>
     IF THE ITEM HAS one_drop 1 set too. If the item has one_drop 0, the inventory
     itself is searched. Is the item not found, the item is given. In that
     case its NOT put in the one drop quest container.
-	In any case the required drop skill/level is checked.
+    In any case the required drop skill/level is checked.
   </attribute>
   <attribute arch="item_skill" editor="required drop skill" type="list_item_skill">
-    This attribute specifies in which skill cathegory the player
+    This attribute specifies in which skill category the player
     must meet the &lt;required level&gt; in order that a one drop
     quest trigger drops the items.
   </attribute>
   <attribute arch="item_level" editor="required drop level" type="int">
-	Level needed (overall or skill specific) that a one-drop is triggered.
+    Level needed (overall or skill specific) that a one-drop is triggered.
   </attribute>
   <attribute arch_begin="msg" arch_end="endmsg" editor="description" type="text">
-    This text describes the weapons's "story". Every decent artifact weapon
+    This text describes the weapon's "story". Every decent artifact weapon
     should have such a description.
   </attribute>
 </type>
@@ -5743,7 +5756,7 @@ object. Its used as a dummy object when we send someone to get that sword or
 that food.]]>
   </description>
   <attribute arch="one_drop" editor="one drop" type="bool">
-	Item is a one-drop quest item. This item will be drop the
+    Item is a one-drop quest item. This item will be drop the
     first time the player triggers the quest (open chest, kill mob)
     with a 100% chance. A second time this item never drops again for
     that player.
@@ -5774,24 +5787,30 @@ that food.]]>
   <description><![CDATA[
     The waypoint object can hold a position that a mob is to reach.
 
-	Mobs will use waypoints automatically if they don't have an AI object, or if they have a behaviour list with move_towards_waypoint in the moves class. If a mob has a default race or arch AI objects without move_towards_waypoint you might want to override it to enable waypoints for that mob.
+    Mobs will use waypoints automatically if they don't have an AI object, or
+    if they have a behavior list with move_towards_waypoint in the moves class.
+    If a mob has a default race or arch AI objects without
+    move_towards_waypoint you might want to override it to enable waypoints for
+    that mob.
 
-    Waypoints can either use exact map coordinates (map name, x, y) as destination, or target a named beacon.
+    Waypoints can either use exact map coordinates (map name, x, y) as
+    destination, or target a named beacon.
 
-	When the mob reaches the destination it will either continue to
-	the next waypoint, or stop. Waypoints can be used to set up patrol
-	routes or make more dynamic script behaviours.
-	When a waypoint is reached, a TRIGGER event will be executed.
-	]]>
+    When the mob reaches the destination it will either continue to
+    the next waypoint, or stop. Waypoints can be used to set up patrol
+    routes or make more dynamic script behaviors.
+    When a waypoint is reached, a TRIGGER event will be executed.
+    ]]>
   </description>
   <attribute arch="title" editor="next waypoint" type="string">
-  	Name of the next waypoint to go to when this is reached. Use this to
-	chain together several waypoints.
+    Name of the next waypoint to go to when this is reached. Use this to
+    chain together several waypoints.
   </attribute>
   <attribute arch="race" editor="destination beacon" type="string">
-    Name of a beacon to target. Overrides destination map, destination x and destination y.
-    This only works if the beacon can be found (i.e. it is on a map that is loaded in memory), so using a destination map might be a better idea
-    if crossing one or more map tiles.
+    Name of a beacon to target. Overrides destination map, destination x and
+    destination y. This only works if the beacon can be found (i.e. it is on a
+    map that is loaded in memory), so using a destination map might be a better
+    idea if crossing one or more map tiles.
 
     Leave this empty if you want to use an explicit target coordinate (map, x, y).
   </attribute>
@@ -5817,15 +5836,17 @@ that food.]]>
     Ignored if targeting a beacon.
   </attribute>
   <attribute arch="wc" editor="pause" type="int">
-    Amount of time the mob should wait at this waypoint before proceeding to the next.
+    Amount of time the mob should wait at this waypoint before proceeding to
+    the next.
   </attribute>
   <attribute arch="grace" editor="trigger distance" type="int">
-    How far away from the exact position will the waypoint be considered to be reached.
-	Set to 0 to require the mob to be standing on top of the specified destination.
+    How far away from the exact position will the waypoint be considered to be
+    reached. Set to 0 to require the mob to be standing on top of the specified
+    destination.
   </attribute>
   <attribute arch="cursed" editor="active" type="bool">
-  	The active waypoint is the one the mob is currently using. A mob should
-	not have more than one active waypoint.
+    The active waypoint is the one the mob is currently using. A mob should
+    not have more than one active waypoint.
   </attribute>
 </type>
 
@@ -5848,7 +5869,8 @@ that food.]]>
     You can for example use timers connected to creators to repeatedly
     create new resources of some kind. <br>
     Don't use timers for quick and repeated script triggering. The Lua plugin
-    has a "coroutine" system that can handle that much more efficiently. For longer trigger intervals, timers work well together with scripts.
+    has a "coroutine" system that can handle that much more efficiently. For
+    longer trigger intervals, timers work well together with scripts.
     ]]>
   </use>
   <attribute arch="no_pick" value="1" type="fixed" />
@@ -5871,7 +5893,8 @@ that food.]]>
   </attribute>
   <attribute arch="hp" editor="time left" type="int">
     Time left before triggering in seconds.
-    -1 means that the timer is inactive and can only be started by a script or a signal on its connection.
+    -1 means that the timer is inactive and can only be started by a script or
+    a signal on its connection.
   </attribute>
 </type>
 
@@ -5884,21 +5907,27 @@ that food.]]>
   </ignore>
   <description><![CDATA[
     Environment sensors periodically watch their environment for specific
-    conditions. Currently they can check for time of day (ToD), day of week (DoW) and brightness, all at the same time.
+    conditions. Currently they can check for time of day (ToD), day of week
+    (DoW) and brightness, all at the same time.
     ]]>
   </description>
   <use><![CDATA[
-    ToD and DoW sensors work even underground and are best used to control the behaviours of sentient beings (guard schedules, workers etc).<br>
+    ToD and DoW sensors work even underground and are best used to control the
+    behaviors of sentient beings (guard schedules, workers etc).<br>
     DoW sensors will trigger during specified weekdays.<br>
-    Brightness sensors will detect the sun if put outdoors, and of course also nearby light sources if indoors/underground and at night.<br><br>
+    Brightness sensors will detect the sun if put outdoors, and of course also
+    nearby light sources if indoors/underground and at night.<br><br>
 
-    The sensors will not trigger unless all configured conditions are satisifed. This means you can basically set it to trigger at 11 am on very bright Thursdays.
-     ]]>
+    The sensors will not trigger unless all configured conditions are
+    satisfied. This means you can basically set it to trigger at 11 am on very
+    bright Thursdays.
+    ]]>
   </use>
   <attribute arch="no_pick" value="1" type="fixed" />
   <attribute arch="sys_object" value="1" type="fixed" />
   <attribute arch="slaying" editor="trigger time" type="string">
-    The time interval this sensors should trigger. This should be in the form "hh:mm-hh:mm", for example "12:00-23:59" to trigger during the afternoon.
+    The time interval this sensors should trigger. This should be in the form
+    "hh:mm-hh:mm", for example "12:00-23:59" to trigger during the afternoon.
     An empty (or malformed) value means don't care about time of day.
   </attribute>
   <attribute arch="last_heal" editor="trigger weekday" type="bitmask_day_of_week">
@@ -5951,13 +5980,14 @@ that food.]]>
     <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
-    Connection sensors are trigger objects that take one or more other connections as input.
-    The inputs can be combined according to a logical rule, and generate a script event or
-    trigger a plugin event.
+    Connection sensors are trigger objects that take one or more other
+    connections as input. The inputs can be combined according to a logical
+    rule, and generate a script event or trigger a plugin event.
     ]]>
   </description>
   <use><![CDATA[
-    The output value is derived from the input connections according to one of the following rules:
+    The output value is derived from the input connections according to one of
+    the following rules:
     <br>
     NAND - the output value is set only if no input values are set.<br>
     AND - the output value is set only if all input values are set.<br>
@@ -6019,8 +6049,9 @@ that food.]]>
   <attribute arch="no_pick" value="1" type="fixed" />
   <attribute arch="sys_object" value="1" type="fixed" />
   <attribute arch="name" editor="beacon ID" type="string">
-    The ID should be a globally unique string, for example "gecko_quest44_chestmarker". This
-    ID is used by scripts or waypoints to locate the beacon wherever it is.
+    The ID should be a globally unique string, for example
+    "gecko_quest44_chestmarker". This ID is used by scripts or waypoints to
+    locate the beacon wherever it is.
   </attribute>
 </type>
 
