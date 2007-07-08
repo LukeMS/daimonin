@@ -11,4 +11,5 @@ nrof 1
 no_drop 1
 sp 40
 wc 7
+dam 100
 end
