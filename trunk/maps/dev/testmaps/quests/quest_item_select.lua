@@ -93,7 +93,7 @@ local function topCheckQ1()
         ib:SetDesc("here it is...", 1, 2, 0, 0)
         quest_icons1()
         ib:AddQuestChecklist(q_mgr_1)
-        ib:SetAccept(nil, "finishq1") 
+        ib:SetAccept(nil, "#finishq1") 
         ib:SetDecline(nil, "hi") 
 	end
 	pl:Interface(1, ib:Build())

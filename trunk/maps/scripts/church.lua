@@ -37,19 +37,19 @@ end
 
 local function topicCast(what)
     if what=="sick" then
-        ib:SetMsg("I can cast °Remove Deathsick° for " .. pl:ShowCost(100 + (4 * pl.level * pl.level)))
+        ib:SetMsg("I can cast ~Remove Deathsick~ for " .. pl:ShowCost(100 + (4 * pl.level * pl.level)))
     elseif what == "deplete" then
-        ib:SetMsg("I can cast °Remove Depletion° for ".. pl:ShowCost(5 * pl.level))
+        ib:SetMsg("I can cast ~Remove Depletion~ for ".. pl:ShowCost(5 * pl.level))
     elseif what == "restore" then
-        ib:SetMsg("I can cast °Restoration° for 150 copper")
+        ib:SetMsg("I can cast ~Restoration~ for 150 copper")
     elseif what == "poison" then
-        ib:SetMsg("I will cast °Cure Poison° for " .. pl:ShowCost(5 * pl.level))
+        ib:SetMsg("I will cast ~Cure Poison~ for " .. pl:ShowCost(5 * pl.level))
     elseif what == "disease" then
-        ib:SetMsg("I can cast °Cure Disease° for ".. pl:ShowCost(100 * pl.level))
+        ib:SetMsg("I can cast ~Cure Disease~ for ".. pl:ShowCost(100 * pl.level))
     elseif what == "curse" then
-        ib:SetMsg("I can cast °Remove Curse° for ".. pl:ShowCost(100 * pl.level))
+        ib:SetMsg("I can cast ~Remove Curse~ for ".. pl:ShowCost(100 * pl.level))
     else
-        ib:SetMsg("I can cast °Remove Damnation° for " .. pl:ShowCost(100 + (3 * pl.level * pl.level)))
+        ib:SetMsg("I can cast ~Remove Damnation~ for " .. pl:ShowCost(100 + (3 * pl.level * pl.level)))
     end
     ib:AddMsg(".\n\nYou have " .. pl:ShowCost(pl:GetMoney()) .. ".\n\nDo you want me to do it now?") 
     ib:SetAccept(nil, "docast " .. what) 
@@ -83,7 +83,7 @@ local function topicDoCast(what)
     ib:SetTitle("Casting " .. spell)
     if pl:PayAmount(sum) == 1 then
         me:CastSpell(pl, game:GetSpellNr(spell), 1, 0, "")
-        ib:SetMsg("°** " .. me.name .. " takes your money **°\n\ndone!")
+        ib:SetMsg("|** " .. me.name .. " takes your money **|\n\ndone!")
     else
         ib:SetMsg("You don't have enough money!")
     end
