@@ -45,8 +45,8 @@ function topicDepositDialog()
         ib:AddMsg(
 [[
 Enter the amount of money you want to deposit.
-For example you can enter °deposit 4 gold, 2 silver, 1 copper°
-or simply °deposit all° to deposit all you money.
+For example you can enter ~deposit 4 gold, 2 silver, 1 copper~
+or simply ~deposit all~ to deposit all you money.
 ]])
         ib:AddLink("deposit all", "deposit all")
         ib:SetTextfield("deposit ")
@@ -88,8 +88,8 @@ function topicWithdrawDialog()
         ib:AddMsg(
 [[
 Enter the amount of money you want to withdraw.
-For example you can enter °withdraw 4 silver, 2 gold° or 
-simply °withdraw all° to withdraw all you money.
+For example you can enter ~withdraw 4 silver, 2 gold~ or 
+simply ~withdraw all~ to withdraw all you money.
 ]])
         ib:AddLink("withdraw all", "withdraw all")
         ib:SetTextfield("withdraw ")

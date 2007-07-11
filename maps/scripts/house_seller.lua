@@ -50,12 +50,12 @@ end
 
 function updateAp(ap_old, ap_new, pid, x, y)
     ib:SetTitle("Upgrading finished")
-    ib:AddMsg("You pay the money.\n", 0)
-    ib:AddMsg("~"..sname.." is casting some strange magic.~\n")
+    ib:AddMsg("|** You pay the money. **|\n", 0)
+    ib:AddMsg("|** ~"..sname.." is casting some strange magic. **|\n")
     map_old = pl:ReadyUniqueMap(ap_old)
     map_new = pl:ReadyUniqueMap(ap_new)
     if map_old == nil or map_new == nil then
-        ib:AddMsg("Something is wrong... Call a DM!\n");
+        ib:AddMsg("|** Something is wrong... Call a DM! **|\n");
     else
         game:UpgradeApartment(map_old, map_new, x, y)
         map_new:Save()
@@ -206,19 +206,19 @@ end
 function topicConfirm()
     ib:SetTitle("Confirm your choice!")
     if pinfo.last_heal==1 then
-        ib:AddMsg("You have chosen to upgrade to °cheap apartment°.\nIt will cost you °30 silver!°\n")
+        ib:AddMsg("You have chosen to upgrade to ~cheap apartment~.\nIt will cost you ~30 silver~!\n")
     elseif pinfo.last_heal==2 then
-        ib:AddMsg("You have chosen to upgrade to °normal apartment°.\nIt will cost you °250 silver!°\n")
+        ib:AddMsg("You have chosen to upgrade to ~normal apartment~.\nIt will cost you ~250 silver~!\n")
     elseif pinfo.last_heal==3 then
-        ib:AddMsg("You have chosen to upgrade to °expensive apartment°.\nIt will cost you °15 gold!°\n")
+        ib:AddMsg("You have chosen to upgrade to ~expensive apartment~.\nIt will cost you ~15 gold~!\n")
     elseif pinfo.last_heal==4 then
-        ib:AddMsg("You have chosen to upgrade to °luxurious apartment°.\nIt will cost you °200 gold!°\n")
+        ib:AddMsg("You have chosen to upgrade to ~luxurious apartment~.\nIt will cost you ~200 gold~!\n")
     end
     ib:AddMsg(
 [[
 Be sure it is the correct choice, then:
-Choose °Acccept° button again and it will be done.
-Choose °Decline° to cancel it.
+Choose ~Accept~ button again and it will be done.
+Choose ~Decline~ to cancel it.
 ]])
 
     ib:SetAccept(nil, "upgrade_confirmation2")
@@ -276,7 +276,7 @@ function topicConfirmAgain()
 end
 
 local function sellMessages()
-    ib:AddMsg(sname.." is casting some strange magic.\n")
+    ib:AddMsg("|** "..sname.." is casting some strange magic. **|\n")
     ib:AddMsg("Congratulations! That was all!\n");
     ib:AddMsg("I have summoned your apartment right now.\n")
     ib:AddMsg("Enter the teleporter and you will be there!\n")
@@ -306,7 +306,7 @@ function topicSellNormal()
     ib:SetTitle("Apartment sale results")
     if pinfo == nil then -- no app - all ok
         if pl:PayAmount(25000) == 1 then
-            ib:AddMsg("You pay the money.\n")
+            ib:AddMsg("|** You pay the money. **|\n")
             create_info(appid_normal, ap_2, 1, 2)
             sellMessages()
         else
@@ -325,7 +325,7 @@ function topicSellExpensive()
     ib:SetTitle("Apartment sale results")
     if pinfo == nil then -- no app - all ok
         if pl:PayAmount(150000) == 1 then
-            ib:AddMsg("You pay the money.\n")
+            ib:AddMsg("|** You pay the money. **|\n")
             create_info(appid_expensive, ap_3, 1, 2)
             sellMessages()
         else
@@ -344,7 +344,7 @@ function topicSellLuxurious()
     ib:SetTitle("Apartment sale results")
     if pinfo == nil then -- no app - all ok
         if pl:PayAmount(2000000) == 1 then
-            ib:AddMsg("You pay the money.\n")
+            ib:AddMsg("|** You pay the money. **|\n")
             create_info(appid_luxurious, ap_4, 2, 1)
             sellMessages()
         else
@@ -373,11 +373,11 @@ function topicUpgradeToCheap()
         pinfo.last_heal = 1
         ib:AddMsg(
 [[
-The cheap apartment will cost you 30 silver.
+The cheap apartment will cost you ~30 silver~.
 NOW LISTEN then to do the upgrade you must confirm it.
 You really want upgrade to a cheap apartment now?
-Choose 'Acccept' button and it will be done.
-Choose 'Decline' to cancel it.
+Choose ~Accept~ button and it will be done.
+Choose ~Decline~ to cancel it.
 ]])
         ib:SetAccept(nil, "upgrade_confirmation1")
         ib:SetDecline(nil, "hi")
@@ -400,11 +400,11 @@ function topicUpgradeToNormal()
             pinfo.last_heal = 2
             ib:AddMsg(
 [[
-The cheap apartment will cost you 250 silver.
+The cheap apartment will cost you ~250 silver~.
 NOW LISTEN then to do the upgrade you must confirm it.
 You really want upgrade to a normal apartment now?
-Choose 'Acccept' button and it will be done.
-Choose 'Decline' to cancel it.
+Choose ~Accept~ button and it will be done.
+Choose ~Decline~ to cancel it.
 ]])
             ib:SetAccept(nil, "upgrade_confirmation1")
             ib:SetDecline(nil, "hi")
@@ -427,11 +427,11 @@ function topicUpgradeToExpensive()
             pinfo.last_heal = 3
             ib:AddMsg(
 [[
-The cheap apartment will cost you 15 gold.
+The cheap apartment will cost you ~15 gold~.
 NOW LISTEN then to do the upgrade you must confirm it.
 You really want upgrade to a expensive apartment now?
-Choose 'Acccept' button and it will be done.
-Choose 'Decline' to cancel it.
+Choose ~Accept~ button and it will be done.
+Choose ~Decline~ to cancel it.
 ]])
             ib:SetAccept(nil, "upgrade_confirmation1")
             ib:SetDecline(nil, "hi")
@@ -454,11 +454,11 @@ function topicUpgradeToLuxurious()
             pinfo.last_heal = 4
             ib:AddMsg(
 [[
-The cheap apartment will cost you 200 gold.
+The cheap apartment will cost you ~200 gold~.
 NOW LISTEN then to do the upgrade you must confirm it.
 You really want upgrade to a luxurious apartment now?
-Choose 'Acccept' button and it will be done.
-Choose 'Decline' to cancel it.
+Choose ~Accept~ button and it will be done.
+Choose ~Decline~ to cancel it.
 ]])
             ib:SetAccept(nil, "upgrade_confirmation1")
             ib:SetDecline(nil, "hi")

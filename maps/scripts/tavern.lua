@@ -71,7 +71,7 @@ local function topicConfirm(nrof, what)
     elseif pl.carrying+(nrof*data.weight)>=pl:GetPlayerWeightLimit() then
         ib:SetMsg("Can you explain me, how you would carry all that stuff, without collapsing?")
     elseif pl:PayAmount(data.price*nrof) == 1 then
-        ib:SetMsg("~** " .. me.name .. " takes your money **~\n\nOk, here is your "..data.title.."!")
+        ib:SetMsg("|** " .. me.name .. " takes your money **|\n\nOk, here is your "..data.title.."!")
         tmp = pl:CreateObjectInsideEx(data.arch, 1, nrof) 
         ib:AddIcon(tmp.name, tmp:GetFace(), "")
     else

@@ -173,7 +173,7 @@ function topicCast(what)
         else
             me:CastSpell(pl, game:GetSpellNr(spell), 1, 0, "")
         end
-        ib:SetMsg("~**" .. me.name .. " takes your money **~\n\ndone!")
+        ib:SetMsg("|**" .. me.name .. " takes your money **|\n\ndone!")
     else
         ib:SetMsg("You don't have enough money!")
     end
