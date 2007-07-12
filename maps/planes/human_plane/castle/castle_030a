@@ -1,5 +1,5 @@
 arch map
-name Guild Hall§jungle1.ogg|0|-1
+name Guild Hall§ColeForeverPiano.ogg|0|-1
 msg
 Creator: Daimonin Map Editor
 Date:    7/16/2004
@@ -8,8 +8,10 @@ width 24
 height 24
 difficulty 1
 outdoor 1
+no_harm 1
 tile_path_1 castle_0300
 tile_path_2 castle_040a
+tile_path_3 castle_030b
 tile_path_4 castle_020a
 tile_path_5 castle_0400
 tile_path_8 castle_0200
@@ -37,7 +39,7 @@ end
 arch floor_sblack2
 y 4
 end
-arch wall_flagstone1.131
+arch wall_flagstone1b.131
 y 4
 end
 arch floor_sblack2
@@ -124,10 +126,13 @@ end
 arch grassd_1
 y 22
 end
+arch fwall_fstone2
+y 22
+end
 arch grassd_3
 y 23
 end
-arch tree_big2
+arch fwall_fstone2
 y 23
 end
 arch grassd_6
@@ -141,7 +146,7 @@ arch grassd_5
 x 1
 y 2
 end
-arch wall_flagstone1.111
+arch wall_flagstone1b.111
 x 1
 y 2
 end
@@ -164,7 +169,7 @@ arch floor_sblack2
 x 1
 y 5
 end
-arch wall_flagstone1.111
+arch wall_flagstone1b.111
 x 1
 y 5
 end
@@ -193,6 +198,7 @@ x 1
 y 9
 end
 arch wmask_wanted
+name announcement
 msg
 Attention!
 We have imprisoned a local ogre
@@ -202,6 +208,11 @@ local guards.
 endmsg
 x 1
 y 9
+arch event_obj
+name Lua
+sub_type 12
+race /scripts_private/examine_sign.lua
+end
 end
 arch floor_flagm1
 x 1
@@ -283,11 +294,15 @@ arch grassd_2
 x 1
 y 22
 end
+arch wall_fstone_round.102
+x 1
+y 22
+end
 arch grassd_8
 x 1
 y 23
 end
-arch tree_big3
+arch fwall_fstone2
 x 1
 y 23
 end
@@ -334,15 +349,11 @@ arch floor_sblack2
 x 2
 y 8
 end
-arch door1_locked
-x 2
-y 8
-end
 arch floor_flagm1
 x 2
 y 9
 end
-arch grassd_m2
+arch grass_fullmask1
 x 2
 y 9
 end
@@ -444,7 +455,7 @@ arch grassd_8
 x 2
 y 23
 end
-arch tree_big3
+arch fwall_fstone2
 x 2
 y 23
 end
@@ -467,7 +478,7 @@ arch floor_sblack1
 x 3
 y 3
 end
-arch wall_flagstone1.131
+arch wall_flagstone1b.131
 x 3
 y 3
 end
@@ -506,6 +517,9 @@ face grate_door1.131
 direction 3
 x 3
 y 7
+arch beacon
+name guildhall jail cell 3 door
+end
 end
 arch floor_sblack1
 x 3
@@ -599,7 +613,7 @@ arch grassd_8
 x 3
 y 23
 end
-arch tree_big2
+arch fwall_fstone2
 x 3
 y 23
 end
@@ -639,7 +653,7 @@ arch floor_sblack1
 x 4
 y 5
 end
-arch wall_flagstone1.111
+arch wall_flagstone1b.111
 x 4
 y 5
 end
@@ -668,12 +682,24 @@ level 4
 arch event_obj
 name Lua
 sub_type 6
-race guildhall/jail_ogre_say.lua
+race guildhall/frahak_say.lua
 end
 arch event_obj
 name Lua
 sub_type 13
-race guildhall/jail_ogre.lua
+race guildhall/frahak.lua
+end
+arch shoulder_leather
+name Ogre Shoulders
+str 1
+cha -1
+material_real 198
+item_quality 85
+item_condition 85
+resist_impact 8
+identified 1
+known_magical 1
+is_magical 1
 end
 end
 end
@@ -685,23 +711,24 @@ arch wall_flagstone1.111
 x 4
 y 8
 end
-arch grassd_2
+arch grassd_5
 x 4
 y 9
 end
-arch wmask_wanted
+arch sign_generic
+name sign
 msg
-A Gnoll has been sighted in Guild Hall! It's reported height is
-about 2 meters, seemed to be wielding a polearm of
-some sort, and has a red mark on its face.
-
-If you see this Gnoll, fight to the best of your abilities to
-kill it and bring proof of death to <person in Merc Guild> in the Mercenary
-Guild of Guild Hall or flee like kobolds in a cavein. Reward is
-as seen fit by <person in Merc Guild>.
+-----------Guild Hall Jail------------
+*Don't fret; they're under lock and key*
 endmsg
+direction 5
 x 4
 y 9
+arch event_obj
+name Lua
+sub_type 12
+race /scripts_private/examine_sign.lua
+end
 end
 arch floor_flagm1
 x 4
@@ -792,7 +819,7 @@ arch grassd_8
 x 4
 y 23
 end
-arch tree_big3
+arch fwall_fstone2
 x 4
 y 23
 end
@@ -820,7 +847,10 @@ x 5
 y 3
 end
 arch hole
-slaying guildhall/kobold_den1
+msg
+You see the bottom of the hole only a few feet down, so you jump unwittingly onto some stairs and nearly twist your ankle. What would live down here?
+endmsg
+slaying guildhall/kobold_den_0000
 hp 10
 sp 10
 x 5
@@ -958,11 +988,11 @@ arch grassd_3
 x 5
 y 23
 end
-arch tree_big2
+arch fwall_fstone2
 x 5
 y 23
 end
-arch grassd_7
+arch grassd_2
 x 6
 end
 arch grassd_8
@@ -973,7 +1003,7 @@ arch grassd_2
 x 6
 y 2
 end
-arch wall_flagstone1.111
+arch wall_flagstone1b.111
 x 6
 y 2
 end
@@ -981,7 +1011,7 @@ arch floor_sblack1
 x 6
 y 3
 end
-arch wall_flagstone1.131
+arch wall_flagstone1b.131
 x 6
 y 3
 end
@@ -1005,7 +1035,7 @@ arch floor_sblack1
 x 6
 y 6
 end
-arch wall_flagstone1.131
+arch wall_flagstone1b.131
 x 6
 y 6
 end
@@ -1021,7 +1051,7 @@ arch floor_sblack1
 x 6
 y 8
 end
-arch wall_flagstone1.141
+arch wall_flagstone1b.141
 x 6
 y 8
 end
@@ -1125,7 +1155,7 @@ arch grassd_5
 x 6
 y 23
 end
-arch tree_big3
+arch fwall_fstone2
 x 6
 y 23
 end
@@ -1135,7 +1165,7 @@ end
 arch earth_m17
 x 7
 end
-arch grassd_8
+arch grassd_1
 x 7
 y 1
 end
@@ -1267,7 +1297,7 @@ arch grassd_8
 x 7
 y 23
 end
-arch tree_big3
+arch fwall_fstone2
 x 7
 y 23
 end
@@ -1461,7 +1491,7 @@ arch grassd_3
 x 8
 y 23
 end
-arch tree_big2
+arch fwall_fstone2
 x 8
 y 23
 end
@@ -1532,8 +1562,12 @@ arch floor_wood2_l1
 x 9
 y 9
 end
+arch light1
+x 9
+y 9
+end
 arch sewer_hole1
-slaying guildhall/guildhallb_030a
+slaying guildhall/guildhall_a_030a
 hp 9
 sp 7
 x 9
@@ -1565,32 +1599,16 @@ x 9
 y 13
 end
 arch stairs_wood_down
-last_eat 1
-slaying castle_030a
-hp 10
+slaying guildhall/guildhall_a_030a
+hp 9
 sp 13
+direction 7
 x 9
 y 13
-arch event_obj
-sub_type 1
-race guildhall/gh_merc_stairs.lua
-end
 end
 arch floor_wood2_l1
 x 9
 y 14
-end
-arch stairs_wood_down
-last_eat 1
-slaying castle_030a
-hp 10
-sp 14
-x 9
-y 14
-arch event_obj
-sub_type 1
-race guildhall/gh_merc_stairs.lua
-end
 end
 arch floor_wood2_l1
 x 9
@@ -1640,11 +1658,15 @@ arch grassd_3
 x 9
 y 22
 end
+arch wall_fstone_round.108
+x 9
+y 22
+end
 arch grassd_2
 x 9
 y 23
 end
-arch tree_big3
+arch fwall_fstone2
 x 9
 y 23
 end
@@ -1805,11 +1827,15 @@ arch grassd_8
 x 10
 y 22
 end
+arch fwall_fstone2
+x 10
+y 22
+end
 arch grassd_8
 x 10
 y 23
 end
-arch tree_big3
+arch fwall_fstone2
 x 10
 y 23
 end
@@ -1982,7 +2008,7 @@ arch grassd_6
 x 11
 y 22
 end
-arch plant5
+arch wall_fstone_round.102
 x 11
 y 22
 end
@@ -1990,7 +2016,7 @@ arch grassd_8
 x 11
 y 23
 end
-arch tree_big3
+arch fwall_fstone2
 x 11
 y 23
 end
@@ -2018,7 +2044,11 @@ x 12
 y 3
 end
 arch stairs_stone_down
-slaying guildhall/guildhallb_030a
+msg
+"warning: mouse traps"
+endmsg
+last_eat 4
+slaying guildhall/guildhall_a2_030a
 hp 1
 sp 1
 direction 5
@@ -2162,7 +2192,7 @@ arch grassd_8
 x 12
 y 23
 end
-arch tree_big2
+arch fwall_fstone2
 x 12
 y 23
 end
@@ -2317,7 +2347,7 @@ arch grassd_4
 x 13
 y 23
 end
-arch tree_big3
+arch fwall_fstone2
 x 13
 y 23
 end
@@ -2358,15 +2388,13 @@ identified 1
 is_named 1
 x 14
 y 3
-arch cape
-name Fanrir's Cape
-no_pick 1
-identified 1
-is_named 1
-end
 arch quest_trigger
 name Examine Fanrir's Sack
 last_heal 1
+end
+arch sandals
+name Fanrir's Sandals
+no_pick 1
 end
 end
 arch grassd_3
@@ -2507,7 +2535,7 @@ arch grassd_3
 x 14
 y 23
 end
-arch tree_big2
+arch fwall_fstone2
 x 14
 y 23
 end
@@ -2584,6 +2612,21 @@ arch grassd_2
 x 15
 y 8
 end
+arch sign_generic
+name sign
+msg
+---------Mercenary Guild of Guild Hall----------
+*We fight for protection, for valor, and for glory!*
+endmsg
+direction 3
+x 15
+y 8
+arch event_obj
+name Lua
+sub_type 12
+race /scripts_private/examine_sign.lua
+end
+end
 arch grassd_2
 x 15
 y 9
@@ -2605,7 +2648,7 @@ arch floor_flagm1
 x 15
 y 11
 end
-arch grassd_m1
+arch grass_fullmask2
 x 15
 y 11
 end
@@ -2690,7 +2733,7 @@ arch grassd_8
 x 15
 y 23
 end
-arch tree_big3
+arch fwall_fstone2
 x 15
 y 23
 end
@@ -2701,35 +2744,6 @@ arch earth_m11
 x 16
 end
 arch grassd_1
-x 16
-y 1
-end
-arch pillar_rune5
-msg
-*List of the Game Rules*
-1. Abuse of the game
-a. Do not use bots, scripts, or other software, or otherwise interfere with the server.
-b. Do not exploit bugs with the intention of giving any player(s) either an advantage or disadvantage over any other player(s), harming the game economy, or otherwise disrupting the game.
-c. Do not attempt to password guess, announce any character's password in public communication, or log into any character other than your own.
-d. Do not 'share' passwords in private or external communication.
-e. Do not engage in alt theft or other alt trickery.
-f. Do not discuss other games in public communication.
-g. Do not sell or trade Daimonin items, money, or experience for perks, goods, or money in real life or other games.
-h. Do not 'spam' the public communication channels.
-2. Abuse of the community
-a. Do not intentionally harass, intimidate, bully, or defame, threaten, incite, or promote real life violence or prejudice, or otherwise indulge in abuse or bigotry against any real life social group or player in either public or private communication.
-b. Do not pass on personal, real life information about another player in either public or private communication without that player's express permission.
-c. Do not discuss 'controversial' topics in public communication.
-d. Do not use profane, obscene, or explicit language in public communication.
-3. Abuse of the rules
-a. Respect the Vols, GMs, and DMs, the devteam, and their decisions.
-b. Do not make false claims to be a Vol, GM, or DM, or member of the devteam.
-c. Do not make false or vexatious claims that these rules have been broken.
-d. Do not be a troublemaker or attempt to 'bend' these rules.
-endmsg
-type 98
-layer 7
-no_pass 0
 x 16
 y 1
 end
@@ -2897,7 +2911,7 @@ arch grassd_8
 x 16
 y 23
 end
-arch tree_big3
+arch fwall_fstone2
 x 16
 y 23
 end
@@ -3084,7 +3098,7 @@ arch grassd_3
 x 17
 y 23
 end
-arch tree_big2
+arch fwall_fstone2
 x 17
 y 23
 end
@@ -3145,19 +3159,31 @@ msg
 You move the boxes aside and slip through the hole, unnoticed.
 endmsg
 face box2.101
-slaying guildhall/guildhallb_030a
-hp 19
+slaying guildhall/guildhall_a_030a
+hp 18
 sp 8
 x 18
 y 8
+arch event_obj
+name Lua
+sub_type 12
+race guildhall/boxes_examine.lua
+end
 end
 arch grassd_3
 x 18
 y 9
 end
 arch straw1.101
+name straw bale
+no_pass 0
 x 18
 y 9
+arch event_obj
+name Lua
+sub_type 12
+race guildhall/boxes_examine.lua
+end
 end
 arch grassd_2
 x 18
@@ -3192,17 +3218,29 @@ arch grassd_2
 x 18
 y 13
 end
-arch box1.101
+arch box2.101
+no_pass 0
 x 18
 y 13
+arch event_obj
+name Lua
+sub_type 12
+race guildhall/boxes_examine.lua
+end
 end
 arch grassd_6
 x 18
 y 14
 end
 arch box_big.101
+no_pass 0
 x 18
 y 14
+arch event_obj
+name Lua
+sub_type 12
+race guildhall/boxes_examine.lua
+end
 end
 arch grassd_3
 x 18
@@ -3330,7 +3368,7 @@ arch grassd_3
 x 18
 y 23
 end
-arch tree_big2
+arch fwall_fstone2
 x 18
 y 23
 end
@@ -3393,6 +3431,16 @@ arch grassd_2
 x 19
 y 9
 end
+arch box1.101
+no_pass 0
+x 19
+y 9
+arch event_obj
+name Lua
+sub_type 12
+race guildhall/boxes_examine.lua
+end
+end
 arch grassd_2
 x 19
 y 10
@@ -3433,12 +3481,7 @@ arch floor_sand_d4
 x 19
 y 16
 end
-arch grassd_m10
-x 19
-y 16
-end
-arch grassd_m7
-layer 5
+arch grass_fullmask2
 x 19
 y 16
 end
@@ -3446,12 +3489,7 @@ arch floor_sand_d4
 x 19
 y 17
 end
-arch grassd_m10
-x 19
-y 17
-end
-arch grassd_m7
-layer 5
+arch grass_fullmask2
 x 19
 y 17
 end
@@ -3459,12 +3497,7 @@ arch floor_sand_d4
 x 19
 y 18
 end
-arch grassd_m10
-x 19
-y 18
-end
-arch grassd_m7
-layer 5
+arch grass_fullmask2
 x 19
 y 18
 end
@@ -3488,11 +3521,15 @@ arch grassd_3
 x 19
 y 22
 end
+arch wall_fstone_round.108
+x 19
+y 22
+end
 arch grassd_8
 x 19
 y 23
 end
-arch tree_big3
+arch fwall_fstone2
 x 19
 y 23
 end
@@ -3590,6 +3627,16 @@ arch grassd_8
 x 20
 y 13
 end
+arch box2.101
+no_pass 0
+x 20
+y 13
+arch event_obj
+name Lua
+sub_type 12
+race guildhall/boxes_examine.lua
+end
+end
 arch grassd_1
 x 20
 y 14
@@ -3602,12 +3649,7 @@ arch floor_sand_d4
 x 20
 y 16
 end
-arch grassd_m10
-x 20
-y 16
-end
-arch grassd_m7
-layer 5
+arch grass_fullmask2
 x 20
 y 16
 end
@@ -3615,12 +3657,7 @@ arch floor_sand_d4
 x 20
 y 17
 end
-arch grassd_m10
-x 20
-y 17
-end
-arch grassd_m7
-layer 5
+arch grass_fullmask2
 x 20
 y 17
 end
@@ -3628,12 +3665,7 @@ arch floor_sand_d4
 x 20
 y 18
 end
-arch grassd_m10
-x 20
-y 18
-end
-arch grassd_m7
-layer 5
+arch grass_fullmask2
 x 20
 y 18
 end
@@ -3661,7 +3693,7 @@ arch grassd_6
 x 20
 y 22
 end
-arch plant10
+arch fwall_fstone2
 x 20
 y 22
 end
@@ -3669,7 +3701,7 @@ arch grassd_3
 x 20
 y 23
 end
-arch tree_big2
+arch fwall_fstone2
 x 20
 y 23
 end
@@ -3764,24 +3796,23 @@ arch grassd_m7
 x 21
 y 12
 end
-arch grassd_7
+arch grassd_2
 x 21
 y 13
+end
+arch box1.101
+no_pass 0
+x 21
+y 13
+arch event_obj
+name Lua
+sub_type 12
+race guildhall/boxes_examine.lua
+end
 end
 arch grassd_8
 x 21
 y 14
-end
-arch spawn_point
-x 21
-y 14
-arch archer
-type 83
-glow_radius 7
-level 25
-arch ai_generic
-end
-end
 end
 arch grassd_8
 x 21
@@ -3791,12 +3822,7 @@ arch floor_sand_d4
 x 21
 y 16
 end
-arch grassd_m10
-x 21
-y 16
-end
-arch grassd_m7
-layer 5
+arch grass_fullmask2
 x 21
 y 16
 end
@@ -3804,12 +3830,7 @@ arch floor_sand_d4
 x 21
 y 17
 end
-arch grassd_m10
-x 21
-y 17
-end
-arch grassd_m7
-layer 5
+arch grass_fullmask2
 x 21
 y 17
 end
@@ -3817,12 +3838,7 @@ arch floor_sand_d4
 x 21
 y 18
 end
-arch grassd_m10
-x 21
-y 18
-end
-arch grassd_m7
-layer 5
+arch grass_fullmask2
 x 21
 y 18
 end
@@ -3846,11 +3862,15 @@ arch grassd_5
 x 21
 y 22
 end
+arch wall_fstone_round.102
+x 21
+y 22
+end
 arch grassd_8
 x 21
 y 23
 end
-arch tree_big3
+arch fwall_fstone2
 x 21
 y 23
 end
@@ -3925,12 +3945,14 @@ x 22
 y 8
 arch smith
 type 83
+face weapon_smith.141
+animation weapon_smith
 glow_radius 7
 level 25
 arch event_obj
 name lua
 sub_type 13
-race /scripts/smith.lua
+race /planes/human_plane/castle/guildhall/smith.lua
 end
 end
 end
@@ -4024,6 +4046,11 @@ melee_attack_enemy
 bow_attack_enemy
 endmsg
 end
+arch event_obj
+name Lua
+sub_type 13
+race guildhall/training_ranger.lua
+end
 end
 end
 arch grassd_4
@@ -4062,7 +4089,7 @@ arch grassd_5
 x 22
 y 23
 end
-arch tree_big
+arch fwall_fstone2
 x 22
 y 23
 end
@@ -4200,7 +4227,7 @@ arch grassd_3
 x 23
 y 23
 end
-arch tree_big2
+arch fwall_fstone2
 x 23
 y 23
 end
