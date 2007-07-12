@@ -28,73 +28,140 @@ end
 arch water_still_deep
 y 2
 end
+arch water_still_fmask.107
+y 2
+end
 arch water_still_deep
+y 3
+end
+arch water_still_fmask.107
 y 3
 end
 arch water_still_deep
 y 4
 end
+arch water_still_fmask.107
+y 4
+end
 arch water_still_deep
+y 5
+end
+arch water_still_fmask.107
 y 5
 end
 arch water_still_deep
 y 6
 end
+arch water_still_fmask.107
+y 6
+end
 arch water_still_deep
+y 7
+end
+arch water_still_fmask.103
 y 7
 end
 arch water_still_deep
 y 8
 end
+arch water_still_fmask.103
+y 8
+end
 arch water_still_deep
+y 9
+end
+arch water_still_fmask.103
 y 9
 end
 arch water_still_deep
 y 10
 end
+arch water_still_fmask.103
+y 10
+end
 arch water_still_deep
+y 11
+end
+arch water_still_fmask.103
 y 11
 end
 arch water_still_deep
 y 12
 end
+arch water_still_fmask.103
+y 12
+end
 arch water_still_deep
+y 13
+end
+arch water_still_fmask.103
 y 13
 end
 arch water_still_deep
 y 14
 end
+arch water_still_fmask.103
+y 14
+end
 arch water_still_deep
+y 15
+end
+arch water_still_fmask.103
 y 15
 end
 arch water_still_deep
 y 16
 end
+arch water_still_fmask.103
+y 16
+end
 arch water_still_deep
+y 17
+end
+arch water_still_fmask.103
 y 17
 end
 arch water_still_deep
 y 18
 end
+arch water_still_fmask.103
+y 18
+end
 arch water_still_deep
 y 19
 end
-arch water_still
+arch water_still_deep
 y 20
 end
-arch water_still
-y 21
-end
-arch water_still
-y 22
+arch water_still_fmask.107
+y 20
 end
 arch water_still_deep
+y 21
+end
+arch water_still_deepest
+y 22
+end
+arch water_still_deep_fmask.106
+y 22
+end
+arch water_still_deepest
 y 23
 end
-arch water_still
+arch water_still_deep_fmask.107
+y 23
+end
+arch water_still_deep
 x 1
 end
-arch water_still
+arch water_still_fmask.107
+x 1
+end
+arch water_still_deep
+x 1
+y 1
+end
+arch water_still_fmask.108
 x 1
 y 1
 end
@@ -118,23 +185,43 @@ arch water_still
 x 1
 y 6
 end
-arch water_still
+arch water_still_deep
 x 1
 y 7
 end
-arch water_still
+arch water_still_fmask.106
+x 1
+y 7
+end
+arch water_still_deep
 x 1
 y 8
 end
-arch water_still
+arch water_still_fmask.107
+x 1
+y 8
+end
+arch water_still_deep
 x 1
 y 9
 end
-arch water_still
+arch water_still_fmask.107
+x 1
+y 9
+end
+arch water_still_deep
 x 1
 y 10
 end
-arch water_still
+arch water_still_fmask.107
+x 1
+y 10
+end
+arch water_still_deep
+x 1
+y 11
+end
+arch water_still_fmask.107
 x 1
 y 11
 end
@@ -142,7 +229,15 @@ arch water_still_deep
 x 1
 y 12
 end
+arch water_still_fmask.107
+x 1
+y 12
+end
 arch water_still_deep
+x 1
+y 13
+end
+arch water_still_fmask.107
 x 1
 y 13
 end
@@ -150,7 +245,15 @@ arch water_still_deep
 x 1
 y 14
 end
+arch water_still_fmask.107
+x 1
+y 14
+end
 arch water_still_deep
+x 1
+y 15
+end
+arch water_still_fmask.107
 x 1
 y 15
 end
@@ -158,7 +261,15 @@ arch water_still_deep
 x 1
 y 16
 end
+arch water_still_fmask.107
+x 1
+y 16
+end
 arch water_still_deep
+x 1
+y 17
+end
+arch water_still_fmask.107
 x 1
 y 17
 end
@@ -166,7 +277,15 @@ arch water_still_deep
 x 1
 y 18
 end
+arch water_still_fmask.107
+x 1
+y 18
+end
 arch water_still_deep
+x 1
+y 19
+end
+arch water_still_fmask.108
 x 1
 y 19
 end
@@ -174,7 +293,11 @@ arch water_still
 x 1
 y 20
 end
-arch water_still
+arch water_still_deep
+x 1
+y 21
+end
+arch water_still_fmask.106
 x 1
 y 21
 end
@@ -322,6 +445,10 @@ x 2
 y 21
 end
 arch water_still_deep
+x 2
+y 22
+end
+arch water_still_fmask.105
 x 2
 y 22
 end
@@ -492,6 +619,10 @@ arch water_still_deep
 x 3
 y 22
 end
+arch water_still_fmask.106
+x 3
+y 22
+end
 arch water_still_deep
 x 3
 y 23
@@ -648,6 +779,10 @@ x 4
 y 22
 end
 arch water_still_deep
+x 4
+y 23
+end
+arch water_still_fmask.106
 x 4
 y 23
 end
@@ -1307,7 +1442,7 @@ x 9
 y 4
 end
 arch hole
-slaying /nonpub/base/grey_cave/castleb_0401
+slaying grey_cave/castleb_0401
 hp 9
 sp 5
 walk_on 1
@@ -1745,6 +1880,10 @@ arch water_still_deep
 x 11
 y 22
 end
+arch water_still_fmask.203
+x 11
+y 22
+end
 arch water_still
 x 11
 y 23
@@ -1752,11 +1891,22 @@ end
 arch water_still_deep
 x 12
 end
+arch water_still_fmask.103
+x 12
+end
 arch water_still_deep
 x 12
 y 1
 end
+arch water_still_fmask.103
+x 12
+y 1
+end
 arch water_still_deep
+x 12
+y 2
+end
+arch water_still_fmask.102
 x 12
 y 2
 end
@@ -1808,7 +1958,15 @@ arch water_still_deep
 x 12
 y 12
 end
+arch water_still_fmask.104
+x 12
+y 12
+end
 arch water_still_deep
+x 12
+y 13
+end
+arch water_still_fmask.103
 x 12
 y 13
 end
@@ -1816,7 +1974,15 @@ arch water_still_deep
 x 12
 y 14
 end
+arch water_still_fmask.103
+x 12
+y 14
+end
 arch water_still_deep
+x 12
+y 15
+end
+arch water_still_fmask.102
 x 12
 y 15
 end
@@ -1848,18 +2014,37 @@ arch water_still_deep
 x 12
 y 22
 end
+arch water_still_fmask.106
+x 12
+y 22
+end
 arch water_still_deep
+x 12
+y 23
+end
+arch water_still_fmask.102
 x 12
 y 23
 end
 arch water_still_deep
 x 13
 end
+arch water_still_fmask.107
+x 13
+end
 arch water_still_deep
 x 13
 y 1
 end
+arch water_still_fmask.107
+x 13
+y 1
+end
 arch water_still_deep
+x 13
+y 2
+end
+arch water_still_fmask.108
 x 13
 y 2
 end
@@ -1879,7 +2064,7 @@ arch earth_m5
 x 13
 y 4
 end
-arch grassd_6
+arch water_still
 x 13
 y 5
 end
@@ -1923,6 +2108,10 @@ arch water_still_deep
 x 13
 y 11
 end
+arch water_still_fmask.205
+x 13
+y 11
+end
 arch water_plant3
 x 13
 y 11
@@ -1931,7 +2120,15 @@ arch water_still_deep
 x 13
 y 12
 end
+arch water_still_fmask.107
+x 13
+y 12
+end
 arch water_still_deep
+x 13
+y 13
+end
+arch water_still_fmask.107
 x 13
 y 13
 end
@@ -1939,7 +2136,15 @@ arch water_still_deep
 x 13
 y 14
 end
+arch water_still_fmask.107
+x 13
+y 14
+end
 arch water_still_deep
+x 13
+y 15
+end
+arch water_still_fmask.107
 x 13
 y 15
 end
@@ -1947,7 +2152,15 @@ arch water_still_deep
 x 13
 y 16
 end
+arch water_still_fmask.103
+x 13
+y 16
+end
 arch water_still_deep
+x 13
+y 17
+end
+arch water_still_fmask.103
 x 13
 y 17
 end
@@ -1955,11 +2168,23 @@ arch water_still_deep
 x 13
 y 18
 end
+arch water_still_fmask.103
+x 13
+y 18
+end
 arch water_still_deep
 x 13
 y 19
 end
+arch water_still_fmask.103
+x 13
+y 19
+end
 arch water_still_deep
+x 13
+y 20
+end
+arch water_still_fmask.201
 x 13
 y 20
 end
@@ -1972,6 +2197,10 @@ x 13
 y 22
 end
 arch water_still_deep
+x 13
+y 23
+end
+arch water_still_fmask.301
 x 13
 y 23
 end
@@ -2058,7 +2287,11 @@ arch water_still
 x 14
 y 15
 end
-arch water_still
+arch water_still_deep
+x 14
+y 16
+end
+arch water_still_fmask.106
 x 14
 y 16
 end
@@ -2066,11 +2299,23 @@ arch water_still_deep
 x 14
 y 17
 end
+arch water_still_fmask.107
+x 14
+y 17
+end
 arch water_still_deep
 x 14
 y 18
 end
+arch water_still_fmask.107
+x 14
+y 18
+end
 arch water_still_deep
+x 14
+y 19
+end
+arch water_still_fmask.108
 x 14
 y 19
 end
@@ -2087,6 +2332,10 @@ x 14
 y 22
 end
 arch water_still_deep
+x 14
+y 23
+end
+arch water_still_fmask.301
 x 14
 y 23
 end
@@ -2240,6 +2489,10 @@ arch water_still_deep
 x 15
 y 22
 end
+arch water_still_fmask.104
+x 15
+y 22
+end
 arch water_still_deep
 x 15
 y 23
@@ -2369,17 +2622,13 @@ y 19
 end
 arch water_still
 x 16
-y 19
-end
-arch water_still
-x 16
-y 19
-end
-arch water_still
-x 16
 y 20
 end
 arch water_still_deep
+x 16
+y 21
+end
+arch water_still_fmask.205
 x 16
 y 21
 end
@@ -2387,7 +2636,15 @@ arch water_still_deep
 x 16
 y 22
 end
+arch water_still_fmask.107
+x 16
+y 22
+end
 arch water_still_deep
+x 16
+y 23
+end
+arch water_still_fmask.107
 x 16
 y 23
 end
@@ -2510,6 +2767,10 @@ x 17
 y 19
 end
 arch water_still_deep
+x 17
+y 20
+end
+arch water_still_fmask.205
 x 17
 y 20
 end
@@ -3295,10 +3556,6 @@ x 23
 y 22
 end
 arch grassd_7
-x 23
-y 23
-end
-arch grassd_1
 x 23
 y 23
 end
