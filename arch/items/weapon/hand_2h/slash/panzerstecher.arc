@@ -10,7 +10,7 @@ sub_type 5
 face panzerstecher.101
 material 2
 material_real 65
-dam 10
+dam 100
 wc 26
 weight 2150
 value 750
