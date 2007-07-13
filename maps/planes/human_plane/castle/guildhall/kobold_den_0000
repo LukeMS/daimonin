@@ -1,12 +1,12 @@
 arch map
-name Stoneglow - Kobold Den§100-dreamybells.ogg|0|-1
+name Kobold Den§100-dreamybells.ogg|0|-1
 msg
 Creator: Daimonin Map Editor
 Date:    3/22/2004
 endmsg
 width 24
 height 24
-difficulty 1
+difficulty 2
 darkness 3
 tileset_id 113
 tileset_x 0
@@ -568,6 +568,10 @@ arch floor_grit4a
 x 3
 y 3
 end
+arch sand_dm9
+x 3
+y 3
+end
 arch floor_grit4a
 x 3
 y 4
@@ -647,6 +651,10 @@ arch floor_grit4a
 x 3
 y 15
 end
+arch sand_dm9
+x 3
+y 15
+end
 arch floor_grit4a
 x 3
 y 16
@@ -705,6 +713,10 @@ arch floor_sand_d4
 x 4
 y 2
 end
+arch sand_dm7
+x 4
+y 2
+end
 arch spawn_point
 x 4
 y 2
@@ -719,6 +731,10 @@ x 4
 y 3
 end
 arch floor_grit4a
+x 4
+y 4
+end
+arch sand_dm6
 x 4
 y 4
 end
@@ -770,6 +786,10 @@ arch floor_grit4a
 x 4
 y 14
 end
+arch sand_dm7
+x 4
+y 14
+end
 arch chair1_111
 x 4
 y 14
@@ -779,6 +799,10 @@ x 4
 y 15
 end
 arch floor_grit4a
+x 4
+y 16
+end
+arch sand_dm6
 x 4
 y 16
 end
@@ -844,6 +868,10 @@ arch floor_grit4a
 x 5
 y 3
 end
+arch sand_dm8
+x 5
+y 3
+end
 arch floor_grit4a
 x 5
 y 4
@@ -897,6 +925,10 @@ x 5
 y 14
 end
 arch floor_grit4a
+x 5
+y 15
+end
+arch sand_dm8
 x 5
 y 15
 end
@@ -954,7 +986,15 @@ arch floor_grit4a
 x 6
 y 2
 end
+arch sand_dm9
+x 6
+y 2
+end
 arch floor_grit4a
+x 6
+y 3
+end
+arch sand_dm9
 x 6
 y 3
 end
@@ -1114,6 +1154,10 @@ arch floor_grit4a
 x 7
 y 1
 end
+arch sand_dm7
+x 7
+y 1
+end
 arch floor_sand_d2
 x 7
 y 2
@@ -1123,6 +1167,10 @@ x 7
 y 3
 end
 arch floor_grit4a
+x 7
+y 4
+end
+arch sand_dm6
 x 7
 y 4
 end
@@ -1205,6 +1253,10 @@ arch floor_grit4a
 x 7
 y 18
 end
+arch sand_dm9
+x 7
+y 18
+end
 arch floor_grit4a
 x 7
 y 19
@@ -1243,7 +1295,15 @@ arch floor_grit4a
 x 8
 y 2
 end
+arch sand_dm8
+x 8
+y 2
+end
 arch floor_grit4a
+x 8
+y 3
+end
+arch sand_dm8
 x 8
 y 3
 end
@@ -1331,11 +1391,19 @@ arch floor_grit4a
 x 8
 y 17
 end
+arch sand_dm7
+x 8
+y 17
+end
 arch floor_sand_d2
 x 8
 y 18
 end
 arch floor_grit4a
+x 8
+y 19
+end
+arch sand_dm6
 x 8
 y 19
 end
@@ -1449,11 +1517,19 @@ arch floor_grit4a
 x 9
 y 14
 end
+arch sand_dm9
+x 9
+y 14
+end
 arch floor_grit4a
 x 9
 y 15
 end
 arch floor_grit4a
+x 9
+y 16
+end
+arch sand_dm5
 x 9
 y 16
 end
@@ -1466,6 +1542,10 @@ x 9
 y 17
 end
 arch floor_grit4a
+x 9
+y 18
+end
+arch sand_dm8
 x 9
 y 18
 end
@@ -1533,11 +1613,19 @@ arch floor_grit4a
 x 10
 y 4
 end
+arch sand_dm7
+x 10
+y 4
+end
 arch floor_sand_d2
 x 10
 y 5
 end
 arch floor_grit4a
+x 10
+y 6
+end
+arch sand_dm6
 x 10
 y 6
 end
@@ -1567,6 +1655,9 @@ x 10
 y 10
 end
 arch stairs_wood_up
+msg
+You climb the tiny stairs in one stride and pull yourself out of the elbow-deep hole.
+endmsg
 slaying ../castle_030a
 hp 5
 sp 3
@@ -1586,11 +1677,19 @@ arch floor_grit4a
 x 10
 y 13
 end
+arch sand_dm20
+x 10
+y 13
+end
 arch floor_sand_d2
 x 10
 y 14
 end
 arch floor_grit4a
+x 10
+y 15
+end
+arch sand_dm7
 x 10
 y 15
 end
@@ -1603,6 +1702,10 @@ x 10
 y 16
 end
 arch floor_grit4a
+x 10
+y 17
+end
+arch sand_dm10
 x 10
 y 17
 end
@@ -1656,6 +1759,10 @@ arch floor_grit4a
 x 11
 y 4
 end
+arch sand_dm19
+x 11
+y 4
+end
 arch spawn_point
 x 11
 y 4
@@ -1666,6 +1773,10 @@ level 2
 end
 end
 arch floor_grit4a
+x 11
+y 5
+end
+arch sand_dm8
 x 11
 y 5
 end
@@ -1705,6 +1816,10 @@ arch floor_grit4a
 x 11
 y 12
 end
+arch sand_dm7
+x 11
+y 12
+end
 arch floor_sand_d4
 x 11
 y 13
@@ -1713,11 +1828,19 @@ arch floor_grit4a
 x 11
 y 14
 end
+arch sand_dm14
+x 11
+y 14
+end
 arch floor_grit4a
 x 11
 y 15
 end
 arch floor_grit4a
+x 11
+y 16
+end
+arch sand_dm12
 x 11
 y 16
 end
@@ -1734,6 +1857,10 @@ x 11
 y 19
 end
 arch floor_grit4a
+x 11
+y 20
+end
+arch sand_dm9
 x 11
 y 20
 end
@@ -1781,6 +1908,10 @@ is_animated 1
 x 12
 y 3
 end
+arch sand_dm22
+x 12
+y 3
+end
 arch floor_sand_d3
 x 12
 y 4
@@ -1790,6 +1921,10 @@ x 12
 y 5
 end
 arch floor_grit4a
+x 12
+y 6
+end
+arch sand_dm6
 x 12
 y 6
 end
@@ -1829,6 +1964,10 @@ arch floor_grit4a
 x 12
 y 13
 end
+arch sand_dm8
+x 12
+y 13
+end
 arch floor_grit4a
 x 12
 y 14
@@ -1853,11 +1992,19 @@ arch floor_grit4a
 x 12
 y 19
 end
+arch sand_dm7
+x 12
+y 19
+end
 arch floor_sand_d3
 x 12
 y 20
 end
 arch floor_grit4a
+x 12
+y 21
+end
+arch sand_dm6
 x 12
 y 21
 end
@@ -1892,6 +2039,10 @@ x 13
 y 2
 end
 arch floor_grit4a
+x 13
+y 3
+end
+arch sand_dm7
 x 13
 y 3
 end
@@ -1921,6 +2072,10 @@ arch floor_grit4a
 x 13
 y 5
 end
+arch sand_dm21
+x 13
+y 5
+end
 arch floor_grit4a
 x 13
 y 6
@@ -2035,6 +2190,10 @@ is_animated 1
 x 13
 y 20
 end
+arch sand_dm8
+x 13
+y 20
+end
 arch floor_grit4a
 x 13
 y 21
@@ -2077,6 +2236,10 @@ arch floor_grit4a
 x 14
 y 4
 end
+arch sand_dm8
+x 14
+y 4
+end
 arch floor_grit4a
 x 14
 y 5
@@ -2109,7 +2272,11 @@ arch floor_grit4a
 x 14
 y 10
 end
-arch floor_grit4a
+arch sand_dm16
+x 14
+y 10
+end
+arch floor_sand_d4
 x 14
 y 11
 end
@@ -2117,7 +2284,7 @@ arch plant_mushroom1
 x 14
 y 11
 end
-arch floor_grit4a
+arch floor_sand_d2
 x 14
 y 12
 end
@@ -2136,6 +2303,10 @@ unaggressive 1
 end
 end
 arch floor_grit4a
+x 14
+y 13
+end
+arch sand_dm6
 x 14
 y 13
 end
@@ -2183,6 +2354,10 @@ arch floor_grit4a
 x 14
 y 20
 end
+arch sand_dm9
+x 14
+y 20
+end
 arch floor_grit4a
 x 14
 y 21
@@ -2273,7 +2448,7 @@ arch fwall_sand1b
 x 15
 y 9
 end
-arch floor_grit4a
+arch floor_sand_d2
 x 15
 y 10
 end
@@ -2291,7 +2466,7 @@ wis 2
 unaggressive 1
 end
 end
-arch floor_grit4a
+arch floor_sand_d4
 x 15
 y 11
 end
@@ -2299,7 +2474,7 @@ arch plant_mushroom3
 x 15
 y 11
 end
-arch floor_grit4a
+arch floor_sand_d4
 x 15
 y 12
 end
@@ -2308,6 +2483,10 @@ x 15
 y 12
 end
 arch floor_grit4a
+x 15
+y 13
+end
+arch sand_dm6
 x 15
 y 13
 end
@@ -2347,11 +2526,19 @@ arch floor_grit4a
 x 15
 y 19
 end
+arch sand_dm7
+x 15
+y 19
+end
 arch floor_sand_d4
 x 15
 y 20
 end
 arch floor_grit4a
+x 15
+y 21
+end
+arch sand_dm6
 x 15
 y 21
 end
@@ -2437,7 +2624,11 @@ arch floor_grit4a
 x 16
 y 10
 end
-arch floor_grit4a
+arch sand_dm17
+x 16
+y 10
+end
+arch floor_sand_d4
 x 16
 y 11
 end
@@ -2445,7 +2636,11 @@ arch plant_mushroom3
 x 16
 y 11
 end
-arch floor_grit4a
+arch floor_sand_d4
+x 16
+y 12
+end
+arch sand_dm21
 x 16
 y 12
 end
@@ -2493,6 +2688,10 @@ arch floor_grit4a
 x 16
 y 20
 end
+arch sand_dm8
+x 16
+y 20
+end
 arch floor_grit4a
 x 16
 y 21
@@ -2520,6 +2719,10 @@ x 17
 y 1
 end
 arch floor_grit4a
+x 17
+y 2
+end
+arch sand_dm9
 x 17
 y 2
 end
@@ -2588,7 +2791,7 @@ arch fwall_sand1b
 x 17
 y 9
 end
-arch floor_grit4a
+arch floor_sand_d4
 x 17
 y 10
 end
@@ -2600,7 +2803,15 @@ arch floor_grit4a
 x 17
 y 11
 end
+arch sand_dm14
+x 17
+y 11
+end
 arch floor_grit4a
+x 17
+y 12
+end
+arch sand_dm9
 x 17
 y 12
 end
@@ -2692,6 +2903,10 @@ arch floor_grit4a
 x 18
 y 1
 end
+arch sand_dm7
+x 18
+y 1
+end
 arch floor_sand_d3
 x 18
 y 2
@@ -2704,6 +2919,10 @@ arch torch_wall_1
 direction 5
 glow_radius 5
 is_animated 1
+x 18
+y 3
+end
+arch sand_dm6
 x 18
 y 3
 end
@@ -2720,6 +2939,10 @@ x 18
 y 5
 end
 arch floor_grit4a
+x 18
+y 6
+end
+arch sand_dm9
 x 18
 y 6
 end
@@ -2776,7 +2999,15 @@ is_animated 1
 x 18
 y 11
 end
-arch floor_grit4a
+arch border_abyss_w1
+x 18
+y 11
+end
+arch floor_sand_d4
+x 18
+y 12
+end
+arch border_abyss_w1
 x 18
 y 12
 end
@@ -2857,7 +3088,15 @@ arch floor_grit4a
 x 19
 y 2
 end
+arch sand_dm8
+x 19
+y 2
+end
 arch floor_grit4a
+x 19
+y 3
+end
+arch sand_dm9
 x 19
 y 3
 end
@@ -2869,11 +3108,19 @@ arch floor_grit4a
 x 19
 y 5
 end
+arch sand_dm7
+x 19
+y 5
+end
 arch floor_sand_d3
 x 19
 y 6
 end
 arch floor_grit4a
+x 19
+y 7
+end
+arch sand_dm6
 x 19
 y 7
 end
@@ -2893,19 +3140,27 @@ arch floor_grit4a
 x 19
 y 10
 end
+arch sand_dm7
+x 19
+y 10
+end
 arch straw1.101
 x 19
 y 10
 end
-arch floor_grit4a
+arch floor_sand_d2
 x 19
 y 11
 end
-arch floor_grit4a
+arch floor_sand_d2
 x 19
 y 12
 end
 arch floor_grit4a
+x 19
+y 13
+end
+arch sand_dm6
 x 19
 y 13
 end
@@ -2918,6 +3173,10 @@ x 19
 y 15
 end
 arch floor_grit4a
+x 19
+y 16
+end
+arch sand_dm9
 x 19
 y 16
 end
@@ -2976,7 +3235,15 @@ arch floor_grit4a
 x 20
 y 1
 end
+arch sand_dm9
+x 20
+y 1
+end
 arch floor_grit4a
+x 20
+y 2
+end
+arch sand_dm7
 x 20
 y 2
 end
@@ -2985,6 +3252,10 @@ x 20
 y 3
 end
 arch floor_grit4a
+x 20
+y 4
+end
+arch sand_dm6
 x 20
 y 4
 end
@@ -2997,6 +3268,10 @@ x 20
 y 5
 end
 arch floor_grit4a
+x 20
+y 6
+end
+arch sand_dm8
 x 20
 y 6
 end
@@ -3032,6 +3307,10 @@ arch floor_grit4a
 x 20
 y 11
 end
+arch sand_dm8
+x 20
+y 11
+end
 arch spawn_point
 x 20
 y 11
@@ -3041,7 +3320,11 @@ type 83
 wis 2
 end
 end
-arch floor_sand_d2
+arch floor_grit4a
+x 20
+y 12
+end
+arch sand_dm8
 x 20
 y 12
 end
@@ -3069,11 +3352,19 @@ arch floor_grit4a
 x 20
 y 17
 end
+arch sand_dm6
+x 20
+y 17
+end
 arch floor_grit4a
 x 20
 y 18
 end
 arch floor_grit4a
+x 20
+y 19
+end
+arch sand_dm9
 x 20
 y 19
 end
@@ -3111,7 +3402,15 @@ arch floor_grit4a
 x 21
 y 2
 end
+arch sand_dm6
+x 21
+y 2
+end
 arch floor_grit4a
+x 21
+y 3
+end
+arch sand_dm8
 x 21
 y 3
 end
@@ -3123,11 +3422,19 @@ arch floor_grit4a
 x 21
 y 5
 end
+arch sand_dm7
+x 21
+y 5
+end
 arch floor_sand_d4
 x 21
 y 6
 end
 arch floor_grit4a
+x 21
+y 7
+end
+arch sand_dm6
 x 21
 y 7
 end
@@ -3157,6 +3464,10 @@ arch floor_grit4a
 x 21
 y 10
 end
+arch sand_dm7
+x 21
+y 10
+end
 arch basket1.101
 x 21
 y 10
@@ -3166,6 +3477,10 @@ x 21
 y 11
 end
 arch floor_grit4a
+x 21
+y 12
+end
+arch sand_dm6
 x 21
 y 12
 end
@@ -3189,6 +3504,10 @@ arch floor_grit4a
 x 21
 y 16
 end
+arch sand_dm8
+x 21
+y 16
+end
 arch floor_grit4a
 x 21
 y 17
@@ -3201,11 +3520,19 @@ arch floor_grit4a
 x 21
 y 18
 end
+arch sand_dm7
+x 21
+y 18
+end
 arch floor_sand_d2
 x 21
 y 19
 end
 arch floor_grit4a
+x 21
+y 20
+end
+arch sand_dm6
 x 21
 y 20
 end
@@ -3235,6 +3562,10 @@ arch floor_grit4a
 x 22
 y 1
 end
+arch sand_dm8
+x 22
+y 1
+end
 arch floor_grit4a
 x 22
 y 2
@@ -3252,6 +3583,10 @@ x 22
 y 5
 end
 arch floor_grit4a
+x 22
+y 6
+end
+arch sand_dm8
 x 22
 y 6
 end
@@ -3312,6 +3647,10 @@ x 22
 y 18
 end
 arch floor_grit4a
+x 22
+y 19
+end
+arch sand_dm8
 x 22
 y 19
 end
