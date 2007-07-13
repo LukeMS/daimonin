@@ -6,93 +6,12 @@ Date:    2005-11-28
 endmsg
 width 24
 height 24
+difficulty 1
 darkness 1
-tile_path_2 guildhallb_040a
+tile_path_2 guildhall_a_040a
 tileset_id 38
 tileset_x 0
 tileset_y 0
-end
-arch floor_ostone4
-end
-arch wall_stone_8
-end
-arch floor_ostone4
-y 1
-end
-arch wall_stone_3
-y 1
-end
-arch floor_ostone4
-y 2
-end
-arch wall_stone_3
-y 2
-end
-arch sewer_wall
-direction 5
-y 2
-end
-arch floor_ostone4
-y 3
-end
-arch wall_stone_3
-y 3
-end
-arch ring_wall.151
-direction 5
-y 3
-end
-arch floor_ostone4
-y 4
-end
-arch wall_stone_3
-y 4
-end
-arch floor_ostone4
-x 1
-end
-arch wall_stone_1
-x 1
-end
-arch floor_ostone4
-x 1
-y 1
-end
-arch stairs_stone_up
-slaying ../castle_030a
-hp 12
-sp 3
-direction 5
-x 1
-y 1
-end
-arch light9
-x 1
-y 1
-end
-arch floor_ostone4
-x 1
-y 2
-end
-arch floor_ostone4
-x 1
-y 3
-end
-arch pile_floor3
-x 1
-y 3
-end
-arch light9
-x 1
-y 3
-end
-arch floor_ostone4
-x 1
-y 4
-end
-arch wall_stone_1
-x 1
-y 4
 end
 arch floor_ostone4
 x 1
@@ -240,47 +159,6 @@ y 17
 end
 arch floor_ostone4
 x 2
-end
-arch wall_stone_1
-x 2
-end
-arch plant1_wall.151
-x 2
-end
-arch floor_ostone4
-x 2
-y 1
-end
-arch chest_4.111
-x 2
-y 1
-end
-arch floor_ostone4
-x 2
-y 2
-end
-arch dirt_floor1
-x 2
-y 2
-end
-arch floor_ostone4
-x 2
-y 3
-end
-arch table_small1b
-x 2
-y 3
-end
-arch floor_ostone4
-x 2
-y 4
-end
-arch wall_stone_1
-x 2
-y 4
-end
-arch floor_ostone4
-x 2
 y 5
 end
 arch wall_stone_1
@@ -292,6 +170,10 @@ x 2
 y 6
 end
 arch floor_ostone2
+x 2
+y 7
+end
+arch amphora1.101
 x 2
 y 7
 end
@@ -413,6 +295,11 @@ arch fwall_rock1
 x 2
 y 21
 end
+arch plant1_wall.151
+direction 7
+x 2
+y 21
+end
 arch earth_brown2
 x 2
 y 22
@@ -431,50 +318,13 @@ y 23
 end
 arch floor_ostone4
 x 3
-end
-arch wall_stone_1
-x 3
-end
-arch plant2_wall.151
-x 3
-end
-arch floor_ostone4
-x 3
-y 1
-end
-arch chest_4.111
-x 3
-y 1
-end
-arch floor_ostone4
-x 3
-y 2
-end
-arch pile_floor1
-x 3
-y 2
-end
-arch floor_ostone4
-x 3
-y 3
-end
-arch trash_wood1.101
-x 3
-y 3
-end
-arch floor_ostone4
-x 3
-y 4
-end
-arch wall_stone_1
-x 3
-y 4
-end
-arch floor_ostone4
-x 3
 y 5
 end
 arch wall_stone_1
+x 3
+y 5
+end
+arch wmask_bflag_fire1_1
 x 3
 y 5
 end
@@ -482,9 +332,28 @@ arch floor_ostone2
 x 3
 y 6
 end
+arch bank1.111
+x 3
+y 6
+end
 arch floor_ostone4
 x 3
 y 7
+end
+arch spawn_point
+x 3
+y 7
+arch mage_old
+name Jahrlen
+type 83
+level 91
+direction 2
+arch event_obj
+name Lua
+sub_type 13
+race merc_jahrlen.lua
+end
+end
 end
 arch floor_ostone2
 x 3
@@ -568,6 +437,10 @@ arch earth_brown3
 x 3
 y 19
 end
+arch rock_big5
+x 3
+y 19
+end
 arch earth_brown1
 x 3
 y 20
@@ -595,55 +468,6 @@ end
 arch fwall_rock2
 x 3
 y 23
-end
-arch floor_ostone4
-x 4
-end
-arch wall_stone_1
-x 4
-end
-arch plant1_wall.151
-x 4
-end
-arch floor_ostone4
-x 4
-y 1
-end
-arch chest_4.111
-x 4
-y 1
-end
-arch light9
-x 4
-y 1
-end
-arch floor_ostone4
-x 4
-y 2
-end
-arch dirt_floor2
-x 4
-y 2
-end
-arch floor_ostone4
-x 4
-y 3
-end
-arch dirt_floor1
-x 4
-y 3
-end
-arch light9
-x 4
-y 3
-end
-arch floor_ostone4
-x 4
-y 4
-end
-arch wall_stone_1
-x 4
-y 4
 end
 arch floor_ostone4
 x 4
@@ -692,6 +516,24 @@ end
 arch floor_ostone2
 x 4
 y 11
+end
+arch spawn_point
+x 4
+y 11
+arch priest_green
+name Chereth
+type 83
+glow_radius 7
+level 31
+is_male 0
+is_female 1
+direction 3
+arch event_obj
+name Lua
+sub_type 13
+race merc_chereth.lua
+end
+end
 end
 arch floor_ostone3
 x 4
@@ -770,6 +612,7 @@ x 4
 y 21
 end
 arch spawn_point
+last_grace 3
 x 4
 y 21
 arch hobgoblin
@@ -777,6 +620,11 @@ name Mahch
 type 83
 level 5
 wis 3
+arch quest_trigger
+name Rusty Rod Retrieval
+sub_type 3
+last_heal 1
+end
 end
 end
 arch earth_brown3
@@ -793,51 +641,21 @@ y 23
 end
 arch floor_ostone4
 x 5
-end
-arch wall_stone_1
-x 5
-end
-arch floor_ostone4
-x 5
-y 1
-end
-arch wall_stone_3
-x 5
-y 1
-end
-arch floor_ostone4
-x 5
-y 2
-end
-arch wall_stone_3
-x 5
-y 2
-end
-arch floor_ostone4
-x 5
-y 3
-end
-arch wall_stone_3
-x 5
-y 3
-end
-arch floor_ostone4
-x 5
-y 4
-end
-arch wall_stone_4
-x 5
-y 4
-end
-arch floor_ostone4
-x 5
 y 5
 end
 arch wall_stone_1
+x 5
+y 5
+end
+arch wmask_bflag_fire1_1
 x 5
 y 5
 end
 arch floor_ostone2
+x 5
+y 6
+end
+arch bank1.111
 x 5
 y 6
 end
@@ -917,6 +735,10 @@ arch fwall_rock2
 x 5
 y 18
 end
+arch plant1_wall.151
+x 5
+y 18
+end
 arch earth_brown1
 x 5
 y 19
@@ -977,6 +799,10 @@ arch floor_ostone2
 x 6
 y 7
 end
+arch amphora2.101
+x 6
+y 7
+end
 arch floor_ostone4
 x 6
 y 8
@@ -986,10 +812,6 @@ x 6
 y 8
 end
 arch wmask_bflag_fire1_1
-x 6
-y 8
-end
-arch ring_wall.151
 x 6
 y 8
 end
@@ -1024,6 +846,10 @@ end
 arch wmask_bflag_fire1_1
 x 6
 y 14
+end
+arch floor_ostone4
+x 6
+y 15
 end
 arch wall_stone_3
 x 6
@@ -1207,7 +1033,15 @@ arch fwall_rock3
 x 7
 y 18
 end
+arch plant1_wall.151
+x 7
+y 18
+end
 arch earth_brown4
+x 7
+y 19
+end
+arch border_abyss_sw1
 x 7
 y 19
 end
@@ -1232,11 +1066,12 @@ x 7
 y 21
 end
 arch spawn_point
+last_grace 5
 x 7
 y 21
 arch goblin
 type 83
-level 3
+level 4
 wis 2
 end
 end
@@ -1279,6 +1114,11 @@ x 8
 y 3
 end
 arch fwall_rock2
+x 8
+y 3
+end
+arch plant1_wall.151
+direction 7
 x 8
 y 3
 end
@@ -1383,6 +1223,7 @@ x 8
 y 16
 end
 arch spawn_point
+last_grace 5
 x 8
 y 16
 arch slug_giant
@@ -1409,6 +1250,10 @@ x 8
 y 19
 end
 arch plant_mushroom3
+x 8
+y 19
+end
+arch border_abyss_s1
 x 8
 y 19
 end
@@ -1454,6 +1299,9 @@ end
 arch fwall_rock3
 x 9
 end
+arch plant1_wall.151
+x 9
+end
 arch earth_brown3
 x 9
 y 1
@@ -1471,13 +1319,13 @@ x 9
 y 2
 end
 arch spawn_point
+slaying bat nest
 x 9
 y 2
-arch gnoll
-name red-marked gnoll
+arch brnbat
 type 83
-level 7
-wis 3
+sleep 0
+unaggressive 1
 end
 end
 arch earth_brown3
@@ -1492,7 +1340,11 @@ arch rock_big2
 x 9
 y 4
 end
-arch fwall_rock3
+arch earth_brown2
+x 9
+y 5
+end
+arch fwall_rock1
 x 9
 y 5
 end
@@ -1560,10 +1412,12 @@ x 9
 y 13
 end
 arch stairs_stone_up
-slaying merc_up
-hp 1
-sp 1
-direction 5
+face stairs_wood_up.131
+animation stairs_wood_up
+slaying ../castle_030a
+hp 9
+sp 13
+direction 7
 x 9
 y 13
 end
@@ -1607,16 +1461,21 @@ arch earth_brown1
 x 9
 y 19
 end
+arch border_abyss_se1
+x 9
+y 19
+end
 arch earth_brown1
 x 9
 y 20
 end
 arch spawn_point
+last_grace 5
 x 9
 y 20
 arch goblin
 type 83
-level 3
+level 4
 wis 2
 end
 end
@@ -1650,6 +1509,16 @@ arch earth_brown4
 x 10
 y 1
 end
+arch spawn_point
+slaying bat nest
+x 10
+y 1
+arch brnbat
+type 83
+sleep 0
+unaggressive 1
+end
+end
 arch earth_brown1
 x 10
 y 2
@@ -1657,6 +1526,16 @@ end
 arch small_stones
 x 10
 y 2
+end
+arch spawn_point
+slaying bat nest
+x 10
+y 2
+arch brnbat
+type 83
+sleep 0
+unaggressive 1
+end
 end
 arch earth_brown3
 x 10
@@ -1674,7 +1553,11 @@ arch mushroom_spot2
 x 10
 y 4
 end
-arch fwall_rock2
+arch earth_brown3
+x 10
+y 5
+end
+arch fwall_rock3
 x 10
 y 5
 end
@@ -1703,9 +1586,9 @@ x 10
 y 8
 end
 arch ladder_down
-slaying merc_ants
+slaying merc_ants_0000
 hp 11
-sp 8
+sp 10
 x 10
 y 8
 end
@@ -1769,11 +1652,23 @@ arch fwall_rock1
 x 10
 y 15
 end
+arch plant1_wall.151
+x 10
+y 15
+end
 arch earth_brown3
 x 10
 y 16
 end
+arch border_abyss_w1
+x 10
+y 16
+end
 arch earth_brown2
+x 10
+y 17
+end
+arch border_abyss_w1
 x 10
 y 17
 end
@@ -1798,6 +1693,10 @@ x 10
 y 20
 end
 arch fwall_rock3
+x 10
+y 20
+end
+arch plant1_wall.151
 x 10
 y 20
 end
@@ -1831,6 +1730,10 @@ arch small_stones
 x 11
 y 1
 end
+arch rock_big9
+x 11
+y 1
+end
 arch earth_brown2
 x 11
 y 2
@@ -1843,7 +1746,11 @@ arch earth_brown2
 x 11
 y 4
 end
-arch fwall_rock2
+arch earth_brown2
+x 11
+y 5
+end
+arch fwall_rock1
 x 11
 y 5
 end
@@ -1911,6 +1818,11 @@ arch fwall_rock2
 x 11
 y 14
 end
+arch plant1_wall.151
+direction 7
+x 11
+y 14
+end
 arch earth_brown2
 x 11
 y 15
@@ -1932,6 +1844,10 @@ x 11
 y 18
 end
 arch light5
+x 11
+y 18
+end
+arch rock_big10
 x 11
 y 18
 end
@@ -2001,7 +1917,11 @@ arch earth_brown4
 x 12
 y 4
 end
-arch fwall_rock3
+arch earth_brown3
+x 12
+y 5
+end
+arch fwall_rock2
 x 12
 y 5
 end
@@ -2102,12 +2022,12 @@ x 12
 y 16
 end
 arch spawn_point
+last_grace 5
 x 12
 y 16
 arch slug_giant
 type 83
-level 2
-unaggressive 1
+level 3
 wis 3
 end
 end
@@ -2148,9 +2068,8 @@ x 12
 y 21
 arch slug_giant
 type 83
-level 2
-unaggressive 1
-wis 3
+level 3
+wis 4
 end
 end
 arch earth_brown3
@@ -2187,6 +2106,15 @@ arch earth_brown2
 x 13
 y 2
 end
+arch spawn_point
+x 13
+y 2
+arch slug_giant
+type 83
+level 2
+unaggressive 1
+end
+end
 arch earth_brown3
 x 13
 y 3
@@ -2203,11 +2131,11 @@ arch rock_big12
 x 13
 y 4
 end
-arch earth_brown4
+arch earth_brown2
 x 13
 y 5
 end
-arch fwall_rock3
+arch fwall_rock1
 x 13
 y 5
 end
@@ -2267,6 +2195,10 @@ arch fwall_rock1
 x 13
 y 12
 end
+arch plant1_wall.151
+x 13
+y 12
+end
 arch earth_brown3
 x 13
 y 13
@@ -2310,16 +2242,6 @@ end
 arch small_stones
 x 13
 y 19
-end
-arch spawn_point
-x 13
-y 19
-arch slug_giant
-type 83
-level 2
-unaggressive 1
-wis 3
-end
 end
 arch earth_brown3
 x 13
@@ -2375,14 +2297,6 @@ arch earth_brown3
 x 14
 y 4
 end
-arch spawn_point
-x 14
-y 4
-arch hobgoblin
-type 83
-level 3
-end
-end
 arch earth_brown4
 x 14
 y 5
@@ -2420,6 +2334,11 @@ x 14
 y 9
 end
 arch fwall_rock1
+x 14
+y 9
+end
+arch plant1_wall.151
+direction 7
 x 14
 y 9
 end
@@ -2530,6 +2449,9 @@ end
 arch fwall_rock3
 x 15
 end
+arch plant1_wall.151
+x 15
+end
 arch earth_brown1
 x 15
 y 1
@@ -2545,14 +2467,6 @@ end
 arch earth_brown3
 x 15
 y 2
-end
-arch spawn_point
-x 15
-y 2
-arch hobgoblin
-type 83
-level 3
-end
 end
 arch earth_brown3
 x 15
@@ -2586,7 +2500,7 @@ arch earth_brown3
 x 15
 y 7
 end
-arch dirt_floor1
+arch border_abyss_n1
 x 15
 y 7
 end
@@ -2595,6 +2509,10 @@ x 15
 y 8
 end
 arch earth_brown3
+x 15
+y 9
+end
+arch fwall_rock3
 x 15
 y 9
 end
@@ -2736,7 +2654,7 @@ arch earth_brown3
 x 16
 y 8
 end
-arch fwall_rock3
+arch border_abyss_w1
 x 16
 y 8
 end
@@ -2812,7 +2730,15 @@ arch earth_brown1
 x 16
 y 19
 end
+arch border_abyss_w1
+x 16
+y 19
+end
 arch earth_brown2
+x 16
+y 20
+end
+arch border_abyss_w1
 x 16
 y 20
 end
@@ -2821,6 +2747,11 @@ x 16
 y 21
 end
 arch fwall_rock2
+x 16
+y 21
+end
+arch plant1_wall.151
+direction 7
 x 16
 y 21
 end
@@ -2858,7 +2789,7 @@ arch earth_brown4
 x 17
 y 2
 end
-arch fwall_rock2
+arch border_abyss_w1
 x 17
 y 2
 end
@@ -2866,7 +2797,7 @@ arch earth_brown3
 x 17
 y 3
 end
-arch fwall_rock2
+arch border_abyss_w1
 x 17
 y 3
 end
@@ -2894,15 +2825,15 @@ arch fwall_rock3
 x 17
 y 6
 end
+arch plant2_wall.151
+x 17
+y 6
+end
 arch earth_brown1
 x 17
 y 7
 end
 arch barrel2.101
-x 17
-y 7
-end
-arch light5
 x 17
 y 7
 end
@@ -2915,6 +2846,11 @@ x 17
 y 9
 end
 arch fwall_rock3
+x 17
+y 9
+end
+arch plant2_wall.151
+direction 7
 x 17
 y 9
 end
@@ -3088,13 +3024,15 @@ arch earth_m22
 x 18
 y 8
 end
-arch invis_exit
-msg
-You carefully move the boxes from the secret entrance and push yourself through.
-endmsg
+arch ropeladder_down
+name rope ladder going up
 slaying ../castle_030a
 hp 18
 sp 8
+x 18
+y 8
+end
+arch light5
 x 18
 y 8
 end
@@ -3144,6 +3082,7 @@ y 13
 arch goblin
 type 83
 level 3
+sleep 1
 wis 2
 end
 end
@@ -3264,6 +3203,10 @@ arch earth_brown3
 x 19
 y 5
 end
+arch rock_big6
+x 19
+y 5
+end
 arch earth_brown2
 x 19
 y 6
@@ -3352,6 +3295,10 @@ arch fwall_rock3
 x 19
 y 17
 end
+arch plant1_wall.151
+x 19
+y 17
+end
 arch earth_brown2
 x 19
 y 18
@@ -3385,8 +3332,7 @@ x 19
 y 21
 arch slug_giant
 type 83
-level 2
-unaggressive 1
+level 3
 wis 3
 end
 end
@@ -3406,6 +3352,9 @@ arch earth_brown4
 x 20
 end
 arch fwall_rock3
+x 20
+end
+arch plant1_wall.151
 x 20
 end
 arch earth_brown1
@@ -3462,6 +3411,10 @@ arch box1.101
 x 20
 y 6
 end
+arch light2
+x 20
+y 6
+end
 arch earth_brown3
 x 20
 y 7
@@ -3478,7 +3431,7 @@ arch earth_brown1
 x 20
 y 9
 end
-arch light5
+arch light1
 x 20
 y 9
 end
@@ -3486,7 +3439,7 @@ arch earth_brown2
 x 20
 y 10
 end
-arch small_stones
+arch fwall_rock3
 x 20
 y 10
 end
@@ -3527,6 +3480,11 @@ x 20
 y 15
 end
 arch fwall_rock2
+x 20
+y 15
+end
+arch plant1_wall.151
+direction 7
 x 20
 y 15
 end
@@ -3563,8 +3521,7 @@ x 20
 y 19
 arch slug_giant
 type 83
-level 2
-unaggressive 1
+level 3
 wis 3
 end
 end
@@ -3676,6 +3633,11 @@ arch fwall_rock1
 x 21
 y 8
 end
+arch plant1_wall.151
+direction 7
+x 21
+y 8
+end
 arch earth_brown4
 x 21
 y 9
@@ -3685,6 +3647,10 @@ x 21
 y 9
 end
 arch earth_brown3
+x 21
+y 10
+end
+arch fwall_rock3
 x 21
 y 10
 end
@@ -3737,6 +3703,10 @@ x 21
 y 16
 end
 arch earth_brown1
+x 21
+y 17
+end
+arch border_abyss_s1
 x 21
 y 17
 end
@@ -3822,6 +3792,10 @@ arch earth_brown1
 x 22
 y 8
 end
+arch border_abyss_n1
+x 22
+y 8
+end
 arch earth_brown4
 x 22
 y 9
@@ -3855,6 +3829,10 @@ x 22
 y 16
 end
 arch earth_brown3
+x 22
+y 17
+end
+arch border_abyss_s1
 x 22
 y 17
 end
@@ -4083,20 +4061,4 @@ end
 arch fwall_rock2
 x 23
 y 23
-end
-arch rock_big5
-x 3
-y 19
-end
-arch rock_big9
-x 11
-y 1
-end
-arch rock_big10
-x 11
-y 18
-end
-arch rock_big6
-x 19
-y 5
 end
