@@ -345,7 +345,7 @@ int apply_potion(object *op, object *tmp)
                 {
                     hp_jump2:
                     hp_flag = 1; /* mark we have checked hp chain */
-                    for (i = 1; i <= op->level; i++)
+                    for (i = 2; i <= op->level; i++)
                     {
                         /* move one value to max */
                         if (CONTR(op)->levhp[i] != (char) op->arch->clone.stats.maxhp)
@@ -357,7 +357,7 @@ int apply_potion(object *op, object *tmp)
                     }
                     sp_jump2:
                     sp_flag = 1; /* mark we have checked sp chain */
-                    for (i = 1; i <= CONTR(op)->exp_obj_ptr[SKILLGROUP_MAGIC]->level; i++)
+                    for (i = 2; i <= CONTR(op)->exp_obj_ptr[SKILLGROUP_MAGIC]->level; i++)
                     {
                         /* move one value to max */
                         if (CONTR(op)->levsp[i] != (char) op->arch->clone.stats.maxsp)
@@ -369,7 +369,7 @@ int apply_potion(object *op, object *tmp)
                     }
                     grace_jump2:
                     grace_flag = 1; /* mark we have checked grace chain */
-                    for (i = 1; i <= CONTR(op)->exp_obj_ptr[SKILLGROUP_WISDOM]->level; i++)
+                    for (i = 2; i <= CONTR(op)->exp_obj_ptr[SKILLGROUP_WISDOM]->level; i++)
                     {
                         /* move one value to max */
                         if (CONTR(op)->levgrace[i] != (char) op->arch->clone.stats.maxgrace)
@@ -2654,7 +2654,7 @@ int apply_special(object *who, object *op, int aflags)
 
     /* This goes through and checks to see if the player already has something
      * of that type applied - if so, unapply it.
-	 * This is a VERY important part -it ensures 
+	 * This is a VERY important part -it ensures
      */
     if (op->type == WAND || op->type == ROD || op->type == HORN || op->type == BOW || (op->type == ARROW && op->sub_type1 >127))
         tmp_flag = 1;
@@ -2846,7 +2846,7 @@ int apply_special(object *who, object *op, int aflags)
 			if(op->sub_type1 < 127) /* its amunition */
 			{
 				/* we want apply amun. Lets only allow to apply amun fitting the applied bow! */
-				if(!pl->equipment[PLAYER_EQUIP_BOW] || pl->equipment[PLAYER_EQUIP_BOW]->type != BOW 
+				if(!pl->equipment[PLAYER_EQUIP_BOW] || pl->equipment[PLAYER_EQUIP_BOW]->type != BOW
 										|| pl->equipment[PLAYER_EQUIP_BOW]->sub_type1 != op->sub_type1)
 				{
 					new_draw_info_format(NDI_UNIQUE, 0, who, "You can't use %s with applied range weapon.", query_short_name(op, NULL));
