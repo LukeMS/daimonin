@@ -567,9 +567,10 @@ static int legal_artifact_combination(object *op, artifact *art)
     linked_char    *tmp;
     const char     *name;
 
-    if (art->allowed == (linked_char *) NULL)
+    tmp = art->allowed;
+    if (!strcmp(tmp->name, "all"))
         return 1; /* Ie, "all" */
-    for (tmp = art->allowed; tmp; tmp = tmp->next)
+    for (; tmp; tmp = tmp->next)
     {
 #ifdef TREASURE_VERBOSE
         LOG(llevDebug, "legal_art: %s\n", tmp->name);
