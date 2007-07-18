@@ -1,7 +1,9 @@
 Object pipe
 name pipe
 face pipe.101
-no_pick 1
+weight 500
+material 18
+value 20
 type 79
-layer 4
+layer 3
 end
