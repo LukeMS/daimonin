@@ -1,7 +1,9 @@
 Object shovel
 name shovel
 face shovel.101
-no_pick 1
+weight 1000
+material 18
+value 60
 type 79
-layer 4
+layer 3
 end
