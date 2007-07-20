@@ -816,11 +816,11 @@ int calc_skill_exp(object *who, object *op, float mod, int level, int *real)
     /* we get first a global level difference mulitplicator */
     exp_mul = calc_level_difference(who_lvl, op_lvl);
     op_exp = (int) (((float) op_exp * lev_exp[op_lvl] * mod)* exp_mul);
-    if(real)
+    if(real != NULL)
     {
-        if(*real) /* scary use of real, iam to sleepy to do it right */
+        if(*real > 0)
             op_exp = (int)((float)(*real)*mod);
-        else
+        else if(*real == 0)
             *real = op_exp;
     }
     /*LOG(-1,"real exp = %d\n",op_exp);*/
