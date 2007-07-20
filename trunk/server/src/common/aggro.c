@@ -364,10 +364,8 @@ static inline int aggro_exp_single(object *victim, object *aggro, int base)
      * exp as in the old style. Because the exp is counted BEFORE we calc the exp
      * max. cap. Killing higher mobs will give alot more total exp.
      */
-    if(base!=-1)
-        exp = base;
-    else
-        calc_skill_exp(hitter, victim, 1.0f, aggro->level, &exp);
+    exp = base;
+    calc_skill_exp(hitter, victim, 1.0f, aggro->level, &exp);
 #ifdef DEBUG_AGGRO
     LOG(-1,".. A-Level: %d -> exp %d\n", aggro->level, exp);
 #endif
@@ -376,7 +374,7 @@ static inline int aggro_exp_single(object *victim, object *aggro, int base)
 #ifdef DEBUG_AGGRO
         LOG(-1,".. no skill dmg - use guild base dmg\n");
 #endif
-		new_draw_info(NDI_UNIQUE, 0, hitter, "You don't fought this time.\nYou trained your default guild skills.");
+		new_draw_info(NDI_UNIQUE, 0, hitter, "You didn't fight this time.\nYou trained your default guild skills.");
         if((tmp = pl->highest_skill[pl->base_skill_group[0]]))
         {
             e1 = calc_skill_exp(hitter, victim, 0.55f, tmp->level, &exp);
@@ -420,8 +418,9 @@ static inline int aggro_exp_single(object *victim, object *aggro, int base)
             e2 = (e2 * pl->base_skill_group_exp[1])/100;
         ret |=add_aggro_exp(hitter, e2, s2);
 #ifdef DEBUG_AGGRO
-        LOG(-1,".. 65%% to skill %s (%d), 35%% to %s (%d)\n", STRING_SAFE(pl->skill_ptr[s1]->name), e1,
-                STRING_SAFE(pl->skill_ptr[s2]->name),e2);
+        LOG(-1,".. 65%% to skill %s (%d), 35%% to %s (%d)\n",
+            STRING_SAFE(pl->skill_ptr[s1]->name), e1,
+            STRING_SAFE(pl->skill_ptr[s2]->name), e2);
 #endif
     }
     else /* 50% in s1, 30% in s2, 20% in s3 */
@@ -439,7 +438,7 @@ static inline int aggro_exp_single(object *victim, object *aggro, int base)
             e3 = (e3 * pl->base_skill_group_exp[2])/100;
         ret |=add_aggro_exp(hitter, e3, s3);
 #ifdef DEBUG_AGGRO
-        LOG(-1,".. 65%% to skill %s (%d), 35%% to %s (%d), 20%% to %s (%d)\n",
+        LOG(-1,".. 50%% to skill %s (%d), 30%% to %s (%d), 20%% to %s (%d)\n",
             STRING_SAFE(pl->skill_ptr[s1]->name),e1,
             STRING_SAFE(pl->skill_ptr[s2]->name),e2,
             STRING_SAFE(pl->skill_ptr[s3]->name),e3);
@@ -448,7 +447,7 @@ static inline int aggro_exp_single(object *victim, object *aggro, int base)
 
     /* if *all* possible skill exp has been zero because mob was to low - drop a message */
     if(ret == FALSE)
-        new_draw_info_format( NDI_UNIQUE, 0, hitter, "Your enemy was to low for exp.");
+        new_draw_info_format( NDI_UNIQUE, 0, hitter, "Your enemy was too low for exp.");
 
     return ret;
 }
@@ -635,7 +634,7 @@ static inline int aggro_exp_group(object *victim, object *aggro, char *kill_msg)
 #ifdef DEBUG_AGGRO
             LOG(-1,".. no skill dmg - use guild base dmg\n");
 #endif
-			new_draw_info(NDI_UNIQUE, 0, tmp, "You don't fought this time.\nYou trained your default guild skills.");
+			new_draw_info(NDI_UNIQUE, 0, tmp, "You didn't fight this time.\nYou trained your default guild skills.");
 
 			/* check kill quests */
 			if(pl->quests_type_kill && pl->quests_type_kill->inv)
