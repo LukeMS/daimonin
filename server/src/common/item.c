@@ -1355,7 +1355,7 @@ int check_magical_container(object *op, object *env)
 
     for(;env;env = env->env)
     {
-        if(env->type == CONTAINER && env->weapon_speed != 1.0f)
+        if(env->type == CONTAINER && env->weapon_speed != 1.0f || op->type == CONTAINER && op->weapon_speed != 1.0f)
             return TRUE;
     }
 
