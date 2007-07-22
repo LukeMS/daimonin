@@ -216,9 +216,7 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
 
     }
     /* Fight Step 4: compare AC with WC + thac-roll - if AC is lower we have a normal hit */
-    else 
-    {  roll = random_roll(0,20);
-	if (hit_obj->stats.wc + roll >= target->stats.ac)
+    else if (hit_obj->stats.wc + roll >= target->stats.ac)
     {
         force_direct_hit:
         CLEAR_FLAG(target, FLAG_SLEEP); /* at this point NO ONE will still sleep */
@@ -295,7 +293,7 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
 
     leave : return hitdam;
 }
-}
+
 /* damage_ob() (old: hit_player()) is called to generate damage - its the main hit function
  * when a monster, player or other "attackable" object is really damaged in terms of hp.
  */
