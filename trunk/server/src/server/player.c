@@ -502,7 +502,7 @@ int move_player(object * const op, int dir, const int flag)
         QUERY_FLAG(op,FLAG_PARALYZED) || QUERY_FLAG(op,FLAG_ROOTED))
         return -1;
 
-    if ((dir = (dir > 8) ? 8 : dir))
+    if ((dir = absdir(dir)))
         op->facing = dir;
     if (QUERY_FLAG(op, FLAG_CONFUSED) && dir)
         dir = absdir(dir + RANDOM() % 3 + RANDOM() % 3 - 2);
