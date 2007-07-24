@@ -143,6 +143,7 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
     op_tag = target->count;
     hitter_tag = hitter->count;
     hitdam  = hit_obj->stats.dam;
+
     if(hitter->type == MONSTER)
       {  object wc_tmp = hitter->arch->clone;
          int(lvl_adj) = hitter->level / 10;
