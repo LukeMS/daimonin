@@ -149,13 +149,18 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
          int(lvl_adj) = hitter->level / 10;
          if(hitter->stats.wc == (wc_tmp.stats.wc + lvl_adj))
            hitter->stats.wc = mob_wc[hitter->level];
-         if(hitter->stats.ac == wc_tmp.stats.ac)
-           hitter->stats.ac = mob_ac[hitter->level];
          if(hitter->level < 10)
           {
              hitter->stats.thac0 += (abs(hitter->level - 10));
              hitter->stats.thacm += (10 - hitter->level);
            }
+      }
+    if(target->type == MONSTER)
+      {
+         int(lvl_adj) = target->level / 10;
+         object ac_tmp = target->arch->clone;
+         if(target->stats.ac == (ac_tmp.stats.ac + lvl_adj))
+           target->stats.ac = mob_ac[target->level];
       }
     /* Fight Step 1: Get the random hit value */
     roll = random_roll(0, 100);
