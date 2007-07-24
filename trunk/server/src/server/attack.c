@@ -40,7 +40,16 @@
 static int  abort_attack(object *target, object *hitter, int env_attack);
 static void send_attack_msg(object *op, object *hitter, int attacknum, int dam, int damage);
 static int  hit_player_attacktype(object *op, object *hitter, int *flags, int damage, uint32 attacknum, int magic);
-
+int mob_wc[MAXLEVEL + 1] = { 1,2,3,4,5,6,7,8,9,10,10,11,11,12,12,13,13,14,14,15,15,16,16,17,17,18,
+  18,19,19,20,20,20,21,21,22,22,23,23,24,24,25,25,26,26,27,27,28,28,29,29,30,
+  30,31,31,32,32,33,33,34,34,35,35,36,36,37,37,38,38,39,39,40,40,41,41,42,42,
+  43,43,44,44,45,45,46,46,47,47,48,48,49,49,50,50,51,51,52,52,53,53,54,54,55,
+  55,56,56,57,57,58,58,59,60,60};
+int mob_ac[MAXLEVEL + 1] = { 1,2,3,4,5,6,7,8,9,10,10,11,11,12,12,13,13,14,14,15,15,16,16,17,17,18,
+  18,19,19,20,20,20,21,21,22,22,23,23,24,24,25,25,26,26,27,27,28,28,29,29,30,
+  30,31,31,32,32,33,33,34,34,35,35,36,36,37,37,38,38,39,39,40,40,41,41,42,42,
+  43,43,44,44,45,45,46,46,47,47,48,48,49,49,50,50,51,51,52,52,53,53,54,54,55,
+  55,56,56,57,57,58,58,59,60,60};
 /* check and adjust all pre-attack issues like checking attack is valid,
  * attack objects are in the right state and such.
  */
@@ -134,7 +143,19 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
     op_tag = target->count;
     hitter_tag = hitter->count;
     hitdam  = hit_obj->stats.dam;
-
+    if(hitter->type == MONSTER)
+      {  object wc_tmp = hitter->arch->clone;
+         int(lvl_adj) = hitter->level / 10;
+         if(hitter->stats.wc == (wc_tmp.stats.wc + lvl_adj))
+           hitter->stats.wc = mob_wc[hitter->level];
+         if(hitter->stats.ac == wc_tmp.stats.ac)
+           hitter->stats.ac = mob_ac[hitter->level];
+         if(hitter->level < 10)
+          {
+             hitter->stats.thac0 += (abs(hitter->level - 10));
+             hitter->stats.thacm += (10 - hitter->level);
+           }
+      }
     /* Fight Step 1: Get the random hit value */
     roll = random_roll(0, 100);
 
