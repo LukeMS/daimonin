@@ -1620,6 +1620,22 @@ void fix_player(object *op)
 			pl->set_skill_weapon);
 		else
 		{
+                        
+                        if(pl->skill_ptr[pl->set_skill_weapon]->level <= 10)
+                          {
+                             thacm += (10 - pl->skill_ptr[pl->set_skill_weapon]->level);
+                             thac0 += abs((pl->skill_ptr[pl->set_skill_weapon]->level - 10));
+                             op->stats.wc += 1;
+                          }
+
+                        else if(pl->skill_ptr[pl->set_skill_weapon]->level < 30 && op->stats.wc <= 20)
+                                op->stats.wc += (int)((pl->skill_ptr[pl->set_skill_weapon]->level / 10) + 1);
+                        else if(pl->skill_ptr[pl->set_skill_weapon]->level < 50 && op->stats.wc <= 25)
+                                op->stats.wc += (int)((pl->skill_ptr[pl->set_skill_weapon]->level / 10) + 1);
+                        else if(pl->skill_ptr[pl->set_skill_weapon]->level <= 80 && op->stats.wc <= 30)
+                                op->stats.wc += (int)((pl->skill_ptr[pl->set_skill_weapon]->level / 10) + 1);
+                        else if(pl->skill_ptr[pl->set_skill_weapon]->level > 80 && op->stats.wc <= 35)
+                                op->stats.wc += (int)((pl->skill_ptr[pl->set_skill_weapon]->level / 10) + 1);
 			op->stats.dam = (sint16) ((float) op->stats.dam * LEVEL_DAMAGE(pl->skill_ptr[pl->set_skill_weapon]->level));
 		}
 	}
