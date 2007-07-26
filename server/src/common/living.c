@@ -2042,7 +2042,18 @@ void fix_monster(object *op)
     int wc_mali=0, ac_mali=0, snare_penalty=0, slow_penalty=0;
     object *base, *tmp, *spawn_info=NULL, *bow=NULL;
     float   tmp_add;
-
+    int mob_wc[MAXLEVEL + 1] = 
+     { 1,2,3,4,5,6,7,8,9,10,10,11,11,12,12,13,13,14,14,15,15,16,16,17,17,18,
+       18,19,19,20,20,20,21,21,22,22,23,23,24,24,25,25,26,26,27,27,28,28,29,29,30,
+       30,31,31,32,32,33,33,34,34,35,35,36,36,37,37,38,38,39,39,40,40,41,41,42,42,
+       43,43,44,44,45,45,46,46,47,47,48,48,49,49,50,50,51,51,52,52,53,53,54,54,55,
+       55,56,56,57,57,58,58,59,60,60};
+    int mob_ac[MAXLEVEL + 1] = 
+     { 1,2,3,4,5,6,7,8,9,10,10,11,11,12,12,13,13,14,14,15,15,16,16,17,17,18,
+   18,19,19,20,20,20,21,21,22,22,23,23,24,24,25,25,26,26,27,27,28,28,29,29,30,
+   30,31,31,32,32,33,33,34,34,35,35,36,36,37,37,38,38,39,39,40,40,41,41,42,42,
+   43,43,44,44,45,45,46,46,47,47,48,48,49,49,50,50,51,51,52,52,53,53,54,54,55,
+   55,56,56,57,57,58,58,59,60,60};
     if (op->head) /* don't adjust tails or player - only single objects or heads */
         return;
 
@@ -2174,6 +2185,16 @@ void fix_monster(object *op)
     /* + level/10 to catch up the equipment improvements of the players. */
     op->stats.ac = base->stats.ac + (op->level / 10) - ac_mali;
     op->stats.wc = base->stats.wc + (op->level / 10) - wc_mali;
+    object wc_tmp = op->arch->clone;
+    if(op->stats.wc == (wc_tmp.stats.wc + ((int)op->level / 10)))
+          op->stats.wc = mob_wc[op->level];
+    if(op->level < 10)
+      {
+         op->stats.thac0 += (abs(op->level - 10));
+         op->stats.thacm += (10 - op->level);
+      }
+    if(op->stats.ac == (wc_tmp.stats.ac + ((int)op->level / 10)))
+          op->stats.ac = mob_ac[op->level];
 
     op->stats.dam = base->stats.dam;
 
