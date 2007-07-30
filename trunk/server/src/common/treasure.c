@@ -1327,16 +1327,22 @@ void set_abs_magic(object *op, int magic)
     op->magic = magic;
     if (op->arch)
     {
-        if (magic == 1)
-            op->value += 5300;
-        else if (magic == 2)
-            op->value += 12300;
-        else if (magic == 3)
-            op->value += 62300;
-        else if (magic == 4)
-            op->value += 130300;
-        else
-            op->value += 250300;
+/*      if (magic == 1)
+           op->value += 5300;
+       else if (magic == 2)
+           op->value += 12300;
+       else if (magic == 3)
+           op->value += 62300;
+       else if (magic == 4)
+           op->value += 130300;
+       else
+           op->value += 250300; 13 Jul 07 L00natyk & Longir*/
+    /*	here can be added additive system too and we can switch it by
+	eg. is_multiplicative 0/1 so it will make items pricing more
+	elastic. 13 Jul 07 L00natyk & Longir
+    */
+	    op->value += (op->value * magic);
+
         if (op->type == ARMOUR)
             ARMOUR_SPEED(op) = (ARMOUR_SPEED(&op->arch->clone) * (100 + magic * 10)) / 100;
 
@@ -1354,6 +1360,87 @@ void set_abs_magic(object *op, int magic)
     }
 }
 
+int roll_ring_bonus_stat(int current, int level, int bonus)
+{
+
+    int roll;
+    
+    if(level <= 20) {
+	roll = 1;
+	}
+    else if(level <= 50) {
+	roll = random_roll(1,2);
+	}
+    else if(level <= 80) {
+	if (current == 6) {
+	    roll = random_roll(1,2);
+	    }
+	else {
+	    roll = random_roll(1,3);
+	    }
+	}
+    else if(level > 80) {
+	if (current >= 7) {
+	    roll = random_roll(1,2);
+	    }
+	else {
+	    roll = random_roll(1,4);
+	    }
+	}
+    if (bonus < 0) {
+	return (roll * -1);
+	}
+    else {
+	return roll;
+	}		
+}
+
+void set_ring_bonus_value_calc(object *op)
+{
+    /*	here we can easy adjust values for each stat and to annoy
+	players cursed rings will be in material price as stats
+	does nothing. :D
+    */
+    //op->value = 0;    
+    int resist;
+    
+    for(resist = 0; resist < num_resist_table; resist++) {
+	if (op->resist[resist_table[resist]] > 0) {	
+	    op->value += (op->resist[resist_table[resist]] * (op->item_quality / 100.0f) * 500);
+	    }
+	}
+
+    if (op->stats.Str > 0) op->value += op->stats.Str * 10400;
+    if (op->stats.Dex > 0) op->value += op->stats.Dex * 10030;
+    if (op->stats.Con > 0) op->value += op->stats.Con * 10002;
+    if (op->stats.Int > 0) op->value += op->stats.Int * 10004;
+    if (op->stats.Wis > 0) op->value += op->stats.Wis * 10005;
+    if (op->stats.Pow > 0) op->value += op->stats.Pow * 10010;
+    if (op->stats.Cha > 0) op->value += op->stats.Cha * 10001;
+
+    if (op->stats.wc > 0) op->value += op->stats.wc * 10010;
+    if (op->stats.ac > 0) op->value += op->stats.ac * 10040;
+
+    if (op->stats.dam > 0) op->value += op->stats.dam * 5003;
+
+    if (op->stats.sp > 0) op->value += op->stats.sp * 11002;
+    if (op->stats.hp > 0) op->value += op->stats.hp * 11001;
+
+    if (op->stats.maxsp > 0) op->value += op->stats.maxsp * 603;
+    if (op->stats.maxhp > 0) op->value += op->stats.maxhp * 501;
+
+    if (op->stats.exp > 0) op->value += op->stats.exp * 3002;
+    
+    if(op->type == AMULET) {
+    	if(QUERY_FLAG(op, FLAG_REFL_MISSILE)) op->value += (20000 * (op->item_quality / 100.0f));
+    	if(QUERY_FLAG(op, FLAG_REFL_SPELL)) op->value += (60000 * (op->item_quality / 100.0f));
+	}	
+
+    
+    /* freak copper coins for make prices more fun */
+
+	op->value += random_roll(0, 199);
+}
 /*
  * Randomly adds one magical ability to the given object.
  * Modified for Partial Resistance in many ways:
@@ -1361,38 +1448,111 @@ void set_abs_magic(object *op, int magic)
  *  is rolled again, increase it - the bonuses now stack with
  *  other bonuses previously rolled and ones the item might natively have.
  * 2) Add code to deal with new PR method.
- * return 0: no special added. 1: something added.
+ * return 0: no special added. 1: something added.     
  */
-
 int set_ring_bonus(object *op, int bonus, int level)
 {
-    int tmp, r, off;
+/*	int tmp, r, off;*/
+    int tmp, off, roll, r;
     off = (level >= 50 ? 1 : 0) + (level >= 60 ? 1 : 0) + (level >= 70 ? 1 : 0) + (level >= 80 ? 1 : 0);
     set_ring_bonus_jump1: /* lets repeat, to lazy for a loop */
-    r = RANDOM() % (bonus > 0 ? 25 : 13);
+/*	r = RANDOM() % (bonus > 0 ? 15 : 13);
+	SET_FLAG(op, FLAG_IS_MAGICAL);*/
 
-    SET_FLAG(op, FLAG_IS_MAGICAL);
+    if(op->type == AMULET) {
+/*     if (!(RANDOM() % 21))
+           r = 20 + RANDOM() % 2;
+       else if (!(RANDOM() % 20))
+       {
+           tmp = RANDOM() % 3;
+           if (tmp == 2)
+               r = 0;
+           else if (!tmp)
+               r = 11;
+           else
+               r = 12;
+       }
+       else if (RANDOM() & 2)
+           r = 10;
+       else
+           r = 13 + RANDOM() % 7;*/
+	roll = random_roll(0,100);
 
-    if (op->type == AMULET)
-    {
-        if (!(RANDOM() % 21))
-            r = 20 + RANDOM() % 2;
-        else if (!(RANDOM() % 20))
-        {
-            tmp = RANDOM() % 3;
-            if (tmp == 2)
-                r = 0;
-            else if (!tmp)
-                r = 11;
-            else
-                r = 12;
-        }
-        else if (RANDOM() & 2)
-            r = 10;
-        else
-            r = 13 + RANDOM() % 7;
+	if(roll < 7) {
+	    r = 0; /* hp + */
+	    }
+	else if(roll < 15) {
+	    r = 1; /* sp + */
+	    }
+	else if(roll < 70) {
+	    r = 2; /* resist */
+	    }
+	else if(roll < 75) {
+	    r = 3; /* reflect spells */
+	    }
+	else if(roll < 80) {
+	    r = 4; /* reflect missles */
+	    }
+	else {
+	    r = 14; /* ac */
+	    }
     }
-    switch (r % 25)
+/*   switch (r % 25)*/
+    else {
+	roll = random_roll(0,100);
+
+	if(roll < 4) {
+	    r = 0; /* hp + */
+	    }
+	else if(roll < 9) {
+	    r = 1; /* sp + */
+	    }
+	else if(roll < 29) {
+	    r = 2; /* resist */
+	    }
+	else if(roll < 34) {
+	    r = 3; /* sp regen */
+	    }
+	else if(roll < 39) {
+	    r = 4; /* hp regen */
+	    }
+	else if(roll < 40) {
+	    r = 5; /* str */
+	    }
+	else if(roll < 42) {
+	    r = 6; /* dex */
+	    }
+	else if(roll < 44) {
+	    r = 7; /* con */
+	    }
+	else if(roll < 46) {
+	    r = 8; /* int */
+	    }
+	else if(roll < 48) {
+	    r = 9; /* wis */
+	    }
+	else if(roll < 50) {
+	    r = 10; /* pow */
+	    }
+	else if(roll < 52) {
+	    r = 11; /* cha */
+	    }
+	else if(roll < 55) {
+	    r = 12; /* dam */
+	    }
+	else if(roll < 65) {
+	    r = 13; /* wc */
+	    }
+	else if(roll < 75) {
+	    r = 14; /* ac */
+	    }
+	else {
+	    r = 15; /* speed */
+	    }
+    
+	}
+
+    switch (r)
     {
           /* Redone by MSW 2000-11-26 to have much less code.  Also,
            * bonuses and penalties will stack and add to existing values.
@@ -1404,50 +1564,34 @@ int set_ring_bonus(object *op, int bonus, int level)
           if (level < 5)
           {
               tmp += RANDOM() % 10;
-              if (bonus > 0)
-                  op->value = (int) ((float) op->value * 1.3f);
           }
           else if (level < 10)
           {
               tmp += 10 + RANDOM() % 10;
-              if (bonus > 0)
-                  op->value = (int) ((float) op->value * 1.32f);
           }
           else if (level < 15)
           {
               tmp += 15 + RANDOM() % 20;
-              if (bonus > 0)
-                  op->value = (int) ((float) op->value * 1.34f);
           }
           else if (level < 20)
           {
               tmp += 20 + RANDOM() % 21;
-              if (bonus > 0)
-                  op->value = (int) ((float) op->value * 1.38f);
           }
           else if (level < 25)
           {
               tmp += 25 + RANDOM() % 23;
-              if (bonus > 0)
-                  op->value = (int) ((float) op->value * 1.4f);
           }
           else if (level < 30)
           {
               tmp += 30 + RANDOM() % 25;
-              if (bonus > 0)
-                  op->value = (int) ((float) op->value * 1.42f);
           }
           else if (level < 40)
           {
               tmp += 40 + RANDOM() % 30;
-              if (bonus > 0)
-                  op->value = (int) ((float) op->value * 1.44f);
           }
           else
           {
               tmp += (int) ((double) level * 0.65) + 50 + RANDOM() % 40;
-              if (bonus > 0)
-                  op->value = (int) ((float) op->value * 1.5f);
           }
           if (bonus < 0)
           {
@@ -1455,193 +1599,58 @@ int set_ring_bonus(object *op, int bonus, int level)
           }
           else
           {
-              op->value += level * 99;
               op->item_level = (int) ((double) level * (0.5 + ((double) (RANDOM() % 40) / 100.0)));
           }
           op->stats.maxhp = tmp;
           break;
         case 1:
+	// mana+
+          tmp = 3;
+          if (level < 5)
+          {
+              tmp += RANDOM() % 3;
+          }
+          else if (level < 10)
+          {
+              tmp += 3 + RANDOM() % 4;
+          }
+          else if (level < 15)
+          {
+              tmp += 4 + RANDOM() % 6;
+          }
+          else if (level < 20)
+          {
+              tmp += 6 + RANDOM() % 8;
+          }
+          else if (level < 25)
+          {
+              tmp += 8 + RANDOM() % 10;
+          }
+          else if (level < 33)
+          {
+              tmp += 10 + RANDOM() % 12;
+          }
+          else if (level < 44)
+          {
+              tmp += 15 + RANDOM() % 15;
+          }
+          else
+          {
+              tmp += (int) ((double) level * 0.53) + 20 + RANDOM() % 20;
+          }
+          if (bonus < 0)
+          {
+              tmp = -tmp;
+          }
+          else
+          {
+              op->item_level = (int) ((double) level * (0.5 + ((double) (RANDOM() % 40) / 100.0)));
+          }
+          op->stats.maxsp = tmp;
+          break;
         case 2:
-        case 3:
-        case 4:
-        case 5:
-        case 6:
-          set_attr_value(&op->stats, r, (signed char) (bonus + get_attr_value(&op->stats, r)));
-          break;
-        case 7:
-          tmp = 1 + (RANDOM()%(10*bonus));
-          if(bonus<0)
-              op->stats.dam-=tmp;
-          else
-          {
-            op->stats.dam+=tmp;
-            if((RANDOM()%20) > 16)
-            {
-                op->value = (int) ((float) op->value * 1.3f);
-                op->stats.dam+=(RANDOM()%9);
-            }
-          }
-          break;
-
-        case 8:
-          op->stats.wc += bonus;
-          if (bonus > 0 && (RANDOM() % 20) > 16)
-          {
-              op->value = (int) ((float) op->value * 1.3f);
-              op->stats.wc++;
-          }
-          break;
-
-        case 9:
-        /* was food/hunger */
-
-        case 10:
-          op->stats.ac += bonus;
-          if (bonus > 0 && (RANDOM() % 20) > 16)
-          {
-              op->value = (int) ((float) op->value * 1.3f);
-              op->stats.ac++;
-          }
-          break;
-
-        case 11:
-          if (!(RANDOM() % 3))
-              goto make_prot_items;
-          tmp = 3;
-          if (level < 5)
-          {
-              tmp += RANDOM() % 3;
-              if (bonus > 0)
-                  op->value = (int) ((float) op->value * 1.3f);
-          }
-          else if (level < 10)
-          {
-              tmp += 3 + RANDOM() % 4;
-              if (bonus > 0)
-                  op->value = (int) ((float) op->value * 1.32f);
-          }
-          else if (level < 15)
-          {
-              tmp += 4 + RANDOM() % 6;
-              if (bonus > 0)
-                  op->value = (int) ((float) op->value * 1.34f);
-          }
-          else if (level < 20)
-          {
-              tmp += 6 + RANDOM() % 8;
-              if (bonus > 0)
-                  op->value = (int) ((float) op->value * 1.38f);
-          }
-          else if (level < 25)
-          {
-              tmp += 8 + RANDOM() % 10;
-              if (bonus > 0)
-                  op->value = (int) ((float) op->value * 1.4f);
-          }
-          else if (level < 33)
-          {
-              tmp += 10 + RANDOM() % 12;
-              if (bonus > 0)
-                  op->value = (int) ((float) op->value * 1.42f);
-          }
-          else if (level < 44)
-          {
-              tmp += 15 + RANDOM() % 15;
-              if (bonus > 0)
-                  op->value = (int) ((float) op->value * 1.44f);
-          }
-          else
-          {
-              tmp += (int) ((double) level * 0.53) + 20 + RANDOM() % 20;
-              if (bonus > 0)
-                  op->value = (int) ((float) op->value * 1.5f);
-          }
-          if (bonus < 0)
-          {
-              tmp = -tmp;
-          }
-          else
-          {
-              op->value += level * 111;
-              op->item_level = (int) ((double) level * (0.5 + ((double) (RANDOM() % 40) / 100.0)));
-          }
-          op->stats.maxsp = tmp;
-          break;
-
-        case 12:
-          if (!(RANDOM() % 3))
-              goto make_prot_items;
-          tmp = 3;
-          if (level < 5)
-          {
-              tmp += RANDOM() % 3;
-              if (bonus > 0)
-                  op->value = (int) ((float) op->value * 1.3f);
-          }
-          else if (level < 10)
-          {
-              tmp += 3 + RANDOM() % 4;
-              if (bonus > 0)
-                  op->value = (int) ((float) op->value * 1.32f);
-          }
-          else if (level < 15)
-          {
-              tmp += 4 + RANDOM() % 6;
-              if (bonus > 0)
-                  op->value = (int) ((float) op->value * 1.34f);
-          }
-          else if (level < 20)
-          {
-              tmp += 6 + RANDOM() % 8;
-              if (bonus > 0)
-                  op->value = (int) ((float) op->value * 1.38f);
-          }
-          else if (level < 25)
-          {
-              tmp += 8 + RANDOM() % 10;
-              if (bonus > 0)
-                  op->value = (int) ((float) op->value * 1.4f);
-          }
-          else if (level < 33)
-          {
-              tmp += 10 + RANDOM() % 12;
-              if (bonus > 0)
-                  op->value = (int) ((float) op->value * 1.42f);
-          }
-          else if (level < 44)
-          {
-              tmp += 15 + RANDOM() % 15;
-              if (bonus > 0)
-                  op->value = (int) ((float) op->value * 1.44f);
-          }
-          else
-          {
-              tmp += (int) ((double) level * 0.53) + 20 + RANDOM() % 20;
-              if (bonus > 0)
-                  op->value = (int) ((float) op->value * 1.5f);
-          }
-          if (bonus < 0)
-          {
-              tmp = -tmp;
-          }
-          else
-          {
-              op->value += level * 111;
-              op->item_level = (int) ((double) level * (0.5 + ((double) (RANDOM() % 40) / 100.0)));
-          }
-          op->stats.maxsp = tmp;
-          break;
-
-        case 13:
-          make_prot_items:
-        case 14:
-        case 15:
-        case 16:
-        case 17:
-
-        case 18:
-        case 19:
-          {
+	    {
+	    //resist
               int b = 5 + FABS( bonus),val,resist = RANDOM() % (num_resist_table - 4 + off);
 
               /* Roughly generate a bonus between 100 and 35 (depending on the bonus) */
@@ -1669,45 +1678,102 @@ int set_ring_bonus(object *op, int bonus, int level)
                  * based on how good a resistance we gave.
                  */
               break;
-          }
-        case 20:
+	      }
+        case 3:
           if (op->type == AMULET)
           {
               SET_FLAG(op, FLAG_REFL_SPELL);
-              op->value *= 11;
+	      if(bonus < 0) {
+	        op->item_quality -= random_roll(1,30), op->item_condition = op->item_quality;
+		}
           }
           else
           {
-              op->stats.hp = 1; /* regenerate hit points */
-              op->value = (int) ((float) op->value * 1.3f);
+	    if(bonus > 0) {
+		roll = random_roll(1,10);
+		op->stats.sp = roll; /* regenerate spell points */
+	      }
+	     else {
+		roll = random_roll(1,3);
+		op->stats.sp = (roll * -1);
+		}
           }
           break;
 
-        case 21:
+        case 4:
           if (op->type == AMULET)
           {
               SET_FLAG(op, FLAG_REFL_MISSILE);
-              op->value *= 9;
+	      if(bonus < 0) {
+	        op->item_quality -= random_roll(1,30), op->item_condition = op->item_quality;
+		}
           }
           else
           {
-              op->stats.sp = 1; /* regenerate spell points */
-              op->value = (int) ((float) op->value * 1.35f);
+	    if(bonus > 0) {
+		roll = random_roll(1,10);
+		op->stats.hp = roll; /* regenerate hit points */
+	      }
+	     else {
+		roll = random_roll(1,3);
+		op->stats.hp = (roll * -1);
+		}
           }
           break;
-
-          /*case 22: */
+        case 5:
+	    op->stats.Str += roll_ring_bonus_stat(op->stats.Str, level, bonus);
+	    break;
+        case 6:
+	    op->stats.Dex += roll_ring_bonus_stat(op->stats.Dex, level, bonus);
+	    break;
+        case 7:
+	    op->stats.Con += roll_ring_bonus_stat(op->stats.Con, level, bonus);
+	    break;		
+        case 8:
+	    op->stats.Int += roll_ring_bonus_stat(op->stats.Int, level, bonus);
+	    break;		
+        case 9:
+	    op->stats.Wis += roll_ring_bonus_stat(op->stats.Wis, level, bonus);
+	    break;		
+        case 10:
+	    op->stats.Pow += roll_ring_bonus_stat(op->stats.Pow, level, bonus);
+	    break;		
+        case 11:
+	    op->stats.Cha += roll_ring_bonus_stat(op->stats.Cha, level, bonus);
+	    break;		
+        case 12:
+          tmp = 1 + (RANDOM()%(10*bonus));
+          if(bonus<0)
+              op->stats.dam-=tmp;
+          else
+          {
+            op->stats.dam+=tmp;
+            if((RANDOM()%20) > 16)
+            {
+                op->stats.dam+=(RANDOM() % 9);
+            }
+          }
+          break;
+        case 13:
+          op->stats.wc += bonus;
+          if (bonus > 0 && (RANDOM() % 20) > 16)
+          {
+              op->stats.wc++;
+          }
+          break;
+        case 14:
+          op->stats.ac += bonus;
+          if (bonus > 0 && (RANDOM() % 20) > 16)
+          {
+              op->stats.ac++;
+          }
+          break;
         default:
           if (!bonus)
               bonus = 1;
           op->stats.exp += bonus; /* Speed! */
-          op->value = (int) ((float) op->value * 1.4f);
           break;
     }
-    if (bonus > 0)
-        op->value = (int) ((float) op->value * 2.0f * (float) bonus);
-    else
-        op->value = -(op->value * 2 * bonus) / 2;
     if (op->value < 0) /* check possible overflow */
         op->value = 0;
     return 1;
@@ -1942,23 +2008,18 @@ int fix_generated_item(object **op_ptr, object *creator, int difficulty, int a_c
                   SET_FLAG(op, FLAG_CURSED);
               set_ring_bonus(op, QUERY_FLAG(op, FLAG_CURSED) ? -DICE2 : DICE2, difficulty);
 
-
-              if (op->type != RING) /* Amulets have only one ability */
-                  break;
-
-              if (!(RANDOM() % 4))
+              if (!(RANDOM() % 4) && op->type != AMULET) /* Amulets have only one ability */
               {
                   int   d   = (RANDOM() % 2 || QUERY_FLAG(op, FLAG_CURSED)) ? -DICE2 : DICE2;
                   if (set_ring_bonus(op, d, difficulty))
-                      op->value = (int) ((float) op->value * 1.95f);
                   if (!(RANDOM() % 4))
                   {
                       int   d   = (RANDOM() % 3 || QUERY_FLAG(op, FLAG_CURSED)) ? -DICE2 : DICE2;
-                      if (set_ring_bonus(op, d, difficulty))
-                          op->value = (int) ((float) op->value * 1.95f);
+                      set_ring_bonus(op, d, difficulty);
                   }
               }
-
+	      
+	      set_ring_bonus_value_calc(op);
               break;
 
             case BOOK:
