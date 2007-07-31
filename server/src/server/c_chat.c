@@ -284,7 +284,7 @@ int command_tell(object *op, char *params)
     char        buf[MAX_BUF], *name = NULL, *msg = NULL;
     char        buf2[MAX_BUF];
     player     *pl;
-
+    int        wiz;
 
     if(!check_mute(op, MUTE_MODE_SHOUT))
         return 0;
@@ -369,8 +369,8 @@ int command_tell(object *op, char *params)
                         new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf2);
                 }
             }
-
-            if (pl->dm_stealth)
+            wiz = QUERY_FLAG(op, FLAG_WIZ);
+            if (pl->dm_stealth && !wiz)
             {
                 sprintf(buf, "%s tells you (dm_stealth): ", op->name);
                 strncat(buf, msg, MAX_BUF - strlen(buf) - 1);
