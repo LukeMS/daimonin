@@ -54,6 +54,24 @@ object * find_key(object *op, object *door)
     return NULL;
 }
 
+/* Grommit 31-Jul-2007
+ * Function to look for marker force with slaying field the same as
+ * the locked door. A mark should allow the player to open the door.
+ * I don't want to mess with find_key.
+ * We only need to look in the top level inventory.
+ */
+object * find_force(object *op, object *door)
+{
+	object *tmp;
+
+    for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
+    {
+        if ((tmp->type == FORCE) && (tmp->slaying == door->slaying))
+            return tmp;
+    }
+    return NULL;
+}
+
 /* this is our main open_door() function. It is used for doors
  * which will auto open/close and/or need a special key. It is
  * used from npc, mobs and players and use the remove_doorX()
@@ -65,6 +83,7 @@ object * find_key(object *op, object *door)
 int open_door(object *op, mapstruct *m, int x, int y, int mode)
 {
     object *tmp, *key = NULL;
+    object *force = NULL;
 
     /* Make sure a monster/npc actually can open doors */
     if (op->type != PLAYER && !QUERY_FLAG(op, FLAG_CAN_OPEN_DOOR))
@@ -77,7 +96,7 @@ int open_door(object *op, mapstruct *m, int x, int y, int mode)
         {
             if (tmp->slaying) /* door needs a key? */
             {
-                if (!(key = find_key(op, tmp)))
+                if (!(key = find_key(op, tmp)) && !(force = find_force(op, tmp)))
                 {
                     if (op->type == PLAYER && mode)
                         new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, tmp->msg);
@@ -89,9 +108,14 @@ int open_door(object *op, mapstruct *m, int x, int y, int mode)
             if (mode) /* really opening the door? */
             {
                 remove_door2(tmp, op);
-                if (op->type == PLAYER && key)
-                    new_draw_info_format(NDI_UNIQUE, NDI_BROWN, op, "You open the door with the %s.",
-                                         query_short_name(key, op));
+                if (op->type == PLAYER)
+                {
+                    if (key)
+                        new_draw_info_format(NDI_UNIQUE, NDI_BROWN, op, "You open the door with the %s.",
+                                             query_short_name(key, op));
+                    else if (force)
+                        new_draw_info(NDI_UNIQUE, NDI_BROWN, op, "A mysterious force opens the locked door.");
+                }
             }
 
             return 1;
@@ -705,7 +729,7 @@ void move_pit(object *op)
 
 /* This routine doesnt seem to work for "inanimate" objects that
  * are being carried, ie a held torch leaps from your hands!.
- * Modified this routine to allow held objects. b.t. 
+ * Modified this routine to allow held objects. b.t.
  */
 void change_object(object *op)
 {
