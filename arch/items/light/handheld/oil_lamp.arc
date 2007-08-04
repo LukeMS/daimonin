@@ -8,5 +8,6 @@ material 512
 value 22
 weight 400
 food 800
+can_stack 1
 nrof 1
 end
