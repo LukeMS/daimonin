@@ -44,6 +44,7 @@ static struct method_decl       Game_methods[]      =
     {"GetTime", Game_GetTime},
     {"LocateBeacon", Game_LocateBeacon},
     {"Log", Game_Log},
+    {"EnumerateCoins", Game_EnumerateCoins},
     //    {"RegisterCommand", Game_RegisterCommand},
     {NULL, NULL}
 };
@@ -645,6 +646,44 @@ static int Game_Log(lua_State *L)
     LOG(level, "LUA:%s\n", text);
 
     return 0;
+}
+
+/*****************************************************************************/
+/* Name   : Game_EnumerateCoins                                              */
+/* Lua    : game:EnumerateCoins(value)                                       */
+/* Info   : Return a table with value nicely enumerated as the optimum       */
+/*          denomination coins. The table has the following fields:          */
+/*              mithril                                                      */
+/*              gold                                                         */
+/*              silver                                                       */
+/*              copper                                                       */
+/* Status : Untested                                                         */
+/*****************************************************************************/
+static int Game_EnumerateCoins(lua_State *L)
+{
+    lua_object *self;
+    sint64      value;
+    sint64      mithril = 0, gold = 0, silver = 0, copper = 0;
+
+    get_lua_args(L, "GI", &self, &value);
+    mithril = value / 10000000; value -= mithril * 10000000;
+    gold    = value / 10000;    value -= gold    * 10000;
+    silver  = value / 100;      value -= silver  * 100;
+    copper  = value;
+    lua_newtable(L);
+    lua_pushliteral(L, "mithril");
+    lua_pushnumber(L, (lua_Number) mithril);
+    lua_rawset(L, -3);
+    lua_pushliteral(L, "gold");
+    lua_pushnumber(L, (lua_Number) gold);
+    lua_rawset(L, -3);
+    lua_pushliteral(L, "silver");
+    lua_pushnumber(L, (lua_Number) silver);
+    lua_rawset(L, -3);
+    lua_pushliteral(L, "copper");
+    lua_pushnumber(L, (lua_Number) copper);
+    lua_rawset(L, -3);
+    return 1;
 }
 
 /* FUNCTIONEND -- End of the Lua plugin functions. */

@@ -42,5 +42,6 @@ static int  Game_IsValid(lua_State *L);
 static int  Game_GetTime(lua_State *L);
 static int  Game_LocateBeacon(lua_State *L);
 static int  Game_Log(lua_State *L);
+static int  Game_EnumerateCoins(lua_State *L);
 
 #endif /* DAIMONIN_GANE_H */
