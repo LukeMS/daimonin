@@ -8040,7 +8040,7 @@ end
 # Ring of Thieves
 #
 Allowed ring_generic
-chance 25
+chance 15
 difficulty 22
 artifact ring_thieves
 def_arch ring_generic
@@ -8067,7 +8067,7 @@ end
 #Ring of Ice
 #
 Allowed ring_generic
-chance 40
+chance 20
 difficulty 12
 artifact ring_ice
 def_arch ring_generic
@@ -8098,7 +8098,7 @@ endmsg
 end
 #
 Allowed ring_generic
-chance 40
+chance 20
 difficulty 12
 artifact ring_fire
 def_arch ring_generic
@@ -8131,7 +8131,7 @@ endmsg
 end
 #
 Allowed ring_generic
-chance 40
+chance 20
 difficulty 12
 artifact ring_storm
 def_arch ring_generic
@@ -8164,7 +8164,7 @@ end
 #
 #
 Allowed ring_generic
-chance 40
+chance 10
 difficulty 35
 artifact ring_storm_great
 def_arch ring_generic
@@ -8199,7 +8199,7 @@ end
 #
 #
 Allowed ring_generic
-chance 30
+chance 10
 difficulty 18
 artifact ring_yordan
 def_arch ring_generic
@@ -8222,7 +8222,7 @@ dam 20
 end
 #
 Allowed ring_generic
-chance 30
+chance 40
 difficulty 7
 artifact ring_ghost
 def_arch ring_generic
@@ -8246,7 +8246,7 @@ end
 #
 #
 Allowed ring_generic
-chance 15
+chance 50
 artifact ring_woe
 def_arch ring_generic
 editor 2:items/talisman/rings
@@ -8267,7 +8267,7 @@ value 50
 end
 #
 Allowed ring_generic
-chance 15
+chance 25
 artifact ring_woe1
 def_arch ring_generic
 editor 2:items/talisman/rings
@@ -8291,7 +8291,7 @@ value 50
 end
 #
 Allowed ring_generic
-chance 15
+chance 25
 artifact ring_woe2
 def_arch ring_generic
 editor 2:items/talisman/rings
@@ -8315,7 +8315,7 @@ value 50
 end
 #
 Allowed ring_generic
-chance 20
+chance 25
 artifact ring_woe3
 def_arch ring_generic
 editor 2:items/talisman/rings
