@@ -1537,7 +1537,7 @@ int set_ring_bonus(object *op, int bonus, int level)
 	else if(roll < 52) {
 	    r = 11; /* cha */
 	    }
-	else if(roll < 55) {
+	else if(roll < 58) {
 	    r = 12; /* dam */
 	    }
 	else if(roll < 65) {
