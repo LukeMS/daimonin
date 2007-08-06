@@ -107,7 +107,7 @@ BehaviourClass(PROCESSES,
              * For pets "home" is the current position of the owner.
              * Deactivate by using a distance setting of -1.
              */
-            Parameter(CHOOSE_ENEMY, ANTILURE_DISTANCE, INTEGER, OPTIONAL, 12)
+            Parameter(CHOOSE_ENEMY, ANTILURE_DISTANCE, INTEGER, OPTIONAL, -1)
     )
 
     /** Plugin interface for processes */
