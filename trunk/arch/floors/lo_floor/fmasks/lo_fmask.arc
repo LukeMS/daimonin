@@ -142,6 +142,22 @@ layer 2
 type 28
 no_pick 1
 end
+Object border_wall_n5
+name border
+face border_wall_n5.101
+no_teleport 1
+layer 2
+type 28
+no_pick 1
+end
+Object border_wall_n6
+name border
+face border_wall_n6.101
+no_teleport 1
+layer 2
+type 28
+no_pick 1
+end
 Object border_wall_w1
 name border
 face border_wall_w1.101
@@ -169,6 +185,22 @@ end
 Object border_wall_w4
 name border
 face border_wall_w4.101
+no_teleport 1
+layer 2
+type 28
+no_pick 1
+end
+Object border_wall_w5
+name border
+face border_wall_w5.101
+no_teleport 1
+layer 2
+type 28
+no_pick 1
+end
+Object border_wall_w6
+name border
+face border_wall_w6.101
 no_teleport 1
 layer 2
 type 28
