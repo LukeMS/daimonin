@@ -157,6 +157,10 @@ struct mob_known_obj *register_npc_known_obj(object *npc, object *other, int fri
          * been hit or helped by them, or if they own us */
         if(other->type == PLAYER && friendship == 0 && npc->owner != other)
             if(!obj_in_line_of_sight(npc, other, &rv))
+              { 
+                ai_dont_stand_still(npc, "max_idle_time=1", 1);
+              }
+            else
                 return NULL;
     }
 
