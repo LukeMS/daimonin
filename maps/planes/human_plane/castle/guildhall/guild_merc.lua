@@ -28,14 +28,14 @@ local function topicDefault()
         if q_mgr_1:GetStatus() == game.QSTAT_NO then
             ib:SetTitle("Welcome to the Mercenary Guild")
             ib:AddMsg("Hello!\nWelcome to the Mercenary Guild of Thraal!\n")
-            ib:AddMsg("\nYou need a job?")
+            ib:AddMsg("\nDo you need a job?")
             ib:AddMsg("\nYou really would be welcome in our ranks. ")
             ib:AddMsg("Our ^troops^ are an important part of the imperial defence.\n")
-            ib:AddMsg("\nYou want to join our guild?")
+            ib:AddMsg("\nDo you want to join our guild?")
             ib:AddLink("Start the Mercenary Guild Quest", "startq1")
         else
             ib:SetTitle("You Solved the Quest?")
-            ib:AddMsg("You have done the task?\n\nShow me the helm and you can join our guild.")
+            ib:AddMsg("Have you done the task?\n\nShow me the helmet and you can join our guild.")
             ib:AddLink("Show Cashin the Helm", "checkq1")
         end
     else
@@ -45,7 +45,7 @@ local function topicDefault()
         else
             ib:SetTitle("Hello Guildmember")
         end
-        ib:AddMsg("Good to see you back. How are you?\n\nNice that you have joined our ^troops^.")
+        ib:AddMsg("Good to see you back. How are you?\n\nIt's nice that you have joined our ^troops^.")
     end
     pl:Interface(1, ib:Build())
 end
@@ -57,13 +57,21 @@ end
 
 local function quest_body1()
     ib:SetMsg("Before you can join the guild I have a small task for you.\n")
-    ib:AddMsg("\nWe have a problem with giant ants for some time now.")
-    ib:AddMsg("\nSee this hole to the old guild cellar on my side?\n")
-    ib:AddMsg("\nOne of those silly ants has stolen my old helmet!")
-    ib:AddMsg("\nEnter the hole and kill the ants there!")
-    ib:AddMsg("\nNo fear, they are weak.\n")
-    ib:AddMsg("\nBring me the helm back and you can join the guild./n")
-    ib:SetDesc("You can join the mercenary guild when you recover the helm for Cashin.", 0, 0, 0, 0)
+    ib:AddMsg("\nWe have had a problem with giant ants for some time now. See this hole to the old guild cellar beside " ..
+              "me? One of those silly ants down there has stolen my old helmet!\n")
+    ib:AddMsg("\nEnter the hole and kill the ants! Don't worry, they are weak.\n")
+    ib:AddMsg("\nBring back the helmet and you can join the guild.\n")
+    ib:AddMsg("\nThere are four rooms in the cellar. I think the ant scout leader in the fourth room has my helmet.\n")
+    ib:AddMsg("\n|Hints|\n")
+    ib:AddMsg("\nHm, you don't look too experienced with your weapon... Well, here is a tip from an old wardog.\n")
+    ib:AddMsg("\nWhen you get down there, try fighting a few ants in the first three rooms before going for the scout " ..
+              "leader. They won't attack you until you attack them.\n")
+    ib:AddMsg("\nWhen you're ready, go for the leader. He is a lot more aggressive and will chase you on sight. Don't " ..
+              "show him any fear!\n")
+    ib:AddMsg("\nIf you run away like a coward he'll have time to recover from his wounds, so it is important that you " ..
+              "keep on the offensive. Don't forget what Fanrir told you about eating food to recover health. You can " ..
+	      "even do that during a fight!")
+    ib:SetDesc("You can join the mercenary guild when you recover the helmet for Cashin.", 0, 0, 0, 0)
 end
 
 -- start: accept or decline the quest
@@ -102,16 +110,16 @@ local function topCheckQ1()
         return
     end
     ib:SetTitle("Join the Mercenary Guild")
-    ib:SetMsg("The quest status is: ".. q_mgr_1:GetStatus() .."\n\n")
+    -- ib:SetMsg("The quest status is: ".. q_mgr_1:GetStatus() .."\n\n")
     if q_mgr_1:GetStatus() ~= game.QSTAT_SOLVED then
-        ib:AddMsg("Where is my helm???\n\nCome back if you have found it!\n")
+        ib:AddMsg("Where is my helmet???\n\nCome back if you have found it!\n")
         ib:AddQuestChecklist(q_mgr_1)
         ib:SetButton("Back", "hi") 
     else
-        ib:AddMsg("Very well done! You found the helm.\n")
-        ib:AddMsg("\nYou can keep the helm.\n")
-        ib:AddMsg("It will protect you well.\n")
-        ib:SetDesc("Join the Mercenary Guild and take the Helm.", 0, 0, 0, 0)
+        ib:AddMsg("Very well done! You found the helmet.\n")
+        ib:AddMsg("\nSince it is my old one, you can keep it.\n")
+        ib:AddMsg("It will protect you well, as it did me.\n")
+        ib:SetDesc("Join the Mercenary Guild and take the Helmet.", 0, 0, 0, 0)
         quest_icons1()
         ib:AddQuestChecklist(q_mgr_1)
         ib:SetAccept(nil, "finishq1") 
@@ -133,7 +141,7 @@ local function topFinishQ1()
         pl:Write("You got ".. q_iname1..".", game.COLOR_WHITE) 
         pl:JoinGuild(guild_tag, game.SKILLGROUP_PHYSIQUE, 100, game.SKILLGROUP_AGILITY, 100, game.SKILLGROUP_WISDOM, 100)
         setGuild()
-        ib:SetTitle("Welcome Mercenary!")
+        ib:SetTitle("Welcome, Mercenary!")
         ib:SetMsg("Very well done!\n")
         ib:AddMsg("\nYou are now a member of the Mercenary Guild!")
         ib:SetButton("Ok", "hi") 
@@ -171,11 +179,11 @@ end
 local function topTroops()
     ib:SetTitle("The Mercenary Troops")
     ib:SetMsg("\nWe, as part of the the Thraal army corps, are invading the abandoned areas after the defeat of Moroch.\n")
-    ib:AddMsg("\nWell, the chronomancers ensured us after they created the portal that we are still in the galactic main sphere.\n")
-    ib:AddMsg("\nBut it seems to me that these lands have many wormholes to other places...\n")
+    ib:AddMsg("\nWell, the chronomancers ensured us after they created the portal that we would still be in the galactic main sphere.\n")
+    ib:AddMsg("\nHowever, it seems to me that these lands have many wormholes to other places...\n")
     ib:AddMsg("\nPerhaps the long time under Morochs influence has weakened the borders between the planes. ")
     ib:AddMsg("You should ask ^Jahrlen^ about it.")
-    ib:AddMsg("\n\nYou should also talk to our senior members, like ^Chereth^ downstairs, ")
+    ib:AddMsg("\n\nYou should also talk to our senior members, like ^Chereth^ downstairs; ")
     ib:AddMsg("they can provide valuable assistance to you.\n")
     ib:SetButton("Ok", "hi") 
     pl:Interface(1, ib:Build())
@@ -184,10 +192,10 @@ end
 local function topJahrlen()
     ib:SetTitle("Jahrlen the Chronomancer")
     ib:SetMsg("\nJahrlen is our guild mage.\n")
-    ib:AddMsg("\nWell, normally we don't have a guild mage.")
-    ib:AddMsg("\nBut we are at war here and he was assigned to us.\n")
+    ib:AddMsg("\nWell, normally we don't have a guild mage, since we are mercenaries.")
+    ib:AddMsg("\nBut we are at war here and he was assigned to us, so we treat him as one of our own.\n")
     ib:AddMsg("\nIn fact, he is a high level chronomancer and we are honored to have him help us.\n")
-    ib:AddMsg("\nHe is in our guild rooms or maybe in one of our branch guildhalls.\n")
+    ib:AddMsg("\nHe is in our guild rooms, or maybe in one of our branch guildhalls.\n")
     ib:AddMsg("\nTalk to him when you meet him! He often has tasks and quests for newbies.\n")
     ib:SetButton("Ok", "hi") 
     pl:Interface(1, ib:Build())

@@ -78,7 +78,7 @@ local function topCheckQ1()
         return
     end
     ib:SetTitle("Ogre Chief Frah'aks Letter Quest")
-    ib:SetMsg("The quest status is: ".. q_mgr_1:GetStatus() .."\n\n")
+    --ib:SetMsg("The quest status is: ".. q_mgr_1:GetStatus() .."\n\n")
     if q_mgr_1:GetStatus() ~= game.QSTAT_SOLVED then
         ib:AddMsg("\nNah, bring Frah'ak note from ^kobolds^ first!\n")
         ib:AddQuestChecklist(q_mgr_1)
@@ -105,8 +105,8 @@ local function topFinishQ1()
     pl:Sound(0, 0, 2, 0)
     pl:AcquireSkill(skill, game.LEARN)
     
-    ib:SetTitle("QUEST END: Ogre Chief Frah'aks Letter Quest")
-    ib:SetMsg("Frah'ak teach some ancient skill.")
+    ib:SetTitle("Quest Completed")
+    ib:SetMsg("Frah'ak teach an ancient skill.")
     ib:SetButton("Ok", "hi") 
     pl:Interface(1, ib:Build())
 end

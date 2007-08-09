@@ -1950,6 +1950,7 @@ arch pedestal
 connected 2
 is_invisible 1
 direction 7
+layer 0
 x 14
 y 9
 arch event_obj
@@ -1991,6 +1992,7 @@ arch pedestal
 connected 1
 is_invisible 1
 direction 7
+layer 0
 x 14
 y 12
 arch event_obj
