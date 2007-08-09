@@ -63,6 +63,21 @@ end
 arch grassd_2
 y 9
 end
+arch wmask_wanted
+name proclamation
+msg
+Cell 1 -- VACANCY
+endmsg
+y 9
+arch event_obj
+name Lua
+sub_type 12
+race /scripts_private/examine_sign.lua
+end
+arch beacon
+name guildhall jail cell 1 proclamation
+end
+end
 arch floor_flagm1
 y 10
 end
@@ -154,13 +169,6 @@ arch floor_sblack2
 x 1
 y 3
 end
-arch exit
-slaying /unofficial/lobby
-hp 8
-sp 19
-x 1
-y 3
-end
 arch floor_sblack2
 x 1
 y 4
@@ -198,13 +206,9 @@ x 1
 y 9
 end
 arch wmask_wanted
-name announcement
+name proclamation
 msg
-Attention!
-We have imprisoned a local ogre
-rogue clan leader. Report ogre
-activity near the city to the
-local guards.
+Cell 2 -- VACANCY
 endmsg
 x 1
 y 9
@@ -212,6 +216,9 @@ arch event_obj
 name Lua
 sub_type 12
 race /scripts_private/examine_sign.lua
+end
+arch beacon
+name guildhall jail cell 2 proclamation
 end
 end
 arch floor_flagm1
@@ -541,6 +548,19 @@ arch light3
 x 3
 y 9
 end
+arch wmask_wanted
+name proclamation
+msg
+Cell 3 -- OUT OF ORDER
+endmsg
+x 3
+y 9
+arch event_obj
+name Lua
+sub_type 12
+race /scripts_private/examine_sign.lua
+end
+end
 arch floor_flagm1
 x 3
 y 10
@@ -722,6 +742,21 @@ msg
 *Don't fret; they're under lock and key*
 endmsg
 direction 5
+x 4
+y 9
+arch event_obj
+name Lua
+sub_type 12
+race /scripts_private/examine_sign.lua
+end
+end
+arch wmask_wanted
+name proclamation
+msg
+Cell 4 -- NO VACANCY
+Fra'hak, the notorious ogre rogue clan leader from Cloud Mountains, has been caught and jailed.
+Report ogre activity near the city to the guards.
+endmsg
 x 4
 y 9
 arch event_obj
@@ -1551,6 +1586,7 @@ x 9
 y 7
 end
 arch table_small1
+name stool
 x 9
 y 7
 end
@@ -1559,10 +1595,6 @@ x 9
 y 8
 end
 arch floor_wood2_l1
-x 9
-y 9
-end
-arch light1
 x 9
 y 9
 end
@@ -1721,18 +1753,25 @@ arch shelf3a.111
 x 10
 y 6
 arch book_dai_vol7
+no_pick 1
 end
 arch book_dai_vol6
+no_pick 1
 end
 arch book_dai_vol5
+no_pick 1
 end
 arch book_dai_vol4
+no_pick 1
 end
 arch book_dai_vol3
+no_pick 1
 end
 arch book_dai_vol2
+no_pick 1
 end
 arch book_dai_vol1
+no_pick 1
 end
 end
 arch floor_wood2_l1
@@ -2048,7 +2087,7 @@ msg
 "warning: mouse traps"
 endmsg
 last_eat 4
-slaying guildhall/guildhall_a2_030a
+slaying guildhall/fanrir_larder_0000
 hp 1
 sp 1
 direction 5

@@ -1,13 +1,14 @@
 arch map
-name Stonehaven
+name Stonehaven§ColeStandard.ogg|0|-1
 msg
 Creator: Daimonin Map Editor
 Date:    6/9/2004
 endmsg
 width 24
 height 24
-difficulty 1
+difficulty 8
 outdoor 1
+no_harm 1
 tile_path_1 castle_0102
 tile_path_2 castle_0201
 tile_path_3 castle_0100
@@ -1062,6 +1063,7 @@ end
 arch bec_de_corbin
 no_pick 1
 identified 1
+unpaid 1
 x 4
 y 5
 end
@@ -1540,15 +1542,6 @@ no_cleric 1
 x 6
 y 6
 end
-arch spawn_point
-x 6
-y 6
-arch archer
-name Yordin
-type 83
-level 99
-end
-end
 arch floor_wood2_l2
 no_magic 1
 no_cleric 1
@@ -1621,8 +1614,13 @@ y 15
 arch smith
 name Lathair
 type 83
+title (Smith)
+face weapon_smith.141
+animation weapon_smith
+level 30
+direction 3
 arch event_obj
-name lua
+name Lua
 sub_type 13
 race /scripts/smith.lua
 end
@@ -1997,9 +1995,10 @@ arch spawn_point
 x 8
 y 19
 arch guard
-name Castle Guard
+name Stonehaven Castle Guard
 type 83
-level 50
+level 25
+direction 4
 end
 end
 arch floor_grit2
@@ -2104,11 +2103,42 @@ arch grassd_3
 x 9
 y 11
 end
-arch grassd_7
+arch spawn_point
 x 9
-y 12
+y 11
+arch archer
+name Commander Taleus
+type 83
+title (Mercenary Guild Archer)
+level 25
+random_move 1
+item_race 0
+item_level 5
+arch event_obj
+name Lua
+sub_type 13
+race scripts/taleus.lua
 end
-arch tree30
+arch waypoint
+name waypoint 2
+title waypoint 1
+slaying castle_0101
+hp 9
+sp 15
+wc 3
+cursed 1
+end
+arch waypoint
+name waypoint 1
+title waypoint 2
+slaying castle_0101
+hp 9
+sp 11
+wc 2
+end
+end
+end
+arch grassd_7
 x 9
 y 12
 end
@@ -2719,10 +2749,6 @@ arch grassd_6
 x 13
 y 7
 end
-arch floor_grit2
-x 13
-y 7
-end
 arch wall_stone_3
 x 13
 y 7
@@ -2895,6 +2921,10 @@ arch floor_wood2_l2
 x 14
 y 3
 end
+arch table_plant1
+x 14
+y 3
+end
 arch floor_wood2_l2
 x 14
 y 4
@@ -3032,9 +3062,10 @@ arch spawn_point
 x 14
 y 19
 arch guard
-name Castle Guard
+name Stonehaven Castle Guard
 type 83
-level 50
+level 25
+direction 6
 end
 end
 arch floor_grit2
@@ -3178,6 +3209,15 @@ arch floor_wood2_l2
 x 15
 y 14
 end
+arch spawn_point
+x 15
+y 14
+arch barmaid
+type 83
+level 8
+direction 4
+end
+end
 arch floor_wood2_l2
 x 15
 y 15
@@ -3202,6 +3242,15 @@ arch chair1_111
 direction 5
 x 15
 y 17
+end
+arch spawn_point
+x 15
+y 17
+arch hobo_old
+type 83
+level 10
+direction 3
+end
 end
 arch floor_wood2_l2
 x 15
@@ -3324,17 +3373,18 @@ end
 arch spawn_point
 x 16
 y 12
-arch monk
+arch bartender
 name Karlack
 type 83
-level 45
+title (Stonehaven Hotel Barkeep)
+level 11
 random_move 1
 item_race 9
 item_level 1
 arch event_obj
-name lua
+name Lua
 sub_type 13
-race //scripts/tavern.lua
+race /scripts/tavern.lua
 end
 end
 end
@@ -3533,7 +3583,6 @@ level 15
 random_move 1
 item_race 7
 item_level 7
-stand_still 1
 end
 end
 arch floor_wood2_l2
@@ -3703,6 +3752,14 @@ arch chair1_111
 x 18
 y 14
 end
+arch spawn_point
+x 18
+y 14
+arch patron
+type 83
+level 6
+end
+end
 arch floor_wood2_l2
 x 18
 y 15
@@ -3731,6 +3788,19 @@ end
 arch door_wood2
 x 18
 y 18
+end
+arch magic_mouth
+msg
+Welcome to the Stonehaven Hotel!
+endmsg
+x 18
+y 18
+arch event_obj
+name Lua
+sub_type 10
+race /scripts/welcome.lua
+slaying 3,7
+end
 end
 arch grassd_4
 x 18
@@ -3960,9 +4030,9 @@ x 20
 end
 arch spawn_point
 x 20
-arch monk
+arch peasant
 type 83
-level 15
+level 13
 random_move 1
 item_race 2
 item_level 2
@@ -4436,7 +4506,9 @@ x 22
 y 16
 arch peasant
 type 83
+level 6
 arch event_obj
+name Lua
 sub_type 13
 race scripts/lost_booze.lua
 end
@@ -4542,6 +4614,10 @@ x 23
 y 9
 end
 arch floor_wood2_l2
+x 23
+y 10
+end
+arch potted_plant5
 x 23
 y 10
 end

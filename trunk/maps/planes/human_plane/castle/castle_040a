@@ -2036,7 +2036,8 @@ y 17
 arch event_obj
 name Lua
 sub_type 10
-race guildhall/happy_noob_welcome.lua
+race /scripts/welcome.lua
+slaying 1,5
 end
 end
 arch shop_floor_normal
