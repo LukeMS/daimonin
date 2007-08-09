@@ -1,13 +1,14 @@
 arch map
-name Stonehaven
+name Stonehaven§ColeChurchyOrHoly.ogg|0|-1
 msg
 Creator: Daimonin Map Editor
 Date:    6/9/2004
 endmsg
 width 24
 height 24
-difficulty 1
+difficulty 8
 outdoor 1
+no_harm 1
 tile_path_1 castle_0003
 tile_path_2 castle_0102
 tile_path_3 castle_0001
@@ -49,40 +50,136 @@ end
 arch grassd_6
 y 8
 end
+arch wmask_wanted
+name proclamation
+msg
+Cell 6 -- VACANCY
+endmsg
+direction 7
+y 8
+arch event_obj
+name Lua
+sub_type 12
+race /scripts/examine_sign.lua
+end
+arch beacon
+name stonehaven jail cell 6 proclamation
+end
+end
 arch grassd_3
 y 9
 end
-arch grassd_1
-y 10
+arch wmask_wanted
+name proclamation
+msg
+Cell 5 -- VACANCY
+endmsg
+direction 7
+y 9
+arch event_obj
+name Lua
+sub_type 12
+race /scripts/examine_sign.lua
+end
+arch beacon
+name stonehaven jail cell 5 proclamation
+end
 end
 arch grassd_5
-y 11
+y 10
 end
 arch plant_flower7
-y 11
+y 10
 end
 arch light4
-y 11
+y 10
 end
 arch lantern2_magic.131
 direction 5
-y 11
+y 10
+end
+arch wmask_wanted
+name proclamation
+msg
+Cell 4 -- VACANCY
+endmsg
+direction 7
+y 10
+arch event_obj
+name Lua
+sub_type 12
+race /scripts/examine_sign.lua
+end
+arch beacon
+name stonehaven jail cell 4 proclamation
+end
 end
 arch grassd_7
-y 12
+y 11
 end
 arch grassd_2
-y 13
+y 12
 end
 arch light4
-y 13
+y 12
 end
 arch lantern2_magic.131
 direction 5
+y 12
+end
+arch wmask_wanted
+name proclamation
+msg
+Cell 3 -- VACANCY
+endmsg
+direction 7
+y 12
+arch event_obj
+name Lua
+sub_type 12
+race /scripts/examine_sign.lua
+end
+arch beacon
+name stonehaven jail cell 3 proclamation
+end
+end
+arch grassd_7
 y 13
+end
+arch wmask_wanted
+name proclamation
+msg
+Cell 2 -- VACANCY
+endmsg
+direction 7
+y 13
+arch event_obj
+name Lua
+sub_type 12
+race /scripts/examine_sign.lua
+end
+arch beacon
+name stonehaven jail cell 2 proclamation
+end
 end
 arch grassd_8
 y 14
+end
+arch wmask_wanted
+name proclamation
+msg
+Cell 1 -- VACANCY
+endmsg
+direction 7
+y 14
+arch event_obj
+name Lua
+sub_type 12
+race /scripts/examine_sign.lua
+end
+arch beacon
+name stonehaven jail cell 1 proclamation
+end
 end
 arch grassd_7
 y 15
@@ -933,7 +1030,7 @@ y 6
 end
 arch bench2.111
 no_pass 0
-direction 7
+direction 3
 x 6
 y 6
 end
@@ -971,7 +1068,7 @@ y 10
 end
 arch bench2.111
 no_pass 0
-direction 7
+direction 3
 x 6
 y 10
 end
@@ -1009,7 +1106,7 @@ y 14
 end
 arch bench2.111
 no_pass 0
-direction 7
+direction 3
 x 6
 y 14
 end
@@ -1047,7 +1144,7 @@ y 18
 end
 arch bench2.111
 no_pass 0
-direction 7
+direction 3
 x 6
 y 18
 end
@@ -1370,10 +1467,6 @@ arch floor_marble4f
 x 9
 y 6
 end
-arch bank1.111
-x 9
-y 6
-end
 arch floor_marble4f
 x 9
 y 7
@@ -1647,15 +1740,17 @@ arch floor_marble4f
 x 11
 y 2
 end
+arch glower.101
+no_pass 1
+x 11
+y 2
+end
 arch floor_marble4f
 x 11
 y 3
 end
-arch glower.101
-x 11
-y 3
-end
-arch light3
+arch basin1_full.101
+no_pass 1
 x 11
 y 3
 end
@@ -1671,7 +1766,11 @@ arch floor_marble4f
 x 11
 y 6
 end
-arch bank1.111
+arch candlelight4.101
+x 11
+y 6
+end
+arch light3
 x 11
 y 6
 end
@@ -1782,7 +1881,7 @@ arch floor_grit1
 x 11
 y 23
 end
-arch grassd_m1
+arch grass_fullmask1
 x 11
 y 23
 end
@@ -1804,24 +1903,33 @@ arch floor_marble4f
 x 12
 y 2
 end
-arch spawn_point
+arch carpet2b
 x 12
 y 2
-arch priest_church
-type 83
-level 50
-arch event_obj
-name lua
-sub_type 13
-race /scripts/church.lua
 end
+arch exit
+name Portal to the Human Plane
+face portal_big.101
+animation portal_big
+anim_speed 2
+glow_radius 3
+x 12
+y 2
+arch event_obj
+name Lua
+sub_type 10
+race scripts/portal_demon_plane.lua
 end
 end
 arch floor_marble4f
 x 12
 y 3
 end
-arch altar_tabernacle
+arch carpet2b
+x 12
+y 3
+end
+arch light6
 x 12
 y 3
 end
@@ -1829,15 +1937,34 @@ arch floor_marble4f
 x 12
 y 4
 end
+arch carpet2.111
+x 12
+y 4
+end
 arch floor_marble4f
 x 12
 y 5
+end
+arch spawn_point
+x 12
+y 5
+arch priest_church
+name Mankar
+type 83
+title (Priest of the Tabernacle)
+level 50
+arch event_obj
+name lua
+sub_type 13
+race scripts/church_stonehaven.lua
+end
+end
 end
 arch floor_marble4f
 x 12
 y 6
 end
-arch light6
+arch altar_tabernacle
 x 12
 y 6
 end
@@ -1961,19 +2088,48 @@ arch flagwall_short_brick1.131
 x 13
 y 2
 end
-arch floor_marble4f
-x 13
-y 3
-end
 arch glower.101
+no_pass 1
+x 13
+y 2
+end
+arch floor_marble4f
 x 13
 y 3
 end
-arch light3
+arch basin1_full.101
+no_pass 1
 x 13
 y 3
 end
 arch floor_marble4f
+x 13
+y 4
+end
+arch book
+name The Book of Deities
+msg
+<tt="Choosing a Deity">
+If you plan to utilise divine powers you must have the skill Divine Prayers and you must choose a cult of a higher being.
+
+To become a follower, find a holy altar of your cult, step onto the altar and apply it. The divine spirit inside this altar will touch your soul, attuning your mortal being to your new deity.
+
+Be warned: if you touch a altar of a enemy deity or of a deity of reverse alignment you will be punished very badly. You might lose Wisdom levels or worse.
+
+Return to the temple of your cult regularly and apply the altar. This will please your deity... And rest assured, the gods do know how to reward a worthy disciple!
+
+<tt="Prayers">
+Next you must learn prayers. Guilds, Priests and churches will teach you prayers. There are also rumours about Prayer books lost in ancient tombs ages ago...
+
+Some prayers will have different effects for every cult. Good starting prayers are, for example, "cause wounds", "bless" or "minor healing".
+
+<tt="Grace">
+Casting prayers will drain your grace. This can only be replenished by resting. If your maximum grace is too low you should try to increase your Wisdom skill group,
+
+
+Never lose faith! Rumours abound of divine prayers of incredible power, and of old and wise priests who have almost reached immortality...
+endmsg
+no_pick 1
 x 13
 y 4
 end
@@ -1982,6 +2138,14 @@ x 13
 y 5
 end
 arch floor_marble4f
+x 13
+y 6
+end
+arch candlelight4.101
+x 13
+y 6
+end
+arch light3
 x 13
 y 6
 end
@@ -2057,7 +2221,7 @@ arch floor_grit1
 x 13
 y 23
 end
-arch grassd_m2
+arch grass_fullmask1
 x 13
 y 23
 end
@@ -2107,10 +2271,6 @@ x 14
 y 5
 end
 arch floor_marble4f
-x 14
-y 6
-end
-arch bank1.111
 x 14
 y 6
 end
@@ -2392,10 +2552,6 @@ x 16
 y 5
 end
 arch floor_marble4f
-x 16
-y 6
-end
-arch bank1.111
 x 16
 y 6
 end

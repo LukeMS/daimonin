@@ -1,13 +1,14 @@
 arch map
-name Stonehaven
+name Stonehaven§ColeStandard.ogg|0|-1
 msg
 Creator: Daimonin Map Editor
 Date:    6/4/2004
 endmsg
 width 24
 height 24
-difficulty 1
+difficulty 8
 outdoor 1
+no_harm 1
 tile_path_1 castle_0101
 tile_path_2 castle_0200
 tile_path_3 ../mountain_0502
@@ -78,28 +79,34 @@ end
 arch fwall_fstone2
 y 11
 end
-arch floor_dark1a
+arch earth_brown3
 y 12
 end
 arch grass_thickm4
 y 12
 end
-arch floor_dark1a
+arch earth_brown3
 y 13
 end
-arch floor_dark1a
+arch earth_brown1
 y 14
 end
-arch rock_big1
+arch rock_big3
+blocksview 0
 y 14
 end
-arch floor_dark1a
+arch earth_brown1
 y 15
 end
-arch floor_dark1a
+arch rock_big14
+blocksview 0
+y 15
+end
+arch earth_brown4
 y 16
 end
-arch rock_big1
+arch rock_big3
+blocksview 0
 y 16
 end
 arch earth_brown2
@@ -114,7 +121,13 @@ end
 arch water_still_deep
 y 19
 end
+arch water_still_fmask.104
+y 19
+end
 arch water_still_deep
+y 20
+end
+arch water_still_fmask.103
 y 20
 end
 arch water_still_deep
@@ -160,9 +173,9 @@ arch spawn_point
 x 1
 y 4
 arch guard
-name Castle Guard
+name Stonehaven Castle Guard
 type 83
-level 50
+level 25
 can_open_door 0
 wis 1
 end
@@ -207,7 +220,7 @@ arch fwall_fstone2
 x 1
 y 11
 end
-arch floor_dark1a
+arch earth_brown3
 x 1
 y 12
 end
@@ -215,27 +228,34 @@ arch grass_thickm4
 x 1
 y 12
 end
-arch floor_dark1a
+arch earth_brown4
 x 1
 y 13
 end
-arch floor_dark1a
+arch earth_brown2
 x 1
 y 14
 end
 arch rock_big1
+blocksview 0
 x 1
 y 14
 end
-arch floor_dark1a
+arch earth_brown4
 x 1
 y 15
 end
-arch floor_dark1a
+arch rock_big14
+blocksview 0
+x 1
+y 15
+end
+arch earth_brown3
 x 1
 y 16
 end
-arch rock_big1
+arch rock_big3
+blocksview 0
 x 1
 y 16
 end
@@ -243,15 +263,19 @@ arch earth_brown3
 x 1
 y 17
 end
-arch water_still
+arch earth_brown3
 x 1
 y 18
 end
-arch earth_m14
+arch water_still_fmask.101
 x 1
 y 18
 end
 arch water_still_deep
+x 1
+y 19
+end
+arch water_still_fmask.106
 x 1
 y 19
 end
@@ -353,7 +377,7 @@ arch fwall_fstone2
 x 2
 y 11
 end
-arch floor_dark1a
+arch earth_brown4
 x 2
 y 12
 end
@@ -361,27 +385,34 @@ arch grass_thickm4
 x 2
 y 12
 end
-arch floor_dark1a
+arch earth_brown4
 x 2
 y 13
 end
-arch floor_dark1a
+arch earth_brown2
 x 2
 y 14
 end
 arch rock_big1
+blocksview 0
 x 2
 y 14
 end
-arch floor_dark1a
+arch earth_brown3
 x 2
 y 15
 end
-arch floor_dark1a
+arch rock_big14
+blocksview 0
+x 2
+y 15
+end
+arch earth_brown3
 x 2
 y 16
 end
 arch rock_big1
+blocksview 0
 x 2
 y 16
 end
@@ -398,6 +429,10 @@ x 2
 y 18
 end
 arch water_still_deep
+x 2
+y 19
+end
+arch water_still_fmask.205
 x 2
 y 19
 end
@@ -467,9 +502,9 @@ arch spawn_point
 x 3
 y 6
 arch guard
-name Castle Guard
+name Stonehaven Castle Guard
 type 83
-level 50
+level 25
 can_open_door 0
 wis 1
 end
@@ -502,7 +537,7 @@ arch fwall_fstone2
 x 3
 y 11
 end
-arch floor_dark1a
+arch earth_brown4
 x 3
 y 12
 end
@@ -510,27 +545,34 @@ arch grass_thickm4
 x 3
 y 12
 end
-arch floor_dark1a
+arch earth_brown1
 x 3
 y 13
 end
-arch floor_dark1a
+arch earth_brown4
 x 3
 y 14
 end
 arch rock_big1
+blocksview 0
 x 3
 y 14
 end
-arch floor_dark1a
+arch earth_brown3
 x 3
 y 15
 end
-arch floor_dark1a
+arch rock_big14
+blocksview 0
+x 3
+y 15
+end
+arch earth_brown3
 x 3
 y 16
 end
 arch rock_big1
+blocksview 0
 x 3
 y 16
 end
@@ -547,6 +589,10 @@ x 3
 y 18
 end
 arch water_still_deep
+x 3
+y 19
+end
+arch water_still_fmask.104
 x 3
 y 19
 end
@@ -646,7 +692,7 @@ arch fwall_fstone2
 x 4
 y 11
 end
-arch floor_dark1a
+arch earth_brown1
 x 4
 y 12
 end
@@ -654,27 +700,34 @@ arch grass_thickm4
 x 4
 y 12
 end
-arch floor_dark1a
+arch earth_brown2
 x 4
 y 13
 end
-arch floor_dark1a
+arch earth_brown1
 x 4
 y 14
 end
-arch rock_big1
+arch rock_big3
+blocksview 0
 x 4
 y 14
 end
-arch floor_dark1a
+arch earth_brown1
 x 4
 y 15
 end
-arch floor_dark1a
+arch rock_big14
+blocksview 0
+x 4
+y 15
+end
+arch earth_brown3
 x 4
 y 16
 end
-arch rock_big1
+arch rock_big3
+blocksview 0
 x 4
 y 16
 end
@@ -691,6 +744,10 @@ x 4
 y 18
 end
 arch water_still_deep
+x 4
+y 19
+end
+arch water_still_fmask.106
 x 4
 y 19
 end
@@ -745,9 +802,9 @@ arch spawn_point
 x 5
 y 4
 arch guard
-name Castle Guard
+name Stonehaven Castle Guard
 type 83
-level 50
+level 25
 can_open_door 0
 wis 1
 end
@@ -792,7 +849,7 @@ arch fwall_fstone2
 x 5
 y 11
 end
-arch floor_dark1a
+arch earth_brown4
 x 5
 y 12
 end
@@ -800,27 +857,34 @@ arch grass_thickm4
 x 5
 y 12
 end
-arch floor_dark1a
+arch earth_brown2
 x 5
 y 13
 end
-arch floor_dark1a
+arch earth_brown2
 x 5
 y 14
 end
-arch rock_big1
+arch rock_big3
+blocksview 0
 x 5
 y 14
 end
-arch floor_dark1a
+arch earth_brown2
 x 5
 y 15
 end
-arch floor_dark1a
+arch rock_big14
+blocksview 0
+x 5
+y 15
+end
+arch earth_brown2
 x 5
 y 16
 end
 arch rock_big1
+blocksview 0
 x 5
 y 16
 end
@@ -828,15 +892,19 @@ arch earth_brown2
 x 5
 y 17
 end
-arch water_still
+arch earth_brown3
 x 5
 y 18
 end
-arch earth_m14
+arch water_still_fmask.101
 x 5
 y 18
 end
 arch water_still_deep
+x 5
+y 19
+end
+arch water_still_fmask.205
 x 5
 y 19
 end
@@ -936,7 +1004,7 @@ arch fwall_fstone2
 x 6
 y 11
 end
-arch floor_dark1a
+arch earth_brown1
 x 6
 y 12
 end
@@ -944,27 +1012,34 @@ arch grass_thickm4
 x 6
 y 12
 end
-arch floor_dark1a
+arch earth_brown4
 x 6
 y 13
 end
-arch floor_dark1a
+arch earth_brown2
 x 6
 y 14
 end
 arch rock_big1
+blocksview 0
 x 6
 y 14
 end
-arch floor_dark1a
+arch earth_brown1
 x 6
 y 15
 end
-arch floor_dark1a
+arch rock_big14
+blocksview 0
+x 6
+y 15
+end
+arch earth_brown4
 x 6
 y 16
 end
 arch rock_big1
+blocksview 0
 x 6
 y 16
 end
@@ -972,15 +1047,19 @@ arch earth_brown1
 x 6
 y 17
 end
-arch water_still
+arch earth_brown3
 x 6
 y 18
 end
-arch earth_m14
+arch water_still_fmask.108
 x 6
 y 18
 end
 arch water_still_deep
+x 6
+y 19
+end
+arch water_still_fmask.104
 x 6
 y 19
 end
@@ -1027,9 +1106,10 @@ arch spawn_point
 x 7
 y 3
 arch guard
-name Castle Guard
+name Stonehaven Castle Guard
 type 83
-level 50
+level 25
+direction 2
 end
 end
 arch grassd_8
@@ -1068,9 +1148,9 @@ arch spawn_point
 x 7
 y 8
 arch guard
-name Castle Guard
+name Stonehaven Castle Guard
 type 83
-level 50
+level 25
 end
 end
 arch floor_fstone2a
@@ -1089,7 +1169,7 @@ arch fwall_fstone2
 x 7
 y 11
 end
-arch floor_dark1a
+arch earth_brown3
 x 7
 y 12
 end
@@ -1097,27 +1177,34 @@ arch grass_thickm4
 x 7
 y 12
 end
-arch floor_dark1a
+arch earth_brown4
 x 7
 y 13
 end
-arch floor_dark1a
+arch earth_brown3
 x 7
 y 14
 end
-arch rock_big1
+arch rock_big3
+blocksview 0
 x 7
 y 14
 end
-arch floor_dark1a
+arch earth_brown4
 x 7
 y 15
 end
-arch floor_dark1a
+arch rock_big14
+blocksview 0
+x 7
+y 15
+end
+arch earth_brown1
 x 7
 y 16
 end
 arch rock_big1
+blocksview 0
 x 7
 y 16
 end
@@ -1125,15 +1212,19 @@ arch earth_brown3
 x 7
 y 17
 end
-arch water_still
+arch earth_brown3
 x 7
 y 18
 end
-arch earth_m10
+arch water_still_fmask.102
 x 7
 y 18
 end
 arch water_still_deep
+x 7
+y 19
+end
+arch water_still_fmask.106
 x 7
 y 19
 end
@@ -1216,7 +1307,7 @@ arch fwall_fstone2
 x 8
 y 11
 end
-arch floor_dark1a
+arch earth_brown1
 x 8
 y 12
 end
@@ -1224,27 +1315,39 @@ arch grass_thickm4
 x 8
 y 12
 end
-arch floor_dark1a
+arch earth_brown3
 x 8
 y 13
 end
-arch floor_dark1a
+arch rock_big14
+blocksview 0
+x 8
+y 13
+end
+arch earth_brown3
 x 8
 y 14
 end
-arch rock_big1
+arch rock_big3
+blocksview 0
 x 8
 y 14
 end
-arch floor_dark1a
+arch earth_brown4
 x 8
 y 15
 end
-arch floor_dark1a
+arch rock_big14
+blocksview 0
+x 8
+y 15
+end
+arch earth_brown2
 x 8
 y 16
 end
-arch rock_big1
+arch rock_big3
+blocksview 0
 x 8
 y 16
 end
@@ -1252,15 +1355,19 @@ arch earth_brown2
 x 8
 y 17
 end
-arch water_still
+arch earth_brown3
 x 8
 y 18
 end
-arch earth_m14
+arch water_still_fmask.108
 x 8
 y 18
 end
 arch water_still_deep
+x 8
+y 19
+end
+arch water_still_fmask.104
 x 8
 y 19
 end
@@ -1280,7 +1387,7 @@ arch rock_big4
 x 8
 y 22
 end
-arch grassd_4
+arch grassd_8
 x 8
 y 23
 end
@@ -1316,20 +1423,18 @@ arch spawn_point
 x 9
 y 4
 arch guard_royal
-name Guard Captain
+name Captain Tenderchops
 type 83
-level 90
-arch event_obj
-sub_type 13
-race scripts/guard_captain.lua
-end
+title (Stonehaven Royal Guard)
+level 35
+direction 2
 end
 end
 arch grassd_1
 x 9
 y 5
 end
-arch grassd_8
+arch grassd_2
 x 9
 y 6
 end
@@ -1337,9 +1442,10 @@ arch spawn_point
 x 9
 y 6
 arch guard
-name Castle Guard
+name Stonehaven Castle Guard
 type 83
-level 50
+level 25
+direction 2
 end
 end
 arch grassd_2
@@ -1383,8 +1489,13 @@ arch fwall_fstone2
 x 9
 y 11
 end
-arch floor_dark1a
-no_pass 1
+arch boulder
+layer 0
+sys_object 1
+x 9
+y 12
+end
+arch earth_brown3
 x 9
 y 12
 end
@@ -1392,31 +1503,51 @@ arch grass_thickm4
 x 9
 y 12
 end
-arch floor_dark1a
-no_pass 1
+arch boulder
+layer 0
+sys_object 1
 x 9
 y 13
 end
-arch floor_dark1a
+arch earth_brown3
+x 9
+y 13
+end
+arch boulder
+layer 0
+sys_object 1
 x 9
 y 14
 end
-arch rock_big1
+arch earth_dark2
 x 9
 y 14
 end
-arch floor_dark1a
-no_pass 1
+arch boulder
+layer 0
+sys_object 1
 x 9
 y 15
 end
-arch floor_dark1a
+arch earth_dark3
+x 9
+y 15
+end
+arch boulder
+layer 0
+sys_object 1
 x 9
 y 16
 end
-arch rock_big1
+arch earth_dark1
 x 9
 y 16
+end
+arch boulder
+layer 0
+sys_object 1
+x 9
+y 17
 end
 arch earth_brown2
 no_pass 1
@@ -1424,11 +1555,6 @@ x 9
 y 17
 end
 arch water_still
-no_pass 1
-x 9
-y 18
-end
-arch sand_dm10
 x 9
 y 18
 end
@@ -1460,9 +1586,9 @@ arch spawn_point
 x 9
 y 23
 arch guard
-name Castle Guard
+name Stonehaven Castle Guard
 type 83
-level 50
+level 25
 end
 end
 arch floor_grit2
@@ -1875,9 +2001,10 @@ arch spawn_point
 x 13
 y 6
 arch guard
-name Castle Guard
+name Stonehaven Castle Guard
 type 83
-level 50
+level 25
+direction 8
 end
 end
 arch grassd_6
@@ -1921,8 +2048,9 @@ arch fwall_fstone2
 x 13
 y 11
 end
-arch floor_dark1a
-no_pass 1
+arch boulder
+layer 0
+sys_object 1
 x 13
 y 12
 end
@@ -1934,12 +2062,13 @@ arch bridge_wood_NS.121
 x 13
 y 12
 end
-arch floor_earth1a
-no_pass 1
+arch boulder
+layer 0
+sys_object 1
 x 13
 y 13
 end
-arch small_stones
+arch floor_earth1a
 x 13
 y 13
 end
@@ -1952,10 +2081,6 @@ no_pass 1
 x 13
 y 14
 end
-arch small_stones
-x 13
-y 14
-end
 arch bridge_wood_NS.131
 x 13
 y 14
@@ -1965,21 +2090,12 @@ no_pass 1
 x 13
 y 15
 end
-arch small_stones
-x 13
-y 15
-end
 arch bridge_wood_NS.131
 x 13
 y 15
 end
 arch floor_earth1a
 no_pass 1
-x 13
-y 16
-end
-arch stone1
-layer 3
 x 13
 y 16
 end
@@ -1993,7 +2109,6 @@ x 13
 y 17
 end
 arch bridge_wood_NS.131
-layer 1
 x 13
 y 17
 end
@@ -2116,7 +2231,7 @@ arch fwall_fstone2
 x 14
 y 11
 end
-arch floor_dark1a
+arch earth_brown2
 x 14
 y 12
 end
@@ -2129,7 +2244,17 @@ arch floor_earth1a
 x 14
 y 13
 end
+arch small_stones
+no_pass 1
+x 14
+y 13
+end
 arch floor_earth1a
+x 14
+y 14
+end
+arch rock_big14
+blocksview 0
 x 14
 y 14
 end
@@ -2149,11 +2274,15 @@ arch floor_earth1a
 x 14
 y 17
 end
+arch water_still_deep_fmask.102
+x 14
+y 17
+end
 arch water_still_deepest
 x 14
 y 18
 end
-arch fstone1m12
+arch water_still_deep_fmask.106
 x 14
 y 18
 end
@@ -2185,9 +2314,9 @@ arch spawn_point
 x 14
 y 23
 arch guard
-name Castle Guard
+name Stonehaven Castle Guard
 type 83
-level 50
+level 25
 end
 end
 arch grassd_6
@@ -2213,9 +2342,10 @@ arch spawn_point
 x 15
 y 3
 arch guard
-name Castle Guard
+name Stonehaven Castle Guard
 type 83
-level 50
+level 25
+direction 8
 end
 end
 arch grassd_6
@@ -2263,9 +2393,9 @@ arch spawn_point
 x 15
 y 8
 arch guard
-name Castle Guard
+name Stonehaven Castle Guard
 type 83
-level 50
+level 25
 end
 end
 arch floor_fstone2a
@@ -2284,7 +2414,7 @@ arch fwall_fstone2
 x 15
 y 11
 end
-arch floor_dark1a
+arch earth_brown1
 x 15
 y 12
 end
@@ -2292,27 +2422,34 @@ arch grass_thickm4
 x 15
 y 12
 end
-arch floor_dark1a
+arch earth_brown1
 x 15
 y 13
 end
-arch floor_dark1a
+arch earth_brown2
 x 15
 y 14
 end
-arch rock_big1
+arch rock_big3
+blocksview 0
 x 15
 y 14
 end
-arch floor_dark1a
+arch earth_brown2
 x 15
 y 15
 end
-arch floor_dark1a
+arch rock_big14
+blocksview 0
+x 15
+y 15
+end
+arch earth_brown2
 x 15
 y 16
 end
-arch rock_big1
+arch rock_big3
+blocksview 0
 x 15
 y 16
 end
@@ -2320,15 +2457,20 @@ arch earth_brown3
 x 15
 y 17
 end
-arch water_still
+arch earth_brown2
+no_pass 1
 x 15
 y 18
 end
-arch earth_m10
+arch water_still_fmask.201
 x 15
 y 18
 end
 arch water_still_deep
+x 15
+y 19
+end
+arch water_still_fmask.105
 x 15
 y 19
 end
@@ -2389,12 +2531,18 @@ x 16
 y 5
 end
 arch wmask_wanted
+name announcement
 msg
 Hold the door closed!
 Castle Command
 endmsg
 x 16
 y 5
+arch event_obj
+name Lua
+sub_type 12
+race /scripts/examine_sign.lua
+end
 end
 arch floor_grey3
 x 16
@@ -2437,7 +2585,7 @@ arch fwall_fstone2
 x 16
 y 11
 end
-arch floor_dark1a
+arch earth_brown3
 x 16
 y 12
 end
@@ -2445,27 +2593,34 @@ arch grass_thickm4
 x 16
 y 12
 end
-arch floor_dark1a
+arch earth_brown1
 x 16
 y 13
 end
-arch floor_dark1a
+arch earth_brown2
 x 16
 y 14
 end
 arch rock_big1
+blocksview 0
 x 16
 y 14
 end
-arch floor_dark1a
+arch earth_brown3
 x 16
 y 15
 end
-arch floor_dark1a
+arch rock_big14
+blocksview 0
+x 16
+y 15
+end
+arch earth_brown4
 x 16
 y 16
 end
-arch rock_big1
+arch rock_big3
+blocksview 0
 x 16
 y 16
 end
@@ -2473,15 +2628,20 @@ arch earth_brown3
 x 16
 y 17
 end
-arch water_still
+arch earth_brown2
+no_pass 1
 x 16
 y 18
 end
-arch earth_m14
+arch water_still_fmask.102
 x 16
 y 18
 end
 arch water_still_deep
+x 16
+y 19
+end
+arch water_still_fmask.106
 x 16
 y 19
 end
@@ -2536,9 +2696,9 @@ arch spawn_point
 x 17
 y 4
 arch guard
-name Castle Guard
+name Stonehaven Castle Guard
 type 83
-level 50
+level 25
 can_open_door 0
 wis 1
 end
@@ -2583,7 +2743,7 @@ arch fwall_fstone2
 x 17
 y 11
 end
-arch floor_dark1a
+arch earth_brown1
 x 17
 y 12
 end
@@ -2591,27 +2751,34 @@ arch grass_thickm4
 x 17
 y 12
 end
-arch floor_dark1a
+arch earth_brown1
 x 17
 y 13
 end
-arch floor_dark1a
+arch earth_brown3
 x 17
 y 14
 end
 arch rock_big1
+blocksview 0
 x 17
 y 14
 end
-arch floor_dark1a
+arch earth_brown2
 x 17
 y 15
 end
-arch floor_dark1a
+arch rock_big14
+blocksview 0
+x 17
+y 15
+end
+arch earth_brown2
 x 17
 y 16
 end
 arch rock_big1
+blocksview 0
 x 17
 y 16
 end
@@ -2619,15 +2786,20 @@ arch earth_brown2
 x 17
 y 17
 end
-arch water_still
+arch earth_brown2
+no_pass 1
 x 17
 y 18
 end
-arch earth_m14
+arch water_still_fmask.101
 x 17
 y 18
 end
 arch water_still_deep
+x 17
+y 19
+end
+arch water_still_fmask.205
 x 17
 y 19
 end
@@ -2731,7 +2903,7 @@ arch fwall_fstone2
 x 18
 y 11
 end
-arch floor_dark1a
+arch earth_brown2
 x 18
 y 12
 end
@@ -2739,27 +2911,34 @@ arch grass_thickm4
 x 18
 y 12
 end
-arch floor_dark1a
+arch earth_brown4
 x 18
 y 13
 end
-arch floor_dark1a
+arch earth_brown4
 x 18
 y 14
 end
-arch rock_big1
+arch rock_big3
+blocksview 0
 x 18
 y 14
 end
-arch floor_dark1a
+arch earth_brown1
 x 18
 y 15
 end
-arch floor_dark1a
+arch rock_big14
+blocksview 0
+x 18
+y 15
+end
+arch earth_brown1
 x 18
 y 16
 end
-arch rock_big1
+arch rock_big3
+blocksview 0
 x 18
 y 16
 end
@@ -2767,15 +2946,20 @@ arch earth_brown1
 x 18
 y 17
 end
-arch water_still
+arch earth_brown2
+no_pass 1
 x 18
 y 18
 end
-arch earth_m10
+arch water_still_fmask.108
 x 18
 y 18
 end
 arch water_still_deep
+x 18
+y 19
+end
+arch water_still_fmask.205
 x 18
 y 19
 end
@@ -2841,9 +3025,9 @@ arch spawn_point
 x 19
 y 6
 arch guard
-name Castle Guard
+name Stonehaven Castle Guard
 type 83
-level 50
+level 25
 can_open_door 0
 wis 1
 end
@@ -2876,7 +3060,7 @@ arch fwall_fstone2
 x 19
 y 11
 end
-arch floor_dark1a
+arch earth_brown2
 x 19
 y 12
 end
@@ -2884,27 +3068,34 @@ arch grass_thickm4
 x 19
 y 12
 end
-arch floor_dark1a
+arch earth_brown2
 x 19
 y 13
 end
-arch floor_dark1a
+arch earth_brown4
 x 19
 y 14
 end
 arch rock_big1
+blocksview 0
 x 19
 y 14
 end
-arch floor_dark1a
+arch earth_brown2
 x 19
 y 15
 end
-arch floor_dark1a
+arch rock_big14
+blocksview 0
+x 19
+y 15
+end
+arch earth_brown3
 x 19
 y 16
 end
-arch rock_big1
+arch rock_big3
+blocksview 0
 x 19
 y 16
 end
@@ -2912,15 +3103,20 @@ arch earth_brown4
 x 19
 y 17
 end
-arch water_still
+arch earth_brown2
+no_pass 1
 x 19
 y 18
 end
-arch earth_m14
+arch water_still_fmask.201
 x 19
 y 18
 end
 arch water_still_deep
+x 19
+y 19
+end
+arch water_still_fmask.104
 x 19
 y 19
 end
@@ -3018,7 +3214,7 @@ arch fwall_fstone2
 x 20
 y 11
 end
-arch floor_dark1a
+arch earth_brown3
 x 20
 y 12
 end
@@ -3026,27 +3222,34 @@ arch grass_thickm4
 x 20
 y 12
 end
-arch floor_dark1a
+arch earth_brown4
 x 20
 y 13
 end
-arch floor_dark1a
+arch earth_brown3
 x 20
 y 14
 end
-arch rock_big1
+arch rock_big3
+blocksview 0
 x 20
 y 14
 end
-arch floor_dark1a
+arch earth_brown2
 x 20
 y 15
 end
-arch floor_dark1a
+arch rock_big14
+blocksview 0
+x 20
+y 15
+end
+arch earth_brown4
 x 20
 y 16
 end
 arch rock_big1
+blocksview 0
 x 20
 y 16
 end
@@ -3054,15 +3257,20 @@ arch earth_brown3
 x 20
 y 17
 end
-arch water_still
+arch earth_brown2
+no_pass 1
 x 20
 y 18
 end
-arch earth_m14
+arch water_still_fmask.102
 x 20
 y 18
 end
 arch water_still_deep
+x 20
+y 19
+end
+arch water_still_fmask.106
 x 20
 y 19
 end
@@ -3117,9 +3325,9 @@ arch spawn_point
 x 21
 y 4
 arch guard
-name Castle Guard
+name Stonehaven Castle Guard
 type 83
-level 50
+level 25
 can_open_door 0
 wis 1
 end
@@ -3164,7 +3372,7 @@ arch fwall_fstone2
 x 21
 y 11
 end
-arch floor_dark1a
+arch earth_brown4
 x 21
 y 12
 end
@@ -3172,27 +3380,34 @@ arch grass_thickm4
 x 21
 y 12
 end
-arch floor_dark1a
+arch earth_brown1
 x 21
 y 13
 end
-arch floor_dark1a
+arch earth_brown2
 x 21
 y 14
 end
-arch rock_big1
+arch rock_big3
+blocksview 0
 x 21
 y 14
 end
-arch floor_dark1a
+arch earth_brown3
 x 21
 y 15
 end
-arch floor_dark1a
+arch rock_big14
+blocksview 0
+x 21
+y 15
+end
+arch earth_brown1
 x 21
 y 16
 end
-arch rock_big1
+arch rock_big3
+blocksview 0
 x 21
 y 16
 end
@@ -3200,15 +3415,20 @@ arch earth_brown3
 x 21
 y 17
 end
-arch water_still
+arch earth_brown2
+no_pass 1
 x 21
 y 18
 end
-arch earth_m10
+arch water_still_fmask.101
 x 21
 y 18
 end
 arch water_still_deep
+x 21
+y 19
+end
+arch water_still_fmask.205
 x 21
 y 19
 end
@@ -3308,7 +3528,7 @@ arch fwall_fstone2
 x 22
 y 11
 end
-arch floor_dark1a
+arch earth_brown3
 x 22
 y 12
 end
@@ -3316,27 +3536,34 @@ arch grass_thickm4
 x 22
 y 12
 end
-arch floor_dark1a
+arch earth_brown3
 x 22
 y 13
 end
-arch floor_dark1a
+arch earth_brown3
 x 22
 y 14
 end
 arch rock_big1
+blocksview 0
 x 22
 y 14
 end
-arch floor_dark1a
+arch earth_brown1
 x 22
 y 15
 end
-arch floor_dark1a
+arch rock_big14
+blocksview 0
+x 22
+y 15
+end
+arch earth_brown3
 x 22
 y 16
 end
 arch rock_big1
+blocksview 0
 x 22
 y 16
 end
@@ -3353,6 +3580,10 @@ x 22
 y 18
 end
 arch water_still_deep
+x 22
+y 19
+end
+arch water_still_fmask.104
 x 22
 y 19
 end
@@ -3439,7 +3670,7 @@ arch fwall_fstone2
 x 23
 y 11
 end
-arch floor_dark1a
+arch earth_brown4
 x 23
 y 12
 end
@@ -3447,27 +3678,34 @@ arch grass_thickm4
 x 23
 y 12
 end
-arch floor_dark1a
+arch earth_brown4
 x 23
 y 13
 end
-arch floor_dark1a
+arch earth_brown4
 x 23
 y 14
 end
-arch rock_big1
+arch rock_big3
+blocksview 0
 x 23
 y 14
 end
-arch floor_dark1a
+arch earth_brown4
 x 23
 y 15
 end
-arch floor_dark1a
+arch rock_big14
+blocksview 0
+x 23
+y 15
+end
+arch earth_brown1
 x 23
 y 16
 end
-arch rock_big1
+arch rock_big3
+blocksview 0
 x 23
 y 16
 end
@@ -3484,6 +3722,10 @@ x 23
 y 18
 end
 arch water_still_deep
+x 23
+y 19
+end
+arch water_still_fmask.105
 x 23
 y 19
 end
