@@ -1195,7 +1195,7 @@ y 10
 arch event_obj
 name Lua
 sub_type 12
-race /scripts_private/examine_sign.lua
+race /scripts/examine_sign.lua
 end
 end
 arch floor_flagm1
@@ -2208,7 +2208,7 @@ y 15
 arch event_obj
 name Lua
 sub_type 12
-race /scripts_private/examine_sign.lua
+race /scripts/examine_sign.lua
 end
 end
 arch grassd_5

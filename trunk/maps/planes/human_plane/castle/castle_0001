@@ -1,13 +1,14 @@
 arch map
-name Stonehaven
+name Stonehaven§ColeStandard.ogg|0|-1
 msg
 Creator: Daimonin Map Editor
 Date:    6/9/2004
 endmsg
 width 24
 height 24
-difficulty 1
+difficulty 8
 outdoor 1
+no_harm 1
 tile_path_1 castle_0002
 tile_path_2 castle_0101
 tile_path_3 castle_0000
@@ -237,7 +238,7 @@ name stuffed bear
 msg
 Phew. Its not alive.
 endmsg
-face bear_grey.043
+face bear_grey.343
 x 1
 y 15
 end
@@ -401,21 +402,6 @@ end
 arch carpet1
 x 2
 y 17
-end
-arch spawn_point
-x 2
-y 17
-arch dog_brown
-name Ardwarf
-type 83
-title the cute doggie
-unaggressive 1
-random_move 1
-item_race 3
-item_level 3
-stand_still 1
-direction 4
-end
 end
 arch floor_wood2b
 x 2
@@ -622,7 +608,7 @@ end
 arch floor_grit1
 x 4
 end
-arch grassd_m1
+arch grass_fullmask2
 x 4
 end
 arch grassd_3
@@ -757,7 +743,7 @@ end
 arch floor_grit1
 x 5
 end
-arch grassd_m2
+arch grass_fullmask2
 x 5
 end
 arch grassd_5
@@ -881,31 +867,6 @@ arch floor_wood2b
 x 5
 y 19
 end
-arch spawn_point
-x 5
-y 19
-arch peasant
-name Korae
-type 83
-title the pet shop owner
-direction 3
-arch key2
-slaying stonehaven_pet_shop
-end
-arch waypoint
-name waypoint_pets
-slaying castle_0001
-hp 7
-sp 20
-end
-arch event_obj
-sub_type 13
-race scripts/PetShop.lua
-end
-arch ai_generic
-end
-end
-end
 arch floor_wood2b
 x 5
 y 20
@@ -937,7 +898,7 @@ end
 arch floor_grit1
 x 6
 end
-arch grassd_m1
+arch grass_fullmask2
 x 6
 end
 arch grassd_1
@@ -1022,6 +983,7 @@ x 6
 y 14
 end
 arch door_wood1
+slaying no_key_available
 x 6
 y 14
 end
@@ -1089,7 +1051,7 @@ end
 arch floor_grit1
 x 7
 end
-arch grassd_m2
+arch grass_fullmask2
 x 7
 end
 arch grassd_8
@@ -1189,6 +1151,7 @@ x 7
 y 16
 end
 arch door_wood1
+slaying no_key_available
 direction 7
 x 7
 y 16
@@ -1227,15 +1190,6 @@ direction 3
 x 7
 y 20
 end
-arch mover
-speed 0.05
-level 0
-walk_on 0
-fly_on 0
-direction 7
-x 7
-y 20
-end
 arch floor_wood2b
 x 7
 y 21
@@ -1263,7 +1217,7 @@ end
 arch floor_grit1
 x 8
 end
-arch grassd_m1
+arch grass_fullmask2
 x 8
 end
 arch grassd_8
@@ -1295,7 +1249,10 @@ x 8
 y 5
 end
 arch floor_earth1a
-no_pass 1
+x 8
+y 6
+end
+arch border_abyss_sw1
 x 8
 y 6
 end
@@ -1369,6 +1326,16 @@ arch grassd_4
 x 8
 y 16
 end
+arch wmask_wanted
+name notice
+msg
+The pet shop is closed due to illness (I have a bug). Back tomorrow!
+  -- Korae
+endmsg
+direction 5
+x 8
+y 16
+end
 arch grassd_1
 x 8
 y 17
@@ -1424,7 +1391,7 @@ end
 arch floor_grit1
 x 9
 end
-arch grassd_m2
+arch grass_fullmask2
 x 9
 end
 arch grassd_6
@@ -1452,16 +1419,18 @@ x 9
 y 5
 end
 arch floor_earth1a
-no_pass 1
+x 9
+y 6
+end
+arch border_abyss_sw2
 x 9
 y 6
 end
 arch floor_earth1a
-no_pass 1
 x 9
 y 7
 end
-arch grassd_m14
+arch border_abyss_sw1
 x 9
 y 7
 end
@@ -1543,6 +1512,7 @@ x 9
 y 20
 end
 arch sign
+name dev sign
 msg
 Note: there's some special tiles around here to
 make it work right. I'll try to get rid of them later...
@@ -1552,6 +1522,11 @@ is_invisible 1
 sys_object 1
 x 9
 y 20
+arch event_obj
+name Lua
+sub_type 12
+race /scripts/examine_sign.lua
+end
 end
 arch grassd_8
 player_only 1
@@ -1562,16 +1537,6 @@ arch grassd_6
 x 9
 y 22
 end
-arch spawn_point
-x 9
-y 22
-arch ant_soldier
-type 83
-unaggressive 1
-friendly 1
-random_move 1
-end
-end
 arch grassd_2
 x 9
 y 23
@@ -1579,7 +1544,7 @@ end
 arch floor_grit1
 x 10
 end
-arch grassd_m1
+arch grass_fullmask2
 x 10
 end
 arch grassd_3
@@ -1619,16 +1584,18 @@ x 10
 y 6
 end
 arch floor_earth1a
-no_pass 1
+x 10
+y 7
+end
+arch border_abyss_sw2
 x 10
 y 7
 end
 arch floor_earth1a
-no_pass 1
 x 10
 y 8
 end
-arch grassd_m14
+arch border_abyss_sw1
 x 10
 y 8
 end
@@ -1690,7 +1657,7 @@ x 10
 y 17
 end
 arch sign
-name Pet Shop
+name sign
 msg
 Stonehaven Pet Shop
 
@@ -1698,6 +1665,11 @@ DO NOT FEED THE ANIMALS!
 endmsg
 x 10
 y 17
+arch event_obj
+name Lua
+sub_type 12
+race /scripts/examine_sign.lua
+end
 end
 arch grassd_8
 x 10
@@ -1734,7 +1706,7 @@ end
 arch floor_grit1
 x 11
 end
-arch grassd_m2
+arch grassd_m7
 x 11
 end
 arch grassd_8
@@ -1782,20 +1754,22 @@ x 11
 y 7
 end
 arch floor_earth1a
-no_pass 1
+x 11
+y 8
+end
+arch border_abyss_sw2
 x 11
 y 8
 end
 arch floor_earth1a
-no_pass 1
+x 11
+y 9
+end
+arch border_abyss_sw1
 x 11
 y 9
 end
 arch wagon_small.111
-x 11
-y 9
-end
-arch grassd_m14
 x 11
 y 9
 end
@@ -1871,16 +1845,6 @@ arch grassd_1
 x 11
 y 21
 end
-arch spawn_point
-x 11
-y 21
-arch ant_soldier
-type 83
-unaggressive 1
-friendly 1
-random_move 1
-end
-end
 arch grassd_4
 x 11
 y 22
@@ -1892,7 +1856,7 @@ end
 arch floor_grit1
 x 12
 end
-arch grassd_m2
+arch grass_fullmask2
 x 12
 end
 arch grassd_1
@@ -1944,21 +1908,23 @@ x 12
 y 8
 end
 arch floor_earth1a
-no_pass 1
+x 12
+y 9
+end
+arch border_abyss_sw2
 x 12
 y 9
 end
 arch floor_earth1a
-no_pass 1
+x 12
+y 10
+end
+arch border_abyss_sw1
 x 12
 y 10
 end
 arch wagon_small.111
 direction 5
-x 12
-y 10
-end
-arch grassd_m14
 x 12
 y 10
 end
@@ -2125,16 +2091,18 @@ x 13
 y 9
 end
 arch floor_earth1a
-no_pass 1
+x 13
+y 10
+end
+arch border_abyss_sw2
 x 13
 y 10
 end
 arch floor_earth1a
-no_pass 1
 x 13
 y 11
 end
-arch grassd_m14
+arch border_abyss_sw1
 x 13
 y 11
 end
@@ -2274,16 +2242,18 @@ x 14
 y 10
 end
 arch floor_earth1a
-no_pass 1
+x 14
+y 11
+end
+arch border_abyss_sw2
 x 14
 y 11
 end
 arch floor_earth1a
-no_pass 1
 x 14
 y 12
 end
-arch grassd_m14
+arch border_abyss_sw1
 x 14
 y 12
 end
@@ -2340,7 +2310,7 @@ x 14
 y 22
 end
 arch sign
-name Pet Shop
+name sign
 msg
 Stonehaven Pet Shop
 
@@ -2348,6 +2318,11 @@ DO NOT FEED THE ANIMALS!
 endmsg
 x 14
 y 22
+arch event_obj
+name Lua
+sub_type 12
+race /scripts/examine_sign.lua
+end
 end
 arch grassd_7
 x 14
@@ -2429,16 +2404,18 @@ x 15
 y 11
 end
 arch floor_earth1a
-no_pass 1
+x 15
+y 12
+end
+arch border_abyss_sw2
 x 15
 y 12
 end
 arch floor_earth1a
-no_pass 1
 x 15
 y 13
 end
-arch grassd_m14
+arch border_abyss_sw1
 x 15
 y 13
 end
@@ -2582,16 +2559,18 @@ x 16
 y 12
 end
 arch floor_earth1a
-no_pass 1
+x 16
+y 13
+end
+arch border_abyss_sw2
 x 16
 y 13
 end
 arch floor_earth1a
-no_pass 1
 x 16
 y 14
 end
-arch grassd_m14
+arch border_abyss_sw1
 x 16
 y 14
 end
@@ -2741,11 +2720,18 @@ x 17
 y 13
 end
 arch floor_earth1a
-no_pass 1
+x 17
+y 14
+end
+arch border_abyss_sw2
 x 17
 y 14
 end
 arch floor_earth1a
+x 17
+y 15
+end
+arch border_abyss_sw1
 x 17
 y 15
 end
@@ -2754,6 +2740,10 @@ x 17
 y 15
 end
 arch floor_earth1a
+x 17
+y 16
+end
+arch grassd_m3
 x 17
 y 16
 end

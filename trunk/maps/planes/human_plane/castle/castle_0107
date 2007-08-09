@@ -1626,13 +1626,18 @@ x 10
 y 1
 end
 arch marker0
-name Directions
+name signpost
 msg
 North: Counsel Buildings
 South: Stonehaven Castle
 endmsg
 x 10
 y 1
+arch event_obj
+name Lua
+sub_type 12
+race /scripts/examine_sign.lua
+end
 end
 arch grassd_7
 x 10
@@ -1643,6 +1648,10 @@ x 10
 y 3
 end
 arch grassd_m10
+x 10
+y 3
+end
+arch fence_01.113
 x 10
 y 3
 end
@@ -1772,16 +1781,6 @@ arch grass_thick1
 x 10
 y 22
 end
-arch spawn_point
-x 10
-y 22
-arch guard
-name Door Guard
-type 83
-level 50
-wis 1
-end
-end
 arch grass_thick2
 x 10
 y 23
@@ -1817,6 +1816,10 @@ x 11
 y 3
 end
 arch grassd_m13
+x 11
+y 3
+end
+arch fence_01.111
 x 11
 y 3
 end
@@ -1984,6 +1987,18 @@ arch floor_grit3b
 x 11
 y 23
 end
+arch spawn_point
+x 11
+y 23
+arch guard
+name Stonehaven Castle Guard
+type 83
+level 30
+wis 1
+stand_still 1
+direction 7
+end
+end
 arch floor_grit3c
 x 12
 end
@@ -2014,9 +2029,26 @@ arch grassd_m12
 x 12
 y 3
 end
-arch floor_grit4d
+arch fence_01.111
+x 12
+y 3
+end
+arch floor_grit3a
 x 12
 y 4
+end
+arch sign
+name notice
+msg
+Take note that there have been enemy sightings, and to further prevent any injuries this path has been closed for the time being. Thank you for your cooperation.
+endmsg
+x 12
+y 4
+arch event_obj
+name Lua
+sub_type 12
+race /scripts/examine_sign.lua
+end
 end
 arch floor_grit3b
 x 12
@@ -2186,6 +2218,10 @@ x 13
 y 3
 end
 arch grassd_m10
+x 13
+y 3
+end
+arch fence_01.112
 x 13
 y 3
 end
@@ -2532,6 +2568,18 @@ arch floor_grit3a
 x 14
 y 23
 end
+arch spawn_point
+x 14
+y 23
+arch guard
+name Stonehaven Castle Guard
+type 83
+level 30
+wis 1
+stand_still 1
+direction 3
+end
+end
 arch grassd_3
 x 15
 end
@@ -2684,16 +2732,6 @@ end
 arch grass_thick1
 x 15
 y 22
-end
-arch spawn_point
-x 15
-y 22
-arch guard
-name Door Guard
-type 83
-level 50
-wis 1
-end
 end
 arch floor_grit3a
 x 15

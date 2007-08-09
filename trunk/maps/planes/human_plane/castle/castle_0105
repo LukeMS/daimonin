@@ -1,13 +1,14 @@
 arch map
-name Stonehaven
+name Stonehaven§ColeMarch2.ogg|0|-1
 msg
 Creator: Daimonin Map Editor
 Date:    6/9/2004
 endmsg
 width 24
 height 24
-difficulty 1
+difficulty 8
 outdoor 1
+no_harm 1
 tile_path_1 castle_0106
 tile_path_2 castle_0205
 tile_path_3 castle_0104
@@ -900,6 +901,10 @@ arch floor_fs_grey1a
 x 6
 y 20
 end
+arch pillar_white2d
+x 6
+y 20
+end
 arch floor_fs_grey1a
 x 6
 y 21
@@ -1004,7 +1009,7 @@ x 7
 y 16
 arch mage_old
 type 83
-level 60
+level 30
 end
 end
 arch floor_fs_grey1a
@@ -1130,11 +1135,13 @@ arch spawn_point
 x 8
 y 15
 arch guard_pole
+name Stonehaven Elite Guard
 msg
-Welcome to the tests of might, magic, and prayer. The Thief's test is not available because nobody is dumb enought to reveal themselves as one! Fight alone and at your own risk!
+The guard casts a sidelong glance at you.
 endmsg
 type 83
-level 45
+level 55
+direction 4
 end
 end
 arch floor_fs_grey1a
@@ -1157,8 +1164,10 @@ arch spawn_point
 x 8
 y 19
 arch guard_royal
+name Stonehaven Royal Guard
 type 83
-level 50
+level 48
+direction 3
 end
 end
 arch floor_fs_grey1a
@@ -1177,8 +1186,10 @@ arch spawn_point
 x 8
 y 22
 arch guard_royal
+name Stonehaven Royal Guard
 type 83
-level 50
+level 44
+direction 3
 end
 end
 arch floor_fs_grey1a
@@ -1268,8 +1279,9 @@ arch spawn_point
 x 9
 y 14
 arch guard_royal
+name Stonehaven Royal Bodyguard
 type 83
-level 50
+level 65
 end
 end
 arch floor_fs_grey1a
@@ -1466,7 +1478,7 @@ arch spawn_point
 x 10
 y 15
 arch queen
-name The Queen
+name Queen Hilde
 type 83
 title of Stonehaven
 level 50
@@ -1653,11 +1665,16 @@ arch grassd_6
 x 11
 end
 arch marker1
-name To The Royal Gardens
+name sign
 msg
 "To The Royal Gardens And Counsel Buildings" is engraved in the signpost with well written gold letters.
 endmsg
 x 11
+arch event_obj
+name Lua
+sub_type 12
+race /scripts/examine_sign.lua
+end
 end
 arch floor_grit2
 x 11
@@ -1739,6 +1756,10 @@ arch carpet2.151
 x 11
 y 14
 end
+arch floor_fs_grey1a
+x 11
+y 15
+end
 arch carpet2g
 x 11
 y 15
@@ -1763,7 +1784,7 @@ arch spawn_point
 x 11
 y 15
 arch king
-name The King
+name King Sigmar
 type 83
 title of Stonehaven
 level 80
@@ -1943,7 +1964,7 @@ arch spawn_point
 x 12
 y 15
 arch noble
-name The Prince
+name Prince Tennyson
 type 83
 title of Stonehaven
 level 40
@@ -2141,8 +2162,9 @@ arch spawn_point
 x 13
 y 14
 arch guard_royal
+name Stonehaven Royal Bodyguard
 type 83
-level 50
+level 65
 end
 end
 arch floor_fs_grey1a
@@ -2332,11 +2354,13 @@ arch spawn_point
 x 14
 y 15
 arch guard_pole
+name Stonehaven Elite Guard
 msg
-Welcome to the tests of might, magic, and prayer. The Thief's test is not available because nobody is dumb enought to reveal themselves as one! Fight alone and at your own risk!
+The guard doesn't respond.
 endmsg
 type 83
-level 45
+level 55
+direction 6
 end
 end
 arch floor_fs_grey1a
@@ -2359,8 +2383,10 @@ arch spawn_point
 x 14
 y 19
 arch guard_royal
+name Stonehaven Royal Guard
 type 83
-level 50
+level 48
+direction 7
 end
 end
 arch floor_fs_grey1a
@@ -2379,8 +2405,10 @@ arch spawn_point
 x 14
 y 22
 arch guard_royal
+name Stonehaven Royal Guard
 type 83
-level 50
+level 44
+direction 7
 end
 end
 arch floor_fs_grey1a
@@ -2479,7 +2507,7 @@ msg
 Jahlnor says: The King is very busy, don't bother him.
 endmsg
 type 83
-level 60
+level 30
 end
 end
 arch floor_fs_grey1a
@@ -2618,6 +2646,10 @@ x 16
 y 19
 end
 arch floor_fs_grey1a
+x 16
+y 20
+end
+arch pillar_white2d
 x 16
 y 20
 end

@@ -72,7 +72,7 @@ y 9
 arch event_obj
 name Lua
 sub_type 12
-race /scripts_private/examine_sign.lua
+race /scripts/examine_sign.lua
 end
 arch beacon
 name guildhall jail cell 1 proclamation
@@ -215,7 +215,7 @@ y 9
 arch event_obj
 name Lua
 sub_type 12
-race /scripts_private/examine_sign.lua
+race /scripts/examine_sign.lua
 end
 arch beacon
 name guildhall jail cell 2 proclamation
@@ -558,7 +558,7 @@ y 9
 arch event_obj
 name Lua
 sub_type 12
-race /scripts_private/examine_sign.lua
+race /scripts/examine_sign.lua
 end
 end
 arch floor_flagm1
@@ -747,7 +747,7 @@ y 9
 arch event_obj
 name Lua
 sub_type 12
-race /scripts_private/examine_sign.lua
+race /scripts/examine_sign.lua
 end
 end
 arch wmask_wanted
@@ -762,7 +762,7 @@ y 9
 arch event_obj
 name Lua
 sub_type 12
-race /scripts_private/examine_sign.lua
+race /scripts/examine_sign.lua
 end
 end
 arch floor_flagm1
@@ -2663,7 +2663,7 @@ y 8
 arch event_obj
 name Lua
 sub_type 12
-race /scripts_private/examine_sign.lua
+race /scripts/examine_sign.lua
 end
 end
 arch grassd_2
