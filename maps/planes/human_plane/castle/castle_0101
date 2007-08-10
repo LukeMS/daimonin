@@ -3799,7 +3799,7 @@ arch event_obj
 name Lua
 sub_type 10
 race /scripts/welcome.lua
-slaying 3,7
+slaying 128
 end
 end
 arch grassd_4

@@ -4,22 +4,15 @@
 -- A script to override magic mouths when approached from certain directions. In this way the mapmaker can make a welcoming message when a player enters a
 -- building but not when he leaves.
 --
--- Attach the scipt to the magic mouth as a trigger event. Set the script data to "<min>, <max>" where both are valid directions (single digits in the range
--- 1 to 8). Note that this delimits the range in which the player must *not* be facing.
+-- Attach the scipt to the magic mouth as a trigger event. Set the script data to a list of valid directions (single digits in the range 1 to 8 -- any other
+-- character(s) or none can be used as serparators). If player is facing in one of those directions the message will be shown. Otherwise it won't.
 -------------------------------------------------------------------------------
 ---------------------------------------
--- Parse the options.
+-- By default the script will override the magic mouth (no message will be shown).
 ---------------------------------------
-local options = { string.find(event.options, "(%d)%s*,%s*(%d)") }; assert(options[1], "Insufficient options passed to script!")
-local min     = tonumber(options[3])
-local max     = tonumber(options[4])
+event.returnvalue = 1
 
 ---------------------------------------
--- Find out which way the player is facing.
+-- If the direction in which player is facing is found in the script data, unset event.retunvalue.
 ---------------------------------------
-local dir = event.activator.facing
-
----------------------------------------
--- Compare the two, overriding default behaviour (ie, don't trigger the magic mouth) if the player is not facing in the right direction.
----------------------------------------
-if dir >= min and dir <= max then event.returnvalue = 1 end
+if string.find(event.options, tostring(event.activator.facing)) then event.returnvalue = 0 end
