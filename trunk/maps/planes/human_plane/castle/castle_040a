@@ -2037,7 +2037,7 @@ arch event_obj
 name Lua
 sub_type 10
 race /scripts/welcome.lua
-slaying 1,5
+slaying 678
 end
 end
 arch shop_floor_normal
