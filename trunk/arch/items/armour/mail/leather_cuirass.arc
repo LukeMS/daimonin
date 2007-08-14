@@ -4,7 +4,7 @@ type 16
 layer 3
 face leather_cuirass.101
 last_heal 18
-last_sp 200
+last_sp 100
 ac 6
 item_level 7
 item_skill 4

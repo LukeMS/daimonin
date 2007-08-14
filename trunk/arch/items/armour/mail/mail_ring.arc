@@ -4,7 +4,7 @@ type 16
 layer 3
 face ring_mail.101
 last_heal 15
-last_sp 100
+last_sp 50
 material 2
 material_real 65
 ac 5
