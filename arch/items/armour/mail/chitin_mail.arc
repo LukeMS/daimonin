@@ -4,7 +4,7 @@ face chitin_mail.101
 type 16
 layer 3
 last_heal 25
-last_sp 300
+last_sp 150
 ac 7
 item_level 10
 item_skill 4

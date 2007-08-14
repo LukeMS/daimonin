@@ -4,7 +4,7 @@ type 16
 layer 3
 face scale_armour.101
 last_heal 20
-last_sp 200
+last_sp 100
 ac 6
 material 32
 material_real 324

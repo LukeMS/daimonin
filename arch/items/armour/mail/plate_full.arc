@@ -6,7 +6,7 @@ face plate_full.101
 last_heal 30
 item_level 20
 item_skill 4
-last_sp 400
+last_sp 200
 material 2
 material_real 65
 ac 8
