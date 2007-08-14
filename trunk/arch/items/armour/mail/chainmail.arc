@@ -4,7 +4,7 @@ type 16
 layer 3
 face chainmail.101
 last_heal 20
-last_sp 8
+last_sp 200
 material 2
 material_real 65
 ac 6

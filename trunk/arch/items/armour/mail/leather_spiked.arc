@@ -4,7 +4,7 @@ type 16
 layer 3
 face leather_spiked.101
 last_heal 8
-last_sp 10
+last_sp 50
 ac 4
 resist_impact 12
 resist_cleave 20
