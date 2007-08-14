@@ -4,7 +4,7 @@ face splint_mail.101
 type 16
 layer 3
 last_heal 25
-last_sp 7
+last_sp 300
 material 2
 material_real 65
 ac 7

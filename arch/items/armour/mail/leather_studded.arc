@@ -4,7 +4,7 @@ type 16
 layer 3
 face leather_studded.101
 last_heal 12
-last_sp 9
+last_sp 100
 ac 5
 item_level 3
 item_skill 4

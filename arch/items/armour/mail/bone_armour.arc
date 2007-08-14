@@ -4,7 +4,7 @@ type 16
 layer 3
 face bone_armour.101
 last_heal 20
-last_sp 8
+last_sp 200
 ac 6
 material 2048
 material_real 705
