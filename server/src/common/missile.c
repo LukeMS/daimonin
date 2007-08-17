@@ -331,7 +331,7 @@ void move_missile(object *op)
 				continue;
 			}
 
-			if ((!QUERY_FLAG(tmp, FLAG_CAN_REFL_MISSILE) || (random_roll(0, 99)) < 90 - op->level / 10))
+			if (!QUERY_FLAG(tmp, FLAG_CAN_REFL_MISSILE) || (random_roll(0, 99) > (90 - op->level / 10)))
 			{
 				/* Attack the object. */
 				op = hit_with_arrow(op, tmp);
