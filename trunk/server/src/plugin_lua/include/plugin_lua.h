@@ -38,6 +38,11 @@
 #ifndef PLUGIN_LUA_H
 #define PLUGIN_LUA_H
 
+/* uncomment this to enable channels support in lua plugin */
+/* you NEED to have channels enabled in the server!        */
+//#define USE_CHANNELS
+
+
 /* First the required header files - only the module interface and lua */
 #include <lua.h>
 #include <lauxlib.h>

@@ -91,6 +91,9 @@ static struct method_decl   GameObject_methods[]            =
     {"Communicate",  (lua_CFunction) GameObject_Communicate},
     {"Say",  (lua_CFunction) GameObject_Say},
     {"SayTo",  (lua_CFunction) GameObject_SayTo},
+#ifdef USE_CHANNELS
+    {"ChannelMsg",  (lua_CFunction) GameObject_ChannelMsg},
+#endif
     {"Write", (lua_CFunction) GameObject_Write},
     {"GetGender",  (lua_CFunction) GameObject_GetGender},
     {"SetGender",  (lua_CFunction) GameObject_SetGender},
@@ -1316,6 +1319,31 @@ static int GameObject_SayTo(lua_State *L)
     return 0;
 }
 
+#ifdef USE_CHANNELS
+/*****************************************************************************/
+/* Name   : GameObject_ChannelMsg                                            */
+/* Lua    : object:ChannelMsg(channel, message, mode)                        */
+/* Info   : object sends message on the channel                              */
+/*          mode: 0 (default) normal message                                 */
+/*          mode: 1 emote                                                    */
+/* Status : NOT-Tested                                                       */
+/*****************************************************************************/
+static int GameObject_ChannelMsg(lua_State *L)
+{
+    lua_object *self;
+    char       *channel;
+    int mode = 0;
+    char *message;
+    static char buf[HUGE_BUF];
+
+    get_lua_args(L, "Oss|i", &self, &channel, &message, &mode);
+
+    hooks->lua_channel_message(channel, STRING_OBJ_NAME(WHO), message, mode);
+
+    return 0;
+}
+
+#endif
 /*****************************************************************************/
 /* Name   : GameObject_Write                                                 */
 /* Lua    : object:Write(message, color)                                     */
