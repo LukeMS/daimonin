@@ -27,7 +27,7 @@
 void ignore_list_clear(void);
 void ignore_list_load(void);
 void ignore_list_save(void);
-int ignore_check(char *name);
+int ignore_check(char *name, char *type);
 void ignore_command(char *cmd);
 
 #endif

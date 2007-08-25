@@ -70,7 +70,11 @@ void do_console(int x, int y)
                     sprintf(buf,":%s",InputString);
                     draw_info(buf,COLOR_DGOLD);*/
 
-            if (*InputString != '/') /* if not a command ... its chat */
+            if ((*InputString != '/') /* if not a command ... its chat */
+#ifdef USE_CHANNELS
+             && (*InputString != '-') /* channels */
+#endif
+             )
             {
                 sprintf(buf, "/say %s", InputString);
             }
@@ -154,7 +158,18 @@ int client_command_check(char *cmd)
         draw_info("unknown spell.", COLOR_GREEN);
         return TRUE;
     }
-
+#ifdef USE_CHANNELS
+    /* i know hardcoding is most of the time bad, but the channel system will be uses
+     * really often. Also we can type directly the '-' in the textwin.
+     */
+    else if (!strnicmp(cmd, "-", strlen("-")))
+    {
+        char channelbuf[1024];
+        sprintf(channelbuf,"/channel %s",cmd+1);
+        send_command(channelbuf,-1,SC_NORMAL);
+        return TRUE;
+    }
+#endif
     else if (!strnicmp(cmd, "/ignore", strlen("/ignore")))
     {
         ignore_command(cmd+7);
