@@ -298,6 +298,13 @@
 			<Option target="Release"/>
 			<Option target="Debug"/>
 		</Unit>
+		<Unit filename="..\..\..\src\include\channel.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="Release"/>
+			<Option target="Debug"/>
+		</Unit>
 		<Unit filename="..\..\..\src\include\commands.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
@@ -806,6 +813,11 @@
 			<Option target="Debug"/>
 		</Unit>
 		<Unit filename="..\..\..\src\server\c_wiz.c">
+			<Option compilerVar="CC"/>
+			<Option target="Release"/>
+			<Option target="Debug"/>
+		</Unit>
+		<Unit filename="..\..\..\src\server\channel.c">
 			<Option compilerVar="CC"/>
 			<Option target="Release"/>
 			<Option target="Debug"/>
