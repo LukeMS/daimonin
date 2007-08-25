@@ -434,9 +434,17 @@ void DrawInfoCmd2(char *data, int len)
     /* we have communication input */
     if (tmp && flags & (NDI_PLAYER|NDI_SAY|NDI_SHOUT|NDI_TELL|NDI_GSAY|NDI_EMOTE))
     {
-        if ( !(flags & NDI_GM) && ignore_check(data))
-            return;
-
+        if (!(flags & NDI_GM))
+        {
+            if ((flags & NDI_SAY) && (ignore_check(data,"say")))
+                return;
+            if ((flags & NDI_SHOUT) && (ignore_check(data,"shout")))
+                return;
+            if ((flags & NDI_TELL) && (ignore_check(data,"tell")))
+                return;
+            if ((flags & NDI_EMOTE) && (ignore_check(data,"emote")))
+                return;
+        }
         /* save last incomming tell player for client sided /reply */
         if (flags & NDI_TELL)
             strcpy(cpl.player_reply, data);
@@ -1940,23 +1948,153 @@ void DataCmd(unsigned char *data, int len)
     free(dest);
 }
 
+#ifdef USE_CHANNELS
+void ChannelMsgCmd(unsigned char *data, int len)
+{
+    uint16 flags;
+    char    channelname[32];
+    char    playername[32];
+    char    *message=NULL;
+    char    prefix[64];
+    char    outstring[1024];
 
+    flags=data[0]<<8;
+    flags|=data[1];
+    data+=2;
+    if (strlen(data)==0)
+    {
+        LOG(LOG_ERROR,"ChannelMsgCmd: Got no data!\n");
+        return;
+    }
+    message=strchr(data,':');
+    if (!message)
+    {
+        LOG(LOG_ERROR,"ChannelMsgCmd: Empty Message!\n");
+        return;
+    }
+    *(message++) = '\0';
+    sscanf(data,"%s %s",channelname, playername);
+    if (ignore_check(playername, channelname)) return;
+//    draw_info_format(COLOR_WHITE,"chmsg: c: %s, p: %s, m: %s",channelname, playername, message);
+    if (flags & NDI_EMOTE)
+    {
+        char message2[1024];
+        sprintf(prefix,"[%s:%s ",channelname, playername);
+        sprintf(message2,"%s%c",message,']');
+        break_string(message2, prefix, TRUE, outstring);
+    }
+    else
+    {
+        sprintf(prefix,"[%s:%s] ",channelname, playername);
+        break_string(message, prefix, FALSE, outstring);
+    }
 
+    draw_info(outstring,flags);
 
+}
+/**
+ * stringbreak for channelsystem, we have to include the prefix in normal msg
+ * and have to add spaces in emotes
+ * @param text message to break
+ * @param prefix prefix to add to the lines
+ * @param one_prefix emotes got only prefix in first line
+ * @param result breaked and prefixed string
+ */
+void break_string(char *text, char *prefix, Boolean one_prefix, char *result)
+{
+    char buf[200];
+    char pref[50];
+    int  i, a, len;
+    int winlen=234;
+    int preflen, restlen;
 
+    /*
+     * TODO: some security checks for max string len's
+     */
+    /* lets calculate the space used by the prefix */
+    preflen=0;
+    buf[0]=0;
+    for (i=0;prefix[i]!=0;i++)
+        preflen += SystemFont.c[(int) (prefix[i])].w + SystemFont.char_offset;
+//        preflen += charwides[(int) (prefix[i])] + charspacing;
 
+    restlen=winlen-preflen;
+    result[0]=0;
+    strcat(result,prefix);
+    if (one_prefix)
+    {
+        for (i=0;i<(preflen/2);i++)
+            pref[i]=' ';
+        pref[i+1]=0;
+    }
+    else strcpy(pref,prefix);
 
+    /* lets do some codestealing from client's draw_info:) */
+    len = 0;
+    for (a = i = 0; ; i++)
+    {
+        len += SystemFont.c[(int) (text[i])].w + SystemFont.char_offset;
+//        len += charwides[(int) (text[i])] + charspacing;
+        if (len >= restlen || text[i] == 0x0a || text[i] == 0)
+        {
 
+            /* now the special part - lets look for a good point to cut */
+            if (len >= restlen && a > 10)
+            {
+                int ii =a, it = i, ix = a, tx = i;
 
+                while (ii >= a / 2)
+                {
+                    if (text[it] == ' '
+                     || text[it] == ':'
+                     || text[it] == '.'
+                     || text[it] == ','
+                     || text[it] == '('
+                     || text[it] == ';'
+                     || text[it] == '-'
+                     || text[it] == '+'
+                     || text[it] == '*'
+                     || text[it] == '?'
+                     || text[it] == '/'
+                     || text[it] == '='
+                     || text[it] == '.'
+                     || text[it] == 0
+                     || text[it] == 0x0a)
+                    {
+                        tx = it;
+                        ix = ii;
+                        break;
+                    }
+                    it--;
+                    ii--;
+                };
+                i = tx;
+                a = ix;
+            }
+            buf[a] = 0x0a;
+            buf[a+1]= 0;
+            strcat(result,buf);
 
+            a = len = 0;
 
+            if (text[i] == 0)
+                break;
 
+            strcat(result,pref);
 
+            /* if we cut on space, space must be removed!!! */
+            if (text[i]==' ')
+                i++;
 
+        }
+        if (text[i] != 0x0a)
+            buf[a++] = text[i];
+    }
 
+    /* remove last newline */
+    result[strlen(result)-1]=0;
 
+    return;
 
-
-
-
-
+}
+#endif

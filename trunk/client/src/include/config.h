@@ -25,6 +25,9 @@
 
 #define DEVELOPMENT
 
+/* uncomment this to enable the channel support in the client */
+//#define USE_CHANNELS
+
 #define DEFAULT_SERVER_PORT 13327
 #define DEFAULT_METASERVER_PORT 13326
 

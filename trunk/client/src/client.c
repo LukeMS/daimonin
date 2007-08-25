@@ -85,6 +85,9 @@ struct CmdMapping commands[]  =
         { InterfaceCmd },
         { BookCmd },
         { MarkCmd },
+#ifdef USE_CHANNELS
+        { ChannelMsgCmd },
+#endif
     };
 
 #define NCOMMANDS (sizeof(commands)/sizeof(struct CmdMapping))

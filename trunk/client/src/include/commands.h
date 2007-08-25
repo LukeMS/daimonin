@@ -95,4 +95,10 @@ extern void InterfaceCmd(unsigned char *data, int len);
 extern void TargetObject(unsigned char *data, int len);
 extern void DataCmd(unsigned char *data, int len);
 extern void NewCharCmd(char *data, int len);
+
+#ifdef USE_CHANNELS
+extern void ChannelMsgCmd(unsigned char *data, int len);
+void break_string(char *text, char *prefix, Boolean one_prefix, char *result);
+#endif
+
 #endif

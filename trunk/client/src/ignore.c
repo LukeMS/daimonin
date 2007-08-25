@@ -24,36 +24,38 @@
 
 /* TODO: use the NPC GUI or some other gui of the client to make the ignore list graphical */
 
-#define IGNORE_FILE_NAME "ignore.list"
-
 typedef struct ignore_list
 {
     struct ignore_list *next;
     char name[64];
+    char type[64];
 }
 _ignore_list;
 
 struct ignore_list *ignore_list_start = NULL;
 
 /* add an entry to the ignore list */
-static void ignore_entry_add(char *name)
+static void ignore_entry_add(char *name, char *type)
 {
     struct ignore_list *node;
-
     node = (struct ignore_list *) malloc(sizeof(struct ignore_list));
     strcpy(node->name, name);
+    if (type[0]=='\0')
+        node->type[0]='\0';
+    else
+        strncpy(node->type, type,64);
     node->next = ignore_list_start;
     ignore_list_start = node;
 }
 
 /* remove an entry from the ignore list */
-static void ignore_entry_remove(char *name)
+static void ignore_entry_remove(char *name, char *type)
 {
     struct ignore_list *node, *tmp=NULL;
 
     for (node = ignore_list_start;node;node = node->next)
     {
-        if (!stricmp(name, node->name))
+        if (!stricmp(name, node->name) && !stricmp(type, node->type))
         {
             if (tmp)
                 tmp->next = node->next;
@@ -78,10 +80,11 @@ static void ignore_list_show(void)
     draw_info("--------------------------", COLOR_WHITE);
     for (node = ignore_list_start;node;i++, node = node->next)
     {
-        draw_info(node->name, COLOR_WHITE);
+        if (!node->type[0])
+            draw_info_format(COLOR_WHITE,"*.%s",node->name);
+        else
+            draw_info_format(COLOR_WHITE,"%s.%s",node->type, node->name);
     }
-
-    draw_info_format(COLOR_WHITE, "\n%d name(s) ignored", i);
 }
 
 /* clear the list, free all memory */
@@ -94,26 +97,39 @@ void ignore_list_clear(void)
         tmp = node->next;
         free(node);
     }
+    ignore_list_start=NULL;
 }
 
 /* clear the list and load it clean from file */
 void ignore_list_load(void)
 {
-    int i;
-    char buf[64];
-    FILE   *stream;
+    char buf[128];
+    char name[64];
+    char type[64];
+	char filename[255];
+	FILE   *stream;
+
+    sprintf(filename,"%s.ignore.list",cpl.name);
+    LOG(LOG_DEBUG,"Trying to open ignore file: %s\n",filename);
+
+    name[0]='\0';
+    type[0]='\0';
 
     ignore_list_clear();
 
-    if (!(stream = fopen_wrapper(IGNORE_FILE_NAME, "r")))
+    if (!(stream = fopen_wrapper(filename, "r")))
         return; /* no list - no ignores - no problem */
 
-    while (fgets(buf, 60, stream) != NULL)
+    while (fgets(buf, 128, stream) != NULL)
     {
-        i = strlen(buf)-1;
-        while (isspace(buf[i--]))
-            buf[i+1]=0;
-        ignore_entry_add(buf);
+        if (sscanf(buf,"%s %s\n",name, type)!=EOF)
+        {
+            if (type[0]=='*')
+                type[0]='\0';
+            ignore_entry_add(name, type);
+        }
+        name[0]='\0';
+        type[0]='\0';
     }
 
     fclose(stream);
@@ -123,14 +139,23 @@ void ignore_list_load(void)
 void ignore_list_save(void)
 {
     struct ignore_list *node;
-    FILE *stream;
+	char filename[255];
+	FILE   *stream;
 
-    if (!(stream = fopen_wrapper(IGNORE_FILE_NAME, "w")))
+    sprintf(filename,"%s.ignore.list",cpl.name);
+    LOG(LOG_DEBUG,"Trying to open ignore file: %s\n",filename);
+
+    if (!(stream = fopen_wrapper(filename, "w")))
         return;
 
     for (node = ignore_list_start;node;node = node->next)
     {
         fputs(node->name, stream);
+        fputs(" ",stream);
+        if (!node->type[0])
+            fputs("*",stream);
+        else
+            fputs(node->type,stream);
         fputs("\n", stream);
     }
 
@@ -142,14 +167,14 @@ void ignore_list_save(void)
 /* check player <name> is on the ignore list.
  * return TRUE: player is on the ignore list
  */
-int ignore_check(char *name)
+int ignore_check(char *name, char *type)
 {
     struct ignore_list *node;
 
     for (node = ignore_list_start;node;node = node->next)
     {
-//        draw_info_format(COLOR_WHITE, "compare >%s< with >%s<", name, node->name);
-        if (!stricmp(name, node->name))
+//        draw_info_format(COLOR_WHITE, "compare >%s< with >%s< (%s with %s)", name, node->name,type, node->type);
+        if (!stricmp(name, node->name) && ((!stricmp(type,node->type)) || (!node->type[0])))
             return TRUE;
     }
     return FALSE;
@@ -159,16 +184,20 @@ int ignore_check(char *name)
 void ignore_command(char *cmd)
 {
     int i;
+    char name[64];
+    char type[64];
+    name[0]='\0';
+    type[0]='\0';
 
     /* trim string - remove all white spaces */
-    cmd[60]=0;
+    cmd[120]=0;
     while (isspace(*cmd))
         cmd++;
     i = strlen(cmd)-1;
     while (isspace(cmd[i--]))
         cmd[i+1]=0;
 
-    /*LOG(LOG_DEBUG, "IGNORE CMD: >%s<\n", cmd);*/
+    LOG(LOG_DEBUG, "IGNORE CMD: >%s<\n", cmd);
 
     if (*cmd == 0) /* pure /ignore command = list */
         ignore_list_show();
@@ -177,18 +206,49 @@ void ignore_command(char *cmd)
         /* syntax: if the name is in the list, remove it.
          * if its new, add it. save the new list then
          */
-        *cmd = toupper(*cmd);
-        if (ignore_check(cmd) )
+        if (sscanf(cmd,"%s %s",name, type)==EOF)
         {
-            ignore_entry_remove(cmd);
-            draw_info_format(COLOR_WHITE, "removed %s from ignore list.", cmd);
+            draw_info_format(COLOR_WHITE,"Syntax: /ignore <name> <'channel'>");
+            draw_info_format(COLOR_WHITE,"Syntax: /ignore <name> *  for all 'channels'");
+            draw_info_format(COLOR_WHITE,"channel can ALSO be somthing like: 'say', 'shout', 'tell', 'emote'");
+        }
+        else if ((name[0]=='\0') || (type[0]=='\0'))
+        {
+            draw_info_format(COLOR_WHITE,"Syntax: /ignore <name> <'channel'>");
+            draw_info_format(COLOR_WHITE,"Syntax: /ignore <name> *  for all 'channels'");
+            draw_info_format(COLOR_WHITE,"channel can ALSO be somthing like: 'say', 'shout', 'tell', 'emote'");
+
         }
         else
         {
-            ignore_entry_add(cmd);
-            draw_info_format(COLOR_WHITE, "added %s to ignore list.", cmd);
-        }
+            i=0;
+            while (name[i]!='\0')
+            {
+                name[i]=tolower(name[i]);
+                i++;
+            }
+            i=0;
+            while (type[i]!='\0')
+            {
+                type[i]=tolower(type[i]);
+                i++;
+            }
 
-        ignore_list_save();
+            name[0] = tolower(name[0]);
+            if (type[0]=='*')
+                type[0]='\0';
+            if (ignore_check(name, type) )
+            {
+                ignore_entry_remove(name, type);
+                draw_info_format(COLOR_WHITE, "removed %s (%s) from ignore list.", name, type);
+            }
+            else
+            {
+                ignore_entry_add(name, type);
+                draw_info_format(COLOR_WHITE, "added %s (%s) to ignore list.", name, type);
+            }
+
+            ignore_list_save();
+        }
     }
 }
