@@ -784,7 +784,7 @@ void free_racelists()
         FREE_ONLY_HASH(list->name);
 		/* we use free_objectlink_simple() because our race
 		 * list ius sorting the arch list object which are not used
-		 * as normal allocated objects 
+		 * as normal allocated objects
 		 */
         for (tmp = list->member; tmp; tmp = tmp->next)
 			free_objectlink_simple(tmp);
@@ -1225,6 +1225,9 @@ void init(int argc, char **argv)
     metaserver_init();
     init_arch_default_behaviours();
     load_ban_file();
+#ifdef USE_CHANNELS
+    load_channels();            /* load the saved channels */
+#endif
     load_gmaster_file();
     init_instance_system();
     init_done = 1;

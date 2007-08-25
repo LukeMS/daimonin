@@ -208,7 +208,7 @@ typedef struct pl_player
 	int			        state;				/* player system state... PLAYING, LOGIN IN... */
     uint32              anim_enemy_count;   /* hm, this can be kicked now - i do it for a quick hack to
                                              * implement the animations. use is_melee_range() instead.
-                                             * for the client: skill/weapon values for the distance weapon 
+                                             * for the client: skill/weapon values for the distance weapon
                                              * - calculated in fix_player() */
 	int                 dist_dps;
 	int                 dist_last_dps;
@@ -371,6 +371,11 @@ typedef struct pl_player
     uint32              last_save_tick;
 #endif
 
+#ifdef USE_CHANNELS
+    struct player_channel  *channels;      /*channels player is 'on' */
+    int                 channels_on;    /*temp disable all channels */
+    unsigned int            channel_count;  /*channel count */
+#endif
 
     /* i disabled this now - search for last_used in the code.
      * perhaps we need this in the future.

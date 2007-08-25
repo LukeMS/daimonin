@@ -263,7 +263,10 @@ void free_player(player *pl)
         insert_ob_in_ob(pl->ob, &void_container); /* Avoid gc of the player object */
         return;
     }
-
+#ifdef USE_CHANNELS
+    /* remove player from ALL channels before player gets destroyed */
+    leaveAllChannels(pl);
+#endif
     /* Now remove from list of players */
     if (pl->prev)
         pl->prev->next = pl->next;
@@ -477,18 +480,18 @@ void flee_player(object *op)
     op->enemy = NULL;
 }
 
-/* For B4 i redesigned move_player(). 
+/* For B4 i redesigned move_player().
  * move_player() was always in sense of a "move" not a "walk".
  * The walking is only one part if this function. The main use
  * is to determinate a player can do a move (and moving to another
  * tile = walking is a move).
  * A glitch was, that move_player() can change the direction of the move
- * invoked for example by confusion. 
+ * invoked for example by confusion.
  * In the past, firing was included in this function, i removed it now from
  * it and added some senseful return values.
  * if flag is TRUE, the function will do a step/walk and call move_ob(),
  * if FALSE (used from fire/range code), the function will return with status.
- * Return values: 
+ * Return values:
  * -1 = doing the move failed (rotted, paralyzed...)
  * 0-x = move will go in that direction
  */
@@ -1028,7 +1031,7 @@ void kill_player(object *op)
     /* Move player to his current respawn-  */
     /* position (usually last savebed)      */
     /*                                      */
-    /****************************************/ 
+    /****************************************/
     /* JG (aka Grommit) 14-Mar-2007 - changed map_status to bed_status */
 
     enter_map_by_name(op, pl->savebed_map, pl->orig_savebed_map, pl->bed_x, pl->bed_y, pl->bed_status);

@@ -545,7 +545,9 @@ int command_dm_stealth(object *op, char *params)
             CONTR(op)->dm_stealth = 1;
         new_draw_info_format(NDI_UNIQUE, 0, op, "toggled dm_stealth to %d", CONTR(op)->dm_stealth);
     }
-
+#ifdef USE_CHANNELS
+    channel_dm_stealth(CONTR(op),CONTR(op)->dm_stealth);
+#endif
     return 0;
 }
 
@@ -1470,7 +1472,7 @@ int command_stuck(object *op, char *params)
 {
     if (op->type == PLAYER && CONTR(op))
     {
-        command_goto(op, "/planes/human_plane/castle/castle_030a 5 11");    
+        command_goto(op, "/planes/human_plane/castle/castle_030a 5 11");
 	}
     return 0;
 }

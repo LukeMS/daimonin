@@ -297,7 +297,9 @@ enum
     BINARY_CMD_INTERFACE,
     BINARY_CMD_BOOK,
     BINARY_CMD_MARK,
-
+#ifdef USE_CHANNELS
+    BINARY_CMD_CHANNELMSG,
+#endif
     /* old, unused or outdated crossfire cmds! */
     BINARY_CMD_MAGICMAP,
     BINARY_CMD_DELINV,

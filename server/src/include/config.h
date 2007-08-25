@@ -47,6 +47,11 @@
     Depending on OS, this can be a big difference.).
  */
 
+/* Channelsystem: uncomment this line to compile it in */
+/* you HAVE to also enable this in the lua-plugin (plugin_lua.h)!!! */
+//#define USE_CHANNELS
+
+
 /* Location of read-only machine independent data */
 #ifndef DATADIR
 #define DATADIR "./lib"
