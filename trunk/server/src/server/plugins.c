@@ -36,6 +36,9 @@ struct plugin_hooklist  hooklist    =
 {
     LOG, create_mapdir_pathname, re_cmp,
     new_draw_info, new_draw_info_format,
+#ifdef USE_CHANNELS
+    lua_channel_message,
+#endif
     new_info_map, new_info_map_except, map_brightness, wall,
     free_string_shared, add_string, add_refcount,
     fix_player,

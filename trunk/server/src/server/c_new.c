@@ -792,6 +792,15 @@ void command_new_char(char *params, int len, player *pl)
     esrv_new_player(pl, op->weight + op->carrying);
     send_skilllist_cmd(op, NULL, SPLIST_MODE_ADD);
     send_spelllist_cmd(op, NULL, SPLIST_MODE_ADD);
+
+#ifdef USE_CHANNELS
+    /* lets ad the default channels to the player */
+    /* or set channels_on to false, and during the tutorial player gets
+     * explained the channel system, and after that
+     * channels_on can be set to TRUE */
+    CONTR(op)->channels_on=TRUE;
+    addDefaultChannels(CONTR(op));
+#endif
 }
 
 void command_face_request(char *params, int len, NewSocket *ns)

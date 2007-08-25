@@ -256,7 +256,7 @@ typedef signed long long         sint64;
 /* group define stuff */
 #define GROUP_NO (-1)
 
-#define PMSG_MODE_NOTEXT     1   /* check GROUP_STATUS_NOQUEST, which means "outside maprang" 
+#define PMSG_MODE_NOTEXT     1   /* check GROUP_STATUS_NOQUEST, which means "outside maprang"
                                   * in party_message broadcast.
                                   * We simply want avoid kill messages & fighting related
                                   * info to group members out of range.
@@ -401,6 +401,11 @@ typedef struct linked_char
 
 /* Monster AI and mobdata structs */
 #include "monster.h"
+
+#ifdef USE_CHANNELS
+/* Channel System */
+#include "channel.h"
+#endif
 
 typedef struct _money_block
 {

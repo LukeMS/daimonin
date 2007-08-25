@@ -79,6 +79,12 @@ CommArray_s Commands[]                  =
     {"/silent_login", command_silent_login,   0.0f},
     {"/egobind",      command_egobind,        1.0f},
 
+#ifdef USE_CHANNELS
+    {"/channel",      command_channel,        1.0f}, /* channel system */
+    {"/createchannel", command_channel_create, 1.0f}, /* channel system */
+    {"/deletechannel", command_channel_delete, 1.0f}, /* channel system */
+    {"/channelmute",  command_channel_mute,     1.0f}, /* channel system */
+#endif
 #ifdef _TESTSERVER
     {"/stuck",        command_stuck,          0.0},
 #endif

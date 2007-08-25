@@ -152,7 +152,9 @@ int save_player(object *op, int flag)
 #ifdef BACKUP_SAVE_AT_HOME
     sint16  backup_x, backup_y;
 #endif
-    
+#ifdef USE_CHANNELS
+    struct  player_channel *pl_channel;
+#endif
     /* Sanity check - some stuff changes this when player is exiting */
     if (op->type != PLAYER || pl == NULL)
         return 0;
@@ -233,6 +235,16 @@ int save_player(object *op, int flag)
     fprintf(fp, "Str %d\nDex %d\nCon %d\nInt %d\nPow %d\nWis %d\nCha %d\n",
                 pl->orig_stats.Str, pl->orig_stats.Dex, pl->orig_stats.Con, pl->orig_stats.Int,
                 pl->orig_stats.Pow, pl->orig_stats.Wis, pl->orig_stats.Cha);
+
+#ifdef USE_CHANNELS
+    /* save the channel stuff */
+    fprintf(fp, "Channels_On %d\n",pl->channels_on);
+    fprintf(fp, "channels %d\n",pl->channel_count);
+    for (pl_channel=pl->channels;pl_channel;pl_channel=pl_channel->next_channel)
+    {
+        fprintf(fp,"%s %c %d %d\n",pl_channel->channel->name, pl_channel->shortcut, pl_channel->color, pl_channel->mute_counter);
+    }
+#endif
 
     /* save hp table */
     fprintf(fp, "lev_hp %d\n", op->level);
@@ -523,6 +535,9 @@ void check_login(object *op, int mode)
     object     *tmp, *tmp2;
     mapstruct  *old_ap_ptr = NULL;
 
+#ifdef USE_CHANNELS
+    int     with_channels = FALSE;
+#endif
 #ifdef PLUGINS
     CFParm      CFP;
     int         evtid;
@@ -710,6 +725,12 @@ void check_login(object *op, int mode)
     pl->orig_stats.Cha = 0;
     pl->p_ver = PLAYER_FILE_VERSION_DEFAULT;
 
+#ifdef USE_CHANNELS
+    /*channel-system */
+    pl->channels=NULL;
+    pl->channels_on=TRUE;
+#endif
+
     /* Loop through the file, loading the rest of the values */
     /* we have here the classic problem with fgets():
      * fgets() reads in a string and puts the \0 after the 0x0a.
@@ -808,6 +829,10 @@ void check_login(object *op, int mode)
             pl->orig_stats.Wis = value;
         else if (!strcmp(buf, "Cha"))
             pl->orig_stats.Cha = value;
+#ifdef USE_CHANNELS
+        else if (!strcmp(buf, "Channels_On"))
+            pl->channels_on=value;
+#endif
         else if (!strcmp(buf, "usekeys"))
         {
             if (!strcmp(bufall + 8, "key_inventory\n"))
@@ -819,6 +844,21 @@ void check_login(object *op, int mode)
             else
                 LOG(llevDebug, "load_player: got unknown usekeys type: %s\n", bufall + 8);
         }
+#ifdef USE_CHANNELS
+        else if (!strcmp(buf,"channels"))
+        {
+            char channelname[MAX_CHANNEL_NAME+1];
+            char shortcut;
+            unsigned long mute=0;
+            int color=NDI_ORANGE;
+            with_channels=TRUE;
+            for (i=1; i<= value; i++)
+            {
+                fscanf(fp,"%s %c %d %d\n",channelname,&shortcut, &color, &mute);
+                loginAddPlayerToChannel(pl, channelname, shortcut, color, mute);
+            }
+        }
+#endif
         else if (!strcmp(buf, "lev_hp"))
         {
             int j;
@@ -882,7 +922,12 @@ void check_login(object *op, int mode)
         else
             LOG(llevDebug, "Debug: load_player(%s) unknown line in player file: %s\n", query_name(op), bufall);
     } /* End of loop loading the character file */
-
+#ifdef USE_CHANNELS
+    /* channel-system: we check if the playerfile has the channels tag */
+    /* if not, add all the default channels */
+    if (!with_channels)
+        addDefaultChannels(pl);
+#endif
     /* do some sanity checks... if we have no valid start points, all is lost */
     if(!pl->orig_map || !pl->maplevel)
     {
