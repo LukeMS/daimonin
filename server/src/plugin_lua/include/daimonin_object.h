@@ -60,6 +60,9 @@ static int  GameObject_Withdraw(lua_State *L);
 static int  GameObject_Communicate(lua_State *L);
 static int  GameObject_Say(lua_State *L);
 static int  GameObject_SayTo(lua_State *L);
+#ifdef USE_CHANNELS
+static int  GameObject_ChannelMsg(lua_State *L);
+#endif
 static int  GameObject_GetGender(lua_State *L);
 static int  GameObject_SetGender(lua_State *L);
 static int  GameObject_SetRank(lua_State *L);
