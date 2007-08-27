@@ -82,7 +82,11 @@ struct mempool *pool_object, *pool_player, *pool_map_bfs,
     *pool_mob_behaviourset, *pool_mob_behaviour, *pool_mob_behaviourparam,
     *pool_objectlink, *pool_gmasters, *pool_bannode, *pool_tlist_tweak,
     *pool_cmd_buf16,*pool_cmd_buf32,*pool_cmd_buf64,
-    *pool_cmd_buf128,*pool_cmd_buf256,*pool_cmd_buf1024,*pool_cmd_buf4096;
+    *pool_cmd_buf128,*pool_cmd_buf256,*pool_cmd_buf1024,*pool_cmd_buf4096
+#ifdef USE_CHANNELS
+    ,*pool_player_channel
+#endif
+    ;
 
 /* Return the exponent exp needed to round n up to the nearest power of two, so that
  * (1 << exp) >= n and (1 << (exp -1)) < n */
@@ -195,6 +199,9 @@ void init_mempools()
             (chunk_initialisator) initialize_command_buffer1024, NULL, NULL, NULL);
     pool_cmd_buf4096 = create_mempool("command buffer 4096b", 1, sizeof(command_struct), 0,
             (chunk_initialisator) initialize_command_buffer4096, NULL, NULL, NULL);
+#ifdef USE_CHANNELS
+    pool_player_channel = create_mempool("player_channel", 25, sizeof(struct player_channel), 0, NULL, NULL, NULL, NULL);
+#endif
 
     /* Initialize end-of-list pointers and a few other values*/
     removed_objects = &end_marker;
