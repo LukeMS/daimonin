@@ -204,6 +204,18 @@ int command_channel(object *ob, char *params)
                     pl_channel->color=color-1;
             }
         }
+        /* we simply map the !mute-command to the command_channel_mute*/
+        else if(!strncasecmp(params,"mute",strlen("mute")))
+        {
+            char    buf3[256];
+            sprintf(buf3,"%s %s",pl_channel->channel->name,params+5);
+            command_channel_mute(ob, buf3);
+            return 1;
+        }
+        else if (!strncasecmp(params, "mod", strlen("mod")))
+        {
+            modify_channel_params(pl_channel,params+4);
+        }
 
         /* TODO: Administrativ Commands for Channel Admins */
         return 1;
@@ -1210,6 +1222,37 @@ int check_channel_mute(struct player_channel *cpl)
     }
     return TRUE;
 }
+
+void modify_channel_params(struct player_channel *cpl, char *params)
+{
+    int enter_lvl=0;
+    int post_lvl=0;
+
+    if (cpl->pl->gmaster_mode < GMASTER_MODE_VOL)
+        return;
+    if (!params)
+    {
+        new_draw_info_format(NDI_UNIQUE, 0, cpl->pl->ob, "Syntax: -<channel>!mod <postlevel> <enterlevel>");
+        return;
+    }
+
+    sscanf(params, "%d %d", &post_lvl, &enter_lvl);
+
+    if (post_lvl>0)
+        cpl->channel->post_lvl=post_lvl;
+
+    if (enter_lvl>0)
+        cpl->channel->enter_lvl=enter_lvl;
+
+    new_draw_info_format(NDI_UNIQUE, 0, cpl->pl->ob, "Channel: %s - postlvl: %d, enterlvl: %d",cpl->channel->name, cpl->channel->post_lvl,cpl->channel->enter_lvl);
+
+    save_channels();
+
+    return;
+
+}
+
+
 
 #endif
 

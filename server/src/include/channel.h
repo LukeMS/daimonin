@@ -100,6 +100,7 @@ int     command_channel_mute(object *ob, char *params);
 void    channel_dm_stealth(player *pl, int dm_stealth);
 
 int     check_channel_mute(struct player_channel *cpl);
+void    modify_channel_params(struct player_channel *cpl, char *params);
 
 void    lua_channel_message(char *channelname, char *name, char *message, int mode);
 
