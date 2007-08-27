@@ -41,6 +41,7 @@ SRCS = \
 	c_party.c\
 	c_range.c\
 	c_wiz.c\
+	channel.c\
 	commands.c\
 	container.c\
 	disease.c\
