@@ -419,7 +419,7 @@ struct player_channel *final_addChannelToPlayer(player *pl, struct channels *cha
     struct player_channel *node;
     struct player_channel *ptr=NULL, *ptr1=NULL;
 
-    node = (struct player_channel *) malloc(sizeof(struct player_channel));
+    node = (struct player_channel *) get_poolchunk(pool_player_channel);
     node->channel=channel;
     node->pl=pl;
     node->mute_freq=0;
@@ -517,16 +517,16 @@ int channelname_ok(char *cp)
     char *tmp=cp;
 
     if(*cp==' ') /* we start with a whitespace? in this case we don't trim - kick*/
-        return 0;
+        return FALSE;
 
     for(;*cp!='\0';cp++)
     {
         if(!((*cp>='a'&&*cp<='z')||(*cp>='A'&&*cp<='Z')||(*cp>='0'&&*cp<='9'))&&*cp!='.'&&*cp!='_')
-            return 0;
+            return FALSE;
     }
-    if(!strcasecmp(tmp,"on") || !strcasecmp(tmp,"off") || !strcasecmp(tmp,"allow") || !strcasecmp(tmp,"channel"))
-        return 0;
-    return 1;
+    if(!strcasecmp(tmp,"on") || !strcasecmp(tmp,"off") || !strcasecmp(tmp,"allow") || !strcasecmp(tmp,"channel") || !strcasecmp(tmp,"group"))
+        return FALSE;
+    return TRUE;
 }
 /**
  * Here we try to find a matching channel in the players channellist
@@ -627,7 +627,7 @@ void removeChannelFromPlayer(player *pl, struct player_channel *pl_channel)
         pl_channel->channel->pl_count--;
     pl->channel_count--;
 
-    free(pl_channel);
+    return_poolchunk(pl_channel,pool_player_channel);
 
     return;
 }
@@ -894,7 +894,7 @@ void channel_dm_stealth(player *pl, int dm_stealth)
  * @param message message to send
  * @param mode 0=normal, 1=emote
  */
-void    lua_channel_message(char *channelname, char *name, char *message, int mode)
+void lua_channel_message(char *channelname, char *name, char *message, int mode)
 {
     struct channels *channel;
     for (channel=channel_list_start;channel;channel=channel->next)
@@ -951,8 +951,6 @@ void    lua_channel_message(char *channelname, char *name, char *message, int mo
     return;
 
 }
-
-
 
 /* save the defined channels
  */
