@@ -1250,7 +1250,26 @@ void modify_channel_params(struct player_channel *cpl, char *params)
 
 }
 
+void sendVirtualChannelMsg(player *sender, char *channelname, player *target, char* msg)
+{
+    char buf[512];
+    char prefix[30];
+    uint8 color;
 
+    SockList    sl;
+    unsigned char slbuf[HUGE_BUF];
+
+    sl.buf = slbuf;
+    SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_CHANNELMSG);
+    SockList_AddShort(&sl, (NDI_PLAYER | NDI_UNIQUE | NDI_YELLOW | NDI_SHOUT ) & NDI_FLAG_MASK);
+    sprintf(buf,"%s %s:%s",channelname, sender->ob->name, msg);
+    strcpy((char *)sl.buf + sl.len, buf);
+    sl.len += strlen(buf);
+
+    Send_With_Handling(&(target->socket), &sl);
+
+    return;
+}
 
 #endif
 

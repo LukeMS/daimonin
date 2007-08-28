@@ -104,5 +104,7 @@ void    modify_channel_params(struct player_channel *cpl, char *params);
 
 void    lua_channel_message(char *channelname, char *name, char *message, int mode);
 
+void sendVirtualChannelMsg(player *sender, char *channelname, player *target, char* msg);
+
 #endif
 #endif
