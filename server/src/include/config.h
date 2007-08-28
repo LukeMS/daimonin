@@ -50,7 +50,8 @@
 /* Channelsystem: uncomment this line to compile it in */
 /* you HAVE to also enable this in the lua-plugin (plugin_lua.h)!!! */
 //#define USE_CHANNELS
-
+/* when defined, annouces the system at login */
+//#define ANNOUNCE_CHANNELS
 
 /* Location of read-only machine independent data */
 #ifndef DATADIR
