@@ -1179,6 +1179,11 @@ void check_login(object *op, int mode)
     pl->socket.status = Ns_Playing;
 
     new_draw_info(NDI_UNIQUE, 0, op, "Welcome Back!");
+#ifdef USE_CHANNELS
+#ifdef ANNOUNCE_CHANNELS
+    new_draw_info(NDI_UNIQUE | NDI_RED, 0, op, "We are testing out a new channel-system!\nMake sure you have a client with channel-support.\nSee forums on www.daimonin.net!");
+#endif
+#endif
     if (!pl->dm_stealth)
     {
         if (!pl->silent_login) /* Inform all players of the login */
