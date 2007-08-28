@@ -215,10 +215,12 @@ int command_gsay(object *op, char *params)
     /* moved down, cause if whitespace is shouted, then no need to log it */
     LOG(llevInfo,"CLOG GSAY:%s >%s<\n", query_name(op), params);
 
+#ifndef USE_CHANNELS
     strcpy(buf, op->name);
     strcat(buf, " (group): ");
     strncat(buf, params, MAX_BUF - 30);
     buf[MAX_BUF - 30] = '\0';
+#endif
 
 	for(ol = gmaster_list_DM;ol;ol=ol->next)
 	{
@@ -234,7 +236,11 @@ int command_gsay(object *op, char *params)
 
 	for(tmp=CONTR(op)->group_leader;tmp;tmp=CONTR(tmp)->group_next)
 	{
+#ifdef USE_CHANNELS
+            sendVirtualChannelMsg(CONTR(op), "Group",CONTR(tmp),params);
+#else
 			new_draw_info(NDI_GSAY | NDI_PLAYER | NDI_UNIQUE | NDI_YELLOW, 0, tmp, buf);
+#endif
 	}
 
     return 1;
