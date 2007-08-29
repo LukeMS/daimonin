@@ -1,5 +1,5 @@
 Object g_pumpkin
-name evil pumpkin
+name Evil Pumpkin
 race pumpkin
 face great_pumpkin.151
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22

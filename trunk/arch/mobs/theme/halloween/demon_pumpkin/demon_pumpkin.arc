@@ -1,5 +1,5 @@
 Object demon_pumpkin
-name demonic pumpkin
+name Demonic Pumpkin
 face demon_pumpkin.251
 race pumpkin
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22

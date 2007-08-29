@@ -1,5 +1,5 @@
 Object horse_white
-name white horse
+name White Horse
 face horse_white.151
 race horse
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
