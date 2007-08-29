@@ -27,6 +27,11 @@
 
 
 #define MAX_CHANNEL_NAME 12
+#define MAX_CHANNEL_HIST_CHAR 256 /* its enough */
+#define MAX_CHANNEL_HIST_LINES 50
+#define CHANNEL_HIST
+
+
 /**
  * Channel-Player doubled-links list.
  * For each player on a channel we have such a node.
@@ -62,8 +67,13 @@ typedef struct channels
     char                     shortcut;                  /* default shortcut, at entering will be copyed to pl_channel_list struct */
     int                      color;                     /* default color */
     int                      pl_count;                  /* player count */
-    sint8                     post_lvl;                  /* lvl required to send message */
-    sint8                     enter_lvl;                 /* lvl required to enter (-1 >=VOL only) */
+    sint8                    post_lvl;                  /* lvl required to send message */
+    sint8                    enter_lvl;                /* lvl required to enter (-1 >=VOL only) */
+#ifdef CHANNEL_HIST
+    char                     history[MAX_CHANNEL_HIST_LINES][MAX_CHANNEL_HIST_CHAR];
+    uint8                    lines;
+    uint8                    startline;
+#endif
 } _channels;
 
 struct channels         *findGlobalChannelFromName(player *pl, char *name, int mute);
@@ -90,6 +100,12 @@ void    removeChannelFromPlayer(player *pl, struct player_channel *pl_channel);
 
 void    sendChannelMessage(player *pl,struct player_channel *pl_channel, char *params);
 void    sendChannelEmote(player *pl,struct player_channel *pl_channel, char *params);
+#ifdef CHANNEL_HIST
+void    addChannelHist(struct channels *channel, const char *name, char *msg, int mode);
+void    sendChannelHist(struct player_channel *cpl, int lines);
+#endif
+
+
 
 int     command_channel(object *ob, char *params);
 int     command_channel_create(object *ob, char *params);
@@ -103,6 +119,7 @@ int     check_channel_mute(struct player_channel *cpl);
 void    modify_channel_params(struct player_channel *cpl, char *params);
 
 void    lua_channel_message(char *channelname, char *name, char *message, int mode);
+
 
 void sendVirtualChannelMsg(player *sender, char *channelname, player *target, char* msg);
 

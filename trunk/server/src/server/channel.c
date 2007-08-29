@@ -181,7 +181,15 @@ int command_channel(object *ob, char *params)
     }
     else if (mode=='*')
     {
-        /* TODO: Channelhistory */
+#ifdef CHANNEL_HIST
+        int lines=0;
+
+        lines=atoi(params);
+        if (lines==0)
+            lines=10; /*max 10 lines if he is not specific */
+
+        sendChannelHist(pl_channel,lines);
+#endif
         return 1;
     }
     else if (mode=='!')
@@ -507,7 +515,7 @@ struct player_channel *final_addChannelToPlayer(player *pl, struct channels *cha
 void printChannelUsage(object *ob)
 {
     new_draw_info_format(NDI_UNIQUE, 0, ob, "Usage:\n       -<channel>[ ][:]<Text>");
-    new_draw_info_format(NDI_UNIQUE, 0, ob, "       -<channel>[+-?%]");
+    new_draw_info_format(NDI_UNIQUE, 0, ob, "       -<channel>[+-?*%]");
     new_draw_info_format(NDI_UNIQUE, 0, ob, "       -[+-?]");
     return;
 }
@@ -651,6 +659,9 @@ void sendChannelMessage(player *pl,struct player_channel *pl_channel, char *para
     LOG(llevInfo, "CLOG CH:%s:%s >%s<\n", pl_channel->channel->name, pl->ob->name, params);
 
     /* TODO: channel history */
+#ifdef CHANNEL_HIST
+    addChannelHist(pl_channel->channel, pl->ob->name, params, 0);
+#endif
 
     sl.buf = slbuf;
     SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_CHANNELMSG);
@@ -690,6 +701,10 @@ void sendChannelEmote(player *pl,struct player_channel *pl_channel, char *params
 
     /* TODO: channel history */
     LOG(llevInfo, "CLOG CH:%s:%s >%s<\n", pl_channel->channel->name, pl->ob->name, params);
+
+#ifdef CHANNEL_HIST
+    addChannelHist(pl_channel->channel, pl->ob->name, params, 1);
+#endif
 
     sl.buf = slbuf;
     SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_CHANNELMSG);
@@ -814,6 +829,11 @@ struct channels *final_addChannel(char *name, char shortcut, int color, sint8 po
     node->name[MAX_CHANNEL_NAME]=0; /* sanity string ending */
     node->shortcut=shortcut;
     node->players=NULL;
+#ifdef CHANNEL_HIST
+    memset(node->history, 0, sizeof(node->history));
+    node->lines=0;
+    node->startline=0;
+#endif
     if (color>-1)
         node->color=color;
     else
@@ -914,6 +934,10 @@ void lua_channel_message(char *channelname, char *name, char *message, int mode)
             LOG(llevInfo, "CLOG LUA-CH:%s:%s >%s<\n", channel->name, name, message);
 
             /* TODO: channel history */
+#ifdef CHANNEL_HIST
+            addChannelHist(channel, name, message, mode);
+#endif
+
 
             sl.buf = slbuf;
             SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_CHANNELMSG);
@@ -1270,6 +1294,84 @@ void sendVirtualChannelMsg(player *sender, char *channelname, player *target, ch
 
     return;
 }
+
+#ifdef CHANNEL_HIST
+void sendChannelHist(struct player_channel *cpl, int lines)
+{
+    int i, line;
+
+    SockList    sl;
+    unsigned char slbuf[HUGE_BUF];
+
+    i=1;
+    line=cpl->channel->startline;
+    if (lines>cpl->channel->lines)
+        lines=cpl->channel->lines;
+
+    while(i<=lines)
+    {
+        sl.buf = slbuf;
+        SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_CHANNELMSG);
+        if (cpl->channel->history[line][0]=='1')
+        {
+            SockList_AddShort(&sl, (NDI_PLAYER | NDI_UNIQUE | NDI_ORANGE | NDI_SHOUT | NDI_EMOTE) & NDI_FLAG_MASK);
+        }
+        else
+        {
+            SockList_AddShort(&sl, (NDI_PLAYER | NDI_UNIQUE | NDI_ORANGE | NDI_SHOUT ) & NDI_FLAG_MASK);
+        }
+
+        sl.buf[2]=(uint8)cpl->color;
+        strcpy((char *)sl.buf + sl.len, cpl->channel->history[line]+1);
+        sl.len += strlen(cpl->channel->history[line]+1);
+
+        Send_With_Handling(&(cpl->pl->socket), &sl);
+
+        line++;
+        if (line==MAX_CHANNEL_HIST_LINES)
+            line=0;
+        i++;
+
+    }
+    return;
+}
+
+void addChannelHist(struct channels *channel, const char* name, char *msg, int mode)
+{
+    char *line=NULL;
+    char  buf[512];
+    char  timestr[64];
+    time_t  zeit;
+
+    if (channel->lines==MAX_CHANNEL_HIST_LINES)
+    {
+        line=channel->history[channel->startline];
+        channel->startline++;
+        if (channel->startline==MAX_CHANNEL_HIST_LINES)
+            channel->startline=0;
+    }
+    else
+    {
+        line=channel->history[channel->lines];
+        channel->lines++;
+    }
+    if (line)
+    {
+        int i;
+
+        time(&zeit);
+        strftime(timestr,64,"[%H:%M]",gmtime(&zeit));
+        sprintf(buf,"%d%s %s:%s %s",mode, channel->name, name, msg, timestr);
+        strncpy(line,buf,MAX_CHANNEL_HIST_CHAR);
+        line[MAX_CHANNEL_HIST_CHAR-1]='\0';
+
+    }
+
+    return;
+}
+#endif
+
+
 
 #endif
 
