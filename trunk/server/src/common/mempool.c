@@ -200,7 +200,7 @@ void init_mempools()
     pool_cmd_buf4096 = create_mempool("command buffer 4096b", 1, sizeof(command_struct), 0,
             (chunk_initialisator) initialize_command_buffer4096, NULL, NULL, NULL);
 #ifdef USE_CHANNELS
-    pool_player_channel = create_mempool("player_channel", 25, sizeof(struct player_channel), 0, NULL, NULL, NULL, NULL);
+    pool_player_channel = create_mempool("player_channel", 75, sizeof(struct player_channel), 0, NULL, NULL, NULL, NULL);
 #endif
 
     /* Initialize end-of-list pointers and a few other values*/
