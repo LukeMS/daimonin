@@ -1839,6 +1839,7 @@ void show_meta_server(_server *node, int metaserver_start, int metaserver_sel)
     SDL_Rect    rec_desc;
     SDL_Rect    box;
     int         mx, my, mb;
+    Boolean     mainserverdown=TRUE;
 
     mb = SDL_GetMouseState(&mx, &my);
     /* background */
@@ -1910,6 +1911,8 @@ void show_meta_server(_server *node, int metaserver_start, int metaserver_sel)
             SDL_FillRect(ScreenSurface, &box, sdl_blue1);
         }
         StringBlt(ScreenSurface, &SystemFont, node->nameip, x + 137, y + 94 + i * 12, COLOR_WHITE, &rec_name, NULL);
+        if (!strcmp(node->nameip,"daimonin.game-server.cc"))
+            mainserverdown=FALSE;
         if (node->player >= 0)
             sprintf(buf, "%d", node->player);
         else
@@ -1917,4 +1920,9 @@ void show_meta_server(_server *node, int metaserver_start, int metaserver_sel)
         StringBlt(ScreenSurface, &SystemFont, buf, x + 416, y + 94 + i * 12, COLOR_WHITE, NULL, NULL);
         node = node->next;
     }
+    if (mainserverdown && (i>0))
+    {
+        StringBlt(ScreenSurface, &SystemFont, "Main Server is momentary down!", x + 137, y + 94 + ((i+1) * 12), COLOR_RED, &rec_name, NULL);
+    }
+
 }
