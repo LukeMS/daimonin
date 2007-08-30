@@ -855,6 +855,7 @@ x 6
 y 8
 end
 arch small_stones
+layer 4
 x 6
 y 8
 end
