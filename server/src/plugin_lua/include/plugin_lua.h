@@ -40,7 +40,7 @@
 
 /* uncomment this to enable channels support in lua plugin */
 /* you NEED to have channels enabled in the server!        */
-//#define USE_CHANNELS
+#define USE_CHANNELS
 
 
 /* First the required header files - only the module interface and lua */
