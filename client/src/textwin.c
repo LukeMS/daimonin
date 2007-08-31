@@ -189,7 +189,7 @@ void draw_info(char *str, int flags)
     static int  key_start   = 0;
     static int  key_count   = 0;
     int         i, len, a, color, mode;
-    int         winlen      = 239;
+    int         winlen      = 244;
     char        buf[4096];
     char       *text;
     int         actWin, z;

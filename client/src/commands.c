@@ -2008,7 +2008,7 @@ void break_string(char *text, char *prefix, Boolean one_prefix, char *result)
     char buf[200];
     char pref[50];
     int  i, a, len;
-    int winlen=234;
+    int winlen=244;
     int preflen, restlen;
 
     /*
@@ -2023,7 +2023,7 @@ void break_string(char *text, char *prefix, Boolean one_prefix, char *result)
     preflen=0;
     buf[0]=0;
     for (i=0;prefix[i]!=0;i++)
-        preflen += SystemFont.c[(int) (prefix[i])].w + SystemFont.char_offset;
+        preflen += SystemFont.c[(uint8) (prefix[i])].w + SystemFont.char_offset;
 //        preflen += charwides[(int) (prefix[i])] + charspacing;
 
     restlen=winlen-preflen;
@@ -2041,7 +2041,7 @@ void break_string(char *text, char *prefix, Boolean one_prefix, char *result)
     len = 0;
     for (a = i = 0; ; i++)
     {
-        len += SystemFont.c[(int) (text[i])].w + SystemFont.char_offset;
+        len += SystemFont.c[(uint8) (text[i])].w + SystemFont.char_offset;
 //        len += charwides[(int) (text[i])] + charspacing;
         if (len >= restlen || text[i] == 0x0a || text[i] == 0)
         {
