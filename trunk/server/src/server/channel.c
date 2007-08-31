@@ -185,7 +185,7 @@ int command_channel(object *ob, char *params)
         int lines=0;
 
         lines=atoi(params);
-        if (lines==0)
+        if (lines<=0)
             lines=10; /*max 10 lines if he is not specific */
 
         sendChannelHist(pl_channel,lines);
@@ -515,7 +515,7 @@ struct player_channel *final_addChannelToPlayer(player *pl, struct channels *cha
 void printChannelUsage(object *ob)
 {
     new_draw_info_format(NDI_UNIQUE, 0, ob, "Usage:\n       -<channel>[ ][:]<Text>");
-    new_draw_info_format(NDI_UNIQUE, 0, ob, "       -<channel>[+-?*%]");
+    new_draw_info_format(NDI_UNIQUE, 0, ob, "       -<channel>[+-?!*%]");
     new_draw_info_format(NDI_UNIQUE, 0, ob, "       -[+-?]");
     return;
 }
@@ -1304,9 +1304,13 @@ void sendChannelHist(struct player_channel *cpl, int lines)
     unsigned char slbuf[HUGE_BUF];
 
     i=1;
-    line=cpl->channel->startline;
     if (lines>cpl->channel->lines)
         lines=cpl->channel->lines;
+
+    line=cpl->channel->startline+(cpl->channel->lines-lines);
+
+    if (line>=MAX_CHANNEL_HIST_LINES)
+        line=line-MAX_CHANNEL_HIST_LINES;
 
     while(i<=lines)
     {
