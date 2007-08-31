@@ -248,3 +248,37 @@ int isqrt(int n)
     }
     return result;
 }
+
+/* We HAVE to replace the smileys codes with the char-value of the smiley,
+ * before ANY stringbreaking, stringwidth-calcs or drawings are done!
+ */
+
+void smiley_convert(char *msg)
+{
+    unsigned char   actChar;
+    int             i;
+
+    for (i = 0; msg[i] != 0; i++)
+    {
+        if (msg[i] == (unsigned char)':')
+        {
+            actChar = 0;
+            if (msg[i+1] == ')') actChar = 128;      /* we replace it with the 'ASCII'-code of the smiley in systemfont */
+            else if (msg[i+1] == '(') actChar = 129;
+            else if (msg[i+1] == 'D') actChar = 130;
+            else if (msg[i+1] == '|') actChar = 131;
+            else if (msg[i+1] == 'o') actChar = 132;
+            else if (msg[i+1] == 'p') actChar = 133;
+
+            if (actChar!=0)
+            {
+                msg[i]=actChar;
+                memmove(&msg[i+1],&msg[i+2],strlen(&msg[i+2])+1);
+            }
+        }
+    }
+
+}
+
+
+

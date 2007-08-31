@@ -459,27 +459,6 @@ void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col
             continue;
         }
 
-        /* Alderan: i disable this here, converting HERE to smileys will cause problems
-         * now we only show smileys in the chatboxes, even not in the commandline
-         */
-
-//        /* lets look for smilies in the text. */
-//        if (font == &SystemFont && actChar == (unsigned char)':' && options.smileys) // Only SystemFont has smileys defined
-//        {
-//            /* We don't need this line (correct me please if im wrong
-//             * This line 'swallows' all colons at the end of a line
-//             */
-//            /* if (text[i+1] == '\0') break; */
-//
-//            if (text[i+1] == ')') actChar = 128;
-//            else if (text[i+1] == '(') actChar = 129;
-//            else if (text[i+1] == 'D') actChar = 130;
-//            else if (text[i+1] == '|') actChar = 131;
-//            else if (text[i+1] == 'o') actChar = 132;
-//            else if (text[i+1] == 'p') actChar = 133;
-//            if (actChar > 127) ++i;
-//        }
-
         tmp = font->c[actChar].w + font->char_offset;
 
         /* if set, we have a clipping line */
