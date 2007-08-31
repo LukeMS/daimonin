@@ -12,7 +12,7 @@ ib:SetHeader(me, me.name .. " the Banker")
 function getBalance(who)
     local pinfo = who:GetPlayerInfo(pinfo_tag)
     if pinfo == nil or pinfo.value == 0 then
-        return pl.name .. ", you have no money stored\n\n", 0
+        return pl.name .. ", you have no money in your account.\n\n", 0
     else
         return pl.name .. ",  your balance is " .. pl:ShowCost(pinfo.value) .. ".\n\n", pinfo.value
     end
@@ -46,7 +46,7 @@ function topicDepositDialog()
 [[
 Enter the amount of money you want to deposit.
 For example you can enter ~deposit 4 gold, 2 silver, 1 copper~
-or simply ~deposit all~ to deposit all you money.
+or simply ~deposit all~ to deposit all your money.
 ]])
         ib:AddLink("deposit all", "deposit all")
         ib:SetTextfield("deposit ")
@@ -89,7 +89,7 @@ function topicWithdrawDialog()
 [[
 Enter the amount of money you want to withdraw.
 For example you can enter ~withdraw 4 silver, 2 gold~ or 
-simply ~withdraw all~ to withdraw all you money.
+simply ~withdraw all~ to withdraw all your money.
 ]])
         ib:AddLink("withdraw all", "withdraw all")
         ib:SetTextfield("withdraw ")
@@ -105,7 +105,7 @@ function topicWithdraw(what)
     ib:SetTitle( "Withdraw - New Balance" )
     local pinfo = pl:GetPlayerInfo(pinfo_tag)
     if pinfo == nil then
-        ib:SetMsg(pl.name .. ", you have no money stored.")
+        ib:SetMsg(pl.name .. ", you have no money in your account.")
         ib:SetButton("Back", "hi")
     else
         local wdraw = pl:Withdraw(pinfo, what)
