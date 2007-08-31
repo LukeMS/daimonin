@@ -70,19 +70,19 @@ int command_channel(object *ob, char *params)
 
     if (channelnamelen==0)              /* Handle the global functions */
     {
-        if (mode=='-') /* temp-on-off without leaving */
+        if ((mode=='-') && (params[0]==0)) /* temp-on-off without leaving */
         {
             CONTR(ob)->channels_on=FALSE;
             new_draw_info_format(NDI_UNIQUE, 0, ob, "You have all Channels temporally disabled");
             return 1;
         }
-        if (mode=='+') /* temp-on-off without leaving */
+        if ((mode=='+') && (params[0]==0)) /* temp-on-off without leaving */
         {
             CONTR(ob)->channels_on=TRUE;
             new_draw_info_format(NDI_UNIQUE, 0, ob, "You listen to all your channels again.");
             return 1;
         }
-        if (mode=='?') /* List all channels */
+        if ((mode=='?') && (params[0]==0)) /* List all channels */
         {
             /* atm its only a quick listing, TODO: maybe descriptions for channels? */
 
@@ -186,7 +186,9 @@ int command_channel(object *ob, char *params)
 
         lines=atoi(params);
         if (lines<=0)
-            lines=10; /*max 10 lines if he is not specific */
+            lines=5; /*max 5 lines if he is not specific */
+        if ((lines>10) && (CONTR(ob)->gmaster_mode < GMASTER_MODE_VOL))
+            lines=10; /*players have 10 lines limit */
 
         sendChannelHist(pl_channel,lines);
 #endif
@@ -224,6 +226,10 @@ int command_channel(object *ob, char *params)
         {
             modify_channel_params(pl_channel,params+4);
         }
+        else if (!strncasecmp(params, "add", strlen("add")))
+            forceAddPlayerToChannel(pl_channel, params+4);
+        else if (!strncasecmp(params, "kick", strlen("kick")))
+            kickPlayerFromChannel(pl_channel, params+5);
 
         /* TODO: Administrativ Commands for Channel Admins */
         return 1;
@@ -658,7 +664,6 @@ void sendChannelMessage(player *pl,struct player_channel *pl_channel, char *para
 
     LOG(llevInfo, "CLOG CH:%s:%s >%s<\n", pl_channel->channel->name, pl->ob->name, params);
 
-    /* TODO: channel history */
 #ifdef CHANNEL_HIST
     addChannelHist(pl_channel->channel, pl->ob->name, params, 0);
 #endif
@@ -699,7 +704,6 @@ void sendChannelEmote(player *pl,struct player_channel *pl_channel, char *params
     SockList    sl;
     unsigned char slbuf[HUGE_BUF];
 
-    /* TODO: channel history */
     LOG(llevInfo, "CLOG CH:%s:%s >%s<\n", pl_channel->channel->name, pl->ob->name, params);
 
 #ifdef CHANNEL_HIST
@@ -1064,6 +1068,59 @@ int command_channel_create(object *ob, char *params)
 
 }
 
+void forceAddPlayerToChannel(struct player_channel *cpl, char *params)
+{
+    player *pl=NULL;
+
+    if (cpl->pl->gmaster_mode < GMASTER_MODE_DM)
+        return;
+    if (!params)
+    {
+        new_draw_info_format(NDI_UNIQUE, 0, cpl->pl->ob, "Syntax: -<channel>!add <player>");
+        return;
+    }
+    if (!(pl=find_player(params)))
+    {
+        new_draw_info_format(NDI_UNIQUE, 0, cpl->pl->ob, "Player %s not found.",params);
+        return;
+    }
+    final_addChannelToPlayer(pl, cpl->channel, 0, -1);
+    new_draw_info_format(NDI_UNIQUE, 0, cpl->pl->ob, "You added player %s to channel %s.",pl->ob->name, cpl->channel->name);
+    new_draw_info_format(NDI_UNIQUE, 0, pl->ob, "You were added to channel %s by %s.",cpl->channel->name, cpl->pl->ob->name);
+    LOG(llevInfo, "CLOG Pl >%s< added pl %s to channel %s\n", cpl->pl->ob->name, pl->ob->name, cpl->channel->name);
+
+    return;
+
+}
+void kickPlayerFromChannel(struct player_channel *cpl, char *params)
+{
+    player *pl=NULL;
+    struct player_channel *kick;
+
+    if (cpl->pl->gmaster_mode < GMASTER_MODE_VOL)
+        return;
+    if (!params)
+    {
+        new_draw_info_format(NDI_UNIQUE, 0, cpl->pl->ob, "Syntax: -<channel>!kick <player>");
+        return;
+    }
+    if (!(pl=find_player(params)))
+    {
+        new_draw_info_format(NDI_UNIQUE, 0, cpl->pl->ob, "Player %s not found.",params);
+        return;
+    }
+
+    kick=findPlayerChannelFromName(pl, cpl->pl, cpl->channel->name, TRUE);
+    removeChannelFromPlayer(pl, kick);
+    new_draw_info_format(NDI_UNIQUE, 0, cpl->pl->ob, "You kicked player %s from channel %s.",pl->ob->name, cpl->channel->name);
+    new_draw_info_format(NDI_UNIQUE, 0, pl->ob, "You were kicked from channel %s by %s.",cpl->channel->name, cpl->pl->ob->name);
+    LOG(llevInfo, "CLOG Pl >%s< kicked pl %s from channel %s\n", cpl->pl->ob->name, pl->ob->name, cpl->channel->name);
+
+    return;
+
+}
+
+
 int command_channel_mute(object *ob, char *params)
 {
     struct channels *channel=NULL;
@@ -1337,6 +1394,7 @@ void sendChannelHist(struct player_channel *cpl, int lines)
         i++;
 
     }
+    LOG(llevInfo, "CLOG Pl >%s< called chan-hist from %s and got %d msg\n", cpl->pl->ob->name, cpl->channel->name, (i-1));
     return;
 }
 
