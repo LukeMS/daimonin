@@ -194,7 +194,6 @@ void draw_info(char *str, int flags)
     char       *text;
     int         actWin, z;
     char       *tag;
-    unsigned char    actChar;
 
     /* Create a modifiable version of str */
     char *buf2 = malloc(strlen(str)+1);
@@ -212,28 +211,9 @@ void draw_info(char *str, int flags)
      */
     for (i = 0; buf2[i] != 0; i++)
     {
-        if (buf2[i] < 32 && buf2[i] != 0x0a && buf2[i] != '§')
-            buf2[i] = 32;
-
-        /* lets look for smilies in the text.
-         * Alderan: We HAVE to do it here, since here is the stringbreaking!
-         * Also we only allow smileys in Chatboxes, and in no other place...
-         */
-        if (buf2[i] == (unsigned char)':' && options.smileys)
+        if ((unsigned char)buf2[i] < 32 && buf2[i] != 0x0a && buf2[i] != '§')
         {
-            actChar = 0;
-            if (buf2[i+1] == ')') actChar = 128;
-            else if (buf2[i+1] == '(') actChar = 129;
-            else if (buf2[i+1] == 'D') actChar = 130;
-            else if (buf2[i+1] == '|') actChar = 131;
-            else if (buf2[i+1] == 'o') actChar = 132;
-            else if (buf2[i+1] == 'p') actChar = 133;
-
-            if (actChar!=0)
-            {
-                buf2[i]=actChar;
-                memmove(&buf2[i+1],&buf2[i+2],strlen(&buf2[i+2])+1);
-            }
+            buf2[i] = 32;
         }
     }
 
@@ -349,7 +329,6 @@ void draw_info(char *str, int flags)
         if (buf2[i] != 0x0a)
             buf[a++] = buf2[i];
     }
-
     free(buf2);
 }
 

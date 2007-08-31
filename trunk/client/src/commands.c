@@ -453,6 +453,8 @@ void DrawInfoCmd2(char *data, int len)
         if (flags & NDI_EMOTE)
             flags &= ~NDI_PLAYER;
     }
+    if (options.smileys)
+        smiley_convert(buf);
     draw_info(buf, flags);
 }
 
@@ -1961,6 +1963,7 @@ void ChannelMsgCmd(unsigned char *data, int len)
     flags=data[0]<<8;
     flags|=data[1];
     data+=2;
+
     if (strlen(data)==0)
     {
         LOG(LOG_ERROR,"ChannelMsgCmd: Got no data!\n");
@@ -2011,6 +2014,11 @@ void break_string(char *text, char *prefix, Boolean one_prefix, char *result)
     /*
      * TODO: some security checks for max string len's
      */
+
+    /* we have to convert to smileys for correct string width calculation */
+    if (options.smileys)
+        smiley_convert(text);
+
     /* lets calculate the space used by the prefix */
     preflen=0;
     buf[0]=0;
