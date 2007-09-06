@@ -1,6 +1,6 @@
 Object corpse_insect
 name decaying insect corpse
-race ant
+race insect
 layer 3
 face corpse_insect.101
 type 122
