@@ -1208,7 +1208,7 @@ int command_mute(object *op, char *params)
 
     if(!seconds) /* unmute player */
     {
-        new_draw_info_format(NDI_UNIQUE, 0, op, "mute command: umuting player %s!", name);
+        new_draw_info_format(NDI_UNIQUE, 0, op, "mute command: unmuting player %s!", name);
         pl->mute_counter = 0;
     }
     else
@@ -1401,7 +1401,7 @@ int command_gm(object *op, char *params)
 
 
 
-/* Actual command to perhaps become dm.  Changed aroun a bit in version 0.92.2
+/* Actual command to perhaps become dm.  Changed around a bit in version 0.92.2
  * - allow people on sockets to become dm, and allow better dm file
  */
 int command_dm(object *op, char *params)
