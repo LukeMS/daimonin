@@ -116,6 +116,7 @@ void TileChunk::createWater()
     mMeshWater->load();
     mEntityWater = TileManager::getSingleton().getSceneManager()->createEntity("Entity_Water", "Mesh_Water");
     mEntityWater->setQueryFlags(ObjectManager::QUERY_TILES_WATER_MASK);
+    mEntityWater->setRenderQueueGroup(RENDER_QUEUE_8);
 }
 
 //================================================================================================
@@ -343,6 +344,7 @@ void TileChunk::createLand(int tileTextureSize)
     mMeshLand->load();
     mEntityLand = TileManager::getSingleton().getSceneManager()->createEntity("Entity_Land", "Mesh_Land");
     mEntityLand->setQueryFlags(ObjectManager::QUERY_TILES_LAND_MASK);
+    mEntityLand->setRenderQueueGroup(RENDER_QUEUE_1);
 }
 
 //================================================================================================

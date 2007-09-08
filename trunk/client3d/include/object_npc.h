@@ -160,7 +160,8 @@ private:
     int mType;
     int mAttack;
     int mDefend;
-    int mMaxHP,    mActHP;
+    int mMaxHP, mActHP;
+    Ogre::Real mDrawnHP;
     int mMaxMana,  mActMana;
     int mMaxGrace, mActGrace;
     int mOffX, mOffZ;

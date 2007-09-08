@@ -37,17 +37,38 @@ material NPC_Visuals
     {
          lighting off
          scene_blend alpha_blend
-	 alpha_rejection greater_equal 128
+         alpha_rejection greater_equal 128
          depth_check off
-	 depth_write on
+         depth_write on
          texture_unit
          {
-	    filtering none
-
+             filtering none
          }
     }
   }
 }
+
+material Material_blob_shadow
+{
+  technique
+  {
+    pass
+    {
+         //lighting off
+         scene_blend alpha_blend
+         //alpha_rejection greater_equal 128
+         depth_check off
+         depth_write off
+
+         //scene_blend modulate
+         texture_unit
+         {
+             texture shadow_blob.png
+         }
+    }
+  }
+}
+
 
 // This is used for highlighting the object below mousepointer
 material Object_Highlight
@@ -60,13 +81,12 @@ material Object_Highlight
       texture_unit
       {
       }
-      
-      texture_unit 
-			{
-                texture shadows.png
+
+      texture_unit
+      {
+//                texture shadows.png
                 scroll_anim 0.0 -1.0
-              
-            }
+      }
     }
   }
 }

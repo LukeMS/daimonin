@@ -73,6 +73,7 @@ public:
         QUERY_CONTAINER       =1 << 5,  /**< Stuff that can be opened (chest, sack,... **/
         QUERY_EQUIPMENT_MASK  =1 << 6,  /**< Stuff that can be equipped (clothes, weapons,... **/
         QUERY_NPC_SELECT_MASK =1 << 7,
+        QUERY_CAMERA_MASK     =1 << 8,
     };
     // Attached objects
     enum

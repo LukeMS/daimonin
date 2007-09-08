@@ -113,13 +113,13 @@ GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOn
                 itemImage.load(itemFilename[i], "General");
                 if (itemImage.getHeight() != ITEM_SIZE || itemImage.getWidth() != ITEM_SIZE)
                 {
-                    Logger::log().warning() << "You tried to use and item with unsupported image size. Only Items of "
+                    Logger::log().warning() << "You tried to use an item with unsupported image size. Only Items of "
                     << ITEM_SIZE << " * " << ITEM_SIZE << " pixel are allowed "<< "[" << itemFilename[i] << "].";
                     break;
                 }
                 if (itemImage.getFormat() != PF_A8R8G8B8)
                 {
-                    Logger::log().warning() << "You tried to use and item with unsupported format ("<< itemImage.getFormat() <<")."
+                    Logger::log().warning() << "You tried to use an item with unsupported format ("<< itemImage.getFormat() <<")."
                     << " Only 32bit [ARGB] png format is allowed "<< "[" << itemFilename[i] << "].";
                     break;
                 }

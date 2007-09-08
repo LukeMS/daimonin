@@ -50,7 +50,7 @@ public:
     /** Returns the distance between 2 subtile positions. **/
     int calcTileDistance(const TilePos &pos1, const TilePos &pos2);
     /** Get the tile below the mouse cursor. **/
-    void pickTile(float mMouseX, float mMouseY);
+    const TilePos pickTile(float mMouseX, float mMouseY);
 
 private:
     // ////////////////////////////////////////////////////////////////////

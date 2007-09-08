@@ -150,22 +150,10 @@ void ObjectVisuals::buildEntity(int index, const char *meshName, const char *ent
 
     mob->begin(MATERIAL_NAME);
 
-    mob->position(-w, h, 0.0);
-    mob->normal(0,0,1);
-    mob->textureCoord(0.0, 0.0);
-
-    mob->position(-w, -h, 0.0);
-    mob->normal(0,0,1);
-    mob->textureCoord(0.0, 1.0);
-
-    mob->position( w,  h, 0.0);
-    mob->normal(0,0,1);
-    mob->textureCoord(1.0, 0.0);
-
-    mob->position( w, -h, 0.0);
-    mob->normal(0,0,1);
-    mob->textureCoord(1.0, 1.0);
-
+    mob->position(-w, h, 0.0); mob->normal(0,0,1); mob->textureCoord(0.0, 0.0);
+    mob->position(-w, -h, 0.0); mob->normal(0,0,1); mob->textureCoord(0.0, 1.0);
+    mob->position( w,  h, 0.0); mob->normal(0,0,1); mob->textureCoord(1.0, 0.0);
+    mob->position( w, -h, 0.0); mob->normal(0,0,1); mob->textureCoord(1.0, 1.0);
     mob->triangle(0, 1, 2);
     mob->triangle(3, 2, 1);
     mob->end();
@@ -193,24 +181,24 @@ void ObjectVisuals::setLifebar(Real percent, int barWidth)
     if (barWidth > TEXTURE_SIZE) barWidth = TEXTURE_SIZE;
     uint32 color, dColor;
     if (percent > 0.5)
-    {   // (green bar)
+    {   // green bar.
         color = 0xff005f00;
         dColor= 0x00001600;
     }
     else if (percent > 0.3)
-    {   // (yellow bar)
+    {   // yellow bar.
         color = 0xff5f5f00;
         dColor= 0x00161600;
     }
     else
-    {   // (red bar)
+    {   // red bar.
         color = 0xff5f0000;
         dColor= 0x00160000;
     }
 
     int x1 = (TEXTURE_SIZE - barWidth)/2;
     int xfill =  (int)(percent * barWidth);
-    PixelBox pb = mHardwarePB->lock (Box(x1, TEXTURE_SIZE-12, x1 + barWidth, TEXTURE_SIZE-1), HardwareBuffer::HBL_DISCARD);
+    PixelBox pb = mHardwarePB->lock (Box(x1, TEXTURE_SIZE-12, x1 + barWidth-1, TEXTURE_SIZE-1), HardwareBuffer::HBL_DISCARD);
     uint32 * dest_data = (uint32*)pb.data;
     for (int x = 0; x < barWidth; ++x) dest_data[x] = 0xff000000;
     dest_data+= TEXTURE_SIZE;
@@ -221,6 +209,7 @@ void ObjectVisuals::setLifebar(Real percent, int barWidth)
             dest_data[x] = (x > xfill)?0xff000000:color;
         }
         color+= (y < 4)?dColor:dColor*-1;
+        //color = 0xff005f00;
         dest_data+= TEXTURE_SIZE;
     }
     for (int x = 0; x < barWidth; ++x) dest_data[x] = 0xff000000;
@@ -302,7 +291,7 @@ void ObjectVisuals::select(ObjectStatic *obj, bool showLifebar, bool showInterac
     const AxisAlignedBox &AABB = obj->getEntity()->getBoundingBox();
     float sizeX = (AABB.getMaximum().x -AABB.getMinimum().x) * 2.0;
     float sizeZ = (AABB.getMaximum().z -AABB.getMinimum().z) * 2.0;
-    if (sizeZ > sizeX) sizeX = sizeZ;
+    if (sizeX < sizeZ) sizeX = sizeZ;
     ParticleManager::getSingleton().setEmitterSize(mPSystem, sizeX, sizeX, true);
 }
 

@@ -43,6 +43,7 @@ const int   TURN_SPEED   = 400;
 const Real  WALK_PRECISON= 1.0f;
 const float BIG_LAGGING  = 0.04f;
 const float TIME_BEFORE_CORPSE_VANISHES = 2.0f;
+const Real  STATUS_BAR_FILLTIME = 1.2;  // Time to draw the statusbar from 0 to 100%.
 
 //================================================================================================
 // Init all static Elemnts.
@@ -78,6 +79,7 @@ ObjectNPC::ObjectNPC(sObject &obj, bool spawn):ObjectStatic(obj)
     mDefend  = obj.defend;
     mMaxHP   = obj.maxHP;
     mActHP   = obj.maxHP;
+    mDrawnHP = obj.maxHP;
     mMaxMana = obj.maxMana;
     mActMana = obj.maxMana;
     mMaxGrace=obj.maxGrace;
@@ -110,13 +112,34 @@ ObjectNPC::ObjectNPC(sObject &obj, bool spawn):ObjectStatic(obj)
         cNode->attachObject(Events::getSingleton().getCamera());
         cNode->setInheritOrientation(false); // Camera needs no turning.
     }
+    // ////////////////////////////////////////////////////////////////////
+    // Attach the blob shadow to the npc.
+    // ////////////////////////////////////////////////////////////////////
+    ManualObject* blob = static_cast<ManualObject*>(Events::getSingleton().GetSceneManager()->createMovableObject("Mob_"+ StringConverter::toString(mIndex, 10, '0'), ManualObjectFactory::FACTORY_TYPE_NAME));
+    blob->begin("Material_blob_shadow");
+    const AxisAlignedBox &AABB = mEntity->getBoundingBox();
+    float sizeX = (AABB.getMaximum().x -AABB.getMinimum().x);
+    float sizeY = 0.5;
+    float sizeZ = (AABB.getMaximum().z -AABB.getMinimum().z);
+    if (sizeX < sizeZ) sizeX = sizeZ;
+    blob->position(-sizeX, sizeY,  sizeX); blob->normal(0,0,1); blob->textureCoord(0.0, 0.0);
+    blob->position( sizeX, sizeY,  sizeX); blob->normal(0,0,1); blob->textureCoord(0.0, 1.0);
+    blob->position(-sizeX, sizeY, -sizeX); blob->normal(0,0,1); blob->textureCoord(1.0, 0.0);
+    blob->position( sizeX, sizeY, -sizeX); blob->normal(0,0,1); blob->textureCoord(1.0, 1.0);
+    blob->triangle(0, 1, 2);
+    blob->triangle(3, 2, 1);
+    blob->end();
+    blob->convertToMesh("Blob_"+ StringConverter::toString(mIndex, 10, '0'));
+    blob->setQueryFlags(ObjectManager::QUERY_NPC_SELECT_MASK);
+    blob->setRenderQueueGroup(RENDER_QUEUE_6);
+    mNode->attachObject(blob);
+
     mCursorTurning =0;
     mAutoTurning = TURN_NONE;
     mAutoMoving = false;
     mEnemyObject = 0;
     mAttacking = ATTACK_NONE;
     // mNode->showBoundingBox(true); // Remove Me!!!!
-
     mOffX =0;
     mOffZ =0;
 }
@@ -270,7 +293,33 @@ bool ObjectNPC::update(const FrameEvent& event)
     mAnim->update(event);
     //  Finish the current (non movement) anim first.
     //  if (!mAnim->isMovement()) return;
-
+    // ////////////////////////////////////////////////////////////////////
+    // Draw the Stats.
+    // Status changes are drawn step by step just because it looks better.
+    // ////////////////////////////////////////////////////////////////////
+    if (mDrawnHP != mActHP)
+    {
+        if (mDrawnHP < mActHP)
+        {
+            mDrawnHP += ((event.timeSinceLastFrame/STATUS_BAR_FILLTIME) * mMaxHP);
+            if (mDrawnHP > mActHP) mDrawnHP = mActHP;
+        }
+        else
+        {
+            mDrawnHP -= ((event.timeSinceLastFrame/STATUS_BAR_FILLTIME) * mMaxHP);
+            if (mDrawnHP < mActHP) mDrawnHP = mActHP;
+        }
+        Real health = Ogre::Real(mDrawnHP) / Ogre::Real(mMaxHP);
+        if (!mIndex)
+        {
+            GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_PLAYERCONSOLE, GuiManager::GUI_MSG_BAR_CHANGED,
+                                                   GuiImageset::GUI_STATUSBAR_PLAYER_HEALTH , (void*)&health);
+        }
+        else
+        {
+            ObjectVisuals::getSingleton().setLifebar(health);
+        }
+    }
     // ////////////////////////////////////////////////////////////////////
     // Ready / unready weapon.
     // ////////////////////////////////////////////////////////////////////
@@ -527,18 +576,8 @@ bool ObjectNPC::movePosition(int deltaX, int deltaZ)
 void ObjectNPC::setDamage(int damage)
 {
     if (mActHP <=0) return;
-
+    mDrawnHP = mActHP; /**< The health shown in the statusbar. **/
     mActHP-= damage;
-    Real health = getHealthPercentage();
-    if (!mIndex)
-    {
-        GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_PLAYERCONSOLE, GuiManager::GUI_MSG_BAR_CHANGED,
-                                               GuiImageset::GUI_STATUSBAR_PLAYER_HEALTH , (void*)&health);
-    }
-    else
-    {
-        ObjectVisuals::getSingleton().setLifebar(health);
-    }
     if (mActHP <= 0)
     {
         mAttacking = ATTACK_NONE;

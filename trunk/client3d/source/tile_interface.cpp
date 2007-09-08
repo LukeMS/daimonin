@@ -92,9 +92,9 @@ TileInterface::~TileInterface()
 }
 
 //================================================================================================
-// Mouse picking.
+// Stores the clicked tile in mPos.
 //================================================================================================
-void TileInterface::pickTile(float mouseX, float mouseY)
+const TilePos TileInterface::pickTile(float mouseX, float mouseY)
 {
     mPos.x = 0, mPos.subX =0;
     mPos.z = 0, mPos.subZ =0;
@@ -107,8 +107,10 @@ void TileInterface::pickTile(float mouseX, float mouseY)
     if (result.size() >1)
     {
         Logger::log().error() << "BUG in TileInterface.cpp: RaySceneQuery returned more than 1 result.";
-        Logger::log().error() << "(You created Entities without setting a setQueryFlags(...) on them)";
-        return;
+        Logger::log().error() << "(Did you create Entities without setting a setQueryFlags() on them?)";
+        for (RaySceneQueryResult::iterator itr = result.begin(); itr!= result.end(); ++itr)
+            Logger::log().error() << "Query Result: " << itr->movable->getName();;
+        return mPos;
     }
 
     // ////////////////////////////////////////////////////////////////////
@@ -120,12 +122,13 @@ void TileInterface::pickTile(float mouseX, float mouseY)
     {
         for (mPos.z = 0; mPos.z < TileManager::CHUNK_SIZE_Z; ++mPos.z)
         {
-            if (getPickPos(&mouseRay, QUADRANT_LEFT  )) return; // Found the clicked pos.
-            if (getPickPos(&mouseRay, QUADRANT_RIGHT )) return; // Found the clicked pos.
-            if (getPickPos(&mouseRay, QUADRANT_TOP   )) return; // Found the clicked pos.
-            if (getPickPos(&mouseRay, QUADRANT_BOTTOM)) return; // Found the clicked pos.
+            if (getPickPos(&mouseRay, QUADRANT_LEFT  )) return mPos; // Found the clicked pos.
+            if (getPickPos(&mouseRay, QUADRANT_RIGHT )) return mPos; // Found the clicked pos.
+            if (getPickPos(&mouseRay, QUADRANT_TOP   )) return mPos; // Found the clicked pos.
+            if (getPickPos(&mouseRay, QUADRANT_BOTTOM)) return mPos; // Found the clicked pos.
         }
     }
+    return mPos;
 }
 
 //================================================================================================
@@ -162,7 +165,6 @@ bool TileInterface::getPickPos(Ray *mouseRay, int quadrant)
             mTris[2] = mTris[3];
         }
     }
-
     if (quadrant&1)
     {   // Top / Bottom.
         mPos.subX = (mSubPosTable[quadrant>>1][31-upper] >> 4) & 0x0f;
@@ -177,12 +179,11 @@ bool TileInterface::getPickPos(Ray *mouseRay, int quadrant)
         mPos.subZ = (mSubPosTable[quadrant>>1][upper] >> 4) & 0x0f;
         mPos.subX = (mSubPosTable[quadrant>>1][upper]     ) & 0x0f;
     }
-    tileToWorldPos(mPos);
     return true;
 }
 
 //================================================================================================
-// Converts a tile pos into the special pos for walls.
+// Converts a tile pos into the world pos.
 //================================================================================================
 Vector3 TileInterface::tileToWorldPos(TilePos tile)
 {
@@ -220,15 +221,14 @@ Vector3 TileInterface::tileToWorldPos(TilePos tile)
 }
 
 //================================================================================================
-// Converts a tile pos into the world pos.
+// Converts a tile pos into the special pos for walls.
 //================================================================================================
 Vector3 TileInterface::tileToWallPos(TilePos tile)
 {
    mTris[0].x = (tile.x + tile.subX)*TileManager::TILE_SIZE_X;
    mTris[0].y = TileManager::getSingleton().getMapHeight(tile.x,tile.z);
    mTris[0].z = (tile.z + tile.subZ)*TileManager::TILE_SIZE_Z;
-
-    return mTris[0];
+   return mTris[0];
 }
 
 //================================================================================================

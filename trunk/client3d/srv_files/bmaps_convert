@@ -1237,8 +1237,8 @@ hole
 hole1
 honeycomb01
 horn
-human_f     Hero.mesh
-human_m     Hero.mesh
+human_female     Hero.mesh
+human_male     Hero.mesh
 icecave_deco
 icecave_deco1
 icecave_deco2
