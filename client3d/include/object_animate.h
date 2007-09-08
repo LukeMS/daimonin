@@ -60,6 +60,7 @@ public:
         ANIM_GROUP_SPAWN,
         ANIM_GROUP_CAST,
         ANIM_GROUP_CAST_FUN,
+        ANIM_GROUP_EMOTE,
         ANIM_GROUP_SUM
     };
     // ////////////////////////////////////////////////////////////////////

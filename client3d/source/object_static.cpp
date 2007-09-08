@@ -76,6 +76,7 @@ ObjectStatic::ObjectStatic(sObject &obj)
     strObj+= "#Obj_";
     strObj+= StringConverter::toString(mIndex, 10, '0');
     mEntity =mSceneMgr->createEntity(strObj, obj.meshName);
+    mEntity->setRenderQueueGroup(RENDER_QUEUE_7);
     switch (obj.type)
     {
         case ObjectManager::OBJECT_CONTAINER:

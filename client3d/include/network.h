@@ -52,8 +52,8 @@ public:
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     enum {SC_NORMAL, SC_FIRERUN, SC_ALWAYS};
-    enum {VERSION_CS = 991022};
-    enum {VERSION_SC = 991022};
+    enum {VERSION_CS = 991023};
+    enum {VERSION_SC = 991023};
     typedef struct command_buffer
     {
         struct command_buffer *next; // Next in queue.

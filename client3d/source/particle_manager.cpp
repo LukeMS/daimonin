@@ -67,6 +67,7 @@ ParticleSystem *ParticleManager::addNodeObject(SceneNode *node, const char* pScr
     obj->lifeTime = lifeTime;
     obj->pSystem  = Events::getSingleton().GetSceneManager()->createParticleSystem("pS_"+StringConverter::toString(mCounter++), pScript);
     obj->pSystem->setBoundsAutoUpdated(false);
+    //obj->pSystem->setRenderQueueGroup(RENDER_QUEUE_6);
     obj->entity = 0;
     obj->sceneNode = node;
     obj->delNodeOnCleanup = false;
@@ -104,13 +105,15 @@ ParticleSystem *ParticleManager::addFreeObject(Vector3 pos, const char *pScript,
     mvParticle.push_back(obj);
     obj->lifeTime = lifeTime;
     obj->pSystem= Events::getSingleton().GetSceneManager()->createParticleSystem("pS_"+StringConverter::toString(mCounter++), pScript);
-    obj->pSystem->setBoundsAutoUpdated(false);
+    //obj->pSystem->setBoundsAutoUpdated(false);
     obj->entity = 0;
     obj->delNodeOnCleanup = true;
     obj->sceneNode= Events::getSingleton().GetSceneManager()->getRootSceneNode()->createChildSceneNode();
     obj->sceneNode->attachObject(obj->pSystem);
     obj->sceneNode->setPosition(pos);
     obj->neededSync = SYNC_PARTICLES | SYNC_EMITTERS;
+    obj->pSystem->setRenderQueueGroup(RENDER_QUEUE_6);
+    //ParticleSystem::setDefaultNonVisibleUpdateTimeout(5);
     return obj->pSystem;
 }
 
@@ -119,7 +122,7 @@ ParticleSystem *ParticleManager::addFreeObject(Vector3 pos, const char *pScript,
 //================================================================================================
 void ParticleManager::update(Real dTime)
 {
-    for (std::vector<sParticles*>::iterator i = mvParticle.begin(); i < mvParticle.end(); )
+      for (std::vector<sParticles*>::iterator i = mvParticle.begin(); i < mvParticle.end(); )
     {
         if ((*i)->lifeTime <0  // Infinite lifeTime.
                 || ((*i)->lifeTime-= dTime) >=0) // Lifeteme not expired.

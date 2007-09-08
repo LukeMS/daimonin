@@ -1,9 +1,9 @@
 # This file holds the content of the image-texture-atlas.
-item_shortsword.png
+item_axe.png
 item_coinCopper.png
+item_food.png
 item_leatherArmor.png
 item_sandals.png
-item_food.png
+item_shortsword.png
 item_spear.png
 item_torchUnlit.png
-item_axe.png

@@ -163,6 +163,7 @@ void TileManager::addWall(int level, int x, int z, int pos, const char *meshName
     String strObj = "Wall_" + StringConverter::toString(++index);
     mMap[x][z].entity[pos] = mSceneManager->createEntity(strObj, meshName);
     mMap[x][z].entity[pos]->setQueryFlags(ObjectManager::QUERY_ENVIRONMENT_MASK);
+    mMap[x][z].entity[pos]->setRenderQueueGroup(RENDER_QUEUE_7);
     TilePos tpos;
     tpos.x     = x;
     tpos.z     = z;

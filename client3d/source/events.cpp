@@ -172,14 +172,11 @@ bool Events::frameStarted(const FrameEvent& evt)
                 //VP->setBackgroundColour(ColourValue(1.0, 1.0, 1.0));
                 mCamera->setAspectRatio(Real(VP->getActualWidth()) / Real(VP->getActualHeight()));
                 mCamera->setFOVy(Degree(mCameraZoom));
-                //mCamera->setPosition(0,175,340);
-                int winkel =0;
-                mCamera->setPosition(340.0*Math::Sin(Degree(winkel)), 175, 340.0 *Math::Cos(Degree(winkel)));
+                mCamera->setQueryFlags(ObjectManager::QUERY_CAMERA_MASK);
+                mCamera->setPosition(0,175,340);
+                //int winkel =0;
+                //mCamera->setPosition(340.0*Math::Sin(Degree(winkel)), 175, 340.0 *Math::Cos(Degree(winkel)));
                 mCamera->pitch(Degree(-28));
-
-                //mCamera->setPosition(Vector3(0, 175, 275));
-                //mCamera->pitch(Degree(20));
-                //mCamera->pitch(Degree(-48));
                 mWorld = mSceneManager->getRootSceneNode()->createChildSceneNode();
                 // ////////////////////////////////////////////////////////////////////
                 // Create a minimal gui for some loading infos..

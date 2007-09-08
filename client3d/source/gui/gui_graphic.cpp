@@ -35,10 +35,7 @@ using namespace Ogre;
 //================================================================================================
 GuiGraphic::GuiGraphic(TiXmlElement *xmlElement, void *parent, bool drawOnInit):GuiElement(xmlElement, parent)
 {
-    if (mHasAlpha)
-        mBuildBuffer = new uint32[mWidth*mHeight];
-    else
-        mBuildBuffer = 0;
+    mBuildBuffer = (mHasAlpha) ? new uint32[mWidth*mHeight] : 0;
     if (drawOnInit) draw();
 }
 
@@ -56,10 +53,8 @@ GuiGraphic::~GuiGraphic()
 inline uint32 GuiGraphic::alphaBlend(const uint32 bg, const uint32 gfx)
 {
     uint32 alpha = gfx >> 24;
-    if (!alpha)
-        return bg;
-    else if (alpha == 0xff)
-        return gfx;
+    if (alpha == 0x00) return bg;
+    if (alpha == 0xff) return gfx;
     // We need 1 byte of free space before each color (because of the alpha multiplication),
     // so we need 2 operations on the 3 colors.
     uint32 rb = (((gfx & 0x00ff00ff) * alpha) + ((bg & 0x00ff00ff) * (0xff - alpha))) & 0xff00ff00;

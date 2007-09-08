@@ -41,11 +41,11 @@ public:
     typedef struct
     {
         int type;                     /**< Type: e.g. static, npc, ... **/
-        Ogre::String nickName;              /**< Ingame-Name. **/
-        Ogre::String meshName;              /**< Name of the ogre3d mesh. **/
+        Ogre::String nickName;        /**< Ingame-Name. **/
+        Ogre::String meshName;        /**< Name of the ogre3d mesh. **/
         int particleNr;               /**< Number of the particle effect. **/
         unsigned int index;           /**< Unique number for this object. **/
-        TilePos pos;                 /**< Tile-pos. **/
+        TilePos pos;                  /**< Tile-pos. **/
         unsigned char boundingRadius; /**< The radius of subtiles, the NPC stands on. **/
         int level;                    /**< Floor-level. **/
         char walkable[8];             /**< 8x8 bit for the walkable status of a tile. **/

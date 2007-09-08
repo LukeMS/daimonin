@@ -42,6 +42,7 @@ const char *ObjectAnimate::StateNames[ANIM_GROUP_SUM]=
         "Death",
         "Spawn",
         "Cast", "Cast_Fun",
+        "Emote",
     };
 
 //=================================================================================================
@@ -127,16 +128,16 @@ void ObjectAnimate::update(const FrameEvent& event)
         if (mAnimGroup != ANIM_GROUP_DEATH && mFreezeLastFrame == false)
             toggleAnimation(ANIM_GROUP_IDLE, 0, true, true, true);
     }
-/*
-    mActState2->addTime(event.timeSinceLastFrame * mAnimSpeed);
-    mTimeLeft2 = mActState->getLength() - mActState->getTimePosition();
-    // if an animation ends -> force the idle animation.
-    if (mActState2->getTimePosition() >= mActState2->getLength() && !mActState2->getLoop())
-    {
-        if (mAnimGroup2 != ANIM_GROUP_DEATH)
-            toggleAnimation2(ANIM_GROUP_IDLE, 0, true, true, true);
-    }
-*/
+    /*
+        mActState2->addTime(event.timeSinceLastFrame * mAnimSpeed);
+        mTimeLeft2 = mActState->getLength() - mActState->getTimePosition();
+        // if an animation ends -> force the idle animation.
+        if (mActState2->getTimePosition() >= mActState2->getLength() && !mActState2->getLoop())
+        {
+            if (mAnimGroup2 != ANIM_GROUP_DEATH)
+                toggleAnimation2(ANIM_GROUP_IDLE, 0, true, true, true);
+        }
+    */
 }
 
 //=================================================================================================
@@ -165,8 +166,8 @@ void ObjectAnimate::toggleAnimation(int animGroup, int animNr, bool loop, bool f
     mAnimNr = animNr;
     // If the previous anim was spawn, we cant use random offsets (because of seamless animations).
 
-	if (animGroup == ANIM_GROUP_SPAWN) random = false;
-	mAnimGroup = animGroup;
+    if (animGroup == ANIM_GROUP_SPAWN) random = false;
+    mAnimGroup = animGroup;
     // Find the anim pos in the anim-vector.
     animGroup =0;
     for (int i=0; i< mAnimGroup; ++i)
@@ -181,7 +182,7 @@ void ObjectAnimate::toggleAnimation(int animGroup, int animNr, bool loop, bool f
     if (random)
         mActState->setTimePosition(Math::RangeRandom(0.0, mActState->getLength()));
     else
-		mActState->setTimePosition(0.0);
+        mActState->setTimePosition(0.0);
 
     mActState->setEnabled(true);
     mActState->setLoop(loop);
@@ -212,8 +213,8 @@ void ObjectAnimate::toggleAnimation2(int animGroup, int animNr, bool loop, bool 
     mAnimNr2 = animNr;
     // If the previous anim was spawn, we cant use random offsets (because of seamless animations).
 
-	if (animGroup == ANIM_GROUP_SPAWN) random = false;
-	mAnimGroup2 = animGroup;
+    if (animGroup == ANIM_GROUP_SPAWN) random = false;
+    mAnimGroup2 = animGroup;
     // Find the anim pos in the anim-vector.
     animGroup =0;
     for (int i=0; i< mAnimGroup2; ++i)
@@ -228,7 +229,7 @@ void ObjectAnimate::toggleAnimation2(int animGroup, int animNr, bool loop, bool 
     if (random)
         mActState2->setTimePosition(Math::RangeRandom(0.0, mActState2->getLength()));
     else
-		mActState2->setTimePosition(0.0);
+        mActState2->setTimePosition(0.0);
 
     mActState2->setEnabled(true);
     mActState2->setLoop(loop);

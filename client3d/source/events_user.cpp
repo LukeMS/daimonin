@@ -77,7 +77,8 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
         case OIS::KC_B:
             {
                 static int animNr= 0;
-                ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_ATTACK, animNr);
+                //ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_ATTACK, animNr);
+                ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_EMOTE, animNr);
                 if (++animNr >= 16) animNr= 0;
                 break;
             }
@@ -508,9 +509,12 @@ bool Events::keyReleased( const OIS::KeyEvent &e )
 //================================================================================================
 bool Events::mouseMoved(const OIS::MouseEvent &e)
 {
-    mMouse.x = e.state.X.abs;  if (mMouse.x >= e.state.width - 10) mMouse.x-= 10;
-    mMouse.y = e.state.Y.abs;  if (mMouse.y >= e.state.height- 10) mMouse.y-= 10;
+    const int MOUSE_POINTER_SIZE = 10;
+    mMouse.x = e.state.X.abs;
+    mMouse.y = e.state.Y.abs;
     mMouse.z = e.state.Z.abs;
+    if (mMouse.x > e.state.width - MOUSE_POINTER_SIZE) mMouse.x = e.state.width - MOUSE_POINTER_SIZE;
+    if (mMouse.y > e.state.height- MOUSE_POINTER_SIZE) mMouse.y = e.state.height- MOUSE_POINTER_SIZE;
     GuiManager::getSingleton().mouseEvent(GuiWindow::MOUSE_MOVEMENT, mMouse);
     return true;
 }
@@ -519,7 +523,6 @@ bool Events::mousePressed(const OIS::MouseEvent &e, OIS::MouseButtonID button)
 {
     if (Option::getSingleton().getGameStatus() < Option::GAME_STATUS_PLAY) return true; // TODO: ServerSelection by mouse.
     if (GuiManager::getSingleton().mouseEvent(GuiWindow::BUTTON_PRESSED, mMouse)) return true;
-
     // ////////////////////////////////////////////////////////////////////
     // Right button for selection and menu.
     // ////////////////////////////////////////////////////////////////////
@@ -532,9 +535,9 @@ bool Events::mousePressed(const OIS::MouseEvent &e, OIS::MouseButtonID button)
             RaySceneQueryResult &result = mRaySceneQuery->execute();
             if (!result.empty())
             {
-                //Logger::log().info() << result.size();
+                //Logger::log().warning() << result.size();
                 RaySceneQueryResult::iterator itr = result.begin();
-                ObjectManager::getSingleton().selectObject(itr->movable);
+                //ObjectManager::getSingleton().selectObject(itr->movable);
             }
             else
             {
@@ -550,27 +553,27 @@ bool Events::mousePressed(const OIS::MouseEvent &e, OIS::MouseButtonID button)
     // ////////////////////////////////////////////////////////////////////
     else if (button == OIS::MB_Left)
     {
-        TileManager::getSingleton().getTileInterface()->pickTile(mMouse.x / e.state.width, mMouse.y / e.state.height);
+        TilePos clickedTile;
         RaySceneQuery *mRaySceneQuery = mSceneManager->createRayQuery(Ray());
         mRaySceneQuery->setRay(mCamera->getCameraToViewportRay(mMouse.x / e.state.width, mMouse.y / e.state.height));
         mRaySceneQuery->setQueryMask(ObjectManager::QUERY_NPC_MASK | ObjectManager::QUERY_CONTAINER);
         RaySceneQueryResult &result = mRaySceneQuery->execute();
         if (!result.empty())
-        {
+        {   // An object waas clicked.
             RaySceneQueryResult::iterator itr = result.begin();
-            ObjectManager::getSingleton().mousePressed(itr->movable, TileManager::getSingleton().getTileInterface()->getSelectedTile(), mShiftDown);
+            ObjectManager::getSingleton().mousePressed(itr->movable, clickedTile, mShiftDown);
         }
         else
-        {
-            ParticleManager::getSingleton().addFreeObject(TileManager::getSingleton().getTileInterface()->getSelectedPos(), "Particle/SelectionDust", 0.8);
-            ObjectManager::getSingleton().mousePressed(0, TileManager::getSingleton().getTileInterface()->getSelectedTile(), mShiftDown);
+        {   // A tile was clicked.
+            clickedTile = TileManager::getSingleton().getTileInterface()->pickTile(mMouse.x / e.state.width, mMouse.y / e.state.height);
+            ParticleManager::getSingleton().addFreeObject(TileManager::getSingleton().getTileInterface()->tileToWorldPos(clickedTile), "Particle/SelectionDust", 0.8);
+            ObjectManager::getSingleton().mousePressed(0, clickedTile, mShiftDown);
         }
         mSceneManager->destroyQuery(mRaySceneQuery);
         mIdleTime =0;
     }
     //e->consume();
     return true;
-
 }
 
 bool Events::mouseReleased(const OIS::MouseEvent &e, OIS::MouseButtonID id)
