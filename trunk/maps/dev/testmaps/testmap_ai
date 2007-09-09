@@ -198,8 +198,8 @@ arch empty_ai
 end
 arch event_obj
 name Lua
-race /dev/testmaps/ai_aimod.lua
 sub_type 6
+race /dev/testmaps/ai_aimod.lua
 end
 end
 arch floor_ostone1
@@ -859,8 +859,8 @@ x 7
 y 2
 arch event_obj
 name Lua
-race /dev/testmaps/ai_ogrescript.lua
 sub_type 6
+race /dev/testmaps/ai_ogrescript.lua
 end
 end
 arch floor_ostone1
@@ -1481,19 +1481,19 @@ msg
 processes:
 look_for_other_mobs
 friendship
-# lua:ai/test_behaviour.lua
-lua:ai/befriend_player.lua
+# lua:/ai/test_behaviour.lua
+lua:/ai/befriend_player.lua
 choose_enemy
 moves:
 sleep
 move_towards_enemy
 move_towards_enemy_last_known_pos
 search_for_lost_enemy
-lua:ai/move_towards_friend.lua
+lua:/ai/move_towards_friend.lua
 move_towards_waypoint
 move_towards_home
 actions:
-lua:ai/whine.lua
+lua:/ai/whine.lua
 melee_attack_enemy
 bow_attack_enemy
 spell_attack_enemy
@@ -2214,10 +2214,10 @@ choose_enemy
 moves:
 sleep
 move_towards_enemy
-lua:ai/keep_distance_to_friends.lua
+lua:/ai/keep_distance_to_friends.lua
 move_towards_enemy_last_known_pos
 search_for_lost_enemy
-lua:ai/move_towards_friends.lua
+lua:/ai/move_towards_friends.lua
 move_towards_waypoint
 move_towards_home
 actions:
@@ -2492,10 +2492,10 @@ choose_enemy
 moves:
 sleep
 move_towards_enemy
-lua:ai/keep_distance_to_friends.lua
+lua:/ai/keep_distance_to_friends.lua
 move_towards_enemy_last_known_pos
 search_for_lost_enemy
-lua:ai/move_towards_friends.lua
+lua:/ai/move_towards_friends.lua
 move_towards_waypoint
 move_towards_home
 actions:
@@ -2714,7 +2714,7 @@ msg
 processes:
 look_for_other_mobs
 groups name=test1
-friendshio group=test2:-200 player=-1000
+friendship group=test2:-200 player=-1000
 choose_enemy
 
 moves:
@@ -2813,10 +2813,10 @@ choose_enemy
 moves:
 sleep
 move_towards_enemy
-lua:ai/keep_distance_to_friends.lua
+lua:/ai/keep_distance_to_friends.lua
 move_towards_enemy_last_known_pos
 search_for_lost_enemy
-lua:ai/move_towards_friends.lua
+lua:/ai/move_towards_friends.lua
 move_towards_waypoint
 move_towards_home
 actions:
@@ -3032,10 +3032,10 @@ choose_enemy
 moves:
 sleep
 move_towards_enemy
-lua:ai/keep_distance_to_friends.lua
+lua:/ai/keep_distance_to_friends.lua
 move_towards_enemy_last_known_pos
 search_for_lost_enemy
-lua:ai/move_towards_friends.lua
+lua:/ai/move_towards_friends.lua
 move_towards_waypoint
 move_towards_home
 actions:
