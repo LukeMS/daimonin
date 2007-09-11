@@ -1612,18 +1612,6 @@ anim button_trigger
 button_small.101
 button_small.102
 mina
-anim candle2_large
-large2_candle2.101
-large2_candle3.101
-mina
-anim candle3_large
-large3_candle2.101
-large3_candle3.101
-mina
-anim candle_large
-large1_candle2.101
-large1_candle3.101
-mina
 anim candle_purp
 candle_purp.101
 candle_purp.102
@@ -3013,6 +3001,18 @@ gel_cube.111
 gel_cube.112
 gel_cube.111
 gel_cube.112
+mina
+anim cupboard1_wall.111
+facings 9
+dummy.111
+cupboard1_wall.111
+cupboard1_wall.111
+cupboard1_wall.111
+cupboard1_wall.171
+cupboard1_wall.171
+cupboard1_wall.171
+cupboard1_wall.171
+cupboard1_wall.111
 mina
 anim curtain1
 facings 9
@@ -5627,10 +5627,20 @@ dwarf_wheel.101
 dwarf_wheel.102
 dwarf_wheel.103
 mina
+anim dwarf_wheel_2
+dwarf_wheel_2.101
+dwarf_wheel_2.102
+dwarf_wheel_2.103
+mina
 anim dwarf_wheelb
 dwarf_wheel.101
 dwarf_wheel.102
 dwarf_wheel.103
+mina
+anim dwarf_wheelb_2
+dwarf_wheel_2.101
+dwarf_wheel_2.102
+dwarf_wheel_2.103
 mina
 anim elemental_ice
 facings 25
@@ -10075,9 +10085,11 @@ lantern_magic.171
 lantern_magic.171
 mina
 anim large_candle
-large_candle.101
-large_candle.102
-large_candle.103
+large_candle_a.101
+large_candle_b.101
+large_candle_c.101
+large_candle_d.101
+large_candle_ul.101
 mina
 anim larva
 facings 25
@@ -11261,6 +11273,109 @@ mud_hand.141
 mud_hand.143
 mud_hand.341
 mud_hand.342
+mina
+anim mud_hand_ud
+facings 25
+trans.101
+trans.101
+trans.101
+trans.101
+mud_hand_ud.101
+mud_hand_ud.101
+mud_hand_ud.101
+mud_hand_ud.102
+mud_hand_ud.101
+mud_hand_ud.101
+mud_hand_ud.101
+mud_hand_ud.102
+mud_hand_ud.101
+mud_hand_ud.101
+mud_hand_ud.101
+mud_hand_ud.102
+mud_hand_ud.101
+mud_hand_ud.101
+mud_hand_ud.101
+mud_hand_ud.102
+mud_hand_ud.101
+mud_hand_ud.101
+mud_hand_ud.101
+mud_hand_ud.102
+mud_hand_ud.101
+mud_hand_ud.101
+mud_hand_ud.101
+mud_hand_ud.102
+mud_hand_ud.101
+mud_hand_ud.101
+mud_hand_ud.101
+mud_hand_ud.102
+mud_hand_ud.101
+mud_hand_ud.101
+mud_hand_ud.101
+mud_hand_ud.102
+mud_hand_ud.101
+mud_hand_ud.101
+mud_hand_ud.101
+mud_hand_ud.102
+mud_hand_ud.101
+mud_hand_ud.101
+mud_hand_ud.101
+mud_hand_ud.102
+mud_hand_ud.101
+mud_hand_ud.101
+mud_hand_ud.101
+mud_hand_ud.102
+mud_hand_ud.101
+mud_hand_ud.101
+mud_hand_ud.101
+mud_hand_ud.102
+mud_hand_ud.101
+mud_hand_ud.101
+mud_hand_ud.101
+mud_hand_ud.102
+mud_hand_ud.101
+mud_hand_ud.101
+mud_hand_ud.101
+mud_hand_ud.102
+mud_hand_ud.101
+mud_hand_ud.101
+mud_hand_ud.101
+mud_hand_ud.102
+mud_hand_ud.101
+mud_hand_ud.101
+mud_hand_ud.101
+mud_hand_ud.102
+mud_hand_ud.101
+mud_hand_ud.103
+mud_hand_ud.201
+mud_hand_ud.202
+mud_hand_ud.101
+mud_hand_ud.103
+mud_hand_ud.201
+mud_hand_ud.202
+mud_hand_ud.101
+mud_hand_ud.103
+mud_hand_ud.201
+mud_hand_ud.202
+mud_hand_ud.101
+mud_hand_ud.103
+mud_hand_ud.201
+mud_hand_ud.202
+mud_hand_ud.101
+mud_hand_ud.103
+mud_hand_ud.201
+mud_hand_ud.202
+mud_hand_ud.101
+mud_hand_ud.103
+mud_hand_ud.201
+mud_hand_ud.202
+mud_hand_ud.101
+mud_hand_ud.103
+mud_hand_ud.201
+mud_hand_ud.202
+mud_hand_ud.101
+mud_hand_ud.103
+mud_hand_ud.201
+mud_hand_ud.202
 mina
 anim mugwump
 facings 25
@@ -16060,6 +16175,59 @@ slime.112
 slime.111
 slime.112
 mina
+anim slime_b
+facings 25
+dummy.111
+dummy.111
+slime_b.111
+slime_b.112
+slime_b.111
+slime_b.112
+slime_b.111
+slime_b.112
+slime_b.111
+slime_b.112
+slime_b.111
+slime_b.112
+slime_b.111
+slime_b.112
+slime_b.111
+slime_b.112
+slime_b.111
+slime_b.112
+slime_b.111
+slime_b.112
+slime_b.111
+slime_b.112
+slime_b.111
+slime_b.112
+slime_b.111
+slime_b.112
+slime_b.111
+slime_b.112
+slime_b.111
+slime_b.112
+slime_b.111
+slime_b.112
+slime_b.111
+slime_b.112
+slime_b.111
+slime_b.112
+slime_b.111
+slime_b.112
+slime_b.111
+slime_b.112
+slime_b.111
+slime_b.112
+slime_b.111
+slime_b.112
+slime_b.111
+slime_b.112
+slime_b.111
+slime_b.112
+slime_b.111
+slime_b.112
+mina
 anim slug_giant
 facings 25
 dummy.111
@@ -16426,6 +16594,27 @@ sparkle_black_golem_mage.151
 sparkle_black_golem_mage.152
 sparkle_black_golem_mage.151
 sparkle_black_golem_mage.152
+mina
+anim spectral_strike
+facings 9
+spectral_strike.101
+spectral_strike.101
+spectral_strike.111
+spectral_strike.112
+spectral_strike.121
+spectral_strike.122
+spectral_strike.131
+spectral_strike.132
+spectral_strike.141
+spectral_strike.142
+spectral_strike.151
+spectral_strike.152
+spectral_strike.161
+spectral_strike.162
+spectral_strike.171
+spectral_strike.172
+spectral_strike.181
+spectral_strike.182
 mina
 anim spider
 facings 25
