@@ -8,8 +8,8 @@ AM_INIT_AUTOMAKE([Daimonin_3D_Client], 0.0.1)
 AC_PREFIX_DEFAULT(./../../../../client-3d-alpha1)
 AC_CONFIG_SRCDIR(../../source/main.cpp)
 
-AM_PROG_CC_C_O
 AC_PROG_CC
+AM_PROG_CC_C_O
 AC_PROG_CXX
 AC_PROG_MAKE_SET
 AC_PROG_INSTALL
