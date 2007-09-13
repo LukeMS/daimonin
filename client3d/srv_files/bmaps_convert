@@ -2736,9 +2736,9 @@ wall_ruin_c2.111
 wall_ruin_c2.131
 wall_ruin_c3.111
 wall_ruin_c3.131
-wall_stone.d.111          
-wall_stone.d.131          
-wall_stone.d.141          
+wall_stone.d.111          bWall1_Bottom.mesh
+wall_stone.d.131          rWall1_Bottom.mesh
+wall_stone.d.141          cWall1_Bottom.mesh
 wall_stone.d.181
 wall_stone1.d.111
 wall_stone1.d.131
@@ -2808,7 +2808,7 @@ wall_stone2.d.141
 wall_stone2.d.181
 wall_stone3.d.111
 wall_stone3.d.131
-wall_stone3.d.141        
+wall_stone3.d.141        cWall1_Bottom.mesh
 wall_stone3.d.181
 wall_stone3_w.111
 wall_stone3_w.131
@@ -2854,8 +2854,8 @@ wall_stone9_w2.111
 wall_stone9_w2.131
 wall_stone_fence.111
 wall_stone_fence.131
-wall_stone_w.111          
-wall_stone_w.131          
+wall_stone_w.111          bWall1_Window.mesh
+wall_stone_w.131          rWall1_Window.mesh
 wall_well.131
 wall_well.151
 wall_white1.d.111
