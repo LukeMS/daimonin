@@ -180,6 +180,7 @@ int command_kick(object *ob, char *params)
             remove_ob(op);
             check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
             op->direction = 0;
+            LOG(llevInfo, "KICKCMD: %s issued /kick %s\n", ob->name, op->name);
             if (params)
                 new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, ob, "%s is kicked out of the game.", op->name);
             LOG(llevInfo, "%s is kicked out of the game.\n", op->name);
@@ -1193,7 +1194,7 @@ int command_mute(object *op, char *params)
 
     sscanf(params, "%s %d", name, &seconds);
     pl= find_player(name);
-
+    LOG(llevInfo, "MUTECMD: %s issued /mute %s %d\n", op->name, name, seconds);
     if(!pl)
     {
         new_draw_info_format(NDI_UNIQUE, 0, op, "mute command: can't find player %s", name);
@@ -1323,6 +1324,8 @@ int command_ban(object *op, char *params)
                     new_draw_info_format(NDI_UNIQUE, 0, op, "Player %s is now banned for %d seconds.", name, ticks/8);
                     LOG(llevSystem,"Player %s is now banned for %d seconds.\n", name, ticks/8);
                     add_ban_entry(name, name_buf, ticks, ticks);
+                                LOG(llevInfo, "BANCMD: %s issued /ban %s %d seconds\n", op->name, name_buf, ticks/8);
+                    command_kick(op, name);
                 }
 
                 return 1;
