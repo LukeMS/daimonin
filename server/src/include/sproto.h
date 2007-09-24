@@ -267,6 +267,7 @@ int                         command_gm(object *op, char *params);
 int                         command_dm(object *op, char *params);
 int                         command_dm_list(object *op, char *params);
 int                         command_dm_set(object *op, char *params);
+int                         command_gm_set(object *op, char *params);
 int                         command_invisible(object *op, char *params);
 int                         command_learn_spell(object *op, char *params);
 int                         command_learn_special_prayer(object *op, char *params);
