@@ -437,7 +437,7 @@ treasureone weapon_misc
     chance 5
   more
   list weapon_amun
-    chance 10
+    chance 30
   more
   list weapon_slash
     chance 20
@@ -482,14 +482,19 @@ treasureone weapon_amun
   arch arrow
     chance 35
     nrof 3
+    material_quality 80
+    material_range 7
   more
   arch sstone
     chance 35
     nrof 3
+    quality_range 7
   more
   arch bolt
     magic 2
     nrof 3
+    material_quality 80
+    material_range 7
 end
 #
 treasureone weapon_throw
@@ -497,57 +502,83 @@ treasureone weapon_throw
     magic_chance 20
     nrof 3
     chance 30
+    material_quality 80
+    material_range 7
   more
   arch t_axe
     magic_chance 20
     nrof 3
     chance 30
+    material_quality 80
+    material_range 7
   more
   arch t_star
     magic_chance 20
     nrof 3
     chance 30
+    material_quality 80
+    material_range 7
   more
   arch t_hammer
     magic_chance 20
 #   magic 2
     nrof 3
     chance 30
+    material_quality 80
+    material_range 7
 end
 #
 treasureone weapon_missile
   arch bow_short
     chance 12
+    material_quality 80
+    material_range 7
   more
   arch bow
     chance 10
     difficulty 6
+    material_quality 80
+    material_range 7
   more
   arch bow_long
     chance 5
     difficulty 18
+    material_quality 80
+    material_range 7
   more
   arch sling_small
     chance 12
+    material_quality 80
+    material_range 7
   more
   arch sling
     chance 10
     difficulty 6
+    material_quality 80
+    material_range 7
   more
   arch sling_heavy
     chance 5
     difficulty 18
+    material_quality 80
+    material_range 7
   more
   arch crossbow_small
     chance 12
+    material_quality 80
+    material_range 7
   more
   arch crossbow
     chance 10
     difficulty 6
+    material_quality 80
+    material_range 7
   more
   arch crossbow_large
     chance 5
     difficulty 18
+    material_quality 80
+    material_range 7
 end
 #
 treasureone weapon_melee
@@ -556,6 +587,7 @@ treasureone weapon_melee
   more
   list weapon_slash
     chance 25
+    quality 85
   more
   list weapon_impact
     chance 25
@@ -631,82 +663,126 @@ treasureone weapon_cleave_1h
   arch axe
     difficulty 3
     chance 15
+    material_quality 80
+    material_range 7
   more
   arch axe_battle
     difficulty 6
     chance 10
+    material_quality 80
+    material_range 7
   more
   arch axe_broad
     difficulty 6
     chance 10
+    material_quality 80
+    material_range 7
   more
   arch axe_double
     difficulty 6
     chance 10
+    material_quality 80
+    material_range 7
   more
   arch axe_great
     difficulty 8
     chance 10
+    material_quality 80
+    material_range 7
   more
   arch axe_hand
     difficulty 3
     chance 15
+    material_quality 80
+    material_range 7
   more
   arch axe_small
     chance 15
+    material_quality 80
+    material_range 7
   more
   arch axe_war
     difficulty 3
     chance 10
+    material_quality 80
+    material_range 7
   more
   arch cleaver_battle
     difficulty 8
     chance 10
+    material_quality 80
+    material_range 7
   more
   arch cleaver_war
     difficulty 3
     chance 15
+    material_quality 80
+    material_range 7
   more
   arch pick_axe
     chance 15
+    material_quality 80
+    material_range 7
   more
   arch whip
     chance 10
+    material_quality 80
+    material_range 7
   more
   arch whip_war
     difficulty 6
     chance 10
+    material_quality 80
+    material_range 7
 end
 #
 treasureone weapon_cleave_2h
   arch axe_2h
     chance 30
+    material_quality 80
+    material_range 7
   more
   arch axe_2h_battle
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch axe_2h_great
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch axe_2h_war
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch mattock
     chance 10
+    material_quality 80
+    material_range 7
 end
 #
 treasureone weapon_cleave_pole
   arch bardiche
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch halberd
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch spetum
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch voulge
     chance 20
+    material_quality 80
+    material_range 7
 end
 #
 treasureone weapon_slash
@@ -725,98 +801,150 @@ end
 treasureone weapon_slash_1h
   arch baselard
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch bastardsword
     difficulty 6
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch broadsword
     difficulty 9
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch falchion
     difficulty 9
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch gladius
     difficulty 3
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch katana
     difficulty 6
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch longsword
     difficulty 6
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch ninjato
     difficulty 3
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch scimitar
     difficulty 6
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch scythe_military
     difficulty 6
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch shortsword
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch sword
     difficulty 3
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch sword_curved
     difficulty 3
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch tsurugi
     difficulty 6
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch tulwar
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch wakizashi
     difficulty 3
     chance 20
+    material_quality 80
+    material_range 7
 end
 #
 treasureone weapon_slash_2h
   arch claymore
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch no_dachi
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch panzerstecher
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch scythe_war
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch sword_double
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch sword_great
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch sword2h
     chance 20
+    material_quality 80
+    material_range 7
 end
 #
 treasureone weapon_slash_pole
   arch fauchard
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch glaive
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch naginata
     chance 20
+    material_quality 80
+    material_range 7
 end
 #
 treasureone weapon_impact
@@ -836,123 +964,189 @@ treasureone weapon_impact_1h
   arch ancus
     difficulty 9
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch club
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch club_big
     difficulty 3
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch club_rough
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch club_spiked
     difficulty 3
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch flail_war
     difficulty 6
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch hammer
     difficulty 3
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch hammer_battle
     difficulty 9
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch manrikigusari
     difficulty 6
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch hammer_military
     difficulty 3
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch hammer_small
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch hammer_war
     difficulty 6
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch mace
     difficulty 3
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch mace_battle
     difficulty 6
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch mace_spiked
     difficulty 3
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch mace_spiked_war
     difficulty 6
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch mace_war
     difficulty 6
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch mstar
     difficulty 3
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch mstar_large
     difficulty 6
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch mstar_small
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch nunchacu
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch nunchacu_war
     difficulty 3
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch shootingstar
     difficulty 6
     chance 20
+    material_quality 80
+    material_range 7
 end
 #
 treasureone weapon_impact_2h
   arch bo
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch club_giant
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch club_giant_spiked
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch hammer_giant
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch hammer_swar_giant
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch hammer_war_giant
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch mstar_2h
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch quaterstaff
     chance 20
+    material_quality 80
+    material_range 7
 end
 #
 treasureone weapon_impact_pole
   arch bec_de_corbin
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch lucern_hammer
     chance 20
+    material_quality 80
+    material_range 7
 end
 #
 treasureone weapon_pierce
@@ -972,206 +1166,318 @@ treasureone weapon_pierce_1h
   arch athame
     difficulty 3
     chance 14
+    material_quality 80
+    material_range 7
   more
   arch cutlass
     difficulty 3
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch dagger
     chance 10
+    material_quality 80
+    material_range 7
   more
   arch dagger_large
     chance 12
+    material_quality 80
+    material_range 7
   more
   arch dagger_small
     chance 8
+    material_quality 80
+    material_range 7
   more
   arch degen
     difficulty 6
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch flamberge
     difficulty 9
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch pallasch
     difficulty 6
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch rapier
     difficulty 6
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch saber
     difficulty 6
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch shiavona
     difficulty 9
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch tanto
     difficulty 3
     chance 14
+    material_quality 80
+    material_range 7
   more
   arch sai
     difficulty 3
     chance 14
+    material_quality 80
+    material_range 7
 end
 #
 treasureone weapon_pierce_2h
   arch forc
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch forc_military
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch spear
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch trident
     chance 20
+    material_quality 80
+    material_range 7
 end
 #
 treasureone weapon_pierce_pole
   arch bill_guisarme
     chance 10
+    material_quality 80
+    material_range 7
   more
   arch guisarme
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch partisan
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch pike
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch ranseur
     chance 20
+    material_quality 80
+    material_range 7
 end
 #
 treasureone weapon_start
   arch club
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch club_big
     difficulty 2
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch club_rough
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch club_spiked
     difficulty 2
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch hammer
     difficulty 2
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch hammer_military
     difficulty 2
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch hammer_small
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch mace
     difficulty 2
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch mace_spiked
     difficulty 2
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch mstar
     difficulty 2
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch mstar_small
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch nunchacu
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch athame
     difficulty 2
     chance 14
+    material_quality 80
+    material_range 7
   more
   arch cutlass
     difficulty 2
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch dagger
     chance 10
+    material_quality 80
+    material_range 7
   more
   arch dagger_large
     chance 12
+    material_quality 80
+    material_range 7
   more
   arch dagger_small
     chance 8
+    material_quality 80
+    material_range 7
   more
   arch tanto
     difficulty 2
     chance 14
+    material_quality 80
+    material_range 7
   more
   arch sai
     difficulty 2
     chance 14
+    material_quality 80
+    material_range 7
   more
   arch baselard
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch gladius
     difficulty 2
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch ninjato
     difficulty 2
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch shortsword
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch sword
     difficulty 2
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch sword_curved
     difficulty 2
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch tulwar
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch wakizashi
     difficulty 2
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch axe
     difficulty 2
     chance 15
+    material_quality 80
+    material_range 7
   more
   arch axe_hand
     difficulty 2
     chance 15
+    material_quality 80
+    material_range 7
   more
   arch axe_small
     chance 15
+    material_quality 80
+    material_range 7
   more
   arch axe_war
     difficulty 2
     chance 10
+    material_quality 80
+    material_range 7
   more
   arch cleaver_war
     difficulty 2
     chance 15
+    material_quality 80
+    material_range 7
   more
   arch pick_axe
     chance 15
+    material_quality 80
+    material_range 7
   more
   arch whip
     chance 10
+    material_quality 80
+    material_range 7
 end
 #
 treasureone armour_misc
@@ -1242,489 +1548,708 @@ treasureone armour_mail
   arch banded_mail  
     difficulty 9
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch bone_armour
     difficulty 6
     chance 30
+    quality_range 7
   more
   arch bplate_mail
     difficulty 12
     chance 30
+    quality_range 7
   more
   arch breastplate
     difficulty 19
     chance 15
+    material_quality 80
+    material_range 7
   more
   arch brigandine
     difficulty 6
     chance 25
+    material_quality 80
+    material_range 7
   more
   arch chain_hauberk
     difficulty 9
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch chain_mail
     difficulty 6
     chance 25
+    material_quality 80
+    material_range 7
   more
   arch chitin_mail
     difficulty 9
     chance 25
+    quality_range 7
   more
   arch crystal_mail
     difficulty 48
     chance 4
+    quality_range 7
   more
   arch lamellar_mail
     difficulty 6
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch leather_armour
     chance 30
+    material_quality 80
+    material_range 7
   more
   arch leather_cuirass
     difficulty 6
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch padded_armour
     chance 25
+    material_quality 80
+    material_range 7
   more
   arch leather_spiked
     chance 25
+    material_quality 80
+    material_range 7
   more
   arch leather_studded
     difficulty 3
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch ring_mail
     difficulty 3
     chance 25
+    material_quality 80
+    material_range 7
   more
   arch mithril_armour
     difficulty 29
     chance 4
+    quality_range 7
   more
   arch mithril_coat
     difficulty 49
     chance 4
+    quality_range 7
   more
   arch mithril_ring
     difficulty 14
     chance 4
+    quality_range 7
   more
   arch plate_field
     difficulty 19
     chance 15
+    material_quality 80
+    material_range 7
   more
   arch plate_full
     difficulty 19
     chance 15
+    material_quality 80
+    material_range 7
   more
   arch plate_mail
     difficulty 19
     chance 15
+    material_quality 80
+    material_range 7
   more
   arch scale_armour
     difficulty 6
     chance 20
+    quality_range 7
   more
   arch scale_mail
     difficulty 9
     chance 25
+    quality_range 7
   more
   arch splint_mail
     difficulty 9
     chance 20
+    material_quality 80
+    material_range 7
 end
 #
 treasureone armour_mail_start
   arch banded_mail
     difficulty 9
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch bone_armour
     difficulty 6
     chance 30
+    quality_range 7
   more
   arch brigandine
     difficulty 6
     chance 25
+    material_quality 80
+    material_range 7
   more
   arch chain_hauberk
     difficulty 9
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch chain_mail
     difficulty 6
     chance 25
+    material_quality 80
+    material_range 7
   more
   arch chitin_mail
     difficulty 9
     chance 25
+    quality_range 7
   more
   arch lamellar_mail
     difficulty 6
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch leather_armour
     chance 30
+    material_quality 80
+    material_range 7
   more
   arch leather_cuirass
     difficulty 6
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch padded_armour
     chance 25
+    material_quality 80
+    material_range 7
   more
   arch leather_spiked
     chance 25
+    material_quality 80
+    material_range 7
   more
   arch leather_studded
     difficulty 3
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch ring_mail
     difficulty 3
     chance 25
+    material_quality 80
+    material_range 7
   more
   arch scale_armour
     difficulty 6
     chance 20
+    quality_range 7
   more
   arch scale_mail
     difficulty 9
     chance 25
+    quality_range 7
   more
   arch splint_mail
     difficulty 9
     chance 20
+    material_quality 80
+    material_range 7
 end
 #
 treasureone armour_bracers
   arch bracers_ac
     chance 35
+    material_quality 80
+    material_range 7
 end
 #
 treasureone armour_boots
   arch sandals
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch low_boots
     chance 25
+    material_quality 80
+    material_range 7
   more
   arch high_boots
     chance 20
     difficulty 2
+    material_quality 80
+    material_range 7
   more
   arch fencing_boots
     chance 15
     difficulty 3
+    material_quality 80
+    material_range 7
   more
   arch combat_boots
     chance 15
     difficulty 3
+    material_quality 80
+    material_range 7
   more
   arch kicking_boots
     chance 15
     difficulty 3
+    material_quality 80
+    material_range 7
   more
   arch fighting_boots
     chance 15
     difficulty 3
+    material_quality 80
+    material_range 7
   more
   arch leggings_leather
     chance 15
     difficulty 6
+    material_quality 80
+    material_range 7
   more
   arch leggings_chain
     chance 10
     difficulty 12
+    material_quality 80
+    material_range 7
   more
   arch leggings_plate
     difficulty 19
     chance 8
+    material_quality 80
+    material_range 7
 end
 #
 treasureone armour_boots_start
   arch sandals
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch low_boots
     chance 25
+    material_quality 80
+    material_range 7
   more
   arch high_boots
     chance 20
     difficulty 2
+    material_quality 80
+    material_range 7
   more
   arch spiked_boots
     chance 20
     difficulty 2
+    material_quality 80
+    material_range 7
   more
   arch fencing_boots
     chance 15
     difficulty 3
+    material_quality 80
+    material_range 7
   more
   arch combat_boots
     chance 15
     difficulty 3
+    material_quality 80
+    material_range 7
   more
   arch kicking_boots
     chance 15
     difficulty 3
+    material_quality 80
+    material_range 7
   more
   arch fighting_boots
     chance 15
     difficulty 3
+    material_quality 80
+    material_range 7
   more
   arch leggings_leather
     chance 15
     difficulty 6
+    material_quality 80
+    material_range 7
 end
 #
 treasureone armour_shield
   arch buckler
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch shield_round
     difficulty 3
     chance 15
+    material_quality 80
+    material_range 7
   more
   arch small_shield
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch shield
     difficulty 3
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch shield_battle
     difficulty 18
     chance 15
+    material_quality 80
+    material_range 7
   more
   arch shield_defender
     difficulty 18
     chance 15
+    material_quality 80
+    material_range 7
   more
   arch shield_heater
     difficulty 8
     chance 15
+    material_quality 80
+    material_range 7
   more
   arch shield_high
     difficulty 7
     chance 15
+    material_quality 80
+    material_range 7
   more
   arch shield_kite
     difficulty 3
     chance 15
+    material_quality 80
+    material_range 7
   more
   arch shield_protector
     difficulty 18
     chance 15
+    material_quality 80
+    material_range 7
   more
   arch shield_war
     difficulty 18
     chance 15
+    material_quality 80
+    material_range 7
   more
   arch blade_stopper
     difficulty 18
     chance 10
+    material_quality 80
+    material_range 7
   more
   arch shield_chitin
     difficulty 8
     chance 10
+    quality_range 7
   more
   arch shield_bone
     difficulty 8
     chance 10
+    quality_range 7
   more
   arch shield_scale
     difficulty 8
     chance 10
+    quality_range 7
   more
   arch ball_and_chain
     difficulty 3
     chance 10
+    material_quality 80
+    material_range 7
   more
   arch shield_demon
     difficulty 18
     chance 5
+    material_quality 80
+    material_range 7
   more
   arch shield_eye
     difficulty 8
     chance 5
+    material_quality 80
+    material_range 7
 end
 #
 treasureone armour_shield_start
   arch buckler
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch shield_round
     difficulty 3
     chance 15
+    material_quality 80
+    material_range 7
   more
   arch small_shield
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch shield
     difficulty 3
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch shield_heater
     difficulty 8
     chance 15
+    material_quality 80
+    material_range 7
   more
   arch shield_high
     difficulty 7
     chance 15
+    material_quality 80
+    material_range 7
   more
   arch shield_kite
     difficulty 3
     chance 15
+    material_quality 80
+    material_range 7
   more
   arch shield_chitin
     difficulty 8
     chance 10
+    quality_range 7
   more
   arch shield_bone
     difficulty 8
     chance 10
+    quality_range 7
   more
   arch shield_scale
     difficulty 8
     chance 10
+    quality_range 7
   more
   arch ball_and_chain
     difficulty 3
     chance 10
+    material_quality 80
+    material_range 7
   more
   arch shield_eye
     difficulty 8
     chance 5
+    material_quality 80
+    material_range 7
 end
 #
 treasureone armour_cloak
   arch cloak
     difficulty 3
     chance 30
+    material_quality 80
+    material_range 7
   more
   arch cape
     chance 25
+    quality_range 7
   more
   arch robe
     chance 25
+    quality_range 7
 end
 #
 treasureone armour_gauntlet
   arch gloves
     chance 40
+    material_quality 80
+    material_range 7
   more
   arch gauntlets
     difficulty 4
     chance 25
+    material_quality 80
+    material_range 7
   more
   arch gauntlets_leather
     chance 25
+    material_quality 80
+    material_range 7
   more
   arch gauntlets_spiked
     chance 25
+    material_quality 80
+    material_range 7
   more
   arch gauntlets_plate
     difficulty 9
     chance 10
+    material_quality 80
+    material_range 7
 end
 #
 treasureone armour_girdle
   arch girdle
     chance 15
+    material_quality 80
+    material_range 7
   more
   arch belt
     difficulty 9
     chance 15
+    material_quality 80
+    material_range 7
 end
 #
 treasureone armour_legs
   arch legs_leather
     chance 15
+    material_quality 80
+    material_range 7
   more
   arch legs_chain
     difficulty 9
     chance 15
+    material_quality 80
+    material_range 7
   more
   arch legs_plate
     difficulty 15
     chance 15
+    material_quality 80
+    material_range 7
 end
 #
 treasureone armour_shoulder
   arch shoulder_leather
     chance 15
+    material_quality 80
+    material_range 7
   more
   arch shoulder_chain
     difficulty 9
     chance 15
+    material_quality 80
+    material_range 7
   more
   arch shoulder_scale
     difficulty 12
     chance 15
+    quality_range 7
   more
   arch shoulder_plate
     difficulty 15
     chance 15
+    material_quality 80
+    material_range 7
 end
 #
 treasureone armour_helm
   arch helm_field
     difficulty 9
     chance 12
+    material_quality 80
+    material_range 7
   more
   arch helm_plate
     difficulty 9
     chance 10
+    material_quality 80
+    material_range 7
   more
   arch helm_war
     difficulty 9
     chance 12
+    material_quality 80
+    material_range 7
   more
   arch helm_bronze
     difficulty 9
     chance 12
+    quality_range 7
   more
   arch full_helmet
     difficulty 9
     chance 10
+    material_quality 80
+    material_range 7
   more
   arch helm_battle
     difficulty 9
     chance 10
+    material_quality 80
+    material_range 7
   more
   arch helm_guard
     difficulty 9
     chance 10
+    material_quality 80
+    material_range 7
   more
   arch coif_scale
     difficulty 4
     chance 15
+    quality_range 7
   more
   arch coif_chain
     difficulty 4
     chance 15
+    material_quality 80
+    material_range 7
   more
   arch helm_iron
     chance 15
+    material_quality 80
+    material_range 7
   more
   arch helm_leather
     chance 20
+    material_quality 80
+    material_range 7
   more
   arch helm_horn
     chance 15
+    material_quality 80
+    material_range 7
   more
   arch crown_generic
     chance 5
+    quality_range 7
   more
   arch hat_feather
     chance 5
+    quality_range 7
   more
   arch hat_blue
     chance 5
+    quality_range 7
 end
 ##############################################################
 #
@@ -2077,176 +2602,216 @@ treasureone food_misc
   arch poison_food
     magic 0
     chance 10
+    quality_range 7
 end
 #
 treasureone food_vegetable
   arch carrot
     magic 0
     chance 20
+    quality_range 7
   more
   arch choko
     magic 0
     chance 20
+    quality_range 7
   more
   arch melon
     magic 0
     chance 20
+    quality_range 7
   more
   arch salad
     magic 0
     chance 20
+    quality_range 7
   more
   arch snozzcumber
     magic 0
     chance 20
+    quality_range 7
   more
   arch tomato
     magic 0
     chance 20
+    quality_range 7
 end
 #
 treasureone food_meat
   arch bacon
     magic 0
     chance 20
+    quality_range 7
   more
   arch beef_jerky
     magic 0
     chance 20
+    quality_range 7
   more
   arch drumstick
     magic 0
     chance 20
+    quality_range 7
   more
   arch roast
     magic 0
     chance 20
+    quality_range 7
   more
   arch sausage
     magic 0
     chance 20
+    quality_range 7
   more
   arch steak
     magic 0
     chance 20
+    quality_range 7
   more
   arch steak2
     magic 0
     chance 20
+    quality_range 7
 end
 #
 treasureone food_fruits
   arch apple
     magic 0
     chance 20
+    quality_range 7
   more
   arch apricot
     magic 0
     chance 20
+    quality_range 7
   more
   arch banana
     magic 0
     chance 20
+    quality_range 7
   more
   arch cherries
     magic 0
     chance 20
+    quality_range 7
   more
   arch grapes
     magic 0
     chance 20
+    quality_range 7
   more
   arch grapes1
     magic 0
     chance 20
+    quality_range 7
   more
   arch lemon
     magic 0
     chance 20
+    quality_range 7
   more
   arch lychee
     magic 0
     chance 20
+    quality_range 7
   more
   arch orange
     magic 0
     chance 20
+    quality_range 7
   more
   arch peach
     magic 0
     chance 20
+    quality_range 7
   more
   arch pear
     magic 0
     chance 20
+    quality_range 7
   more
   arch pear1
     magic 0
     chance 20
+    quality_range 7
   more
   arch pineapple
     magic 0
     chance 20
+    quality_range 7
   more
   arch rambutan
     magic 0
     chance 20
+    quality_range 7
   more
   arch strawberry
     magic 0
     chance 20
+    quality_range 7
   more
   arch sultana
     magic 0
     chance 20
+    quality_range 7
 end
 #
 treasureone food_natural
   arch egg
     magic 0
     chance 50
+    quality_range 7
   more
   arch honeycomb
     magic 0
     chance 50
+    quality_range 7
 end
 #
 treasureone food_backery
   arch bread
     magic 0
     chance 50
+    quality_range 7
   more
   arch bread1
     magic 0
     chance 50
+    quality_range 7
   more
   arch cookie
     magic 0
     chance 50
+    quality_range 7
 end
 #
 treasureone food_base
   arch food_generic
     magic 0
     chance 50
+    quality_range 7
   more
   arch cheese
     magic 0
     chance 50
+    quality_range 7
   more
   arch poison_food
     magic 0
     chance 10
+    quality_range 7
 end
 #
 treasureone food_drink
   arch booze_generic
     magic 0
     chance 30
+    quality_range 7
   more
   arch drink_generic
     magic 0
     chance 20
+    quality_range 7
 end
 ##############################################################
 #
@@ -2272,6 +2837,8 @@ treasureone misc_container
   arch key_ring
     chance 20
     magic 0
+    material_quality 80
+    material_range
   more
   arch quiver
     chance 10
@@ -2371,26 +2938,32 @@ end
 treasureone magic_talisman
   arch ring_generic
     chance 40
+    quality_range 7
   more
   arch amulet_generic
     chance 30
+    quality_range 7
 end
 #
 treasureone magic_device
   arch wand
     chance 93
+    quality_range 7
   more
   arch rod_light
     difficulty 15
     chance 3
+    quality_range 7
   more
   arch horn
     difficulty 25
     chance 3
+    quality_range 7
   more
   arch rod_heavy
     difficulty 40
     chance 1
+    quality_range 7
 end
 #
 treasureone magic_device_talisman
@@ -2478,17 +3051,19 @@ treasureone loot_start
   more
   arch hat_feather
     chance 1
+    quality_range 7
   more
   arch dress
     chance 1
+    quality_range 7
 end
 # base loot list for "misc. base stuff"
 treasureone loot_base
   list weapon_throw
-    chance 6
+    chance 16
   more
   list weapon_amun
-    chance 6
+    chance 26
   more
   list book_misc
     magic 0
@@ -2519,12 +3094,15 @@ treasureone loot_base
   more
   arch hat_feather
     chance 2
+    quality_range 7
   more
   arch dress
     chance 2
+    quality_range 7
   more
   arch pants
     chance 2
+    quality_range 7
   more
   list magic_useup
     chance 3
