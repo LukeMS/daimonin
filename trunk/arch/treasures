@@ -2838,7 +2838,7 @@ treasureone misc_container
     chance 20
     magic 0
     material_quality 80
-    material_range
+    material_range 7
   more
   arch quiver
     chance 10
@@ -2938,10 +2938,12 @@ end
 treasureone magic_talisman
   arch ring_generic
     chance 40
+    magic 0
     quality_range 7
   more
   arch amulet_generic
     chance 30
+    magic 0
     quality_range 7
 end
 #
