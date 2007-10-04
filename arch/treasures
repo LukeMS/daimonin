@@ -2516,21 +2516,25 @@ end
 treasure wealth_gem
   arch gem_generic
     artifact_chance 90
+    magic 0
 end
 #
 treasure wealth_jewel
   arch jewel_generic
     artifact_chance 90
+    magic 0
 end
 #
 treasure wealth_nugget
   arch nugget_generic
     artifact_chance 95
+    magic 0
 end
 #
 treasure wealth_pearl
   arch pearl_generic
     artifact_chance 100
+    magic 0
 end
 #
 treasureone wealth_exp
@@ -2838,7 +2842,7 @@ treasureone misc_container
     chance 20
     magic 0
     material_quality 80
-    material_range 7
+    material_range
   more
   arch quiver
     chance 10
@@ -2938,12 +2942,10 @@ end
 treasureone magic_talisman
   arch ring_generic
     chance 40
-    magic 0
     quality_range 7
   more
   arch amulet_generic
     chance 30
-    magic 0
     quality_range 7
 end
 #
