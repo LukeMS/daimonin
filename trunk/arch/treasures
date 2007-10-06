@@ -2830,6 +2830,8 @@ treasureone misc_container
   arch r_sack
     chance 25
     magic 0
+    material_quality 80
+    material_range 7
   more
   arch bag
     chance 25
@@ -2837,6 +2839,7 @@ treasureone misc_container
   more
   arch pouch
     chance 20
+    magic 0
   more
   arch key_ring
     chance 20
