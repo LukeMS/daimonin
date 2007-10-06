@@ -2842,7 +2842,7 @@ treasureone misc_container
     chance 20
     magic 0
     material_quality 80
-    material_range
+    material_range 7
   more
   arch quiver
     chance 10
@@ -2914,60 +2914,73 @@ treasureone magic_scroll
   arch scroll_generic
     chance 80
     nrof 1
+    magic 0
   more
   arch scroll_generic
     chance 15
     nrof 2
+    magic 0
   more
   arch scroll_generic
     chance 5
     nrof 3
+    magic 0
 end
 #
 treasureone magic_potion
   arch potion_generic
     chance 65
+    magic 0
   more
   arch potion_generic
     nrof 2
     chance 10
+    magic 0
   more
   arch balm_generic
     chance 15
+    magic 0
   more
   arch dust_generic
     chance 10
+    magic 0
 end
 #
 treasureone magic_talisman
   arch ring_generic
     chance 40
     quality_range 7
+    magic 0
   more
   arch amulet_generic
     chance 30
     quality_range 7
+    magic 0
 end
 #
 treasureone magic_device
   arch wand
     chance 93
     quality_range 7
+    magic 0
   more
   arch rod_light
     difficulty 15
     chance 3
     quality_range 7
+    magic 0
   more
   arch horn
     difficulty 25
     chance 3
     quality_range 7
+    magic 0
   more
   arch rod_heavy
     difficulty 40
     chance 1
     quality_range 7
+    magic 0
 end
 #
 treasureone magic_device_talisman
