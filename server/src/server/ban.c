@@ -274,63 +274,70 @@ int check_banned(NewSocket *ns, const char *name, char *ip)
         for(ol = ban_list_ip;ol;ol=ol_tmp)
         {
             ol_tmp = ol->next;
-            /*LOG( -1,"CHECK-IP: %d with %d - pticks: %d left: %d (%d)\n", ip, ol->objlink.ban->ip,
-              pticks, ol->objlink.ban->ticks,ol->objlink.ban->ticks_init);*/
+            LOG( -1,"CHECK-IP: >%s< with >%s< - pticks: %d left: %d (%d)\n", 
+			  STRING_SAFE(ip), STRING_SAFE(ol->objlink.ban->ip),
+              pticks, ol->objlink.ban->ticks,ol->objlink.ban->ticks_init);
 
             if(ol->objlink.ban->ticks_init != -1 &&  pticks >= ol->objlink.ban->ticks)
                 remove_ban_entry(ol); /* is not valid anymore, gc it on the fly */
-            else if(!strcmp(ol->objlink.ban->ip, ip))
-            {
-                char *ban_buf_ip, buf[256], cmd_buf[]  = "X";
-                int h=0,m=0, s = ol->objlink.ban->ticks_init/8;
+            else
+              {char *ban_tmp = ol->objlink.ban->ip;
+               int ctr = 0;
+               for(ban_tmp[ctr];ban_tmp[ctr] != '\0';ctr++)
+               {  if(ban_tmp[ctr] != '*' && ban_tmp[ctr] != ip[ctr])
+                    return FALSE;
+               }
+               {
+                   char *ban_buf_ip, buf[256], cmd_buf[]  = "X";
+                   int h=0,m=0, s = ol->objlink.ban->ticks_init/8;
 
-                if(ol->objlink.ban->ticks_init == -1) /* perm ban */
-                {
-                    ban_buf_ip = ban_buf_ip_def;
-                }
-                else if (s<=90) /* we are nice for all under 90 seconds (1.5 minutes). Thats most times technical tmp bans */
-                {
-                    sprintf(buf, "X2 Login is blocked for %d seconds!\nDon't try to login before.\nLogin timer is reseted to %d seconds!",s,s);
-                    ban_buf_ip = buf;
-                    s = ol->objlink.ban->ticks_init;
-                    remove_ban_entry(ol);
-                    add_ban_entry(NULL, ns->ip_host, s, s);
-                }
-                else if (s < 60*60)
-                {
-                    m = s/60;
-                    sprintf(buf, "X3 IP is banned for %d minutes!\nDon't try to login before.\nLogin timer is reseted!",m);
-                    ban_buf_ip = buf;
-                    s = ol->objlink.ban->ticks_init;
-                    remove_ban_entry(ol);
-                    add_ban_entry(NULL, ns->ip_host, s, s);
-                }
-                else /* must be an ass... */
-                {
-                    h = s/(60*60);
-                    m = (s-h*(60*60))/60;
-                    sprintf(buf, "X3 IP is banned for %dh%dm!\nDon't try to login before.\nAdding one hour ban time!",h,m);
-                    ban_buf_ip = buf;
-                    s = (ol->objlink.ban->ticks-pticks)+(60*60); /* added one hour */
-                    if(s> 3*ol->objlink.ban->ticks_init)
-                        s = -1; /* ban this guy now permanent */
-                    else
-                    {
-                        remove_ban_entry(ol);
-                        add_ban_entry(NULL, ns->ip_host, s, s);
-                    }
-                }
+                   if(ol->objlink.ban->ticks_init == -1) /* perm ban */
+                   {
+                       ban_buf_ip = ban_buf_ip_def;
+                   }
+                   else if (s<=90) /* we are nice for all under 90 seconds (1.5 minutes). Thats most times technical tmp bans */
+                   {
+                       sprintf(buf, "X2 Login is blocked for %d seconds!\nDon't try to login before.\nLogin timer is reseted to %d seconds!",s,s);
+                       ban_buf_ip = buf;
+                       s = ol->objlink.ban->ticks_init;
+                       remove_ban_entry(ol);
+                       add_ban_entry(NULL, ns->ip_host, s, s);
+                   }
+                   else if (s < 60*60)
+                   {
+                       m = s/60;
+                       sprintf(buf, "X3 IP is banned for %d minutes!\nDon't try to login before.\nLogin timer is reseted!",m);
+                       ban_buf_ip = buf;
+                       s = ol->objlink.ban->ticks_init;
+                       remove_ban_entry(ol);
+                       add_ban_entry(NULL, ns->ip_host, s, s);
+                   }
+                   else /* must be an ass... */
+                   {
+                       h = s/(60*60);
+                       m = (s-h*(60*60))/60;
+                       sprintf(buf, "X3 IP is banned for %dh%dm!\nDon't try to login before.\nAdding one hour ban time!",h,m);
+                       ban_buf_ip = buf;
+                       s = (ol->objlink.ban->ticks-pticks)+(60*60); /* added one hour */
+                       if(s> 3*ol->objlink.ban->ticks_init)
+                           s = -1; /* ban this guy now permanent */
+                       else
+                       {
+                           remove_ban_entry(ol);
+                           add_ban_entry(NULL, ns->ip_host, s, s);
+                       }
+                   }
 
-                LOG(-1,"***BANNED IP Login: %s\n", ns->ip_host);
-                Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, ban_buf_ip, strlen(ban_buf_ip));
-                Write_String_To_Socket(ns, BINARY_CMD_ADDME_FAIL, cmd_buf, 1);
-                ns->login_count = ROUND_TAG+(uint32)(5.0f * pticks_second);
-                ns->status = Ns_Zombie; /* we hold the socket open for a *bit* */
-                ns->idle_flag = 1;
-                return TRUE; /* ip matches... kick our friend */
-            }
-        }
-    }
-
+                   LOG(-1,"***BANNED IP Login: %s\n", ns->ip_host);
+                   Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, ban_buf_ip, strlen(ban_buf_ip));
+                   Write_String_To_Socket(ns, BINARY_CMD_ADDME_FAIL, cmd_buf, 1);
+                   ns->login_count = ROUND_TAG+(uint32)(5.0f * pticks_second);
+                   ns->status = Ns_Zombie; /* we hold the socket open for a *bit* */
+                   ns->idle_flag = 1;
+                   return TRUE; /* ip matches... kick our friend */
+               }
+           }
+       }
+   }
     return FALSE;
 }
