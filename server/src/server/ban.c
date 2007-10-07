@@ -287,7 +287,7 @@ int check_banned(NewSocket *ns, const char *name, char *ip)
                {  if(ban_tmp[ctr] != '*' && ban_tmp[ctr] != ip[ctr])
                     return FALSE;
                }
-               {
+               
                    char *ban_buf_ip, buf[256], cmd_buf[]  = "X";
                    int h=0,m=0, s = ol->objlink.ban->ticks_init/8;
 
@@ -335,7 +335,7 @@ int check_banned(NewSocket *ns, const char *name, char *ip)
                    ns->status = Ns_Zombie; /* we hold the socket open for a *bit* */
                    ns->idle_flag = 1;
                    return TRUE; /* ip matches... kick our friend */
-               }
+               
            }
        }
    }
