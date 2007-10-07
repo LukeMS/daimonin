@@ -1290,6 +1290,9 @@ int command_ban(object *op, char *params)
         int ticks=0;
         char *name, name_buf[MAX_BUF]="";
 
+                             if(CONTR(op)->gmaster_mode == GMASTER_MODE_VOL && ticks == -1)
+                               {goto ban_usage;}
+
         if (sscanf(str, "%s %d", name_buf, &ticks) == 2)
         {
             ticks *=8;
