@@ -1,6 +1,6 @@
 Object switch_wall
 name switch
-layer 3
+layer 5
 type 93
 no_pick 1
 no_teleport 1
