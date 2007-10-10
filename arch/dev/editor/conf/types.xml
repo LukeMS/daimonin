@@ -2948,6 +2948,7 @@
     If set and a connected object without "last_eat 1" gives
     signal, the magic wall turns this steps.
   </attribute>
+  <attribute arch="no_pick" value="1" type="fixed" />
 <section name="destroyable">
   <attribute arch="alive" editor="is destroyable" type="bool">
     Walls with &lt;is destroyable&gt; enabled can be attacked and (eventually)
