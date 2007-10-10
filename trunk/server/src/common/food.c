@@ -116,7 +116,7 @@ void apply_food(object *op, object *tmp)
         SET_FLAG(op, FLAG_EATING);
         force = insert_ob_in_ob(force, op);
 
-        new_draw_info_format(NDI_UNIQUE| NDI_NAVY, 0, op, "You start eating the %s", STRING_SAFE(tmp->name));
+        new_draw_info_format(NDI_UNIQUE| NDI_NAVY, 0, op, "You start consuming the %s", STRING_SAFE(tmp->name));
 
     }
     decrease_ob(tmp);
@@ -148,7 +148,7 @@ void food_force_reg(object *op)
             /* implicit interruption of the food force - stop eat by killing the force */
             if (!CONTR(op->env)->rest_mode)
             {
-                new_draw_info(NDI_UNIQUE| NDI_NAVY, 0, op->env, "You stop eating!");
+                new_draw_info(NDI_UNIQUE| NDI_NAVY, 0, op->env, "Your meal is interrupted!");
                 CONTR(op->env)->food_status = 0;
                 CLEAR_FLAG(op->env, FLAG_EATING);
                 remove_ob(op);

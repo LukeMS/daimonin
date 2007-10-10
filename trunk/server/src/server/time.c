@@ -1415,7 +1415,7 @@ int process_object(object *op)
         {
             CLEAR_FLAG(op->env, FLAG_EATING);
             CONTR(op->env)->food_status = 0;
-            new_draw_info(NDI_UNIQUE| NDI_NAVY, 0, op->env, "You finished eating.");
+            new_draw_info(NDI_UNIQUE| NDI_NAVY, 0, op->env, "You finish digesting your meal.");
         }
 
         if (QUERY_FLAG(op, FLAG_APPLIED) && op->type != CONTAINER)
