@@ -761,6 +761,11 @@ treasureone weapon_cleave_2h
     chance 10
     material_quality 80
     material_range 7
+  more
+  arch doubleji
+    chance 10
+    material_quality 80
+    material_range 7
 end
 #
 treasureone weapon_cleave_pole
@@ -780,6 +785,16 @@ treasureone weapon_cleave_pole
     material_range 7
   more
   arch voulge
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch fuji
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch taiji
     chance 20
     material_quality 80
     material_range 7
@@ -835,6 +850,30 @@ treasureone weapon_slash_1h
     material_range 7
   more
   arch longsword
+    difficulty 6
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch kopis
+    difficulty 6
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch muleijian
+    difficulty 9
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch zuijian
+    difficulty 6
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch taiqiang
     difficulty 6
     chance 20
     material_quality 80
@@ -899,6 +938,11 @@ treasureone weapon_slash_2h
     material_quality 80
     material_range 7
   more
+  arch fujian
+    chance 20
+    material_quality 80
+    material_range 7
+  more
   arch no_dachi
     chance 20
     material_quality 80
@@ -942,6 +986,16 @@ treasureone weapon_slash_pole
     material_range 7
   more
   arch naginata
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch zuipudao
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch zuidao
     chance 20
     material_quality 80
     material_range 7
@@ -1202,6 +1256,12 @@ treasureone weapon_pierce_1h
     material_quality 80
     material_range 7
   more
+  arch spatha
+    difficulty 9
+    chance 20
+    material_quality 80
+    material_range 7
+  more
   arch pallasch
     difficulty 6
     chance 20
@@ -1256,6 +1316,16 @@ treasureone weapon_pierce_2h
     material_range 7
   more
   arch trident
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch dory
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch xuqiang
     chance 20
     material_quality 80
     material_range 7
