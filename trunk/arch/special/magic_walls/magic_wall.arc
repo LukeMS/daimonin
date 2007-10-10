@@ -61,4 +61,6 @@ resist_nether 100
 resist_sonic 100
 resist_psionic 100
 blocksview 1
+no_pass 1
+no_pick 1
 end
