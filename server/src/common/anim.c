@@ -119,7 +119,7 @@ void init_anim()
                     STRING_SAFE(buf));
                 animations[num_animations].facings = 1;
             }
-            if (animations[num_animations].facings != 9 && animations[num_animations].facings != 25)
+            else if (animations[num_animations].facings != 9 && animations[num_animations].facings != 25)
             {
                 LOG(llevDebug, "Animation %s has invalid facings paramter (%d - allowed are 9 or 25 only).",
                     STRING_SAFE(animations[num_animations].name), animations[num_animations].facings);
