@@ -1485,7 +1485,7 @@ int command_dm_set(object *op, char *params)
     {
         char name[MAX_BUF], passwd[MAX_BUF], host[MAX_BUF], mode[MAX_BUF], dummy[MAX_BUF];
 
-        if (sscanf(str, "%[^:]:%[^:]:%[^:]:%s%[\n\r]", name, passwd, host, mode, dummy) < 3)
+        if (sscanf(str, "%[^:]:%[^:]:%[^:]:%s%[\n\r]", name, passwd, host, mode, dummy) < 4)
             new_draw_info(NDI_UNIQUE, 0, op, "/dm_set: invalid parameter.");
         else
         {
@@ -1574,7 +1574,7 @@ int command_gm_set(object *op, char *params)
     {
         char name[MAX_BUF], passwd[MAX_BUF], host[MAX_BUF], mode[MAX_BUF], dummy[MAX_BUF];
 
-        if (sscanf(str, "%[^:]:%[^:]:%[^:]:%s%[\n\r]", name, passwd, host, mode, dummy) < 3)
+        if (sscanf(str, "%[^:]:%[^:]:%[^:]:%s%[\n\r]", name, passwd, host, mode, dummy) < 4)
             new_draw_info(NDI_UNIQUE, 0, op, "/gm_set: invalid parameter.");
         else
         {
