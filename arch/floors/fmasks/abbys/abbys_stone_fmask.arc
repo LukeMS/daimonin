@@ -5,7 +5,6 @@ no_teleport 1
 layer 2
 type 28
 no_pick 1
-no_pass 1
 end
 Object abbys_stone2
 name abbys
@@ -14,7 +13,6 @@ no_teleport 1
 layer 2
 type 28
 no_pick 1
-no_pass 1
 end
 Object abbys_stone3
 name abbys
@@ -23,7 +21,6 @@ no_teleport 1
 layer 2
 type 28
 no_pick 1
-no_pass 1
 end
 Object abbys_stone4
 name abbys
@@ -32,7 +29,6 @@ no_teleport 1
 layer 2
 type 28
 no_pick 1
-no_pass 1
 end
 Object abbys_stone5
 name abbys
@@ -41,7 +37,6 @@ no_teleport 1
 layer 2
 type 28
 no_pick 1
-no_pass 1
 end
 Object abbys_stone6
 name abbys
@@ -50,7 +45,6 @@ no_teleport 1
 layer 2
 type 28
 no_pick 1
-no_pass 1
 end
 Object abbys_stone7
 name abbys
@@ -59,7 +53,6 @@ no_teleport 1
 layer 2
 type 28
 no_pick 1
-no_pass 1
 end
 Object abbys_stone8
 name abbys
@@ -68,7 +61,6 @@ no_teleport 1
 layer 2
 type 28
 no_pick 1
-no_pass 1
 end
 Object abbys_stone9
 name abbys
@@ -77,7 +69,6 @@ no_teleport 1
 layer 2
 type 28
 no_pick 1
-no_pass 1
 end
 Object abbys_stone10
 name abbys
@@ -86,7 +77,6 @@ no_teleport 1
 layer 2
 type 28
 no_pick 1
-no_pass 1
 end
 Object abbys_stone11
 name abbys
@@ -95,7 +85,6 @@ no_teleport 1
 layer 2
 type 28
 no_pick 1
-no_pass 1
 end
 Object abbys_stone12
 name abbys
@@ -104,7 +93,6 @@ no_teleport 1
 layer 2
 type 28
 no_pick 1
-no_pass 1
 end
 Object abbys_stone13
 name abbys
@@ -113,7 +101,6 @@ no_teleport 1
 layer 2
 type 28
 no_pick 1
-no_pass 1
 end
 Object abbys_stone14
 name abbys
@@ -122,7 +109,6 @@ no_teleport 1
 layer 2
 type 28
 no_pick 1
-no_pass 1
 end
 Object abbys_stone15
 name abbys
@@ -131,7 +117,6 @@ no_teleport 1
 layer 2
 type 28
 no_pick 1
-no_pass 1
 end
 Object abbys_stone16
 name abbys
@@ -140,5 +125,4 @@ no_teleport 1
 layer 2
 type 28
 no_pick 1
-no_pass 1
 end
