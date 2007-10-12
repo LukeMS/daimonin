@@ -3517,7 +3517,7 @@
     will find no free place. If set to 1, it test the space where
     the spawn point itself is. Increasing the value will start a search
     around the spot, starting in the south. value 2 search spot 0,-1,
-    value 3 spot 1,-1, 4 = 0,-1 ...
+    value 3 spot 1,-1, 4 = 1,0 ...
     Warning: The Test will ONLY be done for the head - so careful when
     inserting big monsters on the map. Depending on the "free" area,
     the spawn point will drop the mob somewhere in the free area.
