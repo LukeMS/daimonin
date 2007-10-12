@@ -6,7 +6,7 @@ attack_cleave 100
 weapon_speed 3.95
 item_level 15
 item_skill 4
-dam 88
+dam 176
 wc 16
 type 15
 sub_type 3
