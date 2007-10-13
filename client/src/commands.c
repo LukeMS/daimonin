@@ -1964,19 +1964,19 @@ void ChannelMsgCmd(unsigned char *data, int len)
     flags|=data[1];
     data+=2;
 
-    if (strlen(data)==0)
+    if (strlen((char *)data)==0)
     {
         LOG(LOG_ERROR,"ChannelMsgCmd: Got no data!\n");
         return;
     }
-    message=strchr(data,':');
+    message=strchr((char *)data,':');
     if (!message)
     {
         LOG(LOG_ERROR,"ChannelMsgCmd: Empty Message!\n");
         return;
     }
     *(message++) = '\0';
-    sscanf(data,"%s %s",channelname, playername);
+    sscanf((char *)data,"%s %s",channelname, playername);
     if (ignore_check(playername, channelname)) return;
 //    draw_info_format(COLOR_WHITE,"chmsg: c: %s, p: %s, m: %s",channelname, playername, message);
     if (flags & NDI_EMOTE)
