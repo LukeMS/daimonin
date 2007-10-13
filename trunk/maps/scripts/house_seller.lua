@@ -61,7 +61,9 @@ function updateAp(ap_old, ap_new, pid, x, y)
         map_new:Save()
         create_info(pid, ap_new, x, y)
         map_old:Delete(1)
+        pl:SetSaveBed(game:ReadyMap("/planes/human_plane/castle/castle_030a"), 18, 1)
         ib:AddMsg("\nDone! Your new apartment is ready.\n")
+        ib:AddMsg("\nMake sure that you use the SaveBed in your new apartment or death is liable to take you back to the dock.\n")
     end
     pl:Interface(1, ib:Build())
 end
