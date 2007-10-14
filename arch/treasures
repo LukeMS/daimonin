@@ -324,140 +324,173 @@ treasureone traps_physical
   arch trap_blades
     difficulty 2
     chance 33
+    magic 0
   more
   arch trap_needle
     difficulty 4
     chance 33
+    magic 0
   more
   arch trap_bear_trap
     difficulty 3
     chance 33
+    magic 0
 end
 #
 treasureone traps_disease
   arch trap_diseased_needle
     difficulty 5
     chance 100
+    magic 0
 end
 #
 treasureone traps_magical
   arch rune_fire
     difficulty 7
     chance 6
+    magic 0
   more
   arch rune_cold
     difficulty 7
     chance 6
+    magic 0
   more
   arch rune_electricity
     difficulty 7
     chance 6
+    magic 0
   more
   arch rune_poison
     difficulty 7
     chance 6
+    magic 0
   more
   arch rune_acid
     difficulty 7
     chance 6
+    magic 0
   more
   arch rune_sonic
     difficulty 7
     chance 6
+    magic 0
   more
   arch rune_magic
     difficulty 10
     chance 4
+    magic 0
   more
   arch rune_light
     difficulty 10
     chance 4
+    magic 0
   more
   arch rune_shadow
     difficulty 10
     chance 4
+    magic 0
   more
   arch rune_psionic
     difficulty 10
     chance 4
+    magic 0
   more
   arch rune_lifesteal
     difficulty 15
     chance 2
+    magic 0
   more
   arch rune_death
     difficulty 15
     chance 2
+    magic 0
   more
   arch rune_chaos
     difficulty 15
     chance 2
+    magic 0
   more
   arch rune_nether
     difficulty 15
     chance 2
+    magic 0
   more
   arch rune_aether
     difficulty 15
     chance 2
+    magic 0
   more
   arch rune_weaponmagic
     difficulty 15
     chance 4
+    magic 0
   more
   arch rune_godpower
     difficulty 15
     chance 2
+    magic 0
   more
   arch rune_drain
     difficulty 12
     chance 4
+    magic 0
   more
   arch rune_depletion
     difficulty 12
     chance 4
+    magic 0
   more
   arch rune_corruption
     difficulty 12
     chance 4
+    magic 0
   more
   arch rune_confusion
     difficulty 12
     chance 4
+    magic 0
   more
   arch rune_fear
     difficulty 12
     chance 4
+    magic 0
   more
   arch rune_slow
     difficulty 12
     chance 4
+    magic 0
   more
   arch rune_paralyze
     difficulty 12
     chance 4
+    magic 0
   more
   arch rune_snare
     difficulty 12
     chance 4
+    magic 0
 end
 # this forces are used by the disease needle
 treasureone traps_needle_diseases
   arch warts
     difficulty 6
     chance 30
+    magic 0
   more
   arch atheletes_foot
     difficulty 5
     chance 10
+    magic 0
   more
   arch tapeworms
     difficulty 5
     chance 30
+    magic 0
   more
   arch diarrhea
     difficulty 6
     chance 30
+    magic 0
 end
 ##############################################################
 #
@@ -587,7 +620,7 @@ treasureone weapon_amun
     quality_range 7
   more
   arch bolt
-    magic 2
+    chance 35
     nrof 3
     material_quality 80
     material_range 7
@@ -683,7 +716,6 @@ treasureone weapon_melee
   more
   list weapon_slash
     chance 25
-    quality 85
   more
   list weapon_impact
     chance 25
