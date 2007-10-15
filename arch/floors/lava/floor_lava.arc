@@ -6,7 +6,6 @@ layer 1
 no_teleport 1
 terrain_type 8
 no_pick 1
-no_pass 1
 end
 Object floor_lava_2
 name lava
@@ -16,7 +15,6 @@ layer 1
 no_teleport 1
 terrain_type 8
 no_pick 1
-no_pass 1
 end
 Object floor_lava_3
 name lava
@@ -26,7 +24,6 @@ layer 1
 no_teleport 1
 terrain_type 8
 no_pick 1
-no_pass 1
 end
 Object floor_lava_4
 name lava
@@ -36,5 +33,4 @@ layer 1
 no_teleport 1
 terrain_type 8
 no_pick 1
-no_pass 1
 end
