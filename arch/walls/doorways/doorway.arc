@@ -1,5 +1,5 @@
 Object doorway_wood1_1
-name passage
+name doorway
 face doorway_wood1.111
 anim
 facings 9
