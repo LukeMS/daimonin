@@ -349,15 +349,16 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
         return(random_roll(1, SP_level_spellpoint_cost(op, caster, type)));
     }
 
-    if (item == spellNormal && op->type == PLAYER && (!s->flags & SPELL_DESC_WIS))
+    else if (item == spellNormal && op->type == PLAYER && !(s->flags & SPELL_DESC_WIS))
     {
-        int failure = random_roll(0, 199)
-                    - CONTR(op)->encumbrance
-                    + op->chosen_skill->level
-                    - s->level
-                    + 35;
+         float failure = (random_roll(0, 99)
+                         - CONTR(op)->encumbrance
+                         + ((op->stats.Int - 10) / 10)
+                         - s->level 
+                         + (op->chosen_skill->level / 10));
 
-        if (failure < 0)
+        
+        if (failure < CONTR(op)->spell_fumble)
         {
             new_draw_info(NDI_UNIQUE, 0, op, "You bungle the spell because you have too much heavy equipment in use.");
             return(random_roll(0, SP_level_spellpoint_cost(op, caster, type)));
