@@ -14,6 +14,7 @@ monster 1
 is_female 1
 is_neutral 1
 terrain_flag 1
+flying 1
 can_use_weapon 1
 int 10
 wis 6

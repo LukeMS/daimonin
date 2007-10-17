@@ -147,7 +147,7 @@ face floor_cave_dropoff1i.101
 type 71
 layer 1
 no_teleport 1
-terrain_type 2
+terrain_type 32
 no_pick 1
 end
 Object floor_cave_dropoff1j
@@ -155,7 +155,7 @@ face floor_cave_dropoff1j.101
 type 71
 layer 1
 no_teleport 1
-terrain_type 2
+terrain_type 32
 no_pick 1
 end
 Object floor_cave_dropoff1k
@@ -163,6 +163,6 @@ face floor_cave_dropoff1k.101
 type 71
 layer 1
 no_teleport 1
-terrain_type 2
+terrain_type 32
 no_pick 1
 end
