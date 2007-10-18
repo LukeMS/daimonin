@@ -1,6 +1,5 @@
 Object shop_floor
 name shop floor
-sys_object 1
 layer 1
 no_teleport 1
 face shop_empty.111
