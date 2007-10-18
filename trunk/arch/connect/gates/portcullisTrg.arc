@@ -1,5 +1,5 @@
 Object portcullisTrg
-name gate
+name portcullis
 type 26
 attack_impact 100
 layer 5
@@ -97,7 +97,7 @@ maxhp 20
 hp 20
 end
 Object portcullisTrg_open
-name gate
+name portcullis
 type 26
 attack_impact 100
 layer 5
