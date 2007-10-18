@@ -16,7 +16,6 @@ is_neutral 1
 terrain_flag 1
 can_see_in_dark 1
 can_use_weapon 1
-flying 1
 int 10
 wis 6
 dex 3
