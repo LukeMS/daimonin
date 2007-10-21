@@ -15181,6 +15181,50 @@ row_boat_b.101
 row_boat_b.101
 row_boat_b.101
 mina
+anim rune_acid
+rune_acid.101
+rune_acid.101
+mina
+anim rune_aether
+rune_aether.101
+rune_aether.101
+mina
+anim rune_chaos
+rune_chaos.101
+rune_chaos.101
+mina
+anim rune_cold
+rune_cold.101
+icestorm.101
+mina
+anim rune_confusion
+rune_confusion.101
+rune_confusion.101
+mina
+anim rune_corruption
+rune_corruption.101
+rune_corruption.101
+mina
+anim rune_death
+rune_death.101
+rune_death.101
+mina
+anim rune_depletion
+rune_depletion.101
+rune_depletion.101
+mina
+anim rune_drain
+rune_drain.101
+rune_drain.101
+mina
+anim rune_electricity
+rune_electricity.101
+lightning.111
+mina
+anim rune_fear
+rune_fear.101
+rune_fear.101
+mina
 anim rune_fire
 rune_fire.101
 fire.101
@@ -15196,6 +15240,58 @@ rune_glass.001
 rune_glass.001
 rune_glass.001
 rune_glass.001
+mina
+anim rune_godpower
+rune_godpower.101
+rune_godpower.101
+mina
+anim rune_lifesteal
+rune_lifesteal.101
+rune_lifesteal.101
+mina
+anim rune_light
+rune_light.101
+rune_light.101
+mina
+anim rune_magic
+rune_magic.101
+rune_magic.101
+mina
+anim rune_nether
+rune_nether.101
+rune_nether.101
+mina
+anim rune_paralyze
+rune_paralyze.101
+rune_paralyze.101
+mina
+anim rune_poison
+rune_poison.101
+rune_poison.101
+mina
+anim rune_psionic
+rune_psionic.101
+rune_psionic.101
+mina
+anim rune_shadow
+rune_shadow.101
+rune_shadow.101
+mina
+anim rune_slow
+rune_slow.101
+rune_slow.101
+mina
+anim rune_snare
+rune_snare.101
+rune_snare.101
+mina
+anim rune_sonic
+rune_sonic.101
+rune_sonic.101
+mina
+anim rune_weaponmagic
+rune_weaponmagic.101
+rune_weaponmagic.101
 mina
 anim sadpriest
 facings 25
