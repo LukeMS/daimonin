@@ -777,7 +777,7 @@ ac 1
 pass_thru 1
 end
 Object portcullisTrg
-name gate
+name portcullis
 type 26
 editor_folder connect/gates
 attack_impact 100
@@ -802,7 +802,7 @@ maxhp 20
 hp 20
 end
 Object portcullisTrg_open
-name gate
+name portcullis
 type 26
 editor_folder connect/gates
 attack_impact 100
@@ -988,7 +988,7 @@ Object switch_wall
 name switch
 type 93
 editor_folder connect/triggers
-layer 3
+layer 5
 no_pick 1
 no_teleport 1
 face switch_wall.111
@@ -1736,7 +1736,7 @@ editor_folder floors/cave
 face floor_cave_dropoff1i.101
 layer 1
 no_teleport 1
-terrain_type 2
+terrain_type 32
 no_pick 1
 end
 Object floor_cave_dropoff1j
@@ -1745,7 +1745,7 @@ editor_folder floors/cave
 face floor_cave_dropoff1j.101
 layer 1
 no_teleport 1
-terrain_type 2
+terrain_type 32
 no_pick 1
 end
 Object floor_cave_dropoff1k
@@ -1754,7 +1754,7 @@ editor_folder floors/cave
 face floor_cave_dropoff1k.101
 layer 1
 no_teleport 1
-terrain_type 2
+terrain_type 32
 no_pick 1
 end
 Object floor_blue1
@@ -2876,7 +2876,6 @@ face abbys_stone1.101
 no_teleport 1
 layer 2
 no_pick 1
-no_pass 1
 end
 Object abbys_stone2
 name abbys
@@ -2886,7 +2885,6 @@ face abbys_stone2.101
 no_teleport 1
 layer 2
 no_pick 1
-no_pass 1
 end
 Object abbys_stone3
 name abbys
@@ -2896,7 +2894,6 @@ face abbys_stone3.101
 no_teleport 1
 layer 2
 no_pick 1
-no_pass 1
 end
 Object abbys_stone4
 name abbys
@@ -2906,7 +2903,6 @@ face abbys_stone4.101
 no_teleport 1
 layer 2
 no_pick 1
-no_pass 1
 end
 Object abbys_stone5
 name abbys
@@ -2916,7 +2912,6 @@ face abbys_stone5.101
 no_teleport 1
 layer 2
 no_pick 1
-no_pass 1
 end
 Object abbys_stone6
 name abbys
@@ -2926,7 +2921,6 @@ face abbys_stone6.101
 no_teleport 1
 layer 2
 no_pick 1
-no_pass 1
 end
 Object abbys_stone7
 name abbys
@@ -2936,7 +2930,6 @@ face abbys_stone7.101
 no_teleport 1
 layer 2
 no_pick 1
-no_pass 1
 end
 Object abbys_stone8
 name abbys
@@ -2946,7 +2939,6 @@ face abbys_stone8.101
 no_teleport 1
 layer 2
 no_pick 1
-no_pass 1
 end
 Object abbys_stone9
 name abbys
@@ -2956,7 +2948,6 @@ face abbys_stone9.101
 no_teleport 1
 layer 2
 no_pick 1
-no_pass 1
 end
 Object abbys_stone10
 name abbys
@@ -2966,7 +2957,6 @@ face abbys_stone10.101
 no_teleport 1
 layer 2
 no_pick 1
-no_pass 1
 end
 Object abbys_stone11
 name abbys
@@ -2976,7 +2966,6 @@ face abbys_stone11.101
 no_teleport 1
 layer 2
 no_pick 1
-no_pass 1
 end
 Object abbys_stone12
 name abbys
@@ -2986,7 +2975,6 @@ face abbys_stone12.101
 no_teleport 1
 layer 2
 no_pick 1
-no_pass 1
 end
 Object abbys_stone13
 name abbys
@@ -2996,7 +2984,6 @@ face abbys_stone13.101
 no_teleport 1
 layer 2
 no_pick 1
-no_pass 1
 end
 Object abbys_stone14
 name abbys
@@ -3006,7 +2993,6 @@ face abbys_stone14.101
 no_teleport 1
 layer 2
 no_pick 1
-no_pass 1
 end
 Object abbys_stone15
 name abbys
@@ -3016,7 +3002,6 @@ face abbys_stone15.101
 no_teleport 1
 layer 2
 no_pick 1
-no_pass 1
 end
 Object abbys_stone16
 name abbys
@@ -3026,7 +3011,6 @@ face abbys_stone16.101
 no_teleport 1
 layer 2
 no_pick 1
-no_pass 1
 end
 Object abyss_n1
 name abyss
@@ -4731,7 +4715,6 @@ layer 1
 no_teleport 1
 terrain_type 8
 no_pick 1
-no_pass 1
 end
 Object floor_lava_2
 name lava
@@ -4742,7 +4725,6 @@ layer 1
 no_teleport 1
 terrain_type 8
 no_pick 1
-no_pass 1
 end
 Object floor_lava_3
 name lava
@@ -4753,7 +4735,6 @@ layer 1
 no_teleport 1
 terrain_type 8
 no_pick 1
-no_pass 1
 end
 Object floor_lava_4
 name lava
@@ -4764,7 +4745,6 @@ layer 1
 no_teleport 1
 terrain_type 8
 no_pick 1
-no_pass 1
 end
 Object border_top_n1
 name border
@@ -5469,6 +5449,16 @@ no_teleport 1
 layer 1
 terrain_type 1
 no_pick 1
+end
+Object nopass
+type 71
+editor_folder floors/floors
+face blocked.111
+layer 1
+no_teleport 1
+terrain_type 1
+no_pick 1
+no_pass 1
 end
 Object floor_ostone1
 name floor
@@ -6222,7 +6212,6 @@ Object shop_floor
 name shop floor
 type 68
 editor_folder floors/shop
-sys_object 1
 layer 1
 no_teleport 1
 face shop_empty.111
@@ -20656,6 +20645,24 @@ material_real 65
 weight 1075
 value 350
 end
+Object spatha
+name spatha
+type 15
+editor_folder items/weapon
+layer 3
+face spatha.101
+weapon_speed 2.60
+attack_pierce 100
+item_level 10
+item_skill 4
+dam 67
+wc 16
+sub_type 2
+material 2
+material_real 65
+weight 1075
+value 350
+end
 Object tanto
 name tanto
 type 15
@@ -20780,6 +20787,24 @@ material_real 65
 weight 1300
 value 350
 end
+Object kopis
+name kopis
+type 15
+editor_folder items/weapon
+layer 3
+face kopis.101
+weapon_speed 3.0
+attack_slash 100
+item_level 7
+item_skill 4
+dam 72
+wc 15
+sub_type 1
+material 2
+material_real 65
+weight 1250
+value 350
+end
 Object longsword
 name longsword
 type 15
@@ -20796,6 +20821,24 @@ sub_type 1
 material 2
 material_real 65
 weight 1300
+value 350
+end
+Object muleijian
+name mulei-jian
+type 15
+editor_folder items/weapon
+layer 3
+face muleijian.101
+weapon_speed 3.00
+attack_slash 100
+item_level 10
+item_skill 4
+dam 77
+wc 16
+sub_type 1
+material 2
+material_real 65
+weight 1450
 value 350
 end
 Object ninjato
@@ -20904,6 +20947,24 @@ material_real 65
 weight 1300
 value 350
 end
+Object taiqiang
+name tai-qiang
+type 15
+editor_folder items/weapon
+layer 3
+face taiqiang.101
+weapon_speed 3.1
+attack_slash 100
+item_level 7
+item_skill 4
+dam 70
+wc 15
+sub_type 1
+material 2
+material_real 65
+weight 1300
+value 350
+end
 Object tsurugi
 name tsurugi
 type 15
@@ -20954,6 +21015,24 @@ sub_type 1
 material 2
 material_real 65
 weight 1300
+value 350
+end
+Object zuijian
+name zui-jian
+type 15
+editor_folder items/weapon
+layer 3
+face zuijian.101
+weapon_speed 3.05
+attack_slash 100
+item_level 10
+item_skill 4
+dam 78
+wc 16
+sub_type 1
+material 2
+material_real 65
+weight 1350
 value 350
 end
 Object axe_2h
@@ -21027,6 +21106,24 @@ material 18
 material_real 65
 weight 2500
 value 750
+end
+Object doubleji
+name double ji
+type 15
+editor_folder items/weapon
+layer 3
+face doubleji.101
+attack_cleave 100
+weapon_speed 3.95
+item_level 15
+item_skill 4
+dam 176
+wc 16
+sub_type 7
+material 18
+material_real 65
+weight 1750
+value 350
 end
 Object mattock
 name mattock
@@ -21190,6 +21287,24 @@ material_real 258
 weight 1750
 value 750
 end
+Object dory
+name dory
+type 15
+editor_folder items/weapon
+layer 3
+weapon_speed 4.0
+attack_pierce 100
+item_level 15
+item_skill 4
+sub_type 6
+face dory.101
+material 18
+material_real 65
+dam 150
+wc 25
+weight 2250
+value 750
+end
 Object forc
 name forc
 type 15
@@ -21262,6 +21377,24 @@ wc 25
 weight 2250
 value 750
 end
+Object xuqiang
+name xu-qiang
+type 15
+editor_folder items/weapon
+layer 3
+weapon_speed 3.90
+attack_pierce 100
+item_level 15
+item_skill 4
+sub_type 6
+face xuqiang.101
+material 18
+material_real 65
+dam 160
+wc 24
+weight 2250
+value 750
+end
 Object claymore
 name claymore
 type 15
@@ -21279,6 +21412,24 @@ dam 98
 wc 27
 weight 2150
 value 750
+end
+Object fujian
+name fu-jian
+type 15
+editor_folder items/weapon
+layer 3
+weapon_speed 4.00
+attack_slash 100
+sub_type 5
+item_level 15
+item_skill 4
+face fujian.101
+material 2
+material_real 65
+dam 152
+wc 26
+weight 2050
+value 800
 end
 Object no_dachi
 name no-dachi
@@ -21407,6 +21558,25 @@ material_real 65
 weight 4600
 value 875
 end
+Object fuji
+name fu-ji
+type 15
+editor_folder items/weapon
+layer 3
+face fuji.101
+item_level 17
+item_skill 4
+attack_cleave 100
+weapon_speed 4.95
+dam 180
+wc 21
+ac 9
+sub_type 11
+material 18
+material_real 65
+weight 4600
+value 875
+end
 Object halberd
 name halberd
 type 15
@@ -21443,6 +21613,25 @@ sub_type 11
 material 18
 material_real 65
 weight 4600
+value 875
+end
+Object taiji
+name tai-ji
+type 15
+editor_folder items/weapon
+layer 3
+face taiji.101
+item_level 17
+item_skill 4
+attack_cleave 100
+weapon_speed 4.85
+dam 160
+wc 23
+ac 7
+sub_type 11
+material 18
+material_real 65
+weight 4750
 value 875
 end
 Object voulge
@@ -21651,6 +21840,44 @@ material_real 65
 dam 90
 wc 23
 ac 5
+weight 4500
+value 875
+end
+Object zuidao
+name zui-dao
+type 15
+editor_folder items/weapon
+layer 3
+weapon_speed 5.3
+item_level 17
+item_skill 4
+attack_slash 100
+sub_type 9
+face zuidao.101
+material 18
+material_real 65
+dam 170
+wc 22
+ac 8
+weight 4900
+value 875
+end
+Object zuipudao
+name zui-pudao
+type 15
+editor_folder items/weapon
+layer 3
+weapon_speed 5.3
+item_level 17
+item_skill 4
+attack_slash 100
+sub_type 9
+face zuipudao.101
+material 18
+material_real 65
+dam 170
+wc 22
+ac 8
 weight 4500
 value 875
 end
@@ -23686,6 +23913,7 @@ monster 1
 is_female 1
 is_neutral 1
 terrain_flag 1
+flying 1
 can_use_weapon 1
 int 10
 wis 6
@@ -30483,7 +30711,6 @@ is_neutral 1
 terrain_flag 1
 can_see_in_dark 1
 can_use_weapon 1
-flying 1
 int 10
 wis 6
 dex 3
@@ -30534,7 +30761,6 @@ is_neutral 1
 terrain_flag 1
 can_see_in_dark 1
 can_use_weapon 1
-flying 1
 int 10
 wis 6
 dex 3
@@ -37993,6 +38219,8 @@ resist_nether 100
 resist_sonic 100
 resist_psionic 100
 blocksview 1
+no_pass 1
+no_pick 1
 end
 Object beacon
 type 137
@@ -38204,6 +38432,237 @@ attack_poison 100
 dam 4
 cha 20
 end
+Object rune_acid
+name Rune of Acid
+type 154
+msg
+You detonate a Rune of Acid!
+endmsg
+editor_folder traps/runes
+layer 4
+face rune_acid.101
+hp 1
+animation rune_acid
+level 1
+is_animated 0
+anim_speed 1
+is_invisible 1
+no_pick 1
+walk_on 1
+attack_acid 100
+dam 8
+cha 20
+end
+Object rune_aether
+name Rune of Aether
+type 154
+msg
+You detonate a Rune of Aether!
+endmsg
+editor_folder traps/runes
+layer 4
+face rune_aether.101
+hp 1
+animation rune_aether
+level 1
+is_animated 0
+anim_speed 1
+is_invisible 1
+no_pick 1
+walk_on 1
+attack_aether 100
+dam 8
+cha 20
+end
+Object rune_chaos
+name Rune of Chaos
+type 154
+msg
+You detonate a Rune of Chaos!
+endmsg
+editor_folder traps/runes
+layer 4
+face rune_chaos.101
+hp 1
+animation rune_chaos
+level 1
+is_animated 0
+anim_speed 1
+is_invisible 1
+no_pick 1
+walk_on 1
+attack_chaos 100
+dam 8
+cha 20
+end
+Object rune_cold
+name Rune of Frost
+type 154
+msg
+You detonate a Rune of Frost!
+endmsg
+editor_folder traps/runes
+layer 4
+face rune_cold.101
+hp 1
+animation rune_cold
+level 1
+is_animated 0
+anim_speed 1
+is_invisible 1
+no_pick 1
+walk_on 1
+attack_cold 100
+dam 8
+cha 20
+end
+Object rune_confusion
+name Rune of Confusion
+type 154
+msg
+You detonate a Rune of Confusion!
+endmsg
+editor_folder traps/runes
+layer 4
+face rune_confusion.101
+hp 1
+animation rune_confusion
+level 1
+is_animated 0
+anim_speed 1
+is_invisible 1
+no_pick 1
+walk_on 1
+attack_confusion 100
+dam 8
+cha 20
+end
+Object rune_corruption
+name Rune of Corruption
+type 154
+msg
+You detonate a Rune of Corruption!
+endmsg
+editor_folder traps/runes
+layer 4
+face rune_corruption.101
+hp 1
+animation rune_corruption
+level 1
+is_animated 0
+anim_speed 1
+is_invisible 1
+no_pick 1
+walk_on 1
+attack_corruption 100
+dam 8
+cha 20
+end
+Object rune_death
+name Rune of Death
+type 154
+msg
+You detonate a Rune of Death!
+endmsg
+editor_folder traps/runes
+layer 4
+face rune_death.101
+hp 1
+animation rune_death
+level 1
+is_animated 0
+anim_speed 1
+is_invisible 1
+no_pick 1
+walk_on 1
+attack_death 100
+dam 16
+cha 20
+end
+Object rune_depletion
+name Rune of Depletion
+type 154
+msg
+You detonate a Rune of Depletion!
+endmsg
+editor_folder traps/runes
+layer 4
+face rune_depletion.101
+hp 1
+animation rune_depletion
+level 1
+is_animated 0
+anim_speed 1
+is_invisible 1
+no_pick 1
+walk_on 1
+attack_depletion 100
+dam 8
+cha 20
+end
+Object rune_drain
+name Rune of Drain
+type 154
+msg
+You detonate a Rune of Drain!
+endmsg
+editor_folder traps/runes
+layer 4
+face rune_drain.101
+hp 1
+animation rune_drain
+level 1
+is_animated 0
+anim_speed 1
+is_invisible 1
+no_pick 1
+walk_on 1
+attack_drain 100
+dam 8
+cha 20
+end
+Object rune_electricity
+name Rune of Lightning
+type 154
+msg
+You detonate a Rune of Lightning!
+endmsg
+editor_folder traps/runes
+layer 4
+face rune_electricity.101
+hp 1
+animation rune_electricity
+level 1
+is_animated 0
+anim_speed 1
+is_invisible 1
+no_pick 1
+walk_on 1
+attack_electricity 100
+dam 8
+cha 20
+end
+Object rune_fear
+name Rune of Fear
+type 154
+msg
+You detonate a Rune of Fear!
+endmsg
+editor_folder traps/runes
+layer 4
+face rune_fear.101
+hp 1
+animation rune_fear
+level 1
+is_animated 0
+anim_speed 1
+is_invisible 1
+no_pick 1
+walk_on 1
+attack_fear 100
+dam 8
+cha 20
+end
 Object rune_fire
 name Rune of Fire
 type 154
@@ -38222,6 +38681,279 @@ is_invisible 1
 no_pick 1
 walk_on 1
 attack_fire 100
+dam 8
+cha 20
+end
+Object rune_godpower
+name Rune of Godpower
+type 154
+msg
+You detonate a Rune of Godpower!
+endmsg
+editor_folder traps/runes
+layer 4
+face rune_godpower.101
+hp 1
+animation rune_godpower
+level 1
+is_animated 0
+anim_speed 1
+is_invisible 1
+no_pick 1
+walk_on 1
+attack_godpower 100
+dam 8
+cha 20
+end
+Object rune_lifesteal
+name Rune of Lifesteal
+type 154
+msg
+You detonate a Rune of Lifesteal!
+endmsg
+editor_folder traps/runes
+layer 4
+face rune_lifesteal.101
+hp 1
+animation rune_lifesteal
+level 1
+is_animated 0
+anim_speed 1
+is_invisible 1
+no_pick 1
+walk_on 1
+attack_lifesteal 100
+dam 8
+cha 20
+end
+Object rune_light
+name Rune of Light
+type 154
+msg
+You detonate a Rune of Light!
+endmsg
+editor_folder traps/runes
+layer 4
+face rune_light.101
+hp 1
+animation rune_light
+level 1
+is_animated 0
+anim_speed 1
+is_invisible 1
+no_pick 1
+walk_on 1
+attack_light 100
+dam 8
+cha 20
+end
+Object rune_magic
+name Rune of Magic
+type 154
+msg
+You detonate a Rune of Magic!
+endmsg
+editor_folder traps/runes
+layer 4
+face rune_magic.101
+hp 1
+animation rune_magic
+level 1
+is_animated 0
+anim_speed 1
+is_invisible 1
+no_pick 1
+walk_on 1
+attack_magic 100
+dam 8
+cha 20
+end
+Object rune_nether
+name Rune of Nether
+type 154
+msg
+You detonate a Rune of Nether!
+endmsg
+editor_folder traps/runes
+layer 4
+face rune_nether.101
+hp 1
+animation rune_nether
+level 1
+is_animated 0
+anim_speed 1
+is_invisible 1
+no_pick 1
+walk_on 1
+attack_nether 100
+dam 8
+cha 20
+end
+Object rune_paralyze
+name Rune of Paralyze
+type 154
+msg
+You detonate a Rune of Paralyze!
+endmsg
+editor_folder traps/runes
+layer 4
+face rune_paralyze.101
+hp 1
+animation rune_paralyze
+level 1
+is_animated 0
+anim_speed 1
+is_invisible 1
+no_pick 1
+walk_on 1
+attack_paralyze 100
+dam 16
+cha 20
+end
+Object rune_poison
+name Rune of Poison
+type 154
+msg
+You detonate a Rune of Poison!
+endmsg
+editor_folder traps/runes
+layer 4
+face rune_poison.101
+hp 1
+animation rune_poison
+level 1
+is_animated 0
+anim_speed 1
+is_invisible 1
+no_pick 1
+walk_on 1
+attack_poison 100
+dam 8
+cha 20
+end
+Object rune_psionic
+name Rune of Psionic
+type 154
+msg
+You detonate a Rune of Psionic!
+endmsg
+editor_folder traps/runes
+layer 4
+face rune_psionic.101
+hp 1
+animation rune_psionic
+level 1
+is_animated 0
+anim_speed 1
+is_invisible 1
+no_pick 1
+walk_on 1
+attack_psionic 100
+dam 8
+cha 20
+end
+Object rune_shadow
+name Rune of Shadow
+type 154
+msg
+You detonate a Rune of Shadow!
+endmsg
+editor_folder traps/runes
+layer 4
+face rune_shadow.101
+hp 1
+animation rune_shadow
+level 1
+is_animated 0
+anim_speed 1
+is_invisible 1
+no_pick 1
+walk_on 1
+attack_shadow 100
+dam 8
+cha 20
+end
+Object rune_slow
+name Rune of Slow
+type 154
+msg
+You detonate a Rune of Slow!
+endmsg
+editor_folder traps/runes
+layer 4
+face rune_slow.101
+hp 1
+animation rune_slow
+level 1
+is_animated 0
+anim_speed 1
+is_invisible 1
+no_pick 1
+walk_on 1
+attack_slow 100
+dam 8
+cha 20
+end
+Object rune_snare
+name Rune of Snaring
+type 154
+msg
+You detonate a Rune of Snare!
+endmsg
+editor_folder traps/runes
+layer 4
+face rune_snare.101
+hp 1
+animation rune_snare
+level 1
+is_animated 0
+anim_speed 1
+is_invisible 1
+no_pick 1
+walk_on 1
+attack_snare 100
+dam 8
+cha 20
+end
+Object rune_sonic
+name Rune of Sonic
+type 154
+msg
+You detonate a Rune of Sonic!
+endmsg
+editor_folder traps/runes
+layer 4
+face rune_sonic.101
+hp 1
+animation rune_sonic
+level 1
+is_animated 0
+anim_speed 1
+is_invisible 1
+no_pick 1
+walk_on 1
+attack_sonic 100
+dam 8
+cha 20
+end
+Object rune_weaponmagic
+name Rune of Weaponmagic
+type 154
+msg
+You detonate a Rune of Weaponmagic!
+endmsg
+editor_folder traps/runes
+layer 4
+face rune_weaponmagic.101
+hp 1
+animation rune_weaponmagic
+level 1
+is_animated 0
+anim_speed 1
+is_invisible 1
+no_pick 1
+walk_on 1
+attack_weaponmagic 100
 dam 8
 cha 20
 end
@@ -38828,7 +39560,7 @@ direction 1
 no_pick 1
 end
 Object doorway_wood1_1
-name passage
+name doorway
 type 77
 editor_folder walls/doorways
 face doorway_wood1.111
