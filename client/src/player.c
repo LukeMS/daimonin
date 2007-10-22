@@ -587,6 +587,8 @@ void show_player_stats(int x, int y)
     sprintf(buf, "%d", cpl.stats.level);
     if (cpl.stats.exp_level != cpl.stats.level)
         StringBlt(ScreenSurface, &BigFont, buf, x + 264 - get_string_pixel_length(buf, &BigFont), y + 43, COLOR_RED, NULL, NULL);
+    else if (cpl.stats.level == server_level.level)
+        StringBlt(ScreenSurface, &BigFont, buf, x + 264 - get_string_pixel_length(buf, &BigFont), y + 43, COLOR_HGOLD, NULL, NULL);
     else
         StringBlt(ScreenSurface, &BigFont, buf, x + 264 - get_string_pixel_length(buf, &BigFont), y + 43, COLOR_WHITE, NULL, NULL);
     sprintf(buf, "%d", cpl.stats.exp);

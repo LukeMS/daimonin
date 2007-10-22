@@ -620,8 +620,9 @@ void StatsCmd(unsigned char *data, int len)
                     if (temp < cpl.stats.exp)
                         cpl.warn_drain = TRUE;
                     cpl.stats.exp = temp;
+                    cpl.stats.exp_level = server_level.level; //we need to set it to max_level as default!!!
                     /* get the real level depending on the exp */
-                    for (x=0;x<=110;x++)
+                    for (x=0;x<=server_level.level;x++)
                     {
                         if (server_level.exp[x]>(uint32)temp)
                         {
