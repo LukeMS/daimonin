@@ -2277,11 +2277,13 @@ treasureone armour_cloak
   more
   arch cape
     chance 25
-    quality_range 7
+    material_quality 80
+    material_range 7
   more
   arch robe
     chance 25
-    quality_range 7
+    material_quality 80
+    material_range 7
 end
 #
 treasureone armour_gauntlet
@@ -2443,11 +2445,13 @@ treasureone armour_helm
   more
   arch hat_feather
     chance 5
-    quality_range 7
+    material_quality 80
+    material_range 7
   more
   arch hat_blue
     chance 5
-    quality_range 7
+    material_quality 80
+    material_range 7
 end
 ##############################################################
 #
