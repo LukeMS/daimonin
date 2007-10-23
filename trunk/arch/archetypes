@@ -14468,6 +14468,21 @@ resist_slash 4
 material_real 193
 material 8
 end
+Object sandals_cloth
+name sandals
+type 99
+editor_folder items/armour
+face sandals2.101
+layer 3
+value 15
+weight 150
+resist_pierce 4
+resist_impact 4
+resist_cleave 4
+resist_slash 4
+material_real 449
+material 128
+end
 Object spiked_boots
 name spiked boots
 type 99
@@ -14502,6 +14517,38 @@ value 75
 material_real 65
 material 2
 weight 250
+end
+Object bracers_cloth
+name bracers
+type 104
+editor_folder items/armour
+layer 3
+face bracers_cloth.101
+resist_impact 3
+resist_slash 3
+resist_pierce 3
+resist_cleave 3
+value 75
+material_real 449
+material 128
+weight 100
+end
+Object bracers_leather
+name bracers
+type 104
+editor_folder items/armour
+layer 3
+face bracers_leather.101
+ac 1
+last_heal 2
+resist_impact 4
+resist_slash 4
+resist_pierce 4
+resist_cleave 4
+value 75
+material_real 193
+material 8
+weight 150
 end
 Object cape
 name cape
@@ -14635,6 +14682,21 @@ material 8
 value 15
 weight 200
 end
+Object gloves_cloth
+name gloves
+type 100
+editor_folder items/armour
+face gloves_cloth.101
+layer 3
+weight 100
+value 40
+resist_impact 2
+resist_slash 2
+resist_pierce 2
+resist_cleave 2
+material_real 449
+material 128
+end
 Object belt
 name belt
 type 113
@@ -14666,6 +14728,21 @@ weight 200
 value 20
 material_real 193
 material 8
+end
+Object girdle_cloth
+name girdle
+type 113
+editor_folder items/armour
+layer 3
+face girdle_cloth.101
+resist_pierce 1
+resist_impact 1
+resist_cleave 1
+resist_slash 1
+weight 100
+value 20
+material_real 449
+material 128
 end
 Object coif_chain
 name chain coif
@@ -15994,6 +16071,21 @@ material_real 65
 material 2
 value 75
 weight 750
+end
+Object shoulder_cloth
+name shoulders
+type 142
+editor_folder items/armour
+layer 3
+face shoulder_cloth.101
+resist_impact 4
+resist_cleave 4
+resist_slash 4
+resist_pierce 4
+material_real 449
+material 128
+value 50
+weight 150
 end
 Object shoulder_leather
 name shoulders
