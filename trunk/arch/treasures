@@ -1974,6 +1974,16 @@ treasureone armour_mail_start
 end
 #
 treasureone armour_bracers
+  arch bracers_cloth
+    chance 20
+    material_quality 80
+    material_range 7
+  more  
+  arch bracers_leather
+    chance 20
+    material_quality 80
+    material_range 7
+  more  
   arch bracers_ac
     chance 35
     material_quality 80
@@ -1981,6 +1991,11 @@ treasureone armour_bracers
 end
 #
 treasureone armour_boots
+  arch sandals_cloth
+    chance 20
+    material_quality 80
+    material_range 7
+  more
   arch sandals
     chance 20
     material_quality 80
@@ -2041,6 +2056,11 @@ treasureone armour_boots
 end
 #
 treasureone armour_boots_start
+  arch sandals_cloth
+    chance 20
+    material_quality 80
+    material_range 7
+  more
   arch sandals
     chance 20
     material_quality 80
@@ -2287,6 +2307,11 @@ treasureone armour_cloak
 end
 #
 treasureone armour_gauntlet
+  arch gloves_cloth
+    chance 40
+    material_quality 80
+    material_range 7
+  more
   arch gloves
     chance 40
     material_quality 80
@@ -2316,6 +2341,11 @@ treasureone armour_gauntlet
 end
 #
 treasureone armour_girdle
+  arch girdle_cloth
+    chance 15
+    material_quality 80
+    material_range 7
+  more
   arch girdle
     chance 15
     material_quality 80
@@ -2348,6 +2378,11 @@ treasureone armour_legs
 end
 #
 treasureone armour_shoulder
+  arch shoulder_cloth
+    chance 15
+    material_quality 80
+    material_range 7
+  more  
   arch shoulder_leather
     chance 15
     material_quality 80
@@ -3028,6 +3063,8 @@ treasureone misc_container
   arch sack
     chance 25
     magic 0
+    material_quality 81
+    material_range 6
   more
   arch r_sack
     chance 25
@@ -3038,10 +3075,14 @@ treasureone misc_container
   arch bag
     chance 25
     magic 0
+    material_quality 81
+    material_range 6
   more
   arch pouch
     chance 20
     magic 0
+    material_quality 80
+    material_range 7
   more
   arch key_ring
     chance 20
@@ -3273,11 +3314,13 @@ treasureone loot_start
   more
   arch hat_feather
     chance 1
-    quality_range 7
+    material_quality 80
+    material_range 7
   more
   arch dress
     chance 1
-    quality_range 7
+    material_quality 80
+    material_range 7
 end
 # base loot list for "misc. base stuff"
 treasureone loot_base
@@ -3316,15 +3359,18 @@ treasureone loot_base
   more
   arch hat_feather
     chance 2
-    quality_range 7
+    material_quality 80
+    material_range 7
   more
   arch dress
     chance 2
-    quality_range 7
+    material_quality 80
+    material_range 7
   more
   arch pants
     chance 2
-    quality_range 7
+    material_quality 80
+    material_range 7
   more
   list magic_useup
     chance 3
