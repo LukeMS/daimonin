@@ -200,7 +200,21 @@
 <listentry value="208" name="leather: dragon leather" />
 
 <listentry value="257" name="wood: pine" />
-<listentry value="267" name="wood: oak" />
+<listentry value="258" name="wood: spruce" />   
+<listentry value="259" name="wood: cedar" />
+<listentry value="260" name="wood: ash" />
+<listentry value="261" name="wood: yew" />   
+<listentry value="262" name="wood: birch" />
+<listentry value="263" name="wood: hickory" />
+<listentry value="264" name="wood: cherry" />
+<listentry value="265" name="wood: walnut" />
+<listentry value="266" name="wood: maple" />
+<listentry value="267" name="wood: elm" /> 
+<listentry value="268" name="wood: red elm" />
+<listentry value="269" name="wood: rosewood" />
+<listentry value="270" name="wood: pernambuco" />    
+<listentry value="271" name="wood: white oak" />    
+<listentry value="272" name="wood: red oak" />
 
 <listentry value="321" name="organic: animal" />
 <listentry value="322" name="organic: dragon" />
@@ -218,10 +232,22 @@
 <listentry value="385" name="stone: flint" />
 <listentry value="386" name="stone: pearl" />
 
-<listentry value="449" name="cloth: wool" />
+<listentry value="449" name="cloth: wool" />   
 <listentry value="450" name="cloth: linen" />
-<listentry value="451" name="cloth: silk" />
-<listentry value="452" name="cloth: elven hair" />
+<listentry value="451" name="cloth: rat hair" />
+<listentry value="452" name="cloth: dog hair" />    
+<listentry value="453" name="cloth: cat hair" />
+<listentry value="454" name="cloth: mugwump hair" />
+<listentry value="455" name="cloth: wildcat hair" />
+<listentry value="456" name="cloth: wolf hair" />
+<listentry value="457" name="cloth: horse hair" />
+<listentry value="458" name="cloth: giant hair" />
+<listentry value="459" name="cloth: minotaur hair" />
+<listentry value="460" name="cloth: worm silk" />    
+<listentry value="461" name="cloth: spider silk" />
+<listentry value="462" name="cloth: angel hair" />   
+<listentry value="463" name="cloth: unicorn hair" />
+<listentry value="464" name="cloth: elven hair" />
 
 <listentry value="513" name="adamant: magic silk" />
 <listentry value="514" name="adamant: mithril" />
