@@ -180,6 +180,10 @@ void esrv_draw_look(object *pl)
         if (tmp == pl)
             continue;
 
+        /* Shop floors should not be seen in below window */
+        if (tmp->type == SHOP_FLOOR)
+            continue;
+
         /* skip map mask, sys_objects and invisible objects when we can't see them */
         if (tmp->layer <= 0
          || IS_SYS_INVISIBLE(tmp)
