@@ -8,6 +8,7 @@ layer 6
 direction 5
 item_race 255
 item_level 255
+glow_radius 3
 corpse 1
 alive 1
 monster 1
@@ -38,7 +39,7 @@ thacm 5
 dam 58
 weapon_speed 3.5
 attack_pierce 100
-speed -0.048
+speed -0.240
 level 1
 weight 91500
 anim
