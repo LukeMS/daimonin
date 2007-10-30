@@ -118,7 +118,7 @@ sub thumbnail_file
 {
     my ($map, $hires) = @_;
     $map->{fullpath} =~ /^(.*)\/([^\/]*)$/;
-    return $hires ? "$1/.dedit/$2.preview" : "$1/.dedit/$2.tile";
+    return $hires ? "$1/.dedit/$2.preview" : "$1/.dedit/$2.icon";
 }
 
 #
