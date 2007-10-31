@@ -351,7 +351,7 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
 
     else if (item == spellNormal && op->type == PLAYER && !(s->flags & SPELL_DESC_WIS))
     {
-         float failure = (random_roll(0, 99)
+         float failure = (float)(random_roll(0, 99)
                          - CONTR(op)->encumbrance
                          + ((op->stats.Int - 10) / 10)
                          - s->level 

@@ -1231,7 +1231,7 @@ void check_login(object *op, int mode)
      * dead, and not using permadeath mode, the kill_player will
      * set the play_again flag, so return.
      */
-    if (op->stats.hp < 0)
+    if (op->stats.hp <= 0)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "Your character was dead last your played.");
         kill_player(op);

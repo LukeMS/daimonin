@@ -164,7 +164,13 @@ int command_kick(object *ob, char *params)
     if(!ob)
     {
         for(pl=first_player;pl!=NULL;pl=pl->next)
-            save_player(pl->ob, 1);
+        {
+            if(save_player(pl->ob, 1))
+                LOG(llevInfo, "Saving player %s: Success!\n", query_name(pl->ob));
+            else
+                LOG(llevInfo, "Saving player %s: FAILED!\n", query_name(pl->ob));
+        }
+        
     }
     else
         save_player(ob,1);
@@ -180,10 +186,11 @@ int command_kick(object *ob, char *params)
             remove_ob(op);
             check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
             op->direction = 0;
-            LOG(llevInfo, "KICKCMD: %s issued /kick %s\n", ob->name, op->name);
+            if(ob)
+                LOG(llevInfo, "KICKCMD: %s issued /kick %s\n", query_name(ob), query_name(op));
             if (params)
-                new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, ob, "%s is kicked out of the game.", op->name);
-            LOG(llevInfo, "%s is kicked out of the game.\n", op->name);
+                new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, ob, "%s is kicked out of the game.", query_name(op));
+            LOG(llevInfo, "%s is kicked out of the game.\n", query_name(op));
             container_unlink(CONTR(op), NULL);
             CONTR(op)->socket.status = Ns_Dead;
         }
@@ -1603,7 +1610,7 @@ int command_gm_set(object *op, char *params)
         {
             if(!strcmp(str,ol->objlink.gm->entry)) /* found a entry */
             {
-               char name[MAX_BUF], passwd[MAX_BUF], host[MAX_BUF], mode[MAX_BUF], dummy[MAX_BUF];
+               char name[MAX_BUF], passwd[MAX_BUF], host[MAX_BUF], mode[MAX_BUF];
                int mode_id = check_gmaster_file_entry(name, passwd, host, mode);
               if(mode_id <= GMASTER_MODE_GM)
               {

@@ -1406,7 +1406,7 @@ void set_ring_bonus_value_calc(object *op)
     
     for(resist = 0; resist < num_resist_table; resist++) {
 	if (op->resist[resist_table[resist]] > 0) {	
-	    op->value += (op->resist[resist_table[resist]] * (op->item_quality / 100.0f) * 500);
+	    op->value += (sint64)(op->resist[resist_table[resist]] * (op->item_quality / 100.0f) * 500);
 	    }
 	}
 
@@ -1432,8 +1432,8 @@ void set_ring_bonus_value_calc(object *op)
     if (op->stats.exp > 0) op->value += op->stats.exp * 3002;
     
     if(op->type == AMULET) {
-    	if(QUERY_FLAG(op, FLAG_REFL_MISSILE)) op->value += (20000 * (op->item_quality / 100.0f));
-    	if(QUERY_FLAG(op, FLAG_REFL_SPELL)) op->value += (60000 * (op->item_quality / 100.0f));
+    	if(QUERY_FLAG(op, FLAG_REFL_MISSILE)) op->value += (sint64)(20000 * (op->item_quality / 100.0f));
+    	if(QUERY_FLAG(op, FLAG_REFL_SPELL)) op->value += (sint64)(60000 * (op->item_quality / 100.0f));
 	}	
 
     

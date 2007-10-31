@@ -257,7 +257,7 @@ struct plugin_hooklist
     void (*new_draw_info)(const int, const int, const object *const , const char *const);
     void (*new_draw_info_format)(const int, const int, const object *const, const char *const, ...);
 #ifdef USE_CHANNELS
-    void (*lua_channel_message)(char *channelname, char *name, char *message, int mode);
+    void (*lua_channel_message)(char *channelname, const char *name, char *message, int mode);
 #endif
     void (*new_info_map)(const int, const mapstruct *const, const int, const int, const int, const char *const);
     void (*new_info_map_except)(const int, const mapstruct *const, const int, const int, const int,

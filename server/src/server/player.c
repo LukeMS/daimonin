@@ -445,7 +445,7 @@ void confirm_password(object *op, int value)
 void flee_player(object *op)
 {
     int dir, diff;
-    if (op->stats.hp < 0)
+    if (op->stats.hp <= 0)
     {
         LOG(llevDebug, "Fleeing player is dead.\n");
         CLEAR_FLAG(op, FLAG_SCARED);
@@ -613,7 +613,7 @@ int save_life(object *op)
                 esrv_del_item(CONTR(op), tmp->count, tmp->env);
             remove_ob(tmp);
             CLEAR_FLAG(op, FLAG_LIFESAVE);
-            if (op->stats.hp < 0)
+            if (op->stats.hp <= 0)
                 op->stats.hp = op->stats.maxhp;
             if (op->stats.food < 0)
                 op->stats.food = 999;
@@ -696,8 +696,19 @@ void do_some_living(object *op)
 {
     player *pl = CONTR(op);
 
+    if (!pl || pl->state != ST_PLAYING)
+        return;
+
+    /* sanity kill check */
+    if (op->stats.hp <= 0)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "You died by low hitpoints!");
+        kill_player(op);
+        return;
+    }
+
     /* food_status < 0 marks an active food force - we don't want double regeneration! */
-    if (pl && pl->state == ST_PLAYING && pl->food_status>=0) /* be sure we are active and playing */
+    if (pl->food_status>=0) /* be sure we are active and playing */
     {
         pl->food_status = 0;
 
@@ -838,14 +849,7 @@ void kill_player(object *op)
     GlobalEvent(&CFP);
 #endif
 
-    if (op->stats.food < 0)
-    {
-        sprintf(buf, "%s starved to death.", op->name);
-        FREE_AND_ADD_REF_HASH(pl->killer, shstr_cons.starvation);
-    }
-    else
-        sprintf(buf, "%s died.", op->name);
-
+    sprintf(buf, "%s died.", op->name);
     play_sound_player_only(pl, SOUND_PLAYER_DIES, SOUND_NORMAL, 0, 0);
 
     /*  save the map location for corpse, gravestone*/
@@ -1007,8 +1011,6 @@ void kill_player(object *op)
     restoration(NULL, op);
 
     apply_death_exp_penalty(op);
-    if (op->stats.food < 0)
-        op->stats.food = 900;
     op->stats.hp = op->stats.maxhp;
     op->stats.sp = op->stats.maxsp;
     op->stats.grace = op->stats.maxgrace;
