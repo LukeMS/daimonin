@@ -268,7 +268,6 @@ int command_channel(object *ob, char *params)
  */
 void addPlayerToChannel(player *pl, char *name, char *params)
 {
-    char   buf[255];
     struct channels         *channel=NULL;
     struct player_channel   *pl_channel=NULL;
 
@@ -655,7 +654,6 @@ void sendChannelMessage(player *pl,struct player_channel *pl_channel, char *para
 {
     struct player_channel *cpl;
     char buf[512]; /* Player commands can only be around 250chars, so with this value, we are on the safe side */
-    char prefix[30];
     uint8 color;
 
 
@@ -698,7 +696,6 @@ void sendChannelEmote(player *pl,struct player_channel *pl_channel, char *params
 {
     struct player_channel *cpl;
     char buf[512];
-    char prefix[30];
     uint8 color;
 
     SockList    sl;
@@ -918,7 +915,7 @@ void channel_dm_stealth(player *pl, int dm_stealth)
  * @param message message to send
  * @param mode 0=normal, 1=emote
  */
-void lua_channel_message(char *channelname, char *name, char *message, int mode)
+void lua_channel_message(char *channelname,  const char *name, char *message, int mode)
 {
     struct channels *channel;
     for (channel=channel_list_start;channel;channel=channel->next)
@@ -928,7 +925,6 @@ void lua_channel_message(char *channelname, char *name, char *message, int mode)
 
             struct player_channel *cpl=NULL;
             char buf[HUGE_BUF];
-            char prefix[30];
             uint8 color;
 
 
@@ -1190,7 +1186,7 @@ int command_channel_mute(object *ob, char *params)
 
 int command_channel_delete(object *ob, char *params)
 {
-    struct channels *channel=NULL, *ch_ptr1=NULL;;
+    struct channels *channel=NULL, *ch_ptr1=NULL;
     struct player_channel *cpl;
 
     if (CONTR(ob)->gmaster_mode < GMASTER_MODE_VOL)
@@ -1230,7 +1226,7 @@ int command_channel_delete(object *ob, char *params)
            return 1;
         }
     }
-
+    return 0;
 }
 
 int check_channel_mute(struct player_channel *cpl)
@@ -1334,8 +1330,6 @@ void modify_channel_params(struct player_channel *cpl, char *params)
 void sendVirtualChannelMsg(player *sender, char *channelname, player *target, char* msg)
 {
     char buf[512];
-    char prefix[30];
-    uint8 color;
 
     SockList    sl;
     unsigned char slbuf[HUGE_BUF];
@@ -1419,8 +1413,6 @@ void addChannelHist(struct channels *channel, const char* name, char *msg, int m
     }
     if (line)
     {
-        int i;
-
         time(&zeit);
         strftime(timestr,64,"[%H:%M]",gmtime(&zeit));
         sprintf(buf,"%d%s %s:%s %s",mode, channel->name, name, msg, timestr);

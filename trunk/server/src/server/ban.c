@@ -281,15 +281,17 @@ int check_banned(NewSocket *ns, const char *name, char *ip)
             if(ol->objlink.ban->ticks_init != -1 &&  pticks >= ol->objlink.ban->ticks)
                 remove_ban_entry(ol); /* is not valid anymore, gc it on the fly */
             else
-              {char *ban_tmp = ol->objlink.ban->ip;
-               int ctr = 0;
-               for(ban_tmp[ctr];ban_tmp[ctr] != '\0';ctr++)
-               {  if(ban_tmp[ctr] != '*' && ban_tmp[ctr] != ip[ctr])
-                    return FALSE;
-               }
-               
+              {
+                  char *ban_tmp = ol->objlink.ban->ip;
+                  int ctr = 0;               
                    char *ban_buf_ip, buf[256], cmd_buf[]  = "X";
                    int h=0,m=0, s = ol->objlink.ban->ticks_init/8;
+
+                   for(ban_tmp[ctr];ban_tmp[ctr] != '\0';ctr++)
+                   {  
+                       if(ban_tmp[ctr] != '*' && ban_tmp[ctr] != ip[ctr])
+                           return FALSE;
+                   }
 
                    if(ol->objlink.ban->ticks_init == -1) /* perm ban */
                    {

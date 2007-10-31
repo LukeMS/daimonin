@@ -388,7 +388,7 @@ int damage_ob(object *op, int dam, object *hitter, int env_attack)
     hitter_tag = hitter->count;
 
     /* A last safery check - this happened in the past sometimes */
-    if (op->stats.hp < 0)
+    if (op->stats.hp <= 0)
     {
         LOG(llevDebug, "BUG/FIXME: victim (arch %s, name %s (%x - %d)) already dead in hit_player()\n", op->arch->name, query_name(op), op, op->count);
         return 0;
