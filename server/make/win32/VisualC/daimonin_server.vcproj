@@ -1110,22 +1110,6 @@
 				<File
 					RelativePath="..\..\..\src\server\channel.c"
 					>
-					<FileConfiguration
-						Name="ReleaseLog|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\server/"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\server/"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\src\server\commands.c"
