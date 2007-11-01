@@ -1362,7 +1362,7 @@ int main(int argc, char *argv[])
     ignore_list_load();
     show_intro(NULL);
     sound_play_music("orchestral.ogg", options.music_volume, 0, -1, 0, MUSIC_MODE_DIRECT);
-
+    sprite_init_system();
     while (1)
     {
         SDL_Event   event;

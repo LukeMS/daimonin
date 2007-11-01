@@ -22,22 +22,25 @@
 */
 #include <include.h>
 
-static double   dark_value[DARK_LEVELS] =
+static int      dark_alpha[DARK_LEVELS] =
     {
-        1.0, 0.828, 0.685, 0.542, 0.399, 0.256, 0.113
-        /* thats the "normal values if we add
-        * 1.0 / 7 =~0.143
-        * but we want it a bit darker - so we
-        * sub 3
-        *
-        0.858,
-        0.715,
-        0.572,
-        0.429,
-        0.286,
-        0.143
-        */
+        0, 44, 80, 117, 153, 190, 226
     };
+SDL_Surface    *darkness_filter[] =
+    {
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+    };
+
+_BBDark     Backbuffer[MAX_BBDARK];
+
+int         bbpos = 0;
+
 
 struct _anim   *start_anim; /* anim queue of current active map */
 
@@ -49,6 +52,12 @@ static void     fow_scale(SDL_Color *col_tab, SDL_Color *grey_tab, int numcol, i
 /* not much special inside atm */
 Boolean sprite_init_system(void)
 {
+    int i;
+
+    for (i=0;i<MAX_BBDARK;i++)
+    {
+        Backbuffer[i].sprite=NULL;
+    }
     return(TRUE);
 }
 
@@ -75,8 +84,9 @@ _Sprite * sprite_tryload_file(char *fname, uint32 flag, SDL_RWops *rwop)
 {
     _Sprite        *sprite;
     SDL_Surface    *bitmap;
-    int             i, s, ncol, dark_flag = FALSE;
-    Uint8           r, g, b;
+    int             i, ncol, dark_flag = FALSE;
+//    int             s;
+//    Uint8           r, g, b;
     UINT32          ckflags, tmp = 0;
     SDL_Color       colors[256], dark[256], ckey;
 
@@ -141,40 +151,41 @@ _Sprite * sprite_tryload_file(char *fname, uint32 flag, SDL_RWops *rwop)
             /* we want 7+1 dark level. level 0 is our original brightness ,
             * level 6 is darkest - level 7 is "total dark" = no light
             */
-            for (s = 1; s < DARK_LEVELS; s++) /* 1-6 darkened versions */
-            {
-                /* we adjust the colors. */
-                for (i = 0; i < bitmap->format->palette->ncolors; i++)
-                {
-                    /* 1st: grap RGB of this entry */
-                    r = colors[i].r;
-                    g = colors[i].g;
-                    b = colors[i].b;
-
-
-                    /* 2nd: if this is not the color key, adjust the color */
-                    if (r != ckey.r || g != ckey.g || b != ckey.b)
-                    {
-                        r = (Uint8) ((double) r * dark_value[s]);
-                        g = (Uint8) ((double) g * dark_value[s]);
-                        b = (Uint8) ((double) b * dark_value[s]);
-                        if (r==255 && g==255 && b==255)
-                            r = g = b = 254;
-                    }
-                    else
-                    {
-                        r = g = b = 255;
-                    }
-
-                    /* store color information in our new palette */
-                    dark[i].r = r;
-                    dark[i].g = g;
-                    dark[i].b = b;
-                }
-                SDL_SetColors(bitmap, dark, 0, ncol);
-                SDL_SetColorKey(bitmap, SDL_SRCCOLORKEY | SDL_RLEACCEL, SDL_MapRGB(bitmap->format,255,255,255));
-                sprite->dark_level[s] = SDL_DisplayFormat(bitmap);
-            }
+//            for (s = 1; s < DARK_LEVELS; s++) /* 1-6 darkened versions */
+//            {
+//                /* we adjust the colors. */
+//                for (i = 0; i < bitmap->format->palette->ncolors; i++)
+//                {
+//                    /* 1st: grap RGB of this entry */
+//                    r = colors[i].r;
+//                    g = colors[i].g;
+//                    b = colors[i].b;
+//
+//
+//                    /* 2nd: if this is not the color key, adjust the color */
+//                    if (r != ckey.r || g != ckey.g || b != ckey.b)
+//                    {
+//                        r = (Uint8) ((double) r * dark_value[s]);
+//                        g = (Uint8) ((double) g * dark_value[s]);
+//                        b = (Uint8) ((double) b * dark_value[s]);
+//                        if (r==255 && g==255 && b==255)
+//                            r = g = b = 254;
+//                    }
+//                    else
+//                    {
+//                        r = g = b = 255;
+//                    }
+//
+//                    /* store color information in our new palette */
+//                    dark[i].r = r;
+//                    dark[i].g = g;
+//                    dark[i].b = b;
+//                }
+//                SDL_SetColors(bitmap, dark, 0, ncol);
+//                SDL_SetColorKey(bitmap, SDL_SRCCOLORKEY | SDL_RLEACCEL, SDL_MapRGB(bitmap->format,255,255,255));
+//                sprite->dark_level[s] = SDL_DisplayFormat(bitmap);
+//
+//            }
             grey_scale(colors, dark, ncol, ckey.r, ckey.g, ckey.b);
             SDL_SetColors(bitmap, dark, 0, ncol);
             SDL_SetColorKey(bitmap, SDL_SRCCOLORKEY | SDL_RLEACCEL, SDL_MapRGB(bitmap->format,255,255,255));
@@ -191,8 +202,8 @@ _Sprite * sprite_tryload_file(char *fname, uint32 flag, SDL_RWops *rwop)
 
         sprite->bitmap = SDL_DisplayFormat(bitmap);
         SDL_FreeSurface(bitmap);
-        if (dark_flag) /* map original color over default dark */
-            sprite->dark_level[0] = sprite->bitmap;
+//        if (dark_flag) /* map original color over default dark */
+//            sprite->dark_level[0] = sprite->bitmap;
     }
     return(sprite);
 }
@@ -637,7 +648,42 @@ void sprite_blt(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx)
             /* last dark level is "no color" ... */
             if (bltfx->dark_level == DARK_LEVELS)
                 return;
-            blt_sprite = sprite->dark_level[bltfx->dark_level];
+
+            /* we create the filter surfaces only when needed, and then store them */
+            if (!darkness_filter[bltfx->dark_level])
+            {
+                SDL_SetAlpha(Bitmaps[BITMAP_TEXTWIN_MASK]->bitmap,SDL_SRCALPHA,dark_alpha[bltfx->dark_level]);
+                darkness_filter[bltfx->dark_level]=SDL_DisplayFormatAlpha(Bitmaps[BITMAP_TEXTWIN_MASK]->bitmap);
+            }
+
+            /* this is the simple rolling backbuffer */
+            /* we test for the backbuffer */
+            if (sprite->dark_level[bltfx->dark_level])
+            {
+                blt_sprite = sprite->dark_level[bltfx->dark_level];
+            }
+            else /* we create the surface, and put it in backbuffer */
+            {
+                /* first we free if necesary */
+                if (Backbuffer[bbpos].sprite)
+                {
+                    blt_sprite = Backbuffer[bbpos].sprite->dark_level[Backbuffer[bbpos].dark_level];
+                    SDL_FreeSurface(blt_sprite);
+                    Backbuffer[bbpos].sprite->dark_level[Backbuffer[bbpos].dark_level]=NULL;
+                    Backbuffer[bbpos].sprite=NULL;
+                }
+                blt_sprite = SDL_DisplayFormatAlpha(sprite->bitmap);
+                SDL_BlitSurface(darkness_filter[bltfx->dark_level],NULL,blt_sprite,NULL);
+
+                /* we put it in the backbuffer */
+                sprite->dark_level[bltfx->dark_level]=blt_sprite;
+                Backbuffer[bbpos].sprite=sprite;
+                Backbuffer[bbpos].dark_level=bltfx->dark_level;
+                bbpos++;
+                if (bbpos>=MAX_BBDARK)
+                    bbpos=0;
+            }
+
         }
         else if (bltfx->flags & BLTFX_FLAG_FOW)
             blt_sprite = sprite->fog_of_war;
