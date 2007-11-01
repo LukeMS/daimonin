@@ -2025,25 +2025,34 @@ void break_string(char *text, char *prefix, Boolean one_prefix, char *result)
     buf[0]=0;
     for (i=0;prefix[i]!=0;i++)
         preflen += SystemFont.c[(uint8) (prefix[i])].w + SystemFont.char_offset;
-//        preflen += charwides[(int) (prefix[i])] + charspacing;
 
     restlen=winlen-preflen;
     result[0]=0;
     strcat(result,prefix);
-    if (one_prefix)
+
+    switch (options.channelformat)
     {
-        for (i=0;i<(preflen/2);i++)
-            pref[i]=' ';
-        pref[i+1]=0;
+        case 0:
+            if (one_prefix)
+            {
+                for (i=0;i<(preflen/2);i++)
+                    pref[i]=' ';
+                pref[i+1]=0;
+            }
+            else strcpy(pref,prefix);
+        break;
+
+        case 1:
+            one_prefix=TRUE;
+            strcpy(pref,"       ");
+        break;
     }
-    else strcpy(pref,prefix);
 
     /* lets do some codestealing from client's draw_info:) */
     len = 0;
     for (a = i = 0; ; i++)
     {
         len += SystemFont.c[(uint8) (text[i])].w + SystemFont.char_offset;
-//        len += charwides[(int) (text[i])] + charspacing;
         if (len >= restlen || text[i] == 0x0a || text[i] == 0)
         {
 
