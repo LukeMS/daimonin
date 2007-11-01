@@ -49,6 +49,7 @@
 # long         - This attribute contains a 64 Bit decimal number     #
 # float        - This attribute contains a floating point number     #
 # string       - This attribute contains a string                    #
+# map_path     - This attribute contains a map path name             #
 # facename     - This attribute contains a string which is           #
 #                a face name                                         #
 # animname     - This attribute contains a string which is           #
@@ -2025,7 +2026,7 @@
     Instances and unique maps will be available in later Daimonin version for groups
     and clans too.
   </attribute>
-  <attribute arch="slaying" editor="exit path" type="string">
+  <attribute arch="slaying" editor="exit path" type="map_path">
     The exit path defines the map that the player is transferred to.
     You can enter an absolute path, beginning with '/' (for example
     "/peterm/FireTemple/fire1"). It can also be a relative path, not beginning
@@ -4232,7 +4233,7 @@
     Instances and unique maps will be available in later Daimonin version for groups
     and clans too.
   </attribute>
-  <attribute arch="slaying" editor="exit path" type="string">
+  <attribute arch="slaying" editor="exit path" type="map_path">
     The exit path defines the map that the player is transferred to.
     You can enter an absolute path, beginning with '/' (for example
     "/peterm/FireTemple/fire1"). It can also be a relative path, not beginning
@@ -5288,7 +5289,7 @@
     Instances and unique maps will be available in later Daimonin version for groups
     and clans too.
   </attribute>
-  <attribute arch="slaying" editor="exit path" type="string">
+  <attribute arch="slaying" editor="exit path" type="map_path">
     The exit path specifies the map that the player is transferred to.
     &lt;exit path&gt; can be an absolute path, beginning with '/'
     (for example "/peterm/FireTemple/fire1"). It can also be a relative
@@ -5414,7 +5415,7 @@
     Instances and unique maps will be available in later Daimonin version for groups
     and clans too.
   </attribute>
-  <attribute arch="slaying" editor="exit path" type="string">
+  <attribute arch="slaying" editor="exit path" type="map_path">
     The exit path defines the map that the player is transferred to.
     You can enter an absolute path, beginning with '/' (for example
     "/peterm/FireTemple/fire1"). It can also be a relative path, not beginning
@@ -5815,7 +5816,7 @@ that food.]]>
 
     Leave this empty if you want to use an explicit target coordinate (map, x, y).
   </attribute>
-  <attribute arch="slaying" editor="destination map" type="string">
+  <attribute arch="slaying" editor="destination map" type="map_path">
     Path to destination map. Leave blank to use current map.
     You can enter an absolute path, beginning with '/' (for example
     "/peterm/FireTemple/fire1"). It can also be a relative path, not beginning
