@@ -6,8 +6,7 @@ height 17
 enter_x 1
 enter_y 1
 msg
-Creator: Daimonin Map Editor
-Date:    4/13/2003
+Created:  2003-04-13 Daimonin Map Editor
 endmsg
 tile_path_3 /dev/testmaps/map_load/testmap_mt_tile_3
 tile_path_4 /dev/testmaps/map_load/testmap_mt_tile_1

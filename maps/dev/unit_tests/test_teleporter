@@ -1,8 +1,7 @@
 arch map
 name Teleporter tests
 msg
-Creator: gecko
-Date:    2007-02-01
+Created:  2007-02-01 gecko
 endmsg
 width 24
 height 24
