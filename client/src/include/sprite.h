@@ -57,6 +57,7 @@ typedef struct _BLTFX
 }
 _BLTFX;
 
+
 /* the structure */
 typedef struct _Sprite
 {
@@ -76,10 +77,22 @@ typedef struct _Sprite
     SDL_Surface    *red;                    /* red (infravision) */
     SDL_Surface    *grey;                       /* grey (xray) */
     SDL_Surface    *fog_of_war;             /* thats the fog of war palette */
-    SDL_Surface    *dark_level[DARK_LEVELS];    /* dark levels.
-                                                           * Note: 0= default sprite - its only mapped */
+    SDL_Surface    *dark_level[DARK_LEVELS];    /* dark levels. */
+                                                           /* Note: 0= default sprite - its only mapped */
 }
 _Sprite;
+
+/* this value defines how many created darkness faces we store in a rolling buffer */
+/* 200 should be enough to hold all faces when not moving much */
+/* bigger value=more memory usage, less CPU usage */
+#define MAX_BBDARK  200
+
+typedef struct _BBDark
+{
+    _Sprite         *sprite;
+     uint8           dark_level;
+}
+_BBDark;
 
 typedef struct _Font
 {
