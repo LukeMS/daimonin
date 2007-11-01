@@ -118,6 +118,7 @@ _option             opt[]                           =
         {"Show Tooltips:", "Show tooltips when hovering with the mouse over items.","", "",SEL_CHECKBOX, 0,1,1, 1, &options.show_tooltips, VAL_BOOL},
         {"Key-info in Dialog menus:", "","", "",SEL_CHECKBOX, 0,1,1, 1, &options.show_d_key_infos, VAL_BOOL},
         {"Enable Smileys:", "","", "",SEL_CHECKBOX, 0,1,1, 1, &options.smileys, VAL_BOOL},
+        {"Channel Format:", "Select how the channels should be displayed.","","Prefixed#Indented", SEL_RANGE, 0,1,1, 0, &options.channelformat, VAL_INT},
         /*{"Collect All Items:", "Don't ask for number of items to get, just get all of them.","", "",SEL_CHECKBOX, 0,1,1, 0,&options.collectAll, VAL_BOOL},   */
         {"#"},
         /* End of Page */

@@ -205,6 +205,7 @@ typedef struct _options
     Boolean                 show_tooltips;
     Boolean                 show_d_key_infos; /* key-infos in dialog-wins. */
     Boolean                 smileys;
+    int                     channelformat;
     Boolean                 collectAll;
 
     /* Debug */

@@ -323,6 +323,7 @@ void init_game_data(void)
     options.cli_pass[0]='\0';
 
     options.firststart = TRUE;
+    options.channelformat=0;
 
     memset(media_file, 0, sizeof(_media_file) * MEDIA_MAX);
     media_count = 0;    /* buffered media files*/
