@@ -1,8 +1,7 @@
 arch map
 name Testmap - AI
 msg
-Creator: Björn Axelsson
-Date:   8/4 2005
+Created:  2005-08-04 Björn Axelsson
 endmsg
 width 24
 height 24

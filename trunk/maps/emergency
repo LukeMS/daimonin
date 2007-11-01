@@ -1,8 +1,7 @@
 arch map
 name Emergency Map - This is a bug! Call DM!
 msg
-Creator: Daimonin Map Editor
-Date:    10/27/2003
+Created:  2003-10-27 Daimonin Map Editor
 endmsg
 width 1
 height 1

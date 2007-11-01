@@ -1,8 +1,7 @@
 arch map
 name Test Lua
 msg
-Creator: gecko
-Date:    2006-12-19
+Created:  2006-12-19 gecko
 endmsg
 width 24
 height 24

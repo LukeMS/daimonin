@@ -1,8 +1,7 @@
 arch map
 name Testmap - gates
 msg
-Creator: Gecko
-Date:    5/6/2006
+Created:  2006-05-06 Gecko
 
 Unit tests for gates.
 Bug #413: timed gates are triggered when map loads
