@@ -498,10 +498,10 @@ void map_draw_map(void)
 
                             if (map->fog_of_war == TRUE)
                                 bltfx.flags |= BLTFX_FLAG_FOW;
-                            else if (cpl.stats.flags & SF_XRAYS)
-                                bltfx.flags |= BLTFX_FLAG_GREY;
                             else if (cpl.stats.flags & SF_INFRAVISION && index_tmp & 0x8000 && map->darkness < 150)
                                 bltfx.flags |= BLTFX_FLAG_RED;
+                            else if (cpl.stats.flags & SF_XRAYS)
+                                bltfx.flags |= BLTFX_FLAG_GREY;
                             else
                                 bltfx.flags |= BLTFX_FLAG_DARK;
 
