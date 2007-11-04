@@ -1,0 +1,45 @@
+Object baselard
+name baselard
+layer 3
+face baselard.101
+weapon_speed 1.95
+attack_slash 100
+dam 26
+wc 12
+type 15
+sub_type 1
+material 2
+material_real 65
+weight 1300
+value 350
+end
+Object shortsword
+name shortsword
+layer 3
+face shortsword.101
+weapon_speed 2.05
+attack_slash 100
+dam 27
+wc 12
+type 15
+sub_type 1
+material 2
+material_real 65
+weight 1300
+value 350
+end
+Object tulwar
+name tulwar
+layer 3
+face tulwar.101
+weapon_speed 2.0
+attack_slash 100
+dam 26
+wc 13
+type 15
+sub_type 1
+material 2
+material_real 65
+weight 1300
+value 350
+end

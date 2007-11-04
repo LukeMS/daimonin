@@ -1,0 +1,136 @@
+Object claymore
+name claymore
+layer 3
+weapon_speed 4.2
+attack_slash 100
+type 15
+sub_type 5
+item_level 15
+item_skill 4
+face claymore.101
+material 2
+material_real 65
+dam 170
+wc 35
+weight 2150
+value 750
+end
+Object fujian
+name fu-jian
+layer 3
+weapon_speed 4.00
+attack_slash 100
+type 15
+sub_type 5
+item_level 15
+item_skill 4
+face fujian.101
+material 2
+material_real 65
+dam 178
+wc 36
+weight 2050
+value 800
+end
+Object no_dachi
+name no-dachi
+layer 3
+weapon_speed 4.05
+attack_slash 100
+type 15
+sub_type 5
+item_level 15
+item_skill 4
+face no_dachi.101
+material 2
+material_real 65
+dam 175
+wc 36
+weight 2150
+value 750
+end
+Object panzerstecher
+name Panzerstecher
+layer 3
+weapon_speed 4.0
+attack_slash 100
+type 15
+item_level 15
+item_skill 4
+sub_type 5
+face panzerstecher.101
+material 2
+material_real 65
+dam 180
+wc 36
+weight 2150
+value 750
+end
+Object scythe_war
+name war scythe
+layer 3
+weapon_speed 4.3
+attack_slash 100
+type 15
+item_level 15
+item_skill 4
+sub_type 5
+face scythe_war.101
+material 18
+material_real 65
+dam 172
+wc 34
+weight 2150
+value 750
+end
+Object sword2h
+name two-handed sword
+layer 3
+weapon_speed 4.15
+attack_slash 100
+type 15
+item_level 15
+item_skill 4
+sub_type 5
+face sword2h.101
+material 2
+material_real 65
+dam 173
+wc 36
+weight 2150
+value 750
+end
+Object sword_double
+name double sword
+layer 3
+weapon_speed 4.0
+attack_slash 100
+type 15
+sub_type 5
+item_level 15
+item_skill 4
+face sword_double.101
+material 2
+material_real 65
+dam 174
+wc 37
+weight 2150
+value 750
+end
+Object sword_great
+name great sword
+layer 3
+weapon_speed 4.3
+attack_slash 100
+type 15
+item_level 15
+item_skill 4
+sub_type 5
+face sword_great.101
+material 2
+material_real 65
+dam 175
+wc 34
+weight 2150
+value 750
+end
