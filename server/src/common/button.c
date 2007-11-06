@@ -217,6 +217,50 @@ static void signal_connection(object *op, oblinkpt *olp, object *activator, obje
 }
 
 /*
+ * JRG (Grommit) 6-Nov-2007
+ * Remove button down checks to separate function
+ * (called by update_button)
+ */
+int check_button_down(object *tmp)
+{
+    object     *ab, *head;
+    unsigned int fly, move;
+    int tot;
+    int is_down = 0;
+
+    if (tmp->type == BUTTON)
+    {
+        fly = QUERY_FLAG(tmp, FLAG_FLY_ON);
+        move = QUERY_FLAG(tmp, FLAG_WALK_ON);
+        tot = 0;
+        for (ab = GET_BOTTOM_MAP_OB(tmp); ab != NULL; ab = ab->above)
+        {
+            if (ab != tmp && (fly ? QUERY_FLAG(ab, FLAG_FLYING) : move))
+                tot += ab->weight * (ab->nrof ? ab->nrof : 1) + ab->carrying;
+        }
+        tmp->weight_limit = (tot >= tmp->weight) ? 1 : 0;
+        if (tmp->weight_limit)
+            is_down = 1;
+    }
+    else if (tmp->type == PEDESTAL)
+    {
+        tmp->weight_limit = 0;
+        fly = QUERY_FLAG(tmp, FLAG_FLY_ON);
+        move = QUERY_FLAG(tmp, FLAG_WALK_ON);
+        for (ab = GET_BOTTOM_MAP_OB(tmp); ab != NULL; ab = ab->above)
+        {
+            head = ab->head ? ab->head : ab;
+            if (ab != tmp
+             && (fly ? QUERY_FLAG(ab, FLAG_FLYING) : move)
+             && (head->race == tmp->slaying || (tmp->slaying == shstr_cons.player && head->type == PLAYER)))
+                tmp->weight_limit = 1;
+        }
+        if (tmp->weight_limit)
+            is_down = 1;
+    }
+    return is_down;
+ }
+/*
  * Updates everything connected with the button op.
  * After changing the state of a button, this function must be called
  * to make sure that all gates and other buttons connected to the
@@ -224,52 +268,34 @@ static void signal_connection(object *op, oblinkpt *olp, object *activator, obje
  */
 void update_button(object *op, object *activator, object *originator)
 {
-    object     *ab, *tmp, *head;
-    unsigned int fly, move;
-    int         tot, any_down = 0;
-    sint32        old_value = op->weight_limit;
+    object     *tmp;
+    int         any_down = 0;
+    sint32      old_value = op->weight_limit;
     objectlink *ol;
+    int         has_links = 0;
 
     /* LOG(llevDebug, "update_button: %s (%d)\n", op->name, op->count); */
     for (ol = get_button_links(op); ol; ol = ol->next)
     {
+        has_links = 1;
         if (!ol->objlink.ob || ol->objlink.ob->count != ol->id)
         {
             LOG(llevDebug, "Internal error in update_button (%s).\n", op->name);
             continue;
         }
         tmp = ol->objlink.ob;
-        if (tmp->type == BUTTON)
-        {
-            fly = QUERY_FLAG(tmp, FLAG_FLY_ON);
-            move = QUERY_FLAG(tmp, FLAG_WALK_ON);
-            tot = 0;
-            for (ab = GET_BOTTOM_MAP_OB(tmp); ab != NULL; ab = ab->above)
-            {
-                if (ab != tmp && (fly ? QUERY_FLAG(ab, FLAG_FLYING) : move))
-                    tot += ab->weight * (ab->nrof ? ab->nrof : 1) + ab->carrying;
-            }
-            tmp->weight_limit = (tot >= tmp->weight) ? 1 : 0;
-            if (tmp->weight_limit)
-                any_down = 1;
-        }
-        else if (tmp->type == PEDESTAL)
-        {
-            tmp->weight_limit = 0;
-            fly = QUERY_FLAG(tmp, FLAG_FLY_ON);
-            move = QUERY_FLAG(tmp, FLAG_WALK_ON);
-            for (ab = GET_BOTTOM_MAP_OB(tmp); ab != NULL; ab = ab->above)
-            {
-                head = ab->head ? ab->head : ab;
-                if (ab != tmp
-                 && (fly ? QUERY_FLAG(ab, FLAG_FLYING) : move)
-                 && (head->race == tmp->slaying || (tmp->slaying == shstr_cons.player && head->type == PLAYER)))
-                    tmp->weight_limit = 1;
-            }
-            if (tmp->weight_limit)
-                any_down = 1;
-        }
+        if (check_button_down(tmp))
+            any_down = 1;
     }
+
+    /* JRG (Grommit) fix 6-Nov-2007 */
+    if (!has_links)
+    {
+        /* No connection, but operate this button anyway (to trigger script if any) */
+        if (check_button_down(op))
+            any_down = 1;
+    }
+
     if (any_down) /* If any other buttons were down, force this to remain down */
         op->weight_limit = 1;
 
