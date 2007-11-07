@@ -6,6 +6,7 @@ attack_slash 100
 type 15
 item_level 17
 item_skill 4
+last_heal 35
 sub_type 9
 face fauchard.101
 material 18
@@ -25,6 +26,7 @@ type 15
 sub_type 9
 item_level 17
 item_skill 4
+last_heal 35
 face glaive.101
 material 18
 material_real 65
@@ -40,6 +42,7 @@ layer 3
 weapon_speed 5.4
 item_level 17
 item_skill 4
+last_heal 35
 attack_slash 100
 type 15
 sub_type 9
@@ -58,6 +61,7 @@ layer 3
 weapon_speed 5.3
 item_level 17
 item_skill 4
+last_heal 35
 attack_slash 100
 type 15
 sub_type 9
@@ -76,6 +80,7 @@ layer 3
 weapon_speed 5.3
 item_level 17
 item_skill 4
+last_heal 35
 attack_slash 100
 type 15
 sub_type 9

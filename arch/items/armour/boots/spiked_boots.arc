@@ -1,7 +1,6 @@
 Object spiked_boots
 name spiked boots
 face spiked_boots.101
-last_heal 4
 layer 3
 ac 1
 weight 950

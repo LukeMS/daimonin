@@ -9,11 +9,13 @@ item_quality 99
 item_condition 99
 is_magical 1
 ac 10
+last_heal 210
 item_level 50
-resist_impact 45
-resist_slash 30
-resist_cleave 30
-resist_pierce 30
+item_skill 4
+resist_impact 60
+resist_slash 50
+resist_cleave 50
+resist_pierce 50
 weight 34500
 value 252600
 end

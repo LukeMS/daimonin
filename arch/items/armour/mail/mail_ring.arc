@@ -11,9 +11,9 @@ ac 5
 item_level 3
 item_skill 4
 resist_impact 25
-resist_cleave 15
+resist_cleave 17
 resist_slash 25
-resist_pierce 15
+resist_pierce 17
 weight 12000
 value 125
 end

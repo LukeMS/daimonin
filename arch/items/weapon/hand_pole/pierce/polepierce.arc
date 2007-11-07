@@ -6,6 +6,7 @@ attack_pierce 100
 type 15
 item_level 17
 item_skill 4
+last_heal 35
 sub_type 10
 face bill_guisarme.101
 material 18
@@ -24,6 +25,7 @@ attack_pierce 100
 type 15
 item_level 17
 item_skill 4
+last_heal 35
 sub_type 10
 face guisarme.101
 material 18
@@ -42,6 +44,7 @@ attack_pierce 100
 type 15
 item_level 17
 item_skill 4
+last_heal 35
 sub_type 10
 face partisan.101
 material 18
@@ -59,6 +62,7 @@ weapon_speed 5.3
 attack_pierce 100
 item_level 17
 item_skill 4
+last_heal 35
 type 15
 sub_type 10
 face pike.101
@@ -76,6 +80,7 @@ layer 3
 weapon_speed 5.3
 item_level 17
 item_skill 4
+last_heal 35
 attack_pierce 100
 type 15
 sub_type 10

@@ -3,7 +3,7 @@ name horned helm
 type 34
 layer 3
 face helm_horn.101
-last_heal 6
+last_heal 26
 ac 1
 resist_impact 5
 resist_cleave 8

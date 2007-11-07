@@ -8,7 +8,6 @@ resist_pierce 6
 resist_impact 6
 resist_cleave 6
 resist_slash 6
-last_heal 1
 material_real 193
 material 8
 type 99

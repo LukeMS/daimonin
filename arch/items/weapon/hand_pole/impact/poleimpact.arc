@@ -6,6 +6,7 @@ weapon_speed 5.8
 attack_impact 100
 item_level 17
 item_skill 4
+last_heal 35
 dam 165
 wc 23
 ac 9
@@ -25,6 +26,7 @@ attack_impact 100
 dam 180
 item_level 17
 item_skill 4
+last_heal 35
 wc 23
 ac 6
 type 15

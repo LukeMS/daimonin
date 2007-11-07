@@ -8,12 +8,12 @@ last_sp 150
 material 2
 material_real 65
 ac 7
-item_level 10
+item_level 13
 item_skill 4
-resist_impact 35
-resist_slash 17
-resist_cleave 17
-resist_pierce 17
+resist_impact 30
+resist_slash 25
+resist_cleave 25
+resist_pierce 25
 weight 20500
 value 2600
 end

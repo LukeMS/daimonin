@@ -4,7 +4,7 @@ layer 3
 face gauntlets_chain.101
 type 100
 ac 1
-last_heal 3
+last_heal 32
 item_level 5
 resist_impact 8
 resist_cleave 8

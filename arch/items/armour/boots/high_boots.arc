@@ -6,7 +6,6 @@ layer 3
 ac 1
 weight 750
 value 125
-last_heal 4
 resist_impact 8
 resist_slash 8
 resist_pierce 8
