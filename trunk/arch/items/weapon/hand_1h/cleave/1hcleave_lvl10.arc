@@ -6,6 +6,7 @@ attack_cleave 100
 weapon_speed 3.5
 item_level 10
 item_skill 4
+last_heal 20
 dam 86
 wc 17
 type 15
@@ -23,6 +24,7 @@ attack_cleave 100
 weapon_speed 4.1
 item_level 10
 item_skill 4
+last_heal 20
 dam 92
 wc 16
 type 15

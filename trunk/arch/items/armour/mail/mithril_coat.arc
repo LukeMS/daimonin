@@ -6,14 +6,16 @@ layer 3
 material 256
 material_real 514
 is_magical 1
-ac 10
+ac 21
+last_heal -85
 item_level 50
+item_skill 5
 proof_phy 1
 proof_ele 1
-resist_impact 30
-resist_slash 45
-resist_cleave 30
-resist_pierce 30
+resist_impact 20
+resist_slash 25
+resist_cleave 20
+resist_pierce 20
 weight 7500
 value 252500
 end

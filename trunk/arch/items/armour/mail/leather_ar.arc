@@ -3,7 +3,6 @@ name armour
 type 16
 layer 3
 face leather_ar.101
-last_heal 6
 ac 3
 resist_impact 10
 resist_cleave 15

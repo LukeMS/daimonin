@@ -8,9 +8,9 @@ last_sp 100
 ac 7
 material 1024
 material_real 644
-item_level 13
+item_level 16
 item_skill 4
-resist_impact 38
+resist_impact 28
 resist_slash 18
 resist_cleave 18
 resist_pierce 18

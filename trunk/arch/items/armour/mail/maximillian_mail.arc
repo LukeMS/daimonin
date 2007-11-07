@@ -8,7 +8,7 @@ material_real 0
 item_quality 99
 item_condition 99
 is_magical 1
-ac 10
+ac 13
 item_level 50
 resist_impact 30
 resist_slash 30

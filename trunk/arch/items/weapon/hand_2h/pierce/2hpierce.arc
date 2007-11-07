@@ -6,6 +6,7 @@ attack_pierce 100
 type 15
 item_level 15
 item_skill 4
+last_heal 40
 sub_type 6
 face dory.101
 material 18
@@ -23,6 +24,7 @@ attack_pierce 100
 type 15
 item_level 15
 item_skill 4
+last_heal 40
 sub_type 6
 face forc.101
 material 18
@@ -40,6 +42,7 @@ attack_pierce 100
 type 15
 item_level 15
 item_skill 4
+last_heal 40
 sub_type 6
 face forc_military.101
 material 18
@@ -57,6 +60,7 @@ attack_pierce 100
 type 15
 item_level 15
 item_skill 4
+last_heal 40
 sub_type 6
 face spear.101
 material 18
@@ -73,6 +77,7 @@ weapon_speed 4.05
 attack_pierce 100
 item_level 15
 item_skill 4
+last_heal 40
 type 15
 sub_type 6
 face trident.101
@@ -91,6 +96,7 @@ attack_pierce 100
 type 15
 item_level 15
 item_skill 4
+last_heal 40
 sub_type 6
 face xuqiang.101
 material 18

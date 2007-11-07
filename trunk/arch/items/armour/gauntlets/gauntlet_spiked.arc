@@ -6,7 +6,6 @@ type 100
 material_real 193
 material 8
 ac 1
-last_heal 3
 item_level 5
 resist_impact 8
 resist_cleave 8

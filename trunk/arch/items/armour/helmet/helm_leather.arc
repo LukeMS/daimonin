@@ -3,7 +3,6 @@ name  cap
 type 34
 layer 3
 face helm_leather.101
-last_heal 5
 weight 900
 ac 1
 resist_impact 4

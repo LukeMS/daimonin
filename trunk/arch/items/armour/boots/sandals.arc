@@ -1,7 +1,6 @@
 Object sandals
 name sandals
 face sandals.101
-last_heal 1
 layer 3
 value 15
 weight 300

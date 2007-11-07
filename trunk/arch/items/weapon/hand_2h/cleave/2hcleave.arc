@@ -6,6 +6,7 @@ attack_cleave 100
 weapon_speed 4.25
 item_level 15
 item_skill 4
+last_heal 40
 dam 172
 wc 36
 type 15
@@ -24,6 +25,7 @@ weapon_speed 4.3
 dam 178
 item_level 15
 item_skill 4
+last_heal 40
 wc 37
 type 15
 sub_type 7
@@ -41,6 +43,7 @@ weapon_speed 4.35
 dam 180
 item_level 15
 item_skill 4
+last_heal 40
 wc 36
 type 15
 sub_type 7
@@ -57,6 +60,7 @@ attack_cleave 100
 weapon_speed 4.35
 item_level 15
 item_skill 4
+last_heal 40
 dam 185
 wc 38
 type 15
@@ -74,6 +78,7 @@ attack_cleave 100
 weapon_speed 3.95
 item_level 15
 item_skill 4
+last_heal 40
 dam 176
 wc 36
 type 15
@@ -91,6 +96,7 @@ attack_cleave 100
 weapon_speed 4.4
 item_level 15
 item_skill 4
+last_heal 40
 dam 185
 wc 34
 type 15

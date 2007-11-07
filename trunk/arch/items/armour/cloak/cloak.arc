@@ -11,6 +11,14 @@ resist_impact 8
 resist_slash 8
 resist_pierce 8
 resist_cleave 8
+resist_drain 3
+resist_depletion 3
+resist_corruption 3
+resist_confusion 3
+resist_fear 3
+resist_slow 3
+resist_paralyze 3
+resist_snare 3
 material_real 193
 material 8
 end

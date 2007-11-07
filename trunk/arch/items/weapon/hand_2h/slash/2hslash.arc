@@ -7,6 +7,7 @@ type 15
 sub_type 5
 item_level 15
 item_skill 4
+last_heal 40
 face claymore.101
 material 2
 material_real 65
@@ -24,6 +25,7 @@ type 15
 sub_type 5
 item_level 15
 item_skill 4
+last_heal 40
 face fujian.101
 material 2
 material_real 65
@@ -41,6 +43,7 @@ type 15
 sub_type 5
 item_level 15
 item_skill 4
+last_heal 40
 face no_dachi.101
 material 2
 material_real 65
@@ -57,6 +60,7 @@ attack_slash 100
 type 15
 item_level 15
 item_skill 4
+last_heal 40
 sub_type 5
 face panzerstecher.101
 material 2
@@ -74,6 +78,7 @@ attack_slash 100
 type 15
 item_level 15
 item_skill 4
+last_heal 40
 sub_type 5
 face scythe_war.101
 material 18
@@ -91,6 +96,7 @@ attack_slash 100
 type 15
 item_level 15
 item_skill 4
+last_heal 40
 sub_type 5
 face sword2h.101
 material 2
@@ -109,6 +115,7 @@ type 15
 sub_type 5
 item_level 15
 item_skill 4
+last_heal 40
 face sword_double.101
 material 2
 material_real 65
@@ -125,6 +132,7 @@ attack_slash 100
 type 15
 item_level 15
 item_skill 4
+last_heal 40
 sub_type 5
 face sword_great.101
 material 2

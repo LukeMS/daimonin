@@ -6,6 +6,7 @@ weapon_speed 3.05
 attack_slash 100
 item_level 10
 item_skill 4
+last_heal 20
 dam 70
 wc 18
 type 15
@@ -23,6 +24,7 @@ weapon_speed 2.75
 attack_slash 100
 item_level 10
 item_skill 4
+last_heal 20
 dam 60
 wc 16
 type 15
@@ -40,6 +42,7 @@ weapon_speed 3.00
 attack_slash 100
 item_level 10
 item_skill 4
+last_heal 20
 dam 68
 wc 17
 type 15
@@ -57,6 +60,7 @@ weapon_speed 3.05
 attack_slash 100
 item_level 10
 item_skill 4
+last_heal 20
 dam 69
 wc 18
 type 15
