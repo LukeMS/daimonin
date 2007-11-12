@@ -206,6 +206,10 @@ void remove_ban_entry(struct oblnk *entry)
 int check_banned(NewSocket *ns, const char *name, char *ip)
 {
     objectlink *ol, *ol_tmp;
+    int   h;
+    int   m;
+    int   s;
+    char  buf[256];
 
     if(name)
     {
@@ -217,129 +221,164 @@ int check_banned(NewSocket *ns, const char *name, char *ip)
               pticks, ol->objlink.ban->ticks);*/
             if(ol->objlink.ban->ticks_init != -1 &&  pticks >= ol->objlink.ban->ticks)
                 remove_ban_entry(ol); /* is not valid anymore, gc it on the fly */
-            else if(ol->objlink.ban->name == name)
+            else
             {
-                /* because name banning is handled from login procedure,
-                 * we tell here the client how long the name is banned - the
-                 * rest is done by the login procedure.
-                 */
-                char buf[256], *ban_buf_name;
-                int h=0,m=0, s = ol->objlink.ban->ticks_init/8;
+                if(ol->objlink.ban->name == name)
+                {
+                    /* because name banning is handled from login procedure,
+                     * we tell here the client how long the name is banned - the
+                     * rest is done by the login procedure.
+                    */
+                    char *ban_buf_name;
+                    s = ol->objlink.ban->ticks_init/8;
 
-                if(ol->objlink.ban->ticks_init == -1) /* perm ban */
-                {
-                    ban_buf_name = ban_buf_name_def;
-                }
-                else if (s<=90) /* we are nice for all under 90 seconds (1.5 minutes) */
-                {
-                    sprintf(buf, "X2 Name %s is blocked for %d seconds!\nDon't try to login to it again!",name, s);
-                    ban_buf_name = buf;
-                }
-                else if (s < 60*60)
-                {
-                    m = s/60;
-                    sprintf(buf, "X3 Name %s is banned for %d minutes!\nDon't try to login to it again!",name, m);
-                    ban_buf_name = buf;
-                }
-                else /* must be an ass... */
-                {
-                    h = s/(60*60);
-                    m = (s-h*(60*60))/60;
-                    sprintf(buf, "X3 Name %s is banned for %dh%dm!\nDon't try to login to it again!",name,h,m);
-                    ban_buf_name = buf;
-                }
+                    if(ol->objlink.ban->ticks_init == -1) /* perm ban */
+                    {
+                        ban_buf_name = ban_buf_name_def;
+                    }
+                    else
+                    {
+                        if (s <= 90) /* we are nice for all under 90 seconds (1.5 minutes) */
+                        {
+                            sprintf(buf, "X2 Name %s is blocked for %d seconds!\nDon't try to log in to it again!",name, s);
+                            ban_buf_name = buf;
+                        }
+                        else
+                        {
+                            if (s < 60*60)
+                            {
+                                m = s/60;
+                                sprintf(buf, "X3 Name %s is banned for %d minutes!\nDon't try to log in to it again!",name, m);
+                                ban_buf_name = buf;
+                            }
+                            else /* must be an ass... */
+                            {
+                                h = s/(60*60);
+                                m = (s-h*(60*60))/60;
+                                sprintf(buf, "X3 Name %s is banned for %dh %dm!\nDon't try to log in to it again!",name,h,m);
+                                ban_buf_name = buf;
+                            }
+                        }
+                    }
 
-                Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, ban_buf_name, strlen(ban_buf_name));
+                    Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, ban_buf_name, strlen(ban_buf_name));
 
-                /* someone is trying to login again & again to banned char? Lets teach him to avoid it */
-                if(++ns->pwd_try == 3)
-                {
-                    char        cmd_buf[2]  = "X";
-                    char password_warning[] = "X3 Don't login to banned chars!\nTry login again not before 2 minutes!";
+                    /* someone is trying to login again & again to banned char? Lets teach him to avoid it */
+                    if(++ns->pwd_try == 3)
+                    {
+                        char        cmd_buf[2]  = "X";
+                        char password_warning[] = "X3 Don't login to banned chars!\nTry log in again not before 2 minutes!";
 
-                    LOG(llevInfo,"BANNED NAME: 3 login tries (2min): IP %s (player: %s).\n",ns->ip_host,name);
-                    add_ban_entry(NULL, ns->ip_host, 8*60*2, 8*60*2); /* 2 min temp ban for this ip */
-                    Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, password_warning , strlen(password_warning));
-                    Write_String_To_Socket(ns, BINARY_CMD_ADDME_FAIL, cmd_buf, 1);
-                    ns->login_count = ROUND_TAG+(uint32)(10.0f * pticks_second);
-                    ns->status = Ns_Zombie; /* we hold the socket open for a *bit* */
-                    ns->idle_flag = 1;
+                        LOG(llevInfo,"BANNED NAME: 3 login tries (2min): IP %s (player: %s).\n",ns->ip_host,name);
+                        add_ban_entry(NULL, ns->ip_host, 8*60*2, 8*60*2); /* 2 min temp ban for this ip */
+                        Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, password_warning , strlen(password_warning));
+                        Write_String_To_Socket(ns, BINARY_CMD_ADDME_FAIL, cmd_buf, 1);
+                        ns->login_count = ROUND_TAG+(uint32)(10.0f * pticks_second);
+                        ns->status = Ns_Zombie; /* we hold the socket open for a *bit* */
+                        ns->idle_flag = 1;
+                    }
+                    return TRUE;
                 }
-                return TRUE;
             }
         }
     }
     else /* compare ip */
     {
-        for(ol = ban_list_ip;ol;ol=ol_tmp)
+        char *ban_tmp;
+        int   ctr = 0;
+        char *ban_buf_ip;
+        char  cmd_buf[]  = "X";
+        int   match;    /* should really be bool, but beggars can't be choosers */
+
+        for(ol = ban_list_ip; ol; ol = ol_tmp)
         {
             ol_tmp = ol->next;
-            LOG( -1,"CHECK-IP: >%s< with >%s< - pticks: %d left: %d (%d)\n", 
+            LOG( -1,"CHECK-IP: >%s< with >%s< - pticks: %d left: %d (%d)\n",
 			  STRING_SAFE(ip), STRING_SAFE(ol->objlink.ban->ip),
               pticks, ol->objlink.ban->ticks,ol->objlink.ban->ticks_init);
 
             if(ol->objlink.ban->ticks_init != -1 &&  pticks >= ol->objlink.ban->ticks)
+            {
                 remove_ban_entry(ol); /* is not valid anymore, gc it on the fly */
+            }
             else
-              {
-                  char *ban_tmp = ol->objlink.ban->ip;
-                  int ctr = 0;               
-                   char *ban_buf_ip, buf[256], cmd_buf[]  = "X";
-                   int h=0,m=0, s = ol->objlink.ban->ticks_init/8;
+            {
+                s = ol->objlink.ban->ticks_init/8;
+                ban_tmp = ol->objlink.ban->ip;
 
-                   for(ban_tmp[ctr];ban_tmp[ctr] != '\0';ctr++)
-                   {  
-                       if(ban_tmp[ctr] != '*' && ban_tmp[ctr] != ip[ctr])
-                           return FALSE;
-                   }
+                match = 1;      /* assume match */
+                for(ctr = 0; ban_tmp[ctr] != '\0'; ctr++)
+                {
+                    if(ban_tmp[ctr] != '*' && ban_tmp[ctr] != ip[ctr])
+                    {
+                        match = 0;  /* no match here - try next entry */
+                        break;      /* break inner loop */
+                    }
+                }
 
-                   if(ol->objlink.ban->ticks_init == -1) /* perm ban */
-                   {
-                       ban_buf_ip = ban_buf_ip_def;
-                   }
-                   else if (s<=90) /* we are nice for all under 90 seconds (1.5 minutes). Thats most times technical tmp bans */
-                   {
-                       sprintf(buf, "X2 Login is blocked for %d seconds!\nDon't try to login before.\nLogin timer is reseted to %d seconds!",s,s);
-                       ban_buf_ip = buf;
-                       s = ol->objlink.ban->ticks_init;
-                       remove_ban_entry(ol);
-                       add_ban_entry(NULL, ns->ip_host, s, s);
-                   }
-                   else if (s < 60*60)
-                   {
-                       m = s/60;
-                       sprintf(buf, "X3 IP is banned for %d minutes!\nDon't try to login before.\nLogin timer is reseted!",m);
-                       ban_buf_ip = buf;
-                       s = ol->objlink.ban->ticks_init;
-                       remove_ban_entry(ol);
-                       add_ban_entry(NULL, ns->ip_host, s, s);
-                   }
-                   else /* must be an ass... */
-                   {
-                       h = s/(60*60);
-                       m = (s-h*(60*60))/60;
-                       sprintf(buf, "X3 IP is banned for %dh%dm!\nDon't try to login before.\nAdding one hour ban time!",h,m);
-                       ban_buf_ip = buf;
-                       s = (ol->objlink.ban->ticks-pticks)+(60*60); /* added one hour */
-                       if(s> 3*ol->objlink.ban->ticks_init)
-                           s = -1; /* ban this guy now permanent */
-                       else
-                       {
-                           remove_ban_entry(ol);
-                           add_ban_entry(NULL, ns->ip_host, s, s);
-                       }
-                   }
+                if (match)
+                {
+                    /* match found - ip is banned */
+                    break;      /* break outer loop */
+                }
+            }
+        }
 
-                   LOG(-1,"***BANNED IP Login: %s\n", ns->ip_host);
-                   Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, ban_buf_ip, strlen(ban_buf_ip));
-                   Write_String_To_Socket(ns, BINARY_CMD_ADDME_FAIL, cmd_buf, 1);
-                   ns->login_count = ROUND_TAG+(uint32)(5.0f * pticks_second);
-                   ns->status = Ns_Zombie; /* we hold the socket open for a *bit* */
-                   ns->idle_flag = 1;
-                   return TRUE; /* ip matches... kick our friend */
-               
-           }
-       }
-   }
+        if (ol)
+        {
+            /* IP is banned */
+            if(ol->objlink.ban->ticks_init == -1) /* perm ban */
+            {
+                ban_buf_ip = ban_buf_ip_def;
+            }
+            else
+            {
+                if (s<=90) /* we are nice for all under 90 seconds (1.5 minutes). Thats most times technical tmp bans */
+                {
+                    sprintf(buf, "X2 Login is blocked for %d seconds!\nDon't try to log in before.\nLogin timer reset to %d seconds!",s,s);
+                    ban_buf_ip = buf;
+                    s = ol->objlink.ban->ticks_init;
+
+                    add_ban_entry(NULL, ns->ip_host, s, s);
+                }
+                else
+                {
+                    if (s < 60*60)
+                    {
+                        m = s/60;
+                        sprintf(buf, "X3 IP is banned for %d minutes!\nDon't try to log in before.\nLogin timer reset!",m);
+                        ban_buf_ip = buf;
+                        s = ol->objlink.ban->ticks_init;
+                        remove_ban_entry(ol);
+                        add_ban_entry(NULL, ns->ip_host, s, s);
+                    }
+                    else /* must be an ass... */
+                    {
+                        h = s/(60*60);
+                        m = (s-h*(60*60))/60;
+                        sprintf(buf, "X3 IP is banned for %dh %dm!\nDon't try to log in before.\nAdding one hour ban time!",h,m);
+                        ban_buf_ip = buf;
+                        s = (ol->objlink.ban->ticks-pticks)+(60*60); /* added one hour */
+                        if(s> 3*ol->objlink.ban->ticks_init)
+                            s = -1; /* ban this guy now permanent */
+                        else
+                        {
+                            remove_ban_entry(ol);
+                            add_ban_entry(NULL, ns->ip_host, s, s);
+                        }
+                    }
+                }
+            }
+
+            LOG(-1,"***BANNED IP Login: %s\n", ns->ip_host);
+            Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, ban_buf_ip, strlen(ban_buf_ip));
+            Write_String_To_Socket(ns, BINARY_CMD_ADDME_FAIL, cmd_buf, 1);
+            ns->login_count = ROUND_TAG+(uint32)(5.0f * pticks_second);
+            ns->status = Ns_Zombie; /* we hold the socket open for a *bit* */
+            ns->idle_flag = 1;
+            return TRUE; /* ip matches... kick our friend */
+        }
+    }
+
     return FALSE;
 }
