@@ -369,9 +369,9 @@ static int Game_MatchString(lua_State *L)
 /*          See also object:ReadyUniqueMap(), object:StartNewInstance() and  */
 /*          map:ReadyInheritedMap()                                          */
 /*          flags:                                                           */
-/*            game:MAP_CHECK - don't load the map if it isn't in memory,     */
+/*            game.MAP_CHECK - don't load the map if it isn't in memory,     */
 /*                             returns nil if the map wasn't in memory.      */
-/*            game:MAP_NEW - delete the map from memory and force a reset    */
+/*            game.MAP_NEW - delete the map from memory and force a reset    */
 /*                           (if it existed in memory or swap)               */
 /*          If map_path is taken from the path attribute of a unique or      */
 /*          instance map, this function will actually load the unique map or */
