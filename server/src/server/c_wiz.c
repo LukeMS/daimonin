@@ -1264,18 +1264,14 @@ int command_ban(object *op, char *params)
 
         new_draw_info(NDI_UNIQUE, 0, op, "ban list");
         new_draw_info(NDI_UNIQUE, 0, op, "--- --- ---");
-        for(ol = ban_list_player;ol;ol=ol_tmp)
-        {
-            ol_tmp = ol->next;
-            if(ol->objlink.ban->ticks_init != -1 &&  pticks >= ol->objlink.ban->ticks)
-                remove_ban_entry(ol); /* is not valid anymore, gc it on the fly */
-            else
-                new_draw_info_format(NDI_UNIQUE, 0, op, "P: %s -> %d left (of %d) sec",
-                        ol->objlink.ban->name ,(ol->objlink.ban->ticks-pticks)/8, ol->objlink.ban->ticks_init/8);
-        }
 
         for(ol = ban_list_ip;ol;ol=ol_tmp)
         {
+            if(CONTR(op)->gmaster_mode == GMASTER_MODE_VOL && ol->objlink.ban->ticks_init == -1)
+             {
+                new_draw_info_format(NDI_UNIQUE, 0, op, "Only GMs and DMs can unban permanently banned!");
+                return 0;
+             }
             ol_tmp = ol->next;
             if(ol->objlink.ban->ticks_init != -1 &&  pticks >= ol->objlink.ban->ticks)
                 remove_ban_entry(ol); /* is not valid anymore, gc it on the fly */
@@ -1297,7 +1293,7 @@ int command_ban(object *op, char *params)
         int ticks=0;
         char *name, name_buf[MAX_BUF]="";
 
-                             if(CONTR(op)->gmaster_mode == GMASTER_MODE_VOL && ticks == -1)
+                             if(CONTR(op)->gmaster_mode == GMASTER_MODE_VOL && ol->objlink.ban->ticks_init == -1)
                                {goto ban_usage;}
 
         if (sscanf(str, "%s %d", name_buf, &ticks) == 2)
@@ -1310,6 +1306,11 @@ int command_ban(object *op, char *params)
                 {
                     for(ol = ban_list_ip;ol;ol=ol_tmp)
                     {
+                        if(CONTR(op)->gmaster_mode == GMASTER_MODE_VOL && ol->objlink.ban->ticks_init == -1)
+                         {
+                            new_draw_info_format(NDI_UNIQUE, 0, op, "Only GMs and DMs can unban permanently banned!");
+                            return 0;
+                         }
                         ol_tmp = ol->next;
                         if(!strcmp(ol->objlink.ban->ip, name_buf))
                             remove_ban_entry(ol);
@@ -1327,6 +1328,11 @@ int command_ban(object *op, char *params)
                     name_hash = find_string(name); /* we need an shared string to check ban list */
                     for(ol = ban_list_player;ol;ol=ol_tmp)
                     {
+                        if(CONTR(op)->gmaster_mode == GMASTER_MODE_VOL && ol->objlink.ban->ticks_init == -1)
+                         {
+                            new_draw_info_format(NDI_UNIQUE, 0, op, "Only GMs and DMs can unban permanently banned!");
+                            return 0;
+                         }
                         ol_tmp = ol->next;
                         if(ol->objlink.ban->name == name_hash)
                             remove_ban_entry(ol);
@@ -1352,6 +1358,11 @@ int command_ban(object *op, char *params)
             {
                 for(ol = ban_list_ip;ol;ol=ol_tmp)
                 {
+                   if(CONTR(op)->gmaster_mode == GMASTER_MODE_VOL && ol->objlink.ban->ticks_init == -1)
+                    {
+                      new_draw_info_format(NDI_UNIQUE, 0, op, "Only GMs and DMs can unban permanently banned!");
+                      return 0;
+                    }
                     ol_tmp = ol->next;
                     if(!strcmp(ol->objlink.ban->ip, name))
                     {
@@ -1373,6 +1384,11 @@ int command_ban(object *op, char *params)
                     ol_tmp = ol->next;
                     if(ol->objlink.ban->name == name_hash)
                     {
+                       if(CONTR(op)->gmaster_mode == GMASTER_MODE_VOL && ol->objlink.ban->ticks_init == -1)
+                        {
+                          new_draw_info_format(NDI_UNIQUE, 0, op, "Only GMs and DMs can unban permanently banned!");
+                          return 0;
+                        }
                         LOG(llevSystem,"/ban: %s unbanned the player %s\n", query_name(op), name);
                         new_draw_info_format(NDI_UNIQUE, 0, op, "You unbanned player %s!", name);
                         remove_ban_entry(ol);
