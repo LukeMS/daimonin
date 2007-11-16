@@ -44,7 +44,7 @@ local function topicBuy(nrof, what)
             ib:SetTitle("Here is my offer")
             ib:SetMsg(nrof.." ~"..data.title.."~ will cost you "..pl:ShowCost(data.price*nrof))    
             ib:SetAccept(nil, "confirm "..nrof.." "..data.title) 
-            ib:AddIcon(data.title, data.icon)
+            ib:AddIcon(data.title, data.icon, "")
             ib:SetDecline(nil, "hi")
             ib:AddMsg(".\n\nYou have " .. pl:ShowCost(pl:GetMoney()) .. ".\n\nYou want to buy it?") 
         else
