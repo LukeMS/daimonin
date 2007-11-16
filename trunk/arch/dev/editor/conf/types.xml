@@ -50,6 +50,7 @@
 # float        - This attribute contains a floating point number     #
 # string       - This attribute contains a string                    #
 # map_path     - This attribute contains a map path name             #
+# script_file  - This attribute contains a script file name          #
 # facename     - This attribute contains a string which is           #
 #                a face name                                         #
 # animname     - This attribute contains a string which is           #
