@@ -25,7 +25,11 @@
 
 spell spells[NROFREALSPELLS]          =
 {
+<<<<<<< .mine
+    {"firestorm",                   SPELL_TYPE_WIZARD, 1,
+=======
     {"firestorm",                   SPELL_TYPE_WIZARD, 10,
+>>>>>>> .r2960
 	4, 12, 3, 6,0, 1.0,
     50,      6,      4,      0,
 	1, 4, 0,  SOUND_MAGIC_FIRE,
@@ -34,7 +38,11 @@ spell spells[NROFREALSPELLS]          =
     PATH_ELEMENTAL, "firebreath",SPELL_ACTIVE
     },
 
+<<<<<<< .mine
+    {"icestorm",                    SPELL_TYPE_WIZARD, 1,
+=======
     {"icestorm",                    SPELL_TYPE_WIZARD, 10,
+>>>>>>> .r2960
 	4, 12, 3, 6,0,1.0,
     50,      6,      4,      0,
 	1, 4, 0,  SOUND_MAGIC_ICE,
@@ -133,7 +141,11 @@ spell spells[NROFREALSPELLS]          =
     PATH_DEATH,"cause_wounds",SPELL_ACTIVE
     },
 
+<<<<<<< .mine
+	{"firebolt",                   SPELL_TYPE_WIZARD, 1,
+=======
 	{"firebolt",                   SPELL_TYPE_WIZARD, 10,
+>>>>>>> .r2960
 	4, 12, 3, 6,0, 1.0,
 	85,      7,      4,      0,
 	1, 4, 0,  SOUND_MAGIC_FIRE,
@@ -150,7 +162,11 @@ spell spells[NROFREALSPELLS]          =
     SPELL_DESC_DIRECTION,
     PATH_CHAOS, "bullet",SPELL_ACTIVE
     },
+<<<<<<< .mine
+	{"frostbolt",                   SPELL_TYPE_WIZARD, 1,
+=======
 	{"frostbolt",                   SPELL_TYPE_WIZARD, 10,
+>>>>>>> .r2960
 	4, 12, 3, 6,0, 1.0,
 	85,      7,      4,      0,
 	1, 4, 0,  SOUND_MAGIC_ICE,
@@ -193,7 +209,11 @@ spell spells[NROFREALSPELLS]          =
     SPELL_DESC_SELF | SPELL_DESC_TOWN | SPELL_DESC_WIS,
     PATH_LIFE, "meffect_purple",SPELL_ACTIVE
     },
+<<<<<<< .mine
+	{"lightning",                   SPELL_TYPE_WIZARD, 1,
+=======
 	{"lightning",                   SPELL_TYPE_WIZARD, 10,
+>>>>>>> .r2960
 	4, 12, 3, 6,0, 1.0,
 	85,      7,      4,      0,
 	1, 4, 0, SOUND_MAGIC_ELEC,
