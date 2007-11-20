@@ -349,7 +349,7 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
         return(random_roll(1, SP_level_spellpoint_cost(op, caster, type)));
     }
 
-    else if (item == spellNormal && op->type == PLAYER && !(s->flags & SPELL_DESC_WIS))
+/*    else if (item == spellNormal && op->type == PLAYER && !(s->flags & SPELL_DESC_WIS))
     {
          float failure = (float)(random_roll(0, 99)
                          - CONTR(op)->encumbrance
@@ -363,7 +363,7 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
             new_draw_info(NDI_UNIQUE, 0, op, "You bungle the spell because you have too much heavy equipment in use.");
             return(random_roll(0, SP_level_spellpoint_cost(op, caster, type)));
         }
-    }
+    }*/
 
     dirty_jump:
     /* a last sanity check: are caster and target *really* valid? */
