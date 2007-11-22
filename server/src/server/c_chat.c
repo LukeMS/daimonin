@@ -57,6 +57,7 @@ static char * cleanup_chat_string(char *ustring)
             case '~':
             case '^':
             case '§':
+            case '|':
                 *ptr = ' ';
                 break;
             default:
