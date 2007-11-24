@@ -151,5 +151,5 @@ extern int    StringWidthOffset(_Font *font, char *text, int *line, int len);
 extern void             StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col, SDL_Rect *area,
                                       _BLTFX *bltfx);
 extern int              sprite_collision(int x1, int y1, int x2, int y2, _Sprite *sprite1, _Sprite *sprite2);
-
+extern void             sprite_clear_backbuffer(void);
 #endif

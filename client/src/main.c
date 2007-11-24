@@ -551,6 +551,7 @@ Boolean game_status_chain(void)
         clear_player();
         reset_keys();
         free_faces();
+        sprite_clear_backbuffer();
         GameStatus = GAME_STATUS_WAITLOOP;
 
         switch (options.cli_server)
