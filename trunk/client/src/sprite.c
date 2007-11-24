@@ -52,13 +52,19 @@ static void     fow_scale(SDL_Color *col_tab, SDL_Color *grey_tab, int numcol, i
 /* not much special inside atm */
 Boolean sprite_init_system(void)
 {
+    sprite_clear_backbuffer();
+    return(TRUE);
+}
+
+void sprite_clear_backbuffer(void)
+{
     int i;
 
     for (i=0;i<MAX_BBDARK;i++)
     {
         Backbuffer[i].sprite=NULL;
     }
-    return(TRUE);
+    bbpos = 0;
 }
 
 Boolean sprite_deinit_system(void)
