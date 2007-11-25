@@ -135,6 +135,7 @@ int command_kick(object *ob, char *params)
     struct pl_player   *pl;
     const char         *name_hash = NULL;
     int                 ret=0;
+    objectlink         *ol;
 
     if(ob && CONTR(ob)->gmaster_mode < GMASTER_MODE_VOL)
         return 0;
@@ -1333,11 +1334,11 @@ int command_ban(object *op, char *params)
                     LOG(llevSystem, "IP %s is now banned for %d seconds.\n", name_buf, ticks/8);
                     add_ban_entry(NULL, name_buf, ticks, ticks);
 	for(ob = gmaster_list_VOL;ob;ob=ob->next)
-		new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 5, ob->objlink.ob, "BAN: IP %s has been banned by %s for %d seconds.\n", ip, query_name(op), seconds);
+		new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 5, ob->objlink.ob, "BAN: IP %s has been banned by %s for %d seconds.\n", name_buf, query_name(op), seconds);
 	for(ob = gmaster_list_GM;ob;ob=ob->next)
-		new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 5, ob->objlink.ob, "BAN: IP %s has been banned by %s for %d seconds.\n", ip, query_name(op), seconds);
+		new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 5, ob->objlink.ob, "BAN: IP %s has been banned by %s for %d seconds.\n", name_buf, query_name(op), seconds);
 	for(ob = gmaster_list_DM;ob;ob=ob->next)
-		new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 5, ob->objlink.ob, "BAN: IP %s has been banned by %s for %d seconds.\n", ip, query_name(op), seconds);
+		new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 5, ob->objlink.ob, "BAN: IP %s has been banned by %s for %d seconds.\n", name_buf, query_name(op), seconds);
                 }
                 else /* we go to ban an player */
                 {
