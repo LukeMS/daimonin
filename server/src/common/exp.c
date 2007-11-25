@@ -396,7 +396,7 @@ sint32 add_exp(object *op, int exp, int skill_nr)
     if (op->exp_obj)
         op->exp_obj = NULL;
 
-	fix_player(op, "add_exp" );
+	FIX_PLAYER(op, "add_exp" );
     return (sint32) exp; /* thats the real exp we have added to our skill */
 }
 

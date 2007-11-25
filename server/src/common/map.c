@@ -144,7 +144,7 @@ char *normalize_path(const char *src, const char *dst, char *path)
         dst = src;
     if(!src)
     {
-        LOG(llevBug,"BUG: normalize_path(): Called with src path = NULL! (dst:%s)\n", STRING_SAFE(dst));
+        LOG(llevDebug,"BUG: normalize_path(): Called with src path = NULL! (dst:%s)\n", STRING_SAFE(dst));
         path[0] = '\0';
         return path;
     }
@@ -166,7 +166,7 @@ char *normalize_path(const char *src, const char *dst, char *path)
             if(strncmp(dst, LOCALDIR "/" INSTANCEDIR, LSTRLEN(LOCALDIR "/" INSTANCEDIR)) == 0
                     || strncmp(dst, LOCALDIR "/" PLAYERDIR, LSTRLEN(LOCALDIR "/" PLAYERDIR)) == 0)
             {
-                LOG(llevBug,"BUG: normalize_path(): Called with unique/instance dst: %s\n", dst);
+                LOG(llevDebug,"BUG: normalize_path(): Called with unique/instance dst: %s\n", dst);
                 strcpy(path, dst);
                 return path;
             }
