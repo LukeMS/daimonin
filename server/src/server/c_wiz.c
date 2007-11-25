@@ -1198,6 +1198,7 @@ int command_mute(object *op, char *params)
     char name[256]="";
     int seconds=0;
     player *pl;
+    objectlink *ol;
 
     if (!params)
         return 0;
@@ -1261,7 +1262,7 @@ int command_silence(object *op, char *params)
  */
 int command_ban(object *op, char *params)
 {
-    objectlink *ol, *ol_tmp;
+    objectlink *ol, *ol_tmp, *ob;
     char *str;
 
     if(CONTR(op)->gmaster_mode == GMASTER_MODE_NO)
