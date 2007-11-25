@@ -2571,7 +2571,7 @@ int apply_special(object *who, object *op, int aflags)
 				 * and safe alot cpu (include a fix_player() inside change_abil())
 				 */
                 /*change_abil(who, op);*/
-				LOG(llevBug, "UNAPPLY SKILL: %s change %s (%s) to NULL\n", query_name(who), query_name(op), query_name(who->chosen_skill) );
+				/*LOG(llevDebug, "UNAPPLY SKILL: %s change %s (%s) to NULL\n", query_name(who), query_name(op), query_name(who->chosen_skill) );*/
 				who->chosen_skill = NULL;
                 buf[0] = '\0';
                 break;
@@ -2833,7 +2833,7 @@ int apply_special(object *who, object *op, int aflags)
             }
             SET_FLAG(op, FLAG_APPLIED);
             /* change_abil(who, op); */
-			LOG(llevBug, "APPLY SKILL: %s change %s to %s\n", query_name(who), query_name(who->chosen_skill), query_name(op) );
+			/*LOG(llevDebug, "APPLY SKILL: %s change %s to %s\n", query_name(who), query_name(who->chosen_skill), query_name(op) );*/
             who->chosen_skill = op;
             buf[0] = '\0';
             break;

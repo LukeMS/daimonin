@@ -57,8 +57,14 @@ int do_throw(object *op, int dir)
 		return 0;
 	}
 
-	/* used action time */
+	/* used action time - hotfix for possible action timer bug */
+	LOG(llevDebug, "AC-TICKS: item %s ->%d for skill %s ->%d.\n", query_name(throw_arrow),throw_arrow->last_grace,query_name(op->chosen_skill),op->chosen_skill->last_grace);
 	ticks = throw_arrow->last_grace + op->chosen_skill->last_grace;
+	if(!ticks)
+	{
+		LOG(llevDebug, "ACBUG: ticks = 0\n");
+		ticks = 10;
+	}
 
 	create_missile(op, NULL, throw_arrow, dir);
 
@@ -109,7 +115,15 @@ int fire_bow(object *op, int dir)
 	}
 
 	/* used action time */
+	LOG(llevDebug, "AC-TICKS: bow %s ->%d arrow %s ->%d for skill %s ->%d.\n", 
+		query_name(bow),bow->last_grace,query_name(arrow),arrow->last_grace,
+		query_name(op->chosen_skill),op->chosen_skill->last_grace);
 	ticks = arrow->last_grace + bow->last_grace + op->chosen_skill->last_grace;
+	if(!ticks)
+	{
+		LOG(llevDebug, "ACBUG: ticks = 0\n");
+		ticks = 10;
+	}
 
 	create_missile(op, bow, arrow, dir);
 

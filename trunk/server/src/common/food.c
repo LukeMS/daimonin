@@ -61,7 +61,7 @@ void apply_food(object *op, object *tmp)
         {
             if (tmp->type == FLESH)
             {
-                new_draw_info(NDI_UNIQUE, 0, op, "You can't eat that!");
+                new_draw_info(NDI_UNIQUE, 0, op, "You can't consume that!");
                 return;
             }
 

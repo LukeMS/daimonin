@@ -50,13 +50,13 @@ static int calc_direction_towards(object *op, object *target, mapstruct *map, in
 
     if (op->map == NULL)
     {
-        LOG(llevBug, "BUG: calc_direction_towards(): '%s' not on a map\n", STRING_OBJ_NAME(op));
+        LOG(llevDebug, "BUG: calc_direction_towards(): '%s' not on a map\n", STRING_OBJ_NAME(op));
         return 0;
     }
 
     if (map == NULL)
     {
-        LOG(llevBug, "BUG: calc_direction_towards(): invalid destination map for '%s'\n", STRING_OBJ_NAME(op));
+        LOG(llevDebug, "BUG: calc_direction_towards(): invalid destination map for '%s'\n", STRING_OBJ_NAME(op));
         return 0;
     }
 
@@ -66,7 +66,7 @@ static int calc_direction_towards(object *op, object *target, mapstruct *map, in
             NULL, map, x, y, &target_rv,
             RV_RECURSIVE_SEARCH | RV_DIAGONAL_DISTANCE))
     {
-        LOG(llevBug, "BUG: calc_direction_towards(): unhandled rv failure '%s'\n", STRING_OBJ_NAME(op));
+        LOG(llevDebug, "BUG: calc_direction_towards(): unhandled rv failure '%s'\n", STRING_OBJ_NAME(op));
         /* TODO: verify results */
         /* if not on same map (or close) do something else... */
         return 0;
