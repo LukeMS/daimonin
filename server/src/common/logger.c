@@ -66,7 +66,7 @@ void check_timestamp()
     {
         last_timestamp.tv_sec = now.tv_sec;
         tim = localtime(&now.tv_sec);
-        sprintf(buf, "TIMESTAMP: %4d-%02d-%02d %02d:%02d:%02d\n",
+        sprintf(buf, "\n*** TIMESTAMP: %4d-%02d-%02d %02d:%02d:%02d ***\n\n",
             tim->tm_year+1900, tim->tm_mon+1, tim->tm_mday,
             tim->tm_hour, tim->tm_min, tim->tm_sec);
         do_print(buf);
