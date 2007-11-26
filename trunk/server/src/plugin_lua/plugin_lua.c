@@ -364,7 +364,7 @@ void detach_lua_context(struct lua_context *context, int resume_time)
 
 void terminate_lua_context(struct lua_context *context)
 {
-#ifdef LUA_DEBUG
+#ifdef LUA_DEBUG_ALL
     LOG(llevDebug, "LUA - Terminating context (%s)\n", context->file);
 #endif
     if(context->prev || context->next || first_context == context) {
@@ -513,7 +513,7 @@ MODULEAPI int triggerEvent(CFParm *PParm)
         case EVENT_CLOSE:
         case EVENT_EXAMINE:
         case EVENT_AI_BEHAVIOUR:
-#ifdef LUA_DEBUG
+#ifdef LUA_DEBUG_ALL
     LOG(llevDebug, "LUA - triggerEvent:: eventcode %d\n", eventcode);
 #endif
           result = HandleEvent(PParm);

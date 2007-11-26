@@ -55,7 +55,8 @@
 #define MODULEAPI
 #endif /* ifdef WIN32 */
 
-#define LUA_DEBUG   /* give us some general infos out */
+#define LUA_DEBUG       /* give us some general infos out */
+#define LUA_DEBUG_ALL   /* give us more infos out */
 
 #define PLUGIN_NAME    "Lua"
 #define PLUGIN_VERSION "Daimonin Lua Plugin 0.1"
