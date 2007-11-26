@@ -793,7 +793,7 @@ int load_file_cache(struct lua_State *L, const char *file)
         /* File changed since we loaded it? */
         if (load_time < stat_buf.st_mtime)
         {
-#ifdef LUA_DEBUG
+#ifdef LUA_DEBUG_ALL
             LOG(llevDebug, "LUA - Cached version old, loading '%s' from file\n", file);
 #endif
             lua_pop(L, 1); /* get rid of old chunk */
@@ -801,7 +801,7 @@ int load_file_cache(struct lua_State *L, const char *file)
         }
         else
         {
-#ifdef LUA_DEBUG
+#ifdef LUA_DEBUG_ALL
             LOG(llevDebug, "LUA - Using cached version of '%s'\n", file);
 #endif
             load = 0;
@@ -809,7 +809,7 @@ int load_file_cache(struct lua_State *L, const char *file)
     }
     else
     {
-#ifdef LUA_DEBUG
+#ifdef LUA_DEBUG_ALL
         LOG(llevDebug, "LUA - Script not in cache, loading '%s' from file\n", file);
 #endif
         lua_pop(L, 1); /* throw away nil */
