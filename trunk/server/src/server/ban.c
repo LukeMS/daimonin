@@ -101,7 +101,7 @@ void load_ban_file(void)
         if (sscanf(line_buf, "%s %s %d %d", name, ip, &ticks, &ticks_left) < 2)
             LOG(llevBug, "BUG: malformed banfile file entry: %s\n", line_buf);
         else
-            add_ban_entry(!strcmp(name, "_") ? NULL : name, ip, ticks, ticks_left); /* "_" is a placeholder for IP only */
+            add_ban_entry(!strcmp(name, "_") ? NULL : name, !strcmp(ip, "_") ? NULL : ip, ticks, ticks_left); /* "_" is a placeholder for IP only */
     }
 }
 
@@ -142,7 +142,7 @@ void save_ban_file(void)
             remove_ban_entry(ol);
         else
         {
-            fprintf(fp, "_ %s %d %ld\n",ol->objlink.ban->ip, ol->objlink.ban->ticks_init,
+            fprintf(fp, "_ %s %d %ld\n",ol->objlink.ban->ip?ol->objlink.ban->ip:"_", ol->objlink.ban->ticks_init,
                 ol->objlink.ban->ticks_init==-1?-1:ol->objlink.ban->ticks-pticks);
         }
     }
@@ -158,15 +158,14 @@ struct objectlink *add_ban_entry(char *banned, char *ip, int ticks, int ticks_le
 {
     objectlink *ol = get_ban_node();
 
-    if (ip == NULL)
-        ip = "_"; /* ip shouldn't be NULL, only causes trouble elsewhere, a string
-                     that doesn't match any IP will do too */
+    if(!banned && !ip)
+        return NULL;
 
     ol->objlink.ban->ticks_init = ticks;
     ol->objlink.ban->ticks_left = ticks_left;
     ol->objlink.ban->ticks = pticks+ticks_left;
-    ol->objlink.ban->ip = malloc(strlen(ip) + 1);
-    strcpy(ol->objlink.ban->ip, ip);
+    if(ip)
+        ol->objlink.ban->ip = strdup_local(ip);
     if(banned)
         FREE_AND_COPY_HASH(ol->objlink.ban->name, banned);
 
@@ -187,7 +186,8 @@ struct objectlink *add_ban_entry(char *banned, char *ip, int ticks, int ticks_le
  */
 void remove_ban_entry(struct oblnk *entry)
 {
-    free(entry->objlink.ban->ip);
+    if(entry->objlink.ban->ip)
+        free(entry->objlink.ban->ip);
     if(entry->objlink.ban->name)
     {
         FREE_ONLY_HASH(entry->objlink.ban->name);
@@ -288,13 +288,13 @@ int check_banned(NewSocket *ns, const char *name, char *ip)
         int   ctr = 0;
         char *ban_buf_ip;
         char  cmd_buf[]  = "X";
-        int   match;    /* should really be bool, but beggars can't be choosers */
+        int   match;    /* should really be bool */
 
         for(ol = ban_list_ip; ol; ol = ol_tmp)
         {
             ol_tmp = ol->next;
             LOG( -1,"CHECK-IP: >%s< with >%s< - pticks: %d left: %d (%d)\n",
-			  STRING_SAFE(ip), STRING_SAFE(ol->objlink.ban->ip),
+              STRING_SAFE(ip), STRING_SAFE(ol->objlink.ban->ip),
               pticks, ol->objlink.ban->ticks,ol->objlink.ban->ticks_init);
 
             if(ol->objlink.ban->ticks_init != -1 &&  pticks >= ol->objlink.ban->ticks)
