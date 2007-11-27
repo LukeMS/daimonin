@@ -1923,7 +1923,7 @@ void show_meta_server(_server *node, int metaserver_start, int metaserver_sel)
     }
     if (mainserverdown && (i>0))
     {
-        StringBlt(ScreenSurface, &SystemFont, "Main Server is momentary down!", x + 137, y + 94 + ((i+1) * 12), COLOR_RED, &rec_name, NULL);
+        StringBlt(ScreenSurface, &SystemFont, "Main Server is momentarily down!", x + 137, y + 94 + ((i+1) * 12), COLOR_RED, &rec_name, NULL);
     }
 
 }
