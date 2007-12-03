@@ -464,6 +464,8 @@ enum
 /* for example, we need for fonts a attached palette, and not the native vid mode*/
 #define SURFACE_FLAG_PALETTE 1      /* surface must stay in palette mode, not in vid mode*/
 #define SURFACE_FLAG_COLKEY_16M 2   /* use this when you want a colkey in a true color picture - color should be 0 */
+#define SURFACE_FLAG_DISPLAYFORMAT 4 /* with the new code images are NOT per default converted to vid mod, for gui stuff set this */
+
 
 typedef enum _bitmap_index
 {

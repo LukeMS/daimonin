@@ -176,6 +176,16 @@ int client_command_check(char *cmd)
         return TRUE;
     }
 
+    else if (!strnicmp(cmd, "/imagestats", strlen("/imagestats")))
+    {
+        draw_info_format(COLOR_WHITE,"IMAGE-LOADING-STATISTICS\n==========================================");
+        draw_info_format(COLOR_WHITE,"Sprites in Memory: %d",ImageStats.loadedsprites);
+        draw_info_format(COLOR_WHITE,"  -> TrueColors: %d",ImageStats.truecolors);
+        draw_info_format(COLOR_WHITE,"Greyscales in Memory: %d",ImageStats.greyscales);
+        draw_info_format(COLOR_WHITE,"Redscales in Memory: %d",ImageStats.redscales);
+        draw_info_format(COLOR_WHITE,"Fowscales in Memory: %d",ImageStats.fowscales);
+        return TRUE;
+    }
     else if (!strnicmp(cmd, "/reply", strlen("/reply")))
     {
         cmd = strchr(cmd, ' ');
@@ -1692,7 +1702,7 @@ void read_spells(void)
             spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].flag = LIST_ENTRY_USED;
             strcpy(spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].icon_name, icon);
             sprintf(line, "%s%s", GetIconDirectory(), icon);
-            spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].icon = sprite_load_file(line, 0);
+            spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].icon = sprite_load_file(line, SURFACE_FLAG_DISPLAYFORMAT);
 
             strcpy(spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].name, name);
             strcpy(spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].desc[0], d1);
@@ -1791,7 +1801,7 @@ void read_skills(void)
 
             strcpy(skill_list[panel].entry[nchar - 'a'].icon_name, icon);
             sprintf(line, "%s%s", GetIconDirectory(), icon);
-            skill_list[panel].entry[nchar - 'a'].icon = sprite_load_file(line, 0);
+            skill_list[panel].entry[nchar - 'a'].icon = sprite_load_file(line, SURFACE_FLAG_DISPLAYFORMAT);
 
             strcpy(skill_list[panel].entry[nchar - 'a'].name, name);
             strcpy(skill_list[panel].entry[nchar - 'a'].desc[0], d1);

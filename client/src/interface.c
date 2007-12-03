@@ -525,6 +525,9 @@ static int interface_cmd_textfield(_gui_interface_textfield *textfield, char *da
 }
 
 /* clear & reset the gui interface */
+/* Alderan 2007-12-03: 'free'ing a sprite won't free all stuff, we need to free also the surfaces
+ * with the function sprite_free_sprite
+ */
 void reset_gui_interface(void)
 {
     map_udate_flag = 2;
@@ -533,7 +536,9 @@ void reset_gui_interface(void)
     {
         int s;
         for (s=0;s<gui_interface_npc->icon_count;s++)
-            free(gui_interface_npc->icon[s].picture);
+            sprite_free_sprite(gui_interface_npc->icon[s].picture);
+        if ((gui_interface_npc->head.face==-1) && (gui_interface_npc->head.picture))
+            sprite_free_sprite(gui_interface_npc->head.picture);
         free(gui_interface_npc);
     }
     reset_keys();
@@ -580,7 +585,7 @@ static _gui_interface_struct *format_gui_interface(_gui_interface_struct *gui_in
         {
             char line[256];
             sprintf(line, "%s%s.png", GetIconDirectory(), gui_int->head.name);
-            gui_int->head.picture = sprite_load_file(line, 0);
+            gui_int->head.picture = sprite_load_file(line, SURFACE_FLAG_DISPLAYFORMAT);
         }
 
         if (gui_int->head.body_text[0]=='\0')
@@ -791,7 +796,7 @@ static _gui_interface_struct *format_gui_interface(_gui_interface_struct *gui_in
         {
             char line[256];
             sprintf(line, "%s%s.png", GetIconDirectory(), gui_int->icon[s].name);
-            gui_int->icon[s].picture = sprite_load_file(line, 0);
+            gui_int->icon[s].picture = sprite_load_file(line, SURFACE_FLAG_DISPLAYFORMAT);
         }
     }
 

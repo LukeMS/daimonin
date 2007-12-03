@@ -128,6 +128,25 @@ _anim;
 #define ASCII_LEFT 30
 #define ASCII_RIGHT 31
 
+/* this surface is only 1x1 pixel, and only used to not
+ * everytime recreate a certain pixelformat
+ */
+extern SDL_Surface  *FormatHolder;
+
+
+typedef struct _imagestats
+{
+    unsigned int redscales;
+    unsigned int greyscales;
+    unsigned int fowscales;
+    unsigned int loadedsprites;
+    unsigned int truecolors;
+}
+_imagestats;
+
+extern struct _imagestats ImageStats;
+
+
 extern struct _anim    *start_anim; /* anim queue of current active map */
 
 extern struct _anim    *add_anim(int type, int x, int y, int mapx, int mapy, int value);
@@ -143,6 +162,7 @@ extern _Sprite         *sprite_tryload_file(char *fname, UINT32 flags, SDL_RWops
 extern void             sprite_free_sprite(_Sprite *sprite);
 extern int              get_string_pixel_length(char *text, struct _Font *font);
 extern void             sprite_blt(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx);
+extern void             sprite_blt_map(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx);
 
 extern Uint32           GetSurfacePixel(SDL_Surface *Surface, Sint32 X, Sint32 Y);
 extern void             CreateNewFont(_Sprite *sprite, _Font *font, int xlen, int ylen, int c32len);
@@ -152,4 +172,6 @@ extern void             StringBlt(SDL_Surface *surf, _Font *font, char *text, in
                                       _BLTFX *bltfx);
 extern int              sprite_collision(int x1, int y1, int x2, int y2, _Sprite *sprite1, _Sprite *sprite2);
 extern void             sprite_clear_backbuffer(void);
+extern Uint32           getpixel(SDL_Surface *surface, int x, int y);
+extern void             putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel);
 #endif
