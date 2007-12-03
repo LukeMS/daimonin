@@ -1,27 +1,24 @@
 /*-----------------------------------------------------------------------------
-This source file is part of Daimonin (http://daimonin.sourceforge.net)
-Copyright (c) 2005 The Daimonin Team
-Also see acknowledgements in Readme.html
+This source file is part of Daimonin's 3d-Client
+Daimonin is a MMORG. Details can be found at http://daimonin.sourceforge.net
+Copyright (c) 2005 Andreas Seidel
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
-Foundation; either version 2 of the License, or (at your option) any later
+Foundation, either version 3 of the License, or (at your option) any later
 version.
 
 This program is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-In addition, as a special exception, the copyright holders of client3d give
+In addition, as a special exception, the copyright holder of client3d give
 you permission to combine the client3d program with lgpl libraries of your
-choice and/or with the fmod libraries.
-You may copy and distribute such a system following the terms of the GNU GPL
-for client3d and the licenses of the other code concerned.
+choice. You may copy and distribute such a system following the terms of the
+GNU GPL for 3d-Client and the licenses of the other code concerned.
 
 You should have received a copy of the GNU General Public License along with
-this program; if not, write to the Free Software Foundation, Inc., 59 Temple
-Place - Suite 330, Boston, MA 02111-1307, USA, or go to
-http://www.gnu.org/licenses/licenses.html
+this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
 #ifndef OBJECT_MANAGER_H
@@ -56,7 +53,8 @@ public:
     };
     enum
     {
-        OBJ_WALK, OBJ_TURN, OBJ_CURSOR_TURN,
+        OBJ_WALK, OBJ_CURSOR_WALK,
+        OBJ_TURN, OBJ_CURSOR_TURN,
         OBJ_TEXTURE,
         OBJ_ANIMATION,
         OBJ_GOTO,
@@ -110,7 +108,7 @@ public:
     void deleteStatic(int number);
     void deleteNPC   (int number);
     void update(int type, const Ogre::FrameEvent& evt);
-    void mousePressed(Ogre::MovableObject *mob, TilePos pos, bool modifier);
+    void mousePressed(Ogre::MovableObject *mob, bool modifier);
     void Event(int obj_type, int action, int val1=0, int val2=0, int val3=0);
     void setEquipment(int npcID, int bone, int type, int itemID);
     void highlightObject(Ogre::MovableObject *mob);
@@ -147,7 +145,7 @@ public:
     {
         mvNPC[npc]->setNickName(name);
     }
-    void setPosition(int npc, TilePos pos)
+    void setPosition(int npc, Ogre::Vector3 pos)
     {
         mvNPC[npc]->setPosition(pos);
     }
@@ -155,7 +153,7 @@ public:
     {
         return mvNPC[npc]->getPosition();
     }
-    const Ogre::Vector3 &synchToWorldPos(int deltaX, int deltaZ);
+    void synchToWorldPos(int deltaX, int deltaZ);
     void selectObject(Ogre::MovableObject *mob);
     Ogre::Vector3 getTargetedWorldPos()
     {
@@ -175,7 +173,7 @@ public:
         else
             return 0;
     }
-    const TilePos getTargetedPos()
+    const Ogre::Vector3 getTargetedPos()
     {
         return mSelectedPos;
     }
@@ -190,7 +188,7 @@ private:
     std::vector<ObjectNPC*   > mvNPC;
     std::vector<ObjectMissile*> mvMissile;
     int mSelectedType, mSelectedObject, mSelectedFriendly;
-    TilePos mSelectedPos;
+    Ogre::Vector3 mSelectedPos;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////

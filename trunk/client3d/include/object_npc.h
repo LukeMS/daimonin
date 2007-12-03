@@ -1,27 +1,24 @@
 /*-----------------------------------------------------------------------------
-This source file is part of Daimonin (http://daimonin.sourceforge.net)
-Copyright (c) 2005 The Daimonin Team
-Also see acknowledgements in Readme.html
+This source file is part of Daimonin's 3d-Client
+Daimonin is a MMORG. Details can be found at http://daimonin.sourceforge.net
+Copyright (c) 2005 Andreas Seidel
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
-Foundation; either version 2 of the License, or (at your option) any later
+Foundation, either version 3 of the License, or (at your option) any later
 version.
 
 This program is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-In addition, as a special exception, the copyright holders of client3d give
+In addition, as a special exception, the copyright holder of client3d give
 you permission to combine the client3d program with lgpl libraries of your
-choice and/or with the fmod libraries.
-You may copy and distribute such a system following the terms of the GNU GPL
-for client3d and the licenses of the other code concerned.
+choice. You may copy and distribute such a system following the terms of the
+GNU GPL for 3d-Client and the licenses of the other code concerned.
 
 You should have received a copy of the GNU General Public License along with
-this program; if not, write to the Free Software Foundation, Inc., 59 Temple
-Place - Suite 330, Boston, MA 02111-1307, USA, or go to
-http://www.gnu.org/licenses/licenses.html
+this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
 #ifndef ObjectNPC_H
@@ -66,10 +63,10 @@ public:
     virtual void freeRecources();
     virtual bool update(const Ogre::FrameEvent& event);
     bool movePosition(int dx, int dz);
-    void moveToDistantTile(TilePos pos, int precision =0);
-    void faceToTile(TilePos pos);
+    void faceToTile(Ogre::Vector3 pos);
     void turning(Ogre::Real turn, bool cursorTurn);
-    void attackObjectOnTile(TilePos pos);
+    void walking(Ogre::Real turn, bool cursorWalk);
+    //void attackObjectOnTile(TilePosOLD pos);
     void addToMap();
     void setEnemy();
     const unsigned char getBoundingRadius() const
@@ -110,10 +107,6 @@ public:
     {
         mAttacking = ATTACK_APPROACH;
     }
-    const TilePos &getDestMapPos() const
-    {
-        return mDestStepPos;
-    }
     void moveToNeighbourTile(int precision =0);
 
 private:
@@ -153,8 +146,9 @@ private:
     unsigned char mBoundingRadius; /**< The radius of subtiles, the NPC stands on. Used for pathfinding. **/
     bool mAutoMoving;
     bool mTalking;
+    void moveByCursor(Ogre::Real dTime);
     Ogre::Real mSpawnSize;
-    Ogre::Real mCursorTurning;
+    Ogre::Real mCursorTurning, mCursorWalking;
     Ogre::Real mDeltaDegree, mDistance;
     int mReadyWeaponStatus;
     int mType;
@@ -165,10 +159,6 @@ private:
     int mMaxMana,  mActMana;
     int mMaxGrace, mActGrace;
     int mOffX, mOffZ;
-    TilePos mDestStepPos;     /**< The next tile pos of a multi tile walk. **/
-    TilePos mDestWalkPos;     /**< The destination pos (as tile).   **/
-    Ogre::Vector3 mDestWalkVec;     /**< The destination pos (as vector). **/
-    Ogre::Vector3 mWalkSpeed;
     ObjectNPC *mEnemyObject;
     // ////////////////////////////////////////////////////////////////////
     // Functions.

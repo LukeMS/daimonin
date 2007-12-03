@@ -1,27 +1,24 @@
 /*-----------------------------------------------------------------------------
-This source file is part of Daimonin (http://daimonin.sourceforge.net)
-Copyright (c) 2005 The Daimonin Team
-Also see acknowledgements in Readme.html
+This source file is part of Daimonin's 3d-Client
+Daimonin is a MMORG. Details can be found at http://daimonin.sourceforge.net
+Copyright (c) 2005 Andreas Seidel
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
-Foundation; either version 2 of the License, or (at your option) any later
+Foundation, either version 3 of the License, or (at your option) any later
 version.
 
 This program is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-In addition, as a special exception, the copyright holders of client3d give
+In addition, as a special exception, the copyright holder of client3d give
 you permission to combine the client3d program with lgpl libraries of your
-choice and/or with the fmod libraries.
-You may copy and distribute such a system following the terms of the GNU GPL
-for client3d and the licenses of the other code concerned.
+choice. You may copy and distribute such a system following the terms of the
+GNU GPL for 3d-Client and the licenses of the other code concerned.
 
 You should have received a copy of the GNU General Public License along with
-this program; if not, write to the Free Software Foundation, Inc., 59 Temple
-Place - Suite 330, Boston, MA 02111-1307, USA, or go to
-http://www.gnu.org/licenses/licenses.html
+this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
 #ifndef GUI_GADGET_SLOT_H
@@ -70,22 +67,16 @@ public:
     /**
      ** Sets the time where the slot cannot be accessed.
      *****************************************************************************/
-    void setBusy(Ogre::Real time)
+    void setBusyTime(Ogre::Real time)
     {
         mBusyTime = time;
         mBusyTimeExpired = 0;
     }
-    /**
-     ** Gets the remaing busy time of the slot.
-     *****************************************************************************/
-    Ogre::Real getBusy()
+    void setBusy()
     {
-        return mBusyTime;
+        mBusyTimeExpired = 0.001; // Something > 0 to start the busy-animation.
     }
-    void update(Ogre::Real dTime)
-    {
-        if (mBusyTime) drawBusy(dTime);
-    }
+    void update(Ogre::Real dTime);
     static void hideDragOverlay()
     {
         mDnDOverlay->hide();
@@ -113,7 +104,8 @@ private:
     int mSlotNr;                           /**< Unique number. **/
     Item::sItem *mItem;                    /**< The Item which is currently in the slot. **/
     unsigned int mSlotWidth, mSlotHeight;
-    Ogre::Real mBusyTime, mBusyTimeExpired;
+    Ogre::Real mBusyTime;                  /**< Slot is busy for this amount of time. **/
+    Ogre::Real mBusyTimeExpired;           /**< Already expired time. **/
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
@@ -121,7 +113,6 @@ private:
     /**
      ** Draws an inactive gfx over the slot for recognizing the busy status.
      *****************************************************************************/
-    void drawBusy(Ogre::Real dTime);
     int getTextureAtlasPos(int itemFace);
 };
 

@@ -1,27 +1,24 @@
 /*-----------------------------------------------------------------------------
-This source file is part of Daimonin (http://daimonin.sourceforge.net)
-Copyright (c) 2005 The Daimonin Team
-Also see acknowledgements in Readme.html
+This source file is part of Daimonin's 3d-Client
+Daimonin is a MMORG. Details can be found at http://daimonin.sourceforge.net
+Copyright (c) 2005 Andreas Seidel
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
-Foundation; either version 2 of the License, or (at your option) any later
+Foundation, either version 3 of the License, or (at your option) any later
 version.
 
 This program is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-In addition, as a special exception, the copyright holders of client3d give
+In addition, as a special exception, the copyright holder of client3d give
 you permission to combine the client3d program with lgpl libraries of your
-choice and/or with the fmod libraries.
-You may copy and distribute such a system following the terms of the GNU GPL
-for client3d and the licenses of the other code concerned.
+choice. You may copy and distribute such a system following the terms of the
+GNU GPL for 3d-Client and the licenses of the other code concerned.
 
 You should have received a copy of the GNU General Public License along with
-this program; if not, write to the Free Software Foundation, Inc., 59 Temple
-Place - Suite 330, Boston, MA 02111-1307, USA, or go to
-http://www.gnu.org/licenses/licenses.html
+this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
 #include <iostream>
@@ -50,7 +47,6 @@ const int TEXTURES_PER_ROW = 7;
 //================================================================================================
 TileManager::TileManager()
 {
-    mInterface = 0;
     mMapScrollX =0;
     mMapScrollZ =0;
     for (int z =0; z <= CHUNK_SIZE_Z; ++z)
@@ -71,7 +67,6 @@ void TileManager::freeRecources()
     for (int z =0; z <= CHUNK_SIZE_Z; ++z)
         delRowOfWalls(z);
     mMapchunk.freeRecources();
-    delete mInterface;
 }
 
 //================================================================================================
@@ -83,15 +78,14 @@ void TileManager::Init(SceneManager* SceneMgr, int tileTextureSize)
     mSceneManager = SceneMgr;
     mTileTextureSize = tileTextureSize;
     mGrid = false;
-    mInterface = new TileInterface(SceneMgr);
-
     // ////////////////////////////////////////////////////////////////////
     // Create all TextureGroups.
     // ////////////////////////////////////////////////////////////////////
     std::string strTextureGroup = "terrain";
     Logger::log().info() << "Creating texture group " << strTextureGroup;
     if (Option::getSingleton().getIntValue(Option::CMDLINE_CREATE_TILE_TEXTURES))
-    { // only needed after a tile-texture has changed.
+    {
+        // only needed after a tile-texture has changed.
         createTextureGroup(strTextureGroup);
     }
     // ////////////////////////////////////////////////////////////////////
@@ -106,6 +100,28 @@ void TileManager::Init(SceneManager* SceneMgr, int tileTextureSize)
     // ////////////////////////////////////////////////////////////////////
     Logger::log().info() << "Init done.";
     Logger::log().headline("Starting TileEngine");
+}
+
+//================================================================================================
+// .
+//================================================================================================
+void TileManager::calcVertexHeight()
+{
+    for (int z=0; z < CHUNK_SIZE_Z; ++z)
+        for (int x=0; x < CHUNK_SIZE_X; ++x)
+        {
+/*
+            mMap[x][z].height[VERTEX_BL] = (getMapHeight(x,z) + getMapHeight(x,z+1) + getMapHeight(x-1,z) + getMapHeight(x-1,z+1)) /4;
+            mMap[x][z].height[VERTEX_TL] = (getMapHeight(x,z) + getMapHeight(x,z-1) + getMapHeight(x-1,z) + getMapHeight(x-1,z-1)) /4;
+            mMap[x][z].height[VERTEX_TR] = (getMapHeight(x,z) + getMapHeight(x,z-1) + getMapHeight(x+1,z) + getMapHeight(x+1,z-1)) /4;
+            mMap[x][z].height[VERTEX_BR] = (getMapHeight(x,z) + getMapHeight(x,z+1) + getMapHeight(x+1,z) + getMapHeight(x+1,z+1)) /4;
+*/
+            mMap[x][z].height[VERTEX_BL] = mMap[x  ][z+1].height[VERTEX_MID];
+            mMap[x][z].height[VERTEX_TL] = mMap[x  ][z  ].height[VERTEX_MID];
+            mMap[x][z].height[VERTEX_TR] = mMap[x+1][z  ].height[VERTEX_MID];
+            mMap[x][z].height[VERTEX_BR] = mMap[x+1][z+1].height[VERTEX_MID];
+            mMap[x][z].height[VERTEX_AVG]=(mMap[x][z].height[VERTEX_BL] + mMap[x][z].height[VERTEX_TL] + mMap[x][z].height[VERTEX_TR] + mMap[x][z].height[VERTEX_BR])/4;
+        }
 }
 
 //================================================================================================
@@ -150,6 +166,7 @@ void TileManager::scrollMap(int dx, int dz)
         clsRowOfWalls(0); // Set all Entities to 0.
     }
     mMapchunk.change();
+    syncWalls(-dx, -dz);
 }
 
 //================================================================================================
@@ -164,15 +181,15 @@ void TileManager::addWall(int level, int x, int z, int pos, const char *meshName
     mMap[x][z].entity[pos] = mSceneManager->createEntity(strObj, meshName);
     mMap[x][z].entity[pos]->setQueryFlags(ObjectManager::QUERY_ENVIRONMENT_MASK);
     mMap[x][z].entity[pos]->setRenderQueueGroup(RENDER_QUEUE_7);
-    TilePos tpos;
-    tpos.x     = x;
-    tpos.z     = z;
-    tpos.subX  = (pos==WALL_POS_LEFT)?0:1;
-    tpos.subZ  = (pos==WALL_POS_TOP )?0:1;
+    Vector3 tpos;
+    tpos.x = x * TILE_SIZE + (pos==WALL_POS_LEFT?0:TILE_SIZE);
+    tpos.z = z * TILE_SIZE + (pos==WALL_POS_TOP?0:TILE_SIZE);
+    //tpos.y = TileManager::getSingleton().getTileHeight((int)tpos.x, (int)tpos.z);
+    tpos.y = 30; // JUST A HACK! (server may send objects before tiles - so the height may be undefined).
     SceneNode *sceneNode = mSceneManager->getRootSceneNode()->createChildSceneNode();
     sceneNode->attachObject(mMap[x][z].entity[pos]);
     sceneNode->yaw(Degree((pos >WALL_POS_TOP )?90:180));
-    sceneNode->setPosition(getTileInterface()->tileToWallPos(tpos));
+    sceneNode->setPosition(tpos);
 }
 
 //================================================================================================
@@ -228,29 +245,13 @@ void TileManager::clsColOfWalls(int col)
 //================================================================================================
 // When player moves over a tile border, the world scrolls.
 //================================================================================================
-void TileManager::syncWalls(Ogre::Vector3 &deltaPos)
+void TileManager::syncWalls(int dx, int dz)
 {
     for (int z =0; z <= CHUNK_SIZE_Z; ++z)
         for (int x =0; x <= CHUNK_SIZE_X; ++x)
             for (int pos = 0; pos < WALL_POS_SUM; ++pos)
                 if (mMap[x][z].entity[pos])
-                    mMap[x][z].entity[pos]->getParentSceneNode()->translate(-deltaPos);
-}
-
-//================================================================================================
-// Set the walkable status for a COMPLETE row of subtiles.
-//================================================================================================
-void TileManager::setWalkablePos(const TilePos &pos, int row, unsigned char walkables)
-{
-    mMap[pos.x][pos.z].walkable[row] |= walkables;
-}
-
-//================================================================================================
-// Get the walkable status of a SINGLE subtile.
-//================================================================================================
-bool TileManager::getWalkablePos(int x, int y)
-{
-    return (mMap[x >> 3][y >> 3].walkable[y&7] & (1 << (x&7))) ==0;
+                    mMap[x][z].entity[pos]->getParentSceneNode()->translate(dx*TILE_SIZE, 0 , dz*TILE_SIZE);
 }
 
 //================================================================================================
@@ -263,7 +264,7 @@ void TileManager::setMapTextures()
     {
         for (int y = 0; y < CHUNK_SIZE_Z; ++y)
         {
-            height = mMap[x][y].height;
+            height = mMap[x][y].height[VERTEX_MID];
             // ////////////////////////////////////////////////////////////////////
             // Highland.
             // ////////////////////////////////////////////////////////////////////
@@ -288,7 +289,8 @@ void TileManager::setMapTextures()
             // Plain.
             // ////////////////////////////////////////////////////////////////////
             else if (height > TileChunk::LEVEL_PLAINS_TOP)
-            { // Plain
+            {
+                // Plain
                 mMap[x][y].terrain_col = 2;
                 mMap[x][y].terrain_row = 2;
             }
@@ -327,8 +329,9 @@ void TileManager::createChunks()
 #ifdef LOG_TIMING
     unsigned long time = Root::getSingleton().getTimer()->getMicroseconds();
 #endif
-    TileChunk::mBounds = new AxisAlignedBox(0, 0, 0, TILE_SIZE_X * CHUNK_SIZE_X, 100, TILE_SIZE_Z * CHUNK_SIZE_Z);
+    TileChunk::mBounds = new AxisAlignedBox(0, 0, 0, TILE_SIZE * CHUNK_SIZE_X, 100, TILE_SIZE * CHUNK_SIZE_Z);
     mMapchunk.create(mTileTextureSize);
+    //calcVertexHeight();
     delete TileChunk::mBounds;
 #ifdef LOG_TIMING
     Logger::log().info() << "Time to create Chunks: "
@@ -344,9 +347,10 @@ void TileManager::changeChunks()
 #ifdef LOG_TIMING
     unsigned long time = Root::getSingleton().getTimer()->getMicroseconds();
 #endif
-    //TileChunk::mBounds = new AxisAlignedBox(0, 0, 0, TILE_SIZE_X * CHUNK_SIZE_X, 100, TILE_SIZE_Z * CHUNK_SIZE_Z);
+    //TileChunk::mBounds = new AxisAlignedBox(0, 0, 0, TILE_SIZE * CHUNK_SIZE_X, 100, TILE_SIZE * CHUNK_SIZE_Z);
     //setMapTextures();
     mMapchunk.change();
+    calcVertexHeight();
     //delete TileChunk::mBounds;
 #ifdef LOG_TIMING
     Logger::log().info() << "Time to change Chunks: "
@@ -763,4 +767,68 @@ void TileManager::toggleGrid()
 {
     mGrid = !mGrid;
     setMaterialLOD(mTileTextureSize);
+}
+
+//================================================================================================
+// Returns the exact height of a position within a triangle.
+//================================================================================================
+int TileManager::calcHeight(int vert0, int vert1, int vertMid, int posX, int posZ)
+{
+    if (posZ == HALF_SIZE) return vert1;
+    int h1 = ((vert1 - vert0) * posZ) / HALF_SIZE + vert0;
+    int h2 = ((vert1 - vertMid) * posZ) / HALF_SIZE + vertMid;
+    int maxX = HALF_SIZE - posZ;
+    return ((h2 - h1) * posX) / maxX + h1;
+}
+
+//================================================================================================
+// Return the exact height of a position within a tile.
+//================================================================================================
+int TileManager::getTileHeight(int posX, int posZ)
+{
+    // ////////////////////////////////////////////////////////////////////
+    // Get the vertex heights of the tile.
+    // ////////////////////////////////////////////////////////////////////
+    int TileX = posX / TileManager::TILE_SIZE;  // Get the Tile position within the map.
+    int TileZ = posZ / TileManager::TILE_SIZE;  // Get the Tile position within the map.
+    posX&= (TileManager::TILE_SIZE-1);          // Lower part is the position within the tile.
+    posZ&= (TileManager::TILE_SIZE-1);          // Lower part is the position within the tile.
+    unsigned int vert0  = TileManager::getSingleton().getMapHeight(TileX, TileZ, TileManager::VERTEX_BL);
+    unsigned int vert1  = TileManager::getSingleton().getMapHeight(TileX, TileZ, TileManager::VERTEX_TL);
+    unsigned int vert2  = TileManager::getSingleton().getMapHeight(TileX, TileZ, TileManager::VERTEX_TR);
+    unsigned int vert3  = TileManager::getSingleton().getMapHeight(TileX, TileZ, TileManager::VERTEX_BR);
+    unsigned int vertMid= TileManager::getSingleton().getMapHeight(TileX, TileZ, TileManager::VERTEX_AVG);
+    // ////////////////////////////////////////////////////////////////////
+    // Divide the tile into 8 trinagles and translate the tris positions
+    // for calcHeight(...) to get always the same triangle.
+    // ////////////////////////////////////////////////////////////////////
+    posZ = TileManager::TILE_SIZE - posZ;
+    if (posZ >= HALF_SIZE)
+    {
+        // Quadrant 1
+        if (posX < HALF_SIZE)
+        {
+            if (TileManager::TILE_SIZE - posZ > posX) // pos b
+                return calcHeight((vert0 + vert1) / 2, vert1, vertMid, posX, posZ - HALF_SIZE);
+            return calcHeight((vert1 + vert2) / 2, vert1, vertMid, TileManager::TILE_SIZE - posZ, HALF_SIZE - posX);
+        }
+        // Quadrant 2
+        else
+        {
+            if (posZ - HALF_SIZE > posX - HALF_SIZE) // pos a
+                return calcHeight((vert1 + vert2) / 2, vert2, vertMid, TileManager::TILE_SIZE - posZ, posX - HALF_SIZE);
+            return calcHeight((vert3 + vert2) / 2, vert2, vertMid, TileManager::TILE_SIZE - posX, posZ - HALF_SIZE);
+        }
+    }
+    // Quadrant 3
+    if (posX < HALF_SIZE)
+    {
+        if (posZ > posX) // pos b
+            return calcHeight((vert1 + vert0) / 2, vert0, vertMid, posX, HALF_SIZE - posZ);
+        return calcHeight((vert0 + vert3) / 2, vert0, vertMid, posZ, HALF_SIZE - posX);
+    }
+    // Quadrant 4
+    if (TileManager::TILE_SIZE - posZ > posX) // pos a
+        return calcHeight((vert3 + vert0) / 2, vert3, vertMid, posZ, posX - HALF_SIZE);
+    return  calcHeight((vert3 + vert2) / 2, vert3, vertMid, TileManager::TILE_SIZE - posX, HALF_SIZE - posZ);
 }

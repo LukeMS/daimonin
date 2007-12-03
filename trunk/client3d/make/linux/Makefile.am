@@ -32,7 +32,6 @@ client3d_SOURCES = \
 	../../source/gui/gui_animation.cpp \
 	../../source/gui/gui_cursor.cpp \
 	../../source/gui/gui_element.cpp \
-	../../source/gui/gui_gadget.cpp \
 	../../source/gui/gui_gadget_slot.cpp \
 	../../source/gui/gui_gadget_combobox.cpp \
 	../../source/gui/gui_gadget_button.cpp \
@@ -47,9 +46,7 @@ client3d_SOURCES = \
 	../../source/gui/gui_window.cpp \
 	../../source/gui/gui_window_dialog.cpp \
 	../../source/tile_chunk.cpp \
-	../../source/tile_interface.cpp \
 	../../source/tile_manager.cpp \
-	../../source/tile_path.cpp \
 	../../source/tile_map.cpp \
 	../../source/events.cpp \
 	../../source/events_user.cpp \

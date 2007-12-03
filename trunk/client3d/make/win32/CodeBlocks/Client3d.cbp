@@ -159,12 +159,9 @@
 		<Unit filename="..\..\..\include\spell_manager.h" />
 		<Unit filename="..\..\..\include\spell_range.h" />
 		<Unit filename="..\..\..\include\tile_chunk.h" />
-		<Unit filename="..\..\..\include\tile_interface.h" />
 		<Unit filename="..\..\..\include\tile_manager.h" />
 		<Unit filename="..\..\..\include\tile_map.h" />
 		<Unit filename="..\..\..\include\tile_map_wrapper.h" />
-		<Unit filename="..\..\..\include\tile_path.h" />
-		<Unit filename="..\..\..\include\tile_pos.h" />
 		<Unit filename="..\..\CodingStyle.txt" />
 		<Unit filename="ReadMe.txt" />
 		<Unit filename="..\..\..\media\xml\GUI_ImageSet.xml" />
@@ -210,12 +207,12 @@
 		<Unit filename="..\..\..\source\spell_manager.cpp" />
 		<Unit filename="..\..\..\source\spell_range.cpp" />
 		<Unit filename="..\..\..\source\tile_chunk.cpp" />
-		<Unit filename="..\..\..\source\tile_interface.cpp" />
 		<Unit filename="..\..\..\source\tile_manager.cpp" />
 		<Unit filename="..\..\..\source\tile_map.cpp" />
-		<Unit filename="..\..\..\source\tile_path.cpp" />
 		<Extensions>
 			<code_completion />
+			<envvars />
+			<debugger />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

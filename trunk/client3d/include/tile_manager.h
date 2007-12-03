@@ -1,27 +1,24 @@
 /*-----------------------------------------------------------------------------
-This source file is part of Daimonin (http://daimonin.sourceforge.net)
-Copyright (c) 2005 The Daimonin Team
-Also see acknowledgements in Readme.html
+This source file is part of Daimonin's 3d-Client
+Daimonin is a MMORG. Details can be found at http://daimonin.sourceforge.net
+Copyright (c) 2005 Andreas Seidel
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
-Foundation; either version 2 of the License, or (at your option) any later
+Foundation, either version 3 of the License, or (at your option) any later
 version.
 
 This program is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-In addition, as a special exception, the copyright holders of client3d give
+In addition, as a special exception, the copyright holder of client3d give
 you permission to combine the client3d program with lgpl libraries of your
-choice and/or with the fmod libraries.
-You may copy and distribute such a system following the terms of the GNU GPL
-for client3d and the licenses of the other code concerned.
+choice. You may copy and distribute such a system following the terms of the
+GNU GPL for 3d-Client and the licenses of the other code concerned.
 
 You should have received a copy of the GNU General Public License along with
-this program; if not, write to the Free Software Foundation, Inc., 59 Temple
-Place - Suite 330, Boston, MA 02111-1307, USA, or go to
-http://www.gnu.org/licenses/licenses.html
+this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
 #ifndef TILE_MANAGER_H
@@ -30,7 +27,6 @@ http://www.gnu.org/licenses/licenses.html
 #include <Ogre.h>
 #include "define.h"
 #include "tile_chunk.h"
-#include "tile_interface.h"
 
 /**
  * TileEngine class which manages all tiles related stuff in the worldmap.
@@ -41,14 +37,12 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
+    enum { TILE_SIZE = 1 << 6};      /**< Size of a tile in pixel. */
+    enum { HALF_SIZE = TILE_SIZE/2}; /**< Size of a tile quadrandt in pixel. */
     enum { CHUNK_SIZE_X = 17 };      /**< Number of tiles in the worldmap (on x-axis). */
     enum { CHUNK_SIZE_Z = 17 };      /**< Number of tiles in the worldmap (on z-axis). */
     enum { MIN_TEXTURE_PIXEL = 16 }; /**< Minimal size of tile in the terrain texture. */
-
-    /** Size of a tile. */
-    enum { TILE_SIZE_X  = 48 }; /**< Size in pixel. */
-    enum { TILE_SIZE_Z  = 48 }; /**< Size in pixel. */
-    enum { SUM_SUBTILES =  8 }; /**< Sum of subtiles in x/z direction. */
+    enum { SUM_SUBTILES =  8 };      /**< Obsolete - don't use! */
 
     int map_transfer_flag;
     bool map_new_flag;
@@ -59,6 +53,17 @@ public:
         TRIANGLE_TOP   = 1 << 1,
         TRIANGLE_RIGHT = 1 << 2,
         TRIANGLE_BOTTOM= 1 << 3
+    };
+
+    enum
+    {
+        VERTEX_BL,  // Bottom/Left.
+        VERTEX_TL,  // Top/Left.
+        VERTEX_TR,  // Top/Right.
+        VERTEX_BR,  // Bottom/Right.
+        VERTEX_MID, // Height given by the server.
+        VERTEX_AVG, // Average Height.
+        VERTEX_SUM, // Number of vertixes.
     };
 
     enum
@@ -86,14 +91,11 @@ public:
     {
         return mTileTextureSize;
     }
-    unsigned char getMapHeight(short x, short y)
+    unsigned char getMapHeight(unsigned int x, unsigned int z, int vertex = VERTEX_MID)
     {
-        return mMap[x][y].height;
-    }
-    float getAvgMapHeight(short x, short y)
-    {
-        return ((mMap[x  ][y].height + mMap[x  ][y+1].height +
-                 mMap[x+1][y].height + mMap[x+1][y+1].height) /4);
+        if (x >= CHUNK_SIZE_X || z >= CHUNK_SIZE_Z)
+            return 0;
+        return mMap[x][z].height[vertex];
     }
     char getMapTextureRow(short x, short z)
     {
@@ -109,18 +111,14 @@ public:
         if (mMap[x][z].terrain_col == 2 && mMap[x][z].terrain_row == 4) return true;
         return false;
     }
-    TileInterface* getTileInterface()
-    {
-        return mInterface;
-    }
     void getMapScroll(int &x, int &z)
     {
         x = mMapScrollX;
         z = mMapScrollZ;
     }
-    void setMapHeight(short x, short y, short value)
+    void setMapHeight(short x, short y, short height)
     {
-        mMap[x][y].height = value;
+        mMap[x][y].height[VERTEX_MID] = height;
     }
     void setMapTextureRow(short x, short y, unsigned char value)
     {
@@ -132,9 +130,9 @@ public:
     }
     void setMap(int x, int y, int height, int row, int col)
     {
-        mMap[x][y].height      = (unsigned char)height;
-        mMap[x][y].terrain_row = (unsigned char)row;
-        mMap[x][y].terrain_col = (unsigned char)col;
+        mMap[x][y].height[VERTEX_MID] = (unsigned char)height;
+        mMap[x][y].terrain_row        = (unsigned char)row;
+        mMap[x][y].terrain_col        = (unsigned char)col;
     }
     void setMapTextures();
     bool loadImage(Ogre::Image &image, const Ogre::String &filename);
@@ -156,10 +154,10 @@ public:
     void setMaterialLOD(int pix);
     void toggleGrid();
     void addToGroupTexture(unsigned char* TextureGroup_data, unsigned char *Filter_data, Ogre::Image* Texture, short pixel, short x, short y);
-    void setWalkablePos(const TilePos &pos, int row, unsigned char walkables);
-    bool getWalkablePos(int x, int y);
     void addWall(int level, int tileX, int tileZ, int pos, const char *meshName);
-    void syncWalls(Ogre::Vector3 &deltaPos);
+    void syncWalls(int dx, int dy);
+    void calcVertexHeight();
+    int getTileHeight(int posX, int posZ);
 
 private:
     // ////////////////////////////////////////////////////////////////////
@@ -168,16 +166,15 @@ private:
     /**  TileEngine struct which holds the worldmap. **/
     struct _mMap
     {
-        unsigned char height;                     /**< Average height. **/
-        unsigned char walkable[SUM_SUBTILES];     /**< Walkable status for each subtile (8 bit * 8 rows)  **/
-        char terrain_col;                         /**< Column of the tile-texture in the terrain-texture. **/
-        char terrain_row;                         /**< Row    of the tile-texture in the terrain-texture. **/
+        unsigned char height[VERTEX_SUM];      /**< Height of every vertex of a tile. **/
+        unsigned char walkable[SUM_SUBTILES];  /**< Walkable status for each subtile (8 bit * 8 rows)  **/  // Obsolete - don't use!
+        char terrain_col;                      /**< Column of the tile-texture in the terrain-texture. **/
+        char terrain_row;                      /**< Row    of the tile-texture in the terrain-texture. **/
         Ogre::Entity *entity[WALL_POS_SUM];
     }
     mMap[CHUNK_SIZE_X+1][CHUNK_SIZE_Z+1];
     Ogre::SceneManager *mSceneManager;
     TileChunk mMapchunk;
-    TileInterface *mInterface;
     int mTileTextureSize;
     int mMapScrollX, mMapScrollZ;
     bool mGrid;
@@ -188,6 +185,7 @@ private:
     TileManager();
     ~TileManager();
     TileManager(const TileManager&); /**< disable copy-constructor. **/
+    int calcHeight(int vert0, int vert1, int vertMid, int posX, int posZ);
     void delRowOfWalls(int row);     /**< Delete all walls that are scrolling out of the tile map.**/
     void delColOfWalls(int col);     /**< Delete all walls that are scrolling out of the tile map.**/
     void clsRowOfWalls(int row);     /**< Set all walls to 0 that are scrolling into the tile map.**/

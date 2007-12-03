@@ -1,27 +1,24 @@
 /*-----------------------------------------------------------------------------
-This source file is part of Daimonin (http://daimonin.sourceforge.net)
-Copyright (c) 2005 The Daimonin Team
-Also see acknowledgements in Readme.html
+This source file is part of Daimonin's 3d-Client
+Daimonin is a MMORG. Details can be found at http://daimonin.sourceforge.net
+Copyright (c) 2005 Andreas Seidel
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
-Foundation; either version 2 of the License, or (at your option) any later
+Foundation, either version 3 of the License, or (at your option) any later
 version.
 
 This program is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-In addition, as a special exception, the copyright holders of client3d give
+In addition, as a special exception, the copyright holder of client3d give
 you permission to combine the client3d program with lgpl libraries of your
-choice and/or with the fmod libraries.
-You may copy and distribute such a system following the terms of the GNU GPL
-for client3d and the licenses of the other code concerned.
+choice. You may copy and distribute such a system following the terms of the
+GNU GPL for 3d-Client and the licenses of the other code concerned.
 
 You should have received a copy of the GNU General Public License along with
-this program; if not, write to the Free Software Foundation, Inc., 59 Temple
-Place - Suite 330, Boston, MA 02111-1307, USA, or go to
-http://www.gnu.org/licenses/licenses.html
+this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
 #include "option.h"
@@ -93,23 +90,19 @@ void ObjectManager::update(int obj_type, const FrameEvent& evt)
 //================================================================================================
 // Update all object positions after a map scroll.
 //================================================================================================
-const Vector3 &ObjectManager::synchToWorldPos(int deltaX, int deltaZ)
+void ObjectManager::synchToWorldPos(int deltaX, int deltaZ)
 {
-    static Vector3 pos;
     for (unsigned int i = 0; i < mvStatic.size(); ++i)
     {
         if (!mvStatic[i]->movePosition(deltaX, deltaZ))
             deleteStatic(i);
     }
-    pos = mvNPC[0]->getPosition();
-    for (unsigned int i = 0; i < mvNPC.size(); ++i)
+    for (unsigned int i = 1; i < mvNPC.size(); ++i)
     {
         // Sync the actual position.
         if (!mvNPC[i]->movePosition(deltaX, deltaZ))
             deleteNPC(i);
     }
-    pos-= mvNPC[0]->getPosition();
-    return pos;
 }
 
 //================================================================================================
@@ -127,12 +120,14 @@ void ObjectManager::Event(int obj_type, int action, int id, int val1, int val2)
         // if (action == OBJ_WALK) mvNPC[id]->walking(val1);
         if (action == OBJ_GOTO)
         {
-            TilePos pos;
+            /*
+            TilePosOLD pos;
             pos.x = val1 & 0xff;
             pos.z = val1 >> 8;
             pos.subX = val2 & 0xff;
             pos.subZ = val2 >> 8;
             mvNPC[ObjectNPC::HERO]->moveToDistantTile(pos);
+            */
         }
         if (action == OBJ_TEXTURE    )
             mvNPC[id]->mEquip->setTexture(val1, val2);
@@ -142,6 +137,8 @@ void ObjectManager::Event(int obj_type, int action, int id, int val1, int val2)
             mvNPC[id]->turning(val1, false);
         if (action == OBJ_CURSOR_TURN)
             mvNPC[id]->turning(val1, true);
+        if (action == OBJ_CURSOR_WALK)
+            mvNPC[id]->walking(val1, true);
         if (action == OBJ_ANIMATION  )
             mvNPC[id]->toggleAnimation(val1, val2);
     }
@@ -260,17 +257,8 @@ void ObjectManager::selectObject(MovableObject *mob)
 //================================================================================================
 // Mouse button was pressed - lets do the right thing.
 //================================================================================================
-void ObjectManager::mousePressed(MovableObject *mob, TilePos pos, bool modifier)
+void ObjectManager::mousePressed(MovableObject *mob, bool modifier)
 {
-    // ////////////////////////////////////////////////////////////////////
-    // Only a tile was pressed - move toward it.
-    // ////////////////////////////////////////////////////////////////////
-    if (!mob)
-    {
-        mvNPC[ObjectNPC::HERO]->moveToDistantTile(pos);
-        ObjectVisuals::getSingleton().unselect();
-        return;
-    }
     // ////////////////////////////////////////////////////////////////////
     // An object was pressed.
     // ////////////////////////////////////////////////////////////////////
@@ -297,8 +285,8 @@ void ObjectManager::mousePressed(MovableObject *mob, TilePos pos, bool modifier)
     }
     else if (mSelectedType < OBJECT_NPC)
     {
-        mSelectedPos = mvStatic[mSelectedObject]->getTilePos();
-        mvNPC[ObjectNPC::HERO]->moveToDistantTile(mSelectedPos, 2);
+        //mSelectedPos = mvStatic[mSelectedObject]->getTilePos();
+        //mvNPC[ObjectNPC::HERO]->moveToDistantTile(mSelectedPos, 2);
         mvStatic[mSelectedObject]->activate();
     }
 }

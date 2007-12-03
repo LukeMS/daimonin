@@ -1,28 +1,26 @@
 /*-----------------------------------------------------------------------------
-This source file is part of Daimonin (http://daimonin.sourceforge.net)
-Copyright (c) 2005 The Daimonin Team
-Also see acknowledgements in Readme.html
+This source file is part of Daimonin's 3d-Client
+Daimonin is a MMORG. Details can be found at http://daimonin.sourceforge.net
+Copyright (c) 2005 Andreas Seidel
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
-Foundation; either version 2 of the License, or (at your option) any later
+Foundation, either version 3 of the License, or (at your option) any later
 version.
 
 This program is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-In addition, as a special exception, the copyright holders of client3d give
+In addition, as a special exception, the copyright holder of client3d give
 you permission to combine the client3d program with lgpl libraries of your
-choice and/or with the fmod libraries.
-You may copy and distribute such a system following the terms of the GNU GPL
-for client3d and the licenses of the other code concerned.
+choice. You may copy and distribute such a system following the terms of the
+GNU GPL for 3d-Client and the licenses of the other code concerned.
 
 You should have received a copy of the GNU General Public License along with
-this program; if not, write to the Free Software Foundation, Inc., 59 Temple
-Place - Suite 330, Boston, MA 02111-1307, USA, or go to
-http://www.gnu.org/licenses/licenses.html
+this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
+
 #ifdef WIN32
 #include <windows.h>
 #else
@@ -39,15 +37,15 @@ http://www.gnu.org/licenses/licenses.html
 
 using namespace Ogre;
 
-const unsigned int ITEM_SIZE = 64; // Only 64 or 32 are allowed!
-const int BITS_FACEFILTER = ~0x8000; // Filter to extract the face number (gfx).
+const unsigned int ITEM_SIZE = 48;
+const int BITS_FACEFILTER = ~0x8000; // Filter to extract the face number (gfx-id).
 Overlay *GuiGadgetSlot::mDnDOverlay =0;
 OverlayElement *GuiGadgetSlot::mDnDElement =0;
 Image GuiGadgetSlot::mAtlasTexture;
 MaterialPtr GuiGadgetSlot::mDnDMaterial;
 TexturePtr GuiGadgetSlot::mDnDTexture;
 std::vector<Ogre::String> GuiGadgetSlot::mvAtlasGfxName;
-int GuiGadgetSlot::mDragSlot = -1;
+int GuiGadgetSlot::mDragSlot =  -1;
 int GuiGadgetSlot::mActiveSlot= -1;
 int uid = 0;
 
@@ -56,11 +54,13 @@ int uid = 0;
 //================================================================================================
 GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOnInit):GuiGraphic(xmlElement, parent, drawOnInit)
 {
+    if (mWidth < (int)ITEM_SIZE)
+        Logger::log().error() << "GuiGadgetSlot: Item size is bigger than background size! This will crash the client";
     std::string filename;
     mSlotNr = uid++;
     mItem = 0;
     mBusyTime = 0;
-
+    mBusyTimeExpired = 0;
     const char *tmp;
     if ((tmp = xmlElement->Attribute("bg_image_name" )))
         Logger::log().error() << "bg_image_name: " << tmp;
@@ -127,14 +127,13 @@ GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOn
                 nextPos+=ITEM_SIZE * ITEM_SIZE;
             }
             // ////////////////////////////////////////////////////////////////////
-            // Write the hires version (32x32 pix).
+            // Write the datas to disc.
             // ////////////////////////////////////////////////////////////////////
             filename = PATH_ITEM_TEXTURES;
             filename+= "/";
             filename+= FILE_ITEM_TEXTURE_ATLAS;
             filename+= ".png";
             itemAtlas.save(filename);
-            // Write the textfile.
             filename.replace(filename.find(".png"), 4, ".txt");
             std::ofstream txtFile(filename.c_str(), std::ios::out | std::ios::binary);
             txtFile << "# This file holds the content of the image-texture-atlas." << std::endl;
@@ -145,17 +144,6 @@ GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOn
             }
             txtFile.close();
             itemFilename.clear();
-            // ////////////////////////////////////////////////////////////////////
-            // Write the lores version (32x32 pix).
-            // ////////////////////////////////////////////////////////////////////
-            /*
-            itemAtlas.resize((ushort)itemAtlas.getWidth()/2, (ushort)itemAtlas.getHeight()/2, Image::FILTER_BICUBIC);
-            filename = PATH_ITEM_TEXTURES;
-            filename+= "/";
-            filename+= FILE_ITEM_TEXTURE_ATLAS;
-            filename+= "_32.png";
-            itemAtlas.save(filename);
-            */
             delete[] itemBuffer;
         }
         // ////////////////////////////////////////////////////////////////////
@@ -185,10 +173,15 @@ GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOn
         mAtlasTexture.load(filename, "General");
         // ////////////////////////////////////////////////////////////////////
         // Create drag'n'drop overlay.
+        // We must clear the whole texture, because textures do always have
+        // 2^n size - while slots can have any size.
         // ////////////////////////////////////////////////////////////////////
         mDnDTexture = TextureManager::getSingleton().createManual("GUI_SlotDnD_Texture", "General",
                       TEX_TYPE_2D, ITEM_SIZE, ITEM_SIZE, 0, PF_A8R8G8B8, TU_STATIC_WRITE_ONLY);
         mDnDOverlay = OverlayManager::getSingleton().create("GUI_SlotDnD_Overlay");
+        memset(mDnDTexture->getBuffer()->lock(HardwareBuffer::HBL_DISCARD), 0x00,
+               mDnDTexture->getWidth()*mDnDTexture->getHeight()*sizeof(uint32));
+        mDnDTexture->getBuffer()->unlock();
         mDnDOverlay->setZOrder(500);
         mDnDElement = OverlayManager::getSingleton().createOverlayElement(GuiWindow::OVERLAY_ELEMENT_TYPE, "GUI_SlotDnD_Frame");
         mDnDElement->setMetricsMode(GMM_PIXELS);
@@ -219,17 +212,14 @@ GuiGadgetSlot::~GuiGadgetSlot()
 //================================================================================================
 // TODO: draw something like a watchlike gfx over the slot to show the busy status.
 //================================================================================================
-void GuiGadgetSlot::drawBusy(Real dTime)
+void GuiGadgetSlot::update(Real dTime)
 {
-    mBusyTimeExpired+= dTime;
-    int degree = (int) ((360 * mBusyTimeExpired) / mBusyTime);
-    if (degree > 360)
-    {
+    if (!mBusyTimeExpired) return;
+    mBusyTimeExpired += dTime;
+    if (mBusyTimeExpired > mBusyTime)
         mBusyTime = 0;
-        draw();  // Clear the busy gfx.
-        return;
-    }
-    // TODO: draw the busy gfx...
+    draw();
+//    int degree = (int) ((360 * mBusyTimeExpired) / mBusyTime);
 }
 
 //================================================================================================
@@ -308,6 +298,8 @@ void GuiGadgetSlot::draw()
     // ////////////////////////////////////////////////////////////////////
     int strtX = mPosX;
     int strtY = mPosY;
+    int offX  = (mWidth  - ITEM_SIZE) /2; // Item needs offset for not to overwrite the slot borders.
+    int offY  = (mHeight - ITEM_SIZE) /2; // Item needs offset for not to overwrite the slot borders.
     Texture *texture = ((GuiWindow*) mParent)->getTexture();
     // ////////////////////////////////////////////////////////////////////
     // Slot gfx.
@@ -338,16 +330,16 @@ void GuiGadgetSlot::draw()
     // Draw slot + item into the buffer.
     // ////////////////////////////////////////////////////////////////////
     int dSlotY = 0, dItemY = 0, destY =0;
-    for (int y =0; y < mHeight; ++y)
+    for (int y = 0; y < mHeight; ++y)
     {
         for (int x =0; x < mWidth; ++x)
         {
             // First check if item has a non transparent pixel to draw.
-            if (gfxNr >=0 && x < (int)ITEM_SIZE && y < (int)ITEM_SIZE)
+            if (gfxNr >=0 && x >= offX && x < (int)ITEM_SIZE+offX && y >= offY && y < (int)ITEM_SIZE+offY)
             {
-                if (srcItemData[dItemY + x] > 0x00ffffff)
+                if (srcItemData[dItemY + x - offX] > 0x00ffffff)
                 {
-                    LayerWindowBG[destY + x] = srcItemData[dItemY + x];
+                    LayerWindowBG[destY + x] = srcItemData[dItemY + x - offX];
                     continue;
                 }
             }
@@ -355,39 +347,39 @@ void GuiGadgetSlot::draw()
             if (srcSlotData[dSlotY + x] > 0x00ffffff)
                 LayerWindowBG[destY + x] = srcSlotData[dSlotY + x];
         }
-        dItemY+= ITEM_SIZE;
+        if (y >= offY) dItemY+= ITEM_SIZE;
         dSlotY+= (int)rowSkipSlot;
         destY+= mWidth;
     }
     // ////////////////////////////////////////////////////////////////////
     // Draw busy-gfx into the buffer.
     // ////////////////////////////////////////////////////////////////////
-/*
-    int busy = 15;
+    /*
+        int busy = 15;
 
-    int x1 = mWidth/2;
-    int x2 = x1 + busy;
-    int y1 = mHeight;
-    int y2 = mHeight/2;
+        int x1 = mWidth/2;
+        int x2 = x1 + busy;
+        int y1 = mHeight;
+        int y2 = mHeight/2;
 
 
-    int x = x1;
-    int dx = x2-x1; if (dx < 0) dx*=-1;
-    int y = y1;
-    int dy = x2-x1; if (dx < 0) dx*=-1;
-    int delta = dx - dy;
-    int xStep, yStep;
+        int x = x1;
+        int dx = x2-x1; if (dx < 0) dx*=-1;
+        int y = y1;
+        int dy = x2-x1; if (dx < 0) dx*=-1;
+        int delta = dx - dy;
+        int xStep, yStep;
 
-    if (x2 > x1) xStep = 1; else xStep = -1;
-    if (y2 > y1) yStep = 1; else yStep = -1;
-    while (x != x2 || y != y2)
-    {
-        if (delta >=0) x+= xStep; delta-= dy;
-        if (delta < 0) y+= yStep; delta+= dx;
+        if (x2 > x1) xStep = 1; else xStep = -1;
+        if (y2 > y1) yStep = 1; else yStep = -1;
+        while (x != x2 || y != y2)
+        {
+            if (delta >=0) x+= xStep; delta-= dy;
+            if (delta < 0) y+= yStep; delta+= dx;
 
-        //for (int posX = x1; posX < x; ++posX) LayerWindowBG[posX + mWidth * y] = 0x00ffffff;
-    }
-*/
+            //for (int posX = x1; posX < x; ++posX) LayerWindowBG[posX + mWidth * y] = 0x00ffffff;
+        }
+    */
 
 
 
@@ -405,8 +397,8 @@ void GuiGadgetSlot::draw()
         label.hideText= false;
         label.index= -1;
         label.font = 2;
-        label.x1 = strtX + 9;
-        label.y1 = strtY + 9;
+        label.x1 = strtX + offX+1;
+        label.y1 = strtY + offY+1;
         label.x2 = label.x1 + mWidth;
         label.y2 = label.y1 + GuiTextout::getSingleton().getFontHeight(label.font);
         label.color= 0x00888888;
@@ -426,6 +418,7 @@ void GuiGadgetSlot::draw()
 //================================================================================================
 void GuiGadgetSlot::drawDragItem()
 {
+    if (!mItem) return;
     int gfxNr = getTextureAtlasPos(mItem->face);
     mDnDTexture->getBuffer()->blitFromMemory(mAtlasTexture.getPixelBox().getSubVolume(Box(0, ITEM_SIZE * gfxNr, ITEM_SIZE, ITEM_SIZE *(gfxNr+1))));
     moveDragOverlay();
