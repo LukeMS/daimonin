@@ -905,6 +905,9 @@ Boolean load_bitmap(int index)
     if (bitmap_name[index].type == PIC_TYPE_TRANS)
         flags |= SURFACE_FLAG_COLKEY_16M;
 
+    if ((index>=BITMAP_INTRO) && (index!=BITMAP_TEXTWIN_MASK))
+        flags |= SURFACE_FLAG_DISPLAYFORMAT;
+
     Bitmaps[index] = sprite_load_file(buf, flags);
     if (!Bitmaps[index] || !Bitmaps[index]->bitmap)
     {
@@ -1342,7 +1345,7 @@ int main(int argc, char *argv[])
     show_intro("load sounds");
     sound_loadall();
     show_intro("load bitmaps");
-    for (i = 5; i < BITMAP_MAX; i++) /* add later better error handling here*/
+    for (i = BITMAP_INTRO+1; i < BITMAP_MAX; i++) /* add later better error handling here*/
         load_bitmap(i);
     show_intro("load keys");
     read_keybind_file(KEYBIND_FILE);
@@ -1734,6 +1737,7 @@ static void show_intro(char *text)
     char    buf[256];
 
     sprite_blt(Bitmaps[BITMAP_INTRO], 0, 0, NULL, NULL);
+
     if (text)
         StringBlt(ScreenSurface, &SystemFont, text, 370, 295, COLOR_DEFAULT, NULL, NULL);
     else

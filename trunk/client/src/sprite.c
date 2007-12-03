@@ -44,10 +44,14 @@ int         bbpos = 0;
 
 struct _anim   *start_anim; /* anim queue of current active map */
 
+struct _imagestats  ImageStats;
+
+SDL_Surface     *FormatHolder;
+
 static Boolean  GetBitmapBorders(SDL_Surface *Surface, int *up, int *down, int *left, int *right, UINT32 ckey);
-static void     grey_scale(SDL_Color *col_tab, SDL_Color *grey_tab, int num_col, int r, int g, int b);
-static void     red_scale(SDL_Color *col_tab, SDL_Color *grey_tab, int numcol, int rcol, int gcol, int bcol);
-static void     fow_scale(SDL_Color *col_tab, SDL_Color *grey_tab, int numcol, int rcol, int gcol, int bcol);
+static void     grey_scale(_Sprite *sprite);
+static void     red_scale(_Sprite *sprite);
+static void     fow_scale(_Sprite *sprite);
 
 /* not much special inside atm */
 Boolean sprite_init_system(void)
@@ -65,6 +69,11 @@ void sprite_clear_backbuffer(void)
         Backbuffer[i].sprite=NULL;
     }
     bbpos = 0;
+    memset(&ImageStats, 0, sizeof(_imagestats));
+
+    FormatHolder=SDL_CreateRGBSurface(SDL_SRCALPHA,1, 1, 32, 0xFF000000, 0x00FF0000 ,0x0000FF00 ,0x000000FF);
+    SDL_SetAlpha(FormatHolder,SDL_SRCALPHA,255);
+    return;
 }
 
 Boolean sprite_deinit_system(void)
@@ -90,11 +99,7 @@ _Sprite * sprite_tryload_file(char *fname, uint32 flag, SDL_RWops *rwop)
 {
     _Sprite        *sprite;
     SDL_Surface    *bitmap;
-    int             i, ncol, dark_flag = FALSE;
-//    int             s;
-//    Uint8           r, g, b;
-    UINT32          ckflags, tmp = 0;
-    SDL_Color       colors[256], dark[256], ckey;
+    UINT32          ckflags, tmp=0;
 
 
     if (fname)
@@ -127,176 +132,114 @@ _Sprite * sprite_tryload_file(char *fname, uint32 flag, SDL_RWops *rwop)
 
     GetBitmapBorders(bitmap, &sprite->border_up, &sprite->border_down, &sprite->border_left, &sprite->border_right, tmp);
 
-    /*
-    LOG(0,"BORDERS %s -> U:%d D:%d L:%d R:%d\n",fname, sprite->border_up,
-        sprite->border_down, sprite->border_left, sprite->border_right);
-    */
+    if (!bitmap->format->palette)
+        ImageStats.truecolors++;
+
     /* we store our original bitmap */
     sprite->bitmap = bitmap;
 
-    if (!(flag & SURFACE_FLAG_PALETTE))
+    if (flag & SURFACE_FLAG_DISPLAYFORMAT)
     {
-        /* we have a palette and we want store the 4 brightness level? */
-        if (bitmap->format->palette)
-        {
-            dark_flag = TRUE; /* don't forget to map the default dark[0] */
-
-            /* first, we grap our color key and numbers of colors */
-            SDL_GetRGB(bitmap->format->colorkey, bitmap->format, &ckey.r, &ckey.g, &ckey.b);
-            ncol = bitmap->format->palette->ncolors;
-
-            /* and save the original palette */
-            /* perhaps we have use in later improvements */
-            for (i = 0; i < bitmap->format->palette->ncolors; i++)
-            {
-                colors[i].r = bitmap->format->palette->colors[i].r;
-                colors[i].g = bitmap->format->palette->colors[i].g;
-                colors[i].b = bitmap->format->palette->colors[i].b;
-            }
-
-            /* we want 7+1 dark level. level 0 is our original brightness ,
-            * level 6 is darkest - level 7 is "total dark" = no light
-            */
-//            for (s = 1; s < DARK_LEVELS; s++) /* 1-6 darkened versions */
-//            {
-//                /* we adjust the colors. */
-//                for (i = 0; i < bitmap->format->palette->ncolors; i++)
-//                {
-//                    /* 1st: grap RGB of this entry */
-//                    r = colors[i].r;
-//                    g = colors[i].g;
-//                    b = colors[i].b;
-//
-//
-//                    /* 2nd: if this is not the color key, adjust the color */
-//                    if (r != ckey.r || g != ckey.g || b != ckey.b)
-//                    {
-//                        r = (Uint8) ((double) r * dark_value[s]);
-//                        g = (Uint8) ((double) g * dark_value[s]);
-//                        b = (Uint8) ((double) b * dark_value[s]);
-//                        if (r==255 && g==255 && b==255)
-//                            r = g = b = 254;
-//                    }
-//                    else
-//                    {
-//                        r = g = b = 255;
-//                    }
-//
-//                    /* store color information in our new palette */
-//                    dark[i].r = r;
-//                    dark[i].g = g;
-//                    dark[i].b = b;
-//                }
-//                SDL_SetColors(bitmap, dark, 0, ncol);
-//                SDL_SetColorKey(bitmap, SDL_SRCCOLORKEY | SDL_RLEACCEL, SDL_MapRGB(bitmap->format,255,255,255));
-//                sprite->dark_level[s] = SDL_DisplayFormat(bitmap);
-//
-//            }
-            grey_scale(colors, dark, ncol, ckey.r, ckey.g, ckey.b);
-            SDL_SetColors(bitmap, dark, 0, ncol);
-            SDL_SetColorKey(bitmap, SDL_SRCCOLORKEY | SDL_RLEACCEL, SDL_MapRGB(bitmap->format,255,255,255));
-            sprite->grey = SDL_DisplayFormat(bitmap);
-            red_scale(colors, dark, ncol, ckey.r, ckey.g, ckey.b);
-            SDL_SetColors(bitmap, dark, 0, ncol);
-            sprite->red = SDL_DisplayFormat(bitmap);
-            fow_scale(colors, dark, ncol, ckey.r, ckey.g, ckey.b);
-            SDL_SetColors(bitmap, dark, 0, ncol);
-            sprite->fog_of_war = SDL_DisplayFormat(bitmap);
-
-            SDL_SetColors(bitmap, colors, 0, ncol);
-        }
-
         sprite->bitmap = SDL_DisplayFormat(bitmap);
         SDL_FreeSurface(bitmap);
-//        if (dark_flag) /* map original color over default dark */
-//            sprite->dark_level[0] = sprite->bitmap;
     }
+
+
+    if (!(flag & SURFACE_FLAG_PALETTE))
+    {
+//        sprite->bitmap = SDL_DisplayFormatAlpha(bitmap);
+//        SDL_FreeSurface(bitmap);
+    }
+    ImageStats.loadedsprites++;
     return(sprite);
 }
 
-static void red_scale(SDL_Color *col_tab, SDL_Color *grey_tab, int numcol, int rcol, int gcol, int bcol)
+
+static void red_scale(_Sprite *sprite)
 {
-    int     i;
-    double  r, g, b;
+    int         j, k;
+    Uint8       r, g, b, a;
+    SDL_Surface *temp;
 
-
-    for (i = 0; i < numcol; i++)
+    temp=SDL_ConvertSurface(sprite->bitmap, FormatHolder->format, FormatHolder->flags);
+    for (k=0;k<temp->h;k++)
     {
-        r = (double) col_tab[i].r;
-        g = (double) col_tab[i].g;
-        b = (double) col_tab[i].b;
-
-        if (r != rcol || g != gcol || b != bcol)
+        for (j=0;j<temp->w;j++)
         {
-            r = (0.212671 * r + 0.715160 * g + 0.072169 * b) + 32;
+            SDL_GetRGBA(getpixel(temp,j,k),temp->format,&r, &g, &b, &a);
+            r = (int) ((0.212671 * r + 0.715160 * g + 0.072169 * b) + 32);
             g = b = 0;
+            putpixel(temp,j,k,SDL_MapRGBA(temp->format, r, g, b,a));
         }
-
-        grey_tab[i].r = (int) r;
-        grey_tab[i].g = (int) g;
-        grey_tab[i].b = (int) b;
     }
+    sprite->red = SDL_DisplayFormatAlpha(temp);
+    SDL_FreeSurface(temp);
+    ImageStats.redscales++;
 }
 
-static void fow_scale(SDL_Color *col_tab, SDL_Color *grey_tab, int numcol, int rcol, int gcol, int bcol)
+static void grey_scale(_Sprite *sprite)
 {
-    int     i;
-    double  r, g, b;
+    int         j, k;
+    Uint8       r, g, b, a;
+    SDL_Surface *temp;
 
-
-    for (i = 0; i < numcol; i++)
+    temp=SDL_ConvertSurface(sprite->bitmap, FormatHolder->format, FormatHolder->flags);
+    for (k=0;k<temp->h;k++)
     {
-        r = (double) col_tab[i].r;
-        g = (double) col_tab[i].g;
-        b = (double) col_tab[i].b;
-
-        if (r != rcol || g != gcol || b != bcol)
+        for (j=0;j<temp->w;j++)
         {
-            g = 0.212671 * r + 0.715160 * g + 0.072169 * b;
-            r = (g * 0.34);
-            b = (g * 0.34) + 16; /* its a try... */
-            g = (g * 0.34);
+            SDL_GetRGBA(getpixel(temp,j,k),temp->format,&r, &g, &b, &a);
+            r = g = b = (int) (0.212671 * r + 0.715160 * g + 0.072169 * b);
+            putpixel(temp,j,k,SDL_MapRGBA(temp->format, r, g, b,a));
         }
-        grey_tab[i].r = (int) r;
-        grey_tab[i].g = (int) g;
-        grey_tab[i].b = (int) b;
     }
+    sprite->grey = SDL_DisplayFormatAlpha(temp);
+    SDL_FreeSurface(temp);
+    ImageStats.greyscales++;
 }
 
-static void grey_scale(SDL_Color *col_tab, SDL_Color *grey_tab, int numcol, int rcol, int gcol, int bcol)
+static void fow_scale(_Sprite *sprite)
 {
-    int     i;
-    double  r, g, b;
+    int         j, k;
+    Uint8       r, g, b, a;
+    SDL_Surface *temp;
 
-    for (i = 0; i < numcol; i++)
+    temp=SDL_ConvertSurface(sprite->bitmap, FormatHolder->format, FormatHolder->flags);
+    for (k=0;k<temp->h;k++)
     {
-        r = (double) col_tab[i].r;
-        g = (double) col_tab[i].g;
-        b = (double) col_tab[i].b;
-
-        if (r != rcol || g != gcol || b != bcol)
+        for (j=0;j<temp->w;j++)
         {
-            r = b = g = 0.212671 * r + 0.715160 * g + 0.072169 * b;
-            if (((uint8) r==255) && ((uint8) g==255) && ((uint8) b==255))
-                r = g = b = 254;
+            SDL_GetRGBA(getpixel(temp,j,k),temp->format,&r, &g, &b, &a);
+            r = g = b = (int)((0.212671 * r + 0.715160 * g + 0.072169 * b) * 0.34);
+            b=+16;
+            putpixel(temp,j,k,SDL_MapRGBA(temp->format, r, g, b,a));
         }
-        else
-        {
-            r = g = b = 255;
-        }
-        grey_tab[i].r = (int) r;
-        grey_tab[i].g = (int) g;
-        grey_tab[i].b = (int) b;
     }
+    sprite->fog_of_war = SDL_DisplayFormatAlpha(temp);
+    SDL_FreeSurface(temp);
+    ImageStats.fowscales++;
 }
 
 void sprite_free_sprite(_Sprite *sprite)
 {
     void   *tmp_free;
+    int i;
+
     if (!sprite)
         return;
     if (sprite->bitmap)
         SDL_FreeSurface(sprite->bitmap);
+    for (i=0;i<DARK_LEVELS;i++)
+    {
+        if (sprite->dark_level[i])
+            SDL_FreeSurface(sprite->dark_level[i]);
+    }
+    if (sprite->grey)
+        SDL_FreeSurface(sprite->grey);
+    if (sprite->red)
+        SDL_FreeSurface(sprite->red);
+    if (sprite->fog_of_war)
+        SDL_FreeSurface(sprite->fog_of_war);
     tmp_free = sprite;
     FreeMemory(&tmp_free);
 }
@@ -415,6 +358,7 @@ void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col
     color_s.r = 204; /* highlight color for selected keywords */
     color_s.g = 102;
     color_s.b = 255;
+
 
     color.r = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[col].r;
     color.g = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[col].g;
@@ -633,8 +577,47 @@ int get_string_pixel_length(char *text, struct _Font *font)
 
     return len;
 }
-
+/* Alderan 2007-11-03: i reworked that a bit:
+ * we dont need for every blit check for all the map drawing stuff
+ * so the mapdrawing gets its own function.
+ * this function can only handle semi-trans in BLTFX
+ */
 void sprite_blt(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx)
+{
+    SDL_Rect        dst;
+    SDL_Surface    *surface, *blt_sprite;
+
+    if (!sprite)
+        return;
+
+    blt_sprite = sprite->bitmap;
+    surface = ScreenSurface;
+    dst.x = x;
+    dst.y = y;
+
+    if (bltfx)
+    {
+        if (bltfx->flags & BLTFX_FLAG_SRCALPHA && !(ScreenSurface->flags & SDL_HWSURFACE))
+        {
+            SDL_SetAlpha(blt_sprite, SDL_SRCALPHA, bltfx->alpha);
+        }
+    }
+
+    if (!blt_sprite)
+        return;
+
+    if (box)
+        SDL_BlitSurface(blt_sprite, box, surface, &dst);
+    else
+        SDL_BlitSurface(blt_sprite, NULL, surface, &dst);
+
+    if (bltfx && bltfx->flags & BLTFX_FLAG_SRCALPHA && !(ScreenSurface->flags & SDL_HWSURFACE))
+    {
+        SDL_SetAlpha(blt_sprite, SDL_SRCALPHA, SDL_ALPHA_OPAQUE);
+    }
+}
+/* This function dupports the whole BLTFX flags, and is only used to blit the map! */
+void sprite_blt_map(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx)
 {
     SDL_Rect        dst;
     SDL_Surface    *surface, *blt_sprite;
@@ -679,6 +662,7 @@ void sprite_blt(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx)
                     Backbuffer[bbpos].sprite=NULL;
                 }
                 blt_sprite = SDL_DisplayFormatAlpha(sprite->bitmap);
+//                blt_sprite = SDL_ConvertSurface(sprite->bitmap, sprite->bitmap->format, SDL_SRCALPHA);
                 SDL_BlitSurface(darkness_filter[bltfx->dark_level],NULL,blt_sprite,NULL);
 
                 /* we put it in the backbuffer */
@@ -692,11 +676,23 @@ void sprite_blt(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx)
 
         }
         else if (bltfx->flags & BLTFX_FLAG_FOW)
+        {
+            if (!sprite->fog_of_war)
+                fow_scale(sprite);
             blt_sprite = sprite->fog_of_war;
+        }
         else if (bltfx->flags & BLTFX_FLAG_RED)
+        {
+            if (!sprite->red)
+                red_scale(sprite);
             blt_sprite = sprite->red;
+        }
         else if (bltfx->flags & BLTFX_FLAG_GREY)
+        {
+            if (!sprite->grey)
+                grey_scale(sprite);
             blt_sprite = sprite->grey;
+        }
         if (!blt_sprite)
             return;
 
@@ -720,6 +716,7 @@ void sprite_blt(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx)
         SDL_SetAlpha(blt_sprite, SDL_SRCALPHA, SDL_ALPHA_OPAQUE);
     }
 }
+
 
 struct _anim * add_anim(int type, int x, int y, int mapx, int mapy, int value)
 {
@@ -969,4 +966,68 @@ int sprite_collision(int x1, int y1, int x2, int y2, _Sprite *sprite1, _Sprite *
     SDL_FillRect(ScreenSurface, &myrect, 3243);
       */
     return(1);
+}
+
+/* This two helper functions are fast, but be careful:
+ * x,y must be on the surface!
+ * When using with the display surface the surface MUST be locked!
+ */
+Uint32 getpixel(SDL_Surface *surface, int x, int y)
+{
+    int bpp = surface->format->BytesPerPixel;
+    /* Here p is the address to the pixel we want to retrieve */
+    Uint8 *p = (Uint8 *)surface->pixels + y * surface->pitch + x * bpp;
+
+    switch(bpp) {
+    case 1:
+        return *p;
+
+    case 2:
+        return *(Uint16 *)p;
+
+    case 3:
+        if(SDL_BYTEORDER == SDL_BIG_ENDIAN)
+            return p[0] << 16 | p[1] << 8 | p[2];
+        else
+            return p[0] | p[1] << 8 | p[2] << 16;
+
+    case 4:
+        return *(Uint32 *)p;
+
+    default:
+        return 0;       /* shouldn't happen, but avoids warnings */
+    }
+}
+
+void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
+{
+    int bpp = surface->format->BytesPerPixel;
+    /* Here p is the address to the pixel we want to set */
+    Uint8 *p = (Uint8 *)surface->pixels + y * surface->pitch + x * bpp;
+
+    switch(bpp) {
+    case 1:
+        *p = pixel;
+        break;
+
+    case 2:
+        *(Uint16 *)p = pixel;
+        break;
+
+    case 3:
+        if(SDL_BYTEORDER == SDL_BIG_ENDIAN) {
+            p[0] = (pixel >> 16) & 0xff;
+            p[1] = (pixel >> 8) & 0xff;
+            p[2] = pixel & 0xff;
+        } else {
+            p[0] = pixel & 0xff;
+            p[1] = (pixel >> 8) & 0xff;
+            p[2] = (pixel >> 16) & 0xff;
+        }
+        break;
+
+    case 4:
+        *(Uint32 *)p = pixel;
+        break;
+    }
 }
