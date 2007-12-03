@@ -1,27 +1,24 @@
 /*-----------------------------------------------------------------------------
-This source file is part of Daimonin (http://daimonin.sourceforge.net)
-Copyright (c) 2005 The Daimonin Team
-Also see acknowledgements in Readme.html
+This source file is part of Daimonin's 3d-Client
+Daimonin is a MMORG. Details can be found at http://daimonin.sourceforge.net
+Copyright (c) 2005 Andreas Seidel
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
-Foundation; either version 2 of the License, or (at your option) any later
+Foundation, either version 3 of the License, or (at your option) any later
 version.
 
 This program is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-In addition, as a special exception, the copyright holders of client3d give
+In addition, as a special exception, the copyright holder of client3d give
 you permission to combine the client3d program with lgpl libraries of your
-choice and/or with the fmod libraries.
-You may copy and distribute such a system following the terms of the GNU GPL
-for client3d and the licenses of the other code concerned.
+choice. You may copy and distribute such a system following the terms of the
+GNU GPL for 3d-Client and the licenses of the other code concerned.
 
 You should have received a copy of the GNU General Public License along with
-this program; if not, write to the Free Software Foundation, Inc., 59 Temple
-Place - Suite 330, Boston, MA 02111-1307, USA, or go to
-http://www.gnu.org/licenses/licenses.html
+this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
 #include <string>
@@ -233,10 +230,8 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                 obj.maxHP     = 50;
                 obj.maxMana   = 50;
                 obj.maxGrace  = 50;
-                obj.pos.x     = x;
-                obj.pos.z     = y;
-                obj.pos.subX  = 3;
-                obj.pos.subZ  = 3;
+                obj.pos.x     = x * TileManager::TILE_SIZE + 3 * 8;
+                obj.pos.z     = y * TileManager::TILE_SIZE + 3 * 8;
                 obj.level     = 0;
                 obj.facing    = 30;
                 obj.particleNr=-1;
@@ -261,10 +256,8 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                 obj.maxHP     = 50;
                 obj.maxMana   = 50;
                 obj.maxGrace  = 50;
-                obj.pos.x     = x;
-                obj.pos.z     = y;
-                obj.pos.subX  = 3;
-                obj.pos.subZ  = 3;
+                obj.pos.x     = x * TileManager::TILE_SIZE + 3 * 8;
+                obj.pos.z     = y * TileManager::TILE_SIZE + 3 * 8;
                 obj.level     = 0;
                 obj.facing    = -60;
                 obj.particleNr=-1;
@@ -280,10 +273,8 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                 obj.maxHP     = 50;
                 obj.maxMana   = 50;
                 obj.maxGrace  = 50;
-                obj.pos.x     = x+1;
-                obj.pos.z     = y+4;
-                obj.pos.subX  = 3;
-                obj.pos.subZ  = 3;
+                obj.pos.x     = (x+1) * TileManager::TILE_SIZE + 3 * 8;
+                obj.pos.z     = (y+4) * TileManager::TILE_SIZE + 3 * 8;
                 obj.level     = 0;
                 obj.facing    = -60;
                 obj.particleNr=-1;
@@ -299,10 +290,8 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                 obj.maxHP     = 50;
                 obj.maxMana   = 50;
                 obj.maxGrace  = 50;
-                obj.pos.x     = x;
-                obj.pos.z     = y+5;
-                obj.pos.subX  = 3;
-                obj.pos.subZ  = 3;
+                obj.pos.x     = x * TileManager::TILE_SIZE + 3 * 8;
+                obj.pos.z     = (y+5) * TileManager::TILE_SIZE + 3 * 8;
                 obj.level     = 0;
                 obj.facing    = 120;
                 obj.particleNr=-1;
@@ -315,11 +304,9 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
             if (once)
             {
                 once = false;
-                TilePos pos;
-                pos.x = x;
-                pos.z = y; //17-5;
-                pos.subX  =3;
-                pos.subZ  =3;
+                Vector3 pos;
+                pos.x = x * TileManager::TILE_SIZE + 3 * 8;
+                pos.z = y * TileManager::TILE_SIZE + 3 * 8; //17-5;
                 ObjectManager::getSingleton().setPosition(ObjectNPC::HERO, pos);
                 //Logger::log().error() << "we got the Hero face: " << face;
             }
@@ -357,10 +344,8 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                 obj.maxHP     = 50;
                 obj.maxMana   = 50;
                 obj.maxGrace  = 50;
-                obj.pos.x     = x;
-                obj.pos.z     = y;
-                obj.pos.subX  = 3;
-                obj.pos.subZ  = 3;
+                obj.pos.x     = x * TileManager::TILE_SIZE + 3 * 8;
+                obj.pos.z     = y * TileManager::TILE_SIZE + 3 * 8;
                 obj.level     = 0;
                 obj.facing    = -60;
                 obj.particleNr=-1;
@@ -384,10 +369,8 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                 obj.maxHP     = 50;
                 obj.maxMana   = 50;
                 obj.maxGrace  = 50;
-                obj.pos.x     = x;
-                obj.pos.z     = y;
-                obj.pos.subX  = 3;
-                obj.pos.subZ  = 3;
+                obj.pos.x     = x * TileManager::TILE_SIZE + 3 * 8;
+                obj.pos.z     = y * TileManager::TILE_SIZE + 3 * 8;
                 obj.level     = 0;
                 obj.facing    = 35;
                 obj.particleNr=-1;

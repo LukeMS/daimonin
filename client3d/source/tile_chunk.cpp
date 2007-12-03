@@ -1,37 +1,42 @@
 /*-----------------------------------------------------------------------------
-This source file is part of Daimonin (http://daimonin.sourceforge.net)
-Copyright (c) 2005 The Daimonin Team
-Also see acknowledgements in Readme.html
+This source file is part of Daimonin's 3d-Client
+Daimonin is a MMORG. Details can be found at http://daimonin.sourceforge.net
+Copyright (c) 2005 Andreas Seidel
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
-Foundation; either version 2 of the License, or (at your option) any later
+Foundation, either version 3 of the License, or (at your option) any later
 version.
 
 This program is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-In addition, as a special exception, the copyright holders of client3d give
+In addition, as a special exception, the copyright holder of client3d give
 you permission to combine the client3d program with lgpl libraries of your
-choice and/or with the fmod libraries.
-You may copy and distribute such a system following the terms of the GNU GPL
-for client3d and the licenses of the other code concerned.
+choice. You may copy and distribute such a system following the terms of the
+GNU GPL for 3d-Client and the licenses of the other code concerned.
 
 You should have received a copy of the GNU General Public License along with
-this program; if not, write to the Free Software Foundation, Inc., 59 Temple
-Place - Suite 330, Boston, MA 02111-1307, USA, or go to
-http://www.gnu.org/licenses/licenses.html
+this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
 #include "define.h"
 #include "option.h"
 #include "logger.h"
 #include "object_manager.h"
-#include "tile_interface.h"
 #include "tile_manager.h"
 
 using namespace Ogre;
+
+//================================================================================================
+// The map has its zero-position in the top-left corner:
+// (x,z)
+//  0,0 1,0 2,0 3,0
+//  0,1 1,1 2,1 3,1
+//  0,2 1,2 2,2 3,2
+//  0,3 1,3 2,3 3,3
+//================================================================================================
 
 //================================================================================================
 // Init static elements.
@@ -145,11 +150,15 @@ void TileChunk::createWater_Buffers()
             if (TileManager::getSingleton().getMapHeight(x, z  ) <= LEVEL_WATER_TOP || TileManager::getSingleton().getMapHeight(x+1, z  ) <= LEVEL_WATER_TOP ||
                     TileManager::getSingleton().getMapHeight(x, z+1) <= LEVEL_WATER_TOP || TileManager::getSingleton().getMapHeight(x+1, z+1) <= LEVEL_WATER_TOP)
             {
-                numVertices += 6;
+                numVertices+= 6;
             }
         }
     }
-    if (numVertices == 0)
+    // ////////////////////////////////////////////////////////////////////
+    // When we don't have any water on the map, we create a dummy mesh.
+    // That way we won't run in any trouble because of uninitialized stuff.
+    // ////////////////////////////////////////////////////////////////////
+    if (!numVertices)
     {
         createDummy(mSubMeshWater);
         return;
@@ -158,7 +167,7 @@ void TileChunk::createWater_Buffers()
     // Create VertexData.
     // ////////////////////////////////////////////////////////////////////
     VertexData* vdata = new VertexData();
-    vdata->vertexCount = numVertices; // Wichtig! Anzahl der Punkte muss angegeben werden, sonst Objekt nicht existent
+    vdata->vertexCount = numVertices;
     VertexDeclaration* vdec = vdata->vertexDeclaration;
     size_t offset = 0;
     vdec->addElement( 0, offset, VET_FLOAT3, VES_POSITION );
@@ -211,25 +220,25 @@ void TileChunk::createWater_Buffers()
                     q2 = LEVEL_WATER_CLP + WaveHigh;
                 }
                 // 1. Triangle
-                pReal[o   ] = TileManager::TILE_SIZE_X * x;
+                pReal[o   ] = TileManager::TILE_SIZE * x;
                 pReal[o+ 1] = q1;
-                pReal[o+ 2] = TileManager::TILE_SIZE_Z * z;
-                pReal[o+10] = TileManager::TILE_SIZE_X * (x+1);
+                pReal[o+ 2] = TileManager::TILE_SIZE * z;
+                pReal[o+10] = TileManager::TILE_SIZE * (x+1);
                 pReal[o+11] = q2;
-                pReal[o+12] = TileManager::TILE_SIZE_Z * (z);
-                pReal[o+20] = TileManager::TILE_SIZE_X * (x);
+                pReal[o+12] = TileManager::TILE_SIZE * (z);
+                pReal[o+20] = TileManager::TILE_SIZE * (x);
                 pReal[o+21] = q2;
-                pReal[o+22] = TileManager::TILE_SIZE_Z * (z+1);
+                pReal[o+22] = TileManager::TILE_SIZE * (z+1);
                 // 2. Triangle
-                pReal[o+30] = TileManager::TILE_SIZE_X * x;
+                pReal[o+30] = TileManager::TILE_SIZE * x;
                 pReal[o+31] = q2;
-                pReal[o+32] = TileManager::TILE_SIZE_Z * (z+1);
-                pReal[o+40] = TileManager::TILE_SIZE_X * (x+1);
+                pReal[o+32] = TileManager::TILE_SIZE * (z+1);
+                pReal[o+40] = TileManager::TILE_SIZE * (x+1);
                 pReal[o+41] = q2;
-                pReal[o+42] = TileManager::TILE_SIZE_Z * (z);
-                pReal[o+50] = TileManager::TILE_SIZE_X * (x+1);
+                pReal[o+42] = TileManager::TILE_SIZE * (z);
+                pReal[o+50] = TileManager::TILE_SIZE * (x+1);
                 pReal[o+51] = q1;
-                pReal[o+52] = TileManager::TILE_SIZE_Z * (z+1);
+                pReal[o+52] = TileManager::TILE_SIZE * (z+1);
 
                 // ////////////////////////////////////////////////////////////////////
                 // Normalvektoren
@@ -322,14 +331,14 @@ void TileChunk::createWater_Buffers()
 
 //================================================================================================
 // Create Land in high Quality. 1 Tile = 4 triangles. We need this for the filter.
-// +------+
-// |\  2 /|
-// | \  / |
-// |  \/  |
-// |1 /\ 3|
-// | /  \ |
-// |/  4 \|
-// +------+
+//  +------+
+//  |\  2 /|
+//  | \  / |
+//  |  \/  |
+//  |1 /\ 3|
+//  | /  \ |
+//  |/  4 \|
+//  +------+
 //================================================================================================
 void TileChunk::createLand(int tileTextureSize)
 {
@@ -368,7 +377,7 @@ void TileChunk::createLand_Buffers()
     // Create VertexData.
     // ////////////////////////////////////////////////////////////////////
     VertexData* vdata = new VertexData();
-    vdata->vertexCount = numVertices; // Wichtig! Anzahl der Punkte muss angegeben werden, sonst Objekt nicht existent
+    vdata->vertexCount = numVertices;
     VertexDeclaration* vdec = vdata->vertexDeclaration;
     size_t offset = 0;
     vdec->addElement( 0, offset, VET_FLOAT3, VES_POSITION );
@@ -393,8 +402,7 @@ void TileChunk::createLand_Buffers()
 
     bool indoor;
     long o = 0;
-    Real g, h, d, f, row, col;
-    Real average;
+    Real row, col;
     Real* pReal1 = static_cast<Real*>(vbuf0->lock (HardwareBuffer::HBL_DISCARD));
     const Real MIPMAP_SPACE = 4;
     // We divide a tile into 4 (2x2) subtiles.
@@ -406,55 +414,49 @@ void TileChunk::createLand_Buffers()
     {
         for (int z = 0; z < TileManager::CHUNK_SIZE_Z; ++z)
         {
-            g = TileManager::getSingleton().getMapHeight(x  , z  );
-            h = TileManager::getSingleton().getMapHeight(x+1, z  );
-            d = TileManager::getSingleton().getMapHeight(x  , z+1);
-            f = TileManager::getSingleton().getMapHeight(x+1, z+1);
-            average = (g + h + d + f) / 4.0;
             // ////////////////////////////////////////////////////////////////////
             // Position.
             // ////////////////////////////////////////////////////////////////////
             // 1. Triangle
-            pReal1[o   ] = TileManager::TILE_SIZE_X * x;
-            pReal1[o+ 1] = d;
-            pReal1[o+ 2] = TileManager::TILE_SIZE_Z * (z+1);
-            pReal1[o+12] = TileManager::TILE_SIZE_X * x;
-            pReal1[o+13] = g;
-            pReal1[o+14] = TileManager::TILE_SIZE_Z * z;
-            pReal1[o+24] = TileManager::TILE_SIZE_X * (x+.5);
-            pReal1[o+25] = average;
-            pReal1[o+26] = TileManager::TILE_SIZE_Z * (z+.5);
+            pReal1[o   ] = TileManager::TILE_SIZE * x;
+            pReal1[o+ 1] = TileManager::getSingleton().getMapHeight(x,z,TileManager::VERTEX_BL);
+            pReal1[o+ 2] = TileManager::TILE_SIZE * (z+1);
+            pReal1[o+12] = TileManager::TILE_SIZE * x;
+            pReal1[o+13] = TileManager::getSingleton().getMapHeight(x,z,TileManager::VERTEX_TL);
+            pReal1[o+14] = TileManager::TILE_SIZE * z;
+            pReal1[o+24] = TileManager::TILE_SIZE * (x+.5);
+            pReal1[o+25] = TileManager::getSingleton().getMapHeight(x,z,TileManager::VERTEX_AVG);
+            pReal1[o+26] = TileManager::TILE_SIZE * (z+.5);
             // 2. Triangle
-            pReal1[o+36] = TileManager::TILE_SIZE_X * x;
-            pReal1[o+37] = g;
-            pReal1[o+38] = TileManager::TILE_SIZE_Z * z;
-            pReal1[o+48] = TileManager::TILE_SIZE_X * (x+1);
-            pReal1[o+49] = h;
-            pReal1[o+50] = TileManager::TILE_SIZE_Z * z;
-            pReal1[o+60] = TileManager::TILE_SIZE_X * (x +.5);
-            pReal1[o+61] = average;
-            pReal1[o+62] = TileManager::TILE_SIZE_Z * (z +.5);
+            pReal1[o+36] = TileManager::TILE_SIZE * x;
+            pReal1[o+37] = pReal1[o+13];
+            pReal1[o+38] = TileManager::TILE_SIZE * z;
+            pReal1[o+48] = TileManager::TILE_SIZE * (x+1);
+            pReal1[o+49] = TileManager::getSingleton().getMapHeight(x,z,TileManager::VERTEX_TR);
+            pReal1[o+50] = TileManager::TILE_SIZE * z;
+            pReal1[o+60] = TileManager::TILE_SIZE * (x +.5);
+            pReal1[o+61] = pReal1[o+25];
+            pReal1[o+62] = TileManager::TILE_SIZE * (z +.5);
             // 3. Triangle
-            pReal1[o+72] = TileManager::TILE_SIZE_X * (x+1);
-            pReal1[o+73] = h;
-            pReal1[o+74] = TileManager::TILE_SIZE_Z * z;
-            pReal1[o+84] = TileManager::TILE_SIZE_X * (x +1);
-            pReal1[o+85] = f;
-            pReal1[o+86] = TileManager::TILE_SIZE_Z * (z +1);
-            pReal1[o+96] = TileManager::TILE_SIZE_X * (x+.5);
-            pReal1[o+97] = average;
-            pReal1[o+98] = TileManager::TILE_SIZE_Z * (z+.5);
+            pReal1[o+72] = TileManager::TILE_SIZE * (x+1);
+            pReal1[o+73] = pReal1[o+49];
+            pReal1[o+74] = TileManager::TILE_SIZE * z;
+            pReal1[o+84] = TileManager::TILE_SIZE * (x +1);
+            pReal1[o+85] = TileManager::getSingleton().getMapHeight(x,z,TileManager::VERTEX_BR);
+            pReal1[o+86] = TileManager::TILE_SIZE * (z +1);
+            pReal1[o+96] = TileManager::TILE_SIZE * (x+.5);
+            pReal1[o+97] = pReal1[o+25];
+            pReal1[o+98] = TileManager::TILE_SIZE * (z+.5);
             // 4. Triangle
-            pReal1[o+108] = TileManager::TILE_SIZE_X * (x +1);
-            pReal1[o+109] = f;
-            pReal1[o+110] = TileManager::TILE_SIZE_Z * (z +1);
-            pReal1[o+120] = TileManager::TILE_SIZE_X * x;
-            pReal1[o+121] = d;
-            pReal1[o+122] = TileManager::TILE_SIZE_Z * (z +1);
-            pReal1[o+132] = TileManager::TILE_SIZE_X * (x+.5);
-            pReal1[o+133] = average;
-            pReal1[o+134] = TileManager::TILE_SIZE_Z * (z+.5);
-
+            pReal1[o+108] = TileManager::TILE_SIZE * (x +1);
+            pReal1[o+109] = pReal1[o+85];
+            pReal1[o+110] = TileManager::TILE_SIZE * (z +1);
+            pReal1[o+120] = TileManager::TILE_SIZE * x;
+            pReal1[o+121] = pReal1[o+ 1];
+            pReal1[o+122] = TileManager::TILE_SIZE * (z +1);
+            pReal1[o+132] = TileManager::TILE_SIZE * (x+.5);
+            pReal1[o+133] = pReal1[o+25];
+            pReal1[o+134] = TileManager::TILE_SIZE * (z+.5);
             // ////////////////////////////////////////////////////////////////////
             // Normalvektoren
             // ////////////////////////////////////////////////////////////////////
@@ -616,7 +618,6 @@ void TileChunk::createLand_Buffers()
             pReal1[o+129] = row;
             pReal1[o+140] = col + 32.0 /1024.0;
             pReal1[o+141] = row + 32.0 /1024.0;
-
             // ////////////////////////////////////////////////////////////////////
             // Grid-Texture.
             // ////////////////////////////////////////////////////////////////////

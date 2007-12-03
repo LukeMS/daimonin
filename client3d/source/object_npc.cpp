@@ -1,27 +1,24 @@
 /*-----------------------------------------------------------------------------
-This source file is part of Daimonin (http://daimonin.sourceforge.net)
-Copyright (c) 2005 The Daimonin Team
-Also see acknowledgements in Readme.html
+This source file is part of Daimonin's 3d-Client
+Daimonin is a MMORG. Details can be found at http://daimonin.sourceforge.net
+Copyright (c) 2005 Andreas Seidel
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
-Foundation; either version 2 of the License, or (at your option) any later
+Foundation, either version 3 of the License, or (at your option) any later
 version.
 
 This program is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-In addition, as a special exception, the copyright holders of client3d give
+In addition, as a special exception, the copyright holder of client3d give
 you permission to combine the client3d program with lgpl libraries of your
-choice and/or with the fmod libraries.
-You may copy and distribute such a system following the terms of the GNU GPL
-for client3d and the licenses of the other code concerned.
+choice. You may copy and distribute such a system following the terms of the
+GNU GPL for 3d-Client and the licenses of the other code concerned.
 
 You should have received a copy of the GNU General Public License along with
-this program; if not, write to the Free Software Foundation, Inc., 59 Temple
-Place - Suite 330, Boston, MA 02111-1307, USA, or go to
-http://www.gnu.org/licenses/licenses.html
+this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
 #include "object_npc.h"
@@ -35,10 +32,10 @@ http://www.gnu.org/licenses/licenses.html
 #include "particle_manager.h"
 #include "events.h"
 #include "tile_manager.h"
-#include "tile_path.h"
 
 using namespace Ogre;
 
+const int   WALK_SPEED   =  70;
 const int   TURN_SPEED   = 400;
 const Real  WALK_PRECISON= 1.0f;
 const float BIG_LAGGING  = 0.04f;
@@ -135,6 +132,7 @@ ObjectNPC::ObjectNPC(sObject &obj, bool spawn):ObjectStatic(obj)
     mNode->attachObject(blob);
 
     mCursorTurning =0;
+    mCursorWalking =0;
     mAutoTurning = TURN_NONE;
     mAutoMoving = false;
     mEnemyObject = 0;
@@ -142,6 +140,31 @@ ObjectNPC::ObjectNPC(sObject &obj, bool spawn):ObjectStatic(obj)
     // mNode->showBoundingBox(true); // Remove Me!!!!
     mOffX =0;
     mOffZ =0;
+}
+
+//================================================================================================
+// Moving by cursor keys..
+//================================================================================================
+void ObjectNPC::moveByCursor(Ogre::Real dTime)
+{
+    Vector3 oldPos = mTilePos;
+    Real distance = WALK_SPEED * dTime;
+    mTilePos.x+= Math::Sin(Degree(mFacing)) * distance;
+    mTilePos.z+= Math::Cos(Degree(mFacing)) * distance;
+    mTilePos.y = TileManager::getSingleton().getTileHeight((int)mTilePos.x, (int)mTilePos.z);
+
+    int dx = (int) (oldPos.x /TileManager::TILE_SIZE) - (int) (mTilePos.x /TileManager::TILE_SIZE);
+    int dz = (int) (oldPos.z /TileManager::TILE_SIZE) - (int) (mTilePos.z /TileManager::TILE_SIZE);
+    // Player moved over a tile border.
+    if (!mIndex && (dx || dz))
+    {
+        mTilePos.x+= dx * TileManager::TILE_SIZE;
+        mTilePos.z+= dz * TileManager::TILE_SIZE;
+        TileManager::getSingleton().scrollMap(-dx, -dz);
+        ObjectManager::getSingleton().synchToWorldPos(dx, dz);
+        //ParticleManager::getSingleton().syncToWorldPos(deltaPos);
+    }
+    mNode->setPosition(mTilePos);
 }
 
 //================================================================================================
@@ -207,82 +230,6 @@ void ObjectNPC::readySecondaryWeapon(bool ready)
     }
 }
 
-//================================================================================================
-// Move to the currently selected object.
-//================================================================================================
-void ObjectNPC::attackObjectOnTile(TilePos pos)
-{}
-
-//================================================================================================
-// Move the Object to the given tile.
-//================================================================================================
-void ObjectNPC::moveToDistantTile(TilePos pos, int precision)
-{
-    if (mActTilePos == pos || mAutoTurning || mAutoMoving) return;
-    mEnemyObject= 0; // After this move, we have to check again if enemy is in attack range.
-    mDestWalkPos= pos;
-    mAutoMoving = true;
-    moveToNeighbourTile(precision);
-}
-
-//================================================================================================
-// Move the Object to a neighbour subtile.
-//================================================================================================
-void ObjectNPC::moveToNeighbourTile(int precision)
-{
-    static TilePath tp;
-    static int step = 0;
-
-    if (!step++)
-    {
-        mOffX = 0;
-        mOffZ = 0;
-        tp.FindPath(mActTilePos, mDestWalkPos, precision);
-    }
-    // We reached the destination pos.
-    if (!tp.ReadPath())
-    {
-        mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_IDLE, 0, true);
-        mAutoMoving = false;
-        step = 0;
-        // For attack we dont move onto the destination tile, but some subtiles before.
-        // So we have to do another faceToTile().
-        if (mActTilePos != mDestWalkPos) faceToTile(mDestWalkPos);
-        return;
-    }
-    mDestStepPos.x = tp.xPath;
-    mDestStepPos.z = tp.yPath;
-    mDestStepPos.subX = mDestStepPos.x &7;
-    mDestStepPos.subZ = mDestStepPos.z &7;
-    mDestStepPos.x /=8;
-    mDestStepPos.z /=8;
-    mDestStepPos.x += mOffX;
-    mDestStepPos.z += mOffZ;
-
-    // ////////////////////////////////////////////////////////////////////
-    // If the player has moved over a tile border, we have to sync the world.
-    // ////////////////////////////////////////////////////////////////////
-    int dx = mActTilePos.x - mDestStepPos.x;
-    int dz = mActTilePos.z - mDestStepPos.z;
-    if (!mIndex && (dx || dz))
-    {
-        Events::getSingleton().setWorldPos(dx, -dz);
-        mOffX+=dx;
-        mOffZ+=dz;
-        mDestStepPos.x += dx;
-        mDestStepPos.z += dz;
-        TileManager::getSingleton().scrollMap(-dx, -dz);
-        Vector3 deltaPos = ObjectManager::getSingleton().synchToWorldPos(dx, dz);
-        TileManager::getSingleton().syncWalls(deltaPos);
-        ParticleManager::getSingleton().syncToWorldPos(deltaPos);
-    }
-
-    // Turn the head into the moving direction.
-    faceToTile(mDestStepPos);
-    // Walk 1 subtile.
-    mDestWalkVec = TileManager::getSingleton().getTileInterface()->tileToWorldPos(mDestStepPos);
-    mWalkSpeed = (mDestWalkVec - mNode->getPosition()) / mDistance;
-}
 
 //================================================================================================
 // Update ObjectNPC.
@@ -431,7 +378,7 @@ bool ObjectNPC::update(const FrameEvent& event)
     // ////////////////////////////////////////////////////////////////////
     // Turning by cursor keys.
     // ////////////////////////////////////////////////////////////////////
-    if (mAnim->isIdle() && mCursorTurning)
+    if (mCursorTurning)
     {
         mEnemyObject = 0; // We are no longer looking at the enemy.
         mNode->yaw(Degree(event.timeSinceLastFrame * TURN_SPEED * mCursorTurning));
@@ -439,12 +386,21 @@ bool ObjectNPC::update(const FrameEvent& event)
         if (mFacing.valueDegrees() >= 360) mFacing -= Degree(360);
         if (mFacing.valueDegrees() <    0) mFacing += Degree(360);
     }
+    // ////////////////////////////////////////////////////////////////////
+    // Walking by cursor keys.
+    // ////////////////////////////////////////////////////////////////////
+    if (mCursorWalking)
+    {
+        mEnemyObject = 0; // We are no longer looking at the enemy.
+        moveByCursor(event.timeSinceLastFrame * mCursorWalking);
+    }
 
     // ////////////////////////////////////////////////////////////////////
     // Auto movement.
     // ////////////////////////////////////////////////////////////////////
     if (mAutoMoving && !waitForTurning)
     {
+        /*
         mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_WALK, 0, true, true);
         // On slow systems it will happen that distance goes negative.
         // So we look if the squared length is bigger than the previous squared length.
@@ -471,6 +427,7 @@ bool ObjectNPC::update(const FrameEvent& event)
             squaredLengthPrev = squaredLengthPrev;
         }
         return true;
+        */
     }
 
     // ////////////////////////////////////////////////////////////////////
@@ -562,9 +519,9 @@ bool ObjectNPC::update(const FrameEvent& event)
 //================================================================================================
 bool ObjectNPC::movePosition(int deltaX, int deltaZ)
 {
-    mActTilePos.x += deltaX;
-    mActTilePos.z += deltaZ;
-    setPosition(mActTilePos);
+    mTilePos.x += deltaX * TileManager::TILE_SIZE;
+    mTilePos.z += deltaZ * TileManager::TILE_SIZE;
+    setPosition(mTilePos);
     if (mActHP <=0) mNode->translate(Vector3(0, -mSpawnSize, 0));
     // if (pos out of playfield) return false;
     return true;
@@ -596,6 +553,22 @@ void ObjectNPC::castSpell(int spell)
 {
     //  if (!askServer.AllowedToCast(spell)) return;
     SpellManager::getSingleton().addObject(spell, mIndex);
+}
+
+
+//================================================================================================
+// Walk by cursor keys..
+//================================================================================================
+void ObjectNPC::walking(Ogre::Real dir, bool cursorWalk)
+{
+    if (cursorWalk)
+    {
+        mCursorWalking = dir;
+        if (dir)
+            mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_WALK, 0, true, true);
+        else
+            mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_IDLE, 0, true);
+    }
 }
 
 //================================================================================================
@@ -632,8 +605,9 @@ void ObjectNPC::turning(Real facing, bool cursorTurn)
 //================================================================================================
 // Turn the Object until it faces the given tile.
 //================================================================================================
-void ObjectNPC::faceToTile(TilePos pos)
+void ObjectNPC::faceToTile(Vector3 pos)
 {
+    /*
     float deltaZ = (pos.z - mActTilePos.z) * TileManager::SUM_SUBTILES  +  (pos.subZ - mActTilePos.subZ);
     float deltaX = (pos.x - mActTilePos.x) * TileManager::SUM_SUBTILES  +  (pos.subX - mActTilePos.subX);
 
@@ -668,6 +642,7 @@ void ObjectNPC::faceToTile(TilePos pos)
     {
         mAutoTurning = TURN_NONE;
     }
+    */
 }
 
 //================================================================================================
@@ -687,7 +662,7 @@ void ObjectNPC::attackShortRange(ObjectNPC *EnemyObject)
     if (mEnemyObject != EnemyObject)
     {
         mEnemyObject = EnemyObject;
-        moveToDistantTile(mEnemyObject->getTilePos(), mEnemyObject->getBoundingRadius());
+    //    moveToDistantTile(mEnemyObject->getTilePos(), mEnemyObject->getBoundingRadius());
         mAttacking = ATTACK_APPROACH;
     }
     // Enemy is already in attack range.
@@ -714,8 +689,8 @@ void ObjectNPC::attackLongRange(ObjectNPC *EnemyObject)
     if (mEnemyObject != EnemyObject)
     {
         mEnemyObject = EnemyObject;
-        const int WEAPON_RANGE = 16; // subtiles range of the weapon
-        moveToDistantTile(mEnemyObject->getTilePos(), WEAPON_RANGE);
+//        const int WEAPON_RANGE = 16; // subtiles range of the weapon
+//        moveToDistantTile(mEnemyObject->getTilePos(), WEAPON_RANGE);
         mAttacking = ATTACK_APPROACH;
     }
     // Enemy is already in attack range.
