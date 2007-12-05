@@ -254,6 +254,25 @@ void set_gmaster_mode(player *pl, int mode)
     pl->socket.ext_title_flag =1;
     new_draw_info_format( NDI_UNIQUE, 0, pl->ob, "%s mode activated for %s!",
                           mode==GMASTER_MODE_DM ? "DM" : (mode==GMASTER_MODE_GM ?"GM" : "VOL") ,pl->ob->name);
+#ifdef _TESTSERVER
+    if (mode == GMASTER_MODE_GM || mode == GMASTER_MODE_DM)
+    {
+        char  buf[MAX_BUF];
+        FILE *fp;
+        LOG(llevSystem, "read stream file...\n");
+        sprintf(buf, "%s/%s", settings.localdir, "stream");
+        if ((fp = fopen(buf, "r")) == NULL)
+        {
+            LOG(llevBug, "BUG: Cannot open %s for reading\n", buf);
+            return;
+        }
+        fscanf(fp, "%s", buf);
+        if (!strcmp(buf, "(null)"))
+            new_draw_info_format(NDI_UNIQUE, 0, pl->ob, "Server compiled with trunk only.");
+        else
+            new_draw_info_format(NDI_UNIQUE, 0, pl->ob, "Server compiled with ~%s~ stream.", buf);
+    }
+#endif
 }
 
 
