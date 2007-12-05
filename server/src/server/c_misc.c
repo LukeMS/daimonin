@@ -319,6 +319,21 @@ int command_who(object *op, char *params)
     sprintf(buf, "There %s %d player%s online  (%d in login)", ip + il > 1 ? "are" : "is",ip + il,
             ip + il > 1 ? "s" : "",il);
     new_draw_info(NDI_UNIQUE, 0, op, buf);
+#ifdef _TESTSERVER
+    FILE *fp;
+    LOG(llevSystem, "read stream file...\n");
+    sprintf(buf, "%s/%s", settings.localdir, "stream");
+    if ((fp = fopen(buf, "r")) == NULL)
+    {
+        LOG(llevBug, "BUG: Cannot open %s for reading\n", buf);
+        return;
+    }
+    fscanf(fp, "%s", buf);
+    if (!strcmp(buf, "(null)"))
+        new_draw_info_format(NDI_UNIQUE, 0, op, "Server compiled with trunk only.");
+    else
+        new_draw_info_format(NDI_UNIQUE, 0, op, "Server compiled with ~%s~ stream.", buf);
+#endif
     return 1;
 }
 
@@ -672,15 +687,25 @@ int command_dumpactivelist(object *op, char *params)
 int command_restart(object *ob, char *params)
 {
 #ifdef _TESTSERVER
-	int t = 30;
+    char  buf[MAX_BUF];
+    FILE *fp;
+    int   t = 30;
 
-	if(ob && CONTR(ob)->gmaster_mode < GMASTER_MODE_VOL)
+    if(ob && CONTR(ob)->gmaster_mode < GMASTER_MODE_VOL)
         return 0;
+    LOG(llevSystem,"write stream file...\n");
+    sprintf(buf, "%s/%s", settings.localdir, "stream");
+    if ((fp = fopen(buf, "w")) == NULL)
+    {
+        LOG(llevBug, "BUG: Cannot open %s for writing\n", buf);
+        return;
+    }
+    fprintf(fp, "%s", params);
 #else
-	int t = 300;
+    int t = 300;
 
-	if(ob && CONTR(ob)->gmaster_mode < GMASTER_MODE_GM)
-		return 0;
+    if(ob && CONTR(ob)->gmaster_mode < GMASTER_MODE_GM)
+        return 0;
 #endif
 
     LOG(llevSystem, "Shutdown Agent started with /restart!\n");
