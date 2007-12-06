@@ -364,7 +364,7 @@ material_real_struct    material_real[NROFMATERIALS *NROFMATERIALS_REAL + 1]    
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     /* ORGANIC (321) */
-    {"animal ",       100,80,       0,0,0,      M_ORGANIC,       RACE_TYPE_NONE}, /* 321 used for misc organics */
+    {"organic ",       100,80,       0,0,0,      M_ORGANIC,       RACE_TYPE_NONE}, /* 321 used for misc organics */
     {"dragon ",      50,96,       0,0,0,      M_ORGANIC,         RACE_TYPE_NONE}, /* 322 */
     {"chitin "              , 50,82,       0,0,0,      M_ORGANIC,         RACE_TYPE_NONE}, /* 323 */
     {"scale "               , 50,80,       0,0,0,      M_ORGANIC,         RACE_TYPE_NONE},/* 324 */
