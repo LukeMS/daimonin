@@ -700,7 +700,10 @@ int command_restart(object *ob, char *params)
         LOG(llevBug, "BUG: Cannot open %s for writing\n", buf);
         return;
     }
-    fprintf(fp, "%s", params);
+    if (params)
+        fprintf(fp, "%s", params);
+    else
+        fprintf(fp, "(null)");
 #else
     int t = 300;
 
