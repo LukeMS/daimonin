@@ -144,6 +144,10 @@
 /special/director/director
 /mobs/animals/dogs/dog_brown/dog_brown
 /mobs/animals/dogs/dog_wild/dog_wild
+/items/misc/doll_penguin/doll_penguin_cry
+/items/misc/doll_penguin/doll_penguin_sit
+/items/misc/doll_penguin/doll_penguin_sleep
+/items/misc/doll_penguin/doll_penguin_walk
 /walls/doors/door1_locked
 /walls/doors/door1_locked_wreath
 /indoor/artificial/bar/bar_door/door_bar1
@@ -249,6 +253,7 @@
 /connect/triggers/handle_lever
 /outdoor/artificial/hay/haybailsmall
 /outdoor/artificial/hay/haypilesmall
+/mobs/theme/halloween/headless/headless_horseman
 /items/organic/bodyparts/heart_beating
 /mobs/demihumans/hobgoblin/hobgoblin
 /mobs/human/peasant/hobo_old
@@ -301,6 +306,10 @@
 /intern/items/light/lamp_wall_1_unlit
 /outdoor/artificial/lanterns/lantern2_magic.131
 /outdoor/artificial/lanterns/lantern_magic.131
+/items/light/handheld/lantern_pumpk/lantern_pumpk_a
+/items/light/handheld/lantern_pumpk/lantern_pumpk_b
+/items/light/handheld/lantern_pumpk/lantern_pumpk_c
+/items/light/handheld/lantern_pumpk/lantern_pumpk_d
 /items/light/candles/large_candle
 /mobs/animals/larva/larva
 /mobs/summoned/golem_lava/lavagolem
