@@ -259,9 +259,9 @@ int check_banned(NewSocket *ns, const char *name, char *ip)
                                 ban_buf_name = buf;
                             }
                         }
+                        Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, ban_buf_name, strlen(ban_buf_name));
+                        Write_String_To_Socket(ns, BINARY_CMD_ADDME_FAIL, ban_buf_name, 1);
                     }
-
-                    Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, ban_buf_name, strlen(ban_buf_name));
 
                     /* someone is trying to login again & again to banned char? Lets teach him to avoid it */
                     if(++ns->pwd_try == 3)
