@@ -56,7 +56,7 @@
 /* Increase when we got MANY new face... Hopefully,we need to increase this
  * in the future...
  */
-#define MAX_FACE_TILES 10000
+#define MAX_FACE_TILES 20000
 
 #define MAXANIM 2000
 
