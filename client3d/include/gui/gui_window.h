@@ -140,6 +140,8 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // GUI_Gadget_Slot stuff.
     // ////////////////////////////////////////////////////////////////////
+    void setSlotBusyTime(int element, Ogre::Real busyTime);
+    void setSlotBusy(int element);
     void addItem(Item::sItem *item);
     void delItem(Item::sItem *item);
     void clrItem();

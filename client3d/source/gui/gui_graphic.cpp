@@ -26,6 +26,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Ogre;
 
+const uint32 SLOT_BUSY_COLOR = 0xbb555555;
+
 //================================================================================================
 // .
 //================================================================================================
@@ -95,7 +97,7 @@ void GuiGraphic::draw()
                     if (++srcX >= mSrcWidth) srcX = 0; // Repeat the image.
                 }
                 dSrcY+= srcRowSkip;
-            if (++srcY >= mSrcHeight){ srcY = 0; dSrcY =0; } // Repeat the image.
+                if (++srcY >= mSrcHeight){ srcY = 0; dSrcY =0; } // Repeat the image.
             }
             src = PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8, mBuildBuffer);
             texture->getBuffer()->blitFromMemory(src, Box(mPosX, mPosY, mPosX + mWidth, mPosY + mHeight));
@@ -173,3 +175,239 @@ void GuiGraphic::draw()
         texture->getBuffer()->unlock();
     }
 }
+
+//================================================================================================
+// Draws a slot (including an item and busytime gfx).
+//================================================================================================
+void GuiGraphic::drawSlot(Ogre::uint32 *srcItemData, int itemSize, int busyTime, int sumItems)
+{
+    if (!mBuildBuffer)
+    {
+        // Alpha must be switched on to craete the build buffer.
+        Logger::log().error() << "Item-Slots must have Alpha switched on. No drawing will be done.";
+        return;
+    }
+    if (itemSize > mWidth-4) itemSize = mWidth-4;
+    if (itemSize > mHeight-4) itemSize = mHeight-4;
+    int strtX = mPosX;
+    int strtY = mPosY;
+    int offX  = (mWidth  - itemSize) /2; // Item needs offset for not to overwrite the slot borders.
+    int offY  = (mHeight - itemSize) /2; // Item needs offset for not to overwrite the slot borders.
+    Texture *texture = ((GuiWindow*) mParent)->getTexture();
+    // ////////////////////////////////////////////////////////////////////
+    // Slot gfx.
+    // ////////////////////////////////////////////////////////////////////
+    PixelBox srcSlot = ((GuiWindow*) mParent)->getPixelBox()->getSubVolume(Box(
+                           gfxSrcPos[mState].x,
+                           gfxSrcPos[mState].y,
+                           gfxSrcPos[mState].x + mWidth,
+                           gfxSrcPos[mState].y + mHeight));
+    uint32 *srcSlotData = static_cast<uint32*>(srcSlot.data);
+    int rowSkipSlot = (int)((GuiWindow*) mParent)->getPixelBox()->getWidth();
+
+    // ////////////////////////////////////////////////////////////////////
+    // Draw slot + item into the buffer.
+    // ////////////////////////////////////////////////////////////////////
+    int dSlotY = 0, dItemY = 0, destY =0;
+    for (int y = 0; y < mHeight; ++y)
+    {
+        for (int x =0; x < mWidth; ++x)
+        {
+            // First check if item has a non transparent pixel to draw.
+            if (x >= offX && x < (int)itemSize+offX && y >= offY && y < (int)itemSize+offY)
+            {
+                if (srcItemData[dItemY + x - offX] > 0x00ffffff)
+                {
+                    mBuildBuffer[destY + x] = srcItemData[dItemY + x - offX];
+                    continue;
+                }
+            }
+            // Now check for the background.
+            if (srcSlotData[dSlotY + x] > 0x00ffffff)
+                mBuildBuffer[destY + x] = srcSlotData[dSlotY + x];
+        }
+        if (y >= offY) dItemY+= itemSize;
+        dSlotY+= (int)rowSkipSlot;
+        destY+= mWidth;
+    }
+    // ////////////////////////////////////////////////////////////////////
+    // Draw busy-gfx into the buffer.
+    // ////////////////////////////////////////////////////////////////////
+    if (busyTime)
+    {
+        //mPrevBusyTime = busyTime;
+        int x2,x3,y2,dY,dX,xStep,yStep,delta,posY;
+        int x = mWidth/2;
+        int y = mWidth/2;
+        if (busyTime > mWidth *2)  // 180...360°
+        {
+            if (busyTime <= (int)(mWidth * 2.5))
+            {
+                // < 225°
+                x2 = (int)(mWidth *2.5) - busyTime;
+                y2 = mWidth-1;
+            }
+            else if (busyTime < (int)(mWidth * 3.5))
+            {
+                // < 325°
+                x2 = 0;
+                y2 = (int)(mWidth *3.5) - busyTime-1;
+            }
+            else
+            {
+                x2 = busyTime - (int)(mWidth *3.5);
+                y2 = 0;
+            }
+            dX = Math::IAbs(x2-x);
+            dY = Math::IAbs(y2-y);
+            delta= dX - dY;
+            xStep= (x2>x)?1:-1;
+            yStep= (y2>y)?1:-1;
+            x3= (y2<mWidth/2)?mWidth/2:0;
+            while (x!=x2)
+            {
+                if (delta >= 0)
+                {
+                    x+= xStep;
+                    delta-= dY;
+                }
+                else
+                {
+                    y+= yStep;
+                    delta+= dX;
+                    posY = y*mWidth;
+                    if (x < x3)
+                    {
+                        for (int i=posY+x+1; i<posY+x3; ++i)
+                            mBuildBuffer[i] = alphaBlend(mBuildBuffer[i], SLOT_BUSY_COLOR);
+                    }
+                    else
+                    {
+                        for (int i=posY+x3+1; i<posY+x; ++i)
+                            mBuildBuffer[i] = alphaBlend(mBuildBuffer[i], SLOT_BUSY_COLOR);
+                    }
+                }
+            }
+            if (y > mWidth/2) y = mWidth/2+1;
+            while (--y > 0)
+            {
+                posY = y*mWidth;
+                for (int i=posY+1; i<posY+mWidth/2; ++i)
+                {
+                    mBuildBuffer[i] = alphaBlend(mBuildBuffer[i], SLOT_BUSY_COLOR);
+                }
+            }
+        }
+        else  // 0...180°
+        {
+            if (busyTime != mWidth*2)
+            {
+                if (busyTime <= mWidth/2)
+                {
+                    //  < 45°
+                    x2= busyTime + mWidth/2;
+                    y2= 0;
+                }
+                else if (busyTime <= (int)(mWidth * 1.5))
+                {
+                    // < 135°
+                    x2 = mWidth;
+                    y2 = busyTime - mWidth /2-1;
+                }
+                else
+                {
+                    // < 180°
+                    x2 =  (int)(mWidth *2.5) - busyTime;
+                    y2 = mWidth-1;
+                }
+                dX = Math::IAbs(x2-x);
+                dY = Math::IAbs(y2-y);
+                delta = dX - dY;
+                if (y2 >y)
+                {
+                    yStep = 1;
+                    x3= mWidth/2;
+                }
+                else
+                {
+                    yStep = -1;
+                    x3= mWidth;
+                }
+                while (x!=x2)
+                {
+                    if (delta >= 0)
+                    {
+                        ++x;
+                        delta-= dY;
+                    }
+                    else
+                    {
+                        y+= yStep;
+                        delta+= dX;
+                        posY = y*mWidth;
+                        if (x < x3)
+                        {
+                            for (int i=posY+x; i<posY+x3-1; ++i)
+                                mBuildBuffer[i] = alphaBlend(mBuildBuffer[i], SLOT_BUSY_COLOR);
+                        }
+                        else
+                        {
+                            for (int i=posY+x3; i<posY+x-1; ++i)
+                                mBuildBuffer[i] = alphaBlend(mBuildBuffer[i], SLOT_BUSY_COLOR);
+                        }
+                    }
+                }
+                // fill lower right quadrant.
+                if (yStep <0) y = mWidth/2-1;
+                while (++y < mWidth-1)
+                {
+                    posY = y*mWidth;
+                    for (int i=posY+mWidth/2; i<posY+mWidth-1; ++i)
+                    {
+                        mBuildBuffer[i] = alphaBlend(mBuildBuffer[i], SLOT_BUSY_COLOR);
+                    }
+                }
+            }
+            // Fill left half.
+            for (y = mWidth; y < (mWidth-1)*mHeight; y+= mWidth)
+            {
+                for (int i=y+1; i< y+mWidth/2; ++i)
+                {
+                    mBuildBuffer[i] = alphaBlend(mBuildBuffer[i], SLOT_BUSY_COLOR);
+                }
+            }
+        }
+    }
+    // ////////////////////////////////////////////////////////////////////
+    // Blit the buffer.
+    // ////////////////////////////////////////////////////////////////////
+    texture->getBuffer()->blitFromMemory(
+        PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8, mBuildBuffer),
+        Box(strtX, strtY, strtX + mWidth, strtY + mHeight));
+    static GuiTextout::TextLine label;
+
+    if (sumItems > 1)
+    {
+        //label.text = mItem->d_name;
+        label.text = StringConverter::toString(sumItems);
+        label.hideText= false;
+        label.index= -1;
+        label.font = 2;
+        label.x1 = strtX + offX+1;
+        label.y1 = strtY + offY+1;
+        label.x2 = label.x1 + mWidth;
+        label.y2 = label.y1 + GuiTextout::getSingleton().getFontHeight(label.font);
+        label.color= 0x00888888;
+        GuiTextout::getSingleton().Print(&label, texture);
+    }
+
+    /*
+        long time = Root::getSingleton().getTimer()->getMilliseconds();
+        for (int z = 0; z < 500; ++z)
+        {}
+        Logger::log().error() <<"time: "<<  Root::getSingleton().getTimer()->getMilliseconds() - time;
+    */
+
+    // unavailable: if ((x&1)!=(y&1)) drawGreyPixel();
+}
+

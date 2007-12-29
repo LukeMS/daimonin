@@ -170,6 +170,14 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // GUI_gadget_Slot stuff.
     // ////////////////////////////////////////////////////////////////////
+    void setSlotBusyTime(int window, int element, Ogre::Real busyTime)
+    {
+        guiWindow[window].setSlotBusyTime(element, busyTime);
+    }
+    void setSlotBusy(int window, int element)
+    {
+        guiWindow[window].setSlotBusy(element);
+    }
     void addItem(int window, Item::sItem *item)
     {
         guiWindow[window].addItem(item);

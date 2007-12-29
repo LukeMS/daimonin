@@ -140,6 +140,11 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
         case OIS::KC_I:
             GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_EQUIPMENT, true);
             GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_INVENTORY, true);
+
+
+            GuiManager::getSingleton().setSlotBusyTime(GuiManager::GUI_WIN_INVENTORY, 0, 6);
+            GuiManager::getSingleton().setSlotBusy(GuiManager::GUI_WIN_INVENTORY, 0);
+
             //GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_TRADE, true);
             //GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_SHOP, true);
 //            GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_TILEGROUND, true);
