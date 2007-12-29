@@ -99,13 +99,13 @@ private:
     static Ogre::MaterialPtr mDnDMaterial;
     static Ogre::TexturePtr mDnDTexture;
     static std::vector<Ogre::String> mvAtlasGfxName;
-    static int mDragSlot;                  /**< Slot where the drag was started. **/
-    static int mActiveSlot;                /**< Slot the mouse is currently over. **/
-    int mSlotNr;                           /**< Unique number. **/
-    Item::sItem *mItem;                    /**< The Item which is currently in the slot. **/
+    static int mDragSlot;                   /**< Slot where the drag was started. **/
+    static int mActiveSlot;                 /**< Slot the mouse is currently over. **/
+    int mSlotNr;                            /**< Unique number. **/
+    Item::sItem *mItem;                     /**< The Item which is currently in the slot. **/
     unsigned int mSlotWidth, mSlotHeight;
-    Ogre::Real mBusyTime;                  /**< Slot is busy for this amount of time. **/
-    Ogre::Real mBusyTimeExpired;           /**< Already expired time. **/
+    Ogre::Real mBusyTime;                   /**< Slot is busy for this amount of time. **/
+    Ogre::Real mBusyTimeExpired;            /**< Already expired time. **/
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////

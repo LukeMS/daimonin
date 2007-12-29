@@ -40,6 +40,7 @@ public:
     GuiGraphic(TiXmlElement *xmlElement, void *parent, bool drawOnInit = true);
     ~GuiGraphic();
     void draw();
+    void drawSlot(Ogre::uint32 *gfxDataItem, int itemSize, int busyTime, int sumItems);
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.

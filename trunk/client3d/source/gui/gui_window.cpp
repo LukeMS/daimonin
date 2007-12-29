@@ -136,8 +136,7 @@ void GuiWindow::Init(TiXmlElement *xmlElem, int zOrder)
 void GuiWindow::setVisible(bool visible)
 {
     if (!isInit) return;
-    if (!visible) mOverlay->hide();
-    else          mOverlay->show();
+    if (!visible) mOverlay->hide(); else mOverlay->show();
 }
 
 //================================================================================================
@@ -643,6 +642,27 @@ void GuiWindow::clearTable(int element)
     }
 }
 
+//================================================================================================
+// .
+//================================================================================================
+void GuiWindow::setSlotBusyTime(int element, Real busyTime)
+{
+    if (element < (int)mvSlot.size())
+    {
+        mvSlot[element]->setBusyTime(busyTime);
+    }
+}
+
+//================================================================================================
+// .
+//================================================================================================
+void GuiWindow::setSlotBusy(int element)
+{
+    if (element < (int)mvSlot.size())
+    {
+        mvSlot[element]->setBusy();
+    }
+}
 
 //================================================================================================
 // .
