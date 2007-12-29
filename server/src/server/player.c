@@ -988,10 +988,13 @@ void kill_player(object *op)
     tmp = arch_to_object(find_archetype("gravestone"));
     sprintf(buf, "%s's gravestone", op->name);
     FREE_AND_COPY_HASH(tmp->name, buf);
+#if 0
     sprintf(buf, "RIP\nHere rests the hero %s the %s,\n"
                  "who was killed\n"
                  "by %s.\n", op->name, op->title?op->title:op->race,
             pl->killer?pl->killer:"bad luck");
+#endif
+    strcpy(buf, gravestone_text(op)); 
     FREE_AND_COPY_HASH(tmp->msg, buf);
     tmp->x = op->x,tmp->y = op->y;
     insert_ob_in_map(tmp, op->map, NULL, 0);

@@ -1064,9 +1064,9 @@ char * gravestone_text(object *op)
     strncat(buf2, "                    ", 20 - strlen(buf) / 2);
     strcat(buf2, buf);
     if (op->type == PLAYER)
-        sprintf(buf, "who was in level %d when killed\n", op->level);
+        sprintf(buf, "who was level %d when killed\n", op->level);
     else
-        sprintf(buf, "who was in level %d when died.\n\n", op->level);
+        sprintf(buf, "who was level %d when died.\n\n", op->level);
     strncat(buf2, "                    ", 20 - strlen(buf) / 2);
     strcat(buf2, buf);
     if (op->type == PLAYER)
@@ -2189,6 +2189,14 @@ int manual_apply(object *op, object *tmp, int aflag)
               return 4; /* 1 = do not write an error message to the player */
               enter_map_by_exit(op, tmp);
           return 4;
+
+        case GRAVESTONE:
+            if (op->type == PLAYER)
+            {
+                apply_sign(op, tmp); /* probably should have apply_gravestone */
+                return 4;
+            }
+            return 0;
 
         case SIGN:
             if (op->type == PLAYER)
