@@ -32,3 +32,10 @@ You need libmng-1.0.8 to get ogre3d compiled.
 If "make install" cant find libOgreMain.lai then make a copy of libOgreMain.la in OgreMain/src/.libs.
 In libOgreMain.lai set installed=yes
 same for the other libs.
+
+//====================================================================
+// Ogre compiling tips (Ogre 1.4).
+//====================================================================
+Depencies: OIS 
+Its an Object Oriented Input System.
+Get the latest version from sourceforge.
