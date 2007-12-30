@@ -201,15 +201,6 @@ spell spells[NROFREALSPELLS]          =
 	SPELL_DESC_DIRECTION,
 	PATH_ELEMENTAL, "lightning", SPELL_ACTIVE
 	},
-
-	{"spectral strike",                SPELL_TYPE_WIZARD, 1,
-	3, 14, 3, 6,0,1.0,
-    60,      5,      4,      4,
-	1, 6, 0,   SOUND_MAGIC_COMET,
-    SPELL_USE_CAST | SPELL_USE_SCROLL | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_BOOK,
-    SPELL_DESC_DIRECTION,
-    PATH_SPIRIT, "spectral_strike",SPELL_ACTIVE
-    }
 };
 
 /*
