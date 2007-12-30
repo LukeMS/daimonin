@@ -477,6 +477,7 @@
 /outdoor/natural/rocks/rock_lake3
 /items/magic_tools/rod_heavy
 /items/magic_tools/rod_light
+/mobs/animals/chickens/rooster
 /connect/exits/ropeladder_down
 /connect/exits/ropeladder_down2
 /walls/rowboat_a
@@ -553,7 +554,6 @@
 /mobs/theme/xmas/snowman_evil
 /mobs/theme/xmas/snowman_evil2
 /mobs/summoned/mage_golem/sparkle_black_mage_golem/sparkle_black_golem_mage
-/magic/spectral_strike/spectral_strike
 /mobs/insects/spiders/spider
 /traps/spider_web
 /mobs/insects/spiders/spider_widow

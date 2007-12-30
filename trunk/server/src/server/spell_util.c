@@ -422,7 +422,6 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
           break;
 
         case SP_BULLET:
-        case SP_SPECTRAL_STRIKE:
         case SP_CAUSE_LIGHT:
         case SP_PROBE:
           success = fire_arch(op, caster,op->x, op->y, dir, spellarch[type], type, casting_level(caster, type), 1);
