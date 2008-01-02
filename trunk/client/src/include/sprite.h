@@ -171,7 +171,32 @@ extern int    StringWidthOffset(_Font *font, char *text, int *line, int len);
 extern void             StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col, SDL_Rect *area,
                                       _BLTFX *bltfx);
 extern int              sprite_collision(int x1, int y1, int x2, int y2, _Sprite *sprite1, _Sprite *sprite2);
-extern void             sprite_clear_backbuffer(void);
 extern Uint32           getpixel(SDL_Surface *surface, int x, int y);
 extern void             putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel);
+
+extern void             sprite_clear_backbuffer(void);
+
+/* Zoom stuff */
+#ifndef M_PI
+#define M_PI	3.141592654
+#endif
+
+/* ---- Structures */
+
+typedef struct tColorRGBA {
+Uint8 r;
+Uint8 g;
+Uint8 b;
+Uint8 a;
+} tColorRGBA;
+
+typedef struct tColorY {
+Uint8 y;
+} tColorY;
+
+extern  SDL_Surface     *zoomSurface(SDL_Surface * src, double zoomx, double zoomy, int smooth);
+extern  void            zoomSurfaceSize(int width, int height, double zoomx, double zoomy, int *dstwidth, int *dstheight);
+int zoomSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst, int flipx, int flipy, int smooth);
+int zoomSurfaceY(SDL_Surface * src, SDL_Surface * dst, int flipx, int flipy);
+
 #endif

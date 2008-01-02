@@ -112,6 +112,19 @@ typedef enum _attacks
 #define SC_FIRERUN 1
 #define SC_ALWAYS 2
 
+typedef struct _screensize
+{
+    int x;
+    int y;
+    int xoff;
+    int yoff;
+}
+_screensize;
+
+extern _screensize Screensize;
+
+extern _screensize Screendefs[16];
+
 typedef struct Animations
 {
     int     loaded;         /* 0= all fields are invalid, 1= anim is loaded */
@@ -218,14 +231,14 @@ typedef struct Stat_struct
     int  exp;            /* Experience */
     int  food;       /* food and resting heartbeat*/
     int  dam;            /* How much damage this object does when hitting */
-	int  dist_dam;
-	int  dist_wc;
+    int  dist_dam;
+    int  dist_wc;
     float   speed;       /* speed encumbrance in %.1f format */
     float   spell_fumble;  /* base chance to fumble a spell */
-	float   weapon_sp;      /* Gets converted to a float for display */
-	float   dist_time;      /* Gets converted to a float for display */
-	float   dps;        /* thats damage / 10 */
-	float   dist_dps;        /* thats damage / 10 */
+    float   weapon_sp;      /* Gets converted to a float for display */
+    float   dist_time;      /* Gets converted to a float for display */
+    float   dps;        /* thats damage / 10 */
+    float   dist_dps;        /* thats damage / 10 */
     uint16  flags;      /* contains fire on/run on flags */
     sint16  protection[NROFATTACKS];     /* Resistant values */
 uint32  protection_change   : 1; /* Resistant value has changed */
@@ -325,7 +338,8 @@ uint32                  echo_bindings       : 1;/* If true, echo the command tha
 
 
     char                    target_hp;  /* hp of our target in % */
-    char                    last_command[MAX_BUF];  /* Last command entered */
+    /* i cant see where we need that */
+//    char                    last_command[MAX_BUF];  /* Last command entered */
     char                    input_text[MAX_BUF];    /* keys typed (for long commands) */
     char                    name[40];   /* name and password.  Only used while */
     char                    password[40];   /* logging in. */
@@ -479,7 +493,7 @@ extern char        *resists_name[NUM_RESISTS];
 #define NDI_EMOTE   0x01000
 #define NDI_GM  0x02000 /* Its from a staff member */
 #define NDI_PLAYER  0x04000 /* this comes from a player */
-#define NDI_VIM     0x08000 /* VIM-Messages */
+#define NDI_VIM     0x08000 /* VIM-Message */
 
 
 #define NDI_UNIQUE  0x10000 /* Print this out immediately, don't buffer */

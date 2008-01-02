@@ -287,6 +287,7 @@ void GoodbyeCmd(char *data, int len)
          */
     /* fprintf(stderr,"Received goodbye command from server - exiting\n");
           exit(0);*/
+
 }
 
 void AnimCmd(unsigned char *data, int len)
@@ -352,6 +353,9 @@ void ImageCmd(unsigned char *data, int len)
     }
     FaceList[pnum].sprite = sprite_tryload_file(buf, 0, NULL);
     map_udate_flag = 2;
+    map_redraw_flag = TRUE;
+//    draw_info_format(COLOR_GREEN,"map_draw_update: ImageCmd");
+
 }
 
 
@@ -402,6 +406,7 @@ void DrawInfoCmd2(char *data, int len)
 {
     int     flags;
     char    *tmp=NULL, buf[2048];
+    Boolean buddy=FALSE;
 
     flags = (int) GetShort_String((unsigned char*)data);
     data += 2;
@@ -431,6 +436,12 @@ void DrawInfoCmd2(char *data, int len)
         vim.starttick = LastTick;
         vim.active = TRUE;
     }
+    /* we log even before we ignore, or cfilter */
+    if (options.msglog>0)
+    {
+        if ((options.msglog==2) || (flags & (NDI_PLAYER|NDI_SAY|NDI_SHOUT|NDI_TELL|NDI_GSAY|NDI_EMOTE)))
+            MSGLOG(buf);
+    }
     /* we have communication input */
     if (tmp && flags & (NDI_PLAYER|NDI_SAY|NDI_SHOUT|NDI_TELL|NDI_GSAY|NDI_EMOTE))
     {
@@ -445,6 +456,21 @@ void DrawInfoCmd2(char *data, int len)
             if ((flags & NDI_EMOTE) && (ignore_check(data,"emote")))
                 return;
         }
+
+        if (options.chatfilter)
+            chatfilter_filter(buf); /* Filter incoming msg for f*words */
+
+        if (buddy_check(data)) /* Color messages from buddys */
+        {
+            buddy=TRUE;
+            flags = (flags & 0xff00) | 113;
+        }
+        else
+            buddy=FALSE;
+
+        if ((flags & NDI_SHOUT) && (options.shoutoff) && !buddy)
+            return;
+
         /* save last incomming tell player for client sided /reply */
         if (flags & NDI_TELL)
             strcpy(cpl.player_reply, data);
@@ -469,6 +495,9 @@ void TargetObject(unsigned char *data, int len)
     cpl.target_code = *data++;
     strcpy(cpl.target_name, (const char *)data);
     map_udate_flag = 2;
+    map_redraw_flag = TRUE;
+//    draw_info_format(COLOR_GREEN,"map_draw_update: TragetObejct");
+
 
     /*    sprintf(buf,"TO: %d %d >%s< (len: %d)\n",cpl.target_mode,cpl.target_code,cpl.target_name,len);
         draw_info(buf,COLOR_GREEN);*/
@@ -489,6 +518,7 @@ void StatsCmd(unsigned char *data, int len)
         {
             cpl.stats.protection[c - CS_STAT_PROT_START] = (sint16) *(((signed char*)data) + i++);
             cpl.stats.protection_change = 1;
+            WIDGET_REDRAW(RESIST_ID);
         }
         else
         {
@@ -500,14 +530,17 @@ void StatsCmd(unsigned char *data, int len)
                 case CS_STAT_REG_HP:
                     cpl.gen_hp = ((float) GetShort_String(data + i)) / 10.0f;
                     i += 2;
+                    WIDGET_REDRAW(REGEN_ID);
                     break;
                 case CS_STAT_REG_MANA:
                     cpl.gen_sp = ((float) GetShort_String(data + i)) / 10.0f;
                     i += 2;
+                    WIDGET_REDRAW(REGEN_ID);
                     break;
                 case CS_STAT_REG_GRACE:
                     cpl.gen_grace = ((float) GetShort_String(data + i)) / 10.0f;
                     i += 2;
+                    WIDGET_REDRAW(REGEN_ID);
                     break;
 
                 case CS_STAT_HP:
@@ -522,11 +555,13 @@ void StatsCmd(unsigned char *data, int len)
                     cpl.stats.hptick=LastTick;
                     cpl.stats.hp = temp;
                     i += 4;
+                    WIDGET_REDRAW(STATS_ID);
                     break;
                 case CS_STAT_MAXHP:
 
                     cpl.stats.maxhp = GetInt_String(data + i);
                     i += 4;
+                    WIDGET_REDRAW(STATS_ID);
                     break;
                 case CS_STAT_SP:
                     temp = (int) GetShort_String(data + i);
@@ -534,10 +569,12 @@ void StatsCmd(unsigned char *data, int len)
                     cpl.stats.sptick = LastTick;
                     cpl.stats.sp = temp;
                     i += 2;
+                    WIDGET_REDRAW(STATS_ID);
                     break;
                 case CS_STAT_MAXSP:
                     cpl.stats.maxsp = GetShort_String(data + i);
                     i += 2;
+                    WIDGET_REDRAW(STATS_ID);
                     break;
                 case CS_STAT_GRACE:
                     temp = (int) GetShort_String(data + i);
@@ -545,10 +582,12 @@ void StatsCmd(unsigned char *data, int len)
                     cpl.stats.gracetick = LastTick;
                     cpl.stats.grace = temp;
                     i += 2;
+                    WIDGET_REDRAW(STATS_ID);
                     break;
                 case CS_STAT_MAXGRACE:
                     cpl.stats.maxgrace = GetShort_String(data + i);
                     i += 2;
+                    WIDGET_REDRAW(STATS_ID);
                     break;
                 case CS_STAT_STR:
                     temp = (int) * (data + i++);
@@ -558,6 +597,7 @@ void StatsCmd(unsigned char *data, int len)
                         cpl.warn_statdown = TRUE;
 
                     cpl.stats.Str = temp;
+                    WIDGET_REDRAW(STATS_ID);
                     break;
                 case CS_STAT_INT:
                     temp = (int) * (data + i++);
@@ -567,6 +607,7 @@ void StatsCmd(unsigned char *data, int len)
                         cpl.warn_statdown = TRUE;
 
                     cpl.stats.Int = temp;
+                    WIDGET_REDRAW(STATS_ID);
                     break;
                 case CS_STAT_POW:
                     temp = (int) * (data + i++);
@@ -576,6 +617,7 @@ void StatsCmd(unsigned char *data, int len)
                         cpl.warn_statdown = TRUE;
 
                     cpl.stats.Pow = temp;
+                    WIDGET_REDRAW(STATS_ID);
 
                     break;
                 case CS_STAT_WIS:
@@ -587,6 +629,7 @@ void StatsCmd(unsigned char *data, int len)
 
                     cpl.stats.Wis = temp;
 
+                    WIDGET_REDRAW(STATS_ID);
                     break;
                 case CS_STAT_DEX:
                     temp = (int) * (data + i++);
@@ -596,6 +639,7 @@ void StatsCmd(unsigned char *data, int len)
                         cpl.warn_statdown = TRUE;
 
                     cpl.stats.Dex = temp;
+                    WIDGET_REDRAW(STATS_ID);
                     break;
                 case CS_STAT_CON:
                     temp = (int) * (data + i++);
@@ -605,6 +649,7 @@ void StatsCmd(unsigned char *data, int len)
                         cpl.warn_statdown = TRUE;
 
                     cpl.stats.Con = temp;
+                    WIDGET_REDRAW(STATS_ID);
                     break;
                 case CS_STAT_CHA:
                     temp = (int) * (data + i++);
@@ -614,6 +659,7 @@ void StatsCmd(unsigned char *data, int len)
                         cpl.warn_statdown = TRUE;
 
                     cpl.stats.Cha = temp;
+                    WIDGET_REDRAW(STATS_ID);
                     break;
                 case CS_STAT_EXP:
                     temp = GetInt_String(data + i);
@@ -624,13 +670,14 @@ void StatsCmd(unsigned char *data, int len)
                     /* get the real level depending on the exp */
                     for (x=0;x<=server_level.level;x++)
                     {
-                        if (server_level.exp[x]>(uint32)temp)
+                       if (server_level.exp[x]>(uint32)temp)
                         {
                             cpl.stats.exp_level = x-1;
                             break;
                         }
                     }
                     i += 4;
+                    WIDGET_REDRAW(MAIN_LVL_ID);
                     break;
                 case CS_STAT_LEVEL:
                     cpl.stats.level = (char) * (data + i++);
@@ -638,6 +685,7 @@ void StatsCmd(unsigned char *data, int len)
                     {
                         cpl.warn_drain = TRUE;
                     }
+                    WIDGET_REDRAW(MAIN_LVL_ID);
                     break;
                 case CS_STAT_WC:
                     cpl.stats.wc = (uint8) GetShort_String(data + i);
@@ -676,6 +724,7 @@ void StatsCmd(unsigned char *data, int len)
                 case CS_STAT_FOOD:
                     cpl.stats.food = GetShort_String(data + i);
                     i += 2;
+                    WIDGET_REDRAW(STATS_ID);
                     break;
                 case CS_STAT_WEAP_SP:
                     cpl.stats.weapon_sp = ((float)GetInt_String(data + i))/1000.0f;
@@ -697,6 +746,7 @@ void StatsCmd(unsigned char *data, int len)
                 case CS_STAT_SKILLEXP_WISDOM:
                     cpl.stats.skill_exp[(c - CS_STAT_SKILLEXP_START) / 2] = GetInt_String(data + i);
                     i += 4;
+                    WIDGET_REDRAW(SKILL_LVL_ID);
                     break;
                 case CS_STAT_SKILLEXP_AGLEVEL:
                 case CS_STAT_SKILLEXP_PELEVEL:
@@ -705,6 +755,7 @@ void StatsCmd(unsigned char *data, int len)
                 case CS_STAT_SKILLEXP_MALEVEL:
                 case CS_STAT_SKILLEXP_WILEVEL:
                     cpl.stats.skill_level[(c - CS_STAT_SKILLEXP_START - 1) / 2] = (sint16) * (data + i++);
+                    WIDGET_REDRAW(SKILL_LVL_ID);
                     break;
                 case CS_STAT_RANGE:
                 {
@@ -906,6 +957,7 @@ void PlayerCmd(unsigned char *data, int len)
 
     options.firststart = FALSE;
     GameStatus = GAME_STATUS_PLAY;
+    txtwin[TW_MIX].size = txtwin_start_size;
     InputStringEndFlag = FALSE;
     tag = GetInt_String(data);
     i += 4;
@@ -928,7 +980,20 @@ void PlayerCmd(unsigned char *data, int len)
     map_draw_map_clear();
     map_transfer_flag = 1;
     map_udate_flag = 2;
+    map_redraw_flag=TRUE;
+//    draw_info_format(COLOR_GREEN,"map_draw_update: PlayerCmd");
 
+
+    ignore_list_load();
+    chatfilter_list_load();
+    kill_list_load();
+    buddy_list_load();
+#if defined( __WIN_32)  || defined(__LINUX)
+            char filename[255];
+            sprintf(filename,"logs/%s.chat.log",cpl.name);
+            LOG(LOG_DEBUG,"trying to open chatlogfile: %s\n",filename);
+            if (!msglog) msglog = fopen_wrapper(filename, "a");
+#endif
     LOG(LOG_MSG, "Loading quickslot settings for server\n");
     load_quickslots_entrys();
     save_options_dat();
@@ -1039,7 +1104,7 @@ void ItemYCmd(unsigned char *data, int len)
 void GroupCmd(unsigned char *data, int len)
 {
     char    name[64], *tmp;
-    int     hp, mhp, sp, msp, gr, mgr, level, slot = 0;
+    int     hp, mhp, sp, msp, gr, mgr, level;
 
     /* len == 0, its a GroupCmd which means "no group" */
     clear_group();
@@ -1054,10 +1119,10 @@ void GroupCmd(unsigned char *data, int len)
         {
             tmp++;
             sscanf(tmp, "%s %d %d %d %d %d %d %d", name, &hp, &mhp, &sp, &msp, &gr, &mgr, &level);
-            set_group(slot, name, level, hp, mhp, sp, msp, gr, mgr);
+            set_group(group_count, name, level, hp, mhp, sp, msp, gr, mgr);
 
             /*LOG(-1, "GROUP: %s [(%x)]\n", tmp, tmp);*/
-            slot++;
+            group_count++;
             tmp = strchr(tmp, '|');
         }
     }
@@ -1084,7 +1149,6 @@ void MarkCmd(unsigned char *data, int len)
     cpl.mark_count = GetInt_String(data);
     /* draw_info_format(COLOR_WHITE, "MARK: %d",cpl.mark_count); */
 }
-
 
 void GroupUpdateCmd(unsigned char *data, int len)
 {
@@ -1154,8 +1218,20 @@ void InterfaceCmd(unsigned char *data, int len)
             gui_interface_npc->win_length = precalc_interface_npc();
             interface_mode = mode;
             cpl.menustatus = MENU_NPC;
-            gui_interface_npc->startx = 400-(Bitmaps[BITMAP_NPC_INTERFACE]->bitmap->w / 2);
-            gui_interface_npc->starty = 50;
+            gui_interface_npc->startx = (Screensize.x/2)-(Bitmaps[BITMAP_NPC_INTERFACE]->bitmap->w / 2);
+            gui_interface_npc->starty = (Screensize.y-600)/2+50;
+            if (gui_interface_npc->icon_count > 0)
+            {
+                int i;
+                for (i = 0; i <= gui_interface_npc->icon_count; i++)
+                {
+                    if (gui_interface_npc->icon[i].mode == 'S')
+                    {
+                        gui_interface_npc->selected = i+1;
+                        break;
+                    }
+                }
+            }
             if (gui_interface_npc->icon_count > 0)
             {
                 int i;
@@ -1308,7 +1384,7 @@ void DeleteInventory(unsigned char *data, int len)
 void Map2Cmd(unsigned char *data, int len)
 {
     static int     map_w=0, map_h=0,mx=0,my=0;
-    static int      step=0;
+    static int      step = 0;
     int     mask, x, y, pos = 0, ext_flag, xdata;
     int     mapstat, ext1, ext2, ext3, probe;
     int     map_new_flag    = FALSE;
@@ -1371,7 +1447,9 @@ void Map2Cmd(unsigned char *data, int len)
                     sound_play_effect(SOUND_STEP1,0,0,100);
             else
                     sound_play_effect(SOUND_STEP2,0,0,100);
+
         }
+
         mx = xpos;
         my = ypos;
     }
@@ -1468,7 +1546,7 @@ void Map2Cmd(unsigned char *data, int len)
                 if (ff_flag & 0x4)
                 {
                     ff1 = GetShort_String(data + pos); pos += 2;
-                    add_anim(ANIM_SELF_DAMAGE, 0, 0, 396, 289, ff1);
+                    add_anim(ANIM_SELF_DAMAGE, 0, 0, options.mapstart_x+(int)((MAP_START_XOFF+20)*(options.zoom/100.0)), options.mapstart_y+(int)(146*(options.zoom/100.0)), ff1);
                 }
                 if (ff_flag & 0x2)
                 {
@@ -1480,6 +1558,7 @@ void Map2Cmd(unsigned char *data, int len)
                     ff3 = GetShort_String(data + pos); pos += 2;
                     add_anim(ANIM_DAMAGE, 0, 0, xpos + x, ypos + y, ff3);
                 }
+//                LOG(LOG_DEBUG,"Damage: ff_flag %x, (%d, %d, %d, %d)",ff_flag, ff0, ff1, ff2, ff3);
             }
             if (ext_flag & 0x08)
             {
@@ -1572,6 +1651,9 @@ void Map2Cmd(unsigned char *data, int len)
         }
     } /* more tiles */
     map_udate_flag = 2;
+    map_redraw_flag = TRUE;
+//    draw_info_format(COLOR_GREEN,"map_draw_update: Map2Cmd");
+
 }
 
 
@@ -1734,6 +1816,7 @@ void SkilllistCmd(unsigned char *data, int len)
                             skill_list[ii].entry[i].flag = LIST_ENTRY_KNOWN;
                             skill_list[ii].entry[i].exp = e;
                             skill_list[ii].entry[i].exp_level = l;
+                            WIDGET_REDRAW(SKILL_EXP_ID);
                         }
                     }
                 }

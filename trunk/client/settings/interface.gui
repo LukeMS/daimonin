@@ -1,0 +1,201 @@
+##############################################
+# This is the daimonin client interface file #
+##############################################
+
+Widget: STATS
+....Moveable: 1
+....Active: 1
+....X1: 227
+....Y1: 0
+....Wd: 172
+....Ht: 102
+....END
+
+Widget: RESIST
+....Moveable: 1
+....Active: 1
+....X1: 497
+....Y1: 0
+....Wd: 198
+....Ht: 79
+....END
+
+Widget: MAIN_LVL
+....Moveable: 1
+....Active: 1
+....X1: 399
+....Y1: 39
+....Wd: 98
+....Ht: 62
+....END
+
+Widget: SKILL_EXP
+....Moveable: 1
+....Active: 1
+....X1: 497
+....Y1: 79
+....Wd: 198
+....Ht: 22
+....END
+
+Widget: REGEN
+....Moveable: 1
+....Active: 1
+....X1: 399
+....Y1: 0
+....Wd: 98
+....Ht: 39
+....END
+
+Widget: SKILL_LVL
+....Moveable: 1
+....Active: 1
+....X1: 695
+....Y1: 0
+....Wd: 52
+....Ht: 101
+....END
+
+Widget: MENUBUTTONS
+....Moveable: 1
+....Active: 1
+....X1: 747
+....Y1: 0
+....Wd: 47
+....Ht: 101
+....END
+
+Widget: QUICKSLOTS
+....Moveable: 1
+....Active: 1
+....X1: 513
+....Y1: 107
+....Wd: 282
+....Ht: 34
+....END
+
+Widget: CHATWIN
+....Moveable: 1
+....Active: 1
+....X1: 1
+....Y1: 366
+....Wd: 261
+....Ht: 233
+....END
+
+Widget: MSGWIN
+....Moveable: 1
+....Active: 1
+....X1: 537
+....Y1: 366
+....Wd: 261
+....Ht: 233
+....END
+
+Widget: MIXWIN
+....Moveable: 1
+....Active: 0
+....X1: 539
+....Y1: 420
+....Wd: 261
+....Ht: 233
+....END
+
+Widget: GROUP
+....Moveable: 1
+....Active: 1
+....X1: 658
+....Y1: 187
+....Wd: 120
+....Ht: 31
+....END
+
+Widget: PLAYERDOLL
+....Moveable: 1
+....Active: 0
+....X1: 0
+....Y1: 41
+....Wd: 221
+....Ht: 224
+....END
+
+Widget: BELOWINV
+....Moveable: 1
+....Active: 1
+....X1: 262
+....Y1: 545
+....Wd: 274
+....Ht: 55
+....END
+
+Widget: PLAYERINFO
+....Moveable: 1
+....Active: 1
+....X1: 0
+....Y1: 0
+....Wd: 219
+....Ht: 41
+....END
+
+Widget: RANGEBOX
+....Moveable: 1
+....Active: 1
+....X1: 6
+....Y1: 100
+....Wd: 94
+....Ht: 60
+....END
+
+Widget: TARGET
+....Moveable: 1
+....Active: 1
+....X1: 267
+....Y1: 514
+....Wd: 264
+....Ht: 31
+....END
+
+Widget: MAININV
+....Moveable: 1
+....Active: 1
+....X1: 540
+....Y1: 146
+....Wd: 239
+....Ht: 32
+....END
+
+Widget: MAPNAME
+....Moveable: 1
+....Active: 1
+....X1: 228
+....Y1: 106
+....Wd: 36
+....Ht: 12
+....END
+
+Widget: CONSOLE
+....Moveable: 1
+....Active: 0
+....X1: 271
+....Y1: 517
+....Wd: 256
+....Ht: 25
+....END
+
+Widget: NUMBER
+....Moveable: 1
+....Active: 0
+....X1: 271
+....Y1: 465
+....Wd: 256
+....Ht: 43
+....END
+
+Widget: STATOMETER
+....Moveable: 1
+....Active: 1
+....X1: 8
+....Y1: 50
+....Wd: 160
+....Ht: 40
+....END

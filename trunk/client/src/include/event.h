@@ -88,7 +88,8 @@ enum
     KEYFUNC_TARGET_ENEMY,
     KEYFUNC_TARGET_FRIEND,
     KEYFUNC_TARGET_SELF,
-    KEYFUNC_COMBAT
+    KEYFUNC_COMBAT,
+    KEYFUNC_SCREENTOGGLE,
 };
 
 typedef struct _keybind_key
@@ -112,6 +113,24 @@ enum
     DRAG_PDOLL
 };
 
+/* use these constants to determine the state of mouse and its events */
+enum {
+	IDLE=1, /* don't change this to 0 (enum default is 0, so leave this as is) */
+	LB_DN,
+	LB_UP,
+	RB_DN,
+	RB_UP,
+	MB_UP,
+	MB_DN,
+};
+
+extern uint32 MouseState; /* state of the buttons */
+extern int MouseEvent; /* whether there is an event (removed at end of main loop) */
+
+extern int old_mouse_y;
+
+extern int itemExamined;
+
 extern button_status global_buttons;
 
 extern int          KeyScanFlag; /* for debug/alpha , remove later */
@@ -125,8 +144,10 @@ extern void reset_keys(void);
 extern void read_keybind_file(char *fname);
 extern void save_keybind_file(char *fname);
 extern void check_menu_keys(int menu, int value);
+extern void quickslot_key(SDL_KeyboardEvent *key, int slot);
+extern Boolean  check_menu_macros(char *text);
 
 Boolean     process_macro_keys(int id, int value);
-
+extern void     check_keys(int key);
 #endif
 

@@ -763,7 +763,7 @@ static _gui_interface_struct *format_gui_interface(_gui_interface_struct *gui_in
             }
         }
 
-		for (i=0;i<gui_int->reward.line_count;i++)
+        for (i=0;i<gui_int->reward.line_count;i++)
         {
             if (strchr(gui_int->reward.lines[i],'|')==strrchr(gui_int->reward.lines[i],'|')
                 && strchr(gui_int->reward.lines[i],'|'))
@@ -1474,7 +1474,7 @@ void show_interface_npc(int mark)
     int x=gui_interface_npc->startx, y=gui_interface_npc->starty, numButton=0,yoff, i;
 
     sprite_blt(Bitmaps[BITMAP_NPC_INTERFACE], x, y, NULL, NULL);
-    add_close_button(x-111, y+9, MENU_NPC);
+    add_close_button(x-113, y+4, MENU_NPC, FALSE);
 
     if (gui_interface_npc->used_flag&GUI_INTERFACE_HEAD)
     {
@@ -1488,8 +1488,8 @@ void show_interface_npc(int mark)
         {
             int xp, yp;
 
-            box.x=x+8;
-            box.y=y+8;
+            box.x=x+4;
+            box.y=y+4;
             box.w=54;
             box.h=54;
 
@@ -1525,7 +1525,7 @@ void show_interface_npc(int mark)
     box.h=INTERFACE_WINLEN_NPC;
 
     blt_window_slider(Bitmaps[BITMAP_NPC_INT_SLIDER], gui_interface_npc->win_length, INTERFACE_WINLEN_NPC,
-                      gui_interface_npc->yoff*-1, -1, x + 345, y + 94);
+                      gui_interface_npc->yoff*-1, -1, x + 340, y + 90);
 
     SDL_SetClipRect(ScreenSurface, &box);
     /*SDL_FillRect(ScreenSurface, &box, 3);*/
@@ -1798,7 +1798,7 @@ void show_interface_npc(int mark)
     if (gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT)
     {
 
-        if (add_button(x + 35, y + 448, numButton++, BITMAP_DIALOG_BUTTON_UP,
+        if (add_button(x + 35, y + 443, numButton++, BITMAP_DIALOG_BUTTON_UP,
                        gui_interface_npc->accept.title, gui_interface_npc->accept.title2))
         {
             int ekey=-1;
@@ -1900,7 +1900,7 @@ void show_interface_npc(int mark)
 
         if (gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE)
         {
-            if (add_button(x + 285, y + 448, numButton++, BITMAP_DIALOG_BUTTON_UP,
+            if (add_button(x + 285, y + 443, numButton++, BITMAP_DIALOG_BUTTON_UP,
                            gui_interface_npc->decline.title, gui_interface_npc->decline.title2))
             {
                 int ekey=-1;
@@ -1997,18 +1997,18 @@ void show_interface_npc(int mark)
     if (gui_interface_npc->who.body[0] != 'Q')
     {
         box.x = x + 95;
-        box.y = y+453;
+        box.y = y+449;
         box.h = 12;
         box.w = 180;
         if (gui_interface_npc->input_flag)
         {
-            StringBlt(ScreenSurface, &SystemFont, "~Return~ to send, ~ESC~ to cancel", x+119, y+441, COLOR_WHITE, NULL, NULL);
+            StringBlt(ScreenSurface, &SystemFont, "~Return~ to send, ~ESC~ to cancel", x+130, y+437, COLOR_WHITE, NULL, NULL);
             SDL_FillRect(ScreenSurface, &box, 0);
             StringBlt(ScreenSurface, &MediumFont, show_input_string(InputString, &MediumFont,box.w-10),box.x+5 ,box.y, COLOR_WHITE, NULL, NULL);
         }
         else
         {
-            StringBlt(ScreenSurface, &SystemFont, "~Return~ to talk", x+155, y+441, COLOR_WHITE, NULL, NULL);
+            StringBlt(ScreenSurface, &SystemFont, "~Return~ to talk", x+155, y+437, COLOR_WHITE, NULL, NULL);
 
             if (gui_interface_npc->link_selected)
             {
@@ -2081,14 +2081,14 @@ void gui_interface_mouse(SDL_Event *e)
     mx = mxr-gui_interface_npc->startx;
     my = myr-gui_interface_npc->starty;
 
-    if (mx >= 349 && mx <= 358 && my >=36 && my <= 45) // close button
+    if (mx >= 345 && mx <= 354 && my >=32 && my <= 41) // close button
     {
         sound_play_effect(SOUND_SCROLL, 0, 0, 100);
         reset_gui_interface();
     }
-    else if (mx >= 344 && mx <= 355) // scroll buttons
+    else if (mx >= 339 && mx <= 350) // scroll buttons
     {
-        if (my >=79 && my <= 90) // scroll up
+        if (my >=73 && my <= 84) // scroll up
         {
             gui_interface_npc->yoff +=12;
             if (gui_interface_npc->yoff < INTERFACE_WINLEN_NPC-gui_interface_npc->win_length)
@@ -2100,7 +2100,7 @@ void gui_interface_mouse(SDL_Event *e)
                 gui_interface_npc->yoff=0;
             }
         }
-        else if (my >=432 && my <= 441) // scroll down
+        else if (my >=428 && my <= 437) // scroll down
         {
             gui_interface_npc->yoff -=12;
             if (gui_interface_npc->yoff < INTERFACE_WINLEN_NPC-gui_interface_npc->win_length)
@@ -2114,7 +2114,7 @@ void gui_interface_mouse(SDL_Event *e)
         }
         return;
     }
-    else if (mx >= 95 && mx <= 275 && my >= 453 && my <= 465) // textfield
+    else if (mx >= 95 && mx <= 275 && my >= 449 && my <= 461) // textfield
     {
         if (!gui_interface_npc->input_flag)
             check_menu_keys(MENU_NPC, SDLK_RETURN);

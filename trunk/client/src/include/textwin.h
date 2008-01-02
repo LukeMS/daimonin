@@ -82,9 +82,10 @@ typedef struct _textwin_set
 }
 _textwin_set;
 
+extern int          txtwin_start_size;  /* we need a backup of the TW_MIX.size */
 extern _textwin_set txtwin[TW_SUM];
 extern int          textwin_flags;
-extern void         textwin_event(int e, SDL_Event *event);
+extern void         textwin_event(int e, SDL_Event *event, int WidgetID);
 extern void         textwin_show(int x, int y);
 extern void         textwin_init();
 extern void   draw_info_format(int flags,char *format,...);
@@ -92,5 +93,7 @@ extern void         draw_info(char *str, int color);
 extern void         textwin_addhistory(char *text);
 extern void         textwin_clearhistory();
 extern void         textwin_putstring(char *text);
+extern void         widget_textwin_show(int x, int y, int actWin);
+
 #endif
 

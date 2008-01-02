@@ -210,6 +210,43 @@ void free_all_items(item *op)
         op = tmp;
     }
 }
+/* 2006-07-20 Alderan
+ * find item-tag from name
+ * name neednt be the full name, name can only a part of s_name
+ * (so 'iron bolt' finds also 'iron bolt +2')
+ */
+int locate_item_tag_from_name (char *name)
+{
+    item *op;
+
+    if (cpl.below && (op=locate_item_from_item_name(cpl.below->inv, name)) != NULL)
+        return op->tag;
+    if (cpl.sack && (op=locate_item_from_item_name(cpl.sack->inv, name)) != NULL)
+        return op->tag;
+    if ((op=locate_item_from_item_name(player, name)) != NULL)
+        return op->tag;
+    return -1;
+}
+/*
+ * 2006-07-20 by Alderan
+ * used by locate_item_tag_from_name
+ */
+item *locate_item_from_item_name (item *op, char *name)
+{
+    item *tmp;
+
+    for (; op!= NULL; op=op->next)
+    {
+        if (strstr(op->s_name,name))
+            return op;
+        else if (op->inv)
+        {
+           if ((tmp = locate_item_from_item_name (op->inv, name)))
+               return tmp;
+        }
+    }
+    return NULL;
+}
 
 int locate_item_nr_from_tag(item *op, int tag)
 {

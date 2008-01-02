@@ -48,8 +48,8 @@ _server_char;
 extern _server_char    *first_server_char;
 extern _server_char     new_character; /* if we login as new char, thats the values of it we set */
 
-#define SKIN_POS_QUICKSLOT_X 518
-#define SKIN_POS_QUICKSLOT_Y 109
+//#define SKIN_POS_QUICKSLOT_X 518
+//#define SKIN_POS_QUICKSLOT_Y 109
 
 #define HUGE_BUF 1024
 
@@ -172,6 +172,19 @@ extern _srv_client_files    srv_client_files[SRV_CLIENT_FILES];
 extern  Uint32              sdl_dgreen, sdl_dred, sdl_gray1, sdl_gray2, sdl_gray3, sdl_gray4, sdl_blue1;
 extern int                  mb_clicked;
 
+
+/* This is for the skin-sysem */
+/* TODO: don't clutter this stuff over all files, instead make a structure for all that stuff */
+typedef struct _skindef
+{
+    Uint32              rowcolor[2];
+    Boolean             newclosebutton;
+}
+_skindef;
+
+extern _skindef     skindef;
+
+
 #define MAXMETAWINDOW 14        /* count max. shown server in meta window*/
 
 #define MAX_HELP_SCREEN 2
@@ -195,6 +208,11 @@ typedef struct _options
     Boolean                 use_TextwinSplit;
     Boolean                 use_TextwinAlpha;
     int                     textwin_alpha;
+    int                     resolution;
+    int                     mapstart_x;
+    int                     mapstart_y;
+    int                     zoom;
+    Boolean                 smooth;
 
     /* Look & Feel */
     int                     player_names;
@@ -207,6 +225,21 @@ typedef struct _options
     Boolean                 smileys;
     int                     channelformat;
     Boolean                 collectAll;
+    Boolean                 chatfilter;         /* true: filter chatmessages */
+    Boolean                 hp_bar;         /* show hp-bar */
+    Boolean                 hp_percent;     /* show hp in % */
+    Boolean                 hp_color;       /* color bar and % */
+    int                     iExpDisplay;    /* robed's extended exp-display */
+    Boolean                 kerbholz;       /* use kill stats */
+    Boolean                 killmsg;        /* show additional kill messages */
+    int                     msglog;         /* log-options */
+    Boolean                 playerdoll;
+    Boolean                 statometer;
+    int                     statsupdate;
+    Boolean                 showqc;
+    int                     itemdmg_limit_orange;
+    int                     itemdmg_limit_red;
+    Boolean                 shoutoff;
 
     /* Debug */
     Boolean                 force_redraw;
@@ -254,12 +287,35 @@ typedef struct _options
     char                    cli_name[40];
     char                    cli_pass[40];
     int                     cli_server;
+    char                    skin[64];
 
     Boolean                 firststart;
+    Boolean                 sleepcounter;
 }
 _options;
 
 extern struct _options  options;
+
+typedef struct statometer {
+    int exp;
+    int kills;
+    int starttime;
+    int lastupdate;
+    double exphour;
+    double killhour;
+} _statometer;
+
+struct statometer statometer;
+
+typedef struct bigmsg {
+    char    msg[128];
+    uint32  starttick;
+    Boolean active;
+} _bigmsg;
+
+extern struct bigmsg bigmsg;
+
+extern time_t sleeptime;
 
 #define FACE_FLAG_NO        0
 #define FACE_FLAG_DOUBLE    1       /* this is a double wall type */
@@ -438,7 +494,7 @@ extern int          show_help_screen;
 extern int          show_help_screen_new;
 extern int      InputFirstKeyPress;
 
-extern int          map_udate_flag, map_transfer_flag;
+extern int          map_udate_flag, map_transfer_flag, map_redraw_flag;
 extern uint32       GameTicksSec;       /* ticks since this second frame in ms */
 extern int          metaserver_start, metaserver_sel, metaserver_count;
 
@@ -450,6 +506,12 @@ extern int          request_file_flags;
 
 extern int          esc_menu_flag;
 extern int          esc_menu_index;
+
+
+extern int f_custom_cursor;
+extern int x_custom_cursor;
+extern int y_custom_cursor;
+
 
 enum
 {
@@ -475,8 +537,8 @@ typedef enum _bitmap_index
     BITMAP_BIGFONT,
     BITMAP_FONT1OUT,
     BITMAP_FONTMEDIUM,
+    BITMAP_FONTMEDIUMOUT,
     BITMAP_INTRO,
-    BITMAP_DOLL,
     BITMAP_BLACKTILE,
     /* blacktile for map*/
     BITMAP_TEXTWIN,
@@ -498,6 +560,7 @@ typedef enum _bitmap_index
     BITMAP_DAMNED,
     BITMAP_LOCK,
     BITMAP_MAGIC,
+    BITMAP_RANGE,
     BITMAP_RANGE_MARKER,
     BITMAP_RANGE_CTRL,
     BITMAP_RANGE_CTRL_NO,
@@ -529,27 +592,13 @@ typedef enum _bitmap_index
     BITMAP_ENEMY2,
     BITMAP_PROBE,
     BITMAP_QUICKSLOTS,
+    BITMAP_QUICKSLOTSV,
     BITMAP_INVENTORY,
     BITMAP_GROUP,
     BITMAP_EXP_BORDER,
     BITMAP_EXP_SLIDER,
     BITMAP_EXP_BUBBLE1,
     BITMAP_EXP_BUBBLE2,
-    BITMAP_STATS,
-    BITMAP_BUFFSPOT,
-    BITMAP_TEXTSPOT,
-    BITMAP_PDOLL2,
-    BITMAP_PDOLL2_SPOT,
-    BITMAP_CLEAR_SPOT,
-    BITMAP_BORDER1,
-    BITMAP_BORDER2,
-    BITMAP_BORDER3,
-    BITMAP_BORDER4,
-    BITMAP_BORDER5,
-    BITMAP_BORDER6,
-    BITMAP_PANEL_P1,
-    BITMAP_GROUP_SPOT,
-    BITMAP_TARGET_SPOT,
     BITMAP_BELOW,
     BITMAP_FLINE,
     BITMAP_HELP_START,
@@ -559,6 +608,7 @@ typedef enum _bitmap_index
     BITMAP_LOADING,
     BITMAP_WARN_HP,
     BITMAP_WARN_FOOD,
+    BITMAP_STATS_BG,
     BITMAP_WARN_WEIGHT,
     BITMAP_LOGO270,
     BITMAP_DIALOG_BG,
@@ -581,7 +631,6 @@ typedef enum _bitmap_index
     BITMAP_TARGET_HP,
     BITMAP_TARGET_HP_B,
     BITMAP_TEXTWIN_MASK,
-    BITMAP_TEXTWIN_BLANK,
     BITMAP_SLIDER_UP,
     BITMAP_SLIDER_DOWN,
     BITMAP_SLIDER,
@@ -602,6 +651,7 @@ typedef enum _bitmap_index
     BITMAP_BUTTONQ_DOWN,
     BITMAP_NCHAR_MARKER,
     BITMAP_TRAPED,
+    BITMAP_PRAY,
     BITMAP_WAND,
     BITMAP_GROUP_INVITE,
     BITMAP_BUTTON_BLACK_UP,
@@ -619,11 +669,31 @@ typedef enum _bitmap_index
     BITMAP_NPC_INT_SLIDER,
     BITMAP_JOURNAL,
     BITMAP_INVSLOT_MARKED,
+    BITMAP_MSCURSOR_MOVE,
+    BITMAP_RESIST_BG,
+    BITMAP_MAIN_LVL_BG,
+    BITMAP_SKILL_EXP_BG,
+    BITMAP_REGEN_BG,
+    BITMAP_SKILL_LVL_BG,
+    BITMAP_MENU_BUTTONS,
+    BITMAP_GROUP_BG,
+    BITMAP_GROUP_BG_BOTTOM,
+    BITMAP_DOLL_BG,
+    BITMAP_PLAYER_INFO,
+    BITMAP_TARGET_BG,
+    BITMAP_INV_BG,
+    BITMAP_TEXTINPUT,
+    BITMAP_STIMER,
     BITMAP_CLOSEBUTTON,
+
     BITMAP_INIT
 }
 _bitmap_index;
 
+/* for custom cursors */
+enum {
+    MSCURSOR_MOVE = 1,
+};
 
 extern char                 InputString[MAX_INPUT_STRING];          /* our text char string*/
 extern char                 InputHistory[MAX_HISTORY_LINES][MAX_INPUT_STRING];  /* input lines history buffer */
@@ -653,7 +723,10 @@ extern struct _Font         MediumFont;
 extern struct _Font         SystemFont;         /* our main font*/
 extern struct _Font         SystemFontOut;          /* our main font*/
 extern struct _Font         Font6x3Out;         /* 6x3 mini font */
+extern struct _Font         MediumFontOut;
 extern SDL_Surface         *ScreenSurface;      /* our main bla and so on surface */
+extern SDL_Surface         *ScreenSurfaceMap;      /* our main bla and so on surface */
+extern SDL_Surface         *zoomed;                /* tem surface for zoomed data */
 extern struct sockaddr_in   insock;       /* Server's attributes*/
 extern int                  SocketStatusErrorNr; /* if an socket error, this is it */
 
@@ -664,6 +737,8 @@ extern void add_metaserver_data(char *server, int port, int player, char *ver, c
 extern void clear_metaserver_data(void);
 extern void get_meta_server_data(int num, char *server, int *port);
 extern void free_faces(void);
+extern void reload_skin();
+extern void load_skindef();
 extern void load_options_dat(void);
 extern void save_options_dat(void);
 extern void reset_input_mode(void);

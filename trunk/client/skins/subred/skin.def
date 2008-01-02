@@ -1,0 +1,7 @@
+# this is the skin-definition file
+# for now its relativly empty
+# only change when you know what you are doing!
+
+newclosebutton: 1
+color: rowcolor_0: 100 57 30
+color: rowcolor_1: 57 59 39

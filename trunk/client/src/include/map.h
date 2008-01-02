@@ -24,9 +24,9 @@
 #if !defined(__MAP_H)
 #define __MAP_H
 
-#define MAP_START_XOFF 376
-
+#define MAP_START_XOFF 390
 #define MAP_START_YOFF 143
+
 #define MAP_TILE_POS_YOFF 23
 #define MAP_TILE_POS_YOFF2 12
 #define MAP_TILE_POS_XOFF 48

@@ -109,7 +109,7 @@ void ignore_list_load(void)
 	char filename[255];
 	FILE   *stream;
 
-    sprintf(filename,"%s.ignore.list",cpl.name);
+    sprintf(filename,"settings/%s.ignore.list",cpl.name);
     LOG(LOG_DEBUG,"Trying to open ignore file: %s\n",filename);
 
     name[0]='\0';
@@ -142,7 +142,7 @@ void ignore_list_save(void)
 	char filename[255];
 	FILE   *stream;
 
-    sprintf(filename,"%s.ignore.list",cpl.name);
+    sprintf(filename,"%settings/s.ignore.list",cpl.name);
     LOG(LOG_DEBUG,"Trying to open ignore file: %s\n",filename);
 
     if (!(stream = fopen_wrapper(filename, "w")))
@@ -210,13 +210,13 @@ void ignore_command(char *cmd)
         {
             draw_info_format(COLOR_WHITE,"Syntax: /ignore <name> <'channel'>");
             draw_info_format(COLOR_WHITE,"Syntax: /ignore <name> *  for all 'channels'");
-            draw_info_format(COLOR_WHITE,"channel can ALSO be somthing like: 'say', 'shout', 'tell', 'emote'");
+            draw_info_format(COLOR_WHITE,"channel can be somthing like: 'say', 'shout', 'tell', 'emote'");
         }
         else if ((name[0]=='\0') || (type[0]=='\0'))
         {
             draw_info_format(COLOR_WHITE,"Syntax: /ignore <name> <'channel'>");
             draw_info_format(COLOR_WHITE,"Syntax: /ignore <name> *  for all 'channels'");
-            draw_info_format(COLOR_WHITE,"channel can ALSO be somthing like: 'say', 'shout', 'tell', 'emote'");
+            draw_info_format(COLOR_WHITE,"channel can be somthing like: 'say', 'shout', 'tell', 'emote'");
 
         }
         else

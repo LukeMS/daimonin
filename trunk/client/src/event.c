@@ -27,7 +27,7 @@ extern char d_ServerName[2048];
 extern int  d_ServerPort;
 static int  get_action_keycode, drop_action_keycode; /* thats the key for G'et command from keybind */
 static int  menuRepeatKey   = -1;
-
+       int  old_mouse_y = 0;
 button_status global_buttons;
 
 typedef struct _keys
@@ -85,6 +85,7 @@ _key_macro      defkey_macro[]          =
         {"?M_TARGET_FRIEND","/target friend",   KEYFUNC_TARGET_FRIEND,0, SC_NORMAL, MENU_NO},
         {"?M_TARGET_SELF",  "/target self",     KEYFUNC_TARGET_SELF,  0, SC_NORMAL, MENU_NO},
         {"?M_COMBAT_TOGGLE","/combat",          KEYFUNC_COMBAT,       0, SC_NORMAL, MENU_NO},
+        {"?M_SCREENTOGGLE","fstoggle",          KEYFUNC_SCREENTOGGLE,       0, SC_NORMAL, MENU_NO},
     };
 #define DEFAULT_KEYMAP_MACROS (sizeof(defkey_macro)/sizeof(struct _key_macro))
 
@@ -98,6 +99,13 @@ int             cursor_type             = 0;
 #define KEY_REPEAT_TIME 35
 #define KEY_REPEAT_TIME_INIT 175
 static Uint32   menuRepeatTicks = 0, menuRepeatTime = KEY_REPEAT_TIME_INIT;
+
+/* the state of the mouse buttons */
+uint32 MouseState = IDLE;
+/* reset after each pass through the main loop */
+int MouseEvent = 0; /* do not set to IDLE, EVER */
+int itemExamined = 0;
+
 
 /* cmds for fire/move/run - used from move_keys()*/
 static char    *directions[10]          =
@@ -121,7 +129,6 @@ static char    *directionsfire[10]      =
 
 static int      key_event(SDL_KeyboardEvent *key);
 static void     key_string_event(SDL_KeyboardEvent *key);
-static void     check_keys(int key);
 static Boolean  check_macro_keys(char *text);
 static void     move_keys(int num);
 static void     key_repeat(void);
@@ -129,8 +136,7 @@ static void     cursor_keys(int num);
 int             key_meta_menu(SDL_KeyboardEvent *key);
 void            key_connection_event(SDL_KeyboardEvent *key);
 void            check_menu_keys(int menu, int key);
-static Boolean  check_menu_macros(char *text);
-static void     quickslot_key(SDL_KeyboardEvent *key, int slot);
+
 
 void init_keys(void)
 {
@@ -161,8 +167,14 @@ void reset_keys(void)
 ******************************************************************/
 int mouseInPlayfield(x, y)
 {
-    x += 45;
-    y -= 127;
+    //we simply realc the mousevalues
+
+    x=(int)(x/(options.zoom/100.0f));
+    y=(int)(y/(options.zoom/100.0f));
+
+
+    x += options.mapstart_x-331;
+    y -= options.mapstart_y-16;
     if (x < 445)
     {
         if ((y < 200) && (y + y + x > 400))
@@ -200,6 +212,8 @@ int draggingInvItem(int src)
 ******************************************************************/
 static void mouse_InputNumber()
 {
+    int mx=0, my=0;
+
     static int  delta   = 0;
     static int  timeVal = 1;
     int         x, y;
@@ -210,9 +224,12 @@ static void mouse_InputNumber()
         delta = 0;
         return;
     }
-    if (x <330 || x> 337 || y < 510 || delta++ & 15)
+    mx = x - cur_widget[IN_NUMBER_ID].x1;
+    my = y - cur_widget[IN_NUMBER_ID].y1;
+
+    if (mx <230 || mx> 237 || my < 5 || delta++ & 15)
         return;
-    if (y > 518)
+    if (my > 13)
     {
         /* + */
         x = atoi(InputString) + timeVal;
@@ -244,6 +261,9 @@ static void mouse_moveHero()
         return; /* disable until we have smooth moving - people think this IS the real mouse moving */
     if (delta++ & 7)
         return; /* dont move to fast */
+    SDL_GetMouseState(&x, &y);
+    if (get_widget_owner(x,y)!=-1)
+        return;
     if (draggingInvItem(DRAG_GET_STATUS))
         return; /* still dragging an item */
     if (cpl.input_mode == INPUT_MODE_NUMBER)
@@ -258,8 +278,9 @@ static void mouse_moveHero()
         return;
     }
     /* textwin has high priority, so dont move if playfield is overlapping */
-    if ((options.use_TextwinSplit) && x > 538 && y > 560 - (txtwin[TW_MSG].size + txtwin[TW_CHAT].size) * 10)
-        return;
+    /* widget function handle this... */
+//    if ((options.use_TextwinSplit) && x > 538 && y > 560 - (txtwin[TW_MSG].size + txtwin[TW_CHAT].size) * 10)
+//        return;
 
     if (get_tile_position(x, y, &tx, &ty))
         return;
@@ -334,8 +355,10 @@ int Event_PollInputDevice(void)
     SDL_Event       event;
     int             x, y, done = 0;
     static int      active_scrollbar    = 0;
-    static int      itemExamined        = 0; /* only print text once per dnd */
+
     static Uint32   Ticks               = 0;
+
+    itemExamined        = 0; /* only print text once per dnd */
 
     if ((SDL_GetTicks() - Ticks > 10) || !Ticks)
     {
@@ -349,10 +372,10 @@ int Event_PollInputDevice(void)
         }
     }
 
+
     global_buttons.valid = -1;
     while (SDL_PollEvent(&event))
     {
-        static int  old_mouse_y = 0;
         x = global_buttons.mx=event.motion.x;
         y = global_buttons.my=event.motion.y;
 
@@ -360,6 +383,23 @@ int Event_PollInputDevice(void)
         switch (event.type)
         {
         case SDL_MOUSEBUTTONUP:
+
+            /* get the mouse state and set an event (event removed at end of main loop) */
+            if(event.button.button == SDL_BUTTON_LEFT)
+                MouseEvent = LB_UP;
+            else if(event.button.button == SDL_BUTTON_MIDDLE)
+                MouseEvent = MB_UP;
+            else if(event.button.button == SDL_BUTTON_RIGHT)
+                MouseEvent = RB_UP;
+            else
+                MouseEvent = IDLE;
+
+            /* no button is down */
+            MouseState = IDLE;
+
+            cursor_type = 0;
+
+
             global_buttons.mx_up = x;
             global_buttons.my_up = y;
             global_buttons.down = -1;
@@ -368,8 +408,7 @@ int Event_PollInputDevice(void)
             if (GameStatus < GAME_STATUS_PLAY)
                 break;
             mb_clicked = 0;
-            if (InputStringFlag && cpl.input_mode == INPUT_MODE_NUMBER)
-                break;
+
             cursor_type = 0;
             active_scrollbar = 0;
 
@@ -390,9 +429,26 @@ int Event_PollInputDevice(void)
                 }
             }
 
+            /* widget has higher prio than anything below, exept menus
+             * so break is we had a widget event
+             */
+            if (widget_event_mouseup(x,y, &event))
+            {
+                /* NOTE: place here special handlings that have to be done, even if a widget owns it */
+
+                draggingInvItem(DRAG_NONE); /* sanity handling */
+                itemExamined = 0; /* ready for next item */
+
+                break;
+            };
+
+            if (InputStringFlag && cpl.input_mode == INPUT_MODE_NUMBER)
+                break;
+
             /***********************
               drag and drop events
             ************************/
+            /* Only drop to ground has to be handled, the rest do the widget handlers */
             if (draggingInvItem(DRAG_GET_STATUS) > DRAG_IWIN_BELOW)
             {
                 /* KEYFUNC_APPLY and KEYFUNC_DROP works only if cpl.inventory_win = IWIN_INV. The tag must
@@ -401,85 +457,8 @@ int Event_PollInputDevice(void)
                 int   old_inv_tag = cpl.win_inv_tag;
                 cpl.inventory_win = IWIN_INV;
 
-                if (draggingInvItem(DRAG_GET_STATUS) == DRAG_PDOLL)
-                {
-                    cpl.win_inv_tag = cpl.win_pdoll_tag;
-                    if (x <223 && y> 450)
-                        process_macro_keys(KEYFUNC_APPLY, 0); /* drop to inventory */
-                }
-
-                if (draggingInvItem(DRAG_GET_STATUS) == DRAG_QUICKSLOT)
-                {
-                    cpl.win_inv_tag = cpl.win_quick_tag;
-                    if (x < 223 && y < 300 && !(locate_item(cpl.win_inv_tag))->applied)
-                        process_macro_keys(KEYFUNC_APPLY, 0); /* drop to player-doll */
-                }
-
-                /* range field */
-                if (draggingInvItem(DRAG_GET_STATUS) == DRAG_IWIN_INV && x <90 && y> 400 && y < 440)
-                {
-                    RangeFireMode = FIRE_MODE_BOW;
-					process_macro_keys(KEYFUNC_APPLY, 0); /* drop to player-doll */
-                }
-
-
-                if (draggingInvItem(DRAG_GET_STATUS) == DRAG_IWIN_INV && x < 223 && y < 300)
-                {
-                    if ((locate_item(cpl.win_inv_tag))->applied)
-                        draw_info("This is applied already!", COLOR_WHITE);
-                    else
-                        process_macro_keys(KEYFUNC_APPLY, 0); /* drop to player-doll */
-                }
-
-                /* drop to quickslots */
-                if (x >= SKIN_POS_QUICKSLOT_X
-                        && x < SKIN_POS_QUICKSLOT_X + 282
-                        && y >= SKIN_POS_QUICKSLOT_Y
-                        && y < SKIN_POS_QUICKSLOT_Y + 42)
-                {
-                    int   ind = get_quickslot(x, y);
-                    if (ind != -1) /* valid slot */
-                    {
-                        if (draggingInvItem(DRAG_GET_STATUS) == DRAG_QUICKSLOT_SPELL)
-                        {
-                            quick_slots[ind].shared.is_spell = TRUE;
-                            quick_slots[ind].spell.groupNr = quick_slots[cpl.win_quick_tag].spell.groupNr;
-                            quick_slots[ind].spell.classNr = quick_slots[cpl.win_quick_tag].spell.classNr;
-                            quick_slots[ind].shared.tag = quick_slots[cpl.win_quick_tag].spell.spellNr;
-                            cpl.win_quick_tag = -1;
-                        }
-                        else
-                        {
-                            if (draggingInvItem(DRAG_GET_STATUS) == DRAG_IWIN_INV
-                                    || draggingInvItem(DRAG_GET_STATUS) == DRAG_PDOLL)
-                                cpl.win_quick_tag = cpl.win_inv_tag;
-                            quick_slots[ind].shared.tag = cpl.win_quick_tag;
-                            quick_slots[ind].item.invSlot = ind;
-                            quick_slots[ind].shared.is_spell = FALSE;
-                            /* now we do some tests... first, ensure this item can fit */
-                            update_quickslots(-1);
-                            /* now: if this is null, item is *not* in the main inventory
-                                               * of the player - then we can't put it in quickbar!
-                                               * Server will not allow apply of items in containers!
-                                               */
-                            if (!locate_item_from_inv(cpl.ob->inv, cpl.win_quick_tag))
-                            {
-                                sound_play_effect(SOUND_CLICKFAIL, 0, 0, 100);
-                                draw_info("Only items from main inventory allowed in quickbar!", COLOR_WHITE);
-                            }
-                            else
-                            {
-                                char      buf[256];
-                                sound_play_effect(SOUND_GET, 0, 0, 100); /* no bug - we 'get' it in quickslots */
-                                sprintf(buf, "set F%d to %s", ind + 1, locate_item(cpl.win_quick_tag)->s_name);
-                                draw_info(buf, COLOR_DGOLD);
-                            }
-                        }
-                    }
-                }
-
                 /* drop to ground */
-                if (mouseInPlayfield(x, y) || (y > 565 && x > 265 && x < 529))
+                if (mouseInPlayfield(x, y))
                 {
                     if (draggingInvItem(DRAG_GET_STATUS) != DRAG_QUICKSLOT_SPELL)
                         process_macro_keys(KEYFUNC_DROP, 0);
@@ -487,14 +466,6 @@ int Event_PollInputDevice(void)
 
                 cpl.inventory_win = old_inv_win;
                 cpl.win_inv_tag = old_inv_tag;
-            }
-            else if (draggingInvItem(DRAG_GET_STATUS) == DRAG_IWIN_BELOW)
-            {
-                if (!mouseInPlayfield(x, y) && y < 550)
-                {
-                    sound_play_effect(SOUND_GET, 0, 0, 100);
-                    process_macro_keys(KEYFUNC_GET, 0);
-                }
             }
             draggingInvItem(DRAG_NONE);
             itemExamined = 0; /* ready for next item */
@@ -504,17 +475,9 @@ int Event_PollInputDevice(void)
             mb_clicked = 0;
             if (GameStatus < GAME_STATUS_PLAY)
                 break;
-            /*
-            {
-            char tz[40];
-            sprintf(tz,"x: %d , y: %d", x, y);
-            draw_info(tz, COLOR_BLUE |NDI_PLAYER);
-            draw_info(tz, COLOR_BLUE);
-            }
-            */
 
-            /* textWindow: slider/resize event */
-
+            x_custom_cursor = x;
+            y_custom_cursor = y;
             if (cpl.menustatus == MENU_NPC)
             {
                 if (event.button.button ==0)
@@ -525,25 +488,13 @@ int Event_PollInputDevice(void)
 
             }
 
-            textwin_event(TW_CHECK_MOVE, &event);
+//            textwin_event(TW_CHECK_MOVE, &event);
 
-            /* scrollbar-sliders */
+            /* scrollbar-sliders We have to have it before the widgets cause of the menu*/
             if (event.button.button == SDL_BUTTON_LEFT && !draggingInvItem(DRAG_GET_STATUS))
             {
-                /* IWIN_INV Slider */
-                if (active_scrollbar == 1 || (cpl.inventory_win == IWIN_INV && y > 506 && y <583 && x>230 && x < 238))
-                {
-                    active_scrollbar = 1;
-                    if (old_mouse_y - y > 0)
-                        cpl.win_inv_slot -= INVITEMXLEN;
-                    else if (old_mouse_y - y < 0)
-                        cpl.win_inv_slot += INVITEMXLEN;
-                    if (cpl.win_inv_slot > cpl.win_inv_count)
-                        cpl.win_inv_slot = cpl.win_inv_count;
-                    break;
-                }
-                /* IWIN_INV Slider */
-                else if (active_scrollbar == 2 || (cpl.menustatus == MENU_NPC && y >= 140 && y <=478 && x>=566 && x <= 573))
+                /* NPC_GUI Slider */
+                if (active_scrollbar == 2 || (cpl.menustatus == MENU_NPC && y >= 136+Screensize.yoff && y <=474+Screensize.yoff && x>=561 && x <= 568))
                 {
                     active_scrollbar = 2;
 
@@ -572,6 +523,25 @@ int Event_PollInputDevice(void)
                 }
             }
 
+            /* We have to break now when menu is active -> Menu higher prio than any widget! */
+            if (cpl.menustatus != MENU_NO)
+                break;
+
+            if (widget_event_mousemv(x,y, &event))
+            {
+                /* NOTE: place here special handlings that have to be done, even if a widget owns it */
+                break;
+            }
+            /*
+            {
+            char tz[40];
+            sprintf(tz,"x: %d , y: %d", x, y);
+            draw_info(tz, COLOR_BLUE |NDI_PLAYER);
+            draw_info(tz, COLOR_BLUE);
+            }
+            */
+
+
             /* examine an item */
             /*
                   if ((cpl.inventory_win == IWIN_INV) && y > 85 && y < 120 && x < 140){
@@ -584,6 +554,17 @@ int Event_PollInputDevice(void)
             break;
 
         case SDL_MOUSEBUTTONDOWN:
+
+            /* get the mouse state and set an event (event removed at end of main loop) */
+            if(event.button.button == SDL_BUTTON_LEFT)
+                MouseEvent = MouseState = LB_DN;
+            else if(event.button.button == SDL_BUTTON_MIDDLE)
+                MouseEvent = MouseState = MB_DN;
+            else if(event.button.button == SDL_BUTTON_RIGHT)
+                MouseEvent = MouseState = RB_DN;
+            else
+                MouseEvent = MouseState = IDLE;
+
             global_buttons.mx_down = x;
             global_buttons.my_down = y;
             global_buttons.down = 1;
@@ -607,81 +588,24 @@ int Event_PollInputDevice(void)
 
             }
 
-            textwin_event(TW_CHECK_BUT_DOWN, &event);
-
-            /* close number input */
-            if (InputStringFlag && cpl.input_mode == INPUT_MODE_NUMBER)
-            {
-                if (x > 339 && x <349 && y> 510 && y < 522)
-                {
-                    SDL_EnableKeyRepeat(0, SDL_DEFAULT_REPEAT_INTERVAL);
-                    InputStringFlag = FALSE;
-                    InputStringEndFlag = TRUE;
-                }
-                break;
-            }
-
-            /* schow-menu buttons*/
-            if (x >= 748 && x <= 790)
-            {
-                if (show_help_screen)
-                {
-                    if (y >= 1 && y <= 49) /* next help page */
-                    {
-                        process_macro_keys(KEYFUNC_HELP, 0);
-                    }
-                    else if (y >= 51 && y <= 74) /* close online help  */
-                    {
-                        sound_play_effect(SOUND_SCROLL, 0, 0, 100);
-                        show_help_screen = 0;
-                    }
-                }
-                else if (y >= 1 && y <= 24) /* spell list */
-                    check_menu_macros("?M_SPELL_LIST");
-                else if (y >= 26 && y <= 49) /* skill list */
-                    check_menu_macros("?M_SKILL_LIST");
-                else if (y >= 51 && y <= 74 && cpl.menustatus != MENU_NPC) /* quest list */
-                    send_command("/qlist", -1, SC_NORMAL);
-                else if (y >= 76 && y <= 99) /* online help */
-                    process_macro_keys(KEYFUNC_HELP, 0);
-            }
-
-            if (cpl.menustatus != MENU_NO)
-                break;
-
-            /* toggle range */
-            if (x > 3 && x <37 && y> 403 && y < 437)
-            {
-                if (event.button.button == SDL_BUTTON_RIGHT)
-                    process_macro_keys(KEYFUNC_RANGE_BACK, 0);
-                else
-                    process_macro_keys(KEYFUNC_RANGE, 0);
-                break;
-            }
-            /* Toggle textwin */
-            if (x >= 488 && x < 528 && y <536 && y> 521)
-            {
-                if (options.use_TextwinSplit)
-                    options.use_TextwinSplit = 0;
-                else
-                    options.use_TextwinSplit = 1;
-                sound_play_effect(SOUND_SCROLL, 0, 0, 100);
-                break;
-            }
-
-            /* Prayer button */
-            if (x > 85 && x < 115 && y <435 && y> 410)
-            {
-                if (!client_command_check("/rest"))
-                    send_command("/rest", -1, SC_NORMAL);
-                break;
-            }
 
             /********************************************************
               beyond here only when no menu is active.
             *********************************************************/
             if (cpl.menustatus != MENU_NO)
                 break;
+
+
+
+            /********************************
+             * Widget System
+             ********************************/
+            if (widget_event_mousedn(x,y, &event))
+            {
+                /* NOTE: place here special handlings that have to be done, even if a widget owns it */
+                break;
+            }
+
 
             /***********************
               mouse in Play-field
@@ -704,128 +628,8 @@ int Event_PollInputDevice(void)
             /***********************
                   * mouse in Menue-field *
                   ************************/
-            /* combat modus */
-            if ((cpl.inventory_win == IWIN_BELOW) && y > 498 && y < 521 && x < 27)
-            {
-                check_keys(SDLK_c);
-                break;
-            }
-            /* talk button */
-            if ((cpl.inventory_win == IWIN_BELOW) && y > 498 + 27 && y <521 + 27 && x> 200 + 70 && x < 240 + 70)
-            {
-                if (cpl.target_code)
-                    send_command("/talk hello", -1, SC_NORMAL);
-                break;
-            }
-
-            /* inventory (open / close) */
-            if (x <112 && y> 466 && y < 496)
-            {
-                if (cpl.inventory_win == IWIN_INV)
-                    cpl.inventory_win = IWIN_BELOW;
-                else
-                    cpl.inventory_win = IWIN_INV;
-                break;
-            }
 
 
-            /* drag from quickslots */
-            else if (x >= SKIN_POS_QUICKSLOT_X
-                     && x < SKIN_POS_QUICKSLOT_X + 282
-                     && y >= SKIN_POS_QUICKSLOT_Y
-                     && y < SKIN_POS_QUICKSLOT_Y + 42)
-            {
-                int   ind = get_quickslot(x, y);
-                if (ind != -1 && quick_slots[ind].shared.tag != -1) /* valid slot */
-                {
-                    cpl.win_quick_tag = quick_slots[ind].shared.tag;
-                    if ((SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)))
-                    {
-                        if (quick_slots[ind].shared.is_spell == TRUE)
-                        {
-                            draggingInvItem(DRAG_QUICKSLOT_SPELL);
-                            quick_slots[ind].spell.spellNr = quick_slots[ind].shared.tag;
-                            cpl.win_quick_tag = ind;
-                        }
-                        else
-                        {
-                            draggingInvItem(DRAG_QUICKSLOT);
-                        }
-                        quick_slots[ind].shared.tag = -1;
-                    }
-                    else
-                    {
-                        int stemp = cpl.      inventory_win, itemp = cpl.win_inv_tag;
-                        cpl.inventory_win = IWIN_INV;
-                        cpl.win_inv_tag = quick_slots[ind].shared.tag;
-                        process_macro_keys(KEYFUNC_APPLY, 0);
-                        cpl.inventory_win = stemp;
-                        cpl.win_inv_tag = itemp;
-                    }
-                }
-                break;
-            }
-
-            /* inventory ( IWIN_INV )  */
-            if (y > 497 && y <593 && x>8 && x < 238)
-            {
-                if (x > 230)/* scrollbar */
-                {
-                    if (y < 506 && cpl.win_inv_slot >= INVITEMXLEN)
-                        cpl.win_inv_slot -= INVITEMXLEN;
-                    else if (y > 583)
-                    {
-                        cpl.win_inv_slot += INVITEMXLEN;
-                        if (cpl.win_inv_slot > cpl.win_inv_count)
-                            cpl.win_inv_slot = cpl.win_inv_count;
-                    }
-                }
-                else
-                {
-                    /* stuff */
-                    if (event.button.button == 4 && cpl.win_inv_slot >= INVITEMXLEN)
-                        cpl.win_inv_slot -= INVITEMXLEN;
-                    else if (event.button.button == 5)
-                    {
-                        cpl.win_inv_slot += INVITEMXLEN;
-                        if (cpl.win_inv_slot > cpl.win_inv_count)
-                            cpl.win_inv_slot = cpl.win_inv_count;
-                    }
-                    else if (event.button.button == SDL_BUTTON_LEFT || event.button.button == SDL_BUTTON_RIGHT)
-                    {
-                        cpl.win_inv_slot = (y - 497) / 32 * INVITEMXLEN + (x - 8) / 32 + cpl.win_inv_start;
-                        cpl.win_inv_tag = get_inventory_data(cpl.ob, &cpl.win_inv_ctag, &cpl.win_inv_slot,
-                                                             &cpl.win_inv_start, &cpl.win_inv_count, INVITEMXLEN,
-                                                             INVITEMYLEN);
-                        if (event.button.button == SDL_BUTTON_RIGHT)
-                            process_macro_keys(KEYFUNC_MARK, 0);
-                        else
-                        {
-                            if (cpl.inventory_win == IWIN_INV)
-                                draggingInvItem(DRAG_IWIN_INV);
-                        }
-                    }
-                }
-                break;
-            }
-
-            /* ground ( IWIN_BELOW )  */
-            if (y > 565 && x > 265 && x < 529)
-            {
-                item     *Item;
-                if (cpl.inventory_win == IWIN_INV)
-                    cpl.inventory_win = IWIN_BELOW;
-                cpl.win_below_slot = (x - 265) / 32;
-                cpl.win_below_tag = get_inventory_data(cpl.below, &cpl.win_below_ctag, &cpl.win_below_slot,
-                                                       &cpl.win_below_start, &cpl.win_below_count, INVITEMBELOWXLEN,
-                                                       INVITEMBELOWYLEN);
-                Item = locate_item(cpl.win_below_tag);
-                if ((SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)))
-                    draggingInvItem(DRAG_IWIN_BELOW);
-                else
-                    process_macro_keys(KEYFUNC_APPLY, 0);
-                break;
-            }
             break; /* SDL_MOUSEBUTTONDOWN */
 
         case SDL_KEYUP:
@@ -1416,6 +1220,9 @@ int key_event(SDL_KeyboardEvent *key)
                 break;
             case SDLK_LSHIFT:
             case SDLK_RSHIFT:
+                SetPriorityWidget(MAIN_INV_ID);
+                if (!options.playerdoll)
+                    SetPriorityWidget(PDOLL_ID);
                 cpl.inventory_win = IWIN_INV;
                 break;
             case SDLK_RALT:
@@ -1506,7 +1313,7 @@ int key_event(SDL_KeyboardEvent *key)
 
 
 /* here we look in the user defined keymap and try to get same useful macros */
-static Boolean check_menu_macros(char *text)
+Boolean check_menu_macros(char *text)
 {
     if (!strcmp("?M_SPELL_LIST", text))
     {
@@ -1519,7 +1326,9 @@ static Boolean check_menu_macros(char *text)
             cpl.menustatus = MENU_SPELL;
         }
         else
+        {
             cpl.menustatus = MENU_NO;
+        }
 
         sound_play_effect(SOUND_SCROLL, 0, 0, 100);
         reset_keys();
@@ -1605,7 +1414,7 @@ static int check_keys_menu_status(int key)
 }
 
 
-static void check_keys(int key)
+void check_keys(int key)
 {
     int     i, j;
     char    buf[512];
@@ -1621,8 +1430,9 @@ static void check_keys(int key)
                 {
                     draw_info(bindkey_list[j].entry[i].text, COLOR_DGOLD);
                     strcpy(buf, bindkey_list[j].entry[i].text);
-                    if (!client_command_check(buf))
-                        send_command(buf, -1, bindkey_list[j].entry[i].mode);
+//                    if (!client_command_check(buf))
+//                        send_command(buf, -1, bindkey_list[j].entry[i].mode);
+                    break_multicommand(buf, -1, bindkey_list[j].entry[i].mode);
                 }
                 return;
             }
@@ -1666,21 +1476,29 @@ Boolean process_macro_keys(int id, int value)
     {
     case KEYFUNC_PAGEUP:
         if (options.use_TextwinSplit)
-            txtwin[TW_MSG].scroll++;
+        {
+            txtwin[TW_CHAT].scroll++;
+            WIDGET_REDRAW(CHATWIN_ID);
+        }
         else
             txtwin[TW_MIX].scroll++;
         break;
     case KEYFUNC_PAGEDOWN:
         if (options.use_TextwinSplit)
-            txtwin[TW_MSG].scroll--;
+        {
+            txtwin[TW_CHAT].scroll--;
+            WIDGET_REDRAW(CHATWIN_ID);
+        }
         else
             txtwin[TW_MIX].scroll--;
         break;
     case KEYFUNC_PAGEUP_TOP:
-        txtwin[TW_CHAT].scroll++;
+        txtwin[TW_MSG].scroll++;
+        WIDGET_REDRAW(MSGWIN_ID);
         break;
     case KEYFUNC_PAGEDOWN_TOP:
-        txtwin[TW_CHAT].scroll--;
+        txtwin[TW_MSG].scroll--;
+        WIDGET_REDRAW(MSGWIN_ID);
         break;
 
     case KEYFUNC_TARGET_ENEMY:
@@ -1703,9 +1521,13 @@ Boolean process_macro_keys(int id, int value)
             save_keybind_file(KEYBIND_FILE);
 
         if (cpl.menustatus != MENU_SPELL)
+        {
             cpl.menustatus = MENU_SPELL;
+        }
         else
+        {
             cpl.menustatus = MENU_NO;
+        }
         reset_keys();
         break;
     case KEYFUNC_SKILL:
@@ -1755,6 +1577,7 @@ Boolean process_macro_keys(int id, int value)
         if (cpl.input_mode == INPUT_MODE_NO)
         {
             cpl.input_mode = INPUT_MODE_CONSOLE;
+            SetPriorityWidget(IN_CONSOLE_ID);
             open_input_mode(253);
         }
         else if (cpl.input_mode == INPUT_MODE_CONSOLE)
@@ -1934,6 +1757,7 @@ Boolean process_macro_keys(int id, int value)
 
             reset_keys();
             cpl.input_mode = INPUT_MODE_NUMBER;
+            SetPriorityWidget(IN_NUMBER_ID);
             open_input_mode(22);
             cpl.loc = loc;
             cpl.tag = tag;
@@ -2062,6 +1886,7 @@ Boolean process_macro_keys(int id, int value)
         {
             reset_keys();
             cpl.input_mode = INPUT_MODE_NUMBER;
+            SetPriorityWidget(IN_NUMBER_ID);
             open_input_mode(22);
             cpl.loc = loc;
             cpl.tag = tag;
@@ -2079,6 +1904,12 @@ Boolean process_macro_keys(int id, int value)
         client_send_move(loc, tag, nrof);
         return FALSE;
         break;
+    case KEYFUNC_SCREENTOGGLE:
+        if (!ToggleScreenFlag)
+            ToggleScreenFlag = TRUE;
+        return FALSE;
+        break;
+
 
     default:
         return TRUE;
@@ -2164,7 +1995,7 @@ static void cursor_keys(int num)
 /******************************************************************
  Handle quickslot key event.
 ******************************************************************/
-static void quickslot_key(SDL_KeyboardEvent *key, int slot)
+void quickslot_key(SDL_KeyboardEvent *key, int slot)
 {
     int     tag;
     char    buf[256];
@@ -2215,7 +2046,7 @@ static void quickslot_key(SDL_KeyboardEvent *key, int slot)
         }
     }
     /* apply item or ready spell */
-    else if (key)
+    else
     {
         if (quick_slots[slot].shared.tag != -1)
         {
@@ -2311,7 +2142,7 @@ static void move_keys(int num)
             sprintf(msg, "fire %s", directions_name[num]);
         }
 
-		fire_command(buf);
+        fire_command(buf);
         draw_info(msg,COLOR_DGOLD);
         return;
     }
@@ -2915,7 +2746,7 @@ void check_menu_keys(int menu, int key)
             else
                 reset_gui_interface();
         }
-	break;
+    break;
 
     case MENU_OPTION:
         switch (key)
@@ -2970,8 +2801,84 @@ void check_menu_keys(int menu, int key)
                 save_keybind_file(KEYBIND_FILE);
             if (cpl.menustatus == MENU_OPTION)
             {
+                Boolean res_change = FALSE;
                 save_options_dat();
                 Mix_VolumeMusic(options.music_volume);
+                if (options.playerdoll)
+                    cur_widget[PDOLL_ID].show = TRUE;
+
+                /* ToggleScreenFlag sets changes this option in the main loop
+                 * so we revert this setting, also if a resolution change occurs
+                 * we first change the resolution, without toggling, and after that
+                 * succeeds we use the specialized attempt_fullscreentoggle
+                 */
+                if (options.fullscreen_flag != options.fullscreen)
+                {
+                    if (options.fullscreen)
+                        options.fullscreen = FALSE;
+                    else
+                        options.fullscreen = TRUE;
+                    ToggleScreenFlag = TRUE;
+                }
+                /* lets add on the fly resolution change for testing */
+                /* i know this part is heavy, but we want to make sure we try everything
+                 * before we shut down the client
+                 */
+                if (Screensize.x!=Screendefs[options.resolution].x || Screensize.y!=Screendefs[options.resolution].y)
+                {
+                    _screensize sz_tmp = Screensize;
+                    Screensize=Screendefs[options.resolution];
+
+                    Uint32 videoflags = get_video_flags();
+                    if ((ScreenSurface = SDL_SetVideoMode(Screensize.x, Screensize.y, options.used_video_bpp, videoflags)) == NULL)
+                    {
+                        draw_info_format(COLOR_RED, "Couldn't set %dx%dx%d video mode: %s\n", Screensize.x, Screensize.y, options.used_video_bpp, SDL_GetError());
+                        LOG(LOG_ERROR, "Couldn't set %dx%dx%d video mode: %s\n", Screensize.x, Screensize.y, options.used_video_bpp, SDL_GetError());
+                        Screensize=sz_tmp;
+                        int i;
+                        for (i=0;i<16;i++)
+                            if (Screensize.x==Screendefs[i].x && Screensize.y == Screendefs[i].y)
+                            {
+                                options.resolution = i;
+                                break;
+                            }
+                        draw_info_format(COLOR_RED, "Try to switch back to old setting...");
+                        LOG(LOG_ERROR, "Try to switch back to old setting...");
+
+                        if ((ScreenSurface = SDL_SetVideoMode(Screensize.x, Screensize.y, options.used_video_bpp, videoflags)) == NULL)
+                        {
+                            draw_info_format(COLOR_RED, "Couldn't set %dx%dx%d video mode: %s\n", Screensize.x, Screensize.y, options.used_video_bpp, SDL_GetError());
+                            LOG(LOG_ERROR, "Couldn't set %dx%dx%d video mode: %s\n", Screensize.x, Screensize.y, options.used_video_bpp, SDL_GetError());
+                            Screensize=Screendefs[0];
+                            options.resolution = 0;
+                            draw_info_format(COLOR_RED, "Try to switch back to 800x600...");
+                            LOG(LOG_ERROR, "Try to switch back to 800x600...");
+                            if ((ScreenSurface = SDL_SetVideoMode(Screensize.x, Screensize.y, options.used_video_bpp, videoflags)) == NULL)
+                            {
+                                /* now we have a problem */
+                                draw_info_format(COLOR_RED, "Couldn't set %dx%dx%d video mode: %s\nFATAL ERROR - exit", Screensize.x, Screensize.y, options.used_video_bpp, SDL_GetError());
+                                LOG(LOG_ERROR, "Couldn't set %dx%dx%d video mode: %s\nFATAL ERROR - exit", Screensize.x, Screensize.y, options.used_video_bpp, SDL_GetError());
+                                Screensize=sz_tmp;
+                                exit(2);
+                            }
+                            else
+                                res_change = TRUE;
+                        }
+                        else
+                            res_change = TRUE;
+                    }
+                    else
+                        res_change = TRUE;
+                }
+                if (res_change)
+                {
+                    const SDL_VideoInfo    *info    = NULL;
+                    info = SDL_GetVideoInfo();
+                    options.real_video_bpp = info->vfmt->BitsPerPixel;
+//                    SDL_FreeSurface(ScreenSurfaceMap);
+//                    ScreenSurfaceMap=SDL_CreateRGBSurface(ScreenSurface->flags, Screensize.x, Screensize.y, options.used_video_bpp, 0,0,0,0);
+
+                }
             }
             cpl.menustatus = MENU_NO;
             reset_keys();

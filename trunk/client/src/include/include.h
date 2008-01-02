@@ -74,7 +74,10 @@ typedef signed char     sint8;
 
 #include <client.h>
 #include <sdlsocket.h>
+#include <chatfilter.h>
 #include <ignore.h>
+#include <buddy.h>
+#include <kerbholz.h>
 #include <commands.h>
 #include <main.h>
 #include <player.h>
@@ -91,4 +94,13 @@ typedef signed char     sint8;
 #include <dialog.h>
 #include <group.h>
 #include <filewrap.h>
+#include <widget.h>
+#include <physfs.h>
+#include <physfsrwops.h>
+
+/* some older physfs libs need that */
+#ifndef PHYSFS_File
+#define PHYSFS_File PHYSFS_file
+#endif
+
 #endif

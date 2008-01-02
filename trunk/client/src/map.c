@@ -152,8 +152,8 @@ void map_draw_map_clear(void)
     {
         for (x = 0; x < MapStatusX; x++)
         {
-            xpos = MAP_START_XOFF + x * MAP_TILE_YOFF - y * MAP_TILE_YOFF;
-            ypos = MAP_START_YOFF + x * MAP_TILE_XOFF + y * MAP_TILE_XOFF;
+            xpos = options.mapstart_x + x * MAP_TILE_YOFF - y * MAP_TILE_YOFF;
+            ypos = options.mapstart_y + x * MAP_TILE_XOFF + y * MAP_TILE_XOFF;
             sprite_blt_map(Bitmaps[BITMAP_BLACKTILE], xpos, ypos, NULL, NULL);
         }
     }
@@ -188,7 +188,7 @@ void UpdateMapName(char *name)
          */
         sound_fadeout_music(0);
     }
-
+    cur_widget[MAPNAME_ID].wd = get_string_pixel_length(name, &SystemFont);
     strcpy(MapData.name, name);
 }
 
@@ -372,7 +372,7 @@ void map_draw_map(void)
     player_posx = MapStatusX - (MapStatusX / 2) - 1;
     player_posy = MapStatusY - (MapStatusY / 2) - 1;
     player_pixx = MAP_START_XOFF + player_posx * MAP_TILE_YOFF - player_posy * MAP_TILE_YOFF + 20;
-    player_pixy = MAP_START_YOFF + player_posx * MAP_TILE_XOFF + player_posy * MAP_TILE_XOFF - 14;
+    player_pixy = 0 + player_posx * MAP_TILE_XOFF + player_posy * MAP_TILE_XOFF - 14;
     player_dummy.border_left = -5;
     player_dummy.border_right = 0;
     player_dummy.border_up = 0;
@@ -409,9 +409,9 @@ void map_draw_map(void)
                 for (k = kk; k <= kt; k++)
                 {
                     xpos = MAP_START_XOFF + x * MAP_TILE_YOFF - y * MAP_TILE_YOFF;
-                    ypos = MAP_START_YOFF + x * MAP_TILE_XOFF + y * MAP_TILE_XOFF;
-                    if (!k)
-                        sprite_blt_map(Bitmaps[BITMAP_BLACKTILE], xpos, ypos, NULL, NULL);
+                    ypos = 0 + x * MAP_TILE_XOFF + y * MAP_TILE_XOFF;
+                 //   if (!k)
+                   //     sprite_blt_map(Bitmaps[BITMAP_BLACKTILE], xpos, ypos, NULL, NULL);
                     if (!debug_layer[k])
                         continue;
 
@@ -581,7 +581,7 @@ void map_draw_map(void)
                                             break;
                                         }
                                     }
-                                    StringBlt(ScreenSurface, &Font6x3Out, map->pname[k],
+                                    StringBlt(ScreenSurfaceMap, &Font6x3Out, map->pname[k],
                                               xpos - (strlen(map->pname[k]) * 2) + 22, ypos - 48, col, NULL, NULL);
                                 }
                             }
@@ -612,37 +612,89 @@ void map_draw_map(void)
                                 {
                                     if (face_sprite)
                                     {
-                                        if (xml == MAP_TILE_POS_XOFF)
-                                            xtemp = (int) (((double) xml / 100.0) * 25.0);
-                                        else
-                                            xtemp = (int) (((double) xml / 100.0) * 20.0);
-                                        sprite_blt(Bitmaps[BITMAP_ENEMY2], xmpos + xtemp - 3, yl - 11, NULL, NULL);
-                                        sprite_blt(Bitmaps[BITMAP_ENEMY1], xmpos + xtemp + (xml - xtemp * 2) - 3,
-                                                   yl - 11, NULL, NULL);
+                                        /* 2007-01-15 Alderan: modifying/extend robed's HP patch */
+                                        int hp_col;
+                                        Uint32 sdl_col;
 
-                                        temp = (xml - xtemp * 2) - 1;
-                                        if (temp <= 0)
+
+                                             if (cpl.target_hp > 90) hp_col = COLOR_GREEN;
+                                        else if (cpl.target_hp > 75) hp_col = COLOR_DGOLD;
+                                        else if (cpl.target_hp > 50) hp_col = COLOR_HGOLD;
+                                        else if (cpl.target_hp > 25) hp_col = COLOR_ORANGE;
+                                        else if (cpl.target_hp > 10) hp_col = COLOR_YELLOW;
+                                        else                         hp_col = COLOR_RED;
+
+                                        if(xml == MAP_TILE_POS_XOFF)
+                                            xtemp = (int) (((double)xml/100.0)*25.0);
+                                        else
+                                            xtemp = (int) (((double)xml/100.0)*20.0);
+
+                                        temp = (xml-xtemp*2)-1;
+                                        if (temp <=0)
                                             temp = 1;
-                                        if (temp >= 300)
+                                        if(temp >= 300)
                                             temp = 300;
                                         mid = map->probe[k];
-                                        if (mid <= 0)
+                                        if(mid<=0)
                                             mid = 1;
-                                        if (mid > 100)
+                                        if (mid>100)
                                             mid = 100;
-                                        temp = (int) (((double) temp / 100.0) * (double) mid);
-                                        rect.h = 2 ;
-                                        rect.w = temp ;
+                                        temp = (int)(((double)temp/100.0)*(double)mid);
+                                        rect.h=2 ;
+                                        rect.w=temp ;
                                         rect.x = 0;
                                         rect.y = 0;
-                                        sprite_blt(Bitmaps[BITMAP_PROBE], xmpos + xtemp - 1, yl - 9, &rect, NULL);
+
+                                        sdl_col = SDL_MapRGB(ScreenSurfaceMap->format,
+                                               Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[hp_col].r,
+                                               Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[hp_col].g,
+                                               Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[hp_col].b);
+
+                                        /* first we draw the bar: */
+                                        rect.x = xmpos+xtemp-1;
+                                        rect.y = yl-9;
+                                        rect.h = 1;
+                                        SDL_FillRect(ScreenSurfaceMap,&rect,sdl_col);
+                                        /* horizontal lines of left bracked */
+                                        rect.h=1;
+                                        rect.w=3;
+                                        rect.x = xmpos+xtemp-3;
+                                        rect.y = yl-11;
+                                        SDL_FillRect(ScreenSurfaceMap,&rect,sdl_col);
+                                        rect.y = yl-7;
+                                        SDL_FillRect(ScreenSurfaceMap,&rect,sdl_col);
+                                        /* hor. lines of right bracked */
+                                        rect.x = xmpos+xtemp+(xml-xtemp*2)-3;
+                                        SDL_FillRect(ScreenSurfaceMap,&rect,sdl_col);
+                                        rect.y = yl-11;
+                                        SDL_FillRect(ScreenSurfaceMap,&rect,sdl_col);
+                                        /* vertical lines */
+                                        rect.w = 1;
+                                        rect.h = 5;
+                                        rect.x = xmpos+xtemp-3;
+                                        rect.y = yl-11;
+                                        SDL_FillRect(ScreenSurfaceMap,&rect,sdl_col);
+                                        rect.x = xmpos+xtemp+(xml-xtemp*2)-1;
+                                        SDL_FillRect(ScreenSurfaceMap,&rect,sdl_col);
+
+                                        /* Draw the name of target if it's not a player */
+                                        if (!(options.player_names && map->pname[k][0]))
+                                            StringBlt(ScreenSurfaceMap, &Font6x3Out, cpl.target_name, xpos - (strlen(cpl.target_name)*2) + 22, yl - 26, cpl.target_color, NULL, NULL);
+                                        /* Draw HP remaining percent */
+                                        if (cpl.target_hp>0)
+                                        {
+                                            char hp_text[9];
+                                            int hp_len;
+                                            hp_len = sprintf((char *)hp_text, "HP: %d%%", cpl.target_hp);
+                                            StringBlt(ScreenSurfaceMap, &Font6x3Out, hp_text, xpos - hp_len*2 + 22, yl - 36, hp_col, NULL, NULL);
+                                        }
                                     }
                                 }
                             }
                         }
                     }
                 }
-            };
+            }
         }
     }
 }
@@ -660,33 +712,41 @@ void map_draw_map(void)
 ******************************************************************/
 int get_tile_position(int x, int y, int *tx, int *ty)
 {
-    if (x < MAP_START_XOFF)
-        x -= MAP_TILE_POS_XOFF;
-    x -= MAP_START_XOFF;
-    y -= MAP_START_YOFF;
-    *tx = x / MAP_TILE_POS_XOFF + y / MAP_TILE_YOFF;
-    *ty = y / MAP_TILE_YOFF - x / MAP_TILE_POS_XOFF;
+    if (x < (int)((options.mapstart_x+390)*(options.zoom/100.0)))
+        x -= (int)(MAP_TILE_POS_XOFF*(options.zoom/100.0));
+    x -= (int)((options.mapstart_x+390)*(options.zoom/100.0));
+    y -= (int)(options.mapstart_y*(options.zoom/100.0));
+    *tx = x / (int)(MAP_TILE_POS_XOFF*(options.zoom/100.0)) + y / (int)(MAP_TILE_YOFF*(options.zoom/100.0));
+    *ty = y / (int)(MAP_TILE_YOFF*(options.zoom/100.0)) - x / (int)(MAP_TILE_POS_XOFF*(options.zoom/100.0));
 
     if (x < 0)
-        x += (MAP_TILE_POS_XOFF << 3) - 1;
-    x %= MAP_TILE_POS_XOFF;
-    y %= MAP_TILE_YOFF;
-
-    if (x < MAP_TILE_POS_XOFF2)
     {
-        if (x + y + y < MAP_TILE_POS_XOFF2)
+        x += ((int)(MAP_TILE_POS_XOFF*(options.zoom/100.0)) << 3) - 1;
+ //       draw_info_format(COLOR_GREEN,"x<0 wert: %d",((int)(MAP_TILE_POS_XOFF*(options.zoom/100.0)) << 3) - 1);
+
+
+    }
+
+
+    x %= (int)(MAP_TILE_POS_XOFF*(options.zoom/100.0));
+    y %= (int)(MAP_TILE_YOFF*(options.zoom/100.0));
+
+    if (x < (int)(MAP_TILE_POS_XOFF2*(options.zoom/100.0)))
+    {
+        if (x + y + y < (int)(MAP_TILE_POS_XOFF2*(options.zoom/100.0)))
             --(*tx);
         else if (y - x > 0)
             ++(*ty);
     }
     else
     {
-        x -= MAP_TILE_POS_XOFF2;
+        x -= (int)(MAP_TILE_POS_XOFF2*(options.zoom/100.0));
         if (x - y - y > 0)
             --(*ty);
-        else if (x + y + y > MAP_TILE_POS_XOFF)
+        else if (x + y + y > (int)(MAP_TILE_POS_XOFF*(options.zoom/100.0)))
             ++(*tx);
     }
+
     if (*tx <0 || *tx>16 || *ty <0 || *ty>16)
         return -1;
     return 0;
