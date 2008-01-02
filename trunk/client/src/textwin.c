@@ -194,7 +194,8 @@ void draw_info(char *str, int flags)
     char       *text;
     int         actWin, z;
     char       *tag;
-    unsigned char    actChar;
+/*    unsigned char    actChar; // unused
+ */
 
     /* Hmm I'm not 100& sure, if this is the best place for that */
     char        *enemy1;
@@ -587,7 +588,7 @@ void textwin_show(int x, int y)
 ******************************************************************/
 void widget_textwin_show(int x, int y, int actWin)
 {
-    int         len, wID;
+    int         len, wID = 0;
     SDL_Rect    box;
     _BLTFX      bltfx;
 
@@ -674,7 +675,7 @@ void widget_textwin_show(int x, int y, int actWin)
 *****************************************************************/
 void textwin_button_event(int actWin, SDL_Event event)
 {
-    int wID;
+    int wID = 0;
 
     if (actWin==TW_CHAT)
         wID=CHATWIN_ID;
@@ -722,7 +723,7 @@ void textwin_button_event(int actWin, SDL_Event event)
 int textwin_move_event(int actWin, SDL_Event event)
 {
 
-    int wID;
+    int wID = 0;
 
     txtwin[actWin].highlight = TW_HL_NONE;
 

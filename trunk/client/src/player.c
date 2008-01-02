@@ -918,7 +918,7 @@ void widget_show_skill_exp(int x, int y)
             long int liLExpTNL = 0;
             long int liTExp = 0;
             long int liTExpTNL = 0;
-            float fLExpPercent;
+            float fLExpPercent = 0;
 
             if (skill_list[cpl.skill_g].entry[cpl.skill_e].exp >= 0)
             {

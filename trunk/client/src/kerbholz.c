@@ -85,7 +85,7 @@ void addNewKill(char *name, unsigned int kills, unsigned int session)
     }
     else
     {
-        ptr=kills_list_start;
+        ptr=ptr1=kills_list_start;
         while(ptr != NULL && (stricmp(ptr->name,name) < 0))
         {
             ptr1=ptr;
