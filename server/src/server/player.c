@@ -36,7 +36,7 @@ player * find_player(char *plname)
     char name[MAX_PLAYER_NAME > (16 - 1) ? MAX_PLAYER_NAME + 1 : 16];
     const char *name_hash;
 
-    int         name_len                                                = strlen(plname); /* we assume a legal string */
+    int name_len = strlen(plname); /* we assume a legal string */
     if (name_len <= 1 || name_len > MAX_PLAYER_NAME)
         return NULL;
 

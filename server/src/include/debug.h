@@ -80,7 +80,8 @@
 /* #define DEBUG_PROBE_IS_CHARM */
 
 /* Controls debugging of the mob behaviours and movement */
-/*#define DEBUG_AI*/
+#define DEBUG_AI
+/*#define DEBUG_AI_ALL */ /* some extra info - enable this for debuging */
 /*#define DEBUG_AI_WAYPOINT*/
 /*#define DEBUG_AI_NPC_KNOWN*/
 
