@@ -57,6 +57,16 @@ static void party_dump(object *pobj)
 }
 #endif
 
+/* help function to clear group data */
+static inline void party_clear_links(player *pl)
+{
+	pl->group_status = GROUP_STATUS_FREE;
+	pl->group_id = GROUP_NO;
+	pl->group_leader = NULL;
+	pl->group_next = NULL;
+	pl->group_prev = NULL;
+}
+
 /* Invite <name> to a group.
  * Command can only be used from a group leader
  * or someone without a group.
@@ -210,7 +220,9 @@ int command_party_join ( object *pl, char *params)
         target = CONTR(activator->group_leader);
     else if(!(target = find_player_hash(activator->group_invite_name)))
     {
-        new_draw_info_format(NDI_UNIQUE, 0,pl, "/join: %s is offline.", STRING_SAFE(activator->group_invite_name));
+        new_draw_info_format(NDI_YELLOW, 0,pl, "/join: %s is offline.", STRING_SAFE(activator->group_invite_name));
+		party_client_group_kill(pl);
+		party_clear_links(activator);
         return 0;
     }
 
@@ -218,7 +230,12 @@ int command_party_join ( object *pl, char *params)
      * group, this invite should fail.
      */
     if(target->group_status & GROUP_STATUS_GROUP && target->group_leader != target->ob)
-        new_draw_info_format(NDI_UNIQUE, 0,pl, "/join: %s joined another group.", query_name(target->ob));
+	{
+        new_draw_info_format(NDI_YELLOW, 0,pl, "/join: %s joined another group.", query_name(target->ob));
+		party_client_group_kill(pl);
+		party_clear_links(activator);
+		return 0;
+	}
 
     /* target is the group leader. activator the member who wants join */
     party_add_member(target, activator);
@@ -375,16 +392,6 @@ void party_add_member(player *leader, player *member)
     new_draw_info(NDI_YELLOW, 0, member->ob, "Use /gsay for group speak or /help group for help.");
     party_client_group_status(member->ob);
 
-}
-
-/* help function to clear group data */
-static inline void party_clear_links(player *pl)
-{
-    pl->group_status = GROUP_STATUS_FREE;
-    pl->group_id = GROUP_NO;
-    pl->group_leader = NULL;
-    pl->group_next = NULL;
-    pl->group_prev = NULL;
 }
 
 /* remove a player from a group */

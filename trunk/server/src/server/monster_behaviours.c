@@ -32,8 +32,6 @@
 
 #include <aiconfig.h>
 
-#define DEBUG_AI
-
 /* Those behaviours are called from other behaviours (ugly, I know...) */
 void ai_choose_enemy(object *op, struct mob_behaviour_param *params);
 void ai_move_towards_owner(object *op, struct mob_behaviour_param *params, move_response *response);
@@ -1740,7 +1738,7 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
                             MOB_DATA(op)->antiluring_timer--;
                             if(MOB_DATA(op)->antiluring_timer <= 0)
                             {
-#ifdef DEBUG_AI
+#ifdef DEBUG_AI_ALL
                                 LOG(llevDebug, "ai_choose_enemy() '%s' ignoring '%s' - too far from home\n",
                                         query_name(op), query_name(tmp->obj));
 #endif

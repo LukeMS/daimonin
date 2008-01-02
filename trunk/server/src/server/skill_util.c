@@ -752,7 +752,7 @@ int change_skill(object *who, int sk_index)
     {
         if (apply_special(who, tmp, AP_APPLY))
         {
-            LOG(llevBug, "BUG: change_skill(): can't apply new skill (%s - %d)\n", who->name, sk_index);
+            /*LOG(llevDebug, "BUG: change_skill(): can't apply new skill (%s - %d)\n", who->name, sk_index);*/
             return 0;
         }
         return 1;
@@ -762,7 +762,7 @@ int change_skill(object *who, int sk_index)
 	{
         if (apply_special(who, who->chosen_skill, AP_UNAPPLY))
             LOG(llevBug, "BUG: change_skill(): can't unapply old skill (%s - %d)\n", who->name, sk_index);
-		fix_player(who, "change_skill AP_UNAPPLY");
+		FIX_PLAYER(who, "change_skill AP_UNAPPLY");
 	}
     if (sk_index >= 0)
         new_draw_info_format(NDI_UNIQUE, 0, who, "You have no knowledge of %s.", skills[sk_index].name);
@@ -784,12 +784,11 @@ int change_skill_to_skill(object *who, object *skl)
 	if (who->chosen_skill == skl)
         return 0;
 
-	LOG(llevDebug, "APPLYcsts: %s change %s to %s.\n", query_name(who), query_name(who->chosen_skill), query_name(skl));
+	/*LOG(llevDebug, "APPLYcsts: %s change %s to %s.\n", query_name(who), query_name(who->chosen_skill), query_name(skl));*/
 
 	if (skl->env != who)
     {
-        LOG(llevBug, "BUG: change_skill_to_skill: skill is not in players inventory (%s - %s)\n", query_name(who),
-            query_name(skl));
+        /*LOG(llevDebug, "BUG: change_skill_to_skill: skill is not in players inventory (%s - %s)\n", query_name(who), query_name(skl));*/
         return 1;
     }
 
