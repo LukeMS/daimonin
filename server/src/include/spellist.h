@@ -25,19 +25,22 @@
 
 spell spells[NROFREALSPELLS]          =
 {
-    {"firestorm",                   SPELL_TYPE_WIZARD, 13, 
+
+    {"firestorm",                   SPELL_TYPE_WIZARD, 1, 
 	4, 12, 3, 6,0, 1.0,
     50,      6,      4,      0,
-	1, 4, 0,  SOUND_MAGIC_FIRE,
+	1, 4, 0, 40, SOUND_MAGIC_FIRE,
     SPELL_USE_CAST | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_DUST | SPELL_USE_BOOK | SPELL_USE_POTION,
     SPELL_DESC_DIRECTION,
     PATH_ELEMENTAL, "firebreath",SPELL_ACTIVE
     },
 
-    {"icestorm",                    SPELL_TYPE_WIZARD, 28, 
+
+
+    {"icestorm",                    SPELL_TYPE_WIZARD, 1, 
 	4, 12, 3, 6,0,1.0,
     50,      6,      4,      0,
-	1, 4, 0,  SOUND_MAGIC_ICE,
+	1, 4, 0, 40, SOUND_MAGIC_ICE,
     SPELL_USE_CAST | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_BOOK | SPELL_USE_POTION | SPELL_USE_DUST,
     SPELL_DESC_DIRECTION,
     PATH_ELEMENTAL, "icestorm",SPELL_ACTIVE
@@ -46,7 +49,7 @@ spell spells[NROFREALSPELLS]          =
 	{"minor healing",               SPELL_TYPE_PRIEST, 1,
 	4, 8, 3, 6,3,1.0,
     0,       0,     0,      0,
-	0, 0, 0, SOUND_MAGIC_STAT,
+	0, 0, 0, 0, SOUND_MAGIC_STAT,
     SPELL_USE_CAST | SPELL_USE_BALM | SPELL_USE_SCROLL | SPELL_USE_ROD | SPELL_USE_POTION | SPELL_USE_BOOK,
     SPELL_DESC_SELF | SPELL_DESC_FRIENDLY | SPELL_DESC_WIS | SPELL_DESC_TOWN,
     PATH_LIFE, "meffect_green",SPELL_ACTIVE
@@ -55,7 +58,7 @@ spell spells[NROFREALSPELLS]          =
 	{"cure poison",                 SPELL_TYPE_PRIEST, 1,
 	5, 16, 3, 6,4, 1.0,/* potion only */
     0,       0,     0,      0,
-	0, 0, 0,    SOUND_MAGIC_STAT,
+	0, 0, 0, 0,   SOUND_MAGIC_STAT,
     SPELL_USE_CAST | SPELL_USE_POTION | SPELL_USE_BOOK,
     SPELL_DESC_SELF | SPELL_DESC_FRIENDLY | SPELL_DESC_WIS | SPELL_DESC_TOWN,
     PATH_LIFE, "meffect_purple",SPELL_ACTIVE
@@ -64,7 +67,7 @@ spell spells[NROFREALSPELLS]          =
 	{"cure disease",                SPELL_TYPE_PRIEST, 1,
 	5, 16, 3, 6,4, 1.0,/* balm only */
     0,       0,     0,      0,
-	0, 0, 0,    SOUND_MAGIC_STAT,
+	0, 0, 0, 0,   SOUND_MAGIC_STAT,
     SPELL_USE_CAST | SPELL_USE_BALM | SPELL_USE_BOOK,
     SPELL_DESC_SELF | SPELL_DESC_FRIENDLY | SPELL_DESC_WIS | SPELL_DESC_TOWN,
     PATH_LIFE,"meffect_purple",SPELL_ACTIVE
@@ -73,7 +76,7 @@ spell spells[NROFREALSPELLS]          =
     {"strength self",               SPELL_TYPE_WIZARD, 1,
 	5, 12, 3, 6,0,1.0,
     0,       0,     0,      4,
-	0, 0, 0,   SOUND_MAGIC_STAT,
+	0, 0, 0, 3,  SOUND_MAGIC_STAT,
     SPELL_USE_CAST | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_POTION | SPELL_USE_ROD | SPELL_USE_SCROLL | SPELL_USE_BOOK,
     SPELL_DESC_SELF | SPELL_DESC_TOWN,
     PATH_NATURE, "meffect_yellow",SPELL_ACTIVE
@@ -82,7 +85,7 @@ spell spells[NROFREALSPELLS]          =
 	{"identify",                    SPELL_TYPE_WIZARD, 1,
 	5, 24, 3, 6,2,1.0,
     0,       0,     0,      0,
-	0, 0, 0,   SOUND_MAGIC_DEFAULT,
+	0, 0, 0, 3,  SOUND_MAGIC_DEFAULT,
     SPELL_USE_CAST | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_SCROLL | SPELL_USE_BOOK,
     SPELL_DESC_SELF | SPELL_DESC_TOWN,
     PATH_TRANSMUTATION, "meffect_pink",SPELL_ACTIVE
@@ -91,7 +94,7 @@ spell spells[NROFREALSPELLS]          =
 	{"detect magic",                SPELL_TYPE_WIZARD, 1,
 	5, 8, 3, 6,0,1.0,
     0,       0,     0,      0,
-	0, 0, 0,    SOUND_MAGIC_DEFAULT,
+	0, 0, 0, 3,   SOUND_MAGIC_DEFAULT,
     SPELL_USE_CAST | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_SCROLL | SPELL_USE_BOOK,
     SPELL_DESC_SELF | SPELL_DESC_TOWN,
     PATH_ABJURATION, "meffect_pink",SPELL_ACTIVE
@@ -100,7 +103,7 @@ spell spells[NROFREALSPELLS]          =
 	{"detect curse",                SPELL_TYPE_PRIEST, 1,
 	5, 8, 3, 6,0,1.0,
     0,       0,     0,      0,
-	0, 0, 0,    SOUND_MAGIC_DEFAULT,
+	0, 0, 0, 0,   SOUND_MAGIC_DEFAULT,
     SPELL_USE_CAST | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_SCROLL | SPELL_USE_BOOK,
     SPELL_DESC_SELF | SPELL_DESC_TOWN | SPELL_DESC_WIS,
     PATH_ABJURATION, "meffect_pink",SPELL_ACTIVE
@@ -109,7 +112,7 @@ spell spells[NROFREALSPELLS]          =
 	{"remove curse",                SPELL_TYPE_PRIEST, 1,
 	5, 24, 3, 6,2,1.0,
     0,       0,     0,      0,
-	0, 0, 0, SOUND_MAGIC_DEFAULT,
+	0, 0, 0, 0, SOUND_MAGIC_DEFAULT,
     SPELL_USE_CAST | SPELL_USE_SCROLL | SPELL_USE_BOOK,     /* scroll */
     SPELL_DESC_SELF | SPELL_DESC_TOWN | SPELL_DESC_FRIENDLY | SPELL_DESC_WIS,
     PATH_ARCANE, "meffect_blue",SPELL_ACTIVE
@@ -118,7 +121,7 @@ spell spells[NROFREALSPELLS]          =
 	{"remove damnation",            SPELL_TYPE_PRIEST, 1,
 	5, 36, 3, 6,2,1.0,
     0,       0,     0,      0,
-	0, 0, 0, SOUND_MAGIC_DEFAULT,
+	0, 0, 0, 0, SOUND_MAGIC_DEFAULT,
     SPELL_USE_CAST | SPELL_USE_SCROLL | SPELL_USE_BOOK, /* scroll*/
     SPELL_DESC_SELF | SPELL_DESC_TOWN | SPELL_DESC_FRIENDLY | SPELL_DESC_WIS,
     PATH_ARCANE, "meffect_blue",SPELL_ACTIVE
@@ -127,16 +130,17 @@ spell spells[NROFREALSPELLS]          =
 	{"cause light wounds",          SPELL_TYPE_PRIEST, 1,
 	3, 14, 3, 6,0,  1.0,/* scroll*/
     60,      5,      4,      4,
-	1, 6, 0,  SOUND_MAGIC_WOUND,
+	1, 6, 0, 5,  SOUND_MAGIC_WOUND,
     SPELL_USE_CAST | SPELL_USE_SCROLL | SPELL_USE_BOOK,
     SPELL_DESC_DIRECTION | SPELL_DESC_WIS,
     PATH_DEATH,"cause_wounds",SPELL_ACTIVE
     },
 
-	{"firebolt",                   SPELL_TYPE_WIZARD, 31, 
+
+	{"firebolt",                   SPELL_TYPE_WIZARD, 1, 
 	4, 12, 3, 6,0, 1.0,
 	85,      7,      4,      0,
-	1, 4, 0,  SOUND_MAGIC_FIRE,
+	1, 4, 0, 60, SOUND_MAGIC_FIRE,
 	SPELL_USE_CAST | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_DUST | SPELL_USE_BOOK | SPELL_USE_POTION,
 	SPELL_DESC_DIRECTION,
 	PATH_ELEMENTAL, "firebolt", SPELL_ACTIVE
@@ -145,32 +149,33 @@ spell spells[NROFREALSPELLS]          =
 	{"magic bullet",                SPELL_TYPE_WIZARD, 1,
 	3, 14, 3, 6,0,1.0,
     60,      5,      4,      4,
-	1, 6, 0,   SOUND_MAGIC_BULLET1,
+	1, 6, 0, 5,   SOUND_MAGIC_BULLET1,
     SPELL_USE_CAST | SPELL_USE_SCROLL | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_BOOK,
     SPELL_DESC_DIRECTION,
     PATH_CHAOS, "bullet",SPELL_ACTIVE
     },
-	{"frostbolt",                   SPELL_TYPE_WIZARD, 20, 
+
+	{"frostbolt",                   SPELL_TYPE_WIZARD, 1, 
 	4, 12, 3, 6,0, 1.0,
 	85,      7,      4,      0,
-	1, 4, 0,  SOUND_MAGIC_ICE,
+	1, 4, 0, 60, SOUND_MAGIC_ICE,
 	SPELL_USE_CAST | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_DUST | SPELL_USE_BOOK | SPELL_USE_POTION,
 	SPELL_DESC_DIRECTION,
 	PATH_ELEMENTAL, "frostbolt", SPELL_ACTIVE
 	},
     {"remove depletion",            SPELL_TYPE_PRIEST, 1,
-	5, 24, 3, 6,0, 1.0,
+	5, 24, 3, 6,4, 1.0,
     0,       0,     0,      0,
-	0, 0, 0,    SOUND_MAGIC_STAT,
+	0, 0, 0, 0,    SOUND_MAGIC_STAT,
     SPELL_USE_CAST,
-    SPELL_DESC_SELF | SPELL_DESC_TOWN | SPELL_DESC_WIS,
+    SPELL_DESC_SELF | SPELL_DESC_FRIENDLY | SPELL_DESC_TOWN | SPELL_DESC_WIS,
     PATH_LIFE, "meffect_purple",SPELL_ACTIVE
     },
 
     {"probe",                       SPELL_TYPE_WIZARD, 1,
 	5, 8, 3, 6,0,1.0,
     1,      5,      4,      4,
-	0, 0, 0, SOUND_MAGIC_DEFAULT,
+	0, 0, 0, 1, SOUND_MAGIC_DEFAULT,
     SPELL_USE_CAST | SPELL_USE_SCROLL | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_BOOK,
     SPELL_DESC_TOWN | SPELL_DESC_DIRECTION,
     PATH_SPIRIT, "probebullet",SPELL_ACTIVE
@@ -179,24 +184,25 @@ spell spells[NROFREALSPELLS]          =
     {"remove death sickness",            SPELL_TYPE_PRIEST, 1,
 	5, 24, 3, 6,0, 1.0,
     0,       0,     0,      0,
-	0,  0, 0, SOUND_MAGIC_STAT,
+	0,  0, 0, 0, SOUND_MAGIC_STAT,
     SPELL_USE_CAST, /* npc/god only atm */
     SPELL_DESC_SELF | SPELL_DESC_TOWN | SPELL_DESC_WIS,
     PATH_LIFE, "meffect_purple",SPELL_ACTIVE
     },
 
     {"restoration",            SPELL_TYPE_PRIEST, 1,
-	5, 16, 3, 6,0, 1.0,
+	5, 16, 3, 6,3, 1.0,
     0,       0,     0,      0,
-	0, 0, 0, SOUND_MAGIC_STAT,
+	0, 0, 0, 0, SOUND_MAGIC_STAT,
     SPELL_USE_CAST | SPELL_USE_SCROLL | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD, /* npc/god only atm */
-    SPELL_DESC_SELF | SPELL_DESC_TOWN | SPELL_DESC_WIS,
+    SPELL_DESC_SELF | SPELL_DESC_FRIENDLY | SPELL_DESC_TOWN | SPELL_DESC_WIS,
     PATH_LIFE, "meffect_purple",SPELL_ACTIVE
     },
-	{"lightning",                   SPELL_TYPE_WIZARD, 49, 
+
+	{"lightning",                   SPELL_TYPE_WIZARD, 1, 
 	4, 12, 3, 6,0, 1.0,
 	85,      7,      4,      0,
-	1, 4, 0, SOUND_MAGIC_ELEC,
+	1, 4, 0, 80, SOUND_MAGIC_ELEC,
 	SPELL_USE_CAST | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_DUST | SPELL_USE_BOOK | SPELL_USE_POTION,
 	SPELL_DESC_DIRECTION,
 	PATH_ELEMENTAL, "lightning", SPELL_ACTIVE
