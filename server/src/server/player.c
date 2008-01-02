@@ -615,8 +615,6 @@ int save_life(object *op)
             CLEAR_FLAG(op, FLAG_LIFESAVE);
             if (op->stats.hp <= 0)
                 op->stats.hp = op->stats.maxhp;
-            if (op->stats.food < 0)
-                op->stats.food = 999;
             return 1;
         }
     LOG(llevBug, "BUG: LIFESAVE set without applied object.\n");
@@ -811,8 +809,6 @@ void kill_player(object *op)
         /*cast_heal(op, op, SP_CURE_CONFUSION);*/
         cure_disease(op, NULL);  /* remove any disease */
         op->stats.hp = op->stats.maxhp;
-        if (op->stats.food <= 0)
-            op->stats.food = 999;
 
         /* create a bodypart-trophy to make the winner happy */
         tmp = arch_to_object(find_archetype("finger"));
