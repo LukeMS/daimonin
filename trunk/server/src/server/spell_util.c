@@ -354,7 +354,7 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
          float failure = (float)(random_roll(0, 99)
                          - CONTR(op)->encumbrance
                          + ((op->stats.Int - 10) / 10)
-                         - s->level
+                         - s->fumble_factor 
                          + (op->chosen_skill->level / 10));
 
 

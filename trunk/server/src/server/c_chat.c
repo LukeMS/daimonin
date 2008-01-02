@@ -195,13 +195,13 @@ int command_say(object *op, char *params)
 int command_gsay(object *op, char *params)
 {
     char    buf[MAX_BUF];
-	objectlink *ol;
-	object *tmp;
+    objectlink *ol;
+    object *tmp;
 
-	if(!check_mute(op, MUTE_MODE_SAY))
-		return 0;
+    if(!check_mute(op, MUTE_MODE_SAY))
+        return 0;
 
-	if (!params)
+    if (!params)
         return 0;
 
     /* message: client sided */
@@ -223,17 +223,17 @@ int command_gsay(object *op, char *params)
     buf[MAX_BUF - 30] = '\0';
 #endif
 
-	for(ol = gmaster_list_DM;ol;ol=ol->next)
-	{
-		if (op != ol->objlink.ob && CONTR(op)->group_leader != CONTR(ol->objlink.ob)->group_leader)
-			new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf);
-	}
+    for(ol = gmaster_list_DM;ol;ol=ol->next)
+    {
+        if (op != ol->objlink.ob && CONTR(op)->group_leader != CONTR(ol->objlink.ob)->group_leader)
+            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf);
+    }
 
-	for(ol = gmaster_list_GM;ol;ol=ol->next)
-	{
-		if (op != ol->objlink.ob && CONTR(op)->group_leader != CONTR(ol->objlink.ob)->group_leader)
-			new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf);
-	}
+    for(ol = gmaster_list_GM;ol;ol=ol->next)
+    {
+        if (op != ol->objlink.ob && CONTR(op)->group_leader != CONTR(ol->objlink.ob)->group_leader)
+            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf);
+    }
 
 	for(tmp=CONTR(op)->group_leader;tmp;tmp=CONTR(tmp)->group_next)
 	{

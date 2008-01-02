@@ -78,6 +78,7 @@ typedef struct spell_struct
 	int     spl;		/*  we add spl points to sp */
 	int     spl_level;	/*  every spl_level until */
 	int     spl_max;	/*  as long its lower as spl_max */
+    int     fumble_factor;     /* replaces level in spell fumble calcs*/
     int     sound; /* number of sound id for this sound */
 
     int     spell_use;       /* Define to what items this spell can be bound (potion, rod,,, ) */
