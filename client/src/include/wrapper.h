@@ -24,6 +24,8 @@
 #if !defined(__WRAPPER_H)
 #define __WRAPPER_H
 
+#include <physfs.h>
+
 /* include here the hardware depend headers */
 #ifdef __WIN_32
 #include "win32.h"
@@ -53,6 +55,7 @@ typedef enum _LOGLEVEL
 }    _LOGLEVEL;
 #define LOGLEVEL LOG_DEBUG
 extern void     LOG(int logLevel, char *format, ...);
+extern void     MSGLOG(char *msg);
 
 extern char    *GetCacheDirectory(void);
 extern char    *GetGfxUserDirectory(void);
@@ -67,6 +70,10 @@ int             attempt_fullscreen_toggle(SDL_Surface **surface, uint32 *flags);
 uint32          get_video_flags(void);
 void            parse_metaserver_data(char *info);
 
+#if defined( __WIN_32)  || defined(__LINUX)
+	FILE *msglog;
+#endif
+
 #if defined(HAVE_STRNICMP)
 #else
 #if !defined(HAVE_STRNCASECMP)
@@ -80,5 +87,8 @@ int             strncasecmp(char *s1, char *s2, int n);
 int             strcasecmp(char *s1, char *s2);
 #endif
 #endif
+
+extern char * PHYSFS_fgets(char * const str, const int size, PHYSFS_File *const fp);
+
 
 #endif

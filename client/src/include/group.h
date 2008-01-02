@@ -54,8 +54,10 @@ _groups;
 extern int           global_group_status;
 extern struct _group group[GROUP_MAX_MEMBER];
 extern char          group_invite[32]; /* name of player who has send the invite */
+extern int           group_count;      /* we need the player count for dynamic window resizing */
 
 extern void show_group(int x, int y);
+extern void widget_show_group(int x, int y);
 extern void clear_group(void);
 extern void set_group(int slot, char *name, int level, int hp, int maxhp, int sp, int maxsp, int grace, int maxgrace);
 

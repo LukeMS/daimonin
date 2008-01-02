@@ -37,7 +37,8 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
-daimonin_PROGRAMS = daimonin$(EXEEXT) updater$(EXEEXT)
+daimonin_widget_PROGRAMS = daimonin-widget$(EXEEXT) \
+	daimonin-widget-updater$(EXEEXT)
 DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in \
 	$(top_srcdir)/../../src/include/define.h.in \
@@ -54,31 +55,35 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/../../src/include/define.h
 CONFIG_CLEAN_FILES =
-am__installdirs = "$(DESTDIR)$(daimonindir)"
-daimoninPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
-PROGRAMS = $(daimonin_PROGRAMS)
+am__installdirs = "$(DESTDIR)$(daimonin_widgetdir)"
+daimonin_widgetPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
+PROGRAMS = $(daimonin_widget_PROGRAMS)
 am__dirstamp = $(am__leading_dot)dirstamp
-am_daimonin_OBJECTS = ../../src/adler32.$(OBJEXT) \
-	../../src/book.$(OBJEXT) ../../src/client.$(OBJEXT) \
+am_daimonin_widget_OBJECTS = ../../src/adler32.$(OBJEXT) \
+	../../src/book.$(OBJEXT) ../../src/buddy.$(OBJEXT) \
+	../../src/chatfilter.$(OBJEXT) ../../src/client.$(OBJEXT) \
 	../../src/commands.$(OBJEXT) ../../src/crc32.$(OBJEXT) \
 	../../src/dialog.$(OBJEXT) ../../src/event.$(OBJEXT) \
 	../../src/filewrap.$(OBJEXT) ../../src/group.$(OBJEXT) \
 	../../src/ignore.$(OBJEXT) ../../src/inffast.$(OBJEXT) \
 	../../src/inflate.$(OBJEXT) ../../src/inftrees.$(OBJEXT) \
 	../../src/interface.$(OBJEXT) ../../src/inventory.$(OBJEXT) \
-	../../src/item.$(OBJEXT) ../../src/main.$(OBJEXT) \
-	../../src/map.$(OBJEXT) ../../src/menu.$(OBJEXT) \
-	../../src/misc.$(OBJEXT) ../../src/player.$(OBJEXT) \
+	../../src/item.$(OBJEXT) ../../src/kerbholz.$(OBJEXT) \
+	../../src/main.$(OBJEXT) ../../src/map.$(OBJEXT) \
+	../../src/menu.$(OBJEXT) ../../src/misc.$(OBJEXT) \
+	../../src/physfsrwops.$(OBJEXT) ../../src/player.$(OBJEXT) \
 	../../src/socket.$(OBJEXT) ../../src/sound.$(OBJEXT) \
 	../../src/sprite.$(OBJEXT) ../../src/textwin.$(OBJEXT) \
 	../../src/uncompr.$(OBJEXT) ../../src/wrapper.$(OBJEXT) \
-	../../src/zutil.$(OBJEXT)
-daimonin_OBJECTS = $(am_daimonin_OBJECTS)
-daimonin_DEPENDENCIES =
-am_updater_OBJECTS = ../../src/updater/linux.$(OBJEXT) \
+	../../src/widget.$(OBJEXT) ../../src/zutil.$(OBJEXT)
+daimonin_widget_OBJECTS = $(am_daimonin_widget_OBJECTS)
+daimonin_widget_DEPENDENCIES =
+am_daimonin_widget_updater_OBJECTS =  \
+	../../src/updater/linux.$(OBJEXT) \
 	../../src/updater/main.$(OBJEXT)
-updater_OBJECTS = $(am_updater_OBJECTS)
-updater_LDADD = $(LDADD)
+daimonin_widget_updater_OBJECTS =  \
+	$(am_daimonin_widget_updater_OBJECTS)
+daimonin_widget_updater_LDADD = $(LDADD)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/../../src/include
 depcomp = $(SHELL) $(top_srcdir)/make_utils/depcomp
 am__depfiles_maybe = depfiles
@@ -86,8 +91,10 @@ COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(daimonin_SOURCES) $(updater_SOURCES)
-DIST_SOURCES = $(daimonin_SOURCES) $(updater_SOURCES)
+SOURCES = $(daimonin_widget_SOURCES) \
+	$(daimonin_widget_updater_SOURCES)
+DIST_SOURCES = $(daimonin_widget_SOURCES) \
+	$(daimonin_widget_updater_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -148,6 +155,7 @@ PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
+PHYSFS_LIBS = @PHYSFS_LIBS@
 RM = @RM@
 RMDIR = @RMDIR@
 SDL_CFLAGS = @SDL_CFLAGS@
@@ -211,10 +219,12 @@ target_alias = @target_alias@
 target_cpu = @target_cpu@
 target_os = @target_os@
 target_vendor = @target_vendor@
-daimonindir = $(d_bindir)
-daimonin_SOURCES = \
+daimonin_widgetdir = $(d_bindir)
+daimonin_widget_SOURCES = \
 	../../src/adler32.c \
 	../../src/book.c \
+	../../src/buddy.c \
+	../../src/chatfilter.c \
 	../../src/client.c \
 	../../src/commands.c \
 	../../src/crc32.c \
@@ -229,10 +239,12 @@ daimonin_SOURCES = \
 	../../src/interface.c \
 	../../src/inventory.c \
 	../../src/item.c \
+	../../src/kerbholz.c \
 	../../src/main.c \
 	../../src/map.c \
 	../../src/menu.c \
 	../../src/misc.c \
+	../../src/physfsrwops.c \
 	../../src/player.c \
 	../../src/socket.c \
 	../../src/sound.c \
@@ -240,15 +252,16 @@ daimonin_SOURCES = \
 	../../src/textwin.c \
 	../../src/uncompr.c \
 	../../src/wrapper.c \
+	../../src/widget.c \
 	../../src/zutil.c
 
-daimonin_LDADD = -lSDL_mixer -lSDL_image @SDL_LIBS@ @EXTRA_LIBS@
-daimonin_OBJDIR = objs
-updater_SOURCES = \
+daimonin_widget_LDADD = -lSDL_mixer -lSDL_image @SDL_LIBS@ @EXTRA_LIBS@ @PHYSFS_LIBS@
+daimonin_widget_OBJDIR = objs
+daimonin_widget_updater_SOURCES = \
 	../../src/updater/linux.c \
 	../../src/updater/main.c 
 
-updater_OBJDIR = updater_objs
+daimonin_widget_updater_OBJDIR = updater_objs
 
 # NOTE: if building xdelta, run its configure with "--disable-shared"
 AUTOMAKE_OPTIONS = subdir-objects
@@ -308,29 +321,29 @@ $(top_srcdir)/../../src/include/define.h.in: @MAINTAINER_MODE_TRUE@ $(am__config
 
 distclean-hdr:
 	-rm -f ../../src/include/define.h ../../src/include/stamp-h1
-install-daimoninPROGRAMS: $(daimonin_PROGRAMS)
+install-daimonin_widgetPROGRAMS: $(daimonin_widget_PROGRAMS)
 	@$(NORMAL_INSTALL)
-	test -z "$(daimonindir)" || $(mkdir_p) "$(DESTDIR)$(daimonindir)"
-	@list='$(daimonin_PROGRAMS)'; for p in $$list; do \
+	test -z "$(daimonin_widgetdir)" || $(mkdir_p) "$(DESTDIR)$(daimonin_widgetdir)"
+	@list='$(daimonin_widget_PROGRAMS)'; for p in $$list; do \
 	  p1=`echo $$p|sed 's/$(EXEEXT)$$//'`; \
 	  if test -f $$p \
 	  ; then \
 	    f=`echo "$$p1" | sed 's,^.*/,,;$(transform);s/$$/$(EXEEXT)/'`; \
-	   echo " $(INSTALL_PROGRAM_ENV) $(daimoninPROGRAMS_INSTALL) '$$p' '$(DESTDIR)$(daimonindir)/$$f'"; \
-	   $(INSTALL_PROGRAM_ENV) $(daimoninPROGRAMS_INSTALL) "$$p" "$(DESTDIR)$(daimonindir)/$$f" || exit 1; \
+	   echo " $(INSTALL_PROGRAM_ENV) $(daimonin_widgetPROGRAMS_INSTALL) '$$p' '$(DESTDIR)$(daimonin_widgetdir)/$$f'"; \
+	   $(INSTALL_PROGRAM_ENV) $(daimonin_widgetPROGRAMS_INSTALL) "$$p" "$(DESTDIR)$(daimonin_widgetdir)/$$f" || exit 1; \
 	  else :; fi; \
 	done
 
-uninstall-daimoninPROGRAMS:
+uninstall-daimonin_widgetPROGRAMS:
 	@$(NORMAL_UNINSTALL)
-	@list='$(daimonin_PROGRAMS)'; for p in $$list; do \
+	@list='$(daimonin_widget_PROGRAMS)'; for p in $$list; do \
 	  f=`echo "$$p" | sed 's,^.*/,,;s/$(EXEEXT)$$//;$(transform);s/$$/$(EXEEXT)/'`; \
-	  echo " rm -f '$(DESTDIR)$(daimonindir)/$$f'"; \
-	  rm -f "$(DESTDIR)$(daimonindir)/$$f"; \
+	  echo " rm -f '$(DESTDIR)$(daimonin_widgetdir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(daimonin_widgetdir)/$$f"; \
 	done
 
-clean-daimoninPROGRAMS:
-	-test -z "$(daimonin_PROGRAMS)" || rm -f $(daimonin_PROGRAMS)
+clean-daimonin_widgetPROGRAMS:
+	-test -z "$(daimonin_widget_PROGRAMS)" || rm -f $(daimonin_widget_PROGRAMS)
 ../../src/$(am__dirstamp):
 	@$(mkdir_p) ../../src
 	@: > ../../src/$(am__dirstamp)
@@ -340,6 +353,10 @@ clean-daimoninPROGRAMS:
 ../../src/adler32.$(OBJEXT): ../../src/$(am__dirstamp) \
 	../../src/$(DEPDIR)/$(am__dirstamp)
 ../../src/book.$(OBJEXT): ../../src/$(am__dirstamp) \
+	../../src/$(DEPDIR)/$(am__dirstamp)
+../../src/buddy.$(OBJEXT): ../../src/$(am__dirstamp) \
+	../../src/$(DEPDIR)/$(am__dirstamp)
+../../src/chatfilter.$(OBJEXT): ../../src/$(am__dirstamp) \
 	../../src/$(DEPDIR)/$(am__dirstamp)
 ../../src/client.$(OBJEXT): ../../src/$(am__dirstamp) \
 	../../src/$(DEPDIR)/$(am__dirstamp)
@@ -369,6 +386,8 @@ clean-daimoninPROGRAMS:
 	../../src/$(DEPDIR)/$(am__dirstamp)
 ../../src/item.$(OBJEXT): ../../src/$(am__dirstamp) \
 	../../src/$(DEPDIR)/$(am__dirstamp)
+../../src/kerbholz.$(OBJEXT): ../../src/$(am__dirstamp) \
+	../../src/$(DEPDIR)/$(am__dirstamp)
 ../../src/main.$(OBJEXT): ../../src/$(am__dirstamp) \
 	../../src/$(DEPDIR)/$(am__dirstamp)
 ../../src/map.$(OBJEXT): ../../src/$(am__dirstamp) \
@@ -376,6 +395,8 @@ clean-daimoninPROGRAMS:
 ../../src/menu.$(OBJEXT): ../../src/$(am__dirstamp) \
 	../../src/$(DEPDIR)/$(am__dirstamp)
 ../../src/misc.$(OBJEXT): ../../src/$(am__dirstamp) \
+	../../src/$(DEPDIR)/$(am__dirstamp)
+../../src/physfsrwops.$(OBJEXT): ../../src/$(am__dirstamp) \
 	../../src/$(DEPDIR)/$(am__dirstamp)
 ../../src/player.$(OBJEXT): ../../src/$(am__dirstamp) \
 	../../src/$(DEPDIR)/$(am__dirstamp)
@@ -391,11 +412,13 @@ clean-daimoninPROGRAMS:
 	../../src/$(DEPDIR)/$(am__dirstamp)
 ../../src/wrapper.$(OBJEXT): ../../src/$(am__dirstamp) \
 	../../src/$(DEPDIR)/$(am__dirstamp)
+../../src/widget.$(OBJEXT): ../../src/$(am__dirstamp) \
+	../../src/$(DEPDIR)/$(am__dirstamp)
 ../../src/zutil.$(OBJEXT): ../../src/$(am__dirstamp) \
 	../../src/$(DEPDIR)/$(am__dirstamp)
-daimonin$(EXEEXT): $(daimonin_OBJECTS) $(daimonin_DEPENDENCIES) 
-	@rm -f daimonin$(EXEEXT)
-	$(LINK) $(daimonin_LDFLAGS) $(daimonin_OBJECTS) $(daimonin_LDADD) $(LIBS)
+daimonin-widget$(EXEEXT): $(daimonin_widget_OBJECTS) $(daimonin_widget_DEPENDENCIES) 
+	@rm -f daimonin-widget$(EXEEXT)
+	$(LINK) $(daimonin_widget_LDFLAGS) $(daimonin_widget_OBJECTS) $(daimonin_widget_LDADD) $(LIBS)
 ../../src/updater/$(am__dirstamp):
 	@$(mkdir_p) ../../src/updater
 	@: > ../../src/updater/$(am__dirstamp)
@@ -406,14 +429,16 @@ daimonin$(EXEEXT): $(daimonin_OBJECTS) $(daimonin_DEPENDENCIES)
 	../../src/updater/$(DEPDIR)/$(am__dirstamp)
 ../../src/updater/main.$(OBJEXT): ../../src/updater/$(am__dirstamp) \
 	../../src/updater/$(DEPDIR)/$(am__dirstamp)
-updater$(EXEEXT): $(updater_OBJECTS) $(updater_DEPENDENCIES) 
-	@rm -f updater$(EXEEXT)
-	$(LINK) $(updater_LDFLAGS) $(updater_OBJECTS) $(updater_LDADD) $(LIBS)
+daimonin-widget-updater$(EXEEXT): $(daimonin_widget_updater_OBJECTS) $(daimonin_widget_updater_DEPENDENCIES) 
+	@rm -f daimonin-widget-updater$(EXEEXT)
+	$(LINK) $(daimonin_widget_updater_LDFLAGS) $(daimonin_widget_updater_OBJECTS) $(daimonin_widget_updater_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 	-rm -f ../../src/adler32.$(OBJEXT)
 	-rm -f ../../src/book.$(OBJEXT)
+	-rm -f ../../src/buddy.$(OBJEXT)
+	-rm -f ../../src/chatfilter.$(OBJEXT)
 	-rm -f ../../src/client.$(OBJEXT)
 	-rm -f ../../src/commands.$(OBJEXT)
 	-rm -f ../../src/crc32.$(OBJEXT)
@@ -428,10 +453,12 @@ mostlyclean-compile:
 	-rm -f ../../src/interface.$(OBJEXT)
 	-rm -f ../../src/inventory.$(OBJEXT)
 	-rm -f ../../src/item.$(OBJEXT)
+	-rm -f ../../src/kerbholz.$(OBJEXT)
 	-rm -f ../../src/main.$(OBJEXT)
 	-rm -f ../../src/map.$(OBJEXT)
 	-rm -f ../../src/menu.$(OBJEXT)
 	-rm -f ../../src/misc.$(OBJEXT)
+	-rm -f ../../src/physfsrwops.$(OBJEXT)
 	-rm -f ../../src/player.$(OBJEXT)
 	-rm -f ../../src/socket.$(OBJEXT)
 	-rm -f ../../src/sound.$(OBJEXT)
@@ -440,6 +467,7 @@ mostlyclean-compile:
 	-rm -f ../../src/uncompr.$(OBJEXT)
 	-rm -f ../../src/updater/linux.$(OBJEXT)
 	-rm -f ../../src/updater/main.$(OBJEXT)
+	-rm -f ../../src/widget.$(OBJEXT)
 	-rm -f ../../src/wrapper.$(OBJEXT)
 	-rm -f ../../src/zutil.$(OBJEXT)
 
@@ -448,6 +476,8 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/adler32.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/book.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/buddy.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/chatfilter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/client.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/commands.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/crc32.Po@am__quote@
@@ -462,16 +492,19 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/interface.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/inventory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/item.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/kerbholz.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/map.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/menu.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/misc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/physfsrwops.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/player.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/socket.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/sound.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/sprite.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/textwin.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/uncompr.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/widget.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/wrapper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/zutil.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/updater/$(DEPDIR)/linux.Po@am__quote@
@@ -673,7 +706,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(PROGRAMS)
 installdirs:
-	for dir in "$(DESTDIR)$(daimonindir)"; do \
+	for dir in "$(DESTDIR)$(daimonin_widgetdir)"; do \
 	  test -z "$$dir" || $(mkdir_p) "$$dir"; \
 	done
 install: install-am
@@ -706,7 +739,7 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-daimoninPROGRAMS clean-generic mostlyclean-am
+clean-am: clean-daimonin_widgetPROGRAMS clean-generic mostlyclean-am
 
 distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
@@ -725,7 +758,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-daimoninPROGRAMS
+install-data-am: install-daimonin_widgetPROGRAMS
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) install-data-hook
 
@@ -756,21 +789,22 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-daimoninPROGRAMS uninstall-info-am
+uninstall-am: uninstall-daimonin_widgetPROGRAMS uninstall-info-am
 
 .PHONY: CTAGS GTAGS all all-am am--refresh check check-am clean \
-	clean-daimoninPROGRAMS clean-generic ctags dist dist-all \
-	dist-bzip2 dist-gzip dist-shar dist-tarZ dist-zip distcheck \
-	distclean distclean-compile distclean-generic distclean-hdr \
-	distclean-tags distcleancheck distdir distuninstallcheck dvi \
-	dvi-am html html-am info info-am install install-am \
-	install-daimoninPROGRAMS install-data install-data-am \
-	install-data-hook install-exec install-exec-am install-info \
-	install-info-am install-man install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
-	uninstall-am uninstall-daimoninPROGRAMS uninstall-info-am
+	clean-daimonin_widgetPROGRAMS clean-generic ctags dist \
+	dist-all dist-bzip2 dist-gzip dist-shar dist-tarZ dist-zip \
+	distcheck distclean distclean-compile distclean-generic \
+	distclean-hdr distclean-tags distcleancheck distdir \
+	distuninstallcheck dvi dvi-am html html-am info info-am \
+	install install-am install-daimonin_widgetPROGRAMS \
+	install-data install-data-am install-data-hook install-exec \
+	install-exec-am install-info install-info-am install-man \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-compile mostlyclean-generic pdf pdf-am ps ps-am \
+	tags uninstall uninstall-am uninstall-daimonin_widgetPROGRAMS \
+	uninstall-info-am
 
 
 install-data-hook:
@@ -783,28 +817,27 @@ install-data-hook:
 	$(MKDIR) -p $(d_datadir)/sfx
 	$(MKDIR) -p $(d_datadir)/media
 	$(MKDIR) -p $(d_datadir)/cache
-	$(MKDIR) -p $(d_datadir)/bitmaps
+	$(MKDIR) -p $(d_datadir)/logs
 	$(MKDIR) -p $(d_datadir)/gfx_user
 	$(MKDIR) -p $(d_datadir)/srv_files
-	$(MKDIR) -p $(d_datadir)/icons
+	$(MKDIR) -p $(d_datadir)/skins
 	$(MKDIR) -p $(d_datadir)/tools
+	$(MKDIR) -p $(d_datadir)/settings
 	$(MKDIR) -p $(d_datadir)/update
 	$(CP) ../../sfx/*.* $(d_datadir)/sfx
 	$(CP) ../../media/*.* $(d_datadir)/media
 	$(CP) ../../cache/*.* $(d_datadir)/cache
-	$(CP) ../../icons/*.* $(d_datadir)/icons
+	$(CP) -R ../../skins/* $(d_datadir)/skins
+	$(CP) -R ../../settings/*.* $(d_datadir)/settings
 	$(CP) ../../srv_files/*.* $(d_datadir)/srv_files
 	$(CP) -R ../../tools/*.* $(d_datadir)/tools
 	$(CP) ../../update/version $(d_datadir)/update
 	$(CP) ../../gfx_user/*.* $(d_datadir)/gfx_user
-	$(CP) ../../bitmaps/*.* $(d_datadir)/bitmaps
-	$(CP) ../../options.dat $(d_datadir)
-	$(CP) ../../keys.dat $(d_datadir)
 	$(CP) ../../daimonin.p0 $(d_datadir)
 	$(CP) ../../License $(d_datadir) || $(CP) ../../../License $(d_datadir)
 	$(CP) ../../archdef.dat $(d_datadir)
 	@echo "*** Daimonin client successful installed in $(daimonindir)!"
-	@echo "*** Enter your install folder and type ./daimonin"
+	@echo "*** Enter your install folder and type ./daimonin-widget"
 	@echo "*** to start the game!"
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

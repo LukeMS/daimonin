@@ -6,16 +6,17 @@ AC_PREREQ(2.59)
 AC_INIT([Daimonin SDL Client], [0.9.7], [http://www.daimonin.net])
 AC_CONFIG_AUX_DIR(make_utils)
 AC_CANONICAL_SYSTEM
-AM_INIT_AUTOMAKE(daimonin_client, 0.9.7)
+AM_INIT_AUTOMAKE(daimonin_widget, 0.9.7)
 
 AC_CONFIG_SRCDIR(../../src/client.c)
 
 # Enforce explicit use of maintainer tools (=bootstrap)
 AM_MAINTAINER_MODE
 
-AM_PROG_CC_C_O
+
 
 AC_PROG_CC
+AM_PROG_CC_C_O
 AC_PROG_MAKE_SET
 AC_PROG_INSTALL
 
@@ -111,8 +112,8 @@ if test "x$simplelayout" = "xyes"; then
         prefix="$HOME"
     fi
 	# Simple layout (everything under one directory)
-	d_bindir="\${prefix}/daimonin-$VERSION"
-	d_datadir="\${prefix}/daimonin-$VERSION"
+	d_bindir="\${prefix}/daimonin-widget-$VERSION"
+	d_datadir="\${prefix}/daimonin-widget-$VERSION"
     DIRDEFINES="-DSYSPATH=\"\\\"./\\\"\""
 else
 	# Unixish layout, files spread out over several directories
@@ -165,6 +166,11 @@ if test "x$sound" = "xyes" ; then
 		     [AC_MSG_ERROR([*** SDL_mixer lib not found! Get SDL_mixer from
 	http://www.libsdl.org/projects/SDL_mixer/index.html])])
 fi	
+
+AC_CHECK_LIB([physfs],
+             [PHYSFS_init],
+             [PHYSFS_LIBS="-lphysfs"],
+             [AC_MSG_ERROR([PhysicsFS lib not found! Get PhysicsFS from http://icculus.org/physfs/])])
 	     
 LIBS=$OLD_LIBS
 
@@ -199,6 +205,11 @@ if test "x$sound" = "xyes" ; then
 	You should install the development package.
 	Or run ./configure --disable-sound])])
 fi	
+
+AC_CHECK_HEADER([physfs.h],
+               [],
+               [AC_MSG_ERROR([*** PhysicsFS include not found!
+You should install PhysicsFS development package.])])
 		
 CPPFLAGS=$OLD_CPPFLAGS
 CXXFLAGS=$OLD_CXXFLAGS
@@ -225,7 +236,7 @@ int main(int argc, char **argv)
 {
 	SDL_RWops *src;
 
-	src = SDL_RWFromFile("../../bitmaps/cursed.png", "rb");
+	src = SDL_RWFromFile("test.png", "rb");
 	if (src == NULL)
 		exit(1);
 	exit(!IMG_isPNG(src));
@@ -360,6 +371,7 @@ fi
 AC_SUBST(CPPFLAGS)
 AC_SUBST(LDFLAGS)
 AC_SUBST(EXTRA_LIBS)
+AC_SUBST(PHYSFS_LIBS)
 
 AC_CONFIG_HEADER(../../src/include/define.h)
 AC_OUTPUT(Makefile)

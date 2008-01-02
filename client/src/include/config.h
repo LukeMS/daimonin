@@ -34,11 +34,14 @@
 #define VERSION_CS 991023
 #define VERSION_SC 991023
 
-#define KEYBIND_FILE "keys.dat"
-#define OPTION_FILE  "options.dat"
+#define KEYBIND_FILE "settings/keys.dat"
+#define OPTION_FILE  "settings/options.dat"
 #define ARCHDEF_FILE "archdef.dat"
 
-#define LOG_FILE     "client.log"
+#define INTERFACE_FILE "settings/interface.gui"
+
+
+#define LOG_FILE     "logs/client.log"
 
 #define CLIENT_ICON_NAME "icon.png"
 
@@ -77,3 +80,9 @@
 /* The numbers of our dark levels */
 /* for each level-1 we store a own bitmap copy, so be careful */
 #define DARK_LEVELS 7
+
+/* maximum reachable level */
+/* NEVER EVER change that to a higher value than really possible */
+/* or your client will crash */
+#define MAX_LEVEL 110
+

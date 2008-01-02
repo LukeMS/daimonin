@@ -45,8 +45,7 @@ static char            *get_range_item_name(int id);
 _quickslot              quick_slots[MAX_QUICK_SLOTS];
 int                     quickslots_pos[MAX_QUICK_SLOTS][2]  =
     {
-        {17,1}
-        , {50,1}, {83,1}, {116,1}, {149,1}, {182,1}, {215,1}, {248,1}
+        {17,1}, {50,1}, {83,1}, {116,1}, {149,1}, {182,1}, {215,1}, {248,1}
     };
 
 void do_console(int x, int y)
@@ -57,6 +56,7 @@ void do_console(int x, int y)
         sound_play_effect(SOUND_CONSOLE, 0, 0, 100);
         reset_keys();
         cpl.input_mode = INPUT_MODE_NO;
+        cur_widget[IN_CONSOLE_ID].show = FALSE;
         map_udate_flag = 2;
     }
     /* if set, we got a finished input!*/
@@ -77,23 +77,40 @@ void do_console(int x, int y)
              )
             {
                 sprintf(buf, "/say %s", InputString);
+                send_command(buf, -1, SC_NORMAL);
             }
             else
-            {
-                if (client_command_check(InputString))
-                    goto no_send_cmd;
-
-                strcpy(buf, InputString);
+            {   /* If the command is one of that commands, we don't look for a multicommand */
+                if (!strncmp(InputString,"/tell",5) || !strncmp(InputString,"/say",4) || !strncmp(InputString,"/reply",6) ||
+                    !strncmp(InputString,"/gsay",5) || !strncmp(InputString,"/shout",6)
+#ifdef USE_CHANNELS
+                     || (*InputString=='-')
+#endif
+                    || !strncmp(InputString,"/create",7)
+                    )
+                {
+                    if (client_command_check(InputString))
+                        goto no_send_cmd;
+                    strcpy(buf, InputString);
+                    send_command(buf, -1, SC_NORMAL);
+                }
+                else
+                {
+                    if (client_command_check(InputString))
+                        goto no_send_cmd;
+                    strcpy(buf, InputString);
+                    break_multicommand(buf,-1,SC_NORMAL);
+                }
             }
-            send_command(buf, -1, SC_NORMAL);
         }
 no_send_cmd:
         reset_keys();
         cpl.input_mode = INPUT_MODE_NO;
         map_udate_flag = 2;
+        cur_widget[IN_CONSOLE_ID].show = FALSE;
     }
     else
-        show_console(x, y);
+        cur_widget[IN_CONSOLE_ID].show = TRUE;
 }
 
 /* client_command_check()
@@ -170,20 +187,173 @@ int client_command_check(char *cmd)
         return TRUE;
     }
 #endif
+	/* lets try out some things to load some work from the server to the client */
+	else if (!strnicmp(cmd, "/apply", strlen("/apply")))
+	{
+		return apply_command(cmd+6);
+	}
+	else if (!strnicmp(cmd, "/markdmbuster", strlen("makrdmbuster")))
+	{
+        markdmbuster();
+	    return TRUE;
+	}
+	else if (!strnicmp(cmd, "/shout_off", strlen("/shout_off")))
+	{
+	    options.shoutoff=TRUE;
+        draw_info_format(COLOR_RED,"Shout disabled");
+        return TRUE;
+	}
+	else if (!strnicmp(cmd, "/shout_on", strlen("/shout_on")))
+	{
+	    options.shoutoff=FALSE;
+        draw_info_format(COLOR_GREEN,"Shout enabled");
+        return TRUE;
+	}
+	else if (!strnicmp(cmd, "/buddy", strlen("/buddy")))
+	{
+		buddy_command(cmd+6);
+		return TRUE;
+	}
     else if (!strnicmp(cmd, "/ignore", strlen("/ignore")))
     {
         ignore_command(cmd+7);
         return TRUE;
     }
-
+    else if (!strnicmp(cmd, "/cfilter", strlen("/cfilter")))
+    {
+        chatfilter_command(cmd+8);
+        return TRUE;
+    }
+    else if (!strnicmp(cmd, "/kills", strlen("/kills")))
+    {
+         kill_command(cmd+6);
+         return TRUE;
+    }
+    else if (!strnicmp(cmd, "/f1", strlen("/f1")))
+    {
+         quickslot_key(NULL,0);
+         return TRUE;
+    }
+    else if (!strnicmp(cmd, "/f2", strlen("/f2")))
+    {
+         quickslot_key(NULL,1);
+         return TRUE;
+    }
+    else if (!strnicmp(cmd, "/f3", strlen("/f3")))
+    {
+         quickslot_key(NULL,2);
+         return TRUE;
+    }
+    else if (!strnicmp(cmd, "/f4", strlen("/f4")))
+    {
+         quickslot_key(NULL,3);
+         return TRUE;
+    }
+    else if (!strnicmp(cmd, "/f5", strlen("/f5")))
+    {
+         quickslot_key(NULL,4);
+         return TRUE;
+    }
+    else if (!strnicmp(cmd, "/f6", strlen("/f6")))
+    {
+         quickslot_key(NULL,5);
+         return TRUE;
+    }
+    else if (!strnicmp(cmd, "/f7", strlen("/f7")))
+    {
+         quickslot_key(NULL,6);
+         return TRUE;
+    }
+    else if (!strnicmp(cmd, "/f8", strlen("/f8")))
+    {
+         quickslot_key(NULL,7);
+         return TRUE;
+    }
     else if (!strnicmp(cmd, "/imagestats", strlen("/imagestats")))
     {
         draw_info_format(COLOR_WHITE,"IMAGE-LOADING-STATISTICS\n==========================================");
         draw_info_format(COLOR_WHITE,"Sprites in Memory: %d",ImageStats.loadedsprites);
-        draw_info_format(COLOR_WHITE,"  -> TrueColors: %d",ImageStats.truecolors);
+        draw_info_format(COLOR_WHITE,"TrueColors: %d",ImageStats.truecolors);
         draw_info_format(COLOR_WHITE,"Greyscales in Memory: %d",ImageStats.greyscales);
         draw_info_format(COLOR_WHITE,"Redscales in Memory: %d",ImageStats.redscales);
         draw_info_format(COLOR_WHITE,"Fowscales in Memory: %d",ImageStats.fowscales);
+        return TRUE;
+    }
+#ifdef DEVELOPMENT
+    else if (!strnicmp(cmd, "/searchpath", strlen("/searchpath")))
+    {
+        char **i, **j;
+
+        for (j = i = PHYSFS_getSearchPath(); *i != NULL; i++)
+        {
+            draw_info_format(COLOR_WHITE,"[%s] is in the search path.", *i);
+        }
+
+        PHYSFS_freeList(j);
+        return TRUE;
+    }
+#endif
+    else if (!strnicmp(cmd, "/changeskin", strlen("/changeskin")))
+    {
+        cmd = strchr(cmd, ' ');
+        if (!cmd || *++cmd == 0)
+            draw_info("usage: /changeskin <skin>", COLOR_GREEN);
+        else
+        {
+            if (stricmp(options.skin,cmd)==0)
+            {
+                draw_info_format(COLOR_WHITE, "You are already using skin %s.",options.skin);
+            }
+            else
+            {
+                char buf[512];
+                Boolean newskin = FALSE;
+
+                sprintf(buf,"skins/%s.zip",cmd);
+                if (PHYSFS_exists(buf))
+                {
+                    if (PHYSFS_addToSearchPath(buf , 0)==0)
+                        LOG(LOG_MSG,"PHYSFS_addPath (%s) failed: %s\n",buf,PHYSFS_getLastError());
+                    else
+                        newskin=TRUE;
+                }
+                sprintf(buf,"skins/%s",cmd);
+                if (PHYSFS_isDirectory(buf))
+                {
+                    if (PHYSFS_addToSearchPath(buf , 0)==0)
+                        LOG(LOG_MSG,"PHYSFS_addPath (%s) failed: %s\n",buf,PHYSFS_getLastError());
+                    else
+                        newskin=TRUE;
+                }
+                if (newskin)
+                {
+                    if (strnicmp(options.skin, "subred", strlen("subred")))
+                    {
+                        sprintf(buf,"skins/%s.zip",options.skin);
+                        if (PHYSFS_removeFromSearchPath(buf)==0)
+                            LOG(LOG_MSG,"PHYSFS_removePath (%s) failed: %s\n",buf,PHYSFS_getLastError());
+                        sprintf(buf,"skins/%s",options.skin);
+                        if (PHYSFS_removeFromSearchPath(buf)==0)
+                            LOG(LOG_MSG,"PHYSFS_removePath (%s) failed: %s\n",buf,PHYSFS_getLastError());
+                    }
+                    strncpy(options.skin, cmd, 63);
+                    save_options_dat();
+                    reload_skin();
+                    reload_icons();
+                }
+                else
+                {
+                    draw_info_format(COLOR_RED,"Skin '%s' not found, using old one.",cmd);
+                }
+            }
+        }
+        return TRUE;
+    }
+    else if (!strnicmp(cmd, "/reloadskinnow", strlen("/reloadskinnow")))
+    {
+        draw_info_format(COLOR_GREEN,"Reloading skin. This function is only for skin creating, and may be removed anytime!");
+        reload_skin();
+        reload_icons();
         return TRUE;
     }
     else if (!strnicmp(cmd, "/reply", strlen("/reply")))
@@ -206,6 +376,46 @@ int client_command_check(char *cmd)
                 LOG(-1,"REPLY: %s\n", buf);
                 send_command(buf, -1, SC_NORMAL);
             }
+        }
+        return TRUE;
+    }
+    else if (!strnicmp(cmd, "/statreset",strlen("/statreset")))
+    {
+        statometer.exp=0;
+        statometer.kills=0;
+        statometer.starttime=LastTick-1;
+        statometer.lastupdate=LastTick;
+        statometer.exphour=0.0f;
+        statometer.killhour=0.0f;
+
+        return TRUE;
+    }
+    else if (!strnicmp(cmd, "/sleeptimer", strlen("/sleeptimer")))
+    {
+        char    tmp[30];
+        int   stpar1 = -1, stpar2 = -1;
+        sscanf(cmd, "%s %d:%d",tmp,&stpar1,&stpar2);
+
+        if ((stpar1==-1) || (stpar2==-1))
+        {
+                draw_info_format(COLOR_WHITE,"Sleeptimer OFF\nUsage: /slepptimer HH:MM");
+                options.sleepcounter = FALSE;
+        }
+        else
+        {
+            struct tm *temp;
+            char buft[512];
+
+            options.sleepcounter = TRUE;
+            time(&sleeptime);
+            temp = localtime(&sleeptime);
+            if (stpar1<temp->tm_hour)
+                temp->tm_mday+=1;
+            temp->tm_hour=stpar1;
+            temp->tm_min=stpar2;
+            sleeptime=mktime(temp);
+            strftime(buft, sizeof buft, "%d-%m-%y %H:%M:%S", localtime(&sleeptime));
+            draw_info_format(COLOR_WHITE,"Sleeptime set to %s", buft);
         }
         return TRUE;
     }
@@ -246,41 +456,22 @@ int client_command_check(char *cmd)
         int wrong   = 0;
         par1 = 9, par2 = -1;
         sscanf(cmd, "%s %d %d", tmp, &par1, &par2);
-        if (par2 != -1) /* split mode */
-        {
-            if (par1<2 || par1>38 || par2<2 || par2>38 || (par1 + par2) < 10 || (par1 + par2) > 38)
-            {
-                wrong = 1;
-                draw_info("/setwin: parameters out of bounds.", COLOR_RED);
-            }
-            else
-            {
-                sprintf(tmp, ">>set textwin to split mode %d+%d rows.", par1, par2);
-                draw_info(tmp, COLOR_GREEN);
 
-                options.use_TextwinSplit = 1;
-                txtwin[TW_MSG].size = par1 - 1;
-                txtwin[TW_CHAT].size = par2 - 1;
-            }
+        if (par1<2 || par1>38)
+        {
+            wrong = 1;
+            draw_info("/setwin: parameters out of bounds.", COLOR_RED);
         }
         else
         {
-            if (par1<2 || par1>38)
-            {
-                wrong = 1;
-                draw_info("/setwin: parameters out of bounds.", COLOR_RED);
-            }
-            else
-            {
-                sprintf(tmp, ">>set textwin to %d rows.", par1);
-                draw_info(tmp, COLOR_GREEN);
-                options.use_TextwinSplit = 0;
-                txtwin[TW_MIX].size = par1 - 1;
-            }
+            sprintf(tmp, ">>set textwin to %d rows.", par1);
+            draw_info(tmp, COLOR_GREEN);
+            options.use_TextwinSplit = 0;
+            txtwin[TW_MIX].size = par1 - 1;
         }
 
         if (wrong)
-            draw_info("Usage: '/setwin <body> |<top>|'\nExample:\n/setwin 9 5\n/setwin 12", COLOR_WHITE);
+            draw_info("Usage: '/setwin <Msg> <Chat>'\nExample:\n/setwin 9 5", COLOR_WHITE);
         return TRUE;
     }
     else if (!strnicmp(cmd, "/keybind", strlen("/keybind")))
@@ -316,10 +507,10 @@ int client_command_check(char *cmd)
     return FALSE;
 }
 
-void show_console(int x, int y)
+void widget_show_console(int x, int y)
 {
-    /*        sprite_blt(Bitmaps[BITMAP_CONSOLE],x, y, NULL, NULL);*/
-    StringBlt(ScreenSurface, &SystemFont, show_input_string(InputString, &SystemFont, 239), x, y, COLOR_WHITE, NULL,
+    sprite_blt(Bitmaps[BITMAP_TEXTINPUT],x, y, NULL, NULL);
+    StringBlt(ScreenSurface, &SystemFont, show_input_string(InputString, &SystemFont, 239), x+9, y+7, COLOR_WHITE, NULL,
               NULL);
 }
 
@@ -330,6 +521,7 @@ void do_number(int x, int y)
     {
         reset_keys();
         cpl.input_mode = INPUT_MODE_NO;
+        cur_widget[IN_NUMBER_ID].show = FALSE;
         map_udate_flag = 2;
     }
     /* if set, we got a finished input!*/
@@ -356,9 +548,11 @@ void do_number(int x, int y)
         reset_keys();
         cpl.input_mode = INPUT_MODE_NO;
         map_udate_flag = 2;
+        cur_widget[IN_NUMBER_ID].show = FALSE;
     }
     else
-        show_number(x, y);
+        cur_widget[IN_NUMBER_ID].show = TRUE;
+
 }
 
 void do_keybind_input(void)
@@ -420,8 +614,25 @@ void do_npcdialog_input(void)
     }
 }
 
+void widget_number_event(int x, int y, SDL_Event event)
+{
+    int mx=0, my=0;
+    mx = x - cur_widget[IN_NUMBER_ID].x1;
+    my = y - cur_widget[IN_NUMBER_ID].y1;
 
-void show_number(int x, int y)
+    /* close number input */
+    if (InputStringFlag && cpl.input_mode == INPUT_MODE_NUMBER)
+    {
+        if (mx > 239 && mx < 249 && my > 5 && my < 17)
+        {
+            SDL_EnableKeyRepeat(0, SDL_DEFAULT_REPEAT_INTERVAL);
+            InputStringFlag = FALSE;
+            InputStringEndFlag = TRUE;
+        }
+    }
+}
+
+void widget_show_number(int x, int y)
 {
     SDL_Rect    tmp;
     char        buf[512];
@@ -440,52 +651,71 @@ static inline void print_resist(char *name, int x, int y, int num)
 {
     char    buf[16];
 
-    StringBlt(ScreenSurface, &SystemFont, name, x, y, (num>ATNR_GODPOWER)?COLOR_DGOLD:COLOR_HGOLD, NULL, NULL);
+    StringBlt(widgetSF[RESIST_ID], &SystemFont, name, x+5, y, (num>ATNR_GODPOWER)?COLOR_DGOLD:COLOR_HGOLD, NULL, NULL);
     sprintf(buf, "%02d", cpl.stats.protection[num]);
-    StringBlt(ScreenSurface, &SystemFont, buf, x + 12, y, cpl.stats.protection[num] ? (cpl.stats.protection[num]<0?COLOR_RED:(cpl.stats.protection[num]>=100?COLOR_ORANGE:COLOR_WHITE)) : COLOR_GREY,NULL, NULL);
+    StringBlt(widgetSF[RESIST_ID], &SystemFont, buf, x + 17, y, cpl.stats.protection[num] ? (cpl.stats.protection[num]<0?COLOR_RED:(cpl.stats.protection[num]>=100?COLOR_ORANGE:COLOR_WHITE)) : COLOR_GREY,NULL, NULL);
 }
 
-void show_resist(int x, int y)
+void widget_show_resist(int x, int y)
 {
-    StringBlt(ScreenSurface, &Font6x3Out, "Resistance Table", x, y + 1, COLOR_HGOLD, NULL, NULL);
+    _BLTFX bltfx;
+    SDL_Rect box;
 
-    print_resist("IM", x+68, y+3, ATNR_PHYSICAL);
-    print_resist("SL", x+98, y+3, ATNR_SLASH);
-    print_resist("CL", x+128, y+3, ATNR_CLEAVE);
-    print_resist("PI", x+158, y+3, ATNR_PIERCE);
+    if (!widgetSF[RESIST_ID])
+        widgetSF[RESIST_ID]=SDL_ConvertSurface(Bitmaps[BITMAP_RESIST_BG]->bitmap,Bitmaps[BITMAP_RESIST_BG]->bitmap->format,Bitmaps[BITMAP_RESIST_BG]->bitmap->flags);
 
-    print_resist("FI", x+8, y+15, ATNR_FIRE);
-    print_resist("CO", x+38, y+15, ATNR_COLD);
-    print_resist("EL", x+68, y+15, ATNR_ELECTRICITY);
-    print_resist("PO", x+98, y+15, ATNR_POISON);
-    print_resist("AC", x+128, y+15, ATNR_ACID);
-    print_resist("SO", x+158, y+15, ATNR_SONIC);
+    if (cur_widget[RESIST_ID].redraw)
+    {
+        cur_widget[RESIST_ID].redraw=FALSE;
 
-    print_resist("MA", x+8, y+27, ATNR_FORCE);
-    print_resist("PS", x+38, y+27, ATNR_PSIONIC);
-    print_resist("LI", x+68, y+27, ATNR_LIGHT);
-    print_resist("SH", x+98, y+27, ATNR_SHADOW);
-    print_resist("LS", x+128, y+27, ATNR_LIFESTEAL);
-    print_resist("AE", x+158, y+27, ATNR_AETHER);
+        bltfx.surface=widgetSF[RESIST_ID];
+        bltfx.flags = 0;
+        bltfx.alpha=0;
 
-    print_resist("NE", x+8, y+39, ATNR_NETHER);
-    print_resist("CH", x+38, y+39, ATNR_CHAOS);
-    print_resist("DE", x+68, y+39, ATNR_DEATH);
+        sprite_blt(Bitmaps[BITMAP_RESIST_BG], 0, 0, NULL, &bltfx);
+        StringBlt(widgetSF[RESIST_ID], &Font6x3Out, "Resistance Table", 5,  1, COLOR_HGOLD, NULL, NULL);
 
-    print_resist("WE", x+98, y+39, ATNR_WEAPONMAGIC);
-    print_resist("GO", x+128, y+39, ATNR_GODPOWER);
+        print_resist("IM", 68, 3, ATNR_PHYSICAL);
+        print_resist("SL", 98, 3, ATNR_SLASH);
+        print_resist("CL", 128, 3, ATNR_CLEAVE);
+        print_resist("PI", 158, 3, ATNR_PIERCE);
 
-    print_resist("DR", x+8, y+51, ATNR_DRAIN);
-    print_resist("DE", x+38, y+51, ATNR_DEPLETION);
-    print_resist("CR", x+68, y+51, ATNR_CORRUPTION);
-    print_resist("CM", x+98, y+51, ATNR_COUNTERMAGIC);
-    print_resist("CA", x+128, y+51, ATNR_CANCELLATION);
-    print_resist("CF", x+158, y+51, ATNR_CONFUSION);
+        print_resist("FI", 8, 15, ATNR_FIRE);
+        print_resist("CO", 38, 15, ATNR_COLD);
+        print_resist("EL", 68, 15, ATNR_ELECTRICITY);
+        print_resist("PO", 98, 15, ATNR_POISON);
+        print_resist("AC", 128, 15, ATNR_ACID);
+        print_resist("SO", 158, 15, ATNR_SONIC);
 
-    print_resist("FE", x+8, y+63, ATNR_FEAR);
-    print_resist("SL", x+38, y+63, ATNR_SLOW);
-    print_resist("PA", x+68, y+63, ATNR_PARALYZE);
-    print_resist("SN", x+98, y+63, ATNR_SNARE);
+        print_resist("MA", 8, 27, ATNR_FORCE);
+        print_resist("PS", 38, 27, ATNR_PSIONIC);
+        print_resist("LI", 68, 27, ATNR_LIGHT);
+        print_resist("SH", 98, 27, ATNR_SHADOW);
+        print_resist("LS", 128, 27, ATNR_LIFESTEAL);
+        print_resist("AE", 158, 27, ATNR_AETHER);
+
+        print_resist("NE", 8, 39, ATNR_NETHER);
+        print_resist("CH", 38, 39, ATNR_CHAOS);
+        print_resist("DE", 68, 39, ATNR_DEATH);
+
+        print_resist("WE", 98, 39, ATNR_WEAPONMAGIC);
+        print_resist("GO", 128, 39, ATNR_GODPOWER);
+
+        print_resist("DR", 8, 51, ATNR_DRAIN);
+        print_resist("DE", 38, 51, ATNR_DEPLETION);
+        print_resist("CR", 68, 51, ATNR_CORRUPTION);
+        print_resist("CM", 98, 51, ATNR_COUNTERMAGIC);
+        print_resist("CA", 128, 51, ATNR_CANCELLATION);
+        print_resist("CF", 158, 51, ATNR_CONFUSION);
+
+        print_resist("FE", 8, 63, ATNR_FEAR);
+        print_resist("SL", 38, 63, ATNR_SLOW);
+        print_resist("PA", 68, 63, ATNR_PARALYZE);
+        print_resist("SN", 98, 63, ATNR_SNARE);
+    }
+    box.x=x;
+    box.y=y;
+    SDL_BlitSurface(widgetSF[RESIST_ID], NULL, ScreenSurface, &box);
 }
 
 #define ICONDEFLEN 32
@@ -536,28 +766,83 @@ Boolean blt_face_centered(int face, int x, int y)
     return TRUE;
 }
 
-void show_range(int x, int y)
+void widget_range_event(int x, int y, SDL_Event event, int MEvent)
+{
+    if (x > cur_widget[RANGE_ID].x1 + 5 &&
+        x < cur_widget[RANGE_ID].x1 + 38 &&
+        y >= cur_widget[RANGE_ID].y1 + 3 &&
+        y <= cur_widget[RANGE_ID].y1 + 33)
+    {
+        if (MEvent==MOUSE_DOWN)
+        {
+            if (event.button.button == SDL_BUTTON_LEFT)
+                process_macro_keys(KEYFUNC_RANGE, 0);
+            else if (event.button.button == 4) /* mousewheel up */
+                process_macro_keys(KEYFUNC_RANGE, 0);
+            else if (event.button.button == 5) /* mousewheel down */
+                process_macro_keys(KEYFUNC_RANGE_BACK, 0);
+            else
+                process_macro_keys(KEYFUNC_RANGE_BACK, 0);
+        }
+        else if (MEvent==MOUSE_UP)
+        {
+            if (draggingInvItem(DRAG_GET_STATUS) > DRAG_IWIN_BELOW)
+            {
+                /* KEYFUNC_APPLY and KEYFUNC_DROP works only if cpl.inventory_win = IWIN_INV. The tag must
+                            be placed in cpl.win_inv_tag. So we do this and after DnD we restore the old values. */
+                int   old_inv_win = cpl.inventory_win;
+                int   old_inv_tag = cpl.win_inv_tag;
+                cpl.inventory_win = IWIN_INV;
+
+                /* range field */
+                if (draggingInvItem(DRAG_GET_STATUS) == DRAG_IWIN_INV &&
+                    x >= cur_widget[RANGE_ID].x1 &&
+                    x <= cur_widget[RANGE_ID].x1 + 78 &&
+                    y >= cur_widget[RANGE_ID].y1 &&
+                    y <= cur_widget[RANGE_ID].y1 + 35)
+                {
+                    RangeFireMode = 4;
+                    process_macro_keys(KEYFUNC_APPLY, 0); /* drop to player-doll */
+                }
+                cpl.inventory_win = old_inv_win;
+                cpl.win_inv_tag = old_inv_tag;
+            }
+        }
+    }
+}
+
+void widget_show_range(int x, int y)
 {
     char        buf[256];
     SDL_Rect    rec_range;
     SDL_Rect    rec_item;
-    item       *tmp;
+    item       *tmp, *tmp2;
 
     rec_range.w = 160;
     rec_item.w = 185;
     examine_range_inv();
 
-//    sprite_blt(Bitmaps[BITMAP_RANGE], x - 2, y, NULL, NULL);
+    sprite_blt(Bitmaps[BITMAP_RANGE], x, y, NULL, NULL);
 
     switch (RangeFireMode)
     {
         case FIRE_MODE_BOW:
             if (fire_mode_tab[FIRE_MODE_BOW].item != FIRE_ITEM_NO)
             {
-                sprintf(buf, "using %s", get_range_item_name(fire_mode_tab[FIRE_MODE_BOW].item));
-                blt_inventory_face_from_tag(fire_mode_tab[FIRE_MODE_BOW].item, x + 3, y + 2);
+                tmp2=locate_item(fire_mode_tab[FIRE_MODE_BOW].item);
+                if (!tmp2)
+                {
+                    LOG(LOG_DEBUG,"BUG: applied range weapon don't exist\n");
+                    StringBlt(ScreenSurface, &SystemFont, "using Nothing", x + 5, y + 36, COLOR_WHITE, &rec_range, NULL);
+                }
+                else
+                {
+                    sprintf(buf, "using %s", tmp2->s_name);
+                    blt_inventory_face_from_tag(fire_mode_tab[FIRE_MODE_BOW].item, x + 5, y + 2);
 
-                StringBlt(ScreenSurface, &SystemFont, buf, x + 3, y + 38, COLOR_WHITE, &rec_range, NULL);
+                    StringBlt(ScreenSurface, &SystemFont, buf, x + 5, y + 36, COLOR_WHITE, &rec_range, NULL);
+                }
+
                 if (fire_mode_tab[FIRE_MODE_BOW].amun != FIRE_ITEM_NO)
                 {
                     tmp = locate_item_from_item(cpl.ob, fire_mode_tab[FIRE_MODE_BOW].amun);
@@ -570,33 +855,40 @@ void show_range(int x, int y)
                     }
                     else
                         strcpy(buf, "ammo not selected");
-                    blt_inventory_face_from_tag(fire_mode_tab[FIRE_MODE_BOW].amun, x + 43, y + 2);
+                    blt_inventory_face_from_tag(fire_mode_tab[FIRE_MODE_BOW].amun, x + 45, y + 2);
                 }
-                else
+                else if (tmp2->itype==TYPE_BOW)
                 {
                     sprintf(buf, "ammo not selected");
                 }
-                StringBlt(ScreenSurface, &SystemFont, buf, x + 3, y + 49, COLOR_WHITE, &rec_item, NULL);
+                else if (tmp2->itype==TYPE_ARROW)
+                {
+                    sprintf(buf, "amount: %d",tmp2->nrof);
+                }
+                else
+//                    sprintf(buf, "Type: %d",tmp2->itype);
+                    buf[0]=0;
+
+                StringBlt(ScreenSurface, &SystemFont, buf, x + 5, y + 47, COLOR_WHITE, &rec_item, NULL);
             }
             else
             {
                 sprintf(buf, "no range weapon applied");
-                StringBlt(ScreenSurface, &SystemFont, buf, x + 3, y + 38, COLOR_WHITE, &rec_range, NULL);
+                StringBlt(ScreenSurface, &SystemFont, buf, x + 5, y + 36, COLOR_WHITE, &rec_range, NULL);
             }
 
-            sprite_blt(Bitmaps[BITMAP_RANGE_MARKER], x + 3, y + 2, NULL, NULL);
+            sprite_blt(Bitmaps[BITMAP_RANGE_MARKER], x + 5, y + 2, NULL, NULL);
             break;
-
 
             /* these are client only, no server signal needed */
         case FIRE_MODE_SKILL:
             if (fire_mode_tab[FIRE_MODE_SKILL].skill)
             {
-                sprite_blt(Bitmaps[BITMAP_RANGE_SKILL], x + 3, y + 2, NULL, NULL);
+                sprite_blt(Bitmaps[BITMAP_RANGE_SKILL], x + 5, y + 2, NULL, NULL);
                 if (fire_mode_tab[FIRE_MODE_SKILL].skill->flag != -1)
                 {
-                    sprite_blt(fire_mode_tab[FIRE_MODE_SKILL].skill->icon, x + 43, y + 2, NULL, NULL);
-                    StringBlt(ScreenSurface, &SystemFont, fire_mode_tab[FIRE_MODE_SKILL].skill->name, x + 3, y + 49,
+                    sprite_blt(fire_mode_tab[FIRE_MODE_SKILL].skill->icon, x + 45, y + 2, NULL, NULL);
+                    StringBlt(ScreenSurface, &SystemFont, fire_mode_tab[FIRE_MODE_SKILL].skill->name, x + 5, y + 47,
                               COLOR_WHITE, &rec_item, NULL);
                 }
                 else
@@ -604,23 +896,23 @@ void show_range(int x, int y)
             }
             else
             {
-                sprite_blt(Bitmaps[BITMAP_RANGE_SKILL_NO], x + 3, y + 2, NULL, NULL);
+                sprite_blt(Bitmaps[BITMAP_RANGE_SKILL_NO], x + 5, y + 2, NULL, NULL);
                 sprintf(buf, "no skill selected");
-                StringBlt(ScreenSurface, &SystemFont, buf, x + 3, y + 49, COLOR_WHITE, &rec_item, NULL);
+                StringBlt(ScreenSurface, &SystemFont, buf, x + 5, y + 47, COLOR_WHITE, &rec_item, NULL);
             }
             sprintf(buf, "use skill");
-            StringBlt(ScreenSurface, &SystemFont, buf, x + 3, y + 38, COLOR_WHITE, &rec_range, NULL);
+            StringBlt(ScreenSurface, &SystemFont, buf, x + 5, y + 36, COLOR_WHITE, &rec_range, NULL);
 
             break;
         case FIRE_MODE_SPELL:
             if (fire_mode_tab[FIRE_MODE_SPELL].spell)
             {
                 /* we use wiz spells as default */
-                sprite_blt(Bitmaps[BITMAP_RANGE_WIZARD], x + 3, y + 2, NULL, NULL);
+                sprite_blt(Bitmaps[BITMAP_RANGE_WIZARD], x + 5, y + 2, NULL, NULL);
                 if (fire_mode_tab[FIRE_MODE_SPELL].spell->flag != -1)
                 {
-                    sprite_blt(fire_mode_tab[FIRE_MODE_SPELL].spell->icon, x + 43, y + 2, NULL, NULL);
-                    StringBlt(ScreenSurface, &SystemFont, fire_mode_tab[FIRE_MODE_SPELL].spell->name, x + 3, y + 49,
+                    sprite_blt(fire_mode_tab[FIRE_MODE_SPELL].spell->icon, x + 45, y + 2, NULL, NULL);
+                    StringBlt(ScreenSurface, &SystemFont, fire_mode_tab[FIRE_MODE_SPELL].spell->name, x + 5, y + 47,
                               COLOR_WHITE, &rec_item, NULL);
                 }
                 else
@@ -628,12 +920,12 @@ void show_range(int x, int y)
             }
             else
             {
-                sprite_blt(Bitmaps[BITMAP_RANGE_WIZARD_NO], x + 3, y + 2, NULL, NULL);
+                sprite_blt(Bitmaps[BITMAP_RANGE_WIZARD_NO], x + 5, y + 2, NULL, NULL);
                 sprintf(buf, "no spell selected");
-                StringBlt(ScreenSurface, &SystemFont, buf, x + 3, y + 49, COLOR_WHITE, &rec_item, NULL);
+                StringBlt(ScreenSurface, &SystemFont, buf, x + 5, y + 47, COLOR_WHITE, &rec_item, NULL);
             }
             sprintf(buf, "cast spell");
-            StringBlt(ScreenSurface, &SystemFont, buf, x + 3, y + 38, COLOR_WHITE, &rec_range, NULL);
+            StringBlt(ScreenSurface, &SystemFont, buf, x + 5, y + 36, COLOR_WHITE, &rec_range, NULL);
 
             break;
     };
@@ -680,12 +972,12 @@ void show_menu(void)
     else if (cpl.menustatus == MENU_SPELL)
     {
         show_spelllist();
-        box.x = SCREEN_XLEN / 2 - Bitmaps[BITMAP_DIALOG_BG]->bitmap->w / 2;
-        box.y = SCREEN_YLEN / 2 - Bitmaps[BITMAP_DIALOG_BG]->bitmap->h / 2 - 42;
+        box.x = Screensize.x / 2 - Bitmaps[BITMAP_DIALOG_BG]->bitmap->w / 2;
+        box.y = Screensize.y / 2 - Bitmaps[BITMAP_DIALOG_BG]->bitmap->h / 2 - 42;
         box.h = 42;
         box.w = Bitmaps[BITMAP_DIALOG_BG]->bitmap->w;
         SDL_FillRect(ScreenSurface, &box, 0);
-        show_quickslots(box.x + 100, box.y + 3);
+        show_quickslots(box.x + 120, box.y + 3);
     }
     else if (cpl.menustatus == MENU_SKILL)
         show_skilllist();
@@ -715,12 +1007,18 @@ void show_media(int x, int y)
     }
 }
 
+void widget_show_mapname(int x, int y)
+{
+    StringBlt(ScreenSurface, &SystemFont, MapData.name, x, y, COLOR_DEFAULT, NULL, NULL);
+}
+
+
 void show_status(void)
 {
     /*
             int y, x;
-            x= SCREEN_XLEN/2-Bitmaps[BITMAP_STATUS]->bitmap->w/2;
-            y= SCREEN_YLEN/2-Bitmaps[BITMAP_STATUS]->bitmap->h/2;
+            x= Screensize.x/2-Bitmaps[BITMAP_STATUS]->bitmap->w/2;
+            y= Screensize.y/2-Bitmaps[BITMAP_STATUS]->bitmap->h/2;
             sprite_blt(Bitmaps[BITMAP_STATUS],x, y, NULL, NULL);
     */
 }
@@ -1820,26 +2118,43 @@ void read_skills(void)
 int get_quickslot(int x, int y)
 {
     int i;
+    int qsx, qsy, xoff;
+    if (cur_widget[QUICKSLOT_ID].ht > 34)
+    {
+        qsx = 1;
+        qsy = 0;
+        xoff = 0;
+    }
+    else
+    {
+        qsx = 0;
+        qsy = 1;
+        xoff= -17;
+    }
 
     for (i = 0; i < MAX_QUICK_SLOTS; i++)
     {
-        if (x >= SKIN_POS_QUICKSLOT_X + quickslots_pos[i][0]
-                && x <= SKIN_POS_QUICKSLOT_X + quickslots_pos[i][0] + 32
-                && y >= SKIN_POS_QUICKSLOT_Y + quickslots_pos[i][1]
-                && y <= SKIN_POS_QUICKSLOT_Y + quickslots_pos[i][1] + 32)
+        if (x >= cur_widget[QUICKSLOT_ID].x1 + quickslots_pos[i][qsx]+xoff
+                && x <= cur_widget[QUICKSLOT_ID].x1 + quickslots_pos[i][qsx]+xoff + 32
+                && y >= cur_widget[QUICKSLOT_ID].y1 + quickslots_pos[i][qsy]
+                && y <= cur_widget[QUICKSLOT_ID].y1 + quickslots_pos[i][qsy] + 32)
             return i;
     }
     return -1;
 }
-
 void show_quickslots(int x, int y)
 {
     int     i, mx, my;
-    char    buf[16];
+    char    buf[512];
+    int     qsx, qsy, xoff;
+
+        qsx = 0;
+        qsy = 1;
+        xoff = -17;
+        sprite_blt(Bitmaps[BITMAP_QUICKSLOTS], x, y, NULL, NULL);
 
     SDL_GetMouseState(&mx, &my);
     update_quickslots(-1);
-    sprite_blt(Bitmaps[BITMAP_QUICKSLOTS], x, y, NULL, NULL);
 
     for (i = MAX_QUICK_SLOTS - 1; i >= 0; i--)
     {
@@ -1849,11 +2164,12 @@ void show_quickslots(int x, int y)
             if (quick_slots[i].shared.is_spell == TRUE)
             {
                 sprite_blt(spell_list[quick_slots[i].spell.groupNr].entry[quick_slots[i].spell.classNr][quick_slots[i].shared.tag].icon,
-                           x + quickslots_pos[i][0], y + quickslots_pos[i][1], NULL, NULL);
-                if (mx >= x + quickslots_pos[i][0]
-                        && mx < x + quickslots_pos[i][0] + 33
-                        && my >= y + quickslots_pos[i][1]
-                        && my < y + quickslots_pos[i][1] + 33)
+                           x + quickslots_pos[i][qsx]+xoff, y + quickslots_pos[i][qsy], NULL, NULL);
+                if (mx >= x + quickslots_pos[i][qsx]+xoff
+                        && mx < x + quickslots_pos[i][qsx]+xoff + 33
+                        && my >= y + quickslots_pos[i][qsy]
+                        && my < y + quickslots_pos[i][qsy] + 33
+                        && GetMouseState(&mx,&my,QUICKSLOT_ID))
                     show_tooltip(mx, my,
                                  spell_list[quick_slots[i].spell.groupNr].entry[quick_slots[i].spell.classNr][quick_slots[i].shared.tag].name);
             }
@@ -1864,21 +2180,199 @@ void show_quickslots(int x, int y)
                 tmp = locate_item_from_item(cpl.ob, quick_slots[i].shared.tag);
                 if (tmp)
                 {
-                    blt_inv_item(tmp, x + quickslots_pos[i][0], y + quickslots_pos[i][1]);
+                    blt_inv_item(tmp, x + quickslots_pos[i][qsx]+xoff, y + quickslots_pos[i][qsy]);
                     /* show tooltip */
-                    if (mx >= x + quickslots_pos[i][0]
-                            && mx < x + quickslots_pos[i][0] + 33
-                            && my >= y + quickslots_pos[i][1]
-                            && my < y + quickslots_pos[i][1] + 33)
-                        show_tooltip(mx, my, tmp->s_name);
+                    if (mx >= x + quickslots_pos[i][qsx]+xoff
+                            && mx < x + quickslots_pos[i][qsx]+xoff + 33
+                            && my >= y + quickslots_pos[i][qsy]
+                            && my < y + quickslots_pos[i][qsy] + 33
+                            && GetMouseState(&mx,&my,QUICKSLOT_ID))
+                    {
+                        sprintf(buf,"%s (q/c: %d/%d)",tmp->s_name, tmp->item_qua, tmp->item_con);
+                        show_tooltip(mx, my, buf);
+                    }
                 }
             }
         }
         sprintf(buf, "F%d", i + 1);
-        StringBlt(ScreenSurface, &Font6x3Out, buf, x + quickslots_pos[i][0] + 12, y + quickslots_pos[i][1] - 6,
+        StringBlt(ScreenSurface, &Font6x3Out, buf, x + quickslots_pos[i][qsx]+xoff + 12, y + quickslots_pos[i][qsy] - 6,
                   COLOR_DEFAULT, NULL, NULL);
     }
 }
+void widget_quickslots(int x, int y)
+{
+    int     i, mx, my;
+    char    buf[512];
+    int     qsx, qsy, xoff;
+
+    if (cur_widget[QUICKSLOT_ID].ht > 34)
+    {
+        qsx = 1;
+        qsy = 0;
+        xoff = 0;
+        sprite_blt(Bitmaps[BITMAP_QUICKSLOTSV], x, y, NULL, NULL);
+    }
+    else
+    {
+        qsx = 0;
+        qsy = 1;
+        xoff = -17;
+        sprite_blt(Bitmaps[BITMAP_QUICKSLOTS], x, y, NULL, NULL);
+    }
+
+    SDL_GetMouseState(&mx, &my);
+    update_quickslots(-1);
+
+    for (i = MAX_QUICK_SLOTS - 1; i >= 0; i--)
+    {
+        if (quick_slots[i].shared.tag != -1)
+        {
+            /* spell in quickslot */
+            if (quick_slots[i].shared.is_spell == TRUE)
+            {
+                sprite_blt(spell_list[quick_slots[i].spell.groupNr].entry[quick_slots[i].spell.classNr][quick_slots[i].shared.tag].icon,
+                           x + quickslots_pos[i][qsx]+xoff, y + quickslots_pos[i][qsy], NULL, NULL);
+                if (mx >= x + quickslots_pos[i][qsx]+xoff
+                        && mx < x + quickslots_pos[i][qsx]+xoff + 33
+                        && my >= y + quickslots_pos[i][qsy]
+                        && my < y + quickslots_pos[i][qsy] + 33
+                        && GetMouseState(&mx,&my,QUICKSLOT_ID))
+                    show_tooltip(mx, my,
+                                 spell_list[quick_slots[i].spell.groupNr].entry[quick_slots[i].spell.classNr][quick_slots[i].shared.tag].name);
+            }
+            /* item in quickslot */
+            else
+            {
+                item   *tmp;
+                tmp = locate_item_from_item(cpl.ob, quick_slots[i].shared.tag);
+                if (tmp)
+                {
+                    blt_inv_item(tmp, x + quickslots_pos[i][qsx]+xoff, y + quickslots_pos[i][qsy]);
+                    /* show tooltip */
+                    if (mx >= x + quickslots_pos[i][qsx]+xoff
+                            && mx < x + quickslots_pos[i][qsx]+xoff + 33
+                            && my >= y + quickslots_pos[i][qsy]
+                            && my < y + quickslots_pos[i][qsy] + 33
+                            && GetMouseState(&mx,&my,QUICKSLOT_ID))
+                    {
+                        sprintf(buf,"%s (QC: %d/%d)",tmp->s_name, tmp->item_qua, tmp->item_con);
+                        show_tooltip(mx, my, buf);
+                    }
+                }
+            }
+        }
+        sprintf(buf, "F%d", i + 1);
+        StringBlt(ScreenSurface, &Font6x3Out, buf, x + quickslots_pos[i][qsx]+xoff + 12, y + quickslots_pos[i][qsy] - 6,
+                  COLOR_DEFAULT, NULL, NULL);
+    }
+}
+void widget_quickslots_mouse_event(int x, int y, int MEvent)
+{
+    if (MEvent==1) /* Mouseup Event */
+    {
+        if (draggingInvItem(DRAG_GET_STATUS) > DRAG_IWIN_BELOW)
+        {
+            int ind = get_quickslot(x, y);
+            if (ind != -1) /* valid slot */
+            {
+                if (draggingInvItem(DRAG_GET_STATUS) == DRAG_QUICKSLOT_SPELL)
+                {
+                    quick_slots[ind].shared.is_spell = TRUE;
+                    quick_slots[ind].spell.groupNr = quick_slots[cpl.win_quick_tag].spell.groupNr;
+                    quick_slots[ind].spell.classNr = quick_slots[cpl.win_quick_tag].spell.classNr;
+                    quick_slots[ind].shared.tag = quick_slots[cpl.win_quick_tag].spell.spellNr;
+                    cpl.win_quick_tag = -1;
+                }
+                else
+                {
+                    if (draggingInvItem(DRAG_GET_STATUS) == DRAG_IWIN_INV)
+                        cpl.win_quick_tag = cpl.win_inv_tag;
+                    else if (draggingInvItem(DRAG_GET_STATUS) == DRAG_PDOLL)
+                        cpl.win_quick_tag = cpl.win_pdoll_tag;
+                    quick_slots[ind].shared.tag = cpl.win_quick_tag;
+                    quick_slots[ind].item.invSlot = ind;
+                    quick_slots[ind].shared.is_spell = FALSE;
+                    /* now we do some tests... first, ensure this item can fit */
+                    update_quickslots(-1);
+                    /* now: if this is null, item is *not* in the main inventory
+                                       * of the player - then we can't put it in quickbar!
+                                       * Server will not allow apply of items in containers!
+                                       */
+                    if (!locate_item_from_inv(cpl.ob->inv, cpl.win_quick_tag))
+                    {
+                        sound_play_effect(SOUND_CLICKFAIL, 0, 0, 100);
+                        draw_info("Only items from main inventory allowed in quickbar!", COLOR_WHITE);
+                    }
+                    else
+                    {
+                        char      buf[256];
+                        sound_play_effect(SOUND_GET, 0, 0, 100); /* no bug - we 'get' it in quickslots */
+                        sprintf(buf, "set F%d to %s", ind + 1, locate_item(cpl.win_quick_tag)->s_name);
+                        draw_info(buf, COLOR_DGOLD);
+                    }
+                }
+            }
+            draggingInvItem(DRAG_NONE);
+            itemExamined = 0; /* ready for next item */
+        }
+    }
+    else /*Mousedown Event */
+    {
+        /* drag from quickslots */
+        int   ind = get_quickslot(x, y);
+        if (ind != -1 && quick_slots[ind].shared.tag != -1) /* valid slot */
+        {
+            cpl.win_quick_tag = quick_slots[ind].shared.tag;
+            if ((SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)))
+            {
+                if (quick_slots[ind].shared.is_spell == TRUE)
+                {
+                    draggingInvItem(DRAG_QUICKSLOT_SPELL);
+                    quick_slots[ind].spell.spellNr = quick_slots[ind].shared.tag;
+                    cpl.win_quick_tag = ind;
+                }
+                else
+                {
+                    draggingInvItem(DRAG_QUICKSLOT);
+                }
+                quick_slots[ind].shared.tag = -1;
+            }
+            else
+            {
+                int stemp = cpl.      inventory_win, itemp = cpl.win_inv_tag;
+                cpl.inventory_win = IWIN_INV;
+                cpl.win_inv_tag = quick_slots[ind].shared.tag;
+                process_macro_keys(KEYFUNC_APPLY, 0);
+                cpl.inventory_win = stemp;
+                cpl.win_inv_tag = itemp;
+            }
+        }
+        else if (x >= cur_widget[QUICKSLOT_ID].x1+266
+                 && x <= cur_widget[QUICKSLOT_ID].x1 + 282
+                 && y >= cur_widget[QUICKSLOT_ID].y1
+                 && y <= cur_widget[QUICKSLOT_ID].y1 + 34
+                 && (cur_widget[QUICKSLOT_ID].ht <= 34))
+        {
+            cur_widget[QUICKSLOT_ID].wd = 34;
+            cur_widget[QUICKSLOT_ID].ht = 282;
+            cur_widget[QUICKSLOT_ID].x1 +=266;
+        }
+        else if (x >= cur_widget[QUICKSLOT_ID].x1
+                 && x <= cur_widget[QUICKSLOT_ID].x1 + 34
+                 && y >= cur_widget[QUICKSLOT_ID].y1
+                 && y <= cur_widget[QUICKSLOT_ID].y1 + 15
+                 && (cur_widget[QUICKSLOT_ID].ht > 34))
+        {
+            cur_widget[QUICKSLOT_ID].wd = 282;
+            cur_widget[QUICKSLOT_ID].ht = 34;
+            cur_widget[QUICKSLOT_ID].x1 -=266;
+        }
+    }
+
+
+    return;
+}
+
 
 void update_quickslots(int del_item)
 {
@@ -1997,7 +2491,7 @@ static int readNextQuickSlots(FILE *fp, char *server, int *port, char *name, _qu
 /******************************************************************
  Restore quickslots from last game.
 ******************************************************************/
-#define QUICKSLOT_FILE "quick.dat"
+#define QUICKSLOT_FILE "settings/quick.dat"
 #define QUICKSLOT_FILE_VERSION 2
 #define QUICKSLOT_FILE_HEADER ((QUICKSLOT_FILE_VERSION << 24) | 0x53 << 16 | 0x51 << 8 | 0x44)
 void load_quickslots_entrys()
@@ -2209,18 +2703,39 @@ void save_quickslots_entrys()
     fclose(stream);
     freeQuickSlots(quick_slots, MAX_QUICK_SLOTS);
 }
+void widget_event_target(int x, int y, SDL_Event event)
+{
+    /* combat modus */
+    if (y > cur_widget[TARGET_ID].y1+3 &&
+        y < cur_widget[TARGET_ID].y1+38 &&
+        x > cur_widget[TARGET_ID].x1+3 &&
+        x < cur_widget[TARGET_ID].x1+30)
+    {
+        check_keys(SDLK_c);
+    }
+    /* talk button */
+    if (y > cur_widget[TARGET_ID].y1 + 7 &&
+        y < cur_widget[TARGET_ID].y1 + 25 &&
+        x > cur_widget[TARGET_ID].x1 + 223 &&
+        x < cur_widget[TARGET_ID].x1 + 259)
+    {
+        if (cpl.target_code)
+            send_command("/talk hello", -1, SC_NORMAL);
+    }
+}
 
-
-void show_target(int x, int y)
+void widget_show_target(int x, int y)
 {
     char       *ptr = NULL;
     SDL_Rect    box;
     double      temp;
     int         hp_tmp;
 
-    sprite_blt(Bitmaps[cpl.target_mode ? BITMAP_TARGET_ATTACK : BITMAP_TARGET_NORMAL], x, y, NULL, NULL);
+    sprite_blt(Bitmaps[BITMAP_TARGET_BG], x, y, NULL, NULL);
 
-    sprite_blt(Bitmaps[BITMAP_TARGET_HP_B], x - 1, y + 20, NULL, NULL);
+    sprite_blt(Bitmaps[cpl.target_mode ? BITMAP_TARGET_ATTACK : BITMAP_TARGET_NORMAL], x+5, y+4, NULL, NULL);
+
+    sprite_blt(Bitmaps[BITMAP_TARGET_HP_B], x+4, y+24, NULL, NULL);
 
     /* redirect target_hp to our hp - server don't send it
      * because we should now our hp exactly
@@ -2251,7 +2766,7 @@ void show_target(int x, int y)
             ptr = "target friend";
     }
     if (cpl.target_code)
-        sprite_blt(Bitmaps[BITMAP_TARGET_TALK], x + 270, y + 27, NULL, NULL);
+        sprite_blt(Bitmaps[BITMAP_TARGET_TALK], x + 223, y + 7, NULL, NULL);
 
     if (options.show_target_self || cpl.target_code != 0)
     {
@@ -2266,13 +2781,37 @@ void show_target(int x, int y)
                 box.w = 1;
             if (box.w > Bitmaps[BITMAP_TARGET_HP]->bitmap->w)
                 box.w = Bitmaps[BITMAP_TARGET_HP]->bitmap->w;
-            sprite_blt(Bitmaps[BITMAP_TARGET_HP], x, y + 21, &box, NULL);
+            sprite_blt(Bitmaps[BITMAP_TARGET_HP], x+5, y + 25, &box, NULL);
         }
 
         if (ptr)
         {
-            StringBlt(ScreenSurface, &SystemFont, cpl.target_name, x + 30, y, cpl.target_color, NULL, NULL);
-            StringBlt(ScreenSurface, &SystemFont, ptr, x + 30, y + 11, cpl.target_color, NULL, NULL);
+            /* BEGIN modified robed's HP-%-patch */
+            /* Draw the name of the target */
+             StringBlt(ScreenSurface, &SystemFont, cpl.target_name, x + 35, y+3, cpl.target_color, NULL, NULL);
+            /* Either draw HP remaining percent and description... */
+            if (hp_tmp)
+            {
+                char hp_text[9];
+                int hp_color;
+                int xhpoffset=0;
+                sprintf((char *)hp_text, "HP: %d%%", hp_tmp);
+                     if (hp_tmp > 90) hp_color = COLOR_GREEN;
+                else if (hp_tmp > 75) hp_color = COLOR_DGOLD;
+                else if (hp_tmp > 50) hp_color = COLOR_HGOLD;
+                else if (hp_tmp > 25) hp_color = COLOR_ORANGE;
+                else if (hp_tmp > 10) hp_color = COLOR_YELLOW;
+                else                  hp_color = COLOR_RED;
+
+               StringBlt(ScreenSurface, &SystemFont, hp_text, x + 35, y + 14, hp_color, NULL, NULL);
+               xhpoffset=50;
+
+                StringBlt(ScreenSurface, &SystemFont, ptr, x + 35 + xhpoffset, y + 14, cpl.target_color, NULL, NULL);
+            }
+            /* ...or draw just the description */
+            else
+                StringBlt(ScreenSurface, &SystemFont, ptr, x + 35, y + 14, cpl.target_color, NULL, NULL);
+            /* END modified robed's HP-%-patch */
         }
     }
 }
@@ -2286,3 +2825,47 @@ void reset_menu_status(void)
     }
 
 }
+
+void reload_icons(void)
+{
+    int i, ii;
+    char    buf[512];
+
+    for (i = 0; i < SPELL_LIST_MAX; i++)
+    {
+        for (ii = 0; ii < DIALOG_LIST_ENTRY; ii++)
+        {
+            if ((spell_list[i].entry[0][ii].flag != LIST_ENTRY_UNUSED) && (spell_list[i].entry[0][ii].icon_name))
+            {
+                if (spell_list[i].entry[0][ii].icon)
+                    sprite_free_sprite(spell_list[i].entry[0][ii].icon);
+               sprintf(buf,"%s%s",GetIconDirectory(),spell_list[i].entry[0][ii].icon_name);
+               spell_list[i].entry[0][ii].icon=sprite_load_file(buf, SURFACE_FLAG_DISPLAYFORMAT);
+            }
+            if ((spell_list[i].entry[1][ii].flag != LIST_ENTRY_UNUSED) && (spell_list[i].entry[1][ii].icon_name))
+            {
+                if (spell_list[i].entry[1][ii].icon)
+                    sprite_free_sprite(spell_list[i].entry[1][ii].icon);
+               sprintf(buf,"%s%s",GetIconDirectory(),spell_list[i].entry[1][ii].icon_name);
+               spell_list[i].entry[1][ii].icon=sprite_load_file(buf, SURFACE_FLAG_DISPLAYFORMAT);
+            }
+        }
+    }
+
+    for (i = 0; i < SKILL_LIST_MAX; i++)
+    {
+        for (ii = 0; ii < DIALOG_LIST_ENTRY; ii++)
+        {
+            if ((skill_list[i].entry[ii].flag != LIST_ENTRY_UNUSED) && (skill_list[i].entry[ii].icon_name))
+            {
+                if (skill_list[i].entry[ii].icon)
+                    sprite_free_sprite(skill_list[i].entry[ii].icon);
+               sprintf(buf,"%s%s",GetIconDirectory(),skill_list[i].entry[ii].icon_name);
+               skill_list[i].entry[ii].icon=sprite_load_file(buf, SURFACE_FLAG_DISPLAYFORMAT);
+            }
+        }
+    }
+
+}
+
+

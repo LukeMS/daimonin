@@ -282,3 +282,30 @@ void smiley_convert(char *msg)
 
 
 
+
+extern void     markdmbuster()
+{
+    int tag=-1;
+    item *it=NULL;
+    char    buf[256];
+
+
+    sprintf(buf,"%s's DMBuster",cpl.name);
+
+    tag=locate_item_tag_from_name(buf);
+
+    if (tag == -1 || !locate_item(tag))
+        return;
+
+    send_mark_obj((it = locate_item(tag)));
+    if (it)
+    {
+        if (cpl.mark_count == it->tag)
+            sprintf(buf, "unmark %s", it->s_name);
+        else
+            sprintf(buf, "mark %s", it->s_name);
+        draw_info(buf, COLOR_DGOLD);
+    }
+
+
+}

@@ -1,9 +1,11 @@
-daimonindir=$(d_bindir)
-daimonin_PROGRAMS = daimonin updater
+daimonin_widgetdir=$(d_bindir)
+daimonin_widget_PROGRAMS = daimonin-widget daimonin-widget-updater
 
-daimonin_SOURCES =  \
+daimonin_widget_SOURCES =  \
 	../../src/adler32.c \
 	../../src/book.c \
+	../../src/buddy.c \
+	../../src/chatfilter.c \
 	../../src/client.c \
 	../../src/commands.c \
 	../../src/crc32.c \
@@ -18,10 +20,12 @@ daimonin_SOURCES =  \
 	../../src/interface.c \
 	../../src/inventory.c \
 	../../src/item.c \
+	../../src/kerbholz.c \
 	../../src/main.c \
 	../../src/map.c \
 	../../src/menu.c \
 	../../src/misc.c \
+	../../src/physfsrwops.c \
 	../../src/player.c \
 	../../src/socket.c \
 	../../src/sound.c \
@@ -29,14 +33,15 @@ daimonin_SOURCES =  \
 	../../src/textwin.c \
 	../../src/uncompr.c \
 	../../src/wrapper.c \
+	../../src/widget.c \
 	../../src/zutil.c
-daimonin_LDADD = -lSDL_mixer -lSDL_image @SDL_LIBS@ @EXTRA_LIBS@
-daimonin_OBJDIR = objs
+daimonin_widget_LDADD = -lSDL_mixer -lSDL_image @SDL_LIBS@ @EXTRA_LIBS@ @PHYSFS_LIBS@
+daimonin_widget_OBJDIR = objs
 
-updater_SOURCES = \
+daimonin_widget_updater_SOURCES = \
 	../../src/updater/linux.c \
 	../../src/updater/main.c 
-updater_OBJDIR = updater_objs
+daimonin_widget_updater_OBJDIR = updater_objs
 
 # NOTE: if building xdelta, run its configure with "--disable-shared"
 
@@ -54,26 +59,25 @@ install-data-hook:
 	$(MKDIR) -p $(d_datadir)/sfx
 	$(MKDIR) -p $(d_datadir)/media
 	$(MKDIR) -p $(d_datadir)/cache
-	$(MKDIR) -p $(d_datadir)/bitmaps
+	$(MKDIR) -p $(d_datadir)/logs
 	$(MKDIR) -p $(d_datadir)/gfx_user
 	$(MKDIR) -p $(d_datadir)/srv_files
-	$(MKDIR) -p $(d_datadir)/icons
+	$(MKDIR) -p $(d_datadir)/skins
 	$(MKDIR) -p $(d_datadir)/tools
+	$(MKDIR) -p $(d_datadir)/settings
 	$(MKDIR) -p $(d_datadir)/update
 	$(CP) ../../sfx/*.* $(d_datadir)/sfx
 	$(CP) ../../media/*.* $(d_datadir)/media
 	$(CP) ../../cache/*.* $(d_datadir)/cache
-	$(CP) ../../icons/*.* $(d_datadir)/icons
+	$(CP) -R ../../skins/* $(d_datadir)/skins
+	$(CP) -R ../../settings/*.* $(d_datadir)/settings
 	$(CP) ../../srv_files/*.* $(d_datadir)/srv_files
 	$(CP) -R ../../tools/*.* $(d_datadir)/tools
 	$(CP) ../../update/version $(d_datadir)/update
 	$(CP) ../../gfx_user/*.* $(d_datadir)/gfx_user
-	$(CP) ../../bitmaps/*.* $(d_datadir)/bitmaps
-	$(CP) ../../options.dat $(d_datadir)
-	$(CP) ../../keys.dat $(d_datadir)
 	$(CP) ../../daimonin.p0 $(d_datadir)
 	$(CP) ../../License $(d_datadir) || $(CP) ../../../License $(d_datadir)
 	$(CP) ../../archdef.dat $(d_datadir)
 	@echo "*** Daimonin client successful installed in $(daimonindir)!"
-	@echo "*** Enter your install folder and type ./daimonin"
+	@echo "*** Enter your install folder and type ./daimonin-widget"
 	@echo "*** to start the game!"

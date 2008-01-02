@@ -36,5 +36,6 @@ void                  *_my_malloc(size_t blen, char *info);
 extern unsigned long  hasharch(char *str, int tablesize);
 extern _bmaptype      *find_bmap(char *name);
 extern void           add_bmap(_bmaptype *at);
+extern void     markdmbuster();
 
 #endif

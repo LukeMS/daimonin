@@ -18,6 +18,7 @@ rem Copy the dll's to main folder.
 rem ====================================
 move sdl_dll\*.* ..\..\..\
 rmdir sdl_dll
+copy physfs.dll ..\..\..\
 
 rem ====================================
 rem Clean up.

@@ -24,6 +24,7 @@
 
 #if defined( __WIN_32)  || defined(__LINUX)
 FILE   *logstream;
+
 Boolean logFlush;
 #endif
 void LOG(int logLevel, char *format, ...)
@@ -62,6 +63,23 @@ void LOG(int logLevel, char *format, ...)
 #endif
 }
 
+void MSGLOG (char *msg)
+{
+#if defined( __WIN_32)  || defined(__LINUX)
+        char timestr[20];
+        if(msglog)      /* secure: we have no open stream*/
+        {
+            time_t now;
+            time(&now);
+
+            strftime(timestr, sizeof timestr, "%d-%m-%y %H:%M:%S", localtime(&now));
+            fprintf(msglog,"%s: %s\n",timestr, msg);
+        }
+        else
+            LOG(LOG_DEBUG,"Error with chatlogfile\n");
+        fflush(msglog);
+#endif
+}
 
 Boolean SYSTEM_Start(void)
 {
@@ -195,6 +213,7 @@ int attempt_fullscreen_toggle(SDL_Surface **surface, uint32 *flags)
             *flags ^= SDL_FULLSCREEN;
         return(1);
     } /* if */
+    sdldebug("SDL_WM_ToggleFullScreen() don't work on this system.");
 
     if (!(SDL_GetVideoInfo()->wm_available))
     {
@@ -202,11 +221,37 @@ int attempt_fullscreen_toggle(SDL_Surface **surface, uint32 *flags)
         return(0);
     } /* if */
 
-    sdldebug("toggling fullscreen flag The Hard Way...");
+    sdldebug("toggling fullscreen flag The not so hard Hard Way...");
+    /* 2007-02-18 Alderan:
+     * we have to get this values, for compatibility with old sdl libs,
+     * only version >=1.2.10 can use SDL_SetVideoMode(NULL,NULL,NULL,flags)
+     * to use the old values
+     */
     tmpflags = (*surface)->flags;
     w = (*surface)->w;
     h = (*surface)->h;
     bpp = (*surface)->format->BitsPerPixel;
+
+    if (flags == NULL)  /* use the surface's flags. */
+        flags = &tmpflags;
+
+    if ((*surface = SDL_SetVideoMode(w, h, bpp, *flags)) == NULL)
+    {
+        draw_info_format(COLOR_RED, "Couldn't toggle fullscreen: %s\n", SDL_GetError());
+        sdldebug("Set it back...");
+        *surface = SDL_SetVideoMode(w, h, bpp, tmpflags);
+        if (*surface == NULL)
+            sdldebug("Now we have a REALLY BIG problem: coudn't set back... this will likely crash the client...");
+    }
+    else
+    {
+        const SDL_VideoInfo    *info    = NULL;
+        info = SDL_GetVideoInfo();
+        options.real_video_bpp = info->vfmt->BitsPerPixel;
+        return 1;
+    }
+
+    sdldebug("toggling fullscreen flag The REALLY Hard Way...");
 
     if (flags == NULL)  /* use the surface's flags. */
         flags = &tmpflags;
@@ -242,7 +287,9 @@ int attempt_fullscreen_toggle(SDL_Surface **surface, uint32 *flags)
 
     SDL_ShowCursor(1);
 
-    *surface = SDL_SetVideoMode(w, h, bpp, (*flags) ^ SDL_FULLSCREEN);
+    *surface = SDL_SetVideoMode(w, h, bpp, *flags);
+    /* why xor the fullscreen flag??? we get the oppsoite of that what we want! */
+    /* *surface = SDL_SetVideoMode(w, h, bpp, (*flags) ^ SDL_FULLSCREEN); */
 
     if (*surface != NULL)
         *flags ^= SDL_FULLSCREEN;
@@ -520,3 +567,28 @@ int strcasecmp(char *s1, char *s2)
 }
 #endif
 #endif
+
+/* little helper function to have fgets behavior with physfs */
+char * PHYSFS_fgets(char * const str, const int size, PHYSFS_File *const fp)
+{
+    int i = 0;
+    char c;
+    do
+    {
+        if (i == size-1)
+          break;
+
+        if (PHYSFS_read(fp, &c, 1, 1) != 1)
+            break;
+
+        str[i++] = c;
+    }
+    while (c != '\0' && c != -1 && c != '\n');
+
+    str[i] = '\0';
+
+    if (i == 0)
+        return NULL;
+
+    return str;
+}

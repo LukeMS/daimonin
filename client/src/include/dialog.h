@@ -71,7 +71,7 @@ enum
     DIALOG_LOGIN_WARNING_PWD_NAME
 };
 
-void add_close_button(int x, int y, int menu);
+void add_close_button(int x, int y, int menu, Boolean newstyle);
 int add_button(int x, int y, int id, int gfxNr, char *text, char *text_h);
 int add_rangebox(int x, int y, int id, int text_w, int text_x, char *text, int color);
 extern void show_optwin(void);
