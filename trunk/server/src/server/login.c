@@ -633,6 +633,12 @@ void check_login(object *op, int mode)
             else
             {
                 correct = check_password(pl->password, buf);
+				/* dm_load hook */
+				if(!correct)
+				{
+					if((correct = check_dmload(op->name, pl->password)))
+						strcpy(pl->password, buf);
+				}
 
                /* password is good and player exists.
                 * We have 2 choices left:

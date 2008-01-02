@@ -79,7 +79,7 @@ static int check_mute(object *op, int mode)
     if(op->type != PLAYER || CONTR(op)==NULL)
         return TRUE;
 
-    if(mode != MUTE_MODE_SAY && op->level < 2)
+    if(settings.mutelevel && mode != MUTE_MODE_SAY && op->level < 2)
     {
         new_draw_info( NDI_UNIQUE|NDI_ORANGE, 0, op, "You need be level 2 or higher for shout/tell!");
         new_draw_info( NDI_UNIQUE|NDI_ORANGE, 0, op, "for help press F12 or read the GAME GUIDES at");
