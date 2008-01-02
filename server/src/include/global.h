@@ -429,6 +429,7 @@ typedef struct ban_struct
 
 typedef struct Settings
 {
+	int								mutelevel;	    /* default FALSE - if TRUE player < level 2 can't shout */
 	int								login_allow;	/* if set to FALSE, login_ip is checked */
 	char						   *login_ip;		/* ip for login_allow */
     char                           *logfilename;   /* logfile to use */

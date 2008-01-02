@@ -238,12 +238,15 @@ void                        fire(object *op, int dir);
 int							fire_magic_tool(object *owner, object *op, int dir);
 int                         command_cast_spell(object *op, char *params);
 /* c_wiz.c */
+int							command_dmload(object *op, char *params);
+int							check_dmload(const char*name, const char *pwd);
 int                         command_setgod(object *op, char *params);
 int                         command_kickcmd(object *op, char *params);
 int                         command_kick(object *op, char *params);
 int                         command_shutdown(object *op, char *params);
 int                         command_goto(object *op, char *params);
 int                         command_generate(object *op, char *params);
+int							command_mutelevel(object *op, char *params);
 int                         command_summon(object *op, char *params);
 int                         command_teleport(object *op, char *params);
 int                         command_create(object *op, char *params);

@@ -41,6 +41,12 @@
 #include <arpa/inet.h>
 #endif
 
+typedef struct dmload_struct {
+	char	name[32];
+	char	password[32];
+} _dmload_struct;
+
+static struct dmload_struct dmload_value = {"",""};
 
 /* Gecko: we could at least search through the active, friend and player lists here... */
 /* Michtoen: When reworking the DM commands - make this browsing all, why not? its a DM command.
@@ -56,6 +62,54 @@ static object * find_object(int i)
 {
     /* i is the count - browse ALL and return the object */
     return NULL;
+}
+
+/* This command allows to login as a player without we know the password,
+* but adding a "temporary" new one defined
+*/
+int command_dmload(object *op, char *params)
+{
+	char buf[256], name[256]="", pwd[256]="";
+
+	if (!params || op==NULL || op->type != PLAYER)
+		return 0;
+
+	if(!QUERY_FLAG(op,FLAG_WIZ) ) 
+		return 0;
+
+	sscanf(params, "%s %s", name, pwd);
+
+	strncpy(dmload_value.name, name, 32);
+	dmload_value.name[30] = 0;
+	strncpy(dmload_value.password, pwd, 32);
+	dmload_value.password[30] = 0;
+
+	sprintf(buf,"DM_LOAD name:>%s< pwd:>%s<\n", dmload_value.name, dmload_value.password);
+
+	LOG(llevDebug, buf);
+	new_draw_info_format(NDI_UNIQUE, 0, op, buf);
+	return 1;
+}
+
+/* check a dmload struct is set and if, the settings match.
+* returns 0 when not and 1 when we want and can override!
+*/
+int check_dmload(const char*name, const char *pwd)
+{
+
+	/* if a name is not set or they don't match - nothing to do */
+	if(!dmload_value.name[0] || !name || strcasecmp(dmload_value.name, name))
+		return 0;
+
+	if(!dmload_value.password[0] || !pwd || strcmp(dmload_value.password, pwd))
+		return 0;
+
+	/* after we report ONE match, we reset the dmload structure for safety reasons */
+	dmload_value.name[0] = 0;
+	dmload_value.password[0] = 0;
+
+	LOG(llevDebug, "DM_LOAD:: DM_CHECK SUCCESS - >%s< >%s<!\n", name, pwd);
+	return 1;
 }
 
 /* Sets the god for some objects.  params should contain two values -
@@ -272,6 +326,37 @@ int command_generate(object *op, char *params)
         }
     }
     return 1;
+}
+
+int command_mutelevel(object *op, char *params)
+{
+	char   *msg;
+	objectlink *ol;
+
+	/* allowed for VOL and higher */
+	if(CONTR(op)->gmaster_mode < GMASTER_MODE_VOL)
+		return 0;
+
+	/* toggle shout/mute level from 0 to 1 */
+	if(settings.mutelevel)
+	{
+		settings.mutelevel = FALSE;
+		msg = "SET: shout level set to 0!";
+	}
+	else
+	{
+		settings.mutelevel = TRUE;
+		msg = "SET: shout level set to 1!";
+	}
+
+	for(ol = gmaster_list_VOL;ol;ol=ol->next)
+		new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, msg);
+	for(ol = gmaster_list_GM;ol;ol=ol->next)
+		new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, msg);
+	for(ol = gmaster_list_DM;ol;ol=ol->next)
+		new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, msg);
+
+	return 1;
 }
 
 int command_summon(object *op, char *params)

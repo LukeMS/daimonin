@@ -30,6 +30,7 @@
 
 struct Settings settings    =
 {
+	FALSE,								/* mute level = if TRUE player <2 can't shout*/
 	TRUE,"",							/* login_allow & login_ip */
     "",                                 /* Logfile */
     CSPORT,                             /* Client/server port */

@@ -99,13 +99,12 @@ CommArray_s Commands[]                  =
     {"/gm",           command_gm,             1.0f},
     {"/vol",          command_vol,            1.0f},
     /* VOL/GM/DM */
+	{"/mutelevel",      command_mutelevel,1.0},
     {"/dm_list",        command_dm_list,1.0f},
     {"/malloc",            command_malloc,   0.0},        /* check the server stats */
     {"/kick",            command_kickcmd, 0.0},            /* kick with a 1m temp login ban */
 
-#ifdef _TESTSERVER
     {"/restart",         command_restart,0.0},
-#endif
 
     {"/mute",            command_mute,1.0f},            /* max 5 min for VOL */
 
@@ -195,6 +194,7 @@ CommArray_s WizCommands[]           =
     {"/stats", command_stats,0.0},
     {"/check_fd", command_check_fd,0.0},
     {"/dm_speed", command_speed,0.0},
+	{"/dm_load",	command_dmload,0.0},
 
 
     /*
