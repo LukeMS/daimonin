@@ -114,7 +114,7 @@ CommArray_s Commands[]                  =
     {"/ban",            command_ban,0.0},
     {"/gm_set",          command_gm_set,         0.0f},
     {"/silence",        command_silence,0.0},
-
+    {"/gm_set",          command_gm_set,         0.0f},
     /*  {"/sound",        command_sound,          1.0},*/
     /*  {"/delete",     command_quit,           1.0},*/
     /*  {"/dropall",        command_dropall,        1.0}, */

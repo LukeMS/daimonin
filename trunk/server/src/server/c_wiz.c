@@ -174,7 +174,7 @@ int command_kickcmd(object *ob, char *params)
      * If its a "technical" kick, the 10 sec is a protection.
      * Perhaps we want reset a map or whatever.
      */
-    ticks = (int) (pticks_second*10.0f);
+    ticks = (int) (pticks_second*60.0f);
     add_ban_entry(params, NULL, ticks, ticks);
 
     return 1;
@@ -1442,12 +1442,16 @@ int command_ban(object *op, char *params)
 			name = cleanup_string((name = name_buf));
 			if(name && name[0]!='\0')
 			{
+                             if(CONTR(op)->gmaster_mode == GMASTER_MODE_VOL && ticks == -1)
+                               {goto ban_usage;}
 				ticks *=8;
 				add_banlist_name(op, name, ticks);
 				save_ban_file();
+                                command_kick(op, name);
 				return 1;
 			}
 		}
+                    LOG(llevInfo, "BANCMD: %s issued /ban name %s %d seconds\n", op->name, name_buf, ticks/8);
 	}
 	else if(!strcmp(params,"ip")) /* ban IP only */
 	{
@@ -1456,12 +1460,24 @@ int command_ban(object *op, char *params)
 			name = cleanup_string((name = name_buf));
 			if(name && name[0]!='\0')
 			{
+                int spot;
+                    if(CONTR(op)->gmaster_mode == GMASTER_MODE_VOL && ticks == -1)
+                        goto ban_usage;
+
+                    for(spot=0,name[0];name[spot] != '\0';spot++)
+                    {
+                        if(CONTR(op)->gmaster_mode == GMASTER_MODE_VOL && name[spot] == '*')
+                            goto ban_usage;
+                        else if(CONTR(op)->gmaster_mode >= GMASTER_MODE_GM && name[spot] == '*' && spot < 11)
+                            goto ban_usage;
+                    }
 				ticks *=8;
 				add_banlist_ip(op, name, ticks);
 				save_ban_file();
 				return 1;
 			}
 		}
+                    LOG(llevInfo, "BANCMD: %s issued /ban ip %s %d seconds\n", op->name, name_buf, ticks/8);
 	}
 	else if(!strcmp(params,"add")) /* ban name & IP at once */
 	{
@@ -1476,11 +1492,16 @@ int command_ban(object *op, char *params)
 			}
 			else
 			{
+                             if(CONTR(op)->gmaster_mode == GMASTER_MODE_VOL && ticks == -1)
+                               {goto ban_usage;}
+
 				ticks *=8;
 				/* add name AND ip to the lists */
 				add_banlist_name(op, name, ticks);
 				add_banlist_ip(op, pl->socket.ip_host, ticks);
 				save_ban_file();
+                                LOG(llevInfo, "BANCMD: %s issued /ban add %s %s %d seconds\n", op->name, name, name_buf, ticks/8);
+                                command_kick(op, name);
 			}
 			return 1;
 
