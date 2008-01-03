@@ -1430,9 +1430,8 @@ void check_keys(int key)
                 {
                     draw_info(bindkey_list[j].entry[i].text, COLOR_DGOLD);
                     strcpy(buf, bindkey_list[j].entry[i].text);
-//                    if (!client_command_check(buf))
-//                        send_command(buf, -1, bindkey_list[j].entry[i].mode);
-                    break_multicommand(buf, -1, bindkey_list[j].entry[i].mode);
+                    if (!client_command_check(buf))
+                        send_command(buf, -1, bindkey_list[j].entry[i].mode);
                 }
                 return;
             }

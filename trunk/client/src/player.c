@@ -152,18 +152,48 @@ void client_send_tell_extended(char *body, char *tail)
     cs_write_string(csocket.fd, buf, strlen(buf));
 }
 
-void break_multicommand(const char *command, int repeat, int must_send)
+/* Strips excess whitespace from command, writing the normalized command to cmd.
+ */
+static void NormalizeCommand(char *cmd, const char *command)
 {
-    char *commandpart;
-    char com2[255];
-    strcpy(com2,command);
-    for (commandpart = strtok(com2, "#"); commandpart; commandpart = strtok(NULL, "#"))  /* seperator '#' */
+    char  buf[MAX_BUF], /* this will be a wc of command */
+         *token = NULL;
+    strcpy(buf, command);
+    *cmd = '\0';
+    /* Get the next non-whitespace token from buf and concatenate it and one
+     * trailing whitespace to cmd:
+     */
+    for (token = strtok(buf, " \t"); token != NULL; token = strtok(NULL, " \t"))
     {
-        if (!client_command_check(commandpart))
-            send_command(commandpart, repeat, must_send);
+        strcat(cmd, token);
+        strcat(cmd, " ");
     }
+    /* There will be one trailing whitespace to our fully normalized cmd.
+     * Get rid of it and fill the rest of cmd with \0:
+     */
+    memset(cmd + strlen(cmd) - 1, '\0', MAX_BUF - (strlen(cmd) - 1));
 }
 
+/* Splits command at the next #,
+ * returning a pointer to the occurrence (which is overwritten with \0 first) or
+ * NULL if no next multicommand is found or command is chat, etc.
+ */ 
+static char *BreakMulticommand(char *command)
+{
+    char *c = NULL;
+    /* Only look for a multicommand if the command is not one of these:
+     */
+    if (!(!strncasecmp(command, "/tell", 5) || !strncasecmp(command, "/say", 4) || !strncasecmp(command, "/reply", 6) || !strncasecmp(command, "/gsay", 5) || !strncasecmp(command, "/shout", 6) || !strncasecmp(command, "/talk", 5)
+#ifdef USE_CHANNELS
+     || (*command == '-')
+#endif
+    || !strncasecmp(command, "/create", 7)))
+    {
+        if ((c = strchr(command, '#'))) /* multicommand separator '#' */
+            *c = '\0';
+    }
+    return c;
+}
 
 /* This should be used for all 'command' processing.  Other functions should
  * call this so that proper windowing will be done.
@@ -174,40 +204,79 @@ void break_multicommand(const char *command, int repeat, int must_send)
  * it will cause definate problems
  * return 1 if command was sent, 0 if not sent.
  */
-
 int send_command(const char *command, int repeat, int must_send)
 {
-    char        buf[MAX_BUF];
+    char    *token,
+             buf[MAX_BUF],
+             cmd[MAX_BUF]; /* our parsed command -- command is what the player
+                              typed, cmd is what the server will see */
+    SockList sl;
 
-    SockList    sl;
-
-        /* Does the server understand 'ncom'? If so, special code */
-        if (csocket.cs_version >= 1021)
+    /* Copy a normalized (leading, trailing, and excess inline whitespace-
+     * stripped) command to cmd:
+     */
+    NormalizeCommand(cmd, command);
+    /* Now go through cmd, possibly separating multicommands.
+     * Each command (before separation) is pointed to by token:
+     */
+    token = cmd;
+    while (token != NULL)
+    {
+        char *end;
+#ifdef USE_CHANNELS
+        if (*token != '/' && *token != '-') /* if not a command ... its chat  (- is for channel system)*/
+#else
+        if (*token != '/')
+#endif
         {
-            int commdiff    = csocket.command_sent - csocket.command_received;
-            if (commdiff < 0)
-                commdiff += 256;
-
-            csocket.command_sent++;
-            csocket.command_sent &= 0xff;   /* max out at 255 */
-
-            sl.buf = (unsigned char *) buf;
-            strcpy((char *) sl.buf, "ncom ");
-            sl.len = 5;
-            SockList_AddShort(&sl, (uint16) csocket.command_sent);
-            SockList_AddInt(&sl, repeat);
-            strncpy((char *) sl.buf + sl.len, command, MAX_BUF - sl.len);
-            sl.buf[MAX_BUF - 1] = 0;
-            sl.len += strlen(command);
-            send_socklist(csocket.fd, sl);
+            sprintf(buf, "/say %s", token);
+            strcpy(token, buf);
         }
+        end = BreakMulticommand(token);
+        if (!client_command_check(token))
+        {
+            /* Nasty hack. Treat /talk as a special case: lowercase it and
+             * print it to the message window as Topic: foo. -- Smacky 20071210
+             */
+            if (!strncasecmp(token, "/talk", 5))
+            {
+                int c;
+                for (c = 0; *(token + c) != '\0'; c++)
+                    *(token + c) = tolower(*(token + c));
+                draw_info_format(COLOR_DGOLD, "Topic: %s", token + 6);
+            }
+
+            /* Does the server understand 'ncom'? If so, special code */
+            if (csocket.cs_version >= 1021)
+            {
+                int commdiff = csocket.command_sent - csocket.command_received;
+                if (commdiff < 0)
+                    commdiff += 256;
+                csocket.command_sent++;
+                csocket.command_sent &= 0xff; /* max out at 255 */
+                sl.buf = (unsigned char *)buf;
+                strcpy((char *)sl.buf, "ncom ");
+                sl.len = 5;
+                SockList_AddShort(&sl, (uint16)csocket.command_sent);
+                SockList_AddInt(&sl, repeat);
+                strncpy((char *)sl.buf + sl.len, token, MAX_BUF - sl.len);
+                sl.buf[MAX_BUF - 1] = 0;
+                sl.len += strlen(token);
+                send_socklist(csocket.fd, sl);
+            }
+            else
+            {
+                sprintf(buf, "cm %d %s", repeat, token);
+                cs_write_string(csocket.fd, buf, strlen(buf));
+            }
+        }
+        if (end != NULL)
+            token = end + 1;
         else
-        {
-            sprintf(buf, "cm %d %s", repeat, command);
-            cs_write_string(csocket.fd, buf, strlen(buf));
-        }
-        if (repeat != -1)
-            cpl.count = 0;
+            token = NULL;
+    }
+    if (repeat != -1)
+        cpl.count = 0;
     return 1;
 }
 
