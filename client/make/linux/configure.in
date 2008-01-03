@@ -6,7 +6,7 @@ AC_PREREQ(2.59)
 AC_INIT([Daimonin SDL Client], [0.9.7], [http://www.daimonin.net])
 AC_CONFIG_AUX_DIR(make_utils)
 AC_CANONICAL_SYSTEM
-AM_INIT_AUTOMAKE(daimonin_widget, 0.9.7)
+AM_INIT_AUTOMAKE(daimonin, 0.9.7)
 
 AC_CONFIG_SRCDIR(../../src/client.c)
 
@@ -112,8 +112,8 @@ if test "x$simplelayout" = "xyes"; then
         prefix="$HOME"
     fi
 	# Simple layout (everything under one directory)
-	d_bindir="\${prefix}/daimonin-widget-$VERSION"
-	d_datadir="\${prefix}/daimonin-widget-$VERSION"
+	d_bindir="\${prefix}/daimonin-$VERSION"
+	d_datadir="\${prefix}/daimonin-$VERSION"
     DIRDEFINES="-DSYSPATH=\"\\\"./\\\"\""
 else
 	# Unixish layout, files spread out over several directories
@@ -273,7 +273,7 @@ if test "x$sound" = "xyes" ; then
 	{
 		char *music;
 	
-		music = (char *) Mix_LoadMUS("../../media/rainthunder.ogg");
+		music = (char *) Mix_LoadMUS("../../media/orchestral.ogg");
 		if (music == NULL)
 			exit(1);
 		exit(0);

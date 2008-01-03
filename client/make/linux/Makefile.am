@@ -1,7 +1,7 @@
-daimonin_widgetdir=$(d_bindir)
-daimonin_widget_PROGRAMS = daimonin-widget daimonin-widget-updater
+daimonindir=$(d_bindir)
+daimonin_PROGRAMS = daimonin daimonin-updater
 
-daimonin_widget_SOURCES =  \
+daimonin_SOURCES =  \
 	../../src/adler32.c \
 	../../src/book.c \
 	../../src/buddy.c \
@@ -35,13 +35,13 @@ daimonin_widget_SOURCES =  \
 	../../src/wrapper.c \
 	../../src/widget.c \
 	../../src/zutil.c
-daimonin_widget_LDADD = -lSDL_mixer -lSDL_image @SDL_LIBS@ @EXTRA_LIBS@ @PHYSFS_LIBS@
-daimonin_widget_OBJDIR = objs
+daimonin_LDADD = -lSDL_mixer -lSDL_image @SDL_LIBS@ @EXTRA_LIBS@ @PHYSFS_LIBS@
+daimonin_OBJDIR = objs
 
-daimonin_widget_updater_SOURCES = \
+daimonin_updater_SOURCES = \
 	../../src/updater/linux.c \
 	../../src/updater/main.c 
-daimonin_widget_updater_OBJDIR = updater_objs
+daimonin_updater_OBJDIR = updater_objs
 
 # NOTE: if building xdelta, run its configure with "--disable-shared"
 
@@ -79,5 +79,5 @@ install-data-hook:
 	$(CP) ../../License $(d_datadir) || $(CP) ../../../License $(d_datadir)
 	$(CP) ../../archdef.dat $(d_datadir)
 	@echo "*** Daimonin client successful installed in $(daimonindir)!"
-	@echo "*** Enter your install folder and type ./daimonin-widget"
+	@echo "*** Enter your install folder and type ./daimonin"
 	@echo "*** to start the game!"

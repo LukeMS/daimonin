@@ -37,8 +37,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
-daimonin_widget_PROGRAMS = daimonin-widget$(EXEEXT) \
-	daimonin-widget-updater$(EXEEXT)
+daimonin_PROGRAMS = daimonin$(EXEEXT) daimonin-updater$(EXEEXT)
 DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in \
 	$(top_srcdir)/../../src/include/define.h.in \
@@ -55,11 +54,11 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/../../src/include/define.h
 CONFIG_CLEAN_FILES =
-am__installdirs = "$(DESTDIR)$(daimonin_widgetdir)"
-daimonin_widgetPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
-PROGRAMS = $(daimonin_widget_PROGRAMS)
+am__installdirs = "$(DESTDIR)$(daimonindir)"
+daimoninPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
+PROGRAMS = $(daimonin_PROGRAMS)
 am__dirstamp = $(am__leading_dot)dirstamp
-am_daimonin_widget_OBJECTS = ../../src/adler32.$(OBJEXT) \
+am_daimonin_OBJECTS = ../../src/adler32.$(OBJEXT) \
 	../../src/book.$(OBJEXT) ../../src/buddy.$(OBJEXT) \
 	../../src/chatfilter.$(OBJEXT) ../../src/client.$(OBJEXT) \
 	../../src/commands.$(OBJEXT) ../../src/crc32.$(OBJEXT) \
@@ -76,14 +75,12 @@ am_daimonin_widget_OBJECTS = ../../src/adler32.$(OBJEXT) \
 	../../src/sprite.$(OBJEXT) ../../src/textwin.$(OBJEXT) \
 	../../src/uncompr.$(OBJEXT) ../../src/wrapper.$(OBJEXT) \
 	../../src/widget.$(OBJEXT) ../../src/zutil.$(OBJEXT)
-daimonin_widget_OBJECTS = $(am_daimonin_widget_OBJECTS)
-daimonin_widget_DEPENDENCIES =
-am_daimonin_widget_updater_OBJECTS =  \
-	../../src/updater/linux.$(OBJEXT) \
+daimonin_OBJECTS = $(am_daimonin_OBJECTS)
+daimonin_DEPENDENCIES =
+am_daimonin_updater_OBJECTS = ../../src/updater/linux.$(OBJEXT) \
 	../../src/updater/main.$(OBJEXT)
-daimonin_widget_updater_OBJECTS =  \
-	$(am_daimonin_widget_updater_OBJECTS)
-daimonin_widget_updater_LDADD = $(LDADD)
+daimonin_updater_OBJECTS = $(am_daimonin_updater_OBJECTS)
+daimonin_updater_LDADD = $(LDADD)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/../../src/include
 depcomp = $(SHELL) $(top_srcdir)/make_utils/depcomp
 am__depfiles_maybe = depfiles
@@ -91,10 +88,8 @@ COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(daimonin_widget_SOURCES) \
-	$(daimonin_widget_updater_SOURCES)
-DIST_SOURCES = $(daimonin_widget_SOURCES) \
-	$(daimonin_widget_updater_SOURCES)
+SOURCES = $(daimonin_SOURCES) $(daimonin_updater_SOURCES)
+DIST_SOURCES = $(daimonin_SOURCES) $(daimonin_updater_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -219,8 +214,8 @@ target_alias = @target_alias@
 target_cpu = @target_cpu@
 target_os = @target_os@
 target_vendor = @target_vendor@
-daimonin_widgetdir = $(d_bindir)
-daimonin_widget_SOURCES = \
+daimonindir = $(d_bindir)
+daimonin_SOURCES = \
 	../../src/adler32.c \
 	../../src/book.c \
 	../../src/buddy.c \
@@ -255,13 +250,13 @@ daimonin_widget_SOURCES = \
 	../../src/widget.c \
 	../../src/zutil.c
 
-daimonin_widget_LDADD = -lSDL_mixer -lSDL_image @SDL_LIBS@ @EXTRA_LIBS@ @PHYSFS_LIBS@
-daimonin_widget_OBJDIR = objs
-daimonin_widget_updater_SOURCES = \
+daimonin_LDADD = -lSDL_mixer -lSDL_image @SDL_LIBS@ @EXTRA_LIBS@ @PHYSFS_LIBS@
+daimonin_OBJDIR = objs
+daimonin_updater_SOURCES = \
 	../../src/updater/linux.c \
 	../../src/updater/main.c 
 
-daimonin_widget_updater_OBJDIR = updater_objs
+daimonin_updater_OBJDIR = updater_objs
 
 # NOTE: if building xdelta, run its configure with "--disable-shared"
 AUTOMAKE_OPTIONS = subdir-objects
@@ -321,29 +316,29 @@ $(top_srcdir)/../../src/include/define.h.in: @MAINTAINER_MODE_TRUE@ $(am__config
 
 distclean-hdr:
 	-rm -f ../../src/include/define.h ../../src/include/stamp-h1
-install-daimonin_widgetPROGRAMS: $(daimonin_widget_PROGRAMS)
+install-daimoninPROGRAMS: $(daimonin_PROGRAMS)
 	@$(NORMAL_INSTALL)
-	test -z "$(daimonin_widgetdir)" || $(mkdir_p) "$(DESTDIR)$(daimonin_widgetdir)"
-	@list='$(daimonin_widget_PROGRAMS)'; for p in $$list; do \
+	test -z "$(daimonindir)" || $(mkdir_p) "$(DESTDIR)$(daimonindir)"
+	@list='$(daimonin_PROGRAMS)'; for p in $$list; do \
 	  p1=`echo $$p|sed 's/$(EXEEXT)$$//'`; \
 	  if test -f $$p \
 	  ; then \
 	    f=`echo "$$p1" | sed 's,^.*/,,;$(transform);s/$$/$(EXEEXT)/'`; \
-	   echo " $(INSTALL_PROGRAM_ENV) $(daimonin_widgetPROGRAMS_INSTALL) '$$p' '$(DESTDIR)$(daimonin_widgetdir)/$$f'"; \
-	   $(INSTALL_PROGRAM_ENV) $(daimonin_widgetPROGRAMS_INSTALL) "$$p" "$(DESTDIR)$(daimonin_widgetdir)/$$f" || exit 1; \
+	   echo " $(INSTALL_PROGRAM_ENV) $(daimoninPROGRAMS_INSTALL) '$$p' '$(DESTDIR)$(daimonindir)/$$f'"; \
+	   $(INSTALL_PROGRAM_ENV) $(daimoninPROGRAMS_INSTALL) "$$p" "$(DESTDIR)$(daimonindir)/$$f" || exit 1; \
 	  else :; fi; \
 	done
 
-uninstall-daimonin_widgetPROGRAMS:
+uninstall-daimoninPROGRAMS:
 	@$(NORMAL_UNINSTALL)
-	@list='$(daimonin_widget_PROGRAMS)'; for p in $$list; do \
+	@list='$(daimonin_PROGRAMS)'; for p in $$list; do \
 	  f=`echo "$$p" | sed 's,^.*/,,;s/$(EXEEXT)$$//;$(transform);s/$$/$(EXEEXT)/'`; \
-	  echo " rm -f '$(DESTDIR)$(daimonin_widgetdir)/$$f'"; \
-	  rm -f "$(DESTDIR)$(daimonin_widgetdir)/$$f"; \
+	  echo " rm -f '$(DESTDIR)$(daimonindir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(daimonindir)/$$f"; \
 	done
 
-clean-daimonin_widgetPROGRAMS:
-	-test -z "$(daimonin_widget_PROGRAMS)" || rm -f $(daimonin_widget_PROGRAMS)
+clean-daimoninPROGRAMS:
+	-test -z "$(daimonin_PROGRAMS)" || rm -f $(daimonin_PROGRAMS)
 ../../src/$(am__dirstamp):
 	@$(mkdir_p) ../../src
 	@: > ../../src/$(am__dirstamp)
@@ -416,9 +411,9 @@ clean-daimonin_widgetPROGRAMS:
 	../../src/$(DEPDIR)/$(am__dirstamp)
 ../../src/zutil.$(OBJEXT): ../../src/$(am__dirstamp) \
 	../../src/$(DEPDIR)/$(am__dirstamp)
-daimonin-widget$(EXEEXT): $(daimonin_widget_OBJECTS) $(daimonin_widget_DEPENDENCIES) 
-	@rm -f daimonin-widget$(EXEEXT)
-	$(LINK) $(daimonin_widget_LDFLAGS) $(daimonin_widget_OBJECTS) $(daimonin_widget_LDADD) $(LIBS)
+daimonin$(EXEEXT): $(daimonin_OBJECTS) $(daimonin_DEPENDENCIES) 
+	@rm -f daimonin$(EXEEXT)
+	$(LINK) $(daimonin_LDFLAGS) $(daimonin_OBJECTS) $(daimonin_LDADD) $(LIBS)
 ../../src/updater/$(am__dirstamp):
 	@$(mkdir_p) ../../src/updater
 	@: > ../../src/updater/$(am__dirstamp)
@@ -429,9 +424,9 @@ daimonin-widget$(EXEEXT): $(daimonin_widget_OBJECTS) $(daimonin_widget_DEPENDENC
 	../../src/updater/$(DEPDIR)/$(am__dirstamp)
 ../../src/updater/main.$(OBJEXT): ../../src/updater/$(am__dirstamp) \
 	../../src/updater/$(DEPDIR)/$(am__dirstamp)
-daimonin-widget-updater$(EXEEXT): $(daimonin_widget_updater_OBJECTS) $(daimonin_widget_updater_DEPENDENCIES) 
-	@rm -f daimonin-widget-updater$(EXEEXT)
-	$(LINK) $(daimonin_widget_updater_LDFLAGS) $(daimonin_widget_updater_OBJECTS) $(daimonin_widget_updater_LDADD) $(LIBS)
+daimonin-updater$(EXEEXT): $(daimonin_updater_OBJECTS) $(daimonin_updater_DEPENDENCIES) 
+	@rm -f daimonin-updater$(EXEEXT)
+	$(LINK) $(daimonin_updater_LDFLAGS) $(daimonin_updater_OBJECTS) $(daimonin_updater_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -706,7 +701,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(PROGRAMS)
 installdirs:
-	for dir in "$(DESTDIR)$(daimonin_widgetdir)"; do \
+	for dir in "$(DESTDIR)$(daimonindir)"; do \
 	  test -z "$$dir" || $(mkdir_p) "$$dir"; \
 	done
 install: install-am
@@ -739,7 +734,7 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-daimonin_widgetPROGRAMS clean-generic mostlyclean-am
+clean-am: clean-daimoninPROGRAMS clean-generic mostlyclean-am
 
 distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
@@ -758,7 +753,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-daimonin_widgetPROGRAMS
+install-data-am: install-daimoninPROGRAMS
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) install-data-hook
 
@@ -789,22 +784,21 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-daimonin_widgetPROGRAMS uninstall-info-am
+uninstall-am: uninstall-daimoninPROGRAMS uninstall-info-am
 
 .PHONY: CTAGS GTAGS all all-am am--refresh check check-am clean \
-	clean-daimonin_widgetPROGRAMS clean-generic ctags dist \
-	dist-all dist-bzip2 dist-gzip dist-shar dist-tarZ dist-zip \
-	distcheck distclean distclean-compile distclean-generic \
-	distclean-hdr distclean-tags distcleancheck distdir \
-	distuninstallcheck dvi dvi-am html html-am info info-am \
-	install install-am install-daimonin_widgetPROGRAMS \
-	install-data install-data-am install-data-hook install-exec \
-	install-exec-am install-info install-info-am install-man \
-	install-strip installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-compile mostlyclean-generic pdf pdf-am ps ps-am \
-	tags uninstall uninstall-am uninstall-daimonin_widgetPROGRAMS \
-	uninstall-info-am
+	clean-daimoninPROGRAMS clean-generic ctags dist dist-all \
+	dist-bzip2 dist-gzip dist-shar dist-tarZ dist-zip distcheck \
+	distclean distclean-compile distclean-generic distclean-hdr \
+	distclean-tags distcleancheck distdir distuninstallcheck dvi \
+	dvi-am html html-am info info-am install install-am \
+	install-daimoninPROGRAMS install-data install-data-am \
+	install-data-hook install-exec install-exec-am install-info \
+	install-info-am install-man install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
+	uninstall-am uninstall-daimoninPROGRAMS uninstall-info-am
 
 
 install-data-hook:
@@ -837,7 +831,7 @@ install-data-hook:
 	$(CP) ../../License $(d_datadir) || $(CP) ../../../License $(d_datadir)
 	$(CP) ../../archdef.dat $(d_datadir)
 	@echo "*** Daimonin client successful installed in $(daimonindir)!"
-	@echo "*** Enter your install folder and type ./daimonin-widget"
+	@echo "*** Enter your install folder and type ./daimonin"
 	@echo "*** to start the game!"
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
