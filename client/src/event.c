@@ -2825,16 +2825,16 @@ void check_menu_keys(int menu, int key)
                  */
                 if (Screensize.x!=Screendefs[options.resolution].x || Screensize.y!=Screendefs[options.resolution].y)
                 {
+					Uint32 videoflags = get_video_flags();
                     _screensize sz_tmp = Screensize;
                     Screensize=Screendefs[options.resolution];
-
-                    Uint32 videoflags = get_video_flags();
+                    
                     if ((ScreenSurface = SDL_SetVideoMode(Screensize.x, Screensize.y, options.used_video_bpp, videoflags)) == NULL)
                     {
-                        draw_info_format(COLOR_RED, "Couldn't set %dx%dx%d video mode: %s\n", Screensize.x, Screensize.y, options.used_video_bpp, SDL_GetError());
+                        int i;
+						draw_info_format(COLOR_RED, "Couldn't set %dx%dx%d video mode: %s\n", Screensize.x, Screensize.y, options.used_video_bpp, SDL_GetError());
                         LOG(LOG_ERROR, "Couldn't set %dx%dx%d video mode: %s\n", Screensize.x, Screensize.y, options.used_video_bpp, SDL_GetError());
                         Screensize=sz_tmp;
-                        int i;
                         for (i=0;i<16;i++)
                             if (Screensize.x==Screendefs[i].x && Screensize.y == Screendefs[i].y)
                             {

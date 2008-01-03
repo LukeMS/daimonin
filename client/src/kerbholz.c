@@ -30,7 +30,6 @@
 
 struct kills_list *kills_list_start = NULL;
 
-
 /* add an entry to the kill list
  * return 1 if new kill (mob with tha name killed for the first time)
  * 2 if 'old' kill
@@ -42,7 +41,7 @@ int addKill(char *name)
     node=kills_list_start;
     while (node)
     {
-        if (!strncasecmp(node->name, name, strlen(name)))
+        if (!strnicmp(node->name, name, strlen(name)))
             break;
         node=node->next;
     }
@@ -251,7 +250,7 @@ _kills_list *getKillEntry(char *name)
     node=kills_list_start;
     while (node)
     {
-        if (!strncasecmp(node->name, name, strlen(name)))
+        if (!strnicmp(node->name, name, strlen(name)))
             break;
         node=node->next;
     }

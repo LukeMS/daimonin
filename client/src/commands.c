@@ -954,6 +954,7 @@ void PlayerCmd(unsigned char *data, int len)
 {
     char    name[MAX_BUF];
     int     tag, weight, face, i = 0, nlen;
+    char filename[255];
 
     options.firststart = FALSE;
     GameStatus = GAME_STATUS_PLAY;
@@ -989,7 +990,6 @@ void PlayerCmd(unsigned char *data, int len)
     kill_list_load();
     buddy_list_load();
 #if defined( __WIN_32)  || defined(__LINUX)
-            char filename[255];
             sprintf(filename,"logs/%s.chat.log",cpl.name);
             LOG(LOG_DEBUG,"trying to open chatlogfile: %s\n",filename);
             if (!msglog) msglog = fopen_wrapper(filename, "a");
