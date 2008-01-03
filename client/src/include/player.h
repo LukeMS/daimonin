@@ -40,7 +40,6 @@ extern void     client_send_apply(int tag);
 extern void     client_send_examine(int tag);
 extern void     client_send_move(int loc, int tag, int nrof);
 extern void     client_send_tell_extended(char* body, char *tail);
-extern void     break_multicommand(const char *command, int repeat, int must_send);
 extern int      send_command(const char *command, int repeat, int must_send);
 extern void     show_help(void);
 extern void     extended_command(const char *ocommand);

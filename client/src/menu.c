@@ -65,43 +65,12 @@ void do_console(int x, int y)
         sound_play_effect(SOUND_CONSOLE, 0, 0, 100);
         if (InputString[0])
         {
-            char    buf[MAX_INPUT_STRING + 32];
             /*
                     sprintf(buf,":%s",InputString);
                     draw_info(buf,COLOR_DGOLD);*/
-
-            if ((*InputString != '/') /* if not a command ... its chat */
-#ifdef USE_CHANNELS
-             && (*InputString != '-') /* channels */
-#endif
-             )
-            {
-                sprintf(buf, "/say %s", InputString);
-                send_command(buf, -1, SC_NORMAL);
-            }
-            else
-            {   /* If the command is one of that commands, we don't look for a multicommand */
-                if (!strncmp(InputString,"/tell",5) || !strncmp(InputString,"/say",4) || !strncmp(InputString,"/reply",6) ||
-                    !strncmp(InputString,"/gsay",5) || !strncmp(InputString,"/shout",6)
-#ifdef USE_CHANNELS
-                     || (*InputString=='-')
-#endif
-                    || !strncmp(InputString,"/create",7)
-                    )
-                {
-                    if (client_command_check(InputString))
-                        goto no_send_cmd;
-                    strcpy(buf, InputString);
-                    send_command(buf, -1, SC_NORMAL);
-                }
-                else
-                {
-                    if (client_command_check(InputString))
-                        goto no_send_cmd;
-                    strcpy(buf, InputString);
-                    break_multicommand(buf,-1,SC_NORMAL);
-                }
-            }
+            if (client_command_check(InputString))
+                goto no_send_cmd;
+            send_command(InputString, -1, SC_NORMAL);
         }
 no_send_cmd:
         reset_keys();
