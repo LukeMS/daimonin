@@ -198,6 +198,7 @@ void draw_info(char *str, int flags)
  */
 
     /* Hmm I'm not 100& sure, if this is the best place for that */
+    char *buf2;
     char        *enemy1;
     char        enemy2[256];
     char        buf3[512];
@@ -263,7 +264,7 @@ void draw_info(char *str, int flags)
     }
 
     /* Create a modifiable version of str */
-    char *buf2 = malloc(strlen(str)+1);
+    buf2 = malloc(strlen(str)+1);
     strcpy(buf2, str);
 
 #ifdef DEVELOPMENT

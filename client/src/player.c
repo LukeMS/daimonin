@@ -183,11 +183,11 @@ static char *BreakMulticommand(char *command)
     char *c = NULL;
     /* Only look for a multicommand if the command is not one of these:
      */
-    if (!(!strncasecmp(command, "/tell", 5) || !strncasecmp(command, "/say", 4) || !strncasecmp(command, "/reply", 6) || !strncasecmp(command, "/gsay", 5) || !strncasecmp(command, "/shout", 6) || !strncasecmp(command, "/talk", 5)
+    if (!(!strnicmp(command, "/tell", 5) || !strnicmp(command, "/say", 4) || !strnicmp(command, "/reply", 6) || !strnicmp(command, "/gsay", 5) || !strnicmp(command, "/shout", 6) || !strnicmp(command, "/talk", 5)
 #ifdef USE_CHANNELS
      || (*command == '-')
 #endif
-    || !strncasecmp(command, "/create", 7)))
+    || !strnicmp(command, "/create", 7)))
     {
         if ((c = strchr(command, '#'))) /* multicommand separator '#' */
             *c = '\0';
@@ -238,7 +238,7 @@ int send_command(const char *command, int repeat, int must_send)
             /* Nasty hack. Treat /talk as a special case: lowercase it and
              * print it to the message window as Topic: foo. -- Smacky 20071210
              */
-            if (!strncasecmp(token, "/talk", 5))
+            if (!strnicmp(token, "/talk", 5))
             {
                 int c;
                 for (c = 0; *(token + c) != '\0'; c++)
@@ -938,12 +938,18 @@ void widget_show_main_lvl(int x, int y)
 
 void widget_show_skill_exp(int x, int y)
 {
-    char        buf[256];
+    _BLTFX      bltfx;
+	char        buf[256];
     double      multi, line;
     SDL_Rect    box;
     int         s, level_exp;
-    multi = line = 0;
-    _BLTFX      bltfx;
+    long int liLExp = 0;
+    long int liLExpTNL = 0;
+    long int liTExp = 0;
+    long int liTExpTNL = 0;
+    float fLExpPercent = 0;
+	multi = line = 0;
+
 
     if (!widgetSF[SKILL_EXP_ID])
         widgetSF[SKILL_EXP_ID]=SDL_ConvertSurface(Bitmaps[BITMAP_SKILL_EXP_BG]->bitmap,
@@ -982,12 +988,6 @@ void widget_show_skill_exp(int x, int y)
                 break;
             }
             StringBlt(widgetSF[SKILL_EXP_ID], &SystemFont, buf, 28, -1, COLOR_WHITE, NULL, NULL);
-
-            long int liLExp = 0;
-            long int liLExpTNL = 0;
-            long int liTExp = 0;
-            long int liTExpTNL = 0;
-            float fLExpPercent = 0;
 
             if (skill_list[cpl.skill_g].entry[cpl.skill_e].exp >= 0)
             {
