@@ -114,8 +114,6 @@ Animations          animations[MAXANIM]; /* get this from commands.c to this pla
 
 time_t sleeptime;
 
-struct bigmsg bigmsg;
-
 _screensize Screensize;
 
 _screensize Screendefs[16] =
@@ -1774,34 +1772,12 @@ int main(int argc, char *argv[])
                 }
             }
         if (showtimer && !esc_menu_flag)
-            sprite_blt(Bitmaps[BITMAP_STIMER], options.mapstart_x-70, options.mapstart_y+150, NULL, NULL);
+            sprite_blt(Bitmaps[BITMAP_STIMER], options.mapstart_x+300, options.mapstart_y+150, NULL, NULL);
         }
         if (!options.sleepcounter)
             showtimer = FALSE;
 
-        /* TODO: This should be moved to the anim functions, but for that we
-         * have to rewrite the anim stuff to handle strings, and different speeds, and so on...
-         */
-        if ((GameStatus == GAME_STATUS_PLAY) && bigmsg.active)
-        {
-            if ((LastTick-bigmsg.starttick)<3000)
-            {
-                _BLTFX      bmbltfx;
-                bmbltfx.alpha = 255;
-                bmbltfx.flags = BLTFX_FLAG_SRCALPHA;
-                int bmoff = 0;
 
-                bmoff = (int)((50.0f/3.0f)*((float)(LastTick-bigmsg.starttick)/1000.0f)*((float)(LastTick-bigmsg.starttick)/1000.0f)+((int)(150.0f*((float)(LastTick-bigmsg.starttick)/3000.0f))));
-
-                if (LastTick-bigmsg.starttick>2000)
-                    bmbltfx.alpha -= (int)(255.0f*((float)(LastTick-bigmsg.starttick-2000)/1000.0f));
-
-                StringBlt(ScreenSurface, &BigFont, bigmsg.msg, (Screensize.x/2)-(StringWidth(&BigFont,bigmsg.msg)/2) , Screensize.y/2-bmoff, COLOR_BLACK, NULL, &bmbltfx);
-                StringBlt(ScreenSurface, &BigFont, bigmsg.msg, (Screensize.x/2)-(StringWidth(&BigFont,bigmsg.msg)/2)-2 , (Screensize.y/2)-2-bmoff, COLOR_GREEN, NULL, &bmbltfx);
-            }
-            else
-                bigmsg.active = FALSE;
-        }
         if((GameStatus  == GAME_STATUS_PLAY) && options.statometer )
         {
             cur_widget[STATOMETER_ID].show=TRUE;

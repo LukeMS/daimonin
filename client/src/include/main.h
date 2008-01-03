@@ -307,14 +307,6 @@ typedef struct statometer {
 
 struct statometer statometer;
 
-typedef struct bigmsg {
-    char    msg[128];
-    uint32  starttick;
-    Boolean active;
-} _bigmsg;
-
-extern struct bigmsg bigmsg;
-
 extern time_t sleeptime;
 
 #define FACE_FLAG_NO        0
