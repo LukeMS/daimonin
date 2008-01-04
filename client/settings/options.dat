@@ -8,33 +8,33 @@
 %22 22
 
 # Communication
-Channel Format: 0
-Enable Smileys: 0
-Log Messages: 1
+Channel format: 0
+Enable smileys: 0
+Log messages: 1
 Textwindows use alpha: 1
 Textwindows alpha value: 110
-Enable Chatfilter: 0
+Enable chatfilter: 0
 
 # Combat
 Low health warning: 10
 Show yourself targeted: 0
 Kill-Stats: 1
 Stat-O-Meter: 5
-Extended EXP display: 4
+Extended exp display: 4
 
 # Inventory
 Overload warning: 85
-Show Item Qua/Con: 1
+Show item qua/con: 1
 Item damage percent 1: 90
 Item damage percent 2: 80
 Playerdoll: 0
 
 # Map
-Player Names: 2
-Playfield Start X: -10
-Playfield Start Y: 100
-Playfield Zoom: 100
-Smooth Zoom: 0
+Player names: 2
+Playfield start X: -10
+Playfield start Y: 100
+Playfield zoom: 100
+Smooth zoom: 0
 
 # Sound
 Sound volume: 100
@@ -48,34 +48,34 @@ Automatic bpp: 1
 Colordeep: 2
 Save CPU time with sleep(): 1
 Sleep time in ms: 15
-Show Tooltips: 1
-Key-info in Dialog menus: 1
+Show tooltips: 1
+Key-info in dialog menus: 1
 
 # Fullscreen flags
-Hardware Surface: 0
-Software Surface: 1
-Hardware Accel: 1
+Hardware surface: 0
+Software surface: 1
+Hardware accel: 1
 Doublebuffer: 0
 Any format: 0
 Async blit: 0
-Hardware Palette: 1
+Hardware palette: 1
 Resizeable: 0
 No frame: 0
 RLE accel: 1
 
 # Windowed flags
-Win Hardware Surface: 1
-Win Software Surface: 1
-Win Hardware Accel: 0
+Win Hardware surface: 1
+Win Software surface: 1
+Win Hardware accel: 0
 Win Doublebuffer: 0
 Win Any format: 1
 Win Async blit: 1
-Win Hardware Palette: 1
+Win Hardware palette: 1
 Win Resizeable: 0
 Win No frame: 0
 Win RLE accel: 1
 
 # Debug
-Show Framerate: 1
-Force Redraw: 0
-Use Update Rect: 0
+Show framerate: 1
+Force redraw: 0
+Use update rect: 0

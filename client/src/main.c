@@ -556,7 +556,7 @@ void load_options_dat(void)
         pos = -1;
         while (opt[++pos].name)
         {
-            if (!strcmp(keyword, opt[pos].name))
+            if (!stricmp(keyword, opt[pos].name))
             {
                 switch (opt[pos].value_type)
                 {
