@@ -172,10 +172,10 @@ int mouseInPlayfield(x, y)
     x=(int)(x/(options.zoom/100.0f));
     y=(int)(y/(options.zoom/100.0f));
 
+    x = x - options.mapstart_x -6;
+    y = y - options.mapstart_y - 5;
 
-    x += options.mapstart_x-331;
-    y -= options.mapstart_y-16;
-    if (x < 445)
+    if (x < 408)
     {
         if ((y < 200) && (y + y + x > 400))
             return -1; /* upper left */
@@ -184,7 +184,7 @@ int mouseInPlayfield(x, y)
     }
     else
     {
-        x -= 445;
+        x -= 408;
         if ((y < 200) && (y + y > x))
             return -1; /* upper right */
         if ((y >= 200) && (y + y + x < 845))
@@ -2835,7 +2835,7 @@ void check_menu_keys(int menu, int key)
 					Uint32 videoflags = get_video_flags();
                     _screensize sz_tmp = Screensize;
                     Screensize=Screendefs[options.resolution];
-                    
+
                     if ((ScreenSurface = SDL_SetVideoMode(Screensize.x, Screensize.y, options.used_video_bpp, videoflags)) == NULL)
                     {
                         int i;

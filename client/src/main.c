@@ -377,7 +377,7 @@ void init_game_data(void)
     options.playerdoll = FALSE;
     options.sleepcounter = FALSE;
     options.zoom=100;
-    options.speedup = FALSE;
+    options.speedup = 0;
     options.mapstart_x = -10;
     options.mapstart_y = 100;
     options.use_TextwinSplit = 1;
@@ -1677,13 +1677,15 @@ int main(int argc, char *argv[])
  */
         if (!options.speedup)
             map_udate_flag=2;
-        else if ((GameStatus == GAME_STATUS_PLAY) && ((LastTick-speeduptick)>200))
+        else if ((GameStatus == GAME_STATUS_PLAY) && ((LastTick-speeduptick)>options.speedup))
         {
                 speeduptick=LastTick;
                 map_udate_flag=2;
         }
         if (map_udate_flag > 0)
         {
+            speeduptick = LastTick;
+
             display_layer1();
             display_layer2();
             display_layer3();

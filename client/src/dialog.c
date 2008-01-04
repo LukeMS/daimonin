@@ -163,7 +163,7 @@ _option             opt[]                           =
         {"Sleep time in ms:", "Time the client will sleep. Used with Save CPU time.","", "",SEL_RANGE, 0,1000,1, 15, &options.sleep, VAL_INT},
         {"Show tooltips:", "Show tooltips when hovering with the mouse over items.","", "",SEL_CHECKBOX, 0,1,1, 1, &options.show_tooltips, VAL_BOOL},
         {"Key-info in dialog menus:", "","", "",SEL_CHECKBOX, 0,1,1, 1, &options.show_d_key_infos, VAL_BOOL},
-        {"SpeedUp:", "Will speed up the client at cost of some graphic glitches","", "",SEL_CHECKBOX, 0,1,1, 0, &options.speedup, VAL_BOOL},
+        {"SpeedUp:", "Will speed up the client at cost of some (graphic) glitches","The higher the value the higher the speed and glitches", "",SEL_RANGE, 0,400,10, 0, &options.speedup, VAL_INT},
 
         /*{"Collect All Items:", "Don't ask for number of items to get, just get all of them.","", "",SEL_CHECKBOX, 0,1,1, 0,&options.collectAll, VAL_BOOL},   */
         {"#"}, /* End of Page */

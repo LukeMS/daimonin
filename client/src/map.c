@@ -712,10 +712,13 @@ void map_draw_map(void)
 ******************************************************************/
 int get_tile_position(int x, int y, int *tx, int *ty)
 {
-    if (x < (int)((options.mapstart_x+390)*(options.zoom/100.0)))
+//    x +=2*MAP_TILE_POS_XOFF;
+//    y +=142+options.mapstart_y;
+
+    if (x < (int)((options.mapstart_x+384)*(options.zoom/100.0)))
         x -= (int)(MAP_TILE_POS_XOFF*(options.zoom/100.0));
-    x -= (int)((options.mapstart_x+390)*(options.zoom/100.0));
-    y -= (int)(options.mapstart_y*(options.zoom/100.0));
+    x -= (int)((options.mapstart_x+384)*(options.zoom/100.0));
+    y -= (int)((options.mapstart_y)*(options.zoom/100.0));
     *tx = x / (int)(MAP_TILE_POS_XOFF*(options.zoom/100.0)) + y / (int)(MAP_TILE_YOFF*(options.zoom/100.0));
     *ty = y / (int)(MAP_TILE_YOFF*(options.zoom/100.0)) - x / (int)(MAP_TILE_POS_XOFF*(options.zoom/100.0));
 
