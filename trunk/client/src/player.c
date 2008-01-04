@@ -702,7 +702,7 @@ void widget_skillgroups(int x, int y)
                   NULL, NULL);
         sprintf(buf, " %d", cpl.stats.skill_level[5]);
         StringBlt(widgetSF[SKILL_LVL_ID], &SystemFont, "Wi:", 6, 86, COLOR_HGOLD, NULL, NULL);
-        StringBlt(widgetSF[SKILL_LVL_ID], &SystemFont, buf, 44 - get_string_pixel_length(buf, &SystemFont), y + 86, COLOR_WHITE,
+        StringBlt(widgetSF[SKILL_LVL_ID], &SystemFont, buf, 44 - get_string_pixel_length(buf, &SystemFont), 86, COLOR_WHITE,
                   NULL, NULL);
     }
     box.x=x;
@@ -768,9 +768,6 @@ void widget_show_player_doll(int x, int y)
     StringBlt(ScreenSurface, &SystemFont, "SF", x + 5, y + 95, COLOR_HGOLD, NULL, NULL);
     sprintf(buf, "%.1f", cpl.stats.spell_fumble);
     StringBlt(ScreenSurface, &SystemFont, buf, x + 20, y + 95, COLOR_WHITE, NULL, NULL);
-    StringBlt(ScreenSurface, &SystemFont, "SF", x + 8, y + 100, COLOR_HGOLD, NULL, NULL);
-    sprintf(buf, "%.1f", cpl.stats.spell_fumble);
-    StringBlt(ScreenSurface, &SystemFont, buf, x + 25, y + 100, COLOR_WHITE, NULL, NULL);
 
 	StringBlt(ScreenSurface, &SystemFont, "Speed", x + 60, y + 167, COLOR_HGOLD, NULL, NULL);
 	sprintf(buf, "%.1f%%", cpl.stats.speed);
