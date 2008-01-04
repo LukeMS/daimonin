@@ -207,7 +207,7 @@ void draw_info(char *str, int flags)
     int tempexp;
     int tempexp2;
 
-    if (options.statometer)
+    if (options.statsupdate)
     {
         tempexp=0;
         tempexp2=0;
@@ -221,7 +221,7 @@ void draw_info(char *str, int flags)
         }
     }
 
-    if (options.statometer && !strncmp(str,"You killed ",11))
+    if (options.statsupdate && !strncmp(str,"You killed ",11))
         statometer.kills++;
 
     if (options.kerbholz)
@@ -239,7 +239,7 @@ void draw_info(char *str, int flags)
             }
             newkill=addKill(enemy2);
 
-            if ((options.killmsg) && (newkill>0))
+            if (newkill>0)
             {
                 if (newkill==1)
                 {

@@ -378,12 +378,14 @@ void init_game_data(void)
     options.sleepcounter = FALSE;
     options.zoom=100;
 
-    options.mapstart_x = MAP_START_XOFF;
-    options.mapstart_y = MAP_START_YOFF;
+    options.mapstart_x = -10;
+    options.mapstart_y = 100;
     options.use_TextwinSplit = 1;
     txtwin[TW_MIX].size = 50;
+    txtwin[TW_MSG].size = 22;
+    txtwin[TW_CHAT].size = 22;
 
-    options.statometer=1;
+//    options.statometer=1;
     options.statsupdate=5;
     options.firststart=TRUE;
 
@@ -427,6 +429,10 @@ void save_options_dat(void)
     }
     /* the %-settings are settings which (should) not shown in options win */
     sprintf(txtBuffer,"%%1 %s\n",options.skin);
+    fputs(txtBuffer, stream);
+    sprintf(txtBuffer,"%%21 %d\n",txtwin[TW_MSG].size);
+    fputs(txtBuffer, stream);
+    sprintf(txtBuffer,"%%22 %d\n",txtwin[TW_CHAT].size);
     fputs(txtBuffer, stream);
 
     while (opt_tab[++i])
@@ -524,6 +530,17 @@ void load_options_dat(void)
                     strncpy(options.skin,line+3,63);
                     options.skin[63]='\0';
                     options.skin[strlen(options.skin)-1]='\0';
+                    break;
+                case '2':
+                    switch (line[2])
+                    {
+                        case '1':
+                            txtwin[TW_MSG].size=atoi(line+4);
+                            break;
+                        case '2':
+                            txtwin[TW_CHAT].size=atoi(line+4);
+                            break;
+                    }
                     break;
             }
             continue;
@@ -1651,6 +1668,15 @@ int main(int argc, char *argv[])
             play_action_sounds();
         }
 
+/* im sorry but atm the widget client needs to redraw the whole screen every frame
+ * note, the map is still only redrawn at changes, its stored from a backbuffer
+ * i have already some widgets reworked to use also backbuffers, which weaken the load
+ * when the update flag is fully implemented we can get around 20%-30% more frames.
+ * but even then mooving widgets and such stuff would decrease the framerate
+ */
+
+        map_udate_flag=2;
+
         if (map_udate_flag > 0)
         {
             display_layer1();
@@ -1661,11 +1687,7 @@ int main(int argc, char *argv[])
             if (GameStatus != GAME_STATUS_PLAY)
                 SDL_FillRect(ScreenSurface, NULL, 0);
 
-
-            if (esc_menu_flag == TRUE
-                    || (options.use_TextwinAlpha && (txtwin[TW_MSG].size + txtwin[TW_CHAT].size) > 9))
-               map_udate_flag = 1;
-            else if (!options.force_redraw)
+            if (!options.force_redraw)
             {
                 if (options.doublebuf_flag)
                     map_udate_flag--;
@@ -1761,11 +1783,6 @@ int main(int argc, char *argv[])
                 time_t now;
                 time(&now);
 
-//                if (difftime(now,sleeptime)>300)
-//                {
-//                    sprintf(sleepmsg,"You should REALLY go to bed now!");
-//                }
-//                else
                 if (difftime(now,sleeptime)>0)
                 {
                     showtimer = TRUE;
@@ -1778,7 +1795,7 @@ int main(int argc, char *argv[])
             showtimer = FALSE;
 
 
-        if((GameStatus  == GAME_STATUS_PLAY) && options.statometer )
+        if((GameStatus  == GAME_STATUS_PLAY) && options.statsupdate )
         {
             cur_widget[STATOMETER_ID].show=TRUE;
             if ((LastTick-statometer.lastupdate)>(options.statsupdate*1000))
@@ -1815,6 +1832,7 @@ int main(int argc, char *argv[])
          */
         if ((GameStatus == GAME_STATUS_PLAY) && vim.active)
         {
+            map_udate_flag = 2;
             if ((LastTick-vim.starttick)<3000)
             {
                 _BLTFX      bmbltfx;
@@ -1911,9 +1929,11 @@ static void display_layer1(void)
     static int gfx_toggle=0;
     SDL_Rect    rect;
 
-
+    /* we clear the screen and start drawing
+     * this is done every frame, this should and hopefully can be optimized. */
     SDL_FillRect(ScreenSurface, NULL, 0);
 
+    /* we recreate the ma only when there is a change (which happens maybe 1-3 times a second) */
     if (map_redraw_flag)
     {
         SDL_FillRect(ScreenSurfaceMap, NULL, 0);
@@ -1928,6 +1948,8 @@ static void display_layer1(void)
     rect.x=options.mapstart_x;
     rect.y=options.mapstart_y;
     SDL_BlitSurface(zoomed, NULL, ScreenSurface, &rect);
+
+    /* the damage numbers */
     play_anims(0,0);
 
     /* draw warning-icons above player */
@@ -1944,13 +1966,13 @@ static void display_layer1(void)
     }
 }
 
-/* display the frame (background image) */
 static void display_layer2(void)
 {
     cpl.container = NULL; /* this will be set right on the fly in get_inventory_data() */
 
     if (GameStatus == GAME_STATUS_PLAY)
     {
+        /* TODO: optimize, only call this functions when something in the inv changed */
         cpl.win_inv_tag = get_inventory_data(cpl.ob, &cpl.win_inv_ctag, &cpl.win_inv_slot,
                                              &cpl.win_inv_start, &cpl.win_inv_count, INVITEMXLEN,
                                              INVITEMYLEN);
@@ -1958,7 +1980,8 @@ static void display_layer2(void)
         cpl.win_below_tag = get_inventory_data(cpl.below, &cpl.win_below_ctag, &cpl.win_below_slot,
                                                &cpl.win_below_start, &cpl.win_below_count, INVITEMBELOWXLEN,
                                                INVITEMBELOWYLEN);
-
+        /* this actually plays only music, but a short look into the code
+         * shows it can display images as well, but that need a deeper look */
         show_media(798, 171);
     }
 

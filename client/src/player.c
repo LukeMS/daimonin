@@ -177,7 +177,7 @@ static void NormalizeCommand(char *cmd, const char *command)
 /* Splits command at the next #,
  * returning a pointer to the occurrence (which is overwritten with \0 first) or
  * NULL if no next multicommand is found or command is chat, etc.
- */ 
+ */
 static char *BreakMulticommand(char *command)
 {
     char *c = NULL;
@@ -1167,7 +1167,7 @@ void widget_show_statometer(int x, int y)
 {
     char statbuf[128];
 
-    if (!options.statometer)
+    if (!options.statsupdate)
     {
         cur_widget[STATOMETER_ID].show=FALSE;
         return;

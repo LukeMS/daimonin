@@ -231,7 +231,6 @@ typedef struct _options
     Boolean                 hp_color;       /* color bar and % */
     int                     iExpDisplay;    /* robed's extended exp-display */
     Boolean                 kerbholz;       /* use kill stats */
-    Boolean                 killmsg;        /* show additional kill messages */
     int                     msglog;         /* log-options */
     Boolean                 playerdoll;
     Boolean                 statometer;

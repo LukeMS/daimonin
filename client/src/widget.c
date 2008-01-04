@@ -679,6 +679,7 @@ int widget_event_mousemv(int x,int y, SDL_Event *event)
 		cur_widget[widget_event_move.id].x1 = x - widget_event_move.xOffset;
 		cur_widget[widget_event_move.id].y1 = y - widget_event_move.yOffset;
 
+        map_udate_flag = 2;
 		return TRUE;
 	}
 	/* NORMAL CONDITION - RESPOND TO MOUSEMOVE EVENT */
