@@ -246,6 +246,7 @@ typedef struct _options
     Boolean                 use_gl;
     int                     sleep;
     Boolean                 limit_speed;
+    Boolean                 speedup;
     Boolean                 auto_bpp_flag;
     Boolean                 use_rect;
 

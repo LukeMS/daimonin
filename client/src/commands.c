@@ -364,6 +364,7 @@ void SkillRdyCmd(unsigned char *data, int len)
     int i, ii;
 
     strcpy(cpl.skill_name, (const char *)data);
+    WIDGET_REDRAW(SKILL_EXP_ID);
 
     /* lets find the skill... and setup the shortcuts to the exp values*/
     for (ii = 0; ii < SKILL_LIST_MAX; ii++)

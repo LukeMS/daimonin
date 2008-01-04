@@ -377,7 +377,7 @@ void init_game_data(void)
     options.playerdoll = FALSE;
     options.sleepcounter = FALSE;
     options.zoom=100;
-
+    options.speedup = FALSE;
     options.mapstart_x = -10;
     options.mapstart_y = 100;
     options.use_TextwinSplit = 1;
@@ -1339,6 +1339,7 @@ int main(int argc, char *argv[])
     int             i, done = 0, FrameCount = 0;
     Boolean         showtimer = FALSE;
     Boolean         newskin = FALSE;
+    uint32          speeduptick = 0;
     //fd_set          tmp_read, tmp_write, tmp_exceptions;
     //struct timeval  timeout;
     // pollret;
@@ -1674,9 +1675,13 @@ int main(int argc, char *argv[])
  * when the update flag is fully implemented we can get around 20%-30% more frames.
  * but even then mooving widgets and such stuff would decrease the framerate
  */
-
-        map_udate_flag=2;
-
+        if (!options.speedup)
+            map_udate_flag=2;
+        else if ((GameStatus == GAME_STATUS_PLAY) && ((LastTick-speeduptick)>250))
+        {
+                speeduptick=LastTick;
+                map_udate_flag=2;
+        }
         if (map_udate_flag > 0)
         {
             display_layer1();

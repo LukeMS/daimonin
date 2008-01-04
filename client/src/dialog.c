@@ -119,7 +119,7 @@ _option             opt[]                           =
         /* End of Page */
 
         /* Combat */
-        {"Low health warning:", "Shows a low health warning above your head","Activatetd if health is less than the given percent value.","", SEL_RANGE, 0,100,5, 0, &options.warning_hp, VAL_INT},
+        {"Low health warning:", "Shows a low health warning above your head","Activatetd if health is less than the given percent value.","", SEL_RANGE, 0,100,5, 20, &options.warning_hp, VAL_INT},
         {"Show yourself targeted:", "Show your name in the target area instead of blank.","", "",SEL_CHECKBOX, 0,1,1, 0, &options.show_target_self, VAL_BOOL},
         {"Kill-Stats:", "Count all kills based on mob name you make","","", SEL_CHECKBOX, 0,1,1, 1,&options.kerbholz, VAL_BOOL},
         {"Stat-O-Meter:", "Show and update the Stats-O-Meter every x seconds.","5 Seconds should be a good time. Set to 0 to disbale/hide","", SEL_RANGE, 0,15,1, 5,&options.statsupdate, VAL_INT},
@@ -163,6 +163,8 @@ _option             opt[]                           =
         {"Sleep time in ms:", "time the client will sleep. Used with Save CPU time.","", "",SEL_RANGE, 0,1000,1, 15, &options.sleep, VAL_INT},
         {"Show Tooltips:", "Show tooltips when hovering with the mouse over items.","", "",SEL_CHECKBOX, 0,1,1, 1, &options.show_tooltips, VAL_BOOL},
         {"Key-info in Dialog menus:", "","", "",SEL_CHECKBOX, 0,1,1, 1, &options.show_d_key_infos, VAL_BOOL},
+        {"SpeedUp:", "Will speed up the client at cost of some graphic glitches","", "",SEL_CHECKBOX, 0,1,1, 0, &options.speedup, VAL_BOOL},
+
         /*{"Collect All Items:", "Don't ask for number of items to get, just get all of them.","", "",SEL_CHECKBOX, 0,1,1, 0,&options.collectAll, VAL_BOOL},   */
         {"#"}, /* End of Page */
 
