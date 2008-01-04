@@ -109,28 +109,28 @@ char               *opt_tab[]                       =
 _option             opt[]                           =
     {
         /* Chat & Messages */
-        {"Channel Format:", "Select how the channels should be displayed.","","Prefixed#Indented", SEL_RANGE, 0,1,1, 0, &options.channelformat, VAL_INT},
-        {"Enable Smileys:", "","", "",SEL_CHECKBOX, 0,1,1, 0, &options.smileys, VAL_BOOL},
-        {"Log Messages:", "Logs Messages like shouts, damage info, and so on","","No Logging#Only Communication#All", SEL_RANGE,0,2,1,1,&options.msglog, VAL_INT},
+        {"Channel format:", "Select how the channels should be displayed.","","Prefixed#Indented", SEL_RANGE, 0,1,1, 0, &options.channelformat, VAL_INT},
+        {"Enable smileys:", "","", "",SEL_CHECKBOX, 0,1,1, 0, &options.smileys, VAL_BOOL},
+        {"Log messages:", "Logs messages like shouts, damage info, and so on","","No logging#Only communication#All", SEL_RANGE,0,2,1,1,&options.msglog, VAL_INT},
         {"Textwindows use alpha:", "Make the text window transparent.","WARNING: Don't use this if you have a VERY slow computer","", SEL_CHECKBOX, 0,1,1, 1, &options.use_TextwinAlpha, VAL_INT},
         {"Textwindows alpha value:", "Transparent value. higher = darker","","", SEL_RANGE, 0,255,5, 110, &options.textwin_alpha, VAL_INT},
-        {"Enable Chatfilter:", "Filter incoming messages for 'bad words'.","See '/cfilter ?'", "",SEL_CHECKBOX, 0,1,1, 0, &options.chatfilter, VAL_BOOL},
+        {"Enable chatfilter:", "Filter incoming messages for 'bad words'.","See '/cfilter ?'", "",SEL_CHECKBOX, 0,1,1, 0, &options.chatfilter, VAL_BOOL},
         {"#"},
         /* End of Page */
 
         /* Combat */
-        {"Low health warning:", "Shows a low health warning above your head","Activatetd if health is less than the given percent value.","", SEL_RANGE, 0,100,5, 20, &options.warning_hp, VAL_INT},
+        {"Low health warning:", "Shows a low health warning above your head","Activated if health is less than the given percent value.","", SEL_RANGE, 0,100,5, 20, &options.warning_hp, VAL_INT},
         {"Show yourself targeted:", "Show your name in the target area instead of blank.","", "",SEL_CHECKBOX, 0,1,1, 0, &options.show_target_self, VAL_BOOL},
         {"Kill-Stats:", "Count all kills based on mob name you make","","", SEL_CHECKBOX, 0,1,1, 1,&options.kerbholz, VAL_BOOL},
-        {"Stat-O-Meter:", "Show and update the Stats-O-Meter every x seconds.","5 Seconds should be a good time. Set to 0 to disbale/hide","", SEL_RANGE, 0,15,1, 5,&options.statsupdate, VAL_INT},
-        {"Extended EXP display:", "Show exp display in various formats.","4nl = For next level; tnl = Till next level; LExp = Level exp; TExp = Total exp;",
+        {"Stat-O-Meter:", "Show and update the Stat-O-Meter every x seconds.","5 Seconds should be a good time. Set to 0 to disbale/hide","", SEL_RANGE, 0,15,1, 5,&options.statsupdate, VAL_INT},
+        {"Extended exp display:", "Show exp display in various formats.","4nl = For next level; tnl = Till next level; LExp = Level exp; TExp = Total exp;",
              "Level/LExp#LExp\%#LExp/LExp 4nl#TExp/TExp 4nl#(LExp\%) LExp tnl", SEL_RANGE, 0, 4, 1, 4, &options.iExpDisplay, VAL_INT},
         {"#"},
         /* End of Page */
 
         /* Inventory */
-        {"Overload warning:", "Shows a overload warning above your head.","Activatetd if loading is greater than the given percent value.","", SEL_RANGE, 0,100,5, 85, &options.warning_weight, VAL_INT},
-        {"Show Item Qua/Con:", "Show Qua/Con in Inventory and Playerdoll","", "",SEL_CHECKBOX, 0,1,1, 0, &options.showqc, VAL_BOOL},
+        {"Overload warning:", "Shows a overload warning above your head.","Activated if loading is greater than the given percent value.","", SEL_RANGE, 0,100,5, 85, &options.warning_weight, VAL_INT},
+        {"Show item qua/con:", "Show qua/con in inventory and playerdoll","", "",SEL_CHECKBOX, 0,1,1, 0, &options.showqc, VAL_BOOL},
         {"Item damage percent 1:", "Item damage worse than this value shows damage bar in orange.", "", "", SEL_RANGE, 0, 100, 5, 90, &options.itemdmg_limit_orange, VAL_INT},
         {"Item damage percent 2:", "Item damage worse than this value shows damage bar in red.", "", "", SEL_RANGE, 0, 100, 5, 80, &options.itemdmg_limit_red, VAL_INT},
         {"Playerdoll:", "Show always the playerdoll when checked","when unchecked only together with inventory","", SEL_CHECKBOX, 0,1,1, 0, &options.playerdoll, VAL_BOOL},
@@ -138,17 +138,17 @@ _option             opt[]                           =
         /* End of Page */
 
         /* Map */
-        {"Player Names:", "Show names of players above their heads.",   "", "show no names#show all names#show only other#show only your", SEL_RANGE, 0,3,1, 2, &options.player_names, VAL_INT},
-        {"Playfield Start X:", "X-Position of Playfield","","",    SEL_RANGE,  -20,1000,10, -10, &options.mapstart_x, VAL_INT},
-        {"Playfield Start Y:", "Y-Position of Playfield","","",     SEL_RANGE,  0,700,10, 100, &options.mapstart_y, VAL_INT},
-        {"Playfield Zoom:", "EXPERIMENTAL!!!!!","","",     SEL_RANGE,  50,200,5, 100, &options.zoom, VAL_INT},
-        {"Smooth Zoom:", "VERY VERY VERY CPU intensive","EXPERIMENTAL!!!","",     SEL_CHECKBOX,  0,1,1, 0, &options.smooth, VAL_BOOL},
+        {"Player names:", "Show names of players above their heads.",   "", "Show no names#Show all names#Show only other names#Show only your name", SEL_RANGE, 0,3,1, 2, &options.player_names, VAL_INT},
+        {"Playfield start X:", "X-position of playfield","","",    SEL_RANGE,  -20,1000,10, -10, &options.mapstart_x, VAL_INT},
+        {"Playfield start Y:", "Y-position of playfield","","",     SEL_RANGE,  0,700,10, 100, &options.mapstart_y, VAL_INT},
+        {"Playfield zoom:", "EXPERIMENTAL!!!!!","","",     SEL_RANGE,  50,200,5, 100, &options.zoom, VAL_INT},
+        {"Smooth zoom:", "VERY VERY VERY CPU intensive","EXPERIMENTAL!!!","",     SEL_CHECKBOX,  0,1,1, 0, &options.smooth, VAL_BOOL},
         {"#"},
         /* End of Page */
 
         /* Sound */
-        {"Sound volume:", "set sound volume for effects.","", "",SEL_RANGE, 0,100,5,100, &options.sound_volume, VAL_INT},
-        {"Music volume:", "set music volume for background.","Sub info","", SEL_RANGE, 0,100,5,80, &options.music_volume, VAL_INT},
+        {"Sound volume:", "Set sound volume for effects.","", "",SEL_RANGE, 0,100,5,100, &options.sound_volume, VAL_INT},
+        {"Music volume:", "Set music volume for background.","Sub info","", SEL_RANGE, 0,100,5,80, &options.music_volume, VAL_INT},
         {"Audible heartbeat:", "Hear your heart pumping during combat.", "Activated if health is less than the given percent value.", "", SEL_RANGE, 0, 100, 5, 50, &options.heartbeat, VAL_INT},
         {"#"},
         /* End of Page */
@@ -160,22 +160,22 @@ _option             opt[]                           =
         {"Automatic bpp:", "Use always the same bits per pixel like your default windows.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,1, &options.auto_bpp_flag, VAL_BOOL},
         {"Colordeep:", "Use this bpp for fullscreen mode. Overruled by automatic bpp.","NOTE: You need to restart the client.","8 bpp#16 bpp#32 bpp", SEL_RANGE, 0,2,1, 2, &options.video_bpp, VAL_INT},
         {"Save CPU time with sleep():", "Client eats less CPU time when set.","", "",SEL_CHECKBOX, 0,1,1, 1, &options.limit_speed, VAL_BOOL},
-        {"Sleep time in ms:", "time the client will sleep. Used with Save CPU time.","", "",SEL_RANGE, 0,1000,1, 15, &options.sleep, VAL_INT},
-        {"Show Tooltips:", "Show tooltips when hovering with the mouse over items.","", "",SEL_CHECKBOX, 0,1,1, 1, &options.show_tooltips, VAL_BOOL},
-        {"Key-info in Dialog menus:", "","", "",SEL_CHECKBOX, 0,1,1, 1, &options.show_d_key_infos, VAL_BOOL},
+        {"Sleep time in ms:", "Time the client will sleep. Used with Save CPU time.","", "",SEL_RANGE, 0,1000,1, 15, &options.sleep, VAL_INT},
+        {"Show tooltips:", "Show tooltips when hovering with the mouse over items.","", "",SEL_CHECKBOX, 0,1,1, 1, &options.show_tooltips, VAL_BOOL},
+        {"Key-info in dialog menus:", "","", "",SEL_CHECKBOX, 0,1,1, 1, &options.show_d_key_infos, VAL_BOOL},
         {"SpeedUp:", "Will speed up the client at cost of some graphic glitches","", "",SEL_CHECKBOX, 0,1,1, 0, &options.speedup, VAL_BOOL},
 
         /*{"Collect All Items:", "Don't ask for number of items to get, just get all of them.","", "",SEL_CHECKBOX, 0,1,1, 0,&options.collectAll, VAL_BOOL},   */
         {"#"}, /* End of Page */
 
         /* Fullscreen Flags */
-        {"Hardware Surface:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1, 0, &options.Full_HWSURFACE, VAL_BOOL},
-        {"Software Surface:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,1, &options.Full_SWSURFACE, VAL_BOOL},
-        {"Hardware Accel:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,1, &options.Full_HWACCEL, VAL_BOOL},
+        {"Hardware surface:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1, 0, &options.Full_HWSURFACE, VAL_BOOL},
+        {"Software surface:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,1, &options.Full_SWSURFACE, VAL_BOOL},
+        {"Hardware accel:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,1, &options.Full_HWACCEL, VAL_BOOL},
         {"Doublebuffer:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,0, &options.Full_DOUBLEBUF, VAL_BOOL},
         {"Any format:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,0, &options.Full_ANYFORMAT, VAL_BOOL},
         {"Async blit:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,0, &options.Full_ASYNCBLIT, VAL_BOOL},
-        {"Hardware Palette:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,1, &options.Full_HWPALETTE, VAL_BOOL},
+        {"Hardware palette:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,1, &options.Full_HWPALETTE, VAL_BOOL},
         {"Resizeable:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,0, &options.Full_RESIZABLE, VAL_BOOL},
         {"No frame:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,0, &options.Full_NOFRAME, VAL_BOOL},
         {"RLE accel:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,1, &options.Full_RLEACCEL, VAL_BOOL},
@@ -183,9 +183,9 @@ _option             opt[]                           =
         /* End of Page */
 
         /* Windowed flags*/
-        {"Win Hardware Surface:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,0, &options.Win_HWSURFACE, VAL_BOOL},
-        {"Win Software Surface:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,1, &options.Win_SWSURFACE, VAL_BOOL},
-        {"Win Hardware Accel:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,0, &options.Win_HWACCEL, VAL_BOOL},
+        {"Win Hardware surface:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,0, &options.Win_HWSURFACE, VAL_BOOL},
+        {"Win Software surface:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,1, &options.Win_SWSURFACE, VAL_BOOL},
+        {"Win Hardware accel:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,0, &options.Win_HWACCEL, VAL_BOOL},
         {"Win Doublebuffer:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,0, &options.Win_DOUBLEBUF, VAL_BOOL},
         {"Win Any format:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,1, &options.Win_ANYFORMAT, VAL_BOOL},
         {"Win Async blit:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,0, &options.Win_ASYNCBLIT, VAL_BOOL},
@@ -196,9 +196,9 @@ _option             opt[]                           =
         {"#"}, /* End of Page */
 
         /* Debug */
-        {"Show Framerate:", "","", "",SEL_CHECKBOX, 0,1,1, 0, &options.show_frame, VAL_BOOL},
-        {"Force Redraw:", "Forces the system to redraw EVERY frame.","", "",SEL_CHECKBOX, 0,1,1,0, &options.force_redraw, VAL_BOOL},
-        {"Use Update Rect:", "","", "",SEL_CHECKBOX, 0,1,1,0, &options.use_rect, VAL_BOOL}, {"#"}, /* End of Page */
+        {"Show framerate:", "","", "",SEL_CHECKBOX, 0,1,1, 0, &options.show_frame, VAL_BOOL},
+        {"Force redraw:", "Forces the system to redraw EVERY frame.","", "",SEL_CHECKBOX, 0,1,1,0, &options.force_redraw, VAL_BOOL},
+        {"Use update rect:", "","", "",SEL_CHECKBOX, 0,1,1,0, &options.use_rect, VAL_BOOL}, {"#"}, /* End of Page */
 
         {0} /* End of Options */
     };
