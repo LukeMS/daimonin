@@ -4,50 +4,52 @@
 
 * 0
 %1 subred
+%21 22
+%22 22
 
-# General
-Player Names: 2
-Show yourself targeted: 0
-Audible heartbeat: 50
-Low health warning: 0
-Overload warning: 85
-Show Tooltips: 1
-Key-info in Dialog menus: 1
-Enable Chatfilter: 0
-Extended EXP display: 4
-Count Kills 1
-Additional Kill messages 1
-Log Messages: 1
-Show Stat-O-Meter: 1
-Statsupdate: 5
-
-# General2
+# Communication
+Channel Format: 0
 Enable Smileys: 0
-Show Item Qua/Con: 0
+Log Messages: 1
+Textwindows use alpha: 1
+Textwindows alpha value: 110
+Enable Chatfilter: 0
+
+# Combat
+Low health warning: 10
+Show yourself targeted: 0
+Kill-Stats: 1
+Stat-O-Meter: 5
+Extended EXP display: 4
+
+# Inventory
+Overload warning: 85
+Show Item Qua/Con: 1
 Item damage percent 1: 90
 Item damage percent 2: 80
-Channel Format: 0
+Playerdoll: 0
+
+# Map
+Player Names: 2
+Playfield Start X: -10
+Playfield Start Y: 100
+Playfield Zoom: 100
+Smooth Zoom: 0
+
+# Sound
+Sound volume: 100
+Music volume: 80
+Audible heartbeat: 50
 
 # Client
 Fullscreen: 0
 Resolution: 0
 Automatic bpp: 1
-Colordeep: 1
-Playfield Start X: 0
-Playfield Start Y: 100
-Playfield Zoom: 100
-Smooth Zoom: 0
-Textwindows use alpha: 1
-Textwindows alpha value: 110
-Textwindow "action" Size: 22
-Textwindow "chat" Size: 22
-Playerdoll: 0
+Colordeep: 2
 Save CPU time with sleep(): 1
 Sleep time in ms: 15
-
-# Sound
-Sound volume: 100
-Music volume: 80
+Show Tooltips: 1
+Key-info in Dialog menus: 1
 
 # Fullscreen flags
 Hardware Surface: 0
@@ -62,18 +64,18 @@ No frame: 0
 RLE accel: 1
 
 # Windowed flags
-Win Hardware Surface: 0
+Win Hardware Surface: 1
 Win Software Surface: 1
 Win Hardware Accel: 0
 Win Doublebuffer: 0
 Win Any format: 1
-Win Async blit: 0
+Win Async blit: 1
 Win Hardware Palette: 1
 Win Resizeable: 0
 Win No frame: 0
 Win RLE accel: 1
 
 # Debug
-Show Framerate: 0
+Show Framerate: 1
 Force Redraw: 0
 Use Update Rect: 0

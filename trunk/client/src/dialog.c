@@ -103,65 +103,68 @@ int                 gen                             = 0;
 ******************************************************************/
 char               *opt_tab[]                       =
     {
-        "General", "General2", "Client", "Sound", "Fullscreen flags", "Windowed flags", "Debug", 0
+        "Communication", "Combat", "Inventory", "Map", "Sound", "Client", "Fullscreen flags", "Windowed flags", "Debug", 0
     };
 
 _option             opt[]                           =
     {
-        /* General */
-        {"Player Names:", "Show names of players above their heads.",   "", "show no names#show all names#show only other#show only your", SEL_RANGE, 0,3,1, 2, &options.player_names, VAL_INT},
-        {"Show yourself targeted:", "Show your name in the target area instead of blank.","", "",SEL_CHECKBOX, 0,1,1, 0, &options.show_target_self, VAL_BOOL},
-        {"Audible heartbeat:", "Hear your heart pumping during combat.", "Activated if health is less than the given percent value.", "", SEL_RANGE, 0, 100, 5, 50, &options.heartbeat, VAL_INT},
-        {"Low health warning:", "Shows a low health warning above your head","Activatetd if health is less than the given percent value.","", SEL_RANGE, 0,100,5, 0, &options.warning_hp, VAL_INT},
-        {"Overload warning:", "Shows a overload warning above your head.","Activatetd if loading is greater than the given percent value.","", SEL_RANGE, 0,100,5, 85, &options.warning_weight, VAL_INT},
-        {"Show Tooltips:", "Show tooltips when hovering with the mouse over items.","", "",SEL_CHECKBOX, 0,1,1, 1, &options.show_tooltips, VAL_BOOL},
-        {"Key-info in Dialog menus:", "","", "",SEL_CHECKBOX, 0,1,1, 1, &options.show_d_key_infos, VAL_BOOL},
-        {"Enable Chatfilter:", "Filter incoming messages for 'bad words'.","See '/cfilter ?'", "",SEL_CHECKBOX, 0,1,1, 0, &options.chatfilter, VAL_BOOL},
-        {"Extended EXP display:", "Show exp display in various formats.","4nl = For next level; tnl = Till next level; LExp = Level exp; TExp = Total exp;",
-             "Level/LExp#LExp\%#LExp/LExp 4nl#TExp/TExp 4nl#(LExp\%) LExp tnl", SEL_RANGE, 0, 4, 1, 4, &options.iExpDisplay, VAL_INT},
-        {"Count Kills", "Count all kills based on mob name you make","","", SEL_CHECKBOX, 0,1,1, 1,&options.kerbholz, VAL_BOOL},
-        {"Additional Kill messages", "Shows you additional information for each kill you make","Only active if 'Count Kills' is activated","", SEL_CHECKBOX, 0,1,1, 1,&options.killmsg, VAL_BOOL},
+        /* Chat & Messages */
+        {"Channel Format:", "Select how the channels should be displayed.","","Prefixed#Indented", SEL_RANGE, 0,1,1, 0, &options.channelformat, VAL_INT},
+        {"Enable Smileys:", "","", "",SEL_CHECKBOX, 0,1,1, 0, &options.smileys, VAL_BOOL},
         {"Log Messages:", "Logs Messages like shouts, damage info, and so on","","No Logging#Only Communication#All", SEL_RANGE,0,2,1,1,&options.msglog, VAL_INT},
-        {"Show Stat-O-Meter:", "","","", SEL_CHECKBOX, 0,1,1, 1,&options.statometer, VAL_BOOL},
-        {"Statsupdate:", "Updating the Stats-O-Meter every x seconds","","", SEL_RANGE, 1,15,1, 5,&options.statsupdate, VAL_INT},
-        /*{"Collect All Items:", "Don't ask for number of items to get, just get all of them.","", "",SEL_CHECKBOX, 0,1,1, 0,&options.collectAll, VAL_BOOL},   */
+        {"Textwindows use alpha:", "Make the text window transparent.","WARNING: Don't use this if you have a VERY slow computer","", SEL_CHECKBOX, 0,1,1, 1, &options.use_TextwinAlpha, VAL_INT},
+        {"Textwindows alpha value:", "Transparent value. higher = darker","","", SEL_RANGE, 0,255,5, 110, &options.textwin_alpha, VAL_INT},
+        {"Enable Chatfilter:", "Filter incoming messages for 'bad words'.","See '/cfilter ?'", "",SEL_CHECKBOX, 0,1,1, 0, &options.chatfilter, VAL_BOOL},
         {"#"},
         /* End of Page */
 
-        /* General 2 */
-        {"Enable Smileys:", "","", "",SEL_CHECKBOX, 0,1,1, 0, &options.smileys, VAL_BOOL},
+        /* Combat */
+        {"Low health warning:", "Shows a low health warning above your head","Activatetd if health is less than the given percent value.","", SEL_RANGE, 0,100,5, 0, &options.warning_hp, VAL_INT},
+        {"Show yourself targeted:", "Show your name in the target area instead of blank.","", "",SEL_CHECKBOX, 0,1,1, 0, &options.show_target_self, VAL_BOOL},
+        {"Kill-Stats:", "Count all kills based on mob name you make","","", SEL_CHECKBOX, 0,1,1, 1,&options.kerbholz, VAL_BOOL},
+        {"Stat-O-Meter:", "Show and update the Stats-O-Meter every x seconds.","5 Seconds should be a good time. Set to 0 to disbale/hide","", SEL_RANGE, 0,15,1, 5,&options.statsupdate, VAL_INT},
+        {"Extended EXP display:", "Show exp display in various formats.","4nl = For next level; tnl = Till next level; LExp = Level exp; TExp = Total exp;",
+             "Level/LExp#LExp\%#LExp/LExp 4nl#TExp/TExp 4nl#(LExp\%) LExp tnl", SEL_RANGE, 0, 4, 1, 4, &options.iExpDisplay, VAL_INT},
+        {"#"},
+        /* End of Page */
+
+        /* Inventory */
+        {"Overload warning:", "Shows a overload warning above your head.","Activatetd if loading is greater than the given percent value.","", SEL_RANGE, 0,100,5, 85, &options.warning_weight, VAL_INT},
         {"Show Item Qua/Con:", "Show Qua/Con in Inventory and Playerdoll","", "",SEL_CHECKBOX, 0,1,1, 0, &options.showqc, VAL_BOOL},
         {"Item damage percent 1:", "Item damage worse than this value shows damage bar in orange.", "", "", SEL_RANGE, 0, 100, 5, 90, &options.itemdmg_limit_orange, VAL_INT},
         {"Item damage percent 2:", "Item damage worse than this value shows damage bar in red.", "", "", SEL_RANGE, 0, 100, 5, 80, &options.itemdmg_limit_red, VAL_INT},
-        {"Channel Format:", "Select how the channels should be displayed.","","Prefixed#Indented", SEL_RANGE, 0,1,1, 0, &options.channelformat, VAL_INT},
-
+        {"Playerdoll:", "Show always the playerdoll when checked","when unchecked only together with inventory","", SEL_CHECKBOX, 0,1,1, 0, &options.playerdoll, VAL_BOOL},
         {"#"},
         /* End of Page */
 
-        /* Client */
-        {"Fullscreen:", "Toggle fullscreen to windowed mode.","NOTE: May crash your client.","", SEL_CHECKBOX, 0,1,1, 0, &options.fullscreen, VAL_BOOL},
-        {"Resolution:", "WARNING: Some resolutions are NOT for fullscreen! If you change to lower resolutions","your GUI-windows may get hidden, then delete interface.gui",
-             "800x600#960x600#1024x768#1100x700#1280x720#1280x800#1280x960#1280x1024#1440x900#1400x1050#1600x1200#1680x1050#1920x1080#1920x1200#2048x1536#2560x1600", SEL_RANGE, 0, 15, 1, 0, &options.resolution, VAL_INT},
-        {"Automatic bpp:", "Use always the same bits per pixel like your default windows.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,1, &options.auto_bpp_flag, VAL_BOOL},
-        {"Colordeep:", "Use this bpp for fullscreen mode. Overruled by automatic bpp.","NOTE: You need to restart the server.","8 bpp#16 bpp#32 bpp", SEL_RANGE, 0,2,1, 1, &options.video_bpp, VAL_INT},
-        {"Playfield Start X:", "X-Position of Playfield","","",    SEL_RANGE,  0,1000,10, MAP_START_XOFF, &options.mapstart_x, VAL_INT},
-        {"Playfield Start Y:", "Y-Position of Playfield","","",     SEL_RANGE,  0,700,10, MAP_START_YOFF, &options.mapstart_y, VAL_INT},
-        {"Playfield Zoom:", "experimental!!!!!","","",     SEL_RANGE,  50,200,5, 100, &options.zoom, VAL_INT},
-        {"Smooth Zoom:", "VERY VERY VERY CPU intensive","","",     SEL_CHECKBOX,  0,1,1, 1, &options.smooth, VAL_BOOL},
-        {"Textwindows use alpha:", "Make the text window transparent.","WARNING: Don't use this if you have a very slow computer","", SEL_CHECKBOX, 0,1,1, 1, &options.use_TextwinAlpha, VAL_INT},
-        {"Textwindows alpha value:", "Transparent value. higher = darker","","", SEL_RANGE, 0,255,5, 110, &options.textwin_alpha, VAL_INT},
-        {"Textwindow \"action\" Size:", "Size of action-text window.","","",    SEL_RANGE,  2,100,1, 22, &txtwin[TW_MSG].size, VAL_INT},
-        {"Textwindow \"chat\" Size:", "Size of chat-text window.","","",     SEL_RANGE,  2,100,1, 22, &txtwin[TW_CHAT].size, VAL_INT},
-        {"Playerdoll:", "Show always playerdoll when checked","or only together with Inventory","", SEL_CHECKBOX, 0,1,1, 0, &options.playerdoll, VAL_BOOL},
-        {"Save CPU time with sleep():", "Client eats less CPU time when set.","", "",SEL_CHECKBOX, 0,1,1, 1, &options.limit_speed, VAL_BOOL},
-        {"Sleep time in ms:", "time the client will sleep. Used with Save CPU time.","", "",SEL_RANGE, 0,1000,1, 15, &options.sleep, VAL_INT},
-        {"#"}, /* End of Page */
+        /* Map */
+        {"Player Names:", "Show names of players above their heads.",   "", "show no names#show all names#show only other#show only your", SEL_RANGE, 0,3,1, 2, &options.player_names, VAL_INT},
+        {"Playfield Start X:", "X-Position of Playfield","","",    SEL_RANGE,  -20,1000,10, -10, &options.mapstart_x, VAL_INT},
+        {"Playfield Start Y:", "Y-Position of Playfield","","",     SEL_RANGE,  0,700,10, 100, &options.mapstart_y, VAL_INT},
+        {"Playfield Zoom:", "EXPERIMENTAL!!!!!","","",     SEL_RANGE,  50,200,5, 100, &options.zoom, VAL_INT},
+        {"Smooth Zoom:", "VERY VERY VERY CPU intensive","EXPERIMENTAL!!!","",     SEL_CHECKBOX,  0,1,1, 0, &options.smooth, VAL_BOOL},
+        {"#"},
+        /* End of Page */
 
         /* Sound */
         {"Sound volume:", "set sound volume for effects.","", "",SEL_RANGE, 0,100,5,100, &options.sound_volume, VAL_INT},
         {"Music volume:", "set music volume for background.","Sub info","", SEL_RANGE, 0,100,5,80, &options.music_volume, VAL_INT},
+        {"Audible heartbeat:", "Hear your heart pumping during combat.", "Activated if health is less than the given percent value.", "", SEL_RANGE, 0, 100, 5, 50, &options.heartbeat, VAL_INT},
         {"#"},
         /* End of Page */
+
+        /* Client */
+        {"Fullscreen:", "Toggle fullscreen to windowed mode.","EXPERIMENTAL! NOTE: May crash your client.","", SEL_CHECKBOX, 0,1,1, 0, &options.fullscreen, VAL_BOOL},
+        {"Resolution:", "WARNING: Some resolutions are NOT for fullscreen! If you change to lower resolutions","your GUI-windows may get hidden, then delete interface.gui",
+             "800x600#960x600#1024x768#1100x700#1280x720#1280x800#1280x960#1280x1024#1440x900#1400x1050#1600x1200#1680x1050#1920x1080#1920x1200#2048x1536#2560x1600", SEL_RANGE, 0, 15, 1, 0, &options.resolution, VAL_INT},
+        {"Automatic bpp:", "Use always the same bits per pixel like your default windows.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1,1, &options.auto_bpp_flag, VAL_BOOL},
+        {"Colordeep:", "Use this bpp for fullscreen mode. Overruled by automatic bpp.","NOTE: You need to restart the client.","8 bpp#16 bpp#32 bpp", SEL_RANGE, 0,2,1, 2, &options.video_bpp, VAL_INT},
+        {"Save CPU time with sleep():", "Client eats less CPU time when set.","", "",SEL_CHECKBOX, 0,1,1, 1, &options.limit_speed, VAL_BOOL},
+        {"Sleep time in ms:", "time the client will sleep. Used with Save CPU time.","", "",SEL_RANGE, 0,1000,1, 15, &options.sleep, VAL_INT},
+        {"Show Tooltips:", "Show tooltips when hovering with the mouse over items.","", "",SEL_CHECKBOX, 0,1,1, 1, &options.show_tooltips, VAL_BOOL},
+        {"Key-info in Dialog menus:", "","", "",SEL_CHECKBOX, 0,1,1, 1, &options.show_d_key_infos, VAL_BOOL},
+        /*{"Collect All Items:", "Don't ask for number of items to get, just get all of them.","", "",SEL_CHECKBOX, 0,1,1, 0,&options.collectAll, VAL_BOOL},   */
+        {"#"}, /* End of Page */
 
         /* Fullscreen Flags */
         {"Hardware Surface:", "Don't change until you know what you do.","NOTE: You need to restart the client.", "",SEL_CHECKBOX, 0,1,1, 0, &options.Full_HWSURFACE, VAL_BOOL},
