@@ -2,7 +2,7 @@
 # This is the Daimonin SDL client option file #
 ###############################################
 
-* 0
+* 1
 %1 subred
 %21 22
 %22 22
@@ -16,7 +16,7 @@ Textwindows alpha value: 110
 Enable chatfilter: 0
 
 # Combat
-Low health warning: 10
+Low health warning: 20
 Show yourself targeted: 0
 Kill-Stats: 1
 Stat-O-Meter: 5
@@ -24,7 +24,7 @@ Extended exp display: 4
 
 # Inventory
 Overload warning: 85
-Show item qua/con: 1
+Show item qua/con: 0
 Item damage percent 1: 90
 Item damage percent 2: 80
 Playerdoll: 0
@@ -50,6 +50,7 @@ Save CPU time with sleep(): 1
 Sleep time in ms: 15
 Show tooltips: 1
 Key-info in dialog menus: 1
+SpeedUp: 0
 
 # Fullscreen flags
 Hardware surface: 0
@@ -64,18 +65,18 @@ No frame: 0
 RLE accel: 1
 
 # Windowed flags
-Win Hardware surface: 1
+Win Hardware surface: 0
 Win Software surface: 1
 Win Hardware accel: 0
 Win Doublebuffer: 0
 Win Any format: 1
-Win Async blit: 1
-Win Hardware palette: 1
+Win Async blit: 0
+Win Hardware Palette: 1
 Win Resizeable: 0
 Win No frame: 0
 Win RLE accel: 1
 
 # Debug
-Show framerate: 1
+Show framerate: 0
 Force redraw: 0
 Use update rect: 0
