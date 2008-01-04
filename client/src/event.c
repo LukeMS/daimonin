@@ -2775,13 +2775,18 @@ void check_menu_keys(int menu, int key)
                     option_list_set.group_nr--;
                     option_list_set.entry_nr = 0;
                 }
+                else
+                    sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             }
             menuRepeatKey = SDLK_UP;
             break;
         case SDLK_DOWN:
             if (!shiftPressed)
             {
-                option_list_set.entry_nr++;
+                if (strcmp(opt[option_list_set.entry_nr + 1].name, "#") != 0)
+                    option_list_set.entry_nr++;
+                else
+                    sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             }
             else
             {
@@ -2790,6 +2795,8 @@ void check_menu_keys(int menu, int key)
                     option_list_set.group_nr++;
                     option_list_set.entry_nr = 0;
                 }
+                else
+                    sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             }
             menuRepeatKey = SDLK_DOWN;
             break;
