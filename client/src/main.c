@@ -1677,7 +1677,7 @@ int main(int argc, char *argv[])
  */
         if (!options.speedup)
             map_udate_flag=2;
-        else if ((GameStatus == GAME_STATUS_PLAY) && ((LastTick-speeduptick)>250))
+        else if ((GameStatus == GAME_STATUS_PLAY) && ((LastTick-speeduptick)>200))
         {
                 speeduptick=LastTick;
                 map_udate_flag=2;
@@ -1742,6 +1742,8 @@ int main(int argc, char *argv[])
                                x, y, NULL, NULL);
                 else
                     blt_inv_item_centered(Item, x, y);
+
+                map_udate_flag = 2;
             }
         }
 
