@@ -1966,12 +1966,12 @@ static void display_layer1(void)
     {
         if (options.warning_hp
                 && ((float) cpl.stats.hp / (float) cpl.stats.maxhp) * 100 <= options.warning_hp)
-            sprite_blt(Bitmaps[BITMAP_WARN_HP], options.mapstart_x+19, options.mapstart_y+155, NULL, NULL);
+            sprite_blt(Bitmaps[BITMAP_WARN_HP], options.mapstart_x+407, options.mapstart_y+205, NULL, NULL);
     }
     else
     {
        if (options.warning_weight && ((float) cpl.real_weight / cpl.weight_limit) * 100 >= options.warning_weight)
-            sprite_blt(Bitmaps[BITMAP_WARN_WEIGHT], options.mapstart_x+11, options.mapstart_y+142, NULL, NULL);
+            sprite_blt(Bitmaps[BITMAP_WARN_WEIGHT], options.mapstart_x+400, options.mapstart_y+192, NULL, NULL);
     }
 }
 

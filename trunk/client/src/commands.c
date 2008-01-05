@@ -1547,7 +1547,7 @@ void Map2Cmd(unsigned char *data, int len)
                 if (ff_flag & 0x4)
                 {
                     ff1 = GetShort_String(data + pos); pos += 2;
-                    add_anim(ANIM_SELF_DAMAGE, 0, 0, options.mapstart_x+(int)((MAP_START_XOFF+20)*(options.zoom/100.0)), options.mapstart_y+(int)(146*(options.zoom/100.0)), ff1);
+                    add_anim(ANIM_SELF_DAMAGE, 0, 0, options.mapstart_x+(int)((MAP_START_XOFF+20)*(options.zoom/100.0)), options.mapstart_y+(int)((146+50)*(options.zoom/100.0)), ff1);
                 }
                 if (ff_flag & 0x2)
                 {

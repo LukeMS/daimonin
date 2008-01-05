@@ -409,7 +409,7 @@ void map_draw_map(void)
                 for (k = kk; k <= kt; k++)
                 {
                     xpos = MAP_START_XOFF + x * MAP_TILE_YOFF - y * MAP_TILE_YOFF;
-                    ypos = 0 + x * MAP_TILE_XOFF + y * MAP_TILE_XOFF;
+                    ypos = 50 + x * MAP_TILE_XOFF + y * MAP_TILE_XOFF;
                  //   if (!k)
                    //     sprite_blt_map(Bitmaps[BITMAP_BLACKTILE], xpos, ypos, NULL, NULL);
                     if (!debug_layer[k])
@@ -718,18 +718,14 @@ int get_tile_position(int x, int y, int *tx, int *ty)
     if (x < (int)((options.mapstart_x+384)*(options.zoom/100.0)))
         x -= (int)(MAP_TILE_POS_XOFF*(options.zoom/100.0));
     x -= (int)((options.mapstart_x+384)*(options.zoom/100.0));
-    y -= (int)((options.mapstart_y)*(options.zoom/100.0));
+    y -= (int)((options.mapstart_y+50)*(options.zoom/100.0));
     *tx = x / (int)(MAP_TILE_POS_XOFF*(options.zoom/100.0)) + y / (int)(MAP_TILE_YOFF*(options.zoom/100.0));
     *ty = y / (int)(MAP_TILE_YOFF*(options.zoom/100.0)) - x / (int)(MAP_TILE_POS_XOFF*(options.zoom/100.0));
 
     if (x < 0)
     {
         x += ((int)(MAP_TILE_POS_XOFF*(options.zoom/100.0)) << 3) - 1;
- //       draw_info_format(COLOR_GREEN,"x<0 wert: %d",((int)(MAP_TILE_POS_XOFF*(options.zoom/100.0)) << 3) - 1);
-
-
     }
-
 
     x %= (int)(MAP_TILE_POS_XOFF*(options.zoom/100.0));
     y %= (int)(MAP_TILE_YOFF*(options.zoom/100.0));

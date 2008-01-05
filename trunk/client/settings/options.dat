@@ -24,7 +24,7 @@ Extended exp display: 4
 
 # Inventory
 Overload warning: 85
-Show item qua/con: 0
+Show item qua/con: 1
 Item damage percent 1: 90
 Item damage percent 2: 80
 Playerdoll: 0
@@ -32,7 +32,7 @@ Playerdoll: 0
 # Map
 Player names: 2
 Playfield start X: -10
-Playfield start Y: 100
+Playfield start Y: 60
 Playfield zoom: 100
 Smooth zoom: 0
 
@@ -77,6 +77,6 @@ Win No frame: 0
 Win RLE accel: 1
 
 # Debug
-Show framerate: 0
+Show framerate: 1
 Force redraw: 0
 Use update rect: 0
