@@ -2918,7 +2918,12 @@ void check_menu_keys(int menu, int key)
             if (!shiftPressed)
             {
                 if (skill_list_set.entry_nr > 0)
-                    skill_list_set.entry_nr--;
+                {
+                    if (skill_list[skill_list_set.group_nr].entry[--skill_list_set.entry_nr].flag == LIST_ENTRY_KNOWN)
+                        sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+                }
+                else
+                    sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             }
             else
             {
@@ -2927,6 +2932,8 @@ void check_menu_keys(int menu, int key)
                     skill_list_set.group_nr--;
                     skill_list_set.entry_nr = 0;
                 }
+                else
+                    sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             }
             menuRepeatKey = SDLK_UP;
             break;
@@ -2934,7 +2941,12 @@ void check_menu_keys(int menu, int key)
             if (!shiftPressed)
             {
                 if (skill_list_set.entry_nr < DIALOG_LIST_ENTRY - 1)
-                    skill_list_set.entry_nr++;
+                {
+                    if (skill_list[skill_list_set.group_nr].entry[++skill_list_set.entry_nr].flag == LIST_ENTRY_KNOWN)
+                        sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+                }
+                else
+                    sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             }
             else
             {
@@ -2943,6 +2955,8 @@ void check_menu_keys(int menu, int key)
                     skill_list_set.group_nr++;
                     skill_list_set.entry_nr = 0;
                 }
+                else
+                    sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             }
             menuRepeatKey = SDLK_DOWN;
             break;
@@ -2993,19 +3007,32 @@ void check_menu_keys(int menu, int key)
             break;
         case SDLK_LEFT:
             if (spell_list_set.class_nr > 0)
+            {
                 spell_list_set.class_nr--;
-            sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+                sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+            }
+            else
+                sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             break;
         case SDLK_RIGHT:
             if (spell_list_set.class_nr < SPELL_LIST_CLASS - 1)
+            {
                 spell_list_set.class_nr++;
-            sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+                sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+            }
+            else
+                sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             break;
         case SDLK_UP:
             if (!shiftPressed)
             {
                 if (spell_list_set.entry_nr > 0)
-                    spell_list_set.entry_nr--;
+                { 
+                    if (spell_list[spell_list_set.group_nr].entry[spell_list_set.class_nr][--spell_list_set.entry_nr].flag == LIST_ENTRY_KNOWN)
+                        sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+                }
+                else
+                    sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             }
             else
             {
@@ -3014,6 +3041,8 @@ void check_menu_keys(int menu, int key)
                     spell_list_set.group_nr--;
                     spell_list_set.entry_nr = 0;
                 }
+                else
+                    sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             }
             menuRepeatKey = SDLK_UP;
             break;
@@ -3021,7 +3050,12 @@ void check_menu_keys(int menu, int key)
             if (!shiftPressed)
             {
                 if (spell_list_set.entry_nr < DIALOG_LIST_ENTRY - 1)
-                    spell_list_set.entry_nr++;
+                {
+                    if (spell_list[spell_list_set.group_nr].entry[spell_list_set.class_nr][++spell_list_set.entry_nr].flag == LIST_ENTRY_KNOWN)
+                        sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+                }
+                else
+                    sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             }
             else
             {
@@ -3030,6 +3064,8 @@ void check_menu_keys(int menu, int key)
                     spell_list_set.group_nr++;
                     spell_list_set.entry_nr = 0;
                 }
+                else
+                    sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             }
             menuRepeatKey = SDLK_DOWN;
             break;
@@ -3043,7 +3079,12 @@ void check_menu_keys(int menu, int key)
             if (!shiftPressed)
             {
                 if (bindkey_list_set.entry_nr > 0)
-                    bindkey_list_set.entry_nr--;
+                {
+                    if (bindkey_list[bindkey_list_set.group_nr].entry[--bindkey_list_set.entry_nr].text[0])
+                        sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+                }
+                else
+                    sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             }
             else
             {
@@ -3052,6 +3093,8 @@ void check_menu_keys(int menu, int key)
                     bindkey_list_set.group_nr--;
                     bindkey_list_set.entry_nr = 0;
                 }
+                else
+                    sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             }
             menuRepeatKey = SDLK_UP;
             break;
@@ -3059,7 +3102,12 @@ void check_menu_keys(int menu, int key)
             if (!shiftPressed)
             {
                 if (bindkey_list_set.entry_nr < OPTWIN_MAX_OPT - 1)
-                    bindkey_list_set.entry_nr++;
+                {
+                    if (bindkey_list[bindkey_list_set.group_nr].entry[++bindkey_list_set.entry_nr].text[0])
+                        sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+                }
+                else
+                    sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             }
             else
             {
@@ -3069,6 +3117,8 @@ void check_menu_keys(int menu, int key)
                     bindkey_list_set.group_nr++;
                     bindkey_list_set.entry_nr = 0;
                 }
+                else
+                    sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             }
             menuRepeatKey = SDLK_DOWN;
             break;
@@ -3132,11 +3182,22 @@ void check_menu_keys(int menu, int key)
             break;
         case SDLK_UP:
             if (create_list_set.entry_nr > 0)
+            {
                 create_list_set.entry_nr--;
+                sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+            }
+            else
+                sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             menuRepeatKey = SDLK_UP;
             break;
         case SDLK_DOWN:
-            create_list_set.entry_nr++;
+            if (create_list_set.entry_nr < 8)
+            {
+                create_list_set.entry_nr++;
+                sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+            }
+            else
+                sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             menuRepeatKey = SDLK_DOWN;
             break;
         }
