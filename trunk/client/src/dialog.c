@@ -1324,8 +1324,8 @@ void show_newplayer_server(void)
     StringBlt(ScreenSurface, &SystemFont, buf, x + 171, y + CREATE_Y0 + 3 * 17 + 1, COLOR_BLACK, NULL, NULL);
     StringBlt(ScreenSurface, &SystemFont, buf, x + 170, y + CREATE_Y0 + 3 * 17, COLOR_HGOLD, NULL, NULL);
 
-    if (create_list_set.entry_nr > 8)
-        create_list_set.entry_nr = 8;
+//    if (create_list_set.entry_nr > 8)
+//        create_list_set.entry_nr = 8;
 
     for (i = 0; i < ATT_SUM; i++)
     {
