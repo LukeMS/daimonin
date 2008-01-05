@@ -2783,7 +2783,13 @@ void check_menu_keys(int menu, int key)
         case SDLK_DOWN:
             if (!shiftPressed)
             {
-                if (strcmp(opt[option_list_set.entry_nr + 1].name, "#") != 0)
+                int i    = -1,
+                    page = option_list_set.group_nr;
+                while (page && opt[++i].name)
+                    if (opt[i].name[0] == '#')
+                        --page;
+                i += 1 + option_list_set.entry_nr + 1;
+                if (opt[i].name[0] && opt[i].name[0] != '#')
                     option_list_set.entry_nr++;
                 else
                     sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
