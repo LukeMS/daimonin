@@ -130,7 +130,7 @@ _option             opt[]                           =
 
         /* Inventory */
         {"Overload warning:", "Shows a overload warning above your head.","Activated if loading is greater than the given percent value.","", SEL_RANGE, 0,100,5, 85, &options.warning_weight, VAL_INT},
-        {"Show item qua/con:", "Show qua/con in inventory and playerdoll","", "",SEL_CHECKBOX, 0,1,1, 0, &options.showqc, VAL_BOOL},
+        {"Show item qua/con:", "Show qua/con in inventory and playerdoll","", "",SEL_CHECKBOX, 0,1,1, 1, &options.showqc, VAL_BOOL},
         {"Item damage percent 1:", "Item damage worse than this value shows damage bar in orange.", "", "", SEL_RANGE, 0, 100, 5, 90, &options.itemdmg_limit_orange, VAL_INT},
         {"Item damage percent 2:", "Item damage worse than this value shows damage bar in red.", "", "", SEL_RANGE, 0, 100, 5, 80, &options.itemdmg_limit_red, VAL_INT},
         {"Playerdoll:", "Show always the playerdoll when checked","when unchecked only together with inventory","", SEL_CHECKBOX, 0,1,1, 0, &options.playerdoll, VAL_BOOL},
@@ -140,7 +140,7 @@ _option             opt[]                           =
         /* Map */
         {"Player names:", "Show names of players above their heads.",   "", "Show no names#Show all names#Show only other names#Show only your name", SEL_RANGE, 0,3,1, 2, &options.player_names, VAL_INT},
         {"Playfield start X:", "X-position of playfield","","",    SEL_RANGE,  -20,1000,10, -10, &options.mapstart_x, VAL_INT},
-        {"Playfield start Y:", "Y-position of playfield","","",     SEL_RANGE,  0,700,10, 100, &options.mapstart_y, VAL_INT},
+        {"Playfield start Y:", "Y-position of playfield","","",     SEL_RANGE,  0,700,10, 60, &options.mapstart_y, VAL_INT},
         {"Playfield zoom:", "EXPERIMENTAL!!!!!","","",     SEL_RANGE,  50,200,5, 100, &options.zoom, VAL_INT},
         {"Smooth zoom:", "VERY VERY VERY CPU intensive","EXPERIMENTAL!!!","",     SEL_CHECKBOX,  0,1,1, 0, &options.smooth, VAL_BOOL},
         {"#"},

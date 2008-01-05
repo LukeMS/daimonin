@@ -856,7 +856,7 @@ void play_anims(int mx, int my)
                                + (anim->mapx - MapData.posx) * MAP_TILE_YOFF
                                - (anim->mapy - MapData.posy - 1) * MAP_TILE_YOFF
                                - 4)*(options.zoom/100.0));
-                        ypos = options.mapstart_y
+                        ypos = options.mapstart_y + 50
                                + (int)(((anim->mapx - MapData.posx) * MAP_TILE_XOFF
                                + (anim->mapy - MapData.posy - 1) * MAP_TILE_XOFF
                                - 34)*(options.zoom/100.0));
@@ -886,7 +886,7 @@ void play_anims(int mx, int my)
                                + (anim->mapx - MapData.posx) * MAP_TILE_YOFF
                                - (anim->mapy - MapData.posy - 1) * MAP_TILE_YOFF
                                - 4)*(options.zoom/100.0));
-                        ypos = options.mapstart_y
+                        ypos = options.mapstart_y + 50
                                + (int)(((anim->mapx - MapData.posx) * MAP_TILE_XOFF
                                + (anim->mapy - MapData.posy - 1) * MAP_TILE_XOFF
                                - 26)*(options.zoom/100.0));

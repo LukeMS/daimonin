@@ -173,7 +173,7 @@ int mouseInPlayfield(x, y)
     y=(int)(y/(options.zoom/100.0f));
 
     x = x - options.mapstart_x -6;
-    y = y - options.mapstart_y - 5;
+    y = y - options.mapstart_y - 55;
 
     if (x < 408)
     {
