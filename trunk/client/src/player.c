@@ -220,7 +220,7 @@ int send_command(const char *command, int repeat, int must_send)
      * Each command (before separation) is pointed to by token:
      */
     token = cmd;
-    while (token != NULL)
+    while (token != NULL && *token)
     {
         char *end;
 #ifdef USE_CHANNELS
