@@ -57,9 +57,9 @@ public:
 
     const char *getText();
 private:
-    GuiImageset::GuiSrcEntry *srcButton;
-    GuiImageset::GuiSrcEntry *srcScrollbarUp;
-    GuiImageset::GuiSrcEntry *srcScrollbarDown;
+    GuiImageset::gfxSrcEntry *srcButton;
+    GuiImageset::gfxSrcEntry *srcScrollbarUp;
+    GuiImageset::gfxSrcEntry *srcScrollbarDown;
     Ogre::uint32 *mGfxBuffer;
     int mAction;
     int mFontHeight;

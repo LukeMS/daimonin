@@ -177,7 +177,7 @@ bool GuiManager::parseWindowsData(const char *fileWindows)
     // ////////////////////////////////////////////////////////////////////
     // Parse the mouse-cursor.
     // ////////////////////////////////////////////////////////////////////
-    GuiImageset::GuiSrcEntryMouse *srcEntry;
+    GuiImageset::gfxSrcMouse *srcEntry;
     if ((xmlElem = xmlRoot->FirstChildElement("Cursor")) && ((valString = xmlElem->Attribute("name"))))
     {
         srcEntry = GuiImageset::getSingleton().getStateGfxPosMouse();
@@ -189,7 +189,7 @@ bool GuiManager::parseWindowsData(const char *fileWindows)
                 if ((valString = xmlElem->Attribute("x"))) mHotSpotX = atoi(valString);
                 if ((valString = xmlElem->Attribute("y"))) mHotSpotY = atoi(valString);
             }
-            GuiCursor::getSingleton().Init(srcEntry->width, srcEntry->height);
+            GuiCursor::getSingleton().Init(srcEntry->w, srcEntry->h);
             GuiCursor::getSingleton().setStateImagePos(srcEntry->state);
         }
         else

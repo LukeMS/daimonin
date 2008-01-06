@@ -79,6 +79,8 @@ public:
         GUI_TEXTBOX_LOGIN_INFO3,
         GUI_TEXTBOX_LOGIN_WARN,
         GUI_TEXTBOX_NPC_HEADLINE,
+        GUI_TEXTBOX_INV_EQUIP,
+        GUI_TEXTBOX_INV_EQUIP_WEIGHT,
         // TextInput
         GUI_TEXTINPUT_LOGIN_NAME,
         GUI_TEXTINPUT_LOGIN_PASSWD,
@@ -120,6 +122,7 @@ public:
         STATE_MOUSE_DRAGGING,            /**< Dragging in action. **/
         STATE_MOUSE_RESIZING,            /**< Resizing a window. **/
         STATE_MOUSE_PICKUP,
+        STATE_MOUSE_STOP,
         STATE_MOUSE_SUM
     };
     static GuiElementNames mMouseState[STATE_MOUSE_SUM];
@@ -143,20 +146,18 @@ public:
 
     typedef struct
     {
-        Ogre::String name;
-        int width, height;
-        bool alpha;
-        gfxPos state[STATE_ELEMENT_SUM];
+        int w, h;
+        gfxPos state[STATE_MOUSE_SUM];
     }
-    GuiSrcEntry;
+    gfxSrcMouse;
 
     typedef struct
     {
-        int width, height;
-        bool alpha;
-        gfxPos state[STATE_MOUSE_SUM];
+        Ogre::String name;
+        int w, h;
+        gfxPos state[STATE_ELEMENT_SUM];
     }
-    GuiSrcEntryMouse;
+    gfxSrcEntry;
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.
@@ -166,9 +167,8 @@ public:
         static GuiImageset singleton; return singleton;
     }
     void parseXML(const char *XML_imageset_file);
-    GuiSrcEntry *getStateGfxPositions(const char* guiImage);
-    void deleteStateGfxPositions(const char* guiImage);
-    GuiSrcEntryMouse *getStateGfxPosMouse();
+    gfxSrcMouse *getStateGfxPosMouse();
+    gfxSrcEntry *getStateGfxPositions(const char* guiImage);
     Ogre::PixelBox &getPixelBox()
     {
         return mSrcPixelBox;
@@ -180,13 +180,12 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    GuiSrcEntryMouse *mSrcEntryMouse;
-    std::vector<GuiSrcEntry*>mvSrcEntry;
+    gfxSrcMouse *mSrcEntryMouse;
+    std::vector<gfxSrcEntry*>mvSrcEntry;
     Ogre::String mStrImageSetGfxFile;
     Ogre::Image mImageSetImg;
     Ogre::PixelBox mSrcPixelBox;
     static GuiElementNames mGuiElementNames[GUI_ELEMENTS_SUM];
-
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////

@@ -99,7 +99,7 @@ void GuiGadgetButton::draw()
     // ////////////////////////////////////////////////////////////////////
     if (mStrLabel != "")
     {
-        Texture *texture = ((GuiWindow*) mParent)->getTexture();
+        Texture *texture = mParent->getTexture();
         GuiTextout::TextLine label;
         label.hideText= false;
         label.index= -1;

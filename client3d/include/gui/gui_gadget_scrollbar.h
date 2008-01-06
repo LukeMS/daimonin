@@ -76,7 +76,7 @@ private:
     Ogre::uint32 mColorBackground, mColorBorderline, mColorBarPassive, mColorBarM_Over, mColorBarActive;
     float mSingleLineSize;
     class GuiGadgetButton *mButScrollUp, *mButScrollDown;
-    void *mParent, *mParentElement;
+    void *mParentElement;
     Callback *mCallFunc;
 
     // ////////////////////////////////////////////////////////////////////

@@ -38,18 +38,15 @@ public:
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     GuiGraphic(TiXmlElement *xmlElement, void *parent, bool drawOnInit = true);
-    ~GuiGraphic();
+    ~GuiGraphic() {};
     void draw();
-    void drawSlot(Ogre::uint32 *gfxDataItem, int itemSize, int busyTime, int sumItems);
+    void drawSlot(Ogre::uint32 *gfxDataItem, int busyTime, int sumItems);
 private:
-    // ////////////////////////////////////////////////////////////////////
-    // Variables / Constants.
-    // ////////////////////////////////////////////////////////////////////
-    Ogre::uint32 *mBuildBuffer;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     Ogre::uint32 alphaBlend(const Ogre::uint32 bg, const Ogre::uint32 gfx);
+    inline void drawBusyGfx(int itemSize, int busyTime);
 };
 
 #endif

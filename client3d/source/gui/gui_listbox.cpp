@@ -48,12 +48,12 @@ GuiListbox::GuiListbox(TiXmlElement *xmlElement, void *parent):GuiElement(xmlEle
     mGfxBufferSize = mWidth * mHeight + mWidth * (mFontHeight+1);
     mGfxBuffer = new uint32[mGfxBufferSize*2];
 
-    if (mFillType == FILL_GFX)
+    if (mGfxSrc)
     {
         // ////////////////////////////////////////////////////////////////////
         // Save the original background.
         // ////////////////////////////////////////////////////////////////////
-        Texture *texture = ((GuiWindow*) mParent)->getTexture();
+        Texture *texture = mParent->getTexture();
         texture->getBuffer()->blitToMemory(
             Box(mPosX, mPosY, mPosX + mWidth, mPosY + mHeight),
             PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8, mGfxBuffer+mGfxBufferSize));
@@ -124,7 +124,7 @@ void GuiListbox::clear()
     mActLines =0;
     mBufferPos=0;
     memcpy(mGfxBuffer, mGfxBuffer + mGfxBufferSize, mGfxBufferSize*sizeof(uint32));
-    Texture *texture = ((GuiWindow*) mParent)->getTexture();
+    Texture *texture = mParent->getTexture();
     texture->getBuffer()->blitFromMemory(
         PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8 , mGfxBuffer),
         Box(mPosX, mPosY, mPosX + mWidth, mPosY + mHeight));
@@ -309,11 +309,11 @@ void GuiListbox::draw()
     if (!mRowsToScroll || mDragging) return;
     if (Root::getSingleton().getTimer()->getMilliseconds() - mTime < SCROLL_SPEED) return;
     mTime = Root::getSingleton().getTimer()->getMilliseconds();
-    Texture *texture = ((GuiWindow*) mParent)->getTexture();
+    Texture *texture = mParent->getTexture();
     // ////////////////////////////////////////////////////////////////////
     // Graphical background.
     // ////////////////////////////////////////////////////////////////////
-    if (mFillType == FILL_GFX)
+    if (mGfxSrc)
     {
         // Restore old background into the work-buffer.
         memcpy(mGfxBuffer, mGfxBuffer + mGfxBufferSize, mGfxBufferSize*sizeof(uint32));
@@ -325,7 +325,7 @@ void GuiListbox::draw()
                     row[(mPrintPos+ (i)-mMaxVisibleRows)& (SIZE_STRING_BUFFER-1)].color);
             gfxBuf+= mWidth * mFontHeight;
         }
-        Texture *texture = ((GuiWindow*) mParent)->getTexture();
+        Texture *texture = mParent->getTexture();
         texture->getBuffer()->blitFromMemory(
             PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8 , mGfxBuffer),
             Box(mPosX, mPosY, mPosX + mWidth, mPosY + mHeight));
@@ -393,7 +393,7 @@ void GuiListbox::scrollTextVertical(int offset)
                 row[(offset+i)& (SIZE_STRING_BUFFER-1)].color);
         gfxBuf+= mWidth * mFontHeight;
     }
-    Texture *texture = ((GuiWindow*) mParent)->getTexture();
+    Texture *texture = mParent->getTexture();
     texture->getBuffer()->blitFromMemory(
         PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8 , mGfxBuffer),
         Box(mPosX, mPosY, mPosX + mWidth, mPosY + mHeight));
@@ -404,7 +404,7 @@ void GuiListbox::scrollTextVertical(int offset)
 //================================================================================================
 void GuiListbox::scrollTextHorizontal(int offset)
 {
-    if (mFillType == FILL_GFX)
+    if (mGfxSrc)
     {
         ;
     }

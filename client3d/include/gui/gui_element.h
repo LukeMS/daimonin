@@ -37,8 +37,8 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    GuiElement(TiXmlElement *xmlElement, void *parent, bool forceAlpha = false);
-    virtual ~GuiElement();
+    GuiElement(TiXmlElement *xmlElement, void *parent);
+    virtual ~GuiElement() {};
     bool setState(int state);
     int getState()
     {
@@ -72,13 +72,6 @@ public:
     // ////////////////////////////////////////////////////////////////////
     enum
     {
-        FILL_GFX,
-        FILL_COLOR,
-        FILL_NONE,
-        FILL_SUM
-    };
-    enum
-    {
         TYPE_GFX,
         TYPE_BUTTON,
         TYPE_BUTTON_CHECK,
@@ -91,21 +84,21 @@ protected:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    int mIndex;                /**< Unique number. **/
-    int mPosX, mPosY;          /**< Position of this element. **/
-    int mSrcWidth, mSrcHeight; /**< Dimension of the graphics source. **/
-    int mWidth, mHeight;       /**< Dimension of this element. **/
-    int mState;                /**< Actual state of this element. **/
-    int mFillType;             /**< The way the background is drawn. **/
-    int mHasAlpha;             /**< Graphics is using alpha values. **/
+    int mIndex;                        /**< Unique number. **/
+    int mPosX, mPosY;                  /**< Position of this element. **/
+    int mWidth, mHeight;               /**< Dimension of this element. **/
+    int mState;                        /**< Actual state of this element. **/
     int mFontNr, mLabelFontNr;
     int mLabelPosX, mLabelPosY;
-    Ogre::String mStrLabel, mStrTooltip;
+    bool mBG_Element;                  /**< Do we need a backup of the background before drawing,
+                                            or is it part of the background gfx? **/
+    Ogre::String mStrLabel;
+    Ogre::String mStrTooltip;
     Ogre::uint32 mFillColor;
-    Ogre::uint32 *LayerWindowBG;         /**< Backup buffer for alpha blit. **/
-    void *mParent;             /**< Pointer to the parent window. **/
+    class GuiWindow *mParent;          /**< Pointer to the parent window. **/
     unsigned char mLabelColor[3];
-    GuiImageset::gfxPos gfxSrcPos[GuiImageset::STATE_ELEMENT_SUM];
+    GuiImageset::gfxSrcEntry *mGfxSrc; /**< Pointer to the infos for locating the gfx in the AtlasTexture
+                                            or 0 if a simple colorfill is used for this element. **/
 };
 
 #endif

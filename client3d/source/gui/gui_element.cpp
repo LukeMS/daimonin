@@ -32,7 +32,7 @@ using namespace Ogre;
 //================================================================================================
 // Parse a gui element.
 //================================================================================================
-GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent, bool forceAlpha)
+GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
 {
     TiXmlElement *xmlGadget;
     String strValue;
@@ -44,41 +44,18 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent, bool forceAlpha)
     mPosY  = 0;
     mWidth = 0;
     mHeight= 0;
-    mParent= parent;
-    GuiImageset::GuiSrcEntry *srcEntry;
+    mBG_Element = true;
+    mGfxSrc    = 0; // No gfx is defined (fallback to color fill).
+    mFillColor = 0;
+    mParent= (GuiWindow*)parent;
     int maxX, maxY;
-    ((GuiWindow*)mParent)->getTexturseSize(maxX, maxY);
+    mParent->getTexturseSize(maxX, maxY);
     // ////////////////////////////////////////////////////////////////////
     // Parse the element.
     // ////////////////////////////////////////////////////////////////////
-    if ((tmp = xmlElem->Attribute("image_name")))
-    {
-        if ((srcEntry = GuiImageset::getSingleton().getStateGfxPositions(tmp)))
-        {
-            mSrcWidth = mWidth = srcEntry->width;
-            mSrcHeight= mHeight= srcEntry->height;
-            if (forceAlpha)
-                mHasAlpha = true;
-            else
-                mHasAlpha = srcEntry->alpha;
-            memcpy(gfxSrcPos, srcEntry->state, sizeof(gfxSrcPos));
-            GuiImageset::getSingleton().deleteStateGfxPositions(tmp);
-        }
-        else
-        {
-            Logger::log().warning() << tmp << " was defined in '" << FILE_GUI_WINDOWS
-            << "' but the gfx-data in '" << FILE_GUI_IMAGESET << "' is missing.";
-        }
-    }
-
-    if ((tmp = xmlElem->Attribute("fill")))
-    {
-             if (!stricmp(tmp, "GFX_FILL"))   mFillType = FILL_GFX;
-        else if (!stricmp(tmp, "COLOR_FILL")) mFillType = FILL_COLOR;
-        else                                  mFillType = FILL_NONE;
-    }
     if ((tmp = xmlElem->Attribute("name")))
     {
+        mBG_Element = false;   // This ins an interactive element (not a part of the bg gfx).
         for (int i = 0; i < GuiImageset::GUI_ELEMENTS_SUM; ++i)
         {
             if (!stricmp(GuiImageset::getSingleton().getElementName(i), tmp))
@@ -88,7 +65,37 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent, bool forceAlpha)
             }
         }
     }
-    //if ((tmp = xmlElem->Attribute("image_name"))) mStrImageName = tmp;
+    // ////////////////////////////////////////////////////////////////////
+    // Parse the background image (if given).
+    // ////////////////////////////////////////////////////////////////////
+    if ((xmlGadget = xmlElem->FirstChildElement("Image")))
+    {
+        if ((tmp = xmlGadget->Attribute("name")))
+        {
+            if ((mGfxSrc = GuiImageset::getSingleton().getStateGfxPositions(tmp)))
+            {
+                mWidth = mGfxSrc->w;  // Set the width of the source gfx as standard width.
+                mHeight= mGfxSrc->h;  // Set the height of the source gfx as standard height.
+            }
+            else
+            {
+                Logger::log().warning() << tmp << " was defined in '" << FILE_GUI_WINDOWS
+                << "' but the gfx-data in '" << FILE_GUI_IMAGESET << "' is missing.";
+            }
+        }
+    }
+    // ////////////////////////////////////////////////////////////////////
+    // Parse the color (if given).
+    // ////////////////////////////////////////////////////////////////////
+    if ((xmlGadget = xmlElem->FirstChildElement("Color")))
+    {
+        // PixelFormat: ARGB.
+        if ((tmp = xmlGadget->Attribute("red"  ))) mFillColor = atoi(tmp) << 16;
+        if ((tmp = xmlGadget->Attribute("green"))) mFillColor+= atoi(tmp) <<  8;
+        if ((tmp = xmlGadget->Attribute("blue" ))) mFillColor+= atoi(tmp);
+        if ((tmp = xmlGadget->Attribute("alpha"))) mFillColor+= atoi(tmp) << 24;
+    }
+
     if ((tmp = xmlElem->Attribute("font"))) mFontNr  = atoi(tmp);
     // ////////////////////////////////////////////////////////////////////
     // Parse the position.
@@ -105,28 +112,11 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent, bool forceAlpha)
     // ////////////////////////////////////////////////////////////////////
     if ((xmlGadget = xmlElem->FirstChildElement("Range")))
     {
-        if ((tmp = xmlGadget->Attribute("width")))
-        {
-            mWidth = atoi(tmp);
-        }
-        if ((tmp = xmlGadget->Attribute("height")))
-        {
-            mHeight= atoi(tmp);
-        }
+        if ((tmp = xmlGadget->Attribute("width")))  mWidth = atoi(tmp);
+        if ((tmp = xmlGadget->Attribute("height"))) mHeight= atoi(tmp);
     }
     if (mPosX + mWidth > maxX) mWidth = maxX-mPosX-1;
     if (mPosY + mHeight >maxY) mHeight= maxY-mPosY-1;
-    // ////////////////////////////////////////////////////////////////////
-    // Parse the color (if given).
-    // ////////////////////////////////////////////////////////////////////
-    if ((xmlGadget = xmlElem->FirstChildElement("Color")))
-    {
-        // PixelFormat: ARGB.
-        if ((tmp = xmlGadget->Attribute("red"  ))) mFillColor = atoi(tmp) << 16;
-        if ((tmp = xmlGadget->Attribute("green"))) mFillColor+= atoi(tmp) <<  8;
-        if ((tmp = xmlGadget->Attribute("blue" ))) mFillColor+= atoi(tmp);
-        if ((tmp = xmlGadget->Attribute("alpha"))) mFillColor+= atoi(tmp) << 24;
-    }
     // ////////////////////////////////////////////////////////////////////
     // Parse the label  (if given).
     // ////////////////////////////////////////////////////////////////////
@@ -147,18 +137,6 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent, bool forceAlpha)
     {
         if ((tmp = xmlGadget->Attribute("text"))) mStrTooltip = tmp;
     }
-    // ////////////////////////////////////////////////////////////////////
-    // Make a copy of the Window background.
-    // ////////////////////////////////////////////////////////////////////
-    if (mHasAlpha)
-    {
-        Texture *texture = ((GuiWindow*) mParent)->getTexture();
-        LayerWindowBG = new uint32[mWidth*mHeight];
-        texture->getBuffer()->blitToMemory(
-            Box(mPosX, mPosY, mPosX+mWidth, mPosY+mHeight),
-            PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8, LayerWindowBG));
-    }
-    else LayerWindowBG = 0;
 }
 
 //================================================================================================
@@ -173,12 +151,4 @@ bool GuiElement::setState(int state)
         return true;
     }
     return false;
-}
-
-//================================================================================================
-// Destructor.
-//================================================================================================
-GuiElement::~GuiElement()
-{
-    delete[] LayerWindowBG;
 }

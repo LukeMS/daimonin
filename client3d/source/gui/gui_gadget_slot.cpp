@@ -37,7 +37,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Ogre;
 
-const unsigned int ITEM_SIZE = 48;
 const char UNKONWN_ITEM_GFX_FILENAME[] = "item_noGfx.png";
 const int UNKNOWN_ITEM_GFX = 0;
 const int BITS_FACEFILTER = ~0x8000; // Filter to extract the face number (gfx-id).
@@ -59,13 +58,8 @@ GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOn
     std::string filename;
     mSlotNr = uid++;
     mItem = 0;
-    mBusyTime = 10;  // Default time for a slot to be busy (MUST be > 0).
+    mBusyTime = 1.0;  // Default time for a slot to be busy (MUST be > 0).
     mBusyTimeExpired = 0;
-    const char *tmp;
-    if ((tmp = xmlElement->Attribute("bg_image_name" )))
-        Logger::log().error() << "bg_image_name: " << tmp;
-    else
-        Logger::log().error() << "none bg_image_name";
     // This stuff is static, so we have to do it only once.
     if (!mDnDOverlay)
     {
@@ -85,7 +79,8 @@ GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOn
             while (handle && found)
             {
                 if (!strstr(FindFileData.cFileName, FILE_ITEM_TEXTURE_ATLAS))
-                {   // Force the unknown item gfx to be the first gfx.
+                {
+                    // Force the unknown item gfx to be the first gfx.
                     if (!strcmp(FindFileData.cFileName, UNKONWN_ITEM_GFX_FILENAME))
                     {
                         itemFilename.insert(itemFilename.begin(), FindFileData.cFileName);
@@ -102,11 +97,12 @@ GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOn
             while ((dir_entry = readdir(dir)))
             {
                 if (strstr(dir_entry->d_name, ".png") && !strstr(dir_entry->d_name, FILE_ITEM_TEXTURE_ATLAS))
-                {   // Force the unknown item gfx to be the first gfx.
+                {
+                    // Force the unknown item gfx to be the first gfx.
                     if (!strcmp(dir_entry->d_name, UNKONWN_ITEM_GFX_FILENAME))
                     {
                         itemFilename.insert(itemFilename.begin(), dir_entry->d_name);
-			unknownGfxFound = true;
+                        unknownGfxFound = true;
                     }
                     else
                         itemFilename.push_back(dir_entry->d_name);
@@ -134,7 +130,7 @@ GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOn
                 if (itemImage.getHeight() != ITEM_SIZE || itemImage.getWidth() != ITEM_SIZE)
                 {
                     Logger::log().warning() << "CreateItemAtlas: Unsupported image size. Only Items of "
-                    << ITEM_SIZE << " * " << ITEM_SIZE << " pixel are allowed "<< "[" << itemFilename[i] << "].";
+                    << (int)ITEM_SIZE << " * " << (int)ITEM_SIZE << " pixel are allowed "<< "[" << itemFilename[i] << "].";
                     break;
                 }
                 if (itemImage.getFormat() != PF_A8R8G8B8)
@@ -215,6 +211,18 @@ GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOn
         mDnDOverlay->add2D(static_cast<OverlayContainer*>(mDnDElement));
     }
     // ////////////////////////////////////////////////////////////////////
+    // Look for a background graphic (its a png from the item folder).
+    // ////////////////////////////////////////////////////////////////////
+    TiXmlElement *xmlGadget;
+    if ((xmlGadget = xmlElement->FirstChildElement("Image")))
+    {
+        const char *tmp;
+        if ((tmp = xmlGadget->Attribute("bg_item_image_filename")))
+            mSlotGfxBG = getTextureAtlasPos(tmp);
+        else
+            mSlotGfxBG = -1;
+    }
+    // ////////////////////////////////////////////////////////////////////
     // Draw the container.
     // ////////////////////////////////////////////////////////////////////
     if (drawOnInit) draw();
@@ -237,7 +245,6 @@ void GuiGadgetSlot::update(Real dTime)
 {
     if (!mBusyTimeExpired) return;
     mBusyTimeExpired += dTime;
-    Logger::log().error() << "bTime: "<< mBusyTime << "  " <<mBusyTimeExpired;
     if (mBusyTimeExpired > mBusyTime) // Busy animation completed.
         mBusyTimeExpired = 0;
     draw();
@@ -293,11 +300,16 @@ int GuiGadgetSlot::mouseEvent(int MouseAction, int x, int y)
 //================================================================================================
 int GuiGadgetSlot::getTextureAtlasPos(int itemFace)
 {
-    String gfxName = ObjectWrapper::getSingleton().getMeshName(itemFace & BITS_FACEFILTER);
+    return getTextureAtlasPos(ObjectWrapper::getSingleton().getMeshName(itemFace & BITS_FACEFILTER));
+}
+
+//================================================================================================
+// Get the item pos in the item-texture-atlas.
+//================================================================================================
+int GuiGadgetSlot::getTextureAtlasPos(const char *gfxName)
+{
     for (unsigned int i =0; i < mvAtlasGfxName.size(); ++i)
-    {
         if (mvAtlasGfxName[i] == gfxName) return i;
-    }
     return UNKNOWN_ITEM_GFX; // No gfx for this Item was found.
 }
 
@@ -306,17 +318,28 @@ int GuiGadgetSlot::getTextureAtlasPos(int itemFace)
 //================================================================================================
 void GuiGadgetSlot::draw()
 {
-    if (!mItem)
-    {   // Empty Slot.
+    // no item and no background gfx in this slot.
+    if (!mItem && mSlotGfxBG < 0)
+    {
         GuiGraphic::draw();
+        return;
     }
+    // We only need a redraw after the value has changed.
+    int newVal = static_cast<int>((ITEM_SIZE*4 * mBusyTimeExpired) / mBusyTime);
+    if (mBusyTimeExpired && mBusyOldVal == newVal) return;
+    mBusyOldVal = newVal;
+    // Draw a background gfx into the slot.
+    if (!mItem)
+    {
+        PixelBox srcItem = mAtlasTexture.getPixelBox().getSubVolume(Box(0, ITEM_SIZE * mSlotGfxBG, ITEM_SIZE, ITEM_SIZE *(mSlotGfxBG+1)));
+        GuiGraphic::drawSlot(static_cast<uint32*>(srcItem.data), static_cast<int>((ITEM_SIZE*4 * mBusyTimeExpired) / mBusyTime), 0);
+    }
+    // Draw an item into the slot.
     else
     {
-        PixelBox srcItem;
         int gfxNr = getTextureAtlasPos(mItem->face);
-        srcItem = mAtlasTexture.getPixelBox().getSubVolume(Box(
-                      0, ITEM_SIZE * gfxNr, ITEM_SIZE, ITEM_SIZE *(gfxNr+1)));
-        GuiGraphic::drawSlot(static_cast<uint32*>(srcItem.data), ITEM_SIZE, static_cast<int>((mWidth*4 * mBusyTimeExpired) / mBusyTime), mItem->nrof);
+        PixelBox srcItem = mAtlasTexture.getPixelBox().getSubVolume(Box(0, ITEM_SIZE * gfxNr, ITEM_SIZE, ITEM_SIZE *(gfxNr+1)));
+        GuiGraphic::drawSlot(static_cast<uint32*>(srcItem.data), newVal, mItem->nrof);
     }
 }
 

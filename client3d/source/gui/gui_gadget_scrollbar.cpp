@@ -46,7 +46,6 @@ GuiGadgetScrollbar::GuiGadgetScrollbar(TiXmlElement *xmlElement, void *parent, v
 {
     mButScrollUp  = 0;
     mButScrollDown= 0;
-    mParent = parent;
     mParentElement= parentElement;
     if (mWidth > mHeight) mHorizontal = true;
     else                  mHorizontal = false;
@@ -249,7 +248,7 @@ void GuiGadgetScrollbar::draw()
     for (int x = 4; x < mWidth-3; ++x) mGfxBuffer[y1 * mWidth + x] = color;
     */
     // Blit.
-    ((GuiWindow*)mParent)->getTexture()->getBuffer()->blitFromMemory(
+     mParent->getTexture()->getBuffer()->blitFromMemory(
         PixelBox(mStopX- mStartX, mStopY-mStartY, 1, PF_A8B8G8R8, mGfxBuffer),
         Box(mStartX, mStartY, mStopX, mStopY));
 }
