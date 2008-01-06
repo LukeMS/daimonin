@@ -239,6 +239,7 @@ typedef struct _options
     int                     itemdmg_limit_orange;
     int                     itemdmg_limit_red;
     Boolean                 shoutoff;
+    int                     menu_repeat;
 
     /* Debug */
     Boolean                 force_redraw;

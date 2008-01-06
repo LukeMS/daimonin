@@ -135,6 +135,7 @@ static void     key_repeat(void);
 static void     cursor_keys(int num);
 int             key_meta_menu(SDL_KeyboardEvent *key);
 void            key_connection_event(SDL_KeyboardEvent *key);
+static void     check_esc_menu_keys(int key);
 void            check_menu_keys(int menu, int key);
 
 
@@ -635,7 +636,7 @@ int Event_PollInputDevice(void)
         case SDL_KEYUP:
             /* end of key-repeat */
             menuRepeatKey = -1;
-            menuRepeatTime = KEY_REPEAT_TIME_INIT;
+            menuRepeatTime = (options.menu_repeat > 0) ? 70 / options.menu_repeat + 280 / options.menu_repeat : 0;
             /* fall through (no break;) */
 
         case SDL_KEYDOWN:
@@ -1264,46 +1265,7 @@ int key_event(SDL_KeyboardEvent *key)
 
             default:
                 if (esc_menu_flag == TRUE)
-                {
-                    reset_keys();
-                    switch ((int) key->keysym.sym)
-                    {
-                    case SDLK_RETURN:
-                        if (esc_menu_index == ESC_MENU_KEYS)
-                        {
-                            show_help_screen = 0;
-                            keybind_status = KEYBIND_STATUS_NO;
-                            cpl.menustatus = MENU_KEYBIND;
-                        }
-                        else if (esc_menu_index == ESC_MENU_SETTINGS)
-                        {
-                            show_help_screen = 0;
-                            keybind_status = KEYBIND_STATUS_NO;
-                            if (cpl.menustatus == MENU_KEYBIND)
-                                save_keybind_file(KEYBIND_FILE);
-                            cpl.menustatus = MENU_OPTION;
-                        }
-                        else if (esc_menu_index == ESC_MENU_LOGOUT)
-                        {
-                            save_quickslots_entrys();
-                            SOCKET_CloseClientSocket(&csocket);
-                        }
-                        sound_play_effect(SOUND_SCROLL, 0, 0, 100);
-                        esc_menu_flag = FALSE;
-                        break;
-
-                    case SDLK_UP:
-                        esc_menu_index--;
-                        if (esc_menu_index < 0)
-                            esc_menu_index = ESC_MENU_INDEX - 1;
-                        break;
-                    case SDLK_DOWN:
-                        esc_menu_index++;
-                        if (esc_menu_index >= ESC_MENU_INDEX)
-                            esc_menu_index = 0;
-                        break;
-                    };
-                }
+                    check_esc_menu_keys((int)key->keysym.sym);
                 break;
             };
         }
@@ -2165,7 +2127,25 @@ static void key_repeat(void)
     register int i,j;
     char    buf[512];
 
-    if (cpl.menustatus == MENU_NO)
+    /* A 'real' menu/dialog or the escape menu: */
+    if (cpl.menustatus != MENU_NO || esc_menu_flag == TRUE)
+    {
+        /* check menu-keys for repeat */
+        if (options.menu_repeat > 0 && (SDL_GetTicks() - menuRepeatTicks > menuRepeatTime || !menuRepeatTicks || menuRepeatKey < 0))
+        {
+            menuRepeatTicks = SDL_GetTicks();
+            if (menuRepeatKey >= 0)
+            {
+                if (esc_menu_flag == TRUE)
+                    check_esc_menu_keys(menuRepeatKey);
+                else
+                    check_menu_keys(cpl.menustatus, menuRepeatKey);
+                menuRepeatTime = 70 / options.menu_repeat;
+            }
+        }
+    }
+    /* Normal gameplay: */
+    else
     {
         /* TODO: optimize this one, too */
         for (j = 0; j < BINDKEY_LIST_MAX; j++)
@@ -2190,19 +2170,6 @@ static void key_repeat(void)
                         }
                     }
                 }
-            }
-        }
-    }
-    else
-    {
-        /* check menu-keys for repeat */
-        if (SDL_GetTicks() - menuRepeatTicks > menuRepeatTime || !menuRepeatTicks || menuRepeatKey < 0)
-        {
-            menuRepeatTicks = SDL_GetTicks();
-            if (menuRepeatKey >= 0)
-            {
-                check_menu_keys(cpl.menustatus, menuRepeatKey);
-                menuRepeatTime = KEY_REPEAT_TIME;
             }
         }
     }
@@ -2309,6 +2276,53 @@ void save_keybind_file(char *fname)
         }
     }
     fclose(stream);
+}
+
+/******************************************************************
+ Handle keystrokes in the escape menu.
+******************************************************************/
+static void check_esc_menu_keys(int key)
+{
+    reset_keys();
+    switch (key)
+    {
+    case SDLK_RETURN:
+        if (esc_menu_index == ESC_MENU_KEYS)
+        {
+            show_help_screen = 0;
+            keybind_status = KEYBIND_STATUS_NO;
+            cpl.menustatus = MENU_KEYBIND;
+        }
+        else if (esc_menu_index == ESC_MENU_SETTINGS)
+        {
+            show_help_screen = 0;
+            keybind_status = KEYBIND_STATUS_NO;
+            if (cpl.menustatus == MENU_KEYBIND)
+                save_keybind_file(KEYBIND_FILE);
+            cpl.menustatus = MENU_OPTION;
+        }
+        else if (esc_menu_index == ESC_MENU_LOGOUT)
+        {
+            save_quickslots_entrys();
+            SOCKET_CloseClientSocket(&csocket);
+        }
+        sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+        esc_menu_flag = FALSE;
+        break;
+
+    case SDLK_UP:
+        esc_menu_index--;
+        if (esc_menu_index < 0)
+            esc_menu_index = ESC_MENU_INDEX - 1;
+        menuRepeatKey = SDLK_UP;
+        break;
+    case SDLK_DOWN:
+        esc_menu_index++;
+        if (esc_menu_index >= ESC_MENU_INDEX)
+            esc_menu_index = 0;
+        menuRepeatKey = SDLK_DOWN;
+        break;
+    };
 }
 
 
