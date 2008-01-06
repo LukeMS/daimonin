@@ -670,7 +670,6 @@ int widget_event_mouseup(int x, int y, SDL_Event *event)
 /* drag the widget, if active                                        */
 int widget_event_mousemv(int x,int y, SDL_Event *event)
 {
-    int i;
     cursor_type = 0; /* with widgets we have to clear every loop the txtwin cursor */
 
 	/* widget moving condition */
@@ -694,12 +693,16 @@ int widget_event_mousemv(int x,int y, SDL_Event *event)
 
 
         /* textwin special handling */
-        for (i=0;i<=2;i++)
+        if (txtwin[TW_CHAT].highlight != TW_HL_NONE)
         {
-            if (txtwin[i].highlight != TW_HL_NONE)
-                txtwin[i].highlight = TW_HL_NONE;
+            txtwin[TW_CHAT].highlight = TW_HL_NONE;
+            WIDGET_REDRAW(CHATWIN_ID);
         }
-
+        if (txtwin[TW_MSG].highlight != TW_HL_NONE)
+        {
+            txtwin[TW_MSG].highlight = TW_HL_NONE;
+            WIDGET_REDRAW(MSGWIN_ID);
+        }
 		/* sanity check.. return if mouse is not in a widget */
 		if(nID<0) { return FALSE; }
         else
