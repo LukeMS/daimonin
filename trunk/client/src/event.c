@@ -152,6 +152,7 @@ void reset_keys(void)
 {
     register int i;
 
+    SDL_EnableKeyRepeat(0, SDL_DEFAULT_REPEAT_INTERVAL);
     reset_input_mode();
     InputStringFlag = FALSE;
     InputStringEndFlag = FALSE;
@@ -636,7 +637,7 @@ int Event_PollInputDevice(void)
         case SDL_KEYUP:
             /* end of key-repeat */
             menuRepeatKey = -1;
-            menuRepeatTime = (options.menu_repeat > 0) ? 70 / options.menu_repeat + 280 / options.menu_repeat : 0;
+            menuRepeatTime = (options.menu_repeat > 0) ? 70 / options.menu_repeat + 280 / options.menu_repeat : 0; // delay
             /* fall through (no break;) */
 
         case SDL_KEYDOWN:
@@ -766,16 +767,17 @@ static void key_string_event(SDL_KeyboardEvent *key)
         switch (key->keysym.sym)
         {
         case SDLK_ESCAPE:
-            SDL_EnableKeyRepeat(0, SDL_DEFAULT_REPEAT_INTERVAL);
+//            SDL_EnableKeyRepeat(0, SDL_DEFAULT_REPEAT_INTERVAL);
             InputStringEscFlag = TRUE;
             return;
             break;
+
         case SDLK_KP_ENTER:
         case SDLK_RETURN:
         case SDLK_TAB:
             if (key->keysym.sym != SDLK_TAB || GameStatus < GAME_STATUS_WAITFORPLAY)
             {
-                SDL_EnableKeyRepeat(0, SDL_DEFAULT_REPEAT_INTERVAL);
+//                SDL_EnableKeyRepeat(0, SDL_DEFAULT_REPEAT_INTERVAL);
                 InputStringFlag = FALSE;
                 InputStringEndFlag = TRUE; /* mark that we've got something here */
 
@@ -969,7 +971,7 @@ static void key_string_event(SDL_KeyboardEvent *key)
             if (cpl.input_mode == INPUT_MODE_NUMBER
                     && (key->keysym.sym == get_action_keycode || key->keysym.sym == drop_action_keycode))
             {
-                SDL_EnableKeyRepeat(0, SDL_DEFAULT_REPEAT_INTERVAL);
+//                SDL_EnableKeyRepeat(0, SDL_DEFAULT_REPEAT_INTERVAL);
                 InputStringFlag = FALSE;
                 InputStringEndFlag = TRUE;/* mark that we got some here*/
             }
@@ -2140,7 +2142,7 @@ static void key_repeat(void)
                     check_esc_menu_keys(menuRepeatKey);
                 else
                     check_menu_keys(cpl.menustatus, menuRepeatKey);
-                menuRepeatTime = 70 / options.menu_repeat;
+                menuRepeatTime = 70 / options.menu_repeat; // interval
             }
         }
     }

@@ -1166,10 +1166,12 @@ void reset_input_mode(void)
 
 void open_input_mode(int maxchar)
 {
+    int interval = (options.menu_repeat > 0) ? 70 / options.menu_repeat : 0;
+    int delay    = (options.menu_repeat > 0) ? interval + 280 / options.menu_repeat : 0;
     reset_input_mode();
     InputMax = maxchar;
     InputFirstKeyPress = TRUE;
-    SDL_EnableKeyRepeat(0, SDL_DEFAULT_REPEAT_INTERVAL); // SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
+    SDL_EnableKeyRepeat(delay, interval); // SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
     if (cpl.input_mode != INPUT_MODE_NUMBER)
         cpl.inventory_win = IWIN_BELOW;
     InputStringFlag = TRUE;
