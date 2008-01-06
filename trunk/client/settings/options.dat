@@ -2,7 +2,7 @@
 # This is the Daimonin SDL client option file #
 ###############################################
 
-* 0
+* 1
 %1 subred
 %21 22
 %22 22
@@ -51,6 +51,7 @@ Sleep time in ms: 15
 Show tooltips: 1
 Key-info in dialog menus: 1
 SpeedUp: 0
+Menu repeat speed: 2
 
 # Fullscreen flags
 Hardware surface: 0

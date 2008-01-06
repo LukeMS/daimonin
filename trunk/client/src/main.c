@@ -1169,7 +1169,7 @@ void open_input_mode(int maxchar)
     reset_input_mode();
     InputMax = maxchar;
     InputFirstKeyPress = TRUE;
-    SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
+    SDL_EnableKeyRepeat(0, SDL_DEFAULT_REPEAT_INTERVAL); // SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
     if (cpl.input_mode != INPUT_MODE_NUMBER)
         cpl.inventory_win = IWIN_BELOW;
     InputStringFlag = TRUE;
