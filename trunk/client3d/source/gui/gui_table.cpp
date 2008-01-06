@@ -205,7 +205,7 @@ int GuiTable::getSelectedRow()
 //================================================================================================
 void GuiTable::draw()
 {
-    Texture *texture = ((GuiWindow*) mParent)->getTexture();
+    Texture *texture = mParent->getTexture();
     // Draw the column headlines.
     GuiTextout::TextLine textline;
     textline.index = -1;
@@ -264,7 +264,7 @@ void GuiTable::drawSelection(int newSelection)
 void GuiTable::drawRow(int row, uint32 color)
 {
     if (row < 0) return;
-    Texture *texture = ((GuiWindow*) mParent)->getTexture();
+    Texture *texture = mParent->getTexture();
     GuiTextout::TextLine textline;
     textline.index = -1;
     textline.hideText= false;

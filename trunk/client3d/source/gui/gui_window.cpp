@@ -57,6 +57,7 @@ std::string GuiWindow::mStrTooltip ="";
 GuiWindow::GuiWindow()
 {
     isInit = false;
+    mWinLayerBG = 0;
     mSumUsedSlots = 0;
     mGadgetDrag = -1;
     mElement = 0;
@@ -111,6 +112,7 @@ void GuiWindow::freeRecources()
     mvTable.clear();
 
     // Set all shared pointer to null.
+    delete[] mWinLayerBG;
     mMaterial.setNull();
     mTexture.setNull();
 }
@@ -454,8 +456,10 @@ inline void GuiWindow::createWindow(int zOrder)
     mElement->setMaterialName("GUI_Material_"+ strNum);
     mOverlay->add2D(static_cast<OverlayContainer*>(mElement));
     // We must clear the whole texture (textures have always 2^n size while windows can be smaller).
-    memset(mTexture->getBuffer()->lock (HardwareBuffer::HBL_DISCARD), 0x00, mTexture->getWidth() * mTexture->getHeight() * sizeof(uint32));
+    memset(mTexture->getBuffer()->lock(HardwareBuffer::HBL_DISCARD), 0x00, mTexture->getWidth() * mTexture->getHeight() * sizeof(uint32));
     mTexture->getBuffer()->unlock();
+    mWinLayerBG = new uint32[mWidth * mHeight];
+    memset(mWinLayerBG, 0x00, mWidth * mHeight * sizeof(uint32));
 }
 
 //================================================================================================

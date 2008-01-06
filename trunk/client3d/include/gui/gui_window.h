@@ -115,6 +115,10 @@ public:
     {
         return &mSrcPixelBox;
     }
+    Ogre::uint32 *getLayerBG()
+    {
+        return mWinLayerBG;
+    }
     void centerWindowOnMouse(int x, int y);
 
     // ////////////////////////////////////////////////////////////////////
@@ -192,6 +196,10 @@ private:
     Ogre::PixelBox mSrcPixelBox;
     Ogre::MaterialPtr mMaterial;
     Ogre::TexturePtr mTexture;
+    Ogre::uint32 *mWinLayerBG; /**< Its a backup of the window background to avoid
+                                    read access to the window texture and to restore
+                                    the background after a dynamic part of the win
+                                    has changed (e.g. button that changed to vivisible)*/
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////

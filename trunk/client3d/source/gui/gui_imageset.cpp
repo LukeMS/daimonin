@@ -70,6 +70,8 @@ GuiImageset::GuiElementNames GuiImageset::mGuiElementNames[GUI_ELEMENTS_SUM]=
         { "Login_LoginInfo2",   GUI_TEXTBOX_LOGIN_INFO2      },
         { "Login_LoginInfo3",   GUI_TEXTBOX_LOGIN_INFO3      },
         { "NPC_Headline",       GUI_TEXTBOX_NPC_HEADLINE     },
+        { "Inv_Equipment",      GUI_TEXTBOX_INV_EQUIP        },
+        { "Inv_Equip_Weight",   GUI_TEXTBOX_INV_EQUIP_WEIGHT },
         // TextInput.
         { "Input_Login_Name",   GUI_TEXTINPUT_LOGIN_NAME   },
         { "Input_Login_Passwd", GUI_TEXTINPUT_LOGIN_PASSWD },
@@ -102,6 +104,7 @@ GuiImageset::GuiElementNames GuiImageset::mMouseState[STATE_MOUSE_SUM]=
         { "Dragging",          STATE_MOUSE_DRAGGING           },
         { "Resizing",          STATE_MOUSE_RESIZING           },
         { "PickUp",            STATE_MOUSE_PICKUP             },
+        { "Stop",              STATE_MOUSE_STOP               },
     };
 
 // GuiElement states.
@@ -124,7 +127,7 @@ GuiImageset::GuiImageset()
 //================================================================================================
 GuiImageset::~GuiImageset()
 {
-    for (std::vector<GuiSrcEntry*>::iterator i = mvSrcEntry.begin(); i < mvSrcEntry.end(); ++i)
+    for (std::vector<gfxSrcEntry*>::iterator i = mvSrcEntry.begin(); i < mvSrcEntry.end(); ++i)
     {
         delete (*i);
     }
@@ -159,9 +162,9 @@ void GuiImageset::parseXML(const char *fileImageSet)
         if (!(strTemp = xmlElem->Attribute("name"))) continue;
         if (!stricmp(strTemp, "MouseCursor"))
         {
-            GuiSrcEntryMouse *Entry = new GuiSrcEntryMouse;
-            if ((strTemp = xmlElem->Attribute("width" ))) Entry->width  = atoi(strTemp);
-            if ((strTemp = xmlElem->Attribute("height"))) Entry->height = atoi(strTemp);
+            gfxSrcMouse *Entry = new gfxSrcMouse;
+            if ((strTemp = xmlElem->Attribute("width" ))) Entry->w  = atoi(strTemp);
+            if ((strTemp = xmlElem->Attribute("height"))) Entry->h = atoi(strTemp);
             if (parseStates(xmlElem, Entry->state, STATE_MOUSE_SUM, true))
                 mSrcEntryMouse = Entry;
             else
@@ -173,12 +176,10 @@ void GuiImageset::parseXML(const char *fileImageSet)
         }
         else // A gui Element.
         {
-            GuiSrcEntry *Entry = new GuiSrcEntry;
+            gfxSrcEntry *Entry = new gfxSrcEntry;
             Entry->name = strTemp;
-            Entry->alpha =false;
-            if ((strTemp = xmlElem->Attribute("alpha" ))) if (atoi(strTemp)) Entry->alpha =true;
-            if ((strTemp = xmlElem->Attribute("width" ))) Entry->width  = atoi(strTemp);
-            if ((strTemp = xmlElem->Attribute("height"))) Entry->height = atoi(strTemp);
+            if ((strTemp = xmlElem->Attribute("width" ))) Entry->w = atoi(strTemp);
+            if ((strTemp = xmlElem->Attribute("height"))) Entry->h = atoi(strTemp);
             if (parseStates(xmlElem, Entry->state, STATE_ELEMENT_SUM, false))
                 mvSrcEntry.push_back(Entry);
             else
@@ -252,7 +253,7 @@ bool GuiImageset::parseStates(TiXmlElement *xmlElem, gfxPos *stateNr, int sum_st
 //================================================================================================
 // Returns the array of the gfx positions for an element.
 //================================================================================================
-GuiImageset::GuiSrcEntry *GuiImageset::getStateGfxPositions(const char* guiImage)
+GuiImageset::gfxSrcEntry *GuiImageset::getStateGfxPositions(const char* guiImage)
 {
     if (guiImage)
     {
@@ -265,19 +266,10 @@ GuiImageset::GuiSrcEntry *GuiImageset::getStateGfxPositions(const char* guiImage
     return 0;
 }
 
-
-//================================================================================================
-// After the srcEntry was copied to the guiElement, we dont need it anymore.
-//================================================================================================
-void GuiImageset::deleteStateGfxPositions(const char* guiImage)
-{
-    // Todo.
-}
-
 //================================================================================================
 // Returns the array of the gfx positions for the mouse-cursor.
 //================================================================================================
-GuiImageset::GuiSrcEntryMouse *GuiImageset::getStateGfxPosMouse()
+GuiImageset::gfxSrcMouse *GuiImageset::getStateGfxPosMouse()
 {
     return mSrcEntryMouse;
 }

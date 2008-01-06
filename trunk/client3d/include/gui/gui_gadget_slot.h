@@ -37,10 +37,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 class GuiGadgetSlot: public GuiGraphic
 {
 public:
-    // ////////////////////////////////////////////////////////////////////
-    // Variables / Constants.
-    // ////////////////////////////////////////////////////////////////////
-
+    enum { ITEM_SIZE = 48 };
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
@@ -93,27 +90,26 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
+    static std::vector<Ogre::String> mvAtlasGfxName;
     static Ogre::Image mAtlasTexture;
     static Ogre::Overlay *mDnDOverlay;
     static Ogre::OverlayElement *mDnDElement;
     static Ogre::MaterialPtr mDnDMaterial;
     static Ogre::TexturePtr mDnDTexture;
-    static std::vector<Ogre::String> mvAtlasGfxName;
     static int mDragSlot;                   /**< Slot where the drag was started. **/
     static int mActiveSlot;                 /**< Slot the mouse is currently over. **/
     int mSlotNr;                            /**< Unique number. **/
+    int mSlotGfxBG;                         /**< The gfx number of the background gfx (will only be shown if slot is empty **/
     Item::sItem *mItem;                     /**< The Item which is currently in the slot. **/
-    unsigned int mSlotWidth, mSlotHeight;
     Ogre::Real mBusyTime;                   /**< Slot is busy for this amount of time. **/
     Ogre::Real mBusyTimeExpired;            /**< Already expired time. **/
+    Ogre::Real mBusyOldVal;                 /**< Indicates if the busy gfx needs a redraw. **/
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     void drawDragItem();
-    /**
-     ** Draws an inactive gfx over the slot for recognizing the busy status.
-     *****************************************************************************/
     int getTextureAtlasPos(int itemFace);
+    int getTextureAtlasPos(const char* gfx);
 };
 
 #endif

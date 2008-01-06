@@ -60,8 +60,8 @@ GuiStatusbar::~GuiStatusbar()
 //================================================================================================
 void GuiStatusbar::draw()
 {
-    Texture *texture = ((GuiWindow*) mParent)->getTexture();
-    PixelBox *pb = ((GuiWindow*) mParent)->getPixelBox();
+    Texture *texture = mParent->getTexture();
+    PixelBox *pb = mParent->getPixelBox();
     // ////////////////////////////////////////////////////////////////////
     // Save the original background.
     // ////////////////////////////////////////////////////////////////////
@@ -80,7 +80,7 @@ void GuiStatusbar::draw()
     // ////////////////////////////////////////////////////////////////////
     // Draw the bar into a temp buffer.
     // ////////////////////////////////////////////////////////////////////
-    if (mFillType == GuiElement::FILL_GFX)
+    if (mGfxSrc)
     {
         // ////////////////////////////////////////////////////////////////////
         // Background part.
@@ -91,7 +91,7 @@ void GuiStatusbar::draw()
         {
             for (int x= 0; x < mWidth; ++x)
             {
-                color = src[(y+gfxSrcPos[0].y) * pb->getWidth() + x+gfxSrcPos[0].x];
+                color = src[(y+mGfxSrc->state[0].y) * pb->getWidth() + x+mGfxSrc->state[0].x];
                 if (color & 0xff000000)
                 {
                     mGfxBuffer[y*mWidth + x] = color;
@@ -106,7 +106,7 @@ void GuiStatusbar::draw()
         {
             for (int x= mLabelPosX; x < mWidth-mLabelPosX; ++x)
             {
-                color = src[(y+gfxSrcPos[0].y) * pb->getWidth() + x+gfxSrcPos[0].x];
+                color = src[(y+mGfxSrc->state[0].y) * pb->getWidth() + x+mGfxSrc->state[0].x];
                 if (color & 0xff000000)
                 {
                     pixColor = color & 0xff000000;

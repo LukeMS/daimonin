@@ -31,12 +31,11 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Ogre;
 
-// hi nedo, i made some changes to the gui stuff, so you have to start it all over...
-// i think the gui code is now more readable.
-// (polyveg)
+// needs to be rewritten!
 
 GuiGadgetCombobox::GuiGadgetCombobox(TiXmlElement *xmlElement, void *parent) :GuiElement(xmlElement, parent)
 {
+    /*
     // ////////////////////////////////////////////////////////////////////
     // .
     // ////////////////////////////////////////////////////////////////////
@@ -76,6 +75,7 @@ GuiGadgetCombobox::GuiGadgetCombobox(TiXmlElement *xmlElement, void *parent) :Gu
         printf("Noo need for a scroll here... \n");
         mNeedsScroll = false;
     }
+    */
 }
 
 GuiGadgetCombobox::~GuiGadgetCombobox()
@@ -89,8 +89,8 @@ void GuiGadgetCombobox::draw()
     // ////////////////////////////////////////////////////////////////////
     // Save background if needed.
     // ////////////////////////////////////////////////////////////////////
-    Texture *texture = ((GuiWindow*) mParent)->getTexture();
-    PixelBox *mSrcPixelBox = ((GuiWindow*) mParent)->getPixelBox();
+    Texture *texture = mParent->getTexture();
+    PixelBox *mSrcPixelBox = mParent->getPixelBox();
 
     if ( mDispDropdown )
     {
@@ -115,10 +115,10 @@ void GuiGadgetCombobox::draw()
     // Draw gaget background.
     // ////////////////////////////////////////////////////////////////////
     PixelBox src = mSrcPixelBox->getSubVolume(Box(
-                       gfxSrcPos[0].x,
-                       gfxSrcPos[0].y,
-                       gfxSrcPos[0].x + mWidth,
-                       gfxSrcPos[0].y + mHeight));
+                       mGfxSrc->state[0].x,
+                       mGfxSrc->state[0].y,
+                       mGfxSrc->state[0].x + mWidth,
+                       mGfxSrc->state[0].y + mHeight));
     texture->getBuffer()->blitFromMemory(src, Box(mPosX, mPosY, mPosX + mWidth, mPosY + mHeight));
 
     // ////////////////////////////////////////////////////////////////////
@@ -129,9 +129,9 @@ void GuiGadgetCombobox::draw()
         PixelBox srcbtn = mSrcPixelBox->getSubVolume(Box(
                               srcButton->state[0].x,
                               srcButton->state[0].y,
-                              srcButton->state[0].x + srcButton->width,
-                              srcButton->state[0].y + srcButton->height));
-        texture->getBuffer()->blitFromMemory(srcbtn, Box(mPosX + mWidth - srcButton->width, mPosY, mPosX + mWidth, mPosY + mEntryHeight));
+                              srcButton->state[0].x + srcButton->w,
+                              srcButton->state[0].y + srcButton->h));
+        texture->getBuffer()->blitFromMemory(srcbtn, Box(mPosX + mWidth - srcButton->w, mPosY, mPosX + mWidth, mPosY + mEntryHeight));
     }
 
     // ////////////////////////////////////////////////////////////////////
@@ -143,7 +143,7 @@ void GuiGadgetCombobox::draw()
     label.font = mLabelFontNr;
     label.x1 = mPosX + mLabelPosX;
     if ( srcButton )
-        label.x2 = label.x1 + mWidth - srcButton->width - mLabelPosX;
+        label.x2 = label.x1 + mWidth - srcButton->w - mLabelPosX;
     else
         label.x2 = label.x1 + mWidth - mLabelPosX;
     label.y1 = mPosY+ mLabelPosY;
@@ -167,20 +167,19 @@ void GuiGadgetCombobox::draw()
                 PixelBox srcbtn = mSrcPixelBox->getSubVolume(Box(
                                       srcScrollbarUp->state[0].x,
                                       srcScrollbarUp->state[0].y,
-                                      srcScrollbarUp->state[0].x + srcScrollbarUp->width,
-                                      srcScrollbarUp->state[0].y + srcScrollbarUp->height));
-                texture->getBuffer()->blitFromMemory(srcbtn, Box(mPosX + mWidth - srcScrollbarUp->width, mPosY + mEntryHeight, mPosX + mWidth, mPosY + mEntryHeight + srcScrollbarUp->height));
-
-                label.x2 -= srcScrollbarUp->width;
+                                      srcScrollbarUp->state[0].x + srcScrollbarUp->w,
+                                      srcScrollbarUp->state[0].y + srcScrollbarUp->h));
+                texture->getBuffer()->blitFromMemory(srcbtn, Box(mPosX + mWidth - srcScrollbarUp->w, mPosY + mEntryHeight, mPosX + mWidth, mPosY + mEntryHeight + srcScrollbarUp->h));
+                label.x2 -= srcScrollbarUp->w;
             }
             if (srcScrollbarDown)
             {
                 PixelBox srcbtn = mSrcPixelBox->getSubVolume(Box(
                                       srcScrollbarDown->state[0].x,
                                       srcScrollbarDown->state[0].y,
-                                      srcScrollbarDown->state[0].x + srcScrollbarDown->width,
-                                      srcScrollbarDown->state[0].y + srcScrollbarDown->height));
-                texture->getBuffer()->blitFromMemory(srcbtn, Box(mPosX + mWidth - srcScrollbarDown->width, mPosY + mEntryHeight + mViewport - srcScrollbarDown->height, mPosX + mWidth, mPosY + mEntryHeight + mViewport));
+                                      srcScrollbarDown->state[0].x + srcScrollbarDown->w,
+                                      srcScrollbarDown->state[0].y + srcScrollbarDown->h));
+                texture->getBuffer()->blitFromMemory(srcbtn, Box(mPosX + mWidth - srcScrollbarDown->w, mPosY + mEntryHeight + mViewport - srcScrollbarDown->h, mPosX + mWidth, mPosY + mEntryHeight + mViewport));
             }
         }
         for ( unsigned int i = 1 ; i < mvOption.size() ; i++ )
