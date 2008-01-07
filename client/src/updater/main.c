@@ -22,6 +22,7 @@
 */
 
 #include "include/include.h"
+#include <curl/curl.h>
 
 #define UPDATE_URL "http://daimonin.sourceforge.net/patch/"
 
@@ -35,7 +36,7 @@
 #define PROCESS_UPDATER "daimonin_start.exe"
 #define SYSTEM_OS_TAG 'w'
 #define FOLDER_TOOLS "tools/"
-#define PROCESS_WGET "wget.exe"
+//#define PROCESS_WGET "wget.exe"
 #define PROCESS_MD5 "md5sum.exe"
 #define PROCESS_BZ2 "bunzip2.exe"
 #define PROCESS_TAR "tar.exe"
@@ -64,15 +65,26 @@ int update_flag = FALSE;
 
 FILE *version_handle=NULL;
 
+/* our easy_curl handle */
+CURL *curlhandle = NULL;
+
+
+
 extern void clear_directory(char* start_dir);
 extern void copy_patch_files(char* start_dir);
 extern int process_patch_file(char *patch_file, int mode);
 extern void copy_patch(char *src, char *dest);
+extern int  download_file(char *url, char *remotefilename, char *destfolder, char *destfilename);
+int curl_progresshandler(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow);
+
+
 
 static void free_resources(void)
 {
     if (copy_buffer)
         free(copy_buffer);
+    if (curlhandle)
+        curl_easy_cleanup(curlhandle);
 }
 
 
@@ -90,6 +102,7 @@ static void updater_error(const char *msg)
 static void start_client_and_close(char *p_path)
 {
     printf("Starting client...\n");
+//    getchar();
     strcpy(process_path, p_path);
     strcat(process_path, PROCESS_CLIENT); /* '/' will work in windows too */
     execute_process(process_path, PROCESS_CLIENT, "", NULL, 0);
@@ -140,11 +153,17 @@ int main(int argc, char *argv[])
     int version_nr, version_def_nr, patched=FALSE;
     char version[256], buf[256], *string_pos;
     char file_name[256], md5[64];
+
+
 #ifndef WIN32
     /*    struct flock fl = { F_RDLCK, SEEK_SET, 0,       0,     0 };*/
 #endif
-
     printf("Daimonin AutoUpdater 1.0a\n\n");
+
+
+    curlhandle = curl_easy_init();
+    if (!curlhandle)
+        updater_error("Error initializing curl...");
 
     /*    printf("%s\n",argv[0]);
         if(argc>1)
@@ -260,16 +279,24 @@ int main(int argc, char *argv[])
         printf("version %s\n", version);
         printf("Get update info....\n");
 
-        /* prepare wget for general update info and retrieve the updating base info */
-        sprintf(process_path,"%s%s%s", prg_path, FOLDER_TOOLS, PROCESS_WGET);
-        sprintf(parms,"-N -P%s %s%s", FOLDER_UPDATE, UPDATE_URL, UPDATE_FILE);
-        if ( execute_process(process_path, PROCESS_WGET, parms, NULL, 100) != 0)
+        if (!download_file(UPDATE_URL, UPDATE_FILE, FOLDER_UPDATE, UPDATE_FILE))
         {
             /* failed to get a update... lets start the client anyway and try to connect to a server */
             printf("Update failed!\nStarting client without update.\nPRESS RETURN\n");
             getchar();
             start_client_and_close(prg_path);
         }
+
+        /* prepare wget for general update info and retrieve the updating base info */
+//        sprintf(process_path,"%s%s%s", prg_path, FOLDER_TOOLS, PROCESS_WGET);
+//        sprintf(parms,"-N -P%s %s%s", FOLDER_UPDATE, UPDATE_URL, UPDATE_FILE);
+//        if ( execute_process(process_path, PROCESS_WGET, parms, NULL, 100) != 0)
+//        {
+            /* failed to get a update... lets start the client anyway and try to connect to a server */
+//            printf("Update failed!\nStarting client without update.\nPRESS RETURN\n");
+//            getchar();
+//            start_client_and_close(prg_path);
+//        }
 
         /* check we have the update or we must get it */
         printf("Check update info....\n");
@@ -297,16 +324,25 @@ int main(int argc, char *argv[])
         /* if we have the update flag set, we assume this is our old patch file */
         if (update_flag==FALSE)
         {
-            sprintf(process_path,"%s%s%s", prg_path, FOLDER_TOOLS, PROCESS_WGET);
-            sprintf(parms,"-N -P%s %s%s", FOLDER_UPDATE, UPDATE_URL, file_name);
-            if ( execute_process(process_path, PROCESS_WGET, parms, NULL, 100) != 0)
+
+            if (!download_file(UPDATE_URL, file_name, FOLDER_UPDATE, file_name))
             {
                 /* failed to get a update... lets start the client anyway and try to connect to a server */
-                fclose(stream);
                 printf("Update failed!\nStarting client without update.\nPRESS RETURN\n");
                 getchar();
                 start_client_and_close(prg_path);
             }
+//
+//            sprintf(process_path,"%s%s%s", prg_path, FOLDER_TOOLS, PROCESS_WGET);
+//            sprintf(parms,"-N -P%s %s%s", FOLDER_UPDATE, UPDATE_URL, file_name);
+//            if ( execute_process(process_path, PROCESS_WGET, parms, NULL, 100) != 0)
+//            {
+//                /* failed to get a update... lets start the client anyway and try to connect to a server */
+//                fclose(stream);
+//                printf("Update failed!\nStarting client without update.\nPRESS RETURN\n");
+//                getchar();
+//                start_client_and_close(prg_path);
+//            }
 
             printf("Applying patch %s (%d).... \n", version, version_nr);
 
@@ -761,3 +797,70 @@ int process_patch_file(char *patch_file, int mode)
 
     return(0);
 }
+
+int download_file(char *url, char *remotefilename, char *destfolder, char *destfilename)
+{
+    CURLcode    res;
+    FILE        *outfile;
+    char        filename[MAX_DIR_PATH];
+    char        fullurl[MAX_DIR_PATH];
+
+    if (!curlhandle)
+        updater_error("curl error.");
+
+    sprintf(filename,"%s/%s", destfolder, destfilename);
+    sprintf(fullurl,"%s%s", url, remotefilename);
+
+    outfile=fopen(filename, "wb+");
+    if (!outfile)
+        updater_error("dl: could not open file for writing.");
+
+    curl_easy_setopt(curlhandle,CURLOPT_URL, fullurl);
+    curl_easy_setopt(curlhandle, CURLOPT_WRITEDATA, outfile);
+//    curl_easy_setopt(curlhandle, CURLOPT_VERBOSE, 1);
+    curl_easy_setopt(curlhandle, CURLOPT_NOPROGRESS, FALSE);
+    curl_easy_setopt(curlhandle, CURLOPT_PROGRESSFUNCTION, curl_progresshandler);
+
+    printf("start downloading file: %s\n",destfilename);
+
+    res = curl_easy_perform(curlhandle);
+    printf("\n");
+    if (res)
+    {
+
+        printf("curl error: %s\n",curl_easy_strerror(res));
+        fclose(outfile);
+        return FALSE;
+    }
+
+    fclose(outfile);
+
+    printf("%s downloaded succesful.\n",destfilename);
+    return TRUE;
+}
+
+int curl_progresshandler(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow)
+{
+    if (dltotal>0)
+    {
+        int step = 0;
+        char outstring[51];
+        int i = 0;
+
+        step = (int) (round((dlnow / dltotal)*50.0f));
+
+        outstring[0]='\0';
+        for (i=1;i<=step;i++)
+            strcat(outstring,"#");
+        for (i=1;i<=(50-step);i++)
+            strcat(outstring," ");
+        outstring[50]='\0';
+        printf("\r[%s] %3.2f%%",outstring, (dlnow/dltotal)*100.0f);
+
+    } else {
+        printf("\r[                                                  ]   0.00%%");
+    }
+
+    return 0;
+}
+
