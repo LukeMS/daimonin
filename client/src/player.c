@@ -389,7 +389,7 @@ void widget_player_data_event(int x, int y)
     mx = x - cur_widget[PLAYER_INFO_ID].x1;
     my = y - cur_widget[PLAYER_INFO_ID].y1;
 
-    if (mx>=190 && mx <= 210 && my >=10 && my<=30)
+    if (mx>=184 && mx <= 210 && my >=5 && my<=35)
     {
         if (!client_command_check("/rest"))
             send_command("/rest", -1, SC_NORMAL);
@@ -418,7 +418,7 @@ void widget_show_player_data(int x, int y)
     StringBlt(ScreenSurface, &SystemFont, buf, x+6, y+26, COLOR_HGOLD, NULL, NULL);
 
     /* temp prayer button */
-    sprite_blt(Bitmaps[BITMAP_PRAY], x+190, y+10, NULL, NULL);
+    sprite_blt(Bitmaps[BITMAP_PRAY], x+184, y+5, NULL, NULL);
 }
 
 /* hp, grace.... */
