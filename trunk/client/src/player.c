@@ -185,7 +185,7 @@ static char *BreakMulticommand(char *command)
      */
     if (!(!strnicmp(command, "/tell", 5) || !strnicmp(command, "/say", 4) || !strnicmp(command, "/reply", 6) || !strnicmp(command, "/gsay", 5) || !strnicmp(command, "/shout", 6) || !strnicmp(command, "/talk", 5)
 #ifdef USE_CHANNELS
-     || (*command == '-')
+     || (*command == '-') || !strnicmp(command, "/channel", 8)
 #endif
     || !strnicmp(command, "/create", 7)))
     {
