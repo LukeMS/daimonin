@@ -1,77 +1,72 @@
-<?xml version="1.0"?>
-<!DOCTYPE CodeBlocks_project_file>
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_project_file>
-	<FileVersion major="1" minor="1"/>
+	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="updater"/>
-		<Option makefile="Makefile"/>
-		<Option makefile_is_custom="0"/>
-		<Option active_target="1"/>
-		<Option compiler="0"/>
+		<Option title="updater" />
+		<Option pch_mode="0" />
+		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="..\..\..\client_start.exe"/>
-				<Option working_dir="..\..\..\..\client"/>
-				<Option object_output="obj\Debug\"/>
-				<Option deps_output=".deps"/>
-				<Option type="1"/>
-				<Option compiler="0"/>
-				<Option projectResourceIncludeDirsRelation="1"/>
+				<Option output="..\..\..\client_start.exe" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="..\..\..\..\client" />
+				<Option object_output="obj\Debug\" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option projectResourceIncludeDirsRelation="1" />
 				<Compiler>
-					<Add option="-g"/>
+					<Add option="-g" />
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="..\..\..\client_start_d.exe"/>
-				<Option working_dir="..\..\..\..\client"/>
-				<Option object_output="obj\Release\"/>
-				<Option deps_output=".deps"/>
-				<Option type="1"/>
-				<Option compiler="0"/>
-				<Option projectResourceIncludeDirsRelation="1"/>
+				<Option output="..\..\..\client_start_d.exe" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="..\..\..\..\client" />
+				<Option object_output="obj\Release\" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option projectResourceIncludeDirsRelation="1" />
 				<Compiler>
-					<Add option="-O2"/>
-					<Add option="-s"/>
-					<Add option="-DWIN32"/>
-					<Add option="-D__WIN32"/>
-					<Add option="-DMINGW"/>
+					<Add option="-O2" />
+					<Add option="-s" />
+					<Add option="-DWIN32" />
+					<Add option="-D__WIN32" />
+					<Add option="-DMINGW" />
 				</Compiler>
 			</Target>
 		</Build>
+		<VirtualTargets>
+			<Add alias="All" targets="Debug;Release;" />
+		</VirtualTargets>
 		<Compiler>
-			<Add option="-Wall"/>
-			<Add directory="..\..\..\src\updater"/>
-			<Add directory="..\..\..\src\updater\include"/>
+			<Add option="-Wall" />
+			<Add option="-D__MINGW32__" />
+			<Add option="-D_WIN32" />
+			<Add option="-DCURL_STATICLIB" />
+			<Add directory="..\..\..\src\updater" />
+			<Add directory="..\..\..\src\updater\include" />
+			<Add directory="..\CodeBlocks" />
 		</Compiler>
+		<Linker>
+			<Add library="libcurl.a" />
+			<Add library="wsock32" />
+			<Add library="winmm" />
+			<Add directory="..\CodeBlocks" />
+		</Linker>
 		<Unit filename="updater.rc">
-			<Option compilerVar="WINDRES"/>
-			<Option objectName="make\win32\CodeBlocks\updater.res"/>
-			<Option target="Debug"/>
-			<Option target="Release"/>
+			<Option compilerVar="WINDRES" />
 		</Unit>
-		<Unit filename="..\..\..\src\updater\include\include.h">
-			<Option compilerVar="CPP"/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Debug"/>
-			<Option target="Release"/>
-		</Unit>
-		<Unit filename="..\..\..\src\updater\include\win32.h">
-			<Option compilerVar="CPP"/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Debug"/>
-			<Option target="Release"/>
-		</Unit>
+		<Unit filename="..\..\..\src\updater\include\include.h" />
+		<Unit filename="..\..\..\src\updater\include\win32.h" />
 		<Unit filename="..\..\..\src\updater\main.c">
-			<Option compilerVar="CC"/>
-			<Option target="Debug"/>
-			<Option target="Release"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\updater\win32.c">
-			<Option compilerVar="CC"/>
-			<Option target="Debug"/>
-			<Option target="Release"/>
+			<Option compilerVar="CC" />
 		</Unit>
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder />
+		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
