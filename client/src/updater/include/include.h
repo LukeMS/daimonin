@@ -80,6 +80,11 @@
 #define TRUE (!FALSE)
 #endif
 
+#include <curl/curl.h>
+#include <bzlib.h>
+
+#define BZ_VERBOSE 2
+
 extern int execute_process(char *p_path, char *exe_name, char *parms, char *output, int seconds_to_wait);
 
 #ifndef WIN32

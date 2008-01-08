@@ -22,7 +22,6 @@
 */
 
 #include "include/include.h"
-#include <curl/curl.h>
 
 #define UPDATE_URL "http://daimonin.sourceforge.net/patch/"
 
@@ -38,7 +37,7 @@
 #define FOLDER_TOOLS "tools/"
 //#define PROCESS_WGET "wget.exe"
 #define PROCESS_MD5 "md5sum.exe"
-#define PROCESS_BZ2 "bunzip2.exe"
+//#define PROCESS_BZ2 "bunzip2.exe"
 #define PROCESS_TAR "tar.exe"
 #define PROCESS_XDELTA "xdelta.exe"
 #define PROCESS_CLIENT "client.exe"
@@ -76,6 +75,7 @@ extern int process_patch_file(char *patch_file, int mode);
 extern void copy_patch(char *src, char *dest);
 extern int  download_file(char *url, char *remotefilename, char *destfolder, char *destfilename);
 int curl_progresshandler(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow);
+extern int  bunzip2(char *infile, char *outfile);
 
 
 
@@ -159,7 +159,6 @@ int main(int argc, char *argv[])
     /*    struct flock fl = { F_RDLCK, SEEK_SET, 0,       0,     0 };*/
 #endif
     printf("Daimonin AutoUpdater 1.0a\n\n");
-
 
     curlhandle = curl_easy_init();
     if (!curlhandle)
@@ -359,9 +358,18 @@ int main(int argc, char *argv[])
             printf("MD5 check - ok.\n");
 
             /* unpack pach file */
-            sprintf(process_path,"%s%s%s", prg_path, FOLDER_TOOLS, PROCESS_BZ2);
-            sprintf(parms,"-k %s/%s", FOLDER_UPDATE,file_name);
-            execute_process(process_path, PROCESS_BZ2, parms, NULL, 1);
+            sprintf(parms,"%s/%s", FOLDER_UPDATE,file_name);
+            sprintf(buf,"%s/%s", FOLDER_UPDATE,file_name);
+            string_pos = strrchr(buf, '.'); /* kill the .bz2 */
+            if (string_pos)
+                *string_pos = '\0';
+            if (!bunzip2(parms, buf))
+            {
+                printf("Error extracting file: %s\n",file_name);
+            }
+//            sprintf(process_path,"%s%s%s", prg_path, FOLDER_TOOLS, PROCESS_BZ2);
+//            sprintf(parms,"-k %s/%s", FOLDER_UPDATE,file_name);
+//            execute_process(process_path, PROCESS_BZ2, parms, NULL, 1);
             sprintf(process_path,"%s%s%s", prg_path, FOLDER_TOOLS, PROCESS_TAR);
             sprintf(buf,"%s/%s", FOLDER_UPDATE,file_name);
             string_pos = strrchr(buf, '.'); /* kill the .bz2 */
@@ -864,3 +872,59 @@ int curl_progresshandler(void *clientp, double dltotal, double dlnow, double ult
     return 0;
 }
 
+extern int  bunzip2(char *infile, char *outfile)
+{
+#define BZ_BUFSIZE 1024*512
+    FILE    *in = NULL;
+    FILE    *out = NULL;
+    BZFILE  *bzf = NULL;
+    char    buf[BZ_BUFSIZE];
+    int     bzer = 0, readlen = 0;
+    int     error = FALSE;
+
+    out=fopen(outfile, "wb+");
+    if (!out)
+        updater_error("unpack: could not open file for writing.");
+    in = fopen(infile, "rb");
+    if (!in)
+    {
+        printf("unpack: could not open input file.\n ");
+        error = TRUE;
+        goto cleanup;
+    }
+    bzf = BZ2_bzReadOpen(&bzer, in, BZ_VERBOSE, 0, NULL, 0);
+    if (bzer!=BZ_OK)
+    {
+        error = TRUE;
+        printf("unpack: bz_open error: %d\n", bzer);
+        goto cleanup_both;
+    }
+
+    readlen = BZ2_bzRead(&bzer, bzf, &buf, BZ_BUFSIZE);
+    while (bzer==BZ_OK)
+    {
+        fwrite(&buf, readlen, 1, out);
+        readlen = BZ2_bzRead(&bzer, bzf, &buf, BZ_BUFSIZE);
+    }
+
+    if (bzer==BZ_STREAM_END)
+        fwrite(&buf, readlen, 1, out);
+    else
+    {
+        printf("unpack: bz_read error: %d\n",bzer);
+        error = TRUE;
+    }
+
+    BZ2_bzReadClose(&bzer,bzf);
+
+cleanup_both:
+    fclose(in);
+cleanup:
+    fclose(out);
+
+    if (error)
+        return FALSE;
+
+    return TRUE;
+#undef BZ_BUFSIZE
+}
