@@ -33,6 +33,7 @@ typedef struct _option
     char           *name;
     char           *info1;  /* info text row 1 */
     char           *info2;  /* info text row 2 */
+    char           *info3;  /* info text row 3 */
     char           *val_text; /* text-replacement for number values */
     int             sel_type;
     int             minRange, maxRange, deltaRange;
