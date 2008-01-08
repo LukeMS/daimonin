@@ -10,10 +10,10 @@ rem ====================================
 ..\..\_Tools_\tar xvf sdl_lib.tar
 ..\..\_Tools_\gunzip -c sdl_inc.tgz >sdl_inc.tar
 ..\..\_Tools_\tar xvf sdl_inc.tar
-..\..\_Tools_\gunzip -c sdl_dll.tgz >sdl_dll.tar
-..\..\_Tools_\tar xvf sdl_dll.tar
 ..\..\_Tools_\gunzip -c curl.tgz >curl.tar
 ..\..\_Tools_\tar xvf curl.tar
+..\..\_Tools_\gunzip -c sdl_dll.tgz >sdl_dll.tar
+..\..\_Tools_\tar xvf sdl_dll.tar
 
 rem ====================================
 rem Copy the dll's to main folder.

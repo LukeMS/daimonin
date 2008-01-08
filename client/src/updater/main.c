@@ -855,7 +855,7 @@ int curl_progresshandler(void *clientp, double dltotal, double dlnow, double ult
         char outstring[51];
         int i = 0;
 
-        step = (int) (round((dlnow / dltotal)*50.0f));
+        step = (int) ((dlnow / dltotal)*50.0f +0.5);
 
         outstring[0]='\0';
         for (i=1;i<=step;i++)
