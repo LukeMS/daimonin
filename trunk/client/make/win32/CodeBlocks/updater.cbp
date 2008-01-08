@@ -41,6 +41,7 @@
 			<Add option="-D__MINGW32__" />
 			<Add option="-D_WIN32" />
 			<Add option="-DCURL_STATICLIB" />
+			<Add option="-DMINGW" />
 			<Add directory="..\..\..\src\updater" />
 			<Add directory="..\..\..\src\updater\include" />
 			<Add directory="..\CodeBlocks" />
@@ -49,6 +50,7 @@
 			<Add library="libcurl.a" />
 			<Add library="wsock32" />
 			<Add library="winmm" />
+			<Add library="libbz2.a" />
 			<Add directory="..\CodeBlocks" />
 		</Linker>
 		<Unit filename="updater.rc">
