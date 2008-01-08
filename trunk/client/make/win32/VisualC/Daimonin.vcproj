@@ -36,7 +36,7 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="WIN32;_DEBUG"
+				PreprocessorDefinitions="_DEBUG"
 				MkTypLibCompatible="true"
 				SuppressStartupBanner="true"
 				TargetEnvironment="1"
@@ -46,7 +46,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="../../../,../../../src/include,.\sdl_inc,.\sdl_inc\SDL\"
-				PreprocessorDefinitions="WIN32;_DEBUG;__WIN_32"
+				PreprocessorDefinitions="WIN32,_DEBUG,__WIN_32"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
@@ -56,7 +56,7 @@
 				ObjectFile=".\Debug/"
 				ProgramDataBaseFileName=".\Debug/"
 				WarningLevel="3"
-				WarnAsError="true"
+				WarnAsError="false"
 				SuppressStartupBanner="true"
 				DebugInformationFormat="3"
 				CompileAs="0"
@@ -66,7 +66,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="WIN32;_DEBUG"
+				PreprocessorDefinitions="_DEBUG"
 				Culture="1031"
 			/>
 			<Tool
@@ -135,7 +135,7 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="WIN32;NDEBUG"
+				PreprocessorDefinitions="NDEBUG"
 				MkTypLibCompatible="true"
 				SuppressStartupBanner="true"
 				TargetEnvironment="1"
@@ -147,8 +147,8 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="../../../,../../../src/include,.\sdl_inc,.\sdl_inc\SDL\"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;__WIN_32"
+				AdditionalIncludeDirectories="../../../;../../../src/include;.\sdl_inc;.\sdl_inc\SDL\;../"
+				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,__WIN_32"
 				ExceptionHandling="0"
 				RuntimeLibrary="0"
 				PrecompiledHeaderThrough=""
@@ -159,7 +159,6 @@
 				WarningLevel="3"
 				WarnAsError="false"
 				SuppressStartupBanner="true"
-				Detect64BitPortabilityProblems="true"
 				CompileAs="1"
 			/>
 			<Tool
@@ -167,7 +166,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="WIN32;NDEBUG"
+				PreprocessorDefinitions="NDEBUG"
 				Culture="1031"
 			/>
 			<Tool
@@ -176,7 +175,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="wsock32.lib advapi32.lib"
+				AdditionalDependencies="wsock32.lib"
 				OutputFile=".\Release/client.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -533,6 +532,10 @@
 				>
 			</File>
 		</Filter>
+		<File
+			RelativePath=".\sdl_lib\libbz2.lib"
+			>
+		</File>
 		<File
 			RelativePath=".\sdl_lib\physfs.lib"
 			>

@@ -3,7 +3,6 @@
 	ProjectType="Visual C++"
 	Version="8,00"
 	Name="updater"
-	ProjectGUID="{B0ECC11F-F5EB-4081-A7C0-65C5A88CF9BD}"
 	>
 	<Platforms>
 		<Platform
@@ -45,7 +44,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../../../../,../../../src/updater,../../../../src/updater/include"
+				AdditionalIncludeDirectories="../../../../../;../../../src/updater;../../../../src/updater/include;../../../win32\VisualC\curl"
 				PreprocessorDefinitions="WIN32,_DEBUG,__WIN_32"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -145,7 +144,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="../../../../../,../../../src/updater,../../../../src/updater/include"
+				AdditionalIncludeDirectories="../../../../../;../../../src/updater;../../../../src/updater/include;../../../../make/win32/VisualC;../../../../make/win32/VisualC/curl"
 				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,__WIN_32"
 				ExceptionHandling="0"
 				RuntimeLibrary="0"
@@ -155,7 +154,7 @@
 				ObjectFile=".\Release/"
 				ProgramDataBaseFileName=".\Release/"
 				WarningLevel="3"
-				WarnAsError="true"
+				WarnAsError="false"
 				SuppressStartupBanner="true"
 				CompileAs="0"
 			/>
@@ -173,6 +172,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
+				AdditionalDependencies="wsock32.lib $(NOINHERIT)"
 				OutputFile=".\Release/daimonin_start.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -255,6 +255,14 @@
 				>
 			</File>
 		</Filter>
+		<File
+			RelativePath="..\sdl_lib\libbz2.lib"
+			>
+		</File>
+		<File
+			RelativePath="..\sdl_lib\libcurl_imp.lib"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
