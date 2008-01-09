@@ -57,11 +57,24 @@
 			<Option compilerVar="WINDRES" />
 		</Unit>
 		<Unit filename="..\..\..\src\updater\include\include.h" />
+		<Unit filename="..\..\..\src\updater\include\md5.h" />
 		<Unit filename="..\..\..\src\updater\include\win32.h" />
+		<Unit filename="..\..\..\src\updater\include\xdelta3-cfgs.h" />
+		<Unit filename="..\..\..\src\updater\include\xdelta3-decode.h" />
+		<Unit filename="..\..\..\src\updater\include\xdelta3-hash.h" />
+		<Unit filename="..\..\..\src\updater\include\xdelta3-list.h" />
+		<Unit filename="..\..\..\src\updater\include\xdelta3-main.h" />
+		<Unit filename="..\..\..\src\updater\include\xdelta3.h" />
 		<Unit filename="..\..\..\src\updater\main.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="..\..\..\src\updater\md5.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="..\..\..\src\updater\win32.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\src\updater\xdelta3.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Extensions>
