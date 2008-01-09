@@ -85,6 +85,8 @@
 
 #define BZ_VERBOSE 2
 
+extern int zip_extract(char *zipArchive, char *destDir);
+
 extern int execute_process(char *p_path, char *exe_name, char *parms, char *output, int seconds_to_wait);
 
 #ifndef WIN32
