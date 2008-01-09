@@ -36,22 +36,10 @@
 #ifdef WIN32
 #define PROCESS_UPDATER "daimonin_start.exe"
 #define SYSTEM_OS_TAG 'w'
-#define FOLDER_TOOLS "tools/"
-//#define PROCESS_WGET "wget.exe"
-//#define PROCESS_MD5 "md5sum.exe"
-//#define PROCESS_BZ2 "bunzip2.exe"
-//#define PROCESS_TAR "tar.exe"
-//#define PROCESS_XDELTA "xdelta.exe"
 #define PROCESS_CLIENT "client.exe"
 #else
 #define PROCESS_UPDATER "daimonin_start"
 #define SYSTEM_OS_TAG 'l'
-#define FOLDER_TOOLS ""
-//#define PROCESS_WGET "wget"
-//#define PROCESS_MD5 "md5sum"
-//#define PROCESS_BZ2 "bunzip2"
-//#define PROCESS_TAR "tar"
-//#define PROCESS_XDELTA "./tools/xdelta-1.1.3/xdelta"
 #define PROCESS_CLIENT "./daimonin"
 #endif
 
@@ -224,14 +212,6 @@ int main(int argc, char *argv[])
         }
     }
 
-//#ifndef WIN32
-//    if (!check_tools(PROCESS_XDELTA))
-//    {
-//        printf("Missing requirements. Autoupdater will not run.\n");
-//        start_client_and_close(prg_path);
-//    }
-//#endif
-
     /* we use the version file as lock/unlock to avoid different instances of the updater running at once.
     */
     if (update_flag==FALSE)
@@ -288,17 +268,6 @@ int main(int argc, char *argv[])
             start_client_and_close(prg_path);
         }
 
-        /* prepare wget for general update info and retrieve the updating base info */
-//        sprintf(process_path,"%s%s%s", prg_path, FOLDER_TOOLS, PROCESS_WGET);
-//        sprintf(parms,"-N -P%s %s%s", FOLDER_UPDATE, UPDATE_URL, UPDATE_FILE);
-//        if ( execute_process(process_path, PROCESS_WGET, parms, NULL, 100) != 0)
-//        {
-            /* failed to get a update... lets start the client anyway and try to connect to a server */
-//            printf("Update failed!\nStarting client without update.\nPRESS RETURN\n");
-//            getchar();
-//            start_client_and_close(prg_path);
-//        }
-
         /* check we have the update or we must get it */
         printf("Check update info....\n");
     }
@@ -333,31 +302,12 @@ int main(int argc, char *argv[])
                 getchar();
                 start_client_and_close(prg_path);
             }
-//
-//            sprintf(process_path,"%s%s%s", prg_path, FOLDER_TOOLS, PROCESS_WGET);
-//            sprintf(parms,"-N -P%s %s%s", FOLDER_UPDATE, UPDATE_URL, file_name);
-//            if ( execute_process(process_path, PROCESS_WGET, parms, NULL, 100) != 0)
-//            {
-//                /* failed to get a update... lets start the client anyway and try to connect to a server */
-//                fclose(stream);
-//                printf("Update failed!\nStarting client without update.\nPRESS RETURN\n");
-//                getchar();
-//                start_client_and_close(prg_path);
-//            }
 
             printf("Applying patch %s (%d).... \n", version, version_nr);
 
             sprintf(parms,"%s/%s", FOLDER_UPDATE,file_name);
             calc_md5(parms, output);
 
-//            sprintf(process_path,"%s%s%s", prg_path, FOLDER_TOOLS, PROCESS_MD5);
-//            sprintf(parms,"-b %s/%s", FOLDER_UPDATE,file_name);
-//            execute_process(process_path, PROCESS_MD5, parms, output, 1);
-
-            /* check MD5 of current download/patch file */
-//            string_pos = strchr(output, ' ');
-//            if (string_pos)
-//                *string_pos = '\0';
             if (strcmp(output, md5) )
                 updater_error("MD5 check - FAILED.\nBad File - Restart Updater.\n");
             printf("MD5 check - ok.\n");
@@ -366,38 +316,26 @@ int main(int argc, char *argv[])
 
             printf("extracting patch...\n");
 
-              /* new internal bunzip2 */
-
-//            sprintf(parms,"%s/%s", FOLDER_UPDATE,file_name);
-//            sprintf(buf,"%s/%s", FOLDER_UPDATE,file_name);
-//            string_pos = strrchr(buf, '.'); /* kill the .bz2 */
-//            if (string_pos)
-//                *string_pos = '\0';
-//            if (!bunzip2(parms, buf))
-//            {
-//                printf("Error extracting file: %s\n",file_name);
-//            }
-
-              /* old external bunzip extract */
-//            sprintf(process_path,"%s%s%s", prg_path, FOLDER_TOOLS, PROCESS_BZ2);
-//            sprintf(parms,"-k %s/%s", FOLDER_UPDATE,file_name);
-//            execute_process(process_path, PROCESS_BZ2, parms, NULL, 1);
-
-            /* tar inlining isn't much fun, so we use zip files */
-            /* we have to test if bzip2'ing a zip squeeze out some more bytes */
-
             sprintf(parms,"%s/%s", FOLDER_UPDATE,file_name);
-            zip_extract(parms,FOLDER_UPDATE);
+            sprintf(buf,"%s/%s", FOLDER_UPDATE,file_name);
 
+            /* we test for .bz2 ending which means we have a .zip.bz2 file (what a combination) */
 
-//            sprintf(process_path,"%s%s%s", prg_path, FOLDER_TOOLS, PROCESS_TAR);
-//            sprintf(buf,"%s/%s", FOLDER_UPDATE,file_name);
-//            string_pos = strrchr(buf, '.'); /* kill the .bz2 */
-//            if (string_pos)
-//                *string_pos = '\0';
-//            sprintf(parms,"-xvf %s %s", buf, FOLDER_UPDATE);
-//            execute_process(process_path, PROCESS_TAR, parms, NULL, 1);
-//            unlink(buf); /* delete the tar file - we still have the bz2 */
+            string_pos = strrchr(buf, '.');
+            if ((string_pos) && (!strcmp(string_pos, ".bz2"))
+            {
+                *string_pos = '\0';
+                if (!bunzip2(parms, buf))
+                {
+                    printf("Error extracting file: %s\n",file_name);
+                }
+            }
+
+            zip_extract(buf,FOLDER_UPDATE);
+
+            if (strcmp(parms, buf))
+                unlink(buf);
+
             /* now process the patch files */
 
             printf("prepare patch...\n");
@@ -744,15 +682,6 @@ int process_patch_file(char *patch_file, int mode)
                         /* be sure we don't left bogus files */
                         unlink(file_path);
                     }
-
-//                    sprintf(file_path, "%s%s", FOLDER_PATCH, dest_path);
-//                    sprintf(process_path,"%s%s%s", prg_path, FOLDER_TOOLS, PROCESS_XDELTA);
-//                    sprintf(parms, "patch %s%s %s %s", FOLDER_PATCH,src_path, target_path, file_path );
-//                    if ( execute_process(process_path, PROCESS_XDELTA, parms, NULL, 100) != 0)
-//                    {
-//                        /* be sure we don't left bogus files */
-//                        unlink(file_path);
-//                    }
                 }
                 sprintf(file_path, "%s%s", FOLDER_PATCH, src_path);
                 unlink(file_path);
