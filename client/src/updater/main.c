@@ -40,7 +40,7 @@
 //#define PROCESS_WGET "wget.exe"
 //#define PROCESS_MD5 "md5sum.exe"
 //#define PROCESS_BZ2 "bunzip2.exe"
-#define PROCESS_TAR "tar.exe"
+//#define PROCESS_TAR "tar.exe"
 //#define PROCESS_XDELTA "xdelta.exe"
 #define PROCESS_CLIENT "client.exe"
 #else
@@ -50,7 +50,7 @@
 //#define PROCESS_WGET "wget"
 //#define PROCESS_MD5 "md5sum"
 //#define PROCESS_BZ2 "bunzip2"
-#define PROCESS_TAR "tar"
+//#define PROCESS_TAR "tar"
 //#define PROCESS_XDELTA "./tools/xdelta-1.1.3/xdelta"
 #define PROCESS_CLIENT "./daimonin"
 #endif
@@ -363,27 +363,43 @@ int main(int argc, char *argv[])
             printf("MD5 check - ok.\n");
 
             /* unpack pach file */
-            sprintf(parms,"%s/%s", FOLDER_UPDATE,file_name);
-            sprintf(buf,"%s/%s", FOLDER_UPDATE,file_name);
-            string_pos = strrchr(buf, '.'); /* kill the .bz2 */
-            if (string_pos)
-                *string_pos = '\0';
-            if (!bunzip2(parms, buf))
-            {
-                printf("Error extracting file: %s\n",file_name);
-            }
+
+            printf("extracting patch...\n");
+
+              /* new internal bunzip2 */
+
+//            sprintf(parms,"%s/%s", FOLDER_UPDATE,file_name);
+//            sprintf(buf,"%s/%s", FOLDER_UPDATE,file_name);
+//            string_pos = strrchr(buf, '.'); /* kill the .bz2 */
+//            if (string_pos)
+//                *string_pos = '\0';
+//            if (!bunzip2(parms, buf))
+//            {
+//                printf("Error extracting file: %s\n",file_name);
+//            }
+
+              /* old external bunzip extract */
 //            sprintf(process_path,"%s%s%s", prg_path, FOLDER_TOOLS, PROCESS_BZ2);
 //            sprintf(parms,"-k %s/%s", FOLDER_UPDATE,file_name);
 //            execute_process(process_path, PROCESS_BZ2, parms, NULL, 1);
-            sprintf(process_path,"%s%s%s", prg_path, FOLDER_TOOLS, PROCESS_TAR);
-            sprintf(buf,"%s/%s", FOLDER_UPDATE,file_name);
-            string_pos = strrchr(buf, '.'); /* kill the .bz2 */
-            if (string_pos)
-                *string_pos = '\0';
-            sprintf(parms,"-xvf %s %s", buf, FOLDER_UPDATE);
-            execute_process(process_path, PROCESS_TAR, parms, NULL, 1);
-            unlink(buf); /* delete the tar file - we still have the bz2 */
+
+            /* tar inlining isn't much fun, so we use zip files */
+            /* we have to test if bzip2'ing a zip squeeze out some more bytes */
+
+            sprintf(parms,"%s/%s", FOLDER_UPDATE,file_name);
+            zip_extract(parms,FOLDER_UPDATE);
+
+
+//            sprintf(process_path,"%s%s%s", prg_path, FOLDER_TOOLS, PROCESS_TAR);
+//            sprintf(buf,"%s/%s", FOLDER_UPDATE,file_name);
+//            string_pos = strrchr(buf, '.'); /* kill the .bz2 */
+//            if (string_pos)
+//                *string_pos = '\0';
+//            sprintf(parms,"-xvf %s %s", buf, FOLDER_UPDATE);
+//            execute_process(process_path, PROCESS_TAR, parms, NULL, 1);
+//            unlink(buf); /* delete the tar file - we still have the bz2 */
             /* now process the patch files */
+
             printf("prepare patch...\n");
         }
         process_patch_file(UPDATE_PATCH_FILE, FALSE);
@@ -885,7 +901,7 @@ int curl_progresshandler(void *clientp, double dltotal, double dlnow, double ult
     return 0;
 }
 
-extern int  bunzip2(char *infile, char *outfile)
+extern int bunzip2(char *infile, char *outfile)
 {
 #define BZ_BUFSIZE 1024*512
     FILE    *in = NULL;
@@ -1000,13 +1016,13 @@ process:
     {
     case XD3_INPUT:
       {
-        printf("XD3_INPUT\n");
+//        printf("XD3_INPUT\n");
         continue;
       }
 
     case XD3_OUTPUT:
       {
-        printf("XD3_OUTPUT\n");
+//        printf("XD3_OUTPUT\n");
         r = fwrite(stream.next_out, 1, stream.avail_out, destFile);
         if (r != (int)stream.avail_out)
           return r;
@@ -1016,7 +1032,7 @@ process:
 
     case XD3_GETSRCBLK:
       {
-        printf("XD3_GETSRCBLK %qd\n", source.getblkno);
+//        printf("XD3_GETSRCBLK %d\n", source.getblkno);
         if (oldFile)
         {
           r = fseek(oldFile, source.blksize * source.getblkno, SEEK_SET);
@@ -1031,19 +1047,19 @@ process:
 
     case XD3_GOTHEADER:
       {
-        printf("XD3_GOTHEADER\n");
+//        printf("XD3_GOTHEADER\n");
         goto process;
       }
 
     case XD3_WINSTART:
       {
-        printf("XD3_WINSTART\n");
+//        printf("XD3_WINSTART\n");
         goto process;
       }
 
     case XD3_WINFINISH:
       {
-        printf("XD3_WINFINISH\n");
+//        printf("XD3_WINFINISH\n");
         goto process;
       }
 

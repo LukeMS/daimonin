@@ -45,16 +45,44 @@
 			<Add directory="..\..\..\src\updater" />
 			<Add directory="..\..\..\src\updater\include" />
 			<Add directory="..\CodeBlocks" />
+			<Add directory="..\..\..\src\include" />
+			<Add directory="..\..\..\src" />
 		</Compiler>
 		<Linker>
 			<Add library="libcurl.a" />
 			<Add library="wsock32" />
 			<Add library="winmm" />
 			<Add library="libbz2.a" />
+			<Add library="libphysfs.a" />
 			<Add directory="..\CodeBlocks" />
 		</Linker>
 		<Unit filename="updater.rc">
 			<Option compilerVar="WINDRES" />
+		</Unit>
+		<Unit filename="..\..\..\src\adler32.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\src\crc32.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\src\include\crc32.h" />
+		<Unit filename="..\..\..\src\include\inffast.h" />
+		<Unit filename="..\..\..\src\include\inflate.h" />
+		<Unit filename="..\..\..\src\include\inftrees.h" />
+		<Unit filename="..\..\..\src\include\zconf.h" />
+		<Unit filename="..\..\..\src\include\zlib.h" />
+		<Unit filename="..\..\..\src\include\zutil.h" />
+		<Unit filename="..\..\..\src\inffast.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\src\inflate.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\src\inftrees.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\src\uncompr.c">
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\updater\include\include.h" />
 		<Unit filename="..\..\..\src\updater\include\md5.h" />
@@ -71,10 +99,16 @@
 		<Unit filename="..\..\..\src\updater\md5.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="..\..\..\src\updater\physfsunpack.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="..\..\..\src\updater\win32.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\updater\xdelta3.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\src\zutil.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Extensions>
