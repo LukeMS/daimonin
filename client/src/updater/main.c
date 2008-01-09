@@ -22,6 +22,8 @@
 */
 
 #include "include/include.h"
+#include "include/md5.h"
+#include "include/xdelta3.h"
 
 #define UPDATE_URL "http://daimonin.sourceforge.net/patch/"
 
@@ -39,17 +41,17 @@
 #define PROCESS_MD5 "md5sum.exe"
 //#define PROCESS_BZ2 "bunzip2.exe"
 #define PROCESS_TAR "tar.exe"
-#define PROCESS_XDELTA "xdelta.exe"
+//#define PROCESS_XDELTA "xdelta.exe"
 #define PROCESS_CLIENT "client.exe"
 #else
 #define PROCESS_UPDATER "daimonin_start"
 #define SYSTEM_OS_TAG 'l'
 #define FOLDER_TOOLS ""
-#define PROCESS_WGET "wget"
+//#define PROCESS_WGET "wget"
 #define PROCESS_MD5 "md5sum"
-#define PROCESS_BZ2 "bunzip2"
+//#define PROCESS_BZ2 "bunzip2"
 #define PROCESS_TAR "tar"
-#define PROCESS_XDELTA "./tools/xdelta-1.1.3/xdelta"
+//#define PROCESS_XDELTA "./tools/xdelta-1.1.3/xdelta"
 #define PROCESS_CLIENT "./daimonin"
 #endif
 
@@ -76,8 +78,8 @@ extern void copy_patch(char *src, char *dest);
 extern int  download_file(char *url, char *remotefilename, char *destfolder, char *destfilename);
 int curl_progresshandler(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow);
 extern int  bunzip2(char *infile, char *outfile);
-
-
+int process_xdelta3(FILE*  patchFile, FILE*  oldFile, FILE* destFile, int BufSize);
+extern int  apply_xdelta3(char *patchfile, char *oldfile, char *destfile);
 
 static void free_resources(void)
 {
@@ -154,7 +156,6 @@ int main(int argc, char *argv[])
     char version[256], buf[256], *string_pos;
     char file_name[256], md5[64];
 
-
 #ifndef WIN32
     /*    struct flock fl = { F_RDLCK, SEEK_SET, 0,       0,     0 };*/
 #endif
@@ -222,13 +223,13 @@ int main(int argc, char *argv[])
         }
     }
 
-#ifndef WIN32
-    if (!check_tools(PROCESS_XDELTA))
-    {
-        printf("Missing requirements. Autoupdater will not run.\n");
-        start_client_and_close(prg_path);
-    }
-#endif
+//#ifndef WIN32
+//    if (!check_tools(PROCESS_XDELTA))
+//    {
+//        printf("Missing requirements. Autoupdater will not run.\n");
+//        start_client_and_close(prg_path);
+//    }
+//#endif
 
     /* we use the version file as lock/unlock to avoid different instances of the updater running at once.
     */
@@ -717,13 +718,21 @@ int process_patch_file(char *patch_file, int mode)
                     /*printf("XDELTA: %s %s %s\n", src_path, target_path, dest_path);*/
 
                     sprintf(file_path, "%s%s", FOLDER_PATCH, dest_path);
-                    sprintf(process_path,"%s%s%s", prg_path, FOLDER_TOOLS, PROCESS_XDELTA);
-                    sprintf(parms, "patch %s%s %s %s", FOLDER_PATCH,src_path, target_path, file_path );
-                    if ( execute_process(process_path, PROCESS_XDELTA, parms, NULL, 100) != 0)
+                    sprintf(parms, "%s%s", FOLDER_PATCH,src_path);
+                    if (!apply_xdelta3(parms, target_path ,file_path))
                     {
                         /* be sure we don't left bogus files */
                         unlink(file_path);
                     }
+
+//                    sprintf(file_path, "%s%s", FOLDER_PATCH, dest_path);
+//                    sprintf(process_path,"%s%s%s", prg_path, FOLDER_TOOLS, PROCESS_XDELTA);
+//                    sprintf(parms, "patch %s%s %s %s", FOLDER_PATCH,src_path, target_path, file_path );
+//                    if ( execute_process(process_path, PROCESS_XDELTA, parms, NULL, 100) != 0)
+//                    {
+//                        /* be sure we don't left bogus files */
+//                        unlink(file_path);
+//                    }
                 }
                 sprintf(file_path, "%s%s", FOLDER_PATCH, src_path);
                 unlink(file_path);
@@ -927,4 +936,161 @@ cleanup:
 
     return TRUE;
 #undef BZ_BUFSIZE
+}
+
+int process_xdelta3(FILE*  patchFile, FILE*  oldFile, FILE* destFile, int BufSize)
+{
+  int r, ret;
+  struct stat statbuf;
+  xd3_stream stream;
+  xd3_config config;
+  xd3_source source;
+  void* Input_Buf;
+  int Input_Buf_Read;
+
+  if (BufSize < XD3_ALLOCSIZE)
+    BufSize = XD3_ALLOCSIZE;
+
+  memset (&stream, 0, sizeof (stream));
+  memset (&source, 0, sizeof (source));
+
+  xd3_init_config(&config, XD3_ADLER32);
+  config.winsize = BufSize;
+  xd3_config_stream(&stream, &config);
+
+  if (oldFile)
+  {
+    r = fstat(fileno(oldFile), &statbuf);
+    if (r)
+      return r;
+    source.size = statbuf.st_size;
+    source.blksize = BufSize;
+    source.curblk = malloc(source.blksize);
+
+    /* Load 1st block of stream. */
+    r = fseek(oldFile, 0, SEEK_SET);
+    if (r)
+      return r;
+    source.onblk = fread((void*)source.curblk, 1, source.blksize, oldFile);
+    source.curblkno = 0;
+    /* Set the stream. */
+    xd3_set_source(&stream, &source);
+  }
+
+  Input_Buf = malloc(BufSize);
+
+  fseek(patchFile, 0, SEEK_SET);
+  do
+  {
+    Input_Buf_Read = fread(Input_Buf, 1, BufSize, patchFile);
+    if (Input_Buf_Read < BufSize)
+    {
+      xd3_set_flags(&stream, XD3_FLUSH);
+    }
+    xd3_avail_input(&stream, Input_Buf, Input_Buf_Read);
+
+process:
+    ret = xd3_decode_input(&stream);
+
+    switch (ret)
+    {
+    case XD3_INPUT:
+      {
+        printf("XD3_INPUT\n");
+        continue;
+      }
+
+    case XD3_OUTPUT:
+      {
+        printf("XD3_OUTPUT\n");
+        r = fwrite(stream.next_out, 1, stream.avail_out, destFile);
+        if (r != (int)stream.avail_out)
+          return r;
+	xd3_consume_output(&stream);
+        goto process;
+      }
+
+    case XD3_GETSRCBLK:
+      {
+        printf("XD3_GETSRCBLK %qd\n", source.getblkno);
+        if (oldFile)
+        {
+          r = fseek(oldFile, source.blksize * source.getblkno, SEEK_SET);
+          if (r)
+            return r;
+          source.onblk = fread((void*)source.curblk, 1,
+			       source.blksize, oldFile);
+          source.curblkno = source.getblkno;
+        }
+        goto process;
+      }
+
+    case XD3_GOTHEADER:
+      {
+        printf("XD3_GOTHEADER\n");
+        goto process;
+      }
+
+    case XD3_WINSTART:
+      {
+        printf("XD3_WINSTART\n");
+        goto process;
+      }
+
+    case XD3_WINFINISH:
+      {
+        printf("XD3_WINFINISH\n");
+        goto process;
+      }
+
+    default:
+      {
+        printf("!!! INVALID %s %d !!!\n",
+		stream.msg, ret);
+        return ret;
+      }
+
+    }
+
+  }
+  while (Input_Buf_Read == BufSize);
+
+  free(Input_Buf);
+
+  free((void*)source.curblk);
+  xd3_close_stream(&stream);
+  xd3_free_stream(&stream);
+
+  return 0;
+
+}
+
+int apply_xdelta3(char *patchfile, char *oldfile, char *destfile)
+{
+    FILE   *oldFile = NULL;
+    FILE   *patchFile = NULL;
+    FILE   *destFile = NULL;
+    int ret = 0;
+
+    printf("applying patch: %s...",patchfile);
+
+    oldFile = fopen(oldfile, "rb");
+    patchFile = fopen(patchfile, "rb");
+    destFile = fopen(destfile, "wb");
+
+    ret = process_xdelta3(patchFile, oldFile, destFile, 1024*32);
+
+    fclose(oldFile);
+    fclose(patchFile);
+    fclose(destFile);
+
+    if (ret==0)
+    {
+        printf("ok\n");
+        return TRUE;
+    } else {
+        printf("failed: %s\n",xd3_strerror(ret));
+        return FALSE;
+    }
+
 }

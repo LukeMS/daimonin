@@ -3,6 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8,00"
 	Name="client"
+	ProjectGUID="{029B7383-4C4F-4660-BB6E-F471A85986E5}"
 	RootNamespace="client"
 	>
 	<Platforms>
