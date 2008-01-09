@@ -38,7 +38,7 @@
 #define SYSTEM_OS_TAG 'w'
 #define FOLDER_TOOLS "tools/"
 //#define PROCESS_WGET "wget.exe"
-#define PROCESS_MD5 "md5sum.exe"
+//#define PROCESS_MD5 "md5sum.exe"
 //#define PROCESS_BZ2 "bunzip2.exe"
 #define PROCESS_TAR "tar.exe"
 //#define PROCESS_XDELTA "xdelta.exe"
@@ -48,7 +48,7 @@
 #define SYSTEM_OS_TAG 'l'
 #define FOLDER_TOOLS ""
 //#define PROCESS_WGET "wget"
-#define PROCESS_MD5 "md5sum"
+//#define PROCESS_MD5 "md5sum"
 //#define PROCESS_BZ2 "bunzip2"
 #define PROCESS_TAR "tar"
 //#define PROCESS_XDELTA "./tools/xdelta-1.1.3/xdelta"
@@ -80,6 +80,7 @@ int curl_progresshandler(void *clientp, double dltotal, double dlnow, double ult
 extern int  bunzip2(char *infile, char *outfile);
 int process_xdelta3(FILE*  patchFile, FILE*  oldFile, FILE* destFile, int BufSize);
 extern int  apply_xdelta3(char *patchfile, char *oldfile, char *destfile);
+extern int  calc_md5(char *filename, char *outputbuf);
 
 static void free_resources(void)
 {
@@ -346,14 +347,17 @@ int main(int argc, char *argv[])
 
             printf("Applying patch %s (%d).... \n", version, version_nr);
 
-            sprintf(process_path,"%s%s%s", prg_path, FOLDER_TOOLS, PROCESS_MD5);
-            sprintf(parms,"-b %s/%s", FOLDER_UPDATE,file_name);
-            execute_process(process_path, PROCESS_MD5, parms, output, 1);
+            sprintf(parms,"%s/%s", FOLDER_UPDATE,file_name);
+            calc_md5(parms, output);
+
+//            sprintf(process_path,"%s%s%s", prg_path, FOLDER_TOOLS, PROCESS_MD5);
+//            sprintf(parms,"-b %s/%s", FOLDER_UPDATE,file_name);
+//            execute_process(process_path, PROCESS_MD5, parms, output, 1);
 
             /* check MD5 of current download/patch file */
-            string_pos = strchr(output, ' ');
-            if (string_pos)
-                *string_pos = '\0';
+//            string_pos = strchr(output, ' ');
+//            if (string_pos)
+//                *string_pos = '\0';
             if (strcmp(output, md5) )
                 updater_error("MD5 check - FAILED.\nBad File - Restart Updater.\n");
             printf("MD5 check - ok.\n");
@@ -1093,4 +1097,33 @@ int apply_xdelta3(char *patchfile, char *oldfile, char *destfile)
         return FALSE;
     }
 
+}
+
+int calc_md5(char *filename, char *outputbuf)
+{
+    FILE    *stream;
+    char    buf[32];
+    int     i;
+
+    stream = fopen(filename, "rb");
+    if (!stream)
+    {
+        printf("could not open file for reading: %s\n",filename);
+        return FALSE;
+    }
+    if (md5_stream(stream, buf)==1)
+    {
+        printf("error with md5 calc: %s\n",filename);
+        fclose(stream);
+        return FALSE;
+    }
+    /* convert the hex to string */
+    for (i=0;i<16;i++)
+    {
+        outputbuf[(i*2)]='\0';
+        sprintf(outputbuf, "%s%02x",outputbuf, buf[i]);
+    }
+
+    fclose(stream);
+    return TRUE;
 }
