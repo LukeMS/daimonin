@@ -332,32 +332,32 @@ AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h malloc.h netdb.h netinet/in.h std
 #
 
 if test "x$simplelayout" = "xyes"; then
-    build_xdelta="no"
+#    build_xdelta="no"
     
-    AC_PATH_PROG(BUNZIP2, bunzip2)
-    AC_PATH_PROG(MD5SUM, md5sum)
-    AC_PATH_PROG(WGET, wget)
-    AC_PATH_PROG(TAR, tar)
-    AC_PATH_PROG(XDELTA, xdelta)
+#    AC_PATH_PROG(BUNZIP2, bunzip2)
+#    AC_PATH_PROG(MD5SUM, md5sum)
+#    AC_PATH_PROG(WGET, wget)
+#    AC_PATH_PROG(TAR, tar)
+#    AC_PATH_PROG(XDELTA, xdelta)
 
     missing_binaries=""
-    if test "x$BUNZIP2" = "x"; then 
-        missing_binaries="${missing_binaries}bunzip2 "
-    fi
-    if test "x$MD5SUM" = "x"; then 
-        missing_binaries="${missing_binaries}md5sum "
-    fi
-    if test "x$WGET" = "x"; then 
-        missing_binaries="${missing_binaries}wget "
-    fi
-    if test "x$TAR" = "x"; then 
-        missing_binaries="${missing_binaries}tar "
-    fi
+#    if test "x$BUNZIP2" = "x"; then 
+#        missing_binaries="${missing_binaries}bunzip2 "
+#    fi
+#    if test "x$MD5SUM" = "x"; then 
+#        missing_binaries="${missing_binaries}md5sum "
+#    fi
+#    if test "x$WGET" = "x"; then 
+#        missing_binaries="${missing_binaries}wget "
+#    fi
+#    if test "x$TAR" = "x"; then 
+#        missing_binaries="${missing_binaries}tar "
+#    fi
     
     # TODO: build xdelta from tarball or embed into autoupdater
-    if test "x$XDELTA" = "x"; then 
-        missing_binaries="${missing_binaries}xdelta "
-    fi
+#    if test "x$XDELTA" = "x"; then 
+#        missing_binaries="${missing_binaries}xdelta "
+#    fi
 
     if test "x$missing_binaries" != "x"; then
         autoupdater="disabled (missing tool(s): $missing_binaries)"

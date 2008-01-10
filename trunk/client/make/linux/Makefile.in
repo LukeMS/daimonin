@@ -77,10 +77,17 @@ am_daimonin_OBJECTS = ../../src/adler32.$(OBJEXT) \
 	../../src/widget.$(OBJEXT) ../../src/zutil.$(OBJEXT)
 daimonin_OBJECTS = $(am_daimonin_OBJECTS)
 daimonin_DEPENDENCIES =
-am_daimonin_updater_OBJECTS = ../../src/updater/linux.$(OBJEXT) \
-	../../src/updater/main.$(OBJEXT)
+am_daimonin_updater_OBJECTS = ../../src/adler32.$(OBJEXT) \
+	../../src/crc32.$(OBJEXT) ../../src/inffast.$(OBJEXT) \
+	../../src/inflate.$(OBJEXT) ../../src/inftrees.$(OBJEXT) \
+	../../src/uncompr.$(OBJEXT) ../../src/zutil.$(OBJEXT) \
+	../../src/updater/linux.$(OBJEXT) \
+	../../src/updater/main.$(OBJEXT) \
+	../../src/updater/xdelta3.$(OBJEXT) \
+	../../src/updater/physfsunpack.$(OBJEXT) \
+	../../src/updater/md5.$(OBJEXT)
 daimonin_updater_OBJECTS = $(am_daimonin_updater_OBJECTS)
-daimonin_updater_LDADD = $(LDADD)
+daimonin_updater_DEPENDENCIES =
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/../../src/include
 depcomp = $(SHELL) $(top_srcdir)/make_utils/depcomp
 am__depfiles_maybe = depfiles
@@ -111,7 +118,6 @@ AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
-BUNZIP2 = @BUNZIP2@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
@@ -140,7 +146,6 @@ MAINT = @MAINT@
 MAINTAINER_MODE_FALSE = @MAINTAINER_MODE_FALSE@
 MAINTAINER_MODE_TRUE = @MAINTAINER_MODE_TRUE@
 MAKEINFO = @MAKEINFO@
-MD5SUM = @MD5SUM@
 MKDIR = @MKDIR@
 OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
@@ -161,10 +166,7 @@ SDL_MIXER_LIBS = @SDL_MIXER_LIBS@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
-TAR = @TAR@
 VERSION = @VERSION@
-WGET = @WGET@
-XDELTA = @XDELTA@
 ac_ct_CC = @ac_ct_CC@
 am__fastdepCC_FALSE = @am__fastdepCC_FALSE@
 am__fastdepCC_TRUE = @am__fastdepCC_TRUE@
@@ -253,9 +255,20 @@ daimonin_SOURCES = \
 daimonin_LDADD = -lSDL_mixer -lSDL_image @SDL_LIBS@ @EXTRA_LIBS@ @PHYSFS_LIBS@
 daimonin_OBJDIR = objs
 daimonin_updater_SOURCES = \
+	../../src/adler32.c \
+	../../src/crc32.c \
+	../../src/inffast.c \
+	../../src/inflate.c \
+	../../src/inftrees.c \
+	../../src/uncompr.c \
+	../../src/zutil.c \
 	../../src/updater/linux.c \
-	../../src/updater/main.c 
+	../../src/updater/main.c \
+	../../src/updater/xdelta3.c \
+	../../src/updater/physfsunpack.c \
+	../../src/updater/md5.c
 
+daimonin_updater_LDADD = -lbz2 @PHYSFS_LIBS@ -lcurl
 daimonin_updater_OBJDIR = updater_objs
 
 # NOTE: if building xdelta, run its configure with "--disable-shared"
@@ -424,6 +437,14 @@ daimonin$(EXEEXT): $(daimonin_OBJECTS) $(daimonin_DEPENDENCIES)
 	../../src/updater/$(DEPDIR)/$(am__dirstamp)
 ../../src/updater/main.$(OBJEXT): ../../src/updater/$(am__dirstamp) \
 	../../src/updater/$(DEPDIR)/$(am__dirstamp)
+../../src/updater/xdelta3.$(OBJEXT):  \
+	../../src/updater/$(am__dirstamp) \
+	../../src/updater/$(DEPDIR)/$(am__dirstamp)
+../../src/updater/physfsunpack.$(OBJEXT):  \
+	../../src/updater/$(am__dirstamp) \
+	../../src/updater/$(DEPDIR)/$(am__dirstamp)
+../../src/updater/md5.$(OBJEXT): ../../src/updater/$(am__dirstamp) \
+	../../src/updater/$(DEPDIR)/$(am__dirstamp)
 daimonin-updater$(EXEEXT): $(daimonin_updater_OBJECTS) $(daimonin_updater_DEPENDENCIES) 
 	@rm -f daimonin-updater$(EXEEXT)
 	$(LINK) $(daimonin_updater_LDFLAGS) $(daimonin_updater_OBJECTS) $(daimonin_updater_LDADD) $(LIBS)
@@ -462,6 +483,9 @@ mostlyclean-compile:
 	-rm -f ../../src/uncompr.$(OBJEXT)
 	-rm -f ../../src/updater/linux.$(OBJEXT)
 	-rm -f ../../src/updater/main.$(OBJEXT)
+	-rm -f ../../src/updater/md5.$(OBJEXT)
+	-rm -f ../../src/updater/physfsunpack.$(OBJEXT)
+	-rm -f ../../src/updater/xdelta3.$(OBJEXT)
 	-rm -f ../../src/widget.$(OBJEXT)
 	-rm -f ../../src/wrapper.$(OBJEXT)
 	-rm -f ../../src/zutil.$(OBJEXT)
@@ -504,6 +528,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/zutil.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/updater/$(DEPDIR)/linux.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/updater/$(DEPDIR)/main.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../../src/updater/$(DEPDIR)/md5.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../../src/updater/$(DEPDIR)/physfsunpack.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../../src/updater/$(DEPDIR)/xdelta3.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`; \

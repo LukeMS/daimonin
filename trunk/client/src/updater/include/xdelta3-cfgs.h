@@ -32,7 +32,7 @@
 #define LONGENOUGH    stream->smatcher.long_enough
 
 #define SOFTCFG 1
-#include "xdelta3.c"
+#include "../xdelta3.c"
 #undef  SOFTCFG
 
 #undef  TEMPLATE
@@ -60,7 +60,7 @@
 #define MAXLAZY       6
 #define LONGENOUGH    6
 
-#include "xdelta3.c"
+#include "../xdelta3.c"
 
 #undef  TEMPLATE
 #undef  LLOOK
@@ -85,7 +85,7 @@
 #define MAXLAZY       18
 #define LONGENOUGH    18
 
-#include "xdelta3.c"
+#include "../xdelta3.c"
 
 #undef  TEMPLATE
 #undef  LLOOK
@@ -110,7 +110,7 @@
 #define MAXLAZY       18
 #define LONGENOUGH    35
 
-#include "xdelta3.c"
+#include "../xdelta3.c"
 
 #undef  TEMPLATE
 #undef  LLOOK
@@ -135,7 +135,7 @@
 #define MAXLAZY       90
 #define LONGENOUGH    70
 
-#include "xdelta3.c"
+#include "../xdelta3.c"
 
 #undef  TEMPLATE
 #undef  LLOOK
@@ -160,7 +160,7 @@
 #define MAXLAZY       36
 #define LONGENOUGH    70
 
-#include "xdelta3.c"
+#include "../xdelta3.c"
 
 #undef  TEMPLATE
 #undef  LLOOK
