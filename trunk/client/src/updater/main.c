@@ -154,13 +154,13 @@ int main(int argc, char *argv[])
     if (!curlhandle)
         updater_error("Error initializing curl...");
 
-    /*    printf("%s\n",argv[0]);
-        if(argc>1)
-            printf("%s\n",argv[1]);
-        if(argc>2)
-            printf("%s\n",argv[2]);
-        printf("\n");
-    */
+//        printf("%s\n",argv[0]);
+//        if(argc>1)
+//            printf("%s\n",argv[1]);
+//        if(argc>2)
+//            printf("%s\n",argv[2]);
+//        printf("\n");
+
     argv0 = argv[0];
     /* prepare pathes */
     if (strlen(argv[0]) + 256 >MAX_DIR_PATH)
@@ -174,6 +174,8 @@ int main(int argc, char *argv[])
 
     if (string_pos)
         *(string_pos+1) = '\0';
+    else
+        prg_path[0]='\0';
 
     /* check for install or update keywords */
     if (argc>1)
@@ -322,7 +324,7 @@ int main(int argc, char *argv[])
             /* we test for .bz2 ending which means we have a .zip.bz2 file (what a combination) */
 
             string_pos = strrchr(buf, '.');
-            if ((string_pos) && (!strcmp(string_pos, ".bz2"))
+            if ((string_pos) && (!strcmp(string_pos, ".bz2")))
             {
                 *string_pos = '\0';
                 if (!bunzip2(parms, buf))
