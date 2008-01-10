@@ -7,7 +7,7 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="..\..\..\client_start.exe" prefix_auto="0" extension_auto="0" />
+				<Option output="..\..\..\client_start_d.exe" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="..\..\..\..\client" />
 				<Option object_output="obj\Debug\" />
 				<Option type="1" />
@@ -18,7 +18,7 @@
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="..\..\..\client_start_d.exe" prefix_auto="0" extension_auto="0" />
+				<Option output="..\..\..\client_start.exe" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="..\..\..\..\client" />
 				<Option object_output="obj\Release\" />
 				<Option type="1" />
