@@ -719,11 +719,6 @@ GREP
 EGREP
 SDL_CFLAGS
 LIBOBJS
-BUNZIP2
-MD5SUM
-WGET
-TAR
-XDELTA
 EXTRA_LIBS
 PHYSFS_LIBS
 LTLIBOBJS'
@@ -7937,227 +7932,32 @@ done
 #
 
 if test "x$simplelayout" = "xyes"; then
-    build_xdelta="no"
+#    build_xdelta="no"
 
-    # Extract the first word of "bunzip2", so it can be a program name with args.
-set dummy bunzip2; ac_word=$2
-{ echo "$as_me:$LINENO: checking for $ac_word" >&5
-echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6; }
-if test "${ac_cv_path_BUNZIP2+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  case $BUNZIP2 in
-  [\\/]* | ?:[\\/]*)
-  ac_cv_path_BUNZIP2="$BUNZIP2" # Let the user override the test with a path.
-  ;;
-  *)
-  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $PATH
-do
-  IFS=$as_save_IFS
-  test -z "$as_dir" && as_dir=.
-  for ac_exec_ext in '' $ac_executable_extensions; do
-  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
-    ac_cv_path_BUNZIP2="$as_dir/$ac_word$ac_exec_ext"
-    echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-done
-IFS=$as_save_IFS
-
-  ;;
-esac
-fi
-BUNZIP2=$ac_cv_path_BUNZIP2
-if test -n "$BUNZIP2"; then
-  { echo "$as_me:$LINENO: result: $BUNZIP2" >&5
-echo "${ECHO_T}$BUNZIP2" >&6; }
-else
-  { echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6; }
-fi
-
-
-    # Extract the first word of "md5sum", so it can be a program name with args.
-set dummy md5sum; ac_word=$2
-{ echo "$as_me:$LINENO: checking for $ac_word" >&5
-echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6; }
-if test "${ac_cv_path_MD5SUM+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  case $MD5SUM in
-  [\\/]* | ?:[\\/]*)
-  ac_cv_path_MD5SUM="$MD5SUM" # Let the user override the test with a path.
-  ;;
-  *)
-  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $PATH
-do
-  IFS=$as_save_IFS
-  test -z "$as_dir" && as_dir=.
-  for ac_exec_ext in '' $ac_executable_extensions; do
-  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
-    ac_cv_path_MD5SUM="$as_dir/$ac_word$ac_exec_ext"
-    echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-done
-IFS=$as_save_IFS
-
-  ;;
-esac
-fi
-MD5SUM=$ac_cv_path_MD5SUM
-if test -n "$MD5SUM"; then
-  { echo "$as_me:$LINENO: result: $MD5SUM" >&5
-echo "${ECHO_T}$MD5SUM" >&6; }
-else
-  { echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6; }
-fi
-
-
-    # Extract the first word of "wget", so it can be a program name with args.
-set dummy wget; ac_word=$2
-{ echo "$as_me:$LINENO: checking for $ac_word" >&5
-echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6; }
-if test "${ac_cv_path_WGET+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  case $WGET in
-  [\\/]* | ?:[\\/]*)
-  ac_cv_path_WGET="$WGET" # Let the user override the test with a path.
-  ;;
-  *)
-  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $PATH
-do
-  IFS=$as_save_IFS
-  test -z "$as_dir" && as_dir=.
-  for ac_exec_ext in '' $ac_executable_extensions; do
-  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
-    ac_cv_path_WGET="$as_dir/$ac_word$ac_exec_ext"
-    echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-done
-IFS=$as_save_IFS
-
-  ;;
-esac
-fi
-WGET=$ac_cv_path_WGET
-if test -n "$WGET"; then
-  { echo "$as_me:$LINENO: result: $WGET" >&5
-echo "${ECHO_T}$WGET" >&6; }
-else
-  { echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6; }
-fi
-
-
-    # Extract the first word of "tar", so it can be a program name with args.
-set dummy tar; ac_word=$2
-{ echo "$as_me:$LINENO: checking for $ac_word" >&5
-echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6; }
-if test "${ac_cv_path_TAR+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  case $TAR in
-  [\\/]* | ?:[\\/]*)
-  ac_cv_path_TAR="$TAR" # Let the user override the test with a path.
-  ;;
-  *)
-  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $PATH
-do
-  IFS=$as_save_IFS
-  test -z "$as_dir" && as_dir=.
-  for ac_exec_ext in '' $ac_executable_extensions; do
-  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
-    ac_cv_path_TAR="$as_dir/$ac_word$ac_exec_ext"
-    echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-done
-IFS=$as_save_IFS
-
-  ;;
-esac
-fi
-TAR=$ac_cv_path_TAR
-if test -n "$TAR"; then
-  { echo "$as_me:$LINENO: result: $TAR" >&5
-echo "${ECHO_T}$TAR" >&6; }
-else
-  { echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6; }
-fi
-
-
-    # Extract the first word of "xdelta", so it can be a program name with args.
-set dummy xdelta; ac_word=$2
-{ echo "$as_me:$LINENO: checking for $ac_word" >&5
-echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6; }
-if test "${ac_cv_path_XDELTA+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  case $XDELTA in
-  [\\/]* | ?:[\\/]*)
-  ac_cv_path_XDELTA="$XDELTA" # Let the user override the test with a path.
-  ;;
-  *)
-  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $PATH
-do
-  IFS=$as_save_IFS
-  test -z "$as_dir" && as_dir=.
-  for ac_exec_ext in '' $ac_executable_extensions; do
-  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
-    ac_cv_path_XDELTA="$as_dir/$ac_word$ac_exec_ext"
-    echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-done
-IFS=$as_save_IFS
-
-  ;;
-esac
-fi
-XDELTA=$ac_cv_path_XDELTA
-if test -n "$XDELTA"; then
-  { echo "$as_me:$LINENO: result: $XDELTA" >&5
-echo "${ECHO_T}$XDELTA" >&6; }
-else
-  { echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6; }
-fi
-
-
+#    AC_PATH_PROG(BUNZIP2, bunzip2)
+#    AC_PATH_PROG(MD5SUM, md5sum)
+#    AC_PATH_PROG(WGET, wget)
+#    AC_PATH_PROG(TAR, tar)
+#    AC_PATH_PROG(XDELTA, xdelta)
 
     missing_binaries=""
-    if test "x$BUNZIP2" = "x"; then
-        missing_binaries="${missing_binaries}bunzip2 "
-    fi
-    if test "x$MD5SUM" = "x"; then
-        missing_binaries="${missing_binaries}md5sum "
-    fi
-    if test "x$WGET" = "x"; then
-        missing_binaries="${missing_binaries}wget "
-    fi
-    if test "x$TAR" = "x"; then
-        missing_binaries="${missing_binaries}tar "
-    fi
+#    if test "x$BUNZIP2" = "x"; then
+#        missing_binaries="${missing_binaries}bunzip2 "
+#    fi
+#    if test "x$MD5SUM" = "x"; then
+#        missing_binaries="${missing_binaries}md5sum "
+#    fi
+#    if test "x$WGET" = "x"; then
+#        missing_binaries="${missing_binaries}wget "
+#    fi
+#    if test "x$TAR" = "x"; then
+#        missing_binaries="${missing_binaries}tar "
+#    fi
 
     # TODO: build xdelta from tarball or embed into autoupdater
-    if test "x$XDELTA" = "x"; then
-        missing_binaries="${missing_binaries}xdelta "
-    fi
+#    if test "x$XDELTA" = "x"; then
+#        missing_binaries="${missing_binaries}xdelta "
+#    fi
 
     if test "x$missing_binaries" != "x"; then
         autoupdater="disabled (missing tool(s): $missing_binaries)"
@@ -8970,17 +8770,12 @@ GREP!$GREP$ac_delim
 EGREP!$EGREP$ac_delim
 SDL_CFLAGS!$SDL_CFLAGS$ac_delim
 LIBOBJS!$LIBOBJS$ac_delim
-BUNZIP2!$BUNZIP2$ac_delim
-MD5SUM!$MD5SUM$ac_delim
-WGET!$WGET$ac_delim
-TAR!$TAR$ac_delim
-XDELTA!$XDELTA$ac_delim
 EXTRA_LIBS!$EXTRA_LIBS$ac_delim
 PHYSFS_LIBS!$PHYSFS_LIBS$ac_delim
 LTLIBOBJS!$LTLIBOBJS$ac_delim
 _ACEOF
 
-  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 15; then
+  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 10; then
     break
   elif $ac_last_try; then
     { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5

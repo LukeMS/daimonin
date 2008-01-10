@@ -39,8 +39,20 @@ daimonin_LDADD = -lSDL_mixer -lSDL_image @SDL_LIBS@ @EXTRA_LIBS@ @PHYSFS_LIBS@
 daimonin_OBJDIR = objs
 
 daimonin_updater_SOURCES = \
+	../../src/adler32.c \
+	../../src/crc32.c \
+	../../src/inffast.c \
+	../../src/inflate.c \
+	../../src/inftrees.c \
+	../../src/uncompr.c \
+	../../src/zutil.c \
 	../../src/updater/linux.c \
-	../../src/updater/main.c 
+	../../src/updater/main.c \
+	../../src/updater/xdelta3.c \
+	../../src/updater/physfsunpack.c \
+	../../src/updater/md5.c
+
+daimonin_updater_LDADD = -lbz2 @PHYSFS_LIBS@ -lcurl
 daimonin_updater_OBJDIR = updater_objs
 
 # NOTE: if building xdelta, run its configure with "--disable-shared"

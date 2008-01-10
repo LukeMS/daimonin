@@ -266,7 +266,7 @@
 #include <errno.h>
 #include <string.h>
 
-#include "xdelta3.h"
+#include "include/xdelta3.h"
 
 /***********************************************************************
  STATIC CONFIGURATION
@@ -361,7 +361,7 @@ typedef enum
 
 /***********************************************************************/
 
-#include "xdelta3-list.h"
+#include "include/xdelta3-list.h"
 
 XD3_MAKELIST(xd3_rlist, xd3_rinst, link);
 
@@ -739,11 +739,11 @@ static const xd3_sec_type djw_sec_type;
 
 /***********************************************************************/
 
-#include "xdelta3-hash.h"
+#include "include/xdelta3-hash.h"
 
 /* Process template passes - this includes xdelta3.c several times. */
 #define __XDELTA3_C_TEMPLATE_PASS__
-#include "xdelta3-cfgs.h"
+#include "include/xdelta3-cfgs.h"
 #undef __XDELTA3_C_TEMPLATE_PASS__
 
 /* Process the inline pass. */
@@ -753,11 +753,11 @@ static const xd3_sec_type djw_sec_type;
 
 /* Secondary compression */
 #if SECONDARY_ANY
-#include "xdelta3-second.h"
+#include "include/xdelta3-second.h"
 #endif
 
 #if SECONDARY_FGK
-#include "xdelta3-fgk.h"
+#include "include/xdelta3-fgk.h"
 static const xd3_sec_type fgk_sec_type =
 {
   VCD_FGK_ID,
@@ -772,7 +772,7 @@ static const xd3_sec_type fgk_sec_type =
 #endif
 
 #if SECONDARY_DJW
-#include "xdelta3-djw.h"
+#include "include/xdelta3-djw.h"
 static const xd3_sec_type djw_sec_type =
 {
   VCD_DJW_ID,
@@ -787,15 +787,15 @@ static const xd3_sec_type djw_sec_type =
 #endif
 
 #if XD3_MAIN || PYTHON_MODULE || SWIG_MODULE || NOT_MAIN
-#include "xdelta3-main.h"
+#include "include/xdelta3-main.h"
 #endif
 
 #if REGRESSION_TEST
-#include "xdelta3-test.h"
+#include "include/xdelta3-test.h"
 #endif
 
 #if PYTHON_MODULE
-#include "xdelta3-python.h"
+#include "include/xdelta3-python.h"
 #endif
 
 #endif /* __XDELTA3_C_HEADER_PASS__ */
@@ -2682,7 +2682,7 @@ xd3_get_appheader (xd3_stream  *stream,
  Decoder stuff
  *************************************************/
 
-#include "xdelta3-decode.h"
+#include "include/xdelta3-decode.h"
 
 /****************************************************************
  Encoder stuff

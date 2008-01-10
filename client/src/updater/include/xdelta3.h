@@ -29,9 +29,13 @@
 #define XD3_MAIN 1
 #define SECONDARY_FGK 0
 #define SECONDARY_DJW 0
-#define XD3_STDIO 0
-#define XD3_POSIX 0
+#ifdef _WIN32
 #define XD3_WIN32 1
+#define XD3_POSIX 0
+#else
+#define XD3_POSIX 1#define XD3_WIN32 0
+#endif
+#define XD3_STDIO 0
 #define EXTERNAL_COMPRESSION 0
 #define VCDIFF_TOOLS 0
 #define XD3_DEBUG 0

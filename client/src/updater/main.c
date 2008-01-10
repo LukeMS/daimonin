@@ -58,7 +58,6 @@ FILE *version_handle=NULL;
 CURL *curlhandle = NULL;
 
 
-
 extern void clear_directory(char* start_dir);
 extern void copy_patch_files(char* start_dir);
 extern int process_patch_file(char *patch_file, int mode);

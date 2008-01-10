@@ -22,7 +22,7 @@
 
 //#include <config.h>
 
-#include "md5.h"
+#include "include/md5.h"
 
 #include <stddef.h>
 #include <stdlib.h>
