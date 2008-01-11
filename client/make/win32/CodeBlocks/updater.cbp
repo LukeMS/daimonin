@@ -25,6 +25,7 @@
 				<Option compiler="gcc" />
 				<Option projectResourceIncludeDirsRelation="1" />
 				<Compiler>
+					<Add option="-Os" />
 					<Add option="-O2" />
 					<Add option="-s" />
 					<Add option="-DWIN32" />
