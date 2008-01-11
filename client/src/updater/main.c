@@ -347,6 +347,12 @@ int main(int argc, char *argv[])
         copy_patch_files(FOLDER_PATCH);
         clear_directory(FOLDER_PATCH);
 
+        /* we have to delete our packed patch archive... */
+
+        sprintf(buf, "%s/%s",FOLDER_UPDATE, file_name);
+        printf("unlinking: >%s<\n",buf);
+        unlink(buf);
+
         /* now make it "offical" */
         version_def_nr = version_nr;
         patched = TRUE;
@@ -367,6 +373,7 @@ int main(int argc, char *argv[])
 	getchar();
 #else
 	printf("Starting client...\n");
+	getchar();
 #endif
 
     start_client_and_close(prg_path);
@@ -490,7 +497,10 @@ void copy_patch(char *src, char *dest)
         fprintf(stderr, "Cannot open file for read :: '%s'\n", src);
         perror("");
         fclose(dest_file);
-        updater_error("");
+
+        /* dont abort the whole updater, maybe be have files like quick.dat */
+        return;
+//        updater_error("");
     }
 
     for (;;)
@@ -580,6 +590,10 @@ void copy_patch_files(char* start_dir)
         /* is this a directory? */
         if (S_ISDIR(dir_stat.st_mode))
         {
+            /* we HAVE to create the target dir first, win wont copy a file when the dir is not there... */
+            sprintf(buf,"%s/%s/%s", base,cwd+patch_dir_len,entry->d_name);
+            mkdir(buf, 0777);
+
             /* Change into the new directory */
             if (chdir(entry->d_name) == -1)
             {
@@ -689,7 +703,7 @@ int process_patch_file(char *patch_file, int mode)
             }
             else if (!strcmp(cmd, "check"))
             {
-                /* allowed on this system/os? */
+                /* NOT allowed on this system/os? */
                 if (strcmp(os_tag,"x") && !strchr(os_tag,SYSTEM_OS_TAG))
                 {
                     /* we don't want apply this file, delete it from patch folder */
@@ -802,7 +816,7 @@ int download_file(char *url, char *remotefilename, char *destfolder, char *destf
 
     fclose(outfile);
 
-    printf("%s downloaded succesful.\n",destfilename);
+    printf("%s downloaded succesful (%d).\n",destfilename, res);
     return TRUE;
 }
 
@@ -1054,7 +1068,7 @@ int calc_md5(char *filename, char *outputbuf)
     stream = fopen(filename, "rb");
     if (!stream)
     {
-        printf("could not open file for reading: %s\n",filename);
+        printf("md5: could not open file for reading: %s\n",filename);
         return FALSE;
     }
     if (md5_stream(stream, buf)==1)
@@ -1064,10 +1078,10 @@ int calc_md5(char *filename, char *outputbuf)
         return FALSE;
     }
     /* convert the hex to string */
+    memset(outputbuf, 0, sizeof(outputbuf));
     for (i=0;i<16;i++)
     {
-        outputbuf[(i*2)]='\0';
-        sprintf(outputbuf, "%s%02x",outputbuf, buf[i]);
+        sprintf(outputbuf, "%s%02x",outputbuf, (unsigned char)buf[i]);
     }
 
     fclose(stream);
