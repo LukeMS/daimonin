@@ -78,6 +78,6 @@ Win No frame: 0
 Win RLE accel: 1
 
 # Debug
-Show framerate: 1
+Show framerate: 0
 Force redraw: 0
 Use update rect: 0

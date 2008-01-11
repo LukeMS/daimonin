@@ -785,6 +785,7 @@ int download_file(char *url, char *remotefilename, char *destfolder, char *destf
     FILE        *outfile;
     char        filename[MAX_DIR_PATH];
     char        fullurl[MAX_DIR_PATH];
+    unsigned long httpresult = 0;
 
     if (!curlhandle)
         updater_error("curl error.");
@@ -810,6 +811,14 @@ int download_file(char *url, char *remotefilename, char *destfolder, char *destf
     {
 
         printf("curl error: %s\n",curl_easy_strerror(res));
+        fclose(outfile);
+        return FALSE;
+    }
+
+    curl_easy_getinfo(curlhandle, CURLINFO_RESPONSE_CODE, &httpresult);
+    if (httpresult>=300)
+    {
+        printf("Error downloading file, Server Response: %d\n",(int) httpresult);
         fclose(outfile);
         return FALSE;
     }
