@@ -672,15 +672,78 @@ int widget_event_mousemv(int x,int y, SDL_Event *event)
 {
     cursor_type = 0; /* with widgets we have to clear every loop the txtwin cursor */
 
-	/* widget moving condition */
-	if(widget_event_move.active)
-	{
-		cur_widget[widget_event_move.id].x1 = x - widget_event_move.xOffset;
-		cur_widget[widget_event_move.id].y1 = y - widget_event_move.yOffset;
-
+    /* widget moving condition */
+    if(widget_event_move.active)
+    {
+//        int adjx = x - widget_event_move.xOffset,
+//            adjy = y - widget_event_move.yOffset;
+//#define SNAP_DIST  32
+#if defined SNAP_DIST
+#define LEFT(ID)   (cur_widget[(ID)].x1)
+#define RIGHT(ID)  (cur_widget[(ID)].x1 + cur_widget[(ID)].wd)
+#define TOP(ID)    (cur_widget[(ID)].y1)
+#define BOTTOM(ID) (cur_widget[(ID)].y1 + cur_widget[(ID)].ht)
+        if (event->motion.xrel != 0 && event->motion.yrel != 0)
+        {
+            int          mID  = widget_event_move.id;
+            widget_node *node;
+            for (node = priority_list_head; node; node = node->next)
+            {
+                int     nID  = node->WidgetID;
+                Boolean done = FALSE;
+                if (nID == mID || !cur_widget[nID].show)
+                    continue;
+                if ((TOP(mID) >= TOP(nID) && TOP(mID) <= BOTTOM (nID)) || (BOTTOM(mID) >= TOP(nID) && BOTTOM(mID) <= BOTTOM(nID)))
+                {
+                    if (event->motion.xrel < 0 && LEFT(mID) <= RIGHT(nID) + SNAP_DIST && LEFT(mID) > RIGHT(nID))
+                    {
+//                        adjx = RIGHT(nID);
+                        event->motion.x = RIGHT(nID) + widget_event_move.xOffset;
+                        done = TRUE;
+                    }
+                    else if (event->motion.xrel > 0 && RIGHT(mID) >= LEFT(nID) - SNAP_DIST && RIGHT(mID) < LEFT(nID))
+                    {
+//                        adjx = LEFT(nID) - cur_widget[mID].wd;
+                        event->motion.x = LEFT(nID) - cur_widget[mID].wd + widget_event_move.xOffset;
+                        done = TRUE;
+                    }
+                }
+                if ((LEFT(mID) >= LEFT(nID) && LEFT(mID) <= RIGHT(nID)) || (RIGHT(mID) >= LEFT(nID) && RIGHT(mID) <= RIGHT(nID)))
+                {
+                    if (event->motion.yrel < 0 && TOP(mID) <= BOTTOM(nID) + SNAP_DIST && TOP(mID) > BOTTOM(nID))
+                    {
+//                        adjy = BOTTOM(nID);
+                        event->motion.y = BOTTOM(nID) + widget_event_move.yOffset;
+                        done = TRUE;
+                    }
+                    else if (event->motion.yrel > 0 && BOTTOM(mID) >= TOP(nID) - SNAP_DIST && BOTTOM(mID) < TOP(nID))
+                    {
+//                        adjy = TOP(nID) - cur_widget[mID].ht;
+                        event->motion.y = TOP(nID) - cur_widget[mID].ht + widget_event_move.yOffset;
+                        done = TRUE;
+                    }
+                }
+                if (done)
+                {
+//                    draw_info_format(COLOR_RED, "%s l=%d r=%d t=%d b=%d", cur_widget[nID].name, LEFT(nID), RIGHT(nID), TOP(nID), BOTTOM(nID));
+                    sound_play_effect(SOUND_SCROLL, 0, 0, 10);
+                    event->motion.xrel = event->motion.yrel = 0; // acts as a brake, preventing mID from 'skipping' through a stack of nodes
+                    SDL_PushEvent(event);
+                    break;
+                }
+            }
+        }
+#undef SNAP_DIST
+#undef LEFT
+#undef RIGHT
+#undef TOP
+#undef BOTTOM
+#endif
+        cur_widget[widget_event_move.id].x1 = x - widget_event_move.xOffset; // adjx;
+        cur_widget[widget_event_move.id].y1 = y - widget_event_move.yOffset; // adjy;
         map_udate_flag = 2;
-		return TRUE;
-	}
+        return TRUE;
+    }
 	/* NORMAL CONDITION - RESPOND TO MOUSEMOVE EVENT */
 	else
 	{
