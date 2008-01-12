@@ -525,7 +525,7 @@ void copy_patch(char *src, char *dest)
             /* no error handling so far */
             break;
         }
-        if (!(num_write = fwrite(copy_buffer, sizeof( char) ,num_read, dest_file)))
+        if ((num_write = fwrite(copy_buffer, sizeof( char) ,num_read, dest_file)) != num_read)
         {
             /* no error handling so far */
             break;
@@ -571,7 +571,7 @@ void append_file(char *src, char *dest)
             /* no error handling so far */
             break;
         }
-        if (!(num_write = fwrite(copy_buffer, sizeof( char) ,num_read, dest_file)))
+        if ((num_write = fwrite(copy_buffer, sizeof( char) ,num_read, dest_file)) != num_read)
         {
             /* no error handling so far */
             break;
