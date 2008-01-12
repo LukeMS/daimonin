@@ -388,7 +388,9 @@ void init_game_data(void)
 //    options.statometer=1;
     options.statsupdate=5;
     options.firststart=TRUE;
-
+#ifdef WIDGET_SNAP
+    options.widget_snap=0;
+#endif
     options.shoutoff=FALSE;
     options.no_meta=FALSE;
 

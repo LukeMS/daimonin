@@ -677,63 +677,64 @@ int widget_event_mousemv(int x,int y, SDL_Event *event)
     {
 //        int adjx = x - widget_event_move.xOffset,
 //            adjy = y - widget_event_move.yOffset;
-//#define SNAP_DIST  32
-#if defined SNAP_DIST
+#ifdef WIDGET_SNAP
 #define LEFT(ID)   (cur_widget[(ID)].x1)
 #define RIGHT(ID)  (cur_widget[(ID)].x1 + cur_widget[(ID)].wd)
 #define TOP(ID)    (cur_widget[(ID)].y1)
 #define BOTTOM(ID) (cur_widget[(ID)].y1 + cur_widget[(ID)].ht)
-        if (event->motion.xrel != 0 && event->motion.yrel != 0)
+        if (options.widget_snap>0)
         {
-            int          mID  = widget_event_move.id;
-            widget_node *node;
-            for (node = priority_list_head; node; node = node->next)
+            if (event->motion.xrel != 0 && event->motion.yrel != 0)
             {
-                int     nID  = node->WidgetID;
-                Boolean done = FALSE;
-                if (nID == mID || !cur_widget[nID].show)
-                    continue;
-                if ((TOP(mID) >= TOP(nID) && TOP(mID) <= BOTTOM (nID)) || (BOTTOM(mID) >= TOP(nID) && BOTTOM(mID) <= BOTTOM(nID)))
+                int          mID  = widget_event_move.id;
+                widget_node *node;
+                for (node = priority_list_head; node; node = node->next)
                 {
-                    if (event->motion.xrel < 0 && LEFT(mID) <= RIGHT(nID) + SNAP_DIST && LEFT(mID) > RIGHT(nID))
+                    int     nID  = node->WidgetID;
+                    Boolean done = FALSE;
+                    if (nID == mID || !cur_widget[nID].show)
+                        continue;
+                    if ((TOP(mID) >= TOP(nID) && TOP(mID) <= BOTTOM (nID)) || (BOTTOM(mID) >= TOP(nID) && BOTTOM(mID) <= BOTTOM(nID)))
                     {
-//                        adjx = RIGHT(nID);
-                        event->motion.x = RIGHT(nID) + widget_event_move.xOffset;
-                        done = TRUE;
+                        if (event->motion.xrel < 0 && LEFT(mID) <= RIGHT(nID) + options.widget_snap && LEFT(mID) > RIGHT(nID))
+                        {
+    //                        adjx = RIGHT(nID);
+                            event->motion.x = RIGHT(nID) + widget_event_move.xOffset;
+                            done = TRUE;
+                        }
+                        else if (event->motion.xrel > 0 && RIGHT(mID) >= LEFT(nID) - options.widget_snap && RIGHT(mID) < LEFT(nID))
+                        {
+    //                        adjx = LEFT(nID) - cur_widget[mID].wd;
+                            event->motion.x = LEFT(nID) - cur_widget[mID].wd + widget_event_move.xOffset;
+                            done = TRUE;
+                        }
                     }
-                    else if (event->motion.xrel > 0 && RIGHT(mID) >= LEFT(nID) - SNAP_DIST && RIGHT(mID) < LEFT(nID))
+                    if ((LEFT(mID) >= LEFT(nID) && LEFT(mID) <= RIGHT(nID)) || (RIGHT(mID) >= LEFT(nID) && RIGHT(mID) <= RIGHT(nID)))
                     {
-//                        adjx = LEFT(nID) - cur_widget[mID].wd;
-                        event->motion.x = LEFT(nID) - cur_widget[mID].wd + widget_event_move.xOffset;
-                        done = TRUE;
+                        if (event->motion.yrel < 0 && TOP(mID) <= BOTTOM(nID) + options.widget_snap && TOP(mID) > BOTTOM(nID))
+                        {
+    //                        adjy = BOTTOM(nID);
+                            event->motion.y = BOTTOM(nID) + widget_event_move.yOffset;
+                            done = TRUE;
+                        }
+                        else if (event->motion.yrel > 0 && BOTTOM(mID) >= TOP(nID) - options.widget_snap && BOTTOM(mID) < TOP(nID))
+                        {
+    //                        adjy = TOP(nID) - cur_widget[mID].ht;
+                            event->motion.y = TOP(nID) - cur_widget[mID].ht + widget_event_move.yOffset;
+                            done = TRUE;
+                        }
                     }
-                }
-                if ((LEFT(mID) >= LEFT(nID) && LEFT(mID) <= RIGHT(nID)) || (RIGHT(mID) >= LEFT(nID) && RIGHT(mID) <= RIGHT(nID)))
-                {
-                    if (event->motion.yrel < 0 && TOP(mID) <= BOTTOM(nID) + SNAP_DIST && TOP(mID) > BOTTOM(nID))
+                    if (done)
                     {
-//                        adjy = BOTTOM(nID);
-                        event->motion.y = BOTTOM(nID) + widget_event_move.yOffset;
-                        done = TRUE;
+    //                    draw_info_format(COLOR_RED, "%s l=%d r=%d t=%d b=%d", cur_widget[nID].name, LEFT(nID), RIGHT(nID), TOP(nID), BOTTOM(nID));
+                        sound_play_effect(SOUND_SCROLL, 0, 0, 10);
+                        event->motion.xrel = event->motion.yrel = 0; // acts as a brake, preventing mID from 'skipping' through a stack of nodes
+                        SDL_PushEvent(event);
+                        break;
                     }
-                    else if (event->motion.yrel > 0 && BOTTOM(mID) >= TOP(nID) - SNAP_DIST && BOTTOM(mID) < TOP(nID))
-                    {
-//                        adjy = TOP(nID) - cur_widget[mID].ht;
-                        event->motion.y = TOP(nID) - cur_widget[mID].ht + widget_event_move.yOffset;
-                        done = TRUE;
-                    }
-                }
-                if (done)
-                {
-//                    draw_info_format(COLOR_RED, "%s l=%d r=%d t=%d b=%d", cur_widget[nID].name, LEFT(nID), RIGHT(nID), TOP(nID), BOTTOM(nID));
-                    sound_play_effect(SOUND_SCROLL, 0, 0, 10);
-                    event->motion.xrel = event->motion.yrel = 0; // acts as a brake, preventing mID from 'skipping' through a stack of nodes
-                    SDL_PushEvent(event);
-                    break;
                 }
             }
         }
-#undef SNAP_DIST
 #undef LEFT
 #undef RIGHT
 #undef TOP
