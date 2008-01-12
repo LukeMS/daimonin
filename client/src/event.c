@@ -2737,9 +2737,20 @@ void check_menu_keys(int menu, int key)
                 char cmd[1024];
                 /* check selected for possible slot selection */
                 if (gui_interface_npc->icon_select)
-                    sprintf(cmd, "%s #%d", gui_interface_npc->accept.command, gui_interface_npc->selected);
+                {
+                    if (gui_interface_npc->accept.command[6] == '#')
+                        sprintf(cmd, "/talk %s #%d", gui_interface_npc->accept.command + 7, gui_interface_npc->selected);
+                    else
+                        sprintf(cmd, "%s #%d", gui_interface_npc->accept.command, gui_interface_npc->selected);
+                }
                 else
+                {
                     strcpy(cmd, gui_interface_npc->accept.command);
+                    if (gui_interface_npc->accept.command[6] == '#')
+                        sprintf(cmd, "/talk %s", gui_interface_npc->accept.command + 7);
+                    else
+                        sprintf(cmd, "%s", gui_interface_npc->accept.command);
+                }
                 gui_interface_send_command(1, cmd);
             }
             else
@@ -2749,7 +2760,15 @@ void check_menu_keys(int menu, int key)
         {
             sound_play_effect(SOUND_SCROLL, 0, 0, 100);
             if (gui_interface_npc->decline.command[0]!='\0')
-                gui_interface_send_command(1, gui_interface_npc->decline.command);
+            {
+                char cmd[1024];
+                /* check selected for possible slot selection */
+                if (gui_interface_npc->icon_select && gui_interface_npc->decline.command[6] == '#')
+                    sprintf(cmd, "/talk %s #%d", gui_interface_npc->decline.command + 7, gui_interface_npc->selected);
+                else
+                    strcpy(cmd, gui_interface_npc->decline.command);
+                gui_interface_send_command(1, cmd);
+            }
             else
                 reset_gui_interface();
         }
