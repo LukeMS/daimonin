@@ -32,6 +32,7 @@
 #define UPDATE_VERSION "version"
 #define FOLDER_UPDATE "update"
 #define FOLDER_PATCH "update/patch/"
+#define NOTES_FILE "update/update.notes"
 
 #ifdef WIN32
 #define PROCESS_UPDATER "daimonin_start.exe"
@@ -62,6 +63,7 @@ extern void clear_directory(char* start_dir);
 extern void copy_patch_files(char* start_dir);
 extern int process_patch_file(char *patch_file, int mode);
 extern void copy_patch(char *src, char *dest);
+extern void append_file(char *src, char *dest);
 extern int  download_file(char *url, char *remotefilename, char *destfolder, char *destfilename);
 int curl_progresshandler(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow);
 extern int  bunzip2(char *infile, char *outfile);
@@ -139,7 +141,7 @@ static char *adjust_string(char *buf)
 
 int main(int argc, char *argv[])
 {
-    FILE   *stream;
+    FILE   *stream, *notes_stream;
     int version_nr, version_def_nr, patched=FALSE;
     char version[256], buf[256], *string_pos;
     char file_name[256], md5[64];
@@ -368,12 +370,25 @@ int main(int argc, char *argv[])
     else
         printf("No new patches found...\n");
 
+    notes_stream = fopen(NOTES_FILE, "r");
+    if (notes_stream)
+    {
+        printf("********************** UPDATE NOTES - README !!! ***************************\n");
+        while (fgets(output, 1024, notes_stream) != NULL)
+            printf("* %s",output);
+
+        fclose(notes_stream);
+        unlink(NOTES_FILE);
+        printf("****************************************************************************\n");
+        printf("Press RETURN to continue.\n");
+        getchar();
+    }
+
 #ifdef _DEBUG
 	printf("Starting client...\n(debug mode: press RETURN to confirm)\n");
 	getchar();
 #else
 	printf("Starting client...\n");
-	getchar();
 #endif
 
     start_client_and_close(prg_path);
@@ -521,6 +536,53 @@ void copy_patch(char *src, char *dest)
     fclose(src_file);
 
 }
+
+/* im to lazy to modify the copy function to also handle appends */
+void append_file(char *src, char *dest)
+{
+    FILE *src_file, *dest_file;
+    int num_read, num_write;
+
+    if (!copy_buffer)
+        copy_buffer = malloc(COPY_BUFFER_SIZE);
+
+    if ((dest_file = fopen(dest, "a+")) == NULL)
+    {
+        fprintf(stderr, "Cannot open file for append :: '%s'\n", dest);
+        perror("");
+        updater_error("");
+    }
+
+    if ((src_file = fopen(src, "r")) == NULL)
+    {
+        fprintf(stderr, "Cannot open file for read :: '%s'\n", src);
+        perror("");
+        fclose(dest_file);
+
+        /* dont abort the whole updater, maybe be have files like quick.dat */
+        return;
+//        updater_error("");
+    }
+
+    for (;;)
+    {
+        if (!(num_read = fread(copy_buffer, sizeof( char) ,COPY_BUFFER_SIZE, src_file)))
+        {
+            /* no error handling so far */
+            break;
+        }
+        if (!(num_write = fwrite(copy_buffer, sizeof( char) ,num_read, dest_file)))
+        {
+            /* no error handling so far */
+            break;
+        }
+    }
+
+    fclose(dest_file);
+    fclose(src_file);
+
+}
+
 
 
 /*
@@ -761,6 +823,15 @@ int process_patch_file(char *patch_file, int mode)
                 {
                     /*printf("DELETE: %s\n", src_path);*/
                     unlink(src_path);
+                }
+            }
+            else if (!strcmp(cmd, "notes"))
+            {
+                if (!strcmp(os_tag,"x") || strchr(os_tag, SYSTEM_OS_TAG))
+                {
+                    sprintf(file_path, "%s%s", FOLDER_PATCH, src_path);
+                    append_file(file_path, NOTES_FILE);
+                    unlink(file_path);
                 }
             }
         }
