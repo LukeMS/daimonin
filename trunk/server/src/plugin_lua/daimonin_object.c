@@ -1257,37 +1257,47 @@ static int GameObject_Communicate(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_Say                                                   */
-/* Lua    : object:Say(message, mode)                                        */
-/* Info   : object says message to everybody on its map                      */
+/* Lua    : object:Say(message, mode, range)                                 */
+/* Info   : object says message to players within range or to all on its map */
 /*          mode: 0 (default) talk to object - adds a "xxx says:" as prefix  */
 /*          mode: 1 raw message                                              */
+/*          range: MAP_INFO_NORMAL (default) limited range (within 12 tiles) */
+/*          range: MAP_INFO_ALL all players on map                           */
+/* Note :   If range is specified, mode must also be explicitly specified.   */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static int GameObject_Say(lua_State *L)
 {
     char       *message, buf[HUGE_BUF];
     int         mode = 0;
+    int         range = MAP_INFO_NORMAL;
     lua_object *self;
 
-    get_lua_args(L, "Os|i", &self, &message, &mode);
+    get_lua_args(L, "Os|ii", &self, &message, &mode, &range);
 
     if (!mode)
     {
         snprintf(buf, sizeof(buf), "%s says: %s", STRING_OBJ_NAME(WHO), message);
         message = buf;
     }
-    hooks->new_info_map(NDI_NAVY|NDI_UNIQUE, WHO->map, WHO->x, WHO->y, MAP_INFO_NORMAL, message);
+    hooks->new_info_map(NDI_NAVY|NDI_UNIQUE, WHO->map, WHO->x, WHO->y, range, message);
 
     return 0;
 }
 
 /*****************************************************************************/
 /* Name   : GameObject_SayTo                                                 */
-/* Lua    : object:SayTo(target, message, mode)                              */
-/* Info   : NPC talks only to player but map get a "xx talks to" msg too.    */
+/* Lua    : object:SayTo(target, message, mode, range)                       */
+/* Info   : NPC talks only to player but map may get a "xx talks to" msg too */
+/*          (depends on mode).                                               */
 /*          mode: 0 (default) talk to object - adds a "xxx says:" as prefix  */
 /*          mode: 1 raw message                                              */
 /*          mode: 2 adds as global map msg: xxx talks to yyy (was b3 default)*/
+/*          range: MAP_INFO_NORMAL (default) limited range (within 12 tiles) */
+/*          range: MAP_INFO_ALL all players on map                           */
+/* Note :   If range is specified, mode must also be explicitly specified.   */
+/*          range is only meaningful when mode = 2, and defines range of     */
+/*          "talks to" message.                                              */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static int GameObject_SayTo(lua_State *L)
@@ -1296,10 +1306,11 @@ static int GameObject_SayTo(lua_State *L)
     object     *target;
     lua_object *obptr2;
     int mode = 0;
+    int range = MAP_INFO_NORMAL;
     char *message;
     static char buf[HUGE_BUF];
 
-    get_lua_args(L, "OOs|i", &self, &obptr2, &message, &mode);
+    get_lua_args(L, "OOs|ii", &self, &obptr2, &message, &mode, &range);
 
     target = obptr2->data.object;
 
@@ -1310,7 +1321,7 @@ static int GameObject_SayTo(lua_State *L)
         if(mode == 2)
         {
             snprintf(buf, sizeof(buf), "%s talks to %s.", STRING_OBJ_NAME(WHO),STRING_OBJ_NAME(target));
-            hooks->new_info_map_except(NDI_UNIQUE, WHO->map, WHO->x, WHO->y, MAP_INFO_NORMAL, WHO, target, buf);
+            hooks->new_info_map_except(NDI_UNIQUE, WHO->map, WHO->x, WHO->y, range, WHO, target, buf);
         }
         snprintf(buf, sizeof(buf), "%s says: %s", STRING_OBJ_NAME(WHO), message);
         hooks->new_draw_info(NDI_NAVY|NDI_UNIQUE, 0, target, buf);
