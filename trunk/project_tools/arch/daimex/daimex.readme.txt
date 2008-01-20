@@ -1,0 +1,80 @@
+  ###########################################################################################
+ # DAIMEX - script for Blender, for rendering and formatting for use in Daimonin 2d client #
+##########################################################################################
+
+C O N T E N T S
+
+1. About
+2. Installation
+3. Setting up & running
+4. Contact, credits & disclaimer
+
+
+1. ABOUT
+
+This is a script for Blender which renders area 1x1x1.5 tiles in centre of scene into output, that is fit for Daimonin (see http://daimonin.net), with desired rotations and animations.
+
+
+2. INSTALLATION
+
+Unpack the stuff anywhere :)
+
+
+3. SETTING UP
+
+3.1 Open Blender from command-line ie console (Using Windows and don't know? Generally its start->launch("cmd") ask Microsoft support).
+Its vital that you open Blender from console, so you see eventual errors.
+
+3.2 Open/make your model. Make sure the model is 1 x 1 x 1.5 tiles large!!! Resize it if it is not!
+
+3.3 Change to the desired name mask for the images (line 48). Get to know image (and arch) naming conventions, if you don't already: 
+http://www.daimonin.net/index.php?name=PNphpBB2&file=viewtopic&t=3879&start=0
+
+3.4 Check if you like the directory, to which the rendered images are saved (line 52). 
+Default is the directory where current_scene.blend is, so you probably dont want to change it.
+
+3.5 Set the desired number of rotations (line 56) and mind that beginning position of camera is under median when looking from top view.
+
+3.6 If you want larger/smaller images change line 61. 
+For example you want 2x2 daimonin tiles large monster, so you make him on 1x1x1.5 blender tiles (as usual) and set rsmulti to 2.
+
+3.7 By default, the script uses sun light source (energy=2) which rotates with the camera. 
+If you don't want to use it, change usescriptlamp to 0 (line 64)
+
+3.8 Set direction in which your model is facing on line 70.
+Default is above median when looking from top view.
+
+3.9 Moving your model to median for rendering could be difficult, so you can set position of your model and camera will move there... set it on lines 73-75.
+(Unfortunately this cannot be done with the model size - you have to resize it to fit 1x1x1.5)
+
+3.10 Set you animation settings. This can be done in 2 ways. 
+If you don't want any animation - just one frame, you don't have to change anything.
+3.10.1 Default way: Just set framestep on line 79.
+3.10.2 Override way: Turn override on (line 86), set start and end frames on lines 87, 88 and don't forget to set the framestep (line 79)
+
+3.11 In Blender configure your renderer in way you like.
+Also I recommend changing the sky colour to black or toggling on the button "Key" in renderer settings (also try "Prem") - you will notice changes in transparency/colour edges of the images.
+
+3.12 Check again everything :)
+
+3.13 Press alt+p in the Blender editor window
+
+Unfortunately the images you get are not indexed (ie are in RGB) which is currently required by Daimonin, so you have to index them by hand (for example in GIMP).
+
+
+4. CONTACT, CREDITS & DISCLAIMER
+
+If you find some bugs or want to ask me anything, email me: Pro.J@seznam.cz
+
+Website: http://ojirio.zsuatt.com/daimex
+
+Thanks to Nakron who helped me a lot (and encouraged me), all Daimonin developers and everybody I like :D
+
+Umm, also, I'm not responsible for any damage done by the script, you are using it on your own risk, you agree with the license and this disclaimer by using the script. ;)
+
+
+5. CHANGE-LOG
+
+22.10.2007 v0.2	- Initial public release
+21.11.2007 v0.3 - Rotation bug fix; changed deprecated stuff
+
