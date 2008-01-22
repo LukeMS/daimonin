@@ -33,7 +33,8 @@
 #define XD3_WIN32 1
 #define XD3_POSIX 0
 #else
-#define XD3_POSIX 1#define XD3_WIN32 0
+#define XD3_POSIX 1
+#define XD3_WIN32 0
 #endif
 #define XD3_STDIO 0
 #define EXTERNAL_COMPRESSION 0
@@ -116,7 +117,7 @@
  */
 #ifndef _WIN32
 #include <stdint.h>
-typedef unsigned int usize_t;
+typedef unsigned int   usize_t;
 #else
 #define WIN32_LEAN_AND_MEAN
 #if XD3_USE_LARGEFILE64
@@ -137,7 +138,8 @@ typedef unsigned int usize_t;
 #include <windows.h>
 typedef unsigned int   usize_t;
 #ifdef _MSC_VER
-#define inline
+#undef inline
+#define inline __inline
 typedef signed int     ssize_t;
 typedef unsigned char  uint8_t;
 typedef unsigned short uint16_t;

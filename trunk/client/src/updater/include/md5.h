@@ -22,7 +22,41 @@
 #define _MD5_H 1
 
 #include <stdio.h>
+#ifndef _WIN32
 #include <stdint.h>
+#else
+#define WIN32_LEAN_AND_MEAN
+#if XD3_USE_LARGEFILE64
+/* 64 bit file offsets: uses GetFileSizeEx and SetFilePointerEx.
+* requires Win2000 or newer version of WinNT */
+#define WINVER		0x0500
+#define _WIN32_WINNT	0x0500
+#else
+/* 32 bit (DWORD) file offsets: uses GetFileSize and
+* SetFilePointer. compatible with win9x-me and WinNT4 */
+#ifndef WINVER
+#define WINVER		0x0400
+#endif
+#ifndef _WIN32_WINNT
+#define _WIN32_WINNT	0x0400
+#endif
+#endif
+#include <windows.h>
+typedef unsigned int   usize_t;
+#ifdef _MSC_VER
+#undef inline
+#define inline __inline
+typedef signed int     ssize_t;
+typedef unsigned char  uint8_t;
+typedef unsigned short uint16_t;
+typedef unsigned long  uint32_t;
+typedef ULONGLONG      uint64_t;
+#else
+/* mingw32, lcc and watcom provide a proper header */
+#include <stdint.h>
+#endif
+#endif
+
 
 #define MD5_DIGEST_SIZE 16
 #define MD5_BLOCK_SIZE 64

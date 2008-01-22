@@ -51,7 +51,6 @@ static void dumpFile(const char *fname)
     {
         char modstr[64];
         PHYSFS_sint64 size = PHYSFS_fileLength(in);
-
 //        printf("(");
 //        if (size == -1)
 //            printf("?");
@@ -70,7 +69,7 @@ static void dumpFile(const char *fname)
                 fail("PHYSFS_read", NULL);
             else
             {
-                PHYSFS_sint64 bw = PHYSFS_write(out, buf, 1, br);
+                PHYSFS_sint64 bw = PHYSFS_write(out, buf, 1, (PHYSFS_uint32) br);
                 if (bw != br)
                     fail("PHYSFS_write", NULL);
                 else

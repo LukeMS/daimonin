@@ -1681,7 +1681,7 @@ int main(int argc, char *argv[])
  */
         if (!options.speedup)
             map_udate_flag=2;
-        else if ((GameStatus == GAME_STATUS_PLAY) && ((LastTick-speeduptick)>options.speedup))
+        else if ((GameStatus == GAME_STATUS_PLAY) && ((int)(LastTick-speeduptick)>options.speedup))
         {
                 speeduptick=LastTick;
                 map_udate_flag=2;
@@ -1811,7 +1811,7 @@ int main(int argc, char *argv[])
         if((GameStatus  == GAME_STATUS_PLAY) && options.statsupdate )
         {
             cur_widget[STATOMETER_ID].show=TRUE;
-            if ((LastTick-statometer.lastupdate)>(options.statsupdate*1000))
+            if ((int)(LastTick-statometer.lastupdate)>(options.statsupdate*1000))
             {
                 statometer.lastupdate=LastTick;
                 statometer.exphour=((statometer.exp/(float)(LastTick-statometer.starttime))*3600000);
