@@ -172,11 +172,20 @@ AC_CHECK_LIB([physfs],
              [PHYSFS_LIBS="-lphysfs"],
              [AC_MSG_ERROR([PhysicsFS lib not found! Get PhysicsFS from http://icculus.org/physfs/])])
 	     
+AC_CHECK_LIB(curl, curl_global_init,
+	[CURL_LIBS="-lcurl"], [
+	echo "*"
+	echo "*  libcurl is needed to build this library. It is either not"
+	echo "*  installed on your system or it is too old."
+	echo "*  Please install or update your libcurl-devel or visit http://curl.haxx.se/"
+	echo "*"
+	AC_MSG_ERROR("Cannot build. Stop.")], -lcurl)
 LIBS=$OLD_LIBS
 
 AC_SUBST([SDL_LIBS])
 AC_SUBST([SDL_IMAGE_LIBS])
 AC_SUBST([SDL_MIXER_LIBS])
+AC_SUBST([CURL_LIBS])
 
 # Check for SDL headers
 
@@ -210,6 +219,7 @@ AC_CHECK_HEADER([physfs.h],
                [],
                [AC_MSG_ERROR([*** PhysicsFS include not found!
 You should install PhysicsFS development package.])])
+
 		
 CPPFLAGS=$OLD_CPPFLAGS
 CXXFLAGS=$OLD_CXXFLAGS
@@ -372,6 +382,7 @@ AC_SUBST(CPPFLAGS)
 AC_SUBST(LDFLAGS)
 AC_SUBST(EXTRA_LIBS)
 AC_SUBST(PHYSFS_LIBS)
+AC_SUBST(CURL_LIBS)
 
 AC_CONFIG_HEADER(../../src/include/define.h)
 AC_OUTPUT(Makefile)
