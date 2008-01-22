@@ -12,8 +12,9 @@ libsdl-image-1.2 and libsdl-image-1.2-dev
 To install those, run this command (one line; without the prompt '>'):
 > apt-get install libsdl1.2 libsdl1.2-dev libsdl-mixer-1.2 libsdl-mixer-1.2-dev libsdl-image-1.2 libsdl-image-1.2-dev
 
-You also need the PhysicsFS
+You also need the PhysicsFS and libcurl-dev
 To install this, run this command (one line):
 > apt-get install libphysfs-dev
+> apt-get install libcurl-dev
 
 Please read the main README for general installation instructions.

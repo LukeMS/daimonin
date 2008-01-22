@@ -12,6 +12,8 @@ Before you can compile the client, you need 3 SDL libraries.
 
 These libs are called SDL, SDL_mixer, SDL_image.
 
+You need also libcurl (libcurl-dev) and the PhysFS libs.
+
 The best way to get these libraries, is through the fink project.  The fink
 project  is a package management system, that enables popular unix programs
 and libraries work on Darwin and MacOS X. 

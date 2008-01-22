@@ -7,8 +7,10 @@ http://www.libsdl.org/index.php.
 You can normally also get them with your Linux distro package manager, 
 just make sure you get the developer versions.
 
-Alderan: Also you need the physfs library:
+Alderan: Also you need the physfs library and libcurl:
 http://icculus.org/physfs/
+libcurl, libcurl-dev or libcurl-devel are avaible for all distros
+
 
 Compilation
 -----------
