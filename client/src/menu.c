@@ -1114,6 +1114,7 @@ static int load_anim_tmp(void)
             free(anim_table[i].anim_cmd);
     }
     memset(animations, 0, sizeof(animations));
+    memset(anim_table, 0, sizeof(anim_table));
 
     /* animation #0 is like face id #0 a bug catch - if ever
      * appear in game flow its a sign of a uninit of simply
