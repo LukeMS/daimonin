@@ -2200,9 +2200,9 @@ void read_keybind_file(char *fname)
             {
                 if (++bindkey_list_set.group_nr == BINDKEY_LIST_MAX)
                     break;
-                while (line[++i] && line[i] != '"' && i < OPTWIN_MAX_TABLEN)
+                while (line[++i] && line[i] != '"' && i - 2 < OPTWIN_MAX_TABLEN - 1)
                     bindkey_list[bindkey_list_set.group_nr].name[i - 2] = line[i];
-                bindkey_list[bindkey_list_set.group_nr].name[++i] = 0;
+                bindkey_list[bindkey_list_set.group_nr].name[i - 2] = 0;
                 bindkey_list_set.entry_nr = 0;
                 continue;
             }
