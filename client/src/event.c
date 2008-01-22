@@ -2183,7 +2183,7 @@ static void key_repeat(void)
 void read_keybind_file(char *fname)
 {
     FILE   *stream;
-    char    line[255];
+    char    line[256];
     int     i, pos;
 
     if ((stream = fopen_wrapper(fname, "r")))

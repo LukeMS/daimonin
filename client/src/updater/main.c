@@ -37,7 +37,7 @@
 #ifdef WIN32
 #define PROCESS_UPDATER "daimonin_start.exe"
 #define SYSTEM_OS_TAG 'w'
-#define PROCESS_CLIENT "client.exe"
+#define PROCESS_CLIENT "daimonin.exe"
 #else
 #define PROCESS_UPDATER "daimonin_start"
 #define SYSTEM_OS_TAG 'l'
@@ -56,8 +56,10 @@ int update_flag = FALSE;
 FILE *version_handle=NULL;
 
 /* our easy_curl handle */
-CURL *curlhandle = NULL;
-
+struct FtpFile {
+    const char *filename;
+    FILE *stream;
+};
 
 extern void clear_directory(char* start_dir);
 extern void copy_patch_files(char* start_dir);
@@ -66,7 +68,6 @@ extern void copy_patch(char *src, char *dest);
 extern void append_file(char *src, char *dest);
 extern int  download_file(char *url, char *remotefilename, char *destfolder, char *destfilename);
 int curl_progresshandler(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow);
-extern int  bunzip2(char *infile, char *outfile);
 int process_xdelta3(FILE*  patchFile, FILE*  oldFile, FILE* destFile, int BufSize);
 extern int  apply_xdelta3(char *patchfile, char *oldfile, char *destfile);
 extern int  calc_md5(char *filename, char *outputbuf);
@@ -75,8 +76,7 @@ static void free_resources(void)
 {
     if (copy_buffer)
         free(copy_buffer);
-    if (curlhandle)
-        curl_easy_cleanup(curlhandle);
+    curl_global_cleanup();
 }
 
 
@@ -93,6 +93,7 @@ static void updater_error(const char *msg)
 
 static void start_client_and_close(char *p_path)
 {
+    curl_global_cleanup();
     printf("Starting client...\n");
 //    getchar();
     strcpy(process_path, p_path);
@@ -149,11 +150,7 @@ int main(int argc, char *argv[])
 #ifndef WIN32
     /*    struct flock fl = { F_RDLCK, SEEK_SET, 0,       0,     0 };*/
 #endif
-    printf("Daimonin AutoUpdater 1.0a\n\n");
-
-    curlhandle = curl_easy_init();
-    if (!curlhandle)
-        updater_error("Error initializing curl...");
+    printf("Daimonin AutoUpdater 1.1\n\n");
 
 //        printf("%s\n",argv[0]);
 //        if(argc>1)
@@ -273,7 +270,9 @@ int main(int argc, char *argv[])
 
         /* check we have the update or we must get it */
         printf("Check update info....\n");
+
     }
+
     /* open the patch info file and process the single entries */
     sprintf(file_path,"%s%s/%s", prg_path, FOLDER_UPDATE, UPDATE_FILE);
     if ((stream = fopen(file_path, "rt")) == NULL)
@@ -324,6 +323,7 @@ int main(int argc, char *argv[])
 
             /* we test for .bz2 ending which means we have a .zip.bz2 file (what a combination) */
 
+            /*
             string_pos = strrchr(buf, '.');
             if ((string_pos) && (!strcmp(string_pos, ".bz2")))
             {
@@ -333,7 +333,7 @@ int main(int argc, char *argv[])
                     printf("Error extracting file: %s\n",file_name);
                 }
             }
-
+*/
             zip_extract(buf,FOLDER_UPDATE);
 
             if (strcmp(parms, buf))
@@ -850,53 +850,54 @@ int process_patch_file(char *patch_file, int mode)
     return(0);
 }
 
+static int my_fwrite(void *buffer, size_t size, size_t nmemb, void *stream)
+{
+    struct FtpFile *out=(struct FtpFile *)stream;
+    if(out && !out->stream) {
+        /* open file for writing */
+        out->stream=fopen(out->filename, "wb");
+        if(!out->stream)
+            return -1; /* failure, can't open file to write */
+    }
+    return fwrite(buffer, size, nmemb, out->stream);
+}
+
 int download_file(char *url, char *remotefilename, char *destfolder, char *destfilename)
 {
+    CURL       *curlhandle = NULL;
     CURLcode    res;
-    FILE        *outfile;
     char        filename[MAX_DIR_PATH];
     char        fullurl[MAX_DIR_PATH];
-    unsigned long httpresult = 0;
+    struct FtpFile ftpfile;
 
+    curlhandle = curl_easy_init();
     if (!curlhandle)
-        updater_error("curl error.");
+        updater_error("Error initializing curl...");
 
+    /* setup curl */
     sprintf(filename,"%s/%s", destfolder, destfilename);
+    ftpfile.filename = filename;
+    ftpfile.stream = NULL;
     sprintf(fullurl,"%s%s", url, remotefilename);
-
-    outfile=fopen(filename, "wb+");
-    if (!outfile)
-        updater_error("dl: could not open file for writing.");
-
     curl_easy_setopt(curlhandle,CURLOPT_URL, fullurl);
-    curl_easy_setopt(curlhandle, CURLOPT_WRITEDATA, outfile);
-//    curl_easy_setopt(curlhandle, CURLOPT_VERBOSE, 1);
+    curl_easy_setopt(curlhandle, CURLOPT_WRITEFUNCTION, my_fwrite);
+    curl_easy_setopt(curlhandle, CURLOPT_WRITEDATA, &ftpfile);
+    curl_easy_setopt(curlhandle, CURLOPT_VERBOSE, 0);
     curl_easy_setopt(curlhandle, CURLOPT_NOPROGRESS, FALSE);
     curl_easy_setopt(curlhandle, CURLOPT_PROGRESSFUNCTION, curl_progresshandler);
 
-    printf("start downloading file: %s\n",destfilename);
-
     res = curl_easy_perform(curlhandle);
-    printf("\n");
-    if (res)
-    {
+    curl_easy_cleanup(curlhandle);
 
-        printf("curl error: %s\n",curl_easy_strerror(res));
-        fclose(outfile);
-        return FALSE;
-    }
+    /* we failed? */
+    if(CURLE_OK != res)
+        updater_error("curl error.");
 
-    curl_easy_getinfo(curlhandle, CURLINFO_RESPONSE_CODE, &httpresult);
-    if (httpresult>=300)
-    {
-        printf("Error downloading file, Server Response: %d\n",(int) httpresult);
-        fclose(outfile);
-        return FALSE;
-    }
+    if(ftpfile.stream)
+        fclose(ftpfile.stream); /* close the local file */
 
-    fclose(outfile);
 
-    printf("%s downloaded succesful (%d).\n",destfilename, res);
+    printf("\n%s downloaded succesful (%d).\n",destfilename, res);
     return TRUE;
 }
 
@@ -923,63 +924,6 @@ int curl_progresshandler(void *clientp, double dltotal, double dlnow, double ult
     }
 
     return 0;
-}
-
-extern int bunzip2(char *infile, char *outfile)
-{
-#define BZ_BUFSIZE 1024*512
-    FILE    *in = NULL;
-    FILE    *out = NULL;
-    BZFILE  *bzf = NULL;
-    char    buf[BZ_BUFSIZE];
-    int     bzer = 0, readlen = 0;
-    int     error = FALSE;
-
-    out=fopen(outfile, "wb+");
-    if (!out)
-        updater_error("unpack: could not open file for writing.");
-    in = fopen(infile, "rb");
-    if (!in)
-    {
-        printf("unpack: could not open input file.\n ");
-        error = TRUE;
-        goto cleanup;
-    }
-    bzf = BZ2_bzReadOpen(&bzer, in, BZ_VERBOSE, 0, NULL, 0);
-    if (bzer!=BZ_OK)
-    {
-        error = TRUE;
-        printf("unpack: bz_open error: %d\n", bzer);
-        goto cleanup_both;
-    }
-
-    readlen = BZ2_bzRead(&bzer, bzf, &buf, BZ_BUFSIZE);
-    while (bzer==BZ_OK)
-    {
-        fwrite(&buf, readlen, 1, out);
-        readlen = BZ2_bzRead(&bzer, bzf, &buf, BZ_BUFSIZE);
-    }
-
-    if (bzer==BZ_STREAM_END)
-        fwrite(&buf, readlen, 1, out);
-    else
-    {
-        printf("unpack: bz_read error: %d\n",bzer);
-        error = TRUE;
-    }
-
-    BZ2_bzReadClose(&bzer,bzf);
-
-cleanup_both:
-    fclose(in);
-cleanup:
-    fclose(out);
-
-    if (error)
-        return FALSE;
-
-    return TRUE;
-#undef BZ_BUFSIZE
 }
 
 int process_xdelta3(FILE*  patchFile, FILE*  oldFile, FILE* destFile, int BufSize)

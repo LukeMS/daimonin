@@ -268,7 +268,7 @@ daimonin_updater_SOURCES = \
 	../../src/updater/physfsunpack.c \
 	../../src/updater/md5.c
 
-daimonin_updater_LDADD = -lbz2 @PHYSFS_LIBS@ -lcurl
+daimonin_updater_LDADD = @PHYSFS_LIBS@ -lcurl
 daimonin_updater_OBJDIR = updater_objs
 
 # NOTE: if building xdelta, run its configure with "--disable-shared"
@@ -842,7 +842,6 @@ install-data-hook:
 	$(MKDIR) -p $(d_datadir)/gfx_user
 	$(MKDIR) -p $(d_datadir)/srv_files
 	$(MKDIR) -p $(d_datadir)/skins
-	$(MKDIR) -p $(d_datadir)/tools
 	$(MKDIR) -p $(d_datadir)/settings
 	$(MKDIR) -p $(d_datadir)/update
 	$(CP) ../../sfx/*.* $(d_datadir)/sfx
@@ -851,7 +850,6 @@ install-data-hook:
 	$(CP) -R ../../skins/* $(d_datadir)/skins
 	$(CP) -R ../../settings/*.* $(d_datadir)/settings
 	$(CP) ../../srv_files/*.* $(d_datadir)/srv_files
-	$(CP) -R ../../tools/*.* $(d_datadir)/tools
 	$(CP) ../../update/version $(d_datadir)/update
 	$(CP) ../../gfx_user/*.* $(d_datadir)/gfx_user
 	$(CP) ../../daimonin.p0 $(d_datadir)

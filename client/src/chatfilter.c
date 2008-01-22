@@ -172,7 +172,7 @@ void chatfilter_filter(char *msg)
 
     strncpy(buf,msg,1024); /* we need a lowercase string as reference */
 
-    for (i=0;i<strlen(buf);i++)
+    for (i=0;i<(int) strlen(buf);i++)
     {
         buf[i]=tolower(buf[i]);
     }
@@ -181,7 +181,7 @@ void chatfilter_filter(char *msg)
     {
         while ((stemp=strstr(buf,node->word))!=NULL)
         {
-            for (i=0;i<strlen(node->word);i++)
+            for (i=0;i<(int)strlen(node->word);i++)
             {
                 msg[(stemp-buf)+i]=replacechar; /* replace with replacechar */
                 stemp[i]=replacechar;           /* reference string must also replaced to prevend endless loop */
@@ -254,7 +254,7 @@ void chatfilter_command(char *cmd)
         /* syntax: if the word is in the list, remove it.
          * if its new, add it. save the new list then
          */
-        for (i=0;i<strlen(cmd);i++)
+        for (i=0;i<(int)strlen(cmd);i++)
         {
             cmd[i]=tolower(cmd[i]);
         }

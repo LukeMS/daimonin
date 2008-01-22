@@ -49,7 +49,7 @@
 				AdditionalIncludeDirectories="../../../,../../../src/include,.\sdl_inc,.\sdl_inc\SDL\"
 				PreprocessorDefinitions="WIN32,_DEBUG,__WIN_32"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
+				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				PrecompiledHeaderThrough="include.h"
 				PrecompiledHeaderFile=".\Debug/client.pch"
@@ -57,7 +57,7 @@
 				ObjectFile=".\Debug/"
 				ProgramDataBaseFileName=".\Debug/"
 				WarningLevel="3"
-				WarnAsError="false"
+				WarnAsError="true"
 				SuppressStartupBanner="true"
 				DebugInformationFormat="3"
 				CompileAs="0"
@@ -77,10 +77,10 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
 				AdditionalDependencies="wsock32.lib"
-				OutputFile=".\Debug/client.exe"
+				OutputFile=".\Debug/daimonin.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
-				IgnoreDefaultLibraryNames="msvcrt.lib;libcmt.lib"
+				IgnoreDefaultLibraryNames=""
 				DelayLoadDLLs="$(NOINHERIT)"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\Debug/Daimonin.pdb"
@@ -109,7 +109,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy Debug\client.exe ..\..\..\client.exe"
+				CommandLine="copy Debug\daimonin.exe ..\..\..\daimonin.exe"
 			/>
 		</Configuration>
 		<Configuration
@@ -148,7 +148,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="../../../;../../../src/include;.\sdl_inc;.\sdl_inc\SDL\;../"
+				AdditionalIncludeDirectories="../../../,../../../src/include,.\sdl_inc,.\sdl_inc\SDL\"
 				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,__WIN_32"
 				ExceptionHandling="0"
 				RuntimeLibrary="0"
@@ -158,7 +158,7 @@
 				ObjectFile=".\Release/"
 				ProgramDataBaseFileName=".\Release/"
 				WarningLevel="3"
-				WarnAsError="false"
+				WarnAsError="true"
 				SuppressStartupBanner="true"
 				CompileAs="1"
 			/>
@@ -177,12 +177,12 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
 				AdditionalDependencies="wsock32.lib"
-				OutputFile=".\Release/client.exe"
+				OutputFile=".\Release/daimonin.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				GenerateManifest="false"
 				IgnoreAllDefaultLibraries="false"
-				IgnoreDefaultLibraryNames="MSVCRT.lib"
+				IgnoreDefaultLibraryNames="msvcrt.lib"
 				DelayLoadDLLs="$(NOINHERIT)"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -211,7 +211,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy Release\client.exe ..\..\..\client.exe"
+				CommandLine="copy Release\daimonin.exe ..\..\..\daimonin.exe"
 			/>
 		</Configuration>
 	</Configurations>
@@ -368,10 +368,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\cflinux.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\include\chatfilter.h"
 				>
 			</File>
@@ -389,10 +385,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\crc32.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\include\define.h"
 				>
 			</File>
 			<File
@@ -533,10 +525,6 @@
 				>
 			</File>
 		</Filter>
-		<File
-			RelativePath=".\sdl_lib\libbz2.lib"
-			>
-		</File>
 		<File
 			RelativePath=".\sdl_lib\physfs.lib"
 			>
