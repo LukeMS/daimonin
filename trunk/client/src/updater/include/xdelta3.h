@@ -136,6 +136,7 @@ typedef unsigned int   usize_t;
 #endif
 #endif
 #include <windows.h>
+
 typedef unsigned int   usize_t;
 #ifdef _MSC_VER
 #undef inline

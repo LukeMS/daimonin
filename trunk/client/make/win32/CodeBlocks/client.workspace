@@ -1,8 +1,7 @@
-<?xml version="1.0"?>
-<!DOCTYPE CodeBlocks_workspace_file>
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_workspace_file>
 	<Workspace title="Workspace">
-		<Project filename="Client.cbp" active="1"/>
-		<Project filename="updater.cbp"/>
+		<Project filename="Client.cbp" active="1" />
+		<Project filename="updater.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>

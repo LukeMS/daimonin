@@ -124,9 +124,9 @@
  *
  * PhysicsFS is mostly thread safe. The error messages returned by
  *  PHYSFS_getLastError are unique by thread, and library-state-setting
- *  functions are mutex'd. For efficiency, individual file accesses are 
- *  not locked, so you can not safely read/write/seek/close/etc the same 
- *  file from two threads at the same time. Other race conditions are bugs 
+ *  functions are mutex'd. For efficiency, individual file accesses are
+ *  not locked, so you can not safely read/write/seek/close/etc the same
+ *  file from two threads at the same time. Other race conditions are bugs
  *  that should be reported/patched.
  *
  * While you CAN use stdio/syscall file access in a program that has PHYSFS_*
@@ -284,7 +284,6 @@ typedef PHYSFS_sint32         PHYSFS_sint64;
 typedef signed __int64        PHYSFS_sint64;
 typedef unsigned __int64      PHYSFS_uint64;
 #else
-uuu
 typedef unsigned long long    PHYSFS_uint64;
 typedef signed long long      PHYSFS_sint64;
 #endif

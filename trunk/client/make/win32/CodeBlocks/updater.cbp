@@ -7,7 +7,7 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="..\..\..\client_start_d.exe" prefix_auto="0" extension_auto="0" />
+				<Option output="..\..\..\daimonin_start_d.exe" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="..\..\..\..\client" />
 				<Option object_output="obj\Debug\" />
 				<Option type="1" />
@@ -18,7 +18,7 @@
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="..\..\..\client_start.exe" prefix_auto="0" extension_auto="0" />
+				<Option output="..\..\..\daimonin_start.exe" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="..\..\..\..\client" />
 				<Option object_output="obj\Release\" />
 				<Option type="1" />
@@ -47,15 +47,12 @@
 			<Add directory="..\..\..\src\updater\include" />
 			<Add directory="..\CodeBlocks" />
 			<Add directory="..\..\..\src\include" />
-			<Add directory="..\..\..\src" />
 		</Compiler>
 		<Linker>
-			<Add library="libcurl.a" />
-			<Add library="wsock32" />
-			<Add library="winmm" />
-			<Add library="libbz2.a" />
-			<Add library="libphysfs.a" />
-			<Add directory="..\CodeBlocks" />
+			<Add library="sdl_lib\static\libphysfs.a" />
+			<Add library="sdl_lib\static\libcurl.a" />
+			<Add library="libwsock32.a" />
+			<Add library="libwinmm.a" />
 		</Linker>
 		<Unit filename="updater.rc">
 			<Option compilerVar="WINDRES" />
@@ -66,13 +63,6 @@
 		<Unit filename="..\..\..\src\crc32.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\..\src\include\crc32.h" />
-		<Unit filename="..\..\..\src\include\inffast.h" />
-		<Unit filename="..\..\..\src\include\inflate.h" />
-		<Unit filename="..\..\..\src\include\inftrees.h" />
-		<Unit filename="..\..\..\src\include\zconf.h" />
-		<Unit filename="..\..\..\src\include\zlib.h" />
-		<Unit filename="..\..\..\src\include\zutil.h" />
 		<Unit filename="..\..\..\src\inffast.c">
 			<Option compilerVar="CC" />
 		</Unit>
