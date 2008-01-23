@@ -1,124 +1,124 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Release" />
-	<File name="ReadMe.txt" open="1" top="0" tabpos="13">
+	<File name="ReadMe.txt" open="1" top="1" tabpos="1">
 		<Cursor position="0" topLine="0" />
 	</File>
-	<File name="..\..\..\src\adler32.c" open="1" top="0" tabpos="51">
+	<File name="..\..\..\src\adler32.c" open="0" top="0" tabpos="39">
 		<Cursor position="0" topLine="0" />
 	</File>
-	<File name="..\..\..\src\book.c" open="1" top="0" tabpos="35">
+	<File name="..\..\..\src\book.c" open="0" top="0" tabpos="23">
 		<Cursor position="15002" topLine="493" />
 	</File>
-	<File name="..\..\..\src\client.c" open="1" top="0" tabpos="37">
+	<File name="..\..\..\src\client.c" open="0" top="0" tabpos="25">
 		<Cursor position="2970" topLine="74" />
 	</File>
-	<File name="..\..\..\src\commands.c" open="1" top="0" tabpos="20">
+	<File name="..\..\..\src\commands.c" open="0" top="0" tabpos="8">
 		<Cursor position="66724" topLine="2028" />
 	</File>
-	<File name="..\..\..\src\crc32.c" open="1" top="0" tabpos="50">
+	<File name="..\..\..\src\crc32.c" open="0" top="0" tabpos="38">
 		<Cursor position="0" topLine="0" />
 	</File>
-	<File name="..\..\..\src\dialog.c" open="1" top="0" tabpos="32">
+	<File name="..\..\..\src\dialog.c" open="0" top="0" tabpos="20">
 		<Cursor position="89896" topLine="1935" />
 	</File>
-	<File name="..\..\..\src\event.c" open="1" top="0" tabpos="21">
+	<File name="..\..\..\src\event.c" open="0" top="0" tabpos="9">
 		<Cursor position="56717" topLine="1567" />
 	</File>
-	<File name="..\..\..\src\include\cflinux.h" open="1" top="0" tabpos="52">
+	<File name="..\..\..\src\include\cflinux.h" open="0" top="0" tabpos="40">
 		<Cursor position="0" topLine="0" />
 	</File>
-	<File name="..\..\..\src\include\client.h" open="1" top="0" tabpos="30">
+	<File name="..\..\..\src\include\client.h" open="0" top="0" tabpos="18">
 		<Cursor position="19597" topLine="556" />
 	</File>
-	<File name="..\..\..\src\include\config.h" open="1" top="0" tabpos="38">
+	<File name="..\..\..\src\include\config.h" open="0" top="0" tabpos="26">
 		<Cursor position="1780" topLine="38" />
 	</File>
-	<File name="..\..\..\src\include\event.h" open="1" top="0" tabpos="44">
+	<File name="..\..\..\src\include\event.h" open="0" top="0" tabpos="32">
 		<Cursor position="2086" topLine="54" />
 	</File>
-	<File name="..\..\..\src\include\include.h" open="1" top="0" tabpos="33">
+	<File name="..\..\..\src\include\include.h" open="0" top="0" tabpos="21">
 		<Cursor position="2003" topLine="66" />
 	</File>
-	<File name="..\..\..\src\include\interface.h" open="1" top="0" tabpos="26">
+	<File name="..\..\..\src\include\interface.h" open="0" top="0" tabpos="14">
 		<Cursor position="4620" topLine="152" />
 	</File>
-	<File name="..\..\..\src\include\inventory.h" open="1" top="0" tabpos="22">
+	<File name="..\..\..\src\include\inventory.h" open="0" top="0" tabpos="10">
 		<Cursor position="1128" topLine="19" />
 	</File>
-	<File name="..\..\..\src\include\kerbholz.h" open="1" top="0" tabpos="34">
+	<File name="..\..\..\src\include\kerbholz.h" open="0" top="0" tabpos="22">
 		<Cursor position="976" topLine="11" />
 	</File>
-	<File name="..\..\..\src\include\main.h" open="1" top="0" tabpos="15">
+	<File name="..\..\..\src\include\main.h" open="0" top="0" tabpos="3">
 		<Cursor position="7844" topLine="222" />
 	</File>
-	<File name="..\..\..\src\include\map.h" open="1" top="0" tabpos="39">
+	<File name="..\..\..\src\include\map.h" open="0" top="0" tabpos="27">
 		<Cursor position="947" topLine="13" />
 	</File>
-	<File name="..\..\..\src\include\menu.h" open="1" top="0" tabpos="27">
+	<File name="..\..\..\src\include\menu.h" open="0" top="0" tabpos="15">
 		<Cursor position="4007" topLine="119" />
 	</File>
-	<File name="..\..\..\src\include\player.h" open="1" top="0" tabpos="36">
+	<File name="..\..\..\src\include\player.h" open="0" top="0" tabpos="24">
 		<Cursor position="1800" topLine="34" />
 	</File>
-	<File name="..\..\..\src\include\sprite.h" open="1" top="0" tabpos="41">
+	<File name="..\..\..\src\include\sprite.h" open="0" top="0" tabpos="29">
 		<Cursor position="5299" topLine="140" />
 	</File>
-	<File name="..\..\..\src\include\wrapper.h" open="1" top="0" tabpos="28">
+	<File name="..\..\..\src\include\wrapper.h" open="0" top="0" tabpos="16">
 		<Cursor position="2388" topLine="68" />
 	</File>
-	<File name="..\..\..\src\inffast.c" open="1" top="0" tabpos="49">
+	<File name="..\..\..\src\inffast.c" open="0" top="0" tabpos="37">
 		<Cursor position="0" topLine="0" />
 	</File>
-	<File name="..\..\..\src\inflate.c" open="1" top="0" tabpos="48">
+	<File name="..\..\..\src\inflate.c" open="0" top="0" tabpos="36">
 		<Cursor position="0" topLine="0" />
 	</File>
-	<File name="..\..\..\src\inftrees.c" open="1" top="0" tabpos="47">
+	<File name="..\..\..\src\inftrees.c" open="0" top="0" tabpos="35">
 		<Cursor position="858" topLine="0" />
 	</File>
-	<File name="..\..\..\src\interface.c" open="1" top="0" tabpos="25">
+	<File name="..\..\..\src\interface.c" open="0" top="0" tabpos="13">
 		<Cursor position="13729" topLine="447" />
 	</File>
-	<File name="..\..\..\src\inventory.c" open="1" top="0" tabpos="24">
+	<File name="..\..\..\src\inventory.c" open="0" top="0" tabpos="12">
 		<Cursor position="26702" topLine="726" />
 	</File>
-	<File name="..\..\..\src\kerbholz.c" open="1" top="0" tabpos="31">
+	<File name="..\..\..\src\kerbholz.c" open="0" top="0" tabpos="19">
 		<Cursor position="906" topLine="9" />
 	</File>
-	<File name="..\..\..\src\main.c" open="1" top="1" tabpos="16">
+	<File name="..\..\..\src\main.c" open="0" top="0" tabpos="4">
 		<Cursor position="71247" topLine="1930" />
 	</File>
-	<File name="..\..\..\src\map.c" open="1" top="0" tabpos="40">
+	<File name="..\..\..\src\map.c" open="0" top="0" tabpos="28">
 		<Cursor position="18541" topLine="491" />
 	</File>
-	<File name="..\..\..\src\menu.c" open="1" top="0" tabpos="14">
+	<File name="..\..\..\src\menu.c" open="0" top="0" tabpos="2">
 		<Cursor position="12089" topLine="332" />
 	</File>
-	<File name="..\..\..\src\misc.c" open="1" top="0" tabpos="46">
+	<File name="..\..\..\src\misc.c" open="0" top="0" tabpos="34">
 		<Cursor position="0" topLine="0" />
 	</File>
-	<File name="..\..\..\src\player.c" open="1" top="0" tabpos="17">
+	<File name="..\..\..\src\player.c" open="0" top="0" tabpos="5">
 		<Cursor position="5686" topLine="161" />
 	</File>
-	<File name="..\..\..\src\socket.c" open="1" top="0" tabpos="43">
+	<File name="..\..\..\src\socket.c" open="0" top="0" tabpos="31">
 		<Cursor position="834" topLine="892" />
 	</File>
-	<File name="..\..\..\src\sprite.c" open="1" top="0" tabpos="18">
+	<File name="..\..\..\src\sprite.c" open="0" top="0" tabpos="6">
 		<Cursor position="28321" topLine="901" />
 	</File>
-	<File name="..\..\..\src\textwin.c" open="1" top="0" tabpos="19">
+	<File name="..\..\..\src\textwin.c" open="0" top="0" tabpos="7">
 		<Cursor position="7574" topLine="222" />
 	</File>
-	<File name="..\..\..\src\uncompr.c" open="1" top="0" tabpos="42">
+	<File name="..\..\..\src\uncompr.c" open="0" top="0" tabpos="30">
 		<Cursor position="2758" topLine="0" />
 	</File>
-	<File name="..\..\..\src\widget.c" open="1" top="0" tabpos="23">
+	<File name="..\..\..\src\widget.c" open="0" top="0" tabpos="11">
 		<Cursor position="20109" topLine="656" />
 	</File>
-	<File name="..\..\..\src\wrapper.c" open="1" top="0" tabpos="29">
+	<File name="..\..\..\src\wrapper.c" open="0" top="0" tabpos="17">
 		<Cursor position="15982" topLine="549" />
 	</File>
-	<File name="..\..\..\src\zutil.c" open="1" top="0" tabpos="45">
+	<File name="..\..\..\src\zutil.c" open="0" top="0" tabpos="33">
 		<Cursor position="426" topLine="108" />
 	</File>
 </CodeBlocks_layout_file>

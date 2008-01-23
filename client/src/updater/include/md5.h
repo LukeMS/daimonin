@@ -42,7 +42,7 @@
 #endif
 #endif
 #include <windows.h>
-typedef unsigned int   usize_t;
+//typedef unsigned int   usize_t;
 #ifdef _MSC_VER
 #undef inline
 #define inline __inline

@@ -1,506 +1,251 @@
-<?xml version="1.0"?>
-<!DOCTYPE CodeBlocks_project_file>
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_project_file>
-	<FileVersion major="1" minor="1"/>
+	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="Client"/>
-		<Option makefile="Makefile"/>
-		<Option makefile_is_custom="0"/>
-		<Option default_target="1"/>
-		<Option active_target="0"/>
-		<Option compiler="0"/>
+		<Option title="Client" />
+		<Option pch_mode="0" />
+		<Option default_target="Debug" />
+		<Option compiler="gcc" />
 		<Build>
 			<Target title="Release">
-				<Option output="..\..\..\client.exe"/>
-				<Option working_dir="..\..\..\..\client"/>
-				<Option object_output=".objs"/>
-				<Option deps_output=".deps"/>
-				<Option type="0"/>
-				<Option compiler="0"/>
-				<Option projectResourceIncludeDirsRelation="0"/>
+				<Option output="..\..\..\daimonin.exe" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="..\..\..\..\client" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Option projectResourceIncludeDirsRelation="0" />
 				<Compiler>
-					<Add option="-Os"/>
-					<Add option="-O3"/>
+					<Add option="-Os" />
+					<Add option="-O3" />
 				</Compiler>
 			</Target>
 			<Target title="Debug">
-				<Option output="..\..\..\client.exe"/>
-				<Option working_dir="..\..\..\..\client"/>
-				<Option object_output=".objs"/>
-				<Option deps_output=".deps"/>
-				<Option type="0"/>
-				<Option compiler="0"/>
-				<Option projectResourceIncludeDirsRelation="0"/>
+				<Option output="..\..\..\daimonin.exe" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="..\..\..\..\client" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Option projectResourceIncludeDirsRelation="0" />
 				<Compiler>
-					<Add option="-g"/>
+					<Add option="-g" />
 				</Compiler>
 			</Target>
 		</Build>
+		<VirtualTargets>
+			<Add alias="All" targets="Release;Debug;" />
+		</VirtualTargets>
 		<Compiler>
-			<Add option="-I&quot;<INCLUDE>\SDL&quot; -Dmain=SDL_main -mms-bitfields -Wall"/>
-			<Add option="-DWIN32"/>
-			<Add option="-D__WIN_32"/>
-			<Add option="-DMINGW"/>
-			<Add directory="..\..\..\src\include"/>
-			<Add directory="sdl_inc"/>
-			<Add directory="sdl_inc\SDL"/>
-			<Add directory="..\CodeBlocks"/>
-			<Add directory="sdl_lib"/>
+			<Add option='-I&quot;&lt;INCLUDE&gt;\SDL&quot; -Dmain=SDL_main -mms-bitfields -Wall' />
+			<Add option="-DWIN32" />
+			<Add option="-D__WIN_32" />
+			<Add option="-DMINGW" />
+			<Add directory="..\..\..\src\include" />
+			<Add directory="sdl_inc" />
+			<Add directory="sdl_inc\SDL" />
+			<Add directory="..\CodeBlocks" />
+			<Add directory="sdl_lib" />
 		</Compiler>
 		<Linker>
-			<Add library="mingw32"/>
-			<Add library="wsock32"/>
-			<Add library="libphysfs.a"/>
-			<Add library="sdl_lib\libSDLmain.a"/>
-			<Add library="sdl_lib\libSDL.a"/>
-			<Add library="sdl_lib\libSDL_image.a"/>
-			<Add library="sdl_lib\libSDL_mixer.a"/>
-			<Add directory="sdl_lib"/>
-			<Add directory="..\CodeBlocks"/>
+			<Add library="mingw32" />
+			<Add library="wsock32" />
+			<Add library="sdl_lib\libSDLmain.a" />
+			<Add library="sdl_lib\libSDL_image.a" />
+			<Add library="sdl_lib\libSDL_mixer.a" />
+			<Add library="sdl_lib\libSDL.dll.a" />
+			<Add library="sdl_lib\libphysfs.a" />
+			<Add directory="sdl_lib" />
+			<Add directory="..\CodeBlocks" />
 		</Linker>
-		<Unit filename="ReadMe.txt">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
-		</Unit>
+		<Unit filename="ReadMe.txt" />
 		<Unit filename="client.rc">
-			<Option compilerVar="WINDRES"/>
-			<Option objectName="make\win32\CodeBlocks\client.res"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="WINDRES" />
 		</Unit>
 		<Unit filename="..\..\..\src\adler32.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\book.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\buddy.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\chatfilter.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\client.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\commands.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\crc32.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\dialog.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\event.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\filewrap.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\group.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\ignore.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\..\src\include\book.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
-		</Unit>
-		<Unit filename="..\..\..\src\include\buddy.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
-		</Unit>
-		<Unit filename="..\..\..\src\include\cflinux.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
-		</Unit>
-		<Unit filename="..\..\..\src\include\chatfilter.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
-		</Unit>
+		<Unit filename="..\..\..\src\include\book.h" />
+		<Unit filename="..\..\..\src\include\buddy.h" />
+		<Unit filename="..\..\..\src\include\cflinux.h" />
+		<Unit filename="..\..\..\src\include\chatfilter.h" />
 		<Unit filename="..\..\..\src\include\client.h">
-			<Option compilerVar="CC"/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\include\commands.h">
-			<Option compilerVar="CC"/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\include\config.h">
-			<Option compilerVar="CC"/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\..\src\include\crc32.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
-		</Unit>
-		<Unit filename="..\..\..\src\include\dialog.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
-		</Unit>
+		<Unit filename="..\..\..\src\include\crc32.h" />
+		<Unit filename="..\..\..\src\include\dialog.h" />
 		<Unit filename="..\..\..\src\include\event.h">
-			<Option compilerVar="CC"/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\..\src\include\filewrap.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
-		</Unit>
-		<Unit filename="..\..\..\src\include\group.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
-		</Unit>
-		<Unit filename="..\..\..\src\include\ignore.h">
-			<Option compilerVar="CPP"/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
-		</Unit>
+		<Unit filename="..\..\..\src\include\filewrap.h" />
+		<Unit filename="..\..\..\src\include\group.h" />
+		<Unit filename="..\..\..\src\include\ignore.h" />
 		<Unit filename="..\..\..\src\include\include.h">
-			<Option compilerVar="CC"/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\include\inffast.h">
-			<Option compilerVar="CC"/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\include\inflate.h">
-			<Option compilerVar="CC"/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\include\inftrees.h">
-			<Option compilerVar="CC"/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\..\src\include\interface.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
-		</Unit>
+		<Unit filename="..\..\..\src\include\interface.h" />
 		<Unit filename="..\..\..\src\include\inventory.h">
-			<Option compilerVar="CC"/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\include\item.h">
-			<Option compilerVar="CC"/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\..\src\include\kerbholz.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
-		</Unit>
+		<Unit filename="..\..\..\src\include\kerbholz.h" />
 		<Unit filename="..\..\..\src\include\main.h">
-			<Option compilerVar="CC"/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\include\map.h">
-			<Option compilerVar="CC"/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\include\menu.h">
-			<Option compilerVar="CC"/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\include\misc.h">
-			<Option compilerVar="CC"/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\..\src\include\physfs.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
-		</Unit>
-		<Unit filename="..\..\..\src\include\physfsrwops.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
-		</Unit>
+		<Unit filename="..\..\..\src\include\physfs.h" />
+		<Unit filename="..\..\..\src\include\physfsrwops.h" />
 		<Unit filename="..\..\..\src\include\player.h">
-			<Option compilerVar="CC"/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\include\sdlsocket.h">
-			<Option compilerVar="CC"/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\include\sound.h">
-			<Option compilerVar="CC"/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\include\sprite.h">
-			<Option compilerVar="CC"/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\include\textwin.h">
-			<Option compilerVar="CC"/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\..\src\include\widget.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
-		</Unit>
+		<Unit filename="..\..\..\src\include\widget.h" />
 		<Unit filename="..\..\..\src\include\win32.h">
-			<Option compilerVar="CC"/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\include\wrapper.h">
-			<Option compilerVar="CC"/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\..\src\include\zconf.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
-		</Unit>
+		<Unit filename="..\..\..\src\include\zconf.h" />
 		<Unit filename="..\..\..\src\include\zlib.h">
-			<Option compilerVar="CC"/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\include\zutil.h">
-			<Option compilerVar="CC"/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\inffast.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\inflate.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\inftrees.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\interface.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\inventory.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\item.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\kerbholz.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\main.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\map.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\menu.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\misc.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\physfsrwops.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\player.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\socket.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\sound.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\sprite.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\textwin.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\uncompr.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\widget.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\wrapper.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\zutil.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder />
+		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
