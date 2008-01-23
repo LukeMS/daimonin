@@ -618,7 +618,7 @@ Boolean SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port)
             continue;
         }
 
-        LOG(LOG_MSG, "Connect Error:  %d", SocketStatusErrorNr);
+        LOG(LOG_MSG, "Connect Error:  %d\n", SocketStatusErrorNr);
         *socket_temp = SOCKET_NO;
         return(FALSE);
     }

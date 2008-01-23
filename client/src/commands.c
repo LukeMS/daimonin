@@ -503,7 +503,7 @@ void TargetObject(unsigned char *data, int len)
     strcpy(cpl.target_name, (const char *)data);
     map_udate_flag = 2;
     map_redraw_flag = TRUE;
-//    draw_info_format(COLOR_GREEN,"map_draw_update: TragetObejct");
+//    draw_info_format(COLOR_GREEN,"map_draw_update: TargetObject\n");
 
 
     /*    sprintf(buf,"TO: %d %d >%s< (len: %d)\n",cpl.target_mode,cpl.target_code,cpl.target_name,len);

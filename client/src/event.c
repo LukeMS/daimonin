@@ -2882,7 +2882,7 @@ void check_menu_keys(int menu, int key)
                                 break;
                             }
                         draw_info_format(COLOR_RED, "Try to switch back to old setting...");
-                        LOG(LOG_ERROR, "Try to switch back to old setting...");
+                        LOG(LOG_ERROR, "Try to switch back to old setting...\n");
 
                         if ((ScreenSurface = SDL_SetVideoMode(Screensize.x, Screensize.y, options.used_video_bpp, videoflags)) == NULL)
                         {
@@ -2891,7 +2891,7 @@ void check_menu_keys(int menu, int key)
                             Screensize=Screendefs[0];
                             options.resolution = 0;
                             draw_info_format(COLOR_RED, "Try to switch back to 800x600...");
-                            LOG(LOG_ERROR, "Try to switch back to 800x600...");
+                            LOG(LOG_ERROR, "Try to switch back to 800x600...\n");
                             if ((ScreenSurface = SDL_SetVideoMode(Screensize.x, Screensize.y, options.used_video_bpp, videoflags)) == NULL)
                             {
                                 /* now we have a problem */
