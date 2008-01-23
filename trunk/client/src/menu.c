@@ -1430,7 +1430,7 @@ create_bmaps: /* if we are here, then we have to (re)create the bmaps.p0 file */
 
         num = atoi(buf + 6);
         /* Skip accross the number data */
-        for (cp = buf + 6; *cp != ' '; cp++)
+        for (cp = buf + 6; *cp != '\0' && *cp != ' '; cp++)
             ;
         len = atoi(cp);
 
