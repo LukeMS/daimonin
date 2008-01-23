@@ -92,8 +92,6 @@ void SetupCmd(char *buf, int len)
         while (s < len && buf[s] != ' ')
             s++;
         buf[s++] = 0;
-        if (s >= len)
-            break;
         while (s < len && buf[s] == ' ')
             s++;
 
