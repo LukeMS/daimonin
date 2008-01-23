@@ -1134,7 +1134,7 @@ static int load_anim_tmp(void)
     count++;
     if ((stream = fopen_wrapper(FILE_ANIMS_TMP, "rt")) == NULL)
     {
-        LOG(LOG_ERROR, "load_anim_tmp: Error reading anim.tmp!");
+        LOG(LOG_ERROR, "load_anim_tmp: Error reading anim.tmp!\n");
         SYSTEM_End(); /* fatal */
         exit(0);
     }
@@ -1199,7 +1199,7 @@ int read_anim_tmp(void)
     /* if this fails, we have a urgent problem somewhere before */
     if ((stream = fopen_wrapper(FILE_BMAPS_TMP, "rb")) == NULL)
     {
-        LOG(LOG_ERROR, "read_anim_tmp:Error reading bmap.tmp for anim.tmp!");
+        LOG(LOG_ERROR, "read_anim_tmp:Error reading bmap.tmp for anim.tmp!\n");
         SYSTEM_End(); /* fatal */
         exit(0);
     }
@@ -1208,7 +1208,7 @@ int read_anim_tmp(void)
 
     if ((stream = fopen_wrapper(FILE_CLIENT_ANIMS, "rb")) == NULL)
     {
-        LOG(LOG_ERROR, "read_anim_tmp:Error reading bmap.tmp for anim.tmp!");
+        LOG(LOG_ERROR, "read_anim_tmp:Error reading bmap.tmp for anim.tmp!\n");
         SYSTEM_End(); /* fatal */
         exit(0);
     }
@@ -1232,14 +1232,14 @@ int read_anim_tmp(void)
     unlink(FILE_ANIMS_TMP); /* for some reason - recreate this file */
     if ((ftmp = fopen_wrapper(FILE_ANIMS_TMP, "wt")) == NULL)
     {
-        LOG(LOG_ERROR, "read_anim_tmp:Error opening anims.tmp!");
+        LOG(LOG_ERROR, "read_anim_tmp:Error opening anims.tmp!\n");
         SYSTEM_End(); /* fatal */
         exit(0);
     }
 
     if ((stream = fopen_wrapper(FILE_CLIENT_ANIMS, "rt")) == NULL)
     {
-        LOG(LOG_ERROR, "read_anim_tmp:Error reading client_anims for anims.tmp!");
+        LOG(LOG_ERROR, "read_anim_tmp:Error reading client_anims for anims.tmp!\n");
         SYSTEM_End(); /* fatal */
         exit(0);
     }
@@ -1344,7 +1344,7 @@ static void load_bmaps_p0(void)
     /* try to open bmaps_p0 file */
     if ((fbmap = fopen_wrapper(FILE_BMAPS_P0, "rb")) == NULL)
     {
-        LOG(LOG_ERROR, "FATAL: Error loading bmaps.p0!");
+        LOG(LOG_ERROR, "FATAL: Error loading bmaps.p0!\n");
         SYSTEM_End(); /* fatal */
         unlink(FILE_BMAPS_P0);
         exit(0);
@@ -1382,7 +1382,7 @@ void read_bmaps_p0(void)
 
     if ((fpic = fopen_wrapper(FILE_DAIMONIN_P0, "rb")) == NULL)
     {
-        LOG(LOG_ERROR, "FATAL: Can't find daimonin.p0 file!");
+        LOG(LOG_ERROR, "FATAL: Can't find daimonin.p0 file!\n");
         SYSTEM_End(); /* fatal */
         unlink(FILE_BMAPS_P0);
         exit(0);
@@ -1408,7 +1408,7 @@ void read_bmaps_p0(void)
 create_bmaps: /* if we are here, then we have to (re)create the bmaps.p0 file */
     if ((fbmap = fopen_wrapper(FILE_BMAPS_P0, "w")) == NULL)
     {
-        LOG(LOG_ERROR, "FATAL: Can't create bmaps.p0 file!");
+        LOG(LOG_ERROR, "FATAL: Can't create bmaps.p0 file!\n");
         SYSTEM_End(); /* fatal */
         fclose(fbmap);
         unlink(FILE_BMAPS_P0);
@@ -1442,7 +1442,7 @@ create_bmaps: /* if we are here, then we have to (re)create the bmaps.p0 file */
             /* we assume thats this is nonsense */
             if (len > 128 * 1024)
             {
-                LOG(LOG_ERROR, "read_client_images:Size of picture out of bounds!(len:%d)(pos:%d)", len, pos);
+                LOG(LOG_ERROR, "read_client_images:Size of picture out of bounds!(len:%d)(pos:%d)\n", len, pos);
                 SYSTEM_End(); /* fatal */
                 fclose(fbmap);
                 fclose(fpic);
@@ -1459,7 +1459,7 @@ create_bmaps: /* if we are here, then we have to (re)create the bmaps.p0 file */
         /* now we got all we needed! */
         sprintf(line_buf, "%d %d %x %s", num, pos, crc, cp);
         fputs(line_buf, fbmap);
-        /*      LOG(LOG_DEBUG,"FOUND: %s", temp_buf);       */
+        /*      LOG(LOG_DEBUG,"FOUND: %s\n", temp_buf);       */
     }
 
 
@@ -1493,7 +1493,7 @@ static int load_bmap_tmp(void)
     delete_bmap_tmp();
     if ((stream = fopen_wrapper(FILE_BMAPS_TMP, "rt")) == NULL)
     {
-        LOG(LOG_ERROR, "bmaptype_table(): error open file <bmap.tmp>");
+        LOG(LOG_ERROR, "bmaptype_table(): error open file <bmap.tmp>\n");
         SYSTEM_End(); /* fatal */
         exit(0);
     }

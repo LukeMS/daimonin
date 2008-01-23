@@ -1403,7 +1403,7 @@ int main(int argc, char *argv[])
 #ifdef DEVELOPMENT
             sprintf(tmp, "Usage: %s -player <playername> -pass <password> [-server <n>]\n1 - daimonin.game-server.cc\n2-test-server.game-server.cc\n3-localhost\n", argv[0]);
 #endif
-            LOG(LOG_MSG, tmp);
+            LOG(LOG_MSG, "%s", tmp);
             fprintf(stderr, tmp);
             exit(1);
         }
