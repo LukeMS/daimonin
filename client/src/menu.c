@@ -1434,7 +1434,6 @@ create_bmaps: /* if we are here, then we have to (re)create the bmaps.p0 file */
             ;
         len = atoi(cp);
 
-        strcpy(buf, cp);
         pos = (int) ftell(fpic);
 
         if (len > bufsize) /* dynamic buffer adjustment */
@@ -1458,7 +1457,7 @@ create_bmaps: /* if we are here, then we have to (re)create the bmaps.p0 file */
         crc = crc32(1L, temp_buf, len);
 
         /* now we got all we needed! */
-        sprintf(line_buf, "%d %d %x %s", num, pos, crc, buf);
+        sprintf(line_buf, "%d %d %x %s", num, pos, crc, cp);
         fputs(line_buf, fbmap);
         /*      LOG(LOG_DEBUG,"FOUND: %s", temp_buf);       */
     }
