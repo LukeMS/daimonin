@@ -1,0 +1,4063 @@
+arch map
+name Under Guild Hall§spokyspace.ogg|0|-1
+msg
+Created:  2005-11-28 Unknown Combat Dummy
+endmsg
+width 24
+height 24
+difficulty 1
+darkness 1
+tile_path_2 guildhall_a_040a
+tileset_id 38
+tileset_x 0
+tileset_y 0
+end
+arch floor_ostone4
+x 1
+y 5
+end
+arch wall_stone_8
+x 1
+y 5
+end
+arch floor_ostone2
+x 1
+y 6
+end
+arch wall_stone_3
+x 1
+y 6
+end
+arch wmask_fire_on_1
+direction 7
+x 1
+y 6
+end
+arch floor_ostone4
+x 1
+y 7
+end
+arch wall_stone_3
+x 1
+y 7
+end
+arch wmask_bflag_fire1_1
+direction 7
+x 1
+y 7
+end
+arch floor_ostone2
+x 1
+y 8
+end
+arch wall_stone_3
+x 1
+y 8
+end
+arch floor_ostone4
+x 1
+y 9
+end
+arch wall_stone_3
+x 1
+y 9
+end
+arch picture15
+direction 7
+x 1
+y 9
+end
+arch floor_ostone2
+x 1
+y 10
+end
+arch wall_stone_3
+x 1
+y 10
+end
+arch wmask_bflag_fire1_1
+direction 7
+x 1
+y 10
+end
+arch floor_ostone4
+x 1
+y 11
+end
+arch wall_stone_3
+x 1
+y 11
+end
+arch wmask_fire_on_1
+direction 7
+x 1
+y 11
+end
+arch floor_ostone2
+x 1
+y 12
+end
+arch wall_stone_3
+x 1
+y 12
+end
+arch wmask_bflag_fire1_1
+direction 7
+x 1
+y 12
+end
+arch floor_ostone4
+x 1
+y 13
+end
+arch wall_stone_3
+x 1
+y 13
+end
+arch picture8
+direction 7
+x 1
+y 13
+end
+arch floor_ostone2
+x 1
+y 14
+end
+arch wall_stone_3
+x 1
+y 14
+end
+arch floor_ostone4
+x 1
+y 15
+end
+arch wall_stone_3
+x 1
+y 15
+end
+arch floor_ostone2
+x 1
+y 16
+end
+arch wall_stone_3
+x 1
+y 16
+end
+arch wmask_bflag_fire1_1
+direction 7
+x 1
+y 16
+end
+arch floor_ostone4
+x 1
+y 17
+end
+arch wall_stone_3
+x 1
+y 17
+end
+arch floor_ostone4
+x 2
+y 5
+end
+arch wall_stone_1
+x 2
+y 5
+end
+arch floor_ostone4
+x 2
+y 6
+end
+arch floor_ostone2
+x 2
+y 7
+end
+arch amphora1.101
+x 2
+y 7
+end
+arch floor_ostone4
+x 2
+y 8
+end
+arch wall_stone_1
+x 2
+y 8
+end
+arch wmask_bflag_fire1_1
+x 2
+y 8
+end
+arch floor_ostone2
+x 2
+y 9
+end
+arch chair1_111
+direction 7
+x 2
+y 9
+end
+arch floor_ostone4
+x 2
+y 10
+end
+arch floor_ostone2
+x 2
+y 11
+end
+arch light5
+x 2
+y 11
+end
+arch floor_ostone4
+x 2
+y 12
+end
+arch chair1_111
+direction 7
+x 2
+y 12
+end
+arch floor_ostone2
+x 2
+y 13
+end
+arch floor_ostone4
+x 2
+y 14
+end
+arch wall_stone_1
+x 2
+y 14
+end
+arch wmask_bflag_fire1_1
+x 2
+y 14
+end
+arch floor_ostone2
+x 2
+y 15
+end
+arch chair_small
+x 2
+y 15
+end
+arch light5
+x 2
+y 15
+end
+arch floor_ostone4
+x 2
+y 16
+end
+arch pottery5.101
+x 2
+y 16
+end
+arch floor_ostone2
+x 2
+y 17
+end
+arch wall_stone_1
+x 2
+y 17
+end
+arch earth_brown1
+x 2
+y 18
+end
+arch fwall_rock3
+x 2
+y 18
+end
+arch earth_brown3
+x 2
+y 19
+end
+arch fwall_rock3
+x 2
+y 19
+end
+arch earth_brown2
+x 2
+y 20
+end
+arch fwall_rock2
+x 2
+y 20
+end
+arch earth_brown2
+x 2
+y 21
+end
+arch fwall_rock1
+x 2
+y 21
+end
+arch plant1_wall.151
+direction 7
+x 2
+y 21
+end
+arch earth_brown2
+x 2
+y 22
+end
+arch fwall_rock3
+x 2
+y 22
+end
+arch earth_brown2
+x 2
+y 23
+end
+arch fwall_rock2
+x 2
+y 23
+end
+arch floor_ostone4
+x 3
+y 5
+end
+arch wall_stone_1
+x 3
+y 5
+end
+arch wmask_bflag_fire1_1
+x 3
+y 5
+end
+arch floor_ostone2
+x 3
+y 6
+end
+arch bank1.111
+x 3
+y 6
+end
+arch floor_ostone4
+x 3
+y 7
+end
+arch spawn_point
+x 3
+y 7
+arch mage_old
+name Jahrlen
+type 83
+level 91
+direction 2
+arch event_obj
+name Lua
+sub_type 13
+race merc_jahrlen.lua
+end
+end
+end
+arch floor_ostone2
+x 3
+y 8
+end
+arch chair1_111
+x 3
+y 8
+end
+arch floor_ostone4
+x 3
+y 9
+end
+arch table_round2
+x 3
+y 9
+end
+arch floor_ostone2
+x 3
+y 10
+end
+arch chair1_111
+direction 5
+x 3
+y 10
+end
+arch floor_ostone4
+x 3
+y 11
+end
+arch floor_ostone2
+x 3
+y 12
+end
+arch table_round2
+x 3
+y 12
+end
+arch floor_ostone4
+x 3
+y 13
+end
+arch chair1_111
+direction 5
+x 3
+y 13
+end
+arch floor_ostone2
+x 3
+y 14
+end
+arch wall_stone_1
+x 3
+y 14
+end
+arch floor_ostone4
+x 3
+y 15
+end
+arch floor_ostone2
+x 3
+y 16
+end
+arch floor_ostone4
+x 3
+y 17
+end
+arch wall_stone_1
+x 3
+y 17
+end
+arch earth_brown1
+x 3
+y 18
+end
+arch fwall_rock3
+x 3
+y 18
+end
+arch earth_brown3
+x 3
+y 19
+end
+arch rock_big5
+x 3
+y 19
+end
+arch earth_brown1
+x 3
+y 20
+end
+arch earth_brown2
+x 3
+y 21
+end
+arch rock1
+x 3
+y 21
+end
+arch earth_brown1
+x 3
+y 22
+end
+arch rock_big12
+x 3
+y 22
+end
+arch earth_brown1
+x 3
+y 23
+end
+arch fwall_rock2
+x 3
+y 23
+end
+arch floor_ostone4
+x 4
+y 5
+end
+arch wall_stone_1
+x 4
+y 5
+end
+arch floor_ostone3
+x 4
+y 6
+end
+arch glower.101
+x 4
+y 6
+end
+arch light5
+x 4
+y 6
+end
+arch floor_ostone2
+x 4
+y 7
+end
+arch floor_ostone4
+x 4
+y 8
+end
+arch floor_ostone3
+x 4
+y 9
+end
+arch glower.101
+x 4
+y 9
+end
+arch light5
+x 4
+y 9
+end
+arch floor_ostone4
+x 4
+y 10
+end
+arch floor_ostone2
+x 4
+y 11
+end
+arch spawn_point
+x 4
+y 11
+arch priest_green
+name Chereth
+type 83
+glow_radius 7
+level 31
+is_male 0
+is_female 1
+direction 3
+arch event_obj
+name Lua
+sub_type 13
+race merc_chereth.lua
+end
+end
+end
+arch floor_ostone3
+x 4
+y 12
+end
+arch glower.101
+x 4
+y 12
+end
+arch light3
+x 4
+y 12
+end
+arch floor_ostone2
+x 4
+y 13
+end
+arch floor_ostone4
+x 4
+y 14
+end
+arch door_wood1
+x 4
+y 14
+end
+arch floor_ostone2
+x 4
+y 15
+end
+arch floor_ostone4
+x 4
+y 16
+end
+arch floor_ostone2
+x 4
+y 17
+end
+arch candlelight4.101
+x 4
+y 17
+end
+arch wall_stone_1
+x 4
+y 17
+end
+arch earth_brown1
+x 4
+y 18
+end
+arch fwall_rock3
+x 4
+y 18
+end
+arch earth_brown1
+x 4
+y 19
+end
+arch rock1
+x 4
+y 19
+end
+arch earth_brown3
+x 4
+y 20
+end
+arch light5
+x 4
+y 20
+end
+arch earth_brown2
+x 4
+y 21
+end
+arch light1
+x 4
+y 21
+end
+arch spawn_point
+last_grace 3
+x 4
+y 21
+arch hobgoblin
+name Mahch
+type 83
+level 5
+wis 3
+arch quest_trigger
+name Rusty Rod Retrieval
+sub_type 3
+last_heal 1
+end
+end
+end
+arch earth_brown3
+x 4
+y 22
+end
+arch earth_brown4
+x 4
+y 23
+end
+arch fwall_rock3
+x 4
+y 23
+end
+arch floor_ostone4
+x 5
+y 5
+end
+arch wall_stone_1
+x 5
+y 5
+end
+arch wmask_bflag_fire1_1
+x 5
+y 5
+end
+arch floor_ostone2
+x 5
+y 6
+end
+arch bank1.111
+x 5
+y 6
+end
+arch floor_ostone4
+x 5
+y 7
+end
+arch floor_ostone2
+x 5
+y 8
+end
+arch floor_ostone4
+x 5
+y 9
+end
+arch floor_ostone2
+x 5
+y 10
+end
+arch floor_ostone4
+x 5
+y 11
+end
+arch floor_ostone2
+x 5
+y 12
+end
+arch floor_ostone4
+x 5
+y 13
+end
+arch floor_ostone2
+x 5
+y 14
+end
+arch wall_stone_1
+x 5
+y 14
+end
+arch floor_ostone4
+x 5
+y 15
+end
+arch shelf3a.111
+x 5
+y 15
+end
+arch floor_ostone2
+x 5
+y 16
+end
+arch chair2_111
+x 5
+y 16
+end
+arch light5
+x 5
+y 16
+end
+arch floor_ostone4
+x 5
+y 17
+end
+arch table_wood1.111
+x 5
+y 17
+end
+arch wall_stone_1
+x 5
+y 17
+end
+arch earth_brown1
+x 5
+y 18
+end
+arch fwall_rock2
+x 5
+y 18
+end
+arch plant1_wall.151
+x 5
+y 18
+end
+arch earth_brown1
+x 5
+y 19
+end
+arch earth_brown3
+x 5
+y 20
+end
+arch small_stones
+x 5
+y 20
+end
+arch earth_brown4
+x 5
+y 21
+end
+arch dirt_floor1
+x 5
+y 21
+end
+arch earth_brown3
+x 5
+y 22
+end
+arch dirt_floor1
+x 5
+y 22
+end
+arch plant_mushroom4
+x 5
+y 22
+end
+arch earth_brown4
+x 5
+y 23
+end
+arch fwall_rock1
+x 5
+y 23
+end
+arch floor_ostone4
+x 6
+y 5
+end
+arch wall_stone_1
+x 6
+y 5
+end
+arch floor_ostone4
+x 6
+y 6
+end
+arch light5
+x 6
+y 6
+end
+arch floor_ostone2
+x 6
+y 7
+end
+arch amphora2.101
+x 6
+y 7
+end
+arch floor_ostone4
+x 6
+y 8
+end
+arch wall_stone_1
+x 6
+y 8
+end
+arch wmask_bflag_fire1_1
+x 6
+y 8
+end
+arch floor_ostone2
+x 6
+y 9
+end
+arch floor_ostone4
+x 6
+y 10
+end
+arch floor_ostone2
+x 6
+y 11
+end
+arch floor_ostone4
+x 6
+y 12
+end
+arch floor_ostone2
+x 6
+y 13
+end
+arch floor_ostone4
+x 6
+y 14
+end
+arch wall_stone_1
+x 6
+y 14
+end
+arch wmask_bflag_fire1_1
+x 6
+y 14
+end
+arch floor_ostone4
+x 6
+y 15
+end
+arch wall_stone_3
+x 6
+y 15
+end
+arch floor_ostone4
+x 6
+y 16
+end
+arch wall_stone_3
+x 6
+y 16
+end
+arch floor_ostone2
+x 6
+y 17
+end
+arch wall_stone_4
+x 6
+y 17
+end
+arch earth_brown1
+x 6
+y 18
+end
+arch fwall_rock3
+x 6
+y 18
+end
+arch earth_brown3
+x 6
+y 19
+end
+arch rock_big11
+x 6
+y 19
+end
+arch earth_brown3
+x 6
+y 20
+end
+arch plant_mushroom4
+x 6
+y 20
+end
+arch earth_brown4
+x 6
+y 21
+end
+arch dirt_floor4
+x 6
+y 21
+end
+arch earth_brown3
+x 6
+y 22
+end
+arch earth_brown1
+x 6
+y 23
+end
+arch fwall_rock2
+x 6
+y 23
+end
+arch floor_ostone4
+x 7
+y 5
+end
+arch wall_stone_1
+x 7
+y 5
+end
+arch floor_ostone2
+x 7
+y 6
+end
+arch wall_stone_3
+x 7
+y 6
+end
+arch floor_ostone4
+x 7
+y 7
+end
+arch wall_stone_3
+x 7
+y 7
+end
+arch floor_ostone2
+x 7
+y 8
+end
+arch wall_stone_4
+x 7
+y 8
+end
+arch picture1.151
+x 7
+y 8
+end
+arch floor_ostone4
+x 7
+y 9
+end
+arch wall_stone_3
+x 7
+y 9
+end
+arch floor_ostone2
+x 7
+y 10
+end
+arch wall_stone_3
+x 7
+y 10
+end
+arch floor_ostone4
+x 7
+y 11
+end
+arch wall_stone_3
+x 7
+y 11
+end
+arch floor_ostone2
+x 7
+y 12
+end
+arch wall_stone_3
+x 7
+y 12
+end
+arch floor_ostone4
+x 7
+y 13
+end
+arch doorway_wood1_1
+direction 7
+x 7
+y 13
+end
+arch floor_ostone2
+x 7
+y 14
+end
+arch wall_stone_1
+layer 7
+x 7
+y 14
+end
+arch earth_brown1
+x 7
+y 15
+end
+arch fwall_rock1
+x 7
+y 15
+end
+arch earth_brown3
+x 7
+y 16
+end
+arch fwall_rock2
+x 7
+y 16
+end
+arch earth_brown2
+x 7
+y 17
+end
+arch fwall_rock3
+x 7
+y 17
+end
+arch earth_brown1
+x 7
+y 18
+end
+arch fwall_rock3
+x 7
+y 18
+end
+arch plant1_wall.151
+x 7
+y 18
+end
+arch earth_brown4
+x 7
+y 19
+end
+arch border_abyss_sw1
+x 7
+y 19
+end
+arch earth_brown1
+x 7
+y 20
+end
+arch mushroom_giant1
+x 7
+y 20
+end
+arch light5
+x 7
+y 20
+end
+arch earth_brown1
+x 7
+y 21
+end
+arch small_stones
+x 7
+y 21
+end
+arch spawn_point
+last_grace 5
+x 7
+y 21
+arch goblin
+type 83
+level 4
+wis 2
+end
+end
+arch earth_brown2
+x 7
+y 22
+end
+arch earth_brown2
+x 7
+y 23
+end
+arch fwall_rock2
+x 7
+y 23
+end
+arch earth_brown2
+x 8
+end
+arch fwall_rock3
+x 8
+end
+arch earth_brown3
+x 8
+y 1
+end
+arch fwall_rock1
+x 8
+y 1
+end
+arch earth_brown2
+x 8
+y 2
+end
+arch fwall_rock1
+x 8
+y 2
+end
+arch earth_brown3
+x 8
+y 3
+end
+arch fwall_rock2
+x 8
+y 3
+end
+arch plant1_wall.151
+direction 7
+x 8
+y 3
+end
+arch earth_brown2
+x 8
+y 4
+end
+arch fwall_rock3
+x 8
+y 4
+end
+arch earth_brown2
+x 8
+y 5
+end
+arch fwall_rock3
+x 8
+y 5
+end
+arch fstone1a
+x 8
+y 6
+end
+arch fwall_wood1c
+x 8
+y 6
+end
+arch fstone1c
+x 8
+y 7
+end
+arch fwall_wood1a
+x 8
+y 7
+end
+arch fstone1a
+x 8
+y 8
+end
+arch fwall_wood1b
+x 8
+y 8
+end
+arch fstone1c
+x 8
+y 9
+end
+arch fwall_wood1c
+x 8
+y 9
+end
+arch fstone1a
+x 8
+y 10
+end
+arch fwall_wood1a
+x 8
+y 10
+end
+arch fstone1c
+x 8
+y 11
+end
+arch fwall_wood1a
+x 8
+y 11
+end
+arch floor_ostone4
+x 8
+y 12
+end
+arch wall_stone_1
+x 8
+y 12
+end
+arch floor_ostone2
+x 8
+y 13
+end
+arch floor_ostone4
+x 8
+y 14
+end
+arch wall_stone_1
+x 8
+y 14
+end
+arch earth_brown2
+x 8
+y 15
+end
+arch fwall_rock2
+x 8
+y 15
+end
+arch earth_brown3
+x 8
+y 16
+end
+arch dirt_floor4
+x 8
+y 16
+end
+arch spawn_point
+last_grace 5
+x 8
+y 16
+arch slug_giant
+type 83
+level 2
+unaggressive 1
+wis 3
+end
+end
+arch light5
+x 8
+y 16
+end
+arch earth_brown2
+x 8
+y 17
+end
+arch earth_brown4
+x 8
+y 18
+end
+arch earth_brown1
+x 8
+y 19
+end
+arch plant_mushroom3
+x 8
+y 19
+end
+arch border_abyss_s1
+x 8
+y 19
+end
+arch earth_brown3
+x 8
+y 20
+end
+arch dirt_floor1
+x 8
+y 20
+end
+arch plant_mushroom1
+x 8
+y 20
+end
+arch earth_brown3
+x 8
+y 21
+end
+arch small_stones
+x 8
+y 21
+end
+arch pile_floor2
+x 8
+y 21
+end
+arch earth_brown3
+x 8
+y 22
+end
+arch earth_brown1
+x 8
+y 23
+end
+arch fwall_rock3
+x 8
+y 23
+end
+arch earth_brown3
+x 9
+end
+arch fwall_rock3
+x 9
+end
+arch plant1_wall.151
+x 9
+end
+arch earth_brown3
+x 9
+y 1
+end
+arch mushroom_spot1
+x 9
+y 1
+end
+arch light5
+x 9
+y 1
+end
+arch earth_brown3
+x 9
+y 2
+end
+arch spawn_point
+slaying bat nest
+x 9
+y 2
+arch brnbat
+type 83
+sleep 0
+unaggressive 1
+end
+end
+arch earth_brown3
+x 9
+y 3
+end
+arch earth_brown4
+x 9
+y 4
+end
+arch rock_big2
+x 9
+y 4
+end
+arch earth_brown2
+x 9
+y 5
+end
+arch fwall_rock1
+x 9
+y 5
+end
+arch fstone1a
+x 9
+y 6
+end
+arch fwall_wood1b
+x 9
+y 6
+end
+arch fstone1c
+x 9
+y 7
+end
+arch ladder_up
+slaying ../castle_030a
+hp 9
+sp 9
+x 9
+y 7
+end
+arch fstone1c
+x 9
+y 8
+end
+arch fstone1a
+x 9
+y 9
+end
+arch box1.101
+x 9
+y 9
+end
+arch fstone1c
+x 9
+y 10
+end
+arch light3
+x 9
+y 10
+end
+arch fstone1b
+x 9
+y 11
+end
+arch fwall_wood1b
+x 9
+y 11
+end
+arch floor_ostone2
+x 9
+y 12
+end
+arch wall_stone_1
+x 9
+y 12
+end
+arch floor_ostone4
+x 9
+y 13
+end
+arch light5
+x 9
+y 13
+end
+arch stairs_stone_up
+face stairs_wood_up.131
+animation stairs_wood_up
+slaying ../castle_030a
+hp 9
+sp 13
+direction 7
+x 9
+y 13
+end
+arch floor_ostone2
+x 9
+y 14
+end
+arch wall_stone_1
+x 9
+y 14
+end
+arch earth_brown2
+x 9
+y 15
+end
+arch fwall_rock2
+x 9
+y 15
+end
+arch earth_brown2
+x 9
+y 16
+end
+arch small_stones
+x 9
+y 16
+end
+arch earth_brown2
+x 9
+y 17
+end
+arch earth_brown2
+x 9
+y 18
+end
+arch fwall_rock3
+x 9
+y 18
+end
+arch earth_brown1
+x 9
+y 19
+end
+arch border_abyss_se1
+x 9
+y 19
+end
+arch earth_brown1
+x 9
+y 20
+end
+arch spawn_point
+last_grace 5
+x 9
+y 20
+arch goblin
+type 83
+level 4
+wis 2
+end
+end
+arch earth_brown2
+x 9
+y 21
+end
+arch plant_mushroom4
+x 9
+y 21
+end
+arch earth_brown2
+x 9
+y 22
+end
+arch earth_brown2
+x 9
+y 23
+end
+arch fwall_rock3
+x 9
+y 23
+end
+arch earth_brown1
+x 10
+end
+arch fwall_rock3
+x 10
+end
+arch earth_brown4
+x 10
+y 1
+end
+arch spawn_point
+slaying bat nest
+x 10
+y 1
+arch brnbat
+type 83
+sleep 0
+unaggressive 1
+end
+end
+arch earth_brown1
+x 10
+y 2
+end
+arch small_stones
+x 10
+y 2
+end
+arch spawn_point
+slaying bat nest
+x 10
+y 2
+arch brnbat
+type 83
+sleep 0
+unaggressive 1
+end
+end
+arch earth_brown3
+x 10
+y 3
+end
+arch pile_floor2
+x 10
+y 3
+end
+arch earth_brown2
+x 10
+y 4
+end
+arch mushroom_spot2
+x 10
+y 4
+end
+arch earth_brown3
+x 10
+y 5
+end
+arch fwall_rock3
+x 10
+y 5
+end
+arch fstone1b
+x 10
+y 6
+end
+arch fwall_wood1a
+x 10
+y 6
+end
+arch fstone1a
+x 10
+y 7
+end
+arch dirt_floor1
+x 10
+y 7
+end
+arch light3
+x 10
+y 8
+end
+arch floor_ruin1
+x 10
+y 8
+end
+arch ladder_down
+slaying merc_ants_0000
+hp 11
+sp 10
+x 10
+y 8
+end
+arch fstone1b
+x 10
+y 9
+end
+arch dirt_floor1
+x 10
+y 9
+end
+arch trash_wood1.101
+x 10
+y 9
+end
+arch fstone1b
+x 10
+y 10
+end
+arch trash_wood2.101
+x 10
+y 10
+end
+arch fstone1a
+x 10
+y 11
+end
+arch fwall_wood1b
+x 10
+y 11
+end
+arch floor_ostone4
+x 10
+y 12
+end
+arch wall_stone_1
+x 10
+y 12
+end
+arch floor_ostone2
+x 10
+y 13
+end
+arch wall_stone_3
+x 10
+y 13
+end
+arch floor_ostone4
+x 10
+y 14
+end
+arch wall_stone_4
+x 10
+y 14
+end
+arch earth_brown2
+x 10
+y 15
+end
+arch fwall_rock1
+x 10
+y 15
+end
+arch plant1_wall.151
+x 10
+y 15
+end
+arch earth_brown3
+x 10
+y 16
+end
+arch border_abyss_w1
+x 10
+y 16
+end
+arch earth_brown2
+x 10
+y 17
+end
+arch border_abyss_w1
+x 10
+y 17
+end
+arch earth_brown1
+x 10
+y 18
+end
+arch fwall_rock3
+x 10
+y 18
+end
+arch earth_brown3
+x 10
+y 19
+end
+arch fwall_rock3
+x 10
+y 19
+end
+arch earth_brown4
+x 10
+y 20
+end
+arch fwall_rock3
+x 10
+y 20
+end
+arch plant1_wall.151
+x 10
+y 20
+end
+arch earth_brown2
+x 10
+y 21
+end
+arch earth_brown2
+x 10
+y 22
+end
+arch earth_brown1
+x 10
+y 23
+end
+arch fwall_rock1
+x 10
+y 23
+end
+arch earth_brown3
+x 11
+end
+arch fwall_rock2
+x 11
+end
+arch earth_brown2
+x 11
+y 1
+end
+arch small_stones
+x 11
+y 1
+end
+arch rock_big9
+x 11
+y 1
+end
+arch earth_brown2
+x 11
+y 2
+end
+arch earth_brown3
+x 11
+y 3
+end
+arch earth_brown2
+x 11
+y 4
+end
+arch earth_brown2
+x 11
+y 5
+end
+arch fwall_rock1
+x 11
+y 5
+end
+arch fstone1c
+x 11
+y 6
+end
+arch fwall_wood1c
+x 11
+y 6
+end
+arch fstone1a
+x 11
+y 7
+end
+arch chair1_drop_171
+x 11
+y 7
+end
+arch fstone1b
+x 11
+y 8
+end
+arch fstone1c
+x 11
+y 9
+end
+arch fstone1a
+x 11
+y 10
+end
+arch grain2.101
+x 11
+y 10
+end
+arch fstone1b
+x 11
+y 11
+end
+arch fwall_wood1c
+x 11
+y 11
+end
+arch earth_brown4
+x 11
+y 12
+end
+arch fwall_rock3
+x 11
+y 12
+end
+arch earth_brown4
+x 11
+y 13
+end
+arch fwall_rock2
+x 11
+y 13
+end
+arch earth_brown3
+x 11
+y 14
+end
+arch fwall_rock2
+x 11
+y 14
+end
+arch plant1_wall.151
+direction 7
+x 11
+y 14
+end
+arch earth_brown2
+x 11
+y 15
+end
+arch fwall_rock1
+x 11
+y 15
+end
+arch earth_brown3
+x 11
+y 16
+end
+arch earth_brown1
+x 11
+y 17
+end
+arch earth_brown1
+x 11
+y 18
+end
+arch light5
+x 11
+y 18
+end
+arch rock_big10
+x 11
+y 18
+end
+arch earth_brown4
+x 11
+y 19
+end
+arch earth_brown4
+x 11
+y 20
+end
+arch fwall_rock2
+x 11
+y 20
+end
+arch earth_brown2
+x 11
+y 21
+end
+arch fwall_rock1
+x 11
+y 21
+end
+arch earth_brown3
+x 11
+y 22
+end
+arch fwall_rock3
+x 11
+y 22
+end
+arch earth_brown3
+x 11
+y 23
+end
+arch fwall_rock3
+x 11
+y 23
+end
+arch earth_brown1
+x 12
+end
+arch fwall_rock3
+x 12
+end
+arch earth_brown4
+x 12
+y 1
+end
+arch earth_brown4
+x 12
+y 2
+end
+arch dirt_floor1
+x 12
+y 2
+end
+arch light5
+x 12
+y 2
+end
+arch earth_brown1
+x 12
+y 3
+end
+arch earth_brown4
+x 12
+y 4
+end
+arch earth_brown3
+x 12
+y 5
+end
+arch fwall_rock2
+x 12
+y 5
+end
+arch fstone1c
+x 12
+y 6
+end
+arch fwall_wood1b
+x 12
+y 6
+end
+arch fstone1a
+x 12
+y 7
+end
+arch light3
+x 12
+y 7
+end
+arch chair1_drop_111
+x 12
+y 7
+end
+arch fstone1b
+x 12
+y 8
+end
+arch trash_wood1.101
+x 12
+y 8
+end
+arch fstone1c
+x 12
+y 9
+end
+arch straw1.101
+x 12
+y 9
+end
+arch fstone1c
+x 12
+y 10
+end
+arch light3
+x 12
+y 10
+end
+arch straw1.101
+x 12
+y 10
+end
+arch fstone1a
+x 12
+y 11
+end
+arch fwall_wood1b
+x 12
+y 11
+end
+arch earth_brown2
+x 12
+y 12
+end
+arch fwall_rock2
+x 12
+y 12
+end
+arch earth_brown1
+x 12
+y 13
+end
+arch earth_brown2
+x 12
+y 14
+end
+arch pile_floor2
+x 12
+y 14
+end
+arch earth_brown1
+x 12
+y 15
+end
+arch small_stones
+x 12
+y 15
+end
+arch plant_mushroom3
+x 12
+y 15
+end
+arch earth_brown2
+x 12
+y 16
+end
+arch plant_mushroom4
+x 12
+y 16
+end
+arch spawn_point
+last_grace 5
+x 12
+y 16
+arch slug_giant
+type 83
+level 3
+wis 3
+end
+end
+arch earth_brown2
+x 12
+y 17
+end
+arch small_stones
+x 12
+y 17
+end
+arch plant_mushroom1
+x 12
+y 17
+end
+arch earth_brown3
+x 12
+y 18
+end
+arch earth_brown2
+x 12
+y 19
+end
+arch earth_brown1
+x 12
+y 20
+end
+arch dirt_floor1
+x 12
+y 20
+end
+arch earth_brown3
+x 12
+y 21
+end
+arch spawn_point
+x 12
+y 21
+arch slug_giant
+type 83
+level 3
+wis 4
+end
+end
+arch earth_brown3
+x 12
+y 22
+end
+arch rock_big2
+x 12
+y 22
+end
+arch earth_brown1
+x 12
+y 23
+end
+arch fwall_rock3
+x 12
+y 23
+end
+arch earth_brown3
+x 13
+end
+arch fwall_rock1
+x 13
+end
+arch earth_brown4
+x 13
+y 1
+end
+arch mushroom_spot2
+x 13
+y 1
+end
+arch earth_brown2
+x 13
+y 2
+end
+arch spawn_point
+x 13
+y 2
+arch slug_giant
+type 83
+level 2
+unaggressive 1
+end
+end
+arch earth_brown3
+x 13
+y 3
+end
+arch small_stones
+x 13
+y 3
+end
+arch earth_brown4
+x 13
+y 4
+end
+arch rock_big12
+x 13
+y 4
+end
+arch earth_brown2
+x 13
+y 5
+end
+arch fwall_rock1
+x 13
+y 5
+end
+arch fstone1b
+x 13
+y 6
+end
+arch fwall_wood1c
+x 13
+y 6
+end
+arch fstone1c
+x 13
+y 7
+end
+arch fwall_wood1c
+x 13
+y 7
+end
+arch fstone1b
+x 13
+y 8
+end
+arch fwall_wood1a
+x 13
+y 8
+end
+arch fstone1a
+x 13
+y 9
+end
+arch fwall_wood1a
+x 13
+y 9
+end
+arch fstone1b
+x 13
+y 10
+end
+arch fwall_wood1b
+x 13
+y 10
+end
+arch fstone1a
+x 13
+y 11
+end
+arch fwall_wood1b
+x 13
+y 11
+end
+arch earth_brown2
+x 13
+y 12
+end
+arch fwall_rock1
+x 13
+y 12
+end
+arch plant1_wall.151
+x 13
+y 12
+end
+arch earth_brown3
+x 13
+y 13
+end
+arch earth_brown3
+x 13
+y 14
+end
+arch earth_brown4
+x 13
+y 15
+end
+arch plant_mushroom2
+x 13
+y 15
+end
+arch earth_brown4
+x 13
+y 16
+end
+arch plant_mushroom3
+x 13
+y 16
+end
+arch earth_brown3
+x 13
+y 17
+end
+arch earth_brown3
+x 13
+y 18
+end
+arch plant_mushroom5
+x 13
+y 18
+end
+arch earth_brown2
+x 13
+y 19
+end
+arch small_stones
+x 13
+y 19
+end
+arch earth_brown3
+x 13
+y 20
+end
+arch earth_brown3
+x 13
+y 21
+end
+arch small_stones
+x 13
+y 21
+end
+arch earth_brown3
+x 13
+y 22
+end
+arch earth_brown1
+x 13
+y 23
+end
+arch fwall_rock1
+x 13
+y 23
+end
+arch earth_brown3
+x 14
+end
+arch fwall_rock3
+x 14
+end
+arch earth_brown1
+x 14
+y 1
+end
+arch rock_big11
+x 14
+y 1
+end
+arch earth_brown3
+x 14
+y 2
+end
+arch earth_brown2
+x 14
+y 3
+end
+arch dirt_floor4
+x 14
+y 3
+end
+arch earth_brown3
+x 14
+y 4
+end
+arch earth_brown4
+x 14
+y 5
+end
+arch fwall_rock2
+x 14
+y 5
+end
+arch earth_brown1
+x 14
+y 6
+end
+arch fwall_rock3
+x 14
+y 6
+end
+arch earth_brown3
+x 14
+y 7
+end
+arch fwall_rock3
+x 14
+y 7
+end
+arch earth_brown3
+x 14
+y 8
+end
+arch fwall_rock2
+x 14
+y 8
+end
+arch earth_brown1
+x 14
+y 9
+end
+arch fwall_rock1
+x 14
+y 9
+end
+arch plant1_wall.151
+direction 7
+x 14
+y 9
+end
+arch earth_brown4
+x 14
+y 10
+end
+arch fwall_rock3
+x 14
+y 10
+end
+arch earth_brown2
+x 14
+y 11
+end
+arch fwall_rock2
+x 14
+y 11
+end
+arch earth_brown3
+x 14
+y 12
+end
+arch fwall_rock1
+x 14
+y 12
+end
+arch earth_brown3
+x 14
+y 13
+end
+arch plant_mushroom1
+x 14
+y 13
+end
+arch earth_brown2
+x 14
+y 14
+end
+arch earth_brown2
+x 14
+y 15
+end
+arch fwall_rock3
+x 14
+y 15
+end
+arch earth_brown1
+x 14
+y 16
+end
+arch fwall_rock3
+no_pass 0
+x 14
+y 16
+end
+arch earth_brown3
+x 14
+y 17
+end
+arch fwall_rock1
+x 14
+y 17
+end
+arch earth_brown1
+x 14
+y 18
+end
+arch earth_brown2
+x 14
+y 19
+end
+arch earth_brown3
+x 14
+y 20
+end
+arch mushroom_giant1
+x 14
+y 20
+end
+arch earth_brown2
+x 14
+y 21
+end
+arch dirt_floor4
+x 14
+y 21
+end
+arch light5
+x 14
+y 21
+end
+arch earth_brown2
+x 14
+y 22
+end
+arch earth_brown2
+x 14
+y 23
+end
+arch fwall_rock2
+x 14
+y 23
+end
+arch earth_brown3
+x 15
+end
+arch fwall_rock3
+x 15
+end
+arch plant1_wall.151
+x 15
+end
+arch earth_brown1
+x 15
+y 1
+end
+arch mushroom_spot1
+x 15
+y 1
+end
+arch light5
+x 15
+y 1
+end
+arch earth_brown3
+x 15
+y 2
+end
+arch earth_brown3
+x 15
+y 3
+end
+arch small_stones
+x 15
+y 3
+end
+arch mushroom_giant1
+x 15
+y 3
+end
+arch earth_brown1
+x 15
+y 4
+end
+arch pile_floor2
+x 15
+y 4
+end
+arch earth_brown3
+x 15
+y 5
+end
+arch earth_brown2
+x 15
+y 6
+end
+arch earth_brown3
+x 15
+y 7
+end
+arch border_abyss_n1
+x 15
+y 7
+end
+arch earth_brown3
+x 15
+y 8
+end
+arch earth_brown3
+x 15
+y 9
+end
+arch fwall_rock3
+x 15
+y 9
+end
+arch earth_brown3
+x 15
+y 10
+end
+arch small_stones
+x 15
+y 10
+end
+arch plant_mushroom5
+x 15
+y 10
+end
+arch earth_brown3
+x 15
+y 11
+end
+arch light5
+x 15
+y 11
+end
+arch earth_brown2
+x 15
+y 12
+end
+arch mushroom_spot1
+x 15
+y 12
+end
+arch earth_brown1
+x 15
+y 13
+end
+arch earth_brown1
+x 15
+y 14
+end
+arch earth_brown3
+x 15
+y 15
+end
+arch fwall_rock3
+x 15
+y 15
+end
+arch earth_brown1
+x 15
+y 16
+end
+arch earth_brown3
+x 15
+y 17
+end
+arch fwall_rock3
+x 15
+y 17
+end
+arch earth_brown3
+x 15
+y 18
+end
+arch mushroom_spot2
+x 15
+y 18
+end
+arch earth_brown1
+x 15
+y 19
+end
+arch small_stones
+x 15
+y 19
+end
+arch earth_brown1
+x 15
+y 20
+end
+arch earth_brown1
+x 15
+y 21
+end
+arch earth_brown4
+x 15
+y 22
+end
+arch earth_brown4
+x 15
+y 23
+end
+arch fwall_rock2
+x 15
+y 23
+end
+arch earth_brown2
+x 16
+end
+arch fwall_rock2
+x 16
+end
+arch earth_brown4
+x 16
+y 1
+end
+arch earth_brown4
+x 16
+y 2
+end
+arch earth_brown3
+x 16
+y 3
+end
+arch earth_brown2
+x 16
+y 4
+end
+arch earth_brown3
+x 16
+y 5
+end
+arch earth_brown2
+x 16
+y 6
+end
+arch fwall_rock3
+x 16
+y 6
+end
+arch earth_brown4
+x 16
+y 7
+end
+arch fwall_rock3
+x 16
+y 7
+end
+arch earth_brown3
+x 16
+y 8
+end
+arch border_abyss_w1
+x 16
+y 8
+end
+arch earth_brown3
+x 16
+y 9
+end
+arch fwall_rock3
+x 16
+y 9
+end
+arch earth_brown1
+x 16
+y 10
+end
+arch earth_brown4
+x 16
+y 11
+end
+arch earth_brown4
+x 16
+y 12
+end
+arch earth_brown4
+x 16
+y 13
+end
+arch small_stones
+x 16
+y 13
+end
+arch dirt_floor4
+x 16
+y 13
+end
+arch earth_brown3
+x 16
+y 14
+end
+arch earth_brown3
+x 16
+y 15
+end
+arch fwall_rock1
+x 16
+y 15
+end
+arch earth_brown3
+x 16
+y 16
+end
+arch plant_mushroom4
+x 16
+y 16
+end
+arch earth_brown3
+x 16
+y 17
+end
+arch fwall_rock1
+x 16
+y 17
+end
+arch earth_brown3
+x 16
+y 18
+end
+arch fwall_rock3
+x 16
+y 18
+end
+arch earth_brown1
+x 16
+y 19
+end
+arch border_abyss_w1
+x 16
+y 19
+end
+arch earth_brown2
+x 16
+y 20
+end
+arch border_abyss_w1
+x 16
+y 20
+end
+arch earth_brown1
+x 16
+y 21
+end
+arch fwall_rock2
+x 16
+y 21
+end
+arch plant1_wall.151
+direction 7
+x 16
+y 21
+end
+arch earth_brown1
+x 16
+y 22
+end
+arch fwall_rock3
+x 16
+y 22
+end
+arch earth_brown2
+x 16
+y 23
+end
+arch fwall_rock3
+x 16
+y 23
+end
+arch earth_brown3
+x 17
+end
+arch fwall_rock1
+x 17
+end
+arch earth_brown2
+x 17
+y 1
+end
+arch fwall_rock3
+x 17
+y 1
+end
+arch earth_brown4
+x 17
+y 2
+end
+arch border_abyss_w1
+x 17
+y 2
+end
+arch earth_brown3
+x 17
+y 3
+end
+arch border_abyss_w1
+x 17
+y 3
+end
+arch earth_brown2
+x 17
+y 4
+end
+arch fwall_rock3
+x 17
+y 4
+end
+arch earth_brown1
+x 17
+y 5
+end
+arch fwall_rock3
+x 17
+y 5
+end
+arch earth_brown4
+x 17
+y 6
+end
+arch fwall_rock3
+x 17
+y 6
+end
+arch plant2_wall.151
+x 17
+y 6
+end
+arch earth_brown1
+x 17
+y 7
+end
+arch barrel2.101
+x 17
+y 7
+end
+arch earth_brown4
+x 17
+y 8
+end
+arch earth_brown1
+x 17
+y 9
+end
+arch fwall_rock3
+x 17
+y 9
+end
+arch plant2_wall.151
+direction 7
+x 17
+y 9
+end
+arch earth_brown4
+x 17
+y 10
+end
+arch fwall_rock1
+x 17
+y 10
+end
+arch earth_brown2
+x 17
+y 11
+end
+arch fwall_rock1
+x 17
+y 11
+end
+arch earth_brown2
+x 17
+y 12
+end
+arch earth_brown4
+x 17
+y 13
+end
+arch mushroom_giant1
+x 17
+y 13
+end
+arch light5
+x 17
+y 13
+end
+arch earth_brown3
+x 17
+y 14
+end
+arch box2.101
+x 17
+y 14
+end
+arch earth_brown1
+x 17
+y 15
+end
+arch fwall_rock2
+x 17
+y 15
+end
+arch earth_brown1
+x 17
+y 16
+end
+arch mushroom_spot1
+x 17
+y 16
+end
+arch earth_brown3
+x 17
+y 17
+end
+arch fwall_rock2
+x 17
+y 17
+end
+arch earth_brown1
+x 17
+y 18
+end
+arch rock2
+x 17
+y 18
+end
+arch earth_brown4
+x 17
+y 19
+end
+arch earth_brown4
+x 17
+y 20
+end
+arch earth_brown2
+x 17
+y 21
+end
+arch earth_brown2
+x 17
+y 22
+end
+arch mushroom_spot1
+x 17
+y 22
+end
+arch earth_brown2
+x 17
+y 23
+end
+arch fwall_rock3
+x 17
+y 23
+end
+arch earth_brown3
+x 18
+end
+arch fwall_rock1
+x 18
+end
+arch earth_brown4
+x 18
+y 1
+end
+arch mushroom_spot1
+x 18
+y 1
+end
+arch light5
+x 18
+y 1
+end
+arch earth_brown2
+x 18
+y 2
+end
+arch earth_brown4
+x 18
+y 3
+end
+arch plant_mushroom1
+x 18
+y 3
+end
+arch earth_brown3
+x 18
+y 4
+end
+arch rock2
+x 18
+y 4
+end
+arch earth_brown1
+x 18
+y 5
+end
+arch fwall_rock3
+x 18
+y 5
+end
+arch earth_brown3
+x 18
+y 6
+end
+arch rock1
+x 18
+y 6
+end
+arch earth_brown3
+x 18
+y 7
+end
+arch trash_wood2.101
+x 18
+y 7
+end
+arch earth_brown3
+x 18
+y 8
+end
+arch earth_m22
+x 18
+y 8
+end
+arch ropeladder_down
+name rope ladder going up
+slaying ../castle_030a
+hp 18
+sp 8
+x 18
+y 8
+end
+arch light5
+x 18
+y 8
+end
+arch earth_brown2
+x 18
+y 9
+end
+arch box2.101
+x 18
+y 9
+end
+arch earth_brown1
+x 18
+y 10
+end
+arch box1.101
+x 18
+y 10
+end
+arch earth_brown3
+x 18
+y 11
+end
+arch fwall_rock2
+x 18
+y 11
+end
+arch earth_brown3
+x 18
+y 12
+end
+arch small_stones
+x 18
+y 12
+end
+arch earth_brown4
+x 18
+y 13
+end
+arch light1
+x 18
+y 13
+end
+arch spawn_point
+x 18
+y 13
+arch goblin
+type 83
+level 3
+sleep 1
+wis 2
+end
+end
+arch earth_brown2
+x 18
+y 14
+end
+arch earth_brown2
+x 18
+y 15
+end
+arch fwall_rock3
+x 18
+y 15
+end
+arch earth_brown3
+x 18
+y 16
+end
+arch spawn_point
+x 18
+y 16
+arch pudding_black
+name shivering black pudding
+type 83
+level 6
+unaggressive 1
+wis 1
+end
+end
+arch earth_brown3
+x 18
+y 17
+end
+arch fwall_rock3
+x 18
+y 17
+end
+arch earth_brown2
+x 18
+y 18
+end
+arch earth_brown1
+x 18
+y 19
+end
+arch light5
+x 18
+y 19
+end
+arch earth_brown4
+x 18
+y 20
+end
+arch plant_mushroom4
+x 18
+y 20
+end
+arch earth_brown4
+x 18
+y 21
+end
+arch small_stones
+x 18
+y 21
+end
+arch pile_floor2
+x 18
+y 21
+end
+arch earth_brown1
+x 18
+y 22
+end
+arch earth_brown3
+x 18
+y 23
+end
+arch fwall_rock3
+x 18
+y 23
+end
+arch earth_brown1
+x 19
+end
+arch fwall_rock3
+x 19
+end
+arch earth_brown4
+x 19
+y 1
+end
+arch earth_brown3
+x 19
+y 2
+end
+arch small_stones
+x 19
+y 2
+end
+arch dirt_floor4
+x 19
+y 2
+end
+arch earth_brown1
+x 19
+y 3
+end
+arch plant_mushroom5
+x 19
+y 3
+end
+arch earth_brown3
+x 19
+y 4
+end
+arch earth_brown3
+x 19
+y 5
+end
+arch rock_big6
+x 19
+y 5
+end
+arch earth_brown2
+x 19
+y 6
+end
+arch earth_brown2
+x 19
+y 7
+end
+arch small_stones
+x 19
+y 7
+end
+arch plant_mushroom4
+x 19
+y 7
+end
+arch earth_brown2
+x 19
+y 8
+end
+arch trash_wood1.101
+x 19
+y 8
+end
+arch earth_brown4
+x 19
+y 9
+end
+arch trash_wood2.101
+x 19
+y 9
+end
+arch earth_brown2
+x 19
+y 10
+end
+arch earth_brown3
+x 19
+y 11
+end
+arch fwall_rock3
+x 19
+y 11
+end
+arch earth_brown3
+x 19
+y 12
+end
+arch mushroom_spot2
+x 19
+y 12
+end
+arch earth_brown1
+x 19
+y 13
+end
+arch earth_brown1
+x 19
+y 14
+end
+arch earth_brown2
+x 19
+y 15
+end
+arch fwall_rock3
+x 19
+y 15
+end
+arch earth_brown2
+x 19
+y 16
+end
+arch mushroom_giant3
+x 19
+y 16
+end
+arch light1
+x 19
+y 16
+end
+arch earth_brown1
+x 19
+y 17
+end
+arch fwall_rock3
+x 19
+y 17
+end
+arch plant1_wall.151
+x 19
+y 17
+end
+arch earth_brown2
+x 19
+y 18
+end
+arch dirt_floor1
+x 19
+y 18
+end
+arch earth_brown3
+x 19
+y 19
+end
+arch plant_mushroom1
+x 19
+y 19
+end
+arch earth_brown3
+x 19
+y 20
+end
+arch earth_brown2
+x 19
+y 21
+end
+arch dirt_floor1
+x 19
+y 21
+end
+arch spawn_point
+x 19
+y 21
+arch slug_giant
+type 83
+level 3
+wis 3
+end
+end
+arch earth_brown1
+x 19
+y 22
+end
+arch earth_brown3
+x 19
+y 23
+end
+arch fwall_rock2
+x 19
+y 23
+end
+arch earth_brown4
+x 20
+end
+arch fwall_rock3
+x 20
+end
+arch plant1_wall.151
+x 20
+end
+arch earth_brown1
+x 20
+y 1
+end
+arch plant_mushroom1
+x 20
+y 1
+end
+arch earth_brown3
+x 20
+y 2
+end
+arch plant_mushroom4
+x 20
+y 2
+end
+arch light5
+x 20
+y 2
+end
+arch earth_brown3
+x 20
+y 3
+end
+arch spawn_point
+x 20
+y 3
+arch slug_giant
+type 83
+level 2
+unaggressive 1
+wis 3
+end
+end
+arch earth_brown1
+x 20
+y 4
+end
+arch earth_brown2
+x 20
+y 5
+end
+arch fwall_rock3
+x 20
+y 5
+end
+arch earth_brown3
+x 20
+y 6
+end
+arch box1.101
+x 20
+y 6
+end
+arch light2
+x 20
+y 6
+end
+arch earth_brown3
+x 20
+y 7
+end
+arch box2.101
+x 20
+y 7
+end
+arch earth_brown4
+x 20
+y 8
+end
+arch earth_brown1
+x 20
+y 9
+end
+arch light1
+x 20
+y 9
+end
+arch earth_brown2
+x 20
+y 10
+end
+arch fwall_rock3
+x 20
+y 10
+end
+arch earth_brown1
+x 20
+y 11
+end
+arch fwall_rock2
+x 20
+y 11
+end
+arch earth_brown3
+x 20
+y 12
+end
+arch fwall_rock2
+x 20
+y 12
+end
+arch earth_brown1
+x 20
+y 13
+end
+arch fwall_rock3
+x 20
+y 13
+end
+arch earth_brown3
+x 20
+y 14
+end
+arch fwall_rock3
+x 20
+y 14
+end
+arch earth_brown1
+x 20
+y 15
+end
+arch fwall_rock2
+x 20
+y 15
+end
+arch plant1_wall.151
+direction 7
+x 20
+y 15
+end
+arch earth_brown2
+x 20
+y 16
+end
+arch fwall_rock3
+x 20
+y 16
+end
+arch earth_brown2
+x 20
+y 17
+end
+arch fwall_rock2
+x 20
+y 17
+end
+arch earth_brown1
+x 20
+y 18
+end
+arch earth_brown3
+x 20
+y 19
+end
+arch small_stones
+x 20
+y 19
+end
+arch spawn_point
+x 20
+y 19
+arch slug_giant
+type 83
+level 3
+wis 3
+end
+end
+arch earth_brown3
+x 20
+y 20
+end
+arch earth_brown2
+x 20
+y 21
+end
+arch earth_brown3
+x 20
+y 22
+end
+arch earth_brown2
+x 20
+y 23
+end
+arch fwall_rock3
+x 20
+y 23
+end
+arch earth_brown4
+x 21
+end
+arch fwall_rock2
+x 21
+end
+arch earth_brown2
+x 21
+y 1
+end
+arch mushroom_giant1
+x 21
+y 1
+end
+arch earth_brown2
+x 21
+y 2
+end
+arch small_stones
+x 21
+y 2
+end
+arch dirt_floor1
+x 21
+y 2
+end
+arch spawn_point
+x 21
+y 2
+arch slug_giant
+type 83
+level 2
+unaggressive 1
+wis 3
+end
+end
+arch earth_brown3
+x 21
+y 3
+end
+arch pile_floor2
+x 21
+y 3
+end
+arch plant_mushroom3
+x 21
+y 3
+end
+arch earth_brown2
+x 21
+y 4
+end
+arch mushroom_spot2
+x 21
+y 4
+end
+arch earth_brown2
+x 21
+y 5
+end
+arch fwall_rock2
+x 21
+y 5
+end
+arch earth_brown3
+x 21
+y 6
+end
+arch fwall_rock3
+x 21
+y 6
+end
+arch earth_brown2
+x 21
+y 7
+end
+arch fwall_rock1
+x 21
+y 7
+end
+arch earth_brown2
+x 21
+y 8
+end
+arch fwall_rock1
+x 21
+y 8
+end
+arch plant1_wall.151
+direction 7
+x 21
+y 8
+end
+arch earth_brown4
+x 21
+y 9
+end
+arch fwall_rock3
+x 21
+y 9
+end
+arch earth_brown3
+x 21
+y 10
+end
+arch fwall_rock3
+x 21
+y 10
+end
+arch earth_brown1
+x 21
+y 11
+end
+arch earth_brown2
+x 21
+y 12
+end
+arch dirt_floor4
+x 21
+y 12
+end
+arch earth_brown2
+x 21
+y 13
+end
+arch plant_mushroom5
+x 21
+y 13
+end
+arch light5
+x 21
+y 13
+end
+arch earth_brown2
+x 21
+y 14
+end
+arch dirt_floor1
+x 21
+y 14
+end
+arch earth_brown4
+x 21
+y 15
+end
+arch small_stones
+x 21
+y 15
+end
+arch earth_brown4
+x 21
+y 16
+end
+arch plant_mushroom4
+x 21
+y 16
+end
+arch earth_brown1
+x 21
+y 17
+end
+arch border_abyss_s1
+x 21
+y 17
+end
+arch earth_brown2
+x 21
+y 18
+end
+arch earth_brown2
+x 21
+y 19
+end
+arch dirt_floor4
+x 21
+y 19
+end
+arch earth_brown1
+x 21
+y 20
+end
+arch small_stones
+x 21
+y 20
+end
+arch earth_brown1
+x 21
+y 21
+end
+arch light5
+x 21
+y 21
+end
+arch earth_brown3
+x 21
+y 22
+end
+arch earth_brown2
+x 21
+y 23
+end
+arch fwall_rock3
+x 21
+y 23
+end
+arch earth_brown4
+x 22
+end
+arch fwall_rock1
+x 22
+end
+arch earth_brown4
+x 22
+y 1
+end
+arch earth_brown2
+x 22
+y 2
+end
+arch earth_brown3
+x 22
+y 3
+end
+arch plant_mushroom4
+x 22
+y 3
+end
+arch earth_brown1
+x 22
+y 4
+end
+arch earth_brown3
+x 22
+y 5
+end
+arch earth_brown3
+x 22
+y 6
+end
+arch earth_brown3
+x 22
+y 7
+end
+arch earth_brown1
+x 22
+y 8
+end
+arch border_abyss_n1
+x 22
+y 8
+end
+arch earth_brown4
+x 22
+y 9
+end
+arch earth_brown4
+x 22
+y 10
+end
+arch earth_brown2
+x 22
+y 11
+end
+arch earth_brown4
+x 22
+y 12
+end
+arch earth_brown4
+x 22
+y 13
+end
+arch earth_brown1
+x 22
+y 14
+end
+arch earth_brown2
+x 22
+y 15
+end
+arch earth_brown2
+x 22
+y 16
+end
+arch earth_brown3
+x 22
+y 17
+end
+arch border_abyss_s1
+x 22
+y 17
+end
+arch earth_brown2
+x 22
+y 18
+end
+arch earth_brown4
+x 22
+y 19
+end
+arch earth_brown4
+x 22
+y 20
+end
+arch earth_brown3
+x 22
+y 21
+end
+arch rock_big11
+x 22
+y 21
+end
+arch earth_brown4
+x 22
+y 22
+end
+arch rock_big12
+x 22
+y 22
+end
+arch earth_brown2
+x 22
+y 23
+end
+arch fwall_rock1
+x 22
+y 23
+end
+arch earth_brown2
+x 23
+end
+arch fwall_rock3
+x 23
+end
+arch earth_brown4
+x 23
+y 1
+end
+arch fwall_rock2
+x 23
+y 1
+end
+arch earth_brown1
+x 23
+y 2
+end
+arch fwall_rock1
+x 23
+y 2
+end
+arch earth_brown2
+x 23
+y 3
+end
+arch fwall_rock1
+x 23
+y 3
+end
+arch earth_brown4
+x 23
+y 4
+end
+arch fwall_rock3
+x 23
+y 4
+end
+arch earth_brown4
+x 23
+y 5
+end
+arch fwall_rock1
+x 23
+y 5
+end
+arch earth_brown4
+x 23
+y 6
+end
+arch fwall_rock3
+x 23
+y 6
+end
+arch earth_brown1
+x 23
+y 7
+end
+arch fwall_rock3
+x 23
+y 7
+end
+arch earth_brown3
+x 23
+y 8
+end
+arch fwall_rock3
+x 23
+y 8
+end
+arch earth_brown3
+x 23
+y 9
+end
+arch fwall_rock2
+x 23
+y 9
+end
+arch earth_brown4
+x 23
+y 10
+end
+arch fwall_rock1
+x 23
+y 10
+end
+arch earth_brown4
+x 23
+y 11
+end
+arch fwall_rock3
+x 23
+y 11
+end
+arch earth_brown1
+x 23
+y 12
+end
+arch fwall_rock2
+x 23
+y 12
+end
+arch earth_brown2
+x 23
+y 13
+end
+arch fwall_rock2
+x 23
+y 13
+end
+arch earth_brown3
+x 23
+y 14
+end
+arch fwall_rock3
+x 23
+y 14
+end
+arch earth_brown3
+x 23
+y 15
+end
+arch fwall_rock3
+x 23
+y 15
+end
+arch earth_brown3
+x 23
+y 16
+end
+arch fwall_rock2
+x 23
+y 16
+end
+arch earth_brown1
+x 23
+y 17
+end
+arch fwall_rock3
+x 23
+y 17
+end
+arch earth_brown2
+x 23
+y 18
+end
+arch fwall_rock3
+x 23
+y 18
+end
+arch earth_brown1
+x 23
+y 19
+end
+arch fwall_rock3
+x 23
+y 19
+end
+arch earth_brown4
+x 23
+y 20
+end
+arch fwall_rock3
+x 23
+y 20
+end
+arch earth_brown4
+x 23
+y 21
+end
+arch fwall_rock3
+x 23
+y 21
+end
+arch earth_brown1
+x 23
+y 22
+end
+arch fwall_rock3
+x 23
+y 22
+end
+arch earth_brown1
+x 23
+y 23
+end
+arch fwall_rock2
+x 23
+y 23
+end

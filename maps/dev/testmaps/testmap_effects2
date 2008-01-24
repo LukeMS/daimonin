@@ -1,0 +1,3108 @@
+arch map
+name Testmap - Effects
+msg
+Created:  2003-06-04 Daimonin Map Editor
+endmsg
+width 24
+height 24
+difficulty 1
+darkness 4
+tileset_id 69
+tileset_x 0
+tileset_y 0
+end
+arch floor_ostone1
+end
+arch wall_stone1_8
+end
+arch floor_ostone1
+y 1
+end
+arch wall_stone1_3
+y 1
+end
+arch floor_ostone1
+y 2
+end
+arch wall_stone1_3
+y 2
+end
+arch floor_ostone1
+y 3
+end
+arch wall_stone1_3
+y 3
+end
+arch floor_ostone1
+y 4
+end
+arch wall_stone1_3
+y 4
+end
+arch floor_ostone1
+y 5
+end
+arch wall_stone1_3
+y 5
+end
+arch floor_ostone1
+y 6
+end
+arch wall_stone1_3
+y 6
+end
+arch floor_ostone1
+y 7
+end
+arch wall_stone1_3
+y 7
+end
+arch floor_ostone1
+y 8
+end
+arch wall_stone1_3
+y 8
+end
+arch floor_ostone1
+y 9
+end
+arch wall_stone1_3
+y 9
+end
+arch floor_ostone1
+y 10
+end
+arch wall_stone1_3
+y 10
+end
+arch floor_ostone1
+y 11
+end
+arch wall_stone1_3
+y 11
+end
+arch floor_ostone1
+y 12
+end
+arch wall_stone1_3
+y 12
+end
+arch floor_ostone1
+y 13
+end
+arch wall_stone1_3
+y 13
+end
+arch floor_ostone1
+y 14
+end
+arch wall_stone1_3
+y 14
+end
+arch floor_ostone1
+y 15
+end
+arch wall_stone1_3
+y 15
+end
+arch floor_ostone1
+y 16
+end
+arch wall_stone1_3
+y 16
+end
+arch floor_ostone1
+y 17
+end
+arch wall_stone1_3
+y 17
+end
+arch floor_ostone1
+y 18
+end
+arch wall_stone1_3
+y 18
+end
+arch floor_ostone1
+y 19
+end
+arch wall_stone1_3
+y 19
+end
+arch floor_ostone1
+y 20
+end
+arch wall_stone1_3
+y 20
+end
+arch floor_ostone1
+y 21
+end
+arch wall_stone1_3
+y 21
+end
+arch floor_ostone1
+y 22
+end
+arch wall_stone1_3
+y 22
+end
+arch floor_ostone1
+y 23
+end
+arch wall_stone1_3
+y 23
+end
+arch floor_ostone1
+x 1
+end
+arch wall_stone1_1
+x 1
+end
+arch floor_ostone1
+x 1
+y 1
+end
+arch stairs_wood_up
+slaying testmap_main
+hp 3
+sp 7
+x 1
+y 1
+end
+arch floor_ostone1
+x 1
+y 2
+end
+arch sign
+msg
+light objects...
+glow radius from 1 to 4.
+endmsg
+x 1
+y 2
+end
+arch floor_ostone1
+x 1
+y 3
+end
+arch light9
+x 1
+y 3
+end
+arch floor_ostone1
+x 1
+y 4
+end
+arch torch
+x 1
+y 4
+end
+arch torch
+identified 1
+x 1
+y 4
+end
+arch floor_ostone1
+x 1
+y 5
+end
+arch lamp
+x 1
+y 5
+end
+arch lamp
+identified 1
+x 1
+y 5
+end
+arch floor_ostone1
+x 1
+y 6
+end
+arch crystal_light
+identified 1
+x 1
+y 6
+end
+arch crystal_light
+x 1
+y 6
+end
+arch floor_ostone1
+x 1
+y 7
+end
+arch crystal_light4
+x 1
+y 7
+end
+arch crystal_light4
+identified 1
+x 1
+y 7
+end
+arch floor_ostone1
+x 1
+y 8
+end
+arch floor_ostone1
+x 1
+y 9
+end
+arch light4
+x 1
+y 9
+end
+arch floor_ostone1
+x 1
+y 10
+end
+arch light4
+x 1
+y 10
+end
+arch sign
+msg
+some special effects - wearing the
+ring will give the wearer the special
+ability the ring is named.
+Note: Stealth is tested in the aggro
+test map.
+endmsg
+x 1
+y 10
+end
+arch floor_ostone1
+x 1
+y 11
+end
+arch light4
+x 1
+y 11
+end
+arch floor_ostone1
+x 1
+y 12
+end
+arch floor_ostone1
+x 1
+y 13
+end
+arch floor_ostone1
+x 1
+y 14
+end
+arch floor_ostone1
+x 1
+y 15
+end
+arch floor_ostone1
+x 1
+y 16
+end
+arch floor_ostone1
+x 1
+y 17
+end
+arch floor_ostone1
+x 1
+y 18
+end
+arch floor_ostone1
+x 1
+y 19
+end
+arch floor_ostone1
+x 1
+y 20
+end
+arch floor_ostone1
+x 1
+y 21
+end
+arch floor_ostone1
+x 1
+y 22
+end
+arch floor_ostone1
+x 1
+y 23
+end
+arch wall_stone1_1
+x 1
+y 23
+end
+arch floor_ostone1
+x 2
+end
+arch wall_stone1_1
+x 2
+end
+arch floor_ostone1
+x 2
+y 1
+end
+arch floor_ostone1
+x 2
+y 2
+end
+arch floor_ostone1
+x 2
+y 3
+end
+arch floor_ostone1
+x 2
+y 4
+end
+arch torch_burnt
+x 2
+y 4
+end
+arch torch_burnt
+identified 1
+x 2
+y 4
+end
+arch floor_ostone1
+x 2
+y 5
+end
+arch oil_lamp
+x 2
+y 5
+end
+arch floor_ostone1
+x 2
+y 6
+end
+arch floor_ostone1
+x 2
+y 7
+end
+arch light9
+x 2
+y 7
+end
+arch floor_ostone1
+x 2
+y 8
+end
+arch ring_generic
+name ring of infravision
+identified 1
+can_see_in_dark 1
+x 2
+y 8
+end
+arch floor_ostone1
+x 2
+y 9
+end
+arch light4
+x 2
+y 9
+end
+arch ring_generic
+name ring of xrays
+xrays 1
+identified 1
+x 2
+y 9
+end
+arch floor_ostone1
+x 2
+y 10
+end
+arch light4
+x 2
+y 10
+end
+arch ring_generic
+identified 1
+make_ethereal 1
+title ethereality
+x 2
+y 10
+end
+arch floor_ostone1
+x 2
+y 11
+end
+arch light4
+x 2
+y 11
+end
+arch ring_generic
+identified 1
+make_invisible 1
+title make invisibility
+x 2
+y 11
+end
+arch floor_ostone1
+x 2
+y 12
+end
+arch ring_generic
+flying 1
+identified 1
+title levitation
+x 2
+y 12
+end
+arch floor_ostone1
+x 2
+y 13
+end
+arch floor_ostone1
+x 2
+y 14
+end
+arch floor_ostone1
+x 2
+y 15
+end
+arch floor_ostone1
+x 2
+y 16
+end
+arch floor_ostone1
+x 2
+y 17
+end
+arch sign
+msg
+Use infravision to see this
+mobs better.
+endmsg
+x 2
+y 17
+end
+arch floor_ostone1
+x 2
+y 18
+end
+arch floor_ostone1
+x 2
+y 19
+end
+arch ant_soldier
+unaggressive 1
+friendly 1
+stand_still 1
+x 2
+y 19
+end
+arch floor_ostone1
+x 2
+y 20
+end
+arch floor_ostone1
+x 2
+y 21
+end
+arch floor_ostone1
+x 2
+y 22
+end
+arch floor_ostone1
+x 2
+y 23
+end
+arch wall_stone1_1
+x 2
+y 23
+end
+arch floor_ostone1
+x 3
+end
+arch wall_stone1_1
+x 3
+end
+arch wall_stone1_1
+x 3
+end
+arch floor_ostone1
+x 3
+y 1
+end
+arch floor_ostone1
+x 3
+y 2
+end
+arch light9
+x 3
+y 2
+end
+arch floor_ostone1
+x 3
+y 3
+end
+arch floor_ostone1
+x 3
+y 4
+end
+arch floor_ostone1
+x 3
+y 5
+end
+arch floor_ostone1
+x 3
+y 6
+end
+arch floor_ostone1
+x 3
+y 7
+end
+arch floor_ostone1
+x 3
+y 8
+end
+arch floor_ostone1
+x 3
+y 9
+end
+arch light4
+x 3
+y 9
+end
+arch floor_ostone1
+x 3
+y 10
+end
+arch light4
+x 3
+y 10
+end
+arch floor_ostone1
+x 3
+y 11
+end
+arch light4
+x 3
+y 11
+end
+arch ring_generic
+title see invisibility
+identified 1
+see_invisible 1
+x 3
+y 11
+end
+arch floor_ostone1
+x 3
+y 12
+end
+arch floor_ostone1
+x 3
+y 13
+end
+arch floor_ostone1
+x 3
+y 14
+end
+arch floor_ostone1
+x 3
+y 15
+end
+arch floor_ostone1
+x 3
+y 16
+end
+arch floor_ostone1
+x 3
+y 17
+end
+arch floor_ostone1
+x 3
+y 18
+end
+arch floor_ostone1
+x 3
+y 19
+end
+arch floor_ostone1
+x 3
+y 20
+end
+arch floor_ostone1
+x 3
+y 21
+end
+arch floor_ostone1
+x 3
+y 22
+end
+arch floor_ostone1
+x 3
+y 23
+end
+arch wall_stone1_1
+x 3
+y 23
+end
+arch floor_ostone1
+x 4
+end
+arch wall_stone1_1
+x 4
+end
+arch floor_ostone1
+x 4
+y 1
+end
+arch floor_ostone1
+x 4
+y 2
+end
+arch floor_ostone1
+x 4
+y 3
+end
+arch floor_ostone1
+x 4
+y 4
+end
+arch floor_ostone1
+x 4
+y 5
+end
+arch floor_ostone1
+x 4
+y 6
+end
+arch light9
+x 4
+y 6
+end
+arch floor_ostone1
+x 4
+y 7
+end
+arch floor_ostone1
+x 4
+y 8
+end
+arch floor_ostone1
+x 4
+y 9
+end
+arch floor_ostone1
+x 4
+y 10
+end
+arch floor_ostone1
+x 4
+y 11
+end
+arch floor_ostone1
+x 4
+y 12
+end
+arch floor_ostone1
+x 4
+y 13
+end
+arch floor_ostone1
+x 4
+y 14
+end
+arch floor_ostone1
+x 4
+y 15
+end
+arch floor_ostone1
+x 4
+y 16
+end
+arch floor_ostone1
+x 4
+y 17
+end
+arch floor_ostone1
+x 4
+y 18
+end
+arch floor_ostone1
+x 4
+y 19
+end
+arch floor_ostone1
+x 4
+y 20
+end
+arch floor_ostone1
+x 4
+y 21
+end
+arch floor_ostone1
+x 4
+y 22
+end
+arch floor_ostone1
+x 4
+y 23
+end
+arch wall_stone1_1
+x 4
+y 23
+end
+arch floor_ostone1
+x 5
+end
+arch wall_stone1_1
+x 5
+end
+arch floor_ostone1
+x 5
+y 1
+end
+arch floor_ostone1
+x 5
+y 2
+end
+arch floor_ostone1
+x 5
+y 3
+end
+arch floor_ostone1
+x 5
+y 4
+end
+arch floor_ostone1
+x 5
+y 5
+end
+arch floor_ostone1
+x 5
+y 6
+end
+arch floor_ostone1
+x 5
+y 7
+end
+arch floor_ostone1
+x 5
+y 8
+end
+arch floor_ostone1
+x 5
+y 9
+end
+arch floor_ostone1
+x 5
+y 10
+end
+arch floor_ostone1
+x 5
+y 11
+end
+arch floor_ostone1
+x 5
+y 12
+end
+arch floor_ostone1
+x 5
+y 13
+end
+arch floor_ostone1
+x 5
+y 14
+end
+arch floor_ostone1
+x 5
+y 15
+end
+arch floor_ostone1
+x 5
+y 16
+end
+arch floor_ostone1
+x 5
+y 17
+end
+arch floor_ostone1
+x 5
+y 18
+end
+arch floor_ostone1
+x 5
+y 19
+end
+arch ant_soldier
+unaggressive 1
+friendly 1
+stand_still 1
+x 5
+y 19
+end
+arch floor_ostone1
+x 5
+y 20
+end
+arch floor_ostone1
+x 5
+y 21
+end
+arch floor_ostone1
+x 5
+y 22
+end
+arch floor_ostone1
+x 5
+y 23
+end
+arch wall_stone1_1
+x 5
+y 23
+end
+arch floor_ostone1
+x 6
+end
+arch wall_stone1_1
+x 6
+end
+arch floor_ostone1
+x 6
+y 1
+end
+arch floor_ostone1
+x 6
+y 2
+end
+arch floor_ostone1
+x 6
+y 3
+end
+arch floor_ostone1
+x 6
+y 4
+end
+arch floor_ostone1
+x 6
+y 5
+end
+arch floor_ostone1
+x 6
+y 6
+end
+arch floor_ostone1
+x 6
+y 7
+end
+arch floor_ostone1
+x 6
+y 8
+end
+arch floor_ostone1
+x 6
+y 9
+end
+arch floor_ostone1
+x 6
+y 10
+end
+arch floor_ostone1
+x 6
+y 11
+end
+arch floor_ostone1
+x 6
+y 12
+end
+arch floor_ostone1
+x 6
+y 13
+end
+arch floor_ostone1
+x 6
+y 14
+end
+arch floor_ostone1
+x 6
+y 15
+end
+arch floor_ostone1
+x 6
+y 16
+end
+arch floor_ostone1
+x 6
+y 17
+end
+arch floor_ostone1
+x 6
+y 18
+end
+arch floor_ostone1
+x 6
+y 19
+end
+arch floor_ostone1
+x 6
+y 20
+end
+arch floor_ostone1
+x 6
+y 21
+end
+arch floor_ostone1
+x 6
+y 22
+end
+arch floor_ostone1
+x 6
+y 23
+end
+arch wall_stone1_1
+x 6
+y 23
+end
+arch floor_ostone1
+x 7
+end
+arch wall_stone1_1
+x 7
+end
+arch floor_ostone1
+x 7
+y 1
+end
+arch floor_ostone1
+x 7
+y 2
+end
+arch light9
+x 7
+y 2
+end
+arch floor_ostone1
+x 7
+y 3
+end
+arch floor_ostone1
+x 7
+y 4
+end
+arch floor_ostone1
+x 7
+y 5
+end
+arch light9
+x 7
+y 5
+end
+arch floor_ostone1
+x 7
+y 6
+end
+arch floor_ostone1
+x 7
+y 7
+end
+arch floor_ostone1
+x 7
+y 8
+end
+arch floor_ostone1
+x 7
+y 9
+end
+arch floor_ostone1
+x 7
+y 10
+end
+arch floor_ostone1
+x 7
+y 11
+end
+arch sign
+msg
+In front of this sign are some invisible
+objects. Wear the ring to see it.
+endmsg
+x 7
+y 11
+end
+arch floor_ostone1
+x 7
+y 12
+end
+arch floor_ostone1
+x 7
+y 13
+end
+arch floor_ostone1
+x 7
+y 14
+end
+arch floor_ostone1
+x 7
+y 15
+end
+arch floor_ostone1
+x 7
+y 16
+end
+arch floor_ostone1
+x 7
+y 17
+end
+arch floor_ostone1
+x 7
+y 18
+end
+arch floor_ostone1
+x 7
+y 19
+end
+arch floor_ostone1
+x 7
+y 20
+end
+arch floor_ostone1
+x 7
+y 21
+end
+arch floor_ostone1
+x 7
+y 22
+end
+arch floor_ostone1
+x 7
+y 23
+end
+arch wall_stone1_1
+x 7
+y 23
+end
+arch floor_ostone1
+x 8
+end
+arch wall_stone1_1
+x 8
+end
+arch floor_ostone1
+x 8
+y 1
+end
+arch floor_ostone1
+x 8
+y 2
+end
+arch floor_ostone1
+x 8
+y 3
+end
+arch floor_ostone1
+x 8
+y 4
+end
+arch floor_ostone1
+x 8
+y 5
+end
+arch floor_ostone1
+x 8
+y 6
+end
+arch floor_ostone1
+x 8
+y 7
+end
+arch floor_ostone1
+x 8
+y 8
+end
+arch floor_ostone1
+x 8
+y 9
+end
+arch floor_ostone1
+x 8
+y 10
+end
+arch floor_ostone1
+x 8
+y 11
+end
+arch floor_ostone1
+x 8
+y 12
+end
+arch floor_ostone1
+x 8
+y 13
+end
+arch floor_ostone1
+x 8
+y 14
+end
+arch floor_ostone1
+x 8
+y 15
+end
+arch floor_ostone1
+x 8
+y 16
+end
+arch floor_ostone1
+x 8
+y 17
+end
+arch floor_ostone1
+x 8
+y 18
+end
+arch floor_ostone1
+x 8
+y 19
+end
+arch floor_ostone1
+x 8
+y 20
+end
+arch floor_ostone1
+x 8
+y 21
+end
+arch floor_ostone1
+x 8
+y 22
+end
+arch floor_ostone1
+x 8
+y 23
+end
+arch wall_stone1_1
+x 8
+y 23
+end
+arch floor_ostone1
+x 9
+end
+arch wall_stone1_1
+x 9
+end
+arch floor_ostone1
+x 9
+y 1
+end
+arch floor_ostone1
+x 9
+y 2
+end
+arch floor_ostone1
+x 9
+y 3
+end
+arch floor_ostone1
+x 9
+y 4
+end
+arch light9
+x 9
+y 4
+end
+arch floor_ostone1
+x 9
+y 5
+end
+arch floor_ostone1
+x 9
+y 6
+end
+arch floor_ostone1
+x 9
+y 7
+end
+arch floor_ostone1
+x 9
+y 8
+end
+arch floor_ostone1
+x 9
+y 9
+end
+arch floor_ostone1
+x 9
+y 10
+end
+arch floor_ostone1
+x 9
+y 11
+end
+arch light4
+x 9
+y 11
+end
+arch floor_ostone1
+x 9
+y 12
+end
+arch light4
+x 9
+y 12
+end
+arch floor_ostone1
+x 9
+y 13
+end
+arch floor_ostone1
+x 9
+y 14
+end
+arch floor_ostone1
+x 9
+y 15
+end
+arch floor_ostone1
+x 9
+y 16
+end
+arch floor_ostone1
+x 9
+y 17
+end
+arch floor_ostone1
+x 9
+y 18
+end
+arch floor_ostone1
+x 9
+y 19
+end
+arch floor_ostone1
+x 9
+y 20
+end
+arch floor_ostone1
+x 9
+y 21
+end
+arch floor_ostone1
+x 9
+y 22
+end
+arch floor_ostone1
+x 9
+y 23
+end
+arch wall_stone1_1
+x 9
+y 23
+end
+arch floor_ostone1
+x 10
+end
+arch wall_stone1_1
+x 10
+end
+arch floor_ostone1
+x 10
+y 1
+end
+arch floor_ostone1
+x 10
+y 2
+end
+arch floor_ostone1
+x 10
+y 3
+end
+arch floor_ostone1
+x 10
+y 4
+end
+arch floor_ostone1
+x 10
+y 5
+end
+arch floor_ostone1
+x 10
+y 6
+end
+arch floor_ostone1
+x 10
+y 7
+end
+arch light9
+x 10
+y 7
+end
+arch floor_ostone1
+x 10
+y 8
+end
+arch floor_ostone1
+x 10
+y 9
+end
+arch floor_ostone1
+x 10
+y 10
+end
+arch floor_ostone1
+x 10
+y 11
+end
+arch light4
+x 10
+y 11
+end
+arch cave_pillar1
+is_invisible 1
+x 10
+y 11
+end
+arch floor_ostone1
+x 10
+y 12
+end
+arch light4
+x 10
+y 12
+end
+arch ant_soldier
+unaggressive 1
+is_invisible 1
+friendly 1
+stand_still 1
+x 10
+y 12
+end
+arch floor_ostone1
+x 10
+y 13
+end
+arch floor_ostone1
+x 10
+y 14
+end
+arch floor_ostone1
+x 10
+y 15
+end
+arch floor_ostone1
+x 10
+y 16
+end
+arch floor_ostone1
+x 10
+y 17
+end
+arch floor_ostone1
+x 10
+y 18
+end
+arch floor_ostone1
+x 10
+y 19
+end
+arch floor_ostone1
+x 10
+y 20
+end
+arch floor_ostone1
+x 10
+y 21
+end
+arch floor_ostone1
+x 10
+y 22
+end
+arch floor_ostone1
+x 10
+y 23
+end
+arch wall_stone1_1
+x 10
+y 23
+end
+arch floor_ostone1
+x 11
+end
+arch wall_stone1_1
+x 11
+end
+arch floor_ostone1
+x 11
+y 1
+end
+arch floor_ostone1
+x 11
+y 2
+end
+arch floor_ostone1
+x 11
+y 3
+end
+arch floor_ostone1
+x 11
+y 4
+end
+arch floor_ostone1
+x 11
+y 5
+end
+arch floor_ostone1
+x 11
+y 6
+end
+arch floor_ostone1
+x 11
+y 7
+end
+arch floor_ostone1
+x 11
+y 8
+end
+arch floor_ostone1
+x 11
+y 9
+end
+arch floor_ostone1
+x 11
+y 10
+end
+arch floor_ostone1
+x 11
+y 11
+end
+arch floor_ostone1
+x 11
+y 12
+end
+arch floor_ostone1
+x 11
+y 13
+end
+arch floor_ostone1
+x 11
+y 14
+end
+arch floor_ostone1
+x 11
+y 15
+end
+arch floor_ostone1
+x 11
+y 16
+end
+arch floor_ostone1
+x 11
+y 17
+end
+arch floor_ostone1
+x 11
+y 18
+end
+arch floor_ostone1
+x 11
+y 19
+end
+arch floor_ostone1
+x 11
+y 20
+end
+arch floor_ostone1
+x 11
+y 21
+end
+arch floor_ostone1
+x 11
+y 22
+end
+arch floor_ostone1
+x 11
+y 23
+end
+arch wall_stone1_1
+x 11
+y 23
+end
+arch floor_ostone1
+x 12
+end
+arch wall_stone1_1
+x 12
+end
+arch floor_ostone1
+x 12
+y 1
+end
+arch floor_ostone1
+x 12
+y 2
+end
+arch light9
+x 12
+y 2
+end
+arch floor_ostone1
+x 12
+y 3
+end
+arch floor_ostone1
+x 12
+y 4
+end
+arch light9
+x 12
+y 4
+end
+arch floor_ostone1
+x 12
+y 5
+end
+arch floor_ostone1
+x 12
+y 6
+end
+arch sign
+name pass_thru & pass_ethereal check
+msg
+In this test, the slime AND walls has this settings:
+black: can_pass_thru, is_ethereal
+blue: can_pass_thru
+green: is_ethereal
+The slime will act in this way:
+Black can pass all doors,
+blue can pass black & blue,
+but green can pass only green & black. 
+endmsg
+x 12
+y 6
+end
+arch floor_ostone1
+x 12
+y 7
+end
+arch floor_ostone1
+x 12
+y 8
+end
+arch floor_ostone1
+x 12
+y 9
+end
+arch floor_ostone1
+x 12
+y 10
+end
+arch floor_ostone1
+x 12
+y 11
+end
+arch floor_ostone1
+x 12
+y 12
+end
+arch floor_ostone1
+x 12
+y 13
+end
+arch floor_ostone1
+x 12
+y 14
+end
+arch floor_ostone1
+x 12
+y 15
+end
+arch floor_ostone1
+x 12
+y 16
+end
+arch floor_ostone1
+x 12
+y 17
+end
+arch floor_ostone1
+x 12
+y 18
+end
+arch floor_ostone1
+x 12
+y 19
+end
+arch floor_ostone1
+x 12
+y 20
+end
+arch floor_ostone1
+x 12
+y 21
+end
+arch floor_ostone1
+x 12
+y 22
+end
+arch floor_ostone1
+x 12
+y 23
+end
+arch wall_stone1_1
+x 12
+y 23
+end
+arch floor_ostone1
+x 13
+end
+arch wall_stone1_1
+x 13
+end
+arch floor_ostone1
+x 13
+y 1
+end
+arch floor_ostone1
+x 13
+y 2
+end
+arch floor_ostone1
+x 13
+y 3
+end
+arch floor_ostone1
+x 13
+y 4
+end
+arch floor_ostone1
+x 13
+y 5
+end
+arch floor_ostone1
+x 13
+y 6
+end
+arch floor_ostone1
+x 13
+y 7
+end
+arch floor_ostone1
+x 13
+y 8
+end
+arch floor_ostone1
+x 13
+y 9
+end
+arch floor_ostone1
+x 13
+y 10
+end
+arch floor_ostone1
+x 13
+y 11
+end
+arch floor_ostone1
+x 13
+y 12
+end
+arch floor_ostone1
+x 13
+y 13
+end
+arch floor_ostone1
+x 13
+y 14
+end
+arch floor_ostone1
+x 13
+y 15
+end
+arch floor_ostone1
+x 13
+y 16
+end
+arch floor_ostone1
+x 13
+y 17
+end
+arch floor_ostone1
+x 13
+y 18
+end
+arch floor_ostone1
+x 13
+y 19
+end
+arch floor_ostone1
+x 13
+y 20
+end
+arch floor_ostone1
+x 13
+y 21
+end
+arch floor_ostone1
+x 13
+y 22
+end
+arch floor_ostone1
+x 13
+y 23
+end
+arch wall_stone1_1
+x 13
+y 23
+end
+arch floor_ostone1
+x 14
+end
+arch wall_stone1_1
+x 14
+end
+arch floor_ostone1
+x 14
+y 1
+end
+arch floor_ostone1
+x 14
+y 2
+end
+arch floor_ostone1
+x 14
+y 3
+end
+arch floor_ostone1
+x 14
+y 4
+end
+arch floor_ostone1
+x 14
+y 5
+end
+arch floor_ostone1
+x 14
+y 6
+end
+arch floor_ostone1
+x 14
+y 7
+end
+arch floor_ostone1
+x 14
+y 8
+end
+arch light9
+x 14
+y 8
+end
+arch floor_ostone1
+x 14
+y 9
+end
+arch floor_ostone1
+x 14
+y 10
+end
+arch floor_ostone1
+x 14
+y 11
+end
+arch floor_ostone1
+x 14
+y 12
+end
+arch floor_ostone1
+x 14
+y 13
+end
+arch floor_ostone1
+x 14
+y 14
+end
+arch floor_ostone1
+x 14
+y 15
+end
+arch floor_ostone1
+x 14
+y 16
+end
+arch light9
+x 14
+y 16
+end
+arch floor_ostone1
+x 14
+y 17
+end
+arch floor_ostone1
+x 14
+y 18
+end
+arch floor_ostone1
+x 14
+y 19
+end
+arch floor_ostone1
+x 14
+y 20
+end
+arch floor_ostone1
+x 14
+y 21
+end
+arch floor_ostone1
+x 14
+y 22
+end
+arch floor_ostone1
+x 14
+y 23
+end
+arch wall_stone1_1
+x 14
+y 23
+end
+arch floor_ostone1
+x 15
+end
+arch wall_stone1_1
+x 15
+end
+arch floor_ostone1
+x 15
+y 1
+end
+arch light9
+x 15
+y 1
+end
+arch floor_ostone1
+x 15
+y 2
+end
+arch floor_ostone1
+x 15
+y 3
+end
+arch floor_ostone1
+x 15
+y 4
+end
+arch light9
+x 15
+y 4
+end
+arch floor_ostone1
+x 15
+y 5
+end
+arch floor_ostone1
+x 15
+y 6
+end
+arch floor_ostone1
+x 15
+y 7
+end
+arch floor_ostone1
+x 15
+y 8
+end
+arch floor_ostone1
+x 15
+y 9
+end
+arch floor_ostone1
+x 15
+y 10
+end
+arch floor_ostone1
+x 15
+y 11
+end
+arch light9
+x 15
+y 11
+end
+arch floor_ostone1
+x 15
+y 12
+end
+arch floor_ostone1
+x 15
+y 13
+end
+arch floor_ostone1
+x 15
+y 14
+end
+arch floor_ostone1
+x 15
+y 15
+end
+arch floor_ostone1
+x 15
+y 16
+end
+arch floor_ostone1
+x 15
+y 17
+end
+arch floor_ostone1
+x 15
+y 18
+end
+arch floor_ostone1
+x 15
+y 19
+end
+arch floor_ostone1
+x 15
+y 20
+end
+arch sign
+name pit & pass check
+msg
+The pits can be passed with levitation.
+The black walls allow only pass_thru,
+the red pass_ethereal. 
+When the test maps are lured here, black
+& blue slime can pass black wall, the green
+mob will alway walk around or use red wall.
+endmsg
+x 15
+y 20
+end
+arch floor_ostone1
+x 15
+y 21
+end
+arch floor_ostone1
+x 15
+y 22
+end
+arch floor_ostone1
+x 15
+y 23
+end
+arch wall_stone1_1
+x 15
+y 23
+end
+arch floor_ostone1
+x 16
+end
+arch wall_stone1_1
+x 16
+end
+arch floor_ostone1
+x 16
+y 1
+end
+arch floor_ostone1
+x 16
+y 2
+end
+arch floor_ostone1
+x 16
+y 3
+end
+arch floor_ostone1
+x 16
+y 4
+end
+arch floor_ostone1
+x 16
+y 5
+end
+arch floor_ostone1
+x 16
+y 6
+end
+arch floor_ostone1
+x 16
+y 7
+end
+arch floor_ostone1
+x 16
+y 8
+end
+arch floor_ostone1
+x 16
+y 9
+end
+arch floor_ostone1
+x 16
+y 10
+end
+arch floor_ostone1
+x 16
+y 11
+end
+arch floor_ostone1
+x 16
+y 12
+end
+arch floor_ostone1
+x 16
+y 13
+end
+arch floor_ostone1
+x 16
+y 14
+end
+arch floor_ostone1
+x 16
+y 15
+end
+arch floor_ostone1
+x 16
+y 16
+end
+arch floor_ostone1
+x 16
+y 17
+end
+arch floor_ostone1
+x 16
+y 18
+end
+arch floor_ostone1
+x 16
+y 19
+end
+arch wall_black1a.111
+pass_thru 1
+blocksview 0
+x 16
+y 19
+end
+arch floor_ostone1
+x 16
+y 20
+end
+arch floor_ostone1
+x 16
+y 21
+end
+arch light9
+x 16
+y 21
+end
+arch floor_ostone1
+x 16
+y 22
+end
+arch floor_ostone1
+x 16
+y 23
+end
+arch wall_stone1_1
+x 16
+y 23
+end
+arch floor_ostone1
+x 17
+end
+arch wall_stone1_1
+x 17
+end
+arch floor_ostone1
+x 17
+y 1
+end
+arch floor_ostone1
+x 17
+y 2
+end
+arch floor_ostone1
+x 17
+y 3
+end
+arch floor_ostone1
+x 17
+y 4
+end
+arch floor_ostone1
+x 17
+y 5
+end
+arch floor_ostone1
+x 17
+y 6
+end
+arch floor_ostone1
+x 17
+y 7
+end
+arch floor_ostone1
+x 17
+y 8
+end
+arch floor_ostone1
+x 17
+y 9
+end
+arch floor_ostone1
+x 17
+y 10
+end
+arch floor_ostone1
+x 17
+y 11
+end
+arch floor_ostone1
+x 17
+y 12
+end
+arch floor_ostone1
+x 17
+y 13
+end
+arch floor_ostone1
+x 17
+y 14
+end
+arch floor_ostone1
+x 17
+y 15
+end
+arch floor_ostone1
+x 17
+y 16
+end
+arch floor_ostone1
+x 17
+y 17
+end
+arch floor_ostone1
+x 17
+y 18
+end
+arch floor_ostone1
+x 17
+y 19
+end
+arch wall_black1a.111
+pass_thru 1
+blocksview 0
+x 17
+y 19
+end
+arch floor_ostone1
+x 17
+y 20
+end
+arch pit_open
+x 17
+y 20
+end
+arch floor_ostone1
+x 17
+y 21
+end
+arch pit_open
+x 17
+y 21
+end
+arch floor_ostone1
+x 17
+y 22
+end
+arch floor_ostone1
+x 17
+y 23
+end
+arch wall_stone1_1
+x 17
+y 23
+end
+arch floor_ostone1
+x 18
+end
+arch wall_stone1_1
+x 18
+end
+arch floor_ostone1
+x 18
+y 1
+end
+arch floor_ostone1
+x 18
+y 2
+end
+arch light9
+x 18
+y 2
+end
+arch floor_ostone1
+x 18
+y 3
+end
+arch floor_ostone1
+x 18
+y 4
+end
+arch floor_ostone1
+x 18
+y 5
+end
+arch floor_ostone1
+x 18
+y 6
+end
+arch light9
+x 18
+y 6
+end
+arch floor_ostone1
+x 18
+y 7
+end
+arch floor_ostone1
+x 18
+y 8
+end
+arch floor_ostone1
+x 18
+y 9
+end
+arch floor_ostone1
+x 18
+y 10
+end
+arch light9
+x 18
+y 10
+end
+arch floor_ostone1
+x 18
+y 11
+end
+arch floor_ostone1
+x 18
+y 12
+end
+arch floor_ostone1
+x 18
+y 13
+end
+arch floor_ostone1
+x 18
+y 14
+end
+arch light9
+x 18
+y 14
+end
+arch floor_ostone1
+x 18
+y 15
+end
+arch floor_ostone1
+x 18
+y 16
+end
+arch floor_ostone1
+x 18
+y 17
+end
+arch floor_ostone1
+x 18
+y 18
+end
+arch floor_ostone1
+x 18
+y 19
+end
+arch wall_black1a.111
+pass_thru 1
+blocksview 0
+x 18
+y 19
+end
+arch floor_ostone1
+x 18
+y 20
+end
+arch pit_open
+x 18
+y 20
+end
+arch floor_ostone1
+x 18
+y 21
+end
+arch pit_open
+x 18
+y 21
+end
+arch floor_ostone1
+x 18
+y 22
+end
+arch floor_ostone1
+x 18
+y 23
+end
+arch wall_stone1_1
+x 18
+y 23
+end
+arch floor_ostone1
+x 19
+end
+arch wall_stone1_1
+x 19
+end
+arch floor_ostone1
+x 19
+y 1
+end
+arch floor_ostone1
+x 19
+y 2
+end
+arch floor_ostone1
+x 19
+y 3
+end
+arch wall_flagstone1.181
+x 19
+y 3
+end
+arch floor_ostone1
+x 19
+y 4
+end
+arch wall_flagstone1.131
+x 19
+y 4
+end
+arch floor_ostone1
+x 19
+y 5
+end
+arch wall_marble1.111a-05
+pass_thru 1
+x 19
+y 5
+end
+arch floor_ostone1
+x 19
+y 6
+end
+arch wall_flagstone1.131
+x 19
+y 6
+end
+arch floor_ostone1
+x 19
+y 7
+end
+arch wall_flagstone1.131
+x 19
+y 7
+end
+arch floor_ostone1
+x 19
+y 8
+end
+arch wall_marble1.111a-03
+pass_ethereal 1
+x 19
+y 8
+end
+arch floor_ostone1
+x 19
+y 9
+end
+arch wall_flagstone1.131
+x 19
+y 9
+end
+arch floor_ostone1
+x 19
+y 10
+end
+arch wall_flagstone1.131
+x 19
+y 10
+end
+arch floor_ostone1
+x 19
+y 11
+end
+arch wall_black1.131
+pass_ethereal 1
+pass_thru 1
+x 19
+y 11
+end
+arch floor_ostone1
+x 19
+y 12
+end
+arch wall_flagstone1.131
+x 19
+y 12
+end
+arch floor_ostone1
+x 19
+y 13
+end
+arch floor_ostone1
+x 19
+y 14
+end
+arch floor_ostone1
+x 19
+y 15
+end
+arch floor_ostone1
+x 19
+y 16
+end
+arch floor_ostone1
+x 19
+y 17
+end
+arch floor_ostone1
+x 19
+y 18
+end
+arch floor_ostone1
+x 19
+y 19
+end
+arch wall_marble1.131-04
+pass_ethereal 1
+blocksview 0
+x 19
+y 19
+end
+arch floor_ostone1
+x 19
+y 20
+end
+arch pit_open
+x 19
+y 20
+end
+arch floor_ostone1
+x 19
+y 21
+end
+arch pit_open
+x 19
+y 21
+end
+arch floor_ostone1
+x 19
+y 22
+end
+arch floor_ostone1
+x 19
+y 23
+end
+arch wall_stone1_1
+x 19
+y 23
+end
+arch floor_ostone1
+x 20
+end
+arch wall_stone1_1
+x 20
+end
+arch floor_ostone1
+x 20
+y 1
+end
+arch floor_ostone1
+x 20
+y 2
+end
+arch floor_ostone1
+x 20
+y 3
+end
+arch wall_flagstone1.111
+x 20
+y 3
+end
+arch floor_ostone1
+x 20
+y 4
+end
+arch blob_acid
+can_pass_thru 1
+x 20
+y 4
+end
+arch floor_ostone1
+x 20
+y 5
+end
+arch pudding_black
+is_ethereal 1
+can_pass_thru 1
+x 20
+y 5
+end
+arch floor_ostone1
+x 20
+y 6
+end
+arch wall_flagstone1.111
+x 20
+y 6
+end
+arch floor_ostone1
+x 20
+y 7
+end
+arch blob_poison
+is_ethereal 1
+x 20
+y 7
+end
+arch floor_ostone1
+x 20
+y 8
+end
+arch pudding_black
+is_ethereal 1
+can_pass_thru 1
+x 20
+y 8
+end
+arch floor_ostone1
+x 20
+y 9
+end
+arch wall_flagstone1.111
+x 20
+y 9
+end
+arch floor_ostone1
+x 20
+y 10
+end
+arch blob_poison
+is_ethereal 1
+x 20
+y 10
+end
+arch floor_ostone1
+x 20
+y 11
+end
+arch pudding_black
+is_ethereal 1
+can_pass_thru 1
+x 20
+y 11
+end
+arch floor_ostone1
+x 20
+y 12
+end
+arch wall_flagstone1.111
+x 20
+y 12
+end
+arch floor_ostone1
+x 20
+y 13
+end
+arch floor_ostone1
+x 20
+y 14
+end
+arch floor_ostone1
+x 20
+y 15
+end
+arch floor_ostone1
+x 20
+y 16
+end
+arch floor_ostone1
+x 20
+y 17
+end
+arch floor_ostone1
+x 20
+y 18
+end
+arch floor_ostone1
+x 20
+y 19
+end
+arch floor_ostone1
+x 20
+y 20
+end
+arch floor_ostone1
+x 20
+y 21
+end
+arch floor_ostone1
+x 20
+y 22
+end
+arch floor_ostone1
+x 20
+y 23
+end
+arch wall_stone1_1
+x 20
+y 23
+end
+arch floor_ostone1
+x 21
+end
+arch wall_stone1_1
+x 21
+end
+arch floor_ostone1
+x 21
+y 1
+end
+arch floor_ostone1
+x 21
+y 2
+end
+arch floor_ostone1
+x 21
+y 3
+end
+arch wall_flagstone1.111
+x 21
+y 3
+end
+arch floor_ostone1
+x 21
+y 4
+end
+arch blob_poison
+is_ethereal 1
+x 21
+y 4
+end
+arch floor_ostone1
+x 21
+y 5
+end
+arch floor_ostone1
+x 21
+y 6
+end
+arch wall_flagstone1.111
+x 21
+y 6
+end
+arch floor_ostone1
+x 21
+y 7
+end
+arch floor_ostone1
+x 21
+y 8
+end
+arch blob_acid
+can_pass_thru 1
+x 21
+y 8
+end
+arch floor_ostone1
+x 21
+y 9
+end
+arch wall_flagstone1.111
+x 21
+y 9
+end
+arch floor_ostone1
+x 21
+y 10
+end
+arch floor_ostone1
+x 21
+y 11
+end
+arch blob_acid
+can_pass_thru 1
+x 21
+y 11
+end
+arch floor_ostone1
+x 21
+y 12
+end
+arch wall_flagstone1.111
+x 21
+y 12
+end
+arch floor_ostone1
+x 21
+y 13
+end
+arch floor_ostone1
+x 21
+y 14
+end
+arch floor_ostone1
+x 21
+y 15
+end
+arch floor_ostone1
+x 21
+y 16
+end
+arch floor_ostone1
+x 21
+y 17
+end
+arch light9
+x 21
+y 17
+end
+arch floor_ostone1
+x 21
+y 18
+end
+arch floor_ostone1
+x 21
+y 19
+end
+arch floor_ostone1
+x 21
+y 20
+end
+arch floor_ostone1
+x 21
+y 21
+end
+arch light9
+x 21
+y 21
+end
+arch floor_ostone1
+x 21
+y 22
+end
+arch floor_ostone1
+x 21
+y 23
+end
+arch wall_stone1_1
+x 21
+y 23
+end
+arch floor_ostone1
+x 22
+end
+arch wall_stone1_1
+x 22
+end
+arch floor_ostone1
+x 22
+y 1
+end
+arch floor_ostone1
+x 22
+y 2
+end
+arch floor_ostone1
+x 22
+y 3
+end
+arch wall_flagstone1.111
+x 22
+y 3
+end
+arch floor_ostone1
+x 22
+y 4
+end
+arch floor_ostone1
+x 22
+y 5
+end
+arch floor_ostone1
+x 22
+y 6
+end
+arch wall_flagstone1.111
+x 22
+y 6
+end
+arch floor_ostone1
+x 22
+y 7
+end
+arch floor_ostone1
+x 22
+y 8
+end
+arch floor_ostone1
+x 22
+y 9
+end
+arch wall_flagstone1.111
+x 22
+y 9
+end
+arch floor_ostone1
+x 22
+y 10
+end
+arch floor_ostone1
+x 22
+y 11
+end
+arch floor_ostone1
+x 22
+y 12
+end
+arch wall_flagstone1.111
+x 22
+y 12
+end
+arch floor_ostone1
+x 22
+y 13
+end
+arch floor_ostone1
+x 22
+y 14
+end
+arch floor_ostone1
+x 22
+y 15
+end
+arch floor_ostone1
+x 22
+y 16
+end
+arch floor_ostone1
+x 22
+y 17
+end
+arch floor_ostone1
+x 22
+y 18
+end
+arch floor_ostone1
+x 22
+y 19
+end
+arch floor_ostone1
+x 22
+y 20
+end
+arch floor_ostone1
+x 22
+y 21
+end
+arch floor_ostone1
+x 22
+y 22
+end
+arch floor_ostone1
+x 22
+y 23
+end
+arch wall_stone1_1
+x 22
+y 23
+end
+arch floor_ostone1
+x 23
+end
+arch wall_stone1_1
+x 23
+end
+arch floor_ostone1
+x 23
+y 1
+end
+arch wall_stone1_3
+x 23
+y 1
+end
+arch floor_ostone1
+x 23
+y 2
+end
+arch wall_stone1_3
+x 23
+y 2
+end
+arch floor_ostone1
+x 23
+y 3
+end
+arch wall_stone1_3
+x 23
+y 3
+end
+arch floor_ostone1
+x 23
+y 4
+end
+arch wall_stone1_3
+x 23
+y 4
+end
+arch floor_ostone1
+x 23
+y 5
+end
+arch wall_stone1_3
+x 23
+y 5
+end
+arch floor_ostone1
+x 23
+y 6
+end
+arch wall_stone1_3
+x 23
+y 6
+end
+arch floor_ostone1
+x 23
+y 7
+end
+arch wall_stone1_3
+x 23
+y 7
+end
+arch floor_ostone1
+x 23
+y 8
+end
+arch wall_stone1_3
+x 23
+y 8
+end
+arch floor_ostone1
+x 23
+y 9
+end
+arch wall_stone1_3
+x 23
+y 9
+end
+arch floor_ostone1
+x 23
+y 10
+end
+arch wall_stone1_3
+x 23
+y 10
+end
+arch floor_ostone1
+x 23
+y 11
+end
+arch wall_stone1_3
+x 23
+y 11
+end
+arch floor_ostone1
+x 23
+y 12
+end
+arch wall_stone1_3
+x 23
+y 12
+end
+arch floor_ostone1
+x 23
+y 13
+end
+arch wall_stone1_3
+x 23
+y 13
+end
+arch floor_ostone1
+x 23
+y 14
+end
+arch wall_stone1_3
+x 23
+y 14
+end
+arch floor_ostone1
+x 23
+y 15
+end
+arch wall_stone1_3
+x 23
+y 15
+end
+arch floor_ostone1
+x 23
+y 16
+end
+arch wall_stone1_3
+x 23
+y 16
+end
+arch floor_ostone1
+x 23
+y 17
+end
+arch wall_stone1_3
+x 23
+y 17
+end
+arch floor_ostone1
+x 23
+y 18
+end
+arch wall_stone1_3
+x 23
+y 18
+end
+arch floor_ostone1
+x 23
+y 19
+end
+arch wall_stone1_3
+x 23
+y 19
+end
+arch floor_ostone1
+x 23
+y 20
+end
+arch wall_stone1_3
+x 23
+y 20
+end
+arch floor_ostone1
+x 23
+y 21
+end
+arch wall_stone1_3
+x 23
+y 21
+end
+arch floor_ostone1
+x 23
+y 22
+end
+arch wall_stone1_3
+x 23
+y 22
+end
+arch floor_ostone1
+x 23
+y 23
+end
+arch wall_stone1_4
+x 23
+y 23
+end

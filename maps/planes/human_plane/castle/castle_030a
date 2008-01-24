@@ -1,0 +1,4271 @@
+arch map
+name Guild Hall§ColeForeverPiano.ogg|0|-1
+msg
+Created:  2004-07-16 Daimonin Map Editor
+endmsg
+width 24
+height 24
+difficulty 1
+outdoor 1
+no_harm 1
+tile_path_1 castle_0300
+tile_path_2 castle_040a
+tile_path_3 castle_030b
+tile_path_4 castle_020a
+tile_path_5 castle_0400
+tile_path_8 castle_0200
+tileset_id 5
+tileset_x 168
+tileset_y -72
+end
+arch grassd_2
+end
+arch grassd_7
+y 1
+end
+arch grassd_1
+y 2
+end
+arch wall_flagstone1.111
+y 2
+end
+arch floor_sblack2
+y 3
+end
+arch wall_flagstone1.131
+y 3
+end
+arch floor_sblack2
+y 4
+end
+arch wall_flagstone1b.131
+y 4
+end
+arch floor_sblack2
+y 5
+end
+arch wall_flagstone1.131
+y 5
+end
+arch floor_sblack2
+y 6
+end
+arch floor_sblack2
+y 7
+end
+arch floor_sblack2
+y 8
+end
+arch wall_flagstone1b.111
+y 8
+end
+arch grassd_2
+y 9
+end
+arch wmask_wanted
+name proclamation
+msg
+Cell 1 -- VACANCY
+endmsg
+y 9
+arch event_obj
+name Lua
+sub_type 12
+race /scripts/examine_sign.lua
+end
+arch beacon
+name guildhall jail cell 1 proclamation
+end
+end
+arch floor_flagm1
+y 10
+end
+arch grassd_m10
+y 10
+end
+arch floor_flagm1
+y 11
+end
+arch floor_flagm1
+y 12
+end
+arch statue_hero_b
+y 12
+end
+arch light1
+y 12
+end
+arch floor_flagm1
+y 13
+end
+arch statue_hero_c
+y 13
+end
+arch light1
+y 13
+end
+arch floor_flagm1
+y 14
+end
+arch grassd_m7
+y 14
+end
+arch grassd_7
+y 15
+end
+arch plant_mushroom3
+y 15
+end
+arch grassd_1
+y 16
+end
+arch grassd_2
+y 17
+end
+arch grassd_2
+y 18
+end
+arch grassd_1
+y 19
+end
+arch grassd_2
+y 20
+end
+arch tree_big2
+y 20
+end
+arch grassd_2
+y 21
+end
+arch grassd_1
+y 22
+end
+arch fwall_fstone2
+y 22
+end
+arch grassd_3
+y 23
+end
+arch fwall_fstone2
+y 23
+end
+arch grassd_6
+x 1
+end
+arch grassd_7
+x 1
+y 1
+end
+arch grassd_5
+x 1
+y 2
+end
+arch wall_flagstone1b.111
+x 1
+y 2
+end
+arch floor_sblack2
+x 1
+y 3
+end
+arch floor_sblack2
+x 1
+y 4
+end
+arch floor_sblack2
+x 1
+y 5
+end
+arch wall_flagstone1b.111
+x 1
+y 5
+end
+arch floor_sblack2
+x 1
+y 6
+end
+arch floor_sblack2
+x 1
+y 7
+end
+arch light1
+x 1
+y 7
+end
+arch floor_sblack2
+x 1
+y 8
+end
+arch wall_flagstone1b.111
+x 1
+y 8
+end
+arch grassd_2
+x 1
+y 9
+end
+arch wmask_wanted
+name proclamation
+msg
+Cell 2 -- VACANCY
+endmsg
+x 1
+y 9
+arch event_obj
+name Lua
+sub_type 12
+race /scripts/examine_sign.lua
+end
+arch beacon
+name guildhall jail cell 2 proclamation
+end
+end
+arch floor_flagm1
+x 1
+y 10
+end
+arch grassd_m10
+x 1
+y 10
+end
+arch floor_flagm1
+x 1
+y 11
+end
+arch grassd_m11
+x 1
+y 11
+end
+arch floor_flagm1
+x 1
+y 12
+end
+arch grassd_m8
+x 1
+y 12
+end
+arch floor_flagm1
+x 1
+y 13
+end
+arch grassd_m8
+x 1
+y 13
+end
+arch floor_flagm1
+x 1
+y 14
+end
+arch grassd_m5
+x 1
+y 14
+end
+arch grassd_8
+x 1
+y 15
+end
+arch grassd_4
+x 1
+y 16
+end
+arch grassd_5
+x 1
+y 17
+end
+arch grassd_2
+x 1
+y 18
+end
+arch plant13
+x 1
+y 18
+end
+arch grassd_4
+x 1
+y 19
+end
+arch grassd_3
+x 1
+y 20
+end
+arch grassd_1
+x 1
+y 21
+end
+arch tree_big3
+x 1
+y 21
+end
+arch grassd_2
+x 1
+y 22
+end
+arch wall_fstone_round.102
+x 1
+y 22
+end
+arch grassd_8
+x 1
+y 23
+end
+arch fwall_fstone2
+x 1
+y 23
+end
+arch grassd_2
+x 2
+end
+arch grassd_5
+x 2
+y 1
+end
+arch grassd_1
+x 2
+y 2
+end
+arch wall_flagstone1.111
+x 2
+y 2
+end
+arch floor_sblack2
+x 2
+y 3
+end
+arch floor_sblack2
+x 2
+y 4
+end
+arch light3
+x 2
+y 4
+end
+arch floor_sblack2
+x 2
+y 5
+end
+arch floor_sblack2
+x 2
+y 6
+end
+arch floor_sblack2
+x 2
+y 7
+end
+arch floor_sblack2
+x 2
+y 8
+end
+arch floor_flagm1
+x 2
+y 9
+end
+arch grass_fullmask1
+x 2
+y 9
+end
+arch floor_flagm1
+x 2
+y 10
+end
+arch grassd_m13
+x 2
+y 10
+end
+arch floor_flagm1
+x 2
+y 11
+end
+arch grassd_m7
+x 2
+y 11
+end
+arch grassd_7
+x 2
+y 12
+end
+arch plant_flower1
+x 2
+y 12
+end
+arch grassd_5
+x 2
+y 13
+end
+arch grassd_2
+x 2
+y 14
+end
+arch grassd_1
+x 2
+y 15
+end
+arch grassd_3
+x 2
+y 16
+end
+arch plant9
+x 2
+y 16
+end
+arch grassd_5
+x 2
+y 17
+end
+arch spawn_point
+last_heal 1
+x 2
+y 17
+arch golem
+name Dummy
+type 83
+face scarecrow.131
+is_animated 0
+glow_radius 1
+no_pass 1
+level 50
+speed 100.0
+no_attack 1
+dam 0
+maxhp 10000
+con 99
+reg_f 1
+unaggressive 1
+stand_still 1
+end
+end
+arch grassd_6
+x 2
+y 18
+end
+arch plant16
+x 2
+y 18
+end
+arch grassd_4
+x 2
+y 19
+end
+arch grassd_6
+x 2
+y 20
+end
+arch grassd_6
+x 2
+y 21
+end
+arch grassd_1
+x 2
+y 22
+end
+arch grassd_8
+x 2
+y 23
+end
+arch fwall_fstone2
+x 2
+y 23
+end
+arch grassd_7
+x 3
+end
+arch grassd_4
+x 3
+y 1
+end
+arch grassd_2
+x 3
+y 2
+end
+arch wall_flagstone1.111
+x 3
+y 2
+end
+arch floor_sblack1
+x 3
+y 3
+end
+arch wall_flagstone1b.131
+x 3
+y 3
+end
+arch floor_sblack1
+x 3
+y 4
+end
+arch grate_closed
+face grate_door1.131
+direction 3
+x 3
+y 4
+end
+arch floor_sblack1
+x 3
+y 5
+end
+arch wall_flagstone1.141
+x 3
+y 5
+end
+arch floor_sblack1
+x 3
+y 6
+end
+arch wall_flagstone1.131
+x 3
+y 6
+end
+arch floor_sblack1
+x 3
+y 7
+end
+arch grate_closed
+face grate_door1.131
+direction 3
+x 3
+y 7
+arch beacon
+name guildhall jail cell 3 door
+end
+end
+arch floor_sblack1
+x 3
+y 8
+end
+arch wall_flagstone1.141
+x 3
+y 8
+end
+arch grassd_7
+x 3
+y 9
+end
+arch lantern2_magic.131
+x 3
+y 9
+end
+arch light3
+x 3
+y 9
+end
+arch wmask_wanted
+name proclamation
+msg
+Cell 3 -- OUT OF ORDER
+endmsg
+x 3
+y 9
+arch event_obj
+name Lua
+sub_type 12
+race /scripts/examine_sign.lua
+end
+end
+arch floor_flagm1
+x 3
+y 10
+end
+arch grassd_m10
+x 3
+y 10
+end
+arch floor_flagm1
+x 3
+y 11
+end
+arch grassd_m7
+x 3
+y 11
+end
+arch grassd_2
+x 3
+y 12
+end
+arch grassd_8
+x 3
+y 13
+end
+arch plant18
+x 3
+y 13
+end
+arch grassd_8
+x 3
+y 14
+end
+arch grassd_8
+x 3
+y 15
+end
+arch plant1
+x 3
+y 15
+end
+arch grassd_5
+x 3
+y 16
+end
+arch grassd_2
+x 3
+y 17
+end
+arch grassd_1
+x 3
+y 18
+end
+arch grassd_5
+x 3
+y 19
+end
+arch grassd_3
+x 3
+y 20
+end
+arch grassd_7
+x 3
+y 21
+end
+arch grassd_8
+x 3
+y 22
+end
+arch grassd_8
+x 3
+y 23
+end
+arch fwall_fstone2
+x 3
+y 23
+end
+arch grassd_1
+x 4
+end
+arch grassd_4
+x 4
+y 1
+end
+arch grassd_2
+x 4
+y 2
+end
+arch wall_flagstone1b.111
+no_pass 0
+x 4
+y 2
+end
+arch floor_sblack1
+x 4
+y 3
+end
+arch prison_deco1.131
+x 4
+y 3
+end
+arch floor_sblack1
+x 4
+y 4
+end
+arch light3
+x 4
+y 4
+end
+arch floor_sblack1
+x 4
+y 5
+end
+arch wall_flagstone1b.111
+x 4
+y 5
+end
+arch floor_sblack1
+x 4
+y 6
+end
+arch prison_deco1.131
+x 4
+y 6
+end
+arch floor_sblack1
+x 4
+y 7
+end
+arch spawn_point
+x 4
+y 7
+arch ogre
+name Frah'ak
+type 83
+randomitems none
+surrendered 1
+stand_still 1
+level 4
+arch event_obj
+name Lua
+sub_type 6
+race guildhall/frahak_say.lua
+end
+arch event_obj
+name Lua
+sub_type 13
+race guildhall/frahak.lua
+end
+arch shoulder_leather
+name Ogre Shoulders
+str 1
+cha -1
+material_real 198
+item_quality 85
+item_condition 85
+resist_impact 8
+identified 1
+known_magical 1
+is_magical 1
+end
+end
+end
+arch floor_sblack1
+x 4
+y 8
+end
+arch wall_flagstone1.111
+x 4
+y 8
+end
+arch grassd_5
+x 4
+y 9
+end
+arch sign_generic
+name sign
+msg
+-----------Guild Hall Jail------------
+*Don't fret; they're under lock and key*
+endmsg
+direction 5
+x 4
+y 9
+arch event_obj
+name Lua
+sub_type 12
+race /scripts/examine_sign.lua
+end
+end
+arch wmask_wanted
+name proclamation
+msg
+Cell 4 -- NO VACANCY
+Fra'hak, the notorious ogre rogue clan leader from Cloud Mountains, has been caught and jailed.
+Report ogre activity near the city to the guards.
+endmsg
+x 4
+y 9
+arch event_obj
+name Lua
+sub_type 12
+race /scripts/examine_sign.lua
+end
+end
+arch floor_flagm1
+x 4
+y 10
+end
+arch grassd_m10
+x 4
+y 10
+end
+arch floor_flagm1
+x 4
+y 11
+end
+arch grassd_m7
+x 4
+y 11
+end
+arch grassd_3
+x 4
+y 12
+end
+arch lantern_magic.131
+direction 5
+x 4
+y 12
+end
+arch light5
+x 4
+y 12
+end
+arch grassd_3
+x 4
+y 13
+end
+arch grassd_6
+x 4
+y 14
+end
+arch grassd_3
+x 4
+y 15
+end
+arch plant1
+x 4
+y 15
+end
+arch grassd_8
+x 4
+y 16
+end
+arch grassd_5
+x 4
+y 17
+end
+arch grassd_2
+x 4
+y 18
+end
+arch grassd_5
+x 4
+y 19
+end
+arch grassd_2
+x 4
+y 20
+end
+arch grassd_2
+x 4
+y 21
+end
+arch plant17
+x 4
+y 21
+end
+arch grassd_3
+x 4
+y 22
+end
+arch plant5
+x 4
+y 22
+end
+arch tree_big3
+x 4
+y 22
+end
+arch grassd_8
+x 4
+y 23
+end
+arch fwall_fstone2
+x 4
+y 23
+end
+arch grassd_2
+x 5
+end
+arch tree_big3
+x 5
+end
+arch grassd_1
+x 5
+y 1
+end
+arch grassd_2
+x 5
+y 2
+end
+arch wall_flagstone1_w.111
+x 5
+y 2
+end
+arch floor_sblack1
+player_only 1
+x 5
+y 3
+end
+arch hole
+msg
+You see the bottom of the hole only a few feet down, so you jump unwittingly onto some stairs and nearly twist your ankle. What would live down here?
+endmsg
+slaying guildhall/kobold_den_0000
+hp 10
+sp 10
+x 5
+y 3
+end
+arch floor_sblack1
+x 5
+y 4
+end
+arch metal_bucket.101
+x 5
+y 4
+end
+arch floor_sblack1
+x 5
+y 5
+end
+arch wall_flagstone1.111
+x 5
+y 5
+end
+arch floor_sblack1
+x 5
+y 6
+end
+arch basket1.101
+x 5
+y 6
+end
+arch floor_sblack1
+x 5
+y 7
+end
+arch floor_sblack1
+x 5
+y 8
+end
+arch wall_flagstone1_w.111
+x 5
+y 8
+end
+arch grassd_5
+x 5
+y 9
+end
+arch floor_flagm1
+x 5
+y 10
+end
+arch grassd_m10
+x 5
+y 10
+end
+arch floor_flagm1
+x 5
+y 11
+end
+arch grassd_m14
+x 5
+y 11
+end
+arch floor_flagm1
+x 5
+y 12
+end
+arch grassd_m9
+x 5
+y 12
+end
+arch floor_flagm1
+x 5
+y 13
+end
+arch grassd_m9
+x 5
+y 13
+end
+arch floor_flagm1
+x 5
+y 14
+end
+arch grassd_m9
+x 5
+y 14
+end
+arch floor_flagm1
+x 5
+y 15
+end
+arch grassd_m9
+x 5
+y 15
+end
+arch floor_flagm1
+x 5
+y 16
+end
+arch grassd_m9
+x 5
+y 16
+end
+arch floor_flagm1
+x 5
+y 17
+end
+arch grassd_m9
+x 5
+y 17
+end
+arch floor_flagm1
+x 5
+y 18
+end
+arch grassd_m3
+x 5
+y 18
+end
+arch grassd_5
+x 5
+y 19
+end
+arch grassd_2
+x 5
+y 20
+end
+arch grassd_4
+x 5
+y 21
+end
+arch grassd_7
+x 5
+y 22
+end
+arch grassd_3
+x 5
+y 23
+end
+arch fwall_fstone2
+x 5
+y 23
+end
+arch grassd_2
+x 6
+end
+arch grassd_8
+x 6
+y 1
+end
+arch grassd_2
+x 6
+y 2
+end
+arch wall_flagstone1b.111
+x 6
+y 2
+end
+arch floor_sblack1
+x 6
+y 3
+end
+arch wall_flagstone1b.131
+x 6
+y 3
+end
+arch floor_sblack1
+x 6
+y 4
+end
+arch wall_flagstone1_w.131
+x 6
+y 4
+end
+arch floor_sblack1
+x 6
+y 5
+end
+arch wall_flagstone1.141
+x 6
+y 5
+end
+arch floor_sblack1
+x 6
+y 6
+end
+arch wall_flagstone1b.131
+x 6
+y 6
+end
+arch floor_sblack1
+x 6
+y 7
+end
+arch wall_flagstone1_w.131
+x 6
+y 7
+end
+arch floor_sblack1
+x 6
+y 8
+end
+arch wall_flagstone1b.141
+x 6
+y 8
+end
+arch grassd_3
+x 6
+y 9
+end
+arch floor_flagm1
+x 6
+y 10
+end
+arch grassd_m6
+x 6
+y 10
+end
+arch floor_flagm1
+x 6
+y 11
+end
+arch grassd_m8
+x 6
+y 11
+end
+arch floor_flagm1
+x 6
+y 12
+end
+arch grassd_m8
+x 6
+y 12
+end
+arch floor_flagm1
+x 6
+y 13
+end
+arch grassd_m8
+x 6
+y 13
+end
+arch floor_flagm1
+x 6
+y 14
+end
+arch grassd_m8
+x 6
+y 14
+end
+arch floor_flagm1
+x 6
+y 15
+end
+arch grassd_m8
+x 6
+y 15
+end
+arch floor_flagm1
+x 6
+y 16
+end
+arch grassd_m8
+x 6
+y 16
+end
+arch floor_flagm1
+x 6
+y 17
+end
+arch grassd_m12
+x 6
+y 17
+end
+arch floor_flagm1
+x 6
+y 18
+end
+arch grassd_m7
+x 6
+y 18
+end
+arch grassd_3
+x 6
+y 19
+end
+arch grassd_1
+x 6
+y 20
+end
+arch grassd_5
+x 6
+y 21
+end
+arch plant_flower7
+x 6
+y 21
+end
+arch grassd_1
+x 6
+y 22
+end
+arch grassd_5
+x 6
+y 23
+end
+arch fwall_fstone2
+x 6
+y 23
+end
+arch water_still
+x 7
+end
+arch earth_m17
+x 7
+end
+arch grassd_1
+x 7
+y 1
+end
+arch grassd_8
+x 7
+y 2
+end
+arch plant_mushroom3
+x 7
+y 2
+end
+arch grassd_3
+x 7
+y 3
+end
+arch grassd_2
+x 7
+y 4
+end
+arch plant5
+x 7
+y 4
+end
+arch grassd_4
+x 7
+y 5
+end
+arch grassd_6
+x 7
+y 6
+end
+arch grassd_3
+x 7
+y 7
+end
+arch grassd_8
+x 7
+y 8
+end
+arch grassd_1
+x 7
+y 9
+end
+arch bank1.111
+x 7
+y 9
+end
+arch grassd_7
+x 7
+y 10
+end
+arch grassd_4
+x 7
+y 11
+end
+arch plant_flower5
+x 7
+y 11
+end
+arch grassd_1
+x 7
+y 12
+end
+arch grassd_2
+x 7
+y 13
+end
+arch grassd_2
+x 7
+y 14
+end
+arch plant_flower5
+x 7
+y 14
+end
+arch grassd_2
+x 7
+y 15
+end
+arch grassd_3
+x 7
+y 16
+end
+arch plant17
+x 7
+y 16
+end
+arch floor_flagm1
+x 7
+y 17
+end
+arch grassd_m10
+x 7
+y 17
+end
+arch floor_flagm1
+x 7
+y 18
+end
+arch grassd_m7
+x 7
+y 18
+end
+arch grassd_3
+x 7
+y 19
+end
+arch grassd_1
+x 7
+y 20
+end
+arch grassd_5
+x 7
+y 21
+end
+arch plant1
+x 7
+y 21
+end
+arch grassd_7
+x 7
+y 22
+end
+arch tree_big2
+x 7
+y 22
+end
+arch grassd_8
+x 7
+y 23
+end
+arch fwall_fstone2
+x 7
+y 23
+end
+arch water_still
+x 8
+end
+arch earth_m6
+x 8
+end
+arch water_still
+x 8
+y 1
+end
+arch earth_m17
+x 8
+y 1
+end
+arch grassd_6
+x 8
+y 2
+end
+arch tree29
+x 8
+y 2
+end
+arch grassd_6
+x 8
+y 3
+end
+arch grassd_3
+x 8
+y 4
+end
+arch grassd_7
+x 8
+y 5
+end
+arch wall_stone_8
+x 8
+y 5
+end
+arch grassd_2
+x 8
+y 6
+end
+arch wall_stone_3
+x 8
+y 6
+end
+arch wmask_bflag_fire1_1
+direction 7
+x 8
+y 6
+end
+arch grassd_3
+x 8
+y 7
+end
+arch wall_stone_w.131
+x 8
+y 7
+end
+arch grassd_5
+x 8
+y 8
+end
+arch wall_stone_3
+x 8
+y 8
+end
+arch grassd_7
+x 8
+y 9
+end
+arch wall_stone_3
+x 8
+y 9
+end
+arch picture11
+direction 7
+x 8
+y 9
+end
+arch grassd_6
+x 8
+y 10
+end
+arch wall_stone_3
+x 8
+y 10
+end
+arch wmask_bflag_fire1_1
+direction 7
+x 8
+y 10
+end
+arch grassd_4
+x 8
+y 11
+end
+arch wall_stone_w.131
+x 8
+y 11
+end
+arch grassd_8
+x 8
+y 12
+end
+arch wall_stone_3
+x 8
+y 12
+end
+arch grassd_2
+x 8
+y 13
+end
+arch wall_stone_3
+x 8
+y 13
+end
+arch grassd_2
+x 8
+y 14
+end
+arch wall_stone_3
+x 8
+y 14
+end
+arch wmask_bflag_fire1_1
+direction 7
+x 8
+y 14
+end
+arch grassd_1
+x 8
+y 15
+end
+arch wall_stone_3
+x 8
+y 15
+end
+arch grassd_4
+x 8
+y 16
+end
+arch floor_flagm1
+x 8
+y 17
+end
+arch grassd_m10
+x 8
+y 17
+end
+arch floor_flagm1
+x 8
+y 18
+end
+arch grassd_m7
+x 8
+y 18
+end
+arch grassd_5
+x 8
+y 19
+end
+arch plant_flower5
+x 8
+y 19
+end
+arch grassd_4
+x 8
+y 20
+end
+arch plant_flower7
+x 8
+y 20
+end
+arch grassd_8
+x 8
+y 21
+end
+arch grassd_8
+x 8
+y 22
+end
+arch tree_big3
+x 8
+y 22
+end
+arch grassd_3
+x 8
+y 23
+end
+arch fwall_fstone2
+x 8
+y 23
+end
+arch water_still
+x 9
+end
+arch water_still
+x 9
+y 1
+end
+arch earth_m6
+x 9
+y 1
+end
+arch water_still
+x 9
+y 2
+end
+arch earth_m17
+x 9
+y 2
+end
+arch grassd_1
+x 9
+y 3
+end
+arch wall_ruin_c3b
+x 9
+y 3
+end
+arch grassd_7
+x 9
+y 4
+end
+arch wall_ruin_c1b
+x 9
+y 4
+end
+arch grassd_5
+x 9
+y 5
+end
+arch wall_stone_4
+x 9
+y 5
+end
+arch floor_wood2_l1
+x 9
+y 6
+end
+arch table_poker2
+x 9
+y 6
+end
+arch floor_wood2_l1
+x 9
+y 7
+end
+arch table_small1
+name stool
+x 9
+y 7
+end
+arch floor_wood2_l1
+x 9
+y 8
+end
+arch floor_wood2_l1
+x 9
+y 9
+end
+arch sewer_hole1
+slaying guildhall/guildhall_a_030a
+hp 9
+sp 7
+x 9
+y 9
+end
+arch floor_wood2_l1
+x 9
+y 10
+end
+arch floor_wood2_l1
+x 9
+y 11
+end
+arch desk2
+direction 7
+x 9
+y 11
+end
+arch floor_wood2_l1
+x 9
+y 12
+end
+arch wall_stone_1
+x 9
+y 12
+end
+arch floor_wood2_l1
+x 9
+y 13
+end
+arch stairs_wood_down
+slaying guildhall/guildhall_a_030a
+hp 9
+sp 13
+direction 7
+x 9
+y 13
+end
+arch floor_wood2_l1
+x 9
+y 14
+end
+arch floor_wood2_l1
+x 9
+y 15
+end
+arch wall_stone_1
+x 9
+y 15
+end
+arch grassd_8
+x 9
+y 16
+end
+arch floor_flagm1
+x 9
+y 17
+end
+arch grassd_m10
+x 9
+y 17
+end
+arch floor_flagm1
+x 9
+y 18
+end
+arch grassd_m7
+x 9
+y 18
+end
+arch grassd_8
+x 9
+y 19
+end
+arch grassd_4
+x 9
+y 20
+end
+arch grassd_5
+x 9
+y 21
+end
+arch tree_big3
+x 9
+y 21
+end
+arch grassd_3
+x 9
+y 22
+end
+arch wall_fstone_round.108
+x 9
+y 22
+end
+arch grassd_2
+x 9
+y 23
+end
+arch fwall_fstone2
+x 9
+y 23
+end
+arch water_still
+x 10
+end
+arch water_still
+x 10
+y 1
+end
+arch earth_m5
+x 10
+y 1
+end
+arch water_still
+x 10
+y 2
+end
+arch earth_m20
+x 10
+y 2
+end
+arch grassd_5
+x 10
+y 3
+end
+arch stone1
+x 10
+y 3
+end
+arch grassd_1
+x 10
+y 4
+end
+arch small_stones
+x 10
+y 4
+end
+arch grassd_8
+x 10
+y 5
+end
+arch wall_stone_1
+x 10
+y 5
+end
+arch floor_wood2_l1
+x 10
+y 6
+end
+arch shelf3a.111
+x 10
+y 6
+arch book_dai_vol7
+no_pick 1
+end
+arch book_dai_vol6
+no_pick 1
+end
+arch book_dai_vol5
+no_pick 1
+end
+arch book_dai_vol4
+no_pick 1
+end
+arch book_dai_vol3
+no_pick 1
+end
+arch book_dai_vol2
+no_pick 1
+end
+arch book_dai_vol1
+no_pick 1
+end
+end
+arch floor_wood2_l1
+x 10
+y 7
+end
+arch floor_wood2_l1
+x 10
+y 8
+end
+arch floor_wood2_l1
+x 10
+y 9
+end
+arch floor_wood2_l1
+x 10
+y 10
+end
+arch floor_wood2_l1
+x 10
+y 11
+end
+arch floor_wood2_l1
+x 10
+y 12
+end
+arch wall_stone_1
+x 10
+y 12
+end
+arch wmask_bflag_fire1_1
+x 10
+y 12
+end
+arch floor_wood2_l1
+x 10
+y 13
+end
+arch floor_wood2_l1
+x 10
+y 14
+end
+arch floor_wood2_l1
+x 10
+y 15
+end
+arch wall_stone_w.111
+x 10
+y 15
+end
+arch grassd_4
+x 10
+y 16
+end
+arch floor_flagm1
+x 10
+y 17
+end
+arch grassd_m10
+x 10
+y 17
+end
+arch floor_flagm1
+x 10
+y 18
+end
+arch grassd_m7
+x 10
+y 18
+end
+arch grassd_2
+x 10
+y 19
+end
+arch grassd_2
+x 10
+y 20
+end
+arch plant_flower7
+x 10
+y 20
+end
+arch grassd_8
+x 10
+y 21
+end
+arch plant1
+x 10
+y 21
+end
+arch grassd_8
+x 10
+y 22
+end
+arch fwall_fstone2
+x 10
+y 22
+end
+arch grassd_8
+x 10
+y 23
+end
+arch fwall_fstone2
+x 10
+y 23
+end
+arch water_still
+x 11
+end
+arch water_still
+x 11
+y 1
+end
+arch earth_m15
+x 11
+y 1
+end
+arch grassd_3
+x 11
+y 2
+end
+arch wall_ruin_c3a
+x 11
+y 2
+end
+arch grassd_8
+x 11
+y 3
+end
+arch wall_ruin_c2b
+x 11
+y 3
+end
+arch grassd_3
+x 11
+y 4
+end
+arch grassd_4
+x 11
+y 5
+end
+arch wall_stone_w.111
+x 11
+y 5
+end
+arch floor_wood2_l1
+x 11
+y 6
+end
+arch floor_wood2_l1
+x 11
+y 7
+end
+arch floor_wood2_l1
+x 11
+y 8
+end
+arch table_lab3.111
+x 11
+y 8
+end
+arch floor_wood2_l1
+x 11
+y 9
+end
+arch floor_wood2_l1
+x 11
+y 10
+end
+arch spawn_point
+name Mercenary Master Cashin
+x 11
+y 10
+arch ranger
+name Mercenary Master Cashin
+type 83
+glow_radius 7
+level 35
+arch event_obj
+name lua
+sub_type 13
+race guildhall/guild_merc.lua
+end
+end
+end
+arch floor_wood2_l1
+x 11
+y 11
+end
+arch potted_plant1
+x 11
+y 11
+end
+arch floor_wood2_l1
+x 11
+y 12
+end
+arch wall_stone_1
+x 11
+y 12
+end
+arch floor_wood2_l1
+x 11
+y 13
+end
+arch carpet1.131
+x 11
+y 13
+end
+arch doorway_wood1_1
+direction 7
+x 11
+y 13
+end
+arch floor_wood2_l1
+x 11
+y 14
+end
+arch carpet1.131
+x 11
+y 14
+end
+arch doorway_wood1_1
+direction 7
+x 11
+y 14
+end
+arch floor_wood2_l1
+x 11
+y 15
+end
+arch wall_stone_1
+x 11
+y 15
+end
+arch grassd_2
+x 11
+y 16
+end
+arch floor_flagm1
+x 11
+y 17
+end
+arch grassd_m10
+x 11
+y 17
+end
+arch floor_flagm1
+x 11
+y 18
+end
+arch grassd_m7
+x 11
+y 18
+end
+arch grassd_3
+x 11
+y 19
+end
+arch plant10
+x 11
+y 19
+end
+arch grassd_2
+x 11
+y 20
+end
+arch grassd_2
+x 11
+y 21
+end
+arch grassd_6
+x 11
+y 22
+end
+arch wall_fstone_round.102
+x 11
+y 22
+end
+arch grassd_8
+x 11
+y 23
+end
+arch fwall_fstone2
+x 11
+y 23
+end
+arch water_still
+x 12
+end
+arch water_still
+x 12
+y 1
+end
+arch earth_m11
+x 12
+y 1
+end
+arch grassd_3
+x 12
+y 2
+end
+arch wall_ruin_c1a
+x 12
+y 2
+end
+arch floor_ruin1
+x 12
+y 3
+end
+arch stairs_stone_down
+msg
+"warning: mouse traps"
+endmsg
+last_eat 4
+slaying guildhall/fanrir_larder_0000
+hp 1
+sp 1
+direction 5
+x 12
+y 3
+end
+arch grassd_3
+x 12
+y 4
+end
+arch grassd_7
+x 12
+y 5
+end
+arch wall_stone_1
+x 12
+y 5
+end
+arch wmask_bflag_fire1_1
+x 12
+y 5
+end
+arch floor_wood2_l1
+x 12
+y 6
+end
+arch chair2_111
+x 12
+y 6
+end
+arch floor_wood2_l1
+x 12
+y 7
+end
+arch floor_wood2_l1
+x 12
+y 8
+end
+arch floor_wood2_l1
+x 12
+y 9
+end
+arch floor_wood2_l1
+x 12
+y 10
+end
+arch floor_wood2_l1
+x 12
+y 11
+end
+arch floor_wood2_l1
+x 12
+y 12
+end
+arch carpet1.151
+x 12
+y 12
+end
+arch floor_wood2_l1
+x 12
+y 13
+end
+arch carpet1
+x 12
+y 13
+end
+arch floor_wood2_l1
+x 12
+y 14
+end
+arch carpet1
+x 12
+y 14
+end
+arch floor_wood2_l1
+x 12
+y 15
+end
+arch wall_stone_w.111
+x 12
+y 15
+end
+arch grassd_6
+x 12
+y 16
+end
+arch plant10
+x 12
+y 16
+end
+arch floor_flagm1
+x 12
+y 17
+end
+arch grassd_m10
+x 12
+y 17
+end
+arch floor_flagm1
+x 12
+y 18
+end
+arch grassd_m7
+x 12
+y 18
+end
+arch grassd_8
+x 12
+y 19
+end
+arch lantern_magic.131
+direction 7
+x 12
+y 19
+end
+arch light5
+x 12
+y 19
+end
+arch grassd_6
+x 12
+y 20
+end
+arch grassd_3
+x 12
+y 21
+end
+arch plant_mushroom2
+x 12
+y 21
+end
+arch grassd_2
+x 12
+y 22
+end
+arch tree_big3
+x 12
+y 22
+end
+arch grassd_8
+x 12
+y 23
+end
+arch fwall_fstone2
+x 12
+y 23
+end
+arch water_still
+x 13
+end
+arch water_still
+x 13
+y 1
+end
+arch earth_m15
+x 13
+y 1
+end
+arch grassd_3
+x 13
+y 2
+end
+arch wall_ruin_c1a
+x 13
+y 2
+end
+arch floor_ruin4
+x 13
+y 3
+end
+arch grassd_m7
+x 13
+y 3
+end
+arch grassd_1
+x 13
+y 4
+end
+arch grassd_2
+x 13
+y 5
+end
+arch wall_stone_w.111
+x 13
+y 5
+end
+arch floor_wood2_l1
+x 13
+y 6
+end
+arch table_lab2.111
+x 13
+y 6
+end
+arch floor_wood2_l1
+x 13
+y 7
+end
+arch candlelight4.101
+x 13
+y 7
+end
+arch light3
+x 13
+y 7
+end
+arch floor_wood2_l1
+x 13
+y 8
+end
+arch floor_wood2_l1
+x 13
+y 9
+end
+arch floor_wood2_l1
+x 13
+y 10
+end
+arch floor_wood2_l1
+x 13
+y 11
+end
+arch floor_wood2_l1
+x 13
+y 12
+end
+arch floor_wood2_l1
+x 13
+y 13
+end
+arch carpet1.171
+x 13
+y 13
+end
+arch light3
+x 13
+y 13
+end
+arch floor_wood2_l1
+x 13
+y 14
+end
+arch carpet1.171
+x 13
+y 14
+end
+arch floor_wood2_l1
+x 13
+y 15
+end
+arch wall_stone_1
+x 13
+y 15
+end
+arch grassd_3
+x 13
+y 16
+end
+arch floor_flagm1
+x 13
+y 17
+end
+arch grassd_m10
+x 13
+y 17
+end
+arch floor_flagm1
+x 13
+y 18
+end
+arch grassd_m7
+x 13
+y 18
+end
+arch grassd_7
+x 13
+y 19
+end
+arch grassd_5
+x 13
+y 20
+end
+arch plant1
+x 13
+y 20
+end
+arch grassd_3
+x 13
+y 21
+end
+arch grassd_2
+x 13
+y 22
+end
+arch grassd_4
+x 13
+y 23
+end
+arch fwall_fstone2
+x 13
+y 23
+end
+arch water_still
+x 14
+end
+arch water_still
+x 14
+y 1
+end
+arch earth_m11
+x 14
+y 1
+end
+arch grassd_3
+x 14
+y 2
+end
+arch wall_ruin_c2a
+x 14
+y 2
+end
+arch floor_ruin1
+x 14
+y 3
+end
+arch grassd_m5
+x 14
+y 3
+end
+arch sack
+name Fanrir's Sack
+layer 5
+no_pick 1
+container 1
+material_real 0
+identified 1
+is_named 1
+x 14
+y 3
+arch quest_trigger
+name Examine Fanrir's Sack
+last_heal 1
+end
+arch sandals
+name Fanrir's Sandals
+no_pick 1
+end
+end
+arch grassd_3
+x 14
+y 4
+end
+arch grassd_1
+x 14
+y 5
+end
+arch wall_stone_1
+x 14
+y 5
+end
+arch floor_wood2_l1
+x 14
+y 6
+end
+arch wall_stone_3
+x 14
+y 6
+end
+arch floor_wood2_l1
+x 14
+y 7
+end
+arch wall_stone_w.131
+x 14
+y 7
+end
+arch floor_wood2_l1
+x 14
+y 8
+end
+arch wall_stone_3
+x 14
+y 8
+end
+arch floor_wood2_l1
+x 14
+y 9
+end
+arch wall_stone_w.131
+x 14
+y 9
+end
+arch floor_wood2_l1
+x 14
+y 10
+end
+arch wall_stone_3
+x 14
+y 10
+end
+arch floor_wood2_l1
+x 14
+y 11
+end
+arch door_wood1
+direction 3
+x 14
+y 11
+end
+arch floor_wood2_l1
+x 14
+y 12
+end
+arch wall_stone_3
+x 14
+y 12
+end
+arch floor_wood2_l1
+x 14
+y 13
+end
+arch chair2_111
+direction 3
+x 14
+y 13
+end
+arch wall_stone_w.131
+x 14
+y 13
+end
+arch floor_wood2_l1
+x 14
+y 14
+end
+arch wall_stone_3
+x 14
+y 14
+end
+arch floor_wood2_l1
+x 14
+y 15
+end
+arch wall_stone_4
+x 14
+y 15
+end
+arch grassd_3
+x 14
+y 16
+end
+arch floor_flagm1
+x 14
+y 17
+end
+arch grassd_m10
+x 14
+y 17
+end
+arch floor_flagm1
+x 14
+y 18
+end
+arch grassd_m7
+x 14
+y 18
+end
+arch grassd_6
+x 14
+y 19
+end
+arch grassd_4
+x 14
+y 20
+end
+arch grassd_1
+x 14
+y 21
+end
+arch grassd_2
+x 14
+y 22
+end
+arch grassd_3
+x 14
+y 23
+end
+arch fwall_fstone2
+x 14
+y 23
+end
+arch water_still
+x 15
+end
+arch earth_m5
+x 15
+end
+arch water_still
+x 15
+y 1
+end
+arch earth_m20
+x 15
+y 1
+end
+arch grassd_3
+x 15
+y 2
+end
+arch spawn_point
+x 15
+y 2
+arch monk
+name Advisor Fanrir
+type 83
+glow_radius 7
+level 15
+arch event_obj
+name lua
+sub_type 13
+race guildhall/gh_fanrir.lua
+end
+end
+end
+arch grassd_6
+x 15
+y 3
+end
+arch grassd_1
+x 15
+y 4
+end
+arch plant17
+x 15
+y 4
+end
+arch grassd_1
+x 15
+y 5
+end
+arch plant12
+x 15
+y 5
+end
+arch grassd_7
+x 15
+y 6
+end
+arch rows
+x 15
+y 6
+end
+arch grassd_7
+x 15
+y 7
+end
+arch plant9
+x 15
+y 7
+end
+arch grassd_2
+x 15
+y 8
+end
+arch sign_generic
+name sign
+msg
+---------Mercenary Guild of Guild Hall----------
+*We fight for protection, for valor, and for glory!*
+endmsg
+direction 3
+x 15
+y 8
+arch event_obj
+name Lua
+sub_type 12
+race /scripts/examine_sign.lua
+end
+end
+arch grassd_2
+x 15
+y 9
+end
+arch grassd_3
+x 15
+y 10
+end
+arch lantern2_magic.131
+direction 7
+x 15
+y 10
+end
+arch light3
+x 15
+y 10
+end
+arch floor_flagm1
+x 15
+y 11
+end
+arch grass_fullmask2
+x 15
+y 11
+end
+arch grassd_7
+x 15
+y 12
+end
+arch plant16
+x 15
+y 12
+end
+arch lantern2_magic.131
+direction 7
+x 15
+y 12
+end
+arch light3
+x 15
+y 12
+end
+arch grassd_3
+x 15
+y 13
+end
+arch grassd_2
+x 15
+y 14
+end
+arch grassd_4
+x 15
+y 15
+end
+arch plant_flower6
+x 15
+y 15
+end
+arch grassd_2
+x 15
+y 16
+end
+arch floor_flagm1
+x 15
+y 17
+end
+arch grassd_m10
+x 15
+y 17
+end
+arch floor_flagm1
+x 15
+y 18
+end
+arch grassd_m7
+x 15
+y 18
+end
+arch grassd_4
+x 15
+y 19
+end
+arch plant_mushroom3
+x 15
+y 19
+end
+arch grassd_2
+x 15
+y 20
+end
+arch plant_flower5
+x 15
+y 20
+end
+arch grassd_2
+x 15
+y 21
+end
+arch grassd_1
+x 15
+y 22
+end
+arch grassd_8
+x 15
+y 23
+end
+arch fwall_fstone2
+x 15
+y 23
+end
+arch water_still
+x 16
+end
+arch earth_m11
+x 16
+end
+arch grassd_1
+x 16
+y 1
+end
+arch floor_flagm1
+x 16
+y 2
+end
+arch grassd_m4
+x 16
+y 2
+end
+arch floor_flagm1
+x 16
+y 3
+end
+arch grassd_m9
+x 16
+y 3
+end
+arch floor_flagm1
+x 16
+y 4
+end
+arch grassd_m9
+x 16
+y 4
+end
+arch floor_flagm1
+x 16
+y 5
+end
+arch grassd_m9
+x 16
+y 5
+end
+arch floor_flagm1
+x 16
+y 6
+end
+arch grassd_m9
+x 16
+y 6
+end
+arch floor_flagm1
+x 16
+y 7
+end
+arch grassd_m9
+x 16
+y 7
+end
+arch floor_flagm1
+x 16
+y 8
+end
+arch grassd_m9
+x 16
+y 8
+end
+arch floor_flagm1
+x 16
+y 9
+end
+arch grassd_m9
+x 16
+y 9
+end
+arch floor_flagm1
+x 16
+y 10
+end
+arch grassd_m9
+x 16
+y 10
+end
+arch floor_flagm1
+x 16
+y 11
+end
+arch grassd_m13
+x 16
+y 11
+end
+arch floor_flagm1
+x 16
+y 12
+end
+arch grassd_m9
+x 16
+y 12
+end
+arch floor_flagm1
+x 16
+y 13
+end
+arch grassd_m9
+x 16
+y 13
+end
+arch floor_flagm1
+x 16
+y 14
+end
+arch grassd_m9
+x 16
+y 14
+end
+arch floor_flagm1
+x 16
+y 15
+end
+arch grassd_m9
+x 16
+y 15
+end
+arch floor_flagm1
+x 16
+y 16
+end
+arch grassd_m9
+x 16
+y 16
+end
+arch floor_flagm1
+x 16
+y 17
+end
+arch floor_flagm1
+x 16
+y 18
+end
+arch grassd_m7
+x 16
+y 18
+end
+arch grassd_6
+x 16
+y 19
+end
+arch plant16
+x 16
+y 19
+end
+arch grassd_7
+x 16
+y 20
+end
+arch plant13
+x 16
+y 20
+end
+arch grassd_2
+x 16
+y 21
+end
+arch grassd_5
+x 16
+y 22
+end
+arch plant10
+x 16
+y 22
+end
+arch grassd_8
+x 16
+y 23
+end
+arch fwall_fstone2
+x 16
+y 23
+end
+arch water_still
+x 17
+end
+arch grassd_3
+x 17
+y 1
+end
+arch bridge_wood_EW.181
+x 17
+y 1
+end
+arch floor_flagm1
+x 17
+y 2
+end
+arch bridge_wood_EW.171
+x 17
+y 2
+end
+arch light2
+x 17
+y 2
+end
+arch floor_flagm1
+x 17
+y 3
+end
+arch grassd_m8
+x 17
+y 3
+end
+arch floor_flagm1
+x 17
+y 4
+end
+arch grassd_m8
+x 17
+y 4
+end
+arch floor_flagm1
+x 17
+y 5
+end
+arch grassd_m8
+x 17
+y 5
+end
+arch light3
+x 17
+y 5
+end
+arch floor_flagm1
+x 17
+y 6
+end
+arch grassd_m8
+x 17
+y 6
+end
+arch floor_flagm1
+x 17
+y 7
+end
+arch grassd_m8
+x 17
+y 7
+end
+arch floor_flagm1
+x 17
+y 8
+end
+arch grassd_m8
+x 17
+y 8
+end
+arch floor_flagm1
+x 17
+y 9
+end
+arch grassd_m8
+x 17
+y 9
+end
+arch floor_flagm1
+x 17
+y 10
+end
+arch grassd_m8
+x 17
+y 10
+end
+arch floor_flagm1
+x 17
+y 11
+end
+arch grassd_m12
+x 17
+y 11
+end
+arch floor_flagm1
+x 17
+y 12
+end
+arch grassd_m11
+x 17
+y 12
+end
+arch floor_flagm1
+x 17
+y 13
+end
+arch grassd_m8
+x 17
+y 13
+end
+arch floor_flagm1
+x 17
+y 14
+end
+arch grassd_m8
+x 17
+y 14
+end
+arch floor_flagm1
+x 17
+y 15
+end
+arch grassd_m8
+x 17
+y 15
+end
+arch floor_flagm1
+x 17
+y 16
+end
+arch grassd_m8
+x 17
+y 16
+end
+arch floor_flagm1
+x 17
+y 17
+end
+arch grassd_m8
+x 17
+y 17
+end
+arch floor_flagm1
+x 17
+y 18
+end
+arch grassd_m5
+x 17
+y 18
+end
+arch grassd_2
+x 17
+y 19
+end
+arch grassd_7
+x 17
+y 20
+end
+arch plant11
+x 17
+y 20
+end
+arch grassd_4
+x 17
+y 21
+end
+arch grassd_6
+x 17
+y 22
+end
+arch tree_big3
+x 17
+y 22
+end
+arch grassd_3
+x 17
+y 23
+end
+arch fwall_fstone2
+x 17
+y 23
+end
+arch water_still
+x 18
+end
+arch bridge_wood_EW.111
+x 18
+y 1
+end
+arch bridge_wood_EW.101
+x 18
+y 2
+end
+arch grassd_6
+x 18
+y 3
+end
+arch bridge_wood_EW.161
+x 18
+y 3
+end
+arch grassd_5
+x 18
+y 4
+end
+arch grassd_2
+x 18
+y 5
+end
+arch plant_flower7
+x 18
+y 5
+end
+arch grassd_7
+x 18
+y 6
+end
+arch plant_flower2
+x 18
+y 6
+end
+arch grassd_2
+x 18
+y 7
+end
+arch plant_flower1
+x 18
+y 7
+end
+arch grassd_7
+x 18
+y 8
+end
+arch ladder_down
+name boxes
+msg
+You move the boxes aside and slip through the hole, unnoticed.
+endmsg
+face box2.101
+slaying guildhall/guildhall_a_030a
+hp 18
+sp 8
+x 18
+y 8
+arch event_obj
+name Lua
+sub_type 12
+race guildhall/boxes_examine.lua
+end
+end
+arch grassd_3
+x 18
+y 9
+end
+arch straw1.101
+name straw bale
+no_pass 0
+x 18
+y 9
+arch event_obj
+name Lua
+sub_type 12
+race guildhall/boxes_examine.lua
+end
+end
+arch grassd_2
+x 18
+y 10
+end
+arch lantern_magic.131
+direction 3
+x 18
+y 10
+end
+arch light5
+x 18
+y 10
+end
+arch floor_flagm1
+x 18
+y 11
+end
+arch grassd_m10
+x 18
+y 11
+end
+arch floor_flagm1
+x 18
+y 12
+end
+arch grassd_m7
+x 18
+y 12
+end
+arch grassd_2
+x 18
+y 13
+end
+arch box2.101
+no_pass 0
+x 18
+y 13
+arch event_obj
+name Lua
+sub_type 12
+race guildhall/boxes_examine.lua
+end
+end
+arch grassd_6
+x 18
+y 14
+end
+arch box_big.101
+no_pass 0
+x 18
+y 14
+arch event_obj
+name Lua
+sub_type 12
+race guildhall/boxes_examine.lua
+end
+end
+arch grassd_3
+x 18
+y 15
+end
+arch floor_sand_d4
+x 18
+y 16
+end
+arch grassd_m1
+x 18
+y 16
+end
+arch target.111
+direction 5
+x 18
+y 16
+end
+arch floor_sand_d1
+x 18
+y 17
+end
+arch grassd_m2
+x 18
+y 17
+end
+arch light3
+x 18
+y 17
+end
+arch spawn_point
+last_grace 0
+last_heal 1
+x 18
+y 17
+arch golem
+name shooting_range_target
+type 83
+face target.131
+is_animated 0
+no_pass 1
+level 100
+race target
+exp 1
+speed 1.0
+no_attack 1
+dam 0
+maxhp 1000
+con 99
+reg_f 1
+wis 0
+unaggressive 1
+friendly 1
+stand_still 1
+attack_impact 0
+resist_impact 250
+resist_slash 250
+resist_cleave 250
+resist_pierce 250
+resist_cold 250
+resist_fire 250
+resist_electricity 250
+resist_acid 250
+resist_poison 250
+resist_sonic 250
+resist_magic 250
+resist_light 250
+resist_shadow 250
+resist_psionic 250
+resist_lifesteal 250
+resist_death 250
+resist_chaos 250
+resist_nether 250
+resist_aether 250
+resist_weaponmagic 250
+resist_godpower 250
+resist_drain 250
+resist_depletion 250
+resist_corruption 250
+resist_confusion 250
+resist_fear 250
+resist_slow 250
+resist_paralyze 250
+resist_snare 250
+end
+end
+arch floor_sand_d2
+x 18
+y 18
+end
+arch grassd_m2
+x 18
+y 18
+end
+arch target.111
+direction 5
+x 18
+y 18
+end
+arch grassd_1
+x 18
+y 19
+end
+arch grassd_4
+x 18
+y 20
+end
+arch plant_flower2
+x 18
+y 20
+end
+arch grassd_8
+x 18
+y 21
+end
+arch grassd_1
+x 18
+y 22
+end
+arch plant_flower1
+x 18
+y 22
+end
+arch grassd_3
+x 18
+y 23
+end
+arch fwall_fstone2
+x 18
+y 23
+end
+arch water_still
+x 19
+end
+arch bridge_wood_EW.101
+x 19
+y 1
+end
+arch bridge_wood_EW.101
+x 19
+y 2
+end
+arch water_still
+x 19
+y 3
+end
+arch earth_m17
+x 19
+y 3
+end
+arch grassd_8
+x 19
+y 4
+end
+arch plant_flower1
+x 19
+y 4
+end
+arch grassd_4
+x 19
+y 5
+end
+arch floor_sand_d1
+x 19
+y 6
+end
+arch grassd_m4
+x 19
+y 6
+end
+arch floor_sand_d1
+x 19
+y 7
+end
+arch grassd_m9
+x 19
+y 7
+end
+arch floor_sand_d1
+x 19
+y 8
+end
+arch grassd_m3
+x 19
+y 8
+end
+arch grassd_2
+x 19
+y 9
+end
+arch box1.101
+no_pass 0
+x 19
+y 9
+arch event_obj
+name Lua
+sub_type 12
+race guildhall/boxes_examine.lua
+end
+end
+arch grassd_2
+x 19
+y 10
+end
+arch plant15
+x 19
+y 10
+end
+arch floor_flagm1
+x 19
+y 11
+end
+arch grassd_m10
+x 19
+y 11
+end
+arch floor_flagm1
+x 19
+y 12
+end
+arch grassd_m7
+x 19
+y 12
+end
+arch grassd_1
+x 19
+y 13
+end
+arch grassd_2
+x 19
+y 14
+end
+arch grassd_5
+x 19
+y 15
+end
+arch floor_sand_d4
+x 19
+y 16
+end
+arch grass_fullmask2
+x 19
+y 16
+end
+arch floor_sand_d4
+x 19
+y 17
+end
+arch grass_fullmask2
+x 19
+y 17
+end
+arch floor_sand_d4
+x 19
+y 18
+end
+arch grass_fullmask2
+x 19
+y 18
+end
+arch grassd_1
+x 19
+y 19
+end
+arch grassd_1
+x 19
+y 20
+end
+arch plant12
+x 19
+y 20
+end
+arch grassd_4
+x 19
+y 21
+end
+arch grassd_3
+x 19
+y 22
+end
+arch wall_fstone_round.108
+x 19
+y 22
+end
+arch grassd_8
+x 19
+y 23
+end
+arch fwall_fstone2
+x 19
+y 23
+end
+arch water_still_deep
+x 20
+end
+arch water_still_fmask.103
+x 20
+end
+arch bridge_wood_EW.101
+x 20
+y 1
+end
+arch light2
+x 20
+y 1
+end
+arch bridge_wood_EW.101
+x 20
+y 2
+end
+arch light2
+x 20
+y 2
+end
+arch water_still
+x 20
+y 3
+end
+arch earth_m11
+x 20
+y 3
+end
+arch grassd_2
+x 20
+y 4
+end
+arch grassd_4
+x 20
+y 5
+end
+arch forge_111
+x 20
+y 5
+end
+arch light3
+x 20
+y 5
+end
+arch floor_sand_d1
+x 20
+y 6
+end
+arch floor_sand_d1
+x 20
+y 7
+end
+arch floor_sand_d1
+x 20
+y 8
+end
+arch grassd_m7
+x 20
+y 8
+end
+arch grassd_5
+x 20
+y 9
+end
+arch plant1
+x 20
+y 9
+end
+arch grassd_7
+x 20
+y 10
+end
+arch floor_flagm1
+x 20
+y 11
+end
+arch grassd_m10
+x 20
+y 11
+end
+arch floor_flagm1
+x 20
+y 12
+end
+arch grassd_m7
+x 20
+y 12
+end
+arch grassd_8
+x 20
+y 13
+end
+arch box2.101
+no_pass 0
+x 20
+y 13
+arch event_obj
+name Lua
+sub_type 12
+race guildhall/boxes_examine.lua
+end
+end
+arch grassd_1
+x 20
+y 14
+end
+arch grassd_2
+x 20
+y 15
+end
+arch floor_sand_d4
+x 20
+y 16
+end
+arch grass_fullmask2
+x 20
+y 16
+end
+arch floor_sand_d4
+x 20
+y 17
+end
+arch grass_fullmask2
+x 20
+y 17
+end
+arch floor_sand_d4
+x 20
+y 18
+end
+arch grass_fullmask2
+x 20
+y 18
+end
+arch grassd_1
+x 20
+y 19
+end
+arch plant9
+x 20
+y 19
+end
+arch grassd_6
+x 20
+y 20
+end
+arch plant16
+x 20
+y 20
+end
+arch grassd_2
+x 20
+y 21
+end
+arch grassd_6
+x 20
+y 22
+end
+arch fwall_fstone2
+x 20
+y 22
+end
+arch grassd_3
+x 20
+y 23
+end
+arch fwall_fstone2
+x 20
+y 23
+end
+arch water_still_deep
+x 21
+end
+arch bridge_wood_EW.101
+x 21
+y 1
+end
+arch bridge_wood_EW.101
+x 21
+y 2
+end
+arch water_still
+x 21
+y 3
+end
+arch earth_m15
+x 21
+y 3
+end
+arch grassd_3
+x 21
+y 4
+end
+arch plant17
+x 21
+y 4
+end
+arch grassd_5
+x 21
+y 5
+end
+arch forge_111
+x 21
+y 5
+end
+arch light3
+x 21
+y 5
+end
+arch floor_sand_d1
+x 21
+y 6
+end
+arch bowl1_full.101
+x 21
+y 6
+end
+arch floor_sand_d1
+x 21
+y 7
+end
+arch floor_sand_d1
+x 21
+y 8
+end
+arch anvil_big_111
+x 21
+y 8
+end
+arch grassd_m7
+x 21
+y 8
+end
+arch grassd_8
+x 21
+y 9
+end
+arch grassd_4
+x 21
+y 10
+end
+arch plant1
+x 21
+y 10
+end
+arch floor_flagm1
+x 21
+y 11
+end
+arch grassd_m10
+x 21
+y 11
+end
+arch floor_flagm1
+x 21
+y 12
+end
+arch grassd_m7
+x 21
+y 12
+end
+arch grassd_2
+x 21
+y 13
+end
+arch box1.101
+no_pass 0
+x 21
+y 13
+arch event_obj
+name Lua
+sub_type 12
+race guildhall/boxes_examine.lua
+end
+end
+arch grassd_8
+x 21
+y 14
+end
+arch grassd_8
+x 21
+y 15
+end
+arch floor_sand_d4
+x 21
+y 16
+end
+arch grass_fullmask2
+x 21
+y 16
+end
+arch floor_sand_d4
+x 21
+y 17
+end
+arch grass_fullmask2
+x 21
+y 17
+end
+arch floor_sand_d4
+x 21
+y 18
+end
+arch grass_fullmask2
+x 21
+y 18
+end
+arch grassd_1
+x 21
+y 19
+end
+arch grassd_5
+x 21
+y 20
+end
+arch grassd_8
+x 21
+y 21
+end
+arch plant1
+x 21
+y 21
+end
+arch grassd_5
+x 21
+y 22
+end
+arch wall_fstone_round.102
+x 21
+y 22
+end
+arch grassd_8
+x 21
+y 23
+end
+arch fwall_fstone2
+x 21
+y 23
+end
+arch water_still_deepest
+x 22
+end
+arch water_still_deep_fmask.102
+x 22
+end
+arch water_still_deep
+x 22
+y 1
+end
+arch water_still_fmask.101
+x 22
+y 1
+end
+arch water_still
+x 22
+y 2
+end
+arch earth_m5
+x 22
+y 2
+end
+arch water_still
+x 22
+y 3
+end
+arch earth_m20
+x 22
+y 3
+end
+arch grassd_3
+x 22
+y 4
+end
+arch grassd_4
+x 22
+y 5
+end
+arch anvil_111
+x 22
+y 5
+end
+arch floor_sand_d1
+x 22
+y 6
+end
+arch grassd_m6
+x 22
+y 6
+end
+arch floor_sand_d1
+x 22
+y 7
+end
+arch grassd_m8
+x 22
+y 7
+end
+arch floor_sand_d1
+x 22
+y 8
+end
+arch grassd_m5
+x 22
+y 8
+end
+arch spawn_point
+x 22
+y 8
+arch smith
+type 83
+face weapon_smith.141
+animation weapon_smith
+glow_radius 7
+level 25
+arch event_obj
+name lua
+sub_type 13
+race /planes/human_plane/castle/guildhall/smith.lua
+end
+end
+end
+arch grassd_5
+x 22
+y 9
+end
+arch grassd_3
+x 22
+y 10
+end
+arch plant_flower6
+x 22
+y 10
+end
+arch floor_flagm1
+x 22
+y 11
+end
+arch grassd_m10
+x 22
+y 11
+end
+arch floor_flagm1
+x 22
+y 12
+end
+arch grassd_m7
+x 22
+y 12
+end
+arch grassd_3
+x 22
+y 13
+end
+arch grassd_1
+x 22
+y 14
+end
+arch plant10
+x 22
+y 14
+end
+arch grassd_4
+x 22
+y 15
+end
+arch grassd_8
+x 22
+y 16
+end
+arch plant_mushroom3
+x 22
+y 16
+end
+arch grassd_7
+x 22
+y 17
+end
+arch spawn_point
+x 22
+y 17
+arch ranger
+type 83
+glow_radius 7
+level 20
+reg_f 1
+arch ai_caster
+msg
+# This is a generic Spellcaster AI that can be used for most mobs
+processes:
+look_for_other_mobs
+friendship name=shooting_range_target:-200 opposite_alignment=-300
+choose_enemy
+
+moves:
+stand_still
+sleep
+# run_away_from_enemy hp_threshold=6
+# move_towards_enemy
+keep_distance_to_enemy
+optimize_line_of_fire
+move_towards_enemy_last_known_pos
+search_for_lost_enemy
+move_towards_waypoint
+# move_randomly xlimit=5 ylimit=5
+move_towards_home
+
+actions:
+melee_attack_enemy
+bow_attack_enemy
+endmsg
+end
+arch event_obj
+name Lua
+sub_type 13
+race guildhall/training_ranger.lua
+end
+end
+end
+arch grassd_4
+x 22
+y 18
+end
+arch plant_flower6
+x 22
+y 18
+end
+arch grassd_1
+x 22
+y 19
+end
+arch grassd_4
+x 22
+y 20
+end
+arch grassd_1
+x 22
+y 21
+end
+arch plant12
+x 22
+y 21
+end
+arch grassd_2
+x 22
+y 22
+end
+arch plant9
+x 22
+y 22
+end
+arch grassd_5
+x 22
+y 23
+end
+arch fwall_fstone2
+x 22
+y 23
+end
+arch water_still_deepest
+x 23
+end
+arch water_still_deep_fmask.106
+x 23
+end
+arch water_still_deep
+x 23
+y 1
+end
+arch water_still_fmask.101
+x 23
+y 1
+end
+arch water_still
+x 23
+y 2
+end
+arch earth_m11
+x 23
+y 2
+end
+arch grassd_2
+x 23
+y 3
+end
+arch grassd_4
+x 23
+y 4
+end
+arch grassd_7
+x 23
+y 5
+end
+arch plant10
+x 23
+y 5
+end
+arch grassd_3
+x 23
+y 6
+end
+arch plant_flower1
+x 23
+y 6
+end
+arch grassd_4
+x 23
+y 7
+end
+arch grassd_7
+x 23
+y 8
+end
+arch grassd_7
+x 23
+y 9
+end
+arch plant1
+x 23
+y 9
+end
+arch grassd_6
+x 23
+y 10
+end
+arch floor_flagm1
+x 23
+y 11
+end
+arch grassd_m10
+x 23
+y 11
+end
+arch floor_flagm1
+x 23
+y 12
+end
+arch grassd_m7
+x 23
+y 12
+end
+arch grassd_3
+x 23
+y 13
+end
+arch grassd_2
+x 23
+y 14
+end
+arch plant13
+x 23
+y 14
+end
+arch grassd_5
+x 23
+y 15
+end
+arch grassd_4
+x 23
+y 16
+end
+arch grassd_8
+x 23
+y 17
+end
+arch grassd_4
+x 23
+y 18
+end
+arch grassd_4
+x 23
+y 19
+end
+arch grassd_2
+x 23
+y 20
+end
+arch grassd_7
+x 23
+y 21
+end
+arch grassd_3
+x 23
+y 22
+end
+arch tree_big2
+x 23
+y 22
+end
+arch grassd_3
+x 23
+y 23
+end
+arch fwall_fstone2
+x 23
+y 23
+end

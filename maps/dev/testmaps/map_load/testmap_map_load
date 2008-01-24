@@ -1,0 +1,1702 @@
+arch map
+name Testmaps - Map Test Load
+msg
+Created:  2003-04-13 Daimonin Map Editor
+endmsg
+width 17
+height 17
+enter_x 1
+enter_y 1
+difficulty 1
+tileset_id 136
+tileset_x 0
+tileset_y 0
+end
+arch floor_ostone1
+end
+arch fwall_brown1
+end
+arch floor_ostone1
+y 1
+end
+arch fwall_brown1
+y 1
+end
+arch floor_ostone1
+y 2
+end
+arch fwall_brown1
+y 2
+end
+arch floor_ostone1
+y 3
+end
+arch fwall_brown1
+y 3
+end
+arch floor_ostone1
+y 4
+end
+arch fwall_brown1
+y 4
+end
+arch floor_ostone1
+y 5
+end
+arch fwall_brown1
+y 5
+end
+arch floor_ostone1
+y 6
+end
+arch fwall_brown1
+y 6
+end
+arch floor_ostone1
+y 7
+end
+arch fwall_brown1
+y 7
+end
+arch floor_ostone1
+y 8
+end
+arch fwall_brown1
+y 8
+end
+arch floor_ostone1
+y 9
+end
+arch fwall_brown1
+y 9
+end
+arch floor_ostone1
+y 10
+end
+arch fwall_brown1
+y 10
+end
+arch floor_ostone1
+y 11
+end
+arch fwall_brown1
+y 11
+end
+arch floor_ostone1
+y 12
+end
+arch fwall_brown1
+y 12
+end
+arch floor_ostone1
+y 13
+end
+arch fwall_brown1
+y 13
+end
+arch floor_ostone1
+y 14
+end
+arch fwall_brown1
+y 14
+end
+arch floor_ostone1
+y 15
+end
+arch fwall_brown1
+y 15
+end
+arch floor_ostone1
+y 16
+end
+arch fwall_brown1
+y 16
+end
+arch floor_ostone1
+x 1
+end
+arch fwall_brown1
+x 1
+end
+arch floor_ostone1
+x 1
+y 1
+end
+arch stairs_wood_up
+slaying ../testmap_main
+hp 3
+sp 4
+last_eat 1
+direction 5
+x 1
+y 1
+end
+arch floor_ostone1
+x 1
+y 2
+end
+arch sign
+name READ ME FIRST
+msg
+We are testing here the new map model
+
+Note that we have 4 object types working as
+"exits": EXIT, TELEPORTER, PIT and TRAPDOOR:
+
+The exits are leading to inheritanced map type,
+forced multi, unique and instance. For normal
+maps and tiled maps too.
+endmsg
+x 1
+y 2
+end
+arch floor_ostone1
+x 1
+y 3
+end
+arch floor_ostone1
+x 1
+y 4
+end
+arch floor_ostone1
+x 1
+y 5
+end
+arch spawn_point
+x 1
+y 5
+arch monk
+name ReadyMap Tester
+type 83
+arch event_obj
+sub_type 13
+race map_ready.lua
+end
+end
+end
+arch floor_ostone1
+x 1
+y 6
+end
+arch floor_ostone1
+x 1
+y 7
+end
+arch floor_ostone1
+x 1
+y 8
+end
+arch floor_ostone1
+x 1
+y 9
+end
+arch floor_ostone1
+x 1
+y 10
+end
+arch floor_ostone1
+x 1
+y 11
+end
+arch floor_ostone1
+x 1
+y 12
+end
+arch floor_ostone1
+x 1
+y 13
+end
+arch floor_ostone1
+x 1
+y 14
+end
+arch floor_ostone1
+x 1
+y 15
+end
+arch floor_ostone1
+x 1
+y 16
+end
+arch fwall_brown1
+x 1
+y 16
+end
+arch floor_ostone1
+x 2
+end
+arch fwall_brown1
+x 2
+end
+arch floor_ostone1
+x 2
+y 1
+end
+arch floor_ostone1
+x 2
+y 2
+end
+arch floor_ostone1
+x 2
+y 3
+end
+arch floor_ostone1
+x 2
+y 4
+end
+arch floor_ostone1
+x 2
+y 5
+end
+arch floor_ostone1
+x 2
+y 6
+end
+arch floor_ostone1
+x 2
+y 7
+end
+arch floor_ostone1
+x 2
+y 8
+end
+arch floor_ostone1
+x 2
+y 9
+end
+arch floor_ostone1
+x 2
+y 10
+end
+arch floor_ostone1
+x 2
+y 11
+end
+arch floor_ostone1
+x 2
+y 12
+end
+arch floor_ostone1
+x 2
+y 13
+end
+arch floor_ostone1
+x 2
+y 14
+end
+arch floor_ostone1
+x 2
+y 15
+end
+arch floor_ostone1
+x 2
+y 16
+end
+arch fwall_brown1
+x 2
+y 16
+end
+arch floor_ostone1
+x 3
+end
+arch fwall_brown1
+x 3
+end
+arch floor_ostone1
+x 3
+y 1
+end
+arch sign
+msg
+Map Test "single map"
+
+This is default test type EXIT
+
+First stair use map type from this map.
+The next 3 forced multi, unique and instance.
+endmsg
+x 3
+y 1
+end
+arch floor_ostone1
+x 3
+y 2
+end
+arch floor_ostone1
+x 3
+y 3
+end
+arch floor_ostone1
+x 3
+y 4
+end
+arch sign
+msg
+Map Test "tiled maps"
+
+This is default test type EXIT
+
+Exit will lead direct to an multi map
+to test the map loading.
+
+First stair use map type from this map.
+The next 3 forced multi, unique and instance.
+endmsg
+x 3
+y 4
+end
+arch floor_ostone1
+x 3
+y 5
+end
+arch floor_ostone1
+x 3
+y 6
+end
+arch floor_ostone1
+x 3
+y 7
+end
+arch floor_ostone1
+x 3
+y 8
+end
+arch sign
+msg
+Map Test "single map"
+
+We test here the type TELEPORTER
+
+First use map type from this map.
+The next 3 forced multi, unique and instance.
+endmsg
+x 3
+y 8
+end
+arch floor_ostone1
+x 3
+y 9
+end
+arch floor_ostone1
+x 3
+y 10
+end
+arch sign
+msg
+Map Test "single map"
+
+We test here the type PIT
+
+First use map type from this map.
+The next 3 forced multi, unique and instance.
+endmsg
+x 3
+y 10
+end
+arch floor_ostone1
+x 3
+y 11
+end
+arch floor_ostone1
+x 3
+y 12
+end
+arch sign
+msg
+Map Test "single map"
+
+We test here the type TRAPDOOR
+
+First use map type from this map.
+The next 3 forced multi, unique and instance.
+endmsg
+x 3
+y 12
+end
+arch floor_ostone1
+x 3
+y 13
+end
+arch floor_ostone1
+x 3
+y 14
+end
+arch floor_ostone1
+x 3
+y 15
+end
+arch floor_ostone1
+x 3
+y 16
+end
+arch fwall_brown1
+x 3
+y 16
+end
+arch floor_ostone1
+x 4
+end
+arch fwall_brown1
+x 4
+end
+arch floor_ostone1
+x 4
+y 1
+end
+arch stairs_stone_down
+name stairs to waypoint testmap
+slaying testmap_mt_junction
+hp 1
+sp 1
+last_heal 1
+direction 5
+x 4
+y 1
+end
+arch floor_ostone1
+x 4
+y 2
+end
+arch floor_ostone1
+x 4
+y 3
+end
+arch floor_ostone1
+x 4
+y 4
+end
+arch stairs_stone_down
+name stairs to waypoint testmap
+slaying testmap_mt_tile_1
+hp 1
+sp 1
+last_heal 1
+direction 5
+x 4
+y 4
+end
+arch floor_ostone1
+x 4
+y 5
+end
+arch floor_ostone1
+x 4
+y 6
+end
+arch floor_ostone1
+x 4
+y 7
+end
+arch floor_ostone1
+x 4
+y 8
+end
+arch teleporter
+slaying testmap_mt_tile_1
+hp 13
+sp 13
+last_heal 1
+x 4
+y 8
+end
+arch floor_ostone1
+x 4
+y 9
+end
+arch floor_ostone1
+x 4
+y 10
+end
+arch pit_open
+slaying testmap_mt_tile_1
+hp 13
+sp 13
+last_heal 1
+x 4
+y 10
+end
+arch floor_ostone1
+x 4
+y 11
+end
+arch floor_ostone1
+x 4
+y 12
+end
+arch trapdoor
+slaying testmap_mt_tile_1
+hp 13
+sp 13
+last_heal 1
+x 4
+y 12
+end
+arch floor_ostone1
+x 4
+y 13
+end
+arch floor_ostone1
+x 4
+y 14
+end
+arch floor_ostone1
+x 4
+y 15
+end
+arch floor_ostone1
+x 4
+y 16
+end
+arch fwall_brown1
+x 4
+y 16
+end
+arch floor_ostone1
+x 5
+end
+arch fwall_brown1
+x 5
+end
+arch floor_ostone1
+x 5
+y 1
+end
+arch floor_ostone1
+x 5
+y 2
+end
+arch floor_ostone1
+x 5
+y 3
+end
+arch floor_ostone1
+x 5
+y 4
+end
+arch floor_ostone1
+x 5
+y 5
+end
+arch floor_ostone1
+x 5
+y 6
+end
+arch floor_ostone1
+x 5
+y 7
+end
+arch floor_ostone1
+x 5
+y 8
+end
+arch floor_ostone1
+x 5
+y 9
+end
+arch floor_ostone1
+x 5
+y 10
+end
+arch floor_ostone1
+x 5
+y 11
+end
+arch floor_ostone1
+x 5
+y 12
+end
+arch floor_ostone1
+x 5
+y 13
+end
+arch floor_ostone1
+x 5
+y 14
+end
+arch floor_ostone1
+x 5
+y 15
+end
+arch floor_ostone1
+x 5
+y 16
+end
+arch fwall_brown1
+x 5
+y 16
+end
+arch floor_ostone1
+x 6
+end
+arch fwall_brown1
+x 6
+end
+arch floor_ostone1
+x 6
+y 1
+end
+arch floor_ostone1
+x 6
+y 2
+end
+arch floor_ostone1
+x 6
+y 3
+end
+arch floor_ostone1
+x 6
+y 4
+end
+arch floor_ostone1
+x 6
+y 5
+end
+arch floor_ostone1
+x 6
+y 6
+end
+arch floor_ostone1
+x 6
+y 7
+end
+arch floor_ostone1
+x 6
+y 8
+end
+arch floor_ostone1
+x 6
+y 9
+end
+arch floor_ostone1
+x 6
+y 10
+end
+arch floor_ostone1
+x 6
+y 11
+end
+arch floor_ostone1
+x 6
+y 12
+end
+arch floor_ostone1
+x 6
+y 13
+end
+arch floor_ostone1
+x 6
+y 14
+end
+arch floor_ostone1
+x 6
+y 15
+end
+arch floor_ostone1
+x 6
+y 16
+end
+arch fwall_brown1
+x 6
+y 16
+end
+arch floor_ostone1
+x 7
+end
+arch fwall_brown1
+x 7
+end
+arch floor_ostone1
+x 7
+y 1
+end
+arch stairs_stone_down
+name stairs to waypoint testmap
+last_eat 1
+slaying testmap_mt_junction
+hp 1
+sp 1
+last_heal 1
+direction 5
+x 7
+y 1
+end
+arch floor_ostone1
+x 7
+y 2
+end
+arch floor_ostone1
+x 7
+y 3
+end
+arch floor_ostone1
+x 7
+y 4
+end
+arch stairs_stone_down
+name stairs to waypoint testmap
+last_eat 1
+slaying testmap_mt_tile_1
+hp 1
+sp 1
+last_heal 1
+direction 5
+x 7
+y 4
+end
+arch floor_ostone1
+x 7
+y 5
+end
+arch floor_ostone1
+x 7
+y 6
+end
+arch floor_ostone1
+x 7
+y 7
+end
+arch floor_ostone1
+x 7
+y 8
+end
+arch teleporter
+last_eat 1
+slaying testmap_mt_tile_1
+hp 13
+sp 13
+last_heal 1
+x 7
+y 8
+end
+arch floor_ostone1
+x 7
+y 9
+end
+arch floor_ostone1
+x 7
+y 10
+end
+arch pit_open
+last_eat 1
+slaying testmap_mt_tile_1
+hp 13
+sp 13
+last_heal 1
+x 7
+y 10
+end
+arch floor_ostone1
+x 7
+y 11
+end
+arch floor_ostone1
+x 7
+y 12
+end
+arch trapdoor
+last_eat 1
+slaying testmap_mt_tile_1
+hp 13
+sp 13
+last_heal 1
+x 7
+y 12
+end
+arch floor_ostone1
+x 7
+y 13
+end
+arch floor_ostone1
+x 7
+y 14
+end
+arch floor_ostone1
+x 7
+y 15
+end
+arch floor_ostone1
+x 7
+y 16
+end
+arch fwall_brown1
+x 7
+y 16
+end
+arch floor_ostone1
+x 8
+end
+arch fwall_brown1
+x 8
+end
+arch floor_ostone1
+x 8
+y 1
+end
+arch floor_ostone1
+x 8
+y 2
+end
+arch floor_ostone1
+x 8
+y 3
+end
+arch floor_ostone1
+x 8
+y 4
+end
+arch floor_ostone1
+x 8
+y 5
+end
+arch floor_ostone1
+x 8
+y 6
+end
+arch floor_ostone1
+x 8
+y 7
+end
+arch floor_ostone1
+x 8
+y 8
+end
+arch floor_ostone1
+x 8
+y 9
+end
+arch floor_ostone1
+x 8
+y 10
+end
+arch floor_ostone1
+x 8
+y 11
+end
+arch floor_ostone1
+x 8
+y 12
+end
+arch floor_ostone1
+x 8
+y 13
+end
+arch floor_ostone1
+x 8
+y 14
+end
+arch floor_ostone1
+x 8
+y 15
+end
+arch floor_ostone1
+x 8
+y 16
+end
+arch fwall_brown1
+x 8
+y 16
+end
+arch floor_ostone1
+x 9
+end
+arch fwall_brown1
+x 9
+end
+arch floor_ostone1
+x 9
+y 1
+end
+arch stairs_stone_down
+name stairs to waypoint testmap
+last_eat 2
+slaying testmap_mt_junction
+hp 1
+sp 1
+last_heal 1
+direction 5
+x 9
+y 1
+end
+arch floor_ostone1
+x 9
+y 2
+end
+arch floor_ostone1
+x 9
+y 3
+end
+arch floor_ostone1
+x 9
+y 4
+end
+arch stairs_stone_down
+name stairs to waypoint testmap
+last_eat 2
+slaying testmap_mt_tile_1
+hp 1
+sp 1
+last_heal 1
+direction 5
+x 9
+y 4
+end
+arch floor_ostone1
+x 9
+y 5
+end
+arch floor_ostone1
+x 9
+y 6
+end
+arch floor_ostone1
+x 9
+y 7
+end
+arch floor_ostone1
+x 9
+y 8
+end
+arch teleporter
+last_eat 2
+slaying testmap_mt_tile_1
+hp 13
+sp 13
+last_heal 1
+x 9
+y 8
+end
+arch floor_ostone1
+x 9
+y 9
+end
+arch floor_ostone1
+x 9
+y 10
+end
+arch pit_open
+last_eat 2
+slaying testmap_mt_tile_1
+hp 13
+sp 13
+last_heal 1
+x 9
+y 10
+end
+arch floor_ostone1
+x 9
+y 11
+end
+arch floor_ostone1
+x 9
+y 12
+end
+arch trapdoor
+last_eat 2
+slaying testmap_mt_tile_1
+hp 13
+sp 13
+last_heal 1
+x 9
+y 12
+end
+arch floor_ostone1
+x 9
+y 13
+end
+arch floor_ostone1
+x 9
+y 14
+end
+arch floor_ostone1
+x 9
+y 15
+end
+arch floor_ostone1
+x 9
+y 16
+end
+arch fwall_brown1
+x 9
+y 16
+end
+arch floor_ostone1
+x 10
+end
+arch fwall_brown1
+x 10
+end
+arch floor_ostone1
+x 10
+y 1
+end
+arch floor_ostone1
+x 10
+y 2
+end
+arch floor_ostone1
+x 10
+y 3
+end
+arch floor_ostone1
+x 10
+y 4
+end
+arch floor_ostone1
+x 10
+y 5
+end
+arch floor_ostone1
+x 10
+y 6
+end
+arch floor_ostone1
+x 10
+y 7
+end
+arch floor_ostone1
+x 10
+y 8
+end
+arch floor_ostone1
+x 10
+y 9
+end
+arch floor_ostone1
+x 10
+y 10
+end
+arch floor_ostone1
+x 10
+y 11
+end
+arch floor_ostone1
+x 10
+y 12
+end
+arch floor_ostone1
+x 10
+y 13
+end
+arch floor_ostone1
+x 10
+y 14
+end
+arch floor_ostone1
+x 10
+y 15
+end
+arch floor_ostone1
+x 10
+y 16
+end
+arch fwall_brown1
+x 10
+y 16
+end
+arch floor_ostone1
+x 11
+end
+arch fwall_brown1
+x 11
+end
+arch floor_ostone1
+x 11
+y 1
+end
+arch stairs_stone_down
+name stairs to waypoint testmap
+last_eat 4
+slaying testmap_mt_junction
+hp 1
+sp 1
+last_heal 1
+direction 5
+x 11
+y 1
+end
+arch floor_ostone1
+x 11
+y 2
+end
+arch floor_ostone1
+x 11
+y 3
+end
+arch floor_ostone1
+x 11
+y 4
+end
+arch stairs_stone_down
+name stairs to waypoint testmap
+last_eat 4
+slaying testmap_mt_tile_1
+hp 1
+sp 1
+last_heal 1
+direction 5
+x 11
+y 4
+end
+arch floor_ostone1
+x 11
+y 5
+end
+arch floor_ostone1
+x 11
+y 6
+end
+arch floor_ostone1
+x 11
+y 7
+end
+arch floor_ostone1
+x 11
+y 8
+end
+arch teleporter
+last_eat 4
+slaying testmap_mt_tile_1
+hp 13
+sp 13
+last_heal 1
+x 11
+y 8
+end
+arch floor_ostone1
+x 11
+y 9
+end
+arch floor_ostone1
+x 11
+y 10
+end
+arch pit_open
+last_eat 4
+slaying testmap_mt_tile_1
+hp 13
+sp 13
+last_heal 1
+x 11
+y 10
+end
+arch floor_ostone1
+x 11
+y 11
+end
+arch floor_ostone1
+x 11
+y 12
+end
+arch trapdoor
+last_eat 4
+slaying testmap_mt_tile_1
+hp 13
+sp 13
+last_heal 1
+x 11
+y 12
+end
+arch floor_ostone1
+x 11
+y 13
+end
+arch floor_ostone1
+x 11
+y 14
+end
+arch floor_ostone1
+x 11
+y 15
+end
+arch floor_ostone1
+x 11
+y 16
+end
+arch fwall_brown1
+x 11
+y 16
+end
+arch floor_ostone1
+x 12
+end
+arch fwall_brown1
+x 12
+end
+arch floor_ostone1
+x 12
+y 1
+end
+arch floor_ostone1
+x 12
+y 2
+end
+arch floor_ostone1
+x 12
+y 3
+end
+arch floor_ostone1
+x 12
+y 4
+end
+arch floor_ostone1
+x 12
+y 5
+end
+arch floor_ostone1
+x 12
+y 6
+end
+arch floor_ostone1
+x 12
+y 7
+end
+arch floor_ostone1
+x 12
+y 8
+end
+arch floor_ostone1
+x 12
+y 9
+end
+arch floor_ostone1
+x 12
+y 10
+end
+arch floor_ostone1
+x 12
+y 11
+end
+arch floor_ostone1
+x 12
+y 12
+end
+arch floor_ostone1
+x 12
+y 13
+end
+arch floor_ostone1
+x 12
+y 14
+end
+arch floor_ostone1
+x 12
+y 15
+end
+arch floor_ostone1
+x 12
+y 16
+end
+arch fwall_brown1
+x 12
+y 16
+end
+arch floor_ostone1
+x 13
+end
+arch fwall_brown1
+x 13
+end
+arch floor_ostone1
+x 13
+y 1
+end
+arch stairs_stone_down
+name stairs to waypoint testmap
+last_eat 4
+slaying testmap_mt_junction
+hp 1
+sp 1
+is_male 1
+last_heal 1
+direction 5
+x 13
+y 1
+end
+arch floor_ostone1
+x 13
+y 2
+end
+arch floor_ostone1
+x 13
+y 3
+end
+arch floor_ostone1
+x 13
+y 4
+end
+arch stairs_stone_down
+name stairs to waypoint testmap
+last_eat 4
+slaying testmap_mt_tile_1
+hp 1
+sp 1
+is_male 1
+last_heal 1
+direction 5
+x 13
+y 4
+end
+arch floor_ostone1
+x 13
+y 5
+end
+arch floor_ostone1
+x 13
+y 6
+end
+arch floor_ostone1
+x 13
+y 7
+end
+arch floor_ostone1
+x 13
+y 8
+end
+arch teleporter
+last_eat 4
+slaying testmap_mt_tile_1
+hp 13
+sp 13
+is_male 1
+last_heal 1
+x 13
+y 8
+end
+arch floor_ostone1
+x 13
+y 9
+end
+arch floor_ostone1
+x 13
+y 10
+end
+arch pit_open
+last_eat 4
+slaying testmap_mt_tile_1
+hp 13
+sp 13
+is_male 1
+last_heal 1
+x 13
+y 10
+end
+arch floor_ostone1
+x 13
+y 11
+end
+arch floor_ostone1
+x 13
+y 12
+end
+arch trapdoor
+last_eat 4
+slaying testmap_mt_tile_1
+hp 13
+sp 13
+last_heal 1
+is_male 1
+x 13
+y 12
+end
+arch floor_ostone1
+x 13
+y 13
+end
+arch floor_ostone1
+x 13
+y 14
+end
+arch floor_ostone1
+x 13
+y 15
+end
+arch floor_ostone1
+x 13
+y 16
+end
+arch fwall_brown1
+x 13
+y 16
+end
+arch floor_ostone1
+x 14
+end
+arch fwall_brown1
+x 14
+end
+arch floor_ostone1
+x 14
+y 1
+end
+arch floor_ostone1
+x 14
+y 2
+end
+arch floor_ostone1
+x 14
+y 3
+end
+arch floor_ostone1
+x 14
+y 4
+end
+arch floor_ostone1
+x 14
+y 5
+end
+arch floor_ostone1
+x 14
+y 6
+end
+arch floor_ostone1
+x 14
+y 7
+end
+arch floor_ostone1
+x 14
+y 8
+end
+arch floor_ostone1
+x 14
+y 9
+end
+arch floor_ostone1
+x 14
+y 10
+end
+arch floor_ostone1
+x 14
+y 11
+end
+arch floor_ostone1
+x 14
+y 12
+end
+arch floor_ostone1
+x 14
+y 13
+end
+arch floor_ostone1
+x 14
+y 14
+end
+arch floor_ostone1
+x 14
+y 15
+end
+arch floor_ostone1
+x 14
+y 16
+end
+arch fwall_brown1
+x 14
+y 16
+end
+arch floor_ostone1
+x 15
+end
+arch fwall_brown1
+x 15
+end
+arch floor_ostone1
+x 15
+y 1
+end
+arch floor_ostone1
+x 15
+y 2
+end
+arch floor_ostone1
+x 15
+y 3
+end
+arch floor_ostone1
+x 15
+y 4
+end
+arch floor_ostone1
+x 15
+y 5
+end
+arch floor_ostone1
+x 15
+y 6
+end
+arch floor_ostone1
+x 15
+y 7
+end
+arch floor_ostone1
+x 15
+y 8
+end
+arch floor_ostone1
+x 15
+y 9
+end
+arch floor_ostone1
+x 15
+y 10
+end
+arch floor_ostone1
+x 15
+y 11
+end
+arch floor_ostone1
+x 15
+y 12
+end
+arch floor_ostone1
+x 15
+y 13
+end
+arch floor_ostone1
+x 15
+y 14
+end
+arch floor_ostone1
+x 15
+y 15
+end
+arch floor_ostone1
+x 15
+y 16
+end
+arch fwall_brown1
+x 15
+y 16
+end
+arch floor_ostone1
+x 16
+end
+arch fwall_brown1
+x 16
+end
+arch floor_ostone1
+x 16
+y 1
+end
+arch fwall_brown1
+x 16
+y 1
+end
+arch floor_ostone1
+x 16
+y 2
+end
+arch fwall_brown1
+x 16
+y 2
+end
+arch floor_ostone1
+x 16
+y 3
+end
+arch fwall_brown1
+x 16
+y 3
+end
+arch floor_ostone1
+x 16
+y 4
+end
+arch fwall_brown1
+x 16
+y 4
+end
+arch floor_ostone1
+x 16
+y 5
+end
+arch fwall_brown1
+x 16
+y 5
+end
+arch floor_ostone1
+x 16
+y 6
+end
+arch fwall_brown1
+x 16
+y 6
+end
+arch floor_ostone1
+x 16
+y 7
+end
+arch fwall_brown1
+x 16
+y 7
+end
+arch floor_ostone1
+x 16
+y 8
+end
+arch fwall_brown1
+x 16
+y 8
+end
+arch floor_ostone1
+x 16
+y 9
+end
+arch fwall_brown1
+x 16
+y 9
+end
+arch floor_ostone1
+x 16
+y 10
+end
+arch fwall_brown1
+x 16
+y 10
+end
+arch floor_ostone1
+x 16
+y 11
+end
+arch fwall_brown1
+x 16
+y 11
+end
+arch floor_ostone1
+x 16
+y 12
+end
+arch fwall_brown1
+x 16
+y 12
+end
+arch floor_ostone1
+x 16
+y 13
+end
+arch fwall_brown1
+x 16
+y 13
+end
+arch floor_ostone1
+x 16
+y 14
+end
+arch fwall_brown1
+x 16
+y 14
+end
+arch floor_ostone1
+x 16
+y 15
+end
+arch fwall_brown1
+x 16
+y 15
+end
+arch floor_ostone1
+x 16
+y 16
+end
+arch fwall_brown1
+x 16
+y 16
+end

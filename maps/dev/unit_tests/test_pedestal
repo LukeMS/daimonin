@@ -1,0 +1,202 @@
+arch map
+name Unit Test: Pedestals
+msg
+Created:  2006-12-17 gecko
+
+Test case for 
+- bug 0000480: Invisible pedestal does not fire connection
+- bug 0000489: obj:Move off pedestal crashes server
+endmsg
+width 24
+height 24
+difficulty 1
+tileset_id 149
+tileset_x 0
+tileset_y 0
+end
+arch pedestal
+slaying slime
+connected 10
+x 4
+y 16
+arch beacon
+name visible_pedestal
+end
+end
+arch spawn_point
+speed 0.0
+last_grace 0
+connected 1
+x 4
+y 16
+arch cube_gel
+type 83
+stand_still 1
+end
+end
+arch grave_fire.101
+connected 10
+x 4
+y 18
+end
+arch handle_lever
+connected 1
+x 5
+y 14
+arch beacon
+name lever
+end
+end
+arch pedestal
+slaying slime
+connected 11
+is_invisible 1
+x 5
+y 16
+arch beacon
+name invisible_pedestal
+end
+end
+arch spawn_point
+speed 0.0
+last_grace 0
+connected 1
+x 5
+y 16
+arch cube_gel
+type 83
+stand_still 1
+end
+end
+arch grave_fire.101
+connected 11
+x 5
+y 18
+end
+arch pedestal
+layer 0
+slaying slime
+connected 12
+sys_object 1
+x 6
+y 16
+arch beacon
+name sys_invisible_pedestal
+end
+end
+arch spawn_point
+speed 0.0
+last_grace 0
+connected 1
+x 6
+y 16
+arch cube_gel
+type 83
+stand_still 1
+end
+end
+arch grave_fire.101
+connected 12
+x 6
+y 18
+end
+arch pedestal
+slaying apple
+connected 13
+x 7
+y 16
+arch beacon
+name visible_pedestal_2
+end
+end
+arch creator
+connected 1
+x 7
+y 16
+arch apple
+race apple
+end
+end
+arch grave_fire.101
+connected 13
+x 7
+y 18
+end
+arch pedestal
+slaying apple
+connected 14
+is_invisible 1
+x 8
+y 16
+arch beacon
+name invisible_pedestal_2
+end
+end
+arch creator
+connected 1
+x 8
+y 16
+arch apple
+race apple
+end
+end
+arch grave_fire.101
+connected 14
+x 8
+y 18
+end
+arch pedestal
+layer 0
+slaying apple
+connected 15
+sys_object 1
+x 9
+y 16
+arch beacon
+name sys_invisible_pedestal_2
+end
+end
+arch creator
+connected 1
+x 9
+y 16
+arch apple
+race apple
+end
+end
+arch grave_fire.101
+connected 15
+x 9
+y 18
+end
+arch handle_lever
+connected 2
+x 12
+y 14
+arch beacon
+name lever_2
+end
+end
+arch pedestal
+slaying apple
+connected 999
+x 12
+y 16
+arch beacon
+name move_off_pedestal
+end
+arch event_obj
+name Lua
+race test_pedestal_move.lua
+sub_type 10
+end
+end
+arch creator
+connected 2
+lifesave 1
+x 12
+y 16
+arch apple
+race apple
+end
+end
