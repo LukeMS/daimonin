@@ -1,0 +1,173 @@
+arch map
+name test_env_sensor
+msg
+Created:  2006-12-05 gecko
+endmsg
+width 24
+height 24
+difficulty 1
+darkness 1
+tileset_id 107
+tileset_x 0
+tileset_y 0
+end
+arch earth_brown2
+y 12
+end
+arch earth_brown2
+y 13
+end
+arch earth_brown2
+y 14
+end
+arch earth_brown4
+x 1
+y 2
+end
+arch earth_brown4
+x 1
+y 3
+end
+arch earth_brown4
+x 1
+y 4
+end
+arch earth_brown2
+x 1
+y 12
+end
+arch grave_fire.101
+name light1
+connected 100
+x 1
+y 13
+arch beacon
+name gravelight_beacon
+end
+end
+arch earth_brown2
+x 1
+y 13
+end
+arch earth_brown2
+x 1
+y 14
+end
+arch earth_brown4
+x 2
+y 2
+end
+arch light9
+name light3
+glow_radius 5
+connected 200
+x 2
+y 3
+arch beacon
+name light_beacon_2
+end
+end
+arch earth_brown4
+x 2
+y 3
+end
+arch earth_brown4
+x 2
+y 4
+end
+arch earth_brown2
+x 2
+y 12
+end
+arch earth_brown2
+x 2
+y 13
+end
+arch earth_brown2
+x 2
+y 14
+end
+arch earth_brown4
+x 3
+y 2
+end
+arch earth_brown4
+x 3
+y 3
+end
+arch earth_brown4
+x 3
+y 4
+end
+arch environment_sensor
+last_grace 3
+connected 100
+speed 1.0
+x 3
+y 5
+arch beacon
+name sensor_beacon
+end
+end
+arch sign
+msg
+This environment sensor should activate both the grave light and the lamp post.
+The handle should activate the hidden light.
+endmsg
+x 3
+y 5
+end
+arch earth_brown2
+x 5
+y 12
+end
+arch earth_brown2
+x 5
+y 13
+end
+arch earth_brown2
+x 5
+y 14
+end
+arch handle_lever
+connected 200
+x 6
+y 5
+arch beacon
+name lever_beacon
+end
+end
+arch earth_brown2
+x 6
+y 12
+end
+arch light8
+name light2
+glow_radius 5
+connected 100
+x 6
+y 13
+arch beacon
+name light_beacon
+end
+end
+arch earth_brown2
+x 6
+y 13
+end
+arch earth_brown2
+x 6
+y 14
+end
+arch earth_brown2
+x 7
+y 12
+end
+arch earth_brown2
+x 7
+y 13
+end
+arch earth_brown2
+x 7
+y 14
+end

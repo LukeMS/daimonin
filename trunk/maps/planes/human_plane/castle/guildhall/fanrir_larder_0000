@@ -1,0 +1,403 @@
+arch map
+name Fanrir's Larder§spokyspace.ogg|0|-1
+msg
+Created:  2005-11-28 Unknown Combat Dummy
+endmsg
+width 24
+height 24
+difficulty 1
+darkness 1
+tileset_id 82
+tileset_x 0
+tileset_y 0
+end
+arch floor_ostone4
+end
+arch wall_stone_8
+end
+arch floor_ostone4
+y 1
+end
+arch wall_stone_3
+y 1
+end
+arch floor_ostone4
+y 2
+end
+arch wall_stone_3
+y 2
+end
+arch sewer_wall
+direction 5
+y 2
+end
+arch floor_ostone4
+y 3
+end
+arch wall_stone_3
+y 3
+end
+arch ring_wall.151
+direction 5
+y 3
+end
+arch floor_ostone4
+y 4
+end
+arch wall_stone_3
+y 4
+end
+arch floor_ostone4
+y 5
+end
+arch wall_stone_3
+y 5
+end
+arch blood_spatter_light_a_wmask
+y 5
+end
+arch floor_ostone4
+y 6
+end
+arch wall_stone_3
+y 6
+end
+arch floor_ostone4
+x 1
+end
+arch wall_stone_1
+x 1
+end
+arch floor_ostone4
+x 1
+y 1
+end
+arch stairs_stone_up
+last_eat 1
+slaying ../castle_030a
+hp 12
+sp 3
+direction 5
+x 1
+y 1
+end
+arch light7
+x 1
+y 1
+end
+arch floor_ostone4
+x 1
+y 2
+end
+arch floor_ostone4
+x 1
+y 3
+end
+arch pile_floor3
+x 1
+y 3
+end
+arch floor_ostone4
+x 1
+y 4
+end
+arch box2.101
+no_pass 0
+direction 3
+x 1
+y 4
+end
+arch magic_mouth
+msg
+Fanrir shouts: If it's too dark, you can use a torch!
+endmsg
+food 1
+x 1
+y 4
+end
+arch floor_ostone4
+x 1
+y 5
+end
+arch floor_ostone4
+x 1
+y 6
+end
+arch wall_stone_1
+x 1
+y 6
+end
+arch floor_ostone4
+x 2
+end
+arch wall_stone_1
+x 2
+end
+arch plant1_wall.151
+x 2
+end
+arch floor_ostone4
+x 2
+y 1
+end
+arch chest_4.111
+x 2
+y 1
+arch trap_bear_trap
+name mouse trap
+msg
+Ouch! You didn't see the mouse trap until it was too late.
+endmsg
+dam 2
+attack_cleave 10
+end
+end
+arch floor_ostone4
+x 2
+y 2
+end
+arch dirt_floor1
+x 2
+y 2
+end
+arch floor_ostone4
+x 2
+y 3
+end
+arch table_small1b
+x 2
+y 3
+end
+arch floor_ostone4
+x 2
+y 4
+end
+arch wall_stone_1
+x 2
+y 4
+end
+arch floor_ostone4
+x 2
+y 5
+end
+arch dirt_floor4
+x 2
+y 5
+end
+arch floor_ostone4
+x 2
+y 6
+end
+arch wall_stone_1
+x 2
+y 6
+end
+arch floor_ostone4
+x 3
+end
+arch wall_stone_1
+x 3
+end
+arch plant2_wall.151
+x 3
+end
+arch floor_ostone4
+x 3
+y 1
+end
+arch chest_4.111
+x 3
+y 1
+arch trap_blades
+name mouse trap
+msg
+You set off the mouse trap!
+endmsg
+dam 2
+attack_slash 10
+end
+end
+arch floor_ostone4
+x 3
+y 2
+end
+arch pile_floor1
+x 3
+y 2
+end
+arch floor_ostone4
+x 3
+y 3
+end
+arch trash_wood1.101
+x 3
+y 3
+end
+arch floor_ostone4
+x 3
+y 4
+end
+arch wall_stone_1
+x 3
+y 4
+end
+arch floor_ostone4
+x 3
+y 5
+end
+arch floor_ostone4
+x 3
+y 6
+end
+arch wall_stone_1
+x 3
+y 6
+end
+arch floor_ostone4
+x 4
+end
+arch wall_stone_1
+x 4
+end
+arch plant1_wall.151
+x 4
+end
+arch floor_ostone4
+x 4
+y 1
+end
+arch chest_4.111
+x 4
+y 1
+arch trap_rocks
+msg
+Some rocks fall from the ceiling and hit you!
+endmsg
+cha 1000000
+dam 15
+attack_impact 80
+arch event_obj
+name Lua
+sub_type 10
+race gh_fanrir_trap.lua
+end
+end
+arch quest_trigger
+name Find Fanrir's Lunch
+sub_type 3
+last_heal 1
+one_drop 0
+end
+end
+arch floor_ostone4
+x 4
+y 2
+end
+arch dirt_floor2
+x 4
+y 2
+end
+arch floor_ostone4
+x 4
+y 3
+end
+arch dirt_floor1
+x 4
+y 3
+end
+arch floor_ostone4
+x 4
+y 4
+end
+arch wall_stone_1
+x 4
+y 4
+end
+arch floor_ostone4
+x 4
+y 5
+end
+arch dirt_floor3
+name small hole
+face hole1.101
+x 4
+y 5
+end
+arch spawn_point
+speed -0.1
+last_grace 1
+last_heal 2
+x 4
+y 5
+arch mouse
+type 83
+randomitems empty
+exp 10
+dam 20
+maxhp 20
+unaggressive 1
+random_move 1
+end
+end
+arch floor_ostone4
+x 4
+y 6
+end
+arch wall_stone_1
+x 4
+y 6
+end
+arch floor_ostone4
+x 5
+end
+arch wall_stone_1
+x 5
+end
+arch floor_ostone4
+x 5
+y 1
+end
+arch wall_stone_3
+x 5
+y 1
+end
+arch floor_ostone4
+x 5
+y 2
+end
+arch wall_stone_3
+x 5
+y 2
+end
+arch floor_ostone4
+x 5
+y 3
+end
+arch wall_stone_3
+x 5
+y 3
+end
+arch floor_ostone4
+x 5
+y 4
+end
+arch wall_stone_4
+x 5
+y 4
+end
+arch floor_ostone4
+x 5
+y 5
+end
+arch wall_stone_3
+x 5
+y 5
+end
+arch floor_ostone4
+x 5
+y 6
+end
+arch wall_stone_4
+x 5
+y 6
+end

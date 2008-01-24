@@ -1,0 +1,1082 @@
+arch map
+name Stonehaven Guard Towers
+msg
+Created:  2005-07-23 Unislash
+endmsg
+width 24
+height 24
+darkness 2
+tileset_id 94
+tileset_x 0
+tileset_y 0
+end
+arch floor_grey3
+y 3
+end
+arch wall_fstone_round.108
+y 3
+end
+arch floor_grey3
+y 4
+end
+arch fwall_fstone2
+y 4
+end
+arch floor_grey3
+y 5
+end
+arch fwall_fstone2
+y 5
+end
+arch floor_grey3
+y 6
+end
+arch fwall_fstone2
+y 6
+end
+arch floor_grey3
+y 7
+end
+arch fwall_fstone2
+y 7
+end
+arch picture11
+direction 7
+y 7
+end
+arch floor_grey3
+y 8
+end
+arch fwall_fstone2
+y 8
+end
+arch floor_grey3
+y 9
+end
+arch fwall_fstone2
+y 9
+end
+arch floor_grey3
+y 10
+end
+arch wall_fstone_round.106
+y 10
+end
+arch floor_grey3
+x 1
+y 3
+end
+arch fwall_fstone2
+x 1
+y 3
+end
+arch floor_grey3
+x 1
+y 4
+end
+arch fwall_fstone2d
+x 1
+y 4
+end
+arch floor_grey3
+x 1
+y 5
+end
+arch shelf3c.111
+direction 7
+x 1
+y 5
+end
+arch floor_grey3
+x 1
+y 6
+end
+arch shelf3a.111
+direction 7
+x 1
+y 6
+end
+arch floor_grey3
+x 1
+y 7
+end
+arch chair2_111
+direction 7
+x 1
+y 7
+end
+arch floor_grey3
+x 1
+y 8
+end
+arch shelf5_wall.111
+direction 7
+x 1
+y 8
+end
+arch floor_grey3
+x 1
+y 9
+end
+arch barrel2.101
+x 1
+y 9
+end
+arch fwall_fstone2a
+x 1
+y 9
+end
+arch floor_grey3
+x 1
+y 10
+end
+arch fwall_fstone2
+x 1
+y 10
+end
+arch floor_grey3
+x 2
+y 3
+end
+arch fwall_fstone2
+x 2
+y 3
+end
+arch wmask_bflag_fire1_1
+x 2
+y 3
+end
+arch floor_grey3
+x 2
+y 4
+end
+arch desk2
+x 2
+y 4
+end
+arch light3
+x 2
+y 4
+end
+arch floor_grey3
+x 2
+y 5
+end
+arch floor_grey3
+x 2
+y 6
+end
+arch carpet1.131
+x 2
+y 6
+end
+arch floor_grey3
+x 2
+y 7
+end
+arch carpet1.131
+x 2
+y 7
+end
+arch table_round1
+x 2
+y 7
+end
+arch light3
+x 2
+y 7
+end
+arch floor_grey3
+x 2
+y 8
+end
+arch floor_grey3
+x 2
+y 9
+end
+arch bed_2a.111
+x 2
+y 9
+end
+arch floor_grey3
+x 2
+y 10
+end
+arch fwall_fstone2
+x 2
+y 10
+end
+arch floor_grey3
+x 3
+y 3
+end
+arch fwall_fstone2
+x 3
+y 3
+end
+arch floor_grey3
+x 3
+y 4
+end
+arch rack.111
+x 3
+y 4
+end
+arch floor_grey3
+x 3
+y 5
+end
+arch carpet1.151
+x 3
+y 5
+end
+arch floor_grey3
+x 3
+y 6
+end
+arch carpet1
+x 3
+y 6
+end
+arch floor_grey3
+x 3
+y 7
+end
+arch carpet1
+x 3
+y 7
+end
+arch floor_grey3
+x 3
+y 8
+end
+arch carpet1.111
+x 3
+y 8
+end
+arch floor_grey3
+x 3
+y 9
+end
+arch bed_2b.111
+x 3
+y 9
+end
+arch floor_grey3
+x 3
+y 10
+end
+arch fwall_fstone2
+x 3
+y 10
+end
+arch floor_grey3
+x 4
+y 3
+end
+arch fwall_fstone2
+x 4
+y 3
+end
+arch wmask_bflag_fire1_1
+x 4
+y 3
+end
+arch floor_grey3
+x 4
+y 4
+end
+arch ladder_down3
+slaying castle2_0100
+hp 4
+sp 4
+x 4
+y 4
+end
+arch floor_grey3
+x 4
+y 5
+end
+arch carpet1.151
+x 4
+y 5
+end
+arch floor_grey3
+x 4
+y 6
+end
+arch carpet1
+x 4
+y 6
+end
+arch floor_grey3
+x 4
+y 7
+end
+arch carpet1
+x 4
+y 7
+end
+arch floor_grey3
+x 4
+y 8
+end
+arch carpet1.111
+x 4
+y 8
+end
+arch chair2_111
+x 4
+y 8
+end
+arch floor_grey3
+x 4
+y 9
+end
+arch table_lab3.111
+x 4
+y 9
+end
+arch light3
+x 4
+y 9
+end
+arch floor_grey3
+x 4
+y 10
+end
+arch fwall_fstone2
+x 4
+y 10
+end
+arch floor_grey3
+x 5
+y 3
+end
+arch fwall_fstone2
+x 5
+y 3
+end
+arch floor_grey3
+x 5
+y 4
+end
+arch shelf2_wall.111
+x 5
+y 4
+end
+arch floor_grey3
+x 5
+y 5
+end
+arch floor_grey3
+x 5
+y 6
+end
+arch carpet1.171
+x 5
+y 6
+end
+arch chair1_111
+direction 7
+x 5
+y 6
+end
+arch floor_grey3
+x 5
+y 7
+end
+arch carpet1.171
+x 5
+y 7
+end
+arch floor_grey3
+x 5
+y 8
+end
+arch floor_grey3
+x 5
+y 9
+end
+arch floor_grey3
+x 5
+y 10
+end
+arch fwall_fstone2
+x 5
+y 10
+end
+arch floor_grey3
+x 6
+y 3
+end
+arch fwall_fstone2
+x 6
+y 3
+end
+arch floor_grey3
+x 6
+y 4
+end
+arch fwall_fstone2b
+x 6
+y 4
+end
+arch floor_grey3
+x 6
+y 5
+end
+arch floor_grey3
+x 6
+y 6
+end
+arch table_wood1.111
+direction 7
+x 6
+y 6
+end
+arch light3
+x 6
+y 6
+end
+arch floor_grey3
+x 6
+y 7
+end
+arch floor_grey3
+x 6
+y 8
+end
+arch glower.101
+x 6
+y 8
+end
+arch light7
+x 6
+y 8
+end
+arch floor_grey3
+x 6
+y 9
+end
+arch fwall_fstone2c
+x 6
+y 9
+end
+arch floor_grey3
+x 6
+y 10
+end
+arch fwall_fstone2
+x 6
+y 10
+end
+arch floor_grey3
+x 7
+y 3
+end
+arch wall_fstone_round.102
+x 7
+y 3
+end
+arch floor_grey3
+x 7
+y 4
+end
+arch fwall_fstone2
+x 7
+y 4
+end
+arch floor_grey3
+x 7
+y 5
+end
+arch fwall_fstone2
+x 7
+y 5
+end
+arch floor_grey3
+x 7
+y 6
+end
+arch fwall_fstone2
+x 7
+y 6
+end
+arch floor_grey3
+x 7
+y 7
+end
+arch fwall_fstone2
+x 7
+y 7
+end
+arch floor_grey3
+x 7
+y 8
+end
+arch fwall_fstone2
+x 7
+y 8
+end
+arch floor_grey3
+x 7
+y 9
+end
+arch fwall_fstone2
+x 7
+y 9
+end
+arch floor_grey3
+x 7
+y 10
+end
+arch wall_fstone_round.104
+x 7
+y 10
+end
+arch floor_grey3
+x 15
+y 3
+end
+arch wall_fstone_round.108
+x 15
+y 3
+end
+arch floor_grey3
+x 15
+y 4
+end
+arch fwall_fstone2
+x 15
+y 4
+end
+arch floor_grey3
+x 15
+y 5
+end
+arch fwall_fstone2
+x 15
+y 5
+end
+arch floor_grey3
+x 15
+y 6
+end
+arch fwall_fstone2
+x 15
+y 6
+end
+arch floor_grey3
+x 15
+y 7
+end
+arch fwall_fstone2
+x 15
+y 7
+end
+arch floor_grey3
+x 15
+y 8
+end
+arch fwall_fstone2
+x 15
+y 8
+end
+arch floor_grey3
+x 15
+y 9
+end
+arch fwall_fstone2
+x 15
+y 9
+end
+arch floor_grey3
+x 15
+y 10
+end
+arch wall_fstone_round.106
+x 15
+y 10
+end
+arch floor_grey3
+x 16
+y 3
+end
+arch fwall_fstone2
+x 16
+y 3
+end
+arch floor_grey3
+x 16
+y 4
+end
+arch fwall_fstone2d
+x 16
+y 4
+end
+arch floor_grey3
+x 16
+y 5
+end
+arch shelf3c.111
+direction 7
+x 16
+y 5
+end
+arch floor_grey3
+x 16
+y 6
+end
+arch shelf3b.111
+direction 7
+x 16
+y 6
+end
+arch floor_grey3
+x 16
+y 7
+end
+arch table_wood1.111
+direction 7
+x 16
+y 7
+end
+arch light3
+x 16
+y 7
+end
+arch floor_grey3
+x 16
+y 8
+end
+arch shelf3a.111
+direction 7
+x 16
+y 8
+end
+arch floor_grey3
+x 16
+y 9
+end
+arch fwall_fstone2a
+x 16
+y 9
+end
+arch floor_grey3
+x 16
+y 10
+end
+arch fwall_fstone2
+x 16
+y 10
+end
+arch floor_grey3
+x 17
+y 3
+end
+arch fwall_fstone2
+x 17
+y 3
+end
+arch floor_grey3
+x 17
+y 4
+end
+arch table_lab3.111
+x 17
+y 4
+end
+arch light3
+x 17
+y 4
+end
+arch floor_grey3
+x 17
+y 5
+end
+arch chair2_111
+direction 5
+x 17
+y 5
+end
+arch floor_grey3
+x 17
+y 6
+end
+arch carpet1.131
+x 17
+y 6
+end
+arch floor_grey3
+x 17
+y 7
+end
+arch carpet1.131
+x 17
+y 7
+end
+arch chair2_111
+direction 3
+x 17
+y 7
+end
+arch floor_grey3
+x 17
+y 8
+end
+arch chair1_111
+direction 7
+x 17
+y 8
+end
+arch floor_grey3
+x 17
+y 9
+end
+arch floor_grey3
+x 17
+y 10
+end
+arch fwall_fstone2
+x 17
+y 10
+end
+arch floor_grey3
+x 18
+y 3
+end
+arch fwall_fstone2
+x 18
+y 3
+end
+arch wmask_bflag_fire1_1
+x 18
+y 3
+end
+arch floor_grey3
+x 18
+y 4
+end
+arch ladder_down3
+slaying castle2_0100
+hp 18
+sp 4
+x 18
+y 4
+end
+arch floor_grey3
+x 18
+y 5
+end
+arch carpet1.151
+x 18
+y 5
+end
+arch carpet1
+x 18
+y 6
+end
+arch carpet1
+x 18
+y 7
+end
+arch chair1_111
+x 18
+y 7
+end
+arch floor_grey3
+x 18
+y 8
+end
+arch carpet1.111
+x 18
+y 8
+end
+arch table_round1
+x 18
+y 8
+end
+arch light3
+x 18
+y 8
+end
+arch floor_grey3
+x 18
+y 9
+end
+arch chair1_drop_111
+x 18
+y 9
+end
+arch floor_grey3
+x 18
+y 10
+end
+arch fwall_fstone2
+x 18
+y 10
+end
+arch floor_grey3
+x 19
+y 3
+end
+arch fwall_fstone2
+x 19
+y 3
+end
+arch floor_grey3
+x 19
+y 4
+end
+arch rack.111
+x 19
+y 4
+end
+arch floor_grey3
+x 19
+y 5
+end
+arch carpet1.151
+x 19
+y 5
+end
+arch carpet1
+x 19
+y 6
+end
+arch chair1_111
+direction 7
+x 19
+y 6
+end
+arch carpet1
+x 19
+y 7
+end
+arch floor_grey3
+x 19
+y 8
+end
+arch carpet1.111
+x 19
+y 8
+end
+arch floor_grey3
+x 19
+y 9
+end
+arch box1.101
+x 19
+y 9
+end
+arch floor_grey3
+x 19
+y 10
+end
+arch fwall_fstone2
+x 19
+y 10
+end
+arch floor_grey3
+x 20
+y 3
+end
+arch fwall_fstone2
+x 20
+y 3
+end
+arch wmask_bflag_fire1_1
+x 20
+y 3
+end
+arch floor_grey3
+x 20
+y 4
+end
+arch floor_grey3
+x 20
+y 5
+end
+arch chair1_111
+x 20
+y 5
+end
+arch floor_grey3
+x 20
+y 6
+end
+arch carpet1.171
+x 20
+y 6
+end
+arch table_round1
+x 20
+y 6
+end
+arch light3
+x 20
+y 6
+end
+arch floor_grey3
+x 20
+y 7
+end
+arch carpet1.171
+x 20
+y 7
+end
+arch chair1_111
+direction 5
+x 20
+y 7
+end
+arch floor_grey3
+x 20
+y 8
+end
+arch glower.101
+x 20
+y 8
+end
+arch light7
+x 20
+y 8
+end
+arch floor_grey3
+x 20
+y 9
+end
+arch barrel.101
+x 20
+y 9
+end
+arch floor_grey3
+x 20
+y 10
+end
+arch fwall_fstone2
+x 20
+y 10
+end
+arch floor_grey3
+x 21
+y 3
+end
+arch fwall_fstone2
+x 21
+y 3
+end
+arch floor_grey3
+x 21
+y 4
+end
+arch fwall_fstone2b
+x 21
+y 4
+end
+arch floor_grey3
+x 21
+y 5
+end
+arch floor_grey3
+x 21
+y 6
+end
+arch chair1_111
+direction 3
+x 21
+y 6
+end
+arch floor_grey3
+x 21
+y 7
+end
+arch floor_grey3
+x 21
+y 8
+end
+arch barrel2.101
+x 21
+y 8
+end
+arch floor_grey3
+x 21
+y 9
+end
+arch fwall_fstone2c
+x 21
+y 9
+end
+arch floor_grey3
+x 21
+y 10
+end
+arch fwall_fstone2
+x 21
+y 10
+end
+arch floor_grey3
+x 22
+y 3
+end
+arch wall_fstone_round.102
+x 22
+y 3
+end
+arch floor_grey3
+x 22
+y 4
+end
+arch fwall_fstone2
+x 22
+y 4
+end
+arch floor_grey3
+x 22
+y 5
+end
+arch fwall_fstone2
+x 22
+y 5
+end
+arch floor_grey3
+x 22
+y 6
+end
+arch fwall_fstone2
+x 22
+y 6
+end
+arch floor_grey3
+x 22
+y 7
+end
+arch fwall_fstone2
+x 22
+y 7
+end
+arch floor_grey3
+x 22
+y 8
+end
+arch fwall_fstone2
+x 22
+y 8
+end
+arch floor_grey3
+x 22
+y 9
+end
+arch fwall_fstone2
+x 22
+y 9
+end
+arch floor_grey3
+x 22
+y 10
+end
+arch wall_fstone_round.104
+x 22
+y 10
+end
