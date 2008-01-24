@@ -29,23 +29,24 @@ function TopicList:AddTopics(topics, ...)
     table.insert(self.topics, {topics = topics, actions = arg})
 end
 
--- Internal function to execute the reponses tied to
--- certain topics
-function TopicList:_DoActions(event, actions, captures)
-    table.foreach(actions, function(k,v)
-        if type(v) == "function" then
-            v(unpack(captures))
-        elseif type(v) == "string" then
-            event.me:SayTo(event.activator, v)
-        end
-        end)
-end
-
 -- Check the given message for topics
 function TopicList:CheckMessage(event_param)
     if(event_param == nil) then
         print "TopicList - Warning: no event object to tl:CheckMessage(event)";
         event_param = event -- this will be deprecated
+    end
+
+    -- Internal function to execute the reponses tied to
+    -- certain topics
+    local function doactions(_action, _captures)
+        for i, v in ipairs(_action) do
+            local t = type(v)
+            if t == "function" then
+                v(unpack(_captures))
+            elseif t == "string" then
+                event_param.me:SayTo(event_param.activator, v)
+            end
+        end
     end
 
     local msg = string.lower(event_param.message)
@@ -57,7 +58,7 @@ function TopicList:CheckMessage(event_param)
             if captures[1] then
                 table.remove(captures,1) -- get rid of indices
                 table.remove(captures,1)
-                self:_DoActions(event_param, topics.actions, captures)
+                doactions(topics.actions, captures)
                 return
             end
         end
@@ -65,7 +66,7 @@ function TopicList:CheckMessage(event_param)
 
     -- if no match, execute the default actions (if any)
     if self.default ~= nil then
-        self:_DoActions(event_param, self.default, {msg})
+        doactions(self.default, {msg})
     end
 end
 
