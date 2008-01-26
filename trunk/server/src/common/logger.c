@@ -64,8 +64,10 @@ void check_timestamp()
     GETTIMEOFDAY(&now);
     if (now.tv_sec >= (last_timestamp.tv_sec + TIMESTAMP_INTERVAL))
     {
+        const time_t temp_time = (const time_t) now.tv_sec;
+
         last_timestamp.tv_sec = now.tv_sec;
-        tim = localtime((const time_t *)&now.tv_sec);
+        tim = localtime(&temp_time);
         sprintf(buf, "\n*** TIMESTAMP: %4d-%02d-%02d %02d:%02d:%02d ***\n\n",
             tim->tm_year+1900, tim->tm_mon+1, tim->tm_mday,
             tim->tm_hour, tim->tm_min, tim->tm_sec);

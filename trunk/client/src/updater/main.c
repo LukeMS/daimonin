@@ -61,6 +61,7 @@ struct FtpFile {
     FILE *stream;
 };
 
+extern int check_patch_master(void);
 extern void clear_directory(char* start_dir);
 extern void copy_patch_files(char* start_dir);
 extern int process_patch_file(char *patch_file, int mode);
@@ -123,6 +124,8 @@ static void write_version_file(char *version, int version_nr)
         getchar();
         start_client_and_close(prg_path);
     }
+    /* *if* we get interrupted we want the applied version be written */
+    fflush(version_handle);
 }
 
 /* removes whitespace from right side */
@@ -152,12 +155,7 @@ int main(int argc, char *argv[])
 #endif
     printf("Daimonin AutoUpdater 1.1\n\n");
 
-//        printf("%s\n",argv[0]);
-//        if(argc>1)
-//            printf("%s\n",argv[1]);
-//        if(argc>2)
-//            printf("%s\n",argv[2]);
-//        printf("\n");
+    /*printf("%s\n",argv[0]);if(argc>1)printf("%s\n",argv[1]);if(argc>2)printf("%s\n",argv[2]);printf("\n");*/
 
     argv0 = argv[0];
     /* prepare pathes */
@@ -250,27 +248,26 @@ int main(int argc, char *argv[])
      */
     if (update_flag==FALSE)
     {
-        /* clearing up is always a good idea to start - also ensure its there */
-        mkdir(FOLDER_PATCH, 0777);
-        clear_directory(FOLDER_PATCH);
-    }
-
-    if (update_flag==FALSE)
-    {
         printf("version %s\n", version);
         printf("Get update info....\n");
 
-        if (!download_file(UPDATE_URL, UPDATE_FILE, FOLDER_UPDATE, UPDATE_FILE))
+        /* clearing up is always a good idea to start - also ensure its there */
+        mkdir(FOLDER_PATCH, 0777);
+        clear_directory(FOLDER_PATCH);
+
+        if (!download_file(UPDATE_URL, UPDATE_FILE, FOLDER_UPDATE, UPDATE_FILE) || !check_patch_master())
         {
+            /* ensure we deleted illegal patch.master files */
+            sprintf(buf, "%s/%s",FOLDER_UPDATE, UPDATE_FILE);
+            unlink(buf);
             /* failed to get a update... lets start the client anyway and try to connect to a server */
-            printf("Update failed!\nStarting client without update.\nPRESS RETURN\n");
+            printf("Incomplete master file!\nStarting client without update.\nPRESS RETURN\n");
             getchar();
             start_client_and_close(prg_path);
         }
 
         /* check we have the update or we must get it */
         printf("Check update info....\n");
-
     }
 
     /* open the patch info file and process the single entries */
@@ -289,7 +286,8 @@ int main(int argc, char *argv[])
 
         sscanf(buf, "%s %s %d %s", file_name, md5, &version_nr, version);
 
-        if (version_nr <= version_def_nr) /* ignore same or lesser versions! */
+        /* ignore same or lesser versions and every line starting with #CMD# */
+        if (version_nr <= version_def_nr || !strcmp(file_name,"#CMD#"))
             continue;
 
         /* we have something new. patch it */
@@ -399,7 +397,54 @@ int main(int argc, char *argv[])
     return(0);
 }
 
+/* search the patch.master file for global command tags and the end tag to
+ * ensure we have an complete and legal master file. Because every file
+ * command is combined with a md5, we don't need to md5 the master file
+ * itself.
+ * NOTE: a patch master command will be triggered when the filename is
+ * "#CMD# - ensure Daimonin never have files with the same name in their
+ * client folder!
+ */
+int check_patch_master(void)
+{
+    FILE   *stream;
+    int id;
+    char buf[256], cmd[256],file_name[256], md5[64];
 
+    /* open the patch info file and process the single entries */
+    sprintf(file_path,"%s%s/%s", prg_path, FOLDER_UPDATE, UPDATE_FILE);
+    if ((stream = fopen(file_path, "rt")) == NULL)
+    {
+        printf("Can't find update file!\nUpdate failed!\nStarting client without update.\nPRESS RETURN\n");
+        getchar();
+        start_client_and_close(prg_path);
+    }
+
+    /* check every entry */
+
+    /* ATM we only check for the END tag - which MUST be the last command in the file! */
+    while (fgets(buf, 256 - 1, stream) != NULL)
+    {
+        adjust_string(buf);
+
+        sscanf(buf, "%s %s %d %s", file_name, md5, &id, cmd);
+
+        /* we have not a command line? Reset command buffer */
+        if(strcmp(file_name,"#CMD#"))
+            cmd[0]='\0';
+        /* add here more commands when needed */
+    }
+    fclose(stream);
+
+    /* this is the last legal line - ensure its the end command! */
+    if(strcmp(cmd,"END"))
+    {
+        printf("\nmaster patch file failed sanity check!\n");
+        return FALSE;
+    }
+
+    return TRUE;
+}
 /*
 * recusively traverse the given directory and clear it
 * (delete all files and subdirectories of the given directory
@@ -868,6 +913,7 @@ int download_file(char *url, char *remotefilename, char *destfolder, char *destf
     CURLcode    res;
     char        filename[MAX_DIR_PATH];
     char        fullurl[MAX_DIR_PATH];
+    long httpresult = 0;
     struct FtpFile ftpfile;
 
     curlhandle = curl_easy_init();
@@ -887,15 +933,22 @@ int download_file(char *url, char *remotefilename, char *destfolder, char *destf
     curl_easy_setopt(curlhandle, CURLOPT_PROGRESSFUNCTION, curl_progresshandler);
 
     res = curl_easy_perform(curlhandle);
-    curl_easy_cleanup(curlhandle);
-
-    /* we failed? */
-    if(CURLE_OK != res)
-        updater_error("curl error.");
 
     if(ftpfile.stream)
         fclose(ftpfile.stream); /* close the local file */
 
+    /* careful: for some reason this can return a negative value in debug mode */
+    curl_easy_getinfo(curlhandle, CURLINFO_RESPONSE_CODE, &httpresult);
+    curl_easy_cleanup(curlhandle);
+    if (httpresult>=300)
+    {
+        printf("\nError downloading file, Server Response: %d\n",(int) httpresult);
+        return FALSE;
+    }
+
+    /* we failed? */
+    if(CURLE_OK != res)
+        updater_error("curl error.");
 
     printf("\n%s downloaded succesful (%d).\n",destfilename, res);
     return TRUE;
