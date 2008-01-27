@@ -643,6 +643,25 @@ int Event_PollInputDevice(void)
         case SDL_KEYDOWN:
             if (cpl.menustatus == MENU_NO && (!InputStringFlag || cpl.input_mode != INPUT_MODE_NUMBER))
             {
+#ifdef DEVELOPMENT
+                if (widget_mouse_event.owner > -1 && f_custom_cursor == MSCURSOR_MOVE && (event.key.keysym.sym == SDLK_DELETE || event.key.keysym.sym == SDLK_BACKSPACE))
+                {
+                    switch (widget_mouse_event.owner)
+                    {
+                        case 17: // MAININV
+                        case 19: // CONSOLE
+                        case 20: // NUMBER
+                            sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                            break;
+                        default:
+                            sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+                            cur_widget[widget_mouse_event.owner].show = FALSE;
+                            f_custom_cursor = 0;
+                            SDL_ShowCursor(1);
+                            options.show_all_widgets = FALSE;
+                    }
+                }
+#endif
                 if (event.key.keysym.mod & KMOD_SHIFT)
                     cpl.inventory_win = IWIN_INV;
                 else
@@ -2845,6 +2864,25 @@ void check_menu_keys(int menu, int key)
                 Mix_VolumeMusic(options.music_volume);
                 if (options.playerdoll)
                     cur_widget[PDOLL_ID].show = TRUE;
+#ifdef DEVELOPMENT
+                if (options.show_all_widgets)
+                {
+                    int nID;
+                    for (nID = 0; nID < TOTAL_WIDGETS; nID++)
+                    {
+                        switch (nID)
+                        {
+                            case 10: // MIXWIN, it's permanently disabled AFAIK
+                            case 17: // MAININV
+                            case 19: // CONSOLE
+                            case 20: // NUMBER
+                                break;
+                            default:
+                                cur_widget[nID].show = TRUE;
+                        }
+                    }
+                }
+#endif
 
                 /* ToggleScreenFlag sets changes this option in the main loop
                  * so we revert this setting, also if a resolution change occurs

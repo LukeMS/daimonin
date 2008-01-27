@@ -122,7 +122,11 @@ _option             opt[]                           =
         {"Low health warning:", "Whether to show a low health warning above your head.","If hitpoints are lower than the given percentage of maximum a warning","is shown. Set to ~0~ to disable.", "",SEL_RANGE,0,100,5,20, &options.warning_hp,VAL_INT},
         {"Show yourself targeted:", "Whether to show your name in the target area.","","", "",SEL_CHECKBOX,0,1,1,0, &options.show_target_self,VAL_BOOL},
         {"Kill-Stats:", "Whether to keep a count all kills based on mob name.","","", "",SEL_CHECKBOX,0,1,1,1, &options.kerbholz,VAL_BOOL},
+#ifdef DEVELOPMENT
+        {"Stat-O-Meter:", "How often to update the Stat-O-Meter.","It is updated every X seconds, as given here.","", "",SEL_RANGE,1,15,1,5, &options.statsupdate,VAL_INT},
+#else
         {"Stat-O-Meter:", "Whether to show the Stat-O-Meter.","It is updated every X seconds, as given here.","Set to ~0~ to disable.", "",SEL_RANGE,0,15,1,5, &options.statsupdate,VAL_INT},
+#endif
         {"Extended exp display:", "How the exp display is shown.","The format key is: ~4nl~ = For next level; ~tnl~ = Till next level;","~LExp~ = Level exp; ~TExp~ = Total exp;", "Level/LExp#LExp\\%#LExp/LExp 4nl#TExp/TExp 4nl#(LExp\\%) LExp tnl",SEL_RANGE,0,4,1,4, &options.iExpDisplay,VAL_INT},
         {"#"},
         /* End of Page */
@@ -163,6 +167,9 @@ _option             opt[]                           =
         {"Key-info in dialog menus:", "UNUSED.","","", "",SEL_CHECKBOX,0,1,1,1, &options.show_d_key_infos,VAL_BOOL},
         {"SpeedUp:", "Whether/how much to speed up the client.","The (potential) cost is some graphical glitches. A higher value means","a faster the client but more glitches. Set to ~0~ to disable.", "",SEL_RANGE,0,400,10,0, &options.speedup,VAL_INT},
         {"Menu repeat speed:", "Whether/how fast to repeat a held down key.","This only affects keypresses in menus/the console,","not in gameplay (that rate is fixed).", "Off#Slow#Medium#Fast",SEL_RANGE,0,3,1,2, &options.menu_repeat,VAL_INT},
+#ifdef DEVELOPMENT
+        {"Show all widgets:", "Whether to show all widgets (of course).", "Check the box if you removed some widgets previously","and have now changed your mind.", "",SEL_CHECKBOX,0,1,1,1, &options.show_all_widgets,VAL_INT},
+#endif
 #ifdef WIDGET_SNAP
         {"Widget snap width:", "The distance at which widgets will snap to each other","Set to zero to disable it.","EXPERIMENTAL!", "",SEL_RANGE,0,32,1,0, &options.widget_snap,VAL_INT},
 #endif
