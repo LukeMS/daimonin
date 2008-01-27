@@ -23,7 +23,7 @@
 /* This is a config file for the client.
  */
 
-//#define DEVELOPMENT
+#define DEVELOPMENT
 
 /* uncomment this to enable the channel support in the client */
 #define USE_CHANNELS
