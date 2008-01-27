@@ -188,7 +188,8 @@ void UpdateMapName(char *name)
          */
         sound_fadeout_music(0);
     }
-    cur_widget[MAPNAME_ID].wd = get_string_pixel_length(name, &SystemFont);
+    cur_widget[MAPNAME_ID].wd = get_string_pixel_length(name, &BigFont);
+    cur_widget[MAPNAME_ID].ht = BigFont.c[0].h;
     strcpy(MapData.name, name);
 }
 
