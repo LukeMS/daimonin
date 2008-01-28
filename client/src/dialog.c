@@ -168,7 +168,7 @@ _option             opt[]                           =
         {"SpeedUp:", "Whether/how much to speed up the client.","The (potential) cost is some graphical glitches. A higher value means","a faster the client but more glitches. Set to ~0~ to disable.", "",SEL_RANGE,0,400,10,0, &options.speedup,VAL_INT},
         {"Menu repeat speed:", "Whether/how fast to repeat a held down key.","This only affects keypresses in menus/the console,","not in gameplay (that rate is fixed).", "Off#Slow#Medium#Fast",SEL_RANGE,0,3,1,2, &options.menu_repeat,VAL_INT},
 #ifdef DEVELOPMENT
-        {"Widget layout:", "Whether to alter the widget layout.", "Select the action you want to perform.","Unlike other options, this will only take effect when you choose ~D~one.", "No change#Show all#Default layout",SEL_RANGE,0,2,1,0, &options.widget_layout,VAL_INT},
+        {"Show all widgets:", "Whether to show all widgets (of course).", "Check the box if you removed some widgets previously","and have now changed your mind.", "",SEL_CHECKBOX,0,1,1,1, &options.show_all_widgets,VAL_INT},
 #endif
 #ifdef WIDGET_SNAP
         {"Widget snap width:", "The distance at which widgets will snap to each other","Set to zero to disable it.","EXPERIMENTAL!", "",SEL_RANGE,0,32,1,0, &options.widget_snap,VAL_INT},

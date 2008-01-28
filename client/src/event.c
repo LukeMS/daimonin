@@ -658,7 +658,7 @@ int Event_PollInputDevice(void)
                             cur_widget[widget_mouse_event.owner].show = FALSE;
                             f_custom_cursor = 0;
                             SDL_ShowCursor(1);
-                            options.widget_layout = 0;
+                            options.show_all_widgets = FALSE;
                     }
                 }
 #endif
@@ -2865,7 +2865,7 @@ void check_menu_keys(int menu, int key)
                 if (options.playerdoll)
                     cur_widget[PDOLL_ID].show = TRUE;
 #ifdef DEVELOPMENT
-                if (options.widget_layout == 1) // Show all
+                if (options.show_all_widgets)
                 {
                     int nID;
                     for (nID = 0; nID < TOTAL_WIDGETS; nID++)
@@ -2882,9 +2882,6 @@ void check_menu_keys(int menu, int key)
                         }
                     }
                 }
-                else if (options.widget_layout == 2) // Revert to default layout
-                    init_widgets_fromDefault();
-                options.widget_layout = 0;
 #endif
 
                 /* ToggleScreenFlag sets changes this option in the main loop
