@@ -241,7 +241,7 @@ typedef struct _options
     Boolean                 shoutoff;
     int                     menu_repeat;
 #ifdef DEVELOPMENT
-    int                     widget_layout;
+    int                     show_all_widgets;
 #endif
 #ifdef WIDGET_SNAP
     int                     widget_snap;

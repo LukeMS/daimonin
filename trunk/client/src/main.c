@@ -389,7 +389,7 @@ void init_game_data(void)
     options.statsupdate=5;
     options.firststart=TRUE;
 #ifdef DEVELOPMENT
-    options.widget_layout = 0;
+    options.show_all_widgets = TRUE;
 #endif
 #ifdef WIDGET_SNAP
     options.widget_snap=0;
