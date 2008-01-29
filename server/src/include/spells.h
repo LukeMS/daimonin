@@ -363,11 +363,11 @@ enum spellnrs
 #define IS_SUMMON_SPELL(spell) (spells[type].flags&SPELL_DESC_SUMMON)
 
 
-#define PATH_DMG_MULT(__op,__spell) (((__op->path_attuned & __spell->path) ? 1.25 : 1) * \
+#define PATH_DMG_MULT(__op,__spell) (((__op->path_attuned & __spell->path) ? 1.15 : 1) * \
 	((__op->path_repelled & __spell->path) ? 0.7 : 1))
-#define PATH_SP_MULT(__op,__spell) (((__op->path_attuned & __spell->path) ? 1.25 : 1) * \
-                ((__op->path_repelled & __spell->path) ? 0.8 : 1))
-#define PATH_TIME_MULT(__op,__spell) (((__op->path_attuned & __spell->path) ? 1.25 : 1) * \
+#define PATH_SP_MULT(__op,__spell) (((__op->path_attuned & __spell->path) ? 0.85 : 1) * \
+                ((__op->path_repelled & __spell->path) ? 1.25 : 1))
+#define PATH_TIME_MULT(__op,__spell) (((__op->path_attuned & __spell->path) ? 1.15 : 1) * \
                 ((__op->path_repelled & __spell->path) ? 0.8 : 1))
 
 extern char        *spellpathnames[NRSPELLPATHS];
