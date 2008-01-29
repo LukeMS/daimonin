@@ -240,9 +240,6 @@ typedef struct _options
     int                     itemdmg_limit_red;
     Boolean                 shoutoff;
     int                     menu_repeat;
-#ifdef DEVELOPMENT
-    int                     show_all_widgets;
-#endif
 #ifdef WIDGET_SNAP
     int                     widget_snap;
 #endif

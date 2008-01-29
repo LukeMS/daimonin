@@ -1164,13 +1164,11 @@ void widget_show_statometer(int x, int y)
 {
     char statbuf[128];
 
-#ifndef DEVELOPMENT
     if (!options.statsupdate)
     {
         cur_widget[STATOMETER_ID].show=FALSE;
         return;
     }
-#endif
 
     StringBlt(ScreenSurface, &BigFont, "Stat-O-Meter:", x+2, y+2, COLOR_BLUE,NULL,NULL);
     sprintf(statbuf,"EXP: %d",statometer.exp);

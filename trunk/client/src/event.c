@@ -648,17 +648,38 @@ int Event_PollInputDevice(void)
                 {
                     switch (widget_mouse_event.owner)
                     {
+                        case 12: // PLAYERDOLL
+                            if (!options.playerdoll) // Actually this shouldn't be necessary as the widget should already be hidden, but JIC
+                            {
+                                sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+                                cur_widget[widget_mouse_event.owner].show = FALSE;
+                                f_custom_cursor = 0;
+                                SDL_ShowCursor(1);
+                            }
+                            else
+                                sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                            break;
                         case 17: // MAININV
                         case 19: // CONSOLE
                         case 20: // NUMBER
                             sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                            break;
+                        case 21: // STATOMETER
+                            if (!options.statsupdate) // Actually this shouldn't be necessary as the widget should already be hidden, but JIC
+                            {
+                                sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+                                cur_widget[widget_mouse_event.owner].show = FALSE;
+                                f_custom_cursor = 0;
+                                SDL_ShowCursor(1);
+                            }
+                            else
+                                sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
                             break;
                         default:
                             sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
                             cur_widget[widget_mouse_event.owner].show = FALSE;
                             f_custom_cursor = 0;
                             SDL_ShowCursor(1);
-                            options.show_all_widgets = FALSE;
                     }
                 }
 #endif
@@ -2864,25 +2885,6 @@ void check_menu_keys(int menu, int key)
                 Mix_VolumeMusic(options.music_volume);
                 if (options.playerdoll)
                     cur_widget[PDOLL_ID].show = TRUE;
-#ifdef DEVELOPMENT
-                if (options.show_all_widgets)
-                {
-                    int nID;
-                    for (nID = 0; nID < TOTAL_WIDGETS; nID++)
-                    {
-                        switch (nID)
-                        {
-                            case 10: // MIXWIN, it's permanently disabled AFAIK
-                            case 17: // MAININV
-                            case 19: // CONSOLE
-                            case 20: // NUMBER
-                                break;
-                            default:
-                                cur_widget[nID].show = TRUE;
-                        }
-                    }
-                }
-#endif
 
                 /* ToggleScreenFlag sets changes this option in the main loop
                  * so we revert this setting, also if a resolution change occurs
