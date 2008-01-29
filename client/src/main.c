@@ -388,9 +388,6 @@ void init_game_data(void)
 //    options.statometer=1;
     options.statsupdate=5;
     options.firststart=TRUE;
-#ifdef DEVELOPMENT
-    options.show_all_widgets = TRUE;
-#endif
 #ifdef WIDGET_SNAP
     options.widget_snap=0;
 #endif
@@ -1813,9 +1810,7 @@ int main(int argc, char *argv[])
 
         if((GameStatus  == GAME_STATUS_PLAY) && options.statsupdate )
         {
-#ifndef DEVELOPMENT
             cur_widget[STATOMETER_ID].show=TRUE;
-#endif
             if ((int)(LastTick-statometer.lastupdate)>(options.statsupdate*1000))
             {
                 statometer.lastupdate=LastTick;

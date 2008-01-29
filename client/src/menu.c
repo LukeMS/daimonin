@@ -514,13 +514,41 @@ int client_command_check(char *cmd)
             statometer.killhour   = 0.0f;
             return TRUE;
         }
-        if (!strnicmp(cmd, "/reset widgets", strlen("/reset widgets")))
+        if (strlen(cmd) == strlen("/reset widgets") && !strnicmp(cmd, "/reset widgets", strlen("/reset widgets")))
         {
             draw_info("Resetting widgets!", COLOR_HGOLD);
             init_widgets_fromDefault();
             return TRUE;
         }
-        draw_info("Usage: ~/reset buddy~ to reset the buddylist,\n~/reset ignore~ to reset the ignorelist,\n~/reset chatfilter~ to reset the chatfilter list,\n~/reset kills~ to reset the kill list,\n~/reset stats~ to reset the stat-o-meter, or\n~/reset widgets~ to reset the widgets.", COLOR_WHITE);
+        if (!strnicmp(cmd, "/reset widgetstatus", strlen("/reset widgetstatus")))
+        {
+            int nID;
+            draw_info("Resetting widgetstatus!", COLOR_HGOLD);
+            for (nID = 0; nID < TOTAL_WIDGETS; nID++)
+            {
+                switch (nID)
+                {
+                    case 10: // MIXWIN
+                        break;
+                    case 12: // PLAYERDOLL, actually this shouldn't be necessary as we can't override the option with mouse-hiding, but JIC
+                        if (options.playerdoll)
+                            cur_widget[nID].show = TRUE;
+                        break;
+                    case 17: // MAININV
+                    case 19: // CONSOLE
+                    case 20: // NUMBER
+                        break;
+                    case 21: // STATOMETER, actually this shouldn't be necessary as we can't override the option with mouse-hiding, but JIC
+                        if (options.statsupdate)
+                            cur_widget[nID].show = TRUE;
+                        break;
+                    default:
+                        cur_widget[nID].show = TRUE;
+                }
+            }
+            return TRUE;
+        }
+        draw_info("Usage: ~/reset buddy~ to reset the buddylist,\n~/reset ignore~ to reset the ignorelist,\n~/reset chatfilter~ to reset the chatfilter list,\n~/reset kills~ to reset the kill list,\n~/reset stats~ to reset the stat-o-meter,\n~/reset widgets~ to reset the widgets, or\n~/reset widgetstatus~ to show any previously hidden widgets.", COLOR_WHITE);
         return TRUE;
     }
 #endif
