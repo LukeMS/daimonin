@@ -473,7 +473,7 @@ int client_command_check(char *cmd)
             strcpy(cmd, "/target 2");
     }
 #ifdef DEVELOPMENT
-    else if (!strnicmp(cmd, "/reset", strlen("/reset")))
+    else if (!strnicmp(cmd, "/reset ", strlen("/reset ")))
     {
         if (!strnicmp(cmd, "/reset buddy", strlen("/reset buddy")))
         {
