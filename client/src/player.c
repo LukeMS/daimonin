@@ -152,28 +152,6 @@ void client_send_tell_extended(char *body, char *tail)
     cs_write_string(csocket.fd, buf, strlen(buf));
 }
 
-/* Strips excess whitespace from command, writing the normalized command to cmd.
- */
-static void NormalizeCommand(char *cmd, const char *command)
-{
-    char  buf[MAX_BUF], /* this will be a wc of command */
-         *token = NULL;
-    strcpy(buf, command);
-    *cmd = '\0';
-    /* Get the next non-whitespace token from buf and concatenate it and one
-     * trailing whitespace to cmd:
-     */
-    for (token = strtok(buf, " \t"); token != NULL; token = strtok(NULL, " \t"))
-    {
-        strcat(cmd, token);
-        strcat(cmd, " ");
-    }
-    /* There will be one trailing whitespace to our fully normalized cmd.
-     * Get rid of it and fill the rest of cmd with \0:
-     */
-    memset(cmd + strlen(cmd) - 1, '\0', MAX_BUF - (strlen(cmd) - 1));
-}
-
 /* Splits command at the next #,
  * returning a pointer to the occurrence (which is overwritten with \0 first) or
  * NULL if no next multicommand is found or command is chat, etc.
@@ -215,7 +193,7 @@ int send_command(const char *command, int repeat, int must_send)
     /* Copy a normalized (leading, trailing, and excess inline whitespace-
      * stripped) command to cmd:
      */
-    NormalizeCommand(cmd, command);
+    strcpy(cmd, normalize_string(command));
     /* Now go through cmd, possibly separating multicommands.
      * Each command (before separation) is pointed to by token:
      */

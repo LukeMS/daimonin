@@ -309,3 +309,27 @@ extern void     markdmbuster()
 
 
 }
+
+static char ScratchSpace[MAX_BUF];
+
+/* Strips excess whitespace from string, writing the normalized string to ScratchSpace.
+ */
+char *normalize_string(const char *string)
+{
+    char  buf[MAX_BUF], /* this will be a wc of string */
+         *token = NULL;
+    strcpy(buf, string);
+    /* Wipe ScratchSpace clean every time: */
+    *ScratchSpace = '\0';
+    /* Get the next non-whitespace token from buf and concatenate it and one
+     * trailing whitespace to ScratchSpace:
+     */
+    for (token = strtok(buf, " \t"); token != NULL; token = strtok(NULL, " \t"))
+    {
+        strcat(ScratchSpace, token);
+        strcat(ScratchSpace, " ");
+    }
+    /* There will be one trailing whitespace left. Get rid of it: */
+    ScratchSpace[strlen(ScratchSpace) - 1] == '\0';
+    return ScratchSpace;
+}
