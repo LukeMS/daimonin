@@ -261,16 +261,30 @@ void set_gmaster_mode(player *pl, int mode)
         FILE *fp;
         LOG(llevSystem, "read stream file...\n");
         sprintf(buf, "%s/%s", settings.localdir, "stream");
-        if ((fp = fopen(buf, "r")) == NULL)
+        if ((fp = fopen(buf, "r")))
         {
-            LOG(llevBug, "BUG: Cannot open %s for reading\n", buf);
-            return;
+            char *cp;
+            if (!fgets(buf, MAX_BUF, fp))
+            {
+                LOG(llevBug, "BUG: error in stream file\n");
+                return;
+            }
+            if ((cp = strchr(buf, '\n')))
+                *cp = '\0';
+            if (!strcmp(buf, "(null)"))
+                new_draw_info_format(NDI_UNIQUE, 0, pl->ob, "Server compiled with trunk only.");
+            else
+            {
+                new_draw_info_format(NDI_UNIQUE, 0, pl->ob, "Server compiled with ~%s~ stream.", buf);
+                while (fgets(buf, MAX_BUF, fp))
+                {
+                    if ((cp = strchr(buf, '\n')))
+                        *cp = '\0';
+                    new_draw_info(NDI_UNIQUE, 0, pl->ob, buf);
+                }
+            }
+            fclose(fp);
         }
-        fscanf(fp, "%s", buf);
-        if (!strcmp(buf, "(null)"))
-            new_draw_info_format(NDI_UNIQUE, 0, pl->ob, "Server compiled with trunk only.");
-        else
-            new_draw_info_format(NDI_UNIQUE, 0, pl->ob, "Server compiled with ~%s~ stream.", buf);
     }
 #endif
 }
