@@ -272,7 +272,7 @@ void set_gmaster_mode(player *pl, int mode)
             if ((cp = strchr(buf, '\n')))
                 *cp = '\0';
             if (!strcmp(buf, "(null)"))
-                new_draw_info_format(NDI_UNIQUE, 0, pl->ob, "Server compiled with trunk only.");
+                new_draw_info(NDI_UNIQUE, 0, pl->ob, "Server compiled with trunk only.");
             else
             {
                 new_draw_info_format(NDI_UNIQUE, 0, pl->ob, "Server compiled with ~%s~ stream.", buf);
