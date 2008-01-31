@@ -704,6 +704,7 @@ int command_restart(object *ob, char *params)
         fprintf(fp, "%s", params);
     else
         fprintf(fp, "(null)");
+    fclose(fp);
 #else
     int t = 300;
 
