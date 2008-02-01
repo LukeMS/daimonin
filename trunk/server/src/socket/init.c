@@ -48,7 +48,7 @@
 #include <arpa/inet.h>
 #endif
 #include <newserver.h>
-#include "zlib.h"
+#include "../zlib/zlib.h"
 
 static int  send_bufsize = 24*1024;
 static int  read_bufsize = 8*1024;
@@ -357,7 +357,9 @@ void init_ericserver()
     }
 
 
+#ifdef SERVER_SEND_FACES
     read_client_images();
+#endif
     init_srv_files(); /* load all srv_xxx files or generate them */
 }
 
@@ -372,7 +374,9 @@ void init_ericserver()
 void free_all_newserver()
 {
     LOG(llevDebug, "Freeing all new client/server information.\n");
+#ifdef SERVER_SEND_FACES
     free_socket_images();
+#endif
     /* for clean memory remove we must loop init_sockets to free the buffers */
     free(init_sockets);
 }

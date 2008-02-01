@@ -147,11 +147,14 @@ void SetUp(char *buf, int len, NewSocket *ns)
         }
         else if (!strcmp(cmd, "facecache"))
         {
+#ifdef SERVER_SEND_FACES
             ns->facecache = atoi(param);
             strcat(cmdback, param);
+#endif
         }
         else if (!strcmp(cmd, "faceset"))
         {
+#ifdef SERVER_SEND_FACES
             int q   = atoi(param);
 
             if (is_valid_faceset(q))
@@ -160,6 +163,7 @@ void SetUp(char *buf, int len, NewSocket *ns)
             strcat(cmdback, tmpbuf);
             /* if the client is using faceset, it knows about image2 command */
             ns->image2 = 1;
+#endif
         }
         else if (!strcmp(cmd, "mapsize"))
         {

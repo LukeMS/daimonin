@@ -35,6 +35,8 @@
  * checks in core loops */
 /* #define PRODUCTION_SYSTEM */
 
+#define ESRV_DEBUG
+
 #ifndef PRODUCTION_SYSTEM
 /* Active list debugging: object.c (activelist_insert_inline()) */
 /* #define DEBUG_ACTIVELIST_LOG */ /* log message when an object is added or removed from an active list */

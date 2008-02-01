@@ -31,10 +31,14 @@
 #define EXTERN extern
 #endif
 
-#define ESRV_DEBUG
+/* temp. defines to prepare a login server based game server which
+ * - don't loads face (daimonin.0 file)
+ * - don't allow the request and sending of faces from client
+ * - don't generates and sending the client srv_files
+ */
+#define SERVER_SEND_FACES
 
 #include "includes.h"
-
 
 /* Type defines for specific signed/unsigned variables of a certain number
  * of bits.  Not really used anyplace, but if a certain number of bits
@@ -245,10 +249,12 @@ typedef signed long long         sint64;
 #define MAX_AGGRO_RANGE 9 /* if target of mob is out of this range (or stats.Wis if higher)*/
 #define MAX_AGGRO_TIME 12 /* until this time - then it skip target */
 
+#ifdef SERVER_SEND_FACES
 /* return values for esrv_send_face() in image.c */
 #define SEND_FACE_OK 0
 #define SEND_FACE_OUT_OF_BOUNDS 1
 #define SEND_FACE_NO_DATA 2
+#endif
 
 /* for attack.c and material.c - item damage */
 #define HIT_FLAG_WEAPON        1024
