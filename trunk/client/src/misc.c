@@ -330,6 +330,6 @@ char *normalize_string(const char *string)
         strcat(ScratchSpace, " ");
     }
     /* There will be one trailing whitespace left. Get rid of it: */
-    ScratchSpace[strlen(ScratchSpace) - 1] == '\0';
+    ScratchSpace[strlen(ScratchSpace) - 1] = '\0';
     return ScratchSpace;
 }
