@@ -37,7 +37,9 @@
  */
 
 #include <global.h>
-#include "zlib.h"
+
+#ifdef SERVER_SEND_FACES
+#include "../zlib/zlib.h"
 
 #define MAX_FACE_SETS   1
 
@@ -472,3 +474,4 @@ void send_image_sums(NewSocket *ns, char *params)
         LOG(llevError, "ERROR: send_image_send: buffer overrun, %s > %s\n", global_sl.len, MAXSOCKBUF);
     Send_With_Handling(ns, &global_sl);
 }
+#endif

@@ -803,6 +803,7 @@ void command_new_char(char *params, int len, player *pl)
 #endif
 }
 
+#ifdef SERVER_SEND_FACES
 void command_face_request(char *params, int len, NewSocket *ns)
 {
     int i, count;
@@ -822,6 +823,7 @@ void command_face_request(char *params, int len, NewSocket *ns)
         }
     }
 }
+#endif
 
 void send_spelllist_cmd(object *op, char *spellname, int mode)
 {

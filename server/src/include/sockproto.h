@@ -1,4 +1,5 @@
 /* image.c */
+#ifdef SERVER_SEND_FACES
 int             is_valid_faceset(int fsn);
 void            free_socket_images(void);
 void            read_client_images(void);
@@ -7,6 +8,7 @@ void            SendFaceCmd(char *buff, int len, NewSocket *ns);
 int             esrv_send_face(NewSocket *ns, short face_num, int nocache);
 void            send_image_info(NewSocket *ns, char *params);
 void            send_image_sums(NewSocket *ns, char *params);
+#endif
 /* info.c */
 void            new_draw_info(const int flags, const int pri, const object *const pl, const char *const buf);
 void            new_draw_info_format(const int flags, const int pri, const object *const pl, const char *const format, ...);

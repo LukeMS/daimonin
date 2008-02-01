@@ -24,18 +24,15 @@ SHELL = @BOURNE_SHELL@
 VPATH = @srcdir@
 srcdir = @srcdir@
 
-SOCKSRCS = \
-	image.c \
-	info.c \
-	init.c \
-	item.c\
-	loop.c \
-	lowlevel.c\
-	metaserver.c\
-	request.c\
-	sounds.c
+ZLIBSRCS = \
+	adler32.c\
+	crc32.c\
+	compress.c\
+	deflate.c\
+	trees.c\
+	zutil.c
 
-SRCS = $(SOCKSRCS)
+SRCS = $(ZLIBSRCS)
 
 ALLFILES=$(SRCS) Makefile.in
 
@@ -56,7 +53,7 @@ INCLUDES= $(EXTRA_INCLUDES) -I. -I../include -I$(srcdir)/../include
 
 SED= @SED@
 
-socket.a: $(OBJS)
+zlib.a: $(OBJS)
 	$(RM) -f $@
 	$(AR) $(ARFLAGS) $@ $(OBJS)
 	$(RANLIB) $@
@@ -67,22 +64,18 @@ depend:
 # Nothing to install here
 install::
 
-proto:
-	cproto -D__CEXTRACT__ $(INCLUDES) $(SOCKSRCS) > ../include/sockproto.h
-	chmod 644 ../include/sockproto.h
-
 archive:
-	if [ ! -d $(ARCHIVE)/socket ]; then $(MKDIR) $(ARCHIVE)/socket; fi
-	$(CP) $(ALLFILES) $(ARCHIVE)/socket
+	if [ ! -d $(ARCHIVE)/zlib ]; then $(MKDIR) $(ARCHIVE)/zlib; fi
+	$(CP) $(ALLFILES) $(ARCHIVE)/zlib
 
 clean:
-	$(RM) -f $(OBJS) Makefile.bak socket.a
+	$(RM) -f $(OBJS) Makefile.bak zlib.a
 
 distclean: clean
-	$(RM) -f Makefile socket.a
+	$(RM) -f Makefile zlib.a
 
 .c.o:
 	$(CC) $(CFLAGS) $(INCLUDES)  -c $*.c
 
-all:: socket.a
+all:: zlib.a
 

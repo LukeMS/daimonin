@@ -118,14 +118,16 @@ PlCmdMapping        plcommands[]    =
 NsCmdMapping        nscommands[]    =
 {
     { "addme",          AddMeCmd },
-    { "askface",        SendFaceCmd},   /* Added: phil */
-    { "requestinfo",    RequestInfo},
-    { "setfacemode",    SetFaceMode},
     { "setsound",       SetSound},
     { "setup",          SetUp},
     { "version",        VersionCmd },
     { "rf",             RequestFileCmd },
+#ifdef SERVER_SEND_FACES
+	{ "requestinfo",    RequestInfo},
+	{ "setfacemode",    SetFaceMode},
+	{ "askface",        SendFaceCmd},   /* Added: phil */
     { "fr",             command_face_request},
+#endif
     { NULL, NULL}   /* terminator */
 };
 
@@ -293,6 +295,7 @@ void command_talk_ex(char *data, int len, player *pl)
 }
 
 
+#ifdef SERVER_SEND_FACES
 /* RequestInfo is sort of a meta command - there is some specific
  * request of information, but we call other functions to provide
  * that information.
@@ -333,7 +336,7 @@ void RequestInfo(char *buf, int len, NewSocket *ns)
     else
         Write_String_To_Socket(ns, BINARY_CMD_REPLYINFO, bigbuf, len);
 }
-
+#endif
 
 //static inline int socket_prepare_commands(NewSocket *ns)
 static int socket_prepare_commands(NewSocket *ns)
