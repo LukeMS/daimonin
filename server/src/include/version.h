@@ -29,6 +29,6 @@
 #define VERSION "0.9.7"
 #endif
 
-#define VERSION_CS 991023
-#define VERSION_SC 991023
+#define VERSION_CS 991024
+#define VERSION_SC 991024
 #define VERSION_INFO "Daimonin Server"

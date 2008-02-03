@@ -165,7 +165,7 @@ typedef struct ClientSocket
 {
     SOCKET              fd;                     /* typedef your socket type to SOCKET */
     SockList            inbuf;
-    SockList   outbuf;
+    SockList			outbuf;
     int                 cs_version, sc_version; /* Server versions of these */
     /* These are used for the newer 'windowing' method of commands -
      * number of last command sent, number of received confirmation
@@ -568,9 +568,11 @@ enum
 #define COLOR_TURQUOISE 210
 
 #define COLOR_BLACK 255
+
+#define SockList_AddChar(__sl, __c) (((__sl)->buf[(__sl)->len++])= (__c))
+
 extern void     DoClient(ClientSocket *csocket);
 extern void     SockList_Init(SockList *sl);
-extern void     SockList_AddChar(SockList *sl, char c);
 extern void     SockList_AddShort(SockList *sl, uint16 data);
 extern void     SockList_AddInt(SockList *sl, uint32 data);
 extern int      GetInt_String(unsigned char *data);

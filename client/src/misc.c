@@ -333,3 +333,60 @@ char *normalize_string(const char *string)
     ScratchSpace[strlen(ScratchSpace) - 1] = '\0';
     return ScratchSpace;
 }
+
+uint16 adjust_endian_int16(uint16 buf)
+{
+	if(endian_do16)
+	{
+		static uint16 serv_int16;
+
+		/* well, we just must reverse the nibbles */
+		serv_int16 = ((buf>>8)&0x00ff) | ((buf<<8)&0xff00);
+		return serv_int16;
+	}
+
+	return buf;
+}
+
+uint32 adjust_endian_int32(uint32 buf)
+{
+	if(endian_do32)
+	{
+		static uint32 serv_int32;
+		uint32 temp;
+		int shift;
+
+
+		temp = buf & 0x000000ff;
+		temp <<= endian_shift32[0];
+		serv_int32 = temp;
+
+		temp = buf & 0x0000ff00;
+		shift = endian_shift32[1] - 8;
+		if(shift > 0)
+			temp <<= shift;
+		else
+			temp >>= shift;
+		serv_int32 |= temp;
+
+		temp = buf & 0x00ff0000;
+		shift = endian_shift32[2] - 16;
+		if(shift > 0)
+			temp <<= shift;
+		else
+			temp >>= shift;
+		serv_int32 |= temp;
+
+		temp = buf & 0xff000000;
+		shift = endian_shift32[3] - 24;
+		if(shift > 0)
+			temp <<= shift;
+		else
+			temp >>= shift;
+		serv_int32 |= temp;
+
+		return serv_int32;
+	}
+	return buf;
+}
+

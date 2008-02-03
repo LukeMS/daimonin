@@ -25,6 +25,7 @@ VPATH = @srcdir@
 srcdir = @srcdir@
 
 SOCKSRCS = \
+	connect.c \
 	image.c \
 	info.c \
 	init.c \
@@ -33,6 +34,7 @@ SOCKSRCS = \
 	lowlevel.c\
 	metaserver.c\
 	request.c\
+	startup.c\
 	sounds.c
 
 SRCS = $(SOCKSRCS)

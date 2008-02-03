@@ -1200,8 +1200,7 @@ static int load_anim_tmp(void)
      * appear in game flow its a sign of a uninit of simply
      * buggy operation.
      */
-    anim_cmd[0] = (unsigned char) ((count >> 8) & 0xff);
-    anim_cmd[1] = (unsigned char) (count & 0xff);
+	*((uint16*)anim_cmd) = (uint16) count;
     anim_cmd[2] = 0; /* flags ... */
     anim_cmd[3] = 1;
     anim_cmd[4] = 0; /* face id o */
@@ -1227,8 +1226,7 @@ static int load_anim_tmp(void)
             {
                 new_anim = FALSE;
                 faces = 0;
-                anim_cmd[0] = (unsigned char) ((count >> 8) & 0xff);
-                anim_cmd[1] = (unsigned char) (count & 0xff);
+				*((uint16*)anim_cmd) = (uint16) count;
                 faces = 1;
                 anim_len = 4;
             }
@@ -1257,8 +1255,8 @@ static int load_anim_tmp(void)
             else
             {
                 face_id = (uint16) atoi(buf);
-                anim_cmd[anim_len++] = (unsigned char) ((face_id >> 8) & 0xff);
-                anim_cmd[anim_len++] = (unsigned char) (face_id & 0xff);
+				*((uint16*)(anim_cmd+anim_len)) = (uint16) face_id;
+				anim_len+=2;
             }
         }
     }

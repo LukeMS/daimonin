@@ -57,7 +57,7 @@ void            HandleClient(NewSocket *ns, player *pl);
 void            doeric_server(int update, struct timeval *timeout);
 void            doeric_server_write(void);
 /* lowlevel.c */
-void            SockList_AddString(SockList *sl, const char *data);
+void            SockList_AddString(SockList *sl, const char *data, int len);
 void            Write_String_To_Socket(NewSocket *ns, char cmd, char *buf, int len);
 void            Send_With_Handling(NewSocket *ns, SockList *msg);
 void            Write_To_Socket(NewSocket *ns, unsigned char *buf, int len);

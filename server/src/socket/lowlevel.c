@@ -20,8 +20,9 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to daimonin@nord-com.net
+	The author can be reached via e-mail to info@daimonin.net
 */
+
 /* newsocket.c contains some base functions that both the client and server
  * can use.  As such, depending what we are being compiled for will
  * determine what we can include.  the client is designed have
@@ -36,18 +37,25 @@
  *
  **********************************************************************/
 
-/* add a 0 terminated string */
-void SockList_AddString(SockList *sl, const char *data)
+/* add a 0 terminated string 
+ * len is the string length we copy
+ * if len is zero, we copy until we find '\0' as string terminator 
+ */
+void SockList_AddString(SockList *sl, const char *data, int len)
 {
-    char    c;
+	if(len)
+	{
+		memcpy(sl->buf+sl->len,data,len);
+		sl->buf[len+sl->len++] = 0;
+	}
+	else
+	{
+		register char    c;
 
-    while ((c = *data++))
-    {
-        sl->buf[sl->len] = c;
-        sl->len++;
-    }
-    sl->buf[sl->len] = c;
-    sl->len++;
+		while ((c = *data++))
+			sl->buf[sl->len++] = c;
+		sl->buf[sl->len++] = 0;
+	}
 }
 
 
