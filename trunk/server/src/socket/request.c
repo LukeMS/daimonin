@@ -20,7 +20,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to daimonin@nord-com.net
+	The author can be reached via e-mail to info@daimonin.net
 */
 
 /*
@@ -99,7 +99,13 @@ void SetUp(char *buf, int len, NewSocket *ns)
 
     LOG(llevInfo, "Get SetupCmd:: %s\n", buf);
     cmdback[0] = BINARY_CMD_SETUP;
-    cmdback[1] = 0;
+
+	/* create the endian template so the client can shift right */
+	*((uint16*) (cmdback+1)) = 0x0201;
+	*((uint32*) (cmdback+3)) = 0x04030201;
+
+	cmdback[7] = 0; /* faked string end so we can simply strcat below */
+
     /*strcpy(cmdback,"setup");*/
     for (s = 0; s < len;)
     {
@@ -1248,7 +1254,7 @@ void draw_client_map2(object *pl)
     SockList_AddChar(&sl, (char) pl_ptr->map_update_cmd); /* marker */
     if(pl_ptr->map_update_cmd != MAP_UPDATE_CMD_SAME)
     {
-        SockList_AddString(&sl, pl->map->name);
+        SockList_AddString(&sl, pl->map->name, 0);
 
         if(pl_ptr->map_update_cmd == MAP_UPDATE_CMD_CONNECTED)
         {
@@ -1746,13 +1752,13 @@ void draw_client_map2(object *pl)
                 {
                     SockList_AddChar(&sl, (char) pname_flag);
                     /*if (pname_flag & 0x08)
-                        SockList_AddString(&sl, CONTR(pname1)->quick_name);*/
+                        SockList_AddString(&sl, CONTR(pname1)->quick_name, 0);*/
                     if (pname_flag & 0x04)
-                        SockList_AddString(&sl, CONTR(pname2)->quick_name);
+                        SockList_AddString(&sl, CONTR(pname2)->quick_name, 0);
                     if (pname_flag & 0x02)
-                        SockList_AddString(&sl, CONTR(pname3)->quick_name);
+                        SockList_AddString(&sl, CONTR(pname3)->quick_name, 0);
                     if (pname_flag & 0x01)
-                        SockList_AddString(&sl, CONTR(pname4)->quick_name);
+                        SockList_AddString(&sl, CONTR(pname4)->quick_name, 0);
                 }
 
                 /* fire & forget layer animation tags */

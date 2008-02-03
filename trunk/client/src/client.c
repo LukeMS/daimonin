@@ -119,24 +119,28 @@ void SockList_Init(SockList *sl)
     sl->buf = NULL;
 }
 
+/*
 void SockList_AddChar(SockList *sl, char c)
 {
-    sl->buf[sl->len] = c;
+    sl->buf[sl->len++] = c;
     sl->len++;
 }
+*/
+
+/* note: we do "hard" casting with explicit set () to avoid problems
+ * under different compilers by the SockList_xxx functions
+ */
 
 void SockList_AddShort(SockList *sl, uint16 data)
 {
-    sl->buf[sl->len++] = (data >> 8) & 0xff;
-    sl->buf[sl->len++] = data & 0xff;
+	*((uint16 *)(sl->buf+sl->len)) = adjust_endian_int16(data);
+	sl->len+=2;
 }
 
 void SockList_AddInt(SockList *sl, uint32 data)
 {
-    sl->buf[sl->len++] = (data >> 24) & 0xff;
-    sl->buf[sl->len++] = (data >> 16) & 0xff;
-    sl->buf[sl->len++] = (data >> 8) & 0xff;
-    sl->buf[sl->len++] = data & 0xff;
+	*((uint32 *)(sl->buf+sl->len)) = adjust_endian_int32(data);
+	sl->len+=4;
 }
 
 /* Basically does the reverse of SockList_AddInt, but on
@@ -144,12 +148,12 @@ void SockList_AddInt(SockList *sl, uint32 data)
  */
 int GetInt_String(unsigned char *data)
 {
-    return ((data[0] << 24) + (data[1] << 16) + (data[2] << 8) + data[3]);
+	return adjust_endian_int32(*((uint32 *)data));
 }
 
 short GetShort_String(unsigned char *data)
 {
-    return ((data[0] << 8) + data[1]);
+	return adjust_endian_int16(*((uint16 *)data));
 }
 
 

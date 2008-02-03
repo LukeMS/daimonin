@@ -1223,6 +1223,10 @@ void init(int argc, char **argv)
 
     init_beforeplay();
     init_ericserver();
+#ifdef SERVER_SEND_FACES
+	read_client_images();
+#endif
+	init_srv_files(); /* load all srv_xxx files or generate them */
     metaserver_init();
     init_arch_default_behaviours();
     load_ban_file();

@@ -63,14 +63,112 @@ void SoundCmd(unsigned char *data, int len)
     calculate_map_sound(num, x, y, 0);
 }
 
+/* we get endian templates from the server.
+ * setup the shift values
+ */
+static int setup_endian_sync(char *buf)
+{
+	/* we have 6 bytes here showing the server endian */
+	endian_int16 = *((uint16 *)buf);
+	endian_int32 = *((uint32 *)(buf+2));
+
+	/* only for testing */
+	 // endian_int32 = 0x02010403;
+	 // endian_int16 = 0x0102;
+
+	LOG(LOG_MSG, "Endian:: we got short16:%x int32:%x\n", endian_int16, endian_int32);
+
+	/* lets first check the simplest case: which means we don't must shift anything! */
+	endian_do16 = FALSE; /* easy going! */
+	if(endian_int16 != 0x0201)
+	{
+		uint16 test16 = 0x0201;
+
+		/* well, its easy: if we don't have 0x0201 then we have 0x0102... */
+		if(endian_int16 == 0x0201) /* some stupid sanity check */
+			return FALSE;
+
+		endian_do16 = TRUE;
+
+		LOG(LOG_MSG, "CHECK Endian 16bit:: we got %x we created read:%x send:%x\n", endian_int16, adjust_endian_int16(endian_int16), adjust_endian_int16(test16));
+		if(endian_int16 != adjust_endian_int16(test16) || test16 != adjust_endian_int16(endian_int16))
+			return FALSE; /* should NEVER happens */
+	}
+
+	/* 32 bit is a bit more complex */
+	if(endian_int32 == 0x04030201)
+		endian_do32 = FALSE;
+	else /* ok, we have a bit work to do */
+	{
+		uint32 test32 = 0x04030201;
+
+		endian_do32 = TRUE;
+		/* to lazy to do this smart with a loop */
+		if((endian_int32 & 0x000000ff) == 0x01)
+			endian_shift32[0] = 0;
+		else if((endian_int32 & 0x0000ff00) == 0x0100)
+			endian_shift32[0] = 8;
+		else if((endian_int32 & 0x00ff0000) == 0x010000)
+			endian_shift32[0] = 16;
+		else
+			endian_shift32[0] = 24;
+
+		if((endian_int32 & 0x000000ff) == 0x02)
+			endian_shift32[1] = 0;
+		else if((endian_int32 & 0x0000ff00) == 0x0200)
+			endian_shift32[1] = 8;
+		else if((endian_int32 & 0x00ff0000) == 0x020000)
+			endian_shift32[1] = 16;
+		else
+			endian_shift32[1] = 24;
+
+		if((endian_int32 & 0x000000ff) == 0x03)
+			endian_shift32[2] = 0;
+		else if((endian_int32 & 0x0000ff00) == 0x0300)
+			endian_shift32[2] = 8;
+		else if((endian_int32 & 0x00ff0000) == 0x030000)
+			endian_shift32[2] = 16;
+		else
+			endian_shift32[2] = 24;
+
+		if((endian_int32 & 0x000000ff) == 0x04)
+			endian_shift32[3] = 0;
+		else if((endian_int32 & 0x0000ff00) == 0x0400)
+			endian_shift32[3] = 8;
+		else if((endian_int32 & 0x00ff0000) == 0x040000)
+			endian_shift32[3] = 16;
+		else
+			endian_shift32[3] = 24;
+
+		/* ok... new we test what we configured by shifting 0x04030201 to the
+		 * server endian - it MUST match our server template
+		 */
+		LOG(LOG_MSG, "CHECK Endian 32bit:: we got %x we created read:%x send:%x\n", endian_int32, adjust_endian_int32(endian_int32), adjust_endian_int32(test32));
+		if(endian_int32 != adjust_endian_int32(test32) || test32 != adjust_endian_int32(endian_int32))
+			return FALSE; /* should NEVER happens */
+	}
+	return TRUE;
+}
+
 void SetupCmd(char *buf, int len)
 {
     int     s;
     char   *cmd, *param;
 
     scrolldy = scrolldx = 0;
-    LOG(LOG_MSG, "Get SetupCmd:: %s\n", buf);
-    for (s = 0; ;)
+	
+	/* setup the endian syncronization */
+	if(!setup_endian_sync(buf))
+	{
+		draw_info("Corrupt endian template!", COLOR_RED);
+		LOG(LOG_ERROR, "Corrupt endian template!\n");
+		SOCKET_CloseSocket(csocket.fd);
+		GameStatus = GAME_STATUS_START;
+		return;
+	}
+
+    LOG(LOG_MSG, "Get SetupCmd:: %s\n", buf+6);
+    for (s = 6; ;)
     {
         while (s < len && buf[s] == ' ')
             s++;

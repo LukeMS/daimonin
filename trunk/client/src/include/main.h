@@ -48,6 +48,14 @@ _server_char;
 extern _server_char    *first_server_char;
 extern _server_char     new_character; /* if we login as new char, thats the values of it we set */
 
+/* global endian templates (send from server) */
+extern int		endian_do16;	/* if FALSE we don't must shift! */
+extern int		endian_do32;	/* if FALSE we don't must shift! */
+extern int		endian_shift16[2]; /* shift values */
+extern int		endian_shift32[4];
+extern uint32	endian_int32;	/* thats the 0x04030201 32bit endian */
+extern uint16	endian_int16;   /* thats the 0x0201 short endian */
+
 //#define SKIN_POS_QUICKSLOT_X 518
 //#define SKIN_POS_QUICKSLOT_Y 109
 

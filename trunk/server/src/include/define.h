@@ -916,20 +916,14 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define PREVIOUS_ITEM_FACE_NAME "prev_item.101"
 
 /* socket defines */
-#define SockList_AddChar(_sl_,_c_)      (_sl_)->buf[(_sl_)->len++]=(_c_)
-#define SockList_AddShort(_sl_, _data_) (_sl_)->buf[(_sl_)->len++]= ((_data_)>>8)&0xff; \
-                                        (_sl_)->buf[(_sl_)->len++] = (_data_) & 0xff
 
-#define SockList_AddInt(_sl_, _data_)   (_sl_)->buf[(_sl_)->len++]=((_data_)>>24)&0xff; \
-                                        (_sl_)->buf[(_sl_)->len++]= ((_data_)>>16)&0xff; \
-                                        (_sl_)->buf[(_sl_)->len++]= ((_data_)>>8)&0xff; \
-                                        (_sl_)->buf[(_sl_)->len++] = (_data_) & 0xff
+/* in the protocol version > 991023 we moved the endian managment to the clients */
+#define SockList_AddChar(_sl_,_c_)		(_sl_)->buf[(_sl_)->len++]=(_c_)
+#define SockList_AddShort(_sl_,_c_)		*((uint16 *)((_sl_)->buf+(_sl_)->len))=(_c_);(_sl_)->len+=2
+#define SockList_AddInt(_sl_,_c_)		*((uint32 *)((_sl_)->buf+(_sl_)->len))=(_c_);(_sl_)->len+=4
 
-/* Basically does the reverse of SockList_AddInt, but on
- * strings instead.  Same for the GetShort, but for 16 bits.
- */
-#define GetInt_String(_data_) (((_data_)[0]<<24) + ((_data_)[1]<<16) + ((_data_)[2]<<8) + (_data_)[3])
-#define GetShort_String(_data_) (((_data_)[0]<<8)+(_data_)[1])
+#define GetInt_String(_data_) ( *(uint32*)(_data_))
+#define GetShort_String(_data_) ( *(uint16*)(_data_))
 
 /* Simple function we use below to keep adding to the same string
  * but also make sure we don't overwrite that string.

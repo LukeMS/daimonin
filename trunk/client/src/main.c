@@ -84,6 +84,14 @@ int f_custom_cursor = 0;
 int x_custom_cursor = 0;
 int y_custom_cursor = 0;
 
+/* global endian templates (send from server) */
+int		endian_do16;	/* if FALSE we don't must shift! */
+int		endian_do32;	/* if FALSE we don't must shift! */
+int		endian_shift16[2]; /* shift values */
+int		endian_shift32[4];
+uint32	endian_int32;	/* thats the 0x04030201 32bit endian */
+uint16	endian_int16;   /* thats the 0x0201 short endian */
+
 
 struct gui_book_struct    *gui_interface_book;
 struct gui_interface_struct *gui_interface_npc;

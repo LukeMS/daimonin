@@ -565,6 +565,9 @@ void cleanup_without_exit()
     free_all_treasures();
     free_all_images();
     free_all_newserver();
+#ifdef SERVER_SEND_FACES
+	free_socket_images();
+#endif
     free_all_recipes();
     free_all_readable();
     free_all_god();

@@ -37,6 +37,8 @@ extern unsigned long  hasharch(char *str, int tablesize);
 extern _bmaptype      *find_bmap(char *name);
 extern void           add_bmap(_bmaptype *at);
 extern void     markdmbuster();
-char   *normalize_string(const char *string);
+extern char   *normalize_string(const char *string);
+extern uint32 adjust_endian_int32(uint32 buf);
+extern uint16 adjust_endian_int16(uint16 buf);
 
 #endif

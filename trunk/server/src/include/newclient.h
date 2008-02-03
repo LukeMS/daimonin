@@ -264,7 +264,8 @@ typedef enum client_cmd {
 
 enum
 {
-    BINARY_CMD_COMC= 1,
+	BINARY_CMD_PING, /* unused */
+	BINARY_CMD_COMC,
     BINARY_CMD_VERSION ,
     BINARY_CMD_DRAWINFO,
     BINARY_CMD_ADDME_FAIL,
