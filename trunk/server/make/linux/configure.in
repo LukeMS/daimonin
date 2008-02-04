@@ -170,8 +170,8 @@ AC_MSG_CHECKING(how many args gettimeofday uses)
 AC_CACHE_VAL(ac_cv_gettimeofday_args,
  [AC_TRY_COMPILE([#include <sys/time.h>
 	#include <unistd.h>],
-	[struct timeval tv; struct timezone tzp;
-	gettimeofday(&tv, &tzp);],
+	[struct timeval tv;
+	gettimeofday(&tv, 0);],
 	[ac_gettimeofday_args=2],
 	[AC_TRY_COMPILE([#include <sys/time.h>
 		#include <unistd.h>],
