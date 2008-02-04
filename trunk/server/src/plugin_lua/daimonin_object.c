@@ -2439,7 +2439,7 @@ static int GameObject_GetNextPlayerInfo(lua_State *L)
 
     /* thats our check paramters: arch "force_info", name of this arch */
     strncpy(name, STRING_OBJ_NAME(myob->data.object), 127); /* 127 chars should be enough for all */
-    name[63] = '\0';
+    name[127] = '\0';
 
     /* get the next linked player_info arch in this inventory */
     for (walk = myob->data.object->below; walk != NULL; walk = walk->below)
