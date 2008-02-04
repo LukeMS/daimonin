@@ -3177,8 +3177,8 @@ else
 #include <sys/time.h>
 	#include <unistd.h>
 int main() {
-struct timeval tv; struct timezone tzp;
-	gettimeofday(&tv, &tzp);
+struct timeval tv;
+	gettimeofday(&tv, 0);
 ; return 0; }
 EOF
 if { (eval echo configure:3185: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
