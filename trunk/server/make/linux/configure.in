@@ -227,6 +227,7 @@ AC_OUTPUT(Makefile
 	../../src/random_maps/Makefile ../../src/socket/Makefile
 	../../src/server/Makefile ../../src/include/Makefile
 	../../src/utils/Makefile ../../src/common/Makefile
+	../../src/zlib/Makefile
 	../../src/tests/Makefile ../../src/lua/config
 	../../src/utils/dmonloop
 	../../src/plugin_lua/Makefile

@@ -84,7 +84,7 @@ distclean: clean
 	$(RM) -f Makefile socket.a
 
 .c.o:
-	$(CC) $(CFLAGS) $(INCLUDES)  -c $*.c
+	$(CC) $(CFLAGS) $(INCLUDES) -c $*.c
 
 all:: socket.a
 
