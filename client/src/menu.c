@@ -473,7 +473,7 @@ int client_command_check(char *cmd)
             strcpy(cmd, "/target 2");
     }
 #ifdef DEVELOPMENT
-    else if (!strnicmp(cmd, "/reset ", strlen("/reset ")))
+    else if (!strnicmp(cmd, "/reset", strlen("/reset")))
     {
         if (!strnicmp(cmd, "/reset buddy", strlen("/reset buddy")))
         {
@@ -482,28 +482,28 @@ int client_command_check(char *cmd)
             buddy_list_save();
             return TRUE;
         }
-        if (!strnicmp(cmd, "/reset ignore", strlen("/reset ignore")))
+        else if (!strnicmp(cmd, "/reset ignore", strlen("/reset ignore")))
         {
             draw_info("Resetting ignore list!", COLOR_HGOLD);
             ignore_list_clear();
             ignore_list_save();
             return TRUE;
         }
-        if (!strnicmp(cmd, "/reset chatfilter", strlen("/reset chatfilter")) || !strnicmp(cmd, "/reset cfilter", strlen("/reset cfilter")))
+        else if (!strnicmp(cmd, "/reset chatfilter", strlen("/reset chatfilter")) || !strnicmp(cmd, "/reset cfilter", strlen("/reset cfilter")))
         {
             draw_info("Resetting chatfilter list!", COLOR_HGOLD);
             chatfilter_list_clear();
             chatfilter_list_save();
             return TRUE;
         }
-        if (!strnicmp(cmd, "/reset kills", strlen("/reset kills")))
+        else if (!strnicmp(cmd, "/reset kills", strlen("/reset kills")))
         {
             draw_info("Resetting kill list!", COLOR_HGOLD);
             kill_list_clear();
             kill_list_save();
             return TRUE;
         }
-        if (!strnicmp(cmd, "/reset stats", strlen("/reset stats")))
+        else if (!strnicmp(cmd, "/reset stats", strlen("/reset stats")))
         {
             draw_info("Resetting stat-o-meter!", COLOR_HGOLD);
             statometer.exp        = 0;
@@ -514,13 +514,7 @@ int client_command_check(char *cmd)
             statometer.killhour   = 0.0f;
             return TRUE;
         }
-        if (strlen(cmd) == strlen("/reset widgets") && !strnicmp(cmd, "/reset widgets", strlen("/reset widgets")))
-        {
-            draw_info("Resetting widgets!", COLOR_HGOLD);
-            init_widgets_fromDefault();
-            return TRUE;
-        }
-        if (!strnicmp(cmd, "/reset widgetstatus", strlen("/reset widgetstatus")))
+        else if (!strnicmp(cmd, "/reset widgetstatus", strlen("/reset widgetstatus")))
         {
             int nID;
             draw_info("Resetting widgetstatus!", COLOR_HGOLD);
@@ -548,8 +542,19 @@ int client_command_check(char *cmd)
             }
             return TRUE;
         }
-        draw_info("Usage: ~/reset buddy~ to reset the buddylist,\n~/reset ignore~ to reset the ignorelist,\n~/reset chatfilter~ to reset the chatfilter list,\n~/reset kills~ to reset the kill list,\n~/reset stats~ to reset the stat-o-meter,\n~/reset widgets~ to reset the widgets, or\n~/reset widgetstatus~ to show any previously hidden widgets.", COLOR_WHITE);
-        return TRUE;
+        else if (!strnicmp(cmd, "/reset widgets", strlen("/reset widgets")))
+        {
+            draw_info("Resetting widgets!", COLOR_HGOLD);
+            init_widgets_fromDefault();
+            return TRUE;
+        }
+        else if (!strnicmp(cmd, "/resetmap", strlen("/resetmap")))
+            return FALSE; /* DM command, handled by server */
+        else
+        {
+            draw_info("Usage: ~/reset buddy~ to reset the buddylist,\n~/reset ignore~ to reset the ignorelist,\n~/reset chatfilter~ to reset the chatfilter list,\n~/reset kills~ to reset the kill list,\n~/reset stats~ to reset the stat-o-meter,\n~/reset widgets~ to reset the widgets, or\n~/reset widgetstatus~ to show any previously hidden widgets.", COLOR_WHITE);
+            return TRUE;
+        }
     }
 #endif
 
