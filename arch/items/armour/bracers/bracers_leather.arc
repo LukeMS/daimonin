@@ -1,0 +1,23 @@
+Object bracers_leather
+name bracers
+layer 3
+type 104
+face bracers_leather.101
+ac 1
+resist_impact 4
+resist_slash 4
+resist_pierce 4
+resist_cleave 4
+resist_drain 3
+resist_depletion 3
+resist_corruption 3
+resist_confusion 3
+resist_fear 3
+resist_slow 3
+resist_paralyze 3
+resist_snare 3
+value 75
+material_real 193
+material 8
+weight 150
+end
