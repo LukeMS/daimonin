@@ -1,0 +1,3553 @@
+# This file contains various treasures, with generation rules.
+#
+#
+# I added alot of new key commands to the treasure list.
+# I changed double use of magic command and changed the way
+# magic items are generated.
+#
+# In CF, the treasure list is more basic and more random.
+# In daimonin there are more commands and a stronger control,
+# allowing to create more detailed treasures.
+#
+#
+# magic:
+# If random generator or magic_chance gives a magic item, magic
+# value is used to generate a magic item. Formula is (RANDOM()%abs(magic))+1.
+# A magic value of 1 will generate always +1 items, a magic value of 2
+# items with +1 or +2 and so on. Negative values are possible too.
+#
+# magic_chance:
+# This value can be between 0 to 100. If there is no magic_chance
+# value, chance for magic item is server internal default drop value.
+# 100 means a 100% chance to generate a magic item.
+#
+# artifact_chance:
+# Same as magic_chance except it generates a item from the artifact list
+#
+#
+# Other commands:
+#
+# chance_fix:
+# base chance for checking the treasure is generated.
+# The chance is 1/chance_fix (algoritm: generate if (RANDOM()%chance_fix) == 0)
+# Example: chance_fix=100 -> chance is 1 to 100
+#          chance_fix=500 -> chance is 1 to 500  
+#
+# difficulty:
+# For spliting treasure lists, difficulty sets a difficulty level. A map
+# or a object generating this list must be same or higher level. If not,
+# list is ignored.
+# 
+# Gods - treasures of gods are special.
+#
+# wealth:
+# The wealth arch is transformed to real money based on the difficulty/level of its
+# enviroment. The default setting is in value of the wealth arch but can be altered
+# by using the magic keyword.
+#
+#########################################################
+# Default "deity" - The Tabernacle
+#
+treasure deity_tabernacle
+  arch tabernacle_avatar_info
+  more
+  arch tabernacle_holy_servant_info
+  more
+  arch god_restore_grace
+  more
+  arch god_restore_hitpoints
+  more
+  arch tabernacle_general_info
+    chance 10
+  more
+  arch god_grace_limit_medium 
+end
+##############################################################
+#
+# PLAYER
+#
+treasure player_human_male
+  arch shirt
+    magic_chance 0
+    artifact_chance 0
+  more
+  arch pants
+    magic_chance 0
+    artifact_chance 0
+  more
+  arch torch
+    magic_chance 0
+    artifact_chance 0
+  more
+  arch torch
+    magic_chance 0
+    artifact_chance 0
+  more
+  list player_starting_wealth
+    magic_chance 0
+    artifact_chance 0
+  more
+  arch skill_use_magic_item
+  more
+  arch skill_literacy
+  more
+  arch skill_throwing
+  more
+  arch skill_punching
+  more
+  arch rank_force
+  more
+  arch alignment_force
+    title true neutral
+  more
+  arch age_force_human
+  more
+  arch guild_force
+end
+#
+treasure player_human_female
+  arch dress
+    magic_chance 0
+    artifact_chance 0
+  more
+  arch pants
+    magic_chance 0
+    artifact_chance 0
+  more
+  arch torch
+    magic_chance 0
+    artifact_chance 0
+  more
+  arch torch
+    magic_chance 0
+    artifact_chance 0
+  more
+  list player_starting_wealth
+    magic_chance 0
+    artifact_chance 0
+  more
+  arch skill_use_magic_item
+  more
+  arch skill_punching
+  more
+  arch skill_literacy
+  more
+  arch skill_throwing
+  more
+  arch rank_force
+  more
+  arch alignment_force
+    title true neutral
+  more
+  arch age_force_human
+  more
+  arch guild_force
+end
+#
+treasure player_half_elf_male
+  arch shirt
+    magic_chance 0
+    artifact_chance 0
+  more
+  arch pants
+    magic_chance 0
+    artifact_chance 0
+  more
+  arch torch
+    magic_chance 0
+    artifact_chance 0
+  more
+  arch torch
+    magic_chance 0
+    artifact_chance 0
+  more
+  list player_starting_wealth
+    magic_chance 0
+    artifact_chance 0
+  more
+  arch skill_use_magic_item
+  more
+  arch skill_literacy
+  more
+  arch skill_throwing
+  more
+  arch skill_punching
+  more
+  arch rank_force
+  more
+  arch alignment_force
+    title true neutral
+  more
+  arch age_force_half_elf
+  more
+  arch guild_force
+end
+#
+treasure player_half_elf_female
+  arch dress
+    magic_chance 0
+    artifact_chance 0
+  more
+  arch pants
+    magic_chance 0
+    artifact_chance 0
+  more
+  arch torch
+    magic_chance 0
+    artifact_chance 0
+  more
+  arch torch
+    magic_chance 0
+    artifact_chance 0
+  more
+  list player_starting_wealth
+    magic_chance 0
+    artifact_chance 0
+  more
+  arch skill_use_magic_item
+  more
+  arch skill_punching
+  more
+  arch skill_literacy
+  more
+  arch skill_throwing
+  more
+  arch rank_force
+  more
+  arch alignment_force
+    title true neutral
+  more
+  arch age_force_half_elf
+  more
+  arch guild_force
+end
+#
+treasure player_dwarf_male
+  arch shirt
+    magic_chance 0
+    artifact_chance 0
+  more
+  arch pants
+    magic_chance 0
+    artifact_chance 0
+  more
+  arch torch
+    magic_chance 0
+    artifact_chance 0
+  more
+  arch torch
+    magic_chance 0
+    artifact_chance 0
+  more
+  list player_starting_wealth
+    magic_chance 0
+    artifact_chance 0
+  more
+  arch skill_use_magic_item
+  more
+  arch skill_literacy
+  more
+  arch skill_throwing
+  more
+  arch skill_punching
+  more
+  arch rank_force
+  more
+  arch alignment_force
+    title true neutral
+  more
+  arch age_force_dwarf
+  more
+  arch guild_force
+end
+#
+treasure player_dwarf_female
+  arch dress
+    magic_chance 0
+    artifact_chance 0
+  more
+  arch pants
+    magic_chance 0
+    artifact_chance 0
+  more
+  arch torch
+    magic_chance 0
+    artifact_chance 0
+  more
+  arch torch
+    magic_chance 0
+    artifact_chance 0
+  more
+  list player_starting_wealth
+    magic_chance 0
+    artifact_chance 0
+  more
+  arch skill_use_magic_item
+  more
+  arch skill_punching
+  more
+  arch skill_literacy
+  more
+  arch skill_throwing
+  more
+  arch rank_force
+  more
+  arch alignment_force
+    title true neutral
+  more
+  arch age_force_dwarf
+  more
+  arch guild_force
+end
+#
+treasureone player_starting_wealth
+  arch coppercoin
+    magic_chance 0
+    artifact_chance 0
+    nrof 80
+    chance 100
+end
+##############################################################
+#
+# BODY PARTS - 
+#
+# human/man-sized body parts
+treasureone body_human_parts
+  arch tooth
+    chance 15
+end
+##############################################################
+#
+# TRAPS - base list 100%
+#
+treasureone traps_physical
+  arch trap_blades
+    difficulty 2
+    chance 33
+    magic 0
+  more
+  arch trap_needle
+    difficulty 4
+    chance 33
+    magic 0
+  more
+  arch trap_bear_trap
+    difficulty 3
+    chance 33
+    magic 0
+end
+#
+treasureone traps_disease
+  arch trap_diseased_needle
+    difficulty 5
+    chance 100
+    magic 0
+end
+#
+treasureone traps_magical
+  arch rune_fire
+    difficulty 7
+    chance 6
+    magic 0
+  more
+  arch rune_cold
+    difficulty 7
+    chance 6
+    magic 0
+  more
+  arch rune_electricity
+    difficulty 7
+    chance 6
+    magic 0
+  more
+  arch rune_poison
+    difficulty 7
+    chance 6
+    magic 0
+  more
+  arch rune_acid
+    difficulty 7
+    chance 6
+    magic 0
+  more
+  arch rune_sonic
+    difficulty 7
+    chance 6
+    magic 0
+  more
+  arch rune_magic
+    difficulty 10
+    chance 4
+    magic 0
+  more
+  arch rune_light
+    difficulty 10
+    chance 4
+    magic 0
+  more
+  arch rune_shadow
+    difficulty 10
+    chance 4
+    magic 0
+  more
+  arch rune_psionic
+    difficulty 10
+    chance 4
+    magic 0
+  more
+  arch rune_lifesteal
+    difficulty 15
+    chance 2
+    magic 0
+  more
+  arch rune_death
+    difficulty 15
+    chance 2
+    magic 0
+  more
+  arch rune_chaos
+    difficulty 15
+    chance 2
+    magic 0
+  more
+  arch rune_nether
+    difficulty 15
+    chance 2
+    magic 0
+  more
+  arch rune_aether
+    difficulty 15
+    chance 2
+    magic 0
+  more
+  arch rune_weaponmagic
+    difficulty 15
+    chance 4
+    magic 0
+  more
+  arch rune_godpower
+    difficulty 15
+    chance 2
+    magic 0
+  more
+  arch rune_drain
+    difficulty 12
+    chance 4
+    magic 0
+  more
+  arch rune_depletion
+    difficulty 12
+    chance 4
+    magic 0
+  more
+  arch rune_corruption
+    difficulty 12
+    chance 4
+    magic 0
+  more
+  arch rune_confusion
+    difficulty 12
+    chance 4
+    magic 0
+  more
+  arch rune_fear
+    difficulty 12
+    chance 4
+    magic 0
+  more
+  arch rune_slow
+    difficulty 12
+    chance 4
+    magic 0
+  more
+  arch rune_paralyze
+    difficulty 12
+    chance 4
+    magic 0
+  more
+  arch rune_snare
+    difficulty 12
+    chance 4
+    magic 0
+end
+# this forces are used by the disease needle
+treasureone traps_needle_diseases
+  arch warts
+    difficulty 6
+    chance 30
+    magic 0
+  more
+  arch atheletes_foot
+    difficulty 5
+    chance 10
+    magic 0
+  more
+  arch tapeworms
+    difficulty 5
+    chance 30
+    magic 0
+  more
+  arch diarrhea
+    difficulty 6
+    chance 30
+    magic 0
+end
+##############################################################
+#
+# OBJECT SPECIAL LISTS
+#
+treasure empty
+  list none
+    chance 100
+end
+#
+treasure default_door
+  list traps
+    chance 30
+end
+#
+treasure default_door_100
+  list traps
+end
+#
+treasure chest
+  list chest_items
+    chance 80
+  no
+    list traps
+    more
+    list chest_items
+    more
+    list chest_items
+    more
+    list chest_items
+      chance 50
+  end
+end
+#
+treasureone chest_items
+  list weapon_misc
+    chance 30
+  more
+  list armour_misc
+    chance 30
+  more
+  list food_misc
+    chance 10
+  more
+  list wealth_normal
+    chance 10
+  more
+  list magic_potion
+    chance 3
+  more
+  list magic_talisman
+    chance 3
+  more
+  list misc_container
+    chance 3
+  more
+  list magic_device
+    chance 3
+  more
+  list magic_scroll
+    chance 5
+end
+##############################################################
+#
+# RANDOM ITEM LISTS
+# this lists *can* return something or not
+#
+#
+# General lists - one of this group
+#
+treasureone weapon_misc
+  list weapon_missile
+    chance 5
+  more
+  list weapon_amun
+    chance 30
+  more
+  list weapon_slash
+    chance 20
+  more
+  list weapon_cleave
+    chance 20
+  more
+  list weapon_pierce
+    chance 20
+  more
+  list weapon_impact
+    chance 20
+  more
+  list weapon_throw
+    chance 5
+end
+#
+treasureone weapons_start
+  list weapon_missile
+    chance 5
+  more
+  list weapon_amun
+    chance 10
+  more
+  list weapon_slash_1h
+    chance 20
+  more
+  list weapon_cleave_1h
+    chance 20
+  more
+  list weapon_pierce_1h
+    chance 20
+  more
+  list weapon_impact_1h
+    chance 20
+  more
+  list weapon_throw
+    chance 5
+end
+#
+treasureone weapon_amun
+  arch arrow
+    chance 35
+    nrof 3
+    material_quality 80
+    material_range 7
+  more
+  arch sstone
+    chance 35
+    nrof 3
+    quality_range 7
+  more
+  arch bolt
+    chance 35
+    nrof 3
+    material_quality 80
+    material_range 7
+end
+#
+treasureone weapon_throw
+  arch t_dagger
+    magic_chance 20
+    nrof 3
+    chance 30
+    material_quality 80
+    material_range 7
+  more
+  arch t_axe
+    magic_chance 20
+    nrof 3
+    chance 30
+    material_quality 80
+    material_range 7
+  more
+  arch t_star
+    magic_chance 20
+    nrof 3
+    chance 30
+    material_quality 80
+    material_range 7
+  more
+  arch t_hammer
+    magic_chance 20
+#   magic 2
+    nrof 3
+    chance 30
+    material_quality 80
+    material_range 7
+end
+#
+treasureone weapon_missile
+  arch bow_short
+    chance 12
+    material_quality 80
+    material_range 7
+  more
+  arch bow
+    chance 10
+    difficulty 6
+    material_quality 80
+    material_range 7
+  more
+  arch bow_long
+    chance 5
+    difficulty 18
+    material_quality 80
+    material_range 7
+  more
+  arch sling_small
+    chance 12
+    material_quality 80
+    material_range 7
+  more
+  arch sling
+    chance 10
+    difficulty 6
+    material_quality 80
+    material_range 7
+  more
+  arch sling_heavy
+    chance 5
+    difficulty 18
+    material_quality 80
+    material_range 7
+  more
+  arch crossbow_small
+    chance 12
+    material_quality 80
+    material_range 7
+  more
+  arch crossbow
+    chance 10
+    difficulty 6
+    material_quality 80
+    material_range 7
+  more
+  arch crossbow_large
+    chance 5
+    difficulty 18
+    material_quality 80
+    material_range 7
+end
+#
+treasureone weapon_melee
+  list weapon_cleave
+    chance 25
+  more
+  list weapon_slash
+    chance 25
+  more
+  list weapon_impact
+    chance 25
+  more
+  list weapon_pierce
+    chance 25
+end
+#
+treasureone weapon_1h
+  list weapon_cleave_1h
+    chance 25
+  more
+  list weapon_slash_1h
+    chance 25
+  more
+  list weapon_impact_1h
+    chance 25
+  more
+  list weapon_pierce_1h
+    chance 25
+end
+#
+treasureone weapon_2h
+  list weapon_cleave_2h
+    difficulty 11
+    chance 25
+  more
+  list weapon_slash_2h
+    difficulty 11
+    chance 25
+  more
+  list weapon_impact_2h
+    difficulty 11
+    chance 25
+  more
+  list weapon_pierce_2h
+    difficulty 11
+    chance 25
+end
+#
+treasureone weapon_pole
+  list weapon_cleave_pole
+    difficulty 12
+    chance 25
+  more
+  list weapon_slash_pole
+    difficulty 12
+    chance 25
+  more
+  list weapon_impact_pole
+    difficulty 12
+    chance 25
+  more
+  list weapon_pierce_pole
+    difficulty 12
+    chance 25
+end
+#
+treasureone weapon_cleave
+  list weapon_cleave_1h
+    chance 60
+  more
+  list weapon_cleave_2h
+    difficulty 11
+    chance 25
+  more
+  list weapon_cleave_pole
+    difficulty 12
+    chance 15
+end
+#
+treasureone weapon_cleave_1h
+  arch axe
+    difficulty 3
+    chance 15
+    material_quality 80
+    material_range 7
+  more
+  arch axe_battle
+    difficulty 6
+    chance 10
+    material_quality 80
+    material_range 7
+  more
+  arch axe_broad
+    difficulty 6
+    chance 10
+    material_quality 80
+    material_range 7
+  more
+  arch axe_double
+    difficulty 6
+    chance 10
+    material_quality 80
+    material_range 7
+  more
+  arch axe_great
+    difficulty 8
+    chance 10
+    material_quality 80
+    material_range 7
+  more
+  arch axe_hand
+    difficulty 3
+    chance 15
+    material_quality 80
+    material_range 7
+  more
+  arch axe_small
+    chance 15
+    material_quality 80
+    material_range 7
+  more
+  arch axe_war
+    difficulty 3
+    chance 10
+    material_quality 80
+    material_range 7
+  more
+  arch cleaver_battle
+    difficulty 8
+    chance 10
+    material_quality 80
+    material_range 7
+  more
+  arch cleaver_war
+    difficulty 3
+    chance 15
+    material_quality 80
+    material_range 7
+  more
+  arch pick_axe
+    chance 15
+    material_quality 80
+    material_range 7
+  more
+  arch whip
+    chance 10
+    material_quality 80
+    material_range 7
+  more
+  arch whip_war
+    difficulty 6
+    chance 10
+    material_quality 80
+    material_range 7
+end
+#
+treasureone weapon_cleave_2h
+  arch axe_2h
+    chance 30
+    material_quality 80
+    material_range 7
+  more
+  arch axe_2h_battle
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch axe_2h_great
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch axe_2h_war
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch mattock
+    chance 10
+    material_quality 80
+    material_range 7
+  more
+  arch doubleji
+    chance 10
+    material_quality 80
+    material_range 7
+end
+#
+treasureone weapon_cleave_pole
+  arch bardiche
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch halberd
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch spetum
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch voulge
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch fuji
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch taiji
+    chance 20
+    material_quality 80
+    material_range 7
+end
+#
+treasureone weapon_slash
+  list weapon_slash_1h
+    chance 60
+  more
+  list weapon_slash_2h
+    difficulty 11
+    chance 25
+  more
+  list weapon_slash_pole
+    difficulty 12
+    chance 15
+end
+#
+treasureone weapon_slash_1h
+  arch baselard
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch bastardsword
+    difficulty 6
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch broadsword
+    difficulty 9
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch falchion
+    difficulty 9
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch gladius
+    difficulty 3
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch katana
+    difficulty 6
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch longsword
+    difficulty 6
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch kopis
+    difficulty 6
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch muleijian
+    difficulty 9
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch zuijian
+    difficulty 6
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch taiqiang
+    difficulty 6
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch ninjato
+    difficulty 3
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch scimitar
+    difficulty 6
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch scythe_military
+    difficulty 6
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch shortsword
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch sword
+    difficulty 3
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch sword_curved
+    difficulty 3
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch tsurugi
+    difficulty 6
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch tulwar
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch wakizashi
+    difficulty 3
+    chance 20
+    material_quality 80
+    material_range 7
+end
+#
+treasureone weapon_slash_2h
+  arch claymore
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch fujian
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch no_dachi
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch panzerstecher
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch scythe_war
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch sword_double
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch sword_great
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch sword2h
+    chance 20
+    material_quality 80
+    material_range 7
+end
+#
+treasureone weapon_slash_pole
+  arch fauchard
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch glaive
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch naginata
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch zuipudao
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch zuidao
+    chance 20
+    material_quality 80
+    material_range 7
+end
+#
+treasureone weapon_impact
+  list weapon_impact_1h
+    chance 60
+  more
+  list weapon_impact_2h
+    difficulty 11
+    chance 25
+  more
+  list weapon_impact_pole
+    difficulty 12
+    chance 15
+end
+#
+treasureone weapon_impact_1h
+  arch ancus
+    difficulty 9
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch club
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch club_big
+    difficulty 3
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch club_rough
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch club_spiked
+    difficulty 3
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch flail_war
+    difficulty 6
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch hammer
+    difficulty 3
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch hammer_battle
+    difficulty 9
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch manrikigusari
+    difficulty 6
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch hammer_military
+    difficulty 3
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch hammer_small
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch hammer_war
+    difficulty 6
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch mace
+    difficulty 3
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch mace_battle
+    difficulty 6
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch mace_spiked
+    difficulty 3
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch mace_spiked_war
+    difficulty 6
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch mace_war
+    difficulty 6
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch mstar
+    difficulty 3
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch mstar_large
+    difficulty 6
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch mstar_small
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch nunchacu
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch nunchacu_war
+    difficulty 3
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch shootingstar
+    difficulty 6
+    chance 20
+    material_quality 80
+    material_range 7
+end
+#
+treasureone weapon_impact_2h
+  arch bo
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch club_giant
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch club_giant_spiked
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch hammer_giant
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch hammer_swar_giant
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch hammer_war_giant
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch mstar_2h
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch quaterstaff
+    chance 20
+    material_quality 80
+    material_range 7
+end
+#
+treasureone weapon_impact_pole
+  arch bec_de_corbin
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch lucern_hammer
+    chance 20
+    material_quality 80
+    material_range 7
+end
+#
+treasureone weapon_pierce
+  list weapon_pierce_1h
+    chance 60
+  more
+  list weapon_pierce_2h
+    difficulty 11
+    chance 25
+  more
+  list weapon_pierce_pole
+    difficulty 12
+    chance 15
+end
+#
+treasureone weapon_pierce_1h
+  arch athame
+    difficulty 3
+    chance 14
+    material_quality 80
+    material_range 7
+  more
+  arch cutlass
+    difficulty 3
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch dagger
+    chance 10
+    material_quality 80
+    material_range 7
+  more
+  arch dagger_large
+    chance 12
+    material_quality 80
+    material_range 7
+  more
+  arch dagger_small
+    chance 8
+    material_quality 80
+    material_range 7
+  more
+  arch degen
+    difficulty 6
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch flamberge
+    difficulty 9
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch spatha
+    difficulty 9
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch pallasch
+    difficulty 6
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch rapier
+    difficulty 6
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch saber
+    difficulty 6
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch shiavona
+    difficulty 9
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch tanto
+    difficulty 3
+    chance 14
+    material_quality 80
+    material_range 7
+  more
+  arch sai
+    difficulty 3
+    chance 14
+    material_quality 80
+    material_range 7
+end
+#
+treasureone weapon_pierce_2h
+  arch forc
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch forc_military
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch spear
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch trident
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch dory
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch xuqiang
+    chance 20
+    material_quality 80
+    material_range 7
+end
+#
+treasureone weapon_pierce_pole
+  arch bill_guisarme
+    chance 10
+    material_quality 80
+    material_range 7
+  more
+  arch guisarme
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch partisan
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch pike
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch ranseur
+    chance 20
+    material_quality 80
+    material_range 7
+end
+#
+treasureone weapon_start
+  arch club
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch club_big
+    difficulty 2
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch club_rough
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch club_spiked
+    difficulty 2
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch hammer
+    difficulty 2
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch hammer_military
+    difficulty 2
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch hammer_small
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch mace
+    difficulty 2
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch mace_spiked
+    difficulty 2
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch mstar
+    difficulty 2
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch mstar_small
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch nunchacu
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch athame
+    difficulty 2
+    chance 14
+    material_quality 80
+    material_range 7
+  more
+  arch cutlass
+    difficulty 2
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch dagger
+    chance 10
+    material_quality 80
+    material_range 7
+  more
+  arch dagger_large
+    chance 12
+    material_quality 80
+    material_range 7
+  more
+  arch dagger_small
+    chance 8
+    material_quality 80
+    material_range 7
+  more
+  arch tanto
+    difficulty 2
+    chance 14
+    material_quality 80
+    material_range 7
+  more
+  arch sai
+    difficulty 2
+    chance 14
+    material_quality 80
+    material_range 7
+  more
+  arch baselard
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch gladius
+    difficulty 2
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch ninjato
+    difficulty 2
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch shortsword
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch sword
+    difficulty 2
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch sword_curved
+    difficulty 2
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch tulwar
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch wakizashi
+    difficulty 2
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch axe
+    difficulty 2
+    chance 15
+    material_quality 80
+    material_range 7
+  more
+  arch axe_hand
+    difficulty 2
+    chance 15
+    material_quality 80
+    material_range 7
+  more
+  arch axe_small
+    chance 15
+    material_quality 80
+    material_range 7
+  more
+  arch axe_war
+    difficulty 2
+    chance 10
+    material_quality 80
+    material_range 7
+  more
+  arch cleaver_war
+    difficulty 2
+    chance 15
+    material_quality 80
+    material_range 7
+  more
+  arch pick_axe
+    chance 15
+    material_quality 80
+    material_range 7
+  more
+  arch whip
+    chance 10
+    material_quality 80
+    material_range 7
+end
+#
+treasureone armour_misc
+  list armour_boots
+    chance 20
+  more
+  list armour_helm
+    chance 20
+  more
+  list armour_shoulder
+    chance 15
+  more
+  list armour_legs
+    chance 15
+  more
+  list armour_shield
+    chance 15
+  more
+  list armour_mail
+    chance 15
+  more
+  list armour_cloak
+    chance 10
+  more
+  list armour_gauntlet
+    chance 5
+  more
+  list armour_girdle
+    chance 5
+  more
+  list armour_bracers
+    chance 5
+end
+#
+treasureone armour_start
+  list armour_boots_start
+    chance 20
+  more
+  list armour_helm
+    chance 20
+  more
+  list armour_shoulder
+    chance 15
+  more
+  list armour_legs
+    chance 15
+  more
+  list armour_shield_start
+    chance 15
+  more
+  list armour_mail_start
+    chance 15
+  more
+  list armour_cloak
+    chance 10
+  more
+  list armour_gauntlet
+    chance 5
+  more
+  list armour_girdle
+    chance 5
+  more
+  list armour_bracers
+    chance 5
+end
+#
+treasureone armour_mail
+  arch banded_mail  
+    difficulty 12
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch bone_armour
+    difficulty 6
+    chance 30
+    quality_range 7
+  more
+  arch bplate_mail
+    difficulty 15
+    chance 30
+    quality_range 7
+  more
+  arch breastplate
+    difficulty 19
+    chance 15
+    material_quality 80
+    material_range 7
+  more
+  arch brigandine
+    difficulty 7
+    chance 25
+    material_quality 80
+    material_range 7
+  more
+  arch chain_hauberk
+    difficulty 13
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch chain_mail
+    difficulty 6
+    chance 25
+    material_quality 80
+    material_range 7
+  more
+  arch chitin_mail
+    difficulty 9
+    chance 25
+    quality_range 7
+  more
+  arch crystal_mail
+    difficulty 48
+    chance 4
+    quality_range 7
+  more
+  arch lamellar_mail
+    difficulty 8
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch leather_armour
+    chance 30
+    material_quality 80
+    material_range 7
+  more
+  arch armour_cloth
+    chance 30
+    difficulty 14
+    material_quality 80
+    material_range 7
+    difficulty 10
+  more
+  arch leather_cuirass
+    difficulty 6
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch padded_armour
+    chance 25
+    material_quality 80
+    material_range 7
+  more
+  arch leather_spiked
+    chance 25
+    material_quality 80
+    material_range 7
+  more
+  arch leather_studded
+    difficulty 3
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch ring_mail
+    difficulty 3
+    chance 25
+    material_quality 80
+    material_range 7
+  more
+  arch mithril_armour
+    difficulty 34
+    chance 4
+    quality_range 7
+  more
+  arch mithril_coat
+    difficulty 49
+    chance 4
+    quality_range 7
+  more
+  arch mithril_ring
+    difficulty 24
+    chance 4
+    quality_range 7
+  more
+  arch plate_field
+    difficulty 21
+    chance 15
+    material_quality 80
+    material_range 7
+  more
+  arch plate_full
+    difficulty 22
+    chance 15
+    material_quality 80
+    material_range 7
+  more
+  arch plate_mail
+    difficulty 24
+    chance 15
+    material_quality 80
+    material_range 7
+  more
+  arch scale_armour
+    difficulty 6
+    chance 20
+    quality_range 7
+  more
+  arch scale_mail
+    difficulty 9
+    chance 25
+    quality_range 7
+  more
+  arch maximillian_mail
+    difficulty 49
+    chance 25
+    quality_range 7
+  more
+  arch panoply_mail
+    difficulty 49
+    chance 25
+    quality_range 7
+  more
+  arch dragon_scale_mail1
+    difficulty 59
+    chance 25
+    quality_range 7
+  more
+  arch dragon_scale_mail2
+    difficulty 59
+    chance 25
+    quality_range 7
+  more
+  arch dragon_scale_mail3
+    difficulty 59
+    chance 25
+    quality_range 7
+  more
+  arch dragon_scale_mail4
+    difficulty 59
+    chance 25
+    quality_range 7
+  more
+  arch dragon_scale_mail5
+    difficulty 59
+    chance 25
+    quality_range 7
+  more
+  arch dragon_scale_mail6
+    difficulty 59
+    chance 25
+    quality_range 7
+  more
+  arch dragon_scale_mail7
+    difficulty 59
+    chance 25
+    quality_range 7
+  more
+  arch plate_scale_armour
+    difficulty 59
+    chance 25
+    quality_range 7
+  more
+  arch dragon_chain_armour
+    difficulty 59
+    chance 25
+    quality_range 7
+  more
+  arch dragon_plate_armour
+    difficulty 59
+    chance 25
+    quality_range 7
+  more
+  arch dress
+    chance 25
+    quality_range 7
+  more
+  arch dress_evening_blue
+    chance 25
+    quality_range 7
+  more
+  arch dress_evening_red
+    chance 25
+    quality_range 7
+  more
+  arch dress_midnight
+    chance 25
+    quality_range 7
+  more
+  arch coat_simple
+    chance 25
+    quality_range 7
+  more
+  arch coat
+    chance 25
+    quality_range 7
+  more
+  arch padded_cloth
+    chance 25
+    quality_range 7
+  more
+  arch coat_expensive
+    chance 25
+    quality_range 7
+  more
+  arch coat_mage
+    difficulty 7
+    chance 25
+    quality_range 7
+  more
+  arch splint_mail
+    difficulty 9
+    chance 20
+    material_quality 80
+    material_range 7
+end
+#
+treasureone armour_mail_start
+  arch banded_mail
+    difficulty 9
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch bone_armour
+    difficulty 6
+    chance 30
+    quality_range 7
+  more
+  arch brigandine
+    difficulty 6
+    chance 25
+    material_quality 80
+    material_range 7
+  more
+  arch chain_hauberk
+    difficulty 9
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch chain_mail
+    difficulty 6
+    chance 25
+    material_quality 80
+    material_range 7
+  more
+  arch chitin_mail
+    difficulty 9
+    chance 25
+    quality_range 7
+  more
+  arch lamellar_mail
+    difficulty 6
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch leather_armour
+    chance 30
+    material_quality 80
+    material_range 7
+  more
+  arch leather_cuirass
+    difficulty 6
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch padded_armour
+    chance 25
+    material_quality 80
+    material_range 7
+  more
+  arch leather_spiked
+    chance 25
+    material_quality 80
+    material_range 7
+  more
+  arch leather_studded
+    difficulty 3
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch ring_mail
+    difficulty 3
+    chance 25
+    material_quality 80
+    material_range 7
+  more
+  arch scale_armour
+    difficulty 6
+    chance 20
+    quality_range 7
+  more
+  arch scale_mail
+    difficulty 9
+    chance 25
+    quality_range 7
+  more
+  arch splint_mail
+    difficulty 9
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch armour_cloth
+    chance 30
+    material_quality 80
+    material_range 7
+end
+#
+treasureone armour_bracers
+  arch bracers_ac
+    chance 35
+    material_quality 80
+    material_range 7
+  more
+  arch bracers_cloth
+    difficulty 3
+    chance 25
+    material_quality 80
+    material_range 7
+  more
+  arch bracers_leather
+    chance 35
+    material_quality 80
+    material_range 7
+end
+#
+treasureone armour_boots
+  arch sandals
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch sandals_cloth
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch low_boots
+    chance 25
+    material_quality 80
+    material_range 7
+  more
+  arch high_boots
+    chance 20
+    difficulty 2
+    material_quality 80
+    material_range 7
+  more
+  arch fencing_boots
+    chance 15
+    difficulty 3
+    material_quality 80
+    material_range 7
+  more
+  arch combat_boots
+    chance 15
+    difficulty 3
+    material_quality 80
+    material_range 7
+  more
+  arch kicking_boots
+    chance 15
+    difficulty 3
+    material_quality 80
+    material_range 7
+  more
+  arch fighting_boots
+    chance 15
+    difficulty 3
+    material_quality 80
+    material_range 7
+  more
+  arch leggings_leather
+    chance 15
+    difficulty 6
+    material_quality 80
+    material_range 7
+  more
+  arch leggings_chain
+    chance 10
+    difficulty 19
+    material_quality 80
+    material_range 7
+  more
+  arch leggings_scale
+    chance 10
+    difficulty 19
+    material_quality 80
+    material_range 7
+  more
+  arch leggings_plate
+    difficulty 24
+    chance 8
+    material_quality 80
+    material_range 7
+end
+#
+treasureone armour_boots_start
+  arch sandals
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch sandals_cloth
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch low_boots
+    chance 25
+    material_quality 80
+    material_range 7
+  more
+  arch high_boots
+    chance 20
+    difficulty 2
+    material_quality 80
+    material_range 7
+  more
+  arch spiked_boots
+    chance 20
+    difficulty 2
+    material_quality 80
+    material_range 7
+  more
+  arch fencing_boots
+    chance 15
+    difficulty 3
+    material_quality 80
+    material_range 7
+  more
+  arch combat_boots
+    chance 15
+    difficulty 3
+    material_quality 80
+    material_range 7
+  more
+  arch kicking_boots
+    chance 15
+    difficulty 3
+    material_quality 80
+    material_range 7
+  more
+  arch fighting_boots
+    chance 15
+    difficulty 3
+    material_quality 80
+    material_range 7
+  more
+  arch leggings_leather
+    chance 15
+    difficulty 6
+    material_quality 80
+    material_range 7
+end
+#
+treasureone armour_shield
+  arch buckler
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch shield_round
+    difficulty 3
+    chance 15
+    material_quality 80
+    material_range 7
+  more
+  arch small_shield
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch shield
+    difficulty 3
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch shield_battle
+    difficulty 25
+    chance 15
+    material_quality 80
+    material_range 7
+  more
+  arch shield_defender
+    difficulty 18
+    chance 15
+    material_quality 80
+    material_range 7
+  more
+  arch shield_heater
+    difficulty 8
+    chance 15
+    material_quality 80
+    material_range 7
+  more
+  arch shield_high
+    difficulty 7
+    chance 15
+    material_quality 80
+    material_range 7
+  more
+  arch shield_kite
+    difficulty 3
+    chance 15
+    material_quality 80
+    material_range 7
+  more
+  arch shield_protector
+    difficulty 18
+    chance 15
+    material_quality 80
+    material_range 7
+  more
+  arch shield_holy
+    difficulty 25
+    chance 15
+    material_quality 80
+    material_range 7
+  more
+  arch shield_skull
+    difficulty 32
+    chance 15
+    material_quality 80
+    material_range 7
+  more
+  arch shield_war
+    difficulty 25
+    chance 15
+    material_quality 80
+    material_range 7
+  more
+  arch blade_stopper
+    difficulty 25
+    chance 10
+    material_quality 80
+    material_range 7
+  more
+  arch shield_chitin
+    difficulty 8
+    chance 10
+    quality_range 7
+  more
+  arch shield_bone
+    difficulty 8
+    chance 10
+    quality_range 7
+  more
+  arch shield_scale
+    difficulty 8
+    chance 10
+    quality_range 7
+  more
+  arch ball_and_chain
+    difficulty 3
+    chance 10
+    material_quality 80
+    material_range 7
+  more
+  arch net_cloth
+    difficulty 3
+    chance 10
+    material_quality 80
+    material_range 7
+  more
+  arch shield_demon
+    difficulty 18
+    chance 5
+    material_quality 80
+    material_range 7
+  more
+  arch shield_eye
+    difficulty 8
+    chance 5
+    material_quality 80
+    material_range 7
+end
+#
+treasureone armour_shield_start
+  arch buckler
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch shield_round
+    difficulty 3
+    chance 15
+    material_quality 80
+    material_range 7
+  more
+  arch small_shield
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch shield
+    difficulty 3
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch shield_heater
+    difficulty 8
+    chance 15
+    material_quality 80
+    material_range 7
+  more
+  arch shield_high
+    difficulty 7
+    chance 15
+    material_quality 80
+    material_range 7
+  more
+  arch shield_kite
+    difficulty 3
+    chance 15
+    material_quality 80
+    material_range 7
+  more
+  arch shield_chitin
+    difficulty 8
+    chance 10
+    quality_range 7
+  more
+  arch shield_bone
+    difficulty 8
+    chance 10
+    quality_range 7
+  more
+  arch net_cloth
+    difficulty 3
+    chance 10
+    material_quality 80
+    material_range 7
+  more
+  arch shield_scale
+    difficulty 8
+    chance 10
+    quality_range 7
+  more
+  arch ball_and_chain
+    difficulty 3
+    chance 10
+    material_quality 80
+    material_range 7
+  more
+  arch shield_eye
+    difficulty 8
+    chance 5
+    material_quality 80
+    material_range 7
+end
+#
+treasureone armour_cloak
+  arch cloak
+    difficulty 3
+    chance 30
+    material_quality 80
+    material_range 7
+  more
+  arch cape
+    chance 25
+    quality_range 7
+  more
+  arch robe
+    chance 25
+    quality_range 7
+end
+#
+treasureone armour_gauntlet
+  arch gloves
+    chance 40
+    material_quality 80
+    material_range 7
+  more
+  arch gloves_cloth
+    chance 30
+    material_quality 80
+    material_range 7
+  more
+  arch gauntlets
+    difficulty 4
+    chance 25
+    material_quality 80
+    material_range 7
+  more
+  arch gauntlets_leather
+    chance 25
+    material_quality 80
+    material_range 7
+  more
+  arch gauntlets_spiked
+    chance 25
+    material_quality 80
+    material_range 7
+  more
+  arch gauntlets_scale
+    difficulty 9
+    chance 10
+    material_quality 80
+    material_range 7
+  more
+  arch gauntlets_plate
+    difficulty 14
+    chance 10
+    material_quality 80
+    material_range 7
+end
+#
+treasureone armour_girdle
+  arch girdle
+    chance 15
+    material_quality 80
+    material_range 7
+  more
+  arch girdle_cloth
+    difficulty 5
+    chance 15
+    material_quality 80
+    material_range 7
+  more
+  arch belt
+    difficulty 9
+    chance 15
+    material_quality 80
+    material_range 7
+end
+#
+treasureone armour_legs
+  arch legs_leather
+    chance 15
+    material_quality 80
+    material_range 7
+  more
+  arch pants
+    chance 15
+    material_quality 80
+    material_range 7
+  more
+  arch legs_chain
+    difficulty 9
+    chance 15
+    material_quality 80
+    material_range 7
+  more
+  arch legs_plate
+    difficulty 15
+    chance 15
+    material_quality 80
+    material_range 7
+end
+#
+treasureone armour_shoulder
+  arch shoulder_leather
+    chance 15
+    material_quality 80
+    material_range 7
+  more
+  arch shoulder_cloth
+    chance 15
+    material_quality 80
+    material_range 7
+  more
+  arch shoulder_chain
+    difficulty 9
+    chance 15
+    material_quality 80
+    material_range 7
+  more
+  arch shoulder_scale
+    difficulty 12
+    chance 15
+    quality_range 7
+  more
+  arch shoulder_plate
+    difficulty 15
+    chance 15
+    material_quality 80
+    material_range 7
+end
+#
+treasureone armour_helm
+  arch helm_field
+    difficulty 9
+    chance 12
+    material_quality 80
+    material_range 7
+  more
+  arch helm_plate
+    difficulty 16
+    chance 10
+    material_quality 80
+    material_range 7
+  more
+  arch helm_war
+    difficulty 16
+    chance 12
+    material_quality 80
+    material_range 7
+  more
+  arch helm_bronze
+    difficulty 9
+    chance 12
+    quality_range 7
+  more
+  arch full_helmet
+    difficulty 9
+    chance 10
+    material_quality 80
+    material_range 7
+  more
+  arch helm_battle
+    difficulty 16
+    chance 10
+    material_quality 80
+    material_range 7
+  more
+  arch helm_guard
+    difficulty 29
+    chance 10
+    material_quality 80
+    material_range 7
+  more
+  arch coif_scale
+    difficulty 4
+    chance 15
+    quality_range 7
+  more
+  arch coif_chain
+    difficulty 4
+    chance 15
+    material_quality 80
+    material_range 7
+  more
+  arch helm_iron
+    chance 15
+    material_quality 80
+    material_range 7
+  more
+  arch helm_leather
+    chance 20
+    material_quality 80
+    material_range 7
+  more
+  arch helm_horn
+    chance 15
+    material_quality 80
+    material_range 7
+  more
+  arch crown_generic
+    chance 5
+    quality_range 7
+  more
+  arch hat_feather
+    chance 5
+    quality_range 7
+  more
+  arch hat_blue
+    chance 5
+    quality_range 7
+end
+##############################################################
+#
+# Mobile & NPC treasure lists
+#
+##############################################################
+##############################################################
+#
+# Skills & Abilites
+#
+# A mob has melee skills & some specials by default arch settings
+#
+##################
+treasure skill_bow
+  arch ability_bow
+  more
+  arch arrow_sys
+end
+#
+treasure skill_xbow
+  arch ability_bow
+  more
+  arch bolt_sys
+end
+#
+treasure skill_sling
+  arch ability_bow
+  more
+  arch sstone_sys
+end
+#
+treasure skill_t_axe
+  arch ability_stone_throw
+  more
+  arch t_axe_sys
+end
+#
+treasure skill_t_hammer
+  arch ability_stone_throw
+  more
+  arch t_hammer_sys
+end
+#
+treasure skill_t_dagger
+  arch ability_stone_throw
+  more
+  arch t_dagger_sys
+end
+#
+treasure skill_t_star
+  arch ability_stone_throw
+  more
+  arch t_star_sys
+end
+#
+treasure skill_t_rock
+  arch ability_stone_throw
+  more
+  arch t_rock_sys
+end
+#
+treasure skill_t_boulder
+  arch ability_stone_throw
+  more
+  arch t_boulder_sys
+end
+#
+treasure skill_t_lboulder
+  arch ability_stone_throw
+  more
+  arch t_lboulder_sys
+end
+#
+treasureone skill_rand_archery
+  list skill_bow
+    chance 34
+  more
+  list skill_xbow
+    chance 33
+  more
+  list skill_sling
+    chance 33
+end
+#
+treasure skill_rand_archery15
+  list skill_rand_archery
+    chance 15
+end
+#
+treasureone skill_rand_throw
+  list skill_t_axe
+    chance 25
+  more
+  list skill_t_hammer
+    chance 25
+  more
+  list skill_t_dagger
+    chance 25
+  more
+  list skill_t_star
+    chance 25
+end
+#
+treasure skill_rand_throw15
+  list skill_rand_throw
+    chance 15
+end
+##############################################################
+#
+# Spells
+#
+##################
+treasure spells_mage
+  arch ability_mbullet
+  more
+  arch ability_lightning
+end
+#
+treasure spells_wizard
+  arch ability_mbullet
+  more
+  arch ability_firestorm
+  more
+  arch ability_firebolt
+  more
+  arch ability_lightning
+end
+#
+treasure spells_sorcerer
+  arch ability_mbullet
+  more
+  arch ability_icestorm
+  more
+  arch ability_frostbolt
+  more
+  arch ability_lightning
+end
+#
+treasure spells_fire
+  arch ability_firestorm
+  more
+  arch ability_firebolt
+end
+#
+treasure spells_ice
+  arch ability_icestorm
+  more
+  arch ability_frostbolt
+end
+#
+treasure spells_priest
+  arch ability_cause_lig_wound
+end
+#
+treasure spells_beholder
+  arch ability_mbullet
+  more
+  arch ability_firestorm
+  more
+  arch ability_icestorm
+  more
+  arch ability_lightning
+end
+#
+treasure spells_demilich
+  arch ability_mbullet
+  more
+  arch ability_frostbolt
+  more
+  arch ability_lightning
+end
+##############################################################
+#
+# TRAPS 
+#
+##################
+treasureone traps
+  list traps_physical
+    chance 33
+  more
+  list traps_disease
+    chance 33
+  more
+  list traps_magical
+    chance 33
+end
+#
+treasureone traps_pm
+  list traps_physical
+    chance 50
+  more
+  list traps_magical
+    chance 50
+end
+#
+treasureone traps_pd
+  list traps_physical
+    chance 50
+  more
+  list traps_disease
+    chance 50
+end
+#
+treasureone traps_md
+  list traps_disease
+    chance 50
+  more
+  list traps_magical
+    chance 50
+end
+#
+treasureone traps_phy
+  list traps_physical
+end
+#
+treasureone traps_mag
+  list traps_magical
+end
+#
+treasureone traps_dis
+  list traps_disease
+end
+##############################################################
+#
+# Wealth & money
+#
+##################
+treasureone wealth_money
+  list wealth_very_low
+  difficulty 1
+  chance 90
+  more
+  list wealth_low
+  difficulty 25
+  chance 45
+  more
+  list wealth_normal
+  difficulty 50
+  chance 30
+  more
+  list wealth_rich
+  difficulty 80
+  chance 15
+  end
+treasure wealth_very_low
+  arch wealth
+    magic 1
+end
+#
+treasure wealth_low
+  arch wealth
+    magic 2
+end
+#
+treasure wealth_normal
+  arch wealth
+end
+#
+treasure wealth_rich
+  arch wealth
+    magic 7
+end
+# difficulty is set in the artifact file for this
+treasure wealth_gem
+  arch gem_generic
+    artifact_chance 90
+    magic 0
+end
+#
+treasure wealth_jewel
+  arch jewel_generic
+    artifact_chance 90
+    magic 0
+end
+#
+treasure wealth_nugget
+  arch nugget_generic
+    artifact_chance 95
+    magic 0
+end
+#
+treasure wealth_pearl
+  arch pearl_generic
+    artifact_chance 100
+    magic 0
+end
+#
+treasureone wealth_exp
+  list wealth_gem
+    chance 65
+  more
+  list wealth_jewel
+    chance 35
+end
+#
+treasureone wealth_misc
+  list wealth_gem
+    chance 45
+  more
+  list wealth_nugget
+    chance 65
+  more
+  list wealth_jewel
+    chance 35
+end
+#
+treasureone wealth_special
+  list wealth_gem
+    chance 50
+  more
+  list wealth_nugget
+    chance 45
+  more
+  list wealth_pearl
+    chance 35
+  more
+  list wealth_jewel
+    chance 25
+end
+##############################################################
+#
+# food
+#
+##################
+treasureone food_misc
+  list food_drink
+    magic 0
+    chance 10
+  more
+  list food_base
+    magic 0
+    chance 20
+  more
+  list food_natural
+    magic 0
+    chance 30
+  more
+  list food_backery
+    magic 0
+    chance 30
+  more
+  list food_vegetable
+    magic 0
+    chance 50
+  more
+  list food_meat
+    magic 0
+    chance 30
+  more
+  list food_fruits
+    magic 0
+    chance 40
+  more
+  arch poison_food
+    magic 0
+    chance 10
+    quality_range 7
+end
+#
+treasureone food_vegetable
+  arch carrot
+    magic 0
+    chance 20
+    quality_range 7
+  more
+  arch choko
+    magic 0
+    chance 20
+    quality_range 7
+  more
+  arch melon
+    magic 0
+    chance 20
+    quality_range 7
+  more
+  arch salad
+    magic 0
+    chance 20
+    quality_range 7
+  more
+  arch snozzcumber
+    magic 0
+    chance 20
+    quality_range 7
+  more
+  arch tomato
+    magic 0
+    chance 20
+    quality_range 7
+end
+#
+treasureone food_meat
+  arch bacon
+    magic 0
+    chance 20
+    quality_range 7
+  more
+  arch beef_jerky
+    magic 0
+    chance 20
+    quality_range 7
+  more
+  arch drumstick
+    magic 0
+    chance 20
+    quality_range 7
+  more
+  arch roast
+    magic 0
+    chance 20
+    quality_range 7
+  more
+  arch sausage
+    magic 0
+    chance 20
+    quality_range 7
+  more
+  arch steak
+    magic 0
+    chance 20
+    quality_range 7
+  more
+  arch steak2
+    magic 0
+    chance 20
+    quality_range 7
+end
+#
+treasureone food_fruits
+  arch apple
+    magic 0
+    chance 20
+    quality_range 7
+  more
+  arch apricot
+    magic 0
+    chance 20
+    quality_range 7
+  more
+  arch banana
+    magic 0
+    chance 20
+    quality_range 7
+  more
+  arch cherries
+    magic 0
+    chance 20
+    quality_range 7
+  more
+  arch grapes
+    magic 0
+    chance 20
+    quality_range 7
+  more
+  arch grapes1
+    magic 0
+    chance 20
+    quality_range 7
+  more
+  arch lemon
+    magic 0
+    chance 20
+    quality_range 7
+  more
+  arch lychee
+    magic 0
+    chance 20
+    quality_range 7
+  more
+  arch orange
+    magic 0
+    chance 20
+    quality_range 7
+  more
+  arch peach
+    magic 0
+    chance 20
+    quality_range 7
+  more
+  arch pear
+    magic 0
+    chance 20
+    quality_range 7
+  more
+  arch pear1
+    magic 0
+    chance 20
+    quality_range 7
+  more
+  arch pineapple
+    magic 0
+    chance 20
+    quality_range 7
+  more
+  arch rambutan
+    magic 0
+    chance 20
+    quality_range 7
+  more
+  arch strawberry
+    magic 0
+    chance 20
+    quality_range 7
+  more
+  arch sultana
+    magic 0
+    chance 20
+    quality_range 7
+end
+#
+treasureone food_natural
+  arch egg
+    magic 0
+    chance 50
+    quality_range 7
+  more
+  arch honeycomb
+    magic 0
+    chance 50
+    quality_range 7
+end
+#
+treasureone food_backery
+  arch bread
+    magic 0
+    chance 50
+    quality_range 7
+  more
+  arch bread1
+    magic 0
+    chance 50
+    quality_range 7
+  more
+  arch cookie
+    magic 0
+    chance 50
+    quality_range 7
+end
+#
+treasureone food_base
+  arch food_generic
+    magic 0
+    chance 50
+    quality_range 7
+  more
+  arch cheese
+    magic 0
+    chance 50
+    quality_range 7
+  more
+  arch poison_food
+    magic 0
+    chance 10
+    quality_range 7
+end
+#
+treasureone food_drink
+  arch booze_generic
+    magic 0
+    chance 30
+    quality_range 7
+  more
+  arch drink_generic
+    magic 0
+    chance 20
+    quality_range 7
+end
+##############################################################
+#
+# Drops misc
+#
+##################
+treasureone misc_container
+  arch sack
+    chance 25
+    magic 0
+  more
+  arch r_sack
+    chance 25
+    magic 0
+    material_quality 80
+    material_range 7
+  more
+  arch bag
+    chance 25
+    magic 0
+  more
+  arch pouch
+    chance 20
+    magic 0
+  more
+  arch key_ring
+    chance 20
+    magic 0
+    material_quality 80
+    material_range 7
+  more
+  arch quiver
+    chance 10
+    magic 0
+  more
+  arch quiver_b
+    chance 10
+    magic 0
+  more
+  arch quiver_s
+    chance 10
+    magic 0
+end
+#
+treasureone book_misc
+  arch tome
+    chance 45
+    magic 0
+  more
+  arch book
+    chance 65
+    magic 0
+end
+#
+treasureone misc_alchemy
+  arch gravedirt
+    chance 1
+    magic 0
+end
+#
+treasureone misc_inorganic
+  arch t_rock
+    chance 25
+end
+#
+treasureone misc_light
+  arch torch
+    magic 0
+    chance 50
+  more
+  arch lamp
+    magic 0
+    chance 20
+  more
+  arch oil_lamp
+    magic 0
+    chance 30
+end
+
+##############################################################
+#
+# Drops magical
+#
+##################
+treasure magic_useup
+  list magic_scroll
+    chance 40
+  no
+    list magic_potion
+      chance 70
+    no
+      arch wand
+        chance 100
+    end
+  end
+end
+#
+treasureone magic_scroll
+  arch scroll_generic
+    chance 80
+    nrof 1
+    magic 0
+  more
+  arch scroll_generic
+    chance 15
+    nrof 2
+    magic 0
+  more
+  arch scroll_generic
+    chance 5
+    nrof 3
+    magic 0
+end
+#
+treasureone magic_potion
+  arch potion_generic
+    chance 65
+    magic 0
+  more
+  arch potion_generic
+    nrof 2
+    chance 10
+    magic 0
+  more
+  arch balm_generic
+    chance 15
+    magic 0
+  more
+  arch dust_generic
+    chance 10
+    magic 0
+end
+#
+treasureone magic_talisman
+  arch ring_generic
+    chance 40
+    quality_range 7
+    magic 0
+  more
+  arch amulet_generic
+    chance 30
+    quality_range 7
+    magic 0
+end
+#
+treasureone magic_device
+  arch wand
+    chance 93
+    quality_range 7
+    magic 0
+  more
+  arch rod_light
+    difficulty 15
+    chance 3
+    quality_range 7
+    magic 0
+  more
+  arch horn
+    difficulty 25
+    chance 3
+    quality_range 7
+    magic 0
+  more
+  arch rod_heavy
+    difficulty 40
+    chance 1
+    quality_range 7
+    magic 0
+end
+#
+treasureone magic_device_talisman
+  list magic_device
+    chance 46
+  more
+  list magic_talisman
+    chance 54
+end
+#
+treasureone magic_rand
+  list magic_useup
+    chance 92
+  more
+  list magic_talisman
+    chance 4
+  more
+  list magic_device
+    chance 4
+end
+##############################################################
+#
+# Drops & loot
+#
+##################7
+# special loot to create always a loot
+treasure loot
+  list wealth_money
+    chance 90
+  more
+# diseased traps are currently disabled
+  list traps_pm
+    chance 9
+  more
+  arch torch
+    magic 0
+    chance 2
+  more
+  list food_misc
+    chance 3
+end
+# special loot for mobs in the start area to give useful drops to start
+# base weapons, base armours and other starting stuff in a somewhat high rate
+treasureone loot_start
+  list weapon_start
+    chance 20
+  more
+  list armour_start
+    chance 30
+  more
+  list weapon_throw
+    chance 12
+  more
+  list weapon_amun
+    chance 10
+  more
+  list food_misc
+    chance 10
+  more
+  list weapon_missile
+    chance 7
+  more
+  list book_misc
+    magic 0
+    chance 3
+  more
+  list wealth_special
+    magic 0
+    chance 4
+  more
+  list misc_container
+    chance 5
+  more
+  list misc_light
+    magic 0
+    chance 15
+  more
+  list misc_alchemy
+    magic 0
+    chance 1
+  more
+  list misc_inorganic
+    magic 0
+    chance 1
+  more
+  arch hat_feather
+    chance 1
+    quality_range 7
+  more
+  arch dress
+    chance 1
+    quality_range 7
+end
+# base loot list for "misc. base stuff"
+treasureone loot_base
+  list weapon_throw
+    chance 16
+  more
+  list weapon_amun
+    chance 26
+  more
+  list book_misc
+    magic 0
+    chance 6
+  more
+  list wealth_special
+    magic 0
+    chance 6
+  more
+  list misc_container
+    chance 5
+  more
+  list food_misc
+    magic 0
+    chance 13
+  more
+  list misc_light
+    magic 0
+    chance 2
+  more
+  list misc_alchemy
+    magic 0
+    chance 2
+  more
+  list misc_inorganic
+    magic 0
+    chance 2
+  more
+  arch hat_feather
+    chance 2
+    quality_range 7
+  more
+  arch dress
+    chance 2
+    quality_range 7
+  more
+  arch pants
+    chance 2
+    quality_range 7
+  more
+  list magic_useup
+    chance 3
+end
+#
+treasureone loot_misc
+  list armour_misc
+    chance 65
+  more
+  list weapon_misc
+    chance 35
+end
+#
+treasureone loot_melee
+  list armour_misc
+    chance 65
+  more
+  list weapon_misc
+    chance 35
+end
+#
+treasureone loot_range
+  list food_misc
+    chance 60
+end
+#
+treasure loot_magic
+  list magic_device_talisman
+    chance 30
+  no
+    list magic_useup
+      chance 81
+    no
+      arch potion_improve
+        difficulty 6
+    end
+  end
+end
+#
+treasureone loot_device
+  list food_misc
+    chance 60
+end

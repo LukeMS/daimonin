@@ -1,0 +1,29 @@
+Object shield_frozenice
+name frozenice shield
+type 33
+layer 3
+face shield_frozenice.101
+ac 14
+wc 2
+item_level 8
+item_skill 5
+resist_impact 3
+resist_cleave 6
+resist_pierce 3
+resist_slash 6
+resist_cold 5
+resist_magic 5
+resist_light 5
+resist_shadow 5
+resist_psionic 5
+resist_lifesteal 5
+resist_death 5
+resist_chaos 8
+resist_nether 3
+resist_aether 3
+material 128
+material_real 449
+weight 700
+value 120
+is_named 1
+end
