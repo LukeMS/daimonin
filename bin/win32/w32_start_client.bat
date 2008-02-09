@@ -1,4 +1,4 @@
 REM *** this should start the sdl client **
 cd ..\..\client
-client.exe
+daimonin.exe
 cd ..\bin\win32
