@@ -669,6 +669,7 @@ Boolean game_status_chain(void)
         reset_keys();
         free_faces();
         sprite_clear_backbuffer();
+		SOCKET_CloseClientSocket(&csocket);
         GameStatus = GAME_STATUS_WAITLOOP;
 
         switch (options.cli_server)

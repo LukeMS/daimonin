@@ -379,6 +379,7 @@ typedef struct linked_char
 
 /* Pull in the socket structure - used in the player structure */
 #include "newserver.h"
+#include "newclient.h"
 
 /* add skills.h global */
 #include "skills.h"
@@ -510,8 +511,6 @@ EXTERN objectlink               *gmaster_list_DM;
 EXTERN objectlink               *ban_list_player; /* see ban.c */
 EXTERN objectlink               *ban_list_ip;    /* see ban.c */
 
-
-EXTERN SockList                 global_sl;
 EXTERN archetype               *global_aggro_history_arch;
 EXTERN archetype               *global_dmg_info_arch;
 
@@ -536,7 +535,8 @@ EXTERN uint32                   global_map_tag; /* our global map_tag value for 
 EXTERN New_Face                *new_faces;
 EXTERN archetype               *coins_arch[NUM_COINS+1];
 EXTERN char                     global_version_msg[32];
-EXTERN SockList                 global_version_sl;
+
+EXTERN sockbuf_struct		   *global_sockbuf_version; 
 
 
 /* arch.c - sysinfo for lowlevel */

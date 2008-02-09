@@ -43,7 +43,9 @@
 
 /* very have debugging of the whole core server loop - mainly how map data ia send & stored */
 /* #define DEBUG_CORE */
-/* #define DEBUG_CORE_MAP */
+/* #define DEBUG_CORE_MAP*/
+
+#define SEND_BUFFER_DEBUG
 
 /*#define SKILL_UTIL_DEBUG*/
 

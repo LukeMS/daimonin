@@ -49,11 +49,9 @@
  */
 #define MAXSOCKBUF_IN (3*1024)
 
-/* Maximum size of any packet we expect.  Using this makes it so we don't need to
-* allocated and deallocated teh same buffer over and over again and the price
-* of using a bit of extra memory.  IT also makes the code simpler.
-*/
-#define MAXSOCKBUF (128*1024)
+/* used for the OS socket bufs */
+#define SOCKET_BUFSIZE_SEND (24*1024)
+#define SOCKET_BUFSIZE_READ (8*1024)
 
 #define CS_QUERY_HIDEINPUT 0x4  /* Hide input being entered */
 
@@ -223,14 +221,6 @@ enum
 #define UPD_QUALITY   0x200
 #define UPD_ALL     0xffff
 
-typedef struct _srv_client_files
-{
-    char           *file;       /* file data, compressed or not */
-    int             len;        /* if -1, the file is not compressed */
-    int             len_ucomp;  /* original uncompressed file length */
-    unsigned int    crc;        /* crc adler32 */
-} _srv_client_files;
-
 enum
 {
     SRV_CLIENT_SKILLS,
@@ -259,8 +249,6 @@ typedef enum client_cmd {
 
     CLIENT_CMD_MAX_NROF
 } _client_cmd;
-
-#define SOCKET_SET_BINARY_CMD(__s__, __bc__) (__s__)->buf[0]=__bc__;(__s__)->len=1
 
 enum
 {
@@ -302,13 +290,81 @@ enum
     BINARY_CMD_CHANNELMSG,
 #endif
     /* old, unused or outdated crossfire cmds! */
-    BINARY_CMD_MAGICMAP,
-    BINARY_CMD_DELINV,
-    BINARY_CMD_REPLYINFO,
     BINARY_CMD_IMAGE2,
     BINARY_CMD_FACE,
     BINARY_CMD_FACE2,
     BINAR_CMD /* last entry */
 };
+
+typedef struct _srv_client_files
+{
+	sockbuf_struct *sockbuf;    /* static sockbuf with file data */
+	int             len;        /* if -1, the file is not compressed */
+	int             len_ucomp;  /* original uncompressed file length */
+	unsigned int    crc;        /* crc adler32 */
+} _srv_client_files;
+
+#define GetInt_String(_data_)			( *(uint32*)(_data_) )
+#define GetShort_String(_data_)			( *(uint16*)(_data_) )
+
+/* thats a bit hard coded but well... */
+#define AddIf_SOCKBUF_PTR _sockbufptr
+
+/* Sends the stats to the client - only sends them if they have changed */
+
+#define AddIfInt(Old,New,Type) if (Old != New) {\
+	Old = New; \
+	SockBuf_AddChar(AddIf_SOCKBUF_PTR, (Type)); \
+	SockBuf_AddInt(AddIf_SOCKBUF_PTR, (New)); \
+	}
+
+#define AddIfShort(Old,New,Type) if (Old != New) {\
+	Old = New; \
+	SockBuf_AddChar(AddIf_SOCKBUF_PTR, (Type)); \
+	SockBuf_AddShort(AddIf_SOCKBUF_PTR, (New)); \
+	}
+
+#define AddIfChar(Old,New,Type) if (Old != New) {\
+	Old = New; \
+	SockBuf_AddChar(AddIf_SOCKBUF_PTR, (Type)); \
+	SockBuf_AddChar(AddIf_SOCKBUF_PTR, (New)); \
+	}
+
+#define AddIfIntFlag(Old,New, Flag,Value, Type) if (Old != New) {\
+	Old = New; \
+	SockBuf_AddChar(AddIf_SOCKBUF_PTR, (Type)); \
+	SockBuf_AddInt(AddIf_SOCKBUF_PTR, (New)); \
+	Flag |= Value; \
+	}
+
+#define AddIfShortFlag(Old,New, Flag,Value,Type) if (Old != New) {\
+	Old = New; \
+	SockBuf_AddChar(AddIf_SOCKBUF_PTR, (Type)); \
+	SockBuf_AddShort(AddIf_SOCKBUF_PTR, (New)); \
+	Flag |= Value; \
+	}
+
+#define AddIfCharFlag(Old,New, Flag,Value, Type) if (Old != New) {\
+	Old = New; \
+	SockBuf_AddChar(AddIf_SOCKBUF_PTR, (Type)); \
+	SockBuf_AddChar(AddIf_SOCKBUF_PTR, (New)); \
+	Flag |= Value; \
+	}
+
+#define AddIfFloat(Old,New,Type) if ((Old) != (New)) {\
+	(Old) = (New); \
+	SockBuf_AddChar(AddIf_SOCKBUF_PTR, (Type)); \
+	SockBuf_AddInt(AddIf_SOCKBUF_PTR,((New)*FLOAT_MULTI));\
+	}
+
+#define AddIfString(Old,New,Type) if (Old == NULL || strcmp(Old,New)) {\
+	int _len;\
+	if (Old) free(Old);\
+	Old = strdup_local(New);\
+	SockBuf_AddChar(AddIf_SOCKBUF_PTR, (Type)); \
+	SockBuf_AddChar(AddIf_SOCKBUF_PTR, (_len = strlen(New))); \
+	SockBuf_AddString(AddIf_SOCKBUF_PTR, (New), len); \
+	}
+
 
 #endif

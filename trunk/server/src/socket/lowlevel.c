@@ -2,9 +2,7 @@
     Daimonin, the Massive Multiuser Online Role Playing Game
     Server Applicatiom
 
-    Copyright (C) 2001 Michael Toennies
-
-    A split from Crossfire, a Multiplayer game for X-windows.
+    Copyright (C) 2001-2008 Michael Toennies
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,125 +21,138 @@
 	The author can be reached via e-mail to info@daimonin.net
 */
 
-/* newsocket.c contains some base functions that both the client and server
- * can use.  As such, depending what we are being compiled for will
- * determine what we can include.  the client is designed have
- * CFCLIENT defined as part of its compile flags.
- */
-
 #include <global.h>
 
-/***********************************************************************
- *
- * SockList functions/utilities
- *
- **********************************************************************/
-
-/* add a 0 terminated string 
- * len is the string length we copy
- * if len is zero, we copy until we find '\0' as string terminator 
- */
-void SockList_AddString(SockList *sl, const char *data, int len)
+/* low level read from socket. This function don't knows about packages.
+* It handles streams.
+*/
+int read_socket_buffer(NewSocket *ns)
 {
-	if(len)
+	ReadList   *sl  = &ns->readbuf;
+	int         stat_ret, read_bytes, tmp;
+
+	if(ns->status == Ns_Zombie) /* zombie clients don't read anything */
+		return 0;
+
+	/* calculate how many bytes can be read in one row in our round robin buffer */
+	tmp = sl->pos+sl->len;
+
+	/* we have still some bytes until we hit our buffer border ?*/
+	if(tmp >= MAXSOCKBUF_IN)
 	{
-		memcpy(sl->buf+sl->len,data,len);
-		sl->buf[len+sl->len++] = 0;
+		tmp = tmp-MAXSOCKBUF_IN; /* thats our start offset */
+		read_bytes = sl->pos - tmp; /* thats our free buffer until ->pos*/
 	}
 	else
+		read_bytes = MAXSOCKBUF_IN-tmp; /* tmp is our offset and there is still a bit to read in */
+
+	/* with this settings we can adjust in a hard way the maximum bytes read per round per socket */
+	/*
+	if(read_bytes >256)
+	read_bytes = 256;
+	*/
+
+#ifdef WIN32
+	stat_ret = recv(ns->fd, sl->buf + tmp, read_bytes, 0);
+#else
+	stat_ret = read(ns->fd, sl->buf + tmp, read_bytes);
+#endif
+
+	/*LOG(-1,"READ(%d)(%d): %d\n", ROUND_TAG, ns->fd, stat_ret);*/
+
+	if (stat_ret > 0)
+		sl->len += stat_ret;
+	else if (stat_ret < 0) /* lets check its a real problem */
 	{
-		register char    c;
+#ifdef WIN32
+		if (WSAGetLastError() == WSAEWOULDBLOCK)
+			return 1;
 
-		while ((c = *data++))
-			sl->buf[sl->len++] = c;
-		sl->buf[sl->len++] = 0;
+		if (WSAGetLastError() == WSAECONNRESET)
+			LOG(llevDebug, "Connection closed by client\n");
+		else
+			LOG(llevDebug, "ReadPacket got error %d, returning 0\n", WSAGetLastError());
+#else
+		if (errno == EINTR || errno == EAGAIN || errno == EWOULDBLOCK)
+			return 1;
+
+		LOG(llevDebug, "ReadPacket got error %d (%s), returning 0\n", errno, strerror_local(errno));
+#endif
 	}
+	else
+		return -1; /* return value of zero means closed socket */
+
+	return stat_ret;
 }
 
-
-/*******************************************************************************
- *
- * Start of write related routines.
- *
- ******************************************************************************/
-
-
-/* Takes a string of data, and writes it out to the socket. A very handy
-* shortcut function.
+/* When the socket is clear to write, and we have backlogged data, this
+* is called to write it out.
 */
-void Write_String_To_Socket(NewSocket *ns, char cmd, char *buf, int len)
+void write_socket_buffer(NewSocket *ns)
 {
-    SockList    sl;
+	int amt, max = -1;
 
-    sl.len = len;
-    sl.buf = (uint8 *) buf;
-    *((char *) buf) = cmd;
-    Send_With_Handling(ns, &sl);
-}
+	/* lets see we have have something to send */
+	while(ns->sockbuf_end)
+	{
+		max = ns->sockbuf_len - ns->sockbuf_pos;
+		if(max > 0) /* nothing to send? should not happens but well... */
+			break;
+		socket_buffer_dequeue(ns);
+	}
 
-/* Send With Handling - calls Write_To_Socket to send data to the client.
-* The only difference in this function is that we take a SockList
-* and we prepend the length information.
-*/
-void Send_With_Handling  (NewSocket *ns, SockList *msg)
-{
-    unsigned char sbuf[4];
+	if(max <= 0) /* nothing in the queue - lets check we have working buffer we can request! */
+	{
+		/* is there something in our working buffer? */
+		if(!ns->sockbuf || !ns->sockbuf->len)
+			return; /* there is really nothing to do! */
 
-    if (ns->status == Ns_Dead || !msg)
-        return;
+		socket_buffer_enqueue(ns, ns->sockbuf);
+		ns->sockbuf = NULL;
+		max = ns->sockbuf_len - ns->sockbuf_pos; /* its a fresh buffer, pos MUST be zero */
+	}
 
-    /* Almost certainly we've overflowed a buffer, so quite now to make
-    * it easier to debug.
-    */
-    if (msg->len >= MAXSOCKBUF)
-        LOG(llevError, "Trying to send a buffer beyond properly size, len =%d\n", msg->len);
+	/* with this settings we can adjust in a hard way the maximum bytes written per round per socket */
+	/*
+	if(max >256)
+	max = 256;
+	*/
 
-    if(msg->len > 32*1024-1) /* if > 32kb use 3 bytes header and set the high bit to show it client */
-    {
-        sbuf[0] = ((uint32) (msg->len) >> 16) & 0xFF;
-        sbuf[0] |= 0x80; /* high bit marker for the client */
-        sbuf[1] = ((uint32) (msg->len) >> 8) & 0xFF;
-        sbuf[2] = ((uint32) (msg->len)) & 0xFF;
-        Write_To_Socket(ns, sbuf, 3);
-    }
-    else
-    {
-        sbuf[0] = ((uint32) (msg->len) >> 8) & 0xFF;
-        sbuf[1] = ((uint32) (msg->len)) & 0xFF;
-        Write_To_Socket(ns, sbuf, 2);
-    }
-    Write_To_Socket(ns, msg->buf, msg->len);
-}
+	amt = send(ns->fd, ns->sockbuf_end->buf + ns->sockbuf_pos, max, MSG_DONTWAIT);
 
-/* This function will write to our socket buffer but not the "real* OS socket */
-void    Write_To_Socket (NewSocket *ns, unsigned char *buf, int len)
-{
-    int avail, end;
+	/*LOG(-1,"WRITE(%d)(%d): %d (%d)\n", ROUND_TAG, ns->fd, amt, max);*/
 
-    if ((len + ns->outputbuffer.len) > MAXSOCKBUF)
-    {
-        LOG(llevDebug, "Socket host %s has overrun internal buffer - marking as dead (bl:%d l:%d)\n",
-            STRING_SAFE(ns->ip_host), ns->outputbuffer.len, len);
-        ns->status = Ns_Dead;
-        return;
-    }
+	/* following this link: http://www-128.ibm.com/developerworks/linux/library/l-sockpit/#N1019D
+	* send() with MSG_DONTWAIT under linux can return 0 which means the data
+	* is "queued for transmission". I was not able to find that in the send() man pages...
+	* In my testings it never happend, so i put it here in to have it perhaps triggered in
+	* some server runs (but we should trust perhaps ibm developer infos...).
+	*/
+#ifndef WIN32 /* linux only ATM */
+	if(!amt)
+	{
+		LOG(llevDebug,"IMPORTANT: send() in write_socket_buffer() returned ZERO! check the comment text in loop.c around line 200. (max: %d)\n", max);
+		amt = max; /* as i understand, the data is now internal buffered? So remove it from our write buffer */
+	}
+	else
+#endif
 
-    /* data + end is where we start putting the new data.  The last byte
-    * currently in use is actually data + end -1
-    */
-    end = ns->outputbuffer.start + ns->outputbuffer.len;
-    /* The buffer is already in a wrapped state, so adjust end */
-    if (end >= MAXSOCKBUF)
-        end -= MAXSOCKBUF;
-    avail = MAXSOCKBUF - end;
+		if (amt < 0) /* error */
+		{
+#ifdef WIN32 /* ***win32 write_socket_buffer: change error handling */
+			if (WSAGetLastError() == WSAEWOULDBLOCK)
+				return;
 
-    /* We can all fit it behind the current data without wrapping */
-    if (avail >= len)
-        memcpy(ns->outputbuffer.data + end, buf, len);
-    else
-    {
-        memcpy(ns->outputbuffer.data + end, buf, avail);
-        memcpy(ns->outputbuffer.data, buf + avail, len - avail);
-    }
-    ns->outputbuffer.len += len;
+			LOG(llevDebug, "New socket write failed (wsb) (%d).\n", WSAGetLastError());
+#else
+			if (errno == EWOULDBLOCK || errno == EINTR)
+				return;
+			LOG(llevDebug, "New socket write failed (wsb %d) (%d: %s).\n", EAGAIN, errno, strerror_local(errno));
+#endif
+			ns->status = Ns_Dead;
+			return;
+		}
+		ns->sockbuf_pos += amt;
+		if(ns->sockbuf_len - ns->sockbuf_pos == 0) /* nothing left? release then this buffer */
+			socket_buffer_dequeue(ns);
 }

@@ -189,11 +189,7 @@ int command_party_invite ( object *pl, char *params)
     target->group_leader_count = pl->count;
 
     /* send the /invite to our player */
-    SOCKET_SET_BINARY_CMD(&global_sl, BINARY_CMD_INVITE);
-    strcpy((char *)global_sl.buf+global_sl.len, pl->name);
-    global_sl.len += strlen(pl->name)+1;
-    Send_With_Handling(&target->socket, &global_sl);
-
+	Write_String_To_Socket(&target->socket, BINARY_CMD_INVITE, pl->name, strlen(pl->name));
     new_draw_info_format(NDI_YELLOW, 0,pl, "You invited %s to join the group.", query_name(target->ob));
 
     return 1;
@@ -513,6 +509,7 @@ void party_message(int mode, int flags, int pri,object *leader, object *source, 
  */
 void party_client_group_status(object *member)
 {
+	sockbuf_struct *sockbuf;
     object *tmp;
     char buf[HUGE_BUF]= "";
     char buf2[HUGE_BUF];
@@ -525,21 +522,17 @@ void party_client_group_status(object *member)
         strcat(buf, buf2);
     }
 
-    SOCKET_SET_BINARY_CMD(&global_sl, BINARY_CMD_GROUP);
-    strcpy((char *)global_sl.buf+global_sl.len, buf);
-    global_sl.len += strlen(buf)+1;
-
-    /* broadcast command to all members */
+	/* broadcast command to all members */
+	sockbuf = SOCKBUF_COMPOSE( BINARY_CMD_GROUP, NULL, buf, SOCKBUF_DYNAMIC, 0);
     for(tmp=CONTR(member)->group_leader;tmp;tmp=CONTR(tmp)->group_next)
-        Send_With_Handling(&CONTR(tmp)->socket, &global_sl);
+		SOCKBUF_ADD_TO_SOCKET(&CONTR(tmp)->socket, sockbuf); /* broadcast the sockbuf */
+	SOCKBUF_COMPOSE_FREE(sockbuf);
 }
 
 /* tell a member that he has no group! */
 void party_client_group_kill(object *member)
 {
-    /* we use gruop init with zero players as "no group" marker */
-    SOCKET_SET_BINARY_CMD(&global_sl, BINARY_CMD_GROUP);
-    Send_With_Handling(&CONTR(member)->socket, &global_sl);
+	Write_String_To_Socket(&CONTR(member)->socket, BINARY_CMD_GROUP, NULL, 1);
 }
 
 /* TODO: optimize update handling
@@ -552,6 +545,7 @@ void party_client_group_kill(object *member)
 /* update a member data for all group members */
 void party_client_group_update(object *member, int flag)
 {
+	sockbuf_struct *sockbuf;
     object *tmp;
     player *pl, *plm;
     char buf2[HUGE_BUF];
@@ -603,13 +597,9 @@ void party_client_group_update(object *member, int flag)
         }
     }
 
-    SOCKET_SET_BINARY_CMD(&global_sl, BINARY_CMD_GROUP_UPDATE);
-    /*Send_With_Handling(&CONTR(member)->socket, &global_sl);*/
-
-    strcpy((char *)global_sl.buf+global_sl.len, buf);
-    global_sl.len += strlen(buf)+1;
-
-    /* broadcast command to all members */
+	/* broadcast command to all members */
+	sockbuf = SOCKBUF_COMPOSE( BINARY_CMD_GROUP_UPDATE, NULL, buf, SOCKBUF_DYNAMIC, 0);
     for(tmp=plm->group_leader;tmp;tmp=CONTR(tmp)->group_next)
-        Send_With_Handling(&CONTR(tmp)->socket, &global_sl);
+		SOCKBUF_ADD_TO_SOCKET(&CONTR(tmp)->socket, sockbuf); /* broadcast the sockbuf */
+	SOCKBUF_COMPOSE_FREE(sockbuf);
 }

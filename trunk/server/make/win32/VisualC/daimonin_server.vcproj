@@ -230,231 +230,39 @@
 				Name="socket"
 				>
 				<File
-					RelativePath="..\..\..\src\socket\adler32.c"
+					RelativePath="..\..\..\src\socket\commands.c"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\socket\compress.c"
+					RelativePath="..\..\..\src\socket\connect.c"
 					>
-				</File>
-				<File
-					RelativePath="..\..\..\src\socket\crc32.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\src\socket\crc32.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\src\socket\deflate.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\src\socket\deflate.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\src\socket\image.c"
-					>
-					<FileConfiguration
-						Name="ReleaseLog|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\socket/"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\socket/"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\src\socket\info.c"
-					>
-					<FileConfiguration
-						Name="ReleaseLog|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\socket/"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\socket/"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\src\socket\init.c"
 					>
-					<FileConfiguration
-						Name="ReleaseLog|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\socket/"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\socket/"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\src\socket\item.c"
-					>
-					<FileConfiguration
-						Name="ReleaseLog|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\socket/"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\socket/"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\src\socket\loop.c"
 					>
-					<FileConfiguration
-						Name="ReleaseLog|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\socket/"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\socket/"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\src\socket\lowlevel.c"
 					>
-					<FileConfiguration
-						Name="ReleaseLog|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\socket/"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\socket/"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\src\socket\metaserver.c"
 					>
-					<FileConfiguration
-						Name="ReleaseLog|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\socket/"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\socket/"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\socket\request.c"
-					>
-					<FileConfiguration
-						Name="ReleaseLog|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\socket/"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\socket/"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\src\socket\sounds.c"
-					>
-					<FileConfiguration
-						Name="ReleaseLog|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\socket/"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\socket/"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\src\socket\trees.c"
+					RelativePath="..\..\..\src\socket\read.c"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\socket\trees.h"
+					RelativePath="..\..\..\src\socket\startup.c"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\socket\zconf.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\src\socket\zlib.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\src\socket\zutil.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\src\socket\zutil.h"
+					RelativePath="..\..\..\src\socket\write.c"
 					>
 				</File>
 			</Filter>
@@ -1112,26 +920,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\server\commands.c"
-					>
-					<FileConfiguration
-						Name="ReleaseLog|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\server/"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\server/"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
 					RelativePath="..\..\..\src\server\container.c"
 					>
 				</File>
@@ -1660,6 +1448,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\src\common\info.c"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\src\common\item.c"
 					>
 				</File>
@@ -1674,28 +1466,6 @@
 				<File
 					RelativePath="..\..\..\src\common\loader.c"
 					>
-				</File>
-				<File
-					RelativePath="..\..\..\src\common\loader.l"
-					>
-					<FileConfiguration
-						Name="ReleaseLog|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							CommandLine="..\..\..\..\dev\win32\flex.exe -i  -o$(InputDir)$(InputName).c $(InputPath)&#x0D;&#x0A;"
-							Outputs="$(InputDir)$(InputName).c"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							CommandLine="..\..\..\..\dev\win32\flex.exe -i  -o$(InputDir)$(InputName).c $(InputPath)&#x0D;&#x0A;"
-							Outputs="$(InputDir)$(InputName).c"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\src\common\logger.c"
@@ -1750,7 +1520,33 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\src\common\request.c"
+					>
+					<FileConfiguration
+						Name="ReleaseLog|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
 					RelativePath="..\..\..\src\common\shstr_ng.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\common\sounds.c"
 					>
 				</File>
 				<File
@@ -1770,7 +1566,67 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\src\common\view_inv.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\common\view_map.c"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\src\common\win32.c"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="zlib"
+				>
+				<File
+					RelativePath="..\..\..\src\zlib\adler32.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\zlib\compress.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\zlib\crc32.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\zlib\crc32.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\zlib\deflate.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\zlib\deflate.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\zlib\trees.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\zlib\trees.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\zlib\zconf.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\zlib\zlib.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\zlib\zutil.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\zlib\zutil.h"
 					>
 				</File>
 			</Filter>

@@ -24,8 +24,6 @@
 #if !defined(__COMMANDS_H)
 #define __COMMANDS_H
 
-#define MAXSOCKBUF_IN (3*1024)
-
 typedef enum client_cmd {
     CLIENT_CMD_GENERIC,
     CLIENT_CMD_STOP,
@@ -77,7 +75,6 @@ extern void VersionCmd(char *data, int len);
 extern void SendVersion(ClientSocket csock);
 extern void SendAddMe(ClientSocket csock);
 extern void RequestFile(ClientSocket csock, int index);
-extern void SendSetFaceMode(ClientSocket csock, int mode);
 extern void SpelllistCmd(unsigned char *data, int len);
 extern void SkilllistCmd(unsigned char *data, int len);
 

@@ -38,6 +38,7 @@ SRCS = \
 	hashfunc.c \
 	holy.c\
 	image.c \
+	info.c \
 	item.c\
 	links.c\
 	living.c\
@@ -47,19 +48,23 @@ SRCS = \
 	map.c\
 	map_tile.c\
 	material.c\
-    mempool.c\
-    missile.c\
+	mempool.c\
+	missile.c\
 	object.c\
 	porting.c\
 	quest.c\
 	re-cmp.c\
 	readable.c\
 	recipe.c\
+	request.c\
 	shstr_ng.c\
+	sounds.c\
 	stats.c\
 	time.c\
 	treasure.c\
-	utils.c
+	utils.c\
+	view_inv.c\
+	view_map.c
 
 ALLFILES=loader.l $(SRCS) README Makefile.in
 

@@ -55,13 +55,9 @@ static command_buffer *command_buffer_new(unsigned int len, uint8 *data)
 {
     command_buffer *buf;
 
-    if (len > MAXSOCKBUF)
-    {
-        LOG(LOG_DEBUG, "Tried to allocate huge command buffer (%d bytes)\n", len);
-        return NULL;
-    }
+    if(!(buf = (command_buffer *)malloc(sizeof(command_buffer)+len+1)))
+		return NULL;
 
-    buf = (command_buffer *)malloc(sizeof(command_buffer)+len+1);
     buf->next = buf->prev = NULL;
     buf->len = len;
 
@@ -197,12 +193,15 @@ command_buffer *get_next_input_command()
  */
 static int reader_thread_loop(void *nix)
 {
-    uint8 readbuf[MAXSOCKBUF+1];
+    static uint8 *readbuf = NULL;
+	static int readbuf_malloc = 256;
     int readbuf_len = 0;
     int header_len = 0;
     int cmd_len = -1;
 
     LOG(LOG_DEBUG, "Reader thread started\n");
+	if(!readbuf)
+		readbuf = malloc(readbuf_malloc);
 
     while (! abort_thread)
     {
@@ -210,62 +209,75 @@ static int reader_thread_loop(void *nix)
         int toread;
 
         /* First, try to read a command length sequence */
-        if (readbuf_len < 2)
-        {
-            if (readbuf_len > 0 && (readbuf[0] & 0x80)) /* three-byte length? */
-                toread = 3 - readbuf_len;
-            else
-                toread = 2 - readbuf_len;
-        }
-        else if (readbuf_len == 2 && (readbuf[0] & 0x80))
-            toread = 1;
+		if (!readbuf_len)
+			toread = 1; /* try to read a command from the socket */
+		else if (!(readbuf[0] & 0x80) && readbuf_len < 3)
+			toread = 3 - readbuf_len; /* read in 2 or 1 more bytes */
+		else if ((readbuf[0] & 0x80) && readbuf_len < 5)
+			toread = 5 - readbuf_len; /* read in 4 to 1 more bytes */
         else
         {
-            /* If we have a finished header, get the packet size from it */
-            if (readbuf_len <= 3)
-            {
-                uint8 *p = readbuf;
-                header_len = (*p & 0x80) ? 3 : 2;
-                cmd_len = 0;
-                if (header_len == 3)
-                    cmd_len += ((int)(*p++) & 0x7f) << 16;
-                cmd_len += ((int)(*p++)) << 8;
-                cmd_len += ((int)(*p++));
-            }
+			if (readbuf_len == 3 && !(readbuf[0] & 0x80))
+			{
+				header_len = 3;
+				cmd_len = adjust_endian_int16(*((uint16 *)(readbuf+1)));
+			}
+			else
+			if (readbuf_len == 5 && (readbuf[0] & 0x80))
+			{
+				header_len = 5;
+				cmd_len = adjust_endian_int32(*((uint32 *)(readbuf+1)));
 
-            toread = cmd_len + header_len - readbuf_len;
-        }
+			}
 
-        ret = recv(csocket.fd, readbuf + readbuf_len, toread, 0);
+			toread = cmd_len + header_len - readbuf_len;
+			if(cmd_len+16 > readbuf_malloc)
+			{
+				uint8 *tmp = readbuf;
 
-        if (ret == 0)
-        {
-            /* End of file */
-            LOG(LOG_DEBUG, "Reader got EOF trying to read %d bytes\n", toread);
-            goto out;
-        }
-        else if (ret == -1)
-        {
-            /* IO error */
-#ifdef WIN32
-            LOG(LOG_DEBUG, "Reader got error %d\n", WSAGetLastError());
-#else
-            LOG(LOG_DEBUG, "Reader got error %d (%s)\n", errno, strerror(errno));
-#endif
-            goto out;
-        }
-        else
-        {
-            readbuf_len += ret;
-            /*            LOG(LOG_DEBUG, "Reader got some data (%d bytes total)\n", readbuf_len); */
-        }
+				readbuf_malloc = cmd_len+16;
+				readbuf = (uint8 *) malloc(readbuf_malloc);
+				memcpy(readbuf, tmp, readbuf_len); /* save the already read in header part */
+				free(tmp);
+			}
 
+			LOG(-1,"CMD_LEN: toread:%d len:%d (%x)\n", toread, cmd_len, (*((char *)readbuf))&~0x80);
+
+        }
+		if(toread)
+		{
+			ret = recv(csocket.fd, readbuf + readbuf_len, toread, 0);
+
+	        if (ret == 0)
+		    {
+			    /* End of file */
+				LOG(LOG_DEBUG, "Reader got EOF trying to read %d bytes\n", toread);
+				goto out;
+			}
+			else if (ret == -1)
+			{
+				/* IO error */
+	#ifdef WIN32
+		        LOG(LOG_DEBUG, "Reader got error %d\n", WSAGetLastError());
+	#else
+		        LOG(LOG_DEBUG, "Reader got error %d (%s)\n", errno, strerror(errno));
+	#endif
+		        goto out;
+			}
+			else
+			{
+				readbuf_len += ret;
+				/*            LOG(LOG_DEBUG, "Reader got some data (%d bytes total)\n", readbuf_len); */
+			}
+		}
         /* Finished with a command ? */
         if (readbuf_len == cmd_len + header_len && !abort_thread)
         {
             /*            LOG(LOG_DEBUG, "Reader got a full command\n", readbuf_len); */
+            command_buffer *buf;
 
-            command_buffer *buf = command_buffer_new(readbuf_len - header_len, readbuf + header_len);
+			LOG(-1," CMD:%x\n", (*((char *)readbuf))&~0x80);
+			buf = command_buffer_new(readbuf_len, readbuf);
             if (buf == NULL)
                 goto out;
 
@@ -282,6 +294,8 @@ static int reader_thread_loop(void *nix)
 
 out:
     SOCKET_CloseClientSocket(&csocket);
+	free(readbuf);
+	readbuf = NULL;
     LOG(LOG_DEBUG, "Reader thread stopped\n");
     return -1;
 }
@@ -519,6 +533,7 @@ Boolean SOCKET_DeinitSocket(void)
     return(TRUE);
 }
 
+#define MAXSOCKBUF 128*1024
 Boolean SOCKET_OpenClientSocket(struct ClientSocket *csock, char *host, int port)
 {
     int tmp = 1;

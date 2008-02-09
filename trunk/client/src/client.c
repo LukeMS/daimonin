@@ -101,13 +101,18 @@ void DoClient(ClientSocket *csocket)
     /* Handle all enqueued commands */
     while ( (cmd = get_next_input_command()) ) /* function has mutex included */
     {
-        /*LOG(LOG_MSG,"Command #%d (LT:%d)(len:%d)\n",cmd->data[0], LastTick, cmd->len);*/
-        if (!cmd->data[0] || cmd->data[0] > NCOMMANDS)
+        LOG(LOG_MSG,"Command #%d (LT:%d)(len:%d)\n",cmd->data[0], LastTick, cmd->len);
+        if (!cmd->data[0] || (cmd->data[0]&~0x80) > NCOMMANDS)
             LOG(LOG_ERROR, "Bad command from server (%d)\n", cmd->data[0]);
         else
         {
-            /*LOG(LOG_MSG,"(%s) >%s<\n",commands[cmd->data[0]-1].cmdname, cmd->data+1);*/
-            commands[cmd->data[0] - 1].cmdproc(cmd->data+1, cmd->len-1);
+			int header_len = 3, cmd_tag = cmd->data[0];
+			if( cmd_tag & 0x80)
+			{
+				cmd_tag &= ~0x80;
+				header_len = 5;
+			}
+			commands[cmd_tag - 1].cmdproc(cmd->data+header_len, cmd->len-header_len);
         }
         command_buffer_free(cmd);
     }

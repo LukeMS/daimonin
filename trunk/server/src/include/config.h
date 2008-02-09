@@ -621,13 +621,6 @@
  *
  */
 
-/* The "wait for connection" function which blocks the server
- * in the middle of the socket function.
- * OK for local servers and the one where no accurate (object)
- * timing is needed.
- */
-/*#define BLOCK_UNTIL_CONNECTION*/
-
 /*
  * If you have defined SAVE_PLAYER, you might want to change this, too.
  * This is the access rights for the players savefiles.

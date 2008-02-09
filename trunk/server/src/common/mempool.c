@@ -82,7 +82,8 @@ struct mempool *pool_object, *pool_player, *pool_map_bfs,
     *pool_mob_behaviourset, *pool_mob_behaviour, *pool_mob_behaviourparam,
     *pool_objectlink, *pool_gmasters, *pool_bannode, *pool_tlist_tweak,
     *pool_cmd_buf16,*pool_cmd_buf32,*pool_cmd_buf64,
-    *pool_cmd_buf128,*pool_cmd_buf256,*pool_cmd_buf1024,*pool_cmd_buf4096
+    *pool_cmd_buf128,*pool_cmd_buf256,*pool_cmd_buf1024,*pool_cmd_buf4096,
+	*pool_sockbuf_small,*pool_sockbuf_medium,*pool_sockbuf_huge,*pool_sockbuf_dynamic
 #ifdef USE_CHANNELS
     ,*pool_player_channel
 #endif
@@ -199,6 +200,15 @@ void init_mempools()
             (chunk_initialisator) initialize_command_buffer1024, NULL, NULL, NULL);
     pool_cmd_buf4096 = create_mempool("command buffer 4096b", 1, sizeof(command_struct), 0,
             (chunk_initialisator) initialize_command_buffer4096, NULL, NULL, NULL);
+	pool_sockbuf_small = create_mempool("socket buffer small", 1, sizeof(sockbuf_struct), 0,
+		(chunk_initialisator) initialize_socket_buffer_small, NULL, NULL, NULL);
+	pool_sockbuf_medium = create_mempool("socket buffer medium", 1, sizeof(sockbuf_struct), 0,
+		(chunk_initialisator) initialize_socket_buffer_medium, NULL, NULL, NULL);
+	pool_sockbuf_huge = create_mempool("socket buffer huge", 1, sizeof(sockbuf_struct), 0,
+		(chunk_initialisator) initialize_socket_buffer_huge, NULL, NULL, NULL);
+	pool_sockbuf_dynamic = create_mempool("socket buffer dynamic", 1, sizeof(sockbuf_struct), 0,
+		(chunk_initialisator) initialize_socket_buffer_dynamic, NULL, NULL, 
+		(chunk_destructor) free_socket_buffer_dynamic);
 #ifdef USE_CHANNELS
     pool_player_channel = create_mempool("player_channel", 75, sizeof(struct player_channel), 0, NULL, NULL, NULL, NULL);
 #endif
