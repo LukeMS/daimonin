@@ -2,9 +2,7 @@
     Daimonin, the Massive Multiuser Online Role Playing Game
     Server Applicatiom
 
-    Copyright (C) 2001 Michael Toennies
-
-    A split from Crossfire, a Multiplayer game for X-windows.
+    Copyright (C) 2001-2008 Michael Toennies
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,11 +20,6 @@
 
 	The author can be reached via e-mail to info@daimonin.net
 */
-
-/* socket.c mainly deals with initialization and higher level socket
- * maintenance (checking for lost connections and if data has arrived.)
- * The reading of data is handled in ericserver.c
- */
 
 #include <global.h>
 #ifndef WIN32 /* ---win32 exclude include files */
@@ -49,8 +42,8 @@
 #endif
 #include <newserver.h>
 
-static int  send_bufsize = 24*1024;
-static int  read_bufsize = 8*1024;
+static int  send_bufsize = SOCKET_BUFSIZE_SEND;
+static int  read_bufsize = SOCKET_BUFSIZE_READ;
 
 /* initialize our base TCP socket */
 static void setsockopts(int fd)
@@ -218,7 +211,7 @@ int create_socket()
 #endif
 
 /* This sets up the socket and reads all the image information into memory. */
-void init_ericserver()
+void init_ericserver(void)
 {
     int oldbufsize;
     unsigned int buflen  = sizeof(int);
@@ -281,6 +274,45 @@ void init_ericserver()
     }
 }
 
+NewSocket *socket_get_available(void)
+{
+	int newsocknum = 0;
+
+	/* If this is the case, all sockets currently in used */
+	if (socket_info.allocated_sockets <= socket_info.nconns + 1)
+	{
+		init_sockets = realloc(init_sockets, sizeof(NewSocket) * (socket_info.nconns + 2));
+		LOG(llevDebug, "(new sockets: %d (old# %d)) ", (socket_info.nconns - socket_info.allocated_sockets) + 2,
+			socket_info.allocated_sockets);
+		if (!init_sockets)
+			LOG(llevError, "\nERROR: doeric_server(): out of memory\n");
+
+		do
+		{
+			newsocknum = socket_info.allocated_sockets;
+			socket_info.allocated_sockets++;
+			memset(&init_sockets[newsocknum],0, sizeof(NewSocket));
+			init_sockets[newsocknum].status = Ns_Avail;
+		}
+		while (socket_info.allocated_sockets <= socket_info.nconns + 1);
+	}
+	else
+	{
+		int j;
+
+		for (j = 1; j < socket_info.allocated_sockets; j++)
+		{
+			if (init_sockets[j].status == Ns_Avail)
+			{
+				newsocknum = j;
+				break;
+			}
+		}
+	}
+
+	return &init_sockets[newsocknum];
+}
+
 /* Free's all the memory that ericserver allocates. */
 void free_all_newserver()
 {
@@ -288,4 +320,3 @@ void free_all_newserver()
     /* for clean memory remove we must loop init_sockets to free the buffers */
     free(init_sockets);
 }
-

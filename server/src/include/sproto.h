@@ -67,6 +67,7 @@ struct objectlink          *add_ban_entry(char *banned, char *ip_string, int tic
 void                        remove_ban_entry(struct oblnk *entry);
 int                         check_banned(NewSocket *ns, const char *name, char *ip);
 /* c_chat.c */
+void						command_talk_ex(char *data, int len, player *pl);
 int                         command_say(object *op, char *params);
 int                         command_gsay(object *op, char *params);
 int                         command_shout(object *op, char *params);
@@ -280,14 +281,6 @@ int                         command_loadplugin(object *op, char *params);
 int                         command_unloadplugin(object *op, char *params);
 /* commands.c */
 void                        init_commands(void);
-void                        send_clear_interface(player *pl);
-void                        initialize_command_buffer16(command_struct *cmdbuf);
-void                        initialize_command_buffer32(command_struct *cmdbuf);
-void                        initialize_command_buffer64(command_struct *cmdbuf);
-void                        initialize_command_buffer128(command_struct *cmdbuf);
-void                        initialize_command_buffer256(command_struct *cmdbuf);
-void                        initialize_command_buffer1024(command_struct *cmdbuf);
-void                        initialize_command_buffer4096(command_struct *cmdbuf);
 /* container.c */
 int                         container_link(player *const pl, object *const sack);
 int                         container_unlink(player *const pl, object *sack);
@@ -418,6 +411,7 @@ sint32                      MTRand_randComp(void);
 /* npc_communicate.c */
 void                        communicate(object *op, char *txt);
 void                        gui_interface(object *who, int mode, const char *text, const char *tail);
+void                        send_clear_interface(player *pl);
 /* spawn_point.c */
 void                        spawn_point(object *op);
 objectlink                 *add_linked_spawn(object *spawn);
@@ -528,6 +522,7 @@ CFParm                     *CFMapSave(CFParm *PParm);
 CFParm                     *CFMapDelete(CFParm *PParm);
 CFParm                     *CFWDestructObject(CFParm *PParm);
 CFParm                     *CFInterface(CFParm *PParm);
+void						send_plugin_custom_message(object *pl, char *buf);
 
 /* resurrection.c */
 void                        dead_player(object *op);

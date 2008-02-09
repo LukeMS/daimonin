@@ -2,9 +2,7 @@
     Daimonin, the Massive Multiuser Online Role Playing Game
     Server Applicatiom
 
-    Copyright (C) 2001 Michael Toennies
-
-    A split from Crossfire, a Multiplayer game for X-windows.
+    Copyright (C) 2001-2008 Michael Toennies
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,12 +20,6 @@
 
 	The author can be reached via e-mail to info@daimonin.net
 */
-
-/* socket.c mainly deals with initialization and higher level socket
- * maintenance (checking for lost connections and if data has arrived.)
- * The reading of data is handled in ericserver.c
- */
-
 
 #include <global.h>
 
@@ -55,11 +47,9 @@ extern int  errno;
 #   include <errno.h>
 #endif
 
-char            _idle_warn_text[]    = "X4 8 minutes idle warning!\nServer will disconnect you in 2 minutes.";
-char            _idle_warn_text2[]    = "X3 Max idle time reached! Server is closing connection.";
+char            _idle_warn_text[]    = "4 8 minutes idle warning!\nServer will disconnect you in 2 minutes.";
+char            _idle_warn_text2[]    = "3 Max idle time reached! Server is closing connection.";
 static fd_set   tmp_read, tmp_exceptions, tmp_write;
-
-NewSocket *socket_get_available();
 
 /*****************************************************************************
  * Start of command dispatch area.
@@ -124,7 +114,6 @@ NsCmdMapping        nscommands[]    =
     { "version",        VersionCmd },
     { "rf",             RequestFileCmd },
 #ifdef SERVER_SEND_FACES
-	{ "requestinfo",    RequestInfo},
 	{ "setfacemode",    SetFaceMode},
 	{ "askface",        SendFaceCmd},   /* Added: phil */
     { "fr",             command_face_request},
@@ -132,218 +121,12 @@ NsCmdMapping        nscommands[]    =
     { NULL, NULL}   /* terminator */
 };
 
-/* low level read from socket. This function don't knows about packages.
-* It handles streams.
-*/
-static inline int read_socket_buffer(NewSocket *ns)
-{
-    SockList   *sl  = &ns->readbuf;
-    int         stat_ret, read_bytes, tmp;
-
-    if(ns->status == Ns_Zombie) /* zombie clients don't read anything */
-        return 0;
-
-    /* calculate how many bytes can be read in one row in our round robin buffer */
-    tmp = sl->pos+sl->len;
-
-    /* we have still some bytes until we hit our buffer border ?*/
-    if(tmp >= MAXSOCKBUF_IN)
-    {
-        tmp = tmp-MAXSOCKBUF_IN; /* thats our start offset */
-        read_bytes = sl->pos - tmp; /* thats our free buffer until ->pos*/
-    }
-    else
-        read_bytes = MAXSOCKBUF_IN-tmp; /* tmp is our offset and there is still a bit to read in */
-
-    /* with this settings we can adjust in a hard way the maximum bytes read per round per socket */
-    /*
-    if(read_bytes >256)
-        read_bytes = 256;
-    */
-
-#ifdef WIN32
-    stat_ret = recv(ns->fd, sl->buf + tmp, read_bytes, 0);
-#else
-    stat_ret = read(ns->fd, sl->buf + tmp, read_bytes);
-#endif
-
-    /*LOG(-1,"READ(%d)(%d): %d\n", ROUND_TAG, ns->fd, stat_ret);*/
-
-    if (stat_ret > 0)
-        sl->len += stat_ret;
-    else if (stat_ret < 0) /* lets check its a real problem */
-    {
-#ifdef WIN32
-        if (WSAGetLastError() == WSAEWOULDBLOCK)
-            return 1;
-
-        if (WSAGetLastError() == WSAECONNRESET)
-            LOG(llevDebug, "Connection closed by client\n");
-        else
-            LOG(llevDebug, "ReadPacket got error %d, returning 0\n", WSAGetLastError());
-#else
-        if (errno == EINTR || errno == EAGAIN || errno == EWOULDBLOCK)
-            return 1;
-
-        LOG(llevDebug, "ReadPacket got error %d (%s), returning 0\n", errno, strerror_local(errno));
-#endif
-    }
-    else
-        return -1; /* return value of zero means closed socket */
-
-    return stat_ret;
-}
-
-/* When the socket is clear to write, and we have backlogged data, this
-* is called to write it out.
-*/
-static inline void write_socket_buffer(NewSocket *ns)
-{
-    int amt, max;
-
-
-    max = MAXSOCKBUF - ns->outputbuffer.start;
-    if (ns->outputbuffer.len < max)
-        max = ns->outputbuffer.len;
-
-    /*LOG(-1,"WRITE-LEN(%d)(%d)(%d)\n", ns->outputbuffer.len,ns->outputbuffer.start,max);*/
-    if (ns->outputbuffer.len == 0)
-        return;
-    /* with this settings we can adjust in a hard way the maximum bytes written per round per socket */
-    /*
-    if(max >256)
-        max = 256;
-    */
-
-    amt = send(ns->fd, ns->outputbuffer.data + ns->outputbuffer.start, max, MSG_DONTWAIT);
-
-    /*LOG(-1,"WRITE(%d)(%d): %d (%d)\n", ROUND_TAG, ns->fd, amt, max);*/
-
-    /* following this link: http://www-128.ibm.com/developerworks/linux/library/l-sockpit/#N1019D
-     * send() with MSG_DONTWAIT under linux can return 0 which means the data
-     * is "queued for transmission". I was not able to find that in the send() man pages...
-     * In my testings it never happend, so i put it here in to have it perhaps triggered in
-     * some server runs (but we should trust perhaps ibm developer infos...).
-     */
-#ifndef WIN32 /* linux only ATM */
-    if(!amt)
-    {
-        LOG(llevDebug,"IMPORTANT: send() in write_socket_buffer() returned ZERO! check the comment text in loop.c around line 200. (max: %d)\n", max);
-        amt = max; /* as i understand, the data is now internal buffered? So remove it from our write buffer */
-    }
-    else
-#endif
-
-    if (amt < 0) /* error */
-    {
-#ifdef WIN32 /* ***win32 write_socket_buffer: change error handling */
-        if (WSAGetLastError() == WSAEWOULDBLOCK)
-            return;
-
-        LOG(llevDebug, "New socket write failed (wsb) (%d).\n", WSAGetLastError());
-#else
-        if (errno == EWOULDBLOCK || errno == EINTR)
-            return;
-        LOG(llevDebug, "New socket write failed (wsb %d) (%d: %s).\n", EAGAIN, errno, strerror_local(errno));
-#endif
-        ns->status = Ns_Dead;
-        return;
-    }
-
-    ns->outputbuffer.start += amt;
-    /* wrap back to start of buffer */
-    if (ns->outputbuffer.start == MAXSOCKBUF)
-        ns->outputbuffer.start = 0;
-    ns->outputbuffer.len -= amt;
-}
-
-
-/* This don't belongs here - the whole command & server/client interface
- * will be worked out for the 3d client and the new commands later.
- * The idea is a 3 layer interface: The lowest level is interface communication
- * like ping or hello. The 2nd layer is this: client is talking to server through
- * commands. Like the MV commands, which is generated by gui manipulations of the
- * player (he drops an item). The client generates something like "move count_nr to place_nr".
- * (Thats what the MV command does).
- * The last layer are all "/" mud like commands typed in by the player.
- *
- * The talk extended is used to "fake" a normal /talk command but use
- * extra parameter to talk to the server direct or non living items instead
- * of talking to a NPC.
- */
-void command_talk_ex(char *data, int len, player *pl)
-{
-    if (!data || !len || !pl || pl->socket.status == Ns_Dead)
-    {
-        if(pl)
-            pl->socket.status = Ns_Dead;
-        return;
-    }
-
-    /* the talk ex command has the same command as the
-     * "normal" /talk, except a head part which are max. 2
-     * numbers: "<mode> <count>"
-     */
-    if(*data == 'Q' && *(data+1)==' ') /* quest list tag */
-    {
-        quest_list_command(pl->ob, data+2);
-    }
-    else
-    {
-        data[len]='\0'; /* sanity string end */
-        LOG(-1,"TX-CMD: unknown tag (len %d) from player %s: >%s<\n", len, query_name(pl->ob),data);
-    }
-}
-
-
-#ifdef SERVER_SEND_FACES
-/* RequestInfo is sort of a meta command - there is some specific
- * request of information, but we call other functions to provide
- * that information.
- */
-void RequestInfo(char *buf, int len, NewSocket *ns)
-{
-    char                *params = NULL, *cp;
-    /* No match */
-    char                bigbuf[MAX_BUF];
-    int                 slen;
-
-    if (!buf || !len)
-        return;
-
-    /* Set up replyinfo before we modify any of the buffers - this is used
-     * if we don't find a match.
-     */
-    /*strcpy(bigbuf,"replyinfo ");*/
-    slen = 1;
-    bigbuf[0] = BINARY_CMD_REPLYINFO;
-    bigbuf[1] = 0;
-    safe_strcat(bigbuf, buf, &slen, sizeof(bigbuf));
-
-    /* find the first space, make it null, and update the
-     * params pointer.
-     */
-    for (cp = buf; *cp != '\0'; cp++)
-        if (*cp == ' ')
-        {
-            *cp = '\0';
-            params = cp + 1;
-            break;
-        }
-    if (!strcmp(buf, "image_info"))
-        send_image_info(ns, params);
-    else if (!strcmp(buf, "image_sums"))
-        send_image_sums(ns, params);
-    else
-        Write_String_To_Socket(ns, BINARY_CMD_REPLYINFO, bigbuf, len);
-}
-#endif
 
 //static inline int socket_prepare_commands(NewSocket *ns)
-static int socket_prepare_commands(NewSocket *ns)
+static int socket_prepare_commands(NewSocket *ns) // use this for debugging
 {
     int toread, flag;
-    SockList *rb = &ns->readbuf;
+    ReadList *rb = &ns->readbuf;
     command_struct *cmdptr = NULL;
 
     while(rb->len >= 2)/* there is something in our in buffer amd its at last a valid length value */
@@ -419,6 +202,7 @@ static int socket_prepare_commands(NewSocket *ns)
         }
 
         cmdptr->len = toread;
+		/*LOG(-1,"we got something in the buffer...:: %d\n",cmdptr->len);*/
 
         if(rb->pos+toread <= MAXSOCKBUF_IN)
         {
@@ -508,39 +292,10 @@ static int socket_prepare_commands(NewSocket *ns)
             continue;
         }
 
-        /* attach command buffer to command list of this ns socket */
-        if(ns->cmd_start)
-        {
-            ns->cmd_end->next = cmdptr;
-            cmdptr->last = ns->cmd_end;
-            cmdptr->next = NULL;
-            ns->cmd_end = cmdptr;
-        }
-        else
-        {
-            ns->cmd_end = ns->cmd_start = cmdptr;
-            cmdptr->next = cmdptr->last = NULL;
-        }
+		command_buffer_enqueue(ns, cmdptr);
     };
 
     return FALSE;
-}
-
-static inline void clear_read_buffer(NewSocket *ns)
-{
-    command_struct *cmdtmp;
-
-    cmdtmp = ns->cmd_start;
-    ns->cmd_start = ns->cmd_start->next;
-    if(!ns->cmd_start)
-        ns->cmd_end = NULL;
-    return_poolchunk(cmdtmp, cmdtmp->pool);
-}
-
-void clear_read_buffer_queue(NewSocket *ns)
-{
-    while (ns->cmd_start)
-        clear_read_buffer(ns);
 }
 
 /* We have now a buffer we read in from the socket.
@@ -563,34 +318,9 @@ int fill_command_buffer(NewSocket *ns, int len)
 
     while (ns->cmd_start && found_command)
     {
-        /* now we need to check what our write buffer does.
-         * We have not many choices, if its to full.
-         * In badest case, we get a overflow - then we kick the
-         * user. So, we try here to "freeze" the socket until we
-         * the output buffers are balanced again.
-         * Freezing works only for "active" action - we can't and don't
-         * want stop sending needed syncronization stuff.
-         */
-        if (ns->outputbuffer.len >= (int) (MAXSOCKBUF * 0.75))
-        {
-            if (!ns->write_overflow)
-            {
-                ns->write_overflow = 1;
-                LOG(llevDebug, "OVERFLOW: socket write overflow protection on! host (%s) (%d)\n", STRING_SAFE(ns->ip_host),
-                    ns->outputbuffer.len);
-            }
-            return TRUE; /* all is ok - we just do nothing */
-        }
-        else if (ns->write_overflow && (ns->outputbuffer.len <= (int) (MAXSOCKBUF * 0.33)))
-        {
-            ns->write_overflow = 0;
-            LOG(llevDebug, "OVERFLOW: socket write overflow protection off! host (%s) (%d)\n", STRING_SAFE(ns->ip_host),
-                ns->outputbuffer.len);
-        }
-
-            /* check its a system command.
-             * If so, process it. If not, store it.
-             */
+		/* check its a system command.
+			* If so, process it. If not, store it.
+            */
             found_command = 0;
             for (i = 0; nscommands[i].cmdname != NULL; i++)
             {
@@ -612,7 +342,7 @@ int fill_command_buffer(NewSocket *ns, int len)
                     nscommands[i].cmdproc(data, data_len, ns); /* and process cmd */
 
                     /* remove command & buffer */
-                    clear_read_buffer(ns);
+                    command_buffer_clear(ns);
 
                     if (ns->addme) /* we have successful added this connect! */
                     {
@@ -658,6 +388,7 @@ void HandleClient(NewSocket *ns, player *pl)
     /* Loop through this - maybe we have several complete packets here. */
     while (ns->cmd_start)
     {
+		/*LOG(-1,"HandleClient: cmdptr:%x\n", ns->cmd_start);*/
         /* If it is a player, and they don't have any speed left, we
          * return, and will read in the data when they do have time.
          */
@@ -665,22 +396,24 @@ void HandleClient(NewSocket *ns, player *pl)
                         (pl && pl->state == ST_PLAYING && (!pl->ob || pl->ob->speed_left < 0.0f)))
             return;
 
-        if (ns->outputbuffer.len >= (int) (MAXSOCKBUF * 0.85))
+		/*
+        if (ns->outputxbuffer.len >= (int) (MAXXSOCKBUF * 0.85))
         {
             if (!ns->write_overflow)
             {
                 ns->write_overflow = 1;
                 LOG(llevDebug, "OVERFLOW: socket write overflow protection on!  (%s) (%d)\n", STRING_SAFE(ns->ip_host),
-                    ns->outputbuffer.len);
+                    ns->outputxbuffer.len);
             }
             return;
         }
-        else if (ns->write_overflow && (ns->outputbuffer.len <= (int) (MAXSOCKBUF * 0.35)))
+        else if (ns->write_overflow && (ns->outputxbuffer.len <= (int) (MAXXSOCKBUF * 0.35)))
         {
             ns->write_overflow = 0;
             LOG(llevDebug, "OVERFLOW: socket write overflow protection off! host (%s) (%d)\n", STRING_SAFE(ns->ip_host),
-                ns->outputbuffer.len);
+                ns->outputxbuffer.len);
         }
+		*/
 
         /* reset idle counter */
         if (pl && pl->state == ST_PLAYING)
@@ -731,7 +464,7 @@ void HandleClient(NewSocket *ns, player *pl)
 
         next_command:
         /* remove command & buffer */
-        clear_read_buffer(ns);
+        command_buffer_clear(ns);
 
         if (cmd_count++ <= 8 && ns->status != Ns_Dead)
         {
@@ -741,49 +474,6 @@ void HandleClient(NewSocket *ns, player *pl)
         return;
     }
 }
-
-/* i disabled this function on default.
- * This is just a performance saving function,
- * putting the server on a kind of "undead" mode
- * until someone is connecting.
- * But this will also block & not handle active object,
- * runtime scripts and others. In a more complex game workd
- * enviroment, this function will lead in some problem.
- */
-#ifdef BLOCK_UNTIL_CONNECTION
-static void block_until_new_connection()
-{
-    struct timeval  Timeout;
-    fd_set          readfs;
-    int             cycles;
-
-    LOG(llevInfo, "Waiting for connections...\n");
-
-    cycles = 1;
-    do
-    {
-        /* Every minutes is a bit often for updates - especially if nothing is going
-         * on.  This slows it down to every 6 minutes.
-         */
-        cycles++;
-        if (cycles % 2 == 0)
-            tick_the_clock();
-        if (cycles == 7)
-        {
-            metaserver_update();
-            cycles = 1;
-        }
-        FD_ZERO(&readfs);
-        FD_SET((uint32) init_sockets[0].fd, &readfs);
-        Timeout.tv_sec = 60;
-        Timeout.tv_usec = 0;
-        flush_old_maps();
-    }
-    while (select(socket_info.max_filedescriptor, &readfs, NULL, NULL, &Timeout) == 0);
-
-    reset_sleep(); /* Or the game would go too fast */
-}
-#endif
 
 void remove_ns_dead_player(player *pl)
 {
@@ -973,7 +663,7 @@ void doeric_server(int update, struct timeval *timeout)
             FD_SET((uint32) init_sockets[i].fd, &tmp_read);
             FD_SET((uint32) init_sockets[i].fd, &tmp_exceptions);
             /* Only check for writing if we actually want to write */
-            if (init_sockets[i].outputbuffer.len > 0)
+            if (init_sockets[i].sockbuf_start || (init_sockets[i].sockbuf && init_sockets[i].sockbuf->len))
                 FD_SET((uint32) init_sockets[i].fd, &tmp_write);
         }
     }
@@ -1025,16 +715,11 @@ void doeric_server(int update, struct timeval *timeout)
             FD_SET((uint32) pl->socket.fd, &tmp_read);
             FD_SET((uint32) pl->socket.fd, &tmp_exceptions);
             /* Only check for writing if we actually want to write */
-            if (pl->socket.outputbuffer.len > 0)
+            if (pl->socket.sockbuf_start || (pl->socket.sockbuf && pl->socket.sockbuf->len))
                 FD_SET((uint32) pl->socket.fd, &tmp_write);
             pl = pl->next;
         }
     }
-
-#ifdef BLOCK_UNTIL_CONNECTION
-    if (!socket_info.nconns && first_player == NULL)
-        block_until_new_connection();
-#endif
 
     /* our one and only select() - after this call, every player socket has signaled us
      * in the tmp_xxxx objects the signal status: FD_ISSET will check socket for socket
@@ -1072,7 +757,7 @@ void doeric_server(int update, struct timeval *timeout)
             if(newsock->status <= Ns_Zombie) /* set from ban check */
             {
                 newsock->status = Ns_Add;
-                Send_With_Handling(newsock, &global_version_sl);
+				SOCKBUF_ADD_TO_SOCKET(newsock, global_sockbuf_version);
             }
         }
         else
@@ -1240,43 +925,4 @@ void doeric_server_write(void)
         if (FD_ISSET(pl->socket.fd, &writeset))
             write_socket_buffer(&pl->socket);
     } /* for() end */
-}
-
-NewSocket *socket_get_available()
-{
-    int newsocknum = 0;
-
-    /* If this is the case, all sockets currently in used */
-    if (socket_info.allocated_sockets <= socket_info.nconns + 1)
-    {
-        init_sockets = realloc(init_sockets, sizeof(NewSocket) * (socket_info.nconns + 2));
-        LOG(llevDebug, "(new sockets: %d (old# %d)) ", (socket_info.nconns - socket_info.allocated_sockets) + 2,
-            socket_info.allocated_sockets);
-        if (!init_sockets)
-            LOG(llevError, "\nERROR: doeric_server(): out of memory\n");
-
-        do
-        {
-            newsocknum = socket_info.allocated_sockets;
-            socket_info.allocated_sockets++;
-            memset(&init_sockets[newsocknum],0, sizeof(NewSocket));
-            init_sockets[newsocknum].status = Ns_Avail;
-        }
-        while (socket_info.allocated_sockets <= socket_info.nconns + 1);
-    }
-    else
-    {
-        int j;
-
-        for (j = 1; j < socket_info.allocated_sockets; j++)
-        {
-            if (init_sockets[j].status == Ns_Avail)
-            {
-                newsocknum = j;
-                break;
-            }
-        }
-    }
-
-    return &init_sockets[newsocknum];
 }

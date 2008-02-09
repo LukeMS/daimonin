@@ -67,6 +67,16 @@ static void init_defaults()
     nroferrors = 0;
 }
 
+/* we create some static write buffers we "broadcast" to fixed events to the clients */
+static void init_global_sockbufs(void)
+{
+	char buf[1024];
+
+	/* thats used in socket/loop.c right after we have a connect */
+	sprintf(buf, "%d %d %s", VERSION_CS, VERSION_SC, VERSION_INFO);
+	global_sockbuf_version = SOCKBUF_COMPOSE( BINARY_CMD_VERSION, NULL,buf,SOCKBUF_DYNAMIC,SOCKBUF_FLAG_STATIC);
+}
+
 /*
  * Initialises global shared strings that we can use in comparisions
  */
@@ -182,12 +192,6 @@ static void init_globals()
     nroftreasures = 0;
     nrofartifacts = 0;
     nrofallowedstr = 0;
-
-    /* thats used in socket/loop.c right after we have a connect */
-    sprintf(global_version_msg, "X%d %d %s", VERSION_CS, VERSION_SC, VERSION_INFO);
-    global_version_msg[0] = BINARY_CMD_VERSION;
-    global_version_sl.buf = (unsigned char *)global_version_msg;
-    global_version_sl.len = strlen(global_version_msg);
 
     init_strings();
 
@@ -1110,12 +1114,6 @@ static void parse_args(int argc, char *argv[], int pass)
 
 static void init_beforeplay()
 {
-    /* several SockList stuff is not dynamic nor must it threadsafe.
-     * lets safe some malloc by using this global buffer.
-     */
-    global_sl.buf = malloc(MAXSOCKBUF);
-    global_sl.len = 0;
-
     pool_mob_data->constructor = (chunk_constructor) initialize_mob_data;
     pool_mob_data->destructor = (chunk_destructor) cleanup_mob_data;
     pool_mob_knownobj->destructor = (chunk_destructor) cleanup_mob_known_obj;
@@ -1280,5 +1278,7 @@ void init_library()
     init_clocks();
 
     init_lists_and_tables(); /* Initializes some global lists and tables */
+	init_global_sockbufs();
+
 }
 

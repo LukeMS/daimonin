@@ -51,8 +51,8 @@
  * of the game server itself. MT-2005
  */
 
-static char *ban_buf_name_def = "X3 You are banned from Daimonin.\nGoodbye.";
-static char *ban_buf_ip_def = "X3 IP is banned from Daimonin.\nGoodbye.";
+static char *ban_buf_name_def = "3 You are banned from Daimonin.\nGoodbye.";
+static char *ban_buf_ip_def = "3 IP is banned from Daimonin.\nGoodbye.";
 
 /* returns a objectlink with ban_struct
  * we use for both the memorypool system
@@ -240,7 +240,7 @@ int check_banned(NewSocket *ns, const char *name, char *ip)
                     {
                         if (s <= 90) /* we are nice for all under 90 seconds (1.5 minutes) */
                         {
-                            sprintf(buf, "X2 Name %s is blocked for %d seconds!\nDon't try to log in to it again!",name, s);
+                            sprintf(buf, "2 Name %s is blocked for %d seconds!\nDon't try to log in to it again!",name, s);
                             ban_buf_name = buf;
                         }
                         else
@@ -248,31 +248,30 @@ int check_banned(NewSocket *ns, const char *name, char *ip)
                             if (s < 60*60)
                             {
                                 m = s/60;
-                                sprintf(buf, "X3 Name %s is banned for %d minutes!\nDon't try to log in to it again!",name, m);
+                                sprintf(buf, "3 Name %s is banned for %d minutes!\nDon't try to log in to it again!",name, m);
                                 ban_buf_name = buf;
                             }
                             else /* must be an ass... */
                             {
                                 h = s/(60*60);
                                 m = (s-h*(60*60))/60;
-                                sprintf(buf, "X3 Name %s is banned for %dh %dm!\nDon't try to log in to it again!",name,h,m);
+                                sprintf(buf, "3 Name %s is banned for %dh %dm!\nDon't try to log in to it again!",name,h,m);
                                 ban_buf_name = buf;
                             }
                         }
                         Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, ban_buf_name, strlen(ban_buf_name));
-                        Write_String_To_Socket(ns, BINARY_CMD_ADDME_FAIL, ban_buf_name, 1);
+                        Write_Command_To_Socket(ns, BINARY_CMD_ADDME_FAIL);
                     }
 
                     /* someone is trying to login again & again to banned char? Lets teach him to avoid it */
                     if(++ns->pwd_try == 3)
                     {
-                        char        cmd_buf[2]  = "X";
-                        char password_warning[] = "X3 Don't login to banned chars!\nTry log in again not before 2 minutes!";
+                        char password_warning[] = "3 Don't login to banned chars!\nTry log in again not before 2 minutes!";
 
                         LOG(llevInfo,"BANNED NAME: 3 login tries (2min): IP %s (player: %s).\n",ns->ip_host,name);
                         add_ban_entry(NULL, ns->ip_host, 8*60*2, 8*60*2); /* 2 min temp ban for this ip */
                         Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, password_warning , strlen(password_warning));
-                        Write_String_To_Socket(ns, BINARY_CMD_ADDME_FAIL, cmd_buf, 1);
+                        Write_Command_To_Socket(ns, BINARY_CMD_ADDME_FAIL);
                         ns->login_count = ROUND_TAG+(uint32)(10.0f * pticks_second);
                         ns->status = Ns_Zombie; /* we hold the socket open for a *bit* */
                         ns->idle_flag = 1;
@@ -287,7 +286,6 @@ int check_banned(NewSocket *ns, const char *name, char *ip)
         char *ban_tmp;
         int   ctr = 0;
         char *ban_buf_ip;
-        char  cmd_buf[]  = "X";
         int   match;    /* should really be bool */
 
         for(ol = ban_list_ip; ol; ol = ol_tmp)
@@ -335,7 +333,7 @@ int check_banned(NewSocket *ns, const char *name, char *ip)
             {
                 if (s<=90) /* we are nice for all under 90 seconds (1.5 minutes). Thats most times technical tmp bans */
                 {
-                    sprintf(buf, "X2 Login is blocked for %d seconds!\nDon't try to log in before.\nLogin timer reset to %d seconds!",s,s);
+                    sprintf(buf, "2 Login is blocked for %d seconds!\nDon't try to log in before.\nLogin timer reset to %d seconds!",s,s);
                     ban_buf_ip = buf;
                     s = ol->objlink.ban->ticks_init;
 
@@ -346,7 +344,7 @@ int check_banned(NewSocket *ns, const char *name, char *ip)
                     if (s < 60*60)
                     {
                         m = s/60;
-                        sprintf(buf, "X3 IP is banned for %d minutes!\nDon't try to log in before.\nLogin timer reset!",m);
+                        sprintf(buf, "3 IP is banned for %d minutes!\nDon't try to log in before.\nLogin timer reset!",m);
                         ban_buf_ip = buf;
                         s = ol->objlink.ban->ticks_init;
                         remove_ban_entry(ol);
@@ -356,7 +354,7 @@ int check_banned(NewSocket *ns, const char *name, char *ip)
                     {
                         h = s/(60*60);
                         m = (s-h*(60*60))/60;
-                        sprintf(buf, "X3 IP is banned for %dh %dm!\nDon't try to log in before.\nAdding one hour ban time!",h,m);
+                        sprintf(buf, "3 IP is banned for %dh %dm!\nDon't try to log in before.\nAdding one hour ban time!",h,m);
                         ban_buf_ip = buf;
                         s = (ol->objlink.ban->ticks-pticks)+(60*60); /* added one hour */
                         if(s> 3*ol->objlink.ban->ticks_init)
@@ -372,7 +370,7 @@ int check_banned(NewSocket *ns, const char *name, char *ip)
 
             LOG(-1,"***BANNED IP Login: %s\n", ns->ip_host);
             Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, ban_buf_ip, strlen(ban_buf_ip));
-            Write_String_To_Socket(ns, BINARY_CMD_ADDME_FAIL, cmd_buf, 1);
+            Write_Command_To_Socket(ns, BINARY_CMD_ADDME_FAIL);
             ns->login_count = ROUND_TAG+(uint32)(5.0f * pticks_second);
             ns->status = Ns_Zombie; /* we hold the socket open for a *bit* */
             ns->idle_flag = 1;

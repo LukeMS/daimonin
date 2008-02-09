@@ -103,7 +103,6 @@
 #include "define.h"
 #include "version.h"
 #include "logger.h"
-#include "newclient.h"
 
 #ifndef TRUE
 #define TRUE 1

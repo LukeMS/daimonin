@@ -34,10 +34,6 @@
 /* This file deals with administrative commands from the client. */
 #include <global.h>
 
-#ifndef tolower
-#define tolower(C)      (((C) >= 'A' && (C) <= 'Z')? (C) - 'A' + 'a': (C))
-#endif
-
 #define MAP_POS_X 0
 #define MAP_POS_Y 1
 
@@ -72,66 +68,6 @@ static int  map_pos_array[][2]  =
 #define NROF_MAP_NODE ((int)(sizeof(map_pos_array) /(sizeof(int)*2)))
 
 
-static int compare_A(const void *a, const void *b)
-{
-    return strcmp(((CommArray_s *) a)->name, ((CommArray_s *) b)->name);
-}
-
-CommArray_s * find_command_element(char *cmd, CommArray_s *commarray, int commsize)
-{
-    CommArray_s    *asp, dummy;
-    char           *cp;
-
-    for (cp = cmd; *cp; cp++)
-        *cp = tolower(*cp);
-
-    dummy.name = cmd;
-    asp = (CommArray_s *) bsearch((void *) &dummy, (void *) commarray, commsize, sizeof(CommArray_s), compare_A);
-    return asp;
-}
-
-/* This function is called from the new client/server code.
- * pl is the player who is issuing the command, command is the
- * command.
- */
-int execute_newserver_command(object *pl, char *command)
-{
-    CommArray_s    *csp = NULL, plug_csp;
-    char           *cp;
-
-    /* remove the command from the parameters */
-    cp = strchr(command, ' ');
-    if (cp)
-    {
-        *(cp++) = '\0';
-        cp = cleanup_string(cp);
-        if (cp && *cp == '\0')
-            cp = NULL;
-    }
-
-    if(find_plugin_command(command, pl, &plug_csp))
-        csp = &plug_csp;
-
-    if (!csp)
-        csp = find_command_element(command, Commands, CommandsSize);
-
-    if (!csp)
-        csp = find_command_element(command, CommunicationCommands, CommunicationCommandSize);
-
-    if (!csp && QUERY_FLAG(pl, FLAG_WIZ))
-        csp = find_command_element(command, WizCommands, WizCommandsSize);
-
-    if (csp == NULL)
-    {
-        new_draw_info_format(NDI_UNIQUE, 0, pl, "'%s' is not a valid command.", command);
-        return 0;
-    }
-
-    pl->speed_left -= csp->time;
-
-    return csp->func(pl, cp);
-}
-
 int command_run(object *op, char *params)
 {
     CONTR(op)->run_on = 1;
@@ -154,9 +90,8 @@ void send_target_command(player *pl)
     if (!pl->ob->map)
         return;
 
-    tmp[0] = BINARY_CMD_TARGET;
-    tmp[1] = pl->combat_mode;
-    tmp[2] = 0; /* color mode */
+    tmp[0] = pl->combat_mode;
+    tmp[1] = 0; /* color mode */
 
     pl->ob->enemy = NULL;
     pl->ob->enemy_count = 0;
@@ -178,17 +113,17 @@ void send_target_command(player *pl)
         else
         {
             if (get_friendship(pl->ob, pl->target_object) >= FRIENDSHIP_HELP)
-                tmp[3] = 2; /* friend */
+                tmp[2] = 2; /* friend */
             else
             {
-                tmp[3] = 1; /* enemy */
+                tmp[2] = 1; /* enemy */
                 pl->ob->enemy = pl->target_object;
                 pl->ob->enemy_count = pl->target_object_count;
             }
             if (pl->target_object->name)
-                strcpy(tmp + 4, pl->target_object->name);
+                strcpy(tmp + 3, pl->target_object->name);
             else
-                strcpy(tmp + 4, "(null)");
+                strcpy(tmp + 3, "(null)");
         }
     }
     else
@@ -197,8 +132,8 @@ void send_target_command(player *pl)
     /* ok... at last, target self */
     if (aim_self_flag)
     {
-        tmp[3] = 0; /* self */
-        strcpy(tmp + 4, pl->ob->name);
+        tmp[2] = 0; /* self */
+        strcpy(tmp + 3, pl->ob->name);
         pl->target_object = pl->ob;
         pl->target_object_count = 0;
         pl->target_map_pos = 0;
@@ -213,25 +148,25 @@ void send_target_command(player *pl)
     {
         /* if < the green border value, the mob is grey */
         if (pl->target_object->level < level_color[pl->ob->level].green) /* grey */
-            tmp[2] = NDI_GREY;
+            tmp[1] = NDI_GREY;
         else /* calc green or blue */
         {
             if (pl->target_object->level < level_color[pl->ob->level].blue)
-                tmp[2] = NDI_GREEN;
+                tmp[1] = NDI_GREEN;
             else
-                tmp[2] = NDI_BLUE;
+                tmp[1] = NDI_BLUE;
         }
     }
     else /* target is higher or as yellow min. range */
     {
         if (pl->target_object->level >= level_color[pl->ob->level].purple)
-            tmp[2] = NDI_PURPLE;
+            tmp[1] = NDI_PURPLE;
         else if (pl->target_object->level >= level_color[pl->ob->level].red)
-            tmp[2] = NDI_RED;
+            tmp[1] = NDI_RED;
         else if (pl->target_object->level >= level_color[pl->ob->level].orange)
-            tmp[2] = NDI_ORANGE;
+            tmp[1] = NDI_ORANGE;
         else
-            tmp[2] = NDI_YELLOW;
+            tmp[1] = NDI_YELLOW;
     }
 
     /* some nice extra info for DM's */
@@ -239,10 +174,10 @@ void send_target_command(player *pl)
     {
         char    buf[64];
         sprintf(buf, "(lvl %d)", pl->target_object->level);
-        strcat(tmp + 4, buf);
+        strcat(tmp + 3, buf);
     }
     pl->target_level = pl->target_object->level;
-    Write_String_To_Socket(&pl->socket, BINARY_CMD_TARGET, tmp, strlen(tmp + 4) + 4);
+    Write_String_To_Socket(&pl->socket, BINARY_CMD_TARGET, tmp, strlen(tmp));
 }
 
 /* send quest list */
@@ -829,7 +764,7 @@ void send_spelllist_cmd(object *op, char *spellname, int mode)
 {
     char    tmp[1024 * 10]; /* we should careful set a big enough buffer here */
 
-    sprintf(tmp, "X%d ", mode);
+    sprintf(tmp, "%d ", mode);
     if (spellname) /* send single name */
     {
         strcat(tmp, "/");
@@ -862,15 +797,15 @@ void send_skilllist_cmd(object *op, object *skillp, int mode)
     if (skillp)
     {
         if (skillp->last_eat == 1) /* normal skills */
-            sprintf(tmp, "X%d /%s|%d|%d", mode, skillp->name, skillp->level, skillp->stats.exp);
+            sprintf(tmp, "%d /%s|%d|%d", mode, skillp->name, skillp->level, skillp->stats.exp);
         else if (skillp->last_eat == 2) /* "buy level" skills */
-            sprintf(tmp, "X%d /%s|%d|-2", mode, skillp->name, skillp->level);
+            sprintf(tmp, "%d /%s|%d|-2", mode, skillp->name, skillp->level);
         else /* no level skills */
-            sprintf(tmp, "X%d /%s|%d|-1", mode, skillp->name, skillp->level);
+            sprintf(tmp, "%d /%s|%d|-1", mode, skillp->name, skillp->level);
     }
     else
     {
-        sprintf(tmp, "X%d ", mode);
+        sprintf(tmp, "%d ", mode);
         for (tmp2 = op->inv; tmp2; tmp2 = tmp2->below)
         {
             if (tmp2->type == SKILL && IS_SYS_INVISIBLE(tmp2))
@@ -895,10 +830,7 @@ void send_skilllist_cmd(object *op, object *skillp, int mode)
 
 void send_ready_skill(object *op, char *skillname)
 {
-    char    tmp[256]; /* we should careful set a big enough buffer here */
-
-    sprintf(tmp, "X%s", skillname);
-    Write_String_To_Socket(&CONTR(op)->socket, BINARY_CMD_SKILLRDY, tmp, strlen(tmp));
+    Write_String_To_Socket(&CONTR(op)->socket, BINARY_CMD_SKILLRDY, skillname, strlen(skillname));
 }
 
 /* send to the client the golem face & name. Note, that this is only cosmetical
@@ -906,12 +838,12 @@ void send_ready_skill(object *op, char *skillname)
  */
 void send_golem_control(object *golem, int mode)
 {
-    char    tmp[256]; /* we should careful set a big enough buffer here */
+    char    tmp[MAX_BUF]; /* we should careful set a big enough buffer here */
 
     if (mode == GOLEM_CTR_RELEASE)
-        sprintf(tmp, "X%d %d %s", mode, 0, golem->name);
+        sprintf(tmp, "%d %d %s", mode, 0, golem->name);
     else
-        sprintf(tmp, "X%d %d %s", mode, golem->face->number, golem->name);
+        sprintf(tmp, "%d %d %s", mode, golem->face->number, golem->name);
     Write_String_To_Socket(&CONTR(golem->owner)->socket, BINARY_CMD_GOLEMCMD, tmp, strlen(tmp));
 }
 

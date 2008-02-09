@@ -2,9 +2,7 @@
     Daimonin, the Massive Multiuser Online Role Playing Game
     Server Applicatiom
 
-    Copyright (C) 2001 Michael Toennies
-
-    A split from Crossfire, a Multiplayer game for X-windows.
+    Copyright (C) 2001-2008 Michael Toennies
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,22 +18,11 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to daimonin@nord-com.net
+    The author can be reached via e-mail to info@daimonin.net
 */
-/*
- * Command parser
- */
 
 #include <global.h>
-
 #include <ctype.h>
-
-/* Added times to all the commands.  However, this was quickly done,
- * and probably needs more refinements.  All socket and DM commands
- * take 0 time.
- */
-
-/* *** The system command lists are are in /socket/loop.c **** */
 
 /*
  * Normal game commands
@@ -128,8 +115,6 @@ CommArray_s Commands[]                  =
     */
 };
 
-const int   CommandsSize                = sizeof(Commands) / sizeof(CommArray_s);
-
 CommArray_s CommunicationCommands[] =
 {
     /* begin emotions */
@@ -153,8 +138,6 @@ CommArray_s CommunicationCommands[] =
     {"/bleed", command_bleed,     1.0}, {"/cringe", command_cringe,   1.0}, {"/think", command_think,     1.0},
     {"/me", command_me,           1.0},
 };
-
-const int   CommunicationCommandSize    = sizeof(CommunicationCommands) / sizeof(CommArray_s);
 
 /*
  * Wizard commands (for both)
@@ -220,9 +203,10 @@ CommArray_s WizCommands[]           =
     */
 };
 
-/* *** The system command lists are are in /socket/loop.c **** */
-
-const int   WizCommandsSize             = sizeof(WizCommands) / sizeof(CommArray_s);
+/* sort the commands for faster access */
+const int   CommandsSize                = sizeof(Commands) / sizeof(CommArray_s);
+const int   CommunicationCommandSize    = sizeof(CommunicationCommands) / sizeof(CommArray_s);
+const int   WizCommandsSize = sizeof(WizCommands) / sizeof(CommArray_s);
 
 static int compare_A(const void *a, const void *b)
 {
@@ -236,42 +220,57 @@ void init_commands()
     qsort((char *) WizCommands, WizCommandsSize, sizeof(CommArray_s), compare_A);
 }
 
-/* Send a "remove NPC interface" command to the client.
- * For example if a player->npc communication stops because
- * the npc is gone (moved away, dead) or stops talking.
- * This is needed to end the asynchron communication way.
- */
-void send_clear_interface(player *pl)
+CommArray_s * find_command_element(char *cmd, CommArray_s *commarray, int commsize)
 {
-    SOCKET_SET_BINARY_CMD(&global_sl, BINARY_CMD_INTERFACE);
-    Send_With_Handling(&pl->socket, &global_sl);
+	CommArray_s    *asp, dummy;
+	char           *cp;
+
+	for (cp = cmd; *cp; cp++)
+		*cp = tolower(*cp);
+
+	dummy.name = cmd;
+	asp = (CommArray_s *) bsearch((void *) &dummy, (void *) commarray, commsize, sizeof(CommArray_s), compare_A);
+	return asp;
 }
 
-void initialize_command_buffer16(command_struct *cmdbuf)
+/* This function is called from the new client/server code.
+* pl is the player who is issuing the command, command is the
+* command.
+*/
+int execute_newserver_command(object *pl, char *command)
 {
-    cmdbuf->buf = (char*)malloc(16);
-}
-void initialize_command_buffer32(command_struct *cmdbuf)
-{
-    cmdbuf->buf = (char*)malloc(32);
-}
-void initialize_command_buffer64(command_struct *cmdbuf)
-{
-    cmdbuf->buf = (char*)malloc(64);
-}
-void initialize_command_buffer128(command_struct *cmdbuf)
-{
-    cmdbuf->buf = (char*)malloc(128);
-}
-void initialize_command_buffer256(command_struct *cmdbuf)
-{
-    cmdbuf->buf = (char*)malloc(256);
-}
-void initialize_command_buffer1024(command_struct *cmdbuf)
-{
-    cmdbuf->buf = (char*)malloc(1024);
-}
-void initialize_command_buffer4096(command_struct *cmdbuf)
-{
-    cmdbuf->buf = (char*)malloc(4096);
+	CommArray_s    *csp = NULL, plug_csp;
+	char           *cp;
+
+	/* remove the command from the parameters */
+	cp = strchr(command, ' ');
+	if (cp)
+	{
+		*(cp++) = '\0';
+		cp = cleanup_string(cp);
+		if (cp && *cp == '\0')
+			cp = NULL;
+	}
+
+	if(find_plugin_command(command, pl, &plug_csp))
+		csp = &plug_csp;
+
+	if (!csp)
+		csp = find_command_element(command, Commands, CommandsSize);
+
+	if (!csp)
+		csp = find_command_element(command, CommunicationCommands, CommunicationCommandSize);
+
+	if (!csp && QUERY_FLAG(pl, FLAG_WIZ))
+		csp = find_command_element(command, WizCommands, WizCommandsSize);
+
+	if (csp == NULL)
+	{
+		new_draw_info_format(NDI_UNIQUE, 0, pl, "'%s' is not a valid command.", command);
+		return 0;
+	}
+
+	pl->speed_left -= csp->time;
+
+	return csp->func(pl, cp);
 }

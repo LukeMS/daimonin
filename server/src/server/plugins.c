@@ -1179,3 +1179,15 @@ CFParm * CFWCreateObject(CFParm *PParm)
     CFP->Value[0] = newobj;
     return (CFP);
 }
+
+/*****************************************************************************/
+/* GROS: The following one is used to allow a plugin to send a generic cmd to*/
+/* a player. Of course, the client need to know the command to be able to    */
+/* manage it !                                                               */
+/*****************************************************************************/
+void send_plugin_custom_message(object *pl, char *buf)
+{
+	/* we must add here binary_cmd! */
+}
+
+

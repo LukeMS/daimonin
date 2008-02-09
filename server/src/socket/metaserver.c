@@ -2,9 +2,7 @@
     Daimonin, the Massive Multiuser Online Role Playing Game
     Server Applicatiom
 
-    Copyright (C) 2001 Michael Toennies
-
-    A split from Crossfire, a Multiplayer game for X-windows.
+    Copyright (C) 2001-2008 Michael Toennies
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

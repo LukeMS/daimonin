@@ -128,20 +128,30 @@ void communicate(object *op, char *txt)
 /* open a (npc) gui communication interface */
 void gui_interface(object *who, int mode, const char *text, const char *tail)
 {
-    SOCKET_SET_BINARY_CMD(&global_sl, BINARY_CMD_INTERFACE);
+	NewSocket *ns = &CONTR(who)->socket;
+
+	SOCKBUF_REQUEST_BUFFER(ns, SOCKET_SIZE_SMALL);
 
     /* NPC_INTERFACE_MODE_NO will send a clear body = remove interface to the client */
     if(mode != NPC_INTERFACE_MODE_NO)
     {
-        SockList_AddChar(&global_sl, (char)mode);
-        strcpy((char *)global_sl.buf+global_sl.len, text);
-        global_sl.len += strlen(text)+1;
+        SockBuf_AddChar(ACTIVE_SOCKBUF(ns), (char)mode);
+		SockBuf_AddString(ACTIVE_SOCKBUF(ns), text, strlen(text));
         if(tail)
-        {
-            strcpy((char *)global_sl.buf+global_sl.len, tail);
-            global_sl.len += strlen(tail)+1;
-        }
+			SockBuf_AddString(ACTIVE_SOCKBUF(ns), tail, strlen(tail));
     }
 
-    Send_With_Handling(&CONTR(who)->socket, &global_sl);
+	SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_INTERFACE, SOCKBUF_DYNAMIC);
 }
+
+/* Send a "remove NPC interface" command to the client.
+* For example if a player->npc communication stops because
+* the npc is gone (moved away, dead) or stops talking.
+* This is needed to end the asynchron communication way.
+*/
+void send_clear_interface(player *pl)
+{
+	SOCKBUF_REQUEST_BUFFER(&pl->socket, SOCKET_SIZE_SMALL);
+	SOCKBUF_REQUEST_FINISH(&pl->socket, BINARY_CMD_INTERFACE, SOCKBUF_DYNAMIC);
+}
+

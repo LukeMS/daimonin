@@ -2,9 +2,7 @@
     Daimonin, the Massive Multiuser Online Role Playing Game
     Server Applicatiom
 
-    Copyright (C) 2001 Michael Toennies
-
-    A split from Crossfire, a Multiplayer game for X-windows.
+    Copyright (C) 2001-2008 Michael Toennies
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -37,41 +35,37 @@ static void load_srv_files(char *fname, int id, int cmd)
     unsigned long numread;
     struct stat statbuf;
 
-    LOG(llevDebug, "Loading %s...", fname);
+	LOG(llevDebug, "Loading %s (id:%d)...", fname, id);
     if ((fp = fopen(fname, "rb")) == NULL)
         LOG(llevError, "\nERROR: Can not open file %s\n", fname);
     fstat(fileno(fp), &statbuf);
     flen = (int) statbuf.st_size;
-    file_tmp = malloc(flen);
-    numread = (unsigned long) fread(file_tmp, sizeof(char), flen, fp);
+    file_tmp = malloc(flen+1);
+    numread = (unsigned long) fread(file_tmp+1, sizeof(char), flen, fp);
     /* get a crc from the unpacked file */
-    SrvClientFiles[id].crc = crc32(1L, file_tmp, numread);
+    SrvClientFiles[id].crc = crc32(1L, file_tmp+1, numread);
     SrvClientFiles[id].len_ucomp = numread;
     numread = flen * 2;
     comp_tmp = (unsigned char *) malloc(numread);
-    compress2(comp_tmp, &numread, file_tmp, flen, Z_BEST_COMPRESSION);
+    compress2(comp_tmp+1, &numread, file_tmp+1, flen, Z_BEST_COMPRESSION);
     /* we prepare the files with the right commands - so we can flush
      * then direct from this buffer to the client.
      */
     if ((int) numread < flen)
     {
         /* copy the compressed file in the right buffer */
-        SrvClientFiles[id].file = malloc(numread + 2);
-        memcpy(SrvClientFiles[id].file + 2, comp_tmp, numread);
-        SrvClientFiles[id].file[1] = (char) DATA_PACKED_CMD;
-        SrvClientFiles[id].len = numread;
+		*comp_tmp = (char) (cmd|DATA_PACKED_CMD);
+		SrvClientFiles[id].sockbuf = SOCKBUF_COMPOSE( BINARY_CMD_DATA, NULL, comp_tmp, numread+1, SOCKBUF_FLAG_STATIC);
+		SrvClientFiles[id].len = numread+1;
     }
     else
     {
-        /* compress has no positive effect here */
-        SrvClientFiles[id].file = malloc(flen + 2);
-        memcpy(SrvClientFiles[id].file + 2, file_tmp, flen);
-        SrvClientFiles[id].file[1] = 0;
-        SrvClientFiles[id].len = -1;
-        numread = flen;
+		/* compress has no positive effect here */
+		*file_tmp = (char) cmd;
+		SrvClientFiles[id].sockbuf = SOCKBUF_COMPOSE(BINARY_CMD_DATA, NULL, file_tmp, flen+1, SOCKBUF_FLAG_STATIC);
+		SrvClientFiles[id].len = -1;
+		numread = flen+1;
     }
-    SrvClientFiles[id].file[0] = BINARY_CMD_DATA;
-    SrvClientFiles[id].file[1] |= cmd;
     free(file_tmp);
     free(comp_tmp);
 
@@ -152,21 +146,3 @@ void init_srv_files(void)
     load_srv_files(buf, SRV_CLIENT_SETTINGS, DATA_CMD_SETTINGS_LIST);
 }
 
-/* a connecting client has requested a srv_ file.
- * not that we don't know anything about the player
- * at this point - we got a open socket, a IP a matching
- * version and a usable setup string from the client.
- */
-void send_srv_file(NewSocket *ns, int id)
-{
-    SockList    sl;
-
-    sl.buf = (unsigned char *)SrvClientFiles[id].file;
-
-    if (SrvClientFiles[id].len != -1)
-        sl.len = SrvClientFiles[id].len + 2;
-    else
-        sl.len = SrvClientFiles[id].len_ucomp + 2;
-
-    Send_With_Handling(ns, &sl);
-}

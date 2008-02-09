@@ -115,7 +115,8 @@ extern struct mempool *pool_object, *pool_player, *pool_map_bfs,
     *pool_mob_behaviourset, *pool_mob_behaviour, *pool_mob_behaviourparam,
     *pool_objectlink, *pool_gmasters, *pool_bannode, *pool_tlist_tweak,
     *pool_cmd_buf16,*pool_cmd_buf32,*pool_cmd_buf64,
-    *pool_cmd_buf128,*pool_cmd_buf256,*pool_cmd_buf1024,*pool_cmd_buf4096
+    *pool_cmd_buf128,*pool_cmd_buf256,*pool_cmd_buf1024,*pool_cmd_buf4096,
+	*pool_sockbuf_small,*pool_sockbuf_medium,*pool_sockbuf_huge, *pool_sockbuf_dynamic
 #ifdef USE_CHANNELS
     ,*pool_player_channel
 #endif

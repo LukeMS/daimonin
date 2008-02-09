@@ -75,6 +75,10 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define ABS(x) ((x)<0?-(x):(x))
 #endif
 
+#ifndef tolower
+#define tolower(C)      (((C) >= 'A' && (C) <= 'Z')? (C) - 'A' + 'a': (C))
+#endif
+
 /** Length of string literal. Don't even think about using this on a pointer */
 #define LSTRLEN(s) ((sizeof(s)/sizeof(char))-1)
 
@@ -914,16 +918,6 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define BLANK_FACE_NAME "blank.111"
 #define NEXT_ITEM_FACE_NAME "next_item.101"
 #define PREVIOUS_ITEM_FACE_NAME "prev_item.101"
-
-/* socket defines */
-
-/* in the protocol version > 991023 we moved the endian managment to the clients */
-#define SockList_AddChar(_sl_,_c_)		(_sl_)->buf[(_sl_)->len++]=(_c_)
-#define SockList_AddShort(_sl_,_c_)		*((uint16 *)((_sl_)->buf+(_sl_)->len))=(_c_);(_sl_)->len+=2
-#define SockList_AddInt(_sl_,_c_)		*((uint32 *)((_sl_)->buf+(_sl_)->len))=(_c_);(_sl_)->len+=4
-
-#define GetInt_String(_data_) ( *(uint32*)(_data_))
-#define GetShort_String(_data_) ( *(uint16*)(_data_))
 
 /* Simple function we use below to keep adding to the same string
  * but also make sure we don't overwrite that string.

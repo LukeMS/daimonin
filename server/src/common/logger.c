@@ -25,7 +25,7 @@
 #include <stdarg.h>
 #include <global.h>
 
-static char log_buf[MAXSOCKBUF*2];
+static char log_buf[256*1024];
 
 /* minimum timestamp interval = 10 minutes */
 #define TIMESTAMP_INTERVAL 600

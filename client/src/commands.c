@@ -949,6 +949,12 @@ void StatsCmd(unsigned char *data, int len)
 void PreParseInfoStat(char *cmd)
 {
     /* Find input name*/
+	if(!cmd)
+	{
+		GameStatus = GAME_STATUS_START;
+		LOG(LOG_MSG, "Bug: Invalid response from server\n");
+		return;
+	}
     if (!strncmp(cmd, "QN",2))
     {
         int status = cmd[2]-'0';
@@ -1040,7 +1046,7 @@ void handle_query(char *data, int len)
  */
 void send_reply(char *text)
 {
-    char    buf[MAXSOCKBUF];
+    char    buf[4096];
     sprintf(buf, "reply %s", text);
     cs_write_string(csocket.fd, buf, strlen(buf));
 }
@@ -1853,14 +1859,6 @@ void RequestFile(ClientSocket csock, int index)
 void SendAddMe(ClientSocket csock)
 {
     cs_write_string(csock.fd, "addme", 5);
-}
-
-void SendSetFaceMode(ClientSocket csock, int mode)
-{
-    char    buf[MAX_BUF];
-
-    sprintf(buf, "setfacemode %d", mode);
-    cs_write_string(csock.fd, buf, strlen(buf));
 }
 
 void SkilllistCmd(unsigned char *data, int len)

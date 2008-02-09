@@ -2,9 +2,7 @@
     Daimonin, the Massive Multiuser Online Role Playing Game
     Server Applicatiom
 
-    Copyright (C) 2001 Michael Toennies
-
-    A split from Crossfire, a Multiplayer game for X-windows.
+    Copyright (C) 2001-2007 Michael Toennies
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,11 +20,6 @@
 
     The author can be reached via e-mail to info@daimonin.net
 */
-
-/* socket.c mainly deals with initialization and higher level socket
- * maintenance (checking for lost connections and if data has arrived.)
- * The reading of data is handled in ericserver.c
- */
 
 #include <global.h>
 #ifndef WIN32 /* ---win32 exclude include files */
@@ -100,9 +93,11 @@ void InitConnection(NewSocket *ns, char *ip)
     ns->rf_bmaps = 0;
     ns->write_overflow = 0;
 
-    ns->cmd_start = NULL;
-    ns->cmd_end = NULL;
-    /* we should really do some checking here - if total clients overflows
+	ns->cmd_start = ns->cmd_end = NULL;
+	ns->sockbuf_start = ns->sockbuf_end = ns->sockbuf = NULL;
+	ns->sockbuf_nrof = ns->sockbuf_bytes = ns->sockbuf_pos =ns->sockbuf_len = 0;
+
+	/* we should really do some checking here - if total clients overflows
      * we need to do something more intelligent, because client id's will start
      * duplicating (not likely in normal cases, but malicous attacks that
      * just open and close connections could get this total up.
@@ -117,8 +112,6 @@ void InitConnection(NewSocket *ns, char *ip)
 
     memset(&ns->lastmap, 0, sizeof(struct Map));
 
-    ns->outputbuffer.start = 0;
-    ns->outputbuffer.len = 0;
     strcpy(ns->ip_host, ip);
 
     socket_info.nconns++;
@@ -146,7 +139,7 @@ void close_newsocket(NewSocket *ns)
     }
 }
 
-void    free_newsocket  (NewSocket *ns)
+void free_newsocket(NewSocket *ns)
 {
     unsigned char *tmp_read = ns->readbuf.buf;
 
@@ -156,7 +149,10 @@ void    free_newsocket  (NewSocket *ns)
     /* clearout the socket but don't restore the buffers.
      * no need to malloc them again & again.
      */
-    clear_read_buffer_queue(ns); /* give back the blocks to the mempools */
+    command_buffer_queue_clear(ns); /* give back the blocks to the mempools */
+	/* flush the write buffers and free them */
+	socket_buffer_enqueue(ns, ns->sockbuf);
+	socket_buffer_queue_clear(ns);
     memset(ns, 0, sizeof(ns));
     ns->readbuf.buf = tmp_read;
 }

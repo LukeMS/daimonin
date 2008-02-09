@@ -49,8 +49,8 @@
  */
 void new_draw_info(const int flags, const int pri, const object *const pl, const char *const buf)
 {
-    unsigned char info_string[HUGE_BUF];
-    SockList    sl;
+	NewSocket *ns;
+	int len;
 
     if (!buf) /* should not happen - generate save string and LOG it */
     {
@@ -81,16 +81,10 @@ void new_draw_info(const int flags, const int pri, const object *const pl, const
     if (pri >= CONTR(pl)->listening) /* player don't want this */
         return;
 
-    sl.buf = info_string;
-    SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_DRAWINFO2);
-    SockList_AddShort(&sl, flags & NDI_FLAG_MASK);
-    strcpy((char *)sl.buf + sl.len, buf);
-    sl.len += strlen(buf);
-    Send_With_Handling(&CONTR(pl)->socket, &sl);
-
-    /*  sprintf(info_string,"X%d %s", flags&NDI_FLAG_MASK, buf);
-        Write_String_To_Socket(&CONTR(pl)->socket, BINARY_CMD_DRAWINFO,info_string, strlen(info_string));
-        */
+	SOCKBUF_REQUEST_BUFFER((ns = &CONTR(pl)->socket),(len = strlen(buf))+3);
+	SockBuf_AddShort(ACTIVE_SOCKBUF(ns), flags & NDI_FLAG_MASK);
+	SockBuf_AddString(ACTIVE_SOCKBUF(ns),buf,len);
+	SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_DRAWINFO2, SOCKBUF_DYNAMIC);
 }
 
 /* This is a pretty trivial function, but it allows us to use printf style

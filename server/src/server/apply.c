@@ -1548,6 +1548,7 @@ void move_apply(object *const trap_obj, object *const victim, object *const orig
 
 static void apply_book(object *op, object *tmp)
 {
+	sockbuf_struct *sptr;
     char buf[MAX_BUF];
 
     if (QUERY_FLAG(op, FLAG_BLIND) && !QUERY_FLAG(op, FLAG_WIZ))
@@ -1586,17 +1587,16 @@ static void apply_book(object *op, object *tmp)
         return;
     }
 
-    /* invoke the new client sided book interface */
-    SOCKET_SET_BINARY_CMD(&global_sl, BINARY_CMD_BOOK);
+	/* invoke the new client sided book interface */
+	SOCKBUF_REQUEST_BUFFER(&CONTR(op)->socket, SOCKET_SIZE_SMALL);
+	sptr = ACTIVE_SOCKBUF(&CONTR(op)->socket);
 
-    SockList_AddInt(&global_sl, tmp->weight_limit);
-    sprintf(buf,"<b t=\"%s%s%s\">", tmp->name?tmp->name:"Book",tmp->title?" ":"",tmp->title?tmp->title:"");
-    strcpy((char *)global_sl.buf+global_sl.len, buf);
-    global_sl.len += strlen(buf);/* yes, no +1 - we want a strcat effect */
-    strcpy((char *)global_sl.buf+global_sl.len, tmp->msg);
-    global_sl.len += strlen(tmp->msg)+1;
-    Send_With_Handling(&CONTR(op)->socket, &global_sl);
+	SockBuf_AddInt(sptr, tmp->weight_limit);
+	sprintf(buf,"<b t=\"%s%s%s\">", tmp->name?tmp->name:"Book",tmp->title?" ":"",tmp->title?tmp->title:"");
+	strcat(buf, tmp->msg);
+	SockBuf_AddString(sptr, buf, strlen(buf));
 
+	SOCKBUF_REQUEST_FINISH(&CONTR(op)->socket, BINARY_CMD_BOOK, SOCKBUF_DYNAMIC);
     /*new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, tmp->msg);*/
 
     /* identify the book - successful reading will do it always */

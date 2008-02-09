@@ -555,8 +555,6 @@ void cleanup_without_exit()
     write_todclock();   /* lets just write the clock here */
     save_ban_file();
 
-    free(global_sl.buf);
-
     /* that must be redone: clear cleanup so we know 100% all memory is freed */
     free_all_maps();
     free_style_maps();

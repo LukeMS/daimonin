@@ -156,7 +156,7 @@ void malloc_info(object *op)
             nrm++;
         }
     sprintf(errmsg, "Sizeof: object=%ld  player=%ld  socketbuf=%ld  map=%ld", (long)sizeof(object),
-            (long) (sizeof(player) + MAXSOCKBUF_IN * 2 + MAXSOCKBUF), (long)MAXSOCKBUF, (long)sizeof(mapstruct));
+            (long) (sizeof(player) + MAXSOCKBUF_IN * 2), (long)SOCKET_BUFSIZE_SEND+SOCKET_BUFSIZE_READ, (long)sizeof(mapstruct));
     new_draw_info(NDI_UNIQUE, 0, op, errmsg);
     LOG(llevSystem, "%s\n", errmsg);
 
@@ -167,13 +167,13 @@ void malloc_info(object *op)
     LOG(llevSystem, "%s\n", errmsg);
 
     sprintf(errmsg, "%4d player(s) using buffers: %d", player_active,
-            i = (player_active * (MAXSOCKBUF_IN * 2 + MAXSOCKBUF * 2)));
+            i = (player_active * (MAXSOCKBUF_IN * 2)));
     new_draw_info(NDI_UNIQUE, 0, op, errmsg);
     sum_alloc += i;
     LOG(llevSystem, "%s\n", errmsg);
 
     sprintf(errmsg, "%d socket(s) allocated: %d", socket_info.allocated_sockets,
-            i = (socket_info.allocated_sockets * (sizeof(NewSocket) + MAXSOCKBUF)));
+            i = (socket_info.allocated_sockets * (sizeof(NewSocket) + SOCKET_BUFSIZE_SEND+SOCKET_BUFSIZE_READ)));
     sum_alloc += i;
     new_draw_info(NDI_UNIQUE, 0, op, errmsg);
     LOG(llevSystem, "%s\n", errmsg);
@@ -1404,15 +1404,13 @@ void receive_player_password(object *op, char k, char *write_buf)
     }
     if (CONTR(op)->state == ST_CONFIRM_PASSWORD)
     {
-        char    cmd_buf[4]   = "X";
-
         if (!check_password(write_buf + 1, CONTR(op)->password))
         {
             get_password(op, 7); /* confirm password has not matched */
             return;
         }
         esrv_new_player(CONTR(op), 0);
-        Write_String_To_Socket(&CONTR(op)->socket, BINARY_CMD_NEW_CHAR, cmd_buf, 1);
+        Write_Command_To_Socket(&CONTR(op)->socket, BINARY_CMD_NEW_CHAR);
         LOG(llevInfo, "NewChar send for %s\n", op->name);
         CONTR(op)->state = ST_CREATE_CHAR;
         return;
