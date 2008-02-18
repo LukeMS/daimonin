@@ -6,7 +6,7 @@ DAIMONIN consists of components that are installed and run independent of each
 other.  These components are:
 
 client/
-    Contains the classical SDL-based 2D client.
+    Contains the 'classic' SDL-based 2D client.
 
 client3d/
     Contains the new 3D client.
