@@ -117,9 +117,6 @@ Boolean             InputStringEscFlag;
 _game_status        GameStatus; /* the global status identifier */
 int     GameStatusLogin;
 
-_anim_table         anim_table[MAXANIM]; /* the stored "anim commands" we created out of anims.tmp */
-Animations          animations[MAXANIM]; /* get this from commands.c to this place*/
-
 time_t sleeptime;
 
 _screensize Screensize;
@@ -318,8 +315,8 @@ void init_game_data(void)
     esc_menu_flag = FALSE;
     srand((uint32) time(NULL));
 
-    memset(anim_table, 0, sizeof(anim_table));
-    memset(animations, 0, sizeof(animations));
+    memset(animcmd, 0, sizeof(animcmd));
+    memset(animation, 0, sizeof(animation));
     memset(bmaptype_table, 0, sizeof(bmaptype_table));
     ToggleScreenFlag = FALSE;
     KeyScanFlag = FALSE;
@@ -401,6 +398,9 @@ void init_game_data(void)
 #endif
     options.shoutoff=FALSE;
     options.no_meta=FALSE;
+
+    options.anim_frame_time = 50;
+    options.anim_check_time = 50;
 
     options.skin[0]='\0';
 
@@ -1353,6 +1353,7 @@ int main(int argc, char *argv[])
     Boolean         showtimer = FALSE;
     Boolean         newskin = FALSE;
     uint32          speeduptick = 0;
+    uint32          new_anim_tick = 0;
     //fd_set          tmp_read, tmp_write, tmp_exceptions;
     //struct timeval  timeout;
     // pollret;
@@ -1613,7 +1614,7 @@ int main(int argc, char *argv[])
     if (!SOCKET_InitSocket()) /* log in function*/
         exit(1);
 
-    LastTick = tmpGameTick = anim_tick = SDL_GetTicks();
+    LastTick = tmpGameTick = anim_tick = new_anim_tick = SDL_GetTicks();
     GameTicksSec = 0;       /* ticks since this second frame in ms */
 
     /* the one and only main loop */
@@ -1670,14 +1671,10 @@ int main(int argc, char *argv[])
 
         if (GameStatus == GAME_STATUS_PLAY)
         {
-            if (LastTick - anim_tick > 110)
+            if (LastTick - new_anim_tick > options.anim_check_time)
             {
-                anim_tick = LastTick;
-                animate_objects();
-                map_udate_flag = 2;
-//                map_redraw_flag=TRUE;
-//                draw_info_format(COLOR_GREEN,"map_draw_update: ticks>110 (PlayAnims)");
-
+                new_anim_tick = LastTick;
+                new_anim_animate(SDL_GetTicks());
             }
             play_action_sounds();
         }

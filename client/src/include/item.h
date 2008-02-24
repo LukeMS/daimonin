@@ -55,10 +55,8 @@ typedef struct item_struct
     sint32              nrof;       /* number of items */
     sint32              weight;     /* how much item weights */
     sint16              face;       /* index for face array */
-    uint16              animation_id;   /* Index into animation array */
-    uint16              anim_speed;     /* how often to animate */
-    uint16              anim_state;     /* last face in sequence drawn */
-    uint16              last_anim;      /* how many ticks have passed since we last animated */
+    struct anim_list    *anim;
+
 unsigned int        magical     : 1;        /* item is magical */
 unsigned int        cursed      : 1;        /* item is cursed */
 unsigned int        damned      : 1;        /* item is damned */
@@ -284,7 +282,6 @@ extern void         update_item(int tag, int loc, char *name, int weight, int fa
                                     int nrof, uint8 type, uint8 subtype, uint8 quality, uint8 codition, uint8 skill,
                                     uint8 level, uint8 direction, int bflag);
 extern void         print_inventory(item *op);
-extern void         animate_objects(void);
 
 extern void         fire_command(char *buf);
 extern void         combat_command(char *buf);

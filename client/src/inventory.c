@@ -331,7 +331,6 @@ void widget_show_inventory_window(int x, int y)
     {
         if (tmp->tag == cpl.mark_count)
             sprite_blt(Bitmaps[BITMAP_INVSLOT_MARKED], x + (i % invxlen) * 32, y + (i / invxlen) * 32, NULL, NULL);
-
         blt_inv_item(tmp, x + (i % invxlen) * 32 + 1, y + (i / invxlen) * 32 + 1);
 
         if (cpl.inventory_win != IWIN_BELOW && i + cpl.win_inv_start == cpl.win_inv_slot)
@@ -352,6 +351,7 @@ jump_in_container1:
             {
                 if (tmpc->tag == cpl.mark_count)
                     sprite_blt(Bitmaps[BITMAP_INVSLOT_MARKED], x + (i % invxlen) * 32, y + (i / invxlen) * 32, NULL, NULL);
+
                 blt_inv_item(tmpc, x + (i % invxlen) * 32 + 1, y + (i / invxlen) * 32 + 1);
                 if (cpl.inventory_win != IWIN_BELOW && i + cpl.win_inv_start == cpl.win_inv_slot)
                 {
@@ -551,19 +551,19 @@ Boolean blt_inv_item_centered(item *tmp, int x, int y)
      * we use the first frame of a animation for it.*/
 
 
-    if (tmp->animation_id > 0)
+/* TODO: map it to new animtable */
+    if (tmp->anim && (tmp->anim->animnum > 0))
     {
-        check_animation_status(tmp->animation_id);
-        if (animations[tmp->animation_id].num_animations && animations[tmp->animation_id].facings <= 1)
-            anim1 = animations[tmp->animation_id].faces[0]; /* first bitmap of this ani */
+        if (new_anim_load_and_check(tmp->anim->animnum, tmp->anim->sequence, tmp->anim->dir))
+            anim1 = animation[tmp->anim->animnum].aSeq[tmp->anim->sequence]->dirs[tmp->anim->dir].faces[0];
     }
+
     if (!FaceList[anim1].sprite) /* fallback: first ani bitmap not loaded */
         anim1 = tmp->face;
 
     /* also fallback here */
     if (FaceList[anim1].sprite->status != SPRITE_STATUS_LOADED)
         anim1 = tmp->face;
-
     xstart = FaceList[anim1].sprite->border_left;
     xlen = FaceList[anim1].sprite->bitmap->w - xstart - FaceList[anim1].sprite->border_right;
     ystart = FaceList[anim1].sprite->border_up;

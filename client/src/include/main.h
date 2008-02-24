@@ -138,6 +138,7 @@ extern int              bmaptype_table_size;
 #define FILE_BMAPS_P0 "bmaps.p0"
 #define FILE_BMAPS_TMP "srv_files/bmaps.tmp"
 #define FILE_ANIMS_TMP "srv_files/anims.tmp"
+#define FILE_ANIMS_TMP2 "srv_files/newanims.tmp"
 
 #define FILE_CLIENT_SPELLS "srv_files/client_spells"
 #define FILE_CLIENT_SKILLS "srv_files/client_skills"
@@ -303,6 +304,8 @@ typedef struct _options
 
     Boolean                 firststart;
     Boolean                 sleepcounter;
+    int                     anim_frame_time;
+    int                     anim_check_time;
 }
 _options;
 

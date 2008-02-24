@@ -85,6 +85,7 @@ typedef signed char     sint8;
 #include <event.h>
 #include <sound.h>
 #include <map.h>
+#include <anim.h>
 #include <sprite.h>
 #include <interface.h>
 #include <book.h>
