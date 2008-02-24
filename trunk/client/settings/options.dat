@@ -81,3 +81,4 @@ Win RLE accel: 1
 Show framerate: 0
 Force redraw: 0
 Use update rect: 0
+Anim Update Time: 50

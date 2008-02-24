@@ -1176,107 +1176,9 @@ int blt_window_slider(_Sprite *slider, int maxlen, int winlen, int startoff, int
     return 0;
 }
 
-static int load_anim_tmp(void)
-{
-    int     i, anim_len = 0, new_anim = TRUE;
-    uint8   faces   = 0;
-    uint16  count = 0, face_id;
-    FILE   *stream;
-    char    buf[HUGE_BUF];
-    unsigned char anim_cmd[2048];
-
-
-    /* clear both animation tables
-     * this *must* be reloaded every time we connect
-     * - remember that different servers can have different
-     * animations!
-     */
-    for (i = 0; i < MAXANIM; i++)
-    {
-        if (animations[i].faces)
-            free(animations[i].faces);
-        if (anim_table[i].anim_cmd)
-            free(anim_table[i].anim_cmd);
-    }
-    memset(animations, 0, sizeof(animations));
-    memset(anim_table, 0, sizeof(anim_table));
-
-    /* animation #0 is like face id #0 a bug catch - if ever
-     * appear in game flow its a sign of a uninit of simply
-     * buggy operation.
-     */
-	*((uint16*)anim_cmd) = (uint16) count;
-    anim_cmd[2] = 0; /* flags ... */
-    anim_cmd[3] = 1;
-    anim_cmd[4] = 0; /* face id o */
-    anim_cmd[5] = 0;
-    anim_table[count].anim_cmd = malloc(6);
-    memcpy(anim_table[count].anim_cmd, anim_cmd, 6);
-    anim_table[count].len = 6;
-    /* end of dummy animation #0 */
-
-    count++;
-    if ((stream = fopen_wrapper(FILE_ANIMS_TMP, "rt")) == NULL)
-    {
-        LOG(LOG_ERROR, "load_anim_tmp: Error reading anim.tmp!\n");
-        SYSTEM_End(); /* fatal */
-        exit(0);
-    }
-
-    while (fgets(buf, HUGE_BUF - 1, stream) != NULL)
-    {
-        if (new_anim == TRUE) /* we are outside a anim body ? */
-        {
-            if (!strncmp(buf, "anim ", 5))
-            {
-                new_anim = FALSE;
-                faces = 0;
-				*((uint16*)anim_cmd) = (uint16) count;
-                faces = 1;
-                anim_len = 4;
-            }
-            else /* we should never hit this point */
-            {
-                LOG(LOG_ERROR, "load_anim_tmp:Error parsing anims.tmp - unknown cmd: >%s<!\n", buf);
-            }
-        }
-        else /* no, we are inside! */
-        {
-            if (!strncmp(buf, "facings ", 8))
-            {
-                faces = atoi(buf + 8);
-            }
-            else if (!strncmp(buf, "mina", 4))
-            {
-                /*LOG(LOG_DEBUG,"LOAD ANIM: #%d - len: %d (%d)\n", count, anim_len, faces);*/
-                anim_cmd[2] = 0; /* flags ... */
-                anim_cmd[3] = faces; /* facings */
-                anim_table[count].len = anim_len;
-                anim_table[count].anim_cmd = malloc(anim_len);
-                memcpy(anim_table[count].anim_cmd, anim_cmd, anim_len);
-                count++;
-                new_anim = TRUE;
-            }
-            else
-            {
-                face_id = (uint16) atoi(buf);
-				*((uint16*)(anim_cmd+anim_len)) = (uint16) face_id;
-				anim_len+=2;
-            }
-        }
-    }
-
-
-    fclose(stream);
-    return 1;
-}
-
-
 int read_anim_tmp(void)
 {
-    FILE       *stream, *ftmp;
-    int         i, new_anim = TRUE, count = 1;
-    char        buf[HUGE_BUF], cmd[HUGE_BUF];
+    FILE       *stream;
     struct stat stat_bmap, stat_anim, stat_tmp;
 
     /* if this fails, we have a urgent problem somewhere before */
@@ -1312,77 +1214,30 @@ int read_anim_tmp(void)
         }
     }
 
-    unlink(FILE_ANIMS_TMP); /* for some reason - recreate this file */
-    if ((ftmp = fopen_wrapper(FILE_ANIMS_TMP, "wt")) == NULL)
-    {
-        LOG(LOG_ERROR, "read_anim_tmp:Error opening anims.tmp!\n");
-        SYSTEM_End(); /* fatal */
-        exit(0);
-    }
+    create_anim_tmp();
 
-    if ((stream = fopen_wrapper(FILE_CLIENT_ANIMS, "rt")) == NULL)
-    {
-        LOG(LOG_ERROR, "read_anim_tmp:Error reading client_anims for anims.tmp!\n");
-        SYSTEM_End(); /* fatal */
-        exit(0);
-    }
-    while (fgets(buf, HUGE_BUF - 1, stream) != NULL)
-    {
-        sscanf(buf, "%s", cmd);
-        if (new_anim == TRUE) /* we are outside a anim body ? */
-        {
-            if (!strncmp(buf, "anim ", 5))
-            {
-                sprintf(cmd, "anim %d -> %s", count++, buf);
-                fputs(cmd, ftmp); /* safe this key string! */
-                new_anim = FALSE;
-            }
-            else /* we should never hit this point */
-            {
-                LOG(LOG_ERROR, "read_anim_tmp:Error parsing client_anim - unknown cmd: >%s<!\n", cmd);
-            }
-        }
-        else /* no, we are inside! */
-        {
-            if (!strncmp(buf, "facings ", 8))
-            {
-                fputs(buf, ftmp); /* safe this key word! */
-            }
-            else if (!strncmp(cmd, "mina", 4))
-            {
-                fputs(buf, ftmp); /* safe this key word! */
-                new_anim = TRUE;
-            }
-            else
-            {
-                /* this is really slow when we have more pictures - we
-                         * browsing #anim * #bmaps times the same table -
-                         * pretty bad - when we stay to long here, we must create
-                         * for bmaps.tmp entries a hash table too.
-                         */
-                for (i = 0; i < bmaptype_table_size; i++)
-                {
-                    if (!strcmp(bmaptype_table[i].name, cmd))
-                        break;
-                }
-                if (i >= bmaptype_table_size)
-                {
-                    /* if we are here then we have a picture name in the anims file
-                                 * which we don't have in our bmaps file! Pretty bad. But because
-                                 * face #0 is ALWAYS bug.101 - we simply use it here! */
-                    i = 0;
-                    LOG(LOG_ERROR, "read_anim_tmp: Invalid anim name >%s< - set to #0 (bug.101)!\n", cmd);
-                }
-                sprintf(cmd, "%d\n", i);
-                fputs(cmd, ftmp);
-            }
-        }
-    }
-
-    fclose(stream);
-    fclose(ftmp);
     return load_anim_tmp(); /* all fine - load file */
 }
+
+/* The editor creates the facespack alphabetically, so we can do a quick binary search... */
+int get_facenum_from_name(char * name)
+{
+    int l=0;
+    int r=(bmaptype_table_size-1);
+    int x;
+    while(r >= l)
+    {
+        x=(l+r)/2;
+        if(strcmp(name, bmaptype_table[x].name)<0)/* smaller? */
+            r=x-1;
+        else      /* bigger! */
+            l=x+1;
+        if(!strcmp(name, bmaptype_table[x].name))
+            return x;     /* Gefunden; x = Position*/
+    }
+    return -1;
+}
+
 
 void read_anims(void)
 {

@@ -66,7 +66,7 @@ struct CmdMapping commands[]  =
         { StatsCmd },
         { ImageCmd },
         { Face1Cmd},
-        { AnimCmd},
+        { NewAnimCmd},
         { SkillRdyCmd },
         { PlayerCmd },
         { SpelllistCmd },
@@ -88,6 +88,7 @@ struct CmdMapping commands[]  =
 #ifdef USE_CHANNELS
         { ChannelMsgCmd },
 #endif
+//        { ModAnimCmd },
     };
 
 #define NCOMMANDS (sizeof(commands)/sizeof(struct CmdMapping))
@@ -414,32 +415,6 @@ int request_face(int pnum, int mode)
     }
     */
     return 1;
-}
-
-
-/* we don't give a error message here in return - no need!
- * IF the server has messed up the anims file he send us - then
- * we simply core here. There is nothing we can do - in the badest
- * case the bad server harm us even more.
- */
-void check_animation_status(int anum)
-{
-    /* i really do it simple here - because we had stored our default
-     * anim list in the same way a server used in the past the anim
-     * command, we simple call the command. This seems a bit odd, but
-     * perhaps we play around in the future with at runtime created
-     * anims (server side) - then we need this interface again and we
-     * can simply call it from both sides.
-     */
-    if (animations[anum].loaded)
-        return;
-
-    /* why we don't preload all anims?
-     * because the anim also flushes loading of all face
-     * part of this anim!
-     */
-    animations[anum].loaded = 1; /* mark this anim as "we have loaded it" */
-    AnimCmd((unsigned char *)anim_table[anum].anim_cmd, anim_table[anum].len); /* same as server sends it! */
 }
 
 /* removes whitespace from right side */

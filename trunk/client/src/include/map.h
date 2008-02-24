@@ -78,6 +78,7 @@ struct MapCell
     uint8   ext[MAXFACES];
     char    pname[MAXFACES][32];
     uint8   probe[MAXFACES];
+    struct anim_list *anim[MAXFACES];
     uint8   darkness;
 }
 MapCell;
@@ -87,6 +88,8 @@ struct Map
     struct MapCell  cells[MAP_MAX_SIZE][MAP_MAX_SIZE];
 }
 Map;
+
+extern struct Map the_map;
 
 typedef struct
 {

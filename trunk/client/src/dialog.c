@@ -200,6 +200,7 @@ _option             opt[]                           =
         {"Show framerate:", "Whether to show the fps and other details under the map name.","","", "",SEL_CHECKBOX,0,1,1,0, &options.show_frame,VAL_BOOL},
         {"Force redraw:", "Whether to force the system to redraw EVERY frame.","","", "",SEL_CHECKBOX,0,1,1,0, &options.force_redraw,VAL_BOOL},
         {"Use update rect:", "Whether to use update rect.","","", "",SEL_CHECKBOX,0,1,1,0, &options.use_rect,VAL_BOOL},
+        {"Anim Update Time:", "Check anims every x ms.","","", "",SEL_RANGE,50,500,25,50, &options.anim_check_time,VAL_INT},
         {"#"},
         /* End of Page */
 

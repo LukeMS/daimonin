@@ -164,9 +164,9 @@ static item * new_item()
     op->magical = op->cursed = op->damned = 0;
     op->traped = op->unpaid = op->locked = op->applied = 0;
     op->flagsval = 0;
-    op->animation_id = 0;
-    op->last_anim = 0;
-    op->anim_state = 0;
+
+    op->anim = NULL;
+
     op->nrof = 0;
     op->open = 0;
     op->type = 255;
@@ -204,6 +204,8 @@ void free_all_items(item *op)
     {
         if (op->inv)
             free_all_items(op->inv);
+        if (op->anim)
+            new_anim_remove_item(op);
         tmp = op->next;
         tmp_free = &op;
         FreeMemory(tmp_free);
@@ -373,9 +375,9 @@ void remove_item(item *op)
     op->magical = op->cursed = op->damned = 0;
     op->unpaid = op->locked = op->applied = 0;
     op->flagsval = 0;
-    op->animation_id = 0;
-    op->last_anim = 0;
-    op->anim_state = 0;
+    if (op->anim)
+        new_anim_remove_item(op);
+    op->anim = NULL;
     op->nrof = 0;
     op->open = 0;
     op->type = 255;
@@ -604,9 +606,18 @@ void set_item_values(item *op, char *name, sint32 weight, uint16 face, int flags
     if (level != 254)
         op->item_level = level;
     op->face = face;
-    op->animation_id = anim;
-    op->anim_speed = animspeed;
-    op->direction = dir;
+
+
+    /* we don't need to change anything in the item update on server, we can simply use the old protokoll
+     * in the old item anim function the base-frame delay was 110 ms, in the new code its 50ms. Animations
+     * from the old client_anims are set to a standard delay to 4 (=200ms) so thats why we have this speed
+     * formula in the add_function
+     */
+    if ((anim>0) && (animspeed>0))
+        new_anim_add_item(anim, 0, dir, (uint8)((DEFAULT_ANIM_DELAY*5000)/(110*animspeed)),op);
+    else /* we don't care here is the item has already an anim, the remove will check */
+        new_anim_remove_item(op);
+
     get_flags(op, flags);
     /* We don't sort the map, so lets not do this either */
     if (op->env != cpl.below)
@@ -708,10 +719,16 @@ void update_item(int tag, int loc, char *name, int weight, int face, int flags, 
         get_flags(player, flags);
         if (player->inv)
             player->inv->inv_updated = 1;
-        player->animation_id = anim;
-        player->anim_speed = animspeed;
+/* This player as item animation stuff will later with smooth movement remooved when whe have moveing-objects */
+//        player->animation_id = anim;
+//        player->anim_speed = animspeed;
         player->nrof = nrof;
         player->direction = direction;
+
+        if ((anim>0) && (animspeed>0))
+            new_anim_add_item(anim, 0, direction, (uint8)((DEFAULT_ANIM_DELAY*5000)/(110*animspeed)),ip);
+        else /* we don't care here is the item has already an anim, the revome will check */
+            new_anim_remove_item(ip);
     }
     else
     {
@@ -757,86 +774,3 @@ void print_inventory(item *op)
     }
     l -= 2;
 }
-
-/* Check the objects, animate the ones as necessary */
-void animate_objects()
-{
-    item   *ip;
-    int     got_one = 0;
-
-    if (player)
-    {
-        /* For now, only the players inventory needs to be animated */
-        for (ip = player->inv; ip; ip = ip->next)
-        {
-            if (ip->animation_id > 0)
-                check_animation_status(ip->animation_id);
-
-            if (ip->animation_id > 0 && ip->anim_speed)
-            {
-                ip->last_anim++;
-                if (ip->last_anim >= ip->anim_speed)
-                {
-                    if (++ip->anim_state >= animations[ip->animation_id].frame)
-                        ip->anim_state = 0;
-                    if (ip->direction > animations[ip->animation_id].facings)
-                        ip->face = animations[ip->animation_id].faces[ip->anim_state];
-                    else
-                        ip->face = animations[ip->animation_id].faces[animations[ip->animation_id].frame * ip->direction + ip->anim_state];
-                    ip->last_anim = 0;
-                    got_one = 1;
-                }
-            }
-        }
-    }
-
-    if (cpl.below)
-    {
-        for (ip = cpl.below->inv; ip; ip = ip->next)
-        {
-            if (ip->animation_id > 0)
-                check_animation_status(ip->animation_id);
-
-            if (ip->animation_id > 0 && ip->anim_speed)
-            {
-                ip->last_anim++;
-                if (ip->last_anim >= ip->anim_speed)
-                {
-                    if (++ip->anim_state >= animations[ip->animation_id].frame)
-                        ip->anim_state = 0;
-                    if (ip->direction > animations[ip->animation_id].facings)
-                        ip->face = animations[ip->animation_id].faces[ip->anim_state];
-                    else
-                        ip->face = animations[ip->animation_id].faces[animations[ip->animation_id].frame * ip->direction + ip->anim_state];
-                    ip->last_anim = 0;
-                    got_one = 1;
-                }
-            }
-        }
-    }
-
-    if (cpl.container)
-    {
-        for (ip = cpl.sack->inv; ip; ip = ip->next)
-        {
-            if (ip->animation_id > 0)
-                check_animation_status(ip->animation_id);
-            if (ip->animation_id > 0 && ip->anim_speed)
-            {
-                ip->last_anim++;
-                if (ip->last_anim >= ip->anim_speed)
-                {
-                    if (++ip->anim_state >= animations[ip->animation_id].frame)
-                        ip->anim_state = 0;
-                    if (ip->direction > animations[ip->animation_id].facings)
-                        ip->face = animations[ip->animation_id].faces[ip->anim_state];
-                    else
-                        ip->face = animations[ip->animation_id].faces[animations[ip->animation_id].frame * ip->direction + ip->anim_state];
-                    ip->last_anim = 0;
-                    got_one = 1;
-                }
-            }
-        }
-    }
-}
-

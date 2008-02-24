@@ -54,7 +54,7 @@ extern void Face1Cmd(unsigned char *data, int len);
 extern void AddMeFail(char *data, int len);
 extern void AddMeSuccess(char *data, int len);
 extern void GoodbyeCmd(char *data, int len);
-extern void AnimCmd(unsigned char *data, int len);
+extern void NewAnimCmd(unsigned char *data, int len);
 extern void ImageCmd(unsigned char *data, int len);
 extern void DrawInfoCmd(char *data, int len);
 extern void DrawInfoCmd2(char *data, int len);

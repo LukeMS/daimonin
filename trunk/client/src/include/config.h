@@ -28,6 +28,8 @@
 /* uncomment this to enable the channel support in the client */
 #define USE_CHANNELS
 
+#define USE_NEW_ANIM
+
 //#define WIDGET_SNAP
 
 #define DEFAULT_SERVER_PORT 13327

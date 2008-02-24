@@ -660,8 +660,8 @@ void widget_textwin_show(int x, int y, int actWin)
             box.h = len;
             box.w = 1;
             SDL_FillRect(widgetSF[wID], &box, sdl_gray4);
-            show_window(actWin, x, y - 2, &bltfx);
         }
+        show_window(actWin, x, y - 2, &bltfx);
     }
     box.x=x;
     box.y=y;

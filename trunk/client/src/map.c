@@ -25,7 +25,7 @@
 
 extern _Sprite         *test_sprite;
 
-static struct Map       the_map;
+struct Map       the_map;
 
 static struct MapCell  *TheMapCache = NULL;
 
@@ -52,8 +52,20 @@ void adjust_map_cache(int xpos, int ypos)
     int x, y /*, i*/;
 //    register struct MapCell                    *map;
     int             xreal=0, yreal=0;
+    anim_list   *al, *al2;
 
     memset(TheMapCache, 0, 9 * (MapData.xlen * MapData.ylen) * sizeof(struct MapCell));
+
+    /* delete all anims */
+    al = AnimListStart;
+    while (al->next)
+    {
+        al2=al;
+        al=al->next;
+        new_anim_remove(al2);
+    }
+
+
     for (y = 0; y < MapStatusY; y++)
     {
         for (x = 0; x < MapStatusX; x++)
@@ -124,13 +136,17 @@ void clear_map(void)
 
 void display_mapscroll(int dx, int dy)
 {
-    int         x, y;
+    int         x, y, i;
     struct Map  newmap;
 
     for (x = 0; x < MapStatusX; x++)
     {
         for (y = 0; y < MapStatusY; y++)
         {
+            if (x - dx < 0 || x - dx >= MapStatusX || y - dy < 0 || y - dy >= MapStatusY)
+            {
+                new_anim_remove_tile_all(&(the_map.cells[x][y]));
+            }
             if (x + dx < 0 || x + dx >= MapStatusX || y + dy < 0 || y + dy >= MapStatusY)
             {
                 memset((char *) &(newmap.cells[x][y]), 0, sizeof(struct MapCell));
@@ -142,6 +158,19 @@ void display_mapscroll(int dx, int dy)
         }
     }
     memcpy((char *) &the_map, (char *) &newmap, sizeof(struct Map));
+
+    /* for the anims we need to traverse all mapcells again, to correct the pointers */
+    for (x = 0; x < MapStatusX; x++)
+    {
+        for (y = 0; y < MapStatusY; y++)
+        {
+            for (i=0;i<MAXFACES;i++)
+            {
+                if (the_map.cells[x][y].anim[i])
+                    the_map.cells[x][y].anim[i]->obj = &(the_map.cells[x][y]);
+            }
+        }
+    }
 }
 
 void map_draw_map_clear(void)
