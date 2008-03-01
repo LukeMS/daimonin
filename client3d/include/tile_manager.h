@@ -25,7 +25,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #define TILE_MANAGER_H
 
 #include <Ogre.h>
-#include "define.h"
 #include "tile_chunk.h"
 
 /**
@@ -37,37 +36,28 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    enum { TILE_SIZE = 1 << 6};      /**< Size of a tile in pixel. */
-    enum { HALF_SIZE = TILE_SIZE/2}; /**< Size of a tile quadrandt in pixel. */
-    enum { CHUNK_SIZE_X = 17 };      /**< Number of tiles in the worldmap (on x-axis). */
-    enum { CHUNK_SIZE_Z = 17 };      /**< Number of tiles in the worldmap (on z-axis). */
-    enum { MIN_TEXTURE_PIXEL = 16 }; /**< Minimal size of tile in the terrain texture. */
-    enum { SUM_SUBTILES =  8 };      /**< Obsolete - don't use! */
+    enum { TILE_SIZE        = 1<<6 }; /**< Size of a tile in pixel. */
+    enum { TEXTURE_SIZE     = 1024 }; /**< The size of both textures (AtlasTexture and RenderTexture). */
+    enum { ATLAS_TILE_SIZE  =  256 }; /**< The size of a tile in the AtlasTexture. */
+    enum { ATLAS_FILTER_SIZE=   64 }; /**< The size of a filter in the AtlasTexture. */
+    enum { MAP_SIZE         =   21 }; /**< Number of tiles in the worldmap (on x ynd z axis). */
+    enum { CHUNK_SIZE       =   21 }; /**< Number of tiles in a chunk      (on x ynd z axis). */
+    enum { MAX_MAP_SETS     =   16 }; /**< The maximum numbers of AtlasTextures to be created by createAtlasTexture(...). */
 
     int map_transfer_flag;
     bool map_new_flag;
 
     enum
     {
-        TRIANGLE_LEFT  = 1 << 0,
-        TRIANGLE_TOP   = 1 << 1,
-        TRIANGLE_RIGHT = 1 << 2,
-        TRIANGLE_BOTTOM= 1 << 3
+        VERTEX_TL,  // Top/Left.
+        VERTEX_TR,  // Top/Right.
+        VERTEX_BL,  // Bottom/Left.
+        VERTEX_BR,  // Bottom/Right.
     };
 
     enum
     {
-        VERTEX_BL,  // Bottom/Left.
-        VERTEX_TL,  // Top/Left.
-        VERTEX_TR,  // Top/Right.
-        VERTEX_BR,  // Bottom/Right.
-        VERTEX_MID, // Height given by the server.
-        VERTEX_AVG, // Average Height.
-        VERTEX_SUM, // Number of vertixes.
-    };
-
-    enum
-    {   // Pos of a wall within a tile.
+        // Pos of a wall within a tile.
         WALL_POS_BOTTOM,
         WALL_POS_TOP,
         WALL_POS_RIGHT,
@@ -87,105 +77,81 @@ public:
     {
         return mSceneManager;
     }
-    int getTextureSize()
+    char getMapTile(int x, int z, int layer)
     {
-        return mTileTextureSize;
+        return mMap[x][z].tileLayer[layer];
     }
-    unsigned char getMapHeight(unsigned int x, unsigned int z, int vertex = VERTEX_MID)
+    char getMapFilter(int x, int z)
     {
-        if (x >= CHUNK_SIZE_X || z >= CHUNK_SIZE_Z)
-            return 0;
-        return mMap[x][z].height[vertex];
+        return mMap[x][z].filterLayer;
     }
-    char getMapTextureRow(short x, short z)
+    char getMapShadow(int x, int z)
     {
-        return mMap[x][z].terrain_row;
+        return (mMap[x][z].filterMirror>>2)&3;
     }
-    char getMapTextureCol(short x, short z)
+    char getMapShadowMirror(int x, int z)
     {
-        return mMap[x][z].terrain_col;
-    }
-    bool getIndoor(short x, short z)
-    {
-        // ATM only map position 2,4 is an indoor tile.
-        if (mMap[x][z].terrain_col == 2 && mMap[x][z].terrain_row == 4) return true;
-        return false;
+        return mMap[x][z].filterShadow;
     }
     void getMapScroll(int &x, int &z)
     {
         x = mMapScrollX;
         z = mMapScrollZ;
     }
-    void setMapHeight(short x, short y, short height)
-    {
-        mMap[x][y].height[VERTEX_MID] = height;
-    }
-    void setMapTextureRow(short x, short y, unsigned char value)
-    {
-        mMap[x][y].terrain_row = value;
-    }
-    void setMapTextureCol(short x, short y, unsigned char value)
-    {
-        mMap[x][y].terrain_col = value;
-    }
-    void setMap(int x, int y, int height, int row, int col)
-    {
-        mMap[x][y].height[VERTEX_MID] = (unsigned char)height;
-        mMap[x][y].terrain_row        = (unsigned char)row;
-        mMap[x][y].terrain_col        = (unsigned char)col;
-    }
-    void setMapTextures();
-    bool loadImage(Ogre::Image &image, const Ogre::String &filename);
-
-    Ogre::AxisAlignedBox *GetBounds();
-    void Init(Ogre::SceneManager* SceneManager, int tileTextureSize = 128);
-
-    void createChunks();
-    void changeChunks();
-
-    void createTexture();
-    void changeTexture();
-    /** Create a terrain-texture out of tile textures. **/
-    bool createTextureGroup(const Ogre::String &terrain_type);
-    void createTextureGroupBorders(unsigned char* TextureGroup_data, short pix);
-    void shrinkFilter();
-    void shrinkTexture(const Ogre::String &terrain_type);
+    Ogre::uchar getMapHeight(unsigned int x, unsigned int z, int vertex);
+    void setMap(int x, int y, Ogre::uchar heightVertexTL, Ogre::uchar tileLayer0, Ogre::uchar tileLayer1, Ogre::uchar filterLayer, Ogre::uchar filterShadow=0);
+    void changeMapset(Ogre::String filenameTileTexture, Ogre::String filenameEnvTexture);
+    void Init(Ogre::SceneManager* SceneManager, int sumTilesX, int sumTilesZ, int zeroX, int zeroZ, bool highDetails);
+    void toggleGrid() { mMapchunk.toggleGrid(); }
     void scrollMap(int x, int z);
-    void setMaterialLOD(int pix);
-    void toggleGrid();
-    void addToGroupTexture(unsigned char* TextureGroup_data, unsigned char *Filter_data, Ogre::Image* Texture, short pixel, short x, short y);
+    void changeChunks();
+    bool loadImage(Ogre::Image &image, const Ogre::String &filename);
+    int  getTileHeight(int posX, int posZ);
+
     void addWall(int level, int tileX, int tileZ, int pos, const char *meshName);
     void syncWalls(int dx, int dy);
-    void calcVertexHeight();
-    int getTileHeight(int posX, int posZ);
+
+    int getDeltaHeightClass(int x, int z);
+    int getDeltaHeightBottom(int x, int z)
+    {
+        return Ogre::Math::IAbs(getMapHeight(x, z, VERTEX_BL) - getMapHeight(x, z, VERTEX_BR));
+    }
 
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     /**  TileEngine struct which holds the worldmap. **/
-    struct _mMap
+    typedef struct
     {
-        unsigned char height[VERTEX_SUM];      /**< Height of every vertex of a tile. **/
-        unsigned char walkable[SUM_SUBTILES];  /**< Walkable status for each subtile (8 bit * 8 rows)  **/  // Obsolete - don't use!
-        char terrain_col;                      /**< Column of the tile-texture in the terrain-texture. **/
-        char terrain_row;                      /**< Row    of the tile-texture in the terrain-texture. **/
         Ogre::Entity *entity[WALL_POS_SUM];
-    }
-    mMap[CHUNK_SIZE_X+1][CHUNK_SIZE_Z+1];
+        Ogre::uchar height;       /**< Height of VERTEX_TL. The other heights are coming for the neighbour tiles. **/
+        Ogre::uchar tileLayer[2]; /**< Layer-numbers of the tile. **/
+        Ogre::uchar filterLayer;  /**< Filter-number of the tile (used to blend the tileLayers). **/
+        Ogre::uchar filterShadow; /**< Filter to darken the tile (used for shadowds/FogOfWar/etc). **/
+        Ogre::uchar filterMirror; /**< bit 0: Mirror filterLayer on x,  bit 1: Mirror filterLayer on z.
+                                       bit 2: Mirror filterShadow on x, bit 3: Mirror filterShadow on z. **/
+    }mapStruct;
+    mapStruct mMap[CHUNK_SIZE+3][CHUNK_SIZE+3];
     Ogre::SceneManager *mSceneManager;
     TileChunk mMapchunk;
-    int mTileTextureSize;
     int mMapScrollX, mMapScrollZ;
-    bool mGrid;
+    bool mHighDetails;
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     TileManager();
-    ~TileManager();
+    ~TileManager() {}
     TileManager(const TileManager&); /**< disable copy-constructor. **/
-    int calcHeight(int vert0, int vert1, int vertMid, int posX, int posZ);
+    /** **************************************************************************
+     **  groupNr -1: create all groups found in the media folder.
+     ** **************************************************************************/
+    void createAtlasTexture(const Ogre::String filenameTiles, const Ogre::String filenameFilters, const Ogre::String filenameShadows, unsigned int groupNr = MAX_MAP_SETS+1);
+    void copyFilterToAtlas(Ogre::uchar *dstBuf, Ogre::String filename, int startRow, int stopRow);
+    bool copyTileToAtlas  (Ogre::uchar *dstBuf, Ogre::String filename);
+    int  calcHeight(int vert0, int vert1, int vert2, int posX, int posZ);
+
     void delRowOfWalls(int row);     /**< Delete all walls that are scrolling out of the tile map.**/
     void delColOfWalls(int col);     /**< Delete all walls that are scrolling out of the tile map.**/
     void clsRowOfWalls(int row);     /**< Set all walls to 0 that are scrolling into the tile map.**/

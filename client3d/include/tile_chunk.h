@@ -27,6 +27,24 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "Ogre.h"
 
 /**
+ * Helper class for drawing blended tile layers to a rendertexture.
+ *****************************************************************************/
+class TilePainter : public Ogre::SimpleRenderable
+{
+public:
+    TilePainter();
+    ~TilePainter() { delete mRenderOp.vertexData; }
+    void updateVertexBuffer();
+    void toggleGrid() { mShowGrid = !mShowGrid; }
+private:
+    bool mShowGrid;
+    // Not used.
+    Ogre::Real getSquaredViewDepth(const Ogre::Camera* cam) const { return 0; }
+    Ogre::Real getBoundingRadius(void) const { return 0; }
+};
+
+
+/**
  * TileEngine class which manages the tiles in a chunk.
  *****************************************************************************/
 class TileChunk
@@ -35,58 +53,35 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-
-    /** Height levels for the tiles. **/
-    enum {
-        // Mountains
-        LEVEL_MOUNTAIN_TOP = 70,
-        LEVEL_MOUNTAIN_MID = 60,
-        LEVEL_MOUNTAIN_DWN = 40,
-        // Plains
-        LEVEL_PLAINS_TOP = 18,
-        LEVEL_PLAINS_MID = 16,
-        LEVEL_PLAINS_DWN = 14,
-        LEVEL_PLAINS_SUB = 12,
-        // Water
-        LEVEL_WATER_CLP = LEVEL_PLAINS_SUB +2, // At this point the water clips the land-tiles.
-        LEVEL_WATER_TOP = LEVEL_WATER_CLP -1,
-    };
-
-    static Ogre::AxisAlignedBox *mBounds;
-
+    enum { MAX_TERRAIN_HEIGHT = 255 };
+    enum { WATERLEVEL         =  14 }; /**<  At this height the water clips the land-tiles. **/
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    TileChunk();
-    ~TileChunk();
-    void create(int tileTextureSize);
+    TileChunk(){};
+    ~TileChunk(){};
+    void init();
     void change();
-    void setMaterial(Ogre::String matLand, Ogre::String matWater);
     void freeRecources();
-    /** Every chunk must have a land- AND a waterSubmesh,
-    if there is no Water, we make a dummy submesh. **/
-    void createDummy(Ogre::SubMesh* submesh);
-    /** Create the land chunk. **/
-    void createLand(int tileTextureSize);
-    /** Change the land chunk. **/
+    /** The terrain must have a land- AND a waterSubmesh. If there are no datas for it, we create a dummy. **/
+    void createDummySubMesh(Ogre::SubMesh* submesh);
+    void createLand();
     void changeLand();
-    /** Create HW buffers for land chunk. **/
-    void createLand_Buffers();
-    /** Create the water chunk. **/
     void createWater();
-    /** Change the water chunk. **/
-    void changeWater();
-    /** Create HW buffers for the water chunk. **/
-    void createWater_Buffers();
+    void updatePainter();
+    void toggleGrid();
+    void loadAtlasTexture(Ogre::String newAtlasTexture);
 
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    Ogre::MeshPtr mMeshWater, mMeshLand;
-    Ogre::SceneNode *mNodeWater,*mNodeLand;
-    Ogre::SubMesh *mSubMeshWater, *mSubMeshLand;
-    Ogre::Entity *mEntityWater, *mEntityLand;
+    TilePainter *mPainter;
+    Ogre::SceneNode *mNode;
+    Ogre::TexturePtr mTexLand, mTexWater;
+    Ogre::MeshPtr mMeshLand, mMeshWater, mMeshPainter;
+    Ogre::SubMesh *mSubMeshWater, *mSubMeshLand, *mSubMeshPainter;
+    Ogre::Entity *mEntityWater, *mEntityLand, *mEntityPainter;
 };
 
 #endif

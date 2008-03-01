@@ -54,7 +54,7 @@ void GuiCursor::Init(int w, int h)
     else if (mWidth > MAX_CURSOR_SIZE) mWidth = MAX_CURSOR_SIZE;
     if (mHeight< 4) mHeight= 4;
     else if (mHeight> MAX_CURSOR_SIZE) mHeight= MAX_CURSOR_SIZE;
-    mTexture = TextureManager::getSingleton().createManual("GUI_Cursor_Texture", "General",
+    mTexture = TextureManager::getSingleton().createManual("GUI_Cursor_Texture", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
                TEX_TYPE_2D, MAX_CURSOR_SIZE, MAX_CURSOR_SIZE, 0, PF_A8R8G8B8, TU_STATIC_WRITE_ONLY);
     // We must clear the whole texture (textures have always 2^n size while cursor-gfx can be smaller).
     memset(mTexture->getBuffer()->lock(HardwareBuffer::HBL_DISCARD), 0x00, MAX_CURSOR_SIZE * MAX_CURSOR_SIZE * sizeof(uint32));

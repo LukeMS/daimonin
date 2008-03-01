@@ -279,9 +279,9 @@ bool Events::frameStarted(const FrameEvent& evt)
             {
                 GuiManager::getSingleton().displaySystemMessage("Starting the tile-engine...");
                 if (Option::getSingleton().getIntValue(Option::HIGH_TEXTURE_DETAILS))
-                    TileManager::getSingleton().Init(mSceneManager, 128);
+                    TileManager::getSingleton().Init(mSceneManager, 21, 21, 11, 11, true);
                 else
-                    TileManager::getSingleton().Init(mSceneManager, 16);
+                    TileManager::getSingleton().Init(mSceneManager, 21, 21, 11, 11, false);
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
                 // Close the loading screen.
                 GuiManager::getSingleton().displaySystemMessage("");
@@ -399,7 +399,7 @@ bool Events::frameStarted(const FrameEvent& evt)
                 strCmd <<
                 "setup sound " << 1 <<
                 " map2cmd "    << 1 <<
-                " mapsize "    << TileManager::CHUNK_SIZE_X << "x" << TileManager::CHUNK_SIZE_Z <<
+                " mapsize "    << 17 << "x" << 17 <<
                 " darkness "   << 1 <<
                 " facecache "  << 1 <<
                 " skf " << ServerFile::getSingleton().getLength(ServerFile::FILE_SKILLS)  << "|" << std::hex<< ServerFile::getSingleton().getCRC(ServerFile::FILE_SKILLS)     << std::dec <<
@@ -597,7 +597,7 @@ bool Events::frameStarted(const FrameEvent& evt)
                         GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Client3d commands:");
                         GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~1 ... 8~ to change cloth.");
                         GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Hold shift for a ranged attack.");
-                        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~!keyx~ for texture quality. ");
+                        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~!keyg~ for grid. ");
                         GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~!keya~ to change Idle animation.");
                         GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~!keyb~ to change Attack animation.");
                         GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~!keyc~ to change Agility animation.");

@@ -440,7 +440,7 @@ inline void GuiWindow::createWindow(int zOrder)
 {
     mWindowNr = ++msInstanceNr;
     std::string strNum = StringConverter::toString(msInstanceNr);
-    mTexture = TextureManager::getSingleton().createManual("GUI_Texture_" + strNum, "General",
+    mTexture = TextureManager::getSingleton().createManual("GUI_Texture_" + strNum, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
                TEX_TYPE_2D, mWidth, mHeight, 0, PF_A8R8G8B8, TU_STATIC_WRITE_ONLY);
     mOverlay = OverlayManager::getSingleton().create("GUI_Overlay_"+strNum);
     mOverlay->setZOrder(400-zOrder);

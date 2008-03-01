@@ -190,7 +190,7 @@ void GuiImageset::parseXML(const char *fileImageSet)
         }
     }
     Logger::log().info() << (int) mvSrcEntry.size() +1 << " Image Entries were parsed."; // +1 because of mouseCursor.
-    mImageSetImg.load(mStrImageSetGfxFile, "General");
+    mImageSetImg.load(mStrImageSetGfxFile, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
     mSrcPixelBox = mImageSetImg.getPixelBox();
 
     // ////////////////////////////////////////////////////////////////////

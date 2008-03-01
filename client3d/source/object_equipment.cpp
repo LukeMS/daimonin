@@ -259,7 +259,7 @@ ObjectEquipment::ObjectEquipment(Entity *parentEntity)
     Image image;
     image.loadDynamicImage(texImageBuf, MAX_MODEL_TEXTURE_SIZE, MAX_MODEL_TEXTURE_SIZE, PF_A8R8G8B8);
     tmpName +="_Texture";
-    mTexture = TextureManager::getSingleton().loadImage(tmpName, "General", image, TEX_TYPE_2D, 3, 1.0f);
+    mTexture = TextureManager::getSingleton().loadImage(tmpName, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, image, TEX_TYPE_2D, 3, 1.0f);
     mMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(tmpName);
 
     // Set the default Colors of the model.
@@ -347,7 +347,7 @@ void ObjectEquipment::setTexture(int pos, int textureColor, int textureNr)
 {
     // Load the shadow texture.
     Image image;
-    image.load("shadow.png", "General");
+    image.load("shadow.png", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
     switch (pos)
     {
         case TEXTURE_POS_SKIN:

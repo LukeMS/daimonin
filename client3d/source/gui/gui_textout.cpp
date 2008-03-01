@@ -152,7 +152,7 @@ void GuiTextout::createBuffer(int width)
 void GuiTextout::loadRawFont(const char *filename)
 {
     Image image;
-    image.load(filename, "General");
+    image.load(filename, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
     size_t size = image.getHeight() * image.getWidth();
     mFont *fnt = new mFont;
     mvFont.push_back(fnt);
@@ -203,7 +203,7 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
         Logger::log().warning() << "Can't load TTF's with size > 16 on this gfx-card. You must use raw-fonts instead!";
         return;
     }
-    FontPtr pFont = FontManager::getSingleton().create("tmpFont", "General", false, 0, &pairList);
+    FontPtr pFont = FontManager::getSingleton().create("tmpFont", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, false, 0, &pairList);
     pFont->load();
     MaterialPtr pMaterial = pFont.getPointer()->getMaterial();
     String strTexture = pMaterial.getPointer()->getTechnique(0)->getPass(0)->getTextureUnitState(0)->getTextureName();

@@ -118,7 +118,7 @@ void GuiGraphic::draw()
                     if (++srcX >= mGfxSrc->w) srcX = 0; // Repeat the image.
                 }
                 dSrcY+= srcRowSkip;
-                dst+=mParent->getWidth();
+                dst+=texture->getWidth();
                 bak+=mParent->getWidth();
                 if (++srcY >= mGfxSrc->h){ srcY = 0; dSrcY =0; } // Repeat the image.
             }
