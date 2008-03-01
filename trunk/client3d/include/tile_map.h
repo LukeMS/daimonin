@@ -87,7 +87,7 @@ public:
 
     typedef struct
     {
-        MapCell cells[TileManager::CHUNK_SIZE_X][TileManager::CHUNK_SIZE_Z];
+        MapCell cells[TileManager::CHUNK_SIZE][TileManager::CHUNK_SIZE];
     }
     Map;
     Map the_map;

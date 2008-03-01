@@ -74,8 +74,8 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
         case OIS::KC_B:
         {
             static int animNr= 0;
-            //ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_ATTACK, animNr);
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_EMOTE, animNr);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_ATTACK, animNr);
+            //ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_EMOTE, animNr);
             if (++animNr >= 16) animNr= 0;
             break;
         }
@@ -140,7 +140,6 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
         case OIS::KC_I:
             GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_EQUIPMENT, true);
             GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_INVENTORY, true);
-
 
             GuiManager::getSingleton().setSlotBusyTime(GuiManager::GUI_WIN_INVENTORY, 0, 6);
             GuiManager::getSingleton().setSlotBusy(GuiManager::GUI_WIN_INVENTORY, 0);
@@ -230,15 +229,46 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
 
         case OIS::KC_X:
         {
-            static int pixel =128;
-            //change pixel size of terrain textures
-            pixel /= 2; // shrink pixel value
-            if (pixel < TileManager::MIN_TEXTURE_PIXEL)
-                pixel = 128; // if value is too low resize to maximum
-            TileManager::getSingleton().setMaterialLOD(pixel);
-            //mTimeUntilNextToggle = .5;
+            String filename = "./shadowtest.txt";
+            std::ifstream txtFile;
+            txtFile.open(filename.c_str(), std::ios::in | std::ios::binary);
+            if (!txtFile)
+            {
+                Logger::log().error() << "Error on file " << filename;
+            }
+            else
+            {
+                while (1)
+                {
+                    int heightTL, tex1, tex2, fil1, shadow;
+                    //Logger::log().error() << "Error on file " << filename;
+                    if (!getline(txtFile, filename)) goto ennn;
+                    if (!getline(txtFile, filename)) goto ennn;
+                    if (!getline(txtFile, filename)) goto ennn;
+                    if (!getline(txtFile, filename)) goto ennn;
+                    for (int y = 0; y < 21; ++y)
+                    {
+                        for (int x = 0; x < 21; ++x)
+                        {
+                            if (!getline(txtFile, filename)) goto ennn;
+                            sscanf(filename.c_str(), "%d %d %d %d %d", &heightTL, &tex1, &tex2, &fil1, &shadow);
+                            TileManager::getSingleton().setMap(x, y, heightTL, tex1, tex2, fil1, shadow);
+                        }
+                        if (!getline(txtFile, filename)) goto ennn;
+                        if (!getline(txtFile, filename)) goto ennn;
+                    }
+                }
+                ennn:
+                txtFile.close();
+
+
+                TileManager::getSingleton().changeChunks();
+
+                break;
+            }
             break;
         }
+
 
         case OIS::KC_Y:
             mSceneDetailIndex = (mSceneDetailIndex+1)%3;
@@ -317,6 +347,7 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
         }
 
         case OIS::KC_9:
+            TileManager::getSingleton().changeChunks();
             //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_BODY, 1);
             break;
 
@@ -446,7 +477,6 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
             //mTimeUntilNextToggle = 0.5;
             break;
         }
-
         // ////////////////////////////////////////////////////////////////////
         // Exit game.
         // ////////////////////////////////////////////////////////////////////

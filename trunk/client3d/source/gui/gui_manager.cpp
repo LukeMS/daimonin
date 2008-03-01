@@ -78,7 +78,7 @@ void GuiManager::Init(int w, int h)
     // ////////////////////////////////////////////////////////////////////
     Logger::log().info() << "Creating Overlay for System-Messages...";
     mTooltipRefresh = false;
-    mTexture = TextureManager::getSingleton().createManual("GUI_ToolTip_Texture", "General",
+    mTexture = TextureManager::getSingleton().createManual("GUI_ToolTip_Texture", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
                TEX_TYPE_2D, TOOLTIP_SIZE_X, TOOLTIP_SIZE_Y, 0, PF_A8R8G8B8, TU_STATIC_WRITE_ONLY);
     mOverlay = OverlayManager::getSingleton().create("GUI_Tooltip_Overlay");
     mOverlay->setZOrder(500);

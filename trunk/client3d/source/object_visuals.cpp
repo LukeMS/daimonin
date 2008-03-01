@@ -125,13 +125,13 @@ void ObjectVisuals::Init()
     mTexBuffer = new unsigned char[TEXTURE_SIZE * TEXTURE_SIZE * sizeof(uint32)];
     Image image;
     image.loadDynamicImage(mTexBuffer, TEXTURE_SIZE, TEXTURE_SIZE, PF_A8B8G8R8);
-    TexturePtr pTexture = TextureManager::getSingleton().loadImage(TEXTURE_NAME, "General", image, TEX_TYPE_2D);
+    TexturePtr pTexture = TextureManager::getSingleton().loadImage(TEXTURE_NAME, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, image, TEX_TYPE_2D);
     tmpMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(TEXTURE_NAME);
     mHardwarePB = pTexture->getBuffer();
     mNode[VISUAL_SELECTION] = 0;
     mNode[VISUAL_LIFEBAR] = 0;
     /*
-        mImage.load("VISUAL_Visuals.png", "General");
+        mImage.load("VISUAL_Visuals.png", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
         mSrcPixelBox = mImage.getPixelBox();
     */
 }

@@ -126,7 +126,7 @@ GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOn
             itemAtlas = itemAtlas.loadDynamicImage((unsigned char*)itemBuffer, ITEM_SIZE, ITEM_SIZE * itemFilename.size(), 1, PF_A8R8G8B8);
             for (unsigned int i = 0; i < itemFilename.size(); ++i)
             {
-                itemImage.load(itemFilename[i], "General");
+                itemImage.load(itemFilename[i], ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
                 if (itemImage.getHeight() != ITEM_SIZE || itemImage.getWidth() != ITEM_SIZE)
                 {
                     Logger::log().warning() << "CreateItemAtlas: Unsupported image size. Only Items of "
@@ -188,13 +188,13 @@ GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOn
         // ////////////////////////////////////////////////////////////////////
         filename = FILE_ITEM_TEXTURE_ATLAS;
         filename+= ".png";
-        mAtlasTexture.load(filename, "General");
+        mAtlasTexture.load(filename, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
         // ////////////////////////////////////////////////////////////////////
         // Create drag'n'drop overlay.
         // We must clear the whole texture, because textures do always have
         // 2^n size - while slots can have any size.
         // ////////////////////////////////////////////////////////////////////
-        mDnDTexture = TextureManager::getSingleton().createManual("GUI_SlotDnD_Texture", "General",
+        mDnDTexture = TextureManager::getSingleton().createManual("GUI_SlotDnD_Texture", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
                       TEX_TYPE_2D, ITEM_SIZE, ITEM_SIZE, 0, PF_A8R8G8B8, TU_STATIC_WRITE_ONLY);
         mDnDOverlay = OverlayManager::getSingleton().create("GUI_SlotDnD_Overlay");
         memset(mDnDTexture->getBuffer()->lock(HardwareBuffer::HBL_DISCARD), 0x00,

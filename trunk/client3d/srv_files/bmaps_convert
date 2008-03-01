@@ -1,4 +1,4 @@
-bug
+bu
 a_axe1
 a_axe2
 a_axe_2h
@@ -755,10 +755,10 @@ floor_farm2b
 floor_fire1a
 floor_fire1b
 floor_fire1c
-floor_flagm1       TilePos_0,0,3
-floor_flagm2       TilePos_0,0,3
-floor_flagm3       TilePos_0,0,3
-floor_flagm4       TilePos_0,0,3
+floor_flagm1       TilePos_2;8,7;0;0
+floor_flagm2       TilePos_2;8,7;1;0
+floor_flagm3       TilePos_2;8,7;2;0
+floor_flagm4       TilePos_2;8,7;3;0
 floor_flagstone1a
 floor_flagstone1b
 floor_flagstone1c
@@ -905,10 +905,10 @@ floor_ruin3
 floor_ruin4
 floor_ruin5
 floor_ruin6
-floor_sand_d1         TilePos_3,3,3
-floor_sand_d2         TilePos_3,3,3
-floor_sand_d3         TilePos_3,3,3
-floor_sand_d4         TilePos_3,3,3
+floor_sand_d1         TilePos_3;2,1;7,0
+floor_sand_d2         TilePos_3;2,1;7,0
+floor_sand_d3         TilePos_3;2,1;7,0
+floor_sand_d4         TilePos_3;2,1;7,0
 floor_sblack1
 floor_sblack1b
 floor_sblack2
@@ -947,26 +947,26 @@ floor_white3a
 floor_white3b
 floor_white3c
 floor_white3d
-floor_wood1       TilePos_2,4,3
-floor_wood1b      TilePos_2,4,3
-floor_wood2      TilePos_2,4,3
-floor_wood2_d1      TilePos_2,4,3
-floor_wood2_d2      TilePos_2,4,3
-floor_wood2_l1      TilePos_2,4,3
-floor_wood2_l2      TilePos_2,4,3
-floor_wood2b      TilePos_2,4,3
-floor_wood3a      TilePos_2,4,3
-floor_wood3b      TilePos_2,4,3
-floor_wood3c      TilePos_2,4,3
-floor_wood3d      TilePos_2,4,3
-floor_wood3e      TilePos_2,4,3
-floor_wood3f      TilePos_2,4,3
-floor_wood3g      TilePos_2,4,3
-floor_wood3h      TilePos_2,4,3
-floor_wood4a      TilePos_2,4,3
-floor_wood4b      TilePos_2,4,3
-floor_wood4c      TilePos_2,4,3
-floor_wood4d      TilePos_2,4,3
+floor_wood1       TilePos_3;<,<;0,0
+floor_wood1b      TilePos_3;<,<;0,0
+floor_wood2       TilePos_3;<,<;0,0
+floor_wood2_d1    TilePos_3;<,<;0,0
+floor_wood2_d2    TilePos_3;<,<;0,0
+floor_wood2_l1    TilePos_3;<,<;0,0
+floor_wood2_l2    TilePos_3;<,<;0,0
+floor_wood2b      TilePos_3;<,<;0,0
+floor_wood3a      TilePos_3;<,<;0,0
+floor_wood3b      TilePos_3;<,<;0,0
+floor_wood3c      TilePos_3;<,<;0,0
+floor_wood3d      TilePos_3;<,<;0,0
+floor_wood3e      TilePos_3;<,<;0,0
+floor_wood3f      TilePos_3;<,<;0,0
+floor_wood3g      TilePos_3;<,<;0,0
+floor_wood3h      TilePos_3;<,<;0,0
+floor_wood4a      TilePos_3;<,<;0,0
+floor_wood4b      TilePos_3;<,<;0,0
+floor_wood4c      TilePos_3;<,<;0,0
+floor_wood4d      TilePos_3;<,<;0,0
 floor_wood_hole1
 floor_yellow1
 floor_yellow2
@@ -1157,28 +1157,28 @@ grass_thick_m5
 grass_thick_m6
 grass_thick_m7
 grass_thick_m8
-grassd_1             TilePos_1,2,3
-grassd_2             TilePos_1,2,3
-grassd_3             TilePos_1,2,3
-grassd_4             TilePos_1,2,3
-grassd_5             TilePos_1,2,3
-grassd_6             TilePos_1,2,3
-grassd_7             TilePos_1,2,3
-grassd_8             TilePos_1,2,3
-grassd_m1             TilePos_1,2,3
-grassd_m10             TilePos_1,2,3
-grassd_m11             TilePos_1,2,3
-grassd_m12             TilePos_1,2,3
-grassd_m13             TilePos_1,2,3
-grassd_m14             TilePos_1,2,3
-grassd_m2             TilePos_1,2,3
-grassd_m3             TilePos_1,2,3
-grassd_m4             TilePos_1,2,3
-grassd_m5             TilePos_1,2,3
-grassd_m6             TilePos_1,2,3
-grassd_m7             TilePos_1,2,3
-grassd_m8             TilePos_1,2,3
-grassd_m9             TilePos_1,2,3
+grassd_1             TilePos_3;4,5;0,0
+grassd_2             TilePos_3;4,5;1,0
+grassd_3             TilePos_3;4,5;2,0
+grassd_4             TilePos_3;4,5;3,0
+grassd_5             TilePos_3;4,5;4,0
+grassd_6             TilePos_3;4,5;5,0
+grassd_7             TilePos_3;4,5;6,0
+grassd_8             TilePos_3;4,5;7,0
+grassd_m1            TilePos_3;5,6;8,0
+grassd_m10           TilePos_3;5,6;0,0
+grassd_m11           TilePos_3;5,6;1,0
+grassd_m12           TilePos_3;5,6;2,0
+grassd_m13           TilePos_3;5,6;3,0
+grassd_m14           TilePos_3;5,6;4,0
+grassd_m2            TilePos_3;5,6;5,0
+grassd_m3            TilePos_3;5,6;6,0
+grassd_m4            TilePos_3;5,6;7,0
+grassd_m5            TilePos_3;6,7;8,0
+grassd_m6            TilePos_3;6,7;9,0
+grassd_m7            TilePos_3;5,7;1,0
+grassd_m8            TilePos_3;4,6;2,0
+grassd_m9            TilePos_3;5,4;3,0
 grate1
 grate1_end
 grate_door1
@@ -1344,9 +1344,9 @@ ladder_round_down_02
 ladder_round_down_03
 ladder_round_down_04
 ladder_up
-lake            TilePos_3,3,1
-lake_deep            TilePos_3,3,1
-lake_deepest            TilePos_3,3,1
+lake            TilePos_0;1,2;0,0
+lake_deep       TilePos_0;1,2;0,0
+lake_deepest    TilePos_0;1,2;0,0
 lamellar_mail
 lamp_lit1
 lamp_pole

@@ -218,7 +218,7 @@ int main(int argc, char **argv)
     /*
         try
         { // try to create a 64MB texture in Video Ram.
-            mTexture = TextureManager::getSingleton().createManual("64 MB", "General",  TEX_TYPE_2D, 4096, 4096, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
+            mTexture = TextureManager::getSingleton().createManual("64 MB", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,  TEX_TYPE_2D, 4096, 4096, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
             mTexture.getPointer()->unload();
             mTexture.setNull();
             Option::getSingleton().setIntValue(Option::HIGH_TEXTURE_DETAILS, true);
@@ -228,8 +228,8 @@ int main(int argc, char **argv)
             mTexture.setNull();
             try
             { // try to create a 32MB texture in Video Ram.
-                mTexture = TextureManager::getSingleton().createManual("16MB nr. 1", "General",  TEX_TYPE_2D, 2048, 2048, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
-                mTextur2 = TextureManager::getSingleton().createManual("16MB nr. 2", "General",  TEX_TYPE_2D, 2048, 2048, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
+                mTexture = TextureManager::getSingleton().createManual("16MB nr. 1", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,  TEX_TYPE_2D, 2048, 2048, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
+                mTextur2 = TextureManager::getSingleton().createManual("16MB nr. 2", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,  TEX_TYPE_2D, 2048, 2048, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
                 mTexture.getPointer()->unload();
                 mTextur2.getPointer()->unload();
                 mTexture.setNull();

@@ -43,6 +43,7 @@ TileMap::TileMap()
     //ObjectWrapper::getSingleton().extractObjects(); // Only called once..
     ObjectWrapper::getSingleton().add3dNames(); // MUST be called after each change of the converter file.
     ObjectWrapper::getSingleton().readObjects();
+    mNeedsRedraw = false;
 }
 
 //================================================================================================
@@ -122,7 +123,7 @@ void TileMap::InitMapData(const char *name, int xl, int yl, int px, int py)
                 music_fade = 1;
             }
             else if (strstr(tag + 1, ".png"))
-            {}
+                {}
             //media_show_update--; // perhaps we have a png - simulate a step = map_scroll.
             *tag = 0;
         }
@@ -183,25 +184,39 @@ void TileMap::set_map_ext(int x, int y, int layer, int ext, int probe)
 void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, char *name)
 {
     enum {LAYER_TILES, LAYER_TODO1, LAYER_TODO2, LAYER_OBJECTS};
-
+    // ////////////////////////////////////////////////////////////////////
+    // Layer: Tiles.
+    // ////////////////////////////////////////////////////////////////////
     if (layer == LAYER_TILES)
     {
         const char *strTile = ObjectWrapper::getSingleton().getMeshName(face & ~0x8000);
+        // Undefined tile.
         if (!strTile || !strTile[0])
         {
-            //Logger::log().error() << "Tile face: " << face << " pos: " << x << ", " << y;
-            TileManager::getSingleton().setMap(x, y, 30, 3, 0);
-            return;
+            //Logger::log().error() << "Unknown tile: " << face << " pos: " << x << ", " << y << "  " << strTile;
+            TileManager::getSingleton().setMap(x, y,
+                                               30, // height
+                                               30, // height
+                                               8,  // Layer  0
+                                               9,  // Layer  1
+                                               1); // Filter
         }
-        // "TilePos_x,y,h"
-        int texture_col = strTile[ 8]-'0';
-        int texture_row = strTile[10]-'0';
-        int height      =(strTile[12]-'0') *10;
-        TileManager::getSingleton().setMap(x, y, height, texture_row, texture_col);
+        else
+        {
+            TileManager::getSingleton().setMap(x, y,
+                                               (uchar)strTile[ 8]-'0', // height
+                                               (uchar)strTile[ 8]-'0', // height
+                                               (uchar)strTile[10]-'0', // Layer  0
+                                               (uchar)strTile[12]-'0', // Layer  1
+                                               (uchar)strTile[14]-'0');// Fllter
+            //Logger::log().error() << "Tile face: " << face << " pos: " << x << ", " << y << "  " << strTile << " height: " << ((uchar)strTile[ 8]-'0')*10;
+        }
+        mNeedsRedraw = true;
         return;
     }
-
-
+    // ////////////////////////////////////////////////////////////////////
+    // layer: Objects.
+    // ////////////////////////////////////////////////////////////////////
     if (layer == LAYER_OBJECTS)
     {
         //Logger::log().error() << "object: " << ObjectWrapper::getSingleton().getMeshName(face & ~0x8000) << "  " << (int) (face & ~0x8000);
@@ -386,7 +401,6 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
         the_map.cells[x][y].ext[layer] = ext;
     the_map.cells[x][y].pos[layer] = pos;
     strcpy(the_map.cells[x][y].pname[layer], name);
-    mNeedsRedraw = true;
 }
 
 //================================================================================================
@@ -418,6 +432,7 @@ void TileMap::scroll(int dx, int dy)
 //================================================================================================
 void TileMap::draw()
 {
+    if (!mNeedsRedraw) return;
     TileManager::getSingleton().changeChunks();
     mNeedsRedraw = false;
 }
