@@ -129,7 +129,6 @@ void SockList_Init(SockList *sl)
 void SockList_AddChar(SockList *sl, char c)
 {
     sl->buf[sl->len++] = c;
-    sl->len++;
 }
 */
 
