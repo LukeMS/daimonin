@@ -93,6 +93,7 @@
     length      CDATA #IMPLIED
     true        CDATA #IMPLIED
     false       CDATA #IMPLIED
+    marker      CDATA #IMPLIED
 >
 
 <!ELEMENT xi:include (xi:fallback?)>
