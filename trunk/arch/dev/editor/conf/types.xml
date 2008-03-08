@@ -584,7 +584,7 @@
     you are interested in implementing it.
     ]]>
   </description>
-  <attribute arch_begin="msg" arch_end="endmsg" editor="behavior list" type="text">
+  <attribute arch_begin="msg" arch_end="endmsg" editor="behavior list" type="text" marker="daimonin-ai">
     This is where behaviors are defined. A behavior belongs to one of the predefined classes,
     and may take parameters.
   </attribute>
