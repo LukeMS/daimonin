@@ -3,6 +3,7 @@ daimonin_PROGRAMS = daimonin daimonin-updater
 
 daimonin_SOURCES =  \
 	../../src/adler32.c \
+	../../src/anim.c \
 	../../src/book.c \
 	../../src/buddy.c \
 	../../src/chatfilter.c \
