@@ -1,5 +1,5 @@
 
-(define (script-fu-daimonin-batch pattern doAlpha cutColour doUnsharp doIndexed doCrop)
+(define (script-fu-daimonin-batch pattern doAlpha cutColour doUnsharp inRadius inAmount inThreshold doIndexed doCrop)
 
 	(let*
 		(
@@ -9,6 +9,11 @@
 			(numfiles (car (file-glob pattern 1))) 
 			(filelist (cadr (file-glob pattern 1)))
 		)
+
+
+		; On Linux, filelist will be a vector, so convert to a simple list
+		(if (vector? filelist) (set! filelist (vector->list filelist)))
+
 
 		; Display number of files on the error window 
 		(gimp-message-set-handler ERROR-CONSOLE) 
@@ -40,7 +45,7 @@
 
 						; Now run unsharp plug-in
 						(if (= isIndexed FALSE)
-							(plug-in-unsharp-mask RUN-NONINTERACTIVE image drawable 10.0 0.5 0)
+							(plug-in-unsharp-mask RUN-NONINTERACTIVE image drawable inRadius inAmount inThreshold)
 						)
 					)
 				)
@@ -90,10 +95,13 @@
 	"December 11, 2007"				;date created
 	""						;image type that the script works on
 	SF-STRING	"Path/Pattern to process" 	""
-	SF-TOGGLE	"Add Alpha"			TRUE
+	SF-TOGGLE	"Add Alpha"			FALSE
 	SF-COLOR	"Colour to change to Alpha"	'(255 255 255)
 	SF-TOGGLE	"Unsharp Mask"			TRUE
-	SF-TOGGLE	"Convert to Indexed"		TRUE
-	SF-TOGGLE	"Crop"				TRUE
+      SF-ADJUSTMENT "Radius"                    '(5 0.1 120 0.1 1 1 0)
+      SF-ADJUSTMENT "Amount"                    '(0.5 0 10 0.01 0.1 2 0)
+      SF-ADJUSTMENT "Threshold"                 '(0 0 255 1 10 0 0)
+	SF-TOGGLE	"Convert to Indexed"		FALSE
+	SF-TOGGLE	"Crop"				FALSE
 )
 (script-fu-menu-register "script-fu-daimonin-batch" "<Toolbox>/Xtns/Daimonin")
