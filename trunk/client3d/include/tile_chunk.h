@@ -32,17 +32,15 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 class TilePainter : public Ogre::SimpleRenderable
 {
 public:
-    TilePainter();
+    TilePainter(int sumVertices);
     ~TilePainter() { delete mRenderOp.vertexData; }
     void updateVertexBuffer();
-    void toggleGrid() { mShowGrid = !mShowGrid; }
+
 private:
-    bool mShowGrid;
     // Not used.
     Ogre::Real getSquaredViewDepth(const Ogre::Camera* cam) const { return 0; }
     Ogre::Real getBoundingRadius(void) const { return 0; }
 };
-
 
 /**
  * TileEngine class which manages the tiles in a chunk.
@@ -53,7 +51,7 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    enum { MAX_TERRAIN_HEIGHT = 255 };
+    enum { MAX_TERRAIN_HEIGHT = 255 *10 };
     enum { WATERLEVEL         =  14 }; /**<  At this height the water clips the land-tiles. **/
     // ////////////////////////////////////////////////////////////////////
     // Functions.
@@ -63,25 +61,28 @@ public:
     void init();
     void change();
     void freeRecources();
-    /** The terrain must have a land- AND a waterSubmesh. If there are no datas for it, we create a dummy. **/
-    void createDummySubMesh(Ogre::SubMesh* submesh);
-    void createLand();
-    void changeLand();
-    void createWater();
-    void updatePainter();
-    void toggleGrid();
     void loadAtlasTexture(Ogre::String newAtlasTexture);
+    void updatePainter();
 
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    TilePainter *mPainter;
+    TilePainter *mPainter;  // Make it static when using more TileChunks.
     Ogre::SceneNode *mNode;
     Ogre::TexturePtr mTexLand, mTexWater;
     Ogre::MeshPtr mMeshLand, mMeshWater, mMeshPainter;
     Ogre::SubMesh *mSubMeshWater, *mSubMeshLand, *mSubMeshPainter;
     Ogre::Entity *mEntityWater, *mEntityLand, *mEntityPainter;
+    int mSumVertices;
+    // ////////////////////////////////////////////////////////////////////
+    // Functions.
+    // ////////////////////////////////////////////////////////////////////
+    /** The terrain must have a land- AND a waterSubmesh. If there are no datas for it, we create a dummy. **/
+    void createDummySubMesh(Ogre::SubMesh* submesh);
+    void createLand();
+    void changeLand();
+    void createWater();
 };
 
 #endif

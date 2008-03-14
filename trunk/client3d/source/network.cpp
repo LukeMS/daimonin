@@ -131,6 +131,17 @@ typedef int SOCKET;
 #endif
 
 
+//================================================================================================
+//
+//================================================================================================
+inline static const char *strerror_local(int errnum)
+{
+#if defined(HAVE_STRERROR)
+    return (strerror(errnum));
+#else
+    return "strerror not implemented";
+#endif
+}
 
 //================================================================================================
 //
@@ -144,18 +155,6 @@ void Network::AddIntToString(String &sl, int data, bool shortInt)
     }
     sl += (data >>  8) & 0xff;
     sl += (data      ) & 0xff;
-}
-
-//================================================================================================
-//
-//================================================================================================
-inline static char *strerror_local(int errnum)
-{
-#if defined(HAVE_STRERROR)
-    return(strerror(errnum));
-#else
-    return("strerror not implemented");
-#endif
 }
 
 //================================================================================================

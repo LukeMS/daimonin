@@ -199,7 +199,8 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                                                30, // height
                                                8,  // Layer  0
                                                9,  // Layer  1
-                                               1); // Filter
+                                               1,  // Filter
+                                               0); // Mirror
         }
         else
         {
@@ -208,7 +209,8 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                                                (uchar)strTile[ 8]-'0', // height
                                                (uchar)strTile[10]-'0', // Layer  0
                                                (uchar)strTile[12]-'0', // Layer  1
-                                               (uchar)strTile[14]-'0');// Fllter
+                                               (uchar)strTile[14]-'0', // Fllter
+                                               0); // Mirror
             //Logger::log().error() << "Tile face: " << face << " pos: " << x << ", " << y << "  " << strTile << " height: " << ((uchar)strTile[ 8]-'0')*10;
         }
         mNeedsRedraw = true;
@@ -320,8 +322,8 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
             {
                 once = false;
                 Vector3 pos;
-                pos.x = x * TileManager::TILE_SIZE + 3 * 8;
-                pos.z = y * TileManager::TILE_SIZE + 3 * 8; //17-5;
+                pos.x = 34 * TileManager::TILE_SIZE;//x * TileManager::TILE_SIZE + 3 * 8;
+                pos.z = 23 * TileManager::TILE_SIZE;//y * TileManager::TILE_SIZE + 3 * 8; //17-5;
                 ObjectManager::getSingleton().setPosition(ObjectNPC::HERO, pos);
                 //Logger::log().error() << "we got the Hero face: " << face;
             }

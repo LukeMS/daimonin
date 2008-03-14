@@ -38,6 +38,7 @@ using namespace Ogre;
 //================================================================================================
 TileManager::TileManager()
 {
+    mShowGrid = false;
     mMapScrollX =0;
     mMapScrollZ =0;
     for (int z =0; z <= CHUNK_SIZE; ++z)
@@ -77,30 +78,13 @@ Ogre::uchar TileManager::getMapHeight(unsigned int x, unsigned int z, int vertex
 }
 
 //================================================================================================
-//
-//================================================================================================
-int TileManager::getDeltaHeightClass(int x, int z)
-{
-    /*
-    int a = Ogre::Math::IAbs(mMap[x][z].height[VERTEX_TL] - mMap[x][z].height[VERTEX_TR]);
-    int b = Ogre::Math::IAbs(mMap[x][z].height[VERTEX_BL] - mMap[x][z].height[VERTEX_BR]);
-    if (a >=220 && b >= 220) return 5;
-    if (a >=180 && b >= 180) return 4;
-    if (a >=140 && b >= 140) return 3;
-    if (a >=100 && b >= 100) return 2;
-    if (a >= 65 && b >=  65) return 1;
-    */
-    return 0;
-}
-
-//================================================================================================
 // Init the TileEngine.
 //================================================================================================
-void TileManager::Init(SceneManager* SceneMgr, int sumTilesX, int sumTilesZ, int zeroX, int zeroZ, bool highDetails)
+void TileManager::Init(SceneManager* SceneMgr, int sumTilesX, int sumTilesZ, int zeroX, int zeroZ, int highDetails)
 {
     Logger::log().headline("Init TileEngine");
     mSceneManager = SceneMgr;
-    mHighDetails  = highDetails;
+    mLod  = highDetails;
     // ////////////////////////////////////////////////////////////////////
     // Create all TextureGroups.
     // ////////////////////////////////////////////////////////////////////
@@ -154,10 +138,177 @@ void TileManager::scrollMap(int dx, int dz)
                 mMap[x][y] = mMap[x][y-1];
         clsRowOfWalls(0); // Set all Entities to 0.
     }
-
-
     mMapchunk.change();
     syncWalls(-dx, -dz);
+}
+
+//================================================================================================
+// Returns the gfx number of the shadow.
+//================================================================================================
+uchar TileManager::calcShadow(int x, int z)
+{
+    int tl, tr, bl, br;
+    // ////////////////////////////////////////////////////////////////////
+    // I - III
+    // ////////////////////////////////////////////////////////////////////
+    bl = getMapHeight(x-1, z, VERTEX_BL);
+    br = getMapHeight(x-1, z, VERTEX_BR);
+    if (bl-br > 10 && bl-br < 100)
+    {
+        tl = getMapHeight(x-1, z, VERTEX_TL);
+        tr = getMapHeight(x-1, z, VERTEX_TR);
+        // ////////////////////////////////////////////////////////////////////
+        // II
+        // ////////////////////////////////////////////////////////////////////
+        if (bl-br < 64)
+        {
+            if (tl-tr >= 220) return 42;
+            if (tl-tr >= 180) return 32;
+            if (tl-tr >= 140) return 22;
+            if (tl-tr >= 100) return 12;
+            if (tl-tr >=  65) return  2;
+        }
+        bl = getMapHeight(x-1, z+1, VERTEX_BL);
+        br = getMapHeight(x-1, z+1, VERTEX_BR);
+        // ////////////////////////////////////////////////////////////////////
+        // I
+        // ////////////////////////////////////////////////////////////////////
+        if (bl-br < 10)
+        {
+            if (tl-tr >= 220) return 41;
+            if (tl-tr >= 180) return 31;
+            if (tl-tr >= 140) return 21;
+            if (tl-tr >= 100) return 11;
+            if (tl-tr >=  65) return  1;
+        }
+        // ////////////////////////////////////////////////////////////////////
+        // III
+        // ////////////////////////////////////////////////////////////////////
+        if (bl-br > 64)
+        {
+            if (tl-tr >= 220) return 43;
+            if (tl-tr >= 180) return 33;
+            if (tl-tr >= 140) return 23;
+            if (tl-tr >= 100) return 13;
+            if (tl-tr >=  65) return  3;
+        }
+    }
+    // ////////////////////////////////////////////////////////////////////
+    // IV
+    // ////////////////////////////////////////////////////////////////////
+    bl = getMapHeight(x, z+2, VERTEX_BL);
+    br = getMapHeight(x, z+2, VERTEX_BR);
+    tl = getMapHeight(x, z+2, VERTEX_TL);
+    tr = getMapHeight(x, z+2, VERTEX_TR);
+    if (bl < 64 && br < 64 && tl < 64 && tr < 64)
+    {
+        br =      getMapHeight(x-1, z+1, VERTEX_BR);
+        tl = br - getMapHeight(x-1, z+1, VERTEX_TL);
+        tr = br - getMapHeight(x-1, z+1, VERTEX_TR);
+        bl = br - getMapHeight(x-1, z+1, VERTEX_BL);
+        if (tl >= 220 && tr >= 220 && bl >= 220) return 44;
+        if (tl >= 180 && tr >= 180 && bl >= 180) return 34;
+        if (tl >= 140 && tr >= 140 && bl >= 140) return 24;
+        if (tl >= 100 && tr >= 100 && bl >= 100) return 14;
+        if (tl >= 65  && tr >=  65 && bl >=  65) return  4;
+    }
+    // ////////////////////////////////////////////////////////////////////
+    // V
+    // ////////////////////////////////////////////////////////////////////
+    // typo from red ????
+
+    // ////////////////////////////////////////////////////////////////////
+    // VI
+    // ////////////////////////////////////////////////////////////////////
+    bl = getMapHeight(x-2, z, VERTEX_BL);
+    br = getMapHeight(x-2, z, VERTEX_BR);
+    tl = getMapHeight(x-2, z, VERTEX_TL);
+    tr = getMapHeight(x-2, z, VERTEX_TR);
+    if (bl < 64 && br < 64 && tl < 64 && tr < 64)
+    {
+        br =      getMapHeight(x-1, z+1, VERTEX_BR);
+        tl = br - getMapHeight(x-1, z+1, VERTEX_TL);
+        tr = br - getMapHeight(x-1, z+1, VERTEX_TR);
+        bl = br - getMapHeight(x-1, z+1, VERTEX_BL);
+        if (tl >= 220 && tr >= 220 && bl >= 220) return 46;
+        if (tl >= 180 && tr >= 180 && bl >= 180) return 36;
+        if (tl >= 140 && tr >= 140 && bl >= 140) return 26;
+        if (tl >= 100 && tr >= 100 && bl >= 100) return 16;
+        if (tl >= 65  && tr >=  65 && bl >=  65) return  6;
+    }
+    // ////////////////////////////////////////////////////////////////////
+    // VII
+    // ////////////////////////////////////////////////////////////////////
+    bl = getMapHeight(x-1, z+1, VERTEX_BL);
+    tl = getMapHeight(x-1, z+1, VERTEX_TL);
+    if (bl-tl > 64)
+    {
+        bl = getMapHeight(x, z+1, VERTEX_BL);
+        br = getMapHeight(x, z+1, VERTEX_BR);
+        tl = getMapHeight(x, z+1, VERTEX_TL);
+        tr = getMapHeight(x, z+1, VERTEX_TR);
+        if (bl-tl >= 220 && br-tr >= 220) return 47;
+        if (bl-tl >= 180 && br-tr >= 180) return 37;
+        if (bl-tl >= 140 && br-tr >= 140) return 27;
+        if (bl-tl >= 100 && br-tr >= 100) return 17;
+        if (bl-tl >=  65 && br-tr >=  65) return  7;
+    }
+    // ////////////////////////////////////////////////////////////////////
+    // VIII
+    // ////////////////////////////////////////////////////////////////////
+    else if (bl-bl < 10)
+    {
+        bl = getMapHeight(x, z+1, VERTEX_BL);
+        br = getMapHeight(x, z+1, VERTEX_BR);
+        tl = getMapHeight(x, z+1, VERTEX_TL);
+        tr = getMapHeight(x, z+1, VERTEX_TR);
+        if (bl-tl >= 220 && br-tr >= 220) return 48;
+        if (bl-tl >= 180 && br-tr >= 180) return 38;
+        if (bl-tl >= 140 && br-tr >= 140) return 28;
+        if (bl-tl >= 100 && br-tr >= 100) return 18;
+        if (bl-tl >=  65 && br-tr >=  65) return  8;
+    }
+    // ////////////////////////////////////////////////////////////////////
+    // IX
+    // ////////////////////////////////////////////////////////////////////
+    bl = getMapHeight(x+1, z+2, VERTEX_BL);
+    br = getMapHeight(x+1, z+2, VERTEX_BR);
+    if (bl-tl > 10 && bl-tl < 65)
+    {
+        tl = getMapHeight(x, z+1, VERTEX_TL);
+        tr = getMapHeight(x, z+1, VERTEX_TR);
+        if (tl-tr >= 220) return 49;
+        if (tl-tr >= 180) return 39;
+        if (tl-tr >= 140) return 29;
+        if (tl-tr >= 100) return 19;
+        if (tl-tr >=  65) return  9;
+    }
+    // ////////////////////////////////////////////////////////////////////
+    // X
+    // ////////////////////////////////////////////////////////////////////
+    //From here to end is still not possible to code becau.
+
+
+
+
+    // ////////////////////////////////////////////////////////////////////
+    // No shadow.
+    // ////////////////////////////////////////////////////////////////////
+    return 66;
+}
+
+//================================================================================================
+//
+//================================================================================================
+void TileManager::calcMapShadows()
+{
+    for (int z = 0; z <= CHUNK_SIZE; ++z)
+    {
+        for (int x = 0; x <= CHUNK_SIZE; ++x)
+        {
+            mMap[x][z].shadow = calcShadow(x, z);
+        }
+    }
 }
 
 //================================================================================================
@@ -248,13 +399,14 @@ void TileManager::syncWalls(int dx, int dz)
 //================================================================================================
 // Set the values for a map position.
 //================================================================================================
-void TileManager::setMap(int x, int y, uchar heightVertexTL, uchar tileLayer0, uchar tileLayer1, uchar filterLayer, uchar filterShadow)
+void TileManager::setMap(int x, int y, uchar height, uchar layer0, uchar layer1, uchar filter, uchar shadow, uchar mirror)
 {
-    mMap[x][y].height       = heightVertexTL *10;
-    mMap[x][y].tileLayer[0] = tileLayer0;
-    mMap[x][y].tileLayer[1] = tileLayer1;
-    mMap[x][y].filterLayer  = filterLayer;
-    mMap[x][y].filterShadow = filterShadow;
+    mMap[x][y].height = height *10;
+    mMap[x][y].layer0 = layer0;
+    mMap[x][y].layer1 = layer1;
+    mMap[x][y].filter = filter;
+    mMap[x][y].shadow = shadow;
+    mMap[x][y].mirror = mirror;
 }
 
 //================================================================================================
