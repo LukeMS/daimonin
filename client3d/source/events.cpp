@@ -170,7 +170,7 @@ bool Events::frameStarted(const FrameEvent& evt)
                 mCamera->setAspectRatio(Real(VP->getActualWidth()) / Real(VP->getActualHeight()));
                 mCamera->setFOVy(Degree(mCameraZoom));
                 mCamera->setQueryFlags(ObjectManager::QUERY_CAMERA_MASK);
-                mCamera->setPosition(0,175,340);
+                mCamera->setPosition(0,240,185);
                 //int winkel =0;
                 //mCamera->setPosition(340.0*Math::Sin(Degree(winkel)), 175, 340.0 *Math::Cos(Degree(winkel)));
                 mCamera->pitch(Degree(-28));
@@ -230,8 +230,7 @@ bool Events::frameStarted(const FrameEvent& evt)
                 light->setVisible(false);
                 mSceneManager->setAmbientLight(ColourValue(1.0, 1.0, 1.0));
                 */
-                mSceneManager->setFog(FOG_LINEAR , ColourValue(0,0,0), 0, 450, 800);
-
+                //mSceneManager->setFog(FOG_LINEAR , ColourValue(0,0,0), 0, 450, 800);
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_SPELL);
                 break;
             }
@@ -693,21 +692,24 @@ bool Events::frameEnded(const FrameEvent& evt)
             {
                 mCamera->yaw(Degree(step));
                 cameraAngle+= step;
-                mCamera->setPosition(340.0*Math::Sin(Degree(cameraAngle)), 175, 340.0 *Math::Cos(Degree(cameraAngle)));
+                mCamera->setPosition(185.0*Math::Sin(Degree(cameraAngle)), 240, 185.0 *Math::Cos(Degree(cameraAngle)));
             }
-            else  mCameraRotating = NONE;
+            else
+            {
+                mCameraRotating = NONE;
+            }
         }
-        else if (mCameraRotating == POSITIVE && cameraAngle < 65)
+        else if (mCameraRotating == POSITIVE && cameraAngle < 3)
         {
             mCamera->yaw(Degree(step));
             cameraAngle+= step;
-            mCamera->setPosition(340.0*Math::Sin(Degree(cameraAngle)), 175, 340.0 *Math::Cos(Degree(cameraAngle)));
+            mCamera->setPosition(185.0*Math::Sin(Degree(cameraAngle)), 240, 185.0 *Math::Cos(Degree(cameraAngle)));
         }
-        else if (mCameraRotating == NEGATIVE && cameraAngle >-65)
+        else if (mCameraRotating == NEGATIVE && cameraAngle >-60)
         {
             mCamera->yaw(Degree(-step));
             cameraAngle-= step;
-            mCamera->setPosition(340.0*Math::Sin(Degree(cameraAngle)), 175, 340.0 *Math::Cos(Degree(cameraAngle)));
+            mCamera->setPosition(185.0*Math::Sin(Degree(cameraAngle)), 240, 185.0 *Math::Cos(Degree(cameraAngle)));
         }
     }
     // ////////////////////////////////////////////////////////////////////

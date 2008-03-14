@@ -229,44 +229,54 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
 
         case OIS::KC_X:
         {
-            String filename = "./shadowtest.txt";
-            std::ifstream txtFile;
-            txtFile.open(filename.c_str(), std::ios::in | std::ios::binary);
-            if (!txtFile)
+            for (int z=22; z ; --z)
             {
-                Logger::log().error() << "Error on file " << filename;
-            }
-            else
-            {
-                while (1)
+                for (int x = z; x < 47; ++x)
                 {
-                    int heightTL, tex1, tex2, fil1, shadow;
-                    //Logger::log().error() << "Error on file " << filename;
-                    if (!getline(txtFile, filename)) goto ennn;
-                    if (!getline(txtFile, filename)) goto ennn;
-                    if (!getline(txtFile, filename)) goto ennn;
-                    if (!getline(txtFile, filename)) goto ennn;
-                    for (int y = 0; y < 21; ++y)
-                    {
-                        for (int x = 0; x < 21; ++x)
-                        {
-                            if (!getline(txtFile, filename)) goto ennn;
-                            sscanf(filename.c_str(), "%d %d %d %d %d", &heightTL, &tex1, &tex2, &fil1, &shadow);
-                            TileManager::getSingleton().setMap(x, y, heightTL, tex1, tex2, fil1, shadow);
-                        }
-                        if (!getline(txtFile, filename)) goto ennn;
-                        if (!getline(txtFile, filename)) goto ennn;
-                    }
+                    TileManager::getSingleton().setMap(x, z, 15, 2, 2, 2, 2, 0);
                 }
-                ennn:
-                txtFile.close();
-
-
-                TileManager::getSingleton().changeChunks();
-
-                break;
             }
             break;
+            /*
+                        String filename = "./shadowtest.txt";
+                        std::ifstream txtFile;
+                        txtFile.open(filename.c_str(), std::ios::in | std::ios::binary);
+                        if (!txtFile)
+                        {
+                            Logger::log().error() << "Error on file " << filename;
+                        }
+                        else
+                        {
+                            while (1)
+                            {
+                                int heightTL, tex1, tex2, fil1, shadow;
+                                //Logger::log().error() << "Error on file " << filename;
+                                if (!getline(txtFile, filename)) goto ennn;
+                                if (!getline(txtFile, filename)) goto ennn;
+                                if (!getline(txtFile, filename)) goto ennn;
+                                if (!getline(txtFile, filename)) goto ennn;
+                                for (int y = 0; y < 21; ++y)
+                                {
+                                    for (int x = 0; x < 21; ++x)
+                                    {
+                                        if (!getline(txtFile, filename)) goto ennn;
+                                        sscanf(filename.c_str(), "%d %d %d %d %d", &heightTL, &tex1, &tex2, &fil1, &shadow);
+                                        TileManager::getSingleton().setMap(x, y, heightTL, tex1, tex2, fil1, shadow, 0);
+                                    }
+                                    if (!getline(txtFile, filename)) goto ennn;
+                                    if (!getline(txtFile, filename)) goto ennn;
+                                }
+                            }
+                            ennn:
+                            txtFile.close();
+
+
+                            TileManager::getSingleton().changeChunks();
+
+                            break;
+                        }
+                        break;
+            */
         }
 
 

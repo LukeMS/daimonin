@@ -31,6 +31,7 @@ using namespace Ogre;
 
 #define SUM_TILES 21
 
+
 const char SRC_TEXTURE_NAME[]     = "terrain_group_00_1024.png";
 const char TEXTURE_LAND_NAME[]    = "TileEngine/TexLand";
 const char TEXTURE_WATER_NAME[]   = "TileEngine/TexWater";
@@ -48,44 +49,56 @@ const int  GRID_SHADOW_MASK_NR    = 72; // Number of the shadow filter used to d
 //  0,3 1,3 2,3 3,3
 //================================================================================================
 
-const char srcTexturePos[SUM_TILES][SUM_TILES][3]=
-{
-    //       pos
-    //       X, Y, size (1 = small 2 = big)
-    //          0         1         2         3         4         5         6         7         8         9        10        11        12        13        14        15        16        17        18        19         20
-    /* 0*/{{26,26,1},{26,26,1},{ 0, 0,1},{ 1, 0,1},{ 2, 0,1},{ 3, 0,1},{ 4, 0,1},{ 5, 0,1},{ 6, 0,1},{ 7, 0,1},{ 8, 0,1},{ 9, 0,1},{10, 0,1},{11, 0,1},{12, 0,1},{13, 0,1},{14, 0,1},{15, 0,1},{16, 0,1},{26,26,1},{26,26,1}},
-    /* 1*/{{26,26,1},{17, 0,1},{18, 0,1},{19, 0,1},{20, 0,1},{21, 0,1},{22, 0,1},{23, 0,1},{24, 0,1},{25, 0,1},{26, 0,1},{27, 0,1},{ 0, 1,1},{ 1, 1,1},{ 2, 1,1},{ 3, 1,1},{ 4, 1,1},{ 5, 1,1},{ 6, 1,1},{ 7, 1,1},{26,26,1}},
-    /* 2*/{{ 8, 1,1},{ 9, 1,1},{10, 1,1},{11, 1,1},{12, 1,1},{13, 1,1},{14, 1,1},{15, 1,1},{16, 1,1},{17, 1,1},{18, 1,1},{19, 1,1},{20, 1,1},{21, 1,1},{22, 1,1},{23, 1,1},{24, 1,1},{25, 1,1},{26, 1,1},{27, 1,1},{ 0, 2,1}},
-    /* 3*/{{ 1, 2,1},{ 2, 2,1},{ 3, 2,1},{ 4, 2,1},{ 5, 2,1},{ 6, 2,1},{ 7, 2,1},{ 8, 2,1},{ 9, 2,1},{10, 2,1},{11, 2,1},{12, 2,1},{13, 2,1},{14, 2,1},{15, 2,1},{16, 2,1},{17, 2,1},{18, 2,1},{19, 2,1},{20, 2,1},{21, 2,1}},
-    /* 4*/{{22, 2,1},{23, 2,1},{24, 2,1},{25, 2,1},{26, 2,1},{27, 2,1},{ 0, 3,1},{ 1, 3,1},{ 2, 3,1},{ 3, 3,1},{ 4, 3,1},{ 5, 3,1},{ 6, 3,1},{ 7, 3,1},{ 8, 3,1},{ 9, 3,1},{10, 3,1},{11, 3,1},{12, 3,1},{13, 3,1},{14, 3,1}},
-    /* 5*/{{15, 3,1},{16, 3,1},{17, 3,1},{18, 3,1},{19, 3,1},{20, 3,1},{ 8, 6,2},{10, 6,2},{12, 6,2},{14, 6,2},{16, 6,2},{18, 6,2},{20, 6,2},{22, 6,2},{24, 6,2},{21, 3,1},{22, 3,1},{23, 3,1},{24, 3,1},{25, 3,1},{26, 3,1}},
-    /* 6*/{{27, 3,1},{ 0, 4,1},{ 1, 4,1},{ 2, 4,1},{ 3, 4,1},{ 6, 8,2},{ 8, 8,2},{10, 8,2},{12, 8,2},{14, 8,2},{16, 8,2},{18, 8,2},{20, 8,2},{22, 8,2},{24, 8,2},{26, 8,2},{ 4, 4,1},{ 5, 4,1},{ 6, 4,1},{ 7, 4,1},{ 8, 4,1}},
-    /* 7*/{{ 9, 4,1},{10, 4,1},{11, 4,1},{12, 4,1},{13, 4,1},{ 6,10,2},{ 8,10,2},{10,10,2},{12,10,2},{14,10,2},{16,10,2},{18,10,2},{20,10,2},{22,10,2},{24,10,2},{26,10,2},{14, 4,1},{15, 4,1},{16, 4,1},{17, 4,1},{18, 4,1}},
-    /* 8*/{{19, 4,1},{20, 4,1},{21, 4,1},{22, 4,1},{23, 4,1},{ 6,12,2},{ 8,12,2},{10,12,2},{12,12,2},{14,12,2},{16,12,2},{18,12,2},{20,12,2},{22,12,2},{24,12,2},{26,12,2},{24, 4,1},{25, 4,1},{26, 4,1},{27, 4,1},{ 0, 5,1}},
-    /* 9*/{{ 1, 5,1},{ 2, 5,1},{ 3, 5,1},{ 4, 5,1},{ 5, 5,1},{ 6,14,2},{ 8,14,2},{10,14,2},{12,14,2},{14,14,2},{16,14,2},{18,14,2},{20,14,2},{22,14,2},{24,14,2},{26,14,2},{ 6, 5,1},{ 7, 5,1},{ 8, 5,1},{ 9, 5,1},{10, 5,1}},
-    /*10*/{{11, 5,1},{12, 5,1},{13, 5,1},{14, 5,1},{15, 5,1},{ 6,16,2},{ 8,16,2},{10,16,2},{12,16,2},{14,16,2},{16,16,2},{18,16,2},{20,16,2},{22,16,2},{24,16,2},{26,16,2},{16, 5,1},{17, 5,1},{18, 5,1},{19, 5,1},{20, 5,1}},
-    /*11*/{{21, 5,1},{22, 5,1},{23, 5,1},{24, 5,1},{25, 5,1},{ 6,18,2},{ 8,18,2},{10,18,2},{12,18,2},{14,18,2},{16,18,2},{18,18,2},{20,18,2},{22,18,2},{24,18,2},{26,18,2},{26, 5,1},{27, 5,1},{ 0, 6,1},{ 1, 6,1},{ 2, 6,1}},
-    /*12*/{{ 3, 6,1},{ 4, 6,1},{ 5, 6,1},{ 6, 6,1},{ 7, 6,1},{ 6,20,2},{ 8,20,2},{10,20,2},{12,20,2},{14,20,2},{16,20,2},{18,20,2},{20,20,2},{22,20,2},{24,20,2},{26,20,2},{26, 6,1},{27, 6,1},{ 0, 7,1},{ 1, 7,1},{ 2, 7,1}},
-    /*13*/{{ 3, 7,1},{ 4, 7,1},{ 5, 7,1},{ 6, 7,1},{ 7, 7,1},{ 6,22,2},{ 8,22,2},{10,22,2},{12,22,2},{14,22,2},{16,22,2},{18,22,2},{20,22,2},{22,22,2},{24,22,2},{26,22,2},{26, 7,1},{27, 7,1},{ 0, 8,1},{ 1, 8,1},{ 2, 8,1}},
-    /*14*/{{ 3, 8,1},{ 4, 8,1},{ 5, 8,1},{ 0, 9,1},{ 1, 9,1},{ 6,24,2},{ 8,24,2},{10,24,2},{12,24,2},{14,24,2},{16,24,2},{18,24,2},{20,24,2},{22,24,2},{24,24,2},{26,24,2},{ 2, 9,1},{ 3, 9,1},{ 4, 9,1},{ 5, 9,1},{ 0,10,1}},
-    /*15*/{{ 1,10,1},{ 2,10,1},{ 3,10,1},{ 4,10,1},{ 5,10,1},{ 0,11,1},{ 8,26,2},{10,26,2},{12,26,2},{14,26,2},{16,26,2},{18,26,2},{20,26,2},{22,26,2},{24,26,2},{ 1,11,1},{ 2,11,1},{ 3,11,1},{ 4,11,1},{ 5,11,1},{ 0,12,1}},
-    /*16*/{{ 1,12,1},{ 2,12,1},{ 3,12,1},{ 4,12,1},{ 5,12,1},{ 0,13,1},{ 1,13,1},{ 2,13,1},{ 3,13,1},{ 4,13,1},{ 5,13,1},{ 0,14,1},{ 1,14,1},{ 2,14,1},{ 3,14,1},{ 4,14,1},{ 5,14,1},{ 0,15,1},{ 1,15,1},{ 2,15,1},{ 3,15,1}},
-    /*17*/{{ 4,15,1},{ 5,15,1},{ 0,16,1},{ 1,16,1},{ 2,16,1},{ 3,16,1},{ 4,16,1},{ 5,16,1},{ 0,17,1},{ 1,17,1},{ 2,17,1},{ 3,17,1},{ 4,17,1},{ 5,17,1},{ 0,18,1},{ 1,18,1},{ 2,18,1},{ 3,18,1},{ 4,18,1},{ 5,18,1},{ 0,19,1}},
-    /*18*/{{ 1,19,1},{ 2,19,1},{ 3,19,1},{ 4,19,1},{ 5,19,1},{ 0,20,1},{ 1,20,1},{ 2,20,1},{ 3,20,1},{ 4,20,1},{ 5,20,1},{ 0,21,1},{ 1,21,1},{ 2,21,1},{ 3,21,1},{ 4,21,1},{ 5,21,1},{ 0,22,1},{ 1,22,1},{ 2,22,1},{ 3,22,1}},
-    /*19*/{{26,26,1},{ 4,22,1},{ 5,22,1},{ 0,23,1},{ 1,23,1},{ 2,23,1},{ 3,23,1},{ 4,23,1},{ 5,23,1},{ 0,24,1},{ 1,24,1},{ 2,24,1},{ 3,24,1},{ 4,24,1},{ 5,24,1},{ 0,25,1},{ 1,25,1},{ 2,25,1},{ 3,25,1},{ 4,25,1},{26,26,1}},
-    /*20*/{{26,26,1},{26,26,1},{ 5,25,1},{ 0,26,1},{ 1,26,1},{ 2,26,1},{ 3,26,1},{ 4,26,1},{ 5,26,1},{ 6,26,1},{ 7,26,1},{ 0,27,1},{ 1,27,1},{ 2,27,1},{ 3,27,1},{ 4,27,1},{ 5,27,1},{ 6,27,1},{ 7,27,1},{26,26,1},{26,26,1}},
-};
-
 //================================================================================================
 // Holds the vertex positions for mirroring on X and Z axis.
 //================================================================================================
-const char mirrorTable[4][6][2]=
+const char MIRROR_TABLE[4][6][2]=
 {
     {{0,0}, {0,1}, {1,0}, {1,0}, {0,1}, {1,1}}, // No mirror
     {{1,0}, {1,1}, {0,0}, {0,0}, {1,1}, {0,1}}, // Mirror on x-axis.
     {{0,1}, {0,0}, {1,1}, {1,1}, {0,0}, {1,0}}, // Mirror on z-axis.
     {{1,1}, {1,0}, {0,1}, {0,1}, {1,0}, {0,0}}  // Mirror on x and z-axis.
 };
+
+//================================================================================================
+// .
+//================================================================================================
+const int CHUNK_START_OFFSET[TileManager::MAP_SIZE/2+2]=
+{
+                //
+    7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16, 16, 17, 17, 18
+};
+
+/*
+const int CHUNK_START_OFFSET[MAP_SIZE/2+2]=
+{
+    {7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16, 16, 17, 17, 18}, //   0° camera rotation.
+    {6, 6, 7, 7, 8, 8,  9,  9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16, 16, 17}, //  15° camera rotation.
+    {5, 5, 6, 6, 7, 7,  8,  8,  9,  9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16}, //  30° camera rotation.
+};
+*/
+
+//================================================================================================
+// .
+//================================================================================================
+Real getTileTextureSize(int x, int z)
+{
+    if (z > 15 && x > 15 && x < 27) return 64.0f;
+    if (z > 14 && x > 14 && x < 28) return 60.0f;
+    if (z > 13 && x > 13 && x < 29) return 56.0f;
+    if (z > 12 && x > 12 && x < 30) return 52.0f;
+    if (z > 11 && x > 11 && x < 31) return 48.0f;
+    if (z > 10 && x > 10 && x < 32) return 44.0f;
+    if (z >  9 && x >  9 && x < 33) return 40.0f;
+    if (z >  8 && x >  8 && x < 34) return 36.0f;
+    if (z >  8 && x >  7 && x < 35) return 32.0f;
+    if (z >  7 && x >  6 && x < 36) return 28.0f;
+    if (z >  5 && x >  5 && x < 37) return 24.0f;
+    if (z >  4 && x >  4 && x < 38) return 20.0f;
+    if (z >  3 && x >  3 && x < 39) return 16.0f;
+    if (z >  2 && x >  2 && x < 40) return 12.0f;
+    return 8.0f;
+}
 
 //================================================================================================
 // v0  +--+ v2/3
@@ -102,80 +115,50 @@ void TilePainter::updateVertexBuffer()
     int filtersPerRow= TileManager::TEXTURE_SIZE /TileManager::ATLAS_FILTER_SIZE;
     float sizeTile   = 1.0f/(float) tilesPerRow;
     float sizeFilter = 1.0f/(float) filtersPerRow;
-    Real offX, offZ;
-    Real colLayer0, rowLayer0;
-    Real colLayer1, rowLayer1;
-    Real colFilter, rowFilter;
-    Real colShadow, rowShadow;
-    int tLayer0, tLayer1, tFilter, tShadow;
-    int tShadowMirror;
-    int mapX, mapZ, odd;
+    Real colLayer0, rowLayer0, colLayer1, rowLayer1, colFilter, rowFilter;
+    Real offX, offZ, colShadow, rowShadow;
+    int tLayer0, tLayer1, tFilter, tShadow, tLayerMirror, tShadowMirror, mapX, mapZ;
+
+    //TileManager::getSingleton().calcMapShadows();
+
+    int startX, stopX, startZ, stopZ;
+    startX = 7;
+    stopX = 7+15;
+    startZ = 7;
+    stopZ = startZ + 29;
+
     TileManager::getSingleton().getMapScroll(mapX, mapZ);
-    odd = mapX + (mapZ&1);
-    for (int z = 0; z < SUM_TILES; ++z)
+
+    for (int z = 0; z < TileManager::MAP_SIZE/2+2; ++z)
     {
         offZ = (Real)((mapZ-z)&1) * sizeTile/2;
-        for (int x = 0; x < SUM_TILES; ++x)
+        for (int x = CHUNK_START_OFFSET[z]; x < TileManager::MAP_SIZE - CHUNK_START_OFFSET[z]; ++x) // TODO::: add the offset to draw the correct tiles.
         {
             offX = (Real)((mapX-x)&1) * sizeTile/2;
-            tLayer0 = TileManager::getSingleton().getMapTile(x,z,0);
-            tLayer1 = TileManager::getSingleton().getMapTile(x,z,1);
-            tFilter = 4;
+            // Tile gfx.
+            TileManager::getSingleton().getMapGfx(x, z, tLayer0, tLayer1, tFilter, tLayerMirror);
+
+
+            tLayer0 = 4;
+            tLayer1 = 4;
+            tFilter = 0;
+
             colLayer0 = offX + (Real)(tLayer0&3) * sizeTile;
             rowLayer0 = offZ + ((Real)(tLayer0/tilesPerRow)) * sizeTile;
             colLayer1 = offX + (Real)(tLayer1&3) * sizeTile;
             rowLayer1 = offZ + ((Real)(tLayer1/tilesPerRow)) * sizeTile;
             colFilter = ((Real)(tFilter&15)) * sizeFilter;
             rowFilter = ((Real)(tFilter/filtersPerRow)) * sizeFilter;
-            if (mShowGrid)
-            {
-                colShadow = ((Real)(GRID_SHADOW_MASK_NR&15)) * sizeFilter;
-                rowShadow =(((Real)(GRID_SHADOW_MASK_NR/filtersPerRow))+ filtersPerRow/2) * sizeFilter;
-                tShadowMirror = ((++odd)&1);
-            }
-            else
-            {
-                int c = TileManager::getSingleton().getDeltaHeightClass(x-1, z);
-                int h = TileManager::getSingleton().getDeltaHeightBottom(x-1, z+1);
-                if (c == 1)
-                {
-                    if      (h > 64) tShadow =  3;
-                    else if (h > 10) tShadow =  2;
-                    else             tShadow =  1;
-                }
-                else if (c == 2)
-                {
-                    if      (h > 64) tShadow = 13;
-                    else if (h > 10) tShadow = 12;
-                    else             tShadow = 11;
-                }
-                else if (c == 3)
-                {
-                    if      (h > 64) tShadow = 23;
-                    else if (h > 10) tShadow = 22;
-                    else             tShadow = 21;
-                }
-                else if (c == 4)
-                {
-                    if      (h > 64) tShadow = 33;
-                    else if (h > 10) tShadow = 32;
-                    else             tShadow = 31;
-                }
-                else if (c == 5)
-                {
-                    if      (h > 64) tShadow = 43;
-                    else if (h > 10) tShadow = 42;
-                    else             tShadow = 41;
-                }
-                else tShadow = 71; // No shadow.
+            // Tile shadow.
+            TileManager::getSingleton().getMapShadow(x, z, tShadow, tShadowMirror);
 
-                //Logger::log().error() << "Tile x: " << x << " z: " << y << " shadowNr: " << tShadow;
 
-                //tShadow       = 71;//TileManager::getSingleton().getMapShadow(x,y);
-                tShadowMirror = 0;//TileManager::getSingleton().getMapShadowMirror(x,y);
-                colShadow = ((Real)(tShadow&15)) * sizeFilter;
-                rowShadow =(((Real)(tShadow/filtersPerRow))+ filtersPerRow/2) * sizeFilter;
-            }
+
+            tShadow = 72;
+            //tShadow = 66;
+
+            colShadow = ((Real)(tShadow&15)) * sizeFilter;
+            rowShadow =(((Real)(tShadow/filtersPerRow))+ filtersPerRow/2) * sizeFilter;
             // Vertex 0
             *pTex++ = colLayer0;
             *pTex++ = rowLayer0;
@@ -183,8 +166,8 @@ void TilePainter::updateVertexBuffer()
             *pTex++ = rowFilter;
             *pTex++ = colLayer1;
             *pTex++ = rowLayer1;
-            *pTex++ = colShadow + sizeFilter * mirrorTable[tShadowMirror][0][0];
-            *pTex++ = rowShadow + sizeFilter * mirrorTable[tShadowMirror][0][1];
+            *pTex++ = colShadow + sizeFilter * MIRROR_TABLE[tShadowMirror][0][0];
+            *pTex++ = rowShadow + sizeFilter * MIRROR_TABLE[tShadowMirror][0][1];
             // Vertex 1
             *pTex++ = colLayer0;
             *pTex++ = rowLayer0 + sizeTile/2;
@@ -192,8 +175,8 @@ void TilePainter::updateVertexBuffer()
             *pTex++ = rowFilter + sizeFilter;
             *pTex++ = colLayer1;
             *pTex++ = rowLayer1 + sizeTile/2;
-            *pTex++ = colShadow + sizeFilter * mirrorTable[tShadowMirror][1][0];
-            *pTex++ = rowShadow + sizeFilter * mirrorTable[tShadowMirror][1][1];
+            *pTex++ = colShadow + sizeFilter * MIRROR_TABLE[tShadowMirror][1][0];
+            *pTex++ = rowShadow + sizeFilter * MIRROR_TABLE[tShadowMirror][1][1];
             // Vertex 2
             *pTex++ = colLayer0 + sizeTile/2;
             *pTex++ = rowLayer0;
@@ -201,8 +184,8 @@ void TilePainter::updateVertexBuffer()
             *pTex++ = rowFilter;
             *pTex++ = colLayer1 + sizeTile/2;
             *pTex++ = rowLayer1;
-            *pTex++ = colShadow + sizeFilter * mirrorTable[tShadowMirror][2][0];
-            *pTex++ = rowShadow + sizeFilter * mirrorTable[tShadowMirror][2][1];
+            *pTex++ = colShadow + sizeFilter * MIRROR_TABLE[tShadowMirror][2][0];
+            *pTex++ = rowShadow + sizeFilter * MIRROR_TABLE[tShadowMirror][2][1];
             // Vertex 3
             *pTex++ = colLayer0 + sizeTile/2;
             *pTex++ = rowLayer0;
@@ -210,8 +193,8 @@ void TilePainter::updateVertexBuffer()
             *pTex++ = rowFilter;
             *pTex++ = colLayer1 + sizeTile/2;
             *pTex++ = rowLayer1;
-            *pTex++ = colShadow + sizeFilter * mirrorTable[tShadowMirror][3][0];
-            *pTex++ = rowShadow + sizeFilter * mirrorTable[tShadowMirror][3][1];
+            *pTex++ = colShadow + sizeFilter * MIRROR_TABLE[tShadowMirror][3][0];
+            *pTex++ = rowShadow + sizeFilter * MIRROR_TABLE[tShadowMirror][3][1];
             // Vertex 4
             *pTex++ = colLayer0;
             *pTex++ = rowLayer0 + sizeTile/2;
@@ -219,8 +202,8 @@ void TilePainter::updateVertexBuffer()
             *pTex++ = rowFilter + sizeFilter;
             *pTex++ = colLayer1;
             *pTex++ = rowLayer1 + sizeTile/2;
-            *pTex++ = colShadow + sizeFilter * mirrorTable[tShadowMirror][4][0];
-            *pTex++ = rowShadow + sizeFilter * mirrorTable[tShadowMirror][4][1];
+            *pTex++ = colShadow + sizeFilter * MIRROR_TABLE[tShadowMirror][4][0];
+            *pTex++ = rowShadow + sizeFilter * MIRROR_TABLE[tShadowMirror][4][1];
             // Vertex 5
             *pTex++ = colLayer0 + sizeTile/2;
             *pTex++ = rowLayer0 + sizeTile/2;
@@ -228,8 +211,8 @@ void TilePainter::updateVertexBuffer()
             *pTex++ = rowFilter + sizeFilter;
             *pTex++ = colLayer1 + sizeTile/2;
             *pTex++ = rowLayer1 + sizeTile/2;
-            *pTex++ = colShadow + sizeFilter * mirrorTable[tShadowMirror][5][0];
-            *pTex++ = rowShadow + sizeFilter * mirrorTable[tShadowMirror][5][1];
+            *pTex++ = colShadow + sizeFilter * MIRROR_TABLE[tShadowMirror][5][0];
+            *pTex++ = rowShadow + sizeFilter * MIRROR_TABLE[tShadowMirror][5][1];
         }
     }
     tvbuf->unlock();
@@ -238,62 +221,66 @@ void TilePainter::updateVertexBuffer()
 //================================================================================================
 // Create the painter used to draw the blended tiles from alpha-texture to a render-texture.
 //================================================================================================
-TilePainter::TilePainter()
+TilePainter::TilePainter(int sumVertices)
 {
-    mShowGrid = false;
-    int SUM_VERTICES = SUM_TILES * SUM_TILES * 6;
     mUseIdentityProjection = true;
     mUseIdentityView = true;
     mRenderOp.useIndexes = false;
     mRenderOp.vertexData = new VertexData();
-    mRenderOp.vertexData->vertexCount = SUM_VERTICES;
+    mRenderOp.vertexData->vertexCount = sumVertices;
     mRenderOp.vertexData->vertexStart = 0;
     mRenderOp.operationType = RenderOperation::OT_TRIANGLE_LIST ;
     VertexDeclaration   *decl = mRenderOp.vertexData->vertexDeclaration;
     VertexBufferBinding *bind = mRenderOp.vertexData->vertexBufferBinding;
     size_t offset = 0;
-    decl->addElement(0, offset, VET_FLOAT3, VES_POSITION);  offset += VertexElement::getTypeSize(VET_FLOAT3);
+    decl->addElement(0, offset, VET_FLOAT3, VES_POSITION);
+    offset += VertexElement::getTypeSize(VET_FLOAT3);
     HardwareVertexBufferSharedPtr vbuf = HardwareBufferManager::getSingleton().createVertexBuffer(VertexElement::getTypeSize(VET_FLOAT3), mRenderOp.vertexData->vertexCount, HardwareBuffer::HBU_STATIC_WRITE_ONLY);
     bind->setBinding(0, vbuf);
     float* pFloat = static_cast<float*>(vbuf->lock(HardwareBuffer::HBL_DISCARD));
-    Real left, top;
-    Real size = 1.0f/14.0f; // 28 tile positions fit into the texture 7 for coordinates -1...0 and 7 for 0...1.
-    for (int y = 0; y < SUM_TILES; ++y)
+    Real left, top, size;
+    top = 1.0f;
+    for (int z = 0; z < TileManager::MAP_SIZE/2+2; ++z)
     {
-        for (int x = 0; x < SUM_TILES; ++x)
+        left=-1.0f;
+        for (int x = CHUNK_START_OFFSET[z]; x < TileManager::MAP_SIZE - CHUNK_START_OFFSET[z]; ++x)
         {
-            Real tile_size = size * srcTexturePos[y][x][2];
-            left = -1.0f + size * srcTexturePos[y][x][0];
-            top  =  1.0f - size * srcTexturePos[y][x][1];
+            size = getTileTextureSize(x, z)/512.0f;
             *pFloat++ = left;
             *pFloat++ = top;
             *pFloat++ = -1;
             *pFloat++ = left;
-            *pFloat++ = top - tile_size;
+            *pFloat++ = top - size;
             *pFloat++ = -1;
-            *pFloat++ = left+ tile_size;
+            *pFloat++ = left+ size;
             *pFloat++ = top;
             *pFloat++ = -1;
-            *pFloat++ = left + tile_size;
+            *pFloat++ = left + size;
             *pFloat++ = top;
             *pFloat++ = -1;
             *pFloat++ = left;
-            *pFloat++ = top - tile_size;
+            *pFloat++ = top - size;
             *pFloat++ = -1;
-            *pFloat++ = left+ tile_size;
-            *pFloat++ = top - tile_size;
+            *pFloat++ = left+ size;
+            *pFloat++ = top - size;
             *pFloat++ = -1;
+            left+= size;
         }
+        top-=getTileTextureSize(TileManager::MAP_SIZE/2, z)/512.0f; // Biggest size is in the middle.
     }
     vbuf->unlock();
     const int SUM_TEXTURE_UNITS = 4;
     offset = 0;
-    decl->addElement(1, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES,0);  offset += VertexElement::getTypeSize(VET_FLOAT2);
-    decl->addElement(1, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES,1);  offset += VertexElement::getTypeSize(VET_FLOAT2);
-    decl->addElement(1, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES,2);  offset += VertexElement::getTypeSize(VET_FLOAT2);
-    decl->addElement(1, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES,3);  offset += VertexElement::getTypeSize(VET_FLOAT2);
+    decl->addElement(1, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES,0);
+    offset += VertexElement::getTypeSize(VET_FLOAT2);
+    decl->addElement(1, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES,1);
+    offset += VertexElement::getTypeSize(VET_FLOAT2);
+    decl->addElement(1, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES,2);
+    offset += VertexElement::getTypeSize(VET_FLOAT2);
+    decl->addElement(1, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES,3);
+    offset += VertexElement::getTypeSize(VET_FLOAT2);
 
-    vbuf = HardwareBufferManager::getSingleton().createVertexBuffer(VertexElement::getTypeSize(VET_FLOAT2)*SUM_TEXTURE_UNITS, SUM_VERTICES, HardwareBuffer::HBU_STATIC_WRITE_ONLY);
+    vbuf = HardwareBufferManager::getSingleton().createVertexBuffer(VertexElement::getTypeSize(VET_FLOAT2)*SUM_TEXTURE_UNITS, sumVertices, HardwareBuffer::HBU_STATIC_WRITE_ONLY);
     bind->setBinding(1, vbuf);
     updateVertexBuffer();
 
@@ -312,7 +299,7 @@ TilePainter::TilePainter()
     /*
             mRenderOp.useIndexes = true;
             mRenderOp.indexData = new IndexData();
-            mRenderOp.indexData->indexCount = SUM_VERTICES;
+            mRenderOp.indexData->indexCount = sumVertices;
             mRenderOp.indexData->indexStart = 0;
             mRenderOp.indexData->indexBuffer = HardwareBufferManager::getSingleton().createIndexBuffer(HardwareIndexBuffer::IT_16BIT, mRenderOp.indexData->indexCount, HardwareBuffer::HBU_STATIC_WRITE_ONLY,false);
             unsigned short* pIdx = static_cast<unsigned short*>(mRenderOp.indexData->indexBuffer->lock(HardwareBuffer::HBL_DISCARD));
@@ -323,14 +310,7 @@ TilePainter::TilePainter()
     */
 }
 
-//================================================================================================
-// Switch the grid on/off.
-//================================================================================================
-void TileChunk::toggleGrid()
-{
-    mPainter->toggleGrid();
-    updatePainter();
-}
+
 
 //================================================================================================
 // Constructor.
@@ -338,13 +318,17 @@ void TileChunk::toggleGrid()
 void TileChunk::init()
 {
     MaterialPtr tmpMaterial;
+    mSumVertices = 0;
+    for (int i=0; i < TileManager::MAP_SIZE/2+2; ++i)
+        mSumVertices+= TileManager::MAP_SIZE - 2*CHUNK_START_OFFSET[i];
+    mSumVertices *= 6;
     // ////////////////////////////////////////////////////////////////////
     // Build the land-tiles.
     // ////////////////////////////////////////////////////////////////////
     mMeshLand = MeshManager::getSingleton().createManual("Mesh_Land", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME );
     mSubMeshLand = mMeshLand->createSubMesh();
     createLand();
-    mMeshLand->_setBounds(AxisAlignedBox(0,0,0,TileManager::TILE_SIZE * SUM_TILES,MAX_TERRAIN_HEIGHT,TileManager::TILE_SIZE * SUM_TILES));
+    mMeshLand->_setBounds(AxisAlignedBox(0,0,0,TileManager::TILE_SIZE * TileManager::MAP_SIZE,MAX_TERRAIN_HEIGHT,TileManager::TILE_SIZE * TileManager::MAP_SIZE));
     mMeshLand->load();
     mEntityLand = TileManager::getSingleton().getSceneManager()->createEntity("Entity_Land", "Mesh_Land");
     mEntityLand->setQueryFlags(ObjectManager::QUERY_TILES_LAND_MASK);
@@ -353,13 +337,14 @@ void TileChunk::init()
     tmpMaterial = MaterialManager::getSingleton().getByName(MATERIAL_LAND_NAME);
     tmpMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(TEXTURE_LAND_NAME);
     mEntityLand->setMaterialName(MATERIAL_LAND_NAME);
+
     // ////////////////////////////////////////////////////////////////////
     // Build the water-tiles.
     // ////////////////////////////////////////////////////////////////////
     mMeshWater = MeshManager::getSingleton().createManual("Mesh_Water", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
     mSubMeshWater = mMeshWater->createSubMesh();
     createDummySubMesh(mSubMeshWater); // We don't have the tile datas yet, so no need to waste time in creating the tiles.
-    mMeshWater->_setBounds(AxisAlignedBox(0,0,0,TileManager::TILE_SIZE * SUM_TILES,MAX_TERRAIN_HEIGHT,TileManager::TILE_SIZE * SUM_TILES));
+    mMeshWater->_setBounds(AxisAlignedBox(0,0,0,TileManager::TILE_SIZE * TileManager::MAP_SIZE,MAX_TERRAIN_HEIGHT,TileManager::TILE_SIZE * TileManager::MAP_SIZE));
     mMeshWater->load();
     mEntityWater = TileManager::getSingleton().getSceneManager()->createEntity("Entity_Water", "Mesh_Water");
     mEntityWater->setQueryFlags(ObjectManager::QUERY_TILES_WATER_MASK);
@@ -375,7 +360,8 @@ void TileChunk::init()
     mNode->setPosition(0, 0, 0);
     mNode->attachObject(mEntityLand);
     mNode->attachObject(mEntityWater);
-    mPainter= new TilePainter();
+
+    mPainter= new TilePainter(mSumVertices);
     loadAtlasTexture("terrain_group_00_1024.png");
     updatePainter();
 }
@@ -436,13 +422,13 @@ void TileChunk::updatePainter()
     Viewport *viewport = renderTarget->addViewport(camera);
     viewport->setOverlaysEnabled(false);
     viewport->setClearEveryFrame(false);
-    viewport->setDimensions(0.0f, 0.0f, 896.0f/1024.0f, 896.0f/1024.0f);
+    viewport->setDimensions(0.0f, 0.0f, 1.0f, 1.0f);
     // Render only the queues in the special case list.
     TileManager::getSingleton().getSceneManager()->setSpecialCaseRenderQueueMode(Ogre::SceneManager::SCRQM_INCLUDE);
     TileManager::getSingleton().getSceneManager()->addSpecialCaseRenderQueue(RENDER_QUEUE_MAIN);
     mPainter->setRenderQueueGroup(RENDER_QUEUE_MAIN);
     renderTarget->update();
-//renderTarget->writeContentsToFile("Animation2d_.png");
+//renderTarget->writeContentsToFile("Painter.png");
     TileManager::getSingleton().getSceneManager()->removeSpecialCaseRenderQueue(RENDER_QUEUE_MAIN);
     //Render all except the queues in the special case list.
     TileManager::getSingleton().getSceneManager()->setSpecialCaseRenderQueueMode(SceneManager::SCRQM_EXCLUDE);
@@ -482,6 +468,16 @@ void TileChunk::change()
 //================================================================================================
 void TileChunk::createWater()
 {
+
+
+
+    createDummySubMesh(mSubMeshWater);
+    return;
+
+
+
+
+
     // ////////////////////////////////////////////////////////////////////
     // Count the Vertices in this chunk.
     // ////////////////////////////////////////////////////////////////////
@@ -515,8 +511,10 @@ void TileChunk::createWater()
     vdata->vertexCount = numVertices;
     VertexDeclaration* vdec = vdata->vertexDeclaration;
     size_t offset = 0;
-    vdec->addElement( 0, offset, VET_FLOAT3, VES_POSITION );  offset += VertexElement::getTypeSize(VET_FLOAT3);
-    vdec->addElement( 0, offset, VET_FLOAT3, VES_NORMAL   );  offset += VertexElement::getTypeSize(VET_FLOAT3);
+    vdec->addElement( 0, offset, VET_FLOAT3, VES_POSITION );
+    offset += VertexElement::getTypeSize(VET_FLOAT3);
+    vdec->addElement( 0, offset, VET_FLOAT3, VES_NORMAL   );
+    offset += VertexElement::getTypeSize(VET_FLOAT3);
     vdec->addElement( 0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 0);
     offset += VertexElement::getTypeSize(VET_FLOAT2);
 
@@ -632,6 +630,21 @@ void TileChunk::createWater()
     mSubMeshWater->vertexData = vdata;
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //================================================================================================
 // v0  +--+ v2/3
 //     | /|
@@ -647,131 +660,75 @@ void TileChunk::changeLand()
     int mapX, mapZ;
     TileManager::getSingleton().getMapScroll(mapX, mapZ);
     mapX += (mapZ&1);
-    Real detail, size = 32.0 /1024.0;
-    for (int z = 0; z < TileManager::CHUNK_SIZE; ++z)
+    Real offX = 13 * TileManager::TILE_SIZE;
+    Real offZ =  2 * TileManager::TILE_SIZE;
+    Real left, top, size;
+    top = 0.0f;
+    for (int z = 0; z < TileManager::MAP_SIZE/2+2; ++z)
     {
-        for (int x= 0; x < TileManager::CHUNK_SIZE; ++x)
+        left= 0.0f;
+        for (int x = CHUNK_START_OFFSET[z]; x < TileManager::MAP_SIZE - CHUNK_START_OFFSET[z]; ++x)
         {
-            detail = srcTexturePos[z][x][2] * size;
-            if (mapX&1)
-            {
-                // 1. Triangle
-                *pReal++ = TileManager::TILE_SIZE * x;
-                *pReal++ = TileManager::getSingleton().getMapHeight(x,z,TileManager::VERTEX_TL);
-                *pReal++ = TileManager::TILE_SIZE * z;
-                *pReal++ = 0.0;
-                *pReal++ = 1.0;
-                *pReal++ = 0.0;
-                *pReal++ = srcTexturePos[z][x][0] * size;
-                *pReal++ = srcTexturePos[z][x][1] * size;
+            // 1. Triangle
+            size = getTileTextureSize(x, z)/1024.0f;
+            *pReal++ = offX + TileManager::TILE_SIZE * x;
+            *pReal++ = TileManager::getSingleton().getMapHeight(x,z,TileManager::VERTEX_TL);
+            *pReal++ = offZ + TileManager::TILE_SIZE * z;
+            *pReal++ = 0.0;
+            *pReal++ = 1.0;
+            *pReal++ = 0.0;
+            *pReal++ = left;
+            *pReal++ = top;
 
-                *pReal++  = TileManager::TILE_SIZE * x;
-                *pReal++  = TileManager::getSingleton().getMapHeight(x,z,TileManager::VERTEX_BL);
-                *pReal++  = TileManager::TILE_SIZE * (z+1);
-                *pReal++  = 0.0;
-                *pReal++  = 1.0;
-                *pReal++  = 0.0;
-                *pReal++ = srcTexturePos[z][x][0] * size;
-                *pReal++ = srcTexturePos[z][x][1] * size + detail;
+            *pReal++  = offX + TileManager::TILE_SIZE * x;
+            *pReal++  = TileManager::getSingleton().getMapHeight(x,z,TileManager::VERTEX_BL);
+            *pReal++  = offZ + TileManager::TILE_SIZE * (z+1);
+            *pReal++  = 0.0;
+            *pReal++  = 1.0;
+            *pReal++  = 0.0;
+            *pReal++ = left;
+            *pReal++ = top + size;
 
-                *pReal++  = TileManager::TILE_SIZE * (x+1);
-                *pReal++  = TileManager::getSingleton().getMapHeight(x,z,TileManager::VERTEX_TR);
-                *pReal++  = TileManager::TILE_SIZE * z;
-                *pReal++  = 0.0;
-                *pReal++  = 1.0;
-                *pReal++  = 0.0;
-                *pReal++ = srcTexturePos[z][x][0] * size + detail;
-                *pReal++ = srcTexturePos[z][x][1] * size;
+            *pReal++  = offX + TileManager::TILE_SIZE * (x+1);
+            *pReal++  = TileManager::getSingleton().getMapHeight(x,z,TileManager::VERTEX_TR);
+            *pReal++  = offZ + TileManager::TILE_SIZE * z;
+            *pReal++  = 0.0;
+            *pReal++  = 1.0;
+            *pReal++  = 0.0;
+            *pReal++ = left + size;
+            *pReal++ = top;
 
-                // 2. Triangle
-                *pReal++ = TileManager::TILE_SIZE * (x+1);
-                *pReal++ = TileManager::getSingleton().getMapHeight(x,z,TileManager::VERTEX_TR);
-                *pReal++ = TileManager::TILE_SIZE * z;
-                *pReal++ = 0.0;
-                *pReal++ = 1.0;
-                *pReal++ = 0.0;
-                *pReal++ = srcTexturePos[z][x][0] * size + detail;
-                *pReal++ = srcTexturePos[z][x][1] * size;
+            // 2. Triangle
+            *pReal++ = offX + TileManager::TILE_SIZE * (x+1);
+            *pReal++ = TileManager::getSingleton().getMapHeight(x,z,TileManager::VERTEX_TR);
+            *pReal++ = offZ + TileManager::TILE_SIZE * z;
+            *pReal++ = 0.0;
+            *pReal++ = 1.0;
+            *pReal++ = 0.0;
+            *pReal++ = left + size;
+            *pReal++ = top;
 
-                *pReal++ = TileManager::TILE_SIZE * x;
-                *pReal++ = TileManager::getSingleton().getMapHeight(x,z,TileManager::VERTEX_BL);
-                *pReal++ = TileManager::TILE_SIZE * (z+1);
-                *pReal++ = 0.0;
-                *pReal++ = 1.0;
-                *pReal++ = 0.0;
-                *pReal++ = srcTexturePos[z][x][0] * size;
-                *pReal++ = srcTexturePos[z][x][1] * size + detail;
+            *pReal++ = offX + TileManager::TILE_SIZE * x;
+            *pReal++ = TileManager::getSingleton().getMapHeight(x,z,TileManager::VERTEX_BL);
+            *pReal++ = offZ + TileManager::TILE_SIZE * (z+1);
+            *pReal++ = 0.0;
+            *pReal++ = 1.0;
+            *pReal++ = 0.0;
+            *pReal++ = left;
+            *pReal++ = top + size;
 
-                *pReal++ = TileManager::TILE_SIZE * (x+1);
-                *pReal++ = TileManager::getSingleton().getMapHeight(x,z,TileManager::VERTEX_BR);
-                *pReal++ = TileManager::TILE_SIZE * (z+1);
-                *pReal++ = 0.0;
-                *pReal++ = 1.0;
-                *pReal++ = 0.0;
-                *pReal++ = srcTexturePos[z][x][0] * size + detail;
-                *pReal++ = srcTexturePos[z][x][1] * size + detail;
-
-            }
-            else
-            {
-                // 1. Triangle
-                *pReal++ = TileManager::TILE_SIZE * x;
-                *pReal++ = TileManager::getSingleton().getMapHeight(x,z,TileManager::VERTEX_TL);
-                *pReal++ = TileManager::TILE_SIZE * z;
-                *pReal++ = 0.0;
-                *pReal++ = 1.0;
-                *pReal++ = 0.0;
-                *pReal++ = srcTexturePos[z][x][0] * size;
-                *pReal++ = srcTexturePos[z][x][1] * size;
-
-                *pReal++  = TileManager::TILE_SIZE * x;
-                *pReal++  = TileManager::getSingleton().getMapHeight(x,z,TileManager::VERTEX_BL);
-                *pReal++  = TileManager::TILE_SIZE * (z+1);
-                *pReal++  = 0.0;
-                *pReal++  = 1.0;
-                *pReal++  = 0.0;
-                *pReal++ = srcTexturePos[z][x][0] * size;
-                *pReal++ = srcTexturePos[z][x][1] * size + detail;
-
-                *pReal++  = TileManager::TILE_SIZE * (x+1);
-                *pReal++  = TileManager::getSingleton().getMapHeight(x,z,TileManager::VERTEX_BR);
-                *pReal++  = TileManager::TILE_SIZE * (z+1);
-                *pReal++  = 0.0;
-                *pReal++  = 1.0;
-                *pReal++  = 0.0;
-                *pReal++ = srcTexturePos[z][x][0] * size + detail;
-                *pReal++ = srcTexturePos[z][x][1] * size + detail;
-
-                // 2. Triangle
-                *pReal++ = TileManager::TILE_SIZE * (x+1);
-                *pReal++ = TileManager::getSingleton().getMapHeight(x,z,TileManager::VERTEX_BR);
-                *pReal++ = TileManager::TILE_SIZE * (z+1);
-                *pReal++ = 0.0;
-                *pReal++ = 1.0;
-                *pReal++ = 0.0;
-                *pReal++ = srcTexturePos[z][x][0] * size + detail;
-                *pReal++ = srcTexturePos[z][x][1] * size + detail;
-
-                *pReal++ = TileManager::TILE_SIZE * (x+1);
-                *pReal++ = TileManager::getSingleton().getMapHeight(x,z,TileManager::VERTEX_TR);
-                *pReal++ = TileManager::TILE_SIZE * z;
-                *pReal++ = 0.0;
-                *pReal++ = 1.0;
-                *pReal++ = 0.0;
-                *pReal++ = srcTexturePos[z][x][0] * size + detail;
-                *pReal++ = srcTexturePos[z][x][1] * size;
-
-                *pReal++ = TileManager::TILE_SIZE * x;
-                *pReal++ = TileManager::getSingleton().getMapHeight(x,z,TileManager::VERTEX_TL);
-                *pReal++ = TileManager::TILE_SIZE * z;
-                *pReal++ = 0.0;
-                *pReal++ = 1.0;
-                *pReal++ = 0.0;
-                *pReal++ = srcTexturePos[z][x][0] * size;
-                *pReal++ = srcTexturePos[z][x][1] * size;
-            }
+            *pReal++ = offX + TileManager::TILE_SIZE * (x+1);
+            *pReal++ = TileManager::getSingleton().getMapHeight(x,z,TileManager::VERTEX_BR);
+            *pReal++ = offZ + TileManager::TILE_SIZE * (z+1);
+            *pReal++ = 0.0;
+            *pReal++ = 1.0;
+            *pReal++ = 0.0;
+            *pReal++ = left + size;
+            *pReal++ = top + size;
+            left+= size;
             --mapX;
         }
+        top+=getTileTextureSize(TileManager::MAP_SIZE/2, z)/1024.0f; // Biggest size is in the middle.
     }
     vbuf->unlock();
 }
@@ -781,30 +738,32 @@ void TileChunk::changeLand()
 //================================================================================================
 void TileChunk::createLand()
 {
-    unsigned int numVertices = TileManager::CHUNK_SIZE * TileManager::CHUNK_SIZE * 6;
     // ////////////////////////////////////////////////////////////////////
     // Create VertexData.
     // ////////////////////////////////////////////////////////////////////
     VertexData* vdata = new VertexData();
-    vdata->vertexCount = numVertices;
+    vdata->vertexCount = mSumVertices;
     VertexDeclaration* vdec = vdata->vertexDeclaration;
     size_t offset = 0;
-    vdec->addElement(0, offset, VET_FLOAT3, VES_POSITION           );  offset += VertexElement::getTypeSize(VET_FLOAT3);
-    vdec->addElement(0, offset, VET_FLOAT3, VES_NORMAL             );  offset += VertexElement::getTypeSize(VET_FLOAT3);
-    vdec->addElement(0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES);  offset += VertexElement::getTypeSize(VET_FLOAT2);
+    vdec->addElement(0, offset, VET_FLOAT3, VES_POSITION);
+    offset += VertexElement::getTypeSize(VET_FLOAT3);
+    vdec->addElement(0, offset, VET_FLOAT3, VES_NORMAL);
+    offset += VertexElement::getTypeSize(VET_FLOAT3);
+    vdec->addElement(0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES);
+    offset += VertexElement::getTypeSize(VET_FLOAT2);
     HardwareVertexBufferSharedPtr vbuf0;
-    vbuf0 = HardwareBufferManager::getSingleton().createVertexBuffer(offset, numVertices, HardwareBuffer::HBU_STATIC_WRITE_ONLY, false);
+    vbuf0 = HardwareBufferManager::getSingleton().createVertexBuffer(offset, mSumVertices, HardwareBuffer::HBU_STATIC_WRITE_ONLY, false);
     vdata->vertexBufferBinding->setBinding(0, vbuf0);
     // ////////////////////////////////////////////////////////////////////
     // Create Index-buffer (SubMeshes always use indexes)
     // ////////////////////////////////////////////////////////////////////
-    HardwareIndexBufferSharedPtr ibuf = HardwareBufferManager::getSingleton().createIndexBuffer(HardwareIndexBuffer::IT_16BIT, numVertices, HardwareBuffer::HBU_STATIC_WRITE_ONLY, false);
+    HardwareIndexBufferSharedPtr ibuf = HardwareBufferManager::getSingleton().createIndexBuffer(HardwareIndexBuffer::IT_16BIT, mSumVertices, HardwareBuffer::HBU_STATIC_WRITE_ONLY, false);
     IndexData* idata = mSubMeshLand->indexData;
     idata->indexBuffer = ibuf;
     idata->indexStart = 0;
-    idata->indexCount = numVertices;
+    idata->indexCount = mSumVertices;
     unsigned short* pIdx = static_cast<unsigned short*>(ibuf->lock (HardwareBuffer::HBL_DISCARD));
-    for (unsigned short p=0; numVertices; --numVertices) *pIdx++ = p++;
+    for (unsigned short p=0; p < mSumVertices; ++p) *pIdx++ = p;
     ibuf->unlock();
 
     mSubMeshLand->operationType = RenderOperation::OT_TRIANGLE_LIST;

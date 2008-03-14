@@ -42,7 +42,7 @@ using namespace Ogre;
 // Init all static Elemnts.
 //================================================================================================
 // Prefix for the object name (S)tatic, (P)layer, (N)PC
-char *ObjectManager::ObjectID[OBJECT_SUM] = { "S","S","S","P","N" };
+const char *ObjectManager::ObjectID[OBJECT_SUM] = { "S","S","S","P","N" };
 
 //================================================================================================
 // Init the model from the description file.

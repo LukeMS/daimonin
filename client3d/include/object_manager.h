@@ -93,7 +93,7 @@ public:
         OBJECT_PLAYER,      /**< Human controlled character. **/
         OBJECT_SUM,
     };
-    static char *ObjectID[OBJECT_SUM];
+    static const char *ObjectID[OBJECT_SUM];
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
