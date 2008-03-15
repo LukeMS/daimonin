@@ -2946,7 +2946,7 @@ void apply_player_light_refill(object *who, object *op)
     }
 
 
-    if (item->type != TYPE_LIGHT_APPLY || !item->race || strstr(item->race, op->race))
+    if (item->type != TYPE_LIGHT_APPLY || !item->race || !strstr(item->race, op->race))
     {
         new_draw_info_format(NDI_UNIQUE, 0, who, "You can't refill the %s with the %s.", query_name(item),
                 query_name(op));
