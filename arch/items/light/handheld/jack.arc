@@ -1,6 +1,6 @@
 Object jack
 name jack'o'lantern
-race lamp_light
+race lamp_oil
 face jackolantern_01.101
 other_arch jack_unlit
 direction 3
