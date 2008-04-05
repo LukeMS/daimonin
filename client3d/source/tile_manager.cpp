@@ -27,6 +27,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "tile_manager.h"
 
 #include "object_manager.h"
+#include "gui_manager.h"
+
 #include "logger.h"
 
 using namespace Ogre;
@@ -41,7 +43,9 @@ TileManager::TileManager()
     mShowGrid = false;
     mMapScrollX =0;
     mMapScrollZ =0;
-    for (int z =0; z <= CHUNK_SIZE; ++z)
+    mSelectedVertexX =0;
+    mSelectedVertexZ =0;
+    for (int z =0; z <= CHUNK_SIZE_Z; ++z)
         clsRowOfWalls(z);
 }
 
@@ -50,15 +54,171 @@ TileManager::TileManager()
 //================================================================================================
 void TileManager::freeRecources()
 {
-    for (int z =0; z <= CHUNK_SIZE; ++z)
+    for (int z =0; z <= CHUNK_SIZE_Z; ++z)
         delRowOfWalls(z);
     mMapchunk.freeRecources();
+    mSceneManager->destroyQuery(mRaySceneQuery);
+}
+
+//================================================================================================
+// A tile was clicked.
+//================================================================================================
+void TileManager::tileClick(float mouseX, float mouseY)
+{
+    Ray mouseRay = mSceneManager->getCamera("PlayerCam")->getCameraToViewportRay(mouseX, mouseY);
+    mRaySceneQuery->setRay(mouseRay);
+    mRaySceneQuery->setQueryMask(ObjectManager::QUERY_TILES_LAND_MASK);
+    // Perform the scene query.
+    RaySceneQueryResult &result = mRaySceneQuery->execute();
+    if (result.size() >1)
+    {
+        Logger::log().error() << "BUG in tileClick(...): RaySceneQuery returned more than 1 result.";
+        Logger::log().error() << "(Perhaps you created Entities without setting a setQueryFlags(...) on them)";
+        return;
+    }
+
+    for (int x = 0; x < CHUNK_SIZE_X; ++x)
+    {
+        for (int z = 0; z < CHUNK_SIZE_Z; ++z)
+        {
+            if ((x+z)&1)
+            {
+                // +-+
+                // |/
+                // +
+                mTris[0].x = (x+0)*TILE_SIZE;
+                mTris[0].y = getMapHeight(x, z, VERTEX_TL);
+                mTris[0].z = (z+0)*TILE_SIZE;
+                mTris[1].x = (x+0)*TILE_SIZE;
+                mTris[1].y = getMapHeight(x, z, VERTEX_BL);
+                mTris[1].z = (z+1)*TILE_SIZE;
+                mTris[2].x = (x+1)*TILE_SIZE;
+                mTris[2].y = getMapHeight(x, z, VERTEX_TR);
+                mTris[2].z = (z+0)*TILE_SIZE;
+                if (vertexPick(&mouseRay, x, z, 0)) return; // We got a hit.
+                //   +
+                //  /|
+                // +-+
+                mTris[0].x = (x+1)*TILE_SIZE;
+                mTris[0].y = getMapHeight(x, z, VERTEX_TR);
+                mTris[0].z = (z+0)*TILE_SIZE;
+                mTris[1].x = (x+0)*TILE_SIZE;
+                mTris[1].y = getMapHeight(x, z, VERTEX_BL);
+                mTris[1].z = (z+1)*TILE_SIZE;
+                mTris[2].x = (x+1)*TILE_SIZE;
+                mTris[2].y = getMapHeight(x, z, VERTEX_BR);
+                mTris[2].z = (z+1)*TILE_SIZE;
+                if (vertexPick(&mouseRay, x, z, 1)) return; // We got a hit.
+            }
+            else
+            {
+                //
+                //   +
+                //   |\.
+                //   +-+
+                mTris[0].x = (x+0.0)*TILE_SIZE;
+                mTris[0].y = getMapHeight(x, z, VERTEX_TL);
+                mTris[0].z = (z+0.0)*TILE_SIZE;
+                mTris[1].x = (x+0.0)*TILE_SIZE;
+                mTris[1].y = getMapHeight(x, z, VERTEX_BL);
+                mTris[1].z = (z+1.0)*TILE_SIZE;
+                mTris[2].x = (x+1.0)*TILE_SIZE;
+                mTris[2].y = getMapHeight(x, z, VERTEX_BR);
+                mTris[2].z = (z+1.0)*TILE_SIZE;
+                if (vertexPick(&mouseRay, x, z, 2)) return; // We got a hit.
+                // +-+
+                //  \|
+                //   +
+                mTris[0].x = (x+1.0)*TILE_SIZE;
+                mTris[0].y = getMapHeight(x, z, VERTEX_BR);
+                mTris[0].z = (z+1.0)*TILE_SIZE;
+                mTris[1].x = (x+1.0)*TILE_SIZE;
+                mTris[1].y = getMapHeight(x, z, VERTEX_TR);
+                mTris[1].z = (z+0.0)*TILE_SIZE;
+                mTris[2].x = (x+0.0)*TILE_SIZE;
+                mTris[2].y = getMapHeight(x, z, VERTEX_TL);
+                mTris[2].z = (z+0.0)*TILE_SIZE;
+                if (vertexPick(&mouseRay, x, z, 3))  return; // We got a hit.
+            }
+        }
+    }
+}
+
+//================================================================================================
+// .
+//================================================================================================
+bool TileManager::vertexPick(Ray *mouseRay, int x, int z, int pos)
+{
+    std::pair<bool, Real> Test;
+    Test = Math::intersects(*mouseRay, mTris[0], mTris[1], mTris[2]);
+    if (!Test.first) return false;  // This tile piece was not clicked.
+    // Test for Vertex 0
+    Test = Math::intersects(*mouseRay, mTris[0], (mTris[0] + mTris[2])/2, (mTris[0] + mTris[1])/2);
+    if (Test.first)
+    {
+        if      (pos == 0) highlightVertex(x  , z  );
+        else if (pos == 1) highlightVertex(x+1, z  );
+        else if (pos == 2) highlightVertex(x  , z  );
+        else if (pos == 3) highlightVertex(x+1, z+1);
+        return true;
+    }
+    // Test for Vertex 1
+    Test = Math::intersects(*mouseRay, mTris[2], (mTris[0] + mTris[2])/2, (mTris[1] + mTris[2])/2);
+    if (Test.first)
+    {
+        if      (pos == 0) highlightVertex(x+1, z  );
+        else if (pos == 1) highlightVertex(x+1, z+1);
+        else if (pos == 2) highlightVertex(x+1, z+1);
+        else if (pos == 3) highlightVertex(x  , z  );
+        return true;
+    }
+    // Test for Vertex 2
+    Test = Math::intersects(*mouseRay, mTris[1], (mTris[0] + mTris[1])/2, (mTris[1] + mTris[2])/2);
+    if (Test.first)
+    {
+        if      (pos == 0) highlightVertex(x  , z+1);
+        else if (pos == 1) highlightVertex(x  , z+1);
+        else if (pos == 2) highlightVertex(x  , z+1);
+        else if (pos == 3) highlightVertex(x+1, z  );
+        return true;
+    }
+    return true;
+}
+
+//================================================================================================
+// .
+//================================================================================================
+void TileManager::highlightVertex(int x, int z)
+{
+    static SceneNode *tcNode = 0;
+    mSelectedVertexX = x;
+    mSelectedVertexZ = z;
+    if (tcNode)
+    {
+        tcNode->detachAllObjects();
+        mSceneManager->destroyManualObject("SelTest");
+        mSceneManager->destroySceneNode("N1");
+    }
+    int y = getMapHeight(x, z, VERTEX_TL)+1;
+    x*= TILE_SIZE;
+    z*= TILE_SIZE;
+    int size = TILE_SIZE/8;
+    ManualObject* mob = static_cast<ManualObject*>(mSceneManager->createMovableObject("SelTest", ManualObjectFactory::FACTORY_TYPE_NAME));
+    mob->begin("TileEngine/VertexSelection");
+    mob->position(x-size, y, z-size); mob->normal(0,1,0); mob->textureCoord(0.0, 0.0);
+    mob->position(x-size, y, z+size); mob->normal(0,1,0); mob->textureCoord(0.0, 1.0);
+    mob->position(x+size, y, z-size); mob->normal(0,1,0); mob->textureCoord(1.0, 0.0);
+    mob->position(x+size, y, z+size); mob->normal(0,1,0); mob->textureCoord(1.0, 1.0);
+    mob->quad(0, 1, 3, 2);
+    mob->end();
+    tcNode = mSceneManager->getRootSceneNode()->createChildSceneNode("N1");
+    tcNode->attachObject(mob);
 }
 
 //================================================================================================
 // Returns the height of a tile-vertex.
 //================================================================================================
-Ogre::uchar TileManager::getMapHeight(unsigned int x, unsigned int z, int vertex)
+short TileManager::getMapHeight(unsigned int x, unsigned int z, int vertex)
 {
     if (x >= MAP_SIZE || z >= MAP_SIZE) return 0;
     if (vertex == VERTEX_TL)  return mMap[x][z].height;
@@ -84,6 +244,7 @@ void TileManager::Init(SceneManager* SceneMgr, int sumTilesX, int sumTilesZ, int
 {
     Logger::log().headline("Init TileEngine");
     mSceneManager = SceneMgr;
+    mRaySceneQuery = mSceneManager->createRayQuery(Ray());
     mLod  = highDetails;
     // ////////////////////////////////////////////////////////////////////
     // Create all TextureGroups.
@@ -105,41 +266,32 @@ void TileManager::scrollMap(int dx, int dz)
     if (dx >0)
     {
         --mMapScrollX;
-        delColOfWalls(0); // Delete walls leaving the view.
-        for (int x = 0; x < CHUNK_SIZE; ++x)
-            for (int y = 0; y <= CHUNK_SIZE; ++y)
+        for (int x = 0; x < CHUNK_SIZE_X; ++x)
+            for (int y = 0; y <= CHUNK_SIZE_Z; ++y)
                 mMap[x][y] = mMap[x+1][y];
-        clsColOfWalls(CHUNK_SIZE); // Set all Entities to 0.
     }
     else if (dx <0)
     {
         ++mMapScrollX;
-        delColOfWalls(CHUNK_SIZE); // Delete walls leaving the view.
-        for (int x = CHUNK_SIZE; x >0; --x)
-            for (int y = 0; y <= CHUNK_SIZE; ++y)
+        for (int x = CHUNK_SIZE_X; x >0; --x)
+            for (int y = 0; y <= CHUNK_SIZE_Z; ++y)
                 mMap[x][y] = mMap[x-1][y];
-        clsColOfWalls(0); // Set all Entities to 0.
     }
     if (dz >0)
     {
         --mMapScrollZ;
-        delRowOfWalls(0); // Delete walls leaving the view.
-        for (int x = 0; x <= CHUNK_SIZE; ++x)
-            for (int y = 0; y < CHUNK_SIZE; ++y)
+        for (int x = 0; x <= CHUNK_SIZE_X; ++x)
+            for (int y = 0; y < CHUNK_SIZE_Z; ++y)
                 mMap[x][y] = mMap[x][y+1];
-        clsRowOfWalls(CHUNK_SIZE); // Set all Entities to 0.
     }
     else if (dz <0)
     {
         ++mMapScrollZ;
-        delRowOfWalls(CHUNK_SIZE); // Delete walls leaving the view.
-        for (int x = 0; x <= CHUNK_SIZE; ++x)
-            for (int y = CHUNK_SIZE; y > 0; --y)
+        for (int x = 0; x <= CHUNK_SIZE_X; ++x)
+            for (int y = CHUNK_SIZE_Z; y > 0; --y)
                 mMap[x][y] = mMap[x][y-1];
-        clsRowOfWalls(0); // Set all Entities to 0.
     }
     mMapchunk.change();
-    syncWalls(-dx, -dz);
 }
 
 //================================================================================================
@@ -302,9 +454,9 @@ uchar TileManager::calcShadow(int x, int z)
 //================================================================================================
 void TileManager::calcMapShadows()
 {
-    for (int z = 0; z <= CHUNK_SIZE; ++z)
+    for (int z = 0; z <= CHUNK_SIZE_Z; ++z)
     {
-        for (int x = 0; x <= CHUNK_SIZE; ++x)
+        for (int x = 0; x <= CHUNK_SIZE_X; ++x)
         {
             mMap[x][z].shadow = calcShadow(x, z);
         }
@@ -339,14 +491,6 @@ void TileManager::addWall(int level, int x, int z, int pos, const char *meshName
 //================================================================================================
 void TileManager::delRowOfWalls(int row)
 {
-    for (int x = 0; x <= CHUNK_SIZE; ++x)
-        for (int pos = 0; pos < WALL_POS_SUM; ++pos)
-            if (mMap[x][row].entity[pos])
-            {
-                mSceneManager->destroySceneNode(mMap[x][row].entity[pos]->getParentSceneNode()->getName());
-                mSceneManager->destroyEntity(mMap[x][row].entity[pos]);
-                mMap[x][row].entity[pos] =0;
-            }
 }
 
 //================================================================================================
@@ -354,9 +498,6 @@ void TileManager::delRowOfWalls(int row)
 //================================================================================================
 void TileManager::clsRowOfWalls(int row)
 {
-    for (int x = 0; x <= CHUNK_SIZE; ++x)
-        for (int pos = 0; pos < WALL_POS_SUM; ++pos)
-            mMap[x][row].entity[pos] =0;
 }
 
 //================================================================================================
@@ -364,14 +505,6 @@ void TileManager::clsRowOfWalls(int row)
 //================================================================================================
 void TileManager::delColOfWalls(int col)
 {
-    for (int z = 0; z <= CHUNK_SIZE; ++z)
-        for (int pos = 0; pos < WALL_POS_SUM; ++pos)
-            if (mMap[col][z].entity[pos])
-            {
-                mSceneManager->destroySceneNode(mMap[col][z].entity[pos]->getParentSceneNode()->getName());
-                mSceneManager->destroyEntity(mMap[col][z].entity[pos]);
-                mMap[col][z].entity[pos] =0;
-            }
 }
 
 //================================================================================================
@@ -379,9 +512,6 @@ void TileManager::delColOfWalls(int col)
 //================================================================================================
 void TileManager::clsColOfWalls(int col)
 {
-    for (int z = 0; z <= CHUNK_SIZE; ++z)
-        for (int pos = 0; pos < WALL_POS_SUM; ++pos)
-            mMap[col][z].entity[pos] =0;
 }
 
 //================================================================================================
@@ -389,17 +519,22 @@ void TileManager::clsColOfWalls(int col)
 //================================================================================================
 void TileManager::syncWalls(int dx, int dz)
 {
-    for (int z =0; z <= CHUNK_SIZE; ++z)
-        for (int x =0; x <= CHUNK_SIZE; ++x)
-            for (int pos = 0; pos < WALL_POS_SUM; ++pos)
-                if (mMap[x][z].entity[pos])
-                    mMap[x][z].entity[pos]->getParentSceneNode()->translate(dx*TILE_SIZE, 0 , dz*TILE_SIZE);
+}
+
+//================================================================================================
+// .
+//================================================================================================
+void TileManager::updateTileHeight(int deltaHeight)
+{
+    mMap[mSelectedVertexX][mSelectedVertexZ].height+= deltaHeight;
+    mMapchunk.change();
+    highlightVertex(mSelectedVertexX, mSelectedVertexZ);
 }
 
 //================================================================================================
 // Set the values for a map position.
 //================================================================================================
-void TileManager::setMap(int x, int y, uchar height, uchar layer0, uchar layer1, uchar filter, uchar shadow, uchar mirror)
+void TileManager::setMap(int x, int y, short height, uchar layer0, uchar layer1, uchar filter, uchar shadow, uchar mirror)
 {
     mMap[x][y].height = height *10;
     mMap[x][y].layer0 = layer0;
@@ -589,7 +724,7 @@ int TileManager::calcHeight(int vert0, int vert1, int vert2, int posX, int posZ)
 //================================================================================================
 // Return the exact height of a position within a tile.
 //================================================================================================
-int TileManager::getTileHeight(int posX, int posZ)
+short TileManager::getTileHeight(int posX, int posZ)
 {
     int mapX, mapZ;
     int TileX = posX / TILE_SIZE; // Get the Tile position within the map.

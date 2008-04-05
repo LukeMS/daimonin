@@ -322,8 +322,8 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
             {
                 once = false;
                 Vector3 pos;
-                pos.x = 34 * TileManager::TILE_SIZE;//x * TileManager::TILE_SIZE + 3 * 8;
-                pos.z = 23 * TileManager::TILE_SIZE;//y * TileManager::TILE_SIZE + 3 * 8; //17-5;
+                pos.x = 18 * TileManager::TILE_SIZE;//x * TileManager::TILE_SIZE + 3 * 8;
+                pos.z = 34 * TileManager::TILE_SIZE;//y * TileManager::TILE_SIZE + 3 * 8; //17-5;
                 ObjectManager::getSingleton().setPosition(ObjectNPC::HERO, pos);
                 //Logger::log().error() << "we got the Hero face: " << face;
             }

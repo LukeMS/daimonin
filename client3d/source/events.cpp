@@ -170,10 +170,13 @@ bool Events::frameStarted(const FrameEvent& evt)
                 mCamera->setAspectRatio(Real(VP->getActualWidth()) / Real(VP->getActualHeight()));
                 mCamera->setFOVy(Degree(mCameraZoom));
                 mCamera->setQueryFlags(ObjectManager::QUERY_CAMERA_MASK);
-                mCamera->setPosition(0,240,185);
+                //mCamera->setPosition(0,240,185);
+                //mCamera->pitch(Degree(-28));
+                mCamera->setPosition(0,1370,1895);
+                mCamera->pitch(Degree(-28));
+
                 //int winkel =0;
                 //mCamera->setPosition(340.0*Math::Sin(Degree(winkel)), 175, 340.0 *Math::Cos(Degree(winkel)));
-                mCamera->pitch(Degree(-28));
                 mWorld = mSceneManager->getRootSceneNode()->createChildSceneNode();
                 // ////////////////////////////////////////////////////////////////////
                 // Create a minimal gui for some loading infos..
