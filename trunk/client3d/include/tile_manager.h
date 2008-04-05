@@ -29,6 +29,14 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * TileEngine class which manages all tiles related stuff in the worldmap.
+ * A tile is build out of 8 trinagles (=4 suvbtiles) arranged in this way:
+ * +--+--+      +--+--+
+ * |\ | /|      |  |  |
+ * | \|/ |      |  |  |
+ * +--+--+      +--+--+
+ * | /|\ |      |  |  |
+ * |/ | \|      |  |  |
+ * +--+--+      +--+--+
  *****************************************************************************/
 class TileManager
 {
@@ -41,7 +49,8 @@ public:
     enum { ATLAS_TILE_SIZE  =  256 }; /**< The size of a tile in the AtlasTexture. */
     enum { ATLAS_FILTER_SIZE=   64 }; /**< The size of a filter in the AtlasTexture. */
     enum { MAP_SIZE         =   43 }; /**< Number of tiles in the worldmap (on x ynd z axis). */
-    enum { CHUNK_SIZE       =   43 }; /**< Number of tiles in a chunk      (on x ynd z axis). */
+    enum { CHUNK_SIZE_X     =   36 }; /**< . */
+    enum { CHUNK_SIZE_Z     =   34 }; /**< . */
     enum { MAX_MAP_SETS     =   16 }; /**< The maximum numbers of AtlasTextures to be created by createAtlasTexture(...). */
 
     int map_transfer_flag;
@@ -78,6 +87,7 @@ public:
     {
         return mSceneManager;
     }
+    void tileClick(float mouseX, float mouseYt);
     void getMapGfx(unsigned int x, unsigned int z, int &layer0, int &layer1, int &filter, int &mirror)
     {
         layer0 = mMap[x][z].layer0;
@@ -89,8 +99,8 @@ public:
     {
         if (mShowGrid)
         {
-            shadow = 72;
-            mirror = !((mMapScrollX+mMapScrollZ+x+z)&1);
+            shadow = TileChunk::SHADOW_GRID;
+            mirror = (mMapScrollX+mMapScrollZ+x+z+1)&1;
         }
         else
         {
@@ -105,7 +115,7 @@ public:
     }
     Ogre::uchar calcShadow(int x, int z);
     void calcMapShadows();
-    Ogre::uchar getMapHeight(unsigned int x, unsigned int z, int vertex);
+    short getMapHeight(unsigned int x, unsigned int z, int vertex);
 
     /** Sets all parameters for a tile.
      ** @x X-pos of the tile within the map.
@@ -127,7 +137,7 @@ public:
      **         bit 2: Mirror shadow on x.
      **         bit 3: Mirror shadow on z.
      *****************************************************************************/
-    void setMap(int x, int z, Ogre::uchar height, Ogre::uchar layer0, Ogre::uchar layer1, Ogre::uchar filter, Ogre::uchar shadow, Ogre::uchar mirror);
+    void setMap(int x, int z, short height, Ogre::uchar layer0, Ogre::uchar layer1, Ogre::uchar filter, Ogre::uchar shadow, Ogre::uchar mirror);
 
     void changeMapset(Ogre::String filenameTileTexture, Ogre::String filenameEnvTexture);
     void toggleGrid()
@@ -138,7 +148,8 @@ public:
     void scrollMap(int x, int z);
     void changeChunks();
     bool loadImage(Ogre::Image &image, const Ogre::String &filename);
-    int  getTileHeight(int posX, int posZ);
+    short getTileHeight(int posX, int posZ);
+    void updateTileHeight(int deltaHeight);
 
     void addWall(int level, int tileX, int tileZ, int pos, const char *meshName);
     void syncWalls(int dx, int dy);
@@ -151,7 +162,7 @@ private:
     typedef struct
     {
         Ogre::Entity *entity[WALL_POS_SUM];
-        Ogre::uchar height; /**< Height of VERTEX_TL. **/
+        short height;       /**< Height of VERTEX_TL. **/
         Ogre::uchar layer0; /**< Gfx-nr in atlas-texture for layer0. **/
         Ogre::uchar layer1; /**< Gfx-nr in atlas-texture for layer1. **/
         Ogre::uchar filter; /**< Gfx-nr in atlas-texture for filter. (used to blend the layers). **/
@@ -161,7 +172,10 @@ private:
     }mapStruct;
     mapStruct mMap[MAP_SIZE+2][MAP_SIZE+2];
     Ogre::SceneManager *mSceneManager;
+    Ogre::RaySceneQuery *mRaySceneQuery;
     TileChunk mMapchunk;
+    Ogre::Vector3 mTris[4];
+    int mSelectedVertexX, mSelectedVertexZ; /**< Editor feature. Stores the actual selected VERTEX_TL of a tile. **/
     int mLod;
     int mMapScrollX, mMapScrollZ;
     bool mShowGrid;
@@ -177,6 +191,8 @@ private:
     void createAtlasTexture(const Ogre::String filenameTiles, const Ogre::String filenameFilters, const Ogre::String filenameShadows, unsigned int groupNr = MAX_MAP_SETS+1);
     void copyFilterToAtlas(Ogre::uchar *dstBuf, Ogre::String filename, int startRow, int stopRow);
     bool copyTileToAtlas  (Ogre::uchar *dstBuf, Ogre::String filename);
+    bool vertexPick(Ogre::Ray *mouseRay, int x, int z, int pos);
+    void highlightVertex(int x, int z);
     int  calcHeight(int vert0, int vert1, int vert2, int posX, int posZ);
 
     void delRowOfWalls(int row); /**< Delete all walls that are scrolling out of the tile map.**/

@@ -34,7 +34,7 @@ class TilePainter : public Ogre::SimpleRenderable
 public:
     TilePainter(int sumVertices);
     ~TilePainter() { delete mRenderOp.vertexData; }
-    void updateVertexBuffer();
+    void updateVertexBuffer(int rotation);
 
 private:
     // Not used.
@@ -53,6 +53,11 @@ public:
     // ////////////////////////////////////////////////////////////////////
     enum { MAX_TERRAIN_HEIGHT = 255 *10 };
     enum { WATERLEVEL         =  14 }; /**<  At this height the water clips the land-tiles. **/
+    enum
+    {
+            SHADOW_NONE = 66,
+            SHADOW_GRID = 72,
+    };
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
@@ -69,20 +74,18 @@ private:
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     TilePainter *mPainter;  // Make it static when using more TileChunks.
-    Ogre::SceneNode *mNode;
     Ogre::TexturePtr mTexLand, mTexWater;
-    Ogre::MeshPtr mMeshLand, mMeshWater, mMeshPainter;
-    Ogre::SubMesh *mSubMeshWater, *mSubMeshLand, *mSubMeshPainter;
-    Ogre::Entity *mEntityWater, *mEntityLand, *mEntityPainter;
+    Ogre::MeshPtr mMeshLand, mMeshWater;
+    Ogre::Entity *mEntityWater, *mEntityLand;
     int mSumVertices;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     /** The terrain must have a land- AND a waterSubmesh. If there are no datas for it, we create a dummy. **/
-    void createDummySubMesh(Ogre::SubMesh* submesh);
-    void createLand();
-    void changeLand();
+    void createDummySubMesh(Ogre::SubMesh *submesh);
     void createWater();
+    void createLand(Ogre::SubMesh *submesh);
+    void changeLand();
 };
 
 #endif

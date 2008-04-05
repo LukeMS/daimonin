@@ -297,24 +297,26 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
             break;
 
         case OIS::KC_1:
-            //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_WEAPON_HAND, 1);
         {
-            static int color =0;
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_TEXTURE, 0, ObjectNPC::TEXTURE_POS_SKIN, color++);
+            //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_WEAPON_HAND, 1);
+            //static int color =0;
+            //ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_TEXTURE, 0, ObjectNPC::TEXTURE_POS_SKIN, color++);
+            TileManager::getSingleton().updateTileHeight(10);
             break;
         }
 
         case OIS::KC_2:
-            //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_SHIELD_HAND, 1);
         {
-            static int color =0;
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_TEXTURE, 0,ObjectNPC::TEXTURE_POS_FACE, color++);
+            //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_SHIELD_HAND, 1);
+            //static int color =0;
+            //ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_TEXTURE, 0,ObjectNPC::TEXTURE_POS_FACE, color++);
+            TileManager::getSingleton().updateTileHeight(-10);
             break;
         }
 
         case OIS::KC_3:
-            //ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_TEXTURE,0, -1);
         {
+            //ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_TEXTURE,0, -1);
             static int color =0;
             ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_TEXTURE, 0,ObjectNPC::TEXTURE_POS_HAIR, color++);
             break;
@@ -382,7 +384,7 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
         case OIS::KC_F1:
         {
             Vector3 pos = mCamera->getPosition();
-            pos.y+= 5;
+            pos.y+= 15;
             Logger::log().error() << "camera pos: " << pos.x << "   " <<pos.y << "   " << pos.z;
             mCamera->setPosition(pos);
         }
@@ -391,7 +393,7 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
         case OIS::KC_F2:
         {
             Vector3 pos = mCamera->getPosition();
-            pos.y-= 5;
+            pos.y-= 15;
             Logger::log().error() << "camera pos: " << pos.x << "   " <<pos.y << "   " << pos.z;
             mCamera->setPosition(pos);
         }
@@ -400,7 +402,7 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
         case OIS::KC_F3:
         {
             Vector3 pos = mCamera->getPosition();
-            pos.z+= 5;
+            pos.z+= 15;
             Logger::log().error() << "camera pos: " << pos.x << "   " << pos.y << "   " << pos.z;
             mCamera->setPosition(pos);
         }
@@ -409,7 +411,7 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
         case OIS::KC_F4:
         {
             Vector3 pos = mCamera->getPosition();
-            pos.z-= 5;
+            pos.z-= 15;
             Logger::log().error() << "camera pos: " << pos.x << "   "<< pos.y << "   " << pos.z;
             mCamera->setPosition(pos);
         }
@@ -603,9 +605,7 @@ bool Events::mousePressed(const OIS::MouseEvent &e, OIS::MouseButtonID button)
         else
         {
             // A tile was clicked.
-            //clickedTile = TileManager::getSingleton().getTileInterface()->pickTile(mMouse.x / e.state.width, mMouse.y / e.state.height);
-            //ParticleManager::getSingleton().addFreeObject(TileManager::getSingleton().getTileInterface()->tileToWorldPos(clickedTile), "Particle/SelectionDust", 0.8);
-            //ObjectManager::getSingleton().mousePressed(0, clickedTile, mShiftDown);
+            TileManager::getSingleton().tileClick(mMouse.x / e.state.width, mMouse.y / e.state.height);
         }
         mSceneManager->destroyQuery(mRaySceneQuery);
         mIdleTime =0;
