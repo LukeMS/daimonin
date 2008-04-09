@@ -2290,7 +2290,7 @@ void ChannelMsgCmd(unsigned char *data, int len)
         break_string(message, prefix, FALSE, outstring);
     }
 
-    draw_info(outstring,color);
+    draw_info(outstring,(NDI_PLAYER|color));
 
 }
 /**
