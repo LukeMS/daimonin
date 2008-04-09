@@ -242,7 +242,7 @@ int save_player(object *op, int flag)
     fprintf(fp, "channels %d\n",pl->channel_count);
     for (pl_channel=pl->channels;pl_channel;pl_channel=pl_channel->next_channel)
     {
-        fprintf(fp,"%s %c %d %d\n",pl_channel->channel->name, pl_channel->shortcut, pl_channel->color, pl_channel->mute_counter);
+        fprintf(fp,"%s %c %d\n",pl_channel->channel->name, pl_channel->shortcut, pl_channel->mute_counter);
     }
 #endif
 
@@ -855,12 +855,11 @@ void check_login(object *op, int mode)
             char channelname[MAX_CHANNEL_NAME+1];
             char shortcut;
             unsigned long mute=0;
-            int color=NDI_ORANGE;
             with_channels=TRUE;
             for (i=1; i<= value; i++)
             {
-                fscanf(fp,"%s %c %d %d\n",channelname,&shortcut, &color, &mute);
-                loginAddPlayerToChannel(pl, channelname, shortcut, color, mute);
+                fscanf(fp,"%s %c %d\n",channelname,&shortcut, &mute);
+                loginAddPlayerToChannel(pl, channelname, shortcut, mute);
             }
         }
 #endif
