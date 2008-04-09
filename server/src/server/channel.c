@@ -661,7 +661,7 @@ void sendChannelMessage(player *pl,struct player_channel *pl_channel, char *para
 
 	sprintf(buf,"%c%c%s %s:%s",0,pl_channel->channel->color, pl_channel->channel->name, pl->ob->name, params);
 
-	sockbuf = SOCKBUF_COMPOSE(BINARY_CMD_CHANNELMSG, NULL, buf, SOCKBUF_DYNAMIC, 0);
+	sockbuf = SOCKBUF_COMPOSE(BINARY_CMD_CHANNELMSG, NULL, buf, strlen(buf+2)+2, 0);
 
     for (cpl=pl_channel->channel->players;cpl;cpl=cpl->next_player)
         if (cpl->pl->channels_on)
@@ -691,7 +691,7 @@ void sendChannelEmote(player *pl,struct player_channel *pl_channel, char *params
 
 	sprintf(buf,"%c%c%s %s:%s",1,pl_channel->channel->color, pl_channel->channel->name, pl->ob->name, params);
 
-	sockbuf = SOCKBUF_COMPOSE(BINARY_CMD_CHANNELMSG, NULL, buf, SOCKBUF_DYNAMIC, 0);
+	sockbuf = SOCKBUF_COMPOSE(BINARY_CMD_CHANNELMSG, NULL, buf, strlen(buf+2)+2, 0);
 
     for (cpl=pl_channel->channel->players;cpl;cpl=cpl->next_player)
         if (cpl->pl->channels_on)
@@ -907,7 +907,7 @@ void lua_channel_message(char *channelname,  const char *name, char *message, in
             addChannelHist(channel, name, message, mode);
 #endif
             sprintf(buf,"%c%c%s %s:%s",mode, channel->color, channel->name, name, message);
-            sockbuf = SOCKBUF_COMPOSE(BINARY_CMD_CHANNELMSG, NULL, buf, SOCKBUF_DYNAMIC, 0);
+            sockbuf = SOCKBUF_COMPOSE(BINARY_CMD_CHANNELMSG, NULL, buf, strlen(buf+2)+2, 0);
 
             for (cpl=channel->players;cpl;cpl=cpl->next_player)
                 if (cpl->pl->channels_on)
@@ -1281,7 +1281,7 @@ void sendVirtualChannelMsg(player *sender, char *channelname, player *target, ch
 
     sprintf(buf,"%c%c%s %s:%s",2,color, channelname, sender->ob->name, msg);
 
-    sockbuf = SOCKBUF_COMPOSE(BINARY_CMD_CHANNELMSG, NULL, buf, SOCKBUF_DYNAMIC, 0);
+    sockbuf = SOCKBUF_COMPOSE(BINARY_CMD_CHANNELMSG, NULL, buf, strlen(buf+2)+2, 0);
 
     SOCKBUF_ADD_TO_SOCKET(&(target->socket), sockbuf);
 
