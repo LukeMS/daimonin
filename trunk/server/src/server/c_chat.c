@@ -266,7 +266,7 @@ int command_gsay(object *op, char *params)
 	for(tmp=CONTR(op)->group_leader;tmp;tmp=CONTR(tmp)->group_next)
 	{
 #ifdef USE_CHANNELS
-            sendVirtualChannelMsg(CONTR(op), "Group",CONTR(tmp),params);
+            sendVirtualChannelMsg(CONTR(op), "Group",CONTR(tmp),params, NDI_YELLOW);
 #else
 			new_draw_info(NDI_GSAY | NDI_PLAYER | NDI_UNIQUE | NDI_YELLOW, 0, tmp, buf);
 #endif

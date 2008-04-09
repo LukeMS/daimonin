@@ -94,7 +94,7 @@ int command_channel(object *ob, char *params)
                    (channel->enter_lvl==-1 || ob->level<channel->enter_lvl))
                         continue;
                 if(pl_channel=findPlayerChannelFromName(CONTR(ob),CONTR(ob), channel->name, TRUE))
-                    new_draw_info_format(NDI_UNIQUE|pl_channel->color, 0, ob, "*(%d) [%c] %s", channel->pl_count, pl_channel->shortcut, channel->name);
+                    new_draw_info_format(NDI_UNIQUE|channel->color, 0, ob, "*(%d) [%c] %s", channel->pl_count, pl_channel->shortcut, channel->name);
                 else
                     new_draw_info_format(NDI_UNIQUE|channel->color, 0, ob, "   (%d) [%c] %s", channel->pl_count, channel->shortcut, channel->name);
             }
@@ -198,22 +198,23 @@ int command_channel(object *ob, char *params)
     {
         if (strlen(params)==0)
         {
-            new_draw_info_format(NDI_UNIQUE, 0, ob, "Colorsyntax: -<channelname>!color <1-210>");
+            /* we don't have server side colors anymore */
+//            new_draw_info_format(NDI_UNIQUE, 0, ob, "Colorsyntax: -<channelname>!color <1-210>");
             return 1;
         }
-        if (!strncasecmp(params,"color",strlen("color")))
-        {
-            int color;
-            if (sscanf(params,"color %d",&color)==EOF)
-                new_draw_info_format(NDI_UNIQUE, 0, ob, "Colorsyntax: -<channelname>!color <1-210>");
-            else
-            {
-                if ((color>210) || (color <1))
-                    new_draw_info_format(NDI_UNIQUE, 0, ob, "Colorsyntax: -<channelname>!color <1-210>");
-                else
-                    pl_channel->color=color-1;
-            }
-        }
+//        if (!strncasecmp(params,"color",strlen("color")))
+//        {
+//            int color;
+//            if (sscanf(params,"color %d",&color)==EOF)
+//                new_draw_info_format(NDI_UNIQUE, 0, ob, "Colorsyntax: -<channelname>!color <1-210>");
+//            else
+//            {
+//                if ((color>210) || (color <1))
+//                    new_draw_info_format(NDI_UNIQUE, 0, ob, "Colorsyntax: -<channelname>!color <1-210>");
+//                else
+//                    pl_channel->color=color-1;
+//            }
+//        }
         /* we simply map the !mute-command to the command_channel_mute*/
         else if(!strncasecmp(params,"mute",strlen("mute")))
         {
@@ -309,7 +310,7 @@ void addPlayerToChannel(player *pl, char *name, char *params)
 /*TODO: bans, ..... */
 
     /* ok we have a channel, no ban, no restrictions, lets add the player */
-    pl_channel=final_addChannelToPlayer(pl, channel, 0, -1);
+    pl_channel=final_addChannelToPlayer(pl, channel, 0);
 
     /* ok player is added to channel, give message to player */
     new_draw_info_format(NDI_UNIQUE, 0, pl->ob, "You enter channel %s.",channel->name);
@@ -424,10 +425,9 @@ struct channels *getChannelFromGlobalShortcut(player *pl, char *name)
  * @param pl PlayerStruct of Player
  * @param channel pointer to channel to add player to
  * @param shortcut shortcut, or 0 for default shortcut
- * @param color color for that channel, or -1 for default color
  * @return pointer to new player-channel-linklist
  */
-struct player_channel *final_addChannelToPlayer(player *pl, struct channels *channel, char shortcut, int color)
+struct player_channel *final_addChannelToPlayer(player *pl, struct channels *channel, char shortcut)
 {
     struct player_channel *node;
     struct player_channel *ptr=NULL, *ptr1=NULL;
@@ -444,10 +444,6 @@ struct player_channel *final_addChannelToPlayer(player *pl, struct channels *cha
         node->shortcut=shortcut;
     else
         node->shortcut=channel->shortcut; /* default shortcut */
-    if (color>-1)
-        node->color=color;
-    else
-        node->color=channel->color;
 
     /* We sort alphabetically */
 
@@ -654,8 +650,8 @@ void sendChannelMessage(player *pl,struct player_channel *pl_channel, char *para
 {
     struct player_channel *cpl;
 	NewSocket *ns = &pl->socket;
+    sockbuf_struct *sockbuf;
     char buf[512]; /* Player commands can only be around 250chars, so with this value, we are on the safe side */
-//    uint8 color;
 
     LOG(llevInfo, "CLOG CH:%s:%s >%s<\n", pl_channel->channel->name, pl->ob->name, params);
 
@@ -663,39 +659,15 @@ void sendChannelMessage(player *pl,struct player_channel *pl_channel, char *para
     addChannelHist(pl_channel->channel, pl->ob->name, params, 0);
 #endif
 
-	/* please test: We use here the new socket buffer write queue
-	 * to broadcast a instanced buffer to many players.
-	 */
-	SOCKBUF_REQUEST_BUFFER(ns, SOCKET_SIZE_MEDIUM);
-	/* NOTE: This *can* be optimized by writing direct to the buffer area and adjust
-	 * the sprintf() length by strlen() - we spare one memcpy()
-	 */
-	SockBuf_AddShort(ACTIVE_SOCKBUF(ns), (NDI_PLAYER | NDI_UNIQUE | NDI_ORANGE | NDI_SHOUT) & NDI_FLAG_MASK);
-	sprintf(buf,"%s %s:%s",pl_channel->channel->name, pl->ob->name, params);
-	SockBuf_AddString(ACTIVE_SOCKBUF(ns), buf, strlen(buf));
-	SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_CHANNELMSG, SOCKBUF_DYNAMIC);
-/*
-    sl.buf = slbuf;
-    SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_CHANNELMSG);
-    SockList_AddShort(&sl, (NDI_PLAYER | NDI_UNIQUE | NDI_ORANGE | NDI_SHOUT) & NDI_FLAG_MASK);
-    sprintf(buf,"%s %s:%s",pl_channel->channel->name, pl->ob->name, params);
-    strcpy((char *)sl.buf + sl.len, buf);
-    sl.len += strlen(buf);
-*/
+	sprintf(buf,"%c%c%s %s:%s",0,pl_channel->channel->color, pl_channel->channel->name, pl->ob->name, params);
+
+	sockbuf = SOCKBUF_COMPOSE(BINARY_CMD_CHANNELMSG, NULL, buf, SOCKBUF_DYNAMIC, 0);
 
     for (cpl=pl_channel->channel->players;cpl;cpl=cpl->next_player)
-    {
         if (cpl->pl->channels_on)
-        {
-			/* when we move the color setting out of the loop, we can broadcast the buffer */
-		/*
-            color=cpl->color;
-            sl.buf[1]=((NDI_PLAYER | NDI_UNIQUE |NDI_SHOUT)>>8)&0xff;
-            sl.buf[2]=color;
-            SendX_With_Handling(&(cpl->pl->socket), &sl)
-			*/
-        }
-    }
+            SOCKBUF_ADD_TO_SOCKET(ns, sockbuf);
+
+    SOCKBUF_COMPOSE_FREE(sockbuf);
     return;
 }
 /**
@@ -707,11 +679,9 @@ void sendChannelMessage(player *pl,struct player_channel *pl_channel, char *para
 void sendChannelEmote(player *pl,struct player_channel *pl_channel, char *params)
 {
     struct player_channel *cpl;
-//    char buf[512];
-//    uint8 color;
-
-//    SockList    sl;
-//    unsigned char slbuf[HUGE_BUF];
+	NewSocket *ns = &pl->socket;
+    sockbuf_struct *sockbuf;
+    char buf[512]; /* Player commands can only be around 250chars, so with this value, we are on the safe side */
 
     LOG(llevInfo, "CLOG CH:%s:%s >%s<\n", pl_channel->channel->name, pl->ob->name, params);
 
@@ -719,27 +689,15 @@ void sendChannelEmote(player *pl,struct player_channel *pl_channel, char *params
     addChannelHist(pl_channel->channel, pl->ob->name, params, 1);
 #endif
 
-	/*
-    sl.buf = slbuf;
-    SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_CHANNELMSG);
-    SockList_AddShort(&sl, (NDI_PLAYER | NDI_UNIQUE | NDI_ORANGE | NDI_SHOUT | NDI_EMOTE) & NDI_FLAG_MASK);
-    sprintf(buf,"%s %s:%s",pl_channel->channel->name, pl->ob->name, params);
-    strcpy((char *)sl.buf + sl.len, buf);
-    sl.len += strlen(buf);
-*/
-    for (cpl=pl_channel->channel->players;cpl;cpl=cpl->next_player)
-    {
-        if (cpl->pl->channels_on)
-        {
-/*
-            color=cpl->color;
-            sl.buf[1]=((NDI_PLAYER | NDI_UNIQUE | NDI_SHOUT | NDI_EMOTE)>>8)&0xff;
-            sl.buf[2]=color;
-            Send_With_HaXndling(&(cpl->pl->socket), &sl);
-*/
-        }
-    }
+	sprintf(buf,"%c%c%s %s:%s",1,pl_channel->channel->color, pl_channel->channel->name, pl->ob->name, params);
 
+	sockbuf = SOCKBUF_COMPOSE(BINARY_CMD_CHANNELMSG, NULL, buf, SOCKBUF_DYNAMIC, 0);
+
+    for (cpl=pl_channel->channel->players;cpl;cpl=cpl->next_player)
+        if (cpl->pl->channels_on)
+            SOCKBUF_ADD_TO_SOCKET(ns, sockbuf);
+
+    SOCKBUF_COMPOSE_FREE(sockbuf);
     return;
 }
 /**
@@ -750,9 +708,9 @@ void sendChannelEmote(player *pl,struct player_channel *pl_channel, char *params
 void addDefaultChannels(player *pl)
 {
 //    loginAddPlayerToChannel(pl,"Auction",0,-1,0);
-    loginAddPlayerToChannel(pl,"Quest",0,-1,0);
-    loginAddPlayerToChannel(pl,"General",0,-1,0);
-    loginAddPlayerToChannel(pl,"Help",0,-1,0);
+    loginAddPlayerToChannel(pl,"Quest",0,-1);
+    loginAddPlayerToChannel(pl,"General",0,-1);
+    loginAddPlayerToChannel(pl,"Help",0,-1);
     pl->channel_count=3;
     return;
 }
@@ -764,7 +722,7 @@ void addDefaultChannels(player *pl)
  * @param shortcut shortcut, or 0 for default shortcut
  * @param color color for that channel, or -1 for default color
  */
-void loginAddPlayerToChannel(player *pl, char *channelname, char shortcut, int color, unsigned long mute)
+void loginAddPlayerToChannel(player *pl, char *channelname, char shortcut, unsigned long mute)
 {
     /* first lets check if the channel still exists
      * channelname must be an exact match, not that player logs out, with channel
@@ -778,7 +736,7 @@ void loginAddPlayerToChannel(player *pl, char *channelname, char shortcut, int c
      {
          if (!strcasecmp(channel->name,channelname))
          {
-            cpl=final_addChannelToPlayer(pl, channel, shortcut, color);
+            cpl=final_addChannelToPlayer(pl, channel, shortcut);
             if (mute>0)
                 cpl->mute_counter=pticks+mute;
          }
@@ -939,50 +897,23 @@ void lua_channel_message(char *channelname,  const char *name, char *message, in
         {
 
             struct player_channel *cpl=NULL;
-			/*
+            sockbuf_struct *sockbuf;
             char buf[HUGE_BUF];
-            uint8 color;
-            SockList    sl;
-            unsigned char slbuf[HUGE_BUF];
-*/
+
             LOG(llevInfo, "CLOG LUA-CH:%s:%s >%s<\n", channel->name, name, message);
 
             /* TODO: channel history */
 #ifdef CHANNEL_HIST
             addChannelHist(channel, name, message, mode);
 #endif
+            sprintf(buf,"%c%c%s %s:%s",mode, channel->color, channel->name, name, message);
+            sockbuf = SOCKBUF_COMPOSE(BINARY_CMD_CHANNELMSG, NULL, buf, SOCKBUF_DYNAMIC, 0);
 
-/*
-            sl.buf = slbuf;
-            SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_CHANNELMSG);
-            if (mode==1)
-            {
-                SockList_AddShort(&sl, (NDI_PLAYER | NDI_UNIQUE | NDI_ORANGE | NDI_SHOUT | NDI_EMOTE) & NDI_FLAG_MASK);
-            }
-            else
-                SockList_AddShort(&sl, (NDI_PLAYER | NDI_UNIQUE | NDI_ORANGE | NDI_SHOUT) & NDI_FLAG_MASK);
-
-            sprintf(buf,"%s %s:%s",channel->name, name, message);
-            strcpy((char *)sl.buf + sl.len, buf);
-            sl.len += strlen(buf);
-
-*/
             for (cpl=channel->players;cpl;cpl=cpl->next_player)
-            {
                 if (cpl->pl->channels_on)
-                {
-/*
-                    color=cpl->color;
-                    if (mode==0)
-                        sl.buf[1]=((NDI_PLAYER | NDI_UNIQUE |NDI_SHOUT)>>8)&0xff;
-                    else
-                        sl.buf[1]=((NDI_PLAYER | NDI_UNIQUE |NDI_SHOUT | NDI_EMOTE )>>8)&0xff;
+                    SOCKBUF_ADD_TO_SOCKET(&(cpl->pl->socket), sockbuf);
 
-                    sl.buf[2]=color;
-                    Send_With_HanXdling(&(cpl->pl->socket), &sl);
-*/
-                }
-            }
+            SOCKBUF_COMPOSE_FREE(sockbuf);
             return;
         }
     }
@@ -1096,7 +1027,7 @@ void forceAddPlayerToChannel(struct player_channel *cpl, char *params)
         new_draw_info_format(NDI_UNIQUE, 0, cpl->pl->ob, "Player %s not found.",params);
         return;
     }
-    final_addChannelToPlayer(pl, cpl->channel, 0, -1);
+    final_addChannelToPlayer(pl, cpl->channel, 0);
     new_draw_info_format(NDI_UNIQUE, 0, cpl->pl->ob, "You added player %s to channel %s.",pl->ob->name, cpl->channel->name);
     new_draw_info_format(NDI_UNIQUE, 0, pl->ob, "You were added to channel %s by %s.",cpl->channel->name, cpl->pl->ob->name);
     LOG(llevInfo, "CLOG Pl >%s< added pl %s to channel %s\n", cpl->pl->ob->name, pl->ob->name, cpl->channel->name);
@@ -1343,23 +1274,18 @@ void modify_channel_params(struct player_channel *cpl, char *params)
 
 }
 
-void sendVirtualChannelMsg(player *sender, char *channelname, player *target, char* msg)
+void sendVirtualChannelMsg(player *sender, char *channelname, player *target, char* msg, int color)
 {
-	/*
+    sockbuf_struct *sockbuf;
     char buf[512];
 
-    SockList    sl;
-    unsigned char slbuf[HUGE_BUF];
+    sprintf(buf,"%c%c%s %s:%s",2,color, channelname, sender->ob->name, msg);
 
-    sl.buf = slbuf;
-    SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_CHANNELMSG);
-    SockList_AddShort(&sl, (NDI_PLAYER | NDI_UNIQUE | NDI_YELLOW | NDI_SHOUT ) & NDI_FLAG_MASK);
-    sprintf(buf,"%s %s:%s",channelname, sender->ob->name, msg);
-    strcpy((char *)sl.buf + sl.len, buf);
-    sl.len += strlen(buf);
+    sockbuf = SOCKBUF_COMPOSE(BINARY_CMD_CHANNELMSG, NULL, buf, SOCKBUF_DYNAMIC, 0);
 
-    Send_With_HaXndling(&(target->socket), &sl);
-*/
+    SOCKBUF_ADD_TO_SOCKET(&(target->socket), sockbuf);
+
+    SOCKBUF_COMPOSE_FREE(sockbuf);
     return;
 }
 
@@ -1367,10 +1293,8 @@ void sendVirtualChannelMsg(player *sender, char *channelname, player *target, ch
 void sendChannelHist(struct player_channel *cpl, int lines)
 {
     int i, line;
-/*
-    SockList    sl;
-    unsigned char slbuf[HUGE_BUF];
-*/
+    char    buf[HUGE_BUF];
+
     i=1;
     if (lines>cpl->channel->lines)
         lines=cpl->channel->lines;
@@ -1379,25 +1303,14 @@ void sendChannelHist(struct player_channel *cpl, int lines)
 
     if (line>=MAX_CHANNEL_HIST_LINES)
         line=line-MAX_CHANNEL_HIST_LINES;
-/*
+
     while(i<=lines)
     {
-        sl.buf = slbuf;
-        SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_CHANNELMSG);
-        if (cpl->channel->history[line][0]=='1')
-        {
-            SockList_AddShort(&sl, (NDI_PLAYER | NDI_UNIQUE | NDI_ORANGE | NDI_SHOUT | NDI_EMOTE) & NDI_FLAG_MASK);
-        }
-        else
-        {
-            SockList_AddShort(&sl, (NDI_PLAYER | NDI_UNIQUE | NDI_ORANGE | NDI_SHOUT ) & NDI_FLAG_MASK);
-        }
-
-        sl.buf[2]=(uint8)cpl->color;
-        strcpy((char *)sl.buf + sl.len, cpl->channel->history[line]+1);
-        sl.len += strlen(cpl->channel->history[line]+1);
-
-        Send_With_HaXndling(&(cpl->pl->socket), &sl);
+        SOCKBUF_REQUEST_BUFFER(&(cpl->pl->socket), SOCKET_SIZE_SMALL);
+        SockBuf_AddChar(ACTIVE_SOCKBUF(&(cpl->pl->socket)),cpl->channel->history[line][0]);
+        SockBuf_AddChar(ACTIVE_SOCKBUF(&(cpl->pl->socket)),(uint8) cpl->channel->color);
+        SockBuf_AddString(ACTIVE_SOCKBUF(&(cpl->pl->socket)), cpl->channel->history[line]+1, strlen(cpl->channel->history[line]+1));
+        SOCKBUF_REQUEST_FINISH(&(cpl->pl->socket), BINARY_CMD_CHANNELMSG, SOCKBUF_DYNAMIC);
 
         line++;
         if (line==MAX_CHANNEL_HIST_LINES)
@@ -1406,7 +1319,7 @@ void sendChannelHist(struct player_channel *cpl, int lines)
 
     }
     LOG(llevInfo, "CLOG Pl >%s< called chan-hist from %s and got %d msg\n", cpl->pl->ob->name, cpl->channel->name, (i-1));
-*/
+
     return;
 }
 

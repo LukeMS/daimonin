@@ -45,7 +45,6 @@ typedef struct player_channel
     struct  channels        *channel;       /* pointer to channel player is listening */
             player          *pl;            /* pointer back to player struct */
 	        char            shortcut;       /* user defined shortcut, overrules global channel shortcut */
-	        int             color;          /* user defined color... */
             unsigned long   mute_freq;
             unsigned long   mute_counter;
             unsigned long   mute_msg_count;
@@ -82,9 +81,9 @@ struct channels         *getChannelFromGlobalShortcut(player *pl, char *name);
 struct player_channel   *getPlChannelFromPlayerShortcut(player *pl, char *name);
 struct player_channel   *findPlayerChannelFromName(player *pl, player *wiz, char *name, int mute);
 
-struct player_channel   *final_addChannelToPlayer(player *pl, struct channels *channel, char shortcut, int color);
+struct player_channel   *final_addChannelToPlayer(player *pl, struct channels *channel, char shortcut);
 void                    addPlayerToChannel(player *pl, char *name, char *params);
-void                    loginAddPlayerToChannel(player *pl, char *channelname, char shortcut, int color, unsigned long mute);
+void                    loginAddPlayerToChannel(player *pl, char *channelname, char shortcut, unsigned long mute);
 
 struct channels    *final_addChannel(char *name, char shortcut, int color, sint8 post_lvl, sint8 enter_lvl);
 void    addDefaultChannels(player *pl);
@@ -123,7 +122,7 @@ void    kickPlayerFromChannel(struct player_channel *cpl, char *params);
 void    lua_channel_message(char *channelname, const char *name, char *message, int mode);
 
 
-void sendVirtualChannelMsg(player *sender, char *channelname, player *target, char* msg);
+void sendVirtualChannelMsg(player *sender, char *channelname, player *target, char* msg, int color);
 
 #endif
 #endif
