@@ -226,6 +226,10 @@ int command_gsay(object *op, char *params)
     objectlink *ol;
     object *tmp;
 
+#ifdef USE_CHANNELS
+    sockbuf_struct *sockbuf;
+#endif
+
     if(!check_mute(op, MUTE_MODE_SAY))
         return 0;
 
@@ -263,14 +267,22 @@ int command_gsay(object *op, char *params)
             new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf);
     }
 
+#ifdef USE_CHANNELS
+    sprintf(buf,"%c%c%s %s:%s",2,NDI_YELLOW, "Group", op->name, params);
+    sockbuf = SOCKBUF_COMPOSE(BINARY_CMD_CHANNELMSG, NULL, buf, strlen(buf+2)+2, 0);
+#endif
 	for(tmp=CONTR(op)->group_leader;tmp;tmp=CONTR(tmp)->group_next)
 	{
 #ifdef USE_CHANNELS
-            sendVirtualChannelMsg(CONTR(op), "Group",CONTR(tmp),params, NDI_YELLOW);
+        SOCKBUF_ADD_TO_SOCKET(&CONTR(tmp)->socket, sockbuf);
+        SOCKBUF_COMPOSE_FREE(sockbuf);
 #else
-			new_draw_info(NDI_GSAY | NDI_PLAYER | NDI_UNIQUE | NDI_YELLOW, 0, tmp, buf);
+        new_draw_info(NDI_GSAY | NDI_PLAYER | NDI_UNIQUE | NDI_YELLOW, 0, tmp, buf);
 #endif
 	}
+#ifdef USE_CHANNELS
+    SOCKBUF_COMPOSE_FREE(sockbuf);
+#endif
 
     return 1;
 }
