@@ -2250,15 +2250,16 @@ void DataCmd(unsigned char *data, int len)
 #ifdef USE_CHANNELS
 void ChannelMsgCmd(unsigned char *data, int len)
 {
-    uint16 flags;
+    uint8 mode;
+    uint8 color;
     char    channelname[32];
     char    playername[32];
     char    *message=NULL;
     char    prefix[64];
     char    outstring[1024];
 
-    flags=data[0]<<8;
-    flags|=data[1];
+    mode=data[0];
+    color=data[1];
     data+=2;
 
     if (strlen((char *)data)==0)
@@ -2276,7 +2277,7 @@ void ChannelMsgCmd(unsigned char *data, int len)
     sscanf((char *)data,"%s %s",channelname, playername);
     if (ignore_check(playername, channelname)) return;
 //    draw_info_format(COLOR_WHITE,"chmsg: c: %s, p: %s, m: %s",channelname, playername, message);
-    if (flags & NDI_EMOTE)
+    if (mode==1)
     {
         char message2[1024];
         sprintf(prefix,"[%s:%s ",channelname, playername);
@@ -2289,7 +2290,7 @@ void ChannelMsgCmd(unsigned char *data, int len)
         break_string(message, prefix, FALSE, outstring);
     }
 
-    draw_info(outstring,flags);
+    draw_info(outstring,color);
 
 }
 /**
