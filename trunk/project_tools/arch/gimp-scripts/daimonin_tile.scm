@@ -1,8 +1,8 @@
-(define (script-fu-daimonin-tile-frame pattern size endFrame onlyLastFrame start end inBorderWidth borderColour saveGIMP keepImagesOpen)
+(define (script-fu-daimonin-tile-frame pattern size inDirections endFrame onlyLastFrame start end inBorderWidth borderColour saveGIMP keepImagesOpen)
 
 
 	; Define a local procedure that handles a single frame
-	(define (script-fu-daimonin-tile-frame-local pattern size frame start end inBorderWidth borderColour saveGIMP keepImagesOpen)
+	(define (script-fu-daimonin-tile-frame-local pattern size inDirections frame start end inBorderWidth borderColour saveGIMP keepImagesOpen)
 		; Local function to update a 4 point array
 		(define (update-segment! s x0 y0 x1 y1)
 			(aset s 0 x0)
@@ -33,10 +33,16 @@
 				(numFiles 0)
 				(fileName)
 				(tileLayer)
+
+				(numDirections)
+				(colOffset)
+				(fileSuffix)
 	
 				(curTileColumn)
 				(curTileRow)
 				(curAction)
+
+                        (numDirections)
 
 				; Convert inBorderWidth to actual border width
 				(borderWidth (+ (* 2 inBorderWidth) 1))
@@ -51,10 +57,36 @@
 			(set! tileHeight (* baseHeight size))
 
 
+			; Check inDirections and set parameters
+			(cond
+				((= inDirections 0)
+						; Convert inDirections from zero based 'choice' (0, 1, 2) to actual number of directions: 1-8, 1-4, 5-8
+						(set! numDirections 8)
+
+						; Work out the tile column offset - used to put image 5 in column 1 when only doing directions 5-8
+						(set! colOffset 0)
+
+						(set! fileSuffix "")
+				)
+
+				((= inDirections 1)
+						(set! numDirections 4)
+						(set! colOffset 0)
+						(set! fileSuffix "a")
+				)
+
+				(else
+						(set! numDirections 4)
+						(set! colOffset 4)
+						(set! fileSuffix "b")
+				)
+			)
+
+
 			; Calculate overall image size
-			; 8 colums (for 8 directions) + borders
+			; 8 (or 4) colums (for 8 (or 4) directions) + borders
 			; rows depend on start and end actions (would normally be 1, 3, but could be 4 for resting images)
-			(set! imgWidth (+ (* tileWidth 8) (* borderWidth 9)))
+			(set! imgWidth (+ (* tileWidth numDirections) (* borderWidth (+ numDirections 1))))
 			(set! imgHeight (+ (* tileHeight (+ end (- start) 1)) (* borderWidth (+ end (- start) 2))))
 
 
@@ -105,11 +137,11 @@
 
 				(set! curTileColumn 1)
 
-				(while (<= curTileColumn 8)
+				(while (<= curTileColumn numDirections)
 
 
 					; Build the file name
-					(set! fileName (string-append pattern "." (number->string curAction) (number->string curTileColumn) (number->string frame) ".png"))
+					(set! fileName (string-append pattern "." (number->string curAction) (number->string (+ curTileColumn colOffset)) (number->string frame) ".png"))
 
 
 					; Check to see if the appropriate file exists
@@ -143,7 +175,8 @@
 
 
 			; Create a file name for the new image
-			(set! fileName (string-append pattern "." (number->string frame)))
+;			(set! fileName (string-append pattern "." (number->string frame) (number->string inDirections)))
+			(set! fileName (string-append pattern "." (number->string frame) fileSuffix))
 
 
 			(if (= saveGIMP TRUE)
@@ -242,7 +275,7 @@
 
 				(while (<= curFrame endFrame)
 
-					(set! frameFileName (script-fu-daimonin-tile-frame-local pattern size curFrame start end inBorderWidth borderColour saveGIMP keepImagesOpen))
+					(set! frameFileName (script-fu-daimonin-tile-frame-local pattern size inDirections curFrame start end inBorderWidth borderColour saveGIMP keepImagesOpen))
 
 					(if (and (= saveGIMP FALSE) (> endFrame firstFrame))
 						(begin
@@ -299,7 +332,8 @@
    ""                  ;image type that the script works on 
    SF-STRING   "File base name (+ path) to tile"    ""
    SF-VALUE    "Tile size factor" "1"
-   SF-VALUE    "Last animation frame number" "3"
+   SF-OPTION   "Directions" '("1 - 8" "1 - 4" "5 - 8")
+   SF-VALUE    "Last animation frame number" "1"
    SF-TOGGLE   "Tile only last frame" FALSE
    SF-OPTION   "Start Action" '("0 - Resting" "1 - Standing" "2 - Running" "3 - Attacking")
    SF-OPTION   "End Action"   '("0 - Resting" "1 - Standing" "2 - Running" "3 - Attacking")
@@ -308,7 +342,4 @@
    SF-TOGGLE   "Save XCF GIMP format file only (no png file, no animated gif created)"  FALSE
    SF-TOGGLE   "Keep images open" FALSE
 ) 
-(script-fu-menu-register "script-fu-daimonin-tile-frame" "<Toolbox>/Xtns/Daimonin") 
-
-
-			
+(script-fu-menu-register "script-fu-daimonin-tile-frame" "<Toolbox>/Xtns/Daimonin")
