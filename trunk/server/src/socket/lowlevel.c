@@ -23,6 +23,11 @@
 
 #include <global.h>
 
+#ifndef WIN32 /* ---win32 exclude unix headers */
+#include <sys/socket.h>
+#endif /* end win32 */
+
+
 /* low level read from socket. This function don't knows about packages.
 * It handles streams.
 */
