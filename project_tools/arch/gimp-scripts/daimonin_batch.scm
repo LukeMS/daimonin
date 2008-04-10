@@ -1,5 +1,5 @@
 
-(define (script-fu-daimonin-batch pattern doAlpha cutColour doUnsharp inRadius inAmount inThreshold doIndexed doCrop)
+(define (script-fu-daimonin-batch pattern doAlpha cutColour doUnsharp inRadius inAmount inThreshold doShadow doIndexed doCrop)
 
 	(let*
 		(
@@ -47,6 +47,14 @@
 						(if (= isIndexed FALSE)
 							(plug-in-unsharp-mask RUN-NONINTERACTIVE image drawable inRadius inAmount inThreshold)
 						)
+					)
+				)
+
+
+				(if (= doShadow TRUE)
+					(begin
+						(script-fu-perspective-shadow image drawable 45 3 0.3 3 '(0 0 0) 33 1 TRUE)
+						(set! drawable (car (gimp-image-merge-down image drawable 0)))
 					)
 				)
 
@@ -101,6 +109,7 @@
       SF-ADJUSTMENT "Radius"                    '(5 0.1 120 0.1 1 1 0)
       SF-ADJUSTMENT "Amount"                    '(0.5 0 10 0.01 0.1 2 0)
       SF-ADJUSTMENT "Threshold"                 '(0 0 255 1 10 0 0)
+        SF-TOGGLE       "Add Perspective Shadow"        FALSE
 	SF-TOGGLE	"Convert to Indexed"		FALSE
 	SF-TOGGLE	"Crop"				FALSE
 )
