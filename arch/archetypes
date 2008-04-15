@@ -249,54 +249,97 @@ Object ladder_down
 name ladder going down
 type 66
 editor_folder connect/exits
-face ladder_down.101
-no_teleport 1
-hp -1
-sp -1
 layer 5
+face ladder_down.151
 no_pick 1
-end
-Object ladder_down2
-name ladder going down
-type 66
-editor_folder connect/exits
-face ladder_down_01.101
-animation ladder_down2
+no_teleport 1
+animation ladder_down
 is_animated 0
 anim_speed 0
 is_turnable 1
-direction 1
-no_teleport 1
+direction 5
 hp -1
 sp -1
-layer 5
-no_pick 1
-end
-Object ladder_down3
-name ladder going down
-type 66
-editor_folder connect/exits
-face ladder_round_down_01.101
-animation ladder_down3
-is_animated 0
-anim_speed 0
-is_turnable 1
-direction 1
-no_teleport 1
-hp -1
-sp -1
-layer 5
-no_pick 1
 end
 Object ladder_up
 name ladder going up
 type 66
 editor_folder connect/exits
-layer 4
+layer 5
+face ladder_up.151
+no_pick 1
+no_teleport 1
+animation ladder_up
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 5
 hp -1
 sp -1
-face ladder_up.101
+end
+Object ladder_down2
+name ladder going down
+type 66
+editor_folder connect/exits
+layer 5
+face ladder_square_down.111
 no_pick 1
+no_teleport 1
+animation ladder_down2
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+hp -1
+sp -1
+end
+Object ladder_down3
+name ladder going down
+type 66
+editor_folder connect/exits
+layer 5
+face ladder_round_down.111
+no_pick 1
+no_teleport 1
+animation ladder_down3
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+hp -1
+sp -1
+end
+Object ladder_down_vege
+name ladder going down
+type 66
+editor_folder connect/exits
+layer 5
+face ladder_down_vege.151
+no_pick 1
+no_teleport 1
+animation ladder_down_vege
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 5
+hp -1
+sp -1
+end
+Object ladder_up_vege
+name ladder going up
+type 66
+editor_folder connect/exits
+layer 5
+face ladder_up_vege.151
+no_pick 1
+no_teleport 1
+animation ladder_up_vege
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 5
+hp -1
+sp -1
 end
 Object portal_big
 name big portal
@@ -6102,6 +6145,46 @@ terrain_type 1
 no_teleport 1
 no_pick 1
 end
+Object floor_sand_l1
+name floor
+type 71
+editor_folder floors/sand
+face floor_sand_l1.101
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+end
+Object floor_sand_l2
+name floor
+type 71
+editor_folder floors/sand
+face floor_sand_l2.101
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+end
+Object floor_sand_l3
+name floor
+type 71
+editor_folder floors/sand
+face floor_sand_l3.101
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+end
+Object floor_sand_l4
+name floor
+type 71
+editor_folder floors/sand
+face floor_sand_l4.101
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+end
 Object sand_dm1
 name sand
 type 28
@@ -6319,6 +6402,16 @@ face shop_empty.111
 layer 1
 no_teleport 1
 terrain_type 1
+no_pick 1
+end
+Object blue_sky_plain
+name blue sky
+type 71
+editor_folder floors/sky
+face blue_sky_plain.101
+no_teleport 1
+layer 1
+terrain_type 32
 no_pick 1
 end
 Object snow.101
@@ -13369,7 +13462,7 @@ Object half_elf_male
 type 1
 editor_folder intern
 race half-elf
-face human_male.151
+face half_elf_male.151
 randomitems player_half_elf_male
 layer 6
 can_open_door 1
@@ -13458,7 +13551,7 @@ speed 0.95
 terrain_flag 1
 animation human_male
 is_animated 1
-anim_speed 3
+anim_speed 2
 level 1
 ac 1
 wc 1
@@ -19540,7 +19633,7 @@ Object jack
 name jack'o'lantern
 type 74
 editor_folder items/light
-race lamp_light
+race lamp_oil
 face jackolantern_01.101
 other_arch jack_unlit
 direction 3
@@ -19563,7 +19656,7 @@ Object lamp
 name lamp
 type 74
 editor_folder items/light
-race lamp_light
+race lamp_oil
 layer 3
 face lamp_unlit.101
 animation lamp
@@ -37492,6 +37585,51 @@ face snowman_sm.101
 no_pick 1
 layer 4
 end
+Object cloud1
+name cloud
+type 79
+editor_folder outdoor/natural
+face cloud_a.101
+no_teleport 1
+layer 5
+no_pick 1
+end
+Object cloud2
+name cloud
+type 79
+editor_folder outdoor/natural
+face cloud_b.101
+no_teleport 1
+layer 5
+no_pick 1
+end
+Object cloud3
+name cloud
+type 79
+editor_folder outdoor/natural
+face cloud_c.101
+no_teleport 1
+layer 5
+no_pick 1
+end
+Object cloud4
+name cloud
+type 79
+editor_folder outdoor/natural
+face cloud_d.101
+no_teleport 1
+layer 5
+no_pick 1
+end
+Object cloud5
+name cloud
+type 79
+editor_folder outdoor/natural
+face cloud_e.101
+no_teleport 1
+layer 5
+no_pick 1
+end
 Object obstacle_volcano_1
 name volcano obstacle
 type 79
@@ -37796,6 +37934,15 @@ type 79
 editor_folder outdoor/natural
 layer 4
 face mushroom_giant3.101
+no_pick 1
+end
+Object mushroom_medium1
+name mushroom
+type 79
+editor_folder outdoor/natural
+layer 4
+face mushroom_medium1.101
+animation mushroom_medium1
 no_pick 1
 end
 Object plant_mushroom1
@@ -39575,6 +39722,58 @@ material 64
 no_pass 0
 no_pick 1
 end
+Object blue_sky_wmask_a
+name blue sky
+type 77
+editor_folder outdoor/natural
+layer 7
+face blue_sky_wmask_a.151
+no_pick 1
+animation blue_sky_wmask_a
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 5
+end
+Object blue_sky_wmask_b
+name blue sky
+type 77
+editor_folder outdoor/natural
+layer 7
+face blue_sky_wmask_b.151
+no_pick 1
+animation blue_sky_wmask_b
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 5
+end
+Object blue_sky_wmask_c
+name blue sky
+type 77
+editor_folder outdoor/natural
+layer 7
+face blue_sky_wmask_c.151
+no_pick 1
+animation blue_sky_wmask_c
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 5
+end
+Object blue_sky_wmask_d
+name blue sky
+type 77
+editor_folder outdoor/natural
+layer 7
+face blue_sky_wmask_d.151
+no_pick 1
+animation blue_sky_wmask_d
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 5
+end
 Object au_tree1
 name tree
 type 79
@@ -40664,11 +40863,14 @@ end
 Object magic_mouth
 type 98
 editor_folder special/communicate
-face magicmouth.111
+face magicmouth.101
 walk_on 1
 fly_on 1
 no_teleport 1
 no_pick 1
+animation magic_mouth
+is_animated 0
+is_turnable 1
 sys_object 1
 end
 Object creator
@@ -41720,7 +41922,6 @@ You are stabbed by spikes!
 endmsg
 editor_folder traps/traps
 face spiked_pit.101
-layer 4
 hp 1
 animation trap_spike_pit
 level 1
@@ -42885,6 +43086,137 @@ name stone wall
 type 77
 editor_folder walls/flagstone
 face wall_flagstone1b_w.131
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_flagstone1_c.111
+name stone wall
+type 77
+editor_folder walls/flagstone
+face wall_flagstone1_c.111
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_flagstone1_c.131
+name stone wall
+type 77
+editor_folder walls/flagstone
+face wall_flagstone1_c.131
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_flagstone1_c.141
+name stone wall
+type 77
+editor_folder walls/flagstone
+face wall_flagstone1_c.141
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_flagstone1_c.181
+name stone wall
+type 77
+editor_folder walls/flagstone
+face wall_flagstone1_c.181
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_flagstone1_c2.131
+name stone wall
+type 77
+editor_folder walls/flagstone
+face wall_flagstone1_c2.131
+layer 5
+no_pick 1
+no_pass 1
+blocksview 1
+end
+Object wall_flagstone1_c2.141
+name stone wall
+type 77
+editor_folder walls/flagstone
+face wall_flagstone1_c2.141
+layer 5
+no_pick 1
+no_pass 1
+blocksview 1
+end
+Object wall_flagstone1_c2.151
+name stone wall
+type 77
+editor_folder walls/flagstone
+face wall_flagstone1_c2.151
+layer 5
+no_pick 1
+no_pass 1
+blocksview 1
+end
+Object wall_flagstone1_c2.181
+name stone wall
+type 77
+editor_folder walls/flagstone
+face wall_flagstone1_c2.181
+layer 5
+no_pick 1
+no_pass 1
+blocksview 1
+end
+Object wall_fstone_d.100
+name stone wall
+type 77
+editor_folder walls/flagstone
+face wall_fstone_d.100
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_flagstone1_d.121
+name stone wall
+type 77
+editor_folder walls/flagstone
+face wall_flagstone1_d.121
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_flagstone1_d.131
+name stone wall
+type 77
+editor_folder walls/flagstone
+face wall_flagstone1_d.131
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_flagstone1_d.141
+name stone wall
+type 77
+editor_folder walls/flagstone
+face wall_flagstone1_d.141
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_flagstone1_d.151
+name stone wall
+type 77
+editor_folder walls/flagstone
+face wall_flagstone1_d.151
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_flagstone1_d.161
+name stone wall
+type 77
+editor_folder walls/flagstone
+face wall_flagstone1_d.161
 layer 5
 no_pick 1
 no_pass 1
