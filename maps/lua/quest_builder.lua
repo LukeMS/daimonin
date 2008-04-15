@@ -190,7 +190,8 @@ end
 -------------------
 function QuestBuilder:AddItemList(_nr, _ib)
     assert(type(_nr) == "number", "Arg #1 must be number!")
-    assert(type(_ib) == "table" or _ib == nil,  "Arg #2 must be InterfaceBuilder or nil!")
+--    assert(type(_ib) == "table" or _ib == nil,  "Arg #2 must be InterfaceBuilder or nil!")
+    assert(type(_ib) == "table",  "Arg #2 must be InterfaceBuilder!")
     assert(_nr > 0 and _nr <= table.getn(self), "Not enough entries in qb table!")
 
     return self[_nr].qm:AddItemList(_ib)
