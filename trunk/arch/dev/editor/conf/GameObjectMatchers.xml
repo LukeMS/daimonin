@@ -4,6 +4,8 @@
     <GameObjectMatcher id="background">
         <title xml:lang="en">Background</title>
         <title xml:lang="de">Hintergrund</title>
+        <title xml:lang="fr">Fond</title>
+        <title xml:lang="sv">Bakgrund</title>
         <And>
             <Attrib name="is_floor" />
             <Attrib name="no_pick" />
@@ -12,6 +14,8 @@
     <GameObjectMatcher id="monster">
         <title xml:lang="en">Monster</title>
         <title xml:lang="de">Monster</title>
+        <title xml:lang="fr">Monstres</title>
+        <title xml:lang="sv">Monster</title>
         <Or>
             <TypeNrs numbers="80 81 83" />
             <Attrib name="monster" />
@@ -21,6 +25,8 @@
     <GameObjectMatcher id="wall">
         <title xml:lang="en">Wall</title>
         <title xml:lang="de">Wand</title>
+        <title xml:lang="fr">Murs</title>
+        <title xml:lang="sv">Väggar</title>
         <And>
             <TypeNrs numbers="77 79" />
             <Attrib name="no_pass" />
@@ -29,16 +35,22 @@
     <GameObjectMatcher id="connected">
         <title xml:lang="en">Connected</title>
         <title xml:lang="de">Verbunden</title>
+        <title xml:lang="fr">Objets connectés</title>
+        <title xml:lang="sv">Anslutna</title>
         <Attrib name="connected" op="ne" value="" />
     </GameObjectMatcher>
     <GameObjectMatcher id="exit">
         <title xml:lang="en">Exit</title>
         <title xml:lang="de">Ausgang</title>
+        <title xml:lang="fr">Sorties</title>
+        <title xml:lang="sv">Utgångar</title>
         <TypeNrs numbers="41 66 69 94 95" />
     </GameObjectMatcher>
     <GameObjectMatcher id="treasure">
         <title xml:lang="en">Treasure</title>
         <title xml:lang="de">Schatz</title>
+        <title xml:lang="fr">Trésors</title>
+        <title xml:lang="sv">Skatter</title>
         <And>
             <TypeNrs numbers="4 5 36 60 85 111 123 124 130" />
             <Attrib name="no_pick" value="" />
@@ -47,11 +59,15 @@
     <GameObjectMatcher id="door">
         <title xml:lang="en">Doors and Keys</title>
         <title xml:lang="de">Türen und Schlüssel</title>
+        <title xml:lang="fr">Portes et Clés</title>
+        <title xml:lang="sv">Dörrar och Nycklar</title>
         <TypeNrs numbers="20 21 23 24 26 91" />
     </GameObjectMatcher>
     <GameObjectMatcher id="equipment">
         <title xml:lang="en">Equipment</title>
         <title xml:lang="de">Ausrüstung</title>
+        <title xml:lang="fr">Équipement</title>
+        <title xml:lang="sv">Utrustning</title>
         <And>
             <TypeNrs numbers="3 13 14 15 16 33 34 35 39 70 87 99 100 104 109 113 122" />
             <Attrib name="no_pick" value="" />
