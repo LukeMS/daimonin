@@ -46,6 +46,30 @@ is_turnable 1
 direction 5
 end
 
+Object message_board3
+name message board
+face message_board3.151
+type 98
+layer 4
+no_pick 1
+anim
+facings 9
+dummy.111
+message_board3.151
+message_board3.131
+message_board3.131
+message_board3.151
+message_board3.151
+message_board3.131
+message_board3.131
+message_board3.151
+mina
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 5
+end
+
 Object message_board4
 name message board
 face message_board4.151
@@ -56,12 +80,12 @@ anim
 facings 9
 dummy.111
 message_board4.151
+message_board4.131
+message_board4.131
 message_board4.151
 message_board4.151
-message_board4.151
-message_board4.151
-message_board4.151
-message_board4.151
+message_board4.131
+message_board4.131
 message_board4.151
 mina
 is_animated 0
