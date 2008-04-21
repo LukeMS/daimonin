@@ -1617,6 +1617,27 @@ brnbat.172
 brnbat.181
 brnbat.182
 mina
+anim broken_altar
+facings 9
+dummy.111
+dummy.111
+broken_altar.111
+broken_altar.111
+broken_altar.111
+broken_altar.111
+broken_altar.131
+broken_altar.131
+broken_altar.131
+broken_altar.131
+broken_altar.111
+broken_altar.111
+broken_altar.111
+broken_altar.111
+broken_altar.131
+broken_altar.131
+broken_altar.131
+broken_altar.131
+mina
 anim broom.111
 facings 9
 dummy.111
@@ -11870,6 +11891,54 @@ menorah_wagon.101
 menorah_wagon.102
 menorah_wagon.103
 menorah_wagon.104
+mina
+anim message_board1
+facings 9
+dummy.111
+message_board1.151
+message_board1.131
+message_board1.131
+message_board1.151
+message_board1.151
+message_board1.131
+message_board1.131
+message_board1.151
+mina
+anim message_board2
+facings 9
+dummy.111
+message_board2.111
+message_board2.121
+message_board2.131
+message_board2.141
+message_board2.151
+message_board2.161
+message_board2.171
+message_board2.181
+mina
+anim message_board3
+facings 9
+dummy.111
+message_board3.151
+message_board3.131
+message_board3.131
+message_board3.151
+message_board3.151
+message_board3.131
+message_board3.131
+message_board3.151
+mina
+anim message_board4
+facings 9
+dummy.111
+message_board4.151
+message_board4.131
+message_board4.131
+message_board4.151
+message_board4.151
+message_board4.131
+message_board4.131
+message_board4.151
 mina
 anim minotaur
 facings 25
