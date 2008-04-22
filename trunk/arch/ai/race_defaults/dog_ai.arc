@@ -19,6 +19,7 @@ avoid_repulsive_items
 search_for_lost_enemy
 move_towards_waypoint
 investigate_attraction
+move_randomly xlimit=5 ylimit=5
 move_towards_home
 
 actions:
