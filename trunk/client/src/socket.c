@@ -241,7 +241,7 @@ static int reader_thread_loop(void *nix)
 				free(tmp);
 			}
 
-			LOG(-1,"CMD_LEN: toread:%d len:%d (%x)\n", toread, cmd_len, (*((char *)readbuf))&~0x80);
+//			LOG(-1,"CMD_LEN: toread:%d len:%d (%x)\n", toread, cmd_len, (*((char *)readbuf))&~0x80);
 
         }
 		if(toread)
@@ -276,7 +276,7 @@ static int reader_thread_loop(void *nix)
             /*            LOG(LOG_DEBUG, "Reader got a full command\n", readbuf_len); */
             command_buffer *buf;
 
-			LOG(-1," CMD:%x\n", (*((char *)readbuf))&~0x80);
+//			LOG(-1," CMD:%x\n", (*((char *)readbuf))&~0x80);
 			buf = command_buffer_new(readbuf_len, readbuf);
             if (buf == NULL)
                 goto out;

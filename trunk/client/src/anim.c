@@ -445,12 +445,57 @@ void new_anim_remove_item(item *it)
  */
 void new_anim_animate(uint32 curTick)
 {
+#ifdef PROFILING
+    Uint32 ts = SDL_GetTicks();
+#endif
     Boolean got_map  = FALSE;
     Boolean got_item = FALSE;
-
+#ifdef ANIM_FRAMESKIP
+    uint32             lasttime;
+    Boolean new_face = FALSE;
+#endif
     anim_list *node = NULL;
 
 
+#ifdef ANIM_FRAMESKIP
+    for (node=AnimListStart;node;node=node->next)
+    {
+        if ((curTick-(node->last_frame_tick))<options.anim_frame_time)
+            continue;
+
+        lasttime = node->last_frame_tick;
+
+        while ((lasttime+=(options.anim_frame_time *
+                            animation[node->animnum].aSeq[node->sequence]->dirs[node->dir].delays[node->current_frame])
+                            / (node->speed/100.0f)) <= curTick)
+        {
+            new_face = TRUE;
+
+            if (++(node->current_frame) >= animation[node->animnum].aSeq[node->sequence]->dirs[node->dir].frames)
+                node->current_frame = 0;
+        }
+
+        if (new_face)
+        {
+            /* for exact animations we shift the last_time a bit */
+            node->last_frame_tick = curTick - (lasttime-curTick);
+
+            switch (node->objtype)
+            {
+                case ATYPE_TILE:
+                    ((struct MapCell *)node->obj)->faces[node->layer] =
+                        animation[node->animnum].aSeq[node->sequence]->dirs[node->dir].faces[node->current_frame];
+                    got_map = TRUE;
+                break;
+                case ATYPE_ITEM:
+                    ((item *)node->obj)->face =
+                        animation[node->animnum].aSeq[node->sequence]->dirs[node->dir].faces[node->current_frame];
+                    got_item = TRUE;
+                break;
+            }
+        }
+    }
+#else
     for (node=AnimListStart;node;node=node->next)
     {
         /* eat that if! :) */
@@ -482,10 +527,13 @@ void new_anim_animate(uint32 curTick)
             }
         }
     }
-
+#endif
     if (got_map)
         map_redraw_flag = TRUE;
 
+#ifdef PROFILING
+    LOG(LOG_MSG, "[Prof] new_anim_animate: %d\n",SDL_GetTicks() - ts);
+#endif
     return;
 }
 

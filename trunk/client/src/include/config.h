@@ -30,6 +30,25 @@
 
 #define USE_NEW_ANIM
 
+/* this define does 2 things:
+ * 1) if the framerate of the client is too slow, frames will be skipped if needed
+ * 2) animations should always look the same...
+ * hopefully i didn't do the calcs wrong
+ */
+#define ANIM_FRAMESKIP
+
+/* NEVER enable this on productions clients, and NEVER on mapmaker clients
+ * use it only for profiling, the log will grow quite big
+ */
+//#define PROFILING
+//#define PROFILING_WIDGETS
+
+/* disable the rolling-backbuffer, means all created darkness surfaces are stored till end of client-run
+ * more memory usage, BUT faster on slower systems (each darkness level is only creating one time ever in a client run
+ */
+//#define NO_BACKBUFFER
+
+
 //#define WIDGET_SNAP
 
 #define DEFAULT_SERVER_PORT 13327
@@ -65,7 +84,12 @@
  */
 #define MAX_FACE_TILES 20000
 
-#define MAXANIM 2000
+
+/* Alderan 2008-04-23:
+ * just to be sure i increase that value a bit, with the new client_anim code, anims are only really loaded
+ * when used the first time, the base-structure memory overhead isn't that much
+ */
+#define MAXANIM 3000
 
 #define MAP_MAX_SIZE    17
 

@@ -593,45 +593,47 @@ void sprite_blt(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx)
 {
     SDL_Rect        dst;
     SDL_Surface    *surface, *blt_sprite;
+    Boolean         reset_trans = FALSE;
 
     if (!sprite)
         return;
 
     blt_sprite = sprite->bitmap;
 
+    if (!blt_sprite)
+        return;
+
     if (bltfx && (bltfx->surface))
         surface=bltfx->surface;
     else
         surface = ScreenSurface;
+
     dst.x = x;
     dst.y = y;
 
-    if (bltfx)
+    if (bltfx && bltfx->flags & BLTFX_FLAG_SRCALPHA && !(ScreenSurface->flags & SDL_HWSURFACE))
     {
-        if (bltfx->flags & BLTFX_FLAG_SRCALPHA && !(ScreenSurface->flags & SDL_HWSURFACE))
-        {
-            SDL_SetAlpha(blt_sprite, SDL_SRCALPHA, bltfx->alpha);
-        }
+        SDL_SetAlpha(blt_sprite, SDL_SRCALPHA, bltfx->alpha);
+        reset_trans = TRUE;
     }
 
-    if (!blt_sprite)
-        return;
+/* why that if? box can either be NULL or set... */
+//    if (box)
+    SDL_BlitSurface(blt_sprite, box, surface, &dst);
+//    else
+//      SDL_BlitSurface(blt_sprite, NULL, surface, &dst);
 
-    if (box)
-        SDL_BlitSurface(blt_sprite, box, surface, &dst);
-    else
-        SDL_BlitSurface(blt_sprite, NULL, surface, &dst);
-
-    if (bltfx && bltfx->flags & BLTFX_FLAG_SRCALPHA && !(ScreenSurface->flags & SDL_HWSURFACE))
+    if (reset_trans)
     {
         SDL_SetAlpha(blt_sprite, SDL_SRCALPHA, SDL_ALPHA_OPAQUE);
     }
 }
-/* This function dupports the whole BLTFX flags, and is only used to blit the map! */
+/* This function supports the whole BLTFX flags, and is only used to blit the map! */
 void sprite_blt_map(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx)
 {
     SDL_Rect        dst;
     SDL_Surface    *surface, *blt_sprite;
+    Boolean         reset_trans = FALSE;
 
     if (!sprite)
         return;
@@ -664,6 +666,7 @@ void sprite_blt_map(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx)
             }
             else /* we create the surface, and put it in backbuffer */
             {
+#ifdef NO_BACKBUFFER
                 /* first we free if necesary */
                 if (Backbuffer[bbpos].sprite)
                 {
@@ -672,17 +675,20 @@ void sprite_blt_map(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx)
                     Backbuffer[bbpos].sprite->dark_level[Backbuffer[bbpos].dark_level]=NULL;
                     Backbuffer[bbpos].sprite=NULL;
                 }
+#endif
                 blt_sprite = SDL_DisplayFormatAlpha(sprite->bitmap);
 //                blt_sprite = SDL_ConvertSurface(sprite->bitmap, sprite->bitmap->format, SDL_SRCALPHA);
                 SDL_BlitSurface(darkness_filter[bltfx->dark_level],NULL,blt_sprite,NULL);
 
                 /* we put it in the backbuffer */
                 sprite->dark_level[bltfx->dark_level]=blt_sprite;
+#ifdef NO_BACKBUFFER
                 Backbuffer[bbpos].sprite=sprite;
                 Backbuffer[bbpos].dark_level=bltfx->dark_level;
                 bbpos++;
                 if (bbpos>=MAX_BBDARK)
                     bbpos=0;
+#endif
             }
 
         }
@@ -711,18 +717,19 @@ void sprite_blt_map(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx)
         if (bltfx->flags & BLTFX_FLAG_SRCALPHA && !(ScreenSurface->flags & SDL_HWSURFACE))
         {
             SDL_SetAlpha(blt_sprite, SDL_SRCALPHA, bltfx->alpha);
+            reset_trans = TRUE;
         }
     }
 
     if (!blt_sprite)
         return;
 
-    if (box)
-        SDL_BlitSurface(blt_sprite, box, surface, &dst);
-    else
-        SDL_BlitSurface(blt_sprite, NULL, surface, &dst);
+//    if (box)
+      SDL_BlitSurface(blt_sprite, box, surface, &dst);
+//    else
+//        SDL_BlitSurface(blt_sprite, NULL, surface, &dst);
 
-    if (bltfx && bltfx->flags & BLTFX_FLAG_SRCALPHA && !(ScreenSurface->flags & SDL_HWSURFACE))
+    if (reset_trans)
     {
         SDL_SetAlpha(blt_sprite, SDL_SRCALPHA, SDL_ALPHA_OPAQUE);
     }

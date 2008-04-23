@@ -944,6 +944,9 @@ void process_widgets()
 {
 	widget_node *node;
 	int nID;
+#ifdef PROFILING_WIDGETS
+    Uint32 ts;
+#endif
 
 	/* sanity checks */
 	if(!priority_list_head) { return; }
@@ -952,8 +955,15 @@ void process_widgets()
 	for(node=priority_list_foot;node;node=node->prev)
 	{
 		nID = node->WidgetID;
+#ifdef PROFILING_WIDGETS
+        ts = SDL_GetTicks();
+        LOG(LOG_MSG, "[Prof] widget_draw %16s shown: %d, redraw: %d, ms: ",cur_widget[nID].name, cur_widget[nID].show, cur_widget[nID].redraw);
+#endif
         if (cur_widget[nID].show)
 		    process_widget(nID, PROCESS);
+#ifdef PROFILING_WIDGETS
+        LOG(LOG_MSG, "%d\n", SDL_GetTicks() - ts);
+#endif
 	}
 }
 
