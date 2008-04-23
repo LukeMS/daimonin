@@ -24,7 +24,7 @@
 VPATH = @srcdir@
 srcdir = @srcdir@
 
-LOCAL_LIBRARIES = ../tests/libtest.a ../common/libcross.a ../random_maps/random_map.a ../socket/socket.a ../zlib/zlib.a
+LOCAL_LIBRARIES = ../tests/libtest.a ../common/libcross.a ../random_maps/random_map.a ../socket/socket.a ../zlib/zlib.a ../common/libcross.a
 
 SRCS = \
 	@SERVER_SYSTEM_SRCS@ \
