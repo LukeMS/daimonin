@@ -1,17 +1,17 @@
 Object yervas_flag
 name big flag
-face yervas_flag.u.151
+face yervasflag.u.151
 anim
 facings 9
 dummy.111
-yervas_flag.u.151
-yervas_flag.u.131
-yervas_flag.u.131
-yervas_flag.u.151
-yervas_flag.u.151
-yervas_flag.u.131
-yervas_flag.u.131
-yervas_flag.u.151
+yervasflag.u.151
+yervasflag.u.131
+yervasflag.u.131
+yervasflag.u.151
+yervasflag.u.151
+yervasflag.u.131
+yervasflag.u.131
+yervasflag.u.151
 mina
 is_animated 0
 anim_speed 0
