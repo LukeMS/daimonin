@@ -84,6 +84,7 @@ _textwin_set;
 
 extern int          txtwin_start_size;  /* we need a backup of the TW_MIX.size */
 extern _textwin_set txtwin[TW_SUM];
+extern SDL_Surface  *txtwinbg;
 extern int          textwin_flags;
 extern void         textwin_event(int e, SDL_Event *event, int WidgetID);
 extern void         textwin_show(int x, int y);

@@ -1354,6 +1354,10 @@ int main(int argc, char *argv[])
     Boolean         newskin = FALSE;
     uint32          speeduptick = 0;
     uint32          new_anim_tick = 0;
+
+#ifdef PROFILING
+    Uint32   ts;
+#endif
     //fd_set          tmp_read, tmp_write, tmp_exceptions;
     //struct timeval  timeout;
     // pollret;
@@ -1541,6 +1545,9 @@ int main(int argc, char *argv[])
     ScreenSurfaceMap=SDL_CreateRGBSurface(videoflags, 850, 600, options.used_video_bpp, 0,0,0,0);
 
 
+    SDL_VideoDriverName(buf, 255);
+    LOG(LOG_MSG, "Video Driver: %s\n",buf);
+
 
     /* 60, 70*/
     sdl_dgreen = SDL_MapRGB(ScreenSurface->format, 0x00, 0x80, 0x00);
@@ -1623,6 +1630,9 @@ int main(int argc, char *argv[])
     */
     while (!done)
     {
+#ifdef PROFILING
+        ts = SDL_GetTicks();
+#endif
         done = Event_PollInputDevice();
 
         /* Have we been shutdown? */
@@ -1694,13 +1704,28 @@ int main(int argc, char *argv[])
         }
         if (map_udate_flag > 0)
         {
+#ifdef PROFILING
+            Uint32 ts2, ts3;
+#endif
             speeduptick = LastTick;
 
+#ifdef PROFILING
+            ts2 = SDL_GetTicks();
+            display_layer1();
+            LOG(LOG_MSG, "[Prof] layer1 (map)            complete: %d\n",((ts3 = SDL_GetTicks()) - ts2));
+            display_layer2();
+            LOG(LOG_MSG, "[Prof] layer2 (inv stuff     ) complete: %d\n",((ts2 = SDL_GetTicks()) - ts3));
+            display_layer3();
+            LOG(LOG_MSG, "[Prof] layer3 (widgets)        complete: %d\n",((ts3 = SDL_GetTicks()) - ts2));
+            display_layer4();
+            LOG(LOG_MSG, "[Prof] layer4 (menues)         complete: %d\n",((ts2 = SDL_GetTicks()) - ts3));
+
+#else
             display_layer1();
             display_layer2();
             display_layer3();
             display_layer4();
-
+#endif
             if (GameStatus != GAME_STATUS_PLAY)
                 SDL_FillRect(ScreenSurface, NULL, 0);
 
@@ -1873,6 +1898,9 @@ int main(int argc, char *argv[])
         }
 
         flip_screen();
+#ifdef PROFILING
+        LOG(LOG_MSG, "[Prof] mainloop: %d\n", SDL_GetTicks() - ts);
+#endif
         if (options.limit_speed)
             SDL_Delay(options.sleep);       /* force the thread to sleep */
     }
@@ -1947,6 +1975,9 @@ static void display_layer1(void)
 {
     static int gfx_toggle=0;
     SDL_Rect    rect;
+#ifdef PROFILING
+    Uint32 ts;
+#endif
 
     /* we clear the screen and start drawing
      * this is done every frame, this should and hopefully can be optimized. */
@@ -1956,12 +1987,24 @@ static void display_layer1(void)
     if (map_redraw_flag)
     {
         SDL_FillRect(ScreenSurfaceMap, NULL, 0);
+#ifdef PROFILING
+        ts = SDL_GetTicks();
+#endif
         map_draw_map();
+#ifdef PROFILING
+        LOG(LOG_MSG, "[Prof] map_draw_map(): %d\n", SDL_GetTicks() - ts);
+#endif
         SDL_FreeSurface(zoomed);
+#ifdef PROFILING
+        ts = SDL_GetTicks();
+#endif
         if (options.zoom==100)
             zoomed=SDL_DisplayFormat(ScreenSurfaceMap);
         else
             zoomed=zoomSurface(ScreenSurfaceMap, options.zoom/100.0, options.zoom/100.0, options.smooth);
+#ifdef PROFILING
+        LOG(LOG_MSG, "[Prof] DisplayFormat or Map-Zoom: %d\n", SDL_GetTicks() - ts);
+#endif
         map_redraw_flag=FALSE;
     }
     rect.x=options.mapstart_x;
