@@ -42,13 +42,15 @@ setmetatable(QuestBuilder, { __call = QuestBuilder.New })
 -- finalstep is the number of the final step in a normal quest.
 --   It is only relevant if mode == game.QUEST_NORMAL and must then be a number.
 -------------------
-function QuestBuilder:AddQuest(quest, mode, level, skill, required, finalstep)
+function QuestBuilder:AddQuest(quest, mode, level, skill, required, finalstep, goal, reward)
     assert(type(quest)     == "string",                                                  "Arg #1 must be string!")
     assert(type(mode)      == "number",                                                  "Arg #2 must be number!")
     assert(type(level)     == "number"                              or level     == nil, "Arg #3 must be number or nil!")
     assert(type(skill)     == "number"                              or skill     == nil, "Arg #4 must be number or nil!")
     assert(type(required)  == "string" or type(required) == "table" or required  == nil, "Arg #5 must be string or table or nil!")
     assert(type(finalstep) == "number"                              or finalstep == nil, "Arg #6 must be number or nil!")
+    assert(type(goal)      == "function"                            or goal      == nil, "Arg #7 must be function or nil!")
+    assert(type(reward)    == "function"                            or reward    == nil, "Arg #8 must be function or nil!")
     if level == nil then
         level = 1
     end
@@ -73,7 +75,9 @@ function QuestBuilder:AddQuest(quest, mode, level, skill, required, finalstep)
                    ["level"] = level,
                    ["skill"] = skill,
                    ["required"] = required,
-                   ["finalstep"] = finalstep })
+                   ["finalstep"] = finalstep,
+                   ["goal"] = goal,
+                   ["reward"] = reward })
 end
 
 -------------------
@@ -193,11 +197,14 @@ function QuestBuilder:RegisterQuest(nr, ib)
 
     nr = math.abs(nr)
     assert(nr > 0 and nr <= table.getn(self), "Not enough entries in qb table!")
-    local success = self[nr].qm:RegisterQuest(self:GetMode(nr), ib)
+    local success = self[nr].qm:RegisterQuest(self[nr].mode, ib)
     assert(success, "Could not register quest!")
     local player = self[nr].player
     player:Sound(0, 0, game.SOUND_LEARN_SPELL)
     player:Write("You start the quest '" .. self[nr].name .. "'.", game.COLOR_NAVY)
+    if self[nr].goal ~= nil then
+        self[nr].goal()
+    end
     return success
 end
 
@@ -274,11 +281,11 @@ end
 -- nr is the quest in question. It must be a number.
 -- reward is the reward player receives.
 --   It must be nil (no reward message is printed) or
---   a string which is inserted into the following message: 'You were rewarded
+--   a string which is inserted into the following message: 'You are rewarded
 --   with <reward>!'
 -------------------
 function QuestBuilder:Finish(nr, reward)
-    assert(type(nr)     == "number",                   "Arg #1 must be number!")
+    assert(type(nr)     == "number",                  "Arg #1 must be number!")
     assert(type(reward) == "string" or reward == nil, "Arg #2 must be string or nil!")
 
     nr = math.abs(nr)
@@ -286,6 +293,14 @@ function QuestBuilder:Finish(nr, reward)
     local player = self[nr].player
     player:Sound(0, 0, game.SOUND_LEVEL_UP)
     player:Write("You finish the quest '" .. self[nr].name .. "'.", game.COLOR_NAVY)
-    if reward then player:Write("You are rewarded with " .. reward .. "!", game.COLOR_NAVY) end
+    if reward then
+        player:Write("You are rewarded with " .. reward .. "!", game.COLOR_NAVY)
+    end
+    if self[nr].reward ~= nil then
+        self[nr].reward()
+    end
+    if self[nr].mode == game.QUEST_KILLITEM or self[nr].mode == game.QUEST_ITEM then
+        self[nr].qm:RemoveQuestItems()
+    end
     return self[nr].qm:Finish()
 end
