@@ -202,8 +202,8 @@ function QuestBuilder:RegisterQuest(nr, ib)
     local player = self[nr].player
     player:Sound(0, 0, game.SOUND_LEARN_SPELL)
     player:Write("You start the quest '" .. self[nr].name .. "'.", game.COLOR_NAVY)
-    if self[nr].goal ~= nil then
-        self[nr].goal()
+    if type(self[nr].goal) == "function" then
+        self[nr].goal(nr)
     end
     return success
 end
@@ -296,8 +296,8 @@ function QuestBuilder:Finish(nr, reward)
     if reward then
         player:Write("You are rewarded with " .. reward .. "!", game.COLOR_NAVY)
     end
-    if self[nr].reward ~= nil then
-        self[nr].reward()
+    if type(self[nr].reward) == "function" then
+        self[nr].reward(nr)
     end
     if self[nr].mode == game.QUEST_KILLITEM or self[nr].mode == game.QUEST_ITEM then
         self[nr].qm:RemoveQuestItems()
