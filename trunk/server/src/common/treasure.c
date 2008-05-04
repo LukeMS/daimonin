@@ -2383,7 +2383,7 @@ static inline void set_material_real(object *op, struct _change_arch *change_arc
                      * At this point we exclude the different used tables
                      */
             /* we should add paper & cloth here too later */
-            if (m_tmp == M_START_IRON || m_tmp == M_START_WOOD || m_tmp == M_START_LEATHER || m_tmp == M_START_CLOTH)
+            if (m_tmp == M_START_IRON || m_tmp == M_START_WOOD || m_tmp == M_START_LEATHER || m_tmp == M_START_CLOTH || m_tmp == M_START_STONE)
             {
                 for (i = 0; i < NROFMATERIALS_REAL; i++)
                 {
