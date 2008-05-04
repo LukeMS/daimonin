@@ -763,7 +763,7 @@ material_real_struct    material_real[NROFMATERIALS *NROFMATERIALS_REAL + 1]    
     {"rat ",        100,80,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"cat ",        100,80,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"dog ",        100,80,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
-    {"kolbold ",    100,80,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"kobold ",     100,80,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"ogre ",       100,80,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"orc ",        100,80,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"gnoll ",      100,80,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
