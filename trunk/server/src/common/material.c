@@ -181,7 +181,7 @@ material_real_struct    material_real[NROFMATERIALS *NROFMATERIALS_REAL + 1]    
     {"aquamarine ",  80,80,       0,0,0,    M_GLASS, RACE_TYPE_NONE}, /* 138 */
     {"opal ",        20,90,       0,0,0,    M_GLASS, RACE_TYPE_NONE}, /* 139 */
     {"amethyst ",    25,88,       0,0,0,    M_GLASS, RACE_TYPE_NONE}, /* 140 */
-    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"amber ",       30,88,       0,0,0,    M_GLASS, RACE_TYPE_NONE}, /* 141 */
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
