@@ -3262,7 +3262,7 @@
     kill it. With every successful hit from an opponent, health points
     get drained - The monster dies by zero health points.
     If the value '-1' is set, the monster will start out with full
-    health. How much that is depends on &lt;max health&gt;.
+    health. How many that is depends on &lt;max health&gt;.
   </attribute>
   <attribute arch="maxhp" editor="max health" type="int">
     &lt;max health&gt; is the maximum amount of &lt;health points&gt; this
@@ -3315,9 +3315,8 @@
     only the amount of *initial* spellpoints the monster starts with.
     When creating a spellcasting monster, remember that &lt;max spellpoints&gt;
     and &lt;spellpoint regen.&gt; are more important.
-    If &lt;spelloints&gt; are set to '-1', the monster will start out with
-    maxed spellpoints.
-    &lt;spellpoints&gt;.
+    If &lt;spelloints&gt; are set to '-1', the monster will start out with full
+    spellpoints. How many that is depends on &lt;max spellpoints&gt;.
   </attribute>
   <attribute arch="maxsp" editor="max spellpoints" type="int">
     &lt;max spellpoints&gt; is the maximum number of spellpoints a monster
