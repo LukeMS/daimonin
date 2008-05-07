@@ -196,9 +196,7 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
             //Logger::log().error() << "Unknown tile: " << face << " pos: " << x << ", " << y << "  " << strTile;
             TileManager::getSingleton().setMap(x, y,
                                                30, // height
-                                               30, // height
-                                               8,  // Layer  0
-                                               9,  // Layer  1
+                                               8,  // gfx
                                                1,  // Filter
                                                0); // Mirror
         }
@@ -206,9 +204,7 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
         {
             TileManager::getSingleton().setMap(x, y,
                                                (uchar)strTile[ 8]-'0', // height
-                                               (uchar)strTile[ 8]-'0', // height
-                                               (uchar)strTile[10]-'0', // Layer  0
-                                               (uchar)strTile[12]-'0', // Layer  1
+                                               (uchar)strTile[10]-'0', // gfx
                                                (uchar)strTile[14]-'0', // Fllter
                                                0); // Mirror
             //Logger::log().error() << "Tile face: " << face << " pos: " << x << ", " << y << "  " << strTile << " height: " << ((uchar)strTile[ 8]-'0')*10;
@@ -322,14 +318,15 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
             {
                 once = false;
                 Vector3 pos;
-                pos.x = 18 * TileManager::TILE_SIZE;//x * TileManager::TILE_SIZE + 3 * 8;
-                pos.z = 34 * TileManager::TILE_SIZE;//y * TileManager::TILE_SIZE + 3 * 8; //17-5;
+                pos.x = (TileManager::CHUNK_SIZE_X/2) * TileManager::TILE_SIZE;//x * TileManager::TILE_SIZE + 3 * 8;
+                pos.z = 28 * TileManager::TILE_SIZE;//y * TileManager::TILE_SIZE + 3 * 8; //17-5;
                 ObjectManager::getSingleton().setPosition(ObjectNPC::HERO, pos);
                 //Logger::log().error() << "we got the Hero face: " << face;
             }
         }
         else if (meshName.find("Wall") != std::string::npos)
         {
+/*
             if      (meshName[0] =='r')
                 TileManager::getSingleton().addWall(0, x, y, TileManager::WALL_POS_RIGHT, meshName.c_str()+1);
             else if (meshName[0] =='l')
@@ -343,6 +340,7 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                 TileManager::getSingleton().addWall(0, x, y, TileManager::WALL_POS_RIGHT, meshName.c_str()+1);
                 TileManager::getSingleton().addWall(0, x, y, TileManager::WALL_POS_BOTTOM, meshName.c_str()+1);
             }
+*/
         }
         else if (meshName == "Sack_N.mesh")
         {

@@ -59,7 +59,7 @@ std::string Option::optValue[SUM_OPTIONS - SEPARATOR-1] =
         "0", // CMDLINE_CREATE_TILE_TEXTURES
         "0", // CMDLINE_SERVER_NAME
         "0", // CMDLINE_SERVER_PORT
-        "0", // CMDLINE_FALLBACK
+        "1", // CMDLINE_TILEENGINE_LOD
         "0", // CMDLINE_OFF_SOUND
         "0", // CMDLINE_SHOW_BOUNDING_BOX
         "0", // CMDLINE_CREATE_IMPOSTERS

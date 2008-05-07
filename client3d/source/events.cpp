@@ -168,13 +168,13 @@ bool Events::frameStarted(const FrameEvent& evt)
                 Viewport *VP = mWindow->addViewport(mCamera);
                 //VP->setBackgroundColour(ColourValue(1.0, 1.0, 1.0));
                 mCamera->setAspectRatio(Real(VP->getActualWidth()) / Real(VP->getActualHeight()));
-                mCamera->setFOVy(Degree(mCameraZoom));
+                mCamera->setFOVy(Degree(mCameraZoom+5));
                 mCamera->setQueryFlags(ObjectManager::QUERY_CAMERA_MASK);
                 //mCamera->setPosition(0,240,185);
                 //mCamera->pitch(Degree(-28));
-                mCamera->setPosition(0,1370,1895);
-                mCamera->pitch(Degree(-28));
-
+                mCamera->setPosition(0,1325,1325);
+                //mCamera->pitch(Degree(-28));
+                mCamera->pitch(Degree(-28-8));
                 //int winkel =0;
                 //mCamera->setPosition(340.0*Math::Sin(Degree(winkel)), 175, 340.0 *Math::Cos(Degree(winkel)));
                 mWorld = mSceneManager->getRootSceneNode()->createChildSceneNode();
@@ -280,10 +280,8 @@ bool Events::frameStarted(const FrameEvent& evt)
         case Option::GAME_STATUS_INIT_TILE:
             {
                 GuiManager::getSingleton().displaySystemMessage("Starting the tile-engine...");
-                if (Option::getSingleton().getIntValue(Option::HIGH_TEXTURE_DETAILS))
-                    TileManager::getSingleton().Init(mSceneManager, 21, 21, 11, 11, true);
-                else
-                    TileManager::getSingleton().Init(mSceneManager, 21, 21, 11, 11, false);
+                int lod = Option::getSingleton().getIntValue(Option::CMDLINE_TILEENGINE_LOD);
+                TileManager::getSingleton().Init(mSceneManager, lod, Option::getSingleton().getIntValue(Option::CMDLINE_CREATE_TILE_TEXTURES));
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
                 // Close the loading screen.
                 GuiManager::getSingleton().displaySystemMessage("");

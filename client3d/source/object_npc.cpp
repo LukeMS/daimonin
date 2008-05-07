@@ -147,21 +147,21 @@ ObjectNPC::ObjectNPC(sObject &obj, bool spawn):ObjectStatic(obj)
 //================================================================================================
 void ObjectNPC::moveByCursor(Ogre::Real dTime)
 {
-    Vector3 oldPos = mTilePos;
+    static Vector3 oldPos = mTilePos;
     Real distance = WALK_SPEED * dTime;
     mTilePos.x+= Math::Sin(Degree(mFacing)) * distance;
     mTilePos.z+= Math::Cos(Degree(mFacing)) * distance;
     mTilePos.y = TileManager::getSingleton().getTileHeight((int)mTilePos.x, (int)mTilePos.z);
-
-    int dx = (int) (oldPos.x /TileManager::TILE_SIZE) - (int) (mTilePos.x /TileManager::TILE_SIZE);
-    int dz = (int) (oldPos.z /TileManager::TILE_SIZE) - (int) (mTilePos.z /TileManager::TILE_SIZE);
+    int dx = (int)(oldPos.x - mTilePos.x) / (TileManager::TILE_SIZE*2);
+    int dz = (int)(oldPos.z - mTilePos.z) / (TileManager::TILE_SIZE*2);
     // Player moved over a tile border.
     if (!mIndex && (dx || dz))
     {
-        mTilePos.x+= dx * TileManager::TILE_SIZE;
-        mTilePos.z+= dz * TileManager::TILE_SIZE;
-        TileManager::getSingleton().scrollMap(-dx, -dz);
-        ObjectManager::getSingleton().synchToWorldPos(dx, dz);
+        mTilePos.x+= dx * TileManager::TILE_SIZE*2;
+        mTilePos.z+= dz * TileManager::TILE_SIZE*2;
+        TileManager::getSingleton().scrollMap(dx, dz);
+        ObjectManager::getSingleton().synchToWorldPos(dx*2, dz*2);
+        oldPos = mTilePos;
         //ParticleManager::getSingleton().syncToWorldPos(deltaPos);
     }
     mNode->setPosition(mTilePos);

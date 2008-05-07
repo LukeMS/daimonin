@@ -233,7 +233,7 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
             {
                 for (int x = z; x < 47; ++x)
                 {
-                    TileManager::getSingleton().setMap(x, z, 15, 2, 2, 2, 2, 0);
+                    TileManager::getSingleton().setMap(x, z, 15, 2);
                 }
             }
             break;
@@ -301,7 +301,7 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
             //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_WEAPON_HAND, 1);
             //static int color =0;
             //ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_TEXTURE, 0, ObjectNPC::TEXTURE_POS_SKIN, color++);
-            TileManager::getSingleton().updateTileHeight(10);
+            TileManager::getSingleton().updateTileHeight(+10);
             break;
         }
 
@@ -317,15 +317,17 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
         case OIS::KC_3:
         {
             //ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_TEXTURE,0, -1);
-            static int color =0;
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_TEXTURE, 0,ObjectNPC::TEXTURE_POS_HAIR, color++);
+            //static int color =0;
+            //ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_TEXTURE, 0,ObjectNPC::TEXTURE_POS_HAIR, color++);
+            TileManager::getSingleton().updateTileGfx(+1);
             break;
         }
 
         case OIS::KC_4:
         {
-            static int color =0;
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_TEXTURE,0, ObjectNPC::TEXTURE_POS_BODY, color++);
+            //static int color =0;
+            //ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_TEXTURE,0, ObjectNPC::TEXTURE_POS_BODY, color++);
+            TileManager::getSingleton().updateTileGfx(-1);
             break;
         }
 

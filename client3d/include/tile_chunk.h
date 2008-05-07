@@ -32,9 +32,25 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 class TilePainter : public Ogre::SimpleRenderable
 {
 public:
-    TilePainter(int sumVertices);
+    TilePainter(int sumVertices, int size);
     ~TilePainter() { delete mRenderOp.vertexData; }
     void updateVertexBuffer(int rotation);
+
+private:
+    // Not used.
+    Ogre::Real getSquaredViewDepth(const Ogre::Camera* cam) const { return 0; }
+    Ogre::Real getBoundingRadius(void) const { return 0; }
+};
+
+/**
+ * RenderOperation for landtiles.
+ *****************************************************************************/
+class LandTiles : public Ogre::SimpleRenderable
+{
+public:
+    LandTiles(int sumVertices);
+    ~LandTiles() { delete mRenderOp.vertexData; }
+    void updateVertexBuffer();
 
 private:
     // Not used.
@@ -63,10 +79,10 @@ public:
     // ////////////////////////////////////////////////////////////////////
     TileChunk(){};
     ~TileChunk(){};
-    void init();
+    void init(int textureSize);
     void change();
     void freeRecources();
-    void loadAtlasTexture(Ogre::String newAtlasTexture);
+    void loadAtlasTexture(int group);
     void updatePainter();
 
 private:
@@ -74,18 +90,19 @@ private:
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     TilePainter *mPainter;  // Make it static when using more TileChunks.
+    LandTiles *mLandTiles;
     Ogre::TexturePtr mTexLand, mTexWater;
-    Ogre::MeshPtr mMeshLand, mMeshWater;
-    Ogre::Entity *mEntityWater, *mEntityLand;
+    Ogre::MeshPtr mMeshWater;
+    Ogre::Entity *mEntityWater;
     int mSumVertices;
+    int mTextureSize;
+    int mSubTileSize;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     /** The terrain must have a land- AND a waterSubmesh. If there are no datas for it, we create a dummy. **/
     void createDummySubMesh(Ogre::SubMesh *submesh);
     void createWater();
-    void createLand(Ogre::SubMesh *submesh);
-    void changeLand();
 };
 
 #endif
