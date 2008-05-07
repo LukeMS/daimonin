@@ -37,10 +37,6 @@ SDL_Surface    *darkness_filter[] =
         NULL,
     };
 
-_BBDark     Backbuffer[MAX_BBDARK];
-
-int         bbpos = 0;
-
 
 struct _anim   *start_anim; /* anim queue of current active map */
 
@@ -52,6 +48,9 @@ static Boolean  GetBitmapBorders(SDL_Surface *Surface, int *up, int *down, int *
 static void     grey_scale(_Sprite *sprite);
 static void     red_scale(_Sprite *sprite);
 static void     fow_scale(_Sprite *sprite);
+static Uint16   CalcHash(const SDL_Surface * src,Uint32 stretch, Uint32 darkness);
+SDL_Surface *check_stretch_cache(const SDL_Surface *src, Uint32 stretch, Uint32 darkness);
+void add_to_stretch_cache(SDL_Surface *src,SDL_Surface *dest, Uint32 stretch, Uint32 darkness);
 
 /* not much special inside atm */
 Boolean sprite_init_system(void)
@@ -65,15 +64,7 @@ Boolean sprite_init_system(void)
 
 void sprite_clear_backbuffer(void)
 {
-    int i;
-
-    for (i=0;i<MAX_BBDARK;i++)
-    {
-        Backbuffer[i].sprite=NULL;
-    }
-    bbpos=0;
     memset(&ImageStats, 0, sizeof(_imagestats));
-
 }
 
 Boolean sprite_deinit_system(void)
@@ -229,18 +220,12 @@ static void fow_scale(_Sprite *sprite)
 
 void sprite_free_sprite(_Sprite *sprite)
 {
-    int i;
     void   *tmp_free;
 
     if (!sprite)
         return;
     if (sprite->bitmap)
         SDL_FreeSurface(sprite->bitmap);
-    for (i=0;i<DARK_LEVELS;i++)
-    {
-        if (sprite->dark_level[i])
-            SDL_FreeSurface(sprite->dark_level[i]);
-    }
     if (sprite->grey)
         SDL_FreeSurface(sprite->grey);
     if (sprite->red)
@@ -617,11 +602,7 @@ void sprite_blt(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx)
         reset_trans = TRUE;
     }
 
-/* why that if? box can either be NULL or set... */
-//    if (box)
     SDL_BlitSurface(blt_sprite, box, surface, &dst);
-//    else
-//      SDL_BlitSurface(blt_sprite, NULL, surface, &dst);
 
     if (reset_trans)
     {
@@ -629,11 +610,12 @@ void sprite_blt(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx)
     }
 }
 /* This function supports the whole BLTFX flags, and is only used to blit the map! */
-void sprite_blt_map(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx)
+void sprite_blt_map(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx, Uint32 stretch)
 {
     SDL_Rect        dst;
-    SDL_Surface    *surface, *blt_sprite;
+    SDL_Surface    *surface, *blt_sprite, *tmp;
     Boolean         reset_trans = FALSE;
+    Boolean         need_stretch = FALSE;
 
     if (!sprite)
         return;
@@ -645,6 +627,7 @@ void sprite_blt_map(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx)
 
     if (bltfx)
     {
+        /* with dark flag we newer check here for the stretch flag, if stretch is 0 no strecthing is done... */
         if (bltfx->flags & BLTFX_FLAG_DARK)
         {
             /* last dark level is "no color" ... */
@@ -658,37 +641,45 @@ void sprite_blt_map(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx)
                 darkness_filter[bltfx->dark_level]=SDL_DisplayFormatAlpha(Bitmaps[BITMAP_TEXTWIN_MASK]->bitmap);
             }
 
-            /* this is the simple rolling backbuffer */
-            /* we test for the backbuffer */
-            if (sprite->dark_level[bltfx->dark_level])
+            /* we use now the stretch_cache with lru list */
+            tmp = check_stretch_cache(blt_sprite,stretch, bltfx->dark_level);
+
+            if (tmp)
             {
-                blt_sprite = sprite->dark_level[bltfx->dark_level];
+                dst.y = dst.y - ( tmp->h - sprite->bitmap->h );
+                blt_sprite = tmp;
             }
-            else /* we create the surface, and put it in backbuffer */
+            else /* we create the surface, and put it in hashtable */
             {
-#ifdef NO_BACKBUFFER
-                /* first we free if necesary */
-                if (Backbuffer[bbpos].sprite)
-                {
-                    blt_sprite = Backbuffer[bbpos].sprite->dark_level[Backbuffer[bbpos].dark_level];
-                    SDL_FreeSurface(blt_sprite);
-                    Backbuffer[bbpos].sprite->dark_level[Backbuffer[bbpos].dark_level]=NULL;
-                    Backbuffer[bbpos].sprite=NULL;
-                }
-#endif
                 blt_sprite = SDL_DisplayFormatAlpha(sprite->bitmap);
-//                blt_sprite = SDL_ConvertSurface(sprite->bitmap, sprite->bitmap->format, SDL_SRCALPHA);
                 SDL_BlitSurface(darkness_filter[bltfx->dark_level],NULL,blt_sprite,NULL);
 
-                /* we put it in the backbuffer */
-                sprite->dark_level[bltfx->dark_level]=blt_sprite;
-#ifdef NO_BACKBUFFER
-                Backbuffer[bbpos].sprite=sprite;
-                Backbuffer[bbpos].dark_level=bltfx->dark_level;
-                bbpos++;
-                if (bbpos>=MAX_BBDARK)
-                    bbpos=0;
-#endif
+                /* lets check for stretching... */
+
+                if (bltfx->flags & BLTFX_FLAG_STRETCH)    // We need to stretch, but lets check the cache 1st
+                {
+                    Uint8 *ht = (Uint8*)&stretch;
+                    Uint8 n = *(ht+3);
+                    Uint8 e = *(ht+2);
+                    Uint8 w = *(ht+1);
+                    Uint8 s = *ht;
+                    int ht_diff;
+
+                    LOG(LOG_MSG,"outcoding stretch=%d N=%d, E=%d, W=%d, S=%d (src1: %p, src2: %p, dark: %d)\n",stretch,n,e,w,s, blt_sprite, sprite->bitmap, bltfx->dark_level);
+                    tmp = tile_stretch(blt_sprite,n,e,s,w);
+
+                    ht_diff = (tmp->h - sprite->bitmap->h);  // tiles never shrink, just get bigger
+
+                    if (tmp==NULL) return;  // we didn't get a bmp back
+
+                    SDL_FreeSurface(blt_sprite);
+
+                    blt_sprite = tmp;
+                    dst.y = dst.y - ht_diff;
+                }
+
+                /* we put it in the hashtable*/
+                add_to_stretch_cache(sprite->bitmap,blt_sprite,stretch, bltfx->dark_level);
             }
 
         }
@@ -697,23 +688,56 @@ void sprite_blt_map(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx)
             if (!sprite->fog_of_war)
                 fow_scale(sprite);
             blt_sprite = sprite->fog_of_war;
+            need_stretch = TRUE;
         }
         else if (bltfx->flags & BLTFX_FLAG_RED)
         {
             if (!sprite->red)
                 red_scale(sprite);
             blt_sprite = sprite->red;
+            need_stretch = TRUE;
         }
         else if (bltfx->flags & BLTFX_FLAG_GREY)
         {
             if (!sprite->grey)
                 grey_scale(sprite);
             blt_sprite = sprite->grey;
+            need_stretch = TRUE;
         }
         if (!blt_sprite)
             return;
 
+        if (need_stretch && bltfx->flags & BLTFX_FLAG_STRETCH)
+        {
+            tmp = check_stretch_cache(blt_sprite,stretch, 0); //no darkness...
 
+            if (tmp==NULL)  // we were not successsful getting it from cache :(
+            {
+                Uint8 n = (stretch>>24) & 0xFF;
+                Uint8 e = (stretch>>16) & 0xFF;
+                Uint8 w = (stretch>>8)  & 0xFF;
+                Uint8 s = stretch & 0xFF;
+
+                int ht_diff;
+
+                printf("outcoding stretch=%d N=%d, E=%d, W=%d, S=%d (src: %p)\n",stretch,n,e,w,s,blt_sprite);
+                tmp = tile_stretch(blt_sprite,n,e,s,w);
+
+                ht_diff = tmp->h - blt_sprite->h;  // tiles never shrink, just get bigger
+
+                if (tmp==NULL) return;  // we didn't get a bmp back
+
+                add_to_stretch_cache(blt_sprite, tmp, stretch, 0); // cache it for next time
+
+                blt_sprite = tmp; // we keep the created surface, surely we need it later
+                dst.y = dst.y - ht_diff;
+            }
+            else  // we have alredy stretch this tile and got it from the cache!
+            {
+                dst.y = dst.y - ( tmp->h - blt_sprite->h );
+                blt_sprite = tmp;
+            }
+        }
         if (bltfx->flags & BLTFX_FLAG_SRCALPHA && !(ScreenSurface->flags & SDL_HWSURFACE))
         {
             SDL_SetAlpha(blt_sprite, SDL_SRCALPHA, bltfx->alpha);
@@ -724,10 +748,7 @@ void sprite_blt_map(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx)
     if (!blt_sprite)
         return;
 
-//    if (box)
-      SDL_BlitSurface(blt_sprite, box, surface, &dst);
-//    else
-//        SDL_BlitSurface(blt_sprite, NULL, surface, &dst);
+    SDL_BlitSurface(blt_sprite, box, surface, &dst);
 
     if (reset_trans)
     {
@@ -1493,4 +1514,264 @@ void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
         *(Uint32 *)p = pixel;
         break;
     }
+}
+/* the following was contributed by JotDot */
+/* and adopted to cache also the darkness faces by Alderan */
+#define DEBUG_HASH 0
+
+#define STRETCH_CACHE_SIZE 1000
+
+#define HASH_HEAD_SIZE 512 /* If non-power of two then change the line below to use % */
+/* ie: #define hash_head_MOD(N) ( (N) % (HASH_HEAD_SIZE - 1) ) */
+#define HASH_MOD(N) ( (N) & (HASH_HEAD_SIZE - 1) )	/* Power of 2 mod */
+
+#define STRETCH_NULL (Uint16)(~0)
+
+/*
+	The cache is implemented using a hash chain technique.  The incoming pointer
+	and the stretch number is converted to a reasonably(?) unique key and hashed.
+	The cache entries also has a double linked list to maintain a LRU method where
+	a successful fetch will place the entry at the head. When the table gets full
+	the tail end is recycled.
+	Limitations: I don't expect more than 64K-1 cache entries so the entries
+	are 16 bit. The key is currently reduced to 8 bit since I don't expect the hash
+	table to be very big.  Just change the CalcHash routine if you want a larger key.
+*/
+struct stretch_cache_
+{
+  SDL_Surface *src;
+  SDL_Surface *dest;
+  Uint32 stretch;
+  Uint32 darkness;
+  Uint16 lru_older;
+  Uint16 lru_newer;
+  Uint16 hash_next;
+};
+
+static Uint16 hash_head[HASH_HEAD_SIZE];		/* Hash chain heads */
+static Uint16 lru_head;							/* Most recent entry */
+static Uint16 lru_tail;							/* Oldest entry */
+static Uint16 stretch_cache_count=0;			/* Number of cached entries */
+
+struct stretch_cache_ stretch_cache[STRETCH_CACHE_SIZE];
+
+static void stretch_init(void)
+{
+	int i;
+
+	for (i=0; i < HASH_HEAD_SIZE; ++i)
+	{
+		hash_head[i] = STRETCH_NULL;
+	}
+
+	lru_head = STRETCH_NULL;
+	lru_tail = STRETCH_NULL;
+
+	stretch_cache_count = 0;
+}
+
+static Uint16 CalcHash(const SDL_Surface * src,Uint32 stretch, Uint32 darkness)
+{
+	/* Nothing fancy. Very simplistic really. */
+	Uint16 sum;
+
+	sum=
+		(Uint16)((Uint32)src >> 16) +
+		(Uint16)((Uint32)src) +
+		(Uint16)((Uint32)stretch >> 16) +
+		(Uint16)stretch +
+		(Uint16)((Uint32)darkness>> 16) +
+		(Uint16)darkness;
+
+	sum=(Uint8)(sum>>8)+(Uint8)sum;	/* Limits the hash head table to 256 entries */
+
+	return HASH_MOD(sum);
+}
+
+/*
+	lru_add() takes the cache entry and adds it to the head of the lru list
+	Note: This does not affect the hash chain table.
+*/
+static void lru_add(Uint16 index)
+{
+	struct stretch_cache_ * elem = stretch_cache + index;
+
+	elem->lru_newer = STRETCH_NULL;
+	elem->lru_older = lru_head;
+
+	if (lru_head != STRETCH_NULL)
+	{
+		stretch_cache[lru_head].lru_newer = index;
+	}
+
+	lru_head = index;
+
+	if (lru_tail == STRETCH_NULL)
+	{
+		lru_tail = index;
+	}
+}
+
+/*
+	lru_remove(Uint16 index) - Takes the entry out of the LRU list.
+	Note: This does not affect the hash chain table.
+*/
+static void lru_remove(Uint16 index)
+{
+	struct stretch_cache_ * elem = stretch_cache + index;
+
+	if (elem->lru_newer != STRETCH_NULL)
+		stretch_cache[elem->lru_newer].lru_older = elem->lru_older;
+	else
+		lru_head = elem->lru_older;
+
+	if (elem->lru_older != STRETCH_NULL)
+		stretch_cache[elem->lru_older].lru_newer = elem->lru_newer;
+	else
+		lru_tail = elem->lru_newer;
+}
+
+static void hash_remove(Uint16 index)
+{
+	struct stretch_cache_ * elem;
+	Uint16 key;
+	Uint16 prev,next;
+
+	elem = stretch_cache + index;
+	key = CalcHash(elem->src,elem->stretch, elem->darkness);
+
+	/* Single linked list here. There should be so few entries on each chain */
+	/* that it does not warrant a double linked list */
+
+	prev = STRETCH_NULL;
+	next = hash_head[key];
+
+	while (next != STRETCH_NULL && next != index) {
+		prev = next;
+		next = stretch_cache[next].hash_next;
+	}
+
+	if (next == STRETCH_NULL) {
+		if (prev == STRETCH_NULL)
+			LOG(LOG_MSG, "Warning: hash_remove encountered an empty chain!\n");
+		else
+			LOG(LOG_MSG, "Warning: hash_remove did not find a match on the chain!\n");
+		return;
+	}
+
+	if (prev == STRETCH_NULL)
+		hash_head[key]=stretch_cache[index].hash_next;
+	else
+		stretch_cache[prev].hash_next = stretch_cache[index].hash_next;
+}
+
+SDL_Surface *check_stretch_cache(const SDL_Surface *src, Uint32 stretch, Uint32 darkness)
+{
+	Uint16 key;
+	Uint16 idx;
+
+	if (!stretch_cache_count)
+	{
+		/* If first time then nothing is in the table thus nothing will be found */
+		stretch_init();
+#if DEBUG_HASH
+		LOG(LOG_MSG, "check_stretch_cache(%p,%d) returned NULL\n",src,stretch);
+#endif
+		return NULL;
+	}
+
+	key = CalcHash(src, stretch, darkness);	/* Key for this entry */
+	idx = hash_head[key];			/* Head of this list */
+
+	while (idx != STRETCH_NULL)
+	{
+		struct stretch_cache_ * elem = stretch_cache + idx;
+
+		if (elem->src != src || elem->stretch != stretch || elem->darkness != darkness)
+			idx = elem->hash_next;
+
+		else
+		{
+			/* Found a match. Move this entry to the head of the LRU list */
+			/* if not already there */
+
+			if (idx != lru_head)
+			{
+				/* Note: The entry is already in the hash chain and that */
+				/* portion does not need to be modified */
+
+				/* Remove from current position in the lru list */
+				lru_remove(idx);
+
+				/* Add current (now orphaned) entry to head of lru list */
+				lru_add(idx);
+			}
+
+			break;
+		}
+	}
+
+#if DEBUG_HASH
+//	LOG(LOG_MSG,"check_stretch_cache(src %p, stretch %d, dark: %d) new entry at %d (key: %d)\n",src,stretch,darkness,idx, key);
+#endif
+
+
+	return (idx != STRETCH_NULL) ? stretch_cache[idx].dest : NULL;
+}
+
+/*
+	add_to_stretch_cache() assumes the entry is not already in the table.
+*/
+
+void add_to_stretch_cache(SDL_Surface *src,SDL_Surface *dest, Uint32 stretch, Uint32 darkness)
+{
+	Uint16 key;
+	Uint16 idx;
+	struct stretch_cache_ * elem;
+
+	/* If there is room in the table then simply fetch the next free location */
+	/* Otherwise we discard the oldest entry and re-use that location */
+
+	if (stretch_cache_count < STRETCH_CACHE_SIZE)
+		idx=stretch_cache_count++;
+
+	else
+	{
+		/* The table is full so we discard the tail in the lru list */
+		idx = lru_tail;		/* This will be the new index after discard */
+
+#if DEBUG_HASH
+		LOG(LOG_MSG,"add_to_stretch_cache(src %p, dest %p, stretch %d, dark: %d) free lru at %d\n",src,dest,stretch,darkness, idx);
+#endif
+
+		/* Get rid of the old surface first */
+		if (stretch_cache[idx].dest != NULL)
+		{
+			SDL_FreeSurface(stretch_cache[idx].dest);
+		}
+
+		hash_remove(idx);	/* Old entry removed from hash table */
+		lru_remove(idx);	/* Entry is now orphaned in lru list */
+	}
+
+	/* Now we can add this new entry into the table */
+	elem = stretch_cache + idx;
+
+	elem->src = src;
+	elem->dest = dest;
+	elem->stretch = stretch;
+	elem->darkness = darkness;
+
+	/* Add to hash table */
+	key = CalcHash(src,stretch, darkness);
+
+#if DEBUG_HASH
+	LOG(LOG_MSG,"add_to_stretch_cache(src %p, dest %p, stretch %d, dark: %d) new entry at %d (key: %d)\n",src,dest,stretch,darkness,idx, key);
+#endif
+
+	elem->hash_next = hash_head[key];
+	hash_head[key] = idx;
+
+	/* Add current entry to head of lru list */
+	lru_add(idx);
 }

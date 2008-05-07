@@ -183,7 +183,7 @@ void map_draw_map_clear(void)
         {
             xpos = options.mapstart_x + x * MAP_TILE_YOFF - y * MAP_TILE_YOFF;
             ypos = options.mapstart_y + x * MAP_TILE_XOFF + y * MAP_TILE_XOFF;
-            sprite_blt_map(Bitmaps[BITMAP_BLACKTILE], xpos, ypos, NULL, NULL);
+            sprite_blt_map(Bitmaps[BITMAP_BLACKTILE], xpos, ypos, NULL, NULL, 0);
         }
     }
 }
@@ -276,7 +276,120 @@ void set_map_ext(int x, int y, int layer, int ext, int probe)
     */
 }
 
-void set_map_face(int x, int y, int layer, int face, int pos, int ext, char *name)
+/* tile Stretching */
+struct MapCell *calc_real_map (int x, int y)
+{
+  int x1; int y1;
+  x1=x; y1=y;
+  if (x1<0) x1 = 0;
+  if (y1<0) y1 = 0;
+  if (x1>MapStatusX) x1 = MapStatusX;
+  if (y1>MapStatusY) y1 = MapStatusY;
+
+  return &the_map.cells[x1][y1];
+}
+void align_tile_stretch( int x, int y)
+{
+  register struct MapCell *map;
+  uint8 top,bottom,right,left,min_ht;
+  uint32 h;
+
+  if ( (x<0)||(y<0) ) return;
+  if ( (x>=MapStatusX)||(y>=MapStatusY)) return;
+
+  int MAX_STRETCH = 8;
+  int MAX_STRETCH_DIAG = 12;
+
+  int NW_HEIGHT,N_HEIGHT,NE_HEIGHT,SW_HEIGHT,S_HEIGHT,SE_HEIGHT,W_HEIGHT,E_HEIGHT,MY_HEIGHT;
+
+  map = calc_real_map ( x-1, y-1); NW_HEIGHT = map->height;
+  map = calc_real_map ( x  , y-1);  N_HEIGHT = map->height;
+  map = calc_real_map ( x+1, y-1); NE_HEIGHT = map->height;
+  map = calc_real_map ( x-1, y+1); SW_HEIGHT = map->height;
+  map = calc_real_map ( x  , y+1);  S_HEIGHT = map->height;
+  map = calc_real_map ( x+1, y+1); SE_HEIGHT = map->height;
+  map = calc_real_map ( x-1, y  );  W_HEIGHT = map->height;
+  map = calc_real_map ( x+1, y  );  E_HEIGHT = map->height;
+  map = calc_real_map ( x  , y  ); MY_HEIGHT = map->height;
+
+    if (abs(MY_HEIGHT - E_HEIGHT) > MAX_STRETCH)
+        E_HEIGHT = MY_HEIGHT;
+    if (abs(MY_HEIGHT - SE_HEIGHT) > MAX_STRETCH_DIAG)
+        SE_HEIGHT = MY_HEIGHT;
+    if (abs(MY_HEIGHT - S_HEIGHT) > MAX_STRETCH)
+        S_HEIGHT = MY_HEIGHT;
+    if (abs(MY_HEIGHT - SW_HEIGHT) > MAX_STRETCH_DIAG)
+        SW_HEIGHT = MY_HEIGHT;
+    if (abs(MY_HEIGHT - W_HEIGHT) > MAX_STRETCH)
+        W_HEIGHT = MY_HEIGHT;
+    if (abs(MY_HEIGHT - NW_HEIGHT) > MAX_STRETCH_DIAG)
+        NW_HEIGHT = MY_HEIGHT;
+    if (abs(MY_HEIGHT - N_HEIGHT) > MAX_STRETCH)
+        N_HEIGHT = MY_HEIGHT;
+    if (abs(MY_HEIGHT - NE_HEIGHT) > MAX_STRETCH_DIAG)
+        NE_HEIGHT = MY_HEIGHT;
+
+//#define MAX(x,y) ((x)>(y)?(x):(y))
+#define MIN(x,y) ((x)<(y)?(x):(y))
+
+//    LOG(LOG_MSG, "align_tile_stretch (%2d,%2d) - n:%d,nw:%d,w:%d,sw:%d,s:%d,so:%d,o:%d,no:%d - my:%d\n",x, y,
+//        N_HEIGHT, NW_HEIGHT, W_HEIGHT, SW_HEIGHT, S_HEIGHT, SE_HEIGHT, E_HEIGHT, NE_HEIGHT, MY_HEIGHT);
+
+       top = MAX( W_HEIGHT,NW_HEIGHT);
+       top = MAX( top, N_HEIGHT );
+       top = MAX(top,MY_HEIGHT);
+
+       bottom = MAX( S_HEIGHT,SE_HEIGHT);
+       bottom = MAX( bottom, E_HEIGHT );
+       bottom = MAX(bottom, MY_HEIGHT);
+
+       right = MAX( N_HEIGHT,NE_HEIGHT);
+       right = MAX( right, E_HEIGHT );
+       right = MAX( right, MY_HEIGHT);
+
+       left = MAX( W_HEIGHT,SW_HEIGHT);
+       left = MAX( left, S_HEIGHT );
+       left = MAX( left, MY_HEIGHT);
+
+
+       /* normalize these... */
+
+       min_ht = MIN( top, bottom);
+       min_ht = MIN( min_ht, left );
+       min_ht = MIN( min_ht, right );
+       min_ht = MIN( min_ht, MY_HEIGHT );
+
+//LOG(LOG_MSG, "ats: top: %d, left: %d, bottom: %d, right: %d - min_ht: %d\n", top, left, bottom, right, min_ht);
+
+       top -= min_ht;
+       bottom -= min_ht;
+       left -= min_ht;
+       right -= min_ht;
+
+       h = bottom+(left<<8)+(right<<16)+(top<<24);
+
+       the_map.cells[x][y].stretch = h;
+
+}
+
+void set_map_height(int x, int y, sint16 height)
+{
+    the_map.cells[x][y].height = height;
+
+    align_tile_stretch(x-1,y-1); /* NW */
+    align_tile_stretch(x  ,y-1); /* N  */
+    align_tile_stretch(x+1,y-1); /* NE */
+    align_tile_stretch(x+1,y  ); /* E  */
+
+    align_tile_stretch(x+1,y+1); /* SE */
+    align_tile_stretch(x  ,y+1); /* S */
+    align_tile_stretch(x-1,y+1); /* SW */
+    align_tile_stretch(x-1,y  ); /* W */
+
+    align_tile_stretch(x  ,y  ); /* HERE */
+}
+
+void set_map_face(int x, int y, int layer, int face, int pos, int ext, char *name, sint16 height)
 {
 //   register struct MapCell                    *map;
     int             xreal, yreal/*, i*/;
@@ -289,6 +402,23 @@ void set_map_face(int x, int y, int layer, int face, int pos, int ext, char *nam
     the_map.cells[x][y].pos[layer] = pos;
 
     strcpy(the_map.cells[x][y].pname[layer], name);
+
+    if (layer==0) /* see if we need to stretch this tile */
+    {
+       the_map.cells[x][y].height = height;
+
+       align_tile_stretch(x-1,y-1); /* NW */
+       align_tile_stretch(x  ,y-1); /* N  */
+       align_tile_stretch(x+1,y-1); /* NE */
+       align_tile_stretch(x+1,y  ); /* E  */
+
+       align_tile_stretch(x+1,y+1); /* SE */
+       align_tile_stretch(x  ,y+1); /* S */
+       align_tile_stretch(x-1,y+1); /* SW */
+       align_tile_stretch(x-1,y  ); /* W */
+
+       align_tile_stretch(x  ,y  ); /* HERE */
+    }
 
     xreal = MapData.posx + (x - (MAP_MAX_SIZE - 1) / 2) + MapData.xlen;
     yreal = MapData.posy + (y - (MAP_MAX_SIZE - 1) / 2) + MapData.ylen;
@@ -397,6 +527,9 @@ void map_draw_map(void)
     int         player_posx, player_posy;
     int         player_pixx, player_pixy;
 
+    Uint32 stretch = 0;
+    int         player_height_offset;  //player stays in same spot, world goes up and down
+
     if (!TheMapCache)
         return;
     player_posx = MapStatusX - (MapStatusX / 2) - 1;
@@ -413,6 +546,8 @@ void map_draw_map(void)
     player_pixy = (player_pixy + MAP_TILE_POS_YOFF) - bmap.h;
     bltfx.surface = NULL;
     bltfx.alpha = 128;
+
+    player_height_offset = the_map.cells[player_posx][player_posy].height;  // this is the height of the tile where the player is standing
 
     for (kk = 0; kk < MAXFACES - 1; kk++)    /* we draw floor & mask as layer wise (layer 0 & 1) */
     {
@@ -545,21 +680,32 @@ void map_draw_map(void)
                                 bltfx.flags &= ~BLTFX_FLAG_DARK;
                                 bltfx.flags |= BLTFX_FLAG_SRCALPHA;
                             }
+
+                            stretch = 0;
+                            if ( (kk <2 )&&( map->stretch )) // kk < 2
+                            {
+                               bltfx.flags |= BLTFX_FLAG_STRETCH;
+                               stretch = map->stretch;
+
+                            }
+
+                            yl = (yl - map->height) + player_height_offset;
+
                             if (FaceList[index].flags & FACE_FLAG_UP)
                             {
                                 if (FaceList[index].flags & FACE_FLAG_D1)
                                 {
                                     if (y < (MAP_MAX_SIZE - 1) / 2)
-                                        sprite_blt_map(face_sprite, xl, yl, NULL, &bltfx);
+                                        sprite_blt_map(face_sprite, xl, yl, NULL, &bltfx, 0);
                                 }
                                 if (FaceList[index].flags & FACE_FLAG_D3)
                                 {
                                     if (x < (MAP_MAX_SIZE - 1) / 2 || y < (MAP_MAX_SIZE - 1) / 2)
-                                        sprite_blt_map(face_sprite, xl, yl, NULL, &bltfx);
+                                        sprite_blt_map(face_sprite, xl, yl, NULL, &bltfx, 0);
                                 }
                             }
                             else
-                                sprite_blt_map(face_sprite, xl, yl, NULL, &bltfx);
+                                sprite_blt_map(face_sprite, xl, yl, NULL, &bltfx, stretch);
 
                             /* here we handle high & low walls - for example when
                              * you enter a house or something. The wall will be drawn
@@ -573,12 +719,12 @@ void map_draw_map(void)
                                     if (FaceList[index].flags & FACE_FLAG_D1)
                                     {
                                         if (y < (MAP_MAX_SIZE - 1) / 2)
-                                            sprite_blt_map(face_sprite, xl, yl - 22, NULL, &bltfx);
+                                            sprite_blt_map(face_sprite, xl, yl - 22, NULL, &bltfx, 0);
                                     }
                                     if (FaceList[index].flags & FACE_FLAG_D3)
                                     {
                                         if (x < (MAP_MAX_SIZE - 1) / 2 || y < (MAP_MAX_SIZE - 1) / 2)
-                                            sprite_blt_map(face_sprite, xl, yl - 22, NULL, &bltfx);
+                                            sprite_blt_map(face_sprite, xl, yl - 22, NULL, &bltfx, 0);
                                     }
                                 }
                             }
@@ -621,22 +767,22 @@ void map_draw_map(void)
                             {
                                 if (map->ext[k] & FFLAG_SLEEP)
                                     sprite_blt_map(Bitmaps[BITMAP_SLEEP], xl + face_sprite->bitmap->w / 2, yl - 5, NULL,
-                                               NULL);
+                                               NULL, 0);
                                 if (map->ext[k] & FFLAG_CONFUSED)
                                     sprite_blt_map(Bitmaps[BITMAP_CONFUSE], xl + face_sprite->bitmap->w / 2 - 1, yl - 4,
-                                               NULL, NULL);
+                                               NULL, NULL, 0);
 //                                if (map->ext[k] & FFLAG_SCARED)
-//                                    sprite_blt(Bitmaps[BITMAP_SCARED], xl + face_sprite->bitmap->w / 2 + 10, yl - 4,
+//                                    sprite_blt_map(Bitmaps[BITMAP_SCARED], xl + face_sprite->bitmap->w / 2 + 10, yl - 4,
 //                                               NULL, NULL);
                                 if (map->ext[k] & FFLAG_EATING)
                                     sprite_blt_map(Bitmaps[BITMAP_WARN_FOOD], xpos + 17, yl - 13, NULL,
-                                               NULL);
+                                               NULL, 0);
                                 if (map->ext[k] & FFLAG_PARALYZED)
                                 {
                                     sprite_blt_map(Bitmaps[BITMAP_PARALYZE], xl + face_sprite->bitmap->w / 2 + 2, yl + 3,
-                                               NULL, NULL);
+                                               NULL, NULL, 0);
                                     sprite_blt_map(Bitmaps[BITMAP_PARALYZE], xl + face_sprite->bitmap->w / 2 + 9, yl + 3,
-                                               NULL, NULL);
+                                               NULL, NULL, 0);
                                 }
                                 if (map->ext[k] & FFLAG_PROBE)
                                 {

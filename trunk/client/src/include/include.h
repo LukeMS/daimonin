@@ -86,6 +86,7 @@ typedef signed char     sint8;
 #include <sound.h>
 #include <map.h>
 #include <anim.h>
+#include <tile_stretcher.h>
 #include <sprite.h>
 #include <interface.h>
 #include <book.h>

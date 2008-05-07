@@ -261,6 +261,26 @@ int client_command_check(char *cmd)
         PHYSFS_freeList(j);
         return TRUE;
     }
+    else if (!strnicmp(cmd, "/teststretch", strlen("/teststretch")))
+    {
+        int h[5][5] =
+        {   {1,1,1,1,1},
+            {1,3,5,3,1},
+            {1,5,10,5,1},
+            {1,3,5,3,1},
+            {1,1,1,1,1}  };
+        int i, j;
+        for (i=6;i<11;i++)
+        {
+            for (j=6;j<11;j++)
+            {
+                set_map_height(i, j, h[i-6][j-6]);
+            }
+        }
+        map_udate_flag = TRUE;
+        map_redraw_flag = TRUE;
+        return TRUE;
+    }
 #endif
     else if (!strnicmp(cmd, "/changeskin", strlen("/changeskin")))
     {

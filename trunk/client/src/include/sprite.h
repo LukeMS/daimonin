@@ -46,6 +46,7 @@ typedef enum _sprite_type
 #define BLTFX_FLAG_FOW 4
 #define BLTFX_FLAG_RED 8
 #define BLTFX_FLAG_GREY 16
+#define BLTFX_FLAG_STRETCH 32
 
 /* here we can change default blt options or set special options */
 typedef struct _BLTFX
@@ -77,22 +78,10 @@ typedef struct _Sprite
     SDL_Surface    *red;                    /* red (infravision) */
     SDL_Surface    *grey;                       /* grey (xray) */
     SDL_Surface    *fog_of_war;             /* thats the fog of war palette */
-    SDL_Surface    *dark_level[DARK_LEVELS];    /* dark levels. */
-                                                           /* Note: 0= default sprite - its only mapped */
 }
 _Sprite;
 
-/* this value defines how many created darkness faces we store in a rolling buffer */
-/* 200 should be enough to hold all faces when not moving much */
-/* bigger value=more memory usage, less CPU usage */
-#define MAX_BBDARK  200
 
-typedef struct _BBDark
-{
-    _Sprite         *sprite;
-     uint8           dark_level;
-}
-_BBDark;
 
 typedef struct _Font
 {
@@ -162,7 +151,7 @@ extern _Sprite         *sprite_tryload_file(char *fname, UINT32 flags, SDL_RWops
 extern void             sprite_free_sprite(_Sprite *sprite);
 extern int              get_string_pixel_length(char *text, struct _Font *font);
 extern void             sprite_blt(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx);
-extern void             sprite_blt_map(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx);
+extern void             sprite_blt_map(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx, Uint32 stretch);
 
 extern Uint32           GetSurfacePixel(SDL_Surface *Surface, Sint32 X, Sint32 Y);
 extern void             CreateNewFont(_Sprite *sprite, _Font *font, int xlen, int ylen, int c32len);

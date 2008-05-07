@@ -30,6 +30,8 @@
 
 #define USE_NEW_ANIM
 
+#define USE_TILESTRETCHER
+
 /* this define does 2 things:
  * 1) if the framerate of the client is too slow, frames will be skipped if needed
  * 2) animations should always look the same...
@@ -42,12 +44,6 @@
  */
 //#define PROFILING
 //#define PROFILING_WIDGETS
-
-/* disable the rolling-backbuffer, means all created darkness surfaces are stored till end of client-run
- * more memory usage, BUT faster on slower systems (each darkness level is only creating one time ever in a client run
- */
-//#define NO_BACKBUFFER
-
 
 //#define WIDGET_SNAP
 
