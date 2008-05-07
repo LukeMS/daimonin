@@ -80,6 +80,8 @@ struct MapCell
     uint8   probe[MAXFACES];
     struct anim_list *anim[MAXFACES];
     uint8   darkness;
+    sint16  height;   /* height of this maptile */
+    uint32  stretch;  /* how we stretch this is really 8 char for N S E W */
 }
 MapCell;
 
@@ -104,7 +106,8 @@ extern _multi_part_obj  MultiArchs[16];
 extern void             clear_map(void);
 extern void             display_map_clearcell(long x, long y);
 extern void             set_map_darkness(int x, int y, uint8 darkness);
-extern void             set_map_face(int x, int y, int layer, int face, int pos, int ext, char *name);
+extern void             set_map_face(int x, int y, int layer, int face, int pos, int ext, char *, sint16 height);
+extern void             set_map_height(int x, int y, sint16 height);
 extern void             map_draw_map(void);
 extern void             display_mapscroll(int dx, int dy);
 extern void             InitMapData(int xl, int yl, int px, int py);

@@ -612,6 +612,9 @@ void widget_textwin_show(int x, int y, int actWin)
      * we always blit the background extra because of the alpha,
      * for performance reasons we need to do a DisplayFormat (its around 4ms !!! faster on my system)
      * and keep track of the old txtwin_alpha value
+     * We also need it to seperate because drawing and esp Blitting of Fonts with palettes to a DisplayFormatted
+     * (hardware) surface is slow as hell (i got sometimes 10 seconds (!not milli!) for the simple textdrawings
+     * (ok that could also my integratet on board graphics with bad hardware blitting support)
      */
 
     if (options.use_TextwinAlpha)

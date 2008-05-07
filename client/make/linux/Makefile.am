@@ -32,6 +32,7 @@ daimonin_SOURCES =  \
 	../../src/sound.c \
 	../../src/sprite.c \
 	../../src/textwin.c \
+	../../src/tile_stretcher.c \
 	../../src/uncompr.c \
 	../../src/wrapper.c \
 	../../src/widget.c \

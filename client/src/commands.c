@@ -68,86 +68,86 @@ void SoundCmd(unsigned char *data, int len)
  */
 static int setup_endian_sync(char *buf)
 {
-	/* we have 6 bytes here showing the server endian */
-	endian_int16 = *((uint16 *)buf);
-	endian_int32 = *((uint32 *)(buf+2));
+    /* we have 6 bytes here showing the server endian */
+    endian_int16 = *((uint16 *)buf);
+    endian_int32 = *((uint32 *)(buf+2));
 
-	/* only for testing */
-	 // endian_int32 = 0x02010403;
-	 // endian_int16 = 0x0102;
+    /* only for testing */
+     // endian_int32 = 0x02010403;
+     // endian_int16 = 0x0102;
 
-	LOG(LOG_MSG, "Endian:: we got short16:%x int32:%x\n", endian_int16, endian_int32);
+    LOG(LOG_MSG, "Endian:: we got short16:%x int32:%x\n", endian_int16, endian_int32);
 
-	/* lets first check the simplest case: which means we don't must shift anything! */
-	endian_do16 = FALSE; /* easy going! */
-	if(endian_int16 != 0x0201)
-	{
-		uint16 test16 = 0x0201;
+    /* lets first check the simplest case: which means we don't must shift anything! */
+    endian_do16 = FALSE; /* easy going! */
+    if(endian_int16 != 0x0201)
+    {
+        uint16 test16 = 0x0201;
 
-		/* well, its easy: if we don't have 0x0201 then we have 0x0102... */
-		if(endian_int16 == 0x0201) /* some stupid sanity check */
-			return FALSE;
+        /* well, its easy: if we don't have 0x0201 then we have 0x0102... */
+        if(endian_int16 == 0x0201) /* some stupid sanity check */
+            return FALSE;
 
-		endian_do16 = TRUE;
+        endian_do16 = TRUE;
 
-		LOG(LOG_MSG, "CHECK Endian 16bit:: we got %x we created read:%x send:%x\n", endian_int16, adjust_endian_int16(endian_int16), adjust_endian_int16(test16));
-		if(endian_int16 != adjust_endian_int16(test16) || test16 != adjust_endian_int16(endian_int16))
-			return FALSE; /* should NEVER happens */
-	}
+        LOG(LOG_MSG, "CHECK Endian 16bit:: we got %x we created read:%x send:%x\n", endian_int16, adjust_endian_int16(endian_int16), adjust_endian_int16(test16));
+        if(endian_int16 != adjust_endian_int16(test16) || test16 != adjust_endian_int16(endian_int16))
+            return FALSE; /* should NEVER happens */
+    }
 
-	/* 32 bit is a bit more complex */
-	if(endian_int32 == 0x04030201)
-		endian_do32 = FALSE;
-	else /* ok, we have a bit work to do */
-	{
-		uint32 test32 = 0x04030201;
+    /* 32 bit is a bit more complex */
+    if(endian_int32 == 0x04030201)
+        endian_do32 = FALSE;
+    else /* ok, we have a bit work to do */
+    {
+        uint32 test32 = 0x04030201;
 
-		endian_do32 = TRUE;
-		/* to lazy to do this smart with a loop */
-		if((endian_int32 & 0x000000ff) == 0x01)
-			endian_shift32[0] = 0;
-		else if((endian_int32 & 0x0000ff00) == 0x0100)
-			endian_shift32[0] = 8;
-		else if((endian_int32 & 0x00ff0000) == 0x010000)
-			endian_shift32[0] = 16;
-		else
-			endian_shift32[0] = 24;
+        endian_do32 = TRUE;
+        /* to lazy to do this smart with a loop */
+        if((endian_int32 & 0x000000ff) == 0x01)
+            endian_shift32[0] = 0;
+        else if((endian_int32 & 0x0000ff00) == 0x0100)
+            endian_shift32[0] = 8;
+        else if((endian_int32 & 0x00ff0000) == 0x010000)
+            endian_shift32[0] = 16;
+        else
+            endian_shift32[0] = 24;
 
-		if((endian_int32 & 0x000000ff) == 0x02)
-			endian_shift32[1] = 0;
-		else if((endian_int32 & 0x0000ff00) == 0x0200)
-			endian_shift32[1] = 8;
-		else if((endian_int32 & 0x00ff0000) == 0x020000)
-			endian_shift32[1] = 16;
-		else
-			endian_shift32[1] = 24;
+        if((endian_int32 & 0x000000ff) == 0x02)
+            endian_shift32[1] = 0;
+        else if((endian_int32 & 0x0000ff00) == 0x0200)
+            endian_shift32[1] = 8;
+        else if((endian_int32 & 0x00ff0000) == 0x020000)
+            endian_shift32[1] = 16;
+        else
+            endian_shift32[1] = 24;
 
-		if((endian_int32 & 0x000000ff) == 0x03)
-			endian_shift32[2] = 0;
-		else if((endian_int32 & 0x0000ff00) == 0x0300)
-			endian_shift32[2] = 8;
-		else if((endian_int32 & 0x00ff0000) == 0x030000)
-			endian_shift32[2] = 16;
-		else
-			endian_shift32[2] = 24;
+        if((endian_int32 & 0x000000ff) == 0x03)
+            endian_shift32[2] = 0;
+        else if((endian_int32 & 0x0000ff00) == 0x0300)
+            endian_shift32[2] = 8;
+        else if((endian_int32 & 0x00ff0000) == 0x030000)
+            endian_shift32[2] = 16;
+        else
+            endian_shift32[2] = 24;
 
-		if((endian_int32 & 0x000000ff) == 0x04)
-			endian_shift32[3] = 0;
-		else if((endian_int32 & 0x0000ff00) == 0x0400)
-			endian_shift32[3] = 8;
-		else if((endian_int32 & 0x00ff0000) == 0x040000)
-			endian_shift32[3] = 16;
-		else
-			endian_shift32[3] = 24;
+        if((endian_int32 & 0x000000ff) == 0x04)
+            endian_shift32[3] = 0;
+        else if((endian_int32 & 0x0000ff00) == 0x0400)
+            endian_shift32[3] = 8;
+        else if((endian_int32 & 0x00ff0000) == 0x040000)
+            endian_shift32[3] = 16;
+        else
+            endian_shift32[3] = 24;
 
-		/* ok... new we test what we configured by shifting 0x04030201 to the
-		 * server endian - it MUST match our server template
-		 */
-		LOG(LOG_MSG, "CHECK Endian 32bit:: we got %x we created read:%x send:%x\n", endian_int32, adjust_endian_int32(endian_int32), adjust_endian_int32(test32));
-		if(endian_int32 != adjust_endian_int32(test32) || test32 != adjust_endian_int32(endian_int32))
-			return FALSE; /* should NEVER happens */
-	}
-	return TRUE;
+        /* ok... new we test what we configured by shifting 0x04030201 to the
+         * server endian - it MUST match our server template
+         */
+        LOG(LOG_MSG, "CHECK Endian 32bit:: we got %x we created read:%x send:%x\n", endian_int32, adjust_endian_int32(endian_int32), adjust_endian_int32(test32));
+        if(endian_int32 != adjust_endian_int32(test32) || test32 != adjust_endian_int32(endian_int32))
+            return FALSE; /* should NEVER happens */
+    }
+    return TRUE;
 }
 
 void SetupCmd(char *buf, int len)
@@ -157,15 +157,15 @@ void SetupCmd(char *buf, int len)
 
     scrolldy = scrolldx = 0;
 
-	/* setup the endian syncronization */
-	if(!setup_endian_sync(buf))
-	{
-		draw_info("Corrupt endian template!", COLOR_RED);
-		LOG(LOG_ERROR, "Corrupt endian template!\n");
-		SOCKET_CloseSocket(csocket.fd);
-		GameStatus = GAME_STATUS_START;
-		return;
-	}
+    /* setup the endian syncronization */
+    if(!setup_endian_sync(buf))
+    {
+        draw_info("Corrupt endian template!", COLOR_RED);
+        LOG(LOG_ERROR, "Corrupt endian template!\n");
+        SOCKET_CloseSocket(csocket.fd);
+        GameStatus = GAME_STATUS_START;
+        return;
+    }
 
     LOG(LOG_MSG, "Get SetupCmd:: %s\n", buf+6);
     for (s = 6; ;)
@@ -910,19 +910,19 @@ void StatsCmd(unsigned char *data, int len)
                     cpl.stats.dps = (float)cpl.stats.dam/10.0f;
                     i += 2;
                     break;
-				case CS_STAT_DIST_DPS:
-					cpl.stats.dist_dam = GetShort_String(data + i);
-					cpl.stats.dist_dps = (float)cpl.stats.dist_dam/10.0f;
-					i += 2;
-					break;
-				case CS_STAT_DIST_WC:
-					cpl.stats.dist_wc = GetShort_String(data + i);
-					i += 2;
-					break;
-				case CS_STAT_DIST_TIME:
-					cpl.stats.dist_time = ((float)GetInt_String(data + i))/1000.0f;
-					i += 4;
-					break;
+                case CS_STAT_DIST_DPS:
+                    cpl.stats.dist_dam = GetShort_String(data + i);
+                    cpl.stats.dist_dps = (float)cpl.stats.dist_dam/10.0f;
+                    i += 2;
+                    break;
+                case CS_STAT_DIST_WC:
+                    cpl.stats.dist_wc = GetShort_String(data + i);
+                    i += 2;
+                    break;
+                case CS_STAT_DIST_TIME:
+                    cpl.stats.dist_time = ((float)GetInt_String(data + i))/1000.0f;
+                    i += 4;
+                    break;
                 case CS_STAT_SPEED:
                     cpl.stats.speed = (float)GetInt_String(data + i)/10.0f;
                     i += 4;
@@ -1056,12 +1056,12 @@ void StatsCmd(unsigned char *data, int len)
 void PreParseInfoStat(char *cmd)
 {
     /* Find input name*/
-	if(!cmd)
-	{
-		GameStatus = GAME_STATUS_START;
-		LOG(LOG_MSG, "Bug: Invalid response from server\n");
-		return;
-	}
+    if(!cmd)
+    {
+        GameStatus = GAME_STATUS_START;
+        LOG(LOG_MSG, "Bug: Invalid response from server\n");
+        return;
+    }
     if (!strncmp(cmd, "QN",2))
     {
         int status = cmd[2]-'0';
@@ -1610,6 +1610,9 @@ void Map2Cmd(unsigned char *data, int len)
     int     mapstat, ext1, ext2, ext3, probe;
     int     map_new_flag    = FALSE;
     int     ff0, ff1, ff2, ff3, ff_flag, xpos, ypos;
+
+    sint16 height_2, height_3, height_4;
+
     char    pname1[64], pname2[64], pname3[64], pname4[64];
     char mapname[256];
     uint16  face;
@@ -1687,6 +1690,7 @@ void Map2Cmd(unsigned char *data, int len)
     {
         ext_flag = 0;
         ext1 = ext2 = ext3 = 0;
+        height_2 = height_3 = height_4 = 0;
         /* first, we get the mask flag - it decribes what we now get */
         mask = GetShort_String(data + pos); pos += 2;
         x = (mask >> 11) & 0x1f;
@@ -1754,6 +1758,29 @@ void Map2Cmd(unsigned char *data, int len)
                     };
                     pname4[i] = 0;
                 }
+
+                /* the following is for future height use, but we will probably change things before we need this */
+                if (pname_flag & 0x40)
+                {
+                    height_2 = GetShort_String(data + pos);
+                    pos += 2;
+                    c = (data[pos++]);
+                }
+                if (pname_flag & 0x20)
+                {
+                    height_3 = GetShort_String(data + pos);
+                    pos += 2;
+                    c = (data[pos++]);
+                }
+                if (pname_flag & 0x10)
+                {
+                    height_4 = GetShort_String(data + pos);
+                    pos += 2;
+                    c = (data[pos++]);
+                }
+
+
+
             }
             if (ext_flag & 0x40) /* damage add on the map */
             {
@@ -1827,10 +1854,16 @@ void Map2Cmd(unsigned char *data, int len)
          */
         if (mask & 0x8)
         {
+            sint16  z_height = 0;
             face = GetShort_String(data + pos); pos += 2;
             request_face(face, 0);
             xdata = 0;
-            set_map_face(x, y, 0, face, xdata, -1, pname1);
+            /* incoming height for floor (this is a sint16 */
+#ifdef USE_TILESTRETCHER
+            z_height = GetShort_String(data + pos); pos += 2;
+#endif
+            set_map_face(x, y, 0, face, xdata, -1, pname1,z_height);
+
         }
         if (mask & 0x4)
         {
@@ -1842,7 +1875,7 @@ void Map2Cmd(unsigned char *data, int len)
                 xdata = (uint8) (data[pos]);
                 pos++;
             }
-            set_map_face(x, y, 1, face, xdata, ext1, pname2);
+            set_map_face(x, y, 1, face, xdata, ext1, pname2,height_2);
         }
         if (mask & 0x2)
         {
@@ -1855,7 +1888,7 @@ void Map2Cmd(unsigned char *data, int len)
                 xdata = (uint8) (data[pos]);
                 pos++;
             }
-            set_map_face(x, y, 2, face, xdata, ext2, pname3);
+            set_map_face(x, y, 2, face, xdata, ext2, pname3,height_3);
         }
         if (mask & 0x1)
         {
@@ -1868,7 +1901,7 @@ void Map2Cmd(unsigned char *data, int len)
                 xdata = (uint8) (data[pos]);
                 pos++;
             }
-            set_map_face(x, y, 3, face, xdata, ext3, pname4);
+            set_map_face(x, y, 3, face, xdata, ext3, pname4,height_4);
         }
     } /* more tiles */
     map_udate_flag = 2;

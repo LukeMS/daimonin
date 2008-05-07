@@ -168,6 +168,7 @@
 		<Unit filename="..\..\..\src\include\textwin.h">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="..\..\..\src\include\tile_stretcher.h" />
 		<Unit filename="..\..\..\src\include\widget.h" />
 		<Unit filename="..\..\..\src\include\win32.h">
 			<Option compilerVar="CC" />
@@ -233,6 +234,9 @@
 		<Unit filename="..\..\..\src\textwin.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="..\..\..\src\tile_stretcher.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="..\..\..\src\uncompr.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -249,7 +253,6 @@
 			<code_completion />
 			<envvars />
 			<debugger />
-			<lib_finder />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
