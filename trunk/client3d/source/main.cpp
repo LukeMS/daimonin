@@ -80,12 +80,6 @@ bool parseCmdLine(const char *cmd, const char *value)
             Option::getSingleton().setStrValue(Option::CMDLINE_SERVER_PORT, value);
             ++options;
         }
-        if ((cmd[1] == 'f' || !stricmp(cmd, "--fallback")))
-        {
-            Logger::log().info() << "You told me to disable the TileEngine.";
-            Option::getSingleton().setIntValue(Option::CMDLINE_FALLBACK, true);
-            ++options;
-        }
         if ((cmd[1] == 'x' || !stricmp(cmd, "--sound off")))
         {
             Logger::log().info() << "You told me to disable the Sound.";
@@ -98,6 +92,12 @@ bool parseCmdLine(const char *cmd, const char *value)
             Option::getSingleton().setIntValue(Option::CMDLINE_SHOW_BOUNDING_BOX, true);
             ++options;
         }
+        if (!stricmp(cmd, "--lod"))
+        {
+            Logger::log().info() << "You told me to to set LoD " << value << " for the TileEngine.";
+            Option::getSingleton().setIntValue(Option::CMDLINE_TILEENGINE_LOD, atoi(value));
+            ++options;
+        }
     }
     if (!options)
     {
@@ -108,7 +108,7 @@ bool parseCmdLine(const char *cmd, const char *value)
         << "--create tileTextures   -c  tileTextures\n"
         << "--server <name>         -s  <name>\n"
         << "--port   <num>          -p  <num>\n"
-        << "--fallback              -f  disable TileEngine\n"
+        << "--lod    <num>              Set LoD for the TileEngine\n"
         << "--sound off             -x  disable Sound\n"
         << "--bbox                      show bounding-boxes\n"
         << "--flipbook <meshName>       convert a mesh into Imposters\n" << std::endl;
@@ -170,13 +170,19 @@ int main(int argc, char **argv)
         if (argc > 1)
         {
             if (!parseCmdLine(argv[argc-1], argv[argc]))
+            {
+                Logger::log().error() << "Unknown cmdline " << argv[argc-1] << " " << argv[argc];
                 return 0;
-            --argc;
+                --argc;
+            }
         }
         else
         {
             if (!parseCmdLine(argv[argc], "0"))
+            {
+                Logger::log().error() << "Unknown cmdline " << argv[argc-1];
                 return 0;
+            }
         }
     }
     Root *root =0;
