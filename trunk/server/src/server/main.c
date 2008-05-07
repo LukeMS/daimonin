@@ -603,7 +603,7 @@ void leave(player *pl, int draw_exit)
         CFP.Value[1] = (void *) (pl->ob);
         CFP.Value[2] = CFP.Value[3] = CFP.Value[4] = NULL;
         CFP.Value[5] = (void *) (&draw_exit);
-        CFP.Value[6] = CFP.Value[7] = CFP.Value[8] = 
+        CFP.Value[6] = CFP.Value[7] = CFP.Value[8] =
             CFP.Value[9] = CFP.Value[10] = NULL;
         CFP.Value[11] = (void *) (pl);
         GlobalEvent(&CFP);

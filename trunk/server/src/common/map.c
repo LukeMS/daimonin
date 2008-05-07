@@ -1679,6 +1679,9 @@ void load_objects(mapstruct *m, FILE *fp, int mapflags)
 
             msp->floor_terrain = op->terrain_type;
             msp->floor_light = op->last_sp;
+#ifdef USE_TILESTRETCHER
+            msp->floor_z = op->z;
+#endif
 
             if(QUERY_FLAG(op,FLAG_NO_PASS))
                 msp->floor_flags |= MAP_FLOOR_FLAG_NO_PASS;
@@ -1747,7 +1750,7 @@ void load_objects(mapstruct *m, FILE *fp, int mapflags)
 				LOG(llevDebug, "\n**BUG:load_objects(%s): object %s (%d)- NUM_FACINGS < op->direction(%d) + op->state(%d) - (pos:%d,%d)\n",
 					m->path ? m->path : ">no map<", query_short_name(op, NULL), op->type, op->direction, op->state, op->x, op->y);
 				/* its an invalid animation offset (can trigger wrong memory access)
-				 * we try to repair it. This is a wrong setting in the arch file or, 
+				 * we try to repair it. This is a wrong setting in the arch file or,
 				 * more common, a map maker bug.
 				 */
 				op->direction = NUM_FACINGS(op)-1;
@@ -2142,6 +2145,9 @@ void save_objects(mapstruct *m, FILE *fp, int flag)
                 floor_g->face = mp->floor_face;
                 floor_g->x = i;
                 floor_g->y = j;
+#ifdef USE_TILESTRETCHER
+                floor_g->z = mp->floor_z;
+#endif
 
                 if(mp->floor_flags & MAP_FLOOR_FLAG_NO_PASS )
                     SET_FLAG(floor_g, FLAG_NO_PASS);
@@ -2162,6 +2168,9 @@ void save_objects(mapstruct *m, FILE *fp, int flag)
                 fmask_g->face = mp->mask_face;
                 fmask_g->x = i;
                 fmask_g->y = j;
+#ifdef USE_TILESTRETCHER
+                floor_g->z = mp->floor_z;
+#endif
                 save_object(fp, fmask_g, 3);
             }
 

@@ -142,6 +142,9 @@ typedef struct obj
     /* *map is part of "object head" but this not? hmm */
     sint16          x;              /* X-Position in the map for this object */
     sint16          y;              /* Y-Position in the map for this object */
+#ifdef USE_TILESTRETCHER
+    sint16          z;              /* Z-Position in the map (in pixels) for this object */
+#endif
 
     uint16          path_attuned;   /* Paths the object is attuned to */
     uint16          path_repelled;  /* Paths the object is repelled from */

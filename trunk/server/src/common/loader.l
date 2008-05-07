@@ -329,6 +329,14 @@ op->ox= op->x;
 op->oy= op->y;
 #endif
 }
+^z{S}		{
+#ifdef USE_TILESTRETCHER
+op->z = IVAL;
+#ifdef POSITION_DEBUG
+op->oz= op->z;
+#endif
+#endif
+}
 ^can_stack{S}				SET_OR_CLEAR_FLAG(op, FLAG_CAN_STACK, IVAL);
 ^nrof{S}					op->nrof= atol(yval());
 ^level{S}					op->level = IVAL;
@@ -1126,7 +1134,10 @@ char *get_ob_diff(const object *op, const object *op2) {
     save_long(buf, "x", op->x);
   if(op->y!=op2->y)
     save_long(buf, "y", op->y);
-
+#ifdef USE_TILESTRETCHER    
+  if(op->z!=op2->z)
+    save_long(buf, "z", op->z);
+#endif
 
   if(op->speed!=op2->speed) {
     sprintf(buf2,"speed %f\n",op->speed);

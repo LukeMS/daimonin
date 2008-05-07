@@ -252,6 +252,9 @@ void draw_client_map2(object *pl)
     int pname_flag, ext_flag, dmg_flag;
     int dmg_layer2, dmg_layer1, dmg_layer0;
     int wdark;
+#ifdef USE_TILESTRETCHER
+    sint16 z1;
+#endif
 
 #ifdef DEBUG_CORE_MAP
     int tile_count  = 0;
@@ -381,7 +384,9 @@ void draw_client_map2(object *pl)
                 pname_flag = 0,ext_flag = 0, dmg_flag = 0;
                 dmg_layer2 = 0,dmg_layer1 = 0,dmg_layer0 = 0;
                 dark = NO_FACE_SEND;
-
+#ifdef USE_TILESTRETCHER
+                z1 = 0;
+#endif
                 /* lets calc the darkness/light value for this tile.*/
                 if (MAP_OUTDOORS(m))
                 {
@@ -441,7 +446,19 @@ void draw_client_map2(object *pl)
                 /* floor layer */
                 face_num0 = 0;
                 if(msp->floor_face)
+                {
                     face_num0 = msp->floor_face->number;
+#ifdef USE_TILESTRETCHER
+                    if (msp->floor_z != 0 )
+                     {
+                       /*pname_flag |=0x80; */ /*  This floor has a height offset */
+                       z1 = msp->floor_z;
+#ifdef DEBUG_CORE_MAP
+                       LOG(llevDebug,"Z1 = %d, pname = %d\n",z1,pname_flag);
+#endif
+                     }
+#endif
+                }
                 /* layer 1 (floor) is really free now - we only have here
                  * type 68 SHOP_FLOOR left using layer 1. That special floor
                  * will be removed when we add real shop interfaces.
@@ -848,6 +865,10 @@ void draw_client_map2(object *pl)
                 if (mask & 0x08)
                 {
                     SockBuf_AddShort(sbptr, face_num0);
+#ifdef USE_TILESTRETCHER
+                    SockBuf_AddShort(sbptr, z1);   /*  <--- sending height every time... */
+                    /* should be reworked to send only when !=0 */
+#endif
                 }
                 if (mask & 0x04)
                 {
