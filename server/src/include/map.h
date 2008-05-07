@@ -284,6 +284,9 @@ typedef struct MapSpace_s
     New_Face           *floor_face;                     /* here we need the face for the floor because it can be turnable */
     uint16              floor_terrain;
     sint16              floor_light;
+#ifdef USE_TILESTRETCHER
+    sint16              floor_z;                        /* height of floor */
+#endif
     uint16              last_damage;                    /* last_damage tmp backbuffer */
     uint16              move_flags;                     /* terrain type flags (water, underwater,...) */
     sint16              mask;                           /* picture/object ID for the floor mask of this tile */

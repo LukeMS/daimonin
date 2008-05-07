@@ -53,6 +53,8 @@
 /* when defined, annouces the system at login */
 #define ANNOUNCE_CHANNELS
 
+#define USE_TILESTRETCHER
+
 /* Location of read-only machine independent data */
 #ifndef DATADIR
 #define DATADIR "./lib"

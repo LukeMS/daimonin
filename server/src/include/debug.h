@@ -45,7 +45,7 @@
 /* #define DEBUG_CORE */
 /* #define DEBUG_CORE_MAP*/
 
-#define SEND_BUFFER_DEBUG
+//#define SEND_BUFFER_DEBUG
 
 /*#define SKILL_UTIL_DEBUG*/
 
