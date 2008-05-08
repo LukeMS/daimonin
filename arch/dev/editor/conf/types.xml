@@ -2767,6 +2767,9 @@
     So, *if* you enable &lt;remove match&gt;, make sure
     to inform the player what's going on!
   </attribute>
+  <attribute arch_begin="msg" arch_end="endmsg" editor="trigger message" type="text">
+    If set, this message will be displayed to the player when he triggers the pedestal.
+  </attribute>
 </type>
 
 <!--####################################################################-->
@@ -4140,6 +4143,10 @@
     is a match. Very useful if you want to open a gate for players
     but not for monsters.
   </attribute>
+  <attribute arch="last_sp" editor="match = having" type="bool">
+    Enabled means having that object is a match.
+    Disabled means not having that object is a match.
+  </attribute>
   <attribute arch="connected" editor="connection" type="int">
     When the pedestal is triggered, all objects with the same
     connection value get activated.
@@ -4149,8 +4156,16 @@
     can have different effects. See the object you are connecting
     to this.
   </attribute>
+  <attribute arch="last_grace" editor="blocking passage" type="bool">
+    If set, only players meeting the match criteria can pass
+    through that space. If unset (default), the inventory
+    checker acts like a trigger/button.
+  </attribute>
   <attribute arch="walk_on" value="1" type="fixed" />
   <attribute arch="walk_off" value="1" type="fixed" />
+  <attribute arch_begin="msg" arch_end="endmsg" editor="trigger message" type="text">
+    If set, this message will be displayed to the player when he triggers the pedestal.
+  </attribute>
 </type>
 
 <!--####################################################################-->
@@ -4190,6 +4205,10 @@
     is a match. Very useful if you want to open a gate for players
     but not for monsters.
   </attribute>
+  <attribute arch="last_sp" editor="match = having" type="bool">
+    Enabled means having that object is a match.
+    Disabled means not having that object is a match.
+  </attribute>
   <attribute arch="connected" editor="connection" type="int">
     When the pedestal is triggered, all objects with the same
     connection value get activated.
@@ -4199,8 +4218,16 @@
     can have different effects. See the object you are connecting
     to this.
   </attribute>
+  <attribute arch="last_grace" editor="blocking passage" type="bool">
+    If set, only players meeting the match criteria can pass
+    through that space. If unset (default), the inventory
+    checker acts like a trigger/button.
+  </attribute>
   <attribute arch="walk_on" value="1" type="fixed" />
   <attribute arch="walk_off" value="1" type="fixed" />
+  <attribute arch_begin="msg" arch_end="endmsg" editor="trigger message" type="text">
+    If set, this message will be displayed to the player when he triggers the pedestal.
+  </attribute>
 </type>
 
 <!--####################################################################-->
