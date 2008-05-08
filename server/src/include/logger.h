@@ -55,7 +55,7 @@ typedef enum LogLevel
     llevNoLog  = -1, /**< set GLOBAL_LOG_LEVEL to this, and no message will be printed out */
     llevSystem = 0,  /**< internal: used for llevError msg and llevBug message - don't set this! */
     llevError,       /**< thats fatal errors - server will shut down after such a message */
-    llevBug,         /**< thats a bug - but we can try going on. Too many bugs and the server will shutdown ("BUG fload") */
+    llevBug,         /**< thats a bug - but we can try going on. Too many bugs and the server will shutdown ("BUG flood") */
     llevMapbug,      /**< A mapping error was detected, but we can work around it. */
     llevInfo,        /**< just tell the log stuff we think its useful to know */
     llevDebug,       /**< give out maximal information for debug and bug control */

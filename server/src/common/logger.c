@@ -132,7 +132,7 @@ void LOG(LogLevel logLevel, char *format, ...)
         if (fatal_error == FALSE)
         {
             fatal_error = TRUE;
-            LOG(llevSystem, "Fatal: Shutdown server. Reason: %s\n", logLevel == llevError ? "Fatal Error" : "BUG fload");
+            LOG(llevSystem, "Fatal: Shutdown server. Reason: %s\n", logLevel == llevError ? "Fatal Error" : "BUG flood");
             fatal_signal(0,1);
         }
     }
