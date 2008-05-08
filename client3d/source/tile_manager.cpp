@@ -115,18 +115,17 @@ void TileManager::createAtlasTexture(int textureSize, unsigned int groupNr)
     {
         if (!copyTileToAtlas(dstBuf)) break;
         for (int i=0; i < 4; ++i) copyFilterToAtlas(dstBuf, i);
-
         // Save the Atlastexture.
-        dstImage.loadDynamicImage(dstBuf, textureSize, textureSize, PF_A8R8G8B8);
+        dstImage.loadDynamicImage(dstBuf, textureSize, textureSize, 1, PF_A8R8G8B8, true);
         String dstFilename = PATH_TILE_TEXTURES;
         dstFilename+= "Atlas_"+ StringConverter::toString(nr,2,'0') + "_";
         for (unsigned short s = textureSize; s >= textureSize/8; s/=2)
         {
             dstImage.save(dstFilename + StringConverter::toString(s, 4, '0') + ".png");
-            dstImage.resize(s/2, s/2, Image::FILTER_BILINEAR); // crashes on linux.
+            dstImage.resize(s/2, s/2, Image::FILTER_BILINEAR);
         }
     }
-    delete[] dstBuf;
+    //delete[] dstBuf; // Will be done by Ogre because autoDelete was set.
 }
 
 //================================================================================================
