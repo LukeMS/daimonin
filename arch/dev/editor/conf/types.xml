@@ -2259,8 +2259,9 @@
 
 <!--####################################################################-->
 <type number="91" name="Gate">
-  <import_type name="default_flags" />
+  <import_type name="combat_values" />
   <ignore>
+    <section name="resistance" />
     <attribute arch="no_magic" />
     <attribute arch="damned" />
     <ignore_list name="non_pickable" />
@@ -2297,12 +2298,20 @@
     Restricting the use of prayers to pass this door. This has
     an effect only if &lt;block view&gt; is disabled.
   </attribute>
+  <attribute arch="level" editor="level" type="int">
+    The gate's level determines how hard it hits a damageable object that is
+    crushed by it closing.
+
+    If &lt;level&gt; is 0 (the default), the value will be calculated according
+    to map difficulty.
+  </attribute>
 </type>
 
 <!--####################################################################-->
 <type number="26" name="Timed Gate">
-  <import_type name="default_flags" />
+  <import_type name="combat_values" />
   <ignore>
+    <section name="resistance" />
     <attribute arch="no_magic" />
     <attribute arch="damned" />
     <ignore_list name="non_pickable" />
@@ -2341,6 +2350,13 @@
   <attribute arch="damned" editor="restrict prayers" type="bool">
     Restricting the use of prayers to pass this door. This has
     an effect only if &lt;block view&gt; is disabled.
+  </attribute>
+  <attribute arch="level" editor="level" type="int">
+    The gate's level determines how hard it hits a damageable object that is
+    crushed by it closing.
+
+    If &lt;level&gt; is 0 (the default), the value will be calculated according
+    to map difficulty.
   </attribute>
 </type>
 

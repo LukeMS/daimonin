@@ -1,7 +1,6 @@
 Object gate_open
 name gate
 type 91
-level 1
 layer 5
 attack_impact 100
 no_teleport 1
@@ -91,12 +90,12 @@ wc 0
 dam 1
 maxsp 1
 end
+
 Object gate_closed
 name gate
 no_teleport 1
 type 91
 layer 5
-level 1
 no_pick 1
 face gate_door1.111
 anim
