@@ -2339,7 +2339,6 @@
     else on the map and your player must enter it in a set time limit (and when he
     fails he can try it again). ]]>
   </use>
-  <section name="attack" />
   <attribute arch="no_pick" value="1" type="fixed" />
   <attribute arch="connected" editor="connection" type="int">
     Whenever a "signal" object is triggered, all objects with identical
