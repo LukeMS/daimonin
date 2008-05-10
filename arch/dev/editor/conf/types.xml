@@ -242,7 +242,7 @@
      and invisible. They don't interact with players at all. -->
 
 <!--####################################################################-->
-<type number="998" name="default_flags">
+<type number="997" name="default_flags">
   <description><![CDATA[
 	This is not a type - its a template for the item flags we need for import.
     ]]>
@@ -348,12 +348,11 @@
 </section>
 </type>
 
-
 <!--####################################################################-->
-<type number="999" name="combat_values">
+<type number="998" name="attack_values">
   <import_type name="default_flags" />
   <description><![CDATA[
-	This is not a type - its a template for the combat values we need for import.
+	This is not a type - its a template for the attack values we need for import.
     ]]>
   </description>
 <section name="attack">
@@ -463,6 +462,15 @@
     normal. A total snared object is called rooted.
   </attribute>
 </section>
+</type>
+
+<!--####################################################################-->
+<type number="999" name="resist_values">
+  <import_type name="attack_values" />
+  <description><![CDATA[
+	This is not a type - its a template for the resistance values we need for import.
+    ]]>
+  </description>
 <section name="resistance">
   <attribute arch="resist_impact" editor="impact (physical)" length="15" type="int">
     "Impact" is damage from clubs, maces or a simple fist.
@@ -570,6 +578,7 @@
   </attribute>
 </section>
 </type>
+
 
 <!--####################################################################-->
 <type number="126" name="AI Object">
@@ -1028,7 +1037,7 @@
 
 <!--####################################################################-->
 <type number="39" name="Amulet">
-  <import_type name="combat_values" />
+  <import_type name="resist_values" />
   <ignore>
     <section name="resistance" />
     <attribute arch="material" />
@@ -1836,7 +1845,7 @@
 
 <!--####################################################################-->
 <type number="158" name="Disease">
-  <import_type name="combat_values" />
+  <import_type name="resist_values" />
   <ignore>
     <ignore_list name="system_object" />
     <ignore_list name="default_setting" />
@@ -2104,7 +2113,7 @@
 
 <!--####################################################################-->
 <type number="72" name="Flesh">
-  <import_type name="combat_values" />
+  <import_type name="resist_values" />
   <description><![CDATA[
     By eating/drinking food-objects, the player can fill his
     stomach and gain a little health. ]]>
@@ -2198,7 +2207,7 @@
 
 <!--####################################################################-->
 <type number="6" name="Food">
-  <import_type name="combat_values" />
+  <import_type name="resist_values" />
   <ignore>
     <attribute arch="cursed" />
     <attribute arch="damned" />
@@ -2228,7 +2237,7 @@
 </type>
 <!--####################################################################-->
 <type number="54" name="Drink">
-  <import_type name="combat_values" />
+  <import_type name="resist_values" />
   <ignore>
     <attribute arch="cursed" />
     <attribute arch="damned" />
@@ -2259,9 +2268,8 @@
 
 <!--####################################################################-->
 <type number="91" name="Gate">
-  <import_type name="combat_values" />
+  <import_type name="attack_values" />
   <ignore>
-    <section name="resistance" />
     <attribute arch="no_magic" />
     <attribute arch="damned" />
     <ignore_list name="non_pickable" />
@@ -2309,9 +2317,8 @@
 
 <!--####################################################################-->
 <type number="26" name="Timed Gate">
-  <import_type name="combat_values" />
+  <import_type name="attack_values" />
   <ignore>
-    <section name="resistance" />
     <attribute arch="no_magic" />
     <attribute arch="damned" />
     <ignore_list name="non_pickable" />
@@ -2332,6 +2339,7 @@
     else on the map and your player must enter it in a set time limit (and when he
     fails he can try it again). ]]>
   </use>
+  <section name="attack" />
   <attribute arch="no_pick" value="1" type="fixed" />
   <attribute arch="connected" editor="connection" type="int">
     Whenever a "signal" object is triggered, all objects with identical
@@ -2664,7 +2672,7 @@
 
 <!--####################################################################-->
 <type number="73" name="Inorganic">
-  <import_type name="combat_values" />
+  <import_type name="resist_values" />
   <description><![CDATA[
     Inorganic materials are generally used as ingredients for
     alchemical recipes. By themselves, they have no special
@@ -2913,7 +2921,7 @@
 
 <!--####################################################################-->
 <type number="62" name="Magic Wall">
-  <import_type name="combat_values" />
+  <import_type name="resist_values" />
   <ignore>
     <ignore_list name="non_pickable" />
     <ignore_list name="default_setting" />
@@ -3080,7 +3088,7 @@
 
 <!--####################################################################-->
 <type number="80" name="Monster &amp; NPC">
-  <import_type name="combat_values" />
+  <import_type name="resist_values" />
   <ignore>
     <attribute arch="material" />
     <attribute arch="material_real" />
@@ -3559,7 +3567,7 @@
 
 <!--####################################################################-->
 <type number="83" name="Spawn Point Mob">
-  <import_type name="combat_values" />
+  <import_type name="resist_values" />
   <ignore>
     <attribute arch="material" />
     <attribute arch="material_real" />
@@ -4340,7 +4348,7 @@
 
 <!--####################################################################-->
 <type number="7" name="Poison Food">
-  <import_type name="combat_values" />
+  <import_type name="resist_values" />
   <ignore>
     <attribute arch="cursed" />
     <attribute arch="damned" />
@@ -4425,7 +4433,7 @@
 
 <!--####################################################################-->
 <type number="5" name="Potion">
-  <import_type name="combat_values" />
+  <import_type name="resist_values" />
   <description><![CDATA[
     The player can drink these and gain various kinds of benefits
     (/penalties) by doing so. ]]>
@@ -4527,7 +4535,7 @@
 
 <!--####################################################################-->
 <type number="13" name="Projectile">
-  <import_type name="combat_values" />
+  <import_type name="resist_values" />
   <ignore>
     <attribute arch="material" />
     <attribute arch="material_real" />
@@ -4738,7 +4746,7 @@
 
 <!--####################################################################-->
 <type number="154" name="Rune &amp; Trap">
-  <import_type name="combat_values" />
+  <import_type name="resist_values" />
   <ignore>
     <ignore_list name="non_pickable" />
     <ignore_list name="default_setting" />
