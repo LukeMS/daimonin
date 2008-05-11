@@ -2,6 +2,7 @@ arch map
 name Stoneglow - Cheap Apartment§110-keybd.ogg|0|-1
 msg
 Created:  2003-10-30 Daimonin Map Editor
+Modified: 2008-05-11 Smacky
 endmsg
 width 5
 height 5
@@ -54,8 +55,9 @@ arch exit
 x 1
 y 1
 arch event_obj
-race /scripts/apart_out.lua
+name Lua
 sub_type 10
+race /scripts/apart_out.lua
 end
 end
 arch floor_ostone2
@@ -93,11 +95,8 @@ arch floor_ostone2
 x 2
 y 1
 end
-arch bed_1a.111
-name bed - a'pply to save and quit
-type 106
-no_magic 1
-damned 1
+arch bed_save
+face bed_1a.111
 x 2
 y 1
 end
@@ -142,11 +141,8 @@ arch floor_ostone2
 x 3
 y 1
 end
-arch bed_1b.111
-name bed - a'pply to save and quit
-type 106
-no_magic 1
-damned 1
+arch bed_save
+face bed_1b.111
 x 3
 y 1
 end

@@ -2,6 +2,7 @@ arch map
 name Stoneglow - Normal Apartment§110-keybd.ogg|0|-1
 msg
 Created:  2003-10-26 Daimonin Map Editor
+Modified: 2008-05-11 Smacky
 endmsg
 width 6
 height 6
@@ -29,7 +30,7 @@ arch wall_pattern2.131
 y 2
 end
 arch wmask_bflag_fire1_1
-direction 5
+direction 3
 y 2
 end
 arch floor_inv
@@ -65,8 +66,8 @@ x 1
 y 1
 arch event_obj
 name Lua
-race /scripts/apart_out.lua
 sub_type 10
+race /scripts/apart_out.lua
 end
 end
 arch floor_ostone5
@@ -155,11 +156,8 @@ arch floor_ostone5
 x 3
 y 1
 end
-arch bed_1a.111
-name bed - a'pply to save and quit
-type 106
-damned 1
-no_magic 1
+arch bed_save
+face bed_1a.111
 x 3
 y 1
 end
@@ -223,11 +221,8 @@ arch floor_ostone5
 x 4
 y 1
 end
-arch bed_1b.111
-name bed - a'pply to save and quit
-type 106
-no_magic 1
-damned 1
+arch bed_save
+face bed_1b.111
 x 4
 y 1
 end
