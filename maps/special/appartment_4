@@ -2,6 +2,7 @@ arch map
 name Stoneglow - Luxurious Apartment§110-keybd.ogg|0|-1
 msg
 Created:  2004-07-26 Daimonin Map Editor
+Modified: 2008-05-11 Smacky
 endmsg
 width 14
 height 14
@@ -41,7 +42,7 @@ arch wall_marble1.111a
 y 4
 end
 arch wmask_bflag_fire1_1
-direction 5
+direction 3
 y 4
 end
 arch floor_inv
@@ -69,7 +70,7 @@ arch wall_marble1.111a
 y 8
 end
 arch wmask_bflag_fire1_1
-direction 5
+direction 3
 y 8
 end
 arch floor_inv
@@ -91,7 +92,7 @@ arch wall_marble1.111a
 y 11
 end
 arch wmask_bflag_brown_1
-direction 5
+direction 3
 y 11
 end
 arch floor_inv
@@ -837,11 +838,7 @@ arch floor_sand_d4
 x 6
 y 6
 end
-arch grassd_m10
-x 6
-y 6
-end
-arch grassd_m7
+arch grass_fullmask2
 x 6
 y 6
 end
@@ -954,11 +951,7 @@ arch floor_sand_d3
 x 7
 y 6
 end
-arch grassd_m10
-x 7
-y 6
-end
-arch grassd_m7
+arch grass_fullmask2
 x 7
 y 6
 end
@@ -1029,11 +1022,12 @@ arch floor_ostone1
 x 8
 y 1
 end
-arch broom.111
+arch metal_bucket.101
+layer 3
 x 8
 y 1
 end
-arch metal_bucket.101
+arch broom.111
 x 8
 y 1
 end
@@ -1081,11 +1075,7 @@ arch floor_sand_d1
 x 8
 y 6
 end
-arch grassd_m10
-x 8
-y 6
-end
-arch grassd_m7
+arch grass_fullmask2
 x 8
 y 6
 end
@@ -1186,10 +1176,8 @@ arch floor_ostone1
 x 9
 y 3
 end
-arch bed_2a.111
-type 106
-no_magic 1
-damned 1
+arch bed_save
+face bed_2a.111
 x 9
 y 3
 end
@@ -1309,10 +1297,8 @@ arch floor_ostone1
 x 10
 y 3
 end
-arch bed_2b.111
-type 106
-no_magic 1
-damned 1
+arch bed_save
+face bed_2b.111
 x 10
 y 3
 end
