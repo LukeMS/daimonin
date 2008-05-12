@@ -1026,8 +1026,7 @@ static void help_topics(object *op, int what)
     for (de = readdir(dirp); de; de = readdir(dirp))
     {
         namelen = NAMLEN(de);
-        if (!strcmp(de->d_name, "CVS") ||
-                        (namelen <= 2 && *de->d_name == '.' && (namelen == 1 || de->d_name[1] == '.')))
+        if (!strcmp(de->d_name, "CVS") || (*de->d_name == '.'))
             continue;
         linelen += namelen + 1;
         if (linelen > 42)
