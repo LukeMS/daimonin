@@ -107,11 +107,12 @@ static int check_mute(object *op, int mode)
     if(op->type != PLAYER || CONTR(op)==NULL)
         return TRUE;
 
-    if(settings.mutelevel && mode != MUTE_MODE_SAY && op->level < 2)
+    /* players less than settings.shout_lvl cannot shout due to spam problems.  DMs and GMs are exempt. */
+    if(mode != MUTE_MODE_SAY && op->level < settings.mutelevel && CONTR(op)->gmaster_mode < GMASTER_MODE_GM)
     {
-        new_draw_info( NDI_UNIQUE|NDI_ORANGE, 0, op, "You need be level 2 or higher for shout/tell!");
-        new_draw_info( NDI_UNIQUE|NDI_ORANGE, 0, op, "for help press F12 or read the GAME GUIDES at");
-        new_draw_info( NDI_UNIQUE|NDI_ORANGE, 0, op, "HTTP://WWW.DAIMONIN.NET");
+        new_draw_info_format(NDI_UNIQUE | NDI_ORANGE, 0, op, "You need be level %d or higher for shout/tell!",settings.mutelevel);
+        new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, op, "for help press F12 or read the GAME GUIDES at");
+        new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, op, "HTTP://ANGELION.SRIC.COM");
         return FALSE;
     }
 
