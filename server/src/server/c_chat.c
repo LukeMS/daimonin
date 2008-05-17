@@ -112,7 +112,7 @@ static int check_mute(object *op, int mode)
     {
         new_draw_info_format(NDI_UNIQUE | NDI_ORANGE, 0, op, "You need be level %d or higher for shout/tell!",settings.mutelevel);
         new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, op, "for help press F12 or read the GAME GUIDES at");
-        new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, op, "HTTP://ANGELION.SRIC.COM");
+        new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, op, "HTTP://WWW.DAIMONIN.NET");
         return FALSE;
     }
 
