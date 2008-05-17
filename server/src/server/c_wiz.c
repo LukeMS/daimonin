@@ -336,33 +336,38 @@ int command_generate(object *op, char *params)
 
 int command_mutelevel(object *op, char *params)
 {
-	char   *msg;
-	objectlink *ol;
+    char buf[256];
+    int lvl = 0;
+    objectlink *ol;
 
-	/* allowed for VOL and higher */
-	if(CONTR(op)->gmaster_mode < GMASTER_MODE_VOL)
-		return 0;
+    /* allowed for VOL and higher */
+    if(CONTR(op)->gmaster_mode < GMASTER_MODE_VOL)
+        return 0;
 
-	/* toggle shout/mute level from 0 to 1 */
-	if(settings.mutelevel)
-	{
-		settings.mutelevel = FALSE;
-		msg = "SET: shout level set to 0!";
-	}
-	else
-	{
-		settings.mutelevel = TRUE;
-		msg = "SET: shout level set to 1!";
-	}
+    if (op && params == NULL)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "Use: /mutelevel <level>");
+        return 0;
+    }
 
-	for(ol = gmaster_list_VOL;ol;ol=ol->next)
-		new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, msg);
-	for(ol = gmaster_list_GM;ol;ol=ol->next)
-		new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, msg);
-	for(ol = gmaster_list_DM;ol;ol=ol->next)
-		new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, msg);
+    /* set shout/mute level from params */
+    sscanf(params, "%d", &lvl);
+    if(CONTR(op)->gmaster_mode == GMASTER_MODE_VOL && lvl > 10)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "WARNING: Maximum mutelevel for VOLs is 10.");
+        lvl=10;
+    }
+    settings.mutelevel = lvl;
+    sprintf(buf,"SET: shout level set to %d!\n", lvl);
 
-	return 1;
+    for(ol = gmaster_list_VOL;ol;ol=ol->next)
+        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, buf);
+    for(ol = gmaster_list_GM;ol;ol=ol->next)
+        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, buf);
+    for(ol = gmaster_list_DM;ol;ol=ol->next)
+        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, buf);
+
+    return 1;
 }
 
 int command_summon(object *op, char *params)

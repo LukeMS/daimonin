@@ -30,17 +30,43 @@
 
 struct Settings settings    =
 {
-	FALSE,								/* mute level = if TRUE player <2 can't shout*/
-	TRUE,"",							/* login_allow & login_ip */
-    "",                                 /* Logfile */
-    CSPORT,                             /* Client/server port */
-    GLOBAL_LOG_LEVEL, 0, NULL, 0,       /* dumpvalues, dumparg, daemonmode */
-    0,                                  /* argc */
-    NULL,                               /* argv */
-    DATADIR, LOCALDIR, PLAYERDIR, INSTANCEDIR, MAPDIR, ARCHETYPES, TREASURES, UNIQUE_DIR, TMPDIR, STATS_DIR, STATS_ARCHIVE_DIR, STAT_LOSS_ON_DEATH,
-    BALANCED_STAT_LOSS, RESET_LOCATION_TIME, 0,
-    /* This and the next 3 values are metaserver values */
-    "", "", 0, "", 0, 0, 0, 0, 0, 0, 0  /* worldmap settings*/
+    0,                      /* mute level = if set players below this level can't shout*/
+    TRUE,                   /* login_allow */
+    "",                     /* login_ip */
+    "",                     /* logfile to use */
+    CSPORT,                 /* Client/server port */
+    GLOBAL_LOG_LEVEL,       /* Default debugging level */
+    0,                      /* Set to dump various values/tables */
+    NULL,                   /* additional argument for some dump functions */
+    0,                      /* If true, detach and become daemon */
+    0,                      /* number of parameters that were passed to the program */
+    NULL,                   /* parameters that were passed to the program */
+    DATADIR,                /* read only data files */
+    LOCALDIR,               /* read/write data files */
+    PLAYERDIR,              /* Where the player files are */
+    INSTANCEDIR,            /* Where the instance map files are */
+    MAPDIR,                 /* Where the map files are */
+    ARCHETYPES,             /* name of the archetypes file - libdir is prepended */
+    TREASURES,              /* location of the treasures file. */
+    UNIQUE_DIR,             /* directory for the unique items */
+    TMPDIR,                 /* Directory to use for temporary files */
+    STATS_DIR,              /* Directory for active logs of statistical events */
+    STATS_ARCHIVE_DIR,      /* Directory for logs, ready for further processing */
+    STAT_LOSS_ON_DEATH,     /* If true, chars lose a random stat when they die */
+    BALANCED_STAT_LOSS,     /* If true, Death stat depletion based on level etc */
+    RESET_LOCATION_TIME,    /* Number of seconds to put player back at home */
+    0,                      /* True if we should send updates */
+    "",                     /* Hostname/ip addr of the metaserver */
+    "",                     /* Hostname of this host */
+    0,                      /* Port number to use for updates */
+    "",                     /* Comment we send to the metaserver */
+    0,                      /* starting x tile for the worldmap */
+    0,                      /* starting y tile for the worldmap */
+    0,                      /* number of tiles wide the worldmap is */
+    0,                      /* number of tiles high the worldmap is */
+    0,                      /* number of squares wide in a wm tile */
+    0,                      /* number of squares high in a wm tile */
+    0,                      /* how dynamic is the world? */
 };
 
 /* Most of this is shamelessly stolen from XSysStats.  But since that is
@@ -290,25 +316,25 @@ static void load_settings()
             has_val = 0;
         }
 
-		/* default value of settings.login_allow is TRUE.
-		 * if set to FALSE, settings.login_ip is checked against
-		 * the login IP. If they match, login_allow is ignored.
-		 * This allows to setup admin login when testing a installed server.
-		 */
-		if (!strcasecmp(buf, "login_allow"))
-		{
-			if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true"))
-				settings.login_allow = TRUE;
-			else
-				settings.login_allow = FALSE;
-		}
-		else if (!strcasecmp(buf, "login_ip"))
-		{
-			if(*cp)
-				settings.login_ip = strdup_local(cp);
-		}
-		else if (!strcasecmp(buf, "metaserver_notification"))
-		{
+        /* default value of settings.login_allow is TRUE.
+         * if set to FALSE, settings.login_ip is checked against
+         * the login IP. If they match, login_allow is ignored.
+         * This allows to setup admin login when testing a installed server.
+         */
+        if (!strcasecmp(buf, "login_allow"))
+        {
+            if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true"))
+                settings.login_allow = TRUE;
+            else
+                settings.login_allow = FALSE;
+        }
+        else if (!strcasecmp(buf, "login_ip"))
+        {
+            if(*cp)
+                settings.login_ip = strdup_local(cp);
+        }
+        else if (!strcasecmp(buf, "metaserver_notification"))
+        {
             if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true"))
             {
                 settings.meta_on = TRUE;
@@ -411,6 +437,12 @@ static void load_settings()
                 LOG(llevBug, "BUG: load_settings: dynamiclevel must be" "at least 0, %d is invalid\n", lev);
             else
                 settings.dynamiclevel = lev;
+        }
+        else if (!strcasecmp(buf, "mutelevel"))
+        {
+            int lev = atoi(cp);
+
+            settings.mutelevel = lev;
         }
         else
         {
