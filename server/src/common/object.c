@@ -1227,7 +1227,7 @@ void drop_ob_inv(object *ob)
             /* if we have a corpse put the item in it */
             if (corpse)
 			{
-				if(!tmp_op->level)
+				if(!tmp_op->item_level)
 				{
 					SET_FLAG(tmp_op, FLAG_IDENTIFIED);
 					SET_FLAG(tmp_op, FLAG_KNOWN_CURSED);
@@ -1244,7 +1244,7 @@ void drop_ob_inv(object *ob)
                  */
                 if (tmp_op->type != RUNE)
                 {
-					if(!tmp_op->level)
+					if(!tmp_op->item_level)
 					{
 						SET_FLAG(tmp_op, FLAG_IDENTIFIED);
 						SET_FLAG(tmp_op, FLAG_KNOWN_CURSED);
