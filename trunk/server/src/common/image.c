@@ -453,7 +453,7 @@ int ReadBmapNames()
 
         /* Kill the newline */
         i = strlen(buf) - 1;
-        while(isspace(buf[i]) && i >= 0)
+        while(i >= 0 && isspace(buf[i]))
             buf[i--] = '\0';
 
         p = (*buf == '\\') ? (buf + 1) : buf;
@@ -466,7 +466,7 @@ int ReadBmapNames()
 
         /* Kill the newline */
         i = strlen(q) - 1;
-        while(isspace(q[i]) && i >= 0)
+        while(i >= 0 && isspace(q[i]))
             q[i--] = '\0';
 
         xbm[nroffiles].name = strdup_local(q);
