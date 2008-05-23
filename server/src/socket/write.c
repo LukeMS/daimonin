@@ -63,7 +63,7 @@ char *socket_buffer_request(NewSocket *ns, int data_len)
 #ifdef SEND_BUFFER_DEBUG
 	LOG(llevDebug,"SOCKBUF: Requested buffer %x for %d + %d bytes\n", tmp, data_len, header_len);
 #endif
-	return (tmp->buf+tmp->len); /* for direct access we return the <data> of this buffer part */
+	return (char *)(tmp->buf+tmp->len); /* for direct access we return the <data> of this buffer part */
 }
 
 /* we want increase the len of sbuf but that will break the bufsize.

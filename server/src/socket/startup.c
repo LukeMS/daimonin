@@ -55,14 +55,14 @@ static void load_srv_files(char *fname, int id, int cmd)
     {
         /* copy the compressed file in the right buffer */
 		*comp_tmp = (char) (cmd|DATA_PACKED_CMD);
-		SrvClientFiles[id].sockbuf = SOCKBUF_COMPOSE( BINARY_CMD_DATA, NULL, comp_tmp, numread+1, SOCKBUF_FLAG_STATIC);
+		SrvClientFiles[id].sockbuf = SOCKBUF_COMPOSE( BINARY_CMD_DATA, NULL, (char *)comp_tmp, numread+1, SOCKBUF_FLAG_STATIC);
 		SrvClientFiles[id].len = numread+1;
     }
     else
     {
 		/* compress has no positive effect here */
 		*file_tmp = (char) cmd;
-		SrvClientFiles[id].sockbuf = SOCKBUF_COMPOSE(BINARY_CMD_DATA, NULL, file_tmp, flen+1, SOCKBUF_FLAG_STATIC);
+		SrvClientFiles[id].sockbuf = SOCKBUF_COMPOSE(BINARY_CMD_DATA, NULL, (char *)file_tmp, flen+1, SOCKBUF_FLAG_STATIC);
 		SrvClientFiles[id].len = -1;
 		numread = flen+1;
     }
