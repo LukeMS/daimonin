@@ -33,6 +33,24 @@ using namespace Ogre;
 
 //#define LOG_TIMING
 
+//////// Only for TESTING
+#include <stdio.h>
+void TileManager::loadLvl()
+{
+    FILE *stream = fopen("client3d.lvl", "rb");
+    fread(&mMap, sizeof(mMap), 1, stream);
+    fclose(stream);
+    changeChunks();
+}
+
+void TileManager::saveLvl()
+{
+    FILE *stream = fopen("client3d.lvl", "wb");
+    fwrite(&mMap, sizeof(mMap), 1, stream);
+    fclose(stream);
+}
+//////////////////////////
+
 //================================================================================================
 // Free all resources.
 //================================================================================================
@@ -49,6 +67,7 @@ void TileManager::Init(SceneManager* SceneMgr, int lod, bool createAtlas)
 {
     Logger::log().headline("Init TileEngine");
     mShowGrid = false;
+    mEditorActSelectedGfx = 0;
     mMapScrollX = mMapScrollZ = 0;
     mSelectedVertexX = mSelectedVertexZ = 0; // Tile picking.
     mSceneManager = SceneMgr;
@@ -60,7 +79,7 @@ void TileManager::Init(SceneManager* SceneMgr, int lod, bool createAtlas)
     {
         Logger::log().info() << "Creating atlas-texture...";
         createAtlasTexture(MAX_TEXTURE_SIZE);
-        //createShadowAtlas("shadow");
+        createAtlasTextureShadows(MAX_TEXTURE_SIZE/2);
         Logger::log().success(true);
     }
     Logger::log().info() << "Creating tile chunk...";
@@ -70,13 +89,177 @@ void TileManager::Init(SceneManager* SceneMgr, int lod, bool createAtlas)
 }
 
 //================================================================================================
-// Collect all tiles and filters into a single RGBA-image.
-// The upper half of the atlastexture is used for tile graphics.
-// The lower half of the atlastexture is used for environment graphics (stones, bushes, trees,...)
+// Rteurn the shadow number.
 //================================================================================================
-void TileManager::createAtlasTexture(int textureSize, unsigned int groupNr)
+int TileManager::getMapShadow(unsigned int x, unsigned int z)
 {
-/*
+    if (!mShowGrid) return mMap[x][z].shadow;
+    return SHADOW_GRID + ((x&1)?SHADOW_MIRROX_X:0) + ((z&1)?0:SHADOW_MIRROX_Z);
+}
+
+//================================================================================================
+// Returns the gfx number of the shadow.
+// This MUST be done in the editor. Its only here because of testing...
+//================================================================================================
+unsigned char TileManager::calcShadow(int x, int z)
+{
+
+
+    return 0 + SHADOW_MIRROX_X; // delete me! (Mirror test)
+
+
+    int tl, tr, bl, br;
+    // ////////////////////////////////////////////////////////////////////
+    // I - III
+    // ////////////////////////////////////////////////////////////////////
+    bl = getMapHeight(x-1, z, VERTEX_BL);
+    br = getMapHeight(x-1, z, VERTEX_BR);
+    if (bl-br > 10 && bl-br < 100)
+    {
+        tl = getMapHeight(x-1, z, VERTEX_TL);
+        tr = getMapHeight(x-1, z, VERTEX_TR);
+        // ////////////////////////////////////////////////////////////////////
+        // II
+        // ////////////////////////////////////////////////////////////////////
+        if (bl-br < 64)
+        {
+            if (tl-tr >= 220) return 42;
+            if (tl-tr >= 180) return 32;
+            if (tl-tr >= 140) return 22;
+            if (tl-tr >= 100) return 12;
+            if (tl-tr >=  65) return  2;
+        }
+        bl = getMapHeight(x-1, z+1, VERTEX_BL);
+        br = getMapHeight(x-1, z+1, VERTEX_BR);
+        // ////////////////////////////////////////////////////////////////////
+        // I
+        // ////////////////////////////////////////////////////////////////////
+        if (bl-br < 10)
+        {
+            if (tl-tr >= 220) return 41;
+            if (tl-tr >= 180) return 31;
+            if (tl-tr >= 140) return 21;
+            if (tl-tr >= 100) return 11;
+            if (tl-tr >=  65) return  1;
+        }
+        // ////////////////////////////////////////////////////////////////////
+        // III
+        // ////////////////////////////////////////////////////////////////////
+        if (bl-br > 64)
+        {
+            if (tl-tr >= 220) return 43;
+            if (tl-tr >= 180) return 33;
+            if (tl-tr >= 140) return 23;
+            if (tl-tr >= 100) return 13;
+            if (tl-tr >=  65) return  3;
+        }
+    }
+    // ////////////////////////////////////////////////////////////////////
+    // IV
+    // ////////////////////////////////////////////////////////////////////
+    bl = getMapHeight(x, z+2, VERTEX_BL);
+    br = getMapHeight(x, z+2, VERTEX_BR);
+    tl = getMapHeight(x, z+2, VERTEX_TL);
+    tr = getMapHeight(x, z+2, VERTEX_TR);
+    if (bl < 64 && br < 64 && tl < 64 && tr < 64)
+    {
+        br =      getMapHeight(x-1, z+1, VERTEX_BR);
+        tl = br - getMapHeight(x-1, z+1, VERTEX_TL);
+        tr = br - getMapHeight(x-1, z+1, VERTEX_TR);
+        bl = br - getMapHeight(x-1, z+1, VERTEX_BL);
+        if (tl >= 220 && tr >= 220 && bl >= 220) return 44;
+        if (tl >= 180 && tr >= 180 && bl >= 180) return 34;
+        if (tl >= 140 && tr >= 140 && bl >= 140) return 24;
+        if (tl >= 100 && tr >= 100 && bl >= 100) return 14;
+        if (tl >= 65  && tr >=  65 && bl >=  65) return  4;
+    }
+    // ////////////////////////////////////////////////////////////////////
+    // V
+    // ////////////////////////////////////////////////////////////////////
+    // typo from red ????
+
+    // ////////////////////////////////////////////////////////////////////
+    // VI
+    // ////////////////////////////////////////////////////////////////////
+    bl = getMapHeight(x-2, z, VERTEX_BL);
+    br = getMapHeight(x-2, z, VERTEX_BR);
+    tl = getMapHeight(x-2, z, VERTEX_TL);
+    tr = getMapHeight(x-2, z, VERTEX_TR);
+    if (bl < 64 && br < 64 && tl < 64 && tr < 64)
+    {
+        br =      getMapHeight(x-1, z+1, VERTEX_BR);
+        tl = br - getMapHeight(x-1, z+1, VERTEX_TL);
+        tr = br - getMapHeight(x-1, z+1, VERTEX_TR);
+        bl = br - getMapHeight(x-1, z+1, VERTEX_BL);
+        if (tl >= 220 && tr >= 220 && bl >= 220) return 46;
+        if (tl >= 180 && tr >= 180 && bl >= 180) return 36;
+        if (tl >= 140 && tr >= 140 && bl >= 140) return 26;
+        if (tl >= 100 && tr >= 100 && bl >= 100) return 16;
+        if (tl >= 65  && tr >=  65 && bl >=  65) return  6;
+    }
+    // ////////////////////////////////////////////////////////////////////
+    // VII
+    // ////////////////////////////////////////////////////////////////////
+    bl = getMapHeight(x-1, z+1, VERTEX_BL);
+    tl = getMapHeight(x-1, z+1, VERTEX_TL);
+    if (bl-tl > 64)
+    {
+        bl = getMapHeight(x, z+1, VERTEX_BL);
+        br = getMapHeight(x, z+1, VERTEX_BR);
+        tl = getMapHeight(x, z+1, VERTEX_TL);
+        tr = getMapHeight(x, z+1, VERTEX_TR);
+        if (bl-tl >= 220 && br-tr >= 220) return 47;
+        if (bl-tl >= 180 && br-tr >= 180) return 37;
+        if (bl-tl >= 140 && br-tr >= 140) return 27;
+        if (bl-tl >= 100 && br-tr >= 100) return 17;
+        if (bl-tl >=  65 && br-tr >=  65) return  7;
+    }
+    // ////////////////////////////////////////////////////////////////////
+    // VIII
+    // ////////////////////////////////////////////////////////////////////
+    else if (bl-bl < 10)
+    {
+        bl = getMapHeight(x, z+1, VERTEX_BL);
+        br = getMapHeight(x, z+1, VERTEX_BR);
+        tl = getMapHeight(x, z+1, VERTEX_TL);
+        tr = getMapHeight(x, z+1, VERTEX_TR);
+        if (bl-tl >= 220 && br-tr >= 220) return 48;
+        if (bl-tl >= 180 && br-tr >= 180) return 38;
+        if (bl-tl >= 140 && br-tr >= 140) return 28;
+        if (bl-tl >= 100 && br-tr >= 100) return 18;
+        if (bl-tl >=  65 && br-tr >=  65) return  8;
+    }
+    // ////////////////////////////////////////////////////////////////////
+    // IX
+    // ////////////////////////////////////////////////////////////////////
+    bl = getMapHeight(x+1, z+2, VERTEX_BL);
+    br = getMapHeight(x+1, z+2, VERTEX_BR);
+    if (bl-tl > 10 && bl-tl < 65)
+    {
+        tl = getMapHeight(x, z+1, VERTEX_TL);
+        tr = getMapHeight(x, z+1, VERTEX_TR);
+        if (tl-tr >= 220) return 49;
+        if (tl-tr >= 180) return 39;
+        if (tl-tr >= 140) return 29;
+        if (tl-tr >= 100) return 19;
+        if (tl-tr >=  65) return  9;
+    }
+    // ////////////////////////////////////////////////////////////////////
+    // X
+    // ////////////////////////////////////////////////////////////////////
+
+    // ////////////////////////////////////////////////////////////////////
+    // No shadow.
+    // ////////////////////////////////////////////////////////////////////
+    return 66;
+}
+
+//================================================================================================
+// Collect all terrain-shadow filters intoo a single atlas texture.
+//================================================================================================
+void TileManager::createAtlasTextureShadows(int textureSize)
+{
+    /*
     // Only for creating dummy filters. DELETE ME!
     {
         Image srcImage;
@@ -96,7 +279,65 @@ void TileManager::createAtlasTexture(int textureSize, unsigned int groupNr)
             }
         }
     }
-*/
+    */
+    uchar *dstBuf = new uchar[textureSize * textureSize * sizeof(uint32)];
+    copyShadowToAtlas(dstBuf, textureSize);
+    Image dstImage;
+    dstImage.loadDynamicImage(dstBuf, textureSize, textureSize, 1, PF_A8R8G8B8, true);
+    String dstFilename = PATH_TILE_TEXTURES;
+    dstFilename+= "Shadows_";
+    for (unsigned short s = textureSize; s >= textureSize/8; s/=2)
+    {
+        dstImage.save(dstFilename + StringConverter::toString(s, 4, '0') + ".png");
+        dstImage.resize(s/2, s/2, Image::FILTER_BILINEAR);
+    }
+    //delete[] dstBuf; // Will be done by Ogre because autoDelete was set.
+}
+
+//================================================================================================
+// Copy a shadow into the atlastexture.
+//================================================================================================
+void TileManager::copyShadowToAtlas(uchar *dstBuf, int atlasSize)
+{
+    const int SIZE_R8G8B8 = 4;
+    int sumImages = 0;
+    unsigned int tileSize = atlasSize / COLS_SRC_TILES/2;
+    Image srcImage;
+    String srcFilename;
+    int lineSkip = (atlasSize - tileSize) * SIZE_R8G8B8;
+    for (int y = 0; y < COLS_SRC_TILES; ++y)
+    {
+        for (int x = 0; x < COLS_SRC_TILES; ++x)
+        {
+            srcFilename = "Shadow_" + StringConverter::toString(sumImages++, 3, '0') + ".png";
+            if (!loadImage(srcImage, srcFilename)) return;
+            if ((srcImage.getWidth() != tileSize) || (srcImage.getHeight() != tileSize))
+            {
+                Logger::log().error() << "Shadow gfx " << srcFilename << " has the wrong size! Only " << tileSize << "x" << tileSize << " is supported";
+                return;
+            }
+            uchar *src= srcImage.getData();
+            uchar *dst= dstBuf + (y * tileSize * MAX_TEXTURE_SIZE + x * tileSize) * SIZE_R8G8B8;
+            for (unsigned int y = 0; y < tileSize; ++y)
+            {
+                for (unsigned int x = 0; x < tileSize; ++x)
+                {
+                    *dst++ = *src++; // R
+                    *dst++ = *src++; // G
+                    *dst++ = *src++; // B
+                    *dst++ = *src++; // A
+                }
+                dst+= lineSkip;
+            }
+        }
+    }
+}
+
+//================================================================================================
+// Collect all tiles and filters into a single RGBA-image.
+//================================================================================================
+void TileManager::createAtlasTexture(int textureSize, unsigned int groupNr)
+{
     int startGroup, stopGroup;
     if (groupNr >= (unsigned int) MAX_MAP_SETS)
     {
@@ -178,7 +419,8 @@ bool TileManager::copyTileToAtlas(uchar *dstBuf)
             }
         }
     }
-    return true; }
+    return true;
+}
 
 //================================================================================================
 // Copy a terrain-filter/shadow-filter into the alpha part of the atlastexture.
@@ -264,7 +506,6 @@ void TileManager::tileClick(float mouseX, float mouseY)
         Logger::log().error() << "(Perhaps you created Entities without setting a setQueryFlags(...) on them)";
         return;
     }
-
     for (int x = 0; x < CHUNK_SIZE_X; ++x)
     {
         for (int z = 0; z < CHUNK_SIZE_Z; ++z)
@@ -376,6 +617,16 @@ bool TileManager::vertexPick(Ray *mouseRay, int x, int z, int pos)
 //================================================================================================
 // .
 //================================================================================================
+void TileManager::updateHeighlightVertexPos(int deltaX, int deltaZ)
+{
+    mSelectedVertexX+= deltaX; if (mSelectedVertexX > CHUNK_SIZE_X) mSelectedVertexX = 0;
+    mSelectedVertexZ+= deltaZ; if (mSelectedVertexZ > CHUNK_SIZE_Z) mSelectedVertexZ = 0;
+    highlightVertex(mSelectedVertexX, mSelectedVertexZ);
+}
+
+//================================================================================================
+// .
+//================================================================================================
 void TileManager::highlightVertex(int x, int z)
 {
     static SceneNode *tcNode = 0;
@@ -479,19 +730,28 @@ void TileManager::updateTileHeight(int deltaHeight)
 void TileManager::updateTileGfx(int deltaGfxNr)
 {
     mMap[mSelectedVertexX][mSelectedVertexZ].gfx+= deltaGfxNr;
+    mEditorActSelectedGfx = mMap[mSelectedVertexX][mSelectedVertexZ].gfx;
     mMapchunk.change();
     highlightVertex(mSelectedVertexX, mSelectedVertexZ);
 }
 
 //================================================================================================
+// .
+//================================================================================================
+void TileManager::setTileGfx()
+{
+    mMap[mSelectedVertexX][mSelectedVertexZ].gfx = mEditorActSelectedGfx;
+    mMapchunk.change();
+}
+
+//================================================================================================
 // Set the values for a map position.
 //================================================================================================
-void TileManager::setMap(unsigned int x, unsigned int y, short height, char gfx, char shadow, char mirror)
+void TileManager::setMap(unsigned int x, unsigned int y, short height, char gfx, char shadow)
 {
     mMap[x][y].height = height *10;
-    mMap[x][y].gfx = gfx;
+    mMap[x][y].gfx    = gfx;
     mMap[x][y].shadow = shadow;
-    mMap[x][y].mirror = mirror;
 }
 
 //================================================================================================
@@ -499,6 +759,12 @@ void TileManager::setMap(unsigned int x, unsigned int y, short height, char gfx,
 //================================================================================================
 void TileManager::changeChunks()
 {
+    {
+        for (int z = 0; z <= CHUNK_SIZE_Z; ++z)
+            for (int x = 0; x <= CHUNK_SIZE_X; ++x)
+                mMap[x][z].shadow = calcShadow(x, z);
+        Logger::log().error() << "Updating terrain shadows.";
+    }
     mMapchunk.change();
 }
 

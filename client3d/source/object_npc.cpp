@@ -79,13 +79,13 @@ ObjectNPC::ObjectNPC(sObject &obj, bool spawn):ObjectStatic(obj)
     mDrawnHP = obj.maxHP;
     mMaxMana = obj.maxMana;
     mActMana = obj.maxMana;
-    mMaxGrace=obj.maxGrace;
-    mActGrace=obj.maxGrace;
+    mMaxGrace= obj.maxGrace;
+    mActGrace= obj.maxGrace;
     mBoundingRadius = obj.boundingRadius;
-    if (spawn)
-        mSpawnSize = 0.0;
-    else
+    if (!spawn || !mIndex)
         mSpawnSize = 1.0;
+    else
+        mSpawnSize = 0.0;
     mNode->setScale(mSpawnSize,mSpawnSize,mSpawnSize);
     // ////////////////////////////////////////////////////////////////////
     // Only players can change equipment.
@@ -103,6 +103,12 @@ ObjectNPC::ObjectNPC(sObject &obj, bool spawn):ObjectStatic(obj)
     // ////////////////////////////////////////////////////////////////////
     if (!mIndex)
     {
+
+
+        Real test_size = 2.5; mNode->setScale(test_size, test_size, test_size); // DELETE ME!
+
+
+
         // Attach camera to players node.
         // (Players Bounding box is increased by that and cant be used for collision detection anymore)
         SceneNode *cNode = mNode->createChildSceneNode();
@@ -147,22 +153,22 @@ ObjectNPC::ObjectNPC(sObject &obj, bool spawn):ObjectStatic(obj)
 //================================================================================================
 void ObjectNPC::moveByCursor(Ogre::Real dTime)
 {
-    static Vector3 oldPos = mTilePos;
+    if (mIndex) return;
+    static int oldX = (int)(mTilePos.x/TileManager::TILE_SIZE/2);
+    static int oldZ = (int)(mTilePos.z/TileManager::TILE_SIZE/2);
     Real distance = WALK_SPEED * dTime;
     mTilePos.x+= Math::Sin(Degree(mFacing)) * distance;
     mTilePos.z+= Math::Cos(Degree(mFacing)) * distance;
     mTilePos.y = TileManager::getSingleton().getTileHeight((int)mTilePos.x, (int)mTilePos.z);
-    int dx = (int)(oldPos.x - mTilePos.x) / (TileManager::TILE_SIZE*2);
-    int dz = (int)(oldPos.z - mTilePos.z) / (TileManager::TILE_SIZE*2);
+    int dx = oldX - (int)(mTilePos.x/TileManager::TILE_SIZE/2);
+    int dz = oldZ - (int)(mTilePos.z/TileManager::TILE_SIZE/2);
     // Player moved over a tile border.
-    if (!mIndex && (dx || dz))
+    if (dx || dz)
     {
         mTilePos.x+= dx * TileManager::TILE_SIZE*2;
         mTilePos.z+= dz * TileManager::TILE_SIZE*2;
         TileManager::getSingleton().scrollMap(dx, dz);
         ObjectManager::getSingleton().synchToWorldPos(dx*2, dz*2);
-        oldPos = mTilePos;
-        //ParticleManager::getSingleton().syncToWorldPos(deltaPos);
     }
     mNode->setPosition(mTilePos);
 }
@@ -662,7 +668,7 @@ void ObjectNPC::attackShortRange(ObjectNPC *EnemyObject)
     if (mEnemyObject != EnemyObject)
     {
         mEnemyObject = EnemyObject;
-    //    moveToDistantTile(mEnemyObject->getTilePos(), mEnemyObject->getBoundingRadius());
+        //    moveToDistantTile(mEnemyObject->getTilePos(), mEnemyObject->getBoundingRadius());
         mAttacking = ATTACK_APPROACH;
     }
     // Enemy is already in attack range.
