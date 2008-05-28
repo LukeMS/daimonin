@@ -166,17 +166,11 @@ bool Events::frameStarted(const FrameEvent& evt)
                 mCameraZoom = STD_CAMERA_ZOOM;
                 mCamera = mSceneManager->createCamera("PlayerCam");
                 Viewport *VP = mWindow->addViewport(mCamera);
-                //VP->setBackgroundColour(ColourValue(1.0, 1.0, 1.0));
                 mCamera->setAspectRatio(Real(VP->getActualWidth()) / Real(VP->getActualHeight()));
-                mCamera->setFOVy(Degree(mCameraZoom+5));
+                mCamera->setFOVy(Degree(mCameraZoom));
                 mCamera->setQueryFlags(ObjectManager::QUERY_CAMERA_MASK);
-                //mCamera->setPosition(0,240,185);
-                //mCamera->pitch(Degree(-28));
                 mCamera->setPosition(0,1325,1325);
-                //mCamera->pitch(Degree(-28));
-                mCamera->pitch(Degree(-28-8));
-                //int winkel =0;
-                //mCamera->setPosition(340.0*Math::Sin(Degree(winkel)), 175, 340.0 *Math::Cos(Degree(winkel)));
+                mCamera->pitch(Degree(-36));
                 mWorld = mSceneManager->getRootSceneNode()->createChildSceneNode();
                 // ////////////////////////////////////////////////////////////////////
                 // Create a minimal gui for some loading infos..
@@ -233,7 +227,7 @@ bool Events::frameStarted(const FrameEvent& evt)
                 light->setVisible(false);
                 mSceneManager->setAmbientLight(ColourValue(1.0, 1.0, 1.0));
                 */
-                //mSceneManager->setFog(FOG_LINEAR , ColourValue(0,0,0), 0, 450, 800);
+                //mSceneManager->setFog(FOG_LINEAR , ColourValue(0.5,0.5,0.5), 0, 2300, 2700);
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_SPELL);
                 break;
             }

@@ -195,18 +195,16 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
         {
             //Logger::log().error() << "Unknown tile: " << face << " pos: " << x << ", " << y << "  " << strTile;
             TileManager::getSingleton().setMap(x, y,
-                                               30, // height
-                                               8,  // gfx
-                                               1,  // Filter
-                                               0); // Mirror
+                                               30, // Height
+                                               8,  // Gfx
+                                               0); // Shadow
         }
         else
         {
             TileManager::getSingleton().setMap(x, y,
-                                               (uchar)strTile[ 8]-'0', // height
-                                               (uchar)strTile[10]-'0', // gfx
-                                               (uchar)strTile[14]-'0', // Fllter
-                                               0); // Mirror
+                                               (uchar)strTile[ 8]-'0',  // Height
+                                               (uchar)strTile[10]-'0',  // Gfx
+                                               (uchar)strTile[14]-'0'); // Shadow
             //Logger::log().error() << "Tile face: " << face << " pos: " << x << ", " << y << "  " << strTile << " height: " << ((uchar)strTile[ 8]-'0')*10;
         }
         mNeedsRedraw = true;
@@ -318,8 +316,8 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
             {
                 once = false;
                 Vector3 pos;
-                pos.x = (TileManager::CHUNK_SIZE_X/2) * TileManager::TILE_SIZE;//x * TileManager::TILE_SIZE + 3 * 8;
-                pos.z = 28 * TileManager::TILE_SIZE;//y * TileManager::TILE_SIZE + 3 * 8; //17-5;
+                pos.x = TileManager::TILE_SIZE * TileManager::CHUNK_SIZE_X/2;
+                pos.z = TileManager::TILE_SIZE * (TileManager::CHUNK_SIZE_Z-2) - TileManager::TILE_SIZE/2;
                 ObjectManager::getSingleton().setPosition(ObjectNPC::HERO, pos);
                 //Logger::log().error() << "we got the Hero face: " << face;
             }

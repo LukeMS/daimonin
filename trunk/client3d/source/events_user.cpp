@@ -82,20 +82,34 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
 
         case OIS::KC_C:
         {
+            TileManager::getSingleton().updateHeighlightVertexPos(0, 1);
+            /*
             static int animNr= 0;
             ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_ABILITY, animNr);
             if (++animNr >= 16) animNr= 0;
 
             //ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, 0,ObjectAnimate::STATE_CAST1);
+            */
             break;
         }
 
         case OIS::KC_D:
+        {
+            TileManager::getSingleton().updateHeighlightVertexPos(-1, 0);
             //ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, 0,ObjectAnimate::STATE_DEATH1);
             break;
+        }
+
+        case OIS::KC_E:
+        {
+            //ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, 0,ObjectAnimate::STATE_DEATH1);
+            break;
+        }
 
         case OIS::KC_F:
         {
+            TileManager::getSingleton().updateHeighlightVertexPos(1, 0);
+            /*
             static TextureFilterOptions mFiltering = TFO_BILINEAR;
             static int mAniso = 1;
             switch (mFiltering)
@@ -117,10 +131,12 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
             }
             MaterialManager::getSingleton().setDefaultTextureFiltering(mFiltering);
             MaterialManager::getSingleton().setDefaultAnisotropy(mAniso);
+            */
             break;
         }
 
         case OIS::KC_G:
+        {
             /*
                         char    buf[100];
                         int nrof =1;
@@ -132,12 +148,16 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
 
             TileManager::getSingleton().toggleGrid();
             break;
+        }
 
         case OIS::KC_H:
+        {
             //ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, 0,ObjectAnimate::STATE_HIT1);
             break;
+        }
 
         case OIS::KC_I:
+        {
             GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_EQUIPMENT, true);
             GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_INVENTORY, true);
 
@@ -152,10 +172,9 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
 
             // ObjectManager::getSingleton().setPlayerEquipment(ObjectManager::OBJECT_PLAYER, ObjectNPC::BONE_HEAD, 1);
             break;
+        }
 
         case OIS::KC_J:
-            // ObjectManager::getSingleton().keyEvent(OBJECT_NPC, OBJ_TURN,  1);
-            //mCamera->yaw(Degree(10));
         {
             /*
                         Vector3 pos = TileManager::getSingleton().getTileInterface()->get_Selection();
@@ -168,8 +187,8 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
                         obj.facing = 0;
                         ObjectManager::getSingleton().addMobileObject(obj);
             */
-        }
-        break;
+            break;
+                }
 
         case OIS::KC_K:
         {
@@ -177,9 +196,17 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
             break;
         }
 
+        case OIS::KC_L:
+        {
+            TileManager::getSingleton().loadLvl();
+            break;
+        }
+
         case OIS::KC_O:
+        {
             // ObjectManager::getSingleton().setPlayerEquipment(ObjectManager::OBJECT_PLAYER, ObjectNPC::BONE_SHIELD_HAND, 1);
             break;
+        }
 
         case OIS::KC_P:
         {
@@ -197,15 +224,25 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
             break;
         }
 
+        case OIS::KC_R:
+        {
+            TileManager::getSingleton().updateHeighlightVertexPos(0, -1);
+            break;
+        }
+
         case OIS::KC_S:
         {
-            bool ready = ObjectManager::getSingleton().isSecondaryWeaponReady(ObjectNPC::HERO);
-            ObjectManager::getSingleton().readySecondaryWeapon(ObjectNPC::HERO, !ready);
+            TileManager::getSingleton().saveLvl();
+            /*
+                        bool ready = ObjectManager::getSingleton().isSecondaryWeaponReady(ObjectNPC::HERO);
+                        ObjectManager::getSingleton().readySecondaryWeapon(ObjectNPC::HERO, !ready);
+            */
             break;
         }
 
         case OIS::KC_T:
-            Item::getSingleton().printAllItems();
+        {
+            //Item::getSingleton().printAllItems();
             /*
                    case KEYFUNC_TARGET_ENEMY:
                      send_command("/target 0", -1, SC_NORMAL);
@@ -221,11 +258,15 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
                      break;
             */
             break;
+        }
+
 
         case OIS::KC_W:
+        {
             //Network::getSingleton().send_command("/apply", -1, SC_NORMAL);
             //GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "apply");
             break;
+        }
 
         case OIS::KC_X:
         {
@@ -236,7 +277,6 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
                     TileManager::getSingleton().setMap(x, z, 15, 2);
                 }
             }
-            break;
             /*
                         String filename = "./shadowtest.txt";
                         std::ifstream txtFile;
@@ -278,7 +318,7 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
                         break;
             */
         }
-
+            break;
 
         case OIS::KC_Y:
             mSceneDetailIndex = (mSceneDetailIndex+1)%3;
@@ -333,8 +373,11 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
 
         case OIS::KC_5:
         {
+            TileManager::getSingleton().setTileGfx();
+            /*
             static int color =0;
             ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_TEXTURE,0, ObjectNPC::TEXTURE_POS_LEGS, color++);
+            */
             break;
         }
 

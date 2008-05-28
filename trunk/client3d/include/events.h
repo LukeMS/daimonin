@@ -92,8 +92,8 @@ private:
     enum
     {
         MIN_CAMERA_ZOOM =  10,
-        STD_CAMERA_ZOOM =  18,
-        MAX_CAMERA_ZOOM = 900
+        STD_CAMERA_ZOOM =  21,
+        MAX_CAMERA_ZOOM = 400
     };
     enum
     {

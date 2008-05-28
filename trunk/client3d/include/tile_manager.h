@@ -55,18 +55,18 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
+    enum { SHADOW_NONE      =    0 }; /**< Shadow gfx number for no shadow */
+    enum { SHADOW_GRID      =    1 }; /**< Shadow gfx number for grid-gfx  */
+    enum { SHADOW_MIRROX_X  = 1<<14}; /**< Mirror the shadow on X-Axis.    */
+    enum { SHADOW_MIRROX_Z  = 1<<15}; /**< Mirror the shadow on Z-Axis.    */
     enum { TILE_SIZE        = 1<<6 }; /**< Rendersize of a tile. */
     enum { MAX_TEXTURE_SIZE = 2048 }; /**< Atlas- and Rendertexture size for highest quality. */
     enum { COLS_SRC_TILES   =    8 }; /**< Number of tile columns in the atlastexture. */
     enum { COLS_SUB_TILES   =  8*4 }; /**< Number of subtiles in a columns. */
-    enum { MAP_SIZE         =   43 }; /**< Number of tiles in the worldmap (on x ynd z axis). */
+    enum { MAP_SIZE         =   42 }; /**< Number of tiles in the worldmap (on x ynd z axis). */
     enum { CHUNK_SIZE_X     =   42 }; /**< . */
     enum { CHUNK_SIZE_Z     =   32 }; /**< . */
     enum { MAX_MAP_SETS     =   16 }; /**< The maximum numbers of AtlasTextures to be created by createAtlasTexture(...). */
-
-    int map_transfer_flag;
-    bool map_new_flag;
-
     enum
     {
         VERTEX_TL,  // Top/Left.
@@ -75,6 +75,8 @@ public:
         VERTEX_BR,  // Bottom/Right.
         VERTEX_SUM  // Numer of vertices
     };
+    int map_transfer_flag;
+    bool map_new_flag;
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.
@@ -86,38 +88,20 @@ public:
         static TileManager Singleton;
         return Singleton;
     }
-
     Ogre::SceneManager* getSceneManager()
     {
         return mSceneManager;
     }
-
     void tileClick(float mouseX, float mouseYt);
-
-    void getMapShadow(unsigned int x, unsigned int z, int &shadow, int &mirror)
-    {
-        if (mShowGrid)
-        {
-            shadow = TileChunk::SHADOW_GRID;
-            mirror = (x+z+1)&1;
-        }
-        else
-        {
-            shadow = mMap[x][z].shadow;
-            mirror =(mMap[x][z].mirror>>2)&3;
-        }
-    }
-
+    int getMapShadow(unsigned int x, unsigned int z);
     void getMapScroll(int &x, int &z)
     {
         x = mMapScrollX;
         z = mMapScrollZ;
     }
-
-    void  setMap(unsigned int x, unsigned int z, short height, char gfx, char shadow=0, char mirror=0);
+    void  setMap(unsigned int x, unsigned int z, short height, char gfx, char shadow=0);
     char  getMapGfx(unsigned int x, unsigned int z, int vertex);
     short getMapHeight(unsigned int x, unsigned int z, int vertex);
-
     void changeMapset(Ogre::String filenameTileTexture, Ogre::String filenameEnvTexture);
     void toggleGrid()
     {
@@ -128,8 +112,14 @@ public:
     void changeChunks();
     bool loadImage(Ogre::Image &image, const Ogre::String &filename);
     short getTileHeight(int posX, int posZ);
+    void updateHeighlightVertexPos(int deltaX, int deltaZ);
     void updateTileHeight(int deltaHeight);
     void updateTileGfx(int deltaGfxNr);
+    void setTileGfx();
+    //////// Only for TESTING
+    void loadLvl();
+    void saveLvl();
+    /////////////////////////
 
 private:
     // ////////////////////////////////////////////////////////////////////
@@ -138,10 +128,14 @@ private:
     /**  TileEngine struct which holds the worldmap. **/
     typedef struct
     {
-        short height; /**< Height of VERTEX_TL. **/
-        char  gfx;    /**< Graphic of VERTEX_TL. **/
-        char  shadow; /**< Shadow that VERTEX_TL is casting. **/
-        char  mirror; /**< The mirroring of the shadow gfx. **/
+        unsigned char  gfx;    /**< Graphic of VERTEX_TL. **/
+        unsigned short height; /**< Height of VERTEX_TL. **/
+        unsigned short shadow; /**< Shadow that VERTEX_TL is casting.
+                                         0: No shadow.
+                                         1: Grid gfx.
+                                     2-127: Shadow gfx.
+                                    Bit 14: Mirror shadow on X-Axis (SHADOW_MIRROX_X).
+                                    Bit 15: Mirror shadow on Z-Axis (SHADOW_MIRROX_Z). **/
     }mapStruct;
     mapStruct mMap[MAP_SIZE+2][MAP_SIZE+2];
     Ogre::SceneManager *mSceneManager;
@@ -149,7 +143,8 @@ private:
     TileChunk mMapchunk;
     Ogre::Vector3 mTris[4];
     int mLod;
-    int mSelectedVertexX, mSelectedVertexZ; /**< Editor feature. Stores the actual selected VERTEX_TL of a tile. **/
+    unsigned int mSelectedVertexX, mSelectedVertexZ; /**< Editor feature. Stores the actual selected VERTEX_TL of a tile. **/
+    int mEditorActSelectedGfx;
     int mMapScrollX, mMapScrollZ;
     bool mShowGrid;
 
@@ -157,19 +152,20 @@ private:
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     TileManager() {}
-
     ~TileManager() {}
-
     TileManager(const TileManager&); /**< disable copy-constructor. **/
     /** **************************************************************************
      **  groupNr -1: create all groups found in the media folder.
      ** **************************************************************************/
     void createAtlasTexture(int textureSize, unsigned int groupNr = MAX_MAP_SETS+1);
+    void createAtlasTextureShadows(int textureSize);
+    void copyShadowToAtlas(Ogre::uchar *dstBuf, int atlasSize);
     void copyFilterToAtlas(Ogre::uchar *dstBuf, int filter);
     bool copyTileToAtlas(Ogre::uchar *dstBuf);
     bool vertexPick(Ogre::Ray *mouseRay, int x, int z, int pos);
     void highlightVertex(int x, int z);
     int  calcHeight(int vert0, int vert1, int vert2, int posX, int posZ);
+    unsigned char calcShadow(int x, int z);
 };
 
 #endif
