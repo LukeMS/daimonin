@@ -101,7 +101,7 @@ int TileManager::getMapShadow(unsigned int x, unsigned int z)
 // Returns the gfx number of the shadow.
 // This MUST be done in the editor. Its only here because of testing...
 //================================================================================================
-unsigned char TileManager::calcShadow(int x, int z)
+unsigned short TileManager::calcShadow(int x, int z)
 {
 
 
@@ -309,7 +309,7 @@ void TileManager::copyShadowToAtlas(uchar *dstBuf, int atlasSize)
     {
         for (int x = 0; x < COLS_SRC_TILES; ++x)
         {
-            srcFilename = "Shadow_" + StringConverter::toString(sumImages++, 3, '0') + ".png";
+            srcFilename = "shadow_" + StringConverter::toString(sumImages++, 3, '0') + ".png";
             if (!loadImage(srcImage, srcFilename)) return;
             if ((srcImage.getWidth() != tileSize) || (srcImage.getHeight() != tileSize))
             {

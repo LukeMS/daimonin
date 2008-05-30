@@ -42,6 +42,7 @@ static const unsigned int MIN_LEN_LOGIN_NAME =  2;
 static const unsigned int MAX_LEN_LOGIN_NAME = 12;
 static const unsigned int MIN_LEN_LOGIN_PSWD =  6;
 static const unsigned int MAX_LEN_LOGIN_PSWD = 17;
+const Real CAMERA_OFFSET = 1325;
 
 #define AUTO_FILL_PASWD // Delete me!!!
 
@@ -169,7 +170,7 @@ bool Events::frameStarted(const FrameEvent& evt)
                 mCamera->setAspectRatio(Real(VP->getActualWidth()) / Real(VP->getActualHeight()));
                 mCamera->setFOVy(Degree(mCameraZoom));
                 mCamera->setQueryFlags(ObjectManager::QUERY_CAMERA_MASK);
-                mCamera->setPosition(0,1325,1325);
+                mCamera->setPosition(0, CAMERA_OFFSET, CAMERA_OFFSET);
                 mCamera->pitch(Degree(-36));
                 mWorld = mSceneManager->getRootSceneNode()->createChildSceneNode();
                 // ////////////////////////////////////////////////////////////////////
@@ -667,27 +668,26 @@ bool Events::frameEnded(const FrameEvent& evt)
         return true;
     mInputMouse->capture();
     mInputKeyboard->capture();
-
     GuiManager::getSingleton().update(evt.timeSinceLastFrame);
     if (Option::getSingleton().getGameStatus() > Option::GAME_STATUS_CONNECT)
         Network::getSingleton().update();
-
     // ////////////////////////////////////////////////////////////////////
     // Update camera movement.
     // ////////////////////////////////////////////////////////////////////
-    static Real cameraAngle= 0;
-    static const int CAMERA_TURN_DELAY = 50;
     if (mCameraRotating != NONE)
     {
+        static Real cameraAngle= 0;
+        const int CAMERA_TURN_DELAY = 50;
         Real step = CAMERA_TURN_DELAY * evt.timeSinceLastFrame;
+        Vector3 actPos = mCamera->getPosition();
         if (mCameraRotating == TURNBACK)
         {
             if (cameraAngle >0) step*= -1;
             if (cameraAngle < -1 || cameraAngle > 1)
             {
-                mCamera->yaw(Degree(step));
                 cameraAngle+= step;
-                mCamera->setPosition(185.0*Math::Sin(Degree(cameraAngle)), 240, 185.0 *Math::Cos(Degree(cameraAngle)));
+                mCamera->yaw(Degree(step));
+                mCamera->setPosition(CAMERA_OFFSET*Math::Sin(Degree(cameraAngle)), actPos.y, CAMERA_OFFSET *Math::Cos(Degree(cameraAngle)));
             }
             else
             {
@@ -696,15 +696,15 @@ bool Events::frameEnded(const FrameEvent& evt)
         }
         else if (mCameraRotating == POSITIVE && cameraAngle < 3)
         {
-            mCamera->yaw(Degree(step));
             cameraAngle+= step;
-            mCamera->setPosition(185.0*Math::Sin(Degree(cameraAngle)), 240, 185.0 *Math::Cos(Degree(cameraAngle)));
+            mCamera->yaw(Degree(step));
+            mCamera->setPosition(CAMERA_OFFSET*Math::Sin(Degree(cameraAngle)), actPos.y, CAMERA_OFFSET *Math::Cos(Degree(cameraAngle)));
         }
         else if (mCameraRotating == NEGATIVE && cameraAngle >-60)
         {
-            mCamera->yaw(Degree(-step));
             cameraAngle-= step;
-            mCamera->setPosition(185.0*Math::Sin(Degree(cameraAngle)), 240, 185.0 *Math::Cos(Degree(cameraAngle)));
+            mCamera->yaw(Degree(-step));
+            mCamera->setPosition(CAMERA_OFFSET*Math::Sin(Degree(cameraAngle)), actPos.y, CAMERA_OFFSET *Math::Cos(Degree(cameraAngle)));
         }
     }
     // ////////////////////////////////////////////////////////////////////

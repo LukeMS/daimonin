@@ -99,8 +99,8 @@ public:
         x = mMapScrollX;
         z = mMapScrollZ;
     }
-    void  setMap(unsigned int x, unsigned int z, short height, char gfx, char shadow=0);
-    char  getMapGfx(unsigned int x, unsigned int z, int vertex);
+    void setMap(unsigned int x, unsigned int z, short height, char gfx, char shadow=0);
+    char getMapGfx(unsigned int x, unsigned int z, int vertex);
     short getMapHeight(unsigned int x, unsigned int z, int vertex);
     void changeMapset(Ogre::String filenameTileTexture, Ogre::String filenameEnvTexture);
     void toggleGrid()
@@ -165,7 +165,7 @@ private:
     bool vertexPick(Ogre::Ray *mouseRay, int x, int z, int pos);
     void highlightVertex(int x, int z);
     int  calcHeight(int vert0, int vert1, int vert2, int posX, int posZ);
-    unsigned char calcShadow(int x, int z);
+    unsigned short calcShadow(int x, int z);
 };
 
 #endif
