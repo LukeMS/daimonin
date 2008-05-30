@@ -149,7 +149,7 @@ public:
     {
         mvNPC[npc]->setPosition(pos);
     }
-    const Ogre::Vector3& getPos(int npc)
+    const Ogre::Vector3& getPosition(int npc)
     {
         return mvNPC[npc]->getPosition();
     }

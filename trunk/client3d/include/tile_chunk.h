@@ -53,6 +53,7 @@ public:
     void updateVertexBuffer();
 
 private:
+    inline void setVertex(int x, int y, int z, Ogre::Real left, Ogre::Real top, Ogre::Real *pReal);
     // Not used.
     Ogre::Real getSquaredViewDepth(const Ogre::Camera* cam) const { return 0; }
     Ogre::Real getBoundingRadius(void) const { return 0; }
@@ -68,7 +69,7 @@ public:
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     enum { MAX_TERRAIN_HEIGHT = 255 *10 };
-    enum { WATERLEVEL         =  14 }; /**<  At this height the water clips the land-tiles. **/
+    enum { WATERLEVEL         =  14 }; /**< At this height the water clips the land-tiles. **/
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
