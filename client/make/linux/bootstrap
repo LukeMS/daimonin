@@ -1,2 +1,2 @@
 #!/bin/sh
-aclocal-1.9 && autoheader && automake-1.9 --foreign --add-missing && autoconf
+aclocal && autoheader && automake --foreign --add-missing && autoconf
