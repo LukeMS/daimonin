@@ -142,7 +142,7 @@ void ignore_list_save(void)
 	char filename[255];
 	FILE   *stream;
 
-    sprintf(filename,"%settings/s.ignore.list",cpl.name);
+    sprintf(filename,"settings/%s.ignore.list",cpl.name);
     LOG(LOG_DEBUG,"Trying to open ignore file: %s\n",filename);
 
     if (!(stream = fopen_wrapper(filename, "w")))
