@@ -544,7 +544,7 @@ void ImageCmd(unsigned char *data, int len)
 
     pnum = GetInt_String(data);
     plen = GetInt_String(data + 4);
-    if (len < 8 || (len - 8) != plen)
+    if (len < 8 || (len - 8) < plen)
     {
         LOG(LOG_ERROR, "PixMapCmd: Lengths don't compare (%d,%d)\n", (len - 8), plen);
         return;
