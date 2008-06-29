@@ -344,8 +344,6 @@ static void sound_start_music(char *fname, int vol, int fade, int loop)
 
     if (SoundSystem != SOUND_SYSTEM_ON)
         return;
-    /* try to load the mp3 */
-    sprintf(buf, "%s%s", GetMediaDirectory(), fname);
 
     if (music.data)
     {
@@ -355,13 +353,13 @@ static void sound_start_music(char *fname, int vol, int fade, int loop)
         music.flag = 0;
     }
 
+    /* try to load the music */
+    sprintf(buf, "%s%s", GetMediaDirectory(), fname);
     music.data = Mix_LoadMUS_wrapper(buf);
     if (!music.data)
     {
 #ifdef DEVELOPMENT
-        char msg[1024];
-        sprintf(msg, "mix_loadmus() failed (%s).", buf);
-        draw_info(msg, 4);
+        draw_info_format(COLOR_GREEN, "mix_loadmus() failed (%s).", buf);
 #endif
         return;
     }
