@@ -321,7 +321,10 @@ void draw_info(char *str, int flags)
     }
     /* we check if something is left after the tag (so tag only draw_infos won't produce a empty line) */
     if (!buf2[0])
+    {
+        free(buf2);
         return;
+    }
 
     /*
      * ok, here we must cut a string to make it fit in window
