@@ -3019,7 +3019,7 @@ void turn_on_light(object *op)
         return;
     }
 
-    /* now we have a filled or permanent, unlight light source
+    /* now we have a filled or permanent, extinguished light source
      * lets light it - BUT we still have light_radius not active
      * when we not drop or apply the source.
      */
@@ -3154,17 +3154,17 @@ void apply_player_light(object *who, object *op)
                     NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
             return;
 
-        new_draw_info_format(NDI_UNIQUE, 0, who, "You unlight the %s.", query_name(op));
+        new_draw_info_format(NDI_UNIQUE, 0, who, "You extinguish the %s.", query_name(op));
 
         turn_off_light(op);
 
         update_object(who, UP_OBJ_FACE);
-        FIX_PLAYER(who ,"apply light - unlight");
+        FIX_PLAYER(who ,"apply light - extinguish");
     }
     else
     {
         /* now the tricky thing: with the first apply cmd, we enlight the light source.
-         * with the second, we apply it. if we unapply a light source, we always unlight
+         * with the second, we apply it. if we unapply a light source, we always extinguish
          * them implicit.
          */
 
@@ -3175,12 +3175,12 @@ void apply_player_light(object *who, object *op)
          */
         if (!op->last_sp)
         {
-            new_draw_info_format(NDI_UNIQUE, 0, who, "The %s can't be light.", query_name(op));
+            new_draw_info_format(NDI_UNIQUE, 0, who, "The %s can't be lit.", query_name(op));
             return;
         }
 
 
-        /* if glow_radius == 0, we have a unlight light source.
+        /* if glow_radius == 0, we have a extinguished light source.
          * before we can put it in the hand to use it, we have to turn
          * the light on.
          */
@@ -3204,9 +3204,17 @@ void apply_player_light(object *who, object *op)
                         NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
                 return;
 
-            new_draw_info_format(NDI_UNIQUE, 0, who, "You prepare %s to light.", query_name(op));
-            turn_on_light(op);
-            FIX_PLAYER(who ,"apply light - turn on light");
+            if (op->env && op->env->type == PLAYER)
+            {
+                new_draw_info_format(NDI_UNIQUE, 0, who, "You prepare the %s to be your light source.", query_name(op));
+                turn_on_light(op);
+                FIX_PLAYER(who ,"apply light - turn on light");
+            }
+            else
+            {
+                new_draw_info_format(NDI_UNIQUE, 0, who, "You light the %s.", query_name(op));
+                turn_on_light(op);
+            }
         }
         else
         {
@@ -3232,7 +3240,7 @@ void apply_player_light(object *who, object *op)
                                     NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
                             return;
 
-                        new_draw_info_format(NDI_UNIQUE, 0, who, "You unlight the %s.", query_name(tmp));
+                        new_draw_info_format(NDI_UNIQUE, 0, who, "You extinguish the %s.", query_name(tmp));
                         CLEAR_FLAG(tmp, FLAG_APPLIED);
 
                         turn_off_light(tmp);
@@ -3240,7 +3248,7 @@ void apply_player_light(object *who, object *op)
                     }
                 }
 
-                new_draw_info_format(NDI_UNIQUE, 0, who, "You apply %s as light.", query_name(op));
+                new_draw_info_format(NDI_UNIQUE, 0, who, "You apply the %s as your light source.", query_name(op));
                 SET_FLAG(op, FLAG_APPLIED);
                 FIX_PLAYER(who ," apply light - apply light");
                 update_object(who, UP_OBJ_FACE);
@@ -3256,7 +3264,7 @@ void apply_player_light(object *who, object *op)
                             NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
                     return;
 
-                new_draw_info_format(NDI_UNIQUE, 0, who, "You unlight the %s.", query_name(op));
+                new_draw_info_format(NDI_UNIQUE, 0, who, "You extinguish the %s.", query_name(op));
                 turn_off_light(op);
             }
         }
