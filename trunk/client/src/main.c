@@ -1453,6 +1453,10 @@ int main(int argc, char *argv[])
 
     if (PHYSFS_addToSearchPath(PHYSFS_getBaseDir() , 1)==0)
         LOG(LOG_MSG,"PHYSFS_addPath (%s) failed: %s\n",PHYSFS_getBaseDir(),PHYSFS_getLastError());
+    if (PHYSFS_addToSearchPath(SYSPATH"skins/subred/", 1) == 0)
+        LOG(LOG_MSG,"PHYSFS_addPath (%s) failed: %s\n",SYSPATH"skins/subred/", PHYSFS_getLastError());
+    if (PHYSFS_addToSearchPath(SYSPATH"skins/subred.zip", 1) == 0)
+        LOG(LOG_MSG,"PHYSFS_addPath (%s) failed: %s\n",SYSPATH"/skins/subred.zip", PHYSFS_getLastError());
     if (PHYSFS_addToSearchPath("skins/subred.zip", 0) == 0)
     {
         LOG(LOG_MSG,"Defaultskin (skins/subred.zip) not found. Your client will most likely crash!\n");
@@ -1493,7 +1497,7 @@ int main(int argc, char *argv[])
     sprintf(buf, "%s/.daimonin", getenv("HOME"));
     if (PHYSFS_addToSearchPath(buf,1)==0)
         LOG(LOG_MSG,"PHYSFS_addPath4 failed: %s\n",PHYSFS_getLastError());
-    if (PHYSFS_addToSearchPath("/usr/share/daimonin_widget",1)==0)
+    if (PHYSFS_addToSearchPath(SYSPATH"_widget",1)==0)
         LOG(LOG_MSG,"PHYSFS_addPath4 failed: %s\n",PHYSFS_getLastError());
 
 #endif
