@@ -814,6 +814,11 @@ void change_object(object *op)
     {
         tmp = arch_to_object(op->other_arch);
         tmp->stats.hp = op->stats.hp; /* The only variable it keeps. */
+        if (tmp->type == TYPE_LIGHT_APPLY)
+        {
+            tmp->stats.food = tmp->stats.maxhp;
+            tmp->glow_radius = tmp->last_sp;
+        }
         if (env)
         {
             tmp->x = env->x,tmp->y = env->y;
@@ -833,11 +838,26 @@ void change_object(object *op)
         }
         else
         {
+            /* The problem with searching for a free spot in this kind of
+             * object change (where the change is only technical, ie, in the
+             * gameworld the object is the same physical object, just with a
+             * changed status) is that the object jumps about for no
+             * player-obvious reason if, eg, it is on the same square as a
+             * player during the change -- Smacky 20080704 */
             j = find_first_free_spot(tmp->arch, op->map, op->x, op->y);
             if (j != -1)  /* Found a free spot */
             {
+                if (op->type == TYPE_LIGHT_APPLY && tmp->other_arch)
+                {
+                    /* remove light mask from map */
+                    adjust_light_source(op->map, op->x, op->y, -(tmp->glow_radius));
+                    update_object(op, UP_OBJ_FACE); /* tell map update we have something changed */
+                    op->glow_radius = 0;
+                }
                 tmp->x = op->x + freearr_x[j],tmp->y = op->y + freearr_y[j];
                 insert_ob_in_map(tmp, op->map, op, 0);
+                if (tmp->type == TYPE_LIGHT_APPLY)
+                    turn_on_light(tmp);
             }
         }
     }
