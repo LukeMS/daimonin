@@ -2,13 +2,12 @@ Object lamp
 name lamp
 race lamp_oil
 layer 3
-face lamp_unlit.101
+face lamp.100
 type 74
 anim
-lamp_lit1.101
-lamp_lit1.102
+lamp.101
+lamp.102
 mina
-is_animated 0
 anim_speed 4
 material 1024
 material_real 641
