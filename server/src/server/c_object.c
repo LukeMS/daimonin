@@ -842,6 +842,19 @@ char *examine(object *op, object *tmp, int flag)
           if (QUERY_FLAG(tmp, FLAG_IDENTIFIED))
               sprintf(buf, "It has %d charges left.\n", tmp->stats.food);
           break;
+
+        case TYPE_LIGHT_APPLY:
+          if (!tmp->last_sp || (tmp->last_eat && !tmp->stats.food))
+              sprintf(buf, "%s no fuel remaining!\n", (tmp->nrof > 1) ? "They each have" : "It has");
+          else if (!tmp->last_eat)
+              sprintf(buf, "%s limitless fuel!\n", (tmp->nrof > 1) ? "They each have" : "It has");
+          else
+          {
+              int minutes = tmp->stats.food / 36 + 1;
+              sprintf(buf, "%s less than %d minute%s of fuel remaining!\n", (tmp->nrof > 1) ? "They each have" : "It has",
+                      minutes, (minutes > 1) ? "s" : "");
+          }
+          break;
     }
 
     if (buf[0] != '\0')
