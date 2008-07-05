@@ -814,11 +814,8 @@ void change_object(object *op)
     {
         tmp = arch_to_object(op->other_arch);
         tmp->stats.hp = op->stats.hp; /* The only variable it keeps. */
-        if (tmp->type == TYPE_LIGHT_APPLY)
-        {
-            tmp->stats.food = tmp->stats.maxhp;
-            tmp->glow_radius = tmp->last_sp;
-        }
+        if (tmp->type == TYPE_LIGHT_APPLY && tmp->other_arch)
+            tmp->stats.food = op->stats.maxhp; /* means we pass max ticks of light down the chain */
         if (env)
         {
             tmp->x = env->x,tmp->y = env->y;
