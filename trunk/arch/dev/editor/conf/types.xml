@@ -642,10 +642,16 @@
   </attribute>
   <attribute arch="glow_radius" editor="light on" type="int">
    Applyable light can be turned on or off. The value above will
-   determinate how and then its copied to this value. If this
+   determine how and then its copied to this value. If this
    value is 0 (default) the light is off - every other value
    means on! This value is normally autoset when applied but can
    be set by map makers to simulate light on.
+
+   NOTE: if you change this value from the arch default, you must also set
+   is_animated by hand or you will get the wrong face (eg, a lit torch which
+   emits no light or an unlit torch which emits light). So if you set this
+   value to >0 you must set is_animated 1, and if you set this value to =0 you
+   must set is_animated 0.
   </attribute>
   <attribute arch="maxhp" editor="max. ticks of light" type="int">
   'Max. Ticks of Light' defines the maximal value of 'Ticks of Light'.
