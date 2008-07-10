@@ -29,7 +29,7 @@ _server_char        new_character; /* if we login as new char, thats the values 
 
 SDL_Surface        *ScreenSurface; /* THE main surface (backbuffer)*/
 SDL_Surface        *ScreenSurfaceMap; /* THE map surface (backbuffer)*/
-SDL_Surface        *zoomed;
+SDL_Surface        *zoomed = NULL;
 _Font               SystemFont;         /* our main font*/
 _Font               SystemFontOut;      /* our main font - black outlined*/
 _Font               BigFont;            /* bigger special font*/
