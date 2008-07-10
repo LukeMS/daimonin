@@ -177,7 +177,7 @@ void send_target_command(player *pl)
         strcat(tmp + 3, buf);
     }
     pl->target_level = pl->target_object->level;
-    Write_String_To_Socket(&pl->socket, BINARY_CMD_TARGET, tmp, strlen(tmp));
+    Write_String_To_Socket(&pl->socket, BINARY_CMD_TARGET, tmp, strlen(tmp+3)+3);
 }
 
 /* send quest list */
