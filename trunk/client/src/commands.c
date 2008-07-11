@@ -397,13 +397,13 @@ void GoodbyeCmd(char *data, int len)
  * alredy got in the client_anims. This command is called from the client itself to load up the animations.
  * This gives us the possibility to later let the server generate dynamic animations.
  * Because this is mostly used client sided and for better understanding i didn't squeze out every bit and didn't optimize it.
- * TODO: checks for reading beyond len!!
+ * TODO: checks for reading beyond len!! <-- The SEGFAULT crash? :)
  */
 void NewAnimCmd(unsigned char *data, int len)
 {
     short animnum;
-    uint16 sequence;
-    uint16 dir;
+    uint8 sequence;
+    uint8 dir;
     int pos=0, i;
     AnimSeq *as=NULL;
     int   seqmap[MAX_SEQUENCES];
