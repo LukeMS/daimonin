@@ -402,8 +402,8 @@ void GoodbyeCmd(char *data, int len)
 void NewAnimCmd(unsigned char *data, int len)
 {
     short animnum;
-    uint8 sequence;
-    uint8 dir;
+    uint16 sequence;
+    uint16 dir;
     int pos=0, i;
     AnimSeq *as=NULL;
     int   seqmap[MAX_SEQUENCES];
