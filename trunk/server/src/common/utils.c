@@ -193,3 +193,22 @@ void bitstostring(long bits, int num, char *str)
     return;
 }
 */
+
+/* Gives a percentage clipped to 0% -> 100% of a/b. */
+int clipped_percent(int a, int b)
+{
+    int rv;
+
+    if (b <= 0)
+        return 0;
+
+    rv = (int) ((100.0f * ((float) a) / ((float) b)) + 0.5f);
+
+    if (rv < 0)
+        return 0;
+    else if (rv > 100)
+        return 100;
+
+    return rv;
+}
+

@@ -640,25 +640,6 @@ int learn_skill(object *pl, object *scroll, char *name, int skillnr, int scroll_
     return 1;
 }
 
-/* Gives a percentage clipped to 0% -> 100% of a/b. */
-/* Probably belongs in some global utils-type file? */
-static int clipped_percent(int a, int b)
-{
-    int rv;
-
-    if (b <= 0)
-        return 0;
-
-    rv = (int) ((100.0f * ((float) a) / ((float) b)) + 0.5f);
-
-    if (rv < 0)
-        return 0;
-    else if (rv > 100)
-        return 100;
-
-    return rv;
-}
-
 /* use_skill() - similar to invoke command, it executes the skill in the
  * direction that the user is facing. Returns false if we are unable to
  * change to the requested skill, or were unable to use the skill properly.
