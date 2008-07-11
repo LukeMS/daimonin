@@ -397,3 +397,5 @@ extern char            *get_word_from_string(char *str, int *pos);
 extern int              buf_overflow(const char *buf1, const char *buf2, int bufsize);
 extern int              transform_name_string(char *name);
 extern void             bitstostring(long bits, int num, char *str);
+extern int              clipped_percent(int a, int b);
+
