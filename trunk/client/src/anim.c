@@ -140,7 +140,7 @@ anim_list *new_anim_add_tile(uint16 anim, uint8 sequence, uint8 dir, uint8 speed
     /* dynamic loading */
     if (!new_anim_load_and_check(anim, sequence, dir))
     {
-        LOG(LOG_DEBUG,"na_add: anim not exitent: a:%d, s:%d, d:%d\n",anim, sequence, dir);
+        LOG(LOG_DEBUG,"na_add_tile: anim does not exist: a:%d, s:%d, d:%d\n",anim, sequence, dir);
         return NULL;
     }
 
@@ -402,7 +402,7 @@ anim_list *new_anim_add_item(uint16 anim, uint8 sequence, uint8 dir, uint8 speed
     /* dynamic loading */
     if (!new_anim_load_and_check(anim, sequence, dir))
     {
-        LOG(LOG_DEBUG,"na_add: anim not exitent: a:%d, s:%d, d:%d\n",anim, sequence, dir);
+        LOG(LOG_DEBUG,"na_add_item: anim does not exist: a:%d, s:%d, d:%d\n",anim, sequence, dir);
         return NULL;
     }
 
