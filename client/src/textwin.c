@@ -50,7 +50,7 @@ static char * get_keyword_start(int actWin, int mouseX, int *row)
     int     pos, pos2 = 538, key_start;
     char   *text;
 
-    if (actWin > TW_SUM)
+    if (actWin >= TW_SUM)
         return 0;
 
     pos = (txtwin[actWin].top_drawLine + (*row)) % TEXT_WIN_MAX - txtwin[actWin].scroll;
