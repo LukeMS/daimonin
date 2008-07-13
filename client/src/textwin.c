@@ -148,6 +148,7 @@ void say_clickedKeyword(int actWin, int mouseX, int mouseY)
             cmdBuf2[pos - 5] = cmdBuf[pos];
             pos++;
         }
+        cmdBuf2[pos - 5] = '\0';
         send_command(cmdBuf2, -1, SC_NORMAL);
     }
     else
