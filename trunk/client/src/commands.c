@@ -430,6 +430,11 @@ void NewAnimCmd(unsigned char *data, int len)
     /* one byte sequence number, 0xFF is the end marker */
     while ((sequence=*(data + pos++))!= 0xFF)
     {
+        if (sequence >= MAX_SEQUENCES)
+        {
+            LOG(LOG_DEBUG, "NewAnimCmd: sequence invalid: %d\n", sequence);
+            return;
+        }
         as = (AnimSeq *) malloc(sizeof(AnimSeq));
         if (!as)
         {
@@ -448,6 +453,11 @@ void NewAnimCmd(unsigned char *data, int len)
 
             /* 1 Byte sequencenum which this sequence is mapped to */
             mapseq = *(data + pos++);
+            if(mapseq >= MAX_SEQUENCES)
+            {
+                LOG(LOG_DEBUG, "NewAnimCmd: sequence invalid: %d\n", mapseq);
+                return;
+            }
 
             /* to map forward we need the pointer, which we get later, so lets save for now in a temp array */
             seqmap[sequence]=mapseq;
@@ -464,6 +474,11 @@ void NewAnimCmd(unsigned char *data, int len)
             if (dir & ASEQ_MAPPED) /*its mapped, next byte tells us to which */
             {
                 dir &= 0x7F;
+                if(dir >= 9)
+                {
+                    LOG(LOG_DEBUG,"NewAnimCmd: invalid direction %d\n", dir);
+                    return;
+                }
                 dirmap[dir] = *(data + pos++);
                 if (dirmap[dir]>8)
                 {
@@ -473,6 +488,11 @@ void NewAnimCmd(unsigned char *data, int len)
                 continue;
             }
             dir &= 0x7F; /* preparation for dir mappings */
+            if(dir >= 9)
+            {
+                LOG(LOG_DEBUG,"NewAnimCmd: invalid direction %d\n", dir);
+                return;
+            }
 
             as->dirs[dir].flags = 0;
             /* one byte frame count (255 frames for one sequence should be enough... */
