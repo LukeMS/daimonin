@@ -77,7 +77,7 @@ void add_bmap(_bmaptype *at)
         if (++index == BMAPTABLE)
             index = 0;
         if (index == org_index)
-            LOG(LOG_ERROR, "ERROR: add_bmap(): bmaptable to small\n");
+            LOG(LOG_ERROR, "ERROR: add_bmap(): bmaptable too small\n");
     }
 }
 
