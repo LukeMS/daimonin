@@ -35,7 +35,7 @@
  *  waste too much memory
  */
 #define NAME_LEN    128
-#define copy_name(t,f) strncpy(t, f, NAME_LEN-1)
+#define copy_name(t,f) do { strncpy((t), (f), NAME_LEN-1); (t)[NAME_LEN-1] = '\0'; } while(0)
 
 /*
  *  item structure keeps all information what player
