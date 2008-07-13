@@ -823,7 +823,7 @@ void create_anim_tmp()
                                     anim_cmd[anim_len++] = delay;
                                 }
                             }
-                            for (k=1;k<=9;k++)
+                            for (k=1;k<9;k++)
                             {
                                 anim_cmd[anim_len++] = k;
                                 anim_cmd[anim_len++] = (uint8) (numfaces/facings);
