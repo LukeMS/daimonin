@@ -418,7 +418,7 @@ void NewAnimCmd(unsigned char *data, int len)
     animnum = (*(data+pos++) << 8);
     animnum |= *(data+pos++);
 
-    if (animnum<0 || animnum >MAXANIM)
+    if (animnum<0 || animnum >=MAXANIM)
     {
         LOG(LOG_DEBUG, "NewAnimCmd: animnum invalid: %d\n",animnum);
         return;
