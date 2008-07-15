@@ -80,7 +80,7 @@ const char *meshName[][ObjectEquipment::ITEM_SUM]=
     };
 
 unsigned long ObjectEquipment::mIndex =0;
-unsigned char *ObjectEquipment::texImageBuf = 0;
+unsigned char *ObjectEquipment::mTexImageBuf = 0;
 
 const uint32 MASK_COLOR = 0xffc638db; // This is our mask. Pixel with this color will not be drawn.
 
@@ -227,7 +227,7 @@ ObjectEquipment::~ObjectEquipment()
 void ObjectEquipment::freeRecources()
 {
     mTexture.setNull();
-    delete[] texImageBuf;
+    delete[] mTexImageBuf;
 }
 
 //================================================================================================
@@ -238,7 +238,7 @@ ObjectEquipment::ObjectEquipment(Entity *parentEntity)
     Logger::log().list()  << "Adding Equipment.";
     if (!mIndex++)
     {
-        texImageBuf = new unsigned char[MAX_MODEL_TEXTURE_SIZE * MAX_MODEL_TEXTURE_SIZE * sizeof(uint32)];
+        mTexImageBuf = new unsigned char[MAX_MODEL_TEXTURE_SIZE * MAX_MODEL_TEXTURE_SIZE * sizeof(uint32)];
     }
     mParentEntity = parentEntity;
     for (int bone=0; bone < BONE_SUM; ++bone)
@@ -253,14 +253,14 @@ ObjectEquipment::ObjectEquipment(Entity *parentEntity)
     // Clone the ObjectNPC-Material.
     String tmpName = "EQ_" + StringConverter::toString(mIndex, 6, '0');
     MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName("NPC");
-    MaterialPtr mMaterial = tmpMaterial->clone(tmpName);
+    MaterialPtr newMaterial = tmpMaterial->clone(tmpName);
     mParentEntity->getSubEntity(0)->setMaterialName(tmpName);
     // Create a texture for the material.
     Image image;
-    image.loadDynamicImage(texImageBuf, MAX_MODEL_TEXTURE_SIZE, MAX_MODEL_TEXTURE_SIZE, PF_A8R8G8B8);
+    image.loadDynamicImage(mTexImageBuf, MAX_MODEL_TEXTURE_SIZE, MAX_MODEL_TEXTURE_SIZE, PF_A8R8G8B8);
     tmpName +="_Texture";
     mTexture = TextureManager::getSingleton().loadImage(tmpName, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, image, TEX_TYPE_2D, 3, 1.0f);
-    mMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(tmpName);
+    newMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(tmpName);
 
     // Set the default Colors of the model.
     setTexture(0, 0, 0);
@@ -314,9 +314,9 @@ inline void ObjectEquipment::drawBopyPart(sPicture &picPart, Image &image, uint3
                     srcColor <<= 8;
                     if ((dstColor & 0xff0000) >= srcColor ) dstColor-= srcColor; else dstColor-= dstColor & 0xff0000;
                 }
-                *buffer = dstColor;
+                *buf = dstColor;
             }
-            ++buffer;
+            ++buf;
         }
     }
     // Copy the buffer back into the model-texture.
@@ -326,14 +326,14 @@ inline void ObjectEquipment::drawBopyPart(sPicture &picPart, Image &image, uint3
                 picPart.dstX + picPart.w,
                 picPart.dstY + picPart.h));
 
-    delete[] buf;
+    delete[] buffer;
 #ifdef WRITE_MODELTEXTURE_TO_FILE
     // Writes the just blitted model-texture as png to disk.
     {
         Image img;
-        uint32 *sysFontBuf = new uint32[mTexture->getWidth()*mTexture->getHeight()];
-        mTexture->getBuffer()->blitToMemory(PixelBox(mTexture->getWidth(), mTexture->getHeight(), 1, PF_A8R8G8B8, sysFontBuf));
-        img = img.loadDynamicImage((unsigned char*)sysFontBuf, mTexture->getWidth(), mTexture->getHeight(), PF_A8R8G8B8);
+        uint32 *tmpBuf = new uint32[mTexture->getWidth()*mTexture->getHeight()];
+        mTexture->getBuffer()->blitToMemory(PixelBox(mTexture->getWidth(), mTexture->getHeight(), 1, PF_A8R8G8B8, tmpBuf));
+        img = img.loadDynamicImage((unsigned char*)tmpBuf, mTexture->getWidth(), mTexture->getHeight(), PF_A8R8G8B8);
         img.save("Texture_Changed.png");
     }
 #endif

@@ -505,7 +505,7 @@ void Network::DrawInfoCmd2(unsigned char *data, int len)
 #define MUSIC_MODE_FORCED 4 /* thats needed for some map event sounds */
 
 // sound ids. //
-typedef enum _sound_id
+enum _sound_id
 {
     SOUND_EVENT01,
     SOUND_BOW01,
@@ -569,7 +569,7 @@ typedef enum _sound_id
 // SOUND_MAX + SOUND_MAGIC_xxx
 
 // this enum should be same as in server //
-typedef enum _spell_sound_id
+enum _spell_sound_id
 {
     SOUND_MAGIC_DEFAULT,
     SOUND_MAGIC_ACID,

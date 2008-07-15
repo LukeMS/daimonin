@@ -35,7 +35,7 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    typedef enum _game_status
+    enum _game_status
     {
         GAME_STATUS_CHECK_HARDWARE,
         GAME_STATUS_INIT_VIEWPORT,      /**< Init all basic ogre stuff. **/
