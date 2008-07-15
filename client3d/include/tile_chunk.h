@@ -27,39 +27,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "Ogre.h"
 
 /**
- * Helper class for drawing blended tile layers to a rendertexture.
- *****************************************************************************/
-class TilePainter : public Ogre::SimpleRenderable
-{
-public:
-    TilePainter(int sumVertices, int size);
-    ~TilePainter() { delete mRenderOp.vertexData; }
-    void updateVertexBuffer(int rotation);
-
-private:
-    // Not used.
-    Ogre::Real getSquaredViewDepth(const Ogre::Camera* cam) const { return 0; }
-    Ogre::Real getBoundingRadius(void) const { return 0; }
-};
-
-/**
- * RenderOperation for landtiles.
- *****************************************************************************/
-class LandTiles : public Ogre::SimpleRenderable
-{
-public:
-    LandTiles(int sumVertices);
-    ~LandTiles() { delete mRenderOp.vertexData; }
-    void updateVertexBuffer();
-
-private:
-    inline void setVertex(int x, int y, int z, Ogre::Real left, Ogre::Real top, Ogre::Real *pReal);
-    // Not used.
-    Ogre::Real getSquaredViewDepth(const Ogre::Camera* cam) const { return 0; }
-    Ogre::Real getBoundingRadius(void) const { return 0; }
-};
-
-/**
  * TileEngine class which manages the tiles in a chunk.
  *****************************************************************************/
 class TileChunk
@@ -68,8 +35,9 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    enum { MAX_TERRAIN_HEIGHT = 255 *10 };
-    enum { WATERLEVEL         =  14 }; /**< At this height the water clips the land-tiles. **/
+    enum { X = 0, Z = 1 };                 /**< Only used for readability. **/
+    enum { MAX_TERRAIN_HEIGHT = 255 *10 }; /**< Height of the terrain is limited. **/
+    enum { WATERLEVEL         =  14 };     /**< At this height the water clips the land-tiles. **/
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
@@ -79,26 +47,29 @@ public:
     void change();
     void freeRecources();
     void loadAtlasTexture(int group);
-    void updatePainter();
 
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    TilePainter *mPainter;  // Make it static when using more TileChunks.
-    LandTiles *mLandTiles;
     Ogre::TexturePtr mTexLand, mTexWater;
-    Ogre::MeshPtr mMeshWater;
-    Ogre::Entity *mEntityWater;
-    int mSumVertices;
+    Ogre::MeshPtr mMeshLand, mMeshWater;
+    Ogre::Entity *mEntityLand, *mEntityWater;
+    Ogre::Vector3 mNormal, mVec1, mVec2, mVec3;
+    Ogre::Real *mPosVBuf;
+    Ogre::Real mTexPosInAtlas[12];
     int mTextureSize;
-    int mSubTileSize;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     /** The terrain must have a land- AND a waterSubmesh. If there are no datas for it, we create a dummy. **/
     void createDummySubMesh(Ogre::SubMesh *submesh);
-    void createWater();
+    void createIndexData(Ogre::SubMesh *submesh, int sumVertices);
+    void calcNormal(Ogre::Real x1, Ogre::Real z1, Ogre::Real x2, Ogre::Real z2, Ogre::Real x3, Ogre::Real z3);
+    void setVertex(Ogre::Vector3 &pos, Ogre::Real posTexX, Ogre::Real posTexZ, Ogre::Real posShadowX, Ogre::Real posShadowZ, int offset);
+    void changeLand();
+    void changeWater();
+    int  calcTextureUnitSorting(int l0, int l1, int l2, int offset);
 };
 
 #endif

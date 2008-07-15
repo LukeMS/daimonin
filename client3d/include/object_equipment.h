@@ -96,7 +96,7 @@ private:
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     static sPicture picHands[4], picArms[4], picShoes[2], picBody[2], picLegs[2], picFace, picHair, picBelt[2];
-    static unsigned char *texImageBuf;
+    static unsigned char *mTexImageBuf;
     enum
     {
         SIDE_BACK,

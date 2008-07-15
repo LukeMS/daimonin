@@ -78,8 +78,8 @@ void TileManager::Init(SceneManager* SceneMgr, int lod, bool createAtlas)
     //if (createAtlas)
     {
         Logger::log().info() << "Creating atlas-texture...";
-        createAtlasTexture(MAX_TEXTURE_SIZE);
-        createAtlasTextureShadows(MAX_TEXTURE_SIZE/2);
+        createFilterTemplate();
+        createAtlasTexture(MAX_TEXTURE_SIZE, true);
         Logger::log().success(true);
     }
     Logger::log().info() << "Creating tile chunk...";
@@ -89,7 +89,7 @@ void TileManager::Init(SceneManager* SceneMgr, int lod, bool createAtlas)
 }
 
 //================================================================================================
-// Rteurn the shadow number.
+// Return the shadow number.
 //================================================================================================
 int TileManager::getMapShadow(unsigned int x, unsigned int z)
 {
@@ -255,80 +255,47 @@ unsigned short TileManager::calcShadow(int x, int z)
 }
 
 //================================================================================================
-// Collect all terrain-shadow filters intoo a single atlas texture.
-//================================================================================================
-void TileManager::createAtlasTextureShadows(int textureSize)
-{
-    /*
-    // Only for creating dummy filters. DELETE ME!
-    {
-        Image srcImage;
-        String srcFilename;
-        for (int filter =0; filter < 4; filter++)
-        {
-            srcFilename = "filter_00_";
-            srcFilename+= 'a' + filter;
-            srcFilename+= ".png";
-            loadImage(srcImage, srcFilename);
-            for (int i =1; i < 32; ++i)
-            {
-                srcFilename = "c:\\filter_" + StringConverter::toString(i, 2, '0') + "_";
-                srcFilename+= 'a' + filter;
-                srcFilename+= ".png";
-                srcImage.save(srcFilename);
-            }
-        }
-    }
-    */
-    uchar *dstBuf = new uchar[textureSize * textureSize * sizeof(uint32)];
-    copyShadowToAtlas(dstBuf, textureSize);
-    Image dstImage;
-    dstImage.loadDynamicImage(dstBuf, textureSize, textureSize, 1, PF_A8R8G8B8, true);
-    String dstFilename = PATH_TILE_TEXTURES;
-    dstFilename+= "Shadows_";
-    for (unsigned short s = textureSize; s >= textureSize/8; s/=2)
-    {
-        dstImage.save(dstFilename + StringConverter::toString(s, 4, '0') + ".png");
-        dstImage.resize(s/2, s/2, Image::FILTER_BILINEAR);
-    }
-    //delete[] dstBuf; // Will be done by Ogre because autoDelete was set.
-}
-
-//================================================================================================
 // Copy a shadow into the atlastexture.
 //================================================================================================
-void TileManager::copyShadowToAtlas(uchar *dstBuf, int atlasSize)
+void TileManager::copyShadowToAtlas(uchar *dstBuf)
 {
-    const int SIZE_R8G8B8 = 4;
-    int sumImages = 0;
-    unsigned int tileSize = atlasSize / COLS_SRC_TILES/2;
+    unsigned int size = MAX_TEXTURE_SIZE/32;
+    unsigned int fixFilterSize = size/16;
+    uint32 *dst, *src;
     Image srcImage;
     String srcFilename;
-    int lineSkip = (atlasSize - tileSize) * SIZE_R8G8B8;
-    for (int y = 0; y < COLS_SRC_TILES; ++y)
+    int sumImages = 0;
+    for (int y = 0; y < 15; ++y)
     {
-        for (int x = 0; x < COLS_SRC_TILES; ++x)
+        dst = ((uint32*)dstBuf) + y*size*2*MAX_TEXTURE_SIZE + size*3/2*MAX_TEXTURE_SIZE + MAX_TEXTURE_SIZE/2+size*3/2;
+        for (int x = 0; x < 7; ++x)
         {
             srcFilename = "shadow_" + StringConverter::toString(sumImages++, 3, '0') + ".png";
             if (!loadImage(srcImage, srcFilename)) return;
-            if ((srcImage.getWidth() != tileSize) || (srcImage.getHeight() != tileSize))
+            if ((srcImage.getWidth() != size-2*fixFilterSize) || (srcImage.getHeight() != size-2*fixFilterSize))
             {
-                Logger::log().error() << "Shadow gfx " << srcFilename << " has the wrong size! Only " << tileSize << "x" << tileSize << " is supported";
+                Logger::log().error() << "Gfx " << srcFilename << " has the wrong size! Only "
+                << size-2*fixFilterSize << "x" << size-2*fixFilterSize << " is supported";
                 return;
             }
-            uchar *src= srcImage.getData();
-            uchar *dst= dstBuf + (y * tileSize * MAX_TEXTURE_SIZE + x * tileSize) * SIZE_R8G8B8;
-            for (unsigned int y = 0; y < tileSize; ++y)
+            if (srcImage.getFormat()!=PF_A8R8G8B8)
             {
-                for (unsigned int x = 0; x < tileSize; ++x)
-                {
-                    *dst++ = *src++; // R
-                    *dst++ = *src++; // G
-                    *dst++ = *src++; // B
-                    *dst++ = *src++; // A
-                }
-                dst+= lineSkip;
+                Logger::log().error() << "Gfx " << srcFilename << " has the wrong pixelformat. Only A8R8G8B8 is supported for shadows.";
+                return;
             }
+            src= (uint32*)srcImage.getData();
+            for (unsigned int posY = 0; posY < size; ++posY)
+            {
+                if (posY == size-fixFilterSize) src-= size-2*fixFilterSize;
+                for (unsigned int posX = 0; posX < size; ++posX)
+                {
+                    dst[posY*MAX_TEXTURE_SIZE + posX] = *src;
+                    if (posX >= fixFilterSize && posX < size-fixFilterSize-1) ++src;
+                }
+                ++src;
+                if (posY < fixFilterSize || posY >= size-fixFilterSize) src-= size-2*fixFilterSize;
+            }
+            dst+= 2*size;
         }
     }
 }
@@ -336,31 +303,26 @@ void TileManager::copyShadowToAtlas(uchar *dstBuf, int atlasSize)
 //================================================================================================
 // Collect all tiles and filters into a single RGBA-image.
 //================================================================================================
-void TileManager::createAtlasTexture(int textureSize, unsigned int groupNr)
+void TileManager::createAtlasTexture(int textureSize, bool fixFilteringErrors, unsigned int startGroup)
 {
-    int startGroup, stopGroup;
-    if (groupNr >= (unsigned int) MAX_MAP_SETS)
+    int stopGroup = startGroup+1;
+    if (startGroup >= (unsigned int) MAX_MAP_SETS)
     {
         startGroup = 0;
         stopGroup  = MAX_MAP_SETS;
     }
-    else
-    {
-        startGroup = groupNr;
-        stopGroup  = startGroup+1;
-    }
     Image dstImage;
-    uchar *dstBuf = new uchar[textureSize * textureSize * sizeof(uint32)];
-    // Buffer will not be cleared, so previous drawn tiles/filters are still there.
+    uchar *dstBuf = new uchar[textureSize * textureSize * RGBA];
     for (int nr = startGroup; nr < stopGroup; ++nr)
     {
         if (!copyTileToAtlas(dstBuf)) break;
-        for (int i=0; i < 4; ++i) copyFilterToAtlas(dstBuf, i);
+        copyFilterToAtlas(dstBuf);
+        copyShadowToAtlas(dstBuf);
         // Save the Atlastexture.
         dstImage.loadDynamicImage(dstBuf, textureSize, textureSize, 1, PF_A8R8G8B8, true);
         String dstFilename = PATH_TILE_TEXTURES;
         dstFilename+= "Atlas_"+ StringConverter::toString(nr,2,'0') + "_";
-        for (unsigned short s = textureSize; s >= textureSize/8; s/=2)
+        for (unsigned short s = textureSize; s >= textureSize/4; s/=2)
         {
             dstImage.save(dstFilename + StringConverter::toString(s, 4, '0') + ".png");
             dstImage.resize(s/2, s/2, Image::FILTER_BILINEAR);
@@ -375,15 +337,15 @@ void TileManager::createAtlasTexture(int textureSize, unsigned int groupNr)
 bool TileManager::copyTileToAtlas(uchar *dstBuf)
 {
     static int nr = -1;
-    int sumImages = 0;
     unsigned int tileSize = MAX_TEXTURE_SIZE / COLS_SRC_TILES;
+    unsigned int subSize = tileSize/2;
+    int pixelSize, sumImages= 0;
     Image srcImage;
     String srcFilename;
     ++nr;
-    int lineSkip = (MAX_TEXTURE_SIZE - tileSize) * sizeof(uint32);
     for (int y = 0; y < COLS_SRC_TILES; ++y)
     {
-        for (int x = 0; x < COLS_SRC_TILES; x+=2)
+        for (int x = 0; x <= 2; x+=2)
         {
             srcFilename = "terrain_" + StringConverter::toString(nr, 2, '0') + "_" + StringConverter::toString(sumImages++, 2, '0') + ".png";
             if (!loadImage(srcImage, srcFilename))
@@ -396,81 +358,160 @@ bool TileManager::copyTileToAtlas(uchar *dstBuf)
                 Logger::log().error() << "Gfx " << srcFilename << " has the wrong size! Only " << tileSize << "x" << tileSize << " is supported";
                 return true;
             }
-            bool srcAlpha = (srcImage.getFormat()==PF_A8R8G8B8);
+
+            bool srcHasAlpha = srcImage.getFormat()==PF_A8R8G8B8;
+            pixelSize = (srcImage.getFormat()==PF_A8R8G8B8)?RGBA:RGB;
             uchar *src = srcImage.getData();
-            uchar *dst1= dstBuf + (y * tileSize * MAX_TEXTURE_SIZE + x * tileSize) * sizeof(uint32);
-            uchar *dst2= dst1 + tileSize * sizeof(uint32);
-            for (unsigned int y = 0; y < tileSize; ++y)
-            {
-                for (unsigned int x = 0; x < tileSize; ++x)
-                {
-                    *dst2++ = *src;   // R
-                    *dst1++ = *src++; // R
-                    *dst2++ = *src;   // G
-                    *dst1++ = *src++; // G
-                    *dst2++ = *src;   // B
-                    *dst1++ = *src++; // B
-                    *dst2++ = *src;   // A
-                    *dst1++ = 0xff;   // A
-                    if (srcAlpha) ++src; // Ignore alpha.
-                }
-                dst1+= lineSkip;
-                dst2+= lineSkip;
-            }
+            uchar *dst = dstBuf + (y*tileSize*MAX_TEXTURE_SIZE + x*tileSize)*RGBA;
+            // ////////////////////////////////////////////////////////////////////
+            // Texture unit 0
+            // ////////////////////////////////////////////////////////////////////
+            copySubTile(src, 0, 0, dst + 0*tileSize*RGBA, 0, 0, subSize/2, srcHasAlpha);
+            copySubTile(src, 1, 0, dst + 0*tileSize*RGBA, 1, 0, subSize/2, srcHasAlpha);
+            copySubTile(src, 2, 0, dst + 0*tileSize*RGBA, 2, 0, subSize/2, srcHasAlpha);
+            copySubTile(src, 3, 0, dst + 0*tileSize*RGBA, 3, 0, subSize/2, srcHasAlpha);
+            copySubTile(src, 0, 1, dst + 0*tileSize*RGBA, 0, 1, subSize/2, srcHasAlpha);
+            copySubTile(src, 1, 1, dst + 0*tileSize*RGBA, 1, 1, subSize/2, srcHasAlpha);
+            copySubTile(src, 2, 1, dst + 0*tileSize*RGBA, 2, 1, subSize/2, srcHasAlpha);
+            copySubTile(src, 3, 1, dst + 0*tileSize*RGBA, 3, 1, subSize/2, srcHasAlpha);
+            copySubTile(src, 0, 2, dst + 0*tileSize*RGBA, 0, 2, subSize/2, srcHasAlpha);
+            copySubTile(src, 1, 2, dst + 0*tileSize*RGBA, 1, 2, subSize/2, srcHasAlpha);
+            copySubTile(src, 2, 2, dst + 0*tileSize*RGBA, 2, 2, subSize/2, srcHasAlpha);
+            copySubTile(src, 3, 2, dst + 0*tileSize*RGBA, 3, 2, subSize/2, srcHasAlpha);
+            copySubTile(src, 0, 3, dst + 0*tileSize*RGBA, 0, 3, subSize/2, srcHasAlpha);
+            copySubTile(src, 1, 3, dst + 0*tileSize*RGBA, 1, 3, subSize/2, srcHasAlpha);
+            copySubTile(src, 2, 3, dst + 0*tileSize*RGBA, 2, 3, subSize/2, srcHasAlpha);
+            copySubTile(src, 3, 3, dst + 0*tileSize*RGBA, 3, 3, subSize/2, srcHasAlpha);
+            // ////////////////////////////////////////////////////////////////////
+            // Texture unit 1
+            // ////////////////////////////////////////////////////////////////////
+            copySubTile(src, 0, 0, dst + 1*tileSize*RGBA, 1, 1, subSize/2, srcHasAlpha);
+            copySubTile(src, 1, 0, dst + 1*tileSize*RGBA, 2, 1, subSize/2, srcHasAlpha);
+            copySubTile(src, 2, 0, dst + 1*tileSize*RGBA, 3, 1, subSize/2, srcHasAlpha);
+            copySubTile(src, 3, 0, dst + 1*tileSize*RGBA, 0, 1, subSize/2, srcHasAlpha);
+            copySubTile(src, 0, 1, dst + 1*tileSize*RGBA, 1, 2, subSize/2, srcHasAlpha);
+            copySubTile(src, 1, 1, dst + 1*tileSize*RGBA, 2, 2, subSize/2, srcHasAlpha);
+            copySubTile(src, 2, 1, dst + 1*tileSize*RGBA, 3, 2, subSize/2, srcHasAlpha);
+            copySubTile(src, 3, 1, dst + 1*tileSize*RGBA, 0, 2, subSize/2, srcHasAlpha);
+            copySubTile(src, 0, 2, dst + 1*tileSize*RGBA, 1, 3, subSize/2, srcHasAlpha);
+            copySubTile(src, 1, 2, dst + 1*tileSize*RGBA, 2, 3, subSize/2, srcHasAlpha);
+            copySubTile(src, 2, 2, dst + 1*tileSize*RGBA, 3, 3, subSize/2, srcHasAlpha);
+            copySubTile(src, 3, 2, dst + 1*tileSize*RGBA, 0, 3, subSize/2, srcHasAlpha);
+            copySubTile(src, 0, 3, dst + 1*tileSize*RGBA, 1, 0, subSize/2, srcHasAlpha);
+            copySubTile(src, 1, 3, dst + 1*tileSize*RGBA, 2, 0, subSize/2, srcHasAlpha);
+            copySubTile(src, 2, 3, dst + 1*tileSize*RGBA, 3, 0, subSize/2, srcHasAlpha);
+            copySubTile(src, 3, 3, dst + 1*tileSize*RGBA, 0, 0, subSize/2, srcHasAlpha);
+            // ////////////////////////////////////////////////////////////////////
+            // Texture unit 2.1 (Horizontal filters)
+            // ////////////////////////////////////////////////////////////////////
+            copySubTile(src, 0, 0, dst + 4*tileSize*RGBA, 0, 1, subSize/2, srcHasAlpha);
+            copySubTile(src, 1, 0, dst + 4*tileSize*RGBA, 1, 1, subSize/2, srcHasAlpha);
+            copySubTile(src, 2, 0, dst + 4*tileSize*RGBA, 2, 1, subSize/2, srcHasAlpha);
+            copySubTile(src, 3, 0, dst + 4*tileSize*RGBA, 3, 1, subSize/2, srcHasAlpha);
+            copySubTile(src, 0, 1, dst + 4*tileSize*RGBA, 0, 2, subSize/2, srcHasAlpha);
+            copySubTile(src, 1, 1, dst + 4*tileSize*RGBA, 1, 2, subSize/2, srcHasAlpha);
+            copySubTile(src, 2, 1, dst + 4*tileSize*RGBA, 2, 2, subSize/2, srcHasAlpha);
+            copySubTile(src, 3, 1, dst + 4*tileSize*RGBA, 3, 2, subSize/2, srcHasAlpha);
+            copySubTile(src, 0, 2, dst + 4*tileSize*RGBA, 0, 3, subSize/2, srcHasAlpha);
+            copySubTile(src, 1, 2, dst + 4*tileSize*RGBA, 1, 3, subSize/2, srcHasAlpha);
+            copySubTile(src, 2, 2, dst + 4*tileSize*RGBA, 2, 3, subSize/2, srcHasAlpha);
+            copySubTile(src, 3, 2, dst + 4*tileSize*RGBA, 3, 3, subSize/2, srcHasAlpha);
+            copySubTile(src, 0, 3, dst + 4*tileSize*RGBA, 0, 0, subSize/2, srcHasAlpha);
+            copySubTile(src, 1, 3, dst + 4*tileSize*RGBA, 1, 0, subSize/2, srcHasAlpha);
+            copySubTile(src, 2, 3, dst + 4*tileSize*RGBA, 2, 0, subSize/2, srcHasAlpha);
+            copySubTile(src, 3, 3, dst + 4*tileSize*RGBA, 3, 0, subSize/2, srcHasAlpha);
+            // ////////////////////////////////////////////////////////////////////
+            // Texture unit 2.2 (Vertical filters)
+            // ////////////////////////////////////////////////////////////////////
+            copySubTile(src, 0, 0, dst + 5*tileSize*RGBA, 1, 0, subSize/2, srcHasAlpha);
+            copySubTile(src, 1, 0, dst + 5*tileSize*RGBA, 2, 0, subSize/2, srcHasAlpha);
+            copySubTile(src, 2, 0, dst + 5*tileSize*RGBA, 3, 0, subSize/2, srcHasAlpha);
+            copySubTile(src, 3, 0, dst + 5*tileSize*RGBA, 0, 0, subSize/2, srcHasAlpha);
+            copySubTile(src, 0, 1, dst + 5*tileSize*RGBA, 1, 1, subSize/2, srcHasAlpha);
+            copySubTile(src, 1, 1, dst + 5*tileSize*RGBA, 2, 1, subSize/2, srcHasAlpha);
+            copySubTile(src, 2, 1, dst + 5*tileSize*RGBA, 3, 1, subSize/2, srcHasAlpha);
+            copySubTile(src, 3, 1, dst + 5*tileSize*RGBA, 0, 1, subSize/2, srcHasAlpha);
+            copySubTile(src, 0, 2, dst + 5*tileSize*RGBA, 1, 2, subSize/2, srcHasAlpha);
+            copySubTile(src, 1, 2, dst + 5*tileSize*RGBA, 2, 2, subSize/2, srcHasAlpha);
+            copySubTile(src, 2, 2, dst + 5*tileSize*RGBA, 3, 2, subSize/2, srcHasAlpha);
+            copySubTile(src, 3, 2, dst + 5*tileSize*RGBA, 0, 2, subSize/2, srcHasAlpha);
+            copySubTile(src, 0, 3, dst + 5*tileSize*RGBA, 1, 3, subSize/2, srcHasAlpha);
+            copySubTile(src, 1, 3, dst + 5*tileSize*RGBA, 2, 3, subSize/2, srcHasAlpha);
+            copySubTile(src, 2, 3, dst + 5*tileSize*RGBA, 3, 3, subSize/2, srcHasAlpha);
+            copySubTile(src, 3, 3, dst + 5*tileSize*RGBA, 0, 3, subSize/2, srcHasAlpha);
         }
     }
     return true;
 }
 
 //================================================================================================
+//
+//================================================================================================
+void TileManager::copySubTile(uchar* src, int srcX, int srcY, uchar *dst, int dstX, int dstY, int size, bool alpha)
+{
+    int alphaPixel = alpha?RGBA:RGB;
+    src+= (srcY*size*size*4 + srcX*size) *alphaPixel;
+    dst+= (MAX_TEXTURE_SIZE * size * dstY + size*dstX) * RGBA;
+    for (int y = 0; y < size; ++y)
+    {
+        for (int x = 0; x < size; ++x)
+        {
+            *dst++ = *src++;
+            *dst++ = *src++;
+            *dst++ = *src++;
+            *dst++ = (alpha)?*src++:0xff;;
+        }
+        src+= size*3*alphaPixel;
+        dst+= (MAX_TEXTURE_SIZE-size) * RGBA;
+    }
+}
+
+
+//================================================================================================
 // Copy a terrain-filter/shadow-filter into the alpha part of the atlastexture.
-//=========================================================== =====================================
-void TileManager::copyFilterToAtlas(uchar *dstBuf, int filter)
+//================================================================================================
+void TileManager::copyFilterToAtlas(uchar *dstBuf)
 {
     int sumImages = 0;
-    unsigned int tileSize = MAX_TEXTURE_SIZE / COLS_SRC_TILES/2;
+    unsigned int size = MAX_TEXTURE_SIZE / COLS_SRC_TILES * 2;
     Image srcImage;
     String srcFilename;
-    int lineSkip = (MAX_TEXTURE_SIZE - tileSize) * sizeof(uint32);
     for (int y = 0; y < COLS_SRC_TILES; ++y)
     {
-        for (int x = 0; x < COLS_SRC_TILES; x+=2)
+        for (int x = 0; x < 2; ++x)
         {
-            srcFilename = "filter_" + StringConverter::toString(sumImages++, 2, '0') + "_";
-            srcFilename+= 'a' + filter;
-            srcFilename+= ".png";
-            if (!loadImage(srcImage, srcFilename)) return;
-            if ((srcImage.getWidth() != tileSize) || (srcImage.getHeight() != tileSize))
+            srcFilename = "filter_" + StringConverter::toString(sumImages++, 2, '0') + ".png";
+            if (!loadImage(srcImage, srcFilename))
             {
-                Logger::log().error() << "Filter " << srcFilename << " has the wrong size! Only " << tileSize << "x" << tileSize << " is supported";
+                // Filter was not found, so we use the default filter.
+                if (!loadImage(srcImage, "filter_00.png"))
+                {
+                    Logger::log().error() << "The default tile-filter (filter_00.png) was not found.";
+                    return;
+                }
+            }
+            if ((srcImage.getWidth() != size) || (srcImage.getHeight() != size))
+            {
+                Logger::log().error() << "Gfx " << srcFilename << " has the wrong size! Only " << size << "x" << size << " is supported.";
                 return;
             }
-            bool srcAlpha = (srcImage.getFormat()==PF_A8R8G8B8);
-            uchar *src = srcImage.getData();
-            uchar *dst1= dstBuf + (y*2 * tileSize * MAX_TEXTURE_SIZE + x*2 * tileSize + filter *tileSize) * sizeof(uint32);
-            uchar *dst2= dst1 + (tileSize * MAX_TEXTURE_SIZE + tileSize)* sizeof(uint32);
-            if (filter==1 || filter ==3) dst2-= (2*tileSize)* sizeof(uint32);
-            for (unsigned int y = 0; y < tileSize; ++y)
+            if (srcImage.getFormat()!=PF_R8G8B8)
             {
-                for (unsigned int x = 0; x < tileSize; ++x)
+                Logger::log().error() << "Gfx " << srcFilename << " has the wrong pixelformat. Only RGB is supported for filters.";
+                return;
+            }
+            uchar *src = srcImage.getData();
+            uchar *dst = dstBuf+(y*size/2*MAX_TEXTURE_SIZE + x *size) * RGBA;
+            for (unsigned int posY = 0; posY < size/2; ++posY)
+            {
+                for (unsigned int posX = 0; posX < size; ++posX)
                 {
-                    dst1+=3;
-                    dst2+=3;
-                    if (srcAlpha)
-                    {
-                        src+=3;
-                        *dst2++ = *src;
-                        *dst1++ = *src++;
-                    }
-                    else
-                    {
-                        *dst2++ = *src;
-                        *dst1++ = *src; // R
-                        src+=3;
-                    }
+                    dst[0*size*RGBA+3] = *src; // alpha part of the atlastexture = red part of the filter.
+                    dst[2*size*RGBA+3] = src[size/2*size*RGB];
+                    dst+=RGBA;
+                    src+=RGB;
                 }
-                dst1+= lineSkip;
-                dst2+= lineSkip;
+                dst+= (MAX_TEXTURE_SIZE-size)*RGBA;
             }
         }
     }
@@ -763,7 +804,6 @@ void TileManager::changeChunks()
         for (int z = 0; z <= CHUNK_SIZE_Z; ++z)
             for (int x = 0; x <= CHUNK_SIZE_X; ++x)
                 mMap[x][z].shadow = calcShadow(x, z);
-        Logger::log().error() << "Updating terrain shadows.";
     }
     mMapchunk.change();
 }
@@ -820,3 +860,106 @@ short TileManager::getTileHeight(int posX, int posZ)
         return calcHeight(getMapHeight(TileX, TileZ, VERTEX_BL), v1, v2, posX, TILE_SIZE-posZ);
     return calcHeight(getMapHeight(TileX, TileZ, VERTEX_TR), v1, v2, posZ, TILE_SIZE-posX);
 }
+
+//================================================================================================
+// Create a template for the filter.
+//================================================================================================
+void TileManager::createFilterTemplate()
+{
+    int size = MAX_TEXTURE_SIZE/4;
+    int lineSkip = size * RGB;
+    const int UNUSED_SIZE = 16;
+    uchar *dstBuf = new uchar[size * size * RGB];
+    memset(dstBuf, 0x00, size * size * RGB);
+    Image dstImage;
+    dstImage.loadDynamicImage(dstBuf, size, size, 1, PF_R8G8B8);
+    // Horizontal borderlines
+    for (int y= 0; y < size/2; y+= size/4)
+    {
+        for (int x = 0; x < size; ++x)
+        {
+            dstBuf[(y*size+x)*RGB +0] = 0xC6;
+            dstBuf[(y*size+x)*RGB +1] = 0x38;
+            dstBuf[(y*size+x)*RGB +2] = 0xDB;
+        }
+    }
+    // vertical borderlines
+    for (int x= 0; x < size; x+= size/4)
+    {
+        for (int y = 0; y < size/2; ++y)
+        {
+            dstBuf[(y*size+x)*RGB +0] = 0xC6;
+            dstBuf[(y*size+x)*RGB +1] = 0x38;
+            dstBuf[(y*size+x)*RGB +2] = 0xDB;
+        }
+    }
+    // Horizontal borderlines for karos
+    uchar *p = dstBuf + size/2*lineSkip;
+    for (int i = 0; i < 2; ++i)
+    {
+        for (int height= 0; height < UNUSED_SIZE; ++height)
+        {
+            for (int x = 0; x < size/2; ++x)
+            {
+                // Top pos
+                p[(height*size+x)*RGB +0] = 0xC6;
+                p[(height*size+x)*RGB +1] = 0x38;
+                p[(height*size+x)*RGB +2] = 0xDB;
+                // Bottom pos
+                p[((size/4 - height)*size+x)*RGB +0] = 0xC6;
+                p[((size/4 - height)*size+x)*RGB +1] = 0x38;
+                p[((size/4 - height)*size+x)*RGB +2] = 0xDB;
+            }
+        }
+        p+= size/4*lineSkip;
+    }
+    // Vertical borderlines for karos
+    p = dstBuf + size/2*lineSkip + size/2*RGB;
+    for (int i = 0; i < 2; ++i)
+    {
+        for (int width= 0; width < UNUSED_SIZE; ++width)
+        {
+            for (int y = 0; y < size/2; ++y)
+            {
+                // Left pos
+                p[(y*size + width)*RGB +0] = 0xC6;
+                p[(y*size + width)*RGB +1] = 0x38;
+                p[(y*size + width)*RGB +2] = 0xDB;
+                // Right pos
+                p[(y*size - width + size/4)*RGB +0] = 0xC6;
+                p[(y*size - width + size/4)*RGB +1] = 0x38;
+                p[(y*size - width + size/4)*RGB +2] = 0xDB;
+            }
+        }
+        p+= size/4*RGB;
+    }
+    // Karos
+    int offset = 0;
+    size/=4;
+    p = dstBuf + lineSkip * size*2;
+    for (int y = 0; y < size; ++y)
+    {
+        for (int x = 0; x < size; ++x)
+        {
+            if ((x == size/2 - offset))
+                x+= 2*offset;
+            for (int row = 0; row < 2; ++row)
+            {
+                for (int col = 0; col < 4; ++col)
+                {
+                    p[size*lineSkip*row + (x+col*size)*RGB+ 0] = 0xC6; // R
+                    p[size*lineSkip*row + (x+col*size)*RGB+ 1] = 0x38; // G
+                    p[size*lineSkip*row + (x+col*size)*RGB+ 2] = 0xDB; // B
+                }
+            }
+        }
+        if (y < size/2) ++offset; else --offset;
+        p+=4*size*RGB;
+    }
+
+    String filename = PATH_TILE_TEXTURES;
+    filename+= "TemplateFilter.png";
+    dstImage.save(filename);
+    delete[] dstBuf;
+}
+

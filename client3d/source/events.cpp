@@ -187,6 +187,7 @@ bool Events::frameStarted(const FrameEvent& evt)
                     overlay->getChild("OverlayElement/Screen2")->hide();
                 GuiManager::getSingleton().displaySystemMessage("* Welcome to Daimonin *");
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_SOUND);
+                GuiManager::getSingleton().displaySystemMessage("Starting the sound-manager...");
                 break;
             }
 
@@ -195,15 +196,14 @@ bool Events::frameStarted(const FrameEvent& evt)
                 // ////////////////////////////////////////////////////////////////////
                 // Init the sound and play the background music.
                 // ////////////////////////////////////////////////////////////////////
-                GuiManager::getSingleton().displaySystemMessage("Starting the sound-manager...");
                 Sound::getSingleton().Init();
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_LIGHT);
+                GuiManager::getSingleton().displaySystemMessage("Starting the light-manager...");
                 break;
             }
 
         case Option::GAME_STATUS_INIT_LIGHT:
             {
-                GuiManager::getSingleton().displaySystemMessage("Starting the light-manager...");
                 /*
                 // Todo: lightmanager
                 Light *light;
@@ -230,69 +230,72 @@ bool Events::frameStarted(const FrameEvent& evt)
                 */
                 //mSceneManager->setFog(FOG_LINEAR , ColourValue(0.5,0.5,0.5), 0, 2300, 2700);
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_SPELL);
+                GuiManager::getSingleton().displaySystemMessage("Starting the spell-manager...");
                 break;
             }
 
         case Option::GAME_STATUS_INIT_SPELL:
             {
-                GuiManager::getSingleton().displaySystemMessage("Starting the spell-manager...");
                 SpellManager::getSingleton().init(mSceneManager);
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_PARTICLE);
+                GuiManager::getSingleton().displaySystemMessage("Starting the particle-manager...");
                 break;
             }
 
         case Option::GAME_STATUS_INIT_PARTICLE:
             {
-                GuiManager::getSingleton().displaySystemMessage("Starting the particle-manager...");
                 ParticleManager::getSingleton().update(0);
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_GUI_IMAGESET);
+                GuiManager::getSingleton().displaySystemMessage("Starting the gui-manager...");
+                GuiManager::getSingleton().displaySystemMessage(" - Parsing Imageset.");
                 break;
             }
 
         case Option::GAME_STATUS_INIT_GUI_IMAGESET:
             {
-                GuiManager::getSingleton().displaySystemMessage("Starting the gui-manager...");
-                GuiManager::getSingleton().displaySystemMessage(" - Parsing Imageset.");
                 GuiImageset::getSingleton().parseXML(FILE_GUI_IMAGESET);
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_GUI_WINDOWS);
+                GuiManager::getSingleton().displaySystemMessage(" - Parsing windows.");
                 break;
             }
 
         case Option::GAME_STATUS_INIT_GUI_WINDOWS:
             {
-                GuiManager::getSingleton().displaySystemMessage(" - Parsing windows.");
                 GuiManager::getSingleton().parseWindows(FILE_GUI_WINDOWS);
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_EVENT_LISTENER);
+                GuiManager::getSingleton().displaySystemMessage("Starting the event-listener...");
                 break;
             }
 
         case Option::GAME_STATUS_INIT_EVENT_LISTENER:
             {
-                GuiManager::getSingleton().displaySystemMessage("Starting the event-listener...");
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_TILE);
+                GuiManager::getSingleton().displaySystemMessage("Starting the tile-engine...");
+                break;
             }
 
         case Option::GAME_STATUS_INIT_TILE:
             {
-                GuiManager::getSingleton().displaySystemMessage("Starting the tile-engine...");
                 int lod = Option::getSingleton().getIntValue(Option::CMDLINE_TILEENGINE_LOD);
-                TileManager::getSingleton().Init(mSceneManager, lod, Option::getSingleton().getIntValue(Option::CMDLINE_CREATE_TILE_TEXTURES));
+                bool createTextures = Option::getSingleton().getIntValue(Option::CMDLINE_CREATE_TILE_TEXTURES)>0?true:false;
+                TileManager::getSingleton().Init(mSceneManager, lod, createTextures);
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
-                // Close the loading screen.
-                GuiManager::getSingleton().displaySystemMessage("");
-                OverlayManager::getSingleton().destroyOverlayElement("OverlayElement/Screen1");
-                OverlayManager::getSingleton().destroyOverlayElement("OverlayElement/Screen2");
-                OverlayManager::getSingleton().destroy("Overlay/Loading");
-                GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Welcome to ~Daimonin 3D~.");
-                GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "You need a running server to start the game!");
+                GuiManager::getSingleton().displaySystemMessage("Starting the network connection...");
                 break;
             }
 
         case Option::GAME_STATUS_INIT_NET:
             {
                 Network::getSingleton().Init();
+                // Close the loading screen.
+                GuiManager::getSingleton().displaySystemMessage("");
+                OverlayManager::getSingleton().destroyOverlayElement("OverlayElement/Screen1");
+                OverlayManager::getSingleton().destroyOverlayElement("OverlayElement/Screen2");
+                OverlayManager::getSingleton().destroy("Overlay/Loading");
                 GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_CHATWINDOW, true);
                 GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_TEXTWINDOW, true);
+                GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Welcome to ~Daimonin 3D~.");
+                GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "You need a running server to start the game!");
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_META);
                 break;
             }

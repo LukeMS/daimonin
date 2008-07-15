@@ -55,14 +55,14 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    enum { SHADOW_NONE      =    0 }; /**< Shadow gfx number for no shadow */
-    enum { SHADOW_GRID      =    1 }; /**< Shadow gfx number for grid-gfx  */
-    enum { SHADOW_MIRROX_X  = 1<<14}; /**< Mirror the shadow on X-Axis.    */
-    enum { SHADOW_MIRROX_Z  = 1<<15}; /**< Mirror the shadow on Z-Axis.    */
+    enum { RGB = 3, RGBA = 4       }; /**< Pixelsize. */
+    enum { SHADOW_NONE      =    0 }; /**< Shadow gfx number for no shadow. */
+    enum { SHADOW_GRID      =    1 }; /**< Shadow gfx number for grid-gfx. */
+    enum { SHADOW_MIRROX_X  = 1<<14}; /**< Mirror the shadow on X-Axis. */
+    enum { SHADOW_MIRROX_Z  = 1<<15}; /**< Mirror the shadow on Z-Axis. */
     enum { TILE_SIZE        = 1<<6 }; /**< Rendersize of a tile. */
     enum { MAX_TEXTURE_SIZE = 2048 }; /**< Atlas- and Rendertexture size for highest quality. */
     enum { COLS_SRC_TILES   =    8 }; /**< Number of tile columns in the atlastexture. */
-    enum { COLS_SUB_TILES   =  8*4 }; /**< Number of subtiles in a columns. */
     enum { MAP_SIZE         =   42 }; /**< Number of tiles in the worldmap (on x ynd z axis). */
     enum { CHUNK_SIZE_X     =   42 }; /**< . */
     enum { CHUNK_SIZE_Z     =   32 }; /**< . */
@@ -106,7 +106,7 @@ public:
     void toggleGrid()
     {
         mShowGrid = !mShowGrid;
-        mMapchunk.updatePainter();
+        mMapchunk.change();
     }
     void scrollMap(int x, int z);
     void changeChunks();
@@ -157,14 +157,15 @@ private:
     /** **************************************************************************
      **  groupNr -1: create all groups found in the media folder.
      ** **************************************************************************/
-    void createAtlasTexture(int textureSize, unsigned int groupNr = MAX_MAP_SETS+1);
-    void createAtlasTextureShadows(int textureSize);
-    void copyShadowToAtlas(Ogre::uchar *dstBuf, int atlasSize);
-    void copyFilterToAtlas(Ogre::uchar *dstBuf, int filter);
-    bool copyTileToAtlas(Ogre::uchar *dstBuf);
+    void createAtlasTexture(int textureSize, bool fixFilteringErrors, unsigned int groupNr = MAX_MAP_SETS);
+    bool copyTileToAtlas  (Ogre::uchar *dstBuf);
+    void copyFilterToAtlas(Ogre::uchar *dstBuf);
+    void copyShadowToAtlas(Ogre::uchar *dstBuf);
+    void copySubTile(Ogre::uchar* src, int srcX, int srcY, Ogre::uchar *dst, int dstX, int dstY, int size, bool srcAlpha);
     bool vertexPick(Ogre::Ray *mouseRay, int x, int z, int pos);
     void highlightVertex(int x, int z);
     int  calcHeight(int vert0, int vert1, int vert2, int posX, int posZ);
+    void createFilterTemplate();
     unsigned short calcShadow(int x, int z);
 };
 

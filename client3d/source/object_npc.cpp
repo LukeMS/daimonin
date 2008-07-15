@@ -103,11 +103,7 @@ ObjectNPC::ObjectNPC(sObject &obj, bool spawn):ObjectStatic(obj)
     // ////////////////////////////////////////////////////////////////////
     if (!mIndex)
     {
-
-
         Real test_size = 2.5; mNode->setScale(test_size, test_size, test_size); // DELETE ME!
-
-
 
         // Attach camera to players node.
         // (Players Bounding box is increased by that and cant be used for collision detection anymore)
