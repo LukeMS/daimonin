@@ -760,3 +760,31 @@ void insert_money_in_player(object *pl, object *money, uint32 nrof)
     esrv_send_item(pl, pl);
     esrv_update_item(UPD_WEIGHT, pl, pl);
 }
+
+/* A simple function to calculate the optimum number of coins of each
+ * denomination for a given value. */
+int enumerate_coins(sint64 value, struct _money_block *money)
+{
+    memset(money, 0, sizeof(struct _money_block));
+    money->mode = MONEYSTRING_NOTHING;
+
+    if ((money->mithril = value / 10000000))
+    {
+        money->mode = MONEYSTRING_AMOUNT;
+        value -= money->mithril * 10000000;
+    }
+    if ((money->gold = value / 10000))
+    {
+        money->mode = MONEYSTRING_AMOUNT;
+        value -= money->gold * 10000;
+    }
+    if ((money->silver = value / 100))
+    {
+        money->mode = MONEYSTRING_AMOUNT;
+        value -= money->silver * 100;
+    }
+    if ((money->copper = value))
+        money->mode = MONEYSTRING_AMOUNT;
+
+    return money->mode;
+}
