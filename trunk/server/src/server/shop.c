@@ -145,20 +145,9 @@ char * cost_string_from_value(sint64 cost, int mode)
         sprintf(buf, "%d%c", num, material_real[coin->clone.material_real].name[0]);
     else if (mode == COSTSTRING_FULL)
         sprintf(buf, "%d %s", num, material_real[coin->clone.material_real].name);
-    next_coin = find_next_coin(cost, &cointype);
-    if (next_coin == NULL)
-    {
-        if (mode != COSTSTRING_SHORT)
-        {
-            if (num == 1)
-                strcat(buf, "coin");
-            else
-                strcat(buf, "coins");
-        }
-        return buf;
-    }
 
-    do
+    next_coin = find_next_coin(cost, &cointype);
+    while (next_coin)
     {
         endbuf = buf + strlen(buf);
 
@@ -190,8 +179,7 @@ char * cost_string_from_value(sint64 cost, int mode)
             sprintf(endbuf, "%d%c", num, material_real[coin->clone.material_real].name[0]);
         else if (mode == COSTSTRING_FULL)
             sprintf(endbuf, "%d %s", num, material_real[coin->clone.material_real].name);
-    }
-    while (next_coin);
+    };
 
     if (mode != COSTSTRING_SHORT)
     {
