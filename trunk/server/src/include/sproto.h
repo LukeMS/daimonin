@@ -543,7 +543,7 @@ void                        trap_adjust(object *trap, int difficulty);
 /* shop.c */
 sint64                      query_cost(object *tmp, object *who, int flag);
 char                       *cost_string_from_value(sint64 cost, int mode);
-char                       *query_cost_string(object *tmp, object *who, int flag);
+char                       *query_cost_string(object *tmp, object *who, int flag, int mode);
 sint64                      query_money(object *op);
 int                         pay_for_amount(sint64 to_pay, object *pl);
 int                         pay_for_item(object *op, object *pl);

@@ -337,10 +337,10 @@ static void pick_up_object(object *pl, object *op, object *tmp, uint32 nrof)
             SET_FLAG(tmp, FLAG_STARTEQUIP);
             tmp->nrof = nrof;
             tmp_nrof = nrof;
-            sprintf(buf, "You pick up the %s for %s from the storage.", query_name(tmp), query_cost_string(tmp, pl, F_BUY));
+            sprintf(buf, "You pick up the %s for %s from the storage.", query_name(tmp), query_cost_string(tmp, pl, F_BUY, COSTSTRING_SHORT));
         }
         else /* this is a unique shop item */
-            sprintf(buf, "The %s will cost you %s.", query_name(tmp), query_cost_string(tmp, pl, F_BUY));
+            sprintf(buf, "The %s will cost you %s.", query_name(tmp), query_cost_string(tmp, pl, F_BUY, COSTSTRING_SHORT));
     }
     else if (nrof < tmp_nrof)
         sprintf(buf,"You pick up %d out of the %s.", nrof, query_name(tmp));
@@ -661,10 +661,10 @@ void put_object_in_sack(object *const op, object *const sack, object *tmp, const
         {
             CLEAR_FLAG(tmp, FLAG_NO_PICK);
             SET_FLAG(tmp, FLAG_STARTEQUIP);
-            sprintf(buf, "You pick up %s for %s from the storage.", query_name(tmp), query_cost_string(tmp, op, F_BUY));
+            sprintf(buf, "You pick up %s for %s from the storage.", query_name(tmp), query_cost_string(tmp, op, F_BUY, COSTSTRING_SHORT));
         }
         else /* this is a unique shop item */
-            sprintf(buf, "%s will cost you %s.", query_name(tmp), query_cost_string(tmp, op, F_BUY));
+            sprintf(buf, "%s will cost you %s.", query_name(tmp), query_cost_string(tmp, op, F_BUY, COSTSTRING_SHORT));
         new_draw_info(NDI_UNIQUE, 0, op, buf);
     }
 
