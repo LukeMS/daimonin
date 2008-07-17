@@ -322,6 +322,10 @@ typedef enum
 #define MONEYSTRING_AMOUNT 1
 #define MONEYSTRING_ALL -1
 
+#define COSTSTRING_SHORT  0 
+#define COSTSTRING_FULL   1
+#define COSTSTRING_APPROX 2
+
 /* GROS: Those are used by plugin events (argument fixthem) */
 #define SCRIPT_FIX_ACTIVATOR 2
 #define SCRIPT_FIX_ALL 1

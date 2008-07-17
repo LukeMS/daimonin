@@ -887,7 +887,7 @@ char *examine(object *op, object *tmp, int flag)
     {
         if (QUERY_FLAG(tmp, FLAG_UNPAID)) /* thats a unpaid clone shop item */
         {
-            sprintf(buf, "%s would cost you %s.\n", tmp->nrof > 1 ? "They" : "It", query_cost_string(tmp, op, F_BUY));
+            sprintf(buf, "%s would cost you %s.\n", tmp->nrof > 1 ? "They" : "It", query_cost_string(tmp, op, F_BUY, COSTSTRING_SHORT));
             strcat(buf_out, buf);
         }
         else /* it is a real one drop item */
@@ -898,7 +898,7 @@ char *examine(object *op, object *tmp, int flag)
             {
                 if (tmp->value)
                     sprintf(buf, "But %s worth %s.\n", tmp->nrof > 1 ? "they are" : "it is",
-                                         query_cost_string(tmp, op, F_TRUE));
+                                         query_cost_string(tmp, op, F_TRUE, COSTSTRING_SHORT));
                 else
                     sprintf(buf, "%s worthless.\n", tmp->nrof > 1 ? "They are" : "It is");
                 strcat(buf_out, buf);
@@ -912,13 +912,13 @@ char *examine(object *op, object *tmp, int flag)
             if (QUERY_FLAG(tmp, FLAG_UNPAID))
             {
                 sprintf(buf, "%s would cost you %s.\n", tmp->nrof > 1 ? "They" : "It",
-                                     query_cost_string(tmp, op, F_BUY));
+                                     query_cost_string(tmp, op, F_BUY, COSTSTRING_SHORT));
                 strcat(buf_out, buf);
             }
             else
             {
                 sprintf(buf, "%s worth %s.\n", tmp->nrof > 1 ? "They are" : "It is",
-                                     query_cost_string(tmp, op, F_BUY));
+                                     query_cost_string(tmp, op, F_BUY, COSTSTRING_SHORT));
                 strcat(buf_out, buf);
                 goto dirty_little_jump1;
 			}
@@ -930,9 +930,9 @@ char *examine(object *op, object *tmp, int flag)
             if (floor && floor->type == SHOP_FLOOR && tmp->type != MONEY)
             {/* disabled CHA effect for b4
 				sprintf(buf, "This shop will pay you %s (%0.1f%%).",
-					query_cost_string(tmp, op, F_SELL), 20.0f + 100.0f);
+					query_cost_string(tmp, op, F_SELL, COSTSTRING_SHORT), 20.0f + 100.0f);
 			  */
-				sprintf(buf, "This shop will pay you %s.", query_cost_string(tmp, op, F_SELL));
+				sprintf(buf, "This shop will pay you %s.", query_cost_string(tmp, op, F_SELL, COSTSTRING_SHORT));
                 strcat(buf_out, buf);
             }
         }

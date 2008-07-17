@@ -141,20 +141,22 @@ char * cost_string_from_value(sint64 cost, int mode)
     num = (uint32) (cost / coin->clone.value);
     cost -= num * coin->clone.value;
     /* careful - never set a coin arch to material_real = -1 ! */
-    if(mode)
-    {
-        sprintf(buf, "%d%c%c", num, material_real[coin->clone.material_real].name[0], coin->clone.name[0]);
-    }
-    else
-    {
-        if (num == 1)
-            sprintf(buf, "1 %s%s", material_real[coin->clone.material_real].name, coin->clone.name);
-        else
-            sprintf(buf, "%d %s%ss", num, material_real[coin->clone.material_real].name, coin->clone.name);
-    }
+    if (mode == COSTSTRING_SHORT)
+        sprintf(buf, "%d%c", num, material_real[coin->clone.material_real].name[0]);
+    else if (mode == COSTSTRING_FULL)
+        sprintf(buf, "%d %s", num, material_real[coin->clone.material_real].name);
     next_coin = find_next_coin(cost, &cointype);
     if (next_coin == NULL)
+    {
+        if (mode != COSTSTRING_SHORT)
+        {
+            if (num == 1)
+                strcat(buf, "coin");
+            else
+                strcat(buf, "coins");
+        }
         return buf;
+    }
 
     do
     {
@@ -174,32 +176,37 @@ char * cost_string_from_value(sint64 cost, int mode)
             /* There will be at least one more string to add to the list,
              * use a comma.
              */
+            /* Can't work out how, but we need to check for and remove any
+             * trailing space. Stupid material names. */
             strcat(endbuf, ", "); endbuf += 2;
         }
         else
         {
-            strcat(endbuf, " and "); endbuf += 5;
+            if (mode == COSTSTRING_SHORT)
+                strcat(endbuf++, " ");
+            strcat(endbuf, "and "); endbuf += 4;
         }
-        if(mode)
-        {
-            sprintf(endbuf, "%d%c%c", num, material_real[coin->clone.material_real].name[0], coin->clone.name[0]);
-        }
-        else
-        {
-            if (num == 1)
-                sprintf(endbuf, "1 %s%s", material_real[coin->clone.material_real].name, coin->clone.name);
-            else
-                sprintf(endbuf, "%d %s%ss", num, material_real[coin->clone.material_real].name, coin->clone.name);
-        }
+        if (mode == COSTSTRING_SHORT)
+            sprintf(endbuf, "%d%c", num, material_real[coin->clone.material_real].name[0]);
+        else if (mode == COSTSTRING_FULL)
+            sprintf(endbuf, "%d %s", num, material_real[coin->clone.material_real].name);
     }
     while (next_coin);
+
+    if (mode != COSTSTRING_SHORT)
+    {
+        if (num == 1)
+            strcat(buf, "coin");
+        else
+            strcat(buf, "coins");
+    }
 
     return buf;
 }
 
-char * query_cost_string(object *tmp, object *who, int flag)
+char * query_cost_string(object *tmp, object *who, int flag, int mode)
 {
-    return cost_string_from_value(query_cost(tmp, who, flag), 0);
+    return cost_string_from_value(query_cost(tmp, who, flag), mode);
 }
 
 
@@ -436,12 +443,12 @@ int get_payment2(object *pl, object *op)
 
     if (op != NULL && QUERY_FLAG(op, FLAG_UNPAID))
     {
-        strncpy(buf, query_cost_string(op, pl, F_BUY), MAX_BUF);
+        strncpy(buf, query_cost_string(op, pl, F_BUY, COSTSTRING_SHORT), MAX_BUF);
         if (!pay_for_item(op, pl))
         {
             sint64 i   = query_cost(op, pl, F_BUY) - query_money(pl);
             CLEAR_FLAG(op, FLAG_UNPAID);
-            new_draw_info_format(NDI_UNIQUE, 0, pl, "You lack %s to buy %s.", cost_string_from_value(i, 0), query_name(op));
+            new_draw_info_format(NDI_UNIQUE, 0, pl, "You lack %s to buy %s.", cost_string_from_value(i, COSTSTRING_SHORT), query_name(op));
             SET_FLAG(op, FLAG_UNPAID);
             return 0;
         }
@@ -582,7 +589,7 @@ void sell_item(object *op, object *pl, sint64 value)
     if (i != 0)
         LOG(llevBug, "BUG: Warning - payment not zero: %d\n", i);
 
-    new_draw_info_format(NDI_UNIQUE, 0, pl, "You receive %s for %s.", query_cost_string(op, pl, 1), query_name(op));
+    new_draw_info_format(NDI_UNIQUE, 0, pl, "You receive %s for %s.", query_cost_string(op, pl, COSTSTRING_FULL), query_name(op));
     SET_FLAG(op, FLAG_UNPAID);
     /* TODO: unique item shop will work like old CF shops
       identify(op);
