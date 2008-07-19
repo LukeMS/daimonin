@@ -322,7 +322,7 @@ int check_banned(NewSocket *ns, const char *name, char *ip)
             }
         }
 
-        if (ol)
+        if (match)
         {
             /* IP is banned */
             if(ol->objlink.ban->ticks_init == -1) /* perm ban */
