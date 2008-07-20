@@ -463,7 +463,7 @@ void move_gate(object *op)
             /* If the object is alive, or the object either can
              * be picked up or the object rolls, move the object
              * off the gate. */
-            if (IS_LIVE(tmp) || !QUERY_FLAG(tmp, FLAG_NO_PICK) || QUERY_FLAG(tmp, FLAG_CAN_ROLL))
+            if (op->map == tmp->map && (IS_LIVE(tmp) || !QUERY_FLAG(tmp, FLAG_NO_PICK) || QUERY_FLAG(tmp, FLAG_CAN_ROLL)))
             {
                 /* If it has speed, it should move itself, otherwise: */
                 int i   = find_free_spot(tmp->arch, op->map, op->x, op->y, 1, 9);
