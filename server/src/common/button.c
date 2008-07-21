@@ -893,7 +893,7 @@ void do_mood_floor(object *op, object *op2)
  *      slaying = match object slaying (if sp != 0) or name field
  *      race = match object archetype name field
  *      if hp != 0, hp = match object type
- *      if FLAG_CONFUSED, require all non-empty fields to match
+ *      if FLAG_SEE_INVISIBLE, require all non-empty fields to match
  */
 
 object * check_inv_recursive(object *op, object *trig)
