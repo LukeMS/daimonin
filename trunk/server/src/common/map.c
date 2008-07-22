@@ -39,6 +39,9 @@ int map_tiled_reverse[TILED_MAPS]           =
     2, 3, 0, 1, 6, 7, 4, 5
 };
 
+/* Tag counter for the memory/weakref system. Uniquely identifies this instance of the map
+ * in memory. Not the same as the map_tag/global_map_tag. */
+static tag_t global_map_id;
 
 /*
  * Returns the mapstruct which has a name matching the given argument.
@@ -319,10 +322,15 @@ void dump_all_maps()
 
 mapstruct * get_linked_map()
 {
-    mapstruct  *map = (mapstruct *) calloc(1, sizeof(mapstruct));
+    mapstruct *map = get_poolchunk(pool_map);
 
-    if (map == NULL)
+    if (map == NULL) {
         LOG(llevError, "ERROR: get_linked_map(): OOM.\n");
+        return NULL;
+    }
+
+    memset(map, 0, sizeof(mapstruct));
+    map->tag = ++global_map_id;
 
     /* lifo queue */
     if(first_map)
@@ -401,6 +409,8 @@ void allocate_map(mapstruct *m)
 mapstruct * get_empty_map(int sizex, int sizey)
 {
     mapstruct  *m   = get_linked_map();
+    if(! m)
+        return NULL;
     m->width = sizex;
     m->height = sizey;
     m->in_memory = MAP_SWAPPED;
@@ -1106,7 +1116,8 @@ void delete_map(mapstruct *m)
     FREE_AND_CLEAR_HASH(m->orig_path);
     FREE_AND_NULL_PTR(m->tmpname); /* malloc() string */
 
-    free(m);
+    m->tag = 0; /* Kill any weak references to this map */
+    return_poolchunk(m, pool_map);
 }
 
 void clean_tmp_map(mapstruct *m)

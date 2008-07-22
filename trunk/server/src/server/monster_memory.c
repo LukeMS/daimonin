@@ -179,6 +179,13 @@ struct mob_known_obj *register_npc_known_obj(object *npc, object *other, int fri
         }
     }
 
+    /* Trigger a script event, possibly overriding the registration */
+    if(trigger_object_plugin_event(EVENT_TRIGGER,
+                npc, other, NULL,
+                NULL, &friendship, &attraction, NULL, 
+                SCRIPT_FIX_NOTHING | EVENT_MULTIPLE_TRIGGERS))
+        return NULL;
+
     /* Initialize the known_obj at last */
     known = get_poolchunk(pool_mob_knownobj);
     known->next = NULL;

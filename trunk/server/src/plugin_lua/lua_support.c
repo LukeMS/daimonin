@@ -581,9 +581,8 @@ int push_object(lua_State *L, lua_class *class, void *data)
 
     /* Setup tag to make invalidation of weak references possible */
     switch(class->type) {
-        /* TODO: maps should be converted to mempools and use normal weak reference tags */
         case LUATYPE_MAP:
-            obj->tag = ROUND_TAG;
+            obj->tag = obj->data.map->tag;
             break;
         case LUATYPE_OBJECT:
         case LUATYPE_AI:
@@ -801,9 +800,6 @@ int load_file_cache(struct lua_State *L, const char *file)
         }
         else
         {
-#ifdef LUA_DEBUG_ALL
-            LOG(llevDebug, "LUA - Using cached version of '%s'\n", file);
-#endif
             load = 0;
         }
     }

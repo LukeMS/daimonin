@@ -77,7 +77,8 @@ struct mempool *mempools[MAX_NROF_MEMPOOLS];
 struct mempool *pool_puddle;
 #endif
 
-struct mempool *pool_object, *pool_player, *pool_map_bfs,
+struct mempool *pool_object, *pool_player, 
+    *pool_map, *pool_map_bfs,
     *pool_path_segment, *pool_mob_data, *pool_mob_knownobj,
     *pool_mob_behaviourset, *pool_mob_behaviour, *pool_mob_behaviourparam,
     *pool_objectlink, *pool_gmasters, *pool_bannode, *pool_tlist_tweak,
@@ -171,6 +172,7 @@ void init_mempools()
     pool_object = create_mempool("objects", OBJECT_EXPAND, sizeof(object), 0, NULL, NULL,
             (chunk_constructor) initialize_object, (chunk_destructor) destroy_object);
     pool_player = create_mempool("players", 25, sizeof(player), MEMPOOL_BYPASS_POOLS, NULL, NULL, NULL, NULL);
+    pool_map = create_mempool("maps", 25, sizeof(mapstruct), 0, NULL, NULL, NULL, NULL);
     pool_map_bfs= create_mempool("map BFS nodes", 16, sizeof(struct mapsearch_node), 0, NULL, NULL, NULL, NULL);
     pool_path_segment= create_mempool("path segments", 500, sizeof(struct path_segment), 0, NULL, NULL, NULL, NULL);
     pool_mob_data= create_mempool("mob brains", 100, sizeof(struct mobdata), 0, NULL, NULL, NULL, NULL);

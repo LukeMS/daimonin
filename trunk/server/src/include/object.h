@@ -278,8 +278,9 @@ typedef struct obj
                                    */
 
 /* Waypoint macros */
-#define WP_FLAG_ACTIVE FLAG_CURSED
-#define WP_FLAG_BESTEFFORT FLAG_NO_ATTACK
+#define WP_FLAG_ACTIVE      FLAG_CURSED
+#define WP_FLAG_BESTEFFORT  FLAG_NO_ATTACK
+#define WP_FLAG_RANDOM_NEXT FLAG_RANDOM_MOVE
 
 #define WP_MAP(wp) (wp)->slaying
 #define WP_X(wp) (wp)->stats.hp

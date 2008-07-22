@@ -218,7 +218,7 @@ typedef struct lua_object_s
 
         void                   *anything;
     } data;
-    uint32 tag; /* Tag used for objects and maps */
+    tag_t tag; /* Tag used for objects and maps */
 } lua_object;
 
 typedef struct lua_class_s

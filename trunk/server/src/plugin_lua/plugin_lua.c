@@ -86,6 +86,10 @@ static struct attribute_decl    Event_attributes[]  =
     {"other", FIELDTYPE_OBJECTREF, offsetof(struct lua_context, other), FIELDFLAG_READONLY, offsetof(struct lua_context, other_tag)},
     {"message", FIELDTYPE_SHSTR, offsetof(struct lua_context, text), FIELDFLAG_READONLY},
     {"options", FIELDTYPE_SHSTR, offsetof(struct lua_context, options), FIELDFLAG_READONLY},
+    {"parameter1", FIELDTYPE_SINT32, offsetof(struct lua_context, parm1), 0},
+    {"parameter2", FIELDTYPE_SINT32, offsetof(struct lua_context, parm2), 0},
+    {"parameter3", FIELDTYPE_SINT32, offsetof(struct lua_context, parm3), 0},
+    {"parameter4", FIELDTYPE_SINT32, offsetof(struct lua_context, parm4), 0},
     {"returnvalue", FIELDTYPE_SINT32, offsetof(struct lua_context, returnvalue), 0},
     {NULL}
 };
@@ -364,9 +368,6 @@ void detach_lua_context(struct lua_context *context, int resume_time)
 
 void terminate_lua_context(struct lua_context *context)
 {
-#ifdef LUA_DEBUG_ALL
-    LOG(llevDebug, "LUA - Terminating context (%s)\n", context->file);
-#endif
     if(context->prev || context->next || first_context == context) {
         lua_context_remove(context);
         if(first_context == NULL)
@@ -430,6 +431,9 @@ void resume_detached_contexts()
 
             if(context->resume_time < 0) {
                 terminate_lua_context(context);
+#ifdef LUA_DEBUG_ALL
+                LOG(llevDebug, "LUA - Terminating context (%s)\n", context->file);
+#endif
             }
         }
     }
@@ -513,9 +517,6 @@ MODULEAPI int triggerEvent(CFParm *PParm)
         case EVENT_CLOSE:
         case EVENT_EXAMINE:
         case EVENT_AI_BEHAVIOUR:
-#ifdef LUA_DEBUG_ALL
-    LOG(llevDebug, "LUA - triggerEvent:: eventcode %d\n", eventcode);
-#endif
           result = HandleEvent(PParm);
           break;
         case EVENT_BORN:
@@ -699,14 +700,17 @@ MODULEAPI int HandleEvent(CFParm *PParm)
     int                 ret, res;
 
 #ifdef LUA_DEBUG
-    LOG(llevDebug, "LUA - HandleEvent:: start script file >%s<\n", (char *) (PParm->Value[9]));
-    LOG(llevDebug, "LUA - call data:: o1:>%s< o2:>%s< o3:>%s< text:>%s< i1:%d i2:%d i3:%d i4:%d\n",
-        STRING_OBJ_NAME((object *) (PParm->Value[1])), STRING_OBJ_NAME((object *) (PParm->Value[2])),
-        STRING_OBJ_NAME((object *) (PParm->Value[3])), STRING_SAFE((char *) (PParm->Value[4])),
-        PParm->Value[5] ? *(int *) (PParm->Value[5]) : 0,
-        PParm->Value[6] ? *(int *) (PParm->Value[6]) : 0,
-        PParm->Value[7] ? *(int *) (PParm->Value[7]) : 0,
-        PParm->Value[8] ? *(int *) (PParm->Value[8]) : 0);
+    LOG(llevDebug, "LUA - event:%d file:>%s< o1:>%s< o2:>%s< o3:>%s< text:>%s< i1:%d i2:%d i3:%d i4:%d\n",
+        *(int*)PParm->Value[0],
+        (char *)PParm->Value[9],
+        STRING_OBJ_NAME((object *) PParm->Value[1]), 
+        STRING_OBJ_NAME((object *) PParm->Value[2]),
+        STRING_OBJ_NAME((object *) PParm->Value[3]), 
+        STRING_SAFE(      (char *) PParm->Value[4]),
+        PParm->Value[5] ? *(int *) PParm->Value[5] : 0,
+        PParm->Value[6] ? *(int *) PParm->Value[6] : 0,
+        PParm->Value[7] ? *(int *) PParm->Value[7] : 0,
+        PParm->Value[8] ? *(int *) PParm->Value[8] : 0);
 #endif
 
     if(PParm->Value[9] == NULL)
@@ -774,12 +778,11 @@ MODULEAPI int HandleEvent(CFParm *PParm)
     if (res)
     {
         terminate_lua_context(context);
+#ifdef LUA_DEBUG_ALL
+        LOG(llevDebug, "LUA - Terminating context due to runtime error (%s)\n", context->file);
+#endif
         return 0;
     }
-
-#ifdef LUA_DEBUG
-    LOG(llevDebug, "fixing. ");
-#endif
 
     if (context->parm4 == SCRIPT_FIX_ALL)
     {
@@ -812,12 +815,16 @@ MODULEAPI int HandleEvent(CFParm *PParm)
 
     ret = context->returnvalue;
 
-    if(context->resume_time == -1)
+    if(context->resume_time == -1) {
         terminate_lua_context(context);
-
 #ifdef LUA_DEBUG
-    LOG(llevDebug, "done (returned: %d)!\n", ret);
+        LOG(llevDebug, "LUA - done and terminated, returncode: %d\n", ret);
 #endif
+    } else {
+#ifdef LUA_DEBUG
+        LOG(llevDebug, "LUA - backgrounded\n");
+#endif
+    }
 
     return ret;
 }

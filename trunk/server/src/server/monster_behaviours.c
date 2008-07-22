@@ -402,6 +402,11 @@ int get_npc_object_attraction(object *op, object *other)
         }
     }
 
+    /* Player attitude */
+    if(attractions[AIPARAM_ATTRACTION_PLAYER].flags & AI_PARAM_PRESENT)
+        if(other->type == PLAYER)
+            attraction += attractions[AIPARAM_ATTRACTION_PLAYER].intvalue;
+
     return attraction;
 }
 
@@ -1302,7 +1307,7 @@ void ai_move_towards_waypoint(object *op, struct mob_behaviour_param *params, mo
     /* If we reached or gave up on the current waypoint */
     if (try_next_wp && wp)
     {
-        if (WP_NEXTWP(wp) && (wp = find_waypoint(op, WP_NEXTWP(wp))))
+        if((wp = get_next_waypoint(op, wp)))
         {
 #ifdef DEBUG_AI_WAYPOINT
             LOG(llevDebug, "ai_move_towards_waypoint(): '%s' next WP: '%s'\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(wp));
@@ -1317,7 +1322,6 @@ void ai_move_towards_waypoint(object *op, struct mob_behaviour_param *params, mo
 #ifdef DEBUG_AI
             LOG(llevDebug, "ai_move_towards_waypoint(): '%s' no next WP\n", STRING_OBJ_NAME(op));
 #endif
-            wp = NULL;
         }
     }
 
@@ -1346,6 +1350,15 @@ void ai_run_away_from_enemy(object *op, struct mob_behaviour_param *params, move
 {
     rv_vector  *rv;
 
+    /* Become scared? */
+    if(!QUERY_FLAG(op, FLAG_SCARED))
+    {
+        if (op->stats.maxhp
+         && AIPARAM_PRESENT(AIPARAM_RUN_AWAY_FROM_ENEMY_HP_THRESHOLD)
+         && (op->stats.hp * 100) / op->stats.maxhp < AIPARAM_INT(AIPARAM_RUN_AWAY_FROM_ENEMY_HP_THRESHOLD))
+            SET_FLAG(op, FLAG_SCARED);
+    }
+
     /* Is scared? */
     if (QUERY_FLAG(op, FLAG_SCARED) && op->enemy)
     {
@@ -1357,9 +1370,10 @@ void ai_run_away_from_enemy(object *op, struct mob_behaviour_param *params, move
             response->data.direction = absdir(rv->direction + 4);
             op->speed_left-=0.5f;/* let him move away "scared" - with weak legs */
         }
-        else
+        else 
         {
-            /* TODO: run around randomly? */
+            response->type = MOVE_RESPONSE_DIR;
+            response->data.direction = RANDOM() % 8 + 1; /* Run randomly */
         }
 
         /* Regain senses? */
@@ -1381,15 +1395,99 @@ void ai_run_away_from_enemy(object *op, struct mob_behaviour_param *params, move
                 CLEAR_FLAG(op, FLAG_SCARED);
         }
     }
-    else
+}
+
+/*
+ * Runs away from repulsive items.
+ * Sets scared if repulsion is > repulsion_threshold and distance < distance_threshold
+ * Clears scared a some random time after distance > distance_threshold
+ */
+void ai_run_away_from_repulsive_object(object *op, struct mob_behaviour_param *params, move_response *response)
+{
+    rv_vector  *rv = NULL;
+    struct mob_known_obj *tmp, *most_repulsive = NULL;
+
+    for(tmp = MOB_DATA(op)->known_mobs; tmp; tmp = tmp->next)
+        if(most_repulsive == NULL || tmp->tmp_attraction < most_repulsive->tmp_attraction)
+            most_repulsive = tmp;
+    for(tmp = MOB_DATA(op)->known_objs; tmp; tmp = tmp->next)
+        if(most_repulsive == NULL || tmp->tmp_attraction < most_repulsive->tmp_attraction)
+            most_repulsive = tmp;
+
+    if(!QUERY_FLAG(op, FLAG_SCARED))
     {
-        /* Become scared? */
-        if (op->stats.maxhp
-         && AIPARAM_PRESENT(AIPARAM_RUN_AWAY_FROM_ENEMY_HP_THRESHOLD)
-         && (op->stats.hp * 100) / op->stats.maxhp < AIPARAM_INT(AIPARAM_RUN_AWAY_FROM_ENEMY_HP_THRESHOLD))
-        {
+        if(most_repulsive &&
+                most_repulsive->tmp_attraction <= AIPARAM_INT(AIPARAM_RUN_AWAY_FROM_REPULSIVE_OBJECT_REPULSION_THRESHOLD) &&
+                (rv = get_known_obj_rv(op, most_repulsive, MAX_KNOWN_OBJ_RV_AGE)) &&
+                rv->distance <= AIPARAM_INT(AIPARAM_RUN_AWAY_FROM_REPULSIVE_OBJECT_DISTANCE_THRESHOLD))
             SET_FLAG(op, FLAG_SCARED);
+    }
+
+    if(QUERY_FLAG(op, FLAG_SCARED))
+    {
+        if(most_repulsive && (rv ||
+                (rv = get_known_obj_rv(op, most_repulsive, MAX_KNOWN_OBJ_RV_AGE))))
+        {
+            response->type = MOVE_RESPONSE_DIR;
+            response->data.direction = absdir(rv->direction + 4);
         }
+        else 
+        {
+            response->type = MOVE_RESPONSE_DIR;
+            response->data.direction = RANDOM() % 8 + 1; /* Run randomly */
+        }
+
+        /* Regain senses? FIXME: doesn't play very well with the run_away_from_enemy behaviour */
+        if (!rv || rv->distance > AIPARAM_INT(AIPARAM_RUN_AWAY_FROM_REPULSIVE_OBJECT_DISTANCE_THRESHOLD))
+            if (!(RANDOM() % 4)) 
+                CLEAR_FLAG(op, FLAG_SCARED);
+    }
+}
+
+/*
+ * Ensures the mob doesn't move too far away from its home position. Not meant for antilure
+ * usage.
+ */
+void ai_stay_near_home(object *op, struct mob_behaviour_param *params, move_response *response)
+{
+    object *base;
+    rv_vector rv;
+    int distflags;
+    int maxdist = AIPARAM_INT(AIPARAM_STAY_NEAR_HOME_MAX_DIST);
+    mapstruct  *map;
+
+    /* Disabled for pets */
+    if(op->owner)
+        return;
+
+    /* TODO: optimization: pointer to the base ob in mob_data */
+    if(!(base = insert_base_info_object(op)) || !base->slaying)
+        return;
+        
+    /* If mob isn't already home */
+    if (op->x == base->x && op->y == base->y && op->map->orig_path == base->slaying)
+        return;
+
+    if(! (map = ready_inherited_map(op->map, base->slaying, 0)))
+        return;
+
+    if(AIPARAM_INT(AIPARAM_STAY_NEAR_HOME_EUCLIDIAN_DISTANCE)) {
+        maxdist *= maxdist;
+        distflags = RV_FAST_EUCLIDIAN_DISTANCE;
+    } else
+        distflags = RV_DIAGONAL_DISTANCE;
+
+    if(!get_rangevector_full(op, op->map, op->x, op->y,
+                NULL, map, base->x, base->y,
+                &rv, distflags))
+        return;
+    
+    if(rv.distance >= maxdist) {
+        response->forbidden |= (1 << absdir(rv.direction+2));
+        response->forbidden |= (1 << absdir(rv.direction+3));
+        response->forbidden |= (1 << absdir(rv.direction+4));
+        response->forbidden |= (1 << absdir(rv.direction+5));
+        response->forbidden |= (1 << absdir(rv.direction+6));
     }
 }
 
@@ -1469,7 +1567,7 @@ void ai_look_for_objects(object *op, struct mob_behaviour_param *params)
                     /* TODO: filter out pointless objects
                      * (monster, player, sys_invisible, decoration, etc) */
                     if(tmp->type == MONSTER || tmp->type == PLAYER ||
-                            QUERY_FLAG(tmp, FLAG_SYS_OBJECT))
+                            QUERY_FLAG(tmp, FLAG_SYS_OBJECT) || tmp == op)
                         continue;
                     /* TODO: what is best - to first see if the object is
                      * "interesting" or to first see if we already know it? */
@@ -1649,11 +1747,16 @@ void ai_attraction(object *op, struct mob_behaviour_param *params)
 
         /* Attraction/fear for other mobs is calculated from the
          * perceived relative combad strength */
-        if(tmp->tmp_friendship > FRIENDSHIP_HELP)
-            tmp->tmp_attraction += relative_combat_strength(op, tmp->obj);
+        if(tmp->tmp_friendship > FRIENDSHIP_HELP) 
+        {
+            if(tmp->tmp_attraction >= 0)
+                tmp->tmp_attraction += relative_combat_strength(op, tmp->obj);
+        }
         else if(tmp->tmp_friendship < FRIENDSHIP_ATTACK)
-            tmp->tmp_attraction -= relative_combat_strength(op, tmp->obj);
-
+        {
+            if(tmp->tmp_attraction <= 0)
+                tmp->tmp_attraction -= relative_combat_strength(op, tmp->obj);
+        }
 #if 0
         LOG(llevDebug, "ai_attraction(): %s attraction towards %s: %d\n",
                 STRING_OBJ_NAME(op), STRING_OBJ_NAME(tmp->obj), tmp->tmp_attraction);
