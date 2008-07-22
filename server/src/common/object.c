@@ -2340,7 +2340,8 @@ object * insert_ob_in_ob(object *op, object *where)
     }
     if (op->more)
     {
-        LOG(llevError, "ERROR: Tried to insert multipart object %s (%d)\n", query_name(op), op->count);
+        LOG(llevError, "ERROR: Tried to insert multipart object %s (%d) in %s (%d)\n",
+            query_name(op), op->count, query_name(where), where->count);
         return op;
     }
 
