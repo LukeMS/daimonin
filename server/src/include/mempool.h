@@ -110,7 +110,8 @@ extern struct mempool *pool_puddle;
 extern struct mempool      *mempools[];
 extern struct mempool_chunk end_marker; /* only used as an end marker for the lists */
 
-extern struct mempool *pool_object, *pool_player, *pool_map_bfs,
+extern struct mempool *pool_object, *pool_player, 
+    *pool_map, *pool_map_bfs,
     *pool_path_segment, *pool_mob_data, *pool_mob_knownobj,
     *pool_mob_behaviourset, *pool_mob_behaviour, *pool_mob_behaviourparam,
     *pool_objectlink, *pool_gmasters, *pool_bannode, *pool_tlist_tweak,

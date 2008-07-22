@@ -159,7 +159,7 @@ int trigger_object_plugin_event(
      * those are the ones we have experienced problems with */
     if(event_type == EVENT_SAY || event_type == EVENT_TRIGGER)
     {
-        if(event_obj->damage_round_tag == pticks)
+        if(event_obj->damage_round_tag == pticks && !flags & EVENT_MULTIPLE_TRIGGERS)
         {
             LOG(llevDebug, "trigger_object_plugin_event(): event object (type %d) for %s called twice the same round\n", event_type, STRING_OBJ_NAME(me));
             return 0;

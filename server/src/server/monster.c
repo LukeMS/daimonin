@@ -468,6 +468,38 @@ object * find_waypoint(object *op, const char *name)
     return wp;
 }
 
+/** Select a random waypoint from a monster's available waypoints.
+ * @param op operand mob
+ * @param ignore optional waypoint that is guaranteed not to be picked.
+ */
+object * get_random_waypoint(object *op, object *ignore)
+{
+    int count = 0, select;
+    object *wp  = NULL;
+    for (wp = op->inv; wp != NULL; wp = wp->below)
+        if (wp->type == TYPE_WAYPOINT_OBJECT && wp != ignore)
+            count++;
+    if(count == 0)
+        return NULL;
+    select = RANDOM() % count;
+    for (wp = op->inv; wp != NULL; wp = wp->below)
+        if (wp->type == TYPE_WAYPOINT_OBJECT && wp != ignore)
+            if(select-- == 0)
+                return wp;
+    return NULL;
+}
+
+/** Select the successor to the waypoint wp for the mob op */
+object * get_next_waypoint(object *op, object *wp)
+{
+    if (QUERY_FLAG(wp, WP_FLAG_RANDOM_NEXT))
+        return get_random_waypoint(op, wp);
+    else if(WP_NEXTWP(wp))
+        return find_waypoint(op, WP_NEXTWP(wp));
+    else
+        return NULL;
+}
+
 /*
  * Main AI function
  */

@@ -375,6 +375,8 @@ object                     *get_active_waypoint(object *op);
 object                     *get_aggro_waypoint(object *op);
 object                     *get_return_waypoint(object *op);
 object                     *find_waypoint(object *op, const char *name);
+object                     *get_random_waypoint(object *op, object *ignore);
+object                     *get_next_waypoint(object *op, object *wp);
 int                         move_monster(object *op, int mode);
 void                        object_accept_path(object *op);
 void                        dump_abilities(void);

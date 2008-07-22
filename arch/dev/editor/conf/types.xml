@@ -5814,6 +5814,10 @@ that food.]]>
     Name of the next waypoint to go to when this is reached. Use this to
     chain together several waypoints.
   </attribute>
+  <attribute arch="random_move" editor="next random" type="bool">
+    When this waypoint is reached, pick the next waypoint randomly from all
+    the waypoints of the mob. Overrides "next_waypoint".
+  </attribute>
   <attribute arch="race" editor="destination beacon" type="string">
     Name of a beacon to target. Overrides destination map, destination x and
     destination y. This only works if the beacon can be found (i.e. it is on a

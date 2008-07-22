@@ -55,29 +55,27 @@
  * will probably be more portable than sint8/unit8
  */
 
-typedef signed char     sint8;
-typedef unsigned char   uint8;
-typedef signed short    sint16;
-typedef unsigned short  uint16;
-typedef signed int      sint32;
-typedef unsigned int    uint32;
-typedef uint32            tag_t;
+typedef signed char        sint8;
+typedef unsigned char      uint8;
+typedef signed short       sint16;
+typedef unsigned short     uint16;
+typedef signed int         sint32;
+typedef unsigned int       uint32;
+typedef uint32             tag_t;
 
 /* 64bit definition */
 #ifdef WIN32
-typedef int64                    sint64;
-typedef unsigned int64            uint64;
-
+typedef int64              sint64;
+typedef unsigned int64     uint64;
 #else /* LINUX and others */
 #if SIZEOF_LONG == 8
-typedef unsigned long            uint64;
-typedef signed long                sint64;
+typedef unsigned long      uint64;
+typedef signed long        sint64;
 #elif SIZEOF_LONG_LONG == 8
-typedef unsigned long long        uint64;
-typedef signed long long         sint64;
-
+typedef unsigned long long uint64;
+typedef signed long long   sint64;
 #else
-#error Your compiler miss int64 support
+#error Your compiler misses 64-bit support
 #endif
 #endif
 
@@ -196,7 +194,7 @@ typedef signed long long         sint64;
 #define GET_LEVEL_EXP(_level_) new_levels[_level_]
 
 #define RESTING_DEFAULT_SEC_TIMER 7    /* start rapid regeneration x second after sitting down */
-#define REG_DEFAULT_SEC_TIMER 10         /* reg normal over the time all x seconds some points */
+#define REG_DEFAULT_SEC_TIMER 10       /* reg normal over the time all x seconds some points */
 
 /* used for eric_server() */
 #define SOCKET_UPDATE_PLAYER 1
@@ -229,73 +227,73 @@ typedef signed long long         sint64;
 /* special macro with no {} ! if() FREE_AND_CLEAR_HASH2 will FAIL! */
 #define FREE_AND_CLEAR_HASH2(_nv_) if(_nv_){free_string_shared(_nv_);_nv_ =NULL;}
 
-#define LINK_SPAWN_ENEMY 0x01
+#define LINK_SPAWN_ENEMY        0x01
 
-#define SPAWN_RANDOM_RANGE 10000
+#define SPAWN_RANDOM_RANGE     10000
 #define RANDOM_DROP_RAND_RANGE 1000000
 
 /* for creating treasures (treasure.c) */
-#define T_STYLE_UNSET (-999)
-#define ART_CHANCE_UNSET (-1)
+#define T_STYLE_UNSET         (-999)
+#define ART_CHANCE_UNSET        (-1)
 
 /* ego items */
-#define EGO_ITEM_BOUND_OK 0
-#define EGO_ITEM_BOUND_UNBOUND 1
-#define EGO_ITEM_BOUND_PLAYER 2
-#define EGO_ITEM_BOUND_CLAN 3
+#define EGO_ITEM_BOUND_OK         0
+#define EGO_ITEM_BOUND_UNBOUND    1
+#define EGO_ITEM_BOUND_PLAYER     2
+#define EGO_ITEM_BOUND_CLAN       3
 
 /* mob defines */
-#define MIN_MON_RADIUS 2  /* minimum monster detection radius */
-#define MAX_AGGRO_RANGE 9 /* if target of mob is out of this range (or stats.Wis if higher)*/
-#define MAX_AGGRO_TIME 12 /* until this time - then it skip target */
+#define MIN_MON_RADIUS            2  /* minimum monster detection radius */
+#define MAX_AGGRO_RANGE           9 /* if target of mob is out of this range (or stats.Wis if higher)*/
+#define MAX_AGGRO_TIME           12 /* until this time - then it skip target */
 
 #ifdef SERVER_SEND_FACES
 /* return values for esrv_send_face() in image.c */
-#define SEND_FACE_OK 0
-#define SEND_FACE_OUT_OF_BOUNDS 1
-#define SEND_FACE_NO_DATA 2
+#define SEND_FACE_OK              0
+#define SEND_FACE_OUT_OF_BOUNDS   1
+#define SEND_FACE_NO_DATA         2
 #endif
 
 /* for attack.c and material.c - item damage */
 #define HIT_FLAG_WEAPON        1024
 
 /* group define stuff */
-#define GROUP_NO (-1)
+#define GROUP_NO                (-1)
 
-#define PMSG_MODE_NOTEXT     1   /* check GROUP_STATUS_NOQUEST, which means "outside maprang"
-                                  * in party_message broadcast.
-                                  * We simply want avoid kill messages & fighting related
-                                  * info to group members out of range.
-                                  */
+#define PMSG_MODE_NOTEXT          1 /* check GROUP_STATUS_NOQUEST, which means "outside maprang"
+                                     * in party_message broadcast.
+                                     * We simply want avoid kill messages & fighting related
+                                     * info to group members out of range.
+                                     */
 
-#define GROUP_MAX_MEMBER		6   /* max # of members of a group */
+#define GROUP_MAX_MEMBER          6 /* max # of members of a group */
 
-#define GROUP_MODE_JOIN			0    /* allow /invite from all */
-#define GROUP_MODE_DENY			1    /* deny /invite from everyone */
-#define GROUP_MODE_INVITE		2    /* allow deny from selected player */
+#define GROUP_MODE_JOIN           0 /* allow /invite from all */
+#define GROUP_MODE_DENY           1 /* deny /invite from everyone */
+#define GROUP_MODE_INVITE         2 /* allow deny from selected player */
 
-#define GROUP_STATUS_FREE		0   /* no group, no pending invite */
-#define GROUP_STATUS_INVITE		1	/* pending invite */
-#define GROUP_STATUS_GROUP		2	/* player is in group group_id */
-#define GROUP_STATUS_NOQUEST	4   /* member get no quests, one drop items ... */
+#define GROUP_STATUS_FREE         0 /* no group, no pending invite */
+#define GROUP_STATUS_INVITE       1 /* pending invite */
+#define GROUP_STATUS_GROUP        2 /* player is in group group_id */
+#define GROUP_STATUS_NOQUEST      4 /* member get no quests, one drop items ... */
 
-#define GROUP_UPDATE_HP         1
-#define GROUP_UPDATE_MAXHP      2
-#define GROUP_UPDATE_SP         4
-#define GROUP_UPDATE_MAXSP      8
-#define GROUP_UPDATE_GRACE      16
-#define GROUP_UPDATE_MAXGRACE   32
-#define GROUP_UPDATE_LEVEL      64
+#define GROUP_UPDATE_HP           1
+#define GROUP_UPDATE_MAXHP        2
+#define GROUP_UPDATE_SP           4
+#define GROUP_UPDATE_MAXSP        8
+#define GROUP_UPDATE_GRACE       16
+#define GROUP_UPDATE_MAXGRACE    32
+#define GROUP_UPDATE_LEVEL       64
 
 /* map distance values for draw_info_map functions
  * This value is in tiles
  */
-#define MAP_INFO_NORMAL 12
-#define MAP_INFO_ALL 9999
+#define MAP_INFO_NORMAL          12
+#define MAP_INFO_ALL           9999
 
 /* client interface communication */
-#define NPC_INTERFACE_MODE_NO  -1
-#define NPC_INTERFACE_MODE_NPC  1
+#define NPC_INTERFACE_MODE_NO    -1
+#define NPC_INTERFACE_MODE_NPC    1
 #define NPC_INTERFACE_MODE_QLIST  2
 
 /* number of connected maps from a tiled map */
@@ -316,38 +314,40 @@ typedef enum
 /* have a marker to all exp groups which define the real player level */
 #define NROFSKILLGROUPS_ACTIVE SKILLGROUP_MISC
 
-#define MAXLEVEL      110
+#define MAXLEVEL           110
 
-#define MONEYSTRING_NOTHING 0
-#define MONEYSTRING_AMOUNT 1
-#define MONEYSTRING_ALL -1
+#define MONEYSTRING_NOTHING  0
+#define MONEYSTRING_AMOUNT   1
+#define MONEYSTRING_ALL     -1
 
 #define COSTSTRING_SHORT  0 
 #define COSTSTRING_FULL   1
 #define COSTSTRING_APPROX 2
 
-/* GROS: Those are used by plugin events (argument fixthem) */
-#define SCRIPT_FIX_ACTIVATOR 2
-#define SCRIPT_FIX_ALL 1
-#define SCRIPT_FIX_NOTHING 0
+/* Those are used by plugin events (argument fixthem) */
+#define EVENT_MULTIPLE_TRIGGERS  4 // Allow multiple event triggers per round
+#define SCRIPT_FIX_ACTIVATOR     2
+#define SCRIPT_FIX_ALL           1
+#define SCRIPT_FIX_NOTHING       0
 
 #define special_potion(__op_sp) (__op_sp)->last_eat
 #define move_object(__op, __dir) move_ob(__op,__dir,__op)
 
 #define is_magical(__op_) QUERY_FLAG(__op_,FLAG_IS_MAGICAL)
 
-#define NUM_COLORS      13
+#define NUM_COLORS          13
 
-#define MAX_DARKNESS 7 /* number of darkness level. Add +1 for "total dark" */
+/** number of darkness level. Add +1 for "total dark" */
+#define MAX_DARKNESS         7
 
 /* define from shstr.h - hash table dump */
-#define SS_DUMP_TOTALS  1
+#define SS_DUMP_TOTALS       1
 
 /* global typedefs.
  * which needs defined before header loading.
  */
 
-/*
+/**
  * So far only used when dealing with artifacts.
  * (now used by alchemy and other code too. Nov 95 b.t).
  * This is used in readable.c, recipe.c and treasure.c .
@@ -428,7 +428,7 @@ typedef struct _money_block
     long    copper;
 }_money_block;
 
-/* ban node - see ban.c */
+/** ban node - see ban.c */
 typedef struct ban_struct
 {
     const char *name;       /* if != NULL, we have banned an name */
@@ -440,46 +440,46 @@ typedef struct ban_struct
 
 typedef struct Settings
 {
-	int								mutelevel;	    /* default FALSE - if TRUE player < level 2 can't shout */
-	int								login_allow;	/* if set to FALSE, login_ip is checked */
-	char						   *login_ip;		/* ip for login_allow */
-    char                           *logfilename;   /* logfile to use */
-    uint16                          csport;     /* port for new client/server */
-    LogLevel                        debug;      /* Default debugging level */
-    uint8                           dumpvalues;     /* Set to dump various values/tables */
-    char                           *dumparg;       /* additional argument for some dump functions */
-    uint8                           daemonmode;     /* If true, detach and become daemon */
-    int                             argc;       /* parameters that were passed to the program */
-    char                           **argv;      /* Only used by xio.c, so will go away at some time */
-    char                           *datadir;        /* read only data files */
-    char                           *localdir;       /* read/write data files */
-    char                           *playerdir;      /* Where the player files are */
-    char                           *instancedir;      /* Where the instance map files are */
-    char                           *mapdir;     /* Where the map files are */
-    char                           *archetypes;    /* name of the archetypes file - libdir is prepended */
-    char                           *treasures;      /* location of the treasures file. */
-    char                           *uniquedir;      /* directory for the unique items */
-    char                           *tmpdir;     /* Directory to use for temporary files */
-    char                           *statsdir;          /* Directory for active logs of statistical events */
-    char                           *statsarchivedir;   /* Directory for logs, ready for further processing */
+    int                             mutelevel;          /* default FALSE - if TRUE player < level 2 can't shout */
+    int                             login_allow;        /* if set to FALSE, login_ip is checked */
+    char                           *login_ip;           /* ip for login_allow */
+    char                           *logfilename;        /* logfile to use */
+    uint16                          csport;             /* port for new client/server */
+    LogLevel                        debug;              /* Default debugging level */
+    uint8                           dumpvalues;         /* Set to dump various values/tables */
+    char                           *dumparg;            /* additional argument for some dump functions */
+    uint8                           daemonmode;         /* If true, detach and become daemon */
+    int                             argc;               /* parameters that were passed to the program */
+    char                           **argv;              /* Only used by xio.c, so will go away at some time */
+    char                           *datadir;            /* read only data files */
+    char                           *localdir;           /* read/write data files */
+    char                           *playerdir;          /* Where the player files are */
+    char                           *instancedir;        /* Where the instance map files are */
+    char                           *mapdir;             /* Where the map files are */
+    char                           *archetypes;         /* name of the archetypes file - libdir is prepended */
+    char                           *treasures;          /* location of the treasures file. */
+    char                           *uniquedir;          /* directory for the unique items */
+    char                           *tmpdir;             /* Directory to use for temporary files */
+    char                           *statsdir;           /* Directory for active logs of statistical events */
+    char                           *statsarchivedir;    /* Directory for logs, ready for further processing */
     uint8                           stat_loss_on_death; /* If true, chars lose a random stat when they die */
     uint8                           balanced_stat_loss; /* If true, Death stat depletion based on level etc */
-    int                             reset_loc_time; /* Number of seconds to put player back at home */
+    int                             reset_loc_time;     /* Number of seconds to put player back at home */
 
     /* The meta_ is information for the metaserver.  These are set in
      * the lib/settings file.
      */
-    uint8                           meta_on : 1;            /* True if we should send updates */
-    char                            meta_server[MAX_BUF];   /* Hostname/ip addr of the metaserver */
-    char                            meta_host[MAX_BUF];     /* Hostname of this host */
+    uint8                           meta_on : 1;        /* True if we should send updates */
+    char                            meta_server[MAX_BUF]; /* Hostname/ip addr of the metaserver */
+    char                            meta_host[MAX_BUF]; /* Hostname of this host */
     uint16                          meta_port;          /* Port number to use for updates */
-    char                            meta_comment[MAX_BUF];  /* Comment we send to the metaserver */
+    char                            meta_comment[MAX_BUF]; /* Comment we send to the metaserver */
     uint32                          worldmapstartx;     /* starting x tile for the worldmap */
     uint32                          worldmapstarty;     /* starting y tile for the worldmap */
     uint32                          worldmaptilesx;     /* number of tiles wide the worldmap is */
     uint32                          worldmaptilesy;     /* number of tiles high the worldmap is */
-    uint32                          worldmaptilesizex;      /* number of squares wide in a wm tile */
-    uint32                          worldmaptilesizey;      /* number of squares high in a wm tile */
+    uint32                          worldmaptilesizex;  /* number of squares wide in a wm tile */
+    uint32                          worldmaptilesizey;  /* number of squares high in a wm tile */
     uint16                          dynamiclevel;       /* how dynamic is the world? */
 } Settings;
 
@@ -487,7 +487,7 @@ typedef struct Settings
 /*****************************************************************************
  * GLOBAL VARIABLES:                                                         *
  *****************************************************************************/
-/* these varaibles are direct initialized in their modules. So we
+/* these variables are direct initialized in their modules. So we
  * can't use EXTERN.
  */
 extern sint32                   new_levels[MAXLEVEL + 2];
@@ -513,7 +513,7 @@ EXTERN objectlink               *gmaster_list_GM;
 EXTERN objectlink               *gmaster_list_DM;
 
 EXTERN objectlink               *ban_list_player; /* see ban.c */
-EXTERN objectlink               *ban_list_ip;    /* see ban.c */
+EXTERN objectlink               *ban_list_ip;     /* see ban.c */
 
 EXTERN archetype               *global_aggro_history_arch;
 EXTERN archetype               *global_dmg_info_arch;
@@ -522,8 +522,8 @@ EXTERN object                  *active_objects; /* List of active objects that n
 EXTERN object                  *inserted_active_objects; /* List of active objects that will be inserted into active_objects */
 EXTERN object                  *next_active_object; /* Loop index for process_events(), might be modified during the loop */
 EXTERN struct mempool_chunk    *removed_objects; /* List of objects that have been removed
-                                                 * during the last server timestep
-                                                 */
+                                                  * during the last server timestep
+                                                  */
 
 /** Intialization functions for the different object types */
 EXTERN void (*object_initializers[256])(object *);

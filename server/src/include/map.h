@@ -349,6 +349,7 @@ typedef struct mapdef
 {
     struct mapdef  *last;                   /* map before, if NULL we are first_map */
     struct mapdef  *next;                   /* Next map, linked list */
+    tag_t           tag;                    /* Unique identifier of this map object. Same as object tags */
 
     MapSpace       *spaces;                 /* Array of spaces on this map */
     MapSpace       *first_light;            /* list of tiles spaces with light sources in */
@@ -362,13 +363,13 @@ typedef struct mapdef
                                              */
 
     /* hash strings... */
-    const char     *name;                   /* Name of map as given by its creator */
-    const char     *msg;                    /* Message map creator may have left */
-    const char     *path;                   /* Filename of the map (shared string now) */
-    const char     *orig_path;              /* same as above but the original pathes - non unique or instanced */
-    const char     *tile_path[TILED_MAPS];  /* path to adjoining maps (shared strings) */
-    const char     *orig_tile_path[TILED_MAPS];  /* sic! */
-    const char     *cached_dist_map;         /* With which other map was relative_tile_position() last used? */
+    shstr          *name;                   /* Name of map as given by its creator */
+    shstr          *msg;                    /* Message map creator may have left */
+    shstr          *path;                   /* Filename of the map (shared string now) */
+    shstr          *orig_path;              /* same as above but the original pathes - non unique or instanced */
+    shstr          *tile_path[TILED_MAPS];  /* path to adjoining maps (shared strings) */
+    shstr          *orig_tile_path[TILED_MAPS]; /* sic! */
+    shstr          *cached_dist_map;         /* With which other map was relative_tile_position() last used? */
     shstr          *reference;              /* Reference for unique or instance maps (a player name) */
     /* hash strings end */
 

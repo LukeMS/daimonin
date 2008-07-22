@@ -19,7 +19,7 @@ apple:Remove()
 coroutine.yield(0) -- The garbage collection should now automatically invalidate the apple
 
 assert(not game:IsValid(apple), "Apple is valid")
-assert(not game:IsValid(map), "My map is valid") -- This is due to the temporary fix of map validity. The map reference shouldn't really become invalid.
+assert(game:IsValid(map), "My map is valid")
 assert(game:IsValid(me), "I'm invalid")
 assert(game:IsValid(void), "Void container is invalid")
 

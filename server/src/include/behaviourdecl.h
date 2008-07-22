@@ -78,6 +78,8 @@ BehaviourClass(PROCESSES,
         Parameter(ATTRACTION, CURSED, INTEGER, OPTIONAL, 0)
         /** Attraction towards cursed objects of a specific type */
         Parameter(ATTRACTION, CURSEDTYPE, TYPEINT, MULTI | OPTIONAL, "X:0")
+        /** Attraction towards any player */
+        Parameter(ATTRACTION, PLAYER, INTEGER, OPTIONAL, 0)
     )
 
     /** Configures the group membership of the mob, not a real behaviour.
@@ -186,6 +188,14 @@ BehaviourClass(MOVES,
         /** Become scared if current_hp < HP_THRESHOLD % of max_hp */
         Parameter(RUN_AWAY_FROM_ENEMY, HP_THRESHOLD, INTEGER, OPTIONAL, 10)
     )
+    
+    /** Runs away from the most repulsive object if scared. */
+    Behaviour(RUN_AWAY_FROM_REPULSIVE_OBJECT, ai_run_away_from_repulsive_object,
+        /** Become scared if at least this close to the object */
+        Parameter(RUN_AWAY_FROM_REPULSIVE_OBJECT, DISTANCE_THRESHOLD, INTEGER, OPTIONAL, 5)
+        /** Become scared if repulsion is at least this low */
+        Parameter(RUN_AWAY_FROM_REPULSIVE_OBJECT, REPULSION_THRESHOLD, INTEGER, OPTIONAL, -30)
+    )
 
     /** Try to stay at a certain distance from the enemy,
      * good for mobs with distance attacks */
@@ -206,6 +216,16 @@ BehaviourClass(MOVES,
     /** Try to move to a position with free line of fire towards
      * enemy. A good archer's answer to AVOID_LINE_OF_FIRE */
     Behaviour(OPTIMIZE_LINE_OF_FIRE, ai_optimize_line_of_fire, NIL)
+
+    /** Do not allow moves that takes us further away from home. Use
+     * early in the moves list. */
+    Behaviour(STAY_NEAR_HOME, ai_stay_near_home,
+            /** Maximum allowed distance from home. */
+            Parameter(STAY_NEAR_HOME, MAX_DIST, INTEGER, OPTIONAL, 12)
+            /** Enables true eucilidian distance (default is diagonal distance). 
+             * Uses more CPU resources.  */
+            Parameter(STAY_NEAR_HOME, EUCLIDIAN_DISTANCE, INTEGER, OPTIONAL, 0)
+    )
 
     /** Plugin interface for moves */
     Behaviour(PLUGIN_MOVE, ai_plugin_move,
