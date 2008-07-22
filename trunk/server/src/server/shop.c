@@ -577,7 +577,7 @@ void sell_item(object *op, object *pl, sint64 value)
     if (i != 0)
         LOG(llevBug, "BUG: Warning - payment not zero: %d\n", i);
 
-    new_draw_info_format(NDI_UNIQUE, 0, pl, "You receive %s for %s.", query_cost_string(op, pl, COSTSTRING_FULL), query_name(op));
+    new_draw_info_format(NDI_UNIQUE, 0, pl, "You receive %s for %s.", query_cost_string(op, pl, F_SELL, COSTSTRING_FULL), query_name(op));
     SET_FLAG(op, FLAG_UNPAID);
     /* TODO: unique item shop will work like old CF shops
       identify(op);
