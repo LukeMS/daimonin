@@ -111,15 +111,20 @@ void update_npc_known_obj(struct mob_known_obj *known, int delta_friendship, int
  * @param other the other object/mob/npc
  * @param friendship initial friendship value or 0 to calculate
  * @param attraction initial attraction value or 0 to calculate
+ * @param check_los set to enable line-of-sight test in some cases
  * @return a mob_known_obj struct for other, or NULL if there was a problem.
  */
-struct mob_known_obj *register_npc_known_obj(object *npc, object *other, int friendship, int attraction)
+struct mob_known_obj *register_npc_known_obj(object *npc, object *other, int friendship, int attraction, int check_los)
 {
     struct mob_known_obj *known;
     int i;
     rv_vector rv;
     int nomap = 0;
     int is_object = 0;
+
+#ifdef DEBUG_AI_NPC_KNOWN
+    LOG(llevDebug, "register_npc_knowledge(%s, %s, %d, %d)\n", STRING_OBJ_NAME(npc), STRING_OBJ_NAME(other), friendship, attraction);
+#endif
 
     /* Non-mob object?  */
     if (other->type != PLAYER && !QUERY_FLAG(other, FLAG_ALIVE))
@@ -155,7 +160,7 @@ struct mob_known_obj *register_npc_known_obj(object *npc, object *other, int fri
         /* We check LOS here, only if we are registering a new object */
         /* Also, we only check against players, and not if we have
          * been hit or helped by them, or if they own us */
-        if(other->type == PLAYER && friendship == 0 && npc->owner != other)
+        if(other->type == PLAYER && check_los && npc->owner != other)
             if(!obj_in_line_of_sight(npc, other, &rv))
               return NULL;
     }
@@ -168,7 +173,9 @@ struct mob_known_obj *register_npc_known_obj(object *npc, object *other, int fri
 
     /* We do a last attempt at LOS test here, for mob to mob detection,
      * but only if the two are enemies */
-    if(nomap == 0 && !is_object && other->type != PLAYER && friendship < 0)
+    if(!nomap && other->type != PLAYER && 
+            (friendship < 0 || attraction < 0) &&
+            (!is_object || check_los))
     {
         if(!obj_in_line_of_sight(npc, other, &rv))
         {
@@ -233,7 +240,9 @@ struct mob_known_obj *register_npc_known_obj(object *npc, object *other, int fri
         MOB_DATA(npc)->known_mobs = known;
     }
 
-    //    LOG(llevDebug,"register_npc_known_obj(): '%s' detected '%s'. friendship: %d, attraction: %d\n",  STRING_OBJ_NAME(npc), STRING_OBJ_NAME(other), known->friendship, known->attraction);
+#ifdef DEBUG_AI_NPC_KNOWN
+    LOG(llevDebug,"register_npc_known_obj(): '%s' detected '%s'. friendship: %d, attraction: %d\n",  STRING_OBJ_NAME(npc), STRING_OBJ_NAME(other), known->friendship, known->attraction);
+#endif
 
     return known;
 }
@@ -249,6 +258,10 @@ struct mob_known_obj *update_npc_knowledge(object *npc, object *other, int delta
 {
     int is_object = 0; /* We differ between objects and mobs */
     struct mob_known_obj *known = NULL; /* Did we already know this other */
+
+#ifdef DEBUG_AI_NPC_KNOWN
+        LOG(llevDebug, "update_npc_knowledge(%s, %s, %d, %d)\n", STRING_OBJ_NAME(npc), STRING_OBJ_NAME(other), delta_friendship, delta_attraction);
+#endif
 
     if (npc == NULL)
     {
@@ -316,7 +329,7 @@ struct mob_known_obj *update_npc_knowledge(object *npc, object *other, int delta
 
     /* Previously unknown other */
     if(known == NULL)
-        known = register_npc_known_obj(npc, other, 0, 0);
+        known = register_npc_known_obj(npc, other, 0, 0, 0);
 
     /* Update values */
     if(known)
@@ -329,6 +342,11 @@ struct mob_known_obj *update_npc_knowledge(object *npc, object *other, int delta
             CLEAR_FLAG(npc, FLAG_UNAGGRESSIVE);
             known->friendship += FRIENDSHIP_ATTACK;
         }
+    } else {
+#ifdef DEBUG_AI_NPC_KNOWN
+        LOG(llevDebug, "update_npc_knowledge(%s, %s, ...) failed to register the new obj\n", STRING_OBJ_NAME(npc), STRING_OBJ_NAME(other));
+#endif
+
     }
 
     return known;

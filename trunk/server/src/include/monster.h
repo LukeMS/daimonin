@@ -75,8 +75,10 @@ struct mobdata_pathfinding
 
 /** The object is known to make use of distance attacks */
 #define AI_OBJFLAG_USES_DISTANCE_ATTACK 0
+/** The object is the missile or similar from a distance attack */
+#define AI_OBJFLAG_IS_MISSILE 1
 /** Total number of flags in the mob_known_obj struct */
-#define NROF_AI_KNOWN_OBJ_FLAGS 1
+#define NROF_AI_KNOWN_OBJ_FLAGS 2
 
 /** Keeps track of other objects known to a mob
  * (enemies, friends and nearby objects). Works as a mob's short-time

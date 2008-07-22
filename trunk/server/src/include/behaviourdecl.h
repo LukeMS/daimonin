@@ -98,6 +98,9 @@ BehaviourClass(PROCESSES,
      * (see ATTRACTION for the definition of interesting) */
     Behaviour(LOOK_FOR_OBJECTS, ai_look_for_objects, NIL)
 
+    /** Specialized behaviour to look out for missiles. Works together with VOID_LINE_OF_FIRE. */
+    Behaviour(LOOK_FOR_ENEMY_MISSILES, ai_look_for_enemy_missiles, NIL)
+
     /** Choose the known mob with the lowest negative friendship as the current enemy
      * should always come after friendship */
     Behaviour(CHOOSE_ENEMY, ai_choose_enemy,
@@ -209,8 +212,7 @@ BehaviourClass(MOVES,
         Parameter(STEP_BACK_AFTER_SWING, DIST, INTEGER, OPTIONAL, 3)
     )
 
-    /** Try to stay out of the line of fire as much as possible
-     * if we belive our enemy uses distance attacks */
+    /** Step out of the way of any detected incoming missiles. */
     Behaviour(AVOID_LINE_OF_FIRE, ai_avoid_line_of_fire, NIL)
 
     /** Try to move to a position with free line of fire towards

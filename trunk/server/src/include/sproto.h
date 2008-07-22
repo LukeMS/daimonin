@@ -386,7 +386,7 @@ void                        cleanup_mob_knowns(object *op, struct mob_known_obj 
 void                        clear_mob_knowns(object *op, struct mob_known_obj **first, hashtable *ht);
 struct mob_known_obj       *update_npc_knowledge(object *npc, object *other, int delta_friendship, int delta_attraction);
 void                        update_npc_known_obj(struct mob_known_obj *known, int delta_friendship, int delta_attraction);
-struct                      mob_known_obj *register_npc_known_obj(object *npc, object *other, int friendship, int attraction);
+struct                      mob_known_obj *register_npc_known_obj(object *npc, object *other, int friendship, int attraction, int check_los);
 rv_vector                  *get_known_obj_rv(object *op, struct mob_known_obj *known_obj, int maxage);
 /* monster_behaviourset.c */
 struct mob_behaviourset    *parse_behaviourconfig(const char *conf_text, object *op);
