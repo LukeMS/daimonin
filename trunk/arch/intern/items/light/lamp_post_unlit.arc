@@ -1,4 +1,6 @@
 Object lamp_post_unlit
+type 74
+layer 5
 sub_type 1
 anim
 facings 9
