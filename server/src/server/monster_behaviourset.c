@@ -318,6 +318,13 @@ struct mob_behaviourset * generate_behaviourset(object *op)
             behaviourclasses[BEHAVIOURCLASS_PROCESSES].behaviours[AIBEHAVIOUR_CHOOSE_ENEMY].params[AIPARAM_CHOOSE_ENEMY_ANTILURE_DISTANCE].defaultvalue;
         check_behaviour_parameters(last);
     }
+        
+    /* Behaviours for melee-only fighters */
+    if(!QUERY_FLAG(op, FLAG_READY_SPELL) && !QUERY_FLAG(op, FLAG_READY_BOW))
+    {
+        last = last->next = init_behaviour(BEHAVIOURCLASS_PROCESSES, AIBEHAVIOUR_LOOK_FOR_ENEMY_MISSILES);
+        check_behaviour_parameters(last);
+    }
 
     /* Moves */
     if (QUERY_FLAG(op, FLAG_STAND_STILL))

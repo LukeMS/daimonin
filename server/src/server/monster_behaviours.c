@@ -129,7 +129,7 @@ void npc_call_for_help(object *op) {
           if(rv && rv->distance < 4) {
               /* TODO: also check reverse friendship */
               /* TODO: -friendship here dependant on +friendship towards tmp */
-              register_npc_known_obj(friend->ob, op->enemy, FRIENDSHIP_ATTACK);
+              register_npc_known_obj(friend->ob, op->enemy, FRIENDSHIP_ATTACK, 0);
           }
       }
   }
@@ -186,6 +186,13 @@ int mapcoord_in_line_of_fire(object *op1, mapstruct *map, int x, int y, int mode
     rv_vector rv;
     get_rangevector_full(op1, op1->map, op1->x, op1->y, NULL, map, x, y, &rv, RV_DIAGONAL_DISTANCE);
     return can_hit_missile(op1, NULL, &rv, mode);
+}
+
+int mapcoord_in_line_of_missile(object *op, mapstruct *map, int x, int y)
+{
+    rv_vector rv;
+    get_rangevector_full(op, op->map, op->x, op->y, NULL, map, x, y, &rv, RV_DIAGONAL_DISTANCE);
+    return can_hit_missile(op, NULL, &rv, 1) && op->direction == rv.direction;
 }
 
 /* scary function - need rework. even in crossfire its changed now */
@@ -914,78 +921,100 @@ void ai_step_back_after_swing(object *op, struct mob_behaviour_param *params, mo
 
 void ai_avoid_line_of_fire(object *op, struct mob_behaviour_param *params, move_response *response)
 {
+    struct mob_known_obj *tmp;
+
+    /* Disabled for multi-tile mobs. TODO: add support */
+    if(op->more)
+        return;
+
+    /* Disable this behaviour if we are in a melee fight */
     if (OBJECT_VALID(op->enemy, op->enemy_count))
     {
-        /* TODO: not correct for multi-tile mobs, the in_line_of_fire() functions simply don't
-         * work for them. Possible solutions: 1) disable for multi-tile mobs (what do big monsters care
-         * about puny missiles, anyway?  2) fix the line-of-fire functions (can be very expensive) */
-        /* Disabled for multi-tile mobs */
-        if(op->more)
+        rv_vector  *rv  = get_known_obj_rv(op, MOB_DATA(op)->enemy, MAX_KNOWN_OBJ_RV_AGE);
+        if (rv && rv->distance <= 1)
             return;
+    }
 
-        /* TODO: mobs will not approach enemy through narrow corridors, as they can't
-         * avoid missiles there. It also means they can get stuck in the middle of a corridor as
-         * a sitting duck for any distance attacks. Possible fixes: 1) only activate if the enemy if
-         * known to use missiles (maybe easy with upcoming mob damage memory) 2) temporarily disable
-         * if we get stuck somewhere. 3) detect getting stuck and either flee or charge.
-         */
+    /* Find relevant missiles */
+    for(tmp = MOB_DATA(op)->known_objs; tmp; tmp = tmp->next)
+    {
+        int i;
+        rv_vector *rv;
+        if(! QUERY_FLAG(tmp, AI_OBJFLAG_IS_MISSILE))
+            continue;
 
-        /* Disable behaviour if we don't think enemy uses missiles */
-        if(! QUERY_FLAG(MOB_DATA(op)->enemy, AI_OBJFLAG_USES_DISTANCE_ATTACK))
-        {
-            if(op->enemy->type == PLAYER)
-            {
-                /* Nasty hack for quick detection of possible distance-attack
-                 * skills */
-                /* TODO: should preferably be using observed behaviour instead of
-                 * chosen skill, but this is quite cheap. */
-                char is_distance_skill[NROFSKILLS] = {
-                    0,0,0,0,0, 0,0,0,0,0,
-                    0,0,0,0,0, 0,0,0,1,0, /* Flame touch ? */
-                    0,0,0,0,1, 1,1,0,0,1,
-                    1,0,0,0,1, 1,0,0,0,0,
-                    0,0 };
+        switch(tmp->obj->type) {
+            /* Straight-line-like missiles */
+            case ARROW:
+            case BULLET:
+            case MMISSILE:
+            case THROWN_OBJ:
+            case FBULLET:
+            case FBALL:
+                /* Don't stand still in line of fire.
+                 * TODO: should possibly do a random throw against the mob's reaction
+                 * time, intelligence or somesuch */
+                /* TODO: smart mobs should ignore weak missiles or anything it is immune against */
+                if(mapcoord_in_line_of_missile(tmp->obj, op->map, op->x, op->y))
+                    response->forbidden |= (1 << 0);
 
-                if(op->enemy->chosen_skill == NULL ||
-                        ! is_distance_skill[op->enemy->chosen_skill->stats.sp])
-                    return;
-                SET_FLAG(MOB_DATA(op)->enemy, AI_OBJFLAG_USES_DISTANCE_ATTACK);
-            }
-            else if (op->enemy->type == MONSTER)
-            {
-                if(! QUERY_FLAG(op->enemy, FLAG_READY_SPELL) && ! QUERY_FLAG(op->enemy, FLAG_READY_BOW))
-                    return;
-                SET_FLAG(MOB_DATA(op)->enemy, AI_OBJFLAG_USES_DISTANCE_ATTACK);
-            }
-        }
-
-        /* Behaviour core */
-        if(mob_can_see_obj(op, op->enemy, MOB_DATA(op)->enemy))
-        {
-            rv_vector  *rv  = get_known_obj_rv(op, MOB_DATA(op)->enemy, MAX_KNOWN_OBJ_RV_AGE);
-
-            if (rv->distance > 2 && rv->distance < 8)
-            {
-                int i;
-
-                   /* Avoid staying in line of fire */
-                if(can_hit_missile(op->enemy, op, rv, 1))
-                       response->forbidden |= (1 << 0);
-
-                for(i=-3; i<=3; i++) {
+                /* Don't move into line of fire (note: this may fail if
+                 * firing into the back of an enemy. That is a good thing :) */
+                for(i=-2; i<=2; i++) {
                     mapstruct *m;
-                    int d = absdir(rv->direction + i);
+                    int d = absdir(op->direction + i);
                     int x = op->x + freearr_x[d];
                     int y = op->y + freearr_y[d];
 
                     /* Avoid moving into line of fire */
                     if ((m = out_of_map(op->map, &x, &y)))
                     {
-                        if(mapcoord_in_line_of_fire(op->enemy, m, x, y, 1))
+                        if(mapcoord_in_line_of_missile(tmp->obj, m, x, y))
                             response->forbidden |= (1 << d);
                     }
                 }
-            }
+                break;
+
+            /* Area-like "missiles" */
+            case CONE:
+                if ((rv = get_known_obj_rv(op, tmp, 0))) 
+                {
+                    if(rv->distance == 0) {
+                        response->forbidden |= (1 << 0);
+                    } else {
+                        /* stats.sp is the cone's direction. We check if the mob is in a
+                         * cone of the found object */
+                        if(tmp->obj->stats.sp == 0 || 
+                                dirdiff(absdir(rv->direction + 4), tmp->obj->stats.sp) <= 1)
+                        {
+                            /* Simply try to retreat out of the way. */
+                            /* TODO: add sidestepping */
+                            response->forbidden |= (1 << 0);
+                            response->forbidden |= (1 << absdir(rv->direction-2));
+                            response->forbidden |= (1 << absdir(rv->direction-1));
+                            response->forbidden |= (1 << rv->direction);
+                            response->forbidden |= (1 << absdir(rv->direction+1));
+                            response->forbidden |= (1 << absdir(rv->direction+2));
+                        }
+                    }
+                }
+                break;
+
+            /* Note: untested and probably not very smart... */
+            case POISONCLOUD:
+            case LIGHTNING:
+            case BOMB:
+                /* TODO: Really step out of the way, not only out of the area */
+                if ((rv = get_known_obj_rv(op, tmp, 0))) 
+                {
+                    if(rv->distance <= 1) {
+                        response->forbidden |= (1 << rv->direction);
+                        response->forbidden |= (1 << absdir(rv->direction-1));
+                        response->forbidden |= (1 << absdir(rv->direction+1));
+                        response->forbidden |= (1 << 0);
+                    }
+                }
+                break;
         }
     }
 }
@@ -1091,14 +1120,8 @@ void ai_move_towards_enemy(object *op, struct mob_behaviour_param *params, move_
         MOB_DATA(op)->enemy->friendship /= 2;
         MOB_DATA(op)->enemy->tmp_friendship = 0;
 
-        /* Go through the mob list yet again (should only be done once) */
-        /* TODO: keep track of second_worst_enemy instead... */
-        // ai_choose_enemy(op, XXX: need parameters here...);
-        op->enemy = NULL;
-
-//        LOG(llevDebug, "ai_move_towards_enemy(): %s chose new enemy: %s\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(op->enemy));
-        if(op->enemy == NULL)
-            return;
+        /* Note: this may eventually make the mob forget about the enemy and go home, 
+         * but e.g. linked spawns will get reaggroed by their friends. */
     }
 
     response->type = MOVE_RESPONSE_OBJECT;
@@ -1576,7 +1599,7 @@ void ai_look_for_objects(object *op, struct mob_behaviour_param *params)
                     {
                         int attraction = get_npc_object_attraction(op, tmp);
                         if(attraction) {
-                            register_npc_known_obj(op, tmp, 0, attraction);
+                            register_npc_known_obj(op, tmp, 0, attraction, 1);
 #if defined DEBUG_AI
                             LOG(llevDebug, "attraction of '%s' -> '%s': %d\n",
                                     STRING_OBJ_NAME(op), STRING_OBJ_NAME(tmp), attraction);
@@ -1586,6 +1609,108 @@ void ai_look_for_objects(object *op, struct mob_behaviour_param *params)
                     } else
                         update_npc_known_obj(known, 0, 0);
                 }
+            }
+        }
+    }
+}
+
+static void maps_in_range(object *op, int range, int *maps)
+{
+    if (op->y - range < 0)
+        maps[0] = 1; /* North */
+    if (op->y + range >= MAP_HEIGHT(op->map))
+        maps[2] = 1; /* South */
+    if (op->x - range < 0) {
+        maps[3] = 1; /* West */
+        if (maps[0])
+            maps[7] = 1; /* Northwest */
+        if (maps[2])
+            maps[6] = 1; /* Southwest */
+    }
+    if (op->x + range >= MAP_WIDTH(op->map)) {
+        maps[1] = 1; /* East */
+        if (maps[0])
+            maps[4] = 1; /* Northeast */
+        if (maps[2])
+            maps[5] = 1; /* Southeast */
+    }
+}
+
+/** Scans the nearby area for enemy missiles, bullets, storms etc.
+ * XXX: currently very experimental */
+void ai_look_for_enemy_missiles(object *op, struct mob_behaviour_param *params)
+{
+    int dx, dy, x, y;
+    int sense_range;
+    mapstruct *m;
+    int tilenr;
+    int check_maps[8] = {0,0,0,0,0,0,0,0}; /* nearby map tiles to scan */
+
+    if(!op->map)
+        return;
+
+    /* Disable this behaviour if we are in a melee fight */
+    if (OBJECT_VALID(op->enemy, op->enemy_count))
+    {
+        rv_vector  *rv  = get_known_obj_rv(op, MOB_DATA(op)->enemy, MAX_KNOWN_OBJ_RV_AGE);
+        if (rv && rv->distance <= 1)
+            return;
+    }
+
+    /* initialize hashtable if needed */
+    if(MOB_DATA(op)->known_objs_ht == NULL)
+        MOB_DATA(op)->known_objs_ht = pointer_hashtable_new(32);
+
+    /* The "real" sense range calculation is in mob_can_see_ob(), this is
+     * a simplified version */
+    sense_range = op->stats.Wis;
+    if (QUERY_FLAG(op, FLAG_SLEEP) || QUERY_FLAG(op, FLAG_BLIND))
+        sense_range /= 2;
+    sense_range = MAX(MIN_MON_RADIUS * 4, sense_range);
+
+    maps_in_range(op, sense_range, check_maps);
+
+    /* Scan for acvtive enemy missiles in each marked map */
+    for (tilenr=0; tilenr < TILED_MAPS + 1; tilenr++)
+    {
+        object *obj;
+        if(tilenr == TILED_MAPS)
+            obj = op->map->active_objects->active_next; /* Always scan op's map */
+        else if (op->map->tile_map[tilenr] && op->map->tile_map[tilenr]->in_memory == MAP_IN_MEMORY && check_maps[tilenr])
+            obj = op->map->tile_map[tilenr]->active_objects->active_next;
+        else
+            continue;
+
+        for (; obj; obj = obj->active_next)
+        {
+            int type = 0;
+            switch(obj->type) {
+                case BULLET:
+                case MMISSILE:
+                case THROWN_OBJ:
+                case ARROW:
+                case FBULLET:
+                case FBALL:
+                case POISONCLOUD:
+                case LIGHTNING:
+                case CONE:
+                case BOMB:
+             
+                    if (obj->owner == NULL || get_friendship(op, obj->owner) <= FRIENDSHIP_ATTACK) 
+                    {
+                        struct mob_known_obj *known = hashtable_find(MOB_DATA(op)->known_objs_ht, obj);
+                        if(! known)
+                        {
+                            rv_vector rv;
+                            if (get_rangevector(op, obj, &rv, RV_DIAGONAL_DISTANCE) &&
+                                    rv.distance <= sense_range)
+                                known = register_npc_known_obj(op, obj, 0, -10, 1);
+                                /* TODO: configurable attraction value */
+                        } else
+                            update_npc_known_obj(known, 0, 0);
+                        if(known)
+                            SET_FLAG(known, AI_OBJFLAG_IS_MISSILE);
+                    }
             }
         }
     }
@@ -1631,24 +1756,7 @@ void ai_look_for_other_mobs(object *op, struct mob_behaviour_param *params)
     if (QUERY_FLAG(op, FLAG_SLEEP) || QUERY_FLAG(op, FLAG_BLIND))
         sense_range /= 2;
 
-    if (op->y - sense_range < 0)
-        check_maps[0] = 1; /* North */
-    if (op->y + sense_range >= MAP_HEIGHT(op->map))
-        check_maps[2] = 1; /* South */
-    if (op->x - sense_range < 0) {
-        check_maps[3] = 1; /* West */
-        if (check_maps[0])
-            check_maps[7] = 1; /* Northwest */
-        if (check_maps[2])
-            check_maps[6] = 1; /* Southwest */
-    }
-    if (op->x + sense_range >= MAP_WIDTH(op->map)) {
-        check_maps[1] = 1; /* East */
-        if (check_maps[0])
-            check_maps[4] = 1; /* Northeast */
-        if (check_maps[2])
-            check_maps[5] = 1; /* Southeast */
-    }
+    maps_in_range(op, sense_range, check_maps);
 
     /* Scan for mobs and players in each marked map */
     for (tilenr=0; tilenr < TILED_MAPS + 1; tilenr++)
@@ -1682,7 +1790,7 @@ void ai_look_for_other_mobs(object *op, struct mob_behaviour_param *params)
                 if(tmp)
                     update_npc_known_obj(tmp, 0, 0);
                 else
-                    register_npc_known_obj(op, obj, 0, 0);
+                    register_npc_known_obj(op, obj, 0, 0, 1);
                 /* TODO: get rid of double rv calculation
                  * (both can_see_obj() and register_npc_known_obj)
                  */
@@ -1725,7 +1833,7 @@ void ai_friendship(object *op, struct mob_behaviour_param *params)
 
     /* Learn about owner's enemy if we didn't know of it */
     if(owner_enemy && !op->enemy && !known_owner_enemy)
-        register_npc_known_obj(op, owner_enemy, 0, 0);
+        register_npc_known_obj(op, owner_enemy, 0, 0, 0);
 }
 
 /** Update attraction/fear level of each known mob */

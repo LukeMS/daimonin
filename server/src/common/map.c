@@ -771,6 +771,21 @@ static int load_map_header(FILE *fp, mapstruct *m, int flags)
         }
     }
 
+#ifndef PRODUCTION_SYSTEM
+    /* Verify tileset_id after linking */
+    {
+        int i;
+        for(i=0; i<8; i++) {
+            if(m->tile_map[i] && m->tile_map[i]->tileset_id != m->tileset_id) {
+                /* AI pathfinding reuquires consistent tileset_id */
+                LOG(llevMapbug, "MAPBUG: connected maps have inconsistent tileset_ids: %s (id %d)<->%s (id %d). Pathfinding will have problems.\n",
+                        STRING_SAFE(m->orig_path), m->tileset_id, STRING_SAFE(m->tile_map[i]->orig_path), m->tile_map[i]->tileset_id);
+                /* TODO: also doublecheck tileset_x and tileset_y */
+            }
+        }
+    }
+#endif
+
     if(!MAP_STATUS_TYPE(m->map_status)) /* synchronize dynamically the map status flags */
     {
         m->map_status |= MAP_STATUS_TYPE(flags);
