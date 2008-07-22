@@ -338,17 +338,17 @@ end
 -- the quest qb[nr] from the player's inventory.
 -- nr is the quest in question. It must be a number.
 -------------------
-function QuestBuilder:RemoveQuestItems(nr)
-    assert(type(nr) == "number",
-           "Arg #1 must be number!")
-
-    nr = math.abs(nr)
-    assert(nr > 0 and
-           nr <= table.getn(self),
-           "Not enough entries in qb table!")
-
-    return self[nr].qm:RemoveQuestItems()
-end
+--function QuestBuilder:RemoveQuestItems(nr)
+--    assert(type(nr) == "number",
+--           "Arg #1 must be number!")
+--
+--    nr = math.abs(nr)
+--    assert(nr > 0 and
+--           nr <= table.getn(self),
+--           "Not enough entries in qb table!")
+--
+--    return self[nr].qm:RemoveQuestItems()
+--end
 
 -------------------
 -- qb:Finish() marks the quest qb[nr] as finished.
