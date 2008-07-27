@@ -27,6 +27,11 @@
         <title xml:lang="de">Boden</title>
         <TypeNrs numbers="65 68 71" />
     </GameObjectMatcher>
+    <GameObjectMatcher id="below_floor">
+        <title xml:lang="en">Below Floor</title>
+        <title xml:lang="de">Unter Boden</title>
+        <Attrib name="layer" value="0" />
+    </GameObjectMatcher>
     <GameObjectMatcher id="wall">
         <title xml:lang="en">Wall</title>
         <title xml:lang="de">Wand</title>
