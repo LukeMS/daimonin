@@ -3083,3 +3083,111 @@ void init_object_initializers()
     object_initializers[TYPE_BEACON] = beacon_initializer;
     object_initializers[MONSTER] = monster_initializer;
 }
+
+/* Returns the next object in the local object tree (according to mode and
+ * root) of op which matches.
+ * An object matches when it has the specified type, arch, name, and title.
+ * Any of these criteria can be discounted by setting them to 0 (type) or NULL
+ * (arch, name, and title).
+ * A local object tree is defined as *up to* all the ancestors, descendants,
+ * and siblings of op. This scope is modified according to mode and root.
+ * If mode == FNO_MODE_INV_ONLY, only the immediate inventory of op is
+ * included.
+ * If mode == FNO_MODE_CONTAINERS, the inventories of all CONTAINER type
+ * descendants is included as well.
+ * If mode == FNO_MODE_ALL, the inventories of all descendants, regardless of
+ * type, is included.
+ * If root == NULL, all ancestors below the 'natural' root are included.
+ * If root != NULL, only ancestors below the specified root are included.
+ * The natural root is the ancestor which is on a map (the assumption is that
+ * players and monsters must always be directly on a map, not in an
+ * environment). */
+object *find_next_object(object *op, uint8 type, archetype *arch, uint8 *name, uint8 *title, uint8 mode, object *root)
+{
+    object *next = NULL;
+
+    LOG(llevDebug, "DEBUG:: %s/find_next_object_of_type(%s[%d], %d, %s, \"%s\", \"%s\", %d, %s[%d]):",
+        __FILE__,
+        (op) ? op->name : "NULL", (op) ? op->count : 0,
+        type, (arch) ? arch->name : "NULL", name, title, 
+        mode, (root) ? root->name : "NULL", (root) ? root->count : 0);
+
+    if (op->inv &&
+        (mode == FNO_MODE_INV_ONLY ||
+         (mode == FNO_MODE_CONTAINERS &&
+          (op->type == PLAYER ||
+           op->type == MONSTER ||
+           op->type == CONTAINER ||
+           op->type == SPAWN_POINT_MOB)) ||
+         mode == FNO_MODE_ALL))
+    {
+        next = op->inv;
+        LOG(llevDebug, "\n v");
+    }
+    else if (op->below && !op->map)
+    {
+        next = op->below;
+        LOG(llevDebug, "\n >");
+    }
+    else if (op->env && op->env != root)
+    {
+        next = op->env;
+        LOG(llevDebug, "\n ^");
+    }
+
+    while (next)
+    {
+        LOG(llevDebug, " %s[%d]",
+            next->name, next->count);
+
+        if ((!type || next->type == type) &&
+            (!arch || next->arch == arch) &&
+            (!name || !strcmp(next->name, name)) &&
+            (!title || !strcmp(next->title, title)))
+        {
+            LOG(llevDebug, " MATCHES!\n");
+            break;
+        }
+
+        if (next->inv &&
+            ((mode == FNO_MODE_CONTAINERS &&
+              (next->type == CONTAINER ||
+               next->type == SPAWN_POINT_MOB) ||
+             mode == FNO_MODE_ALL)))
+        {
+            next = next->inv;
+            LOG(llevDebug, "\n v");
+        }
+        else if (next->env && !next->below)
+        {
+            object *tmp = NULL;
+
+            while (!next->map && !tmp && (!root || next->env != root->env))
+            {
+                next = next->env;
+                tmp = (!next->map) ? next->below : NULL;
+                LOG(llevDebug, "\n ^ %s[%d]",
+                    next->name, next->count);
+            }
+            next = tmp;
+            if (mode != FNO_MODE_ALL)
+                while (next && QUERY_FLAG(next, FLAG_SYS_OBJECT))
+                    next = next->below;
+            LOG(llevDebug, "->");
+        }
+        else
+        {
+            next = next->below;
+            if (mode != FNO_MODE_ALL)
+                while (next && QUERY_FLAG(next, FLAG_SYS_OBJECT))
+                    next = next->below;
+            LOG(llevDebug, " >");
+        }
+    }
+
+    if (!next)
+        LOG(llevDebug, " NULL!");
+    LOG(llevDebug, "\n");
+    
+    return next;
+}

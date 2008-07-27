@@ -295,4 +295,9 @@ typedef struct obj
 
 #define WP_MOVE_TRIES 4 /* number of retries to get closer to (local) target before giving up */
 
+/*find_next_object modes */
+#define FNO_MODE_INV_ONLY   0
+#define FNO_MODE_CONTAINERS 1
+#define FNO_MODE_ALL        2
+
 #endif
