@@ -2,6 +2,7 @@ arch map
 name Testmaps - Main§rainthunder.ogg|0|-1
 msg
 Created:  2003-04-13 Daimonin Map Editor
+Modified: 2008-07-27 smacky
 endmsg
 width 17
 height 17
@@ -758,15 +759,19 @@ arch floor_ostone1
 x 6
 y 8
 end
-arch ant_soldier
-name Skillgiver
-friendly 1
-stand_still 1
+arch spawn_point
 x 6
 y 8
+arch ant_soldier
+name Skillgiver
+type 83
+friendly 1
+stand_still 1
 arch event_obj
+name Lua
 sub_type 13
 race /dev/testmaps/skills.lua
+end
 end
 end
 arch floor_ostone1
@@ -838,6 +843,10 @@ arch floor_ostone1
 x 7
 y 3
 end
+arch floor_ostone1
+x 7
+y 4
+end
 arch stairs_stone_down
 name stairs to ai testmap
 slaying testmap_ai
@@ -858,16 +867,19 @@ arch floor_ostone1
 x 7
 y 7
 end
-arch golem
-name Scripter
-friendly 1
-stand_still 1
+arch spawn_point
 x 7
 y 7
+arch golem
+name Scripter
+type 83
+friendly 1
+stand_still 1
 arch event_obj
 name Lua
 sub_type 6
 race /dev/testmaps/ScriptTest.lua
+end
 end
 end
 arch floor_ostone1
@@ -975,15 +987,19 @@ arch floor_ostone1
 x 8
 y 8
 end
-arch ant_red
-name Spellgiver
-stand_still 1
-friendly 1
+arch spawn_point
 x 8
 y 8
+arch ant_red
+name Spellgiver
+type 83
+stand_still 1
+friendly 1
 arch event_obj
+name Lua
 sub_type 13
 race /dev/testmaps/spells.lua
+end
 end
 end
 arch floor_ostone1
@@ -1593,6 +1609,13 @@ arch floor_ostone1
 x 14
 y 7
 end
+arch sign
+msg
+To core methods testmap
+endmsg
+x 14
+y 7
+end
 arch floor_ostone1
 x 14
 y 8
@@ -1715,6 +1738,14 @@ x 15
 y 6
 end
 arch floor_ostone1
+x 15
+y 7
+end
+arch stairs_stone_down
+name Tiled maps and multitle archs
+slaying testmap_coremethods
+hp 1
+sp 1
 x 15
 y 7
 end
