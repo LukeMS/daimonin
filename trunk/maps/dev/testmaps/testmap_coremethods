@@ -187,7 +187,7 @@ arch sign
 msg
 object:FindNextObject() test
 
-Pull the lever to run the fno.lua script. As this method has quite a few optional arguments it would require a slightly complex UI to satisfactorily allow these options to be changed at runtime. It's not worth writing this, so just change the script to change behaviour. By default, the match is TYPE_CONTAINER only. See script.
+Pull the lever to run the FindNextObject.lua script. As this method has quite a few optional arguments it would require a slightly complex UI to satisfactorily allow these options to be changed at runtime. It's not worth writing this, so just change the script to change behaviour. By default, the match is TYPE_CONTAINER only. See script.
 endmsg
 x 1
 y 4
@@ -203,7 +203,7 @@ y 5
 arch event_obj
 name Lua
 sub_type 1
-race fno.lua
+race FindNextObject.lua
 end
 end
 arch floor_ostone1
