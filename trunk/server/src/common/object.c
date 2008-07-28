@@ -3129,7 +3129,7 @@ object *find_next_object(object *op, uint8 type, archetype *arch, uint8 *name, u
         next = op->below;
         LOG(llevDebug, "\n >");
     }
-    else if (op->env && op->env != root)
+    else if (op->env)
     {
         next = op->env;
         LOG(llevDebug, "\n ^");
@@ -3140,7 +3140,12 @@ object *find_next_object(object *op, uint8 type, archetype *arch, uint8 *name, u
         LOG(llevDebug, " %s[%d]",
             next->name, next->count);
 
-        if ((!type || next->type == type) &&
+        if (root && next == root)
+        {
+            LOG(llevDebug, " ROOT!");
+            break;
+        }
+        else if ((!type || next->type == type) &&
             (!arch || next->arch == arch) &&
             (!name || !strcmp(next->name, name)) &&
             (!title || !strcmp(next->title, title)))
@@ -3162,25 +3167,34 @@ object *find_next_object(object *op, uint8 type, archetype *arch, uint8 *name, u
         {
             object *tmp = NULL;
 
-            while (!next->map && !tmp && (!root || next->env != root->env))
+            while (!tmp && !next->map)
             {
+                if (next == root)
+                    break;
                 next = next->env;
                 tmp = (!next->map) ? next->below : NULL;
                 LOG(llevDebug, "\n ^ %s[%d]",
                     next->name, next->count);
             }
-            next = tmp;
-            if (mode != FNO_MODE_ALL)
-                while (next && QUERY_FLAG(next, FLAG_SYS_OBJECT))
-                    next = next->below;
+            if (next != root)
+            {
+                next = tmp;
+                if (mode != FNO_MODE_ALL)
+                    while (next && QUERY_FLAG(next, FLAG_SYS_OBJECT))
+                        if ((next = next->below) == root && root)
+                            break;
+            }
             LOG(llevDebug, "->");
         }
         else
         {
-            next = next->below;
-            if (mode != FNO_MODE_ALL)
-                while (next && QUERY_FLAG(next, FLAG_SYS_OBJECT))
-                    next = next->below;
+            if ((next = next->below) != root)
+            {
+                if (mode != FNO_MODE_ALL)
+                    while (next && QUERY_FLAG(next, FLAG_SYS_OBJECT))
+                        if ((next = next->below) == root && root)
+                            break;
+            }
             LOG(llevDebug, " >");
         }
     }
