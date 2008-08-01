@@ -302,35 +302,73 @@ end
 -------------------
 -- qb:AddQuestTarget() is a wrapper qm:AddQuestTarget() which is itself
 -- a wrapper for object:AddQuestTarget()!
--- nr is the quest in question. It must be a number.
+-- nr is the quest in question. It must be a numiber.
+-- TODO: Document args 2-6. Sort out 7th arg.
 -------------------
-function QuestBuilder:AddQuestTarget(nr, ...)
+function QuestBuilder:AddQuestTarget(nr, chance, nrof, arch, name, title)
     assert(type(nr) == "number",
            "Arg #1 must be number!")
+    assert(type(chance) == "number",
+           "Arg #2 must be number!")
+    assert(type(nrof) == "number",
+           "Arg #3 must be number!")
+    assert(type(arch) == "string",
+           "Arg #4 must be string!")
+    assert(type(name) == "string" or name == nil,
+           "Arg #5 must be string or nil!")
+    assert(type(title) == "string" or title == nil,
+           "Arg #6 must be string or nil!")
 
     nr = math.abs(nr)
     assert(nr > 0 and
            nr <= table.getn(self),
            "Not enough entries in qb table!")
 
-    return self[nr].qm:AddQuestTarget(unpack(arg))
+    local t = {
+        [1] = chance,
+        [2] = nrof,
+        [3] = arch,
+        [4] = name,
+        [5] = title
+    }
+
+    return self[nr].qm:AddQuestTarget(unpack(t))
 end
 
 -------------------
 -- qb:AddQuestItem() is a wrapper for qm:AddQuestTarget() which is itself
 -- a wrapper for object:AddQuestItem()!
 -- nr is the quest in question. It must be a number.
+-- TODO: Document args 2-6.
 -------------------
-function QuestBuilder:AddQuestItem(nr, ...)
+function QuestBuilder:AddQuestItem(nr, nrof, arch, face, name, title)
     assert(type(nr) == "number",
            "Arg #1 must be number!")
+    assert(type(nrof) == "number",
+           "Arg #2 must be number!")
+    assert(type(arch) == "string",
+           "Arg #3 must be string!")
+    assert(type(face) == "string",
+           "Arg #4 must be string!")
+    assert(type(name) == "string" or name == nil,
+           "Arg #5 must be string or nil!")
+    assert(type(title) == "string" or title == nil,
+           "Arg #6 must be string or nil!")
 
     nr = math.abs(nr)
     assert(nr > 0 and
            nr <= table.getn(self),
            "Not enough entries in qb table!")
 
-    return self[nr].qm:AddQuestItem(unpack(arg))
+    local t = {
+        [1] = nrof,
+        [2] = arch,
+        [3] = face,
+        [4] = name,
+        [5] = title
+    }
+
+    return self[nr].qm:AddQuestItem(unpack(t))
 end
 
 -------------------
