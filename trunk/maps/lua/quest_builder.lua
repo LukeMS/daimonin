@@ -302,8 +302,13 @@ end
 -------------------
 -- qb:AddQuestTarget() is a wrapper qm:AddQuestTarget() which is itself
 -- a wrapper for object:AddQuestTarget()!
--- nr is the quest in question. It must be a numiber.
--- TODO: Document args 2-6. Sort out 7th arg.
+-- nr is the quest in question. It must be a number.
+-- chance is the 1/chance likelihood of a kill counting. It must be a number.
+-- nrof is the number of kills which must be made. It must be a number.
+-- arch is the target's arch. It must be a string.
+-- name is the target's name. It must be a string or nil.
+-- title is the target's title. It must be a string or nil.
+-- TODO: Sort out 7th arg.
 -------------------
 function QuestBuilder:AddQuestTarget(nr, chance, nrof, arch, name, title)
     assert(type(nr) == "number",
@@ -339,7 +344,11 @@ end
 -- qb:AddQuestItem() is a wrapper for qm:AddQuestTarget() which is itself
 -- a wrapper for object:AddQuestItem()!
 -- nr is the quest in question. It must be a number.
--- TODO: Document args 2-6.
+-- nrof is the number of items which must be gathered. It must be a number.
+-- arch is the target's arch. It must be a string.
+-- face is the target's face. It must be a string.
+-- name is the target's name. It must be a string or nil.
+-- title is the target's title. It must be a string or nil.
 -------------------
 function QuestBuilder:AddQuestItem(nr, nrof, arch, face, name, title)
     assert(type(nr) == "number",
