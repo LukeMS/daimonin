@@ -384,6 +384,18 @@ arrow.161
 arrow.171
 arrow.181
 mina
+anim arrow_fey
+facings 9
+arrow_fey.101
+arrow_fey.111
+arrow_fey.121
+arrow_fey.131
+arrow_fey.141
+arrow_fey.151
+arrow_fey.161
+arrow_fey.171
+arrow_fey.181
+mina
 anim arrow_wintersevent
 facings 9
 arrow_wintersevent.101
@@ -1721,29 +1733,45 @@ anim candle_purp
 candle_purp.101
 candle_purp.102
 mina
+anim candlelight1.101
+candlelight1.101
+candlelight1.102
+mina
+anim candlelight2.101
+candlelight2.101
+candlelight2.102
+mina
+anim candlelight3.101
+candlelight3.101
+candlelight3.102
+mina
+anim candlelight4.101
+candlelight4.101
+candlelight4.102
+mina
 anim cane_pole
 facings 9
 dummy.111
-cane_pole.151
-cane_pole.151
-cane_pole.151
-cane_pole.151
+dummy.111
+dummy.111
 cane_pole.131
-cane_pole.131
-cane_pole.131
-cane_pole.131
+dummy.111
+cane_pole.151
+dummy.111
+dummy.111
+dummy.111
 mina
 anim cane_pole_unlit
 facings 9
 dummy.111
-cane_pole.150
-cane_pole.150
-cane_pole.150
-cane_pole.150
+dummy.111
+dummy.111
 cane_pole.130
-cane_pole.130
-cane_pole.130
-cane_pole.130
+dummy.111
+cane_pole.150
+dummy.111
+dummy.111
+dummy.111
 mina
 anim cat_black
 facings 25
@@ -4563,6 +4591,48 @@ doorway_wood1.131
 doorway_wood1.131
 doorway_wood1.111
 mina
+anim double_handle-handle1
+facings 9
+dummy.111
+dummy.111
+double_handle-handle1.111
+double_handle-handle1.112
+dummy.111
+dummy.111
+dummy.111
+dummy.111
+dummy.111
+dummy.111
+dummy.111
+dummy.111
+dummy.111
+dummy.111
+double_handle-handle1.171
+double_handle-handle1.172
+dummy.111
+dummy.111
+mina
+anim double_handle-trigger1
+facings 9
+dummy.111
+dummy.111
+double_handle-handle1.111
+double_handle-handle1.112
+dummy.111
+dummy.111
+dummy.111
+dummy.111
+dummy.111
+dummy.111
+dummy.111
+dummy.111
+dummy.111
+dummy.111
+double_handle-handle1.171
+double_handle-handle1.172
+dummy.111
+dummy.111
+mina
 anim dragon_black
 facings 25
 dummy.111
@@ -5389,14 +5459,14 @@ mina
 anim drowflag
 facings 9
 dummy.111
-flag_drows.u.151
-flag_drows.u.151
-flag_drows.u.151
-flag_drows.u.131
-flag_drows.u.131
-flag_drows.u.131
-flag_drows.u.131
-flag_drows.u.151
+drowflag.u.151
+drowflag.u.131
+drowflag.u.131
+drowflag.u.151
+drowflag.u.151
+drowflag.u.131
+drowflag.u.131
+drowflag.u.151
 mina
 anim druj_skull
 facings 25
@@ -6281,86 +6351,86 @@ mina
 anim flag_01
 facings 9
 dummy.111
-flag_01.u.151
-flag_01.u.151
-flag_01.u.151
-flag_01.u.131
-flag_01.u.131
-flag_01.u.131
-flag_01.u.131
-flag_01.u.151
+flag1.u.151
+flag1.u.151
+flag1.u.151
+flag1.u.131
+flag1.u.131
+flag1.u.131
+flag1.u.131
+flag1.u.151
 mina
 anim flag_02
 facings 9
 dummy.111
-flag_02.u.151
-flag_02.u.151
-flag_02.u.151
-flag_02.u.131
-flag_02.u.131
-flag_02.u.131
-flag_02.u.131
-flag_02.u.151
+flag2.u.151
+flag2.u.151
+flag2.u.151
+flag2.u.131
+flag2.u.131
+flag2.u.131
+flag2.u.131
+flag2.u.151
 mina
 anim flag_03
 facings 9
 dummy.111
-flag_03.u.151
-flag_03.u.151
-flag_03.u.151
-flag_03.u.131
-flag_03.u.131
-flag_03.u.131
-flag_03.u.131
-flag_03.u.151
+flag3.u.151
+flag3.u.151
+flag3.u.151
+flag3.u.131
+flag3.u.131
+flag3.u.131
+flag3.u.131
+flag3.u.151
 mina
 anim flag_04
 facings 9
 dummy.111
-flag_04.u.151
-flag_04.u.151
-flag_04.u.151
-flag_04.u.131
-flag_04.u.131
-flag_04.u.131
-flag_04.u.131
-flag_04.u.151
+flag4.u.151
+flag4.u.151
+flag4.u.151
+flag4.u.131
+flag4.u.131
+flag4.u.131
+flag4.u.131
+flag4.u.151
 mina
 anim flag_05
 facings 9
 dummy.111
-flag_05.u.151
-flag_05.u.151
-flag_05.u.151
-flag_05.u.131
-flag_05.u.131
-flag_05.u.131
-flag_05.u.131
-flag_05.u.151
+flag5.u.151
+flag5.u.151
+flag5.u.151
+flag5.u.131
+flag5.u.131
+flag5.u.131
+flag5.u.131
+flag5.u.151
 mina
 anim flag_06
 facings 9
 dummy.111
-flag_06.u.151
-flag_06.u.151
-flag_06.u.151
-flag_06.u.131
-flag_06.u.131
-flag_06.u.131
-flag_06.u.131
-flag_06.u.151
+flag6.u.151
+flag6.u.151
+flag6.u.151
+flag6.u.131
+flag6.u.131
+flag6.u.131
+flag6.u.131
+flag6.u.151
 mina
 anim flag_07
 facings 9
 dummy.111
-flag_07.u.151
-flag_07.u.151
-flag_07.u.151
-flag_07.u.131
-flag_07.u.131
-flag_07.u.131
-flag_07.u.131
-flag_07.u.151
+flag7.u.151
+flag7.u.151
+flag7.u.151
+flag7.u.131
+flag7.u.131
+flag7.u.131
+flag7.u.131
+flag7.u.151
 mina
 anim fmask_lava_blob
 fmask_lava_blob.101
@@ -6532,6 +6602,34 @@ mina
 anim full_xmas_tree
 chtree_big5b.101
 chtree_big5b.102
+mina
+anim fungus
+facings 25
+trans.101
+fungus.131
+fungus.131
+fungus.131
+fungus.131
+fungus.151
+fungus.151
+fungus.151
+fungus.151
+fungus.131
+fungus.131
+fungus.131
+fungus.131
+fungus.151
+fungus.151
+fungus.151
+fungus.151
+fungus.131
+fungus.131
+fungus.131
+fungus.131
+fungus.151
+fungus.151
+fungus.151
+fungus.151
 mina
 anim g_pumpkin
 facings 25
@@ -7837,8 +7935,8 @@ grave_cross2.131
 grave_cross2.111
 mina
 anim grave_fire.101
-grave_fire_on.101
-grave_fire_on.102
+grave_fire.101
+grave_fire.102
 mina
 anim grave_open.111
 facings 9
@@ -8661,30 +8759,6 @@ hobo_old.151
 hobo_old.152
 hobo_old.153
 mina
-anim honey_deco_2_1
-facings 9
-dummy.111
-honey_deco_2.u.151
-honey_deco_2.u.151
-honey_deco_2.u.151
-honey_deco_2.u.131
-honey_deco_2.u.131
-honey_deco_2.u.131
-honey_deco_2.u.131
-honey_deco_2.u.151
-mina
-anim honey_deco_3_1
-facings 9
-dummy.111
-honey_deco3.111
-honey_deco3.111
-honey_deco3.111
-honey_deco3.131
-honey_deco3.131
-honey_deco3.131
-honey_deco3.131
-honey_deco3.111
-mina
 anim horn
 horn.101
 horn.102
@@ -9247,34 +9321,34 @@ anim jack
 facings 9
 dummy.111
 dummy.111
-jackolantern_01.102
-jackolantern_01.103
-jackolantern_01.102
-jackolantern_01.103
-jackolantern_01.102
-jackolantern_01.103
-jackolantern_02.102
-jackolantern_02.103
-jackolantern_02.102
-jackolantern_02.103
-jackolantern_02.102
-jackolantern_02.103
-jackolantern_02.102
-jackolantern_02.103
-jackolantern_01.102
-jackolantern_01.103
+dummy.111
+dummy.111
+dummy.111
+dummy.111
+jackolantern.131
+jackolantern.132
+dummy.111
+dummy.111
+jackolantern.151
+jackolantern.152
+dummy.111
+dummy.111
+dummy.111
+dummy.111
+dummy.111
+dummy.111
 mina
 anim jack_unlit
 facings 9
 dummy.111
-jackolantern_01.101
-jackolantern_01.101
-jackolantern_01.101
-jackolantern_02.101
-jackolantern_02.101
-jackolantern_02.101
-jackolantern_02.101
-jackolantern_01.101
+dummy.111
+dummy.111
+jackolantern.130
+dummy.111
+jackolantern.150
+dummy.111
+dummy.111
+dummy.111
 mina
 anim jelly_blue
 facings 25
@@ -10117,14 +10191,14 @@ mina
 anim koboldflag
 facings 9
 dummy.111
-koboldflag.u.111
-koboldflag.u.111
-koboldflag.u.111
+koboldflag.u.151
 koboldflag.u.131
 koboldflag.u.131
+koboldflag.u.151
+koboldflag.u.151
 koboldflag.u.131
 koboldflag.u.131
-koboldflag.u.111
+koboldflag.u.151
 mina
 anim krillen
 facings 25
@@ -10277,56 +10351,35 @@ ladder_up_vege.131
 ladder_up_vege.151
 mina
 anim lamp
-lamp_lit1.101
-lamp_lit1.102
+lamp.101
+lamp.102
 mina
 anim lamp_pole
-facings 9
-dummy.111
 lamp_pole.101
-lamp_pole.101
-lamp_pole.101
-lamp_pole.101
-lamp_pole.101
-lamp_pole.101
-lamp_pole.101
-lamp_pole.101
-mina
-anim lamp_pole_unlit
-facings 9
-dummy.111
-lamp_pole.111
-lamp_pole.111
-lamp_pole.111
-lamp_pole.111
-lamp_pole.111
-lamp_pole.111
-lamp_pole.111
-lamp_pole.111
 mina
 anim lamp_post
 facings 9
 dummy.111
-lamp_post.151
-lamp_post.151
-lamp_post.151
-lamp_post.151
+dummy.111
+dummy.111
 lamp_post.131
-lamp_post.131
-lamp_post.131
-lamp_post.131
+dummy.111
+lamp_post.151
+dummy.111
+dummy.111
+dummy.111
 mina
 anim lamp_post_unlit
 facings 9
 dummy.111
-lamp_post.152
-lamp_post.152
-lamp_post.152
-lamp_post.152
-lamp_post.132
-lamp_post.132
-lamp_post.132
-lamp_post.132
+dummy.111
+dummy.111
+lamp_post.130
+dummy.111
+lamp_post.150
+dummy.111
+dummy.111
+dummy.111
 mina
 anim lamp_snow
 lamp_snow.101
@@ -10336,25 +10389,25 @@ anim lamp_wall
 facings 9
 dummy.111
 lamp_wall.111
+dummy.111
 lamp_wall.111
-lamp_wall.111
+dummy.111
 lamp_wall.171
+dummy.111
 lamp_wall.171
-lamp_wall.171
-lamp_wall.171
-lamp_wall.111
+dummy.111
 mina
 anim lamp_wall_1_unlit
 facings 9
 dummy.111
 lamp_wall.110
+dummy.111
 lamp_wall.110
-lamp_wall.110
+dummy.111
 lamp_wall.170
+dummy.111
 lamp_wall.170
-lamp_wall.170
-lamp_wall.170
-lamp_wall.110
+dummy.111
 mina
 anim lantern2_magic.131
 facings 9
@@ -10381,27 +10434,35 @@ lantern_magic.171
 lantern_magic.171
 mina
 anim lantern_pumpk_a
+lantern_pumpk_a.101
 lantern_pumpk_a.102
-lantern_pumpk_a.103
 mina
 anim lantern_pumpk_b
+lantern_pumpk_b.101
 lantern_pumpk_b.102
-lantern_pumpk_b.103
 mina
 anim lantern_pumpk_c
+lantern_pumpk_c.101
 lantern_pumpk_c.102
-lantern_pumpk_c.103
 mina
 anim lantern_pumpk_d
+lantern_pumpk_d.101
 lantern_pumpk_d.102
-lantern_pumpk_d.103
 mina
-anim large_candle
+anim large_candle_a
 large_candle_a.101
+large_candle_a.102
+large_candle_a.103
+mina
+anim large_candle_b
 large_candle_b.101
+large_candle_b.102
+large_candle_b.103
+mina
+anim large_candle_c
 large_candle_c.101
-large_candle_d.101
-large_candle_ul.101
+large_candle_c.102
+large_candle_c.103
 mina
 anim larva
 facings 25
@@ -13677,6 +13738,108 @@ pair_human.151
 pair_human.151
 pair_human.151
 pair_human.151
+mina
+anim palisade-door1
+facings 9
+dummy.111
+dummy.111
+palisade-door1.111
+palisade-door1.112
+dummy.111
+dummy.111
+palisade-door1.131
+palisade-door1.132
+dummy.111
+dummy.111
+palisade-door1.151
+palisade-door1.152
+dummy.111
+dummy.111
+palisade-door1.171
+palisade-door1.172
+dummy.111
+dummy.111
+mina
+anim palisade-door1-w
+facings 9
+dummy.111
+dummy.111
+palisade-door1-w.111
+palisade-door1-w.112
+dummy.111
+dummy.111
+palisade-door1-w.131
+palisade-door1-w.132
+dummy.111
+dummy.111
+palisade-door1-w.151
+palisade-door1-w.152
+dummy.111
+dummy.111
+palisade-door1-w.171
+palisade-door1-w.172
+dummy.111
+dummy.111
+mina
+anim palisade-doorway1
+facings 9
+dummy.111
+dummy.111
+dummy.111
+palisade-doorway1.131
+dummy.111
+palisade-doorway1.151
+dummy.111
+dummy.111
+dummy.111
+mina
+anim palisade-doorway2
+facings 9
+dummy.111
+dummy.111
+dummy.111
+palisade-doorway2.131
+dummy.111
+palisade-doorway2.151
+dummy.111
+dummy.111
+dummy.111
+mina
+anim palisade-wall1
+facings 9
+dummy.111
+dummy.111
+dummy.111
+palisade-wall1.131
+palisade-wall1.141
+palisade-wall1.151
+dummy.111
+dummy.111
+palisade-wall1.181
+mina
+anim palisade-wall2
+facings 9
+dummy.111
+dummy.111
+dummy.111
+palisade-wall2.131
+dummy.111
+palisade-wall2.151
+dummy.111
+dummy.111
+dummy.111
+mina
+anim palisade-wall3
+facings 9
+dummy.111
+dummy.111
+dummy.111
+palisade-wall3.131
+dummy.111
+palisade-wall3.151
+dummy.111
+dummy.111
+dummy.111
 mina
 anim parrot
 facings 25
@@ -18488,8 +18651,8 @@ tipper.131
 tipper.111
 mina
 anim torch
-torch_lit1.101
-torch_lit1.102
+torch.101
+torch.102
 mina
 anim torch_skull_wall_1
 facings 9
@@ -18501,46 +18664,46 @@ torch_skull_wall.111
 torch_skull_wall.112
 torch_skull_wall.113
 torch_skull_wall.111
+dummy.111
+dummy.111
+dummy.111
+dummy.111
 torch_skull_wall.111
 torch_skull_wall.112
 torch_skull_wall.113
 torch_skull_wall.111
-torch_skull_wall.111
-torch_skull_wall.112
-torch_skull_wall.113
-torch_skull_wall.111
+dummy.111
+dummy.111
+dummy.111
+dummy.111
 torch_skull_wall.171
 torch_skull_wall.172
 torch_skull_wall.173
 torch_skull_wall.171
+dummy.111
+dummy.111
+dummy.111
+dummy.111
 torch_skull_wall.171
 torch_skull_wall.172
 torch_skull_wall.173
 torch_skull_wall.171
-torch_skull_wall.171
-torch_skull_wall.172
-torch_skull_wall.173
-torch_skull_wall.171
-torch_skull_wall.171
-torch_skull_wall.172
-torch_skull_wall.173
-torch_skull_wall.171
-torch_skull_wall.111
-torch_skull_wall.112
-torch_skull_wall.113
-torch_skull_wall.111
+dummy.111
+dummy.111
+dummy.111
+dummy.111
 mina
 anim torch_skull_wall_1_unlit
 facings 9
 dummy.111
 torch_skull_wall.110
+dummy.111
 torch_skull_wall.110
-torch_skull_wall.110
+dummy.111
 torch_skull_wall.170
+dummy.111
 torch_skull_wall.170
-torch_skull_wall.170
-torch_skull_wall.170
-torch_skull_wall.110
+dummy.111
 mina
 anim torch_wall_1
 facings 9
@@ -18552,46 +18715,46 @@ torch_wall.111
 torch_wall.112
 torch_wall.113
 torch_wall.114
+dummy.111
+dummy.111
+dummy.111
+dummy.111
 torch_wall.111
 torch_wall.112
 torch_wall.113
 torch_wall.114
-torch_wall.111
-torch_wall.112
-torch_wall.113
-torch_wall.114
+dummy.111
+dummy.111
+dummy.111
+dummy.111
 torch_wall.171
 torch_wall.172
 torch_wall.173
 torch_wall.174
+dummy.111
+dummy.111
+dummy.111
+dummy.111
 torch_wall.171
 torch_wall.172
 torch_wall.173
 torch_wall.174
-torch_wall.171
-torch_wall.172
-torch_wall.173
-torch_wall.174
-torch_wall.171
-torch_wall.172
-torch_wall.173
-torch_wall.174
-torch_wall.111
-torch_wall.112
-torch_wall.113
-torch_wall.114
+dummy.111
+dummy.111
+dummy.111
+dummy.111
 mina
 anim torch_wall_1_unlit
 facings 9
 dummy.111
 torch_wall.110
+dummy.111
 torch_wall.110
-torch_wall.110
+dummy.111
 torch_wall.170
+dummy.111
 torch_wall.170
-torch_wall.170
-torch_wall.170
-torch_wall.110
+dummy.111
 mina
 anim toy_santa
 toy_santa.101
@@ -19347,6 +19510,51 @@ lake_deepest.102
 lake_deepest.103
 lake_deepest.104
 mina
+anim waterfall_huge
+waterfall_huge.101
+waterfall_huge.102
+waterfall_huge.103
+mina
+anim waterfall_huge_a
+waterfall_huge.101
+waterfall_huge.102
+waterfall_huge.103
+mina
+anim waterfall_huge_b
+waterfall_huge.101
+waterfall_huge.102
+waterfall_huge.103
+mina
+anim waterfall_huge_c
+waterfall_huge.101
+waterfall_huge.102
+waterfall_huge.103
+mina
+anim waterfall_huge_d
+waterfall_huge.101
+waterfall_huge.102
+waterfall_huge.103
+mina
+anim waterfall_huge_e
+waterfall_huge.101
+waterfall_huge.102
+waterfall_huge.103
+mina
+anim waterfall_huge_f
+waterfall_huge.101
+waterfall_huge.102
+waterfall_huge.103
+mina
+anim waterfall_huge_g
+waterfall_huge.101
+waterfall_huge.102
+waterfall_huge.103
+mina
+anim waterfall_huge_h
+waterfall_huge.101
+waterfall_huge.102
+waterfall_huge.103
+mina
 anim watertrough.111
 facings 9
 dummy.111
@@ -19422,26 +19630,26 @@ mina
 anim wmask_bflag_brown_1
 facings 9
 dummy.111
-wmask_bflag_brown.u.151
-wmask_bflag_brown.u.151
-wmask_bflag_brown.u.151
-wmask_bflag_brown.u.131
-wmask_bflag_brown.u.131
-wmask_bflag_brown.u.131
-wmask_bflag_brown.u.131
-wmask_bflag_brown.u.151
+flag8.u.151
+flag8.u.131
+flag8.u.131
+flag8.u.151
+flag8.u.151
+flag8.u.131
+flag8.u.131
+flag8.u.151
 mina
 anim wmask_bflag_fire1_1
 facings 9
 dummy.111
-wmask_bflag_fire1.u.151
-wmask_bflag_fire1.u.151
-wmask_bflag_fire1.u.151
-wmask_bflag_fire1.u.131
-wmask_bflag_fire1.u.131
-wmask_bflag_fire1.u.131
-wmask_bflag_fire1.u.131
-wmask_bflag_fire1.u.151
+flag9.u.151
+flag9.u.131
+flag9.u.131
+flag9.u.151
+flag9.u.151
+flag9.u.131
+flag9.u.131
+flag9.u.151
 mina
 anim wmask_fire_off_1
 facings 9
@@ -20058,14 +20266,14 @@ mina
 anim yervas_flag
 facings 9
 dummy.111
-yervas_flag.u.151
-yervas_flag.u.151
-yervas_flag.u.151
-yervas_flag.u.131
-yervas_flag.u.131
-yervas_flag.u.131
-yervas_flag.u.131
-yervas_flag.u.151
+yervasflag.u.151
+yervasflag.u.131
+yervasflag.u.131
+yervasflag.u.151
+yervasflag.u.151
+yervasflag.u.131
+yervasflag.u.131
+yervasflag.u.151
 mina
 anim zombie
 facings 25
