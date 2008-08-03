@@ -230,7 +230,7 @@ end
 
 -------------------
 -- qb:RegisterQuest() creates a new quest from qb[nr] (qb[nr].qm.trigger must
--- be nil), returning true if the quest could be added, false otherwise.
+-- be nil), generating an error if registration fails.
 -- nr is the quest in question. It must be a number.
 -- ib is the InterfaceBuilder which contains the quest description.
 -------------------
@@ -244,19 +244,17 @@ function QuestBuilder:RegisterQuest(nr, ib)
     assert(nr > 0 and
            nr <= table.getn(self),
            "Not enough entries in qb table!")
-    local success = self[nr].qm:RegisterQuest(self[nr].mode, ib)
-    assert(success,
+    assert(self[nr].qm:RegisterQuest(self[nr].mode, ib),
            "Could not register quest!")
 
     local player = self[nr].player
 
     player:Sound(0, 0, game.SOUND_LEARN_SPELL)
     player:Write("You start the quest '" .. self[nr].name .. "'.")
+
     if type(self[nr].goal) == "function" then
         self[nr].goal(nr)
     end
-
-    return success
 end
 
 -------------------
