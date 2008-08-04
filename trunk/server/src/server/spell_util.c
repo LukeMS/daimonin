@@ -300,7 +300,7 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
         return 0;
     }
 
-    /* LOG(llevInfo,"TARGET: op: %s target: %s\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(target)); */
+	/* LOG(llevInfo,"TARGET: op: %s target: %s\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(target)); */
 
     /* if valid target is not in range for selected spell, skip here casting */
     if (target)
@@ -310,10 +310,10 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
         {
             if(op->type == PLAYER)
                 new_draw_info(NDI_UNIQUE, 0, op, "Your target is out of range!");
-            /*
-            else
+			/* 
+			else
                 LOG(llevInfo,"cast_spell: %s out of range for %s from %s", STRING_OBJ_NAME(target), spells[type].name, STRING_OBJ_NAME(op));
-            */
+			*/
             return 0;
         }
     }
@@ -332,14 +332,14 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
         if (s->flags & SPELL_DESC_WIS)
             new_draw_info_format(NDI_UNIQUE, 0, op, "This ground is unholy!  %s ignores you.", godname);
         else
-            new_draw_info(NDI_UNIQUE, 0, op, "Something blocks the magic.");
+			new_draw_info(NDI_UNIQUE, 0, op, "Something blocks the magic.");
         return 0;
     }
 
     /* chance to fumble the spell by to low wisdom */
     /* FIXME: we have now spell_fumble */
     if (item == spellNormal && op->type == PLAYER && s->flags & SPELL_DESC_WIS
-            && random_roll(0, 99) < s->level / (float) MAX(1, op->chosen_skill->level) * 1)
+			&& random_roll(0, 99) < s->level / (float) MAX(1, op->chosen_skill->level) * 1)
     {
         play_sound_player_only(CONTR(op), SOUND_FUMBLE_SPELL, SOUND_NORMAL, 0, 0);
         new_draw_info(NDI_UNIQUE, 0, op, "You fumble the prayer because your wisdom is low.");
@@ -351,14 +351,12 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
 
     else if (item == spellNormal && op->type == PLAYER && !(s->flags & SPELL_DESC_WIS))
     {
-         float failure = (float)(random_roll(0, 99)
-                         - CONTR(op)->encumbrance
-                         + ((op->stats.Int - 10) / 10)
-                         - s->fumble_factor 
-                         + (op->chosen_skill->level / 10));
+         float failure = CONTR(op)->spell_fumble
+                         - (op->chosen_skill->level / 10)
+                         + s->fumble_factor;
 
-
-        if (failure < CONTR(op)->spell_fumble)
+        
+        if (random_roll(0,99) < failure)
         {
             new_draw_info(NDI_UNIQUE, 0, op, "You bungle the spell because you have too much heavy equipment in use.");
             return(random_roll(0, SP_level_spellpoint_cost(op, caster, type)));
@@ -371,7 +369,7 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
     if ((caster && !OBJECT_ACTIVE(caster)) || (target && !OBJECT_ACTIVE(target)))
         return 0;
 
-    switch ((enum spellnrs) type)
+	switch ((enum spellnrs) type)
     {
           /*
             case SP_RESTORATION:
@@ -428,21 +426,21 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
           success = fire_arch(op, caster,op->x, op->y, dir, spellarch[type], type, casting_level(caster, type), 1);
           break;
 
-        case SP_FROSTBOLT:
-        case SP_FIREBOLT:
-        case SP_S_LIGHTNING:
-            success = fire_bolt(op,caster,dir,type,!ability);
-        break;
+		case SP_FROSTBOLT:
+		case SP_FIREBOLT:
+		case SP_S_LIGHTNING:
+			success = fire_bolt(op,caster,dir,type,!ability);
+		break;
 
-        default:
+		default:
           LOG(llevBug, "BUG: cast_spell() has invalid spell nr. %d\n", type);
           break;
-          /*
-          case SP_CAUSE_HEAVY:
-          case SP_CAUSE_MEDIUM:
-          case SP_CAUSE_CRITICAL:
-          case SP_LARGE_BULLET:
-          */
+		  /*
+		  case SP_CAUSE_HEAVY:
+		  case SP_CAUSE_MEDIUM:
+		  case SP_CAUSE_CRITICAL:
+		  case SP_LARGE_BULLET:
+		  */
           /*
             case SP_BULLET:
             case SP_LARGE_BULLET:
@@ -977,23 +975,23 @@ int summon_monster(object *op, object *caster, int dir, archetype *at, int spell
 }
 
 /* moved from ok_to_put_more()
- * This function ensures that a AoE spell only put *one* instance/object of
+ * This function ensures that a AoE spell only put *one* instance/object of 
  * themself in a tile.
  */
 static inline int check_spell_instance(mapstruct *m, int x, int y, object *op)
 {
-    object *tmp;
+	object *tmp;
 
-    for (tmp = get_map_ob(m, x, y); tmp != NULL; tmp = tmp->above)
-    {
-        /* weight_limit is the ->count of the original spell object which started
-         * this spell!
-         */
-        if (op->type == tmp->type && op->weight_limit == tmp->weight_limit)
-            return 0; /* only one part for cone/explosion per tile! */
-    }
+	for (tmp = get_map_ob(m, x, y); tmp != NULL; tmp = tmp->above)
+	{
+		/* weight_limit is the ->count of the original spell object which started
+		 * this spell!
+		 */
+		if (op->type == tmp->type && op->weight_limit == tmp->weight_limit)
+			return 0; /* only one part for cone/explosion per tile! */
+	}
 
-    return 1;
+	return 1;
 }
 
 /* Returns true if it is ok to put spell *op on the space/may provided.
@@ -1027,32 +1025,32 @@ int fire_bolt(object *op, object *caster, int dir, int type, int magic)
 {
     object *tmp = NULL;
 
-    if (!spellarch[type])
+	if (!spellarch[type])
         return 0;
 
-    tmp = arch_to_object(spellarch[type]);
+	tmp = arch_to_object(spellarch[type]);
     if (tmp == NULL)
         return 0;
 
-    set_owner(tmp, op);
+	set_owner(tmp, op);
 
-    tmp->level = casting_level(caster, type);
+	tmp->level = casting_level(caster, type);
 
-    /* we should have from the arch type the default damage - we add our new damage profil */
+	/* we should have from the arch type the default damage - we add our new damage profil */
     tmp->stats.dam = (sint16) SP_lvl_dam_adjust(tmp->level, type, spells[type].bdam, 0);
 
     tmp->stats.hp = spells[type].bdur;
 
-    tmp->x = op->x,tmp->y = op->y;
+	tmp->x = op->x,tmp->y = op->y;
     tmp->direction = dir;
 
-    if (QUERY_FLAG(tmp, FLAG_IS_TURNABLE))
+	if (QUERY_FLAG(tmp, FLAG_IS_TURNABLE))
         SET_ANIMATION(tmp, (NUM_ANIMATIONS(tmp) / NUM_FACINGS(tmp)) * tmp->direction);
 
-    set_owner(tmp, op);
-    copy_owner(tmp, op);
-    tmp->weight_limit = tmp->count; /* *very* important - miss this and the spells go really wild! */
-    tmp->x += DIRX(tmp),tmp->y += DIRY(tmp);
+	set_owner(tmp, op);
+	copy_owner(tmp, op);
+	tmp->weight_limit = tmp->count; /* *very* important - miss this and the spells go really wild! */
+	tmp->x += DIRX(tmp),tmp->y += DIRY(tmp);
 
     if (wall(op->map, tmp->x, tmp->y))
     {
@@ -1128,7 +1126,7 @@ int cast_cone(object *op, object *caster, int dir, int strength, int spell_type,
     object *tmp;
     int     i, success = 0, range_min = -1, range_max = 1;
     uint32  count_ref;
-    float   tmp_dam;
+	float	tmp_dam;
 
     if (!dir)
         range_min = -3,range_max = 4,strength /= 2;
@@ -1162,14 +1160,14 @@ int cast_cone(object *op, object *caster, int dir, int strength, int spell_type,
         else
             tmp->stats.sp = i;
 
-        /* for b4, most cone effects have a fixed strength, means ldur = 0 */
-        tmp->stats.hp = strength + (SP_level_strength_adjust(op, caster, spell_type) / 5);
-        /* for b4, we grap the damage from the spell def table - in that way we can use the
-         * arch "firebreath" for different spells with different settings
-         */
-        tmp_dam = (float) SP_lvl_dam_adjust(level, spell_type, spells[spell_type].bdam , 0);
-        /* lets check the originator of the spell (player, mob) has bonus/malus from spell path */
-        tmp->stats.dam = (int) (tmp_dam * PATH_DMG_MULT(op, find_spell(spell_type)));
+		/* for b4, most cone effects have a fixed strength, means ldur = 0 */
+		tmp->stats.hp = strength + (SP_level_strength_adjust(op, caster, spell_type) / 5);
+		/* for b4, we grap the damage from the spell def table - in that way we can use the
+		 * arch "firebreath" for different spells with different settings
+		 */
+		tmp_dam = (float) SP_lvl_dam_adjust(level, spell_type, spells[spell_type].bdam , 0);
+		/* lets check the originator of the spell (player, mob) has bonus/malus from spell path */
+		tmp->stats.dam = (int) (tmp_dam * PATH_DMG_MULT(op, find_spell(spell_type)));
 
         tmp->stats.maxhp = tmp->count;
         if (!QUERY_FLAG(tmp, FLAG_FLYING))
@@ -1177,10 +1175,10 @@ int cast_cone(object *op, object *caster, int dir, int strength, int spell_type,
         if ((!QUERY_FLAG(tmp, FLAG_WALK_ON) || !QUERY_FLAG(tmp, FLAG_FLY_ON)) && tmp->stats.dam)
             LOG(llevDebug, "cast_cone(): arch %s doesn't have walk_on 1 and fly_on 1\n", spell_arch->name);
 
-        if (QUERY_FLAG(tmp, FLAG_IS_TURNABLE))
-            SET_ANIMATION(tmp, (NUM_ANIMATIONS(tmp) / NUM_FACINGS(tmp)) * dir);
+		if (QUERY_FLAG(tmp, FLAG_IS_TURNABLE))
+			SET_ANIMATION(tmp, (NUM_ANIMATIONS(tmp) / NUM_FACINGS(tmp)) * dir);
 
-        if (!insert_ob_in_map(tmp, op->map, op, 0))
+		if (!insert_ob_in_map(tmp, op->map, op, 0))
             return 0;
         if (tmp->other_arch)
             cone_drop(tmp);
@@ -1568,7 +1566,7 @@ void move_bolt(object *op)
         if (w && !QUERY_FLAG(op, FLAG_REFLECTING))
             return;
 
-        if (w || r)
+		if (w || r)
         {
             /* We're about to bounce */
             if (!QUERY_FLAG(op, FLAG_REFLECTING))
@@ -1593,16 +1591,16 @@ void move_bolt(object *op)
             update_turn_face(op); /* A bolt *must* be IS_TURNABLE */
             return;
         }
-        /* disabling this line allows back bouncing! */
-/*      else if(!check_spell_instance(op->map, op->x, op->y, op) ) */
-        else
+		/* disabling this line allows back bouncing! */
+/*		else if(!check_spell_instance(op->map, op->x, op->y, op) ) */
+		else
         {
             /* Create a copy of this object and put it ahead */
             tmp = get_object();
             copy_object(op, tmp);
             tmp->speed_left = -0.1f;
-            tmp->weight_limit = op->weight_limit;
-            tmp->stats.sp = 0;
+			tmp->weight_limit = op->weight_limit;
+			tmp->stats.sp = 0;
             tmp->x += DIRX(tmp),tmp->y += DIRY(tmp);
             if (!insert_ob_in_map(tmp, op->map, op, 0))
                 return;
@@ -1616,11 +1614,11 @@ void move_bolt(object *op)
                 forklightning(op, tmp);
             }
 
-            if (tmp)
+			if (tmp)
             {
                 if (!tmp->stats.food)
                 {
-                    tmp->stats.food = 1;
+					tmp->stats.food = 1;
                     move_bolt(tmp);
                 }
                 else
@@ -2523,27 +2521,27 @@ int SP_level_spellpoint_cost(object *op, object *caster, int spell_type)
 {
     spell  *s       = find_spell(spell_type);
     int     level   = casting_level(caster, spell_type);
-    int     sp      = s->sp;
+	int     sp		= s->sp;
 
 #ifdef SPELLPOINT_LEVEL_DEPEND
-    /* level defines our lower border */
-    if(level > s->level && s->spl)
-    {
-        /* we add every spl_level spl points to the spell costs */
-        level -= s->level;
-        level /= s->spl_level;
-
-        sp += level * s->spl;
-        /* spl_max defines a upper border of sp costs */
-        if(s->spl_max>0 && sp > s->spl_max)
-            sp = s->spl_max;
-    }
+	/* level defines our lower border */
+	if(level > s->level && s->spl)
+	{
+		/* we add every spl_level spl points to the spell costs */
+		level -= s->level;
+		level /= s->spl_level;
+		
+		sp += level * s->spl;
+		/* spl_max defines a upper border of sp costs */
+		if(s->spl_max>0 && sp > s->spl_max)
+			sp = s->spl_max;
+	}
 #endif /* SPELLPOINT_LEVEL_DEPEND */
 
-    /* at path bonus/malus */
-    sp = (int) ((float) sp * (float) PATH_SP_MULT(caster, s));
+	/* at path bonus/malus */
+	sp = (int) ((float) sp * (float) PATH_SP_MULT(caster, s));
 
-    return sp;
+	return sp;
 }
 
 /*  move_swarm_spell:  peterm  */
@@ -2861,15 +2859,15 @@ int SP_lvl_dam_adjust(int level, int spell_type, int base_dam, int stats_bonus)
     if (base_dam == -1)
         base_dam = spells[spell_type].bdam;
 
-    /* ensure a legal level value */
-    if (level < 0)
-        level = 1;
+	/* ensure a legal level value */
+	if (level < 0)
+		level = 1;
 
-    /* we simulate a stats bonus if needed to have a more progressive damage behaviour */
-    if(stats_bonus != 0)
-        dam_adj = (int) (((float) base_dam * LEVEL_DAMAGE(level) * get_player_stat_bonus(stats_bonus))/10.0f);
-    else
-        dam_adj = (int) (((float) base_dam * LEVEL_DAMAGE(level))/10.0f);
+	/* we simulate a stats bonus if needed to have a more progressive damage behaviour */
+	if(stats_bonus >= 0)
+		dam_adj = (int) (((float) base_dam * LEVEL_DAMAGE(level) * get_player_stat_bonus(stats_bonus)));
+	else
+		dam_adj = (int) (((float) base_dam * LEVEL_DAMAGE(level)));
 
     return dam_adj;
 }
