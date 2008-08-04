@@ -848,7 +848,7 @@ void fix_player(object *op)
     int                 snare_penalty = 0,slow_penalty = 0, ring_count = 0, skill_level_drain=0, skill_level_max = 1;
     int                 tmp_item, old_glow, max_boni_hp = 0, max_boni_sp = 0, max_boni_grace = 0;
     int                 i, j, inv_flag, inv_see_flag, light, ac;
-    int                 thac0=0, thacm=0;
+    int                 thac0=0, thacm=0, temp_fumble=0;
     int                 resists_boni[NROFATTACKS], resists_mali[NROFATTACKS];
     int                 potion_resist_boni[NROFATTACKS], potion_resist_mali[NROFATTACKS], potion_attack[NROFATTACKS];
     object             *tmp, *tmp_ptr, *skill_weapon = NULL, *applied_skill = NULL;
@@ -1194,7 +1194,7 @@ void fix_player(object *op)
 
                   pl->encumbrance += (sint16) (3 * tmp->weight / 1000);
 
-                  pl->spell_fumble += tmp->last_heal;
+                  temp_fumble += tmp->last_heal;
 
 				  thac0 += tmp->stats.thac0;
                   thacm += tmp->stats.thacm;
@@ -1282,7 +1282,8 @@ void fix_player(object *op)
                   pl->gen_sp += tmp->stats.sp;
                   pl->gen_grace += tmp->stats.grace;
                   pl->gen_hp += tmp->stats.hp;
-                  pl->spell_fumble += tmp->last_heal; /* spell fumble chance */
+                  temp_fumble += tmp->last_heal; /* spell fumble chance */
+                  pl->spell_fumble = temp_fumble + pl->encumbrance - op->stats.Int;
                   thac0 += tmp->stats.thac0;
                   thacm += tmp->stats.thacm;
 
@@ -1372,7 +1373,7 @@ void fix_player(object *op)
                         if (tmp->stats.wc)
                             pl->wc_bonus += (tmp->stats.wc + tmp->magic);
 						/* force effects goes to damage before calculation */
-						if (tmp->stats.dam)
+			if (tmp->stats.dam)
                             op->stats.dam += (tmp->stats.dam + tmp->magic);
                         if (tmp->stats.ac)
                             ac += (tmp->stats.ac + tmp->magic);
