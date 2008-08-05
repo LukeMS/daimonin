@@ -27,8 +27,8 @@ spell spells[NROFREALSPELLS]          =
 {
 
     {"firestorm",                   SPELL_TYPE_WIZARD, 1, 
-	2, 12, 3, 6,0, 1.0,
-    75,      8,      4,      0,  
+	4, 12, 3, 6,0, 1.0,
+    65,      7,      4,      0,  
 	1, 4, 0, 5, SOUND_MAGIC_FIRE,
     SPELL_USE_CAST | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_DUST | SPELL_USE_BOOK | SPELL_USE_POTION,
     SPELL_DESC_DIRECTION,
@@ -38,8 +38,8 @@ spell spells[NROFREALSPELLS]          =
 
 
     {"icestorm",                    SPELL_TYPE_WIZARD, 1, 
-	2, 12, 3, 6,0,1.0,
-    75,      8,      4,      0,  
+	4, 12, 3, 6,0,1.0,
+    65,      7,      4,      0,  
 	1, 4, 0, 5, SOUND_MAGIC_ICE,
     SPELL_USE_CAST | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_BOOK | SPELL_USE_POTION | SPELL_USE_DUST,
     SPELL_DESC_DIRECTION,
@@ -47,7 +47,7 @@ spell spells[NROFREALSPELLS]          =
     }, 
 
 	{"minor healing",               SPELL_TYPE_PRIEST, 1, 
-	1, 8, 3, 6,3,1.0,
+	4, 8, 3, 6,3,1.0,
     0,       0,     0,      0, 
 	0, 0, 0, 0, SOUND_MAGIC_STAT,
     SPELL_USE_CAST | SPELL_USE_BALM | SPELL_USE_SCROLL | SPELL_USE_ROD | SPELL_USE_POTION | SPELL_USE_BOOK,
@@ -56,7 +56,7 @@ spell spells[NROFREALSPELLS]          =
     }, 
 
 	{"cure poison",                 SPELL_TYPE_PRIEST, 1, 
-	2, 16, 3, 6,4, 1.0,/* potion only */
+	5, 16, 3, 6,4, 1.0,/* potion only */
     0,       0,     0,      0,
 	0, 0, 0, 0,   SOUND_MAGIC_STAT,
     SPELL_USE_CAST | SPELL_USE_POTION | SPELL_USE_BOOK,
@@ -65,7 +65,7 @@ spell spells[NROFREALSPELLS]          =
     }, 
 
 	{"cure disease",                SPELL_TYPE_PRIEST, 1, 
-	1, 16, 3, 6,4, 1.0,/* balm only */
+	5, 16, 3, 6,4, 1.0,/* balm only */
     0,       0,     0,      0,
 	0, 0, 0, 0,   SOUND_MAGIC_STAT,
     SPELL_USE_CAST | SPELL_USE_BALM | SPELL_USE_BOOK,
@@ -74,7 +74,7 @@ spell spells[NROFREALSPELLS]          =
     },
 
     {"strength self",               SPELL_TYPE_WIZARD, 1, 
-	1, 12, 3, 6,0,1.0,
+	5, 12, 3, 6,0,1.0,
     0,       0,     0,      4, 
 	0, 0, 0, 3,  SOUND_MAGIC_STAT,
     SPELL_USE_CAST | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_POTION | SPELL_USE_ROD | SPELL_USE_SCROLL | SPELL_USE_BOOK,
@@ -92,7 +92,7 @@ spell spells[NROFREALSPELLS]          =
     }, 
 
 	{"detect magic",                SPELL_TYPE_WIZARD, 1, 
-	2, 8, 3, 6,0,1.0,
+	5, 8, 3, 6,0,1.0,
     0,       0,     0,      0,
 	0, 0, 0, 3,   SOUND_MAGIC_DEFAULT,
     SPELL_USE_CAST | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_SCROLL | SPELL_USE_BOOK,
@@ -101,7 +101,7 @@ spell spells[NROFREALSPELLS]          =
     }, 
 
 	{"detect curse",                SPELL_TYPE_PRIEST, 1, 
-	2, 8, 3, 6,0,1.0,
+	5, 8, 3, 6,0,1.0,
     0,       0,     0,      0,
 	0, 0, 0, 0,   SOUND_MAGIC_DEFAULT,
     SPELL_USE_CAST | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_SCROLL | SPELL_USE_BOOK,
@@ -110,7 +110,7 @@ spell spells[NROFREALSPELLS]          =
     },
 
 	{"remove curse",                SPELL_TYPE_PRIEST, 1, 
-	3, 24, 3, 6,2,1.0,
+	5, 24, 3, 6,2,1.0,
     0,       0,     0,      0,
 	0, 0, 0, 0, SOUND_MAGIC_DEFAULT,
     SPELL_USE_CAST | SPELL_USE_SCROLL | SPELL_USE_BOOK,     /* scroll */
@@ -128,8 +128,8 @@ spell spells[NROFREALSPELLS]          =
     }, 
 
 	{"cause light wounds",          SPELL_TYPE_PRIEST, 1, 
-	2, 14, 3, 6,0,  1.0,/* scroll*/
-    60,      5,      4,      4,  
+	3, 14, 3, 6,0,  1.0,/* scroll*/
+    95,      5,      4,      4,  
 	1, 6, 0, 5,  SOUND_MAGIC_WOUND,
     SPELL_USE_CAST | SPELL_USE_SCROLL | SPELL_USE_BOOK,
     SPELL_DESC_DIRECTION | SPELL_DESC_WIS,
@@ -138,16 +138,16 @@ spell spells[NROFREALSPELLS]          =
 
 
 	{"firebolt",                   SPELL_TYPE_WIZARD, 1, 
-	3, 12, 3, 6,0, 1.0,
-	85,      10,      4,      0,  
-	1, 4, 0, 5, SOUND_MAGIC_FIRE,
+	6, 12, 3, 6,0, 1.0,
+	108,      8,      4,      0,  
+	1, 3, 0, 5, SOUND_MAGIC_FIRE,
 	SPELL_USE_CAST | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_DUST | SPELL_USE_BOOK | SPELL_USE_POTION,
 	SPELL_DESC_DIRECTION,
 	PATH_ELEMENTAL, "firebolt", SPELL_ACTIVE
 	},
 
 	{"magic bullet",                SPELL_TYPE_WIZARD, 1, 
-	2, 14, 3, 6,0,1.0,
+	3, 14, 3, 6,0,1.0,
     95,      5,      4,      4, 
 	1, 6, 0, 5,   SOUND_MAGIC_BULLET1,
     SPELL_USE_CAST | SPELL_USE_SCROLL | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_BOOK,
@@ -156,15 +156,15 @@ spell spells[NROFREALSPELLS]          =
     },
 
 	{"frostbolt",                   SPELL_TYPE_WIZARD, 1, 
-	3, 12, 3, 6,0, 1.0,
-	85,      10,      4,      0,  
-	1, 4, 0, 5, SOUND_MAGIC_ICE,
+	6, 12, 3, 6,0, 1.0,
+	108,      8,      4,      0,  
+	1, 3, 0, 5, SOUND_MAGIC_ICE,
 	SPELL_USE_CAST | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_DUST | SPELL_USE_BOOK | SPELL_USE_POTION,
 	SPELL_DESC_DIRECTION,
 	PATH_ELEMENTAL, "frostbolt", SPELL_ACTIVE
 	},
     {"remove depletion",            SPELL_TYPE_PRIEST, 1, 
-	2, 24, 3, 6,4, 1.0,
+	5, 24, 3, 6,4, 1.0,
     0,       0,     0,      0,
 	0, 0, 0, 0,    SOUND_MAGIC_STAT,
     SPELL_USE_CAST,
@@ -173,7 +173,7 @@ spell spells[NROFREALSPELLS]          =
     },
 
     {"probe",                       SPELL_TYPE_WIZARD, 1, 
-	2, 8, 3, 6,0,1.0,
+	5, 8, 3, 6,0,1.0,
     1,      5,      4,      4, 
 	0, 0, 0, 1, SOUND_MAGIC_DEFAULT,
     SPELL_USE_CAST | SPELL_USE_SCROLL | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_BOOK,
@@ -191,7 +191,7 @@ spell spells[NROFREALSPELLS]          =
     },
 
     {"restoration",            SPELL_TYPE_PRIEST, 1, 
-	3, 16, 3, 6,3, 1.0,
+	5, 16, 3, 6,3, 1.0,
     0,       0,     0,      0,
 	0, 0, 0, 0, SOUND_MAGIC_STAT,
     SPELL_USE_CAST | SPELL_USE_SCROLL | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD, /* npc/god only atm */
@@ -200,9 +200,9 @@ spell spells[NROFREALSPELLS]          =
     },
 
 	{"lightning",                   SPELL_TYPE_WIZARD, 1, 
-	3, 12, 3, 6,0, 1.0,
-	85,      10,      4,      0,  
-	1, 4, 0, 5, SOUND_MAGIC_ELEC,
+	6, 12, 3, 6,0, 1.0,
+	108,      8,      4,      0,  
+	1, 3, 0, 5, SOUND_MAGIC_ELEC,
 	SPELL_USE_CAST | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_DUST | SPELL_USE_BOOK | SPELL_USE_POTION,
 	SPELL_DESC_DIRECTION,
 	PATH_ELEMENTAL, "lightning", SPELL_ACTIVE

@@ -1024,6 +1024,7 @@ static inline int ok_to_put_more(mapstruct *m, int x, int y, object *op)
 int fire_bolt(object *op, object *caster, int dir, int type, int magic)
 {
     object *tmp = NULL;
+    float	tmp_dam;
 
 	if (!spellarch[type])
         return 0;
@@ -1037,7 +1038,9 @@ int fire_bolt(object *op, object *caster, int dir, int type, int magic)
 	tmp->level = casting_level(caster, type);
 
 	/* we should have from the arch type the default damage - we add our new damage profil */
-    tmp->stats.dam = (sint16) SP_lvl_dam_adjust(tmp->level, type, spells[type].bdam, 0);
+    tmp_dam = (float) SP_lvl_dam_adjust(tmp->level, type, spells[type].bdam, 0);
+    /* give bonus or malus to damage depending on if the player/mob is attuned/repelled to that spell path */
+    tmp->stats.dam = (int) (tmp_dam * PATH_DMG_MULT(op, find_spell(type)));
 
     tmp->stats.hp = spells[type].bdur;
 
@@ -1075,6 +1078,7 @@ int fire_bolt(object *op, object *caster, int dir, int type, int magic)
 int fire_arch(object *op, object *caster, sint16 x, sint16 y, int dir, archetype *at, int type, int level, int magic)
 {
     object *tmp, *env;
+    float	tmp_dam;
 
     if (at == NULL)
         return 0;
@@ -1086,7 +1090,9 @@ int fire_arch(object *op, object *caster, sint16 x, sint16 y, int dir, archetype
     if (tmp == NULL)
         return 0;
     tmp->stats.sp = type;
-    tmp->stats.dam = SP_lvl_dam_adjust(level, type, tmp->stats.dam, 0);
+    tmp_dam = (float) SP_lvl_dam_adjust(level, type, spells[type].bdam, 0);
+    /* give bonus or malus to damage depending on if the player/mob is attuned/repelled to that spell path */
+    tmp->stats.dam = (int) (tmp_dam * PATH_DMG_MULT(op, find_spell(type)));
     tmp->stats.hp = spells[type].bdur + SP_level_strength_adjust(op, caster, type);
     tmp->x = x, tmp->y = y;
     tmp->direction = dir;
