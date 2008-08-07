@@ -67,6 +67,8 @@
 # bool_special - Like bool, but with customized true/false values    #
 # treasurelist - CF treasure list (see "treasures" file)             #
 # list_LISTNAME       - list, must be defined as a <list> element    #
+# doublelist_LISTNAME,LISTNAME                                       #
+#              - two lists, must be defined as a <list> elements     #
 # bitmask_BITMASKNAME - bitmask, must be defined as a <bitmask>      #
 #                       element                                      #
 #                                                                    #
