@@ -22,19 +22,21 @@
             <Attrib name="generator" />
         </Or>
     </GameObjectMatcher>
+    <GameObjectMatcher id="floormask">
+        <title xml:lang="en">Floormask</title>
+        <title xml:lang="de">Bodenmasken</title>
+        <And>
+            <TypeNrs numbers="28" />
+            <Attrib name="layer" value="2" />
+        </And>
+    </GameObjectMatcher>
     <GameObjectMatcher id="floor">
         <title xml:lang="en">Floor</title>
         <title xml:lang="de">Boden</title>
-        <Or>
-            <And>
-                <TypeNrs numbers="28" />
-                <Attrib name="layer" value="2" />
-            </And>
-            <And>
-                <TypeNrs numbers="68 71" />
-                <Attrib name="layer" value="1" />
-            </And>
-        </Or>
+        <And>
+            <TypeNrs numbers="68 71" />
+            <Attrib name="layer" value="1" />
+        </And>
     </GameObjectMatcher>
     <GameObjectMatcher id="wall">
         <title xml:lang="en">Wall</title>
