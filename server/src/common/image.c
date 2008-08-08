@@ -39,7 +39,7 @@ static struct bmappair *xbm = NULL;
 #include "../zlib/zlib.h"
 
 #define MAX_FACE_SETS   1
-#define MAX_IMAGE_SIZE 20000
+#define MAX_IMAGE_SIZE 200000
 
 typedef struct FaceInfo
 {
