@@ -201,7 +201,7 @@ GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOn
                mDnDTexture->getWidth()*mDnDTexture->getHeight()*sizeof(uint32));
         mDnDTexture->getBuffer()->unlock();
         mDnDOverlay->setZOrder(500);
-        mDnDElement = OverlayManager::getSingleton().createOverlayElement(GuiWindow::OVERLAY_ELEMENT_TYPE, "GUI_SlotDnD_Frame");
+        mDnDElement = OverlayManager::getSingleton().createOverlayElement(GuiImageset::OVERLAY_ELEMENT_TYPE, "GUI_SlotDnD_Frame");
         mDnDElement->setMetricsMode(GMM_PIXELS);
         mDnDElement->setDimensions (ITEM_SIZE, ITEM_SIZE);
         MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName("GUI/Window");

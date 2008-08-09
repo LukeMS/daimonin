@@ -119,7 +119,7 @@ ParticleSystem *ParticleManager::addFreeObject(Vector3 pos, const char *pScript,
 //================================================================================================
 void ParticleManager::update(Real dTime)
 {
-      for (std::vector<sParticles*>::iterator i = mvParticle.begin(); i < mvParticle.end(); )
+    for (std::vector<sParticles*>::iterator i = mvParticle.begin(); i < mvParticle.end(); )
     {
         if ((*i)->lifeTime <0  // Infinite lifeTime.
                 || ((*i)->lifeTime-= dTime) >=0) // Lifeteme not expired.

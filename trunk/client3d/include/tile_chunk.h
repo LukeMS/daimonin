@@ -35,30 +35,32 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    enum { X = 0, Z = 1 };                 /**< Only used for readability. **/
-    enum { MAX_TERRAIN_HEIGHT = 255 *10 }; /**< Height of the terrain is limited. **/
-    enum { WATERLEVEL         =  14 };     /**< At this height the water clips the land-tiles. **/
+
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    TileChunk(){};
-    ~TileChunk(){};
-    void init(int textureSize);
-    void change();
+    TileChunk() {};
+    ~TileChunk() {};
+    void init(int textureSize, int queryMaskLand, int queryMaskWater);
+    void update();
+    void rotate(Ogre::Real cameraAngle);
     void freeRecources();
-    void loadAtlasTexture(int group);
+    void loadAtlasTexture(int landGroup, int waterGroup);
 
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    Ogre::TexturePtr mTexLand, mTexWater;
+    enum { X = 0, Z = 1 };                 /**< Only used for readability. **/
+    enum { MAX_TERRAIN_HEIGHT = 255 *10 }; /**< Height of the terrain is limited. **/
+    enum { WATERLEVEL         =  14 };     /**< At this height the water clips the land-tiles. **/
+    int mTextureSize;
+    unsigned int mCameraRotation;
     Ogre::MeshPtr mMeshLand, mMeshWater;
     Ogre::Entity *mEntityLand, *mEntityWater;
     Ogre::Vector3 mNormal, mVec1, mVec2, mVec3;
     Ogre::Real *mPosVBuf;
-    Ogre::Real mTexPosInAtlas[12];
-    int mTextureSize;
+    Ogre::Real mTexPosInAtlas[8];
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
@@ -69,7 +71,7 @@ private:
     void setVertex(Ogre::Vector3 &pos, Ogre::Real posTexX, Ogre::Real posTexZ, Ogre::Real posShadowX, Ogre::Real posShadowZ, int offset);
     void changeLand();
     void changeWater();
-    int  calcTextureUnitSorting(int l0, int l1, int l2, int offset);
+    int  calcTextureUnitSorting(int l0, int l1, int l2);
 };
 
 #endif

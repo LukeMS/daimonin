@@ -46,8 +46,8 @@ public:
         GAME_STATUS_INIT_OBJECT,        /**< Init the objects. **/
         GAME_STATUS_INIT_GUI_IMAGESET,  /**< Parse the IMageSet. **/
         GAME_STATUS_INIT_GUI_WINDOWS,   /**< Parse the Windows. **/
-        GAME_STATUS_INIT_EVENT_LISTENER,/**< Init the key/mouse listener. **/
         GAME_STATUS_INIT_TILE,          /**< Init the tile-engine. **/
+        GAME_STATUS_INIT_GUI,           /**< Init the GUI. **/
         GAME_STATUS_INIT_NET,           /**< init the network. **/
 
         GAME_STATUS_META,               /**< connect to meta server. **/

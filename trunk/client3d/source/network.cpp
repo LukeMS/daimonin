@@ -43,6 +43,7 @@ int SoundStatus=1;
 
 bool Network::GameStatusVersionOKFlag = false;
 bool Network::GameStatusVersionFlag = false;
+bool Network::mEqualEndian = false;
 bool Network::mInitDone = false;
 
 struct CmdMapping
@@ -50,41 +51,42 @@ struct CmdMapping
     void (*serverCmd)(unsigned char *, int len);
 };
 struct CmdMapping  commands[]  =
-    {    // Don't change this sorting! Its hardcoded in the server.
-        { Network::CompleteCmd},     //  0
-        { Network::VersionCmd },     //  1
-        { Network::DrawInfoCmd },    //  2
-        { Network::AddMeFail },      //  3
-        { Network::Map2Cmd },        //  4
-        { Network::DrawInfoCmd2 },   //  5
-        { Network::ItemXCmd },       //  6
-        { Network::SoundCmd},        //  7
-        { Network::TargetObject },   //  8
-        { Network::ItemUpdateCmd },  //  9
-        { Network::ItemDeleteCmd },  // 10
-        { Network::StatsCmd },       // 11
-        { Network::ImageCmd },       // 12
-        { Network::Face1Cmd},        // 13
-        { Network::AnimCmd},         // 14
-        { Network::SkillRdyCmd },    // 15
-        { Network::PlayerCmd },      // 16
-        { Network::SpelllistCmd },   // 17
-        { Network::SkilllistCmd },   // 18
-        { Network::GolemCmd },       // 19
-        { Network::AddMeSuccess },   // 20
-        { Network::GoodbyeCmd },     // 21
-        { Network::SetupCmd},        // 22
-        { Network::handle_query},    // 23
-        { Network::DataCmd},         // 24
-        { Network::NewCharCmd},      // 25
-        { Network::ItemYCmd },       // 26
-        { Network::GroupCmd },       // 27
-        { Network::GroupInviteCmd }, // 28
-        { Network::GroupUpdateCmd }, // 29
-        { Network::InterfaceCmd },   // 30
-        { Network::BookCmd },        // 31
-        { Network::MarkCmd },        // 32
-    };
+{
+    // Don't change this sorting! Its hardcoded in the server.
+    { Network::CompleteCmd},     //  0
+    { Network::VersionCmd },     //  1
+    { Network::DrawInfoCmd },    //  2
+    { Network::AddMeFail },      //  3
+    { Network::Map2Cmd },        //  4
+    { Network::DrawInfoCmd2 },   //  5
+    { Network::ItemXCmd },       //  6
+    { Network::SoundCmd},        //  7
+    { Network::TargetObject },   //  8
+    { Network::ItemUpdateCmd },  //  9
+    { Network::ItemDeleteCmd },  // 10
+    { Network::StatsCmd },       // 11
+    { Network::ImageCmd },       // 12
+    { Network::Face1Cmd},        // 13
+    { Network::AnimCmd},         // 14
+    { Network::SkillRdyCmd },    // 15
+    { Network::PlayerCmd },      // 16
+    { Network::SpelllistCmd },   // 17
+    { Network::SkilllistCmd },   // 18
+    { Network::GolemCmd },       // 19
+    { Network::AddMeSuccess },   // 20
+    { Network::GoodbyeCmd },     // 21
+    { Network::SetupCmd},        // 22
+    { Network::handle_query},    // 23
+    { Network::DataCmd},         // 24
+    { Network::NewCharCmd},      // 25
+    { Network::ItemYCmd },       // 26
+    { Network::GroupCmd },       // 27
+    { Network::GroupInviteCmd }, // 28
+    { Network::GroupUpdateCmd }, // 29
+    { Network::InterfaceCmd },   // 30
+    { Network::BookCmd },        // 31
+    { Network::MarkCmd },        // 32
+};
 const int SUM_SERVER_COMMANDS = sizeof(commands) / sizeof(CmdMapping);
 
 Network::ClientSocket Network::csocket;
@@ -180,6 +182,7 @@ Network::Network()
 //================================================================================================
 Network::~Network()
 {
+    if (!mInitDone) return;
     CloseClientSocket();
 #ifdef WIN32
     WSACleanup();
@@ -189,27 +192,15 @@ Network::~Network()
 }
 
 //================================================================================================
-// .
-//================================================================================================
-void Network::clearMetaServerData()
-{
-    GuiManager::getSingleton().clearTable(GuiManager::GUI_WIN_SERVERSELECT, GuiImageset::GUI_TABLE);
-    for (std::vector<Server*>::iterator i = mvServer.begin(); i != mvServer.end(); ++i)
-        delete (*i);
-    mvServer.clear();
-}
-
-//================================================================================================
 //
 //================================================================================================
 bool Network::Init()
 {
     if (mInitDone) return true;
     csocket.fd = NO_SOCKET;
-    csocket.cs_version = 0;
     SocketStatusErrorNr= 0;
 
-    Logger::log().headline("Starting Network");
+    Logger::log().headline() << "Starting Network";
 #ifdef WIN32
     WSADATA w;
     WORD wVersionRequested = MAKEWORD(2, 2);
@@ -267,10 +258,14 @@ void Network::update()
     while ((cmd = get_next_input_command()))
     {
         //Logger::log().error() << "network cmd: " << cmd->data[0] - 1 << "  " << cmd->data[0];
-        if (!cmd->data[0] || cmd->data[0] >= SUM_SERVER_COMMANDS)
+        if (!cmd->data[0] || (cmd->data[0]&~0x80) >= SUM_SERVER_COMMANDS)
             Logger::log().error() << "Bad command from server " << cmd->data[0];
         else
-            commands[cmd->data[0] - 1].serverCmd(cmd->data+1, cmd->len-1);
+        {
+            //int lenHeader = cmd->data[0]&0x80?5:3;
+            int lenHeader = 1;
+            commands[(cmd->data[0]&~0x80) - 1].serverCmd(cmd->data+lenHeader, cmd->len-lenHeader);
+        }
         command_buffer_free(cmd);
     }
 }
@@ -279,7 +274,7 @@ void Network::update()
 // The main thread should poll this function which detects connection shutdowns and
 // removes the threads if it happens.
 //================================================================================================
-bool Network::handle_socket_shutdown()
+void Network::handle_socket_shutdown()
 {
     socket_thread_stop();
     // Empty all queues.
@@ -288,7 +283,6 @@ bool Network::handle_socket_shutdown()
     while (output_queue_start)
         command_buffer_free(command_buffer_dequeue(&output_queue_start, &output_queue_end));
     Logger::log().info() << "Connection lost";
-    return true;
 }
 
 //================================================================================================
@@ -586,22 +580,21 @@ void Network::socket_thread_stop()
 //================================================================================================
 //
 //================================================================================================
-bool Network::CloseSocket()
+void Network::CloseSocket()
 {
     if (csocket.fd == NO_SOCKET)
-        return true;
+        return;
 #ifdef WIN32
     closesocket(csocket.fd);
 #else
     close(csocket.fd);
 #endif
-    return true;
 }
 
 //================================================================================================
 //
 //================================================================================================
-bool Network::CloseClientSocket()
+void Network::CloseClientSocket()
 {
     SDL_LockMutex(socket_mutex);
     if (csocket.fd != NO_SOCKET)
@@ -616,7 +609,6 @@ bool Network::CloseClientSocket()
         SDL_CondSignal(output_buffer_cond);
     }
     SDL_UnlockMutex(socket_mutex);
-    return true;
 }
 
 //================================================================================================
@@ -817,7 +809,7 @@ bool Network::OpenSocket(const char *host, int port)
     for (ai = res; ai != NULL; ai = ai->ai_next)
     {
         getnameinfo(ai->ai_addr, ai->ai_addrlen, hostaddr, sizeof(hostaddr), NULL, 0, NI_NUMERICHOST);
-        Logger::log().info() << "  trying " << hostaddr;
+        Logger::log().info() << "  Trying " << hostaddr;
         csocket.fd = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
         if (csocket.fd == -1)
         {
@@ -912,6 +904,32 @@ void Network::cs_write_string(const char *buf)
 }
 
 //================================================================================================
+// Connect to meta and get server data.
+//================================================================================================
+void Network::contactMetaserver()
+{
+    clearMetaServerData();
+    csocket.fd = NO_SOCKET;
+    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "");
+    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Query metaserver...");
+    std::stringstream strBuf;
+    strBuf << "Trying " << DEFAULT_METASERVER << " " << DEFAULT_METASERVER_PORT;
+    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, strBuf.str().c_str());
+    if (OpenSocket(DEFAULT_METASERVER, DEFAULT_METASERVER_PORT))
+    {
+        read_metaserver_data();
+        CloseSocket();
+        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "done.");
+    }
+    else
+        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Metaserver failed! Using default list.", 0x00ff0000);
+    add_metaserver_data("127.0.0.1"  , "127.0.0.1"                 , DEFAULT_SERVER_PORT, -1, "local"   , "localhost.", "Start server before you try to connect.", "", "");
+    add_metaserver_data("daimonin.game-server.cc", "daimonin.game-server.cc"   , DEFAULT_SERVER_PORT, -1, "internet", "STABLE"    , "Main Server", "", "");
+    //add_metaserver_data("Test-Server", "test-server.game-server.cc", DEFAULT_SERVER_PORT, -1, "internet", "UNSTABLE"  , "Just for Devs", "", "");
+    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Select a server.");
+}
+
+//================================================================================================
 // We used our core connect routine to connect to metaserver, this is the special read one.
 //================================================================================================
 void Network::read_metaserver_data()
@@ -949,7 +967,7 @@ void Network::read_metaserver_data()
             }
             else if (stat == 0)
             {
-                // connect closed by meta
+                // connection closed by meta
                 break;
             }
     }
@@ -957,30 +975,6 @@ void Network::read_metaserver_data()
     parse_metaserver_data(buf);
     delete[] ptr;
     delete[] buf;
-}
-
-//================================================================================================
-// Connect to meta and get server data.
-//================================================================================================
-void Network::contactMetaserver()
-{
-    clearMetaServerData();
-    csocket.fd = NO_SOCKET;
-    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "");
-    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "query metaserver...");
-    std::stringstream strBuf;
-    strBuf << "trying " << DEFAULT_METASERVER << " " << DEFAULT_METASERVER_PORT;
-    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, strBuf.str().c_str());
-    if (OpenSocket(DEFAULT_METASERVER, DEFAULT_METASERVER_PORT))
-    {
-        read_metaserver_data();
-        CloseSocket();
-        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "done.");
-    }
-    else
-        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "metaserver failed! using default list.");
-    add_metaserver_data("127.0.0.1", "127.0.0.1", DEFAULT_SERVER_PORT, -1, "local", "localhost.", "Start server before you try to connect.", "", "");
-    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "select a server.");
 }
 
 //================================================================================================
@@ -1074,4 +1068,16 @@ void Network::add_metaserver_data(const char *ip, const char *server, int port, 
 const char *Network::get_metaserver_info(int node, int infoLineNr)
 {
     return mvServer[node]->desc[infoLineNr &3].c_str();
+}
+
+//================================================================================================
+// .
+//================================================================================================
+void Network::clearMetaServerData()
+{
+    GuiManager::getSingleton().clearTable(GuiManager::GUI_WIN_SERVERSELECT, GuiImageset::GUI_TABLE);
+    if (!mvServer.size()) return;
+    for (std::vector<Server*>::iterator i = mvServer.begin(); i != mvServer.end(); ++i)
+        delete (*i);
+    mvServer.clear();
 }

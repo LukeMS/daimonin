@@ -24,10 +24,9 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 #include <OgreHardwarePixelBuffer.h>
 #include "logger.h"
+#include "define.h"
 #include "tile_chunk.h"
 #include "tile_manager.h"
-
-#include "object_manager.h"
 
 using namespace Ogre;
 
@@ -63,10 +62,11 @@ void TileManager::freeRecources()
 //================================================================================================
 // Init the TileEngine.
 //================================================================================================
-void TileManager::Init(SceneManager* SceneMgr, int lod, bool createAtlas)
+void TileManager::Init(SceneManager* SceneMgr, int queryMaskLand, int queryMaskWater, int lod, bool createAtlas)
 {
-    Logger::log().headline("Init TileEngine");
+    Logger::log().headline() << "Init TileEngine";
     mShowGrid = false;
+    mQueryMaskLand = queryMaskLand;
     mEditorActSelectedGfx = 0;
     mMapScrollX = mMapScrollZ = 0;
     mSelectedVertexX = mSelectedVertexZ = 0; // Tile picking.
@@ -83,7 +83,7 @@ void TileManager::Init(SceneManager* SceneMgr, int lod, bool createAtlas)
         Logger::log().success(true);
     }
     Logger::log().info() << "Creating tile chunk...";
-    mMapchunk.init(textureSize);
+    mMapchunk.init(textureSize, queryMaskLand, queryMaskWater);
     Logger::log().success(true);
     Logger::log().info() << "Init done.";
 }
@@ -538,7 +538,7 @@ void TileManager::tileClick(float mouseX, float mouseY)
 {
     Ray mouseRay = mSceneManager->getCamera("PlayerCam")->getCameraToViewportRay(mouseX, mouseY);
     mRaySceneQuery->setRay(mouseRay);
-    mRaySceneQuery->setQueryMask(ObjectManager::QUERY_TILES_LAND_MASK);
+    mRaySceneQuery->setQueryMask(mQueryMaskLand);
     // Perform the scene query.
     RaySceneQueryResult &result = mRaySceneQuery->execute();
     if (result.size() >1)
@@ -752,7 +752,7 @@ void TileManager::scrollMap(int dx, int dz)
             for (int y = CHUNK_SIZE_Z; y > 0; --y)
                 mMap[x][y] = mMap[x][y-2];
     }
-    mMapchunk.change();
+    mMapchunk.update();
 }
 
 //================================================================================================
@@ -761,7 +761,7 @@ void TileManager::scrollMap(int dx, int dz)
 void TileManager::updateTileHeight(int deltaHeight)
 {
     mMap[mSelectedVertexX][mSelectedVertexZ].height+= deltaHeight;
-    mMapchunk.change();
+    mMapchunk.update();
     highlightVertex(mSelectedVertexX, mSelectedVertexZ);
 }
 
@@ -772,7 +772,7 @@ void TileManager::updateTileGfx(int deltaGfxNr)
 {
     mMap[mSelectedVertexX][mSelectedVertexZ].gfx+= deltaGfxNr;
     mEditorActSelectedGfx = mMap[mSelectedVertexX][mSelectedVertexZ].gfx;
-    mMapchunk.change();
+    mMapchunk.update();
     highlightVertex(mSelectedVertexX, mSelectedVertexZ);
 }
 
@@ -782,7 +782,7 @@ void TileManager::updateTileGfx(int deltaGfxNr)
 void TileManager::setTileGfx()
 {
     mMap[mSelectedVertexX][mSelectedVertexZ].gfx = mEditorActSelectedGfx;
-    mMapchunk.change();
+    mMapchunk.update();
 }
 
 //================================================================================================
@@ -800,20 +800,23 @@ void TileManager::setMap(unsigned int x, unsigned int y, short height, char gfx,
 //================================================================================================
 void TileManager::changeChunks()
 {
+    long time = Root::getSingleton().getTimer()->getMicroseconds();
+    // Shadow calculation is part of the editor. This is just for testing here.
     {
         for (int z = 0; z <= CHUNK_SIZE_Z; ++z)
             for (int x = 0; x <= CHUNK_SIZE_X; ++x)
                 mMap[x][z].shadow = calcShadow(x, z);
     }
-    mMapchunk.change();
+    mMapchunk.update();
+    Logger::log().error() << "Time to change terrain: " << (double)(Root::getSingleton().getTimer()->getMicroseconds() - time)/1000 << " ms";
 }
 
 //================================================================================================
 // Change Tile and Environmet textures.
 //================================================================================================
-void TileManager::changeMapset(String filenameTileTexture, String filenameEnvTexture)
+void TileManager::changeMapset(int landGroup, int waterGroup)
 {
-    mMapchunk.loadAtlasTexture(0);
+    mMapchunk.loadAtlasTexture(landGroup, waterGroup);
 }
 
 //================================================================================================

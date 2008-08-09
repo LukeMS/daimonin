@@ -32,20 +32,20 @@ using namespace Ogre;
 // Init all static Elemnts.
 //=================================================================================================
 const char *ObjectAnimate::StateNames[ANIM_GROUP_SUM]=
-    {
-        "Idle", "Idle_Fun",
-        "Walk",
-        "Run",
-        "Ability",
-        "Attack", "Attack_Fun",
-        "Block",
-        "Hit",
-        "Slump",
-        "Death",
-        "Spawn",
-        "Cast", "Cast_Fun",
-        "Emote",
-    };
+{
+    "Idle", "Idle_Fun",
+    "Walk",
+    "Run",
+    "Ability",
+    "Attack", "Attack_Fun",
+    "Block",
+    "Hit",
+    "Slump",
+    "Death",
+    "Spawn",
+    "Cast", "Cast_Fun",
+    "Emote",
+};
 
 //=================================================================================================
 // Constructor.

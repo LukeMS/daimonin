@@ -81,7 +81,7 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    void Init(Ogre::SceneManager* SceneManager, int lod = 1, bool createAtlasTexture = true);
+    void Init(Ogre::SceneManager *SceneManager, int queryMaskLand, int queryMaskWater, int lod = 1, bool createAtlasTexture = true);
     void freeRecources();
     static TileManager &getSingleton()
     {
@@ -102,14 +102,18 @@ public:
     void setMap(unsigned int x, unsigned int z, short height, char gfx, char shadow=0);
     char getMapGfx(unsigned int x, unsigned int z, int vertex);
     short getMapHeight(unsigned int x, unsigned int z, int vertex);
-    void changeMapset(Ogre::String filenameTileTexture, Ogre::String filenameEnvTexture);
+    void changeMapset(int landGroup, int waterGroup);
     void toggleGrid()
     {
         mShowGrid = !mShowGrid;
-        mMapchunk.change();
+        mMapchunk.update();
     }
     void scrollMap(int x, int z);
     void changeChunks();
+    void rotate(Ogre::Real cameraAngle)
+    {
+        mMapchunk.rotate(cameraAngle);
+    }
     bool loadImage(Ogre::Image &image, const Ogre::String &filename);
     short getTileHeight(int posX, int posZ);
     void updateHeighlightVertexPos(int deltaX, int deltaZ);
@@ -126,7 +130,7 @@ private:
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     /**  TileEngine struct which holds the worldmap. **/
-    typedef struct
+    typedef struct _mapStruct
     {
         unsigned char  gfx;    /**< Graphic of VERTEX_TL. **/
         unsigned short height; /**< Height of VERTEX_TL. **/
@@ -145,6 +149,7 @@ private:
     int mLod;
     unsigned int mSelectedVertexX, mSelectedVertexZ; /**< Editor feature. Stores the actual selected VERTEX_TL of a tile. **/
     int mEditorActSelectedGfx;
+    int mQueryMaskLand;
     int mMapScrollX, mMapScrollZ;
     bool mShowGrid;
 

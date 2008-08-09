@@ -188,7 +188,7 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
                         ObjectManager::getSingleton().addMobileObject(obj);
             */
             break;
-                }
+        }
 
         case OIS::KC_K:
         {
@@ -318,7 +318,7 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
                         break;
             */
         }
-            break;
+        break;
 
         case OIS::KC_Y:
             mSceneDetailIndex = (mSceneDetailIndex+1)%3;
@@ -360,6 +360,7 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
             //static int color =0;
             //ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_TEXTURE, 0,ObjectNPC::TEXTURE_POS_HAIR, color++);
             TileManager::getSingleton().updateTileGfx(+1);
+            //TileManager::getSingleton().changeMapset(1,-1);
             break;
         }
 

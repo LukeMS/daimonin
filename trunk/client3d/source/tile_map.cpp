@@ -324,21 +324,21 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
         }
         else if (meshName.find("Wall") != std::string::npos)
         {
-/*
-            if      (meshName[0] =='r')
-                TileManager::getSingleton().addWall(0, x, y, TileManager::WALL_POS_RIGHT, meshName.c_str()+1);
-            else if (meshName[0] =='l')
-                TileManager::getSingleton().addWall(0, x, y, TileManager::WALL_POS_LEFT, meshName.c_str()+1);
-            else if (meshName[0] =='t')
-                TileManager::getSingleton().addWall(0, x, y, TileManager::WALL_POS_TOP, meshName.c_str()+1);
-            else if (meshName[0] =='b')
-                TileManager::getSingleton().addWall(0, x, y, TileManager::WALL_POS_BOTTOM, meshName.c_str()+1);
-            else if (meshName[0] =='c') // Corner wall.
-            {
-                TileManager::getSingleton().addWall(0, x, y, TileManager::WALL_POS_RIGHT, meshName.c_str()+1);
-                TileManager::getSingleton().addWall(0, x, y, TileManager::WALL_POS_BOTTOM, meshName.c_str()+1);
-            }
-*/
+            /*
+                        if      (meshName[0] =='r')
+                            TileManager::getSingleton().addWall(0, x, y, TileManager::WALL_POS_RIGHT, meshName.c_str()+1);
+                        else if (meshName[0] =='l')
+                            TileManager::getSingleton().addWall(0, x, y, TileManager::WALL_POS_LEFT, meshName.c_str()+1);
+                        else if (meshName[0] =='t')
+                            TileManager::getSingleton().addWall(0, x, y, TileManager::WALL_POS_TOP, meshName.c_str()+1);
+                        else if (meshName[0] =='b')
+                            TileManager::getSingleton().addWall(0, x, y, TileManager::WALL_POS_BOTTOM, meshName.c_str()+1);
+                        else if (meshName[0] =='c') // Corner wall.
+                        {
+                            TileManager::getSingleton().addWall(0, x, y, TileManager::WALL_POS_RIGHT, meshName.c_str()+1);
+                            TileManager::getSingleton().addWall(0, x, y, TileManager::WALL_POS_BOTTOM, meshName.c_str()+1);
+                        }
+            */
         }
         else if (meshName == "Sack_N.mesh")
         {

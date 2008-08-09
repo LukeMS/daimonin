@@ -65,7 +65,7 @@ public:
         DRAG_ENTER,
         DRAG_EXIT,
     };
-    static const char *OVERLAY_ELEMENT_TYPE;
+    static const char *GUI_MATERIAL_NAME;
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.

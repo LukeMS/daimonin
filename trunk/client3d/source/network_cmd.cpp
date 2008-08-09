@@ -89,15 +89,15 @@ void Network::VersionCmd(unsigned char *data, int len)
 {
     GameStatusVersionOKFlag = false;
     GameStatusVersionFlag = true;
-    csocket.cs_version = atoi((char*)data);
+    int cs_version = atoi((char*)data);
 
     // The first version is the client to server version the server wants
     // ATM, we just do for "must match".
     // Later it will be smart to define range where the differences are ok
-    if (VERSION_CS != csocket.cs_version)
+    if (VERSION_CS != cs_version)
     {
-        Logger::log().error() << "Invalid CS version (" <<  (int)VERSION_CS << " " << csocket.cs_version << ")";
-        if (VERSION_CS > csocket.cs_version)
+        Logger::log().error() << "Invalid CS version (" <<  (int)VERSION_CS << " " << cs_version << ")";
+        if (VERSION_CS > cs_version)
         {
             GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "The server is outdated!");
             GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Select a different one!");
@@ -126,14 +126,14 @@ void Network::VersionCmd(unsigned char *data, int len)
         SDL_Delay(3250);
         return;
     }
-    csocket.sc_version = atoi(cp);
-    if (csocket.sc_version != VERSION_SC)
+    int sc_version = atoi(cp);
+    if (sc_version != VERSION_SC)
     {
         std::stringstream strCmd;
-        strCmd << "Invalid SC version  (" << VERSION_SC << ", " << csocket.sc_version << ")";
+        strCmd << "Invalid SC version  (" << VERSION_SC << ", " << sc_version << ")";
         GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, strCmd.str().c_str());
         String strBuf;
-        if (VERSION_SC > csocket.sc_version)
+        if (VERSION_SC > sc_version)
             strBuf = "The server is outdated!\nSelect a different one!";
         else
             strBuf = "Your client is outdated!\nUpdate your client!";
@@ -1328,6 +1328,19 @@ void Network::GoodbyeCmd(unsigned char *data, int len)
 //================================================================================================
 void Network::SetupCmd(unsigned char *buf, int len)
 {
+
+    Logger::log().error() << "setup "<< buf;
+
+    // If server sends endian check - do the check.
+    if (*(uint16*)buf == 0x0201 || *(uint16*)buf == 0x0102)
+    {
+        Logger::log().error() << "Neuer Server";
+        //Server sends 0x0201 to test if we have the same endian on serevr and client.
+        uint16 serverEndian = *(uint16*)buf;
+        uint16 clientEndian = 0x0201;
+        mEqualEndian = (serverEndian == clientEndian);
+        buf+=6;
+    }
     unsigned char *cmd, *param;
     scrolldy = scrolldx = 0;
     for (int s = 0; ;)
@@ -1381,13 +1394,13 @@ void Network::SetupCmd(unsigned char *buf, int len)
         }
 
         else if (!strcmp((const char*)cmd, "mapsize"))
-        {}
+            {}
         else if (!strcmp((const char*)cmd, "map2cmd"))
-        {}
+            {}
         else if (!strcmp((const char*)cmd, "darkness"))
-        {}
+            {}
         else if (!strcmp((const char*)cmd, "facecache"))
-        {}
+            {}
 
         else
         {
@@ -1649,44 +1662,44 @@ void Network::PreParseInfoStat(char *cmd)
     {
         switch (status)
         {
-        case 0:
-            GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED, GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"");
-            break;
-        case 1:
-            if (Option::getSingleton().getLoginType() == Option::LOGIN_EXISTING_PLAYER)
+            case 0:
+                GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED, GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"");
+                break;
+            case 1:
+                if (Option::getSingleton().getLoginType() == Option::LOGIN_EXISTING_PLAYER)
+                    GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
+                                                           GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000There is no character with that name!~");
+                break;
+            case 2:
                 GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
-                                                       GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000There is no character with that name!~");
-            break;
-        case 2:
-            GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
-                                                   GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name or character is in creating process or blocked!~");
-            break;
-        case 3:
-            if (Option::getSingleton().getLoginType() == Option::LOGIN_EXISTING_PLAYER)
+                                                       GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name or character is in creating process or blocked!~");
+                break;
+            case 3:
+                if (Option::getSingleton().getLoginType() == Option::LOGIN_EXISTING_PLAYER)
+                    GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
+                                                           GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name is taken - choose a different one!~");
+                break;
+            case 4:
+                if (Option::getSingleton().getLoginType() == Option::LOGIN_NEW_PLAYER)
+                    GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
+                                                           GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name is taken - choose a different one!~");
+                break;
+            case 5:
                 GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
-                                                       GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name is taken - choose a different one!~");
-            break;
-        case 4:
-            if (Option::getSingleton().getLoginType() == Option::LOGIN_NEW_PLAYER)
+                                                       GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name is banned - choose a different one!~");
+                break;
+            case 6:
                 GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
-                                                       GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name is taken - choose a different one!~");
-            break;
-        case 5:
-            GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
-                                                   GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name is banned - choose a different one!~");
-            break;
-        case 6:
-            GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
-                                                   GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name is illegal - ITS TO SHORT OR ILLEGAL SIGNS!~");
-            break;
-        case 7:
-            GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
-                                                   GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name is illegal - ITS TO SHORT OR ILLEGAL SIGNS!~");
-            break;
-        default:
-            GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
-                                                   GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Password is illegal or does not match!~");
-            break;
+                                                       GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name is illegal - ITS TO SHORT OR ILLEGAL SIGNS!~");
+                break;
+            case 7:
+                GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
+                                                       GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name is illegal - ITS TO SHORT OR ILLEGAL SIGNS!~");
+                break;
+            default:
+                GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
+                                                       GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Password is illegal or does not match!~");
+                break;
         }
         Option::getSingleton().setGameStatus(Option::GAME_STATUS_NAME_INIT);
     }

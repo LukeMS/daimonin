@@ -83,7 +83,6 @@ public:
         int fd;
         Ogre::String inbuf;
         Ogre::String outbuf;
-        int cs_version, sc_version; // Server versions of these
         // These are used for the newer 'windowing' method of commands -
         // number of last command sent, number of received confirmation
         int command_sent, command_received;
@@ -138,13 +137,13 @@ public:
     {
         return OpenClientSocket(mvServer[mActServerNr]->ip.c_str(), mvServer[mActServerNr]->port);
     }
-    static bool CloseSocket();
-    static bool CloseClientSocket();
+    static void CloseSocket();
+    static void CloseClientSocket();
     static void send_reply(const char *text);
     static void cs_write_string(const char *buf);
     int  GetError();  // returns socket error
     void read_metaserver_data();
-    bool handle_socket_shutdown();
+    void handle_socket_shutdown();
     void update();
     void contactMetaserver();
     void SendVersion();
@@ -221,6 +220,7 @@ private:
     int SocketStatusErrorNr;
     int mActServerNr;
     struct sockaddr_in  insock;       // Server's attributes
+    static bool mEqualEndian; // Same endian on server and client?
     static bool mInitDone;
 
     // ////////////////////////////////////////////////////////////////////

@@ -155,6 +155,7 @@
 		<Unit filename="..\..\..\include\object_visuals.h" />
 		<Unit filename="..\..\..\include\option.h" />
 		<Unit filename="..\..\..\include\particle_manager.h" />
+		<Unit filename="..\..\..\include\resourceloader.h" />
 		<Unit filename="..\..\..\include\sound.h" />
 		<Unit filename="..\..\..\include\spell_manager.h" />
 		<Unit filename="..\..\..\include\spell_range.h" />
@@ -203,6 +204,7 @@
 		<Unit filename="..\..\..\source\option.cpp" />
 		<Unit filename="..\..\..\source\option_init.cpp" />
 		<Unit filename="..\..\..\source\particle_manager.cpp" />
+		<Unit filename="..\..\..\source\resourceloader.cpp" />
 		<Unit filename="..\..\..\source\sound.cpp" />
 		<Unit filename="..\..\..\source\spell_manager.cpp" />
 		<Unit filename="..\..\..\source\spell_range.cpp" />

@@ -28,6 +28,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "network.h"
 #include "object_manager.h"
 #include "object_visuals.h"
+#include "resourceloader.h"
 
 using namespace Ogre;
 

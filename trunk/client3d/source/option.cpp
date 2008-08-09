@@ -97,7 +97,7 @@ checkForKeyword:
 //================================================================================================
 Option::Option()
 {
-    Logger::log().headline("Init Options");
+    Logger::log().headline() << "Init Options";
     mDescFile =0;
 }
 
