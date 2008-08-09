@@ -124,7 +124,7 @@ private:
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     Events() {};
-    ~Events(){};
+    ~Events() {};
     bool frameStarted(const Ogre::FrameEvent& evt);
     bool frameEnded  (const Ogre::FrameEvent& evt);
     bool checkUsername(const char *name);

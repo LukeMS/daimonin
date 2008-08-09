@@ -21,23 +21,22 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
-#include "define.h"
 #include "logger.h"
-#include "object_manager.h"
 #include "tile_manager.h"
+#include "resourceloader.h"
 
 using namespace Ogre;
 
-const char SRC_TEXTURE_NAME[]     = "Atlas_00_";
+const char SRC_TEXTURE_NAME[]     = "Atlas";
 const char TEXTURE_LAND_NAME[]    = "TileEngine/TexLand";
 const char TEXTURE_WATER_NAME[]   = "TileEngine/TexWater";
 const char MATERIAL_LAND_NAME[]   = "TileEngine/MatLand";
 const char MATERIAL_WATER_NAME[]  = "TileEngine/MatWater";
 const int  SUM_QUAD_VERTICES = 6;  /**< A quadrat is build out of 2 triangles with 3 vertices each. **/
+const unsigned int SUM_CAMERA_POS  = 7;
 const Real TEX_SIZE = 1.0f/((float)TileManager::COLS_SRC_TILES*4.0f);
 const Real SHADOW_SIZE  = TEX_SIZE/2;
 const Real SHADOW_SPACE = SHADOW_SIZE/8.0f;
-
 
 //================================================================================================
 // The map has its zero-position in the top-left corner:
@@ -58,26 +57,40 @@ const Real MIRROR[4][4][2]=
 };
 
 //================================================================================================
-// Holds the x-offset for each row of tiiles.
+// Holds the x-offset for each row of tiles.
 // This prevents the drawing of tiles which are outside the field of view.
+// Each line holds a range of the camera rotation.
 //================================================================================================
-const int CHUNK_START_OFFSET[][TileManager::CHUNK_SIZE_Z]=
+const int CHUNK_START_OFFSET[SUM_CAMERA_POS][TileManager::CHUNK_SIZE_Z]=
 {
-    {0,0,0,0, 2,2,2,2,2,2, 4,4,4,4,4,4, 6,6,6,6,6,6, 8,8,8,8,8,8, 10,10,10,10}, //   0° camera rotation.
-    //{6, 6, 7, 7, 8, 8,  9,  9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16, 16, 17}, //  15° camera rotation.
-    //{5, 5, 6, 6, 7, 7,  8,  8,  9,  9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16}, //  30° camera rotation.
+    { 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 6, 6, 6, 6, 6, 6, 8, 8, 8, 8, 8, 8,10,10,10,10}, // -45°
+    { 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 6, 6, 6, 6, 6, 6, 8, 8, 8, 8, 8, 8,10,10}, // -30°
+    { 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 6, 6, 6, 6, 6, 6, 8, 8, 8, 8, 8, 8}, // -15°
+    { 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 6, 6, 6, 6, 6, 6, 8, 8, 8, 8, 8, 8,10,10,10,10}, //   0°
+    { 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 6, 6, 6, 6, 6, 6, 8, 8, 8, 8, 8, 8,10,10,10,10}, //  15°
+    { 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 6, 6, 6, 6, 6, 6, 8, 8, 8, 8, 8, 8,10,10,10,10}, //  30°
+    { 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 6, 6, 6, 6, 6, 6, 8, 8, 8, 8, 8, 8,10,10,10,10}, //  45°
 };
+
+//================================================================================================
+// Sum of tiles in a row (Caluclated from CHUNK_START_OFFSET)
+//================================================================================================
+int CHUNK_X_LENGTH[TileManager::CHUNK_SIZE_Z];
 
 //================================================================================================
 // Constructor.
 //================================================================================================
-void TileChunk::init(int textureSize)
+void TileChunk::init(int textureSize, int queryMaskLand, int queryMaskWater)
 {
-    MaterialPtr tmpMaterial;
     mTextureSize = textureSize;
+    mCameraRotation = 0;
     int sumVertices = 0;
+    int cameraStandardPos = 3; // 0° rotation of the camera in CHUNK_START_OFFSET[][] table.
     for (int i=0; i < TileManager::CHUNK_SIZE_Z; ++i)
-        sumVertices+= TileManager::CHUNK_SIZE_X - 2*CHUNK_START_OFFSET[0][i];
+    {
+        CHUNK_X_LENGTH[i] = TileManager::CHUNK_SIZE_X - 2*CHUNK_START_OFFSET[cameraStandardPos][i];
+        sumVertices+= CHUNK_X_LENGTH[i];
+    }
     sumVertices*= SUM_QUAD_VERTICES;
     // ////////////////////////////////////////////////////////////////////
     // Build the land-tiles.
@@ -100,17 +113,10 @@ void TileChunk::init(int textureSize)
     submesh->vertexData = vData;
     mMeshLand->_setBounds(AxisAlignedBox(0,0,0,TileManager::TILE_SIZE * TileManager::CHUNK_SIZE_X,MAX_TERRAIN_HEIGHT,TileManager::TILE_SIZE * TileManager::CHUNK_SIZE_Z));
     mMeshLand->load();
-    // Set the material.
-    int absSize = textureSize/TileManager::COLS_SRC_TILES/4;
-    String strTextureFile= SRC_TEXTURE_NAME + StringConverter::toString(absSize*8*4, 4, '0') + ".png";
-    tmpMaterial = MaterialManager::getSingleton().getByName(MATERIAL_LAND_NAME);
-    tmpMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(strTextureFile);
-    tmpMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(1)->setTextureName(strTextureFile);
-    tmpMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(2)->setTextureName(strTextureFile);
-    tmpMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(3)->setTextureName(strTextureFile);
     mEntityLand = TileManager::getSingleton().getSceneManager()->createEntity("Entity_Land", "Mesh_Land");
+    loadAtlasTexture(0, -1);
     mEntityLand->setMaterialName(MATERIAL_LAND_NAME);
-    mEntityLand->setQueryFlags(ObjectManager::QUERY_TILES_WATER_MASK);
+    mEntityLand->setQueryFlags(queryMaskLand);
     mEntityLand->setRenderQueueGroup(RENDER_QUEUE_1);
     // ////////////////////////////////////////////////////////////////////
     // Build the water-tiles.
@@ -120,13 +126,10 @@ void TileChunk::init(int textureSize)
     mMeshWater->_setBounds(AxisAlignedBox(0,0,0,TileManager::TILE_SIZE * TileManager::CHUNK_SIZE_X,MAX_TERRAIN_HEIGHT,TileManager::TILE_SIZE * TileManager::CHUNK_SIZE_Z));
     mMeshWater->load();
     mEntityWater = TileManager::getSingleton().getSceneManager()->createEntity("Entity_Water", "Mesh_Water");
-    mEntityWater->setQueryFlags(ObjectManager::QUERY_TILES_WATER_MASK);
-    mEntityWater->setRenderQueueGroup(RENDER_QUEUE_8);
-
-    mTexWater = TextureManager::getSingleton().createManual(TEXTURE_WATER_NAME, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, TEX_TYPE_2D, mTextureSize/TileManager::COLS_SRC_TILES, mTextureSize/TileManager::COLS_SRC_TILES, 0, PF_A8R8G8B8, TU_STATIC);
-    tmpMaterial = MaterialManager::getSingleton().getByName(MATERIAL_WATER_NAME);
-    tmpMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(TEXTURE_WATER_NAME);
+    loadAtlasTexture(-1, 0);
     mEntityWater->setMaterialName(MATERIAL_WATER_NAME);
+    mEntityWater->setQueryFlags(queryMaskWater);
+    mEntityWater->setRenderQueueGroup(RENDER_QUEUE_8);
     // ////////////////////////////////////////////////////////////////////
     // Attach the tiles to a scenenode.
     // ////////////////////////////////////////////////////////////////////
@@ -137,14 +140,48 @@ void TileChunk::init(int textureSize)
 }
 
 //================================================================================================
+// Set a new material.
+//================================================================================================
+void TileChunk::loadAtlasTexture(int landGroup, int waterGroup)
+{
+    if (landGroup >=0)
+    {
+        String textureFile = SRC_TEXTURE_NAME;
+        textureFile+= "_"+ StringConverter::toString(landGroup, 2, '0');
+        textureFile+= "_"+ StringConverter::toString(mTextureSize/TileManager::COLS_SRC_TILES*8, 4, '0') + ".png";
+        MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName(MATERIAL_LAND_NAME);
+        for (int i=0; i < tmpMaterial->getTechnique(0)->getPass(0)->getNumTextureUnitStates(); ++i)
+            tmpMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(i)->setTextureName(textureFile);
+    }
+    if (waterGroup >=0)
+    {
+        String textureFile = TEXTURE_WATER_NAME;
+        MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName(MATERIAL_WATER_NAME);
+        for (int i=0; i < tmpMaterial->getTechnique(0)->getPass(0)->getNumTextureUnitStates(); ++i)
+            tmpMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(i)->setTextureName(textureFile);
+    }
+}
+
+//================================================================================================
+//
+//================================================================================================
+void TileChunk::rotate(Real cameraAngle)
+{
+    unsigned int rotation = (unsigned int)(cameraAngle + 45.0f) / 15;
+    if (mCameraRotation != rotation && rotation < SUM_CAMERA_POS)
+    {
+        mCameraRotation = rotation;
+        update();
+    }
+}
+
+//================================================================================================
 // Free all resources.
 //================================================================================================
 void TileChunk::freeRecources()
 {
-    mMeshWater.setNull();
     mMeshLand.setNull();
-    mTexWater.setNull();
-    mTexLand.setNull();
+    mMeshWater.setNull();
 }
 
 //================================================================================================
@@ -181,8 +218,6 @@ void TileChunk::calcNormal(Real x1, Real z1, Real x2, Real z2, Real x3, Real z3)
     mNormal = mVec2 - mVec1;
     mNormal = mNormal.crossProduct(mVec3 - mVec1);
     mNormal.normalise();
-
-    mNormal = Vector3(1,1,1);
 }
 
 //================================================================================================
@@ -192,12 +227,9 @@ void TileChunk::setVertex(Vector3 &pos, Real posTexX, Real posTexZ, Real posShad
 {
     static const int TEXTURE_UNIT_SORT[][6]=
     {
-        // Triangle 1
-        {0,1, 2,3, 6,7}, {0,1, 6,7, 2,3}, {2,3, 0,1, 6,7},
-        {2,3, 6,7, 0,1}, {6,7, 0,1, 2,3}, {6,7, 2,3, 0,1},
-        // Triangle 2
-        {0,1, 2,3, 4,5}, {0,1, 4,5, 2,3}, {2,3, 0,1, 4,5},
-        {2,3, 4,5, 0,1}, {4,5, 0,1, 2,3}, {4,5, 2,3, 0,1},
+        {0,1, 2,3, 4,5}, {0,1, 4,5, 2,3},
+        {2,3, 0,1, 4,5}, {2,3, 4,5, 0,1},
+        {4,5, 0,1, 2,3}, {4,5, 2,3, 0,1},
     };
     // Pos in the world.
     *mPosVBuf++ = pos.x;
@@ -216,27 +248,27 @@ void TileChunk::setVertex(Vector3 &pos, Real posTexX, Real posTexZ, Real posShad
     *mPosVBuf++ = mTexPosInAtlas[TEXTURE_UNIT_SORT[p][4]] + posTexX * TEX_SIZE;
     *mPosVBuf++ = mTexPosInAtlas[TEXTURE_UNIT_SORT[p][5]] + posTexZ * TEX_SIZE;
     // Shadows
-    *mPosVBuf++ = mTexPosInAtlas[8] + posShadowX * (SHADOW_SIZE-SHADOW_SPACE)*2;
-    *mPosVBuf++ = mTexPosInAtlas[9] + posShadowZ * (SHADOW_SIZE-SHADOW_SPACE)*2;
+    *mPosVBuf++ = mTexPosInAtlas[6] + posShadowX * (SHADOW_SIZE-SHADOW_SPACE)*2;
+    *mPosVBuf++ = mTexPosInAtlas[7] + posShadowZ * (SHADOW_SIZE-SHADOW_SPACE)*2;
 }
 
 //================================================================================================
 // TextureUnit sorting: The higher the gfx-nr, the higher the texture unit.
 //================================================================================================
-int TileChunk::calcTextureUnitSorting(int l0, int l1, int l2, int offset)
+int TileChunk::calcTextureUnitSorting(int l0, int l1, int l2)
 {
     if (l0 <= l1)
     {
         if (l0 <= l2)
         {
-            if (l1 <= l2) return 0 + offset;
-            return 1 + offset;
+            if (l1 <= l2) return 0;
+            return 1;
         }
-        return 4 + offset;
+        return 4;
     }
-    if (l0 <= l2) return 2 + offset;
-    if (l1 <= l2) return 3 + offset;
-    return 5 + offset;
+    if (l0 <= l2) return 2;
+    if (l1 <= l2) return 3;
+    return 5;
 }
 
 //================================================================================================
@@ -265,9 +297,7 @@ void TileChunk::changeLand()
         {1 * TEX_SIZE, 2 * TEX_SIZE, 3 * TEX_SIZE, 0 * TEX_SIZE}, // Texture Unit 2.1 (vertical)
         {0 * TEX_SIZE, 1 * TEX_SIZE, 2 * TEX_SIZE, 3 * TEX_SIZE}, // Texture Unit 2.2 (horizontal)
     };
-    int rotation = 0;
-    int scrollX, scrollZ, texUnit0, texUnit1, texUnit21, texUnit22, texUnitShadow, mirror, sortPos;
-    int offX, offZ;
+    int scrollX, scrollZ, texUnit0, texUnit1, texUnit2, texUnitShadow, mirror, sortPos, offX, offZ;
 
     HardwareVertexBufferSharedPtr vbuf = mMeshLand->getSubMesh(0)->vertexData->vertexBufferBinding->getBuffer(0);
     mPosVBuf = static_cast<Real*>(vbuf->lock(HardwareBuffer::HBL_DISCARD));
@@ -275,14 +305,14 @@ void TileChunk::changeLand()
     for (int z = 0; z < TileManager::CHUNK_SIZE_Z; ++z)
     {
         offZ = (z+scrollZ)&3;
-        for (int x = CHUNK_START_OFFSET[rotation][z]; x < TileManager::CHUNK_SIZE_X - CHUNK_START_OFFSET[rotation][z]; ++x) // TODO::: add the offset to draw the correct tiles.
+        for (int x = CHUNK_START_OFFSET[mCameraRotation][z]; x < CHUNK_START_OFFSET[mCameraRotation][z]+CHUNK_X_LENGTH[z]; ++x)
         {
             offX = (x-scrollX)&3;
             // Shadow gfx
             texUnitShadow = TileManager::getSingleton().getMapShadow(x, z);
-            mTexPosInAtlas[9] = (Real) ((texUnitShadow&127)/7);
-            mTexPosInAtlas[8] = (Real)(((texUnitShadow&127) - mTexPosInAtlas[9]*7)*4*SHADOW_SIZE +0.5f + 3*SHADOW_SIZE +  SHADOW_SPACE);
-            mTexPosInAtlas[9] = mTexPosInAtlas[9]*4*SHADOW_SIZE + 3*SHADOW_SIZE + SHADOW_SPACE;
+            mTexPosInAtlas[7] = (Real) ((texUnitShadow&127)/7);
+            mTexPosInAtlas[6] = (Real)(((texUnitShadow&127) - mTexPosInAtlas[7]*7)*4*SHADOW_SIZE +0.5f + 3*SHADOW_SIZE +  SHADOW_SPACE);
+            mTexPosInAtlas[7] = mTexPosInAtlas[7]*4*SHADOW_SIZE + 3*SHADOW_SIZE + SHADOW_SPACE;
             mirror = texUnitShadow >> 14;
 
             // Tile gfx.
@@ -291,57 +321,25 @@ void TileChunk::changeLand()
                 if (z&1) // bottom-right subtile.
                 {
                     texUnit0 = TileManager::getSingleton().getMapGfx(x, z, TileManager::VERTEX_TL);
+                    mTexPosInAtlas[0]= (Real)(texUnit0 &1) * TEX_SIZE*8.0f + TU_POS[0][offX];
+                    mTexPosInAtlas[1]= (Real)(texUnit0 /2) * TEX_SIZE*4.0f + TU_POS[4][offZ];
                     texUnit1 = TileManager::getSingleton().getMapGfx(x, z, TileManager::VERTEX_BR);
-                    texUnit22= TileManager::getSingleton().getMapGfx(x, z, TileManager::VERTEX_TR);
-                    texUnit21= TileManager::getSingleton().getMapGfx(x, z, TileManager::VERTEX_BL);
-                }
-                else  // top-right subtile.
-                {
-
-                    texUnit0 = TileManager::getSingleton().getMapGfx(x, z, TileManager::VERTEX_BL);
-                    texUnit1 = TileManager::getSingleton().getMapGfx(x, z, TileManager::VERTEX_TR);
-                    texUnit22= TileManager::getSingleton().getMapGfx(x, z, TileManager::VERTEX_BR);
-                    texUnit21= TileManager::getSingleton().getMapGfx(x, z, TileManager::VERTEX_TL);
-                }
-            }
-            else
-            {
-                if (z&1) // bottom-left subtile.
-                {
-                    texUnit0 = TileManager::getSingleton().getMapGfx(x, z, TileManager::VERTEX_TR);
-                    texUnit1 = TileManager::getSingleton().getMapGfx(x, z, TileManager::VERTEX_BL);
-                    texUnit22= TileManager::getSingleton().getMapGfx(x, z, TileManager::VERTEX_TL);
-                    texUnit21= TileManager::getSingleton().getMapGfx(x, z, TileManager::VERTEX_BR);
-                }
-                else  // top-left subtile.
-                {
-                    texUnit0 = TileManager::getSingleton().getMapGfx(x, z, TileManager::VERTEX_BR);
-                    texUnit1 = TileManager::getSingleton().getMapGfx(x, z, TileManager::VERTEX_TL);
-                    texUnit22= TileManager::getSingleton().getMapGfx(x, z, TileManager::VERTEX_BL);
-                    texUnit21= TileManager::getSingleton().getMapGfx(x, z, TileManager::VERTEX_TR);
-                }
-            }
-            mTexPosInAtlas[0]= (Real)(texUnit0 &1) * TEX_SIZE*8.0f + TU_POS[0][offX];
-            mTexPosInAtlas[2]= (Real)(texUnit1 &1) * TEX_SIZE*8.0f + TU_POS[1][offX];
-            mTexPosInAtlas[4]= (Real)(texUnit21&1) * TEX_SIZE*8.0f + TU_POS[2][offX];
-            mTexPosInAtlas[6]= (Real)(texUnit22&1) * TEX_SIZE*8.0f + TU_POS[3][offX];
-            mTexPosInAtlas[1]= (Real)(texUnit0 /2) * TEX_SIZE*4.0f + TU_POS[4][offZ];
-            mTexPosInAtlas[3]= (Real)(texUnit1 /2) * TEX_SIZE*4.0f + TU_POS[5][offZ];
-            mTexPosInAtlas[5]= (Real)(texUnit21/2) * TEX_SIZE*4.0f + TU_POS[6][offZ];
-            mTexPosInAtlas[7]= (Real)(texUnit22/2) * TEX_SIZE*4.0f + TU_POS[7][offZ];
-
-            if ((x-scrollX)&1)
-            {
-                if (z&1) // bottom-right subtile.
-                {
+                    mTexPosInAtlas[2]= (Real)(texUnit1 &1) * TEX_SIZE*8.0f + TU_POS[1][offX];
+                    mTexPosInAtlas[3]= (Real)(texUnit1 /2) * TEX_SIZE*4.0f + TU_POS[5][offZ];
                     // Triangle 1
-                    sortPos = calcTextureUnitSorting(texUnit0, texUnit1, texUnit21, 6);
+                    texUnit2= TileManager::getSingleton().getMapGfx(x, z, TileManager::VERTEX_BL);
+                    mTexPosInAtlas[4]= (Real)(texUnit2&1) * TEX_SIZE*8.0f + TU_POS[2][offX];
+                    mTexPosInAtlas[5]= (Real)(texUnit2/2) * TEX_SIZE*4.0f + TU_POS[6][offZ];
+                    sortPos = calcTextureUnitSorting(texUnit0, texUnit1, texUnit2);
                     calcNormal(x+MIRROR[0][0][X], z+MIRROR[0][0][Z],  x+MIRROR[0][1][X], z+MIRROR[0][1][Z],  x+MIRROR[0][3][X], z+MIRROR[0][3][Z]);
                     setVertex(mVec1, MIRROR[0][0][X], MIRROR[0][0][Z], MIRROR[mirror][0][X], MIRROR[mirror][0][Z], sortPos);
                     setVertex(mVec2, MIRROR[0][1][X], MIRROR[0][1][Z], MIRROR[mirror][1][X], MIRROR[mirror][1][Z], sortPos);
                     setVertex(mVec3, MIRROR[0][3][X], MIRROR[0][3][Z], MIRROR[mirror][3][X], MIRROR[mirror][3][Z], sortPos);
                     // Triangle 2
-                    sortPos = calcTextureUnitSorting(texUnit0, texUnit1, texUnit22, 0);
+                    texUnit2= TileManager::getSingleton().getMapGfx(x, z, TileManager::VERTEX_TR);
+                    mTexPosInAtlas[4]= (Real)(texUnit2&1) * TEX_SIZE*8.0f + TU_POS[3][offX];
+                    mTexPosInAtlas[5]= (Real)(texUnit2/2) * TEX_SIZE*4.0f + TU_POS[7][offZ];
+                    sortPos = calcTextureUnitSorting(texUnit0, texUnit1, texUnit2);
                     calcNormal(x+MIRROR[0][3][X], z+MIRROR[0][3][Z],  x+MIRROR[0][2][X], z+MIRROR[0][2][Z],  x+MIRROR[0][0][X], z+MIRROR[0][0][Z]);
                     setVertex(mVec1, MIRROR[0][3][X], MIRROR[0][3][Z], MIRROR[mirror][3][X], MIRROR[mirror][3][Z], sortPos);
                     setVertex(mVec2, MIRROR[0][2][X], MIRROR[0][2][Z], MIRROR[mirror][2][X], MIRROR[mirror][2][Z], sortPos);
@@ -349,14 +347,26 @@ void TileChunk::changeLand()
                 }
                 else  // top-right subtile.
                 {
+                    texUnit0 = TileManager::getSingleton().getMapGfx(x, z, TileManager::VERTEX_BL);
+                    mTexPosInAtlas[0]= (Real)(texUnit0 &1) * TEX_SIZE*8.0f + TU_POS[0][offX];
+                    mTexPosInAtlas[1]= (Real)(texUnit0 /2) * TEX_SIZE*4.0f + TU_POS[4][offZ];
+                    texUnit1 = TileManager::getSingleton().getMapGfx(x, z, TileManager::VERTEX_TR);
+                    mTexPosInAtlas[2]= (Real)(texUnit1 &1) * TEX_SIZE*8.0f + TU_POS[1][offX];
+                    mTexPosInAtlas[3]= (Real)(texUnit1 /2) * TEX_SIZE*4.0f + TU_POS[5][offZ];
                     // Triangle 1
-                    sortPos = calcTextureUnitSorting(texUnit0, texUnit1, texUnit21, 6);
+                    texUnit2= TileManager::getSingleton().getMapGfx(x, z, TileManager::VERTEX_TL);
+                    mTexPosInAtlas[4]= (Real)(texUnit2&1) * TEX_SIZE*8.0f + TU_POS[2][offX];
+                    mTexPosInAtlas[5]= (Real)(texUnit2/2) * TEX_SIZE*4.0f + TU_POS[6][offZ];
+                    sortPos = calcTextureUnitSorting(texUnit0, texUnit1, texUnit2);
                     calcNormal(x+MIRROR[0][0][X], z+MIRROR[0][0][Z],  x+MIRROR[0][1][X], z+MIRROR[0][1][Z],  x+MIRROR[0][2][X], z+MIRROR[0][2][Z]);
                     setVertex(mVec1, MIRROR[0][0][X], MIRROR[0][0][Z], MIRROR[mirror][0][X], MIRROR[mirror][0][Z], sortPos);
                     setVertex(mVec2, MIRROR[0][1][X], MIRROR[0][1][Z], MIRROR[mirror][1][X], MIRROR[mirror][1][Z], sortPos);
                     setVertex(mVec3, MIRROR[0][2][X], MIRROR[0][2][Z], MIRROR[mirror][2][X], MIRROR[mirror][2][Z], sortPos);
                     // Triangle 2
-                    sortPos = calcTextureUnitSorting(texUnit0, texUnit1, texUnit22, 0);
+                    texUnit2= TileManager::getSingleton().getMapGfx(x, z, TileManager::VERTEX_BR);
+                    mTexPosInAtlas[4]= (Real)(texUnit2&1) * TEX_SIZE*8.0f + TU_POS[3][offX];
+                    mTexPosInAtlas[5]= (Real)(texUnit2/2) * TEX_SIZE*4.0f + TU_POS[7][offZ];
+                    sortPos = calcTextureUnitSorting(texUnit0, texUnit1, texUnit2);
                     calcNormal(x+MIRROR[0][2][X], z+MIRROR[0][2][Z],  x+MIRROR[0][1][X], z+MIRROR[0][1][Z],  x+MIRROR[0][3][X], z+MIRROR[0][3][Z]);
                     setVertex(mVec1, MIRROR[0][2][X], MIRROR[0][2][Z], MIRROR[mirror][2][X], MIRROR[mirror][2][Z], sortPos);
                     setVertex(mVec2, MIRROR[0][1][X], MIRROR[0][1][Z], MIRROR[mirror][1][X], MIRROR[mirror][1][Z], sortPos);
@@ -367,14 +377,26 @@ void TileChunk::changeLand()
             {
                 if (z&1) // bottom-left subtile.
                 {
+                    texUnit0 = TileManager::getSingleton().getMapGfx(x, z, TileManager::VERTEX_TR);
+                    mTexPosInAtlas[0]= (Real)(texUnit0 &1) * TEX_SIZE*8.0f + TU_POS[0][offX];
+                    mTexPosInAtlas[1]= (Real)(texUnit0 /2) * TEX_SIZE*4.0f + TU_POS[4][offZ];
+                    texUnit1 = TileManager::getSingleton().getMapGfx(x, z, TileManager::VERTEX_BL);
+                    mTexPosInAtlas[2]= (Real)(texUnit1 &1) * TEX_SIZE*8.0f + TU_POS[1][offX];
+                    mTexPosInAtlas[3]= (Real)(texUnit1 /2) * TEX_SIZE*4.0f + TU_POS[5][offZ];
                     // Triangle 1
-                    sortPos = calcTextureUnitSorting(texUnit0, texUnit1, texUnit22,0);
+                    texUnit2= TileManager::getSingleton().getMapGfx(x, z, TileManager::VERTEX_TL);
+                    mTexPosInAtlas[4]= (Real)(texUnit2&1) * TEX_SIZE*8.0f + TU_POS[3][offX];
+                    mTexPosInAtlas[5]= (Real)(texUnit2/2) * TEX_SIZE*4.0f + TU_POS[7][offZ];
+                    sortPos = calcTextureUnitSorting(texUnit0, texUnit1, texUnit2);
                     calcNormal(x+MIRROR[0][0][X], z+MIRROR[0][0][Z],  x+MIRROR[0][1][X], z+MIRROR[0][1][Z],  x+MIRROR[0][2][X], z+MIRROR[0][2][Z]);
                     setVertex(mVec1, MIRROR[0][0][X], MIRROR[0][0][Z], MIRROR[0][0][X], MIRROR[mirror][0][Z], sortPos);
                     setVertex(mVec2, MIRROR[0][1][X], MIRROR[0][1][Z], MIRROR[0][1][X], MIRROR[mirror][1][Z], sortPos);
                     setVertex(mVec3, MIRROR[0][2][X], MIRROR[0][2][Z], MIRROR[0][2][X], MIRROR[mirror][2][Z], sortPos);
                     // Triangle 2
-                    sortPos = calcTextureUnitSorting(texUnit0, texUnit1, texUnit21,6);
+                    texUnit2= TileManager::getSingleton().getMapGfx(x, z, TileManager::VERTEX_BR);
+                    mTexPosInAtlas[4]= (Real)(texUnit2&1) * TEX_SIZE*8.0f + TU_POS[2][offX];
+                    mTexPosInAtlas[5]= (Real)(texUnit2/2) * TEX_SIZE*4.0f + TU_POS[6][offZ];
+                    sortPos = calcTextureUnitSorting(texUnit0, texUnit1, texUnit2);
                     calcNormal(x+MIRROR[0][2][X], z+MIRROR[0][2][Z],  x+MIRROR[0][1][X], z+MIRROR[0][1][Z],  x+MIRROR[0][3][X], z+MIRROR[0][3][Z]);
                     setVertex(mVec1, MIRROR[0][2][X], MIRROR[0][2][Z], MIRROR[0][2][X], MIRROR[mirror][2][Z], sortPos);
                     setVertex(mVec2, MIRROR[0][1][X], MIRROR[0][1][Z], MIRROR[0][1][X], MIRROR[mirror][1][Z], sortPos);
@@ -382,14 +404,26 @@ void TileChunk::changeLand()
                 }
                 else  // top-left subtile.
                 {
+                    texUnit0 = TileManager::getSingleton().getMapGfx(x, z, TileManager::VERTEX_BR);
+                    mTexPosInAtlas[0]= (Real)(texUnit0 &1) * TEX_SIZE*8.0f + TU_POS[0][offX];
+                    mTexPosInAtlas[1]= (Real)(texUnit0 /2) * TEX_SIZE*4.0f + TU_POS[4][offZ];
+                    texUnit1 = TileManager::getSingleton().getMapGfx(x, z, TileManager::VERTEX_TL);
+                    mTexPosInAtlas[2]= (Real)(texUnit1 &1) * TEX_SIZE*8.0f + TU_POS[1][offX];
+                    mTexPosInAtlas[3]= (Real)(texUnit1 /2) * TEX_SIZE*4.0f + TU_POS[5][offZ];
                     // Triangle 1
-                    sortPos = calcTextureUnitSorting(texUnit0, texUnit1, texUnit22, 0);
+                    texUnit2= TileManager::getSingleton().getMapGfx(x, z, TileManager::VERTEX_BL);
+                    mTexPosInAtlas[4]= (Real)(texUnit2&1) * TEX_SIZE*8.0f + TU_POS[3][offX];
+                    mTexPosInAtlas[5]= (Real)(texUnit2/2) * TEX_SIZE*4.0f + TU_POS[7][offZ];
+                    sortPos = calcTextureUnitSorting(texUnit0, texUnit1, texUnit2);
                     calcNormal(x+MIRROR[0][0][X], z+MIRROR[0][0][Z],  x+MIRROR[0][1][X], z+MIRROR[0][1][Z],  x+MIRROR[0][3][X], z+MIRROR[0][3][Z]);
                     setVertex(mVec1, MIRROR[0][0][X], MIRROR[0][0][Z], MIRROR[0][0][X], MIRROR[mirror][0][Z], sortPos);
                     setVertex(mVec2, MIRROR[0][1][X], MIRROR[0][1][Z], MIRROR[0][1][X], MIRROR[mirror][1][Z], sortPos);
                     setVertex(mVec3, MIRROR[0][3][X], MIRROR[0][3][Z], MIRROR[0][3][X], MIRROR[mirror][3][Z], sortPos);
                     // Triangle 2
-                    sortPos = calcTextureUnitSorting(texUnit0, texUnit1, texUnit21, 6);
+                    texUnit2= TileManager::getSingleton().getMapGfx(x, z, TileManager::VERTEX_TR);
+                    mTexPosInAtlas[4]= (Real)(texUnit2&1) * TEX_SIZE*8.0f + TU_POS[2][offX];
+                    mTexPosInAtlas[5]= (Real)(texUnit2/2) * TEX_SIZE*4.0f + TU_POS[6][offZ];
+                    sortPos = calcTextureUnitSorting(texUnit0, texUnit1, texUnit2);
                     calcNormal(x+MIRROR[0][3][X], z+MIRROR[0][3][Z],  x+MIRROR[0][2][X], z+MIRROR[0][2][Z],  x+MIRROR[0][0][X], z+MIRROR[0][0][Z]);
                     setVertex(mVec1, MIRROR[0][3][X], MIRROR[0][3][Z], MIRROR[0][3][X], MIRROR[mirror][3][Z], sortPos);
                     setVertex(mVec2, MIRROR[0][2][X], MIRROR[0][2][Z], MIRROR[0][2][X], MIRROR[mirror][2][Z], sortPos);
@@ -401,54 +435,13 @@ void TileChunk::changeLand()
     vbuf->unlock();
 }
 
-
-//================================================================================================
-// Set a new material.
-//================================================================================================
-void TileChunk::loadAtlasTexture(int group)
-{
-    /*
-        String filename;
-        Image image;
-        filename = "Atlas_" + StringConverter::toString(group, 2, '0') + "_" + StringConverter::toString(mTextureSize, 4, '0') + ".png";
-        image.load(filename, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-        uint32 *src = (uint32 *) image.getData();
-        // ////////////////////////////////////////////////////////////////////
-        // Copy the water tile to a separate texture
-        // (Water needs own texture for the scroll animation).
-        // ////////////////////////////////////////////////////////////////////
-        int SUBT_SIZE = mTextureSize/TileManager::COLS_SRC_TILES;
-        mTexWater->getBuffer()->lock(HardwareBuffer::HBL_DISCARD);
-        PixelBox pb = mTexWater->getBuffer()->getCurrentLock();
-        uint32 *dst = (uint32 *)pb.data;
-        for (int y = 0; y < SUBT_SIZE; ++y)
-        {
-            for (int x = 0; x < SUBT_SIZE; ++x)
-                *dst++ = *src++ | 0xff000000;
-            src+=(mTextureSize - SUBT_SIZE);
-        }
-        mTexWater->getBuffer()->unlock();
-        // ////////////////////////////////////////////////////////////////////
-        // Copy the new atlastexture over the old one.
-        // ////////////////////////////////////////////////////////////////////
-        MaterialPtr tmpMaterial = mPainter->getMaterial();
-        TexturePtr texPainter = TextureManager::getSingleton().getByName(tmpMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->getTextureName());
-        pb = texPainter->getBuffer()->lock(Box(0, 0, mTextureSize, mTextureSize), HardwareBuffer::HBL_DISCARD);
-        memcpy(pb.data, image.getData(), mTextureSize * mTextureSize * sizeof(uint32));
-        texPainter->getBuffer()->unlock();
-        updatePainter();
-    */
-}
-
 //================================================================================================
 // Change a chunk.
 //================================================================================================
-void TileChunk::change()
+void TileChunk::update()
 {
-    long time = Root::getSingleton().getTimer()->getMicroseconds();
     changeLand();
     changeWater();
-    Logger::log().error() << "Time to change terrain: " << (double)(Root::getSingleton().getTimer()->getMicroseconds() - time)/1000 << " ms";
 }
 
 //================================================================================================

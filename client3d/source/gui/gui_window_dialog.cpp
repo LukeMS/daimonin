@@ -94,9 +94,9 @@ char *GuiDialog::get_parameter_string(char *data, int &pos)
 {
     static char buf[4024];
     char *start_ptr = strchr(data+pos,'"');
-    if (!start_ptr) return ""; // error
+    if (!start_ptr) return (char*)""; // error
     char *end_ptr = strchr(++start_ptr,'"');
-    if (!end_ptr) return ""; // error
+    if (!end_ptr) return (char*)""; // error
     strncpy(buf, start_ptr, end_ptr-start_ptr);
     buf[end_ptr-start_ptr]=0;
     pos+= ++end_ptr-(data+pos);
@@ -497,7 +497,7 @@ void GuiDialog::format_gui_interface()
         }
         else
 
-        butDecline.label="";
+            butDecline.label="";
         butDecline.command="";
         GuiManager::getSingleton().getButtonHandle(GuiManager::GUI_WIN_NPCDIALOG, GuiImageset::GUI_BUTTON_NPC_ACCEPT)->setLabel(butAccept.label.c_str());
         GuiManager::getSingleton().getButtonHandle(GuiManager::GUI_WIN_NPCDIALOG, GuiImageset::GUI_BUTTON_NPC_DECLINE)->setLabel(butDecline.label.c_str());

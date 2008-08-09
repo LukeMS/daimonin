@@ -275,7 +275,7 @@ private:
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     GuiTextinput()
-{}
+    {}
     ~GuiTextinput()
     {}
     GuiTextinput(const GuiTextinput&);

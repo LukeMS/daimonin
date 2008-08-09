@@ -21,82 +21,51 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
-#include <exception>
 #include <ctime>
+#include <exception>
 #include "logger.h"
 
-const char *Logger::mFilename = FILE_LOGGING;
-bool Logger::mTable = false;
-bool Logger::mList = false;
+const char *PRG_NAME = "Daimonin Ogre3d Client";
+const char *FILENAME = "./client_log.html";
+const char *STR_STYLE[] = {"List", "Info", "Warn", "Error", "Success", "Headline"};
+int Logger::mType = 0;
 
 //================================================================================================
-// .
+// Constructor.
 //================================================================================================
 Logger::Logger()
 {
-    std::ofstream log_stream(mFilename, std::ios::out);
-    if (!log_stream.is_open()) throw std::bad_exception();
-    log_stream
-    << "<html><head><title>" << PRG_NAME << " - Logfile</title></head>" <<
+    std::ofstream log_stream(FILENAME, std::ios::out);
+    if (!log_stream.is_open()) return;
+    log_stream  << "<html>\n<head><title>" << PRG_NAME << " - Logfile</title></head>\n" <<
     "<style>\n" <<
-    "td.Info {color:black;  }\n" <<
-    "td.List {color:black;  }\n" <<
-    "td.Warn {color:orange; }\n" <<
-    "td.Error{color:red;    }\n" <<
-    "td.Ok   {color:#00ff00;}\n" <<
+    "td."<< STR_STYLE[STYLE_LIST    ]<< " {color:black;  }\n" <<
+    "td."<< STR_STYLE[STYLE_INFO    ]<< " {color:black;  }\n" <<
+    "td."<< STR_STYLE[STYLE_WARN    ]<< " {color:orange; }\n" <<
+    "td."<< STR_STYLE[STYLE_ERROR   ]<< " {color:red;    }\n" <<
+    "td."<< STR_STYLE[STYLE_SUCCESS ]<< " {color:#00ff00;}\n" <<
+    "td."<< STR_STYLE[STYLE_HEADLINE]<< " {color:black; font-size: 18pt; font-weight: bold;}\n" <<
     "</style>\n" <<
-    "<body>\n<h1>" << PRG_NAME << " - Logfile</h1>\n" <<
+    "<body>\n" <<
+    "<table  width=\"100%\">\n\n" <<
+    "<h1>" << PRG_NAME << " - Logfile</h1>\n" <<
     "<h2>Started: " << now() << "</h2>\n";
 }
 
 //================================================================================================
-// .
+// Destructor.
 //================================================================================================
 Logger::~Logger()
 {
-    std::ofstream log_stream(mFilename, std::ios::out | std::ios::app);
+    std::ofstream log_stream(FILENAME, std::ios::out | std::ios::app);
     if (log_stream.is_open())
     {
-        if (mTable)
-        {
-            log_stream << "</table>\n";
-            mTable = false;
-        }
-        log_stream << "\n<hr><h2>Ended: " << now() << "</h2></body></html>";
+        log_stream << "\n\n</table>\n<hr><h2>Ended: " << now() << "</h2>\n</body>\n</html>";
     }
 }
 
 //================================================================================================
-// .
-//================================================================================================
-void Logger::headline(const char *text)
-{
-    std::ofstream log_stream(mFilename, std::ios::out | std::ios::app);
-    if (!log_stream.is_open()) throw std::bad_exception();
-    if (mTable)
-    {
-        log_stream << "\n</table>\n";
-        mTable = false;
-    }
-    log_stream << "\n<hr><h2>" << text << "</h2>\n";
-}
-
-//================================================================================================
-// .
-//================================================================================================
-void Logger::success(bool status)
-{
-    std::ofstream log_stream(mFilename, std::ios::out | std::ios::in| std::ios::binary);
-    if (!log_stream.is_open()) throw std::bad_exception();
-    log_stream.seekp(-5, std::ios::end);
-    if (status)
-        log_stream << "<td width=\"5%\" class=\"Ok\"> ok </td></tr>";
-    else
-        log_stream << "<td width=\"5%\" class=\"Error\"> failed </td></tr>";
-}
-
-//================================================================================================
-// .
+// Returns the actual date/time.
 //================================================================================================
 const char* Logger::now()
 {
@@ -105,48 +74,54 @@ const char* Logger::now()
     _strdate(dateStr);
     _strtime(dateStr+9);
     dateStr[8] = ' ';
-    return dateStr;
 #else
     struct tm newtime;
     time_t ltime;
-    ltime=time(&ltime);
+    ltime = time(&ltime);
     localtime_r(&ltime, &newtime);
     asctime_r(&newtime, dateStr);
-    return dateStr;
 #endif
+    return dateStr;
 }
 
 //================================================================================================
-// .
+// Writes a status message to the end of line..
 //================================================================================================
-Logger::LogEntry::LogEntry(const char *type)
+void Logger::success(bool status)
 {
-    out.open(mFilename, std::ios::out | std::ios::app);
-    if (!out.is_open())  throw std::bad_exception();
-    if (!mTable)
+    std::ofstream log_stream(FILENAME, std::ios::out | std::ios::in| std::ios::binary);
+    if (log_stream.is_open())
     {
-        out << "<table  width=\"100%\">";
-        mTable = true;
-    }
-    out << "\n<tr><td width= \"95%\" class=\"" << type << "\">";
-    if (!mList && type && type[0]=='L') //"List"
-    {
-        out << "<li>";
-        mList = true;
-        return;
+        log_stream.seekp(-5, std::ios::end); // position before </tr> key.
+        if (status)
+            log_stream << "<td width=\"5%\" class=\"" << STR_STYLE[STYLE_SUCCESS] << "\"> ok </td></tr>";
+        else
+            log_stream << "<td width=\"5%\" class=\"" << STR_STYLE[STYLE_ERROR] << "\"> failed </td></tr>";
     }
 }
 
 //================================================================================================
-// .
+// Constructor.
+//================================================================================================
+Logger::LogEntry::LogEntry(int type)
+{
+    mOut.open(FILENAME, std::ios::out | std::ios::app);
+    if (!mOut.is_open())  throw std::bad_exception();
+    if ((mType = type) == STYLE_HEADLINE)
+        mOut << "\n</table>\n\n<hr>\n<table  width=\"100%\">";
+    if (type == STYLE_LIST)
+        mOut << "\n<tr><td width= \"95%\" class=\"" << STR_STYLE[STYLE_LIST] << "\"><li>";
+    else
+        mOut << "\n<tr><td width= \"95%\" class=\"" << STR_STYLE[type] << "\">";
+}
+
+//================================================================================================
+// Destructor.
 //================================================================================================
 Logger::LogEntry::~LogEntry()
 {
-    if (!out.is_open())  throw std::bad_exception();
-    if (mList)
-    {
-        out << "</li>";
-        mList = false;
-    }
-    out << "</td></tr>";
+    if (!mOut.is_open()) return;
+    if (mType = STYLE_LIST) mOut << "</li>";
+    mOut << "</td></tr>";
+    mOut.close();
 }

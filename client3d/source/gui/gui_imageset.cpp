@@ -23,98 +23,105 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <Ogre.h>
 #include <tinyxml.h>
+#include <OgreFontManager.h>
 #include "define.h"
 #include "gui_imageset.h"
 #include "gui_manager.h"
 #include "gui_window.h"
 #include "gui_cursor.h"
+#include "resourceloader.h"
 #include "option.h"
 #include "logger.h"
-#include <OgreFontManager.h>
 
 using namespace Ogre;
 
+const char *GuiImageset::OVERLAY_ELEMENT_TYPE  = "Panel"; // defined in Ogre::OverlayElementFactory.h
+const char *GuiImageset::OVERLAY_RESOURCE_NAME = "_Overlay";
+const char *GuiImageset::ELEMENT_RESOURCE_NAME = "_OverlayElement";
+const char *GuiImageset::TEXTURE_RESOURCE_NAME = "_Texture";
+const char *GuiImageset::MATERIAL_RESOURCE_NAME= "_Material";
+
 GuiImageset::GuiElementNames GuiImageset::mGuiElementNames[GUI_ELEMENTS_SUM]=
-    {
-        // Standard Buttons (Handled inside of gui_windows).
-        { "But_Close",          GUI_BUTTON_CLOSE    },
-        { "But_OK",             GUI_BUTTON_OK       },
-        { "But_Cancel",         GUI_BUTTON_CANCEL   },
-        { "But_Min",            GUI_BUTTON_MINIMIZE },
-        { "But_Max",            GUI_BUTTON_MAXIMIZE },
-        { "But_Resize",         GUI_BUTTON_RESIZE   },
-        // Unique Buttons (Handled outside of gui_windows).
-        { "But_NPC_Accept",     GUI_BUTTON_NPC_ACCEPT },
-        { "But_NPC_Decline",    GUI_BUTTON_NPC_DECLINE},
-        // Listboxes.
-        { "List_Msg",           GUI_LIST_MSGWIN    },
-        { "List_Chat",          GUI_LIST_CHATWIN   },
-        { "List_NPC",           GUI_LIST_NPC       },
-        // Statusbar.
-        { "Bar_Health",         GUI_STATUSBAR_NPC_HEALTH    },
-        { "Bar_Mana",           GUI_STATUSBAR_PLAYER_MANA   },
-        { "Bar_Grace",          GUI_STATUSBAR_PLAYER_GRACE  },
-        { "Bar_PlayerHealth",   GUI_STATUSBAR_PLAYER_HEALTH },
-        { "Bar_PlayerMana",     GUI_STATUSBAR_NPC_MANA      },
-        { "Bar_PlayerGrace",    GUI_STATUSBAR_NPC_GRACE     },
-        // TextValues.
-        { "Engine_CurrentFPS",  GUI_TEXTVALUE_STAT_CUR_FPS   },
-        { "Engine_BestFPS",     GUI_TEXTVALUE_STAT_BEST_FPS  },
-        { "Engine_WorstFPS",    GUI_TEXTVALUE_STAT_WORST_FPS },
-        { "Engine_SumTris",     GUI_TEXTVALUE_STAT_SUM_TRIS  },
-        { "Login_ServerInfo1",  GUI_TEXTBOX_SERVER_INFO1     },
-        { "Login_ServerInfo2",  GUI_TEXTBOX_SERVER_INFO2     },
-        { "Login_ServerInfo3",  GUI_TEXTBOX_SERVER_INFO3     },
-        { "Login_LoginWarn",    GUI_TEXTBOX_LOGIN_WARN       },
-        { "Login_LoginInfo1",   GUI_TEXTBOX_LOGIN_INFO1      },
-        { "Login_LoginInfo2",   GUI_TEXTBOX_LOGIN_INFO2      },
-        { "Login_LoginInfo3",   GUI_TEXTBOX_LOGIN_INFO3      },
-        { "NPC_Headline",       GUI_TEXTBOX_NPC_HEADLINE     },
-        { "Inv_Equipment",      GUI_TEXTBOX_INV_EQUIP        },
-        { "Inv_Equip_Weight",   GUI_TEXTBOX_INV_EQUIP_WEIGHT },
-        // TextInput.
-        { "Input_Login_Name",   GUI_TEXTINPUT_LOGIN_NAME   },
-        { "Input_Login_Passwd", GUI_TEXTINPUT_LOGIN_PASSWD },
-        { "Input_Login_Verify", GUI_TEXTINPUT_LOGIN_VERIFY },
-        { "Input_NPC_Dialog",   GUI_TEXTINPUT_NPC_DIALOG   },
-        // Table
-        { "Table_Server",       GUI_TABLE },
-        // Combobox.
-        { "ComboBoxTest",       GUI_COMBOBOX_TEST  },
-        // Gadget_Slot
-        { "Slot_Quickslot",     GUI_SLOT_QUICKSLOT    },
-        { "Slot_Equipment",     GUI_SLOT_EQUIPMENT    },
-        { "Slot_Inventory",     GUI_SLOT_INVENTORY    },
-        { "Slot_Container",     GUI_SLOT_CONTAINER    },
-        { "Slot_TradeOffer",    GUI_SLOT_TRADE_OFFER  },
-        { "Slot_TradeReturn",   GUI_SLOT_TRADE_RETURN },
-        { "Slot_Shop",          GUI_SLOT_SHOP         },
-    };
+{
+    // Standard Buttons (Handled inside of gui_windows).
+    { "But_Close",          GUI_BUTTON_CLOSE    },
+    { "But_OK",             GUI_BUTTON_OK       },
+    { "But_Cancel",         GUI_BUTTON_CANCEL   },
+    { "But_Min",            GUI_BUTTON_MINIMIZE },
+    { "But_Max",            GUI_BUTTON_MAXIMIZE },
+    { "But_Resize",         GUI_BUTTON_RESIZE   },
+    // Unique Buttons (Handled outside of gui_windows).
+    { "But_NPC_Accept",     GUI_BUTTON_NPC_ACCEPT },
+    { "But_NPC_Decline",    GUI_BUTTON_NPC_DECLINE},
+    // Listboxes.
+    { "List_Msg",           GUI_LIST_MSGWIN    },
+    { "List_Chat",          GUI_LIST_CHATWIN   },
+    { "List_NPC",           GUI_LIST_NPC       },
+    // Statusbar.
+    { "Bar_Health",         GUI_STATUSBAR_NPC_HEALTH    },
+    { "Bar_Mana",           GUI_STATUSBAR_PLAYER_MANA   },
+    { "Bar_Grace",          GUI_STATUSBAR_PLAYER_GRACE  },
+    { "Bar_PlayerHealth",   GUI_STATUSBAR_PLAYER_HEALTH },
+    { "Bar_PlayerMana",     GUI_STATUSBAR_NPC_MANA      },
+    { "Bar_PlayerGrace",    GUI_STATUSBAR_NPC_GRACE     },
+    // TextValues.
+    { "Engine_CurrentFPS",  GUI_TEXTVALUE_STAT_CUR_FPS   },
+    { "Engine_BestFPS",     GUI_TEXTVALUE_STAT_BEST_FPS  },
+    { "Engine_WorstFPS",    GUI_TEXTVALUE_STAT_WORST_FPS },
+    { "Engine_SumTris",     GUI_TEXTVALUE_STAT_SUM_TRIS  },
+    { "Login_ServerInfo1",  GUI_TEXTBOX_SERVER_INFO1     },
+    { "Login_ServerInfo2",  GUI_TEXTBOX_SERVER_INFO2     },
+    { "Login_ServerInfo3",  GUI_TEXTBOX_SERVER_INFO3     },
+    { "Login_LoginWarn",    GUI_TEXTBOX_LOGIN_WARN       },
+    { "Login_LoginInfo1",   GUI_TEXTBOX_LOGIN_INFO1      },
+    { "Login_LoginInfo2",   GUI_TEXTBOX_LOGIN_INFO2      },
+    { "Login_LoginInfo3",   GUI_TEXTBOX_LOGIN_INFO3      },
+    { "NPC_Headline",       GUI_TEXTBOX_NPC_HEADLINE     },
+    { "Inv_Equipment",      GUI_TEXTBOX_INV_EQUIP        },
+    { "Inv_Equip_Weight",   GUI_TEXTBOX_INV_EQUIP_WEIGHT },
+    // TextInput.
+    { "Input_Login_Name",   GUI_TEXTINPUT_LOGIN_NAME   },
+    { "Input_Login_Passwd", GUI_TEXTINPUT_LOGIN_PASSWD },
+    { "Input_Login_Verify", GUI_TEXTINPUT_LOGIN_VERIFY },
+    { "Input_NPC_Dialog",   GUI_TEXTINPUT_NPC_DIALOG   },
+    // Table
+    { "Table_Server",       GUI_TABLE },
+    // Combobox.
+    { "ComboBoxTest",       GUI_COMBOBOX_TEST  },
+    // Gadget_Slot
+    { "Slot_Quickslot",     GUI_SLOT_QUICKSLOT    },
+    { "Slot_Equipment",     GUI_SLOT_EQUIPMENT    },
+    { "Slot_Inventory",     GUI_SLOT_INVENTORY    },
+    { "Slot_Container",     GUI_SLOT_CONTAINER    },
+    { "Slot_TradeOffer",    GUI_SLOT_TRADE_OFFER  },
+    { "Slot_TradeReturn",   GUI_SLOT_TRADE_RETURN },
+    { "Slot_Shop",          GUI_SLOT_SHOP         },
+};
 
 // Mouse states.
 GuiImageset::GuiElementNames GuiImageset::mMouseState[STATE_MOUSE_SUM]=
-    {
-        { "Default",           STATE_MOUSE_DEFAULT            },
-        { "Pushed",            STATE_MOUSE_PUSHED             },
-        { "Talk",              STATE_MOUSE_TALK               },
-        { "Attack-ShortRange", STATE_MOUSE_SHORT_RANGE_ATTACK },
-        { "Attack-LongRange",  STATE_MOUSE_LONG_RANGE_ATTACK  },
-        { "Open",              STATE_MOUSE_OPEN               },
-        { "Cast",              STATE_MOUSE_CAST               },
-        { "Dragging",          STATE_MOUSE_DRAGGING           },
-        { "Resizing",          STATE_MOUSE_RESIZING           },
-        { "PickUp",            STATE_MOUSE_PICKUP             },
-        { "Stop",              STATE_MOUSE_STOP               },
-    };
+{
+    { "Default",           STATE_MOUSE_DEFAULT            },
+    { "Pushed",            STATE_MOUSE_PUSHED             },
+    { "Talk",              STATE_MOUSE_TALK               },
+    { "Attack-ShortRange", STATE_MOUSE_SHORT_RANGE_ATTACK },
+    { "Attack-LongRange",  STATE_MOUSE_LONG_RANGE_ATTACK  },
+    { "Open",              STATE_MOUSE_OPEN               },
+    { "Cast",              STATE_MOUSE_CAST               },
+    { "Dragging",          STATE_MOUSE_DRAGGING           },
+    { "Resizing",          STATE_MOUSE_RESIZING           },
+    { "PickUp",            STATE_MOUSE_PICKUP             },
+    { "Stop",              STATE_MOUSE_STOP               },
+};
 
 // GuiElement states.
 GuiImageset::GuiElementNames GuiImageset::mElementState[STATE_ELEMENT_SUM]=
-    {
-        { "Default",   STATE_ELEMENT_DEFAULT },
-        { "Pressed",   STATE_ELEMENT_PUSHED  },
-        { "MouseOver", STATE_ELEMENT_M_OVER  },
-        { "Passive",   STATE_ELEMENT_PASSIVE },
-    };
+{
+    { "Default",   STATE_ELEMENT_DEFAULT },
+    { "Pressed",   STATE_ELEMENT_PUSHED  },
+    { "MouseOver", STATE_ELEMENT_M_OVER  },
+    { "Passive",   STATE_ELEMENT_PASSIVE },
+};
 
 //================================================================================================
 // .
@@ -136,11 +143,89 @@ GuiImageset::~GuiImageset()
 }
 
 //================================================================================================
+// (Re)loads the material and texture or creates them if they dont exist.
+//================================================================================================
+Overlay *GuiImageset::loadResources(int size, String name, TexturePtr &texture)
+{
+    String strOverlay = name + OVERLAY_RESOURCE_NAME;
+    String strElement = name + ELEMENT_RESOURCE_NAME;
+    String strTexture = name + TEXTURE_RESOURCE_NAME;
+    String strMaterial= name + MATERIAL_RESOURCE_NAME;
+    Overlay *overlay = OverlayManager::getSingleton().getByName(strOverlay);
+    if (!overlay)
+    {
+        OverlayElement *element = OverlayManager::getSingleton().createOverlayElement(OVERLAY_ELEMENT_TYPE, strElement);
+        if (!element)
+        {
+            Logger::log().error() << "Could not create " << strElement;
+            return 0;
+        }
+        element->setMetricsMode(GMM_PIXELS);
+        overlay = OverlayManager::getSingleton().create(strOverlay);
+        if (!overlay)
+        {
+            Logger::log().error() << "Could not create " << strElement;
+            return 0;
+        }
+        overlay->add2D(static_cast<OverlayContainer*>(element));
+    }
+    texture = TextureManager::getSingleton().getByName(strTexture);
+    if (texture.isNull())
+    {
+        texture = TextureManager::getSingleton().createManual(strTexture, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+                  TEX_TYPE_2D, size, size, 0, PF_A8R8G8B8, TU_STATIC_WRITE_ONLY,
+                  ManResourceLoader::getSingleton().getLoader());
+        if (texture.isNull())
+        {
+            Logger::log().error() << "Could not create " << strTexture;
+            return 0;
+        }
+        // We must clear the whole texture (textures have always 2^n size while our gfx can be smaller).
+        memset(texture->getBuffer()->lock(HardwareBuffer::HBL_DISCARD), 0x00, size * size * sizeof(uint32));
+        texture->getBuffer()->unlock();
+    }
+    MaterialPtr material = MaterialManager::getSingleton().getByName(strMaterial);
+    if (material.isNull())
+    {
+        material = MaterialManager::getSingleton().getByName(GuiWindow::GUI_MATERIAL_NAME);
+        if (material.isNull())
+        {
+            Logger::log().info() << "Material definition '" << GuiWindow::GUI_MATERIAL_NAME
+            << "' was not found in the default folders. Using a hardcoded material.";
+            material = MaterialManager::getSingleton().create(GuiWindow::GUI_MATERIAL_NAME, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+            if (material.isNull())
+            {
+                Logger::log().error() << "Could not create default material " << GuiWindow::GUI_MATERIAL_NAME;
+                return 0;
+            }
+            material->setLightingEnabled(false);
+            material->setDepthWriteEnabled(false);
+            material->setDepthCheckEnabled(false);
+            material->setSceneBlending(SBT_TRANSPARENT_ALPHA);
+            material->getTechnique(0)->getPass(0)->createTextureUnitState();
+            material->getTechnique(0)->getPass(0)->setAlphaRejectSettings(CMPF_GREATER, 128);
+            material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureFiltering(TFO_NONE);
+        }
+        material = material->clone(strMaterial);
+        if (material.isNull())
+        {
+            Logger::log().error() << "Could not create " << strMaterial;
+            return 0;
+        }
+    }
+    material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(strTexture);
+    OverlayElement *element = overlay->getChild(strElement);
+    element->setDimensions(texture->getWidth(), texture->getHeight());
+    element->setMaterialName(strMaterial);
+    return overlay;
+}
+
+//================================================================================================
 // Parse the gfx datas from the imageset.
 //================================================================================================
 void GuiImageset::parseXML(const char *fileImageSet)
 {
-    Logger::log().headline("Parsing the imageset");
+    Logger::log().headline() << "Parsing the imageset";
     // ////////////////////////////////////////////////////////////////////
     // Check for a working description file.
     // ////////////////////////////////////////////////////////////////////

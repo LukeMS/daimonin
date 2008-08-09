@@ -39,7 +39,8 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    enum {
+    enum
+    {
         // Standard Buttons (Handled inside of gui_windows).
         GUI_BUTTON_CLOSE,
         GUI_BUTTON_OK,
@@ -159,6 +160,11 @@ public:
     }
     gfxSrcEntry;
 
+    static const char *OVERLAY_ELEMENT_TYPE;
+    static const char *OVERLAY_RESOURCE_NAME;
+    static const char *ELEMENT_RESOURCE_NAME;
+    static const char *TEXTURE_RESOURCE_NAME;
+    static const char *MATERIAL_RESOURCE_NAME;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
@@ -175,6 +181,7 @@ public:
     }
     const char *getElementName(int i);
     int getElementIndex(int i);
+    Ogre::Overlay *loadResources(int size, Ogre::String name, Ogre::TexturePtr &texture);
 
 private:
     // ////////////////////////////////////////////////////////////////////

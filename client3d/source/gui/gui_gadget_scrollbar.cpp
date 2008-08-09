@@ -117,8 +117,8 @@ bool GuiGadgetScrollbar::mouseEvent(int MouseAction, int x, int y)
     }
     // Test the slider.
     if (mDragging ||
-            x > mStartX + SLIDER_INNER_OFFSET && x < mStopX - 2* SLIDER_INNER_OFFSET &&
-            y > mStartY + SLIDER_INNER_OFFSET && y < mStopY - 2* SLIDER_INNER_OFFSET )
+            (x > mStartX + SLIDER_INNER_OFFSET && x < mStopX - 2* SLIDER_INNER_OFFSET &&
+             y > mStartY + SLIDER_INNER_OFFSET && y < mStopY - 2* SLIDER_INNER_OFFSET))
     {
         static int dragSliderPos = 0;
         if (!mMouseOver)
@@ -248,7 +248,7 @@ void GuiGadgetScrollbar::draw()
     for (int x = 4; x < mWidth-3; ++x) mGfxBuffer[y1 * mWidth + x] = color;
     */
     // Blit.
-     mParent->getTexture()->getBuffer()->blitFromMemory(
+    mParent->getTexture()->getBuffer()->blitFromMemory(
         PixelBox(mStopX- mStartX, mStopY-mStartY, 1, PF_A8B8G8R8, mGfxBuffer),
         Box(mStartX, mStartY, mStopX, mStopY));
 }

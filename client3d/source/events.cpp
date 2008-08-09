@@ -43,6 +43,8 @@ static const unsigned int MAX_LEN_LOGIN_NAME = 12;
 static const unsigned int MIN_LEN_LOGIN_PSWD =  6;
 static const unsigned int MAX_LEN_LOGIN_PSWD = 17;
 const Real CAMERA_OFFSET = 1325;
+const char *GUI_LOADING_OVERLAY = "GUI_LOADING_OVERLAY";
+const char *GUI_LOADING_OVERLAY_ELEMENT = "GUI_LOADING_OVERLAY_ELEMENT";
 
 #define AUTO_FILL_PASWD // Delete me!!!
 
@@ -154,505 +156,509 @@ bool Events::frameStarted(const FrameEvent& evt)
     switch (Option::getSingleton().getGameStatus())
     {
         case Option::GAME_STATUS_INIT_VIEWPORT:
-            {
-                // ////////////////////////////////////////////////////////////////////
-                // Commandline argument to create Imposters.
-                // ////////////////////////////////////////////////////////////////////
-                const char *meshName = Option::getSingleton().getStrValue(Option::CMDLINE_CREATE_IMPOSTERS);
-                if (strlen(meshName) > 1)
-                    if (!ObjectManager::getSingleton().createFlipBook(meshName, 16)) return false;
-                // ////////////////////////////////////////////////////////////////////
-                // Create one viewport, entire window.
-                // ////////////////////////////////////////////////////////////////////
-                mCameraZoom = STD_CAMERA_ZOOM;
-                mCamera = mSceneManager->createCamera("PlayerCam");
-                Viewport *VP = mWindow->addViewport(mCamera);
-                mCamera->setAspectRatio(Real(VP->getActualWidth()) / Real(VP->getActualHeight()));
-                mCamera->setFOVy(Degree(mCameraZoom));
-                mCamera->setQueryFlags(ObjectManager::QUERY_CAMERA_MASK);
-                mCamera->setPosition(0, CAMERA_OFFSET, CAMERA_OFFSET);
-                mCamera->pitch(Degree(-36));
-                mWorld = mSceneManager->getRootSceneNode()->createChildSceneNode();
-                // ////////////////////////////////////////////////////////////////////
-                // Create a minimal gui for some loading infos..
-                // ////////////////////////////////////////////////////////////////////
-                GuiManager::getSingleton().Init(mWindow->getWidth(), mWindow->getHeight());
-                GuiTextout::getSingleton().loadRawFont(FILE_SYSTEM_FONT);
-                // Show the loading-gfx.
-                Overlay *overlay = OverlayManager::getSingleton().getByName ("Overlay/Loading");
-                overlay->show();
-                if (Root::getSingleton().getTimer()->getMilliseconds() & 1)
-                    overlay->getChild("OverlayElement/Screen1")->hide();
-                else
-                    overlay->getChild("OverlayElement/Screen2")->hide();
-                GuiManager::getSingleton().displaySystemMessage("* Welcome to Daimonin *");
-                Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_SOUND);
-                GuiManager::getSingleton().displaySystemMessage("Starting the sound-manager...");
-                break;
-            }
+        {
+            // ////////////////////////////////////////////////////////////////////
+            // Commandline argument to create Imposters.
+            // ////////////////////////////////////////////////////////////////////
+            const char *meshName = Option::getSingleton().getStrValue(Option::CMDLINE_CREATE_IMPOSTERS);
+            if (strlen(meshName) > 1)
+                if (!ObjectManager::getSingleton().createFlipBook(meshName, 16)) return false;
+            // ////////////////////////////////////////////////////////////////////
+            // Create one viewport, entire window.
+            // ////////////////////////////////////////////////////////////////////
+            mCameraZoom = STD_CAMERA_ZOOM;
+            mCamera = mSceneManager->createCamera("PlayerCam");
+            Viewport *VP = mWindow->addViewport(mCamera);
+            mCamera->setAspectRatio(Real(VP->getActualWidth()) / Real(VP->getActualHeight()));
+            mCamera->setFOVy(Degree(mCameraZoom));
+            mCamera->setQueryFlags(ObjectManager::QUERY_CAMERA_MASK);
+            mCamera->setPosition(0, CAMERA_OFFSET, CAMERA_OFFSET);
+            mCamera->pitch(Degree(-36));
+            mWorld = mSceneManager->getRootSceneNode()->createChildSceneNode();
+            // ////////////////////////////////////////////////////////////////////
+            // Create a minimal gui for some loading infos..
+            // ////////////////////////////////////////////////////////////////////
+            GuiManager::getSingleton().Init(mWindow->getWidth(), mWindow->getHeight());
+            GuiTextout::getSingleton().loadRawFont(FILE_SYSTEM_FONT);
+            // Show the loading-gfx.
+            Overlay *overlay = OverlayManager::getSingleton().create(GUI_LOADING_OVERLAY);
+            overlay->setZOrder(400);
+            OverlayElement *element = OverlayManager::getSingleton().createOverlayElement("Panel", GUI_LOADING_OVERLAY_ELEMENT);
+            element->setMetricsMode(GMM_RELATIVE);
+            element->setPosition(0.0, 0.0);
+            element->setDimensions(0.5, 1.0);
+            if (Root::getSingleton().getTimer()->getMilliseconds() & 1)
+                element->setMaterialName("GUI/LoadScreen1");
+            else
+                element->setMaterialName("GUI/LoadScreen2");
+            overlay->add2D(static_cast<OverlayContainer*>(element));
+            overlay->show();
+            GuiManager::getSingleton().displaySystemMessage("* Welcome to Daimonin *");
+            Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_SOUND);
+            GuiManager::getSingleton().displaySystemMessage("Starting the sound-manager...");
+            break;
+        }
 
         case Option::GAME_STATUS_INIT_SOUND:
-            {
-                // ////////////////////////////////////////////////////////////////////
-                // Init the sound and play the background music.
-                // ////////////////////////////////////////////////////////////////////
-                Sound::getSingleton().Init();
-                Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_LIGHT);
-                GuiManager::getSingleton().displaySystemMessage("Starting the light-manager...");
-                break;
-            }
+        {
+            // ////////////////////////////////////////////////////////////////////
+            // Init the sound and play the background music.
+            // ////////////////////////////////////////////////////////////////////
+            Sound::getSingleton().Init();
+            Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_LIGHT);
+            GuiManager::getSingleton().displaySystemMessage("Starting the light-manager...");
+            break;
+        }
 
         case Option::GAME_STATUS_INIT_LIGHT:
-            {
-                /*
-                // Todo: lightmanager
-                Light *light;
-                light = mSceneManager->createLight("Light_Vol");
-                light->setType(Light::LT_POINT );
-                light->setPosition(-100, 200, 800);
-                //    light->setDiffuseColour(1.0, 1.0, 1.0);
-                light->setSpecularColour(1.0, 1.0, 1.0);
-                mWorld->attachObject(light);
-                setLightMember(light, 0);
+        {
+            /*
+            // Todo: lightmanager
+            Light *light;
+            light = mSceneManager->createLight("Light_Vol");
+            light->setType(Light::LT_POINT );
+            light->setPosition(-100, 200, 800);
+            //    light->setDiffuseColour(1.0, 1.0, 1.0);
+            light->setSpecularColour(1.0, 1.0, 1.0);
+            mWorld->attachObject(light);
+            setLightMember(light, 0);
 
-                light = mSceneManager->createLight("Light_Spot");
-                light->setType(Light::LT_SPOTLIGHT);
-                light->setDirection(0, -1, -1);
-                light->setPosition (-125, 200, 100);
-                light->setDiffuseColour(1.0, 1.0, 1.0);
-                // light->setSpotlightRange(Radian(.2) , Radian(.6), 5.5);
-                // light->setAttenuation(1000,1,0.005,0);
+            light = mSceneManager->createLight("Light_Spot");
+            light->setType(Light::LT_SPOTLIGHT);
+            light->setDirection(0, -1, -1);
+            light->setPosition (-125, 200, 100);
+            light->setDiffuseColour(1.0, 1.0, 1.0);
+            // light->setSpotlightRange(Radian(.2) , Radian(.6), 5.5);
+            // light->setAttenuation(1000,1,0.005,0);
 
-                mWorld->attachObject(light);
-                setLightMember(light, 1);
-                light->setVisible(false);
-                mSceneManager->setAmbientLight(ColourValue(1.0, 1.0, 1.0));
-                */
-                //mSceneManager->setFog(FOG_LINEAR , ColourValue(0.5,0.5,0.5), 0, 2300, 2700);
-                Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_SPELL);
-                GuiManager::getSingleton().displaySystemMessage("Starting the spell-manager...");
-                break;
-            }
+            mWorld->attachObject(light);
+            setLightMember(light, 1);
+            light->setVisible(false);
+            mSceneManager->setAmbientLight(ColourValue(1.0, 1.0, 1.0));
+            */
+            //mSceneManager->setFog(FOG_LINEAR , ColourValue(0.5,0.5,0.5), 0, 2300, 2700);
+            Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_SPELL);
+            GuiManager::getSingleton().displaySystemMessage("Starting the spell-manager...");
+            break;
+        }
 
         case Option::GAME_STATUS_INIT_SPELL:
-            {
-                SpellManager::getSingleton().init(mSceneManager);
-                Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_PARTICLE);
-                GuiManager::getSingleton().displaySystemMessage("Starting the particle-manager...");
-                break;
-            }
+        {
+            SpellManager::getSingleton().init(mSceneManager);
+            Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_PARTICLE);
+            GuiManager::getSingleton().displaySystemMessage("Starting the particle-manager...");
+            break;
+        }
 
         case Option::GAME_STATUS_INIT_PARTICLE:
-            {
-                ParticleManager::getSingleton().update(0);
-                Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_GUI_IMAGESET);
-                GuiManager::getSingleton().displaySystemMessage("Starting the gui-manager...");
-                GuiManager::getSingleton().displaySystemMessage(" - Parsing Imageset.");
-                break;
-            }
+        {
+            ParticleManager::getSingleton().update(0);
+            Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_GUI_IMAGESET);
+            GuiManager::getSingleton().displaySystemMessage("Starting the gui-manager...");
+            GuiManager::getSingleton().displaySystemMessage(" - Parsing Imageset.");
+            break;
+        }
 
         case Option::GAME_STATUS_INIT_GUI_IMAGESET:
-            {
-                GuiImageset::getSingleton().parseXML(FILE_GUI_IMAGESET);
-                Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_GUI_WINDOWS);
-                GuiManager::getSingleton().displaySystemMessage(" - Parsing windows.");
-                break;
-            }
+        {
+            GuiImageset::getSingleton().parseXML(FILE_GUI_IMAGESET);
+            Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_GUI_WINDOWS);
+            GuiManager::getSingleton().displaySystemMessage(" - Parsing windows.");
+            break;
+        }
 
         case Option::GAME_STATUS_INIT_GUI_WINDOWS:
-            {
-                GuiManager::getSingleton().parseWindows(FILE_GUI_WINDOWS);
-                Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_EVENT_LISTENER);
-                GuiManager::getSingleton().displaySystemMessage("Starting the event-listener...");
-                break;
-            }
-
-        case Option::GAME_STATUS_INIT_EVENT_LISTENER:
-            {
-                Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_TILE);
-                GuiManager::getSingleton().displaySystemMessage("Starting the tile-engine...");
-                break;
-            }
+        {
+            GuiManager::getSingleton().parseWindows(FILE_GUI_WINDOWS);
+            Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_TILE);
+            GuiManager::getSingleton().displaySystemMessage("Starting the tile-engine...");
+            break;
+        }
 
         case Option::GAME_STATUS_INIT_TILE:
-            {
-                int lod = Option::getSingleton().getIntValue(Option::CMDLINE_TILEENGINE_LOD);
-                bool createTextures = Option::getSingleton().getIntValue(Option::CMDLINE_CREATE_TILE_TEXTURES)>0?true:false;
-                TileManager::getSingleton().Init(mSceneManager, lod, createTextures);
-                Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
-                GuiManager::getSingleton().displaySystemMessage("Starting the network connection...");
-                break;
-            }
+        {
+            int lod = Option::getSingleton().getIntValue(Option::CMDLINE_TILEENGINE_LOD);
+            bool createTextures = Option::getSingleton().getIntValue(Option::CMDLINE_CREATE_TILE_TEXTURES)>0?true:false;
+            TileManager::getSingleton().Init(mSceneManager, ObjectManager::QUERY_TILES_LAND_MASK, ObjectManager::QUERY_TILES_WATER_MASK, lod, createTextures);
+            Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_GUI);
+            GuiManager::getSingleton().displaySystemMessage("Starting the GUI...");
+            break;
+        }
+
+        case Option::GAME_STATUS_INIT_GUI:
+        {
+            // Close the loading screen.
+            GuiManager::getSingleton().displaySystemMessage("");
+            OverlayManager::getSingleton().destroyOverlayElement(GUI_LOADING_OVERLAY_ELEMENT);
+            OverlayManager::getSingleton().destroy(GUI_LOADING_OVERLAY);
+            GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_CHATWINDOW, true);
+            GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_TEXTWINDOW, true);
+            GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Welcome to ~Daimonin 3D~.");
+            GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "You need a running server to start the game!");
+            Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
+            break;
+        }
 
         case Option::GAME_STATUS_INIT_NET:
-            {
-                Network::getSingleton().Init();
-                // Close the loading screen.
-                GuiManager::getSingleton().displaySystemMessage("");
-                OverlayManager::getSingleton().destroyOverlayElement("OverlayElement/Screen1");
-                OverlayManager::getSingleton().destroyOverlayElement("OverlayElement/Screen2");
-                OverlayManager::getSingleton().destroy("Overlay/Loading");
-                GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_CHATWINDOW, true);
-                GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_TEXTWINDOW, true);
-                GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Welcome to ~Daimonin 3D~.");
-                GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "You need a running server to start the game!");
-                Option::getSingleton().setGameStatus(Option::GAME_STATUS_META);
-                break;
-            }
+        {
+            Network::getSingleton().Init();
+            Option::getSingleton().setGameStatus(Option::GAME_STATUS_META);
+            break;
+        }
 
         case Option::GAME_STATUS_META:
+        {
+            Network::getSingleton().contactMetaserver();
+            Option::getSingleton().setGameStatus(Option::GAME_STATUS_START);
+            break;
+        }
+
+        case Option::GAME_STATUS_START:
+        {
+            GuiManager::getSingleton().resetTextInput();
+            GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_LOGIN, false);
+            GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_SERVERSELECT, true);
+            Option::getSingleton().setGameStatus(Option::GAME_STATUS_STARTCONNECT);
+            break;
+        }
+
+        case Option::GAME_STATUS_STARTCONNECT:
+        {
+            if (GuiManager::getSingleton().getTableUserBreak(GuiManager::GUI_WIN_SERVERSELECT, GuiImageset::GUI_TABLE))
             {
-                Network::getSingleton().contactMetaserver();
+                GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_SERVERSELECT, false);
+                Option::getSingleton().setGameStatus(Option::GAME_STATUS_PLAY);
+            }
+            // Print server infos.
+            int select;
+            select = GuiManager::getSingleton().getTableSelection(GuiManager::GUI_WIN_SERVERSELECT, GuiImageset::GUI_TABLE);
+            if (select >=0)
+            {
+                for (int i =0; i< 4;++i)
+                {
+                    GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_SERVERSELECT,
+                                                           GuiManager::GUI_MSG_TXT_CHANGED,
+                                                           GuiImageset::GUI_TEXTBOX_SERVER_INFO1 + i,
+                                                           (void*)Network::getSingleton().get_metaserver_info(select, i));
+                }
+            }
+            // A server was selected.
+            select = GuiManager::getSingleton().getTableActivated(GuiManager::GUI_WIN_SERVERSELECT, GuiImageset::GUI_TABLE);
+            if (select >=0)
+            {
+                GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_SERVERSELECT, false);
+                Network::getSingleton().setActiveServer(select);
+                Option::getSingleton().setGameStatus(Option::GAME_STATUS_CONNECT);
+            }
+            break;
+        }
+
+        case Option::GAME_STATUS_CONNECT:
+        {
+            //GuiManager::getSingleton().showWindow(GUI_WIN_SERVERSELECT, false);
+            Network::GameStatusVersionFlag = false;
+            if (!Network::getSingleton().OpenActiveServerSocket())
+            {
+                GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Connection failed!");
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_START);
                 break;
             }
-
-        case Option::GAME_STATUS_START:
-            {
-                GuiManager::getSingleton().resetTextInput();
-                GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_LOGIN, false);
-                GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_SERVERSELECT, true);
-                Option::getSingleton().setGameStatus(Option::GAME_STATUS_STARTCONNECT);
-                break;
-            }
-
-        case Option::GAME_STATUS_STARTCONNECT:
-            {
-                if (GuiManager::getSingleton().getTableUserBreak(GuiManager::GUI_WIN_SERVERSELECT, GuiImageset::GUI_TABLE))
-                {
-                    GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_SERVERSELECT, false);
-                    Option::getSingleton().setGameStatus(Option::GAME_STATUS_PLAY);
-                }
-                // Print server infos.
-                int select;
-                select = GuiManager::getSingleton().getTableSelection(GuiManager::GUI_WIN_SERVERSELECT, GuiImageset::GUI_TABLE);
-                if (select >=0)
-                {
-                    for (int i =0; i< 4;++i)
-                    {
-                        GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_SERVERSELECT,
-                                                               GuiManager::GUI_MSG_TXT_CHANGED,
-                                                               GuiImageset::GUI_TEXTBOX_SERVER_INFO1 + i,
-                                                               (void*)Network::getSingleton().get_metaserver_info(select, i));
-                    }
-                }
-                // A server was selected.
-                select = GuiManager::getSingleton().getTableActivated(GuiManager::GUI_WIN_SERVERSELECT, GuiImageset::GUI_TABLE);
-                if (select >=0)
-                {
-                    GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_SERVERSELECT, false);
-                    Network::getSingleton().setActiveServer(select);
-                    Option::getSingleton().setGameStatus(Option::GAME_STATUS_CONNECT);
-                }
-                break;
-            }
-
-        case Option::GAME_STATUS_CONNECT:
-            {
-                //GuiManager::getSingleton().showWindow(GUI_WIN_SERVERSELECT, false);
-                Network::GameStatusVersionFlag = false;
-                if (!Network::getSingleton().OpenActiveServerSocket())
-                {
-                    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "connection failed!");
-                    Option::getSingleton().setGameStatus(Option::GAME_STATUS_START);
-                    break;
-                }
-                Network::getSingleton().socket_thread_start();
-                GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "connected. exchange version.");
-                Option::getSingleton().setGameStatus(Option::GAME_STATUS_VERSION);
-                break;
-            }
+            Network::getSingleton().socket_thread_start();
+            GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Connected. Exchange version.");
+            Option::getSingleton().setGameStatus(Option::GAME_STATUS_VERSION);
+            break;
+        }
 
         case Option::GAME_STATUS_VERSION:
-            {
-                Logger::log().info() << "Send version.";
-                Network::getSingleton().SendVersion();
-                Option::getSingleton().setGameStatus(Option::GAME_STATUS_WAITVERSION);
-                break;
-            }
+        {
+            Network::getSingleton().SendVersion();
+            Option::getSingleton().setGameStatus(Option::GAME_STATUS_WAITVERSION);
+            break;
+        }
 
         case Option::GAME_STATUS_WAITVERSION:
+        {
+            // perhaps here should be a timer? Remember, the version exchange server<->client is asynchron
+            // so perhaps the server send his version faster as the client send it to server.
+            if (Network::GameStatusVersionFlag) // wait for version answer when needed
             {
-                // perhaps here should be a timer? Remember, the version exchange server<->client is asynchron
-                // so perhaps the server send his version faster as the client send it to server.
-                if (Network::GameStatusVersionFlag) // wait for version answer when needed
+                if (!Network::GameStatusVersionOKFlag)
                 {
-                    if (!Network::GameStatusVersionOKFlag)
-                    {
-                        Option::getSingleton().setGameStatus(Option::GAME_STATUS_START);
-                    }
-                    else
-                    {
-                        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "version confirmed.");
-                        Option::getSingleton().setGameStatus(Option::GAME_STATUS_SETUP);
-                    }
+                    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Version not supported.");
+                    Option::getSingleton().setGameStatus(Option::GAME_STATUS_START);
                 }
-                break;
+                else
+                {
+                    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Version confirmed.");
+                    Option::getSingleton().setGameStatus(Option::GAME_STATUS_SETUP);
+                }
             }
+            break;
+        }
 
         case Option::GAME_STATUS_SETUP:
-            {
-                ServerFile::getSingleton().checkFiles();
-                std::stringstream strCmd;
-                strCmd <<
-                "setup sound " << 1 <<
-                " map2cmd "    << 1 <<
-                " mapsize "    << 17 << "x" << 17 <<
-                " darkness "   << 1 <<
-                " facecache "  << 1 <<
-                " skf " << ServerFile::getSingleton().getLength(ServerFile::FILE_SKILLS)  << "|" << std::hex<< ServerFile::getSingleton().getCRC(ServerFile::FILE_SKILLS)     << std::dec <<
-                " spf " << ServerFile::getSingleton().getLength(ServerFile::FILE_SPELLS)  << "|" << std::hex<< ServerFile::getSingleton().getCRC(ServerFile::FILE_SPELLS)     << std::dec <<
-                " bpf " << ServerFile::getSingleton().getLength(ServerFile::FILE_BMAPS)   << "|" << std::hex<< ServerFile::getSingleton().getCRC(ServerFile::FILE_BMAPS)      << std::dec <<
-                " stf " << ServerFile::getSingleton().getLength(ServerFile::FILE_SETTINGS)<< "|" << std::hex<< ServerFile::getSingleton().getCRC(ServerFile::FILE_SETTINGS)   << std::dec <<
-                " amf " << ServerFile::getSingleton().getLength(ServerFile::FILE_ANIMS)   << "|" << std::hex<< ServerFile::getSingleton().getCRC(ServerFile::FILE_ANIMS)      << std::dec;
-                Network::getSingleton().cs_write_string((char*)strCmd.str().c_str());
-                //Logger::log().info() << "Send: " << str;
-                Option::getSingleton().setGameStatus(Option::GAME_STATUS_WAITSETUP);
-                break;
-            }
+        {
+            ServerFile::getSingleton().checkFiles();
+            std::stringstream strCmd;
+            strCmd <<
+            "setup sound " << 1 <<
+            " map2cmd "    << 1 <<
+            " mapsize "    << 17 << "x" << 17 <<
+            " darkness "   << 1 <<
+            " facecache "  << 1 <<
+            " skf " << ServerFile::getSingleton().getLength(ServerFile::FILE_SKILLS)  << "|" << std::hex<< ServerFile::getSingleton().getCRC(ServerFile::FILE_SKILLS)     << std::dec <<
+            " spf " << ServerFile::getSingleton().getLength(ServerFile::FILE_SPELLS)  << "|" << std::hex<< ServerFile::getSingleton().getCRC(ServerFile::FILE_SPELLS)     << std::dec <<
+            " bpf " << ServerFile::getSingleton().getLength(ServerFile::FILE_BMAPS)   << "|" << std::hex<< ServerFile::getSingleton().getCRC(ServerFile::FILE_BMAPS)      << std::dec <<
+            " stf " << ServerFile::getSingleton().getLength(ServerFile::FILE_SETTINGS)<< "|" << std::hex<< ServerFile::getSingleton().getCRC(ServerFile::FILE_SETTINGS)   << std::dec <<
+            " amf " << ServerFile::getSingleton().getLength(ServerFile::FILE_ANIMS)   << "|" << std::hex<< ServerFile::getSingleton().getCRC(ServerFile::FILE_ANIMS)      << std::dec;
+            Network::getSingleton().cs_write_string((char*)strCmd.str().c_str());
+            //Logger::log().info() << "Send: " << str;
+            Option::getSingleton().setGameStatus(Option::GAME_STATUS_WAITSETUP);
+            break;
+        }
 
         case Option::GAME_STATUS_REQUEST_FILES:
+        {
+            if (!ServerFile::getSingleton().requestFiles())
             {
-                if (!ServerFile::getSingleton().requestFiles())
-                {
-                    // Wait until all files are upToDate.
-                    break;
-                }
-                // Now we wait for user to select login or create character.
-                Option::getSingleton().setGameStatus(Option::GAME_STATUS_ADDME); // only for testing....
+                // Wait until all files are upToDate.
                 break;
             }
+            // Now we wait for user to select login or create character.
+            Option::getSingleton().setGameStatus(Option::GAME_STATUS_ADDME); // only for testing....
+            break;
+        }
 
         case Option::GAME_STATUS_ADDME:
-            {
-                TileMap::getSingleton().clear_map();
-                Network::getSingleton().cs_write_string("addme");
-                Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN);
-                break;
-            }
+        {
+            TileMap::getSingleton().clear_map();
+            Network::getSingleton().cs_write_string("addme");
+            Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN);
+            break;
+        }
 
         case Option::GAME_STATUS_LOGIN:
+        {
+            // now wait for login request of the server.
+            if (GuiManager::getSingleton().brokenTextInput())
             {
-                // now wait for login request of the server.
-                if (GuiManager::getSingleton().brokenTextInput())
-                {
-                    Logger::log().info() << "Break Login.";
-                    Network::getSingleton().CloseSocket();
-                    Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
-                    GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_SERVERSELECT, false);
-                    GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_LOGIN, false);
-                    //GameStatusLogin = FALSE;
-                }
-                break;
+                Logger::log().info() << "Break Login.";
+                Network::getSingleton().CloseSocket();
+                Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
+                GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_SERVERSELECT, false);
+                GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_LOGIN, false);
+                //GameStatusLogin = FALSE;
             }
+            break;
+        }
 
         case Option::GAME_STATUS_NAME_INIT:
-            {
-                GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_LOGIN, true);
-                GuiManager::getSingleton().startTextInput(GuiManager::GUI_WIN_LOGIN, GuiImageset::GUI_TEXTINPUT_LOGIN_NAME, MAX_LEN_LOGIN_NAME, true, true);
-                Option::getSingleton().setGameStatus(Option::GAME_STATUS_NAME_USER);
-                break;
-            }
+        {
+            GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_LOGIN, true);
+            GuiManager::getSingleton().startTextInput(GuiManager::GUI_WIN_LOGIN, GuiImageset::GUI_TEXTINPUT_LOGIN_NAME, MAX_LEN_LOGIN_NAME, true, true);
+            Option::getSingleton().setGameStatus(Option::GAME_STATUS_NAME_USER);
+            break;
+        }
 
         case Option::GAME_STATUS_NAME_USER:
+        {
+            if (GuiManager::getSingleton().brokenTextInput())
             {
-                if (GuiManager::getSingleton().brokenTextInput())
-                {
-                    Logger::log().error() <<  "GAME_STATUS_NAME_USER broken";
-                    Network::getSingleton().CloseSocket();
-                    Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
-                    break;
-                }
-                // Wait for user to finish the textinput.
-                if (!GuiManager::getSingleton().finishedTextInput()) break;
-                // Check length of the username.
-                strPlayerName = GuiManager::getSingleton().getTextInput();
-                if (strPlayerName.size() < MIN_LEN_LOGIN_NAME || strPlayerName.size() > MAX_LEN_LOGIN_NAME)
-                {
-                    String strMsg = "~#ffff0000Username length must be between " + StringConverter::toString(MIN_LEN_LOGIN_NAME)+
-                                    " and " + StringConverter::toString(MAX_LEN_LOGIN_NAME) + " chars!~";
-                    GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED, GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)strMsg.c_str());
-                    GuiManager::getSingleton().startTextInput(GuiManager::GUI_WIN_LOGIN, GuiImageset::GUI_TEXTINPUT_LOGIN_NAME, MAX_LEN_LOGIN_NAME, true, true);
-                    break;
-                }
-#ifndef AUTO_FILL_PASWD
-                Option::getSingleton().setLoginType(Option::LOGIN_EXISTING_PLAYER);
-#endif
-                // C -> Create new hero , L -> Login.
-                String strServer = Option::getSingleton().getLoginType() == Option::LOGIN_NEW_PLAYER?"C":"L";
-                strServer += strPlayerName;
-                Network::getSingleton().send_reply((char*)strServer.c_str());
-                GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED, GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"");
-                // now wait again for next server question
-                Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_WAIT);
+                Logger::log().error() <<  "GAME_STATUS_NAME_USER broken";
+                Network::getSingleton().CloseSocket();
+                Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
                 break;
             }
+            // Wait for user to finish the textinput.
+            if (!GuiManager::getSingleton().finishedTextInput()) break;
+            // Check length of the username.
+            strPlayerName = GuiManager::getSingleton().getTextInput();
+            if (strPlayerName.size() < MIN_LEN_LOGIN_NAME || strPlayerName.size() > MAX_LEN_LOGIN_NAME)
+            {
+                String strMsg = "~#ffff0000Username length must be between " + StringConverter::toString(MIN_LEN_LOGIN_NAME)+
+                                " and " + StringConverter::toString(MAX_LEN_LOGIN_NAME) + " chars!~";
+                GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED, GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)strMsg.c_str());
+                GuiManager::getSingleton().startTextInput(GuiManager::GUI_WIN_LOGIN, GuiImageset::GUI_TEXTINPUT_LOGIN_NAME, MAX_LEN_LOGIN_NAME, true, true);
+                break;
+            }
+#ifndef AUTO_FILL_PASWD
+            Option::getSingleton().setLoginType(Option::LOGIN_EXISTING_PLAYER);
+#endif
+            // C -> Create new hero , L -> Login.
+            String strServer = Option::getSingleton().getLoginType() == Option::LOGIN_NEW_PLAYER?"C":"L";
+            strServer += strPlayerName;
+            Network::getSingleton().send_reply((char*)strServer.c_str());
+            GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED, GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"");
+            // now wait again for next server question
+            Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_WAIT);
+            break;
+        }
 
         case Option::GAME_STATUS_PSWD_INIT:
-            {
-                GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_LOGIN, true);
+        {
+            GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_LOGIN, true);
 #ifndef AUTO_FILL_PASWD
-                GuiManager::getSingleton().startTextInput(GuiManager::GUI_WIN_LOGIN, GuiImageset::GUI_TEXTINPUT_LOGIN_PASSWD, MAX_LEN_LOGIN_PSWD, false, false);
-                Option::getSingleton().setGameStatus(Option::GAME_STATUS_PSWD_USER);
+            GuiManager::getSingleton().startTextInput(GuiManager::GUI_WIN_LOGIN, GuiImageset::GUI_TEXTINPUT_LOGIN_PASSWD, MAX_LEN_LOGIN_PSWD, false, false);
+            Option::getSingleton().setGameStatus(Option::GAME_STATUS_PSWD_USER);
 #else
-                Network::getSingleton().send_reply("NIX_PASWD");
-                Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_WAIT);
+            Network::getSingleton().send_reply("NIX_PASWD");
+            Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_WAIT);
 #endif
-                break;
-            }
+            break;
+        }
 
         case Option::GAME_STATUS_PSWD_USER:
+        {
+            if (GuiManager::getSingleton().brokenTextInput())
             {
-                if (GuiManager::getSingleton().brokenTextInput())
-                {
-                    Network::getSingleton().CloseSocket();
-                    Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
-                    break;
-                }
-                if (!GuiManager::getSingleton().finishedTextInput())
-                    break;
-                strPlayerPswd = GuiManager::getSingleton().getTextInput();
-                if (strPlayerPswd.size() < MIN_LEN_LOGIN_PSWD || strPlayerPswd.size() > MAX_LEN_LOGIN_PSWD)
-                {
-                    String strMsg = "~#ffff0000Password length must be between " + StringConverter::toString(MIN_LEN_LOGIN_PSWD)+
-                                    " and "  + StringConverter::toString(MAX_LEN_LOGIN_PSWD) + " chars!~";
-                    GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED, GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)strMsg.c_str());
-                    GuiManager::getSingleton().startTextInput(GuiManager::GUI_WIN_LOGIN, GuiImageset::GUI_TEXTINPUT_LOGIN_PASSWD, MAX_LEN_LOGIN_PSWD, false, false);
-                    break;
-                }
-                if (strPlayerPswd == strPlayerName)
-                {
-                    GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED, GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Password can't be same as character name!~");
-                    GuiManager::getSingleton().startTextInput(GuiManager::GUI_WIN_LOGIN, GuiImageset::GUI_TEXTINPUT_LOGIN_PASSWD, MAX_LEN_LOGIN_PSWD, false, false);
-                    break;
-                }
-                Logger::log().info() << "Login: send password <*****>";
-                Network::getSingleton().send_reply((char*)strPlayerPswd.c_str());
-                Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_WAIT);
-                GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED, GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"");
-                GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_LOGIN, false);
+                Network::getSingleton().CloseSocket();
+                Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
                 break;
             }
+            if (!GuiManager::getSingleton().finishedTextInput())
+                break;
+            strPlayerPswd = GuiManager::getSingleton().getTextInput();
+            if (strPlayerPswd.size() < MIN_LEN_LOGIN_PSWD || strPlayerPswd.size() > MAX_LEN_LOGIN_PSWD)
+            {
+                String strMsg = "~#ffff0000Password length must be between " + StringConverter::toString(MIN_LEN_LOGIN_PSWD)+
+                                " and "  + StringConverter::toString(MAX_LEN_LOGIN_PSWD) + " chars!~";
+                GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED, GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)strMsg.c_str());
+                GuiManager::getSingleton().startTextInput(GuiManager::GUI_WIN_LOGIN, GuiImageset::GUI_TEXTINPUT_LOGIN_PASSWD, MAX_LEN_LOGIN_PSWD, false, false);
+                break;
+            }
+            if (strPlayerPswd == strPlayerName)
+            {
+                GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED, GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Password can't be same as character name!~");
+                GuiManager::getSingleton().startTextInput(GuiManager::GUI_WIN_LOGIN, GuiImageset::GUI_TEXTINPUT_LOGIN_PASSWD, MAX_LEN_LOGIN_PSWD, false, false);
+                break;
+            }
+            Logger::log().info() << "Login: send password <*****>";
+            Network::getSingleton().send_reply((char*)strPlayerPswd.c_str());
+            Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_WAIT);
+            GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED, GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"");
+            GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_LOGIN, false);
+            break;
+        }
 
         case Option::GAME_STATUS_VRFY_INIT:
-            {
-                GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_LOGIN, true);
+        {
+            GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_LOGIN, true);
 #ifndef AUTO_FILL_PASWD
-                GuiManager::getSingleton().startTextInput(GuiManager::GUI_WIN_LOGIN, GuiImageset::GUI_TEXTINPUT_LOGIN_VERIFY, MAX_LEN_LOGIN_PSWD, false, false);
-                Option::getSingleton().setGameStatus(Option::GAME_STATUS_VRFY_USER);
+            GuiManager::getSingleton().startTextInput(GuiManager::GUI_WIN_LOGIN, GuiImageset::GUI_TEXTINPUT_LOGIN_VERIFY, MAX_LEN_LOGIN_PSWD, false, false);
+            Option::getSingleton().setGameStatus(Option::GAME_STATUS_VRFY_USER);
 #else
-                Network::getSingleton().send_reply("NIX_PASWD");
-                Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_WAIT);
+            Network::getSingleton().send_reply("NIX_PASWD");
+            Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_WAIT);
 #endif
-                break;
-            }
+            break;
+        }
 
         case Option::GAME_STATUS_VRFY_USER:
+        {
+            TileManager::getSingleton().map_transfer_flag = 0;
+            if (GuiManager::getSingleton().brokenTextInput())
             {
-                TileManager::getSingleton().map_transfer_flag = 0;
-                if (GuiManager::getSingleton().brokenTextInput())
-                {
-                    Network::getSingleton().CloseSocket();
-                    Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
-                    break;
-                }
-                if (!GuiManager::getSingleton().finishedTextInput())
-                    break;
-                Logger::log().info() << "Login: send verify password <*****>";
-                Network::getSingleton().send_reply((char*)GuiManager::getSingleton().getTextInput());
-                Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_WAIT);
+                Network::getSingleton().CloseSocket();
+                Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
                 break;
             }
+            if (!GuiManager::getSingleton().finishedTextInput())
+                break;
+            Logger::log().info() << "Login: send verify password <*****>";
+            Network::getSingleton().send_reply((char*)GuiManager::getSingleton().getTextInput());
+            Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_WAIT);
+            break;
+        }
 
         case Option::GAME_STATUS_NEW_CHAR:
-            {
-                // Send the new created character to server.
-                Option::getSingleton().setLoginType(Option::LOGIN_NEW_PLAYER);
-                // "nc %s %d %d %d %d %d %d %d %d", nc->char_arch[nc->gender_selected], nc->stats[0], nc->stats[1], nc->stats[2], nc->stats[3], nc->stats[4], nc->stats[5], nc->stats[6], nc->skill_selected);
-                char buf[] = "nc human_male 14 14 13 12 12 12 12 0";
-                Network::getSingleton().cs_write_string(buf);
-                GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_LOGIN, false);
-                Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_WAIT);
-                break;
-            }
+        {
+            // Send the new created character to server.
+            Option::getSingleton().setLoginType(Option::LOGIN_NEW_PLAYER);
+            // "nc %s %d %d %d %d %d %d %d %d", nc->char_arch[nc->gender_selected], nc->stats[0], nc->stats[1], nc->stats[2], nc->stats[3], nc->stats[4], nc->stats[5], nc->stats[6], nc->skill_selected);
+            char buf[] = "nc human_male 14 14 13 12 12 12 12 0";
+            Network::getSingleton().cs_write_string(buf);
+            GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_LOGIN, false);
+            Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_WAIT);
+            break;
+        }
 
         case Option::GAME_STATUS_PLAY:
+        {
+            static bool once = false;
+            ObjectManager::getSingleton().update(ObjectManager::OBJECT_NPC, evt);
+            mIdleTime += evt.timeSinceLastFrame;
+            if (mIdleTime > 1.0)
             {
-                static bool once = false;
-                ObjectManager::getSingleton().update(ObjectManager::OBJECT_NPC, evt);
-                mIdleTime += evt.timeSinceLastFrame;
-                if (mIdleTime > 1.0)
+                mIdleTime = 0;
+                if (!once)
                 {
-                    mIdleTime = 0;
-                    if (!once)
-                    {
-                        ObjectManager::getSingleton().init();
-                        ObjectVisuals::getSingleton().Init();
-                        GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_STATISTICS, true);
-                        GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_PLAYERINFO, true);
-                        mWindow->resetStatistics();
-                        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "");
-                        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Client3d commands:");
-                        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~1 ... 8~ to change cloth.");
-                        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Hold shift for a ranged attack.");
-                        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~!keyg~ for grid. ");
-                        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~!keya~ to change Idle animation.");
-                        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~!keyb~ to change Attack animation.");
-                        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~!keyc~ to change Agility animation.");
-                        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~!keyp~ to ready/unready primary weapon.");
-                        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~!keys~ to ready/unready secondary weapon.");
-                        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~!keyq~ to start attack animation.");
-                        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~PGUP/PGDOWN~ to rotate camera.");
-                        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~HOME~ to freeze camera rotation.");
-                        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~!keyi~ for Inventory.");
-                        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Example of user defined chars: :( :) :D :P !key-spc");
-                        // Can crash the client...
-                        //ObjectManager::getSingleton().setNameNPC(ObjectNPC::HERO, strPlayerName.c_str());
+                    ObjectManager::getSingleton().init();
+                    ObjectVisuals::getSingleton().Init();
+                    GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_STATISTICS, true);
+                    GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_PLAYERINFO, true);
+                    mWindow->resetStatistics();
+                    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "");
+                    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Client3d commands:");
+                    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~1 ... 8~ to change cloth.");
+                    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Hold shift for a ranged attack.");
+                    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~!keyg~ for grid. ");
+                    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~!keya~ to change Idle animation.");
+                    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~!keyb~ to change Attack animation.");
+                    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~!keyc~ to change Agility animation.");
+                    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~!keyp~ to ready/unready primary weapon.");
+                    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~!keys~ to ready/unready secondary weapon.");
+                    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~!keyq~ to start attack animation.");
+                    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~PGUP/PGDOWN~ to rotate camera.");
+                    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~HOME~ to freeze camera rotation.");
+                    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~!keyi~ for Inventory.");
+                    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Example of user defined chars: :( :) :D :P !key-spc");
+                    // Can crash the client...
+                    //ObjectManager::getSingleton().setNameNPC(ObjectNPC::HERO, strPlayerName.c_str());
 
-                        //Sound::getSingleton().playStream(Sound::GREETS_VISITOR);
-                        once = true;
-                    }
-                    else
-                    {
-                        //  Sound::getSingleton().playStream(Sound::PLAYER_IDLE);
-                    }
-                    break;
+                    //Sound::getSingleton().playStream(Sound::GREETS_VISITOR);
+                    once = true;
                 }
-
-                static unsigned long time = Root::getSingleton().getTimer()->getMilliseconds();
-                if (Root::getSingleton().getTimer()->getMilliseconds() - time > 180.0)
+                else
                 {
-                    RaySceneQuery *mRaySceneQuery = mSceneManager->createRayQuery(Ray());
-                    mRaySceneQuery->setRay(mCamera->getCameraToViewportRay(mMouse.x / mWindow->getWidth(), mMouse.y / mWindow->getHeight()));
-                    mRaySceneQuery->setQueryMask(ObjectManager::QUERY_NPC_MASK | ObjectManager::QUERY_CONTAINER);
-                    RaySceneQueryResult &result = mRaySceneQuery->execute();
-                    if (!result.empty() && !GuiManager::getSingleton().mouseInsideGui())
-                    {
-                        // Mouse is over an object.
-                        RaySceneQueryResult::iterator itr = result.begin();
-                        ObjectManager::getSingleton().highlightObject(itr->movable);
-                    }
-                    else
-                    {
-                        // Mouse is (no longer) over an object.
-                        ObjectVisuals::getSingleton().highlightOff();
-                    }
-                    mSceneManager->destroyQuery(mRaySceneQuery);
-                    time = Root::getSingleton().getTimer()->getMilliseconds();
+                    //  Sound::getSingleton().playStream(Sound::PLAYER_IDLE);
                 }
-
-                /*
-                        static Real time = evt.timeSinceLastFrame+1.0;
-                        if (evt.timeSinceLastFrame > time)
-                        {
-                          TileManager::getSingleton().ChangeChunks();
-                           time = evt.timeSinceLastFrame+1.0;
-                        }
-                */
-                ParticleManager::getSingleton().update(evt.timeSinceLastFrame);
-                TileMap::getSingleton().update();
                 break;
             }
+
+            static unsigned long time = Root::getSingleton().getTimer()->getMilliseconds();
+            if (Root::getSingleton().getTimer()->getMilliseconds() - time > 180.0)
+            {
+                RaySceneQuery *mRaySceneQuery = mSceneManager->createRayQuery(Ray());
+                mRaySceneQuery->setRay(mCamera->getCameraToViewportRay(mMouse.x / mWindow->getWidth(), mMouse.y / mWindow->getHeight()));
+                mRaySceneQuery->setQueryMask(ObjectManager::QUERY_NPC_MASK | ObjectManager::QUERY_CONTAINER);
+                RaySceneQueryResult &result = mRaySceneQuery->execute();
+                if (!result.empty() && !GuiManager::getSingleton().mouseInsideGui())
+                {
+                    // Mouse is over an object.
+                    RaySceneQueryResult::iterator itr = result.begin();
+                    ObjectManager::getSingleton().highlightObject(itr->movable);
+                }
+                else
+                {
+                    // Mouse is (no longer) over an object.
+                    ObjectVisuals::getSingleton().highlightOff();
+                }
+                mSceneManager->destroyQuery(mRaySceneQuery);
+                time = Root::getSingleton().getTimer()->getMilliseconds();
+            }
+
+            /*
+                    static Real time = evt.timeSinceLastFrame+1.0;
+                    if (evt.timeSinceLastFrame > time)
+                    {
+                      TileManager::getSingleton().ChangeChunks();
+                       time = evt.timeSinceLastFrame+1.0;
+                    }
+            */
+            ParticleManager::getSingleton().update(evt.timeSinceLastFrame);
+            TileMap::getSingleton().update();
+            break;
+        }
 
         default:
         {
@@ -697,18 +703,19 @@ bool Events::frameEnded(const FrameEvent& evt)
                 mCameraRotating = NONE;
             }
         }
-        else if (mCameraRotating == POSITIVE && cameraAngle < 3)
+        else if (mCameraRotating == POSITIVE && cameraAngle < 45)
         {
             cameraAngle+= step;
             mCamera->yaw(Degree(step));
             mCamera->setPosition(CAMERA_OFFSET*Math::Sin(Degree(cameraAngle)), actPos.y, CAMERA_OFFSET *Math::Cos(Degree(cameraAngle)));
         }
-        else if (mCameraRotating == NEGATIVE && cameraAngle >-60)
+        else if (mCameraRotating == NEGATIVE && cameraAngle >-45)
         {
             cameraAngle-= step;
             mCamera->yaw(Degree(-step));
             mCamera->setPosition(CAMERA_OFFSET*Math::Sin(Degree(cameraAngle)), actPos.y, CAMERA_OFFSET *Math::Cos(Degree(cameraAngle)));
         }
+        TileManager::getSingleton().rotate(cameraAngle);
     }
     // ////////////////////////////////////////////////////////////////////
     // Update frame counter.

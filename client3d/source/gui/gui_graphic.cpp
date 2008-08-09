@@ -92,7 +92,7 @@ void GuiGraphic::draw()
                 }
                 dSrcY+= srcRowSkip;
                 dst+=mParent->getWidth();
-                if (++srcY >= mGfxSrc->h){ srcY = 0; dSrcY =0; } // Repeat the image.
+                if (++srcY >= mGfxSrc->h) { srcY = 0; dSrcY =0; } // Repeat the image.
             }
             // Copy the background gfx to the texture.
             PixelBox p1(mParent->getWidth(), mParent->getHeight(), 1, PF_A8R8G8B8, mParent->getLayerBG());
@@ -120,7 +120,7 @@ void GuiGraphic::draw()
                 dSrcY+= srcRowSkip;
                 dst+=texture->getWidth();
                 bak+=mParent->getWidth();
-                if (++srcY >= mGfxSrc->h){ srcY = 0; dSrcY =0; } // Repeat the image.
+                if (++srcY >= mGfxSrc->h) { srcY = 0; dSrcY =0; } // Repeat the image.
             }
             texture->getBuffer()->unlock();
         }
@@ -215,7 +215,7 @@ void GuiGraphic::drawSlot(Ogre::uint32 *srcItemData, int busyTime, int sumItems)
         {
             // Print the number of items.
             GuiTextout::getSingleton().PrintToBuffer(itemSize, itemSize, buildBuf +itemSize+1,
-                StringConverter::toString(sumItems).c_str(), 2, SLOT_QUANTITY_COLOR);
+                    StringConverter::toString(sumItems).c_str(), 2, SLOT_QUANTITY_COLOR);
         }
         if (busyTime)
         {

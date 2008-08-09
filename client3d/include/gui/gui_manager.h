@@ -103,8 +103,11 @@ public:
     {
         return mMouseInside;
     }
+    void loadResources();
+    void loadResources(Ogre::Resource *res);
     void freeRecources();
     void Init(int w, int h);
+    void reloadTexture(Ogre::String &name);
     void parseImageset(const char *XML_imageset_file);
     void parseWindows (const char *XML_windows_file);
     void update(Ogre::Real);
@@ -203,29 +206,24 @@ private:
     int mDragSrcItemPosx, mDragSrcItemPosy; // Set on dragStart for moving back on false drag&drop.
     int mActiveWindow, mActiveElement;
     int mHotSpotX, mHotSpotY;
-    Ogre::Vector3 mMouse;
-    bool mMouseInside;       /**< Mouse is used for gui related stuff at the moment. **/
-    bool mTooltipRefresh;
-    bool mIsDragging;
-    bool mProcessingTextInput;
     unsigned int mScreenWidth, mScreenHeight;
     unsigned long mTooltipDelay;
+    bool mIsDragging;
+    bool mMouseInside;       /**< Mouse is used for gui related stuff at the moment. **/
+    bool mTooltipRefresh;
+    bool mActiveTextInput;
+    Ogre::Vector3 mMouse;
     Ogre::Overlay *mOverlay;
     Ogre::OverlayElement *mElement;
-    Ogre::MaterialPtr mMaterial;
     Ogre::TexturePtr mTexture;
     Ogre::String mStrTooltip, mBackupTextInputString;
     Ogre::String mStrTextInput;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    GuiManager()
-    {}
-    ~GuiManager()
-    {}
+    GuiManager()  {}
+    ~GuiManager() {}
     GuiManager(const GuiManager&); // disable copy-constructor.
-    //GuiManager& operator=(GuiManager const&);
-    bool parseWindowsData (const char *file);
     void clearTooltip();
 };
 

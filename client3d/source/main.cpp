@@ -23,6 +23,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <Ogre.h>
 #include "logger.h"
+#include "define.h"
 #include "events.h"
 #include "option.h"
 
@@ -102,16 +103,16 @@ bool parseCmdLine(const char *cmd, const char *value)
     if (!options)
     {
         std::cout << "\nusage:\n"
-        << "--list gui              -l  gui\n"
-        << "--create rawFonts       -c  rawFonts\n"
-        << "--create items          -c  items\n"
-        << "--create tileTextures   -c  tileTextures\n"
-        << "--server <name>         -s  <name>\n"
-        << "--port   <num>          -p  <num>\n"
-        << "--lod    <num>              Set LoD for the TileEngine\n"
-        << "--sound off             -x  disable Sound\n"
-        << "--bbox                      show bounding-boxes\n"
-        << "--flipbook <meshName>       convert a mesh into Imposters\n" << std::endl;
+                  << "--list gui              -l  gui\n"
+                  << "--create rawFonts       -c  rawFonts\n"
+                  << "--create items          -c  items\n"
+                  << "--create tileTextures   -c  tileTextures\n"
+                  << "--server <name>         -s  <name>\n"
+                  << "--port   <num>          -p  <num>\n"
+                  << "--lod    <num>              Set LoD for the TileEngine\n"
+                  << "--sound off             -x  disable Sound\n"
+                  << "--bbox                      show bounding-boxes\n"
+                  << "--flipbook <meshName>       convert a mesh into Imposters\n" << std::endl;
         return false;
     }
     return true;
@@ -162,9 +163,9 @@ void LogException(Exception& e)
 //================================================================================================
 int main(int argc, char **argv)
 {
-    Logger::log().headline("Init Logfile");
+    Logger::log().headline() << "Init Logfile";
     Option::getSingleton().setGameStatus(Option::GAME_STATUS_CHECK_HARDWARE);
-    Logger::log().headline("Parse CmdLine");
+    Logger::log().headline() << "Parse CmdLine";
     while (--argc)
     {
         if (argc > 1)

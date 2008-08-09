@@ -46,7 +46,8 @@ const int MIN_GFX_SIZE = 4;
 //================================================================================================
 // Init all static Elemnts.
 //================================================================================================
-const char *GuiWindow::OVERLAY_ELEMENT_TYPE = "Panel"; // defined in Ogre::OverlayElementFactory.h
+const char *GuiWindow::GUI_MATERIAL_NAME = "GUI/Window";
+
 int GuiWindow::msInstanceNr = -1;
 int GuiWindow::mMouseDragging = -1;
 std::string GuiWindow::mStrTooltip ="";
@@ -151,7 +152,7 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, int zOrder)
     int screenH = GuiManager::getSingleton().getScreenHeight();
     int screenW = GuiManager::getSingleton().getScreenWidth();
     if ((strTmp = xmlRoot->Attribute("name")))
-        Logger::log().info () << "Parsing window: " << strTmp;
+        Logger::log().info() << "Parsing window: " << strTmp;
     // ////////////////////////////////////////////////////////////////////
     // Parse the Coordinates type.
     // ////////////////////////////////////////////////////////////////////
@@ -381,9 +382,9 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, int zOrder)
         // create pose references, initially zero
         const int SI_COUNT = 18;
         unsigned short poseIndexes[SI_COUNT] =
-            {
-                1, 2, 3, 4, 7, 8, 6, 5, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18
-            };
+        {
+            1, 2, 3, 4, 7, 8, 6, 5, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18
+        };
         for (int i = 0; i < SI_COUNT; ++i)
         {
             manualKeyFrame->addPoseReference(poseIndexes[i], 0.0f);
@@ -444,7 +445,7 @@ inline void GuiWindow::createWindow(int zOrder)
                TEX_TYPE_2D, mWidth, mHeight, 0, PF_A8R8G8B8, TU_STATIC_WRITE_ONLY);
     mOverlay = OverlayManager::getSingleton().create("GUI_Overlay_"+strNum);
     mOverlay->setZOrder(400-zOrder);
-    mElement = OverlayManager::getSingleton().createOverlayElement (OVERLAY_ELEMENT_TYPE, "GUI_Frame_" + strNum);
+    mElement = OverlayManager::getSingleton().createOverlayElement(GuiImageset::OVERLAY_ELEMENT_TYPE, "GUI_Frame_" + strNum);
     mElement->setMetricsMode(GMM_PIXELS);
     // Texture is always a power of 2. set this size also for the overlay.
     mElement->setDimensions (mTexture->getWidth(), mTexture->getHeight());

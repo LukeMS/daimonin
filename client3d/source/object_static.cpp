@@ -61,7 +61,7 @@ ObjectStatic::ObjectStatic(sObject &obj)
     if (!mSceneMgr)
     {
         mSceneMgr = Events::getSingleton().GetSceneManager();
-        Logger::log().headline("Init Actor Models");
+        Logger::log().headline() << "Init Actor Models";
     }
     mIndex    = index++;
     mNickName = obj.nickName;

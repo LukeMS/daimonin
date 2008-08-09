@@ -244,7 +244,7 @@ private:
             if (entry->name2d.find("wall",  0) == std::string::npos && entry->name2d.find("door",  0) == std::string::npos)
             {
                 // Cut the animation number.
-               entry->name2d = entry->name2d.substr(0, entry->name2d.find( '.'));
+                entry->name2d = entry->name2d.substr(0, entry->name2d.find( '.'));
             }
             mvBmpEntry.push_back(entry);
             entry->name3d = "";

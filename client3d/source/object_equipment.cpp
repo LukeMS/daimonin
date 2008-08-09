@@ -31,53 +31,53 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 using namespace Ogre;
 
 String boneName[ObjectEquipment::BONE_SUM]=
-    {
-        "Pelvis",
-        "Center",
-        "Head",
-        "Neck",
-        "Spine",     "Spine1",
-        "LClavicle", "R_Clavicle",
-        "LUpperArm", "RUpperArm",
-        "LForeArm",  "RForeArm",
-        "LHand",     "RHand",
-        "RFingers",  "LFingers",
-        "LThigh",    "RThigh",
-        "LCalf",     "RCalf",
-        "LFoot",     "RFoot",
-        "LToes",     "RToes"
-    };
+{
+    "Pelvis",
+    "Center",
+    "Head",
+    "Neck",
+    "Spine",     "Spine1",
+    "LClavicle", "R_Clavicle",
+    "LUpperArm", "RUpperArm",
+    "LForeArm",  "RForeArm",
+    "LHand",     "RHand",
+    "RFingers",  "LFingers",
+    "LThigh",    "RThigh",
+    "LCalf",     "RCalf",
+    "LFoot",     "RFoot",
+    "LToes",     "RToes"
+};
 
 const char *particleName[ObjectEquipment::PARTICLE_FX_SUM]=
-    {
-        "Particle/SwordGlow"
-    };
+{
+    "Particle/SwordGlow"
+};
 
 // Todo: use pointer to vector for this. and read meshnames from a xml-file.
 const char *meshName[][ObjectEquipment::ITEM_SUM]=
-    {
-        {   // ITEM_WEAPON
-            "Sword_Short_01.mesh",
-            "Mace_Small_01.mesh",
-            "Short_Bow.mesh",
-        },
-        {   // ITEM_ARMOR_SHIELD
-            "Shield_Round_01.mesh",
-            "Shield_Round_02.mesh"
-        },
-        {   // ITEM_ARMOR_HEAD
-            0,
-            0
-        },
-        {   // ITEM_ARMOR_BODY
-            0,
-            0
-        },
-        {   // ITEM_ARMOR_LEGS
-            0,
-            0
-        }
-    };
+{
+    {   // ITEM_WEAPON
+        "Sword_Short_01.mesh",
+        "Mace_Small_01.mesh",
+        "Short_Bow.mesh",
+    },
+    {   // ITEM_ARMOR_SHIELD
+        "Shield_Round_01.mesh",
+        "Shield_Round_02.mesh"
+    },
+    {   // ITEM_ARMOR_HEAD
+        0,
+        0
+    },
+    {   // ITEM_ARMOR_BODY
+        0,
+        0
+    },
+    {   // ITEM_ARMOR_LEGS
+        0,
+        0
+    }
+};
 
 unsigned long ObjectEquipment::mIndex =0;
 unsigned char *ObjectEquipment::mTexImageBuf = 0;
@@ -87,133 +87,133 @@ const uint32 MASK_COLOR = 0xffc638db; // This is our mask. Pixel with this color
 const int MAX_MODEL_TEXTURE_SIZE = 512;
 
 ObjectEquipment::sPicture ObjectEquipment::picFace =
-    {
-        65, 75, // w, h
-        324, 13,  // dst pos.
-        188,  1,  // src pos.
-        0, 79 // offest next src pic.
-    };
+{
+    65, 75, // w, h
+    324, 13,  // dst pos.
+    188,  1,  // src pos.
+    0, 79 // offest next src pic.
+};
 ObjectEquipment::sPicture ObjectEquipment::picHair =
-    {
-        49, 85, // w, h
-        130, 3,  // dst pos.
-        254, 1,  // src pos.
-        0, 86 // offest next src pic.
-    };
+{
+    49, 85, // w, h
+    130, 3,  // dst pos.
+    254, 1,  // src pos.
+    0, 86 // offest next src pic.
+};
 ObjectEquipment::sPicture ObjectEquipment::picBody[2] =
-    {
-        { // Back
-            186, 153, // w, h
-            61,  70,  // dst pos.
-            1,  155,  // src pos.
-            0, 0 // offest next src pic.
-        },
-        { // Front
-            186, 153, // w, h
-            261,  70,  // dst pos.
-            1,  1,  // src pos.
-            0, 0 // offest next src pic.
-        }
-    };
+{
+    { // Back
+        186, 153, // w, h
+        61,  70,  // dst pos.
+        1,  155,  // src pos.
+        0, 0 // offest next src pic.
+    },
+    { // Front
+        186, 153, // w, h
+        261,  70,  // dst pos.
+        1,  1,  // src pos.
+        0, 0 // offest next src pic.
+    }
+};
 ObjectEquipment::sPicture ObjectEquipment::picArms[4] =
-    {
-        { // Back Left
-            38, 81, // w, h
-            56,  155,  // dst pos.
-            1,  529,  // src pos.
-            0, 0 // offest next src pic.
-        },
-        { // Back Right
-            38, 81, // w, h
-            212,  155,  // dst pos.
-            40,  529,  // src pos.
-            0, 0 // offest next src pic.
-        },
-        { // Front Left
-            38, 81, // w, h
-            256,  155,  // dst pos.
-            79,  529,  // src pos.
-            0, 0 // offest next src pic.
-        },
-        { // Front Right
-            38, 81, // w, h
-            412,  155,  // dst pos.
-            118, 529,  // src pos.
-            0, 0 // offest next src pic.
-        }
-    };
+{
+    { // Back Left
+        38, 81, // w, h
+        56,  155,  // dst pos.
+        1,  529,  // src pos.
+        0, 0 // offest next src pic.
+    },
+    { // Back Right
+        38, 81, // w, h
+        212,  155,  // dst pos.
+        40,  529,  // src pos.
+        0, 0 // offest next src pic.
+    },
+    { // Front Left
+        38, 81, // w, h
+        256,  155,  // dst pos.
+        79,  529,  // src pos.
+        0, 0 // offest next src pic.
+    },
+    { // Front Right
+        38, 81, // w, h
+        412,  155,  // dst pos.
+        118, 529,  // src pos.
+        0, 0 // offest next src pic.
+    }
+};
 ObjectEquipment::sPicture ObjectEquipment::picHands[4] =
-    {
-        { // Back
-            29, 57, // w, h
-            58,  236,  // dst pos.
-            261, 297,  // src pos.
-            0, 0 // offest next src pic.
-        },
-        { // Back
-            29, 57, // w, h
-            221, 236,  // dst pos.
-            261, 355,  // src pos.
-            0, 0 // offest next src pic.
-        },
-        { // Front
-            29, 57, // w, h
-            259, 236,  // dst pos.
-            261, 413,  // src pos.
-            0, 0 // offest next src pic.
-        },
-        { // Front
-            29, 57, // w, h
-            421, 236,  // dst pos.
-            261, 471,  // src pos.
-            0, 0 // offest next src pic.
-        }
-    };
+{
+    { // Back
+        29, 57, // w, h
+        58,  236,  // dst pos.
+        261, 297,  // src pos.
+        0, 0 // offest next src pic.
+    },
+    { // Back
+        29, 57, // w, h
+        221, 236,  // dst pos.
+        261, 355,  // src pos.
+        0, 0 // offest next src pic.
+    },
+    { // Front
+        29, 57, // w, h
+        259, 236,  // dst pos.
+        261, 413,  // src pos.
+        0, 0 // offest next src pic.
+    },
+    { // Front
+        29, 57, // w, h
+        421, 236,  // dst pos.
+        261, 471,  // src pos.
+        0, 0 // offest next src pic.
+    }
+};
 ObjectEquipment::sPicture ObjectEquipment::picBelt[2] =
-    {
-        { // Back
-            129, 22, // w, h
-            89, 223,  // dst pos.
-            157, 529,  // src pos.
-            0, 87 // offest next src pic.
-        },
-        { // Front
-            129, 22, // w, h
-            291, 223,  // dst pos.
-            157, 529,  // src pos.
-            0, 87 // offest next src pic.
-        }
-    };
+{
+    { // Back
+        129, 22, // w, h
+        89, 223,  // dst pos.
+        157, 529,  // src pos.
+        0, 87 // offest next src pic.
+    },
+    { // Front
+        129, 22, // w, h
+        291, 223,  // dst pos.
+        157, 529,  // src pos.
+        0, 87 // offest next src pic.
+    }
+};
 ObjectEquipment::sPicture ObjectEquipment::picLegs[2] =
-    {
-        { // Back
-            129, 219, // w, h
-            89, 245,  // dst pos.
-            1,  309,  // src pos.
-            0, 0 // offest next src pic.
-        },
-        { // Front
-            129, 219, // w, h
-            291, 245,  // dst pos.
-            131,  309,  // src pos.
-            0, 0 // offest (x,y) for next src pic.
-        }
-    };
+{
+    { // Back
+        129, 219, // w, h
+        89, 245,  // dst pos.
+        1,  309,  // src pos.
+        0, 0 // offest next src pic.
+    },
+    { // Front
+        129, 219, // w, h
+        291, 245,  // dst pos.
+        131,  309,  // src pos.
+        0, 0 // offest (x,y) for next src pic.
+    }
+};
 ObjectEquipment::sPicture ObjectEquipment::picShoes[2] =
-    {
-        { // Left
-            43, 63, // w, h
-            304, 446,  // dst pos.
-            157,  575,  // src pos.
-            0, 0 // offest next src pic.
-        },
-        { // Right
-            43, 63, // w, h
-            363, 446,  // dst pos.
-            201, 575,  // src pos.
-            0, 0 // offest next src pic.
-        }
-    };
+{
+    { // Left
+        43, 63, // w, h
+        304, 446,  // dst pos.
+        157,  575,  // src pos.
+        0, 0 // offest next src pic.
+    },
+    { // Right
+        43, 63, // w, h
+        363, 446,  // dst pos.
+        201, 575,  // src pos.
+        0, 0 // offest next src pic.
+    }
+};
 
 //================================================================================================
 // .

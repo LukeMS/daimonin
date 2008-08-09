@@ -23,57 +23,41 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <OgreHardwarePixelBuffer.h>
 #include "gui_cursor.h"
-#include "gui_window.h"
 #include "gui_imageset.h"
 
 using namespace Ogre;
 
+
+const int MIN_CURSOR_SIZE =  4;
 const int MAX_CURSOR_SIZE = 64;
-
-//================================================================================================
-// Constructor.
-//================================================================================================
-GuiCursor::GuiCursor()
-{}
-
-//================================================================================================
-// Destructor.
-//================================================================================================
-GuiCursor::~GuiCursor()
-{}
 
 //================================================================================================
 // Create an overlay for the mouse-cursor.
 //================================================================================================
-void GuiCursor::Init(int w, int h)
+void GuiCursor::Init(int w, int h, const char *resourceName)
 {
+    mResourceName = resourceName;
     mState = GuiImageset::STATE_MOUSE_DEFAULT;
     mWidth = w;
     mHeight= h;
-    if (mWidth < 4) mWidth = 4;
-    else if (mWidth > MAX_CURSOR_SIZE) mWidth = MAX_CURSOR_SIZE;
-    if (mHeight< 4) mHeight= 4;
-    else if (mHeight> MAX_CURSOR_SIZE) mHeight= MAX_CURSOR_SIZE;
-    mTexture = TextureManager::getSingleton().createManual("GUI_Cursor_Texture", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-               TEX_TYPE_2D, MAX_CURSOR_SIZE, MAX_CURSOR_SIZE, 0, PF_A8R8G8B8, TU_STATIC_WRITE_ONLY);
-    // We must clear the whole texture (textures have always 2^n size while cursor-gfx can be smaller).
-    memset(mTexture->getBuffer()->lock(HardwareBuffer::HBL_DISCARD), 0x00, MAX_CURSOR_SIZE * MAX_CURSOR_SIZE * sizeof(uint32));
-    mTexture->getBuffer()->unlock();
-    // Create the overlay element.
-    Overlay *overlay= OverlayManager::getSingleton().create("GUI_MouseCursor");
-    overlay->setZOrder(550);
-    mElement = OverlayManager::getSingleton().createOverlayElement(GuiWindow::OVERLAY_ELEMENT_TYPE, "GUI_Cursor");
-    mElement->setMetricsMode(GMM_PIXELS);
+    if (mWidth < MIN_CURSOR_SIZE) mWidth = MIN_CURSOR_SIZE; else
+        if (mWidth > MAX_CURSOR_SIZE) mWidth = MAX_CURSOR_SIZE;
+    if (mHeight< MIN_CURSOR_SIZE) mHeight= MIN_CURSOR_SIZE; else
+        if (mHeight> MAX_CURSOR_SIZE) mHeight= MAX_CURSOR_SIZE;
+    loadResources();
     mElement->setPosition(0, 0);
-    mElement->setDimensions (mTexture->getWidth(), mTexture->getHeight());
-    MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName("GUI/Window");
-    tmpMaterial = tmpMaterial->clone("GUI_Cursor_Material");
-    tmpMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName("GUI_Cursor_Texture");
-    tmpMaterial->load();
-    mElement->setMaterialName("GUI_Cursor_Material");
-    overlay->add2D(static_cast<OverlayContainer*>(mElement));
+}
+
+//================================================================================================
+// (Re)loads the material and texture or creates them if they dont exist.
+//================================================================================================
+void GuiCursor::loadResources()
+{
+    Overlay *overlay = GuiImageset::getSingleton().loadResources(MAX_CURSOR_SIZE, mResourceName, mTexture);
+    mElement = overlay->getChild(mResourceName + GuiImageset::ELEMENT_RESOURCE_NAME);
+    overlay->setZOrder(550);
     overlay->show();
-    mState = GuiImageset::STATE_MOUSE_DEFAULT;
+    draw();
 }
 
 //================================================================================================

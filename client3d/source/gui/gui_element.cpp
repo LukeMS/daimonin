@@ -23,6 +23,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <Ogre.h>
 #include "logger.h"
+#include "define.h"
 #include "gui_element.h"
 #include "gui_imageset.h"
 #include "gui_window.h"

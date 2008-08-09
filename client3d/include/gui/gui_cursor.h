@@ -42,15 +42,16 @@ public:
     }
     void getPos(Ogre::Real &x, Ogre::Real &y)
     {
-        y = mElement->getTop () - mHeight/2;
-        x = mElement->getLeft() - mWidth/2;
+        y = mElement->getTop() - mHeight/2;
+        x = mElement->getLeft()- mWidth/2;
     }
     void setState(unsigned int state);
     int  getState()
     {
         return mState;
     }
-    void Init(int w, int h);
+    void Init(int w, int h, const char *resourceName);
+    void loadResources();
     void freeRecources();
     static GuiCursor &getSingleton()
     {
@@ -67,11 +68,12 @@ private:
     GuiImageset::gfxPos gfxSrcPos[GuiImageset::STATE_MOUSE_SUM];
     Ogre::OverlayElement *mElement;
     Ogre::TexturePtr mTexture;
+    Ogre::String mResourceName;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    GuiCursor();
-    ~GuiCursor();
+    GuiCursor()  {};
+    ~GuiCursor() {};
     GuiCursor(const GuiCursor&); // disable copy-constructor.
     void draw();
 };

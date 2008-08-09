@@ -50,24 +50,24 @@ typedef struct
 SoundFiles;
 
 SoundFiles mSoundFiles[Sound::SAMPLE_SUM] =
-    {
-        // Background musics.
-        { "invtro94.s3m",        0, 0, true , true },
-        // Long sound e.g. spoken text (ogg).
-        { "Player_Idle.ogg",     0, 0, false, true },
-        { "Wizard_Visitor.ogg",  0, 0, false, true },
-        { "male_bounty_01.ogg",  0, 0, false, true },
-        // Short sounds (wav)
-        { "console.wav",         0, 0, false, true },
-        { "male_hit_01.wav",     0, 0, false, true },
-        { "female_hit_01.wav",   0, 0, false, true },
-        { "female_hit_02.wav",   0, 0, false, true },
-        { "tentacle_hit_01.wav", 0, 0, false, true },
-        { "golem_hit_01.wav",    0, 0, false, true },
-        { "attack_01.wav",       0, 0, false, true },
-        // Dummy sound (for error handling).
-        { "dummy.wav",           0, 0, false, true },
-    };
+{
+    // Background musics.
+    { "invtro94.s3m",        0, 0, true , true },
+    // Long sound e.g. spoken text (ogg).
+    { "Player_Idle.ogg",     0, 0, false, true },
+    { "Wizard_Visitor.ogg",  0, 0, false, true },
+    { "male_bounty_01.ogg",  0, 0, false, true },
+    // Short sounds (wav)
+    { "console.wav",         0, 0, false, true },
+    { "male_hit_01.wav",     0, 0, false, true },
+    { "female_hit_01.wav",   0, 0, false, true },
+    { "female_hit_02.wav",   0, 0, false, true },
+    { "tentacle_hit_01.wav", 0, 0, false, true },
+    { "golem_hit_01.wav",    0, 0, false, true },
+    { "attack_01.wav",       0, 0, false, true },
+    // Dummy sound (for error handling).
+    { "dummy.wav",           0, 0, false, true },
+};
 
 const float DISTANCEFACTOR = 1.0f; // Units per meter. (feet = 3.28.  cm = 100).
 
@@ -78,7 +78,7 @@ bool Sound::Init()
 {
     mInit = false;
     if (Option::getSingleton().getIntValue(Option::CMDLINE_OFF_SOUND)) return false;
-    Logger::log().headline("Init Sound-System");
+    Logger::log().headline() << "Init Sound-System";
     // ////////////////////////////////////////////////////////////////////
     // Create the main system object.
     // ////////////////////////////////////////////////////////////////////
@@ -137,12 +137,12 @@ void Sound::freeRecources()
 void Sound::createDummy()
 {
     const unsigned char dummy[] =
-        {
-            0x52,0x49,0x46,0x46,0xC0,0x00,0x00,0x00,0x57,0x41,0x56,0x45,0x66,0x6D,0x74,0x20,
-            0x12,0x00,0x00,0x00,0x01,0x00,0x01,0x00,0x11,0x2B,0x00,0x00,0x11,0x2B,0x00,0x00,
-            0x01,0x00,0x08,0x00,0x00,0x00,0x66,0x61,0x63,0x74,0x04,0x00,0x00,0x00,0x8E,0x00,
-            0x00,0x00,0x64,0x61,0x74,0x61,0x8E,0x00,0x00,0x00,0x80,0x80,0x80,0x80,0x80,0x80
-        };
+    {
+        0x52,0x49,0x46,0x46,0xC0,0x00,0x00,0x00,0x57,0x41,0x56,0x45,0x66,0x6D,0x74,0x20,
+        0x12,0x00,0x00,0x00,0x01,0x00,0x01,0x00,0x11,0x2B,0x00,0x00,0x11,0x2B,0x00,0x00,
+        0x01,0x00,0x08,0x00,0x00,0x00,0x66,0x61,0x63,0x74,0x04,0x00,0x00,0x00,0x8E,0x00,
+        0x00,0x00,0x64,0x61,0x74,0x61,0x8E,0x00,0x00,0x00,0x80,0x80,0x80,0x80,0x80,0x80
+    };
     std::string filename = PATH_SAMPLES;
     filename += mSoundFiles[DUMMY].filename;
     ofstream out(filename.c_str(), ios::binary);
@@ -279,13 +279,13 @@ void Sound::set3DPos(unsigned int id, float &posX, float &posY, float &posZ)
 {
     if (!mInit) return;
     FMOD_VECTOR pos =
-        {
-            posX * DISTANCEFACTOR, posY, posZ
-        };
+    {
+        posX * DISTANCEFACTOR, posY, posZ
+    };
     FMOD_VECTOR vel =
-        {
-            0.0f, 0.0f, 0.0f
-        };
+    {
+        0.0f, 0.0f, 0.0f
+    };
     result = FMOD_Channel_Set3DAttributes(mSoundFiles[id].channel, &pos, &vel);
     if (result != FMOD_OK)
     {
