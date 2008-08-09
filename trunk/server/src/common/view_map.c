@@ -388,7 +388,7 @@ void draw_client_map2(object *pl)
                 z1 = 0;
 #endif
                 /* lets calc the darkness/light value for this tile.*/
-                if (MAP_OUTDOORS(m))
+                if (MAP_OUTDOORS(m) && wdark <= m->light_value)
                 {
                     d = msp->light_value + wdark + dm_light;
                 }

@@ -235,11 +235,17 @@ void update_position(mapstruct *m, MapSpace *mspace, int x, int y)
 */
 int map_brightness(mapstruct *m, int x, int y)
 {
+    int ambient_light;
+
     if (!(m = out_of_map(m, &x, &y)))
         return 0;
 
-    return GET_MAP_LIGHT_VALUE(m,x,y) +
-        (MAP_OUTDOORS(m) ? global_darkness_table[world_darkness] : m->light_value);
+    if (MAP_OUTDOORS(m) && global_darkness_table[world_darkness] <= m->light_value)
+        ambient_light = global_darkness_table[world_darkness];
+    else
+        ambient_light = m->light_value;
+
+    return GET_MAP_LIGHT_VALUE(m, x, y) + ambient_light;
 }
 
 /*
