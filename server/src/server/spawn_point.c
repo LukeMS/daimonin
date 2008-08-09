@@ -71,6 +71,10 @@ static object * spawn_monster(object *gen, object *orig, int range)
 /* check the current darkness on this map allows to spawn
  * 0: not allowed, 1: allowed
  */
+/* Is this completely right? Why doesn't this function refer to
+ * global_darkness_table[world_darkness], just world_darkness?
+ * Why are we only interested in the map darkness level for spawns,
+ * not the actual darkness on the square? -- Smacky 20080130 */
 static inline int spawn_point_darkness(object *spoint, int darkness)
 {
     int map_light;
@@ -78,7 +82,7 @@ static inline int spawn_point_darkness(object *spoint, int darkness)
     if (!spoint->map)
         return 0;
 
-    if (MAP_OUTDOORS(spoint->map)) /* outdoor map */
+    if (MAP_OUTDOORS(spoint->map) && world_darkness <= MAP_DARKNESS(spoint->map))
         map_light = world_darkness;
     else
     {
