@@ -261,7 +261,7 @@ void draw_client_map2(object *pl)
 #endif
 
     if (pl_ptr->dm_light)
-        dm_light = global_darkness_table[MAX_DARKNESS];
+        dm_light = global_darkness_table[pl_ptr->dm_light];
 
     wdark = darkness_table[world_darkness];
     special_vision = (QUERY_FLAG(pl, FLAG_XRAYS) ? 1 : 0) | (QUERY_FLAG(pl, FLAG_SEE_IN_DARK) ? 2 : 0);
@@ -390,11 +390,11 @@ void draw_client_map2(object *pl)
                 /* lets calc the darkness/light value for this tile.*/
                 if (MAP_OUTDOORS(m) && wdark <= m->light_value)
                 {
-                    d = msp->light_value + wdark + dm_light;
+                    d = msp->light_value + ((!dm_light) ? wdark : dm_light);
                 }
                 else
                 {
-                    d = msp->light_value + m->light_value + dm_light;
+                    d = msp->light_value + ((!dm_light) ? m->light_value : dm_light);
                 }
 
                 if (d <= 0) /* tile is not normal visible */
