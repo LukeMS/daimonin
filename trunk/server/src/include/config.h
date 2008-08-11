@@ -673,3 +673,8 @@
 
 #define RESET_LOCATION_TIME 0
 
+/* Use the shipped version of inet_pton.  You can turn this off if you know
+ * your local system will work with the inet_pton it has.
+ */
+#define NEED_INET_PTON
+
