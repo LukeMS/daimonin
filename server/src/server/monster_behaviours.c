@@ -68,6 +68,11 @@ int mob_can_see_obj(object *op, object *obj, struct mob_known_obj *known_obj)
                     cache_time == ROUND_TAG)
         return cached_result;
 
+    /* DM with dm_stealth? */
+    if (obj->type == PLAYER && CONTR(obj)->gmaster_mode == GMASTER_MODE_DM &&
+        CONTR(obj)->dm_stealth)
+        return FALSE;
+
     /* Invisibility */
     if (QUERY_FLAG(obj, FLAG_IS_INVISIBLE) && !QUERY_FLAG(op, FLAG_SEE_INVISIBLE))
         return FALSE;
