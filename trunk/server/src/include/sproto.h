@@ -66,8 +66,8 @@ void                        save_ban_file(void);
 struct objectlink          *add_ban_entry(char *banned, char *ip_string, int ticks, int ticks_left);
 void                        remove_ban_entry(struct oblnk *entry);
 int                         check_banned(NewSocket *ns, const char *name, char *ip);
+int			    ip_compare(const char *ban_tmp, const char *ip_temp);
 /* c_chat.c */
-void						command_talk_ex(char *data, int len, player *pl);
 int                         command_say(object *op, char *params);
 int                         command_gsay(object *op, char *params);
 int                         command_shout(object *op, char *params);
@@ -281,6 +281,14 @@ int                         command_loadplugin(object *op, char *params);
 int                         command_unloadplugin(object *op, char *params);
 /* commands.c */
 void                        init_commands(void);
+void                        send_clear_interface(player *pl);
+void                        initialize_command_buffer16(command_struct *cmdbuf);
+void                        initialize_command_buffer32(command_struct *cmdbuf);
+void                        initialize_command_buffer64(command_struct *cmdbuf);
+void                        initialize_command_buffer128(command_struct *cmdbuf);
+void                        initialize_command_buffer256(command_struct *cmdbuf);
+void                        initialize_command_buffer1024(command_struct *cmdbuf);
+void                        initialize_command_buffer4096(command_struct *cmdbuf);
 /* container.c */
 int                         container_link(player *const pl, object *const sack);
 int                         container_unlink(player *const pl, object *sack);
@@ -375,8 +383,6 @@ object                     *get_active_waypoint(object *op);
 object                     *get_aggro_waypoint(object *op);
 object                     *get_return_waypoint(object *op);
 object                     *find_waypoint(object *op, const char *name);
-object                     *get_random_waypoint(object *op, object *ignore);
-object                     *get_next_waypoint(object *op, object *wp);
 int                         move_monster(object *op, int mode);
 void                        object_accept_path(object *op);
 void                        dump_abilities(void);
@@ -386,7 +392,7 @@ void                        cleanup_mob_knowns(object *op, struct mob_known_obj 
 void                        clear_mob_knowns(object *op, struct mob_known_obj **first, hashtable *ht);
 struct mob_known_obj       *update_npc_knowledge(object *npc, object *other, int delta_friendship, int delta_attraction);
 void                        update_npc_known_obj(struct mob_known_obj *known, int delta_friendship, int delta_attraction);
-struct                      mob_known_obj *register_npc_known_obj(object *npc, object *other, int friendship, int attraction, int check_los);
+struct                      mob_known_obj *register_npc_known_obj(object *npc, object *other, int friendship, int attraction);
 rv_vector                  *get_known_obj_rv(object *op, struct mob_known_obj *known_obj, int maxage);
 /* monster_behaviourset.c */
 struct mob_behaviourset    *parse_behaviourconfig(const char *conf_text, object *op);
@@ -413,7 +419,6 @@ sint32                      MTRand_randComp(void);
 /* npc_communicate.c */
 void                        communicate(object *op, char *txt);
 void                        gui_interface(object *who, int mode, const char *text, const char *tail);
-void                        send_clear_interface(player *pl);
 /* spawn_point.c */
 void                        spawn_point(object *op);
 objectlink                 *add_linked_spawn(object *spawn);
@@ -524,7 +529,6 @@ CFParm                     *CFMapSave(CFParm *PParm);
 CFParm                     *CFMapDelete(CFParm *PParm);
 CFParm                     *CFWDestructObject(CFParm *PParm);
 CFParm                     *CFInterface(CFParm *PParm);
-void						send_plugin_custom_message(object *pl, char *buf);
 
 /* resurrection.c */
 void                        dead_player(object *op);
@@ -545,7 +549,7 @@ void                        trap_adjust(object *trap, int difficulty);
 /* shop.c */
 sint64                      query_cost(object *tmp, object *who, int flag);
 char                       *cost_string_from_value(sint64 cost, int mode);
-char                       *query_cost_string(object *tmp, object *who, int flag, int mode);
+char                       *query_cost_string(object *tmp, object *who, int flag);
 sint64                      query_money(object *op);
 int                         pay_for_amount(sint64 to_pay, object *pl);
 int                         pay_for_item(object *op, object *pl);
@@ -557,7 +561,6 @@ int                         query_money_type(object *op, int value);
 sint64                      remove_money_type(object *who, object *op, sint64 value, sint64 amount);
 void                        add_money_to_player(object *pl, int c, int s, int g, int m);
 void                        insert_money_in_player(object *pl, object *money, uint32 nrof);
-int                         enumerate_coins(sint64 value, struct _money_block *money);
 /* skills.c */
 int                         attempt_steal(object *op, object *who);
 int                         adj_stealchance(object *op, object *victim, int roll);
