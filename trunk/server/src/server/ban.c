@@ -304,15 +304,7 @@ int check_banned(NewSocket *ns, const char *name, char *ip)
                 s = ol->objlink.ban->ticks_init/8;
                 ban_tmp = ol->objlink.ban->ip;
 
-                match = 1;      /* assume match */
-                for(ctr = 0; ban_tmp[ctr] != '\0'; ctr++)
-                {
-                    if(ban_tmp[ctr] != '*' && ban_tmp[ctr] != ip[ctr])
-                    {
-                        match = 0;  /* no match here - try next entry */
-                        break;      /* break inner loop */
-                    }
-                }
+                match = ip_compare(ban_tmp,ip);
 
                 if (match)
                 {
@@ -322,7 +314,7 @@ int check_banned(NewSocket *ns, const char *name, char *ip)
             }
         }
 
-        if (match)
+        if (match && ol)
         {
             /* IP is banned */
             if(ol->objlink.ban->ticks_init == -1) /* perm ban */

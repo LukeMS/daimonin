@@ -48,6 +48,7 @@ SRCS = \
 	gmaster.c\
 	gods.c\
 	init.c\
+	ipcompare.c\
 	login.c\
 	main.c\
 	monster.c\
