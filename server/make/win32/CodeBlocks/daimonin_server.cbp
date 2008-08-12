@@ -205,6 +205,7 @@
 		<Unit filename="..\..\..\src\include\hashfunc.h" />
 		<Unit filename="..\..\..\src\include\hashtable.h" />
 		<Unit filename="..\..\..\src\include\includes.h" />
+		<Unit filename="..\..\..\src\include\ipcompare.h" />
 		<Unit filename="..\..\..\src\include\libproto.h" />
 		<Unit filename="..\..\..\src\include\links.h" />
 		<Unit filename="..\..\..\src\include\living.h" />
@@ -357,6 +358,9 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\server\init.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\src\server\ipcompare.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\src\server\login.c">
