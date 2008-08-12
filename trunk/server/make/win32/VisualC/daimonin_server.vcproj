@@ -618,6 +618,10 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath="..\..\..\src\server\ipcompare.c"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\src\server\login.c"
 					>
 					<FileConfiguration
@@ -1713,6 +1717,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\includes.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\include\ipcompare.h"
 				>
 			</File>
 			<File
