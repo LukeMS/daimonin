@@ -33,7 +33,7 @@
 #define NEED_INET_PTON
 #endif
 
-#ifndef DEBUG_IPCOMPARE
+#ifdef DEBUG_IPCOMPARE_MAIN
 #define llevDebug 0
 #define LOG(x,y,args...) printf(y,## args)
 #else
