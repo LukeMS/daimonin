@@ -66,6 +66,7 @@ void                        save_ban_file(void);
 struct objectlink          *add_ban_entry(char *banned, char *ip_string, int ticks, int ticks_left);
 void                        remove_ban_entry(struct oblnk *entry);
 int                         check_banned(NewSocket *ns, const char *name, char *ip);
+int                         ip_compare(const char *ban_tmp, const char *ip_temp);
 /* c_chat.c */
 void						command_talk_ex(char *data, int len, player *pl);
 int                         command_say(object *op, char *params);
