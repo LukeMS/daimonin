@@ -558,9 +558,27 @@ int command_dm_dev(object *op, char *params)
     return 0;
 }
 
-/* NOTE: dm_stealth works also when a dm logs in WITHOUT dm set or
- * when the player leave dm mode!
- */
+/* '/dm_invis' toggles intrinsic invisibility and see invisible for the DM, but
+ * only while in DM mode. It must be turned on every time the player enters DM
+ * mode/logs in. */
+int command_dm_invis(object *op, char *params)
+{
+    if (op->type == PLAYER && CONTR(op))
+    {
+        CONTR(op)->dm_invis = (CONTR(op)->dm_invis) ? 0 : 1;
+        new_draw_info_format(NDI_UNIQUE, 0, op, "toggled dm_invis to %d",
+                             CONTR(op)->dm_invis);
+        FIX_PLAYER(op, "command dm_invis");
+    }
+
+    return 0;
+}
+
+/* '/dm_stealth' toggles whether the DM's presence is announced to players (ie,
+ * on login, in /who, and as feedback in /tell) AND whether mobs can sense the
+ * DM's presence. The former works also when a dm logs in WITHOUT /dm set or
+ * when the player leave DM mode, but the latter is only effective while DM
+ * mode is active. */
 int command_dm_stealth(object *op, char *params)
 {
     if (op->type == PLAYER && CONTR(op))
