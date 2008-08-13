@@ -944,9 +944,9 @@ int esrv_apply_container(object *op, object *sack)
             return 1;
 
         if (container_unlink(CONTR(op), cont))
-            new_draw_info_format(NDI_UNIQUE, 0, op, "You close %s.", query_name(cont));
+            new_draw_info_format(NDI_UNIQUE, 0, op, "You close the %s.", query_name(cont));
         else
-            new_draw_info_format(NDI_UNIQUE, 0, op, "You leave %s.", query_name(cont));
+            new_draw_info_format(NDI_UNIQUE, 0, op, "You leave the %s.", query_name(cont));
 
 
         if (cont == sack) /* we closing the one we applied */
@@ -2551,7 +2551,7 @@ int apply_special(object *who, object *op, int aflags)
                 if(!op->item_condition)
                     sprintf(buf, "Your %s is broken!", query_name(op));
                 else
-                    sprintf(buf, "You unwield %s.", query_name(op));
+                    sprintf(buf, "You no longer wield the %s.", query_name(op));
                 break;
 
             case SKILL:
@@ -2592,7 +2592,7 @@ int apply_special(object *who, object *op, int aflags)
                 if(!op->item_condition)
                     sprintf(buf, "Your %s is broken!", query_name(op));
                 else
-                    sprintf(buf, "You unwear %s.", query_name(op));
+                    sprintf(buf, "You take off the %s.", query_name(op));
                 break;
 
 			case ARROW:
@@ -2603,7 +2603,7 @@ int apply_special(object *who, object *op, int aflags)
                 if(!op->item_condition)
                     sprintf(buf, "Your %s is broken!", query_name(op));
                 else
-                    sprintf(buf, "You unready %s.", query_name(op));
+                    sprintf(buf, "You unready the %s.", query_name(op));
 				if(op->type != ARROW || op->sub_type1 > 127)
 				{
 					if (who->type != PLAYER)
@@ -2613,7 +2613,7 @@ int apply_special(object *who, object *op, int aflags)
 				}
                 break;
             default:
-                sprintf(buf, "You unapply %s.", query_name(op));
+                sprintf(buf, "You unapply the %s.", query_name(op));
                 break;
         }
         if (buf[0] != '\0') /* urgh... what use of buf */
@@ -2794,7 +2794,7 @@ int apply_special(object *who, object *op, int aflags)
             SET_FLAG(op, FLAG_APPLIED);
             SET_FLAG(who, FLAG_READY_WEAPON);
             change_abil(who, op);
-            sprintf(buf, "You wield %s.", query_name(op));
+            sprintf(buf, "You wield the %s.", query_name(op));
             break;
 
         case SHIELD:
@@ -2811,7 +2811,7 @@ int apply_special(object *who, object *op, int aflags)
         case AMULET:
             SET_FLAG(op, FLAG_APPLIED);
             change_abil(who, op);
-            sprintf(buf, "You wear %s.", query_name(op));
+            sprintf(buf, "You put on the %s.", query_name(op));
             break;
 
             /* this part is needed for skill-tools */
@@ -2825,7 +2825,7 @@ int apply_special(object *who, object *op, int aflags)
                         LOG(llevBug, "BUG: apply_special(SKILL): found unapplied tool with experience object\n");
                     else
                         link_player_skill(who, op);
-                    new_draw_info_format(NDI_UNIQUE, 0, who, "You ready %s.", query_name(op));
+                    new_draw_info_format(NDI_UNIQUE, 0, who, "You ready the %s.", query_name(op));
                     new_draw_info_format(NDI_UNIQUE, 0, who, "You can now use the skill: %s.", skills[op->stats.sp].name);
                 }
                 else
@@ -2867,7 +2867,7 @@ int apply_special(object *who, object *op, int aflags)
             }
 
             SET_FLAG(op, FLAG_APPLIED);
-            new_draw_info_format(NDI_UNIQUE, 0, who, "You ready %s.", query_name(op));
+            new_draw_info_format(NDI_UNIQUE, 0, who, "You ready the %s.", query_name(op));
             if (who->type == PLAYER)
             {
                 if (op->type != BOW)
@@ -2882,7 +2882,7 @@ int apply_special(object *who, object *op, int aflags)
             break;
 
         default:
-            sprintf(buf, "You apply %s.", query_name(op));
+            sprintf(buf, "You apply the %s.", query_name(op));
     }
     if (!QUERY_FLAG(op, FLAG_APPLIED))
         SET_FLAG(op, FLAG_APPLIED);
