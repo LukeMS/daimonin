@@ -20,7 +20,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-	The author can be reached via e-mail to info@daimonin.net
+    The author can be reached via e-mail to info@daimonin.net
 */
 
 #include <global.h>
@@ -234,8 +234,8 @@ static int  darkness_table[]    =
 void draw_client_map2(object *pl)
 {
     static uint32   map2_count  = 0;
-	NewSocket		*ns;
-	sockbuf_struct	*sbptr;
+    NewSocket        *ns;
+    sockbuf_struct    *sbptr;
     MapCell        *mp;
     MapSpace       *msp;
     New_Face       *face;
@@ -268,12 +268,12 @@ void draw_client_map2(object *pl)
 
     map2_count++;      /* we need this to decide quickly we have updated a object before here */
 
-	ns = &pl_ptr->socket;
-	SOCKBUF_REQUEST_BUFFER(ns, SOCKET_SIZE_MEDIUM);
-	sbptr = ACTIVE_SOCKBUF(ns);
+    ns = &pl_ptr->socket;
+    SOCKBUF_REQUEST_BUFFER(ns, SOCKET_SIZE_MEDIUM);
+    sbptr = ACTIVE_SOCKBUF(ns);
 
     SockBuf_AddChar(sbptr, pl_ptr->map_update_cmd); /* marker */
-	if(pl_ptr->map_update_cmd != MAP_UPDATE_CMD_SAME)
+    if(pl_ptr->map_update_cmd != MAP_UPDATE_CMD_SAME)
     {
         SockBuf_AddString(sbptr, pl->map->name, strlen(pl->map->name));
 
@@ -778,14 +778,14 @@ void draw_client_map2(object *pl)
                 }
                 else
                 {
-					/* well.. IS there something we have to send? */
-					if (!(mask & 0x3f)) /* check all bits except the position */
-						continue;
+                    /* well.. IS there something we have to send? */
+                    if (!(mask & 0x3f)) /* check all bits except the position */
+                        continue;
 #ifdef DEBUG_CORE_MAP
-					else
-						tile_count++;
+                    else
+                        tile_count++;
 #endif
-					SockBuf_AddShort(sbptr, mask); /* mask only */
+                    SockBuf_AddShort(sbptr, mask); /* mask only */
                 }
 
                 if (pname_flag)
@@ -897,15 +897,15 @@ void draw_client_map2(object *pl)
         } /* for x loop */
     } /* for y loop */
 
-	/* Verify that we in fact do need to send this */
-	if (SOCKBUF_REQUEST_BUFSIZE(sbptr) > 3)
-	{
+    /* Verify that we in fact do need to send this */
+    if (SOCKBUF_REQUEST_BUFSIZE(sbptr) > 3)
+    {
 #ifdef DEBUG_CORE_MAP
-		LOG(llevDebug, "MAP2: (%d) %d %d send tiles: %d \n", SOCKBUF_REQUEST_BUFSIZE(sbptr), sbptr->len, sbptr->request_len, tile_count);
+        LOG(llevDebug, "MAP2: (%d) %d %d send tiles: %d \n", SOCKBUF_REQUEST_BUFSIZE(sbptr), sbptr->len, sbptr->request_len, tile_count);
 #endif
-		SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_MAP2, SOCKBUF_DYNAMIC);
-	}
-	else
-		SOCKBUF_REQUEST_RESET(ns);
+        SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_MAP2, SOCKBUF_DYNAMIC);
+    }
+    else
+        SOCKBUF_REQUEST_RESET(ns);
 }
 
