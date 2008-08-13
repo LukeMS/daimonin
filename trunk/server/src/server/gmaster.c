@@ -294,25 +294,30 @@ void set_gmaster_mode(player *pl, int mode)
  */
 void remove_gmaster_mode(player *pl)
 {
+    int gmaster_mode = pl->gmaster_mode;
+
+    pl->gmaster_mode = GMASTER_MODE_NO;
     new_draw_info_format(NDI_UNIQUE, 0, pl->ob, "%s mode deactivated.",
-        pl->gmaster_mode==GMASTER_MODE_DM ? "DM" : (pl->gmaster_mode==GMASTER_MODE_GM ?"GM" : "VOL"));
+        (gmaster_mode == GMASTER_MODE_DM) ? "DM" : ((gmaster_mode == GMASTER_MODE_GM) ? "GM" : "VOL"));
 
     remove_gmaster_list(pl);
 
-    if(pl->gmaster_mode == GMASTER_MODE_DM)
+    if(gmaster_mode == GMASTER_MODE_DM)
     {
         /* remove the DM power settings */
         CLEAR_FLAG(pl->ob, FLAG_WIZ);
         CLEAR_FLAG(pl->ob, FLAG_WIZPASS);
         CLEAR_MULTI_FLAG(pl->ob, FLAG_FLYING);
-        FIX_PLAYER(pl->ob, "set_gmaster_mode");
+        /* bit of a cheat, but by doing this we avoid a fix when going into DM
+         * mode and slight confusion. */
+        pl->dm_invis = 0;
+        FIX_PLAYER(pl->ob, "remove DM mode");
         pl->socket.update_tile = 0;
         esrv_send_inventory(pl->ob, pl->ob);
         pl->update_los = 1;
     }
 
     pl->socket.ext_title_flag =1;
-    pl->gmaster_mode = GMASTER_MODE_NO;
 }
 
 /* write back the gmaster file.

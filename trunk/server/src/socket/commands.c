@@ -161,6 +161,7 @@ CommArray_s WizCommands[]           =
     {"/maps", command_maps,   0.0},
     {"/dump", command_dump,0.0}, /* dump info of object nr. x */
 
+    {"/dm_invis", command_dm_invis,0.0},
     {"/dm_stealth", command_dm_stealth,0.0},
     {"/dm_dev", command_dm_dev,0.0},
     {"/dm_light", command_dm_light,0.0},

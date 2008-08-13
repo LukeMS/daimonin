@@ -151,6 +151,7 @@ int                         command_dumpallobjects(object *op, char *params);
 int                         command_dumpfriendlyobjects(object *op, char *params);
 int                         command_dumpallarchetypes(object *op, char *params);
 int                         command_dm_dev(object *op, char *params);
+int                         command_dm_invis(object *op, char *params);
 int                         command_dm_stealth(object *op, char *params);
 int                         command_dm_light(object *op, char *params);
 int                         command_dm_password(object *op, char *params);
