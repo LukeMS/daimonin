@@ -29,7 +29,7 @@
 
 #define BUF_SZ 100
 
-#define DEBUG_IPCOMPARE
+/*#define DEBUG_IPCOMPARE*/
 
 #define MASK_ALL 4
 #define MASK_HUNDREDS 3
@@ -69,11 +69,21 @@ int parse_ip(const char * ip, char ip_terms[], int mask_pos[])
     while (buffer[pos] != '\0')
     {
         if (buffer[pos] == '*')
-            buffer[pos] = '0';
+        {
+#ifdef DEBUG_IPCOMPARE
+            LOG(llevDebug,"parse_ip: replaced * at %d with 0.\n",pos);
+#endif
+            if (pos)
+                buffer[pos] = '0';
+            else
+                buffer[pos] = '1';
+        }
         pos++;
     }
+#ifdef DEBUG_IPCOMPARE
+    LOG(llevDebug,"parse_ip: buffer = %s.\n",buffer);
+#endif
     len = pos;
-
 
     if (strchr(buffer, ':'))
     {
@@ -104,8 +114,6 @@ int parse_ip(const char * ip, char ip_terms[], int mask_pos[])
         /* find the end of this term */
         while (ip[pos] != '.' &&  ip[pos] != '\0')
             pos++;
-        if (ip[pos] == '\0')
-            pos--;
         /* find the start of the term */
         while (ip[index] != ':' && ip[index] != '.' && index)
             index--;
@@ -132,16 +140,30 @@ int parse_ip(const char * ip, char ip_terms[], int mask_pos[])
                 else
                     mask_pos[1] = MASK_HUNDREDS;
                 break;
+            case 4: /* "boundary conditions are annoying": last term includes \0 */
+                if (temp-index == 3)
+                    mask_pos[1] = MASK_ONES;
+                else if (temp-index == 2)
+                    mask_pos[1] = MASK_TENS;
+                else if (temp-index == 1)
+                    mask_pos[1] = MASK_HUNDREDS;
+                break;
         }
         temp=12; /* start at the end, count the dots until the masked term */
         pos = 0;
         while (ip[pos] != '*' && ip[pos] != '\0')
         {
+#ifdef DEBUG_IPCOMPARE
+            LOG(llevDebug, "pos_finder: temp=%d; index=%d; pos=%d\n",temp, index, pos);
+#endif
             if (ip[pos] == '.')
-                temp--;
+                temp++;
             pos++;
         }
+#ifdef DEBUG_IPCOMPARE
+        LOG(llevDebug, "pos_finder: temp=%d; index=%d; pos=%d\n",temp, index, pos);
         mask_pos[0] = temp;
+#endif
     }
     return 0;
 }
@@ -149,7 +171,7 @@ int parse_ip(const char * ip, char ip_terms[], int mask_pos[])
 /* compare IP address strings */
 int ip_compare(const char * ip1, const char * ip2)
 {
-    char ip1_terms[16], ip2_terms[16];
+    unsigned char ip1_terms[16], ip2_terms[16];
     int mask_pos1[2], mask_pos2[2];
     int i = 0, mask_power = -1, mask_pos = -1;
 
@@ -226,31 +248,34 @@ int ip_compare(const char * ip1, const char * ip2)
 #ifdef DEBUG_IPCOMPARE
                     LOG(llevDebug, "(* any match)\n");
 #endif
-                    return 1;
+                    /* Tests: NONE! */
                     break;
                 case MASK_HUNDREDS:
 #ifdef DEBUG_IPCOMPARE
                     LOG(llevDebug, "(* in hundreds)\n");
 #endif
-                    if (ip1_terms[i] % 10 == ip2_terms[i] % 10 && (ip1_terms[i] / 10) % 10 == (ip2_terms[i] / 10) % 10)
-                        return 1;
+                    /* Tests: 100s term is non-zero in both, match in tens term, match in ones term */
+                    if (!(ip1_terms[i] / 100) || !(ip2_terms[i] / 100) || ip1_terms[i] % 10 != ip2_terms[i] % 10 || (ip1_terms[i] / 10) % 10 != (ip2_terms[i] / 10) % 10)
+                        return 0;
                     break;
                 case MASK_TENS:
 #ifdef DEBUG_IPCOMPARE
                     LOG(llevDebug, "%d %d; (* in tens)\n",ip1_terms[i]/100, ip2_terms[i]/100);
 #endif
-                    if (ip1_terms[i] / 100 == ip2_terms[i] / 100 && ip1_terms[i] % 10 == ip2_terms[i] % 10)
-                        return 1;
+                    /* Tests: 10s term is non-zero in both, match in hundreds term, match in ones term */
+                    if (!(ip1_terms[i] / 10) || !(ip2_terms[i] / 10) ||ip1_terms[i] / 100 != ip2_terms[i] / 100 || ip1_terms[i] % 10 != ip2_terms[i] % 10)
+                        return 0;
                     break;
                 case MASK_ONES:
 #ifdef DEBUG_IPCOMPARE
                     LOG(llevDebug, "%d %d; (* in ones)\n",ip1_terms[i]/10, ip2_terms[i]/10);
 #endif
-                    if (ip1_terms[i] / 10 == ip2_terms[i] / 10)
-                        return 1;
+                    /* Tests: 100s terms match and tens terms match */
+                    if (ip1_terms[i] / 100 != ip2_terms[i] / 100 || ip1_terms[i] / 10 != ip2_terms[i] / 10)
+                        return 0;
                     break;
             }
-            return 0;
+            return 1;
         }
     }
 
