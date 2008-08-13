@@ -2041,7 +2041,7 @@ void dragon_level_gain(object *who)
 void fix_monster(object *op)
 {
     int wc_mali=0, ac_mali=0, snare_penalty=0, slow_penalty=0;
-    object *base, *tmp, *spawn_info=NULL, *bow=NULL;
+    object *base, *tmp, *spawn_info=NULL, *bow=NULL, *wc_tmp;
     float   tmp_add;
     int mob_wc[MAXLEVEL + 1] = 
      { 1,2,3,4,5,6,7,8,9,10,10,11,11,12,12,13,13,14,14,15,15,16,16,17,17,18,
@@ -2186,16 +2186,16 @@ void fix_monster(object *op)
     /* + level/10 to catch up the equipment improvements of the players. */
     op->stats.ac = base->stats.ac + (op->level / 10) - ac_mali;
     op->stats.wc = base->stats.wc + (op->level / 10) - wc_mali;
-    object wc_tmp = op->arch->clone;
-    if(op->stats.wc == (wc_tmp.stats.wc + ((int)op->level / 10)))
+    wc_tmp = &op->arch->clone;
+    if(op->stats.wc == (wc_tmp->stats.wc + ((int)op->level / 10)))
           op->stats.wc = mob_wc[op->level];
     if(op->level < 10)
       {
          op->stats.thac0 += (abs(op->level - 10));
          op->stats.thacm += (10 - op->level);
       }
-    if(op->stats.ac == (wc_tmp.stats.ac + ((int)op->level / 10)))
-          op->stats.ac = mob_ac[op->level];
+    if(op->stats.ac == (wc_tmp->stats.ac + ((int)op->level / 10)))
+         op->stats.ac = mob_ac[op->level];
 
     op->stats.dam = base->stats.dam;
 
