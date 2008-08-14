@@ -149,6 +149,9 @@ int save_player(object *op, int flag)
     char    filename[MAX_BUF], tmpfilename[MAXPATHLEN], backupfile[MAX_BUF];
     player *pl  = CONTR(op);
     int     i, wiz = QUERY_FLAG(op, FLAG_WIZ);
+    object *force;
+    archetype *at = find_archetype("drain");
+    int drain_level = 0;
 #ifdef BACKUP_SAVE_AT_HOME
     sint16  backup_x, backup_y;
 #endif
@@ -247,10 +250,6 @@ int save_player(object *op, int flag)
 #endif
 
     /* check for drain so we know the proper level of the player to save the hp table with */
-    object *force;
-    archetype *at = find_archetype("drain");
-    int drain_level = 0;
-
     if (!at)
         LOG(llevBug, "BUG: Couldn't find archetype drain.\n");
     else
