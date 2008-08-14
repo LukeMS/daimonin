@@ -249,17 +249,17 @@ int save_player(object *op, int flag)
     /* check for drain so we know the proper level of the player to save the hp table with */
     object *force;
     archetype *at = find_archetype("drain");
-    if (!at)
-    {
-        LOG(llevBug, "BUG: Couldn't find archetype drain.\n");
-        return;
-    }
     int drain_level = 0;
+
+    if (!at)
+        LOG(llevBug, "BUG: Couldn't find archetype drain.\n");
+    else
+    {
+        force = present_arch_in_ob(at, op);
     
-    force = present_arch_in_ob(at, op);
-    
-    if (force)
-        drain_level = force->level;
+        if (force)
+            drain_level = force->level;
+    }
 
     /* save hp table */
     fprintf(fp, "lev_hp %d\n", op->level + drain_level);
