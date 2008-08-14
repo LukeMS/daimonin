@@ -420,7 +420,22 @@ void player_lvl_adj(object *who, object *op, int flag_msg)
         return;
     }
 
-    if (op->level < MAXLEVEL && op->stats.exp >= GET_LEVEL_EXP(op->level + 1))
+    /* check for drain before assuming the player has leveled up */
+    object *force;
+    archetype *at = find_archetype("drain");
+    if (!at)
+    {
+        LOG(llevBug, "BUG: Couldn't find archetype drain.\n");
+        return;
+    }
+    int drain_level = 0;
+    
+    force = present_arch_in_ob(at, op);
+    
+    if (force)
+        drain_level = force->level;
+
+    if (op->level < MAXLEVEL && op->stats.exp >= GET_LEVEL_EXP(op->level + drain_level + 1))
     {
         op->level++;
 
@@ -454,13 +469,13 @@ void player_lvl_adj(object *who, object *op, int flag_msg)
 
         if (who && who->type == PLAYER && op->type != EXPERIENCE && op->type != SKILL && who->level > 1)
         {
-            if (who->level > 4)
-                CONTR(who)->levhp[who->level] = (char) ((RANDOM() % who->arch->clone.stats.maxhp) + 1);
-            else if (who->level > 2)
-                CONTR(who)->levhp[who->level] = (char) ((RANDOM() % (who->arch->clone.stats.maxhp / 2)) + 1)
+            if (who->level + drain_level > 4)
+                CONTR(who)->levhp[who->level + drain_level] = (char) ((RANDOM() % who->arch->clone.stats.maxhp) + 1);
+            else if (who->level + drain_level > 2)
+                CONTR(who)->levhp[who->level + drain_level] = (char) ((RANDOM() % (who->arch->clone.stats.maxhp / 2)) + 1)
                                               + (who->arch->clone.stats.maxhp / 2);
             else
-                CONTR(who)->levhp[who->level] = (char) who->arch->clone.stats.maxhp;
+                CONTR(who)->levhp[who->level + drain_level] = (char) who->arch->clone.stats.maxhp;
         }
         if (op->level > 1 && op->type == EXPERIENCE)
         {

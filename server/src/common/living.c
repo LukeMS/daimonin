@@ -670,6 +670,9 @@ void drain_specific_stat(object *op, int deplete_stats)
  */
 void drain_level(object *op, int level, int mode, int ticks)
 {
+    if (op->level <= 1) /* level 1 mobs can't get drained any further */
+        return;
+
     object *force;
     static archetype  *at = NULL;
 
@@ -702,9 +705,11 @@ void drain_level(object *op, int level, int mode, int ticks)
         }
     }
 
+    /* we don't want drain to make the mob's level be at a value that shouldn't exist */
+    int original_level = force->level + op->level;
     force->level += level;
-    if (force->level < 0 || force->level >= MAXLEVEL) /* we don't want drain to make the mob's level be at a value that shouldn't exist */
-        force->level = MAXLEVEL - 1;
+    if (force->level < 1 || force->level >= original_level)
+        force->level = original_level - 1; /* cap force->level at one below the mob's original undrained level */
     FIX_PLAYER(op, "drain_level"); /* will redirect to fix_monster() automatically */
     if(op->type == PLAYER)
         new_draw_info(NDI_UNIQUE, 0, op, "You lose a level!");
