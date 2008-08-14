@@ -408,6 +408,9 @@ sint32 add_exp(object *op, int exp, int skill_nr)
 void player_lvl_adj(object *who, object *op, int flag_msg)
 {
     char    buf[MAX_BUF];
+    object *force;
+    archetype *at = find_archetype("drain");
+    int drain_level = 0;
 
     SET_FLAG(who, FLAG_NO_FIX_PLAYER);
     if (!op)        /* when rolling stats */
@@ -421,17 +424,13 @@ void player_lvl_adj(object *who, object *op, int flag_msg)
     }
 
     /* check for drain before assuming the player has leveled up */
-    object *force;
-    archetype *at = find_archetype("drain");
     if (!at)
     {
         LOG(llevBug, "BUG: Couldn't find archetype drain.\n");
         return;
     }
-    int drain_level = 0;
-    
+
     force = present_arch_in_ob(at, op);
-    
     if (force)
         drain_level = force->level;
 
