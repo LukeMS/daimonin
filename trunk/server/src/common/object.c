@@ -3086,9 +3086,7 @@ void init_object_initializers()
 
 /* Returns the next object in the local object tree (according to mode and
  * root) of op which matches.
- * An object matches when it has the specified type, arch, name, and title.
- * Any of these criteria can be discounted by setting them to 0 (type) or NULL
- * (arch, name, and title).
+ * An object matches when it has the specified type.
  * A local object tree is defined as *up to* all the ancestors, descendants,
  * and siblings of op. This scope is modified according to mode and root.
  * If mode == FNO_MODE_INV_ONLY, only the immediate inventory of op is
@@ -3102,14 +3100,13 @@ void init_object_initializers()
  * The natural root is the ancestor which is on a map (the assumption is that
  * players and monsters must always be directly on a map, not in an
  * environment). */
-object *find_next_object(object *op, uint8 type, archetype *arch, uint8 *name, uint8 *title, uint8 mode, object *root)
+object *find_next_object(object *op, uint8 type, uint8 mode, object *root)
 {
     object *next = NULL;
 
-    LOG(llevDebug, "DEBUG:: %s/find_next_object_of_type(%s[%d], %d, %s, \"%s\", \"%s\", %d, %s[%d]):",
+    LOG(llevDebug, "DEBUG:: %s/find_next_object_of_type(%s[%d], %d, %d, %s[%d]):",
         __FILE__,
-        (op) ? op->name : "NULL", (op) ? op->count : 0,
-        type, (arch) ? arch->name : "NULL", name, title, 
+        (op) ? op->name : "NULL", (op) ? op->count : 0, type,
         mode, (root) ? root->name : "NULL", (root) ? root->count : 0);
 
     if (op->inv &&
@@ -3145,10 +3142,7 @@ object *find_next_object(object *op, uint8 type, archetype *arch, uint8 *name, u
             LOG(llevDebug, " ROOT!");
             break;
         }
-        else if ((!type || next->type == type) &&
-            (!arch || next->arch == arch) &&
-            (!name || !strcmp(next->name, name)) &&
-            (!title || !strcmp(next->title, title)))
+        else if (!type || next->type == type)
         {
             LOG(llevDebug, " MATCHES!\n");
             break;
