@@ -1571,7 +1571,6 @@ void tear_down_wall(object *op)
  */
 void poison_player(object *op, object *hitter, float dam)
 {
-    float       pmul;
     archetype  *at  = find_archetype("poisoning");
     object     *tmp = present_arch_in_ob(at, op);
 
@@ -1637,8 +1636,7 @@ void poison_player(object *op, object *hitter, float dam)
                 {
                     if (op->stats.Con > 1 && !(RANDOM() % 2))
                     {
-                        pmul = (hitter->level + (RANDOM() % (hitter->level / 4 + 1)) / 2) * 0.01f + 0.2f;
-                        tmp->stats.Con = 1 + (sint8) (pmul * (op->stats.Con - 1));
+                        tmp->stats.Con = (sint8) ((hitter->level / 2 + RANDOM() % (hitter->level * 8 + 1) / 10) * 0.1f + 2.0f);
                         if (tmp->stats.Con >= op->stats.Con)
                             tmp->stats.Con = op->stats.Con - 1;
                         tmp->stats.Con *= -1;
@@ -1646,8 +1644,7 @@ void poison_player(object *op, object *hitter, float dam)
 
                     if (op->stats.Str > 1 && !(RANDOM() % 2))
                     {
-                        pmul = (hitter->level + (RANDOM() % (hitter->level / 4 + 1)) / 2) * 0.01f + 0.2f;
-                        tmp->stats.Str = 1 + (sint8) (pmul * (op->stats.Str - 1));
+                        tmp->stats.Str = (sint8) ((hitter->level / 2 + RANDOM() % (hitter->level * 8 + 1) / 10) * 0.1f + 2.0f);
                         if (tmp->stats.Str >= op->stats.Str)
                             tmp->stats.Str = op->stats.Str - 1;
                         tmp->stats.Str *= -1;
@@ -1655,40 +1652,39 @@ void poison_player(object *op, object *hitter, float dam)
 
                     if (op->stats.Dex > 1 && !(RANDOM() % 2))
                     {
-                        pmul = (hitter->level + (RANDOM() % (hitter->level / 4 + 1)) / 2) * 0.01f + 0.2f;
-                        tmp->stats.Dex = 1 + (sint8) (pmul * (op->stats.Dex - 1));
+                        tmp->stats.Dex = (sint8) ((hitter->level / 2 + RANDOM() % (hitter->level * 8 + 1) / 10) * 0.1f + 2.0f);
                         if (tmp->stats.Dex >= op->stats.Dex)
                             tmp->stats.Dex = op->stats.Dex - 1;
                         tmp->stats.Dex *= -1;
                     }
-                    if (op->stats.Int > 1 && !(RANDOM() % 3))
+
+                    if (op->stats.Int > 1 && !(RANDOM() % 2))
                     {
-                        pmul = (hitter->level + (RANDOM() % (hitter->level / 4 + 1)) / 2) * 0.01f + 0.2f;
-                        tmp->stats.Int = 1 + (sint8) (pmul * (op->stats.Int - 1));
+                        tmp->stats.Int = (sint8) ((hitter->level / 2 + RANDOM() % (hitter->level * 8 + 1) / 10) * 0.1f + 2.0f);
                         if (tmp->stats.Int >= op->stats.Int)
                             tmp->stats.Int = op->stats.Int - 1;
                         tmp->stats.Int *= -1;
                     }
-                    if (op->stats.Cha > 1 && !(RANDOM() % 3))
+
+                    if (op->stats.Cha > 1 && !(RANDOM() % 2))
                     {
-                        pmul = (hitter->level + (RANDOM() % (hitter->level / 4 + 1)) / 2) * 0.01f + 0.2f;
-                        tmp->stats.Cha = 1 + (sint8) (pmul * (op->stats.Cha - 1));
+                        tmp->stats.Cha = (sint8) ((hitter->level / 2 + RANDOM() % (hitter->level * 8 + 1) / 10) * 0.1f + 2.0f);
                         if (tmp->stats.Cha >= op->stats.Cha)
                             tmp->stats.Cha = op->stats.Cha - 1;
                         tmp->stats.Cha *= -1;
                     }
-                    if (op->stats.Pow > 1 && !(RANDOM() % 4))
+
+                    if (op->stats.Pow > 1 && !(RANDOM() % 2))
                     {
-                        pmul = (hitter->level + (RANDOM() % (hitter->level / 4 + 1)) / 2) * 0.01f + 0.2f;
-                        tmp->stats.Pow = 1 + (sint8) (pmul * (op->stats.Pow - 1));
+                        tmp->stats.Pow = (sint8) ((hitter->level / 2 + RANDOM() % (hitter->level * 8 + 1) / 10) * 0.1f + 2.0f);
                         if (tmp->stats.Pow >= op->stats.Pow)
                             tmp->stats.Pow = op->stats.Pow - 1;
                         tmp->stats.Pow *= -1;
                     }
-                    if (op->stats.Wis > 1 && !(RANDOM() % 4))
+
+                    if (op->stats.Wis > 1 && !(RANDOM() % 2))
                     {
-                        pmul = (hitter->level + (RANDOM() % (hitter->level / 4 + 1)) / 2) * 0.01f + 0.2f;
-                        tmp->stats.Wis = 1 + (sint8) (pmul * (op->stats.Wis - 1));
+                        tmp->stats.Wis = (sint8) ((hitter->level / 2 + RANDOM() % (hitter->level * 8 + 1) / 10) * 0.1f + 2.0f);
                         if (tmp->stats.Wis >= op->stats.Wis)
                             tmp->stats.Wis = op->stats.Wis - 1;
                         tmp->stats.Wis *= -1;
