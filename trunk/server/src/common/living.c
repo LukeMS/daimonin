@@ -703,6 +703,8 @@ void drain_level(object *op, int level, int mode, int ticks)
     }
 
     force->level += level;
+    if (force->level < 0 || force->level >= MAXLEVEL) /* we don't want drain to make the mob's level be at a value that shouldn't exist */
+        force->level = MAXLEVEL - 1;
     FIX_PLAYER(op, "drain_level"); /* will redirect to fix_monster() automatically */
     if(op->type == PLAYER)
         new_draw_info(NDI_UNIQUE, 0, op, "You lose a level!");
