@@ -3104,7 +3104,7 @@ object *find_next_object(object *op, uint8 type, uint8 mode, object *root)
 {
     object *next = NULL;
 
-    LOG(llevDebug, "DEBUG:: %s/find_next_object_of_type(%s[%d], %d, %d, %s[%d]):",
+    LOG(llevDebug, "DEBUG:: %s/find_next_object(%s[%d], %d, %d, %s[%d]):",
         __FILE__,
         (op) ? op->name : "NULL", (op) ? op->count : 0, type,
         mode, (root) ? root->name : "NULL", (root) ? root->count : 0);
