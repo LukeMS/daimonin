@@ -1240,8 +1240,8 @@ static void apply_sign(object *op, object *sign)
             }
             else if((op->chosen_skill->weight_limit & sign->weight_limit) != sign->weight_limit)
             {
-                new_draw_info_format(NDI_UNIQUE, 0, op, "You are unable to decipher the %s.\nIts written in %s.",
-                                        query_name(sign), get_language(sign->weight_limit));
+                new_draw_info_format(NDI_UNIQUE, 0, op, "You are unable to decipher the %s.\nIt is written in %s.",
+                                     query_name(sign), get_language(sign->weight_limit));
                 return;
             }
         }
@@ -1260,14 +1260,21 @@ static void apply_sign(object *op, object *sign)
 
     if (sign->msg == NULL)
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "Nothing is written on it.");
+        new_draw_info_format(NDI_UNIQUE, 0, op, "Nothing is written on the %s.",
+                             query_name(sign));
         return;
     }
 
-    if(!QUERY_FLAG(sign,FLAG_SYS_OBJECT))
-        new_draw_info_format(NDI_UNIQUE, 0, op, "The %s is written in %s.\nYou start reading the it.",
-                             sign->name, get_language(sign->weight_limit));
-    new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, sign->msg);
+    /* sign */
+    if (!QUERY_FLAG(sign, FLAG_SYS_OBJECT))
+    {
+        new_draw_info_format(NDI_UNIQUE, 0, op, "The %s is written in %s.\nYou start reading it.",
+                             query_name(sign), get_language(sign->weight_limit));
+        new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, sign->msg);
+    }
+    /* magic mouth */
+    else if (sign->direction == 0 || sign->direction == op->direction)
+        new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, sign->msg);
 }
 
 
