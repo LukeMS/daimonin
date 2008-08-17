@@ -81,5 +81,14 @@ int command_stay(object *op, char *params)
     fire(op, 0);
     return 0;
 }
-
-
+static int push_internal(object *op, char *params, int dir)
+{
+    push_roll_object(op, dir, TRUE);
+    return 0;
+}
+int command_push_object (object *op, char *params)
+{
+	int dir;
+    dir = op->anim_last_facing;
+    return push_internal(op, params, dir);
+}

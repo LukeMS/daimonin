@@ -193,6 +193,7 @@ int                         command_southeast(object *op, char *params);
 int                         command_southwest(object *op, char *params);
 int                         command_west(object *op, char *params);
 int                         command_stay(object *op, char *params);
+int                         command_push_object (object *op, char *params);
 /* c_new.c */
 CommArray_s                *find_command_element(char *cmd, CommArray_s *commarray, int commsize);
 int                         execute_newserver_command(object *pl, char *command);
@@ -424,6 +425,7 @@ void                        send_link_spawn_signal(object *spawn, object *target
 /* move.c */
 int                         move_ob(object *op, int dir, object *originator);
 int                         teleport(object *teleporter, uint8 tele_type, object *user);
+int                         push_roll_object(object * const op, int dir, const int flag);
 void                        recursive_roll(object *op, int dir, object *pusher);
 int                         roll_ob(object *op, int dir, object *pusher);
 int                         push_ob(object *who, int dir, object *pusher);
