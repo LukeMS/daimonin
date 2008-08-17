@@ -6,4 +6,5 @@ weight 1000000
 no_pass 1
 can_roll 1
 no_pick 1
+terrain_flag 1
 end
