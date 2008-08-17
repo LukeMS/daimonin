@@ -1258,22 +1258,21 @@ static void apply_sign(object *op, object *sign)
                 NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
         return;
 
-    if (sign->msg == NULL)
-    {
-        new_draw_info_format(NDI_UNIQUE, 0, op, "Nothing is written on the %s.",
-                             query_name(sign));
-        return;
-    }
-
     /* sign */
     if (!QUERY_FLAG(sign, FLAG_SYS_OBJECT))
     {
-        new_draw_info_format(NDI_UNIQUE, 0, op, "The %s is written in %s.\nYou start reading it.",
-                             query_name(sign), get_language(sign->weight_limit));
-        new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, sign->msg);
+        if (!sign->msg)
+            new_draw_info_format(NDI_UNIQUE, 0, op, "Nothing is written on the %s.",
+                                 query_name(sign));
+        else
+        {
+            new_draw_info_format(NDI_UNIQUE, 0, op, "The %s is written in %s.\nYou start reading it.",
+                                 query_name(sign), get_language(sign->weight_limit));
+            new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, sign->msg);
+        }
     }
     /* magic mouth */
-    else if (sign->direction == 0 || sign->direction == op->direction)
+    else if (sign->msg && (sign->direction == 0 || sign->direction == op->direction))
         new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, sign->msg);
 }
 
