@@ -22,4 +22,5 @@ no_pass 1
 can_roll 1
 type 79
 layer 4
+terrain_flag 1
 end
