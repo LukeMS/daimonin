@@ -455,7 +455,10 @@ void move_gate(object *op)
         {
             if (IS_LIVE(tmp))
             {
-                damage_ob(tmp, 4, op, ENV_ATTACK_CHECK);
+                int dam = (op->level > 0) ? op->level : op->map->difficulty;
+
+                dam = dam * 3 + (tmp->level - dam) + 1;
+                damage_ob(tmp, dam, op, ENV_ATTACK_CHECK);
                 if (tmp->type == PLAYER)
                     new_draw_info_format(NDI_UNIQUE, 0, tmp, "You are crushed by the %s!", op->name);
             }
