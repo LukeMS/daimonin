@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no" ?>
+﻿<?xml version="1.0" standalone="no" ?>
 <!--
 ######################################################################
 # types.xml - This is the definitions-file for all the different     #
@@ -177,6 +177,7 @@
     zero weight are not pickable for players. Still, set the "non-pickable"-flag
     for explicitly non-pickable objects (hey, this is open source.. you
     never know ;) ).
+    It takes about 1 point of player str per 50000g to push an object.
   </attribute>
   <attribute arch="value" editor="value" type="long">
     Adds a certain value to the object: It will be worth that many times the
@@ -601,6 +602,11 @@
   </description>
   <attribute arch_begin="msg" arch_end="endmsg" editor="description" type="text">
     This text may describe the object.
+  </attribute>
+    <attribute arch="terrain_flag" editor="can move on" type="bitmask_terrain">
+    These settings define on which kind of terrain this
+    object can be pushed to. If set to nothing, the object will not move.
+    The flag moveable must also be set to allow pushing.
   </attribute>
 </type>
 
