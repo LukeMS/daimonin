@@ -270,7 +270,11 @@ int roll_ob(object *op, int dir, object *pusher)
 
     if(blocked_link(op, freearr_x[dir], freearr_y[dir]))
         return 0;
-
+    if (QUERY_FLAG(op, FLAG_ANIMATE))
+	{
+	    op->anim_moving_dir = dir;
+        op->direction = dir;
+	}
     remove_ob(op);
     if (check_walk_off(op, NULL, MOVE_APPLY_VANISHED) != CHECK_WALK_OK)
         return 0;
@@ -323,7 +327,18 @@ int push_ob(object *who, int dir, object *pusher)
 
         return 0;
     }
+/* TODO: allow multi arch pushing. Can't be very difficult */
+    if (who->more != NULL && owner == pusher)
+    {
+        remove_ob(who);
+        if (check_walk_off(who, NULL, MOVE_APPLY_DEFAULT) != CHECK_WALK_OK)
+            return 0;
+        move_ob(pusher, dir, pusher);
+        pet_follow_owner(who);
+        
 
+        return 1;
+    }
 
     /* We want ONLY become enemy of evil, unaggressive monster. We must RUN in them */
     /* In original we have here a unaggressive check only - that was the reason why */
@@ -346,28 +361,33 @@ int push_ob(object *who, int dir, object *pusher)
     }
        }*/
 
-    /* now, lets test stand still we NEVER can psuh stand_still monsters. */
+    /* now, lets test stand still we NEVER can push stand_still monsters. */
     if (QUERY_FLAG(who, FLAG_STAND_STILL))
     {
         new_draw_info_format(NDI_UNIQUE, 0, pusher, "You can't push %s.", who->name);
         return 0;
     }
 
-    /* This block is basically if you are pushing friendly but
-     * non pet creaturs.
+    /* This block is basically if you are pushing 
+     * non pet creatures. With move-push attacks removed, we can now
+	 * try to push even aggressive mobs, maybe into a fire pit.
      * It basically does a random strength comparision to
      * determine if you can push someone around.  Note that
      * this pushes the other person away - its not a swap.
+	 * As of B4 mobs have no str by default. Mapmakers can add
+	 * str to a mob, usually for scripted pick up. If a mob has 
+	 * no str we use 9 + level/10 to give a pseudo str. Also a weight factor
+	 * is added for the object being pushed, a beholder should be harder to push
+	 * than an ant even if they are the same level.
      */
 
-    str1 = (who->stats.Str > 0 ? who->stats.Str : who->level);
-    str2 = (pusher->stats.Str > 0 ? pusher->stats.Str : pusher->level);
+    str1 = (who->stats.Str > 0 ? who->stats.Str : 9 + who->level / 10);
+	  str1 = str1 + who->weight / 50000 - 1;
+    str2 = (pusher->stats.Str > 0 ? pusher->stats.Str : 9 + pusher->level / 10);
     if (QUERY_FLAG(who, FLAG_WIZ)
      || random_roll(str1, str1 / 2 + str1 * 2)
-     >= random_roll(str2,str2/ 2 + str2 * 2)
-     || !move_ob(who,
-                 dir,
-                 pusher))
+     >= random_roll(str2, str2/ 2 + str2 * 2)
+     || !move_ob(who, dir, pusher))
     {
         new_draw_info_format(NDI_UNIQUE, 0, who, "%s tried to push you.", pusher->name);
         return 0;
@@ -378,12 +398,58 @@ int push_ob(object *who, int dir, object *pusher)
      * to be in an else block - the message is going to a different
      * player
      */
+    (void) move_ob(pusher, dir, pusher);
     new_draw_info_format(NDI_UNIQUE, 0, who, "%s pushed you.", pusher->name);
     new_draw_info_format(NDI_UNIQUE, 0, pusher, "You pushed %s back.", who->name);
 
     return 1;
 }
+int push_roll_object(object * const op, int dir, const int flag)
+{
 
+    object     *tmp;
+    mapstruct  *m;
+    int         xt, yt, ret;
+    ret = 0;
+	/* we check for all conditions where op can't push anything */
+    if (dir <= 0 || CONTR(op)->rest_mode || QUERY_FLAG(op,FLAG_PARALYZED) || 
+		QUERY_FLAG(op,FLAG_ROOTED) || QUERY_FLAG(op, FLAG_FLYING)|| QUERY_FLAG(op, FLAG_LEVITATE))
+        return 0;   
+    xt = op->x + freearr_x[dir];
+    yt = op->y + freearr_y[dir];
+    if (!(m = out_of_map(op->map, &xt, &yt)))
+        return 0;
+	for (tmp = get_map_ob(m, xt, yt); tmp != NULL; tmp = tmp->above)
+	{
+        if (IS_LIVE(tmp)|| QUERY_FLAG(tmp,FLAG_CAN_ROLL))
+		{
+			break;
+		}
+	}
+	    if (tmp == NULL)
+	    {
+            new_draw_info_format(NDI_UNIQUE, 0, op, "You fail to push anything.");
+		    return 0;
+	    }
+	    /* here we try to push pets, players and mobs */
+	    if (get_owner(tmp)==op || IS_LIVE(tmp))
+        {
+            play_sound_map(op->map, op->x, op->y, SOUND_PUSH_PLAYER, SOUND_NORMAL);
+            if(push_ob(tmp,dir,op))
+                ret = 1;
+            if(op->hide)
+                make_visible(op);
+            return ret;
+        }
+	    /* here we try to push moveable objects */
+        else if(QUERY_FLAG(tmp,FLAG_CAN_ROLL))
+        {
+            recursive_roll(tmp,dir,op);
+            if(action_makes_visible(op))
+                make_visible(op);
+        }
+        return ret;
+}
 int missile_reflection_adjust(object *op, int flag)
 {
     if (!op->stats.maxgrace) /* no more direction/reflection! */
