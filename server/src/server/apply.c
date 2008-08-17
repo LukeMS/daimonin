@@ -1231,16 +1231,19 @@ static void apply_sign(object *op, object *sign)
         }
 
         /* you has the right skill & language knowledge to read it? */
-        else if (!change_skill(op, SK_LITERACY))
+        else if (sign->msg)
         {
-            new_draw_info(NDI_UNIQUE, 0, op, "You are unable to decipher the strange symbols.");
-            return;
-        }
-        else if((op->chosen_skill->weight_limit & sign->weight_limit) != sign->weight_limit)
-        {
-            new_draw_info_format(    NDI_UNIQUE, 0, op, "You are unable to decipher the %s.\nIts written in %s.",
-                                    query_name(sign), get_language(sign->weight_limit));
-            return;
+            if (!change_skill(op, SK_LITERACY))
+            {
+                new_draw_info(NDI_UNIQUE, 0, op, "You are unable to decipher the strange symbols.");
+                return;
+            }
+            else if((op->chosen_skill->weight_limit & sign->weight_limit) != sign->weight_limit)
+            {
+                new_draw_info_format(NDI_UNIQUE, 0, op, "You are unable to decipher the %s.\nIts written in %s.",
+                                        query_name(sign), get_language(sign->weight_limit));
+                return;
+            }
         }
     }
 
@@ -1262,7 +1265,8 @@ static void apply_sign(object *op, object *sign)
     }
 
     if(!QUERY_FLAG(sign,FLAG_SYS_OBJECT))
-        new_draw_info_format(NDI_UNIQUE, 0, op, "You start reading the %s.", sign->name);
+        new_draw_info_format(NDI_UNIQUE, 0, op, "The %s is written in %s.\nYou start reading the it.",
+                             sign->name, get_language(sign->weight_limit));
     new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, sign->msg);
 }
 
