@@ -784,10 +784,9 @@ char *examine(object *op, object *tmp, int flag)
           }
           break;
 
-        case SIGN:
         case BOOK:
           if (tmp->msg != NULL)
-             sprintf(buf, "It's written in %s.\n",get_language(tmp->weight_limit));
+             sprintf(buf, "It is written in %s.\n", get_language(tmp->weight_limit));
           break;
 
         case CONTAINER:
@@ -953,6 +952,7 @@ char *examine(object *op, object *tmp, int flag)
      * types - especially if the first entry is a match
      */
     if (tmp->msg && tmp->type != EXIT
+     && tmp->type != SIGN
      && tmp->type != BOOK
      && tmp->type != CORPSE
      && !QUERY_FLAG(tmp, FLAG_WALK_ON)
@@ -971,6 +971,18 @@ char *examine(object *op, object *tmp, int flag)
     if(op)
     {
         new_draw_info(NDI_UNIQUE, 0, op, buf_out);
+
+        /* Examining signs also applies them (so the player can see what is on
+         * them). This is because for signs their whole raison d'etre is to be
+         * read and it is logical to equate players examining a sign with them
+         * actually reading it. So it is not a useful UI feature to expect
+         * players to differentiate between apply and examine in this case.
+         * However, internally they are still separate actions. A player
+         * examining a sign will generate an EXAMINE event followed by an APPLY
+         * event, but a player applying a sign will only generate an APPLY
+         * event. -- Smacky 20080426 */
+        if (tmp->type == SIGN)
+            manual_apply(op, tmp, 0);
 
         if (QUERY_FLAG(op, FLAG_WIZ))
         {
