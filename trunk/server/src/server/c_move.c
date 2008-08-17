@@ -92,3 +92,13 @@ int command_push_object (object *op, char *params)
     dir = op->anim_last_facing;
     return push_internal(op, params, dir);
 }
+int command_turn_right (object *op, char *params)
+{
+    op->anim_last_facing < 8 ? ++op->anim_last_facing : (op->anim_last_facing = 1) ;
+    return 1;
+}
+int command_turn_left (object *op, char *params)
+{
+    op->anim_last_facing > 1 ? --op->anim_last_facing : (op->anim_last_facing = 8) ;
+    return 1;
+}

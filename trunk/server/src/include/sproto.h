@@ -194,6 +194,8 @@ int                         command_southwest(object *op, char *params);
 int                         command_west(object *op, char *params);
 int                         command_stay(object *op, char *params);
 int                         command_push_object (object *op, char *params);
+int                         command_turn_right (object *op, char *params);
+int                         command_turn_left (object *op, char *params);
 /* c_new.c */
 CommArray_s                *find_command_element(char *cmd, CommArray_s *commarray, int commsize);
 int                         execute_newserver_command(object *pl, char *command);
