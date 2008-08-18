@@ -483,10 +483,7 @@ int damage_ob(object *op, int dam, object *hitter, int env_attack)
         op->last_damage = 0;
         op->damage_round_tag = ROUND_TAG;
     }
-    if ((op->last_damage + maxdam) > 64000)
-        op->last_damage = 64000;
-    else
-        op->last_damage += maxdam;
+    op->last_damage += maxdam;
 
     /*LOG(-1,"DMG: %d\n", maxdam);*/
     op->stats.hp -= maxdam; /* thats the damage the target got */
