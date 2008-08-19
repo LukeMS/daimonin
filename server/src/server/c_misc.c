@@ -87,6 +87,22 @@ int command_spell_reset(object *op, char *params)
 
 int command_motd(object *op, char *params)
 {
+#ifdef MOTD
+    if (CONTR(op)->gmaster_mode == GMASTER_MODE_DM && params)
+    {
+        char  buf[MAX_BUF];
+        FILE *fp;
+        LOG(llevSystem,"write motd file...\n");
+        sprintf(buf, "%s/%s", settings.localdir, MOTD_FILE);
+        if ((fp = fopen(buf, "w")) == NULL)
+        {
+            LOG(llevBug, "BUG: Cannot open %s for writing\n", buf);
+            return;
+        }
+        fprintf(fp, "%s", params);
+        fclose(fp);
+    }
+#endif
     display_motd(op);
     return 1;
 }

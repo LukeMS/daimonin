@@ -73,10 +73,14 @@ void display_motd(object *op)
     char    buf[MAX_BUF];
     FILE   *fp;
 
-    sprintf(buf, "%s/%s", settings.localdir, MOTD);
+    sprintf(buf, "%s/%s", settings.localdir, MOTD_FILE);
     if ((fp = fopen(buf,"r")) == NULL)
     {
-        return;
+        sprintf(buf, "%s/%s", settings.localdir, MOTD_DEFAULT);
+        if ((fp = fopen(buf,"r")) == NULL)
+        {
+            return;
+        }
     }
     while (fgets(buf, MAX_BUF, fp) != NULL)
     {
