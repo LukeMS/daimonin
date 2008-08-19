@@ -952,6 +952,7 @@ char *examine(object *op, object *tmp, int flag)
      * types - especially if the first entry is a match
      */
     if (tmp->msg && tmp->type != EXIT
+     && tmp->type != GRAVESTONE
      && tmp->type != SIGN
      && tmp->type != BOOK
      && tmp->type != CORPSE
@@ -981,7 +982,8 @@ char *examine(object *op, object *tmp, int flag)
          * examining a sign will generate an EXAMINE event followed by an APPLY
          * event, but a player applying a sign will only generate an APPLY
          * event. -- Smacky 20080426 */
-        if (tmp->type == SIGN)
+        if (tmp->type == SIGN ||
+            tmp->type == GRAVESTONE)
             manual_apply(op, tmp, 0);
 
         if (QUERY_FLAG(op, FLAG_WIZ))
