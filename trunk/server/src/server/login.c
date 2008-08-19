@@ -1202,6 +1202,7 @@ void check_login(object *op, int mode)
     new_draw_info(NDI_UNIQUE | NDI_RED, 0, op, "We are testing out a new channel-system!\nMake sure you have a client with channel-support.\nSee forums on www.daimonin.net!");
 #endif
 #endif
+    display_motd(op);
     if (!pl->dm_stealth)
     {
         if (!pl->silent_login) /* Inform all players of the login */

@@ -547,7 +547,9 @@
  */
 
 #ifndef MOTD
-#define MOTD "motd"
+#define MOTD
+#define MOTD_DEFAULT "motd"
+#define MOTD_FILE "motd_file"
 #endif
 
 
