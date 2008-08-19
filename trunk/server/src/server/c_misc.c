@@ -85,6 +85,10 @@ int command_spell_reset(object *op, char *params)
     return 1;
 }
 
+/* '/motd' displays the MOTD. DMs can also set the MOTD:
+ *   '/motd default' restores the server-set MOTD (actually deletes the DM-set
+ *   one).
+ *   '/motd <message>' sets the DM-set MOTD. */
 int command_motd(object *op, char *params)
 {
 #ifdef MOTD
@@ -92,18 +96,33 @@ int command_motd(object *op, char *params)
     {
         char  buf[MAX_BUF];
         FILE *fp;
-        LOG(llevSystem,"write motd file...\n");
+
         sprintf(buf, "%s/%s", settings.localdir, MOTD_FILE);
-        if ((fp = fopen(buf, "w")) == NULL)
+
+        if (!strcmp(params, "default"))
         {
-            LOG(llevBug, "BUG: Cannot open %s for writing\n", buf);
-            return;
+            LOG(llevSystem, "restore default motd...\n");
+
+            if ((fp = fopen(buf, "r")) && remove(buf))
+                LOG(llevBug, "BUG: Cannot remove %s!\n", buf);
         }
-        fprintf(fp, "%s", params);
-        fclose(fp);
+        else
+        {
+            LOG(llevSystem, "write motd file...\n");
+
+            if (!(fp = fopen(buf, "w")))
+                LOG(llevBug, "BUG: Cannot open %s for writing!\n", buf);
+            else
+            {
+                fprintf(fp, "%s", params);
+                fclose(fp);
+            }
+        }
     }
 #endif
+
     display_motd(op);
+
     return 1;
 }
 
