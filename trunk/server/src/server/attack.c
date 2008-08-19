@@ -488,16 +488,18 @@ int damage_ob(object *op, int dam, object *hitter, int env_attack)
     /*LOG(-1,"DMG: %d\n", maxdam);*/
     op->stats.hp -= maxdam; /* thats the damage the target got */
 
-	/* lets kill, kill, kill... */
-	if (op->stats.hp <= 0 && op->type == PLAYER && !QUERY_FLAG(op, FLAG_WIZ))
-	{
-		kill_player(op);
-		return maxdam;  /* nothing more to do for wall */
-	}
-	/* Eneq(@csd.uu.se): Check to see if monster runs away. */
-	/* TODO: gecko: this should go into a behaviour... */
-	else if ((op->stats.hp >= 0) && QUERY_FLAG(op, FLAG_MONSTER)
-		&& op->stats.hp < (signed short) (((float) op->run_away / 100.0f) * (float) op->stats.maxhp))
+    /* lets kill, kill, kill... */
+    if (op->stats.hp <= 0 && op->type == PLAYER && !QUERY_FLAG(op, FLAG_WIZ))
+    {
+        char buf[128];
+        strcpy(buf, query_name(hitter));
+        FREE_AND_COPY_HASH(CONTR(op)->killer, buf);
+        kill_player(op);
+        return maxdam;  /* nothing more to do for wall */
+    }
+    /* Eneq(@csd.uu.se): Check to see if monster runs away. */
+    /* TODO: gecko: this should go into a behaviour... */
+    else if ((op->stats.hp >= 0) && QUERY_FLAG(op, FLAG_MONSTER) && op->stats.hp < (signed short) (((float) op->run_away / 100.0f) * (float) op->stats.maxhp))
     {
         SET_FLAG(op, FLAG_RUN_AWAY);
     }
