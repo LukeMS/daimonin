@@ -279,6 +279,7 @@ void spring_trap(object *trap, object *victim)
 
     if(trap->sub_type1 != 128)
         trap_show(trap, env);
+#if 0
     trap->type = MISC_OBJECT;  /* make the trap impotent */
     CLEAR_FLAG(trap, FLAG_FLY_ON);
     CLEAR_FLAG(trap, FLAG_WALK_ON);
@@ -287,6 +288,7 @@ void spring_trap(object *trap, object *victim)
     SET_FLAG(trap, FLAG_IS_USED_UP);    /* ok, let the trap wear off */
     trap->speed = trap->speed_left = 1.0f;
     update_ob_speed(trap);
+#endif
 
     if (!trap->stats.sp)
     {
