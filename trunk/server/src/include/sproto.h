@@ -24,7 +24,6 @@ int                         check_improve_weapon(object *op, object *tmp);
 int                         improve_armour(object *op, object *improver, object *armour);
 int                         convert_item(object *item, object *converter, object *originator);
 int                         esrv_apply_container(object *op, object *sack);
-char                       *gravestone_text(object *op);
 void                        move_apply(object *const trap, object *const victim, object *const originator, const int flags);
 void                        do_learn_spell(object *op, int spell, int special_prayer);
 void                        do_forget_spell(object *op, int spell);

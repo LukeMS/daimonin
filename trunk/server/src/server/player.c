@@ -777,6 +777,65 @@ void do_some_living(object *op)
     }
 }
 
+/* Returns pointer to a static string containing gravestone text. */
+static sint8 *gravestone_text(object *op)
+{
+    static sint8 buf[MAX_BUF];
+    sint8        tmp_buf[MAX_BUF];
+    timeofday_t  tod;
+    uint8        day;
+
+    /* name */
+    sprintf(buf, "R.I.P.\n\n%s",
+            op->name);
+
+    /* title */
+    if (op->title)
+    {
+        sprintf(tmp_buf, " %s",
+                op->title);
+        strcat(buf, tmp_buf);
+    }
+
+    /* race, level */
+    sprintf(tmp_buf, " the %s\nwho was level %d\nwhen ",
+            op->race,
+            op->level);
+    strcat(buf, tmp_buf);
+
+    /* gender */
+    if (QUERY_FLAG(op, FLAG_IS_MALE))
+    {
+        if (QUERY_FLAG(op, FLAG_IS_FEMALE))
+            strcat(buf, "they were");
+        else
+            strcat(buf, "he was");
+    }
+    else if (QUERY_FLAG(op, FLAG_IS_FEMALE))
+       strcat(buf, "she was");
+    else
+       strcat(buf, "it was");
+
+    /* cause of death */
+    sprintf(tmp_buf, " killed by %s.\n\n",
+            (CONTR(op)->killer) ? CONTR(op)->killer : "bad luck");
+    strcat(buf, tmp_buf);
+
+    /* date */
+    get_tod(&tod);
+    day = (uint8)tod.day + 1;
+    sprintf(tmp_buf, "On %s, %d%s Day of the %s\n",
+           tod.dayofweek_name,
+           day,
+           ((day == 1 || (day > 20 && (day % 10) == 1)) ? "st" :
+            ((day == 2 || (day > 20 && (day % 10) == 2)) ? "nd" :
+             ((day == 3 || (day > 20 && (day % 10) == 3)) ? "rd" : "th"))),
+           tod.month_name);
+    strcat(buf, tmp_buf);
+
+    return buf;
+}
+
 /* If the player should die (lack of hp, food, etc), we call this.
  * op is the player in jeopardy.  If the player can not be saved (not
  * permadeath, no lifesave), this will take care of removing the player
