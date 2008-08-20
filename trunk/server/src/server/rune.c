@@ -244,7 +244,7 @@ void spring_trap(object *trap, object *victim)
     if(victim->type == PLAYER && QUERY_FLAG(victim, FLAG_WIZ))
         return;
     /* Prevent recursion */
-    if (trap->stats.hp <= 0)
+    if (trap->stats.hp == 0)
         return;
 
     /* get the spell number from the name in the slaying field, and set
@@ -265,8 +265,6 @@ void spring_trap(object *trap, object *victim)
                 trap, victim, NULL,
                 NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
         return;
-
-    trap->stats.hp--;  /*decrement detcount */
 
     if (victim && victim->type == PLAYER && trap->msg)
         new_draw_info(NDI_UNIQUE, 0, victim, trap->msg);
@@ -309,7 +307,10 @@ void spring_trap(object *trap, object *victim)
         cast_spell(trap, trap, trap->direction, trap->stats.sp - 1, 1, spellNormal, NULL);
     }
 
-    if (trap->stats.hp <= 0)
+    if (trap->stats.hp > 0)
+        trap->stats.hp--;
+
+    if (trap->stats.hp == 0)
     {
         trap->type = MISC_OBJECT;  /* make the trap impotent */
         CLEAR_FLAG(trap, FLAG_FLY_ON);
@@ -413,6 +414,7 @@ int trap_show(object *trap, object *where)
     CLEAR_FLAG(trap, FLAG_SYS_OBJECT);
     CLEAR_MULTI_FLAG(trap, FLAG_IS_INVISIBLE);
     trap->layer = 7;
+    trap->stats.Cha = 1; // make it visible
 
     if (env && env->type != PLAYER && env->type != MONSTER && env->type != LOCKED_DOOR && !QUERY_FLAG(env, FLAG_NO_PASS))
     {
