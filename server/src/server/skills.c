@@ -1416,7 +1416,7 @@ int remove_trap(object *op, int dir, int level)
             }
         }
     }
-    new_draw_info(NDI_UNIQUE, 0, op, "Here is no trap to remove nearby.");
+    new_draw_info(NDI_UNIQUE, 0, op, "You have found no nearby traps to remove yet!");
     return 0;
 }
 
