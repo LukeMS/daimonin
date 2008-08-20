@@ -331,7 +331,7 @@ static sint64 pay_from_container(object *op, object *pouch, sint64 to_pay)
 	{
 		next = tmp->below;
 
-		if (tmp->type == CONTAINER)
+		if (tmp->type == CONTAINER && tmp->inv)
 			remain = pay_from_container(op, tmp, remain);
 	}
 
