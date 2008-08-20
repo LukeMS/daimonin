@@ -330,7 +330,7 @@ void align_tile_stretch( int x, int y)
         NE_HEIGHT = MY_HEIGHT;
 
 //#define MAX(x,y) ((x)>(y)?(x):(y))
-#define MIN(x,y) ((x)<(y)?(x):(y))
+//#define MIN(x,y) ((x)<(y)?(x):(y))
 
 //    LOG(LOG_MSG, "align_tile_stretch (%2d,%2d) - n:%d,nw:%d,w:%d,sw:%d,s:%d,so:%d,o:%d,no:%d - my:%d\n",x, y,
 //        N_HEIGHT, NW_HEIGHT, W_HEIGHT, SW_HEIGHT, S_HEIGHT, SE_HEIGHT, E_HEIGHT, NE_HEIGHT, MY_HEIGHT);

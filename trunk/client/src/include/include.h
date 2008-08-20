@@ -42,6 +42,9 @@
 #ifndef MAX
 #define MAX(x,y) ((x) > (y) ? (x) : (y))
 #endif
+#ifndef MIN
+#define MIN(x,y) ((x) < (y) ? (x) : (y))
+#endif
 
 /* This is for the DevCpp IDE */
 #ifndef __WIN_32
