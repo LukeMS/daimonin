@@ -3132,14 +3132,23 @@ object *find_next_object(object *op, uint8 type, uint8 mode, object *root)
         LOG(llevDebug, "\n ^");
     }
 
-    while (next)
+    while (1)
     {
+        /* These are the only ways to break out of this loop, so it's important
+         * to get them right. */
+        if (!next)
+        {
+            LOG(llevDebug, " NULL!");
+            break;
+        }
+
         LOG(llevDebug, " %s[%d]",
             next->name, next->count);
 
-        if (root && next == root)
+        if (root && next == root || next == root->env)
         {
             LOG(llevDebug, " ROOT!");
+            next = NULL;
             break;
         }
         else if (!type || next->type == type)
@@ -3175,7 +3184,7 @@ object *find_next_object(object *op, uint8 type, uint8 mode, object *root)
                 next = tmp;
                 if (mode != FNO_MODE_ALL)
                     while (next && QUERY_FLAG(next, FLAG_SYS_OBJECT))
-                        if ((next = next->below) == root && root)
+                        if (root && (next = next->below) == root)
                             break;
             }
             LOG(llevDebug, "->");
@@ -3193,8 +3202,6 @@ object *find_next_object(object *op, uint8 type, uint8 mode, object *root)
         }
     }
 
-    if (!next)
-        LOG(llevDebug, " NULL!");
     LOG(llevDebug, "\n");
     
     return next;
