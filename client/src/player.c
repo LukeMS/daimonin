@@ -495,6 +495,7 @@ void widget_player_stats(int x, int y)
                 StringBlt(widgetSF[STATS_ID], &SystemFont, "Wait", 58, 84, COLOR_WHITE, NULL, NULL);
             }
 
+            tmp++; /* adjust in order to draw the bar correctly */
             if (tmp < 0)
                 tmp = 0;
             temp = (double) tmp / 1000;
