@@ -24,8 +24,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef DIALOG_INTERFACE_H
 #define DIALOG_INTERFACE_H
 
+#include <Ogre.h>
 #include "define.h"
-#include "gui_gadget_button.h"
 
 /**
  ** This class provides a graphical dialog window.

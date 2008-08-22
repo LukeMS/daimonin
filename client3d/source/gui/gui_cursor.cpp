@@ -24,9 +24,11 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <OgreHardwarePixelBuffer.h>
 #include "gui_cursor.h"
 #include "gui_imageset.h"
+#include "gui_manager.h"
+#include "resourceloader.h"
+#include "logger.h"
 
 using namespace Ogre;
-
 
 const int MIN_CURSOR_SIZE =  4;
 const int MAX_CURSOR_SIZE = 64;
@@ -40,22 +42,25 @@ void GuiCursor::Init(int w, int h, const char *resourceName)
     mState = GuiImageset::STATE_MOUSE_DEFAULT;
     mWidth = w;
     mHeight= h;
-    if (mWidth < MIN_CURSOR_SIZE) mWidth = MIN_CURSOR_SIZE; else
-        if (mWidth > MAX_CURSOR_SIZE) mWidth = MAX_CURSOR_SIZE;
-    if (mHeight< MIN_CURSOR_SIZE) mHeight= MIN_CURSOR_SIZE; else
-        if (mHeight> MAX_CURSOR_SIZE) mHeight= MAX_CURSOR_SIZE;
-    loadResources();
+    if      (mWidth < MIN_CURSOR_SIZE) mWidth = MIN_CURSOR_SIZE;
+    else if (mWidth > MAX_CURSOR_SIZE) mWidth = MAX_CURSOR_SIZE;
+    if      (mHeight< MIN_CURSOR_SIZE) mHeight= MIN_CURSOR_SIZE;
+    else if (mHeight> MAX_CURSOR_SIZE) mHeight= MAX_CURSOR_SIZE;
+    String strTexture = resourceName; strTexture+= GuiManager::TEXTURE_RESOURCE_NAME;
+    mTexture = TextureManager::getSingleton().createManual(strTexture, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+               TEX_TYPE_2D, mWidth, mHeight, 0, PF_A8R8G8B8, TU_STATIC_WRITE_ONLY,
+               ManResourceLoader::getSingleton().getLoader());
+    mTexture->load();
     mElement->setPosition(0, 0);
 }
 
 //================================================================================================
 // (Re)loads the material and texture or creates them if they dont exist.
 //================================================================================================
-void GuiCursor::loadResources()
+void GuiCursor::loadResources(int posZ)
 {
-    Overlay *overlay = GuiImageset::getSingleton().loadResources(MAX_CURSOR_SIZE, mResourceName, mTexture);
-    mElement = overlay->getChild(mResourceName + GuiImageset::ELEMENT_RESOURCE_NAME);
-    overlay->setZOrder(550);
+    Overlay *overlay = GuiManager::getSingleton().loadResources(mWidth, mHeight, mResourceName, posZ);
+    mElement = overlay->getChild(mResourceName + GuiManager::ELEMENT_RESOURCE_NAME);
     overlay->show();
     draw();
 }

@@ -24,8 +24,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef GUI_GADGET_SCROLLBAR_H
 #define GUI_GADGET_SCROLLBAR_H
 
-#include <tinyxml.h>
 #include <Ogre.h>
+#include <tinyxml.h>
 #include "gui_element.h"
 #include "gui_listbox.h"
 #include "gui_gadget_button.h"
@@ -56,7 +56,7 @@ public:
     GuiGadgetScrollbar(TiXmlElement *xmlElement, void *parent, void *parentElement);
     ~GuiGadgetScrollbar();
     void resize(int newWidth, int newHeight);
-    void updateSliderSize(int maxPos, int maxVisPos, int actPos);
+    void updateSliderSize(int actPos, int maxVisPos, int maxPos = -1);
     void setFunction(Callback *c)
     {
         mCallFunc = c;

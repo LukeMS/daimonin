@@ -51,7 +51,7 @@ public:
         return mState;
     }
     void Init(int w, int h, const char *resourceName);
-    void loadResources();
+    void loadResources(int posZ);
     void freeRecources();
     static GuiCursor &getSingleton()
     {

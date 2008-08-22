@@ -24,8 +24,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef GUI_STATUSBAR_H
 #define GUI_STATUSBAR_H
 
-#include <tinyxml.h>
 #include <Ogre.h>
+#include <tinyxml.h>
 #include "gui_element.h"
 
 /**

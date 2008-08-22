@@ -170,7 +170,7 @@ void Network::DrawInfoCmd(unsigned char *data, int len)
     if (!buf)
     {
         Logger::log().error() << "DrawInfoCmd - got no data";
-        buf = "";
+        buf = (char*)"";
     }
     else
         ++buf;

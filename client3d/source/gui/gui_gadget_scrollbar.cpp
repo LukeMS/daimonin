@@ -23,10 +23,10 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <tinyxml.h>
 #include "define.h"
-#include "gui_manager.h"
-#include "gui_gadget_scrollbar.h"
 #include "logger.h"
 #include "gui_window.h"
+#include "gui_manager.h"
+#include "gui_gadget_scrollbar.h"
 
 using namespace Ogre;
 
@@ -47,8 +47,7 @@ GuiGadgetScrollbar::GuiGadgetScrollbar(TiXmlElement *xmlElement, void *parent, v
     mButScrollUp  = 0;
     mButScrollDown= 0;
     mParentElement= parentElement;
-    if (mWidth > mHeight) mHorizontal = true;
-    else                  mHorizontal = false;
+    mHorizontal = (mWidth > mHeight);
     uint32 *color = 0;
     const char *tmp;
     TiXmlElement *xmlOpt;
@@ -88,8 +87,8 @@ GuiGadgetScrollbar::GuiGadgetScrollbar(TiXmlElement *xmlElement, void *parent, v
 GuiGadgetScrollbar::~GuiGadgetScrollbar()
 {
     delete[] mGfxBuffer;
-    if (mButScrollUp)   delete mButScrollUp;
-    if (mButScrollDown) delete mButScrollDown;
+    delete mButScrollUp;
+    delete mButScrollDown;
 }
 
 //================================================================================================
@@ -255,29 +254,24 @@ void GuiGadgetScrollbar::draw()
 
 //================================================================================================
 // Update the slider size.
+// Call from an external source (e.g when a new line was added to a listbox)
 //================================================================================================
-void GuiGadgetScrollbar::updateSliderSize(int maxVisPos, int actPos, int maxPos)
+void GuiGadgetScrollbar::updateSliderSize(int actPos, int maxVisiblePos, int maxPos)
 {
-    ++maxVisPos;
-    if (maxPos >0 && actPos > maxPos) actPos = maxPos;
-    if (actPos < maxVisPos)
-        mSliderSize = mMaxSliderSize;
-    else
-        mSliderSize = (mMaxSliderSize * maxVisPos) / actPos;
+    if (actPos > maxPos) actPos = maxPos;
+    mSliderSize = (maxPos <= maxVisiblePos)?mMaxSliderSize:(mMaxSliderSize * maxVisiblePos) / maxPos;
     // Set the new slider position.
     mMaxSliderPos = mMaxSliderSize - mSliderSize;
-
-
-    mSliderPos = (mMaxSliderSize * actPos) / maxVisPos;
+    mSliderPos = (mMaxSliderSize * actPos) / maxVisiblePos;
     if (mSliderPos > mMaxSliderPos) mSliderPos = mMaxSliderPos;
     // Draw the slider.
-    if (actPos > maxVisPos) mSingleLineSize = (float)mSliderPos/ (float)(actPos-maxVisPos);
-    else mSingleLineSize =0;
+    mSingleLineSize = (actPos > maxVisiblePos)?(float)mSliderPos/(float)(actPos-maxVisiblePos):0;
     draw();
 }
 
 //================================================================================================
 // Update the slider position.
+// Call from a button/slider of this object.
 //================================================================================================
 void GuiGadgetScrollbar::updateSliderPos(int type, int offset)
 {
@@ -305,7 +299,6 @@ void GuiGadgetScrollbar::updateSliderPos(int type, int offset)
     }
     // Unknown action.
     else return;
-
     draw();
     activated(type, (int) (mSliderPos / mSingleLineSize));
 }
@@ -359,5 +352,5 @@ void GuiGadgetScrollbar::resize(int newWidth, int newHeight)
     }
     if (mButScrollUp)   mButScrollUp->draw();
     if (mButScrollDown) mButScrollDown->draw();
-    updateSliderSize(1, 1, -1);
+    updateSliderSize(1, 1);
 }

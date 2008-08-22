@@ -33,36 +33,40 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "gui_manager.h"
 #include "item.h"
 #include "option.h"
+#include "resourceloader.h"
 #include "tile_map_wrapper.h"
 
 using namespace Ogre;
 
+// TODO: Use the tooltip overlay/texture for the dnd overlay/texturet.
+
 const char UNKONWN_ITEM_GFX_FILENAME[] = "item_noGfx.png";
-const int UNKNOWN_ITEM_GFX = 0;
-const int BITS_FACEFILTER = ~0x8000; // Filter to extract the face number (gfx-id).
+const int  UNKNOWN_ITEM_GFX = 0;
+const int  BITS_FACEFILTER = ~0x8000; // Filter to extract the face number (gfx-id).
+String GuiGadgetSlot::mResourceName = "";
 Overlay *GuiGadgetSlot::mDnDOverlay =0;
 OverlayElement *GuiGadgetSlot::mDnDElement =0;
 Image GuiGadgetSlot::mAtlasTexture;
-MaterialPtr GuiGadgetSlot::mDnDMaterial;
 TexturePtr GuiGadgetSlot::mDnDTexture;
 std::vector<Ogre::String> GuiGadgetSlot::mvAtlasGfxName;
 int GuiGadgetSlot::mDragSlot =  -1;
 int GuiGadgetSlot::mActiveSlot= -1;
-int uid = 0;
+int uid = -1;
 
 //================================================================================================
 // Constructor.
 //================================================================================================
-GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOnInit):GuiGraphic(xmlElement, parent, drawOnInit)
+GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, const char *resourceName, bool drawOnInit):GuiGraphic(xmlElement, parent, drawOnInit)
 {
     std::string filename;
-    mSlotNr = uid++;
+    mSlotNr = ++uid;
     mItem = 0;
     mBusyTime = 1.0;  // Default time for a slot to be busy (MUST be > 0).
     mBusyTimeExpired = 0;
     // This stuff is static, so we have to do it only once.
-    if (!mDnDOverlay)
+    if (!uid)
     {
+        mResourceName = resourceName;
         // ////////////////////////////////////////////////////////////////////
         // Create the item texture atlas.
         // ////////////////////////////////////////////////////////////////////
@@ -189,26 +193,6 @@ GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOn
         filename = FILE_ITEM_TEXTURE_ATLAS;
         filename+= ".png";
         mAtlasTexture.load(filename, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-        // ////////////////////////////////////////////////////////////////////
-        // Create drag'n'drop overlay.
-        // We must clear the whole texture, because textures do always have
-        // 2^n size - while slots can have any size.
-        // ////////////////////////////////////////////////////////////////////
-        mDnDTexture = TextureManager::getSingleton().createManual("GUI_SlotDnD_Texture", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-                      TEX_TYPE_2D, ITEM_SIZE, ITEM_SIZE, 0, PF_A8R8G8B8, TU_STATIC_WRITE_ONLY);
-        mDnDOverlay = OverlayManager::getSingleton().create("GUI_SlotDnD_Overlay");
-        memset(mDnDTexture->getBuffer()->lock(HardwareBuffer::HBL_DISCARD), 0x00,
-               mDnDTexture->getWidth()*mDnDTexture->getHeight()*sizeof(uint32));
-        mDnDTexture->getBuffer()->unlock();
-        mDnDOverlay->setZOrder(500);
-        mDnDElement = OverlayManager::getSingleton().createOverlayElement(GuiImageset::OVERLAY_ELEMENT_TYPE, "GUI_SlotDnD_Frame");
-        mDnDElement->setMetricsMode(GMM_PIXELS);
-        mDnDElement->setDimensions (ITEM_SIZE, ITEM_SIZE);
-        MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName("GUI/Window");
-        mDnDMaterial = tmpMaterial->clone("GUI_SlotDnD_Material");
-        mDnDMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName("GUI_SlotDnD_Texture");
-        mDnDElement->setMaterialName("GUI_SlotDnD_Material");
-        mDnDOverlay->add2D(static_cast<OverlayContainer*>(mDnDElement));
     }
     // ////////////////////////////////////////////////////////////////////
     // Look for a background graphic (its a png from the item folder).
@@ -229,11 +213,20 @@ GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOn
 }
 
 //================================================================================================
+// (Re)loads the material and texture or creates them if they dont exist.
+//================================================================================================
+void GuiGadgetSlot::loadResources(int posZ)
+{
+    mDnDOverlay = GuiManager::getSingleton().loadResources(ITEM_SIZE, ITEM_SIZE, mResourceName, posZ);
+    mDnDElement = mDnDOverlay->getChild(mResourceName + GuiManager::ELEMENT_RESOURCE_NAME);
+    draw();
+}
+
+//================================================================================================
 // Destructor..
 //================================================================================================
 GuiGadgetSlot::~GuiGadgetSlot()
 {
-    mDnDMaterial.setNull();
     mDnDTexture.setNull();
     mvAtlasGfxName.clear();
 }
@@ -349,9 +342,22 @@ void GuiGadgetSlot::draw()
 void GuiGadgetSlot::drawDragItem()
 {
     if (!mItem) return;
+    if (mDnDTexture.isNull())
+    {
+        Logger::log().error() << "1";
+        mDnDTexture = TextureManager::getSingleton().createManual(mResourceName+GuiManager::TEXTURE_RESOURCE_NAME,
+                      ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+                      TEX_TYPE_2D, ITEM_SIZE, ITEM_SIZE, 0, PF_A8R8G8B8, TU_STATIC_WRITE_ONLY,
+                      ManResourceLoader::getSingleton().getLoader());
+        mDnDTexture->load();
+    }
     int gfxNr = getTextureAtlasPos(mItem->face);
+    Logger::log().error() << "2";
     mDnDTexture->getBuffer()->blitFromMemory(mAtlasTexture.getPixelBox().getSubVolume(Box(0, ITEM_SIZE * gfxNr, ITEM_SIZE, ITEM_SIZE *(gfxNr+1))));
+Logger::log().error() << "3";
     moveDragOverlay();
+Logger::log().error() << "4";
     mDnDOverlay->show();
+Logger::log().error() << "5";
 }
 
