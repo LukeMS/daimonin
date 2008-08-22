@@ -24,8 +24,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef GUI_IMAGESET_H
 #define GUI_IMAGESET_H
 
-#include <tinyxml.h>
 #include <Ogre.h>
+#include <tinyxml.h>
 #include <vector>
 
 /**
@@ -160,11 +160,6 @@ public:
     }
     gfxSrcEntry;
 
-    static const char *OVERLAY_ELEMENT_TYPE;
-    static const char *OVERLAY_RESOURCE_NAME;
-    static const char *ELEMENT_RESOURCE_NAME;
-    static const char *TEXTURE_RESOURCE_NAME;
-    static const char *MATERIAL_RESOURCE_NAME;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
@@ -173,7 +168,11 @@ public:
         static GuiImageset singleton; return singleton;
     }
     void parseXML(const char *XML_imageset_file);
-    gfxSrcMouse *getStateGfxPosMouse();
+    /**  Returns the array of the gfx positions for the mouse-cursor. **/
+    gfxSrcMouse *getStateGfxPosMouse()
+    {
+        return mSrcEntryMouse;
+    }
     gfxSrcEntry *getStateGfxPositions(const char* guiImage);
     Ogre::PixelBox &getPixelBox()
     {
@@ -181,7 +180,6 @@ public:
     }
     const char *getElementName(int i);
     int getElementIndex(int i);
-    Ogre::Overlay *loadResources(int size, Ogre::String name, Ogre::TexturePtr &texture);
 
 private:
     // ////////////////////////////////////////////////////////////////////

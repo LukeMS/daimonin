@@ -120,10 +120,10 @@ public:
     typedef struct
     {
         selType type;
-        char *name;     /**< Name of the Option **/
-        char *info1;    /**< Info text row 1    **/
-        char *info2;    /**< Info text row 2    **/
-        char *val_text; /**< Text-replacement (values are separated by '#') **/
+        const char *name;     /**< Name of the Option **/
+        const char *info1;    /**< Info text row 1    **/
+        const char *info2;    /**< Info text row 2    **/
+        const char *val_text; /**< Text-replacement (values are separated by '#') **/
         Ogre::String txtValue;
         int  intValue;
         int  minRange, maxRange, deltaRange;

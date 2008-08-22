@@ -35,12 +35,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Ogre;
 
-const char *GuiImageset::OVERLAY_ELEMENT_TYPE  = "Panel"; // defined in Ogre::OverlayElementFactory.h
-const char *GuiImageset::OVERLAY_RESOURCE_NAME = "_Overlay";
-const char *GuiImageset::ELEMENT_RESOURCE_NAME = "_OverlayElement";
-const char *GuiImageset::TEXTURE_RESOURCE_NAME = "_Texture";
-const char *GuiImageset::MATERIAL_RESOURCE_NAME= "_Material";
-
 GuiImageset::GuiElementNames GuiImageset::mGuiElementNames[GUI_ELEMENTS_SUM]=
 {
     // Standard Buttons (Handled inside of gui_windows).
@@ -140,84 +134,6 @@ GuiImageset::~GuiImageset()
     }
     mvSrcEntry.clear();
     delete mSrcEntryMouse;
-}
-
-//================================================================================================
-// (Re)loads the material and texture or creates them if they dont exist.
-//================================================================================================
-Overlay *GuiImageset::loadResources(int size, String name, TexturePtr &texture)
-{
-    String strOverlay = name + OVERLAY_RESOURCE_NAME;
-    String strElement = name + ELEMENT_RESOURCE_NAME;
-    String strTexture = name + TEXTURE_RESOURCE_NAME;
-    String strMaterial= name + MATERIAL_RESOURCE_NAME;
-    Overlay *overlay = OverlayManager::getSingleton().getByName(strOverlay);
-    if (!overlay)
-    {
-        OverlayElement *element = OverlayManager::getSingleton().createOverlayElement(OVERLAY_ELEMENT_TYPE, strElement);
-        if (!element)
-        {
-            Logger::log().error() << "Could not create " << strElement;
-            return 0;
-        }
-        element->setMetricsMode(GMM_PIXELS);
-        overlay = OverlayManager::getSingleton().create(strOverlay);
-        if (!overlay)
-        {
-            Logger::log().error() << "Could not create " << strElement;
-            return 0;
-        }
-        overlay->add2D(static_cast<OverlayContainer*>(element));
-    }
-    texture = TextureManager::getSingleton().getByName(strTexture);
-    if (texture.isNull())
-    {
-        texture = TextureManager::getSingleton().createManual(strTexture, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-                  TEX_TYPE_2D, size, size, 0, PF_A8R8G8B8, TU_STATIC_WRITE_ONLY,
-                  ManResourceLoader::getSingleton().getLoader());
-        if (texture.isNull())
-        {
-            Logger::log().error() << "Could not create " << strTexture;
-            return 0;
-        }
-        // We must clear the whole texture (textures have always 2^n size while our gfx can be smaller).
-        memset(texture->getBuffer()->lock(HardwareBuffer::HBL_DISCARD), 0x00, size * size * sizeof(uint32));
-        texture->getBuffer()->unlock();
-    }
-    MaterialPtr material = MaterialManager::getSingleton().getByName(strMaterial);
-    if (material.isNull())
-    {
-        material = MaterialManager::getSingleton().getByName(GuiWindow::GUI_MATERIAL_NAME);
-        if (material.isNull())
-        {
-            Logger::log().info() << "Material definition '" << GuiWindow::GUI_MATERIAL_NAME
-            << "' was not found in the default folders. Using a hardcoded material.";
-            material = MaterialManager::getSingleton().create(GuiWindow::GUI_MATERIAL_NAME, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-            if (material.isNull())
-            {
-                Logger::log().error() << "Could not create default material " << GuiWindow::GUI_MATERIAL_NAME;
-                return 0;
-            }
-            material->setLightingEnabled(false);
-            material->setDepthWriteEnabled(false);
-            material->setDepthCheckEnabled(false);
-            material->setSceneBlending(SBT_TRANSPARENT_ALPHA);
-            material->getTechnique(0)->getPass(0)->createTextureUnitState();
-            material->getTechnique(0)->getPass(0)->setAlphaRejectSettings(CMPF_GREATER, 128);
-            material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureFiltering(TFO_NONE);
-        }
-        material = material->clone(strMaterial);
-        if (material.isNull())
-        {
-            Logger::log().error() << "Could not create " << strMaterial;
-            return 0;
-        }
-    }
-    material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(strTexture);
-    OverlayElement *element = overlay->getChild(strElement);
-    element->setDimensions(texture->getWidth(), texture->getHeight());
-    element->setMaterialName(strMaterial);
-    return overlay;
 }
 
 //================================================================================================
@@ -352,22 +268,13 @@ GuiImageset::gfxSrcEntry *GuiImageset::getStateGfxPositions(const char* guiImage
 }
 
 //================================================================================================
-// Returns the array of the gfx positions for the mouse-cursor.
-//================================================================================================
-GuiImageset::gfxSrcMouse *GuiImageset::getStateGfxPosMouse()
-{
-    return mSrcEntryMouse;
-}
-
-//================================================================================================
 // .
 //================================================================================================
 const char *GuiImageset::getElementName(int i)
 {
     if (i < GUI_ELEMENTS_SUM && mGuiElementNames[i].name)
         return mGuiElementNames[i].name;
-    else
-        return "ERROR";
+    return "ERROR";
 }
 
 //================================================================================================
@@ -377,6 +284,5 @@ int GuiImageset::getElementIndex(int i)
 {
     if (i < GUI_ELEMENTS_SUM)
         return mGuiElementNames[i].index;
-    else
-        return -1;
+    return -1;
 }

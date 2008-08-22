@@ -24,8 +24,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef GUI_GADGET_SLOT_H
 #define GUI_GADGET_SLOT_H
 
-#include <tinyxml.h>
 #include <Ogre.h>
+#include <tinyxml.h>
 #include "item.h"
 #include "gui_graphic.h"
 #include "gui_cursor.h"
@@ -41,8 +41,9 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, bool drawOnInit = true);
+    GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, const char *resourceName, bool drawOnInit = true);
     ~GuiGadgetSlot();
+    void loadResources(int posZ);
     int mouseEvent(int MouseAction, int x, int y);
     void draw();
     /**
@@ -94,8 +95,8 @@ private:
     static Ogre::Image mAtlasTexture;
     static Ogre::Overlay *mDnDOverlay;
     static Ogre::OverlayElement *mDnDElement;
-    static Ogre::MaterialPtr mDnDMaterial;
     static Ogre::TexturePtr mDnDTexture;
+    static Ogre::String mResourceName;
     static int mDragSlot;                   /**< Slot where the drag was started. **/
     static int mActiveSlot;                 /**< Slot the mouse is currently over. **/
     int mSlotNr;                            /**< Unique number. **/

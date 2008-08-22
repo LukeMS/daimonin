@@ -399,8 +399,9 @@ bool ObjectManager::createFlipBook(String meshName, int sumRotations)
 
     const int textureSize = 1024/sumRotations;
     TexturePtr texture = TextureManager::getSingleton().createManual(
-                             "FlipBookTexture", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-                             TEX_TYPE_2D, textureSize * sumRotations, textureSize, 0, PF_A8R8G8B8, TU_RENDERTARGET);
+                             ManResourceLoader::TEMP_RESOURCE + "FlipBookTexture", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+                             TEX_TYPE_2D, textureSize * sumRotations, textureSize, 0, PF_A8R8G8B8, TU_RENDERTARGET,
+                             ManResourceLoader::getSingleton().getLoader());
     RenderTexture *renderTarget = texture->getBuffer()->getRenderTarget();
     renderTarget->setAutoUpdated(false);
 

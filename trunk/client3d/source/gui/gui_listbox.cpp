@@ -71,7 +71,7 @@ GuiListbox::GuiListbox(TiXmlElement *xmlElement, void *parent):GuiElement(xmlEle
     mBufferPos    = 0;
     mPrintPos     = 0;
     mRowsToScroll = 0;
-    mMaxVisibleRows  = mHeight / mFontHeight;
+    mMaxVisibleRows  = (int)((float)mHeight / (float)mFontHeight + 0.5);
     if (mMaxVisibleRows < 1) mMaxVisibleRows = 1;
     mPixelScroll  = 0;
     mVScrollOffset = 0;
@@ -233,7 +233,7 @@ int GuiListbox::addTextline(const char *srcText, uint32 default_color)
             ++mBufferPos;
             ++mRowsToScroll;
             ++linecount;
-            ++mActLines;
+            if (mActLines < SIZE_STRING_BUFFER) ++mActLines;
             dstPos = w = 0;
             if (buf2[srcPos] == ' ') ++srcPos;
 
@@ -370,7 +370,7 @@ void GuiListbox::draw()
     // ////////////////////////////////////////////////////////////////////
     if (mScrollBarV)
     {
-        mScrollBarV->updateSliderSize(mMaxVisibleRows, mPrintPos, SIZE_STRING_BUFFER);
+        mScrollBarV->updateSliderSize(mPrintPos, mMaxVisibleRows, mActLines);
     }
 }
 

@@ -121,7 +121,7 @@ Logger::LogEntry::LogEntry(int type)
 Logger::LogEntry::~LogEntry()
 {
     if (!mOut.is_open()) return;
-    if (mType = STYLE_LIST) mOut << "</li>";
+    if (mType == STYLE_LIST) mOut << "</li>";
     mOut << "</td></tr>";
     mOut.close();
 }

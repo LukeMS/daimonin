@@ -29,7 +29,7 @@ using namespace Ogre;
 
 const char SRC_TEXTURE_NAME[]     = "Atlas";
 const char TEXTURE_LAND_NAME[]    = "TileEngine/TexLand";
-const char TEXTURE_WATER_NAME[]   = "TileEngine/TexWater";
+const char TEXTURE_WATER_NAME[]   = "water_00_128.png";
 const char MATERIAL_LAND_NAME[]   = "TileEngine/MatLand";
 const char MATERIAL_WATER_NAME[]  = "TileEngine/MatWater";
 const int  SUM_QUAD_VERTICES = 6;  /**< A quadrat is build out of 2 triangles with 3 vertices each. **/

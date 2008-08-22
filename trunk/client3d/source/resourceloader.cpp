@@ -25,6 +25,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "resourceloader.h"
 #include "gui_manager.h"
 
+const Ogre::String ManResourceLoader::TEMP_RESOURCE = "TEMP_";
+
 void ManResourceLoader::ResourceLoader::loadResource(Ogre::Resource *resource)
 {
     // All GUI stuff

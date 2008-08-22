@@ -50,6 +50,7 @@ private:
     ~ManResourceLoader() {}
     ManResourceLoader(const ManResourceLoader&); // disable copy-constructor.
 public:
+    static const Ogre::String TEMP_RESOURCE;
     static ManResourceLoader &getSingleton()
     {
         static ManResourceLoader Singleton; return Singleton;

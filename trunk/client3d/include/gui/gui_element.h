@@ -24,8 +24,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef GUI_ELEMENT_H
 #define GUI_ELEMENT_H
 
-#include <tinyxml.h>
 #include <Ogre.h>
+#include <tinyxml.h>
 #include "gui_imageset.h"
 
 /**
@@ -39,6 +39,7 @@ public:
     // ////////////////////////////////////////////////////////////////////
     GuiElement(TiXmlElement *xmlElement, void *parent);
     virtual ~GuiElement() {};
+    virtual void draw() =0;
     bool setState(int state);
     int getState()
     {
@@ -61,7 +62,6 @@ public:
     {
         return mHeight;
     }
-    virtual void draw() =0;
     const char *getTooltip()
     {
         return mStrTooltip.c_str();

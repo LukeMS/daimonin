@@ -24,8 +24,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef GUI_GADGET_BUTTON_H
 #define GUI_GADGET_BUTTON_H
 
-#include <tinyxml.h>
 #include <Ogre.h>
+#include <tinyxml.h>
 #include "gui_graphic.h"
 #include "gui_window.h"
 

@@ -65,7 +65,6 @@ public:
         DRAG_ENTER,
         DRAG_EXIT,
     };
-    static const char *GUI_MATERIAL_NAME;
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.
@@ -73,13 +72,15 @@ public:
     ~GuiWindow()
     {}
     GuiWindow();
+    void loadResources(int posZ);
+    void loadDnDResources(int posZ);
     void freeRecources();
     bool isVisible()
     {
         return mOverlay->isVisible();
     }
     void setVisible(bool visible);
-    void Init(TiXmlElement *xmlElem, int zOrder);
+    void Init(TiXmlElement *xmlElem, int zOrder, const char *resourceWin, const char *resourceDnD, int winNr);
     bool keyEvent(const char keyChar, const unsigned char key);
     void update(Ogre::Real timeSinceLastFrame);
     void getTexturseSize(int &w, int &h)
@@ -169,9 +170,11 @@ private:
     // ////////////////////////////////////////////////////////////////////
     static int msInstanceNr, mMouseDragging;
     static Ogre::String mStrTooltip;
+    Ogre::String mResourceName;
     int mWindowNr;
     int mMousePressed, mMouseOver;
-    int mPosX, mPosY, mPosZ, mWidth, mHeight;
+    int mPosX, mPosY, mPosZ;
+    int mWidth, mHeight;
     int mHeadPosX, mHeadPosY;
     int mDragPosX1, mDragPosX2, mDragPosY1, mDragPosY2, mDragOldMousePosX, mDragOldMousePosY;
     int mMinimized, mDefaultHeight;
@@ -194,7 +197,6 @@ private:
     Ogre::OverlayElement *mElement;
     Ogre::AnimationState *mSpeakAnimState, *mManualAnimState;
     Ogre::PixelBox mSrcPixelBox;
-    Ogre::MaterialPtr mMaterial;
     Ogre::TexturePtr mTexture;
     Ogre::uint32 *mWinLayerBG; /**< Its a backup of the window background to avoid
                                     read access to the window texture and to restore
@@ -205,10 +207,9 @@ private:
     // ////////////////////////////////////////////////////////////////////
     static void buttonPressed(GuiWindow *me, int index);
     static void listboxPressed(GuiWindow *me, int index, int line);
-    void createWindow(int zOrder);
     void setHeight(int h);
     void delGadget(int number);
-    void parseWindowData(TiXmlElement *xmlElem, int zOrder);
+    void parseWindowData(TiXmlElement *xmlElem, const char *resourceWin, int zOrder);
     void printParsedTextline(TiXmlElement *xmlElem);
 };
 

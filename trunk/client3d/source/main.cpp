@@ -26,6 +26,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "define.h"
 #include "events.h"
 #include "option.h"
+#include "option.h"
+#include "resourceloader.h"
 
 using namespace Ogre;
 
@@ -222,39 +224,43 @@ int main(int argc, char **argv)
 
     Option::getSingleton().setIntValue(Option::HIGH_TEXTURE_DETAILS, true);
     Option::getSingleton().setIntValue(Option::HIGH_TILES_DETAILS, true);
-    /*
+/*
+    try
+    {
+        // try to create a 64MB texture in Video Ram.
+        mTexture = TextureManager::getSingleton().#(ManResourceLoader::TEMP_RESOURCE + "64 MB", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+                   TEX_TYPE_2D, 4096, 4096, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY, ManResourceLoader::getSingleton().getLoader());
+        mTexture->unload();
+        mTexture.setNull();
+        Option::getSingleton().setIntValue(Option::HIGH_TEXTURE_DETAILS, true);
+    }
+    catch ( Exception& )
+    {
+        mTexture.setNull();
         try
-        { // try to create a 64MB texture in Video Ram.
-            mTexture = TextureManager::getSingleton().createManual("64 MB", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,  TEX_TYPE_2D, 4096, 4096, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
-            mTexture.getPointer()->unload();
+        { // try to create a 32MB texture in Video Ram.
+            mTexture = TextureManager::getSingleton().createManual(ManResourceLoader::TEMP_RESOURCE + "16MB #1", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+                       TEX_TYPE_2D, 2048, 2048, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY, ManResourceLoader::getSingleton().getLoader());
+            mTextur2 = TextureManager::getSingleton().createManual(ManResourceLoader::TEMP_RESOURCE + "16MB #2", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+                       TEX_TYPE_2D, 2048, 2048, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY, ManResourceLoader::getSingleton().getLoader());
+            mTexture->unload();
+            mTextur2->unload();
             mTexture.setNull();
-            Option::getSingleton().setIntValue(Option::HIGH_TEXTURE_DETAILS, true);
+            mTextur2.setNull();
+            Option::getSingleton().setIntValue(Option::HIGH_TILES_DETAILS, true);
         }
-        catch( Exception& )
+        catch ( Exception& )
         {
-            mTexture.setNull();
-            try
-            { // try to create a 32MB texture in Video Ram.
-                mTexture = TextureManager::getSingleton().createManual("16MB nr. 1", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,  TEX_TYPE_2D, 2048, 2048, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
-                mTextur2 = TextureManager::getSingleton().createManual("16MB nr. 2", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,  TEX_TYPE_2D, 2048, 2048, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
-                mTexture.getPointer()->unload();
-                mTextur2.getPointer()->unload();
-                mTexture.setNull();
-                mTextur2.setNull();
-                Option::getSingleton().setIntValue(Option::HIGH_TILES_DETAILS, true);
-            }
-            catch( Exception& )
-            {
-                Logger::log().warning() << "Your gfx-card seems to have less than 64 MB";
-                Logger::log().warning() << "Switching to minimal Details.";
-                Option::getSingleton().setIntValue(Option::HIGH_TEXTURE_DETAILS, false);
-                Option::getSingleton().setIntValue(Option::HIGH_TILES_DETAILS, false);
-            }
-            Logger::log().warning() << "Your gfx-card seems to only have 64 MB";
-            Logger::log().warning() << "High texture details and large ttf-fonts support will be disabled.";
+            Logger::log().warning() << "Your gfx-card seems to have less than 64 MB";
+            Logger::log().warning() << "Switching to minimal Details.";
             Option::getSingleton().setIntValue(Option::HIGH_TEXTURE_DETAILS, false);
+            Option::getSingleton().setIntValue(Option::HIGH_TILES_DETAILS, false);
         }
-    */
+        Logger::log().warning() << "Your gfx-card seems to only have 64 MB";
+        Logger::log().warning() << "High texture details and large ttf-fonts support will be disabled.";
+        Option::getSingleton().setIntValue(Option::HIGH_TEXTURE_DETAILS, false);
+    }
+*/
     try
     {
         // ////////////////////////////////////////////////////////////////////

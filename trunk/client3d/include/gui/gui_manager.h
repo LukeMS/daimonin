@@ -24,12 +24,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef GUI_MANAGER_H
 #define GUI_MANAGER_H
 
-#include <vector>
-#include <tinyxml.h>
 #include <Ogre.h>
 #include "gui_window.h"
-#include "gui_cursor.h"
-#include "gui_imageset.h"
 
 /**
  ** This is the interface to the world outside.
@@ -62,6 +58,7 @@ public:
         GUI_WIN_STATISTICS,
         GUI_WIN_SUM
     };
+    static const int SUM_WIN_DIGITS; /**< Numbers of digits (For string format) **/
     enum
     {
         GUI_MSG_TXT_GET,
@@ -92,6 +89,12 @@ public:
     }
     GuiWinNam;
 
+    static const char *GUI_MATERIAL_NAME;
+    static const char *OVERLAY_ELEMENT_TYPE;
+    static const char *OVERLAY_RESOURCE_NAME;
+    static const char *ELEMENT_RESOURCE_NAME;
+    static const char *TEXTURE_RESOURCE_NAME;
+    static const char *MATERIAL_RESOURCE_NAME;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
@@ -103,7 +106,7 @@ public:
     {
         return mMouseInside;
     }
-    void loadResources();
+    Ogre::Overlay *loadResources(int w, int h, Ogre::String name, int posZ);
     void loadResources(Ogre::Resource *res);
     void freeRecources();
     void Init(int w, int h);
@@ -225,6 +228,7 @@ private:
     ~GuiManager() {}
     GuiManager(const GuiManager&); // disable copy-constructor.
     void clearTooltip();
+    void loadResources(int posZ);
 };
 
 #endif

@@ -24,11 +24,10 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef GUI_GADGET_COMBOBOX_H
 #define GUI_GADGET_COMBOBOX_H
 
-#include <tinyxml.h>
 #include <Ogre.h>
+#include <tinyxml.h>
 #include "gui_imageset.h"
 #include "gui_element.h"
-#include "gui_textout.h"
 
 /**
  ** This class provides an interactive combobox.
@@ -49,13 +48,12 @@ public:
 
     GuiGadgetCombobox(TiXmlElement *xmlElement, void *parent);
     ~GuiGadgetCombobox();
-
     void draw();
     void setText(const char *value);
     bool setState(int state);
     bool mouseOver(int x, int y);
-
     const char *getText();
+
 private:
     GuiImageset::gfxSrcEntry *srcButton;
     GuiImageset::gfxSrcEntry *srcScrollbarUp;
@@ -79,7 +77,6 @@ private:
     bool mDDButton;
     std::vector<Ogre::String> mvOption;
     std::vector<int> mvValue;
-}
-;
+};
 
 #endif // GUI_COMBOBOX_H

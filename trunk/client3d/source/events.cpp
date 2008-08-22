@@ -614,7 +614,6 @@ bool Events::frameStarted(const FrameEvent& evt)
                     GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Example of user defined chars: :( :) :D :P !key-spc");
                     // Can crash the client...
                     //ObjectManager::getSingleton().setNameNPC(ObjectNPC::HERO, strPlayerName.c_str());
-
                     //Sound::getSingleton().playStream(Sound::GREETS_VISITOR);
                     once = true;
                 }

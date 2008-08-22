@@ -27,42 +27,20 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "logger.h"
 #include "gui_window.h"
 #include "gui_cursor.h"
-#include "gui_textout.h"
 #include "gui_manager.h"
 #include "gui_imageset.h"
-#include "gui_listbox.h"
-#include "gui_statusbar.h"
 #include "option.h"
 #include "sound.h"
 #include "events.h"
 #include "gui_window_dialog.h"
+#include "resourceloader.h"
 
 using namespace Ogre;
 
-const int MIN_GFX_SIZE = 4;
-
-//const char XML_BACKGROUND[] = "Background";
-
-//================================================================================================
-// Init all static Elemnts.
-//================================================================================================
-const char *GuiWindow::GUI_MATERIAL_NAME = "GUI/Window";
-
+const int MIN_GFX_SIZE = 1 << 2;
 int GuiWindow::msInstanceNr = -1;
 int GuiWindow::mMouseDragging = -1;
 std::string GuiWindow::mStrTooltip ="";
-
-//================================================================================================
-// Constructor.
-//================================================================================================
-GuiWindow::GuiWindow()
-{
-    isInit = false;
-    mWinLayerBG = 0;
-    mSumUsedSlots = 0;
-    mGadgetDrag = -1;
-    mElement = 0;
-}
 
 //================================================================================================
 // Destructor.
@@ -114,38 +92,43 @@ void GuiWindow::freeRecources()
 
     // Set all shared pointer to null.
     delete[] mWinLayerBG;
-    mMaterial.setNull();
     mTexture.setNull();
 }
 
 //================================================================================================
+// Constructor.
+//================================================================================================
+GuiWindow::GuiWindow()
+{
+    isInit = false;
+    mWinLayerBG = 0;
+    mSumUsedSlots = 0;
+    mGadgetDrag = -1;
+}
+
+
+//================================================================================================
 // Build a window out of a xml description file.
 //================================================================================================
-void GuiWindow::Init(TiXmlElement *xmlElem, int zOrder)
+void GuiWindow::Init(TiXmlElement *xmlElem, int zOrder, const char *resourceWin, const char *resourceDnD, int winNr)
 {
     mMousePressed  =-1;
     mMouseOver     =-1;
     mSpeakAnimState= 0;
     mHeight = MIN_GFX_SIZE;
     mWidth  = MIN_GFX_SIZE;
+    mWindowNr = winNr;//++msInstanceNr;
+    mResourceName = resourceWin;
+    mResourceName+= "#" + StringConverter::toString(mWindowNr, GuiManager::SUM_WIN_DIGITS, '0');
     mSrcPixelBox = GuiImageset::getSingleton().getPixelBox();
-    parseWindowData(xmlElem, zOrder);
+    parseWindowData(xmlElem, resourceDnD, zOrder);
     isInit = true;
-}
-
-//================================================================================================
-// .
-//================================================================================================
-void GuiWindow::setVisible(bool visible)
-{
-    if (!isInit) return;
-    if (!visible) mOverlay->hide(); else mOverlay->show();
 }
 
 //================================================================================================
 // Parse the xml window data..
 //================================================================================================
-void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, int zOrder)
+void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, const char *resourceDnD, int zOrder)
 {
     TiXmlElement *xmlElem;
     const char *strTmp;
@@ -208,8 +191,10 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, int zOrder)
             else if (aY==0) mPosY =(screenH- mHeight) /2 + atoi(strTmp);
             else mPosY = atoi(strTmp);
         }
+        /*
         if ((strTmp = xmlElem->Attribute("zOrder")))
             mPosZ = atoi(strTmp);
+        */
     }
     // ////////////////////////////////////////////////////////////////////
     // Parse the Dragging entries.
@@ -236,7 +221,13 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, int zOrder)
     // ////////////////////////////////////////////////////////////////////
     // Now we have all datas to create the window..
     // ////////////////////////////////////////////////////////////////////
-    createWindow(zOrder);
+    mWinLayerBG = new uint32[mWidth * mHeight];
+    memset(mWinLayerBG, 0x00, mWidth * mHeight * sizeof(uint32));
+    mTexture = TextureManager::getSingleton().createManual(mResourceName + GuiManager::TEXTURE_RESOURCE_NAME,
+               ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, TEX_TYPE_2D, mWidth, mHeight, 0, PF_A8R8G8B8,
+               TU_STATIC_WRITE_ONLY, ManResourceLoader::getSingleton().getLoader());
+    mTexture->load();
+    mElement->setPosition(mPosX, mPosY);
     // ////////////////////////////////////////////////////////////////////
     // Parse the graphics.
     // ////////////////////////////////////////////////////////////////////
@@ -347,7 +338,8 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, int zOrder)
         }
         else if ( !strcmp(xmlElem->Attribute("type"), "SLOT"))
         {
-            mvSlot.push_back(new GuiGadgetSlot(xmlElem, this));
+            String resName = mResourceName+"_"; resName+= resourceDnD;
+            mvSlot.push_back(new GuiGadgetSlot(xmlElem, this, resName.c_str()));
         }
         else if ( !strcmp(xmlElem->Attribute("type"), "COMBOBOX"))
         {
@@ -406,10 +398,37 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, int zOrder)
         mManualAnimState = head->getAnimationState("manual");
         mManualAnimState->setTimePosition(0);
         mNPC_HeadOverlay = OverlayManager::getSingleton().create("GUI_Overlay_Head");
-        mNPC_HeadOverlay->setZOrder(500);
+        mNPC_HeadOverlay->setZOrder(zOrder-mWindowNr+1);
         mNPC_HeadOverlay->add3D(mSceneNode);
         mNPC_HeadOverlay->show();
     }
+}
+
+//================================================================================================
+// (Re)loads the material and texture or creates them if they dont exist.
+//================================================================================================
+void GuiWindow::loadResources(int posZ)
+{
+    mOverlay = GuiManager::getSingleton().loadResources(mWidth, mHeight, mResourceName, posZ-mWindowNr);
+    mOverlay->setZOrder(posZ-mWindowNr+1);
+    mElement = mOverlay->getChild(mResourceName + GuiManager::ELEMENT_RESOURCE_NAME);
+}
+
+//================================================================================================
+// .
+//================================================================================================
+void GuiWindow::loadDnDResources(int posZ)
+{
+    mvSlot[0]->loadResources(posZ);
+}
+
+//================================================================================================
+// .
+//================================================================================================
+void GuiWindow::setVisible(bool visible)
+{
+    if (!isInit) return;
+    if (!visible) mOverlay->hide(); else mOverlay->show();
 }
 
 //================================================================================================
@@ -432,35 +451,6 @@ inline void GuiWindow::printParsedTextline(TiXmlElement *xmlElem)
     textline.x2 = mWidth - textline.x1;
     textline.y2 = textline.y1 + GuiTextout::getSingleton().getFontHeight(textline.font);
     GuiTextout::getSingleton().Print(&textline, mTexture.getPointer());
-}
-
-//================================================================================================
-// Create the window.
-//================================================================================================
-inline void GuiWindow::createWindow(int zOrder)
-{
-    mWindowNr = ++msInstanceNr;
-    std::string strNum = StringConverter::toString(msInstanceNr);
-    mTexture = TextureManager::getSingleton().createManual("GUI_Texture_" + strNum, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-               TEX_TYPE_2D, mWidth, mHeight, 0, PF_A8R8G8B8, TU_STATIC_WRITE_ONLY);
-    mOverlay = OverlayManager::getSingleton().create("GUI_Overlay_"+strNum);
-    mOverlay->setZOrder(400-zOrder);
-    mElement = OverlayManager::getSingleton().createOverlayElement(GuiImageset::OVERLAY_ELEMENT_TYPE, "GUI_Frame_" + strNum);
-    mElement->setMetricsMode(GMM_PIXELS);
-    // Texture is always a power of 2. set this size also for the overlay.
-    mElement->setDimensions (mTexture->getWidth(), mTexture->getHeight());
-    mElement->setPosition(mPosX, mPosY);
-    MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName("GUI/Window");
-    mMaterial = tmpMaterial->clone("GUI_Material_"+ strNum);
-    mMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName("GUI_Texture_" + strNum);
-    mMaterial->load();
-    mElement->setMaterialName("GUI_Material_"+ strNum);
-    mOverlay->add2D(static_cast<OverlayContainer*>(mElement));
-    // We must clear the whole texture (textures have always 2^n size while windows can be smaller).
-    memset(mTexture->getBuffer()->lock(HardwareBuffer::HBL_DISCARD), 0x00, mTexture->getWidth() * mTexture->getHeight() * sizeof(uint32));
-    mTexture->getBuffer()->unlock();
-    mWinLayerBG = new uint32[mWidth * mHeight];
-    memset(mWinLayerBG, 0x00, mWidth * mHeight * sizeof(uint32));
 }
 
 //================================================================================================
@@ -836,7 +826,7 @@ void GuiWindow::update(Real timeSinceLastFrame)
 {
     if (!isInit || !mOverlay->isVisible()) return;
     // Update drag animation (move back on wrong drag).
-    ;
+    // ToDO
     // Speak Animation.
     if (mSpeakAnimState)
         mSpeakAnimState->addTime(timeSinceLastFrame);
