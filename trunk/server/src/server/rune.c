@@ -436,9 +436,6 @@ int trap_show(object *trap, object *where)
     return 1;
 }
 
-#ifndef sqr
-#define sqr(x) ((x)*(x))
-#endif
 int trap_disarm(object *disarmer, object *trap, int risk)
 {
     object *env             = trap->env;
@@ -447,7 +444,7 @@ int trap_disarm(object *disarmer, object *trap, int risk)
     int     disarmer_level  = SK_level(disarmer);
 
     /* this formula awards a more reasonable amount of exp */
-    trapworth = MAX(1, trap->level) * disarmer->map->difficulty * sqr(MAX(trap->stats.dam, spells[trap->stats.sp].sp))
+    trapworth = MAX(1, trap->level) * disarmer->map->difficulty * SQR(MAX(trap->stats.dam, spells[trap->stats.sp].sp))
               / disarmer_level;
 
     if ((trap->level <= disarmer_level && (RANDOM() % 10))

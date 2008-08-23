@@ -74,6 +74,9 @@ error - Your ANSI C compiler should be defining __STDC__;
 #ifndef ABS
 #define ABS(x) ((x)<0?-(x):(x))
 #endif
+#ifndef SQR
+#define SQR(x) ((x)*(x))
+#endif
 
 #ifndef tolower
 #define tolower(C)      (((C) >= 'A' && (C) <= 'Z')? (C) - 'A' + 'a': (C))
