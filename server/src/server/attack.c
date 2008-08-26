@@ -680,15 +680,15 @@ int hit_map(object *op, int dir)
 */
 static inline void send_resist_msg(object *op, object *hitter, int attacknum)
 {
-	if (op->type == PLAYER)
-	{
-		new_draw_info_format(NDI_GREY, 0, op, "You resists the %s attack!", attack_name[attacknum]);
-	}
-	/* i love C... ;) */
-	if (hitter->type == PLAYER || ((hitter = get_owner(hitter)) && hitter->type == PLAYER))
-	{
-		new_draw_info_format(NDI_GREY, 0, hitter, "%s resists the %s attack!", op->name, attack_name[attacknum]);
-	}
+    if (op->type == PLAYER)
+    {
+        new_draw_info_format(NDI_GREY, 0, op, "You resist the %s attack!", attack_name[attacknum]);
+    }
+    /* i love C... ;) */
+    if (hitter->type == PLAYER || ((hitter = get_owner(hitter)) && hitter->type == PLAYER))
+    {
+        new_draw_info_format(NDI_GREY, 0, hitter, "%s resists the %s attack!", op->name, attack_name[attacknum]);
+    }
 }
 
 /* This returns the amount of damage hitter does to op with the
@@ -822,8 +822,8 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
                     remove_paralyze(op);
             break;
         }
-		send_resist_msg(op, hitter, attacknum);
-		return 0;
+        send_resist_msg(op, hitter, attacknum);
+        return 0;
     }
 
     switch (attacknum)
@@ -1267,7 +1267,7 @@ static void send_attack_msg(object *op, object *hitter, int attacknum, int dam, 
         new_draw_info_format(NDI_PURPLE, 0, op, "%s hits you for %d (%d) damage.", hitter->name, (int) dam,
                              ((int) dam) - damage);
     }
-	/* i love C... ;) */
+    /* i love C... ;) */
     if (hitter->type == PLAYER || ((hitter = get_owner(hitter)) && hitter->type == PLAYER))
     {
         new_draw_info_format(NDI_ORANGE, 0, hitter, "You hit %s for %d (%d) with %s.", op->name, (int) dam,
@@ -1441,9 +1441,9 @@ int kill_object(object *op, int dam, object *hitter, int typeX)
                 SET_FLAG(op, FLAG_STARTEQUIP);
             }
 
-			/* here "remove" the killed object, drop the items inside and add
-			 * quests and quest items/one drops to group of corpse_owner 
-			 */
+            /* here "remove" the killed object, drop the items inside and add
+             * quests and quest items/one drops to group of corpse_owner 
+             */
             destruct_ob(op); 
         }
    }
@@ -1493,7 +1493,7 @@ object * hit_with_arrow(object *op, object *victim)
     int     hit_something   = 0;
     tag_t   hitter_tag;
 
-	hitter = op;
+    hitter = op;
     hitter_tag = hitter->count;
 
     if(!trigger_object_plugin_event(EVENT_ATTACK,
@@ -1513,7 +1513,7 @@ object * hit_with_arrow(object *op, object *victim)
         trigger_object_plugin_event(EVENT_STOP,
                 hitter, victim, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL);
 
-		stop_missile(hitter);
+        stop_missile(hitter);
         return NULL;
     }
 
