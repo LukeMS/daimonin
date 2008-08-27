@@ -69,7 +69,7 @@ typedef struct ReadList_struct
  * so it fits clean in a buffer /256 bytes
  */
 #define SOCKBUF_HEADER_DEFAULT 3 /* thats the standard 3 byte header <cmd><length> */
-#define SOCKBUF_HEADER_EXTENDED 5 
+#define SOCKBUF_HEADER_EXTENDED 5
 
 #define SOCKET_SIZE_SMALL (256-SOCKBUF_HEADER_DEFAULT)
 #define SOCKET_SIZE_MEDIUM (2048-SOCKBUF_HEADER_DEFAULT)
