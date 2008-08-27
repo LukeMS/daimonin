@@ -43,12 +43,12 @@ char *socket_buffer_request(NewSocket *ns, int data_len)
 	if(!tmp)
 		ns->sockbuf = socket_buffer_get(data_len + header_len);
 	/* the buffer is already there... lets check there is enough space for data_len */
-	else if(tmp->bufsize < data_len + header_len) 
+	else if(tmp->bufsize < data_len + header_len)
 	{
 		/* we must request a new buffer - lets throw the old one in our send queue */
 		socket_buffer_enqueue(ns, tmp);
 		ns->sockbuf = socket_buffer_get(data_len + header_len);
-	}	
+	}
 	tmp = ns->sockbuf;
 	tmp->ns = ns; /* tell the sockbuf its direct connected to this socket */
 
@@ -81,7 +81,7 @@ sockbuf_struct *socket_buffer_adjust(sockbuf_struct *sbuf, int len)
 		addmem = len + (4*1024); /* huh... thats a big one?! */
 
 	tmp = socket_buffer_get(sbuf->bufsize + addmem);
-	
+
 	memcpy(tmp->buf, sbuf->buf, sbuf->len);
 	tmp->len = sbuf->len;
 	tmp->request_len = sbuf->request_len;
@@ -143,7 +143,7 @@ void socket_buffer_request_finish(NewSocket *ns, int cmd, int len)
 		if(tmp->request_len == SOCKBUF_DYNAMIC || tmp->request_len >= tmp->len)
 		{
 			/* the buffer is really messed up... */
-			LOG(llevBug,"BUG: Called socket_buffer_add() with invalid request buffer length len:%d rlen:%d\n", 
+			LOG(llevBug,"BUG: Called socket_buffer_add() with invalid request buffer length len:%d rlen:%d\n",
 				tmp->len, tmp->request_len);
 			return;
 		}
@@ -154,13 +154,13 @@ void socket_buffer_request_finish(NewSocket *ns, int cmd, int len)
 
 		if(len < 0)
 		{
-			LOG(llevBug,"Debug: Called socket_buffer_add() with invalid length len:%d rlen:%d\n", 
+			LOG(llevBug,"Debug: Called socket_buffer_add() with invalid length len:%d rlen:%d\n",
 				tmp->len, tmp->request_len);
 			tmp->len = tmp->request_len; /* its a try to restore a valid buffer */
 			return;
 		}
 
-		/* the data is filled up and ready, the ->len value is ok... 
+		/* the data is filled up and ready, the ->len value is ok...
 		 * just rewrite now the command tag and the length
 		 */
 		if(header_len == SOCKBUF_HEADER_DEFAULT)
@@ -249,7 +249,7 @@ sockbuf_struct *socket_buffer_get(int len)
 		if(!tmp->buf)
 			LOG(llevError, "dynamic sockbuf: malloc returned zero for %d(%d) bytes\n", len, tmp->bufsize);
 #ifdef SEND_BUFFER_DEBUG
-		LOG(llevDebug, "Allocated overzised dynamic sockbuf for: %d(%d) bytes\n", len, tmp->bufsize);
+		LOG(llevDebug, "Allocated overzised dynamic sockbuf (%x) for: %d(%d) bytes\n", tmp, len, tmp->bufsize);
 #endif
 	}
 	tmp->ns = tmp->last = tmp->next = NULL;
@@ -259,16 +259,16 @@ sockbuf_struct *socket_buffer_get(int len)
 }
 
 
-/* setup the data in the right way for the client in format 
+/* setup the data in the right way for the client in format
 * <cmd><length of data><data>
-* We have to take care about the fact that we don't know for most 
+* We have to take care about the fact that we don't know for most
 * buffer how big they will become when we start to create them.
 * To avoid double data copying, we collect the data right in our socket buffer
 * and write then the length value back.
 * if length is >0xffff use 4 bytes instead of 2 for <length of data>
 * and set the high bit of cmd
 * paramter:
-* out_buf != NULL: use it as buffer 
+* out_buf != NULL: use it as buffer
 * (WARNING: we assume an already allocated ->buf in the right size
 * out_buf == NULL: allocate a fitting command buffer
 * len >= 0: copy len bytes from cmd_buf to out_buf (binary data or string collection)
@@ -289,7 +289,7 @@ sockbuf_struct *compose_socklist_buffer(int cmd, sockbuf_struct *out_buf, char *
 	 */
 	*(tmp_buf->buf+tmp_buf->len) = (uint8)cmd;
 
-	/* setup the <1 byte cmd><2/4 bytes length> header */ 
+	/* setup the <1 byte cmd><2/4 bytes length> header */
 	if(len > 0xffff)
 	{
 		*((uint32*)(tmp_buf->buf+tmp_buf->len+1)) = (uint32)len;
@@ -310,7 +310,7 @@ sockbuf_struct *compose_socklist_buffer(int cmd, sockbuf_struct *out_buf, char *
 
 }
 
-/* attach socket buffer to outgoing list of this ns socket 
+/* attach socket buffer to outgoing list of this ns socket
  * Its a FIFO list, start means here "newest"
  */
 void socket_buffer_enqueue(NewSocket *ns, sockbuf_struct *sockbufptr)
@@ -344,7 +344,7 @@ void socket_buffer_enqueue(NewSocket *ns, sockbuf_struct *sockbufptr)
 	ns->sockbuf_nrof++;
 }
 
-/* NOTE: we have a FIFO queue here - we remove from the end 
+/* NOTE: we have a FIFO queue here - we remove from the end
  * We just check there is something at the end of the queue -
  * if so this must be the one we want remove
  */
