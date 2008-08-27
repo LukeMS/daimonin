@@ -309,7 +309,15 @@ void esrv_draw_look(object *pl)
         if (QUERY_FLAG(pl, FLAG_WIZ))
         {
             if (tmp->inv)
+            {
                got_one = esrv_draw_DM_inv(pl, tmp);
+               /* 2008-08-28 Alderan:
+                * Fix double mempool-free bug
+                * We MUST re-get the pointer to the buffer, because the function could
+                * (and will in some circumstances) resize the buffer.
+                */
+               sbptr = ACTIVE_SOCKBUF(ns);
+            }
         }
     } /* for loop */
 
@@ -425,7 +433,11 @@ int esrv_draw_DM_inv(object *pl, object *op)
         got_one++;
 
 		if (tmp->inv) /* oh well... another container to flush */
+		{
             got_one = esrv_draw_DM_inv(pl, tmp);
+            /* 2008-08-28 Alderan: fix for double mempool-free bug */
+            sbptr = ACTIVE_SOCKBUF(ns);
+		}
     } /* for loop */
 
     SockBuf_AddInt(sbptr, 0);
@@ -679,7 +691,11 @@ void esrv_send_inventory(object *pl, object *op)
             if (QUERY_FLAG(pl, FLAG_WIZ))
             {
                 if (tmp->inv && tmp->type != CONTAINER)
+                {
                     got_one = esrv_send_inventory_DM(pl, tmp);
+                    /* 2008-08-28 Alderan: Always re-get the local pointer after a call to a function which puts stuff in the sockbuf! */
+                    sbptr = ACTIVE_SOCKBUF(ns);
+                }
             }
         }
     }
@@ -796,7 +812,7 @@ static void esrv_update_item_send(int flags, object *pl, object *op)
         SockBuf_AddChar(sbptr, op->item_quality);
         SockBuf_AddChar(sbptr, op->item_condition);
     }
-		
+
 	SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_UPITEM, SOCKBUF_DYNAMIC);
 }
 
