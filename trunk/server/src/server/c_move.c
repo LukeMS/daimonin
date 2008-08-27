@@ -90,19 +90,25 @@ static int push_internal(object *op, char *params, int dir)
 
 int command_push_object (object *op, char *params)
 {
-	int dir;
-    dir = op->anim_last_facing;
+    sint8 dir = op->facing;
+
     return push_internal(op, params, dir);
 }
 
 int command_turn_right (object *op, char *params)
 {
-    op->anim_last_facing < 8 ? ++op->anim_last_facing : (op->anim_last_facing = 1) ;
+    sint8 dir = absdir(op->facing + 1);
+
+    op->anim_last_facing = op->anim_last_facing_last = op->facing = dir;
+
     return 1;
 }
 
 int command_turn_left (object *op, char *params)
 {
-    op->anim_last_facing > 1 ? --op->anim_last_facing : (op->anim_last_facing = 8) ;
+    sint8 dir = absdir(op->facing - 1);
+
+    op->anim_last_facing = op->anim_last_facing_last = op->facing = dir;
+
     return 1;
 }
