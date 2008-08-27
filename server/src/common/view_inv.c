@@ -169,6 +169,7 @@ void esrv_draw_look(object *pl)
         SockBuf_AddChar(sbptr, 0);
         sprintf(buf, "A'pply (click) to see %d previous items", NUM_LOOK_OBJECTS);
 		add_stringlen_to_sockbuf(buf, sbptr);
+		sbptr = ACTIVE_SOCKBUF(ns);
         SockBuf_AddShort(sbptr, 0);
         SockBuf_AddChar(sbptr, 0);
         SockBuf_AddInt(sbptr, 0);
@@ -206,6 +207,7 @@ void esrv_draw_look(object *pl)
             SockBuf_AddChar(sbptr, 0);
             sprintf(buf, "A'pply (click) to see next group of items");
 			add_stringlen_to_sockbuf(buf, sbptr);
+			sbptr = ACTIVE_SOCKBUF(ns);
             SockBuf_AddShort(sbptr, 0);
             SockBuf_AddChar(sbptr, 0);
             SockBuf_AddInt(sbptr, 0);
@@ -350,6 +352,7 @@ int esrv_draw_DM_inv(object *pl, object *op)
     len = strlen(tmp_in_inv);
     SockBuf_AddChar(sbptr, len+1);
 	add_stringlen_to_sockbuf(tmp_in_inv, sbptr);
+	sbptr = ACTIVE_SOCKBUF(ns);
     SockBuf_AddShort(sbptr, 0);
     SockBuf_AddChar(sbptr, 0);
     SockBuf_AddInt(sbptr, 0);
@@ -447,6 +450,7 @@ int esrv_draw_DM_inv(object *pl, object *op)
     len = strlen(tmp_end_inv);
     SockBuf_AddChar(sbptr, len+1);
 	add_stringlen_to_sockbuf(tmp_end_inv, sbptr);
+	sbptr = ACTIVE_SOCKBUF(ns);
     SockBuf_AddShort(sbptr, 0);
     SockBuf_AddChar(sbptr, 0);
     SockBuf_AddInt(sbptr, 0);
