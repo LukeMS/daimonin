@@ -6,27 +6,7 @@ name double handle
 face double_handle-handle1.111
 no_pick 1
 no_teleport 1
-anim
-facings 9
-dummy.111
-dummy.111
-double_handle-handle1.111
-double_handle-handle1.112
-dummy.111
-dummy.111
-dummy.111
-dummy.111
-dummy.111
-dummy.111
-dummy.111
-dummy.111
-dummy.111
-dummy.111
-double_handle-handle1.171
-double_handle-handle1.172
-dummy.111
-dummy.111
-mina
+animation double_handle-handle1
 is_turnable 1
 is_animated 0
 anim_speed 0
@@ -42,27 +22,7 @@ face double_handle-handle1.111
 no_pick 1
 no_teleport 1
 exp 30
-anim
-facings 9
-dummy.111
-dummy.111
-double_handle-handle1.111
-double_handle-handle1.112
-dummy.111
-dummy.111
-dummy.111
-dummy.111
-dummy.111
-dummy.111
-dummy.111
-dummy.111
-dummy.111
-dummy.111
-double_handle-handle1.171
-double_handle-handle1.172
-dummy.111
-dummy.111
-mina
+animation double_handle-trigger1
 is_turnable 1
 is_animated 0
 anim_speed 0
