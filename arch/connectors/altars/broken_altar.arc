@@ -5,27 +5,7 @@ type 18
 face broken_altar.111
 food 10
 sp -1
-anim
-facings 9
-dummy.111
-dummy.111
-broken_altar.111
-broken_altar.111
-broken_altar.111
-broken_altar.111
-broken_altar.131
-broken_altar.131
-broken_altar.131
-broken_altar.131
-broken_altar.111
-broken_altar.111
-broken_altar.111
-broken_altar.111
-broken_altar.131
-broken_altar.131
-broken_altar.131
-broken_altar.131
-mina
+animation broken_altar
 level 1
 is_animated 0
 anim_speed 0
