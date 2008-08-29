@@ -1,5 +1,5 @@
 # handles
-Object double_handle-handle1
+Object double_handle-handle
 type 93
 layer 5
 name double handle
@@ -14,7 +14,7 @@ direction 1
 end
 
 # triggers
-Object double_handle-trigger1
+Object double_handle-trigger
 type 27
 layer 5
 name double handle
