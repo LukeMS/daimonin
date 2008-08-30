@@ -10,10 +10,7 @@ layer 5
 type 66
 sub_type 1
 no_pick 1
-anim
-tele_stone.101
-tele_stone.102
-mina
+animation tele_stone
 is_animated 1
 anim_speed 5
 walk_on 0

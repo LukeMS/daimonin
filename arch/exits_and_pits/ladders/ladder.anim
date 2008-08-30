@@ -1,0 +1,26 @@
+# ladder_down
+anim ladder_down
+facings 9
+dummy.111
+ladder_down.151
+ladder_down.131
+ladder_down.131
+ladder_down.151
+ladder_down.151
+ladder_down.131
+ladder_down.131
+ladder_down.151
+mina
+# ladder_up
+anim ladder_up
+facings 9
+dummy.111
+ladder_up.151
+ladder_up.131
+ladder_up.131
+ladder_up.151
+ladder_up.151
+ladder_up.131
+ladder_up.131
+ladder_up.151
+mina

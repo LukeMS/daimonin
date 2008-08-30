@@ -10,15 +10,13 @@ layer 5
 type 66
 sub_type 1
 no_pick 1
-anim
-exit.101
-exit.102
-mina
+animation exit
 is_animated 1
 anim_speed 5
 walk_on 1
 fly_on 1
 end
+
 Object exit_green
 name exit
 face exit_green.101
@@ -31,10 +29,7 @@ layer 5
 type 66
 sub_type 1
 no_pick 1
-anim
-exit_green.101
-exit_green.102
-mina
+animation exit_green
 is_animated 1
 anim_speed 5
 walk_on 1
