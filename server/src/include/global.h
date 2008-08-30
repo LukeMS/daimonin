@@ -422,10 +422,10 @@ typedef struct _money_block
 {
     /** 0, 1, or -1: see get_money_from_string() */
     int     mode;
-    long    mithril;
-    long    gold;
-    long    silver;
-    long    copper;
+    sint64   mithril;
+    sint64   gold;
+    sint64   silver;
+    sint64   copper;
 }_money_block;
 
 /** ban node - see ban.c */

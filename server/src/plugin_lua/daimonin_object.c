@@ -1213,14 +1213,16 @@ static int GameObject_Withdraw(lua_State *L)
                 val = 0;
             else
             {
+				// we have here "physical" money we insert in the player,
+				// so the cast from int64 to unint32 will be ok - be sure we test it always
                 if (money.mithril)
-                    hooks->insert_money_in_player(WHO, &hooks->coins_arch[0]->clone, money.mithril);
+                    hooks->insert_money_in_player(WHO, &hooks->coins_arch[0]->clone, (uint32)money.mithril);
                 if (money.gold)
-                    hooks->insert_money_in_player(WHO, &hooks->coins_arch[1]->clone, money.gold);
+                    hooks->insert_money_in_player(WHO, &hooks->coins_arch[1]->clone, (uint32)money.gold);
                 if (money.silver)
-                    hooks->insert_money_in_player(WHO, &hooks->coins_arch[2]->clone, money.silver);
+                    hooks->insert_money_in_player(WHO, &hooks->coins_arch[2]->clone, (uint32)money.silver);
                 if (money.copper)
-                    hooks->insert_money_in_player(WHO, &hooks->coins_arch[3]->clone, money.copper);
+                    hooks->insert_money_in_player(WHO, &hooks->coins_arch[3]->clone, (uint32)money.copper);
 
                 bank->value -= big_value;
                 hooks->FIX_PLAYER(WHO, "LUA: withdraw - insert money");

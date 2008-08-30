@@ -1293,7 +1293,6 @@ void sendVirtualChannelMsg(player *sender, char *channelname, player *target, ch
 void sendChannelHist(struct player_channel *cpl, int lines)
 {
     int i, line;
-    char    buf[HUGE_BUF];
 
     i=1;
     if (lines>cpl->channel->lines)
