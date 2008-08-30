@@ -5,18 +5,7 @@ name ladder going down
 face ladder_down.151
 no_pick 1
 no_teleport 1
-anim
-facings 9
-dummy.111
-ladder_down.151
-ladder_down.131
-ladder_down.131
-ladder_down.151
-ladder_down.151
-ladder_down.131
-ladder_down.131
-ladder_down.151
-mina
+animation ladder_down
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -32,18 +21,7 @@ name ladder going up
 face ladder_up.151
 no_pick 1
 no_teleport 1
-anim
-facings 9
-dummy.111
-ladder_up.151
-ladder_up.131
-ladder_up.131
-ladder_up.151
-ladder_up.151
-ladder_up.131
-ladder_up.131
-ladder_up.151
-mina
+animation ladder_up
 is_animated 0
 anim_speed 0
 is_turnable 1
