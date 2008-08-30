@@ -1,12 +1,7 @@
 Object water_still_deep
 name deep water
 face lake_deep.101
-anim
-lake_deep.101
-lake_deep.102
-lake_deep.103
-lake_deep.104
-mina
+animation water_still_deep
 speed 0.00
 is_animated 0
 anim_speed 10
