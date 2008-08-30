@@ -8,34 +8,7 @@ no_pick 1
 layer 6
 face dummy.111
 race animal,bird,slime,insect,reptile
-anim
-facings 25
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-mina
+animation Tabernacle
 is_animated 1
 anim_speed 3
 str 30

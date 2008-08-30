@@ -50,34 +50,7 @@ attack_electricity 25
 speed -0.025
 level 1
 weight 455000
-anim
-facings 25
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-trans.101
-mina
+animation tabernacle_avatar
 is_animated 1
 anim_speed 4
 no_pick 1
