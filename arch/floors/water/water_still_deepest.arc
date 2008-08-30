@@ -1,12 +1,7 @@
 Object water_still_deepest
 name deepest water
 face lake_deepest.101
-anim
-lake_deepest.101
-lake_deepest.102
-lake_deepest.103
-lake_deepest.104
-mina
+animation water_still_deepest
 speed 0.00
 is_animated 0
 anim_speed 10
