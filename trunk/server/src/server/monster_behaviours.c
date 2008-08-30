@@ -1447,7 +1447,7 @@ void ai_run_away_from_repulsive_object(object *op, struct mob_behaviour_param *p
         if(most_repulsive &&
                 most_repulsive->tmp_attraction <= AIPARAM_INT(AIPARAM_RUN_AWAY_FROM_REPULSIVE_OBJECT_REPULSION_THRESHOLD) &&
                 (rv = get_known_obj_rv(op, most_repulsive, MAX_KNOWN_OBJ_RV_AGE)) &&
-                rv->distance <= AIPARAM_INT(AIPARAM_RUN_AWAY_FROM_REPULSIVE_OBJECT_DISTANCE_THRESHOLD))
+                (int)rv->distance <= AIPARAM_INT(AIPARAM_RUN_AWAY_FROM_REPULSIVE_OBJECT_DISTANCE_THRESHOLD))
             SET_FLAG(op, FLAG_SCARED);
     }
 
@@ -1466,7 +1466,7 @@ void ai_run_away_from_repulsive_object(object *op, struct mob_behaviour_param *p
         }
 
         /* Regain senses? FIXME: doesn't play very well with the run_away_from_enemy behaviour */
-        if (!rv || rv->distance > AIPARAM_INT(AIPARAM_RUN_AWAY_FROM_REPULSIVE_OBJECT_DISTANCE_THRESHOLD))
+        if (!rv || (int)rv->distance > AIPARAM_INT(AIPARAM_RUN_AWAY_FROM_REPULSIVE_OBJECT_DISTANCE_THRESHOLD))
             if (!(RANDOM() % 4)) 
                 CLEAR_FLAG(op, FLAG_SCARED);
     }
@@ -1510,7 +1510,7 @@ void ai_stay_near_home(object *op, struct mob_behaviour_param *params, move_resp
                 &rv, distflags))
         return;
     
-    if(rv.distance >= maxdist) {
+    if((int)rv.distance >= maxdist) {
         response->forbidden |= (1 << absdir(rv.direction+2));
         response->forbidden |= (1 << absdir(rv.direction+3));
         response->forbidden |= (1 << absdir(rv.direction+4));
@@ -1645,9 +1645,7 @@ static void maps_in_range(object *op, int range, int *maps)
  * XXX: currently very experimental */
 void ai_look_for_enemy_missiles(object *op, struct mob_behaviour_param *params)
 {
-    int dx, dy, x, y;
     int sense_range;
-    mapstruct *m;
     int tilenr;
     int check_maps[8] = {0,0,0,0,0,0,0,0}; /* nearby map tiles to scan */
 
@@ -1708,7 +1706,7 @@ void ai_look_for_enemy_missiles(object *op, struct mob_behaviour_param *params)
                         {
                             rv_vector rv;
                             if (get_rangevector(op, obj, &rv, RV_DIAGONAL_DISTANCE) &&
-                                    rv.distance <= sense_range)
+                                    (int)rv.distance <= sense_range)
                                 known = register_npc_known_obj(op, obj, 0, -10, 1);
                                 /* TODO: configurable attraction value */
                         } else
