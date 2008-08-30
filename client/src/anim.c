@@ -460,14 +460,14 @@ void new_anim_animate(uint32 curTick)
 #ifdef ANIM_FRAMESKIP
     for (node=AnimListStart;node;node=node->next)
     {
-        if ((curTick-(node->last_frame_tick))<options.anim_frame_time)
+        if ((curTick-(node->last_frame_tick))<(uint32)options.anim_frame_time)
             continue;
 
         lasttime = node->last_frame_tick;
 
-        while ((lasttime+=(options.anim_frame_time *
-                            animation[node->animnum].aSeq[node->sequence]->dirs[node->dir].delays[node->current_frame])
-                            / (node->speed/100.0f)) <= curTick)
+        while ((lasttime+=(uint32)((float)options.anim_frame_time *
+                            (float)(animation[node->animnum].aSeq[node->sequence]->dirs[node->dir].delays[node->current_frame])
+                            / ((float)node->speed/100.0f))) <= curTick)
         {
             new_face = TRUE;
 

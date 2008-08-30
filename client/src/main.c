@@ -1685,7 +1685,7 @@ int main(int argc, char *argv[])
 
         if (GameStatus == GAME_STATUS_PLAY)
         {
-            if (LastTick - new_anim_tick > options.anim_check_time)
+            if (LastTick - new_anim_tick > (uint32) options.anim_check_time)
             {
                 new_anim_tick = LastTick;
                 new_anim_animate(SDL_GetTicks());

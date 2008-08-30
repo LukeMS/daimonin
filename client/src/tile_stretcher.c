@@ -43,16 +43,16 @@ int determine_line(line_and_slope *dest, int sx, int sy, int ex, int ey)
     float slope;
 
     if (sy>ey)
-        y_diff = sy-ey;
+        y_diff = (float)sy-ey;
     else
-        y_diff = ey-sy;
+        y_diff = (float)ey-sy;
 
     if (sx>ex)
-        x_diff = sx-ex;
+        x_diff = (float)sx-ex;
     else
-        x_diff = ex-sx;
+        x_diff = (float)ex-sx;
 
-    if (x_diff == 0)
+    if (x_diff == 0.0f)
         slope = 0.0;
     else
         slope = y_diff / x_diff;
@@ -222,11 +222,11 @@ int copy_pixel_to_pixel(SDL_Surface *src,SDL_Surface *dest,int x1,int y1,int x2,
     if (alpha==0) return 0;
 
     /* We must clamp to 255 since it is allowable for brightness to exceed 1.0 */
-    n = (Uint16)red * brightness;
+    n = (Uint16)(red * brightness);
     red=(n<=255)?n:255;
-    n = (Uint16)green * brightness;
+    n = (Uint16)(green * brightness);
     green=(n<=255)?n:255;
-    n = (Uint16)blue * brightness;
+    n = (Uint16)(blue * brightness);
     blue=(n<=255)?n:255;
 //    n = (Uint16)alpha * brightness;
 //    alpha=(n<=255)?n:255;
@@ -336,7 +336,7 @@ int copy_vertical_line( SDL_Surface *src,SDL_Surface *dest,
     for (y = 0; y <= dest_h; y++)
     {
         int go_y = dest_sy+y;
-        int get_y = src_sy+(y*ratio);
+        int get_y = src_sy+(int)(y*ratio);
 
         copy_pixel_to_pixel(src,dest,src_x,get_y,dest_x,go_y,brightness);
     }
@@ -425,7 +425,7 @@ SDL_Surface *tile_stretch(SDL_Surface *src, int n, int e, int s, int w)
 
     if (w>e)
     {
-        w_dark = 1.0 - ( (w-e) / 25.0 );
+        w_dark = 1.0f - ( (w-e) / 25.0f );
         if ( (n>0)||(s>0) )
         {
             e_dark = w_dark;
@@ -434,7 +434,7 @@ SDL_Surface *tile_stretch(SDL_Surface *src, int n, int e, int s, int w)
 
     if (e>w)
     {
-       e_dark = 1.0 + ( (e-w) / 25.0 );
+       e_dark = 1.0f + ( (e-w) / 25.0f );
        if ( (s>0)||(n>0) )
        {
            w_dark = e_dark;
@@ -493,8 +493,8 @@ SDL_Surface *tile_stretch(SDL_Surface *src, int n, int e, int s, int w)
               ( ( at_least_one==0)&&(dest_slope==0.0) ) )
         {
             at_least_one = 1;
-            if (kicker   >= 1.0) { kicker   = kicker   - 1.0; y1=y1+dest_y_inc;   }
-            if (kicker_2 >= 1.0) { kicker_2 = kicker_2 - 1.0; y2=y2+dest_y_inc_2; }
+            if (kicker   >= 1.0f) { kicker   = kicker   - 1.0f; y1=y1+dest_y_inc;   }
+            if (kicker_2 >= 1.0f) { kicker_2 = kicker_2 - 1.0f; y2=y2+dest_y_inc_2; }
 
             src_len = std_tile_half_len[x1];
 

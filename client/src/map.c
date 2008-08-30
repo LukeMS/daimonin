@@ -293,14 +293,14 @@ void align_tile_stretch( int x, int y)
   register struct MapCell *map;
   uint8 top,bottom,right,left,min_ht;
   uint32 h;
-
-  if ( (x<0)||(y<0) ) return;
-  if ( (x>=MapStatusX)||(y>=MapStatusY)) return;
-
   int MAX_STRETCH = 8;
   int MAX_STRETCH_DIAG = 12;
 
   int NW_HEIGHT,N_HEIGHT,NE_HEIGHT,SW_HEIGHT,S_HEIGHT,SE_HEIGHT,W_HEIGHT,E_HEIGHT,MY_HEIGHT;
+
+  if ( (x<0)||(y<0) ) return;
+  if ( (x>=MapStatusX)||(y>=MapStatusY)) return;
+
 
   map = calc_real_map ( x-1, y-1); NW_HEIGHT = map->height;
   map = calc_real_map ( x  , y-1);  N_HEIGHT = map->height;

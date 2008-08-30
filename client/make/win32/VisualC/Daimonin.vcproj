@@ -227,6 +227,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\anim.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\book.c"
 				>
 			</File>
@@ -339,6 +343,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\tile_stretcher.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\uncompr.c"
 				>
 			</File>
@@ -360,11 +368,19 @@
 			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
+				RelativePath="..\..\..\src\include\anim.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\include\book.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\buddy.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\include\cflinux.h"
 				>
 			</File>
 			<File
@@ -481,6 +497,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\textwin.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\include\tile_stretcher.h"
 				>
 			</File>
 			<File
