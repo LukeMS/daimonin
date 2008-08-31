@@ -57,6 +57,7 @@ struct Settings settings    =
     RESET_LOCATION_TIME,    /* Number of seconds to put player back at home */
     0,                      /* True if we should send updates */
     "",                     /* Hostname/ip addr of the metaserver */
+	"",						/* name of the server */
     "",                     /* Hostname of this host */
     0,                      /* Port number to use for updates */
     "",                     /* Comment we send to the metaserver */
@@ -355,6 +356,21 @@ static void load_settings()
             else
                 LOG(llevBug, "BUG: load_settings: metaserver_server must have a value.\n");
         }
+		else if (!strcasecmp(buf, "metaserver_name"))
+		{
+			if (has_val)
+			{
+				int ii;
+
+				strcpy(settings.meta_name, cp);
+				// to ensure we can use a simple scanf, we mark all ' ' whitespace with a '-'
+				for(ii=0;settings.meta_name[ii]!=0;ii++)
+					if(settings.meta_name[ii]==' ')
+						settings.meta_name[ii] = '_';
+			}
+			else
+				LOG(llevBug, "BUG: load_settings: metaserver_name must have a value.\n");
+		}
         else if (!strcasecmp(buf, "metaserver_host"))
         {
             if (has_val)
@@ -371,10 +387,16 @@ static void load_settings()
             else
                 settings.meta_port = port;
         }
-        else if (!strcasecmp(buf, "metaserver_comment"))
-        {
-            strcpy(settings.meta_comment, cp);
-        }
+		else if (!strcasecmp(buf, "metaserver_comment"))
+		{
+			int ii;
+
+			strcpy(settings.meta_comment, cp);
+			// to ensure we can use a simple scanf, we mark all ' ' whitespace with a '-'
+			for(ii=0;settings.meta_comment[ii]!=0;ii++)
+				if(settings.meta_comment[ii]==' ')
+					settings.meta_comment[ii] = '_';
+		}
         else if (!strcasecmp(buf, "worldmapstartx"))
         {
             int size    = atoi(cp);
