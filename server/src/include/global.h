@@ -471,6 +471,7 @@ typedef struct Settings
      */
     uint8                           meta_on : 1;        /* True if we should send updates */
     char                            meta_server[MAX_BUF]; /* Hostname/ip addr of the metaserver */
+	char                            meta_name[MAX_BUF];   /* Servername listed in the meta server list */
     char                            meta_host[MAX_BUF]; /* Hostname of this host */
     uint16                          meta_port;          /* Port number to use for updates */
     char                            meta_comment[MAX_BUF]; /* Comment we send to the metaserver */
