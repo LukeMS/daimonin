@@ -837,9 +837,9 @@ if (*socket_temp == SOCKET_NO)
    read one.*/
 
 #ifdef __WIN_32
-void read_metaserver_data(SOCKET fd)
+int read_metaserver_data(SOCKET fd)
 {
-    int     stat, temp;
+    int     stat, temp, ret;
     char   *ptr, *buf;
     void   *tmp_free;
 
@@ -875,18 +875,20 @@ void read_metaserver_data(SOCKET fd)
     }
     buf[temp] = 0;
     LOG(0, "GET: %s\n", buf);
-    parse_metaserver_data(buf);
+    ret = parse_metaserver_data(buf);
     tmp_free = &buf;
     FreeMemory(tmp_free);
     tmp_free = &ptr;
     FreeMemory(tmp_free);
+
+    return ret;
 }
 
 #elif __LINUX
 
-void read_metaserver_data(SOCKET fd)
+int read_metaserver_data(SOCKET fd)
 {
-    int     stat, temp;
+    int     stat, temp, ret;
     char   *ptr, *buf;
     void   *tmp_free;
 
@@ -926,11 +928,13 @@ void read_metaserver_data(SOCKET fd)
     }
 
     buf[temp] = 0;
-    parse_metaserver_data(buf);
+    ret = parse_metaserver_data(buf);
     tmp_free = &buf;
     FreeMemory(tmp_free);
     tmp_free = &ptr;
     FreeMemory(tmp_free);
+
+    return ret;
 }
 
 #endif

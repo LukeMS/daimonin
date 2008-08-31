@@ -449,75 +449,49 @@ int parse_serverhost(char *tmp, char *server, int *port)
     return 0;
 }
 
-/* This is really, really a bad implementation.
- * This is still weird test code and need a real code solution.
- */
-void parse_metaserver_data(char *info)
+/* we have one big string holding all servers from the metaserver
+* we do simple castings of 2 placeholders ( | and _ ) to ' ' whitespace
+* and use then sscanf to get the info
+*/
+int parse_metaserver_data(char *info)
 {
-    char    server[1024], version[1024], desc[1025], desc_line[4][47], *tmp;
-    int     port, player, count, s, ss, sss;
-    void   *tmp_free;
+    char    *tmp, server[128], version[128], name[128], desc[1024];
+    int     port, player, count, s, ret = FALSE;
 
-    tmp = (char *) malloc(MAX_METASTRING_BUFFER);
-    for (count = 0; ;)
+    // set all '|' to ' ' whitespace so we can use sscanf
+    for(s=0;info[s]!=0;s++)
+        if(info[s]=='|')
+            info[s]=' ';
+
+    for(;;)
     {
-        if ((s = read_substr_char(info, tmp, &count, '|')) == -1)
-        {
+        server[0]= name[0] = version[0] = desc[0] = '\0';
+        sscanf(info,"%d %s %s %d %s %d %s", &count, name, server, &port, version, &player, desc);
+        if(server[0] == '\0')
             break;
-        }
-        if ((s = read_substr_char(info, tmp, &count, '|')) == -1)
-            break;
-        if ((s = read_substr_char(info, tmp, &count, '|')) == -1)
-            break;
-        if (s >= 1023)
-            s = 1023;
-        tmp[s] = 0;
-        if (parse_serverhost(tmp, server, &port) == -1)
-            break;
-        /* player */
-        if ((s = read_substr_char(info, tmp, &count, '|')) == -1)
-            break;
-        player = atoi(tmp);
-        /* version; */
-        if ((s = read_substr_char(info, tmp, &count, '|')) == -1)
-            break;
-        strncpy(version, tmp, s);
-        if (s >= 1023)
-            s = 1023;
-        version[s] = 0;
-        /* desc */
-        desc_line[0][0] = 0;
-        desc_line[1][0] = 0;
-        desc_line[2][0] = 0;
-        desc_line[3][0] = 0;
-        if ((s = read_substr_char(info, tmp, &count, '|')) != -1)
-        {
-            if (s >= 1023)
-                s = 1023;
-            strncpy(desc, tmp, s);
-            desc[s] = 0;
 
-            sss = 0;
-            for (ss = 0; ss < 45 && sss < s; ss++,sss++)
-                desc_line[0][ss] = desc[sss];
-            desc_line[0][ss] = 0;
-            for (ss = 0; ss < 45 && sss < s; ss++,sss++)
-                desc_line[1][ss] = desc[sss];
-            desc_line[1][ss] = 0;
-            for (ss = 0; ss < 45 && sss < s; ss++,sss++)
-                desc_line[2][ss] = desc[sss];
-            desc_line[2][ss] = 0;
-            for (ss = 0; ss < 45 && sss < s; ss++,sss++)
-                desc_line[3][ss] = desc[sss];
-            desc_line[3][ss] = 0;
-        }
-        read_substr_char(info, tmp, &count, 0x0a);
-        /*if(version[0] == 'D')*/ /* Daimonin marker */
-        add_metaserver_data(server, port, player, version, &desc_line[0][0], &desc_line[1][0], &desc_line[2][0],
-                            &desc_line[3][0]);
+        // set all '_' to ' ' whitespace
+        for(s=0;name[s]!=0;s++)
+            if(name[s]=='_')
+                name[s]=' ';
+        for(s=0;desc[s]!=0;s++)
+            if(desc[s]=='_')
+                desc[s]=' ';
+        for(s=0;version[s]!=0;s++)
+            if(version[s]=='_')
+                version[s]=' ';
+
+        LOG(LOG_DEBUG, "SERVER: {%d} %s %s %d %s %d {%s}\n", count,name, server, port, version, player, desc);		
+        add_metaserver_data(name, server, port, player, version, desc);
+        ret = TRUE; // ok, we have at last ONE valid server in the list
+
+        // go to next row
+        if(!(tmp = strchr(info, 0x0a)))
+            break;
+        info = tmp+1;
     }
-    tmp_free = &tmp;
-    FreeMemory(tmp_free);
+
+    return ret;
 }
 
 /* This seems to be lacking on some system */

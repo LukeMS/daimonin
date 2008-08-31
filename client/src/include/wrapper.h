@@ -66,9 +66,9 @@ extern char    *GetIconDirectory(void);
 
 extern Boolean  SYSTEM_Start(void);
 extern Boolean  SYSTEM_End(void);
-int             attempt_fullscreen_toggle(SDL_Surface **surface, uint32 *flags);
-uint32          get_video_flags(void);
-void            parse_metaserver_data(char *info);
+extern int      attempt_fullscreen_toggle(SDL_Surface **surface, uint32 *flags);
+extern uint32   get_video_flags(void);
+extern int      parse_metaserver_data(char *info);
 
 #if defined( __WIN_32)  || defined(__LINUX)
 	FILE *msglog;

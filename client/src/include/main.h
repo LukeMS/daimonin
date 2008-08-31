@@ -98,12 +98,10 @@ _keymap;
 typedef struct _server
 {
     struct _server *next;   /* go on in list. NULL: no following this node*/
+	char           *name;
     char           *nameip;
     char           *version;
     char           *desc1;
-    char           *desc2;
-    char           *desc3;
-    char           *desc4;
     int             player;
     int             port;
 }
@@ -488,7 +486,9 @@ extern int          debug_layer[MAXFACES];
 extern int          music_global_fade; /* global flag for polling music fade out */
 
 extern _game_status GameStatus;     /* THE game status 2*/
-extern int   GameStatusLogin;
+extern int			GameStatusLogin;
+extern int			ShowLocalServer;		/* show local server in the meta list */
+extern char			GlobalClientVersion[64]; /* the client version */
 extern int          MapStatusX;             /* map x,y len */
 extern int          MapStatusY;
 
@@ -499,7 +499,7 @@ extern int          ServerPort;         /* port addr */
 
 extern int          show_help_screen;
 extern int          show_help_screen_new;
-extern int      InputFirstKeyPress;
+extern int          InputFirstKeyPress;
 
 extern int          map_udate_flag, map_transfer_flag, map_redraw_flag;
 extern uint32       GameTicksSec;       /* ticks since this second frame in ms */
@@ -739,8 +739,7 @@ extern int                  SocketStatusErrorNr; /* if an socket error, this is 
 
 extern int  main(int argc, char *argv[]);
 extern void open_input_mode(int maxchar);
-extern void add_metaserver_data(char *server, int port, int player, char *ver, char *desc1, char *desc2, char *desc3,
-                                    char *desc4);
+extern void add_metaserver_data(char *name, char *server, int port, int player, char *ver, char *desc);
 extern void clear_metaserver_data(void);
 extern void get_meta_server_data(int num, char *server, int *port);
 extern void free_faces(void);
