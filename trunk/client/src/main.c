@@ -115,7 +115,9 @@ Boolean             InputStringEndFlag; /* if true, we had entered some in text 
 Boolean             InputStringEscFlag;
 
 _game_status        GameStatus; /* the global status identifier */
-int     GameStatusLogin;
+int                 GameStatusLogin;
+int                 ShowLocalServer;
+char                GlobalClientVersion[64];
 
 time_t sleeptime;
 
@@ -301,6 +303,35 @@ static void delete_player_lists(void)
 }
 
 
+/******************************************************************
+Try to read in the version file to find the real patch level
+******************************************************************/
+static void load_version_file(void)
+{
+    char buf[64];
+    FILE   *stream;
+
+    // set the version to the binary default
+    strcpy(GlobalClientVersion, PACKAGE_VERSION);
+
+    // lets try to fetch the current patch level
+    if (!(stream = fopen_wrapper("update/version", "r")))
+    {
+        LOG(LOG_DEBUG,"Can't open version file.\n");
+        return;
+    }
+    if (fgets(buf, sizeof(buf), stream) != NULL)
+    {
+        strcpy(GlobalClientVersion, buf);
+        LOG(LOG_DEBUG,"Version patch level: %s\n", buf);
+    }
+    else
+        LOG(LOG_DEBUG,"Can't read version file.\n");
+
+    fclose(stream);
+}
+
+
 /* pre init, overrule in hardware module if needed */
 void init_game_data(void)
 {
@@ -355,6 +386,7 @@ void init_game_data(void)
     SoundSystem = SOUND_SYSTEM_OFF;
     GameStatus = GAME_STATUS_INIT;
     GameStatusLogin = FALSE;
+    ShowLocalServer = FALSE;
     CacheStatus = CF_FACE_CACHE;
     SoundStatus = 1;
     MapStatusX = MAP_MAX_SIZE;
@@ -408,6 +440,7 @@ void init_game_data(void)
     media_count = 0;    /* buffered media files*/
     media_show = MEDIA_SHOW_NO; /* show this media file*/
 
+    load_version_file();
     textwin_clearhistory();
     delete_player_lists();
     load_options_dat(); /* now load options, allowing the user to override the presetings */
@@ -508,7 +541,7 @@ void load_options_dat(void)
 
 /* we have to have it here, before we junp back because of missing config file */
 
-    strcpy(options.metaserver, "damn.informatik.uni-bremen.de");
+    strcpy(options.metaserver, "www.daimonin.com");
     options.metaserver_port = DEFAULT_METASERVER_PORT;
 
     txtwin_start_size = txtwin[TW_MIX].size;
@@ -624,8 +657,8 @@ Boolean game_status_chain(void)
         clear_group();
         map_udate_flag = 2;
         if (argServerName[0] != 0)
-            add_metaserver_data(argServerName, argServerPort, -1, "user server",
-                                "Server from -server '...' command line.", "", "", "");
+            add_metaserver_data(argServerName, argServerName, argServerPort, -1, "user server",
+            "Server from -server '...' command line.");
 
         /* skip of -nometa in command line or no metaserver set in options */
         if (options.no_meta || !options.metaserver[0])
@@ -634,6 +667,8 @@ Boolean game_status_chain(void)
         }
         else
         {
+            int meta_ret = FALSE;
+
             SOCKET fd = SOCKET_NO;
 
             draw_info("query metaserver...", COLOR_GREEN);
@@ -641,18 +676,30 @@ Boolean game_status_chain(void)
             draw_info(buf, COLOR_GREEN);
             if (SOCKET_OpenSocket(&fd, options.metaserver, options.metaserver_port))
             {
-                read_metaserver_data(fd);
+                meta_ret = read_metaserver_data(fd);
                 SOCKET_CloseSocket(fd);
                 draw_info("done.", COLOR_GREEN);
             }
             else
+
+            {
                 draw_info("metaserver failed! using default list.", COLOR_GREEN);
+            }
+
+            if(!meta_ret)
+            {
+                add_metaserver_data("Daimonin", "daimonin.game-server.cc", DEFAULT_SERVER_PORT, -1, "0.97x", "Public Daimonin game server from www.daimonin.com.");
+                add_metaserver_data("Test Server", "test-server.game-server.cc", DEFAULT_SERVER_PORT, -1, "test", "Checkout here the newest features & maps! BETA TESTING.");
+            }
         }
 
-//#ifdef DEVELOPMENT
-        add_metaserver_data("test-server.game-server.cc", DEFAULT_SERVER_PORT, -1, "test", "Daimonin test server", "", "", "");
-//#endif
-        add_metaserver_data("127.0.0.1", DEFAULT_SERVER_PORT, -1, "local", "localhost. Start server before you try to connect.", "", "", "");
+        // add local server only when user gives the -local option OR when its not a development compile
+
+#ifndef DEVELOPMENT
+        if(ShowLocalServer)
+#endif
+            add_metaserver_data("LOCAL SERVER", "127.0.0.1", argServerPort, -1, "LOCAL", "localhost. Start your server before you try to connect.");
+
         count_meta_server();
         draw_info("select a server.", COLOR_GREEN);
         GameStatus = GAME_STATUS_START;
@@ -1079,17 +1126,13 @@ void clear_metaserver_data(void)
 
     for (; node;)
     {
+        tmp_free = &node->name;
+        FreeMemory(tmp_free);
         tmp_free = &node->nameip;
         FreeMemory(tmp_free);
         tmp_free = &node->version;
         FreeMemory(tmp_free);
         tmp_free = &node->desc1;
-        FreeMemory(tmp_free);
-        tmp_free = &node->desc2;
-        FreeMemory(tmp_free);
-        tmp_free = &node->desc3;
-        FreeMemory(tmp_free);
-        tmp_free = &node->desc4;
         FreeMemory(tmp_free);
         tmp = node->next;
         tmp_free = &node;
@@ -1103,8 +1146,7 @@ void clear_metaserver_data(void)
     metaserver_count = 0;
 }
 
-void add_metaserver_data(char *server, int port, int player, char *ver, char *desc1, char *desc2, char *desc3,
-                         char *desc4)
+void add_metaserver_data(char *name, char *server, int port, int player, char *ver, char *desc)
 {
     _server    *node;
 
@@ -1120,18 +1162,14 @@ void add_metaserver_data(char *server, int port, int player, char *ver, char *de
 
     node->player = player;
     node->port = port;
+    node->name = _malloc(strlen(name) + 1, "add_metaserver_data(): name string");
+    strcpy(node->name, name);
     node->nameip = _malloc(strlen(server) + 1, "add_metaserver_data(): nameip string");
     strcpy(node->nameip, server);
     node->version = _malloc(strlen(ver) + 1, "add_metaserver_data(): version string");
     strcpy(node->version, ver);
-    node->desc1 = _malloc(strlen(desc1) + 1, "add_metaserver_data(): desc string");
-    strcpy(node->desc1, desc1);
-    node->desc2 = _malloc(strlen(desc2) + 1, "add_metaserver_data(): desc string");
-    strcpy(node->desc2, desc2);
-    node->desc3 = _malloc(strlen(desc3) + 1, "add_metaserver_data(): desc string");
-    strcpy(node->desc3, desc3);
-    node->desc4 = _malloc(strlen(desc4) + 1, "add_metaserver_data(): desc string");
-    strcpy(node->desc4, desc4);
+    node->desc1 = _malloc(strlen(desc) + 1, "add_metaserver_data(): desc string");
+    strcpy(node->desc1, desc);
 }
 
 static void count_meta_server(void)
@@ -1402,6 +1440,10 @@ int main(int argc, char *argv[])
                     strcpy(argServerName, argv[argc]);
                     --argc;
                 }*/
+        else if (strcmp(argv[argc], "-local") == 0)
+        {
+            ShowLocalServer = TRUE;
+        }
         else if (strcmp(argv[argc], "-nometa") == 0)
         {
             options.no_meta = 1;
@@ -1619,7 +1661,7 @@ int main(int argc, char *argv[])
     }
     ; /* wait for keypress */
 
-    sprintf(buf, "Welcome to Daimonin v%s", PACKAGE_VERSION);
+    sprintf(buf, "Welcome to Daimonin v%s", GlobalClientVersion);
     draw_info(buf, COLOR_HGOLD);
     draw_info("init network...", COLOR_GREEN);
     if (!SOCKET_InitSocket()) /* log in function*/
@@ -1923,7 +1965,6 @@ int main(int argc, char *argv[])
 
 static void show_intro(char *text)
 {
-    char    buf[256];
     int     x, y;
 
     x=Screensize.xoff/2;
@@ -1937,14 +1978,23 @@ static void show_intro(char *text)
     else
         StringBlt(ScreenSurface, &SystemFont, "** Press Key **", x+375, y+585, COLOR_DEFAULT, NULL, NULL);
 
-    sprintf(buf, "v. %s", PACKAGE_VERSION);
-    StringBlt(ScreenSurface, &SystemFont, buf, x+10, y+585, COLOR_DEFAULT, NULL, NULL);
     flip_screen();
 }
 
 
 static void flip_screen(void)
 {
+    if (GameStatus != GAME_STATUS_PLAY)
+    {
+        char    buf[64];
+#ifdef _DEBUG
+        sprintf(buf, "v. %s *DEBUG VERSION*", GlobalClientVersion);
+#else
+        sprintf(buf, "v. %s", GlobalClientVersion);
+#endif
+        StringBlt(ScreenSurface, &SystemFont, buf, (Screensize.xoff/2)+10, (Screensize.yoff/2)+585, COLOR_DEFAULT, NULL, NULL);
+    }
+
 #ifdef INSTALL_OPENGL
     if (options.use_gl)
         SDL_GL_SwapBuffers();

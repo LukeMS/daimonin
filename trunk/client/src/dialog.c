@@ -200,7 +200,7 @@ _option             opt[]                           =
         {"Show framerate:", "Whether to show the fps and other details under the map name.","","", "",SEL_CHECKBOX,0,1,1,0, &options.show_frame,VAL_BOOL},
         {"Force redraw:", "Whether to force the system to redraw EVERY frame.","","", "",SEL_CHECKBOX,0,1,1,0, &options.force_redraw,VAL_BOOL},
         {"Use update rect:", "Whether to use update rect.","","", "",SEL_CHECKBOX,0,1,1,0, &options.use_rect,VAL_BOOL},
-        {"Anim Update Time:", "Check anims every x ms.","","", "",SEL_RANGE,50,500,25,50, &options.anim_check_time,VAL_INT},
+		{"Anim Update Time:", "Check anims every x ms.","","", "",SEL_RANGE,50,500,25,50, &options.anim_check_time,VAL_INT},
         {"#"},
         /* End of Page */
 
@@ -1886,7 +1886,6 @@ void show_meta_server(_server *node, int metaserver_start, int metaserver_sel)
     SDL_Rect    rec_desc;
     SDL_Rect    box;
     int         mx, my, mb;
-    Boolean     mainserverdown=TRUE;
 
     mb = SDL_GetMouseState(&mx, &my);
     /* background */
@@ -1937,39 +1936,25 @@ void show_meta_server(_server *node, int metaserver_start, int metaserver_sel)
         if (i == metaserver_sel - metaserver_start)
         {
             int o   = 0;
-            if (!node->desc4[0])
-                o += 5; if (!node->desc3[0])
-                o += 5;
-            if (!node->desc2[0])
-                o += 5; if (!node->desc1[0])
-                o += 5;
-            sprintf(buf, "version %s", node->version);
-            StringBlt(ScreenSurface, &SystemFont, buf, x + 160, y + 418 + o, COLOR_BLACK, NULL, NULL);
-            StringBlt(ScreenSurface, &SystemFont, buf, x + 159, y + 417 + o, COLOR_WHITE, NULL, NULL);
-            StringBlt(ScreenSurface, &SystemFont, node->desc1, x + 160, y + 431 + o, COLOR_BLACK, &rec_desc, NULL);
-            StringBlt(ScreenSurface, &SystemFont, node->desc1, x + 159, y + 430 + o, COLOR_HGOLD, &rec_desc, NULL);
-            StringBlt(ScreenSurface, &SystemFont, node->desc2, x + 160, y + 442 + o, COLOR_BLACK, &rec_desc, NULL);
-            StringBlt(ScreenSurface, &SystemFont, node->desc2, x + 159, y + 441 + o, COLOR_HGOLD, &rec_desc, NULL);
-            StringBlt(ScreenSurface, &SystemFont, node->desc3, x + 160, y + 453 + o, COLOR_BLACK, &rec_desc, NULL);
-            StringBlt(ScreenSurface, &SystemFont, node->desc3, x + 159, y + 452 + o, COLOR_HGOLD, &rec_desc, NULL);
-            /* hm, 3 descr. are far enough */
+			
+			sprintf(buf, "Version: %s", node->version);
+            StringBlt(ScreenSurface, &SystemFont, buf, x + 160, y + 438 + o, COLOR_BLACK, NULL, NULL);
+            StringBlt(ScreenSurface, &SystemFont, buf, x + 159, y + 437 + o, COLOR_WHITE, NULL, NULL);
+			
+            StringBlt(ScreenSurface, &SystemFont, node->desc1, x + 160, y + 451 + o, COLOR_BLACK, &rec_desc, NULL);
+            StringBlt(ScreenSurface, &SystemFont, node->desc1, x + 159, y + 450 + o, COLOR_HGOLD, &rec_desc, NULL);
+
             /*StringBlt(ScreenSurface,&SystemFont, node->desc1, x+150, y+464+o, COLOR_HGOLD, &rec_desc,NULL);*/
             box.y = y + TXT_Y_START + 13 + i * 12;
             SDL_FillRect(ScreenSurface, &box, sdl_blue1);
         }
-        StringBlt(ScreenSurface, &SystemFont, node->nameip, x + 137, y + 94 + i * 12, COLOR_WHITE, &rec_name, NULL);
-        if (!strcmp(node->nameip,"daimonin.game-server.cc"))
-            mainserverdown=FALSE;
+        StringBlt(ScreenSurface, &SystemFont, node->name, x + 137, y + 94 + i * 12, COLOR_WHITE, &rec_name, NULL);
         if (node->player >= 0)
             sprintf(buf, "%d", node->player);
         else
-            sprintf(buf, "-");
+            sprintf(buf, "??");
         StringBlt(ScreenSurface, &SystemFont, buf, x + 416, y + 94 + i * 12, COLOR_WHITE, NULL, NULL);
         node = node->next;
-    }
-    if (mainserverdown && (i>0))
-    {
-        StringBlt(ScreenSurface, &SystemFont, "Main Server is temporarily down!", x + 137, y + 94 + ((i+1) * 12), COLOR_RED, &rec_name, NULL);
     }
 
 }

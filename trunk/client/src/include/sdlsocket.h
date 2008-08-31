@@ -49,6 +49,6 @@ extern Boolean  SOCKET_OpenClientSocket(struct ClientSocket *csock, char *host, 
 extern Boolean  SOCKET_CloseSocket(SOCKET socket);
 extern Boolean  SOCKET_CloseClientSocket(struct ClientSocket *csock);
 extern int      SOCKET_GetError(void);  /* returns socket error */
-void            read_metaserver_data(SOCKET fd);
+extern int      read_metaserver_data(SOCKET fd);
 
 #endif
