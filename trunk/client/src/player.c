@@ -1120,8 +1120,6 @@ void widget_show_regeneration(int x, int y)
 
         sprite_blt(Bitmaps[BITMAP_REGEN_BG], 0, 0, NULL, &bltfx);
 
-        x-=173;
-
         StringBlt(widgetSF[REGEN_ID], &Font6x3Out, "Regeneration", 4, 1, COLOR_HGOLD, NULL, NULL);
         StringBlt(widgetSF[REGEN_ID], &SystemFont, "HP", 61, 13, COLOR_HGOLD, NULL, NULL);
         sprintf(buf, "%2.1f", cpl.gen_hp);
