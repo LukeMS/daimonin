@@ -248,13 +248,13 @@ int command_kick(object *ob, char *params)
             LOG(llevInfo, "%s is kicked out of the game.\n", query_name(op));
             for(ol = gmaster_list_VOL;ol;ol=ol->next)
                 new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob,
-                    "KICK: Player %s has been kicked by %s\n", pl->ob->name, query_name(ob));
+                    "KICK: Player %s has been kicked by %s\n", query_name(op), query_name(ob));
             for(ol = gmaster_list_GM;ol;ol=ol->next)
                 new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob,
-                    "KICK: Player %s has been kicked by %s\n", pl->ob->name, query_name(ob));
+                    "KICK: Player %s has been kicked by %s\n", query_name(op), query_name(ob));
             for(ol = gmaster_list_DM;ol;ol=ol->next)
                 new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob,
-                    "KICK: Player %s has been kicked by %s\n", pl->ob->name, query_name(ob));
+                    "KICK: Player %s has been kicked by %s\n", query_name(op), query_name(ob));
             container_unlink(CONTR(op), NULL);
             CONTR(op)->socket.status = Ns_Dead;
         }
@@ -1303,20 +1303,11 @@ int command_mute(object *op, char *params)
     sscanf(params, "%s %d", name, &seconds);
     pl= find_player(name);
     if(pl == NULL)
-      return 0;
-    LOG(llevInfo, "MUTECMD: %s issued /mute %s %d\n", op->name, name, seconds);
-    for(ol = gmaster_list_VOL;ol;ol=ol->next)
-        new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 5, ol->objlink.ob, "MUTE: Player %s has been muted by %s for %d seconds.\n", pl->ob->name, query_name(op), seconds);
-    for(ol = gmaster_list_GM;ol;ol=ol->next)
-        new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 5, ol->objlink.ob, "MUTE: Player %s has been muted by %s for %d seconds.\n", pl->ob->name, query_name(op), seconds);
-    for(ol = gmaster_list_DM;ol;ol=ol->next)
-        new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 5, ol->objlink.ob, "MUTE: Player %s has been muted by %s for %d seconds.\n", pl->ob->name, query_name(op), seconds);
-
-    if(!pl)
     {
         new_draw_info_format(NDI_UNIQUE, 0, op, "mute command: can't find player %s", name);
         return 0;
     }
+    LOG(llevInfo, "MUTECMD: %s issued /mute %s %d\n", op->name, name, seconds);
 
     if(seconds<0)
     {
@@ -1334,11 +1325,14 @@ int command_mute(object *op, char *params)
         new_draw_info_format(NDI_UNIQUE, 0, op, "mute command: mute player %s for %d seconds!", name, seconds);
         pl->mute_counter = pticks+seconds*(1000000/MAX_TIME);
         for(ol = gmaster_list_VOL;ol;ol=ol->next)
-        new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, "MUTE: Player %s has been muted by %s for %d seconds.\n", pl->ob->name, query_name(op), seconds);
+        new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob,
+            "MUTE: Player %s has been muted by %s for %d seconds.\n", query_name(pl->ob), query_name(op), seconds);
         for(ol = gmaster_list_GM;ol;ol=ol->next)
-        new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, "MUTE: Player %s has been muted by %s for %d seconds.\n", pl->ob->name, query_name(op), seconds);
+        new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob,
+            "MUTE: Player %s has been muted by %s for %d seconds.\n", query_name(pl->ob), query_name(op), seconds);
         for(ol = gmaster_list_DM;ol;ol=ol->next)
-        new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, "MUTE: Player %s has been muted by %s for %d seconds.\n", pl->ob->name, query_name(op), seconds);
+        new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob,
+            "MUTE: Player %s has been muted by %s for %d seconds.\n", query_name(pl->ob), query_name(op), seconds);
 
     }
 
@@ -1459,11 +1453,6 @@ int command_ban(object *op, char *params)
 
         for(ol = ban_list_ip;ol;ol=ol_tmp)
         {
-            if(CONTR(op)->gmaster_mode == GMASTER_MODE_VOL && ol->objlink.ban->ticks_init == -1)
-             {
-                new_draw_info_format(NDI_UNIQUE, 0, op, "Only GMs and DMs can unban permanently banned!");
-                return 0;
-             }
             ol_tmp = ol->next;
             if(ol->objlink.ban->ticks_init != -1 &&  pticks >= ol->objlink.ban->ticks)
                 remove_ban_entry(ol); /* is not valid anymore, gc it on the fly */
@@ -1493,12 +1482,6 @@ int command_ban(object *op, char *params)
                     goto ban_usage;
                 }
 
-                /* This is horrible - replaced!!
-                /* It is a conditional expression which does nothing
-                /* apart from relying on its side-effect. */
-
-                /* ticks==-1?-1:(ticks = ticks*8); */
-
                 if (ticks != -1)
                     ticks *= 8;     /* convert seconds to ticks */
 
@@ -1518,17 +1501,20 @@ int command_ban(object *op, char *params)
             if(name && name[0]!='\0')
             {
                 int spot;
-                    if(CONTR(op)->gmaster_mode == GMASTER_MODE_VOL && ticks == -1)
-                        goto ban_usage;
+                if(CONTR(op)->gmaster_mode == GMASTER_MODE_VOL && ticks == -1)
+                    goto ban_usage;
 
-                    for(spot=0;name[spot] != '\0';spot++)
-                    {
-                        if(CONTR(op)->gmaster_mode == GMASTER_MODE_VOL && name[spot] == '*')
-                            goto ban_usage;
-                        else if(CONTR(op)->gmaster_mode >= GMASTER_MODE_GM && name[spot] == '*' && spot < 11)
-                            goto ban_usage;
-                    }
-                ticks==-1?-1:(ticks = ticks*8);
+                for(spot=0;name[spot] != '\0';spot++)
+                {
+                    if(CONTR(op)->gmaster_mode == GMASTER_MODE_VOL && name[spot] == '*')
+                        goto ban_usage;
+                    else if(CONTR(op)->gmaster_mode >= GMASTER_MODE_GM && name[spot] == '*' && spot < 11)
+                        goto ban_usage;
+                }
+
+                if (ticks != -1)
+                    ticks *= 8;     /* convert seconds to ticks */
+
                 add_banlist_ip(op, name, ticks);
                 save_ban_file();
                 return 1;
@@ -1555,8 +1541,6 @@ int command_ban(object *op, char *params)
                     goto ban_usage;
                 }
 
-                /* Another abomination replaced! */
-                /* ticks==-1?-1:(ticks = ticks*8); */
                 if (ticks != -1)
                     ticks *= 8;
 
@@ -1568,16 +1552,16 @@ int command_ban(object *op, char *params)
                 for(ob = gmaster_list_VOL;ob;ob=ob->next)
                     new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob,
                         "BAN: Player %s and IP %s have been banned by %s for %d seconds.\n",
-                        name, name_buf, op->name, ticks/8);
+                        query_name(pl->ob), pl->socket.ip_host, op->name, ticks/8);
                 for(ob = gmaster_list_GM;ob;ob=ob->next)
                     new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob,
                         "BAN: Player %s and IP %s have been banned by %s for %d seconds.\n",
-                        name, name_buf, op->name, ticks/8);
+                        query_name(pl->ob), pl->socket.ip_host, op->name, ticks/8);
                 for(ob = gmaster_list_DM;ob;ob=ob->next)
                     new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob,
                         "BAN: Player %s and IP %s have been banned by %s for %d seconds.\n",
-                        name, name_buf, op->name, ticks/8);
-                command_kick(op, name);
+                        query_name(pl->ob), pl->socket.ip_host, op->name, ticks/8);
+                command_kick(op, query_name(pl->ob));
             }
             return 1;
 
@@ -1598,11 +1582,11 @@ int command_ban(object *op, char *params)
                 ol_tmp = ol->next;
                 if(!strcmp(ol->objlink.ban->ip, name))
                 {
-                   if(CONTR(op)->gmaster_mode == GMASTER_MODE_VOL && ol->objlink.ban->ticks_init == -1)
-                   {
-                       new_draw_info_format(NDI_UNIQUE, 0, op, "Only GMs and DMs can unban permanently banned!");
-                       return 0;
-                   }
+                    if(CONTR(op)->gmaster_mode == GMASTER_MODE_VOL && ol->objlink.ban->ticks_init == -1)
+                    {
+                        new_draw_info_format(NDI_UNIQUE, 0, op, "Only GMs and DMs can unban permanently banned!");
+                        return 0;
+                    }
                     LOG(llevSystem,"/ban: %s unbanned the IP %s\n", query_name(op), name);
                     new_draw_info_format(NDI_UNIQUE, 0, op, "You unbanned IP %s!", name);
                     remove_ban_entry(ol);
@@ -1764,7 +1748,7 @@ int command_dm_set(object *op, char *params)
     {
         char name[MAX_BUF], passwd[MAX_BUF], host[MAX_BUF], mode[MAX_BUF], dummy[MAX_BUF];
 
-        if (sscanf(str, "%[^:]:%[^:]:%[^:]:%s%[\n\r]", name, passwd, host, mode, dummy) < 4)
+        if (sscanf(str, "%[^:]:%[^:]:%[^:]:%s%[\n\r]", name, passwd, host, mode, dummy) < 3)
             new_draw_info(NDI_UNIQUE, 0, op, "/dm_set: invalid parameter.");
         else
         {
@@ -1853,7 +1837,7 @@ int command_gm_set(object *op, char *params)
     {
         char name[MAX_BUF], passwd[MAX_BUF], host[MAX_BUF], mode[MAX_BUF], dummy[MAX_BUF];
 
-        if (sscanf(str, "%[^:]:%[^:]:%[^:]:%s%[\n\r]", name, passwd, host, mode, dummy) < 4)
+        if (sscanf(str, "%[^:]:%[^:]:%[^:]:%s%[\n\r]", name, passwd, host, mode, dummy) < 3)
             new_draw_info(NDI_UNIQUE, 0, op, "/gm_set: invalid parameter.");
         else
         {
