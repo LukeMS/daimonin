@@ -1986,12 +1986,15 @@ static void flip_screen(void)
 {
     if (GameStatus != GAME_STATUS_PLAY)
     {
-        char    buf[64];
+        char    buf[128];
+        sprintf(buf, "v. %s%s",
+                GlobalClientVersion,
 #ifdef _DEBUG
-        sprintf(buf, "v. %s *DEBUG VERSION*", GlobalClientVersion);
+                " *DEBUG VERSION*"
 #else
-        sprintf(buf, "v. %s", GlobalClientVersion);
+                ""
 #endif
+                );
         StringBlt(ScreenSurface, &SystemFont, buf, (Screensize.xoff/2)+10, (Screensize.yoff/2)+585, COLOR_DEFAULT, NULL, NULL);
     }
 
