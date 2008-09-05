@@ -108,19 +108,19 @@ void DoClient(ClientSocket *csocket)
                 cmd_tag &= ~0x80;
                 header_len = 5;
             }
-            commands[cmd_tag - 1].cmdproc(cmd->data+header_len, cmd->len-header_len);
+            commands[cmd_tag - 1].cmdproc((char *)cmd->data+header_len, cmd->len-header_len);
         }
         command_buffer_free(cmd);
     }
 }
 
 /* Helper function for incoming binary data.*/
-static inline int GetInt_String(const unsigned char *const data)
+static inline int GetInt_String(unsigned char *data)
 {
     return adjust_endian_int32(*((uint32 *)data));
 }
 
-static inline short GetShort_String(const unsigned char *const data)
+static inline short GetShort_String(unsigned char *data)
 {
     return adjust_endian_int16(*((uint16 *)data));
 }
@@ -1773,40 +1773,40 @@ void Map2Cmd(char *data, int len)
 
 void SkilllistCmd(char *data, int len)
 {
-    unsigned char *tmp, *tmp2, *tmp3, *tmp4;
+    char *tmp, *tmp2, *tmp3, *tmp4;
     int     l, e, i, ii, mode;
     char    name[256];
 
     /*LOG(-1,"sklist: %s\n", data);*/
 
     /* we grap our mode */
-    mode = atoi((const char *)data);
+    mode = atoi(data);
 
     /* now look for the members fo the list we have */
     for (; ;)
     {
-        tmp = (unsigned char *)strchr((char *)data, '/'); /* find start of a name */
+        tmp = strchr(data, '/'); /* find start of a name */
         if (!tmp)
             return;
         data = tmp + 1;
 
-        tmp2 = (unsigned char *)strchr((char*)data, '/');
+        tmp2 = strchr(data, '/');
         if (tmp2)
         {
-            strncpy(name, (const char *)data, tmp2 - data);
+            strncpy(name, data, tmp2 - data);
             name[tmp2 - data] = 0;
             data = tmp2;
         }
         else
-            strcpy(name, (const char *)data);
+            strcpy(name, data);
 
         /*LOG(-1,"sname (%d): >%s<\n", mode, name);*/
-        tmp3 = (unsigned char *)strchr(name, '|');
+        tmp3 = strchr(name, '|');
         *tmp3 = 0;
-        tmp4 = (unsigned char *)strchr((char *)tmp3 + 1, '|');
+        tmp4 = strchr(tmp3 + 1, '|');
 
-        l = atoi((const char *)tmp3 + 1);
-        e = atoi((const char *)tmp4 + 1);
+        l = atoi(tmp3 + 1);
+        e = atoi(tmp4 + 1);
 
         /* we have a name, the level and exp - now setup the list */
         for (ii = 0; ii < SKILL_LIST_MAX; ii++)
@@ -1839,29 +1839,28 @@ void SkilllistCmd(char *data, int len)
 void SpelllistCmd(char *data, int len)
 {
     int     i, ii, mode;
-    unsigned char   *tmp, *tmp2;
-    char    name[256];
+    char   *tmp, *tmp2, name[256];
 
     /*LOG(LOG_DEBUG,"slist: <%s>\n", data);*/
     /* we grap our mode */
-    mode = atoi((const char *)data);
+    mode = atoi(data);
 
     for (; ;)
     {
-        tmp = (unsigned char *)strchr((char *)data, '/'); /* find start of a name */
+        tmp = strchr(data, '/'); /* find start of a name */
         if (!tmp)
             return;
         data = tmp + 1;
 
-        tmp2 = (unsigned char *)strchr((char *)data, '/');
+        tmp2 = strchr(data, '/');
         if (tmp2)
         {
-            strncpy(name, (const char *)data, tmp2 - data);
+            strncpy(name,data, tmp2 - data);
             name[tmp2 - data] = 0;
             data = tmp2;
         }
         else
-            strcpy(name, (const char *)data);
+            strcpy(name, data);
 
         /* we have a name - now check the spelllist file and set the entry
            to _KNOWN */
@@ -1905,10 +1904,10 @@ void GolemCmd(char *data, int len)
 
     /*LOG(LOG_DEBUG,"golem: <%s>\n", data);*/
     /* we grap our mode */
-    mode = atoi((const char *)data);
+    mode = atoi(data);
     if (mode == GOLEM_CTR_RELEASE)
     {
-        tmp = strchr((char *)data, ' '); /* find start of a name */
+        tmp = strchr(data, ' '); /* find start of a name */
         face = atoi(tmp + 1);
         request_face(face, 0);
         tmp = strchr(tmp + 1, ' '); /* find start of a name */
@@ -1918,7 +1917,7 @@ void GolemCmd(char *data, int len)
     }
     else
     {
-        tmp = strchr((char *)data, ' '); /* find start of a name */
+        tmp = strchr(data, ' '); /* find start of a name */
         face = atoi(tmp + 1);
         request_face(face, 0);
         tmp = strchr(tmp + 1, ' '); /* find start of a name */
