@@ -222,6 +222,7 @@
 		<Unit filename="..\..\..\src\include\player.h" />
 		<Unit filename="..\..\..\src\include\plugin.h" />
 		<Unit filename="..\..\..\src\include\plugproto.h" />
+		<Unit filename="..\..\..\src\include\protocol.h" />
 		<Unit filename="..\..\..\src\include\quest.h" />
 		<Unit filename="..\..\..\src\include\race.h" />
 		<Unit filename="..\..\..\src\include\re-cmp.h" />
@@ -505,7 +506,6 @@
 			<code_completion />
 			<envvars />
 			<debugger />
-			<lib_finder />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
