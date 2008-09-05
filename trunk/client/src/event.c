@@ -117,11 +117,6 @@ static char    *directionsrun[10]       =
         "/run 0", "/run 6", "/run 5", "/run 4", "/run 7",\
         "/run 5", "/run 3", "/run 8", "/run 1", "/run 2"
     };
-static char    *directionsfire[10]      =
-    {
-        "fire 0", "fire 6", "fire 5", "fire 4", "fire 7",\
-        "fire 0", "fire 3", "fire 8", "fire 1", "fire 2"
-    };
 
 static int      key_event(SDL_KeyboardEvent *key);
 static void     key_string_event(SDL_KeyboardEvent *key);
