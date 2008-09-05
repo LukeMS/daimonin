@@ -62,7 +62,6 @@ Uint32              videoflags_full, videoflags_win;
 struct _fire_mode   fire_mode_tab[FIRE_MODE_INIT];
 int                 RangeFireMode;
 
-int                 CacheStatus;            /* cache status... set this in hardware depend */
 int                 SoundStatus;            /* SoundStatus 0=no 1= yes */
 int                 MapStatusX;             /* map x,y len */
 int                 MapStatusY;
@@ -99,8 +98,6 @@ struct gui_interface_struct *gui_interface_npc;
 _bmaptype          *bmap_table[BMAPTABLE];
 
 int                 map_udate_flag, map_transfer_flag, map_redraw_flag;          /* update map area */
-int                 GameStatusVersionFlag;
-int                 GameStatusVersionOKFlag;
 int                 request_file_chain, request_file_flags;
 
 int                 ToggleScreenFlag;
@@ -150,8 +147,6 @@ Boolean game_status_chain(void);
 Boolean load_bitmap(int index);
 
 struct vimmsg vim;
-
-#define NCOMMANDS (sizeof(commands)/sizeof(struct CmdMapping))
 
 _server            *start_server, *end_server;
 int                 metaserver_start, metaserver_sel, metaserver_count;
@@ -387,7 +382,6 @@ void init_game_data(void)
     GameStatus = GAME_STATUS_INIT;
     GameStatusLogin = FALSE;
     ShowLocalServer = FALSE;
-    CacheStatus = CF_FACE_CACHE;
     SoundStatus = 1;
     MapStatusX = MAP_MAX_SIZE;
     MapStatusY = MAP_MAX_SIZE;
@@ -742,7 +736,6 @@ Boolean game_status_chain(void)
     else if (GameStatus == GAME_STATUS_STARTCONNECT)
     {
         char    sbuf[256];
-        clear_group();
         sprintf(sbuf, "%s%s", GetBitmapDirectory(), bitmap_name[BITMAP_LOADING].name);
         FaceList[MAX_FACE_TILES - 1].sprite = sprite_tryload_file(sbuf, 0, NULL);
 
@@ -753,8 +746,6 @@ Boolean game_status_chain(void)
     }
     else if (GameStatus == GAME_STATUS_CONNECT)
     {
-        clear_group();
-        GameStatusVersionFlag = FALSE;
         if (!SOCKET_OpenClientSocket(&csocket, ServerName, ServerPort))
         {
             sprintf(buf, "connection failed!");
@@ -764,63 +755,33 @@ Boolean game_status_chain(void)
         else
         {
             socket_thread_start();
-            GameStatus = GAME_STATUS_VERSION;
-            sprintf(buf, "connected. exchange version.");
+            sprintf(buf, "connected. exchange version & setup info.");
             draw_info(buf, COLOR_GREEN);
+            GameStatus = GAME_STATUS_SETUP;
         }
     }
-    else if (GameStatus == GAME_STATUS_VERSION)
-    {
-        SendVersion(csocket);
-        GameStatus = GAME_STATUS_WAITVERSION;
-    }
-    else if (GameStatus == GAME_STATUS_WAITVERSION)
-    {
-        /*
-        * perhaps here should be a timer ???
-        * remember, the version exchange server<->client is asynchron
-        * so perhaps the server send his version faster
-        * as the client send it to server
-        */
-        if (GameStatusVersionFlag)
-            /* wait for version answer when needed*/
-        {
-            /* false version! */
-            if (!GameStatusVersionOKFlag)
-            {
-                GameStatus = GAME_STATUS_START;
-            }
-            else
-            {
-                sprintf(buf, "version confirmed.\nstarting login procedure...");
-                draw_info(buf, COLOR_GREEN);
-                GameStatus = GAME_STATUS_SETUP;
-            }
-        }
-    }
+    /* send the setup command to the server, then wait */
     else if (GameStatus == GAME_STATUS_SETUP)
     {
-        clear_group();
         map_transfer_flag = 0;
         srv_client_files[SRV_CLIENT_SETTINGS].status = SRV_CLIENT_STATUS_OK;
         srv_client_files[SRV_CLIENT_BMAPS].status = SRV_CLIENT_STATUS_OK;
         srv_client_files[SRV_CLIENT_ANIMS].status = SRV_CLIENT_STATUS_OK;
         srv_client_files[SRV_CLIENT_SKILLS].status = SRV_CLIENT_STATUS_OK;
         srv_client_files[SRV_CLIENT_SPELLS].status = SRV_CLIENT_STATUS_OK;
-
-        sprintf(buf,
-                "setup sound %d map2cmd 1 mapsize %dx%d darkness 1 facecache 1 skf %d|%x spf %d|%x bpf %d|%x stf %d|%x amf %d|%x",
-                SoundStatus, MapStatusX, MapStatusY, srv_client_files[SRV_CLIENT_SKILLS].len,
-                srv_client_files[SRV_CLIENT_SKILLS].crc, srv_client_files[SRV_CLIENT_SPELLS].len,
-                srv_client_files[SRV_CLIENT_SPELLS].crc, srv_client_files[SRV_CLIENT_BMAPS].len,
-                srv_client_files[SRV_CLIENT_BMAPS].crc, srv_client_files[SRV_CLIENT_SETTINGS].len,
-                srv_client_files[SRV_CLIENT_SETTINGS].crc, srv_client_files[SRV_CLIENT_ANIMS].len,
-                srv_client_files[SRV_CLIENT_ANIMS].crc);
-        cs_write_string(csocket.fd, buf, strlen(buf));
+        SendSetupCmd();
         request_file_chain = 0;
         request_file_flags = 0;
 
         GameStatus = GAME_STATUS_WAITSETUP;
+    }
+    else if (GameStatus == GAME_STATUS_WAITSETUP)
+    {
+        /* we wait for setup response.
+        * void SetupCmd(char *buf, int len);
+        * will change the GameStatus.
+        * we can add a timer here
+        */
     }
     else if (GameStatus == GAME_STATUS_REQUEST_FILES)
     {
@@ -899,15 +860,13 @@ Boolean game_status_chain(void)
         map_transfer_flag = 0;
 
         if (options.cli_name[0] || options.cli_pass[0] || options.cli_server)
-        {
             GameStatus=GAME_STATUS_ADDME;
-        }
     }
     else if (GameStatus == GAME_STATUS_ADDME)
     {
+        SendAddMe();
         cpl.mark_count = -1;
         map_transfer_flag = 0;
-        SendAddMe(csocket);
         cpl.name[0] = 0;
         cpl.password[0] = 0;
         GameStatus = GAME_STATUS_LOGIN;

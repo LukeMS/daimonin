@@ -283,7 +283,5 @@ extern void         update_item(int tag, int loc, char *name, int weight, int fa
                                     uint8 level, uint8 direction, int bflag);
 extern void         print_inventory(item *op);
 
-extern void         fire_command(char *buf);
-extern void         combat_command(char *buf);
 extern void         dump_inv(item *);
 #endif /* ITEM_H */

@@ -625,56 +625,20 @@ void set_item_values(item *op, char *name, sint32 weight, uint16 face, int flags
     update_item_sort(op);
 }
 
-void fire_command(char *buf)
-{
-    SockList    sl;
-
-    sl.buf = (unsigned char *) buf;
-    sl.len = strlen(buf);
-    send_socklist(csocket.fd, sl);
-}
-
-void combat_command(char *buf)
-{
-    SockList    sl;
-
-    sl.buf = (unsigned char *) buf;
-    sl.len = strlen(buf);
-    send_socklist(csocket.fd, sl);
-}
-
 void toggle_locked(item *op)
 {
-    SockList    sl;
-    char        buf[MAX_BUF];
-
     if (!op || !op->env || op->env->tag == 0)
         return; /* if item is on the ground, don't lock it */
-
-    sl.buf = (unsigned char *) buf;
-    strcpy((char *) sl.buf, "lock ");
-    sl.len = 5;
-    if (op->locked)
-        sl.buf[sl.len++] = 0;
-    else
-        sl.buf[sl.len++] = 1;
-    SockList_AddInt(&sl, op->tag);
-    send_socklist(csocket.fd, sl);
+    
+    send_lock_command(op->locked?0:1, op->tag);
 }
 
 void send_mark_obj(item *op)
 {
-    SockList    sl;
-    char        buf[MAX_BUF];
-
     if (!op || !op->env || op->env->tag == 0)
         return; /* if item is on the ground, don't mark it */
 
-    sl.buf = (unsigned char *) buf;
-    strcpy((char *) sl.buf, "mark ");
-    sl.len = 5;
-    SockList_AddInt(&sl, op->tag);
-    send_socklist(csocket.fd, sl);
+    send_mark_command(op->tag);
 }
 
 

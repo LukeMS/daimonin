@@ -46,8 +46,9 @@ static command_buffer *output_queue_start = NULL, *output_queue_end = NULL;
  */
 
 /** Create a new command buffer of the given size, copying the data buffer if not NULL.
- * The buffer will always be null-terminated for safety (and one byte larger than requested).
- * @param len requested buffer size in bytes
+ * The buffer is not null terminated anymore because we don't know its a string or binary data
+ * the caller must count in the cmd & length size
+ * @param len requested buffer size in bytes + 16 byte safety
  * @param data buffer data to copy (len bytes), or NULL
  * @return a new command buffer or NULL in case of an error
  */
@@ -55,7 +56,7 @@ static command_buffer *command_buffer_new(unsigned int len, uint8 *data)
 {
     command_buffer *buf;
 
-    if(!(buf = (command_buffer *)malloc(sizeof(command_buffer)+len+1)))
+    if( !(buf = (command_buffer *)malloc(sizeof(command_buffer)+len+16)) )
 		return NULL;
 
     buf->next = buf->prev = NULL;
@@ -63,7 +64,6 @@ static command_buffer *command_buffer_new(unsigned int len, uint8 *data)
 
     if (data)
         memcpy(buf->data, data, len);
-    buf->data[len] = 0; /* Buffer overflow sentinel */
 
     return buf;
 }
@@ -111,21 +111,73 @@ static command_buffer *command_buffer_dequeue(command_buffer **queue_start, comm
  * If body is NULL, a single-byte command is created from cmd.
  * Otherwise body should include the length and cmd header
  */
-int send_command_binary(uint8 cmd, uint8 *body, unsigned int len)
+int send_command_binary(int cmd, uint8 *body, int len, int flags)
 {
     command_buffer *buf;
+    int len_copy = len;
 
-    if (body)
-        buf = command_buffer_new(len, body);
+    if (!body) /* single binary command without tail */
+        buf = command_buffer_new(1, (uint8 *)&cmd);
     else
     {
-        uint8 tmp[3];
-        len = 0x8001;
-        /* Packet order is obviously big-endian for length data */
-        tmp[0] = (len >> 8) & 0xFF;
-        tmp[1] = len & 0xFF;
-        tmp[2] = cmd;
-        buf = command_buffer_new(3, tmp);
+        /* first, lets check we have a theoretical >64k data buffer
+         * ATM we don't support data blocks >64k from the client
+         * to the server. I can only see doing it when we allow
+         * bigger textures or player pictures which can be uploaded 
+         * by the player to the server.
+         * even then we should not use the low level protocol
+         * to send any raw big blocks but a higher function
+         * which capsules the data in their data area
+         * in fact we use a much lower max block that we define
+         */
+
+        /* we have string which we must send with a zero as last char */
+        if(flags & SEND_CMD_FLAG_STRING)
+            len++;
+
+        if(len >(MAX_DATA_TAIL_LENGTH-1))
+        {
+            LOG(LOG_DEBUG,"BUG: socket buffer MAX_DATA_TAIL_LENGTH > %d: %d\n", MAX_DATA_TAIL_LENGTH, len);
+            SOCKET_CloseClientSocket(&csocket);
+            return -1;
+        }
+
+        buf = command_buffer_new(len+3, NULL); /* we need max len + 1 byte cmd + 2 bytes cmd_len at last */
+
+        /* setup the header and copy the data tail*/
+        if(buf)
+        {
+            int data_offset = 1; /* our command */
+            buf->data[0] = cmd;
+
+            if(flags & SEND_CMD_FLAG_FIXED)
+            {
+                /* this makes no sense for our current protocol */
+                if(flags & SEND_CMD_FLAG_STRING)
+                    LOG(LOG_DEBUG,"BUG WARNING: send_command_binary() _FLAG_STRING & _FLAG_FIXED set for cmd %d (len:%d)\n", cmd, len);
+                /* for a fixed len we must readjust the buffer len value */
+                buf->len = len+1; /* pure data block length + cmd tag */
+            }
+            else
+            {
+                /* we have a dynamic data tail length - let the server know how long it is */
+                buf->data[data_offset++] = (uint8) ((len >> 8) & 0xFF);
+                buf->data[data_offset++] = ((uint32) (len)) & 0xFF;
+            }
+
+            LOG(LOG_DEBUG,"SEND: cmd:%d len:%d (blen:%d) (%d %d)\n", cmd, len,buf->len,
+                (flags & SEND_CMD_FLAG_FIXED)?-1:buf->data[1], (flags & SEND_CMD_FLAG_FIXED)?-1:buf->data[2]);
+
+            memcpy(buf->data+data_offset, body, len_copy);
+
+            /* if the command requests a last zero byte, do it now.
+             * the server will check it normally and kick you if its not there
+             * why? as a marker for block but also to ensure a valid string 
+             * in the raw read buffer of the server.
+             */
+            if(flags & SEND_CMD_FLAG_STRING)
+                buf->data[len_copy+data_offset] = 0; 
+        }
     }
 
     if (buf == NULL)
@@ -133,31 +185,6 @@ int send_command_binary(uint8 cmd, uint8 *body, unsigned int len)
         SOCKET_CloseClientSocket(&csocket);
         return -1;
     }
-
-    SDL_LockMutex(output_buffer_mutex);
-    command_buffer_enqueue(buf, &output_queue_start, &output_queue_end);
-    SDL_CondSignal(output_buffer_cond);
-    SDL_UnlockMutex(output_buffer_mutex);
-
-    return 0;
-}
-
-/** move a command buffer to the out buffer so it can be written to the socket */
-int send_socklist(int fd, SockList  msg)
-{
-    command_buffer *buf;
-
-    buf = command_buffer_new(msg.len + 2, NULL);
-    if (buf == NULL)
-    {
-        SOCKET_CloseClientSocket(&csocket);
-        return -1;
-    }
-
-    memcpy(buf->data + 2, msg.buf, msg.len);
-
-    buf->data[0] = (uint8) ((msg.len >> 8) & 0xFF);
-    buf->data[1] = ((uint32) (msg.len)) & 0xFF;
 
     SDL_LockMutex(output_buffer_mutex);
     command_buffer_enqueue(buf, &output_queue_start, &output_queue_end);
@@ -267,19 +294,21 @@ static int reader_thread_loop(void *nix)
 			else
 			{
 				readbuf_len += ret;
-				/*            LOG(LOG_DEBUG, "Reader got some data (%d bytes total)\n", readbuf_len); */
+/* LOG(LOG_DEBUG, "Reader got some data (%d bytes total)\n", readbuf_len); */
 			}
 		}
         /* Finished with a command ? */
         if (readbuf_len == cmd_len + header_len && !abort_thread)
         {
-            /*            LOG(LOG_DEBUG, "Reader got a full command\n", readbuf_len); */
             command_buffer *buf;
 
-//			LOG(-1," CMD:%x\n", (*((char *)readbuf))&~0x80);
+            LOG(-1," CMD:%x len:%d\n", (*((char *)readbuf))&~0x80,readbuf_len);
+            LOG(-1," CMD-DATA:%s\n", readbuf+3);
+
 			buf = command_buffer_new(readbuf_len, readbuf);
             if (buf == NULL)
                 goto out;
+            buf->data[readbuf_len] = 0; /* we terminate our buffer for security and incoming raw strings */
 
             SDL_LockMutex(input_buffer_mutex);
             command_buffer_enqueue(buf, &input_queue_start, &input_queue_end);
@@ -466,13 +495,6 @@ Boolean SOCKET_CloseClientSocket(struct ClientSocket *csock)
 
     SOCKET_CloseSocket(csock->fd);
 
-    FreeMemory((void *)&csock->inbuf.buf);
-    FreeMemory((void *)&csock->outbuf.buf);
-    csock->inbuf.buf = csock->outbuf.buf = NULL;
-    csock->inbuf.len = 0;
-    csock->outbuf.len = 0;
-    csock->inbuf.pos = 0;
-    csock->outbuf.pos = 0;
     csock->fd = SOCKET_NO;
 
     abort_thread = TRUE;
@@ -495,7 +517,6 @@ Boolean SOCKET_InitSocket(void)
     int     error;
 
     csocket.fd = SOCKET_NO;
-    csocket.cs_version = 0;
 
     SocketStatusErrorNr = 0;
     error = WSAStartup(wVersionRequested, &w);
@@ -540,17 +561,6 @@ Boolean SOCKET_OpenClientSocket(struct ClientSocket *csock, char *host, int port
 
     if (! SOCKET_OpenSocket(&csock->fd, host, port))
         return FALSE;
-
-    csock->inbuf.buf = (unsigned char *) malloc(MAXSOCKBUF);
-    csock->inbuf.len = 0;
-    csock->inbuf.pos = 0;
-    csock->outbuf.buf = (unsigned char *) malloc(MAXSOCKBUF);
-    csock->outbuf.len = 0;
-    csock->outbuf.pos = 0;
-
-    csock->command_sent = 0;
-    csock->command_received = 0;
-    csock->command_time = 0;
 
     if (setsockopt(csock->fd, IPPROTO_TCP, TCP_NODELAY, (char *) &tmp, sizeof(tmp)))
     {

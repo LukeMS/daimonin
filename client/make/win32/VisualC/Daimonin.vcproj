@@ -484,6 +484,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\include\protocol.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\include\sdlsocket.h"
 				>
 			</File>

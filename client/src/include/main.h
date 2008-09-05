@@ -146,15 +146,6 @@ extern int              bmaptype_table_size;
 
 enum
 {
-    SRV_CLIENT_SKILLS,
-    SRV_CLIENT_SPELLS,
-    SRV_CLIENT_SETTINGS,
-    SRV_CLIENT_ANIMS,
-    SRV_CLIENT_BMAPS,
-    SRV_CLIENT_FILES /* last index */
-};
-enum
-{
     SRV_CLIENT_STATUS_OK,
     SRV_CLIENT_STATUS_UPDATE
 };
@@ -179,6 +170,10 @@ extern _srv_client_files    srv_client_files[SRV_CLIENT_FILES];
 extern  Uint32              sdl_dgreen, sdl_dred, sdl_gray1, sdl_gray2, sdl_gray3, sdl_gray4, sdl_blue1;
 extern int                  mb_clicked;
 
+/* spell list commands for client spell list */
+#define SPLIST_MODE_ADD    0
+#define SPLIST_MODE_REMOVE 1
+#define SPLIST_MODE_UPDATE 2
 
 /* This is for the skin-sysem */
 /* TODO: don't clutter this stuff over all files, instead make a structure for all that stuff */
@@ -445,10 +440,6 @@ typedef enum _game_status
     /* we have a server+port, init and start*/
     GAME_STATUS_CONNECT,
     /* if this is set, we start connecting*/
-    GAME_STATUS_VERSION,
-    /* now the steps: Connect, we send version*/
-    GAME_STATUS_WAITVERSION,
-    /* wait for response... add up in version cmd*/
     GAME_STATUS_SETUP,
     /* we ready to send setup commands*/
     GAME_STATUS_WAITSETUP,
@@ -491,6 +482,7 @@ extern int			ShowLocalServer;		/* show local server in the meta list */
 extern char			GlobalClientVersion[64]; /* the client version */
 extern int          MapStatusX;             /* map x,y len */
 extern int          MapStatusY;
+extern int          SoundStatus;            /* SoundStatus 0=no 1= yes */
 
 extern uint32       LastTick;           /* system time counter in ms since prg start */
 
@@ -504,9 +496,6 @@ extern int          InputFirstKeyPress;
 extern int          map_udate_flag, map_transfer_flag, map_redraw_flag;
 extern uint32       GameTicksSec;       /* ticks since this second frame in ms */
 extern int          metaserver_start, metaserver_sel, metaserver_count;
-
-extern int          GameStatusVersionFlag;
-extern int          GameStatusVersionOKFlag;
 
 extern int          request_file_chain;
 extern int          request_file_flags;

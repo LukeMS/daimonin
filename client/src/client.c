@@ -1,8 +1,7 @@
 /*
     Daimonin SDL client, a client program for the Daimonin MMORPG.
 
-
-  Copyright (C) 2003 Michael Toennies
+    Copyright (C) 2008 Michael Toennies
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,161 +20,172 @@
     The author can be reached via e-mail to info@daimonin.net
 */
 
-/* Client interface main routine.
- * this file sets up a few global variables, connects to the server,
- * tells it what kind of pictures it wants, adds the client and enters
- * the main dispatch loop
- *
- * the main event loop (event_loop()) checks the tcp socket for input and
- * then polls for x events.  This should be fixed since you can just block
- * on both filedescriptors.
- *
- * The DoClient function recieves a message (an ArgList), unpacks it, and
- * in a slow for loop dispatches the command to the right function through
- * the commands table.   ArgLists are essentially like RPC things, only
- * they don't require going through RPCgen, and it's easy to get variable
- * length lists.  They are just lists of longs, strings, characters, and
- * byte arrays that can be converted to a machine independent format
+/* This file deals with higher level functions for sending informations 
+ * and commands to the server. Most low level functions are in socket.c
  */
+
 #include <include.h>
 #include <stdio.h>
 
-Client_Player   cpl;
 ClientSocket    csocket;
 
-typedef void (*CmdProc) (unsigned char*, int);
-struct CmdMapping
-{
-    void (*cmdproc)(unsigned char *, int);
-};
+/* helper array to cast a key num input to a server dir value */
+static int move_dir[] = {0,6,5,4,7,0,3,8,1,2};
 
-struct CmdMapping commands[]  =
-    {
-        /* Don't change this sorting! Its hardcoded in the server. */
-        { CompleteCmd},
-        { (CmdProc) VersionCmd },
-        { (CmdProc) DrawInfoCmd },
-        { (CmdProc) AddMeFail },
-        { Map2Cmd },
-        { (CmdProc) DrawInfoCmd2 },
-        { ItemXCmd },
-        { SoundCmd},
-        { TargetObject },
-        { UpdateItemCmd },
-        { DeleteItem },
-        { StatsCmd },
-        { ImageCmd },
-        { Face1Cmd},
-        { NewAnimCmd},
-        { SkillRdyCmd },
-        { PlayerCmd },
-        { SpelllistCmd },
-        { SkilllistCmd },
-        { GolemCmd },
-        { (CmdProc) AddMeSuccess },
-        { (CmdProc) GoodbyeCmd },
-        { (CmdProc) SetupCmd},
-        { (CmdProc) handle_query},
-        { DataCmd},
-        { (CmdProc) NewCharCmd},
-        { ItemYCmd },
-        { GroupCmd },
-        { GroupInviteCmd },
-        { GroupUpdateCmd },
-        { InterfaceCmd },
-        { BookCmd },
-        { MarkCmd },
+/* helper functions for working with binary parms for the socklist */
+static inline void SockList_AddShort(SockList *const sl, const uint16 data)
+{
+    if(sl->buf)
+    	*((uint16 *)(sl->buf+sl->len)) = adjust_endian_int16(data);
+    else
+        *((uint16 *)(sl->defbuf+sl->len)) = adjust_endian_int16(data);
+	sl->len+=2;
+}
+static inline void SockList_AddInt(SockList *const sl, const uint32 data)
+{
+    if(sl->buf)
+    	*((uint32 *)(sl->buf+sl->len)) = adjust_endian_int32(data);
+    else
+        *((uint32 *)(sl->defbuf+sl->len)) = adjust_endian_int32(data);
+	sl->len+=4;
+}
+static inline void SockList_AddBuffer(SockList *const sl, const char *const buf, const int len)
+{
+    if(sl->buf)
+        memcpy(sl->buf+sl->len,buf,len);
+    else
+        memcpy(sl->defbuf+sl->len,buf,len);
+    sl->len+=len;
+}
+
+
+/* Splits command at the next #,
+* returning a pointer to the occurrence (which is overwritten with \0 first) or
+* NULL if no next multicommand is found or command is chat, etc.
+*/
+static char *BreakMulticommand(const char *command)
+{
+    char *c = NULL;
+    /* Only look for a multicommand if the command is not one of these:
+    */
+    if (!(!strnicmp(command, "/tell", 5) || !strnicmp(command, "/say", 4) || !strnicmp(command, "/reply", 6) || !strnicmp(command, "/gsay", 5) || !strnicmp(command, "/shout", 6) || !strnicmp(command, "/talk", 5)
 #ifdef USE_CHANNELS
-        { ChannelMsgCmd },
+        || (*command == '-') || !strnicmp(command, "/channel", 8)
 #endif
-//        { ModAnimCmd },
-    };
-
-#define NCOMMANDS (sizeof(commands)/sizeof(struct CmdMapping))
-
-static void face_flag_extension(int pnum, char *buf);
-
-void DoClient(ClientSocket *csocket)
-{
-    command_buffer *cmd;
-
-    /* Handle all enqueued commands */
-    while ( (cmd = get_next_input_command()) ) /* function has mutex included */
+        || !strnicmp(command, "/create", 7)))
     {
-//        LOG(LOG_MSG,"Command #%d (LT:%d)(len:%d)\n",cmd->data[0], LastTick, cmd->len);
-        if (!cmd->data[0] || (cmd->data[0]&~0x80) > NCOMMANDS)
-            LOG(LOG_ERROR, "Bad command from server (%d)\n", cmd->data[0]);
-        else
+        if ((c = strchr(command, '#'))) /* multicommand separator '#' */
+            *c = '\0';
+    }
+    return c;
+}
+
+/* send_game_command() will send a higher level game command like /tell, /say or
+ * other "slash" text commants. Usually, this kind of commands are typed in 
+ * console or are bound to macros. 
+ * The underlaying protocol command is CLIENT_CMD_GENERIC, which means
+ * its a command holding another command.
+ * For realtime or system commands, commands with binary params and such,
+ * not a slash command should be used but a new protocol command.
+ * Only that commands hold real binary params and can be pre-processed
+ * by the server protocol functions.
+ */
+void send_game_command(const char *command)
+{
+    SockList    sl;
+    char *token, cmd[HUGE_BUF];
+
+    /* Copy a normalized (leading, trailing, and excess inline whitespace-
+    * stripped) command to cmd:
+    */
+    strcpy(cmd, normalize_string(command));
+
+    /* Now go through cmd, possibly separating multicommands.
+    * Each command (before separation) is pointed to by token:
+    */
+    token = cmd;
+    while (token != NULL && *token)
+    {
+        char *end;
+
+    #ifdef USE_CHANNELS
+        if (*token != '/' && *token != '-') /* if not a command ... its chat  (- is for channel system)*/
+    #else
+        if (*token != '/')
+    #endif
         {
-			int header_len = 3, cmd_tag = cmd->data[0];
-			if( cmd_tag & 0x80)
-			{
-				cmd_tag &= ~0x80;
-				header_len = 5;
-			}
-			commands[cmd_tag - 1].cmdproc(cmd->data+header_len, cmd->len-header_len);
+            char buf[MAX_BUF];
+
+            sprintf(buf, "/say %s", token);
+            strcpy(token, buf);
         }
-        command_buffer_free(cmd);
+
+        end = BreakMulticommand(token);
+        if (!client_command_check(token))
+        {
+            /* Nasty hack. Treat /talk as a special case: lowercase it and
+            * print it to the message window as Topic: foo. -- Smacky 20071210
+            */
+            if (!strnicmp(token, "/talk", 5))
+            {
+                int c;
+                for (c = 0; *(token + c) != '\0'; c++)
+                    *(token + c) = tolower(*(token + c));
+                draw_info_format(COLOR_DGOLD, "Topic: %s", token + 6);
+            }
+
+            /* put the slash command inside the protocol command GENERIC */
+            SockList_INIT(&sl, NULL);
+            SockList_COMMAND(&sl, CLIENT_CMD_GENERIC, SEND_CMD_FLAG_STRING);
+            SockList_AddBuffer(&sl, token+1, strlen(token+1)); /* with +1 we remove the leading '/' */
+            send_socklist_binary(&sl); /* and kick it in send queue */
+        }
+        if (end != NULL)
+            token = end + 1;
+        else
+            token = NULL;
     }
 }
 
-void SockList_Init(SockList *sl)
-{
-    sl->len = 0;
-    sl->buf = NULL;
-}
-
-/*
-void SockList_AddChar(SockList *sl, char c)
-{
-    sl->buf[sl->len++] = c;
-}
+/* help function for receiving faces (pictures)
+* NOTE: This feature must be enabled from the server
 */
-
-/* note: we do "hard" casting with explicit set () to avoid problems
- * under different compilers by the SockList_xxx functions
- */
-
-void SockList_AddShort(SockList *sl, uint16 data)
+static void face_flag_extension(int pnum, char *buf)
 {
-	*((uint16 *)(sl->buf+sl->len)) = adjust_endian_int16(data);
-	sl->len+=2;
+    char   *stemp;
+
+    FaceList[pnum].flags = FACE_FLAG_NO;
+    /* check for the "double"/"up" tag in the picture name */
+    if ((stemp = strstr(buf, ".d")))
+        FaceList[pnum].flags |= FACE_FLAG_DOUBLE;
+    else if ((stemp = strstr(buf, ".u")))
+        FaceList[pnum].flags |= FACE_FLAG_UP;
+
+    /* Now the facing stuff: if some tag was there, lets grap the facing info */
+    if (FaceList[pnum].flags && stemp)
+    {
+        int tc;
+        for (tc = 0; tc < 4; tc++)
+        {
+            if (!*(stemp + tc)) /* has the string a '0' before our anim tags */
+                goto finish_face_cmd_j1;
+        }
+        /* lets set the right flags for the tags */
+        if (((FaceList[pnum].flags & FACE_FLAG_UP) && *(stemp + tc) == '5') || *(stemp + tc) == '1')
+            FaceList[pnum].flags |= FACE_FLAG_D1;
+        else if (*(stemp + tc) == '3')
+            FaceList[pnum].flags |= FACE_FLAG_D3;
+        else if (*(stemp + tc) == '4' || *(stemp + tc) == '8' || *(stemp + tc) == '0')
+            FaceList[pnum].flags |= (FACE_FLAG_D3 | FACE_FLAG_D1);
+    }
+finish_face_cmd_j1: /* error jump from for() */
+    return;
 }
 
-void SockList_AddInt(SockList *sl, uint32 data)
-{
-	*((uint32 *)(sl->buf+sl->len)) = adjust_endian_int32(data);
-	sl->len+=4;
-}
-
-/* Basically does the reverse of SockList_AddInt, but on
- * strings instead.  Same for the GetShort, but for 16 bits.
- */
-int GetInt_String(unsigned char *data)
-{
-	return adjust_endian_int32(*((uint32 *)data));
-}
-
-short GetShort_String(unsigned char *data)
-{
-	return adjust_endian_int16(*((uint16 *)data));
-}
-
-
-/* Takes a string of data, and writes it out to the socket. A very handy
- * shortcut function.
- */
-int cs_write_string(int fd, char *buf, int len)
-{
-    SockList    sl;
-
-    sl.len = len;
-    sl.buf = (unsigned char *) buf;
-    return send_socklist(fd, sl);
-}
 
 void finish_face_cmd(int pnum, uint32 checksum, char *face)
 {
+//    SockList        sl;
     char            buf[2048];
     FILE           *stream;
     struct stat     statbuf;
@@ -222,9 +232,8 @@ void finish_face_cmd(int pnum, uint32 checksum, char *face)
         len = fread(data, 1, len, stream);
         fclose(stream);
         newsum = 0;
-        if (len <= 0) /* something is wrong... now unlink the file and
-                                                                                  * let it reload then possible and needed
-                                                                                  */
+        /* something is wrong... now unlink the file and let it reload then possible and needed */
+        if (len <= 0) 
         {
             unlink(buf);
             checksum = 1; /* now we are 100% different to newsum */
@@ -246,40 +255,15 @@ void finish_face_cmd(int pnum, uint32 checksum, char *face)
     }
     /*LOG(LOG_MSG,"FACE: call server for %s (%d)\n", face, pnum);*/
     face_flag_extension(pnum, buf);
-    sprintf(buf, "askface %d", pnum);
-    cs_write_string(csocket.fd, buf, strlen(buf)); /* face command los*/
-}
 
-static void face_flag_extension(int pnum, char *buf)
-{
-    char   *stemp;
+    /* TODO: fix both face functions in the server - 
+    * this and "fr" in int request_face(int pnum, int mode)
+    SockList_INIT(&sl, NULL);
+    SockList_COMMAND(&sl, CLIENT_CMD_FACE, 0);
+    SockList_AddInt(&sl, pnum);
+    send_socklist_binary(&sl);
+    */
 
-    FaceList[pnum].flags = FACE_FLAG_NO;
-    /* check for the "double"/"up" tag in the picture name */
-    if ((stemp = strstr(buf, ".d")))
-        FaceList[pnum].flags |= FACE_FLAG_DOUBLE;
-    else if ((stemp = strstr(buf, ".u")))
-        FaceList[pnum].flags |= FACE_FLAG_UP;
-
-    /* Now the facing stuff: if some tag was there, lets grap the facing info */
-    if (FaceList[pnum].flags && stemp)
-    {
-        int tc;
-        for (tc = 0; tc < 4; tc++)
-        {
-            if (!*(stemp + tc)) /* has the string a '0' before our anim tags */
-                goto finish_face_cmd_j1;
-        }
-        /* lets set the right flags for the tags */
-        if (((FaceList[pnum].flags & FACE_FLAG_UP) && *(stemp + tc) == '5') || *(stemp + tc) == '1')
-            FaceList[pnum].flags |= FACE_FLAG_D1;
-        else if (*(stemp + tc) == '3')
-            FaceList[pnum].flags |= FACE_FLAG_D3;
-        else if (*(stemp + tc) == '4' || *(stemp + tc) == '8' || *(stemp + tc) == '0')
-            FaceList[pnum].flags |= (FACE_FLAG_D3 | FACE_FLAG_D1);
-    }
-finish_face_cmd_j1: /* error jump from for() */
-    return;
 }
 
 
@@ -336,7 +320,7 @@ int request_face(int pnum, int mode)
             fr_buf[0] = 'f';
             fr_buf[1] = 'r';
             fr_buf[2] = ' ';
-            cs_write_string(csocket.fd, fr_buf, 4 + count * sizeof(uint16));
+          //  cs_write_string(csocket.fd, fr_buf, 4 + count * sizeof(uint16));
             count = 0;
         }
         return 1;
@@ -401,32 +385,173 @@ int request_face(int pnum, int mode)
         finish_face_cmd(num, bmaptype_table[num].crc, bmaptype_table[num].name);
     }
 
-    /*
-    *((uint16 *)(fr_buf+4+count*sizeof(uint16)))=num;
-    *((uint8 *)(fr_buf+3))=(uint8)++count;
-    if(count == REQUEST_FACE_MAX)
-    {
-        fr_buf[0]='f';
-        fr_buf[1]='r';
-        fr_buf[2]=' ';
-        cs_write_string(csocket.fd, fr_buf, 4+count*sizeof(uint16));
-        count = 0;
-    }
-    */
     return 1;
 }
 
-/* removes whitespace from right side */
-char * adjust_string(char *buf)
+/* send the setup command to the server
+ * This is the handshake command after the client connects
+ * and the first data which are send between server & client
+ * NOTE: Because this is the first command, the data part is 
+ * String only. With the response from the server we get 
+ * endian info which enables us to send binary data (without
+ * fixed shifting)
+ */
+void SendSetupCmd(void)
 {
-    int i, len = strlen(buf);
+    char buf[MAX_BUF];
 
-    for (i = len - 1; i >= 0; i--)
-    {
-        if (!isspace(buf[i]))
-            return buf;
+    sprintf(buf,
+    "cs %s sc %s sound %d map2cmd 1 mapsize %dx%d darkness 1 facecache 1 skf %d|%x spf %d|%x bpf %d|%x stf %d|%x amf %d|%x",
+    VERSION_CS, VERSION_SC,
+    SoundStatus, MapStatusX, MapStatusY, srv_client_files[SRV_CLIENT_SKILLS].len,
+    srv_client_files[SRV_CLIENT_SKILLS].crc, srv_client_files[SRV_CLIENT_SPELLS].len,
+    srv_client_files[SRV_CLIENT_SPELLS].crc, srv_client_files[SRV_CLIENT_BMAPS].len,
+    srv_client_files[SRV_CLIENT_BMAPS].crc, srv_client_files[SRV_CLIENT_SETTINGS].len,
+    srv_client_files[SRV_CLIENT_SETTINGS].crc, srv_client_files[SRV_CLIENT_ANIMS].len,
+    srv_client_files[SRV_CLIENT_ANIMS].crc);
 
-        buf[i] = 0;
-    }
-    return buf;
+    send_command_binary(CLIENT_CMD_SETUP, buf, strlen(buf), SEND_CMD_FLAG_STRING);
+}
+
+/* Request a so called "server file" from the server.
+ * Which includes a list of skills the server knows,
+ * spells and such, and how they are described and 
+ * visualized
+ */
+void RequestFile(ClientSocket csock, int index)
+{
+    SockList    sl;
+
+    /* for binary stuff we better use the socklist system */
+    SockList_INIT(&sl, NULL);
+    SockList_COMMAND(&sl, CLIENT_CMD_REQUESTFILE, SEND_CMD_FLAG_FIXED);
+    SockList_AddChar(&sl, index);
+    send_socklist_binary(&sl);
+}
+
+/* TODO: expand to the main login which loads the player char
+ * by sending all login info
+ */
+void SendAddMe(void)
+{
+    send_command_binary(CLIENT_CMD_ADDME, NULL, 0, 0);
+}
+
+/* Sends a reply to the server.  text contains the null terminated
+* string of text to send.  This function basically just packs
+* the stuff up.
+*/
+void send_reply(char *text)
+{
+    SockList    sl;
+
+    SockList_INIT(&sl, NULL);
+    SockList_COMMAND(&sl, CLIENT_CMD_REPLY, SEND_CMD_FLAG_STRING);
+    SockList_AddBuffer(&sl, text, strlen(text));
+    send_socklist_binary(&sl);
+}
+
+void send_new_char(_server_char *nc)
+{
+    char    buf[MAX_BUF];
+
+    sprintf(buf, "%s %d %d %d %d %d %d %d %d", nc->char_arch[nc->gender_selected], nc->stats[0], nc->stats[1],
+        nc->stats[2], nc->stats[3], nc->stats[4], nc->stats[5], nc->stats[6], nc->skill_selected);
+
+    send_command_binary(CLIENT_CMD_NEWCHAR, buf, strlen(buf), SEND_CMD_FLAG_STRING);
+}
+
+void client_send_apply(int tag)
+{
+    SockList    sl;
+
+    SockList_INIT(&sl, NULL);
+    SockList_COMMAND(&sl, CLIENT_CMD_APPLY, SEND_CMD_FLAG_FIXED);
+    SockList_AddInt(&sl, tag);
+    send_socklist_binary(&sl);
+}
+
+/* THE main move command function */
+void send_move_command(int dir, int mode)
+{
+    SockList    sl;
+    // remapped to: "idle", "/sw", "/s", "/se", "/w", "/stay", "/e", "/nw", "/n", "/ne" 
+
+    SockList_INIT(&sl, NULL);
+    SockList_COMMAND(&sl, CLIENT_CMD_MOVE, SEND_CMD_FLAG_FIXED);
+    SockList_AddChar(&sl, move_dir[dir]);
+    SockList_AddChar(&sl, mode);
+    send_socklist_binary(&sl);
+}
+
+void client_send_examine(int tag)
+{
+    SockList    sl;
+
+    SockList_INIT(&sl, NULL);
+    SockList_COMMAND(&sl, CLIENT_CMD_EXAMINE, SEND_CMD_FLAG_FIXED);
+    SockList_AddInt(&sl, tag);
+    send_socklist_binary(&sl);
+}
+
+/* Requests nrof objects of tag get moved to loc. */
+void send_inv_move(int loc, int tag, int nrof)
+{
+    SockList    sl;
+
+    SockList_INIT(&sl, NULL);
+    SockList_COMMAND(&sl, CLIENT_CMD_INVMOVE, SEND_CMD_FLAG_FIXED);
+    SockList_AddInt(&sl, loc);
+    SockList_AddInt(&sl, tag);
+    SockList_AddInt(&sl, nrof);
+    send_socklist_binary(&sl);
+}
+
+void client_send_tell_extended(char *body, char *tail)
+{
+    SockList    sl;
+    char    buf[MAX_BUF];
+
+    sprintf(buf, "%s %s", body, tail);
+
+    SockList_INIT(&sl, NULL);
+    SockList_COMMAND(&sl, CLIENT_CMD_GUITALK, SEND_CMD_FLAG_STRING);
+    SockList_AddBuffer(&sl, buf, strlen(buf));
+    send_socklist_binary(&sl);
+}
+
+void send_lock_command(int mode, int tag)
+{
+    SockList    sl;
+
+    SockList_INIT(&sl, NULL);
+    SockList_COMMAND(&sl, CLIENT_CMD_LOCK, SEND_CMD_FLAG_FIXED);
+    SockList_AddChar(&sl, mode);
+    SockList_AddInt(&sl, tag);
+    send_socklist_binary(&sl);
+}
+
+void send_mark_command(int tag)
+{
+    SockList    sl;
+
+    SockList_INIT(&sl, NULL);
+    SockList_COMMAND(&sl, CLIENT_CMD_MARK, SEND_CMD_FLAG_FIXED);
+    SockList_AddInt(&sl, tag);
+    send_socklist_binary(&sl);
+}
+
+void send_fire_command(int num, int mode, char *tmp_name)
+{
+    SockList    sl;
+
+    SockList_INIT(&sl, NULL);
+    SockList_COMMAND(&sl, CLIENT_CMD_FIRE, 0);
+    SockList_AddInt(&sl, move_dir[num]);
+    SockList_AddInt(&sl, mode);
+    if(tmp_name)
+        SockList_AddBuffer(&sl, tmp_name, strlen(tmp_name));
+    SockList_AddChar(&sl, 0); /* be sure we finish with zero - server will check it */
+    send_socklist_binary(&sl);
+
 }
