@@ -3112,11 +3112,34 @@ void turn_off_light(object *op)
 }
 
 /* apply_player_light() - the new player light. old style torches will be
- * removed from arches but still in game.
- */
+ * removed from arches but still in game. */
+/* Note that op->msg is used for both non-applyable applyable lights (ie, to
+ * respond to apply attempts) and for successfully applied applyable lights,
+ * and is used both for light and extinguish attempts. Therefore, care should
+ * be taken to change the msg if ever no_fix_player is changed (which can only
+ * be done in the map file or via a script anyway) and the on/off status cannot
+ * be mentioned in the (static) msg -- Smacky 20080905 */
 void apply_player_light(object *who, object *op)
 {
     object *tmp;
+
+    /* Lights with no_fix_player 1 cannot be lit/extinguished by applying them
+     * -- to prevent players buggering about with map design and puzzles. */
+    if (QUERY_FLAG(op, FLAG_NO_FIX_PLAYER)) // FLAG_NO_APPLY would be better but there is no arch attribute
+    {
+        if (!(QUERY_FLAG(op, FLAG_NO_PICK)))
+            LOG(llevBug, "BUG:: %s apply_player_light(): Pickable applyable light source flagged as no_apply!\n",
+                         __FILE__);
+
+        if (op->msg)
+            new_draw_info(NDI_UNIQUE, 0, who, op->msg);
+        else if (!op->glow_radius)
+            new_draw_info_format(NDI_UNIQUE, 0, who, "You cannot light the %s.", query_name(op));
+        else
+            new_draw_info_format(NDI_UNIQUE, 0, who, "You cannot extinguish the %s.", query_name(op));
+
+        return;
+    }
 
     if (QUERY_FLAG(op, FLAG_APPLIED))
     {
@@ -3134,7 +3157,11 @@ void apply_player_light(object *who, object *op)
                     NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
             return;
 
-        new_draw_info_format(NDI_UNIQUE, 0, who, "You extinguish the %s.", query_name(op));
+        if (op->msg)
+            new_draw_info(NDI_UNIQUE, 0, who, op->msg);
+        else
+            new_draw_info_format(NDI_UNIQUE, 0, who, "You extinguish the %s.",
+                                 query_name(op));
 
         turn_off_light(op);
 
@@ -3186,13 +3213,19 @@ void apply_player_light(object *who, object *op)
 
             if (op->env && op->env->type == PLAYER)
             {
-                new_draw_info_format(NDI_UNIQUE, 0, who, "You prepare the %s to be your light source.", query_name(op));
+                new_draw_info_format(NDI_UNIQUE, 0, who, "You prepare the %s to be your light source.",
+                                     query_name(op));
                 turn_on_light(op);
                 FIX_PLAYER(who ,"apply light - turn on light");
             }
             else
             {
-                new_draw_info_format(NDI_UNIQUE, 0, who, "You light the %s.", query_name(op));
+                if (op->msg)
+                    new_draw_info(NDI_UNIQUE, 0, who, op->msg);
+                else
+                    new_draw_info_format(NDI_UNIQUE, 0, who, "You light the %s.",
+                                         query_name(op));
+
                 turn_on_light(op);
             }
         }
@@ -3220,7 +3253,12 @@ void apply_player_light(object *who, object *op)
                                     NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
                             return;
 
-                        new_draw_info_format(NDI_UNIQUE, 0, who, "You extinguish the %s.", query_name(tmp));
+                        if (tmp->msg)
+                            new_draw_info(NDI_UNIQUE, 0, who, tmp->msg);
+                        else
+                            new_draw_info_format(NDI_UNIQUE, 0, who, "You extinguish the %s.",
+                                                 query_name(tmp));
+
                         CLEAR_FLAG(tmp, FLAG_APPLIED);
 
                         turn_off_light(tmp);
@@ -3228,7 +3266,12 @@ void apply_player_light(object *who, object *op)
                     }
                 }
 
-                new_draw_info_format(NDI_UNIQUE, 0, who, "You apply the %s as your light source.", query_name(op));
+                if (op->msg)
+                    new_draw_info(NDI_UNIQUE, 0, who, op->msg);
+                else
+                    new_draw_info_format(NDI_UNIQUE, 0, who, "You apply the %s as your light source.",
+                                         query_name(op));
+
                 SET_FLAG(op, FLAG_APPLIED);
                 FIX_PLAYER(who ," apply light - apply light");
                 update_object(who, UP_OBJ_FACE);
@@ -3244,7 +3287,12 @@ void apply_player_light(object *who, object *op)
                             NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
                     return;
 
-                new_draw_info_format(NDI_UNIQUE, 0, who, "You extinguish the %s.", query_name(op));
+                if (op->msg)
+                    new_draw_info(NDI_UNIQUE, 0, who, op->msg);
+                else
+                    new_draw_info_format(NDI_UNIQUE, 0, who, "You extinguish the %s.",
+                                         query_name(op));
+
                 turn_off_light(op);
             }
         }
