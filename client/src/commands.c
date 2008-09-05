@@ -595,11 +595,11 @@ void StatsCmd(char *data, int len)
 
     while (i < len)
     {
-        c = data[i++];
+        c = (uint8) data[i++];
 
         if (c >= CS_STAT_RES_START && c <= CS_STAT_RES_END)
         {
-            cpl.stats.protection[c - CS_STAT_RES_START] = (sint16) *(((signed char*)data) + i++);
+            cpl.stats.protection[c - CS_STAT_RES_START] = (sint16) *((data + i++));
             cpl.stats.protection_change = 1;
             WIDGET_REDRAW(RESIST_ID);
         }
@@ -763,7 +763,7 @@ void StatsCmd(char *data, int len)
                     WIDGET_REDRAW(MAIN_LVL_ID);
                     break;
                 case CS_STAT_LEVEL:
-                    cpl.stats.level = (char) * (data + i++);
+                    cpl.stats.level = (sint8) * (data + i++);
                     if (cpl.stats.level != cpl.stats.exp_level)
                     {
                         cpl.warn_drain = TRUE;
@@ -842,7 +842,7 @@ void StatsCmd(char *data, int len)
                     break;
                 case CS_STAT_RANGE:
                 {
-                    int   rlen    = data[i++];
+                    int   rlen    = (uint8) data[i++];
                     strncpy(cpl.range, (const char *) data + i, rlen);
                     cpl.range[rlen] = '\0';
                     i += rlen;
@@ -851,7 +851,7 @@ void StatsCmd(char *data, int len)
 
                 case CS_STAT_EXT_TITLE:
                 {
-                    int   rlen    = data[i++];
+                    int   rlen    = (uint8) data[i++];
 
                     tmp = strchr((char *)data + i, '\n');
                     *tmp = 0;
@@ -906,13 +906,6 @@ void StatsCmd(char *data, int len)
                 case CS_STAT_TITLE:
                 {
                     LOG(LOG_MSG, "Command get stats: CS_STAT_TITLE is outdated\n");
-                    /*
-                                                  int rlen=data[i++];
-                                                  strncpy(cpl.title2,
-                                                  (const char*)data+i,rlen);
-                                                  cpl.title2[rlen]='\0';
-                                                  i += rlen;
-                                              */
                 }
                 break;
                 default:
