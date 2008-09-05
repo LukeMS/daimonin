@@ -6,36 +6,7 @@ face fire.101
 level 1
 no_save 1
 attack_fire 100
-anim
-facings 9
-fire.101
-fire.102
-fire.103
-fire.101
-fire.102
-fire.103
-fire.101
-fire.102
-fire.103
-fire.101
-fire.102
-fire.103
-fire.101
-fire.102
-fire.103
-fire.101
-fire.102
-fire.103
-fire.101
-fire.102
-fire.103
-fire.101
-fire.102
-fire.103
-fire.101
-fire.102
-fire.103
-mina
+animation firebolt
 anim_speed 1
 terrain_flag 32767
 last_sp 12
