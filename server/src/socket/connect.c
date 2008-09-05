@@ -84,7 +84,6 @@ void InitConnection(NewSocket *ns, char *ip)
     ns->mapy = 17;
     ns->mapx_2 = 8;
     ns->mapy_2 = 8;
-    ns->version = 0;
     ns->setup = 0;
     ns->rf_settings = 0;
     ns->rf_skills = 0;
@@ -104,6 +103,7 @@ void InitConnection(NewSocket *ns, char *ip)
      */
     ns->readbuf.len = 0;
     ns->readbuf.pos = 0;
+    ns->readbuf.toread = 0; /* imnportant, marks readbuf.cmd as invalid! */
     if(!ns->readbuf.buf)
         ns->readbuf.buf = malloc(MAXSOCKBUF_IN);
     ns->readbuf.buf[0] = 0;
@@ -151,8 +151,12 @@ void free_newsocket(NewSocket *ns)
      */
     command_buffer_queue_clear(ns); /* give back the blocks to the mempools */
 	/* flush the write buffers and free them */
-	socket_buffer_enqueue(ns, ns->sockbuf);
-	socket_buffer_queue_clear(ns);
+    if(ns->sockbuf)
+    {
+        ns->sockbuf->len = ns->sockbuf->pos = 1; /* avoid clear buffer warning */
+        socket_buffer_enqueue(ns, ns->sockbuf);
+    }
+    socket_buffer_queue_clear(ns);
     memset(ns, 0, sizeof(ns));
     ns->readbuf.buf = tmp_read;
 }

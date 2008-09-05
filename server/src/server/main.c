@@ -935,7 +935,6 @@ void iterate_main_loop()
     check_active_maps();        /* Removes unused maps after a certain timeout */
     do_specials();              /* Routines called from time to time. */
 
-    /*doeric_server_write();*/
     object_gc();                /* Clean up the object pool */
     sleep_delta();              /* Sleep proper amount of time before next tick but poll the socket */
 }

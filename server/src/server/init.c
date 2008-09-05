@@ -97,11 +97,15 @@ static void init_defaults()
 /* we create some static write buffers we "broadcast" to fixed events to the clients */
 static void init_global_sockbufs(void)
 {
+    /*
 	char buf[1024];
+    */
 
 	/* thats used in socket/loop.c right after we have a connect */
+    /*
 	sprintf(buf, "%d %d %s", VERSION_CS, VERSION_SC, VERSION_INFO);
 	global_sockbuf_version = SOCKBUF_COMPOSE( BINARY_CMD_VERSION, NULL,buf,SOCKBUF_DYNAMIC,SOCKBUF_FLAG_STATIC);
+    */
 }
 
 /*

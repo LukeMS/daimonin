@@ -517,7 +517,7 @@ void command_new_char(char *params, int len, player *pl)
     int                 skillnr[]       = {SK_SLASH_WEAP, SK_MELEE_WEAPON, SK_CLEAVE_WEAP, SK_PIERCE_WEAP};
     archetype          *p_arch          = NULL;
     const char         *name_tmp        = NULL;
-    object             /* *objtmp,*/ *op;
+    object             *op = pl->ob;
     int x = pl->ob->    x, y = pl->ob->y;
     int                 stats[8], i, v;
 #ifdef PLUGINS
@@ -527,27 +527,6 @@ void command_new_char(char *params, int len, player *pl)
     char                name[HUGE_BUF]  = "";
     char                buf[HUGE_BUF]   = "";
     char               *skillitem[] = {"shortsword", "mstar_small", "axe_small", "dagger_large"};
-
-    if (!pl || pl->socket.status == Ns_Dead)
-    {
-        if(pl)
-            pl->socket.status = Ns_Dead;
-        return;
-    }
-
-    op = pl->ob;
-    if (pl->state != ST_CREATE_CHAR)
-    {
-        LOG(llevDebug, "SHACK:: %s: command_new_char send at from time\n", query_name(pl->ob));
-        pl->socket.status = Ns_Dead; /* kill socket */
-        return;
-    }
-
-    if (!params || !len || len > MAX_BUF)
-    {
-        pl->socket.status = Ns_Dead; /* kill socket */
-        return;
-    }
 
     sscanf(params, "%s %d %d %d %d %d %d %d %d\n", name, &stats[0], &stats[1], &stats[2], &stats[3], &stats[4], &stats[5],
             &stats[6],&stats[7]);
@@ -737,28 +716,6 @@ void command_new_char(char *params, int len, player *pl)
     addDefaultChannels(CONTR(op));
 #endif
 }
-
-#ifdef SERVER_SEND_FACES
-void command_face_request(char *params, int len, NewSocket *ns)
-{
-    int i, count;
-
-    if (!params || !len)
-        return;
-    count = *(uint8 *) params;
-
-    for (i = 0; i < count; i++)
-    {
-        if (esrv_send_face(ns, *((short *) (params + 1) + i), 0) == SEND_FACE_OUT_OF_BOUNDS)
-        {
-            LOG(llevInfo, "CLIENT BUG: command_face_request (%d) out of bounds. host: %s. close connection.\n",
-                *((short *) (params + 1) + i), STRING_SAFE(ns->ip_host));
-            ns->status = Ns_Dead; /* killl socket */
-            return;
-        }
-    }
-}
-#endif
 
 void send_spelllist_cmd(object *op, char *spellname, int mode)
 {

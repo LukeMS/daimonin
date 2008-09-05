@@ -2838,10 +2838,10 @@ int find_dir_2(int x, int y)
 
 int absdir(int d)
 {
-    while (d < 1)
-        d += 8;
-    while (d > 8)
-        d -= 8;
+    if (d < 1)
+        d +=((uint32)((d/-8)*8))+8;
+    if (d > 8)
+        d -= ((uint32)((d-1)/8))*8;
     return d;
 }
 

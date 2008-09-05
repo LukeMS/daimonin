@@ -62,6 +62,8 @@ typedef struct ReadList_struct
 {
     int             len;
     int             pos;
+    int             cmd;    /* used when we already have cmd tag and wait for data tail */
+    int             toread; /* length of data tail */
     unsigned char  *buf;
 } ReadList ;
 
@@ -157,8 +159,9 @@ typedef struct _command_struct
         void            *next;
         void            *last;
         struct mempool  *pool;
+        int              cmd;       /* thats our binary command tag */
         int              len;       /* the length of the data inside buf[] */
-        char            *buf;       /* buf[0] is the binary command tag */
+        char            *buf;       /* the data tail when len > 0 */
 } command_struct;
 
 typedef struct NewSocket_struct
@@ -196,7 +199,6 @@ typedef struct NewSocket_struct
         uint32              ext_title_flag  : 1;        /* send ext title to client */
         uint32              darkness        : 1;        /* True if client wants darkness information */
         uint32              image2          : 1;        /* Client wants image2/face2 commands */
-        uint32              version         : 1;
         uint32              write_overflow  : 1;
         uint32              setup           : 1;
         uint32              rf_settings     : 1;
@@ -209,6 +211,18 @@ typedef struct NewSocket_struct
         sint16              look_position_container;  /* start of drawing of look window for a container */
         uint8               faceset;        /* Set the client is using, default 0 */
 } NewSocket;
+
+typedef void (*func_uint8_int_ns) (char *, int, NewSocket *);
+
+typedef struct CmdMapping_struct
+{
+    /* 0= no data tail, -1 = dynamic length, read in 2 bytes, x = fixed tail length */
+    int                 data_len; 
+    func_uint8_int_ns   cmdproc;
+}_CmdMapping;
+
+extern _CmdMapping cs_commands[];
+
 
 typedef struct Socket_Info_struct
 {

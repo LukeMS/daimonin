@@ -1,10 +1,26 @@
+/* commands.c */
+CommArray_s     *find_command_element(char *cmd, CommArray_s *commarray, int commsize);
+void            process_command_queue(NewSocket *ns, player *pl);
+void            cs_cmd_generic(char *buf, int len, NewSocket *ns);
+void            cs_cmd_setup(char *buf, int len, NewSocket *ns);
+void            cs_cmd_addme(char *buf, int len, NewSocket *ns);
+void            cs_cmd_reply(char *buf, int len, NewSocket *ns);
+void            cs_cmd_file(char *buf, int len, NewSocket *ns);
+void            cs_cmd_newchar(char *buf, int len, NewSocket *ns);
+void            cs_cmd_moveobj(char *buf, int len, NewSocket *ns);
+void            cs_cmd_face(char *params, int len, NewSocket *ns);
+void            cs_cmd_move(char *params, int len, NewSocket *ns);
+void            cs_cmd_examine(char *buf, int len, NewSocket *ns);
+void            cs_cmd_apply(char *buf, int len, NewSocket *ns);
+void            cs_cmd_lock(char *data, int len, NewSocket *ns);
+void            cs_cmd_mark(char *data, int len, NewSocket *ns);
+void            cs_cmd_talk(char *data, int len, NewSocket *ns);
+void            cs_cmd_fire(char *params, int len, NewSocket *ns);
 /* image.c */
 #ifdef SERVER_SEND_FACES
 int             is_valid_faceset(int fsn);
 void            free_socket_images(void);
 void            read_client_images(void);
-void            SetFaceMode(char *buf, int len, NewSocket *ns);
-void            SendFaceCmd(char *buff, int len, NewSocket *ns);
 int             esrv_send_face(NewSocket *ns, short face_num, int nocache);
 #endif
 /* info.c */
@@ -37,19 +53,10 @@ void            esrv_update_item(int flags, object *pl, object *op);
 void            esrv_send_item(object *pl, object *op);
 void            esrv_del_item(player *pl, int tag, object *cont);
 object         *esrv_get_ob_from_count(object *pl, tag_t count);
-void            ExamineCmd(char *buf, int len, player *pl);
-void            ApplyCmd(char *buf, int len, player *pl);
-void            LockItem(char *data, int len, player *pl);
-void            MarkItem(char *data, int len, player *pl);
-void            look_at(object *op, int dx, int dy);
-void            LookAt(char *buf, int len, player *pl);
 void            esrv_move_object(object *pl, tag_t to, tag_t tag, long nrof);
 /* loop.c */
 void            remove_ns_dead_player(player *pl);
-int             fill_command_buffer(NewSocket *ns, int len);
-void            HandleClient(NewSocket *ns, player *pl);
 void            doeric_server(int update, struct timeval *timeout);
-void            doeric_server_write(void);
 /* lowlevel.c */
 void			write_socket_buffer(NewSocket *ns);
 int				read_socket_buffer(NewSocket *ns);
@@ -68,22 +75,10 @@ void            initialize_command_buffer256(command_struct *cmdbuf);
 void            initialize_command_buffer1024(command_struct *cmdbuf);
 void            initialize_command_buffer4096(command_struct *cmdbuf);
 /* request.c */
-void            SetUp(char *buf, int len, NewSocket *ns);
-void            AddMeCmd(char *buf, int len, NewSocket *ns);
-void            PlayerCmd(char *buf, int len, player *pl);
-void            NewPlayerCmd(char *buf, int len, player *pl);
-void            ReplyCmd(char *buf, int len, player *pl);
-void            RequestFileCmd(char *buf, int len, NewSocket *ns);
-void            VersionCmd(char *buf, int len, NewSocket *ns);
-void            SetSound(char *buf, int len, NewSocket *ns);
-void            MoveCmd(char *buf, int len, player *pl);
 void            send_query(NewSocket *ns, uint8 flags, char *text);
 void            esrv_update_skills(player *pl);
 void            esrv_update_stats(player *pl);
 void            esrv_new_player(player *pl, uint32 weight);
-void            esrv_send_animation(NewSocket *ns, short anim_num);
-void            draw_client_map(object *pl);
-void            draw_client_map2(object *pl);
 /* startup.c */
 void            init_srv_files(void);
 /* sounds.c */

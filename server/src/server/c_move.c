@@ -25,63 +25,6 @@
 
 #include <global.h>
 
-static int move_internal(object *op, char *params, int dir)
-{
-    if (params)
-    {
-		if (params[0] == 'r' && !CONTR(op)->run_on)
-            CONTR(op)->run_on = 1;
-    }
-    move_player(op, dir, TRUE);
-    return 0;
-}
-
-int command_east(object *op, char *params)
-{
-    return move_internal(op, params, 3);
-}
-
-int command_north(object *op, char *params)
-{
-    return move_internal(op, params, 1);
-}
-
-int command_northeast(object *op, char *params)
-{
-    return move_internal(op, params, 2);
-}
-
-int command_northwest(object *op, char *params)
-{
-    return move_internal(op, params, 8);
-}
-
-int command_south(object *op, char *params)
-{
-    return move_internal(op, params, 5);
-}
-
-int command_southeast(object *op, char *params)
-{
-    return move_internal(op, params, 4);
-}
-
-int command_southwest(object *op, char *params)
-{
-    return move_internal(op, params, 6);
-}
-
-int command_west(object *op, char *params)
-{
-    return move_internal(op, params, 7);
-}
-
-int command_stay(object *op, char *params)
-{
-    fire(op, 0);
-    return 0;
-}
-
 static int push_internal(object *op, char *params, int dir)
 {
     push_roll_object(op, dir, TRUE);
