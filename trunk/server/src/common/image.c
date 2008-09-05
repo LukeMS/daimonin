@@ -269,56 +269,6 @@ void read_client_images()
 }
 
 /*
-* Client tells us what type of faces it wants.  Also sets
-* the caching attribute.
-*
-*/
-
-void SetFaceMode(char *buf, int len, NewSocket *ns)
-{
-	char                    tmp[256];
-
-	int mask = (atoi(buf)  &CF_FACE_CACHE), mode = (atoi(buf) & ~CF_FACE_CACHE);
-
-	if (mode == CF_FACE_NONE)
-	{
-		ns->facecache = 1;
-	}
-	else if (mode != CF_FACE_PNG)
-	{
-		sprintf(tmp, "%d %s", NDI_RED, "Warning - send unsupported face mode.  Will use Png");
-		Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, tmp, strlen(tmp));
-#ifdef ESRV_DEBUG
-		LOG(llevDebug, "SetFaceMode: Invalid mode from client: %d\n", mode);
-#endif
-	}
-	if (mask)
-	{
-		ns->facecache = 1;
-	}
-}
-
-/* client has requested pixmap that it somehow missed getting
-* This will be called often if the client is
-* caching images.
-*/
-
-void SendFaceCmd(char *buff, int len, NewSocket *ns)
-{
-	long    tmpnum;
-	short   facenum;
-
-	if (!buff || !len)
-		return;
-
-	tmpnum  = atoi(buff);
-	facenum = (short)(tmpnum & 0xffff);
-
-	if (facenum != 0)
-		esrv_send_face(ns, facenum, 1);
-}
-
-/*
 * esrv_send_face sends a face to a client if they are in pixmap mode
 * nothing gets sent in bitmap mode.
 * If nocache is true (nonzero), ignore the cache setting from the client -

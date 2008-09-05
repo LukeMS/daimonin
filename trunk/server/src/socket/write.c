@@ -46,7 +46,13 @@ char *socket_buffer_request(NewSocket *ns, int data_len)
 	else if(tmp->bufsize < data_len + header_len)
 	{
 		/* we must request a new buffer - lets throw the old one in our send queue */
-		socket_buffer_enqueue(ns, tmp);
+        if(tmp->len)/* enqueue if there is anything in the buffer */
+    		socket_buffer_enqueue(ns, tmp);
+        else if(!tmp->instance && !(tmp->flags & SOCKBUF_FLAG_STATIC)) /* when not, release it! */
+            return_poolchunk(tmp, tmp->pool);
+        else /* this should not be happen - tell the devs */
+            LOG(llevBug,"BUG: Blocked working socket_buffer not released in socket_buffer_request()\n");
+
 		ns->sockbuf = socket_buffer_get(data_len + header_len);
 	}
 	tmp = ns->sockbuf;
@@ -334,7 +340,10 @@ void socket_buffer_enqueue(NewSocket *ns, sockbuf_struct *sockbufptr)
 		ns->sockbuf_len = sockbufptr->len;
 	}
 
-	/* ensure to reset the "working buffer" pointers */
+    if(sockbufptr->len == 0) /* sanity check. will do no harm but should not happen */
+        LOG(llevDebug, "BUG: socket_buffer_enqueue() found buffer without data!\n"); 
+
+    /* ensure to reset the "working buffer" pointers */
 	sockbufptr->ns = NULL;
 	ns->sockbuf = NULL;
 

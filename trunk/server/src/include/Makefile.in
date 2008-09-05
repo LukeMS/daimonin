@@ -12,7 +12,7 @@ autoconf.h.in  god.h          newserver.h    skillist.h     xdir.h \
 book.h         includes.h     object.h       skills.h	    sockproto.h \
 plugin.h       plugproto.h    timers.h       pathfinder.h   behaviourdecl.h \
 monster.h      mempool.h      aiconfig.h     links.h        aggro.h \
-gmaster.h      quest.h        debug.h
+gmaster.h      quest.h        debug.h        protocol.h
 
 all::
 

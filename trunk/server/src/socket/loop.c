@@ -51,121 +51,333 @@ char            _idle_warn_text[]    = "4 8 minutes idle warning!\nServer will d
 char            _idle_warn_text2[]    = "3 Max idle time reached! Server is closing connection.";
 static fd_set   tmp_read, tmp_exceptions, tmp_write;
 
-/*****************************************************************************
- * Start of command dispatch area.
- * The commands here are protocol commands.
- ****************************************************************************/
-
-
-/* Either keep this near the start or end of the file so it is
- * at least reasonablye easy to find.
- * There are really 2 commands - those which are sent/received
- * before player joins, and those happen after the player has joined.
- * As such, we have function types that might be called, so
- * we end up having 2 tables.
+/* NOTE: i used for the parms of this static inline function different names,
+ * even they point to the same variables. I did that because i experienced
+ * in debugging mode problems. Seems VC had problems to see where which 
+ * variable name fits.
  */
-typedef void (*func_uint8_int_ns) (char *, int, NewSocket *);
-typedef void (*func_uint8_int_pl)(char *, int, player *);
 
-typedef struct NsCmdMapping_struct
+/* copy a command data tail out of our round robin buffer */
+static inline void copy_cmd_data(ReadList *b, char *rbuf, int len)
+//static void copy_client_command(ReadList *b, char *rbuf, int len)
 {
-    char               *cmdname;
-    func_uint8_int_ns   cmdproc;
-}NsCmdMapping;
+    /* lets grap the data tail from the round robin */
+    if(b->pos + len <= MAXSOCKBUF_IN)
+    {
+        memcpy(rbuf, b->buf + b->pos, len);
+        b->pos += len;
+    }
+    else /* the command is splitted? */
+    {
+        int tmp_read, read_part;
 
-typedef struct PlCmdMapping_struct
-{
-    char               *cmdname;
-    func_uint8_int_pl   cmdproc;
-}PlCmdMapping;
+        read_part = (b->pos + len) - MAXSOCKBUF_IN;
+        tmp_read = len - read_part;
+        memcpy(rbuf, b->buf + b->pos, tmp_read);
+        memcpy(rbuf + tmp_read, b->buf, read_part);
+        b->pos = read_part;
+    }
 
+    rbuf[len] = 0; /* it ensures we are null terminated. nice */
 
-/*
- * CmdMapping is the dispatch table for the server, used in HandleClient,
- * which gets called when the client has input.  All commands called here
- * use the same parameter form (char* data, int len, int clientnum.
- * We do implicit casts, because the data that is being passed is
- * unsigned (pretty much needs to be for binary data), however, most
- * of these treat it only as strings, so it makes things easier
- * to cast it here instead of a bunch of times in the function itself.
+    /* finally adjust the removed data tail length from our round robin */
+    if(b->pos == MAXSOCKBUF_IN)
+        b->pos = 0;
+    b->len -= len;
+
+}
+
+/* for pre processing we need a valid data tail
+ * if its broken in 2 parts in the round robin buffer, we must 
+ * first copy it in a temporary flat buffer.
+ * NOTE: this is not thread safe atm because the static data_buffer,
+ * to make it thread safe move it as non statical to pre_process_command()
+ * NOTE 2: we can't ensure the data-tail is zero marked at the end for pre_process,
+ * our string functions have to take care about it!
  */
-PlCmdMapping        plcommands[]    =
+static char *pre_copy_cmd_data(ReadList *readb)
 {
-    { "ex",             ExamineCmd },
-    { "ap",             ApplyCmd },
-    { "mv",             MoveCmd },
-    { "reply",          ReplyCmd},
-    { "cm",             PlayerCmd},
-    { "ncom",           NewPlayerCmd},
-    { "lt",             LookAt},
-    { "lock",           LockItem},
-    { "mark",           MarkItem},
-    { "tx",             command_talk_ex},
-    { "/fire",          command_fire},
-    { "nc",             command_new_char},
-    { NULL, NULL}   /* terminator */
-};
+    static char data_buffer[MAX_DATA_TAIL_LENGTH+1];
 
-NsCmdMapping        nscommands[]    =
+    /* can we grap the tail right out of the round robin? */
+    if(readb->pos + readb->toread <= MAXSOCKBUF_IN) /* yes, its one block */
+    {
+        readb->pos += readb->toread; /* for our socket functions we have now copied and removed the tail */
+        if(readb->pos == MAXSOCKBUF_IN)
+            readb->pos = 0;
+        readb->len -= readb->toread;
+        return readb->buf + (readb->pos - readb->toread);
+    }
+
+    /* its in 2 parts. copy_client_command() will copy, adjust readb->pos and zero mark the buffer too */
+    copy_cmd_data(readb, data_buffer, readb->len);
+    return data_buffer;
+}
+
+/* We have a handfull commands we only allow in a right order 
+* and/or only at ONE time. Lets check we have that and our
+* client does not try to cheat us
+*/
+//static inline int pre_process_command(NewSocket *ns)
+static int pre_process_command(NewSocket *nsock) // use this for debugging
 {
-    { "addme",          AddMeCmd },
-    { "setsound",       SetSound},
-    { "setup",          SetUp},
-    { "version",        VersionCmd },
-    { "rf",             RequestFileCmd },
-#ifdef SERVER_SEND_FACES
-	{ "setfacemode",    SetFaceMode},
-	{ "askface",        SendFaceCmd},   /* Added: phil */
-    { "fr",             command_face_request},
-#endif
-    { NULL, NULL}   /* terminator */
-};
+    ReadList *buf = &nsock->readbuf;
+    int cmd = buf->cmd;
 
+    /* TODO: disabled and unused commands */
+    if(cmd == CLIENT_CMD_PING)
+    {
+        LOG(llevDebug,"BOGUS CLIENT DATA: Invalid command from socket %d: %d\n", nsock->fd, cmd);
+        nsock->status = Ns_Dead;
+        return TRUE;
+    }
+
+    /* Login: the simplest reason to pre-process a command */
+    else if(cmd <= CLIENT_CMD_ADDME)
+    {
+        if(nsock->status != Ns_Add) /* only allowed at this stage! */
+        {
+            LOG(llevDebug,"BOGUS CLIENT DATA: Invalid setup from socket %d at status %d: %d\n", nsock->fd, nsock->status, cmd);
+            nsock->status = Ns_Dead;
+        }
+        else
+        {
+            /* Here we have all the PRE login procedure functions 
+             * They will take care about the right order of calling
+             * itself, so we just fire them up here
+             */
+            if(cmd == CLIENT_CMD_SETUP)
+                cs_cmd_setup(pre_copy_cmd_data(buf), buf->toread, nsock);
+            else if(cmd == CLIENT_CMD_REQUESTFILE)
+                cs_cmd_file(pre_copy_cmd_data(buf), buf->toread, nsock);
+            else if(cmd == CLIENT_CMD_ADDME)
+                cs_cmd_addme(NULL, buf->toread, nsock);
+        }
+
+        return TRUE;
+    }
+    else if(cmd <= CLIENT_CMD_NEWCHAR)
+    {
+        if(nsock->status != Ns_Login) /* only allowed at this stage! */
+        {
+            LOG(llevDebug,"BOGUS CLIENT DATA: Invalid Login from socket %d at status %d: %d\n", nsock->fd, nsock->status, cmd);
+            nsock->status = Ns_Dead;
+        }
+        else
+        {
+            /* reply manages name/password login, newchar the creation of a now one
+             * TODO: kick away this bad implementation and merge this whole step with addme.
+             */
+            if(cmd == CLIENT_CMD_REPLY)
+                cs_cmd_reply(pre_copy_cmd_data(buf), buf->toread, nsock);
+            else if(cmd == CLIENT_CMD_NEWCHAR)
+                cs_cmd_newchar(pre_copy_cmd_data(buf), buf->toread, nsock);
+        }
+        return TRUE;
+    }
+    else if(cmd <= CLIENT_CMD_MOVE) /* move changes will invoke command stack manipulations */
+    {
+  //      command_move(pre_copy_cmd_data(buf), buf->toread, nsock);
+    //    return TRUE;
+        /*
+        if(flag)
+        {
+        // TEST: we test here our binary commands.
+        if(cmdptr->buf[0] == CLIENT_CMD_STOP)
+        {
+        command_struct *cmdold=NULL, *cmdtmp = ns->cmd_start;
+        int i;
+
+        while (cmdtmp)
+        {
+        // lets check its a non-system command.
+        // With binary commands, this will ALOT easier.
+
+        for (i = 0; nscommands[i].cmdname != NULL; i++)
+        {
+        if ((int) strlen(nscommands[i].cmdname) <= ns->cmd_start->len &&
+        !strncmp(ns->cmd_start->buf, nscommands[i].cmdname, strlen(nscommands[i].cmdname)))
+        {
+        i = -1;
+        break;
+        }
+        }
+
+        if(i == -1) // its a system command 
+        {
+        cmdold = cmdtmp;
+        cmdtmp = cmdtmp->next;
+
+        }
+        else // a command we must skip!
+        {
+        command_struct *cmdnext=cmdtmp->next;
+
+        if(cmdold)
+        cmdold->next = cmdnext;
+
+        if(ns->cmd_start == cmdtmp)
+        ns->cmd_start = cmdnext;
+
+        if(ns->cmd_end == cmdtmp)
+        ns->cmd_end = cmdnext;
+
+        return_poolchunk(cmdtmp, cmdtmp->pool);
+        cmdtmp = cmdnext;
+        }
+
+        };
+        }
+        else // something illegal from the client. Kill it!
+        {
+        LOG(llevInfo,"HACKBUG: Wrong binary client command: %d from %s\n",
+        cmdptr->buf[0], STRING_SAFE(ns->ip_host));
+        return_poolchunk(cmdptr, cmdptr->pool);
+        ns->status = Ns_Dead;
+        return TRUE;
+        }
+
+        return_poolchunk(cmdptr, cmdptr->pool);
+        continue;
+        }
+        */
+    }
+
+    return FALSE; /* nothing to do, ignore us */
+}
 
 //static inline int socket_prepare_commands(NewSocket *ns)
 static int socket_prepare_commands(NewSocket *ns) // use this for debugging
 {
-    int toread, flag;
+    int toread;
+    command_struct *cmdptr;
     ReadList *rb = &ns->readbuf;
-    command_struct *cmdptr = NULL;
 
-    while(rb->len >= 2)/* there is something in our in buffer amd its at last a valid length value */
+    while(rb->len) /* there is something in our in buffer - at last we got a command tag */
     {
-        flag = FALSE;
-        if(rb->pos+1 >= MAXSOCKBUF_IN) /* our command length is splitted! */
-            toread = (rb->buf[MAXSOCKBUF_IN-1] << 8) + rb->buf[0];
-        else
-            toread = (rb->buf[rb->pos] << 8) + rb->buf[rb->pos+1];
-
-        /* don't have the time for a 100% binary client->server interface.
-         * This flag will tell us its a binary command
-         */
-        if(toread&0x8000)
+        /* sanity check - skip all data from as invalid marked sockets */
+        if(ns->status >= Ns_Zombie)
         {
-            toread&=~0x8000;
-            flag = TRUE;
-        }
-
-        /* lets check our "toread" value is senseful! */
-        if(toread <= 0 || toread > MAXSOCKBUF_IN)
-        {
-            /* bogus command! kill client NOW */
-            ns->status = Ns_Dead;
+            rb->len = rb->pos = 0;
             return TRUE;
         }
 
-        if (toread > rb->len-2) /* remember - perhaps the command is incomplete! */
-            return FALSE;
+        if(rb->toread) /* we have already a cmd in the readbuf and wait for the data tail? */
+            toread = rb->toread;
+        else /* we have first to find a legal cmd */
+        {
+            // sanity check for a legal command
+            if( (rb->cmd = rb->buf[rb->pos]) < 0 || rb->cmd >= CLIENT_CMD_MAX_NROF)
+            {
+                LOG(llevDebug,"BOGUS CLIENT DATA: Invalid command from socket %d: %d\n", ns->fd, rb->cmd);
+                rb->len = rb->pos = 0;
+                ns->status = Ns_Dead;
+                return TRUE;
+            }
+            LOG(llevDebug,"Found Command: %d\n", rb->cmd);
 
-        /* we have a valid, full command - grap & copy it from the read buffer to command struct */
-        rb->pos +=2;
-        if(rb->pos >= MAXSOCKBUF_IN)
-            rb->pos -= MAXSOCKBUF_IN;
+            /* there is our command - now lets see we have a data part or not */
+            if(cs_commands[rb->cmd].data_len) /* != 0 means there is a data tail */
+            {
+                if(cs_commands[rb->cmd].data_len > 0) /* >0 means we have a fixed tail length we expect */
+                {
+                    /* force a fixed data tail length - if the client is sending something wrong,
+                     * our command functions will find it out. Never trust a client, if we got cheated
+                     * here the client can also cheat the length values in a dynamic command
+                     */
+                    toread = cs_commands[rb->cmd].data_len; 
+                }
+                else
+                {
+                    /* 2 bytes after the command tells us about the data length - check they are there */
+                    if(rb->len < 3) /* cmd + 2 bytes length */
+                        return FALSE; /* we have to wait */
 
-        /* lets get a command chunk which is big enough - this is still for testing,
+                    /* our 2 length bytes can appear in 3 states in our round robin buffer */
+                    if(rb->pos+1 >= MAXSOCKBUF_IN) /* both bytes are beyond the border */
+                        toread = (rb->buf[0] << 8) + rb->buf[1];
+                    else if(rb->pos+2 >= MAXSOCKBUF_IN) /* the 2nd bytes is at buf[0] */
+                        toread = (rb->buf[rb->pos+1] << 8) + rb->buf[0];
+                    else
+                        toread = (rb->buf[rb->pos+1] << 8) + rb->buf[rb->pos+2];
+
+                    /* adjust buffer position - 2 bytes for toread length */
+                    rb->pos +=2;
+                    if(rb->pos >= MAXSOCKBUF_IN)
+                        rb->pos -= MAXSOCKBUF_IN;
+                    rb->len -= 2;
+                }
+
+                /* lets check our "toread" value is senseful! */
+                if(toread <= 0 || toread > MAXSOCKBUF_IN)
+                {
+                    /* bogus command! kill client NOW */
+                    LOG(llevDebug,"BOGUS CLIENT DATA: Invalid command (%d)length from socket %d: %d\n", rb->cmd, ns->fd, toread);
+                    rb->len = rb->pos = 0;
+                    ns->status = Ns_Dead;
+                    return TRUE;
+                }
+
+                /* Ok... now we have a valid command with a valid length
+                * NOW there are 2 options:
+                * 1.) we already have the whole data block in our buffer
+                * 2.) or not
+                * in the 2nd case we do a nice trick. 
+                * we store the cmd and the already processed length in the readbuffer struct
+                * so we only check the next time for the missing length.
+                */
+                rb->toread = toread;
+            }
+            else /* single command - we don't deal with data tails or toread */
+            {
+                rb->toread = toread = 0; /* sanity settings - there is nothing to do in terms data */
+            }
+
+            /* data or not - at last we have found a valid command - adjust the readbuffer */
+            if(++rb->pos >= MAXSOCKBUF_IN)
+                rb->pos -= MAXSOCKBUF_IN;
+            rb->len--;
+        }
+
+        /* HERE and ONLY HERE we check the right length */
+        if (toread > rb->len) /* for single command toread is 0 and always valid */
+            return FALSE; /* we have to wait */
+
+        /* we have a full command!
+         * Now we process the command right out of the buffer in real time.
+         * if there is nothing we can do right now, we will go on and store the
+         * command in our readbuffer system
+         */
+        if(pre_process_command(ns) )
+        {
+            if (ns->addme)
+            {
+                /* this socket was copied to a player struct after ADDME
+                * ns-> is now a invalid mirror - diasble it and give it
+                * back to the socket listener
+                */
+                ns->addme = 0;
+                ns->readbuf.buf = NULL;
+                ns->readbuf.len = ns->readbuf.toread = 0; /* sanity settings */
+                ns->login_count = ROUND_TAG + pticks_socket_idle; // reset idle counter
+                socket_info.nconns--;
+                ns->status = Ns_Avail;
+                return TRUE; /* leave this instance, the copied socket in the player will go */
+            }
+            rb->toread = 0; /* sanity setting */
+            continue; /* ok, command is processed... try to fetch the next one */
+        }
+
+        rb->toread = 0; /* turn off the cmd cache marker - we must do it after pre_process_command()! */
+
+        /* We have a command, lets store it in the regular command queue
+         * TODO NOTE: we *can* do here alot more as storing.
+         * for example can we implement a "weight system", sorting the commands in a "important"
+         * list and other in "do it when time".
+         * But for know lets get a command chunk which is big enough - this is still for testing,
          * i am sure we don't need so much different buffers.
          */
-        if(toread < 16)
+        if(toread < 16) /* for single commands we still need a queue - so lets use the 16 byte ones */
         {
             cmdptr = get_poolchunk(pool_cmd_buf16);
             cmdptr->pool = pool_cmd_buf16;
@@ -201,280 +413,24 @@ static int socket_prepare_commands(NewSocket *ns) // use this for debugging
             cmdptr->pool = pool_cmd_buf4096;
         }
 
+        /* we store the command and the toread length */
+        cmdptr->cmd = rb->cmd;
         cmdptr->len = toread;
-		/*LOG(-1,"we got something in the buffer...:: %d\n",cmdptr->len);*/
 
-        if(rb->pos+toread <= MAXSOCKBUF_IN)
-        {
-            memcpy(cmdptr->buf, rb->buf+rb->pos, toread);
-            rb->pos += toread;
-        }
-        else /* the command is splitted? */
-        {
-            int tmp_read, read_part;
+        if(toread) /* not a single command? */
+            copy_cmd_data(rb, cmdptr->buf, toread);
 
-            read_part = (rb->pos + toread) - MAXSOCKBUF_IN;
-            tmp_read = toread - read_part;
-            memcpy(cmdptr->buf, rb->buf+rb->pos, tmp_read);
-            memcpy(cmdptr->buf+tmp_read, rb->buf, read_part);
-            rb->pos = read_part;
-        }
-
-        /*LOG(-1,"READCMD(%d)(%d)(%d)(%d): >%s<\n", cmdptr->len, flag, toread, cmdptr->buf[0],cmdptr->buf);*/
-        cmdptr->buf[toread] = 0; /* it ensures we are null terminated. nice */
-
-        if(rb->pos == MAXSOCKBUF_IN)
-            rb->pos = 0;
-        rb->len -= (toread+2);
-
-        /* lets pre-process "instant" commands.
-         * in theorie we can grap them direct out of the readbuffer if
-         * they are not splitted... but this is alot cleaner code.
-         */
-        if(flag)
-        {
-            /* TEST: we test here our binary commands. */
-            if(cmdptr->buf[0] == CLIENT_CMD_STOP)
-            {
-                command_struct *cmdold=NULL, *cmdtmp = ns->cmd_start;
-                int i;
-
-                while (cmdtmp)
-                {
-                    /* lets check its a non-system command.
-                     * With binary commands, this will ALOT easier.
-                     */
-                    for (i = 0; nscommands[i].cmdname != NULL; i++)
-                    {
-                        if ((int) strlen(nscommands[i].cmdname) <= ns->cmd_start->len &&
-                            !strncmp(ns->cmd_start->buf, nscommands[i].cmdname, strlen(nscommands[i].cmdname)))
-                        {
-                            i = -1;
-                            break;
-                        }
-                    }
-
-                    if(i == -1) /* its a system command */
-                    {
-                        cmdold = cmdtmp;
-                        cmdtmp = cmdtmp->next;
-
-                    }
-                    else /* a command we must skip! */
-                    {
-                        command_struct *cmdnext=cmdtmp->next;
-
-                        if(cmdold)
-                            cmdold->next = cmdnext;
-
-                        if(ns->cmd_start == cmdtmp)
-                            ns->cmd_start = cmdnext;
-
-                        if(ns->cmd_end == cmdtmp)
-                            ns->cmd_end = cmdnext;
-
-                        return_poolchunk(cmdtmp, cmdtmp->pool);
-                        cmdtmp = cmdnext;
-                    }
-
-                };
-            }
-            else /* something illegal from the client. Kill it! */
-            {
-                LOG(llevInfo,"HACKBUG: Wrong binary client command: %d from %s\n",
-                    cmdptr->buf[0], STRING_SAFE(ns->ip_host));
-                return_poolchunk(cmdptr, cmdptr->pool);
-                ns->status = Ns_Dead;
-                return TRUE;
-            }
-
-            return_poolchunk(cmdptr, cmdptr->pool);
-            continue;
-        }
-
-		command_buffer_enqueue(ns, cmdptr);
+        /* and kick the command in the queue... we are done! next! */
+        command_buffer_enqueue(ns, cmdptr);
     };
 
     return FALSE;
 }
 
-/* We have now a buffer we read in from the socket.
- * In that buffer are 0-x commands (and/or perhaps *one* last, incomplete one).
- * We read now in fifo way the commands from that buffer.
- * If its a system command, we just fire it directly.
- * If its a player command, we put it in the command queue.
+
+/* the socket is marked as "dead" - means we drop the connection and
+ * auto-remove/logout the player
  */
-int fill_command_buffer(NewSocket *ns, int len)
-{
-    char * data;
-    int i, data_len;
-    int found_command = 1;
-
-    if(socket_prepare_commands(ns))
-        return FALSE;
-
-    if(ns->status >= Ns_Login)
-        return TRUE;
-
-    while (ns->cmd_start && found_command)
-    {
-		/* check its a system command.
-			* If so, process it. If not, store it.
-            */
-            found_command = 0;
-            for (i = 0; nscommands[i].cmdname != NULL; i++)
-            {
-                int cmdlen = (int)strlen(nscommands[i].cmdname); /* TODO: this can be precomputed to save a few us */
-                if (cmdlen <= ns->cmd_start->len &&
-                            !strncmp(ns->cmd_start->buf, nscommands[i].cmdname, cmdlen))
-                {
-                    /* pre process the command */
-
-                    data = strchr((char *) ns->cmd_start->buf, ' ');
-                    if (data)
-                    {
-                        *data = '\0';
-                        data++;
-                        data_len = ns->cmd_start->len - (int)(data - ns->cmd_start->buf);
-                    }
-                    else
-                        data_len = 0;
-                    nscommands[i].cmdproc(data, data_len, ns); /* and process cmd */
-
-                    /* remove command & buffer */
-                    command_buffer_clear(ns);
-
-                    if (ns->addme) /* we have successful added this connect! */
-                    {
-                        /* NOTE: this socket is now copied to a player struct - disable it now */
-                        ns->addme = 0;
-                        ns->readbuf.buf = NULL;
-                        ns->login_count = ROUND_TAG + pticks_socket_idle; /* reset idle counter */
-                        socket_info.nconns--;
-                        ns->status = Ns_Avail;
-                        return TRUE;
-                    }
-
-                    if (ns->status == Ns_Dead)
-                        return FALSE;
-
-                    found_command = 1;
-                    break;
-                }
-            }
-    };
-
-    if(! found_command)
-    {
-        LOG(llevDebug, "HACKBUG: Bad command from client (%s)\n", STRING_SAFE(ns->cmd_start->buf));
-        ns->status = Ns_Dead;
-        return FALSE;
-    }
-
-    return TRUE;
-}
-
-/* HandleClient is actually not named really well - we only get here once
- * there is input, so we don't do exception or other stuff here.
- * sock is the output socket information.  pl is the player associated
- * with this socket, null if no player (one of the init_sockets for just
- * starting a connection)
- */
-void HandleClient(NewSocket *ns, player *pl)
-{
-    int len = 0, i, cmd_count = 0;
-    char * data;
-
-    /* Loop through this - maybe we have several complete packets here. */
-    while (ns->cmd_start)
-    {
-		/*LOG(-1,"HandleClient: cmdptr:%x\n", ns->cmd_start);*/
-        /* If it is a player, and they don't have any speed left, we
-         * return, and will read in the data when they do have time.
-         */
-        if ( ns->status < Ns_Avail || ns->status >= Ns_Zombie ||
-                        (pl && pl->state == ST_PLAYING && (!pl->ob || pl->ob->speed_left < 0.0f)))
-            return;
-
-		/*
-        if (ns->outputxbuffer.len >= (int) (MAXXSOCKBUF * 0.85))
-        {
-            if (!ns->write_overflow)
-            {
-                ns->write_overflow = 1;
-                LOG(llevDebug, "OVERFLOW: socket write overflow protection on!  (%s) (%d)\n", STRING_SAFE(ns->ip_host),
-                    ns->outputxbuffer.len);
-            }
-            return;
-        }
-        else if (ns->write_overflow && (ns->outputxbuffer.len <= (int) (MAXXSOCKBUF * 0.35)))
-        {
-            ns->write_overflow = 0;
-            LOG(llevDebug, "OVERFLOW: socket write overflow protection off! host (%s) (%d)\n", STRING_SAFE(ns->ip_host),
-                ns->outputxbuffer.len);
-        }
-		*/
-
-        /* reset idle counter */
-        if (pl && pl->state == ST_PLAYING)
-        {
-            ns->login_count = ROUND_TAG + pticks_player_idle1;
-            ns->idle_flag = 0;
-        }
-
-        /* preprocess command */
-        data = strchr((char *) ns->cmd_start->buf, ' ');
-        if (data)
-        {
-            *data = '\0';
-            data++;
-            len = ns->cmd_start->len - (int)(data - ns->cmd_start->buf);
-        }
-        else
-            len = 0;
-
-
-        for (i = 0; nscommands[i].cmdname != NULL; i++)
-        {
-            if (strcmp(ns->cmd_start->buf, nscommands[i].cmdname) == 0)
-            {
-                nscommands[i].cmdproc(data, len, ns);
-                goto next_command;
-            }
-        }
-        /* Only valid players can use these commands */
-        if (pl)
-        {
-            for (i = 0; plcommands[i].cmdname != NULL; i++)
-            {
-                if (strcmp(ns->cmd_start->buf, plcommands[i].cmdname) == 0)
-                {
-                    plcommands[i].cmdproc(data, len, pl);
-                    goto next_command;
-                }
-            }
-        }
-
-        /* If we get here, we didn't find a valid command.  Logging
-         * this might be questionable, because a broken client/malicious
-         * user could certainly send a whole bunch of invalid commands.
-         */
-        LOG(llevDebug, "HACKBUG: Bad command from client (%s) (%s)\n", STRING_SAFE(ns->cmd_start->buf), STRING_SAFE((char *) data));
-        ns->status = Ns_Dead;
-
-        next_command:
-        /* remove command & buffer */
-        command_buffer_clear(ns);
-
-        if (cmd_count++ <= 8 && ns->status != Ns_Dead)
-        {
-            /* LOG(llevDebug,"MultiCmd: #%d /%s)\n", cmd_count, (char*)ns->inbuf.buf+2); */
-            continue;
-        }
-        return;
-    }
-}
-
 void remove_ns_dead_player(player *pl)
 {
 
@@ -621,7 +577,9 @@ static int check_ip_ban(NewSocket *sock, char *ip)
  */
 void doeric_server(int update, struct timeval *timeout)
 {
-    int     i, pollret, update_client=update&SOCKET_UPDATE_CLIENT, update_player=update&SOCKET_UPDATE_PLAYER;
+    int     i, pollret;
+    int     update_client=update&SOCKET_UPDATE_CLIENT; /* if set we try to poll the socket only */
+    int     update_player=update&SOCKET_UPDATE_PLAYER; /* poll socket & do a player turn */
     uint32  update_below;
 
 #if WIN32 || !HAVE_GETADDRINFO
@@ -755,10 +713,7 @@ void doeric_server(int update, struct timeval *timeout)
             InitConnection(newsock, tmp_ip);
             check_ip_ban(newsock, tmp_ip);
             if(newsock->status <= Ns_Zombie) /* set from ban check */
-            {
                 newsock->status = Ns_Add;
-				SOCKBUF_ADD_TO_SOCKET(newsock, global_sockbuf_version);
-            }
         }
         else
             LOG(llevDebug, "Error on accept!\n");
@@ -789,7 +744,7 @@ void doeric_server(int update, struct timeval *timeout)
                     init_sockets[i].status = Ns_Dead;
                 }
                 else
-                    fill_command_buffer(&init_sockets[i], MAXSOCKBUF_IN - 1);
+                    socket_prepare_commands(&init_sockets[i]);
             }
 
             if (init_sockets[i].status == Ns_Dead)
@@ -835,10 +790,10 @@ void doeric_server(int update, struct timeval *timeout)
                     pl->socket.status = Ns_Dead;
                 }
                 else
-                    fill_command_buffer(&pl->socket, MAXSOCKBUF_IN - 1);
+                    socket_prepare_commands(&pl->socket);
             }
 
-            if (pl->socket.status == Ns_Dead) /* perhaps something was bad in HandleClient() */
+            if (pl->socket.status == Ns_Dead) /* perhaps something was bad? */
             {
                 remove_ns_dead_player(pl);  /* or player has left game */
             }
@@ -873,56 +828,5 @@ void doeric_server(int update, struct timeval *timeout)
                 }
             }
         }
-    } /* for() end */
-}
-
-void doeric_server_write(void)
-{
-    player *pl, *next;
-    uint32  update_below;
-    fd_set writeset;
-    struct timeval timeout = {0, 0};
-
-    /* This does roughly the same thing, but for the players now */
-    for (pl = first_player; pl != NULL; pl = next)
-    {
-        next = pl->next;
-
-        /* we don't care about problems here... let remove player at start of next loop! */
-        if (pl->socket.status == Ns_Dead || FD_ISSET(pl->socket.fd, &tmp_exceptions))
-        {
-            remove_ns_dead_player(pl);
-            continue;
-        }
-        if (pl->state == ST_PLAYING)
-        {
-            esrv_update_stats(pl);
-            if (pl->update_skills)
-            {
-                esrv_update_skills(pl);
-                pl->update_skills = 0;
-            }
-            draw_client_map(pl->ob);
-
-            if (pl->ob->map
-                && (update_below = GET_MAP_UPDATE_COUNTER(pl->ob->map, pl->ob->x, pl->ob->y)) != pl->socket.update_tile)
-            {
-                esrv_draw_look(pl->ob);
-                pl->socket.update_tile = update_below;
-            }
-        }
-
-        /* Check that a write won't block */
-        FD_ZERO(&writeset);
-        FD_SET((uint32)pl->socket.fd, &writeset);
-
-        /* tv_usec=0 should be work too */
-        timeout.tv_sec = 0;
-        timeout.tv_usec = 0;
-        select(pl->socket.fd + 1, NULL, &writeset, NULL, &timeout);
-
-        /* and *now* write back to player */
-        if (FD_ISSET(pl->socket.fd, &writeset))
-            write_socket_buffer(&pl->socket);
     } /* for() end */
 }

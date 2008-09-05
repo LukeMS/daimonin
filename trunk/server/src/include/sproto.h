@@ -67,7 +67,6 @@ void                        remove_ban_entry(struct oblnk *entry);
 int                         check_banned(NewSocket *ns, const char *name, char *ip);
 int                         ip_compare(const char *ban_tmp, const char *ip_temp);
 /* c_chat.c */
-void						command_talk_ex(char *data, int len, player *pl);
 int                         command_say(object *op, char *params);
 int                         command_gsay(object *op, char *params);
 int                         command_shout(object *op, char *params);
@@ -183,21 +182,10 @@ int                         command_silent_login(object *op, char *params);
 char                        *get_subdir(const char *name);
 int                         command_stuck(object *op, char *params);
 /* c_move.c */
-int                         command_east(object *op, char *params);
-int                         command_north(object *op, char *params);
-int                         command_northeast(object *op, char *params);
-int                         command_northwest(object *op, char *params);
-int                         command_south(object *op, char *params);
-int                         command_southeast(object *op, char *params);
-int                         command_southwest(object *op, char *params);
-int                         command_west(object *op, char *params);
-int                         command_stay(object *op, char *params);
 int                         command_push_object (object *op, char *params);
 int                         command_turn_right (object *op, char *params);
 int                         command_turn_left (object *op, char *params);
 /* c_new.c */
-CommArray_s                *find_command_element(char *cmd, CommArray_s *commarray, int commsize);
-int                         execute_newserver_command(object *pl, char *command);
 int                         command_run(object *op, char *params);
 int                         command_run_stop(object *op, char *params);
 void                        send_target_command(player *pl);
@@ -238,7 +226,6 @@ void                        party_client_group_status(object *member);
 void                        party_client_group_kill(object *member);
 void                        party_client_group_update(object *member, int flag);
 /* c_range.c */
-void                        command_fire(char *params, int len, player *pl);
 void                        fire(object *op, int dir);
 int							fire_magic_tool(object *owner, object *op, int dir);
 int                         command_cast_spell(object *op, char *params);

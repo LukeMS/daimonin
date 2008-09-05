@@ -382,6 +382,7 @@ typedef struct linked_char
 #include "stats.h"
 
 /* Pull in the socket structure - used in the player structure */
+#include "protocol.h" /* this is a shared header between server & client! */
 #include "newserver.h"
 #include "newclient.h"
 
@@ -540,9 +541,6 @@ EXTERN uint32                   global_map_tag; /* our global map_tag value for 
 EXTERN New_Face                *new_faces;
 EXTERN archetype               *coins_arch[NUM_COINS+1];
 EXTERN char                     global_version_msg[32];
-
-EXTERN sockbuf_struct		   *global_sockbuf_version; 
-
 
 /* arch.c - sysinfo for lowlevel */
 EXTERN int                      arch_init;

@@ -26,34 +26,6 @@
 
 #include <global.h>
 
-/* The talk extended is used to "fake" a normal /talk command but use
-* extra parameter to talk to the server direct or non living items instead
-* of talking to a NPC.
-*/
-void command_talk_ex(char *data, int len, player *pl)
-{
-	if (!data || !len || !pl || pl->socket.status == Ns_Dead)
-	{
-		if(pl)
-			pl->socket.status = Ns_Dead;
-		return;
-	}
-
-	/* the talk ex command has the same command as the
-	* "normal" /talk, except a head part which are max. 2
-	* numbers: "<mode> <count>"
-	*/
-	if(*data == 'Q' && *(data+1)==' ') /* quest list tag */
-	{
-		quest_list_command(pl->ob, data+2);
-	}
-	else
-	{
-		data[len]='\0'; /* sanity string end */
-		LOG(-1,"TX-CMD: unknown tag (len %d) from player %s: >%s<\n", len, query_name(pl->ob),data);
-	}
-}
-
 /* this function does 3 things: controlling we have
  * a legal string - if not, return NULL  - if return string*
  * - remove all whitespace in front (if all are whitespace

@@ -318,11 +318,8 @@ player *add_player(NewSocket *ns)
     if(!p)
         return NULL;
 
+    /* we move the socket to the one inside the player */
     memcpy(&p->socket, ns, sizeof(NewSocket));
-    /* Needed because the socket we just copied over needs to be cleared.
-     * Note that this can result in a client reset if there is partial data
-     * on the uncoming socket.
-     */
     p->socket.pl = p;
     p->socket.status = Ns_Login; /* now, we start the login procedure! */
     p->socket.below_clear = 0;
@@ -578,9 +575,9 @@ int handle_newcs_player(player *pl)
     if (!op || !OBJECT_ACTIVE(op))
         return -1;
 
-    HandleClient(&pl->socket, pl);
+    process_command_queue(&pl->socket, pl);
 
-    if (!op || !OBJECT_ACTIVE(op) || pl->socket.status == Ns_Dead)
+    if (!op || !OBJECT_ACTIVE(op) || pl->socket.status >= Ns_Zombie)
         return -1;
 
     /* player is fine, check for speed */
