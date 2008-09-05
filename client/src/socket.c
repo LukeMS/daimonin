@@ -303,7 +303,7 @@ static int reader_thread_loop(void *nix)
             command_buffer *buf;
 
             LOG(-1," CMD:%x len:%d\n", (*((char *)readbuf))&~0x80,readbuf_len);
-            LOG(-1," CMD-DATA:%s\n", readbuf+3);
+            /*LOG(-1," CMD-DATA:%s\n", readbuf+3);*/
 
 			buf = command_buffer_new(readbuf_len, readbuf);
             if (buf == NULL)
