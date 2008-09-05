@@ -20,7 +20,6 @@
 
     The author can be reached via e-mail to info@daimonin.net
 */
-#include "include.h"
 
 #define MAP_UPDATE_CMD_SAME 0
 #define MAP_UPDATE_CMD_NEW 1
@@ -194,8 +193,8 @@ typedef struct SockList
     int             flags; /* the flags for send function */ 
     int             len; /**< How much data in buf */
     int             pos; /**< Start of data in buf */
-    unsigned char  *buf;
-    unsigned char  defbuf[MAX_DATA_TAIL_LENGTH];
+    char            *buf;
+    char            defbuf[MAX_DATA_TAIL_LENGTH];
 }
 SockList;
 
