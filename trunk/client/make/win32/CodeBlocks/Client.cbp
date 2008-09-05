@@ -156,6 +156,7 @@
 		<Unit filename="..\..\..\src\include\player.h">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="..\..\..\src\include\protocol.h" />
 		<Unit filename="..\..\..\src\include\sdlsocket.h">
 			<Option compilerVar="CC" />
 		</Unit>

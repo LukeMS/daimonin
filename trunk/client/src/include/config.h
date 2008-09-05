@@ -37,7 +37,7 @@
  * 2) animations should always look the same...
  * hopefully i didn't do the calcs wrong
  */
-#define ANIM_FRAMESKIP
+//#define ANIM_FRAMESKIP
 
 /* NEVER enable this on productions clients, and NEVER on mapmaker clients
  * use it only for profiling, the log will grow quite big
