@@ -7,6 +7,7 @@
 <!ELEMENT GameObjectMatcher (title+,%Match;)>
 <!ATTLIST GameObjectMatcher
     id CDATA #IMPLIED
+    system (true|false) 'false'
 >
 
 <!ELEMENT title (#PCDATA)>
