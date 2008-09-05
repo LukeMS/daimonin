@@ -23,28 +23,6 @@
 #if !defined(__MAIN_H)
 #define __MAIN_H
 
-
-typedef struct _server_char
-{
-    struct _server_char    *next;
-    struct _server_char    *prev;
-    int                     pic_id;
-    char                   *name; /* race name: human, elf */
-    char                   *desc[4]; /* 4 description strings */
-    int                     bar[3];
-    int                     bar_add[3];
-    int                     gender[4]; /* male, female, neutrum, herm. */
-    int                     gender_selected;
-    int                     skill_selected;
-    char                   *char_arch[4]; /* 4 description strings */
-    int                     face_id[4];
-    int                     stat_points; /* points which can be added to char stats */
-    int                     stats[7];
-    int                     stats_min[7];
-    int                     stats_max[7];
-}
-_server_char;
-
 extern _server_char    *first_server_char;
 extern _server_char     new_character; /* if we login as new char, thats the values of it we set */
 

@@ -111,7 +111,7 @@ static command_buffer *command_buffer_dequeue(command_buffer **queue_start, comm
  * If body is NULL, a single-byte command is created from cmd.
  * Otherwise body should include the length and cmd header
  */
-int send_command_binary(int cmd, uint8 *body, int len, int flags)
+int send_command_binary(int cmd, char *body, int len, int flags)
 {
     command_buffer *buf;
     int len_copy = len;

@@ -40,7 +40,7 @@ command_buffer;
 #define SEND_CMD_FLAG_FIXED  2 /* the the command as fixed, without length tag (server knows length) */
 
 #define send_socklist_binary(_sl_) send_command_binary((_sl_)->cmd, (_sl_)->buf?(_sl_)->buf:(_sl_)->defbuf, (_sl_)->len, (_sl_)->flags )
-extern int send_command_binary(int cmd, uint8 *body, int len, int flags);
+extern int send_command_binary(int cmd, char *body, int len, int flags);
 
 extern void command_buffer_free(command_buffer *buf);
 extern command_buffer *get_next_input_command(void);
