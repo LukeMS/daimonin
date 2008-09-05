@@ -151,9 +151,9 @@ typedef struct _srv_client_files
  * They also will fail in if(..) GetShort_Buffer().
  * There must be explicit set {}!
  */
-#define GetChar_Buffer(_data_)			*(uint8*)(((uint8*)_data_));((uint8*)_data_)++ 
-#define GetShort_Buffer(_data_)			*(uint16*) (_data_);((uint8*)_data_)+=2
-#define GetInt_Buffer(_data_)			*(uint32*)(_data_);((uint8*)_data_)+=4
+#define GetChar_Buffer(_data_)			*((uint8*) (_data_));(_data_)++ 
+#define GetShort_Buffer(_data_)			*((uint16*) (_data_));(_data_)+=2
+#define GetInt_Buffer(_data_)			*((uint32*) (_data_));(_data_)+=4
 
 /* thats a bit hard coded but well... */
 #define AddIf_SOCKBUF_PTR _sockbufptr
