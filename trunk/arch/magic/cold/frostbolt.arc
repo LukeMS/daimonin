@@ -6,36 +6,7 @@ face icestorm.101
 level 1
 no_save 1
 attack_cold 100
-anim
-facings 9
-icestorm.101
-icestorm.102
-icestorm.103
-icestorm.101
-icestorm.102
-icestorm.103
-icestorm.101
-icestorm.102
-icestorm.103
-icestorm.101
-icestorm.102
-icestorm.103
-icestorm.101
-icestorm.102
-icestorm.103
-icestorm.101
-icestorm.102
-icestorm.103
-icestorm.101
-icestorm.102
-icestorm.103
-icestorm.101
-icestorm.102
-icestorm.103
-icestorm.101
-icestorm.102
-icestorm.103
-mina
+animation frostbolt
 anim_speed 1
 terrain_flag 32767
 last_sp 12
