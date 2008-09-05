@@ -883,3 +883,165 @@ void create_anim_tmp()
     fclose(ftmp);
 }
 
+/* lets do it analog like the old way
+* This Command will most likely never called from the server, because we have our animations
+* alredy got in the client_anims. This command is called from the client itself to load up the animations.
+* This gives us the possibility to later let the server generate dynamic animations.
+* Because this is mostly used client sided and for better understanding i didn't squeze out every bit and didn't optimize it.
+* TODO: checks for reading beyond len!! <-- The SEGFAULT crash? :)
+*/
+void NewAnimCmd(unsigned char *data, int len)
+{
+    short animnum;
+    uint8 sequence;
+    uint8 dir;
+    int pos=0, i;
+    AnimSeq *as=NULL;
+    int   seqmap[MAX_SEQUENCES];
+    int   dirmap[9];
+
+    for (i=0;i<MAX_SEQUENCES;i++)
+        seqmap[i]=-1;
+
+    memset(dirmap, -1, sizeof(dirmap));
+
+    /* 2 Bytes animation number */
+    animnum = (*(data+pos++) << 8);
+    animnum |= *(data+pos++);
+
+    if (animnum<0 || animnum >=MAXANIM)
+    {
+        LOG(LOG_DEBUG, "NewAnimCmd: animnum invalid: %d\n",animnum);
+        return;
+    }
+
+    /* one byte global flags */
+    animation[animnum].flags = *(data+pos++);
+
+    /* one byte sequence number, 0xFF is the end marker */
+    while ((sequence=*(data + pos++))!= 0xFF)
+    {
+        if (sequence >= MAX_SEQUENCES)
+        {
+            LOG(LOG_DEBUG, "NewAnimCmd: sequence invalid: %d\n", sequence);
+            return;
+        }
+        as = (AnimSeq *) malloc(sizeof(AnimSeq));
+        if (!as)
+        {
+            LOG(LOG_DEBUG, "NewAnimCmd: out of memory allocating AnimSeq: %d (%d)\n",sequence, animnum);
+            return;
+        }
+        memset(as, 0, sizeof(AnimSeq));
+        animation[animnum].aSeq[sequence] = as;
+        /* one byte flags */
+        as->flags = *(data + pos++);
+
+        /* if the highest bit in flags is set, this sequence is mapped to another sequence, the next byte tells us which */
+        if (as->flags & 0x80)
+        {
+            uint8 mapseq;
+
+            /* 1 Byte sequencenum which this sequence is mapped to */
+            mapseq = *(data + pos++);
+            if(mapseq >= MAX_SEQUENCES)
+            {
+                LOG(LOG_DEBUG, "NewAnimCmd: sequence invalid: %d\n", mapseq);
+                return;
+            }
+
+            /* to map forward we need the pointer, which we get later, so lets save for now in a temp array */
+            seqmap[sequence]=mapseq;
+            /* thats all for this sequence */
+            continue;
+        }
+
+        memset(dirmap, -1, sizeof(dirmap));
+
+        /* now we load our directions */
+        /* one byte dir number, 0xFF is the end marker */
+        while ((dir=*(data + pos++))!= 0xFF)
+        {
+            if (dir & ASEQ_MAPPED) /*its mapped, next byte tells us to which */
+            {
+                dir &= 0x7F;
+                if(dir >= 9)
+                {
+                    LOG(LOG_DEBUG,"NewAnimCmd: invalid direction %d\n", dir);
+                    return;
+                }
+                dirmap[dir] = *(data + pos++);
+                if (dirmap[dir]>8)
+                {
+                    LOG(LOG_DEBUG,"NewAnimCmd: dirmap to dir > 8, ignored!\n");
+                    dirmap[dir]=-1;
+                }
+                continue;
+            }
+            dir &= 0x7F; /* preparation for dir mappings */
+            if(dir >= 9)
+            {
+                LOG(LOG_DEBUG,"NewAnimCmd: invalid direction %d\n", dir);
+                return;
+            }
+
+            as->dirs[dir].flags = 0;
+            /* one byte frame count (255 frames for one sequence should be enough... */
+            as->dirs[dir].frames = *(data + pos++);
+
+            as->dirs[dir].faces = _malloc(sizeof(uint16) * as->dirs[dir].frames, "NewAnimCmd(): face buf");
+            as->dirs[dir].delays = _malloc(sizeof(uint8) * as->dirs[dir].frames, "NewAnimCmd(): delay buf");
+
+            if (!as->dirs[dir].faces || !as->dirs[dir].delays)
+            {
+                LOG(LOG_DEBUG, "NewAnimCmd: out of memory allocating face/delay buf: d:%d s:%d a:%d\n",dir,sequence, animnum);
+                return;
+            }
+            for (i = 0; i < as->dirs[dir].frames; i++)
+            {
+                as->dirs[dir].faces[i] = (*(data + pos++) << 8 );
+                as->dirs[dir].faces[i] |= *(data + pos++) ;
+                as->dirs[dir].delays[i] = *(data+pos++);
+            }
+        }
+        /* now we do the dirmaps, when having a dirmap we copy the date of one dir to another,
+        * the face and delay list is only a pointer, so we don't need more mem */
+        for (i=0;i<9;i++)
+        {
+            if (dirmap[i]!=-1)
+            {
+                memcpy(&(as->dirs[i]), &(as->dirs[dirmap[i]]), sizeof(AnimSeqDir));
+                as->dirs[i].flags |= ASEQ_MAPPED;
+            }
+        }
+    }
+
+    /* lets do the mappings */
+
+    /* first the default mappings */
+    for (i=1;i<MAX_SEQUENCES;i++)
+    {
+        if (!animation[animnum].aSeq[i])
+        {
+            animation[animnum].aSeq[i] = animation[animnum].aSeq[defaultmappings[i]];
+        }
+    }
+
+    /* now overwrite the mappings whith the mappings from the arc */
+    for (i=0;i<MAX_SEQUENCES;i++)
+    {
+        if (seqmap[i]!=-1)
+        {
+            if (!animation[animnum].aSeq[seqmap[i]])
+            {
+                LOG(LOG_DEBUG,"NewAnimCmd: SeqMap to non existing Seq: a:%d, curSeq: %d, wantedSeq: %d\n",animnum, i, seqmap[i]);
+                continue;
+            }
+            animation[animnum].aSeq[i] = animation[animnum].aSeq[seqmap[i]];
+        }
+    }
+
+    /* mark it as successful loaded */
+    animation[animnum].loaded = TRUE;
+    return;
+}

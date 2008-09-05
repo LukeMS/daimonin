@@ -45,6 +45,7 @@
  *  Initialiazes player item, information is received from server
  */
 
+Client_Player   cpl;
 _server_level   server_level;
 
 typedef enum _player_doll_enum
@@ -101,172 +102,6 @@ void new_player(uint32 tag, char *name, uint32 weight, short face)
     copy_name(cpl.ob->d_name, name);
 }
 
-
-void new_char(_server_char *nc)
-{
-    char    buf[MAX_BUF];
-
-    sprintf(buf, "nc %s %d %d %d %d %d %d %d %d", nc->char_arch[nc->gender_selected], nc->stats[0], nc->stats[1],
-            nc->stats[2], nc->stats[3], nc->stats[4], nc->stats[5], nc->stats[6], nc->skill_selected);
-    cs_write_string(csocket.fd, buf, strlen(buf));
-}
-
-void look_at(int x, int y)
-{
-    char    buf[MAX_BUF];
-
-    sprintf(buf, "lt %d %d", x, y);
-    cs_write_string(csocket.fd, buf, strlen(buf));
-}
-
-void client_send_apply(int tag)
-{
-    char    buf[MAX_BUF];
-
-    sprintf(buf, "ap %d", tag);
-    cs_write_string(csocket.fd, buf, strlen(buf));
-}
-
-void client_send_examine(int tag)
-{
-    char    buf[MAX_BUF];
-
-    sprintf(buf, "ex %d", tag);
-    cs_write_string(csocket.fd, buf, strlen(buf));
-}
-
-/* Requests nrof objects of tag get moved to loc. */
-void client_send_move(int loc, int tag, int nrof)
-{
-    char    buf[MAX_BUF];
-
-    sprintf(buf, "mv %d %d %d", loc, tag, nrof);
-    cs_write_string(csocket.fd, buf, strlen(buf));
-}
-
-void client_send_tell_extended(char *body, char *tail)
-{
-    char    buf[MAX_BUF];
-
-    sprintf(buf, "tx %s %s", body, tail);
-    cs_write_string(csocket.fd, buf, strlen(buf));
-}
-
-/* Splits command at the next #,
- * returning a pointer to the occurrence (which is overwritten with \0 first) or
- * NULL if no next multicommand is found or command is chat, etc.
- */
-static char *BreakMulticommand(char *command)
-{
-    char *c = NULL;
-    /* Only look for a multicommand if the command is not one of these:
-     */
-    if (!(!strnicmp(command, "/tell", 5) || !strnicmp(command, "/say", 4) || !strnicmp(command, "/reply", 6) || !strnicmp(command, "/gsay", 5) || !strnicmp(command, "/shout", 6) || !strnicmp(command, "/talk", 5)
-#ifdef USE_CHANNELS
-     || (*command == '-') || !strnicmp(command, "/channel", 8)
-#endif
-    || !strnicmp(command, "/create", 7)))
-    {
-        if ((c = strchr(command, '#'))) /* multicommand separator '#' */
-            *c = '\0';
-    }
-    return c;
-}
-
-/* This should be used for all 'command' processing.  Other functions should
- * call this so that proper windowing will be done.
- * command is the text command, repeat is a count value, or -1 if none
- * is desired and we don't want to reset the current count.
- * must_send means we must send this command no matter what (ie, it is
- * an administrative type of command like fire_stop, and failure to send
- * it will cause definate problems
- * return 1 if command was sent, 0 if not sent.
- */
-int send_command(const char *command, int repeat, int must_send)
-{
-    char    *token,
-             buf[MAX_BUF],
-             cmd[MAX_BUF]; /* our parsed command -- command is what the player
-                              typed, cmd is what the server will see */
-    SockList sl;
-
-    /* Copy a normalized (leading, trailing, and excess inline whitespace-
-     * stripped) command to cmd:
-     */
-    strcpy(cmd, normalize_string(command));
-    /* Now go through cmd, possibly separating multicommands.
-     * Each command (before separation) is pointed to by token:
-     */
-    token = cmd;
-    while (token != NULL && *token)
-    {
-        char *end;
-#ifdef USE_CHANNELS
-        if (*token != '/' && *token != '-') /* if not a command ... its chat  (- is for channel system)*/
-#else
-        if (*token != '/')
-#endif
-        {
-            sprintf(buf, "/say %s", token);
-            strcpy(token, buf);
-        }
-        end = BreakMulticommand(token);
-        if (!client_command_check(token))
-        {
-            /* Nasty hack. Treat /talk as a special case: lowercase it and
-             * print it to the message window as Topic: foo. -- Smacky 20071210
-             */
-            if (!strnicmp(token, "/talk", 5))
-            {
-                int c;
-                for (c = 0; *(token + c) != '\0'; c++)
-                    *(token + c) = tolower(*(token + c));
-                draw_info_format(COLOR_DGOLD, "Topic: %s", token + 6);
-            }
-
-            /* Does the server understand 'ncom'? If so, special code */
-            if (csocket.cs_version >= 1021)
-            {
-                int commdiff = csocket.command_sent - csocket.command_received;
-                if (commdiff < 0)
-                    commdiff += 256;
-                csocket.command_sent++;
-                csocket.command_sent &= 0xff; /* max out at 255 */
-                sl.buf = (unsigned char *)buf;
-                strcpy((char *)sl.buf, "ncom ");
-                sl.len = 5;
-                SockList_AddShort(&sl, (uint16)csocket.command_sent);
-                SockList_AddInt(&sl, repeat);
-                strncpy((char *)sl.buf + sl.len, token, MAX_BUF - sl.len);
-                sl.buf[MAX_BUF - 1] = 0;
-                sl.len += strlen(token);
-                send_socklist(csocket.fd, sl);
-            }
-            else
-            {
-                sprintf(buf, "cm %d %s", repeat, token);
-                cs_write_string(csocket.fd, buf, strlen(buf));
-            }
-        }
-        if (end != NULL)
-            token = end + 1;
-        else
-            token = NULL;
-    }
-    if (repeat != -1)
-        cpl.count = 0;
-    return 1;
-}
-
-void CompleteCmd(unsigned char *data, int len)
-{
-    if (len != 6)
-    {
-        fprintf(stderr, "comc - invalid length %d - ignoring\n", len);
-    }
-    csocket.command_received = GetShort_String(data);
-    csocket.command_time = GetInt_String(data + 2);
-}
 
 /* Show a basic help message */
 void show_help()
@@ -370,7 +205,7 @@ void widget_player_data_event(int x, int y)
     if (mx>=184 && mx <= 210 && my >=5 && my<=35)
     {
         if (!client_command_check("/rest"))
-            send_command("/rest", -1, SC_NORMAL);
+            send_game_command("/rest");
 
     }
 }
@@ -632,7 +467,7 @@ void        widget_menubuttons_event(int x, int y, int MEvent)
         else if (dy >= 26 && dy <= 49) /* skill list */
             check_menu_macros("?M_SKILL_LIST");
         else if (dy >= 51 && dy <= 74) /* quest list */
-            send_command("/qlist", -1, SC_NORMAL);
+            send_game_command("/qlist");
         else if (dy >= 76 && dy <= 99) /* online help */
             process_macro_keys(KEYFUNC_HELP, 0);
     }

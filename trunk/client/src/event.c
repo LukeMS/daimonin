@@ -40,52 +40,52 @@ static _keys    keys[MAX_KEYS];
 
 _key_macro      defkey_macro[]          =
     {
-        {"?M_SOUTHWEST",    "southwest",        KEYFUNC_MOVE,  1, SC_NORMAL, MENU_NO
+        {"?M_SOUTHWEST",    "southwest",        KEYFUNC_MOVE,  1, MENU_NO
         },
-        {"?M_SOUTH",          "south",            KEYFUNC_MOVE,  2, SC_NORMAL, MENU_NO},
-        {"?M_SOUTHEAST",    "southeast",        KEYFUNC_MOVE,  3, SC_NORMAL, MENU_NO},
-        {"?M_WEST",           "west",                 KEYFUNC_MOVE,  4, SC_NORMAL, MENU_NO},
-        {"?M_STAY",           "stay",                 KEYFUNC_MOVE,  5, SC_NORMAL, MENU_NO},
-        {"?M_EAST",           "east",                 KEYFUNC_MOVE,  6, SC_NORMAL, MENU_NO},
-        {"?M_NORTHWEST",    "northwest",        KEYFUNC_MOVE,  7, SC_NORMAL, MENU_NO},
-        {"?M_NORTH",          "north",            KEYFUNC_MOVE,  8, SC_NORMAL, MENU_NO},
-        {"?M_NORTHEAST",    "northeast",        KEYFUNC_MOVE,  9, SC_NORMAL, MENU_NO},
-        {"?M_RUN",            "run",                  KEYFUNC_RUN,   0, SC_NORMAL, MENU_NO},
-        {"?M_CONSOLE",      "console",          KEYFUNC_CONSOLE,0, SC_NORMAL, MENU_NO},
-        {"?M_UP",               "up",                   KEYFUNC_CURSOR,0, SC_NORMAL, MENU_NO},
-        {"?M_DOWN",           "down",                 KEYFUNC_CURSOR,1, SC_NORMAL, MENU_NO},
-        {"?M_LEFT",           "left",             KEYFUNC_CURSOR,2, SC_NORMAL, MENU_NO},
-        {"?M_RIGHT",          "right",            KEYFUNC_CURSOR,3, SC_NORMAL, MENU_NO},
-        {"?M_RANGE",          "cycle fire mode forwards",     KEYFUNC_RANGE,0, SC_NORMAL, MENU_NO},
-        {"?M_RANGE_BACK",     "cycle fire mode backwards",    KEYFUNC_RANGE_BACK,0, SC_NORMAL, MENU_NO},
-        {"?M_RANGE_BOW",      "fire mode: bow",     KEYFUNC_RANGE_SELECT,FIRE_MODE_BOW, SC_NORMAL, MENU_NO},
-        {"?M_RANGE_SPELL",    "fire mode: spell",   KEYFUNC_RANGE_SELECT,FIRE_MODE_SPELL, SC_NORMAL, MENU_NO},
-        {"?M_RANGE_SKILL",    "fire mode: skill",   KEYFUNC_RANGE_SELECT,FIRE_MODE_SKILL, SC_NORMAL, MENU_NO},
-        {"?M_APPLY",          "apply <tag>",      KEYFUNC_APPLY,0, SC_NORMAL, MENU_NO},
-        {"?M_EXAMINE",      "examine <tag>",    KEYFUNC_EXAMINE,0, SC_NORMAL, MENU_NO},
-        {"?M_DROP",           "drop <tag>",       KEYFUNC_DROP,0, SC_NORMAL, MENU_NO},
-        {"?M_GET",            "get <tag>",        KEYFUNC_GET,0, SC_NORMAL, MENU_NO},
-        {"?M_LOCK",           "lock <tag>",       KEYFUNC_LOCK,0, SC_NORMAL, MENU_NO},
-        {"?M_MARK",           "mark<tag>",        KEYFUNC_MARK,0, SC_NORMAL, MENU_NO},
-        {"?M_STATUS",           "status",           KEYFUNC_STATUS,       0, SC_NORMAL, MENU_ALL},
-        {"?M_OPTION",           "option",           KEYFUNC_OPTION,       0, SC_NORMAL, MENU_ALL},
-        {"?M_KEYBIND",      "key bind",         KEYFUNC_KEYBIND,      0, SC_NORMAL, MENU_ALL},
-        {"?M_SKILL_LIST",   "skill list",       KEYFUNC_SKILL,        0, SC_NORMAL, MENU_ALL},
-        {"?M_SPELL_LIST",   "spell list",       KEYFUNC_SPELL,        0, SC_NORMAL, MENU_ALL},
-        {"?M_PAGEUP",           "scroll up",        KEYFUNC_PAGEUP,       0, SC_NORMAL, MENU_NO},
-        {"?M_PAGEDOWN",     "scroll down",      KEYFUNC_PAGEDOWN,     0, SC_NORMAL, MENU_NO},
-        {"?M_LAYER0",           "l0",               KEYFUNC_LAYER0,       0, SC_NORMAL, MENU_NO},
-        {"?M_LAYER1",           "l1",               KEYFUNC_LAYER1,       0, SC_NORMAL, MENU_NO},
-        {"?M_LAYER2",           "l2",               KEYFUNC_LAYER2,       0, SC_NORMAL, MENU_NO},
-        {"?M_LAYER3",           "l3",               KEYFUNC_LAYER3,       0, SC_NORMAL, MENU_NO},
-        {"?M_HELP",             "show help",        KEYFUNC_HELP,         0, SC_NORMAL, MENU_NO},
-        {"?M_PAGEUP_TOP",     "scroll up",        KEYFUNC_PAGEUP_TOP,   0, SC_NORMAL, MENU_NO},
-        {"?M_PAGEDOWN_TOP", "scroll down",      KEYFUNC_PAGEDOWN_TOP, 0, SC_NORMAL, MENU_NO},
-        {"?M_TARGET_ENEMY", "/target enemy",    KEYFUNC_TARGET_ENEMY, 0, SC_NORMAL, MENU_NO},
-        {"?M_TARGET_FRIEND","/target friend",   KEYFUNC_TARGET_FRIEND,0, SC_NORMAL, MENU_NO},
-        {"?M_TARGET_SELF",  "/target self",     KEYFUNC_TARGET_SELF,  0, SC_NORMAL, MENU_NO},
-        {"?M_COMBAT_TOGGLE","/combat",          KEYFUNC_COMBAT,       0, SC_NORMAL, MENU_NO},
-        {"?M_SCREENTOGGLE","fstoggle",          KEYFUNC_SCREENTOGGLE,       0, SC_NORMAL, MENU_NO},
+        {"?M_SOUTH",          "south",            KEYFUNC_MOVE,  2, MENU_NO},
+        {"?M_SOUTHEAST",    "southeast",        KEYFUNC_MOVE,  3, MENU_NO},
+        {"?M_WEST",           "west",                 KEYFUNC_MOVE,  4, MENU_NO},
+        {"?M_STAY",           "stay",                 KEYFUNC_MOVE,  5, MENU_NO},
+        {"?M_EAST",           "east",                 KEYFUNC_MOVE,  6, MENU_NO},
+        {"?M_NORTHWEST",    "northwest",        KEYFUNC_MOVE,  7, MENU_NO},
+        {"?M_NORTH",          "north",            KEYFUNC_MOVE,  8, MENU_NO},
+        {"?M_NORTHEAST",    "northeast",        KEYFUNC_MOVE,  9, MENU_NO},
+        {"?M_RUN",            "run",                  KEYFUNC_RUN,   0, MENU_NO},
+        {"?M_CONSOLE",      "console",          KEYFUNC_CONSOLE,0, MENU_NO},
+        {"?M_UP",               "up",                   KEYFUNC_CURSOR,0, MENU_NO},
+        {"?M_DOWN",           "down",                 KEYFUNC_CURSOR,1, MENU_NO},
+        {"?M_LEFT",           "left",             KEYFUNC_CURSOR,2, MENU_NO},
+        {"?M_RIGHT",          "right",            KEYFUNC_CURSOR,3, MENU_NO},
+        {"?M_RANGE",          "cycle fire mode forwards",     KEYFUNC_RANGE,0, MENU_NO},
+        {"?M_RANGE_BACK",     "cycle fire mode backwards",    KEYFUNC_RANGE_BACK,0, MENU_NO},
+        {"?M_RANGE_BOW",      "fire mode: bow",     KEYFUNC_RANGE_SELECT,FIRE_MODE_BOW, MENU_NO},
+        {"?M_RANGE_SPELL",    "fire mode: spell",   KEYFUNC_RANGE_SELECT,FIRE_MODE_SPELL, MENU_NO},
+        {"?M_RANGE_SKILL",    "fire mode: skill",   KEYFUNC_RANGE_SELECT,FIRE_MODE_SKILL, MENU_NO},
+        {"?M_APPLY",          "apply <tag>",      KEYFUNC_APPLY,0,  MENU_NO},
+        {"?M_EXAMINE",      "examine <tag>",    KEYFUNC_EXAMINE,0,  MENU_NO},
+        {"?M_DROP",           "drop <tag>",       KEYFUNC_DROP,0, MENU_NO},
+        {"?M_GET",            "get <tag>",        KEYFUNC_GET,0,  MENU_NO},
+        {"?M_LOCK",           "lock <tag>",       KEYFUNC_LOCK,0, MENU_NO},
+        {"?M_MARK",           "mark<tag>",        KEYFUNC_MARK,0, MENU_NO},
+        {"?M_STATUS",           "status",           KEYFUNC_STATUS,       0, MENU_ALL},
+        {"?M_OPTION",           "option",           KEYFUNC_OPTION,       0, MENU_ALL},
+        {"?M_KEYBIND",      "key bind",         KEYFUNC_KEYBIND,      0, MENU_ALL},
+        {"?M_SKILL_LIST",   "skill list",       KEYFUNC_SKILL,        0, MENU_ALL},
+        {"?M_SPELL_LIST",   "spell list",       KEYFUNC_SPELL,        0, MENU_ALL},
+        {"?M_PAGEUP",           "scroll up",        KEYFUNC_PAGEUP,       0, MENU_NO},
+        {"?M_PAGEDOWN",     "scroll down",      KEYFUNC_PAGEDOWN,     0, MENU_NO},
+        {"?M_LAYER0",           "l0",               KEYFUNC_LAYER0,       0, MENU_NO},
+        {"?M_LAYER1",           "l1",               KEYFUNC_LAYER1,       0, MENU_NO},
+        {"?M_LAYER2",           "l2",               KEYFUNC_LAYER2,       0, MENU_NO},
+        {"?M_LAYER3",           "l3",               KEYFUNC_LAYER3,       0, MENU_NO},
+        {"?M_HELP",             "show help",        KEYFUNC_HELP,         0, MENU_NO},
+        {"?M_PAGEUP_TOP",     "scroll up",        KEYFUNC_PAGEUP_TOP,   0, MENU_NO},
+        {"?M_PAGEDOWN_TOP", "scroll down",      KEYFUNC_PAGEDOWN_TOP, 0, MENU_NO},
+        {"?M_TARGET_ENEMY", "/target enemy",    KEYFUNC_TARGET_ENEMY, 0, MENU_NO},
+        {"?M_TARGET_FRIEND","/target friend",   KEYFUNC_TARGET_FRIEND,0, MENU_NO},
+        {"?M_TARGET_SELF",  "/target self",     KEYFUNC_TARGET_SELF,  0, MENU_NO},
+        {"?M_COMBAT_TOGGLE","/combat",          KEYFUNC_COMBAT,       0, MENU_NO},
+        {"?M_SCREENTOGGLE","fstoggle",          KEYFUNC_SCREENTOGGLE,       0, MENU_NO},
     };
 #define DEFAULT_KEYMAP_MACROS (sizeof(defkey_macro)/sizeof(struct _key_macro))
 
@@ -108,10 +108,6 @@ int itemExamined = 0;
 
 
 /* cmds for fire/move/run - used from move_keys()*/
-static char    *directions[10]          =
-    {
-        "null", "/sw", "/s", "/se", "/w", "/stay", "/e", "/nw", "/n", "/ne"
-    };
 static char    *directions_name[10]     =
     {
         "null", "southwest", "south", "southeast", "west", "stay", "east", "northwest", "north", "northeast"
@@ -623,7 +619,7 @@ int Event_PollInputDevice(void)
                     cpl.inventory_win = IWIN_BELOW;
                     get_tile_position(x, y, &tx, &ty);
                     sprintf(tbuf, "/target !%d %d", tx - MAP_MAX_SIZE / 2, ty - MAP_MAX_SIZE / 2);
-                    send_command(tbuf, -1, SC_NORMAL);
+                    send_game_command(tbuf);
                 }
                 break;
             }
@@ -1188,7 +1184,7 @@ int key_event(SDL_KeyboardEvent *key)
                 break;
             case SDLK_LALT:
             case SDLK_RALT:
-                send_command("/run_stop", -1, SC_FIRERUN);
+                send_game_command("/run_stop");
                 /*draw_info("run_stop",COLOR_DGOLD);*/
                 cpl.run_on = FALSE;
                 break;
@@ -1435,7 +1431,7 @@ void check_keys(int key)
                     draw_info(bindkey_list[j].entry[i].text, COLOR_DGOLD);
                     strcpy(buf, bindkey_list[j].entry[i].text);
                     if (!client_command_check(buf))
-                        send_command(buf, -1, bindkey_list[j].entry[i].mode);
+                        send_game_command(buf);
                 }
                 return;
             }
@@ -1505,16 +1501,16 @@ Boolean process_macro_keys(int id, int value)
         break;
 
     case KEYFUNC_TARGET_ENEMY:
-        send_command("/target 0", -1, SC_NORMAL);
+        send_game_command("/target 0");
         break;
     case KEYFUNC_TARGET_FRIEND:
-        send_command("/target 1", -1, SC_NORMAL);
+        send_game_command("/target 1");
         break;
     case KEYFUNC_TARGET_SELF:
-        send_command("/target 2", -1, SC_NORMAL);
+        send_game_command("/target 2");
         break;
     case KEYFUNC_COMBAT:
-        send_command("/combat", -1, SC_NORMAL);
+        send_game_command("/combat");
         break;
 
     case KEYFUNC_SPELL:
@@ -1590,7 +1586,7 @@ Boolean process_macro_keys(int id, int value)
 
     case KEYFUNC_RUN:
         if (!(cpl.runkey_on = cpl.runkey_on ? FALSE : TRUE))
-            send_command("/run_stop", -1, SC_FIRERUN);
+            send_game_command("/run_stop");
         sprintf(buf, "runmode %s", cpl.runkey_on ? "on" : "off");
         /*draw_info(buf,COLOR_DGOLD);*/
         break;
@@ -1776,7 +1772,7 @@ Boolean process_macro_keys(int id, int value)
         sound_play_effect(SOUND_GET, 0, 0, 100);
         sprintf(buf, "get %s", it->s_name);
         draw_info(buf, COLOR_DGOLD);
-        client_send_move(loc, tag, nrof);
+        send_inv_move(loc, tag, nrof);
         return FALSE;
 
         break;
@@ -1904,7 +1900,7 @@ Boolean process_macro_keys(int id, int value)
         sound_play_effect(SOUND_DROP, 0, 0, 100);
         sprintf(buf, "drop %s", it->s_name);
         draw_info(buf, COLOR_DGOLD);
-        client_send_move(loc, tag, nrof);
+        send_inv_move(loc, tag, nrof);
         return FALSE;
         break;
     case KEYFUNC_SCREENTOGGLE:
@@ -2092,7 +2088,7 @@ static void move_keys(int num)
 
     if (num == 5)
     {
-        send_command_binary(CLIENT_CMD_STOP, NULL, 0);
+        send_move_command(num, 0);
         return;
     }
 
@@ -2102,12 +2098,15 @@ static void move_keys(int num)
     /* but it stops running when released */
     if ((cpl.runkey_on || cpl.run_on) && (!cpl.firekey_on && !cpl.fire_on)) /* runmode on, or ALT key trigger */
     {
-        send_command(directionsrun[num], -1, SC_FIRERUN);
+        send_game_command(directionsrun[num]);
         strcpy(buf, "run ");
     }
     /* thats the range menu - we handle it messages unique */
     else if (cpl.firekey_on || cpl.fire_on)
     {
+        int itemid = -1;
+        char *tmp_name = NULL;
+
         if (RangeFireMode == FIRE_MODE_SKILL)
         {
             if (!fire_mode_tab[FIRE_MODE_SKILL].skill || fire_mode_tab[FIRE_MODE_SKILL].skill->flag == -1)
@@ -2115,8 +2114,11 @@ static void move_keys(int num)
                 draw_info("no skill selected.", COLOR_WHITE);
                 return;
             }
-            sprintf(buf, "/%s %d %d %s", directionsfire[num], RangeFireMode, -1,
+            tmp_name = fire_mode_tab[RangeFireMode].skill->name;
+
+/*            sprintf(buf, "/%s %d %d %s", directionsfire[num], RangeFireMode, -1,
                     fire_mode_tab[RangeFireMode].skill->name);
+*/
             sprintf(msg, "use %s %s", fire_mode_tab[RangeFireMode].skill->name, directions_name[num]);
         }
         else if (RangeFireMode == FIRE_MODE_SPELL)
@@ -2126,13 +2128,20 @@ static void move_keys(int num)
                 draw_info("no spell selected.", COLOR_WHITE);
                 return;
             }
-            sprintf(buf, "/%s %d %d %s", directionsfire[num], RangeFireMode, -1,
+            tmp_name = fire_mode_tab[RangeFireMode].spell->name;
+/*            sprintf(buf, "/%s %d %d %s", directionsfire[num], RangeFireMode, -1,
                     fire_mode_tab[RangeFireMode].spell->name);
+*/
             sprintf(msg, "cast %s %s", fire_mode_tab[RangeFireMode].spell->name, directions_name[num]);
         }
         else
+        {
+            itemid = fire_mode_tab[RangeFireMode].item;
+/*
             sprintf(buf, "/%s %d %d %d", directionsfire[num], RangeFireMode, fire_mode_tab[RangeFireMode].item,
                     fire_mode_tab[RangeFireMode].amun);
+*/
+        }
 
 
         if (RangeFireMode == FIRE_MODE_BOW)
@@ -2145,13 +2154,14 @@ static void move_keys(int num)
             sprintf(msg, "fire %s", directions_name[num]);
         }
 
-        fire_command(buf);
+        /* atm we only use direction, mode and the skill/spell name */
+        send_fire_command(num, RangeFireMode, tmp_name);
         draw_info(msg,COLOR_DGOLD);
         return;
     }
     else
     {
-        send_command(directions[num], -1, SC_FIRERUN);
+        send_move_command(num, 0);
         buf[0] = 0;
     }
     strcat(buf, directions_name[num]);
@@ -2206,7 +2216,7 @@ static void key_repeat(void)
                             {
                                 strcpy(buf, bindkey_list[j].entry[i].text);
                                 if (!client_command_check(buf))
-                                    send_command(buf, -1, bindkey_list[j].entry[i].mode);
+                                    send_game_command(buf);
                                 draw_info(bindkey_list[j].entry[i].text, COLOR_DGOLD);
                             }
                         }
@@ -2445,7 +2455,7 @@ void check_menu_keys(int menu, int key)
             {
                 gui_interface_send_command(1, gui_interface_npc->link[gui_interface_npc->link_selected-1].cmd);
                 /*
-                send_command(gui_interface_npc->link[gui_interface_npc->link_selected-1].cmd, -1, SC_NORMAL);
+                send_command(gui_interface_npc->link[gui_interface_npc->link_selected-1].cmd);
                 draw_info_format(COLOR_WHITE, "Talking about: %s", gui_interface_npc->link[gui_interface_npc->link_selected-1].link);
                 */
                 gui_interface_npc->link_selected=0;
@@ -2457,7 +2467,7 @@ void check_menu_keys(int menu, int key)
             {
                 gui_interface_send_command(0, gui_interface_npc->keywords[gui_interface_npc->keyword_selected-1]);
                 /*
-                send_command(gui_interface_npc->link[gui_interface_npc->link_selected-1].cmd, -1, SC_NORMAL);
+                send_command(gui_interface_npc->link[gui_interface_npc->link_selected-1].cmd);
                 draw_info_format(COLOR_WHITE, "Talking about: %s", gui_interface_npc->link[gui_interface_npc->link_selected-1].link);
                 */
                 gui_interface_npc->keyword_selected=0;
@@ -3235,7 +3245,7 @@ void check_menu_keys(int menu, int key)
                 break;
             }
             dialog_new_char_warn = 0;
-            new_char(&new_character);
+            send_new_char(&new_character);
             GameStatus = GAME_STATUS_WAITFORPLAY;
             cpl.menustatus = MENU_NO;
             break;

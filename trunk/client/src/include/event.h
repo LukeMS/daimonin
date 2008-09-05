@@ -43,7 +43,6 @@ typedef struct _key_macro
     char    cmd[64]; /* our cmd string*/
     int     internal;/*intern: Use this function to generate the cmd*/
     int     value;/* a default value for cmds*/
-    int     mode;/* the default send mode*/
     int     menu_mode;
 }
 _key_macro;

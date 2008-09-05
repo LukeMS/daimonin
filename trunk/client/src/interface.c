@@ -1144,7 +1144,7 @@ void gui_interface_send_command(int mode, char *cmd)
     {
         if (mode == 1)
         {
-            send_command(cmd, -1, SC_NORMAL);
+            send_game_command(cmd);
             /* if(strncmp(cmd, "/talk ", 6) == 0)
              textwin_addhistory(cmd); */
         }
@@ -1152,7 +1152,7 @@ void gui_interface_send_command(int mode, char *cmd)
         {
             char buf[1024];
             sprintf(buf,"/talk %s", cmd);
-            send_command(buf, -1, SC_NORMAL);
+            send_game_command(buf);
             sprintf(msg,"Talking about: %s", cmd);
             draw_info(msg,COLOR_WHITE);
             if (mode == 2)

@@ -22,15 +22,114 @@
 */
 
 
-/* Handles commands received by the server.  This does not necessarily
- * handle all commands - some might be in other files (like init.c)
+/* Handles commands received by the server.
  *
  */
 
 #include <include.h>
+
+/* nast but tricky scroll helper */
 static int  scrolldx = 0, scrolldy = 0;
 
-void SoundCmd(unsigned char *data, int len)
+
+/* Command function pointer list and main incoming command dispatcher
+ * NOTE: the enum server_client_cmd list with
+ * the BINARY COMMAND TAGS for commands[] are in protocol.h
+ * which is a shared header between server and client.
+ * The protocol level cs commands are in client.c
+ */
+
+typedef void (*CmdProc) (char*, int);
+
+struct CmdMapping
+{
+    void (*cmdproc)(char *, int);
+};
+
+/* the one and only sc command function pointer list */
+struct CmdMapping commands[]  =
+{
+    /* Don't change this sorting! Its hardcoded in the server. */
+    { DrawInfoCmd },
+    { AddMeFail },
+    { Map2Cmd },
+    { DrawInfoCmd2 },
+    { ItemXCmd },
+    { SoundCmd},
+    { TargetObject },
+    { UpdateItemCmd },
+    { DeleteItem },
+    { StatsCmd },
+    { ImageCmd },
+    { Face1Cmd},
+    { SkillRdyCmd },
+    { PlayerCmd },
+    { SpelllistCmd },
+    { SkilllistCmd },
+    { GolemCmd },
+    { AddMeSuccess },
+    { SetupCmd},
+    { handle_query},
+    { DataCmd},
+    { NewCharCmd},
+    { ItemYCmd },
+    { GroupCmd },
+    { GroupInviteCmd },
+    { GroupUpdateCmd },
+    { InterfaceCmd },
+    { BookCmd },
+    { MarkCmd },
+#ifdef USE_CHANNELS
+    { ChannelMsgCmd },
+#endif
+    //        { ModAnimCmd },
+};
+
+#define NCOMMANDS (sizeof(commands)/sizeof(struct CmdMapping))
+
+/* process all sc commands */
+void DoClient(ClientSocket *csocket)
+{
+    command_buffer *cmd;
+
+    /* Handle all enqueued commands */
+    while ( (cmd = get_next_input_command()) ) /* function has mutex included */
+    {
+        /* LOG(LOG_MSG,"Command #%d (LT:%d)(len:%d)\n",cmd->data[0], LastTick, cmd->len); */
+        if (!cmd->data[0] || (cmd->data[0]&~0x80) > NCOMMANDS)
+            LOG(LOG_ERROR, "Bad command from server (%d)\n", cmd->data[0]);
+        else
+        {
+            int header_len = 3;
+            _server_client_cmd cmd_tag = cmd->data[0];
+
+            if( cmd_tag & 0x80)
+            {
+                cmd_tag &= ~0x80;
+                header_len = 5;
+            }
+            commands[cmd_tag - 1].cmdproc(cmd->data+header_len, cmd->len-header_len);
+        }
+        command_buffer_free(cmd);
+    }
+}
+
+/* Helper function for incoming binary data.*/
+static inline int GetInt_String(const unsigned char *const data)
+{
+    return adjust_endian_int32(*((uint32 *)data));
+}
+
+static inline short GetShort_String(const unsigned char *const data)
+{
+    return adjust_endian_int16(*((uint16 *)data));
+}
+
+/**********************************************************************
+ * SC COMMAND FUNCTIONS                                               *
+ **********************************************************************/
+
+void SoundCmd(char *data, int len)
 {
     int x, y, num, type;
 
@@ -63,92 +162,6 @@ void SoundCmd(unsigned char *data, int len)
     calculate_map_sound(num, x, y, 0);
 }
 
-/* we get endian templates from the server.
- * setup the shift values
- */
-static int setup_endian_sync(char *buf)
-{
-    /* we have 6 bytes here showing the server endian */
-    endian_int16 = *((uint16 *)buf);
-    endian_int32 = *((uint32 *)(buf+2));
-
-    /* only for testing */
-     // endian_int32 = 0x02010403;
-     // endian_int16 = 0x0102;
-
-    LOG(LOG_MSG, "Endian:: we got short16:%x int32:%x\n", endian_int16, endian_int32);
-
-    /* lets first check the simplest case: which means we don't must shift anything! */
-    endian_do16 = FALSE; /* easy going! */
-    if(endian_int16 != 0x0201)
-    {
-        uint16 test16 = 0x0201;
-
-        /* well, its easy: if we don't have 0x0201 then we have 0x0102... */
-        if(endian_int16 == 0x0201) /* some stupid sanity check */
-            return FALSE;
-
-        endian_do16 = TRUE;
-
-        LOG(LOG_MSG, "CHECK Endian 16bit:: we got %x we created read:%x send:%x\n", endian_int16, adjust_endian_int16(endian_int16), adjust_endian_int16(test16));
-        if(endian_int16 != adjust_endian_int16(test16) || test16 != adjust_endian_int16(endian_int16))
-            return FALSE; /* should NEVER happens */
-    }
-
-    /* 32 bit is a bit more complex */
-    if(endian_int32 == 0x04030201)
-        endian_do32 = FALSE;
-    else /* ok, we have a bit work to do */
-    {
-        uint32 test32 = 0x04030201;
-
-        endian_do32 = TRUE;
-        /* to lazy to do this smart with a loop */
-        if((endian_int32 & 0x000000ff) == 0x01)
-            endian_shift32[0] = 0;
-        else if((endian_int32 & 0x0000ff00) == 0x0100)
-            endian_shift32[0] = 8;
-        else if((endian_int32 & 0x00ff0000) == 0x010000)
-            endian_shift32[0] = 16;
-        else
-            endian_shift32[0] = 24;
-
-        if((endian_int32 & 0x000000ff) == 0x02)
-            endian_shift32[1] = 0;
-        else if((endian_int32 & 0x0000ff00) == 0x0200)
-            endian_shift32[1] = 8;
-        else if((endian_int32 & 0x00ff0000) == 0x020000)
-            endian_shift32[1] = 16;
-        else
-            endian_shift32[1] = 24;
-
-        if((endian_int32 & 0x000000ff) == 0x03)
-            endian_shift32[2] = 0;
-        else if((endian_int32 & 0x0000ff00) == 0x0300)
-            endian_shift32[2] = 8;
-        else if((endian_int32 & 0x00ff0000) == 0x030000)
-            endian_shift32[2] = 16;
-        else
-            endian_shift32[2] = 24;
-
-        if((endian_int32 & 0x000000ff) == 0x04)
-            endian_shift32[3] = 0;
-        else if((endian_int32 & 0x0000ff00) == 0x0400)
-            endian_shift32[3] = 8;
-        else if((endian_int32 & 0x00ff0000) == 0x040000)
-            endian_shift32[3] = 16;
-        else
-            endian_shift32[3] = 24;
-
-        /* ok... new we test what we configured by shifting 0x04030201 to the
-         * server endian - it MUST match our server template
-         */
-        LOG(LOG_MSG, "CHECK Endian 32bit:: we got %x we created read:%x send:%x\n", endian_int32, adjust_endian_int32(endian_int32), adjust_endian_int32(test32));
-        if(endian_int32 != adjust_endian_int32(test32) || test32 != adjust_endian_int32(endian_int32))
-            return FALSE; /* should NEVER happens */
-    }
-    return TRUE;
-}
 
 void SetupCmd(char *buf, int len)
 {
@@ -156,7 +169,6 @@ void SetupCmd(char *buf, int len)
     char   *cmd, *param;
 
     scrolldy = scrolldx = 0;
-
     /* setup the endian syncronization */
     if(!setup_endian_sync(buf))
     {
@@ -167,7 +179,7 @@ void SetupCmd(char *buf, int len)
         return;
     }
 
-    LOG(LOG_MSG, "Get SetupCmd:: %s\n", buf+6);
+    LOG(LOG_MSG, "Got SetupCmd:: %s\n", buf);
     for (s = 6; ;)
     {
         while (s < len && buf[s] == ' ')
@@ -193,7 +205,28 @@ void SetupCmd(char *buf, int len)
         while (s < len && buf[s] == ' ')
             s++;
 
-        if (!strcmp(cmd, "sound"))
+        if (!strcmp(cmd, "sc") || !strcmp(cmd, "cs"))
+        {
+            if( (!strcmp(cmd, "sc") && strcmp(param, VERSION_SC)) || 
+                                (!strcmp(cmd, "cs") && strcmp(param, VERSION_CS)) )
+            {
+                char tmpbuf[MAX_BUF];
+
+                sprintf(tmpbuf, "Invalid version %s: %s   (CS:%s,SC:%s)", cmd, param, VERSION_CS, VERSION_SC);
+                draw_info(tmpbuf, COLOR_RED);
+                if (!strcmp(cmd, "cs"))
+                    sprintf(tmpbuf, "The server is outdated!\nSelect a different one!");
+                else
+                    sprintf(tmpbuf, "Your client is outdated!\nUpdate your client!");
+                draw_info(tmpbuf, COLOR_RED);
+                SOCKET_CloseSocket(csocket.fd);
+                GameStatus = GAME_STATUS_START;
+                LOG(LOG_ERROR, "%s\n", tmpbuf);
+                SDL_Delay(3250);
+                return;
+            }
+        }
+        else if (!strcmp(cmd, "sound"))
         {
             if (!strcmp(param, "FALSE"))
             {}}
@@ -340,7 +373,7 @@ void SetupCmd(char *buf, int len)
  * if we have already received a face for a particular number.
  */
 
-void Face1Cmd(unsigned char *data, int len)
+void Face1Cmd(char *data, int len)
 {
     int     pnum;
     uint32  checksum;
@@ -375,187 +408,7 @@ void AddMeSuccess(char *data, int len)
     return;
 }
 
-void GoodbyeCmd(char *data, int len)
-{
-    /* This could probably be greatly improved - I am not sure if anything
-     * needs to be saved here, but certainly it should be possible to
-     * reconnect to the server or a different server without having to
-     * rerun the client.
-     */
-
-    /* Damn, this should not be here - if the version not matches, the server
-         * drops the connnect - so we get a client shutdown here?
-         * NEVER do this again.
-         */
-    /* fprintf(stderr,"Received goodbye command from server - exiting\n");
-          exit(0);*/
-
-}
-
-/* lets do it analog like the old way
- * This Command will most likely never called from the server, because we have our animations
- * alredy got in the client_anims. This command is called from the client itself to load up the animations.
- * This gives us the possibility to later let the server generate dynamic animations.
- * Because this is mostly used client sided and for better understanding i didn't squeze out every bit and didn't optimize it.
- * TODO: checks for reading beyond len!! <-- The SEGFAULT crash? :)
- */
-void NewAnimCmd(unsigned char *data, int len)
-{
-    short animnum;
-    uint8 sequence;
-    uint8 dir;
-    int pos=0, i;
-    AnimSeq *as=NULL;
-    int   seqmap[MAX_SEQUENCES];
-    int   dirmap[9];
-
-    for (i=0;i<MAX_SEQUENCES;i++)
-        seqmap[i]=-1;
-
-    memset(dirmap, -1, sizeof(dirmap));
-
-    /* 2 Bytes animation number */
-    animnum = (*(data+pos++) << 8);
-    animnum |= *(data+pos++);
-
-    if (animnum<0 || animnum >=MAXANIM)
-    {
-        LOG(LOG_DEBUG, "NewAnimCmd: animnum invalid: %d\n",animnum);
-        return;
-    }
-
-    /* one byte global flags */
-    animation[animnum].flags = *(data+pos++);
-
-    /* one byte sequence number, 0xFF is the end marker */
-    while ((sequence=*(data + pos++))!= 0xFF)
-    {
-        if (sequence >= MAX_SEQUENCES)
-        {
-            LOG(LOG_DEBUG, "NewAnimCmd: sequence invalid: %d\n", sequence);
-            return;
-        }
-        as = (AnimSeq *) malloc(sizeof(AnimSeq));
-        if (!as)
-        {
-            LOG(LOG_DEBUG, "NewAnimCmd: out of memory allocating AnimSeq: %d (%d)\n",sequence, animnum);
-            return;
-        }
-        memset(as, 0, sizeof(AnimSeq));
-        animation[animnum].aSeq[sequence] = as;
-        /* one byte flags */
-        as->flags = *(data + pos++);
-
-        /* if the highest bit in flags is set, this sequence is mapped to another sequence, the next byte tells us which */
-        if (as->flags & 0x80)
-        {
-            uint8 mapseq;
-
-            /* 1 Byte sequencenum which this sequence is mapped to */
-            mapseq = *(data + pos++);
-            if(mapseq >= MAX_SEQUENCES)
-            {
-                LOG(LOG_DEBUG, "NewAnimCmd: sequence invalid: %d\n", mapseq);
-                return;
-            }
-
-            /* to map forward we need the pointer, which we get later, so lets save for now in a temp array */
-            seqmap[sequence]=mapseq;
-            /* thats all for this sequence */
-            continue;
-        }
-
-        memset(dirmap, -1, sizeof(dirmap));
-
-        /* now we load our directions */
-        /* one byte dir number, 0xFF is the end marker */
-        while ((dir=*(data + pos++))!= 0xFF)
-        {
-            if (dir & ASEQ_MAPPED) /*its mapped, next byte tells us to which */
-            {
-                dir &= 0x7F;
-                if(dir >= 9)
-                {
-                    LOG(LOG_DEBUG,"NewAnimCmd: invalid direction %d\n", dir);
-                    return;
-                }
-                dirmap[dir] = *(data + pos++);
-                if (dirmap[dir]>8)
-                {
-                    LOG(LOG_DEBUG,"NewAnimCmd: dirmap to dir > 8, ignored!\n");
-                    dirmap[dir]=-1;
-                }
-                continue;
-            }
-            dir &= 0x7F; /* preparation for dir mappings */
-            if(dir >= 9)
-            {
-                LOG(LOG_DEBUG,"NewAnimCmd: invalid direction %d\n", dir);
-                return;
-            }
-
-            as->dirs[dir].flags = 0;
-            /* one byte frame count (255 frames for one sequence should be enough... */
-            as->dirs[dir].frames = *(data + pos++);
-
-            as->dirs[dir].faces = _malloc(sizeof(uint16) * as->dirs[dir].frames, "NewAnimCmd(): face buf");
-            as->dirs[dir].delays = _malloc(sizeof(uint8) * as->dirs[dir].frames, "NewAnimCmd(): delay buf");
-
-            if (!as->dirs[dir].faces || !as->dirs[dir].delays)
-            {
-                LOG(LOG_DEBUG, "NewAnimCmd: out of memory allocating face/delay buf: d:%d s:%d a:%d\n",dir,sequence, animnum);
-                return;
-            }
-            for (i = 0; i < as->dirs[dir].frames; i++)
-            {
-                as->dirs[dir].faces[i] = (*(data + pos++) << 8 );
-                as->dirs[dir].faces[i] |= *(data + pos++) ;
-                as->dirs[dir].delays[i] = *(data+pos++);
-            }
-        }
-        /* now we do the dirmaps, when having a dirmap we copy the date of one dir to another,
-         * the face and delay list is only a pointer, so we don't need more mem */
-        for (i=0;i<9;i++)
-        {
-            if (dirmap[i]!=-1)
-            {
-                memcpy(&(as->dirs[i]), &(as->dirs[dirmap[i]]), sizeof(AnimSeqDir));
-                as->dirs[i].flags |= ASEQ_MAPPED;
-            }
-        }
-    }
-
-    /* lets do the mappings */
-
-    /* first the default mappings */
-    for (i=1;i<MAX_SEQUENCES;i++)
-    {
-        if (!animation[animnum].aSeq[i])
-        {
-            animation[animnum].aSeq[i] = animation[animnum].aSeq[defaultmappings[i]];
-        }
-    }
-
-    /* now overwrite the mappings whith the mappings from the arc */
-    for (i=0;i<MAX_SEQUENCES;i++)
-    {
-        if (seqmap[i]!=-1)
-        {
-            if (!animation[animnum].aSeq[seqmap[i]])
-            {
-                LOG(LOG_DEBUG,"NewAnimCmd: SeqMap to non existing Seq: a:%d, curSeq: %d, wantedSeq: %d\n",animnum, i, seqmap[i]);
-                continue;
-            }
-            animation[animnum].aSeq[i] = animation[animnum].aSeq[seqmap[i]];
-        }
-    }
-
-    /* mark it as successful loaded */
-    animation[animnum].loaded = TRUE;
-    return;
-}
-
-void ImageCmd(unsigned char *data, int len)
+void ImageCmd(char *data, int len)
 {
     int     pnum, plen;
     char    buf[2048];
@@ -588,7 +441,7 @@ void ImageCmd(unsigned char *data, int len)
 }
 
 
-void SkillRdyCmd(unsigned char *data, int len)
+void SkillRdyCmd(char *data, int len)
 {
     int i, ii;
 
@@ -714,7 +567,7 @@ void DrawInfoCmd2(char *data, int len)
     draw_info(buf, flags);
 }
 
-void TargetObject(unsigned char *data, int len)
+void TargetObject(char *data, int len)
 {
     cpl.target_mode = *data++;
     if (cpl.target_mode)
@@ -734,7 +587,7 @@ void TargetObject(unsigned char *data, int len)
 
 }
 
-void StatsCmd(unsigned char *data, int len)
+void StatsCmd(char *data, int len)
 {
     int     i   = 0, x;
     int     c, temp;
@@ -744,9 +597,9 @@ void StatsCmd(unsigned char *data, int len)
     {
         c = data[i++];
 
-        if (c >= CS_STAT_PROT_START && c <= CS_STAT_PROT_END)
+        if (c >= CS_STAT_RES_START && c <= CS_STAT_RES_END)
         {
-            cpl.stats.protection[c - CS_STAT_PROT_START] = (sint16) *(((signed char*)data) + i++);
+            cpl.stats.protection[c - CS_STAT_RES_START] = (sint16) *(((signed char*)data) + i++);
             cpl.stats.protection_change = 1;
             WIDGET_REDRAW(RESIST_ID);
         }
@@ -1167,18 +1020,6 @@ void handle_query(char *data, int len)
     PreParseInfoStat(buf);
 }
 
-/* Sends a reply to the server.  text contains the null terminated
- * string of text to send.  This function basically just packs
- * the stuff up.
- */
-void send_reply(char *text)
-{
-    char    buf[4096];
-    sprintf(buf, "reply %s", text);
-    cs_write_string(csocket.fd, buf, strlen(buf));
-}
-
-
 
 /* This function copies relevant data from the archetype to the
  * object.  Only copies data that was not set in the object
@@ -1186,7 +1027,7 @@ void send_reply(char *text)
  *
  */
 
-void PlayerCmd(unsigned char *data, int len)
+void PlayerCmd(char *data, int len)
 {
     char    name[MAX_BUF];
     int     tag, weight, face, i = 0, nlen;
@@ -1241,7 +1082,7 @@ void PlayerCmd(unsigned char *data, int len)
 /* this is a bit hacked now - perhaps we should consider
  * in the future a new designed item command.
  */
-void ItemXYCmd(unsigned char *data, int len, int bflag)
+void ItemXYCmd(char *data, int len, int bflag)
 {
     int     weight, loc, tag, face, flags, pos = 0, nlen, anim, nrof, dmode;
     uint8   itype, stype, item_qua, item_con, item_skill, item_level;
@@ -1326,18 +1167,18 @@ void ItemXYCmd(unsigned char *data, int len, int bflag)
 }
 
 /* ItemXCmd is ItemCmd with sort order normal (add to end) */
-void ItemXCmd(unsigned char *data, int len)
+void ItemXCmd(char *data, int len)
 {
     ItemXYCmd(data, len, FALSE);
 }
 
 /* ItemYCmd is ItemCmd with sort order reversed (add to front) */
-void ItemYCmd(unsigned char *data, int len)
+void ItemYCmd(char *data, int len)
 {
     ItemXYCmd(data, len, TRUE);
 }
 
-void GroupCmd(unsigned char *data, int len)
+void GroupCmd(char *data, int len)
 {
     char    name[64], *tmp;
     int     hp, mhp, sp, msp, gr, mgr, level;
@@ -1366,7 +1207,7 @@ void GroupCmd(unsigned char *data, int len)
 
 /* Someone want invite us to a group.
  */
-void GroupInviteCmd(unsigned char *data, int len)
+void GroupInviteCmd(char *data, int len)
 {
     if (global_group_status != GROUP_NO) /* bug */
         LOG(LOG_ERROR, "ERROR: Got group invite when g_status != GROUP_NO (%s).\n", data);
@@ -1379,14 +1220,14 @@ void GroupInviteCmd(unsigned char *data, int len)
 
 /* Server confirms our mark request
  */
-void MarkCmd(unsigned char *data, int len)
+void MarkCmd(char *data, int len)
 {
 
     cpl.mark_count = GetInt_String(data);
     /* draw_info_format(COLOR_WHITE, "MARK: %d",cpl.mark_count); */
 }
 
-void GroupUpdateCmd(unsigned char *data, int len)
+void GroupUpdateCmd(char *data, int len)
 {
     char        *tmp;
     int         hp, mhp, sp, msp, gr, mgr, level, slot = 0;
@@ -1406,7 +1247,7 @@ void GroupUpdateCmd(unsigned char *data, int len)
     }
 }
 
-void BookCmd(unsigned char *data, int len)
+void BookCmd(char *data, int len)
 {
     int mode;
 
@@ -1424,7 +1265,7 @@ void BookCmd(unsigned char *data, int len)
 
 }
 
-void InterfaceCmd(unsigned char *data, int len)
+void InterfaceCmd(char *data, int len)
 {
 
     map_udate_flag = 2;
@@ -1497,7 +1338,7 @@ void InterfaceCmd(unsigned char *data, int len)
 }
 
 /* UpdateItemCmd updates some attributes of an item */
-void UpdateItemCmd(unsigned char *data, int len)
+void UpdateItemCmd(char *data, int len)
 {
     int     weight, loc, tag, face, sendflags, flags, pos = 0, nlen, anim, nrof, quality=254, condition=254;
     uint8   direction;
@@ -1594,7 +1435,7 @@ if (ip->anim)
     map_udate_flag = 2;
 }
 
-void DeleteItem(unsigned char *data, int len)
+void DeleteItem(char *data, int len)
 {
     int pos = 0, tag;
 
@@ -1608,7 +1449,7 @@ void DeleteItem(unsigned char *data, int len)
     map_udate_flag = 2;
 }
 
-void DeleteInventory(unsigned char *data, int len)
+void DeleteInventory(char *data, int len)
 {
     int tag;
 
@@ -1622,7 +1463,7 @@ void DeleteInventory(unsigned char *data, int len)
     map_udate_flag = 2;
 }
 
-void Map2Cmd(unsigned char *data, int len)
+void Map2Cmd(char *data, int len)
 {
     static int     map_w=0, map_h=0,mx=0,my=0;
     static int      step = 0;
@@ -1930,103 +1771,7 @@ void Map2Cmd(unsigned char *data, int len)
 
 }
 
-
-void MagicMapCmd(unsigned char *data, int len)
-{}
-
-void VersionCmd(char *data, int len)
-{
-    char   *cp;
-    char    buf[1024];
-
-    LOG(LOG_MSG, "Server ID: %s\n", data);
-    GameStatusVersionOKFlag = FALSE;
-    GameStatusVersionFlag = TRUE;
-    csocket.cs_version = atoi(data);
-
-    /* The first version is the client to server version the server wants
-     * ATM, we just do for "must match".
-     * Later it will be smart to define range where the differences are ok
-     */
-    if (VERSION_CS != csocket.cs_version)
-    {
-        sprintf(buf, "Invalid CS version (%d,%d)", VERSION_CS, csocket.cs_version);
-        draw_info(buf, COLOR_RED);
-        if (VERSION_CS > csocket.cs_version)
-            sprintf(buf, "The server is outdated!\nSelect a different one!");
-        else
-            sprintf(buf, "Your client is outdated!\nUpdate your client!");
-        draw_info(buf, COLOR_RED);
-        SOCKET_CloseSocket(csocket.fd);
-        GameStatus = GAME_STATUS_START;
-        LOG(LOG_ERROR, "%s\n", buf);
-        SDL_Delay(3250);
-        return;
-    }
-    cp = (char *) (strchr(data, ' '));
-    if (!cp)
-    {
-        sprintf(buf, "Invalid version string: %s", data);
-        draw_info(buf, COLOR_RED);
-        LOG(LOG_ERROR, "%s\n", buf);
-        SOCKET_CloseSocket(csocket.fd);
-        GameStatus = GAME_STATUS_START;
-        SDL_Delay(3250);
-        return;
-    }
-    csocket.sc_version = atoi(cp);
-    if (csocket.sc_version != VERSION_SC)
-    {
-        sprintf(buf, "Invalid SC version (%d,%d)", VERSION_SC, csocket.sc_version);
-        draw_info(buf, COLOR_RED);
-        if (VERSION_SC > csocket.sc_version)
-            sprintf(buf, "The server is outdated!\nSelect a different one!");
-        else
-            sprintf(buf, "Your client is outdated!\nUpdate your client!");
-        draw_info(buf, COLOR_RED);
-        LOG(LOG_ERROR, "%s\n", buf);
-        SOCKET_CloseSocket(csocket.fd);
-        GameStatus = GAME_STATUS_START;
-        SDL_Delay(3250);
-        return;
-    }
-    cp = (char *) (strchr(cp + 1, ' '));
-    if (!cp || strncmp(cp + 1, "Daimonin Server", 15))
-    {
-        sprintf(buf, "Invalid server name: %s", cp);
-        draw_info(buf, COLOR_RED);
-        LOG(LOG_ERROR, "%s\n", buf);
-        SOCKET_CloseSocket(csocket.fd);
-        GameStatus = GAME_STATUS_START;
-        SDL_Delay(3250);
-        return;
-    }
-    GameStatusVersionOKFlag = TRUE;
-}
-
-void SendVersion(ClientSocket csock)
-{
-    char    buf[MAX_BUF];
-
-    sprintf(buf, "version %d %d %s", VERSION_CS, VERSION_SC, PACKAGE_NAME);
-    LOG(LOG_DEBUG,"Send version command: %s\n", buf);
-    cs_write_string(csock.fd, buf, strlen(buf));
-}
-
-void RequestFile(ClientSocket csock, int index)
-{
-    char    buf[MAX_BUF];
-
-    sprintf(buf, "rf %d", index);
-    cs_write_string(csock.fd, buf, strlen(buf));
-}
-
-void SendAddMe(ClientSocket csock)
-{
-    cs_write_string(csock.fd, "addme", 5);
-}
-
-void SkilllistCmd(unsigned char *data, int len)
+void SkilllistCmd(char *data, int len)
 {
     unsigned char *tmp, *tmp2, *tmp3, *tmp4;
     int     l, e, i, ii, mode;
@@ -2091,7 +1836,7 @@ void SkilllistCmd(unsigned char *data, int len)
     }
 }
 
-void SpelllistCmd(unsigned char *data, int len)
+void SpelllistCmd(char *data, int len)
 {
     int     i, ii, mode;
     unsigned char   *tmp, *tmp2;
@@ -2153,7 +1898,7 @@ next_name:;
     }
 }
 
-void GolemCmd(unsigned char *data, int len)
+void GolemCmd(char *data, int len)
 {
     int     mode, face;
     char   *tmp, buf[256];
@@ -2197,17 +1942,10 @@ static void save_data_cmd_file(char *path, unsigned char *data, int len)
         LOG(LOG_ERROR, "save data cmd file : Can't open %s for write. (len:%d)\n", path, len);
 }
 
-/* server tells us to go to the new char creation */
-void NewCharCmd(char *data, int len)
-{
-    dialog_new_char_warn = 0;
-    GameStatus = GAME_STATUS_NEW_CHAR;
-}
-
 /* server has send us a block of data...
  * lets check what we got
  */
-void DataCmd(unsigned char *data, int len)
+void DataCmd(char *data, int len)
 {
     uint8   data_type   = (uint8) (*data);
     uint8   data_comp ;
@@ -2300,8 +2038,135 @@ void DataCmd(unsigned char *data, int len)
     free(dest);
 }
 
+/* server tells us to go to the new char creation */
+void NewCharCmd(char *data, int len)
+{
+    dialog_new_char_warn = 0;
+    GameStatus = GAME_STATUS_NEW_CHAR;
+}
+
 #ifdef USE_CHANNELS
-void ChannelMsgCmd(unsigned char *data, int len)
+
+/**
+* stringbreak for channelsystem, we have to include the prefix in normal msg
+* and have to add spaces in emotes
+* @param text message to break
+* @param prefix prefix to add to the lines
+* @param one_prefix emotes got only prefix in first line
+* @param result breaked and prefixed string
+*/
+static inline void break_string(char *text, char *prefix, Boolean one_prefix, char *result)
+{
+    char buf[200];
+    char pref[50];
+    int  i, a, len;
+    int winlen=244;
+    int preflen, restlen;
+
+    /*
+    * TODO: some security checks for max string len's
+    */
+
+    /* we have to convert to smileys for correct string width calculation */
+    if (options.smileys)
+        smiley_convert(text);
+
+    /* lets calculate the space used by the prefix */
+    preflen=0;
+    buf[0]=0;
+    for (i=0;prefix[i]!=0;i++)
+        preflen += SystemFont.c[(uint8) (prefix[i])].w + SystemFont.char_offset;
+
+    restlen=winlen-preflen;
+    result[0]=0;
+    strcat(result,prefix);
+
+    switch (options.channelformat)
+    {
+    case 0:
+        if (one_prefix)
+        {
+            for (i=0;i<(preflen/2);i++)
+                pref[i]=' ';
+            pref[i+1]=0;
+        }
+        else strcpy(pref,prefix);
+        break;
+
+    case 1:
+        one_prefix=TRUE;
+        strcpy(pref,"       ");
+        break;
+    }
+
+    /* lets do some codestealing from client's draw_info:) */
+    len = 0;
+    for (a = i = 0; ; i++)
+    {
+        len += SystemFont.c[(uint8) (text[i])].w + SystemFont.char_offset;
+        if (len >= restlen || text[i] == 0x0a || text[i] == 0)
+        {
+
+            /* now the special part - lets look for a good point to cut */
+            if (len >= restlen && a > 10)
+            {
+                int ii =a, it = i, ix = a, tx = i;
+
+                while (ii >= a / 2)
+                {
+                    if (text[it] == ' '
+                        || text[it] == ':'
+                        || text[it] == '.'
+                        || text[it] == ','
+                        || text[it] == '('
+                        || text[it] == ';'
+                        || text[it] == '-'
+                        || text[it] == '+'
+                        || text[it] == '*'
+                        || text[it] == '?'
+                        || text[it] == '/'
+                        || text[it] == '='
+                        || text[it] == '.'
+                        || text[it] == 0
+                        || text[it] == 0x0a)
+                    {
+                        tx = it;
+                        ix = ii;
+                        break;
+                    }
+                    it--;
+                    ii--;
+                };
+                i = tx;
+                a = ix;
+            }
+            buf[a] = 0x0a;
+            buf[a+1]= 0;
+            strcat(result,buf);
+
+            a = len = 0;
+
+            if (text[i] == 0)
+                break;
+
+            strcat(result,pref);
+
+            /* if we cut on space, space must be removed!!! */
+            if (text[i]==' ')
+                i++;
+
+        }
+        if (text[i] != 0x0a)
+            buf[a++] = text[i];
+    }
+
+    /* remove last newline */
+    result[strlen(result)-1]=0;
+
+    return;
+}
+
+void ChannelMsgCmd(char *data, int len)
 {
     uint8 mode;
     uint8 color;
@@ -2346,123 +2211,5 @@ void ChannelMsgCmd(unsigned char *data, int len)
     draw_info(outstring,(NDI_PLAYER|color));
 
 }
-/**
- * stringbreak for channelsystem, we have to include the prefix in normal msg
- * and have to add spaces in emotes
- * @param text message to break
- * @param prefix prefix to add to the lines
- * @param one_prefix emotes got only prefix in first line
- * @param result breaked and prefixed string
- */
-void break_string(char *text, char *prefix, Boolean one_prefix, char *result)
-{
-    char buf[200];
-    char pref[50];
-    int  i, a, len;
-    int winlen=244;
-    int preflen, restlen;
 
-    /*
-     * TODO: some security checks for max string len's
-     */
-
-    /* we have to convert to smileys for correct string width calculation */
-    if (options.smileys)
-        smiley_convert(text);
-
-    /* lets calculate the space used by the prefix */
-    preflen=0;
-    buf[0]=0;
-    for (i=0;prefix[i]!=0;i++)
-        preflen += SystemFont.c[(uint8) (prefix[i])].w + SystemFont.char_offset;
-
-    restlen=winlen-preflen;
-    result[0]=0;
-    strcat(result,prefix);
-
-    switch (options.channelformat)
-    {
-        case 0:
-            if (one_prefix)
-            {
-                for (i=0;i<(preflen/2);i++)
-                    pref[i]=' ';
-                pref[i+1]=0;
-            }
-            else strcpy(pref,prefix);
-        break;
-
-        case 1:
-            one_prefix=TRUE;
-            strcpy(pref,"       ");
-        break;
-    }
-
-    /* lets do some codestealing from client's draw_info:) */
-    len = 0;
-    for (a = i = 0; ; i++)
-    {
-        len += SystemFont.c[(uint8) (text[i])].w + SystemFont.char_offset;
-        if (len >= restlen || text[i] == 0x0a || text[i] == 0)
-        {
-
-            /* now the special part - lets look for a good point to cut */
-            if (len >= restlen && a > 10)
-            {
-                int ii =a, it = i, ix = a, tx = i;
-
-                while (ii >= a / 2)
-                {
-                    if (text[it] == ' '
-                     || text[it] == ':'
-                     || text[it] == '.'
-                     || text[it] == ','
-                     || text[it] == '('
-                     || text[it] == ';'
-                     || text[it] == '-'
-                     || text[it] == '+'
-                     || text[it] == '*'
-                     || text[it] == '?'
-                     || text[it] == '/'
-                     || text[it] == '='
-                     || text[it] == '.'
-                     || text[it] == 0
-                     || text[it] == 0x0a)
-                    {
-                        tx = it;
-                        ix = ii;
-                        break;
-                    }
-                    it--;
-                    ii--;
-                };
-                i = tx;
-                a = ix;
-            }
-            buf[a] = 0x0a;
-            buf[a+1]= 0;
-            strcat(result,buf);
-
-            a = len = 0;
-
-            if (text[i] == 0)
-                break;
-
-            strcat(result,pref);
-
-            /* if we cut on space, space must be removed!!! */
-            if (text[i]==' ')
-                i++;
-
-        }
-        if (text[i] != 0x0a)
-            buf[a++] = text[i];
-    }
-
-    /* remove last newline */
-    result[strlen(result)-1]=0;
-
-    return;
-
-}
 #endif

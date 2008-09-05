@@ -24,78 +24,44 @@
 #if !defined(__COMMANDS_H)
 #define __COMMANDS_H
 
-typedef enum client_cmd {
-    CLIENT_CMD_GENERIC,
-    CLIENT_CMD_STOP,
+extern void DoClient(ClientSocket *csocket);
 
-    CLIENT_CMD_MAX_NROF
-} _client_cmd;
-
-#define DATA_PACKED_CMD 0x80
-enum
-{
-    DATA_CMD_NO,
-    DATA_CMD_SKILL_LIST,
-    DATA_CMD_SPELL_LIST,
-    DATA_CMD_SETTINGS_LIST,
-    DATA_CMD_ANIM_LIST,
-    DATA_CMD_BMAP_LIST
-};
-
-/* spell list commands for client spell list */
-#define SPLIST_MODE_ADD    0
-#define SPLIST_MODE_REMOVE 1
-#define SPLIST_MODE_UPDATE 2
-
-extern void SoundCmd(unsigned char *data, int len);
+extern void SoundCmd(char *data, int len);
 extern void SetupCmd(char *buf, int len);
-extern void FaceCmd(unsigned char *data, int len);
-extern void Face1Cmd(unsigned char *data, int len);
+extern void Face1Cmd(char *data, int len);
 extern void AddMeFail(char *data, int len);
 extern void AddMeSuccess(char *data, int len);
-extern void GoodbyeCmd(char *data, int len);
-extern void NewAnimCmd(unsigned char *data, int len);
-extern void ImageCmd(unsigned char *data, int len);
+extern void ImageCmd(char *data, int len);
 extern void DrawInfoCmd(char *data, int len);
 extern void DrawInfoCmd2(char *data, int len);
-extern void StatsCmd(unsigned char *data, int len);
+extern void StatsCmd(char *data, int len);
 extern void PreParseInfoStat(char *cmd);
 extern void handle_query(char *data, int len);
-extern void send_reply(char *text);
-extern void PlayerCmd(unsigned char *data, int len);
-extern void Item1Cmd(unsigned char *data, int len);
-extern void UpdateItemCmd(unsigned char *data, int len);
-
-extern void DeleteItem(unsigned char *data, int len);
-extern void DeleteInventory(unsigned char *data, int len);
-extern void Map2Cmd(unsigned char *data, int len);
-extern void MagicMapCmd(unsigned char *data, int len);
-extern void VersionCmd(char *data, int len);
-
-extern void SendVersion(ClientSocket csock);
-extern void SendAddMe(ClientSocket csock);
-extern void RequestFile(ClientSocket csock, int index);
-extern void SpelllistCmd(unsigned char *data, int len);
-extern void SkilllistCmd(unsigned char *data, int len);
-
-extern void SkillRdyCmd(unsigned char *data, int len);
-extern void GolemCmd(unsigned char *data, int len);
-extern void ItemXYCmd(unsigned char *data, int len, int bflag);
-extern void ItemXCmd(unsigned char *data, int len);
-extern void ItemYCmd(unsigned char *data, int len);
-extern void GroupCmd(unsigned char *data, int len);
-extern void GroupInviteCmd(unsigned char *data, int len);
-extern void GroupUpdateCmd(unsigned char *data, int len);
-extern void MarkCmd(unsigned char *data, int len);
-extern void BookCmd(unsigned char *data, int len);
-extern void InterfaceCmd(unsigned char *data, int len);
-extern void TargetObject(unsigned char *data, int len);
-extern void DataCmd(unsigned char *data, int len);
+extern void PlayerCmd(char *data, int len);
+extern void Item1Cmd(char *data, int len);
+extern void UpdateItemCmd(char *data, int len);
+extern void DeleteItem(char *data, int len);
+extern void DeleteInventory(char *data, int len);
+extern void Map2Cmd(char *data, int len);
+extern void SpelllistCmd(char *data, int len);
+extern void SkilllistCmd(char *data, int len);
+extern void SkillRdyCmd(char *data, int len);
+extern void GolemCmd(char *data, int len);
+extern void ItemXYCmd(char *data, int len, int bflag);
+extern void ItemXCmd(char *data, int len);
+extern void ItemYCmd(char *data, int len);
+extern void GroupCmd(char *data, int len);
+extern void GroupInviteCmd(char *data, int len);
+extern void GroupUpdateCmd(char *data, int len);
+extern void MarkCmd(char *data, int len);
+extern void BookCmd(char *data, int len);
+extern void InterfaceCmd(char *data, int len);
+extern void TargetObject(char *data, int len);
+extern void DataCmd(char *data, int len);
 extern void NewCharCmd(char *data, int len);
 
 #ifdef USE_CHANNELS
-extern void ChannelMsgCmd(unsigned char *data, int len);
-void break_string(char *text, char *prefix, Boolean one_prefix, char *result);
+extern void ChannelMsgCmd(char *data, int len);
 #endif
 
 #endif

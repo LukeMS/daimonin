@@ -148,6 +148,8 @@ extern void         new_anim_animate(uint32 curTick);
 extern void         create_anim_tmp();
 extern int          load_anim_tmp(void);
 
+extern void         NewAnimCmd(unsigned char *data, int len);
+
 
 
 

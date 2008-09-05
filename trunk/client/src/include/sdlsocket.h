@@ -34,10 +34,15 @@ typedef struct _command_buffer
 }
 command_buffer;
 
+/* flags for send_command_binary() */
+#define SEND_CMD_FLAG_NO 0
+#define SEND_CMD_FLAG_STRING 1 /* add a '\0' to the outbuffer string as sanity set */
+#define SEND_CMD_FLAG_FIXED  2 /* the the command as fixed, without length tag (server knows length) */
+
+#define send_socklist_binary(_sl_) send_command_binary((_sl_)->cmd, (_sl_)->buf?(_sl_)->buf:(_sl_)->defbuf, (_sl_)->len, (_sl_)->flags )
+extern int send_command_binary(int cmd, uint8 *body, int len, int flags);
+
 extern void command_buffer_free(command_buffer *buf);
-/* extern _command_buffer_read *read_cmd_start; */
-extern int send_command_binary(uint8 cmd, uint8 *body, unsigned int len);
-extern int send_socklist(int fd, SockList msg);
 extern command_buffer *get_next_input_command(void);
 extern void socket_thread_start(void);
 extern void socket_thread_stop(void);

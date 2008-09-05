@@ -83,12 +83,12 @@ void widget_show_group(int x, int y)
             if (add_button(x + 4 , y + 110, 101, BITMAP_BUTTON_BLACK_UP, "join", "join"))
             {
                 global_group_status = GROUP_WAIT;
-                send_command("/join", -1, SC_NORMAL);
+                send_game_command("/join");
             }
             if (add_button(x + 61, y + 110, 102, BITMAP_BUTTON_BLACK_UP, "deny", "deny"))
             {
                 global_group_status = GROUP_NO;
-                send_command("/deny", -1, SC_NORMAL);
+                send_game_command("/deny");
             }
         }
     }
@@ -99,7 +99,7 @@ void widget_show_group(int x, int y)
             if (global_group_status != GROUP_LEAVE)
             {
                 global_group_status = GROUP_LEAVE;
-                send_command("/leave", -1, SC_NORMAL);
+                send_game_command("/leave");
             }
         }
 
@@ -216,12 +216,12 @@ void show_group(int x, int y)
             if (add_button(x + group_pos[0][0] + 40, y + group_pos[0][1] + 48, 101, BITMAP_BUTTON_BLACK_UP, "join", "join"))
             {
                 global_group_status = GROUP_WAIT;
-                send_command("/join", -1, SC_NORMAL);
+                send_game_command("/join");
             }
             if (add_button(x + group_pos[0][0] + 120, y + group_pos[0][1] + 48, 102, BITMAP_BUTTON_BLACK_UP, "deny", "deny"))
             {
                 global_group_status = GROUP_NO;
-                send_command("/deny", -1, SC_NORMAL);
+                send_game_command("/deny");
             }
         }
     }
@@ -232,7 +232,7 @@ void show_group(int x, int y)
             if (global_group_status != GROUP_LEAVE)
             {
                 global_group_status = GROUP_LEAVE;
-                send_command("/leave", -1, SC_NORMAL);
+                send_game_command("/leave");
             }
         }
 

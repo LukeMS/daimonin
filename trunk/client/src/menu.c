@@ -70,7 +70,7 @@ void do_console(int x, int y)
                     draw_info(buf,COLOR_DGOLD);*/
             if (client_command_check(InputString))
                 goto no_send_cmd;
-            send_command(InputString, -1, SC_NORMAL);
+            send_game_command(InputString);
         }
 no_send_cmd:
         reset_keys();
@@ -152,7 +152,7 @@ int client_command_check(char *cmd)
     {
         char channelbuf[1024];
         sprintf(channelbuf,"/channel %s",cmd+1);
-        send_command(channelbuf,-1,SC_NORMAL);
+        send_game_command(channelbuf);
         return TRUE;
     }
 #endif
@@ -363,7 +363,7 @@ int client_command_check(char *cmd)
 
                 sprintf(buf,"/tell %s %s", cpl.player_reply, cmd);
                 LOG(-1,"REPLY: %s\n", buf);
-                send_command(buf, -1, SC_NORMAL);
+                send_game_command(buf);
             }
         }
         return TRUE;
@@ -608,7 +608,7 @@ void do_number(int x, int y)
             tmp = atoi(InputString);
             if (tmp > 0 && tmp <= cpl.nrof)
             {
-                client_send_move(cpl.loc, cpl.tag, tmp);
+                send_inv_move(cpl.loc, cpl.tag, tmp);
                 sprintf(buf, "%s %d from %d %s", cpl.nummode == NUM_MODE_GET ? "get" : "drop", tmp, cpl.nrof,
                         cpl.num_text);
                 if (cpl.nummode == NUM_MODE_GET)
@@ -2647,7 +2647,7 @@ void widget_event_target(int x, int y, SDL_Event event)
         x < cur_widget[TARGET_ID].x1 + 259)
     {
         if (cpl.target_code)
-            send_command("/talk hello", -1, SC_NORMAL);
+            send_game_command("/talk hello");
     }
 }
 

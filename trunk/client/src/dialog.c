@@ -1641,17 +1641,6 @@ void show_login_server(void)
     if (request_file_chain > 9)
         StringBlt(ScreenSurface, &SystemFont, "Sync files...", x + 2, y + 80, COLOR_WHITE, NULL, NULL);
 
-    /* if set, we have requested something and the stuff in the socket buffer is our file! */
-    if (request_file_chain == 1
-            || request_file_chain == 3
-            || request_file_chain == 5
-            || request_file_chain == 7
-            || request_file_chain == 9)
-    {
-        sprintf(buf, "received ~%d~ bytes", csocket.inbuf.len);
-        StringBlt(ScreenSurface, &SystemFont, buf, x + 1, y + 150, COLOR_WHITE, NULL, NULL);
-    }
-
     /* login user part */
     if (GameStatus == GAME_STATUS_REQUEST_FILES)
         return;
