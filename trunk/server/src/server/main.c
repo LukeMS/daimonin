@@ -174,10 +174,8 @@ void process_players1(mapstruct *map)
     /* Basically, we keep looping until all the players have done their actions. */
     for (pl = first_player; pl != NULL; pl = pl->next)
     {
-        if (handle_newcs_player(pl) == -1) /* -1: player is invalid now */
-        {
+        if(pl->socket.status != Ns_Playing || handle_newcs_player(pl) == -1) /* -1: player is invalid */
             continue;
-        }
 
         /* we call do_some_living now in a interval of 1 sec.
          * That will save us some cpu time per player
@@ -214,6 +212,9 @@ void process_players2(mapstruct *map)
 
     for (pl = first_player; pl != NULL; pl = pl->next)
     {
+        if(pl->socket.status != Ns_Playing)
+            continue;
+
         /* thats for debug spells - if enabled, mana/grace is always this value
             pl->ob->stats.grace = 900;
             pl->ob->stats.sp = 900;

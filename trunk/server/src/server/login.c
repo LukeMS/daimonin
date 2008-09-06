@@ -1193,7 +1193,7 @@ void check_login(object *op, int mode)
     if(!mode)
         return; /* if in traverse mode, we only want load the player - not make him alive */
 
-    /* *ONLY* place we set this status */
+    /* Ns_Playing for a existing char - 2nd place to set is the newchar function */
     pl->socket.status = Ns_Playing;
 
     new_draw_info(NDI_UNIQUE, 0, op, "Welcome Back!");
