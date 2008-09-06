@@ -73,13 +73,9 @@ void InitConnection(NewSocket *ns, char *ip)
     ns->login_count = ROUND_TAG + pticks_socket_idle;
     ns->idle_flag = 0;
     ns->addme = 0;
-    ns->faceset = 0;
-    ns->facecache = 0;
     ns->image2 = 0;
     ns->sound = 0;
     ns->ext_title_flag = 1;
-    ns->map2cmd = 0;
-    ns->darkness = 1;
     ns->mapx = 17;
     ns->mapy = 17;
     ns->mapx_2 = 8;
@@ -90,7 +86,6 @@ void InitConnection(NewSocket *ns, char *ip)
     ns->rf_spells = 0;
     ns->rf_anims = 0;
     ns->rf_bmaps = 0;
-    ns->write_overflow = 0;
 
 	ns->cmd_start = ns->cmd_end = NULL;
 	ns->sockbuf_start = ns->sockbuf_end = ns->sockbuf = NULL;
