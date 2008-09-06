@@ -877,7 +877,7 @@ char *examine(object *op, object *tmp, int flag)
     if (tmp->weight)
     {
         sprintf(buf, tmp->nrof > 1 ? "They weigh %3.3f kg.\n" : "It weighs %3.3f kg.\n",
-            (float) (tmp->nrof ? tmp->weight * tmp->nrof : tmp->weight) / 1000.0f);
+            (float) (tmp->nrof ? tmp->weight * (sint32)tmp->nrof : tmp->weight) / 1000.0f);
 
         strcat(buf_out, buf);
     }

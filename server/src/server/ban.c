@@ -131,7 +131,7 @@ void save_ban_file(void)
         else
         {
             fprintf(fp, "%s _ %d %ld\n",ol->objlink.ban->name, ol->objlink.ban->ticks_init,
-                                        ol->objlink.ban->ticks_init==-1?-1:ol->objlink.ban->ticks-pticks);
+                                        ol->objlink.ban->ticks_init==-1?-1:(int)(ol->objlink.ban->ticks-pticks));
         }
     }
 
@@ -143,7 +143,7 @@ void save_ban_file(void)
         else
         {
             fprintf(fp, "_ %s %d %ld\n",ol->objlink.ban->ip?ol->objlink.ban->ip:"_", ol->objlink.ban->ticks_init,
-                ol->objlink.ban->ticks_init==-1?-1:ol->objlink.ban->ticks-pticks);
+                ol->objlink.ban->ticks_init==-1?-1:(int)(ol->objlink.ban->ticks-pticks));
         }
     }
 
@@ -170,7 +170,7 @@ struct objectlink *add_ban_entry(char *banned, char *ip, int ticks, int ticks_le
         FREE_AND_COPY_HASH(ol->objlink.ban->name, banned);
 
     LOG(-1,"Banning: %s (IP: %s) for %d seconds (%d sec left).\n", STRING_SAFE(ol->objlink.ban->name),
-            STRING_SAFE(ip), ticks/8,ol->objlink.ban->ticks_init==-1?-1:(ol->objlink.ban->ticks-pticks)/8);
+            STRING_SAFE(ip), ticks/8,ol->objlink.ban->ticks_init==-1?-1:(int)(ol->objlink.ban->ticks-pticks)/8);
 
     if(banned) /* add to name list */
         objectlink_link(&ban_list_player, NULL, NULL, ban_list_player, ol);
