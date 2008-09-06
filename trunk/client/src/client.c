@@ -400,10 +400,8 @@ void SendSetupCmd(void)
 {
     char buf[MAX_BUF];
 
-    sprintf(buf,
-    "cs %s sc %s sound %d map2cmd 1 mapsize %dx%d darkness 1 facecache 1 skf %d|%x spf %d|%x bpf %d|%x stf %d|%x amf %d|%x",
-    VERSION_CS, VERSION_SC,
-    SoundStatus, MapStatusX, MapStatusY, srv_client_files[SRV_CLIENT_SKILLS].len,
+    sprintf(buf, "cs %s sc %s sn %d mz %dx%d skf %d|%x spf %d|%x bpf %d|%x stf %d|%x amf %d|%x",
+    VERSION_CS, VERSION_SC, SoundStatus, MapStatusX, MapStatusY, srv_client_files[SRV_CLIENT_SKILLS].len,
     srv_client_files[SRV_CLIENT_SKILLS].crc, srv_client_files[SRV_CLIENT_SPELLS].len,
     srv_client_files[SRV_CLIENT_SPELLS].crc, srv_client_files[SRV_CLIENT_BMAPS].len,
     srv_client_files[SRV_CLIENT_BMAPS].crc, srv_client_files[SRV_CLIENT_SETTINGS].len,
