@@ -29,6 +29,9 @@
 #include <newserver.h>
 #include <random_map.h>
 
+#define YY_NO_UNPUT
+#define YY_NO_POP_STATE
+#define YY_NO_TOP_STATE
 
 #define YY_DECL int rmap_lex_read(RMParms *RP)
 

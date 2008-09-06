@@ -31,7 +31,8 @@ enum
 struct behaviourparam_decl
 {
     const char *name;
-    int         type, attribs;
+    int         type;
+    int         attribs;
     void       *defaultvalue;
 };
 

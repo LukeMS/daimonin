@@ -29,9 +29,10 @@
 #include <newserver.h>
 #include <sproto.h>
 
+#define YY_NO_UNPUT
+#define YY_NO_TOP_STATE
 
 #define YY_DECL int lex_load(object *op, int map_flags)
-
 static char *yval();
 static object *singularity;
 static artifact *amask_art;
@@ -105,11 +106,11 @@ WS	[ \t]*{NL}?
 					copy_object_data(&tmp->arch->clone,tmp);
 				else
 				    tmp2 = create_singularity(yval());
-					
+
 			    strcpy(msgbuf, "");
 				old_sleft = tmp->speed_left;
 				old_speed = tmp->speed;
-				
+
 				lex_load(tmp, map_flags);
 			    if (!tmp->arch)
 				    tmp = tmp2;
@@ -140,7 +141,7 @@ WS	[ \t]*{NL}?
 					tmp->attacked_by = NULL; /* used for containers as link to players viewing it */
 					tmp->attacked_by_count = 0;
 				}
-				 
+
 				if(tmp->inv && !QUERY_FLAG(tmp,FLAG_SYS_OBJECT))
 					tmp->carrying = sum_weight(tmp);			/* ensure right weight for inventories */
 				else
@@ -149,7 +150,7 @@ WS	[ \t]*{NL}?
 			    if(QUERY_FLAG(op, FLAG_NO_INVENTORY) )
 			    {
                     /* destroy_object(tmp);
-                       Don't call destroy_object(). tmp will be 
+                       Don't call destroy_object(). tmp will be
                        garbage collected automatically!
                        Gecko 2006-07-12
                      */
@@ -197,7 +198,7 @@ WS	[ \t]*{NL}?
 					  */
 					else if(tmp->randomitems && (map_flags & MAP_STATUS_ORIGINAL) &&(op->type != SPAWN_POINT ))
 						create_treasure_list(tmp->randomitems, tmp, 0, get_enviroment_level(tmp),ART_CHANCE_UNSET,0);
-                    
+
                     if(object_initializers[tmp->type] != NULL)
                         object_initializers[tmp->type](tmp);
 				}
@@ -756,7 +757,7 @@ void *create_loader_buffer(void *fp)
  * arch is expanded after loading in a map and out_of_map() triggers a map loading for
  * parts in a different map. Because we don't need any order of objects when we load a map,
  * this will work fine.
- * Note: load_object can be called with fp = FILE * and fp = char * - so we have here void used 
+ * Note: load_object can be called with fp = FILE * and fp = char * - so we have here void used
  */
 int load_object(void *fp, object *op, void *mybuffer, int bufstate, int map_flags) {
     int retval = 0;
@@ -835,7 +836,7 @@ int load_object(void *fp, object *op, void *mybuffer, int bufstate, int map_flag
 		singularity->y = op->y;
 		copy_object_data(singularity,op); /* yep, this is right - op is a reference from outside */
 	}
-	
+
 	if(QUERY_FLAG(op,FLAG_IDENTIFIED))
 	{
 		SET_FLAG(op,FLAG_KNOWN_MAGICAL);
@@ -879,7 +880,7 @@ int load_object(void *fp, object *op, void *mybuffer, int bufstate, int map_flag
 		if(op->speed<0.0f && op->speed_left==op->arch->clone.speed_left)
 			op->speed_left=op->speed_left+(float)(RANDOM()%90)/100.0f;
 	  }
-				
+
 	  if(amask_art)
 		give_artifact_abilities(op, amask_art);
 
@@ -906,7 +907,7 @@ int load_object(void *fp, object *op, void *mybuffer, int bufstate, int map_flag
 int set_variable(object *op,char *buf) {
     YY_BUFFER_STATE  yybufstate,yycurbuf=YY_CURRENT_BUFFER;
     int retval;
-	
+
     strcpy(msgbuf, "");
     yy_push_state(INITIAL);
     yybufstate=yy_scan_string(buf);
@@ -1010,7 +1011,7 @@ static inline char *append_multiline(char *buf, const char *str)
             }
         }
     }
-    
+
     /* Mantis bug #000050 */
     /* Ensure there's a newline before endmsg */
     if(first == '\0' || buf[-2] != '\n') {
@@ -1040,7 +1041,7 @@ static inline char *append_simple(char *buf, const char *str)
 char *get_ob_diff(const object *op, const object *op2) {
     /* I plan to optimize this heavily */
     /* TODO: One good optimization would be to keep track of the end of buf
-     * instead of using strcat() which must find the end at every call 
+     * instead of using strcat() which must find the end at every call
      * /Gecko
      */
   static char buf2[HUGE_BUF];
@@ -1054,11 +1055,11 @@ char *get_ob_diff(const object *op, const object *op2) {
     buf_end = append_simple(append_line(append_simple(buf_end, "name "), op->name), "\n");
   if(op->title && op->name!=op2->title)
     buf_end = append_simple(append_line(append_simple(buf_end, "title "), op->title), "\n");
-  if(op->race && op->race!=op2->race) 
+  if(op->race && op->race!=op2->race)
     buf_end = append_simple(append_line(append_simple(buf_end, "race "), op->race), "\n");
-  if(op->slaying && op->slaying!=op2->slaying) 
+  if(op->slaying && op->slaying!=op2->slaying)
     buf_end = append_simple(append_line(append_simple(buf_end, "slaying "), op->slaying), "\n");
-  if(op->msg && op->msg!=op2->msg) 
+  if(op->msg && op->msg!=op2->msg)
     buf_end = append_simple(append_multiline(append_simple(buf_end,"msg\n"), op->msg), "endmsg\n");
   if(op->other_arch!=op2->other_arch&&op->other_arch!=NULL &&
      op->other_arch->name) {
@@ -1134,7 +1135,7 @@ char *get_ob_diff(const object *op, const object *op2) {
     save_long(buf, "x", op->x);
   if(op->y!=op2->y)
     save_long(buf, "y", op->y);
-#ifdef USE_TILESTRETCHER    
+#ifdef USE_TILESTRETCHER
   if(op->z!=op2->z)
     save_long(buf, "z", op->z);
 #endif
@@ -1204,7 +1205,7 @@ char *get_ob_diff(const object *op, const object *op2) {
 #else
 		sprintf(buf2,"value %I64d\n", op->value);
 #endif
-	
+
 		strcat(buf,buf2);
 	}
 
@@ -1264,7 +1265,7 @@ char *get_ob_diff(const object *op, const object *op2) {
     save_long(buf, "last_grace", op->last_grace);
   if(op->last_eat!=op2->last_eat)
     save_long(buf, "last_eat", op->last_eat);
-  if(QUERY_FLAG(op,FLAG_IS_LINKED) && op->map) 
+  if(QUERY_FLAG(op,FLAG_IS_LINKED) && op->map)
   {
       /* Generate comma separated list of links */
       oblinkpt   *obp;
@@ -1274,12 +1275,12 @@ char *get_ob_diff(const object *op, const object *op2) {
       strcpy(buf2, "connected ");
       for (obp = op->map->buttons; obp; obp = obp->next)
           for (ol = obp->objlink.link; ol; ol = ol->next)
-              if (ol->objlink.ob == op && ol->id == op->count) 
+              if (ol->objlink.ob == op && ol->id == op->count)
               {
                   sprintf(buf2 + strlen(buf2), "%s%d", foundone?",":"", obp->value);
                   foundone = 1;
               }
-      
+
       strcat(buf,buf2);
       strcat(buf,"\n");
   }
@@ -1361,7 +1362,7 @@ void save_object(FILE *fp,object *op, int flag) {
     if(!fp || QUERY_FLAG(op, FLAG_NO_SAVE) || (!(flag&1) && (QUERY_FLAG(op, FLAG_UNPAID))))
 		return;
 
-    if((at=op->arch)==NULL) 
+    if((at=op->arch)==NULL)
 		at=empty_archetype;
 	fprintf(fp,"arch %s\n",at->name);
 
@@ -1395,7 +1396,7 @@ void save_object(FILE *fp,object *op, int flag) {
     }
 
     /* Save a player's pets */
-    if(op->type==PLAYER) 
+    if(op->type==PLAYER)
         save_all_pets(fp, op, flag);
 
     if (!(flag&2))

@@ -193,13 +193,9 @@ typedef struct NewSocket_struct
         uint32              below_clear     : 1;        /* marker to map draw/draw below */
         uint32              idle_flag       : 1;        /* idle warning was given and we count for disconnect */
         uint32              addme           : 1;        /* important: when set, a "connect" was initizialised as "player" */
-        uint32              facecache       : 1;        /* If true, client is caching images */
         uint32              sound           : 1;        /* does the client want sound */
-        uint32              map2cmd         : 1;        /* Always use map2 protocol command */
         uint32              ext_title_flag  : 1;        /* send ext title to client */
-        uint32              darkness        : 1;        /* True if client wants darkness information */
         uint32              image2          : 1;        /* Client wants image2/face2 commands */
-        uint32              write_overflow  : 1;
         uint32              setup           : 1;
         uint32              rf_settings     : 1;
         uint32              rf_skills       : 1;
@@ -209,7 +205,6 @@ typedef struct NewSocket_struct
 
         sint16              look_position;  /* start of drawing of look window */
         sint16              look_position_container;  /* start of drawing of look window for a container */
-        uint8               faceset;        /* Set the client is using, default 0 */
 } NewSocket;
 
 typedef void (*func_uint8_int_ns) (char *, int, NewSocket *);

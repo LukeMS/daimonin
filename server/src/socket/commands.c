@@ -434,45 +434,12 @@ void cs_cmd_setup(char *buf, int len, NewSocket *ns)
             sprintf(tmpbuf, "%d", VERSION_SC);
             strcat(cmdback, tmpbuf);
         }
-        else if (!strcmp(cmd, "sound"))
+        else if (!strcmp(cmd, "sn"))
         {
             ns->sound = atoi(param);
             strcat(cmdback, param);
         }
-        else if (!strcmp(cmd, "darkness"))
-        {
-            ns->darkness = atoi(param);
-            strcat(cmdback, param);
-        }
-        else if (!strcmp(cmd, "map2cmd"))
-        {
-            ns->map2cmd = atoi(param);
-            /* if beyond this size, need to use map2cmd no matter what */
-            if (ns->mapx > 11 || ns->mapy > 11)
-                ns->map2cmd = 1;
-            strcat(cmdback, ns->map2cmd ? "1" : "0");
-        }
-        else if (!strcmp(cmd, "facecache"))
-        {
-#ifdef SERVER_SEND_FACES
-            ns->facecache = atoi(param);
-            strcat(cmdback, param);
-#endif
-        }
-        else if (!strcmp(cmd, "faceset"))
-        {
-#ifdef SERVER_SEND_FACES
-            int q   = atoi(param);
-
-            if (is_valid_faceset(q))
-                ns->faceset = q;
-            sprintf(tmpbuf, "%d", ns->faceset);
-            strcat(cmdback, tmpbuf);
-            /* if the client is using faceset, it knows about image2 command */
-            ns->image2 = 1;
-#endif
-        }
-        else if (!strcmp(cmd, "mapsize"))
+        else if (!strcmp(cmd, "mz"))
         {
             int     x, y = 0;
             char   *cp;

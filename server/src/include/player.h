@@ -361,7 +361,7 @@ typedef struct pl_player
     unsigned char       listening; /* Which priority will be used in info_all */
 
     unsigned char       run_on;
-    sint32              last_weight_limit;  /* Last weight limit transmitted to client */
+    uint32              last_weight_limit;  /* Last weight limit transmitted to client */
     living              orig_stats;       /* Can be less in case of poisoning */
     living              last_stats;       /* Last stats drawn with draw_stats() */
     long                last_weight;

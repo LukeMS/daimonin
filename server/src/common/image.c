@@ -30,7 +30,7 @@
 struct bmappair
 {
 	char                   *name;
-	unsigned int            number;
+	int                     number;
 };
 
 static struct bmappair *xbm = NULL;
@@ -292,7 +292,7 @@ int esrv_send_face(NewSocket *ns, short face_num, int nocache)
 		return SEND_FACE_OUT_OF_BOUNDS;
 	}
 
-	fallback = get_face_fallback(ns->faceset, face_num);
+	fallback = get_face_fallback(0, face_num);
 
 	if (facesets[fallback].faces[face_num].data == NULL)
 	{
@@ -300,7 +300,7 @@ int esrv_send_face(NewSocket *ns, short face_num, int nocache)
 		return SEND_FACE_NO_DATA;
 	}
 
-	if (ns->facecache && !nocache)
+	if (!nocache)
 	{
 		if (ns->image2)
 			cmdmode = BINARY_CMD_FACE2;
