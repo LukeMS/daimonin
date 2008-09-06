@@ -1123,7 +1123,7 @@ static void parse_args(int argc, char *argv[], int pass)
 
     while (on_arg < argc)
     {
-        for (i = 0; i < sizeof(options) / sizeof(struct Command_Line_Options); i++)
+        for (i = 0; i < (int)(sizeof(options) / sizeof(struct Command_Line_Options)); i++)
         {
             if (!strcmp(options[i].cmd_option, argv[on_arg]))
             {

@@ -335,7 +335,7 @@ int push_ob(object *who, int dir, object *pusher)
             return 0;
         move_ob(pusher, dir, pusher);
         pet_follow_owner(who);
-        
+
 
         return 1;
     }
@@ -368,14 +368,14 @@ int push_ob(object *who, int dir, object *pusher)
         return 0;
     }
 
-    /* This block is basically if you are pushing 
+    /* This block is basically if you are pushing
      * non pet creatures. With move-push attacks removed, we can now
 	 * try to push even aggressive mobs, maybe into a fire pit.
      * It basically does a random strength comparision to
      * determine if you can push someone around.  Note that
      * this pushes the other person away - its not a swap.
 	 * As of B4 mobs have no str by default. Mapmakers can add
-	 * str to a mob, usually for scripted pick up. If a mob has 
+	 * str to a mob, usually for scripted pick up. If a mob has
 	 * no str we use 9 + level/10 to give a pseudo str. Also a weight factor
 	 * is added for the object being pushed, a beholder should be harder to push
 	 * than an ant even if they are the same level.
@@ -412,9 +412,9 @@ int push_roll_object(object * const op, int dir, const int flag)
     int         xt, yt, ret;
     ret = 0;
 	/* we check for all conditions where op can't push anything */
-    if (dir <= 0 || CONTR(op)->rest_mode || QUERY_FLAG(op,FLAG_PARALYZED) || 
+    if (dir <= 0 || CONTR(op)->rest_mode || QUERY_FLAG(op,FLAG_PARALYZED) ||
 		QUERY_FLAG(op,FLAG_ROOTED) || QUERY_FLAG(op, FLAG_FLYING)|| QUERY_FLAG(op, FLAG_LEVITATE))
-        return 0;   
+        return 0;
     xt = op->x + freearr_x[dir];
     yt = op->y + freearr_y[dir];
     if (!(m = out_of_map(op->map, &xt, &yt)))
@@ -737,7 +737,7 @@ int enter_map_by_exit(object *op, object *exit_ob)
     }
 
     /* lets fetch the right map status */
-    mstatus = exit_ob->last_eat ? MAP_STATUS_TYPE(exit_ob->last_eat) : MAP_STATUS_TYPE(exit_ob->map->map_status);
+    mstatus = exit_ob->last_eat ? (int)MAP_STATUS_TYPE(exit_ob->last_eat) : (int)MAP_STATUS_TYPE(exit_ob->map->map_status);
 
     /* get the map ptr - load the map if needed */
     newmap = ready_map_name( file_path, exit_ob->race, mstatus, reference);
