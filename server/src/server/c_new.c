@@ -649,6 +649,9 @@ void command_new_char(char *params, int len, player *pl)
     pl->last_save_tick = ROUND_TAG;
 #endif
 
+    /* at this point the player will be added in any way - mark it as valid */
+    pl->socket.status = Ns_Playing;
+
     display_motd(op);
     if (!pl->dm_stealth)
     {
