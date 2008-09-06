@@ -644,16 +644,15 @@ int command_dm_light(object *op, char *params)
 {
     if (op->type == PLAYER && CONTR(op))
     {
-        uint32 dm_light;
+        uint32 dm_light = 0;
 
         if (params == NULL || !sscanf(params, "%d", &dm_light))
             dm_light = (CONTR(op)->dm_light) ? 0 : MAX_DARKNESS;
-        else if (dm_light < 0)
-            dm_light = 0;
-        else if (dm_light > MAX_DARKNESS)
+
+        if (dm_light > MAX_DARKNESS)
             dm_light = MAX_DARKNESS;
 
-        CONTR(op)->dm_light = dm_light;
+        CONTR(op)->dm_light = dm_light & 0x07;
         new_draw_info_format(NDI_UNIQUE, 0, op, "Switch dm_light to %d",
                              CONTR(op)->dm_light);
 
