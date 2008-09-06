@@ -226,10 +226,6 @@ void SetupCmd(char *buf, int len)
                 return;
             }
         }
-        else if (!strcmp(cmd, "sound"))
-        {
-            if (!strcmp(param, "FALSE"))
-            {}}
         else if (!strcmp(cmd, "skf"))
         {
             if (!strcmp(param, "FALSE"))
@@ -345,13 +341,9 @@ void SetupCmd(char *buf, int len)
                 }
             }
         }
-        else if (!strcmp(cmd, "mapsize"))
+        else if (!strcmp(cmd, "sn")) /* sound */
         {}
-        else if (!strcmp(cmd, "map2cmd"))
-        {}
-        else if (!strcmp(cmd, "darkness"))
-        {}
-        else if (!strcmp(cmd, "facecache"))
+        else if (!strcmp(cmd, "mz")) /* mapsize */
         {}
         else
         {
