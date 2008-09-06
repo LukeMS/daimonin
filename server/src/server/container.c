@@ -448,7 +448,7 @@ int sack_can_hold(const object *const pl, const object *const sack, const object
         ((op->type==CONTAINER && op->weapon_speed!=1.0f)?((sint32)op->damage_round_tag+op->weight):WEIGHT_NROF(op, nrof))))
             return TRUE;
 
-        new_draw_info_format(NDI_UNIQUE, 0, pl, "The %s is to heavy for the %s!",
+        new_draw_info_format(NDI_UNIQUE, 0, pl, "The %s is too heavy for the %s!",
                                     query_short_name(op, pl),query_name(sack));
     }
 
