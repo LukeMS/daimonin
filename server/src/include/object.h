@@ -33,7 +33,7 @@
 #define decrease_ob(xyz) decrease_ob_nr(xyz,1)
 
 #define WEIGHT(op) ((op->nrof ? op->weight * op->nrof : (unsigned int) (op->weight) + op->carrying))
-#define WEIGHT_NROF(op, nrof) ((nrof ? op->weight * nrof : op->weight) + op->carrying)
+#define WEIGHT_NROF(op, nrof) (((nrof > 0) ? op->weight * ((sint32)nrof) : op->weight) + op->carrying)
 
 /* move_apply() function call flags */
 #define MOVE_APPLY_DEFAULT  0
