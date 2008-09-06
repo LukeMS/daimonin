@@ -292,7 +292,7 @@ void free_player(player *pl)
     FREE_AND_CLEAR_HASH(pl->maplevel );
     FREE_AND_CLEAR_HASH(pl->orig_map);
 
-    if(pl->socket.status != ST_SOCKET_NO)
+    if(pl->socket.status != (enum Sock_Status)ST_SOCKET_NO)
         free_newsocket(&pl->socket);
 
     if (pl->ob)
@@ -1050,7 +1050,7 @@ void kill_player(object *op)
                  "by %s.\n", op->name, op->title?op->title:op->race,
             pl->killer?pl->killer:"bad luck");
 #endif
-    strcpy(buf, gravestone_text(op)); 
+    strcpy(buf, gravestone_text(op));
     FREE_AND_COPY_HASH(tmp->msg, buf);
     tmp->x = op->x,tmp->y = op->y;
     insert_ob_in_map(tmp, op->map, NULL, 0);
