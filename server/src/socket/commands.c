@@ -24,7 +24,12 @@
 #include <global.h>
 #include <ctype.h>
 
-/* binary command tags are defined in the shared protocol.h */
+/* binary command tags are defined in the shared protocol.h 
+ * first value is data tail length:
+ * 0 = no data, single command
+ * -1 = dynamic data tail, firs 2 bytes of tail describe tail length-2 
+ * x = length of data tail in bytes
+ */
 _CmdMapping cs_commands[]    =
 {
     {0,         NULL}, /* ping */
@@ -347,7 +352,7 @@ void cs_cmd_generic(char *buf, int len, NewSocket *ns)
 
     if (csp == NULL)
     {
-        new_draw_info_format(NDI_UNIQUE, 0, ob, "'%s' is not a valid command.", buf);
+        new_draw_info_format(NDI_UNIQUE, 0, ob, "'/%s' is not a valid command.", buf);
         return;
     }
 
@@ -628,14 +633,11 @@ void cs_cmd_setup(char *buf, int len, NewSocket *ns)
         ns->idle_flag = 1;
         return;
     }
-
-
 }
+
 
 /* The client has requested to be added to the game.  This is what
 * takes care of it.  We tell the client how things worked out.
-* I am not sure if this file is the best place for this function.  however,
-* it either has to be here or init_sockets needs to be exported.
 * TODO: addme will be our one and only "put us in the game" function.
 * It will be extended with options, works as a "addme login <playername> <password>"
 * or a "addme create <playernam> <password> <data...>".
@@ -811,6 +813,7 @@ void cs_cmd_moveobj(char *buf, int len, NewSocket *ns)
     loc = (tag_t)GetInt_Buffer(buf);
     tag = (tag_t)GetInt_Buffer(buf);
     nrof = (long)GetInt_Buffer(buf);
+
     esrv_move_object(pl->ob, loc, tag, nrof);
 }
 
@@ -890,6 +893,7 @@ void cs_cmd_move(char *buf, int len, NewSocket *ns)
 
     dir = GetChar_Buffer(buf);
     mode = GetChar_Buffer(buf);
+
     move_player(pl->ob, dir, TRUE);
 
     /*
@@ -966,6 +970,7 @@ void cs_cmd_apply(char *buf, int len, NewSocket *ns)
         /*LOG(llevDebug, "Player '%s' tried apply the unknown object (%d)\n",pl->ob->name, tag);*/
         return;
     }
+
     player_apply(pl->ob, op, 0, 0);
 }
 
@@ -1000,6 +1005,7 @@ void cs_cmd_lock(char *data, int len, NewSocket *ns)
         CLEAR_FLAG(op, FLAG_INV_LOCKED);
     else
         SET_FLAG(op, FLAG_INV_LOCKED);
+
     esrv_update_item(UPD_FLAGS, pl->ob, op);
 }
 
@@ -1034,7 +1040,6 @@ void cs_cmd_mark(char *data, int len, NewSocket *ns)
     SOCKBUF_REQUEST_BUFFER(&pl->socket, SOCKET_SIZE_SMALL);
     SockBuf_AddInt(ACTIVE_SOCKBUF(&pl->socket),  pl->mark_count);
     SOCKBUF_REQUEST_FINISH(&pl->socket, BINARY_CMD_MARK, SOCKBUF_DYNAMIC);
-    /*new_draw_info_format(NDI_UNIQUE, 0, pl->ob, "Marked item %s", query_name(op));*/
 }
 
 /* The talk extended is used to "fake" a normal /talk command but use
@@ -1056,9 +1061,7 @@ void cs_cmd_talk(char *data, int len, NewSocket *ns)
     * numbers: "<mode> <count>"
     */
     if(*data == 'Q' && *(data+1)==' ') /* quest list tag */
-    {
         quest_list_command(pl->ob, data+2);
-    }
     else
     {
         data[len]='\0'; /* sanity string end */
