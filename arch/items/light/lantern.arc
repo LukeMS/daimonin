@@ -48,13 +48,13 @@ speed -0.02
 anim
 facings 9
 dummy.111
+lantern2_magic.111
 dummy.111
+lantern2_magic.171
 dummy.111
-lantern2_magic.131
+lantern2_magic.111
 dummy.111
-lantern2_magic.151
-dummy.111
-dummy.111
+lantern2_magic.171
 dummy.111
 mina
 is_animated 0
