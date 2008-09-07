@@ -91,7 +91,14 @@ int command_channel(object *ob, char *params)
             {
                 /* we don't diplsay channels we can't get on, >=VOL see always all channels, even if there lvl is to low*/
                 if (CONTR(ob)->gmaster_mode < GMASTER_MODE_VOL &&
-                   (channel->enter_lvl==-1 || ob->level<channel->enter_lvl))
+                   ((channel->enter_lvl==-1
+/* Method stub for later to implement clan system
+ * This function should return TRUE if the player is in that clan.
+ * channel->clan will be some sort of pointer to the clan info...
+ */
+//                    && !is_player_in_clan(channel->clan)
+
+                   ) || ob->level<channel->enter_lvl))
                         continue;
                 if(pl_channel=findPlayerChannelFromName(CONTR(ob),CONTR(ob), channel->name, TRUE))
                     new_draw_info_format(NDI_UNIQUE|channel->color, 0, ob, "*(%d) [%c] %s", channel->pl_count, pl_channel->shortcut, channel->name);
@@ -113,7 +120,7 @@ int command_channel(object *ob, char *params)
     }
 
     /* for all channelfuntions except joining we need the pointer of the desired channel in player's channel-list*/
-    pl_channel=getPlChannelFromPlayerShortcut(CONTR(ob),channelname); /* wfirst we try to get the channel over the players shortcut */
+    pl_channel=getPlChannelFromPlayerShortcut(CONTR(ob),channelname); /* first we try to get the channel over the players shortcut */
     if (!pl_channel)
     {   /* All the error messages are handled here in this function, should eventually splittet */
         pl_channel=findPlayerChannelFromName(CONTR(ob),CONTR(ob), channelname, FALSE);
@@ -232,7 +239,6 @@ int command_channel(object *ob, char *params)
         else if (!strncasecmp(params, "kick", strlen("kick")))
             kickPlayerFromChannel(pl_channel, params+5);
 
-        /* TODO: Administrativ Commands for Channel Admins */
         return 1;
     }
     else if (mode=='%')   /* change player's shortcut */
@@ -265,7 +271,7 @@ int command_channel(object *ob, char *params)
  * @param pl     Pointer of player-struct
  * @param name   Shortcut or name (can be abbreviated) of channel player wants to join
  * @param params will be used to hold the pw for pw-protected (clan)channels
- * TODO: pw-channels, lvl-based restrictions, bans, and GM-based restrictions
+ * TODO: pw-channels
  */
 void addPlayerToChannel(player *pl, char *name, char *params)
 {
@@ -292,7 +298,7 @@ void addPlayerToChannel(player *pl, char *name, char *params)
         }
     }
 
-    /* Ok player is not a channel with that shortcut or name, good */
+    /* Ok player is not on a channel with that shortcut or name, good */
     /* lets try to find the channel, first of course with shortcut */
     channel=getChannelFromGlobalShortcut(pl, name);
     if (!channel) /* No channel with that (default)-shortcut, or no shortcut at all given */
@@ -337,7 +343,14 @@ struct channels *findGlobalChannelFromName(player *pl, char *name, int mute)
     while (c)
     {
         if (pl->gmaster_mode < GMASTER_MODE_VOL &&
-           (c->enter_lvl==-1 || pl->ob->level<c->enter_lvl))
+            ((c->enter_lvl==-1
+/* Method stub for later to implement clan system
+ * This function should return TRUE if the player is in that clan.
+ * channel->clan will be some sort of pointer to the clan info...
+ */
+//           && !is_player_in_clan(c->clan)
+
+            ) || pl->ob->level<c->enter_lvl))
            {
                 c=c->next;
                 continue;
@@ -357,7 +370,14 @@ struct channels *findGlobalChannelFromName(player *pl, char *name, int mute)
     for (tmp=c->next;tmp;tmp=tmp->next)
     {
         if (pl->gmaster_mode < GMASTER_MODE_VOL &&
-           (tmp->enter_lvl==-1 || pl->ob->level<tmp->enter_lvl))
+            ((tmp->enter_lvl==-1
+/* Method stub for later to implement clan system
+ * This function should return TRUE if the player is in that clan.
+ * channel->clan will be some sort of pointer to the clan info...
+ */
+//             && !is_player_in_clan(tmp->clan)
+
+             ) || pl->ob->level<tmp->enter_lvl))
                 continue;
         if (!strncasecmp(tmp->name, name, strlen(name)))
         {
@@ -413,7 +433,14 @@ struct channels *getChannelFromGlobalShortcut(player *pl, char *name)
     for (channel=channel_list_start;channel;channel=channel->next)
     {
         if (pl->gmaster_mode < GMASTER_MODE_VOL &&
-           (channel->enter_lvl==-1 || pl->ob->level<channel->enter_lvl))
+            ((channel->enter_lvl==-1
+/* Method stub for later to implement clan system
+ * This function should return TRUE if the player is in that clan.
+ * channel->clan will be some sort of pointer to the clan info...
+ */
+//           && !is_player_in_clan(channel->clan)
+
+            ) || pl->ob->level<channel->enter_lvl))
                 continue;/* restricted channel */
         if(channel->shortcut==name[0])
             return channel;
@@ -641,7 +668,7 @@ void removeChannelFromPlayer(player *pl, struct player_channel *pl_channel)
     return;
 }
 /**
- * Sends a normal message to all player who listens, in their own configured color
+ * Sends a normal message to all player who listens
  * @param pl PlayerStruct of Sender
  * @param pl_channel player_channel-link for that player/channel
  * @param params Message
@@ -746,7 +773,7 @@ void loginAddPlayerToChannel(player *pl, char *channelname, char shortcut, unsig
 }
 /**
  * Loads the channels from the channel-savefile
- * atm there is no saving, only hardcoded channels
+ *
  */
 void load_channels()
 {
