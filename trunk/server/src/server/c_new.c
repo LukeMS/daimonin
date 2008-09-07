@@ -591,7 +591,7 @@ void command_new_char(char *params, int len, player *pl)
 
     if(stats[7] < 0 || stats[7] > 3) /* selected weapon skill */
     {
-        LOG(llevDebug, "SHACK:: %s: tried to hack NewChar! (weapon skill %d)\n", query_name(pl->ob), stats[6]);
+        LOG(llevDebug, "SHACK:: %s: tried to hack NewChar! (weapon skill %d)\n", query_name(pl->ob), stats[7]);
         pl->socket.status = Ns_Dead; /* killl socket */
         return;
     }
