@@ -474,33 +474,82 @@ int command_target(object *op, char *params)
 /* min_ is also the "start" value */
 typedef struct _new_char_template
 {
-    char                       *name;
-    int                         max_p;
-    int                         min_Str;
-    int                         max_Str;
-    int                         min_Dex;
-    int                         max_Dex;
-    int                         min_Con;
-    int                         max_Con;
-    int                         min_Int;
-    int                         max_Int;
-    int                         min_Wis;
-    int                         max_Wis;
-    int                         min_Pow;
-    int                         max_Pow;
-    int                         min_Cha;
-    int                         max_Cha;
-}_new_char_template;
+    char *name;
+    int   max_p;
+    int   min_Str, max_Str;
+    int   min_Dex, max_Dex;
+    int   min_Con, max_Con;
+    int   min_Int, max_Int;
+    int   min_Wis, max_Wis;
+    int   min_Pow, max_Pow;
+    int   min_Cha, max_Cha;
+} _new_char_template;
 
-static _new_char_template   new_char_template[] =
+static _new_char_template new_char_template[] =
 {
-    {"human_male", 5, 12, 14, 12, 14, 12 ,14, 12, 14 ,12, 14 , 12, 14 ,12 ,14},
-    {"human_female", 5, 12, 14, 12, 14, 12 ,14, 12, 14 ,12, 14 , 12, 14 ,12 ,14},
-    {"half_elf_male", 5, 12, 14, 13, 15, 11 ,13, 12, 14 ,11, 13 , 13, 15 ,12 ,14},
-    {"half_elf_female", 5, 12, 14, 13, 15, 11 ,13, 12, 14 ,11, 13 , 13, 15 ,12 ,14},
-    {"dwarf_male", 5, 13, 15, 11, 13, 13, 15, 12, 14, 12, 14, 11, 13, 12, 14},
-    {"dwarf_female", 5, 13, 15, 11, 13, 13, 15, 12, 14, 12, 14, 11, 13, 12, 14},
-    {NULL, 5, 12, 14, 12, 14, 12 ,14, 12, 14 ,12, 14 , 12, 14 ,12 ,14}
+    { "human_male",
+       5,
+       12, 14,
+       12, 14,
+       12, 14,
+       12, 14,
+       12, 14,
+       12, 14,
+       12, 14 },
+    { "human_female",
+      5,
+      12, 14,
+      12, 14,
+      12, 14,
+      12, 14,
+      12, 14,
+      12, 14,
+      12, 14 },
+    { "half_elf_male",
+      5,
+      12, 14,
+      13, 15,
+      11, 13,
+      12, 14,
+      11, 13,
+      13, 15,
+      12 ,14 },
+    { "half_elf_female",
+      5,
+      12, 14,
+      13, 15,
+      11, 13,
+      12, 14,
+      11, 13,
+      13, 15,
+      12 ,14 },
+    { "dwarf_male",
+      5,
+      13, 15,
+      11, 13,
+      13, 15,
+      12, 14,
+      12, 14,
+      11, 13,
+      12, 14 },
+    { "dwarf_female",
+      5,
+      13, 15,
+      11, 13,
+      13, 15,
+      12, 14,
+      12, 14,
+      11, 13,
+      12, 14 },
+    { NULL,
+      5,
+      12, 14,
+      12, 14,
+      12 ,14,
+      12, 14,
+      12, 14,
+      12, 14,
+      12 ,14 }
 };
 
 /* client send us a new char creation.
