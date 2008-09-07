@@ -24,10 +24,10 @@
 #include <global.h>
 #include <ctype.h>
 
-/* binary command tags are defined in the shared protocol.h 
+/* binary command tags are defined in the shared protocol.h
  * first value is data tail length:
  * 0 = no data, single command
- * -1 = dynamic data tail, firs 2 bytes of tail describe tail length-2 
+ * -1 = dynamic data tail, firs 2 bytes of tail describe tail length-2
  * x = length of data tail in bytes
  */
 _CmdMapping cs_commands[]    =
@@ -370,7 +370,7 @@ void cs_cmd_setup(char *buf, int len, NewSocket *ns)
     /* lets do some sanity checks */
     if (!buf || ns->status != Ns_Add || !len || buf[len-1] != 0)
     {
-        LOG(llevInfo, "HACKBUG: invalid setup data part from %s (%x %d %d)\n", 
+        LOG(llevInfo, "HACKBUG: invalid setup data part from %s (%x %d %d)\n",
             STRING_SAFE(ns->ip_host), buf, len, buf[len-1]);
         ns->status = Ns_Dead;
         return;
@@ -1025,7 +1025,7 @@ void cs_cmd_mark(char *data, int len, NewSocket *ns)
     tag = GetInt_Buffer(data);
     op = esrv_get_ob_from_count(pl->ob, tag);
 
-    if(!op || tag == pl->mark_count)
+    if(!op || tag == (int)pl->mark_count)
     {
         pl->mark = NULL;
         pl->mark_count = -1;
@@ -1071,12 +1071,12 @@ void cs_cmd_talk(char *data, int len, NewSocket *ns)
 
 /* this command is triggered when we use the CTRL key in the client and invoke the
 * range/firing system there.
-* we have ATM 3 types of action: 
+* we have ATM 3 types of action:
 * a.) we fire an applied object (throw item, bow/arrow, rod...)
 * b.) we fire an spell icon
 * c.) we fire an skill icon
 * Options b.) and c.) will invoke to cast the spell or use the skill
-*/	  
+*/
 
 void cs_cmd_fire(char *params, int len, NewSocket *ns)
 {
@@ -1084,7 +1084,7 @@ void cs_cmd_fire(char *params, int len, NewSocket *ns)
     player *pl = ns->pl;
     object *op;
 
-    if (!pl || !pl->ob || ns->status >= Ns_Zombie || !params 
+    if (!pl || !pl->ob || ns->status >= Ns_Zombie || !params
         || len<(2*PARM_SIZE_INT+PARM_SIZE_CHAR) || params[len] != 0)
     {
         ns->status = Ns_Dead;
