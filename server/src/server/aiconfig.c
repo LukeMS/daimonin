@@ -34,7 +34,7 @@
 
 #define BehaviourClass(name, behaviours) behaviours
 #define Behaviour(name, func, params) \
-    static struct behaviourparam_decl param_decl_ ## name[] = { params {NULL}};
+    static struct behaviourparam_decl param_decl_ ## name[] = { params {NULL,0,0,0}};
 #define Parameter(behaviour, name, type, flags, defval) \
 { #name, type, flags, (void *)defval },
 
@@ -48,7 +48,6 @@
     extern name ## _behaviour_t behaviours __dummy_ ## name ## _ai_function_name;
 #define Behaviour(name, func, params) \
     func,
-
 #include BEHAVIOUR_DECLARATION_FILE
 
 /* Generate the behaviour declarations */
@@ -56,7 +55,7 @@
 #undef Behaviour
 
 #define BehaviourClass(name, behaviours) \
-    static struct behaviour_decl class_decl_ ## name [] = { behaviours {NULL}};
+    static struct behaviour_decl class_decl_ ## name [] = { behaviours {NULL,0,0,0,0}};
 #define Behaviour(name, func, params) \
     { #name, func, NROF_AIPARAMS_ ## name, param_decl_ ## name, AIBEHAVIOUR_ ## name},
 
