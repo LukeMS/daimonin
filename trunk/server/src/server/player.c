@@ -1108,7 +1108,7 @@ void kill_player(object *op)
      * STATS_EVENT()-function. There should be added some more
      * data to a player death
      */
-    STATS_EVENT(STATS_EVENT_PLAYER_DEATH, op->name);
+    /*STATS_EVENT(STATS_EVENT_PLAYER_DEATH, op->name);*/
     new_draw_info(NDI_UNIQUE, 0, op, "YOU HAVE DIED.");
     save_player(op, 1);
     return;

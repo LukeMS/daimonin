@@ -67,7 +67,7 @@ static struct method_decl   AI_methods[]            =
 struct attribute_decl       AI_attributes[]         =
 {
     /* All entries MUST be in same order as field_id enum above */
-    {NULL}
+    {NULL,0,0,0,0}
 };
 
 /* Utility function */
@@ -703,8 +703,8 @@ static int AI_isValid(lua_State *L, lua_object *obj)
 
 lua_class   AI  =
 {
-    LUATYPE_AI, "AI", 0, AI_toString, AI_attributes, AI_methods,
-    NULL, NULL, NULL, NULL, NULL, AI_isValid
+    LUATYPE_AI, "AI", 0, AI_toString, AI_attributes, AI_methods, NULL,
+    NULL, NULL, NULL, NULL, AI_isValid, 0
 };
 
 int AI_init(lua_State *L)
