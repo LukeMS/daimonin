@@ -7,20 +7,23 @@
 	<File name="../../../src/client.c" open="0" top="0" tabpos="6">
 		<Cursor position="1766" topLine="42" />
 	</File>
-	<File name="../../../src/commands.c" open="0" top="0" tabpos="7">
-		<Cursor position="11065" topLine="345" />
+	<File name="../../../src/commands.c" open="1" top="0" tabpos="6">
+		<Cursor position="13129" topLine="398" />
 	</File>
-	<File name="../../../src/event.c" open="1" top="1" tabpos="2">
+	<File name="../../../src/event.c" open="1" top="0" tabpos="2">
 		<Cursor position="63546" topLine="1717" />
 	</File>
-	<File name="../../../src/include/cflinux.h" open="0" top="0" tabpos="4">
-		<Cursor position="1050" topLine="28" />
+	<File name="../../../src/include/cflinux.h" open="1" top="0" tabpos="3">
+		<Cursor position="1493" topLine="45" />
 	</File>
 	<File name="../../../src/include/filewrap.h" open="0" top="0" tabpos="5">
 		<Cursor position="1048" topLine="0" />
 	</File>
-	<File name="../../../src/include/include.h" open="0" top="0" tabpos="2">
-		<Cursor position="958" topLine="19" />
+	<File name="../../../src/include/include.h" open="1" top="0" tabpos="4">
+		<Cursor position="1750" topLine="52" />
+	</File>
+	<File name="../../../src/include/sound.h" open="1" top="0" tabpos="5">
+		<Cursor position="4263" topLine="183" />
 	</File>
 	<File name="../../../src/include/wrapper.h" open="0" top="0" tabpos="3">
 		<Cursor position="880" topLine="0" />

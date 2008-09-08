@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_project_file>
-	<FileVersion major="1" minor="5" />
+	<FileVersion major="1" minor="6" />
 	<Project>
 		<Option title="updater" />
 		<Option pch_mode="2" />
-		<Option default_target="" />
 		<Option compiler="gcc" />
-		<Option virtualFolders="" />
 		<Build>
 			<Target title="Debug">
 				<Option output="./updater" prefix_auto="1" extension_auto="1" />
@@ -16,6 +14,10 @@
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>
+				<Linker>
+					<Add library="/usr/lib/libphysfs.so" />
+					<Add library="/usr/lib/libcurl.so" />
+				</Linker>
 			</Target>
 			<Target title="Release">
 				<Option output="./updater" prefix_auto="1" extension_auto="1" />
@@ -27,31 +29,47 @@
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
+					<Add library="/usr/lib/libphysfs.so" />
+					<Add library="/usr/lib/libcurl.so" />
 				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
-			<Add option="-Wall" />
+			<Add option="-W" />
 		</Compiler>
-		<Unit filename="../../../src/updater/include/include.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
+		<Linker>
+			<Add library="/usr/lib/libphysfs.so" />
+			<Add library="/usr/lib/libcurl.so" />
+		</Linker>
+		<Unit filename="../../../src/updater/include/include.h" />
+		<Unit filename="../../../src/updater/include/md5.h" />
+		<Unit filename="../../../src/updater/include/physfs.h" />
+		<Unit filename="../../../src/updater/include/physfsrwops.h" />
+		<Unit filename="../../../src/updater/include/xdelta3-cfgs.h" />
+		<Unit filename="../../../src/updater/include/xdelta3-decode.h" />
+		<Unit filename="../../../src/updater/include/xdelta3-hash.h" />
+		<Unit filename="../../../src/updater/include/xdelta3-list.h" />
+		<Unit filename="../../../src/updater/include/xdelta3-main.h" />
+		<Unit filename="../../../src/updater/include/xdelta3.h" />
 		<Unit filename="../../../src/updater/linux.c">
 			<Option compilerVar="CC" />
-			<Option target="Debug" />
-			<Option target="Release" />
 		</Unit>
 		<Unit filename="../../../src/updater/main.c">
 			<Option compilerVar="CC" />
-			<Option target="Debug" />
-			<Option target="Release" />
+		</Unit>
+		<Unit filename="../../../src/updater/md5.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/updater/physfsunpack.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/updater/xdelta3.c">
+			<Option compilerVar="CC" />
 		</Unit>
 		<Extensions>
 			<code_completion />
+			<envvars />
+			<debugger />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
