@@ -29,7 +29,7 @@ SRCS =  @PLUGIN_SYSTEM_SRCS@ \
 OBJECTS   = $(SRCS:.c=.o)
 INCLUDE   = -I./include -I../include -I$(INCLUDEROOT)
 
-CFLAGS    = @CFLAGS@ -fPIC $(EXTRA_CFLAGS)
+CFLAGS    = @CFLAGS@ -W -fPIC $(EXTRA_CFLAGS)
 DEPEND = @DEPEND@
 
 LDFLAGS=	-export-dynamic -rdynamic -Xlinker -Bsymbolic

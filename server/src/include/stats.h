@@ -1,7 +1,6 @@
 #ifndef STATS_H
 #define STATS_H
 
-//#define STATS_EVENT stats_event
 #define STATS_EVENT
 
 typedef enum stats_event_type

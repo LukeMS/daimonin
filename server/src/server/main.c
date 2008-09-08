@@ -962,7 +962,7 @@ int main(int argc, char **argv)
 #endif
     compile_info();       /* its not a bad idea to show at start whats up */
 
-    STATS_EVENT(STATS_EVENT_STARTUP);
+    /*STATS_EVENT(STATS_EVENT_STARTUP);*/
     reset_sleep(); /* init our last_time = start time - and lets go! */
 
 #ifdef DEBUG_TRAVERSE_PLAYER_DIR

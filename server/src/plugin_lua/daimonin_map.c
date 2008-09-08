@@ -44,18 +44,18 @@ static struct method_decl       Map_methods[]       =
 
 static struct attribute_decl    Map_attributes[]    =
 {
-    { "name",    FIELDTYPE_CSTR, offsetof(mapstruct, name), FIELDFLAG_READONLY },
-    { "message", FIELDTYPE_CSTR, offsetof(mapstruct, msg), FIELDFLAG_READONLY },
-    { "reset_interval", FIELDTYPE_UINT32, offsetof(mapstruct, reset_timeout), FIELDFLAG_READONLY },
-    { "difficulty", FIELDTYPE_UINT16, offsetof(mapstruct, difficulty), FIELDFLAG_READONLY },
-    { "height", FIELDTYPE_UINT16, offsetof(mapstruct, height), FIELDFLAG_READONLY },
-    { "width", FIELDTYPE_UINT16, offsetof(mapstruct, width), FIELDFLAG_READONLY },
-    { "darkness", FIELDTYPE_SINT32, offsetof(mapstruct, darkness), FIELDFLAG_READONLY },
-    { "light_value", FIELDTYPE_SINT32, offsetof(mapstruct, light_value), FIELDFLAG_READONLY },
-    { "path", FIELDTYPE_SHSTR, offsetof(mapstruct, path), FIELDFLAG_READONLY },
-    { "orig_path", FIELDTYPE_SHSTR, offsetof(mapstruct, orig_path), FIELDFLAG_READONLY },
-    { "map_status", FIELDTYPE_UINT32, offsetof(mapstruct, map_status), FIELDFLAG_READONLY },
-    {NULL}
+    { "name",    FIELDTYPE_CSTR, offsetof(mapstruct, name), FIELDFLAG_READONLY, 0 },
+    { "message", FIELDTYPE_CSTR, offsetof(mapstruct, msg), FIELDFLAG_READONLY, 0 },
+    { "reset_interval", FIELDTYPE_UINT32, offsetof(mapstruct, reset_timeout), FIELDFLAG_READONLY, 0 },
+    { "difficulty", FIELDTYPE_UINT16, offsetof(mapstruct, difficulty), FIELDFLAG_READONLY, 0 },
+    { "height", FIELDTYPE_UINT16, offsetof(mapstruct, height), FIELDFLAG_READONLY, 0 },
+    { "width", FIELDTYPE_UINT16, offsetof(mapstruct, width), FIELDFLAG_READONLY, 0 },
+    { "darkness", FIELDTYPE_SINT32, offsetof(mapstruct, darkness), FIELDFLAG_READONLY, 0 },
+    { "light_value", FIELDTYPE_SINT32, offsetof(mapstruct, light_value), FIELDFLAG_READONLY, 0 },
+    { "path", FIELDTYPE_SHSTR, offsetof(mapstruct, path), FIELDFLAG_READONLY, 0 },
+    { "orig_path", FIELDTYPE_SHSTR, offsetof(mapstruct, orig_path), FIELDFLAG_READONLY, 0 },
+    { "map_status", FIELDTYPE_UINT32, offsetof(mapstruct, map_status), FIELDFLAG_READONLY, 0 },
+    { NULL, 0, 0, 0, 0}
 };
 
 static const char              *Map_flags[]         =
@@ -458,7 +458,7 @@ static int Map_isValid(lua_State *L, lua_object *obj)
 lua_class   Map =
 {
     LUATYPE_MAP, "Map", 0, Map_toString, Map_attributes, Map_methods,
-    NULL, Map_flags, Map_getFlag, Map_setFlag, NULL, Map_isValid
+    NULL, Map_flags, Map_getFlag, Map_setFlag, NULL, Map_isValid, 0
 };
 
 /* Initialize the map class */

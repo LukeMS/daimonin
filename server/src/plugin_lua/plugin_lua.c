@@ -84,21 +84,21 @@ static struct attribute_decl    Event_attributes[]  =
     {"me", FIELDTYPE_OBJECTREF, offsetof(struct lua_context, self), FIELDFLAG_READONLY, offsetof(struct lua_context, self_tag)},
     {"activator", FIELDTYPE_OBJECTREF, offsetof(struct lua_context, activator), FIELDFLAG_READONLY, offsetof(struct lua_context, activator_tag)},
     {"other", FIELDTYPE_OBJECTREF, offsetof(struct lua_context, other), FIELDFLAG_READONLY, offsetof(struct lua_context, other_tag)},
-    {"message", FIELDTYPE_SHSTR, offsetof(struct lua_context, text), FIELDFLAG_READONLY},
-    {"options", FIELDTYPE_SHSTR, offsetof(struct lua_context, options), FIELDFLAG_READONLY},
-    {"parameter1", FIELDTYPE_SINT32, offsetof(struct lua_context, parm1), 0},
-    {"parameter2", FIELDTYPE_SINT32, offsetof(struct lua_context, parm2), 0},
-    {"parameter3", FIELDTYPE_SINT32, offsetof(struct lua_context, parm3), 0},
-    {"parameter4", FIELDTYPE_SINT32, offsetof(struct lua_context, parm4), 0},
-    {"returnvalue", FIELDTYPE_SINT32, offsetof(struct lua_context, returnvalue), 0},
-    {NULL}
+    {"message", FIELDTYPE_SHSTR, offsetof(struct lua_context, text), FIELDFLAG_READONLY, 0},
+    {"options", FIELDTYPE_SHSTR, offsetof(struct lua_context, options), FIELDFLAG_READONLY, 0},
+    {"parameter1", FIELDTYPE_SINT32, offsetof(struct lua_context, parm1), 0, 0},
+    {"parameter2", FIELDTYPE_SINT32, offsetof(struct lua_context, parm2), 0, 0},
+    {"parameter3", FIELDTYPE_SINT32, offsetof(struct lua_context, parm3), 0, 0},
+    {"parameter4", FIELDTYPE_SINT32, offsetof(struct lua_context, parm4), 0, 0},
+    {"returnvalue", FIELDTYPE_SINT32, offsetof(struct lua_context, returnvalue), 0, 0},
+    {NULL, 0, 0, 0, 0}
 };
 
 /* Basic script classes */
 lua_class Event =
 {
     LUATYPE_EVENT, "Event", 0, NULL, Event_attributes, NULL,
-    NULL, NULL, NULL, NULL, NULL, Event_isValid
+    NULL, NULL, NULL, NULL, NULL, Event_isValid, 0
 };
 
 /*
@@ -703,9 +703,9 @@ MODULEAPI int HandleEvent(CFParm *PParm)
     LOG(llevDebug, "LUA - event:%d file:>%s< o1:>%s< o2:>%s< o3:>%s< text:>%s< i1:%d i2:%d i3:%d i4:%d\n",
         *(int*)PParm->Value[0],
         (char *)PParm->Value[9],
-        STRING_OBJ_NAME((object *) PParm->Value[1]), 
+        STRING_OBJ_NAME((object *) PParm->Value[1]),
         STRING_OBJ_NAME((object *) PParm->Value[2]),
-        STRING_OBJ_NAME((object *) PParm->Value[3]), 
+        STRING_OBJ_NAME((object *) PParm->Value[3]),
         STRING_SAFE(      (char *) PParm->Value[4]),
         PParm->Value[5] ? *(int *) PParm->Value[5] : 0,
         PParm->Value[6] ? *(int *) PParm->Value[6] : 0,
@@ -981,7 +981,7 @@ MODULEAPI CFParm * postinitPlugin(CFParm *PParm)
     LOG(llevDebug, "LUA - Start postinitPlugin.\n");
 
     CFP.Value[1] = (void *)PLUGIN_NAME;
-    
+
     /* Register for logout events (needed by the datastore system) */
     i = EVENT_LOGOUT;
     CFP.Value[0] = (void *)(&i);
