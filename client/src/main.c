@@ -1680,7 +1680,7 @@ int main(int argc, char *argv[])
 
         if (GameStatus > GAME_STATUS_CONNECT)
         {
-            DoClient(&csocket);
+            DoClient();
             request_face(0, 1); /* flush face request buffer */
         }
 

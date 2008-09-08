@@ -88,7 +88,7 @@ struct CmdMapping commands[]  =
 #define NCOMMANDS (sizeof(commands)/sizeof(struct CmdMapping))
 
 /* process all sc commands */
-void DoClient(ClientSocket *csocket)
+void DoClient(void)
 {
     command_buffer *cmd;
 
@@ -114,16 +114,14 @@ void DoClient(ClientSocket *csocket)
     }
 }
 
-/* Helper function for incoming binary data.*/
-static inline int GetInt_String(unsigned char *data)
-{
-    return adjust_endian_int32(*((uint32 *)data));
-}
+/* Helper macros for incoming binary data.*/
+#define GetSINT8_String(_d_)    (*((sint8 *)(_d_)) )
+#define GetUINT8_String(_d_)    (*((uint8 *)(_d_)) )
+#define GetSINT16_String(_d_)   ((sint16) adjust_endian_int16(*((uint16 *)(_d_))))
+#define GetUINT16_String(_d_)   adjust_endian_int16(*((uint16 *)(_d_)))
+#define GetSINT32_String(_d_)   (sint32) adjust_endian_int32(*((uint32 *)(_d_)))
+#define GetUINT32_String(_d_)   adjust_endian_int32(*((uint32 *)(_d_)))
 
-static inline short GetShort_String(unsigned char *data)
-{
-    return adjust_endian_int16(*((uint16 *)data));
-}
 
 /**********************************************************************
  * SC COMMAND FUNCTIONS                                               *
@@ -138,10 +136,11 @@ void SoundCmd(char *data, int len)
         LOG(LOG_ERROR, "Got invalid length on sound command: %d\n", len);
         return;
     }
-    x = (signed char) data[0];
-    y = (signed char) data[1];
-    num = GetShort_String((unsigned char *)data + 2);
-    type = data[4];
+    x = GetSINT8_String(data);
+    y = GetSINT8_String(data+1);
+    num = GetUINT16_String(data + 2);
+    type = GetUINT8_String(data+4);
+
     if (type == SOUND_SPELL)
     {
         if (num < 0 || num >= SPELL_SOUND_MAX)
@@ -371,8 +370,8 @@ void Face1Cmd(char *data, int len)
     uint32  checksum;
     char   *face;
 
-    pnum = GetShort_String((unsigned char *)data);
-    checksum = GetInt_String((unsigned char *)data + 2);
+    pnum = GetUINT16_String(data);
+    checksum = GetUINT32_String(data + 2);
     face = (char *) data + 6;
     data[len] = '\0';
 
@@ -407,8 +406,9 @@ void ImageCmd(char *data, int len)
     /*int fd,l; */
     FILE   *stream;
 
-    pnum = GetInt_String((unsigned char *)data);
-    plen = GetInt_String((unsigned char *)data + 4);
+    pnum = GetSINT32_String(data);
+    plen = GetSINT32_String(data + 4);
+ 
     if (len < 8 || (len - 8) < plen)
     {
         LOG(LOG_ERROR, "PixMapCmd: Lengths don't compare (%d,%d)\n", (len - 8), plen);
@@ -483,7 +483,7 @@ void DrawInfoCmd2(char *data, int len)
     char    *tmp=NULL, buf[2048];
     Boolean buddy=FALSE;
 
-    flags = (int) GetShort_String((unsigned char*)data);
+    flags = GetUINT16_String(data);
     data += 2;
 
     len -= 2;
@@ -587,11 +587,11 @@ void StatsCmd(char *data, int len)
 
     while (i < len)
     {
-        c = (uint8) data[i++];
+        c = GetUINT8_String(data + i++);
 
         if (c >= CS_STAT_RES_START && c <= CS_STAT_RES_END)
         {
-            cpl.stats.protection[c - CS_STAT_RES_START] = (sint16) *((data + i++));
+            cpl.stats.protection[c - CS_STAT_RES_START] = GetSINT16_String(data + i++);
             cpl.stats.protection_change = 1;
             WIDGET_REDRAW(RESIST_ID);
         }
@@ -603,23 +603,23 @@ void StatsCmd(char *data, int len)
                     cpl.target_hp = (int) * (data + i++);
                     break;
                 case CS_STAT_REG_HP:
-                    cpl.gen_hp = ((float) GetShort_String((unsigned char *)data + i)) / 10.0f;
+                    cpl.gen_hp = ((float) GetUINT16_String(data + i)) / 10.0f;
                     i += 2;
                     WIDGET_REDRAW(REGEN_ID);
                     break;
                 case CS_STAT_REG_MANA:
-                    cpl.gen_sp = ((float) GetShort_String((unsigned char *)data + i)) / 10.0f;
+                    cpl.gen_sp = ((float) GetUINT16_String(data + i)) / 10.0f;
                     i += 2;
                     WIDGET_REDRAW(REGEN_ID);
                     break;
                 case CS_STAT_REG_GRACE:
-                    cpl.gen_grace = ((float) GetShort_String((unsigned char *)data + i)) / 10.0f;
+                    cpl.gen_grace = ((float) GetUINT16_String(data + i)) / 10.0f;
                     i += 2;
                     WIDGET_REDRAW(REGEN_ID);
                     break;
 
                 case CS_STAT_HP:
-                    temp = GetInt_String((unsigned char *)data + i);
+                    temp = GetSINT32_String(data + i);
                     if (temp < cpl.stats.hp)
                     {
                         cpl.warn_hp = 1;
@@ -634,12 +634,12 @@ void StatsCmd(char *data, int len)
                     break;
                 case CS_STAT_MAXHP:
 
-                    cpl.stats.maxhp = GetInt_String((unsigned char *)data + i);
+                    cpl.stats.maxhp = GetSINT32_String(data + i);
                     i += 4;
                     WIDGET_REDRAW(STATS_ID);
                     break;
                 case CS_STAT_SP:
-                    temp = (int) GetShort_String((unsigned char *)data + i);
+                    temp = GetUINT16_String(data + i);
                     cpl.stats.tempsp = temp-cpl.stats.sp;
                     cpl.stats.sptick = LastTick;
                     cpl.stats.sp = temp;
@@ -647,12 +647,12 @@ void StatsCmd(char *data, int len)
                     WIDGET_REDRAW(STATS_ID);
                     break;
                 case CS_STAT_MAXSP:
-                    cpl.stats.maxsp = GetShort_String((unsigned char *)data + i);
+                    cpl.stats.maxsp = GetUINT16_String(data + i);
                     i += 2;
                     WIDGET_REDRAW(STATS_ID);
                     break;
                 case CS_STAT_GRACE:
-                    temp = (int) GetShort_String((unsigned char *)data + i);
+                    temp = GetUINT16_String(data + i);
                     cpl.stats.tempgrace = temp-cpl.stats.grace;
                     cpl.stats.gracetick = LastTick;
                     cpl.stats.grace = temp;
@@ -660,7 +660,7 @@ void StatsCmd(char *data, int len)
                     WIDGET_REDRAW(STATS_ID);
                     break;
                 case CS_STAT_MAXGRACE:
-                    cpl.stats.maxgrace = GetShort_String((unsigned char *)data + i);
+                    cpl.stats.maxgrace = GetUINT16_String(data + i);
                     i += 2;
                     WIDGET_REDRAW(STATS_ID);
                     break;
@@ -737,7 +737,7 @@ void StatsCmd(char *data, int len)
                     WIDGET_REDRAW(STATS_ID);
                     break;
                 case CS_STAT_EXP:
-                    temp = GetInt_String((unsigned char *)data + i);
+                    temp = GetSINT32_String(data + i);
                     if (temp < cpl.stats.exp)
                         cpl.warn_drain = TRUE;
                     cpl.stats.exp = temp;
@@ -763,54 +763,54 @@ void StatsCmd(char *data, int len)
                     WIDGET_REDRAW(MAIN_LVL_ID);
                     break;
                 case CS_STAT_WC:
-                    cpl.stats.wc = (uint8) GetShort_String((unsigned char *)data + i);
+                    cpl.stats.wc = GetUINT16_String(data + i);
                     i += 2;
                     break;
                 case CS_STAT_AC:
-                    cpl.stats.ac = (uint8) GetShort_String((unsigned char *)data + i);
+                    cpl.stats.ac = GetUINT16_String(data + i);
                     i += 2;
                     break;
                 case CS_STAT_DAM:
-                    cpl.stats.dam = GetShort_String((unsigned char *)data + i);
+                    cpl.stats.dam = GetUINT16_String(data + i);
                     cpl.stats.dps = (float)cpl.stats.dam/10.0f;
                     i += 2;
                     break;
                 case CS_STAT_DIST_DPS:
-                    cpl.stats.dist_dam = GetShort_String((unsigned char *)data + i);
+                    cpl.stats.dist_dam = GetUINT16_String(data + i);
                     cpl.stats.dist_dps = (float)cpl.stats.dist_dam/10.0f;
                     i += 2;
                     break;
                 case CS_STAT_DIST_WC:
-                    cpl.stats.dist_wc = GetShort_String((unsigned char *)data + i);
+                    cpl.stats.dist_wc = GetUINT16_String(data + i);
                     i += 2;
                     break;
                 case CS_STAT_DIST_TIME:
-                    cpl.stats.dist_time = ((float)GetInt_String((unsigned char *)data + i))/1000.0f;
+                    cpl.stats.dist_time = ((float)GetUINT32_String(data + i))/1000.0f;
                     i += 4;
                     break;
                 case CS_STAT_SPEED:
-                    cpl.stats.speed = (float)GetInt_String((unsigned char *)data + i)/10.0f;
+                    cpl.stats.speed = (float)GetUINT32_String(data + i)/10.0f;
                     i += 4;
                     break;
                 case CS_STAT_SPELL_FUMBLE:
-                    cpl.stats.spell_fumble = (float)GetInt_String((unsigned char *)data + i)/10.0f;
+                    cpl.stats.spell_fumble = (float)GetUINT32_String(data + i)/10.0f;
                     i += 4;
                     break;
                 case CS_STAT_FOOD:
-                    cpl.stats.food = GetShort_String((unsigned char *)data + i);
+                    cpl.stats.food = GetUINT16_String(data + i);
                     i += 2;
                     WIDGET_REDRAW(STATS_ID);
                     break;
                 case CS_STAT_WEAP_SP:
-                    cpl.stats.weapon_sp = ((float)GetInt_String((unsigned char *)data + i))/1000.0f;
+                    cpl.stats.weapon_sp = ((float)GetUINT32_String(data + i))/1000.0f;
                     i += 4;
                     break;
                 case CS_STAT_FLAGS:
-                    cpl.stats.flags = GetShort_String((unsigned char *)data + i);
+                    cpl.stats.flags = GetUINT16_String(data + i);
                     i += 2;
                     break;
                 case CS_STAT_WEIGHT_LIM:
-                    set_weight_limit(GetInt_String((unsigned char *)data + i));
+                    set_weight_limit(GetUINT32_String(data + i));
                     i += 4;
                     break;
                 case CS_STAT_SKILLEXP_AGILITY:
@@ -819,7 +819,7 @@ void StatsCmd(char *data, int len)
                 case CS_STAT_SKILLEXP_PHYSIQUE:
                 case CS_STAT_SKILLEXP_MAGIC:
                 case CS_STAT_SKILLEXP_WISDOM:
-                    cpl.stats.skill_exp[(c - CS_STAT_SKILLEXP_START) / 2] = GetInt_String((unsigned char *)data + i);
+                    cpl.stats.skill_exp[(c - CS_STAT_SKILLEXP_START) / 2] = GetUINT32_String(data + i);
                     i += 4;
                     WIDGET_REDRAW(SKILL_LVL_ID);
                     break;
@@ -1022,11 +1022,11 @@ void PlayerCmd(char *data, int len)
     GameStatus = GAME_STATUS_PLAY;
     txtwin[TW_MIX].size = txtwin_start_size;
     InputStringEndFlag = FALSE;
-    tag = GetInt_String((unsigned char *)data);
+    tag = GetSINT32_String(data);
     i += 4;
-    weight = GetInt_String((unsigned char *)data + i);
+    weight = GetSINT32_String(data + i);
     i += 4;
-    face = GetInt_String((unsigned char *)data + i);
+    face = GetSINT32_String(data + i);
     request_face(face, 0);
     i += 4;
     nlen = data[i++];
@@ -1077,12 +1077,12 @@ void ItemXYCmd(char *data, int len, int bflag)
     map_udate_flag = 2;
     itype = stype = item_qua = item_con = item_skill = item_level = 0;
 
-    dmode = GetInt_String((unsigned char *)data);
+    dmode = GetSINT32_String(data);
     pos += 4;
 
     /*LOG(-1,"ITEMXY:(%d) %s\n", dmode, locate_item(dmode)?(locate_item(dmode)->d_name?locate_item(dmode)->s_name:"no name"):"no LOC");*/
 
-    loc = GetInt_String((unsigned char *)data + pos);
+    loc = GetSINT32_String(data + pos);
 
     if (dmode >= 0)
         remove_item_inventory(locate_item(loc));
@@ -1118,10 +1118,10 @@ void ItemXYCmd(char *data, int len, int bflag)
     {
         while (pos < len)
         {
-            tag = GetInt_String((unsigned char *)data + pos); pos += 4;
-            flags = GetInt_String((unsigned char *)data + pos); pos += 4;
-            weight = GetInt_String((unsigned char *)data + pos); pos += 4;
-            face = GetInt_String((unsigned char *)data + pos); pos += 4;
+            tag = GetSINT32_String(data + pos); pos += 4;
+            flags = GetSINT32_String(data + pos); pos += 4;
+            weight = GetSINT32_String(data + pos); pos += 4;
+            face = GetSINT32_String(data + pos); pos += 4;
             request_face(face, 0);
             direction = data[pos++];
 
@@ -1139,9 +1139,9 @@ void ItemXYCmd(char *data, int len, int bflag)
             memcpy(name, (char *) data + pos, nlen);
             pos += nlen;
             name[nlen] = '\0';
-            anim = GetShort_String((unsigned char *)data + pos); pos += 2;
+            anim = GetUINT16_String(data + pos); pos += 2;
             animspeed = data[pos++];
-            nrof = GetInt_String((unsigned char *)data + pos); pos += 4;
+            nrof = GetSINT32_String(data + pos); pos += 4;
             update_item(tag, loc, name, weight, face, flags, anim, animspeed, nrof, itype, stype, item_qua, item_con,
                         item_skill, item_level, direction, bflag);
         }
@@ -1208,7 +1208,7 @@ void GroupInviteCmd(char *data, int len)
 void MarkCmd(char *data, int len)
 {
 
-    cpl.mark_count = GetInt_String((unsigned char *)data);
+    cpl.mark_count = GetSINT32_String(data);
     /* draw_info_format(COLOR_WHITE, "MARK: %d",cpl.mark_count); */
 }
 
@@ -1332,9 +1332,9 @@ void UpdateItemCmd(char *data, int len)
     uint8   animspeed;
 
     map_udate_flag = 2;
-    sendflags = GetShort_String((unsigned char *)data);
+    sendflags = GetUINT16_String(data);
     pos += 2;
-    tag = GetInt_String((unsigned char *)data + pos);
+    tag = GetSINT32_String(data + pos);
     pos += 4;
     ip = locate_item(tag);
     if (!ip)
@@ -1360,7 +1360,7 @@ if (ip->anim)
 
     if (sendflags & UPD_LOCATION)
     {
-        loc = GetInt_String((unsigned char *)data + pos);
+        loc = GetSINT32_String(data + pos);
         env = locate_item(loc);
         if (!env)
             fprintf(stderr, "UpdateItemCmd: unknown object tag (%d) for new location\n", loc);
@@ -1368,17 +1368,17 @@ if (ip->anim)
     }
     if (sendflags & UPD_FLAGS)
     {
-        flags = GetInt_String((unsigned char *)data + pos);
+        flags = GetSINT32_String(data + pos);
         pos += 4;
     }
     if (sendflags & UPD_WEIGHT)
     {
-        weight = GetInt_String((unsigned char *)data + pos);
+        weight = GetSINT32_String(data + pos);
         pos += 4;
     }
     if (sendflags & UPD_FACE)
     {
-        face = GetInt_String((unsigned char *)data + pos);
+        face = GetSINT32_String(data + pos);
         request_face(face, 0);
         pos += 4;
     }
@@ -1398,7 +1398,7 @@ if (ip->anim)
     }
     if (sendflags & UPD_ANIM)
     {
-        anim = GetShort_String((unsigned char *)data + pos);
+        anim = GetUINT16_String(data + pos);
         pos += 2;
     }
     if (sendflags & UPD_ANIMSPEED)
@@ -1407,7 +1407,7 @@ if (ip->anim)
     }
     if (sendflags & UPD_NROF)
     {
-        nrof = GetInt_String((unsigned char *)data + pos);
+        nrof = GetSINT32_String(data + pos);
         pos += 4;
     }
     if (sendflags & UPD_QUALITY)
@@ -1426,7 +1426,7 @@ void DeleteItem(char *data, int len)
 
     while (pos < len)
     {
-        tag = GetInt_String((unsigned char *)data); pos += 4;
+        tag = GetSINT32_String(data); pos += 4;
         delete_item(tag);
     }
     if (pos > len)
@@ -1538,7 +1538,7 @@ void Map2Cmd(char *data, int len)
         ext1 = ext2 = ext3 = 0;
         height_2 = height_3 = height_4 = 0;
         /* first, we get the mask flag - it decribes what we now get */
-        mask = GetShort_String((unsigned char *)data + pos); pos += 2;
+        mask = GetUINT16_String(data + pos); pos += 2;
         x = (mask >> 11) & 0x1f;
         y = (mask >> 6) & 0x1f;
 
@@ -1608,19 +1608,19 @@ void Map2Cmd(char *data, int len)
                 /* the following is for future height use, but we will probably change things before we need this */
                 if (pname_flag & 0x40)
                 {
-                    height_2 = GetShort_String((unsigned char *)data + pos);
+                    height_2 = GetSINT16_String(data + pos);
                     pos += 2;
                     c = (data[pos++]);
                 }
                 if (pname_flag & 0x20)
                 {
-                    height_3 = GetShort_String((unsigned char *)data + pos);
+                    height_3 = GetUINT16_String(data + pos);
                     pos += 2;
                     c = (data[pos++]);
                 }
                 if (pname_flag & 0x10)
                 {
-                    height_4 = GetShort_String((unsigned char *)data + pos);
+                    height_4 = GetUINT16_String(data + pos);
                     pos += 2;
                     c = (data[pos++]);
                 }
@@ -1634,22 +1634,22 @@ void Map2Cmd(char *data, int len)
                 ff_flag = (uint8) (data[pos++]);
                 if (ff_flag & 0x8)
                 {
-                    ff0 = GetShort_String((unsigned char *)data + pos); pos += 2;
+                    ff0 = GetUINT16_String(data + pos); pos += 2;
                     add_anim(ANIM_KILL, 0, 0, xpos + x, ypos + y, ff0);
                 }
                 if (ff_flag & 0x4)
                 {
-                    ff1 = GetShort_String((unsigned char *)data + pos); pos += 2;
+                    ff1 = GetUINT16_String(data + pos); pos += 2;
                     add_anim(ANIM_SELF_DAMAGE, 0, 0, options.mapstart_x+(int)((MAP_START_XOFF+20)*(options.zoom/100.0)), options.mapstart_y+(int)((146+50)*(options.zoom/100.0)), ff1);
                 }
                 if (ff_flag & 0x2)
                 {
-                    ff2 = GetShort_String((unsigned char *)data + pos); pos += 2;
+                    ff2 = GetUINT16_String(data + pos); pos += 2;
                     add_anim(ANIM_DAMAGE, 0, 0, xpos + x, ypos + y, ff2);
                 }
                 if (ff_flag & 0x1)
                 {
-                    ff3 = GetShort_String((unsigned char *)data + pos); pos += 2;
+                    ff3 = GetUINT16_String(data + pos); pos += 2;
                     add_anim(ANIM_DAMAGE, 0, 0, xpos + x, ypos + y, ff3);
                 }
 //                LOG(LOG_DEBUG,"Damage: ff_flag %x, (%d, %d, %d, %d)",ff_flag, ff0, ff1, ff2, ff3);
@@ -1701,19 +1701,19 @@ void Map2Cmd(char *data, int len)
         if (mask & 0x8)
         {
             sint16  z_height = 0;
-            face = GetShort_String((unsigned char *)data + pos); pos += 2;
+            face = GetUINT16_String(data + pos); pos += 2;
             request_face(face, 0);
             xdata = 0;
             /* incoming height for floor (this is a sint16 */
 #ifdef USE_TILESTRETCHER
-            z_height = GetShort_String((unsigned char *)data + pos); pos += 2;
+            z_height = GetUINT16_String(data + pos); pos += 2;
 #endif
             set_map_face(x, y, 0, face, xdata, -1, pname1,z_height);
 
         }
         if (mask & 0x4)
         {
-            face = GetShort_String((unsigned char *)data + pos); pos += 2;
+            face = GetUINT16_String(data + pos); pos += 2;
             request_face(face, 0);
             xdata = 0;
             if (ext_flag & 0x04) /* we have here a multi arch, fetch head offset */
@@ -1725,7 +1725,7 @@ void Map2Cmd(char *data, int len)
         }
         if (mask & 0x2)
         {
-            face = GetShort_String((unsigned char *)data + pos); pos += 2;
+            face = GetUINT16_String(data + pos); pos += 2;
             request_face(face, 0);
             /* LOG(0,"we got face: %x (%x) ->%s\n", face, face&~0x8000, FaceList[face&~0x8000].name?FaceList[face&~0x8000].name:"(null)" );*/
             xdata = 0;
@@ -1738,7 +1738,7 @@ void Map2Cmd(char *data, int len)
         }
         if (mask & 0x1)
         {
-            face = GetShort_String((unsigned char *)data + pos); pos += 2;
+            face = GetUINT16_String(data + pos); pos += 2;
             request_face(face, 0);
             /*LOG(0,"we got face2: %x (%x) ->%s\n", face, face&~0x8000, FaceList[face&~0x8000].name?FaceList[face&~0x8000].name:"(null)" );*/
             xdata = 0;

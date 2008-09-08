@@ -24,7 +24,7 @@
 #if !defined(__COMMANDS_H)
 #define __COMMANDS_H
 
-extern void DoClient(ClientSocket *csocket);
+extern void DoClient(void);
 
 extern void SoundCmd(char *data, int len);
 extern void SetupCmd(char *buf, int len);
