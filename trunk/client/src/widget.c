@@ -49,7 +49,7 @@ _widgetdata def_widget[TOTAL_WIDGETS];
 
 /* Default (default) data-list of all widgets */
 /* {name,priority_index,x1,y1,width,height,moveable?, active?} */
-const static _widgetdata con_widget[TOTAL_WIDGETS] =
+static const _widgetdata con_widget[TOTAL_WIDGETS] =
 {
 	{"STATS",NULL,227,0,172,102,        TRUE, TRUE, TRUE},
 	{"RESIST",NULL,497,0,198,79,        TRUE, TRUE, TRUE},

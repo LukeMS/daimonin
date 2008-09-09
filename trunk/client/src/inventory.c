@@ -56,7 +56,7 @@ int get_inventory_data(item *op, int *ctag, int *slot, int *start, int *count, i
         (*count)++;
 
         cpl.window_weight += tmp->weight;
-        if (tmp->tag == cpl.container_tag)
+        if ((int)tmp->tag == cpl.container_tag)
             cpl.container = tmp;
         if (cpl.container && cpl.container->tag == tmp->tag)
         {
@@ -329,7 +329,7 @@ void widget_show_inventory_window(int x, int y)
 
     for (; tmp && i < invxlen*invylen; tmp = tmp->next)
     {
-        if (tmp->tag == cpl.mark_count)
+        if ((int) tmp->tag == cpl.mark_count)
             sprite_blt(Bitmaps[BITMAP_INVSLOT_MARKED], x + (i % invxlen) * 32, y + (i / invxlen) * 32, NULL, NULL);
         blt_inv_item(tmp, x + (i % invxlen) * 32 + 1, y + (i / invxlen) * 32 + 1);
 
@@ -349,7 +349,7 @@ void widget_show_inventory_window(int x, int y)
 jump_in_container1:
             for (; tmpc && i < invxlen*invylen; tmpc = tmpc->next)
             {
-                if (tmpc->tag == cpl.mark_count)
+                if ((int)tmpc->tag == cpl.mark_count)
                     sprite_blt(Bitmaps[BITMAP_INVSLOT_MARKED], x + (i % invxlen) * 32, y + (i / invxlen) * 32, NULL, NULL);
 
                 blt_inv_item(tmpc, x + (i % invxlen) * 32 + 1, y + (i / invxlen) * 32 + 1);
@@ -465,7 +465,7 @@ void widget_show_below_window(item *op, int x, int y)
     for (; tmp && i < INVITEMBELOWXLEN*INVITEMBELOWYLEN; tmp = tmp->next)
     {
         at = tmp->applied;
-        if (tmp->tag != cpl.container_tag)
+        if ((int)tmp->tag != cpl.container_tag)
             tmp->applied = 0;
         blt_inv_item(tmp, x + (i % INVITEMBELOWXLEN) * 32 + 5, y + (i / INVITEMBELOWXLEN) * 32 + 19);
         tmp->applied = at;

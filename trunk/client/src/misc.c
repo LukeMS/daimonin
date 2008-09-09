@@ -32,7 +32,7 @@ unsigned long hashbmap(char *str, int tablesize)
     {
         hash ^= (unsigned long) * p << rot;
         rot += 2;
-        if (rot >= (sizeof(long) - sizeof(char)) * 8)
+        if (rot >= (int)((sizeof(long) - sizeof(char)) * 8))
             rot = 0;
     }
     return (hash % tablesize);
@@ -300,7 +300,7 @@ extern void     markdmbuster()
     send_mark_obj((it = locate_item(tag)));
     if (it)
     {
-        if (cpl.mark_count == it->tag)
+        if (cpl.mark_count == (int)it->tag)
             sprintf(buf, "unmark %s", it->s_name);
         else
             sprintf(buf, "mark %s", it->s_name);

@@ -255,7 +255,7 @@ int locate_item_nr_from_tag(item *op, int tag)
     int count   = 0;
     for (; op != NULL; count++,op = op->next)
     {
-        if (op->tag == tag)
+        if ((int)op->tag == tag)
             return count;
     }
     return -1;
@@ -280,7 +280,7 @@ item * locate_item_from_inv(item *op, sint32 tag)
 {
     for (; op != NULL; op = op->next)
     {
-        if (op->tag == tag)
+        if ((sint32) op->tag == tag)
             return op;
     }
     return NULL;
@@ -295,7 +295,7 @@ item * locate_item_from_item(item *op, sint32 tag)
 
     for (; op != NULL; op = op->next)
     {
-        if (op->tag == tag)
+        if ((sint32)op->tag == tag)
             return op;
         else if (op->inv)
         {
@@ -532,7 +532,7 @@ static sint32 get_nrof(char *name)
         nrof = 1;
     else
     {
-        for (i = 1; i < sizeof(numbers) / sizeof(numbers[0]); i++)
+        for (i = 1; i < (int)(sizeof(numbers) / sizeof(numbers[0])); i++)
             if (strncmp(name, numbers[i], strlen(numbers[i])) == 0)
             {
                 nrof = i;
@@ -540,7 +540,7 @@ static sint32 get_nrof(char *name)
             }
         if (!nrof)
         {
-            for (i = 1; i < sizeof(numbers_10) / sizeof(numbers_10[0]); i++)
+            for (i = 1; i < (int)(sizeof(numbers_10) / sizeof(numbers_10[0])); i++)
                 if (strncmp(name, numbers_10[i], strlen(numbers_10[i])) == 0)
                 {
                     nrof = i * 10;
@@ -629,7 +629,7 @@ void toggle_locked(item *op)
 {
     if (!op || !op->env || op->env->tag == 0)
         return; /* if item is on the ground, don't lock it */
-    
+
     send_lock_command(op->locked?0:1, op->tag);
 }
 
@@ -671,7 +671,7 @@ void update_item(int tag, int loc, char *name, int weight, int face, int flags, 
     /* Need to do some special handling if this is the player that is
      * being updated.
      */
-    if (player->tag == tag)
+    if ((int)player->tag == tag)
     {
         copy_name(player->d_name, name);
         /* I don't think this makes sense, as you can have

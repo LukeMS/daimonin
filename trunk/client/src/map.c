@@ -748,7 +748,7 @@ void map_draw_map(void)
                                         if (name_tmp)
                                         {
                                             len = name_tmp - map->pname[k];
-                                            if (len != strlen(&group[s].name[0]))
+                                            if (len != (int) strlen(&group[s].name[0]))
                                                 len = 0;
                                         }
 

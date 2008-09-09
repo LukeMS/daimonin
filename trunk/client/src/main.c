@@ -235,7 +235,7 @@ static _bitmap_name bitmap_name[BITMAP_INIT]    =
         {"closeb.png", PIC_TYPE_DEFAULT},
     };
 
-#define BITMAP_MAX (sizeof(bitmap_name)/sizeof(struct _bitmap_name))
+#define BITMAP_MAX (int)(sizeof(bitmap_name)/sizeof(struct _bitmap_name))
 _Sprite            *Bitmaps[BITMAP_MAX];
 
 static void display_layer1(void);   /* map & player */
@@ -1372,7 +1372,7 @@ int main(int argc, char *argv[])
         {
             strncpy(options.cli_name,argv[argc],39);
             options.cli_name[39]='\0'; /* sanity \0 */
-            toupper(options.cli_name[0]);
+            options.cli_name[0] = toupper(options.cli_name[0]);
             --argc;
         }
 #if (1)
