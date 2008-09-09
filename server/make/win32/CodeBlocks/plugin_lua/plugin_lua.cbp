@@ -1,159 +1,113 @@
-<?xml version="1.0"?>
-<!DOCTYPE Code::Blocks_project_file>
-<Code::Blocks_project_file>
-	<FileVersion major="1" minor="1"/>
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="plugin_lua"/>
-		<Option makefile="Makefile"/>
-		<Option makefile_is_custom="0"/>
-		<Option default_target="-1"/>
-		<Option active_target="0"/>
-		<Option compiler="0"/>
+		<Option title="plugin_lua" />
+		<Option pch_mode="0" />
+		<Option compiler="gcc" />
 		<Build>
 			<Target title="Release">
-				<Option output="release\plugin_lua.dll"/>
-				<Option working_dir=""/>
-				<Option object_output="Release"/>
-				<Option deps_output=".deps"/>
-				<Option external_deps=""/>
-				<Option type="3"/>
-				<Option compiler="0"/>
-				<Option createDefFile="1"/>
-				<Option createStaticLib="1"/>
+				<Option output="release\plugin_lua.dll" prefix_auto="0" extension_auto="0" />
+				<Option object_output="Release" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
 				<Compiler>
-					<Add option="-W"/>
-					<Add option="-D_WINDOWS"/>
-					<Add option="-D_USRDLL"/>
-					<Add option="-DWIN32"/>
-					<Add option="-DNDEBUG"/>
-					<Add option="-DLUA_PLUGIN_EXPORTS"/>
-					<Add option="-DMIN_GW"/>
-					<Add directory="..\..\..\..\src\include"/>
-					<Add directory="..\..\..\..\src\lua"/>
-					<Add directory="..\..\..\..\src\lua\include"/>
-					<Add directory="..\..\..\..\src\plugin_lua\include"/>
+					<Add option="-W" />
+					<Add option="-D_WINDOWS" />
+					<Add option="-D_USRDLL" />
+					<Add option="-DWIN32" />
+					<Add option="-DNDEBUG" />
+					<Add option="-DLUA_PLUGIN_EXPORTS" />
+					<Add option="-DMIN_GW" />
+					<Add directory="..\..\..\..\src\include" />
+					<Add directory="..\..\..\..\src\lua" />
+					<Add directory="..\..\..\..\src\lua\include" />
+					<Add directory="..\..\..\..\src\plugin_lua\include" />
 				</Compiler>
 				<Linker>
-					<Add library="liblua.a"/>
-					<Add library="liblualib.a"/>
-					<Add library="winmm"/>
-					<Add directory="..\lua\Release"/>
+					<Add library="liblua.a" />
+					<Add library="liblualib.a" />
+					<Add library="winmm" />
+					<Add directory="..\lua\Release" />
 				</Linker>
 				<ExtraCommands>
-					<Add after="..\cp .\Release\plugin_lua.dll ..\..\..\..\plugins\plugin_lua.dll"/>
+					<Add after="..\cp .\Release\plugin_lua.dll ..\..\..\..\plugins\plugin_lua.dll" />
 				</ExtraCommands>
 			</Target>
 			<Target title="Debug">
-				<Option output="Debug\plugin_lua.dll"/>
-				<Option working_dir=""/>
-				<Option object_output="Debug"/>
-				<Option deps_output=".deps"/>
-				<Option external_deps=""/>
-				<Option type="3"/>
-				<Option compiler="0"/>
-				<Option createDefFile="1"/>
-				<Option createStaticLib="1"/>
+				<Option output="Debug\plugin_lua.dll" prefix_auto="0" extension_auto="0" />
+				<Option object_output="Debug" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
 				<Compiler>
-					<Add option="-W"/>
-					<Add option="-g"/>
-					<Add option="-D_WINDOWS"/>
-					<Add option="-D_USRDLL"/>
-					<Add option="-DLUA_PLUGIN_EXPORTS"/>
-					<Add option="-DDEBUG_MOVEATTACK"/>
-					<Add option="-DDEBUG"/>
-					<Add option="-DWIN32"/>
-					<Add option="-DNDEBUG"/>
-					<Add option="-DMIN_GW"/>
-					<Add directory="..\..\..\..\src\include"/>
-					<Add directory="..\..\..\..\src\lua"/>
-					<Add directory="..\..\..\..\src\lua\include"/>
-					<Add directory="..\..\..\..\src\plugin_lua\include"/>
+					<Add option="-W" />
+					<Add option="-g" />
+					<Add option="-D_WINDOWS" />
+					<Add option="-D_USRDLL" />
+					<Add option="-DLUA_PLUGIN_EXPORTS" />
+					<Add option="-DDEBUG_MOVEATTACK" />
+					<Add option="-DDEBUG" />
+					<Add option="-DWIN32" />
+					<Add option="-DNDEBUG" />
+					<Add option="-DMIN_GW" />
+					<Add directory="..\..\..\..\src\include" />
+					<Add directory="..\..\..\..\src\lua" />
+					<Add directory="..\..\..\..\src\lua\include" />
+					<Add directory="..\..\..\..\src\plugin_lua\include" />
 				</Compiler>
 				<Linker>
-					<Add library="liblua.a"/>
-					<Add library="liblualibd.a"/>
-					<Add library="winmm"/>
-					<Add directory="..\lua\Debug"/>
+					<Add library="liblua.a" />
+					<Add library="liblualibd.a" />
+					<Add library="winmm" />
+					<Add directory="..\lua\Debug" />
 				</Linker>
 				<ExtraCommands>
-					<Add after="..\cp .\Debug\plugin_lua.dll ..\..\..\..\plugins\plugin_lua.dll"/>
+					<Add after="..\cp .\Debug\plugin_lua.dll ..\..\..\..\plugins\plugin_lua.dll" />
 				</ExtraCommands>
 			</Target>
 		</Build>
+		<VirtualTargets>
+			<Add alias="All" targets="Release;Debug;" />
+		</VirtualTargets>
 		<Compiler>
-			<Add directory="..\..\..\..\src\include"/>
-			<Add directory="..\..\..\..\src\plugin_lua\include"/>
-			<Add directory="..\..\..\..\src\lua\include"/>
+			<Add directory="..\..\..\..\src\include" />
+			<Add directory="..\..\..\..\src\plugin_lua\include" />
+			<Add directory="..\..\..\..\src\lua\include" />
 		</Compiler>
 		<Unit filename="..\..\..\..\src\common\win32.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\..\src\plugin_lua\ai_object.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\..\src\plugin_lua\daimonin_game.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\..\src\plugin_lua\daimonin_map.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\..\src\plugin_lua\daimonin_object.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\..\..\src\plugin_lua\include\ai_object.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
-		</Unit>
-		<Unit filename="..\..\..\..\src\plugin_lua\include\daimonin_game.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
-		</Unit>
-		<Unit filename="..\..\..\..\src\plugin_lua\include\daimonin_map.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
-		</Unit>
-		<Unit filename="..\..\..\..\src\plugin_lua\include\daimonin_object.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
-		</Unit>
-		<Unit filename="..\..\..\..\src\plugin_lua\include\plugin_lua.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
-		</Unit>
+		<Unit filename="..\..\..\..\src\plugin_lua\include\ai_object.h" />
+		<Unit filename="..\..\..\..\src\plugin_lua\include\daimonin_game.h" />
+		<Unit filename="..\..\..\..\src\plugin_lua\include\daimonin_map.h" />
+		<Unit filename="..\..\..\..\src\plugin_lua\include\daimonin_object.h" />
+		<Unit filename="..\..\..\..\src\plugin_lua\include\plugin_lua.h" />
 		<Unit filename="..\..\..\..\src\plugin_lua\lua_support.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\..\src\plugin_lua\plugin_lua.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+		</Extensions>
 	</Project>
-</Code::Blocks_project_file>
+</CodeBlocks_project_file>
