@@ -1027,7 +1027,7 @@ void PlayerCmd(char *data, int len)
     weight = GetSINT32_String(data + i);
     i += 4;
     face = GetSINT32_String(data + i);
-    request_face(face, 0);
+    request_face(face);
     i += 4;
     nlen = data[i++];
     memcpy(name, (const char *) data + i, nlen);
@@ -1122,7 +1122,7 @@ void ItemXYCmd(char *data, int len, int bflag)
             flags = GetSINT32_String(data + pos); pos += 4;
             weight = GetSINT32_String(data + pos); pos += 4;
             face = GetSINT32_String(data + pos); pos += 4;
-            request_face(face, 0);
+            request_face(face);
             direction = data[pos++];
 
             if (loc)
@@ -1346,7 +1346,7 @@ void UpdateItemCmd(char *data, int len)
     /*LOG(-1,"UPDATE: loc:%d tag:%d\n",loc, tag); */
     weight = ip->weight;
     face = ip->face;
-    request_face(face, 0);
+    request_face(face);
     flags = ip->flagsval;
     anim = 0;
     animspeed = 0;
@@ -1379,7 +1379,7 @@ if (ip->anim)
     if (sendflags & UPD_FACE)
     {
         face = GetSINT32_String(data + pos);
-        request_face(face, 0);
+        request_face(face);
         pos += 4;
     }
     if (sendflags & UPD_DIRECTION)
@@ -1702,7 +1702,7 @@ void Map2Cmd(char *data, int len)
         {
             sint16  z_height = 0;
             face = GetUINT16_String(data + pos); pos += 2;
-            request_face(face, 0);
+            request_face(face);
             xdata = 0;
             /* incoming height for floor (this is a sint16 */
 #ifdef USE_TILESTRETCHER
@@ -1714,7 +1714,7 @@ void Map2Cmd(char *data, int len)
         if (mask & 0x4)
         {
             face = GetUINT16_String(data + pos); pos += 2;
-            request_face(face, 0);
+            request_face(face);
             xdata = 0;
             if (ext_flag & 0x04) /* we have here a multi arch, fetch head offset */
             {
@@ -1726,7 +1726,7 @@ void Map2Cmd(char *data, int len)
         if (mask & 0x2)
         {
             face = GetUINT16_String(data + pos); pos += 2;
-            request_face(face, 0);
+            request_face(face);
             /* LOG(0,"we got face: %x (%x) ->%s\n", face, face&~0x8000, FaceList[face&~0x8000].name?FaceList[face&~0x8000].name:"(null)" );*/
             xdata = 0;
             if (ext_flag & 0x02) /* we have here a multi arch, fetch head offset */
@@ -1739,7 +1739,7 @@ void Map2Cmd(char *data, int len)
         if (mask & 0x1)
         {
             face = GetUINT16_String(data + pos); pos += 2;
-            request_face(face, 0);
+            request_face(face);
             /*LOG(0,"we got face2: %x (%x) ->%s\n", face, face&~0x8000, FaceList[face&~0x8000].name?FaceList[face&~0x8000].name:"(null)" );*/
             xdata = 0;
             if (ext_flag & 0x01) /* we have here a multi arch, fetch head offset */
@@ -1894,7 +1894,7 @@ void GolemCmd(char *data, int len)
     {
         tmp = strchr(data, ' '); /* find start of a name */
         face = atoi(tmp + 1);
-        request_face(face, 0);
+        request_face(face);
         tmp = strchr(tmp + 1, ' '); /* find start of a name */
         sprintf(buf, "You lose control of %s.", tmp + 1);
         draw_info(buf, COLOR_WHITE);
@@ -1904,7 +1904,7 @@ void GolemCmd(char *data, int len)
     {
         tmp = strchr(data, ' '); /* find start of a name */
         face = atoi(tmp + 1);
-        request_face(face, 0);
+        request_face(face);
         tmp = strchr(tmp + 1, ' '); /* find start of a name */
         sprintf(buf, "You get control of %s.", tmp + 1);
         draw_info(buf, COLOR_WHITE);

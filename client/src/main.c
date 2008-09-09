@@ -1679,10 +1679,7 @@ int main(int argc, char *argv[])
         GameTicksSec = LastTick - tmpGameTick;
 
         if (GameStatus > GAME_STATUS_CONNECT)
-        {
             DoClient();
-            request_face(0, 1); /* flush face request buffer */
-        }
 
         if (GameStatus == GAME_STATUS_PLAY)
         {

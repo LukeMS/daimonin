@@ -301,7 +301,7 @@ Boolean new_anim_load_and_check(uint16 anim, uint8 sequence, uint8 dir)
 
         animation[anim].aSeq[sequence]->dirs[dir].flags |= ASEQ_DIR_LOADED;
         for (i=0;i<animation[anim].aSeq[sequence]->dirs[dir].frames;i++)
-            request_face(animation[anim].aSeq[sequence]->dirs[dir].faces[i], 0);
+            request_face(animation[anim].aSeq[sequence]->dirs[dir].faces[i]);
     }
 
     return TRUE;

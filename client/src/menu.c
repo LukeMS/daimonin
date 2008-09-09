@@ -1626,7 +1626,7 @@ int get_bmap_id(char *name)
     {
         if (bmaptype_table[i].name[0] && !strcmp(bmaptype_table[i].name, name))
         {
-            request_face(i, 0);
+            request_face(i);
             return i;
         }
     }

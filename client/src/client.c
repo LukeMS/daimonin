@@ -185,7 +185,7 @@ finish_face_cmd_j1: /* error jump from for() */
 
 void finish_face_cmd(int pnum, uint32 checksum, char *face)
 {
-//    SockList        sl;
+    SockList        sl;
     char            buf[2048];
     FILE           *stream;
     struct stat     statbuf;
@@ -232,37 +232,34 @@ void finish_face_cmd(int pnum, uint32 checksum, char *face)
         len = fread(data, 1, len, stream);
         fclose(stream);
         newsum = 0;
+
         /* something is wrong... now unlink the file and let it reload then possible and needed */
         if (len <= 0) 
-        {
-            unlink(buf);
-            checksum = 1; /* now we are 100% different to newsum */
-        }
+            checksum = 1; /* mark as wrong */
         else /* lets go for the checksum check*/
             newsum = crc32(1L, data, len);
+
         free(data);
 
         if (newsum == checksum)
         {
             FaceList[pnum].sprite = sprite_tryload_file(buf, 0, NULL);
-            /*perhaps we fail ,try insanity new load*/
             if (FaceList[pnum].sprite)
             {
                 face_flag_extension(pnum, buf);
                 return; /* found and loaded!*/
             }
         }
+        unlink(buf); /* forget this face - unlink it and request a new one! */
     }
-    /*LOG(LOG_MSG,"FACE: call server for %s (%d)\n", face, pnum);*/
+
+    LOG(LOG_MSG,"FACE: call server for %s (%d)\n", face, pnum);
     face_flag_extension(pnum, buf);
 
-    /* TODO: fix both face functions in the server - 
-    * this and "fr" in int request_face(int pnum, int mode)
     SockList_INIT(&sl, NULL);
     SockList_COMMAND(&sl, CLIENT_CMD_FACE, 0);
-    SockList_AddInt(&sl, pnum);
+    SockList_AddShort(&sl, pnum);
     send_socklist_binary(&sl);
-    */
 
 }
 
@@ -296,35 +293,15 @@ static int load_picture_from_pack(int num)
  * if not, say server "send us face cmd "
  * Return: 0 - face not there, requested.
  * 1: face requested or loaded
- * this command collect all new faces and then flush
- * it at once. I insert the flush command after the
- * socket call.
  */
-#define REQUEST_FACE_MAX 250
-
-int request_face(int pnum, int mode)
+int request_face(int pnum)
 {
     char        buf[256 * 2];
     FILE       *stream;
     struct stat statbuf;
     int         len;
     unsigned char * data;
-    static int  count   = 0;
-    static char fr_buf[REQUEST_FACE_MAX*sizeof(uint16) + 4];
     uint16      num     = (uint16) (pnum&~0x8000);
-
-    if (mode == 1) /* forced flush buffer & command */
-    {
-        if (count)
-        {
-            fr_buf[0] = 'f';
-            fr_buf[1] = 'r';
-            fr_buf[2] = ' ';
-          //  cs_write_string(csocket.fd, fr_buf, 4 + count * sizeof(uint16));
-            count = 0;
-        }
-        return 1;
-    }
 
     if (FaceList[num].name || FaceList[num].flags & FACE_REQUESTED) /* loaded OR requested.. */
         return 1;
@@ -379,7 +356,7 @@ int request_face(int pnum, int mode)
         FaceList[num].checksum = bmaptype_table[num].crc;
         load_picture_from_pack(num);
     }
-    else /* 2nd best case  - lets check the cache for it...  or request it */
+    else /* check client /cache folder. If its not there, finish_face_cmd() will stop or ask the server */
     {
         FaceList[num].flags |= FACE_REQUESTED;
         finish_face_cmd(num, bmaptype_table[num].crc, bmaptype_table[num].name);
