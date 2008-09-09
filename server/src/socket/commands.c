@@ -838,45 +838,22 @@ void cs_cmd_newchar(char *buf, int len, NewSocket *ns)
     command_new_char(buf, len, pl);
 }
 
-/* TODO: merge both and fix */
 #ifdef SERVER_SEND_FACES
-/*
-void cs_cmd_send_face(char *buff, int len, NewSocket *ns)
-{
-    long    tmpnum;
-    short   facenum;
 
-    if (!buff || len < PARM_SIZE_INT)
-        return;
-
-    tmpnum  = GetInt_Buffer(buff);
-    facenum = (short)(tmpnum & 0xffff);
-
-    if (facenum != 0)
-        esrv_send_face(ns, facenum, 1);
-}
-*/
 void cs_cmd_face(char *params, int len, NewSocket *ns)
 {
-    /*
-    int i, count;
+    player *pl = ns->pl;
+    short face;
 
-    if (!params || !len)
-        return;
-    count = *(uint8 *) params;
-*/
-    /*
-    for (i = 0; i < count; i++)
+    if (!pl || ns->status >= Ns_Zombie || !params || len< (PARM_SIZE_SHORT) )
     {
-        if (esrv_send_face(ns, *((short *) (params + 1) + i), 0) == SEND_FACE_OUT_OF_BOUNDS)
-        {
-            LOG(llevInfo, "CLIENT BUG: command_face_request (%d) out of bounds. host: %s. close connection.\n",
-                *((short *) (params + 1) + i), STRING_SAFE(ns->ip_host));
-            ns->status = Ns_Dead;
-            return;
-        }
+        ns->status = Ns_Dead;
+        return;
     }
-    */
+
+    face = GetShort_Buffer(params);
+    if (face != 0)
+        esrv_send_face(ns, face, 1);
 }
 #endif
 
