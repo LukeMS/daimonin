@@ -132,8 +132,7 @@ struct obj *aggro_insert_damage(struct obj *target, struct obj *hitter)
  * This is the main setting function to update for a target the damage & aggro marker AFTER aggro and damage
  * is done from the hitter to the
  */
-struct obj *aggro_update_info(struct obj *target, struct obj *target_owner,
-                              struct obj *hitter, struct obj *hitter_owner, int dmg, int flags)
+struct obj *aggro_update_info(struct obj *target, struct obj *hitter, struct obj *hitter_owner, int dmg)
 {
     struct obj *history = NULL, *aggro = NULL, *tmp = NULL;
     int skill_nr = 0;

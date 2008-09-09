@@ -2679,23 +2679,6 @@ object *present_arch_in_ob_temp(archetype *at, object *op)
 }
 
 /*
- * set_cheat(object) sets the cheat flag (WAS_WIZ) in the object and in
- * all it's inventory (recursively).
- * If checksums are used, a player will get set_cheat called for
- * him/her-self and all object carried by a call to this function.
- */
-
-void set_cheat(object *op)
-{
-    /*
-     object *tmp;
-     if(op->inv)
-       for(tmp = op->inv; tmp != NULL; tmp = tmp->below)
-         set_cheat(tmp);
-    */
-}
-
-/*
  * find_free_spot(archetype, map, x, y, start, stop) will search for
  * a spot at the given map and coordinates which will be able to contain
  * the given archetype.  start and stop specifies how many squares
