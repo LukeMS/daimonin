@@ -32,6 +32,45 @@
 #define YY_NO_UNPUT
 #define YY_NO_TOP_STATE
 
+/* got a stupid signedess problem in line
+ * for ( n = 0; n < (size_t) max_size
+ * because the missing (size_t) cast. If you experience
+ * problems with this definition, disable this macro here,
+ * flex will fallback to its original
+ */
+#ifdef LINUX
+#define YY_INPUT(buf,result,max_size) \
+	if ( YY_CURRENT_BUFFER_LVALUE->yy_is_interactive ) \
+		{ \
+		int c = '*'; \
+		size_t n; \
+		for ( n = 0; n < (size_t) max_size && \
+			     (c = getc( yyin )) != EOF && c != '\n'; ++n ) \
+			buf[n] = (char) c; \
+		if ( c == '\n' ) \
+			buf[n++] = (char) c; \
+		if ( c == EOF && ferror( yyin ) ) \
+			YY_FATAL_ERROR( "input in flex scanner failed" ); \
+		result = n; \
+		} \
+	else \
+		{ \
+		errno=0; \
+		while ( (result = fread(buf, 1, max_size, yyin))==0 && ferror(yyin)) \
+			{ \
+			if( errno != EINTR) \
+				{ \
+				YY_FATAL_ERROR( "input in flex scanner failed" ); \
+				break; \
+				} \
+			errno=0; \
+			clearerr(yyin); \
+			} \
+		}\
+\
+
+#endif
+
 #define YY_DECL int lex_load(object *op, int map_flags)
 static char *yval();
 static object *singularity;

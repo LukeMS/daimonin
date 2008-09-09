@@ -823,7 +823,7 @@ struct channels *final_addChannel(char *name, char shortcut, int color, sint8 po
 {
 
     struct channels *node;
-    struct channels *ptr, *ptr1;
+    struct channels *ptr, *ptr1=NULL;
 
     node = (struct channels *) malloc(sizeof(struct channels));
     strncpy(node->name,name,MAX_CHANNEL_NAME);

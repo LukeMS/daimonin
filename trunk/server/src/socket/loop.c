@@ -53,7 +53,7 @@ static fd_set   tmp_read, tmp_exceptions, tmp_write;
 
 /* NOTE: i used for the parms of this static inline function different names,
  * even they point to the same variables. I did that because i experienced
- * in debugging mode problems. Seems VC had problems to see where which 
+ * in debugging mode problems. Seems VC had problems to see where which
  * variable name fits.
  */
 
@@ -88,7 +88,7 @@ static inline void copy_cmd_data(ReadList *b, char *rbuf, int len)
 }
 
 /* for pre processing we need a valid data tail
- * if its broken in 2 parts in the round robin buffer, we must 
+ * if its broken in 2 parts in the round robin buffer, we must
  * first copy it in a temporary flat buffer.
  * NOTE: this is not thread safe atm because the static data_buffer,
  * to make it thread safe move it as non statical to pre_process_command()
@@ -114,7 +114,7 @@ static char *pre_copy_cmd_data(ReadList *readb)
     return data_buffer;
 }
 
-/* We have a handfull commands we only allow in a right order 
+/* We have a handfull commands we only allow in a right order
 * and/or only at ONE time. Lets check we have that and our
 * client does not try to cheat us
 */
@@ -142,7 +142,7 @@ static int pre_process_command(NewSocket *nsock) // use this for debugging
         }
         else
         {
-            /* Here we have all the PRE login procedure functions 
+            /* Here we have all the PRE login procedure functions
              * They will take care about the right order of calling
              * itself, so we just fire them up here
              */
@@ -203,7 +203,7 @@ static int pre_process_command(NewSocket *nsock) // use this for debugging
         }
         }
 
-        if(i == -1) // its a system command 
+        if(i == -1) // its a system command
         {
         cmdold = cmdtmp;
         cmdtmp = cmdtmp->next;
@@ -250,7 +250,7 @@ static int pre_process_command(NewSocket *nsock) // use this for debugging
 static int socket_prepare_commands(NewSocket *ns) // use this for debugging
 {
     int toread;
-    command_struct *cmdptr;
+    command_struct *cmdptr = NULL;
     ReadList *rb = &ns->readbuf;
 
     while(rb->len) /* there is something in our in buffer - at last we got a command tag */
@@ -285,7 +285,7 @@ static int socket_prepare_commands(NewSocket *ns) // use this for debugging
                      * our command functions will find it out. Never trust a client, if we got cheated
                      * here the client can also cheat the length values in a dynamic command
                      */
-                    toread = cs_commands[rb->cmd].data_len; 
+                    toread = cs_commands[rb->cmd].data_len;
                 }
                 else
                 {
@@ -322,7 +322,7 @@ static int socket_prepare_commands(NewSocket *ns) // use this for debugging
                 * NOW there are 2 options:
                 * 1.) we already have the whole data block in our buffer
                 * 2.) or not
-                * in the 2nd case we do a nice trick. 
+                * in the 2nd case we do a nice trick.
                 * we store the cmd and the already processed length in the readbuffer struct
                 * so we only check the next time for the missing length.
                 */
