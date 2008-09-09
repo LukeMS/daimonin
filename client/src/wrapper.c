@@ -477,16 +477,14 @@ int parse_metaserver_data(char *info)
         char    desc[1024];
     };
 
-/*    char    *tmp, server[128], version[128], name[128], desc[1024];*/
     char    *tmp;
-/*    int     port, player, count, s, ret = FALSE;*/
     int     i, j, k;
     int     server_count, index;
     struct entry *entries = NULL;
     int     *tag = NULL;
     size_t  size;
 
-    // count number of strings and allocate that number of entries
+    // Count number of strings and allocate that number of entries
     for (i = 0, server_count = 0; info[i] != 0; i++)
     {
         if (info[i] == '\n')
