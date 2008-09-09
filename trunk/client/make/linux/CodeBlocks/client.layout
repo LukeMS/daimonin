@@ -1,34 +1,64 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
-	<ActiveTarget name="Release" />
+	<ActiveTarget name="Debug" />
 	<File name="../../../src/book.c" open="0" top="0" tabpos="1">
 		<Cursor position="881" topLine="0" />
 	</File>
 	<File name="../../../src/client.c" open="0" top="0" tabpos="6">
 		<Cursor position="1766" topLine="42" />
 	</File>
-	<File name="../../../src/commands.c" open="1" top="0" tabpos="6">
+	<File name="../../../src/commands.c" open="0" top="0" tabpos="6">
 		<Cursor position="13129" topLine="398" />
 	</File>
-	<File name="../../../src/event.c" open="1" top="0" tabpos="2">
-		<Cursor position="63546" topLine="1717" />
+	<File name="../../../src/dialog.c" open="0" top="0" tabpos="0">
+		<Cursor position="16009" topLine="192" />
 	</File>
-	<File name="../../../src/include/cflinux.h" open="1" top="0" tabpos="3">
+	<File name="../../../src/event.c" open="0" top="0" tabpos="2">
+		<Cursor position="58369" topLine="1670" />
+	</File>
+	<File name="../../../src/include/cflinux.h" open="0" top="0" tabpos="3">
 		<Cursor position="1493" topLine="45" />
+	</File>
+	<File name="../../../src/include/dialog.h" open="0" top="0" tabpos="0">
+		<Cursor position="1008" topLine="16" />
 	</File>
 	<File name="../../../src/include/filewrap.h" open="0" top="0" tabpos="5">
 		<Cursor position="1048" topLine="0" />
 	</File>
-	<File name="../../../src/include/include.h" open="1" top="0" tabpos="4">
+	<File name="../../../src/include/include.h" open="0" top="0" tabpos="4">
 		<Cursor position="1750" topLine="52" />
 	</File>
-	<File name="../../../src/include/sound.h" open="1" top="0" tabpos="5">
+	<File name="../../../src/include/player.h" open="0" top="0" tabpos="0">
+		<Cursor position="5181" topLine="149" />
+	</File>
+	<File name="../../../src/include/sound.h" open="0" top="0" tabpos="5">
 		<Cursor position="4263" topLine="183" />
 	</File>
 	<File name="../../../src/include/wrapper.h" open="0" top="0" tabpos="3">
 		<Cursor position="880" topLine="0" />
 	</File>
-	<File name="../../../src/socket.c" open="1" top="0" tabpos="1">
+	<File name="../../../src/inventory.c" open="0" top="0" tabpos="0">
+		<Cursor position="16745" topLine="453" />
+	</File>
+	<File name="../../../src/item.c" open="0" top="0" tabpos="0">
+		<Cursor position="17323" topLine="644" />
+	</File>
+	<File name="../../../src/main.c" open="1" top="1" tabpos="5">
+		<Cursor position="48247" topLine="1345" />
+	</File>
+	<File name="../../../src/map.c" open="1" top="0" tabpos="1">
+		<Cursor position="27989" topLine="721" />
+	</File>
+	<File name="../../../src/menu.c" open="1" top="0" tabpos="2">
+		<Cursor position="48100" topLine="1449" />
+	</File>
+	<File name="../../../src/misc.c" open="1" top="0" tabpos="3">
+		<Cursor position="7770" topLine="273" />
+	</File>
+	<File name="../../../src/socket.c" open="0" top="0" tabpos="1">
 		<Cursor position="18754" topLine="652" />
+	</File>
+	<File name="../../../src/widget.c" open="1" top="0" tabpos="4">
+		<Cursor position="1973" topLine="37" />
 	</File>
 </CodeBlocks_layout_file>
