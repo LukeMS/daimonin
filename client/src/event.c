@@ -158,7 +158,7 @@ void reset_keys(void)
  ret: 0  if mousepointer is in the game-field.
      -1 if mousepointer is in a menue-field.
 ******************************************************************/
-int mouseInPlayfield(x, y)
+int mouseInPlayfield(int x, int y)
 {
     //we simply realc the mousevalues
 
@@ -999,8 +999,8 @@ static void key_string_event(SDL_KeyboardEvent *key)
             /* if we are in number console mode, use GET as quick enter
              * mode - this is a very handy shortcut
              */
-            if (cpl.input_mode == INPUT_MODE_NUMBER
-                    && (key->keysym.sym == get_action_keycode || key->keysym.sym == drop_action_keycode))
+            if (cpl.input_mode == (int) INPUT_MODE_NUMBER
+                    && ((int)key->keysym.sym == get_action_keycode || (int)key->keysym.sym == drop_action_keycode))
             {
 //                SDL_EnableKeyRepeat(0, SDL_DEFAULT_REPEAT_INTERVAL);
                 InputStringFlag = FALSE;
@@ -1447,7 +1447,7 @@ static Boolean check_macro_keys(char *text)
         textwin_putstring(&text[magic_len]);
         return(FALSE);
     }
-    for (i = 0; i < DEFAULT_KEYMAP_MACROS; i++)
+    for (i = 0; i < (int)DEFAULT_KEYMAP_MACROS; i++)
     {
         if (!strcmp(defkey_macro[i].macro, text))
         {
@@ -1649,7 +1649,7 @@ Boolean process_macro_keys(int id, int value)
         send_mark_obj((it = locate_item(tag)));
         if (it)
         {
-            if (cpl.mark_count == it->tag)
+            if (cpl.mark_count == (int) it->tag)
                 sprintf(buf, "unmark %s", it->s_name);
             else
                 sprintf(buf, "mark %s", it->s_name);
@@ -1682,7 +1682,7 @@ Boolean process_macro_keys(int id, int value)
             if (cpl.container)
             {
                 /* container, aber nicht der gleiche */
-                if (cpl.container->tag != cpl.win_below_ctag)
+                if ((int)cpl.container->tag != cpl.win_below_ctag)
                     loc = cpl.container->tag;
                 else
                     loc = cpl.ob->tag;
@@ -1694,7 +1694,7 @@ Boolean process_macro_keys(int id, int value)
         {
             if (cpl.container)
             {
-                if (cpl.container->tag == cpl.win_inv_ctag)
+                if ((int)cpl.container->tag == cpl.win_inv_ctag)
                 {
                     tag = cpl.win_inv_tag;
                     loc = cpl.ob->tag;
@@ -3099,7 +3099,7 @@ void check_menu_keys(int menu, int key)
             if (!shiftPressed)
             {
                 if (spell_list_set.entry_nr > 0)
-                { 
+                {
                     if (spell_list[spell_list_set.group_nr].entry[spell_list_set.class_nr][--spell_list_set.entry_nr].flag == LIST_ENTRY_KNOWN)
                         sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
                 }

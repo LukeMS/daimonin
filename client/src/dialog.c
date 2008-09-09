@@ -115,7 +115,7 @@ _option             opt[]                           =
         {"Textwindows use alpha:", "Whether the textwindows are transparent.","","WARNING: Don't check this if you have a VERY slow computer!", "",SEL_CHECKBOX,0,1,1,1, &options.use_TextwinAlpha,VAL_INT},
         {"Textwindows alpha value:", "Transparency value of textwindows.","A higher value means a darker textwindow.","Only has meaning if 'Textwindows use alpha' is checked.", "",SEL_RANGE,0,255,5,110, &options.textwin_alpha,VAL_INT},
         {"Enable chatfilter:", "Whether to filter incoming messages for 'bad' words.","See '/cfilter ?' for more details on this.","", "",SEL_CHECKBOX,0,1,1,0, &options.chatfilter,VAL_BOOL},
-        {"#"},
+        {"#", "","","", "",0,0,0,0,0, NULL,0},
         /* End of Page */
 
         /* Combat */
@@ -124,7 +124,7 @@ _option             opt[]                           =
         {"Kill-Stats:", "Whether to keep a count all kills based on mob name.","","", "",SEL_CHECKBOX,0,1,1,1, &options.kerbholz,VAL_BOOL},
         {"Stat-O-Meter:", "Whether to show the Stat-O-Meter.","It is updated every X seconds, as given here.","Set to ~0~ to disable.", "",SEL_RANGE,0,15,1,5, &options.statsupdate,VAL_INT},
         {"Extended exp display:", "How the exp display is shown.","The format key is: ~4nl~ = For next level; ~tnl~ = Till next level;","~LExp~ = Level exp; ~TExp~ = Total exp;", "Level/LExp#LExp\\%#LExp/LExp 4nl#TExp/TExp 4nl#(LExp\\%) LExp tnl",SEL_RANGE,0,4,1,4, &options.iExpDisplay,VAL_INT},
-        {"#"},
+        {"#", "","","", "",0,0,0,0,0, NULL,0},
         /* End of Page */
 
         /* Inventory */
@@ -133,7 +133,7 @@ _option             opt[]                           =
         {"Item damage percent 1:", "Whether to show a damaged item in orange.","If the item's con is lower than the given percentage of its qua","the damage bar is shown in orange. Set to ~0~ to disable.", "",SEL_RANGE,0,100,5,90, &options.itemdmg_limit_orange,VAL_INT},
         {"Item damage percent 2:", "Whether to show a severely damaged item in red.","If the item's con is lower than the given percentage of its qua","the damage bar is shown in red. Set to ~0~ to disable.", "",SEL_RANGE,0,100,5,80, &options.itemdmg_limit_red,VAL_INT},
         {"Playerdoll:", "Whether to always show the playerdoll.","If unchecked, the playerdoll is only shown while the inventory is open.","", "",SEL_CHECKBOX,0,1,1,0, &options.playerdoll,VAL_BOOL},
-        {"#"},
+        {"#", "","","", "",0,0,0,0,0, NULL,0},
         /* End of Page */
 
         /* Map */
@@ -142,14 +142,14 @@ _option             opt[]                           =
         {"Playfield start Y:", "The Y-position of the playfield.","","", "",SEL_RANGE,0,700,10,60, &options.mapstart_y,VAL_INT},
         {"Playfield zoom:", "The zoom percentage of the playfield.","EXPERIMENTAL!!!!!","", "",SEL_RANGE,50,200,5,100, &options.zoom,VAL_INT},
         {"Smooth zoom:", "Whether to use smooth zoom on the playfield.","EXPERIMENTAL!!!!!","WARNING: VERY VERY VERY CPU intensive!", "",SEL_CHECKBOX,0,1,1,0, &options.smooth,VAL_BOOL},
-        {"#"},
+        {"#", "","","", "",0,0,0,0,0, NULL,0},
         /* End of Page */
 
         /* Sound */
         {"Sound volume:", "The sound volume as a percentage of maximum volume.","Set to ~0~ to disable sound effects.","", "",SEL_RANGE,0,100,5,100, &options.sound_volume,VAL_INT},
         {"Music volume:", "The music volume as a percentage of maximum volume.","Set to ~0~ to disable background music.","", "",SEL_RANGE,0,100,5,80, &options.music_volume,VAL_INT},
         {"Audible heartbeat:", "Whether to hear your heart pumping during combat.","If hitpoints are lower than the given percentage of maximum","you will hear your heartbeat. Set to ~0~ to disable.", "",SEL_RANGE,0,100,5,50, &options.heartbeat,VAL_INT},
-        {"#"},
+        {"#", "","","", "",0,0,0,0,0, NULL,0},
         /* End of Page */
 
         /* Client */
@@ -167,7 +167,7 @@ _option             opt[]                           =
         {"Widget snap width:", "The distance at which widgets will snap to each other","Set to zero to disable it.","EXPERIMENTAL!", "",SEL_RANGE,0,32,1,0, &options.widget_snap,VAL_INT},
 #endif
         /*{"Collect All Items:", "Don't ask for number of items to get, just get all of them.","","", "",SEL_CHECKBOX,0,1,1,0, &options.collectAll,VAL_BOOL},   */
-        {"#"}, /* End of Page */
+        {"#", "","","", "",0,0,0,0,0, NULL,0},
 
         /* Fullscreen Flags */
         {"Hardware surface:", "Don't change unless you know what you are doing.","NOTE: You need to restart the client for this option to take effect.","", "",SEL_CHECKBOX,0,1,1,0, &options.Full_HWSURFACE,VAL_BOOL},
@@ -180,7 +180,7 @@ _option             opt[]                           =
         {"Resizeable:", "Don't change unless you know what you are doing.","NOTE: You need to restart the client for this option to take effect.","", "",SEL_CHECKBOX,0,1,1,0, &options.Full_RESIZABLE,VAL_BOOL},
         {"No frame:", "Don't change unless you know what you are doing.","NOTE: You need to restart the client for this option to take effect.","", "",SEL_CHECKBOX,0,1,1,0, &options.Full_NOFRAME,VAL_BOOL},
         {"RLE accel:", "Don't change unless you know what you are doing.","NOTE: You need to restart the client for this option to take effect.","", "",SEL_CHECKBOX,0,1,1,1, &options.Full_RLEACCEL,VAL_BOOL},
-        {"#"},
+        {"#", "","","", "",0,0,0,0,0, NULL,0},
         /* End of Page */
 
         /* Windowed flags*/
@@ -194,17 +194,18 @@ _option             opt[]                           =
         {"Win Resizeable:", "Don't change unless you know what you are doing.","NOTE: You need to restart the client for this option to take effect.","", "",SEL_CHECKBOX,0,1,1,0, &options.Win_RESIZABLE,VAL_BOOL},
         {"Win No frame:", "Don't change unless you know what you are doing.","NOTE: You need to restart the client for this option to take effect.","", "",SEL_CHECKBOX,0,1,1,0, &options.Win_NOFRAME,VAL_BOOL},
         {"Win RLE accel:", "Don't change unless you know what you are doing.","NOTE: You need to restart the client for this option to take effect.","", "",SEL_CHECKBOX,0,1,1,1, &options.Win_RLEACCEL,VAL_BOOL},
-        {"#"}, /* End of Page */
+        {"#", "","","", "",0,0,0,0,0, NULL,0},
 
         /* Debug */
         {"Show framerate:", "Whether to show the fps and other details under the map name.","","", "",SEL_CHECKBOX,0,1,1,0, &options.show_frame,VAL_BOOL},
         {"Force redraw:", "Whether to force the system to redraw EVERY frame.","","", "",SEL_CHECKBOX,0,1,1,0, &options.force_redraw,VAL_BOOL},
         {"Use update rect:", "Whether to use update rect.","","", "",SEL_CHECKBOX,0,1,1,0, &options.use_rect,VAL_BOOL},
 		{"Anim Update Time:", "Check anims every x ms.","","", "",SEL_RANGE,50,500,25,50, &options.anim_check_time,VAL_INT},
-        {"#"},
+        {"#", "","","", "",0,0,0,0,0, NULL,0},
         /* End of Page */
 
-        {0} /* End of Options */
+        {NULL, NULL,NULL,NULL, NULL,0,0,0,0,0, NULL,0},
+        /* End of Options */
     };
 
 /******************************************************************
@@ -1925,11 +1926,11 @@ void show_meta_server(_server *node, int metaserver_start, int metaserver_sel)
         if (i == metaserver_sel - metaserver_start)
         {
             int o   = 0;
-			
+
 			sprintf(buf, "Version: %s", node->version);
             StringBlt(ScreenSurface, &SystemFont, buf, x + 160, y + 438 + o, COLOR_BLACK, NULL, NULL);
             StringBlt(ScreenSurface, &SystemFont, buf, x + 159, y + 437 + o, COLOR_WHITE, NULL, NULL);
-			
+
             StringBlt(ScreenSurface, &SystemFont, node->desc1, x + 160, y + 451 + o, COLOR_BLACK, &rec_desc, NULL);
             StringBlt(ScreenSurface, &SystemFont, node->desc1, x + 159, y + 450 + o, COLOR_HGOLD, &rec_desc, NULL);
 

@@ -989,7 +989,7 @@ int process_xdelta3(FILE*  patchFile, FILE*  oldFile, FILE* destFile, int BufSiz
   void* Input_Buf;
   int Input_Buf_Read;
 
-  if (BufSize < XD3_ALLOCSIZE)
+  if (BufSize < (int) XD3_ALLOCSIZE)
     BufSize = XD3_ALLOCSIZE;
 
   memset (&stream, 0, sizeof (stream));
