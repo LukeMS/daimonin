@@ -449,41 +449,79 @@ int parse_serverhost(char *tmp, char *server, int *port)
     return 0;
 }
 
+/* Helper function for parse_metaserver_data */
+/* Replaces all occurrences of specified char in string with space */
+static void char_to_space(char *str, char ch)
+{
+    int i;
+
+    for(i = 0; str[i] != 0; i++)
+        if(str[i] == ch)
+            str[i]=' ';
+}
+
 /* we have one big string holding all servers from the metaserver
 * we do simple castings of 2 placeholders ( | and _ ) to ' ' whitespace
 * and use then sscanf to get the info
 */
 int parse_metaserver_data(char *info)
 {
-    char    *tmp, server[128], version[128], name[128], desc[1024];
-    int     port, player, count, s, ret = FALSE;
+    struct entry
+    {
+        int     count;
+        char    name[128];
+        char    server[128];
+        int     port;
+        char    version[128];
+        int     player;
+        char    desc[1024];
+    };
+
+/*    char    *tmp, server[128], version[128], name[128], desc[1024];*/
+    char    *tmp;
+/*    int     port, player, count, s, ret = FALSE;*/
+    int     i, j, k;
+    int     server_count, index;
+    struct entry *entries = NULL;
+    int     *tag = NULL;
+    size_t  size;
+
+    // count number of strings and allocate that number of entries
+    for (i = 0, server_count = 0; info[i] != 0; i++)
+    {
+        if (info[i] == '\n')
+            server_count++;
+    }
+    if (server_count == 0)
+        return FALSE;
+
+    // Allocate entries and tag array
+    size = server_count * sizeof(struct entry);
+    entries = _malloc(size , "parse_metaserver_data: entries");
+    memset(entries, 0, size);
+    tag = _malloc(server_count * sizeof(int), "parse_metaserver_data: tag");
+
+    // Initialize tag array
+    for (i = 0; i < server_count; i++)
+        tag[i] = i;
 
     // set all '|' to ' ' whitespace so we can use sscanf
-    for(s=0;info[s]!=0;s++)
-        if(info[s]=='|')
-            info[s]=' ';
+    char_to_space(info, '|');
 
-    for(;;)
+    for(index = 0; index < server_count; index++)
     {
-        server[0]= name[0] = version[0] = desc[0] = '\0';
-        sscanf(info,"%d %s %s %d %s %d %s", &count, name, server, &port, version, &player, desc);
-        if(server[0] == '\0')
-            break;
+        sscanf(info,"%d %s %s %d %s %d %s", &entries[index].count, entries[index].name,
+            entries[index].server, &entries[index].port, entries[index].version,
+            &entries[index].player, entries[index].desc);
 
         // set all '_' to ' ' whitespace
-        for(s=0;name[s]!=0;s++)
-            if(name[s]=='_')
-                name[s]=' ';
-        for(s=0;desc[s]!=0;s++)
-            if(desc[s]=='_')
-                desc[s]=' ';
-        for(s=0;version[s]!=0;s++)
-            if(version[s]=='_')
-                version[s]=' ';
+        char_to_space(entries[index].name, '_');
+        char_to_space(entries[index].desc, '_');
+        char_to_space(entries[index].version, '_');
 
-        LOG(LOG_DEBUG, "SERVER: {%d} %s %s %d %s %d {%s}\n", count,name, server, port, version, player, desc);		
-        add_metaserver_data(name, server, port, player, version, desc);
-        ret = TRUE; // ok, we have at last ONE valid server in the list
+        LOG(LOG_DEBUG, "SERVER: {%d} %s %s %d %s %d {%s}\n", entries[index].count, entries[index].name,
+            entries[index].server, entries[index].port, entries[index].version,
+            entries[index].player, entries[index].desc);
 
         // go to next row
         if(!(tmp = strchr(info, 0x0a)))
@@ -491,7 +529,33 @@ int parse_metaserver_data(char *info)
         info = tmp+1;
     }
 
-    return ret;
+    // Do tag sort
+	for (i = server_count - 1; i >= 0; i--)
+	{
+		for (j = 0; j < i; j++)
+		{
+		    if (strcmp(entries[j].name, entries[j+1].name) > 0)
+		    {
+		        k = tag[j];
+		        tag[j] = tag[j+1];
+		        tag[j+1] = k;
+		    }
+		}
+	}
+
+	// Add to list in sorted tag order
+	for (index = 0; index < server_count; index++)
+	{
+	    i = tag[index];
+        add_metaserver_data(entries[i].name, entries[i].server, entries[i].port,
+            entries[i].player, entries[i].version, entries[i].desc);
+	}
+
+	/* Free memory */
+    free(entries);
+    free(tag);
+
+    return (server_count > 0) ? TRUE : FALSE;
 }
 
 /* This seems to be lacking on some system */
