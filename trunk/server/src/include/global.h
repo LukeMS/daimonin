@@ -156,14 +156,14 @@ typedef signed long long   sint64;
  * Some standard c libaries don't check for NULL in that functions - most times
  * the retail versions.
  */
-#define STRING_SAFE(__string__) ((__string__)?(__string__):">NULL STR<")
-#define PTR_STRING_SAFE(__ptr__, __field__) ((__ptr__)?STRING_SAFE((__ptr__)->__field__):">NULL PTR<")
+#define STRING_SAFE(__string__) ((__string__)!=NULL?(__string__):">NULL STR<")
+#define PTR_STRING_SAFE(__ptr__, __field__) ((__ptr__)!=NULL?STRING_SAFE((__ptr__)->__field__):">NULL PTR<")
 
 #define STRING_ARCH_NAME(__arch__) PTR_STRING_SAFE((__arch__), name)
 
 #define STRING_OBJ_NAME(__ob__) PTR_STRING_SAFE((__ob__), name)
-#define STRING_OBJ_ARCH_NAME(__ob__) ((__ob__)?PTR_STRING_SAFE((__ob__)->arch, name):">NULL OBJ<")
-#define STRING_OBJ_MAP_PATH(__ob__) ((__ob__)?STRING_MAP_NAME((__ob__)->map):">NULL OBJ<")
+#define STRING_OBJ_ARCH_NAME(__ob__) ((__ob__)!=NULL?PTR_STRING_SAFE((__ob__)->arch, name):">NULL OBJ<")
+#define STRING_OBJ_MAP_PATH(__ob__) ((__ob__)!=NULL?STRING_MAP_NAME((__ob__)->map):">NULL OBJ<")
 #define STRING_OBJ_TITLE(__ob__) PTR_STRING_SAFE((__ob__), title)
 #define STRING_OBJ_RACE(__ob__) PTR_STRING_SAFE((__ob__), race)
 #define STRING_OBJ_SLAYING(__ob__) PTR_STRING_SAFE((__ob__), slaying)
@@ -171,7 +171,7 @@ typedef signed long long   sint64;
 
 #define STRING_MAP_PATH(__map__) PTR_STRING_SAFE((__map__), path)
 #define STRING_MAP_ORIG_PATH(__map__) PTR_STRING_SAFE((__map__), orig_path)
-#define STRING_MAP_TILE_PATH(__map__, __id__) ((__map__)?PTR_STRING_SAFE((__map__), tile_path[(__id__)]):">NULL MAP<")
+#define STRING_MAP_TILE_PATH(__map__, __id__) ((__map__)!=NULL?PTR_STRING_SAFE((__map__), tile_path[(__id__)]):">NULL MAP<")
 #define STRING_MAP_NAME(__map__) PTR_STRING_SAFE((__map__), name)
 #define STRING_MAP_TMPNAME(__map__) PTR_STRING_SAFE((__map__), tmpname)
 #define STRING_MAP_MSG(__map__) PTR_STRING_SAFE((__map__), msg)

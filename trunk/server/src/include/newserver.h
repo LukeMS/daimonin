@@ -149,7 +149,7 @@ typedef struct _sockbuf_struct
 /* helper macro to add a command with string data block */
 #define Write_String_To_Socket(_ns_,_cmd_,_buf_,_len_) \
 	{SOCKBUF_REQUEST_BUFFER((_ns_),(_len_)+1); \
-	if(_buf_) \
+	if(_buf_ != NULL) \
 	SockBuf_AddString(ACTIVE_SOCKBUF(_ns_),(_buf_),(_len_)); \
 	SOCKBUF_REQUEST_FINISH((_ns_), (_cmd_), SOCKBUF_DYNAMIC);}
 
@@ -212,7 +212,7 @@ typedef void (*func_uint8_int_ns) (char *, int, NewSocket *);
 typedef struct CmdMapping_struct
 {
     /* 0= no data tail, -1 = dynamic length, read in 2 bytes, x = fixed tail length */
-    int                 data_len; 
+    int                 data_len;
     func_uint8_int_ns   cmdproc;
 }_CmdMapping;
 

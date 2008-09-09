@@ -1161,7 +1161,7 @@ void check_login(object *op, int mode)
                     skin = tmp;
             }
         }
-        set_dragon_name(op, abil, skin);
+        /*set_dragon_name(op, abil, skin);*/
     }
 
     pl->player_loaded = 1; /* important: there is a player file */

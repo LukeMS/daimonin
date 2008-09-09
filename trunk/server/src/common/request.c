@@ -79,7 +79,7 @@ void send_query(NewSocket *ns, uint8 flags, char *text)
 {
     char    buf[MAX_BUF];
 
-    sprintf(buf, "%d %s", flags, text ? text : "");
+    sprintf(buf, "%d %s", flags, text!= NULL ? text : "");
     Write_String_To_Socket(ns, BINARY_CMD_QUERY, buf, strlen(buf));
 }
 

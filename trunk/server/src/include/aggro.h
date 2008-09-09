@@ -42,15 +42,12 @@ extern struct obj *aggro_insert_damage(struct obj *target, struct obj *hitter);
 
 /** Updates the damage and aggro marker for a target after the aggro and damage is done from the hitter to the target.
  * @param target Target to update.
- * @param target_owner Owner of the target.
  * @param hitter Hitter to get information from.
  * @param hitter_object Object the hitter used to cause the damage (?).
  * @param dmg Damage that was done.
- * @param flags Flags.
  * @return aggro or <code>NULL</code> if not available.
  */
-extern struct obj *aggro_update_info(struct obj *target, struct obj *target_owner,
-                                     struct obj *hitter, struct obj *hitter_object, int dmg, int flags);
+extern struct obj *aggro_update_info(struct obj *target, struct obj *hitter, struct obj *hitter_object, int dmg);
 
 /** Calculates the experience for an aggro.
  * Analyzes all aggro info in the supplied object and gives the player experience based on this information.

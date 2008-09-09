@@ -77,7 +77,7 @@ struct mempool *mempools[MAX_NROF_MEMPOOLS];
 struct mempool *pool_puddle;
 #endif
 
-struct mempool *pool_object, *pool_player, 
+struct mempool *pool_object, *pool_player,
     *pool_map, *pool_map_bfs,
     *pool_path_segment, *pool_mob_data, *pool_mob_knownobj,
     *pool_mob_behaviourset, *pool_mob_behaviour, *pool_mob_behaviourparam,
@@ -209,7 +209,7 @@ void init_mempools()
 	pool_sockbuf_huge = create_mempool("socket buffer huge", 1, sizeof(sockbuf_struct), 0,
 		(chunk_initialisator) initialize_socket_buffer_huge, NULL, NULL, NULL);
 	pool_sockbuf_dynamic = create_mempool("socket buffer dynamic", 1, sizeof(sockbuf_struct), 0,
-		(chunk_initialisator) initialize_socket_buffer_dynamic, NULL, NULL, 
+		(chunk_initialisator) initialize_socket_buffer_dynamic, NULL, NULL,
 		(chunk_destructor) free_socket_buffer_dynamic);
 #ifdef USE_CHANNELS
     pool_player_channel = create_mempool("player_channel", 75, sizeof(struct player_channel), 0, NULL, NULL, NULL, NULL);
@@ -644,6 +644,7 @@ void * sort_singly_linked_list(void *p, unsigned index, int (*compare) (void *, 
 }
 
 /* Comparision function for sort_singly_linked_list */
+/*
 static int sort_puddle_by_nrof_free(void *a, void *b, void *args)
 {
     if (((struct puddle_info *) a)->nrof_free < ((struct puddle_info *) b)->nrof_free)
@@ -653,7 +654,7 @@ static int sort_puddle_by_nrof_free(void *a, void *b, void *args)
     else
         return 0;
 }
-
+*/
 /*
  * Go through the freelists and free puddles with no used chunks.
  * This function is quite slow and dangerous to call.

@@ -1948,6 +1948,7 @@ void fix_player(object *op)
  * as soon as clients support this!
  * Please, anyone, write support for 'ext_title'.
  */
+#if 0
 void set_dragon_name(object *pl, object *abil, object *skin)
 {
     int atnr    = -1;  /* attacknumber of highest level */
@@ -1993,6 +1994,7 @@ void set_dragon_name(object *pl, object *abil, object *skin)
     }
     */
 }
+#endif
 
 /*
  * This function is called when a dragon-player gains
@@ -2048,7 +2050,7 @@ void dragon_level_gain(object *who)
     }
 
     /* last but not least, set the new title for the dragon */
-    set_dragon_name(who, abil, skin);
+    /*set_dragon_name(who, abil, skin);*/
 }
 
 

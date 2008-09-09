@@ -115,9 +115,11 @@ static void signal_connection(object *op, oblinkpt *olp, object *activator, obje
 
             case MOOD_FLOOR:
               /* Ignore map loading triggers */
+            /*
               if(ignore_trigger_events)
                   break;
               do_mood_floor(tmp, op);
+              */
               break;
 
             case TIMED_GATE:
@@ -808,10 +810,10 @@ int get_button_value(object *button)
 
 /* TODO: this needs to be updated for the new AI system if it is going to
  * be used at all. Gecko 2005-04-30 */
+#if 0
 void do_mood_floor(object *op, object *op2)
 {
     LOG(llevBug, "BUG: mood floor used (not implemented yet)\n");
-#if 0
     object *tmp;
     object *tmp2;
 
@@ -883,8 +885,8 @@ void do_mood_floor(object *op, object *op2)
         default:
           break;
     }
-#endif
 }
+#endif
 
 /* this function returns the object it matches, or NULL if non.
  * It will descend through containers to find the object.
