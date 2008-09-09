@@ -206,7 +206,7 @@ SockList;
 extern void     send_game_command(const char *command);
 
 extern void     finish_face_cmd(int pnum, uint32 checksum, char *face);
-extern int      request_face(int num, int mode);
+extern int      request_face(int num);
 
 extern void     SendSetupCmd(void);
 extern void     RequestFile(ClientSocket csock, int index);
