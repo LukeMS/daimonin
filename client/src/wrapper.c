@@ -528,28 +528,28 @@ int parse_metaserver_data(char *info)
     }
 
     // Do tag sort
-	for (i = server_count - 1; i >= 0; i--)
-	{
-		for (j = 0; j < i; j++)
-		{
-		    if (strcmp(entries[j].name, entries[j+1].name) > 0)
-		    {
-		        k = tag[j];
-		        tag[j] = tag[j+1];
-		        tag[j+1] = k;
-		    }
-		}
-	}
+    for (i = server_count - 1; i >= 0; i--)
+    {
+        for (j = 0; j < i; j++)
+        {
+            if (strcmp(entries[j].name, entries[j+1].name) > 0)
+            {
+                k = tag[j];
+                tag[j] = tag[j+1];
+                tag[j+1] = k;
+            }
+        }
+    }
 
-	// Add to list in sorted tag order
-	for (index = 0; index < server_count; index++)
-	{
-	    i = tag[index];
+    // Add to list in sorted tag order
+    for (index = 0; index < server_count; index++)
+    {
+        i = tag[index];
         add_metaserver_data(entries[i].name, entries[i].server, entries[i].port,
             entries[i].player, entries[i].version, entries[i].desc);
-	}
+    }
 
-	/* Free memory */
+    /* Free memory */
     free(entries);
     free(tag);
 
