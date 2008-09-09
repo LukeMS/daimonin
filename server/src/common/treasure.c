@@ -327,7 +327,7 @@ static void create_money_table(void)
 
 static treasure * load_treasure(FILE *fp, int *t_style, int *a_chance)
 {
-    char        buf[MAX_BUF], *cp, variable[MAX_BUF];
+    char        buf[MAX_BUF], *cp=NULL, variable[MAX_BUF];
     treasure   *t   = get_empty_treasure();
     int         value;
     int         start_marker = 0, t_style2, a_chance2;
@@ -1364,7 +1364,7 @@ int roll_ring_bonus_stat(int current, int level, int bonus)
 {
 
     int roll;
-    
+
     if(level <= 20) {
 	roll = 1;
 	}
@@ -1392,7 +1392,7 @@ int roll_ring_bonus_stat(int current, int level, int bonus)
 	}
     else {
 	return roll;
-	}		
+	}
 }
 
 void set_ring_bonus_value_calc(object *op)
@@ -1401,11 +1401,11 @@ void set_ring_bonus_value_calc(object *op)
 	players cursed rings will be in material price as stats
 	does nothing. :D
     */
-    //op->value = 0;    
+    //op->value = 0;
     int resist;
-    
+
     for(resist = 0; resist < num_resist_table; resist++) {
-	if (op->resist[resist_table[resist]] > 0) {	
+	if (op->resist[resist_table[resist]] > 0) {
 	    op->value += (sint64)(op->resist[resist_table[resist]] * (op->item_quality / 100.0f) * 500);
 	    }
 	}
@@ -1430,13 +1430,13 @@ void set_ring_bonus_value_calc(object *op)
     if (op->stats.maxhp > 0) op->value += op->stats.maxhp * 501;
 
     if (op->stats.exp > 0) op->value += op->stats.exp * 3002;
-    
+
     if(op->type == AMULET) {
     	if(QUERY_FLAG(op, FLAG_REFL_MISSILE)) op->value += (sint64)(20000 * (op->item_quality / 100.0f));
     	if(QUERY_FLAG(op, FLAG_REFL_SPELL)) op->value += (sint64)(60000 * (op->item_quality / 100.0f));
-	}	
+	}
 
-    
+
     /* freak copper coins for make prices more fun */
 
 	op->value += random_roll(0, 199);
@@ -1448,7 +1448,7 @@ void set_ring_bonus_value_calc(object *op)
  *  is rolled again, increase it - the bonuses now stack with
  *  other bonuses previously rolled and ones the item might natively have.
  * 2) Add code to deal with new PR method.
- * return 0: no special added. 1: something added.     
+ * return 0: no special added. 1: something added.
  */
 int set_ring_bonus(object *op, int bonus, int level)
 {
@@ -1549,7 +1549,7 @@ int set_ring_bonus(object *op, int bonus, int level)
 	else {
 	    r = 15; /* speed */
 	    }
-    
+
 	}
 
     switch (r)
@@ -1728,19 +1728,19 @@ int set_ring_bonus(object *op, int bonus, int level)
 	    break;
         case 7:
 	    op->stats.Con += roll_ring_bonus_stat(op->stats.Con, level, bonus);
-	    break;		
+	    break;
         case 8:
 	    op->stats.Int += roll_ring_bonus_stat(op->stats.Int, level, bonus);
-	    break;		
+	    break;
         case 9:
 	    op->stats.Wis += roll_ring_bonus_stat(op->stats.Wis, level, bonus);
-	    break;		
+	    break;
         case 10:
 	    op->stats.Pow += roll_ring_bonus_stat(op->stats.Pow, level, bonus);
-	    break;		
+	    break;
         case 11:
 	    op->stats.Cha += roll_ring_bonus_stat(op->stats.Cha, level, bonus);
-	    break;		
+	    break;
         case 12:
           tmp = 1 + (RANDOM()%(10*bonus));
           if(bonus<0)
@@ -2018,7 +2018,7 @@ int fix_generated_item(object **op_ptr, object *creator, int difficulty, int a_c
                       set_ring_bonus(op, d, difficulty);
                   }
               }
-	      
+
 	      set_ring_bonus_value_calc(op);
               break;
 

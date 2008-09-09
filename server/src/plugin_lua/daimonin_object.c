@@ -2006,7 +2006,7 @@ static int GameObject_CheckQuestLevel(lua_State *L)
 {
     int level, item_skill_group, tmp_lev, ret=1;
     lua_object *self;
-    player *pl;
+    player *pl = NULL;
 
     get_lua_args(L, "Oii", &self, &level, &item_skill_group);
 

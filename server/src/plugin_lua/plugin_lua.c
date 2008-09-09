@@ -494,7 +494,7 @@ MODULEAPI void registerHooks(struct plugin_hooklist *hooklist)
 MODULEAPI int triggerEvent(CFParm *PParm)
 {
     int eventcode;
-    int result;
+    int result = 0;
 
     eventcode = *(int *) (PParm->Value[0]);
     switch (eventcode)

@@ -318,7 +318,7 @@ struct mob_behaviourset * generate_behaviourset(object *op)
             behaviourclasses[BEHAVIOURCLASS_PROCESSES].behaviours[AIBEHAVIOUR_CHOOSE_ENEMY].params[AIPARAM_CHOOSE_ENEMY_ANTILURE_DISTANCE].defaultvalue;
         check_behaviour_parameters(last);
     }
-        
+
     /* Behaviours for melee-only fighters */
     if(!QUERY_FLAG(op, FLAG_READY_SPELL) && !QUERY_FLAG(op, FLAG_READY_BOW))
     {
@@ -594,7 +594,7 @@ static struct mob_behaviour *setup_plugin_behaviour(
         char *buf, char *colonpos, const char *tok_end, const char *conf_text)
 {
     int plugin_index, behaviour_index, options_index;
-    int behaviour_id;
+    int behaviour_id = 0;
     struct mob_behaviour *new_behaviour = NULL;
     const char *line_end = conf_text;
 
