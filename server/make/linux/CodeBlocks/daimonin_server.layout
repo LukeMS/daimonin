@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<ActiveTarget name="All" />
+	<File name="readme.txt" open="0" top="0" tabpos="1">
+		<Cursor position="432" topLine="0" />
+	</File>
+	<File name="../../../src/common/aggro.c" open="1" top="1" tabpos="1">
+		<Cursor position="4811" topLine="130" />
+	</File>
+	<File name="../../../src/common/button.c" open="0" top="0" tabpos="11">
+		<Cursor position="27535" topLine="802" />
+	</File>
+	<File name="../../../src/common/image.c" open="0" top="0" tabpos="3">
+		<Cursor position="965" topLine="23" />
+	</File>
+	<File name="../../../src/common/loader.c" open="0" top="0" tabpos="8">
+		<Cursor position="185913" topLine="3304" />
+	</File>
+	<File name="../../../src/common/loader.l" open="0" top="0" tabpos="0">
+		<Cursor position="1141" topLine="29" />
+	</File>
+	<File name="../../../src/common/map_tile.c" open="0" top="0" tabpos="12">
+		<Cursor position="41565" topLine="1186" />
+	</File>
+	<File name="../../../src/common/object.c" open="0" top="0" tabpos="7">
+		<Cursor position="14244" topLine="420" />
+	</File>
+	<File name="../../../src/common/re-cmp.c" open="0" top="0" tabpos="7">
+		<Cursor position="0" topLine="0" />
+	</File>
+	<File name="../../../src/common/request.c" open="0" top="0" tabpos="4">
+		<Cursor position="5589" topLine="146" />
+	</File>
+	<File name="../../../src/common/treasure.c" open="0" top="0" tabpos="0">
+		<Cursor position="11831" topLine="323" />
+	</File>
+	<File name="../../../src/include/aiconfig.h" open="0" top="0" tabpos="2">
+		<Cursor position="1129" topLine="17" />
+	</File>
+	<File name="../../../src/include/behaviourdecl.h" open="0" top="0" tabpos="1">
+		<Cursor position="1691" topLine="27" />
+	</File>
+	<File name="../../../src/include/hashfunc.h" open="0" top="0" tabpos="6">
+		<Cursor position="1321" topLine="12" />
+	</File>
+	<File name="../../../src/include/includes.h" open="0" top="0" tabpos="5">
+		<Cursor position="1521" topLine="42" />
+	</File>
+	<File name="../../../src/include/plugin.h" open="0" top="0" tabpos="9">
+		<Cursor position="0" topLine="0" />
+	</File>
+	<File name="../../../src/include/stats.h" open="0" top="0" tabpos="8">
+		<Cursor position="52" topLine="0" />
+	</File>
+	<File name="../../../src/random_maps/reader.c" open="0" top="0" tabpos="9">
+		<Cursor position="25638" topLine="614" />
+	</File>
+	<File name="../../../src/random_maps/reader.l" open="0" top="0" tabpos="0">
+		<Cursor position="2067" topLine="51" />
+	</File>
+	<File name="../../../src/server/aiconfig.c" open="0" top="0" tabpos="3">
+		<Cursor position="1889" topLine="35" />
+	</File>
+	<File name="../../../src/server/channel.c" open="0" top="0" tabpos="0">
+		<Cursor position="27968" topLine="814" />
+	</File>
+	<File name="../../../src/server/main.c" open="0" top="0" tabpos="4">
+		<Cursor position="7321" topLine="135" />
+	</File>
+	<File name="../../../src/server/monster_behaviourset.c" open="0" top="0" tabpos="0">
+		<Cursor position="22604" topLine="585" />
+	</File>
+	<File name="../../../src/server/player.c" open="0" top="0" tabpos="14">
+		<Cursor position="35837" topLine="1093" />
+	</File>
+	<File name="../../../src/server/plugins.c" open="0" top="0" tabpos="8">
+		<Cursor position="17047" topLine="24" />
+	</File>
+	<File name="../../../src/server/spell_effect.c" open="0" top="0" tabpos="13">
+		<Cursor position="55619" topLine="1589" />
+	</File>
+	<File name="../../../src/socket/loop.c" open="0" top="0" tabpos="0">
+		<Cursor position="8208" topLine="241" />
+	</File>
+</CodeBlocks_layout_file>

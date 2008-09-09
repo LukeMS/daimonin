@@ -1,0 +1,24 @@
+Before using CodeBlocks the source must be configured by doing
+
+sh ./configure
+
+on a cosole in the same way as to when using the normal make.
+That will generate the needed file autoconf.h.
+
+Then CodeBlocks can be started.
+
+CodeBlocks is mainly for development. Its useful for coding but
+also for testing the source. By using Compile/all it will 
+compile the source with and without optimizing and stricter
+warnings.
+
+Note: Release is set to include Debug infos - thats on purpose.
+On a live server you want readable core files when it bugs.
+On the other hand you want fast code, thats why its set to -O3 and
+other speed settings. We trade here a bit debug overhead for the
+speed but thats needed.
+
+Its also important to the which warnings -O3 gives. The code
+should be altered to work with that setting. Through the very low
+depencies the server can run in heavy native opt. level. -O3 will
+work fine with the current source and is tested over the years.

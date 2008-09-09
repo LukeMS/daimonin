@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="Lualiblib" />
+		<Option pch_mode="0" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Release">
+				<Option output="Release/liblualib.a" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="" />
+				<Option object_output="./Release" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option projectResourceIncludeDirsRelation="2" />
+				<Compiler>
+					<Add option="-fexpensive-optimizations" />
+					<Add option="-O3" />
+					<Add option="-ffast-math" />
+					<Add option="-funroll-loops" />
+					<Add option="-DLINUX" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_LIB" />
+					<Add option="-DLUA_OPNAMES" />
+					<Add directory="../../../../src/lua/include" />
+				</Compiler>
+			</Target>
+			<Target title="Debug">
+				<Option output="Debug/liblualibd.a" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="" />
+				<Option object_output="./Debug" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option projectResourceIncludeDirsRelation="2" />
+				<Compiler>
+					<Add option="-DLINUX" />
+					<Add option="-D_DEBUG" />
+					<Add option="-D_LIB" />
+					<Add option="-DLUA_OPNAMES" />
+					<Add directory="../../../../src/lua/include" />
+				</Compiler>
+			</Target>
+		</Build>
+		<VirtualTargets>
+			<Add alias="All" targets="Release;Debug;" />
+		</VirtualTargets>
+		<Compiler>
+			<Add option="-W" />
+			<Add option="-g" />
+			<Add option="-fomit-frame-pointer" />
+		</Compiler>
+		<Linker>
+			<Add library="m" />
+		</Linker>
+		<Unit filename="../source/include/lauxlib.h" />
+		<Unit filename="../source/include/lualib.h" />
+		<Unit filename="../../../../src/lua/lib/lauxlib.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/lua/lib/lbaselib.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/lua/lib/ldblib.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/lua/lib/liolib.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/lua/lib/lmathlib.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/lua/lib/loadlib.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/lua/lib/lstrlib.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../src/lua/lib/ltablib.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Extensions>
+			<envvars />
+			<code_completion />
+			<lib_finder disable_auto="1" />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

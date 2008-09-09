@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="daimonin_server" />
+		<Option pch_mode="0" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Release">
+				<Option platforms="Unix;" />
+				<Option output="../../../daimonin_server" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="../../../../server" />
+				<Option object_output="./Release" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option projectResourceIncludeDirsRelation="1" />
+				<Compiler>
+					<Add option="-fexpensive-optimizations" />
+					<Add option="-O3" />
+					<Add option="-ffast-math" />
+					<Add option="-funroll-loops" />
+					<Add option="-D_CONSOLE" />
+					<Add option="-DLINUX" />
+					<Add option="-DNDEBUG" />
+					<Add option="-DLUA_PLUGIN_EXPORTS" />
+				</Compiler>
+			</Target>
+			<Target title="Debug">
+				<Option output="../../../daimonin_server" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="../../../../server" />
+				<Option object_output="./Debug" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option projectResourceIncludeDirsRelation="1" />
+				<Compiler>
+					<Add option="-W" />
+					<Add option="-g" />
+					<Add option="-D_CONSOLE" />
+					<Add option="-DDEBUG" />
+					<Add option="-DDEBUG_MOVEATTACK" />
+					<Add option="-DLINUX" />
+					<Add option="-DLUA_PLUGIN_EXPORTS" />
+				</Compiler>
+			</Target>
+		</Build>
+		<VirtualTargets>
+			<Add alias="All" targets="Release;Debug;" />
+		</VirtualTargets>
+		<Compiler>
+			<Add option="-W" />
+			<Add option="-g" />
+			<Add directory="../../../src/include" />
+			<Add directory="../../../src/random_maps" />
+		</Compiler>
+		<Linker>
+			<Add library="dl" />
+			<Add library="m" />
+			<Add library="nsl" />
+			<Add library="crypt" />
+		</Linker>
+		<ExtraCommands>
+			<Add before="flex -i -Prmap -t ../../../src/random_maps/reader.l &gt; ../../../src/random_maps/reader.c" />
+			<Add before="flex -i -t ../../../src/common/loader.l &gt; ../../../src/common/loader.c" />
+		</ExtraCommands>
+		<Unit filename="readme.txt" />
+		<Unit filename="../../../src/common/aggro.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/common/anim.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/common/arch.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/common/artifact.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/common/button.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/common/exp.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/common/food.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/common/guild.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/common/hashfunc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/common/hashtable.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/common/holy.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/common/image.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/common/info.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/common/item.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/common/links.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/common/living.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/common/loader.c">
+			<Option compilerVar="CC" />
+			<Option compiler="gcc" use="0" buildCommand="\n" />
+		</Unit>
+		<Unit filename="../../../src/common/loader.l">
+			<Option compiler="gcc" use="0" buildCommand="\n" />
+		</Unit>
+		<Unit filename="../../../src/common/logger.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/common/los.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/common/map.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/common/map_tile.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/common/material.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/common/mempool.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/common/missile.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/common/object.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/common/porting.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/common/quest.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/common/re-cmp.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/common/readable.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/common/recipe.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/common/request.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/common/shstr_ng.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/common/sounds.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/common/stats.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/common/time.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/common/treasure.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/common/utils.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/common/view_inv.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/common/view_map.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/include/aggro.h" />
+		<Unit filename="../../../src/include/aiconfig.h" />
+		<Unit filename="../../../src/include/arch.h" />
+		<Unit filename="../../../src/include/artifact.h" />
+		<Unit filename="../../../src/include/attack.h" />
+		<Unit filename="../../../src/include/behaviourdecl.h" />
+		<Unit filename="../../../src/include/book.h" />
+		<Unit filename="../../../src/include/channel.h" />
+		<Unit filename="../../../src/include/commands.h" />
+		<Unit filename="../../../src/include/config.h" />
+		<Unit filename="../../../src/include/debug.h" />
+		<Unit filename="../../../src/include/define.h" />
+		<Unit filename="../../../src/include/face.h" />
+		<Unit filename="../../../src/include/global.h" />
+		<Unit filename="../../../src/include/gmaster.h" />
+		<Unit filename="../../../src/include/god.h" />
+		<Unit filename="../../../src/include/hashfunc.h" />
+		<Unit filename="../../../src/include/hashtable.h" />
+		<Unit filename="../../../src/include/includes.h" />
+		<Unit filename="../../../src/include/ipcompare.h" />
+		<Unit filename="../../../src/include/libproto.h" />
+		<Unit filename="../../../src/include/links.h" />
+		<Unit filename="../../../src/include/living.h" />
+		<Unit filename="../../../src/include/loader.h" />
+		<Unit filename="../../../src/include/logger.h" />
+		<Unit filename="../../../src/include/map.h" />
+		<Unit filename="../../../src/include/material.h" />
+		<Unit filename="../../../src/include/mempool.h" />
+		<Unit filename="../../../src/include/monster.h" />
+		<Unit filename="../../../src/include/newclient.h" />
+		<Unit filename="../../../src/include/newserver.h" />
+		<Unit filename="../../../src/include/object.h" />
+		<Unit filename="../../../src/include/pathfinder.h" />
+		<Unit filename="../../../src/include/player.h" />
+		<Unit filename="../../../src/include/plugin.h" />
+		<Unit filename="../../../src/include/plugproto.h" />
+		<Unit filename="../../../src/include/quest.h" />
+		<Unit filename="../../../src/include/race.h" />
+		<Unit filename="../../../src/include/re-cmp.h" />
+		<Unit filename="../../../src/include/recipe.h" />
+		<Unit filename="../../../src/include/shstr_ng.h" />
+		<Unit filename="../../../src/include/skillist.h" />
+		<Unit filename="../../../src/include/skills.h" />
+		<Unit filename="../../../src/include/sockproto.h" />
+		<Unit filename="../../../src/include/sounds.h" />
+		<Unit filename="../../../src/include/spellist.h" />
+		<Unit filename="../../../src/include/spells.h" />
+		<Unit filename="../../../src/include/sproto.h" />
+		<Unit filename="../../../src/include/stats.h" />
+		<Unit filename="../../../src/include/testproto.h" />
+		<Unit filename="../../../src/include/timeutils.h" />
+		<Unit filename="../../../src/include/tod.h" />
+		<Unit filename="../../../src/include/treasure.h" />
+		<Unit filename="../../../src/include/version.h" />
+		<Unit filename="../../../src/random_maps/decor.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/random_maps/door.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/random_maps/exit.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/random_maps/expand2x.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/random_maps/expand2x.h" />
+		<Unit filename="../../../src/random_maps/floor.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/random_maps/maze_gen.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/random_maps/maze_gen.h" />
+		<Unit filename="../../../src/random_maps/monster.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/random_maps/random_map.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/random_maps/random_map.h" />
+		<Unit filename="../../../src/random_maps/reader.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/random_maps/reader.l" />
+		<Unit filename="../../../src/random_maps/rogue_layout.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/random_maps/room_gen.h" />
+		<Unit filename="../../../src/random_maps/room_gen_onion.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/random_maps/room_gen_spiral.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/random_maps/rproto.h" />
+		<Unit filename="../../../src/random_maps/snake.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/random_maps/special.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/random_maps/square_spiral.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/random_maps/style.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/random_maps/treasure.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/random_maps/wall.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/aiconfig.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/alchemy.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/apply.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/attack.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/ban.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/c_chat.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/c_misc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/c_move.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/c_new.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/c_object.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/c_party.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/c_range.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/c_wiz.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/channel.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/container.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/daemon.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/disease.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/egoitem.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/gmaster.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/gods.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/init.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/ipcompare.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/login.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/monster.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/monster_behaviours.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/monster_behaviourset.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/monster_memory.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/move.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/mtrand.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/npc_communicate.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/pathfinder.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/pets.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/player.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/plugins.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/resurrection.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/rune.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/shop.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/skill_util.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/skills.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/spawn_point.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/spell_effect.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/spell_util.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/swamp.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/swap.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/time.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/weather.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/socket/commands.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/socket/connect.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/socket/init.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/socket/loop.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/socket/lowlevel.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/socket/metaserver.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/socket/read.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/socket/startup.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/socket/write.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/tests/benchmark_main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/tests/benchmark_shstr.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/tests/test_main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/tests/test_shstr.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/zlib/adler32.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/zlib/compress.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/zlib/crc32.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/zlib/crc32.h" />
+		<Unit filename="../../../src/zlib/deflate.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/zlib/deflate.h" />
+		<Unit filename="../../../src/zlib/trees.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/zlib/trees.h" />
+		<Unit filename="../../../src/zlib/zconf.h" />
+		<Unit filename="../../../src/zlib/zlib.h" />
+		<Unit filename="../../../src/zlib/zutil.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/zlib/zutil.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

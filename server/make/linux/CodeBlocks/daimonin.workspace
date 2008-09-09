@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_workspace_file>
+	<Workspace title="Daimonin">
+		<Project filename="daimonin_server.cbp" active="1">
+			<Depends filename="plugin_lua/plugin_lua.cbp" />
+		</Project>
+		<Project filename="lua/Lualib.cbp" />
+		<Project filename="lua/Lualiblib.cbp" />
+		<Project filename="plugin_lua/plugin_lua.cbp">
+			<Depends filename="lua/Lualib.cbp" />
+			<Depends filename="lua/Lualiblib.cbp" />
+		</Project>
+	</Workspace>
+</CodeBlocks_workspace_file>
