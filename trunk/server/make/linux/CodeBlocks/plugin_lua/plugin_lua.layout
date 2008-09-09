@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<ActiveTarget name="All" />
+	<File name="../../../../src/plugin_lua/ai_object.c" open="0" top="0" tabpos="2">
+		<Cursor position="3012" topLine="42" />
+	</File>
+	<File name="../../../../src/plugin_lua/daimonin_map.c" open="0" top="0" tabpos="4">
+		<Cursor position="2606" topLine="30" />
+	</File>
+	<File name="../../../../src/plugin_lua/daimonin_object.c" open="0" top="0" tabpos="5">
+		<Cursor position="87118" topLine="1997" />
+	</File>
+	<File name="../../../../src/plugin_lua/include/plugin_lua.h" open="0" top="0" tabpos="1">
+		<Cursor position="10013" topLine="251" />
+	</File>
+	<File name="../../../../src/plugin_lua/plugin_lua.c" open="0" top="0" tabpos="3">
+		<Cursor position="16552" topLine="485" />
+	</File>
+</CodeBlocks_layout_file>
