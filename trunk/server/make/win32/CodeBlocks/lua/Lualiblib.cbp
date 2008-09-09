@@ -1,108 +1,80 @@
-<?xml version="1.0"?>
-<!DOCTYPE Code::Blocks_project_file>
-<Code::Blocks_project_file>
-	<FileVersion major="1" minor="1"/>
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="Lualiblib"/>
-		<Option makefile="Makefile"/>
-		<Option makefile_is_custom="0"/>
-		<Option default_target="-1"/>
-		<Option active_target="0"/>
-		<Option compiler="0"/>
+		<Option title="Lualiblib" />
+		<Option pch_mode="0" />
+		<Option compiler="gcc" />
 		<Build>
 			<Target title="Release">
-				<Option output="Release\lualib.a"/>
-				<Option working_dir=""/>
-				<Option object_output=".\Release"/>
-				<Option deps_output=".deps"/>
-				<Option external_deps=""/>
-				<Option type="2"/>
-				<Option compiler="0"/>
-				<Option createDefFile="1"/>
-				<Option projectResourceIncludeDirsRelation="2"/>
+				<Option output="Release\liblualib.a" prefix_auto="1" extension_auto="0" />
+				<Option working_dir="" />
+				<Option object_output=".\Release" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option projectResourceIncludeDirsRelation="2" />
 				<Compiler>
-					<Add option="-W"/>
-					<Add option="-DWIN32"/>
-					<Add option="-DNDEBUG"/>
-					<Add option="-D_LIB"/>
-					<Add directory="..\..\..\..\src\lua\include"/>
+					<Add option="-W" />
+					<Add option="-DWIN32" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_LIB" />
+					<Add directory="..\..\..\..\src\lua\include" />
 				</Compiler>
 			</Target>
 			<Target title="Debug">
-				<Option output="Debug\lualibd.a"/>
-				<Option working_dir=""/>
-				<Option object_output=".\Debug"/>
-				<Option deps_output=".deps"/>
-				<Option external_deps=""/>
-				<Option type="2"/>
-				<Option compiler="0"/>
-				<Option createDefFile="1"/>
-				<Option projectResourceIncludeDirsRelation="2"/>
+				<Option output="Debug\liblualibd.a" prefix_auto="1" extension_auto="0" />
+				<Option working_dir="" />
+				<Option object_output=".\Debug" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option projectResourceIncludeDirsRelation="2" />
 				<Compiler>
-					<Add option="-W"/>
-					<Add option="-DWIN32"/>
-					<Add option="-D_DEBUG"/>
-					<Add option="-D_LIB"/>
-					<Add directory="..\..\..\..\src\lua\include"/>
+					<Add option="-W" />
+					<Add option="-DWIN32" />
+					<Add option="-D_DEBUG" />
+					<Add option="-D_LIB" />
+					<Add directory="..\..\..\..\src\lua\include" />
 				</Compiler>
 			</Target>
 		</Build>
+		<VirtualTargets>
+			<Add alias="All" targets="Release;Debug;" />
+		</VirtualTargets>
 		<Compiler>
-			<Add option="-g"/>
+			<Add option="-g" />
 		</Compiler>
-		<Unit filename="..\source\include\lauxlib.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
-		</Unit>
-		<Unit filename="..\source\include\lualib.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
-		</Unit>
+		<Unit filename="..\source\include\lauxlib.h" />
+		<Unit filename="..\source\include\lualib.h" />
 		<Unit filename="..\..\..\..\src\lua\lib\lauxlib.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\..\src\lua\lib\lbaselib.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\..\src\lua\lib\ldblib.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\..\src\lua\lib\liolib.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\..\src\lua\lib\lmathlib.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\..\src\lua\lib\loadlib.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\..\src\lua\lib\lstrlib.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\..\src\lua\lib\ltablib.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
+			<Option compilerVar="CC" />
 		</Unit>
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+		</Extensions>
 	</Project>
-</Code::Blocks_project_file>
+</CodeBlocks_project_file>
