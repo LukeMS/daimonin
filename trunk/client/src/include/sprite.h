@@ -157,7 +157,6 @@ extern Uint32           GetSurfacePixel(SDL_Surface *Surface, Sint32 X, Sint32 Y
 extern void             CreateNewFont(_Sprite *sprite, _Font *font, int xlen, int ylen, int c32len);
 extern int    StringWidth(_Font *font, char *text);
 extern int    StringWidthOffset(_Font *font, char *text, int *line, int len);
-extern void             StringBltShadow(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col, SDL_Rect *area, _BLTFX *bltfx);
 extern void             StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col, SDL_Rect *area,
                                       _BLTFX *bltfx);
 extern int              sprite_collision(int x1, int y1, int x2, int y2, _Sprite *sprite1, _Sprite *sprite2);
@@ -188,5 +187,17 @@ extern  SDL_Surface     *zoomSurface(SDL_Surface * src, double zoomx, double zoo
 extern  void            zoomSurfaceSize(int width, int height, double zoomx, double zoomy, int *dstwidth, int *dstheight);
 int zoomSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst, int flipx, int flipy, int smooth);
 int zoomSurfaceY(SDL_Surface * src, SDL_Surface * dst, int flipx, int flipy);
+
+/* Macros for the oft-used technique of printing strings twice, the first black
+ * layer slightly offset from the second coloured layer to give a clearer,
+ * slightly 3d 'shadow' effect. */
+/* EMBOSS prints the string with the shadow on the bottom and right. */
+#define EMBOSS(surf, font, text, x, y, col, area, bltfx) \
+        StringBlt((surf), (font), (text), (x) + 1, (y) + 1, COLOR_BLACK, (area), (bltfx)); \
+        StringBlt((surf), (font), (text), (x), (y), (col), (area), (bltfx));
+/* ENGRAVE prints the string with the shadow on the top and left. */
+#define ENGRAVE(surf, font, text, x, y, col, area, bltfx) \
+        StringBlt((surf), (font), (text), (x), (y), COLOR_BLACK, (area), (bltfx)); \
+        StringBlt((surf), (font), (text), (x) + 1, (y) + 1, (col), (area), (bltfx));
 
 #endif

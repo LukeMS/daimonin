@@ -328,12 +328,6 @@ int StringWidthOffset(_Font *font, char *text, int *line, int len)
     return flag;
 }
 
-void StringBltShadow(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col, SDL_Rect *area, _BLTFX *bltfx)
-{
-    StringBlt(surf, font, text, x + 1, y, COLOR_BLACK, area, bltfx);
-    StringBlt(surf, font, text, x, y + 1, col, area, bltfx);
-}
-
 void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col, SDL_Rect *area, _BLTFX *bltfx)
 {
     register int i,tmp, line_clip = -1,line_count = 0;
