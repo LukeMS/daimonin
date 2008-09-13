@@ -106,7 +106,7 @@ typedef struct Stat_struct
     float   dps;        /* thats damage / 10 */
     float   dist_dps;        /* thats damage / 10 */
     uint16  flags;      /* contains fire on/run on flags */
-    sint16  protection[NROFATTACKS];     /* Resistant values */
+    sint8  protection[NROFATTACKS];     /* Resistant values */
     uint32  protection_change   : 1; /* Resistant value has changed */
     sint16  skill_level[MAX_SKILL];  /* Level and experience totals for */
     sint32  skill_exp[MAX_SKILL];    /* skills */
