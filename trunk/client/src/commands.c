@@ -793,7 +793,7 @@ void StatsCmd(char *data, int len)
                     i += 4;
                     break;
                 case CS_STAT_SPELL_FUMBLE:
-                    cpl.stats.spell_fumble = (float)GetUINT32_String(data + i)/10.0f;
+                    cpl.stats.spell_fumble = (float)GetSINT32_String(data + i)/10.0f;
                     i += 4;
                     break;
                 case CS_STAT_FOOD:
