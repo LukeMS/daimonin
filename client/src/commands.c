@@ -776,12 +776,12 @@ void StatsCmd(char *data, int len)
                     i += 2;
                     break;
                 case CS_STAT_DIST_DPS:
-                    cpl.stats.dist_dam = GetUINT16_String(data + i);
+                    cpl.stats.dist_dam = GetSINT16_String(data + i);
                     cpl.stats.dist_dps = (float)cpl.stats.dist_dam/10.0f;
                     i += 2;
                     break;
                 case CS_STAT_DIST_WC:
-                    cpl.stats.dist_wc = GetUINT16_String(data + i);
+                    cpl.stats.dist_wc = GetSINT16_String(data + i);
                     i += 2;
                     break;
                 case CS_STAT_DIST_TIME:
