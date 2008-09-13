@@ -591,7 +591,7 @@ void StatsCmd(char *data, int len)
 
         if (c >= CS_STAT_RES_START && c <= CS_STAT_RES_END)
         {
-            cpl.stats.protection[c - CS_STAT_RES_START] = GetSINT16_String(data + i++);
+            cpl.stats.protection[c - CS_STAT_RES_START] = GetSINT8_String(data + i++);
             cpl.stats.protection_change = 1;
             WIDGET_REDRAW(RESIST_ID);
         }
