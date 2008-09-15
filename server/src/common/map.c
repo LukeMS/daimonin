@@ -1705,6 +1705,7 @@ void load_objects(mapstruct *m, FILE *fp, int mapflags)
 
             msp->floor_terrain = op->terrain_type;
             msp->floor_light = op->last_sp;
+            msp->floor_direction_block = op->block_movement;
 #ifdef USE_TILESTRETCHER
             msp->floor_z = op->z;
 #endif

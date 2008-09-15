@@ -2182,6 +2182,13 @@
   <attribute arch_begin="msg" arch_end="endmsg" editor="description" type="text">
     This text may describe the object.
   </attribute>
+  <attribute arch="block_movement" editor="block movement" type="bitmask_move_blocking">
+    The &lt;block movement&gt; defines from what direction
+    movement onto this tile will be blocked. This blocks
+    all players, mobs and moveable objects from the set direction
+    This is useful for preventing diagonal movement where
+    the map graphics clearly show no space to move.
+  </attribute>
 </type>
 
 <!--####################################################################-->

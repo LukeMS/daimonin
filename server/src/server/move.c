@@ -264,6 +264,7 @@ int roll_ob(object *op, int dir, object *pusher)
     {
         if (tmp->head == op)
             continue;
+        tmp->direction = dir;
         if (IS_LIVE(tmp) || (QUERY_FLAG(tmp, FLAG_NO_PASS) && !roll_ob(tmp, dir, pusher)))
             return 0;
     }
@@ -382,7 +383,7 @@ int push_ob(object *who, int dir, object *pusher)
      */
 
     str1 = (who->stats.Str > 0 ? who->stats.Str : 9 + who->level / 10);
-	  str1 = str1 + who->weight / 50000 - 1;
+	str1 = str1 + who->weight / 50000 - 1;
     str2 = (pusher->stats.Str > 0 ? pusher->stats.Str : 9 + pusher->level / 10);
     if (QUERY_FLAG(who, FLAG_WIZ)
      || random_roll(str1, str1 / 2 + str1 * 2)
@@ -426,29 +427,30 @@ int push_roll_object(object * const op, int dir, const int flag)
 			break;
 		}
 	}
-	    if (tmp == NULL)
-	    {
-            new_draw_info_format(NDI_UNIQUE, 0, op, "You fail to push anything.");
-		    return 0;
-	    }
-	    /* here we try to push pets, players and mobs */
-	    if (get_owner(tmp)==op || IS_LIVE(tmp))
-        {
-            play_sound_map(op->map, op->x, op->y, SOUND_PUSH_PLAYER, SOUND_NORMAL);
-            if(push_ob(tmp,dir,op))
-                ret = 1;
-            if(op->hide)
-                make_visible(op);
-            return ret;
-        }
-	    /* here we try to push moveable objects */
-        else if(QUERY_FLAG(tmp,FLAG_CAN_ROLL))
-        {
-            recursive_roll(tmp,dir,op);
-            if(action_makes_visible(op))
-                make_visible(op);
-        }
+	if (tmp == NULL)
+	{
+        new_draw_info_format(NDI_UNIQUE, 0, op, "You fail to push anything.");
+		return 0;
+	}
+	/* here we try to push pets, players and mobs */
+	if (get_owner(tmp)==op || IS_LIVE(tmp))
+    {
+        play_sound_map(op->map, op->x, op->y, SOUND_PUSH_PLAYER, SOUND_NORMAL);
+        if(push_ob(tmp,dir,op))
+            ret = 1;
+        if(op->hide)
+            make_visible(op);
         return ret;
+    }
+	/* here we try to push moveable objects */
+    else if(QUERY_FLAG(tmp,FLAG_CAN_ROLL))
+    {
+        tmp->direction = dir;
+        recursive_roll(tmp,dir,op);
+        if(action_makes_visible(op))
+            make_visible(op);
+    }
+    return ret;
 }
 int missile_reflection_adjust(object *op, int flag)
 {
