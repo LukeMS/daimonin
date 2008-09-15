@@ -683,6 +683,7 @@ op->oz= op->z;
 ^sub_type{S}		op->sub_type1 = IVAL;
 ^terrain_flag{S}	op->terrain_flag = IVAL;
 ^terrain_type{S}	op->terrain_type = IVAL;
+^block_movement{S}	op->block_movement = IVAL;
 ^item_quality{S}	op->item_quality = IVAL;
 ^item_condition{S}	op->item_condition = IVAL;
 ^item_race{S}		op->item_race = IVAL;
@@ -1202,6 +1203,10 @@ char *get_ob_diff(const object *op, const object *op2) {
   }
   if(op->terrain_type!=op2->terrain_type) {
     sprintf(buf2,"terrain_type %d\n",op->terrain_type);
+    strcat(buf,buf2);
+  }
+  if(op->block_movement!=op2->block_movement) {
+    sprintf(buf2,"block_movement %d\n",op->block_movement);
     strcat(buf,buf2);
   }
   if(op->item_quality!=op2->item_quality) {

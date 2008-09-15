@@ -284,6 +284,7 @@ typedef struct MapSpace_s
     New_Face           *floor_face;                     /* here we need the face for the floor because it can be turnable */
     uint16              floor_terrain;
     sint16              floor_light;
+    uint16              floor_direction_block;          /* direction blocking flag */
 #ifdef USE_TILESTRETCHER
     sint16              floor_z;                        /* height of floor */
 #endif

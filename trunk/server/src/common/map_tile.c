@@ -333,6 +333,7 @@ int blocked(object *op, mapstruct *m, int x, int y, int terrain)
 {
     int         flags;
     MapSpace   *msp;
+    uint16      atmp;
 
     flags = (msp = GET_MAP_SPACE_PTR(m, x, y))->flags;
 
@@ -368,6 +369,14 @@ int blocked(object *op, mapstruct *m, int x, int y, int terrain)
         if(op==NULL || op->type != PLAYER || !(flags & P_IS_PLAYER_PET)
             || flags & P_IS_PVP || m->map_flags & MAP_FLAG_PVP)
             return (flags & (P_DOOR_CLOSED | P_NO_PASS | P_IS_ALIVE | P_IS_PLAYER | P_CHECK_INV | P_PASS_THRU| P_PASS_ETHEREAL));
+    }
+    if (msp->floor_direction_block !=0)
+    {
+        atmp = absdir(op->direction);
+        if (msp->floor_direction_block & (1U << atmp))
+        {
+            return (flags & (P_DOOR_CLOSED | P_NO_PASS | P_IS_ALIVE | P_IS_PLAYER | P_CHECK_INV | P_PASS_THRU | P_PASS_ETHEREAL)) | P_NO_TERRAIN;
+        }
     }
 
     /* still one flag to check: perhaps P_PASS_THRU overrules NO_PASS? Or PASS_ETHEREAL? */

@@ -156,8 +156,7 @@ typedef struct obj
                                      * A object which can be applied GIVES this terrain flags to his owner
                                      */
     uint16          terrain_flag;   /* The object can move over/is unaffected from this terrain type */
-
-
+    uint16          block_movement; /* The object blocks objects moving in this direction from it's tile */
     uint16          material;           /* What materials this object consist of */
     sint16          material_real;      /* This hold the real material value like what kind of steel */
 
