@@ -8,27 +8,7 @@ sp 5
 pass_thru 1
 no_pick 1
 face door_lock1_wreath.111
-anim
-facings 9
-dummy.111
-dummy.111
-door_lock1_wreath.111
-door_lock1_wreath.112
-door_lock1_wreath.111
-door_lock1_wreath.112
-door_lock1_wreath.131
-door_lock1_wreath.132
-door_lock1_wreath.131
-door_lock1_wreath.132
-door_lock1_wreath.151
-door_lock1_wreath.152
-door_lock1_wreath.151
-door_lock1_wreath.152
-door_lock1_wreath.171
-door_lock1_wreath.172
-door_lock1_wreath.171
-door_lock1_wreath.172
-mina
+animation door1_locked_wreath
 is_animated 0
 anim_speed 1
 is_turnable 1
