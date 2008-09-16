@@ -35,7 +35,7 @@ end
 
 Object lantern2_magic.131
 name magic lantern
-face lantern2_magic.131
+face lantern2_magic.171
 other_arch lantern2_magic_unlit
 layer 5
 type 74
