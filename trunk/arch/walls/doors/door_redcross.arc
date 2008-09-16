@@ -9,27 +9,7 @@ pass_thru 1
 no_pick 1
 direction 1
 face door_redcross.111
-anim
-facings 9
-dummy.111
-dummy.111
-door_redcross.111
-door_redcross.112
-door_redcross.111
-door_redcross.112
-door_redcross.111
-door_redcross.112
-door_redcross.111
-door_redcross.112
-door_redcross.111
-door_redcross.112
-door_redcross.111
-door_redcross.112
-door_redcross.111
-door_redcross.112
-door_redcross.111
-door_redcross.112
-mina
+animation door_redcross
 is_animated 0
 anim_speed 1
 is_turnable 1
