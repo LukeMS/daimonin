@@ -1304,7 +1304,7 @@ void show_newplayer_server(void)
     if(GameStatus == GAME_STATUS_ACCOUNT_CHAR_CREATE)
     {
         if (add_button(x + 30, y + 397, id++, BITMAP_DIALOG_BUTTON_UP, "Name", "~N~ame"))
-            check_menu_keys(MENU_CREATE, SDLK_c);
+            check_menu_keys(MENU_CREATE, SDLK_n);
     }
 
     for (i = 0; i < ATT_SUM; i++)
@@ -1562,7 +1562,7 @@ void show_newplayer_server(void)
         char namebuf[MAX_BUF];
 
         StringBlt(ScreenSurface, &BigFont, "Try Character Name", x + 134, y + 323, COLOR_WHITE, NULL, NULL);
- 
+
         if(GameStatus == GAME_STATUS_ACCOUNT_CHAR_NAME)
         {
             sprite_blt(Bitmaps[BITMAP_LOGIN_INP], x + 132, y + 345, NULL, NULL);
@@ -1702,15 +1702,15 @@ void show_login_server(void)
         {
             StringBlt(ScreenSurface, &BigFont, ">> Login <<", x+51, y+52, COLOR_BLACK, NULL, NULL);
             StringBlt(ScreenSurface, &BigFont, ">> Login <<", x+49, y+50, COLOR_GREEN, NULL, NULL);
-            StringBlt(ScreenSurface, &BigFont, "Create Account", x+18, y+32, COLOR_BLACK, NULL, NULL);
-            StringBlt(ScreenSurface, &BigFont, "Create Account", x+16, y+30, COLOR_WHITE, NULL, NULL);
+            StringBlt(ScreenSurface, &BigFont, "Create Account", x+28, y+32, COLOR_BLACK, NULL, NULL);
+            StringBlt(ScreenSurface, &BigFont, "Create Account", x+26, y+30, COLOR_WHITE, NULL, NULL);
         }
         else
         {
             StringBlt(ScreenSurface, &BigFont, "Login", x+72, y+52, COLOR_BLACK, NULL, NULL);
             StringBlt(ScreenSurface, &BigFont, "Login", x+70, y+50, COLOR_WHITE, NULL, NULL);
-            StringBlt(ScreenSurface, &BigFont, ">> Create Account <<", x-3, y+32, COLOR_BLACK, NULL, NULL);
-            StringBlt(ScreenSurface, &BigFont, ">> Create Account <<", x-5, y+30, COLOR_GREEN, NULL, NULL);
+            StringBlt(ScreenSurface, &BigFont, ">> Create Account <<", x+7, y+32, COLOR_BLACK, NULL, NULL);
+            StringBlt(ScreenSurface, &BigFont, ">> Create Account <<", x+5, y+30, COLOR_GREEN, NULL, NULL);
         }
         y += 160;
         StringBlt(ScreenSurface, &SystemFont,
@@ -1757,7 +1757,7 @@ void show_login_server(void)
         StringBlt(ScreenSurface, &SystemFont, "Enter your Password", x + 2, y + 60, COLOR_HGOLD, NULL, NULL);
         sprite_blt(Bitmaps[BITMAP_LOGIN_INP], x - 2, y + 75, NULL, NULL);
 
-        if (LoginInputStep == LOGIN_STEP_PASS1)    
+        if (LoginInputStep == LOGIN_STEP_PASS1)
         {
             for (i = 0; i < (int)strlen(InputString); i++)
                 buf[i] = '*';
@@ -1765,7 +1765,7 @@ void show_login_server(void)
             buf[i] = 0;
             StringBlt(ScreenSurface, &SystemFont, buf, x + 2, y + 77, COLOR_WHITE, NULL, NULL);
         }
-        else if (LoginInputStep == LOGIN_STEP_PASS2)    
+        else if (LoginInputStep == LOGIN_STEP_PASS2)
         {
             for (i = 0; i < (int) strlen(cpl.password); i++)
                 buf[i] = '*';buf[i] = 0;
@@ -2055,6 +2055,6 @@ void show_account(void)
     if(char_count < ACCOUNT_MAX_PLAYER)
     {
         StringBlt(ScreenSurface, &BigFont, "Press '~C~' for a new Character", x+120, y+100+char_count*50, COLOR_HGOLD, NULL, NULL);
-    }   
+    }
 }
 
