@@ -51,6 +51,8 @@ static void     fow_scale(_Sprite *sprite);
 static Uint16   CalcHash(const SDL_Surface * src,Uint32 stretch, Uint32 darkness);
 SDL_Surface *check_stretch_cache(const SDL_Surface *src, Uint32 stretch, Uint32 darkness);
 void add_to_stretch_cache(SDL_Surface *src,SDL_Surface *dest, Uint32 stretch, Uint32 darkness);
+static void stretch_init(void);
+
 
 /* not much special inside atm */
 Boolean sprite_init_system(void)
@@ -65,6 +67,7 @@ Boolean sprite_init_system(void)
 void sprite_clear_backbuffer(void)
 {
     memset(&ImageStats, 0, sizeof(_imagestats));
+    stretch_init();
 }
 
 Boolean sprite_deinit_system(void)
