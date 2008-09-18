@@ -3,6 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8,00"
 	Name="Client3d"
+	ProjectGUID="{53C40EDF-1BD3-46BE-A694-1E64FEAA9F98}"
 	RootNamespace="Client3d"
 	Keyword="Win32Proj"
 	>
@@ -274,6 +275,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\source\particle_manager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\resourceloader.cpp"
 				>
 			</File>
 			<File
@@ -655,6 +660,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\include\particle_manager.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\include\resourceloader.h"
 				>
 			</File>
 			<File
