@@ -1827,9 +1827,9 @@ void show_login_server(void)
                       x+2, y+110  , COLOR_ORANGE, NULL, NULL);
             break;
         case DIALOG_LOGIN_WARNING_ACCOUNT_UNKNOWN:
-            StringBlt(ScreenSurface, &SystemFont, "Account don't exist or wrong name - try again!",
+            StringBlt(ScreenSurface, &SystemFont, "Account doesn't exist or wrong name - try again!",
                 x+1, y+111  , COLOR_BLACK, NULL, NULL);
-            StringBlt(ScreenSurface, &SystemFont, "Account don't exist or wrong name - try again!!",
+            StringBlt(ScreenSurface, &SystemFont, "Account doesn't exist or wrong name - try again!!",
                 x+2, y+110  , COLOR_ORANGE, NULL, NULL);
             break;
         case DIALOG_LOGIN_WARNING_PWD_WRONG:
