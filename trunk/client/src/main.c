@@ -1081,6 +1081,7 @@ Boolean game_status_chain(void)
     }
     else if (GameStatus == GAME_STATUS_ACCOUNT)
     {
+        reset_input_mode();
         cpl.menustatus = MENU_NO;
         /* Selection/Creation of chars is done in event.c
          * Fallback for ESC will drop the connection
