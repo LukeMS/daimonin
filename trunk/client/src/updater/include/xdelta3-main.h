@@ -556,12 +556,20 @@ get_millisecs_now (void)
   // It doesn't matter that the offset is Jan 1, 1601
   // Result is the numbre of 100 nanosecond units
   // 100ns * 10,000 = 1ms
+  // MT-2008: totally sick code, it is casting a struct
+  // to a __int64 where the author assumes that
+  // the struct is a.) from same length as __int64
+  // and b.) from right endianess. Beside its against
+  // the ANSI strict-aliasing rule
   SYSTEMTIME st;
   FILETIME ft;
-  __int64 *pi = (__int64*)&ft;
+  __int64 pi;
+ //  __int64 *pi = (__int64*)&ft;
   GetLocalTime(&st);
   SystemTimeToFileTime(&st, &ft);
-  return (long)((*pi) / 10000);
+  pi = (((__int64)ft.dwHighDateTime)<<32)|((__int64)ft.dwLowDateTime);
+//  return (long)((*pi) / 10000);
+  return (long)(pi / 10000);
 #endif
 }
 
