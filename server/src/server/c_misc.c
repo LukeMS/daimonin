@@ -329,7 +329,7 @@ int command_who(object *op, char *params)
         }
 
         ip++;
-        if (pl->state == ST_PLAYING)
+        if (pl->state & ST_PLAYING)
         {
             if (QUERY_FLAG(pl->ob, FLAG_IS_MALE))
                 sex = QUERY_FLAG(pl->ob, FLAG_IS_FEMALE) ? "hermaphrodite" : "male";

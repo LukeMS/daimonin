@@ -263,7 +263,7 @@ void process_command_queue(NewSocket *ns, player *pl)
     int cmd, cmd_count = 0;
 
     /* do some sanity checks ... we only allow a full enabled player to work out commands */
-    if ( ns->status != Ns_Playing || pl->state!=ST_PLAYING || (pl && (!pl->ob || pl->ob->speed_left < 0.0f)))
+    if ( ns->status != Ns_Playing || !(pl->state&ST_PLAYING) || (pl && (!pl->ob || pl->ob->speed_left < 0.0f)))
         return;
 
     /* Loop through this - maybe we have several complete packets here. */
@@ -293,7 +293,7 @@ void process_command_queue(NewSocket *ns, player *pl)
         command_buffer_clear(ns);
 
         /* have we to stop or one more command? */
-        if (cmd_count++ >= 8 || ns->status != Ns_Playing || pl->state!=ST_PLAYING || (pl && (!pl->ob || pl->ob->speed_left < 0.0f)))
+        if (cmd_count++ >= 8 || ns->status != Ns_Playing || !(pl->state&ST_PLAYING) || (pl && (!pl->ob || pl->ob->speed_left < 0.0f)))
             return;
     }
 }
@@ -320,7 +320,7 @@ void cs_cmd_generic(char *buf, int len, NewSocket *ns)
 
     ob = pl->ob;
 
-    if (pl->state != ST_PLAYING)
+    if (!(pl->state & ST_PLAYING))
     {
         new_draw_info_format(NDI_UNIQUE, 0, ob, "You can not issue commands - state is not ST_PLAYING (%s)", buf);
         return;

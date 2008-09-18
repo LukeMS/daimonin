@@ -31,7 +31,7 @@ int player_save(object *op)
     FILE   *fp;
     char    filename[MAX_BUF], tmpfilename[MAXPATHLEN], backupfile[MAX_BUF]="";
     player *pl  = CONTR(op);
-    int     have_file = TRUE, i, wiz = QUERY_FLAG(op, FLAG_WIZ);
+    int     tmp, have_file = TRUE, i, wiz = QUERY_FLAG(op, FLAG_WIZ);
     object *force;
     archetype *at = find_archetype("drain");
     int drain_level = 0;
@@ -64,6 +64,10 @@ int player_save(object *op)
     }
 
     fprintf(fp, "account %s\n", pl->account_name);
+
+    /* save player state without the dynamic/session set one if there is something */
+    if((tmp = (pl->state&~(ST_PLAYING|ST_ZOMBIE|ST_DEAD))))
+        fprintf(fp, "state %d\n",  tmp);
 
     if(pl->gmaster_mode != GMASTER_MODE_NO)
     {
@@ -399,13 +403,14 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
 
                     for (ptmp = first_player; ptmp != NULL; ptmp = ptmp->next)
                     {
-                        if (ptmp->state == ST_PLAYING && ptmp->ob->name == name)
+                        if ((ptmp->state & ST_PLAYING) && ptmp->ob->name == name)
                         {
                             LOG(llevInfo, "Double login! Kicking older instance! (%d) ", kick_loop);
                             Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, double_login_warning, strlen(double_login_warning));
                             fclose(fp); /* we will rewrite the file when saving beyond! close it first */
                             player_save(ptmp->ob);
-                            ptmp->state = ST_ZOMBIE;
+                            ptmp->state &= ~ST_PLAYING;
+                            ptmp->state |= ST_ZOMBIE;
                             ptmp->socket.status = Ns_Dead;
                             remove_ns_dead_player(ptmp);/* super hard kick! */
                             continue;
@@ -465,6 +470,8 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
             pl->gmaster_mode = GMASTER_MODE_DM;
         else if (!strcmp(buf, "mute"))
             pl->mute_counter = pticks+(unsigned long)value;
+        else if (!strcmp(buf, "state"))
+            pl->state = value; /* be sure to do all other state flag settings after this load */
         else if (!strcmp(buf, "dm_stealth"))
             pl->dm_stealth = value;
         else if (!strcmp(buf, "silent_login"))
@@ -742,7 +749,7 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
 
     /* mark socket, player & connection as playing and add charcter to player queue */
     pl->socket.status = Ns_Playing;
-    pl->state = ST_PLAYING;
+    pl->state |= ST_PLAYING;
 
     player_active++;
     if(player_active_meta < player_active)
@@ -767,11 +774,14 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
 
     /* we do the login script BEFORE we go to the map */
 #ifdef PLUGINS
-    /* GROS : Here we handle the BORN global event */
-    evtid = EVENT_BORN;
-    CFP.Value[0] = (void *) (&evtid);
-    CFP.Value[1] = (void *) (op);
-    GlobalEvent(&CFP);
+    if(pl->state & ST_BORN)
+    {
+        /* GROS : Here we handle the BORN global event */
+        evtid = EVENT_BORN;
+        CFP.Value[0] = (void *) (&evtid);
+        CFP.Value[1] = (void *) (op);
+        GlobalEvent(&CFP);
+    }
 
     /* GROS : Here we handle the LOGIN global event */
     evtid = EVENT_LOGIN;
@@ -780,6 +790,9 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
     CFP.Value[2] = (void *) (pl->socket.ip_host);
     GlobalEvent(&CFP);
 #endif
+
+    /* if we add more BORN, "first time used / first time loaded" stuff, do it before this line */
+    pl->state &= ~ST_BORN;
 
 #ifdef USE_CHANNELS
     /* channel-system: we check if the playerfile has the channels tag */
@@ -866,7 +879,7 @@ addme_login_msg player_create(NewSocket *ns, player **pl_ret, char *name, int ra
     op->custom_attrset = pl;
     pl->ob = op;
     op->type = PLAYER;
-    pl->state = ST_BORN;
+    pl->state |= ST_BORN;
     *pl_ret = pl;
 
 #ifdef AUTOSAVE

@@ -609,7 +609,7 @@ int learn_skill(object *pl, object *scroll, char *name, int skillnr, int scroll_
     skillnr = skill->clone.stats.sp;
     if(find_skill(pl,skillnr))
     {
-        if(p && p->state == ST_PLAYING)
+        if(p && (p->state & ST_PLAYING))
             new_draw_info_format(NDI_UNIQUE, 0, pl, "You already know the skill '%s'!", query_name(&skill->clone));
         return 0;
     }
@@ -625,7 +625,7 @@ int learn_skill(object *pl, object *scroll, char *name, int skillnr, int scroll_
     /* disabled the meditation check for now - MT-2005 */
     if (tmp->stats.sp == SK_MELEE_WEAPON && has_meditation)
     {
-        if(p && p->state == ST_PLAYING)
+        if(p && (p->state & ST_PLAYING))
             new_draw_info(NDI_UNIQUE, 0, pl, "Your knowledge of inner peace prevents you from learning about melee weapons.");
         return 2;
     }
@@ -636,7 +636,7 @@ int learn_skill(object *pl, object *scroll, char *name, int skillnr, int scroll_
     CONTR(pl)->skill_ptr[tmp->stats.sp] = tmp;
     link_player_skill(pl, tmp);
 
-    if(p && p->state == ST_PLAYING)
+    if(p && (p->state & ST_PLAYING))
     {
         play_sound_player_only(CONTR(pl), SOUND_LEARN_SPELL, SOUND_NORMAL, 0, 0);
         new_draw_info_format(NDI_UNIQUE, 0, pl, "You have learned the skill %s!", tmp->name);

@@ -458,7 +458,7 @@ void remove_ns_dead_player(player *pl)
 
 	LOG(llevDebug, "remove_ns_dead_player(%s): state:%d gmaster:%d g_status:%d\n", STRING_OBJ_NAME(pl->ob),pl->state,
 		pl->gmaster_mode, pl->group_status);
-    if (pl->state != ST_DEAD)
+    if (!(pl->state & ST_DEAD))
     {
         /* remove the player from global gmaster lists */
         if(pl->gmaster_mode != GMASTER_MODE_NO)
@@ -827,7 +827,7 @@ void doeric_server(int update, struct timeval *timeout)
                  */
                 if (update_client)
                 {
-                    if (update_player && pl->state == ST_PLAYING)
+                    if (update_player && (pl->state & ST_PLAYING))
                     {
                         esrv_update_stats(pl);
                         if (pl->update_skills)

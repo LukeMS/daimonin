@@ -164,9 +164,10 @@ void free_player(player *pl)
     leaveAllChannels(pl);
 #endif
 
-    if(pl->state == ST_ZOMBIE)
+    if((pl->state & ST_ZOMBIE) && !(pl->state & ST_DEAD))
     {
-        pl->state = ST_DEAD;
+        pl->state &= ~ST_PLAYING;
+        pl->state |= ST_DEAD;
 		LOG(llevDebug, "FREE_PLAYER(%s) --> ST_DEAD\n", query_name(pl->ob));
         FREE_AND_COPY_HASH(pl->ob->name, "noname"); /* we neutralize the name - we don't want find this player anymore */
         insert_ob_in_ob(pl->ob, &void_container); /* Avoid gc of the player object */
@@ -542,7 +543,7 @@ void do_some_living(object *op)
 {
     player *pl = CONTR(op);
 
-    if (!pl || pl->state != ST_PLAYING)
+    if (!pl || !(pl->state & ST_PLAYING))
         return;
 
     /* sanity kill check */
