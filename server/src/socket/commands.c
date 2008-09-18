@@ -1264,8 +1264,9 @@ void cs_cmd_newchar(char *buf, int len, NewSocket *ns)
     if(ret == ADDME_MSG_OK)
     {
         /* character is valid, created and saved - now update our account data */
-        ns->pl_account.level[ns->pl_account.nrof_chars] = 1;
-        ns->pl_account.race[ns->pl_account.nrof_chars] = 2;
+        ns->pl_account.level[ns->pl_account.nrof_chars] = 1; /* we always start with level 1 */
+        ns->pl_account.race[ns->pl_account.nrof_chars] = race;
+        ns->pl_account.gender[ns->pl_account.nrof_chars] = gender;
         strcpy(ns->pl_account.charname[ns->pl_account.nrof_chars], buf);
         ns->pl_account.nrof_chars += 1;
 
