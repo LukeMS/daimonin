@@ -33,7 +33,7 @@ void account_clear(Account *ac)
 
     for(i=0;i<ACCOUNT_MAX_PLAYER;i++)
     {
-        ac->level[i] = ac->race[i] = 0;
+        ac->level[i] = ac->race[i] = ac->gender[i] = 0;
         ac->charname[i][0] = 0;
     }
 }
@@ -71,6 +71,7 @@ account_status account_save(Account *ac, const char *name)
             fprintf(fp, "lvl %d\n", ac->level[i]);
             fprintf(fp, "name %s\n", ac->charname[i]);
             fprintf(fp, "race %d\n", ac->race[i]);
+            fprintf(fp, "gender %d\n", ac->gender[i]);
         }
     }
 
@@ -213,6 +214,13 @@ account_status account_load(Account *ac, char *name, char *pass)
                 else
                     ac->race[i] = val;
             }
+            else if (!strcmp(buf, "gender"))
+            {
+                if(i < 0)
+                    ret = ACCOUNT_STATUS_CORRUPT;
+                else
+                    ac->gender[i] = val;
+            }
             else
                 ret = ACCOUNT_STATUS_CORRUPT;
         }
@@ -271,6 +279,7 @@ void account_send_client(NewSocket *ns, int stats)
                 SockBuf_AddString(sbptr, ac->charname[i], strlen(ac->charname[i]));
                 SockBuf_AddChar(sbptr, ac->level[i]);
                 SockBuf_AddChar(sbptr, ac->race[i]);
+                SockBuf_AddChar(sbptr, ac->gender[i]);
             }
         }
     }
@@ -304,8 +313,7 @@ account_status account_delete_player(Account *ac, char *name)
     {
         if(ac->level[i] && !strcmp(name, ac->charname[i]))
         {
-            ac->level[i] = 0;
-            ac->race[i] = 0;
+            ac->level[i] = ac->race[i] = ac->gender[i] = 0;
             ac->charname[i][0] = 0;
             ret = ACCOUNT_STATUS_OK;
             /* to do NOT a break here will delete any entry in the case we have the same name 

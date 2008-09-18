@@ -2225,6 +2225,7 @@ void AccountCmd(char *data, int len)
             count += strlen(account.name[account.count]) + 1;
             account.level[account.count] = GetSINT8_String(data+count++);
             account.race[account.count] = GetSINT8_String(data+count++);
+            account.gender[account.count] = GetSINT8_String(data+count++);
             account.count++;
         }
 

@@ -126,6 +126,7 @@ typedef struct Account_Struct
     char    name[ACCOUNT_MAX_PLAYER][MAX_PLAYER_NAME+1]; /* List of account chars */
     int     level[ACCOUNT_MAX_PLAYER];
     int     race[ACCOUNT_MAX_PLAYER];
+    int     gender[ACCOUNT_MAX_PLAYER];
 } Account;
 
 extern Account account;

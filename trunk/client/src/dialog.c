@@ -2047,7 +2047,7 @@ void show_account(void)
         {
             char_count++;
             StringBlt(ScreenSurface, &BigFont, account.name[i], x+120, y+100+i*50, COLOR_WHITE, NULL, NULL);
-            sprintf(buf,"Level: %d", account.level[i]);
+            sprintf(buf,"Level:%d Race:%d Gender:%d", account.level[i],account.race[i],account.gender[i]);
             StringBlt(ScreenSurface, &SystemFont, buf, x+120, y+116+i*50, COLOR_WHITE, NULL, NULL);
         }
     }

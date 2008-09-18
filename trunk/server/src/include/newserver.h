@@ -171,7 +171,8 @@ typedef struct _account
     const char *create_name;            /* this works like a semaphor and reserves the name for creating an new account */
     int         nrof_chars;             /* number of chars this account is holding */
     int         level[ACCOUNT_MAX_PLAYER];      /* level of the char: if level == 0, then the entry is free */
-    int         race[ACCOUNT_MAX_PLAYER];       /* race of player */
+    int         race[ACCOUNT_MAX_PLAYER];       /* race of this character (pointing to client_settings!) */
+    int         gender[ACCOUNT_MAX_PLAYER];       /* gender of this character (pointing to client_settings!) */
     char        charname[ACCOUNT_MAX_PLAYER][MAX_PLAYER_NAME+1]; /* all the players this account owns. we don't use hashes */
     char        pwd[MAX_ACCOUNT_PASSWORD+1];    /* we save here the password for writing back or changing */
 } Account;
