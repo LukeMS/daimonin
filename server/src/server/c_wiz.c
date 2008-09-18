@@ -64,6 +64,7 @@ static object * find_object(int i)
     return NULL;
 }
 
+#if 0 /* disabled because account patch */
 /* This command allows to login as a player without we know the password,
 * but adding a "temporary" new one defined
 */
@@ -90,7 +91,6 @@ int command_dmload(object *op, char *params)
     new_draw_info_format(NDI_UNIQUE, 0, op, buf);
     return 1;
 }
-
 /* check a dmload struct is set and if, the settings match.
 * returns 0 when not and 1 when we want and can override!
 */
@@ -111,6 +111,8 @@ int check_dmload(const char*name, const char *pwd)
     LOG(llevDebug, "DM_LOAD:: DM_CHECK SUCCESS - >%s< >%s<!\n", name, pwd);
     return 1;
 }
+
+#endif
 
 /* Sets the god for some objects.  params should contain two values -
  * first the object to change, followed by the god to change it to.
@@ -220,7 +222,7 @@ int command_kick(object *ob, char *params)
     {
         for(pl=first_player;pl!=NULL;pl=pl->next)
         {
-            if(save_player(pl->ob, 1))
+            if(player_save(pl->ob))
                 LOG(llevInfo, "Saving player %s: Success!\n", query_name(pl->ob));
             else
                 LOG(llevInfo, "Saving player %s: FAILED!\n", query_name(pl->ob));
@@ -228,7 +230,7 @@ int command_kick(object *ob, char *params)
 
     }
     else
-        save_player(ob,1);
+        player_save(ob);
 
     for (pl = first_player; pl != NULL; pl = pl->next)
     {

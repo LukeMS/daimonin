@@ -141,6 +141,7 @@ void free_newsocket(NewSocket *ns)
     LOG(llevDebug, "Closing socket %d\n", ns->fd);
     close_newsocket(ns);
 
+    account_clear(&ns->pl_account);
     /* clearout the socket but don't restore the buffers.
      * no need to malloc them again & again.
      */

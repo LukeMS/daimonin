@@ -254,9 +254,6 @@ static void init_artifacts(FILE *fp)
         }
         else if (!strncmp(cp, "editor", 6))
         {
-            /* QUICKHACK: we don't won't delete the pre-beta 4 fake arch items on the players */
-            art->flags |= ARTIFACT_FLAG_HAS_DEF_ARCH; /* remove this quickhack for 1.0 */
-
             editor_flag = TRUE;
             if(!strncmp(cp+7,"2:",2)) /* mask only */
                 /* Do nothing */;

@@ -171,8 +171,9 @@ void init_mempools()
 #endif
     pool_object = create_mempool("objects", OBJECT_EXPAND, sizeof(object), 0, NULL, NULL,
             (chunk_constructor) initialize_object, (chunk_destructor) destroy_object);
-    pool_player = create_mempool("players", 25, sizeof(player), MEMPOOL_BYPASS_POOLS, NULL, NULL, NULL, NULL);
-    pool_map = create_mempool("maps", 25, sizeof(mapstruct), 0, NULL, NULL, NULL, NULL);
+    pool_player = create_mempool("players", 50, sizeof(player), MEMPOOL_BYPASS_POOLS, NULL, NULL, NULL,
+        (chunk_destructor) destroy_player_struct);
+    pool_map = create_mempool("maps", 50, sizeof(mapstruct), 0, NULL, NULL, NULL, NULL);
     pool_map_bfs= create_mempool("map BFS nodes", 16, sizeof(struct mapsearch_node), 0, NULL, NULL, NULL, NULL);
     pool_path_segment= create_mempool("path segments", 500, sizeof(struct path_segment), 0, NULL, NULL, NULL, NULL);
     pool_mob_data= create_mempool("mob brains", 100, sizeof(struct mobdata), 0, NULL, NULL, NULL, NULL);

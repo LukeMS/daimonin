@@ -208,7 +208,7 @@ int item_matched_string(object *pl, object *op, const char *name)
 
 void init_archetypes()
 {
-    /* called from add_player() and edit() */
+    /* called from and edit() */
     if (first_archetype != NULL) /* Only do this once */
         return;
     arch_init = 1;

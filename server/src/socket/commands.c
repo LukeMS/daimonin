@@ -36,9 +36,11 @@ _CmdMapping cs_commands[]    =
 
     {-1,        cs_cmd_setup},
     {1,         cs_cmd_file},
-    {0,         cs_cmd_addme},
-    {-1,        cs_cmd_reply},
+    {-1,        cs_cmd_checkname},
+    {-1,        cs_cmd_login},
     {-1,        cs_cmd_newchar},
+    {-1,        cs_cmd_delchar},
+    {-1,        cs_cmd_addme},
     {-1,        cs_cmd_face},
     {2,         cs_cmd_move},
     {4,         cs_cmd_apply},
@@ -125,17 +127,6 @@ CommArray_s Commands[]                  =
     {"gm_set",          command_gm_set,         0.0f},
     {"silence",        command_silence,0.0},
     {"gm_set",          command_gm_set,         0.0f},
-    /*  {"sound",        command_sound,          1.0},*/
-    /*  {"delete",     command_quit,           1.0},*/
-    /*  {"dropall",        command_dropall,        1.0}, */
-
-    /* temporary disabled commands
-    {"listen", command_listen,    0.0}, our channel system should work different
-    {"drop", command_drop,    1.0},
-    {"get", command_take,     1.0},
-    {"examine", command_examine,  0.5}, should work in direction
-    {"statistics", command_statistics,    0.0}, will be send to client later in status
-    */
 };
 
 CommArray_s CommunicationCommands[] =
@@ -188,7 +179,6 @@ CommArray_s WizCommands[]           =
     {"dm_stealth", command_dm_stealth,0.0},
     {"dm_dev", command_dm_dev,0.0},
     {"dm_light", command_dm_light,0.0},
-    {"dm_pwd", command_dm_password,0.0},
     {"d_active", command_dumpactivelist,0.0},
     {"d_arches", command_dumpallarchetypes,0.0},
     {"d_maps", command_dumpallmaps,0.0},
@@ -201,10 +191,19 @@ CommArray_s WizCommands[]           =
     {"stats", command_stats,0.0},
     {"check_fd", command_check_fd,0.0},
     {"dm_speed", command_speed,0.0},
-	{"dm_load",	command_dmload,0.0},
 
-
+    /* old, outdated or disabled commands */
     /*
+    TODO: fix password related commands who changed by the account patch
+    {"dm_pwd", command_dm_password,0.0},
+    {"dm_load",	command_dmload,0.0}, // disabled because account patch
+
+    {"dropall",        command_dropall,        1.0},
+    {"listen", command_listen,    0.0}, // our channel system should work different
+    {"drop", command_drop,    1.0},
+    {"get", command_take,     1.0},
+    {"examine", command_examine,  0.5}, // should work in direction
+    {"statistics", command_statistics,    0.0}, // will be send to client later in status
     {"archs", command_archs, 0.0},
     {"abil", command_abil,0.0},
     {"debug", command_debug,0.0},
@@ -215,7 +214,6 @@ CommArray_s WizCommands[]           =
     {"learn_special_prayer", command_learn_special_prayer, 0.0},
     {"learn_spell", command_learn_spell, 0.0},
     {"logs", command_logs,   0.0},
-    {"players", command_players, 0.0},
     {"patch", command_patch,0.0},
     {"printlos", command_printlos,0.0},
     {"resistances", command_resistances, 0.0},
@@ -314,7 +312,7 @@ void cs_cmd_generic(char *buf, int len, NewSocket *ns)
     object *ob;
 
     /* we assume that our slash command is always a zero terminated string */
-    if (!buf || !len || buf[len] != 0 || !pl || !pl->ob || ns->status >= Ns_Zombie)
+    if (!buf || !len || buf[len] != 0 || !pl || !pl->ob || ns->status != Ns_Playing)
     {
         ns->status = Ns_Dead;
         return;
@@ -368,7 +366,7 @@ void cs_cmd_setup(char *buf, int len, NewSocket *ns)
     char   *cmd, *param, tmpbuf[MAX_DATA_TAIL_LENGTH+128], *cmdback;
 
     /* lets do some sanity checks */
-    if (!buf || ns->status != Ns_Add || !len || buf[len-1] != 0)
+    if (!buf || ns->status != Ns_Login || !len || buf[len-1] != 0)
     {
         LOG(llevInfo, "HACKBUG: invalid setup data part from %s (%x %d %d)\n",
             STRING_SAFE(ns->ip_host), buf, len, buf[len-1]);
@@ -400,6 +398,9 @@ void cs_cmd_setup(char *buf, int len, NewSocket *ns)
     *((uint32*) (cmdback+2)) = 0x04030201;
 
     cmdback[6] = 0; /* faked string end so we can simply strcat below */
+
+    /* ac = account creation, fc = faces & server data can be polled */
+    strcat(cmdback, "ac 1 fc 1 ");
 
     for (s = 0; s < len;)
     {
@@ -636,91 +637,13 @@ void cs_cmd_setup(char *buf, int len, NewSocket *ns)
 }
 
 
-/* The client has requested to be added to the game.  This is what
-* takes care of it.  We tell the client how things worked out.
-* TODO: addme will be our one and only "put us in the game" function.
-* It will be extended with options, works as a "addme login <playername> <password>"
-* or a "addme create <playernam> <password> <data...>".
-* The whole system of name request will be removed - also the dreaded add
-* of "fake" player structs before the server knows which player should added.
-* For the initial binary protocol, we leave this for now to make things easier.
-*  MT-2008
-*/
-void cs_cmd_addme(char *buf, int len, NewSocket *ns)
-{
-    player     *pl=NULL;
-
-    /* add_player() will move the login to the next step - adding a "connect"
-    * as a uninitialized player AND send a get_name() which is "tell me your name".
-    * ->addme flag is only a temp flag for the socket loop - because we close here
-    * the socket or, when all is ok, we change to Ns_Login mode.
-    */
-    if (!ns->setup || ns->status != Ns_Add || len || !(pl=add_player(ns)))
-    {
-        Write_Command_To_Socket(ns, BINARY_CMD_ADDME_FAIL);
-        ns->login_count = ROUND_TAG+(uint32)(10.0f * pticks_second);
-        ns->status = Ns_Zombie; /* we hold the socket open for a *bit* */
-        ns->idle_flag = 1;
-
-    }
-    else
-    {
-        /* lets preset our old socket so it can be given back */
-        ns->addme = 1; /* mark the old socket as invalid */
-        ns = &pl->socket; /* map us to our copied socket - command queue was copied too! */
-
-        Write_Command_To_Socket(ns, BINARY_CMD_ADDME_SUC);
-        LOG(llevDebug, "addme_cmd(): socket %d\n", ns->fd);
-    }
-}
-
-/* This is a reply to a previous query. */
-void cs_cmd_reply(char *buf, int len, NewSocket *ns)
-{
-    player *pl = ns->pl;
-    char    write_buf[MAX_BUF];
-
-    if (!buf || !len || !pl || ns->status >= Ns_Zombie)
-    {
-        ns->status = Ns_Dead;
-        return;
-    }
-
-    strcpy(write_buf, ":");
-    strncat(write_buf, buf, 250);
-    write_buf[250] = 0;
-    ns->ext_title_flag = 1;
-
-    switch (pl->state)
-    {
-    case ST_PLAYING:
-        ns->status = Ns_Dead;
-        LOG(llevBug, "BUG: Got reply message with ST_PLAYING input state (player %s)\n", query_name(pl->ob));
-        break;
-
-    case ST_GET_NAME:
-        receive_player_name(pl->ob, MAX_PLAYER_NAME, write_buf+1);
-        break;
-
-    case ST_GET_PASSWORD:
-    case ST_CONFIRM_PASSWORD:
-        receive_player_password(pl->ob, MAX_PLAYER_NAME, write_buf);
-        break;
-
-    default:
-        ns->status = Ns_Dead;
-        LOG(llevBug, "BUG: Unknown input state: %d\n", pl->state);
-        break;
-    }
-}
-
 /* request a srv_file! */
 void cs_cmd_file(char *buf, int len, NewSocket *ns)
 {
     int id;
 
     /* *only* allow this command between the first login and the "addme" command! */
-    if (!ns->setup || ns->status != Ns_Add || !buf || len != 1)
+    if (!ns->setup || ns->status != Ns_Login || !buf || len != 1)
     {
         LOG(llevInfo, "RF: received bad rf command for IP:%s\n", STRING_SAFE(ns->ip_host));
         ns->status = Ns_Dead;
@@ -804,7 +727,7 @@ void cs_cmd_moveobj(char *buf, int len, NewSocket *ns)
     tag_t loc, tag;
     long nrof;
 
-    if (!buf || len< 3*PARM_SIZE_INT || !pl || ns->status >= Ns_Zombie)
+    if (!buf || len< 3*PARM_SIZE_INT || !pl || ns->status != Ns_Playing)
     {
         ns->status = Ns_Dead;
         return;
@@ -817,35 +740,13 @@ void cs_cmd_moveobj(char *buf, int len, NewSocket *ns)
     esrv_move_object(pl->ob, loc, tag, nrof);
 }
 
-
-void cs_cmd_newchar(char *buf, int len, NewSocket *ns)
-{
-    player *pl = ns->pl;
-
-    if (!buf || !len || len > MAX_BUF || !pl || !pl->ob || ns->status >= Ns_Zombie)
-    {
-        ns->status = Ns_Dead;
-        return;
-    }
-
-    if (pl->state != ST_CREATE_CHAR)
-    {
-        LOG(llevDebug, "SHACK:: %s: command_new_char send at from time\n", query_name(pl->ob));
-        ns->status = Ns_Dead;
-        return;
-    }
-
-    command_new_char(buf, len, pl);
-}
-
 #ifdef SERVER_SEND_FACES
 
 void cs_cmd_face(char *params, int len, NewSocket *ns)
 {
-    player *pl = ns->pl;
     short face;
 
-    if (!pl || ns->status >= Ns_Zombie || !params || len< (PARM_SIZE_SHORT) )
+    if (!ns->setup || ns->status >= Ns_Zombie || !params || len< (PARM_SIZE_SHORT) )
     {
         ns->status = Ns_Dead;
         return;
@@ -862,7 +763,7 @@ void cs_cmd_move(char *buf, int len, NewSocket *ns)
     player *pl = ns->pl;
     int dir, mode;
 
-    if (!buf || len<(PARM_SIZE_CHAR*2) || !pl || !pl->ob || ns->status >= Ns_Zombie)
+    if (!buf || len<(PARM_SIZE_CHAR*2) || !pl || !pl->ob || ns->status != Ns_Playing)
     {
         ns->status = Ns_Dead;
         return;
@@ -896,7 +797,7 @@ void cs_cmd_examine(char *buf, int len, NewSocket *ns)
     object *op;
     long    tag;
 
-    if (!buf || len<PARM_SIZE_INT || !pl || ns->status >= Ns_Zombie)
+    if (!buf || len<PARM_SIZE_INT || !pl || ns->status != Ns_Playing)
     {
         ns->status = Ns_Dead;
         return;
@@ -920,7 +821,7 @@ void cs_cmd_apply(char *buf, int len, NewSocket *ns)
     object *op;
     player *pl = ns->pl;
 
-    if (!buf || len<PARM_SIZE_INT || !pl || ns->status >= Ns_Zombie)
+    if (!buf || len<PARM_SIZE_INT || !pl || ns->status != Ns_Playing)
     {
         ns->status = Ns_Dead;
         return;
@@ -958,7 +859,7 @@ void cs_cmd_lock(char *data, int len, NewSocket *ns)
     player *pl = ns->pl;
     object *op;
 
-    if (!data || len < (PARM_SIZE_CHAR+PARM_SIZE_INT) || !pl || !pl->ob || ns->status >= Ns_Zombie)
+    if (!data || len < (PARM_SIZE_CHAR+PARM_SIZE_INT) || !pl || !pl->ob || ns->status != Ns_Playing)
     {
         ns->status = Ns_Dead;
         return;
@@ -993,7 +894,7 @@ void cs_cmd_mark(char *data, int len, NewSocket *ns)
     object *op;
     player *pl = ns->pl;
 
-    if (!data || len<PARM_SIZE_INT || !pl || !pl->ob || ns->status >= Ns_Zombie)
+    if (!data || len<PARM_SIZE_INT || !pl || !pl->ob || ns->status != Ns_Playing)
     {
         ns->status = Ns_Dead;
         return;
@@ -1027,7 +928,7 @@ void cs_cmd_talk(char *data, int len, NewSocket *ns)
 {
     player *pl = ns->pl;
 
-    if (!data || len<2 || !pl || !pl->ob || ns->status >= Ns_Zombie)
+    if (!data || len<2 || !pl || !pl->ob || ns->status != Ns_Playing)
     {
         ns->status = Ns_Dead;
         return;
@@ -1061,8 +962,8 @@ void cs_cmd_fire(char *params, int len, NewSocket *ns)
     player *pl = ns->pl;
     object *op;
 
-    if (!pl || !pl->ob || ns->status >= Ns_Zombie || !params
-        || len<(2*PARM_SIZE_INT+PARM_SIZE_CHAR) || params[len] != 0)
+    if (!pl || !pl->ob || ns->status != Ns_Playing || !params
+        || len<(2*PARM_SIZE_INT+PARM_SIZE_CHAR) || params[len-1])
     {
         ns->status = Ns_Dead;
         return;
@@ -1092,4 +993,334 @@ void cs_cmd_fire(char *params, int len, NewSocket *ns)
         op->anim_enemy_dir = dir;
     else
         op->anim_enemy_dir = op->facing;
+}
+
+
+/* must be called from create account to mark a name as been taken */
+void cs_cmd_checkname(char *buf, int len, NewSocket *ns)
+{
+    int name_len, i, ret = ACCOUNT_STATUS_OK;
+    const char *hash_name = NULL;
+    char filename[MAX_BUF];
+
+    if (ns->pl_account.nrof_chars == ACCOUNT_MAX_PLAYER || !buf
+                    || len<(PARM_SIZE_CHAR*3) || buf[len-1] || ns->status != Ns_Login)
+    {
+        ns->status = Ns_Dead;
+        return;
+    }
+
+    name_len = strlen(buf);
+    if(name_len < MIN_ACCOUNT_NAME || name_len > MAX_ACCOUNT_NAME)
+    {
+        ns->status = Ns_Dead;
+        return;
+    }
+
+    /* the client should block any invalid name - if we have one here its bogus */
+    if(!name_valid(buf))
+    {
+        ns->status = Ns_Dead;
+        return;
+    }
+
+    /* first, check its a already used account name */
+    sprintf(filename, "%s/%s/%s/%s/%s.acc", settings.localdir, settings.accountdir, get_subdir(buf), buf, buf);
+    hash_name = add_string(buf);
+    /* perhaps this socket tried twice? delete any previous try */
+    FREE_AND_CLEAR_HASH(ns->pl_account.create_name);
+
+    /* lets check the name is in use - we don't must browse the player list, we don't allow
+     * to play without the char was created with player file anymore.
+     */
+    if (access(filename, F_OK) == 0)
+        ret = ACCOUNT_STATUS_EXISTS;
+    else /* now check every connected socket */
+    {
+        for (i = 1; i < socket_info.allocated_sockets; i++)
+        {
+            /* check only connected sockets */
+            if (init_sockets[i].status > Ns_Avail && init_sockets[i].status < Ns_Zombie )
+            {
+                if(hash_name == init_sockets[i].pl_account.create_name)
+                {
+                    ret = ACCOUNT_STATUS_EXISTS;
+                    break;
+                }
+            }
+        }
+    }
+
+    if(ret == ACCOUNT_STATUS_OK) /* nothing found... */
+    {
+        ns->pl_account.create_name = hash_name; /* we reuse the hash ref */
+    }
+    else
+    {
+        LOG(llevDebug,"Account: account_create(): Account %s already exists!\n", filename);
+        FREE_AND_CLEAR_HASH(hash_name); /* we don't use the hash ref */
+    }
+
+    account_create_msg(ns, ret);
+}
+
+/* login to a account or create it (create must have called checkname first to reserve the name */
+void cs_cmd_login(char *buf, int len, NewSocket *ns)
+{
+    char *pass;
+    account_status ret = ACCOUNT_STATUS_OK;
+    int mode, name_len, pass_len;
+
+    if (!buf || len<(PARM_SIZE_CHAR*5) || buf[len-1] || ns->status != Ns_Login)
+    {
+        ns->status = Ns_Dead;
+        return;
+    }
+
+    mode = GetChar_Buffer(buf);
+
+    name_len = strlen(buf);
+    /* we have a char + 2 string, both with 0 as endmarker - check we have 2 valid strings an a name in range */
+    if(name_len+MIN_ACCOUNT_PASSWORD+3 > len || name_len < MIN_ACCOUNT_NAME || name_len > MAX_ACCOUNT_NAME)
+    {
+        ns->status = Ns_Dead;
+        return;
+    }
+
+    pass = buf+name_len+1;
+    pass_len = strlen(pass);
+    /* is the password in right size? Don't allow pass = name and ensure name is valid */
+    if(pass_len < MIN_ACCOUNT_PASSWORD || pass_len > MAX_ACCOUNT_PASSWORD || !strcmp(buf,pass) || !name_valid(buf) )
+    {
+        ns->status = Ns_Dead;
+        return;
+    }
+
+    /* client told us to create this account */
+    if(mode == ACCOUNT_MODE_CREATE)
+    {
+        /* is the client honest? then we have checked the name */
+        if(!ns->pl_account.create_name || strcmp(buf, ns->pl_account.create_name))
+        {
+            ns->status = Ns_Dead;
+            return;
+        }
+        ret = account_create(&ns->pl_account, buf, pass);
+    }
+
+    if(ret == ACCOUNT_STATUS_OK) /* still all ok? then load this account */
+        ret = account_load(&ns->pl_account, buf, pass);
+
+    /* in any case we give now a response */
+    account_send_client(ns, ret); /* can be also "sorry, no account" */
+
+    if(ret) /* something is wrong, send a clear account command with status only */
+    {
+        /* add here a counter with temp ip ban for 30sec to avoid login hammering */
+    }
+    else /* player is logged in to his account */
+    {
+        /* only place where we go in account selection and allow newchar and addme */
+        ns->status = Ns_Account;
+    }
+}
+
+/* try to add (login) a player <name> from account logged in on socket ns */
+void cs_cmd_addme(char *buf, int len, NewSocket *ns)
+{
+    int        name_len;
+    player     *pl = NULL;
+    addme_login_msg error_msg;
+    const char *hash_name;
+
+    if (!buf || len < (MIN_PLAYER_NAME+1) || buf[len-1] || ns->status != Ns_Account)
+    {
+        ns->status = Ns_Dead;
+        return;
+    }
+
+    /* the client MUST have send us a valid name. If not we are very, very angry ... */
+    name_len = strlen(buf);
+    if(name_len < MIN_PLAYER_NAME || name_len > MAX_PLAYER_NAME || !name_valid(buf) || !player_name_valid(buf))
+    {
+        ns->status = Ns_Dead;
+        return;
+    }
+
+    hash_name = add_string(buf); /* generate a hash - used for example when we compare player names */
+
+    /* lets see the player is banned - if so don't even try to log */
+    if (check_banned(ns, hash_name, 0))
+    {
+        LOG(llevInfo, "Banned player %s tried to add. [%s]\n", hash_name, ns->ip_host);
+        error_msg = ADDME_MSG_BANNED;
+    }
+    else
+    {
+        /* lets try to login! ns is our socket, the player name must be a hash
+        * the return value will tell us player is now loaded & active or there is a problem.
+        * login_player() will put the player on the map and send all initial commands in the
+        * right order - after it, the player is already playing accept there is an error!
+        */
+        error_msg = player_load(ns, hash_name);
+
+        /* small trick - we use the socket player relink to point to the new player struct from login_player */
+        pl = ns->pl;
+        ns->pl = NULL;
+
+        /*LOG(-1,"Socket: pl->socket: %x fd:%d :: ns: %x fd:%d\n", &pl->socket, pl->socket.fd, ns, ns->fd);*/
+    }
+
+    FREE_AND_CLEAR_HASH(hash_name); /* clear this reference */
+
+    /* now check the login was a success or not */
+    if ( error_msg != ADDME_MSG_OK )
+    {
+        LOG(llevDebug, "ADDMEFAIL: login failed for %s on accout %s with error %d\n", buf, ns->pl_account.name, error_msg);
+        player_addme_failed(ns, error_msg);
+    }
+    else
+    {
+        /* forget this 2 settings and watch the socket exploding */
+        pl->socket.readbuf.toread = 0; /* mark this addme cmd as done on the copied, no active socket */
+        ns->addme = 1; /* mark the old socket as invalid because mirrored */
+
+        /* give out some more initial info */
+        start_info(pl->ob);
+        display_motd(pl->ob);
+#ifdef USE_CHANNELS
+#ifdef ANNOUNCE_CHANNELS
+        new_draw_info(NDI_UNIQUE | NDI_RED, 0, pl->ob, "We are testing out a new channel-system!\nMake sure you have a client with channel-support.\nSee forums on www.daimonin.net!");
+#endif
+#endif
+    }
+}
+
+/* Client wants create a new player. We check the name is taken or not (and the stats are ok of course).
+ * If the name is taken, we answer with an addme_fails and the player can try another name.
+ * If the stats are bad we have a hacker and we are angry again
+ * Is all ok we create the player file, add the player name to the account index, save it for security
+ * and send a new account data command to the client so it leaves char creation and presents the new
+ * account data
+ */
+void cs_cmd_newchar(char *buf, int len, NewSocket *ns)
+{
+    int     gender, race, skill_nr, name_len, ret = ADDME_MSG_OK;
+    char    filename[MAX_BUF];
+
+    if (ns->pl_account.nrof_chars == ACCOUNT_MAX_PLAYER || !buf || len < (4+MIN_PLAYER_NAME)
+                            || len > (3+MAX_PLAYER_NAME) || buf[len-1] || ns->status != Ns_Account)
+    {
+        ns->status = Ns_Dead;
+        return;
+    }
+
+    race = GetChar_Buffer(buf);
+    gender = GetChar_Buffer(buf);
+    skill_nr = GetChar_Buffer(buf);
+
+    name_len = strlen(buf);
+    if(name_len < MIN_PLAYER_NAME || name_len > MAX_PLAYER_NAME || !name_valid(buf) || !player_name_valid(buf))
+    {
+        ns->status = Ns_Dead;
+        return;
+    }
+
+    /* simple check now with a valid character name - if the player file exists the name is taken.
+     * There is no way anymore that a character can be accessed/played without a player
+     * name AND the new player file is always created instantly.
+     */
+    sprintf(filename, "%s/%s/%s/%s/%s.pl", settings.localdir, settings.playerdir, get_subdir(buf), buf, buf);
+
+    if (access(filename, F_OK) == 0)
+        ret = ADDME_MSG_TAKEN;
+    else
+    {
+        player *pl = NULL;
+
+        /* name is ok... now we have to do some work by filling up a player structure.
+         * in this way we can use the standard save_player() function which is alot more
+         * clean as trying here own stuff - we only must have now command_new_char()
+         * in the future.
+         */
+
+        ret = player_create(ns, &pl, buf, race, gender, skill_nr);
+
+        if(ret == ADDME_MSG_OK && pl)
+        {
+            /* only by OK as return value we have a valid pl pointer */
+
+            if(!player_save(pl->ob)) /* if we can't save we don't add this char to the account */
+                ret = ADDME_MSG_CORRUPT;
+
+            /* Force an out-of-loop gc to delete the player struct & object NOW */
+            pl->ob->type = DEAD_OBJECT; /* we tell the object destructor the player struct is invalid */
+            CLEAR_FLAG(pl->ob, FLAG_FRIENDLY); /* avoid friendly list handling */
+            object_gc();
+        }
+    }
+
+    if(ret == ADDME_MSG_OK)
+    {
+        /* character is valid, created and saved - now update our account data */
+        ns->pl_account.level[ns->pl_account.nrof_chars] = 1;
+        ns->pl_account.race[ns->pl_account.nrof_chars] = 2;
+        strcpy(ns->pl_account.charname[ns->pl_account.nrof_chars], buf);
+        ns->pl_account.nrof_chars += 1;
+
+        /* to ensure valid accounts we save it now */
+        account_save(&ns->pl_account, ns->pl_account.name); /* ignore problems here, we have later a 2nd try perhaps */
+
+        /* all done - now update the account info of the client */
+        account_send_client(ns, ACCOUNT_STATUS_OK); /* its always OK, we send here addme_fails when something is wrong */
+    }
+    else /* something is wrong, use addme_fails to tell it player (normally ADDME_MSG_TAKEN) */
+    {
+        player_addme_failed(ns, ret);
+    }
+}
+
+/* delete a character from an account.
+ * The player file is moved with a time tag inside the account folder for backup
+ */
+void cs_cmd_delchar(char *buf, int len, NewSocket *ns)
+{
+    int name_len, ret;
+
+    if (!ns->pl_account.nrof_chars || !buf || len < (1+MIN_PLAYER_NAME)
+                                || len > (1+MAX_PLAYER_NAME) || buf[len-1] || ns->status != Ns_Account)
+    {
+        ns->status = Ns_Dead;
+        return;
+    }
+
+    name_len = strlen(buf);
+    if(name_len < MIN_PLAYER_NAME || name_len > MAX_PLAYER_NAME || !name_valid(buf))
+    {
+        ns->status = Ns_Dead;
+        return;
+    }
+
+    /* name is ok, now try to remove from account and move the player file.
+     * account_delete_player() will take care about the flow
+     */
+    ret = account_delete_player(&ns->pl_account, buf);
+
+    /* no player with that name is part of this account.
+     * this is a hack or a nasty sync problem - the client MUST send us a name which is part of account
+     */
+    if(ret == ACCOUNT_STATUS_EXISTS)
+    {
+        ns->status = Ns_Dead;
+        return;
+    }
+
+    /* save the account and update the client in any case - if we don't do it it stays in delete wait status*/
+    account_save(&ns->pl_account, ns->pl_account.name);
+
+    if(ret != ACCOUNT_STATUS_OK) /* just tell the client we had a problem ... no need for details */
+        player_addme_failed(ns, ADDME_MSG_CORRUPT);
+
+    /* we just refresh a valid account, so force an OK status */
+    account_send_client(ns, ACCOUNT_STATUS_OK);
 }

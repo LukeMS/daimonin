@@ -25,6 +25,7 @@ VPATH = @srcdir@
 srcdir = @srcdir@
 
 SOCKSRCS = \
+	account.c\
 	commands.c\
 	connect.c \
 	init.c \

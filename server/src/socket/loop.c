@@ -127,22 +127,22 @@ static int pre_process_command(NewSocket *nsock) // use this for debugging
     /* TODO: disabled and unused commands */
     if(cmd == CLIENT_CMD_PING)
     {
-        LOG(llevDebug,"BOGUS CLIENT DATA: Invalid command from socket %d: %d\n", nsock->fd, cmd);
+        LOG(llevDebug,"BOGUS CLIENT DATA: Invalid ping command from socket %d: %d\n", nsock->fd, cmd);
         nsock->status = Ns_Dead;
         return TRUE;
     }
 
     /* Login: the simplest reason to pre-process a command */
-    else if(cmd <= CLIENT_CMD_ADDME)
+    else if(cmd <= CLIENT_CMD_LOGIN)
     {
-        if(nsock->status != Ns_Add) /* only allowed at this stage! */
+        if(nsock->status != Ns_Login) /* cmds only allowed at this stage! */
         {
-            LOG(llevDebug,"BOGUS CLIENT DATA: Invalid setup from socket %d at status %d: %d\n", nsock->fd, nsock->status, cmd);
+            LOG(llevDebug,"BOGUS CLIENT DATA: Invalid cmd: %d from socket %d at status Ns_Login\n", cmd, nsock->fd);
             nsock->status = Ns_Dead;
         }
         else
         {
-            /* Here we have all the PRE login procedure functions
+            /* Here we have all account login procedure functions
              * They will take care about the right order of calling
              * itself, so we just fire them up here
              */
@@ -150,36 +150,49 @@ static int pre_process_command(NewSocket *nsock) // use this for debugging
                 cs_cmd_setup(pre_copy_cmd_data(buf), buf->toread, nsock);
             else if(cmd == CLIENT_CMD_REQUESTFILE)
                 cs_cmd_file(pre_copy_cmd_data(buf), buf->toread, nsock);
-            else if(cmd == CLIENT_CMD_ADDME)
-                cs_cmd_addme(NULL, buf->toread, nsock);
+            else if(cmd == CLIENT_CMD_CHECKNAME)
+                cs_cmd_checkname(pre_copy_cmd_data(buf), buf->toread, nsock);
+            else if(cmd == CLIENT_CMD_LOGIN) /* will set status to Ns_Account */
+                cs_cmd_login(pre_copy_cmd_data(buf), buf->toread, nsock);
         }
 
         return TRUE;
     }
-    else if(cmd <= CLIENT_CMD_NEWCHAR)
+    else if(cmd <= CLIENT_CMD_ADDME)
     {
-        if(nsock->status != Ns_Login) /* only allowed at this stage! */
+        if(nsock->status != Ns_Account) /* cmds only allowed at this stage! */
         {
-            LOG(llevDebug,"BOGUS CLIENT DATA: Invalid Login from socket %d at status %d: %d\n", nsock->fd, nsock->status, cmd);
+            LOG(llevDebug,"BOGUS CLIENT DATA: Invalid cmd %d from socket %d at status Ns_Account\n", cmd, nsock->fd);
             nsock->status = Ns_Dead;
         }
         else
         {
-            /* reply manages name/password login, newchar the creation of a now one
-             * TODO: kick away this bad implementation and merge this whole step with addme.
-             */
-            if(cmd == CLIENT_CMD_REPLY)
-                cs_cmd_reply(pre_copy_cmd_data(buf), buf->toread, nsock);
-            else if(cmd == CLIENT_CMD_NEWCHAR)
+            if(cmd == CLIENT_CMD_NEWCHAR)
                 cs_cmd_newchar(pre_copy_cmd_data(buf), buf->toread, nsock);
+            else if(cmd == CLIENT_CMD_DELCHAR)
+                cs_cmd_delchar(pre_copy_cmd_data(buf), buf->toread, nsock);
+            else if(cmd == CLIENT_CMD_ADDME)
+                cs_cmd_addme(pre_copy_cmd_data(buf), buf->toread, nsock);
         }
         return TRUE;
     }
     else if(cmd <= CLIENT_CMD_MOVE) /* move changes will invoke command stack manipulations */
     {
-  //      command_move(pre_copy_cmd_data(buf), buf->toread, nsock);
-    //    return TRUE;
+        /* allow as pre processed cmd only when we don't play - in the other case enqueue */
+        if(cmd == CLIENT_CMD_FACE)
+        {
+            if(nsock->status >= Ns_Login && nsock->status < Ns_Playing)
+            {
+                cs_cmd_face(pre_copy_cmd_data(buf), buf->toread, nsock);
+                return TRUE;
+            }
+        }
+        
+        /* TODO: enable command queue post flush for state move commands */
+
         /*
+        //      command_move(pre_copy_cmd_data(buf), buf->toread, nsock);
+        //    return TRUE;
         if(flag)
         {
         // TEST: we test here our binary commands.
@@ -357,6 +370,7 @@ static int socket_prepare_commands(NewSocket *ns) // use this for debugging
                 * back to the socket listener
                 */
                 ns->addme = 0;
+                /* account name ptrs are was deleted as we mirrored the socket */
                 ns->readbuf.buf = NULL;
                 ns->readbuf.len = ns->readbuf.toread = 0; /* sanity settings */
                 ns->login_count = ROUND_TAG + pticks_socket_idle; // reset idle counter
@@ -366,6 +380,14 @@ static int socket_prepare_commands(NewSocket *ns) // use this for debugging
             }
             rb->toread = 0; /* sanity setting */
             continue; /* ok, command is processed... try to fetch the next one */
+        }
+
+        if(ns->status != Ns_Playing) /* we enqueue *only* for active players! */
+        {
+            LOG(llevDebug,"BOGUS CLIENT DATA: Invalid command (%d)for NOT Ns_Playing state (%d - %d) from socket %d: %d\n", rb->cmd, Ns_Playing, ns->status, ns->fd, toread);
+            rb->len = rb->pos = 0;
+            ns->status = Ns_Dead;
+            return TRUE;
         }
 
         rb->toread = 0; /* turn off the cmd cache marker - we must do it after pre_process_command()! */
@@ -461,7 +483,7 @@ void remove_ns_dead_player(player *pl)
         }
 
         container_unlink(pl, NULL);
-        save_player(pl->ob, 0);
+        player_save(pl->ob);
 
         if (!QUERY_FLAG(pl->ob, FLAG_REMOVED))
         {
@@ -713,7 +735,7 @@ void doeric_server(int update, struct timeval *timeout)
             InitConnection(newsock, tmp_ip);
             check_ip_ban(newsock, tmp_ip);
             if(newsock->status <= Ns_Zombie) /* set from ban check */
-                newsock->status = Ns_Add;
+                newsock->status = Ns_Login;  /* enhance status from Ns_Wait to Ns_Login to allow account login */
         }
         else
             LOG(llevDebug, "Error on accept!\n");

@@ -106,7 +106,6 @@ enum
 
 /* QUCKHACK - can be removed for 1.0 */
 #define PLAYER_FILE_VERSION_DEFAULT 0
-#define PLAYER_FILE_VERSION_BETA3   1
 #define PLAYER_FILE_VERSION_BETA4   2
 
 #ifdef WIN32
@@ -123,10 +122,7 @@ typedef struct pl_player
 
     NewSocket           socket;             /* Socket information for this player */
 
-    /* WARNING!: maplevel MUST be the first struct member after socket! we use it in player.c, line 171 as
-     * marker for memset()! below this is set to 0 with memset!
-     */
-
+    /* WARNING!: maplevel MUST be the first struct member after socket! */
     /* start of hash strings ptr... */
     const char          *maplevel;              /* Name of the map the player is on */
 
@@ -136,12 +132,9 @@ typedef struct pl_player
     const char          *savebed_map;           /* map where player will respawn after death */
     const char          *orig_savebed_map;      /* map where player will respawn after death (original map) */
     const char          *orig_map;              /* Name of the map the player is on (original map) */
+    /* we store the account name here too so we can later load player from dm accounts */
+    const char          *account_name;          /* name of the account this player is part of */
     /* hash strings end*/
-
-	uint32              player_loaded       : 1;            /* this flags is set when the player is loaded from file
-															* and not just created. It is used to overrule the "no save
-															* when exp is 0" rule - which can lead inventory duping.
-															*/
 
 	uint32              name_changed        : 1;            /* If true, the player has set a name. */
 	uint32              update_los          : 1;                /* If true, update_los() in draw(), and clear */
@@ -351,7 +344,6 @@ typedef struct pl_player
 
 	char                quick_name[BIG_NAME*3];     /* thats rank + name +" the xxxx" */
 	char                ext_title[MAX_EXT_TITLE];   /* for client: <Rank> <Name>\n<Gender> <Race> <Profession> */
-	char                password[MAX_PLAYER_PASSWORD]; /* 2 (seed) + 11 (crypted) + 1 (EOS) + 2 (safety) = 16 */
 
 	usekeytype          usekeys;          /* Method for finding keys for doors */
 

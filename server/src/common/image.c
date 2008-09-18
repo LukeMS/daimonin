@@ -269,14 +269,8 @@ void read_client_images()
 }
 
 /*
-* esrv_send_face sends a face to a client if they are in pixmap mode
-* nothing gets sent in bitmap mode.
-* If nocache is true (nonzero), ignore the cache setting from the client -
-* this is needed for the askface, in which we really do want to send the
-* face (and askface is the only place that should be setting it).  Otherwise,
-* we look at the facecache, and if set, send the image name.
-*/
-/* return: 0 - all ok. 1: face nr out of bound, 2: face data not avaible
+* esrv_send_face sends a face to a client 
+* return: 0 - all ok. 1: face nr out of bound, 2: face data not avaible
 * define in global.h:
 * #define SEND_FACE_OK 0
 * #define SEND_FACE_OUT_OF_BOUNDS 1
@@ -302,12 +296,7 @@ int esrv_send_face(NewSocket *ns, short face_num, int nocache)
 
 	if (!nocache)
 	{
-		if (ns->image2)
-			cmdmode = BINARY_CMD_FACE2;
-		else if (ns->sc_version >= 1026)
-			cmdmode = BINARY_CMD_FACE1;
-		else
-			cmdmode = BINARY_CMD_FACE;
+		cmdmode = BINARY_CMD_FACE1;
 
 		SOCKBUF_REQUEST_BUFFER(ns, SOCKET_SIZE_MEDIUM);
 
@@ -322,10 +311,7 @@ int esrv_send_face(NewSocket *ns, short face_num, int nocache)
 	}
 	else
 	{
-		if (ns->image2)
-			cmdmode = BINARY_CMD_IMAGE2;
-		else
-			cmdmode = BINARY_CMD_IMAGE;
+		cmdmode = BINARY_CMD_IMAGE;
 
 		SOCKBUF_REQUEST_BUFFER(ns, SOCKET_SIZE_MEDIUM);
 

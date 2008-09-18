@@ -33,10 +33,10 @@
 typedef struct _gmaster_struct
 {
     char                    entry[196]; /* unparsed gmaster_file entry for this node */
-    char                    host[128];
-    char                    name[16]; /* MAX_PLAYER_NAME + 1 - i want move this to 2^x border */
-    char                    password[MAX_PLAYER_PASSWORD];
-    int                        mode;    /* What is this entry? DM, VOL, GM? */
+    char                    host[MAX_BUF];
+    char                    name[MAX_PLAYER_NAME+1];
+    char                    password[MAX_ACCOUNT_PASSWORD+1];
+    int                     mode;    /* What is this entry? DM, VOL, GM? */
 } gmaster_struct;
 
 #endif

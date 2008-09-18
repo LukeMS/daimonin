@@ -586,6 +586,7 @@ int link_player_skill(object *pl, object *skillop)
 
 int learn_skill(object *pl, object *scroll, char *name, int skillnr, int scroll_flag)
 {
+    player      *p;
     object     *tmp;
     archetype  *skill           = NULL;
     int         has_meditation  = 0;
@@ -594,6 +595,7 @@ int learn_skill(object *pl, object *scroll, char *name, int skillnr, int scroll_
     if(pl->type != PLAYER)
         return 2;
 
+    p = CONTR(pl);
     if(skillnr!= -1)
         skill = skills[skillnr].at;
     else if (scroll)
@@ -607,7 +609,8 @@ int learn_skill(object *pl, object *scroll, char *name, int skillnr, int scroll_
     skillnr = skill->clone.stats.sp;
     if(find_skill(pl,skillnr))
     {
-        new_draw_info_format(NDI_UNIQUE, 0, pl, "You already know the skill '%s'!", query_name(&skill->clone));
+        if(p && p->state == ST_PLAYING)
+            new_draw_info_format(NDI_UNIQUE, 0, pl, "You already know the skill '%s'!", query_name(&skill->clone));
         return 0;
     }
 
@@ -622,7 +625,8 @@ int learn_skill(object *pl, object *scroll, char *name, int skillnr, int scroll_
     /* disabled the meditation check for now - MT-2005 */
     if (tmp->stats.sp == SK_MELEE_WEAPON && has_meditation)
     {
-        new_draw_info(NDI_UNIQUE, 0, pl, "Your knowledge of inner peace prevents you from learning about melee weapons.");
+        if(p && p->state == ST_PLAYING)
+            new_draw_info(NDI_UNIQUE, 0, pl, "Your knowledge of inner peace prevents you from learning about melee weapons.");
         return 2;
     }
     /* now a random change to learn, based on player Int */
@@ -631,11 +635,14 @@ int learn_skill(object *pl, object *scroll, char *name, int skillnr, int scroll_
     insert_ob_in_ob(tmp, pl);
     CONTR(pl)->skill_ptr[tmp->stats.sp] = tmp;
     link_player_skill(pl, tmp);
-    play_sound_player_only(CONTR(pl), SOUND_LEARN_SPELL, SOUND_NORMAL, 0, 0);
-    new_draw_info_format(NDI_UNIQUE, 0, pl, "You have learned the skill %s!", tmp->name);
 
-    send_skilllist_cmd(pl, tmp, SPLIST_MODE_ADD);
-    esrv_send_item(pl, tmp);
+    if(p && p->state == ST_PLAYING)
+    {
+        play_sound_player_only(CONTR(pl), SOUND_LEARN_SPELL, SOUND_NORMAL, 0, 0);
+        new_draw_info_format(NDI_UNIQUE, 0, pl, "You have learned the skill %s!", tmp->name);
+        send_skilllist_cmd(pl, tmp, SPLIST_MODE_ADD);
+        esrv_send_item(pl, tmp);
+    }
 
     return 1;
 }

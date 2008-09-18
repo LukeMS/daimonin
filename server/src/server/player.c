@@ -33,7 +33,7 @@
  */
 player * find_player(char *plname)
 {
-    char name[MAX_PLAYER_NAME > (16 - 1) ? MAX_PLAYER_NAME + 1 : 16];
+    char name[MAX_PLAYER_NAME+1];
     const char *name_hash;
 
     int name_len = strlen(plname); /* we assume a legal string */
@@ -97,130 +97,49 @@ void display_motd(object *op)
 #endif
 }
 
-int playername_ok(char *cp)
+/* check we have only valid chars in our name.
+ * Works for acocunts as for player names
+ * player names have another check in player_name_valid()
+ */
+int name_valid(char *cp)
 {
     char *tmp=cp;
 
-    if(*cp==' ') /* we start with a whitespace? in this case we don't trim - kick*/
-        return 0;
+    if(strchr(cp,' ')) /* we have any ' ' char? Then its invalid*/
+        return FALSE;
 
     for(;*cp!='\0';cp++)
     {
         if(!((*cp>='a'&&*cp<='z')||(*cp>='A'&&*cp<='Z'))&&*cp!='-'&&*cp!='_')
-            return 0;
+            return FALSE;
+    }
+
+    return TRUE;
+}
+
+/* same as above, just we check we have the right lower/upper name format 
+ * and no forbidden names
+ */
+int player_name_valid(char *cp)
+{
+    char *tmp=cp;
+
+    /* we want the format "Foo". Not allowed are "foo", "FOo" or "foO" */
+    if(*cp != toupper(*cp))
+        return FALSE;
+
+    for(++cp;*cp!='\0';cp++)
+    {
+        if(*cp != tolower(*cp))
+            return FALSE;
     }
 
     /* we don't want some special names & keywords here. */
-    if(!strcasecmp(tmp,"on") || !strcasecmp(tmp,"off") || !strcasecmp(tmp,"allow"))
-        return 0;
-    return 1;
-}
+    /* TODO: add here a complete "forbidden name" mechanisn */
+    if(!strcasecmp(tmp,"fuck") || !strcasecmp(tmp,"off") || !strcasecmp(tmp,"allow"))
+        return FALSE;
 
-/* Redo this to do both get_player_ob and get_player.
- * Hopefully this will be less bugfree and simpler.
- * Returns the player structure.  If 'p' is null,
- * we create a new one.  Otherwise, we recycle
- * the one that is passed.
- */
-player *get_player(player *p)
-{
-    static archetype *p_arch = NULL;
-    object *op  = NULL;
-    int     i;
-
-    /* we need this to assign a "standard player object" - at this
-     * moment a player is login in we have not loaded the player file
-     * and no idea about the true object
-     */
-    if(!p_arch)
-        p_arch = find_archetype("human_male");
-
-    if (!p)
-    {
-        p = (player *) get_poolchunk(pool_player);
-        memset(p, 0, sizeof(player));
-        if (p == NULL)
-            LOG(llevError, "ERROR: get_player(): out of memory\n");
-
-        player_active++; /* increase player count */
-        if(player_active_meta < player_active)
-            player_active_meta = player_active;
-
-        if (!last_player)
-            first_player = last_player = p;
-        else
-        {
-            last_player->next = p;
-            p->prev = last_player;
-            last_player = p;
-        }
-    }
-    else
-    {
-        /* Clears basically the entire player structure except
-         * for next and socket.
-         */
-        memset((void *) ((char *) p + offsetof(player, maplevel)), 0, sizeof(player) - offsetof(player, maplevel));
-    }
-
-    /* There are some elements we want initialized to non zero value -
-     * we deal with that below this point.
-     */
-    p->group_id = GROUP_NO;
-
-#ifdef AUTOSAVE
-    p->last_save_tick = 9999999;
-#endif
-
-    p->gmaster_mode = GMASTER_MODE_NO;
-    p->gmaster_node = NULL;
-    p->mute_freq_shout=0;
-    p->mute_freq_say=0;
-    p->mute_counter=0;
-    p->mute_msg_count=0;
-
-    op  = arch_to_object(p_arch);
-    op->custom_attrset = p; /* this is where we set up initial CONTR(op) */
-    p->ob = op;
-    op->speed_left = 0.5;
-    op->speed = 1.0;
-    op->direction = 5;     /* So player faces south */
-    /* i let it in but there is no use atm for run_away and player */
-    op->run_away = 0; /* Then we panick... */
-
-    p->state = ST_CREATE_CHAR;
-
-    p->target_hp = -1;
-    p->target_hp_p = -1;
-    p->listening = 9;
-    p->last_weapon_sp = -1;
-    p->last_speed_enc = 0;
-    p->last_spell_fumble = 0;
-    p->update_los = 1;
-
-    FREE_AND_COPY_HASH(op->race, op->arch->clone.race);
-
-    /* Would be better of '0' was not a defined spell */
-    for (i = 0; i < NROFREALSPELLS; i++)
-        p->known_spells[i] = -1;
-
-    /* we need to clear these to -1 and not zero - otherwise,
-     * if a player quits and starts a new character, we wont
-     * send new values to the client, as things like exp start
-     * at zero.
-     */
-    for (i = 0; i < NROFSKILLGROUPS; i++)
-    {
-        p->exp_obj_ptr[i] = NULL;
-        p->last_exp_obj_exp[i] = -1;
-        p->last_exp_obj_level[i] = -1;
-    }
-
-    p->set_skill_weapon = NO_SKILL_READY; /* quick skill reminder for select hand weapon */
-    p->set_skill_archery = NO_SKILL_READY;
-    p->last_stats.exp = -1;
-
-    return p;
+    return TRUE;
 }
 
 void free_player(player *pl)
@@ -259,6 +178,11 @@ void free_player(player *pl)
      * only for the player loop and the socket its still present.
      */
 
+#ifdef USE_CHANNELS
+    /* remove player from ALL channels before player gets destroyed */
+    leaveAllChannels(pl);
+#endif
+
     if(pl->state == ST_ZOMBIE)
     {
         pl->state = ST_DEAD;
@@ -267,10 +191,6 @@ void free_player(player *pl)
         insert_ob_in_ob(pl->ob, &void_container); /* Avoid gc of the player object */
         return;
     }
-#ifdef USE_CHANNELS
-    /* remove player from ALL channels before player gets destroyed */
-    leaveAllChannels(pl);
-#endif
     /* Now remove from list of players */
     if (pl->prev)
         pl->prev->next = pl->next;
@@ -283,16 +203,8 @@ void free_player(player *pl)
         last_player = pl->prev;
     player_active--;
 
-    /* clear all hash strings */
-    FREE_AND_CLEAR_HASH(pl->instance_name);
-    FREE_AND_CLEAR_HASH(pl->group_invite_name);
-    FREE_AND_CLEAR_HASH(pl->killer);
-    FREE_AND_CLEAR_HASH(pl->savebed_map );
-    FREE_AND_CLEAR_HASH(pl->orig_savebed_map);
-    FREE_AND_CLEAR_HASH(pl->maplevel );
-    FREE_AND_CLEAR_HASH(pl->orig_map);
 
-    if(pl->socket.status != (enum Sock_Status)ST_SOCKET_NO)
+    if(pl->socket.status != Ns_Disabled)
         free_newsocket(&pl->socket);
 
     if (pl->ob)
@@ -305,35 +217,21 @@ void free_player(player *pl)
     }
 }
 
-/* Tries to add player on the connection passwd in ns.
- * All we can really get in this is some settings like host and display
- * mode.
+/* called from gc - we remove here the last allocated memory 
+ * and release the hash strings
  */
-
-player *add_player(NewSocket *ns)
+void destroy_player_struct(player *pl)
 {
-    player *p;
-
-    p = get_player(NULL);
-    if(!p)
-        return NULL;
-
-    /* we move the socket to the one inside the player */
-    memcpy(&p->socket, ns, sizeof(NewSocket));
-    p->socket.pl = p;
-    p->socket.status = Ns_Login; /* now, we start the login procedure! */
-    p->socket.below_clear = 0;
-    p->socket.update_tile = 0;
-    p->socket.look_position = 0;
-
-    start_info(p->ob);
-    get_name(p->ob, 0); /* start a nice & clean login */
-
-    insert_ob_in_ob(p->ob, &void_container); /* Avoid gc of the player */
-
-    return p;
+    /* clear all hash strings */
+    FREE_AND_CLEAR_HASH(pl->instance_name);
+    FREE_AND_CLEAR_HASH(pl->group_invite_name);
+    FREE_AND_CLEAR_HASH(pl->killer);
+    FREE_AND_CLEAR_HASH(pl->savebed_map );
+    FREE_AND_CLEAR_HASH(pl->orig_savebed_map);
+    FREE_AND_CLEAR_HASH(pl->maplevel );
+    FREE_AND_CLEAR_HASH(pl->orig_map);
+    FREE_AND_CLEAR_HASH(pl->account_name);
 }
-
 
 void give_initial_items(object *pl, struct oblnk *items)
 {
@@ -387,7 +285,15 @@ void give_initial_items(object *pl, struct oblnk *items)
                 CLEAR_FLAG(op, FLAG_CURSED);
                 CLEAR_FLAG(op, FLAG_DAMNED);
             }
-            manual_apply(pl, op,0);
+
+            /* WARNING: we force here the flag "applied" without calling manual_apply().
+             * We do this to avoid apply messages & commands send to the client - item applying
+             * is normally an action which works ONLY for active playing character.
+             * We must ensure here, that our applyable startup items don't trigger deeper
+             * game engine effects like items set function, scripts and such.
+             * they will not trigger here and are so a source of possible bugs.
+             */
+            SET_FLAG(op, FLAG_APPLIED);
         }
 
         /* Give starting characters identified, uncursed, and undamned
@@ -402,46 +308,6 @@ void give_initial_items(object *pl, struct oblnk *items)
         }
     } /* for loop of objects in player inv */
 }
-
-
-/*
- * value can be:
- * 0= name is not taken, no player with that name in the system
- * 1= name is blocked and login to this name is not allowed (is in creating or system use)
- * 2= name is taken and its logged in right now
- * 3= name is taken and banned
- * 4= name is taken and not logged in
- * 5= illegal password
- * 6= verify password don't match
- */
-void get_name(object *op, int value)
-{
-    char buf[8];
-
-    sprintf(buf, "QN%d", value);
-    CONTR(op)->state = ST_GET_NAME;
-    send_query(&CONTR(op)->socket, CS_QUERY_HIDEINPUT, buf);
-}
-
-/* if we are here, the login name is valid */
-void get_password(object *op, int value)
-{
-    char buf[8];
-
-    sprintf(buf, "QP%d", value);
-    CONTR(op)->state = ST_GET_PASSWORD;
-    send_query(&CONTR(op)->socket, CS_QUERY_HIDEINPUT, buf);
-}
-
-void confirm_password(object *op, int value)
-{
-    char buf[8];
-
-    sprintf(buf, "QV%d", value);
-    CONTR(op)->state = ST_CONFIRM_PASSWORD;
-    send_query(&CONTR(op)->socket, CS_QUERY_HIDEINPUT, buf);
-}
-
 
 void flee_player(object *op)
 {
@@ -1110,68 +976,8 @@ void kill_player(object *op)
      */
     /*STATS_EVENT(STATS_EVENT_PLAYER_DEATH, op->name);*/
     new_draw_info(NDI_UNIQUE, 0, op, "YOU HAVE DIED.");
-    save_player(op, 1);
+    player_save(op);
     return;
-#endif
-
-    /* If NOT_PERMADETH is set, then the rest of this is not reachable.  This
-     * should probably be embedded in an else statement.
-     */
-
-    new_draw_info(NDI_UNIQUE | NDI_ALL, 0, NULL, buf);
-    if (pl->golem != NULL)
-    {
-        send_golem_control(pl->golem, GOLEM_CTR_RELEASE);
-        destruct_ob(pl->golem);
-        pl->golem = NULL;
-    }
-    loot_object(op); /* Remove some of the items for good */
-    remove_ob(op);
-    check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
-    op->direction = 0;
-    if (!QUERY_FLAG(op, FLAG_WIZ) && op->stats.exp)
-    {
-        delete_character(op->name);
-#ifndef NOT_PERMADEATH
-#ifdef RESURRECTION
-        /* save playerfile sans equipment when player dies
-        ** then save it as player.pl.dead so that future resurrection
-        ** type spells will work on them nicely
-        */
-        op->stats.hp = op->stats.maxhp_adj;
-        op->stats.food = 999;
-
-        /*  set the location of where the person will reappear when  */
-        container_unlink(pl, NULL);
-        save_player(op, 1);
-        op->map = map;
-        /* please see resurrection.c: peterm */
-        dead_player(op);
-#endif
-#endif
-    }
-    /*play_again(op);*/
-    pl->socket.status = Ns_Dead;
-#ifdef NOT_PERMADEATH
-    tmp = arch_to_object(find_archetype("gravestone"));
-    sprintf(buf, "%s's gravestone", op->name);
-    FREE_AND_COPY_HASH(tmp->name, buf);
-    sprintf(buf, "RIP\nHere rests the hero %s the %s,\nwho was killed by %s.\n", op->name, op->title?op->title:op->race,
-            pl->killer?pl->killer:"bad luck");
-    FREE_AND_COPY_HASH(tmp->msg, buf);
-    tmp->x = x,tmp->y = y;
-    insert_ob_in_map(tmp, map, NULL, 0);
-#else
-    /*  peterm:  added to create a corpse at deathsite.  */
-    /*
-       tmp=arch_to_object(find_archetype("corpse_pl"));
-       sprintf(buf,"%s", op->name);
-       FREE_AND_COPY_HASH(tmp->name,buf);
-       tmp->level=op->level;
-       tmp->x=x;tmp->y=y;
-       FREE_AND_COPY_HASH(tmp->msg, gravestone_text(op));
-       insert_ob_in_map (tmp, map, NULL,0);
-    */
 #endif
 }
 

@@ -48,13 +48,14 @@
  */
 enum Sock_Status
 {
-    Ns_Avail,
-    Ns_Wait,
-    Ns_Add,
-    Ns_Login,
-    Ns_Playing,
-    Ns_Zombie,
-    Ns_Dead
+    Ns_Disabled=-1, /* special case value to mark a socket disabled without valid data! */
+    Ns_Avail=0,     /* socket is allocated, clean & unused */
+    Ns_Wait,        /* this socket is listen for a new connection */
+    Ns_Login,       /* this socket is connected, client is in the setup/send account name&password chain */
+    Ns_Account,     /* socket has loaded account data and allows character selection/creation/deletion */
+    Ns_Playing,     /* there is a loaded player. ->pl is valid and client is playing with a character */
+    Ns_Zombie,      /* we disabled every communication but hold the connection */
+    Ns_Dead         /* we mark the socket as invalid and dead - socket low level will close connection ASAP */
 };
 
 /* temp. use for read */
@@ -164,11 +165,24 @@ typedef struct _command_struct
         char            *buf;       /* the data tail when len > 0 */
 } command_struct;
 
+typedef struct _account
+{
+    const char *name;                   /* account name */
+    const char *create_name;            /* this works like a semaphor and reserves the name for creating an new account */
+    int         nrof_chars;             /* number of chars this account is holding */
+    int         level[ACCOUNT_MAX_PLAYER];      /* level of the char: if level == 0, then the entry is free */
+    int         race[ACCOUNT_MAX_PLAYER];       /* race of player */
+    char        charname[ACCOUNT_MAX_PLAYER][MAX_PLAYER_NAME+1]; /* all the players this account owns. we don't use hashes */
+    char        pwd[MAX_ACCOUNT_PASSWORD+1];    /* we save here the password for writing back or changing */
+} Account;
+
+/* Note: Take care when setting or deleting socket - account_data can hold hash strings references */
 typedef struct NewSocket_struct
 {
         int                 fd;
         struct pl_player    *pl;                /* if != NULL this socket is part of a player struct */
-        command_struct      *cmd_start;          /* pointer to the list of incoming commands in process */
+        struct _account     pl_account;            /* every socket is related to an account or waiting for one */ 
+        command_struct      *cmd_start;         /* pointer to the list of incoming commands in process */
         command_struct      *cmd_end;
 		sockbuf_struct      *sockbuf_start;		/* pointer to the list of prepared outgoing packages in process */
 		sockbuf_struct      *sockbuf_end;

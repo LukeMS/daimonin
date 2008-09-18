@@ -187,10 +187,6 @@ typedef signed long long   sint64;
 #define GET_INV_ANIMATION(ob,anim) (animations[ob->inv_animation_id].faces[anim])
 #define GET_INV_ANIM_ID(ob) (ob->inv_animation_id)
 
-
-#define MAX_PLAYER_NAME        12
-#define MAX_PLAYER_PASSWORD    16
-
 #define GET_LEVEL_EXP(_level_) new_levels[_level_]
 
 #define RESTING_DEFAULT_SEC_TIMER 7    /* start rapid regeneration x second after sitting down */
@@ -360,6 +356,7 @@ typedef struct linked_char
     struct linked_char *next;
 } linked_char;
 
+#include "protocol.h" /* this is a shared header between server & client! defines & macros only! */
 #include "loader.h"
 #include "face.h"
 #include "aggro.h"
@@ -382,7 +379,6 @@ typedef struct linked_char
 #include "stats.h"
 
 /* Pull in the socket structure - used in the player structure */
-#include "protocol.h" /* this is a shared header between server & client! */
 #include "newserver.h"
 #include "newclient.h"
 
@@ -441,6 +437,7 @@ typedef struct ban_struct
 
 typedef struct Settings
 {
+    int                             player_races;       /* number of player race arches in client_settings */
     int                             mutelevel;          /* default FALSE - if TRUE player < level 2 can't shout */
     int                             login_allow;        /* if set to FALSE, login_ip is checked */
     char                           *login_ip;           /* ip for login_allow */
@@ -454,6 +451,7 @@ typedef struct Settings
     char                           **argv;              /* Only used by xio.c, so will go away at some time */
     char                           *datadir;            /* read only data files */
     char                           *localdir;           /* read/write data files */
+    char                           *accountdir;         /* Where the player files are */
     char                           *playerdir;          /* Where the player files are */
     char                           *instancedir;        /* Where the instance map files are */
     char                           *mapdir;             /* Where the map files are */
@@ -470,7 +468,7 @@ typedef struct Settings
     /* The meta_ is information for the metaserver.  These are set in
      * the lib/settings file.
      */
-    uint8                           meta_on : 1;        /* True if we should send updates */
+    int                             meta_on : 1;        /* True if we should send updates */
     char                            meta_server[MAX_BUF]; /* Hostname/ip addr of the metaserver */
 	char                            meta_name[MAX_BUF];   /* Servername listed in the meta server list */
     char                            meta_host[MAX_BUF]; /* Hostname of this host */
@@ -485,6 +483,20 @@ typedef struct Settings
     uint16                          dynamiclevel;       /* how dynamic is the world? */
 } Settings;
 
+typedef struct _player_arch_template
+{
+    archetype   *p_arch[4];
+    int   str;  /* these stats points overrule the arch settings for easy player customizing */
+    int   dex;
+    int   con;
+    int   intel;
+    int   wis;
+    int   pow;
+    int   cha;
+} player_arch_template;
+
+/* increase when you add more as 12 player races to client_settings */
+#define MAX_PLAYER_ARCH     (12*4)
 
 /*****************************************************************************
  * GLOBAL VARIABLES:                                                         *
@@ -499,6 +511,7 @@ extern int                      freearr_y[SIZEOFFREE];
 extern int                      maxfree[SIZEOFFREE];
 extern int                      freedir[SIZEOFFREE];
 extern Settings                 settings;
+extern player_arch_template     player_arch_list[MAX_PLAYER_ARCH];
 
 extern int                      global_darkness_table[MAX_DARKNESS + 1];
 extern spell                    spells[NROFREALSPELLS];
@@ -563,7 +576,6 @@ EXTERN racelink                *first_race;
  * Variables set by different flags (see init.c):
  */
 EXTERN long                     init_done;          /* Ignores signals until init_done is true */
-EXTERN long                     trying_emergency_save;  /* True when emergency_save() is reached */
 EXTERN long                     nroferrors;     /* If it exceeds MAX_ERRORS, call fatal() */
 
 EXTERN unsigned long            pticks;                 /* this is the global round counter. Every main loop pticks=pticks+1 */

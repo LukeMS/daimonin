@@ -63,7 +63,7 @@ int read_socket_buffer(NewSocket *ns)
 	stat_ret = read(ns->fd, sl->buf + tmp, read_bytes);
 #endif
 
-	LOG(-1,"READ(%d)(%d): %d\n", ROUND_TAG, ns->fd, stat_ret);
+    LOG(-1,"READ(tick: %d)(FD: %x / %d): %d\n", ROUND_TAG, ns, ns->fd, stat_ret);
 
 	if (stat_ret > 0)
 		sl->len += stat_ret;
