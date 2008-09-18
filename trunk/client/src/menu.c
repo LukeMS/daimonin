@@ -1702,15 +1702,10 @@ void load_settings(void)
 
                     while (fgets(buf, HUGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
                         ;
-                    sscanf(adjust_string(buf), "%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d",
-                           &serv_char->stat_points, &serv_char->stats[0], &serv_char->stats_min[0],
-                           &serv_char->stats_max[0], &serv_char->stats[1], &serv_char->stats_min[1],
-                           &serv_char->stats_max[1], &serv_char->stats[2], &serv_char->stats_min[2],
-                           &serv_char->stats_max[2], &serv_char->stats[3], &serv_char->stats_min[3],
-                           &serv_char->stats_max[3], &serv_char->stats[4], &serv_char->stats_min[4],
-                           &serv_char->stats_max[4], &serv_char->stats[5], &serv_char->stats_min[5],
-                           &serv_char->stats_max[5], &serv_char->stats[6], &serv_char->stats_min[6],
-                           &serv_char->stats_max[6]);
+                    sscanf(adjust_string(buf), "%d %d %d %d %d %d %d\n",
+                           &serv_char->stats[0], 
+                           &serv_char->stats[1], &serv_char->stats[2], &serv_char->stats[3], 
+                           &serv_char->stats[4], &serv_char->stats[5], &serv_char->stats[6]);
 
                     while (fgets(buf, HUGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
                         ;
@@ -1728,7 +1723,7 @@ void load_settings(void)
                         ;
                     serv_char->desc[3] = malloc(strlen(adjust_string(buf)) + 1);
                     strcpy(serv_char->desc[3], buf);
-                    serv_char->skill_selected = -1;
+                    serv_char->skill_selected = 0;
 
                     /* add this char template to list */
                     if (!first_server_char)
@@ -1778,7 +1773,7 @@ void load_settings(void)
         int g;
 
         memcpy(&new_character, first_server_char, sizeof(_server_char));
-        new_character.skill_selected = -1;
+        new_character.skill_selected = 0;
         /* adjust gender */
         for (g = 0; g < 4; g++)
         {

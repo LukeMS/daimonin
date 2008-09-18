@@ -119,6 +119,16 @@ typedef enum _inventory_win
     IWIN_INV
 }   _inventory_win;
 
+typedef struct Account_Struct
+{
+    int     count; /* number of chars we have created */
+    int     selected; /* we have which character selected? */
+    char    name[ACCOUNT_MAX_PLAYER][MAX_PLAYER_NAME+1]; /* List of account chars */
+    int     level[ACCOUNT_MAX_PLAYER];
+    int     race[ACCOUNT_MAX_PLAYER];
+} Account;
+
+extern Account account;
 
 typedef struct Player_Struct
 {
@@ -206,8 +216,9 @@ typedef struct Player_Struct
     /* i cant see where we need that */
     //    char                    last_command[MAX_BUF];  /* Last command entered */
     char                    input_text[MAX_BUF];    /* keys typed (for long commands) */
-    char                    name[40];   /* name and password.  Only used while */
-    char                    password[40];   /* logging in. */
+    char                    acc_name[MAX_ACCOUNT_NAME+1];   /* account name + '\0' */
+    char                    name[MAX_PLAYER_NAME+1];        /* name of char which is selected to play */
+    char                    password[MAX_ACCOUNT_PASSWORD+1];  /* account password */
     char                    spells[255][40];    /* List of all the spells the */
     char                    target_name[MAX_BUF];   /* Rank & Name of char*/
     char                    num_text[300];

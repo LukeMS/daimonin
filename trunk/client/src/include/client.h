@@ -67,10 +67,7 @@ typedef struct _server_char
     int                     skill_selected;
     char                   *char_arch[4]; /* 4 description strings */
     int                     face_id[4];
-    int                     stat_points; /* points which can be added to char stats */
     int                     stats[7];
-    int                     stats_min[7];
-    int                     stats_max[7];
 }
 _server_char;
 
@@ -210,9 +207,9 @@ extern int      request_face(int num);
 
 extern void     SendSetupCmd(void);
 extern void     RequestFile(ClientSocket csock, int index);
-extern void     SendAddMe(void);
-extern void     send_reply(char *text);
+extern void     SendAddMe(char *name);
 extern void     send_new_char(struct _server_char *nc);
+extern void     send_del_char(char *name);
 extern void     client_send_apply(int tag);
 extern void     send_move_command(int dir, int mode);
 extern void     client_send_examine(int tag);
@@ -221,3 +218,5 @@ extern void     client_send_tell_extended(char* body, char *tail);
 extern void     send_lock_command(int mode, int tag);
 extern void     send_mark_command(int tag);
 extern void     send_fire_command(int num, int mode, char *tmp_name);
+extern void     client_send_checkname(char *buf);
+extern void     client_send_login(int mode, char *name, char *pass);

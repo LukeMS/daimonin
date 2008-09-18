@@ -1293,19 +1293,27 @@ void show_newplayer_server(void)
     sprintf(buf, "Use ~%c%c~ and ~%c%c~ cursor keys to setup your stats.", ASCII_UP, ASCII_DOWN, ASCII_RIGHT, ASCII_LEFT);
     StringBlt(ScreenSurface, &SystemFont, buf, x + 131, y + 76, COLOR_BLACK, NULL, NULL);
     StringBlt(ScreenSurface, &SystemFont, buf, x + 130, y + 75, COLOR_WHITE, NULL, NULL);
-    StringBlt(ScreenSurface, &SystemFont, "Adjust the stats using *all* your points.", x + 131, y + 89, COLOR_BLACK,
-              NULL, NULL);
-    StringBlt(ScreenSurface, &SystemFont, "Adjust the stats using *all* your points.", x + 130, y + 88, COLOR_WHITE,
-              NULL, NULL);
-    StringBlt(ScreenSurface, &SystemFont, "Press ~C~ to create your new character", x + 131, y + 101, COLOR_BLACK, NULL,
+
+    StringBlt(ScreenSurface, &SystemFont, "Press ~N~ to name your new chararcter", x + 131, y + 101, COLOR_BLACK, NULL,
               NULL);
-    StringBlt(ScreenSurface, &SystemFont, "Press ~C~ to create your new character.", x + 130, y + 100, COLOR_WHITE,
+    StringBlt(ScreenSurface, &SystemFont, "Press ~N~ to name your new chararcter", x + 130, y + 100, COLOR_WHITE,
               NULL, NULL);
 
 
     /* create button */
-    if (add_button(x + 30, y + 397, id++, BITMAP_DIALOG_BUTTON_UP, "Create", "~C~reate"))
-        check_menu_keys(MENU_CREATE, SDLK_c);
+    if(GameStatus == GAME_STATUS_ACCOUNT_CHAR_CREATE)
+    {
+        if (add_button(x + 30, y + 397, id++, BITMAP_DIALOG_BUTTON_UP, "Name", "~N~ame"))
+            check_menu_keys(MENU_CREATE, SDLK_c);
+    }
+
+    for (i = 0; i < ATT_SUM; i++)
+    {
+        sprintf(buf, "%s: %d", attribute[i].name, new_character.stats[i]);
+        StringBlt(ScreenSurface, &SystemFont, buf, x + 130, y + CREATE_Y0 + (i + 4) * 17, COLOR_WHITE, NULL, NULL);
+    }
+
+#if 0
 
     if (dialog_new_char_warn == 1)
     {
@@ -1379,7 +1387,7 @@ void show_newplayer_server(void)
             }
         }
     }
-
+#endif
     if (create_list_set.entry_nr == 0)
         StringBlt(ScreenSurface, &SystemFont, "Race:", x + 130, y + CREATE_Y0 + 0 * 17 + 2, COLOR_GREEN, NULL, NULL);
     else
@@ -1400,7 +1408,7 @@ void show_newplayer_server(void)
     {
         int g;
 
-        new_character.skill_selected = -1;
+        new_character.skill_selected = 0;
         if (delta >0)
         {
             /* try to get a new valid gender */
@@ -1529,25 +1537,51 @@ void show_newplayer_server(void)
     StringBlt(ScreenSurface, &SystemFont, buf, x + 36, y + 168, COLOR_BLACK, NULL, NULL);
     StringBlt(ScreenSurface, &SystemFont, buf, x + 35, y + 167, COLOR_WHITE, NULL, NULL);
 
-    StringBlt(ScreenSurface, &SystemFont, "W-Skill is your 'weapon skill' - the kind of weapon you are able to use." , x + 135, y + 324, COLOR_BLACK, NULL, NULL);
-    StringBlt(ScreenSurface, &SystemFont, "W-Skill is your 'weapon skill' - the kind of weapon you are able to use.", x + 134, y + 323, COLOR_WHITE, NULL, NULL);
+    if(GameStatus == GAME_STATUS_ACCOUNT_CHAR_CREATE)
+    {
+        StringBlt(ScreenSurface, &SystemFont, "W-Skill is your 'weapon skill' - the kind of weapon you are able to use." , x + 135, y + 324, COLOR_BLACK, NULL, NULL);
+        StringBlt(ScreenSurface, &SystemFont, "W-Skill is your 'weapon skill' - the kind of weapon you are able to use.", x + 134, y + 323, COLOR_WHITE, NULL, NULL);
 
-    StringBlt(ScreenSurface, &SystemFont, "There are 4 base weapon skills:" , x + 135, y + 346, COLOR_BLACK, NULL, NULL);
-    StringBlt(ScreenSurface, &SystemFont, "There are 4 base weapon skills:", x + 134, y + 345, COLOR_WHITE, NULL, NULL);
+        StringBlt(ScreenSurface, &SystemFont, "There are 4 base weapon skills:" , x + 135, y + 346, COLOR_BLACK, NULL, NULL);
+        StringBlt(ScreenSurface, &SystemFont, "There are 4 base weapon skills:", x + 134, y + 345, COLOR_WHITE, NULL, NULL);
 
+        StringBlt(ScreenSurface, &SystemFont, "* SLASH allows use of bladed weapons like swords" , x + 135, y + 358, COLOR_BLACK, NULL, NULL);
+        StringBlt(ScreenSurface, &SystemFont, "* SLASH allows use of bladed weapons like swords", x + 134, y + 357, COLOR_WHITE, NULL, NULL);
 
-    StringBlt(ScreenSurface, &SystemFont, "* SLASH allows use of bladed weapons like swords" , x + 135, y + 358, COLOR_BLACK, NULL, NULL);
-    StringBlt(ScreenSurface, &SystemFont, "* SLASH allows use of bladed weapons like swords", x + 134, y + 357, COLOR_WHITE, NULL, NULL);
+        StringBlt(ScreenSurface, &SystemFont, "* IMPACT is for mace, morningstars, clubs and hammers" , x + 135, y + 370, COLOR_BLACK, NULL, NULL);
+        StringBlt(ScreenSurface, &SystemFont, "* IMPACT is for mace, morningstars, clubs and hammers", x + 134, y + 369, COLOR_WHITE, NULL, NULL);
 
-    StringBlt(ScreenSurface, &SystemFont, "* IMPACT is for mace, morningstars, clubs and hammers" , x + 135, y + 370, COLOR_BLACK, NULL, NULL);
-    StringBlt(ScreenSurface, &SystemFont, "* IMPACT is for mace, morningstars, clubs and hammers", x + 134, y + 369, COLOR_WHITE, NULL, NULL);
+        StringBlt(ScreenSurface, &SystemFont, "* CLEAVE allows use of any sort of axes" , x + 135, y + 382, COLOR_BLACK, NULL, NULL);
+        StringBlt(ScreenSurface, &SystemFont, "* CLEAVE allows use of any sort of axes", x + 134, y + 381, COLOR_WHITE, NULL, NULL);
 
-    StringBlt(ScreenSurface, &SystemFont, "* CLEAVE allows use of any sort of axes" , x + 135, y + 382, COLOR_BLACK, NULL, NULL);
-    StringBlt(ScreenSurface, &SystemFont, "* CLEAVE allows use of any sort of axes", x + 134, y + 381, COLOR_WHITE, NULL, NULL);
+        StringBlt(ScreenSurface, &SystemFont, "* PIERCE is for daggers, degen or rapiers" , x + 135, y + 394, COLOR_BLACK, NULL, NULL);
+        StringBlt(ScreenSurface, &SystemFont, "* PIERCE is for daggers, degen or rapiers", x + 134, y + 393, COLOR_WHITE, NULL, NULL);
+    }
+    else
+    {
+        char namebuf[MAX_BUF];
 
-    StringBlt(ScreenSurface, &SystemFont, "* PIERCE is for daggers, degen or rapiers" , x + 135, y + 394, COLOR_BLACK, NULL, NULL);
-    StringBlt(ScreenSurface, &SystemFont, "* PIERCE is for daggers, degen or rapiers", x + 134, y + 393, COLOR_WHITE, NULL, NULL);
+        StringBlt(ScreenSurface, &BigFont, "Try Character Name", x + 134, y + 323, COLOR_WHITE, NULL, NULL);
+ 
+        if(GameStatus == GAME_STATUS_ACCOUNT_CHAR_NAME)
+        {
+            sprite_blt(Bitmaps[BITMAP_LOGIN_INP], x + 132, y + 345, NULL, NULL);
+            sprintf(namebuf, "%s%c", InputString, '_');
+            StringBlt(ScreenSurface, &SystemFont, namebuf, x + 138, y + 347, COLOR_WHITE, NULL, NULL);
+        }
+        else
+        {
+            SDL_Rect box;
 
+            box.x= x+132;
+            box.y= y+345;
+            box.w= 250;
+            box.h= 20;
+            SDL_FillRect(ScreenSurface, &box, sdl_gray3);
+            sprintf(namebuf, "*** WAIT: Ask server to create character %s ***", cpl.name);
+            StringBlt(ScreenSurface, &SystemFont, namebuf, x + 138, y + 347, COLOR_GREEN, NULL, NULL);
+        }
+    }
 
     StringBlt(ScreenSurface, &SystemFont, new_character.desc[0], x + 160, y + 434, COLOR_BLACK, NULL, NULL);
     StringBlt(ScreenSurface, &SystemFont, new_character.desc[0], x + 159, y + 433, COLOR_WHITE, NULL, NULL);
@@ -1647,32 +1681,42 @@ void show_login_server(void)
         return;
     StringBlt(ScreenSurface, &SystemFont, "done.", x + 2, y + 92, COLOR_WHITE, NULL, NULL);
     y += 180;
-    if (GameStatus <= GAME_STATUS_LOGIN)
+    if (GameStatus <= GAME_STATUS_LOGIN_BREAK)
     {
         StringBlt(ScreenSurface, &SystemFont, "Query for Login. Waiting...", x, y, COLOR_HGOLD, NULL, NULL);
         return;
     }
+    else if (GameStatus == GAME_STATUS_LOGIN_WAIT_NAME)
+    {
+        StringBlt(ScreenSurface, &SystemFont, "Query for new Account. Waiting...", x, y, COLOR_HGOLD, NULL, NULL);
+        return;
+    }
+    else if (GameStatus == GAME_STATUS_LOGIN_WAIT)
+    {
+        StringBlt(ScreenSurface, &SystemFont, "Query for Account. Waiting...", x, y, COLOR_HGOLD, NULL, NULL);
+        return;
+    }
     else if (GameStatus == GAME_STATUS_LOGIN_SELECT)
     {
-        if (GameStatusLogin)
+        if (GameStatusSelect == GAME_STATUS_LOGIN_ACCOUNT)
         {
             StringBlt(ScreenSurface, &BigFont, ">> Login <<", x+51, y+52, COLOR_BLACK, NULL, NULL);
             StringBlt(ScreenSurface, &BigFont, ">> Login <<", x+49, y+50, COLOR_GREEN, NULL, NULL);
-            StringBlt(ScreenSurface, &BigFont, "Create Character", x+18, y+32, COLOR_BLACK, NULL, NULL);
-            StringBlt(ScreenSurface, &BigFont, "Create Character", x+16, y+30, COLOR_WHITE, NULL, NULL);
+            StringBlt(ScreenSurface, &BigFont, "Create Account", x+18, y+32, COLOR_BLACK, NULL, NULL);
+            StringBlt(ScreenSurface, &BigFont, "Create Account", x+16, y+30, COLOR_WHITE, NULL, NULL);
         }
         else
         {
             StringBlt(ScreenSurface, &BigFont, "Login", x+72, y+52, COLOR_BLACK, NULL, NULL);
             StringBlt(ScreenSurface, &BigFont, "Login", x+70, y+50, COLOR_WHITE, NULL, NULL);
-            StringBlt(ScreenSurface, &BigFont, ">> Create Character <<", x-3, y+32, COLOR_BLACK, NULL, NULL);
-            StringBlt(ScreenSurface, &BigFont, ">> Create Character <<", x-5, y+30, COLOR_GREEN, NULL, NULL);
+            StringBlt(ScreenSurface, &BigFont, ">> Create Account <<", x-3, y+32, COLOR_BLACK, NULL, NULL);
+            StringBlt(ScreenSurface, &BigFont, ">> Create Account <<", x-5, y+30, COLOR_GREEN, NULL, NULL);
         }
         y += 160;
         StringBlt(ScreenSurface, &SystemFont,
-                  "Select ~Create Character~ for a new or ~Login~ for a saved character." ,
+                  "Select ~Create Account~ for a new or ~Login~ for a existing account." ,
                   x-10, y+1, COLOR_BLACK, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont, "Select ~Create Character~ for a new or ~Login~ for a saved character.",
+        StringBlt(ScreenSurface, &SystemFont, "Select ~Create Account~ for a new or ~Login~ for a existing account.",
                   x-11, y  , COLOR_WHITE, NULL, NULL);
         y+=12;
         sprintf(buf,"Use ~%c,%c~ to select and press then ~Return~", ASCII_UP, ASCII_DOWN);
@@ -1684,87 +1728,63 @@ void show_login_server(void)
         return;
     }
 
-    if (GameStatusLogin)
+    if (GameStatusSelect == GAME_STATUS_LOGIN_ACCOUNT)
     {
         StringBlt(ScreenSurface, &BigFont, "Login", x+72, y+2, COLOR_BLACK, NULL, NULL);
         StringBlt(ScreenSurface, &BigFont, "Login", x+70, y+0, COLOR_WHITE, NULL, NULL);
     }
     else
     {
-        StringBlt(ScreenSurface, &BigFont, "Create Character", x+18, y+2, COLOR_BLACK, NULL, NULL);
-        StringBlt(ScreenSurface, &BigFont, "Create Character", x+16, y+0, COLOR_WHITE, NULL, NULL);
+        StringBlt(ScreenSurface, &BigFont, "Create Account", x+18, y+2, COLOR_BLACK, NULL, NULL);
+        StringBlt(ScreenSurface, &BigFont, "Create Account", x+16, y+0, COLOR_WHITE, NULL, NULL);
     }
 
-    if (GameStatusLogin)
+    if (GameStatusSelect == GAME_STATUS_LOGIN_ACCOUNT)
         StringBlt(ScreenSurface, &SystemFont, "Enter your Name", x, y+20, COLOR_HGOLD, NULL, NULL);
     else
         StringBlt(ScreenSurface, &SystemFont, "Select a Name", x, y+20, COLOR_HGOLD, NULL, NULL);
 
     sprite_blt(Bitmaps[BITMAP_LOGIN_INP], x - 2, y + 35, NULL, NULL);
-    if (GameStatus == GAME_STATUS_NAME)
+    if ((GameStatus == GAME_STATUS_LOGIN_ACCOUNT || GameStatus == GAME_STATUS_LOGIN_NEW) && LoginInputStep == LOGIN_STEP_NAME)
         StringBlt(ScreenSurface, &SystemFont,
                   show_input_string(InputString, &SystemFont, Bitmaps[BITMAP_LOGIN_INP]->bitmap->w - 16), x + 2, y + 37,
                   COLOR_WHITE, NULL, NULL);
     else
-        StringBlt(ScreenSurface, &SystemFont, cpl.name, x + 2, y + 37, COLOR_WHITE, NULL, NULL);
+        StringBlt(ScreenSurface, &SystemFont, cpl.acc_name, x + 2, y + 37, COLOR_WHITE, NULL, NULL);
 
-    if (GameStatus < GAME_STATUS_PSWD)
+    if (LoginInputStep >= LOGIN_STEP_PASS1)
     {
-        if (GameStatus == GAME_STATUS_PSWD_WAIT)
-            StringBlt(ScreenSurface, &SystemFont, "sending name... waiting...", x + 2, y + 60, COLOR_WHITE, NULL, NULL);
-        else
+        StringBlt(ScreenSurface, &SystemFont, "Enter your Password", x + 2, y + 60, COLOR_HGOLD, NULL, NULL);
+        sprite_blt(Bitmaps[BITMAP_LOGIN_INP], x - 2, y + 75, NULL, NULL);
+
+        if (LoginInputStep == LOGIN_STEP_PASS1)    
         {
-            if (!GameStatusLogin)
-            {
-                StringBlt(ScreenSurface, &SystemFont, "*REMEMBER*: ~Your website account name~",x+1, y+61, COLOR_BLACK, NULL, NULL);
-                StringBlt(ScreenSurface, &SystemFont, "*REMEMBER*: ~Your website account name~",x+2, y+60, COLOR_WHITE, NULL, NULL);
-                StringBlt(ScreenSurface, &SystemFont, "                             ~is NOT your character name !~",x+1, y+71, COLOR_BLACK, NULL, NULL);
-                StringBlt(ScreenSurface, &SystemFont, "                             ~is NOT your character name !~",x+2, y+70, COLOR_WHITE, NULL, NULL);
-                StringBlt(ScreenSurface, &SystemFont, "                             ~Select a different one WITHOUT~",x+1, y+81, COLOR_BLACK, NULL, NULL);
-                StringBlt(ScreenSurface, &SystemFont, "                             ~Select a different one WITHOUT~",x+2, y+80, COLOR_WHITE, NULL, NULL);
-                StringBlt(ScreenSurface, &SystemFont, "                             ~numbers and special chars in it.~",x+1, y+91, COLOR_BLACK, NULL, NULL);
-                StringBlt(ScreenSurface, &SystemFont, "                             ~numbers and special chars in it.~",x+2, y+90, COLOR_WHITE, NULL, NULL);
-            }
+            for (i = 0; i < (int)strlen(InputString); i++)
+                buf[i] = '*';
+            buf[i++] = '_';
+            buf[i] = 0;
+            StringBlt(ScreenSurface, &SystemFont, buf, x + 2, y + 77, COLOR_WHITE, NULL, NULL);
         }
-        goto login_jmp;
-    }
-    StringBlt(ScreenSurface, &SystemFont, "Enter your Password", x + 2, y + 60, COLOR_HGOLD, NULL, NULL);
-    sprite_blt(Bitmaps[BITMAP_LOGIN_INP], x - 2, y + 75, NULL, NULL);
+        else if (LoginInputStep == LOGIN_STEP_PASS2)    
+        {
+            for (i = 0; i < (int) strlen(cpl.password); i++)
+                buf[i] = '*';buf[i] = 0;
 
-    if (GameStatus == GAME_STATUS_PSWD)
-    {
-        strcpy(buf, show_input_string(InputString, &SystemFont, Bitmaps[BITMAP_LOGIN_INP]->bitmap->w - 16));
-        for (i = 0; i < CurrentCursorPos; i++)
-            buf[i] = '*';
-        for (i = CurrentCursorPos + 1; i < (int) strlen(InputString) + 1; i++)
-            buf[i] = '*';
-        buf[i] = 0;
-        StringBlt(ScreenSurface, &SystemFont, buf, x + 2, y + 77, COLOR_WHITE, NULL, NULL);
-    }
-    else
-    {
-        for (i = 0; i < (int) strlen(cpl.password); i++)
-            buf[i] = '*';buf[i] = 0;
-        StringBlt(ScreenSurface, &SystemFont, buf, x + 2, y + 77, COLOR_WHITE, NULL, NULL);
-    }
-    if (GameStatus < GAME_STATUS_VERIFYPSWD)
-    {
-        if (GameStatus == GAME_STATUS_VERIFYPSWD_WAIT)
-            StringBlt(ScreenSurface, &SystemFont, "sending password... waiting...", x + 2, y + 100, COLOR_WHITE, NULL, NULL);
-        goto login_jmp;
+            StringBlt(ScreenSurface, &SystemFont, buf, x + 2, y + 77, COLOR_WHITE, NULL, NULL);
+        }
+
+        if (LoginInputStep == LOGIN_STEP_PASS2)
+        {
+            StringBlt(ScreenSurface, &SystemFont, "New Account: Verify Password", x + 2, y + 100, COLOR_HGOLD, NULL, NULL);
+            sprite_blt(Bitmaps[BITMAP_LOGIN_INP], x - 2, y + 115, NULL, NULL);
+            for (i = 0; i < (int)strlen(InputString); i++)
+                buf[i] = '*';
+            buf[i++] = '_';
+            buf[i] = 0;
+            StringBlt(ScreenSurface, &SystemFont, buf, x + 2, y + 117, COLOR_WHITE, NULL, NULL);
+        }
     }
 
-    if (GameStatus == GAME_STATUS_VERIFYPSWD)
-    {
-        StringBlt(ScreenSurface, &SystemFont, "New Character: Verify Password", x + 2, y + 100, COLOR_HGOLD, NULL, NULL);
-        sprite_blt(Bitmaps[BITMAP_LOGIN_INP], x - 2, y + 115, NULL, NULL);
-        strcpy(buf, show_input_string(InputString, &SystemFont, Bitmaps[BITMAP_LOGIN_INP]->bitmap->w - 16));
-        for (i = 0; i < (int) strlen(InputString); i++)
-            buf[i] = '*';
-        StringBlt(ScreenSurface, &SystemFont, buf, x + 2, y + 117, COLOR_WHITE, NULL, NULL);
-    }
-
-login_jmp:
     switch (dialog_login_warning_level)
     {
         case DIALOG_LOGIN_WARNING_NONE:
@@ -1801,15 +1821,21 @@ login_jmp:
                       x+2, y+110  , COLOR_ORANGE, NULL, NULL);
             break;
         case DIALOG_LOGIN_WARNING_NAME_WRONG:
-            StringBlt(ScreenSurface, &SystemFont, "Name is too short - it must be two chars or longer!",
+            StringBlt(ScreenSurface, &SystemFont, "Name is too short - it must be 3 chars or longer!",
                       x+1, y+111  , COLOR_BLACK, NULL, NULL);
-            StringBlt(ScreenSurface, &SystemFont, "Name is too short - it must be two chars or longer!",
+            StringBlt(ScreenSurface, &SystemFont, "Name is too short - it must be 3 chars or longer!",
                       x+2, y+110  , COLOR_ORANGE, NULL, NULL);
             break;
+        case DIALOG_LOGIN_WARNING_ACCOUNT_UNKNOWN:
+            StringBlt(ScreenSurface, &SystemFont, "Account don't exist or wrong name - try again!",
+                x+1, y+111  , COLOR_BLACK, NULL, NULL);
+            StringBlt(ScreenSurface, &SystemFont, "Account don't exist or wrong name - try again!!",
+                x+2, y+110  , COLOR_ORANGE, NULL, NULL);
+            break;
         case DIALOG_LOGIN_WARNING_PWD_WRONG:
-            StringBlt(ScreenSurface, &SystemFont, "Password is illegal or does not match!",
+            StringBlt(ScreenSurface, &SystemFont, "Password does not match! Try again.",
                       x+1, y+111  , COLOR_BLACK, NULL, NULL);
-            StringBlt(ScreenSurface, &SystemFont, "Password is illegal or does not match!",
+            StringBlt(ScreenSurface, &SystemFont, "Password does not match! Try again.",
                       x+2, y+110  , COLOR_ORANGE, NULL, NULL);
             break;
         case DIALOG_LOGIN_WARNING_PWD_SHORT:
@@ -1827,7 +1853,7 @@ login_jmp:
     }
 
     y += 157;
-    if (GameStatusLogin) /* Login */
+    if (GameStatusSelect == GAME_STATUS_LOGIN_ACCOUNT) /* Login */
     {
         StringBlt(ScreenSurface, &SystemFont, "REMEMBER: You must have first ~created a character~ to login!",
                   x-10, y+1  , COLOR_BLACK, NULL, NULL);
@@ -1948,3 +1974,87 @@ void show_meta_server(_server *node, int metaserver_start, int metaserver_sel)
     }
 
 }
+
+/******************************************************************
+show account: show and access characters of your account
+******************************************************************/
+void show_account(void)
+{
+    SDL_Rect    box;
+    int         x, y, i, char_count = 0;
+    int         mx, my, mb;
+    char buf[MAX_BUF];
+
+    mb = SDL_GetMouseState(&mx, &my);
+
+    x = 25;
+    y = Screensize.y / 2 - Bitmaps[BITMAP_DIALOG_BG]->bitmap->h / 2;
+    sprite_blt(Bitmaps[BITMAP_DIALOG_BG], x, y, NULL, NULL);
+    sprite_blt(Bitmaps[BITMAP_LOGO270], x + 20, y + 85, NULL, NULL);
+
+    StringBlt(ScreenSurface, &SystemFont, "Welcome on Server Daimonin", x+200, y+20, COLOR_WHITE, NULL, NULL);
+    StringBlt(ScreenSurface, &BigFont, "Account Overview", x+180, y+35, COLOR_WHITE, NULL, NULL);
+
+    StringBlt(ScreenSurface, &BigFont, "Character List", x+120, y+70, COLOR_WHITE, NULL, NULL);
+    StringBlt(ScreenSurface, &BigFont, "_____________________________", x+120, y+80, COLOR_WHITE, NULL, NULL);
+
+    if(account.count) /* show selected player */
+    {
+        box.x = x+119;  box.y = y+95+account.selected*50;
+        box.h = 50;  box.w = 350;
+        SDL_FillRect(ScreenSurface, &box, sdl_gray4);
+
+        if (GameStatus >= GAME_STATUS_ACCOUNT_CHAR_DEL && GameStatus <= GAME_STATUS_ACCOUNT_CHAR_DEL_WAIT )
+        {
+            char delbuf[MAX_BUF];
+
+            sprintf(delbuf, "Delete Character %s", account.name[account.selected]);
+            StringBlt(ScreenSurface, &BigFont, delbuf, x+120, y+435, COLOR_HGOLD, NULL, NULL);
+
+            if (GameStatus == GAME_STATUS_ACCOUNT_CHAR_DEL )
+            {
+                StringBlt(ScreenSurface, &BigFont, "Type 'delete':", x+120, y+455, COLOR_HGOLD, NULL, NULL);
+                sprite_blt(Bitmaps[BITMAP_LOGIN_INP], x + 250, y + 455, NULL, NULL);
+                sprintf(delbuf, "%s%c", InputString, '_');
+                StringBlt(ScreenSurface, &SystemFont, delbuf, x + 256, y + 457, COLOR_WHITE, NULL, NULL);
+                StringBlt(ScreenSurface, &SystemFont, "press RETURN or ESC", x + 256, y + 472, COLOR_WHITE, NULL, NULL);
+            }
+            else
+            {
+                SDL_Rect box;
+
+                box.x= x+120;
+                box.y= y+455;
+                box.w= 250;
+                box.h= 20;
+                SDL_FillRect(ScreenSurface, &box, sdl_gray3);
+                sprintf(delbuf, "*** WAIT: Ask server to delete character %s ***", account.name[account.selected]);
+                StringBlt(ScreenSurface, &SystemFont, delbuf, x + 125, y + 458, COLOR_GREEN, NULL, NULL);
+            }
+        }
+        else
+        {
+            StringBlt(ScreenSurface, &BigFont, "Press ~RETURN~ to play", x+120, y+435, COLOR_HGOLD, NULL, NULL);
+            StringBlt(ScreenSurface, &BigFont, "Press '~D~' to delete this Character", x+120, y+452, COLOR_HGOLD, NULL, NULL);
+            sprintf(buf, "Use ~%c%c~ cursor keys for selection", ASCII_UP, ASCII_DOWN);
+            StringBlt(ScreenSurface, &SystemFont, buf, x+120, y + 470, COLOR_WHITE, NULL, NULL);
+        }
+    }
+
+    for(i=0;i<ACCOUNT_MAX_PLAYER;i++)
+    {
+        if(account.name[i][0])
+        {
+            char_count++;
+            StringBlt(ScreenSurface, &BigFont, account.name[i], x+120, y+100+i*50, COLOR_WHITE, NULL, NULL);
+            sprintf(buf,"Level: %d", account.level[i]);
+            StringBlt(ScreenSurface, &SystemFont, buf, x+120, y+116+i*50, COLOR_WHITE, NULL, NULL);
+        }
+    }
+
+    if(char_count < ACCOUNT_MAX_PLAYER)
+    {
+        StringBlt(ScreenSurface, &BigFont, "Press '~C~' for a new Character", x+120, y+100+char_count*50, COLOR_HGOLD, NULL, NULL);
+    }   
+}
+

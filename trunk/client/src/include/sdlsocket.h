@@ -35,9 +35,9 @@ typedef struct _command_buffer
 command_buffer;
 
 /* flags for send_command_binary() */
-#define SEND_CMD_FLAG_NO 0
-#define SEND_CMD_FLAG_STRING 1 /* add a '\0' to the outbuffer string as sanity set */
-#define SEND_CMD_FLAG_FIXED  2 /* the the command as fixed, without length tag (server knows length) */
+#define SEND_CMD_FLAG_DYNAMIC   0 /* data tail length can vary, add 2 length bytes */
+#define SEND_CMD_FLAG_STRING    1 /* add a '\0' to the outbuffer string as sanity set */
+#define SEND_CMD_FLAG_FIXED     2 /* the the command as fixed, without length tag (server knows length) */
 
 #define send_socklist_binary(_sl_) send_command_binary((_sl_)->cmd, (_sl_)->buf?(_sl_)->buf:(_sl_)->defbuf, (_sl_)->len, (_sl_)->flags )
 extern int send_command_binary(int cmd, char *body, int len, int flags);

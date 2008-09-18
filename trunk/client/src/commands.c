@@ -67,11 +67,9 @@ struct CmdMapping commands[]  =
     { SpelllistCmd },
     { SkilllistCmd },
     { GolemCmd },
-    { AddMeSuccess },
+    { AccNameSuccess },
     { SetupCmd},
-    { handle_query},
     { DataCmd},
-    { NewCharCmd},
     { ItemYCmd },
     { GroupCmd },
     { GroupInviteCmd },
@@ -79,6 +77,7 @@ struct CmdMapping commands[]  =
     { InterfaceCmd },
     { BookCmd },
     { MarkCmd },
+    { AccountCmd },
 #ifdef USE_CHANNELS
     { ChannelMsgCmd },
 #endif
@@ -121,7 +120,6 @@ void DoClient(void)
 #define GetUINT16_String(_d_)   adjust_endian_int16(*((uint16 *)(_d_)))
 #define GetSINT32_String(_d_)   (sint32) adjust_endian_int32(*((uint32 *)(_d_)))
 #define GetUINT32_String(_d_)   adjust_endian_int32(*((uint32 *)(_d_)))
-
 
 /**********************************************************************
  * SC COMMAND FUNCTIONS                                               *
@@ -224,6 +222,13 @@ void SetupCmd(char *buf, int len)
                 SDL_Delay(3250);
                 return;
             }
+        }
+        else if (!strcmp(cmd, "ac"))
+        {
+        }
+        else if (!strcmp(cmd, "fc"))
+        {
+
         }
         else if (!strcmp(cmd, "skf"))
         {
@@ -378,24 +383,120 @@ void Face1Cmd(char *data, int len)
     finish_face_cmd(pnum, checksum, face);
 }
 
-/* Handles when the server says we can't be added.  In reality, we need to
- * close the connection and quit out, because the client is going to close
- * us down anyways.
+/* Handles when the server says we can't be added. 
  */
 void AddMeFail(char *data, int len)
 {
+    char buf[MAX_BUF];
+    int msg = ADDME_MSG_DISCONNECT;
+
     LOG(LOG_MSG, "addme_failed received.\n");
-    SOCKET_CloseSocket(csocket.fd);
-    SDL_Delay(1250);
-    GameStatus = GAME_STATUS_INIT;
-    /*GameStatus = GAME_STATUS_START;*/
-    /* add here error handling */
+
+    if(len)
+        msg = GetUINT8_String(data);
+
+    /* if the server really don't like us, close the connection.
+     * Server had done it already.
+     */
+    if(msg == ADDME_MSG_DISCONNECT)
+    {
+        LOG(LOG_MSG, "Server rejected your action - closing socket.\n");
+        SOCKET_CloseSocket(csocket.fd);
+        SDL_Delay(1250);
+        GameStatus = GAME_STATUS_INIT;
+    }
+    else
+    {
+        /* something is wrong... char is banned, not ready, we can't join
+         * check the game status and decide where we can go on.
+         * Do it right - the server remembers our action and will dicon/ban
+         * us without any announce when we try something stupid.
+         */
+         if(msg == ADDME_MSG_OK) /* huch? should not happen! */
+         {
+             LOG(LOG_MSG, "Bug addme_failed received ADDME_MSG_OK?!\n");
+         }
+
+         /* something was going wrong when loading the file...
+          * player should ask a GM/DM for help
+          */
+         draw_info("***PLAYER LOGIN FAILED***", COLOR_ORANGE);
+         if(msg == ADDME_MSG_OK || msg == ADDME_MSG_INTERNAL || msg == ADDME_MSG_CORRUPT)
+         {
+             sprintf(buf,"Can't load player file %s\n Error Code: %d\nCall a game master for help!\n", cpl.name, msg);
+             draw_info(buf, COLOR_ORANGE);
+         }
+         else if(msg == ADDME_MSG_UNKNOWN)
+         {
+             draw_info("Unknow player name!", COLOR_ORANGE);
+         }
+         else if(msg == ADDME_MSG_TAKEN)
+         {
+             draw_info("Name is already taken!\nChoose a different one.", COLOR_ORANGE);
+         }
+         else if(msg == ADDME_MSG_ACCOUNT)
+         {
+             draw_info("Player owned by different account!", COLOR_ORANGE);
+         }
+         else if(msg == ADDME_MSG_BANNED)
+         {
+             draw_info("Player is BANNED!", COLOR_ORANGE);
+         }
+         else
+         {
+             draw_info("Player loading failed!", COLOR_ORANGE);
+         }
+         SDL_Delay(1250);
+         if(GameStatus == GAME_STATUS_ACCOUNT_CHAR_NAME_WAIT)
+         {
+             reset_input_mode();
+             cpl.name[0] = 0;  
+             InputStringFlag=TRUE;
+             InputStringEndFlag=FALSE;
+             open_input_mode(MAX_PLAYER_NAME);
+             GameStatus = GAME_STATUS_ACCOUNT_CHAR_NAME;
+             cpl.menustatus = MENU_NO;
+         }
+         else
+             GameStatus = GAME_STATUS_ACCOUNT;
+    }
     return;
 }
 
-void AddMeSuccess(char *data, int len)
+void AccNameSuccess(char *data, int len)
 {
-    LOG(LOG_MSG, "addme_success received.\n");
+    int num = ACCOUNT_STATUS_DISCONNECT;
+
+    if(len)
+        num = GetUINT8_String(data);
+
+    if(num == ACCOUNT_STATUS_DISCONNECT)
+    {
+        LOG(LOG_MSG, "Server rejected your account action - closing socket.\n");
+        SOCKET_CloseSocket(csocket.fd);
+        SDL_Delay(1250);
+        GameStatus = GAME_STATUS_INIT;
+    }
+    else
+    {
+        if(num == ACCOUNT_STATUS_OK)
+        {
+            /* we continue with the account creation */
+            GameStatus = GAME_STATUS_LOGIN_NEW;
+            /* but now we go to password input */
+            LoginInputStep = LOGIN_STEP_PASS1;
+            dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
+            cpl.password[0] = 0;
+            open_input_mode(MAX_ACCOUNT_PASSWORD);
+        }
+        else /* something is wrong, try again */
+        {
+            GameStatus = GAME_STATUS_LOGIN_NEW;
+            sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+            open_input_mode(MAX_ACCOUNT_PASSWORD);
+        }
+    }
+
     return;
 }
 
@@ -911,107 +1012,13 @@ void StatsCmd(char *data, int len)
     }
 }
 
-void PreParseInfoStat(char *cmd)
-{
-    /* Find input name*/
-    if(!cmd)
-    {
-        GameStatus = GAME_STATUS_START;
-        LOG(LOG_MSG, "Bug: Invalid response from server\n");
-        return;
-    }
-    if (!strncmp(cmd, "QN",2))
-    {
-        int status = cmd[2]-'0';
 
-        LOG(LOG_MSG, "Login: Enter name - status %d\n", status);
-        cpl.name[0] = 0;
-        cpl.password[0] = 0;
-
-        switch (status)
-        {
-            case 1:
-                if (!GameStatusLogin)
-                    dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
-                else
-                    dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_NO;
-                break;
-            case 2:
-                dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_BLOCKED;
-                break;
-            case 3:
-                if (GameStatusLogin)
-                    dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
-                else
-                    dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_PLAYING;
-                break;
-            case 4:
-                if (GameStatusLogin)
-                    dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
-                else
-                    dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_TAKEN;
-                break;
-            case 5:
-                dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_BANNED;
-                break;
-            case 6:
-                dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_WRONG;
-                break;
-            case 7:
-                dialog_login_warning_level = DIALOG_LOGIN_WARNING_PWD_WRONG;
-                break;
-
-            default: /* is also status 0 */
-                dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
-                break;
-        }
-
-        GameStatus = GAME_STATUS_NAME;
-    }
-    else if (!strncmp(cmd, "QP",2))
-    {
-        int status = cmd[2]-'0';
-
-        dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
-        LOG(LOG_MSG, "Login: Enter password\n");
-        if (status != 0)
-            dialog_login_warning_level = DIALOG_LOGIN_WARNING_PWD_WRONG;
-        GameStatus = GAME_STATUS_PSWD;
-    }
-    else if (!strncmp(cmd, "QV",2))
-    {
-        LOG(LOG_MSG, "Login: Enter verify password\n");
-        dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
-        GameStatus = GAME_STATUS_VERIFYPSWD;
-    }
-    if (GameStatus == GAME_STATUS_NAME)
-        open_input_mode(12);
-    else if (GameStatus <= GAME_STATUS_VERIFYPSWD)
-        open_input_mode(17);
-}
-
-
-void handle_query(char *data, int len)
-{
-    char   *buf;
-    /*uint8 flags = atoi(data); ATM unused parameter*/
-
-    buf = strchr(data, ' ');
-    if (buf)
-        buf++;
-
-    /* one query string */
-    LOG(LOG_MSG, "Received query string: %s\n", buf);
-    PreParseInfoStat(buf);
-}
-
-
-/* This function copies relevant data from the archetype to the
- * object.  Only copies data that was not set in the object
- * structure.
- *
+/* The one and only character/player init function.
+ * If we get this, the server added us to the player list
+ * and kicked us to the map.
+ * Set the client in playing mode and wait for the incoming
+ * regular server data.
  */
-
 void PlayerCmd(char *data, int len)
 {
     char    name[MAX_BUF];
@@ -2022,13 +2029,6 @@ void DataCmd(char *data, int len)
     free(dest);
 }
 
-/* server tells us to go to the new char creation */
-void NewCharCmd(char *data, int len)
-{
-    dialog_new_char_warn = 0;
-    GameStatus = GAME_STATUS_NEW_CHAR;
-}
-
 #ifdef USE_CHANNELS
 
 /**
@@ -2197,3 +2197,38 @@ void ChannelMsgCmd(char *data, int len)
 }
 
 #endif
+
+/* Server is sending us our account data or the reason why not */
+void AccountCmd(char *data, int len)
+{
+    int count = 0;
+    int ac_status;
+
+    /* First, get the account status - it tells us too when login failed */ 
+    ac_status = GetSINT8_String(data+count++);
+    if(ac_status) /* something is wrong when not ACCOUNT_STATUS_OK (0) */
+    {
+        draw_info_format(COLOR_RED, "Unknown Account: %s", cpl.acc_name);
+        GameStatus = GAME_STATUS_LOGIN_ACCOUNT;
+        LoginInputStep = LOGIN_STEP_NAME;
+        dialog_login_warning_level = DIALOG_LOGIN_WARNING_ACCOUNT_UNKNOWN;
+        cpl.acc_name[0] = 0;  
+        open_input_mode(MAX_ACCOUNT_NAME);
+
+    }
+    else /* we have account data... set it up and move player to account view mode */
+    {
+        memset(&account, 0 , sizeof(Account));
+        while(count < len)
+        {
+            strcpy(account.name[account.count], data+count);
+            count += strlen(account.name[account.count]) + 1;
+            account.level[account.count] = GetSINT8_String(data+count++);
+            account.race[account.count] = GetSINT8_String(data+count++);
+            account.count++;
+        }
+
+        GameStatus = GAME_STATUS_ACCOUNT;
+        LoginInputStep = LOGIN_STEP_NOTHING;
+    }
+}

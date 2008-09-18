@@ -30,13 +30,11 @@ extern void SoundCmd(char *data, int len);
 extern void SetupCmd(char *buf, int len);
 extern void Face1Cmd(char *data, int len);
 extern void AddMeFail(char *data, int len);
-extern void AddMeSuccess(char *data, int len);
+extern void AccNameSuccess(char *data, int len);
 extern void ImageCmd(char *data, int len);
 extern void DrawInfoCmd(char *data, int len);
 extern void DrawInfoCmd2(char *data, int len);
 extern void StatsCmd(char *data, int len);
-extern void PreParseInfoStat(char *cmd);
-extern void handle_query(char *data, int len);
 extern void PlayerCmd(char *data, int len);
 extern void Item1Cmd(char *data, int len);
 extern void UpdateItemCmd(char *data, int len);
@@ -58,7 +56,7 @@ extern void BookCmd(char *data, int len);
 extern void InterfaceCmd(char *data, int len);
 extern void TargetObject(char *data, int len);
 extern void DataCmd(char *data, int len);
-extern void NewCharCmd(char *data, int len);
+extern void AccountCmd(char *data, int len);
 
 #ifdef USE_CHANNELS
 extern void ChannelMsgCmd(char *data, int len);
