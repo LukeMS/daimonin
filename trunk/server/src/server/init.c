@@ -30,6 +30,7 @@
 
 struct Settings settings    =
 {
+    0,                      /* well be set from create_client_settings() */
     0,                      /* mute level = if set players below this level can't shout*/
     TRUE,                   /* login_allow */
     "",                     /* login_ip */
@@ -43,6 +44,7 @@ struct Settings settings    =
     NULL,                   /* parameters that were passed to the program */
     DATADIR,                /* read only data files */
     LOCALDIR,               /* read/write data files */
+    ACCOUNTDIR,             /* Where the accounts are stored */
     PLAYERDIR,              /* Where the player files are */
     INSTANCEDIR,            /* Where the instance map files are */
     MAPDIR,                 /* Where the map files are */
@@ -226,7 +228,6 @@ static void init_globals()
 
     init_strings();
 
-    trying_emergency_save = 0;
     num_animations = 0;
     animations = NULL;
     animations_allocated = 0;
@@ -722,10 +723,7 @@ static void rec_sighup(int i)
 {
     LOG(llevSystem, "\nSIGHUP received\n");
     if (init_done)
-    {
-        emergency_save(0);
         cleanup(0);
-    }
     exit(global_exit_return);
 }
 
@@ -1039,7 +1037,7 @@ void compile_info()
 
 /*
 * fatal_signal() is meant to be called whenever a fatal signal is intercepted.
-* It will call the emergency_save and the clean_tmp_files functions.
+* It will try to kick the player and save them and the clean_tmp_files functions.
 */
 void fatal_signal(int make_core, int close_sockets)
 {
@@ -1048,7 +1046,12 @@ void fatal_signal(int make_core, int close_sockets)
 #ifdef PLUGINS
         removePlugins();
 #endif
-        emergency_save(0);
+        /* this line will try to save all player files when the server crashed.
+         * thats good to avoid dubing but a evil source to destroy the player
+         * files. Thats one of the biggest problems we can have, so i disabled 
+         * this line
+         */
+        /* command_kick(NULL, NULL); */
         clean_tmp_files(FALSE);
         write_book_archive();
         write_todclock();   /* lets just write the clock here */

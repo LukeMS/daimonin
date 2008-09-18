@@ -1,3 +1,11 @@
+/* account.c */
+void            account_clear(Account *ac);
+account_status  account_save(Account *ac, const char *name);
+account_status  account_create(Account *ac, const char *name, char *pass);
+account_status  account_load(Account *ac, char *name, char *pass);
+void            account_create_msg(NewSocket *ns, int msg);
+void            account_send_client(NewSocket *ns, int stats);
+account_status  account_delete_player(Account *ac, char *name);
 /* commands.c */
 CommArray_s     *find_command_element(char *cmd, CommArray_s *commarray, int commsize);
 void            process_command_queue(NewSocket *ns, player *pl);
@@ -7,6 +15,7 @@ void            cs_cmd_addme(char *buf, int len, NewSocket *ns);
 void            cs_cmd_reply(char *buf, int len, NewSocket *ns);
 void            cs_cmd_file(char *buf, int len, NewSocket *ns);
 void            cs_cmd_newchar(char *buf, int len, NewSocket *ns);
+void            cs_cmd_delchar(char *buf, int len, NewSocket *ns);
 void            cs_cmd_moveobj(char *buf, int len, NewSocket *ns);
 void            cs_cmd_face(char *params, int len, NewSocket *ns);
 void            cs_cmd_move(char *params, int len, NewSocket *ns);
@@ -16,6 +25,8 @@ void            cs_cmd_lock(char *data, int len, NewSocket *ns);
 void            cs_cmd_mark(char *data, int len, NewSocket *ns);
 void            cs_cmd_talk(char *data, int len, NewSocket *ns);
 void            cs_cmd_fire(char *params, int len, NewSocket *ns);
+void            cs_cmd_checkname(char *buf, int len, NewSocket *ns);
+void            cs_cmd_login(char *buf, int len, NewSocket *ns);
 /* image.c */
 #ifdef SERVER_SEND_FACES
 int             is_valid_faceset(int fsn);
@@ -75,7 +86,6 @@ void            initialize_command_buffer256(command_struct *cmdbuf);
 void            initialize_command_buffer1024(command_struct *cmdbuf);
 void            initialize_command_buffer4096(command_struct *cmdbuf);
 /* request.c */
-void            send_query(NewSocket *ns, uint8 flags, char *text);
 void            esrv_update_skills(player *pl);
 void            esrv_update_stats(player *pl);
 void            esrv_new_player(player *pl, uint32 weight);

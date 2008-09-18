@@ -909,18 +909,16 @@ error - Your ANSI C compiler should be defining __STDC__;
 /*
  * Use of the state-variable in player objects:
  */
-#define ST_SOCKET_NO            (-1)
-#define ST_GET_NAME             0
-#define ST_GET_PASSWORD         1
-#define ST_CONFIRM_PASSWORD     2
-#define ST_CREATE_CHAR          3
+#define ST_BORN                 0x01 /* this char was never played before and is new */ 
 #define ST_DEAD                 4
 #define ST_ZOMBIE               5
 #define ST_PLAYING              6
 
+#ifdef SERVER_SEND_FACES
 #define BLANK_FACE_NAME "blank.111"
 #define NEXT_ITEM_FACE_NAME "next_item.101"
 #define PREVIOUS_ITEM_FACE_NAME "prev_item.101"
+#endif
 
 /* Simple function we use below to keep adding to the same string
  * but also make sure we don't overwrite that string.

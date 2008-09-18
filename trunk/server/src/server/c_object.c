@@ -166,7 +166,7 @@ int command_apply(object *op, char *params)
 }
 
 
-
+#if 0
 /* Command will drop all items that have not been locked */
 int command_dropall(object *op, char *params)
 {
@@ -286,6 +286,7 @@ int command_dropall(object *op, char *params)
 
     return 0;
 }
+#endif
 
 /* Object op wants to drop object(s) params.  params can be a
  * comma seperated list.

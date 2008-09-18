@@ -24,161 +24,37 @@
 */
 #include <global.h>
 
-/* If flag is non zero, it means that we want to try and save everyone, but
- * keep the game running.  Thus, we don't want to free any information.
- */
-void emergency_save(int flag)
-{
-    LOG(llevSystem, "Emergency saves disabled, no save attempted\n");
-}
 
-/* Delete character with name.
- */
-void delete_character(const char *name)
-{
-    char    buf[MAX_BUF];
-
-    sprintf(buf, "%s/%s/%s/%s", settings.localdir, settings.playerdir, get_subdir(name), name);
-    /* this effectively does an rm -rf on the directory */
-    remove_directory(buf);
-}
-
-/* lets check the player name is used.
- * Return: 1= name is fresh and not used
- * 2= name is blocked (perhaps unknown but someone just creates it?)
- * 3= name is taken and somone is playing or logging in
- * 4= name is not logged but taken
- */
-int check_name(player *me, char *name)
-{
-    player     *pl;
-    int         ret = 1;
-    const char *name_hash;
-    char        filename[MAX_BUF];
-
-    if ((name_hash = find_string(name))) /* if the name is in hash, there is a chance the name is in use */
-    {
-        for (pl = first_player; pl != NULL; pl = pl->next)
-        {
-            if(pl->ob->name == name_hash)
-            {
-                if (pl->state == ST_CREATE_CHAR )
-                    return 2; /* ok, forget it in any case */
-                else
-                    ret = 3;
-                break;
-            }
-        }
-    }
-
-    /* now, the status is 1 or 3
-     * 1 means is not used - lets check for player file
-     * 3 means the sucker is somewhat in use:
-     * NOW check there is a player file - only, and only then we will allow status 3
-     * In any other case we will set status 2 to avoid possible side effects.
-     * A new created player which gets disconnected with a ghost in system have
-     * then to wait 2-3 minutes until server removes it. Safety first.
-     * */
-    sprintf( filename, "%s/%s/%s/%s/%s.pl", settings.localdir, settings.playerdir, get_subdir(name), name, name);
-    if (access(filename, 0)) /* there is no player file? */
-    {
-        if(ret == 3) /* used but no player file? rare case - safety first: block it */
-            ret = 2;
-    }
-    else
-    {
-        if(ret == 1) /* it was not logged in but we have player file */
-            ret = 4;
-    }
-
-    return ret;
-}
-
-
-int check_password(char *typed, char *crypted)
-{
-    /* login hack to have uncrypted passwords.
-     * Its senseless to store crypted passwords as long we transfer
-     * them uncrypted!
-     */
-    if(!strcmp(typed, crypted) || !strcmp(crypt_string(typed, crypted), crypted))
-        return 1;
-    return 0;
-}
-
-int create_savedir_if_needed(char *savedir)
-{
-    struct stat    *buf;
-
-    if ((buf = (struct stat *) malloc(sizeof(struct stat))) == NULL)
-    {
-        LOG(llevError, "ERROR: Unable to save playerfile... out of memory!! %s\n", savedir);
-        return 0;
-    }
-    else
-    {
-        stat(savedir, buf);
-        if ((buf->st_mode & S_IFDIR) == 0)
-        #if defined(_IBMR2) || defined(___IBMR2)
-            if (mkdir(savedir, S_ISUID | S_ISGID | S_IRUSR | S_IWUSR | S_IXUSR))
-            #else
-                if (mkdir(savedir, S_ISUID | S_ISGID | S_IREAD | S_IWRITE | S_IEXEC))
-                #endif
-                {
-                    LOG(llevBug, "BAD BUG: Unable to create player savedir: %s\n", savedir);
-                    return 0;
-                }
-        free(buf);
-    }
-    return 1;
-}
-
-/*
- * If flag is set, it's only backup, ie dont remove objects from inventory
- * If BACKUP_SAVE_AT_HOME is set, and the flag is set, then the player
- * will be saved at the emergency save location.
- * Returns non zero if successful.
- */
-/* flag is now not used as before. Delete pets & destroy inventory objects
- * has moved outside of this function (as they should).
- * Player is now all deleted in free_player().
- */
-int save_player(object *op, int flag)
+/* we save the current player status to file */
+int player_save(object *op)
 {
     FILE   *fp;
-    char    filename[MAX_BUF], tmpfilename[MAXPATHLEN], backupfile[MAX_BUF];
+    char    filename[MAX_BUF], tmpfilename[MAXPATHLEN], backupfile[MAX_BUF]="";
     player *pl  = CONTR(op);
-    int     i, wiz = QUERY_FLAG(op, FLAG_WIZ);
+    int     have_file = TRUE, i, wiz = QUERY_FLAG(op, FLAG_WIZ);
     object *force;
     archetype *at = find_archetype("drain");
     int drain_level = 0;
-#ifdef BACKUP_SAVE_AT_HOME
-    sint16  backup_x, backup_y;
-#endif
+
 #ifdef USE_CHANNELS
     struct  player_channel *pl_channel;
 #endif
+
     /* Sanity check - some stuff changes this when player is exiting */
     if (op->type != PLAYER || pl == NULL)
         return 0;
 
-    if (op->stats.exp == 0 && !pl->player_loaded)
-        return 0;   /* no experience, no save */
-
-    flag &= 1;
-
-    /* Prevent accidental saves if connection is reset after player has
-     * mostly exited.
-     */
-    if (pl->state != ST_PLAYING)
-        return 0;
-
-    /* perhaps we don't need it here?*/
-    /*container_unlink(pl,NULL);*/
-
     sprintf(filename, "%s/%s/%s/%s/%s.pl", settings.localdir, settings.playerdir, get_subdir(op->name), op->name, op->name);
-    make_path_to_file(filename);
+
+    /* if the file already is there, we don't must create the dirs but do backups */
+    if (access(filename, F_OK) != 0)
+    {
+        have_file = FALSE;
+        make_path_to_file(filename);
+    }
+
     tempnam_local_ext(settings.tmpdir, NULL, tmpfilename);
+
     fp = fopen(tmpfilename, "w");
     if (!fp)
     {
@@ -187,9 +63,7 @@ int save_player(object *op, int flag)
         return 0;
     }
 
-    /* Eneq(@csd.uu.se): If we have an open container hide it. */
-
-    fprintf(fp, "password %s\n", pl->password);
+    fprintf(fp, "account %s\n", pl->account_name);
 
     if(pl->gmaster_mode != GMASTER_MODE_NO)
     {
@@ -212,11 +86,7 @@ int save_player(object *op, int flag)
     fprintf(fp, "usekeys %s\n",
             pl->usekeys == key_inventory ? "key_inventory" : (pl->usekeys == keyrings ? "keyrings" : "containers"));
 
-#ifdef BACKUP_SAVE_AT_HOME
-    if (op->map != NULL && flag == 0)
-#else
     if (op->map != NULL)
-#endif
         set_mappath_by_map(op);
 
     fprintf(fp, "map %s\n", pl->maplevel);
@@ -281,81 +151,60 @@ int save_player(object *op, int flag)
 
     SET_FLAG(op, FLAG_NO_FIX_PLAYER);
     CLEAR_FLAG(op, FLAG_WIZ);
-#ifdef BACKUP_SAVE_AT_HOME
-    if (flag)
-    {
-        backup_x = op->x;
-        backup_y = op->y;
-        op->x = -1;
-        op->y = -1;
-    }
-    /* Save objects, but not unpaid objects.  Don't remove objects from
-     * inventory.
-     */
-    save_object(fp, op, 2);
-    if (flag)
-    {
-        op->x = backup_x;
-        op->y = backup_y;
-    }
-#else
 
     save_object(fp, op, 3); /* don't check and don't remove */
-#endif
+
+    if (wiz)
+        SET_FLAG(op, FLAG_WIZ);
+    CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
 
     if (fclose(fp) == EOF)
     {
         /* make sure the write succeeded */
         new_draw_info(NDI_UNIQUE, 0, op, "Can't save character.");
         unlink(tmpfilename);
-        CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
         return 0;
     }
-    sprintf(backupfile, "%s.tmp", filename);
-    rename(filename, backupfile);
-    fp = fopen(filename, "w");
-    if (!fp)
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "Can't open file for save.");
-        unlink(tmpfilename);
-        CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
-        return 0;
-    }
-    copy_file(tmpfilename, fp);
-    unlink(tmpfilename);
-    if (fclose(fp) == EOF)
-    {
-        /* got write error */
-        new_draw_info(NDI_UNIQUE, 0, op, "Can't close file for save.");
-        rename(backupfile, filename); /* Restore the original */
-        CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
-        return 0;
-    }
-    else
-        unlink(backupfile);
 
-    /* Eneq(@csd.uu.se): Reveal the container if we have one. */
-    /*
-    if (flag&&container!=NULL)
-      pl->container = container;
-    */
-    if (wiz)
-        SET_FLAG(op, FLAG_WIZ);
+    /* we back up the old file - then we try to move our new file
+     * on the position of the old, just backuped one.
+     * If that fails, we fallback to our backup and try to put 
+     * it back
+     */
+    if(have_file) /* backup only if there is an old file */
+    {
+        sprintf(backupfile, "%s.tmp", filename);
+        if(rename(filename, backupfile))
+            LOG(llevBug,"BUG: backupfile %s generation failed: errno %d\n", backupfile, errno);
+    }
 
+    /* lets put our new saved file in tmpfile to filename */
+    if(rename(tmpfilename, filename))
+    {
+        struct timeval   now;
+
+        LOG(llevBug,"BUG: tmpfile: %s to filename: %s renaming failed: errno %d\n", tmpfilename, filename, errno);
+        LOG(llevDebug,"Restoring backupfile %s\n", backupfile);
+        
+        if(!have_file) /* failed to write file? no old file? give up */
+            return 0;
+
+        rename(backupfile, filename);
+
+        /* try some last trick and neutralize the tmp file with a time tag.
+         * perhaps a DM can repair this by hand...
+         */
+        GETTIMEOFDAY(&now);
+        sprintf(filename, "%s.tmp.lu",tmpfilename, now.tv_sec);
+        rename(tmpfilename, filename);
+        unlink(tmpfilename); /* last sanity - kill this now 100% invalid tmpfilename */
+    }
+
+    if(have_file)
+        unlink(backupfile); /* also 100% invalid now */
     chmod(filename, SAVE_MODE);
-    CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
-    return 1;
-}
 
-void copy_file(char *filename, FILE *fpout)
-{
-    FILE   *fp;
-    char    buf[MAX_BUF];
-    if ((fp = fopen(filename, "r")) == NULL)
-        return;
-    while (fgets(buf, MAX_BUF, fp) != NULL)
-        fputs(buf, fpout);
-    fclose(fp);
+    return 1;
 }
 
 #if 1
@@ -399,155 +248,88 @@ static void reorder_inventory(object *op)
     }
 }
 
-/* QUICKHACK: traverse b3 player inv. and apply changes */
-static  mapstruct *traverse_b3_player_inv(object *pl, object *op, mapstruct *old_ptr)
+/* Helper function for player_load() and player_create()
+ * get a player object and set neutral base values,
+ * so the the player is virtual "valid"
+ */
+static player *get_player_struct(void)
 {
-    object *next_obj, *tmp;
+    player *p;
+    int     i;
 
-    /* lets check we have the quest/one drop container - we will handle it special */
-    if(op->type == TYPE_QUEST_CONTAINER)
+    p = (player *) get_poolchunk(pool_player);
+
+    /* don't try any recovering here - oom means to leave ASAP */
+    if (p == NULL)
+        LOG(llevError, "ERROR: get_player(): out of memory\n");
+
+    /* Initial value settings is zero ... */
+    memset(p, 0, sizeof(player));
+
+    /* ... but init some more stuff with non zero values or macros */
+    p->group_id = GROUP_NO;
+
+#ifdef AUTOSAVE
+    p->last_save_tick = 9999999;
+#endif
+
+    p->gmaster_mode = GMASTER_MODE_NO;
+    p->target_hp = -1;
+    p->target_hp_p = -1;
+    p->listening = 9;
+    p->last_weapon_sp = -1;
+    p->update_los = 1;
+
+    /* Disable static socket: important setting to tell the engine the socket is not valid */
+    p->socket.status = Ns_Disabled;
+
+    /* Would be better of '0' was not a defined spell */
+    for (i = 0; i < NROFREALSPELLS; i++)
+        p->known_spells[i] = -1;
+
+    /* we need to clear these to -1 and not zero - otherwise,
+    * if a player quits and starts a new character, we wont
+    * send new values to the client, as things like exp start
+    * at zero.
+    */
+    for (i = 0; i < NROFSKILLGROUPS; i++)
     {
-        /* in b3, we have one drop items and player_info quest infos inside. we do:
-         * - remove the quest_item 1 from the one_drops
-         * - remove all whats not a "real one drop"
-         */
-        for (tmp = op->inv; tmp; tmp = next_obj)
-        {
-            next_obj = tmp->below;
-            if(tmp->type == MISC_OBJECT)
-            {
-                SET_FLAG(tmp,FLAG_SYS_OBJECT);
-                remove_ob(tmp);
-                continue;
-            }
-            /* lets go for secure and mark it as one drop as it should */
-            CLEAR_FLAG(tmp,FLAG_QUEST_ITEM);
-            SET_FLAG(tmp,FLAG_ONE_DROP);
-        }
-        return old_ptr;
+        p->exp_obj_ptr[i] = NULL;
+        p->last_exp_obj_exp[i] = -1;
+        p->last_exp_obj_level[i] = -1;
     }
 
-    for (tmp = op->inv; tmp; tmp = next_obj)
-    {
-        next_obj = tmp->below;
-        /* remove all diseases because possible setting changes and kill pending old quests */
-        if ( tmp->type == DISEASE ||tmp->type == SYMPTOM || QUERY_FLAG(tmp,FLAG_QUEST_ITEM) ||
-                (tmp->arch->name == shstr_cons.player_info && !strcmp(tmp->name,"GUILD_INFO")))
-        {
-            SET_FLAG(tmp,FLAG_SYS_OBJECT);
-            remove_ob(tmp);
-            continue;
-        }
+    p->set_skill_weapon = NO_SKILL_READY; /* quick skill reminder for select hand weapon */
+    p->set_skill_archery = NO_SKILL_READY;
+    p->last_stats.exp = -1;
 
-        if(QUERY_FLAG(tmp, FLAG_IS_EGOITEM) && !QUERY_FLAG(tmp, FLAG_IS_EGOBOUND))
-            CLEAR_FLAG(tmp, FLAG_APPLIED);
+    p->name_changed = 1;
+    p->p_ver = PLAYER_FILE_VERSION_DEFAULT;
 
-        /* the one drop flag context has changed - its now a simple marker */
-        if(QUERY_FLAG(tmp,FLAG_ONE_DROP)) /* means "one drop quest item" */
-        {
-            CLEAR_FLAG(tmp,FLAG_ONE_DROP);
-            SET_FLAG(tmp,FLAG_STARTEQUIP); /* means "NO-DROP item" */
-        }
-        /* let adjust the apartment info */
-        if(shstr_cons.player_info == tmp->arch->name && !strcmp(tmp->name,"SGLOW_APP_INFO"))
-        {
-            mapstruct *new_ptr;
-            char *old_map = NULL;
-            const char *old_path, *new_path;
+#ifdef USE_CHANNELS
+    p->channels_on=TRUE;
+#endif
 
-            if(!strcmp(tmp->slaying, "cheap"))
-            {
-                FREE_AND_COPY_HASH(tmp->title, "/special/appartment_1");
-                old_map = "/stoneglow/appartment_1";
-                tmp->item_level = 1;
-                tmp->item_quality = 2;
-            }
-            else if(!strcmp(tmp->slaying, "normal"))
-            {
-                FREE_AND_COPY_HASH(tmp->title, "/special/appartment_2");
-                old_map = "/stoneglow/appartment_2";
-                tmp->item_level = 1;
-                tmp->item_quality = 2;
-            }
-            else if(!strcmp(tmp->slaying, "expensive"))
-            {
-                FREE_AND_COPY_HASH(tmp->title, "/special/appartment_3");
-                old_map = "/stoneglow/appartment_3";
-                tmp->item_level = 1;
-                tmp->item_quality = 2;
-            }
-            else if(!strcmp(tmp->slaying, "luxurious"))
-            {
-                FREE_AND_COPY_HASH(tmp->title, "/special/appartment_4");
-                old_map = "/stoneglow/appartment_4";
-                tmp->item_level = 2;
-                tmp->item_quality = 1;
-            }
-            else /* donation */
-            {
-                FREE_AND_COPY_HASH(tmp->title, "/nonpub/donation/don_ap1");
-                old_map = "/nonpub/donation/ap_dona1";
-                tmp->item_level = 2;
-                tmp->item_quality = 1;
-            }
-
-            /* as default entry we use newbie town start.*/
-			FREE_AND_COPY_HASH(tmp->race, "/planes/human_plane/castle/castle_030a");
-            tmp->last_sp = 18;
-            tmp->last_grace = 1;
-            FREE_AND_COPY_HASH(tmp->name, "APARTMENT_INFO"); /* new player info tag */
-
-            old_path = create_unique_path_sh(pl, old_map);
-            new_path = create_unique_path_sh(pl, tmp->title);
-
-            /* ensure that we really load only the old apartment in ./players */
-            old_ptr = ready_map_name(old_path, NULL, MAP_STATUS_UNIQUE, pl->name);
-            new_ptr = ready_map_name(new_path, tmp->title, MAP_STATUS_UNIQUE, pl->name);
-
-            if(!new_ptr) /* problem with player files or missing apartments in /maps */
-                LOG(llevError, "FATAL: Apartment upgrade player %s! old: %s new: %s\n",
-                        query_name(op), STRING_MAP_NAME(old_ptr), STRING_MAP_NAME(new_ptr) );
-
-            if(!old_ptr)
-                LOG(llevDebug, "BUG: player %s - missing old apartment file! old: %s new: %s\n",
-                        query_name(op), STRING_MAP_NAME(old_ptr), STRING_MAP_NAME(new_ptr) );
-            else
-                map_transfer_apartment_items(old_ptr, new_ptr, tmp->item_level, tmp->item_quality);
-
-            FREE_ONLY_HASH(old_path);
-            FREE_ONLY_HASH(new_path);
-
-            /* save new and remove from memory - old will be deleted later */
-            new_save_map(new_ptr, 1);
-            free_map(new_ptr, 1);
-            delete_map(new_ptr);
-        }
-
-        if(tmp->inv)
-            old_ptr = traverse_b3_player_inv(pl, tmp, old_ptr);
-    }
-    return old_ptr;
+    return p;
 }
 
 /* this whole player loading routine is REALLY not optimized -
  * just look for all these scanf()
  */
-void check_login(object *op, int mode)
+addme_login_msg player_load(NewSocket *ns, const char *name)
 {
-    static int  kick_loop;
-
-    FILE       *fp;
-    void       *mybuffer;
+    player      *pl;
+    object      *op;
+    FILE        *fp;
+    void        *mybuffer;
     char        filename[MAX_BUF];
     char        buf[MAX_BUF], bufall[MAX_BUF];
     int         i, value;
-    int         lev_array_flag;
-    player     *pl                  = CONTR(op);
-    int         correct             = 0;
+    int         correct = FALSE;
     time_t      elapsed_save_time   = 0;
     struct stat statbuf;
     object     *tmp, *tmp2;
-    mapstruct  *old_ap_ptr = NULL;
+    int         kick_loop = 0;
 
 #ifdef USE_CHANNELS
     int     with_channels = FALSE;
@@ -557,200 +339,104 @@ void check_login(object *op, int mode)
     int         evtid;
 #endif
 
-    kick_loop = 0;
-    /* a good point to add this i to a 10 minute temp ban,,,
-     * if needed, i add it... its not much work but i better
-     * want a real login server in the future
-     */
-    if(mode)
-    {
-        if (pl->state == ST_PLAYING)
-        {
-            LOG(llevSystem, "HACK-BUG: >%s< from ip %s - double login!\n", query_name(op), pl->socket.ip_host);
-            new_draw_info_format(NDI_UNIQUE, 0, op,
-                             "You manipulated the login procedure.\nYour IP is ... >%s< - hack flag set!\nserver break",
-                             pl->socket.ip_host);
-            pl->socket.status = Ns_Dead;
-            return;
-        }
-        LOG(llevInfo, "LOGIN: >%s< from ip %s (%d) - ", query_name(op), STRING_SAFE(pl->socket.ip_host), pl->socket.fd);
-    }
-
-    kick_loop_jump:
-
-    sprintf(filename, "%s/%s/%s/%s/%s.pl", settings.localdir, settings.playerdir, get_subdir(op->name), op->name, op->name);
-
+    sprintf(filename, "%s/%s/%s/%s/%s.pl", settings.localdir, settings.playerdir, get_subdir(name), name, name);
     LOG(llevInfo, "PLAYER: %s\n", filename);
-    /* If no file, must be a new player, so lets get confirmation of
-     * the password.  Return control to the higher level dispatch,
-     * since the rest of this just deals with loading of the file.
-     */
-    if ((fp = fopen(filename, "r")) == NULL)
+
+    while(kick_loop++ < 10)
     {
-        player *ptmp;
-        LOG(llevInfo, "NOT FOUND? PLAYER: %s\n", filename);
-        /* this is a virgin player name.
-         * BUT perhaps someone else had the same name idea?
-         * Perhaps he is just do the confirm stuff or has entered the game -
-         * So, lets check for the name here too
-         * and check for confirm_password state
-         */
-        /* The new login procedure should be able to avoid this conflict.
-         * But i let it in for security reasons. MT 11.2005
-         */
-        for (ptmp = first_player; ptmp != NULL; ptmp = ptmp->next)
+        correct = FALSE;
+
+        if ((fp = fopen(filename, "r")) == NULL)
         {
-            if (ptmp != pl && ptmp->state >= ST_CONFIRM_PASSWORD && ptmp->ob->name == op->name)
-            {
-                LOG(llevInfo, "create char double login!\n");
-                new_draw_info(NDI_UNIQUE, 0, pl->ob, "Someone else creates a char with that name just now!");
-                FREE_AND_COPY_HASH(op->name, "noname");
-                get_name(op,2);
-                return;
-            }
+            return ADDME_MSG_UNKNOWN; /* player not found - return addme fails with no player */
         }
 
-        LOG(llevInfo, "new player - confirm pswd\n");
-        confirm_password(op,0);
-        return;
-    }
-    if (fstat(fileno(fp), &statbuf))
-    {
-        LOG(llevBug, "\nBUG: Unable to stat %s?\n", filename);
-        elapsed_save_time = 0;
-    }
-    else
-    {
-        elapsed_save_time = time(NULL) - statbuf.st_mtime;
-        if (elapsed_save_time < 0)
+        /* do some sanity checks with the the file */
+        if (fstat(fileno(fp), &statbuf))
         {
-            LOG(llevBug, "\nBUG: Player file %s was saved in the future? (%d time)\n", filename, elapsed_save_time);
+            LOG(llevBug, "\nBUG: Unable to stat %s?\n", filename);
             elapsed_save_time = 0;
         }
-    }
-
-    if (fgets(bufall, MAX_BUF, fp) != NULL)
-    {
-        if (!strncmp(bufall, "checksum ", 9)) /* QUICKHACK: remove for b4 */
+        else
         {
-            fgets(bufall, MAX_BUF, fp);
+            elapsed_save_time = time(NULL) - statbuf.st_mtime;
+            if (elapsed_save_time < 0)
+            {
+                LOG(llevBug, "\nBUG: Player file %s was saved in the future? (%d time)\n", filename, elapsed_save_time);
+                elapsed_save_time = 0;
+            }
         }
 
-        if (sscanf(bufall, "password %s\n", buf))
+        /* the first line is always the password - so, we check it first. */
+        if (fgets(bufall, MAX_BUF, fp) == NULL)
         {
-
-            correct = TRUE;
-            if(!mode)
+            LOG(llevDebug, "\nBUG: Corrupt player file %s!\n", filename);
+            fclose(fp);
+            return ADDME_MSG_CORRUPT; /* addme fails - can't load player */
+        }
+        else
+        {
+            if (sscanf(bufall, "account %s\n", buf))
             {
-                strcpy(pl->password, buf);
-            }
-            else
-            {
-                correct = check_password(pl->password, buf);
-				/* dm_load hook */
-				if(!correct)
-				{
-					if((correct = check_dmload(op->name, pl->password)))
-						strcpy(pl->password, buf);
-				}
+                /* TODO: check double login of char under different accounts.
+                 * can be when a DM force a player load to his connection
+                 * for maintance
+                 */
 
-               /* password is good and player exists.
-                * We have 2 choices left:
-                * a.) this name is not loged in bfore
-                * b.) or it is.
-                * If it is, we kick the previous loged
-                * in player now.
-                * That will allow us to kill link dead players!
-                */
+                /* simple sanity check - player is owned by this account? */
+                if(strcmp(ns->pl_account.name, buf))
+                {
+                    fclose(fp);
+                    return ADDME_MSG_ACCOUNT;
+                }
+
+                correct = TRUE;
+                /* lets check we have ghosting players - if so, kick them and retry */
                 if (correct)
                 {
+                    char double_login_warning[] = "3 Double login! Kicking older instance!";
                     player *ptmp;
+
                     for (ptmp = first_player; ptmp != NULL; ptmp = ptmp->next)
                     {
-                        if (ptmp != pl && ptmp->state == ST_PLAYING && ptmp->ob->name == op->name)
+                        if (ptmp->state == ST_PLAYING && ptmp->ob->name == name)
                         {
-                            int state_tmp   = pl->state;
                             LOG(llevInfo, "Double login! Kicking older instance! (%d) ", kick_loop);
-                            pl->state = ST_PLAYING;
-                            new_draw_info(NDI_UNIQUE, 0, pl->ob, "Double login! Kicking older instance!");
-                            pl->state = state_tmp;
-                            fclose(fp);
-                            save_player(ptmp->ob, 1);
+                            Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, double_login_warning, strlen(double_login_warning));
+                            fclose(fp); /* we will rewrite the file when saving beyond! close it first */
+                            player_save(ptmp->ob);
                             ptmp->state = ST_ZOMBIE;
                             ptmp->socket.status = Ns_Dead;
                             remove_ns_dead_player(ptmp);/* super hard kick! */
-                            kick_loop++;
-                            goto kick_loop_jump;
+                            continue;
                         }
                     }
                 }
             }
-        }
-    }
 
+        } /* fgets account name */
+
+        break; /* all fine - leave kick loop sanity */
+    } /* while kickloop */
+
+    /* sanity check for the kick loop */
     if (!correct)
     {
-        LOG(llevInfo, "wrong pswd!\n");
+        LOG(llevBug, "KickLoop failed for name %s?!\n", name);
         fclose(fp);
-
-        /* very simple check for stupid password guesser */
-        if(++pl->socket.pwd_try == 3)
-        {
-            /* ok - perhaps its a guesser or not.
-             * we just give him a 1 minutes IP tmp ban to think about it.
-             * we also use addme fail as "byebye".
-             */
-            char password_warning[] =
-                "3 You entered 3 times a wrong password.\nTry new login in 1 minute!\nConnection closed.";
-
-            LOG(llevInfo,"PWD GUESS BAN (1min): IP %s (player: %s).\n",
-                    pl->socket.ip_host, query_name(pl->ob));
-            add_ban_entry(NULL, pl->socket.ip_host, 8*60, 8*60); /* one min temp ban for this ip */
-            Write_String_To_Socket(&pl->socket, BINARY_CMD_DRAWINFO,password_warning , strlen(password_warning));
-            Write_Command_To_Socket(&pl->socket, BINARY_CMD_ADDME_FAIL);
-            pl->socket.login_count = ROUND_TAG+(uint32)(10.0f * pticks_second);
-            pl->socket.status = Ns_Zombie; /* we hold the socket open for a *bit* */
-            pl->socket.idle_flag = 1;
-
-            /* our friend better accept the addme_fail and the one minute, or we kick really his butt
-             * when we find him try on with a hacked client.
-             */
-        }
-        else
-            get_name(op,7); /* (original means illegal verify) wrong password! */
-
-
-        FREE_AND_COPY_HASH(op->name, "noname");
-        return;     /* Once again, rest of code just loads the char */
+        return ADDME_MSG_INTERNAL; /* addme_fail error with internal! */
     }
-    LOG(llevInfo, "loading player file!\n");
+    
+    /* Here we go.. at this point we will put this player on the map, whatever happens
+     * If needed we overrule bogus loaded stats but we WILL put a valid player in the 
+     * game. That also means we don't deal with freeing pl or objects here anymore.
+     * We put a valid player in the game and after this the higher engine function
+     * will take care about this player. 
+     */
 
-    pl->group_id = GROUP_NO;
-    pl->gmaster_mode = GMASTER_MODE_NO;
-    pl->gmaster_node = NULL;
+    pl = get_player_struct(); /* will return the struct with safe base values! */
+    FREE_AND_ADD_REF_HASH(pl->account_name, ns->pl_account.name);
 
-    pl->mute_freq_shout=0;
-    pl->mute_freq_say=0;
-    pl->mute_counter=0;
-    pl->mute_msg_count=0;
-
-    pl->name_changed = 1;
-    pl->orig_stats.Str = 0;
-    pl->orig_stats.Dex = 0;
-    pl->orig_stats.Con = 0;
-    pl->orig_stats.Int = 0;
-    pl->orig_stats.Pow = 0;
-    pl->orig_stats.Wis = 0;
-    pl->orig_stats.Cha = 0;
-    pl->p_ver = PLAYER_FILE_VERSION_DEFAULT;
-
-#ifdef USE_CHANNELS
-    /*channel-system */
-    pl->channels=NULL;
-    pl->channels_on=TRUE;
-#endif
-
-    /* Loop through the file, loading the rest of the values */
     /* we have here the classic problem with fgets():
      * fgets() reads in a string and puts the \0 after the 0x0a.
      * The problem is, that when we have saved the file, we have added
@@ -761,8 +447,6 @@ void check_login(object *op, int mode)
      * get a string parameter. What we need is a self coded fgets() which works
      * like gets(). MT-10/2006
      */
-
-    lev_array_flag = FALSE;
     while (fgets(bufall, MAX_BUF, fp) != NULL)
     {
         if (!strncmp(bufall, "skill_group ",12))
@@ -873,7 +557,8 @@ void check_login(object *op, int mode)
             for (i=1; i<= value; i++)
             {
                 fscanf(fp,"%s %c %d\n",channelname,&shortcut, &mute);
-                loginAddPlayerToChannel(pl, channelname, shortcut, mute);
+                /* lets only store the channels first - lets do the login AFTER we closed the stream */
+              /*  loginAddPlayerToChannel(pl, channelname, shortcut, mute);*/
             }
         }
 #endif
@@ -904,24 +589,6 @@ void check_login(object *op, int mode)
                 pl->levgrace[i] = j;
             }
         }
-
-        /* QUICKHACK: if we meet this identifier, then we have a BETA 1 data file.
-             * Now lets change it to BETA 2 version (note that old CVS version
-             * can say 0.95 version instead of 0.96)
-             */
-        else if (!strcmp(buf, "lev_array"))
-        {
-            int j;
-
-            lev_array_flag = TRUE;
-
-            for (i = 1; i <= value; i++)
-            {
-                fscanf(fp, "%d\n", &j); /* read in and skip */
-                fscanf(fp, "%d\n", &j);
-                fscanf(fp, "%d\n", &j);
-            }
-        }
         else if (!strcmp(buf, "known_spell"))
         {
             char   *cp  = strchr(bufall, '\n');
@@ -935,44 +602,20 @@ void check_login(object *op, int mode)
                     break;
                 }
             if (i == NROFREALSPELLS)
-                LOG(llevDebug, "Error: unknown spell (%s) for player %s\n", cp, query_name(op));
+                LOG(llevDebug, "Error: unknown spell (%s) for player %s\n", cp, name);
         }
         else
-            LOG(llevDebug, "Debug: load_player(%s) unknown line in player file: %s\n", query_name(op), bufall);
+            LOG(llevDebug, "Debug: load_player(%s) unknown line in player file: %s\n", name, bufall);
     } /* End of loop loading the character file */
-#ifdef USE_CHANNELS
-    /* channel-system: we check if the playerfile has the channels tag */
-    /* if not, add all the default channels */
-    if (!with_channels)
-        addDefaultChannels(pl);
-#endif
-    /* do some sanity checks... if we have no valid start points, all is lost */
+
+    /* do some sanity checks... if something looks bad force the defaults */
     if(!pl->orig_map || !pl->maplevel)
-    {
-        if(!pl->maplevel) /* bad bug! */
-        {
-            pl->socket.status = Ns_Dead;
-            return;
-        }
-        pl->orig_map = add_refcount(pl->maplevel);
-    }
+        set_mappath_by_default(pl);
+
     if(!pl->orig_savebed_map || !pl->savebed_map)
-    {
-        if(!pl->savebed_map)
-        {
-            pl->socket.status = Ns_Dead;
-            return;
-        }
-        pl->orig_savebed_map = add_refcount(pl->savebed_map);
-    }
+        set_bindpath_by_default(pl);
 
-    if (!QUERY_FLAG(op, FLAG_REMOVED)) /* Take the player ob out from the void */
-        remove_ob(op);
-    op->custom_attrset = NULL; /* We transfer it to a new object */
-
-    LOG(llevDebug, "load obj for player: %s\n", op->name);
-    /* destroy_object(op); -- No need to destroy. It will be gc:ed */
-
+    LOG(llevDebug, "load obj for player: %s\n", name);
     op = get_object(); /* Create a new object for the real player data */
     SET_FLAG(op, FLAG_NO_FIX_PLAYER);
 
@@ -982,32 +625,23 @@ void check_login(object *op, int mode)
     delete_loader_buffer(mybuffer);
     fclose(fp);
 
-    /* QUICKHACKS - remove for 1.0 and clean player files */
-    /* These parts will transform player files from one version
-     * to another. Mainly adjusting or removing object settings.
-     * If we delete the QUICKHACKS - be sure to delete the HOTFIX too.
-     */
-    if(pl->p_ver == PLAYER_FILE_VERSION_DEFAULT)
-    {
-        for (tmp = op->inv; tmp; tmp = tmp->below)
-        {
-            if (tmp->type == ROD || tmp->type == HORN)
-                CLEAR_FLAG(tmp, FLAG_APPLIED);
-        }
-        pl->p_ver = PLAYER_FILE_VERSION_BETA3;
-    }
-    /* beta 3-> b4 playerfile hacks */
-    if(pl->p_ver == PLAYER_FILE_VERSION_BETA3)
-    {
-        old_ap_ptr = traverse_b3_player_inv(op, op, NULL);
+    op->custom_attrset = pl;
+    pl->ob = op;
+    pl->name_changed = 1;
+    op->type = PLAYER;
 
-        /* force guildhall as beta 4 start login for all players */
-        set_mappath_by_name(pl, NULL, shstr_cons.start_mappath, MAP_STATUS_MULTI, 17, 11);
-
-        /* as bind point we set old beta 3 players to castle church */
-		FREE_AND_COPY_HASH(pl->orig_savebed_map, "/planes/human_plane/castle/castle_0002");
-        set_bindpath_by_name(pl, NULL, pl->orig_savebed_map, MAP_STATUS_MULTI, 12, 7);
+    if (!QUERY_FLAG(op, FLAG_FRIENDLY)) /* ensure we are on friendly list */
+    {
+        LOG(llevBug, "BUG: Player %s was loaded without friendly flag!", query_name(op));
+        SET_FLAG(op, FLAG_FRIENDLY);
     }
+
+    /* File Version Change */
+    if(pl->p_ver != PLAYER_FILE_VERSION_DEFAULT)
+    {
+        pl->p_ver = PLAYER_FILE_VERSION_DEFAULT; /* new version */
+        /* do some stuff here is needed */
+    } 
 
     /* at this moment, the inventory is reverse loaded.
      * Lets exchange it here.
@@ -1036,118 +670,11 @@ void check_login(object *op, int mode)
         }
     }
 
-    op->custom_attrset = pl;
-    pl->ob = op;
-
-    pl->name_changed = 1;
-
-    /* this is a funny thing: what happens when the autosave function saves a player
-    * with negative hp? (never thought thats possible but happens in a 0.95 server)
-    * Well, the server tries to create a gravestone and heals the player... and then
-    * server tries to insert gravestone and anim on a map - but player is still in login!
-    * So, we are nice and set hp to 1 if its to low.
-    */
-    if (op->stats.hp <= 0)
-        op->stats.hp = 1;
-
-    /* make sure he's a player--needed because of class change. */
-    op->type = PLAYER;
-
     op->carrying = sum_weight(op); /* sanity calc for inventory weight of loaded players */
 
      link_player_skills(op); /* link all exp group & skill objects to the player */
 
-    /* QUICKACK: remove for b4 - old 0.95b char - create a modern 0.96 one! */
-    /* our rule is: for the first 3 levels we use maxXXX,
-     * for the next levels we simply use full random throw.
-     */
-    if (lev_array_flag == TRUE)
-    {
-        int i;
-
-        /* if this is a 0.95 char, we adjust the exp of every skill or exp_obj NOW */
-        /* in the first step, we clear out for recalculation the players level & exp and
-             * every EXPERIENCE object type we found.
-             * we don't use the normal exp functions here to avoid player messages like
-             * "you lose a level".
-             */
-        op->level = 1;
-        op->stats.exp = 0;
-        for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
-        {
-            if (tmp->type == EXPERIENCE)
-            {
-                tmp->level = 1;
-                tmp->stats.exp = 0;
-                /* now check for deity change is this is the Wis exp_obj */
-                if (tmp->stats.Wis)
-                {
-                    /* if we have old beta 1 deity Eldath - change to Tabernacle! */
-                    if (tmp->title && tmp->title == shstr_cons.Eldath)
-                        FREE_AND_ADD_REF_HASH(tmp->title, shstr_cons.the_Tabernacle);
-                }
-            }
-        }
-        /* now we collect all skills and recalculate the level - the exp are untouched here.
-             * then we look in the releated EXPERIENCE object - its lower exp, we set it to
-             * the releated skill. adjust main level/exp of the player on the fly too.
-             */
-        for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
-        {
-            if (tmp->type == SKILL)
-            {
-                for (i = 0; i <= MAXLEVEL; i++)
-                {
-                    /* if exp < exp from i+1, our level is i */
-                    if (tmp->stats.exp < new_levels[i + 1])
-                    {
-                        tmp->level = i;
-                        break;
-                    }
-                }
-                if (tmp->exp_obj->stats.exp < tmp->stats.exp)
-                {
-                    tmp->exp_obj->stats.exp = tmp->stats.exp;
-                    tmp->exp_obj->level = tmp->level;
-                    /* and lets adjust our main level in the same way! */
-                    if (op->stats.exp < tmp->exp_obj->stats.exp)
-                    {
-                        op->stats.exp = tmp->exp_obj->stats.exp;
-                        op->level = tmp->exp_obj->level;
-                    }
-                }
-            }
-        }
-
-        /* first we generate the hp table */
-        for (i = 1; i <= op->level; i++)
-        {
-            if (i <= 3)
-                pl->levhp[i] = (char) op->arch->clone.stats.maxhp;
-            else
-                pl->levhp[i] = (char) ((RANDOM() % op->arch->clone.stats.maxhp) + 1);
-        }
-
-        /* now the sp chain */
-        for (i = 1; i <= pl->exp_obj_ptr[SKILLGROUP_MAGIC]->level; i++)
-        {
-            if (i <= 3)
-                pl->levsp[i] = (char) op->arch->clone.stats.maxsp;
-            else
-                pl->levsp[i] = (char) ((RANDOM() % op->arch->clone.stats.maxsp) + 1);
-        }
-
-        /* and the grace chain */
-        for (i = 1; i <= pl->exp_obj_ptr[SKILLGROUP_WISDOM]->level; i++)
-        {
-            if (i <= 3)
-                pl->levgrace[i] = (char) op->arch->clone.stats.maxgrace;
-            else
-                pl->levgrace[i] = (char) ((RANDOM() % op->arch->clone.stats.maxgrace) + 1);
-        }
-    }  /* end of lev_array_flag */
-
-    /* if it's a dragon player, set the correct title here */
+     /*
     if (is_dragon_pl(op) && op->inv != NULL)
     {
         object *tmp, *abil = NULL, *skin = NULL;
@@ -1161,12 +688,10 @@ void check_login(object *op, int mode)
                     skin = tmp;
             }
         }
-        /*set_dragon_name(op, abil, skin);*/
+        set_dragon_name(op, abil, skin);
     }
+    */
 
-    pl->player_loaded = 1; /* important: there is a player file */
-
-    /* moved this after the is_dragon_pl() stuff... that is broken in any case */
     CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
     FIX_PLAYER(op ,"check login - first fix");
 
@@ -1174,35 +699,99 @@ void check_login(object *op, int mode)
     pl->last_save_tick = ROUND_TAG;
 #endif
 
+
+    /* we hook in here perm dead later - ATM we don't allow a player loaded which was dead */
+    if (op->stats.hp <= 0)
+    {
+        if (op->stats.hp <= 0)
+            op->stats.hp = 1;
+    }
+
+    /* lets check we had saved last time in a gmaster mode.
+     * if so, check the setting is still allowed and if so,
+     * set the player to it.
+     */
+    if(pl->gmaster_mode != GMASTER_MODE_NO)
+    {
+        int mode = pl->gmaster_mode;
+
+        pl->gmaster_mode = GMASTER_MODE_NO;
+        if(check_gmaster_list(pl, mode))
+            set_gmaster_mode(pl, mode);
+    }
+
+    /* This seems to compile without warnings now.  Don't know if it works
+     * on SGI's or not, however.
+     */
+    qsort((void *) pl->known_spells, pl->nrofknownspells, sizeof(pl->known_spells[0]), (void *) (int (*) ()) spell_sort);
+
+    /* put the player in "playing" mode and add it to the player list... */
+    /* enable the player socket by moving the login socket to it */
+    /* WARNING: delete this reference by the caller. Its a marker to show the socket is now owned by pl */
+    ns->pl = pl;
+    FREE_AND_CLEAR_HASH(ns->pl_account.create_name);
+    memcpy(&pl->socket, ns, sizeof(NewSocket));
+    ns->pl_account.name = NULL;
+    pl->socket.below_clear = 0;
+    pl->socket.update_tile = 0;
+    pl->socket.look_position = 0;
+    pl->socket.update_tile = 0;
+    pl->socket.look_position = 0;
+    pl->socket.look_position_container = 0;
+    pl->socket.ext_title_flag = 1;
+
+    /* mark socket, player & connection as playing and add charcter to player queue */
+    pl->socket.status = Ns_Playing;
     pl->state = ST_PLAYING;
 
-    // QUICKHACK: to avoid problems after conversion, we have to force a save here
-    if(pl->p_ver != PLAYER_FILE_VERSION_BETA4)
+    player_active++;
+    if(player_active_meta < player_active)
+        player_active_meta = player_active;
+
+    if (!last_player)
+        first_player = last_player = pl;
+    else
     {
-        pl->p_ver = PLAYER_FILE_VERSION_BETA4;
-        save_player(pl->ob, 1);
-        if(old_ap_ptr)
-        {
-            unlink(old_ap_ptr->path);
-            free_map(old_ap_ptr, 1);
-            delete_map(old_ap_ptr);
-        }
-    } // end QUICKHACK
+        last_player->next = pl;
+        pl->prev = last_player;
+        last_player = pl;
+    }
 
-    /* NOW we are ready with loading and setup... now we kick the player in the world */
-    if(!mode)
-        return; /* if in traverse mode, we only want load the player - not make him alive */
+    /* This command will tell the client to go in playing mode and wait for server game data */
+    esrv_new_player(pl, op->weight + op->carrying);
+    LOG(llevDebug, "Send new_player(): socket %d\n", ns->fd);
 
-    /* Ns_Playing for a existing char - 2nd place to set is the newchar function */
-    pl->socket.status = Ns_Playing;
+    esrv_send_inventory(op, op);
+    send_spelllist_cmd(op, NULL, SPLIST_MODE_ADD); /* send the known spells as list to client */
+    send_skilllist_cmd(op, NULL, SPLIST_MODE_ADD);
 
-    new_draw_info(NDI_UNIQUE, 0, op, "Welcome Back!");
+    /* we do the login script BEFORE we go to the map */
+#ifdef PLUGINS
+    /* GROS : Here we handle the BORN global event */
+    evtid = EVENT_BORN;
+    CFP.Value[0] = (void *) (&evtid);
+    CFP.Value[1] = (void *) (op);
+    GlobalEvent(&CFP);
+
+    /* GROS : Here we handle the LOGIN global event */
+    evtid = EVENT_LOGIN;
+    CFP.Value[0] = (void *) (&evtid);
+    CFP.Value[1] = (void *) (pl);
+    CFP.Value[2] = (void *) (pl->socket.ip_host);
+    GlobalEvent(&CFP);
+#endif
+
 #ifdef USE_CHANNELS
-#ifdef ANNOUNCE_CHANNELS
-    new_draw_info(NDI_UNIQUE | NDI_RED, 0, op, "We are testing out a new channel-system!\nMake sure you have a client with channel-support.\nSee forums on www.daimonin.net!");
+    /* channel-system: we check if the playerfile has the channels tag */
+    /* if not, add all the default channels */
+    if (!with_channels)
+        addDefaultChannels(pl);
 #endif
-#endif
-    display_motd(op);
+
+    /* and finally the player appears on the map */
+    enter_map_by_name(op, pl->maplevel, pl->orig_map, pl->map_x, pl->map_y, pl->map_status);
+
+    /* announce the login */
     if (!pl->dm_stealth)
     {
         if (!pl->silent_login) /* Inform all players of the login */
@@ -1235,79 +824,103 @@ void check_login(object *op, int mode)
                 new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, buf_dm);
         }
     }
-#ifdef PLUGINS
-    /* GROS : Here we handle the LOGIN global event */
-    evtid = EVENT_LOGIN;
-    CFP.Value[0] = (void *) (&evtid);
-    CFP.Value[1] = (void *) (pl);
-    CFP.Value[2] = (void *) (pl->socket.ip_host);
-    GlobalEvent(&CFP);
+
+    return ADDME_MSG_OK;
+}
+
+/* we create player >name< with a template player arch object and some setup values
+ * It will return at success in pl_ret a pointer to that pl objectz.
+ * That object is ready to save but NOT ready for playing.
+ * We don't have set the friendly list, the socket and others.
+ * If we fail, no player struct will be returned and it returns
+ * with an error msg.
+ */
+addme_login_msg player_create(NewSocket *ns, player **pl_ret, char *name, int race, int gender, int skill_nr)
+{
+    player          *pl = NULL;
+    object          *op = NULL;
+    archetype       *p_arch;
+    int             skillnr[]       = {SK_SLASH_WEAP, SK_MELEE_WEAPON, SK_CLEAVE_WEAP, SK_PIERCE_WEAP};
+    char            *skillitem[]     = {"shortsword", "mstar_small", "axe_small", "dagger_large"};
+
+    /* do some sanity checks. *ns, *pl and the name are checked by caller */ 
+
+    /* race & gender values in range? This values MUST fit or client is hacked or damaged */
+    if(race < 0 || race >= settings.player_races || gender < 0 || gender >= MAX_RACE_GENDER)
+        return ADDME_MSG_DISCONNECT;
+
+    /* check we have a valid player race object arch. MUST fit too */ 
+    if(!(p_arch = player_arch_list[race].p_arch[gender]))
+        return ADDME_MSG_DISCONNECT;
+
+    /* now check the skill ID */
+    if(skill_nr < 0 || skill_nr >= MAX_START_SKILLS)
+        return ADDME_MSG_DISCONNECT;
+
+    /* santiy checks done - all values are fine and initilized, start character generation */
+    /* setup the base structure */
+    pl = get_player_struct();
+    op = get_object();
+    copy_object_data(&p_arch->clone, op); /* copy without active list stuff and such */
+    SET_FLAG(op, FLAG_NO_FIX_PLAYER);
+    op->custom_attrset = pl;
+    pl->ob = op;
+    op->type = PLAYER;
+    pl->state = ST_BORN;
+    *pl_ret = pl;
+
+#ifdef AUTOSAVE
+    pl->last_save_tick = ROUND_TAG;
 #endif
 
-    /* If the player should be dead, call kill_player for them
-     * Only check for hp - if player lacks food, let the normal
-     * logic for that to take place.  If player is permanently
-     * dead, and not using permadeath mode, the kill_player will
-     * set the play_again flag, so return.
-     */
-    if (op->stats.hp <= 0)
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "Your character was dead last your played.");
-        kill_player(op);
+    /* now we add our custom settings for this new character */
+    FREE_AND_ADD_REF_HASH(pl->account_name, ns->pl_account.name);
+    FREE_AND_COPY_HASH(op->name, name);
+    pl->orig_stats.Str = op->stats.Str = (sint8) player_arch_list[race].str;
+    pl->orig_stats.Dex = op->stats.Dex = (sint8) player_arch_list[race].dex;
+    pl->orig_stats.Con = op->stats.Con = (sint8) player_arch_list[race].con;
+    pl->orig_stats.Int = op->stats.Int = (sint8) player_arch_list[race].intel;
+    pl->orig_stats.Wis = op->stats.Wis = (sint8) player_arch_list[race].wis;
+    pl->orig_stats.Pow = op->stats.Pow = (sint8) player_arch_list[race].pow;
+    pl->orig_stats.Cha = op->stats.Cha = (sint8) player_arch_list[race].cha;
 
-        if (pl->state != ST_PLAYING)
-            return;
-    }
+    /* setup start point and default maps */
+    set_mappath_by_default(pl);
+    set_bindpath_by_default(pl);
+    op->x = pl->map_x;
+    op->y = pl->map_y;
 
-    /* lets check we had saved last time in a gmaster mode.
-     * if so, check the setting is still allowed and if so,
-     * set the player to it.
-     */
-    if(pl->gmaster_mode != GMASTER_MODE_NO)
-    {
-        int mode = pl->gmaster_mode;
+    /* setup the base object structure, which are usually invisible objects in the inventory */
+    link_player_skills(op);
+    learn_skill(op, NULL, NULL, skillnr[skill_nr], 0);
 
-        pl->gmaster_mode = GMASTER_MODE_NO;
-        if(check_gmaster_list(pl, mode))
-            set_gmaster_mode(pl, mode);
-    }
+    /* and here the initial stuff depending the treasure list of the player arch */
+    give_initial_items(op, op->randomitems);
 
-    /* Do this after checking for death - no reason sucking up bandwidth if
-     * the data isn't needed.
-     */
-    esrv_new_player(pl, op->weight + op->carrying);
-    esrv_send_inventory(op, op);
+    /* some more sanity settings */
+    SET_ANIMATION(op, 4 * (NUM_ANIMATIONS(op) / NUM_FACINGS(op))); /* So player faces south */
+    CLEAR_FLAG(op, FLAG_WIZ);
+    FREE_AND_CLEAR_HASH2(op->msg);
+    op->carrying = sum_weight(op); 
 
-    /* This seems to compile without warnings now.  Don't know if it works
-     * on SGI's or not, however.
-     */
-    qsort((void *) pl->known_spells, pl->nrofknownspells, sizeof(pl->known_spells[0]), (void *) (int (*) ()) spell_sort);
+    CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
+    /* this is more or less a fake flagging - ensure you delete it before object release */
+    SET_FLAG(pl->ob, FLAG_FRIENDLY);
 
-    /* hm, this is for secure - be SURE our player is on
-     * friendly list. If friendly is set, this was be done
-     * in loader.c.
-     */
-    if (!QUERY_FLAG(op, FLAG_FRIENDLY))
-    {
-        LOG(llevBug, "BUG: Player %s was loaded without friendly flag!", query_name(op));
-        SET_FLAG(op, FLAG_FRIENDLY);
-    }
+ return ADDME_MSG_OK;
+}
 
-    /* ok, we are done with the login.
-     * Lets put the player on the map and send all player lists to the client.
-     * The player is active now.
-     */
-    enter_map_by_name(op, pl->maplevel, pl->orig_map, pl->map_x, pl->map_y, pl->map_status);
 
-    pl->socket.update_tile = 0;
-    pl->socket.look_position = 0;
-    pl->socket.look_position_container = 0;
-    pl->socket.ext_title_flag = 1;
+/* tell the player something is wrong - and let him try another char
+* we don't kill the socket here and we stay in the current socket mode
+* mostly for another addme but also a new character is possible
+*/
+void player_addme_failed(NewSocket *ns, int error_msg)
+{
+    sockbuf_struct	*sbptr;
 
-    pl->ob->direction = 4;
-    esrv_new_player(pl, op->weight + op->carrying);
-    send_spelllist_cmd(op, NULL, SPLIST_MODE_ADD); /* send the known spells as list to client */
-    send_skilllist_cmd(op, NULL, SPLIST_MODE_ADD);
-
-    return;
+    SOCKBUF_REQUEST_BUFFER(ns, SOCKET_SIZE_SMALL);
+    sbptr = ACTIVE_SOCKBUF(ns);
+    SockBuf_AddChar(sbptr, error_msg);
+    SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_ADDME_FAIL, SOCKBUF_DYNAMIC);
 }

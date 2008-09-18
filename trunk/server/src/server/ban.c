@@ -260,7 +260,7 @@ int check_banned(NewSocket *ns, const char *name, char *ip)
                             }
                         }
                         Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, ban_buf_name, strlen(ban_buf_name));
-                        Write_Command_To_Socket(ns, BINARY_CMD_ADDME_FAIL);
+                        player_addme_failed(ns, ADDME_MSG_BANNED);
                     }
 
                     /* someone is trying to login again & again to banned char? Lets teach him to avoid it */
@@ -271,7 +271,7 @@ int check_banned(NewSocket *ns, const char *name, char *ip)
                         LOG(llevInfo,"BANNED NAME: 3 login tries (2min): IP %s (player: %s).\n",ns->ip_host,name);
                         add_ban_entry(NULL, ns->ip_host, 8*60*2, 8*60*2); /* 2 min temp ban for this ip */
                         Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, password_warning , strlen(password_warning));
-                        Write_Command_To_Socket(ns, BINARY_CMD_ADDME_FAIL);
+                        player_addme_failed(ns, ADDME_MSG_DISCONNECT); /* tell client we failed and kick him away */
                         ns->login_count = ROUND_TAG+(uint32)(10.0f * pticks_second);
                         ns->status = Ns_Zombie; /* we hold the socket open for a *bit* */
                         ns->idle_flag = 1;
@@ -362,7 +362,7 @@ int check_banned(NewSocket *ns, const char *name, char *ip)
 
             LOG(-1,"***BANNED IP Login: %s\n", ns->ip_host);
             Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, ban_buf_ip, strlen(ban_buf_ip));
-            Write_Command_To_Socket(ns, BINARY_CMD_ADDME_FAIL);
+            player_addme_failed(ns, ADDME_MSG_DISCONNECT); /* tell client something is wrong and we leave */
             ns->login_count = ROUND_TAG+(uint32)(5.0f * pticks_second);
             ns->status = Ns_Zombie; /* we hold the socket open for a *bit* */
             ns->idle_flag = 1;

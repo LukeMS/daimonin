@@ -662,6 +662,8 @@ int command_dm_light(object *op, char *params)
     return 0;
 }
 
+/* TODO: logic changed with account patch! */
+#if 0
 int command_dm_password (object *op, char *params)
 {
     player *pl;
@@ -705,7 +707,7 @@ int command_dm_password (object *op, char *params)
     while (fgets(bufall,MAX_BUF-1,fp) != NULL)
     {
         if(!strncmp(bufall,"password ",9))
-            fprintf(fpout,"password %s\n", crypt_string(pwd,NULL));
+            fprintf(fpout,"password %s\n", crypt_string(pwd));
         else
             fputs(bufall, fpout);
     }
@@ -713,6 +715,7 @@ int command_dm_password (object *op, char *params)
     /* now, this is important - perhaps the player is online!
      * be sure we change the password in the player struct too!
      */
+/* TODO: we must check accounts here */
     if((name_hash = find_string(name)))
     {
         for(pl=first_player;pl!=NULL;pl=pl->next)
@@ -722,7 +725,7 @@ int command_dm_password (object *op, char *params)
              */
             if(pl->ob && pl->ob->name == name_hash)
             {
-                strcpy(pl->password,crypt_string(pwd,NULL));
+        FIXME->  strcpy(pl->socket.account.pwd, crypt_string(pwd));
                 break;
             }
         }
@@ -739,6 +742,7 @@ int command_dm_password (object *op, char *params)
 
     return 0;
 }
+#endif
 
 int command_dumpactivelist(object *op, char *params)
 {
@@ -958,46 +962,6 @@ int command_fix_me(object *op, char *params)
     FIX_PLAYER(op ,"command fix_me");
     return 1;
 }
-
-int command_players(object *op, char *paramss)
-{
-    char    buf[MAX_BUF];
-    char   *t;
-    DIR    *Dir;
-
-    sprintf(buf, "%s/%s/", settings.localdir, settings.playerdir);
-    t = buf + strlen(buf);
-    if ((Dir = opendir(buf)) != NULL)
-    {
-        const struct dirent    *Entry;
-
-        while ((Entry = readdir(Dir)) != NULL)
-        {
-            /* skip '.' , '..' */
-            if (!((Entry->d_name[0] == '.' && Entry->d_name[1] == '\0')
-               || (Entry->d_name[0] == '.' && Entry->d_name[1] == '.' && Entry->d_name[2] == '\0')))
-            {
-                struct stat Stat;
-
-                strcpy(t, Entry->d_name);
-                if (stat(buf, &Stat) == 0)
-                {
-                    if ((Stat.st_mode & S_IFMT) == S_IFDIR)
-                    {
-                        char        buf2[MAX_BUF];
-                        struct tm  *tm  = localtime(&Stat.st_mtime);
-                        sprintf(buf2, "%s\t%04d %02d %02d %02d %02d %02d", Entry->d_name, 1900 + tm->tm_year,
-                                1 + tm->tm_mon, tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec);
-                        new_draw_info(NDI_UNIQUE, 0, op, buf2);
-                    }
-                }
-            }
-        }
-    }
-    closedir(Dir);
-    return 0;
-}
-
 
 
 int command_logs(object *op, char *params)
@@ -1334,161 +1298,6 @@ int onoff_value(char *line)
     }
 }
 
-int command_quit(object *op, char *params)
-{
-    return 1;
-}
-
-int command_sound(object *op, char *params)
-{
-    if (CONTR(op)->socket.sound)
-    {
-        CONTR(op)->socket.sound = 0;
-        new_draw_info(NDI_UNIQUE, 0, op, "The sounds are disabled.");
-    }
-    else
-    {
-        CONTR(op)->socket.sound = 1;
-        new_draw_info(NDI_UNIQUE, 0, op, "The sounds are enabled.");
-    }
-    return 1;
-}
-
-/* Perhaps these should be in player.c, but that file is
- * already a bit big.
- * status can be:
- * 0= start/continue login, nothing special happens
- * 1= name is not taken, no player with that name in the system
- * 2= name is blocked and login to this name is not allowed (is in creating or system use)
- * 3= name is taken and its logged in right now
- * 4= name is taken and not logged in
- * 5= name is taken and banned
- * 6= illegal password or name
- * 7= verify password don't match
- */
-void receive_player_name(object *op, char k, char *write_buf)
-{
-    const char *name_hash = NULL;
-    int status=0;
-
-    /* be sure the player name is like "Xxxxx" */
-    unsigned int name_len = transform_name_string(write_buf + 1);
-
-    /* we have a hacker? */
-    if(CONTR(op)->socket.pwd_try >= 3)
-    {
-        /* someone ignored the addme_fail and the 1min ban for 3 wrong pwd guesses? BAD idea */
-        add_ban_entry(NULL, CONTR(op)->socket.ip_host, 8*60*24*31, 8*60*24*31); /* one month ban */
-        /* no need to be nice and tell him whats going on - kick this sucker HARD */
-        CONTR(op)->socket.status = Ns_Dead;
-        return;
-    }
-
-    LOG(llevDebug, "Got name from client: %s\n", write_buf + 1);
-
-    /* is the name legal? */
-    if ( name_len <= 1 || name_len > MAX_PLAYER_NAME || !playername_ok(write_buf + 1))
-    {
-        get_name(op, 6); /* nice try - illegal name */
-        return;
-    }
-
-    /* we got a legal name... NOW check this named is banned */
-    if((name_hash = find_string(write_buf+1))) /* if the name is not in the hash list, it can't be in the ban list too */
-    {
-        if (check_banned(&CONTR(op)->socket, name_hash, 0)) //* this can remove the ref count from name_hash - it is then invalid */
-        {
-            LOG(llevInfo, "Banned player %s tried to add. [%s]\n", write_buf+1, CONTR(op)->socket.ip_host);
-            if(CONTR(op)->socket.status < Ns_Zombie)
-                get_name(op, 5); /* tells client the name is banned - ask for a new name! */
-            return;
-        }
-    }
-
-    /* ok, we have a legal and unbanned name - now check how it is or was in use */
-    if((status = check_name(CONTR(op), write_buf + 1)) == 2)
-    {
-        get_name(op, 2); /* means: Name denied: Name is in create, login or logout transfer */
-        return;
-    }
-
-    /* status is now 1,3 or 4
-     * Note: we don't trust the client!
-     * The L/C parameter don't effect the login procedure - we only use
-     * it to hold the client in sync with our login. If the client tries to
-     * cheat, IT will be out of sync - not the server.
-     */
-    if(write_buf[0]=='C')
-    {
-        if(status != 1)
-        {
-            get_name(op, status); /* its 3 or 4 = taken */
-            return;
-        }
-    }
-    else /* means write_buf[0]=='L' */
-    {
-        if(status == 1) /* this name/character don't exits */
-        {
-            get_name(op, status); /* 1 means - don't exists for normal login */
-            return;
-        }
-    }
-
-    /* ok, login seems fine. now ask for password.
-     * Note again: The server don't care about old or new char at this point.
-     */
-    FREE_AND_COPY_HASH(op->name, write_buf + 1);
-    CONTR(op)->name_changed = 1;
-    get_password(op, 0);
-}
-
-
-/* a client send player name + password.
- * check password. Login char OR verify password
- * for new char creation.
- * For beta 2 we have moved the char creation to client
- */
-void receive_player_password(object *op, char k, char *write_buf)
-{
-    unsigned int pwd_len = strlen(write_buf+1);
-
-    if (CONTR(op)->state == ST_CONFIRM_PASSWORD)
-    {
-        if (pwd_len < 6 || pwd_len > 17)
-        {
-            get_password(op, 7); /* confirm password has not matched */
-            return;
-        }
-    }
-    else
-    {
-        if (pwd_len < 1 || pwd_len > 17)
-        {
-            get_password(op, 6); /* password is illegal */
-            return;
-        }
-    }
-    if (CONTR(op)->state == ST_CONFIRM_PASSWORD)
-    {
-        if (!check_password(write_buf + 1, CONTR(op)->password))
-        {
-            get_password(op, 7); /* confirm password has not matched */
-            return;
-        }
-        esrv_new_player(CONTR(op), 0);
-        Write_Command_To_Socket(&CONTR(op)->socket, BINARY_CMD_NEW_CHAR);
-        LOG(llevInfo, "NewChar send for %s\n", op->name);
-        CONTR(op)->state = ST_CREATE_CHAR;
-        return;
-    }
-    strcpy(CONTR(op)->password, write_buf + 1);
-    CONTR(op)->state = ST_CREATE_CHAR;
-    check_login(op, TRUE);
-    return;
-}
-
-
 int command_save(object *op, char *params)
 {
     if (blocks_cleric(op->map, op->x, op->y))
@@ -1502,7 +1311,7 @@ int command_save(object *op, char *params)
     }
     else
     {
-        if (save_player(op, 1))
+        if (player_save(op))
             new_draw_info(NDI_UNIQUE, 0, op, "You have been saved.");
         else
             new_draw_info(NDI_UNIQUE, 0, op, "SAVE FAILED!");

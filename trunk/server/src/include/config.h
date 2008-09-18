@@ -98,6 +98,10 @@
 #define UNIQUE_DIR "unique-items"
 #endif
 
+#ifndef ACCOUNTDIR
+#define ACCOUNTDIR "accounts"
+#endif
+
 #ifndef PLAYERDIR
 #define PLAYERDIR "players"
 #endif
@@ -650,14 +654,6 @@
 
 #define AUTOSAVE 5000
 
-/* By selecting the following, whenever a player does a backup save (with
- * the 'save command), the player will be saved at home (EMERGENCY_MAP_*
- * information that is specified later).  IF this is not set, the player
- * will be saved at his present location.
- */
-
-/*#define BACKUP_SAVE_AT_HOME*/
-
 /* RESET_LOCATION_TIME is the number of seconds that must elapse before
  * we fill return the player to his savebed location.  If this is zero,
  * this feature is disabled (player will resume where ever he was
@@ -665,12 +661,7 @@
  * it will prevent players from camping out in treasure rooms.
  * Do not comment this out - it must be set to something - if you
  * comment this out, the program will not compile.
- *
- * This will work to BACKUP_SAVE_AT_HOME at home above, but where the player
- * where appear under what conditions is a little complicated depending
- * on how the player exited the game.  But if the elapsed time is greater than
- * the value below, player will always get returned to savebed location
- * location.
+ * TODO: rework this setting
  */
 
 #define RESET_LOCATION_TIME 0

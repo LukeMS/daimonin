@@ -230,6 +230,10 @@
 				Name="socket"
 				>
 				<File
+					RelativePath="..\..\..\src\socket\account.c"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\src\socket\commands.c"
 					>
 				</File>

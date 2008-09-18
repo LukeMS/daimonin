@@ -24,6 +24,8 @@
 #include <global.h>
 #include "../zlib/zlib.h"
 
+player_arch_template        player_arch_list[MAX_PLAYER_ARCH];
+
 /* as long the server don't have a autoupdate/login server
  * as frontend we must serve our depending client files self.
  */
@@ -78,11 +80,15 @@ static void load_srv_files(char *fname, int id, int cmd)
  */
 static void create_client_settings(void)
 {
-    char    buf[MAX_BUF*4];
-    int     i;
-    FILE   *fset_default, *fset_create;
+    archetype   *p_arch;
+    char        buf[MAX_BUF*4], arch_name[64];
+    int         i, line=0, id, race=0, gender = 0;
+    FILE        *fset_default, *fset_create;
 
     LOG(llevDebug, "Creating %s/client_settings...\n", settings.localdir);
+
+    /* used by create_player() as default template */
+    memset(player_arch_list, 0 , sizeof(player_arch_template));
 
     /* open default */
     sprintf(buf, "%s/client_settings", settings.datadir);
@@ -102,8 +108,61 @@ static void create_client_settings(void)
 
     /* copy default to target */
     while (fgets(buf, MAX_BUF, fset_default) != NULL)
-        fputs(buf, fset_create);
+    {
+        if(buf[0] == '#')
+            fputs(buf, fset_create);
+        else
+        {
+            /* the file format for the settings is fixed and MUST fit - so we use a line counter for the entries */
+            if(line < 2 || line >6) /* just flush the face defines & the description */
+            {
+
+            }
+            else if(line >= 2 && line <= 5) /* thats the player arch lines */
+            {
+                sscanf(buf, "%d %s %*s\n", &id, arch_name);
+                if(id) /* 0 marks an invalid entry */
+                {
+
+                    if (!(p_arch = find_archetype(arch_name)) || p_arch->clone.type != PLAYER)
+                    {
+                        /* global error will stop the server */
+                        LOG(llevError, "Error: invalid player arch in client_settings race %d line %d!\n", race, line);
+                    }
+                    player_arch_list[race].p_arch[gender++] = p_arch; /* we just copy the clone here later */
+                }
+            }
+            else if (line == 6) /* thats the default start values */
+            {
+                sscanf(buf, "%d %d %d %d %d %d %d\n",
+                &player_arch_list[race].str, &player_arch_list[race].dex, 
+                &player_arch_list[race].con, &player_arch_list[race].intel,
+                &player_arch_list[race].wis, &player_arch_list[race].pow, &player_arch_list[race].cha);
+                race++;
+                gender = 0;
+            }
+
+            fputs(buf, fset_create);
+            if( line++ >= 10)
+                line = 0;
+        }
+    }
     fclose(fset_default);
+
+    settings.player_races = race; /* number of loaded player race templates */
+
+    /* flush the loaded info to LOG so we can see what we have */
+    LOG(llevInfo, "Loaded %d player race templates:\n", settings.player_races);
+    for(line=0; line < race;line++)
+        LOG(llevInfo, "%s %s %s %s stats: %d %d %d %d %d %d %d\n", 
+        player_arch_list[line].p_arch[0]?player_arch_list[line].p_arch[0]->clone.name:"NULL",
+        player_arch_list[line].p_arch[1]?player_arch_list[line].p_arch[1]->clone.name:"NULL",
+        player_arch_list[line].p_arch[2]?player_arch_list[line].p_arch[2]->clone.name:"NULL",
+        player_arch_list[line].p_arch[3]?player_arch_list[line].p_arch[3]->clone.name:"NULL",
+        player_arch_list[line].str, player_arch_list[line].dex, 
+        player_arch_list[line].con, player_arch_list[line].intel, player_arch_list[line].wis,
+        player_arch_list[line].pow, player_arch_list[line].cha);
+    LOG(llevInfo, "done.\n");
 
     /* now we add the server specific date
      * first: the exp levels!

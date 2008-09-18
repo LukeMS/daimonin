@@ -53,8 +53,6 @@
 #define SOCKET_BUFSIZE_SEND (24*1024)
 #define SOCKET_BUFSIZE_READ (8*1024)
 
-#define CS_QUERY_HIDEINPUT 0x4  /* Hide input being entered */
-
 /* These are multiplication values that should be used when changing
  * floats to ints, and vice version.  MULTI is integer representatin
  * (float to int), MULTF is float, for going from int to float.

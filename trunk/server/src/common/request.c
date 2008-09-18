@@ -71,18 +71,6 @@ static int  cs_stat_skillexp[]    =
  *
  ******************************************************************************/
 
-/*
- * send_query asks the client to query the user.  This way, the client knows
- * it needs to send something back (vs just printing out a message
- */
-void send_query(NewSocket *ns, uint8 flags, char *text)
-{
-    char    buf[MAX_BUF];
-
-    sprintf(buf, "%d %s", flags, text!= NULL ? text : "");
-    Write_String_To_Socket(ns, BINARY_CMD_QUERY, buf, strlen(buf));
-}
-
 void esrv_update_skills(player *pl)
 {
     object *tmp2;

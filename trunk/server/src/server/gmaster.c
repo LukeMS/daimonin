@@ -103,7 +103,7 @@ int check_gmaster_file_entry(char *name, char *passwd, char *host, char *mode)
 {
     int mode_id = GMASTER_MODE_NO;
 
-    if(strlen(name) >= MAX_PLAYER_NAME*2)
+    if(strlen(name) > MAX_PLAYER_NAME)
     {
         LOG(llevBug, "BUG: load_gmaster_file): name %s to long: %d\n", name, strlen(name));
         return mode_id;
@@ -113,7 +113,7 @@ int check_gmaster_file_entry(char *name, char *passwd, char *host, char *mode)
         LOG(llevBug, "BUG: load_gmaster_file): host %s to long: %d\n", host, strlen(host));
         return mode_id;
     }
-    if(strlen(passwd) >= MAX_PLAYER_PASSWORD)
+    if(strlen(passwd) > MAX_ACCOUNT_PASSWORD)
     {
         LOG(llevBug, "BUG: load_gmaster_file): passwd %s to long: %d\n", passwd, strlen(passwd));
         return mode_id;
@@ -209,7 +209,11 @@ int check_gmaster_list(player *pl, int mode)
                 ol->objlink.gm->password,ol->objlink.gm->host,ol->objlink.gm->mode );*/
         if ( ol->objlink.gm->mode >= mode /* allow a GM to activate VOL mode for example */
              && (!strcmp(ol->objlink.gm->name, "*") || !strcasecmp(pl->ob->name, ol->objlink.gm->name))
-             && (!strcmp(ol->objlink.gm->password, "*") || !strcmp(pl->password, ol->objlink.gm->password))
+             && (!strcmp(ol->objlink.gm->password, "*")
+#if 0 /* disabled by account patch */
+             || !strcmp(pl->socket.account.pwd, ol->objlink.gm->password)
+#endif
+             )
              && (!strcmp(ol->objlink.gm->host, "*") || !strcasecmp(pl->socket.ip_host, ol->objlink.gm->host)))
             return TRUE;
     }

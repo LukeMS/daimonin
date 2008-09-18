@@ -133,24 +133,10 @@ void start_info(object *op)
     new_draw_info(NDI_UNIQUE, 0, op, buf);
 }
 
-char * crypt_string(char *str, char *salt)
+/* here we hook in to crypt the password - this feature is disabled atm */
+char * crypt_string(char *str)
 {
-#ifndef WIN32 /* ***win32 crypt_string:: We don't need this anymore since server/client fork */
-    static char    *c   = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./";
-    char            s[2];
-    if (salt == NULL)
-        s[0] = c[RANDOM() % (int) strlen(c)],
-        s[1] = c[RANDOM() % (int) strlen(c)];
-    else
-        s[0] = salt[0],
-        s[1] = salt[1];
-#ifdef HAVE_LIBDES
-    return (char *) des_crypt(str, s);
-#else
-    return (char *) crypt(str, s);
-#endif
-#endif /* win32 */
-    return(str);
+    return str;
 }
 
 /* generate a unique instance map ID */
@@ -198,7 +184,7 @@ void process_players1(mapstruct *map)
             }
             else
             {
-                save_player(pl->ob, 1);
+                player_save(pl->ob);
                 pl->last_save_tick = ROUND_TAG;
             }
         }
@@ -868,7 +854,7 @@ static void traverse_player_stats(char* start_dir)
                     LOG(llevDebug, "Error: loading player %s...\n", entry->d_name);
                 else
                 {
-                    pl->socket.status = ST_SOCKET_NO;
+                    pl->socket.status = Ns_Disabled;
                     entry->d_name[fptr-entry->d_name] = 0;
                     FREE_AND_COPY_HASH(pl->ob->name, entry->d_name);
                     entry->d_name[fptr-entry->d_name] = '.';
