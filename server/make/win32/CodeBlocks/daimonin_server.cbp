@@ -439,6 +439,9 @@
 		<Unit filename="..\..\..\src\server\weather.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="..\..\..\src\socket\account.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="..\..\..\src\socket\commands.c">
 			<Option compilerVar="CC" />
 		</Unit>
