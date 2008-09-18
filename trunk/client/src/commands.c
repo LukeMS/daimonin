@@ -95,7 +95,7 @@ void DoClient(void)
     while ( (cmd = get_next_input_command()) ) /* function has mutex included */
     {
         /* LOG(LOG_MSG,"Command #%d (LT:%d)(len:%d)\n",cmd->data[0], LastTick, cmd->len); */
-        if (!cmd->data[0] || (cmd->data[0]&~0x80) > NCOMMANDS)
+        if (!cmd->data[0] || (cmd->data[0]&~0x80) > (uint8) NCOMMANDS)
             LOG(LOG_ERROR, "Bad command from server (%d)\n", cmd->data[0]);
         else
         {
