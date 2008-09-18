@@ -1195,9 +1195,10 @@ static void key_string_event(SDL_KeyboardEvent *key)
                     else if (c >= 32 && ((c != '_' && c != '^' && c != '~' && c != '§' && c != '°' && c != '|')
                         || (GameStatus >= GAME_STATUS_LOGIN_ACCOUNT && GameStatus <= GAME_STATUS_LOGIN_NEW)))
                     {
-                        if(GameStatus >= GAME_STATUS_LOGIN_ACCOUNT && GameStatus <= GAME_STATUS_LOGIN_NEW &&
+                        if(GameStatus == GAME_STATUS_ACCOUNT_CHAR_NAME || 
+                            (GameStatus >= GAME_STATUS_LOGIN_ACCOUNT && GameStatus <= GAME_STATUS_LOGIN_NEW &&
                             ( (c >='a' && c <= 'z') || (c >='A' && c <= 'Z') || (c>='0' && c <='9') || 
-                            c == '-' || c == '_' /* enable for characters here when needed */) )
+                            c == '-' || c == '_' /* enable for characters here when needed */) ))
                         {
 
                         if (GameStatus == GAME_STATUS_ACCOUNT_CHAR_NAME)
