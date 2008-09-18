@@ -40,7 +40,7 @@ using namespace Ogre;
 
 static const int TOOLTIP_SIZE = 1 << 8;
 static const unsigned long TOOLTIP_DELAY = 2000; // Wait x ms before showing the tooltip.
-const int   GuiManager::SUM_WIN_DIGITS = (int)log10(GuiManager::GUI_WIN_SUM) +1;
+const int   GuiManager::SUM_WIN_DIGITS = (int)log10((float)GuiManager::GUI_WIN_SUM) +1;
 const char *GuiManager::GUI_MATERIAL_NAME     = "GUI/Window";
 const char *GuiManager::OVERLAY_ELEMENT_TYPE  = "Panel"; // defined in Ogre::OverlayElementFactory.h
 const char *GuiManager::OVERLAY_RESOURCE_NAME = "_Overlay";
