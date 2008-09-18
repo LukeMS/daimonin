@@ -615,12 +615,23 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
             LOG(llevDebug, "Debug: load_player(%s) unknown line in player file: %s\n", name, bufall);
     } /* End of loop loading the character file */
 
-    /* do some sanity checks... if something looks bad force the defaults */
+    /* ensure we have a valid map we can the player kick put in later.
+     * when needed fallback to the defined start maps
+     */
     if(!pl->orig_map || !pl->maplevel)
-        set_mappath_by_default(pl);
+    {
+        if(!pl->maplevel) /* bad bug! */
+            set_mappath_by_default(pl);
 
+        FREE_AND_ADD_REF_HASH(pl->orig_map, pl->maplevel);
+    }
     if(!pl->orig_savebed_map || !pl->savebed_map)
-        set_bindpath_by_default(pl);
+    {
+        if(!pl->savebed_map)
+            set_bindpath_by_default(pl);
+
+        FREE_AND_ADD_REF_HASH(pl->orig_savebed_map, pl->savebed_map);
+    }
 
     LOG(llevDebug, "load obj for player: %s\n", name);
     op = get_object(); /* Create a new object for the real player data */
