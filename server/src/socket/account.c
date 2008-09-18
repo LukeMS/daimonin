@@ -337,3 +337,24 @@ account_status account_delete_player(Account *ac, char *name)
 
     return ret;
 }
+
+/* check we have only valid chars in our name.
+* Works for acocunts as for player names
+* player names have another check in player_name_valid()
+*/
+int account_name_valid(char *cp)
+{
+    char *tmp=cp;
+
+    if(strchr(cp,' ')) /* we have any ' ' char? Then its invalid*/
+        return FALSE;
+
+    for(;*cp!='\0';cp++)
+    {
+        /* fail if not alphabet letter or digit and not '-' or '_' */
+        if(!isalnum(*cp) && *cp != '-' && *cp!= '_')
+            return FALSE;
+    }
+
+    return TRUE;
+}

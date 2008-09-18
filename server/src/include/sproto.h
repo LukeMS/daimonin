@@ -425,7 +425,6 @@ void                        pet_follow_owner(object *pet);
 player                     *find_player(char *plname);
 player                     *find_player_hash(const char *plname);
 void                        display_motd(object *op);
-int                         name_valid(char *cp);
 int                         player_name_valid(char *cp);
 void                        free_player(player *pl);
 void                        destroy_player_struct(player *pl);

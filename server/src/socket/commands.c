@@ -1018,7 +1018,7 @@ void cs_cmd_checkname(char *buf, int len, NewSocket *ns)
     }
 
     /* the client should block any invalid name - if we have one here its bogus */
-    if(!name_valid(buf))
+    if(!account_name_valid(buf))
     {
         ns->status = Ns_Dead;
         return;
@@ -1090,7 +1090,8 @@ void cs_cmd_login(char *buf, int len, NewSocket *ns)
     pass = buf+name_len+1;
     pass_len = strlen(pass);
     /* is the password in right size? Don't allow pass = name and ensure name is valid */
-    if(pass_len < MIN_ACCOUNT_PASSWORD || pass_len > MAX_ACCOUNT_PASSWORD || !strcmp(buf,pass) || !name_valid(buf) )
+    if(pass_len < MIN_ACCOUNT_PASSWORD || pass_len > MAX_ACCOUNT_PASSWORD 
+                                       || !strcmp(buf,pass) || !account_name_valid(buf) )
     {
         ns->status = Ns_Dead;
         return;
@@ -1141,7 +1142,7 @@ void cs_cmd_addme(char *buf, int len, NewSocket *ns)
 
     /* the client MUST have send us a valid name. If not we are very, very angry ... */
     name_len = strlen(buf);
-    if(name_len < MIN_PLAYER_NAME || name_len > MAX_PLAYER_NAME || !name_valid(buf) || !player_name_valid(buf))
+    if(name_len < MIN_PLAYER_NAME || name_len > MAX_PLAYER_NAME || !player_name_valid(buf))
     {
         ns->status = Ns_Dead;
         return;
@@ -1220,7 +1221,7 @@ void cs_cmd_newchar(char *buf, int len, NewSocket *ns)
     skill_nr = GetChar_Buffer(buf);
 
     name_len = strlen(buf);
-    if(name_len < MIN_PLAYER_NAME || name_len > MAX_PLAYER_NAME || !name_valid(buf) || !player_name_valid(buf))
+    if(name_len < MIN_PLAYER_NAME || name_len > MAX_PLAYER_NAME || !player_name_valid(buf))
     {
         ns->status = Ns_Dead;
         return;
@@ -1295,7 +1296,7 @@ void cs_cmd_delchar(char *buf, int len, NewSocket *ns)
     }
 
     name_len = strlen(buf);
-    if(name_len < MIN_PLAYER_NAME || name_len > MAX_PLAYER_NAME || !name_valid(buf))
+    if(name_len < MIN_PLAYER_NAME || name_len > MAX_PLAYER_NAME || !player_name_valid(buf))
     {
         ns->status = Ns_Dead;
         return;

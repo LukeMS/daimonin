@@ -97,40 +97,21 @@ void display_motd(object *op)
 #endif
 }
 
-/* check we have only valid chars in our name.
- * Works for acocunts as for player names
- * player names have another check in player_name_valid()
- */
-int name_valid(char *cp)
-{
-    char *tmp=cp;
-
-    if(strchr(cp,' ')) /* we have any ' ' char? Then its invalid*/
-        return FALSE;
-
-    for(;*cp!='\0';cp++)
-    {
-        if(!((*cp>='a'&&*cp<='z')||(*cp>='A'&&*cp<='Z'))&&*cp!='-'&&*cp!='_')
-            return FALSE;
-    }
-
-    return TRUE;
-}
-
 /* same as above, just we check we have the right lower/upper name format 
  * and no forbidden names
+ * only allow alphabet letters and the '-' for a name.
  */
 int player_name_valid(char *cp)
 {
     char *tmp=cp;
 
     /* we want the format "Foo". Not allowed are "foo", "FOo" or "foO" */
-    if(*cp != toupper(*cp))
+    if(*cp != toupper(*cp) || (!isalpha(*cp) && *cp != '-') )
         return FALSE;
 
     for(++cp;*cp!='\0';cp++)
     {
-        if(*cp != tolower(*cp))
+        if(*cp != tolower(*cp) || (!isalpha(*cp) && *cp != '-'))
             return FALSE;
     }
 
