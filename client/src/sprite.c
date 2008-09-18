@@ -93,16 +93,21 @@ _Sprite * sprite_tryload_file(char *fname, uint32 flag, SDL_RWops *rwop)
     UINT32          ckflags, tmp=0;
     SDL_RWops       *rw;
 
-
     if (fname)
     {
         if (PHYSFS_exists(fname)==0)
+        {
             LOG(LOG_MSG,"file: %s does not exist in physfs\n",fname);
-        if ((rw=PHYSFSRWOPS_openRead(fname))==NULL)
-            LOG(LOG_MSG,"PHYSFSRWOPS_openRead failed: %s\n",PHYSFS_getLastError());
-        if ((bitmap = IMG_Load_RW(rw,0)) == NULL)
             return(NULL);
-        SDL_RWclose(rw);
+        }
+        else
+        {
+            if ((rw=PHYSFSRWOPS_openRead(fname))==NULL)
+                LOG(LOG_MSG,"PHYSFSRWOPS_openRead failed: %s\n",PHYSFS_getLastError());
+            if ((bitmap = IMG_Load_RW(rw,0)) == NULL)
+                return(NULL);
+            SDL_RWclose(rw);
+        }
 
     }
     else
@@ -336,6 +341,9 @@ void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col
     SDL_Rect    src, dst, dst_tmp;
     SDL_Color   color, color_g, color_s;
     unsigned char actChar =0;
+
+    if(!text || !font || !surf) /* sanity check */
+        return;
 
     if (area)
         line_clip = area->w;

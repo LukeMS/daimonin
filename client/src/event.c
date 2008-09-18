@@ -317,23 +317,102 @@ static int key_login_select_menu(SDL_KeyboardEvent *key)
         {
         case SDLK_UP:
             sound_play_effect(SOUND_SCROLL, 0, 0, 100);
-            GameStatusLogin?(GameStatusLogin=FALSE):(GameStatusLogin=TRUE);
+            GameStatusSelect == GAME_STATUS_LOGIN_ACCOUNT?(GameStatusSelect=GAME_STATUS_LOGIN_NEW):(GameStatusSelect=GAME_STATUS_LOGIN_ACCOUNT);
             break;
 
         case SDLK_DOWN:
             sound_play_effect(SOUND_SCROLL, 0, 0, 100);
-            GameStatusLogin?(GameStatusLogin=FALSE):(GameStatusLogin=TRUE);
+            GameStatusSelect==GAME_STATUS_LOGIN_ACCOUNT?(GameStatusSelect=GAME_STATUS_LOGIN_NEW):(GameStatusSelect=GAME_STATUS_LOGIN_ACCOUNT);
             break;
 
         case SDLK_RETURN:
             sound_play_effect(SOUND_SCROLL, 0, 0, 100);
-            open_input_mode(12);
-            GameStatus = GAME_STATUS_ADDME;
+            dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
+            open_input_mode(MAX_ACCOUNT_NAME);
+            LoginInputStep = LOGIN_STEP_NAME;
+            GameStatus = GameStatusSelect; /* create account or direct login */
             break;
 
         case SDLK_ESCAPE:
             sound_play_effect(SOUND_SCROLL, 0, 0, 100);
             SOCKET_CloseClientSocket(&csocket);
+            GameStatus = GAME_STATUS_INIT;
+            return(0);
+
+        default:
+            break;
+        }
+    }
+    return(0);
+}
+
+/* key input for the account screen (character select / create / delete) */
+static int key_account_menu(SDL_KeyboardEvent *key)
+{
+    if (key->type == SDL_KEYDOWN)
+    {
+        switch (key->keysym.sym)
+        {
+        case SDLK_UP:
+            sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+            if(account.count && --account.selected < 0)
+                account.selected = account.count-1;
+            break;
+
+        case SDLK_DOWN:
+            sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+            if(account.count && ++account.selected > account.count-1)
+                    account.selected = 0;
+            break;
+
+        case SDLK_c:
+            if(account.count < ACCOUNT_MAX_PLAYER)
+            {
+                sound_play_effect(SOUND_PAGE, 0, 0, 100);
+                GameStatus = GAME_STATUS_ACCOUNT_CHAR_CREATE;
+            }
+            break;
+
+        case SDLK_d:
+            if(account.count)
+            {
+                sound_play_effect(SOUND_PAGE, 0, 0, 100);
+                GameStatus = GAME_STATUS_ACCOUNT_CHAR_DEL;
+                /* the player must write "delete" , then we allow deletion of the selected char name */
+                reset_input_mode();
+                InputStringFlag=TRUE;
+                InputStringEndFlag=FALSE;
+                open_input_mode(MAX_PLAYER_NAME);
+                cpl.menustatus = MENU_NO;
+            }
+            break;
+
+        case SDLK_RETURN:
+            sound_play_effect(SOUND_PAGE, 0, 0, 100);
+
+            /* put client in wait modus... 2 choices:
+            * a.) login fails - we will get a BINARY_CMD_ACCOUNT with error msg
+            * b.) server is adding <name> - we get a BINARY_CMD_PLAYER and then regular playing data
+            * Option a.) will move us back to character selection with an error message in the status
+            */
+            if(account.count)
+            {
+                /* tell server that we want play with this char */
+                SendAddMe(account.name[account.selected]);
+                GameStatus = GAME_STATUS_WAITFORPLAY;
+
+                /* some sanity settings */
+                clear_map();
+                cpl.name[0] = 0;
+                map_udate_flag = 2;
+                map_transfer_flag = 1;
+            }
+            break;
+
+        case SDLK_ESCAPE:
+            sound_play_effect(SOUND_PAGE, 0, 0, 100);
+            SOCKET_CloseClientSocket(&csocket);
+            GameStatus = GAME_STATUS_INIT;
             return(0);
 
         default:
@@ -632,7 +711,15 @@ int Event_PollInputDevice(void)
             /* fall through (no break;) */
 
         case SDL_KEYDOWN:
-            if (cpl.menustatus == MENU_NO && (!InputStringFlag || cpl.input_mode != INPUT_MODE_NUMBER))
+            /* We *only* type a player name now in the creation screen.
+             * or "Delete" in char creation.
+             */
+            if(GameStatus == GAME_STATUS_ACCOUNT_CHAR_NAME && InputStringFlag)
+            {
+                key_string_event(&event.key);
+                break;
+            }
+            else if (cpl.menustatus == MENU_NO && (!InputStringFlag || cpl.input_mode != INPUT_MODE_NUMBER))
             {
 #ifdef DEVELOPMENT
                 if (widget_mouse_event.owner > -1 && f_custom_cursor == MSCURSOR_MOVE && (event.key.keysym.sym == SDLK_DELETE || event.key.keysym.sym == SDLK_BACKSPACE))
@@ -698,7 +785,9 @@ int Event_PollInputDevice(void)
                     done = key_meta_menu(&event.key);
                 else if (GameStatus == GAME_STATUS_LOGIN_SELECT)
                     done = key_login_select_menu(&event.key);
-                else if (GameStatus == GAME_STATUS_PLAY || GAME_STATUS_NEW_CHAR)
+                else if (GameStatus == GAME_STATUS_ACCOUNT)
+                    done = key_account_menu(&event.key);
+                else if (GameStatus == GAME_STATUS_PLAY || GameStatus == GAME_STATUS_ACCOUNT_CHAR_CREATE)
                     done = key_event(&event.key);
                 else
                     key_connection_event(&event.key);
@@ -999,7 +1088,7 @@ static void key_string_event(SDL_KeyboardEvent *key)
             /* if we are in number console mode, use GET as quick enter
              * mode - this is a very handy shortcut
              */
-            if (cpl.input_mode == (int) INPUT_MODE_NUMBER
+            if (cpl.input_mode == INPUT_MODE_NUMBER
                     && ((int)key->keysym.sym == get_action_keycode || (int)key->keysym.sym == drop_action_keycode))
             {
 //                SDL_EnableKeyRepeat(0, SDL_DEFAULT_REPEAT_INTERVAL);
@@ -1078,9 +1167,40 @@ static void key_string_event(SDL_KeyboardEvent *key)
                     if ((key->keysym.unicode & 0xFF80) == 0)
                         c = key->keysym.unicode & 0x7F;
                     c = key->keysym.unicode & 0xff;
-                    if (c >= 32 && c != '^' && c != '~' && c != '§' && c != '°' && c != '|')
+                    if (LoginInputStep > LOGIN_STEP_NAME) /* allow full input for passwords */
                     {
-                        if (GameStatus == GAME_STATUS_NAME)
+                        if (key->keysym.mod & KMOD_SHIFT)
+                            c = toupper(c);
+
+                        if (c == 0)
+                            sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                        else
+                        {
+                            i = InputCount;
+                            while (i >= CurrentCursorPos)
+                            {
+                                InputString[i + 1] = InputString[i];
+                                i--;
+                            }
+                            InputString[CurrentCursorPos] = c;
+                            CurrentCursorPos++;
+                            InputCount++;
+                            InputString[InputCount] = 0;
+                        }
+                    }
+                    /* allow some special case not for chat input or script input.
+                     * Allow nearly all sign for account name input
+                     * Handle player names special
+                     */
+                    else if (c >= 32 && ((c != '_' && c != '^' && c != '~' && c != '§' && c != '°' && c != '|')
+                        || (GameStatus >= GAME_STATUS_LOGIN_ACCOUNT && GameStatus <= GAME_STATUS_LOGIN_NEW)))
+                    {
+                        if(GameStatus >= GAME_STATUS_LOGIN_ACCOUNT && GameStatus <= GAME_STATUS_LOGIN_NEW &&
+                            ( (c >='a' && c <= 'z') || (c >='A' && c <= 'Z') || (c>='0' && c <='9') || 
+                            c == '-' || c == '_' /* enable for characters here when needed */) )
+                        {
+
+                        if (GameStatus == GAME_STATUS_ACCOUNT_CHAR_NAME)
                         {
                             switch (tolower(c))
                             {
@@ -1141,6 +1261,9 @@ static void key_string_event(SDL_KeyboardEvent *key)
 
                         }
                     }
+                    }
+                    else
+                        sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
                 }
             }
             break;
@@ -1152,7 +1275,7 @@ static void key_string_event(SDL_KeyboardEvent *key)
 /* we have a key event */
 int key_event(SDL_KeyboardEvent *key)
 {
-    if (GameStatus != GAME_STATUS_PLAY && GameStatus != GAME_STATUS_NEW_CHAR)
+    if (GameStatus != GAME_STATUS_PLAY && GameStatus != GAME_STATUS_ACCOUNT_CHAR_CREATE)
         return 0;
 
     if (key->type == SDL_KEYUP)
@@ -2387,13 +2510,18 @@ void check_menu_keys(int menu, int key)
     /* close menue */
     if (key == SDLK_ESCAPE)
     {
+        if (GameStatus == GAME_STATUS_ACCOUNT_CHAR_CREATE || GameStatus == GAME_STATUS_ACCOUNT_CHAR_DEL)
+        {
+            dialog_new_char_warn = 0;
+            reset_input_mode();
+            GameStatus = GAME_STATUS_ACCOUNT;
+            cpl.menustatus = MENU_NO;
+            return;
+        }
+
         if (cpl.menustatus == MENU_KEYBIND)
             save_keybind_file(KEYBIND_FILE);
 
-        if (cpl.menustatus == MENU_CREATE)
-        {
-            SOCKET_CloseClientSocket(&csocket);
-        }
         cpl.menustatus = MENU_NO;
         map_udate_flag = 2;
         reset_keys();
@@ -3226,13 +3354,10 @@ void check_menu_keys(int menu, int key)
         {
         case SDLK_RETURN:
             break;
-        case SDLK_c:
-            if (new_character.stat_points)
-            {
-                dialog_new_char_warn = 1;
-                sound_play_effect(SOUND_CLICKFAIL, 0, 0, 100);
-                break;
-            }
+        case SDLK_ESCAPE:
+            /* is handled in main menu handler */
+            break;
+        case SDLK_n:
             if (new_character.skill_selected == -1)
             {
                 dialog_new_char_warn = 2;
@@ -3240,37 +3365,33 @@ void check_menu_keys(int menu, int key)
                 break;
             }
             dialog_new_char_warn = 0;
-            send_new_char(&new_character);
-            GameStatus = GAME_STATUS_WAITFORPLAY;
+            reset_input_mode();
+            cpl.name[0] = 0;  
+            InputStringFlag=TRUE;
+            InputStringEndFlag=FALSE;
+            open_input_mode(MAX_PLAYER_NAME);
+            GameStatus = GAME_STATUS_ACCOUNT_CHAR_NAME;
             cpl.menustatus = MENU_NO;
             break;
         case SDLK_LEFT:
             create_list_set.key_change = -1;
-            menuRepeatKey = SDLK_LEFT;
+            menuRepeatKey = -1;
             break;
         case SDLK_RIGHT:
             create_list_set.key_change = 1;
-            menuRepeatKey = SDLK_RIGHT;
+            menuRepeatKey = -1;
             break;
         case SDLK_UP:
-            if (create_list_set.entry_nr > 0)
-            {
-                create_list_set.entry_nr--;
-                sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
-            }
-            else
-                sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
-            menuRepeatKey = SDLK_UP;
+            if (--create_list_set.entry_nr < 0)
+                create_list_set.entry_nr = 1;
+            sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+            menuRepeatKey = -1;
             break;
         case SDLK_DOWN:
-            if (create_list_set.entry_nr < 8)
-            {
-                create_list_set.entry_nr++;
-                sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
-            }
-            else
-                sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
-            menuRepeatKey = SDLK_DOWN;
+            if (++create_list_set.entry_nr >= 2)
+                create_list_set.entry_nr = 0;
+            sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+            menuRepeatKey = -1;
             break;
         }
         break;

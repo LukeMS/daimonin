@@ -504,3 +504,307 @@
 1220922356 source:/mnt/hgfs/HD-F/Projects/daimonin/client/src/zutil.c
 	"zutil.h"
 
+1221490727 source:/mnt/hgfs/Untitled-1/Projects/daimonin/client/src/adler32.c
+	"zlib.h"
+
+1221490727 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/zlib.h
+	"zconf.h"
+
+1221490727 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/zconf.h
+	<windows.h>
+	<sys/types.h>
+	<unistd.h>
+	<unixio.h>
+
+1221490727 source:/mnt/hgfs/Untitled-1/Projects/daimonin/client/src/anim.c
+	<include.h>
+
+1221490727 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/include.h
+	"define.h"
+	"config.h"
+	<wrapper.h>
+	<SDL_mixer.h>
+	<string.h>
+	<stdlib.h>
+	<stdio.h>
+	<zlib.h>
+	<item.h>
+	<protocol.h>
+	<client.h>
+	<sdlsocket.h>
+	<chatfilter.h>
+	<ignore.h>
+	<buddy.h>
+	<kerbholz.h>
+	<commands.h>
+	<main.h>
+	<player.h>
+	<misc.h>
+	<event.h>
+	<sound.h>
+	<map.h>
+	<anim.h>
+	<tile_stretcher.h>
+	<sprite.h>
+	<interface.h>
+	<book.h>
+	<textwin.h>
+	<inventory.h>
+	<menu.h>
+	<dialog.h>
+	<group.h>
+	<filewrap.h>
+	<widget.h>
+	<physfs.h>
+	<physfsrwops.h>
+
+1221490735 /mnt/hgfs/Untitled-1/Projects/daimonin/client/make/linux/CodeBlocks/define.h
+
+1221490727 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/config.h
+
+1221490727 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/wrapper.h
+	<physfs.h>
+	"win32.h"
+	<cflinux.h>
+	<strings.h>
+	<strings.h>
+
+1221490727 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/physfs.h
+
+1221490727 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/win32.h
+	<windows.h>
+	<windowsx.h>
+	<mmsystem.h>
+	<winsock2.h>
+	<io.h>
+	<fcntl.h>
+	<sys/stat.h>
+	<time.h>
+	<string.h>
+	<malloc.h>
+	<sys/types.h>
+	<errno.h>
+	<ctype.h>
+	<stdarg.h>
+	<stddef.h>
+	<stdlib.h>
+	<SDL/SDL.h>
+	<SDL/SDL_main.h>
+	<SDL/SDL_image.h>
+	<SDL/SDL_thread.h>
+	<SDL/SDL_mutex.h>
+
+1221490727 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/cflinux.h
+	<sys/stat.h>
+	<sys/time.h>
+	<time.h>
+	<string.h>
+	<unistd.h>
+	<fcntl.h>
+	<dmalloc.h>
+	<sys/types.h>
+	<errno.h>
+	<ctype.h>
+	<stdarg.h>
+	<stddef.h>
+	<netdb.h>
+	<sys/socket.h>
+	<arpa/inet.h>
+	<netinet/in.h>
+	<netinet/tcp.h>
+	<SDL.h>
+	<SDL_main.h>
+	<SDL_image.h>
+	<SDL_thread.h>
+	<SDL_mutex.h>
+
+1221490727 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/item.h
+
+1221659421 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/protocol.h
+
+1221611243 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/client.h
+
+1221497881 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/sdlsocket.h
+
+1221490727 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/chatfilter.h
+
+1221490727 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/ignore.h
+
+1221490727 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/buddy.h
+
+1221490727 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/kerbholz.h
+
+1221494246 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/commands.h
+
+1221501023 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/main.h
+
+1221490727 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/player.h
+
+1221490727 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/misc.h
+
+1221490727 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/event.h
+
+1221490727 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/sound.h
+
+1221490727 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/map.h
+
+1221490727 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/anim.h
+
+1221490727 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/tile_stretcher.h
+
+1221490727 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/sprite.h
+
+1221490727 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/interface.h
+
+1221490727 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/book.h
+
+1221490727 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/textwin.h
+
+1221490727 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/inventory.h
+
+1221490727 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/menu.h
+
+1221490727 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/dialog.h
+
+1221490727 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/group.h
+
+1221490727 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/filewrap.h
+
+1221490727 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/widget.h
+
+1221490727 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/physfsrwops.h
+	"physfs.h"
+	"SDL.h"
+
+1221490727 source:/mnt/hgfs/Untitled-1/Projects/daimonin/client/src/book.c
+	<include.h>
+
+1221490727 source:/mnt/hgfs/Untitled-1/Projects/daimonin/client/src/buddy.c
+	<include.h>
+
+1221490727 source:/mnt/hgfs/Untitled-1/Projects/daimonin/client/src/chatfilter.c
+	<include.h>
+
+1221674739 source:/mnt/hgfs/Untitled-1/Projects/daimonin/client/src/client.c
+	<include.h>
+	<stdio.h>
+
+1221592631 source:/mnt/hgfs/Untitled-1/Projects/daimonin/client/src/commands.c
+	<include.h>
+
+1221490727 source:/mnt/hgfs/Untitled-1/Projects/daimonin/client/src/crc32.c
+	<stdio.h>
+	"zutil.h"
+	<limits.h>
+	"crc32.h"
+
+1221490727 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/zutil.h
+	"zlib.h"
+	<stddef.h>
+	<string.h>
+	<stdlib.h>
+	<errno.h>
+	<alloc.h>
+	<malloc.h>
+	<unix.h>
+	<stdio.h>
+
+1221490727 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/crc32.h
+
+1221610519 source:/mnt/hgfs/Untitled-1/Projects/daimonin/client/src/dialog.c
+	"include.h"
+
+1221703838 source:/mnt/hgfs/Untitled-1/Projects/daimonin/client/src/event.c
+	"include.h"
+
+1221490727 source:/mnt/hgfs/Untitled-1/Projects/daimonin/client/src/filewrap.c
+	<include.h>
+
+1221490727 source:/mnt/hgfs/Untitled-1/Projects/daimonin/client/src/group.c
+	<include.h>
+
+1221490727 source:/mnt/hgfs/Untitled-1/Projects/daimonin/client/src/ignore.c
+	<include.h>
+
+1221490727 source:/mnt/hgfs/Untitled-1/Projects/daimonin/client/src/inffast.c
+	"zutil.h"
+	"inftrees.h"
+	"inflate.h"
+	"inffast.h"
+
+1221490727 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/inftrees.h
+
+1221490727 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/inflate.h
+
+1221490727 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/inffast.h
+
+1221490727 source:/mnt/hgfs/Untitled-1/Projects/daimonin/client/src/inflate.c
+	"zutil.h"
+	"inftrees.h"
+	"inflate.h"
+	"inffast.h"
+	"inffixed.h"
+	<stdio.h>
+
+1221490727 source:/mnt/hgfs/Untitled-1/Projects/daimonin/client/src/inftrees.c
+	"zutil.h"
+	"inftrees.h"
+
+1221490727 source:/mnt/hgfs/Untitled-1/Projects/daimonin/client/src/interface.c
+	<include.h>
+
+1221490727 source:/mnt/hgfs/Untitled-1/Projects/daimonin/client/src/inventory.c
+	"include.h"
+	"math.h"
+
+1221490727 source:/mnt/hgfs/Untitled-1/Projects/daimonin/client/src/item.c
+	<include.h>
+	<ctype.h>
+
+1221490727 source:/mnt/hgfs/Untitled-1/Projects/daimonin/client/src/kerbholz.c
+	<include.h>
+
+1221490727 source:/mnt/hgfs/Untitled-1/Projects/daimonin/client/src/map.c
+	"include.h"
+
+1221571166 source:/mnt/hgfs/Untitled-1/Projects/daimonin/client/src/menu.c
+	<include.h>
+
+1221490727 source:/mnt/hgfs/Untitled-1/Projects/daimonin/client/src/misc.c
+	<include.h>
+
+1221490727 source:/mnt/hgfs/Untitled-1/Projects/daimonin/client/src/physfsrwops.c
+	<stdio.h>
+	"physfsrwops.h"
+
+1221490727 source:/mnt/hgfs/Untitled-1/Projects/daimonin/client/src/player.c
+	<include.h>
+	<math.h>
+
+1221490727 source:/mnt/hgfs/Untitled-1/Projects/daimonin/client/src/socket.c
+	<include.h>
+
+1221490727 source:/mnt/hgfs/Untitled-1/Projects/daimonin/client/src/sound.c
+	"include.h"
+
+1221490727 source:/mnt/hgfs/Untitled-1/Projects/daimonin/client/src/sprite.c
+	<include.h>
+
+1221490727 source:/mnt/hgfs/Untitled-1/Projects/daimonin/client/src/textwin.c
+	<include.h>
+
+1221490727 source:/mnt/hgfs/Untitled-1/Projects/daimonin/client/src/tile_stretcher.c
+	"include.h"
+
+1221490727 source:/mnt/hgfs/Untitled-1/Projects/daimonin/client/src/uncompr.c
+	"zlib.h"
+
+1221490727 source:/mnt/hgfs/Untitled-1/Projects/daimonin/client/src/widget.c
+	<include.h>
+
+1221490727 source:/mnt/hgfs/Untitled-1/Projects/daimonin/client/src/wrapper.c
+	<include.h>
+
+1221490727 source:/mnt/hgfs/Untitled-1/Projects/daimonin/client/src/zutil.c
+	"zutil.h"
+

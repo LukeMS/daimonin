@@ -21,18 +21,35 @@
     The author can be reached via e-mail to info@daimonin.net
 */
 
+/* min & max length of player & account names & password
+* important - for a login server this must snyced up with it too
+*/
+#define MIN_PLAYER_NAME        3
+#define MAX_PLAYER_NAME        12
+/* Note: there is no password for a player (aka single characters) anymore */
+
+#define MIN_ACCOUNT_NAME        3
+#define MAX_ACCOUNT_NAME        12
+#define MIN_ACCOUNT_PASSWORD    6
+#define MAX_ACCOUNT_PASSWORD    16
+
 /* List of client to server (cs) binary command tags */
 typedef enum client_cmd {
-
-    CLIENT_CMD_PING, /* system command */
-
+    /* start of pre-processed cmds */
+    CLIENT_CMD_PING, /* unused */
+    /* Ns_Login mode only commands */
     CLIENT_CMD_SETUP,
     CLIENT_CMD_REQUESTFILE,
-    CLIENT_CMD_ADDME,
-    CLIENT_CMD_REPLY,
+    CLIENT_CMD_CHECKNAME,
+    CLIENT_CMD_LOGIN,
+    /* Ns_Account mode only commands */
     CLIENT_CMD_NEWCHAR,
-    CLIENT_CMD_FACE,
+    CLIENT_CMD_DELCHAR,
+    CLIENT_CMD_ADDME,
+    /* Ns_Playing mode only commands */
+    CLIENT_CMD_FACE, /* special case: Allowed since Ns_Login for face sending servers */
     CLIENT_CMD_MOVE,
+    /* end of pre-processed cmds */
     CLIENT_CMD_APPLY,
     CLIENT_CMD_EXAMINE,
     CLIENT_CMD_INVMOVE,
@@ -43,7 +60,6 @@ typedef enum client_cmd {
     CLIENT_CMD_GENERIC,
 
     CLIENT_CMD_MAX_NROF
-
 } _client_cmd;
 
 
@@ -77,11 +93,9 @@ typedef enum server_client_cmd {
     BINARY_CMD_SPELL_LIST,
     BINARY_CMD_SKILL_LIST,
     BINARY_CMD_GOLEMCMD,
-    BINARY_CMD_ADDME_SUC,
+    BINARY_CMD_ACCNAME_SUC,
     BINARY_CMD_SETUP,
-    BINARY_CMD_QUERY,
     BINARY_CMD_DATA,
-    BINARY_CMD_NEW_CHAR,
     BINARY_CMD_ITEMY,
     BINARY_CMD_GROUP,
     BINARY_CMD_INVITE,
@@ -89,16 +103,51 @@ typedef enum server_client_cmd {
     BINARY_CMD_INTERFACE,
     BINARY_CMD_BOOK,
     BINARY_CMD_MARK,
+    BINARY_CMD_ACCOUNT,
 #ifdef USE_CHANNELS
     BINARY_CMD_CHANNELMSG,
 #endif
-    /* old, unused or outdated crossfire cmds! */
-    BINARY_CMD_IMAGE2,
-    BINARY_CMD_FACE,
-    BINARY_CMD_FACE2,
+
     BINAR_CMD /* last entry */
 } _server_client_cmd;
 
+/* number of chars one account can control */
+#define ACCOUNT_MAX_PLAYER 6
+
+/* define how much gender we have - needed to check client_settings gender entries */
+#define MAX_RACE_GENDER 4
+
+/* return values for account login */
+typedef enum account_status_enum
+{
+    ACCOUNT_STATUS_OK,
+    ACCOUNT_STATUS_UNKNOWN,
+    ACCOUNT_STATUS_EXISTS,
+    ACCOUNT_STATUS_CORRUPT,
+    ACCOUNT_STATUS_NOSAVE,
+    ACCOUNT_STATUS_BANNED,
+    ACCOUNT_STATUS_DISCONNECT,
+    ACCOUNT_STATUS_WRONGPWD
+} account_status;
+
+/* tell the main account login function what to do */
+typedef enum account_mode_enum
+{
+    ACCOUNT_MODE_LOGIN,
+    ACCOUNT_MODE_CREATE
+} account_mode;
+
+/* return values for addme commands */
+typedef enum addme_login_msg_struct {
+    ADDME_MSG_OK,
+    ADDME_MSG_UNKNOWN,
+    ADDME_MSG_CORRUPT,
+    ADDME_MSG_ACCOUNT,
+    ADDME_MSG_TAKEN,
+    ADDME_MSG_INTERNAL,
+    ADDME_MSG_BANNED,
+    ADDME_MSG_DISCONNECT
+} addme_login_msg;
 
 enum
 {

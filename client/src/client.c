@@ -58,6 +58,24 @@ static inline void SockList_AddBuffer(SockList *const sl, const char *const buf,
     sl->len+=len;
 }
 
+static inline void SockList_AddString(SockList *const sl, const char *const buf)
+{
+    int len = strlen(buf);
+
+    if(sl->buf)
+    {
+        memcpy(sl->buf+sl->len,buf,len);
+        *(sl->buf+sl->len+len++) = 0; /* ensure the string is send with 0 end marker */
+    }
+    else
+    {
+        memcpy(sl->defbuf+sl->len,buf,len);
+        *(sl->defbuf+sl->len+len++) = 0;
+    }
+    sl->len+=len;
+
+
+}
 
 /* Splits command at the next #,
 * returning a pointer to the occurrence (which is overwritten with \0 first) or
@@ -404,37 +422,63 @@ void RequestFile(ClientSocket csock, int index)
     send_socklist_binary(&sl);
 }
 
-/* TODO: expand to the main login which loads the player char
- * by sending all login info
+/* ONLY send this when we are valid connected to our account.
+ * Server will assume a hacking attempt when something is wrong
+ * we are not logged to an account or name don't exists in that
+ * account. Will invoke a hack warning and a temp ban!
+ * This command will invoke the login for char name and put player
+ * in playing mode or invoke an account cmd error msg
  */
-void SendAddMe(void)
+void SendAddMe(char *name)
 {
-    send_command_binary(CLIENT_CMD_ADDME, NULL, 0, 0);
+    SockList    sl;
+    SockList_INIT(&sl, NULL);
+    SockList_COMMAND(&sl, CLIENT_CMD_ADDME, SEND_CMD_FLAG_DYNAMIC);
+    SockList_AddString(&sl, name);
+    send_socklist_binary(&sl);
 }
 
-/* Sends a reply to the server.  text contains the null terminated
-* string of text to send.  This function basically just packs
-* the stuff up.
-*/
-void send_reply(char *text)
+/* the server also parsed client_settings. 
+ * We only tell him our name, the selected default arch (as gender_selected)
+ * and the weapon skill
+ * The server will grap the other values from the loaded file
+ */
+void send_new_char(_server_char *nc)
+{
+    int i =0;
+    SockList    sl;
+    _server_char   *tmpc;
+
+
+    /* lets find the entry number */
+    for (tmpc = first_server_char; tmpc; tmpc = tmpc->next)
+    {
+        /* get our current template */
+        if (!strcmp(tmpc->name, new_character.name))
+            break;
+        i++;
+    }
+
+    SockList_INIT(&sl, NULL);
+    SockList_COMMAND(&sl, CLIENT_CMD_NEWCHAR, SEND_CMD_FLAG_DYNAMIC);
+    SockList_AddChar(&sl, i);
+    SockList_AddChar(&sl, nc->gender_selected);
+    SockList_AddChar(&sl, nc->skill_selected);
+    SockList_AddString(&sl, cpl.name);
+    send_socklist_binary(&sl);
+}
+
+/* delete a character */
+void send_del_char(char *name)
 {
     SockList    sl;
 
     SockList_INIT(&sl, NULL);
-    SockList_COMMAND(&sl, CLIENT_CMD_REPLY, SEND_CMD_FLAG_STRING);
-    SockList_AddBuffer(&sl, text, strlen(text));
+    SockList_COMMAND(&sl, CLIENT_CMD_DELCHAR, SEND_CMD_FLAG_DYNAMIC);
+    SockList_AddString(&sl, name);
     send_socklist_binary(&sl);
 }
 
-void send_new_char(_server_char *nc)
-{
-    char    buf[MAX_BUF];
-
-    sprintf(buf, "%s %d %d %d %d %d %d %d %d", nc->char_arch[nc->gender_selected], nc->stats[0], nc->stats[1],
-        nc->stats[2], nc->stats[3], nc->stats[4], nc->stats[5], nc->stats[6], nc->skill_selected);
-
-    send_command_binary(CLIENT_CMD_NEWCHAR, buf, strlen(buf), SEND_CMD_FLAG_STRING);
-}
 
 void client_send_apply(int tag)
 {
@@ -530,3 +574,26 @@ void send_fire_command(int num, int mode, char *tmp_name)
     send_socklist_binary(&sl);
 
 }
+
+void client_send_checkname(char *buf)
+{
+    SockList    sl;
+
+    SockList_INIT(&sl, NULL);
+    SockList_COMMAND(&sl, CLIENT_CMD_CHECKNAME, 0);
+    SockList_AddString(&sl, buf);
+    send_socklist_binary(&sl);
+}
+
+void client_send_login(int mode, char *name, char *pass)
+{
+    SockList    sl;
+
+    SockList_INIT(&sl, NULL);
+    SockList_COMMAND(&sl, CLIENT_CMD_LOGIN, 0);
+    SockList_AddChar(&sl, mode);
+    SockList_AddString(&sl, name);
+    SockList_AddString(&sl, pass);
+    send_socklist_binary(&sl);
+}
+

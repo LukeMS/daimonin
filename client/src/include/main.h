@@ -48,6 +48,16 @@ extern uint16	endian_int16;   /* thats the 0x0201 short endian */
 #define INTERFACE_MODE_NPC    1
 #define INTERFACE_MODE_QLIST    2
 
+/* Login step definition for input mask */
+typedef enum _login_step {
+    LOGIN_STEP_NOTHING,
+    LOGIN_STEP_NAME,
+    LOGIN_STEP_PASS1,
+    LOGIN_STEP_PASS2
+} _login_step;
+
+extern _login_step LoginInputStep; 
+
 #define BMAPTABLE 19001 /* prime nubmer for hash table */
 /* struct for out bmap data */
 typedef struct _bmaptype
@@ -426,26 +436,25 @@ typedef enum _game_status
     /* after we get response from setup, we request files if needed */
     GAME_STATUS_ADDME,
     /* all setup is done, now try to enter game!*/
-    GAME_STATUS_LOGIN,
+    GAME_STATUS_LOGIN_BREAK,
     /* now we wait for LOGIN request of the server*/
     GAME_STATUS_LOGIN_SELECT,
-    /* we have "type your name" now - but first let player decide we want a new char or login to old one */
-    GAME_STATUS_NAME,
-    GAME_STATUS_NAME_WAIT,
-    /* all this here is tricky*/
-    GAME_STATUS_PSWD,
-    GAME_STATUS_PSWD_WAIT,
-    /* server will trigger this when asking for*/
-    GAME_STATUS_VERIFYPSWD,
-    GAME_STATUS_VERIFYPSWD_WAIT,
-    /* client will then show input panel or so*/
-    GAME_STATUS_NEW_CHAR,
-    /* show new char creation screen and send /nc command when finished */
-    GAME_STATUS_WAITFORPLAY,
-    /* we simply wait for game start */
-    /* means, this is not a serial stepping here*/
-    GAME_STATUS_QUIT,
-    /* we are in quit menu*/
+
+    GAME_STATUS_LOGIN_ACCOUNT, /* Login to an account - type in name & password */
+
+    GAME_STATUS_LOGIN_NEW,      /* create a new char - give a name, wait until server says ok, then type passwords */
+    GAME_STATUS_LOGIN_WAIT_NAME, /* tell server we want new account <name> - wait for response */
+    GAME_STATUS_LOGIN_WAIT,    /* we told server to login to account name with pass - wait for account data */
+
+    GAME_STATUS_ACCOUNT,                /* show the account screen with player chars */
+
+    GAME_STATUS_ACCOUNT_CHAR_DEL,       /* we typed 'D' for character deletion */
+    GAME_STATUS_ACCOUNT_CHAR_DEL_WAIT,  /* wait for delete response. ESC will drop the connection */
+    GAME_STATUS_ACCOUNT_CHAR_CREATE,    /* we typed 'C' and select race & stats of a new char */
+    GAME_STATUS_ACCOUNT_CHAR_NAME,      /* we type in a name and send it to server checking name is ok */
+    GAME_STATUS_ACCOUNT_CHAR_NAME_WAIT, /* wait for name request from server.  ESC will drop the connection */
+
+    GAME_STATUS_WAITFORPLAY,            /* addme <name> send - wait server puts us into the game */
     GAME_STATUS_PLAY
     /* we play now!!*/
 }                    _game_status;
@@ -455,7 +464,7 @@ extern int          debug_layer[MAXFACES];
 extern int          music_global_fade; /* global flag for polling music fade out */
 
 extern _game_status GameStatus;     /* THE game status 2*/
-extern int			GameStatusLogin;
+extern int			GameStatusSelect; /* select next game status: create or login for exmaple */
 extern int			ShowLocalServer;		/* show local server in the meta list */
 extern char			GlobalClientVersion[64]; /* the client version */
 extern int          MapStatusX;             /* map x,y len */

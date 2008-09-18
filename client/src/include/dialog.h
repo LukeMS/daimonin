@@ -69,7 +69,8 @@ enum
     DIALOG_LOGIN_WARNING_NAME_WRONG,
     DIALOG_LOGIN_WARNING_PWD_WRONG,
     DIALOG_LOGIN_WARNING_PWD_SHORT,
-    DIALOG_LOGIN_WARNING_PWD_NAME
+    DIALOG_LOGIN_WARNING_PWD_NAME,
+    DIALOG_LOGIN_WARNING_ACCOUNT_UNKNOWN
 };
 
 void add_close_button(int x, int y, int menu, Boolean newstyle);
@@ -79,6 +80,6 @@ extern void show_optwin(void);
 extern void show_newplayer_server(void);
 extern void show_login_server(void);
 extern void show_meta_server(_server *node, int metaserver_start, int metaserver_sel);
-
+extern void show_account(void);
 #endif
 

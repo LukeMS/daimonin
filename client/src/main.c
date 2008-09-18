@@ -24,6 +24,8 @@
 #include <include.h>
 #include <signal.h>
 
+Account             account; /* account data of this player, received from the server */
+
 _server_char       *first_server_char   = NULL; /* list of possible chars/race with setup when we want create a char */
 _server_char        new_character; /* if we login as new char, thats the values of it we set */
 
@@ -40,6 +42,7 @@ struct sockaddr_in  insock; /* Server's attributes */
 ClientSocket        csocket;
 int                 SocketStatusErrorNr;        /* if an socket error, this is it */
 
+_login_step          LoginInputStep;
 Uint32              sdl_dgreen, sdl_dred, sdl_gray1, sdl_gray2, sdl_gray3, sdl_gray4, sdl_blue1;
 
 _skindef            skindef;
@@ -112,7 +115,7 @@ Boolean             InputStringEndFlag; /* if true, we had entered some in text 
 Boolean             InputStringEscFlag;
 
 _game_status        GameStatus; /* the global status identifier */
-int                 GameStatusLogin;
+int                 GameStatusSelect;
 int                 ShowLocalServer;
 char                GlobalClientVersion[64];
 
@@ -257,9 +260,15 @@ static int is_username_valid(const char *name)
 
     for (i=0; i< (int)strlen(name); i++)
     {
-        if (name[i]!= '-' && name[i]!= '_' && !(((name[i] <= 90) && (name[i]>=65))||((name[i] >= 97) && (name[i]<=122))))
+        if (name[i]!= '-' && !(((name[i] <= 90) && (name[i]>=65))||((name[i] >= 97) && (name[i]<=122))))
             return 0;
     }
+    return 1;
+}
+
+/* Ensures that the accountname doesn't contain any invalid character */
+static int is_accountname_valid(const char *name)
+{
     return 1;
 }
 
@@ -379,8 +388,11 @@ void init_game_data(void)
     argServerName[0] = 0;
     argServerPort = DEFAULT_SERVER_PORT;
     SoundSystem = SOUND_SYSTEM_OFF;
+
     GameStatus = GAME_STATUS_INIT;
-    GameStatusLogin = FALSE;
+    GameStatusSelect = GAME_STATUS_LOGIN_ACCOUNT;
+    LoginInputStep = LOGIN_STEP_NOTHING;
+
     ShowLocalServer = FALSE;
     SoundStatus = 1;
     MapStatusX = MAP_MAX_SIZE;
@@ -396,6 +408,7 @@ void init_game_data(void)
     RangeFireMode = 0;
     gui_interface_npc = NULL;
     gui_interface_book = NULL;
+    LoginInputStep = LOGIN_STEP_NAME;
 
     options.cli_name[0]='\0';
     options.cli_server=0;
@@ -626,12 +639,23 @@ void load_options_dat(void)
 Boolean game_status_chain(void)
 {
     char    buf[1024];
-    /* autoinit or reset prg data */
+
+    /* lets drop some status messages for the client logs */
+    static int st = -1, lg = -1, gs = -1;
+    if(st != (int)GameStatus || lg != (int)LoginInputStep || gs != (int)GameStatusSelect)
+    {
+        LOG(LOG_DEBUG, "GAME STATUS: :%d (gsl:%d lip:%d)\n", GameStatus, GameStatusSelect, LoginInputStep);
+        st = GameStatus;
+        lg = LoginInputStep;
+        gs = GameStatusSelect;
+    }
 
     if (GameStatus == GAME_STATUS_INIT)
     {
+        map_transfer_flag = 0;
         cpl.mark_count = -1;
-        GameStatusLogin = !options.firststart;
+        GameStatusSelect = GAME_STATUS_LOGIN_ACCOUNT;
+        LoginInputStep = LOGIN_STEP_NOTHING;
         interface_mode = INTERFACE_MODE_NO;
         clear_group();
         map_udate_flag = 2;
@@ -763,7 +787,6 @@ Boolean game_status_chain(void)
     /* send the setup command to the server, then wait */
     else if (GameStatus == GAME_STATUS_SETUP)
     {
-        map_transfer_flag = 0;
         srv_client_files[SRV_CLIENT_SETTINGS].status = SRV_CLIENT_STATUS_OK;
         srv_client_files[SRV_CLIENT_BMAPS].status = SRV_CLIENT_STATUS_OK;
         srv_client_files[SRV_CLIENT_ANIMS].status = SRV_CLIENT_STATUS_OK;
@@ -852,156 +875,316 @@ Boolean game_status_chain(void)
             request_file_chain++; /* this ensure one loop tick and updating the messages */
         }
         else if (request_file_chain == 13)
-            GameStatus = GAME_STATUS_LOGIN_SELECT; /* now lets start the real login by asking "login" or "create" */
+             GameStatus = GAME_STATUS_LOGIN_SELECT; /* now lets start the real login by asking "login" or "create" */
+// debug GameStatus = GAME_STATUS_ACCOUNT;
+    }
+    else if (GameStatus == GAME_STATUS_LOGIN_BREAK)
+    {
+        /* its BREAK LOGIN */
+        map_transfer_flag = 0;
+        LoginInputStep = LOGIN_STEP_NOTHING;
+        reset_input_mode();
+        GameStatus = GAME_STATUS_LOGIN_SELECT;
     }
     else if (GameStatus == GAME_STATUS_LOGIN_SELECT)
     {
-        /* the choices are in event.c */
-        map_transfer_flag = 0;
+        /* the choices are in event.c by pressing RETURN on Login or Create Character */
+        LoginInputStep = LOGIN_STEP_NAME;
 
+        /* autologin disabled */
+        /*
         if (options.cli_name[0] || options.cli_pass[0] || options.cli_server)
-            GameStatus=GAME_STATUS_ADDME;
+           GameStatus=GAME_STATUS_ADDME;
+        */
     }
-    else if (GameStatus == GAME_STATUS_ADDME)
+    /* CREATE NEW ACCOUNT: Try to find a valid account name, gather password and create AND login to the acount */
+    else if (GameStatus == GAME_STATUS_LOGIN_NEW)
     {
-        SendAddMe();
-        cpl.mark_count = -1;
-        map_transfer_flag = 0;
-        cpl.name[0] = 0;
-        cpl.password[0] = 0;
-        GameStatus = GAME_STATUS_LOGIN;
-        /* now wait for login request of the server*/
+        if(LoginInputStep == LOGIN_STEP_NAME)
+        {
+            if (InputStringEscFlag)
+                GameStatus = GAME_STATUS_LOGIN_BREAK;
+            else if (InputStringFlag == FALSE && InputStringEndFlag == TRUE)
+            {
+                if (is_accountname_valid(InputString))
+                {
+                    /* ensure a valid name */
+                    strncpy(cpl.acc_name, InputString,MAX_ACCOUNT_NAME);
+                    cpl.acc_name[MAX_ACCOUNT_NAME] = 0;
+
+                    dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
+                    LOG(LOG_MSG,"Account Login: send name %s\n", cpl.acc_name);
+                    client_send_checkname(cpl.acc_name);
+                    reset_input_mode();
+                    GameStatus = GAME_STATUS_LOGIN_WAIT_NAME; /* wait for response of server */
+                }
+                else
+                {
+                    dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_WRONG;
+                    InputStringFlag=TRUE;
+                    InputStringEndFlag=FALSE;
+                }
+            }
+        }
+        else
+        {
+            textwin_clearhistory();
+            if (InputStringEscFlag)
+                GameStatus = GAME_STATUS_LOGIN_BREAK;
+            else if (InputStringFlag == FALSE && InputStringEndFlag == TRUE)
+            {
+                if(LoginInputStep == LOGIN_STEP_PASS2)
+                {
+                    if(strcmp(cpl.password, InputString))
+                    {
+                        /* stupid player did a typo - try again, silly */
+                        dialog_login_warning_level = DIALOG_LOGIN_WARNING_PWD_WRONG;
+                        cpl.password[0] = 0;
+                        LoginInputStep = LOGIN_STEP_PASS1;
+                        open_input_mode(MAX_ACCOUNT_PASSWORD);
+                   }
+                    else /* FIN: we have a valid name & pass - send it to the server! */
+                    {
+                        GameStatus = GAME_STATUS_LOGIN_WAIT;
+                        LoginInputStep = LOGIN_STEP_NOTHING;
+                        client_send_login(ACCOUNT_MODE_CREATE, cpl.acc_name, cpl.password);
+                    }
+                }
+                else
+                {
+                    int pwd_len = strlen(InputString);
+
+                    if (pwd_len < MIN_ACCOUNT_PASSWORD || pwd_len > MAX_ACCOUNT_PASSWORD)
+                    {
+                        dialog_login_warning_level = DIALOG_LOGIN_WARNING_PWD_SHORT;
+                        cpl.password[0] = 0;
+                    }
+                    /* we don't allow account where name & password is the same! */
+                    else if(!strcmp(cpl.acc_name, InputString))
+                    {
+                        dialog_login_warning_level = DIALOG_LOGIN_WARNING_PWD_NAME;
+                        cpl.password[0] = 0;
+                        LoginInputStep = LOGIN_STEP_PASS1;
+                        open_input_mode(MAX_ACCOUNT_PASSWORD);
+                    }
+                    else
+                    {
+                        strncpy(cpl.password, InputString, MAX_ACCOUNT_PASSWORD);
+                        cpl.password[MAX_ACCOUNT_PASSWORD] = 0;
+                        /* lets type the user the password once more to ensure there is no typo */
+                        LoginInputStep = LOGIN_STEP_PASS2;
+                        dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
+                    }
+                    open_input_mode(MAX_ACCOUNT_PASSWORD);
+                }
+            }
+        }
     }
-    else if (GameStatus == GAME_STATUS_LOGIN)
+    else if (GameStatus == GAME_STATUS_LOGIN_WAIT_NAME)
     {
-        map_transfer_flag = 0;
+        /* wait for void AccNameSuccess() from server */
+
+        if (InputStringEscFlag)
+            GameStatus = GAME_STATUS_LOGIN_BREAK;
+    }
+    /* ACCOUNT LOGIN: gather name & password and login to an account */
+    else if (GameStatus == GAME_STATUS_LOGIN_ACCOUNT)
+    {
+        if(LoginInputStep == LOGIN_STEP_NAME)
+        {
+            /* autologin disabled */
+            /*
+            if (options.cli_name[0])
+            {
+                strcpy(InputString,options.cli_name);
+                InputStringFlag = FALSE;
+                InputStringEndFlag = TRUE;
+                options.cli_name[0]='\0'; // we generally only try once
+            }
+            */
+
+            if (InputStringEscFlag)
+                GameStatus = GAME_STATUS_LOGIN_BREAK;
+            else if (InputStringFlag == FALSE && InputStringEndFlag == TRUE)
+            {
+                int pwd_len = strlen(InputString);
+
+                /* we don't want that the server things we cheat - so check it here */
+                if (!is_accountname_valid(InputString)
+                    || pwd_len < MIN_ACCOUNT_NAME || pwd_len > MAX_ACCOUNT_NAME)
+                {
+                    dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_WRONG;
+                    cpl.acc_name[0] = 0;
+                    open_input_mode(MAX_ACCOUNT_NAME);
+                }
+                else
+                {
+                    strncpy(cpl.acc_name, InputString,MAX_ACCOUNT_NAME);
+                    cpl.acc_name[MAX_ACCOUNT_NAME] = 0;
+
+                    dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
+                    cpl.password[0] = 0;
+                    open_input_mode(MAX_ACCOUNT_PASSWORD);
+                    LoginInputStep = LOGIN_STEP_PASS1;
+                }
+            }
+        }
+        else /* that must be LoginInputStep == LOGIN_STEP_PASS1 */
+        {
+            textwin_clearhistory();
+
+            /* autologin disabled */
+            /*
+            if (options.cli_pass[0])
+            {
+                strcpy(InputString,options.cli_pass);
+                options.cli_pass[0] = '\0';
+                InputStringFlag=FALSE;
+                InputStringEndFlag=TRUE;
+            }
+            */
+
+            if (InputStringEscFlag)
+                GameStatus = GAME_STATUS_LOGIN_BREAK;
+            else if (InputStringFlag == FALSE && InputStringEndFlag == TRUE)
+            {
+                int pwd_len = strlen(InputString);
+
+                /* we don't want that the server things we cheat - so check it here */
+                if (pwd_len < MIN_ACCOUNT_PASSWORD || pwd_len > MAX_ACCOUNT_PASSWORD)
+                {
+                    dialog_login_warning_level = DIALOG_LOGIN_WARNING_PWD_SHORT;
+                    cpl.password[0] = 0;
+                    open_input_mode(MAX_ACCOUNT_PASSWORD);
+                }
+                else
+                {
+                    strncpy(cpl.password, InputString, MAX_ACCOUNT_PASSWORD);
+                    cpl.password[MAX_ACCOUNT_PASSWORD] = 0;
+
+                    /* Now send name & pass to server and wait for the account data */
+                    reset_input_mode();
+                    GameStatus = GAME_STATUS_LOGIN_WAIT;
+                    LoginInputStep = LOGIN_STEP_NOTHING;
+                    client_send_login(ACCOUNT_MODE_LOGIN, cpl.acc_name, cpl.password);
+
+                }
+            }
+
+        }
+
+    }
+    /* we have send name & password - now lets wait for the account data or error msg */
+    else if (GameStatus == GAME_STATUS_LOGIN_WAIT)
+    {
+        /* we wait for the account info from the server! */
+    }
+    else if (GameStatus == GAME_STATUS_ACCOUNT)
+    {
+        cpl.menustatus = MENU_NO;
+        /* Selection/Creation of chars is done in event.c
+         * Fallback for ESC will drop the connection
+         */
+    }
+    else if (GameStatus == GAME_STATUS_ACCOUNT_CHAR_DEL)
+    {
+        /* we typed 'D' for deletion in GAME_STATUS_ACCOUNT.
+         * Now let the user type the deletion sanity sentence
+         * Fallback for ESC is GAME_STATUS_ACCOUNT
+         */
         if (InputStringEscFlag)
         {
-            sprintf(buf, "Break Login.");
-            draw_info(buf, COLOR_RED);
-            SOCKET_CloseClientSocket(&csocket);
-            GameStatusLogin = !options.firststart;
+            reset_input_mode();
+            GameStatus = GAME_STATUS_ACCOUNT;
         }
+        else if (InputStringFlag == FALSE && InputStringEndFlag == TRUE)
+        {
+            if(!stricmp(InputString, "delete"))
+            {
+                /* we have typed the magic words ... now delete */
+                reset_input_mode();
+                send_del_char(account.name[account.selected]);
+                GameStatus = GAME_STATUS_ACCOUNT_CHAR_DEL_WAIT;
+            }
+            else
+            {
+                /* something is wrong... to be on the safe side we skip all */
+                reset_input_mode();
+                GameStatus =  GAME_STATUS_ACCOUNT;
+            }
+        }
+    }
+    else if (GameStatus == GAME_STATUS_ACCOUNT_CHAR_DEL_WAIT)
+    {
+        /* wait for response of the deletion command.
+         * We will get new account data or a error msg we show
+         * any problem or ESC will drop the connection and will
+         * force a new login
+         */
+    }
+    else if (GameStatus == GAME_STATUS_ACCOUNT_CHAR_CREATE)
+    {
+        /* Show the character creation screen. Setup race and stats
+         * of the character. After we go to the name selection.
+         * The Character is only local here, only AFTER the name selection
+         * we send any data or request to the server.
+         */
         reset_input_mode();
-    }
-    else if (GameStatus == GAME_STATUS_NAME)
-    {
-        map_transfer_flag = 0;
-        /* we have a fininshed console input*/
-        if (options.cli_name[0])
-        {
-            strcpy(InputString,options.cli_name);
-            InputStringFlag = FALSE;
-            InputStringEndFlag = TRUE;
-            options.cli_name[0]='\0'; /* we generally only try once */
-        }
-        if (InputStringEscFlag)
-            GameStatus = GAME_STATUS_LOGIN;
-
-        else if (InputStringFlag == FALSE && InputStringEndFlag == TRUE)
-        {
-            int check;
-            check = is_username_valid(InputString);
-            if (check)
-            {
-                char name_tmp[256];
-
-                strcpy(cpl.name, InputString);
-                dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
-                LOG(LOG_MSG,"Login: send name %s\n", InputString);
-                sprintf(name_tmp,"%c%s", GameStatusLogin?'L':'C', InputString);
-                send_reply(name_tmp);
-                GameStatus = GAME_STATUS_NAME_WAIT;
-                /* now wait again for next server question*/
-            }
-            else
-            {
-                dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_WRONG;
-                InputStringFlag=TRUE;
-                InputStringEndFlag=FALSE;
-            }
-        }
-    }
-    else if (GameStatus == GAME_STATUS_NAME_WAIT)
-    {
-        /* simply wait for action of the server after we send name */
-    }
-    else if (GameStatus == GAME_STATUS_PSWD)
-    {
-        map_transfer_flag = 0;
-        /* we have a fininshed console input*/
-        textwin_clearhistory();
-        if (options.cli_pass[0])
-        {
-            strcpy(InputString,options.cli_pass);
-            options.cli_pass[0] = '\0';             /* pass is only tried once, since we won't get in an endless-loop and get banned */
-            InputStringFlag=FALSE;
-            InputStringEndFlag=TRUE;
-        }
-        if (InputStringEscFlag)
-            GameStatus = GAME_STATUS_LOGIN;
-
-        else if (InputStringFlag == FALSE && InputStringEndFlag == TRUE)
-        {
-            int pwd_len = strlen(InputString);
-            strncpy(cpl.password, InputString, 39);
-            if (!GameStatusLogin && (pwd_len < 6 || pwd_len > 17))
-            {
-                dialog_login_warning_level = DIALOG_LOGIN_WARNING_PWD_SHORT;
-                cpl.password[0] = 0;   /* insanity 0 */
-                open_input_mode(12);
-            }
-            else if (!GameStatusLogin && !stricmp(cpl.name, cpl.password))
-            {
-                dialog_login_warning_level = DIALOG_LOGIN_WARNING_PWD_NAME;
-                cpl.password[0] = 0;   /* insanity 0 */
-                open_input_mode(12);
-            }
-            else
-            {
-                cpl.password[39] = 0;   /* insanity 0 */
-                LOG(LOG_MSG, "Login: send password <*****>\n");
-                send_reply(cpl.password);
-                GameStatus = GAME_STATUS_PSWD_WAIT;
-            }
-            /* now wait again for next server question*/
-        }
-    }
-    else if (GameStatus == GAME_STATUS_PSWD_WAIT)
-    {
-        /* simply wait for action of the server after we send the password */
-    }
-    else if (GameStatus == GAME_STATUS_VERIFYPSWD)
-    {
-        map_transfer_flag = 0;
-        /* we have a fininshed console input*/
-        if (InputStringEscFlag)
-            GameStatus = GAME_STATUS_LOGIN;
-        else if (InputStringFlag == FALSE && InputStringEndFlag == TRUE)
-        {
-            LOG(LOG_MSG, "Login: send verify password <*****>\n");
-            send_reply(InputString);
-            GameStatus = GAME_STATUS_VERIFYPSWD_WAIT;
-            /* now wait again for next server question*/
-        }
-    }
-    else if (GameStatus == GAME_STATUS_VERIFYPSWD_WAIT)
-    {}
-    else if (GameStatus == GAME_STATUS_WAITFORPLAY)
-    {
-        clear_map();
-        map_draw_map_clear();
-        map_udate_flag = 2;
-        map_transfer_flag = 1;
-    }
-    else if (GameStatus == GAME_STATUS_NEW_CHAR)
-    {
-        map_transfer_flag = 0;
+        dialog_new_char_warn = 0;
         show_help_screen_new = TRUE;
     }
-    else if (GameStatus == GAME_STATUS_QUIT)
+    else if (GameStatus == GAME_STATUS_ACCOUNT_CHAR_NAME)
     {
-        map_transfer_flag = 0;
+        /* get a name for the char we created in GAME_STATUS_ACCOUNT_CHAR_CREATE
+         * Fallback for ESC is GAME_STATUS_ACCOUNT_CHAR_CREATE
+         */
+        if (InputStringEscFlag)
+        {
+            GameStatus = GAME_STATUS_ACCOUNT_CHAR_CREATE;
+        }
+        else if (InputStringFlag == FALSE && InputStringEndFlag == TRUE)
+        {
+            int name_len = strlen(InputString);
+
+            /* we don't want that the server things we cheat - so check it here */
+            if (!is_username_valid(InputString) || name_len < MIN_PLAYER_NAME || name_len > MAX_PLAYER_NAME)
+            {
+                /* tell player about the problem and let him try again */
+                dialog_new_char_warn = 1; /* = name must min/max */
+                open_input_mode(MAX_PLAYER_NAME);
+            }
+            else /* we have a valid name... now let the server decide to create or deny this char */
+            {
+                strncpy(cpl.name, InputString, MAX_PLAYER_NAME);
+                cpl.name[MAX_PLAYER_NAME] = 0;
+
+                dialog_new_char_warn = 0; /* = name must min/max */
+                LoginInputStep = LOGIN_STEP_NOTHING;
+                /* Now send name & pass to server and wait for the account data */
+                reset_input_mode();
+                GameStatus =  GAME_STATUS_ACCOUNT_CHAR_NAME_WAIT;
+                send_new_char(&new_character);
+            }
+        }
+    }
+    else if (GameStatus == GAME_STATUS_ACCOUNT_CHAR_NAME_WAIT)
+    {
+        /* we wait for response from the server that name is ok or not.
+         * there are 3 actions:
+         * 1.) we press ESC. To avoid sync problems, we drop connection!
+         * 2.) name is ok and server created char. We get a new account data
+         * and a automatic fallback to GAME_STATUS_ACCOUNT
+         * 3.) name is taken or something - we get a error msg in addme_fails and
+         * fallback to GAME_STATUS_ACCOUNT_CHAR_NAME for another chance
+         * All that is done elsewhere, this is just a placeholder
+         */
+    }
+    else if (GameStatus == GAME_STATUS_WAITFORPLAY)
+    {
+
+        /* ESC will drop the connection to avoid problems */
+        map_udate_flag=2;
+        map_draw_map_clear(); /* draw a clear map */
     }
     return(TRUE);
 }
@@ -1699,7 +1882,7 @@ int main(int argc, char *argv[])
  */
         if (!options.speedup)
             map_udate_flag=2;
-        else if ((GameStatus == GAME_STATUS_PLAY) && ((int)(LastTick-speeduptick)>options.speedup))
+        else if ((GameStatus >= GAME_STATUS_WAITFORPLAY) && ((int)(LastTick-speeduptick)>options.speedup))
         {
                 speeduptick=LastTick;
                 map_udate_flag=2;
@@ -1728,7 +1911,7 @@ int main(int argc, char *argv[])
             display_layer3();
             display_layer4();
 #endif
-            if (GameStatus != GAME_STATUS_PLAY)
+            if (GameStatus < GAME_STATUS_WAITFORPLAY)
                 SDL_FillRect(ScreenSurface, NULL, 0);
 
             if (!options.force_redraw)
@@ -1740,15 +1923,11 @@ int main(int argc, char *argv[])
             }
         } /* map update */
 
-        if (GameStatus != GAME_STATUS_PLAY)
+        if (GameStatus < GAME_STATUS_WAITFORPLAY)
             textwin_show(539, 485);
 
-        if (GameStatus == GAME_STATUS_WAITFORPLAY)
-            StringBlt(ScreenSurface, &SystemFont, "Transfer Character to Map...", 300, 300, COLOR_DEFAULT, NULL,
-                      NULL);
-
         /* if not connected, walk through connection chain and/or wait for action */
-        if (GameStatus != GAME_STATUS_PLAY)
+        if (GameStatus < GAME_STATUS_WAITFORPLAY)
         {
             if (!game_status_chain())
             {
@@ -1758,7 +1937,7 @@ int main(int argc, char *argv[])
         }
 
         if (map_transfer_flag)
-            StringBlt(ScreenSurface, &SystemFont, "Transfer Character to Map...", 300, 300, COLOR_DEFAULT, NULL, NULL);
+                StringBlt(ScreenSurface, &SystemFont, "Transfer Character to Map...", 300, 300, COLOR_DEFAULT, NULL, NULL);
 
         /* show the current dragged item */
         if (cpl.menustatus == MENU_NO && (drag = draggingInvItem(DRAG_GET_STATUS)))
@@ -1801,9 +1980,11 @@ int main(int argc, char *argv[])
         }
         if (GameStatus < GAME_STATUS_REQUEST_FILES)
             show_meta_server(start_server, metaserver_start, metaserver_sel);
-        else if (GameStatus >= GAME_STATUS_REQUEST_FILES && GameStatus < GAME_STATUS_NEW_CHAR)
+        else if (GameStatus >= GAME_STATUS_REQUEST_FILES && GameStatus < GAME_STATUS_ACCOUNT)
             show_login_server();
-        else if (GameStatus == GAME_STATUS_NEW_CHAR)
+        else if (GameStatus >= GAME_STATUS_ACCOUNT && GameStatus <= GAME_STATUS_ACCOUNT_CHAR_DEL_WAIT)
+            show_account();
+        else if (GameStatus >= GAME_STATUS_ACCOUNT_CHAR_CREATE && GameStatus <= GAME_STATUS_ACCOUNT_CHAR_NAME_WAIT )
             cpl.menustatus = MENU_CREATE;
 
         if (show_help_screen_new && GameStatus == GAME_STATUS_PLAY)
@@ -1822,7 +2003,7 @@ int main(int argc, char *argv[])
         FrameCount++;
         LastTick = SDL_GetTicks();
 
-        if((GameStatus  == GAME_STATUS_PLAY) && options.sleepcounter )
+        if((GameStatus  >= GAME_STATUS_WAITFORPLAY) && options.sleepcounter )
         {
             if ((GameTicksSec==0) && options.sleepcounter)
             {
@@ -1940,7 +2121,7 @@ static void show_intro(char *text)
 
 static void flip_screen(void)
 {
-    if (GameStatus != GAME_STATUS_PLAY)
+    if (GameStatus < GAME_STATUS_WAITFORPLAY)
     {
         char    buf[128];
         sprintf(buf, "v. %s%s",
@@ -2066,7 +2247,7 @@ static void display_layer2(void)
 static void display_layer3(void)
 {
     /* process the widgets */
-    if(GameStatus  == GAME_STATUS_PLAY)
+    if(GameStatus  >= GAME_STATUS_WAITFORPLAY)
     {
         process_widgets();
     }
@@ -2076,7 +2257,7 @@ static void display_layer3(void)
 /* dialogs, highest-priority layer */
 static void display_layer4(void)
 {
-    if (GameStatus == GAME_STATUS_PLAY)
+    if (GameStatus >= GAME_STATUS_WAITFORPLAY)
     {
         /* we have to make sure that this two windows get closed/hidden right */
         cur_widget[IN_CONSOLE_ID].show = FALSE;
