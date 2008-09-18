@@ -399,7 +399,7 @@ int command_summon(object *op, char *params)
         new_draw_info(NDI_UNIQUE, 0, op, "You can't summon yourself next to yourself.");
         return 1;
     }
-    if (pl->state != ST_PLAYING)
+    if (!(pl->state & ST_PLAYING))
     {
         new_draw_info(NDI_UNIQUE, 0, op, "That player can't be summoned right now.");
         return 1;
@@ -449,7 +449,7 @@ int command_teleport(object *op, char *params)
         new_draw_info(NDI_UNIQUE, 0, op, "You can't teleport yourself next to yourself.");
         return 1;
     }
-    if (pl->state != ST_PLAYING)
+    if (!(pl->state & ST_PLAYING))
     {
         new_draw_info(NDI_UNIQUE, 0, op, "You can't teleport to that player right now.");
         return 1;

@@ -175,7 +175,7 @@ void process_players1(mapstruct *map)
         /* check for ST_PLAYING state so that we don't try to save off when
            * the player is logging in.
            */
-        if ((pl->last_save_tick + AUTOSAVE) < ROUND_TAG && pl->state == ST_PLAYING)
+        if ((pl->last_save_tick + AUTOSAVE) < ROUND_TAG && (pl->state & ST_PLAYING))
         {
             /* we must change this unholy ground thing */
             if (blocks_cleric(pl->ob->map, pl->ob->x, pl->ob->y))
@@ -313,7 +313,7 @@ static void process_map_events(mapstruct *map)
 
         if (op->map == NULL && op->env == NULL)
         {
-            if (op->type == PLAYER && CONTR(op)->state != ST_PLAYING)
+            if (op->type == PLAYER && !(CONTR(op)->state & ST_PLAYING))
                 continue;
             LOG(llevBug, "BUG: process_events(): Object without map or inventory is on active list: %s (%d)\n",
                 query_name(op), op->count);

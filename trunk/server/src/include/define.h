@@ -909,10 +909,13 @@ error - Your ANSI C compiler should be defining __STDC__;
 /*
  * Use of the state-variable in player objects:
  */
+/* static player state flags */
 #define ST_BORN                 0x01 /* this char was never played before and is new */ 
-#define ST_DEAD                 4
-#define ST_ZOMBIE               5
-#define ST_PLAYING              6
+#define ST_RESURRECT            0x02 /* player is dead but can be resurrected */
+/* these state flags are dynamic and not saved */
+#define ST_PLAYING              0x20
+#define ST_ZOMBIE               0x40
+#define ST_DEAD                 0x80
 
 #ifdef SERVER_SEND_FACES
 #define BLANK_FACE_NAME "blank.111"

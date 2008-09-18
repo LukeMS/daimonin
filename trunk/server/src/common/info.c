@@ -64,7 +64,7 @@ void new_draw_info(const int flags, const int pri, const object *const pl, const
         player *tmppl;
         for (tmppl = first_player; tmppl != NULL; tmppl = tmppl->next)
         {
-            if(tmppl->state != ST_DEAD && tmppl->state != ST_ZOMBIE && tmppl->socket.status != Ns_Dead)
+            if(!(tmppl->state & (ST_DEAD|ST_ZOMBIE)) && tmppl->socket.status != Ns_Dead)
                 new_draw_info((flags & ~NDI_ALL), pri, tmppl->ob, buf);
         }
         return;
@@ -75,7 +75,7 @@ void new_draw_info(const int flags, const int pri, const object *const pl, const
     if (!pl || pl->type != PLAYER)
         return;
 
-    if (!CONTR(pl) || CONTR(pl)->state != ST_PLAYING)
+    if (!CONTR(pl) || !(CONTR(pl)->state & ST_PLAYING))
         return;
 
     if (pri >= CONTR(pl)->listening) /* player don't want this */
