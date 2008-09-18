@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
-	<ActiveTarget name="Release" />
+	<ActiveTarget name="All" />
 	<File name="ReadMe.txt" open="1" top="0" tabpos="1">
 		<Cursor position="0" topLine="0" />
 	</File>
 	<File name="..\..\..\src\adler32.c" open="0" top="0" tabpos="39">
 		<Cursor position="0" topLine="0" />
 	</File>
-	<File name="..\..\..\src\book.c" open="0" top="0" tabpos="23">
-		<Cursor position="15002" topLine="493" />
+	<File name="..\..\..\src\anim.c" open="1" top="0" tabpos="5">
+		<Cursor position="28697" topLine="881" />
+	</File>
+	<File name="..\..\..\src\book.c" open="1" top="0" tabpos="6">
+		<Cursor position="6120" topLine="252" />
 	</File>
 	<File name="..\..\..\src\client.c" open="0" top="0" tabpos="25">
 		<Cursor position="2970" topLine="74" />
 	</File>
-	<File name="..\..\..\src\commands.c" open="0" top="0" tabpos="8">
-		<Cursor position="66724" topLine="2028" />
+	<File name="..\..\..\src\commands.c" open="1" top="0" tabpos="3">
+		<Cursor position="2704" topLine="80" />
 	</File>
 	<File name="..\..\..\src\crc32.c" open="0" top="0" tabpos="38">
 		<Cursor position="0" topLine="0" />
@@ -64,8 +67,8 @@
 	<File name="..\..\..\src\include\sprite.h" open="0" top="0" tabpos="29">
 		<Cursor position="5299" topLine="140" />
 	</File>
-	<File name="..\..\..\src\include\win32.h" open="1" top="1" tabpos="2">
-		<Cursor position="1405" topLine="0" />
+	<File name="..\..\..\src\include\win32.h" open="1" top="0" tabpos="2">
+		<Cursor position="1405" topLine="17" />
 	</File>
 	<File name="..\..\..\src\include\wrapper.h" open="0" top="0" tabpos="16">
 		<Cursor position="2388" topLine="68" />
@@ -100,11 +103,11 @@
 	<File name="..\..\..\src\misc.c" open="0" top="0" tabpos="34">
 		<Cursor position="0" topLine="0" />
 	</File>
-	<File name="..\..\..\src\player.c" open="0" top="0" tabpos="5">
-		<Cursor position="5686" topLine="161" />
+	<File name="..\..\..\src\player.c" open="1" top="0" tabpos="4">
+		<Cursor position="33610" topLine="882" />
 	</File>
-	<File name="..\..\..\src\socket.c" open="0" top="0" tabpos="31">
-		<Cursor position="834" topLine="892" />
+	<File name="..\..\..\src\socket.c" open="1" top="1" tabpos="8">
+		<Cursor position="15659" topLine="535" />
 	</File>
 	<File name="..\..\..\src\sprite.c" open="0" top="0" tabpos="6">
 		<Cursor position="28321" topLine="901" />
