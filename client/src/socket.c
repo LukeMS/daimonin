@@ -123,7 +123,7 @@ int send_command_binary(int cmd, char *body, int len, int flags)
         /* first, lets check we have a theoretical >64k data buffer
          * ATM we don't support data blocks >64k from the client
          * to the server. I can only see doing it when we allow
-         * bigger textures or player pictures which can be uploaded 
+         * bigger textures or player pictures which can be uploaded
          * by the player to the server.
          * even then we should not use the low level protocol
          * to send any raw big blocks but a higher function
@@ -172,11 +172,11 @@ int send_command_binary(int cmd, char *body, int len, int flags)
 
             /* if the command requests a last zero byte, do it now.
              * the server will check it normally and kick you if its not there
-             * why? as a marker for block but also to ensure a valid string 
+             * why? as a marker for block but also to ensure a valid string
              * in the raw read buffer of the server.
              */
             if(flags & SEND_CMD_FLAG_STRING)
-                buf->data[len_copy+data_offset] = 0; 
+                buf->data[len_copy+data_offset] = 0;
         }
     }
 
@@ -466,7 +466,7 @@ int SOCKET_GetError()
 
 Boolean SOCKET_CloseSocket(SOCKET fd)
 {
-    if (fd == SOCKET_NO)
+    if ((int)fd == SOCKET_NO)
         return(TRUE);
 
 #ifdef __LINUX
@@ -485,7 +485,7 @@ Boolean SOCKET_CloseClientSocket(struct ClientSocket *csock)
 {
     SDL_LockMutex(socket_mutex);
 
-    if (csock->fd == SOCKET_NO)
+    if ((int)csock->fd == SOCKET_NO)
     {
         SDL_UnlockMutex(socket_mutex);
         return(TRUE);
@@ -544,7 +544,7 @@ Boolean SOCKET_InitSocket(void)
 
 Boolean SOCKET_DeinitSocket(void)
 {
-    if (csocket.fd != SOCKET_NO)
+    if ((int)csocket.fd != SOCKET_NO)
         SOCKET_CloseClientSocket(&csocket);
 
 #ifdef WIN32
