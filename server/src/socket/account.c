@@ -47,7 +47,7 @@ account_status account_save(Account *ac, const char *name)
     char filepath[MAX_BUF];
     char tmpfilename[MAX_BUF];
 
-    sprintf(filepath, "%s/%s/%s/%s/", settings.localdir, settings.accountdir, get_subdir(name), name);
+    sprintf(filepath, "%s/%s/%s/%s", settings.localdir, settings.accountdir, get_subdir(name), name);
     sprintf(filename, "%s/%s.acc", filepath, name);    
     make_path_to_file(filename); /* sanity pathing */
     LOG(llevInfo, "Save Account: %s\n", filename);
