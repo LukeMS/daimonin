@@ -31,6 +31,10 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #define INVITEMXLEN 7
 #define INVITEMYLEN 3
 
+/**
+ ** This singleton class is the final object class.
+ ** It handles additional functions like weapon and equipment changes.
+ *****************************************************************************/
 class ObjectHero
 {
 public:

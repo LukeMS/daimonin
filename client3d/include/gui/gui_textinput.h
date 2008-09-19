@@ -29,7 +29,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "sound.h"
 
 /**
- ** TextInput class which manages the keyboard input for the Dialog class.
+ ** TextInput class which handles the keyboard input for the Dialog class.
  *****************************************************************************/
 class GuiTextinput
 {

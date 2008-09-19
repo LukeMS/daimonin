@@ -1,4 +1,4 @@
-/*-----------------------------------------------------------------------------
+/*---------------------------------------------7--------------------------------
 This source file is part of Daimonin's 3d-Client
 Daimonin is a MMORG. Details can be found at http://daimonin.sourceforge.net
 Copyright (c) 2005 Andreas Seidel
@@ -69,12 +69,12 @@ void Item::clearContainer(int container)
     {
         if (container != mActItemID[i]) continue;
         for (std::list<sItem*>::const_iterator iter = mItemList[i].begin(); iter!= mItemList[i].end(); ++iter)
-            delete (*iter);
+            delete *iter;
         mItemList[i].clear();
         GuiManager::getSingleton().clrItem(mWindowID[i]);
         return;
     }
-    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Item::clearContainer fails!");
+    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Item::clearContainer failed!");
 }
 
 //================================================================================================
@@ -82,10 +82,9 @@ void Item::clearContainer(int container)
 //================================================================================================
 void Item::ItemXYCmd(unsigned char *data, int len, bool bflag)
 {
-    int pos = 4;
-    int mode= Network::getSingleton().GetInt_String(data);
-    int container = Network::getSingleton().GetInt_String(data + pos);
-    pos+= 4;
+    int pos = 0;
+    int mode      = Network::getSingleton().GetInt_String(data + pos); pos+= 4;
+    int container = Network::getSingleton().GetInt_String(data + pos); pos+= 4;
     if (mode == MODE_TOGGLE_OPEN)
     {
         if (container == CONTAINER_UNKNOWN)
@@ -101,14 +100,10 @@ void Item::ItemXYCmd(unsigned char *data, int len, bool bflag)
     while (pos < len)
     {
         sItem *tmpItem = new sItem;
-        tmpItem->tag      = Network::getSingleton().GetInt_String(data + pos);
-        pos += 4;
-        tmpItem->flagsval = Network::getSingleton().GetInt_String(data + pos);
-        pos += 4;
-        tmpItem->weight   = Network::getSingleton().GetInt_String(data + pos);
-        pos += 4;
-        tmpItem->face     = Network::getSingleton().GetInt_String(data + pos);
-        pos += 4;
+        tmpItem->tag      = Network::getSingleton().GetInt_String(data + pos); pos += 4;
+        tmpItem->flagsval = Network::getSingleton().GetInt_String(data + pos); pos += 4;
+        tmpItem->weight   = Network::getSingleton().GetInt_String(data + pos); pos += 4;
+        tmpItem->face     = Network::getSingleton().GetInt_String(data + pos); pos += 4;
         //request_face(face, 0);
         tmpItem->direction = data[pos++];
         if (container != mActItemID[ITEMLIST_GROUND])
@@ -129,26 +124,24 @@ void Item::ItemXYCmd(unsigned char *data, int len, bool bflag)
             tmpItem->item_level= 0;
             tmpItem->item_skill= 0;
         }
-        int nlen = data[pos++];
-        char *name = new char[nlen+1];
-        memcpy(name, (char *) data + pos, nlen);
-        name[nlen] = '\0';
-        tmpItem->d_name = name;
-        delete[] name;
-        pos += nlen;
-        tmpItem->animation_id = Network::getSingleton().GetShort_String(data + pos);
-        pos += 2;
+        tmpItem->d_name = "";
+        for (int i = data[pos++]; i; --i)
+            tmpItem->d_name+= data[pos++];
+        tmpItem->animation_id = Network::getSingleton().GetShort_String(data + pos);  pos += 2;
         tmpItem->anim_speed = data[pos++];
-        tmpItem->nrof = Network::getSingleton().GetInt_String(data + pos);
-        pos += 4;
-        Logger::log().warning() << "Add item: " << tmpItem->d_name << "  gfx-id: " << tmpItem->face;
-        update(tmpItem, container, bflag);
+        tmpItem->sumItems = Network::getSingleton().GetInt_String(data + pos); pos += 4;
+        Logger::log().warning() << "Add item: " << tmpItem->d_name << "  gfx-id: " << tmpItem->face; // Just for testing.
+        if (!update(tmpItem, container, bflag))
+        {
+            Logger::log().error() << "<Item::ItemXYCmd> Unknown container ID: " << container << " for item " << tmpItem->d_name;
+            delete tmpItem;
+        }
     }
     // map_udate_flag = 2;
 }
 
 //================================================================================================
-//
+// Returns the container in which the item is located.
 //================================================================================================
 int Item::getContainerID(unsigned int ItemID)
 {
@@ -176,7 +169,7 @@ Item::sItem *Item::locateItem(int container, unsigned int tag)
         if (mActItemID[i] == container || mActItemID[i] == CONTAINER_UNKNOWN)
         {
             for (iter = mItemList[i].begin(); iter!= mItemList[i].end(); ++iter)
-                if (tag == (*iter)->tag) return (*iter);
+                if (tag == (*iter)->tag) return *iter;
         }
     }
     return 0;
@@ -196,10 +189,13 @@ void Item::delItem(unsigned int item, int container)
         {
             for (iter = mItemList[i].begin(); iter!= mItemList[i].end(); ++iter)
             {
-                if ((*iter)->tag != item) continue;
-                GuiManager::getSingleton().delItem(mWindowID[i], *iter);
-                delete (*iter);
-                mItemList[i].erase(iter);
+                if ((*iter)->tag == item)
+                {
+                    GuiManager::getSingleton().delItem(mWindowID[i], *iter);
+                    delete *iter;
+                    mItemList[i].erase(iter);
+                    return;
+                }
             }
         }
     }
@@ -208,7 +204,7 @@ void Item::delItem(unsigned int item, int container)
 //================================================================================================
 // Add an Item to a given container.
 //================================================================================================
-void Item::addItem(sItem *tmpItem, int container)
+bool Item::addItem(sItem *tmpItem, int container)
 {
     //GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "-- add Item");
     for (int i =0; i < ITEMLIST_SUM; ++i)
@@ -217,77 +213,69 @@ void Item::addItem(sItem *tmpItem, int container)
         {
             GuiManager::getSingleton().addItem(mWindowID[i], tmpItem);
             mItemList[i].push_back(tmpItem);
-            return;
+            return true;
         }
     }
-    Logger::log().error() << "<Item::addItem> Unknown container ID: " << container;
+    return false;
 }
 
 //================================================================================================
-// .
+// Update the item location.
+//================================================================================================
+bool Item::update(sItem *tmpItem, int newContainerID, bool bflag)
+{
+    int actContainerID = getContainerID(tmpItem->tag);
+    // The item doesn't have a container yet.
+    if (actContainerID == CONTAINER_UNKNOWN)
+    {
+        return addItem(tmpItem, newContainerID);
+    }
+    // Move the item into a new container.
+    if (actContainerID != newContainerID)
+    {
+        delItem(tmpItem->tag, actContainerID);
+        return addItem(tmpItem, newContainerID);
+    }
+    // Not supported container.
+    return false;
+}
+
+//================================================================================================
+// Moves an item from the ground to the inventory.
 //================================================================================================
 void Item::getInventoryItemFromFloor(int slotNr)
 {
     if (slotNr >= (int)mItemList[ITEMLIST_GROUND].size()) return;
-
     std::list<sItem*>::iterator iter;
-    for (iter = mItemList[ITEMLIST_GROUND].begin(); slotNr-- && iter != mItemList[ITEMLIST_GROUND].end(); )  ++iter;
-    char buf[256];
-    sprintf(buf, "drop %s", (*iter)->d_name.c_str());
-    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, buf);
-
+    for (iter = mItemList[ITEMLIST_GROUND].begin(); slotNr-- && iter != mItemList[ITEMLIST_GROUND].end();)  ++iter;
+    sprintf(mStrBuffer, "drop %s", (*iter)->d_name.c_str());
+    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, mStrBuffer);
     // move item to Backpack.
-    sprintf(buf, "mv %d %d %d", mActItemID[ITEMLIST_BACKPACK], (*iter)->tag, (*iter)->nrof);
-    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, buf);
-    Network::getSingleton().cs_write_string(buf);
-    delete (*iter);
+    sprintf(mStrBuffer, "mv %d %d %d", mActItemID[ITEMLIST_BACKPACK], (*iter)->tag, (*iter)->sumItems);
+    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, mStrBuffer);
+    Network::getSingleton().cs_write_string(mStrBuffer);
+    delete *iter;
     mItemList[ITEMLIST_GROUND].erase(iter);
     return;
 }
 
 //================================================================================================
-// Updates an item with new attributes.
-//================================================================================================
-bool Item::update(sItem *tmpItem, int newContainerID, bool bflag)
-{
-    int actContainerID = getContainerID(tmpItem->tag);
-    // This is a new Item.
-    if (actContainerID == CONTAINER_UNKNOWN)
-    {
-        addItem(tmpItem, newContainerID);
-    }
-    // Move the item into a new container.
-    else if (actContainerID != newContainerID)
-    {
-        delItem(tmpItem->tag, actContainerID);
-        addItem(tmpItem, newContainerID);
-    }
-    // Update all attributes.
-    return false;
-}
-
-//================================================================================================
-// .
+// Moves an item from the inventory to the ground.
 //================================================================================================
 void Item::dropInventoryItemToFloor(int slotNr)
 {
-    //int nrof = 1;
+    //int sumItems = 1;
     //sound_play_effect(SOUND_DROP, 0, 0, 100);
-
     std::list<sItem*>::iterator iter;
-    for (iter = mItemList[ITEMLIST_BACKPACK].begin(); slotNr-- && iter != mItemList[ITEMLIST_BACKPACK].end(); )  ++iter;
-    char buf[256];
-    sprintf(buf, "drop %s", (*iter)->d_name.c_str());
-    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, buf);
-
+    for (iter = mItemList[ITEMLIST_BACKPACK].begin(); slotNr-- && iter != mItemList[ITEMLIST_BACKPACK].end();)  ++iter;
+    sprintf(mStrBuffer, "drop %s", (*iter)->d_name.c_str());
+    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, mStrBuffer);
     // move item TO Ground.
-    sprintf(buf, "mv %d %d %d", mActItemID[ITEMLIST_GROUND], (*iter)->tag, (*iter)->nrof);
-    Network::getSingleton().cs_write_string(buf);
-
-    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, buf);
-
+    sprintf(mStrBuffer, "mv %d %d %d", mActItemID[ITEMLIST_GROUND], (*iter)->tag, (*iter)->sumItems);
+    Network::getSingleton().cs_write_string(mStrBuffer);
+    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, mStrBuffer);
     GuiManager::getSingleton().delItem(GuiManager::GUI_WIN_INVENTORY, *iter);
-    delete (*iter);
+    delete *iter;
     mItemList[ITEMLIST_BACKPACK].erase(iter);
 }
 
@@ -307,62 +295,37 @@ void Item::dropItem(int srcWindow, int srcItemSlot, int dstWindow, int dstItemSl
     // ////////////////////////////////////////////////////////////////////
     // Drop inside a window.
     // ////////////////////////////////////////////////////////////////////
-
-// TODO
-
-    char buf[256];
-    sprintf(buf, "drag and drop src: %d, %d dest: %d, %d", srcWindow, srcItemSlot, dstWindow, dstItemSlot);
-    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, buf);
+    // TODO
+    sprintf(mStrBuffer, "drag and drop src: %d, %d dest: %d, %d", srcWindow, srcItemSlot, dstWindow, dstItemSlot);
+    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, mStrBuffer);
     return;
 }
 
 //================================================================================================
-// Just for debug.
+// Just for Debug. Print the items of all containers.
 //================================================================================================
 void Item::printAllItems()
 {
     String strTmp;
     std::list<sItem*>::iterator iter;
-    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Backpack:", 0x00ff0000);
-    if (mItemList[ITEMLIST_BACKPACK].empty())
-        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "<empty>");
-    else
-        for (iter = mItemList[ITEMLIST_BACKPACK].begin(); iter!= mItemList[ITEMLIST_BACKPACK].end(); ++iter)
+    const char *names[ITEMLIST_SUM] = {"Backpack", "Container:", "Ground:" };
+    for (int c = 0; c < ITEMLIST_SUM; ++c)
+    {
+        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, names[c], 0x00ff0000);
+        if (mItemList[ITEMLIST_BACKPACK].empty())
         {
-            strTmp = (*iter)->d_name +
-                     " [" + StringConverter::toString(mActItemID[ITEMLIST_BACKPACK]) + "]"+
-                     " [" + StringConverter::toString((*iter)->tag) + "]"+
-                     " [" + ObjectWrapper::getSingleton().getMeshName((*iter)->face & ~0x8000) + "]";
-            GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, strTmp.c_str());
+            GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "<empty>");
         }
-    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Container:", 0x00ff0000);
-    if (mItemList[ITEMLIST_CONTAINER].empty())
-        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "<empty>");
-    else
-        for (iter = mItemList[ITEMLIST_CONTAINER].begin(); iter!= mItemList[ITEMLIST_CONTAINER].end(); ++iter)
+        else
         {
-            strTmp = (*iter)->d_name +
-                     " [" + StringConverter::toString(mActItemID[ITEMLIST_CONTAINER]) + "]"+
-                     " [" + StringConverter::toString((*iter)->tag) + "]"+
-                     " [" + ObjectWrapper::getSingleton().getMeshName((*iter)->face & ~0x8000) + "]";
-            GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, strTmp.c_str());
+            for (iter = mItemList[ITEMLIST_BACKPACK].begin(); iter!= mItemList[ITEMLIST_BACKPACK].end(); ++iter)
+            {
+                strTmp = (*iter)->d_name +
+                         " [" + StringConverter::toString(mActItemID[ITEMLIST_BACKPACK]) + "]"+
+                         " [" + StringConverter::toString((*iter)->tag) + "]"+
+                         " [" + ObjectWrapper::getSingleton().getMeshName((*iter)->face & ~0x8000) + "]";
+                GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, strTmp.c_str());
+            }
         }
-    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Ground:", 0x00ff0000);
-    if (mItemList[ITEMLIST_GROUND].empty())
-        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "<empty>");
-    else
-        for (iter = mItemList[ITEMLIST_GROUND].begin(); iter!= mItemList[ITEMLIST_GROUND].end(); ++iter)
-        {
-            strTmp = (*iter)->d_name +
-                     " [" + StringConverter::toString(mActItemID[ITEMLIST_GROUND]) + "]"+
-                     " [" + StringConverter::toString((*iter)->tag) + "]"+
-                     " [" + ObjectWrapper::getSingleton().getMeshName((*iter)->face & ~0x8000) + "]";
-            GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, strTmp.c_str());
-        }
+    }
 }
-
-/*
-    char buf[256];
-    sprintf(buf, "%d", mActHeroContainerID);
-    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, buf);
-*/

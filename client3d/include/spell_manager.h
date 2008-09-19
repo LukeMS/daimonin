@@ -27,6 +27,9 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <Ogre.h>
 #include "spell_range.h"
 
+/**
+ ** This singleton class handles all spell effects.
+ *****************************************************************************/
 class SpellManager
 {
 
@@ -76,7 +79,7 @@ private:
     Ogre::SceneManager *mSceneMgr;
     Ogre::SceneNode  *mNode;
     Ogre::String mDescFile;
-    std::vector<SpellRange*>mvObject_range;
+//    std::vector<SpellRange*>mvObject_range;
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.

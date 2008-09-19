@@ -219,7 +219,7 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, const char *resourceDnD, 
         if ((strTmp = xmlElem->Attribute("text"))) mStrTooltip = strTmp;
     }
     // ////////////////////////////////////////////////////////////////////
-    // Now we have all datas to create the window..
+    // Now we have all data to create the window..
     // ////////////////////////////////////////////////////////////////////
     mWinLayerBG = new uint32[mWidth * mHeight];
     memset(mWinLayerBG, 0x00, mWidth * mHeight * sizeof(uint32));
@@ -712,7 +712,7 @@ void GuiWindow::addItem(Item::sItem *item)
 }
 
 //================================================================================================
-// .
+// Delete an item from a slot.
 //================================================================================================
 void GuiWindow::delItem(Item::sItem *item)
 {
@@ -720,12 +720,17 @@ void GuiWindow::delItem(Item::sItem *item)
     {
         if (item == mvSlot[i]->getItem())
         {
-            // Found the item that will be deleted.
-            for (; i < mSumUsedSlots; ++i)
-                mvSlot[i]->setItem(mvSlot[i+1]->getItem());
+            if (i < mSumUsedSlots-1)
+            {
+                // Found the item that will be deleted.
+                for (; i < mSumUsedSlots; ++i)
+                    mvSlot[i]->setItem(mvSlot[i+1]->getItem());
+            }
+            mvSlot[--mSumUsedSlots]->setItem(0);
+            return;
         }
     }
-    mvSlot[--mSumUsedSlots]->setItem(0);
+    Logger::log().error() << "GuiWindow::delItem(): cant find item " << item->d_name;
 }
 
 //================================================================================================

@@ -28,25 +28,25 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "tile_chunk.h"
 
 /**
- * TileEngine class which manages all tiles related stuff in the worldmap.
- * A tile is build out of 8 trinagles (=4 suvbtiles) arranged in this way:
- * +--+--+
- * |\ | /|
- * | \|/ |
- * +--+--+
- * | /|\ |
- * |/ | \|
- * +--+--+
- *
- * For a better looking terrain, every tile has 4 source graphics.
- * This way the terrain doesn't repeat too much.
- * +--+--+
- * |  |  |
- * |  |  |
- * +--+--+
- * |  |  |
- * |  |  |
- * +--+--+
+ ** This singleto class handles all tile related stuff in the worldmap.
+ ** A tile is build out of 8 trinagles (=4 suvbtiles) arranged in this way:
+ ** +--+--+
+ ** |\ | /|
+ ** | \|/ |
+ ** +--+--+
+ ** | /|\ |
+ ** |/ | \|
+ ** +--+--+
+ **
+ ** For a better looking terrain, every tile has 4 source graphics.
+ ** This way the terrain doesn't repeat too much.
+ ** +--+--+
+ ** |  |  |
+ ** |  |  |
+ ** +--+--+
+ ** |  |  |
+ ** |  |  |
+ ** +--+--+
  *****************************************************************************/
 
 class TileManager

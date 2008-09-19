@@ -27,6 +27,9 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 #include <Ogre.h>
 
+/**
+ ** This singleton class handles all particle effects.
+ *****************************************************************************/
 class ParticleManager
 {
 

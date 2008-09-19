@@ -3,7 +3,6 @@
 	ProjectType="Visual C++"
 	Version="8,00"
 	Name="Client3d"
-	ProjectGUID="{53C40EDF-1BD3-46BE-A694-1E64FEAA9F98}"
 	RootNamespace="Client3d"
 	Keyword="Win32Proj"
 	>
@@ -17,7 +16,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\..\..\debug\"
+			OutputDirectory="..\..\..\"
 			IntermediateDirectory=".\obj\$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
@@ -66,7 +65,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="OgreMain_d.lib OIS_d.lib fmodex_vc.lib WS2_32.lib SDL.lib SDLmain.lib"
-				OutputFile="$(OutDir)/Client3d.exe"
+				OutputFile="$(OutDir)/Client3d_d.exe"
 				Version="0.99"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories=".\sdl_lib;.\ogre_lib\;.\fmod_lib"
@@ -99,7 +98,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine=".\..\..\_Tools_\cp.exe plugins_d.cfg ..\..\..\debug\plugins.cfg&quot;"
+				CommandLine=".\..\..\_Tools_\cp.exe plugins_d.cfg ..\..\..\plugins.cfg&quot;"
 			/>
 		</Configuration>
 		<Configuration

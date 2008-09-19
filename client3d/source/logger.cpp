@@ -85,7 +85,7 @@ const char* Logger::now()
 }
 
 //================================================================================================
-// Writes a status message to the end of line..
+// Writes a status message to the end of line.
 //================================================================================================
 void Logger::success(bool status)
 {

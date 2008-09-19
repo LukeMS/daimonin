@@ -139,11 +139,10 @@ GuiTextout::~GuiTextout()
 //================================================================================================
 // Create a buffer to save the background (for dynamic text).
 //================================================================================================
-void GuiTextout::createBuffer(int width)
+void GuiTextout::createBuffer()
 {
     delete[] mTextGfxBuffer;
-    if (width < MAX_TEXTLINE_LEN) width = MAX_TEXTLINE_LEN;
-    mTextGfxBuffer = new uint32[mMaxFontHeight * width];
+    mTextGfxBuffer = new uint32[mMaxFontHeight * MAX_TEXTLINE_LEN];
 }
 
 //================================================================================================
@@ -159,7 +158,11 @@ void GuiTextout::loadRawFont(const char *filename)
     fnt->data = new uint32[size];
     memcpy(fnt->data, image.getData(), size * sizeof(uint32));
     fnt->height = (int) image.getHeight();
-    if (mMaxFontHeight < fnt->height)  mMaxFontHeight = fnt->height;
+    if (fnt->height > mMaxFontHeight)
+    {
+        mMaxFontHeight = fnt->height;
+        createBuffer();
+    }
     fnt->textureWidth = (int)image.getWidth();
     fnt->charStart[0]=0;
     // Parse the character width (a vert green line is the end sign).
@@ -175,7 +178,6 @@ void GuiTextout::loadRawFont(const char *filename)
             if (++i >= CHARS_IN_FONT) break;
         }
     }
-    createBuffer((int)image.getWidth());
     Logger::log().info() << "System-Font (" << image.getWidth() << "x" << image. getHeight() <<") was created.";
 }
 
@@ -234,7 +236,11 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
     // TextCursour char.
     fnt->charWidth[STANDARD_CHARS_IN_FONT-1] = fnt->charWidth[0];
     fnt->charStart[STANDARD_CHARS_IN_FONT-1] = fnt->charStart[STANDARD_CHARS_IN_FONT-2] + fnt->charWidth[STANDARD_CHARS_IN_FONT-2];
-    if (mMaxFontHeight < fnt->height)  mMaxFontHeight = fnt->height;
+    if (fnt->height > mMaxFontHeight)
+    {
+        mMaxFontHeight = fnt->height;
+        createBuffer();
+    }
     // Special chars.
     unsigned int i, j =0;
     for (i = STANDARD_CHARS_IN_FONT; i < STANDARD_CHARS_IN_FONT + mvSpecialChar.size(); ++i)
@@ -377,11 +383,11 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
     TextureManager ::getSingleton().remove(pTexture->getName());
     MaterialManager::getSingleton().remove(pMaterial->getName());
     FontManager    ::getSingleton().remove(pFont->getName());
-    createBuffer(MAX_TEXTLINE_LEN); // Set standard buffer size.
 }
 
 //================================================================================================
 // Prepare the background and print the text.
+// todo: Replace blit by direct writing to texture (faster and no buffer is needed).
 //================================================================================================
 void GuiTextout::Print(TextLine *line, Texture *texture)
 {

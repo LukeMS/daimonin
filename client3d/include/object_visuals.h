@@ -27,6 +27,10 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <Ogre.h>
 #include "object_npc.h"
 
+/**
+ ** This singleton class handles all visual informations of an object.
+ ** Visuals are lifebars, selction gfx's, etc.
+ *****************************************************************************/
 class ObjectVisuals
 {
 

@@ -699,7 +699,10 @@ bool Events::frameEnded(const FrameEvent& evt)
             }
             else
             {
+                mCamera->yaw(Degree(-cameraAngle));
+                mCamera->setPosition(0, actPos.y, CAMERA_OFFSET);
                 mCameraRotating = NONE;
+                cameraAngle = 0;
             }
         }
         else if (mCameraRotating == POSITIVE && cameraAngle < 45)

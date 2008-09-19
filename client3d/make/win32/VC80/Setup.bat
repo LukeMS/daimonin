@@ -7,7 +7,6 @@ rem ====================================
 rem Unpack all files.
 rem ====================================
 ..\..\_Tools_\gunzip -c client3d_build_vc.tgz >build.tar
-..\..\_Tools_\gunzip -c client3d_build_vc.tar >build.tar
 ..\..\_Tools_\tar xvf build.tar
 ..\..\_Tools_\gunzip -c ogre_lib.tgz >ogre_lib.tar
 ..\..\_Tools_\tar xvf ogre_lib.tar
@@ -27,13 +26,9 @@ rem ====================================
 rem ====================================
 rem Copy the dll's to main folder.
 rem ====================================
-copy sdl_dll\*.* ..\..\..\debug
 move sdl_dll\*.* ..\..\..\
-move ogre_dll\debug\*.* ..\..\..\debug
-copy fmod_dll\*.* ..\..\..\debug
 move ogre_dll\*.* ..\..\..\
 move fmod_dll\*.* ..\..\..\
-rmdir ogre_dll\debug
 rmdir ogre_dll
 rmdir fmod_dll
 rmdir sdl_dll
@@ -49,4 +44,3 @@ del ogre_lib.tgz
 del ogre_inc.tgz
 del sdl_lib.tgz
 del sdl_dll.tgz
-pause

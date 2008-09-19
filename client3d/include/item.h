@@ -27,8 +27,12 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <list>
 #include <Ogre.h>
 
-/** Item structure keeps all information of what the
- ** player knows about items in his inventory.
+/**
+ ** This class keeps all information of what the client knows about items.
+ ** There are special items, called containers, which are items that can hold
+ ** other items (like chests, sacks, etc).
+ ** Every time a container is opened, the server sends all containing items.
+ ** Therefore only 1 itemlist is needed for open containers.
  *****************************************************************************/
 class Item
 {
@@ -53,52 +57,43 @@ public:
     };
     enum // This will replace the bitfield below...
     {
-        IS_MAGICAL = 1 << 0, /**< item is magical   **/
-        IS_CURSED  = 1 << 1, /**< item is cursed    **/
-        IS_DAMNED  = 1 << 2, /**< item is damned    **/
-        IS_LOCKED  = 1 << 3, /**< item is locked    **/
-        IS_UNPAID  = 1 << 4, /**< item is unpaid    **/
-        IS_TRAPED  = 1 << 5, /**< item is traped    **/
-        IS_APPLIED = 1 << 6, /**< item is applied   **/
-        IS_OPEN    = 1 << 7, /**< container is open **/
+        IS_MAGICAL = 1 << 0, /**< Item is magical   **/
+        IS_CURSED  = 1 << 1, /**< Item is cursed    **/
+        IS_DAMNED  = 1 << 2, /**< Item is damned    **/
+        IS_LOCKED  = 1 << 3, /**< Item is locked    **/
+        IS_UNPAID  = 1 << 4, /**< Item is unpaid    **/
+        IS_TRAPED  = 1 << 5, /**< Item is traped    **/
+        IS_APPLIED = 1 << 6, /**< Item is applied   **/
+        IS_OPEN    = 1 << 7, /**< Container is open **/
         IS_DIRTY   = 1 << 8, /**< An item in this container was updated. **/
     };
     typedef struct sItem
     {
-bool magical     :
-        1; /**< item is magical   **/
-bool cursed      :
-        1; /**< item is cursed    **/
-bool damned      :
-        1; /**< item is damned    **/
-bool unpaid      :
-        1; /**< item is unpaid    **/
-bool locked      :
-        1; /**< item is locked    **/
-bool traped      :
-        1; /**< item is traped    **/
-bool applied     :
-        1; /**< item is applied   **/
-bool open        :
-        1; /**< container is open **/
-bool inv_updated :
-        1; /**< container was updated **/
-        Ogre::String d_name; /**< item's full name w/o status information **/
-        Ogre::String s_name; /**< item's singular name as sent to us **/
-        Ogre::String p_name; /**< item's plural name as sent to us **/
-        Ogre::String flags;  /**< item's status information **/
-        unsigned int tag;   /**< item identifier (0 = free) **/
-        int nrof;           /**< number of items **/
-        int weight;         /**< how much item weights **/
-        short face;         /**< index for face array **/
+bool magical    :1;          /**< Item is magical   **/
+bool cursed     :1;          /**< Item is cursed    **/
+bool damned     :1;          /**< Item is damned    **/
+bool unpaid     :1;          /**< Item is unpaid    **/
+bool locked     :1;          /**< Item is locked    **/
+bool traped     :1;          /**< Item is traped    **/
+bool applied    :1;          /**< Item is applied   **/
+bool open       :1;          /**< Container is open **/
+bool inv_updated:1;          /**< Container was updated **/
+        Ogre::String d_name;         /**< Item's full name w/o status information **/
+        Ogre::String s_name;         /**< Item's singular name as sent to us **/
+        Ogre::String p_name;         /**< Item's plural name as sent to us **/
+        Ogre::String flags;          /**< Item's status information **/
+        unsigned int tag;            /**< Item identifier (0 = free) **/
+        int sumItems;                /**< Number of items in this stack **/
+        int weight;                  /**< Weight of the item **/
+        short face;                  /**< Index for face array **/
         unsigned short animation_id; /**< Index into animation array **/
-        unsigned short anim_speed;   /**< how often to animate **/
+        unsigned short anim_speed;   /**< How often to animate **/
         unsigned short anim_state;   /**< last face in sequence drawn **/
-        unsigned short last_anim;    /**< how many ticks have passed since we last animated **/
+        unsigned short last_anim;    /**< How many ticks have passed since we last animated **/
         /**<  when item's inventory is modified, draw routines can use this to redraw things **/
-        unsigned int flagsval;    /**< unmodified flags value as sent from the server **/
-        unsigned char apply_type; /**< how item is applied (worn/wield/etc) **/
-        unsigned char type;       /**< Item type for ordering **/
+        unsigned int  flagsval;       /**< Unmodified flags value as sent from the server **/
+        unsigned char apply_type;    /**< How item is applied (worn/wield/etc) **/
+        unsigned char type;          /**< Item type for ordering **/
         unsigned char itype;
         unsigned char stype;
         unsigned char item_qua;
@@ -110,13 +105,9 @@ bool inv_updated :
     sItem;
     enum
     {
-        ITEMLIST_BACKPACK,  // Items in backpack.
-        /** A container is an item which can hold other items (e.g. chest, sack, etc).
-            Every time we open a container, the server send us all containing items.
-            So we can forget about the inventory of closed containers.
-            Therefore we only need 1 itemlist for open containers. **/
-        ITEMLIST_CONTAINER, // Items in the actual open container.
-        ITEMLIST_GROUND,    // Items on the ground.
+        ITEMLIST_BACKPACK,  /**< Items in backpack. **/
+        ITEMLIST_CONTAINER, /**< Items in the actual open container. **/
+        ITEMLIST_GROUND,    /**< Items on the ground. **/
         ITEMLIST_SUM
     };
     enum
@@ -141,7 +132,7 @@ bool inv_updated :
     void ItemXYCmd(unsigned char *data, int len, bool bflag);
     void clearContainer(int container);
     void delItem(unsigned int item, int container);
-    void addItem(sItem *tmpItem, int container);
+    bool addItem(sItem *tmpItem, int container);
     void dropInventoryItemToFloor(int slotNr);
     void getInventoryItemFromFloor(int slotNr);
     bool update(sItem *tmpItem, int newContainerID, bool bflag);
@@ -159,6 +150,7 @@ private:
     std::list<sItem*> mItemList[ITEMLIST_SUM];
     int mActItemID[ITEMLIST_SUM]; /**< ID of the actual itemContainer **/
     int mWindowID[ITEMLIST_SUM];  /**< ID of window containing the slots for the items **/
+    char mStrBuffer[256];
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////

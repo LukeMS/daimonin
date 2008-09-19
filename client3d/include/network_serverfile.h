@@ -26,6 +26,9 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include "define.h"
 
+/**
+ ** This singleton class handles files send by the server.
+ *****************************************************************************/
 class ServerFile
 {
 
