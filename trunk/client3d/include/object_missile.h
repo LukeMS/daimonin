@@ -27,6 +27,9 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <Ogre.h>
 #include "define.h"
 
+/**
+ ** This class handles all ranged weapon objects.
+ *****************************************************************************/
 class ObjectMissile
 {
 public:
@@ -37,10 +40,10 @@ public:
     typedef enum { FIRE, ICE, POISON,  } enumParticle;
     typedef struct
     {
-        unsigned int index;           /**< Unique number for this object. **/
+        unsigned int index;     /**< Unique number for this object. **/
         enumType     type;
         enumParticle particle;
-        Ogre::String meshName;              /**< Name of the ogre3d mesh. **/
+        Ogre::String meshName;  /**< Name of the ogre3d mesh. **/
         Ogre::Real facing;
         int maxDamage;
         int minDamage;

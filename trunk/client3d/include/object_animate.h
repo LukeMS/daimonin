@@ -26,13 +26,12 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <Ogre.h>
 
-// This will be rewritten for separted Upper/lower Body animation.
-// So it will be possible to walk and shoot arrows at same time without generating
-// Mixed Mode animations.
-
-//================================================================================================
-// Class.
-//================================================================================================
+/**
+ ** This class handles object animation.
+ ** @todo separate Upper/lower Body animation.
+ **       So it will be possible to walk and shoot arrows at same time
+ **       without generating mixed mode animations.
+ *****************************************************************************/
 class ObjectAnimate
 {
 public:

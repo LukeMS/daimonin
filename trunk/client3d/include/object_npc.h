@@ -29,6 +29,10 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "object_animate.h"
 #include "object_equipment.h"
 
+/**
+ ** This is an extended object class.
+ ** It handles additional functions like movement and fighting.
+ *****************************************************************************/
 class ObjectNPC : public ObjectStatic
 {
 public:

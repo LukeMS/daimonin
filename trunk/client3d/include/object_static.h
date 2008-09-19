@@ -28,6 +28,11 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "define.h"
 #include "object_animate.h"
 
+/**
+ ** This is the basic object class.
+ ** It handles static (=non moveable) objects like environment stuff.
+ ** @todo Static objects support particle effects.
+ *****************************************************************************/
 class ObjectStatic
 {
 public:

@@ -30,9 +30,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "gui_gadget_scrollbar.h"
 
 /**
- ** Scrollbar class
- ** which manages the display of scrollable text and/or graphics in a window.
- ** The type can be GFX_FILL or COLOR_FILL.
+ ** This class handles the display of scrollable text and/or graphics in a
+ ** window. The type can be GFX_FILL or COLOR_FILL.
  *****************************************************************************/
 class GuiListbox : public GuiElement
 {

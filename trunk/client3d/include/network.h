@@ -42,6 +42,10 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <fcntl.h>
 #endif
 
+/**
+ ** This singleton class handles all network related stuff except serverfiles.
+ ** Files send by the server are handled in network_serverfile.
+ *****************************************************************************/
 class Network
 {
 public:

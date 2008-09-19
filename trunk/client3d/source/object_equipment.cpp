@@ -30,6 +30,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Ogre;
 
+const char *FILE_SHADOW_IMAGE = "shadow.png";
 String boneName[ObjectEquipment::BONE_SUM]=
 {
     "Pelvis",
@@ -81,8 +82,10 @@ const char *meshName[][ObjectEquipment::ITEM_SUM]=
 
 unsigned long ObjectEquipment::mIndex =0;
 unsigned char *ObjectEquipment::mTexImageBuf = 0;
+Image ObjectEquipment::shadowImage;
 
-const uint32 MASK_COLOR = 0xffc638db; // This is our mask. Pixel with this color will not be drawn.
+//const uint32 MASK_COLOR = 0xffc638db; // This is our mask. Pixel with this color will not be drawn.
+const uint32 MASK_COLOR = 0xffdb38c6; // This is our mask. Pixel with this color will not be drawn.
 
 const int MAX_MODEL_TEXTURE_SIZE = 512;
 
@@ -91,14 +94,14 @@ ObjectEquipment::sPicture ObjectEquipment::picFace =
     65, 75, // w, h
     324, 13,  // dst pos.
     188,  1,  // src pos.
-    0, 79 // offest next src pic.
+    0, 79 // offset next src pic.
 };
 ObjectEquipment::sPicture ObjectEquipment::picHair =
 {
     49, 85, // w, h
     130, 3,  // dst pos.
     254, 1,  // src pos.
-    0, 86 // offest next src pic.
+    0, 86 // offset next src pic.
 };
 ObjectEquipment::sPicture ObjectEquipment::picBody[2] =
 {
@@ -106,13 +109,13 @@ ObjectEquipment::sPicture ObjectEquipment::picBody[2] =
         186, 153, // w, h
         61,  70,  // dst pos.
         1,  155,  // src pos.
-        0, 0 // offest next src pic.
+        0, 0 // offset next src pic.
     },
     { // Front
         186, 153, // w, h
         261,  70,  // dst pos.
         1,  1,  // src pos.
-        0, 0 // offest next src pic.
+        0, 0 // offset next src pic.
     }
 };
 ObjectEquipment::sPicture ObjectEquipment::picArms[4] =
@@ -121,25 +124,25 @@ ObjectEquipment::sPicture ObjectEquipment::picArms[4] =
         38, 81, // w, h
         56,  155,  // dst pos.
         1,  529,  // src pos.
-        0, 0 // offest next src pic.
+        0, 0 // offset next src pic.
     },
     { // Back Right
         38, 81, // w, h
         212,  155,  // dst pos.
         40,  529,  // src pos.
-        0, 0 // offest next src pic.
+        0, 0 // offset next src pic.
     },
     { // Front Left
         38, 81, // w, h
         256,  155,  // dst pos.
         79,  529,  // src pos.
-        0, 0 // offest next src pic.
+        0, 0 // offset next src pic.
     },
     { // Front Right
         38, 81, // w, h
         412,  155,  // dst pos.
         118, 529,  // src pos.
-        0, 0 // offest next src pic.
+        0, 0 // offset next src pic.
     }
 };
 ObjectEquipment::sPicture ObjectEquipment::picHands[4] =
@@ -148,25 +151,25 @@ ObjectEquipment::sPicture ObjectEquipment::picHands[4] =
         29, 57, // w, h
         58,  236,  // dst pos.
         261, 297,  // src pos.
-        0, 0 // offest next src pic.
+        0, 0 // offset next src pic.
     },
     { // Back
         29, 57, // w, h
         221, 236,  // dst pos.
         261, 355,  // src pos.
-        0, 0 // offest next src pic.
+        0, 0 // offset next src pic.
     },
     { // Front
         29, 57, // w, h
         259, 236,  // dst pos.
         261, 413,  // src pos.
-        0, 0 // offest next src pic.
+        0, 0 // offset next src pic.
     },
     { // Front
         29, 57, // w, h
         421, 236,  // dst pos.
         261, 471,  // src pos.
-        0, 0 // offest next src pic.
+        0, 0 // offset next src pic.
     }
 };
 ObjectEquipment::sPicture ObjectEquipment::picBelt[2] =
@@ -175,13 +178,13 @@ ObjectEquipment::sPicture ObjectEquipment::picBelt[2] =
         129, 22, // w, h
         89, 223,  // dst pos.
         157, 529,  // src pos.
-        0, 87 // offest next src pic.
+        0, 87 // offset next src pic.
     },
     { // Front
         129, 22, // w, h
         291, 223,  // dst pos.
         157, 529,  // src pos.
-        0, 87 // offest next src pic.
+        0, 87 // offset next src pic.
     }
 };
 ObjectEquipment::sPicture ObjectEquipment::picLegs[2] =
@@ -190,13 +193,13 @@ ObjectEquipment::sPicture ObjectEquipment::picLegs[2] =
         129, 219, // w, h
         89, 245,  // dst pos.
         1,  309,  // src pos.
-        0, 0 // offest next src pic.
+        0, 0 // offset next src pic.
     },
     { // Front
         129, 219, // w, h
         291, 245,  // dst pos.
         131,  309,  // src pos.
-        0, 0 // offest (x,y) for next src pic.
+        0, 0 // offset (x,y) for next src pic.
     }
 };
 ObjectEquipment::sPicture ObjectEquipment::picShoes[2] =
@@ -205,13 +208,13 @@ ObjectEquipment::sPicture ObjectEquipment::picShoes[2] =
         43, 63, // w, h
         304, 446,  // dst pos.
         157,  575,  // src pos.
-        0, 0 // offest next src pic.
+        0, 0 // offset next src pic.
     },
     { // Right
         43, 63, // w, h
         363, 446,  // dst pos.
         201, 575,  // src pos.
-        0, 0 // offest next src pic.
+        0, 0 // offset next src pic.
     }
 };
 
@@ -227,7 +230,6 @@ ObjectEquipment::~ObjectEquipment()
 void ObjectEquipment::freeRecources()
 {
     mTexture.setNull();
-    delete[] mTexImageBuf;
 }
 
 //================================================================================================
@@ -235,10 +237,17 @@ void ObjectEquipment::freeRecources()
 //================================================================================================
 ObjectEquipment::ObjectEquipment(Entity *parentEntity)
 {
-    Logger::log().list()  << "Adding Equipment.";
+    Logger::log().list() << "Adding Equipment.";
     if (!mIndex++)
     {
-        mTexImageBuf = new unsigned char[MAX_MODEL_TEXTURE_SIZE * MAX_MODEL_TEXTURE_SIZE * sizeof(uint32)];
+        try
+        {
+            shadowImage.load(FILE_SHADOW_IMAGE, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+        }
+        catch (Exception&)
+        {
+            Logger::log().error() << "ObjectEquipment: couldn't find shadow mask " << FILE_SHADOW_IMAGE;
+        }
     }
     mParentEntity = parentEntity;
     for (int bone=0; bone < BONE_SUM; ++bone)
@@ -246,98 +255,77 @@ ObjectEquipment::ObjectEquipment(Entity *parentEntity)
         mItem[bone].entity  = 0;
         mItem[bone].particle= 0;
     }
-
-    // ////////////////////////////////////////////////////////////////////
-    // We ignore the material of the mesh and create an own material.
-    // ////////////////////////////////////////////////////////////////////
     // Clone the ObjectNPC-Material.
-    String tmpName = "EQ_" + StringConverter::toString(mIndex, 6, '0');
-    MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName("NPC");
-    MaterialPtr newMaterial = tmpMaterial->clone(tmpName);
+    String tmpName = "Mat_NPC_" + StringConverter::toString(mIndex, 6, '0');
+    MaterialPtr material = MaterialManager::getSingleton().getByName("NPC");
+    material = material->clone(tmpName);
     mParentEntity->getSubEntity(0)->setMaterialName(tmpName);
     // Create a texture for the material.
-    Image image;
-    image.loadDynamicImage(mTexImageBuf, MAX_MODEL_TEXTURE_SIZE, MAX_MODEL_TEXTURE_SIZE, PF_A8R8G8B8);
-    tmpName +="_Texture";
-    mTexture = TextureManager::getSingleton().loadImage(tmpName, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, image, TEX_TYPE_2D, 3, 1.0f);
-    newMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(tmpName);
-
+    tmpName = "Tex_NPC_" + StringConverter::toString(mIndex, 6, '0');
+    mTexture = TextureManager::getSingleton().createManual(tmpName, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+               TEX_TYPE_2D, MAX_MODEL_TEXTURE_SIZE, MAX_MODEL_TEXTURE_SIZE, 0, PF_A8R8G8B8, TU_STATIC_WRITE_ONLY);
+    material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(tmpName);
     // Set the default Colors of the model.
     setTexture(0, 0, 0);
-    setTexture(2, 1, 0);
-    setTexture(3, 2, 0);
-    setTexture(4, 3, 0);
-    setTexture(5, 4, 0);
-    setTexture(6, 5, 0);
-    setTexture(7, 6, 0);
+    setTexture(2, 1, 0); setTexture(3, 2, 0); setTexture(4, 3, 0);
+    setTexture(5, 4, 0); setTexture(6, 5, 0); setTexture(7, 6, 0);
 }
 
 //================================================================================================
 // Draw a part of the texture.
 //================================================================================================
-inline void ObjectEquipment::drawBopyPart(sPicture &picPart, Image &image, uint32 texColor, uint32 texNumber)
+inline void ObjectEquipment::drawBopyPart(sPicture &picPart, uint32 texColor, uint32 texNumber)
 {
     uint32 srcColor, dstColor;
-    uint32 *texRace = (uint32*)image.getData();
-    uint32 *buffer  = new uint32[picPart.w * picPart.h];
-    uint32 *buf = buffer;
-    int width = (int)image.getWidth();
-    // Get the color information from the top line of the texture-shadow picture.
-    // We have to swap R and B Color information (default texture format is A8R8G8B8).
-    srcColor = texRace[texColor & 0xff];
-    texColor = (srcColor & 0xff00ff00);
-    texColor+= (srcColor & 0x000000ff) << 16;
-    texColor+= (srcColor & 0x00ff0000) >> 16;
-    // Get the current model-texture fragment.
-    PixelBox pb(picPart.w, picPart.h, 1, PF_A8B8G8R8 , buffer);
-    mTexture->getBuffer()->blitToMemory(
-        Box(picPart.dstX,
-            picPart.dstY,
-            picPart.dstX + picPart.w,
-            picPart.dstY + picPart.h),
-        pb);
+    uint32 *texRace = (uint32*)shadowImage.getData();
+    int srcWidth = (int)shadowImage.getWidth();
+    int dstWidth = (int)mTexture->getWidth();
+    texColor = texRace[texColor & 0xff];
+    PixelBox pb = mTexture->getBuffer()->lock(
+                      Box(picPart.dstX,
+                          picPart.dstY,
+                          picPart.dstX + picPart.w,
+                          picPart.dstY + picPart.h),
+                      HardwareBuffer::HBL_NORMAL);
+    uint32 *dst = (uint32*)pb.data;
     // Fill the buffer with the selected color (darkened by the shadow texture).
     for (int y=0; y < picPart.h; ++y)
     {
         for (int x=0; x < picPart.w; ++x)
         {
-            srcColor = texRace[(y+picPart.srcY)*width + (x+picPart.srcX)];
+            srcColor = texRace[(y+picPart.srcY)*srcWidth + (x+picPart.srcX)];
             if (srcColor != MASK_COLOR)
             {
                 dstColor = texColor;
                 if (srcColor != 0xffffffff) // darkening.
                 {
                     srcColor = 0xff - (srcColor & 0xff);
-                    if ((dstColor & 0x0000ff) >= srcColor ) dstColor-= srcColor; else dstColor-= dstColor & 0x0000ff;
+                    if ((dstColor & 0x0000ff) >= srcColor) dstColor-= srcColor; else dstColor-= dstColor & 0x0000ff;
                     srcColor <<= 8;
-                    if ((dstColor & 0x00ff00) >= srcColor ) dstColor-= srcColor; else dstColor-= dstColor & 0x00ff00;
+                    if ((dstColor & 0x00ff00) >= srcColor) dstColor-= srcColor; else dstColor-= dstColor & 0x00ff00;
                     srcColor <<= 8;
-                    if ((dstColor & 0xff0000) >= srcColor ) dstColor-= srcColor; else dstColor-= dstColor & 0xff0000;
+                    if ((dstColor & 0xff0000) >= srcColor) dstColor-= srcColor; else dstColor-= dstColor & 0xff0000;
                 }
-                *buf = dstColor;
+                dst[x] = dstColor;
             }
-            ++buf;
         }
+        dst+= dstWidth;
     }
-    // Copy the buffer back into the model-texture.
-    mTexture->getBuffer()->blitFromMemory(
-        pb, Box(picPart.dstX,
-                picPart.dstY,
-                picPart.dstX + picPart.w,
-                picPart.dstY + picPart.h));
+    mTexture->getBuffer()->unlock();
 
-    delete[] buffer;
 #ifdef WRITE_MODELTEXTURE_TO_FILE
-    // Writes the just blitted model-texture as png to disk.
+    // Write the model-texture as png to disk.
     {
-        Image img;
+        static int nr = 0;
+        String file = "NPC_Texture__" + StringConverter::toString(nr++, 3, '0') +".png";
         uint32 *tmpBuf = new uint32[mTexture->getWidth()*mTexture->getHeight()];
         mTexture->getBuffer()->blitToMemory(PixelBox(mTexture->getWidth(), mTexture->getHeight(), 1, PF_A8R8G8B8, tmpBuf));
+        Image img;
         img = img.loadDynamicImage((unsigned char*)tmpBuf, mTexture->getWidth(), mTexture->getHeight(), PF_A8R8G8B8);
-        img.save("Texture_Changed.png");
+        img.save(file);
+        delete[] tmpBuf;
     }
 #endif
-
 }
 
 //================================================================================================
@@ -345,60 +333,49 @@ inline void ObjectEquipment::drawBopyPart(sPicture &picPart, Image &image, uint3
 //================================================================================================
 void ObjectEquipment::setTexture(int pos, int textureColor, int textureNr)
 {
-    // Load the shadow texture.
-    Image image;
-    image.load("shadow.png", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
     switch (pos)
     {
         case TEXTURE_POS_SKIN:
         {
-            drawBopyPart(picFace, image, textureColor, textureNr);
-            for (int side = 0; side < 4; ++side) drawBopyPart(picArms[side], image, textureColor, textureNr);
+            drawBopyPart(picFace, textureColor, textureNr);
+            for (int side = 0; side < 4; ++side) drawBopyPart(picArms[side], textureColor, textureNr);
             break;
         }
-
         case TEXTURE_POS_FACE:
         {
-            drawBopyPart(picFace, image, textureColor, textureNr);
+            drawBopyPart(picFace, textureColor, textureNr);
             break;
         }
-
         case TEXTURE_POS_HAIR:
         {
-            drawBopyPart(picHair, image, textureColor, textureNr);
+            drawBopyPart(picHair, textureColor, textureNr);
             break;
         }
-
         case TEXTURE_POS_BODY:
         {
-            for (int side = 0; side < 2; ++side) drawBopyPart(picBody[side], image, textureColor, textureNr);
+            for (int side = 0; side < 2; ++side) drawBopyPart(picBody[side], textureColor, textureNr);
             break;
         }
-
         case TEXTURE_POS_LEGS:
         {
-            for (int side = 0; side < 2; ++side) drawBopyPart(picLegs[side], image, textureColor, textureNr);
+            for (int side = 0; side < 2; ++side) drawBopyPart(picLegs[side], textureColor, textureNr);
             break;
         }
-
         case TEXTURE_POS_BELT:
         {
-            for (int side = 0; side < 2; ++side) drawBopyPart(picBelt[side], image, textureColor, textureNr);
+            for (int side = 0; side < 2; ++side) drawBopyPart(picBelt[side], textureColor, textureNr);
             break;
         }
-
         case TEXTURE_POS_SHOES:
         {
-            for (int side = 0; side < 2; ++side) drawBopyPart(picShoes[side], image, textureColor, textureNr);
+            for (int side = 0; side < 2; ++side) drawBopyPart(picShoes[side], textureColor, textureNr);
             break;
         }
-
         case TEXTURE_POS_HANDS:
         {
-            for (int side = 0; side < 4; ++side) drawBopyPart(picHands[side], image, textureColor, textureNr);
+            for (int side = 0; side < 4; ++side) drawBopyPart(picHands[side], textureColor, textureNr);
             break;
         }
-
         default:
             Logger::log().warning() << "Unknown Texuture-pos (" << pos << ") for ObjectNPC.";
             break;
@@ -412,7 +389,6 @@ void ObjectEquipment::equipItem(unsigned int bone, int type, int itemID, int par
 {
     if (bone >= BONE_SUM) return;
     dropItem(bone);
-
     // Add a particle system.
     if (particleID < 0 || particleID >= PARTICLE_FX_SUM)
     {
@@ -422,7 +398,6 @@ void ObjectEquipment::equipItem(unsigned int bone, int type, int itemID, int par
     {
         mItem[bone].particle = ParticleManager::getSingleton().addBoneObject(mParentEntity, boneName[bone].c_str(), particleName[particleID], -1);
     }
-
     // Add a entity.
     if (itemID < 0 || itemID >= ITEM_SUM)
     {
@@ -431,7 +406,6 @@ void ObjectEquipment::equipItem(unsigned int bone, int type, int itemID, int par
     else
     {
         static unsigned long itemIndex =0;
-        //Logger::log().error() << meshName[type][itemID];
         String tmpName = "Item_" + StringConverter::toString(++itemIndex, 8, '0');
         mItem[bone].entity= Events::getSingleton().GetSceneManager()->createEntity(tmpName, meshName[type][itemID]);
         mItem[bone].entity->setQueryFlags(ObjectManager::QUERY_EQUIPMENT_MASK);

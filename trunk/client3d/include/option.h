@@ -29,6 +29,9 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <sstream>
 #include <iostream>
 
+/**
+ ** This singleton class handles all options the user and the engine can set.
+ *****************************************************************************/
 class Option
 {
 public:

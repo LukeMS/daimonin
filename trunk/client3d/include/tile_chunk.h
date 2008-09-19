@@ -27,7 +27,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "Ogre.h"
 
 /**
- * TileEngine class which manages the tiles in a chunk.
+ ** TileEngine class which handles the tiles in a chunk.
  *****************************************************************************/
 class TileChunk
 {
@@ -64,7 +64,7 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    /** The terrain must have a land- AND a waterSubmesh. If there are no datas for it, we create a dummy. **/
+    /** The terrain must have a land- AND a waterSubmesh. If there is no data for it, we create a dummy. **/
     void createDummySubMesh(Ogre::SubMesh *submesh);
     void createIndexData(Ogre::SubMesh *submesh, int sumVertices);
     void calcNormal(Ogre::Real x1, Ogre::Real z1, Ogre::Real x2, Ogre::Real z2, Ogre::Real x3, Ogre::Real z3);

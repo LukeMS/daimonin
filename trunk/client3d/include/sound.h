@@ -26,6 +26,9 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include "fmod.h"
 
+/**
+ ** This singleton class handles all sound related stuff.
+ *****************************************************************************/
 class Sound
 {
 public:

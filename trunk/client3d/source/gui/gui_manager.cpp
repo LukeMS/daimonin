@@ -99,8 +99,8 @@ void GuiManager::Init(int w, int h)
     mActiveTextInput= false;
     String strTexture = RESOURCE_TOOLTIP; strTexture+= TEXTURE_RESOURCE_NAME;
     mTexture = TextureManager::getSingleton().createManual(strTexture, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-              TEX_TYPE_2D, TOOLTIP_SIZE, TOOLTIP_SIZE, 0, PF_A8R8G8B8, TU_STATIC_WRITE_ONLY,
-              ManResourceLoader::getSingleton().getLoader());
+               TEX_TYPE_2D, TOOLTIP_SIZE, TOOLTIP_SIZE, 0, PF_A8R8G8B8, TU_STATIC_WRITE_ONLY,
+               ManResourceLoader::getSingleton().getLoader());
     mTexture->load();
     mElement->setPosition((mScreenWidth-mTexture->getWidth())/3*2, (mScreenHeight-mTexture->getHeight())/2);
 }
@@ -239,7 +239,7 @@ void GuiManager::centerWindowOnMouse(int window)
 }
 
 //================================================================================================
-// Parse the windows datas.
+// Parse the windows data.
 //================================================================================================
 void GuiManager::parseWindows(const char *fileWindows)
 {

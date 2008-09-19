@@ -63,13 +63,13 @@ const Real MIRROR[4][4][2]=
 //================================================================================================
 const int CHUNK_START_OFFSET[SUM_CAMERA_POS][TileManager::CHUNK_SIZE_Z]=
 {
-    { 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 6, 6, 6, 6, 6, 6, 8, 8, 8, 8, 8, 8,10,10,10,10}, // -45°
+    { 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 6, 6, 6, 6, 6, 6, 8, 8, 8, 8, 8, 8,12,16,14,12}, // -45°
     { 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 6, 6, 6, 6, 6, 6, 8, 8, 8, 8, 8, 8,10,10}, // -30°
     { 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 6, 6, 6, 6, 6, 6, 8, 8, 8, 8, 8, 8}, // -15°
     { 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 6, 6, 6, 6, 6, 6, 8, 8, 8, 8, 8, 8,10,10,10,10}, //   0°
-    { 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 6, 6, 6, 6, 6, 6, 8, 8, 8, 8, 8, 8,10,10,10,10}, //  15°
-    { 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 6, 6, 6, 6, 6, 6, 8, 8, 8, 8, 8, 8,10,10,10,10}, //  30°
-    { 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 6, 6, 6, 6, 6, 6, 8, 8, 8, 8, 8, 8,10,10,10,10}, //  45°
+    { 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 6, 6, 6, 6, 6, 6, 8, 8, 8, 8}, //  15°
+    { 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5}, //  30°
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //  45°
 };
 
 //================================================================================================
@@ -83,7 +83,7 @@ int CHUNK_X_LENGTH[TileManager::CHUNK_SIZE_Z];
 void TileChunk::init(int textureSize, int queryMaskLand, int queryMaskWater)
 {
     mTextureSize = textureSize;
-    mCameraRotation = 0;
+    mCameraRotation = 3;
     int sumVertices = 0;
     int cameraStandardPos = 3; // 0° rotation of the camera in CHUNK_START_OFFSET[][] table.
     for (int i=0; i < TileManager::CHUNK_SIZE_Z; ++i)
@@ -122,7 +122,7 @@ void TileChunk::init(int textureSize, int queryMaskLand, int queryMaskWater)
     // Build the water-tiles.
     // ////////////////////////////////////////////////////////////////////
     mMeshWater = MeshManager::getSingleton().createManual("Mesh_Water", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-    createDummySubMesh(mMeshWater->createSubMesh()); // We don't have the tile datas yet, so no need to waste time in creating the tiles.
+    createDummySubMesh(mMeshWater->createSubMesh()); // We don't have the tile data yet, so no need to waste time in creating the tiles.
     mMeshWater->_setBounds(AxisAlignedBox(0,0,0,TileManager::TILE_SIZE * TileManager::CHUNK_SIZE_X,MAX_TERRAIN_HEIGHT,TileManager::TILE_SIZE * TileManager::CHUNK_SIZE_Z));
     mMeshWater->load();
     mEntityWater = TileManager::getSingleton().getSceneManager()->createEntity("Entity_Water", "Mesh_Water");
@@ -167,7 +167,7 @@ void TileChunk::loadAtlasTexture(int landGroup, int waterGroup)
 //================================================================================================
 void TileChunk::rotate(Real cameraAngle)
 {
-    unsigned int rotation = (unsigned int)(cameraAngle + 45.0f) / 15;
+    unsigned int rotation = (unsigned int)((cameraAngle + 45.0f) / 15);
     if (mCameraRotation != rotation && rotation < SUM_CAMERA_POS)
     {
         mCameraRotation = rotation;

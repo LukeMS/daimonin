@@ -27,6 +27,10 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <Ogre.h>
 #include "define.h"
 
+/**
+ ** This class handles all equipment of an object like weapon, armour, etc.
+ ** Equipment supports particle-effects and color change of the bodyparts.
+ *****************************************************************************/
 class ObjectEquipment
 {
 public:
@@ -87,7 +91,7 @@ public:
     ~ObjectEquipment();
     void freeRecources();
     void setTexture(int pos, int textureColor, int textureNr =0);
-    void drawBopyPart(sPicture &picPart, Ogre::Image &image, Ogre::uint32 texColor, Ogre::uint32 texNumber);
+    void drawBopyPart(sPicture &picPart, Ogre::uint32 texColor, Ogre::uint32 texNumber);
     void dropItem(int bone);
     void equipItem(unsigned int bone, int type, int itemID, int particleID =-1);
 
@@ -97,6 +101,7 @@ private:
     // ////////////////////////////////////////////////////////////////////
     static sPicture picHands[4], picArms[4], picShoes[2], picBody[2], picLegs[2], picFace, picHair, picBelt[2];
     static unsigned char *mTexImageBuf;
+    static Ogre::Image shadowImage;
     enum
     {
         SIDE_BACK,

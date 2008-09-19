@@ -271,7 +271,7 @@ void ObjectVisuals::select(ObjectNPC *npc, bool showLifebar, bool showInteractMe
 }
 
 //===================================================
-// Select an static object.
+// Select a static object.
 //===================================================
 void ObjectVisuals::select(ObjectStatic *obj, bool showLifebar, bool showInteractMenu)
 {

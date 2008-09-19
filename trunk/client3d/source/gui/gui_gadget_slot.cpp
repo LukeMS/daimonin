@@ -147,7 +147,7 @@ GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, const char 
                 nextPos+=ITEM_SIZE * ITEM_SIZE;
             }
             // ////////////////////////////////////////////////////////////////////
-            // Write the datas to disc.
+            // Write the data to disc.
             // ////////////////////////////////////////////////////////////////////
             filename = PATH_ITEM_TEXTURES;
             filename+= "/";
@@ -267,7 +267,7 @@ int GuiGadgetSlot::mouseEvent(int MouseAction, int x, int y)
             GuiManager::getSingleton().setTooltip(mStrTooltip.c_str());
             return GuiManager::EVENT_CHECK_NEXT;
         }
-        if (MouseAction == GuiWindow::BUTTON_PRESSED)
+        if (MouseAction == GuiWindow::BUTTON_PRESSED && mItem)
         {
             mDragSlot = mActiveSlot;
             drawDragItem();
@@ -332,7 +332,7 @@ void GuiGadgetSlot::draw()
     {
         int gfxNr = getTextureAtlasPos(mItem->face);
         PixelBox srcItem = mAtlasTexture.getPixelBox().getSubVolume(Box(0, ITEM_SIZE * gfxNr, ITEM_SIZE, ITEM_SIZE *(gfxNr+1)));
-        GuiGraphic::drawSlot(static_cast<uint32*>(srcItem.data), newVal, mItem->nrof);
+        GuiGraphic::drawSlot(static_cast<uint32*>(srcItem.data), newVal, mItem->sumItems);
     }
 }
 
@@ -344,7 +344,6 @@ void GuiGadgetSlot::drawDragItem()
     if (!mItem) return;
     if (mDnDTexture.isNull())
     {
-        Logger::log().error() << "1";
         mDnDTexture = TextureManager::getSingleton().createManual(mResourceName+GuiManager::TEXTURE_RESOURCE_NAME,
                       ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
                       TEX_TYPE_2D, ITEM_SIZE, ITEM_SIZE, 0, PF_A8R8G8B8, TU_STATIC_WRITE_ONLY,
@@ -352,12 +351,8 @@ void GuiGadgetSlot::drawDragItem()
         mDnDTexture->load();
     }
     int gfxNr = getTextureAtlasPos(mItem->face);
-    Logger::log().error() << "2";
     mDnDTexture->getBuffer()->blitFromMemory(mAtlasTexture.getPixelBox().getSubVolume(Box(0, ITEM_SIZE * gfxNr, ITEM_SIZE, ITEM_SIZE *(gfxNr+1))));
-Logger::log().error() << "3";
     moveDragOverlay();
-Logger::log().error() << "4";
     mDnDOverlay->show();
-Logger::log().error() << "5";
 }
 

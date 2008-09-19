@@ -27,7 +27,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <fstream>
 
 /**
- ** This class provides logging facility.
+ ** This singleton class provides logging facility.
  ** Logs are stored in HTML format.
  *****************************************************************************/
 class Logger

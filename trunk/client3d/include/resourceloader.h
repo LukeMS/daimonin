@@ -27,8 +27,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <Ogre.h>
 
 /**
-** This class provides the reloading of manual created resources.
-*****************************************************************************/
+ ** This singleton class provides the reloading of manual created resources.
+ *****************************************************************************/
 class ManResourceLoader
 {
 private:

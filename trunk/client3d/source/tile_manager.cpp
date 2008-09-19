@@ -909,9 +909,9 @@ void TileManager::createFilterTemplate()
                 p[(height*size+x)*RGB +1] = 0x38;
                 p[(height*size+x)*RGB +2] = 0xDB;
                 // Bottom pos
-                p[((size/4 - height)*size+x)*RGB +0] = 0xC6;
-                p[((size/4 - height)*size+x)*RGB +1] = 0x38;
-                p[((size/4 - height)*size+x)*RGB +2] = 0xDB;
+                p[((size/4 - height-1)*size+x)*RGB +0] = 0xC6;
+                p[((size/4 - height-1)*size+x)*RGB +1] = 0x38;
+                p[((size/4 - height-1)*size+x)*RGB +2] = 0xDB;
             }
         }
         p+= size/4*lineSkip;
@@ -929,17 +929,17 @@ void TileManager::createFilterTemplate()
                 p[(y*size + width)*RGB +1] = 0x38;
                 p[(y*size + width)*RGB +2] = 0xDB;
                 // Right pos
-                p[(y*size - width + size/4)*RGB +0] = 0xC6;
-                p[(y*size - width + size/4)*RGB +1] = 0x38;
-                p[(y*size - width + size/4)*RGB +2] = 0xDB;
+                p[(y*size - width + size/4-1)*RGB +0] = 0xC6;
+                p[(y*size - width + size/4-1)*RGB +1] = 0x38;
+                p[(y*size - width + size/4-1)*RGB +2] = 0xDB;
             }
         }
         p+= size/4*RGB;
     }
     // Karos
     int offset = 0;
+    p = dstBuf + lineSkip * size/2;
     size/=4;
-    p = dstBuf + lineSkip * size*2;
     for (int y = 0; y < size; ++y)
     {
         for (int x = 0; x < size; ++x)
@@ -959,7 +959,6 @@ void TileManager::createFilterTemplate()
         if (y < size/2) ++offset; else --offset;
         p+=4*size*RGB;
     }
-
     String filename = PATH_TILE_TEXTURES;
     filename+= "TemplateFilter.png";
     dstImage.save(filename);

@@ -202,6 +202,15 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
             break;
         }
 
+        case OIS::KC_M:
+        {
+            String strMemUsage = "Memory used for Textures: " + StringConverter::toString(TextureManager::getSingleton().getMemoryUsage()/1024) + " KB";
+            GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, strMemUsage.c_str());
+            strMemUsage = "Memory used for Meshes: " + StringConverter::toString(MeshManager::getSingleton().getMemoryUsage()/1024) + " KB";
+            GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, strMemUsage.c_str());
+            break;
+        }
+
         case OIS::KC_O:
         {
             // ObjectManager::getSingleton().setPlayerEquipment(ObjectManager::OBJECT_PLAYER, ObjectNPC::BONE_SHIELD_HAND, 1);

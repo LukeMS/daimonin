@@ -29,19 +29,16 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <OISKeyboard.h>
 #include <OISInputManager.h>
 
-//================================================================================================
-// Class.
-//================================================================================================
+/**
+ ** This singleton class handles all engine and user events.
+ *****************************************************************************/
 class Events: public Ogre::FrameListener, public OIS::KeyListener, OIS::MouseListener
 {
 public:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    enum
-    {
-        LIGHT_VOL, LIGHT_SPOT
-    };
+
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
@@ -64,10 +61,6 @@ public:
         return mWorld->getPosition();
     }
     void setWorldPos(int posX, int posZ);
-    void setLightMember(Ogre::Light *light, int nr)
-    {
-        mLight[nr] = light;
-    }
     Ogre::Camera *getCamera()
     {
         return mCamera;
@@ -109,29 +102,27 @@ private:
     OIS::InputManager *mInputManager;
     OIS::Keyboard     *mInputKeyboard;
     OIS::Mouse        *mInputMouse;
-    Ogre::Real mIdleTime;
-    Ogre::Real mCameraZoom;
+    Ogre::Real mIdleTime;                  /**< Time without user interaction. **/
     Ogre::Vector3 mMouse;
+    Ogre::Camera* mCamera;
+    Ogre::Real mCameraZoom;
     Ogre::Real mCamCornerX, mCamCornerY;
     Ogre::SceneNode *mWorld;
     Ogre::SceneManager *mSceneManager;
     Ogre::RenderWindow* mWindow;
-    Ogre::Camera* mCamera;
-    Ogre::Light *mLight[2];
-    Ogre::Light *mSpotLight, *mVolLight;
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     Events() {};
     ~Events() {};
-    bool frameStarted(const Ogre::FrameEvent& evt);
-    bool frameEnded  (const Ogre::FrameEvent& evt);
     bool checkUsername(const char *name);
-    bool keyPressed(const OIS::KeyEvent &e);
-    bool keyReleased(const OIS::KeyEvent &e);
-    bool mouseMoved(const OIS::MouseEvent &e);
-    bool mousePressed(const OIS::MouseEvent &e, OIS::MouseButtonID id);
+    bool frameStarted (const Ogre::FrameEvent &evt);
+    bool frameEnded   (const Ogre::FrameEvent &evt);
+    bool keyPressed   (const OIS::KeyEvent &e);
+    bool keyReleased  (const OIS::KeyEvent &e);
+    bool mouseMoved   (const OIS::MouseEvent &e);
+    bool mousePressed (const OIS::MouseEvent &e, OIS::MouseButtonID id);
     bool mouseReleased(const OIS::MouseEvent &e, OIS::MouseButtonID id);
 };
 

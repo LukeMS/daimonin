@@ -137,7 +137,7 @@ GuiImageset::~GuiImageset()
 }
 
 //================================================================================================
-// Parse the gfx datas from the imageset.
+// Parse the gfx data from the imageset.
 //================================================================================================
 void GuiImageset::parseXML(const char *fileImageSet)
 {
