@@ -907,6 +907,15 @@ static void key_string_event(SDL_KeyboardEvent *key)
             }
             break;
 
+        /* We need to allow these keys to be used in input -- their precise
+         * meaning depends on the next keystroke and is handled below.
+         * TODO: During account name input these should be disabled though. */
+        case SDLK_RSHIFT:
+        case SDLK_LSHIFT:
+        case SDLK_RCTRL:
+        case SDLK_LCTRL:
+            break;
+
         case SDLK_BACKSPACE:
             /* erases the previous character or word if CTRL is pressed */
             if (InputCount && CurrentCursorPos)
@@ -1082,15 +1091,6 @@ static void key_string_event(SDL_KeyboardEvent *key)
 
         case SDLK_END:
             CurrentCursorPos = InputCount;
-            break;
-
-        /* We need to allow these keys to be used in input -- their precise
-         * meaning depends on the next keystroke and is handled below.
-         * TODO: During account name input these should be disabled though. */
-        case SDLK_RSHIFT:
-        case SDLK_LSHIFT:
-        case SDLK_RCTRL:
-        case SDLK_LCTRL:
             break;
 
         default:
