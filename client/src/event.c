@@ -879,7 +879,6 @@ int key_meta_menu(SDL_KeyboardEvent *key)
 /* we get TEXT from keyboard. This is for console input */
 static void key_string_event(SDL_KeyboardEvent *key)
 {
-    register char c;
     register int i;
 
     if (key->type == SDL_KEYDOWN)
@@ -909,7 +908,7 @@ static void key_string_event(SDL_KeyboardEvent *key)
 
         /* We need to allow these keys to be used in input -- their precise
          * meaning depends on the next keystroke and is handled below.
-         * TODO: During account name input these should be disabled though. */
+         * TODO: SHIFT is allowed during login but has no effect. */
         case SDLK_RSHIFT:
         case SDLK_LSHIFT:
         case SDLK_RCTRL:
@@ -1104,175 +1103,92 @@ static void key_string_event(SDL_KeyboardEvent *key)
                 InputStringFlag = FALSE;
                 InputStringEndFlag = TRUE;/* mark that we got some here*/
             }
+
             /* now keyboard magic - transform a sym (kind of scancode)
              * to a layout code
              */
             if (InputCount < InputMax)
             {
-                c = 0;
-                /* we want only numbers in number mode - even when shift is hold */
-                if (cpl.input_mode == INPUT_MODE_NUMBER)
-                {
-                    switch (key->keysym.sym)
-                    {
-                    case SDLK_0:
-                    case SDLK_KP0:
-                        c = '0';
-                        break;
-                    case SDLK_KP1:
-                    case SDLK_1:
-                        c = '1';
-                        break;
-                    case SDLK_KP2:
-                    case SDLK_2:
-                        c = '2';
-                        break;
-                    case SDLK_KP3:
-                    case SDLK_3:
-                        c = '3';
-                        break;
-                    case SDLK_KP4:
-                    case SDLK_4:
-                        c = '4';
-                        break;
-                    case SDLK_KP5:
-                    case SDLK_5:
-                        c = '5';
-                        break;
-                    case SDLK_KP6:
-                    case SDLK_6:
-                        c = '6';
-                        break;
-                    case SDLK_KP7:
-                    case SDLK_7:
-                        c = '7';
-                        break;
-                    case SDLK_KP8:
-                    case SDLK_8:
-                        c = '8';
-                        break;
-                    case SDLK_KP9:
-                    case SDLK_9:
-                        c = '9';
-                        break;
-                    default:
-                        c = 0;
-                        break;
-                    }
-                    if (c)
-                    {
-                        if (InputFirstKeyPress == TRUE)
-                        {
-                            CurrentCursorPos = 0;
-                            InputCount = 0;
-                        }
-                        InputString[CurrentCursorPos++] = c;
-                        InputCount++;
-                        InputString[InputCount] = 0;
-                    }
-                }
+                register char c;
+
+                if ((key->keysym.unicode & 0xFF80) == 0)
+                    c = key->keysym.unicode & 0x7F;
+                c = key->keysym.unicode & 0xff;
+
+                if (key->keysym.mod & KMOD_SHIFT)
+                    c = toupper(c);
+
+                /* These chars are never allowed. */
+                if (c <= 32 || c == '^' || c == '~' || c == '°' || c == '|' || c == '§')
+                    c = 0;
                 else
                 {
-                    if ((key->keysym.unicode & 0xFF80) == 0)
-                        c = key->keysym.unicode & 0x7F;
-                    c = key->keysym.unicode & 0xff;
-                    if (LoginInputStep > LOGIN_STEP_NAME) /* allow full input for passwords */
+                    if (GameStatus >= GAME_STATUS_LOGIN_ACCOUNT && GameStatus <= GAME_STATUS_LOGIN_NEW)
                     {
-                        if (key->keysym.mod & KMOD_SHIFT)
-                            c = toupper(c);
+                        switch (LoginInputStep)
+                        {
+                            case LOGIN_STEP_NAME:
+                                /* Allow only these chars for account names. */
+                                if ((c < 'a' || c > 'z') &&
+                                    (c < 'A' || c > 'Z') &&
+                                    (c < '0' || c > '9') && 
+                                    (c != '-' && c != '_'))
+                                    c = 0;
+                                break;
 
-                        if (c == 0)
-                            sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
-                        else
-                        {
-                            i = InputCount;
-                            while (i >= CurrentCursorPos)
-                            {
-                                InputString[i + 1] = InputString[i];
-                                i--;
-                            }
-                            InputString[CurrentCursorPos] = c;
-                            CurrentCursorPos++;
-                            InputCount++;
-                            InputString[InputCount] = 0;
+                            case LOGIN_STEP_PASS1:
+                            case LOGIN_STEP_PASS2:
+                                /* Allow full input for passwords, including
+                                 * shifted chars. */
+                                break;
+
+                            default:
+                                c = 0;
+                                break;
                         }
                     }
-                    /* allow some special case not for chat input or script input.
-                     * Allow nearly all sign for account name input
-                     * Handle player names special
-                     */
-                    else if (c >= 32 && ((c != '^' && c != '~' && c != '§' && c != '°' && c != '|')
-                        || (GameStatus >= GAME_STATUS_LOGIN_ACCOUNT && GameStatus <= GAME_STATUS_LOGIN_NEW)))
+                    else if (GameStatus == GAME_STATUS_ACCOUNT_CHAR_NAME)
                     {
-                        if((GameStatus != GAME_STATUS_LOGIN_ACCOUNT && GameStatus != GAME_STATUS_LOGIN_NEW) || 
-                            (GameStatus >= GAME_STATUS_LOGIN_ACCOUNT && GameStatus <= GAME_STATUS_LOGIN_NEW &&
-                            ( (c >='a' && c <= 'z') || (c >='A' && c <= 'Z') || (c>='0' && c <='9') || 
-                            c == '-' || c == '_' /* enable for characters here when needed */) ))
-                        {
-                            if (GameStatus == GAME_STATUS_ACCOUNT_CHAR_NAME)
-                            {
-                                switch (tolower(c))
-                                {
-                                    case SDLK_UNDERSCORE:
-                                    case SDLK_MINUS:
-                                    case SDLK_a:
-                                    case SDLK_b:
-                                    case SDLK_c:
-                                    case SDLK_d:
-                                    case SDLK_e:
-                                    case SDLK_f:
-                                    case SDLK_g:
-                                    case SDLK_h:
-                                    case SDLK_i:
-                                    case SDLK_j:
-                                    case SDLK_k:
-                                    case SDLK_l:
-                                    case SDLK_m:
-                                    case SDLK_n:
-                                    case SDLK_o:
-                                    case SDLK_p:
-                                    case SDLK_q:
-                                    case SDLK_r:
-                                    case SDLK_s:
-                                    case SDLK_t:
-                                    case SDLK_u:
-                                    case SDLK_v:
-                                    case SDLK_w:
-                                    case SDLK_x:
-                                    case SDLK_y:
-                                    case SDLK_z:
-                                        if (CurrentCursorPos == 0)
-                                            c = toupper(c);
-                                        else
-                                            c = tolower(c);
-                                        break;
-                                    default:
-                                        c = 0;
-                                }
-                            }
-                            else if (key->keysym.mod & KMOD_SHIFT)
-                                c = toupper(c);
-     
-                            if (c == 0)
-                                sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
-                            else
-                            {
-                                i = InputCount;
-                                while (i >= CurrentCursorPos)
-                                {
-                                    InputString[i + 1] = InputString[i];
-                                    i--;
-                                }
-                                InputString[CurrentCursorPos] = c;
-                                CurrentCursorPos++;
-                                InputCount++;
-                                InputString[InputCount] = 0;
-     
-                            }
-                        }
+                        /* Allow only these chars for player names. */
+                        if ((c < 'a' || c > 'z') &&
+                            (c < 'A' || c > 'Z') &&
+                            (c != '-' && c != '_'))
+                            c = 0;
+                        else if (CurrentCursorPos == 0 && (c >= 'a' && c <= 'z'))
+                            c = toupper(c);
+                        else if (c >= 'A' && c <= 'Z')
+                            c = tolower(c);
                     }
-                    else
-                        sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                    else if (cpl.input_mode == INPUT_MODE_NUMBER)
+                    {
+                        /* Allow only numbers in number mode. */
+                        if (c < '0' || c > '9')
+                            c = 0;
+                    }
+                    else if (cpl.input_mode == INPUT_MODE_CONSOLE)
+                    {
+                        /* Allow full input in the console, including shifted
+                         * chars, but note that /talk strings will be lowercased
+                         * and normalised before being sent to the server. */
+                        /* FIXME: Do that here? */
+                    }
+                    else if (cpl.input_mode == INPUT_MODE_NPCDIALOG)
+                    {
+                        /* Allow full input in an interface, including shifted
+                         * chars, but note that this will be lowercased and
+                         * normalised before being sent to the server. */
+                        /* FIXME: Do that here? */
+                    }
+                }
+
+                if (c == 0)
+                    sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                else
+                {
+                    for (i = InputCount; i >= CurrentCursorPos; i--)
+                        InputString[i + 1] = InputString[i];
+                    InputString[CurrentCursorPos++] = c;
+                    InputString[++InputCount] = 0;
                 }
             }
             break;
