@@ -1084,6 +1084,15 @@ static void key_string_event(SDL_KeyboardEvent *key)
             CurrentCursorPos = InputCount;
             break;
 
+        /* We need to allow these keys to be used in input -- their precise
+         * meaning depends on the next keystroke and is handled below.
+         * TODO: During account name input these should be disabled though. */
+        case SDLK_RSHIFT:
+        case SDLK_LSHIFT:
+        case SDLK_RCTRL:
+        case SDLK_LCTRL:
+            break;
+
         default:
             /* if we are in number console mode, use GET as quick enter
              * mode - this is a very handy shortcut
@@ -1192,7 +1201,7 @@ static void key_string_event(SDL_KeyboardEvent *key)
                      * Allow nearly all sign for account name input
                      * Handle player names special
                      */
-                    else if (c >= 32 && ((c != '_' && c != '^' && c != '~' && c != '§' && c != '°' && c != '|')
+                    else if (c >= 32 && ((c != '^' && c != '~' && c != '§' && c != '°' && c != '|')
                         || (GameStatus >= GAME_STATUS_LOGIN_ACCOUNT && GameStatus <= GAME_STATUS_LOGIN_NEW)))
                     {
                         if((GameStatus != GAME_STATUS_LOGIN_ACCOUNT && GameStatus != GAME_STATUS_LOGIN_NEW) || 
