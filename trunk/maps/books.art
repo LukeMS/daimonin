@@ -5,7 +5,7 @@ Allowed none
 chance 1
 artifact book_test
 def_arch book
-editor 2:items/readable/books
+editor 1:items/readable/books
 Object
 face tome_gold.101
 title of tests
@@ -31,7 +31,7 @@ Allowed none
 chance 1
 artifact book_dai_vol1
 def_arch book
-editor 2:items/readable/books
+editor 1:items/readable/books
 Object
 name Daimonin's History
 face tome.101
@@ -51,7 +51,7 @@ Allowed none
 chance 1
 artifact book_dai_vol2
 def_arch book
-editor 2:items/readable/books
+editor 1:items/readable/books
 Object
 name Daimonin's History
 face tome.101
@@ -71,7 +71,7 @@ Allowed none
 chance 1
 artifact book_dai_vol3
 def_arch book
-editor 2:items/readable/books
+editor 1:items/readable/books
 Object
 name Daimonin's History
 face tome.101
@@ -94,7 +94,7 @@ Allowed none
 chance 1
 artifact book_dai_vol4
 def_arch book
-editor 2:items/readable/books
+editor 1:items/readable/books
 Object
 name Daimonin's History
 face tome.101
@@ -114,7 +114,7 @@ Allowed none
 chance 1
 artifact book_dai_vol5
 def_arch book
-editor 2:items/readable/books
+editor 1:items/readable/books
 Object
 name Daimonin's History
 face tome.101
@@ -137,7 +137,7 @@ Allowed none
 chance 1
 artifact book_dai_vol6
 def_arch book
-editor 2:items/readable/books
+editor 1:items/readable/books
 Object
 name Daimonin's History
 face tome.101
@@ -159,7 +159,7 @@ Allowed none
 chance 1
 artifact book_dai_vol7
 def_arch book
-editor 2:items/readable/books
+editor 1:items/readable/books
 Object
 name Daimonin's History
 face tome.101
