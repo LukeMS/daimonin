@@ -280,6 +280,7 @@ struct plugin_hooklist
     object*(*insert_ob_in_ob)(object *, object *);
     object*(*insert_ob_in_map)(object * const, mapstruct *, object *const, const int);
     int (*move_ob)(object *, int, object *);
+    void (*update_object)(object *, int);
     void (*free_mempool)(struct mempool *);
     struct mempool * (*create_mempool)(const char *description, uint32 expand, uint32 size,
         uint32 flags, chunk_initialisator initialisator, chunk_deinitialisator deinitialisator,

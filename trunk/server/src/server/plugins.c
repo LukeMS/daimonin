@@ -45,6 +45,7 @@ struct plugin_hooklist  hooklist    =
     esrv_send_item, esrv_send_inventory, esrv_update_item,
     lookup_skill_by_name, look_up_spell_name,
     insert_ob_in_ob, insert_ob_in_map, move_ob,
+    update_object,
     free_mempool, create_mempool, nearest_pow_two_exp,
     return_poolchunk_array_real, get_poolchunk_array_real,
     arch_to_object, find_archetype,

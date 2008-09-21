@@ -132,6 +132,7 @@ static struct method_decl   GameObject_methods[]            =
     {"GetPets", (lua_CFunction) GameObject_GetPets},
     {"GetGmasterMode", (lua_CFunction) GameObject_GetGmasterMode},
     {"GetPlayerWeightLimit", (lua_CFunction) GameObject_GetPlayerWeightLimit},
+    {"SetMoveFlags", (lua_CFunction) GameObject_SetMoveFlags},
 
     // {"GetUnmodifiedAttribute", (lua_CFunction)GameObject_GetUnmodifiedAttribute},
     {NULL, NULL}
@@ -3428,6 +3429,52 @@ static int GameObject_GetPlayerWeightLimit(lua_State *L)
 
     lua_pushnumber(L, CONTR(WHO)->weight_limit);
     return 1;
+}
+
+/*****************************************************************************/
+/* Name   : GameObject_SetMoveFlags                                          */
+/* Lua    : object:SetMoveFlags()                                            */
+/* Info   : Sets the movement flags for an object, which may be a multipart  */
+/*          object.                                                          */
+/* Status : Tested                                                           */
+/* TODO   : limit by type, no_pass and so on.                                */
+/*          make the arguments optional(luamania will help).                 */
+/*          allow boolean/nil (only/as well?) arguments (more Lua, less C).  */
+/*****************************************************************************/
+static int GameObject_SetMoveFlags(lua_State *L)
+{
+    lua_object *self;
+    // Currently preassigning to -1 does nothing.
+    int         walk_on = -1,
+                fly_on = -1,
+                walk_off = -1,
+                fly_off = -1;
+    object     *tmp;
+
+    get_lua_args(L, "Oiiii", &self, &walk_on, &fly_on, &walk_off, &fly_off);
+
+    for (tmp = WHO; tmp && tmp->more; tmp = tmp->more)
+    {
+#if 0
+        LOG(llevDebug, ">>BEFORE>>tag %d won %d fon %d woff %d foff %d\n",
+            tmp->count,
+            QUERY_FLAG(tmp, FLAG_WALK_ON), QUERY_FLAG(tmp, FLAG_FLY_ON),
+            QUERY_FLAG(tmp, FLAG_WALK_OFF), QUERY_FLAG(tmp, FLAG_FLY_OFF));
+#endif
+        SET_OR_CLEAR_FLAG(tmp, FLAG_WALK_ON, walk_on);
+        SET_OR_CLEAR_FLAG(tmp, FLAG_FLY_ON, fly_on);
+        SET_OR_CLEAR_FLAG(tmp, FLAG_WALK_OFF, walk_off);
+        SET_OR_CLEAR_FLAG(tmp, FLAG_FLY_OFF, fly_off);
+#if 0
+        LOG(llevDebug, ">>AFTER>>tag %d won %d fon %d woff %d foff %d\n",
+            tmp->count,
+            QUERY_FLAG(tmp, FLAG_WALK_ON), QUERY_FLAG(tmp, FLAG_FLY_ON),
+            QUERY_FLAG(tmp, FLAG_WALK_OFF), QUERY_FLAG(tmp, FLAG_FLY_OFF));
+#endif
+        hooks->update_object(tmp, UP_OBJ_INSERT);
+    }
+
+    return 0;
 }
 
 

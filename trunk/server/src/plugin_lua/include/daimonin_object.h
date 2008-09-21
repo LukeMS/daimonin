@@ -130,6 +130,7 @@ static int  GameObject_MakePet(lua_State *L);
 static int  GameObject_GetPets(lua_State *L);
 static int  GameObject_GetGmasterMode(lua_State *L);
 static int  GameObject_GetPlayerWeightLimit(lua_State *L);
+static int  GameObject_SetMoveFlags(lua_State *L);
 #if 0
 /* Hmmm... Still requires constants... */
 static PyObject* GameObject_GetUnmodifiedAttribute(GameObject* self, PyObject* args);
