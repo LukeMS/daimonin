@@ -96,6 +96,41 @@ function map_objects(map, x, y)
     return iterator, nil, { above = map:GetFirstObjectOnSquare(x,y) }
 end
 
+-------------------
+-- absolute_path() returns the absolute path of suffix based on prefix.
+-- Becuase the map readying methods only work on absolute paths, but these are
+-- shunned in all other circumstances (ie, exit paths).
+-------------------
+function absolute_path(prefix, suffix)
+     ---------
+     -- If suffix is already absolute, nothing to do. Return it unaltered.
+     ---------
+    if string.sub(suffix, 1, 1) == "/" then
+        return suffix
+    end
+
+    local len = string.len(prefix)
+
+    ---------
+    -- Find the last / in prefix. This separates the filename from the dirs.
+    ---------
+    for i = 1, len do
+        if string.sub(prefix, i, i) == "/" then
+            len = i
+        end
+    end
+
+    ---------
+    -- Truncate prefix.
+    ---------
+    prefix = string.sub(prefix, 1, len)
+
+    ---------
+    -- Concatenate prefix and suffix to get the absolute path. Return this.
+    ---------
+    return prefix .. suffix
+end
+
 -- Magic errorhandler, sends script errors to involved DM:s
 -- TODO: possibility to turn on/off either via a script or custom commands
 -- TODO: possibility to register DM's that should get messages even if not involved
