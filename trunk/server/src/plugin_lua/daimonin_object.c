@@ -3435,43 +3435,60 @@ static int GameObject_GetPlayerWeightLimit(lua_State *L)
 /* Name   : GameObject_SetMoveFlags                                          */
 /* Lua    : object:SetMoveFlags()                                            */
 /* Info   : Sets the movement flags for an object, which may be a multipart  */
-/*          object.                                                          */
-/* Status : Tested                                                           */
+/*          object and reinserts players and monsters on the map as it goes  */
+/*          so the new flags effect.                                         */
+/* Status : Tested (but needs multiplayer testing)                           */
 /* TODO   : limit by type, no_pass and so on.                                */
-/*          make the arguments optional(luamania will help).                 */
+/*          make the arguments optional (luamania will help).                */
 /*          allow boolean/nil (only/as well?) arguments (more Lua, less C).  */
+/*          Handle objects in envs, not on maps.                             */
 /*****************************************************************************/
 static int GameObject_SetMoveFlags(lua_State *L)
 {
     lua_object *self;
-    // Currently preassigning to -1 does nothing.
+    // TODO: Currently preassigning to -1 does nothing.
     int         walk_on = -1,
                 fly_on = -1,
                 walk_off = -1,
                 fly_off = -1;
-    object     *tmp;
+    object     *part;
 
     get_lua_args(L, "Oiiii", &self, &walk_on, &fly_on, &walk_off, &fly_off);
 
-    for (tmp = WHO; tmp && tmp->more; tmp = tmp->more)
+    for (part = WHO; part; part = part->more)
     {
+        /* FIXME: not sure what will happen if the obj is not on a map. */
+        object *next = GET_MAP_OB_LAST(part->map, part->x, part->y);
+
 #if 0
         LOG(llevDebug, ">>BEFORE>>tag %d won %d fon %d woff %d foff %d\n",
-            tmp->count,
-            QUERY_FLAG(tmp, FLAG_WALK_ON), QUERY_FLAG(tmp, FLAG_FLY_ON),
-            QUERY_FLAG(tmp, FLAG_WALK_OFF), QUERY_FLAG(tmp, FLAG_FLY_OFF));
+            part->count,
+            QUERY_FLAG(part, FLAG_WALK_ON), QUERY_FLAG(part, FLAG_FLY_ON),
+            QUERY_FLAG(part, FLAG_WALK_OFF), QUERY_FLAG(part, FLAG_FLY_OFF));
 #endif
-        SET_OR_CLEAR_FLAG(tmp, FLAG_WALK_ON, walk_on);
-        SET_OR_CLEAR_FLAG(tmp, FLAG_FLY_ON, fly_on);
-        SET_OR_CLEAR_FLAG(tmp, FLAG_WALK_OFF, walk_off);
-        SET_OR_CLEAR_FLAG(tmp, FLAG_FLY_OFF, fly_off);
+        SET_OR_CLEAR_FLAG(part, FLAG_WALK_ON, walk_on);
+        SET_OR_CLEAR_FLAG(part, FLAG_FLY_ON, fly_on);
+        SET_OR_CLEAR_FLAG(part, FLAG_WALK_OFF, walk_off);
+        SET_OR_CLEAR_FLAG(part, FLAG_FLY_OFF, fly_off);
 #if 0
         LOG(llevDebug, ">>AFTER>>tag %d won %d fon %d woff %d foff %d\n",
-            tmp->count,
-            QUERY_FLAG(tmp, FLAG_WALK_ON), QUERY_FLAG(tmp, FLAG_FLY_ON),
-            QUERY_FLAG(tmp, FLAG_WALK_OFF), QUERY_FLAG(tmp, FLAG_FLY_OFF));
+            part->count,
+            QUERY_FLAG(part, FLAG_WALK_ON), QUERY_FLAG(part, FLAG_FLY_ON),
+            QUERY_FLAG(part, FLAG_WALK_OFF), QUERY_FLAG(part, FLAG_FLY_OFF));
 #endif
-        hooks->update_object(tmp, UP_OBJ_INSERT);
+
+        while (next)
+        {
+            object *below = next->below;
+
+            if (next->type == MONSTER ||
+                next->type == PLAYER)
+            {
+                hooks->remove_ob(next);
+                hooks->insert_ob_in_map(next, part->map, NULL, 0);
+            }
+            next = below;
+        }
     }
 
     return 0;
