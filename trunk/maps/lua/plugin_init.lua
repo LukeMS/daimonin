@@ -79,8 +79,9 @@ end
 
 --
 -- Very useful and elegant iterator functions for for loops
--- for object in obj_inventory(obj)
--- for object in map_objects(map, x, y)
+-- for obj in obj_inventory(object) loops through the inventory of object
+-- for obj in map_objects(map, x, y) loops through all the objects on square
+-- for obj in multipart(object) loops through all the parts of object starting at head
 --
 
 -- TODO: In the future I want to add those to the Map and Object classes,
@@ -96,15 +97,25 @@ function map_objects(map, x, y)
     return iterator, nil, { above = map:GetFirstObjectOnSquare(x,y) }
 end
 
+function multipart(obj)
+    local iterator = function(_, last) return last.more end
+
+    if obj.head then
+        return iterator, nil, { more = obj.head }
+    else
+        return iterator, nil, { more = obj }
+    end
+end
+
 -------------------
 -- absolute_path() returns the absolute path of suffix based on prefix.
 -- Becuase the map readying methods only work on absolute paths, but these are
 -- shunned in all other circumstances (ie, exit paths).
 -------------------
 function absolute_path(prefix, suffix)
-     ---------
-     -- If suffix is already absolute, nothing to do. Return it unaltered.
-     ---------
+    ---------
+    -- If suffix is already absolute, nothing to do. Return it unaltered.
+    ---------
     if string.sub(suffix, 1, 1) == "/" then
         return suffix
     end
