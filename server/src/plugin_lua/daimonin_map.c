@@ -25,44 +25,135 @@
 #include <global.h>
 #include <daimonin_map.h>
 
-/* Global data objects */
-
-static struct method_decl       Map_methods[]       =
+static struct method_decl Map_methods[] =
 {
-    {"ReadyInheritedMap", Map_ReadyInheritedMap},
-    {"Save", Map_Save},
-    {"Delete", Map_Delete},
+    {"CreateObject",           Map_CreateObject},
+    {"Delete",                 Map_Delete},
     {"GetFirstObjectOnSquare", Map_GetFirstObjectOnSquare},
-    {"GetBrightnessOnSquare", Map_GetBrightnessOnSquare},
-    {"IsWallOnSquare", Map_IsWallOnSquare},
-    {"PlaySound", Map_PlaySound},
-    {"Message", Map_Message},
-    {"MapTileAt",  Map_MapTileAt},
-    {"CreateObject", Map_CreateObject},
+    {"GetBrightnessOnSquare",  Map_GetBrightnessOnSquare},
+    {"IsWallOnSquare",         Map_IsWallOnSquare},
+    {"MapTileAt",              Map_MapTileAt},
+    {"Message",                Map_Message},
+    {"PlaySound",              Map_PlaySound},
+    {"ReadyInheritedMap",      Map_ReadyInheritedMap},
+    {"Save",                   Map_Save},
+
     {NULL, NULL}
 };
 
-static struct attribute_decl    Map_attributes[]    =
+static struct attribute_decl Map_attributes[] =
 {
-    { "name",    FIELDTYPE_CSTR, offsetof(mapstruct, name), FIELDFLAG_READONLY, 0 },
-    { "message", FIELDTYPE_CSTR, offsetof(mapstruct, msg), FIELDFLAG_READONLY, 0 },
-    { "reset_interval", FIELDTYPE_UINT32, offsetof(mapstruct, reset_timeout), FIELDFLAG_READONLY, 0 },
-    { "difficulty", FIELDTYPE_UINT16, offsetof(mapstruct, difficulty), FIELDFLAG_READONLY, 0 },
-    { "height", FIELDTYPE_UINT16, offsetof(mapstruct, height), FIELDFLAG_READONLY, 0 },
-    { "width", FIELDTYPE_UINT16, offsetof(mapstruct, width), FIELDFLAG_READONLY, 0 },
-    { "darkness", FIELDTYPE_SINT32, offsetof(mapstruct, darkness), FIELDFLAG_READONLY, 0 },
-    { "light_value", FIELDTYPE_SINT32, offsetof(mapstruct, light_value), FIELDFLAG_READONLY, 0 },
-    { "path", FIELDTYPE_SHSTR, offsetof(mapstruct, path), FIELDFLAG_READONLY, 0 },
-    { "orig_path", FIELDTYPE_SHSTR, offsetof(mapstruct, orig_path), FIELDFLAG_READONLY, 0 },
-    { "map_status", FIELDTYPE_UINT32, offsetof(mapstruct, map_status), FIELDFLAG_READONLY, 0 },
-    { NULL, 0, 0, 0, 0}
+    {"name",           FIELDTYPE_CSTR,   offsetof(mapstruct, name),          FIELDFLAG_READONLY, 0},
+    {"message",        FIELDTYPE_CSTR,   offsetof(mapstruct, msg),           FIELDFLAG_READONLY, 0},
+    {"reset_interval", FIELDTYPE_UINT32, offsetof(mapstruct, reset_timeout), FIELDFLAG_READONLY, 0},
+    {"difficulty",     FIELDTYPE_UINT16, offsetof(mapstruct, difficulty),    FIELDFLAG_READONLY, 0},
+    {"height",         FIELDTYPE_UINT16, offsetof(mapstruct, height),        FIELDFLAG_READONLY, 0},
+    {"width",          FIELDTYPE_UINT16, offsetof(mapstruct, width),         FIELDFLAG_READONLY, 0},
+    {"darkness",       FIELDTYPE_SINT32, offsetof(mapstruct, darkness),      FIELDFLAG_READONLY, 0},
+    {"light_value",    FIELDTYPE_SINT32, offsetof(mapstruct, light_value),   FIELDFLAG_READONLY, 0},
+    {"path",           FIELDTYPE_SHSTR,  offsetof(mapstruct, path),          FIELDFLAG_READONLY, 0},
+    {"orig_path",      FIELDTYPE_SHSTR,  offsetof(mapstruct, orig_path),     FIELDFLAG_READONLY, 0},
+    {"map_status",     FIELDTYPE_UINT32, offsetof(mapstruct, map_status),    FIELDFLAG_READONLY, 0},
+
+    {NULL, 0, 0, 0, 0}
 };
 
-static const char              *Map_flags[]         =
+static const char *Map_flags[] =
 {
-    "?f_outdoor", "?f_no_save", "?f_fixed_rtime", "f_nomagic", "f_nopriest", "f_noharm", "f_nosummon", "?f_fixed_login",
-    "?f_permdeath", "?f_ultradeath", "?f_ultimatedeath", "?f_pvp", FLAGLIST_END_MARKER
+    "?f_outdoor",
+    "?f_no_save",
+    "?f_fixed_rtime",
+    "f_nomagic",
+    "f_nopriest",
+    "f_noharm",
+    "f_nosummon",
+    "?f_fixed_login",
+    "?f_permdeath",
+    "?f_ultradeath",
+    "?f_ultimatedeath",
+    "?f_pvp",
+
+    FLAGLIST_END_MARKER
 };
+
+/* pushes flag value on top of stack */
+static int Map_getFlag(lua_State *L, lua_object *obj, uint32 flagno)
+{
+    lua_pushboolean(L, (obj->data.map->map_flags & (1 << flagno)));
+    return 1;
+}
+
+/* pushes flag value on top of stack */
+static int Map_setFlag(lua_State *L, lua_object *obj, uint32 flagno)
+{
+    int     value;
+
+    if (lua_isnumber(L, -1))
+        value = (int) lua_tonumber(L, -1);
+    else
+        value = lua_toboolean(L, -1);
+
+    if(value)
+        obj->data.map->map_flags |= (1 << flagno);
+    else
+        obj->data.map->map_flags &= ~(1 << flagno);
+
+    return 0;
+}
+
+/* Return a string representation of this object (useful for debugging) */
+static int Map_toString(lua_State *L)
+{
+    lua_object *obj = lua_touserdata(L, 1);
+    char        buf[HUGE_BUF], *ptr;
+
+    if (obj == NULL || obj->class->type != LUATYPE_MAP)
+        luaL_error(L, "Not a Map object");
+
+    strncpy(buf, obj->data.map->name, sizeof(buf));
+    buf[sizeof(buf) - 1] = '\0';
+
+    /* We can't send this special char to the client message thingie,
+     * it will mess the text up */
+    if ((ptr = strchr(buf, '§')))
+        *ptr = '$';
+
+    lua_pushfstring(L, "[%s \"%s\"]", obj->data.map->path, buf);
+    return 1;
+}
+
+/* Tests if a Map object is valid */
+static int Map_isValid(lua_State *L, lua_object *obj)
+{
+    return (obj->tag == obj->data.map->tag && obj->data.map->in_memory == MAP_IN_MEMORY);
+}
+
+/* Declare the map class */
+lua_class Map =
+{
+    LUATYPE_MAP,
+    "Map",
+    0,
+    Map_toString,
+    Map_attributes,
+    Map_methods,
+    NULL,
+    Map_flags,
+    Map_getFlag,
+    Map_setFlag,
+    NULL,
+    Map_isValid,
+    0
+};
+
+/* Initialize the map class */
+int Map_init(lua_State *s)
+{
+    init_class(s, &Map);
+
+    return 0;
+}
+
 
 /****************************************************************************/
 /*                          Map methods                                     */
@@ -397,74 +488,3 @@ static int Map_CreateObject(lua_State *L)
 
 
 /* FUNCTIONEND -- End of the Lua plugin functions. */
-
-/****************************************************************************/
-/* Map object management                                                    */
-/****************************************************************************/
-
-/* pushes flag value on top of stack */
-static int Map_getFlag(lua_State *L, lua_object *obj, uint32 flagno)
-{
-    lua_pushboolean(L, (obj->data.map->map_flags & (1 << flagno)));
-    return 1;
-}
-
-/* pushes flag value on top of stack */
-static int Map_setFlag(lua_State *L, lua_object *obj, uint32 flagno)
-{
-    int     value;
-
-    if (lua_isnumber(L, -1))
-        value = (int) lua_tonumber(L, -1);
-    else
-        value = lua_toboolean(L, -1);
-
-    if(value)
-        obj->data.map->map_flags |= (1 << flagno);
-    else
-        obj->data.map->map_flags &= ~(1 << flagno);
-
-    return 0;
-}
-
-/* Return a string representation of this object (useful for debugging) */
-static int Map_toString(lua_State *L)
-{
-    lua_object *obj = lua_touserdata(L, 1);
-    char        buf[HUGE_BUF], *ptr;
-
-    if (obj == NULL || obj->class->type != LUATYPE_MAP)
-        luaL_error(L, "Not a Map object");
-
-    strncpy(buf, obj->data.map->name, sizeof(buf));
-    buf[sizeof(buf) - 1] = '\0';
-
-    /* We can't send this special char to the client message thingie,
-     * it will mess the text up */
-    if ((ptr = strchr(buf, '§')))
-        *ptr = '$';
-
-    lua_pushfstring(L, "[%s \"%s\"]", obj->data.map->path, buf);
-    return 1;
-}
-
-/* Tests if a Map object is valid */
-static int Map_isValid(lua_State *L, lua_object *obj)
-{
-    return (obj->tag == obj->data.map->tag && obj->data.map->in_memory == MAP_IN_MEMORY);
-}
-
-/* Declare the map class */
-lua_class   Map =
-{
-    LUATYPE_MAP, "Map", 0, Map_toString, Map_attributes, Map_methods,
-    NULL, Map_flags, Map_getFlag, Map_setFlag, NULL, Map_isValid, 0
-};
-
-/* Initialize the map class */
-int Map_init(lua_State *s)
-{
-    init_class(s, &Map);
-
-    return 0;
-}

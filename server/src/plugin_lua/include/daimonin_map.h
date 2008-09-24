@@ -29,15 +29,15 @@
 #include <plugin_lua.h>
 
 /* Map object methods */
+static int  Map_CreateObject(lua_State *L);
+static int  Map_Delete(lua_State *L);
+static int  Map_GetBrightnessOnSquare(lua_State *L);
+static int  Map_GetFirstObjectOnSquare(lua_State *L);
+static int  Map_IsWallOnSquare(lua_State *L);
+static int  Map_MapTileAt(lua_State *L);
+static int  Map_Message(lua_State *L);
+static int  Map_PlaySound(lua_State *L);
 static int  Map_ReadyInheritedMap(lua_State *L);
 static int  Map_Save(lua_State *L);
-static int  Map_Delete(lua_State *L);
-static int  Map_IsWallOnSquare(lua_State *L);
-static int  Map_GetFirstObjectOnSquare(lua_State *L);
-static int  Map_GetBrightnessOnSquare(lua_State *L);
-static int  Map_PlaySound(lua_State *L);
-static int  Map_Message(lua_State *L);
-static int  Map_MapTileAt(lua_State *L);
-static int  Map_CreateObject(lua_State *L);
 
 #endif /* DAIMONIN_MAP_H*/

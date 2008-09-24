@@ -30,18 +30,18 @@
 #include <plugin_lua.h>
 
 /* Game methods */
-static int  Game_UpgradeApartment(lua_State *L);
-static int  Game_MatchString(lua_State *L);
-static int  Game_ReadyMap(lua_State *L);
+static int  Game_EnumerateCoins(lua_State *L);
 static int  Game_FindPlayer(lua_State *L);
 static int  Game_GetSpellNr(lua_State *L);
 static int  Game_GetSkillNr(lua_State *L);
-// static int Game_RegisterCommand(lua_State *L);
-static int  Game_LoadObject(lua_State *L);
-static int  Game_IsValid(lua_State *L);
 static int  Game_GetTime(lua_State *L);
+static int  Game_IsValid(lua_State *L);
+static int  Game_LoadObject(lua_State *L);
 static int  Game_LocateBeacon(lua_State *L);
 static int  Game_Log(lua_State *L);
-static int  Game_EnumerateCoins(lua_State *L);
+static int  Game_MatchString(lua_State *L);
+static int  Game_ReadyMap(lua_State *L);
+static int  Game_UpgradeApartment(lua_State *L);
+// static int Game_RegisterCommand(lua_State *L);
 
 #endif /* DAIMONIN_GANE_H */

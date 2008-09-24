@@ -27,231 +27,280 @@
 #include <global.h>
 #include <daimonin_object.h>
 
-/* Global data */
-
-/* Available python methods for the GameObject object */
-static struct method_decl   GameObject_methods[]            =
+static struct method_decl GameObject_methods[] =
 {
-    {"SetPosition", (lua_CFunction) GameObject_SetPosition},
-    {"ReadyUniqueMap", (lua_CFunction) GameObject_ReadyUniqueMap},
-    {"StartNewInstance", (lua_CFunction) GameObject_StartNewInstance},
-    {"CheckInstance", (lua_CFunction) GameObject_CheckInstance},
-    {"DeleteInstance", (lua_CFunction) GameObject_DeleteInstance},
-    {"CreateArtifact", (lua_CFunction) GameObject_CreateArtifact},
-    {"GetName", (lua_CFunction) GameObject_GetName},
-    {"GetEquipment", (lua_CFunction) GameObject_GetEquipment},
-    {"GetRepairCost", (lua_CFunction) GameObject_GetRepairCost},
-    {"Repair", (lua_CFunction) GameObject_Repair},
-    {"Sound",  (lua_CFunction) GameObject_Sound},
-    {"Interface",  (lua_CFunction) GameObject_Interface},
-    {"SetSaveBed",  (lua_CFunction) GameObject_SetSaveBed},
-    {"DecreaseNrOf",  (lua_CFunction) GameObject_DecreaseNrOf},
-    {"GetSkill",  (lua_CFunction) GameObject_GetSkill},
-    {"SetSkill",  (lua_CFunction) GameObject_SetSkill},
-    {"ActivateRune",  (lua_CFunction) GameObject_ActivateRune},
-    {"InsertInside",  (lua_CFunction) GameObject_InsertInside},
-    {"GetGod",  (lua_CFunction) GameObject_GetGod},
-    {"SetGod",  (lua_CFunction) GameObject_SetGod},
-    {"Apply",  (lua_CFunction) GameObject_Apply},
-    {"PickUp",  (lua_CFunction) GameObject_PickUp},
-    {"Drop",  (lua_CFunction) GameObject_Drop},
-    {"Take",  (lua_CFunction) GameObject_Take},
-    {"Fix", (lua_CFunction) GameObject_Fix},
-    {"Kill", (lua_CFunction) GameObject_Kill},
-    {"CastSpell", (lua_CFunction) GameObject_CastSpell},
-    {"DoKnowSpell", (lua_CFunction) GameObject_DoKnowSpell},
-    {"AcquireSpell", (lua_CFunction) GameObject_AcquireSpell},
-    {"FindSkill", (lua_CFunction) GameObject_FindSkill},
-    {"AcquireSkill", (lua_CFunction) GameObject_AcquireSkill},
-    {"FindMarkedObject", (lua_CFunction) GameObject_FindMarkedObject},
-    {"AddQuest", (lua_CFunction) GameObject_AddQuest},
-    {"GetQuest", (lua_CFunction) GameObject_GetQuest},
-    {"CheckQuestLevel", (lua_CFunction) GameObject_CheckQuestLevel},
-    {"AddQuestTarget", (lua_CFunction) GameObject_AddQuestTarget},
-    {"AddQuestItem", (lua_CFunction) GameObject_AddQuestItem},
-    {"NrofQuestItem", (lua_CFunction) GameObject_NrofQuestItem},
-    {"RemoveQuestItem", (lua_CFunction) GameObject_RemoveQuestItem},
-    {"SetQuestStatus", (lua_CFunction) GameObject_SetQuestStatus},
-    {"CheckOneDropQuest", (lua_CFunction) GameObject_CheckOneDropQuest},
-    {"AddOneDropQuest", (lua_CFunction) GameObject_AddOneDropQuest},
-    {"CreatePlayerForce", (lua_CFunction) GameObject_CreatePlayerForce},
-    {"CreatePlayerInfo", (lua_CFunction) GameObject_CreatePlayerInfo},
-    {"GetPlayerInfo", (lua_CFunction) GameObject_GetPlayerInfo},
-    {"GetNextPlayerInfo", (lua_CFunction) GameObject_GetNextPlayerInfo},
-    {"CheckInvisibleObjectInside", (lua_CFunction) GameObject_CheckInvisibleInside},
-    {"CreateInvisibleObjectInside", (lua_CFunction) GameObject_CreateInvisibleInside},
-    {"CreateObjectInside", (lua_CFunction) GameObject_CreateObjectInside},
-    {"CreateObjectInsideEx", (lua_CFunction) GameObject_CreateObjectInsideEx},
-    {"CheckInventory", (lua_CFunction) GameObject_CheckInventory},
-    {"Remove", (lua_CFunction) GameObject_Remove},
-    {"Destruct", (lua_CFunction) GameObject_Destruct},
-    {"IdentifyItem", (lua_CFunction) GameObject_IdentifyItem},
-    {"Deposit",  (lua_CFunction) GameObject_Deposit},
-    {"Withdraw",  (lua_CFunction) GameObject_Withdraw},
-    {"Communicate",  (lua_CFunction) GameObject_Communicate},
-    {"Say",  (lua_CFunction) GameObject_Say},
-    {"SayTo",  (lua_CFunction) GameObject_SayTo},
+    {"AcquireSkill",           (lua_CFunction) GameObject_AcquireSkill},
+    {"AcquireSpell",           (lua_CFunction) GameObject_AcquireSpell},
+    {"ActivateRune",           (lua_CFunction) GameObject_ActivateRune},
+    {"AddMoney",               (lua_CFunction) GameObject_AddMoney},
+    {"AddMoneyEx",             (lua_CFunction) GameObject_AddMoneyEx},
+    {"AddOneDropQuest",        (lua_CFunction) GameObject_AddOneDropQuest},
+    {"AddQuest",               (lua_CFunction) GameObject_AddQuest},
+    {"AddQuestItem",           (lua_CFunction) GameObject_AddQuestItem},
+    {"AddQuestTarget",         (lua_CFunction) GameObject_AddQuestTarget},
+    {"Apply",                  (lua_CFunction) GameObject_Apply},
+    {"CastSpell",              (lua_CFunction) GameObject_CastSpell},
 #ifdef USE_CHANNELS
-    {"ChannelMsg",  (lua_CFunction) GameObject_ChannelMsg},
+    {"ChannelMsg",             (lua_CFunction) GameObject_ChannelMsg},
 #endif
-    {"Write", (lua_CFunction) GameObject_Write},
-    {"GetGender",  (lua_CFunction) GameObject_GetGender},
-    {"SetGender",  (lua_CFunction) GameObject_SetGender},
-    {"SetRank",  (lua_CFunction) GameObject_SetRank},
-    {"SetAlignment",  (lua_CFunction) GameObject_SetAlignment},
-    {"GetAlignmentForce",  (lua_CFunction) GameObject_GetAlignmentForce},
-    {"GetGuild",  (lua_CFunction) GameObject_GetGuild},
-    {"CheckGuild",  (lua_CFunction) GameObject_CheckGuild},
-    {"JoinGuild",  (lua_CFunction) GameObject_JoinGuild},
-    {"LeaveGuild",  (lua_CFunction) GameObject_LeaveGuild},
-    {"Save", (lua_CFunction) GameObject_Save},
-    {"GetIP", (lua_CFunction) GameObject_GetIP},
-    {"GetArchName", (lua_CFunction) GameObject_GetArchName},
-    {"ShowCost",  (lua_CFunction) GameObject_ShowCost},
-    {"GetItemCost",  (lua_CFunction) GameObject_GetItemCost},
-    {"AddMoney",  (lua_CFunction) GameObject_AddMoney},
-    {"AddMoneyEx",  (lua_CFunction) GameObject_AddMoneyEx},
-    {"GetMoney",  (lua_CFunction) GameObject_GetMoney},
-    {"PayForItem", (lua_CFunction) GameObject_PayForItem},
-    {"PayAmount", (lua_CFunction) GameObject_PayAmount},
-    {"SendCustomCommand",(lua_CFunction) GameObject_SendCustomCommand},
-    {"CheckTrigger", (lua_CFunction) GameObject_CheckTrigger},
-    {"Clone", (lua_CFunction) GameObject_Clone},
-    {"Move", (lua_CFunction) GameObject_Move},
-    {"GetAI", (lua_CFunction) GameObject_GetAI},
-    {"GetVector", (lua_CFunction) GameObject_GetVector},
-    {"GetFace", (lua_CFunction) GameObject_GetFace},
-    {"GetInvFace", (lua_CFunction) GameObject_GetInvFace},
-    {"GetAnimation", (lua_CFunction) GameObject_GetAnimation},
-    {"GetInvAnimation", (lua_CFunction) GameObject_GetInvAnimation},
-    {"SetFace", (lua_CFunction) GameObject_SetFace},
-    {"SetInvFace", (lua_CFunction) GameObject_SetInvFace},
-    {"SetAnimation", (lua_CFunction) GameObject_SetAnimation},
-    {"SetInvAnimation", (lua_CFunction) GameObject_SetInvAnimation},
-    {"MakePet", (lua_CFunction) GameObject_MakePet},
-    {"GetPets", (lua_CFunction) GameObject_GetPets},
-    {"GetGmasterMode", (lua_CFunction) GameObject_GetGmasterMode},
-    {"GetPlayerWeightLimit", (lua_CFunction) GameObject_GetPlayerWeightLimit},
+    {"CheckGuild",             (lua_CFunction) GameObject_CheckGuild},
+    {"CheckInstance",          (lua_CFunction) GameObject_CheckInstance},
+    {"CheckInventory",         (lua_CFunction) GameObject_CheckInventory},
+    {"CheckInvisibleInside",   (lua_CFunction) GameObject_CheckInvisibleInside},
+    {"CheckOneDropQuest",      (lua_CFunction) GameObject_CheckOneDropQuest},
+    {"CheckQuestLevel",        (lua_CFunction) GameObject_CheckQuestLevel},
+    {"CheckTrigger",           (lua_CFunction) GameObject_CheckTrigger},
+    {"Clone",                  (lua_CFunction) GameObject_Clone},
+    {"Communicate",            (lua_CFunction) GameObject_Communicate},
+    {"CreateArtifact",         (lua_CFunction) GameObject_CreateArtifact},
+    {"CreateInvisibleInside",  (lua_CFunction) GameObject_CreateInvisibleInside},
+    {"CreateObjectInside",     (lua_CFunction) GameObject_CreateObjectInside},
+    {"CreateObjectInsideEx",   (lua_CFunction) GameObject_CreateObjectInsideEx},
+    {"CreatePlayerForce",      (lua_CFunction) GameObject_CreatePlayerForce},
+    {"CreatePlayerInfo",       (lua_CFunction) GameObject_CreatePlayerInfo},
+    {"DecreaseNrOf",           (lua_CFunction) GameObject_DecreaseNrOf},
+    {"DeleteInstance",         (lua_CFunction) GameObject_DeleteInstance},
+    {"Deposit",                (lua_CFunction) GameObject_Deposit},
+    {"Destruct",               (lua_CFunction) GameObject_Destruct},
+    {"DoKnowSpell",            (lua_CFunction) GameObject_DoKnowSpell},
+    {"Drop",                   (lua_CFunction) GameObject_Drop},
+    {"FindMarkedObject",       (lua_CFunction) GameObject_FindMarkedObject},
+    {"FindSkill",              (lua_CFunction) GameObject_FindSkill},
+    {"Fix",                    (lua_CFunction) GameObject_Fix},
+    {"GetAI",                  (lua_CFunction) GameObject_GetAI},
+    {"GetAlignmentForce",      (lua_CFunction) GameObject_GetAlignmentForce},
+    {"GetAnimation",           (lua_CFunction) GameObject_GetAnimation},
+    {"GetArchName",            (lua_CFunction) GameObject_GetArchName},
+    {"GetEquipment",           (lua_CFunction) GameObject_GetEquipment},
+    {"GetFace",                (lua_CFunction) GameObject_GetFace},
+    {"GetGender",              (lua_CFunction) GameObject_GetGender},
+    {"GetGmasterMode",         (lua_CFunction) GameObject_GetGmasterMode},
+    {"GetGod",                 (lua_CFunction) GameObject_GetGod},
+    {"GetGuild",               (lua_CFunction) GameObject_GetGuild},
+    {"GetInvAnimation",        (lua_CFunction) GameObject_GetInvAnimation},
+    {"GetInvFace",             (lua_CFunction) GameObject_GetInvFace},
+    {"GetIP",                  (lua_CFunction) GameObject_GetIP},
+    {"GetItemCost",            (lua_CFunction) GameObject_GetItemCost},
+    {"GetMoney",               (lua_CFunction) GameObject_GetMoney},
+    {"GetName",                (lua_CFunction) GameObject_GetName},
+    {"GetNextPlayerInfo",      (lua_CFunction) GameObject_GetNextPlayerInfo},
+    {"GetPets",                (lua_CFunction) GameObject_GetPets},
+    {"GetPlayerInfo",          (lua_CFunction) GameObject_GetPlayerInfo},
+    {"GetPlayerWeightLimit",   (lua_CFunction) GameObject_GetPlayerWeightLimit},
+    {"GetQuest",               (lua_CFunction) GameObject_GetQuest},
+    {"GetRepairCost",          (lua_CFunction) GameObject_GetRepairCost},
+    {"GetSkill",               (lua_CFunction) GameObject_GetSkill},
+/*  {"GetUnmodifiedAttribute", (lua_CFunction) GameObject_GetUnmodifiedAttribute}, */
+    {"GetVector",              (lua_CFunction) GameObject_GetVector},
+    {"IdentifyItem",           (lua_CFunction) GameObject_IdentifyItem},
+    {"InsertInside",           (lua_CFunction) GameObject_InsertInside},
+    {"Interface",              (lua_CFunction) GameObject_Interface},
+    {"JoinGuild",              (lua_CFunction) GameObject_JoinGuild},
+    {"Kill",                   (lua_CFunction) GameObject_Kill},
+    {"LeaveGuild",             (lua_CFunction) GameObject_LeaveGuild},
+    {"MakePet",                (lua_CFunction) GameObject_MakePet},
+    {"Move",                   (lua_CFunction) GameObject_Move},
+    {"NrofQuestItem",          (lua_CFunction) GameObject_NrofQuestItem},
+    {"PayForItem",             (lua_CFunction) GameObject_PayForItem},
+    {"PayAmount",              (lua_CFunction) GameObject_PayAmount},
+    {"PickUp",                 (lua_CFunction) GameObject_PickUp},
+    {"ReadyUniqueMap",         (lua_CFunction) GameObject_ReadyUniqueMap},
+    {"Remove",                 (lua_CFunction) GameObject_Remove},
+    {"RemoveQuestItem",        (lua_CFunction) GameObject_RemoveQuestItem},
+    {"Repair",                 (lua_CFunction) GameObject_Repair},
+    {"Save",                   (lua_CFunction) GameObject_Save},
+    {"Say",                    (lua_CFunction) GameObject_Say},
+    {"SayTo",                  (lua_CFunction) GameObject_SayTo},
+    {"SendCustomCommand",      (lua_CFunction) GameObject_SendCustomCommand},
+    {"SetAlignment",           (lua_CFunction) GameObject_SetAlignment},
+    {"SetAnimation",           (lua_CFunction) GameObject_SetAnimation},
+    {"SetFace",                (lua_CFunction) GameObject_SetFace},
+    {"SetGender",              (lua_CFunction) GameObject_SetGender},
+    {"SetGod",                 (lua_CFunction) GameObject_SetGod},
+    {"SetInvAnimation",        (lua_CFunction) GameObject_SetInvAnimation},
+    {"SetInvFace",             (lua_CFunction) GameObject_SetInvFace},
+    {"SetPosition",            (lua_CFunction) GameObject_SetPosition},
+    {"SetQuestStatus",         (lua_CFunction) GameObject_SetQuestStatus},
+    {"SetRank",                (lua_CFunction) GameObject_SetRank},
+    {"SetSaveBed",             (lua_CFunction) GameObject_SetSaveBed},
+    {"SetSkill",               (lua_CFunction) GameObject_SetSkill},
+    {"ShowCost",               (lua_CFunction) GameObject_ShowCost},
+    {"Sound",                  (lua_CFunction) GameObject_Sound},
+    {"StartNewInstance",       (lua_CFunction) GameObject_StartNewInstance},
+    {"Take",                   (lua_CFunction) GameObject_Take},
+    {"Withdraw",               (lua_CFunction) GameObject_Withdraw},
+    {"Write",                  (lua_CFunction) GameObject_Write},
 
-    // {"GetUnmodifiedAttribute", (lua_CFunction)GameObject_GetUnmodifiedAttribute},
     {NULL, NULL}
 };
 
-/* GameObject attributes */
-struct attribute_decl       GameObject_attributes[]         =
+/* All entries MUST be in same order as field_id enum above */
+struct attribute_decl GameObject_attributes[] =
 {
-    /* All entries MUST be in same order as field_id enum above */
-    {"below", FIELDTYPE_OBJECT, offsetof(object, below), FIELDFLAG_READONLY, 0},
-    {"above", FIELDTYPE_OBJECT, offsetof(object, above), FIELDFLAG_READONLY, 0},
-    {"inventory", FIELDTYPE_OBJECT, offsetof(object, inv), FIELDFLAG_READONLY, 0},
-    {"environment", FIELDTYPE_OBJECT, offsetof(object, env), FIELDFLAG_READONLY, 0},
-    {"more", FIELDTYPE_OBJECT, offsetof(object, more), FIELDFLAG_READONLY, 0},
-    {"head", FIELDTYPE_OBJECT, offsetof(object, head), FIELDFLAG_READONLY, 0},
-    {"map", FIELDTYPE_MAP, offsetof(object, map), FIELDFLAG_READONLY, 0},
-    {"count", FIELDTYPE_UINT32, offsetof(object, count), FIELDFLAG_READONLY, 0},
-    {"name", FIELDTYPE_SHSTR, offsetof(object, name), 0, 0},
-    {"title", FIELDTYPE_SHSTR, offsetof(object, title), 0, 0},
-    {"race", FIELDTYPE_SHSTR, offsetof(object, race), 0, 0},
-    {"slaying", FIELDTYPE_SHSTR, offsetof(object, slaying), 0, 0},
-    {"message", FIELDTYPE_SHSTR, offsetof(object, msg), 0, 0},
+    {"below",                 FIELDTYPE_OBJECT,    offsetof(object, below),                     FIELDFLAG_READONLY, 0},
+    {"above",                 FIELDTYPE_OBJECT,    offsetof(object, above),                     FIELDFLAG_READONLY, 0},
+    {"inventory",             FIELDTYPE_OBJECT,    offsetof(object, inv),                       FIELDFLAG_READONLY, 0},
+    {"environment",           FIELDTYPE_OBJECT,    offsetof(object, env),                       FIELDFLAG_READONLY, 0},
+    {"more",                  FIELDTYPE_OBJECT,    offsetof(object, more),                      FIELDFLAG_READONLY, 0},
+    {"head",                  FIELDTYPE_OBJECT,    offsetof(object, head),                      FIELDFLAG_READONLY, 0},
+    {"map",                   FIELDTYPE_MAP,       offsetof(object, map),                       FIELDFLAG_READONLY, 0},
+    {"count",                 FIELDTYPE_UINT32,    offsetof(object, count),                     FIELDFLAG_READONLY, 0},
+    {"name",                  FIELDTYPE_SHSTR,     offsetof(object, name),                      0,                  0},
+    {"title",                 FIELDTYPE_SHSTR,     offsetof(object, title),                     0,                  0},
+    {"race",                  FIELDTYPE_SHSTR,     offsetof(object, race),                      0,                  0},
+    {"slaying",               FIELDTYPE_SHSTR,     offsetof(object, slaying),                   0,                  0},
+    {"message",               FIELDTYPE_SHSTR,     offsetof(object, msg),                       0,                  0},
     /* TODO: limited to >=0 */
-    {"weight",       FIELDTYPE_SINT32, offsetof(object, weight), 0, 0},
-    {"weight_limit", FIELDTYPE_UINT32, offsetof(object, weight_limit), 0, 0},
-    {"carrying",     FIELDTYPE_SINT32, offsetof(object, carrying), 0, 0},
-    {"path_attuned", FIELDTYPE_UINT32, offsetof(object, path_attuned), 0, 0},
-    {"path_repelled",FIELDTYPE_UINT32, offsetof(object, path_repelled), 0, 0},
-    {"path_denied",  FIELDTYPE_UINT32, offsetof(object, path_denied), 0, 0},
-    {"value",        FIELDTYPE_SINT64, offsetof(object, value), 0, 0},
+    {"weight",                FIELDTYPE_SINT32,    offsetof(object, weight),                    0,                  0},
+    {"weight_limit",          FIELDTYPE_UINT32,    offsetof(object, weight_limit),              0,                  0},
+    {"carrying",              FIELDTYPE_SINT32,    offsetof(object, carrying),                  0,                  0},
+    {"path_attuned",          FIELDTYPE_UINT32,    offsetof(object, path_attuned),              0,                  0},
+    {"path_repelled",         FIELDTYPE_UINT32,    offsetof(object, path_repelled),             0,                  0},
+    {"path_denied",           FIELDTYPE_UINT32,    offsetof(object, path_denied),               0,                  0},
+    {"value",                 FIELDTYPE_SINT64,    offsetof(object, value),                     0,                  0},
     /* TODO: Max 100000 */
-    {"quantity",     FIELDTYPE_UINT32, offsetof(object, nrof), 0, 0},
-
+    {"quantity",              FIELDTYPE_UINT32,    offsetof(object, nrof),                      0,                  0},
     /* TODO: I don't know what these do, or if they should be accessible... */
-    {"damage_round_tag", FIELDTYPE_UINT32, offsetof(object, damage_round_tag), 0, 0},
-    {"update_tag",   FIELDTYPE_UINT32, offsetof(object, update_tag), 0, 0},
-
+    {"damage_round_tag",      FIELDTYPE_UINT32,    offsetof(object, damage_round_tag),          0,                  0},
+    {"update_tag",            FIELDTYPE_UINT32,    offsetof(object, update_tag),                0,                  0},
     /* TODO: make enemy & owner settable (requires HOOKS for set_npc_enemy() and set_owner()) */
-    {"enemy",        FIELDTYPE_OBJECTREF, offsetof(object, enemy), FIELDFLAG_READONLY, offsetof(object, enemy_count)},
-    // TODO: remove    {"attacked_by",  FIELDTYPE_OBJECTREF, offsetof(object, attacked_by), FIELDFLAG_READONLY, offsetof(object, attacked_by_count)},
-    {"owner",        FIELDTYPE_OBJECTREF, offsetof(object, owner), FIELDFLAG_READONLY, offsetof(object, owner_count)},
-    {"x",            FIELDTYPE_SINT16, offsetof(object, x), FIELDFLAG_READONLY, 0},
-    {"y",            FIELDTYPE_SINT16, offsetof(object, y), FIELDFLAG_READONLY, 0},
-    {"last_damage",  FIELDTYPE_UINT16, offsetof(object, last_damage), 0, 0},
-    {"terrain_type", FIELDTYPE_UINT16, offsetof(object, terrain_type), 0, 0},
-    {"terrain_flag", FIELDTYPE_UINT16, offsetof(object, terrain_flag), 0, 0},
-    {"material",     FIELDTYPE_UINT16, offsetof(object, material), 0, 0},
-    {"material_real",FIELDTYPE_SINT16, offsetof(object, material_real), 0, 0},
-    {"last_heal",    FIELDTYPE_SINT16, offsetof(object, last_heal), 0, 0},
+    {"enemy",                 FIELDTYPE_OBJECTREF, offsetof(object, enemy),                     FIELDFLAG_READONLY, offsetof(object, enemy_count)},
+    /* TODO: remove    {"attacked_by",  FIELDTYPE_OBJECTREF, offsetof(object, attacked_by), FIELDFLAG_READONLY, offsetof(object, attacked_by_count)}, */
+    {"owner",                 FIELDTYPE_OBJECTREF, offsetof(object, owner),                     FIELDFLAG_READONLY, offsetof(object, owner_count)},
+    {"x",                     FIELDTYPE_SINT16,    offsetof(object, x),                         FIELDFLAG_READONLY, 0},
+    {"y",                     FIELDTYPE_SINT16,    offsetof(object, y),                         FIELDFLAG_READONLY, 0},
+    {"last_damage",           FIELDTYPE_UINT16,    offsetof(object, last_damage),               0,                  0},
+    {"terrain_type",          FIELDTYPE_UINT16,    offsetof(object, terrain_type),              0,                  0},
+    {"terrain_flag",          FIELDTYPE_UINT16,    offsetof(object, terrain_flag),              0,                  0},
+    {"material",              FIELDTYPE_UINT16,    offsetof(object, material),                  0,                  0},
+    {"material_real",         FIELDTYPE_SINT16,    offsetof(object, material_real),             0,                  0},
+    {"last_heal",             FIELDTYPE_SINT16,    offsetof(object, last_heal),                 0,                  0},
     /* TODO: Limit to max 16000 ? */
-    {"last_sp",      FIELDTYPE_SINT16, offsetof(object, last_sp), 0, 0},
+    {"last_sp",               FIELDTYPE_SINT16,    offsetof(object, last_sp),                   0,                  0},
     /* TODO: Limit to max 16000 ? */
-    {"last_grace",   FIELDTYPE_SINT16, offsetof(object, last_grace), 0, 0},
-    {"last_eat",     FIELDTYPE_SINT16, offsetof(object, last_eat), 0, 0},
+    {"last_grace",            FIELDTYPE_SINT16,    offsetof(object, last_grace),                0,                  0},
+    {"last_eat",              FIELDTYPE_SINT16,    offsetof(object, last_eat),                  0,                  0},
     /* TODO: will require animation lookup function. How about face, is that a special anim? */
-    {"magic",        FIELDTYPE_SINT8 , offsetof(object, magic), 0, 0},
-    {"state",        FIELDTYPE_UINT8 , offsetof(object, state), 0, 0},
-    {"level",        FIELDTYPE_SINT8 , offsetof(object, level), FIELDFLAG_PLAYER_READONLY, 0},
-    {"direction",    FIELDTYPE_SINT8 , offsetof(object, direction), 0, 0},
-    {"facing",       FIELDTYPE_SINT8 , offsetof(object, facing), 0, 0},
-    {"quick_pos",    FIELDTYPE_UINT8 , offsetof(object, quick_pos), 0, 0},
-    {"type",         FIELDTYPE_UINT8 , offsetof(object, type), FIELDFLAG_READONLY, 0},
-    {"sub_type_1",   FIELDTYPE_UINT8 , offsetof(object, sub_type1), 0, 0},
-    {"item_quality", FIELDTYPE_UINT8 , offsetof(object, item_quality), 0, 0},
-    {"item_condition", FIELDTYPE_UINT8 , offsetof(object, item_condition), 0, 0},
-    {"item_race",    FIELDTYPE_UINT8 , offsetof(object, item_race), 0, 0},
-    {"item_level",   FIELDTYPE_UINT8 , offsetof(object, item_level), 0, 0},
-    {"item_skill",   FIELDTYPE_UINT8 , offsetof(object, item_skill), 0, 0},
-    {"glow_radius",  FIELDTYPE_SINT8 , offsetof(object, glow_radius), 0, 0},
-    {"anim_enemy_dir", FIELDTYPE_SINT8 , offsetof(object, anim_enemy_dir), 0, 0},
-    {"anim_moving_dir", FIELDTYPE_SINT8 , offsetof(object, anim_moving_dir), 0, 0},
-    {"anim_enemy_dir_last", FIELDTYPE_SINT8 , offsetof(object, anim_enemy_dir_last), 0, 0},
-    {"anim_moving_dir_last", FIELDTYPE_SINT8 , offsetof(object, anim_moving_dir_last), 0, 0},
-    {"anim_last_facing", FIELDTYPE_SINT8 , offsetof(object, anim_last_facing), 0, 0},
-    {"anim_last_facing_last", FIELDTYPE_SINT8 , offsetof(object, anim_last_facing_last), 0, 0},
-    {"anim_speed",   FIELDTYPE_UINT8 , offsetof(object, anim_speed), 0, 0},
-    {"last_anim",    FIELDTYPE_UINT8 , offsetof(object, last_anim), 0, 0},
-    {"run_away",     FIELDTYPE_UINT8 , offsetof(object, run_away), 0, 0},
-    {"hide",         FIELDTYPE_UINT8 , offsetof(object, hide), 0, 0},
-    {"layer",        FIELDTYPE_UINT8 , offsetof(object, layer), 0, 0},
-
-    /*
-    "RESIST,       FIELDTYPE_SINT8 , offsetof(object, anim_moving_dir), 0, 0},
-    "ATTACK,       FIELDTYPE_SINT8 , offsetof(object, anim_moving_dir), 0, 0},
-    "PROTECTION,   FIELDTYPE_SINT8 , offsetof(object, anim_moving_dir), 0, 0},
-    */
-
+    {"magic",                 FIELDTYPE_SINT8,     offsetof(object, magic),                     0,                  0},
+    {"state",                 FIELDTYPE_UINT8,     offsetof(object, state),                     0,                  0},
+    {"level",                 FIELDTYPE_SINT8,     offsetof(object, level),                     FIELDFLAG_PLAYER_READONLY, 0},
+    {"direction",             FIELDTYPE_SINT8,     offsetof(object, direction),                 0,                  0},
+    {"facing",                FIELDTYPE_SINT8,     offsetof(object, facing),                    0,                  0},
+    {"quick_pos",             FIELDTYPE_UINT8,     offsetof(object, quick_pos),                 0,                  0},
+    {"type",                  FIELDTYPE_UINT8,     offsetof(object, type),                      FIELDFLAG_READONLY, 0},
+    {"sub_type_1",            FIELDTYPE_UINT8,     offsetof(object, sub_type1),                 0,                  0},
+    {"item_quality",          FIELDTYPE_UINT8,     offsetof(object, item_quality),              0,                  0},
+    {"item_condition",        FIELDTYPE_UINT8,     offsetof(object, item_condition),            0,                  0},
+    {"item_race",             FIELDTYPE_UINT8,     offsetof(object, item_race),                 0,                  0},
+    {"item_level",            FIELDTYPE_UINT8,     offsetof(object, item_level),                0,                  0},
+    {"item_skill",            FIELDTYPE_UINT8,     offsetof(object, item_skill),                0,                  0},
+    {"glow_radius",           FIELDTYPE_SINT8,     offsetof(object, glow_radius),               0,                  0},
+    {"anim_enemy_dir",        FIELDTYPE_SINT8,     offsetof(object, anim_enemy_dir),            0,                  0},
+    {"anim_moving_dir",       FIELDTYPE_SINT8,     offsetof(object, anim_moving_dir),           0,                  0},
+    {"anim_enemy_dir_last",   FIELDTYPE_SINT8,     offsetof(object, anim_enemy_dir_last),       0,                  0},
+    {"anim_moving_dir_last",  FIELDTYPE_SINT8,     offsetof(object, anim_moving_dir_last),      0,                  0},
+    {"anim_last_facing",      FIELDTYPE_SINT8,     offsetof(object, anim_last_facing),          0,                  0},
+    {"anim_last_facing_last", FIELDTYPE_SINT8,     offsetof(object, anim_last_facing_last),     0,                  0},
+    {"anim_speed",            FIELDTYPE_UINT8,     offsetof(object, anim_speed),                0,                  0},
+    {"last_anim",             FIELDTYPE_UINT8,     offsetof(object, last_anim),                 0,                  0},
+    {"run_away",              FIELDTYPE_UINT8,     offsetof(object, run_away),                  0,                  0},
+    {"hide",                  FIELDTYPE_UINT8,     offsetof(object, hide),                      0,                  0},
+    {"layer",                 FIELDTYPE_UINT8,     offsetof(object, layer),                     0,                  0},
+    {"resist_impact",         FIELDTYPE_SINT8,     offsetof(object, resist[ATNR_PHYSICAL]),     FIELDFLAG_PLAYER_READONLY, 0},
+    {"resist_slash",          FIELDTYPE_SINT8,     offsetof(object, resist[ATNR_SLASH]),        FIELDFLAG_PLAYER_READONLY, 0},
+    {"resist_cleave",         FIELDTYPE_SINT8,     offsetof(object, resist[ATNR_CLEAVE]),       FIELDFLAG_PLAYER_READONLY, 0},
+    {"resist_pierce",         FIELDTYPE_SINT8,     offsetof(object, resist[ATNR_PIERCE]),       FIELDFLAG_PLAYER_READONLY, 0},
+    {"resist_fire",           FIELDTYPE_SINT8,     offsetof(object, resist[ATNR_FIRE]),         FIELDFLAG_PLAYER_READONLY, 0},
+    {"resist_cold",           FIELDTYPE_SINT8,     offsetof(object, resist[ATNR_COLD]),         FIELDFLAG_PLAYER_READONLY, 0},
+    {"resist_electricity",    FIELDTYPE_SINT8,     offsetof(object, resist[ATNR_ELECTRICITY]),  FIELDFLAG_PLAYER_READONLY, 0},
+    {"resist_poison",         FIELDTYPE_SINT8,     offsetof(object, resist[ATNR_POISON]),       FIELDFLAG_PLAYER_READONLY, 0},
+    {"resist_acid",           FIELDTYPE_SINT8,     offsetof(object, resist[ATNR_ACID]),         FIELDFLAG_PLAYER_READONLY, 0},
+    {"resist_sonic",          FIELDTYPE_SINT8,     offsetof(object, resist[ATNR_SONIC]),        FIELDFLAG_PLAYER_READONLY, 0},
+    {"resist_magic",          FIELDTYPE_SINT8,     offsetof(object, resist[ATNR_MAGIC]),        FIELDFLAG_PLAYER_READONLY, 0},
+    {"resist_psionic",        FIELDTYPE_SINT8,     offsetof(object, resist[ATNR_PSIONIC]),      FIELDFLAG_PLAYER_READONLY, 0},
+    {"resist_light",          FIELDTYPE_SINT8,     offsetof(object, resist[ATNR_LIGHT]),        FIELDFLAG_PLAYER_READONLY, 0},
+    {"resist_shadow",         FIELDTYPE_SINT8,     offsetof(object, resist[ATNR_SHADOW]),       FIELDFLAG_PLAYER_READONLY, 0},
+    {"resist_lifesteal",      FIELDTYPE_SINT8,     offsetof(object, resist[ATNR_LIFESTEAL]),    FIELDFLAG_PLAYER_READONLY, 0},
+    {"resist_aether",         FIELDTYPE_SINT8,     offsetof(object, resist[ATNR_AETHER]),       FIELDFLAG_PLAYER_READONLY, 0},
+    {"resist_nether",         FIELDTYPE_SINT8,     offsetof(object, resist[ATNR_NETHER]),       FIELDFLAG_PLAYER_READONLY, 0},
+    {"resist_chaos",          FIELDTYPE_SINT8,     offsetof(object, resist[ATNR_CHAOS]),        FIELDFLAG_PLAYER_READONLY, 0},
+    {"resist_death",          FIELDTYPE_SINT8,     offsetof(object, resist[ATNR_DEATH]),        FIELDFLAG_PLAYER_READONLY, 0},
+    {"resist_weaponmagic",    FIELDTYPE_SINT8,     offsetof(object, resist[ATNR_WEAPONMAGIC]),  FIELDFLAG_PLAYER_READONLY, 0},
+    {"resist_godpower",       FIELDTYPE_SINT8,     offsetof(object, resist[ATNR_GODPOWER]),     FIELDFLAG_PLAYER_READONLY, 0},
+    {"resist_drain",          FIELDTYPE_SINT8,     offsetof(object, resist[ATNR_DRAIN]),        FIELDFLAG_PLAYER_READONLY, 0},
+    {"resist_depletion",      FIELDTYPE_SINT8,     offsetof(object, resist[ATNR_DEPLETION]),    FIELDFLAG_PLAYER_READONLY, 0},
+    {"resist_corruption",     FIELDTYPE_SINT8,     offsetof(object, resist[ATNR_CORRUPTION]),   FIELDFLAG_PLAYER_READONLY, 0},
+    {"resist_countermagic",   FIELDTYPE_SINT8,     offsetof(object, resist[ATNR_COUNTERMAGIC]), FIELDFLAG_PLAYER_READONLY, 0},
+    {"resist_cancellation",   FIELDTYPE_SINT8,     offsetof(object, resist[ATNR_CANCELLATION]), FIELDFLAG_PLAYER_READONLY, 0},
+    {"resist_confusion",      FIELDTYPE_SINT8,     offsetof(object, resist[ATNR_CONFUSION]),    FIELDFLAG_PLAYER_READONLY, 0},
+    {"resist_fear",           FIELDTYPE_SINT8,     offsetof(object, resist[ATNR_FEAR]),         FIELDFLAG_PLAYER_READONLY, 0},
+    {"resist_slow",           FIELDTYPE_SINT8,     offsetof(object, resist[ATNR_SLOW]),         FIELDFLAG_PLAYER_READONLY, 0},
+    {"resist_paralyze",       FIELDTYPE_SINT8,     offsetof(object, resist[ATNR_PARALYZE]),     FIELDFLAG_PLAYER_READONLY, 0},
+    {"resist_snare",          FIELDTYPE_SINT8,     offsetof(object, resist[ATNR_SNARE]),        FIELDFLAG_PLAYER_READONLY, 0},
+    {"attack_impact",         FIELDTYPE_SINT8,     offsetof(object, attack[ATNR_PHYSICAL]),     FIELDFLAG_PLAYER_READONLY, 0},
+    {"attack_slash",          FIELDTYPE_SINT8,     offsetof(object, attack[ATNR_SLASH]),        FIELDFLAG_PLAYER_READONLY, 0},
+    {"attack_cleave",         FIELDTYPE_SINT8,     offsetof(object, attack[ATNR_CLEAVE]),       FIELDFLAG_PLAYER_READONLY, 0},
+    {"attack_pierce",         FIELDTYPE_SINT8,     offsetof(object, attack[ATNR_PIERCE]),       FIELDFLAG_PLAYER_READONLY, 0},
+    {"attack_fire",           FIELDTYPE_SINT8,     offsetof(object, attack[ATNR_FIRE]),         FIELDFLAG_PLAYER_READONLY, 0},
+    {"attack_cold",           FIELDTYPE_SINT8,     offsetof(object, attack[ATNR_COLD]),         FIELDFLAG_PLAYER_READONLY, 0},
+    {"attack_electricity",    FIELDTYPE_SINT8,     offsetof(object, attack[ATNR_ELECTRICITY]),  FIELDFLAG_PLAYER_READONLY, 0},
+    {"attack_poison",         FIELDTYPE_SINT8,     offsetof(object, attack[ATNR_POISON]),       FIELDFLAG_PLAYER_READONLY, 0},
+    {"attack_acid",           FIELDTYPE_SINT8,     offsetof(object, attack[ATNR_ACID]),         FIELDFLAG_PLAYER_READONLY, 0},
+    {"attack_sonic",          FIELDTYPE_SINT8,     offsetof(object, attack[ATNR_SONIC]),        FIELDFLAG_PLAYER_READONLY, 0},
+    {"attack_magic",          FIELDTYPE_SINT8,     offsetof(object, attack[ATNR_MAGIC]),        FIELDFLAG_PLAYER_READONLY, 0},
+    {"attack_psionic",        FIELDTYPE_SINT8,     offsetof(object, attack[ATNR_PSIONIC]),      FIELDFLAG_PLAYER_READONLY, 0},
+    {"attack_light",          FIELDTYPE_SINT8,     offsetof(object, attack[ATNR_LIGHT]),        FIELDFLAG_PLAYER_READONLY, 0},
+    {"attack_shadow",         FIELDTYPE_SINT8,     offsetof(object, attack[ATNR_SHADOW]),       FIELDFLAG_PLAYER_READONLY, 0},
+    {"attack_lifesteal",      FIELDTYPE_SINT8,     offsetof(object, attack[ATNR_LIFESTEAL]),    FIELDFLAG_PLAYER_READONLY, 0},
+    {"attack_aether",         FIELDTYPE_SINT8,     offsetof(object, attack[ATNR_AETHER]),       FIELDFLAG_PLAYER_READONLY, 0},
+    {"attack_nether",         FIELDTYPE_SINT8,     offsetof(object, attack[ATNR_NETHER]),       FIELDFLAG_PLAYER_READONLY, 0},
+    {"attack_chaos",          FIELDTYPE_SINT8,     offsetof(object, attack[ATNR_CHAOS]),        FIELDFLAG_PLAYER_READONLY, 0},
+    {"attack_death",          FIELDTYPE_SINT8,     offsetof(object, attack[ATNR_DEATH]),        FIELDFLAG_PLAYER_READONLY, 0},
+    {"attack_weaponmagic",    FIELDTYPE_SINT8,     offsetof(object, attack[ATNR_WEAPONMAGIC]),  FIELDFLAG_PLAYER_READONLY, 0},
+    {"attack_godpower",       FIELDTYPE_SINT8,     offsetof(object, attack[ATNR_GODPOWER]),     FIELDFLAG_PLAYER_READONLY, 0},
+    {"attack_drain",          FIELDTYPE_SINT8,     offsetof(object, attack[ATNR_DRAIN]),        FIELDFLAG_PLAYER_READONLY, 0},
+    {"attack_depletion",      FIELDTYPE_SINT8,     offsetof(object, attack[ATNR_DEPLETION]),    FIELDFLAG_PLAYER_READONLY, 0},
+    {"attack_corruption",     FIELDTYPE_SINT8,     offsetof(object, attack[ATNR_CORRUPTION]),   FIELDFLAG_PLAYER_READONLY, 0},
+    {"attack_countermagic",   FIELDTYPE_SINT8,     offsetof(object, attack[ATNR_COUNTERMAGIC]), FIELDFLAG_PLAYER_READONLY, 0},
+    {"attack_cancellation",   FIELDTYPE_SINT8,     offsetof(object, attack[ATNR_CANCELLATION]), FIELDFLAG_PLAYER_READONLY, 0},
+    {"attack_confusion",      FIELDTYPE_SINT8,     offsetof(object, attack[ATNR_CONFUSION]),    FIELDFLAG_PLAYER_READONLY, 0},
+    {"attack_fear",           FIELDTYPE_SINT8,     offsetof(object, attack[ATNR_FEAR]),         FIELDFLAG_PLAYER_READONLY, 0},
+    {"attack_slow",           FIELDTYPE_SINT8,     offsetof(object, attack[ATNR_SLOW]),         FIELDFLAG_PLAYER_READONLY, 0},
+    {"attack_paralyze",       FIELDTYPE_SINT8,     offsetof(object, attack[ATNR_PARALYZE]),     FIELDFLAG_PLAYER_READONLY, 0},
+    {"attack_snare",          FIELDTYPE_SINT8,     offsetof(object, attack[ATNR_SNARE]),        FIELDFLAG_PLAYER_READONLY, 0},
     /* TODO: -10.0 < speed < 10.0, also might want to call update_object_speed() */
-    {"speed",        FIELDTYPE_FLOAT, offsetof(object, speed), FIELDFLAG_PLAYER_READONLY, 0},
-    {"speed_left",   FIELDTYPE_FLOAT, offsetof(object, speed_left), 0, 0},
-    {"weapon_speed", FIELDTYPE_FLOAT, offsetof(object, weapon_speed), 0, 0},
-    {"weapon_speed_left", FIELDTYPE_FLOAT, offsetof(object, weapon_speed_left), 0, 0},
-
+    {"speed",                 FIELDTYPE_FLOAT,     offsetof(object, speed),                     FIELDFLAG_PLAYER_READONLY, 0},
+    {"speed_left",            FIELDTYPE_FLOAT,     offsetof(object, speed_left),                0,                  0},
+    {"weapon_speed",          FIELDTYPE_FLOAT,     offsetof(object, weapon_speed),              0,                  0},
+    {"weapon_speed_left",     FIELDTYPE_FLOAT,     offsetof(object, weapon_speed_left),         0,                  0},
     /* Stats */
-    {"experience",     FIELDTYPE_SINT32, offsetof(object, stats.exp), 0, 0},
-    {"hitpoints",      FIELDTYPE_SINT32, offsetof(object, stats.hp), 0, 0},
-    {"max_hitpoints",   FIELDTYPE_SINT32, offsetof(object, stats.maxhp), FIELDFLAG_PLAYER_READONLY, 0},
-    {"spellpoints",      FIELDTYPE_SINT16, offsetof(object, stats.sp), 0, 0},
-    {"max_spellpoints",   FIELDTYPE_SINT16, offsetof(object, stats.maxsp), FIELDFLAG_PLAYER_READONLY, 0},
+    {"experience",            FIELDTYPE_SINT32,    offsetof(object, stats.exp),                 0,                  0},
+    {"hitpoints",             FIELDTYPE_SINT32,    offsetof(object, stats.hp),                  0,                  0},
+    {"max_hitpoints",         FIELDTYPE_SINT32,    offsetof(object, stats.maxhp),               FIELDFLAG_PLAYER_READONLY, 0},
+    {"spellpoints",           FIELDTYPE_SINT16,    offsetof(object, stats.sp),                  0,                  0},
+    {"max_spellpoints",       FIELDTYPE_SINT16,    offsetof(object, stats.maxsp),               FIELDFLAG_PLAYER_READONLY, 0},
     /* TODO: Limit to +- 16000 ? */
-    {"grace",   FIELDTYPE_SINT16, offsetof(object, stats.grace), 0, 0},
-    {"max_grace",FIELDTYPE_SINT16, offsetof(object, stats.maxgrace), FIELDFLAG_PLAYER_READONLY, 0},
+    {"grace",                 FIELDTYPE_SINT16,    offsetof(object, stats.grace),               0,                  0},
+    {"max_grace",             FIELDTYPE_SINT16,    offsetof(object, stats.maxgrace),            FIELDFLAG_PLAYER_READONLY, 0},
     /* TODO: Limit to max 999 (at least for players) ? */
-    {"food",    FIELDTYPE_SINT16, offsetof(object, stats.food), 0, 0},
+    {"food",                  FIELDTYPE_SINT16,    offsetof(object, stats.food),                0,                  0},
     /* TODO: Limit to 0 <= dam <= 120 ? */
-    {"damage",     FIELDTYPE_SINT16, offsetof(object, stats.dam), FIELDFLAG_PLAYER_READONLY, 0},
+    {"damage",                FIELDTYPE_SINT16,    offsetof(object, stats.dam),                 FIELDFLAG_PLAYER_READONLY, 0},
     /* TODO: Limit to +-120 */
-    {"weapon_class",      FIELDTYPE_SINT16, offsetof(object, stats.wc), FIELDFLAG_PLAYER_READONLY, 0},
+    {"weapon_class",          FIELDTYPE_SINT16,    offsetof(object, stats.wc),                  FIELDFLAG_READONLY, 0},
     /* TODO: Limit to +-120 */
-    {"armour_class",       FIELDTYPE_SINT16, offsetof(object, stats.ac),FIELDFLAG_PLAYER_READONLY, 0},
+    {"armour_class",          FIELDTYPE_SINT16,    offsetof(object, stats.ac),                  FIELDFLAG_READONLY, 0},
     /* TODO: Limit to +-30 (all  */
-    {"strength",     FIELDTYPE_SINT8, offsetof(object, stats.Str), FIELDFLAG_PLAYER_FIX, 0},
-    {"dexterity",     FIELDTYPE_SINT8, offsetof(object, stats.Dex), FIELDFLAG_PLAYER_FIX, 0},
-    {"constitution",     FIELDTYPE_SINT8, offsetof(object, stats.Con), FIELDFLAG_PLAYER_FIX, 0},
-    {"wisdom",     FIELDTYPE_SINT8, offsetof(object, stats.Wis), FIELDFLAG_PLAYER_FIX, 0},
-    {"charisma",     FIELDTYPE_SINT8, offsetof(object, stats.Cha), FIELDFLAG_PLAYER_FIX, 0},
-    {"intelligence",     FIELDTYPE_SINT8, offsetof(object, stats.Int), FIELDFLAG_PLAYER_FIX, 0},
-    {"power",     FIELDTYPE_SINT8, offsetof(object, stats.Pow), FIELDFLAG_PLAYER_FIX, 0},
-    {"thac0",     FIELDTYPE_SINT8, offsetof(object, stats.thac0), FIELDFLAG_PLAYER_READONLY, 0},
-    {"thacm",     FIELDTYPE_SINT8, offsetof(object, stats.thacm), FIELDFLAG_PLAYER_READONLY, 0},
+    {"strength",              FIELDTYPE_SINT8,     offsetof(object, stats.Str),                 FIELDFLAG_PLAYER_FIX, 0},
+    {"dexterity",             FIELDTYPE_SINT8,     offsetof(object, stats.Dex),                 FIELDFLAG_PLAYER_FIX, 0},
+    {"constitution",          FIELDTYPE_SINT8,     offsetof(object, stats.Con),                 FIELDFLAG_PLAYER_FIX, 0},
+    {"wisdom",                FIELDTYPE_SINT8,     offsetof(object, stats.Wis),                 FIELDFLAG_PLAYER_FIX, 0},
+    {"charisma",              FIELDTYPE_SINT8,     offsetof(object, stats.Cha),                 FIELDFLAG_PLAYER_FIX, 0},
+    {"intelligence",          FIELDTYPE_SINT8,     offsetof(object, stats.Int),                 FIELDFLAG_PLAYER_FIX, 0},
+    {"power",                 FIELDTYPE_SINT8,     offsetof(object, stats.Pow),                 FIELDFLAG_PLAYER_FIX, 0},
+    {"thac0",                 FIELDTYPE_SINT8,     offsetof(object, stats.thac0),               FIELDFLAG_PLAYER_READONLY, 0},
+    {"thacm",                 FIELDTYPE_SINT8,     offsetof(object, stats.thacm),               FIELDFLAG_PLAYER_READONLY, 0},
+
     {NULL, 0, 0, 0, 0}
 };
 
@@ -262,38 +311,291 @@ struct attribute_decl       GameObject_attributes[]         =
  * If an entry begins with "?", that flag is read-only
  * Yes, this is almost exactly a repeat from loader.c
  */
-static const char          *GameObject_flags[NUM_FLAGS + 1 + 1] =
+static const char *GameObject_flags[NUM_FLAGS + 1 + 1] =
 {
-    "f_sleep", "f_confused", "?f_paralyzed", "f_scared", "f_is_eating", "f_is_invisible", "f_is_ethereal", "f_is_good",
-    "f_no_pick", "f_walk_on", "f_no_pass",     /* 10 */
-    "f_is_animated", NULL, "f_flying", "f_monster", "f_friendly", "?f_is_removed", "f_been_applied",
-	NULL /* internal flag: HAS_MOVED */, "f_treasure", "f_is_neutral", /* 20 */
-    "f_see_invisible", "f_can_roll", "f_generator", "f_is_turnable", "f_walk_off", "f_fly_on", "f_fly_off",
-    "f_is_used_up", "f_identified", "f_reflecting",    /* 30 */
-    "f_changing", "f_splitting", "f_hitback", "f_startequip", "f_blocksview", "f_undead", "f_fix_player", "f_unaggressive",
-    "f_reflect_missile", "f_reflect_spell",             /* 40 */
-    "f_no_magic", "f_no_fix_player", "f_is_evil", "f_tear_down", "f_run_away", "f_pass_thru", "f_can_pass_thru",
-    "?f_feared", "f_is_blind", "f_no_drop", /* 50 */
-    "f_reg_f", "f_has_ready_spell", "f_surrendered", "?f_rooted", "?f_slowed",
-    "f_can_use_armour", "f_can_use_weapon", "f_can_use_ring", NULL /* unused */, "f_has_ready_bow",       /* 60 */
-    "f_xrays", "?f_no_apply", "f_can_stack", "f_lifesave", "f_is_magical", "f_alive", "f_stand_still", "f_random_move",
-    "f_only_attack", "?f_wiz", /* 70 */
-    "f_stealth", "?f_wizpass", "?f_is_linked", "f_cursed", "f_damned", "f_see_anywhere", "f_known_magical", "f_known_cursed",
-    "f_can_use_skill", "f_is_thrown",               /* 80 */
-    NULL, NULL, "f_is_male", "f_is_female", "f_applied", "f_inv_locked", "f_is_wooded",
-    "f_is_hilly", "f_levitate", "f_has_ready_weapon",        /* 90 */
-    "f_no_skill_ident", "f_use_dmg_info", "f_can_see_in_dark", "f_is_cauldron", "f_is_dust", "f_no_steal",
-    "f_one_hit", NULL /* debug flag CLIENT_SENT */, "f_berserk", "f_no_attack",   /* 100 */
-    "f_invulnerable", "f_quest_item", "f_is_traped", "f_proof_phy", "f_proof_ele", /* 105 */
-    "f_proof_mag", "f_proof_sph", "f_no_inv", NULL, "f_sys_object", /* 110 */
-    NULL, "f_unpaid", "f_is_aged", "f_make_invisible", "f_make_ethereal", "f_is_player", "f_is_named",
-    "?f_spawn_mob_flag", "f_no_teleport", "f_corpse", "f_corpse_forced", "f_player_only", "f_no_cleric",
-    "f_one_drop", "f_cursed_perm", "f_damned_perm", "f_door_closed", "f_was_reflected", "f_is_missile",
-    "f_can_reflect_missile", "f_can_reflect_spell", "f_is_assassin", "f_auto_apply", "?f_no_save",
-    "f_pass_ethereal","f_ego", "f_egobound", "f_egoclan", "f_egolock",
+    "f_sleep",
+    "f_confused",
+    "?f_paralyzed",
+    "f_scared",
+    "f_is_eating",
+    "f_is_invisible",
+    "f_is_ethereal",
+    "f_is_good",
+    "f_no_pick",
+    "f_walk_on",
 
-    FLAGLIST_END_MARKER /* Marks the end of the list */
+    /* 10 */
+    "f_no_pass",
+    "f_is_animated",
+    NULL,
+    "f_flying",
+    "f_monster",
+    "f_friendly",
+    "?f_is_removed",
+    "f_been_applied",
+    /* internal flag: HAS_MOVED */ NULL,
+    "f_treasure",
+
+    /* 20 */
+    "f_is_neutral",
+    "f_see_invisible",
+    "f_can_roll",
+    "f_generator",
+    "f_is_turnable",
+    "f_walk_off",
+    "f_fly_on",
+    "f_fly_off",
+    "f_is_used_up",
+    "f_identified",
+
+    /* 30 */
+    "f_reflecting",
+    "f_changing",
+    "f_splitting",
+    "f_hitback",
+    "f_startequip",
+    "f_blocksview",
+    "f_undead",
+    "f_fix_player",
+    "f_unaggressive",
+    "f_reflect_missile",
+
+    /* 40 */
+    "f_reflect_spell",
+    "f_no_magic",
+    "f_no_fix_player",
+    "f_is_evil",
+    "f_tear_down",
+    "f_run_away",
+    "f_pass_thru",
+    "f_can_pass_thru",
+    "?f_feared",
+    "f_is_blind",
+
+    /* 50 */
+    "f_no_drop",
+    "f_reg_f",
+    "f_has_ready_spell",
+    "f_surrendered",
+    "?f_rooted",
+    "?f_slowed",
+    "f_can_use_armour",
+    "f_can_use_weapon",
+    "f_can_use_ring",
+    /* unused */ NULL,
+
+    /* 60 */
+    "f_has_ready_bow",
+    "f_xrays",
+    "?f_no_apply",
+    "f_can_stack",
+    "f_lifesave",
+    "f_is_magical",
+    "f_alive",
+    "f_stand_still",
+    "f_random_move",
+    "f_only_attack",
+
+    /* 70 */
+    "?f_wiz",
+    "f_stealth",
+    "?f_wizpass",
+    "?f_is_linked",
+    "f_cursed",
+    "f_damned",
+    "f_see_anywhere",
+    "f_known_magical",
+    "f_known_cursed",
+    "f_can_use_skill",
+
+    /* 80 */
+    "f_is_thrown",
+    NULL,
+    NULL,
+    "f_is_male",
+    "f_is_female",
+    "f_applied",
+    "f_inv_locked",
+    "f_is_wooded",
+    "f_is_hilly",
+    "f_levitate",
+
+    /* 90 */
+    "f_has_ready_weapon",
+    "f_no_skill_ident",
+    "f_use_dmg_info",
+    "f_can_see_in_dark",
+    "f_is_cauldron",
+    "f_is_dust",
+    "f_no_steal",
+    "f_one_hit",
+     /* debug flag CLIENT_SENT */ NULL,
+    "f_berserk",
+
+    /* 100 */
+    "f_no_attack",
+    "f_invulnerable",
+    "f_quest_item",
+    "f_is_traped",
+    "f_proof_phy",
+    "f_proof_ele",
+    "f_proof_mag",
+    "f_proof_sph",
+    "f_no_inv",
+    NULL,
+
+    /* 110 */
+    "f_sys_object",
+    NULL,
+    "f_unpaid",
+    "f_is_aged",
+    "f_make_invisible",
+    "f_make_ethereal",
+    "f_is_player",
+    "f_is_named",
+    "?f_spawn_mob_flag",
+    "f_no_teleport",
+
+    /* 120 */
+    "f_corpse",
+    "f_corpse_forced",
+    "f_player_only",
+    "f_no_cleric",
+    "f_one_drop",
+    "f_cursed_perm",
+    "f_damned_perm",
+    "f_door_closed",
+    "f_was_reflected",
+    "f_is_missile",
+
+    /* 130 */
+    "f_can_reflect_missile",
+    "f_can_reflect_spell",
+    "f_is_assassin",
+    "f_auto_apply",
+    "?f_no_save",
+    "f_pass_ethereal",
+    "f_ego",
+    "f_egobound",
+    "f_egoclan",
+    "f_egolock",
+
+    FLAGLIST_END_MARKER
 };
+
+/* This gets called before and after an attribute has been set in an object */
+static int GameObject_setAttribute(lua_State *L, lua_object *obj, struct attribute_decl *attrib, int before)
+{
+    object *who = obj->data.object;
+
+#if 0
+    /* Pre-setting hook -- is this necessary? */
+    if (before)
+        ;
+#endif
+
+    /* update player inv when needed */
+    hooks->esrv_send_item(hooks->is_player_inv(who), who);
+
+    /* Special handling for some player stuff */
+    if (who->type == PLAYER)
+    {
+        if (attrib->offset == offsetof(object, stats.Int))
+            CONTR(who)->orig_stats.Int = (sint8) lua_tonumber(L, -1);
+        else if (attrib->offset == offsetof(object, stats.Str))
+            CONTR(who)->orig_stats.Str = (sint8) lua_tonumber(L, -1);
+        else if (attrib->offset == offsetof(object, stats.Cha))
+            CONTR(who)->orig_stats.Cha = (sint8) lua_tonumber(L, -1);
+        else if (attrib->offset == offsetof(object, stats.Wis))
+            CONTR(who)->orig_stats.Wis = (sint8) lua_tonumber(L, -1);
+        else if (attrib->offset == offsetof(object, stats.Dex))
+            CONTR(who)->orig_stats.Dex = (sint8) lua_tonumber(L, -1);
+        else if (attrib->offset == offsetof(object, stats.Con))
+            CONTR(who)->orig_stats.Con = (sint8) lua_tonumber(L, -1);
+        else if (attrib->offset == offsetof(object, stats.Pow))
+            CONTR(who)->orig_stats.Pow = (sint8) lua_tonumber(L, -1);
+
+        if (attrib->flags & FIELDFLAG_PLAYER_FIX)
+            hooks->FIX_PLAYER(who, "LUA - set attribute");
+    }
+
+    return 0;
+}
+
+/* value is on top of stack */
+static int GameObject_setFlag(lua_State *L, lua_object *obj, uint32 flagno)
+{
+    int     value;
+
+    if (lua_isnumber(L, -1))
+        value = (int) lua_tonumber(L, -1);
+    else
+        value = lua_toboolean(L, -1);
+
+    if (value)
+        SET_FLAG(obj->data.object, flagno);
+    else
+        CLEAR_FLAG(obj->data.object, flagno);
+
+    hooks->esrv_send_item(hooks->is_player_inv(obj->data.object), obj->data.object);
+
+    /* TODO: if gender changed:
+    if()
+       CONTR(WHO)->socket.ext_title_flag = 1; * demand update to client */
+
+    return 0;
+}
+
+/* pushes flag on top of stack */
+static int GameObject_getFlag(lua_State *L, lua_object *obj, uint32 flagno)
+{
+    lua_pushboolean(L, QUERY_FLAG(obj->data.object, flagno));
+    return 1;
+}
+
+/* toString method for GameObjects */
+static int GameObject_toString(lua_State *L)
+{
+    lua_object *obj = lua_touserdata(L, 1);
+
+    if (obj && obj->class->type == LUATYPE_OBJECT)
+        lua_pushfstring(L, "%s [%d] ", STRING_OBJ_NAME(obj->data.object), obj->data.object->count);
+    else
+        luaL_error(L, "Not an object");
+
+    return 1;
+}
+
+/* Tests if an object is valid */
+static int GameObject_isValid(lua_State *L, lua_object *obj)
+{
+    return obj->data.object->count == obj->tag;
+}
+
+lua_class GameObject  =
+{
+    LUATYPE_OBJECT,
+    "GameObject",
+    0,
+    GameObject_toString,
+    GameObject_attributes,
+    GameObject_methods,
+    NULL,
+    GameObject_flags,
+    GameObject_getFlag,
+    GameObject_setFlag,
+    GameObject_setAttribute,
+    GameObject_isValid,
+    0
+};
+
+int GameObject_init(lua_State *L)
+{
+    init_class(L, &GameObject);
+
+    return 0;
+}
+
 
 /****************************************************************************/
 /*                          GameObject methods                              */
@@ -3474,116 +3776,6 @@ static int GameObject_GetUnmodifiedAttribute(GameObject* whoptr, PyObject* args)
 }
 
 #endif
-
-/****************************************************************************/
-/* Lua object management code                                               */
-/****************************************************************************/
-
-/* This gets called before and after an attribute has been set in an object */
-static int GameObject_setAttribute(lua_State *L, lua_object *obj, struct attribute_decl *attrib, int before)
-{
-    object *who = obj->data.object;
-
-    /* Pre-setting hook */
-    if (before)
-    {
-        if (who->type == PLAYER && attrib->flags & FIELDFLAG_PLAYER_READONLY)
-            luaL_error(L, "attribute %s is readonly on players", attrib->name);
-        return 0;
-    }
-
-    /* update player inv when needed */
-    hooks->esrv_send_item(hooks->is_player_inv(who), who);
-
-    /* Special handling for some player stuff */
-    if (who->type == PLAYER)
-    {
-        if (attrib->offset == offsetof(object, stats.Int))
-            CONTR(who)->orig_stats.Int = (sint8) lua_tonumber(L, -1);
-        else if (attrib->offset == offsetof(object, stats.Str))
-            CONTR(who)->orig_stats.Str = (sint8) lua_tonumber(L, -1);
-        else if (attrib->offset == offsetof(object, stats.Cha))
-            CONTR(who)->orig_stats.Cha = (sint8) lua_tonumber(L, -1);
-        else if (attrib->offset == offsetof(object, stats.Wis))
-            CONTR(who)->orig_stats.Wis = (sint8) lua_tonumber(L, -1);
-        else if (attrib->offset == offsetof(object, stats.Dex))
-            CONTR(who)->orig_stats.Dex = (sint8) lua_tonumber(L, -1);
-        else if (attrib->offset == offsetof(object, stats.Con))
-            CONTR(who)->orig_stats.Con = (sint8) lua_tonumber(L, -1);
-        else if (attrib->offset == offsetof(object, stats.Pow))
-            CONTR(who)->orig_stats.Pow = (sint8) lua_tonumber(L, -1);
-
-        if (attrib->flags & FIELDFLAG_PLAYER_FIX)
-            hooks->FIX_PLAYER(who, "LUA - set attribute");
-    }
-
-    return 0;
-}
-
-/* value is on top of stack */
-static int GameObject_setFlag(lua_State *L, lua_object *obj, uint32 flagno)
-{
-    int     value;
-
-    if (lua_isnumber(L, -1))
-        value = (int) lua_tonumber(L, -1);
-    else
-        value = lua_toboolean(L, -1);
-
-    if (value)
-        SET_FLAG(obj->data.object, flagno);
-    else
-        CLEAR_FLAG(obj->data.object, flagno);
-
-    hooks->esrv_send_item(hooks->is_player_inv(obj->data.object), obj->data.object);
-
-    /* TODO: if gender changed:
-    if()
-       CONTR(WHO)->socket.ext_title_flag = 1; * demand update to client */
-
-    return 0;
-}
-
-/* pushes flag on top of stack */
-static int GameObject_getFlag(lua_State *L, lua_object *obj, uint32 flagno)
-{
-    lua_pushboolean(L, QUERY_FLAG(obj->data.object, flagno));
-    return 1;
-}
-
-/* toString method for GameObjects */
-static int GameObject_toString(lua_State *L)
-{
-    lua_object *obj = lua_touserdata(L, 1);
-
-    if (obj && obj->class->type == LUATYPE_OBJECT)
-        lua_pushfstring(L, "[%s \"%s\"] ", STRING_OBJ_ARCH_NAME(obj->data.object), STRING_OBJ_NAME(obj->data.object));
-    else
-        luaL_error(L, "Not an object");
-
-    return 1;
-}
-
-/* Tests if an object is valid */
-static int GameObject_isValid(lua_State *L, lua_object *obj)
-{
-    return obj->data.object->count == obj->tag;
-}
-
-lua_class   GameObject  =
-{
-    LUATYPE_OBJECT, "GameObject", 0, GameObject_toString, GameObject_attributes, GameObject_methods, NULL,
-    GameObject_flags,
-    GameObject_getFlag, GameObject_setFlag, GameObject_setAttribute,
-    GameObject_isValid, 0
-};
-
-int GameObject_init(lua_State *L)
-{
-    init_class(L, &GameObject);
-
-    return 0;
-}
 
 /******************
  * Old, leftover stuff. Will clean up later...
