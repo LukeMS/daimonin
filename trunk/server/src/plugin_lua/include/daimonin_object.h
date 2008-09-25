@@ -77,6 +77,7 @@ static int  GameObject_GetFace(lua_State *L);
 static int  GameObject_GetGender(lua_State *L);
 static int  GameObject_GetGmasterMode(lua_State *L);
 static int  GameObject_GetGod(lua_State *L);
+static int  GameObject_GetGroup(lua_State *L);
 static int  GameObject_GetGuild(lua_State *L);
 static int  GameObject_GetInvAnimation(lua_State *L);
 static int  GameObject_GetInvFace(lua_State *L);

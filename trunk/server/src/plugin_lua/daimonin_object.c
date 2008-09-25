@@ -76,6 +76,7 @@ static struct method_decl GameObject_methods[] =
     {"GetGender",              (lua_CFunction) GameObject_GetGender},
     {"GetGmasterMode",         (lua_CFunction) GameObject_GetGmasterMode},
     {"GetGod",                 (lua_CFunction) GameObject_GetGod},
+    {"GetGroup",               (lua_CFunction) GameObject_GetGroup},
     {"GetGuild",               (lua_CFunction) GameObject_GetGuild},
     {"GetInvAnimation",        (lua_CFunction) GameObject_GetInvAnimation},
     {"GetInvFace",             (lua_CFunction) GameObject_GetInvFace},
@@ -3731,6 +3732,47 @@ static int GameObject_GetPlayerWeightLimit(lua_State *L)
         luaL_error(L, "GetPlayerWeightLimit() can only be called on a legal player object.");
 
     lua_pushnumber(L, CONTR(WHO)->weight_limit);
+    return 1;
+}
+
+/*****************************************************************************/
+/* Name   : GameObject_GetGroup                                              */
+/* Lua    : object:GetGroup()                                                */
+/* Info   : Only works for player objects. Other types generate an error.    */
+/*          The function takes no arguments.                                 */
+/*          If the player is in a group, the return is a table with numerical*/
+/*          where [1] is the leader and [2] onwards are the other members.   */
+/*          Otherwise, the return is nil.                                    */
+/* Status : Untested                                                         */
+/* TODO   : Much.                                                            */
+/*****************************************************************************/
+static int GameObject_GetGroup(lua_State *L)
+{
+    lua_object *self;
+    object     *member,
+               *leader;
+    int         nrof;
+
+    get_lua_args(L, "O", &self);
+
+    /* Only players can be in groups */
+    if (WHO->type != PLAYER || CONTR(WHO) == NULL)
+        return luaL_error(L, "GetGroup() can only be called on a player!");
+
+    /* No leader means no group. */
+    if (!(leader = CONTR(WHO)->group_leader))
+    {
+        lua_pushnil(L);
+        return 1;
+    }
+
+    lua_newtable(L);
+    for (member = leader, nrof = CONTR(leader)->group_nrof; member && nrof > 0;  member = CONTR(member)->group_next, nrof--)
+    {
+        push_object(L, &GameObject, member);
+        lua_rawset(L, -2);
+    }
+
     return 1;
 }
 
