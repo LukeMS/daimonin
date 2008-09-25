@@ -237,7 +237,7 @@ int check_button_down(object *tmp)
         tot = 0;
         for (ab = GET_BOTTOM_MAP_OB(tmp); ab != NULL; ab = ab->above)
         {
-            if (ab != tmp && (fly ? QUERY_FLAG(ab, FLAG_FLYING) : move))
+            if (ab != tmp && (IS_AIRBORNE(ab) ? fly : move))
                 tot += ab->weight * (ab->nrof ? ab->nrof : 1) + ab->carrying;
         }
         tmp->weight_limit = (tot >= tmp->weight) ? 1 : 0;
@@ -253,7 +253,7 @@ int check_button_down(object *tmp)
         {
             head = ab->head ? ab->head : ab;
             if (ab != tmp
-             && (fly ? QUERY_FLAG(ab, FLAG_FLYING) : move)
+             && (IS_AIRBORNE(ab) ? fly : move)
              && (head->race == tmp->slaying || (tmp->slaying == shstr_cons.player && head->type == PLAYER)))
                 tmp->weight_limit = 1;
         }
@@ -350,7 +350,7 @@ void update_buttons(mapstruct *m)
 
                     for (ab = GET_BOTTOM_MAP_OB(tmp); ab != NULL; ab = ab->above)
                     {
-                        if (ab != tmp && (fly ? QUERY_FLAG(ab, FLAG_FLYING) : move))
+                        if (ab != tmp && (IS_AIRBORNE(ab) ? fly : move))
                             check_inv(ab, tmp);
                     }
                     break;
@@ -548,7 +548,7 @@ int check_trigger(object *op, object *cause, object *originator)
               if (cause)
               {
                   for (tmp = GET_BOTTOM_MAP_OB(op); tmp; tmp = tmp->above)
-                      if ((!QUERY_FLAG(tmp, FLAG_FLYING)&&!QUERY_FLAG(tmp, FLAG_LEVITATE)))
+                      if (!IS_AIRBORNE(tmp))
                           tot += tmp->weight * (tmp->nrof ? tmp->nrof : 1) + tmp->carrying;
                   if (tot >= op->weight)
                       push = 1;
@@ -570,7 +570,7 @@ int check_trigger(object *op, object *cause, object *originator)
               for (tmp = GET_BOTTOM_MAP_OB(op); tmp; tmp = tmp->above)
               {
                   object   *head    = tmp->head ? tmp->head : tmp;
-                  if(((!QUERY_FLAG(head, FLAG_FLYING)&&!QUERY_FLAG(head, FLAG_LEVITATE)) || QUERY_FLAG(op, FLAG_FLY_ON))
+                  if((!IS_AIRBORNE(head) || QUERY_FLAG(op, FLAG_FLY_ON))
                    && (head->race == op->slaying || (op->slaying == shstr_cons.player && head->type == PLAYER))
                    && tmp != op)
                   {

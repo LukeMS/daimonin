@@ -101,10 +101,8 @@ static inline int adj_attackroll(object *hitter, object *target, int adjust)
         adjust += adjust/10; /* + 10% */
 
     /* if we attack at a different 'altitude' its harder - remove 10% */
-    if (QUERY_FLAG(attacker, FLAG_FLYING) != QUERY_FLAG(target, FLAG_FLYING))
+    if (IS_AIRBORNE(attacker) != IS_AIRBORNE(target))
         adjust -= adjust/10;
-    else if (QUERY_FLAG(attacker, FLAG_LEVITATE) != QUERY_FLAG(target, FLAG_LEVITATE))
-    adjust -= adjust/10;
 
     return adjust;
 }

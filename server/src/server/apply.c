@@ -1427,17 +1427,15 @@ void move_apply(object *const trap_obj, object *const victim, object *const orig
               {
                   sint32    tot;
                   for (ab = trap->above,tot = 0; ab != NULL; ab = ab->above)
-                      if (!QUERY_FLAG(ab, FLAG_FLYING) && !QUERY_FLAG(ab, FLAG_FLYING))
-                      {
+                      if (!IS_AIRBORNE(ab))
                           tot += WEIGHT(ab);
-                      }
                   if (!(trap->weight_limit = (tot > trap->weight) ? 1 : 0))
                       goto leave;
                   SET_ANIMATION(trap, (NUM_ANIMATIONS(trap) / NUM_FACINGS(trap)) * trap->direction + trap->weight_limit);
                   update_object(trap, UP_OBJ_FACE);
               }
               for (ab = trap->above, max = 100, sound_was_played = 0;
-                   --max && ab && (!QUERY_FLAG(ab, FLAG_FLYING)&&!QUERY_FLAG(ab, FLAG_LEVITATE));
+                   --max && ab && !IS_AIRBORNE(ab);
                    ab = ab->above)
               {
                   if (!sound_was_played)
@@ -2368,14 +2366,13 @@ int player_apply(object *pl, object *op, int aflag, int quiet)
 {
     int tmp;
 
-    if (op->env == NULL && (QUERY_FLAG(pl, FLAG_FLYING) || QUERY_FLAG(pl, FLAG_LEVITATE)))
-    {
         /* player is flying and applying object not in inventory */
-        if (!QUERY_FLAG(pl, FLAG_WIZ) && !QUERY_FLAG(op, FLAG_FLYING) && !QUERY_FLAG(op, FLAG_LEVITATE) && !QUERY_FLAG(op, FLAG_FLY_ON))
-        {
-            new_draw_info(NDI_UNIQUE, 0, pl, "But you are floating high " "above the ground!");
-            return 0;
-        }
+    if (op->env == NULL &&
+        CONTR(pl)->gmaster_mode != GMASTER_MODE_DM &&
+        (IS_AIRBORNE(pl) && (!IS_AIRBORNE(op) || !QUERY_FLAG(op, FLAG_FLY_ON))))
+    {
+        new_draw_info(NDI_UNIQUE, 0, pl, "But you are floating high above the ground!");
+        return 0;
     }
 
     /* skip not needed fix_player() calls for trivial action */

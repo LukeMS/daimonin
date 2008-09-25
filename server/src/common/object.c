@@ -2453,8 +2453,7 @@ int check_walk_on(object *const op, object *const originator, int flags)
     if (QUERY_FLAG(op, FLAG_NO_APPLY))
         return 0;
 
-    fly = (QUERY_FLAG(op, FLAG_FLYING)|QUERY_FLAG(op, FLAG_LEVITATE));
-    if (fly)
+    if ((fly = IS_AIRBORNE(op)))
         flags |= MOVE_APPLY_FLY_ON;
     else
         flags |= MOVE_APPLY_WALK_ON;
@@ -2531,8 +2530,7 @@ int check_walk_off(object *op, object *originator, int flags)
         return CHECK_WALK_OK;
 
     tag = op->count;
-    fly = (QUERY_FLAG(op, FLAG_FLYING)|QUERY_FLAG(op, FLAG_LEVITATE));
-    if (fly)
+    if ((fly = IS_AIRBORNE(op)))
         flags |= MOVE_APPLY_FLY_OFF;
     else
         flags |= MOVE_APPLY_WALK_OFF;
