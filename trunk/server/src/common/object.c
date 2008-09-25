@@ -2030,47 +2030,29 @@ object *insert_ob_in_map(object *const op, mapstruct *m, object *const originato
      */
     if (!(flag & INS_NO_WALK_ON) && (mc->flags & (P_WALK_ON | P_FLY_ON) || op->more) && !op->head)
     {
-        int event;
-
-        /* we want reuse mc here... bad enough we need to check it double for multi arch */
-        if (IS_AIRBORNE(op))
+        for (tmp = op; tmp; tmp = tmp->more)
         {
-            if (!(mc->flags & P_FLY_ON)) /* we are flying but no fly event here */
-                goto check_walk_loop;
-        }
-        else /* we are not flying - check walking only */
-        {
-            if (!(mc->flags & P_WALK_ON))
-                goto check_walk_loop;
-        }
+            int event;
 
-        if ((event = check_walk_on(op, originator, MOVE_APPLY_MOVE)))
-        {
-            if (event == CHECK_WALK_MOVED)
-                return op; /* don't return NULL - we are valid but we was moved */
-            else
-                return NULL; /* CHECK_WALK_DESTROYED */
-        }
-
-        /* TODO: check event */
-
-        check_walk_loop:
-        for (tmp = op->more; tmp != NULL; tmp = tmp->more)
-        {
             mc = GET_MAP_SPACE_PTR(tmp->map, tmp->x, tmp->y);
 
-            /* object is flying/levitating */
-            if (IS_AIRBORNE(op))  /* trick: op is single tile OR always head! */
+            /* tmp is flying/levitating but no fly event here */
+            if (IS_AIRBORNE(tmp)) /* Old code queried op only, but as
+                                   * check_walk_on() may be called on tmp and
+                                   * queries it for the flying flags, we must
+                                   * do so here too -- Smacky 20080926 */
             {
-                if (!(mc->flags & P_FLY_ON)) /* we are flying but no fly event here */
+                if (!(mc->flags & P_FLY_ON))
                     continue;
             }
-            else /* we are not flying - check walking only */
+            /* tmp is walkimg but no walk event here */
+            else
             {
                 if (!(mc->flags & P_WALK_ON))
                     continue;
             }
 
+            /* there is a move event appropriate to tmp's move type here */
             if ((event = check_walk_on(tmp, originator, MOVE_APPLY_MOVE)))
             {
                 if (event == CHECK_WALK_MOVED)
