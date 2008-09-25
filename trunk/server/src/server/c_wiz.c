@@ -469,7 +469,7 @@ int command_create(object *op, char *params)
 {
     object     *tmp = NULL;
     int         nrof, i, magic, set_magic = 0, set_nrof = 0, gotquote, gotspace;
-    char        buf[MAX_BUF], *cp, *bp = buf, *bp2, *bp3, *bp4 = NULL, *obp;
+    char        buf[MAX_BUF], *cp, *bp = buf, *bp2, *bp3, *bp4 = NULL, *obp, *cp2;
     archetype  *at;
     artifact   *art = NULL;
 
@@ -511,10 +511,10 @@ int command_create(object *op, char *params)
         set_magic = 1;
         LOG(llevDebug, "%s creates: (%d) (%d) %s\n", op->name, nrof, magic, bp);
     }
-    if ((cp = strstr(bp, " of ")) != NULL)
+    if ((cp = strstr(bp, " amask ")) != NULL)
     {
         *cp = '\0';
-        cp += 4;
+        cp += 7;
     }
 
     for (bp2 = bp; *bp2; bp2++)
@@ -534,21 +534,20 @@ int command_create(object *op, char *params)
 
     if (cp)
     {
+        for (cp2 = cp; *cp2; cp2++)
+         if (*cp2 == ' ')
+           {
+            *cp2 = '\0';
+            break;
+           }
         if (find_artifactlist(at->clone.type) == NULL)
         {
             new_draw_info_format(NDI_UNIQUE, 0, op, "No artifact list for type %d\n", at->clone.type);
         }
         else
         {
-            art = find_artifactlist(at->clone.type)->items;
+            art = find_artifact(cp);
 
-            do
-            {
-                if (art->flags&ARTIFACT_FLAG_HAS_DEF_ARCH && !strcmp(art->def_at.clone.name, cp))
-                    break;
-                art = art->next;
-            }
-            while (art != NULL);
             if (!art)
             {
                 new_draw_info_format(NDI_UNIQUE, 0, op, "No such artifact ([%d] of %s)", at->clone.type, cp);
@@ -2015,4 +2014,23 @@ int command_unloadplugin(object *op, char *params)
 
     removeOnePlugin(params);
     return 1;
+}
+int command_ip(object *op, char *params)
+{
+     if(CONTR(op)->gmaster_mode < GMASTER_MODE_VOL)
+      return 0;
+
+    player *pl;
+    pl = find_player(params);
+
+    if(!pl)
+     {
+       new_draw_info(NDI_UNIQUE, 0, op, "IP of Who?");
+       return 0;
+     }
+    else
+     {
+       new_draw_info_format(NDI_UNIQUE, 0, op, "IP of %s is %s", params, pl->socket.ip_host);
+       return 1;
+     }
 }

@@ -264,6 +264,7 @@ int                         command_forget_spell(object *op, char *params);
 int                         command_listplugins(object *op, char *params);
 int                         command_loadplugin(object *op, char *params);
 int                         command_unloadplugin(object *op, char *params);
+int                         command_ip(object *op, char *params);
 /* commands.c */
 void                        init_commands(void);
 /* container.c */

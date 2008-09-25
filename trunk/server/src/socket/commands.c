@@ -127,6 +127,7 @@ CommArray_s Commands[]                  =
     {"gm_set",          command_gm_set,         0.0f},
     {"silence",        command_silence,0.0},
     {"gm_set",          command_gm_set,         0.0f},
+    {"ip",              command_ip,             0.0f},
 };
 
 CommArray_s CommunicationCommands[] =
