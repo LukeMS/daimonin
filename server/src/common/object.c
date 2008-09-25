@@ -2033,7 +2033,7 @@ object *insert_ob_in_map(object *const op, mapstruct *m, object *const originato
         int event;
 
         /* we want reuse mc here... bad enough we need to check it double for multi arch */
-        if (QUERY_FLAG(op, FLAG_FLY_ON))
+        if (IS_AIRBORNE(op))
         {
             if (!(mc->flags & P_FLY_ON)) /* we are flying but no fly event here */
                 goto check_walk_loop;
@@ -2060,7 +2060,7 @@ object *insert_ob_in_map(object *const op, mapstruct *m, object *const originato
             mc = GET_MAP_SPACE_PTR(tmp->map, tmp->x, tmp->y);
 
             /* object is flying/levitating */
-            if (QUERY_FLAG(op, FLAG_FLY_ON))  /* trick: op is single tile OR always head! */
+            if (IS_AIRBORNE(op))  /* trick: op is single tile OR always head! */
             {
                 if (!(mc->flags & P_FLY_ON)) /* we are flying but no fly event here */
                     continue;
