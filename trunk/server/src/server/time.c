@@ -973,7 +973,7 @@ void move_player_mover(object *op)
         dir = random_roll(1, 8);
     for (victim = GET_BOTTOM_MAP_OB(op); victim != NULL; victim = victim->above)
     {
-        if (IS_LIVE(victim) && ((!QUERY_FLAG(victim, FLAG_FLYING)&&!QUERY_FLAG(victim, FLAG_LEVITATE)) || op->stats.maxhp))
+        if (IS_LIVE(victim) && !IS_AIRBORNE(victim) || op->stats.maxhp)
         {
             if (QUERY_FLAG(op, FLAG_LIFESAVE) && op->stats.hp-- < 0)
             {

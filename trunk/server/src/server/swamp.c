@@ -27,7 +27,7 @@
 
 void walk_on_deep_swamp(object *op, object *victim)
 {
-    if (victim->type == PLAYER && (!QUERY_FLAG(victim, FLAG_FLYING)&&!QUERY_FLAG(victim, FLAG_LEVITATE) )&& victim->stats.hp >= 0)
+    if (victim->type == PLAYER && !IS_AIRBORNE(victim) && victim->stats.hp >= 0)
     {
         new_draw_info(NDI_UNIQUE, 0, victim, "You are down to your knees " "in the swamp.");
         op->stats.food = 1;
@@ -43,7 +43,7 @@ void move_deep_swamp(object *op)
     while (above)
     {
         nabove = above->above;
-        if (above->type == PLAYER && (!QUERY_FLAG(above, FLAG_FLYING)&&!QUERY_FLAG(above, FLAG_LEVITATE)) && above->stats.hp >= 0)
+        if (above->type == PLAYER && !IS_AIRBORNE(above) && above->stats.hp >= 0)
         {
             if (op->stats.food < 1)
             {

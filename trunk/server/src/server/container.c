@@ -292,7 +292,7 @@ static void pick_up_object(object *pl, object *op, object *tmp, uint32 nrof)
     * (sack, luggage, etc), tmp->env->env then points to the player (nested
     * containers not allowed as of now)
     */
-    if ((QUERY_FLAG(pl, FLAG_FLYING) || QUERY_FLAG(pl, FLAG_LEVITATE))&& !QUERY_FLAG(pl, FLAG_WIZ) && is_player_inv(tmp) != pl)
+    if (!QUERY_FLAG(pl, FLAG_WIZ) && is_player_inv(tmp) != pl && IS_AIRBORNE(pl))
     {
         if(QUERY_FLAG(pl, FLAG_FLYING))
             new_draw_info(NDI_UNIQUE, 0, pl, "You are flying; you can't reach the ground!");

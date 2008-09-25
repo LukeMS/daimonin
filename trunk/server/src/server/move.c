@@ -414,7 +414,7 @@ int push_roll_object(object * const op, int dir, const int flag)
     ret = 0;
 	/* we check for all conditions where op can't push anything */
     if (dir <= 0 || CONTR(op)->rest_mode || QUERY_FLAG(op,FLAG_PARALYZED) ||
-		QUERY_FLAG(op,FLAG_ROOTED) || QUERY_FLAG(op, FLAG_FLYING)|| QUERY_FLAG(op, FLAG_LEVITATE))
+		QUERY_FLAG(op,FLAG_ROOTED) || IS_AIRBORNE(op))
         return 0;
     xt = op->x + freearr_x[dir];
     yt = op->y + freearr_y[dir];
