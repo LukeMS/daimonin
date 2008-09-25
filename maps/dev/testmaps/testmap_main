@@ -2,7 +2,7 @@ arch map
 name Testmaps - Main§rainthunder.ogg|0|-1
 msg
 Created:  2003-04-13 Daimonin Map Editor
-Modified: 2008-09-24 smacky
+Modified: 2008-09-25 smacky
 endmsg
 width 17
 height 17
@@ -1639,6 +1639,13 @@ arch floor_ostone1
 x 14
 y 11
 end
+arch sign
+msg
+To doors testmap
+endmsg
+x 14
+y 11
+end
 arch floor_ostone1
 x 14
 y 12
@@ -1776,6 +1783,13 @@ x 15
 y 10
 end
 arch floor_ostone1
+x 15
+y 11
+end
+arch stairs_stone_down
+slaying testmap_doors
+hp 1
+sp 1
 x 15
 y 11
 end
