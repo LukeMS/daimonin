@@ -523,9 +523,10 @@ extern spell                    spells[NROFREALSPELLS];
 
 /* lists of the active ingame gmasters */
 EXTERN objectlink               *gmaster_list;
+EXTERN objectlink               *gmaster_list_MW;
 EXTERN objectlink               *gmaster_list_VOL;
 EXTERN objectlink               *gmaster_list_GM;
-EXTERN objectlink               *gmaster_list_DM;
+EXTERN objectlink               *gmaster_list_MM;
 
 EXTERN objectlink               *ban_list_player; /* see ban.c */
 EXTERN objectlink               *ban_list_ip;     /* see ban.c */

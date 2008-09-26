@@ -71,12 +71,14 @@ int player_save(object *op)
 
     if(pl->gmaster_mode != GMASTER_MODE_NO)
     {
-        if(pl->gmaster_mode == GMASTER_MODE_VOL)
+        if(pl->gmaster_mode == GMASTER_MODE_MW)
+            fprintf(fp, "dm_MW\n");
+        else if(pl->gmaster_mode == GMASTER_MODE_VOL)
             fprintf(fp, "dm_VOL\n");
         else if(pl->gmaster_mode == GMASTER_MODE_GM)
             fprintf(fp, "dm_GM\n");
         else
-            fprintf(fp, "dm_DM\n");
+            fprintf(fp, "dm_MM\n");
     }
     if(pl->mute_counter > pticks)
         fprintf(fp, "mute %d\n", (int)(pl->mute_counter-pticks)); /* should be not THAT long */
@@ -462,12 +464,14 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
         sscanf(bufall, "%s %d\n", buf, &value);
         if (!strcmp(buf, "endplst"))
             break;
+        else if (!strcmp(buf, "dm_MW"))
+            pl->gmaster_mode = GMASTER_MODE_MW;
         else if (!strcmp(buf, "dm_VOL"))
             pl->gmaster_mode = GMASTER_MODE_VOL;
         else if (!strcmp(buf, "dm_GM"))
             pl->gmaster_mode = GMASTER_MODE_GM;
-        else if (!strcmp(buf, "dm_DM"))
-            pl->gmaster_mode = GMASTER_MODE_DM;
+        else if (!strcmp(buf, "dm_MM"))
+            pl->gmaster_mode = GMASTER_MODE_MM;
         else if (!strcmp(buf, "mute"))
             pl->mute_counter = pticks+(unsigned long)value;
         else if (!strcmp(buf, "state"))
@@ -827,25 +831,30 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
 
             sprintf(buf, "%s has entered the game.", query_name(pl->ob));
 
-            for (ol = gmaster_list_DM; ol; ol = ol->next)
-                new_draw_info(NDI_UNIQUE, 5, ol->objlink.ob, buf);
+            for (ol = gmaster_list_MM; ol; ol = ol->next)
+                new_draw_info_format(NDI_UNIQUE, 5, ol->objlink.ob, "%s has entered the game from ip %s", query_name(pl->ob), pl->socket.ip_host);
             for (ol = gmaster_list_GM; ol; ol = ol->next)
-                new_draw_info(NDI_UNIQUE, 5, ol->objlink.ob, buf);
+                new_draw_info_format(NDI_UNIQUE, 5, ol->objlink.ob, "%s has entered the game from ip %s", query_name(pl->ob), pl->socket.ip_host);
             for (ol = gmaster_list_VOL; ol; ol = ol->next)
+                new_draw_info_format(NDI_UNIQUE, 5, ol->objlink.ob, "%s has entered the game from ip %s", query_name(pl->ob), pl->socket.ip_host);
+            for (ol = gmaster_list_MW; ol; ol = ol->next)
                 new_draw_info(NDI_UNIQUE, 5, ol->objlink.ob, buf);
+
         }
-        if(gmaster_list_DM || gmaster_list_GM)
+        if(gmaster_list_MM || gmaster_list_GM || gmaster_list_VOL)
         {
             objectlink *ol;
             char buf_dm[64];
 
             sprintf(buf_dm, "DM: %d players now playing.", player_active);
 
-            for(ol = gmaster_list_DM;ol;ol=ol->next)
+            for(ol = gmaster_list_MM;ol;ol=ol->next)
                 new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, buf_dm);
-
             for(ol = gmaster_list_GM;ol;ol=ol->next)
                 new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, buf_dm);
+            for(ol = gmaster_list_VOL;ol;ol=ol->next)
+                new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, buf_dm);
+
         }
     }
 

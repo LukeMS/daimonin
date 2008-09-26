@@ -2377,7 +2377,7 @@ int player_apply(object *pl, object *op, int aflag, int quiet)
 
         /* player is flying and applying object not in inventory */
     if (op->env == NULL &&
-        CONTR(pl)->gmaster_mode != GMASTER_MODE_DM &&
+        CONTR(pl)->gmaster_mode != GMASTER_MODE_MM &&
         (IS_AIRBORNE(pl) && (!IS_AIRBORNE(op) || !QUERY_FLAG(op, FLAG_FLY_ON))))
     {
         new_draw_info(NDI_UNIQUE, 0, pl, "But you are floating high above the ground!");

@@ -228,13 +228,19 @@ int command_gsay(object *op, char *params)
     buf[MAX_BUF - 30] = '\0';
 #endif
 
-    for(ol = gmaster_list_DM;ol;ol=ol->next)
+    for(ol = gmaster_list_MM;ol;ol=ol->next)
     {
         if (op != ol->objlink.ob && CONTR(op)->group_leader != CONTR(ol->objlink.ob)->group_leader)
             new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf);
     }
 
     for(ol = gmaster_list_GM;ol;ol=ol->next)
+    {
+        if (op != ol->objlink.ob && CONTR(op)->group_leader != CONTR(ol->objlink.ob)->group_leader)
+            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf);
+    }
+
+    for(ol = gmaster_list_VOL;ol;ol=ol->next)
     {
         if (op != ol->objlink.ob && CONTR(op)->group_leader != CONTR(ol->objlink.ob)->group_leader)
             new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf);
@@ -370,14 +376,14 @@ int command_tell(object *op, char *params)
              * Only way to find out/control abuse of this commands
              * or we have to give many people access to the server logs (not a option)
              */
-            if(gmaster_list_DM || gmaster_list_GM)
+            if(gmaster_list_MM || gmaster_list_GM || gmaster_list_VOL)
             {
                 objectlink *ol;
 
                 sprintf(buf2, "%s tells %s: ", op->name, pl->ob->name);
                 strncat(buf2, msg, MAX_BUF - strlen(buf2) - 1);
                 buf2[MAX_BUF - 1] = 0;
-                for(ol = gmaster_list_DM;ol;ol=ol->next)
+                for(ol = gmaster_list_MM;ol;ol=ol->next)
                 {
                     if (pl->ob != ol->objlink.ob && op != ol->objlink.ob)
                         new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf2);
@@ -388,9 +394,14 @@ int command_tell(object *op, char *params)
                     if (pl->ob != ol->objlink.ob && op != ol->objlink.ob)
                         new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf2);
                 }
+                for(ol = gmaster_list_VOL;ol;ol=ol->next)
+                {
+                    if (pl->ob != ol->objlink.ob && op != ol->objlink.ob)
+                        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf2);
+                }
             }
             wiz = QUERY_FLAG(op, FLAG_WIZ);
-            if (pl->dm_stealth && !wiz)
+            if (pl->dm_stealth && CONTR(op)->gmaster_mode < GMASTER_MODE_GM)
             {
                 sprintf(buf, "%s tells you (dm_stealth): ", op->name);
                 strncat(buf, msg, MAX_BUF - strlen(buf) - 1);
@@ -530,6 +541,11 @@ static void emote_other(object *op, object *target, char *str, char *buf, char *
 
     if (target && target->name)
         name = target->name;
+    if (CONTR(target)->dm_stealth && CONTR(op)->gmaster_mode < GMASTER_MODE_GM)
+       {
+          new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
+          return;
+       }
 
     switch (emotion)
     {

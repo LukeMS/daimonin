@@ -468,17 +468,20 @@ void remove_ns_dead_player(player *pl)
         if(pl->group_status & GROUP_STATUS_GROUP)
             party_remove_member(pl, TRUE);
 
-        if(gmaster_list_DM || gmaster_list_GM)
+        if(gmaster_list_MM || gmaster_list_GM || gmaster_list_VOL)
         {
             objectlink *ol;
             char buf_dm[128];
 
             sprintf(buf_dm,"%s leaves the game (%d still playing).", query_name(pl->ob), player_active - 1);
 
-            for(ol = gmaster_list_DM;ol;ol=ol->next)
+            for(ol = gmaster_list_MM;ol;ol=ol->next)
                 new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, buf_dm);
 
             for(ol = gmaster_list_GM;ol;ol=ol->next)
+                new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, buf_dm);
+
+            for(ol = gmaster_list_VOL;ol;ol=ol->next)
                 new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, buf_dm);
         }
 
