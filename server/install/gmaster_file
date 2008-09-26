@@ -11,8 +11,8 @@
 # <host> is an IP address. May be '*' for any host. Must not contain the ':'
 # character. THIS DOES NOT WORK AS IPv6 USES ':' IN THE HOST NAME.
 #
-# <mode> is one of VOL, GM, or DM.
+# <mode> is one of MW, VOL, GM, or MM.
 #
 # The following (which allows any player to be any type of gmaster) is useful
 # on local servers for testing. Just uncomment the next line:
-#*:*:*:DM
+#*:*:*:MM
