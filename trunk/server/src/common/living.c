@@ -345,6 +345,7 @@ int change_abil(object *op, object *tmp)
             new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "Suddenly you feel less safe, somehow.");
         }
     }
+
     if (QUERY_FLAG(tmp, FLAG_FLYING))
     {
         if (flag > 0)
@@ -768,55 +769,55 @@ static inline int set_player_equipment(player *pl, object *optr, int num)
  */
 static inline void set_speed_encumbrance(object *op, player *pl)
 {
-	int tmp_speed_enc = pl->speed_enc;
+    int tmp_speed_enc = pl->speed_enc;
 
-	/* calculate the increase/decrease multiplier */
-	pl->speed_enc = 1000 - (pl->speed_enc_base + pl->speed_reduce_from_disease);
+    /* calculate the increase/decrease multiplier */
+    pl->speed_enc = 1000 - (pl->speed_enc_base + pl->speed_reduce_from_disease);
 
-	/* now... if we carry more as weight_linit-encumbrance limit (aka around 65%) then we have a speed decrease */
-	if(op->carrying > (sint32) (pl->weight_limit - pl->speed_enc_limit))
-	{
-		float speed_factor;
+    /* now... if we carry more as weight_linit-encumbrance limit (aka around 65%) then we have a speed decrease */
+    if(op->carrying > (sint32) (pl->weight_limit - pl->speed_enc_limit))
+    {
+        float speed_factor;
 
-		/* the * 1.15f is the trick. We add 15% because we don't want 0% speed (rooted) */
-		speed_factor = (float)(op->carrying - (sint32) (pl->weight_limit - pl->speed_enc_limit)) 
-			/ ((float)pl->speed_enc_limit * 1.15f);
-		/* speed_factor should be now something between 0.15 and x.0 (when weight ins normal) */
+        /* the * 1.15f is the trick. We add 15% because we don't want 0% speed (rooted) */
+        speed_factor = (float)(op->carrying - (sint32) (pl->weight_limit - pl->speed_enc_limit)) 
+            / ((float)pl->speed_enc_limit * 1.15f);
+        /* speed_factor should be now something between 0.15 and x.0 (when weight ins normal) */
 
-		/* we never "overtaxe" like in nethack. We want avoid a "side effect" rooting effect when
-		* we draw away strength. The decreased damage and base speed is worse enough.
-		* We *always* allow with 15% min moving
-		*/
-		if (speed_factor < 0.0f)
-			speed_factor = 0.0f;
-		else if (speed_factor > 0.85f) /* we nerver lose more as 85% of our speed by weight. unlogical, but key game element */
-			speed_factor = 0.85f;
+        /* we never "overtaxe" like in nethack. We want avoid a "side effect" rooting effect when
+        * we draw away strength. The decreased damage and base speed is worse enough.
+        * We *always* allow with 15% min moving
+        */
+        if (speed_factor < 0.0f)
+            speed_factor = 0.0f;
+        else if (speed_factor > 0.85f) /* we nerver lose more as 85% of our speed by weight. unlogical, but key game element */
+            speed_factor = 0.85f;
 
-		pl->speed_enc -= (int)(speed_factor*1000.0f); /* remove the missing f % from speed_enc */
-	}
+        pl->speed_enc -= (int)(speed_factor*1000.0f); /* remove the missing f % from speed_enc */
+    }
 
-	if(pl->speed_enc == tmp_speed_enc) /* speed is unchanged! */
-		return;
+    if(pl->speed_enc == tmp_speed_enc) /* speed is unchanged! */
+        return;
 
-	if(pl->speed_enc < 150)
-		pl->speed_enc = 150;
-	else if(pl->speed_enc > 1000)
-		pl->speed_enc = 1000;
+    if(pl->speed_enc < 150)
+        pl->speed_enc = 150;
+    else if(pl->speed_enc > 1000)
+        pl->speed_enc = 1000;
 
-	/* now we have ->speed filled with our base speed and speed_enc with % of speed we are allowed */
-	op->speed = op->arch->clone.speed * (((float)pl->speed_enc) / 1000.0f);
+    /* now we have ->speed filled with our base speed and speed_enc with % of speed we are allowed */
+    op->speed = op->arch->clone.speed * (((float)pl->speed_enc) / 1000.0f);
 
-	/*LOG(llevDebug, "SPEED - FIX_PLAYER(%s): enc=%d%% speed = %f\n", query_name(op), pl->speed_enc, op->speed);*/
+    /*LOG(llevDebug, "SPEED - FIX_PLAYER(%s): enc=%d%% speed = %f\n", query_name(op), pl->speed_enc, op->speed);*/
 
-	/* lets have a fair min. speed.
-	* When we have added smooth scrolling, the whole
-	* handling will change so or so. MT-06.2005
-	*/
-	if (op->speed < 0.15f)
-		op->speed = 0.15f; /* ouch */
-	else if (op->speed > 1.0f)
-		op->speed = 1.0f;
-	update_ob_speed(op);
+    /* lets have a fair min. speed.
+    * When we have added smooth scrolling, the whole
+    * handling will change so or so. MT-06.2005
+    */
+    if (op->speed < 0.15f)
+        op->speed = 0.15f; /* ouch */
+    else if (op->speed > 1.0f)
+        op->speed = 1.0f;
+    update_ob_speed(op);
 }
 
 /* this is a special function handling inventory changes for a player
@@ -828,10 +829,10 @@ static inline void set_speed_encumbrance(object *op, player *pl)
  */
 void fix_player_weight(object *op)
 {
-	if(!op || !CONTR(op) || op->carrying == CONTR(op)->carrying_last)
-		return;
+    if(!op || !CONTR(op) || op->carrying == CONTR(op)->carrying_last)
+        return;
 
-	set_speed_encumbrance(op, CONTR(op));
+    set_speed_encumbrance(op, CONTR(op));
 }
 
 /*
@@ -909,9 +910,9 @@ void fix_player(object *op)
     pl = CONTR(op);
     inv_flag = inv_see_flag = ac = 0;
 
-	pl->speed_enc_base = pl->speed_reduce_from_disease = 0;
-	pl->speed_enc = pl->dist_dps = pl->dist_wc = -1;
-	pl->dist_action_time = 0;
+    pl->speed_enc_base = pl->speed_reduce_from_disease = 0;
+    pl->speed_enc = pl->dist_dps = pl->dist_wc = -1;
+    pl->dist_action_time = 0;
     op->stats.Str = pl->orig_stats.Str;
     op->stats.Dex = pl->orig_stats.Dex;
     op->stats.Con = pl->orig_stats.Con;
@@ -934,8 +935,8 @@ void fix_player(object *op)
     /* for players, we adjust with the values */
     op->weight_limit = op->arch->clone.weight_limit;
 
-	/* natural wc/ac/dam settings */
-	op->stats.wc = op->arch->clone.stats.wc;
+    /* natural wc/ac/dam settings */
+    op->stats.wc = op->arch->clone.stats.wc;
     op->stats.ac = op->arch->clone.stats.ac;
     op->stats.dam = op->arch->clone.stats.dam;
 
@@ -944,7 +945,7 @@ void fix_player(object *op)
     op->stats.maxgrace = op->arch->clone.stats.maxgrace;
 
     pl->levhp[1] = (char) op->stats.maxhp;
-	pl->levsp[1] = (char) op->stats.maxsp + 15;
+    pl->levsp[1] = (char) op->stats.maxsp + 15;
     pl->levgrace[1] = (char) op->stats.maxgrace + 15;
 
     old_glow = op->glow_radius;
@@ -964,9 +965,9 @@ void fix_player(object *op)
     if (op->chosen_skill && !op->chosen_skill->last_eat && op->chosen_skill->exp_obj)
         op->chosen_skill->level = op->chosen_skill->exp_obj->level;
 
-	pl->gen_sp = pl->gen_grace = pl->gen_hp = 20;
+    pl->gen_sp = pl->gen_grace = pl->gen_hp = 20;
 
-	FREE_AND_CLEAR_HASH(op->slaying);
+    FREE_AND_CLEAR_HASH(op->slaying);
 
     /* HOTFIX: we parted refl_xxx from can_refl_xxx */
     CLEAR_FLAG(op, FLAG_REFL_MISSILE);
@@ -1136,47 +1137,47 @@ void fix_player(object *op)
         {
             switch (tmp->type) /* still applied stuff */
             {
-				case WAND:
-				case ROD:
-				case HORN:
-					if(!set_player_equipment(pl, tmp, PLAYER_EQUIP_BOW))
-						continue;
+                case WAND:
+                case ROD:
+                case HORN:
+                    if(!set_player_equipment(pl, tmp, PLAYER_EQUIP_BOW))
+                        continue;
 
-					for (i = 0; i < 7; i++)
-						change_attr_value(&(op->stats), i, get_attr_value(&(tmp->stats), i));
-					break;
+                    for (i = 0; i < 7; i++)
+                        change_attr_value(&(op->stats), i, get_attr_value(&(tmp->stats), i));
+                    break;
 
-				/* throw/arrow dam & wc are dynmically calculated in the do_throw() function */
-			    case ARROW:
-					if(tmp->sub_type1 < 127) /* its amun, not a throw weapon */
-					{
-						if(!set_player_equipment(pl, tmp, PLAYER_EQUIP_AMUN))
-							continue;
-						break;
-					}
+                /* throw/arrow dam & wc are dynmically calculated in the do_throw() function */
+                case ARROW:
+                    if(tmp->sub_type1 < 127) /* its amun, not a throw weapon */
+                    {
+                        if(!set_player_equipment(pl, tmp, PLAYER_EQUIP_AMUN))
+                            continue;
+                        break;
+                    }
 
-					if(!set_player_equipment(pl, tmp, PLAYER_EQUIP_BOW))
-						continue;
-				break;
+                    if(!set_player_equipment(pl, tmp, PLAYER_EQUIP_BOW))
+                        continue;
+                break;
 
-				/* bow dam/wc are also added in the fire functions */
-				case BOW:
-					if(!set_player_equipment(pl, tmp, PLAYER_EQUIP_BOW))
-						continue;
+                /* bow dam/wc are also added in the fire functions */
+                case BOW:
+                    if(!set_player_equipment(pl, tmp, PLAYER_EQUIP_BOW))
+                        continue;
 
-					if (tmp->sub_type1 == RANGE_WEAP_BOW)
-						pl->set_skill_archery = SK_MISSILE_WEAPON;
-					else if (tmp->sub_type1 == RANGE_WEAP_XBOWS)
-						pl->set_skill_archery = SK_XBOW_WEAP;
-					else
-						pl->set_skill_archery = SK_SLING_WEAP;
+                    if (tmp->sub_type1 == RANGE_WEAP_BOW)
+                        pl->set_skill_archery = SK_MISSILE_WEAPON;
+                    else if (tmp->sub_type1 == RANGE_WEAP_XBOWS)
+                        pl->set_skill_archery = SK_XBOW_WEAP;
+                    else
+                        pl->set_skill_archery = SK_SLING_WEAP;
 
-					for (i = 0; i < 7; i++)
-						change_attr_value(&(op->stats), i, get_attr_value(&(tmp->stats), i));
+                    for (i = 0; i < 7; i++)
+                        change_attr_value(&(op->stats), i, get_attr_value(&(tmp->stats), i));
 
-					break;
+                    break;
 
-				case WEAPON:
+                case WEAPON:
                   if(!set_player_equipment(pl, tmp, PLAYER_EQUIP_WEAPON1))
                       continue;
                   pl->selected_weapon = tmp; /* thats our weapon */
@@ -1194,9 +1195,9 @@ void fix_player(object *op)
                   if (!op->weapon_speed)
                       LOG(llevBug, "BUG: monster/player %s applied weapon %s without weapon speed!\n", op->name, tmp->name);
 
-				  /* wc and damage of a melee weapon only count for melee! */
-				  op->stats.wc += (tmp->stats.wc + tmp->magic); /* add the weapon wc direct to the player wc */
-				  op->stats.dam = (tmp->stats.dam + tmp->magic);
+                  /* wc and damage of a melee weapon only count for melee! */
+                  op->stats.wc += (tmp->stats.wc + tmp->magic); /* add the weapon wc direct to the player wc */
+                  op->stats.dam = (tmp->stats.dam + tmp->magic);
                   ac += tmp->stats.ac;
 
                   if (tmp->slaying != NULL)
@@ -1206,23 +1207,23 @@ void fix_player(object *op)
 
                   temp_fumble += tmp->last_heal;
 
-				  thac0 += tmp->stats.thac0;
+                  thac0 += tmp->stats.thac0;
                   thacm += tmp->stats.thacm;
 
                   for (i = 0; i < 7; i++)
                       change_attr_value(&(op->stats), i, get_attr_value(&(tmp->stats), i));
                   break;
 
-				case TYPE_LIGHT_APPLY:
-					if (tmp->glow_radius > light)
-						light = tmp->glow_radius;
-					break;
+                case TYPE_LIGHT_APPLY:
+                    if (tmp->glow_radius > light)
+                        light = tmp->glow_radius;
+                    break;
 
-				case SKILL:
-					applied_skill = tmp;
-					break;
+                case SKILL:
+                    applied_skill = tmp;
+                    break;
 
-					/* all armours + rings and amulets */
+                    /* all armours + rings and amulets */
                 case RING:
                     if(!set_player_equipment(pl, tmp, PLAYER_EQUIP_RRING + ring_count))
                         continue;
@@ -1382,8 +1383,8 @@ void fix_player(object *op)
                             change_attr_value(&(op->stats), i, get_attr_value(&(tmp->stats), i));
                         if (tmp->stats.wc)
                             pl->wc_bonus += (tmp->stats.wc + tmp->magic);
-						/* force effects goes to damage before calculation */
-			if (tmp->stats.dam)
+                        /* force effects goes to damage before calculation */
+            if (tmp->stats.dam)
                             op->stats.dam += (tmp->stats.dam + tmp->magic);
                         if (tmp->stats.ac)
                             ac += (tmp->stats.ac + tmp->magic);
@@ -1490,147 +1491,147 @@ void fix_player(object *op)
         } /* if applied */
     } /* Item is equipped - end of for loop going through items. */
 
-	/* lets check we have applied an amunition type equal to our distance weapon */
-	if(pl->equipment[PLAYER_EQUIP_AMUN])
-	{
-		if(!pl->equipment[PLAYER_EQUIP_BOW] || pl->equipment[PLAYER_EQUIP_BOW]->type != BOW ||
-			pl->equipment[PLAYER_EQUIP_AMUN]->sub_type1 != pl->equipment[PLAYER_EQUIP_BOW]->sub_type1)
-		{
-			/* wrong amunition - unapply it on the fly */
-			CLEAR_FLAG(pl->equipment[PLAYER_EQUIP_AMUN], FLAG_APPLIED);
-			esrv_send_item(op, pl->equipment[PLAYER_EQUIP_AMUN]);
-			pl->equipment[PLAYER_EQUIP_AMUN] = NULL;
-		}
+    /* lets check we have applied an amunition type equal to our distance weapon */
+    if(pl->equipment[PLAYER_EQUIP_AMUN])
+    {
+        if(!pl->equipment[PLAYER_EQUIP_BOW] || pl->equipment[PLAYER_EQUIP_BOW]->type != BOW ||
+            pl->equipment[PLAYER_EQUIP_AMUN]->sub_type1 != pl->equipment[PLAYER_EQUIP_BOW]->sub_type1)
+        {
+            /* wrong amunition - unapply it on the fly */
+            CLEAR_FLAG(pl->equipment[PLAYER_EQUIP_AMUN], FLAG_APPLIED);
+            esrv_send_item(op, pl->equipment[PLAYER_EQUIP_AMUN]);
+            pl->equipment[PLAYER_EQUIP_AMUN] = NULL;
+        }
 
-	}
+    }
 
-	/* setup thze distance weapon && calculate the distance dps/wc/time values for the client (visual values) */
-	if(pl->equipment[PLAYER_EQUIP_BOW])
-	{
-		if(pl->equipment[PLAYER_EQUIP_BOW]->type == BOW || pl->equipment[PLAYER_EQUIP_BOW]->type == ARROW)
-		{
-			object *skill_ptr;
-			int tmp_dam, tmp_wc, tmp_time;
+    /* setup thze distance weapon && calculate the distance dps/wc/time values for the client (visual values) */
+    if(pl->equipment[PLAYER_EQUIP_BOW])
+    {
+        if(pl->equipment[PLAYER_EQUIP_BOW]->type == BOW || pl->equipment[PLAYER_EQUIP_BOW]->type == ARROW)
+        {
+            object *skill_ptr;
+            int tmp_dam, tmp_wc, tmp_time;
 
-			if((tmp = pl->equipment[PLAYER_EQUIP_BOW])->type == ARROW)
-			{
-				skill_ptr = pl->skill_ptr[SK_THROWING];
-				tmp_dam = tmp_wc = tmp_time =0;
+            if((tmp = pl->equipment[PLAYER_EQUIP_BOW])->type == ARROW)
+            {
+                skill_ptr = pl->skill_ptr[SK_THROWING];
+                tmp_dam = tmp_wc = tmp_time =0;
 
-			}
-			else /* its a bow.. calc the arrow in */
-			{
-				if (tmp->sub_type1 == RANGE_WEAP_BOW)
-					skill_ptr = pl->skill_ptr[SK_MISSILE_WEAPON];
-				else if (tmp->sub_type1 == RANGE_WEAP_XBOWS)
-					skill_ptr = pl->skill_ptr[SK_XBOW_WEAP];
-				else
-					skill_ptr = pl->skill_ptr[SK_SLING_WEAP];
+            }
+            else /* its a bow.. calc the arrow in */
+            {
+                if (tmp->sub_type1 == RANGE_WEAP_BOW)
+                    skill_ptr = pl->skill_ptr[SK_MISSILE_WEAPON];
+                else if (tmp->sub_type1 == RANGE_WEAP_XBOWS)
+                    skill_ptr = pl->skill_ptr[SK_XBOW_WEAP];
+                else
+                    skill_ptr = pl->skill_ptr[SK_SLING_WEAP];
 
-				tmp_dam = tmp->stats.dam + tmp->magic;
-				tmp_wc = tmp->stats.wc + tmp->magic;
-				tmp_time = tmp->last_grace;
-				
-				/* map it over to the real arrow */
-				tmp = pl->equipment[PLAYER_EQUIP_AMUN];
-			}
+                tmp_dam = tmp->stats.dam + tmp->magic;
+                tmp_wc = tmp->stats.wc + tmp->magic;
+                tmp_time = tmp->last_grace;
+                
+                /* map it over to the real arrow */
+                tmp = pl->equipment[PLAYER_EQUIP_AMUN];
+            }
 
-			/* a last sanity check with emergency jmp */
-			if(!skill_ptr || !tmp)
-				goto no_skill_ptr_jmp;
+            /* a last sanity check with emergency jmp */
+            if(!skill_ptr || !tmp)
+                goto no_skill_ptr_jmp;
 
-			tmp_dam += tmp->stats.dam + tmp->magic;
-			tmp_wc += tmp->stats.wc + tmp->magic;
-			tmp_time += tmp->last_grace;
+            tmp_dam += tmp->stats.dam + tmp->magic;
+            tmp_wc += tmp->stats.wc + tmp->magic;
+            tmp_time += tmp->last_grace;
 
-			/* we don't add op->stats.wc here because its melee.... our wc modifier comes from the skill.
-			 * but we add in wc modifier from equipment - means ATM a ring wc+2 will add wc to melee AND
-			 * to distance!
-			 */
-			pl->dist_wc = (int)((float)(tmp_wc + skill_ptr->stats.wc) * get_player_stat_bonus(op->stats.Dex))+ pl->wc_bonus; 
+            /* we don't add op->stats.wc here because its melee.... our wc modifier comes from the skill.
+             * but we add in wc modifier from equipment - means ATM a ring wc+2 will add wc to melee AND
+             * to distance!
+             */
+            pl->dist_wc = (int)((float)(tmp_wc + skill_ptr->stats.wc) * get_player_stat_bonus(op->stats.Dex))+ pl->wc_bonus; 
 
-			/* lets calculate the real dmg and dps */
-			pl->dist_dps = (int) ((float) tmp_dam * LEVEL_DAMAGE(skill_ptr->level)); /* dmg level adjusted */
+            /* lets calculate the real dmg and dps */
+            pl->dist_dps = (int) ((float) tmp_dam * LEVEL_DAMAGE(skill_ptr->level)); /* dmg level adjusted */
 
-			/* and now we adjust it by the stats and devide by 10 - thats the "real dmg" now */
-			pl->dist_dps = (int)(((float)pl->dist_dps * 
-				(get_player_stat_bonus(op->stats.Str)/2.0f + get_player_stat_bonus(op->stats.Dex)/2.0f)) /10.0f);
+            /* and now we adjust it by the stats and devide by 10 - thats the "real dmg" now */
+            pl->dist_dps = (int)(((float)pl->dist_dps * 
+                (get_player_stat_bonus(op->stats.Str)/2.0f + get_player_stat_bonus(op->stats.Dex)/2.0f)) /10.0f);
 
-			/* the damage bonus of rings and stuff are added AFTER dmg adjustment! */
-			f = (float) (pl->equipment[PLAYER_EQUIP_BOW]->item_condition) / 100.0f;
-			pl->dist_dps = (int)((float)pl->dist_dps * f)+ pl->dam_bonus;
-			if(pl->dist_dps < 0)
-				pl->dist_dps = 0;
+            /* the damage bonus of rings and stuff are added AFTER dmg adjustment! */
+            f = (float) (pl->equipment[PLAYER_EQUIP_BOW]->item_condition) / 100.0f;
+            pl->dist_dps = (int)((float)pl->dist_dps * f)+ pl->dam_bonus;
+            if(pl->dist_dps < 0)
+                pl->dist_dps = 0;
 
-			/* in pl->dist_dps is now only the "real" dmg this item does - now calculate human readable dps */
-			for(tmp_item=i=0;i<=LAST_ATNR_ATTACK;i++) /* collect the dmg parts */
-				tmp_item += tmp->attack[i];
+            /* in pl->dist_dps is now only the "real" dmg this item does - now calculate human readable dps */
+            for(tmp_item=i=0;i<=LAST_ATNR_ATTACK;i++) /* collect the dmg parts */
+                tmp_item += tmp->attack[i];
 
-			f = (float) (tmp_time + skill_ptr->last_grace) * WEAPON_SWING_TIME; /* the action time */
+            f = (float) (tmp_time + skill_ptr->last_grace) * WEAPON_SWING_TIME; /* the action time */
 
-			/* because we transfer dps as INT to the client, we store it right shifted >>1 */
-			pl->dist_dps = (int) (( ((float)pl->dist_dps*((float)tmp_item/100.0f))/ f)*10.0f);
+            /* because we transfer dps as INT to the client, we store it right shifted >>1 */
+            pl->dist_dps = (int) (( ((float)pl->dist_dps*((float)tmp_item/100.0f))/ f)*10.0f);
 
-			/* last work - cast the swing time to INT for transfering */
-			pl->dist_action_time = (int)(f * 1000.0f);
-				
-		}
-		else /* show '**' in the range weapon area of the client */
-		{
-			no_skill_ptr_jmp:
-				pl->dist_dps = -2;
-				pl->dist_wc = -1;
-		}
-	}
-	else /* show '--' in the range weapon area of the client */
-	{
-		pl->dist_dps = -1;
-		pl->dist_wc = -1;
-	}
+            /* last work - cast the swing time to INT for transfering */
+            pl->dist_action_time = (int)(f * 1000.0f);
+                
+        }
+        else /* show '**' in the range weapon area of the client */
+        {
+            no_skill_ptr_jmp:
+                pl->dist_dps = -2;
+                pl->dist_wc = -1;
+        }
+    }
+    else /* show '--' in the range weapon area of the client */
+    {
+        pl->dist_dps = -1;
+        pl->dist_wc = -1;
+    }
 
-	/* Weapons: the best bare hand skill and/or the applied weapon.
-	* If we have no weapon selected, use the bare hand skill for attacking and wc/dam .
-	* if we have a weapon, use the weapon and forget the bare hand skill.
-	*/
-	if (pl->set_skill_weapon == NO_SKILL_READY) /* ok, no weapon - we must use our hands */
-	{
-		f = 1.0f;
-		if (skill_weapon)
-		{
-			pl->skill_weapon = skill_weapon;
+    /* Weapons: the best bare hand skill and/or the applied weapon.
+    * If we have no weapon selected, use the bare hand skill for attacking and wc/dam .
+    * if we have a weapon, use the weapon and forget the bare hand skill.
+    */
+    if (pl->set_skill_weapon == NO_SKILL_READY) /* ok, no weapon - we must use our hands */
+    {
+        f = 1.0f;
+        if (skill_weapon)
+        {
+            pl->skill_weapon = skill_weapon;
 
-			op->weapon_speed = skill_weapon->weapon_speed;
+            op->weapon_speed = skill_weapon->weapon_speed;
 
-			if (skill_weapon->slaying != NULL)
-				FREE_AND_COPY_HASH(op->slaying, skill_weapon->slaying);
+            if (skill_weapon->slaying != NULL)
+                FREE_AND_COPY_HASH(op->slaying, skill_weapon->slaying);
 
-			/* now we must add this special skill attack */
-			for (i = 0; i < NROFATTACKS; i++)
-			{
-				op->attack[i] += skill_weapon->attack[i];
-				if (op->attack[i] > 120)
-					op->attack[i] = 120;
-			}
+            /* now we must add this special skill attack */
+            for (i = 0; i < NROFATTACKS; i++)
+            {
+                op->attack[i] += skill_weapon->attack[i];
+                if (op->attack[i] > 120)
+                    op->attack[i] = 120;
+            }
 
-			thac0 += skill_weapon->stats.thac0;
-			thacm += skill_weapon->stats.thacm;
-			op->stats.wc += skill_weapon->stats.wc; /* skill = weapon - we must add the wc now */
-			ac += skill_weapon->stats.ac;
-			op->stats.dam += skill_weapon->stats.dam; /* and the damage */
-			op->stats.dam = (sint16) ((float) op->stats.dam * LEVEL_DAMAGE(skill_weapon->level));
-		}
-		else
-			LOG(llevBug, "BUG: fix_player(): player %s has no hth skill!\n", op->name);
-	}
-	else /* weapon in hand */
-	{
-		f = (float) (pl->equipment[PLAYER_EQUIP_WEAPON1]->item_condition) / 100.0f;
-		/* ouch - weapon without the skill applied... */
-		if (!pl->skill_ptr[pl->set_skill_weapon])
-			LOG(llevBug, "BUG: fix_player(): player %s has weapon selected but not the skill #%d!!!\n", op->name,
-			pl->set_skill_weapon);
-		else
-		{
+            thac0 += skill_weapon->stats.thac0;
+            thacm += skill_weapon->stats.thacm;
+            op->stats.wc += skill_weapon->stats.wc; /* skill = weapon - we must add the wc now */
+            ac += skill_weapon->stats.ac;
+            op->stats.dam += skill_weapon->stats.dam; /* and the damage */
+            op->stats.dam = (sint16) ((float) op->stats.dam * LEVEL_DAMAGE(skill_weapon->level));
+        }
+        else
+            LOG(llevBug, "BUG: fix_player(): player %s has no hth skill!\n", op->name);
+    }
+    else /* weapon in hand */
+    {
+        f = (float) (pl->equipment[PLAYER_EQUIP_WEAPON1]->item_condition) / 100.0f;
+        /* ouch - weapon without the skill applied... */
+        if (!pl->skill_ptr[pl->set_skill_weapon])
+            LOG(llevBug, "BUG: fix_player(): player %s has weapon selected but not the skill #%d!!!\n", op->name,
+            pl->set_skill_weapon);
+        else
+        {
                         
                         if(pl->skill_ptr[pl->set_skill_weapon]->level <= 10)
                           {
@@ -1647,20 +1648,20 @@ void fix_player(object *op)
                                 op->stats.wc += (int)((pl->skill_ptr[pl->set_skill_weapon]->level / 10) + 1);
                         else if(pl->skill_ptr[pl->set_skill_weapon]->level > 80 && op->stats.wc <= 35)
                                 op->stats.wc += (int)((pl->skill_ptr[pl->set_skill_weapon]->level / 10) + 1);
-			op->stats.dam = (sint16) ((float) op->stats.dam * LEVEL_DAMAGE(pl->skill_ptr[pl->set_skill_weapon]->level));
-		}
-	}
+            op->stats.dam = (sint16) ((float) op->stats.dam * LEVEL_DAMAGE(pl->skill_ptr[pl->set_skill_weapon]->level));
+        }
+    }
 
-	check_stat_bounds(&(op->stats));
+    check_stat_bounds(&(op->stats));
 
-	/* now the last adds - stat boni to dam and wc! */
-	op->stats.dam = (int)((float)op->stats.dam * get_player_stat_bonus(op->stats.Str) /10.0f);
-	if (op->stats.dam < 0)
-		op->stats.dam = 0;
+    /* now the last adds - stat boni to dam and wc! */
+    op->stats.dam = (int)((float)op->stats.dam * get_player_stat_bonus(op->stats.Str) /10.0f);
+    if (op->stats.dam < 0)
+        op->stats.dam = 0;
 
-	op->stats.dam = (sint16)((float) op->stats.dam * f) + pl->dam_bonus; /* and finally the item condition + dmg bonus! */
+    op->stats.dam = (sint16)((float) op->stats.dam * f) + pl->dam_bonus; /* and finally the item condition + dmg bonus! */
 
-	/* now collect all our real armour stuff - this will now add *after* all force
+    /* now collect all our real armour stuff - this will now add *after* all force
      * or non potion effects effecting resist,attack or protection - also this wii
      * give us a sorted adding.
      * But the most important point is that we calc *here* and only here the equipment
@@ -1749,14 +1750,14 @@ void fix_player(object *op)
     /* calculate the max. value what the player can carry */
     pl->weight_limit = get_player_weight_limit(op, 0);
 
-	/* we calculate this: we get weight_limit - ENCUMBRANCE_LIMIT %. Thats around 35% of the
-	* value ATM. Thats our base. Then we check how much of this last 35% we really carry. Thats
-	* our encumbrance value in % that we assign to speed_enc
-	*/
-	pl->speed_enc_limit = (int) ((float) pl->weight_limit * ENCUMBRANCE_LIMIT); /* = 35% of our max value */
+    /* we calculate this: we get weight_limit - ENCUMBRANCE_LIMIT %. Thats around 35% of the
+    * value ATM. Thats our base. Then we check how much of this last 35% we really carry. Thats
+    * our encumbrance value in % that we assign to speed_enc
+    */
+    pl->speed_enc_limit = (int) ((float) pl->weight_limit * ENCUMBRANCE_LIMIT); /* = 35% of our max value */
 
     /* CALCULATE REAL PLAYER SPEED */
-	set_speed_encumbrance(op, pl);
+    set_speed_encumbrance(op, pl);
 
     op->glow_radius = light;
 
@@ -2268,27 +2269,27 @@ void fix_monster(object *op)
     op->stats.dam = (sint16) (((float) op->stats.dam * ((LEVEL_DAMAGE((op->level < 0) ? 0 : op->level) + tmp_add)
                      * (0.925f + 0.05 * (op->level / 10)))) / 10.0f);
 
-	/* this will add an special decrease in power to mobs from level 1 to 5 */
-	if(op->level <= 5)
-	{
-		/* this should range from 0.8xx to near 1.0 */
-		float d = 1.0f - ( (0.35f/5.0f) * (float)(6-op->level));
+    /* this will add an special decrease in power to mobs from level 1 to 5 */
+    if(op->level <= 5)
+    {
+        /* this should range from 0.8xx to near 1.0 */
+        float d = 1.0f - ( (0.35f/5.0f) * (float)(6-op->level));
 
-		op->stats.dam = (int) ((float)op->stats.dam * d);
-		if(op->stats.dam < 1)
-			op->stats.dam = 1;
+        op->stats.dam = (int) ((float)op->stats.dam * d);
+        if(op->stats.dam < 1)
+            op->stats.dam = 1;
 
-		op->stats.maxhp = (int) ((float)op->stats.maxhp * d);
-		if(op->stats.maxhp < 1)
-			op->stats.maxhp = 1;
+        op->stats.maxhp = (int) ((float)op->stats.maxhp * d);
+        if(op->stats.maxhp < 1)
+            op->stats.maxhp = 1;
 
-		/* cap the pools to <=max */
-		if (op->stats.hp > op->stats.maxhp)
-			op->stats.hp = op->stats.maxhp;
+        /* cap the pools to <=max */
+        if (op->stats.hp > op->stats.maxhp)
+            op->stats.hp = op->stats.maxhp;
 
 
 
-	}
+    }
     /* Set up AI in op->custom_attrset */
     if(! MOB_DATA(op))
     {
