@@ -626,7 +626,7 @@ error - Your ANSI C compiler should be defining __STDC__;
     (op->type==ARROW || op->type==MMISSILE || op->type==BULLET)
 
 #define IS_AIRBORNE(op) \
-    ((QUERY_FLAG(op, FLAG_FLYING) | QUERY_FLAG(op, FLAG_LEVITATE)))
+    ((QUERY_FLAG(op, FLAG_FLYING) || QUERY_FLAG(op, FLAG_LEVITATE)))
 
 /* the flags */
 
