@@ -1519,7 +1519,8 @@ void move_apply(object *const trap_obj, object *const victim, object *const orig
 static void apply_book(object *op, object *tmp)
 {
 	sockbuf_struct *sptr;
-    char buf[MAX_BUF];
+    char    buf[HUGE_BUF];
+    size_t  len;
 
     if (QUERY_FLAG(op, FLAG_BLIND) && !QUERY_FLAG(op, FLAG_WIZ))
     {
@@ -1558,12 +1559,14 @@ static void apply_book(object *op, object *tmp)
     }
 
 	/* invoke the new client sided book interface */
-	SOCKBUF_REQUEST_BUFFER(&CONTR(op)->socket, SOCKET_SIZE_SMALL);
+	sprintf(buf,"<b t=\"%s%s%s\">", tmp->name?tmp->name:"Book",tmp->title?" ":"",tmp->title?tmp->title:"");
+	strcat(buf, tmp->msg);
+    len = strlen(buf);
+
+	SOCKBUF_REQUEST_BUFFER(&CONTR(op)->socket, (len > SOCKET_SIZE_MEDIUM) ? SOCKET_SIZE_HUGE : SOCKET_SIZE_MEDIUM);
 	sptr = ACTIVE_SOCKBUF(&CONTR(op)->socket);
 
 	SockBuf_AddInt(sptr, tmp->weight_limit);
-	sprintf(buf,"<b t=\"%s%s%s\">", tmp->name?tmp->name:"Book",tmp->title?" ":"",tmp->title?tmp->title:"");
-	strcat(buf, tmp->msg);
 	SockBuf_AddString(sptr, buf, strlen(buf));
 
 	SOCKBUF_REQUEST_FINISH(&CONTR(op)->socket, BINARY_CMD_BOOK, SOCKBUF_DYNAMIC);
