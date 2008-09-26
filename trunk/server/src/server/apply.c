@@ -1521,6 +1521,7 @@ static void apply_book(object *op, object *tmp)
     sockbuf_struct *sptr;
     char    buf[HUGE_BUF];
     size_t  len;
+    size_t  catlen;
 
     if (QUERY_FLAG(op, FLAG_BLIND) && !QUERY_FLAG(op, FLAG_WIZ))
     {
@@ -1560,14 +1561,19 @@ static void apply_book(object *op, object *tmp)
 
     /* invoke the new client sided book interface */
     sprintf(buf,"<b t=\"%s%s%s\">", tmp->name?tmp->name:"Book",tmp->title?" ":"",tmp->title?tmp->title:"");
-    strcat(buf, tmp->msg);
+    len = strlen(buf);
+    catlen = strlen(tmp->msg);
+    if ((len + catlen) >= HUGE_BUF)
+        catlen = HUGE_BUF - len - 1;
+    strncat(buf, tmp->msg, catlen);
+    buf[len + catlen] = '\0';
     len = strlen(buf);
 
     SOCKBUF_REQUEST_BUFFER(&CONTR(op)->socket, (len > SOCKET_SIZE_MEDIUM) ? SOCKET_SIZE_HUGE : SOCKET_SIZE_MEDIUM);
     sptr = ACTIVE_SOCKBUF(&CONTR(op)->socket);
 
     SockBuf_AddInt(sptr, tmp->weight_limit);
-    SockBuf_AddString(sptr, buf, strlen(buf));
+    SockBuf_AddString(sptr, buf, len);
 
     SOCKBUF_REQUEST_FINISH(&CONTR(op)->socket, BINARY_CMD_BOOK, SOCKBUF_DYNAMIC);
     /*new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, tmp->msg);*/
