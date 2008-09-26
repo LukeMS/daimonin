@@ -1389,13 +1389,13 @@ void move_apply(object *const trap_obj, object *const victim, object *const orig
               damage_ob(victim, trap->stats.dam, trap, ENV_ATTACK_CHECK);
           goto leave;
 
-		case CONE:
-		case LIGHTNING: /* bolt */
-			/*
-			if ((IS_LIVE(victim) && trap->speed) && trap->owner != victim)
-				damage_ob(victim, trap->stats.dam, trap, ENV_ATTACK_CHECK);
-			goto leave;
-			*/
+        case CONE:
+        case LIGHTNING: /* bolt */
+            /*
+            if ((IS_LIVE(victim) && trap->speed) && trap->owner != victim)
+                damage_ob(victim, trap->stats.dam, trap, ENV_ATTACK_CHECK);
+            goto leave;
+            */
           /*
            if(IS_LIVE(victim)&&trap->speed) {
              uint32 attacktype = trap->attacktype & ~AT_COUNTERSPELL;
@@ -1518,7 +1518,7 @@ void move_apply(object *const trap_obj, object *const victim, object *const orig
 
 static void apply_book(object *op, object *tmp)
 {
-	sockbuf_struct *sptr;
+    sockbuf_struct *sptr;
     char    buf[HUGE_BUF];
     size_t  len;
 
@@ -1558,18 +1558,18 @@ static void apply_book(object *op, object *tmp)
         return;
     }
 
-	/* invoke the new client sided book interface */
-	sprintf(buf,"<b t=\"%s%s%s\">", tmp->name?tmp->name:"Book",tmp->title?" ":"",tmp->title?tmp->title:"");
-	strcat(buf, tmp->msg);
+    /* invoke the new client sided book interface */
+    sprintf(buf,"<b t=\"%s%s%s\">", tmp->name?tmp->name:"Book",tmp->title?" ":"",tmp->title?tmp->title:"");
+    strcat(buf, tmp->msg);
     len = strlen(buf);
 
-	SOCKBUF_REQUEST_BUFFER(&CONTR(op)->socket, (len > SOCKET_SIZE_MEDIUM) ? SOCKET_SIZE_HUGE : SOCKET_SIZE_MEDIUM);
-	sptr = ACTIVE_SOCKBUF(&CONTR(op)->socket);
+    SOCKBUF_REQUEST_BUFFER(&CONTR(op)->socket, (len > SOCKET_SIZE_MEDIUM) ? SOCKET_SIZE_HUGE : SOCKET_SIZE_MEDIUM);
+    sptr = ACTIVE_SOCKBUF(&CONTR(op)->socket);
 
-	SockBuf_AddInt(sptr, tmp->weight_limit);
-	SockBuf_AddString(sptr, buf, strlen(buf));
+    SockBuf_AddInt(sptr, tmp->weight_limit);
+    SockBuf_AddString(sptr, buf, strlen(buf));
 
-	SOCKBUF_REQUEST_FINISH(&CONTR(op)->socket, BINARY_CMD_BOOK, SOCKBUF_DYNAMIC);
+    SOCKBUF_REQUEST_FINISH(&CONTR(op)->socket, BINARY_CMD_BOOK, SOCKBUF_DYNAMIC);
     /*new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, tmp->msg);*/
 
     /* identify the book - successful reading will do it always */
@@ -2267,8 +2267,8 @@ int manual_apply(object *op, object *tmp, int aflag)
         case ROD:
         case HORN:
         case SKILL:
-		case BOW:
-		case ARROW:
+        case BOW:
+        case ARROW:
           if (tmp->env != op)
               return 2;   /* not in inventory */
           apply_special(op, tmp, aflag);
@@ -2468,8 +2468,8 @@ void player_apply_below(object *pl)
 int apply_special(object *who, object *op, int aflags)
 {
     /* wear/wield */
-	player *pl = CONTR(who);
-	int     ego_mode, basic_flag  = aflags &AP_BASIC_FLAGS;
+    player *pl = CONTR(who);
+    int     ego_mode, basic_flag  = aflags &AP_BASIC_FLAGS;
     int     tmp_flag    = 0;
     object *tmp;
     char    buf[HUGE_BUF];
@@ -2546,13 +2546,13 @@ int apply_special(object *who, object *op, int aflags)
                                 skills[op->stats.sp].name);
                     }
                 }
-				/* i disabled here change_abil - because skill changing is somewhat often called
-				 * AND automatically done. We simply don't give out change_abil() messages here
-				 * and safe alot cpu (include a fix_player() inside change_abil())
-				 */
+                /* i disabled here change_abil - because skill changing is somewhat often called
+                 * AND automatically done. We simply don't give out change_abil() messages here
+                 * and safe alot cpu (include a fix_player() inside change_abil())
+                 */
                 /*change_abil(who, op);*/
-				/*LOG(llevDebug, "UNAPPLY SKILL: %s change %s (%s) to NULL\n", query_name(who), query_name(op), query_name(who->chosen_skill) );*/
-				who->chosen_skill = NULL;
+                /*LOG(llevDebug, "UNAPPLY SKILL: %s change %s (%s) to NULL\n", query_name(who), query_name(op), query_name(who->chosen_skill) );*/
+                who->chosen_skill = NULL;
                 buf[0] = '\0';
                 break;
 
@@ -2575,8 +2575,8 @@ int apply_special(object *who, object *op, int aflags)
                     sprintf(buf, "You take off the %s.", query_name(op));
                 break;
 
-			case ARROW:
-			case BOW:
+            case ARROW:
+            case BOW:
             case WAND:
             case ROD:
             case HORN:
@@ -2584,13 +2584,13 @@ int apply_special(object *who, object *op, int aflags)
                     sprintf(buf, "Your %s is broken!", query_name(op));
                 else
                     sprintf(buf, "You unready the %s.", query_name(op));
-				if(op->type != ARROW || op->sub_type1 > 127)
-				{
-					if (who->type != PLAYER)
-					{
-						CLEAR_FLAG(who, FLAG_READY_BOW); break;
-					}
-				}
+                if(op->type != ARROW || op->sub_type1 > 127)
+                {
+                    if (who->type != PLAYER)
+                    {
+                        CLEAR_FLAG(who, FLAG_READY_BOW); break;
+                    }
+                }
                 break;
             default:
                 sprintf(buf, "You unapply the %s.", query_name(op));
@@ -2623,8 +2623,8 @@ int apply_special(object *who, object *op, int aflags)
             }
         }
 
-		if (who->type == PLAYER)
-			esrv_send_item(who, op);
+        if (who->type == PLAYER)
+            esrv_send_item(who, op);
 
         return 0;
     }
@@ -2634,7 +2634,7 @@ int apply_special(object *who, object *op, int aflags)
 
     /* This goes through and checks to see if the player already has something
      * of that type applied - if so, unapply it.
-	 * This is a VERY important part -it ensures
+     * This is a VERY important part -it ensures
      */
     if (op->type == WAND || op->type == ROD || op->type == HORN || op->type == BOW || (op->type == ARROW && op->sub_type1 >127))
         tmp_flag = 1;
@@ -2658,7 +2658,7 @@ int apply_special(object *who, object *op, int aflags)
         case RING:
         case AMULET:
         case BOW:
-		case ARROW:
+        case ARROW:
             if(!op->item_condition)
             {
                 sprintf(buf, "The %s is broken and can't be applied.", query_name(op));
@@ -2813,26 +2813,26 @@ int apply_special(object *who, object *op, int aflags)
             }
             SET_FLAG(op, FLAG_APPLIED);
             /* change_abil(who, op); */
-			/*LOG(llevDebug, "APPLY SKILL: %s change %s to %s\n", query_name(who), query_name(who->chosen_skill), query_name(op) );*/
+            /*LOG(llevDebug, "APPLY SKILL: %s change %s to %s\n", query_name(who), query_name(who->chosen_skill), query_name(op) );*/
             who->chosen_skill = op;
             buf[0] = '\0';
             break;
 
-		case ARROW:
-			/* an arrow can be a.) a throw item (= distance weapon) or b.) ammunition for a distance weapon
-			* as throw item we handle it like a bow/wand/etc...
-			* as normal arrow special - we test first we have applied the right distance weapon for it
-			*/
-			if(op->sub_type1 < 127) /* its amunition */
-			{
-				/* we want apply amun. Lets only allow to apply amun fitting the applied bow! */
-				if(!pl->equipment[PLAYER_EQUIP_BOW] || pl->equipment[PLAYER_EQUIP_BOW]->type != BOW
-										|| pl->equipment[PLAYER_EQUIP_BOW]->sub_type1 != op->sub_type1)
-				{
-					new_draw_info_format(NDI_UNIQUE, 0, who, "You can't use %s with applied range weapon.", query_short_name(op, NULL));
-					return 1;
-				}
-			}
+        case ARROW:
+            /* an arrow can be a.) a throw item (= distance weapon) or b.) ammunition for a distance weapon
+            * as throw item we handle it like a bow/wand/etc...
+            * as normal arrow special - we test first we have applied the right distance weapon for it
+            */
+            if(op->sub_type1 < 127) /* its amunition */
+            {
+                /* we want apply amun. Lets only allow to apply amun fitting the applied bow! */
+                if(!pl->equipment[PLAYER_EQUIP_BOW] || pl->equipment[PLAYER_EQUIP_BOW]->type != BOW
+                                        || pl->equipment[PLAYER_EQUIP_BOW]->sub_type1 != op->sub_type1)
+                {
+                    new_draw_info_format(NDI_UNIQUE, 0, who, "You can't use %s with applied range weapon.", query_short_name(op, NULL));
+                    return 1;
+                }
+            }
         case WAND:
         case ROD:
         case HORN:
