@@ -441,9 +441,10 @@ static struct constant_decl Game_constants[] =
 
     /* gmaster modes (gmaster.h) */
     {"GMASTER_MODE_NO",  GMASTER_MODE_NO},
+    {"GMASTER_MODE_MW",  GMASTER_MODE_MW},
     {"GMASTER_MODE_VOL", GMASTER_MODE_VOL},
     {"GMASTER_MODE_GM",  GMASTER_MODE_GM},
-    {"GMASTER_MODE_DM",  GMASTER_MODE_DM},
+    {"GMASTER_MODE_MM",  GMASTER_MODE_MM},
 
     /* spell numbers (spells.h) */
     {"SP_FIRESTORM",        SP_FIRESTORM},

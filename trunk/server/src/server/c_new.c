@@ -601,7 +601,8 @@ void generate_ext_title(player *pl)
         gender = "neuter";
 
     /* get a possible special tag for DM/GM/VOL */
-    tmp = (pl->gmaster_mode==GMASTER_MODE_NO?"":(pl->gmaster_mode==GMASTER_MODE_DM ? " [DM]" : (pl->gmaster_mode==GMASTER_MODE_GM ?" [GM]" : " [VOL]")));
+tmp = (pl->gmaster_mode==GMASTER_MODE_NO?"":(pl->gmaster_mode==GMASTER_MODE_MM ? " [MM]" : (pl->gmaster_mode==GMASTER_MODE_GM ?" [GM]" : (pl->gmaster_mode==GMASTER_MODE_VOL ?" [VOL]" : " [MW]"))));
+
 
     strcpy(pl->quick_name, rank);
     strcat(pl->quick_name, pl->ob->name);

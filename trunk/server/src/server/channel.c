@@ -1042,7 +1042,7 @@ void forceAddPlayerToChannel(struct player_channel *cpl, char *params)
 {
     player *pl=NULL;
 
-    if (cpl->pl->gmaster_mode < GMASTER_MODE_DM)
+    if (cpl->pl->gmaster_mode < GMASTER_MODE_MM)
         return;
     if (!params)
     {

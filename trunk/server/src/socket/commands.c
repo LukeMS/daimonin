@@ -107,17 +107,19 @@ CommArray_s Commands[]                  =
     {"leave",        command_party_leave,    4.0f},
     {"remove",        command_party_remove,    4.0f},
 
-    {"dm",           command_dm,             1.0f},
+    {"mm",           command_mm,             1.0f},
     {"gm",           command_gm,             1.0f},
     {"vol",          command_vol,            1.0f},
+    {"mw",           command_mw,             1.0f},
     /* VOL/GM/DM */
 	{"mutelevel",      command_mutelevel,1.0},
     {"dm_list",        command_dm_list,1.0f},
     {"malloc",            command_malloc,   0.0},        /* check the server stats */
     {"kick",            command_kickcmd, 0.0},            /* kick with a 1m temp login ban */
-
+    {"generate",        command_generate, 0.0},
     {"restart",         command_restart,0.0},
-
+    {"dm_stealth", command_dm_stealth,0.0},
+    {"inventory",        command_inventory,1.0f},    /* inv check of player x for exampel to check quest items */
     {"mute",            command_mute,1.0f},            /* max 5 min for VOL */
 
     /* GM/DM */
@@ -162,8 +164,6 @@ CommArray_s WizCommands[]           =
     {"dm_set",          command_dm_set,         0.0f},
     {"plugin",command_loadplugin,0.0},
     {"pluglist",command_listplugins,0.0},
-
-    {"inventory",        command_inventory,1.0f},    /* inv check of player x for exampel to check quest items */
     /* DM/WIZ commands */
     {"goto", command_goto,0.0},
     {"shutdown", command_start_shutdown,0.0},
@@ -177,7 +177,6 @@ CommArray_s WizCommands[]           =
     {"dump", command_dump,0.0}, /* dump info of object nr. x */
 
     {"dm_invis", command_dm_invis,0.0},
-    {"dm_stealth", command_dm_stealth,0.0},
     {"dm_dev", command_dm_dev,0.0},
     {"dm_light", command_dm_light,0.0},
     {"d_active", command_dumpactivelist,0.0},

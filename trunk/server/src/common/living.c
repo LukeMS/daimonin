@@ -983,10 +983,10 @@ void fix_player(object *op)
     if (!QUERY_FLAG(&op->arch->clone, FLAG_IS_ETHEREAL))
         CLEAR_MULTI_FLAG(op, FLAG_IS_ETHEREAL);
     if (!QUERY_FLAG(&op->arch->clone, FLAG_IS_INVISIBLE) &&
-        (pl->gmaster_mode != GMASTER_MODE_DM || !pl->dm_invis))
+        (pl->gmaster_mode != GMASTER_MODE_MM || !pl->dm_invis))
         CLEAR_MULTI_FLAG(op, FLAG_IS_INVISIBLE);
     if (!QUERY_FLAG(&op->arch->clone, FLAG_SEE_INVISIBLE) &&
-        (pl->gmaster_mode != GMASTER_MODE_DM || !pl->dm_invis))
+        (pl->gmaster_mode != GMASTER_MODE_MM || !pl->dm_invis))
         CLEAR_FLAG(op, FLAG_SEE_INVISIBLE);
     if (!QUERY_FLAG(&op->arch->clone, FLAG_LIFESAVE))
         CLEAR_FLAG(op, FLAG_LIFESAVE);
@@ -1915,7 +1915,7 @@ void fix_player(object *op)
     pl->dps = (int) (( ((float)op->stats.dam*((float)tmp_item/100.0f))/ op->weapon_speed)*10.0f);
 
     /* DM with dm_invis? */
-    if (pl->gmaster_mode == GMASTER_MODE_DM && pl->dm_invis)
+    if (pl->gmaster_mode == GMASTER_MODE_MM && pl->dm_invis)
     {
         SET_MULTI_FLAG(op, FLAG_IS_INVISIBLE);
         SET_FLAG(op, FLAG_SEE_INVISIBLE);

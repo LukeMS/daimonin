@@ -26,9 +26,10 @@
 #define __GMASTER_H
 
 #define GMASTER_MODE_NO        0
-#define GMASTER_MODE_VOL    1
-#define GMASTER_MODE_GM        2
-#define GMASTER_MODE_DM        4
+#define GMASTER_MODE_MW        1
+#define GMASTER_MODE_VOL       2
+#define GMASTER_MODE_GM        4
+#define GMASTER_MODE_MM        8
 
 typedef struct _gmaster_struct
 {

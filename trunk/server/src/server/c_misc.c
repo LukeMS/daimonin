@@ -92,7 +92,7 @@ int command_spell_reset(object *op, char *params)
 int command_motd(object *op, char *params)
 {
 #ifdef MOTD
-    if (CONTR(op)->gmaster_mode == GMASTER_MODE_DM && params)
+    if (CONTR(op)->gmaster_mode == GMASTER_MODE_MM && params)
     {
         char  buf[MAX_BUF];
         FILE *fp;
@@ -315,11 +315,11 @@ int command_who(object *op, char *params)
     if (!op)
         return 1;
 
-    wiz = QUERY_FLAG(op, FLAG_WIZ);
+//    wiz = QUERY_FLAG(op, FLAG_WIZ);
 
     for (pl = first_player; pl != NULL; pl = pl->next)
     {
-        if (pl->dm_stealth && !wiz)
+        if (pl->dm_stealth && CONTR(op)->gmaster_mode < GMASTER_MODE_VOL)
             continue;
 
         if (pl->ob->map == NULL)
@@ -338,7 +338,7 @@ int command_who(object *op, char *params)
             else
                 sex = "neuter";
 
-            if (wiz)
+            if (CONTR(op)->gmaster_mode >= GMASTER_MODE_GM)
             {
                 int off = 0, tmp, tmp1;
                 if ((tmp = strlen(pl->ob->map->path)) > (22 - ((tmp1 = strlen(pl->ob->name)))))
@@ -346,6 +346,8 @@ int command_who(object *op, char *params)
 
                 sprintf(buf, "%s (%d) [@%s] [%s]", pl->quick_name, pl->ob->count, pl->socket.ip_host, pl->ob->map->path + off);
             }
+            else if (CONTR(op)->gmaster_mode == GMASTER_MODE_VOL)
+                sprintf(buf, "%s the %s %s (lvl %d) [%s]", pl->quick_name, sex, pl->ob->race, pl->ob->level, pl->socket.ip_host);
             else
                 sprintf(buf, "%s the %s %s (lvl %d)", pl->quick_name, sex, pl->ob->race, pl->ob->level);
             new_draw_info(NDI_UNIQUE, 0, op, buf);
@@ -586,7 +588,7 @@ int command_dumpallarchetypes(object *op, char *params)
 
 int command_dm_dev(object *op, char *params)
 {
-    if (op->type == PLAYER && CONTR(op))
+    if (op->type == PLAYER && CONTR(op)->gmaster_mode == GMASTER_MODE_MM)
     {
         command_goto(op, "/dev/testmaps/testmap_main 2 2");
     }
@@ -616,7 +618,7 @@ int command_dm_invis(object *op, char *params)
  * mode is active. */
 int command_dm_stealth(object *op, char *params)
 {
-    if (op->type == PLAYER && CONTR(op))
+    if (op->type == PLAYER && CONTR(op)->gmaster_mode > GMASTER_MODE_VOL)
     {
         if (CONTR(op)->dm_stealth)
         {
@@ -642,7 +644,7 @@ int command_dm_stealth(object *op, char *params)
  * is rarely useful). */
 int command_dm_light(object *op, char *params)
 {
-    if (op->type == PLAYER && CONTR(op))
+    if (op->type == PLAYER && CONTR(op)->gmaster_mode == GMASTER_MODE_MM)
     {
         uint32 dm_light = 0;
 
@@ -794,7 +796,7 @@ int command_restart(object *ob, char *params)
 #else
     int t = 300;
 
-    if(ob && CONTR(ob)->gmaster_mode < GMASTER_MODE_DM)
+    if(ob && CONTR(ob)->gmaster_mode < GMASTER_MODE_MM)
         return 0;
 #endif
     strcpy(buf, "Shutdown Agent started with /restart");
