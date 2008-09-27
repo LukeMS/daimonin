@@ -308,14 +308,12 @@ void current_map_info(object *op)
 int command_who(object *op, char *params)
 {
     player     *pl;
-    int         ip = 0, il = 0, wiz;
+    int         ip = 0, il = 0;
     char        buf[MAX_BUF];
     const char *sex;
 
     if (!op)
         return 1;
-
-//    wiz = QUERY_FLAG(op, FLAG_WIZ);
 
     for (pl = first_player; pl != NULL; pl = pl->next)
     {

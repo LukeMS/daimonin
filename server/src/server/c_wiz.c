@@ -1310,10 +1310,9 @@ int command_addexp(object *op, char *params)
 
 int command_speed(object *op, char *params)
 {
+    long i;
     if(op && CONTR(op)->gmaster_mode != GMASTER_MODE_MM)
         return 0;
-
-    long i;
     if (params == NULL || !sscanf(params, "%ld", &i))
     {
         new_draw_info_format(NDI_UNIQUE, 0, op, "Current speed is %ld ums (%f ticks/second)", pticks_ums, pticks_second);
@@ -2341,10 +2340,11 @@ int command_unloadplugin(object *op, char *params)
 }
 int command_ip(object *op, char *params)
 {
+    player *pl;
      if(CONTR(op)->gmaster_mode < GMASTER_MODE_VOL)
       return 0;
 
-    player *pl;
+
     pl = find_player(params);
 
     if(!pl)
