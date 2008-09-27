@@ -234,17 +234,20 @@ void check_stat_bounds(living *stats)
 }
 
 /* return 1 if we sucessfully changed a stat, 0 if nothing was changed. */
-/* flag is set to 1 if we are applying the object, -1 if we are removing
+/* applied is set to 1 if we are applying the object, -1 if we are removing
  * the object.
  * It is the calling functions responsibilty to check to see if the object
  * can be applied or not.
  */
 int change_abil(object *op, object *tmp)
 {
-    int flag = QUERY_FLAG(tmp,  FLAG_APPLIED) ? 1 : -1,i,j,success = 0;
-    object                      refop;
-    char                        message[MAX_BUF];
-    int                         potion_max  = 0;
+    int    applied = (QUERY_FLAG(tmp, FLAG_APPLIED)) ? 1 : -1,
+           i,
+           j,
+           success = 0;
+    object refop;
+    char   message[MAX_BUF];
+    int    potion_max  = 0;
 
     /* remember what object was like before it was changed.  note that
      * refop is a local copy of op only to be used for detecting changes
@@ -262,13 +265,13 @@ int change_abil(object *op, object *tmp)
                 /* Check to see if stats are within limits such that this can be
                  * applied.
                  */
-                if (((i + flag * get_attr_value(&(tmp->stats), j))
+                if (((i + applied * get_attr_value(&(tmp->stats), j))
                   <= (20 + tmp->stats.sp + get_attr_value(&(op->arch->clone.stats), j)))
                  && i
                   > 0)
                 {
                     change_attr_value(&(CONTR(op)->orig_stats), j,
-                                      (signed char) (flag * get_attr_value(&(tmp->stats), j)));
+                                      (signed char) (applied * get_attr_value(&(tmp->stats), j)));
                     tmp->stats.sp = 0;/* Fix it up for super potions */
                 }
                 else
@@ -282,14 +285,14 @@ int change_abil(object *op, object *tmp)
              * recalculates this anyway.
              */
             for (j = 0; j < 7; j++)
-                change_attr_value(&(op->stats), j, (signed char) (flag * get_attr_value(&(tmp->stats), j)));
+                change_attr_value(&(op->stats), j, (signed char) (applied * get_attr_value(&(tmp->stats), j)));
             check_stat_bounds(&(op->stats));
         } /* end of potion handling code */
     }
 
     /* reset attributes that fix_player doesn't reset since it doesn't search
      * everything to set */
-    if (flag == -1)
+    if (applied == -1)
     {
         op->path_attuned &= ~tmp->path_attuned,
         op->path_repelled &= ~tmp->path_repelled,
@@ -300,11 +303,12 @@ int change_abil(object *op, object *tmp)
      * change_ability then might as well call it from here
      */
     FIX_PLAYER(op, "change_abil");
+    SET_FLAG(op, FLAG_NO_FIX_PLAYER); // is cleared later on in player_apply()
 
     if (tmp->attack[ATNR_CONFUSION])
     {
         success = 1;
-        if (flag > 0)
+        if (applied > 0)
             new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "Your hands begin to glow red.");
         else
             new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "Your hands stop glowing red.");
@@ -312,7 +316,7 @@ int change_abil(object *op, object *tmp)
     if (QUERY_FLAG(op, FLAG_LIFESAVE) != QUERY_FLAG(&refop, FLAG_LIFESAVE))
     {
         success = 1;
-        if (flag > 0)
+        if (applied > 0)
         {
             new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You feel very protected.");
         }
@@ -324,7 +328,7 @@ int change_abil(object *op, object *tmp)
     if (QUERY_FLAG(op, FLAG_CAN_REFL_MISSILE) != QUERY_FLAG(&refop, FLAG_CAN_REFL_MISSILE))
     {
         success = 1;
-        if (flag > 0)
+        if (applied > 0)
         {
             new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "A magic force shimmers around you.");
         }
@@ -336,7 +340,7 @@ int change_abil(object *op, object *tmp)
     if (QUERY_FLAG(op, FLAG_CAN_REFL_SPELL) != QUERY_FLAG(&refop, FLAG_CAN_REFL_SPELL))
     {
         success = 1;
-        if (flag > 0)
+        if (applied > 0)
         {
             new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You feel more safe now, somehow.");
         }
@@ -346,61 +350,37 @@ int change_abil(object *op, object *tmp)
         }
     }
 
-    if (QUERY_FLAG(tmp, FLAG_FLYING))
+    /* TODO: For now it is easier to treat flying and levitating as the same,
+     * but in future they should be subtly different (ie, with different actual
+     * effects, not just messages) -- Smacky 20080926 */
+    if (QUERY_FLAG(tmp, FLAG_FLYING) || QUERY_FLAG(tmp, FLAG_LEVITATE))
     {
-        if (flag > 0)
+        if (applied > 0)
         {
             success = 1;
-            /* if were already flying then now flying higher */
-            if (QUERY_FLAG(op, FLAG_FLYING) == QUERY_FLAG(&refop, FLAG_FLYING))
-                new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You fly a little higher in the air.");
+
+            if (IS_AIRBORNE(&refop))
+                new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You are airborne. You feel a little more stable.");
             else
             {
-                new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You start to fly in the air!.");
-                SET_MULTI_FLAG(op, FLAG_FLYING);
-                if (op->speed > 1)
-                    op->speed = 1;
-            }
-        }
-        else
-        {
-            success = 1;
-            /* if were already flying then now flying lower */
-            if (QUERY_FLAG(op, FLAG_FLYING) == QUERY_FLAG(&refop, FLAG_FLYING))
-                new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You fly a little lower in the air.");
-            else
-            {
-                new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You fly down to the ground.");
+                new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You become airborne!");
+
+                if (op->speed > 1) // why? and shouldn't we call update_ob_speed() too?
+                    op->speed = 1; // also, why not do this when you stop flying too? -- Smacky 20080926
+
                 check_walk_on(op, op, 0);
             }
         }
-    }
-
-    if (QUERY_FLAG(tmp, FLAG_LEVITATE))
-    {
-        if (flag > 0)
-        {
-            success = 1;
-            /* if were already flying then now flying higher */
-            if (QUERY_FLAG(op, FLAG_FLYING) == QUERY_FLAG(&refop, FLAG_FLYING))
-                new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You float a little higher in the air.");
-            else
-            {
-                new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You start to float in the air!.");
-                SET_MULTI_FLAG(op, FLAG_FLYING);
-                if (op->speed > 1)
-                    op->speed = 1;
-            }
-        }
         else
         {
             success = 1;
-            /* if were already flying then now flying lower */
-            if (QUERY_FLAG(op, FLAG_FLYING) == QUERY_FLAG(&refop, FLAG_FLYING))
-                new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You float a little lower in the air.");
+
+            if (IS_AIRBORNE(op))
+                new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You are airborne. You feel a little less stable.");
             else
             {
-                new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You float down to the ground.");
+                new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You are no longer airborne.");
+
                 check_walk_on(op, op, 0);
             }
         }
@@ -412,7 +392,7 @@ int change_abil(object *op, object *tmp)
         if (QUERY_FLAG(op, FLAG_UNDEAD) != QUERY_FLAG(&refop, FLAG_UNDEAD))
         {
             success = 1;
-            if (flag > 0)
+            if (applied > 0)
             {
                 FREE_AND_COPY_HASH(op->race, "undead");
                 new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "Your lifeforce drains away!");
@@ -429,7 +409,7 @@ int change_abil(object *op, object *tmp)
     if (QUERY_FLAG(op, FLAG_STEALTH) != QUERY_FLAG(&refop, FLAG_STEALTH))
     {
         success = 1;
-        if (flag > 0)
+        if (applied > 0)
         {
             new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You walk more quietly.");
         }
@@ -441,7 +421,7 @@ int change_abil(object *op, object *tmp)
     if (QUERY_FLAG(op, FLAG_SEE_INVISIBLE) != QUERY_FLAG(&refop, FLAG_SEE_INVISIBLE))
     {
         success = 1;
-        if (flag > 0)
+        if (applied > 0)
         {
             new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You see invisible things.");
         }
@@ -453,7 +433,7 @@ int change_abil(object *op, object *tmp)
     if (QUERY_FLAG(op, FLAG_IS_INVISIBLE) != QUERY_FLAG(&refop, FLAG_IS_INVISIBLE))
     {
         success = 1;
-        if (flag > 0)
+        if (applied > 0)
         {
             new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You become transparent.");
         }
@@ -467,7 +447,7 @@ int change_abil(object *op, object *tmp)
     if (QUERY_FLAG(tmp, FLAG_BLIND))
     {
         success = 1;
-        if (flag > 0)
+        if (applied > 0)
         {
             if (QUERY_FLAG(op, FLAG_WIZ))
                 new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "Your mortal self is blinded.");
@@ -496,7 +476,7 @@ int change_abil(object *op, object *tmp)
     if (QUERY_FLAG(op, FLAG_SEE_IN_DARK) != QUERY_FLAG(&refop, FLAG_SEE_IN_DARK))
     {
         success = 1;
-        if (flag > 0)
+        if (applied > 0)
         {
             new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "Your vision is better in the dark.");
         }
@@ -509,7 +489,7 @@ int change_abil(object *op, object *tmp)
     if (QUERY_FLAG(op, FLAG_XRAYS) != QUERY_FLAG(&refop, FLAG_XRAYS))
     {
         success = 1;
-        if (flag > 0)
+        if (applied > 0)
         {
             if (QUERY_FLAG(op, FLAG_WIZ))
                 new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "Your vision becomes a little clearer.");
@@ -535,7 +515,7 @@ int change_abil(object *op, object *tmp)
     if ((tmp->stats.hp || tmp->stats.maxhp) && op->type == PLAYER)
     {
         success = 1;
-        if (flag * tmp->stats.hp > 0 || flag * tmp->stats.maxhp > 0)
+        if (applied * tmp->stats.hp > 0 || applied * tmp->stats.maxhp > 0)
             new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You feel much more healthy!");
         else
             new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You feel much less healthy!");
@@ -543,7 +523,7 @@ int change_abil(object *op, object *tmp)
     if ((tmp->stats.sp || tmp->stats.maxsp) && op->type == PLAYER && tmp->type != SKILL)
     {
         success = 1;
-        if (flag * tmp->stats.sp > 0 || flag * tmp->stats.maxsp > 0)
+        if (applied * tmp->stats.sp > 0 || applied * tmp->stats.maxsp > 0)
             new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You feel one with the powers of magic!");
         else
             new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You suddenly feel very mundane.");
@@ -552,7 +532,7 @@ int change_abil(object *op, object *tmp)
     if ((tmp->stats.grace || tmp->stats.maxgrace) && op->type == PLAYER)
     {
         success = 1;
-        if (flag * tmp->stats.grace > 0 || flag * tmp->stats.maxgrace)
+        if (applied * tmp->stats.grace > 0 || applied * tmp->stats.maxgrace)
             new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You feel closer to your deity!");
         else
             new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You suddenly feel less holy.");
@@ -584,7 +564,7 @@ int change_abil(object *op, object *tmp)
             if ((i = get_attr_value(&(tmp->stats), j)) != 0)
             {
                 success = 1;
-                if (i * flag > 0)
+                if (i * applied > 0)
                     new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, gain_msg[j]);
                 else
                     new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, lose_msg[j]);
