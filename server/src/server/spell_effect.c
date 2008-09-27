@@ -1379,7 +1379,7 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
     if (msg_flag)
     {
         if(tmp->type == PLAYER)
-            change_abil(tmp, force); /* Mostly to display any messages */
+            change_abil(tmp, force, 0); /* Mostly to display any messages */
         else
             FIX_PLAYER(tmp ,"cast change attr - bug? bogus call - fix monster?"); /* fix monster? */
     }

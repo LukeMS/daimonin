@@ -270,7 +270,7 @@ void create_food_buf_force(object *who, object *food, object *force)
     SET_FLAG(force, FLAG_APPLIED);
     force = insert_ob_in_ob(force, who);
     if(who->type == PLAYER)
-        change_abil(who, force); /* Mostly to display any messages */
+        change_abil(who, force, 0); /* Mostly to display any messages */
     else
         FIX_PLAYER(who ,"create food force (bug? can't be fix_player. fix_monster?"); /* huch? should be fix_monster, right? */
 }

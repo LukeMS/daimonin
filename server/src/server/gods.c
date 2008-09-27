@@ -299,7 +299,7 @@ void become_follower(object *op, object *new_god)
         /* get rid of old god */
         new_draw_info_format(NDI_UNIQUE, 0, op, "%s's blessing is withdrawn from you.", exp_obj->title);
         CLEAR_FLAG(exp_obj, FLAG_APPLIED);
-        change_abil(op, exp_obj);
+        change_abil(op, exp_obj, 0);
         FREE_AND_CLEAR_HASH2(exp_obj->title);
     }
 
@@ -358,7 +358,7 @@ void become_follower(object *op, object *new_god)
 #endif
 
     SET_FLAG(exp_obj, FLAG_APPLIED);
-    change_abil(op, exp_obj);
+    change_abil(op, exp_obj, 0);
 
     check_special_prayers(op, new_god);
 }
