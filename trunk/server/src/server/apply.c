@@ -2384,6 +2384,7 @@ int player_apply(object *pl, object *op, int aflag, int quiet)
         return 0;
     }
 
+#if 0
     /* skip not needed fix_player() calls for trivial action */
     SET_FLAG(pl, FLAG_NO_FIX_PLAYER);
     tmp = manual_apply(pl, op, aflag);
@@ -2394,6 +2395,18 @@ int player_apply(object *pl, object *op, int aflag, int quiet)
         CONTR(pl)->rest_sitting = CONTR(pl)->rest_mode = 0;
     if(tmp & 1)
         FIX_PLAYER(pl ,"player apply ");
+#else
+    tmp = manual_apply(pl, op, aflag);
+
+    /* we have applied something which makes us standing up */
+    if(CONTR(pl) && CONTR(pl)->rest_sitting && !(tmp & 8))
+        CONTR(pl)->rest_sitting = CONTR(pl)->rest_mode = 0;
+    if(tmp & 1)
+    {
+        FIX_PLAYER(pl ,"player apply ");
+        CLEAR_FLAG(pl, FLAG_NO_FIX_PLAYER); // may have been set if change_abil() called
+    }
+#endif
 
     if (!quiet)
     {
