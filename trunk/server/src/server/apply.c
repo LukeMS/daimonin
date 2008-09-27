@@ -223,7 +223,7 @@ int apply_potion(object *op, object *tmp)
             force = insert_ob_in_ob(force, op);
             CLEAR_FLAG(tmp, FLAG_APPLIED);
             SET_FLAG(force, FLAG_APPLIED);
-            if (!change_abil(op, force)) /* implicit fix_player() here */
+            if (!change_abil(op, force, 1)) /* implicit fix_player() here */
                 new_draw_info(NDI_UNIQUE, 0, op, "Nothing happened.");
             decrease_ob(tmp);
             return 1;
@@ -2545,7 +2545,7 @@ int apply_special(object *who, object *op, int aflags)
         switch (op->type)
         {
             case WEAPON:
-                change_abil(who, op);
+                change_abil(who, op, 1);
                 CLEAR_FLAG(who, FLAG_READY_WEAPON);
                 if(!op->item_condition)
                     sprintf(buf, "Your %s is broken!", query_name(op));
@@ -2587,7 +2587,7 @@ int apply_special(object *who, object *op, int aflags)
             case GIRDLE:
             case BRACERS:
             case CLOAK:
-                change_abil(who, op);
+                change_abil(who, op, 1);
                 if(!op->item_condition)
                     sprintf(buf, "Your %s is broken!", query_name(op));
                 else
@@ -2792,7 +2792,7 @@ int apply_special(object *who, object *op, int aflags)
         case WEAPON:
             SET_FLAG(op, FLAG_APPLIED);
             SET_FLAG(who, FLAG_READY_WEAPON);
-            change_abil(who, op);
+            change_abil(who, op, 1);
             sprintf(buf, "You wield the %s.", query_name(op));
             break;
 
@@ -2809,7 +2809,7 @@ int apply_special(object *who, object *op, int aflags)
         case RING:
         case AMULET:
             SET_FLAG(op, FLAG_APPLIED);
-            change_abil(who, op);
+            change_abil(who, op, 1);
             sprintf(buf, "You put on the %s.", query_name(op));
             break;
 
