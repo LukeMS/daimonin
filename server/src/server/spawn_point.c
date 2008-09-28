@@ -223,6 +223,10 @@ void spawn_point(object *op)
     {
         next = tmp->below;
 
+        /* ignore events (scripts) */
+        if (tmp->type == TYPE_EVENT_OBJECT)
+            continue;
+
         if (tmp->type != SPAWN_POINT_MOB)
             LOG(llevBug, "BUG: spawn point in map %s (%d,%d) with wrong type object (%d) in inv: %s\n",
                 op->map ? op->map->path : "<no map>", op->x, op->y, tmp->type, query_name(tmp));
@@ -251,6 +255,9 @@ void spawn_point(object *op)
     if (!(mob = spawn_monster(mob, op, op->last_heal)))
         return; /* that happens when we have no free spot....*/
 
+    if (trigger_object_plugin_event(EVENT_TRIGGER, op, mob, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+        return;
+
     /* setup special monster -> spawn point values */
     op->last_eat = 0;
     if (mob->last_eat) /* darkness controled spawns */
@@ -258,7 +265,6 @@ void spawn_point(object *op)
         op->last_eat = mob->last_eat;
         mob->last_eat = 0;
     }
-
     insert_spawn_mob_loot(op, mob, tmp);
 
     op->last_sp = rmt; /* this is the last rand() for what we have spawned! */
