@@ -2065,6 +2065,26 @@ void save_objects(mapstruct *m, FILE *fp, int flag)
                     }
                     continue;
                 }
+                else if (op->type == MONSTER)
+                {
+                    /* This is for mobs whose spawn has been interrupted by a
+                     * script so do not have SPAWN_INFO or MOB DATA. Properly
+                     * spawned mobs should have been handled above, so
+                     * this should be safe. */
+                    activelist_remove(head);
+                    remove_ob(head);
+                    check_walk_off(head, NULL, MOVE_APPLY_VANISHED | MOVE_APPLY_SAVING);
+                    if (otmp && (QUERY_FLAG(otmp, FLAG_REMOVED) || OBJECT_FREE(otmp))) /* invalid next ptr! */
+                    {
+                        if (!QUERY_FLAG(op, FLAG_REMOVED) && !OBJECT_FREE(op))
+                            otmp = op->above;
+                        else if (last_valid)
+                            otmp = last_valid->above;
+                        else
+                            otmp = get_map_ob(m, i, j); /* should be really rare */
+                    }
+                    continue;
+                }
                 else if (op->type == SPAWN_POINT)
                 {
                     /* Handling of the spawn points is much easier as handling the mob.

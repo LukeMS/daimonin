@@ -159,7 +159,7 @@ static void insert_spawn_mob_loot(object *op, object *mob, object *tmp)
  */
 void spawn_point(object *op)
 {
-    int     rmt;
+    int     rmt, tag;
     object *tmp, *mob, *next;
 
     if (op->enemy)
@@ -255,8 +255,17 @@ void spawn_point(object *op)
     if (!(mob = spawn_monster(mob, op, op->last_heal)))
         return; /* that happens when we have no free spot....*/
 
+    tag = mob->count;
     if (trigger_object_plugin_event(EVENT_TRIGGER, op, mob, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+    {
+        if (!was_destroyed(mob, tag))
+        {
+            mob->last_eat = 0;
+            insert_spawn_mob_loot(op, mob, tmp);
+            fix_monster(mob); /* fix all the values and add in possible abilities or forces ... */
+        }
         return;
+    }
 
     /* setup special monster -> spawn point values */
     op->last_eat = 0;
