@@ -255,8 +255,11 @@ void spawn_point(object *op)
     if (!(mob = spawn_monster(mob, op, op->last_heal)))
         return; /* that happens when we have no free spot....*/
 
+    /* normal spawning may be interrupted by a script, allowing you to do
+     * clever things to the mob. This is an apply event because trigger is
+     * already used in the case of connected spawn points. */
     tag = mob->count;
-    if (trigger_object_plugin_event(EVENT_TRIGGER, op, mob, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+    if (trigger_object_plugin_event(EVENT_APPLY, op, mob, tmp, NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
     {
         if (!was_destroyed(mob, tag))
         {
