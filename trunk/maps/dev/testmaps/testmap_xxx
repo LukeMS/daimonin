@@ -1,12 +1,13 @@
 arch map
-name Testmap - Effects
+name Testmap - XXX
 msg
 Created:  2003-06-04 Daimonin Map Editor
+Modified: 2008-09-29 smacky
 endmsg
 width 24
 height 24
 difficulty 1
-darkness 1280
+darkness 5
 tileset_id 144
 tileset_x 0
 tileset_y 0
@@ -365,9 +366,6 @@ x 2
 y 23
 end
 arch floor_ostone1
-x 3
-end
-arch wall_stone1_1
 x 3
 end
 arch wall_stone1_1
