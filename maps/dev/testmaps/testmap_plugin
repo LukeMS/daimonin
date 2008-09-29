@@ -2,6 +2,7 @@ arch map
 name Testmap - Plugin Events
 msg
 Created:  2003-06-04 Daimonin Map Editor
+Modified: 2008-09-29 smacky
 endmsg
 width 24
 height 24
@@ -195,8 +196,8 @@ x 1
 y 5
 arch event_obj
 name Lua
-race /dev/testmaps/Event_Examine.lua
 sub_type 12
+race /dev/testmaps/Event_Examine.lua
 end
 end
 arch floor_ostone1
@@ -213,8 +214,8 @@ x 1
 y 6
 arch event_obj
 name Lua
-race /dev/testmaps/Event_Examine.lua
 sub_type 12
+race /dev/testmaps/Event_Examine.lua
 end
 end
 arch floor_ostone1
@@ -234,8 +235,8 @@ x 1
 y 8
 arch event_obj
 name Lua
-race /dev/testmaps/LuaTest.lua
 sub_type 6
+race /dev/testmaps/LuaTest.lua
 end
 end
 arch floor_ostone1
@@ -252,9 +253,9 @@ x 1
 y 10
 arch event_obj
 name Lua
+sub_type 5
 race /dev/testmaps/Event_Pickup.lua
 slaying override
-sub_type 5
 end
 end
 arch floor_ostone1
@@ -266,8 +267,8 @@ x 1
 y 11
 arch event_obj
 name Lua
-race /dev/testmaps/Event_Pickup.lua
 sub_type 5
+race /dev/testmaps/Event_Pickup.lua
 end
 end
 arch floor_ostone1
@@ -280,9 +281,9 @@ x 1
 y 12
 arch event_obj
 name Lua
+sub_type 1
 race /dev/testmaps/Event_Apply.lua
 slaying override
-sub_type 1
 end
 end
 arch floor_ostone1
@@ -294,8 +295,8 @@ x 1
 y 13
 arch event_obj
 name Lua
-race /dev/testmaps/Event_Apply.lua
 sub_type 1
+race /dev/testmaps/Event_Apply.lua
 end
 end
 arch floor_ostone1
@@ -311,15 +312,15 @@ x 1
 y 15
 arch event_obj
 name Lua
+sub_type 6
 race /dev/testmaps/Event_Talk_Say.lua
 slaying SAY
-sub_type 6
 end
 arch event_obj
 name Lua
+sub_type 13
 race /dev/testmaps/Event_Talk_Say.lua
 slaying TALK
-sub_type 13
 end
 end
 arch floor_ostone1
@@ -341,8 +342,8 @@ x 1
 y 18
 arch event_obj
 name lua
-race /dev/testmaps/Event_Trigger.lua
 sub_type 10
+race /dev/testmaps/Event_Trigger.lua
 end
 end
 arch floor_ostone1
@@ -475,8 +476,8 @@ x 2
 y 17
 arch event_obj
 name Lua
-race /dev/testmaps/Trigger_Connection.lua
 sub_type 1
+race /dev/testmaps/Trigger_Connection.lua
 end
 end
 arch floor_ostone1
@@ -489,8 +490,8 @@ x 2
 y 18
 arch event_obj
 name lua
-race /dev/testmaps/Event_Apply.lua
 sub_type 1
+race /dev/testmaps/Event_Apply.lua
 end
 arch beacon
 name lever_beacon
@@ -521,9 +522,6 @@ x 2
 y 23
 end
 arch floor_ostone1
-x 3
-end
-arch wall_stone1_1
 x 3
 end
 arch wall_stone1_1
@@ -618,6 +616,7 @@ connected 42
 x 3
 y 20
 arch event_obj
+name Lua
 sub_type 10
 race PedestalScript.lua
 end
@@ -761,18 +760,20 @@ arch floor_ostone1
 x 5
 y 2
 end
+arch spawn_point
+x 5
+y 2
 arch monk
 name LuaTester
+type 83
 invulnerable 1
 no_attack 1
 unaggressive 0
-friendly 1
-x 5
-y 2
 arch event_obj
 name Lua
-race /dev/testmaps/LuaTest.lua
 sub_type 6
+race /dev/testmaps/LuaTest.lua
+end
 end
 end
 arch floor_ostone1
@@ -783,19 +784,22 @@ arch floor_ostone1
 x 5
 y 4
 end
+arch spawn_point
+x 5
+y 4
 arch drow_sorcerer
+type 83
 invulnerable 1
 no_attack 1
 unaggressive 1
 friendly 1
 stand_still 1
 direction 7
-x 5
-y 4
 arch event_obj
 name Lua
-race /dev/testmaps/DrowScript.lua
 sub_type 6
+race /dev/testmaps/DrowScript.lua
+end
 end
 end
 arch floor_ostone1
@@ -869,8 +873,8 @@ x 5
 y 20
 arch event_obj
 name Lua
-race PedestalScript.lua
 sub_type 10
+race PedestalScript.lua
 end
 end
 arch floor_ostone1
@@ -1093,8 +1097,8 @@ x 7
 y 20
 arch event_obj
 name Lua
-race ExitScript.lua
 sub_type 10
+race ExitScript.lua
 end
 end
 arch floor_ostone1
@@ -1131,22 +1135,25 @@ arch floor_ostone1
 x 8
 y 3
 end
+arch spawn_point
+x 8
+y 3
 arch lost_soul
+type 83
 invulnerable 1
 no_attack 1
 unaggressive 1
 friendly 1
 stand_still 1
 direction 7
-x 8
-y 3
 arch event_obj
 name Lua
-race /dev/testmaps/lost_soul.lua
 sub_type 6
+race /dev/testmaps/lost_soul.lua
 end
 arch beacon
 name script_tester_beacon_1
+end
 end
 end
 arch floor_ostone1
@@ -1704,6 +1711,13 @@ arch floor_ostone1
 x 13
 y 13
 end
+arch sign
+msg
+On the chequered floor is a spawn point with an APPLY script. Each time it spawns, the mob is put into one of the three pen areas according to colour (physical colour, not level colour). A TRIGGER scrpt is run when a connected spawn (such as this one) has its connection activated.
+endmsg
+x 13
+y 13
+end
 arch floor_ostone1
 x 13
 y 14
@@ -1720,7 +1734,15 @@ arch floor_ostone1
 x 13
 y 17
 end
+arch small_fence1.181
+x 13
+y 17
+end
 arch floor_ostone1
+x 13
+y 18
+end
+arch small_fence1.131
 x 13
 y 18
 end
@@ -1728,11 +1750,23 @@ arch floor_ostone1
 x 13
 y 19
 end
+arch small_fence1.131
+x 13
+y 19
+end
 arch floor_ostone1
 x 13
 y 20
 end
+arch small_fence1.131
+x 13
+y 20
+end
 arch floor_ostone1
+x 13
+y 21
+end
+arch small_fence1.131
 x 13
 y 21
 end
@@ -1810,6 +1844,11 @@ arch floor_ostone1
 x 14
 y 14
 end
+arch handle_lever
+connected 666
+x 14
+y 14
+end
 arch floor_ostone1
 x 14
 y 15
@@ -1822,19 +1861,27 @@ arch floor_ostone1
 x 14
 y 17
 end
-arch floor_ostone1
+arch small_fence1.111
+x 14
+y 17
+end
+arch floor_red1
 x 14
 y 18
 end
-arch floor_ostone1
+arch floor_red1
 x 14
 y 19
 end
-arch floor_ostone1
+arch floor_red1
 x 14
 y 20
 end
-arch floor_ostone1
+arch floor_red1
+x 14
+y 21
+end
+arch small_fence1.111
 x 14
 y 21
 end
@@ -1924,19 +1971,32 @@ arch floor_ostone1
 x 15
 y 17
 end
-arch floor_ostone1
+arch small_fence1.111
+x 15
+y 17
+end
+arch floor_red1
 x 15
 y 18
 end
-arch floor_ostone1
+arch floor_red1
 x 15
 y 19
 end
-arch floor_ostone1
+arch beacon
+name testmap_plugin red jelly pen
+x 15
+y 19
+end
+arch floor_red1
 x 15
 y 20
 end
-arch floor_ostone1
+arch floor_red1
+x 15
+y 21
+end
+arch small_fence1.111
 x 15
 y 21
 end
@@ -2018,27 +2078,59 @@ arch floor_ostone1
 x 16
 y 15
 end
-arch floor_ostone1
+arch floor_bw1
 x 16
 y 16
+end
+arch spawn_point
+speed 0.0
+last_grace 0
+sp -1
+connected 666
+x 16
+y 16
+arch jelly_red
+type 83
+end
+arch jelly_ochre
+type 83
+object_int1 6666
+end
+arch jelly_green
+type 83
+object_int1 3333
+end
+arch event_obj
+name Lua
+sub_type 1
+race separate_jellies.lua
+end
 end
 arch floor_ostone1
 x 16
 y 17
 end
-arch floor_ostone1
+arch small_fence1.111
+x 16
+y 17
+end
+arch floor_red1
 x 16
 y 18
 end
-arch floor_ostone1
+arch floor_red1
 x 16
 y 19
 end
-arch floor_ostone1
+arch floor_red1
 x 16
 y 20
 end
-arch floor_ostone1
+arch floor_fire1c
+x 16
+y 21
+end
+arch small_fence1.111
 x 16
 y 21
 end
@@ -2112,7 +2204,15 @@ arch floor_ostone1
 x 17
 y 13
 end
+arch small_fence1.181
+x 17
+y 13
+end
 arch floor_ostone1
+x 17
+y 14
+end
+arch small_fence1.131
 x 17
 y 14
 end
@@ -2120,7 +2220,15 @@ arch floor_ostone1
 x 17
 y 15
 end
+arch small_fence1.131
+x 17
+y 15
+end
 arch floor_ostone1
+x 17
+y 16
+end
+arch small_fence1.131
 x 17
 y 16
 end
@@ -2128,19 +2236,39 @@ arch floor_ostone1
 x 17
 y 17
 end
-arch floor_ostone1
+arch small_fence1.141
+x 17
+y 17
+end
+arch floor_red1
 x 17
 y 18
 end
-arch floor_ostone1
+arch small_fence1.131
+x 17
+y 18
+end
+arch floor_red1
 x 17
 y 19
 end
-arch floor_ostone1
+arch small_fence1.131
+x 17
+y 19
+end
+arch floor_red1
 x 17
 y 20
 end
-arch floor_ostone1
+arch small_fence1.131
+x 17
+y 20
+end
+arch floor_red1
+x 17
+y 21
+end
+arch small_fence1.141
 x 17
 y 21
 end
@@ -2214,35 +2342,47 @@ arch floor_ostone1
 x 18
 y 13
 end
-arch floor_ostone1
+arch small_fence1.111
+x 18
+y 13
+end
+arch grass_thick2
 x 18
 y 14
 end
-arch floor_ostone1
+arch grass_thick2
 x 18
 y 15
 end
-arch floor_ostone1
+arch grass_thick2
 x 18
 y 16
 end
-arch floor_ostone1
+arch grass_thick1
 x 18
 y 17
 end
-arch floor_ostone1
+arch small_fence1.111
+x 18
+y 17
+end
+arch desert.102
 x 18
 y 18
 end
-arch floor_ostone1
+arch desert.101
 x 18
 y 19
 end
-arch floor_ostone1
+arch desert.104
 x 18
 y 20
 end
-arch floor_ostone1
+arch desert.101
+x 18
+y 21
+end
+arch small_fence1.111
 x 18
 y 21
 end
@@ -2316,35 +2456,57 @@ arch floor_ostone1
 x 19
 y 13
 end
-arch floor_ostone1
+arch small_fence1.111
+x 19
+y 13
+end
+arch grass_thick1
 x 19
 y 14
 end
-arch floor_ostone1
+arch grass_thick1
 x 19
 y 15
 end
-arch floor_ostone1
+arch beacon
+name testmap_plugin green jelly pen
+x 19
+y 15
+end
+arch grass_thick3
 x 19
 y 16
 end
-arch floor_ostone1
+arch grass_thick2
 x 19
 y 17
 end
-arch floor_ostone1
+arch small_fence1.111
+x 19
+y 17
+end
+arch desert.102
 x 19
 y 18
 end
-arch floor_ostone1
+arch desert.103
 x 19
 y 19
 end
-arch floor_ostone1
+arch beacon
+name testmap_plugin ochre jelly pen
+x 19
+y 19
+end
+arch desert.103
 x 19
 y 20
 end
-arch floor_ostone1
+arch desert.102
+x 19
+y 21
+end
+arch small_fence1.111
 x 19
 y 21
 end
@@ -2418,35 +2580,47 @@ arch floor_ostone1
 x 20
 y 13
 end
-arch floor_ostone1
+arch small_fence1.111
+x 20
+y 13
+end
+arch grass_thick3
 x 20
 y 14
 end
-arch floor_ostone1
+arch grass_thick2
 x 20
 y 15
 end
-arch floor_ostone1
+arch grass_thick1
 x 20
 y 16
 end
-arch floor_ostone1
+arch grass_thick1
 x 20
 y 17
 end
-arch floor_ostone1
+arch small_fence1.111
+x 20
+y 17
+end
+arch desert.101
 x 20
 y 18
 end
-arch floor_ostone1
+arch desert.101
 x 20
 y 19
 end
-arch floor_ostone1
+arch desert.104
 x 20
 y 20
 end
-arch floor_ostone1
+arch desert.103
+x 20
+y 21
+end
+arch small_fence1.111
 x 20
 y 21
 end
@@ -2520,35 +2694,71 @@ arch floor_ostone1
 x 21
 y 13
 end
-arch floor_ostone1
+arch small_fence1.111
+x 21
+y 13
+end
+arch grass_thick2
 x 21
 y 14
 end
-arch floor_ostone1
+arch small_fence1.131
+x 21
+y 14
+end
+arch grass_thick1
 x 21
 y 15
 end
-arch floor_ostone1
+arch small_fence1.131
+x 21
+y 15
+end
+arch grass_thick2
 x 21
 y 16
 end
-arch floor_ostone1
+arch small_fence1.131
+x 21
+y 16
+end
+arch grass_thick3
 x 21
 y 17
 end
-arch floor_ostone1
+arch small_fence1.141
+x 21
+y 17
+end
+arch desert.104
 x 21
 y 18
 end
-arch floor_ostone1
+arch small_fence1.131
+x 21
+y 18
+end
+arch desert.103
 x 21
 y 19
 end
-arch floor_ostone1
+arch small_fence1.131
+x 21
+y 19
+end
+arch desert.102
 x 21
 y 20
 end
-arch floor_ostone1
+arch small_fence1.131
+x 21
+y 20
+end
+arch desert.101
+x 21
+y 21
+end
+arch small_fence1.141
 x 21
 y 21
 end
