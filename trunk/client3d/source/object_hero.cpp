@@ -22,6 +22,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
 #include "object_hero.h"
+#include "logger.h"
+
 //================================================================================================
 // Init all static Elemnts.
 //================================================================================================
@@ -60,3 +62,22 @@ ObjectHero::ObjectHero()
     magicmap = 0;
 //    RangeFireMode = 0;
 }
+
+//================================================================================================
+//
+//================================================================================================
+int ObjectHero::fillAccount(int pos, const unsigned char *data)
+{
+    int i = 0;
+    account.name[pos] = (const char*)data;
+    i+= account.name[pos].size();
+    account.level [pos] = data[++i];
+    account.race  [pos] = data[++i];
+    account.gender[pos] = data[++i];
+    ++account.count;
+    Logger::log().error() << "Player " << account.name[pos] << " Level: " << account.level[pos] << " race: " << account.race[pos] ;
+    return ++i;
+}
+
+
+

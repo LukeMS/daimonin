@@ -57,7 +57,7 @@ enum
 //================================================================================================
 int Network::GetInt_String(unsigned char *data)
 {
-    return ((data[0] << 24) + (data[1] << 16) + (data[2] << 8) + data[3]);
+    return (ntohl((data[0] << 24) + (data[1] << 16) + (data[2] << 8) + data[3]));
 }
 
 //================================================================================================
@@ -65,99 +65,79 @@ int Network::GetInt_String(unsigned char *data)
 //================================================================================================
 short Network::GetShort_String(unsigned char *data)
 {
-    return ((data[0] << 8) + data[1]);
+    return (ntohs(data[0] << 8) + data[1]);
 }
 
 //================================================================================================
 // .
 //================================================================================================
-void Network::CompleteCmd(unsigned char *data, int len)
+void Network::AccNameSuccess(unsigned char *data, int len)
 {
-    if (len != 6)
+    Logger::log().error() << "AccNameSuccess";
+    /*
+    int num = (len)?GetUINT8_String(data):ACCOUNT_STATUS_DISCONNECT;
+    if(num == ACCOUNT_STATUS_DISCONNECT)
     {
-        Logger::log().error() << "CompleteCmd - invalid length (" << len << ") - will be ignored";
-        // is here a return; missing?
+        LOG(LOG_MSG, "Server rejected your account action - closing socket.\n");
+        SOCKET_CloseSocket(csocket.fd);
+        SDL_Delay(1250);
+        GameStatus = GAME_STATUS_INIT;
     }
-    csocket.command_received = GetShort_String(data);
-    csocket.command_time = GetInt_String(data + 2);
+    else
+    {
+        if(num == ACCOUNT_STATUS_OK)
+        {
+            // we continue with the account creation
+            GameStatus = GAME_STATUS_LOGIN_NEW;
+            // but now we go to password input
+            LoginInputStep = LOGIN_STEP_PASS1;
+            dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
+            cpl.password[0] = 0;
+            open_input_mode(MAX_ACCOUNT_PASSWORD);
+        }
+        else // something is wrong, try again
+        {
+            GameStatus = GAME_STATUS_LOGIN_NEW;
+            sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+            open_input_mode(MAX_ACCOUNT_PASSWORD);
+        }
+    }
+    */
 }
 
 //================================================================================================
-// .
+// Server is sending us our account data or the reason why not
 //================================================================================================
-void Network::VersionCmd(unsigned char *data, int len)
+void Network::AccountCmd(unsigned char *data, int len)
 {
-    GameStatusVersionOKFlag = false;
-    GameStatusVersionFlag = true;
-    int cs_version = atoi((char*)data);
-
-    // The first version is the client to server version the server wants
-    // ATM, we just do for "must match".
-    // Later it will be smart to define range where the differences are ok
-    if (VERSION_CS != cs_version)
+    int count = 0;
+    ObjectHero::getSingleton().clearAccount();
+    // First, get the account status - it tells us too when login failed
+    if ((unsigned char)data[count++]) // something is wrong when not ACCOUNT_STATUS_OK (0)
     {
-        Logger::log().error() << "Invalid CS version (" <<  (int)VERSION_CS << " " << cs_version << ")";
-        if (VERSION_CS > cs_version)
+        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Account does not exist");
+        Logger::log().error() << "Unknown Account!";
+/*
+        draw_info_format(COLOR_RED, "Unknown Account: %s", cpl.acc_name);
+        GameStatus = GAME_STATUS_LOGIN_ACCOUNT;
+        LoginInputStep = LOGIN_STEP_NAME;
+        dialog_login_warning_level = DIALOG_LOGIN_WARNING_ACCOUNT_UNKNOWN;
+        cpl.acc_name[0] = 0;
+        open_input_mode(MAX_ACCOUNT_NAME);
+*/
+    }
+    else // we have account data... set it up and move player to account view mode
+    {
+        for (int nr = 0; nr < ObjectHero::ACCOUNT_MAX_PLAYER; ++nr)
         {
-            GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "The server is outdated!");
-            GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Select a different one!");
-            Logger::log().error() << "The selected server is outdated.";
+            if (count >= len) break;
+            count += ObjectHero::getSingleton().fillAccount(nr, data+count);
         }
-        else
-        {
-            GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Your client is outdated!");
-            GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Update your client!");
-            Logger::log().error() << "The client is outdated.";
-        }
-        CloseSocket();
-        Option::getSingleton().setGameStatus(Option::GAME_STATUS_START);
-        SDL_Delay(3250);
-        return;
+        //GameStatus = GAME_STATUS_ACCOUNT;
+        //LoginInputStep = LOGIN_STEP_NOTHING;
     }
-    char *cp = (char *) (strchr((char *)data, ' '));
-    if (!cp)
-    {
-        std::stringstream strCmd;
-        strCmd << "Invalid version string: " << data;
-        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, strCmd.str().c_str());
-        Logger::log().error() << data;
-        CloseSocket();
-        Option::getSingleton().setGameStatus(Option::GAME_STATUS_START);
-        SDL_Delay(3250);
-        return;
-    }
-    int sc_version = atoi(cp);
-    if (sc_version != VERSION_SC)
-    {
-        std::stringstream strCmd;
-        strCmd << "Invalid SC version  (" << VERSION_SC << ", " << sc_version << ")";
-        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, strCmd.str().c_str());
-        String strBuf;
-        if (VERSION_SC > sc_version)
-            strBuf = "The server is outdated!\nSelect a different one!";
-        else
-            strBuf = "Your client is outdated!\nUpdate your client!";
-        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, strBuf.c_str());
-        Logger::log().error() << strBuf;
-        CloseSocket();
-        Option::getSingleton().setGameStatus(Option::GAME_STATUS_START);
-        SDL_Delay(3250);
-        return;
-    }
-    cp = (char *) (strchr(cp + 1, ' '));
-    if (!cp || strncmp(cp + 1, "Daimonin Server", 15))
-    {
-        String strBuf = "Invalid server name: ";
-        strBuf+= cp;
-        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, strBuf.c_str());
-        Logger::log().error() << strBuf;
-        CloseSocket();
-        Option::getSingleton().setGameStatus(Option::GAME_STATUS_START);
-        SDL_Delay(3250);
-        return;
-    }
-    GameStatusVersionOKFlag = true;
 }
+
 
 //================================================================================================
 // .
@@ -1100,7 +1080,7 @@ void Network::PlayerCmd(unsigned char *data, int len)
     i += nlen;
     if (i != len)
     {
-        Logger::log().error() << "PlayerCmd: lengths do not match (" << len << " != " << i << ")";
+        Logger::log().error() << "PlayerCmd: lengths does not match (" << len << " != " << i << ")";
     }
 //    new_player(tag, name, weight, (short) face);
 //    map_draw_map_clear();
@@ -1130,7 +1110,7 @@ void Network::PlayerCmd(unsigned char *data, int len)
         obj.particleNr=-1;
         ObjectManager::getSingleton().addMobileObject(obj);
     }
-    Logger::log().info() << "Loading quickslot settings for server";
+    Logger::log().info() << "Loading quickslot settings";
     //load_quickslots_entrys();
 }
 
@@ -1324,92 +1304,106 @@ void Network::GoodbyeCmd(unsigned char *data, int len)
 }
 
 //================================================================================================
-// .
+// Server send us the setup cmd..
 //================================================================================================
 void Network::SetupCmd(unsigned char *buf, int len)
 {
-
-    Logger::log().error() << "setup "<< buf;
-
-    // If server sends endian check - do the check.
-    if (*(uint16*)buf == 0x0201 || *(uint16*)buf == 0x0102)
-    {
-        Logger::log().error() << "Neuer Server";
-        //Server sends 0x0201 to test if we have the same endian on serevr and client.
-        uint16 serverEndian = *(uint16*)buf;
-        uint16 clientEndian = 0x0201;
-        mEqualEndian = (serverEndian == clientEndian);
-        buf+=6;
-    }
+    buf+=6; // Skip the endian test - because its crap! Please use htonl()/htons() instead!
     unsigned char *cmd, *param;
     scrolldy = scrolldx = 0;
-    for (int s = 0; ;)
+    int pos =0;
+    while (1)
     {
-        while (buf[s] == ' ')
-            ++s;
-        if (s >= len)
-            break;
-        cmd = &buf[s];
-        while (buf[s] && buf[s] != ' ')
-            ++s;
-        buf[s++] = 0;
-        while (buf[s] == ' ')
-            ++s;
-        if (s >= len)
-            break;
-        param = &buf[s];
-        while (buf[s] && buf[s] != ' ')
-            ++s;
-        buf[s++] = 0;
-        while (buf[s] == ' ')
-            ++s;
+        // Get command.
+        while (pos < len && buf[pos] == ' ') ++pos;
+        if (pos >= len) break;
+        cmd = &buf[pos];
+        while (pos < len && buf[pos] != ' ') ++pos;
+        if (pos >= len) break;
+        buf[pos++] = '\0';
+        // Get parameter.
+        while (pos < len && buf[pos] == ' ') ++pos;
+        if (pos >= len) break;
+        param = &buf[pos];
+        while (pos < len && buf[pos] != ' ') ++pos;
+        if (pos >= len) break;
+        buf[pos++] = '\0';
 
-        if (!strcmp((const char*)cmd, "sound"))
+        if (!strcmp((const char*)cmd, "cs"))
+        {
+            if (VERSION_CS != atoi((const char*)param))
+            {
+                GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "~Your client is outdated!~");
+                Logger::log().error() << "Client is outdated";
+                CloseClientSocket();
+                SDL_Delay(3250);
+                return;
+            }
+            Logger::log().info() << "Client version confirmed";
+            continue;
+        }
+        if (!strcmp((const char*)cmd, "sc"))
+        {
+            if (VERSION_SC != atoi((const char*)param))
+            {
+                GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "~The server is outdated!\nSelect a different one!~");
+                CloseClientSocket();
+                SDL_Delay(3250);
+                return;
+            }
+            Logger::log().info() << "Server version confirmed";
+            continue;
+        }
+        if (!strcmp((const char*)cmd, "ac"))
+        {
+            continue;
+        }
+        if (!strcmp((const char*)cmd, "fc"))
+        {
+            continue;
+        }
+        if (!strcmp((const char*)cmd, "mz")) // MapSize.
+        {
+            continue;
+        }
+        if (!strcmp((const char*)cmd, "sn")) // Sound.
         {
             if (!strcmp((const char*)param, "FALSE"))
             {
                 ;
             }
+            continue;
         }
-
-        else if (!strcmp((const char*)cmd, "skf"))
+        if (!strcmp((const char*)cmd, "skf"))
         {
             checkFileStatus((const char*)cmd, (char*)param, ServerFile::FILE_SKILLS);
+            continue;
         }
-        else if (!strcmp((const char*)cmd, "spf"))
+        if (!strcmp((const char*)cmd, "spf"))
         {
             checkFileStatus((const char*)cmd, (char*)param, ServerFile::FILE_SPELLS);
+            continue;
         }
-        else if (!strcmp((const char*)cmd, "stf"))
+        if (!strcmp((const char*)cmd, "stf"))
         {
             checkFileStatus((const char*)cmd, (char*)param, ServerFile::FILE_SETTINGS);
+            continue;
         }
-        else if (!strcmp((const char*)cmd, "bpf"))
+        if (!strcmp((const char*)cmd, "bpf"))
         {
             checkFileStatus((const char*)cmd, (char*)param, ServerFile::FILE_BMAPS);
+            continue;
         }
-        else if (!strcmp((const char*)cmd, "amf"))
+        if (!strcmp((const char*)cmd, "amf"))
         {
             checkFileStatus((const char*)cmd, (char*)param, ServerFile::FILE_ANIMS);
+            continue;
         }
-
-        else if (!strcmp((const char*)cmd, "mapsize"))
-            {}
-        else if (!strcmp((const char*)cmd, "map2cmd"))
-            {}
-        else if (!strcmp((const char*)cmd, "darkness"))
-            {}
-        else if (!strcmp((const char*)cmd, "facecache"))
-            {}
-
-        else
-        {
-            Logger::log().error() << "Got setup for a command we don't understand: " << cmd << " " << param;
-            GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "~The server is outdated!\nSelect a different one!~");
-            CloseSocket();
-            Option::getSingleton().setGameStatus(Option::GAME_STATUS_START);
-            return;
-        }
+        Logger::log().error() << "Got setup for a command we don't understand: " << cmd << " " << param;
+        Option::getSingleton().setGameStatus(Option::GAME_STATUS_START);
+        CloseSocket();
+        SDL_Delay(3250);
+        return;
     }
     Option::getSingleton().setGameStatus(Option::GAME_STATUS_REQUEST_FILES);
 }
@@ -1506,7 +1500,7 @@ void Network::DataCmd(unsigned char *data, int len)
     //         if (data_cmd-1 == SERVER_FILE_SKILLS) { read_skills(); }
     //    else if (data_cmd-1 == SERVER_FILE_SPELLS) { read_spells(); }
 }
-
+/*
 //================================================================================================
 // server tells us to go to the new char creation.
 //================================================================================================
@@ -1515,7 +1509,7 @@ void Network::NewCharCmd(unsigned char *data, int len)
     //dialog_new_char_warn = 0;
     Option::getSingleton().setGameStatus(Option::GAME_STATUS_NEW_CHAR);
 }
-
+*/
 //================================================================================================
 // .
 //================================================================================================
@@ -1701,18 +1695,18 @@ void Network::PreParseInfoStat(char *cmd)
                                                        GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Password is illegal or does not match!~");
                 break;
         }
-        Option::getSingleton().setGameStatus(Option::GAME_STATUS_NAME_INIT);
+//        Option::getSingleton().setGameStatus(Option::GAME_STATUS_NAME_INIT);
     }
     else if (!strncmp(cmd, "QP",2))
     {
         if (status)
             GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
                                                    GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Password is illegal or does not match!~");
-        Option::getSingleton().setGameStatus(Option::GAME_STATUS_PSWD_INIT);
+        // Option::getSingleton().setGameStatus(Option::GAME_STATUS_PSWD_INIT);
     }
     else if (!strncmp(cmd, "QV",2))
     {
-        Option::getSingleton().setGameStatus(Option::GAME_STATUS_VRFY_INIT);
+        //Option::getSingleton().setGameStatus(Option::GAME_STATUS_VRFY_INIT);
     }
 }
 

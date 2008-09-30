@@ -85,7 +85,7 @@ public:
     void loadRawFont(const char *filename);
     void loadTTFont (const char *filename, const char *size, const char *resolution);
     void createBuffer();
-    void Print(TextLine *line, Ogre::Texture *texture);
+    void Print(TextLine *line, Ogre::Texture *texture, bool textureIsLocked = false);
     void PrintToBuffer(int width, int height, Ogre::uint32 *dest_data, const char*text, unsigned int font, Ogre::uint32 color = COLOR_WHITE);
     int CalcTextWidth(unsigned char *text, unsigned int fontNr = 0);
     int getFontHeight(int fontNr)

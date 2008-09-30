@@ -53,8 +53,45 @@ public:
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     enum {SC_NORMAL, SC_FIRERUN, SC_ALWAYS};
-    enum {VERSION_CS = 991023};
-    enum {VERSION_SC = 991023};
+    enum {VERSION_CS = 991027};
+    enum {VERSION_SC = 991027};
+    // flags for send_command_binary()
+    enum
+    {
+        SEND_CMD_FLAG_DYNAMIC = 1 << 0, // Data tail length can vary, add 2 length bytes
+        SEND_CMD_FLAG_STRING  = 1 << 1, // add a '\0' to the outbuffer string as sanity set
+        SEND_CMD_FLAG_NOSTRING= 1 << 2, // no add of  '\0'
+        SEND_CMD_FLAG_FIXED   = 1 << 3, // the the command as fixed, without length tag (server knows length)
+    };
+
+    // List of client to server (cs) binary command tags.
+    enum client_cmd
+    {
+        // start of pre-processed cmds
+        CLIENT_CMD_PING = 0, // unused.
+        // Ns_Login mode only commands.
+        CLIENT_CMD_SETUP,
+        CLIENT_CMD_REQUESTFILE,
+        CLIENT_CMD_CHECKNAME,
+        CLIENT_CMD_LOGIN,
+        // Ns_Account mode only commands.
+        CLIENT_CMD_NEWCHAR,
+        CLIENT_CMD_DELCHAR,
+        CLIENT_CMD_ADDME,
+        // Ns_Playing mode only commands.
+        CLIENT_CMD_FACE, // special case: Allowed since Ns_Login for face sending servers.
+        CLIENT_CMD_MOVE,
+        // end of pre-processed cmds.
+        CLIENT_CMD_APPLY,
+        CLIENT_CMD_EXAMINE,
+        CLIENT_CMD_INVMOVE,
+        CLIENT_CMD_GUITALK,
+        CLIENT_CMD_LOCK,
+        CLIENT_CMD_MARK,
+        CLIENT_CMD_FIRE,
+        CLIENT_CMD_GENERIC,
+        CLIENT_CMD_SUM
+    };
     typedef struct command_buffer
     {
         struct command_buffer *next; // Next in queue.
@@ -122,7 +159,8 @@ public:
     static int writer_thread_loop(void *);
 
     static int send_command(const char *command, int repeat, int force);
-    int send_command_binary(unsigned char cmd, unsigned char *body, unsigned int len);
+    static int send_command_binary(unsigned char cmd, unsigned char *body, int len, int flags);
+    static int send_command_binary(unsigned char cmd, std::stringstream &stream);
     static int send_socklist(Ogre::String msg);
     void socket_thread_start();
     void socket_thread_stop();
@@ -145,17 +183,14 @@ public:
     static void CloseClientSocket();
     static void send_reply(const char *text);
     static void cs_write_string(const char *buf);
-    int  GetError();  // returns socket error
+    static Ogre::String &Network::getError();  // returns socket error
     void read_metaserver_data();
     void handle_socket_shutdown();
     void update();
     void contactMetaserver();
-    void SendVersion();
     void add_metaserver_data(const char *ip, const char *server, int port, int player, const char *ver,
                              const char *desc1, const char *desc2, const char *desc3, const char *desc4);
     // Commands
-    static void CompleteCmd    (unsigned char *data, int len);
-    static void VersionCmd     (unsigned char *data, int len);
     static void DrawInfoCmd    (unsigned char *data, int len);
     static void DrawInfoCmd2   (unsigned char *data, int len);
     static void AddMeFail      (unsigned char *data, int len);
@@ -171,6 +206,8 @@ public:
     static void SpelllistCmd   (unsigned char *data, int len);
     static void SkilllistCmd   (unsigned char *data, int len);
     static void GolemCmd       (unsigned char *data, int len);
+    static void AccountCmd     (unsigned char *data, int len);
+    static void AccNameSuccess (unsigned char *data, int len);
     static void AddMeSuccess   (unsigned char *data, int len);
     static void GoodbyeCmd     (unsigned char *data, int len);
     static void SetupCmd       (unsigned char *data, int len);
@@ -224,7 +261,6 @@ private:
     int SocketStatusErrorNr;
     int mActServerNr;
     struct sockaddr_in  insock;       // Server's attributes
-    static bool mEqualEndian; // Same endian on server and client?
     static bool mInitDone;
 
     // ////////////////////////////////////////////////////////////////////

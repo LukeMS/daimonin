@@ -24,8 +24,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef SOUND_H
 #define SOUND_H
 
-#include "fmod.h"
-
 /**
  ** This singleton class handles all sound related stuff.
  *****************************************************************************/
@@ -84,8 +82,7 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    Sound()
-    {}
+    Sound() { mInit = false; }
     ~Sound()
     {}
     Sound( const Sound& ); // disable copy-constructor.
