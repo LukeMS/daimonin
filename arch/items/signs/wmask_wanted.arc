@@ -1,5 +1,5 @@
 Object wmask_wanted
-name announcement (apply to read) 
+name announcement
 face wmask_wanted.111
 anim
 facings 9

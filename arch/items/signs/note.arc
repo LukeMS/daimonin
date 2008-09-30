@@ -1,4 +1,5 @@
 Object note
+name note
 face note.101
 layer 3
 identified 1
