@@ -8,28 +8,7 @@ pass_thru 1
 no_pick 1
 direction 1
 face fence_01_gate_closed.112
-anim
-facings 9
-dummy.111
-dummy.111
-fence_01_gate.112
-fence_01_gate_closed.112
-fence_01_gate.112
-fence_01_gate_closed.112
-fence_01_gate.112
-fence_01_gate_closed.112
-fence_01_gate.112
-fence_01_gate_closed.112
-fence_01_gate.112
-fence_01_gate_closed.112
-fence_01_gate.112
-fence_01_gate_closed.112
-fence_01_gate.112
-fence_01_gate_closed.112
-fence_01_gate.112
-fence_01_gate_closed.112
-mina
-is_animated 0
+animation fence_gate_01
 anim_speed 1
 is_turnable 1
 msg
