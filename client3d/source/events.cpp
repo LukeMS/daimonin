@@ -149,7 +149,7 @@ void Events::setWorldPos(int deltaX, int deltaZ)
 //================================================================================================
 bool Events::frameStarted(const FrameEvent& evt)
 {
-    static String strPlayerName, strPlayerPswd;
+    static String strAccountName, strAccountPswd;
     if (mWindow->isClosed() || mQuitGame)
         return false;
 
@@ -364,35 +364,8 @@ bool Events::frameStarted(const FrameEvent& evt)
                 break;
             }
             Network::getSingleton().socket_thread_start();
-            GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Connected. Exchange version.");
-            Option::getSingleton().setGameStatus(Option::GAME_STATUS_VERSION);
-            break;
-        }
-
-        case Option::GAME_STATUS_VERSION:
-        {
-            Network::getSingleton().SendVersion();
-            Option::getSingleton().setGameStatus(Option::GAME_STATUS_WAITVERSION);
-            break;
-        }
-
-        case Option::GAME_STATUS_WAITVERSION:
-        {
-            // perhaps here should be a timer? Remember, the version exchange server<->client is asynchron
-            // so perhaps the server send his version faster as the client send it to server.
-            if (Network::GameStatusVersionFlag) // wait for version answer when needed
-            {
-                if (!Network::GameStatusVersionOKFlag)
-                {
-                    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Version not supported.");
-                    Option::getSingleton().setGameStatus(Option::GAME_STATUS_START);
-                }
-                else
-                {
-                    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Version confirmed.");
-                    Option::getSingleton().setGameStatus(Option::GAME_STATUS_SETUP);
-                }
-            }
+            GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Connected. Sending Setup Command.");
+            Option::getSingleton().setGameStatus(Option::GAME_STATUS_SETUP);
             break;
         }
 
@@ -401,70 +374,55 @@ bool Events::frameStarted(const FrameEvent& evt)
             ServerFile::getSingleton().checkFiles();
             std::stringstream strCmd;
             strCmd <<
-            "setup sound " << 1 <<
-            " map2cmd "    << 1 <<
-            " mapsize "    << 17 << "x" << 17 <<
-            " darkness "   << 1 <<
-            " facecache "  << 1 <<
+            "cs "  << Network::VERSION_CS <<
+            " sc " << Network::VERSION_SC <<
+            " sn " << 1 <<
+            " mz "    << 17 << "x" << 17 <<
             " skf " << ServerFile::getSingleton().getLength(ServerFile::FILE_SKILLS)  << "|" << std::hex<< ServerFile::getSingleton().getCRC(ServerFile::FILE_SKILLS)     << std::dec <<
             " spf " << ServerFile::getSingleton().getLength(ServerFile::FILE_SPELLS)  << "|" << std::hex<< ServerFile::getSingleton().getCRC(ServerFile::FILE_SPELLS)     << std::dec <<
             " bpf " << ServerFile::getSingleton().getLength(ServerFile::FILE_BMAPS)   << "|" << std::hex<< ServerFile::getSingleton().getCRC(ServerFile::FILE_BMAPS)      << std::dec <<
             " stf " << ServerFile::getSingleton().getLength(ServerFile::FILE_SETTINGS)<< "|" << std::hex<< ServerFile::getSingleton().getCRC(ServerFile::FILE_SETTINGS)   << std::dec <<
-            " amf " << ServerFile::getSingleton().getLength(ServerFile::FILE_ANIMS)   << "|" << std::hex<< ServerFile::getSingleton().getCRC(ServerFile::FILE_ANIMS)      << std::dec;
-            Network::getSingleton().cs_write_string((char*)strCmd.str().c_str());
-            //Logger::log().info() << "Send: " << str;
+            " amf " << ServerFile::getSingleton().getLength(ServerFile::FILE_ANIMS)   << "|" << std::hex<< ServerFile::getSingleton().getCRC(ServerFile::FILE_ANIMS)      << std::dec << '\0';
+            //Network::getSingleton().cs_write_string((char*)strCmd.str().c_str());
+            Network::getSingleton().send_command_binary(Network::CLIENT_CMD_SETUP, (unsigned char*)strCmd.str().c_str(), (int)strlen(strCmd.str().c_str()), Network::SEND_CMD_FLAG_STRING);
             Option::getSingleton().setGameStatus(Option::GAME_STATUS_WAITSETUP);
+            break;
+        }
+
+        case Option::GAME_STATUS_WAITSETUP:
+        {
+            // Here we wait for the server to send SetupCmd().
+            // ToDO: Set a timer, so it won't be a endless loop if the SetupCmd changed and client don't understand it.
             break;
         }
 
         case Option::GAME_STATUS_REQUEST_FILES:
         {
-            if (!ServerFile::getSingleton().requestFiles())
-            {
-                // Wait until all files are upToDate.
-                break;
-            }
-            // Now we wait for user to select login or create character.
-            Option::getSingleton().setGameStatus(Option::GAME_STATUS_ADDME); // only for testing....
-            break;
-        }
-
-        case Option::GAME_STATUS_ADDME:
-        {
-            TileMap::getSingleton().clear_map();
-            Network::getSingleton().cs_write_string("addme");
-            Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN);
+            // Wait until all files are upToDate.
+            if (ServerFile::getSingleton().requestFiles())
+                Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN);
             break;
         }
 
         case Option::GAME_STATUS_LOGIN:
         {
-            // now wait for login request of the server.
-            if (GuiManager::getSingleton().brokenTextInput())
-            {
-                Logger::log().info() << "Break Login.";
-                Network::getSingleton().CloseSocket();
-                Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
-                GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_SERVERSELECT, false);
-                GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_LOGIN, false);
-                //GameStatusLogin = FALSE;
-            }
-            break;
-        }
-
-        case Option::GAME_STATUS_NAME_INIT:
-        {
+            TileMap::getSingleton().clear_map();
+            GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_SERVERSELECT, false);
             GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_LOGIN, true);
             GuiManager::getSingleton().startTextInput(GuiManager::GUI_WIN_LOGIN, GuiImageset::GUI_TEXTINPUT_LOGIN_NAME, MAX_LEN_LOGIN_NAME, true, true);
-            Option::getSingleton().setGameStatus(Option::GAME_STATUS_NAME_USER);
+            Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_NAME);
             break;
         }
 
-        case Option::GAME_STATUS_NAME_USER:
+        // Login on an existing account.
+        case Option::GAME_STATUS_LOGIN_NAME:
         {
+
+            //Logger::log().error() <<  "TEST: " << test.str().size();
+
             if (GuiManager::getSingleton().brokenTextInput())
             {
-                Logger::log().error() <<  "GAME_STATUS_NAME_USER broken";
+                Logger::log().error() <<  "User break on login.";
                 Network::getSingleton().CloseSocket();
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
                 break;
@@ -472,8 +430,8 @@ bool Events::frameStarted(const FrameEvent& evt)
             // Wait for user to finish the textinput.
             if (!GuiManager::getSingleton().finishedTextInput()) break;
             // Check length of the username.
-            strPlayerName = GuiManager::getSingleton().getTextInput();
-            if (strPlayerName.size() < MIN_LEN_LOGIN_NAME || strPlayerName.size() > MAX_LEN_LOGIN_NAME)
+            String strAccountName = GuiManager::getSingleton().getTextInput();
+            if (strAccountName.size() < MIN_LEN_LOGIN_NAME || strAccountName.size() > MAX_LEN_LOGIN_NAME)
             {
                 String strMsg = "~#ffff0000Username length must be between " + StringConverter::toString(MIN_LEN_LOGIN_NAME)+
                                 " and " + StringConverter::toString(MAX_LEN_LOGIN_NAME) + " chars!~";
@@ -481,107 +439,177 @@ bool Events::frameStarted(const FrameEvent& evt)
                 GuiManager::getSingleton().startTextInput(GuiManager::GUI_WIN_LOGIN, GuiImageset::GUI_TEXTINPUT_LOGIN_NAME, MAX_LEN_LOGIN_NAME, true, true);
                 break;
             }
-#ifndef AUTO_FILL_PASWD
-            Option::getSingleton().setLoginType(Option::LOGIN_EXISTING_PLAYER);
-#endif
-            // C -> Create new hero , L -> Login.
-            String strServer = Option::getSingleton().getLoginType() == Option::LOGIN_NEW_PLAYER?"C":"L";
-            strServer += strPlayerName;
-            Network::getSingleton().send_reply((char*)strServer.c_str());
-            GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED, GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"");
-            // now wait again for next server question
-            Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_WAIT);
+            std::stringstream strAccount;
+            strAccount << strAccountName << '\0' << strAccountName << "123" << '\0';
+            Network::getSingleton().send_command_binary(Network::CLIENT_CMD_LOGIN, strAccount);
+
+            Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_NAME_WAIT);
             break;
         }
 
-        case Option::GAME_STATUS_PSWD_INIT:
+/*
+void client_send_checkname(char *buf)
+{
+
+    SockList_COMMAND(&sl, CLIENT_CMD_CHECKNAME, 0);
+    SockList_AddString(&sl, buf);
+    send_socklist_binary(&sl);
+
+
+ static inline void SockList_AddString(SockList *const sl, const char *const buf)
+{
+    int len = strlen(buf);
+
+    if(sl->buf)
+    {
+        memcpy(sl->buf+sl->len,buf,len);
+        *(sl->buf+sl->len+len++) = 0; // ensure the string is send with 0 end marker
+    }
+    else
+    {
+        memcpy(sl->defbuf+sl->len,buf,len);
+        *(sl->defbuf+sl->len+len++) = 0;
+    }
+    sl->len+=len;
+
+}
+
+
+    // Contains the base information we use to make up a packet we want to send.
+typedef struct SockList
+{
+    int             cmd; // the binary command tag we want send
+    int             flags; // the flags for send function
+    int             len; // How much data in buf
+    int             pos; // Start of data in buf
+    char            *buf;
+    char            defbuf[MAX_DATA_TAIL_LENGTH];
+}
+SockList;
+
+// help define for a clean socklist init
+#define         SockList_INIT(_sl_, _buf_) {memset( (_sl_), 0, sizeof(SockList) );(_sl_)->buf=(_buf_);}
+#define         SockList_COMMAND(__sl, __cmd, __flags) {(__sl)->cmd=(__cmd);(__sl)->flags=(__flags);}
+#define         SockList_AddChar(__sl, __c) (__sl)->buf?*((__sl)->buf+(__sl)->len++):(((__sl)->defbuf[(__sl)->len++])= (unsigned char)(__c))
+#define send_socklist_binary(_sl_) send_command_binary((_sl_)->cmd, (_sl_)->buf?(_sl_)->buf:(_sl_)->defbuf, (_sl_)->len, (_sl_)->flags )
+}
+*/
+        case Option::GAME_STATUS_LOGIN_NAME_WAIT:
         {
-            GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_LOGIN, true);
-#ifndef AUTO_FILL_PASWD
-            GuiManager::getSingleton().startTextInput(GuiManager::GUI_WIN_LOGIN, GuiImageset::GUI_TEXTINPUT_LOGIN_PASSWD, MAX_LEN_LOGIN_PSWD, false, false);
-            Option::getSingleton().setGameStatus(Option::GAME_STATUS_PSWD_USER);
-#else
-            Network::getSingleton().send_reply("NIX_PASWD");
-            Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_WAIT);
-#endif
+            //Logger::log().error() << "GAME_STATUS_LOGIN_NAME_WAIT";
+
+            //Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_NAME_WAIT);
             break;
         }
 
-        case Option::GAME_STATUS_PSWD_USER:
-        {
-            if (GuiManager::getSingleton().brokenTextInput())
-            {
-                Network::getSingleton().CloseSocket();
-                Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
-                break;
-            }
-            if (!GuiManager::getSingleton().finishedTextInput())
-                break;
-            strPlayerPswd = GuiManager::getSingleton().getTextInput();
-            if (strPlayerPswd.size() < MIN_LEN_LOGIN_PSWD || strPlayerPswd.size() > MAX_LEN_LOGIN_PSWD)
-            {
-                String strMsg = "~#ffff0000Password length must be between " + StringConverter::toString(MIN_LEN_LOGIN_PSWD)+
-                                " and "  + StringConverter::toString(MAX_LEN_LOGIN_PSWD) + " chars!~";
-                GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED, GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)strMsg.c_str());
-                GuiManager::getSingleton().startTextInput(GuiManager::GUI_WIN_LOGIN, GuiImageset::GUI_TEXTINPUT_LOGIN_PASSWD, MAX_LEN_LOGIN_PSWD, false, false);
-                break;
-            }
-            if (strPlayerPswd == strPlayerName)
-            {
-                GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED, GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Password can't be same as character name!~");
-                GuiManager::getSingleton().startTextInput(GuiManager::GUI_WIN_LOGIN, GuiImageset::GUI_TEXTINPUT_LOGIN_PASSWD, MAX_LEN_LOGIN_PSWD, false, false);
-                break;
-            }
-            Logger::log().info() << "Login: send password <*****>";
-            Network::getSingleton().send_reply((char*)strPlayerPswd.c_str());
-            Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_WAIT);
-            GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED, GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"");
-            GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_LOGIN, false);
-            break;
-        }
 
-        case Option::GAME_STATUS_VRFY_INIT:
-        {
-            GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_LOGIN, true);
-#ifndef AUTO_FILL_PASWD
-            GuiManager::getSingleton().startTextInput(GuiManager::GUI_WIN_LOGIN, GuiImageset::GUI_TEXTINPUT_LOGIN_VERIFY, MAX_LEN_LOGIN_PSWD, false, false);
-            Option::getSingleton().setGameStatus(Option::GAME_STATUS_VRFY_USER);
-#else
-            Network::getSingleton().send_reply("NIX_PASWD");
-            Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_WAIT);
-#endif
-            break;
-        }
+           // Logger::log().error() << "Account name entered!";
 
-        case Option::GAME_STATUS_VRFY_USER:
-        {
-            TileManager::getSingleton().map_transfer_flag = 0;
-            if (GuiManager::getSingleton().brokenTextInput())
-            {
-                Network::getSingleton().CloseSocket();
-                Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
-                break;
-            }
-            if (!GuiManager::getSingleton().finishedTextInput())
-                break;
-            Logger::log().info() << "Login: send verify password <*****>";
-            Network::getSingleton().send_reply((char*)GuiManager::getSingleton().getTextInput());
-            Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_WAIT);
-            break;
-        }
+        /*
+                    // Check length of the username.
+                    strAccountName = GuiManager::getSingleton().getTextInput();
 
-        case Option::GAME_STATUS_NEW_CHAR:
-        {
-            // Send the new created character to server.
-            Option::getSingleton().setLoginType(Option::LOGIN_NEW_PLAYER);
-            // "nc %s %d %d %d %d %d %d %d %d", nc->char_arch[nc->gender_selected], nc->stats[0], nc->stats[1], nc->stats[2], nc->stats[3], nc->stats[4], nc->stats[5], nc->stats[6], nc->skill_selected);
-            char buf[] = "nc human_male 14 14 13 12 12 12 12 0";
-            Network::getSingleton().cs_write_string(buf);
-            GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_LOGIN, false);
-            Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_WAIT);
-            break;
-        }
+        #ifndef AUTO_FILL_PASWD
+                    Option::getSingleton().setLoginType(Option::LOGIN_EXISTING_PLAYER);
+        #endif
+                    // C -> Create new hero , L -> Login.
+                    String strServer = Option::getSingleton().getLoginType() == Option::LOGIN_NEW_PLAYER?"C":"L";
+                    strServer += strAccountName;
+                    Network::getSingleton().send_reply((char*)strServer.c_str());
+                    GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED, GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"");
+                    // now wait again for next server question
+                    Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_WAIT);
+                    break;
+                }
 
+                case Option::GAME_STATUS_PSWD_INIT:
+                {
+                    GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_LOGIN, true);
+        #ifndef AUTO_FILL_PASWD
+                    GuiManager::getSingleton().startTextInput(GuiManager::GUI_WIN_LOGIN, GuiImageset::GUI_TEXTINPUT_LOGIN_PASSWD, MAX_LEN_LOGIN_PSWD, false, false);
+                    Option::getSingleton().setGameStatus(Option::GAME_STATUS_PSWD_USER);
+        #else
+                    Network::getSingleton().send_reply("NIX_PASWD");
+                    Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_WAIT);
+        #endif
+                    break;
+                }
+
+                case Option::GAME_STATUS_PSWD_USER:
+                {
+                    if (GuiManager::getSingleton().brokenTextInput())
+                    {
+                        Network::getSingleton().CloseSocket();
+                        Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
+                        break;
+                    }
+                    if (!GuiManager::getSingleton().finishedTextInput())
+                        break;
+                    strAccountPswd = GuiManager::getSingleton().getTextInput();
+                    if (strAccountPswd.size() < MIN_LEN_LOGIN_PSWD || strAccountPswd.size() > MAX_LEN_LOGIN_PSWD)
+                    {
+                        String strMsg = "~#ffff0000Password length must be between " + StringConverter::toString(MIN_LEN_LOGIN_PSWD)+
+                                        " and "  + StringConverter::toString(MAX_LEN_LOGIN_PSWD) + " chars!~";
+                        GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED, GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)strMsg.c_str());
+                        GuiManager::getSingleton().startTextInput(GuiManager::GUI_WIN_LOGIN, GuiImageset::GUI_TEXTINPUT_LOGIN_PASSWD, MAX_LEN_LOGIN_PSWD, false, false);
+                        break;
+                    }
+                    if (strAccountPswd == strAccountName)
+                    {
+                        GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED, GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Password can't be same as character name!~");
+                        GuiManager::getSingleton().startTextInput(GuiManager::GUI_WIN_LOGIN, GuiImageset::GUI_TEXTINPUT_LOGIN_PASSWD, MAX_LEN_LOGIN_PSWD, false, false);
+                        break;
+                    }
+                    Logger::log().info() << "Login: send password <*****>";
+                    Network::getSingleton().send_reply((char*)strAccountPswd.c_str());
+                    Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_WAIT);
+                    GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED, GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"");
+                    GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_LOGIN, false);
+                    break;
+                }
+
+                case Option::GAME_STATUS_VRFY_INIT:
+                {
+                    GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_LOGIN, true);
+        #ifndef AUTO_FILL_PASWD
+                    GuiManager::getSingleton().startTextInput(GuiManager::GUI_WIN_LOGIN, GuiImageset::GUI_TEXTINPUT_LOGIN_VERIFY, MAX_LEN_LOGIN_PSWD, false, false);
+                    Option::getSingleton().setGameStatus(Option::GAME_STATUS_VRFY_USER);
+        #else
+                    Network::getSingleton().send_reply("NIX_PASWD");
+                    Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_WAIT);
+        #endif
+                    break;
+                }
+
+                case Option::GAME_STATUS_VRFY_USER:
+                {
+                    TileManager::getSingleton().map_transfer_flag = 0;
+                    if (GuiManager::getSingleton().brokenTextInput())
+                    {
+                        Network::getSingleton().CloseSocket();
+                        Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
+                        break;
+                    }
+                    if (!GuiManager::getSingleton().finishedTextInput())
+                        break;
+                    Logger::log().info() << "Login: send verify password <*****>";
+                    Network::getSingleton().send_reply((char*)GuiManager::getSingleton().getTextInput());
+                    Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_WAIT);
+                    break;
+                }
+
+                case Option::GAME_STATUS_NEW_CHAR:
+                {
+                    // Send the new created character to server.
+                    Option::getSingleton().setLoginType(Option::LOGIN_NEW_PLAYER);
+                    // "nc %s %d %d %d %d %d %d %d %d", nc->char_arch[nc->gender_selected], nc->stats[0], nc->stats[1], nc->stats[2], nc->stats[3], nc->stats[4], nc->stats[5], nc->stats[6], nc->skill_selected);
+                    char buf[] = "nc human_male 14 14 13 12 12 12 12 0";
+                    Network::getSingleton().cs_write_string(buf);
+                    GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_LOGIN, false);
+                    Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_WAIT);
+                    break;
+                }
+        */
         case Option::GAME_STATUS_PLAY:
         {
             static bool once = false;
@@ -613,7 +641,7 @@ bool Events::frameStarted(const FrameEvent& evt)
                     GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Press ~!keyi~ for Inventory.");
                     GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Example of user defined chars: :( :) :D :P !key-spc");
                     // Can crash the client...
-                    //ObjectManager::getSingleton().setNameNPC(ObjectNPC::HERO, strPlayerName.c_str());
+                    //ObjectManager::getSingleton().setNameNPC(ObjectNPC::HERO, strAccountName.c_str());
                     //Sound::getSingleton().playStream(Sound::GREETS_VISITOR);
                     once = true;
                 }
@@ -672,13 +700,13 @@ bool Events::frameStarted(const FrameEvent& evt)
 //================================================================================================
 bool Events::frameEnded(const FrameEvent& evt)
 {
-    if (Option::getSingleton().getGameStatus() <= Option::GAME_STATUS_INIT_NET)
+    if (Option::getSingleton().getGameStatus() < Option::GAME_STATUS_INIT_NET)
         return true;
+
     mInputMouse->capture();
     mInputKeyboard->capture();
     GuiManager::getSingleton().update(evt.timeSinceLastFrame);
-    if (Option::getSingleton().getGameStatus() > Option::GAME_STATUS_CONNECT)
-        Network::getSingleton().update();
+    Network::getSingleton().update();
     // ////////////////////////////////////////////////////////////////////
     // Update camera movement.
     // ////////////////////////////////////////////////////////////////////

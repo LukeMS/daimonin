@@ -388,8 +388,9 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
 //================================================================================================
 // Prepare the background and print the text.
 // todo: Replace blit by direct writing to texture (faster and no buffer is needed).
+// todo: If textureIsLocked == true don't lock/unlock the texture.
 //================================================================================================
-void GuiTextout::Print(TextLine *line, Texture *texture)
+void GuiTextout::Print(TextLine *line, Texture *texture, bool textureIsLocked)
 {
     // Restore background.
     if (line->index >= 0)

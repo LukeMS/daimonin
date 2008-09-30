@@ -34,7 +34,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 using namespace std;
 
-FMOD_SYSTEM *soundSystem = 0;
+FMOD_SYSTEM *System = 0;
 FMOD_RESULT result;
 
 typedef struct
@@ -76,13 +76,12 @@ const float DISTANCEFACTOR = 1.0f; // Units per meter. (feet = 3.28.  cm = 100).
 //================================================================================================
 bool Sound::Init()
 {
-    mInit = false;
     if (Option::getSingleton().getIntValue(Option::CMDLINE_OFF_SOUND)) return false;
     Logger::log().headline() << "Init Sound-System";
     // ////////////////////////////////////////////////////////////////////
     // Create the main system object.
     // ////////////////////////////////////////////////////////////////////
-    result = FMOD_System_Create(&soundSystem);
+    result = FMOD_System_Create(&System);
     if (result != FMOD_OK)
     {
         Logger::log().error() << "FMOD error! " << result << " " << FMOD_ErrorString(result);
@@ -91,13 +90,13 @@ bool Sound::Init()
     // ////////////////////////////////////////////////////////////////////
     // Init Fmod.
     // ////////////////////////////////////////////////////////////////////
-    result = FMOD_System_Init(soundSystem, 32, FMOD_INIT_NORMAL, 0);
+    result = FMOD_System_Init(System, 32, FMOD_INIT_NORMAL, 0);
     if (result != FMOD_OK)
     {
         Logger::log().error() << "FMOD error! " << result << " " << FMOD_ErrorString(result);
         return false;
     }
-    result = FMOD_System_Set3DSettings(soundSystem, 1.0, DISTANCEFACTOR, 1.0f);
+    result = FMOD_System_Set3DSettings(System, 1.0, DISTANCEFACTOR, 1.0f);
     if (result != FMOD_OK)
     {
         Logger::log().error() << "FMOD error! " << result << " " << FMOD_ErrorString(result);
@@ -127,8 +126,8 @@ void Sound::freeRecources()
     {
         FMOD_Sound_Release(mSoundFiles[i].sound);
     }
-    result = FMOD_System_Close(soundSystem);
-    result = FMOD_System_Release(soundSystem);
+    result = FMOD_System_Close(System);
+    result = FMOD_System_Release(System);
 }
 
 //================================================================================================
@@ -162,19 +161,12 @@ void Sound::createStream(int id)
     std::string filename = PATH_SAMPLES;
     filename += mSoundFiles[id].filename;
     int options = FMOD_HARDWARE;
-    if (mSoundFiles[id].isMusic) options |= FMOD_LOOP_NORMAL; else options |= FMOD_LOOP_OFF;
-    if (mSoundFiles[id].is2D   ) options |= FMOD_2D;          else options |= FMOD_3D;
-    result = FMOD_System_CreateStream(
-                 soundSystem,
-                 filename.c_str(),
-                 options,
-                 0,
-                 &mSoundFiles[id].sound);
+    options |= mSoundFiles[id].isMusic?FMOD_LOOP_NORMAL:FMOD_LOOP_OFF;
+    options |= mSoundFiles[id].is2D?FMOD_2D:FMOD_3D;
+    result = FMOD_System_CreateStream(System, filename.c_str(), options, 0, &mSoundFiles[id].sound);
     if (result != FMOD_OK)
     {
-        Logger::log().error() << "Error on creating Soundstream "
-        << mSoundFiles[id].filename << " : "
-        << FMOD_ErrorString(result);
+        Logger::log().error() << "Error on creating Soundstream " << mSoundFiles[id].filename << " : " << FMOD_ErrorString(result);
     }
 }
 
@@ -185,17 +177,10 @@ void Sound::playStream(int id)
 {
     if (!mInit) return;
     stopStream(id);
-    result = FMOD_System_PlaySound(
-                 soundSystem,
-                 FMOD_CHANNEL_FREE,
-                 mSoundFiles[id].sound,
-                 0,
-                 &mSoundFiles[id].channel);
+    result = FMOD_System_PlaySound(System, FMOD_CHANNEL_FREE, mSoundFiles[id].sound, 0, &mSoundFiles[id].channel);
     if (result != FMOD_OK)
     {
-        Logger::log().error() << "Error on play Soundstream "
-        << mSoundFiles[id].filename << " : "
-        << FMOD_ErrorString(result);
+        Logger::log().error() << "Error on play Soundstream " << mSoundFiles[id].filename << " : " << FMOD_ErrorString(result);
         return;
     }
     setVolume(id);
@@ -204,40 +189,22 @@ void Sound::playStream(int id)
 
 void Sound::playStream(char *file, bool loop)
 {
+    if (!mInit) return;
     std::string filename = PATH_SAMPLES;
     filename+= file;
     int options = FMOD_HARDWARE | FMOD_2D;
-    if (loop)
-        options |= FMOD_LOOP_NORMAL;
-    else
-        options |= FMOD_LOOP_OFF;
-    result = FMOD_System_CreateStream(
-                 soundSystem,
-                 filename.c_str(),
-                 options,
-                 0,
-                 &mSoundFiles[DUMMY].sound);
+    options |= (loop)?FMOD_LOOP_NORMAL:FMOD_LOOP_OFF;
+    result = FMOD_System_CreateStream(System, filename.c_str(), options, 0, &mSoundFiles[DUMMY].sound);
     if (result != FMOD_OK)
     {
-        Logger::log().error() << "Error on creating Soundstream "
-        << filename << " : "  << FMOD_ErrorString(result);
+        Logger::log().error() << "Error on creating Soundstream " << filename << " : "  << FMOD_ErrorString(result);
+        return;
     }
-
-
-
-    if (!mInit) return;
     stopStream(DUMMY);
-    result = FMOD_System_PlaySound(
-                 soundSystem,
-                 FMOD_CHANNEL_FREE,
-                 mSoundFiles[DUMMY].sound,
-                 0,
-                 &mSoundFiles[DUMMY].channel);
+    result = FMOD_System_PlaySound(System, FMOD_CHANNEL_FREE, mSoundFiles[DUMMY].sound, 0, &mSoundFiles[DUMMY].channel);
     if (result != FMOD_OK)
     {
-        Logger::log().error() << "Error on play Soundstream "
-        << filename << " : "
-        << FMOD_ErrorString(result);
+        Logger::log().error() << "Error on play Soundstream " << filename << " : " << FMOD_ErrorString(result);
         return;
     }
     setVolume(DUMMY);
@@ -249,8 +216,7 @@ void Sound::playStream(char *file, bool loop)
 //================================================================================================
 void Sound::stopStream(int id)
 {
-    if (!mInit) return;
-    FMOD_Channel_SetPaused(mSoundFiles[id].channel, true);
+    if (mInit) FMOD_Channel_SetPaused(mSoundFiles[id].channel, true);
 }
 
 //================================================================================================

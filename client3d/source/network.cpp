@@ -43,50 +43,46 @@ int SoundStatus=1;
 
 bool Network::GameStatusVersionOKFlag = false;
 bool Network::GameStatusVersionFlag = false;
-bool Network::mEqualEndian = false;
 bool Network::mInitDone = false;
 
 struct CmdMapping
 {
     void (*serverCmd)(unsigned char *, int len);
 };
-struct CmdMapping  commands[]  =
+struct CmdMapping commands[]  =
 {
     // Don't change this sorting! Its hardcoded in the server.
-    { Network::CompleteCmd},     //  0
-    { Network::VersionCmd },     //  1
-    { Network::DrawInfoCmd },    //  2
-    { Network::AddMeFail },      //  3
-    { Network::Map2Cmd },        //  4
-    { Network::DrawInfoCmd2 },   //  5
-    { Network::ItemXCmd },       //  6
-    { Network::SoundCmd},        //  7
-    { Network::TargetObject },   //  8
-    { Network::ItemUpdateCmd },  //  9
-    { Network::ItemDeleteCmd },  // 10
-    { Network::StatsCmd },       // 11
-    { Network::ImageCmd },       // 12
-    { Network::Face1Cmd},        // 13
-    { Network::AnimCmd},         // 14
-    { Network::SkillRdyCmd },    // 15
-    { Network::PlayerCmd },      // 16
-    { Network::SpelllistCmd },   // 17
-    { Network::SkilllistCmd },   // 18
-    { Network::GolemCmd },       // 19
-    { Network::AddMeSuccess },   // 20
-    { Network::GoodbyeCmd },     // 21
-    { Network::SetupCmd},        // 22
-    { Network::handle_query},    // 23
-    { Network::DataCmd},         // 24
-    { Network::NewCharCmd},      // 25
-    { Network::ItemYCmd },       // 26
-    { Network::GroupCmd },       // 27
-    { Network::GroupInviteCmd }, // 28
-    { Network::GroupUpdateCmd }, // 29
-    { Network::InterfaceCmd },   // 30
-    { Network::BookCmd },        // 31
-    { Network::MarkCmd },        // 32
+    { Network::DrawInfoCmd },    //  0
+    { Network::AddMeFail },      //  1
+    { Network::Map2Cmd },        //  2
+    { Network::DrawInfoCmd2 },   //  3
+    { Network::ItemXCmd },       //  4
+    { Network::SoundCmd},        //  5
+    { Network::TargetObject },   //  6
+    { Network::ItemUpdateCmd },  //  7
+    { Network::ItemDeleteCmd },  //  8
+    { Network::StatsCmd },       //  9
+    { Network::ImageCmd },       // 10
+    { Network::Face1Cmd},        // 11
+    { Network::SkillRdyCmd },    // 12
+    { Network::PlayerCmd },      // 13
+    { Network::SpelllistCmd },   // 14
+    { Network::SkilllistCmd },   // 15
+    { Network::GolemCmd },       // 16
+    { Network::AccNameSuccess }, // 17
+    { Network::SetupCmd },       // 18
+    { Network::DataCmd },        // 19
+    { Network::ItemYCmd },       // 20
+    { Network::GroupCmd },       // 21
+    { Network::GroupInviteCmd }, // 22
+    { Network::GroupUpdateCmd }, // 23
+    { Network::InterfaceCmd },   // 24
+    { Network::BookCmd },        // 25
+    { Network::MarkCmd },        // 26
+    { Network::AccountCmd },     // 27
+    //{ Network::ChannelMsgCmd },  // 28
 };
+
 const int SUM_SERVER_COMMANDS = sizeof(commands) / sizeof(CmdMapping);
 
 Network::ClientSocket Network::csocket;
@@ -132,19 +128,6 @@ const int MSG_DONTWAIT = 0;
 typedef int SOCKET;
 #endif
 
-
-//================================================================================================
-//
-//================================================================================================
-inline static const char *strerror_local(int errnum)
-{
-#if defined(HAVE_STRERROR)
-    return (strerror(errnum));
-#else
-    return "strerror not implemented";
-#endif
-}
-
 //================================================================================================
 //
 //================================================================================================
@@ -160,15 +143,21 @@ void Network::AddIntToString(String &sl, int data, bool shortInt)
 }
 
 //================================================================================================
-//
+// Get the socket error number.
 //================================================================================================
-int Network::GetError()
+String &Network::getError()
 {
+    static String strError = "";
 #ifdef WIN32
-    return(WSAGetLastError());
+    strError = StringConverter::toString(WSAGetLastError());
 #else
-    return errno;
+    int error = errno();
+    strError = StringConverter::toString(error);
+#if defined(HAVE_STRERROR)
+    strError+= ": " + strerror(error);
 #endif
+#endif
+    return strError;
 }
 
 //================================================================================================
@@ -241,29 +230,24 @@ void Network::socket_thread_start()
     input_thread = SDL_CreateThread(reader_thread_loop, NULL);
     if (!input_thread)
         Logger::log().error() <<  "Unable to start socket thread: " << SDL_GetError();
-
     output_thread = SDL_CreateThread(writer_thread_loop, NULL);
     if (!output_thread)
         Logger::log().error() <<  "Unable to start socket thread: " << SDL_GetError();
 }
 
 //================================================================================================
-// .
+// Handle all enqueued commands.
 //================================================================================================
 void Network::update()
 {
-    if (!mInitDone) return;
     command_buffer *cmd;
-    // Handle all enqueued commands.
     while ((cmd = get_next_input_command()))
     {
-        //Logger::log().error() << "network cmd: " << cmd->data[0] - 1 << "  " << cmd->data[0];
-        if (!cmd->data[0] || (cmd->data[0]&~0x80) >= SUM_SERVER_COMMANDS)
-            Logger::log().error() << "Bad command from server " << cmd->data[0];
+        if (!cmd->data[0] || (cmd->data[0]&~0x80)-1 >= SUM_SERVER_COMMANDS)
+            Logger::log().error() << "Bad command from server " << (int)(cmd->data[0]&~0x80)-1;
         else
         {
-            //int lenHeader = cmd->data[0]&0x80?5:3;
-            int lenHeader = 1;
+            int lenHeader = cmd->data[0]&0x80?5:3;
             commands[(cmd->data[0]&~0x80) - 1].serverCmd(cmd->data+lenHeader, cmd->len-lenHeader);
         }
         command_buffer_free(cmd);
@@ -367,25 +351,77 @@ int Network::send_command(const char *command, int repeat, int force)
 }
 
 //================================================================================================
+//
+//================================================================================================
+int Network::send_command_binary(unsigned char cmd, std::stringstream &stream)
+{
+    int size = (int)stream.str().size()+1;
+    std::stringstream full_cmd;
+    full_cmd << cmd << '\0' << (unsigned char)size << '\0' << stream.str();
+    command_buffer *buf = command_buffer_new(size+3, (unsigned char*)full_cmd.str().c_str());
+    SDL_LockMutex(output_buffer_mutex);
+    command_buffer_enqueue(buf, &output_queue_start, &output_queue_end);
+    SDL_CondSignal(output_buffer_cond);
+    SDL_UnlockMutex(output_buffer_mutex);
+    return 0;
+}
+
+//================================================================================================
 // Add a binary command to the output buffer.
 // If body is NULL, a single-byte command is created from cmd.
 // Otherwise body should include the length and cmd header
 //================================================================================================
-int Network::send_command_binary(unsigned char cmd, unsigned char *body, unsigned int len)
+int Network::send_command_binary(unsigned char cmd, unsigned char *body, int len, int flags)
 {
     command_buffer *buf;
-
-    if (body)
-        buf = command_buffer_new(len, (unsigned char*)body);
+    if (!body)  // single binary command without tail
+        buf = command_buffer_new(len, body);
     else
     {
-        unsigned char tmp[3];
-        len = 0x8001;
-        // Packet order is obviously big-endian for length data.
-        tmp[0] = (len >> 8) & 0xFF;
-        tmp[1] = len & 0xFF;
-        tmp[2] = cmd;
-        buf = command_buffer_new(3, tmp);
+        const int MAX_DATA_TAIL_LENGTH = 255;
+        // we have a string with a '/0'
+        if (flags & SEND_CMD_FLAG_STRING) ++len;
+        if (len >= MAX_DATA_TAIL_LENGTH)
+        {
+            Logger::log().error() << "Network::send_command_binary: socket buffer MAX_DATA_TAIL_LENGTH >= " << MAX_DATA_TAIL_LENGTH << " (" << len << ")";
+            CloseClientSocket();
+            return -1;
+        }
+        buf = command_buffer_new(len+3, 0); // we need max len + 1 byte cmd + 2 bytes cmd_len at last
+        // setup the header and copy the data tail
+        if (buf)
+        {
+            int len_copy = len;
+            int data_offset = 1; // our command
+            buf->data[0] = cmd;
+            if (flags & SEND_CMD_FLAG_FIXED)
+            {
+                // this makes no sense for our current protocol
+                if (flags & SEND_CMD_FLAG_STRING)
+                    Logger::log().error() << "Network::send_command_binary: SEND_CMD_FLAG_FIXED and SEND_CMD_FLAG_STRING used together makes no sense!";
+                // for a fixed len we must readjust the buffer len value
+                buf->len = len+1; // pure data block length + cmd tag
+            }
+            else
+            {
+                // we have a dynamic data tail length - let the server know how long it is
+                buf->data[data_offset++] = (uint8) ((len >> 8) & 0xFF);
+                buf->data[data_offset++] = ((uint32) (len)) & 0xFF;
+            }
+            //Logger::log().error() << "send binary cmd: " << (int)cmd << " len: " << len << " (blen:" << buf->len << ") (" << (int)((flags & SEND_CMD_FLAG_FIXED)?-1:buf->data[1]) << "   " << (int)((flags & SEND_CMD_FLAG_FIXED)?-1:buf->data[2]) << ")";
+            memcpy(buf->data+data_offset, body, len_copy);
+            // If the command requests a c-style string ending - add the "\0".
+            // The server will kick you if its missing.
+            // why? as a marker for block but also to ensure a valid string
+            // in the raw read buffer of the server.
+            if (flags & SEND_CMD_FLAG_STRING)
+                buf->data[len_copy+data_offset] = 0;
+        }
+    }
+    if (!buf)
+    {
+        CloseClientSocket();
+        return -1;
     }
     SDL_LockMutex(output_buffer_mutex);
     command_buffer_enqueue(buf, &output_queue_start, &output_queue_end);
@@ -432,40 +468,40 @@ Network::command_buffer *Network::get_next_input_command()
 //================================================================================================
 int Network::reader_thread_loop(void *)
 {
-    unsigned char readbuf[MAXSOCKBUF+1];
+    static unsigned char readbuf[MAXSOCKBUF+1];
     int readbuf_len = 0;
     int header_len = 0;
     int cmd_len = -1;
     int ret;
     int toread;
     Logger::log().info() << "Reader thread started  ";
-
     while (!abort_thread)
     {
         // First, try to read a command length sequence.
-        if (readbuf_len < 2)
-        {
-            if (readbuf_len > 0 && (readbuf[0] & 0x80)) // three-byte length?
-                toread = 3 - readbuf_len;
-            else
-                toread = 2 - readbuf_len;
-        }
-        else if (readbuf_len == 2 && (readbuf[0] & 0x80))
-            toread = 1;
+        if (!readbuf_len)
+            toread = 1; // Try to read a command from the socket.
+        else if (!(readbuf[0] & 0x80) && readbuf_len < 3)
+            toread = 3 - readbuf_len; // read in 2 or 1 more bytes.
+        else if ((readbuf[0] & 0x80) && readbuf_len < 5)
+            toread = 5 - readbuf_len; // read in 4 to 1 more bytes.
         else
         {
-            // If we have a finished header, get the packet size from it.
-            if (readbuf_len <= 3)
+            if (readbuf_len == 3 && !(readbuf[0] & 0x80))
             {
-                unsigned char *p = readbuf;
-                header_len = (*p & 0x80) ? 3 : 2;
-                cmd_len = 0;
-                if (header_len == 3)
-                    cmd_len += ((int)(*p++) & 0x7f) << 16;
-                cmd_len += ((int)(*p++)) << 8;
-                cmd_len += ((int)(*p++));
+                header_len = 3;
+                cmd_len = GetShort_String(readbuf+1);
+            }
+            else if (readbuf_len == 5 && (readbuf[0] & 0x80))
+            {
+                header_len = 5;
+                cmd_len = GetInt_String(readbuf+1);
+
             }
             toread = cmd_len + header_len - readbuf_len;
+            if (cmd_len+16 >= MAXSOCKBUF)
+            {
+                Logger::log().error() << "Network::reader_thread_loop: To much data from server.";
+            }
         }
         ret = recv(csocket.fd, (char*)readbuf + readbuf_len, toread, 0);
         if (ret == 0)
@@ -477,11 +513,7 @@ int Network::reader_thread_loop(void *)
         else if (ret == -1)
         {
             // IO error.
-#ifdef WIN32
-            Logger::log().error() << "Reader thread got error " << WSAGetLastError();
-#else
-            Logger::log().error() << "Reader thread got error " << errno << " : " << strerror_local(errno);
-#endif
+            Logger::log().error() << "Reader thread got error " << getError();
             goto out;
         }
         else
@@ -489,12 +521,12 @@ int Network::reader_thread_loop(void *)
             readbuf_len += ret;
             //Logger::log().error() << "Reader got some data ("<< readbuf_len<< " bytes total)";
         }
-
         // Finished with a command ?
-        if (readbuf_len == cmd_len + header_len)
+        if (readbuf_len == cmd_len + header_len && !abort_thread)
         {
             // LOG(LOG_DEBUG, "Reader got a full command\n", readbuf_len);
-            command_buffer *buf = command_buffer_new(readbuf_len - header_len, readbuf + header_len);
+            command_buffer *buf = command_buffer_new(readbuf_len, readbuf);
+            buf->data[readbuf_len] = 0; // we terminate our buffer for security and incoming raw strings
             SDL_LockMutex(input_buffer_mutex);
             command_buffer_enqueue(buf, &input_queue_start, &input_queue_end);
             SDL_CondSignal(input_buffer_cond);
@@ -541,11 +573,7 @@ int Network::writer_thread_loop(void *nix)
             else if (ret == -1)
             {
                 // IO error.
-#ifdef WIN32
-                Logger::log().error() << "Writer thread got error " << WSAGetLastError();
-#else
-                Logger::log().error() << "Writer thread got error " << errno << " : " << strerror_local(errno);
-#endif
+                Logger::log().error() << "Writer thread got error " << getError();
                 goto out;
             }
             else
@@ -876,17 +904,6 @@ next_try:
 //================================================================================================
 //
 //================================================================================================
-void Network::SendVersion()
-{
-    std::stringstream strCmd;
-    strCmd << "version " << VERSION_CS << " " << VERSION_SC << " " << CLIENT_PACKAGE_NAME;
-    Logger::log().info() << "Send version command: " << strCmd.str();
-    cs_write_string(strCmd.str().c_str());
-}
-
-//================================================================================================
-//
-//================================================================================================
 void Network::send_reply(const char *text)
 {
     String strTxt = "reply ";
@@ -899,8 +916,7 @@ void Network::send_reply(const char *text)
 //================================================================================================
 void Network::cs_write_string(const char *buf)
 {
-    String sl = buf;
-    send_socklist(sl);
+    send_socklist(buf);
 }
 
 //================================================================================================
@@ -923,9 +939,9 @@ void Network::contactMetaserver()
     }
     else
         GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Metaserver failed! Using default list.", 0x00ff0000);
-    add_metaserver_data("127.0.0.1"  , "127.0.0.1"                 , DEFAULT_SERVER_PORT, -1, "local"   , "localhost.", "Start server before you try to connect.", "", "");
-    add_metaserver_data("daimonin.game-server.cc", "daimonin.game-server.cc"   , DEFAULT_SERVER_PORT, -1, "internet", "STABLE"    , "Main Server", "", "");
-    //add_metaserver_data("Test-Server", "test-server.game-server.cc", DEFAULT_SERVER_PORT, -1, "internet", "UNSTABLE"  , "Just for Devs", "", "");
+    add_metaserver_data("daimonin.game-server.cc", "daimonin.game-server.cc"   , DEFAULT_SERVER_PORT, -1, "internet", "STABLE",                                  "~#ff00ff00Main Server", "", "");
+    add_metaserver_data("Test-Server"            , "test-server.game-server.cc", DEFAULT_SERVER_PORT, -1, "internet", "UNSTABLE",                                "~#ffff0000Test Server", "", "");
+    add_metaserver_data("127.0.0.1"              , "127.0.0.1"                 , DEFAULT_SERVER_PORT, -1, "local"   , "Start server before you try to connect.", "Localhost."           , "", "");
     GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Select a server.");
 }
 
@@ -1047,7 +1063,7 @@ void Network::add_metaserver_data(const char *ip, const char *server, int port, 
 {
     Server *node = new Server;
     node->player = player;
-    node->port   = DEFAULT_SERVER_PORT;//port;
+    node->port   = DEFAULT_SERVER_PORT;
     node->name   = server;
     node->ip     = ip;
     node->version= ver;
@@ -1056,9 +1072,11 @@ void Network::add_metaserver_data(const char *ip, const char *server, int port, 
     node->desc[2]  = desc3;
     node->desc[3]  = desc4;
     mvServer.push_back(node);
-    String strRow = server;
-    if (player <0) strRow+=",-";
-    else           strRow+=","+StringConverter::toString(player);
+    String strRow;
+    strRow+= desc2; strRow+= ";";
+    strRow+= desc1; strRow+= ";";
+    strRow+=server;
+    strRow+=(player <0)?",-":","+StringConverter::toString(player);
     GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_SERVERSELECT, GuiManager::GUI_MSG_ADD_TABLEROW, GuiImageset::GUI_TABLE, (void*) strRow.c_str());
 }
 

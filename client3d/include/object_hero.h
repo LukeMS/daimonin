@@ -41,6 +41,7 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
+    enum {ACCOUNT_MAX_PLAYER = 6};
     enum {MAX_SKILL = 6};
     typedef enum _attacks
     {
@@ -228,19 +229,31 @@ public:
     {
         static ObjectHero Singleton; return Singleton;
     }
+    int fillAccount(int count, const unsigned char *data);
+    void clearAccount()
+    {
+        account.count = 0;
+    }
 
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-
+    struct _Account
+    {
+        int count;    // Number of chars already created.
+        int selected; // Actually selected character.
+        Ogre::String name[ACCOUNT_MAX_PLAYER]; // List of account chars.
+        int level [ACCOUNT_MAX_PLAYER];
+        int race  [ACCOUNT_MAX_PLAYER];
+        int gender[ACCOUNT_MAX_PLAYER];
+    } account;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     ObjectHero(const ObjectHero&); // disable copy-constructor.
     ObjectHero();
-    ~ObjectHero()
-    {}
+    ~ObjectHero() {}
 };
 
 #endif

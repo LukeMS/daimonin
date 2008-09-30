@@ -1,0 +1,1478 @@
+<?xml version= "1.0" encoding= "us-ascii"?>
+<XML name= "GUI">
+  <!--#############################################-->
+  <!--FONTS:                                       -->
+  <!--#############################################-->
+  <Fonts>
+    <Font type="TTF" name= "Vera.ttf" size="7" />
+    <Font type="TTF" name= "Vera.ttf" size="8" />
+    <Font type="TTF" name= "Vera.ttf" size="10" />
+    <Font type="TTF" name= "Vera.ttf" size="24" resolution="55"/>
+    <Font type="TTF" name= "Vera.ttf" size="20" />
+    <Font type="TTF" name= "Vera.ttf" size="22" />
+  </Fonts>
+
+
+  <!--#############################################-->
+  <!--MOUSE CURSOR:                                -->
+  <!--#############################################-->
+  <Cursor name= "MouseCursor">
+   <HotSpotOffset x="0" y="0" />
+  </Cursor>
+
+
+  <!--#############################################-->
+  <!--WINDOW: Engine Statistics                    -->
+  <!--#############################################-->
+  <Window name= "Statistics">
+    <Size      width= "150" height= "88" />
+    <Pos       x= "5" y= "5" zOrder = "50" />
+    <DragArea  x= "0" y= "0" width= "150" height= "17" />
+    <Tooltip  text= "This is the Player Info Window." />
+    <!--=============================================-->
+    <!-- Borderlines                                 -->
+    <!--=============================================-->
+    <Graphic>
+      <Pos x= "0" y= "0" />
+      <Color red= "200" green= "200" blue= "200" alpha = "255" />
+      <Range width= "150" height= "88" />
+    </Graphic>
+    <!--=============================================-->
+    <!-- Window Tiltle                               -->
+    <!--=============================================-->
+    <Graphic>
+      <Pos x= "1" y= "1" />
+      <Color red= "80" green= "100" blue= "60" alpha = "255" />
+      <Range width= "148" height= "17" />
+    </Graphic>
+    <Label  x= "35" y= "4" font="02" text= "Statistics" />
+    <Gadget type= "BUTTON"  name = "But_Close">
+      <Image name = "Button-01-Close"/>
+      <Pos x= "132" y= "1" />
+    </Gadget>
+    <!--=============================================-->
+    <!-- Window Body                                 -->
+    <!--=============================================-->
+    <Graphic>
+      <Pos x= "1" y= "19" />
+      <Color red= "70" green= "90" blue= "50" alpha = "150" />
+      <Range width= "148" height= "79" />
+    </Graphic>
+    <Label   x=  "05" y= "25" font="02" text= "Current FPS:" />
+    <TextBox x= "100" y= "25" font="02" text= "000.0" width = "45" name= "Engine_CurrentFPS" />
+    <Label   x=  "05" y= "40" font="02" text= "Best FPS:" />
+    <TextBox x= "100" y= "40" font="02" text= "000.0" width = "45" name= "Engine_BestFPS" />
+    <Label   x=  "05" y= "55" font="00" text= "Worst FPS:" />
+    <TextBox x= "100" y= "55" font="00" text= "000.0" width = "45" name= "Engine_WorstFPS" />
+    <Label   x=  "05" y= "70" font="02" text= "Triangles:" />
+    <TextBox x= "100" y= "70" font="02" text= "0000"  width = "45" name= "Engine_SumTris" />
+  </Window>
+
+
+
+  <!--#############################################-->
+  <!--WINDOW: Player info                          -->
+  <!--#############################################-->
+  <Window name= "PlayerInfo">
+    <Size      width= "348" height= "88" />
+    <Alignment x= "center" />
+    <Pos       x ="0" y= "0" zOrder = "50" />
+    <Tooltip  text= "This is the Player Info Window." />
+    <!--=============================================-->
+    <!-- Window Body                                 -->
+    <!--=============================================-->
+    <Graphic>
+      <Image name = "Player-Info"/>
+      <Pos x= "0" y= "0" />
+      <Range width= "348" height= "88" />
+    </Graphic>
+    <!--=============================================-->
+    <!-- Window Tiltle                               -->
+    <!--=============================================-->
+    <Gadget type= "BUTTON"  name = "Buton_info">
+      <Image name = "Player-Info-Button"/>
+      <Pos x= "70" y= "8" />
+    </Gadget>
+    <Graphic>
+      <Image name = "Player-Portrait"/>
+      <Pos x= "8" y= "9" />
+      <Range width= "71" height= "71" />
+    </Graphic>
+  </Window>
+
+
+
+  <!--#############################################-->
+  <!--WINDOW: Chat Window                          -->
+  <!--#############################################-->
+  <Window name= "ChatWindow">
+    <Size     width= "280" height= "269" />
+    <Alignment x="right" />
+    <Pos       x= "280"  y= "0" zOrder = "401" />
+    <DragArea  x= "0"    y= "0" width= "280" height= "18" />
+    <Tooltip  text= "Chat Window." />
+
+    <Graphic>
+      <Image name = "Background-General"/>
+      <Pos x= "0" y= "0" />
+      <Range width= "280" height= "18" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-NW"/>
+      <Pos x= "0" y= "0" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Bar-Horizontal-Top"/>
+      <Pos x= "10" y= "0" />
+      <Range width= "260" height= "5" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-NE"/>
+      <Pos x= "271" y= "0" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-SW"/>
+      <Pos x= "0" y= "9" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Bar-Horizontal-Bottom"/>
+      <Pos x= "10" y= "13" />
+      <Range width= "260" height= "5" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-SE"/>
+      <Pos x= "271" y= "9" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+
+    <Listbox name= "List_Msg" font="02">
+      <Pos x= "1" y= "18" />
+      <Range width= "262" height= "251" />
+      <Color red= "60" green= "56" blue= "31" alpha = "200" />
+      <Gadget type= "SCROLLER" name = "VScrollbar">
+         <Pos x= "263" y= "18" />
+         <Range width= "16" height= "251" />
+         <Color type= "BACKGROUND"  red=  "56" green=  "60" blue= "49" alpha = "255" />
+         <Color type= "BORDERLINE"  red=  "89" green=  "95" blue= "87" alpha = "255" />
+         <Color type= "BAR_PASSIVE" red=   "0" green=   "0" blue=  "0" alpha = "255" />
+         <Color type= "BAR_M_OVER"  red= "188" green= "158" blue= "81" alpha = "255" />
+         <Color type= "BAR_ACTIVE"  red=  "80" green= "100" blue= "60" alpha = "255" />
+         <Gadget type= "BUTTON" name = "But_ScrollUp"  >
+            <Image name = "Button-01-Up" />
+         </Gadget>
+         <Gadget type= "BUTTON" name = "But_ScrollDown">
+            <Image name = "Button-01-Down"/>
+         </Gadget>
+      </Gadget>
+    </Listbox>
+  </Window>
+
+
+
+  <!--#############################################-->
+  <!--WINDOW: Message Window                       -->
+  <!--#############################################-->
+  <Window name= "TextWindow">
+    <Size     width= "280" height= "269" />
+    <Alignment x="right" />
+    <Pos       x= "280"  y= "269" zOrder = "400" />
+    <DragArea  x= "0"    y= "0" width= "280" height= "18" />
+    <Tooltip  text= "Message Window." />
+
+    <Graphic>
+      <Image name = "Background-General"/>
+      <Pos x= "0" y= "0" />
+      <Range width= "280" height= "18" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-NW"/>
+      <Pos x= "0" y= "0" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Bar-Horizontal-Top"/>
+      <Pos x= "10" y= "0" />
+      <Range width= "260" height= "5" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-NE"/>
+      <Pos x= "271" y= "0" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-SW"/>
+      <Pos x= "0" y= "9" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Bar-Horizontal-Bottom"/>
+      <Pos x= "10" y= "13" />
+      <Range width= "260" height= "5" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-SE"/>
+      <Pos x= "271" y= "9" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+
+    <Listbox name= "List_Msg" font="02">
+      <Pos x= "1" y= "18" />
+      <Range width= "262" height= "251" />
+      <Color red= "60" green= "56" blue= "31" alpha = "200" />
+      <Gadget type= "SCROLLER" name = "VScrollbar">
+         <Pos x= "263" y= "18" />
+         <Range width= "16" height= "251" />
+         <Color type= "BACKGROUND"  red=  "56" green=  "60" blue= "49" alpha = "255" />
+         <Color type= "BORDERLINE"  red=  "89" green=  "95" blue= "87" alpha = "255" />
+         <Color type= "BAR_PASSIVE" red=   "0" green=   "0" blue=  "0" alpha = "255" />
+         <Color type= "BAR_M_OVER"  red= "188" green= "158" blue= "81" alpha = "255" />
+         <Color type= "BAR_ACTIVE"  red=  "80" green= "100" blue= "60" alpha = "255" />
+         <Gadget type= "BUTTON" name = "But_ScrollUp"  >
+            <Image name = "Button-01-Up" />
+         </Gadget>
+         <Gadget type= "BUTTON" name = "But_ScrollDown" >
+            <Image name = "Button-01-Down"/>
+         </Gadget>
+      </Gadget>
+    </Listbox>
+  </Window>
+
+
+
+  <!--#############################################-->
+  <!--WINDOW: Server Select                        -->
+  <!--#############################################-->
+  <Window name= "ServerSelect">
+    <Size     width= "512" height= "512" />
+    <Pos      x= "200" y= "200" zOrder = "250" />
+    <DragArea x= "0" y= "0" width= "512" height= "29" />
+    <Tooltip  text= "Select your server." />
+    <!--=============================================-->
+    <!-- Seamless Background                         -->
+    <!--=============================================-->
+    <Graphic>
+      <Image name = "Background-General"/>
+      <Pos x= "0" y= "0" />
+      <Range width= "512" height= "512" />
+    </Graphic>
+    <!--=============================================-->
+    <!-- Layer 0                                     -->
+    <!--=============================================-->
+    <Graphic>
+      <Image name = "Bar-Horizontal-Top"/>
+      <Pos x= "9" y= "0" />
+      <Range width= "508" height= "4" />
+    </Graphic>
+    <Label x=  "225" y= "8" font="04" text= "Login" />
+    <Graphic>
+      <Image name = "Bar-Horizontal-Bottom"/>
+      <Pos x= "4" y= "30" />
+      <Range width= "503" height= "4" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Bar-Horizontal-Bottom"/>
+      <Pos x= "4" y= "34" />
+      <Range width= "503" height= "4" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Bar-Horizontal-Top"/>
+      <Pos x= "9" y= "508" />
+      <Range width= "493" height= "4" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Bar-Vertical-Left"/>
+      <Pos x= "0" y= "9" />
+      <Range width= "4" height= "493" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Bar-Vertical-Right"/>
+      <Pos x= "508" y= "9" />
+      <Range width= "4" height= "493" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-NW"/>
+      <Pos x= "0" y= "0" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-SE"/>
+      <Pos x= "503" y= "503" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-NE"/>
+      <Pos x= "503" y= "0" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-NE"/>
+      <Pos x= "503" y= "0" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-SW"/>
+      <Pos x= "0" y= "503" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-NW"/>
+      <Pos x= "0" y= "34" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-SE"/>
+      <Pos x= "503" y= "25" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-NE"/>
+      <Pos x= "503" y= "34" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-NE"/>
+      <Pos x= "503" y= "0" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-SW"/>
+      <Pos x= "0" y= "25" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <!--=============================================-->
+    <!-- Layer 1                                     -->
+    <!--=============================================-->
+    <Table name= "Table_Server" font="03">
+      <Pos x= "56" y= "60" />
+      <Range width= "400" height= "300"/>
+      <Color type= "COLOR_ODD_ROWS"  red=  "45" green=  "37" blue= "16" alpha = "255" />
+      <Color type= "COLOR_EVEN_ROWS" red=  "62" green=  "49" blue= "32" alpha = "255" />
+      <Color type= "COLOR_SELECTION" red=   "0" green=   "0" blue= "99" alpha = "255" />
+      <Column width = "300" label ="Server:" />
+      <Column width = "100" label ="Players: " />
+      <SubRow font="03" red=  "128" green=  "128" blue= "128" alpha = "255" />
+      <SubRow font="02" red=  "128" green=  "128" blue= "128" alpha = "255" />
+      <SubRow font="01" red=  "128" green=  "128" blue= "128" alpha = "255" />
+    </Table>
+    <TextBox x= "60" y= "400" font="02" text= "" width = "392" name= "Login_ServerInfo1" />
+    <TextBox x= "60" y= "415" font="02" text= "" width = "392" name= "Login_ServerInfo2" />
+    <TextBox x= "60" y= "430" font="02" text= "" width = "392" name= "Login_ServerInfo3" />
+  </Window>
+
+
+
+  <!--#############################################-->
+  <!--WINDOW: Login                                -->
+  <!--#############################################-->
+  <Window name= "Login">
+    <Size     width= "512" height= "512" />
+    <Pos      x= "200" y= "200" zOrder = "250" />
+    <DragArea x= "0" y= "0" width= "512" height= "29" />
+    <Tooltip  text= "Select the server." />
+    <!--=============================================-->
+    <!-- Seamless Background                         -->
+    <!--=============================================-->
+    <Graphic>
+      <Image name = "Background-General"/>
+      <Pos x= "0" y= "0" />
+      <Range width= "512" height= "512" />
+    </Graphic>
+    <!--=============================================-->
+    <!-- Layer 0                                     -->
+    <!--=============================================-->
+    <Graphic>
+      <Image name = "Corner-NW"/>
+      <Pos x= "0" y= "0" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Bar-Horizontal-Top"/>
+      <Pos x= "10" y= "0" />
+      <Range width= "494" height= "6" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-NE"/>
+      <Pos x= "503" y= "0" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Label x=  "225" y= "8" font="04" text= "Login" />
+    <Graphic>
+      <Image name = "Bar-Horizontal-Top"/>
+      <Pos x= "5" y= "30" />
+      <Range width= "502" height= "6" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-SW"/>
+      <Pos x= "0" y= "503" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Bar-Horizontal-Bottom"/>
+      <Pos x= "10" y= "507" />
+      <Range width= "492" height= "6" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-SE"/>
+      <Pos x= "503" y= "503" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Bar-Vertical-Left"/>
+      <Pos x= "0" y= "10" />
+      <Range width= "6" height= "492" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Bar-Vertical-Right"/>
+      <Pos x= "507" y= "10" />
+      <Range width= "65" height= "492" />
+    </Graphic>
+    <!--=============================================-->
+    <!-- Layer 1                                     -->
+    <!--=============================================-->
+    <Label   x=  "80" y=  "65" font="03" text= "Account Name: " />
+    <TextBox x= "200" y=  "65" font="02" text= "" width = "110" name= "Input_Login_Name" />
+    <Label   x=  "80" y=  "85" font="03" text= "Password: " />
+    <TextBox x= "200" y=  "85" font="02" hide ="1" text= "" width = "100" name= "Input_Login_Passwd" />
+    <Label   x=  "80" y= "105" font="03" text= "Retype Pswd: " />
+    <TextBox x= "200" y= "105" font="02" hide ="1" text= "" width = "100" name= "Input_Login_Verify" />
+    <TextBox x= "60" y= "350" font="02" text= "" width = "392" name= "Login_LoginWarn" />
+    <TextBox x= "60" y= "400" font="02" text= "" width = "392" name= "Login_LoginInfo1" />
+    <TextBox x= "60" y= "415" font="02" text= "" width = "392" name= "Login_LoginInfo2" />
+    <TextBox x= "60" y= "430" font="02" text= "" width = "392" name= "Login_LoginInfo3" />
+  </Window>
+
+
+
+  <!--#############################################-->
+  <!--WINDOW: NPC Dialog                           -->
+  <!--#############################################-->
+  <Window name= "DialogNPC">
+    <Size     width= "303" height= "350" />
+    <Pos      x= "200" y= "200" zOrder = "250" />
+    <DragArea x= "0" y= "0" width= "303" height= "29" />
+    <Tooltip  text= "Conversation Window" />
+    <!--=============================================-->
+    <!-- Seamless Background                         -->
+    <!--=============================================-->
+    <Graphic>
+      <Image name = "Background-General"/>
+      <Pos x= "0" y= "0" />
+      <Range width= "303" height= "350" />
+    </Graphic>
+    <!--=============================================-->
+    <!-- Layer 0                                     -->
+    <!--=============================================-->
+    <Graphic>
+      <Image name = "Corner-NW"/>
+      <Pos x= "0" y= "0" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Bar-Horizontal-Top"/>
+      <Pos x= "10" y= "0" />
+      <Range width= "494" height= "4" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-NE"/>
+      <Pos x= "294" y= "0" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Bar-Horizontal-Bottom"/>
+      <Pos x= "5" y= "30" />
+      <Range width= "293" height= "4" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-SW"/>
+      <Pos x= "0" y= "341" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Bar-Horizontal-Bottom"/>
+      <Pos x= "10" y= "345" />
+      <Range width= "283" height= "4" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-SE"/>
+      <Pos x= "294" y= "341" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Bar-Vertical-Left"/>
+      <Pos x= "0" y= "10" />
+      <Range width= "5" height= "283" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Bar-Vertical-Right"/>
+      <Pos x= "298" y= "10" />
+      <Range width= "5" height= "283" />
+    </Graphic>
+    <!--=============================================-->
+    <!-- Layer 1                                     -->
+    <!--=============================================-->
+    <TextBox x= "55" y= "8" font="04" text= "Dialog Window" width = "230" name= "NPC_Headline" />
+    <Gadget type= "BUTTON"  name = "But_Close">
+      <Image name = "Button-01-Close"/>
+      <Pos x= "285" y= "1" />
+    </Gadget>
+    <Listbox name= "List_NPC" font="02">
+      <Pos x= "10" y= "60" />
+      <Range width= "270" height= "248" />
+      <Gadget type= "SCROLLER" name = "VScrollbar">
+         <Pos x= "284" y= "60" />
+         <Range width= "16" height= "248" />
+         <Color type= "BACKGROUND"  red=  "56" green=  "60" blue= "49" alpha = "255" />
+         <Color type= "BORDERLINE"  red=  "89" green=  "95" blue= "87" alpha = "255" />
+         <Color type= "BAR_PASSIVE" red=   "0" green=   "0" blue=  "0" alpha = "255" />
+         <Color type= "BAR_M_OVER"  red= "188" green= "158" blue= "81" alpha = "255" />
+         <Color type= "BAR_ACTIVE"  red=  "80" green= "100" blue= "60" alpha = "255" />
+         <Gadget type= "BUTTON" name = "But_ScrollUp"  >
+            <Image name = "Button-01-Up"/>
+         </Gadget>
+         <Gadget type= "BUTTON" name = "But_ScrollDown">
+            <Image name = "Button-01-Down"/>
+         </Gadget>
+      </Gadget>
+    </Listbox>
+    <Gadget type= "BUTTON"  name = "But_NPC_Accept">
+      <Image name = "Button-01-Standard"/>
+      <Pos   x= "10" y= "320" />
+      <Label x= "5" y= "5" font="02" text= "" />
+    </Gadget>
+    <TextBox x= "70" y= "325" font="02" hide ="0" text= "Enter your text here..." width = "222" name= "Input_NPC_Dialog" />
+    <Gadget type= "BUTTON"  name = "But_NPC_Decline">
+      <Image name = "Button-01-Standard"/>
+      <Label x= "5" y= "5" font="02" text= "" />
+      <Pos x= "238" y= "320" />
+    </Gadget>
+  </Window>
+
+
+
+  <!--#############################################-->
+  <!--WINDOW: Equipment                            -->
+  <!--#############################################-->
+  <Window name= "Win_Equipment">
+    <Size     width= "330" height= "580" />
+    <Alignment x= "left" />
+    <Pos       x ="5" y= "100" zOrder = "50" />
+    <DragArea x= "0" y= "0" width= "330" height= "30" />
+    <Tooltip  text= "Equipment window." />
+    <!--=============================================-->
+    <!-- Seamless Background                         -->
+    <!--=============================================-->
+    <Graphic>
+      <Image name = "Background-General"/>
+      <Pos x= "0" y= "0" />
+      <Range width= "330" height= "580" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Background-Equipment"/>
+      <Pos x= "88" y= "122" />
+      <Range width= "154" height= "233" />
+    </Graphic>
+    <!--=============================================-->
+    <!-- Layer 0                                     -->
+    <!--=============================================-->
+    <Graphic>
+      <Image name = "Corner-NW"/>
+      <Pos x= "0" y= "0" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Bar-Horizontal-Top"/>
+      <Pos x= "10" y= "0" />
+      <Range width= "320" height= "4" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-NE"/>
+      <Pos x= "321" y= "0" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-SW"/>
+      <Pos x= "0" y= "571" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Bar-Horizontal-Bottom"/>
+      <Pos x= "10" y= "576" />
+      <Range width= "320" height= "4" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-SE"/>
+      <Pos x= "321" y= "571" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Bar-Vertical-Left"/>
+      <Pos x= "0" y= "10" />
+      <Range width= "4" height= "570" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Bar-Vertical-Right"/>
+      <Pos x= "326" y= "0" />
+      <Range width= "4" height= "570" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Icon-Holder"/>
+      <Pos x= "294" y= "0" />
+      <Range width= "36" height= "37" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Icon-Equipment"/>
+      <Pos x= "301" y= "6" />
+      <Range width= "22" height= "25" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Weight-Anvil"/>
+      <Pos x= "11" y= "11" />
+      <Range width= "86" height= "28" />
+    </Graphic>
+    <!--=============================================-->
+    <!-- Layer 1 slots and icons                     -->
+    <!--=============================================-->
+    <Gadget type= "SLOT"  name = "Slot">
+      <Image name = "Item-Slot" bg_item_image_filename ="item_bg_amulet.png"/>
+      <Pos x= "30" y= "60" />
+    </Gadget>
+    <Gadget type= "SLOT"  name = "Slot">
+      <Image name = "Item-Slot" bg_item_image_filename ="item_bg_righthand.png"/>
+      <Pos x= "23" y= "297" />
+    </Gadget>
+
+    <Graphic>
+      <Image name = "Equipment-Bracers"/>
+      <Pos x= "20" y= "140" />
+      <Range width= "42" height= "39" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Equipment-Gloves"/>
+      <Pos x= "22" y= "220" />
+      <Range width= "43" height= "33" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Equipment-Crossbow"/>
+      <Pos x= "23" y= "383" />
+      <Range width= "39" height= "39" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Equipment-Ring"/>
+      <Pos x= "29" y= "464" />
+      <Range width= "28" height= "27" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Equipment-Cloack"/>
+      <Pos x= "108" y= "60" />
+      <Range width= "36" height= "40" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Equipment-Spellbook"/>
+      <Pos x= "105" y= "384" />
+      <Range width= "40" height= "36" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Equipment-Scroll"/>
+      <Pos x= "105" y= "465" />
+      <Range width= "37" height= "38" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Equipment-Helmet"/>
+      <Pos x= "194" y= "66" />
+      <Range width= "23" height= "23" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Equipment-Boots"/>
+      <Pos x= "186" y= "380" />
+      <Range width= "37" height= "40" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Equipment-Lantern"/>
+      <Pos x= "191" y= "466" />
+      <Range width= "31" height= "32" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Equipment-Amulet"/>
+      <Pos x= "274" y= "60" />
+      <Range width= "22" height= "30" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Equipment-Armor"/>
+      <Pos x= "261" y= "133" />
+      <Range width= "43" height= "49" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Equipment-Belt"/>
+      <Pos x= "267" y= "227" />
+      <Range width= "38" height= "22" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Equipment-Shield"/>
+      <Pos x= "265" y= "295" />
+      <Range width= "37" height= "44" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Equipment-Quiver"/>
+      <Pos x= "274" y= "388" />
+      <Range width= "30" height= "31" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Equipment-Ring"/>
+      <Pos x= "270" y= "464" />
+      <Range width= "28" height= "27" />
+    </Graphic>
+    <!--=============================================-->
+    <!-- Layer 2 tabs                                -->
+    <!--=============================================-->
+    <Graphic>
+      <Image name = "Button-02-Outline"/>
+      <Pos x= "10" y= "535" />
+      <Range width= "71" height= "27" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Button-02-Outline"/>
+      <Pos x= "90" y= "535" />
+      <Range width= "71" height= "27" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Button-02-Outline"/>
+      <Pos x= "170" y= "535" />
+      <Range width= "71" height= "27" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Button-02-Outline"/>
+      <Pos x= "250" y= "535" />
+      <Range width= "71" height= "27" />
+    </Graphic>
+    <Gadget type= "BUTTON"   name = "Tab_Stats">
+     <Image name = "Button-01-Standard"/>
+      <Pos   x= "13" y= "538" />
+      <Label x= "10" y= "8" font="02" text= "Stats" />
+    </Gadget>
+    <Gadget type= "BUTTON"  name = "Tab_Skills">
+      <Image name = "Button-01-Standard"/>
+      <Pos   x= "93" y= "538" />
+      <Label x= "10" y= "8" font="02" text= "Skills" />
+    </Gadget>
+    <Gadget type= "BUTTON"  name = "Tab_Protection">
+      <Image name = "Button-01-Standard"/>
+      <Pos   x= "173" y= "538" />
+      <Label x= "10" y= "8" font="02" text= "Stats" />
+    </Gadget>
+    <Gadget type= "BUTTON"  name = "Tab_Experience">
+      <Image name = "Button-01-Standard"/>
+      <Pos   x= "253" y= "538" />
+      <Label x= "10" y= "8" font="02" text= "Stats" />
+    </Gadget>
+    <TextBox x= "60" y= "8" font="03" text= "Equipment Window" width = "230" name= "Inv_Equipment" />
+    <TextBox x= "40" y= "24" font="02" text= "999 kg" width = "54" name= "Inv_Equip_Weight" />
+    <Gadget type= "BUTTON"  name = "But_Close">
+      <Image name = "Button-01-Close"/>
+      <Pos x= "280" y= "4" />
+    </Gadget>
+  </Window>
+
+
+
+    <!--#############################################-->
+    <!--WINDOW: Inventory                            -->
+    <!--#############################################-->
+  <Window name= "Win_Inventory">
+    <Size     width= "330" height= "580" />
+    <Alignment x= "left" />
+    <Pos       x ="335" y= "100" zOrder = "50" />
+    <DragArea x= "0" y= "0" width= "330" height= "30" />
+    <Tooltip  text= "Shop window" />
+    <!--=============================================-->
+    <!-- Seamless Background                         -->
+    <!--=============================================-->
+    <Graphic>
+      <Image name = "Background-General"/>
+      <Pos x= "0" y= "0" />
+      <Range width= "330" height= "580" />
+    </Graphic>
+    <!--=============================================-->
+    <!-- Layer 0                                     -->
+    <!--=============================================-->
+    <Graphic>
+      <Image name = "Corner-NW"/>
+      <Pos x= "0" y= "0" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Bar-Horizontal-Top"/>
+      <Pos x= "10" y= "0" />
+      <Range width= "320" height= "4" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-NE"/>
+      <Pos x= "321" y= "0" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-SW"/>
+      <Pos x= "0" y= "571" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Bar-Horizontal-Bottom"/>
+      <Pos x= "10" y= "576" />
+      <Range width= "320" height= "4" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-SE"/>
+      <Pos x= "321" y= "571" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Bar-Vertical-Left"/>
+      <Pos x= "0" y= "10" />
+      <Range width= "4" height= "570" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Bar-Vertical-Right"/>
+      <Pos x= "326" y= "0" />
+      <Range width= "4" height= "570" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Icon-Holder"/>
+      <Pos x= "294" y= "0" />
+      <Range width= "36" height= "37" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Icon-Inventory"/>
+      <Pos x= "301" y= "6" />
+      <Range width= "24" height= "25" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Icons-Background"/>
+      <Pos x= "7" y= "7" />
+      <Range width= "321" height= "50" />
+    </Graphic>
+    <!--=============================================-->
+    <!-- Layer 1 slots and icons                     -->
+    <!--=============================================-->
+    <Gadget type= "SLOT"  name = "Slot">
+      <Image name = "Item-Slot"/>
+      <Pos x= "17" y= "89" />
+    </Gadget>
+
+    <Gadget type= "SLOT"  name = "Slot">
+      <Image name = "Item-Slot"/>
+      <Pos x= "90" y= "89" />
+    </Gadget>
+
+    <Gadget type= "SLOT"  name = "Slot">
+      <Image name = "Item-Slot"/>
+      <Pos x= "163" y= "89" />
+    </Gadget>
+
+    <Gadget type= "SLOT"  name = "Slot">
+      <Image name = "Item-Slot"/>
+      <Pos x= "236" y= "89" />
+    </Gadget>
+
+    <Gadget type= "SLOT"  name = "Slot">
+      <Image name = "Item-Slot"/>
+      <Pos x= "17" y= "162" />
+    </Gadget>
+
+    <Gadget type= "SLOT"  name = "Slot">
+      <Image name = "Item-Slot"/>
+      <Pos x= "90" y= "162" />
+    </Gadget>
+
+    <Gadget type= "SLOT"  name = "Slot">
+      <Image name = "Item-Slot" />
+      <Pos x= "163" y= "162" />
+    </Gadget>
+
+    <Gadget type= "SLOT"  name = "Slot">
+      <Image name = "Item-Slot"/>
+      <Pos x= "236" y= "162" />
+    </Gadget>
+
+    <Graphic>
+      <Image name = "Monney-Copper"/>
+      <Pos x= "11" y= "11" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Monney-Silver"/>
+      <Pos x= "71" y= "14" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Monney-Gold"/>
+      <Pos x= "130" y= "11" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Monney-Mithrill"/>
+      <Pos x= "190" y= "18" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Icon-Anvil"/>
+      <Pos x= "250" y= "13" />
+    </Graphic>
+    <!--=============================================-->
+    <!-- Layer 2 tabs                                -->
+    <!--=============================================-->
+    <Graphic>
+      <Image name = "Button-02-Outline"/>
+      <Pos x= "10" y= "470" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Button-02-Outline"/>
+      <Pos x= "90" y= "470" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Button-02-Outline"/>
+      <Pos x= "170" y= "470" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Button-02-Outline"/>
+      <Pos x= "250" y= "470" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Button-02-Outline"/>
+      <Pos x= "10" y= "500" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Button-02-Outline"/>
+      <Pos x= "90" y= "500" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Button-02-Outline"/>
+      <Pos x= "170" y= "500" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Button-02-Outline"/>
+      <Pos x= "250" y= "500" />
+    </Graphic>
+    <Gadget type= "BUTTON"   name = "Tab_Stats">
+      <Image name = "Button-01-Standard"/>
+      <Pos   x= "13" y= "473" />
+      <Label x= "10" y= "8" font="02" text= "Weapons" />
+    </Gadget>
+    <Gadget type= "BUTTON"  name = "Tab_Skills">
+      <Image name = "Button-01-Standard"/>
+      <Pos   x= "93" y= "473" />
+      <Label x= "10" y= "8" font="02" text= "Shields" />
+    </Gadget>
+    <Gadget type= "BUTTON"  name = "Tab_Protection">
+      <Image name = "Button-01-Standard"/>
+      <Pos   x= "173" y= "473" />
+      <Label x= "10" y= "8" font="02" text= "Polyveg's" />
+    </Gadget>
+    <Gadget type= "BUTTON"  name = "Tab_Experience">
+      <Image name = "Button-01-Standard"/>
+      <Pos   x= "253" y= "473" />
+      <Label x= "10" y= "8" font="02" text= "Potions" />
+    </Gadget>
+    <Gadget type= "BUTTON"   name = "Tab_Stats">
+      <Image name = "Button-01-Standard"/>
+      <Pos   x= "13" y= "503" />
+      <Label x= "10" y= "8" font="02" text= "Cats" />
+    </Gadget>
+    <Gadget type= "BUTTON"  name = "Tab_Skills">
+      <Image name = "Button-01-Standard"/>
+      <Pos   x= "93" y= "503" />
+      <Label x= "10" y= "8" font="02" text= "Dogs" />
+    </Gadget>
+    <Gadget type= "BUTTON"  name = "Tab_Protection">
+      <Image name = "Button-01-Standard"/>
+      <Pos   x= "173" y= "503" />
+      <Label x= "10" y= "8" font="02" text= "Time" />
+    </Gadget>
+    <Gadget type= "BUTTON"  name = "Tab_Experience">
+      <Image name = "Button-01-Standard"/>
+      <Pos   x= "253" y= "503" />
+      <Label x= "10" y= "8" font="02" text= "one11!!!!" />
+    </Gadget>
+    <Gadget type= "BUTTON"  name = "Next_page">
+      <Image name = "Button-01-Next"/>
+      <Pos   x= "301" y= "543" />
+      <Label x= "10" y= "8" font="02" text= "" />
+    </Gadget>
+    <Gadget type= "BUTTON"  name = "Prev_Page">
+      <Image name = "Button-01-Prev"/>
+      <Pos   x= "6" y= "543" />
+      <Label x= "10" y= "8" font="02" text= "" />
+    </Gadget>
+    <Gadget type= "BUTTON"  name = "But_Close">
+      <Image name = "Button-01-Close"/>
+      <Pos x= "280" y= "4" />
+    </Gadget>
+  </Window>
+
+
+
+  <!--#############################################-->
+  <!--WINDOW: Trading                              -->
+  <!--#############################################-->
+  <Window name= "Win_Trade">
+    <Size     width= "330" height= "505" />
+    <Alignment x= "left" />
+    <Pos       x ="680" y= "120" zOrder = "50" />
+    <DragArea x= "0" y= "0" width= "330" height= "30" />
+    <Tooltip  text= "Trade window" />
+    <!--=============================================-->
+    <!-- Seamless Background                         -->
+    <!--=============================================-->
+    <Graphic>
+      <Image name = "Background-General"/>
+      <Pos x= "0" y= "0" />
+      <Range width= "330" height= "505" />
+    </Graphic>
+    <!--=============================================-->
+    <!-- Layer 0                                     -->
+    <!--=============================================-->
+    <Graphic>
+      <Image name = "Corner-NW"/>
+      <Pos x= "0" y= "0" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Bar-Horizontal-Top"/>
+      <Pos x= "10" y= "0" />
+      <Range width= "320" height= "4" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-NE"/>
+      <Pos x= "321" y= "0" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-SW"/>
+      <Pos x= "0" y= "496" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Bar-Horizontal-Bottom"/>
+      <Pos x= "9" y= "501" />
+      <Range width= "320" height= "4" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-SE"/>
+      <Pos x= "321" y= "496" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Bar-Vertical-Left"/>
+      <Pos x= "0" y= "10" />
+      <Range width= "4" height= "595" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Bar-Vertical-Right"/>
+      <Pos x= "326" y= "0" />
+      <Range width= "4" height= "595" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Icon-Holder"/>
+      <Pos x= "294" y= "0" />
+      <Range width= "36" height= "37" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Icon-Trade"/>
+      <Pos x= "299" y= "5" />
+      <Range width= "27" height= "27" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Icons-Background"/>
+      <Pos x= "7" y= "7" />
+      <Range width= "321" height= "50" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Icons-Background"/>
+      <Pos x= "7" y= "270" />
+      <Range width= "321" height= "50" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-NW"/>
+      <Pos x= "0" y= "263" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-SE"/>
+      <Pos x= "321" y= "254" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-NE"/>
+      <Pos x= "321" y= "263" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-SW"/>
+      <Pos x= "0" y= "254" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Bar-Horizontal-Bottom"/>
+      <Pos x= "9" y= "259" />
+      <Range width= "320" height= "4" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Bar-Horizontal-Top"/>
+      <Pos x= "9" y= "263" />
+      <Range width= "320" height= "4" />
+    </Graphic>
+    <!--=============================================-->
+    <!-- Layer 1 slots and icons                     -->
+    <!--=============================================-->
+    <Graphic>
+      <Image name = "Monney-Copper"/>
+      <Pos x= "11" y= "11" />
+      <Range width= "27" height= "21" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Monney-Silver"/>
+      <Pos x= "71" y= "14" />
+      <Range width= "23" height= "17" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Monney-Gold"/>
+      <Pos x= "130" y= "11" />
+      <Range width= "25" height= "21" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Monney-Mithrill"/>
+      <Pos x= "190" y= "18" />
+      <Range width= "22" height= "14" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Icon-Anvil"/>
+      <Pos x= "250" y= "13" />
+      <Range width= "24" height= "23" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Monney-Copper"/>
+      <Pos x= "11" y= "274" />
+      <Range width= "27" height= "21" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Monney-Silver"/>
+      <Pos x= "71" y= "277" />
+      <Range width= "23" height= "17" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Monney-Gold"/>
+      <Pos x= "130" y= "274" />
+      <Range width= "25" height= "21" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Monney-Mithrill"/>
+      <Pos x= "190" y= "281" />
+      <Range width= "22" height= "14" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Icon-Anvil"/>
+      <Pos x= "250" y= "276" />
+      <Range width= "24" height= "23" />
+    </Graphic>
+    <!--=============================================-->
+    <!-- Layer 2 tabs                                -->
+    <!--=============================================-->
+    <Graphic>
+      <Image name = "Button-02-Outline"/>
+      <Pos x= "210" y= "227" />
+      <Range width= "71" height= "27" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Button-02-Outline"/>
+      <Pos x= "50" y= "227" />
+      <Range width= "71" height= "27" />
+    </Graphic>
+    <Gadget type= "BUTTON"   name = "Tab_Lock">
+      <Image name = "Button-01-Standard"/>
+      <Pos   x= "53" y= "230" />
+      <Label x= "10" y= "8" font="02" text= "Lock" />
+    </Gadget>
+    <Gadget type= "BUTTON"  name = "Tab_Trade">
+      <Image name = "Button-01-Standard"/>
+      <Pos   x= "213" y= "230" />
+      <Label x= "10" y= "8" font="02" text= "Trade" />
+    </Gadget>
+
+    <TextBox x= "15" y= "42" font="02" text= "10" width = "60" name= "Engine_SumTris" />
+    <TextBox x= "75" y= "42" font="02" text= "100" width = "60" name= "Engine_SumTris" />
+    <TextBox x= "135" y= "42" font="02" text= "1000" width = "60" name= "Engine_SumTris" />
+    <TextBox x= "195" y= "42" font="02" text= "10000" width = "60" name= "Engine_SumTris" />
+    <TextBox x= "255" y= "42" font="02" text= "10000 kg" width = "60" name= "Engine_SumTris" />
+    <TextBox x= "15" y= "305" font="02" text= "10" width = "60" name= "Engine_SumTris" />
+    <TextBox x= "75" y= "305" font="02" text= "100" width = "60" name= "Engine_SumTris" />
+    <TextBox x= "135" y= "305" font="02" text= "1000" width = "60" name= "Engine_SumTris" />
+    <TextBox x= "195" y= "305" font="02" text= "10000" width = "60" name= "Engine_SumTris" />
+    <TextBox x= "255" y= "305" font="02" text= "10.25612 kg" width = "60" name= "Engine_SumTris" />
+
+    <Gadget type= "BUTTON"  name = "But_Close">
+      <Image name = "Button-01-Close"/>
+      <Pos x= "280" y= "4" />
+    </Gadget>
+  </Window>
+
+
+
+  <!--#############################################-->
+  <!--WINDOW: Shop                                 -->
+  <!--#############################################-->
+  <Window name= "Win_Shop">
+    <Size     width= "330" height= "580" />
+    <Alignment x= "left" />
+    <Pos       x ="680" y= "100" zOrder = "50" />
+    <DragArea x= "0" y= "0" width= "330" height= "30" />
+    <Tooltip  text= "Shop window" />
+    <!--=============================================-->
+    <!-- Seamless Background                         -->
+    <!--=============================================-->
+    <Graphic>
+      <Image name = "Background-General"/>
+      <Pos x= "0" y= "0" />
+      <Range width= "330" height= "580" />
+    </Graphic>
+    <!--=============================================-->
+    <!-- Layer 0                                     -->
+    <!--=============================================-->
+    <Graphic>
+      <Image name = "Corner-NW"/>
+      <Pos x= "0" y= "0" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Bar-Horizontal-Top"/>
+      <Pos x= "10" y= "0" />
+      <Range width= "320" height= "4" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-NE"/>
+      <Pos x= "321" y= "0" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-SW"/>
+      <Pos x= "0" y= "571" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Bar-Horizontal-Bottom"/>
+      <Pos x= "10" y= "576" />
+      <Range width= "320" height= "4" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-SE"/>
+      <Pos x= "321" y= "571" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Bar-Vertical-Left"/>
+      <Pos x= "0" y= "10" />
+      <Range width= "4" height= "570" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Bar-Vertical-Right"/>
+      <Pos x= "326" y= "0" />
+      <Range width= "4" height= "570" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Icon-Holder"/>
+      <Pos x= "294" y= "0" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Icon-Shop"/>
+      <Pos x= "301" y= "6" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Icons-Background"/>
+      <Pos x= "7" y= "7" />
+      <Range width= "321" height= "50" />
+    </Graphic>
+    <!--=============================================-->
+    <!-- Layer 1 slots and icons                     -->
+    <!--=============================================-->
+    <Graphic>
+      <Image name = "Monney-Copper"/>
+      <Pos x= "10" y= "10" />
+      <Range width= "27" height= "21" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Monney-Silver"/>
+      <Pos x= "70" y= "13" />
+      <Range width= "23" height= "17" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Monney-Gold"/>
+      <Pos x= "129" y= "10" />
+      <Range width= "25" height= "21" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Monney-Mithrill"/>
+      <Pos x= "189" y= "17" />
+      <Range width= "22" height= "14" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Icon-Anvil"/>
+      <Pos x= "249" y= "12" />
+      <Range width= "24" height= "23" />
+    </Graphic>
+    <!--=============================================-->
+    <!-- Layer 2 tabs                                -->
+    <!--=============================================-->
+    <Graphic>
+      <Image name = "Button-02-Outline"/>
+      <Pos x= "49" y= "480" />
+      <Range width= "71" height= "27" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Button-02-Outline"/>
+      <Pos x= "210" y= "480" />
+      <Range width= "71" height= "27" />
+    </Graphic>
+    <Gadget type= "BUTTON"   name = "Tab_Buy">
+      <Image name = "Button-01-Standard"/>
+      <Pos   x= "52" y= "483" />
+      <Label x= "10" y= "8" font="02" text= "Buy" />
+    </Gadget>
+    <Gadget type= "BUTTON"  name = "Tab_Sell">
+      <Image name = "Button-01-Standard"/>
+      <Pos   x= "213" y= "483 " />
+      <Label x= "10" y= "8" font="02" text= "Sell" />
+    </Gadget>
+    <Gadget type= "BUTTON"  name = "Next_page">
+      <Image name = "Button-01-Next"/>
+      <Pos   x= "301" y= "543" />
+    </Gadget>
+    <Gadget type= "BUTTON"  name = "Prev_Page">
+      <Image name = "Button-01-Prev"/>
+      <Pos   x= "6" y= "543" />
+    </Gadget>
+    <Gadget type= "BUTTON"  name = "But_Close">
+      <Image name = "Button-01-Close"/>
+      <Pos x= "280" y= "4" />
+    </Gadget>
+  </Window>
+
+
+
+    <!--#############################################-->
+    <!--WINDOW: container                            -->
+    <!--#############################################-->
+  <Window name= "Win_Container">
+    <Size  width= "330" height= "340" />
+    <Alignment x= "left" />
+    <Pos       x="580" y= "100" zOrder = "50" />
+    <DragArea  x= "0" y= "0" width= "330" height= "30" />
+    <Tooltip  text= "Container1" />
+    <!--=============================================-->
+    <!-- Seamless Background                         -->
+    <!--=============================================-->
+    <Graphic>
+      <Image name = "Background-General"/>
+      <Pos x= "0" y= "0" />
+      <Range width= "330" height= "340" />
+    </Graphic>
+    <!--=============================================-->
+    <!-- Layer 0                                     -->
+    <!--=============================================-->
+    <Graphic>
+      <Image name = "Corner-NW"/>
+      <Pos x= "0" y= "0" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Bar-Horizontal-Top"/>
+      <Pos x= "10" y= "0" />
+      <Range width= "320" height= "4" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-NE"/>
+      <Pos x= "321" y= "0" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Bar-Horizontal-Bottom"/>
+      <Pos x= "9" y= "316" />
+      <Range width= "320" height= "4" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Bar-Vertical-Left"/>
+      <Pos x= "0" y= "10" />
+      <Range width= "4" height= "311" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Bar-Vertical-Right"/>
+      <Pos x= "326" y= "0" />
+      <Range width= "4" height= "311" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Icon-Holder"/>
+      <Pos x= "294" y= "0" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Icon-Inventory"/>
+      <Pos x= "299" y= "5" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Icons-Background"/>
+      <Pos x= "7" y= "7" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-SE"/>
+      <Pos x= "321" y= "254" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Corner-SW"/>
+      <Pos x= "0" y= "254" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Bar-Horizontal-Bottom"/>
+      <Pos x= "9" y= "259" />
+      <Range width= "320" height= "4" />
+    </Graphic>
+    <!--=============================================-->
+    <!-- Layer 1 slots and icons                     -->
+    <!--=============================================-->
+    <Gadget type= "SLOT"  name = "Slot">
+      <Image name = "Item-Slot" bg_item_image_filename ="item_bg_scroll.png"/>
+      <Pos x= "17" y= "89" />
+    </Gadget>
+    <Graphic>
+      <Image name = "Monney-Copper"/>
+      <Pos x= "11" y= "11" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Monney-Silver"/>
+      <Pos x= "71" y= "14" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Monney-Gold"/>
+      <Pos x= "130" y= "11" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Monney-Mithrill"/>
+      <Pos x= "190" y= "18" />
+    </Graphic>
+    <Graphic>
+      <Image name = "Icon-Anvil"/>
+      <Pos x= "250" y= "13" />
+    </Graphic>
+    <!--=============================================-->
+    <!-- Layer 2 tabs                                -->
+    <!--=============================================-->
+    <Graphic>
+      <Image name = "Button-02-Outline"/>
+      <Pos x= "127" y= "317" />
+    </Graphic>
+    <Gadget type= "BUTTON"  name = "Tab_12">
+      <Image name = "Button-01-Standard"/>
+      <Pos   x= "130" y= "310" />
+      <Label x= "10" y= "8" font="02" text= "Take all" />
+    </Gadget>
+    <Gadget type= "BUTTON"  name = "But_Close">
+      <Image name = "Button-01-Close"/>
+      <Pos x= "280" y= "4" />
+    </Gadget>
+  </Window>
+</XML>

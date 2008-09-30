@@ -75,7 +75,7 @@ void TileManager::Init(SceneManager* SceneMgr, int queryMaskLand, int queryMaskW
     mLod = lod&3;
     int textureSize = MAX_TEXTURE_SIZE >> mLod;
     Logger::log().info() << "Setting LoD to " << mLod << ". Atlas size is " << textureSize << "x" << textureSize<< ".";
-    //if (createAtlas)
+    if (createAtlas)
     {
         Logger::log().info() << "Creating atlas-texture...";
         createFilterTemplate();
