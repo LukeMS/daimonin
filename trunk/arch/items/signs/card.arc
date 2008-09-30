@@ -1,4 +1,5 @@
 Object card
+name card
 face card.101
 layer 3
 identified 1

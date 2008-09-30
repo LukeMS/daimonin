@@ -1,4 +1,5 @@
 Object letter
+name letter
 face letter.101
 layer 3
 identified 1

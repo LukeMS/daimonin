@@ -1,4 +1,5 @@
 Object diploma
+name diploma
 face diploma.101
 layer 3
 identified 1

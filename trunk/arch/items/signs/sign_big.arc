@@ -1,5 +1,5 @@
 Object sign_generic
-name big sign ('a'pply to read)
+name big sign
 face sign_generic.111
 type 98
 anim
@@ -22,7 +22,7 @@ layer 4
 no_pick 1
 end
 Object sign_pub
-name big sign ('a'pply to read)
+name big sign
 face sign_pub.111
 type 98
 anim
