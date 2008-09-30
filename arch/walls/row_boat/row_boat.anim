@@ -1,0 +1,24 @@
+anim rowboat_a
+facings 9
+dummy.111
+row_boat_a.101
+row_boat_a.101
+row_boat_a.101
+row_boat_a.101
+row_boat_a.101
+row_boat_a.101
+row_boat_a.101
+row_boat_a.101
+mina
+anim rowboat_b
+facings 9
+dummy.111
+row_boat_b.101
+row_boat_b.101
+row_boat_b.101
+row_boat_b.101
+row_boat_b.101
+row_boat_b.101
+row_boat_b.101
+row_boat_b.101
+mina
