@@ -1805,7 +1805,7 @@ treasureone armour_mail
     material_range 7
   more
   arch armour_cloth
-    chance 30
+    chance 5
     difficulty 14
     material_quality 80
     material_range 7
@@ -1872,6 +1872,16 @@ treasureone armour_mail
     material_quality 80
     material_range 7
   more
+  arch maximillian_mail
+    difficulty 49
+    chance 5
+    quality_range 7
+  more
+  arch panoply_mail
+    difficulty 49
+    chance 5
+    quality_range 7
+  more
   arch scale_armour
     difficulty 6
     chance 20
@@ -1882,64 +1892,54 @@ treasureone armour_mail
     chance 25
     quality_range 7
   more
-  arch maximillian_mail
-    difficulty 49
-    chance 25
-    quality_range 7
-  more
-  arch panoply_mail
-    difficulty 49
-    chance 25
-    quality_range 7
-  more
   arch dragon_scale_mail1
     difficulty 59
-    chance 25
+    chance 5
     quality_range 7
   more
   arch dragon_scale_mail2
     difficulty 59
-    chance 25
+    chance 5
     quality_range 7
   more
   arch dragon_scale_mail3
     difficulty 59
-    chance 25
+    chance 5
     quality_range 7
   more
   arch dragon_scale_mail4
     difficulty 59
-    chance 25
+    chance 5
     quality_range 7
   more
   arch dragon_scale_mail5
     difficulty 59
-    chance 25
+    chance 5
     quality_range 7
   more
   arch dragon_scale_mail6
     difficulty 59
-    chance 25
+    chance 5
     quality_range 7
   more
   arch dragon_scale_mail7
     difficulty 59
-    chance 25
+    chance 5
     quality_range 7
   more
   arch plate_scale_armour
     difficulty 59
-    chance 25
+    chance 5
     quality_range 7
   more
   arch dragon_chain_armour
     difficulty 59
-    chance 25
+    chance 5
     quality_range 7
   more
   arch dragon_plate_armour
     difficulty 59
-    chance 25
+    chance 5
     quality_range 7
   more
   arch dress
@@ -1976,7 +1976,7 @@ treasureone armour_mail
   more
   arch coat_mage
     difficulty 7
-    chance 25
+    chance 15
     quality_range 7
   more
   arch splint_mail
@@ -2077,7 +2077,7 @@ treasureone armour_mail_start
     material_range 7
   more
   arch armour_cloth
-    chance 30
+    chance 5
     material_quality 80
     material_range 7
 end
@@ -2154,7 +2154,7 @@ treasureone armour_boots
   more
   arch leggings_chain
     chance 10
-    difficulty 19
+    difficulty 9
     material_quality 80
     material_range 7
   more
@@ -2259,6 +2259,18 @@ treasureone armour_shield
     material_quality 80
     material_range 7
   more
+  arch shield_holy
+    difficulty 25
+    chance 15
+    material_quality 80
+    material_range 7
+  more
+  arch shield_skull
+    difficulty 32
+    chance 15
+    material_quality 80
+    material_range 7
+  more
   arch shield_defender
     difficulty 18
     chance 15
@@ -2285,18 +2297,6 @@ treasureone armour_shield
   more
   arch shield_protector
     difficulty 18
-    chance 15
-    material_quality 80
-    material_range 7
-  more
-  arch shield_holy
-    difficulty 25
-    chance 15
-    material_quality 80
-    material_range 7
-  more
-  arch shield_skull
-    difficulty 32
     chance 15
     material_quality 80
     material_range 7
@@ -3541,7 +3541,7 @@ treasure loot_magic
     list magic_useup
       chance 81
     no
-      arch potion_improve
+      arch potion_generic_poi
         difficulty 6
     end
   end
