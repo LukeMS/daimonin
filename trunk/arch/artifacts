@@ -93,9 +93,9 @@
 # The 'editor <num>: <path>' entry defines the use of the artifact entry
 #
 # editor 0: = this item is internal - ignore complete in the editor
-# editor 2: = this item is a "fake arch" - don't use it for artifact masking
-# editor 2: = this is a mask entry
-# editor 2: = this is used as fake arch and also as mask entry
+# editor 1: = this item is a "fake arch" - don't use it for artifact masking
+# editor 2: = this is a mask entry - in B5 this is the only entry used for items
+# editor 3: = this is used as fake arch and also as mask entry
 # fake arch = the server will add the entry to the arch list as it would be a file in /arch
 # the path behind the ':' is used as a directory inside /arch - the editor will use it to sort them 
 #
