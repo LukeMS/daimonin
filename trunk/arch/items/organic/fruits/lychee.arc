@@ -1,4 +1,5 @@
 Object lychee
+name lychee
 face lychee01.101
 last_eat 10
 hp 20

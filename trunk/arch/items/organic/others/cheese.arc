@@ -1,4 +1,5 @@
 Object cheese
+name cheese
 face cheese01.101
 last_eat 10
 hp 20

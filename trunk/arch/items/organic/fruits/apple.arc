@@ -1,4 +1,5 @@
 Object apple
+name apple
 face apple01.101
 last_eat 10
 hp 20

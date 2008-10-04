@@ -1,4 +1,5 @@
 Object bread
+name bread
 face bread01.101
 last_eat 10
 can_stack 1
@@ -15,6 +16,7 @@ material 32
 value 5
 weight 125
 end
+
 Object bread1
 name bread
 can_stack 1

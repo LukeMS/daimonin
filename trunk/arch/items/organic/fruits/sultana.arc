@@ -1,4 +1,5 @@
 Object sultana
+name sultanas
 face sultana01.101
 last_eat 10
 hp 20

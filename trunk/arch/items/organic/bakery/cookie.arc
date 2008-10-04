@@ -1,4 +1,5 @@
 Object cookie
+name cookie
 face cookie01.101
 last_eat 10
 hp 20

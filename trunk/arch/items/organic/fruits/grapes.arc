@@ -1,4 +1,5 @@
 Object grapes
+name green grapes
 face grapes01.101
 last_eat 10
 hp 20
@@ -14,8 +15,9 @@ material_real -1
 value 10
 weight 400
 end
+
 Object grapes1
-name grapes
+name purple grapes
 face grapes02.101
 last_eat 10
 hp 20

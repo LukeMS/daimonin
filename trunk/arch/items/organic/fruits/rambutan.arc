@@ -1,4 +1,5 @@
 Object rambutan
+name rambutan
 face rambutan01.101
 last_eat 10
 hp 20

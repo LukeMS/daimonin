@@ -1,4 +1,5 @@
 Object banana
+name banana
 face banana01.101
 last_eat 10
 hp 20

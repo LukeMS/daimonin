@@ -1,4 +1,5 @@
 Object peach
+name peach
 face peach01.101
 last_eat 10
 hp 20

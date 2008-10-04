@@ -1,4 +1,5 @@
 Object lemon
+name lemon
 face lemon01.101
 last_eat 10
 hp 20

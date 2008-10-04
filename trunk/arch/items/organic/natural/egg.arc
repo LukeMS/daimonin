@@ -1,4 +1,5 @@
 Object egg
+name egg
 face egg01.101
 last_eat 10
 hp 20

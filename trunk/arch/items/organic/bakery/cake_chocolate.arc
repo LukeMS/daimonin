@@ -16,6 +16,7 @@ material 32
 value 5
 weight 125
 end
+
 Object cookie_tree
 name christmas tree cookie
 face cookie_tree.101
@@ -34,8 +35,9 @@ material 32
 value 5
 weight 125
 end
+
 Object cake_piece
-name cake piece
+name piece of cake
 face cakepiece.101
 last_eat 10
 hp 15
@@ -52,6 +54,7 @@ material 32
 value 5
 weight 125
 end
+
 Object cake2
 name cake
 face cake2.101
@@ -70,6 +73,7 @@ material 32
 value 5
 weight 125
 end
+
 Object icecake
 name icecake
 face icecake.101

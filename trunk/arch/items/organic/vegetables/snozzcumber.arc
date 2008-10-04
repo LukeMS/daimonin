@@ -1,4 +1,5 @@
 Object snozzcumber
+name snozzcumber
 face snozzcumber01.101
 last_eat 10
 hp 20
