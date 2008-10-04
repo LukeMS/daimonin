@@ -284,35 +284,6 @@ no_teleport 1
 walk_on 1
 walk_off 1
 end
-Object double_handle-handle1
-name double handle
-type 93
-editor_folder connectors/handles
-layer 5
-face double_handle-handle1.111
-no_pick 1
-no_teleport 1
-animation double_handle-handle1
-is_turnable 1
-is_animated 0
-anim_speed 0
-direction 1
-end
-Object double_handle-trigger1
-name double handle
-type 27
-editor_folder connectors/handles
-layer 5
-face double_handle-handle1.111
-no_pick 1
-no_teleport 1
-exp 30
-animation double_handle-trigger1
-is_turnable 1
-is_animated 0
-anim_speed 0
-direction 1
-end
 Object handle_lever
 name big lever
 type 93
@@ -469,7 +440,7 @@ end
 Object ladder_down
 name ladder going down
 type 66
-editor_folder exits_and_pits/ladders
+editor_folder exits/ladders
 layer 5
 face ladder_down.151
 no_pick 1
@@ -485,7 +456,7 @@ end
 Object ladder_up
 name ladder going up
 type 66
-editor_folder exits_and_pits/ladders
+editor_folder exits/ladders
 layer 5
 face ladder_up.151
 no_pick 1
@@ -501,7 +472,7 @@ end
 Object ladder_down2
 name ladder going down
 type 66
-editor_folder exits_and_pits/ladders
+editor_folder exits/ladders
 layer 5
 face ladder_square_down.111
 no_pick 1
@@ -517,7 +488,7 @@ end
 Object ladder_down3
 name ladder going down
 type 66
-editor_folder exits_and_pits/ladders
+editor_folder exits/ladders
 layer 5
 face ladder_round_down.111
 no_pick 1
@@ -533,7 +504,7 @@ end
 Object ladder_down_vege
 name ladder going down
 type 66
-editor_folder exits_and_pits/ladders
+editor_folder exits/ladders
 layer 5
 face ladder_down_vege.151
 no_pick 1
@@ -549,7 +520,7 @@ end
 Object ladder_up_vege
 name ladder going up
 type 66
-editor_folder exits_and_pits/ladders
+editor_folder exits/ladders
 layer 5
 face ladder_up_vege.151
 no_pick 1
@@ -564,7 +535,7 @@ sp -1
 end
 Object hole
 type 66
-editor_folder exits_and_pits/misc
+editor_folder exits/misc
 face hole1.101
 layer 5
 hp -1
@@ -574,7 +545,7 @@ no_pick 1
 end
 Object invis_exit
 type 66
-editor_folder exits_and_pits/misc
+editor_folder exits/misc
 face inv_exit.101
 player_only 1
 layer 0
@@ -589,7 +560,7 @@ end
 Object sewer_hole1
 name sewer hole
 type 66
-editor_folder exits_and_pits/misc
+editor_folder exits/misc
 face sewer_hole1.101
 layer 5
 hp -1
@@ -600,7 +571,7 @@ end
 Object sewer_hole2
 name sewer hole
 type 66
-editor_folder exits_and_pits/misc
+editor_folder exits/misc
 face sewer_hole2.101
 layer 3
 hp -1
@@ -608,10 +579,38 @@ sp -1
 no_teleport 1
 no_pick 1
 end
+Object tele_rock
+name mysterious rock
+type 66
+editor_folder exits/misc
+sub_type 1
+layer 5
+face tele_rock.101
+hp -1
+sp -1
+no_pick 1
+animation tele_rock
+is_animated 1
+anim_speed 5
+end
+Object tele_stone
+name mysterious stone
+type 66
+editor_folder exits/misc
+sub_type 1
+layer 5
+face tele_stone.101
+hp -1
+sp -1
+no_pick 1
+animation tele_stone
+is_animated 1
+anim_speed 5
+end
 Object well_stone
 name stone well
 type 66
-editor_folder exits_and_pits/misc
+editor_folder exits/misc
 no_teleport 1
 hp -1
 sp -1
@@ -622,7 +621,7 @@ end
 Object pit_closed
 name pit
 type 94
-editor_folder exits_and_pits/pits
+editor_folder exits/pits
 no_pick 1
 no_teleport 1
 hp -1
@@ -638,7 +637,7 @@ end
 Object pit_open
 name pit
 type 94
-editor_folder exits_and_pits/pits
+editor_folder exits/pits
 hp -1
 sp -1
 layer 4
@@ -654,23 +653,24 @@ maxsp 1
 end
 Object portal_big
 name big portal
-type 41
-editor_folder exits_and_pits/portals
+type 66
+editor_folder exits/portals
+sub_type 1
+layer 5
 face portal_big.101
-no_teleport 1
-speed 0.50
 hp -1
 sp -1
-layer 5
 no_pick 1
 animation portal_big
 is_animated 1
 anim_speed 2
+walk_on 1
+fly_on 1
 end
 Object ropeladder_down
 name rope ladder going up
 type 66
-editor_folder exits_and_pits/ropes
+editor_folder exits/ropes
 face ropeladder_down.131
 animation ropeladder_down
 is_animated 0
@@ -686,7 +686,7 @@ end
 Object ropeladder_down2
 name rope ladder going up
 type 66
-editor_folder exits_and_pits/ropes
+editor_folder exits/ropes
 face ropeladder_down2.131
 animation ropeladder_down2
 is_animated 0
@@ -702,7 +702,7 @@ end
 Object stairs_red_up
 name stairs going up
 type 66
-editor_folder exits_and_pits/stairs
+editor_folder exits/stairs
 face stairs_red_up.131
 animation stairs_red_up
 is_animated 0
@@ -718,7 +718,7 @@ end
 Object stairs_red_down
 name stairs going down
 type 66
-editor_folder exits_and_pits/stairs
+editor_folder exits/stairs
 face stairs_red_down.131
 animation stairs_red_down
 is_animated 0
@@ -734,7 +734,7 @@ end
 Object stairs_stone_up
 name stairs going up
 type 66
-editor_folder exits_and_pits/stairs
+editor_folder exits/stairs
 face stairs_stone_up.131
 animation stairs_stone_up
 is_animated 0
@@ -750,7 +750,7 @@ end
 Object stairs_stone_down
 name stairs going down
 type 66
-editor_folder exits_and_pits/stairs
+editor_folder exits/stairs
 face stairs_stone_down.131
 animation stairs_stone_down
 is_animated 0
@@ -766,7 +766,7 @@ end
 Object stairs_wood_up
 name stairs going up
 type 66
-editor_folder exits_and_pits/stairs
+editor_folder exits/stairs
 face stairs_wood_up.131
 animation stairs_wood_up
 is_animated 0
@@ -782,7 +782,7 @@ end
 Object stairs_wood_down
 name stairs going down
 type 66
-editor_folder exits_and_pits/stairs
+editor_folder exits/stairs
 face stairs_wood_down.131
 animation stairs_wood_down
 is_animated 0
@@ -798,7 +798,7 @@ end
 Object exit
 name exit
 type 66
-editor_folder exits_and_pits/teleporters
+editor_folder exits/teleporters
 face exit.101
 player_only 1
 speed 0.1
@@ -817,7 +817,7 @@ end
 Object exit_green
 name exit
 type 66
-editor_folder exits_and_pits/teleporters
+editor_folder exits/teleporters
 face exit_green.101
 player_only 1
 speed 0.1
@@ -836,7 +836,7 @@ end
 Object shop_mat
 name shop teleporter
 type 69
-editor_folder exits_and_pits/teleporters
+editor_folder exits/teleporters
 layer 4
 face exit.101
 no_pick 1
@@ -848,58 +848,9 @@ walk_on 1
 fly_on 1
 speed 0.50
 end
-Object tele_rock
-name mysterious rock
-type 66
-editor_folder exits_and_pits/teleporters
-face tele_rock.101
-player_only 1
-speed 0.1
-hp -1
-sp -1
-no_teleport 1
-layer 5
-sub_type 1
-no_pick 1
-animation tele_rock
-is_animated 1
-anim_speed 5
-walk_on 0
-fly_on 0
-end
-Object no_tele_rock
-name mysterious rock
-type 79
-editor_folder exits_and_pits/teleporters
-face tele_rock.101
-layer 5
-is_animated 0
-material 64
-no_pass 0
-no_pick 1
-end
-Object tele_stone
-name mysterious stone
-type 66
-editor_folder exits_and_pits/teleporters
-face tele_stone.101
-player_only 1
-speed 0.1
-hp -1
-sp -1
-no_teleport 1
-layer 5
-sub_type 1
-no_pick 1
-animation tele_stone
-is_animated 1
-anim_speed 5
-walk_on 0
-fly_on 0
-end
 Object teleporter
 type 41
-editor_folder exits_and_pits/teleporters
+editor_folder exits/teleporters
 face exit.101
 player_only 1
 layer 5
@@ -5802,7 +5753,7 @@ end
 Object grate_open
 name grate
 type 91
-editor_folder gates/gates
+editor_folder gates/grates
 layer 5
 no_teleport 1
 attack_impact 100
@@ -5822,7 +5773,7 @@ end
 Object grate_closed
 name grate
 type 91
-editor_folder gates/gates
+editor_folder gates/grates
 no_teleport 1
 layer 5
 no_pick 1
@@ -5844,7 +5795,7 @@ end
 Object grateTrg1
 name gate
 type 26
-editor_folder gates/gates
+editor_folder gates/grates
 attack_impact 100
 layer 5
 no_pick 1
@@ -5868,7 +5819,7 @@ end
 Object grateTrg1_open
 name gate
 type 26
-editor_folder gates/gates
+editor_folder gates/grates
 attack_impact 100
 layer 5
 no_pick 1
@@ -5894,7 +5845,7 @@ end
 Object portcullis_open
 name portcullis
 type 91
-editor_folder gates/gates
+editor_folder gates/portcullises
 layer 5
 no_teleport 1
 attack_impact 100
@@ -5914,7 +5865,7 @@ end
 Object portcullis_closed
 name portcullis
 type 91
-editor_folder gates/gates
+editor_folder gates/portcullises
 no_teleport 1
 layer 5
 no_pick 1
@@ -5936,7 +5887,7 @@ end
 Object portcullisTrg
 name portcullis
 type 26
-editor_folder gates/gates
+editor_folder gates/portcullises
 attack_impact 100
 layer 5
 no_pick 1
@@ -5960,7 +5911,7 @@ end
 Object portcullisTrg_open
 name portcullis
 type 26
-editor_folder gates/gates
+editor_folder gates/portcullises
 attack_impact 100
 layer 5
 no_pick 1
@@ -6625,6 +6576,24 @@ layer 3
 no_drop 1
 no_pick 1
 end
+Object potion_generic_poi
+name potion
+type 5
+editor_folder intern
+nrof 1
+layer 3
+sp -1
+face potion_gen.101
+inv_face potion_gen.101
+last_grace 13
+can_stack 1
+last_sp 7
+sub_type 128
+is_thrown 1
+material 512
+weight 200
+value 28
+end
 Object lamp_post_unlit
 type 74
 editor_folder intern
@@ -6638,6 +6607,20 @@ editor_folder intern
 layer 5
 sub_type 1
 animation lamp_wall_1_unlit
+end
+Object lantern2_magic_unlit
+type 74
+editor_folder intern
+layer 5
+sub_type 1
+animation lantern2_magic_unlit
+end
+Object lantern_magic_unlit
+type 74
+editor_folder intern
+layer 5
+sub_type 1
+animation lantern_magic_unlit
 end
 Object torch_skull_wall_1_unlit
 type 74
@@ -6758,6 +6741,72 @@ Object age_force
 name age force
 type 67
 editor_folder intern
+layer 0
+sys_object 1
+item_quality 100
+item_condition 100
+nrof 1
+identified 1
+known_magical 1
+known_cursed 1
+applied 1
+face force.101
+no_drop 1
+speed 0
+end
+Object age_force_dwarf
+name age_force_dwarf
+type 67
+editor_folder intern
+layer 0
+sys_object 1
+item_quality 100
+item_condition 100
+nrof 1
+title dwarf age force (artifacts generic)
+hp 21
+maxhp 100
+sp   0
+grace  0
+identified 1
+known_magical 1
+known_cursed 1
+applied 1
+face force.101
+no_drop 1
+speed 0
+end
+Object age_force_half_elf
+name age_force_half_elf
+type 67
+editor_folder intern
+layer 0
+sys_object 1
+item_quality 100
+item_condition 100
+nrof 1
+identified 1
+known_magical 1
+known_cursed 1
+applied 1
+title half-elf age force (artifacts generic)
+hp 21
+maxhp 100
+sp   0
+grace  0
+face force.101
+no_drop 1
+speed 0
+end
+Object age_force_human
+name age_force_human
+type 67
+editor_folder intern
+title human age force (artifacts generic)
+hp 21
+maxhp 80
+sp   0
+grace  0
 layer 0
 sys_object 1
 item_quality 100
@@ -8023,6 +8072,310 @@ identified 1
 sys_object 1
 face info.101
 no_drop 1
+end
+Object arrow_sys
+name arrow_sys
+type 13
+editor_folder intern
+layer 0
+race missile_sys
+face arrow.101
+last_sp 5
+attack_pierce 100
+sub_type 1
+can_stack 1
+identified 1
+sys_object 1
+animation _arrow_sys
+anim_speed 1
+is_animated 0
+is_turnable 1
+nrof 1
+weight 15
+value 1
+material 16
+material_real 257
+end
+Object bolt_sys
+name bolt_sys
+type 13
+editor_folder intern
+layer 0
+race missile_sys
+identified 1
+sys_object 1
+attack_cleave 100
+last_sp 4
+sub_type 2
+can_stack 1
+face bolt.101
+animation _bolt_sys
+anim_speed 1
+is_animated 0
+is_turnable 1
+nrof 1
+weight 17
+value 1
+material 2
+material_real 65
+end
+Object snowball_sys
+name snowball_sys
+type 13
+editor_folder intern
+face snowball.101
+race rock_sys
+identified 1
+sys_object 1
+layer 0
+attack_impact 100
+dam 10
+can_stack 1
+wc 55
+last_grace 8
+last_sp 7
+sub_type 132
+nrof 1
+animation _snowball_sys
+anim_speed 5
+is_animated 0
+is_thrown 1
+weight 30
+value 1
+end
+Object sstone_sys
+name sstone_sys
+type 13
+editor_folder intern
+race missile_sys
+identified 1
+sys_object 1
+layer 0
+face sstone.101
+last_sp 4
+can_stack 1
+attack_impact 100
+animation _sstone_sys
+anim_speed 10
+is_animated 0
+is_turnable 1
+sub_type 3
+nrof 1
+weight 12
+value 1
+material 64
+material_real 385
+end
+Object starsdavid_sys
+name starsdavid_sys
+type 13
+editor_folder intern
+face starsdavid.101
+race rock_sys
+identified 1
+sys_object 1
+layer 0
+attack_slash 100
+dam 34
+wc 45
+last_grace 10
+last_sp 7
+can_stack 1
+nrof 1
+sub_type 129
+animation _starsdavid_sys
+is_animated 0
+anim_speed 5
+is_turnable 1
+is_thrown 1
+material 2
+material_real 65
+weight 20
+value 35
+end
+Object t_axe_sys
+name t_axe_sys
+type 13
+editor_folder intern
+race rock_sys
+identified 1
+sys_object 1
+face t_axe.101
+layer 0
+attack_cleave 100
+dam 32
+wc 45
+can_stack 1
+last_grace 10
+last_sp 7
+nrof 1
+sub_type 131
+animation _t_axe_sys
+is_animated 0
+anim_speed 5
+is_turnable 1
+is_thrown 1
+material 2
+material_real 65
+weight 22
+value 2
+end
+Object t_boulder_sys
+name t_boulder_sys
+type 13
+editor_folder intern
+race rock_sys
+identified 1
+sys_object 1
+layer 0
+face t_boulder.101
+attack_impact 100
+last_sp 7
+dam 30
+can_stack 1
+wc 45
+last_grace 14
+sub_type 132
+nrof 1
+weight 20000
+value 1
+animation _t_boulder_sys
+anim_speed 5
+is_animated 0
+is_turnable 1
+is_thrown 1
+material 64
+end
+Object t_dagger_sys
+name t_dagger_sys
+type 13
+editor_folder intern
+race rock_sys
+identified 1
+sys_object 1
+layer 0
+face t_dagger.101
+attack_pierce 100
+dam 32
+wc 45
+can_stack 1
+last_grace 10
+last_sp 7
+nrof 1
+sub_type 130
+animation _t_dagger_sys
+anim_speed 5
+is_animated 0
+is_turnable 1
+is_thrown 1
+material 2
+material_real 65
+weight 20
+value 2
+end
+Object t_hammer_sys
+name t_hammer_sys
+type 13
+editor_folder intern
+race rock_sys
+identified 1
+sys_object 1
+layer 0
+face hammer_2.101
+attack_impact 100
+dam 32
+wc 45
+can_stack 1
+last_grace 10
+last_sp 7
+nrof 1
+sub_type 128
+animation _t_hammer_sys
+anim_speed 5
+is_animated 0
+is_turnable 1
+is_thrown 1
+material 80
+material_real 65
+weight 22
+value 2
+end
+Object t_lboulder_sys
+name t_lboulder_sys
+type 13
+editor_folder intern
+race rock_sys
+identified 1
+sys_object 1
+layer 0
+face t_lboulder.101
+attack_impact 100
+last_grace 18
+last_sp 7
+dam 50
+wc 48
+can_stack 1
+sub_type 132
+nrof 1
+weight 120000
+animation _t_lboulder_sys
+anim_speed 5
+is_animated 0
+is_thrown 1
+value 2
+material 64
+end
+Object t_rock_sys
+name t_rock_sys
+type 13
+editor_folder intern
+layer 0
+race rock_sys
+identified 1
+sys_object 1
+face t_rock.101
+attack_impact 100
+dam 10
+last_grace 10
+wc 40
+last_sp 7
+can_stack 1
+sub_type 132
+nrof 1
+animation _t_rock_sys
+anim_speed 5
+is_animated 0
+is_thrown 1
+weight 500
+value 1
+material 64
+end
+Object t_star_sys
+name t_star_sys
+type 13
+editor_folder intern
+race rock_sys
+identified 1
+sys_object 1
+face t_star.101
+layer 0
+attack_slash 100
+dam 32
+wc 45
+last_grace 10
+last_sp 7
+can_stack 1
+nrof 1
+sub_type 129
+animation _t_star_sys
+is_animated 0
+anim_speed 5
+is_turnable 1
+is_thrown 1
+material 2
+material_real 65
+weight 20
+value 2
 end
 Object jack_unlit
 type 74
@@ -10980,7 +11333,7 @@ type 122
 editor_folder items/container
 other_arch close_chest1_111
 face chest_mm_closed.111
-animation chest
+animation _chest
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -11002,7 +11355,7 @@ type 122
 editor_folder items/container
 other_arch close_chest_m1_1
 face chest_lm_closed.111
-animation chest_m
+animation _chest_m
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -11024,7 +11377,7 @@ type 122
 editor_folder items/container
 other_arch close_chest_w1_1
 face chest_lw_closed.111
-animation chest_w1
+animation _chest_w1
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -11046,7 +11399,7 @@ type 122
 editor_folder items/container
 other_arch close_chest_4.111
 face chest_mw_closed.111
-animation chest_4.111
+animation _chest_4.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -11068,7 +11421,7 @@ type 122
 editor_folder items/container
 other_arch close_chest_sm_1
 face chest_sm_closed.111
-animation chest_sm_1
+animation _chest_sm_1
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -11090,7 +11443,7 @@ type 122
 editor_folder items/container
 other_arch close_chest_sw_1
 face chest_sw_closed.111
-animation chest_sw_1
+animation _chest_sw_1
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -11112,7 +11465,7 @@ type 122
 editor_folder items/container
 other_arch close_chest7_111
 face chest_mm2_closed.111
-animation chest7_111
+animation _chest7_111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -11171,7 +11524,7 @@ Touching the treasure chest it crumbles to dust.
 endmsg
 editor_folder items/container
 face chest_wood_s.111
-animation random_chest_wood
+animation _random_chest_wood
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -11193,7 +11546,7 @@ Touching the treasure chest it crumbles to dust.
 endmsg
 editor_folder items/container
 face chest_black_s.111
-animation random_chest_black
+animation _random_chest_black
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -11215,7 +11568,7 @@ Touching the treasure chest it crumbles to dust.
 endmsg
 editor_folder items/container
 face chest_metal_s.111
-animation random_chest_metal
+animation _random_chest_metal
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -11275,7 +11628,7 @@ name kettle
 type 122
 editor_folder items/container
 face kettle.101
-animation kettle
+animation _kettle
 is_animated 1
 anim_speed 1
 speed 1
@@ -11294,7 +11647,7 @@ name desk
 type 122
 editor_folder items/container
 face desk1.111
-animation desk1.111
+animation _desk1.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -11313,7 +11666,7 @@ name desk
 type 122
 editor_folder items/container
 face desk2.111
-animation desk2
+animation _desk2
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -11332,7 +11685,7 @@ name drawer
 type 122
 editor_folder items/container
 face drawers1.111
-animation drawers1.111
+animation _drawers1.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -11351,7 +11704,7 @@ name chained skeleton
 type 122
 editor_folder items/container
 face chained_skel.111
-animation chained_skel.111
+animation _chained_skel.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -11386,7 +11739,7 @@ name cupboard
 type 122
 editor_folder items/container
 face cupboard1_wall.111
-animation cupboard1_wall.111
+animation _cupboard1_wall.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -11405,7 +11758,7 @@ name locker
 type 122
 editor_folder items/container
 face locker1.111
-animation locker1.111
+animation _locker1.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -11424,7 +11777,7 @@ name locker
 type 122
 editor_folder items/container
 face locker2.111
-animation locker2.111
+animation _locker2.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -11443,7 +11796,7 @@ name locker
 type 122
 editor_folder items/container
 face locker3.111
-animation locker3.111
+animation _locker3.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -11462,7 +11815,7 @@ name locker
 type 122
 editor_folder items/container
 face locker4.111
-animation locker4
+animation _locker4
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -11481,7 +11834,7 @@ name locker
 type 122
 editor_folder items/container
 face locker5.111
-animation locker5
+animation _locker5
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -11569,7 +11922,7 @@ name weapon rack
 type 122
 editor_folder items/container
 face rack.111
-animation rack.111
+animation _rack.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -11604,7 +11957,7 @@ name shelf
 type 122
 editor_folder items/container
 face shelf1.111
-animation shelf1.111
+animation _shelf1.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -11623,7 +11976,7 @@ name shelf
 type 122
 editor_folder items/container
 face shelf2.111
-animation shelf2.111
+animation _shelf2.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -11642,7 +11995,7 @@ name shelf
 type 122
 editor_folder items/container
 face shelf3.111
-animation shelf3.111
+animation _shelf3.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -11661,7 +12014,7 @@ name shelf
 type 122
 editor_folder items/container
 face shelf3a.111
-animation shelf3a.111
+animation _shelf3a.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -11680,7 +12033,7 @@ name shelf
 type 122
 editor_folder items/container
 face shelf3b.111
-animation shelf3b.111
+animation _shelf3b.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -11699,7 +12052,7 @@ name shelf
 type 122
 editor_folder items/container
 face shelf3c.111
-animation shelf3c.111
+animation _shelf3c.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -11718,7 +12071,7 @@ name demolished shelf
 type 122
 editor_folder items/container
 face shelf3_dem1.111
-animation shelf3_dem1.111
+animation _shelf3_dem1.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -11737,7 +12090,7 @@ name demolished shelf
 type 122
 editor_folder items/container
 face shelf3_dem2.111
-animation shelf3_dem2.111
+animation _shelf3_dem2.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -11756,7 +12109,7 @@ name demolished shelf
 type 122
 editor_folder items/container
 face shelf3_dem3.111
-animation shelf3_dem3.111
+animation _shelf3_dem3.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -11775,7 +12128,7 @@ name shelf
 type 122
 editor_folder items/container
 face shelf_wall.111
-animation shelf_wall.111
+animation _shelf_wall.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -11794,7 +12147,7 @@ name shelf
 type 122
 editor_folder items/container
 face shelf1_wall.111
-animation shelf1_wall.111
+animation _shelf1_wall.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -11813,7 +12166,7 @@ name shelf
 type 122
 editor_folder items/container
 face shelf2_wall.111
-animation shelf2_wall.111
+animation _shelf2_wall.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -11832,7 +12185,7 @@ name shelf
 type 122
 editor_folder items/container
 face shelf3_wall.111
-animation shelf3_wall.111
+animation _shelf3_wall.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -11851,7 +12204,7 @@ name shelf
 type 122
 editor_folder items/container
 face shelf4_wall.111
-animation shelf4_wall.111
+animation _shelf4_wall.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -11870,7 +12223,7 @@ name shelf
 type 122
 editor_folder items/container
 face shelf5_wall.111
-animation shelf5_wall.111
+animation _shelf5_wall.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -11889,7 +12242,7 @@ name shelf
 type 122
 editor_folder items/container
 face shelf6_wall.111
-animation shelf6_wall.111
+animation _shelf6_wall.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -11908,7 +12261,7 @@ name demolished shelf
 type 122
 editor_folder items/container
 face shelf_wall_dem1.111
-animation shelf_wall_dem1.111
+animation _shelf_wall_dem1.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -11927,7 +12280,7 @@ name demolished shelf
 type 122
 editor_folder items/container
 face shelf_wall_dem2.111
-animation shelf_wall_dem2.111
+animation _shelf_wall_dem2.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -11946,7 +12299,7 @@ name demolished shelf
 type 122
 editor_folder items/container
 face shelf_wall_dem3.111
-animation shelf_wall_dem3.111
+animation _shelf_wall_dem3.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -11965,7 +12318,7 @@ name flat wagon
 type 122
 editor_folder items/container
 face flat_wagon.101
-animation wagon_flat
+animation _wagon_flat
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -11984,7 +12337,7 @@ name small wagon
 type 122
 editor_folder items/container
 face wagon_small.111
-animation wagon_small.111
+animation _wagon_small.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -12209,7 +12562,7 @@ other_arch candle_purp_burnt
 face candle_purp.100
 layer 3
 can_stack 1
-animation candle_purp
+animation _candle_purp
 anim_speed 4
 material 144
 value 470
@@ -12239,7 +12592,7 @@ editor_folder items/light
 layer 4
 face candlelight1.100
 no_pick 1
-animation candlelight1.101
+animation _candlelight1.101
 is_animated 1
 anim_speed 8
 material 34
@@ -12256,7 +12609,7 @@ editor_folder items/light
 layer 4
 face candlelight2.100
 no_pick 1
-animation candlelight2.101
+animation _candlelight2.101
 is_animated 1
 anim_speed 8
 material 34
@@ -12273,7 +12626,7 @@ editor_folder items/light
 layer 4
 face candlelight3.100
 no_pick 1
-animation candlelight3.101
+animation _candlelight3.101
 is_animated 1
 anim_speed 8
 material 34
@@ -12290,7 +12643,7 @@ editor_folder items/light
 layer 4
 face candlelight4.100
 no_pick 1
-animation candlelight4.101
+animation _candlelight4.101
 is_animated 1
 anim_speed 8
 material 34
@@ -12308,13 +12661,33 @@ face lcrystal_unlit.101
 layer 3
 item_quality 100
 item_condition 100
-animation crystal_light
+animation _crystal_light
 is_animated 0
 anim_speed 4
 material 256
 value 35
 weight 100
 food 1
+end
+Object glower.101
+name glower
+type 74
+msg
+There is no obvious way for you to operate the glower.
+endmsg
+editor_folder items/light
+face glower.101
+layer 5
+glow_radius 4
+last_sp 4
+weight 1250
+material 144
+food 1
+speed -0.02
+no_pick 1
+no_fix_player 1
+is_animated 1
+animation _glower.101
 end
 Object grave_fire.101
 name grave fire
@@ -12323,7 +12696,7 @@ editor_folder items/light
 layer 4
 face grave_fire.100
 no_pick 1
-animation grave_fire.101
+animation _grave_fire.101
 is_animated 1
 anim_speed 8
 material 64
@@ -12340,7 +12713,7 @@ editor_folder items/light
 race lamp_oil
 layer 3
 face lamp.100
-animation lamp
+animation _lamp
 anim_speed 4
 material 1024
 material_real 641
@@ -12359,7 +12732,7 @@ editor_folder items/light
 layer 5
 face lamp_pole.100
 is_animated 1
-animation lamp_pole
+animation _lamp_pole
 glow_radius 5
 no_teleport 1
 no_pick 1
@@ -12376,7 +12749,7 @@ face lamp_post.151
 other_arch lamp_post_unlit
 layer 5
 glow_radius 5
-animation lamp_post
+animation _lamp_post
 is_turnable 1
 direction 5
 no_teleport 1
@@ -12394,7 +12767,7 @@ editor_folder items/light
 race lamp_light
 layer 3
 face lamp_snow.101
-animation lamp_snow
+animation _lamp_snow
 is_animated 0
 anim_speed 4
 material 1024
@@ -12416,7 +12789,7 @@ layer 5
 face lamp_wall.111
 other_arch lamp_wall_1_unlit
 glow_radius 5
-animation lamp_wall
+animation _lamp_wall
 is_turnable 1
 direction 1
 no_teleport 1
@@ -12427,6 +12800,54 @@ material 144
 food 1
 speed -0.02
 end
+Object lantern_magic.131
+name magic lantern
+type 74
+msg
+There is no obvious way for you to operate the lantern.
+endmsg
+editor_folder items/light
+face lantern_magic.131
+other_arch lantern_magic_unlit
+layer 5
+glow_radius 5
+last_sp 5
+weight 1250
+material 144
+food 1
+speed -0.02
+animation _lantern_magic.131
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 5
+no_pick 1
+no_fix_player 1
+end
+Object lantern2_magic.131
+name magic lantern
+type 74
+msg
+There is no obvious way for you to operate the lantern.
+endmsg
+editor_folder items/light
+face lantern2_magic.171
+other_arch lantern2_magic_unlit
+layer 5
+glow_radius 4
+last_sp 4
+weight 1250
+material 144
+food 1
+speed -0.02
+animation _lantern2_magic.131
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+no_fix_player 1
+end
 Object large_candle_a
 name large candle
 type 74
@@ -12435,7 +12856,7 @@ face large_candle_a.100
 other_arch large_candle_b
 layer 3
 no_pick 1
-animation large_candle_a
+animation _large_candle_a
 anim_speed 4
 speed 10
 last_sp 5
@@ -12453,7 +12874,7 @@ other_arch large_candle_c
 sub_type 2
 layer 3
 no_pick 1
-animation large_candle_b
+animation _large_candle_b
 anim_speed 4
 speed 10
 last_sp 4
@@ -12471,7 +12892,7 @@ other_arch large_candle_burnt
 sub_type 2
 layer 3
 no_pick 1
-animation large_candle_c
+animation _large_candle_c
 anim_speed 4
 speed 10
 last_sp 3
@@ -12504,22 +12925,6 @@ food 800
 can_stack 1
 nrof 1
 end
-Object open_flame
-name flame
-type 79
-editor_folder items/light
-layer 3
-face open_flame.101
-material 144
-glow_radius 5
-weight 500
-no_pick 1
-no_pass 1
-animation open_flame
-is_animated 1
-anim_speed 4
-speed -0.2
-end
 Object torch
 name torch
 type 74
@@ -12529,7 +12934,7 @@ face torch.100
 can_stack 1
 nrof 1
 layer 3
-animation torch
+animation _torch
 anim_speed 4
 material 144
 value 10
@@ -12560,7 +12965,7 @@ layer 5
 face torch_skull_wall.111
 other_arch torch_skull_wall_1_unlit
 glow_radius 5
-animation torch_skull_wall_1
+animation _torch_skull_wall_1
 is_animated 1
 is_turnable 1
 anim_speed 4
@@ -12582,7 +12987,7 @@ face torch_wall.110
 other_arch torch_wall_1_unlit
 glow_radius 5
 is_animated 1
-animation torch_wall_1
+animation _torch_wall_1
 is_turnable 1
 anim_speed 4
 direction 1
@@ -12599,7 +13004,7 @@ name Crystal Ball
 type 79
 editor_folder items/magic_tools
 face crystal_ball.101
-animation crystal_ball
+animation _crystal_ball
 is_animated 1
 anim_speed 1
 speed 1
@@ -12617,7 +13022,7 @@ speed -0.1
 layer 3
 last_grace 40
 sp -1
-animation deerhorn
+animation _deerhorn
 hp 10
 maxhp 10
 is_animated 1
@@ -12635,7 +13040,7 @@ speed -0.1
 layer 3
 last_grace 26
 sp -1
-animation horn
+animation _horn
 hp 15
 maxhp 15
 is_animated 1
@@ -12652,7 +13057,7 @@ editor_folder items/magic_tools
 maxsp 1000
 layer 3
 face power_crystal.101
-animation power_crystal
+animation _power_crystal
 is_animated 1
 anim_speed 5
 weight 3
@@ -12667,7 +13072,7 @@ face rod_heavy.101
 layer 3
 sp -1
 last_grace 30
-animation rod_heavy
+animation _rod_heavy
 is_animated 1
 anim_speed 5
 speed -0.25
@@ -12686,7 +13091,7 @@ layer 3
 face rod_light.101
 sp -1
 last_grace 22
-animation rod_light
+animation _rod_light
 is_animated 1
 anim_speed 5
 speed -0.25
@@ -12705,7 +13110,7 @@ layer 3
 face sr_scepter1.101
 sp -1
 last_grace 35
-animation sr_scepter1
+animation _sr_scepter1
 is_animated 1
 anim_speed 5
 speed -0.25
@@ -12721,7 +13126,7 @@ editor_folder items/magic_tools
 layer 3
 face wand.101
 sp -1
-animation wand
+animation _wand
 is_animated 1
 last_grace 12
 anim_speed 5
@@ -12737,7 +13142,7 @@ editor_folder items/magic_tools
 layer 3
 face wand_frozenice.101
 sp -1
-animation wand_frozenice
+animation _wand_frozenice
 is_animated 1
 last_grace 12
 anim_speed 5
@@ -12818,7 +13223,7 @@ name Snowflake
 type 79
 editor_folder items/misc
 face glass_snowflake.101
-animation snowflake
+animation _snowflake
 is_animated 1
 anim_speed 1
 speed 1
@@ -12906,7 +13311,7 @@ name Glass Rune
 type 79
 editor_folder items/misc
 face rune_glass.001
-animation rune_glass
+animation _rune_glass
 is_animated 1
 anim_speed 1
 speed 1
@@ -13108,7 +13513,7 @@ name ice golem core
 type 79
 editor_folder items/organic
 face core_ice_golem.101
-animation core_ice_golem
+animation _core_ice_golem
 is_animated 1
 anim_speed .9
 speed 1
@@ -13124,7 +13529,7 @@ name lava golem core
 type 79
 editor_folder items/organic
 face core_lava_golem.101
-animation core_lava_golem
+animation _core_lava_golem
 is_animated 1
 anim_speed .9
 speed 1
@@ -13140,7 +13545,7 @@ name stone golem core
 type 79
 editor_folder items/organic
 face core_stone_golem.101
-animation core_stone_golem
+animation _core_stone_golem
 is_animated 1
 anim_speed 1
 speed 1
@@ -13155,7 +13560,7 @@ name water golem core
 type 79
 editor_folder items/organic
 face core_water_golem.101
-animation core_water_golem
+animation _core_water_golem
 is_animated 1
 anim_speed .9
 speed 1
@@ -13244,7 +13649,7 @@ name beating heart
 type 86
 editor_folder items/organic
 face heart.102
-animation heart_beating
+animation _heart_beating
 is_animated 1
 anim_speed .3
 speed 1
@@ -14219,6 +14624,7 @@ value 0
 weight 50
 end
 Object card
+name card
 type 98
 editor_folder items/signs
 face card.101
@@ -14229,6 +14635,7 @@ value 8
 weight 20
 end
 Object diploma
+name diploma
 type 98
 editor_folder items/signs
 face diploma.101
@@ -14239,11 +14646,11 @@ value 25
 weight 50
 end
 Object dir_sign
-name big sign ('a'pply to read)
+name big sign
 type 98
 editor_folder items/signs
 face dir_signs.111
-animation dir_sign
+animation _dir_sign
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -14252,6 +14659,7 @@ layer 4
 no_pick 1
 end
 Object letter
+name letter
 type 98
 editor_folder items/signs
 face letter.101
@@ -14270,7 +14678,7 @@ layer 4
 no_pick 1
 end
 Object marker4
-name big sign ('a'pply to read)
+name big sign
 type 98
 editor_folder items/signs
 face marker4.101
@@ -14278,11 +14686,11 @@ layer 4
 no_pick 1
 end
 Object marker0
-name big sign ('a'pply to read)
+name big sign
 type 98
 editor_folder items/signs
 face marker.111
-animation marker0
+animation _marker0
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -14291,11 +14699,11 @@ layer 4
 no_pick 1
 end
 Object marker1
-name big sign ('a'pply to read)
+name big sign
 type 98
 editor_folder items/signs
 face marker1.111
-animation marker1
+animation _marker1
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -14304,11 +14712,11 @@ layer 4
 no_pick 1
 end
 Object marker2
-name big sign ('a'pply to read)
+name big sign
 type 98
 editor_folder items/signs
 face marker2.121
-animation marker2
+animation _marker2
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -14317,11 +14725,11 @@ layer 4
 no_pick 1
 end
 Object marker3
-name big sign ('a'pply to read)
+name big sign
 type 98
 editor_folder items/signs
 face marker3.111
-animation marker3
+animation _marker3
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -14330,66 +14738,15 @@ layer 4
 no_pick 1
 end
 Object marker_atrillia
-name big sign ('a'pply to read)
+name big sign
 type 98
 editor_folder items/signs
 face marker_atrillia.131
 layer 4
 no_pick 1
 end
-Object message_board1
-name message board
-type 98
-editor_folder items/signs
-face message_board1.151
-layer 4
-no_pick 1
-animation message_board1
-is_animated 0
-anim_speed 0
-is_turnable 1
-direction 5
-end
-Object message_board2
-name message board
-type 98
-editor_folder items/signs
-face message_board2.151
-layer 4
-no_pick 1
-animation message_board2
-is_animated 0
-anim_speed 0
-is_turnable 1
-direction 5
-end
-Object message_board3
-name message board
-type 98
-editor_folder items/signs
-face message_board3.151
-layer 4
-no_pick 1
-animation message_board3
-is_animated 0
-anim_speed 0
-is_turnable 1
-direction 5
-end
-Object message_board4
-name message board
-type 98
-editor_folder items/signs
-face message_board4.151
-layer 4
-no_pick 1
-animation message_board4
-is_animated 0
-anim_speed 0
-is_turnable 1
-direction 5
-end
 Object note
+name note
 type 98
 editor_folder items/signs
 face note.101
@@ -14400,7 +14757,7 @@ value 8
 weight 75
 end
 Object sign
-name sign ('a'pply to read)
+name sign
 type 98
 editor_folder items/signs
 face sign.111
@@ -14408,11 +14765,11 @@ layer 4
 no_pick 1
 end
 Object sign_generic
-name big sign ('a'pply to read)
+name big sign
 type 98
 editor_folder items/signs
 face sign_generic.111
-animation sign_generic
+animation _sign_generic
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -14421,11 +14778,11 @@ layer 4
 no_pick 1
 end
 Object sign_pub
-name big sign ('a'pply to read)
+name big sign
 type 98
 editor_folder items/signs
 face sign_pub.111
-animation sign_pub
+animation _sign_pub
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -14434,11 +14791,11 @@ layer 4
 no_pick 1
 end
 Object wmask_wanted
-name announcement (apply to read)
+name announcement
 type 98
 editor_folder items/signs
 face wmask_wanted.111
-animation wmask_wanted
+animation _wmask_wanted
 is_animated 0
 anim_speed 0
 identified 1
@@ -16984,7 +17341,7 @@ last_sp 5
 attack_pierce 100
 sub_type 1
 can_stack 1
-animation arrow
+animation _arrow
 anim_speed 1
 is_animated 0
 is_turnable 1
@@ -17006,7 +17363,7 @@ attack_pierce 100
 attack_cold 10
 sub_type 1
 can_stack 1
-animation arrow_wintersevent
+animation _arrow_wintersevent
 anim_speed 1
 is_animated 0
 is_turnable 1
@@ -17030,7 +17387,7 @@ wc 9
 attack_pierce 100
 sub_type 1
 can_stack 1
-animation arrow_fey
+animation _arrow_fey
 anim_speed 1
 is_animated 0
 is_turnable 1
@@ -17051,7 +17408,7 @@ last_sp 4
 sub_type 2
 can_stack 1
 face bolt.101
-animation bolt
+animation _bolt
 anim_speed 1
 is_animated 0
 is_turnable 1
@@ -17073,7 +17430,7 @@ last_sp 4
 sub_type 2
 can_stack 1
 face bolt_wintersevent.101
-animation bolt_wintersevent
+animation _bolt_wintersevent
 anim_speed 1
 is_animated 0
 is_turnable 1
@@ -17093,7 +17450,7 @@ face sstone.101
 last_sp 4
 can_stack 1
 attack_impact 100
-animation sstone
+animation _sstone
 anim_speed 10
 is_animated 0
 is_turnable 1
@@ -17115,7 +17472,7 @@ last_sp 4
 can_stack 1
 attack_impact 100
 attack_cold 10
-animation sstone_wintersevent
+animation _sstone_wintersevent
 anim_speed 10
 is_animated 0
 is_turnable 1
@@ -17385,7 +17742,7 @@ last_grace 10
 last_sp 7
 nrof 1
 sub_type 131
-animation t_axe
+animation _t_axe
 is_animated 0
 anim_speed 5
 is_turnable 1
@@ -17412,7 +17769,7 @@ wc 99
 last_sp 7
 dam 0
 sub_type 132
-animation ball
+animation _ball
 anim_speed 5
 is_animated 0
 is_turnable 1
@@ -17435,7 +17792,7 @@ wc 99
 last_sp 7
 dam 0
 sub_type 132
-animation ball_winter
+animation _ball_winter
 anim_speed 5
 is_animated 0
 is_turnable 1
@@ -17456,7 +17813,7 @@ last_grace 8
 last_sp 7
 sub_type 132
 nrof 1
-animation snow_ball
+animation _snow_ball
 anim_speed 5
 is_animated 0
 is_thrown 1
@@ -17480,7 +17837,7 @@ wc 35
 sub_type 132
 nrof 1
 weight 120000
-animation snow_ball2
+animation _snow_ball2
 anim_speed 5
 is_animated 0
 is_thrown 1
@@ -17503,7 +17860,7 @@ sub_type 132
 nrof 1
 weight 20000
 value 1
-animation t_boulder
+animation _t_boulder
 anim_speed 5
 is_animated 0
 is_turnable 1
@@ -17525,7 +17882,7 @@ last_grace 10
 last_sp 7
 nrof 1
 sub_type 128
-animation t_hammer
+animation _t_hammer
 anim_speed 5
 is_animated 0
 is_turnable 1
@@ -17551,7 +17908,7 @@ can_stack 1
 sub_type 132
 nrof 1
 weight 120000
-animation t_lboulder
+animation _t_lboulder
 anim_speed 5
 is_animated 0
 is_thrown 1
@@ -17573,7 +17930,7 @@ last_sp 7
 can_stack 1
 sub_type 132
 nrof 1
-animation t_rock
+animation _t_rock
 anim_speed 5
 is_animated 0
 is_thrown 1
@@ -17596,7 +17953,7 @@ last_grace 10
 last_sp 7
 nrof 1
 sub_type 130
-animation t_dagger
+animation _t_dagger
 anim_speed 5
 is_animated 0
 is_turnable 1
@@ -17621,7 +17978,7 @@ last_sp 7
 can_stack 1
 nrof 1
 sub_type 129
-animation starsdavid2
+animation _starsdavid2
 is_animated 0
 anim_speed 5
 is_turnable 1
@@ -17646,7 +18003,7 @@ last_sp 7
 can_stack 1
 nrof 1
 sub_type 129
-animation starsdavid
+animation _starsdavid
 is_animated 0
 anim_speed 5
 is_turnable 1
@@ -17671,7 +18028,7 @@ last_sp 7
 can_stack 1
 nrof 1
 sub_type 129
-animation t_star
+animation _t_star
 is_animated 0
 anim_speed 5
 is_turnable 1
@@ -17948,7 +18305,7 @@ Object meffect_purple
 name magic glow
 type 79
 editor_folder magic/spell_effect
-face effect1_purble.101
+face effect1_purple.101
 layer 7
 no_save 1
 animation meffect_purple
@@ -18314,7 +18671,7 @@ no_pick 1
 no_teleport 1
 is_turnable 1
 direction 0
-animation blood_spatter_heavy_a_fmask
+animation _blood_spatter_heavy_a_fmask
 end
 Object blood_spatter_heavy_a_wmask
 type 77
@@ -18325,7 +18682,7 @@ no_pick 1
 no_teleport 1
 is_turnable 1
 direction 3
-animation blood_spatter_heavy_a_wmask
+animation _blood_spatter_heavy_a_wmask
 end
 Object blood_spatter_light_a_fmask
 type 28
@@ -18336,7 +18693,7 @@ no_pick 1
 no_teleport 1
 is_turnable 1
 direction 0
-animation blood_spatter_light_a_fmask
+animation _blood_spatter_light_a_fmask
 end
 Object blood_spatter_light_a_wmask
 type 77
@@ -18347,7 +18704,7 @@ no_pick 1
 no_teleport 1
 is_turnable 1
 direction 3
-animation blood_spatter_light_a_wmask
+animation _blood_spatter_light_a_wmask
 end
 Object blood_spatter_medium_a_fmask
 type 28
@@ -18358,7 +18715,7 @@ no_pick 1
 no_teleport 1
 is_turnable 1
 direction 0
-animation blood_spatter_medium_a_fmask
+animation _blood_spatter_medium_a_fmask
 end
 Object blood_spatter_medium_a_wmask
 type 77
@@ -18369,7 +18726,7 @@ no_pick 1
 no_teleport 1
 is_turnable 1
 direction 3
-animation blood_spatter_medium_a_wmask
+animation _blood_spatter_medium_a_wmask
 end
 Object blood_floor1
 name blood
@@ -18394,7 +18751,7 @@ name blood
 type 77
 editor_folder masks/blood
 face wall_blood1.u.151
-animation wall_blood1
+animation _wall_blood1
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -18407,7 +18764,7 @@ name blood
 type 77
 editor_folder masks/blood
 face wall_blood2.u.151
-animation wall_blood2
+animation _wall_blood2
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -18420,7 +18777,7 @@ name blood
 type 77
 editor_folder masks/blood
 face wall_blood3.u.151
-animation wall_blood3
+animation _wall_blood3
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -18433,7 +18790,7 @@ name blood
 type 77
 editor_folder masks/blood
 face wall_blood4.u.151
-animation wall_blood4
+animation _wall_blood4
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -18860,7 +19217,7 @@ name cave
 type 77
 editor_folder masks/cave
 face cave_deco_w1.u.151
-animation cave_deco_wall1
+animation _cave_deco_wall1
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -18873,7 +19230,7 @@ name cave
 type 77
 editor_folder masks/cave
 face cave_deco_w2.u.151
-animation cave_deco_wall2
+animation _cave_deco_wall2
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -18886,7 +19243,7 @@ name cave
 type 77
 editor_folder masks/cave
 face cave_deco_w3.u.151
-animation cave_deco_wall3
+animation _cave_deco_wall3
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -18899,7 +19256,7 @@ name cave
 type 77
 editor_folder masks/cave
 face cave_deco_w4.u.151
-animation cave_deco_wall4
+animation _cave_deco_wall4
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -18912,7 +19269,7 @@ name cave
 type 77
 editor_folder masks/cave
 face cave_deco_w5.u.151
-animation cave_deco_wall5
+animation _cave_deco_wall5
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -18925,7 +19282,7 @@ name pot
 type 77
 editor_folder masks/cooking_utensils
 face pot_wall.u.151
-animation pot_wall.131
+animation _pot_wall.131
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -19307,7 +19664,7 @@ name drow flag
 type 77
 editor_folder masks/flags
 face drowflag.u.151
-animation drowflag
+animation _drowflag
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -19320,7 +19677,7 @@ name big flag
 type 77
 editor_folder masks/flags
 face flag1.u.151
-animation flag_01
+animation _flag_01
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -19333,7 +19690,7 @@ name big flag
 type 77
 editor_folder masks/flags
 face flag2.u.151
-animation flag_02
+animation _flag_02
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -19346,7 +19703,7 @@ name big flag
 type 77
 editor_folder masks/flags
 face flag3.u.151
-animation flag_03
+animation _flag_03
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -19359,7 +19716,7 @@ name big flag
 type 77
 editor_folder masks/flags
 face flag4.u.151
-animation flag_04
+animation _flag_04
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -19372,7 +19729,7 @@ name big flag
 type 77
 editor_folder masks/flags
 face flag5.u.151
-animation flag_05
+animation _flag_05
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -19385,7 +19742,7 @@ name big flag
 type 77
 editor_folder masks/flags
 face flag6.u.151
-animation flag_06
+animation _flag_06
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -19398,7 +19755,7 @@ name big flag
 type 77
 editor_folder masks/flags
 face flag7.u.151
-animation flag_07
+animation _flag_07
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -19411,7 +19768,7 @@ name big flag
 type 77
 editor_folder masks/flags
 face flag8.u.151
-animation wmask_bflag_brown_1
+animation _wmask_bflag_brown_1
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -19424,7 +19781,7 @@ name big flag
 type 77
 editor_folder masks/flags
 face flag9.u.151
-animation wmask_bflag_fire1_1
+animation _wmask_bflag_fire1_1
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -19437,7 +19794,7 @@ name kobold flag
 type 77
 editor_folder masks/flags
 face koboldflag.u.151
-animation koboldflag
+animation _koboldflag
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -19450,7 +19807,7 @@ name big flag
 type 77
 editor_folder masks/flags
 face yervasflag.u.151
-animation yervas_flag
+animation _yervas_flag
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -20030,7 +20387,7 @@ name fire place
 type 77
 editor_folder masks/hearths
 face wmask_fire_on.151
-animation wmask_fire_on_1
+animation _wmask_fire_on_1
 is_animated 1
 anim_speed 3
 speed -.25
@@ -20044,7 +20401,7 @@ name fire place
 type 77
 editor_folder masks/hearths
 face wmask_fire_off.151
-animation wmask_fire_off_1
+animation _wmask_fire_off_1
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -20345,7 +20702,7 @@ name lavawall
 type 77
 editor_folder masks/lava
 face fmask_lava_wall.151
-animation fmask_lava_wall.151
+animation _fmask_lava_wall.151
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -20360,7 +20717,7 @@ editor_folder masks/lava
 face fmask_lava_blob.101
 layer 5
 glow_radius 6
-animation fmask_lava_blob
+animation _fmask_lava_blob
 is_animated 1
 anim_speed 3
 speed 1
@@ -20371,7 +20728,7 @@ name chains
 type 77
 editor_folder masks/manacles
 face chains1.u.151
-animation chains1.151
+animation _chains1.151
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -20384,7 +20741,7 @@ name chains
 type 77
 editor_folder masks/manacles
 face chains2.u.151
-animation chains2.151
+animation _chains2.151
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -20397,7 +20754,7 @@ name chains
 type 77
 editor_folder masks/manacles
 face chains3.u.151
-animation chains3.151
+animation _chains3.151
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -20410,7 +20767,7 @@ name mouse hole
 type 77
 editor_folder masks/misc
 face wall_mousehole1.151
-animation mousehole1
+animation _mousehole1
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -20423,7 +20780,7 @@ name big iron ring
 type 77
 editor_folder masks/misc
 face ring_wall.151
-animation ring_wall.151
+animation _ring_wall.151
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -20436,7 +20793,7 @@ name sewer hole
 type 77
 editor_folder masks/misc
 face sewer_wall.151
-animation sewer_wall
+animation _sewer_wall
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -20459,7 +20816,7 @@ name drain
 type 77
 editor_folder masks/misc
 face wall_drain1.151
-animation wall_drain1
+animation _wall_drain1
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -20472,7 +20829,7 @@ name drain
 type 77
 editor_folder masks/misc
 face wall_drain2.151
-animation wall_drain2
+animation _wall_drain2
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -20485,7 +20842,7 @@ name drain
 type 77
 editor_folder masks/misc
 face wall_drain3.151
-animation wall_drain3
+animation _wall_drain3
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -20498,7 +20855,7 @@ name drain
 type 77
 editor_folder masks/misc
 face wall_drain4.151
-animation wall_drain4
+animation _wall_drain4
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -20511,7 +20868,7 @@ name water hole
 type 77
 editor_folder masks/misc
 face sewer_wall1on.131
-animation water hole
+animation _water hole
 speed 0.02
 is_animated 1
 anim_speed 19
@@ -20524,7 +20881,7 @@ name ship wheel
 type 77
 editor_folder masks/misc
 face wmask_shipwheel.151
-animation wmask_shipwheel
+animation _wmask_shipwheel
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -20546,7 +20903,7 @@ name picture
 type 77
 editor_folder masks/paintings
 face picture1.u.151
-animation picture1.151
+animation _picture1.151
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -20559,7 +20916,7 @@ name picture
 type 77
 editor_folder masks/paintings
 face picture2.u.151
-animation picture2.151
+animation _picture2.151
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -20572,7 +20929,7 @@ name picture
 type 77
 editor_folder masks/paintings
 face picture3.u.151
-animation picture3.151
+animation _picture3.151
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -20585,7 +20942,7 @@ name picture
 type 77
 editor_folder masks/paintings
 face picture4.u.151
-animation picture4.151
+animation _picture4.151
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -20598,7 +20955,7 @@ name picture
 type 77
 editor_folder masks/paintings
 face picture5.u.151
-animation picture5.151
+animation _picture5.151
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -20611,7 +20968,7 @@ name picture
 type 77
 editor_folder masks/paintings
 face picture6.u.151
-animation picture6.151
+animation _picture6.151
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -20624,7 +20981,7 @@ name picture
 type 77
 editor_folder masks/paintings
 face picture7.u.151
-animation picture7
+animation _picture7
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -20637,7 +20994,7 @@ name picture
 type 77
 editor_folder masks/paintings
 face picture8.u.151
-animation picture8
+animation _picture8
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -20650,7 +21007,7 @@ name picture
 type 77
 editor_folder masks/paintings
 face picture9.u.151
-animation picture9
+animation _picture9
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -20663,7 +21020,7 @@ name picture
 type 77
 editor_folder masks/paintings
 face picture10.u.151
-animation picture10
+animation _picture10
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -20676,7 +21033,7 @@ name picture
 type 77
 editor_folder masks/paintings
 face picture11.u.151
-animation picture11
+animation _picture11
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -20689,7 +21046,7 @@ name picture
 type 77
 editor_folder masks/paintings
 face picture12.u.151
-animation picture12
+animation _picture12
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -20702,7 +21059,7 @@ name picture
 type 77
 editor_folder masks/paintings
 face picture13.u.151
-animation picture13
+animation _picture13
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -20715,7 +21072,7 @@ name picture
 type 77
 editor_folder masks/paintings
 face picture14.u.151
-animation picture14
+animation _picture14
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -20728,7 +21085,7 @@ name picture
 type 77
 editor_folder masks/paintings
 face picture15.u.151
-animation picture15
+animation _picture15
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -20741,7 +21098,7 @@ name plants
 type 77
 editor_folder masks/plants
 face plant1_wall.151
-animation plant1_wall.151
+animation _plant1_wall.151
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -20754,7 +21111,7 @@ name plants
 type 77
 editor_folder masks/plants
 face plant2_wall.151
-animation plant2_wall.151
+animation _plant2_wall.151
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -20867,7 +21224,7 @@ type 28
 editor_folder masks/ruins
 layer 2
 face fmask_ruin1a.111
-animation fmask_ruin1a.111
+animation _fmask_ruin1a.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -20911,7 +21268,7 @@ name runes
 type 77
 editor_folder masks/ruins
 face wmask_ruin1a.111
-animation wmask_ruin1a.111
+animation _wmask_ruin1a.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -20924,7 +21281,7 @@ name runes
 type 77
 editor_folder masks/ruins
 face wmask_ruin1b.111
-animation wmask_ruin1b.111
+animation _wmask_ruin1b.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -21137,7 +21494,7 @@ editor_folder masks/sky
 layer 7
 face blue_sky_wmask_a.151
 no_pick 1
-animation blue_sky_wmask_a
+animation _blue_sky_wmask_a
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -21150,7 +21507,7 @@ editor_folder masks/sky
 layer 7
 face blue_sky_wmask_b.151
 no_pick 1
-animation blue_sky_wmask_b
+animation _blue_sky_wmask_b
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -21163,7 +21520,7 @@ editor_folder masks/sky
 layer 7
 face blue_sky_wmask_c.151
 no_pick 1
-animation blue_sky_wmask_c
+animation _blue_sky_wmask_c
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -21176,7 +21533,7 @@ editor_folder masks/sky
 layer 7
 face blue_sky_wmask_d.151
 no_pick 1
-animation blue_sky_wmask_d
+animation _blue_sky_wmask_d
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -21673,7 +22030,7 @@ name water
 type 77
 editor_folder masks/water
 face wmask_water_a.151
-animation wmask_water_a
+animation _wmask_water_a
 is_animated 1
 anim_speed 3
 speed -.25
@@ -21687,7 +22044,7 @@ name water
 type 77
 editor_folder masks/water
 face wmask_water_b.151
-animation wmask_water_b
+animation _wmask_water_b
 is_animated 1
 anim_speed 3
 speed -.25
@@ -21746,7 +22103,7 @@ weapon_speed 3.5
 speed -0.04
 level 1
 weight 13250
-animation blob_acid
+animation _blob_acid
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -21796,7 +22153,7 @@ weapon_speed 3.5
 speed -0.04
 level 1
 weight 12750
-animation blob_poison
+animation _blob_poison
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -21845,7 +22202,7 @@ weapon_speed 3.5
 speed -0.04
 level 1
 weight 15750
-animation blob_quivering
+animation _blob_quivering
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -21894,7 +22251,7 @@ weapon_speed 3.5
 speed -0.03
 level 1
 weight 8250
-animation cube_gel
+animation _cube_gel
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -21945,7 +22302,7 @@ weapon_speed 3.5
 speed -0.05
 level 1
 weight 12250
-animation jelly_blue
+animation _jelly_blue
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -21995,7 +22352,7 @@ weapon_speed 3.5
 speed -0.05
 level 1
 weight 16250
-animation jelly_green
+animation _jelly_green
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -22046,7 +22403,7 @@ weapon_speed 3.5
 speed -0.05
 level 1
 weight 17250
-animation jelly_ochre
+animation _jelly_ochre
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -22097,7 +22454,7 @@ weapon_speed 3.5
 speed -0.05
 level 1
 weight 14250
-animation jelly_red
+animation _jelly_red
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -22148,7 +22505,7 @@ weapon_speed 3.5
 speed -0.05
 level 1
 weight 16450
-animation jelly_spotted
+animation _jelly_spotted
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -22197,7 +22554,7 @@ weapon_speed 3.5
 speed -0.025
 level 1
 weight 11250
-animation gray_ooze
+animation _gray_ooze
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -22248,7 +22605,7 @@ weapon_speed 3.5
 speed -0.03
 level 1
 weight 19250
-animation pudding_black
+animation _pudding_black
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -22299,7 +22656,7 @@ weapon_speed 3.5
 speed -0.03
 level 1
 weight 14500
-animation pudding_blue
+animation _pudding_blue
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -22350,7 +22707,7 @@ weapon_speed 3.5
 speed -0.031
 level 1
 weight 16250
-animation pudding_brown
+animation _pudding_brown
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -22401,7 +22758,7 @@ weapon_speed 3.5
 speed -0.031
 level 1
 weight 17250
-animation pudding_green
+animation _pudding_green
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -22452,7 +22809,7 @@ weapon_speed 3.5
 speed -0.031
 level 1
 weight 17250
-animation pudding_red
+animation _pudding_red
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -22503,7 +22860,7 @@ weapon_speed 3.5
 speed -0.029
 level 1
 weight 17250
-animation slime
+animation _slime
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -22554,7 +22911,7 @@ weapon_speed 3.5
 speed -0.029
 level 1
 weight 17250
-animation slime_b
+animation _slime_b
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -22602,7 +22959,7 @@ speed -0.06
 run_away 10
 level 1
 weight 42000
-animation brnbat
+animation _brnbat
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -22648,7 +23005,7 @@ speed -0.06
 run_away 10
 level 1
 weight 325000
-animation bear_grey
+animation _bear_grey
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -22695,7 +23052,7 @@ speed -0.06
 run_away 10
 level 1
 weight 42000
-animation parrot
+animation _parrot
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -22742,7 +23099,7 @@ speed -0.06
 run_away 10
 level 1
 weight 42000
-animation penguin
+animation _penguin
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -22788,7 +23145,7 @@ speed -0.06
 run_away 10
 level 1
 weight 325000
-animation cat_black
+animation _cat_black
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -22834,7 +23191,7 @@ speed -0.06
 run_away 10
 level 1
 weight 325000
-animation cat_wild
+animation _cat_wild
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -22881,7 +23238,7 @@ speed -0.06
 run_away 10
 level 1
 weight 42000
-animation chicken_large
+animation _chicken_large
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -22928,7 +23285,7 @@ speed -0.06
 run_away 10
 level 1
 weight 42000
-animation rooster
+animation _rooster
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -22975,7 +23332,7 @@ speed -0.06
 run_away 10
 level 1
 weight 142500
-animation cow_small
+animation _cow_small
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -23022,7 +23379,7 @@ speed -0.06
 run_away 10
 level 1
 weight 142500
-animation deer
+animation _deer
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -23069,7 +23426,7 @@ speed -0.06
 run_away 10
 level 1
 weight 325000
-animation dog_brown
+animation _dog_brown
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -23115,7 +23472,7 @@ speed -0.06
 run_away 10
 level 1
 weight 325000
-animation dog_wild
+animation _dog_wild
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -23161,7 +23518,7 @@ speed -0.06
 run_away 10
 level 1
 weight 325000
-animation wolf
+animation _wolf
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -23207,7 +23564,7 @@ speed -0.06
 run_away 10
 level 1
 weight 325000
-animation frog
+animation _frog
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -23253,7 +23610,7 @@ speed -0.06
 run_away 10
 level 1
 weight 42000
-animation horse_white
+animation _horse_white
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -23299,7 +23656,7 @@ speed -0.06
 run_away 10
 level 1
 weight 325000
-animation larva
+animation _larva
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -23345,7 +23702,7 @@ speed -0.06
 run_away 10
 level 1
 weight 325000
-animation mugwump
+animation _mugwump
 is_animated 1
 anim_speed 3
 no_pick 1
@@ -23392,7 +23749,7 @@ speed -0.06
 run_away 10
 level 1
 weight 42000
-animation owl_snow
+animation _owl_snow
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -23439,7 +23796,7 @@ speed -0.06
 run_away 10
 level 1
 weight 42000
-animation owl_snow_large
+animation _owl_snow_large
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -23485,7 +23842,7 @@ speed -0.06
 run_away 10
 level 1
 weight 325000
-animation crocodile
+animation _crocodile
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -23531,7 +23888,7 @@ speed -0.06
 run_away 10
 level 1
 weight 325000
-animation newt
+animation _newt
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -23577,7 +23934,7 @@ speed -0.06
 run_away 10
 level 1
 weight 325000
-animation snake
+animation _snake
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -23623,7 +23980,7 @@ speed -0.06
 run_away 10
 level 1
 weight 325000
-animation rattle_snake
+animation _rattle_snake
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -23669,7 +24026,7 @@ speed -0.06
 run_away 10
 level 1
 weight 325000
-animation mouse
+animation _mouse
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -23715,7 +24072,7 @@ speed -0.03
 run_away 10
 level 1
 weight 325000
-animation rat_a
+animation _rat_a
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -23761,7 +24118,7 @@ speed -0.03
 run_away 10
 level 1
 weight 325000
-animation rat_b
+animation _rat_b
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -23807,7 +24164,7 @@ speed -0.03
 run_away 10
 level 1
 weight 325000
-animation rat_c
+animation _rat_c
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -23853,7 +24210,7 @@ speed -0.03
 run_away 10
 level 1
 weight 325000
-animation rat_d
+animation _rat_d
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -23899,7 +24256,7 @@ speed -0.06
 run_away 10
 level 1
 weight 325000
-animation worm
+animation _worm
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -23954,7 +24311,7 @@ speed -0.06
 run_away 6
 level 1
 weight 1350000
-animation beholder_dread
+animation _beholder_dread
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -24046,7 +24403,7 @@ speed -0.06
 run_away 6
 level 1
 weight 1350000
-animation oclunus
+animation _oclunus
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -24302,7 +24659,7 @@ attack_slash 100
 speed -0.061
 level 1
 weight 95500
-animation angel_warrior
+animation _angel_warrior
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -24351,7 +24708,7 @@ attack_slash 100
 speed -0.061
 level 1
 weight 95500
-animation gnoll
+animation _gnoll
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -24400,7 +24757,7 @@ attack_slash 100
 speed -0.061
 level 1
 weight 52500
-animation goblin
+animation _goblin
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -24449,7 +24806,7 @@ attack_slash 100
 speed -0.061
 level 1
 weight 62500
-animation hobgoblin
+animation _hobgoblin
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -24501,7 +24858,7 @@ attack_electricity 90
 speed -0.06
 level 1
 weight 425000
-animation knome
+animation _knome
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -24550,7 +24907,7 @@ attack_pierce 100
 speed -0.061
 level 1
 weight 42500
-animation kobold
+animation _kobold
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -24599,7 +24956,7 @@ attack_slash 100
 speed -0.061
 level 1
 weight 47500
-animation kobold_big
+animation _kobold_big
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -24648,7 +25005,7 @@ attack_pierce 100
 speed -0.060
 level 1
 weight 45500
-animation kobold_fighter
+animation _kobold_fighter
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -24697,7 +25054,7 @@ attack_pierce 100
 speed -0.061
 level 1
 weight 46500
-animation kobold_guard
+animation _kobold_guard
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -24747,7 +25104,7 @@ attack_pierce 100
 speed -0.061
 level 1
 weight 42500
-animation kobold_shaman
+animation _kobold_shaman
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -24795,7 +25152,7 @@ attack_cleave 100
 speed -0.060
 level 1
 weight 162500
-animation abomination_small
+animation _abomination_small
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -24843,7 +25200,7 @@ attack_cleave 100
 speed -0.060
 level 1
 weight 162500
-animation bone_devil
+animation _bone_devil
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -24891,7 +25248,7 @@ attack_cleave 100
 speed -0.060
 level 1
 weight 162500
-animation demon_armour
+animation _demon_armour
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -24939,7 +25296,7 @@ attack_cleave 100
 speed -0.060
 level 1
 weight 162500
-animation demon_goat
+animation _demon_goat
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -24987,7 +25344,7 @@ attack_cleave 100
 speed -0.060
 level 1
 weight 162500
-animation demon_green
+animation _demon_green
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -25035,7 +25392,7 @@ attack_cleave 100
 speed -0.060
 level 1
 weight 162500
-animation demon_lord
+animation _demon_lord
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -25083,7 +25440,7 @@ attack_cleave 100
 speed -0.060
 level 1
 weight 162500
-animation demon_sfire
+animation _demon_sfire
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -25131,7 +25488,7 @@ attack_cleave 100
 speed -0.060
 level 1
 weight 162500
-animation devil_lord
+animation _devil_lord
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -25179,7 +25536,7 @@ attack_cleave 100
 speed -0.060
 level 1
 weight 162500
-animation lom_lobon
+animation _lom_lobon
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -25227,7 +25584,7 @@ attack_cleave 100
 speed -0.060
 level 1
 weight 162500
-animation oty
+animation _oty
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -25275,7 +25632,7 @@ attack_cleave 100
 speed -0.060
 level 1
 weight 162500
-animation raas
+animation _raas
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -25335,7 +25692,7 @@ attack_acid 50
 speed -0.061
 level 1
 weight 950000
-animation dragon_black
+animation _dragon_black
 is_animated 1
 anim_speed 5
 no_pick 1
@@ -25432,7 +25789,7 @@ attack_cold 50
 speed -0.061
 level 1
 weight 950000
-animation dragon_blu
+animation _dragon_blu
 is_animated 1
 anim_speed 5
 no_pick 1
@@ -25529,7 +25886,7 @@ attack_poison 50
 speed -0.061
 level 1
 weight 950000
-animation dragon_green
+animation _dragon_green
 is_animated 1
 anim_speed 5
 no_pick 1
@@ -25625,7 +25982,7 @@ attack_fire 50
 speed -0.061
 level 1
 weight 950000
-animation dragon_red
+animation _dragon_red
 is_animated 1
 anim_speed 5
 no_pick 1
@@ -25719,7 +26076,7 @@ attack_pierce 100
 speed -0.061
 level 1
 weight 850000
-animation dragon_skeletal
+animation _dragon_skeletal
 is_animated 1
 anim_speed 5
 no_pick 1
@@ -25802,7 +26159,7 @@ attack_slash 100
 speed -0.0225
 level 1
 weight 295500
-animation dragon_water_small
+animation _dragon_water_small
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -25855,7 +26212,7 @@ attack_impact 100
 speed -0.057
 level 1
 weight 82250
-animation dwarf_fighter
+animation _dwarf_fighter
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -25908,7 +26265,7 @@ attack_impact 100
 speed -0.057
 level 1
 weight 82250
-animation dwarf_noble
+animation _dwarf_noble
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -25952,7 +26309,7 @@ attack_cleave 100
 speed -0.061
 level 1
 weight 35500
-animation elemental_ice
+animation _elemental_ice
 is_animated 1
 anim_speed 5
 no_pick 1
@@ -25996,7 +26353,7 @@ attack_cleave 100
 speed -0.061
 level 1
 weight 35500
-animation mud_hand
+animation _mud_hand
 is_animated 1
 anim_speed 5
 no_pick 1
@@ -26046,7 +26403,7 @@ attack_pierce 100
 speed -0.061
 level 1
 weight 62500
-animation drow_annihilator
+animation _drow_annihilator
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -26095,7 +26452,7 @@ attack_slash 100
 speed -0.061
 level 1
 weight 62500
-animation drow_captain
+animation _drow_captain
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -26144,7 +26501,7 @@ attack_slash 100
 speed -0.059
 level 1
 weight 61250
-animation drow_fighter
+animation _drow_fighter
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -26193,7 +26550,7 @@ attack_slash 100
 speed -0.058
 level 1
 weight 61500
-animation drow_guard
+animation _drow_guard
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -26243,7 +26600,7 @@ attack_pierce 100
 speed -0.061
 level 1
 weight 61500
-animation drow_sorcerer
+animation _drow_sorcerer
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -26293,7 +26650,7 @@ attack_slash 100
 speed -0.059
 level 1
 weight 61250
-animation elven_merchant
+animation _elven_merchant
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -26341,7 +26698,7 @@ attack_impact 100
 speed -0.058
 level 1
 weight 522500
-animation cyclops
+animation _cyclops
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -26389,7 +26746,7 @@ attack_impact 100
 speed -0.058
 level 1
 weight 522500
-animation ettin
+animation _ettin
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -26441,7 +26798,7 @@ resist_cold -25
 speed -0.054
 level 1
 weight 652500
-animation giant_fire
+animation _giant_fire
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -26493,7 +26850,7 @@ resist_fire -25
 speed -0.054
 level 1
 weight 652500
-animation giant_frost
+animation _giant_frost
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -26542,7 +26899,7 @@ resist_acid 25
 speed -0.055
 level 1
 weight 473250
-animation giant_hill
+animation _giant_hill
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -26592,7 +26949,7 @@ resist_acid 25
 speed -0.053
 level 1
 weight 153250
-animation ogre
+animation _ogre
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -26641,7 +26998,7 @@ resist_acid 25
 speed -0.054
 level 1
 weight 732500
-animation giant_stone
+animation _giant_stone
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -26698,7 +27055,7 @@ attack_weaponmagic 10
 speed -0.049
 level 1
 weight 65000
-animation archer
+animation _archer
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -26747,7 +27104,7 @@ attack_slash 100
 speed -0.047
 level 1
 weight 93500
-animation childf1
+animation _childf1
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -26796,7 +27153,7 @@ attack_slash 100
 speed -0.047
 level 1
 weight 93500
-animation childf2
+animation _childf2
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -26845,7 +27202,7 @@ attack_slash 100
 speed -0.047
 level 1
 weight 93500
-animation childm1
+animation _childm1
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -26894,7 +27251,7 @@ attack_slash 100
 speed -0.047
 level 1
 weight 93500
-animation childm2
+animation _childm2
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -26950,7 +27307,7 @@ attack_weaponmagic 30
 speed -0.048
 level 1
 weight 85000
-animation guard
+animation _guard
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -27006,7 +27363,7 @@ attack_weaponmagic 30
 speed -0.048
 level 1
 weight 85000
-animation guard2
+animation _guard2
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -27062,7 +27419,7 @@ attack_weaponmagic 25
 speed -0.048
 level 1
 weight 82500
-animation guard_pole
+animation _guard_pole
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -27118,7 +27475,7 @@ attack_weaponmagic 30
 speed -0.0485
 level 1
 weight 87000
-animation guard_royal
+animation _guard_royal
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -27174,7 +27531,7 @@ attack_weaponmagic 30
 speed -0.047
 level 1
 weight 65000
-animation mage_old
+animation _mage_old
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -27230,7 +27587,7 @@ attack_weaponmagic 30
 speed -0.047
 level 1
 weight 65000
-animation seether
+animation _seether
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -27285,7 +27642,7 @@ attack_weaponmagic 20
 speed -0.049
 level 1
 weight 65500
-animation monk
+animation _monk
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -27338,7 +27695,7 @@ attack_slash 100
 speed -0.047
 level 1
 weight 77500
-animation king
+animation _king
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -27391,7 +27748,7 @@ attack_slash 100
 speed -0.047
 level 1
 weight 67500
-animation noble
+animation _noble
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -27444,7 +27801,7 @@ attack_pierce 100
 speed -0.047
 level 1
 weight 57500
-animation queen
+animation _queen
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -27493,7 +27850,7 @@ attack_slash 100
 speed -0.047
 level 1
 weight 93500
-animation hobo_old
+animation _hobo_old
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -27542,7 +27899,7 @@ attack_slash 100
 speed -0.047
 level 1
 weight 93500
-animation peasant
+animation _peasant
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -27591,7 +27948,7 @@ attack_slash 100
 speed -0.047
 level 1
 weight 93500
-animation tailor
+animation _tailor
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -27640,7 +27997,7 @@ attack_slash 100
 speed -0.047
 level 1
 weight 68500
-animation traveller_parka
+animation _traveller_parka
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -27689,7 +28046,7 @@ attack_slash 100
 speed -0.047
 level 1
 weight 48500
-animation traveller_wife
+animation _traveller_wife
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -27745,7 +28102,7 @@ attack_weaponmagic 30
 speed -0.0495
 level 1
 weight 75000
-animation oarman
+animation _oarman
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -27801,7 +28158,7 @@ attack_weaponmagic 30
 speed -0.0495
 level 1
 weight 75000
-animation pirate
+animation _pirate
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -27857,7 +28214,7 @@ attack_weaponmagic 30
 speed -0.0495
 level 1
 weight 75000
-animation pirate_2
+animation _pirate_2
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -27913,7 +28270,7 @@ attack_weaponmagic 30
 speed -0.0495
 level 1
 weight 75000
-animation pirate_3
+animation _pirate_3
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -27969,7 +28326,7 @@ attack_weaponmagic 30
 speed -0.0495
 level 1
 weight 75000
-animation pirate_sorceress
+animation _pirate_sorceress
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -28025,7 +28382,7 @@ attack_weaponmagic 30
 speed -0.0495
 level 1
 weight 75000
-animation ship_captain
+animation _ship_captain
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -28082,7 +28439,7 @@ attack_weaponmagic 10
 speed -0.048
 level 1
 weight 65000
-animation priest_church
+animation _priest_church
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -28139,7 +28496,7 @@ attack_weaponmagic 10
 speed -0.048
 level 1
 weight 65000
-animation priest_green
+animation _priest_green
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -28196,7 +28553,7 @@ attack_weaponmagic 10
 speed -0.048
 level 1
 weight 65000
-animation priest_robed
+animation _priest_robed
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -28253,7 +28610,7 @@ attack_weaponmagic 10
 speed -0.048
 level 1
 weight 65000
-animation sadpriest
+animation _sadpriest
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -28310,7 +28667,7 @@ attack_weaponmagic 30
 speed -0.0495
 level 1
 weight 75000
-animation ranger
+animation _ranger
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -28365,7 +28722,7 @@ attack_weaponmagic 50
 speed -0.048
 level 1
 weight 65500
-animation smith
+animation _smith
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -28420,7 +28777,7 @@ attack_weaponmagic 50
 speed -0.048
 level 1
 weight 65500
-animation weapon_smith
+animation _weapon_smith
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -28469,7 +28826,7 @@ attack_slash 100
 speed -0.047
 level 1
 weight 93500
-animation barmaid
+animation _barmaid
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -28518,7 +28875,7 @@ attack_slash 100
 speed -0.047
 level 1
 weight 93500
-animation bartender
+animation _bartender
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -28567,7 +28924,7 @@ attack_slash 100
 speed -0.047
 level 1
 weight 93500
-animation chef
+animation _chef
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -28622,7 +28979,7 @@ attack_weaponmagic 30
 speed -0.0495
 level 1
 weight 75000
-animation patron
+animation _patron
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -28678,7 +29035,7 @@ attack_weaponmagic 30
 speed -0.0495
 level 1
 weight 75000
-animation thief_female
+animation _thief_female
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -28727,7 +29084,7 @@ attack_slash 100
 speed -0.047
 level 1
 weight 48500
-animation female1
+animation _female1
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -28776,7 +29133,7 @@ attack_slash 100
 speed -0.047
 level 1
 weight 48500
-animation female2
+animation _female2
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -28792,7 +29149,7 @@ is_animated 1
 anim_speed 4
 speed -0.025
 direction 5
-animation pair_human
+animation _pair_human
 no_pass 1
 no_pick 1
 end
@@ -28840,7 +29197,7 @@ attack_slash 100
 speed -0.047
 level 1
 weight 48500
-animation woman_old
+animation _woman_old
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -28886,7 +29243,7 @@ attack_cleave 100
 speed -0.053
 level 1
 weight 72500
-animation ant_queen
+animation _ant_queen
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -28933,7 +29290,7 @@ attack_cleave 100
 speed -0.053
 level 1
 weight 22500
-animation ant_red
+animation _ant_red
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -28978,7 +29335,7 @@ attack_cleave 100
 speed -0.053
 level 1
 weight 25500
-animation ant_soldier
+animation _ant_soldier
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -29023,7 +29380,7 @@ attack_pierce 100
 speed -0.053
 level 1
 weight 8500
-animation bee_killer
+animation _bee_killer
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -29069,7 +29426,7 @@ attack_poison 10
 speed -0.053
 level 1
 weight 11500
-animation hornet
+animation _hornet
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -29114,7 +29471,7 @@ attack_pierce 100
 speed -0.053
 level 1
 weight 11500
-animation wasp_giant
+animation _wasp_giant
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -29162,7 +29519,7 @@ attack_cleave 100
 speed -0.060
 level 1
 weight 162500
-animation krillen
+animation _krillen
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -29208,7 +29565,7 @@ speed -0.06
 run_away 10
 level 1
 weight 325000
-animation skorpion
+animation _skorpion
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -29254,7 +29611,7 @@ speed -0.06
 run_away 10
 level 1
 weight 325000
-animation spider
+animation _spider
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -29300,7 +29657,7 @@ speed -0.06
 run_away 10
 level 1
 weight 325000
-animation spider_widow
+animation _spider_widow
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -29351,7 +29708,7 @@ resist_fear 25
 speed -0.057
 level 1
 weight 483250
-animation minotaur
+animation _minotaur
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -29397,7 +29754,7 @@ speed -0.06
 run_away 10
 level 1
 weight 325000
-animation fungus
+animation _fungus
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -29443,7 +29800,7 @@ speed -0.06
 run_away 10
 level 1
 weight 325000
-animation salamand
+animation _salamand
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -29492,7 +29849,7 @@ resist_paralyze 100
 speed -0.040
 level 1
 weight 34250
-animation slug_giant
+animation _slug_giant
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -29546,7 +29903,7 @@ attack_impact 50
 speed -0.0611
 level 1
 weight 452500
-animation worm_purple
+animation _worm_purple
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -29632,7 +29989,7 @@ attack_pierce 100
 speed -0.048
 level 1
 weight 91500
-animation orc_archer
+animation _orc_archer
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -29680,7 +30037,7 @@ attack_impact 100
 speed -0.048
 level 1
 weight 122000
-animation orc_berserker
+animation _orc_berserker
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -29729,7 +30086,7 @@ attack_slash 100
 speed -0.0485
 level 1
 weight 92000
-animation orc_captain
+animation _orc_captain
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -29778,7 +30135,7 @@ attack_pierce 100
 speed -0.048
 level 1
 weight 91500
-animation orc_fighter
+animation _orc_fighter
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -29826,7 +30183,7 @@ attack_slash 100
 speed -0.048
 level 1
 weight 97000
-animation orc_warrior
+animation _orc_warrior
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -29875,7 +30232,7 @@ attack_impact 100
 speed -0.0486
 level 1
 weight 89500
-animation orc_outlaw
+animation _orc_outlaw
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -29925,7 +30282,7 @@ attack_impact 100
 speed -0.047
 level 1
 weight 82500
-animation orc_priest
+animation _orc_priest
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -29975,7 +30332,7 @@ attack_pierce 100
 speed -0.047
 level 1
 weight 82500
-animation orc_sorcerer
+animation _orc_sorcerer
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -30023,7 +30380,7 @@ attack_slash 100
 speed -0.049
 level 1
 weight 105000
-animation orc_warlord
+animation _orc_warlord
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -30067,7 +30424,7 @@ attack_cleave 100
 speed -0.048
 level 1
 weight 355000
-animation quickwood
+animation _quickwood
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -30112,7 +30469,7 @@ attack_impact 100
 speed -0.048
 level 1
 weight 355000
-animation treant_ancient
+animation _treant_ancient
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -30157,7 +30514,7 @@ attack_impact 100
 speed -0.048
 level 1
 weight 355000
-animation treant_evil
+animation _treant_evil
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -30204,7 +30561,7 @@ attack_impact 100
 speed -0.046
 level 1
 weight 185000
-animation golem
+animation _golem
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -30253,7 +30610,7 @@ attack_cold 100
 speed -0.045
 level 1
 weight 320000
-animation icegolem
+animation _icegolem
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -30302,7 +30659,7 @@ attack_fire 100
 speed -0.045
 level 1
 weight 320000
-animation lavagolem
+animation _lavagolem
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -30349,7 +30706,7 @@ attack_impact 100
 speed -0.046
 level 1
 weight 185000
-animation black_golem_mage
+animation _black_golem_mage
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -30396,7 +30753,7 @@ attack_impact 100
 speed -0.046
 level 1
 weight 185000
-animation golem_mage
+animation _golem_mage
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -30443,7 +30800,7 @@ attack_impact 100
 speed -0.046
 level 1
 weight 185000
-animation sparkle_black_golem_mage
+animation _sparkle_black_golem_mage
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -30500,7 +30857,7 @@ attack_impact 100
 speed -0.061
 level 1
 weight 365000
-animation troll
+animation _troll
 is_animated 1
 anim_speed 5
 no_pick 1
@@ -30589,7 +30946,7 @@ attack_paralyze 30
 speed -0.047
 level 1
 weight 62500
-animation barrow_wight
+animation _barrow_wight
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -30644,7 +31001,7 @@ attack_cleave 100
 speed -0.054
 level 1
 weight 7500
-animation demilich
+animation _demilich
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -30701,7 +31058,7 @@ attack_cleave 100
 speed -0.054
 level 1
 weight 7500
-animation druj_skull
+animation _druj_skull
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -30753,7 +31110,7 @@ attack_paralyze 30
 speed -0.047
 level 1
 weight 62500
-animation ghoul
+animation _ghoul
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -30807,7 +31164,7 @@ attack_cleave 100
 speed -0.054
 level 1
 weight 7500
-animation lich
+animation _lich
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -30861,7 +31218,7 @@ attack_cleave 100
 speed -0.054
 level 1
 weight 7500
-animation lich_lord
+animation _lich_lord
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -30915,7 +31272,7 @@ attack_drain 50
 speed -0.048
 level 1
 weight 2500
-animation lost_soul
+animation _lost_soul
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -30964,7 +31321,7 @@ attack_slash 100
 speed -0.048
 level 1
 weight 27500
-animation skel_fighter1
+animation _skel_fighter1
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -31013,7 +31370,7 @@ attack_slash 100
 speed -0.048
 level 1
 weight 27500
-animation skel_fighter2
+animation _skel_fighter2
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -31062,7 +31419,7 @@ attack_slash 100
 speed -0.048
 level 1
 weight 27500
-animation skel_fighter3
+animation _skel_fighter3
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -31116,7 +31473,7 @@ attack_cleave 100
 speed -0.048
 level 1
 weight 28500
-animation skel_mage
+animation _skel_mage
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -31165,7 +31522,7 @@ attack_slash 100
 speed -0.048
 level 1
 weight 27500
-animation skeleton
+animation _skeleton
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -31217,7 +31574,7 @@ attack_paralyze 30
 speed -0.047
 level 1
 weight 62500
-animation vampire
+animation _vampire
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -31269,7 +31626,7 @@ attack_paralyze 30
 speed -0.047
 level 1
 weight 62500
-animation vampire_lord
+animation _vampire_lord
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -31323,7 +31680,7 @@ attack_drain 50
 speed -0.048
 level 1
 weight 12500
-animation wraith
+animation _wraith
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -31372,7 +31729,7 @@ attack_slash 100
 speed -0.048
 level 1
 weight 27500
-animation zombie
+animation _zombie
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -31426,7 +31783,7 @@ attack_pierce 100
 speed -0.06
 level 1
 weight 425000
-animation wyvern
+animation _wyvern
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -31473,7 +31830,7 @@ name small hay bail
 type 79
 editor_folder scenery/bales_and_bundles
 face haybailsmall.111
-animation haybailsmall
+animation _haybailsmall
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -31487,7 +31844,7 @@ name small hay pile
 type 79
 editor_folder scenery/bales_and_bundles
 face haypilesmall.111
-animation haypilesmall
+animation _haypilesmall
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -31519,7 +31876,7 @@ name counter
 type 79
 editor_folder scenery/bars_and_countertops
 face bank2a.111
-animation bank2a
+animation _bank2a
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -31532,7 +31889,7 @@ name counter
 type 79
 editor_folder scenery/bars_and_countertops
 face bank2b.111
-animation bank2b
+animation _bank2b
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -31545,7 +31902,7 @@ name counter
 type 79
 editor_folder scenery/bars_and_countertops
 face bank2c.111
-animation bank2c
+animation _bank2c
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -31561,7 +31918,7 @@ face bar1.111
 layer 5
 no_pick 1
 no_pass 1
-animation bar1
+animation _bar1
 is_animated 0
 anim_speed 1
 is_turnable 1
@@ -31591,7 +31948,7 @@ pass_thru 1
 no_pick 1
 direction 1
 face door_bar1.111
-animation door_bar1
+animation _door_bar1
 is_animated 0
 anim_speed 1
 is_turnable 1
@@ -31601,7 +31958,7 @@ name bed
 type 79
 editor_folder scenery/beds
 face bed_1a.111
-animation bed_1a.111
+animation _bed_1a.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -31614,7 +31971,7 @@ name bed
 type 79
 editor_folder scenery/beds
 face bed_1b.111
-animation bed_1b.111
+animation _bed_1b.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -31627,7 +31984,7 @@ name bed
 type 79
 editor_folder scenery/beds
 face bed_2a.111
-animation bed_2a.111
+animation _bed_2a.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -31640,7 +31997,7 @@ name bed
 type 79
 editor_folder scenery/beds
 face bed_2b.111
-animation bed_2b.111
+animation _bed_2b.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -31653,7 +32010,7 @@ name bed
 type 79
 editor_folder scenery/beds
 face bed_3a.111
-animation bed_3a.111
+animation _bed_3a.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -31666,7 +32023,7 @@ name bed
 type 79
 editor_folder scenery/beds
 face bed_3b.111
-animation bed_3b.111
+animation _bed_3b.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -31679,7 +32036,7 @@ name bed
 type 79
 editor_folder scenery/beds
 face bed_4a.111
-animation bed_4a.111
+animation _bed_4a.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -31692,7 +32049,7 @@ name bed
 type 79
 editor_folder scenery/beds
 face bed_4b.111
-animation bed_4b.111
+animation _bed_4b.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -31705,7 +32062,7 @@ name bed
 type 79
 editor_folder scenery/beds
 face couch1a.111
-animation couch1a
+animation _couch1a
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -31718,7 +32075,7 @@ name bed
 type 79
 editor_folder scenery/beds
 face couch1b.111
-animation couch1b
+animation _couch1b
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -31739,7 +32096,7 @@ name bed
 type 79
 editor_folder scenery/beds
 face prison_deco1.131
-animation prison_deco1.131
+animation _prison_deco1.131
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -31752,7 +32109,7 @@ name bed
 type 79
 editor_folder scenery/beds
 face prison_deco2.131
-animation prison_deco2.131
+animation _prison_deco2.131
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -31765,7 +32122,7 @@ name bed
 type 79
 editor_folder scenery/beds
 face prison_deco3.131
-animation prison_deco3.131
+animation _prison_deco3.131
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -31778,7 +32135,7 @@ name counter
 type 79
 editor_folder scenery/benches
 face bank1.111
-animation bank1.111
+animation _bank1.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -31791,7 +32148,7 @@ name bench
 type 79
 editor_folder scenery/benches
 face bench1a.111
-animation bench1a.111
+animation _bench1a.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -31804,7 +32161,7 @@ name bench
 type 79
 editor_folder scenery/benches
 face bench1b.111
-animation bench1b.111
+animation _bench1b.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -31817,7 +32174,7 @@ name bench
 type 79
 editor_folder scenery/benches
 face bench2.131
-animation bench2.111
+animation _bench2.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -31830,7 +32187,7 @@ name outdoor bench
 type 79
 editor_folder scenery/benches
 face bench3.111
-animation bench3.111
+animation _bench3.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -31843,7 +32200,7 @@ name outdoor bench
 type 79
 editor_folder scenery/benches
 face bench4.131
-animation bench4.111
+animation _bench4.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -31856,7 +32213,7 @@ name outdoor bench
 type 79
 editor_folder scenery/benches
 face bench5.131
-animation bench5.111
+animation _bench5.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -31869,7 +32226,7 @@ name bench
 type 79
 editor_folder scenery/benches
 face kiddy_bench.131
-animation kiddy_bench.111
+animation _kiddy_bench.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -31941,7 +32298,7 @@ type 79
 editor_folder scenery/burial_paraphernalia
 layer 5
 face coffin_wood.111
-animation coffin_wood.111
+animation _coffin_wood.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -31955,7 +32312,7 @@ type 79
 editor_folder scenery/burial_paraphernalia
 layer 5
 face coffin_stone.111
-animation coffin_stone.111
+animation _coffin_stone.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -31969,7 +32326,7 @@ type 79
 editor_folder scenery/burial_paraphernalia
 layer 5
 face grave1.111
-animation grave1.111
+animation _grave1.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -31983,7 +32340,7 @@ type 79
 editor_folder scenery/burial_paraphernalia
 layer 5
 face grave2.111
-animation grave2.111
+animation _grave2.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -31997,7 +32354,7 @@ type 79
 editor_folder scenery/burial_paraphernalia
 layer 5
 face grave_open.111
-animation grave_open.111
+animation _grave_open.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -32011,7 +32368,7 @@ type 79
 editor_folder scenery/burial_paraphernalia
 layer 5
 face grave_cross1.111
-animation grave_cross1.111
+animation _grave_cross1.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -32025,7 +32382,7 @@ type 79
 editor_folder scenery/burial_paraphernalia
 layer 5
 face grave_cross2.111
-animation grave_cross2.111
+animation _grave_cross2.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -32065,7 +32422,7 @@ name cave
 type 79
 editor_folder scenery/cave
 face cave_deco_full.u.111
-animation cave_deco_full
+animation _cave_deco_full
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -32079,7 +32436,7 @@ name cave
 type 79
 editor_folder scenery/cave
 face cave_deco1.111
-animation cave_deco1
+animation _cave_deco1
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -32093,7 +32450,7 @@ name cave
 type 79
 editor_folder scenery/cave
 face cave_deco2.111
-animation cave_deco2
+animation _cave_deco2
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -32107,7 +32464,7 @@ name cave
 type 79
 editor_folder scenery/cave
 face cave_deco3.111
-animation cave_deco3
+animation _cave_deco3
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -32274,7 +32631,7 @@ name chair
 type 79
 editor_folder scenery/chairs
 face chair1.111
-animation chair1_111
+animation _chair1_111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -32287,7 +32644,7 @@ name chair
 type 79
 editor_folder scenery/chairs
 face chair2.111
-animation chair2_111
+animation _chair2_111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -32332,7 +32689,7 @@ name stone throne
 type 79
 editor_folder scenery/chairs
 face char_throne.111
-animation stone_throne
+animation _stone_throne
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -32344,7 +32701,7 @@ name throne
 type 79
 editor_folder scenery/chairs
 face throne.111
-animation throne.111
+animation _throne.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -32478,6 +32835,7 @@ no_pick 1
 no_pass 1
 can_roll 1
 layer 4
+terrain_flag 1
 end
 Object basket1.101
 name basket
@@ -32665,7 +33023,7 @@ name small cauldron
 type 79
 editor_folder scenery/cooking_utensils
 face fire_cauld.131
-animation fire_cauld.131
+animation _fire_cauld.131
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -32870,7 +33228,7 @@ material 64
 layer 5
 no_pick 1
 no_pass 1
-animation obstacle_volcano_2
+animation _obstacle_volcano_2
 is_animated 1
 anim_speed 3
 speed 1
@@ -32906,7 +33264,7 @@ layer 5
 no_pick 1
 no_pass 1
 glow_radius 3
-animation obstacle_volcano_5
+animation _obstacle_volcano_5
 is_animated 1
 anim_speed 3
 speed 1
@@ -32928,7 +33286,7 @@ type 79
 editor_folder scenery/effects
 face sparkle_lup.101
 layer 7
-animation level_up
+animation _level_up
 is_animated 1
 anim_speed 1
 speed 1
@@ -32979,7 +33337,7 @@ face fog.111
 other_arch fog
 terrain_flag 65535
 layer 7
-animation fog
+animation _fog
 is_animated 1
 anim_speed 4
 flying 1
@@ -33001,7 +33359,7 @@ layer 7
 face fog.111
 other_arch fog_glow1
 terrain_flag 65535
-animation fog_glow1
+animation _fog_glow1
 is_animated 1
 anim_speed 4
 flying 1
@@ -33023,7 +33381,7 @@ face fog.111
 layer 7
 terrain_flag 65535
 other_arch fog_glow2
-animation fog_glow2
+animation _fog_glow2
 is_animated 1
 anim_speed 4
 flying 1
@@ -33043,7 +33401,7 @@ type 79
 editor_folder scenery/fog
 face fog.111
 layer 7
-animation temp_fog
+animation _temp_fog
 is_animated 1
 anim_speed 4
 food 2
@@ -33062,7 +33420,7 @@ mpart_id 2
 editor_folder scenery/hearths
 face fireplace_right.101
 layer 5
-animation fireplace_right
+animation _fireplace_right
 is_animated 1
 anim_speed 1
 speed 1
@@ -33075,7 +33433,7 @@ type 79
 mpart_id 2
 mpart_nr 1
 layer 5
-animation fireplace_rightb
+animation _fireplace_rightb
 is_animated 1
 anim_speed 1
 speed 1
@@ -33109,7 +33467,7 @@ mpart_id 1
 editor_folder scenery/hearths
 face fireplace_left.101
 layer 5
-animation fireplace_left
+animation _fireplace_left
 is_animated 1
 anim_speed 1
 speed 1
@@ -33122,7 +33480,7 @@ type 79
 mpart_id 1
 mpart_nr 1
 layer 5
-animation fireplace_leftb
+animation _fireplace_leftb
 is_animated 1
 anim_speed 1
 speed 1
@@ -33149,14 +33507,6 @@ layer 5
 no_pick 1
 y 1
 end
-Object glower.101
-name glower
-type 79
-editor_folder scenery/hearths
-face glower.101
-no_pick 1
-layer 4
-end
 Object icecave_deco
 name ice cave
 type 79
@@ -33171,7 +33521,7 @@ name ice cave
 type 79
 editor_folder scenery/icecave
 face icecave_deco_full.u.111
-animation icecave_deco_full
+animation _icecave_deco_full
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -33185,7 +33535,7 @@ name ice cave
 type 79
 editor_folder scenery/icecave
 face icecave_deco1.111
-animation icecave_deco1
+animation _icecave_deco1
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -33199,7 +33549,7 @@ name ice cave
 type 79
 editor_folder scenery/icecave
 face icecave_deco2.111
-animation icecave_deco2
+animation _icecave_deco2
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -33213,7 +33563,7 @@ name ice cave
 type 79
 editor_folder scenery/icecave
 face icecave_deco3.111
-animation icecave_deco3
+animation _icecave_deco3
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -33227,7 +33577,7 @@ name ice cave
 type 77
 editor_folder scenery/icecave
 face icecave_deco_w1.u.151
-animation icecave_deco_wall1
+animation _icecave_deco_wall1
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -33240,7 +33590,7 @@ name ice cave
 type 77
 editor_folder scenery/icecave
 face icecave_deco_w2.u.151
-animation icecave_deco_wall2
+animation _icecave_deco_wall2
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -33253,7 +33603,7 @@ name ice cave
 type 77
 editor_folder scenery/icecave
 face icecave_deco_w3.u.151
-animation icecave_deco_wall3
+animation _icecave_deco_wall3
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -33266,7 +33616,7 @@ name ice cave
 type 77
 editor_folder scenery/icecave
 face icecave_deco_w4.u.151
-animation icecave_deco_wall4
+animation _icecave_deco_wall4
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -33279,7 +33629,7 @@ name ice cave
 type 77
 editor_folder scenery/icecave
 face icecave_deco_w5.u.151
-animation icecave_deco_wall5
+animation _icecave_deco_wall5
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -33330,33 +33680,6 @@ editor_folder scenery/icecave
 layer 5
 face icecave_pillar5.101
 no_pass 1
-no_pick 1
-end
-Object lantern_magic.131
-name magic lantern
-type 79
-editor_folder scenery/lanterns
-no_pass 1
-face lantern_magic.131
-animation lantern_magic.131
-is_animated 0
-anim_speed 0
-is_turnable 1
-direction 1
-layer 5
-no_pick 1
-end
-Object lantern2_magic.131
-name magic lantern
-type 79
-editor_folder scenery/lanterns
-face lantern2_magic.131
-animation lantern2_magic.131
-is_animated 0
-anim_speed 0
-is_turnable 1
-direction 1
-layer 5
 no_pick 1
 end
 Object dolmen
@@ -33434,7 +33757,7 @@ mpart_id 3
 editor_folder scenery/megaliths
 layer 5
 face stonehenge.111
-animation stonehenge
+animation _stonehenge
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -33475,19 +33798,6 @@ no_pass 1
 no_pick 1
 x 1
 y 1
-end
-Object broom.111
-name broom
-type 79
-editor_folder scenery/misc
-face broom.111
-animation broom.111
-is_animated 0
-anim_speed 0
-is_turnable 1
-direction 1
-no_pick 1
-layer 4
 end
 Object cardinal_giant_a
 name cardinal statue
@@ -33534,13 +33844,29 @@ name mirror
 type 79
 editor_folder scenery/misc
 face mirror_big.111
-animation mirror_big.111
+animation _mirror_big.111
 is_animated 0
 anim_speed 0
 is_turnable 1
 direction 1
 no_pick 1
 layer 4
+end
+Object open_flame
+name flame
+type 79
+editor_folder scenery/misc
+layer 3
+face open_flame.101
+material 144
+glow_radius 5
+weight 500
+no_pick 1
+no_pass 1
+animation _open_flame
+is_animated 1
+anim_speed 4
+speed -0.2
 end
 Object rows
 name rows
@@ -33589,7 +33915,7 @@ name straw
 type 79
 editor_folder scenery/misc
 face straw2.111
-animation straw2.111
+animation _straw2.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -33628,7 +33954,7 @@ type 79
 editor_folder scenery/pillars
 face ped_magic1.131
 no_save 1
-animation ped_magic1
+animation _ped_magic1
 is_animated 1
 anim_speed 1
 speed 1
@@ -33642,7 +33968,7 @@ type 79
 editor_folder scenery/pillars
 layer 5
 face ped_black.111
-animation ped_black
+animation _ped_black
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -33656,7 +33982,7 @@ type 79
 editor_folder scenery/pillars
 layer 5
 face ped_black_h1.111
-animation ped_black_h1
+animation _ped_black_h1
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -33670,7 +33996,7 @@ type 79
 editor_folder scenery/pillars
 layer 5
 face ped_black_hs1.111
-animation ped_black_hs1
+animation _ped_black_hs1
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -33684,7 +34010,7 @@ type 79
 editor_folder scenery/pillars
 layer 5
 face ped_black_hw1.111
-animation ped_black_hw1
+animation _ped_black_hw1
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -33698,7 +34024,7 @@ type 79
 editor_folder scenery/pillars
 layer 5
 face ped_black_hws1.111
-animation ped_black_hws1
+animation _ped_black_hws1
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -33712,7 +34038,7 @@ type 79
 editor_folder scenery/pillars
 layer 5
 face ped_white.111
-animation ped_white
+animation _ped_white
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -33726,7 +34052,7 @@ type 79
 editor_folder scenery/pillars
 layer 5
 face ped_white_h1.111
-animation ped_white_h1
+animation _ped_white_h1
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -33740,7 +34066,7 @@ type 79
 editor_folder scenery/pillars
 layer 5
 face ped_white_hs1.111
-animation ped_white_hs1
+animation _ped_white_hs1
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -33754,7 +34080,7 @@ type 79
 editor_folder scenery/pillars
 layer 5
 face ped_white_hw1.111
-animation ped_white_hw1
+animation _ped_white_hw1
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -33768,7 +34094,7 @@ type 79
 editor_folder scenery/pillars
 layer 5
 face ped_white_hws1.111
-animation ped_white_hws1
+animation _ped_white_hws1
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -33782,7 +34108,7 @@ type 79
 editor_folder scenery/pillars
 layer 5
 face ped_white_hw2.111
-animation ped_white_hw2
+animation _ped_white_hw2
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -33796,7 +34122,7 @@ type 79
 editor_folder scenery/pillars
 layer 5
 face ped_white_hw3.111
-animation ped_white_hw3
+animation _ped_white_hw3
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -33810,7 +34136,7 @@ type 79
 editor_folder scenery/pillars
 layer 5
 face ped_white_ww1.111
-animation ped_white_ww1
+animation _ped_white_ww1
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -33824,7 +34150,7 @@ type 79
 editor_folder scenery/pillars
 layer 5
 face ped_white_ww2.111
-animation ped_white_ww2
+animation _ped_white_ww2
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -33856,7 +34182,7 @@ type 79
 editor_folder scenery/pillars
 layer 5
 face pillar_black1c.111
-animation pillar_black1c
+animation _pillar_black1c
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -33870,7 +34196,7 @@ type 79
 editor_folder scenery/pillars
 layer 5
 face pillar_black1d.111
-animation pillar_black1d
+animation _pillar_black1d
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -33902,7 +34228,7 @@ type 79
 editor_folder scenery/pillars
 layer 5
 face pillar_black2c.111
-animation pillar_black2c
+animation _pillar_black2c
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -33916,7 +34242,7 @@ type 79
 editor_folder scenery/pillars
 layer 5
 face pillar_black2d.111
-animation pillar_black2d
+animation _pillar_black2d
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -34400,7 +34726,7 @@ type 79
 editor_folder scenery/pillars
 layer 5
 face pillar_white1c.111
-animation pillar_white1c
+animation _pillar_white1c
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -34414,7 +34740,7 @@ type 79
 editor_folder scenery/pillars
 layer 5
 face pillar_white1d.111
-animation pillar_white1d
+animation _pillar_white1d
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -34446,7 +34772,7 @@ type 79
 editor_folder scenery/pillars
 layer 5
 face pillar_white2c.111
-animation pillar_white2c
+animation _pillar_white2c
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -34460,7 +34786,7 @@ type 79
 editor_folder scenery/pillars
 layer 5
 face pillar_white2d.111
-animation pillar_white2d
+animation _pillar_white2d
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -34754,7 +35080,7 @@ type 79
 editor_folder scenery/plants
 layer 4
 face mushroom_medium1.101
-animation mushroom_medium1
+animation _mushroom_medium1
 no_pick 1
 end
 Object plant_mushroom1
@@ -35626,7 +35952,7 @@ weight 1500000
 no_pass 1
 blocksview 1
 no_pick 1
-animation rock_big2_waterfall
+animation _rock_big2_waterfall
 is_animated 1
 anim_speed 4
 speed -0.02
@@ -35642,7 +35968,7 @@ weight 1500000
 no_pass 1
 blocksview 1
 no_pick 1
-animation rock_big2_waterfall2
+animation _rock_big2_waterfall2
 is_animated 1
 anim_speed 4
 speed -0.02
@@ -35652,7 +35978,7 @@ name rocks
 type 71
 editor_folder scenery/rocks
 face rock_lake.101
-animation rock_lake
+animation _rock_lake
 speed 0.02
 is_animated 1
 anim_speed 19
@@ -35666,7 +35992,7 @@ name rocks
 type 71
 editor_folder scenery/rocks
 face rock_lake2.101
-animation rock_lake2
+animation _rock_lake2
 speed 0.02
 is_animated 1
 anim_speed 19
@@ -35680,7 +36006,7 @@ name rocks
 type 71
 editor_folder scenery/rocks
 face rock_lake3.101
-animation rock_lake3
+animation _rock_lake3
 speed 0.02
 is_animated 1
 anim_speed 19
@@ -36465,7 +36791,7 @@ mpart_id 6
 editor_folder scenery/rocks
 face waterfall_huge.101
 layer 5
-animation waterfall_huge
+animation _waterfall_huge
 is_animated 1
 anim_speed 1
 speed 1
@@ -36480,7 +36806,7 @@ type 79
 mpart_id 6
 mpart_nr 1
 layer 5
-animation waterfall_huge_a
+animation _waterfall_huge_a
 is_animated 1
 anim_speed 1
 speed 1
@@ -36496,7 +36822,7 @@ type 79
 mpart_id 6
 mpart_nr 2
 layer 5
-animation waterfall_huge_b
+animation _waterfall_huge_b
 is_animated 1
 anim_speed 1
 speed 1
@@ -36512,7 +36838,7 @@ type 79
 mpart_id 6
 mpart_nr 3
 layer 5
-animation waterfall_huge_c
+animation _waterfall_huge_c
 is_animated 1
 anim_speed 1
 speed 1
@@ -36526,7 +36852,7 @@ type 79
 mpart_id 6
 mpart_nr 4
 layer 5
-animation waterfall_huge_d
+animation _waterfall_huge_d
 is_animated 1
 anim_speed 1
 speed 1
@@ -36541,7 +36867,7 @@ type 79
 mpart_id 6
 mpart_nr 5
 layer 5
-animation waterfall_huge_e
+animation _waterfall_huge_e
 is_animated 1
 anim_speed 1
 speed 1
@@ -36556,7 +36882,7 @@ type 79
 mpart_id 6
 mpart_nr 6
 layer 5
-animation waterfall_huge_f
+animation _waterfall_huge_f
 is_animated 1
 anim_speed 1
 speed 1
@@ -36570,7 +36896,7 @@ type 79
 mpart_id 6
 mpart_nr 7
 layer 5
-animation waterfall_huge_g
+animation _waterfall_huge_g
 is_animated 1
 anim_speed 1
 speed 1
@@ -36586,7 +36912,7 @@ type 79
 mpart_id 6
 mpart_nr 8
 layer 5
-animation waterfall_huge_h
+animation _waterfall_huge_h
 is_animated 1
 anim_speed 1
 speed 1
@@ -36700,7 +37026,7 @@ type 79
 editor_folder scenery/scarecrows
 layer 5
 face scarecrow.111
-animation scarecrow.111
+animation _scarecrow.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -37013,7 +37339,7 @@ name shrine
 type 79
 editor_folder scenery/shrines
 face shrine1.111
-animation shrine1.111
+animation _shrine1.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -37036,7 +37362,7 @@ name statue
 type 79
 editor_folder scenery/statues
 face statue_fire.111
-animation statue_fire
+animation _statue_fire
 speed -0.02
 is_animated 1
 anim_speed 4
@@ -37120,7 +37446,7 @@ name statue
 type 79
 editor_folder scenery/statues
 face statue_white2.131
-animation statue_white2
+animation _statue_white2
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -37135,7 +37461,7 @@ name statue
 type 79
 editor_folder scenery/statues
 face statue_white3.131
-animation statue_white3
+animation _statue_white3
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -37154,6 +37480,7 @@ weight 1000000
 no_pass 1
 can_roll 1
 no_pick 1
+terrain_flag 1
 end
 Object stone1
 name stone
@@ -37229,7 +37556,7 @@ is_animated 1
 anim_speed 1
 speed -0.1
 speed_left -1.0
-animation bluebottles
+animation _bluebottles
 end
 Object table_round1
 name table
@@ -37288,7 +37615,7 @@ name table
 type 79
 editor_folder scenery/tables
 face table_lab1.111
-animation table_lab1.111
+animation _table_lab1.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -37302,7 +37629,7 @@ name table
 type 79
 editor_folder scenery/tables
 face table_lab2.111
-animation table_lab2.111
+animation _table_lab2.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -37316,7 +37643,7 @@ name table
 type 79
 editor_folder scenery/tables
 face table_lab3.111
-animation table_lab3.111
+animation _table_lab3.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -37352,7 +37679,7 @@ name kettle table
 type 79
 editor_folder scenery/tables
 face table_round_kettle.101
-animation kettle table
+animation _kettle table
 is_animated 1
 anim_speed 1
 speed 1
@@ -37369,7 +37696,7 @@ name table
 type 79
 editor_folder scenery/tables
 face table_wood1.111
-animation table_wood1.111
+animation _table_wood1.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -37384,7 +37711,7 @@ type 79
 editor_folder scenery/targets
 layer 5
 face target.111
-animation target.111
+animation _target.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -37397,7 +37724,7 @@ name anvil
 type 79
 editor_folder scenery/tools
 face anvil.111
-animation anvil_111
+animation _anvil_111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -37410,7 +37737,20 @@ name big anvil
 type 79
 editor_folder scenery/tools
 face anvil_big.111
-animation anvil_big_111
+animation _anvil_big_111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 4
+end
+Object broom.111
+name broom
+type 79
+editor_folder scenery/tools
+face broom.111
+animation _broom.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -37423,7 +37763,7 @@ name forge
 type 79
 editor_folder scenery/tools
 face forge.111
-animation forge_111
+animation _forge_111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -37436,7 +37776,7 @@ name pitchfork
 type 79
 editor_folder scenery/tools
 face pitchfork.151
-animation pitchfork
+animation _pitchfork
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -38616,7 +38956,7 @@ name tipper
 type 79
 editor_folder scenery/wagons
 face tipper.111
-animation tipper
+animation _tipper
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -38631,7 +38971,7 @@ mpart_id 3
 editor_folder scenery/wagons
 layer 5
 face wagon_big.131
-animation wagon_big
+animation _wagon_big
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -38750,7 +39090,7 @@ name well
 type 77
 editor_folder scenery/water
 face wall_well.131
-animation wall_well.131
+animation _wall_well.131
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -38763,7 +39103,7 @@ name watertrough
 type 79
 editor_folder scenery/water
 face watertrough.141
-animation watertrough.111
+animation _watertrough.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -38779,7 +39119,7 @@ mpart_id 2
 editor_folder scenery/water_wheels
 face dwarf_wheel.101
 layer 5
-animation dwarf_wheel
+animation _dwarf_wheel
 is_animated 1
 anim_speed 1
 speed 1
@@ -38792,7 +39132,7 @@ type 79
 mpart_id 2
 mpart_nr 1
 layer 5
-animation dwarf_wheelb
+animation _dwarf_wheelb
 is_animated 1
 anim_speed 1
 speed 1
@@ -38806,7 +39146,7 @@ mpart_id 1
 editor_folder scenery/water_wheels
 face dwarf_wheel_2.101
 layer 5
-animation dwarf_wheel_2
+animation _dwarf_wheel_2
 is_animated 1
 anim_speed 1
 speed 1
@@ -38819,7 +39159,7 @@ type 79
 mpart_id 1
 mpart_nr 1
 layer 5
-animation dwarf_wheelb_2
+animation _dwarf_wheelb_2
 is_animated 1
 anim_speed 1
 speed 1
@@ -39354,7 +39694,7 @@ face jackolantern.151
 other_arch jack_unlit
 direction 5
 layer 3
-animation jack
+animation _jack
 is_animated 1
 is_turnable 1
 anim_speed 4
@@ -39391,7 +39731,7 @@ face lantern_pumpk_a.100
 can_stack 1
 nrof 1
 layer 3
-animation lantern_pumpk_a
+animation _lantern_pumpk_a
 anim_speed 4
 material 32
 material_real -1
@@ -39412,7 +39752,7 @@ face lantern_pumpk_b.100
 can_stack 1
 nrof 1
 layer 3
-animation lantern_pumpk_b
+animation _lantern_pumpk_b
 anim_speed 4
 material 32
 material_real -1
@@ -39433,7 +39773,7 @@ face lantern_pumpk_c.100
 can_stack 1
 nrof 1
 layer 3
-animation lantern_pumpk_c
+animation _lantern_pumpk_c
 anim_speed 4
 material 32
 material_real -1
@@ -39454,7 +39794,7 @@ face lantern_pumpk_d.100
 can_stack 1
 nrof 1
 layer 3
-animation lantern_pumpk_d
+animation _lantern_pumpk_d
 anim_speed 4
 material 32
 material_real -1
@@ -39510,7 +39850,7 @@ resist_acid 25
 speed -0.054
 level 1
 weight 732500
-animation demon_pumpkin
+animation _demon_pumpkin
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -39559,7 +39899,7 @@ resist_acid 25
 speed -0.054
 level 1
 weight 732500
-animation g_pumpkin
+animation _g_pumpkin
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -39609,7 +39949,7 @@ attack_pierce 100
 speed -0.240
 level 1
 weight 91500
-animation headless_horseman
+animation _headless_horseman
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -39847,7 +40187,7 @@ attack_slash 100
 speed -0.047
 level 1
 weight 48500
-animation dancerf1
+animation _dancerf1
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -39896,7 +40236,7 @@ attack_slash 100
 speed -0.047
 level 1
 weight 48500
-animation dancerm1
+animation _dancerm1
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -40037,7 +40377,7 @@ face cane_pole.131
 other_arch cane_pole_unlit
 layer 5
 glow_radius 5
-animation cane_pole
+animation _cane_pole
 speed -0.02
 is_turnable 1
 anim_speed 4
@@ -40070,7 +40410,7 @@ type 79
 editor_folder themed/xmas
 layer 5
 face chtree_big5b.101
-animation chtree_big5b
+animation _chtree_big5b
 is_animated 1
 anim_speed 4
 speed 0.1
@@ -40085,7 +40425,7 @@ type 79
 editor_folder themed/xmas
 layer 5
 face xmastreeinside.101
-animation xmastreeinside
+animation _xmastreeinside
 is_animated 1
 anim_speed 4
 speed 0.1
@@ -40101,7 +40441,7 @@ mpart_id 3
 editor_folder themed/xmas
 layer 5
 face xmastree.101
-animation xmastree
+animation _xmastree
 is_animated 1
 anim_speed 4
 speed 0.1
@@ -40168,7 +40508,7 @@ resist_snare 4
 material_real 449
 material 128
 is_animated 1
-animation cloak_santa
+animation _cloak_santa
 anim_speed 5
 end
 Object scarf
@@ -40220,7 +40560,7 @@ type 79
 editor_folder themed/xmas
 layer 4
 face elf_toytable.111
-animation elf_toytable
+animation _elf_toytable
 is_animated 1
 anim_speed 4
 speed 0.1
@@ -40234,7 +40574,7 @@ type 79
 editor_folder themed/xmas
 layer 4
 face elf_toytable.171
-animation elf_toytable2
+animation _elf_toytable2
 is_animated 1
 anim_speed 4
 speed 0.1
@@ -40253,7 +40593,7 @@ can_stack 1
 grace 10
 layer 3
 face figpud.101
-animation figpud
+animation _figpud
 is_animated 1
 anim_speed 3
 weight 400
@@ -40274,7 +40614,7 @@ grace 10
 layer 3
 can_stack 1
 face figpud2.101
-animation figpud2
+animation _figpud2
 is_animated 1
 anim_speed 3
 weight 400
@@ -40290,7 +40630,7 @@ type 79
 editor_folder themed/xmas
 face chtree_big5b.101
 identified 1
-animation full_xmas_tree
+animation _full_xmas_tree
 is_animated 1
 anim_speed 4
 speed 0.1
@@ -40349,7 +40689,7 @@ type 79
 editor_folder themed/xmas
 face cup_tree.101
 identified 1
-animation cup_tree
+animation _cup_tree
 is_animated 1
 anim_speed 5
 layer 3
@@ -40362,7 +40702,7 @@ type 79
 editor_folder themed/xmas
 face evilelf.101
 identified 1
-animation evilelf
+animation _evilelf
 is_animated 1
 anim_speed 5
 layer 3
@@ -40387,7 +40727,7 @@ type 79
 editor_folder themed/xmas
 face santabobblehead.101
 identified 1
-animation santabobblehead
+animation _santabobblehead
 is_animated 1
 anim_speed 4
 layer 3
@@ -40503,7 +40843,7 @@ name santa toy
 type 79
 editor_folder themed/xmas
 face toy_santa.101
-animation toy_santa
+animation _toy_santa
 is_animated 1
 anim_speed 2
 identified 1
@@ -40625,7 +40965,7 @@ name Holiday Lights
 type 77
 editor_folder themed/xmas
 face lights_holiday_blue.131
-animation lights_holiday_blue
+animation _lights_holiday_blue
 is_animated 1
 anim_speed 3
 speed -.25
@@ -40639,7 +40979,7 @@ name Holiday Lights
 type 77
 editor_folder themed/xmas
 face lights_holiday_blue_all.131
-animation lights_holiday_blue_all
+animation _lights_holiday_blue_all
 is_animated 1
 anim_speed 3
 speed -.25
@@ -40653,7 +40993,7 @@ name Holiday Lights
 type 77
 editor_folder themed/xmas
 face lights_holiday_multi.131
-animation lights_holiday_multi
+animation _lights_holiday_multi
 is_animated 1
 anim_speed 3
 speed -.25
@@ -40667,7 +41007,7 @@ name Holiday Lights
 type 77
 editor_folder themed/xmas
 face lights_holiday_multi_all.131
-animation lights_holiday_multi_all
+animation _lights_holiday_multi_all
 is_animated 1
 anim_speed 3
 speed -.25
@@ -40681,7 +41021,7 @@ name Holiday Lights
 type 77
 editor_folder themed/xmas
 face lights_holiday_pink.131
-animation lights_holiday_pink
+animation _lights_holiday_pink
 is_animated 1
 anim_speed 3
 speed -.25
@@ -40695,7 +41035,7 @@ name Holiday Lights
 type 77
 editor_folder themed/xmas
 face lights_holiday_pink_all.131
-animation lights_holiday_pink_all
+animation _lights_holiday_pink_all
 is_animated 1
 anim_speed 3
 speed -.25
@@ -40709,7 +41049,7 @@ name Holiday Lights
 type 77
 editor_folder themed/xmas
 face lights_holiday_red.131
-animation lights_holiday_red
+animation _lights_holiday_red
 is_animated 1
 anim_speed 3
 speed -.25
@@ -40723,7 +41063,7 @@ name Holiday Lights
 type 77
 editor_folder themed/xmas
 face lights_holiday_red_all.131
-animation lights_holiday_red_all
+animation _lights_holiday_red_all
 is_animated 1
 anim_speed 3
 speed -.25
@@ -40737,7 +41077,7 @@ name Holiday Lights
 type 77
 editor_folder themed/xmas
 face lights_holiday_white_a.131
-animation lights_holiday_white_a
+animation _lights_holiday_white_a
 is_animated 1
 anim_speed 3
 speed -.25
@@ -40751,7 +41091,7 @@ name Holiday Lights
 type 77
 editor_folder themed/xmas
 face lights_holiday_white_all.131
-animation lights_holiday_white_all
+animation _lights_holiday_white_all
 is_animated 1
 anim_speed 3
 speed -.25
@@ -40765,7 +41105,7 @@ name Holiday Lights
 type 77
 editor_folder themed/xmas
 face lights_holiday_xmas.131
-animation lights_holiday_xmas
+animation _lights_holiday_xmas
 is_animated 1
 anim_speed 3
 speed -.25
@@ -40779,7 +41119,7 @@ name Holiday Lights
 type 77
 editor_folder themed/xmas
 face lights_holiday_xmas_all.131
-animation lights_holiday_xmas_all
+animation _lights_holiday_xmas_all
 is_animated 1
 anim_speed 3
 speed -.25
@@ -40793,7 +41133,7 @@ name Holiday Lights
 type 77
 editor_folder themed/xmas
 face lights_holiday_yellow.131
-animation lights_holiday_yellow
+animation _lights_holiday_yellow
 is_animated 1
 anim_speed 3
 speed -.25
@@ -40807,7 +41147,7 @@ name Holiday Lights
 type 77
 editor_folder themed/xmas
 face lights_holiday_yellow_all.131
-animation lights_holiday_yellow_all
+animation _lights_holiday_yellow_all
 is_animated 1
 anim_speed 3
 speed -.25
@@ -40875,7 +41215,7 @@ name menorah
 type 71
 editor_folder themed/xmas
 face table_menorah1.101
-animation table_menorah
+animation _table_menorah
 speed 0.02
 is_animated 1
 anim_speed 19
@@ -40895,7 +41235,7 @@ no_teleport 1
 layer 3
 is_animated 1
 anim_speed 4
-animation menorah_wagon
+animation _menorah_wagon
 end
 Object santa
 name Santa
@@ -40947,7 +41287,7 @@ attack_weaponmagic 50
 speed -0.048
 level 1
 weight 65500
-animation santa
+animation _santa
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -40994,7 +41334,7 @@ attack_impact 100
 speed -0.046
 level 1
 weight 125000
-animation snowman_evil
+animation _snowman_evil
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -41041,7 +41381,7 @@ attack_impact 100
 speed -0.046
 level 1
 weight 185000
-animation snowman_evil2
+animation _snowman_evil2
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -41051,7 +41391,7 @@ name sign
 type 98
 editor_folder themed/xmas
 face npsign.161
-animation npsign
+animation _npsign
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -41077,7 +41417,7 @@ player_only 1
 hp -1
 sp -1
 sub_type 1
-animation portal_elf
+animation _portal_elf
 is_animated 1
 anim_speed 4
 speed 0.1
@@ -41244,7 +41584,7 @@ type 79
 editor_folder themed/xmas
 face snowflakey.101
 identified 1
-animation snowflakey
+animation _snowflakey
 is_animated 1
 anim_speed 4
 speed 0.1
@@ -41279,7 +41619,7 @@ player_only 1
 hp -1
 sp -1
 sub_type 1
-animation star_davidt
+animation _star_davidt
 is_animated 1
 anim_speed 4
 speed 0.1
@@ -41349,7 +41689,7 @@ name large tree
 type 79
 editor_folder themed/xmas
 face xmastreeinside.101
-animation white_xmas_tree
+animation _white_xmas_tree
 is_animated 1
 anim_speed -.2
 identified 1
@@ -41366,7 +41706,7 @@ name wreath
 type 77
 editor_folder themed/xmas
 face wreath.u.151
-animation wreath.151
+animation _wreath.151
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -41447,7 +41787,7 @@ endmsg
 editor_folder traps/traps
 face tspikes.101
 hp 1
-animation trap_bear_trap
+animation _trap_bear_trap
 level 1
 anim_speed 1
 is_animated 0
@@ -41468,7 +41808,7 @@ endmsg
 editor_folder traps/traps
 face blades.101
 hp 1
-animation trap_blades
+animation _trap_blades
 level 1
 anim_speed 1
 is_animated 0
@@ -41489,7 +41829,7 @@ endmsg
 editor_folder traps/traps
 face falling_rocks.101
 hp 1
-animation trap_rocks
+animation _trap_rocks
 level 1
 anim_speed 1
 is_animated 0
@@ -41507,7 +41847,7 @@ editor_folder traps/traps
 face glue.101
 speed -0.06
 layer 4
-animation glue
+animation _glue
 is_animated 1
 anim_speed 14
 no_pick 1
@@ -41521,7 +41861,7 @@ sub_type 128
 face needle.101
 randomitems traps_needle_diseases
 hp 1
-animation trap_diseased_needle
+animation _trap_diseased_needle
 anim_speed 1
 level 1
 is_animated 0
@@ -41540,7 +41880,7 @@ endmsg
 editor_folder traps/traps
 face needle.101
 hp 1
-animation trap_needle
+animation _trap_needle
 level 1
 anim_speed 1
 is_animated 0
@@ -41562,7 +41902,7 @@ editor_folder traps/runes
 layer 4
 face rune_acid.101
 hp 1
-animation rune_acid
+animation _rune_acid
 level 1
 is_animated 0
 anim_speed 1
@@ -41583,7 +41923,7 @@ editor_folder traps/runes
 layer 4
 face rune_aether.101
 hp 1
-animation rune_aether
+animation _rune_aether
 level 1
 is_animated 0
 anim_speed 1
@@ -41604,7 +41944,7 @@ editor_folder traps/runes
 layer 4
 face rune_chaos.101
 hp 1
-animation rune_chaos
+animation _rune_chaos
 level 1
 is_animated 0
 anim_speed 1
@@ -41625,7 +41965,7 @@ editor_folder traps/runes
 layer 4
 face rune_cold.101
 hp 1
-animation rune_cold
+animation _rune_cold
 level 1
 is_animated 0
 anim_speed 1
@@ -41646,7 +41986,7 @@ editor_folder traps/runes
 layer 4
 face rune_confusion.101
 hp 1
-animation rune_confusion
+animation _rune_confusion
 level 1
 is_animated 0
 anim_speed 1
@@ -41667,7 +42007,7 @@ editor_folder traps/runes
 layer 4
 face rune_corruption.101
 hp 1
-animation rune_corruption
+animation _rune_corruption
 level 1
 is_animated 0
 anim_speed 1
@@ -41688,7 +42028,7 @@ editor_folder traps/runes
 layer 4
 face rune_death.101
 hp 1
-animation rune_death
+animation _rune_death
 level 1
 is_animated 0
 anim_speed 1
@@ -41709,7 +42049,7 @@ editor_folder traps/runes
 layer 4
 face rune_depletion.101
 hp 1
-animation rune_depletion
+animation _rune_depletion
 level 1
 is_animated 0
 anim_speed 1
@@ -41730,7 +42070,7 @@ editor_folder traps/runes
 layer 4
 face rune_drain.101
 hp 1
-animation rune_drain
+animation _rune_drain
 level 1
 is_animated 0
 anim_speed 1
@@ -41751,7 +42091,7 @@ editor_folder traps/runes
 layer 4
 face rune_electricity.101
 hp 1
-animation rune_electricity
+animation _rune_electricity
 level 1
 is_animated 0
 anim_speed 1
@@ -41772,7 +42112,7 @@ editor_folder traps/runes
 layer 4
 face rune_fear.101
 hp 1
-animation rune_fear
+animation _rune_fear
 level 1
 is_animated 0
 anim_speed 1
@@ -41793,7 +42133,7 @@ editor_folder traps/runes
 layer 4
 face rune_fire.101
 hp 1
-animation rune_fire
+animation _rune_fire
 level 1
 is_animated 0
 anim_speed 1
@@ -41814,7 +42154,7 @@ editor_folder traps/runes
 layer 4
 face rune_godpower.101
 hp 1
-animation rune_godpower
+animation _rune_godpower
 level 1
 is_animated 0
 anim_speed 1
@@ -41835,7 +42175,7 @@ editor_folder traps/runes
 layer 4
 face rune_lifesteal.101
 hp 1
-animation rune_lifesteal
+animation _rune_lifesteal
 level 1
 is_animated 0
 anim_speed 1
@@ -41856,7 +42196,7 @@ editor_folder traps/runes
 layer 4
 face rune_light.101
 hp 1
-animation rune_light
+animation _rune_light
 level 1
 is_animated 0
 anim_speed 1
@@ -41877,7 +42217,7 @@ editor_folder traps/runes
 layer 4
 face rune_magic.101
 hp 1
-animation rune_magic
+animation _rune_magic
 level 1
 is_animated 0
 anim_speed 1
@@ -41898,7 +42238,7 @@ editor_folder traps/runes
 layer 4
 face rune_nether.101
 hp 1
-animation rune_nether
+animation _rune_nether
 level 1
 is_animated 0
 anim_speed 1
@@ -41919,7 +42259,7 @@ editor_folder traps/runes
 layer 4
 face rune_paralyze.101
 hp 1
-animation rune_paralyze
+animation _rune_paralyze
 level 1
 is_animated 0
 anim_speed 1
@@ -41940,7 +42280,7 @@ editor_folder traps/runes
 layer 4
 face rune_poison.101
 hp 1
-animation rune_poison
+animation _rune_poison
 level 1
 is_animated 0
 anim_speed 1
@@ -41961,7 +42301,7 @@ editor_folder traps/runes
 layer 4
 face rune_psionic.101
 hp 1
-animation rune_psionic
+animation _rune_psionic
 level 1
 is_animated 0
 anim_speed 1
@@ -41982,7 +42322,7 @@ editor_folder traps/runes
 layer 4
 face rune_shadow.101
 hp 1
-animation rune_shadow
+animation _rune_shadow
 level 1
 is_animated 0
 anim_speed 1
@@ -42003,7 +42343,7 @@ editor_folder traps/runes
 layer 4
 face rune_slow.101
 hp 1
-animation rune_slow
+animation _rune_slow
 level 1
 is_animated 0
 anim_speed 1
@@ -42024,7 +42364,7 @@ editor_folder traps/runes
 layer 4
 face rune_snare.101
 hp 1
-animation rune_snare
+animation _rune_snare
 level 1
 is_animated 0
 anim_speed 1
@@ -42045,7 +42385,7 @@ editor_folder traps/runes
 layer 4
 face rune_sonic.101
 hp 1
-animation rune_sonic
+animation _rune_sonic
 level 1
 is_animated 0
 anim_speed 1
@@ -42066,7 +42406,7 @@ editor_folder traps/runes
 layer 4
 face rune_weaponmagic.101
 hp 1
-animation rune_weaponmagic
+animation _rune_weaponmagic
 level 1
 is_animated 0
 anim_speed 1
@@ -42084,7 +42424,7 @@ editor_folder traps/traps
 face spider_web.111
 layer 4
 speed -0.01
-animation spider_web
+animation _spider_web
 is_animated 1
 anim_speed 25
 no_pick 1
@@ -42099,7 +42439,7 @@ endmsg
 editor_folder traps/traps
 face spiked_pit.101
 hp 1
-animation trap_spike_pit
+animation _trap_spike_pit
 level 1
 anim_speed 1
 is_animated 0
@@ -42117,7 +42457,7 @@ type 95
 editor_folder traps/traps
 layer 4
 face trapdoor_1.101
-animation trapdoor
+animation _trapdoor
 is_animated 0
 anim_speed 4
 walk_on 1
@@ -42860,8 +43200,6 @@ type 77
 editor_folder walls/doorways
 face doorway_wood1.111
 animation doorway_wood1_1
-is_animated 0
-anim_speed 0
 is_turnable 1
 direction 1
 no_pick 1
@@ -43226,7 +43564,6 @@ no_pick 1
 direction 1
 face fence_01_gate_closed.112
 animation fence_gate_01
-is_animated 0
 anim_speed 1
 is_turnable 1
 end
@@ -44469,8 +44806,6 @@ type 77
 editor_folder walls/lo_walls
 face lo_wall1.111
 animation lo_wall1
-is_animated 0
-anim_speed 0
 is_turnable 1
 direction 1
 layer 5
@@ -44483,8 +44818,6 @@ type 77
 editor_folder walls/lo_walls
 face lo_wall2.111
 animation lo_wall2
-is_animated 0
-anim_speed 0
 is_turnable 1
 direction 1
 layer 5
@@ -44497,8 +44830,6 @@ type 77
 editor_folder walls/lo_walls
 face lo_wall2a.111
 animation lo_wall2a
-is_animated 0
-anim_speed 0
 is_turnable 1
 direction 1
 layer 5
@@ -44511,8 +44842,6 @@ type 77
 editor_folder walls/lo_walls
 face lo_wall3.111
 animation lo_wall3
-is_animated 0
-anim_speed 0
 is_turnable 1
 direction 1
 layer 5
@@ -44525,8 +44854,6 @@ type 77
 editor_folder walls/lo_walls
 face lo_wall3a.111
 animation lo_wall3a
-is_animated 0
-anim_speed 0
 is_turnable 1
 direction 1
 layer 5
@@ -44548,8 +44875,6 @@ type 77
 editor_folder walls/lo_walls
 face lo_wall4a.111
 animation lo_wall4a
-is_animated 0
-anim_speed 0
 is_turnable 1
 direction 1
 layer 5
@@ -44562,8 +44887,6 @@ type 77
 editor_folder walls/lo_walls
 face lo_wall4b.111
 animation lo_wall4b
-is_animated 0
-anim_speed 0
 is_turnable 1
 direction 1
 layer 5
@@ -44576,8 +44899,6 @@ type 77
 editor_folder walls/lo_walls
 face lo_wall4c.111
 animation lo_wall4c
-is_animated 0
-anim_speed 0
 is_turnable 1
 direction 1
 layer 5
@@ -44591,8 +44912,6 @@ type 77
 editor_folder walls/lo_walls
 face lo_wall5.111
 animation lo_wall5
-is_animated 0
-anim_speed 0
 is_turnable 1
 direction 1
 layer 5
@@ -44605,8 +44924,6 @@ type 77
 editor_folder walls/lo_walls
 face lo_wall5a.111
 animation lo_wall5a
-is_animated 0
-anim_speed 0
 is_turnable 1
 direction 1
 layer 5
@@ -44620,8 +44937,6 @@ type 77
 editor_folder walls/lo_walls
 face lo_wall6.111
 animation lo_wall6
-is_animated 0
-anim_speed 0
 is_turnable 1
 direction 1
 layer 5
@@ -44635,8 +44950,6 @@ type 77
 editor_folder walls/lo_walls
 face lo_wall6.d.111
 animation lo_wall6_d
-is_animated 0
-anim_speed 0
 is_turnable 1
 direction 1
 layer 5
@@ -44650,8 +44963,6 @@ type 77
 editor_folder walls/lo_walls
 face lo_wall6a.111
 animation lo_wall6a
-is_animated 0
-anim_speed 0
 is_turnable 1
 direction 1
 layer 5
@@ -44665,8 +44976,6 @@ type 77
 editor_folder walls/lo_walls
 face lo_wall7.111
 animation lo_wall7
-is_animated 0
-anim_speed 0
 is_turnable 1
 direction 1
 layer 5
@@ -44700,8 +45009,6 @@ type 77
 editor_folder walls/lo_walls
 face lo_wall9.111
 animation lo_wall9
-is_animated 0
-anim_speed 0
 is_turnable 1
 direction 1
 layer 5
@@ -46489,116 +46796,6 @@ layer 5
 no_pick 1
 no_pass 1
 end
-Object palisade-door1
-name door
-type 20
-msg
-The door is locked.
-endmsg
-editor_folder walls/palisade
-layer 5
-face palisade-door1.151
-door_closed 1
-sp 5
-blocksview 1
-pass_thru 1
-no_pick 1
-animation palisade-door1
-is_turnable 1
-is_animated 0
-anim_speed 0
-direction 5
-end
-Object palisade-door1-w
-name door
-type 20
-msg
-The door is locked.
-endmsg
-editor_folder walls/palisade
-layer 5
-face palisade-door1-w.151
-door_closed 1
-sp 5
-pass_thru 1
-no_pick 1
-animation palisade-door1-w
-is_turnable 1
-is_animated 0
-anim_speed 0
-direction 5
-end
-Object palisade-doorway1
-name doorway
-type 77
-editor_folder walls/palisade
-layer 7
-face palisade-doorway1.151
-no_pick 1
-animation palisade-doorway1
-is_turnable 1
-is_animated 0
-anim_speed 0
-direction 5
-end
-Object palisade-doorway2
-name doorway
-type 77
-editor_folder walls/palisade
-layer 7
-face palisade-doorway2.151
-no_pick 1
-animation palisade-doorway2
-is_turnable 1
-is_animated 0
-anim_speed 0
-direction 5
-end
-Object palisade-wall1
-name wooden palisade
-type 77
-editor_folder walls/palisade
-layer 5
-face palisade-wall1.151
-blocksview 1
-no_pick 1
-no_pass 1
-animation palisade-wall1
-is_turnable 1
-is_animated 0
-anim_speed 0
-direction 5
-end
-Object palisade-wall2
-name wooden palisade
-type 77
-editor_folder walls/palisade
-layer 5
-face palisade-wall2.151
-blocksview 1
-no_pick 1
-no_pass 1
-animation palisade-wall2
-is_turnable 1
-is_animated 0
-anim_speed 0
-direction 5
-end
-Object palisade-wall3
-name wooden palisade
-type 77
-editor_folder walls/palisade
-layer 5
-face palisade-wall3.151
-blocksview 1
-no_pick 1
-no_pass 1
-animation palisade-wall3
-is_turnable 1
-is_animated 0
-anim_speed 0
-direction 5
-end
 Object wall_pattern1.111
 name stone wall
 type 77
@@ -46887,8 +47084,6 @@ type 77
 editor_folder walls/row_boat
 face row_boat_a.101
 animation rowboat_a
-is_animated 0
-anim_speed 0
 is_turnable 1
 direction 1
 no_pick 1
@@ -46900,8 +47095,6 @@ type 77
 editor_folder walls/row_boat
 face row_boat_b.101
 animation rowboat_b
-is_animated 0
-anim_speed 0
 is_turnable 1
 direction 1
 no_pick 1
