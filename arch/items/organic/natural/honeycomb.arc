@@ -1,4 +1,5 @@
 Object honeycomb
+name honeycomb
 face honeycomb01.101
 last_eat 10
 hp 20

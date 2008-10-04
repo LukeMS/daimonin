@@ -1,4 +1,5 @@
 Object apricot
+name apricot
 face apricot01.101
 last_eat 10
 hp 20

@@ -1,4 +1,5 @@
 Object sausage
+name sausages
 face sausage01.101
 last_eat 10
 hp 20

@@ -1,4 +1,5 @@
 Object roast
+name roast
 face roast01.101
 last_eat 10
 hp 20

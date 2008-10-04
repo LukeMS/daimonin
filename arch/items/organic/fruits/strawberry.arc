@@ -1,4 +1,5 @@
 Object strawberry
+name strawberry
 face strawberry01.101
 last_eat 10
 hp 20

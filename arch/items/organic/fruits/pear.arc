@@ -1,4 +1,5 @@
 Object pear
+name yellow pear
 face pear01.101
 last_eat 10
 hp 20
@@ -14,8 +15,9 @@ material_real -1
 value 10
 weight 400
 end
+
 Object pear1
-name pear
+name green pear
 face pear02.101
 last_eat 10
 hp 20

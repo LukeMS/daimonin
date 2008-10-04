@@ -1,4 +1,5 @@
 Object orange
+name orange
 face orange01.101
 last_eat 10
 hp 20

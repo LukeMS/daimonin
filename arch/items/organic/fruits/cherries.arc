@@ -1,4 +1,5 @@
 Object cherries
+name cherries
 face cherries01.101
 last_eat 10
 hp 20

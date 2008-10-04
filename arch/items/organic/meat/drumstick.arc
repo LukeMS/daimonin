@@ -1,4 +1,5 @@
 Object drumstick
+name drumstick
 face drumstick01.101
 last_eat 10
 hp 20

@@ -1,4 +1,5 @@
 Object tomato
+name tomato
 face tomato01.101
 last_eat 10
 hp 20
