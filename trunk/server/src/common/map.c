@@ -2068,9 +2068,8 @@ void save_objects(mapstruct *m, FILE *fp, int flag)
                 else if (op->type == MONSTER)
                 {
                     /* This is for mobs whose spawn has been interrupted by a
-                     * script so do not have SPAWN_INFO or MOB DATA. Properly
-                     * spawned mobs should have been handled above, so
-                     * this should be safe. */
+                     * script so do not have SPAWN_INFO. Properly spawned mobs
+                     * should have been handled above, so this should be safe. */
                     activelist_remove(head);
                     remove_ob(head);
                     check_walk_off(head, NULL, MOVE_APPLY_VANISHED | MOVE_APPLY_SAVING);
