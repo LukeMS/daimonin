@@ -73,6 +73,7 @@ short Network::GetShort_String(unsigned char *data)
 //================================================================================================
 void Network::AccNameSuccess(unsigned char *data, int len)
 {
+    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Account Success");
     Logger::log().error() << "AccNameSuccess";
     /*
     int num = (len)?GetUINT8_String(data):ACCOUNT_STATUS_DISCONNECT;
@@ -111,12 +112,17 @@ void Network::AccNameSuccess(unsigned char *data, int len)
 void Network::AccountCmd(unsigned char *data, int len)
 {
     int count = 0;
+
+    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Account cmd from server");
+
     ObjectHero::getSingleton().clearAccount();
     // First, get the account status - it tells us too when login failed
     if ((unsigned char)data[count++]) // something is wrong when not ACCOUNT_STATUS_OK (0)
     {
+    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Account fail");
         GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Account does not exist");
-        Logger::log().error() << "Unknown Account!";
+        GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED, GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"Account does not exist");
+        Option::getSingleton().setGameStatus(Option::GAME_STATUS_START);
 /*
         draw_info_format(COLOR_RED, "Unknown Account: %s", cpl.acc_name);
         GameStatus = GAME_STATUS_LOGIN_ACCOUNT;
@@ -128,11 +134,14 @@ void Network::AccountCmd(unsigned char *data, int len)
     }
     else // we have account data... set it up and move player to account view mode
     {
+        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Account ok");
+
         for (int nr = 0; nr < ObjectHero::ACCOUNT_MAX_PLAYER; ++nr)
         {
             if (count >= len) break;
             count += ObjectHero::getSingleton().fillAccount(nr, data+count);
         }
+        Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_DONE);
         //GameStatus = GAME_STATUS_ACCOUNT;
         //LoginInputStep = LOGIN_STEP_NOTHING;
     }
@@ -176,6 +185,7 @@ void Network::Map2Cmd(unsigned char *data, int len)
 {
     static int map_w=0, map_h=0,mx=0,my=0;
     int     mask, x, y, pos = 0, ext_flag, xdata;
+    int height_2, height_3, height_4;
     int     mapstat, ext1, ext2, ext3, probe;
     bool    map_new_flag = false;
     int     ff0, ff1, ff2, ff3, ff_flag, xpos, ypos;
@@ -219,7 +229,6 @@ void Network::Map2Cmd(unsigned char *data, int len)
     {
         xpos = (uint8) (data[pos++]);
         ypos = (uint8) (data[pos++]);
-
         // we have moved
         if ((xpos - mx || ypos - my))
         {
@@ -269,16 +278,14 @@ void Network::Map2Cmd(unsigned char *data, int len)
         if (mask & 0x20) // catch the ext. flag...
         {
             ext_flag = (uint8) (data[pos++]);
-
             if (ext_flag & 0x80) // we have player names....
             {
                 char c;
-                int  i, pname_flag = (uint8) (data[pos++]);
-
+                int  i, pname_flag = (uint8) data[pos++];
                 if (pname_flag & 0x08) // floor ....
                 {
                     i = 0;
-                    while ((c = (char) (data[pos++])))
+                    while ((c = (char) data[pos++]))
                     {
                         pname1[i++] = c;
                     }
@@ -287,7 +294,7 @@ void Network::Map2Cmd(unsigned char *data, int len)
                 if (pname_flag & 0x04) // fm....
                 {
                     i = 0;
-                    while ((c = (char) (data[pos++])))
+                    while ((c = (char) data[pos++]))
                     {
                         pname2[i++] = c;
                     }
@@ -311,11 +318,29 @@ void Network::Map2Cmd(unsigned char *data, int len)
                     }
                     pname4[i] = 0;
                 }
+                if (pname_flag & 0x40)
+                {
+                    height_2 = GetShort_String(data + pos);
+                    pos+=2;
+                    c = data[pos++];
+                }
+                if (pname_flag & 0x20)
+                {
+                    height_3 = GetShort_String(data + pos);
+                    pos+=2;
+                    c = data[pos++];
+                }
+                if (pname_flag & 0x10)
+                {
+                    height_4 = GetShort_String(data + pos);
+                    pos+=2;
+                    c = data[pos++];
+                }
             }
             if (ext_flag & 0x40) // damage add on the map
             {
                 ff0 = ff1 = ff2 = ff3 = -1;
-                ff_flag = (uint8) (data[pos++]);
+                ff_flag = (uint8) data[pos++];
                 if (ff_flag & 0x8)
                 {
                     ff0 = GetShort_String(data + pos);
@@ -343,9 +368,9 @@ void Network::Map2Cmd(unsigned char *data, int len)
             }
             if (ext_flag & 0x08)
             {
-                ext3 = (int) (data[pos++]);
+                ext3 = (int) data[pos++];
                 if (ext3 & TileMap::FFLAG_PROBE)
-                    probe = (int) (data[pos++]);
+                    probe = (int) data[pos++];
                 else
                     probe = 0;
                 TileMap::getSingleton().set_map_ext(x, y, 3, ext3, probe);
@@ -396,7 +421,7 @@ void Network::Map2Cmd(unsigned char *data, int len)
             xdata = 0;
             if (ext_flag & 0x04) // we have here a multi arch, fetch head offset
             {
-                xdata = (uint8) (data[pos]);
+                xdata = (uint8) data[pos];
                 pos++;
             }
             TileMap::getSingleton().set_map_face(x, y, 1, face, xdata, ext1, pname2);
@@ -409,7 +434,7 @@ void Network::Map2Cmd(unsigned char *data, int len)
             xdata = 0;
             if (ext_flag & 0x02) // we have here a multi arch, fetch head offset
             {
-                xdata = (uint8) (data[pos]);
+                xdata = (uint8) data[pos];
                 pos++;
             }
             TileMap::getSingleton().set_map_face(x, y, 2, face, xdata, ext2, pname3);
@@ -422,7 +447,7 @@ void Network::Map2Cmd(unsigned char *data, int len)
             xdata = 0;
             if (ext_flag & 0x01) // we have here a multi arch, fetch head offset
             {
-                xdata = (uint8) (data[pos]);
+                xdata = (uint8) data[pos];
                 pos++;
             }
             TileMap::getSingleton().set_map_face(x, y, 3, face, xdata, ext3, pname4);
@@ -994,46 +1019,6 @@ void Network::Face1Cmd(unsigned char *data, int len)
 //================================================================================================
 // .
 //================================================================================================
-void Network::AnimCmd(unsigned char *data, int len)
-{
-    /*
-        short   anum;
-        int     i, j;
-
-        anum = GetShort_String(data);
-        if (anum<0 || anum> MAXANIM)
-        {
-            Logger::log().error() << "AnimCmd: animation number invalid: " << anum;
-            return;
-        }
-
-        animations[anum].flags = *(data + 2);
-        animations[anum].facings = *(data + 3);
-        animations[anum].num_animations = (len - 4) / 2;
-        if (animations[anum].num_animations < 1)
-        {
-            Logger::log().error() << "AnimCmd: num animations invalid: " << animations[anum].num_animations;
-            return;
-        }
-        if (animations[anum].facings > 1)
-            animations[anum].frame = animations[anum].num_animations / animations[anum].facings;
-        else
-            animations[anum].frame = animations[anum].num_animations;
-        animations[anum].faces = _malloc(sizeof(uint16) * animations[anum].num_animations, "AnimCmd(): facenum buf");
-        for (i = 4,j = 0; i < len; i += 2,j++)
-        {
-            animations[anum].faces[j] = GetShort_String(data + i);
-            request_face(animations[anum].faces[j], 0);
-        }
-        if (j != animations[anum].num_animations)
-            Logger::log().error() <<  "Calculated animations does not equal stored animations?("
-              << j <<  " != " << animations[anum].num_animations) <<")";
-    */
-}
-
-//================================================================================================
-// .
-//================================================================================================
 void Network::SkillRdyCmd(unsigned char *data, int len)
 {
     /*
@@ -1103,8 +1088,8 @@ void Network::PlayerCmd(unsigned char *data, int len)
         obj.maxHP     = 150;
         obj.maxMana   = 150;
         obj.maxGrace  = 150;
-        obj.pos.x     = 1 * TileManager::TILE_SIZE + 3 * 8;
-        obj.pos.z     = 1 * TileManager::TILE_SIZE + 3 * 8;
+        obj.pos.x     = TileManager::TILE_SIZE * TileManager::CHUNK_SIZE_X/2;
+        obj.pos.z     = TileManager::TILE_SIZE *(TileManager::CHUNK_SIZE_Z-3) - TileManager::TILE_SIZE/2;
         obj.level     = 0;
         obj.facing    = -60;
         obj.particleNr=-1;
@@ -1284,26 +1269,6 @@ void Network::GolemCmd(unsigned char *data, int len)
 }
 
 //================================================================================================
-// .
-//================================================================================================
-void Network::AddMeSuccess(unsigned char *data, int len)
-{
-    //Logger::log().info() << "addme_success received.";
-}
-
-//================================================================================================
-// This could probably be greatly improved - I am not sure if anything needs to be saved here,
-// but certainly it should be possible to reconnect to the server or a different server without
-// having to rerurn the client.
-//================================================================================================
-void Network::GoodbyeCmd(unsigned char *data, int len)
-{
-    // Damn, this should not be here - if the version not matches, the server
-    // drops the connnect - so we get a client shutdown here?
-    // NEVER do this again.
-}
-
-//================================================================================================
 // Server send us the setup cmd..
 //================================================================================================
 void Network::SetupCmd(unsigned char *buf, int len)
@@ -1435,19 +1400,6 @@ void Network::checkFileStatus(const char *cmd, char *param, int fileNr)
 }
 
 //================================================================================================
-// .
-//================================================================================================
-void Network::handle_query(unsigned char *data, int len)
-{
-    //uint8 flags = atoi(data);  // ATM unused parameter
-    char *buf = strchr((char *)data, ' ');
-    if (buf) ++buf;
-    // one query string
-    Logger::log().info() << "Received query string: " <<  buf;
-    PreParseInfoStat(buf);
-}
-
-//================================================================================================
 // Server has send us a file: uncompress and save it.
 //================================================================================================
 void Network::DataCmd(unsigned char *data, int len)
@@ -1500,16 +1452,7 @@ void Network::DataCmd(unsigned char *data, int len)
     //         if (data_cmd-1 == SERVER_FILE_SKILLS) { read_skills(); }
     //    else if (data_cmd-1 == SERVER_FILE_SPELLS) { read_spells(); }
 }
-/*
-//================================================================================================
-// server tells us to go to the new char creation.
-//================================================================================================
-void Network::NewCharCmd(unsigned char *data, int len)
-{
-    //dialog_new_char_warn = 0;
-    Option::getSingleton().setGameStatus(Option::GAME_STATUS_NEW_CHAR);
-}
-*/
+
 //================================================================================================
 // .
 //================================================================================================
@@ -1647,70 +1590,6 @@ void Network::MarkCmd(unsigned char *data, int len)
 }
 
 //================================================================================================
-//
-//================================================================================================
-void Network::PreParseInfoStat(char *cmd)
-{
-    int status = cmd[2] -'0';
-    if (!strncmp(cmd, "QN",2))
-    {
-        switch (status)
-        {
-            case 0:
-                GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED, GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"");
-                break;
-            case 1:
-                if (Option::getSingleton().getLoginType() == Option::LOGIN_EXISTING_PLAYER)
-                    GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
-                                                           GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000There is no character with that name!~");
-                break;
-            case 2:
-                GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
-                                                       GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name or character is in creating process or blocked!~");
-                break;
-            case 3:
-                if (Option::getSingleton().getLoginType() == Option::LOGIN_EXISTING_PLAYER)
-                    GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
-                                                           GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name is taken - choose a different one!~");
-                break;
-            case 4:
-                if (Option::getSingleton().getLoginType() == Option::LOGIN_NEW_PLAYER)
-                    GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
-                                                           GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name is taken - choose a different one!~");
-                break;
-            case 5:
-                GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
-                                                       GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name is banned - choose a different one!~");
-                break;
-            case 6:
-                GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
-                                                       GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name is illegal - ITS TO SHORT OR ILLEGAL SIGNS!~");
-                break;
-            case 7:
-                GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
-                                                       GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name is illegal - ITS TO SHORT OR ILLEGAL SIGNS!~");
-                break;
-            default:
-                GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
-                                                       GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Password is illegal or does not match!~");
-                break;
-        }
-//        Option::getSingleton().setGameStatus(Option::GAME_STATUS_NAME_INIT);
-    }
-    else if (!strncmp(cmd, "QP",2))
-    {
-        if (status)
-            GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
-                                                   GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Password is illegal or does not match!~");
-        // Option::getSingleton().setGameStatus(Option::GAME_STATUS_PSWD_INIT);
-    }
-    else if (!strncmp(cmd, "QV",2))
-    {
-        //Option::getSingleton().setGameStatus(Option::GAME_STATUS_VRFY_INIT);
-    }
-}
-
-//================================================================================================
 // we got a face - test we have it loaded. If not, say server "send us face cmd "
 // Return: 0 - face not there, requested.  1: face requested or loaded
 // This command collect all new faces and then flush it at once.
@@ -1727,7 +1606,7 @@ int Network::request_face(int, int)
 void Network::CreatePlayerAccount()
 {
     //   (buf, "nc %s %d %d %d %d %d %d %d", nc->char_arch[nc->gender_selected], nc->stats[0], nc->stats[1], nc->stats[2], nc->stats[3], nc->stats[4], nc->stats[5], nc->stats[6]);
-    cs_write_string("nc human_male 14 14 13 12 12 12 12 0");
+    //cs_write_string("nc human_male 14 14 13 12 12 12 12 0");
 }
 
 //================================================================================================

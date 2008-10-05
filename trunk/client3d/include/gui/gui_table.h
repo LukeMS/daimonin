@@ -29,10 +29,14 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <tinyxml.h>
 #include "gui_element.h"
 
-/**
+/** --------------------------------------------------------------------------
  ** This class handles an interactive table.
- ** Cols are separated by a comma in the row-text.
- ** SubRows are separated by a comma in the row-text.
+ ** --------------------------------------------------------------------------
+ ** SubRows are separated by ';' in the row-text.
+ ** Columns are separated by ',' in the row-text.
+ ** @todo add gfx-columnn support.
+ ** @todo add scrollbars.
+ ** @todo change the seletionbar to a gfx (alpha) and draw it on top of the row..
  *****************************************************************************/
 class GuiTable : public GuiElement
 {
@@ -42,10 +46,9 @@ public:
     // ////////////////////////////////////////////////////////////////////
     GuiTable(TiXmlElement *xmlElement, void *parent);
     ~GuiTable();
-    void draw();
-    void clearRows();
-    void drawSelection(int newSelection);
-    void addRow(const char *row);
+    void clear();                             /**< Clear the whole table.   **/
+    void addRow(const char *row);             /**< Add a row to the table.  **/
+    void setRow(int row, const char *rowTxt); /**< Set new values to a row. **/
     bool getUserBreak();
     bool mouseEvent(int MouseAction, int x, int y);
     bool keyEvent(const char keyChar, const unsigned char key);
@@ -58,34 +61,30 @@ private:
     // ////////////////////////////////////////////////////////////////////
     typedef struct
     {
-        int width;
-        Ogre::String label;
-    }
-    ColumnEntry;
+        int width;          /**< Width of the column. **/
+        Ogre::String label; /**< Label of the column. **/
+    } ColumnEntry;
+    std::vector<ColumnEntry*>mvColumn; /**< Columns in a single row. **/
     typedef struct
     {
-        Ogre::uint32 color;
-        int fontNr;
-    }
-    SubRowEntry;
-
-    std::vector<ColumnEntry*>mvColumn;
+        Ogre::uint32 color; /**< Default color of the subrow. **/
+        int fontNr;         /**< Default font  of the subrow. **/
+    } SubRowEntry;
     std::vector<SubRowEntry*>mvSubRow;
     std::vector<Ogre::String>mvRow;
-    Ogre::Real mMinHeight, mMaxHeight;
-    bool mVisible;
-    bool mRowActivated;
-    bool mRowChanged;
     bool mUserBreak;
-    int  mHeightBorderline;
-    int  mSelectedRow;
-    int  mRowHeight;
-    Ogre::uint32 *mGfxBuffer;
-    Ogre::uint32 mColorBack[2], mColorSelect;
+    bool mRowActivated;                /**< A row was activated by the user.(double-click lmb or return key) **/
+    bool mSeletedRowChanged;           /**< The selected row has changed by the user (crsr up/down or lmb). **/
+    int  mHeightColumnLabel;
+    int  mHeightRow;
+    int  mSelectedRow;                 /**< The actual selected row. **/
+    Ogre::uint32 mColorRowBG[2];
+    Ogre::uint32 mColorSelect;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    void drawSelection();
+    void draw(); /**< Draw the background of the table. **/
+    void drawSelection(int newSelection);
     void drawRow(int row, Ogre::uint32 color);
 };
 

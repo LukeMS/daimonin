@@ -30,8 +30,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Ogre;
 
-static const unsigned long SCROLL_SPEED = 12;
-static const Real CLOSING_SPEED  = 10.0f;  // default: 10.0f
 const char SEPARATOR_COL    = ',';
 const char SEPARATOR_SUBROW = ';';
 const int  TEXT_OFFSET = 2; // Text offset in pixel x/y from the topleft border.
@@ -46,9 +44,10 @@ GuiTable::GuiTable(TiXmlElement *xmlElement, void *parent):GuiElement(xmlElement
     for (xmlOpt = xmlElement->FirstChildElement("Color"); xmlOpt; xmlOpt = xmlOpt->NextSiblingElement("Color"))
     {
         uint32 *color;
-        if      (!strcmp(xmlOpt->Attribute("type"), "COLOR_ODD_ROWS"))  { color = &mColorBack[0]; *color =0; } // Color of odd  rows.
-        else if (!strcmp(xmlOpt->Attribute("type"), "COLOR_EVEN_ROWS")) { color = &mColorBack[1]; *color =0; } // Color of even rows.
-        else if (!strcmp(xmlOpt->Attribute("type"), "COLOR_SELECTION")) { color = &mColorSelect;  *color =0; } // Color of selection.
+        if      (!strcmp(xmlOpt->Attribute("type"), "COLOR_ODD_ROWS"))  color = &mColorRowBG[0]; // Color of odd  rows.
+        else if (!strcmp(xmlOpt->Attribute("type"), "COLOR_EVEN_ROWS")) color = &mColorRowBG[1]; // Color of even rows.
+        else if (!strcmp(xmlOpt->Attribute("type"), "COLOR_SELECTION")) color = &mColorSelect;  // Color of selection.
+        *color = 0x00000000; // default color.
         if ((tmp = xmlOpt->Attribute("alpha"))) *color+= atoi(tmp) << 24;
         if ((tmp = xmlOpt->Attribute("red")))   *color+= atoi(tmp) << 16;
         if ((tmp = xmlOpt->Attribute("green"))) *color+= atoi(tmp) <<  8;
@@ -57,27 +56,27 @@ GuiTable::GuiTable(TiXmlElement *xmlElement, void *parent):GuiElement(xmlElement
     for (xmlOpt = xmlElement->FirstChildElement("Column"); xmlOpt; xmlOpt = xmlOpt->NextSiblingElement("Column"))
     {
         ColumnEntry *entry = new ColumnEntry;
-        if ((tmp = xmlOpt->Attribute("width"))) entry->width = atoi(tmp);
-        if ((tmp = xmlOpt->Attribute("label"))) entry->label = tmp;
+        entry->width = (tmp = xmlOpt->Attribute("width"))?atoi(tmp):mWidth/4;
+        entry->label = (tmp = xmlOpt->Attribute("label"))?tmp:"NOT SET";
         mvColumn.push_back(entry);
     }
     for (xmlOpt = xmlElement->FirstChildElement("SubRow"); xmlOpt; xmlOpt = xmlOpt->NextSiblingElement("SubRow"))
     {
         SubRowEntry *entry = new SubRowEntry;
-        entry->color = 0;
-        if ((tmp = xmlOpt->Attribute("font")))  entry->fontNr= atoi(tmp);
-        if ((tmp = xmlOpt->Attribute("alpha"))) entry->color+= atoi(tmp) << 24;
+        entry->fontNr= ((tmp = xmlOpt->Attribute("font")))?atoi(tmp):0;
+        entry->color = 0x00000000; // default color.
+        if ((tmp = xmlOpt->Attribute("alpha"))) entry->color = atoi(tmp) << 24;
         if ((tmp = xmlOpt->Attribute("red"  ))) entry->color+= atoi(tmp) << 16;
         if ((tmp = xmlOpt->Attribute("green"))) entry->color+= atoi(tmp) <<  8;
         if ((tmp = xmlOpt->Attribute("blue" ))) entry->color+= atoi(tmp);
         mvSubRow.push_back(entry);
     }
     mUserBreak = false;
-    mRowHeight = 0;
+    mHeightRow = 0;
     for (std::vector<SubRowEntry*>::iterator i = mvSubRow.begin(); i < mvSubRow.end(); ++i)
-        mRowHeight+= GuiTextout::getSingleton().getFontHeight((*i)->fontNr) + TEXT_OFFSET;
-    mHeightBorderline = GuiTextout::getSingleton().getFontHeight(mFontNr);
-    clearRows();
+        mHeightRow+= GuiTextout::getSingleton().getFontHeight((*i)->fontNr) + TEXT_OFFSET;
+    mHeightColumnLabel = GuiTextout::getSingleton().getFontHeight(mFontNr);
+    clear();
 }
 
 //================================================================================================
@@ -95,7 +94,7 @@ GuiTable::~GuiTable()
 }
 
 //================================================================================================
-// Returns true if the key event was on this gadget (so no need to check the other gadgets).
+// Returns true if the key event happened here (so no need to check the other gadgets).
 //================================================================================================
 bool GuiTable::keyEvent(const char keyChar, const unsigned char key)
 {
@@ -103,26 +102,18 @@ bool GuiTable::keyEvent(const char keyChar, const unsigned char key)
     {
         if (mSelectedRow <= 0)  return true;
         drawSelection(mSelectedRow-1);
-        mRowChanged = true;
-        return true;
+        return (mSeletedRowChanged = true);
     }
     if (key == OIS::KC_DOWN)
     {
         if (mSelectedRow+1 >= (int)mvRow.size())  return true;
         drawSelection(mSelectedRow+1);
-        mRowChanged = true;
-        return true;
+        return (mSeletedRowChanged = true);
     }
     if (key == OIS::KC_RETURN) // || key == OIS::KC_NUMPADENTER)
-    {
-        mRowActivated = true;
-        return true;
-    }
+        return (mRowActivated = true);
     if (key == OIS::KC_ESCAPE)
-    {
-        mUserBreak = true;
-        return true;
-    }
+        return (mUserBreak = true);
     return false;
 }
 
@@ -133,20 +124,25 @@ bool GuiTable::mouseEvent(int MouseAction, int x, int y)
 {
     if (x < mPosX || x > mPosX + mWidth || y < mPosY || y > mPosY + mHeight)
         return false;
-    int row = (y-mPosY) / mRowHeight -1;
-    if (MouseAction == GuiWindow::BUTTON_PRESSED && row >=0 && row < (int)mvRow.size())
+    int row = (y-mPosY-mHeightColumnLabel) / mHeightRow;
+    if (row <0 || row >= (int)mvRow.size()) return true;
+
+    if (MouseAction == GuiWindow::BUTTON_RELEASED)
     {
         static unsigned long time =0;
-        if (mSelectedRow == row)
         {
             if (Root::getSingleton().getTimer()->getMilliseconds()- time < GuiWindow::TIME_DOUBLECLICK)
                 return (mRowActivated = true);
         }
-        else
+        time = Root::getSingleton().getTimer()->getMilliseconds();
+    }
+    if (MouseAction == GuiWindow::BUTTON_PRESSED)
+    {
+        if (mSelectedRow != row)
         {
             drawSelection(row);
+            return (mSeletedRowChanged = true);
         }
-        time = Root::getSingleton().getTimer()->getMilliseconds();
     }
     return true;
 }
@@ -172,14 +168,22 @@ void GuiTable::addRow(const char *row)
 }
 
 //================================================================================================
+// Change an existing row.
+//================================================================================================
+void GuiTable::setRow(int row, const char *text)
+{
+    drawRow(row, (row == mSelectedRow)?mColorSelect:mColorRowBG[row&1]);
+}
+
+//================================================================================================
 // Clear all rows.
 //================================================================================================
-void GuiTable::clearRows()
+void GuiTable::clear()
 {
     mvRow.clear();
     mSelectedRow = -1;
     mRowActivated = false;
-    mRowChanged = true;
+    mSeletedRowChanged = true;
     draw();
 }
 
@@ -201,9 +205,9 @@ int GuiTable::getActivatedRow()
 //================================================================================================
 int GuiTable::getSelectedRow()
 {
-    if (!mRowChanged)
+    if (!mSeletedRowChanged)
         return -1;
-    mRowChanged = false;
+    mSeletedRowChanged = false;
     return mSelectedRow;
 }
 
@@ -223,7 +227,7 @@ void GuiTable::draw()
     textline.x1 = mPosX;
     textline.x2 = textline.x1 + mWidth;
     textline.y1 = mPosY;
-    textline.y2 = textline.y1 + mHeightBorderline;
+    textline.y2 = textline.y1 + mHeightColumnLabel;
     for (std::vector<ColumnEntry*>::iterator i = mvColumn.begin(); i < mvColumn.end(); ++i)
     {
         if ((*i)->label!="")
@@ -234,15 +238,15 @@ void GuiTable::draw()
         textline.x1 += (*i)->width;
     }
     // Draw the line background.
-    PixelBox pb = texture->getBuffer()->lock(Box(mPosX, mPosY+mHeightBorderline, mPosX+mWidth, mPosY+mHeight), HardwareBuffer::HBL_DISCARD);
+    PixelBox pb = texture->getBuffer()->lock(Box(mPosX, mPosY+mHeightColumnLabel, mPosX+mWidth, mPosY+mHeight), HardwareBuffer::HBL_DISCARD);
     uint32 *dest_data = (uint32*)pb.data;
-    int y = 0, h = mHeightBorderline;
+    int y = 0, h = mHeightColumnLabel;
     while (h < mHeight)
     {
-        for (int line =0; line < mRowHeight && h++ < mHeight; ++line)
+        for (int line =0; line < mHeightRow && h++ < mHeight; ++line)
         {
             for (int x = 0; x < mWidth; ++x)
-                dest_data[x] = mColorBack[y&1];
+                dest_data[x] = mColorRowBG[y&1];
             dest_data+=texture->getWidth();
         }
         ++y;
@@ -255,7 +259,7 @@ void GuiTable::draw()
 //================================================================================================
 void GuiTable::drawSelection(int newSelection)
 {
-    drawRow(mSelectedRow, mColorBack[mSelectedRow&1]); // Restore selection background
+    drawRow(mSelectedRow, mColorRowBG[mSelectedRow&1]); // Restore selection background
     drawRow(newSelection, mColorSelect); // Draw new selection bar.
     mSelectedRow = newSelection;
 }
@@ -272,11 +276,11 @@ void GuiTable::drawRow(int row, uint32 bgColor)
     textline.hideText= false;
     textline.LayerWindowBG = 0;
     textline.x2 = mPosX + mWidth;
-    int offset = mHeightBorderline + row * mRowHeight;
+    int offset = mHeightColumnLabel + row * mHeightRow;
     // Draw the background.
-    PixelBox pb = texture->getBuffer()->lock(Box(mPosX, mPosY+offset, mPosX+mWidth, mPosY+offset+mRowHeight), HardwareBuffer::HBL_DISCARD);
+    PixelBox pb = texture->getBuffer()->lock(Box(mPosX, mPosY+offset, mPosX+mWidth, mPosY+offset+mHeightRow), HardwareBuffer::HBL_DISCARD);
     uint32 *dest_data = (uint32*)pb.data;
-    for (int line =0; line < mRowHeight; ++line)
+    for (int line =0; line < mHeightRow; ++line)
     {
         for (int x = 0; x < mWidth; ++x)
             dest_data[x] = bgColor;
@@ -285,7 +289,7 @@ void GuiTable::drawRow(int row, uint32 bgColor)
     texture->getBuffer()->unlock();
     // Print the text.
     if (!mvRow[row].size()) return;
-    textline.y1 = mPosY+mHeightBorderline + row * mRowHeight + TEXT_OFFSET;
+    textline.y1 = mPosY+mHeightColumnLabel + row * mHeightRow + TEXT_OFFSET;
     std::string::size_type colStart, colEnd, subRowStrt, subRowEnd = 0;
     for (std::vector<SubRowEntry*>::iterator subRow = mvSubRow.begin(); subRow < mvSubRow.end(); ++subRow)
     {
@@ -302,8 +306,8 @@ void GuiTable::drawRow(int row, uint32 bgColor)
         {
             colStart = colEnd;
             colEnd = mvRow[row].find(SEPARATOR_COL, colStart);
-            if (colEnd > subRowEnd) colEnd = subRowEnd;
-            if (colEnd == std::string::npos) colEnd = subRowEnd;
+            if (colEnd > subRowEnd || colEnd == std::string::npos)
+                colEnd = subRowEnd;
             textline.text = mvRow[row].substr(colStart, colEnd-colStart);
             GuiTextout::getSingleton().Print(&textline, texture);
             if (++colEnd >= subRowEnd) break;
@@ -313,22 +317,3 @@ void GuiTable::drawRow(int row, uint32 bgColor)
         textline.y1+= fontHeight;
     }
 }
-/*
-    for (int subRow = 0; subRow < 5; ++subRow)
-    {
-        subRowStrt = subRowEnd;
-        subRowEnd = str.find(';', subRowStrt);
-        if (subRowEnd == std::string::npos) subRowEnd = str.size();
-        colEnd = subRowStrt;
-        for (int i = 0; i < 5; ++i)
-        {
-            colStrt = colEnd;
-            colEnd = str.find(',', colStrt);
-            if (colEnd == std::string::npos) colEnd = subRowEnd;
-            cout << str.substr(colStrt, colEnd-colStrt) << " ";
-            if (++colEnd >= subRowEnd) break;
-        }
-        if (++subRowEnd >= str.size()) break;
-        cout << endl;
-    }
-*/

@@ -347,19 +347,19 @@
     <!--=============================================-->
     <Table name= "Table_Server" font="03">
       <Pos x= "56" y= "60" />
-      <Range width= "400" height= "300"/>
+      <Range width= "400" height= "350"/>
       <Color type= "COLOR_ODD_ROWS"  red=  "45" green=  "37" blue= "16" alpha = "255" />
       <Color type= "COLOR_EVEN_ROWS" red=  "62" green=  "49" blue= "32" alpha = "255" />
       <Color type= "COLOR_SELECTION" red=   "0" green=   "0" blue= "99" alpha = "255" />
-      <Column width = "300" label ="Server:" />
-      <Column width = "100" label ="Players: " />
-      <SubRow font="03" red=  "128" green=  "128" blue= "128" alpha = "255" />
+      <Column width = "300" label ="~#ff999999Server:" />
+      <Column width = "100" label ="~#ff999999Players: " />
+      <SubRow font="03" red=  "255" green=  "255" blue= "255" alpha = "255" />
       <SubRow font="02" red=  "128" green=  "128" blue= "128" alpha = "255" />
       <SubRow font="01" red=  "128" green=  "128" blue= "128" alpha = "255" />
     </Table>
-    <TextBox x= "60" y= "400" font="02" text= "" width = "392" name= "Login_ServerInfo1" />
-    <TextBox x= "60" y= "415" font="02" text= "" width = "392" name= "Login_ServerInfo2" />
-    <TextBox x= "60" y= "430" font="02" text= "" width = "392" name= "Login_ServerInfo3" />
+    <TextBox x= "60" y= "420" font="03" text= "" width = "392" name= "Login_ServerInfo1" />
+    <TextBox x= "60" y= "440" font="02" text= "" width = "392" name= "Login_ServerInfo2" />
+    <TextBox x= "60" y= "455" font="03" text= "" width = "392" name= "Login_ServerInfo3" />
   </Window>
 
 
@@ -432,16 +432,22 @@
     <!--=============================================-->
     <!-- Layer 1                                     -->
     <!--=============================================-->
-    <Label   x=  "80" y=  "65" font="03" text= "Account Name: " />
-    <TextBox x= "200" y=  "65" font="02" text= "" width = "110" name= "Input_Login_Name" />
-    <Label   x=  "80" y=  "85" font="03" text= "Password: " />
-    <TextBox x= "200" y=  "85" font="02" hide ="1" text= "" width = "100" name= "Input_Login_Passwd" />
-    <Label   x=  "80" y= "105" font="03" text= "Retype Pswd: " />
-    <TextBox x= "200" y= "105" font="02" hide ="1" text= "" width = "100" name= "Input_Login_Verify" />
-    <TextBox x= "60" y= "350" font="02" text= "" width = "392" name= "Login_LoginWarn" />
-    <TextBox x= "60" y= "400" font="02" text= "" width = "392" name= "Login_LoginInfo1" />
-    <TextBox x= "60" y= "415" font="02" text= "" width = "392" name= "Login_LoginInfo2" />
-    <TextBox x= "60" y= "430" font="02" text= "" width = "392" name= "Login_LoginInfo3" />
+    <Gadget type= "BUTTON"  name = "But_CreateAccount">
+      <Image name = "Button-01-Standard"/>
+      <Pos x= "200" y= "63" />
+      <Label x= "4" y= "3" font="03" text= "create" />
+    </Gadget>
+    <Label   x=  "20" y=  "65" font="03" text= "~#ffffff00Login to your account, or               an account." />
+    <Label   x=  "80" y=  "105" font="03" text= "Account Name: " />
+    <TextBox x= "200" y=  "105" font="03" text= "" width = "110" name= "Input_Login_Name" />
+    <Label   x=  "80" y=  "125" font="03" text= "Password: " />
+    <TextBox x= "200" y=  "125" font="03" hide ="1" text= "" width = "100" name= "Input_Login_Passwd" />
+    <Label   x=  "80" y= "145" font="03" text= "Retype Pswd: " />
+    <TextBox x= "200" y= "145" font="03" hide ="1" text= "" width = "100" name= "Input_Login_Verify" />
+    <TextBox x= "60" y= "180" font="03" text= "" width = "392" name= "Login_LoginWarn" />
+    <TextBox x= "60" y= "195" font="02" text= "" width = "392" name= "Login_LoginInfo1" />
+    <TextBox x= "60" y= "210" font="02" text= "" width = "392" name= "Login_LoginInfo2" />
+    <TextBox x= "60" y= "225" font="02" text= "" width = "392" name= "Login_LoginInfo3" />
   </Window>
 
 

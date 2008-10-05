@@ -25,11 +25,14 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <OgreFontManager.h>
 #include "define.h"
 #include "option.h"
+#include "gui_graphic.h"
 #include "gui_textout.h"
 #include "gui_imageset.h"
 #include "logger.h"
 
 using namespace Ogre;
+
+#define INC_ALPHA
 
 const char GuiTextout::TXT_CMD_HIGHLIGHT   = '~';
 const char GuiTextout::TXT_CMD_LOWLIGHT    = -80; // prevent anjuta and codeblocks problems with the degree character.
@@ -283,27 +286,15 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
             for (int y = y1; y < y1+fnt->height; ++y)
             {
                 fnt->data[fnt->charStart[i]+x + yPos] = ttfData[x1+x + y*texture->getWidth()];
+#ifdef INC_ALPHA
+                if (fnt->data[fnt->charStart[i]+x + yPos] > 0x70ffffff)
+                    fnt->data[fnt->charStart[i]+x + yPos] = 0xffffffff;
+#endif
                 yPos+= fnt->textureWidth;
             }
         }
     }
     delete[] ttfData;
-
-    // ////////////////////////////////////////////////////////////////////
-    // Transparent to color.
-    // ////////////////////////////////////////////////////////////////////
-    for (int i=0; i < fnt->textureWidth * fnt->height; ++i)
-    {
-        if (fnt->data[i] != 0x00ffffff)
-        {
-            int alpha = (fnt->data[i] >> 24) & 0xff;
-            alpha+=0x40;
-            if (alpha > 0xff) alpha = 0xff;
-            if (alpha < 0x70) fnt->data[i] = 0x00ffffff;
-            else              fnt->data[i] = 0xff000000 + ((alpha<<16)&0xff0000) + ((alpha <<8)&0xff00) + alpha;
-        }
-    }
-
     // Copy all special chars.
     PixelBox srcPixelBox = GuiImageset::getSingleton().getPixelBox();
     PixelBox src;
@@ -436,13 +427,24 @@ void GuiTextout::PrintToBuffer(int width, int height, uint32 *dest_data, const c
     drawText(width, h, dest_data, text, false, fontNr, color);
 }
 
+uint32 alphaBlend(const uint32 bg, const uint32 gfx)
+{
+    uint32 alpha = gfx >> 24;
+    if (alpha == 0x00) return bg;
+    if (alpha == 0xff) return gfx;
+    // We need 1 byte of free space before each color (because of the alpha multiplication),
+    // so we need 2 operations on the 3 colors.
+    uint32 rb = (((gfx & 0x00ff00ff) * alpha) + ((bg & 0x00ff00ff) * (0xff - alpha))) & 0xff00ff00;
+    uint32 g  = (((gfx & 0x0000ff00) * alpha) + ((bg & 0x0000ff00) * (0xff - alpha))) & 0x00ff0000;
+    return (bg & 0xff000000) | ((rb | g) >> 8);
+}
+
 //================================================================================================
 // Print text into a given background. All stuff beyond width/height will be clipped.
 //================================================================================================
 void GuiTextout::drawText(int width, int height, uint32 *dest_data, const char *text, bool hideText, unsigned int fontNr, uint32 color)
 {
     if (fontNr >= mvFont.size()) fontNr = 0;
-    uint32 pixFont, pixColor;
     uint32 colorBack = color;
     int srcRow, dstRow, stopX, clipX=0;
     unsigned char chr;
@@ -502,20 +504,26 @@ void GuiTextout::drawText(int width, int height, uint32 *dest_data, const char *
                 stopX  = mvFont[fontNr]->charWidth[chr]-1;
                 if (clipX + stopX > width)
                     stopX = width - clipX;
-                for (int y =(int)mvFont[fontNr]->height < height?(int)mvFont[fontNr]->height:height; y; --y)
+                if (chr < STANDARD_CHARS_IN_FONT)
                 {
-                    for (int x = 0; x < stopX; ++x)
-                    {   // PixelFormat: A8 R8 G8 B8.
-                        pixFont = mvFont[fontNr]->data[srcRow + x];
-                        if (pixFont <= 0xffffff) continue;
-                        pixColor = pixFont & 0xff000000;
-                        pixColor+= ((color&0x0000ff) < (pixFont& 0x0000ff))? color & 0x0000ff : pixFont & 0x0000ff;
-                        pixColor+= ((color&0x00ff00) < (pixFont& 0x00ff00))? color & 0x00ff00 : pixFont & 0x00ff00;
-                        pixColor+= ((color&0xff0000) < (pixFont& 0xff0000))? color & 0xff0000 : pixFont & 0xff0000;
-                        dest_data[dstRow + x] = pixColor;
+                    color &= 0x00ffffff;
+                    for (int y =(int)mvFont[fontNr]->height < height?(int)mvFont[fontNr]->height:height; y; --y)
+                    {
+                        for (int x = 0; x < stopX; ++x)
+                            dest_data[dstRow + x] = alphaBlend(dest_data[dstRow + x], color + (mvFont[fontNr]->data[srcRow + x] & 0xff000000));
+                        srcRow+= mvFont[fontNr]->textureWidth;
+                        dstRow+= width;
                     }
-                    srcRow+= mvFont[fontNr]->textureWidth;
-                    dstRow+= width;
+                }
+                else // Special chars always keep their own color.
+                {
+                    for (int y =(int)mvFont[fontNr]->height < height?(int)mvFont[fontNr]->height:height; y; --y)
+                    {
+                        for (int x = 0; x < stopX; ++x)
+                            dest_data[dstRow + x] = alphaBlend(dest_data[dstRow + x], mvFont[fontNr]->data[srcRow + x]);
+                        srcRow+= mvFont[fontNr]->textureWidth;
+                        dstRow+= width;
+                    }
                 }
                 clipX+= stopX;
                 if (clipX >= width) return;

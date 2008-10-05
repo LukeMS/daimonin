@@ -116,9 +116,6 @@ public:
     }
     mStructServer;
 
-    // ClientSocket could probably hold more of the global values - it could
-    // probably hold most all socket/communication related values instead
-    // of globals.
     typedef struct
     {
         int fd;
@@ -132,9 +129,6 @@ public:
     }
     ClientSocket;
 
-    static bool GameStatusVersionOKFlag;
-    static bool GameStatusVersionFlag;
-
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
@@ -147,43 +141,29 @@ public:
 
     static int   GetInt_String(unsigned char *data);
     static short GetShort_String(unsigned char *data);
-    static command_buffer *get_next_input_command();
     static command_buffer *command_buffer_new(unsigned int len, unsigned char *data);
     static command_buffer *command_buffer_dequeue(command_buffer **queue_start, command_buffer **queue_end);
     static void command_buffer_free(command_buffer *buf);
     static void command_buffer_enqueue(command_buffer *buf, command_buffer **queue_start, command_buffer **queue_end);
     static void checkFileStatus(const char *cmd, char *param, int fileNr);
     static void AddIntToString(Ogre::String &sl, int data, bool shortInt);
-
     static int reader_thread_loop(void *);
     static int writer_thread_loop(void *);
-
     static int send_command(const char *command, int repeat, int force);
     static int send_command_binary(unsigned char cmd, unsigned char *body, int len, int flags);
     static int send_command_binary(unsigned char cmd, std::stringstream &stream);
     static int send_socklist(Ogre::String msg);
     void socket_thread_start();
-    void socket_thread_stop();
-    bool isInit()
-    {
-        return mInitDone;
-    }
     void setActiveServer(int nr)
     {
         mActServerNr = nr;
     }
     bool InitSocket();
     bool OpenSocket(const char *host, int port);
-    bool OpenClientSocket(const char *host, int port);
-    bool OpenActiveServerSocket()
-    {
-        return OpenClientSocket(mvServer[mActServerNr]->ip.c_str(), mvServer[mActServerNr]->port);
-    }
+    bool OpenActiveServerSocket();
     static void CloseSocket();
     static void CloseClientSocket();
-    static void send_reply(const char *text);
-    static void cs_write_string(const char *buf);
-    static Ogre::String &Network::getError();  // returns socket error
+    static Ogre::String &getError();
     void read_metaserver_data();
     void handle_socket_shutdown();
     void update();
@@ -192,41 +172,33 @@ public:
                              const char *desc1, const char *desc2, const char *desc3, const char *desc4);
     // Commands
     static void DrawInfoCmd    (unsigned char *data, int len);
-    static void DrawInfoCmd2   (unsigned char *data, int len);
     static void AddMeFail      (unsigned char *data, int len);
     static void Map2Cmd        (unsigned char *data, int len);
+    static void DrawInfoCmd2   (unsigned char *data, int len);
+    static void ItemXCmd       (unsigned char *data, int len);
     static void SoundCmd       (unsigned char *data, int len);
     static void TargetObject   (unsigned char *data, int len);
+    static void ItemUpdateCmd  (unsigned char *data, int len);
+    static void ItemDeleteCmd  (unsigned char *data, int len);
     static void StatsCmd       (unsigned char *data, int len);
     static void ImageCmd       (unsigned char *data, int len);
     static void Face1Cmd       (unsigned char *data, int len);
-    static void AnimCmd        (unsigned char *data, int len);
     static void SkillRdyCmd    (unsigned char *data, int len);
     static void PlayerCmd      (unsigned char *data, int len);
     static void SpelllistCmd   (unsigned char *data, int len);
     static void SkilllistCmd   (unsigned char *data, int len);
     static void GolemCmd       (unsigned char *data, int len);
-    static void AccountCmd     (unsigned char *data, int len);
     static void AccNameSuccess (unsigned char *data, int len);
-    static void AddMeSuccess   (unsigned char *data, int len);
-    static void GoodbyeCmd     (unsigned char *data, int len);
     static void SetupCmd       (unsigned char *data, int len);
-    static void handle_query   (unsigned char *data, int len);
     static void DataCmd        (unsigned char *data, int len);
-    static void NewCharCmd     (unsigned char *data, int len);
-    static void InterfaceCmd   (unsigned char *data, int len);
-    static void BookCmd        (unsigned char *data, int len);
-    static void MarkCmd        (unsigned char *data, int len);
-
+    static void ItemYCmd       (unsigned char *data, int len);
     static void GroupCmd       (unsigned char *data, int len);
     static void GroupInviteCmd (unsigned char *data, int len);
     static void GroupUpdateCmd (unsigned char *data, int len);
-
-    static void ItemXCmd       (unsigned char *data, int len);
-    static void ItemYCmd       (unsigned char *data, int len);
-    static void ItemUpdateCmd  (unsigned char *data, int len);
-    static void ItemDeleteCmd  (unsigned char *data, int len);
-
+    static void InterfaceCmd   (unsigned char *data, int len);
+    static void BookCmd        (unsigned char *data, int len);
+    static void MarkCmd        (unsigned char *data, int len);
+    static void AccountCmd     (unsigned char *data, int len);
     // Commands helper.
     static int  request_face(int, int);
     static void CreatePlayerAccount();
@@ -258,10 +230,9 @@ private:
     static SDL_cond   *output_buffer_cond;
     static SDL_mutex  *socket_mutex;
     static ClientSocket csocket;
-    int SocketStatusErrorNr;
     int mActServerNr;
     struct sockaddr_in  insock;       // Server's attributes
-    static bool mInitDone;
+    bool mInitDone;
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.

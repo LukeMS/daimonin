@@ -234,6 +234,10 @@ public:
     {
         account.count = 0;
     }
+    Ogre::String &getCharName(unsigned int nr)
+    {
+        return account.name[nr];
+    }
 
 private:
     // ////////////////////////////////////////////////////////////////////

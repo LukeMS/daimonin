@@ -253,7 +253,7 @@ void Item::getInventoryItemFromFloor(int slotNr)
     // move item to Backpack.
     sprintf(mStrBuffer, "mv %d %d %d", mActItemID[ITEMLIST_BACKPACK], (*iter)->tag, (*iter)->sumItems);
     GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, mStrBuffer);
-    Network::getSingleton().cs_write_string(mStrBuffer);
+    //Network::getSingleton().cs_write_string(mStrBuffer);
     delete *iter;
     mItemList[ITEMLIST_GROUND].erase(iter);
     return;
@@ -272,7 +272,7 @@ void Item::dropInventoryItemToFloor(int slotNr)
     GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, mStrBuffer);
     // move item TO Ground.
     sprintf(mStrBuffer, "mv %d %d %d", mActItemID[ITEMLIST_GROUND], (*iter)->tag, (*iter)->sumItems);
-    Network::getSingleton().cs_write_string(mStrBuffer);
+    //Network::getSingleton().cs_write_string(mStrBuffer);
     GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, mStrBuffer);
     GuiManager::getSingleton().delItem(GuiManager::GUI_WIN_INVENTORY, *iter);
     delete *iter;

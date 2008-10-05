@@ -174,18 +174,19 @@ public:
      ** Process a key event.
      ** @param keyChar The ascii value of the pressed key.
      ** @param key The The keycode of the key.
+     ** @return true if there was user action.
      *****************************************************************************/
-    void keyEvent(const int key, const unsigned int keyChar)
+    bool keyEvent(const int key, const unsigned int keyChar)
     {
         if (key == OIS::KC_RETURN || key == OIS::KC_TAB)
         {
             finished();
-            return;
+            return true;
         }
         if (key == OIS::KC_ESCAPE)
         {
             canceled();
-            return;
+            return true;
         }
         // ////////////////////////////////////////////////////////////////////
         // Input modus TEXT.
@@ -195,29 +196,29 @@ public:
             if (key == OIS::KC_BACK && mCursorPos > 0)
             {
                 mStrTextInput.erase(--mCursorPos, 1);
-                return;
+                return true;
             }
             if (key == OIS::KC_DELETE)
             {
                 mStrTextInput.erase(mCursorPos, 1);
-                return;
+                return true;
             }
             if (key == OIS::KC_LEFT && mCursorPos > 0)
             {
                 --mCursorPos;
-                return;
+                return true;
             }
             if (key == OIS::KC_RIGHT && mCursorPos < mStrTextInput.size())
             {
                 ++mCursorPos;
-                return;
+                return true;
             }
             if ((!keyChar || mStrTextInput.size() >= mMaxChars)
                     || (mBlockNumbers  && (keyChar >= '0' && keyChar <= '9'))
                     || (mBlockWhiteSpace && (keyChar <'A' || keyChar > 'z')))
             {
                 Sound::getSingleton().playStream(Sound::BUTTON_CLICK);
-                return;
+                return true;
             }
             mStrTextInput.insert(mCursorPos,1,keyChar);
             ++mCursorPos;
@@ -233,9 +234,10 @@ public:
             else if (key == OIS::KC_DOWN && mActValue < mMaxValue)
                 ++mActValue;
             if (oldValue != mActValue) mChange =true;
+            return true;
         }
+        return false;
     }
-
     int getInputMode()
     {
         return mInputMode;

@@ -615,7 +615,9 @@ bool Events::mouseMoved(const OIS::MouseEvent &e)
 
 bool Events::mousePressed(const OIS::MouseEvent &e, OIS::MouseButtonID button)
 {
-    if (Option::getSingleton().getGameStatus() < Option::GAME_STATUS_PLAY) return true; // TODO: ServerSelection by mouse.
+    // ////////////////////////////////////////////////////////////////////
+    // First check if the mouse action is within the gui..
+    // ////////////////////////////////////////////////////////////////////
     if (GuiManager::getSingleton().mouseEvent(GuiWindow::BUTTON_PRESSED, mMouse)) return true;
     // ////////////////////////////////////////////////////////////////////
     // Right button for selection and menu.
