@@ -508,8 +508,10 @@ void trigger_move(object *op, int state, object *originator) /* 1 down and 0 up 
     op->stats.wc = state;
     if (state)
     {
+        float reset = (op->stats.exp) ? (float)op->stats.exp : 30.0f;
+
         use_trigger(op, originator);
-        op->speed = 1.0f / (float) op->arch->clone.stats.exp;
+        op->speed = 1.0f / reset;
         update_ob_speed(op);
         op->speed_left = -1;
     }

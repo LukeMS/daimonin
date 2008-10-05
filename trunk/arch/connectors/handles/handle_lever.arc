@@ -6,8 +6,6 @@ no_pick 1
 no_teleport 1
 face lever.111
 animation handle_lever
-is_animated 0
-anim_speed 0
 is_turnable 1
 direction 1
 end

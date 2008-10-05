@@ -4,8 +4,6 @@ type 64
 layer 3
 face pedestal.111
 animation check_inv
-is_animated 0
-anim_speed 0
 is_turnable 1
 direction 1
 no_pick 1

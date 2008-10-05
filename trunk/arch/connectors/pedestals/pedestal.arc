@@ -5,8 +5,6 @@ slaying player
 type 17
 face pedestal.111
 animation pedestal
-is_animated 0
-anim_speed 0
 is_turnable 1
 direction 1
 no_pick 1
