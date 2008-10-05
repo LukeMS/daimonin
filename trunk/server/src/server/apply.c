@@ -3172,7 +3172,7 @@ void apply_player_light(object *who, object *op)
         if (QUERY_FLAG(op, FLAG_PERM_DAMNED))
             SET_FLAG(op, FLAG_DAMNED);
 
-        if(trigger_object_plugin_event(EVENT_APPLY, who, op, NULL,
+        if(trigger_object_plugin_event(EVENT_APPLY, op, who, NULL,
                     NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
             return;
 
@@ -3226,7 +3226,7 @@ void apply_player_light(object *who, object *op)
                 }
             }
 
-            if(trigger_object_plugin_event(EVENT_APPLY, who, op, NULL,
+            if(trigger_object_plugin_event(EVENT_APPLY, op, who, NULL,
                         NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
                 return;
 
@@ -3268,7 +3268,7 @@ void apply_player_light(object *who, object *op)
                         if (QUERY_FLAG(tmp, FLAG_PERM_DAMNED))
                             SET_FLAG(tmp, FLAG_DAMNED);
 
-                        if(trigger_object_plugin_event(EVENT_APPLY, who, op, NULL,
+                        if(trigger_object_plugin_event(EVENT_APPLY, op, who, NULL,
                                     NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
                             return;
 
@@ -3302,7 +3302,7 @@ void apply_player_light(object *who, object *op)
                 if (QUERY_FLAG(op, FLAG_PERM_DAMNED))
                     SET_FLAG(op, FLAG_DAMNED);
 
-                if(trigger_object_plugin_event(EVENT_APPLY, who, op, NULL,
+                if(trigger_object_plugin_event(EVENT_APPLY, op, who, NULL,
                             NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
                     return;
 
