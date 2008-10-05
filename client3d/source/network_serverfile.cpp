@@ -99,7 +99,7 @@ bool ServerFile::requestFiles()
     {
         std::stringstream strCmd;
         strCmd << "rf " << mRequestFileChain;
-        Network::getSingleton().cs_write_string(strCmd.str().c_str());
+        //Network::getSingleton().cs_write_string(strCmd.str().c_str());
         srv_file[mRequestFileChain].status = STATUS_UPDATING;
     }
     return false;

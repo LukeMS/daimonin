@@ -73,6 +73,7 @@ void TileManager::Init(SceneManager* SceneMgr, int queryMaskLand, int queryMaskW
     mSceneManager = SceneMgr;
     mRaySceneQuery = mSceneManager->createRayQuery(Ray());
     mLod = lod&3;
+    //mLod = 3;
     int textureSize = MAX_TEXTURE_SIZE >> mLod;
     Logger::log().info() << "Setting LoD to " << mLod << ". Atlas size is " << textureSize << "x" << textureSize<< ".";
     if (createAtlas)

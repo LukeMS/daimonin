@@ -309,6 +309,7 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                 ObjectManager::getSingleton().addMobileObject(obj);
             }
         }
+/*
         else if (meshName == "Hero.mesh")
         {
             static bool once = true;
@@ -317,12 +318,13 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                 once = false;
                 Vector3 pos;
                 pos.x = TileManager::TILE_SIZE * TileManager::CHUNK_SIZE_X/2;
-                pos.z = 0;
+                pos.y = 0;
                 pos.z = TileManager::TILE_SIZE * (TileManager::CHUNK_SIZE_Z-2) - TileManager::TILE_SIZE/2;
                 ObjectManager::getSingleton().setPosition(ObjectNPC::HERO, pos);
                 //Logger::log().error() << "we got the Hero face: " << face;
             }
         }
+*/
         else if (meshName.find("Wall") != std::string::npos)
         {
             /*

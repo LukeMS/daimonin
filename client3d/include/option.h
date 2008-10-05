@@ -68,7 +68,9 @@ public:
         GAME_STATUS_LOGIN_PASWD,
         GAME_STATUS_LOGIN_PASWD_WAIT,
         GAME_STATUS_LOGIN_NEW_ACCOUNT,
-
+        GAME_STATUS_LOGIN_DONE,
+        GAME_STATUS_LOGIN_CHARACTER,
+        GAME_STATUS_LOGIN_CHARACTER_WAIT,
 
         GAME_STATUS_WAITFORPLAY,       /**< we simply wait for game start means, this is not a serial stepping here **/
         GAME_STATUS_QUIT,              /**< we are in quit menu **/

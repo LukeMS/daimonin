@@ -96,7 +96,7 @@ void GuiManager::Init(int w, int h)
     mScreenHeight   = h;
     mMouseInside    = true;
     mTooltipRefresh = false;
-    mActiveTextInput= false;
+    mTextInputActive= false;
     String strTexture = RESOURCE_TOOLTIP; strTexture+= TEXTURE_RESOURCE_NAME;
     mTexture = TextureManager::getSingleton().createManual(strTexture, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
                TEX_TYPE_2D, TOOLTIP_SIZE, TOOLTIP_SIZE, 0, PF_A8R8G8B8, TU_STATIC_WRITE_ONLY,
@@ -358,22 +358,22 @@ bool GuiManager::keyEvent(const int key, const unsigned int keyChar)
     // Key event in npc-dialog window.
     if (GuiDialog::getSingleton().keyEvent(key, keyChar)) return true;
     // We have an active Textinput.
-    if (mActiveTextInput)
+    if (mTextInputActive)
     {
         if (key == OIS::KC_ESCAPE)
         {
             sendMessage(mActiveWindow, GUI_MSG_TXT_CHANGED, mActiveElement, (void*)mBackupTextInputString.c_str());
             GuiTextinput::getSingleton().canceled();
-            mActiveTextInput = false;
+            mTextInputActive = false;
             return true;
         }
-        GuiTextinput::getSingleton().keyEvent(key, keyChar);
+        mTextInputUserAction = GuiTextinput::getSingleton().keyEvent(key, keyChar);
         if (GuiTextinput::getSingleton().wasFinished())
         {
             mStrTextInput = GuiTextinput::getSingleton().getText();
             sendMessage(mActiveWindow, GUI_MSG_TXT_CHANGED, mActiveElement, (void*)mStrTextInput.c_str());
             GuiTextinput::getSingleton().stop();
-            mActiveTextInput = false;
+            mTextInputActive = false;
         }
         return true;
     }
@@ -432,8 +432,7 @@ bool GuiManager::mouseEvent(int mouseAction, Vector3 &mouse)
         if (ret == EVENT_CHECK_DONE)
         {
             mActiveWindow = i;
-            mMouseInside = true;
-            return true;
+            return (mMouseInside = true);
         }
         if (ret == EVENT_DRAG_STRT)
         {
@@ -459,8 +458,8 @@ const char *GuiManager::sendMessage(int window, int message, int element, void *
 //================================================================================================
 void GuiManager::startTextInput(int window, int winElement, int maxChars, bool blockNumbers, bool blockWhitespaces)
 {
-    if (mActiveTextInput || !guiWindow[window].isVisible()) return;
-    mActiveTextInput = true;
+    if (mTextInputActive || !guiWindow[window].isVisible()) return;
+    mTextInputActive = true;
     mActiveWindow = window;
     mActiveElement= winElement;
     const char *tmp = sendMessage(mActiveWindow, GUI_MSG_TXT_GET, mActiveElement);
@@ -568,7 +567,7 @@ void GuiManager::update(Real timeSinceLastFrame)
     // ////////////////////////////////////////////////////////////////////
     // Update textinput.
     // ////////////////////////////////////////////////////////////////////
-    if (mActiveTextInput)
+    if (mTextInputActive)
         sendMessage(mActiveWindow, GUI_MSG_TXT_CHANGED, mActiveElement, (void*)GuiTextinput::getSingleton().getText());
     // ////////////////////////////////////////////////////////////////////
     // Update windows.

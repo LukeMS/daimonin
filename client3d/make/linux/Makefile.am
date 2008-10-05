@@ -63,6 +63,7 @@ client3d_SOURCES = \
 	../../source/object_visuals.cpp \
 	../../source/object_manager.cpp \
 	../../source/object_npc.cpp \
+	../../source/object_hero.cpp \
 	../../source/object_missile.cpp \
 	../../source/object_static.cpp \
 	../../source/option.cpp \

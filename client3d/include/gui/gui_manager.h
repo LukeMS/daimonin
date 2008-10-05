@@ -119,23 +119,24 @@ public:
     const char *sendMessage(int window, int message, int element, void *value1 = 0, void *value2 = 0);
     void setTooltip(const char *text);
     void displaySystemMessage(const char*text);
-    void startTextInput(int window, int winElement, int maxChars, bool blockNumbers=false, bool blockWhitespaces=false);
-    bool brokenTextInput();
-    void resetTextInput();
-    bool finishedTextInput();
-    void cancelTextInput();
-    const char *getTextInput();
     void centerWindowOnMouse(int window);
     void showWindow(int window, bool visible);
-    int getScreenWidth()
-    {
-        return mScreenWidth;
-    }
-    int getScreenHeight()
-    {
-        return mScreenHeight;
-    }
+    int getScreenWidth()  { return mScreenWidth; }
+    int getScreenHeight() { return mScreenHeight;}
 
+    void startTextInput(int window, int winElement, int maxChars, bool blockNumbers=false, bool blockWhitespaces=false);
+    void resetTextInput();
+    bool brokenTextInput();
+    bool finishedTextInput();
+    bool getUserAction()
+    {
+        if (!mTextInputUserAction)
+            return false;
+        mTextInputUserAction = false;
+        return true;
+    }
+    void cancelTextInput();
+    const char *getTextInput();
     // ////////////////////////////////////////////////////////////////////
     // GUI_Table stuff.
     // ////////////////////////////////////////////////////////////////////
@@ -214,7 +215,8 @@ private:
     bool mIsDragging;
     bool mMouseInside;       /**< Mouse is used for gui related stuff at the moment. **/
     bool mTooltipRefresh;
-    bool mActiveTextInput;
+    bool mTextInputActive;
+    bool mTextInputUserAction;
     Ogre::Vector3 mMouse;
     Ogre::Overlay *mOverlay;
     Ogre::OverlayElement *mElement;

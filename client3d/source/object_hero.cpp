@@ -70,7 +70,7 @@ int ObjectHero::fillAccount(int pos, const unsigned char *data)
 {
     int i = 0;
     account.name[pos] = (const char*)data;
-    i+= account.name[pos].size();
+    i+= (int)account.name[pos].size();
     account.level [pos] = data[++i];
     account.race  [pos] = data[++i];
     account.gender[pos] = data[++i];
@@ -78,6 +78,3 @@ int ObjectHero::fillAccount(int pos, const unsigned char *data)
     Logger::log().error() << "Player " << account.name[pos] << " Level: " << account.level[pos] << " race: " << account.race[pos] ;
     return ++i;
 }
-
-
-

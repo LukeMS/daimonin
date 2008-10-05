@@ -485,7 +485,7 @@ int GuiWindow::mouseEvent(int MouseAction, Vector3 &mouse)
     int rx = (int) mouse.x;
     int ry = (int) mouse.y;
 
-    if (rx < mPosX && rx > mPosX + mWidth && ry < mPosY && ry > mPosY + mHeight)
+    if (rx < mPosX || rx > mPosX + mWidth || ry < mPosY || ry > mPosY + mHeight)
         return GuiManager::EVENT_CHECK_NEXT;
     int x = rx - mPosX;
     int y = ry - mPosY;
@@ -633,7 +633,7 @@ void GuiWindow::clearTable(int element)
     for (unsigned int i = 0; i < mvTable.size() ; ++i)
     {
         if (mvTable[i]->getIndex() == element)
-            mvTable[i]->clearRows();
+            mvTable[i]->clear();
     }
 }
 
