@@ -160,7 +160,8 @@ static void insert_spawn_mob_loot(object *op, object *mob, object *tmp)
 void spawn_point(object *op)
 {
     int     rmt, tag;
-    object *tmp, *mob, *next;
+    char    buf[MAX_BUF];
+    object *tmp, *mob, *next, *loot;
 
     if (op->enemy)
     {
@@ -251,22 +252,43 @@ void spawn_point(object *op)
     if (!mob) /* well, this time we spawn nothing */
         return;
 
-    tmp = mob->inv; /* quick save the def mob inventory */
+    /* loot is a temporary object purely for script convenience. Its only
+     * purpose is to temporarily store the mob's default inventory (that is,
+     * the items it is specifically given in a map file, *not* randomitems. */
+    sprintf(buf, "%s's loot", mob->name);
+    loot = create_singularity(buf);
+
+    for (tmp = mob->inv; tmp; tmp = tmp->below)
+    {
+        object *ob = get_object();
+
+        copy_object(tmp, ob);
+        insert_ob_in_ob(ob, loot);
+    }
+
     if (!(mob = spawn_monster(mob, op, op->last_heal)))
+    {
+        mark_object_removed(loot);
+
         return; /* that happens when we have no free spot....*/
+    }
 
     /* normal spawning may be interrupted by a script, allowing you to do
      * clever things to the mob. This is an apply event because trigger is
      * already used in the case of connected spawn points. */
     tag = mob->count;
-    if (trigger_object_plugin_event(EVENT_APPLY, op, mob, tmp, NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+    if (trigger_object_plugin_event(EVENT_APPLY, op, mob, loot, NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
     {
         if (!was_destroyed(mob, tag))
         {
             mob->last_eat = 0;
-            insert_spawn_mob_loot(op, mob, tmp);
+            insert_spawn_mob_loot(op, mob, loot->inv);
             fix_monster(mob); /* fix all the values and add in possible abilities or forces ... */
         }
+
+        if (OBJECT_ACTIVE(loot)) /* make sure loot is removed */
+            mark_object_removed(loot);
+
         return;
     }
 
@@ -277,7 +299,9 @@ void spawn_point(object *op)
         op->last_eat = mob->last_eat;
         mob->last_eat = 0;
     }
-    insert_spawn_mob_loot(op, mob, tmp);
+
+    insert_spawn_mob_loot(op, mob, loot->inv);
+    mark_object_removed(loot);
 
     op->last_sp = rmt; /* this is the last rand() for what we have spawned! */
 

@@ -2,12 +2,12 @@ arch map
 name Testmap - Plugin Events
 msg
 Created:  2003-06-04 Daimonin Map Editor
-Modified: 2008-09-29 smacky
+Modified: 2008-10-05 smacky
 endmsg
 width 24
 height 24
 difficulty 1
-darkness 1280
+darkness 5
 tileset_id 47
 tileset_x 0
 tileset_y 0
@@ -1713,7 +1713,9 @@ y 13
 end
 arch sign
 msg
-On the chequered floor is a spawn point with an APPLY script. Each time it spawns, the mob is put into one of the three pen areas according to colour (physical colour, not level colour). A TRIGGER scrpt is run when a connected spawn (such as this one) has its connection activated.
+On the chequered floor is a spawn point with an APPLY script. Each time it spawns, the mob has any money extracted from its treasure and left on the chequered square and is then put into one of the three pen areas according to colour (physical colour, not level colour). See the script /dev/testmaps/separate_jellies.lua for more details.
+
+A TRIGGER scrpt can also be run when a connected spawn (such as this one) has its connection activated, but is not in this case
 endmsg
 x 13
 y 13
@@ -1844,8 +1846,9 @@ arch floor_ostone1
 x 14
 y 14
 end
-arch handle_lever
+arch trigger_lever
 connected 666
+exp 3
 x 14
 y 14
 end
@@ -2091,6 +2094,10 @@ x 16
 y 16
 arch jelly_red
 type 83
+arch apple
+end
+arch silvercoin
+end
 end
 arch jelly_ochre
 type 83
@@ -2099,6 +2106,8 @@ end
 arch jelly_green
 type 83
 object_int1 3333
+arch silvercoin
+end
 end
 arch event_obj
 name Lua
