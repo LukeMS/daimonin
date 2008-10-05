@@ -1008,9 +1008,8 @@
     Note that the maximum possible for &lt;drop amount&gt; is 32767.
   </attribute>
   <attribute arch="exp" editor="reset time" type="int">
-    Being activated, the altar will reset after &lt;reset time&gt; ticks.
-    After reset, the altar is ready to be activated once again.
-    The default &lt;reset time&gt; is 30.
+    Once activated, the altar will reset after &lt;reset time&gt; ticks. After
+    this reset, the pedestal can then be activated again. The default is 30.
   </attribute>
   <attribute arch="connected" editor="connection" type="int">
     If a connection value is set, the altar will trigger all objects
@@ -1484,6 +1483,10 @@
   <attribute arch="weight" editor="press weight" type="string">
     The button is pressed (triggered), as soon as
     &lt;press weigh&gt; gram are placed on top of it.
+  </attribute>
+  <attribute arch="exp" editor="reset time" type="int">
+    Once activated, the button will reset after &lt;reset time&gt; ticks. After
+    this reset, the button can then be activated again. The default is 30.
   </attribute>
   <attribute arch="connected" editor="connection" type="int">
     Every time the button is pressed or released, all objects
@@ -2464,6 +2467,10 @@
     opened after the first player passed. If you want to keep the gate shut,
     connecting it to a handle trigger is an easy solution.  ]]>
   </use>
+  <attribute arch="exp" editor="reset time" type="int">
+    Once activated, the handle will reset after &lt;reset time&gt; ticks. After
+    this reset, the handle can then be activated again. The default is 30.
+  </attribute>
 </type>
 
 <!--####################################################################-->
@@ -4194,6 +4201,10 @@
     If it is set to "player", any player stepping on the pedestal
     is a match. Very useful if you want to open a gate for players
     but not for monsters.
+  </attribute>
+  <attribute arch="exp" editor="reset time" type="int">
+    Once activated, the pedestal will reset after &lt;reset time&gt; ticks. After
+    this reset, the pedestal can then be activated again. The default is 30.
   </attribute>
   <attribute arch="connected" editor="connection" type="int">
     When the pedestal is triggered, all objects with the same

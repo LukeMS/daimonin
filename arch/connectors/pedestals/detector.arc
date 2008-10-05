@@ -5,8 +5,6 @@ layer 3
 type 51 
 face pedestal.111
 animation detector
-is_animated 0
-anim_speed 0
 is_turnable 1
 direction 1
 speed 0.5
