@@ -1,0 +1,36 @@
+anim ladder_down_rough
+facings 9
+dummy.111
+dummy.111
+dummy.111
+ladder_down_rough.131
+dummy.111
+ladder_down_rough.151
+dummy.111
+dummy.111
+dummy.111
+mina
+anim ladder_up_rough
+facings 9
+dummy.111
+dummy.111
+dummy.111
+ladder_up_rough.131
+dummy.111
+ladder_up_rough.151
+dummy.111
+dummy.111
+dummy.111
+mina
+anim ladder_up_rough2
+facings 9
+dummy.111
+dummy.111
+dummy.111
+ladder_up_rough2.131
+dummy.111
+ladder_up_rough2.151
+dummy.111
+dummy.111
+dummy.111
+mina
