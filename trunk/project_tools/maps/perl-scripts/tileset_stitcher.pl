@@ -103,6 +103,7 @@ foreach my $map (@$tileset)
 }
 
 open OUT, ">$outfile" or die "Couldn't open $outfile: $!\n";
+binmode OUT;
 print OUT $image->jpeg;
 close OUT;
 
