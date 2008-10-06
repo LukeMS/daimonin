@@ -74,7 +74,7 @@ public class Mapchecker extends JFrame
     private boolean logFileSet = false;
     private boolean commandLine = false;
     
-    final String version = "V1.6";
+    final String version = "V1.7";
     
     public Mapchecker(String topDirStr, String logFileStr)
     {
