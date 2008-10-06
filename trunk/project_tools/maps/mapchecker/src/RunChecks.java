@@ -1054,7 +1054,10 @@ public class RunChecks extends Thread
             else if (line.equals("end"))
             {
                 if (!exists)
+                {
                     logMapsquareError("Error", shortPath, curX, curY, "object " + object + " does not exist!");
+                    errors++;
+                }
 
                 if ((curX < 0) || (curY < 0) || (curX >= mapSizeX) || (curY >= mapSizeY))
                     valid = false;
