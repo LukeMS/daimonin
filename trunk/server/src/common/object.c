@@ -3067,10 +3067,12 @@ object *find_next_object(object *op, uint8 type, uint8 mode, object *root)
 {
     object *next = NULL;
 
+#ifdef DEBUG_FNO
     LOG(llevDebug, "DEBUG:: %s/find_next_object(%s[%d], %d, %d, %s[%d]):",
         __FILE__,
         (op) ? op->name : "NULL", (op) ? op->count : 0, type,
         mode, (root) ? root->name : "NULL", (root) ? root->count : 0);
+#endif
 
     if (op->inv &&
         (mode == FNO_MODE_INV_ONLY ||
@@ -3082,17 +3084,23 @@ object *find_next_object(object *op, uint8 type, uint8 mode, object *root)
          mode == FNO_MODE_ALL))
     {
         next = op->inv;
+#ifdef DEBUG_FNO
         LOG(llevDebug, "\n v");
+#endif
     }
     else if (op->below && !op->map)
     {
         next = op->below;
+#ifdef DEBUG_FNO
         LOG(llevDebug, "\n >");
+#endif
     }
     else if (op->env)
     {
         next = op->env;
+#ifdef DEBUG_FNO
         LOG(llevDebug, "\n ^");
+#endif
     }
 
     while (1)
@@ -3101,7 +3109,9 @@ object *find_next_object(object *op, uint8 type, uint8 mode, object *root)
          * to get them right. */
         if (!next)
         {
+#ifdef DEBUG_FNO
             LOG(llevDebug, " NULL!");
+#endif
             break;
         }
 
@@ -3110,13 +3120,17 @@ object *find_next_object(object *op, uint8 type, uint8 mode, object *root)
 
         if (root && next == root || next == root->env)
         {
+#ifdef DEBUG_FNO
             LOG(llevDebug, " ROOT!");
+#endif
             next = NULL;
             break;
         }
         else if (!type || next->type == type)
         {
+#ifdef DEBUG_FNO
             LOG(llevDebug, " MATCHES!\n");
+#endif
             break;
         }
 
@@ -3127,7 +3141,9 @@ object *find_next_object(object *op, uint8 type, uint8 mode, object *root)
              mode == FNO_MODE_ALL)))
         {
             next = next->inv;
+#ifdef DEBUG_FNO
             LOG(llevDebug, "\n v");
+#endif
         }
         else if (next->env && !next->below)
         {
@@ -3139,8 +3155,10 @@ object *find_next_object(object *op, uint8 type, uint8 mode, object *root)
                     break;
                 next = next->env;
                 tmp = (!next->map) ? next->below : NULL;
+#ifdef DEBUG_FNO
                 LOG(llevDebug, "\n ^ %s[%d]",
                     next->name, next->count);
+#endif
             }
             if (next != root)
             {
@@ -3150,7 +3168,9 @@ object *find_next_object(object *op, uint8 type, uint8 mode, object *root)
                         if (root && (next = next->below) == root)
                             break;
             }
+#ifdef DEBUG_FNO
             LOG(llevDebug, "->");
+#endif
         }
         else
         {
@@ -3161,11 +3181,15 @@ object *find_next_object(object *op, uint8 type, uint8 mode, object *root)
                         if ((next = next->below) == root && root)
                             break;
             }
+#ifdef DEBUG_FNO
             LOG(llevDebug, " >");
+#endif
         }
     }
 
+#ifdef DEBUG_FNO
     LOG(llevDebug, "\n");
+#endif
     
     return next;
 }
