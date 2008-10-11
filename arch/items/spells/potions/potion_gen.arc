@@ -14,4 +14,5 @@ is_thrown 1
 material 512
 weight 200
 value 28
+level 1
 end

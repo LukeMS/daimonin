@@ -2,6 +2,7 @@ arch map
 name Testmaps  - Artifacts 3
 msg
 Created:  2004-02-06 Daimonin Map Editor
+Modified: 2008-10-10 tehill
 endmsg
 width 24
 height 24
@@ -372,7 +373,9 @@ arch floor_ostone1
 x 3
 y 2
 end
-arch scroll_firestorm
+arch scroll_generic
+amask scroll_firestorm
+identified 1
 x 3
 y 2
 end
@@ -388,7 +391,9 @@ arch floor_ostone1
 x 3
 y 5
 end
-arch potion_minor_res_fire
+arch potion_generic
+amask potion_minor_res_fire
+identified 1
 x 3
 y 5
 end
@@ -404,7 +409,9 @@ arch floor_ostone1
 x 3
 y 8
 end
-arch balm_first_aid
+arch balm_generic
+amask balm_first_aid
+identified 1
 x 3
 y 8
 end
@@ -420,7 +427,8 @@ arch floor_ostone1
 x 3
 y 11
 end
-arch holding_min
+arch bag
+amask holding_min
 identified 1
 x 3
 y 11
@@ -488,7 +496,9 @@ arch floor_ostone1
 x 4
 y 2
 end
-arch scroll_icestorm
+arch scroll_generic
+amask scroll_icestorm
+identified 1
 x 4
 y 2
 end
@@ -504,7 +514,9 @@ arch floor_ostone1
 x 4
 y 5
 end
-arch potion_minor_res_cold
+arch potion_generic
+amask potion_minor_res_cold
+identified 1
 x 4
 y 5
 end
@@ -532,7 +544,8 @@ arch floor_ostone1
 x 4
 y 11
 end
-arch holding_small
+arch bag
+amask holding_small
 identified 1
 x 4
 y 11
@@ -600,7 +613,9 @@ arch floor_ostone1
 x 5
 y 2
 end
-arch scroll_min_heal
+arch scroll_generic
+amask scroll_min_heal
+identified 1
 x 5
 y 2
 end
@@ -616,7 +631,9 @@ arch floor_ostone1
 x 5
 y 5
 end
-arch potion_minor_res_elec
+arch potion_generic
+amask potion_minor_res_elec
+identified 1
 x 5
 y 5
 end
@@ -644,7 +661,8 @@ arch floor_ostone1
 x 5
 y 11
 end
-arch holding_med
+arch bag
+amask holding_med
 identified 1
 x 5
 y 11
@@ -712,7 +730,9 @@ arch floor_ostone1
 x 6
 y 2
 end
-arch scroll_str_self
+arch scroll_generic
+amask scroll_str_self
+identified 1
 x 6
 y 2
 end
@@ -728,7 +748,9 @@ arch floor_ostone1
 x 6
 y 5
 end
-arch potion_minor_res_poison
+arch potion_generic
+amask potion_minor_res_poison
+identified 1
 x 6
 y 5
 end
@@ -756,7 +778,8 @@ arch floor_ostone1
 x 6
 y 11
 end
-arch holding
+arch bag
+amask holding
 identified 1
 x 6
 y 11
@@ -824,7 +847,9 @@ arch floor_ostone1
 x 7
 y 2
 end
-arch scroll_identify
+arch scroll_generic
+amask scroll_identify
+identified 1
 x 7
 y 2
 end
@@ -840,7 +865,9 @@ arch floor_ostone1
 x 7
 y 5
 end
-arch potion_minor_res_acid
+arch potion_generic
+amask potion_minor_res_acid
+identified 1
 x 7
 y 5
 end
@@ -868,7 +895,8 @@ arch floor_ostone1
 x 7
 y 11
 end
-arch holding_fine
+arch bag
+amask holding_fine
 identified 1
 x 7
 y 11
@@ -936,7 +964,9 @@ arch floor_ostone1
 x 8
 y 2
 end
-arch scroll_dmagic
+arch scroll_generic
+amask scroll_dmagic
+identified 1
 x 8
 y 2
 end
@@ -952,7 +982,9 @@ arch floor_ostone1
 x 8
 y 5
 end
-arch potion_minor_strength
+arch potion_generic
+amask potion_minor_strength
+identified 1
 x 8
 y 5
 end
@@ -980,7 +1012,8 @@ arch floor_ostone1
 x 8
 y 11
 end
-arch holding_great
+arch bag
+amask holding_great
 identified 1
 x 8
 y 11
@@ -1048,7 +1081,9 @@ arch floor_ostone1
 x 9
 y 2
 end
-arch scroll_dcurse
+arch scroll_generic
+amask scroll_dcurse
+identified 1
 x 9
 y 2
 end
@@ -1064,11 +1099,9 @@ arch floor_ostone1
 x 9
 y 5
 end
-arch potion_minor_dex
-x 9
-y 5
-end
-arch potion_minor_dex
+arch potion_generic
+amask potion_minor_dex
+identified 1
 x 9
 y 5
 end
@@ -1096,7 +1129,8 @@ arch floor_ostone1
 x 9
 y 11
 end
-arch holding_greater
+arch bag
+amask holding_greater
 identified 1
 x 9
 y 11
@@ -1164,7 +1198,9 @@ arch floor_ostone1
 x 10
 y 2
 end
-arch scroll_rem_curse
+arch scroll_generic
+amask scroll_rem_curse
+identified 1
 x 10
 y 2
 end
@@ -1180,7 +1216,9 @@ arch floor_ostone1
 x 10
 y 5
 end
-arch potion_minor_con
+arch potion_generic
+amask potion_minor_con
+identified 1
 x 10
 y 5
 end
@@ -1208,7 +1246,8 @@ arch floor_ostone1
 x 10
 y 11
 end
-arch holding_weight
+arch bag
+amask holding_weight
 identified 1
 x 10
 y 11
@@ -1276,7 +1315,9 @@ arch floor_ostone1
 x 11
 y 2
 end
-arch scroll_rem_damn
+arch scroll_generic
+amask scroll_rem_damn
+identified 1
 x 11
 y 2
 end
@@ -1292,7 +1333,9 @@ arch floor_ostone1
 x 11
 y 5
 end
-arch potion_evil_liquid
+arch potion_generic
+amask potion_evil_liquid
+identified 1
 x 11
 y 5
 end
@@ -1383,7 +1426,9 @@ arch floor_ostone1
 x 12
 y 2
 end
-arch scroll_cause_lwound
+arch scroll_generic
+amask scroll_cause_lwound
+identified 1
 x 12
 y 2
 end
@@ -1399,7 +1444,9 @@ arch floor_ostone1
 x 12
 y 5
 end
-arch potion_minor_res
+arch potion_generic
+amask potion_minor_res
+identified 1
 x 12
 y 5
 end
@@ -1502,7 +1549,9 @@ arch floor_ostone1
 x 13
 y 5
 end
-arch potion_improve
+arch potion_generic
+amask potion_improve
+identified 1
 x 13
 y 5
 end
@@ -1605,7 +1654,9 @@ arch floor_ostone1
 x 14
 y 5
 end
-arch potion_firestorm
+arch potion_generic
+amask potion_firestorm
+identified 1
 x 14
 y 5
 end
@@ -1708,7 +1759,9 @@ arch floor_ostone1
 x 15
 y 5
 end
-arch potion_freezing
+arch potion_generic
+amask potion_freezing
+identified 1
 x 15
 y 5
 end
@@ -1811,7 +1864,9 @@ arch floor_ostone1
 x 16
 y 5
 end
-arch potion_cure_sickness
+arch potion_generic
+amask potion_cure_sickness
+identified 1
 x 16
 y 5
 end
@@ -1914,7 +1969,9 @@ arch floor_ostone1
 x 17
 y 5
 end
-arch potion_cure_illness
+arch potion_generic
+amask potion_cure_illness
+identified 1
 x 17
 y 5
 end
