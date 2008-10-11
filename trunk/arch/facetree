@@ -4986,6 +4986,8 @@
 /scenery/cooking_utensils/lab_cauld_brk.101
 /exits/ladders/ladder_down.131
 /exits/ladders/ladder_down.151
+/exits/ladders/ladder_down_rough.131
+/exits/ladders/ladder_down_rough.151
 /exits/ladders/ladder_down_vege.131
 /exits/ladders/ladder_down_vege.151
 /exits/ladders/ladder_round_down.111
@@ -4998,6 +5000,10 @@
 /exits/ladders/ladder_square_down.171
 /exits/ladders/ladder_up.131
 /exits/ladders/ladder_up.151
+/exits/ladders/ladder_up_rough.131
+/exits/ladders/ladder_up_rough.151
+/exits/ladders/ladder_up_rough2.131
+/exits/ladders/ladder_up_rough2.151
 /exits/ladders/ladder_up_vege.131
 /exits/ladders/ladder_up_vege.151
 /floors/water/lake.101
