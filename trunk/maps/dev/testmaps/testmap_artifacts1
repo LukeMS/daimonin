@@ -2,6 +2,7 @@ arch map
 name Testmap - Artifacts1
 msg
 Created:  2003-06-04 Daimonin Map Editor
+Modified: 2008-10-07 tehill
 endmsg
 width 24
 height 24
@@ -182,199 +183,196 @@ arch floor_ostone1
 x 1
 y 4
 end
-arch cloak_rhun
+arch floor_ostone1
+x 1
+y 5
+end
+arch floor_ostone1
+x 1
+y 6
+end
+arch floor_ostone1
+x 1
+y 7
+end
+arch floor_ostone1
+x 1
+y 8
+end
+arch floor_ostone1
+x 1
+y 9
+end
+arch floor_ostone1
+x 1
+y 10
+end
+arch floor_ostone1
+x 1
+y 11
+end
+arch floor_ostone1
+x 1
+y 12
+end
+arch floor_ostone1
+x 1
+y 13
+end
+arch floor_ostone1
+x 1
+y 14
+end
+arch floor_ostone1
+x 1
+y 15
+end
+arch floor_ostone1
+x 1
+y 16
+end
+arch floor_ostone1
+x 1
+y 17
+end
+arch floor_ostone1
+x 1
+y 18
+end
+arch floor_ostone1
+x 1
+y 19
+end
+arch floor_ostone1
+x 1
+y 20
+end
+arch floor_ostone1
+x 1
+y 21
+end
+arch floor_ostone1
+x 1
+y 22
+end
+arch floor_ostone1
+x 1
+y 23
+end
+arch floor_ostone1
+x 2
+end
+arch wall_stone1_1
+x 2
+end
+arch floor_ostone1
+x 2
+y 1
+end
+arch floor_ostone1
+x 2
+y 2
+end
+arch floor_ostone1
+x 2
+y 3
+end
+arch floor_ostone1
+x 2
+y 4
+end
+arch floor_ostone1
+x 2
+y 5
+end
+arch floor_ostone1
+x 2
+y 6
+end
+arch floor_ostone1
+x 2
+y 7
+end
+arch floor_ostone1
+x 2
+y 8
+end
+arch floor_ostone1
+x 2
+y 9
+end
+arch floor_ostone1
+x 2
+y 10
+end
+arch floor_ostone1
+x 2
+y 11
+end
+arch floor_ostone1
+x 2
+y 12
+end
+arch floor_ostone1
+x 2
+y 13
+end
+arch floor_ostone1
+x 2
+y 14
+end
+arch floor_ostone1
+x 2
+y 15
+end
+arch floor_ostone1
+x 2
+y 16
+end
+arch floor_ostone1
+x 2
+y 17
+end
+arch floor_ostone1
+x 2
+y 18
+end
+arch floor_ostone1
+x 2
+y 19
+end
+arch floor_ostone1
+x 2
+y 20
+end
+arch floor_ostone1
+x 2
+y 21
+end
+arch floor_ostone1
+x 2
+y 22
+end
+arch floor_ostone1
+x 2
+y 23
+end
+arch floor_ostone1
+x 3
+end
+arch wall_stone1_1
+x 3
+end
+arch wall_stone1_1
+x 3
+end
+arch floor_ostone1
+x 3
+y 1
+end
+arch cloak
+amask cloak_woe1
 identified 1
-x 1
-y 4
-end
-arch floor_ostone1
-x 1
-y 5
-end
-arch floor_ostone1
-x 1
-y 6
-end
-arch floor_ostone1
-x 1
-y 7
-end
-arch floor_ostone1
-x 1
-y 8
-end
-arch floor_ostone1
-x 1
-y 9
-end
-arch floor_ostone1
-x 1
-y 10
-end
-arch floor_ostone1
-x 1
-y 11
-end
-arch floor_ostone1
-x 1
-y 12
-end
-arch floor_ostone1
-x 1
-y 13
-end
-arch floor_ostone1
-x 1
-y 14
-end
-arch floor_ostone1
-x 1
-y 15
-end
-arch floor_ostone1
-x 1
-y 16
-end
-arch floor_ostone1
-x 1
-y 17
-end
-arch floor_ostone1
-x 1
-y 18
-end
-arch floor_ostone1
-x 1
-y 19
-end
-arch floor_ostone1
-x 1
-y 20
-end
-arch floor_ostone1
-x 1
-y 21
-end
-arch floor_ostone1
-x 1
-y 22
-end
-arch floor_ostone1
-x 1
-y 23
-end
-arch floor_ostone1
-x 2
-end
-arch wall_stone1_1
-x 2
-end
-arch floor_ostone1
-x 2
-y 1
-end
-arch floor_ostone1
-x 2
-y 2
-end
-arch floor_ostone1
-x 2
-y 3
-end
-arch floor_ostone1
-x 2
-y 4
-end
-arch floor_ostone1
-x 2
-y 5
-end
-arch floor_ostone1
-x 2
-y 6
-end
-arch floor_ostone1
-x 2
-y 7
-end
-arch floor_ostone1
-x 2
-y 8
-end
-arch floor_ostone1
-x 2
-y 9
-end
-arch floor_ostone1
-x 2
-y 10
-end
-arch floor_ostone1
-x 2
-y 11
-end
-arch floor_ostone1
-x 2
-y 12
-end
-arch floor_ostone1
-x 2
-y 13
-end
-arch floor_ostone1
-x 2
-y 14
-end
-arch floor_ostone1
-x 2
-y 15
-end
-arch floor_ostone1
-x 2
-y 16
-end
-arch floor_ostone1
-x 2
-y 17
-end
-arch floor_ostone1
-x 2
-y 18
-end
-arch floor_ostone1
-x 2
-y 19
-end
-arch floor_ostone1
-x 2
-y 20
-end
-arch floor_ostone1
-x 2
-y 21
-end
-arch floor_ostone1
-x 2
-y 22
-end
-arch floor_ostone1
-x 2
-y 23
-end
-arch floor_ostone1
-x 3
-end
-arch wall_stone1_1
-x 3
-end
-arch wall_stone1_1
-x 3
-end
-arch floor_ostone1
-x 3
-y 1
-end
-arch cloak_woe1
 x 3
 y 1
 end
@@ -382,7 +380,19 @@ arch floor_ostone1
 x 3
 y 2
 end
+arch cloak
+amask cloak_less_fire
+identified 1
+x 3
+y 2
+end
 arch floor_ostone1
+x 3
+y 3
+end
+arch robe
+amask robe_sm_pow
+identified 1
 x 3
 y 3
 end
@@ -390,7 +400,9 @@ arch floor_ostone1
 x 3
 y 4
 end
-arch shield_mass
+arch shield
+amask shield_min_fire
+identified 1
 x 3
 y 4
 end
@@ -406,7 +418,9 @@ arch floor_ostone1
 x 3
 y 7
 end
-arch girdle_min_str
+arch girdle
+amask girdle_minor_hp
+identified 1
 x 3
 y 7
 end
@@ -422,7 +436,9 @@ arch floor_ostone1
 x 3
 y 10
 end
-arch gauntlet_min_str
+arch gauntlets
+amask gauntlet_inaccuracy
+identified 1
 x 3
 y 10
 end
@@ -434,11 +450,19 @@ arch floor_ostone1
 x 3
 y 12
 end
+arch helm_iron
+amask helm_med_con
+identified 1
+x 3
+y 12
+end
 arch floor_ostone1
 x 3
 y 13
 end
-arch helm_infravision
+arch helm_iron
+amask helm_infravision
+identified 1
 x 3
 y 13
 end
@@ -450,11 +474,19 @@ arch floor_ostone1
 x 3
 y 15
 end
+arch bracers_ac
+amask bracers_sm_wisdom
+identified 1
+x 3
+y 15
+end
 arch floor_ostone1
 x 3
 y 16
 end
-arch bracers_dex
+arch bracers_ac
+amask bracers_min_dex
+identified 1
 x 3
 y 16
 end
@@ -466,11 +498,19 @@ arch floor_ostone1
 x 3
 y 18
 end
+arch leggings_leather
+amask leggings_med_poison
+identified 1
+x 3
+y 18
+end
 arch floor_ostone1
 x 3
 y 19
 end
-arch boots_granite
+arch high_boots
+amask boots_granite
+identified 1
 x 3
 y 19
 end
@@ -486,11 +526,19 @@ arch floor_ostone1
 x 3
 y 22
 end
-arch armour_mass
+arch chain_mail
+amask armour_mass
+identified 1
 x 3
 y 22
 end
 arch floor_ostone1
+x 3
+y 23
+end
+arch chain_mail
+amask armour_sm_elec
+identified 1
 x 3
 y 23
 end
@@ -504,7 +552,9 @@ arch floor_ostone1
 x 4
 y 1
 end
-arch cloak_less_fire
+arch cloak
+amask cloak_min_fire
+identified 1
 x 4
 y 1
 end
@@ -512,7 +562,19 @@ arch floor_ostone1
 x 4
 y 2
 end
+arch cloak
+amask cloak_less_cold
+identified 1
+x 4
+y 2
+end
 arch floor_ostone1
+x 4
+y 3
+end
+arch robe
+amask robe_sm_wis
+identified 1
 x 4
 y 3
 end
@@ -520,7 +582,9 @@ arch floor_ostone1
 x 4
 y 4
 end
-arch shield_less_fire
+arch shield
+amask shield_min_cold
+identified 1
 x 4
 y 4
 end
@@ -536,7 +600,9 @@ arch floor_ostone1
 x 4
 y 7
 end
-arch girdle_min_dex
+arch girdle
+amask girdle_medium_hp
+identified 1
 x 4
 y 7
 end
@@ -552,7 +618,9 @@ arch floor_ostone1
 x 4
 y 10
 end
-arch gauntlet_min_dex
+arch gauntlets
+amask gauntlet_min_str
+identified 1
 x 4
 y 10
 end
@@ -564,11 +632,19 @@ arch floor_ostone1
 x 4
 y 12
 end
+arch helm_iron
+amask helm_med_cha
+identified 1
+x 4
+y 12
+end
 arch floor_ostone1
 x 4
 y 13
 end
-arch helm_xray
+arch helm_iron
+amask helm_xray
+identified 1
 x 4
 y 13
 end
@@ -580,11 +656,19 @@ arch floor_ostone1
 x 4
 y 15
 end
+arch bracers_ac
+amask bracers_med_dex
+identified 1
+x 4
+y 15
+end
 arch floor_ostone1
 x 4
 y 16
 end
-arch bracers_str
+arch bracers_ac
+amask bracers_min_str
+identified 1
 x 4
 y 16
 end
@@ -596,11 +680,19 @@ arch floor_ostone1
 x 4
 y 18
 end
+arch leggings_leather
+amask leggings_med_electricity
+identified 1
+x 4
+y 18
+end
 arch floor_ostone1
 x 4
 y 19
 end
-arch boots_less_fire
+arch low_boots
+amask boots_min_fire
+identified 1
 x 4
 y 19
 end
@@ -616,11 +708,19 @@ arch floor_ostone1
 x 4
 y 22
 end
-arch armour_less_fire
+arch chain_mail
+amask armour_vuln
+identified 1
 x 4
 y 22
 end
 arch floor_ostone1
+x 4
+y 23
+end
+arch chain_mail
+amask armour_sm_poison
+identified 1
 x 4
 y 23
 end
@@ -634,7 +734,9 @@ arch floor_ostone1
 x 5
 y 1
 end
-arch cloak_less_cold
+arch cloak
+amask cloak_min_cold
+identified 1
 x 5
 y 1
 end
@@ -642,7 +744,19 @@ arch floor_ostone1
 x 5
 y 2
 end
+arch cloak
+amask cloak_less_elec
+identified 1
+x 5
+y 2
+end
 arch floor_ostone1
+x 5
+y 3
+end
+arch robe
+amask robe_sm_cha
+identified 1
 x 5
 y 3
 end
@@ -650,7 +764,9 @@ arch floor_ostone1
 x 5
 y 4
 end
-arch shield_less_cold
+arch shield
+amask shield_min_elec
+identified 1
 x 5
 y 4
 end
@@ -666,7 +782,9 @@ arch floor_ostone1
 x 5
 y 7
 end
-arch girdle_min_con
+arch girdle
+amask girdle_hp
+identified 1
 x 5
 y 7
 end
@@ -682,7 +800,9 @@ arch floor_ostone1
 x 5
 y 10
 end
-arch gauntlet_min_con
+arch gauntlets
+amask gauntlet_min_dex
+identified 1
 x 5
 y 10
 end
@@ -694,11 +814,20 @@ arch floor_ostone1
 x 5
 y 12
 end
+arch hat_feather
+name feathered hat
+amask helm_med_pow
+identified 1
+x 5
+y 12
+end
 arch floor_ostone1
 x 5
 y 13
 end
-arch helm_min_str
+arch helm_iron
+amask helm_min_str
+identified 1
 x 5
 y 13
 end
@@ -710,11 +839,19 @@ arch floor_ostone1
 x 5
 y 15
 end
+arch bracers_ac
+amask bracers_med_str
+identified 1
+x 5
+y 15
+end
 arch floor_ostone1
 x 5
 y 16
 end
-arch bracers_con
+arch bracers_ac
+amask bracers_min_con
+identified 1
 x 5
 y 16
 end
@@ -726,11 +863,19 @@ arch floor_ostone1
 x 5
 y 18
 end
+arch leggings_leather
+amask leggings_med_cold
+identified 1
+x 5
+y 18
+end
 arch floor_ostone1
 x 5
 y 19
 end
-arch boots_less_cold
+arch low_boots
+amask boots_min_cold
+identified 1
 x 5
 y 19
 end
@@ -746,11 +891,19 @@ arch floor_ostone1
 x 5
 y 22
 end
-arch armour_less_cold
+arch chain_mail
+amask armour_minor_hp
+identified 1
 x 5
 y 22
 end
 arch floor_ostone1
+x 5
+y 23
+end
+arch chain_mail
+amask armour_sm_acid
+identified 1
 x 5
 y 23
 end
@@ -764,7 +917,9 @@ arch floor_ostone1
 x 6
 y 1
 end
-arch cloak_less_elec
+arch cloak
+amask cloak_min_elec
+identified 1
 x 6
 y 1
 end
@@ -772,7 +927,19 @@ arch floor_ostone1
 x 6
 y 2
 end
+arch cloak
+amask cloak_less_poison
+identified 1
+x 6
+y 2
+end
 arch floor_ostone1
+x 6
+y 3
+end
+arch robe
+amask robe_med_str
+identified 1
 x 6
 y 3
 end
@@ -780,7 +947,9 @@ arch floor_ostone1
 x 6
 y 4
 end
-arch shield_less_elec
+arch shield
+amask shield_min_poison
+identified 1
 x 6
 y 4
 end
@@ -796,7 +965,9 @@ arch floor_ostone1
 x 6
 y 7
 end
-arch girdle_min_int
+arch girdle
+amask girdle_major_hp
+identified 1
 x 6
 y 7
 end
@@ -808,11 +979,19 @@ arch floor_ostone1
 x 6
 y 9
 end
+arch gauntlets
+amask gauntlet_med_dam
+identified 1
+x 6
+y 9
+end
 arch floor_ostone1
 x 6
 y 10
 end
-arch gauntlet_min_int
+arch gauntlets
+amask gauntlet_min_con
+identified 1
 x 6
 y 10
 end
@@ -824,11 +1003,19 @@ arch floor_ostone1
 x 6
 y 12
 end
+arch helm_iron
+amask helm_med_wis
+identified 1
+x 6
+y 12
+end
 arch floor_ostone1
 x 6
 y 13
 end
-arch helm_min_dex
+arch helm_iron
+amask helm_min_dex
+identified 1
 x 6
 y 13
 end
@@ -840,11 +1027,19 @@ arch floor_ostone1
 x 6
 y 15
 end
+arch bracers_ac
+amask bracers_med_con
+identified 1
+x 6
+y 15
+end
 arch floor_ostone1
 x 6
 y 16
 end
-arch bracers_int
+arch bracers_cloth
+amask bracers_min_int
+identified 1
 x 6
 y 16
 end
@@ -856,11 +1051,19 @@ arch floor_ostone1
 x 6
 y 18
 end
+arch leggings_leather
+amask leggings_med_fire
+identified 1
+x 6
+y 18
+end
 arch floor_ostone1
 x 6
 y 19
 end
-arch boots_less_elec
+arch low_boots
+amask boots_min_elec
+identified 1
 x 6
 y 19
 end
@@ -876,11 +1079,19 @@ arch floor_ostone1
 x 6
 y 22
 end
-arch armour_less_elec
+arch chain_mail
+amask armour_medium_hp
+identified 1
 x 6
 y 22
 end
 arch floor_ostone1
+x 6
+y 23
+end
+arch chain_mail
+amask armour_med_fire
+identified 1
 x 6
 y 23
 end
@@ -894,7 +1105,9 @@ arch floor_ostone1
 x 7
 y 1
 end
-arch cloak_less_poison
+arch cloak
+amask cloak_min_poison
+identified 1
 x 7
 y 1
 end
@@ -902,7 +1115,19 @@ arch floor_ostone1
 x 7
 y 2
 end
+arch cloak
+amask cloak_less_acid
+identified 1
+x 7
+y 2
+end
 arch floor_ostone1
+x 7
+y 3
+end
+arch robe
+amask robe_med_dex
+identified 1
 x 7
 y 3
 end
@@ -910,7 +1135,9 @@ arch floor_ostone1
 x 7
 y 4
 end
-arch shield_less_poison
+arch shield
+amask shield_min_acid
+identified 1
 x 7
 y 4
 end
@@ -926,7 +1153,9 @@ arch floor_ostone1
 x 7
 y 7
 end
-arch girdle_min_pow
+arch girdle
+amask girdle_great_hp
+identified 1
 x 7
 y 7
 end
@@ -938,11 +1167,19 @@ arch floor_ostone1
 x 7
 y 9
 end
+arch gauntlets
+amask gauntlet_med_cha
+identified 1
+x 7
+y 9
+end
 arch floor_ostone1
 x 7
 y 10
 end
-arch gauntlet_pow
+arch gloves_cloth
+amask gauntlet_min_int
+identified 1
 x 7
 y 10
 end
@@ -954,11 +1191,21 @@ arch floor_ostone1
 x 7
 y 12
 end
+arch hat_feather
+name feathered hat
+amask helm_med_int
+identified 1
+x 7
+y 12
+end
 arch floor_ostone1
 x 7
 y 13
 end
-arch helm_min_int
+arch hat_feather
+name feathered hat
+amask helm_min_int
+identified 1
 x 7
 y 13
 end
@@ -970,11 +1217,19 @@ arch floor_ostone1
 x 7
 y 15
 end
+arch bracers_cloth
+amask bracers_med_int
+identified 1
+x 7
+y 15
+end
 arch floor_ostone1
 x 7
 y 16
 end
-arch bracers_cha
+arch bracers_ac
+amask bracers_min_cha
+identified 1
 x 7
 y 16
 end
@@ -986,11 +1241,19 @@ arch floor_ostone1
 x 7
 y 18
 end
+arch low_boots
+amask boots_med_acid
+identified 1
+x 7
+y 18
+end
 arch floor_ostone1
 x 7
 y 19
 end
-arch boots_less_poison
+arch low_boots
+amask boots_min_poison
+identified 1
 x 7
 y 19
 end
@@ -1006,11 +1269,19 @@ arch floor_ostone1
 x 7
 y 22
 end
-arch armour_less_poison
+arch chain_mail
+amask armour_hp
+identified 1
 x 7
 y 22
 end
 arch floor_ostone1
+x 7
+y 23
+end
+arch chain_mail
+amask armour_med_cold
+identified 1
 x 7
 y 23
 end
@@ -1024,7 +1295,9 @@ arch floor_ostone1
 x 8
 y 1
 end
-arch cloak_less_acid
+arch cloak
+amask cloak_min_acid
+identified 1
 x 8
 y 1
 end
@@ -1032,7 +1305,19 @@ arch floor_ostone1
 x 8
 y 2
 end
+arch cloak
+amask cloak_sm_fire
+identified 1
+x 8
+y 2
+end
 arch floor_ostone1
+x 8
+y 3
+end
+arch robe
+amask robe_med_con
+identified 1
 x 8
 y 3
 end
@@ -1040,7 +1325,9 @@ arch floor_ostone1
 x 8
 y 4
 end
-arch shield_less_acid
+arch shield
+amask shield_mass
+identified 1
 x 8
 y 4
 end
@@ -1056,7 +1343,9 @@ arch floor_ostone1
 x 8
 y 7
 end
-arch girdle_min_wis
+arch girdle
+amask girdle_min_str
+identified 1
 x 8
 y 7
 end
@@ -1068,11 +1357,19 @@ arch floor_ostone1
 x 8
 y 9
 end
+arch gauntlets
+amask gauntlet_med_wis
+identified 1
+x 8
+y 9
+end
 arch floor_ostone1
 x 8
 y 10
 end
-arch gauntlet_wis
+arch gloves_cloth
+amask gauntlet_min_pow
+identified 1
 x 8
 y 10
 end
@@ -1084,11 +1381,19 @@ arch floor_ostone1
 x 8
 y 12
 end
+arch helm_iron
+amask helm_med_dex
+identified 1
+x 8
+y 12
+end
 arch floor_ostone1
 x 8
 y 13
 end
-arch helm_min_wis
+arch helm_iron
+amask helm_min_wis
+identified 1
 x 8
 y 13
 end
@@ -1100,11 +1405,19 @@ arch floor_ostone1
 x 8
 y 15
 end
+arch bracers_ac
+amask bracers_med_cha
+identified 1
+x 8
+y 15
+end
 arch floor_ostone1
 x 8
 y 16
 end
-arch bracers_pow
+arch bracers_cloth
+amask bracers_min_pow
+identified 1
 x 8
 y 16
 end
@@ -1116,11 +1429,19 @@ arch floor_ostone1
 x 8
 y 18
 end
+arch low_boots
+amask boots_med_poison
+identified 1
+x 8
+y 18
+end
 arch floor_ostone1
 x 8
 y 19
 end
-arch boots_less_acid
+arch low_boots
+amask boots_min_acid
+identified 1
 x 8
 y 19
 end
@@ -1136,11 +1457,19 @@ arch floor_ostone1
 x 8
 y 22
 end
-arch armour_less_acid
+arch chain_mail
+amask armour_major_hp
+identified 1
 x 8
 y 22
 end
 arch floor_ostone1
+x 8
+y 23
+end
+arch chain_mail
+amask armour_med_elec
+identified 1
 x 8
 y 23
 end
@@ -1154,7 +1483,9 @@ arch floor_ostone1
 x 9
 y 1
 end
-arch robe_woe
+arch robe
+amask robe_woe
+identified 1
 x 9
 y 1
 end
@@ -1162,11 +1493,29 @@ arch floor_ostone1
 x 9
 y 2
 end
+arch cloak
+amask cloak_sm_cold
+identified 1
+x 9
+y 2
+end
 arch floor_ostone1
 x 9
 y 3
 end
+arch robe
+amask robe_med_int
+identified 1
+x 9
+y 3
+end
 arch floor_ostone1
+x 9
+y 4
+end
+arch shield
+amask shield_less_fire
+identified 1
 x 9
 y 4
 end
@@ -1182,7 +1531,9 @@ arch floor_ostone1
 x 9
 y 7
 end
-arch girdle_min_cha
+arch girdle
+amask girdle_min_dex
+identified 1
 x 9
 y 7
 end
@@ -1194,11 +1545,19 @@ arch floor_ostone1
 x 9
 y 9
 end
+arch gloves_cloth
+amask gauntlet_med_pow
+identified 1
+x 9
+y 9
+end
 arch floor_ostone1
 x 9
 y 10
 end
-arch gauntlet_cha
+arch gauntlets
+amask gauntlet_min_wis
+identified 1
 x 9
 y 10
 end
@@ -1210,11 +1569,20 @@ arch floor_ostone1
 x 9
 y 12
 end
+arch helm_iron
+amask helm_med_str
+identified 1
+x 9
+y 12
+end
 arch floor_ostone1
 x 9
 y 13
 end
-arch helm_min_pow
+arch hat_feather
+name feathered hat
+amask helm_min_pow
+identified 1
 x 9
 y 13
 end
@@ -1226,11 +1594,19 @@ arch floor_ostone1
 x 9
 y 15
 end
+arch bracers_cloth
+amask bracers_med_pow
+identified 1
+x 9
+y 15
+end
 arch floor_ostone1
 x 9
 y 16
 end
-arch bracers_wis
+arch bracers_ac
+amask bracers_min_wis
+identified 1
 x 9
 y 16
 end
@@ -1242,11 +1618,19 @@ arch floor_ostone1
 x 9
 y 18
 end
+arch low_boots
+amask boots_med_elec
+identified 1
+x 9
+y 18
+end
 arch floor_ostone1
 x 9
 y 19
 end
-arch leggings_less_fire
+arch leggings_leather
+amask leggings_min_fire
+identified 1
 x 9
 y 19
 end
@@ -1262,7 +1646,19 @@ arch floor_ostone1
 x 9
 y 22
 end
+arch chain_mail
+amask armour_great_hp
+identified 1
+x 9
+y 22
+end
 arch floor_ostone1
+x 9
+y 23
+end
+arch chain_mail
+amask armour_med_poison
+identified 1
 x 9
 y 23
 end
@@ -1276,7 +1672,9 @@ arch floor_ostone1
 x 10
 y 1
 end
-arch robe_min_str
+arch robe
+amask robe_min_str
+identified 1
 x 10
 y 1
 end
@@ -1284,11 +1682,29 @@ arch floor_ostone1
 x 10
 y 2
 end
+arch cloak
+amask cloak_sm_elec
+identified 1
+x 10
+y 2
+end
 arch floor_ostone1
 x 10
 y 3
 end
+arch robe
+amask robe_med_pow
+identified 1
+x 10
+y 3
+end
 arch floor_ostone1
+x 10
+y 4
+end
+arch shield
+amask shield_less_cold
+identified 1
 x 10
 y 4
 end
@@ -1300,7 +1716,19 @@ arch floor_ostone1
 x 10
 y 6
 end
+arch girdle
+amask girdle_med_cha
+identified 1
+x 10
+y 6
+end
 arch floor_ostone1
+x 10
+y 7
+end
+arch girdle
+amask girdle_min_con
+identified 1
 x 10
 y 7
 end
@@ -1312,11 +1740,19 @@ arch floor_ostone1
 x 10
 y 9
 end
+arch gloves_cloth
+amask gauntlet_med_int
+identified 1
+x 10
+y 9
+end
 arch floor_ostone1
 x 10
 y 10
 end
-arch gauntlet_min_dam
+arch gauntlets
+amask gauntlet_min_cha
+identified 1
 x 10
 y 10
 end
@@ -1328,11 +1764,19 @@ arch floor_ostone1
 x 10
 y 12
 end
+arch helm_iron
+amask helm_less_acid
+identified 1
+x 10
+y 12
+end
 arch floor_ostone1
 x 10
 y 13
 end
-arch helm_min_cha
+arch helm_iron
+amask helm_min_cha
+identified 1
 x 10
 y 13
 end
@@ -1344,7 +1788,19 @@ arch floor_ostone1
 x 10
 y 15
 end
+arch bracers_ac
+amask bracers_med_wis
+identified 1
+x 10
+y 15
+end
 arch floor_ostone1
+x 10
+y 16
+end
+arch bracers_ac
+amask bracers_less_dex
+identified 1
 x 10
 y 16
 end
@@ -1356,11 +1812,19 @@ arch floor_ostone1
 x 10
 y 18
 end
+arch low_boots
+amask boots_med_cold
+identified 1
+x 10
+y 18
+end
 arch floor_ostone1
 x 10
 y 19
 end
-arch leggings_less_cold
+arch leggings_leather
+amask leggings_min_cold
+identified 1
 x 10
 y 19
 end
@@ -1376,7 +1840,19 @@ arch floor_ostone1
 x 10
 y 22
 end
+arch chain_mail
+amask armour_min_fire
+identified 1
+x 10
+y 22
+end
 arch floor_ostone1
+x 10
+y 23
+end
+arch chain_mail
+amask armour_med_acid
+identified 1
 x 10
 y 23
 end
@@ -1390,7 +1866,9 @@ arch floor_ostone1
 x 11
 y 1
 end
-arch robe_min_dex
+arch robe
+amask robe_min_dex
+identified 1
 x 11
 y 1
 end
@@ -1398,11 +1876,29 @@ arch floor_ostone1
 x 11
 y 2
 end
+arch cloak
+amask cloak_sm_poison
+identified 1
+x 11
+y 2
+end
 arch floor_ostone1
 x 11
 y 3
 end
+arch robe
+amask medium wisdom
+identified 1
+x 11
+y 3
+end
 arch floor_ostone1
+x 11
+y 4
+end
+arch shield
+amask shield_less_elec
+identified 1
 x 11
 y 4
 end
@@ -1414,7 +1910,19 @@ arch floor_ostone1
 x 11
 y 6
 end
+arch girdle
+amask girdle_med_wis
+identified 1
+x 11
+y 6
+end
 arch floor_ostone1
+x 11
+y 7
+end
+arch girdle_cloth
+amask girdle_min_int
+identified 1
 x 11
 y 7
 end
@@ -1426,11 +1934,19 @@ arch floor_ostone1
 x 11
 y 9
 end
+arch gauntlets
+amask gauntlet_med_con
+identified 1
+x 11
+y 9
+end
 arch floor_ostone1
 x 11
 y 10
 end
-arch gauntlet_min_prec
+arch gauntlets
+amask gauntlet_min_dam
+identified 1
 x 11
 y 10
 end
@@ -1442,11 +1958,19 @@ arch floor_ostone1
 x 11
 y 12
 end
+arch helm_iron
+amask helm_less_poison
+identified 1
+x 11
+y 12
+end
 arch floor_ostone1
 x 11
 y 13
 end
-arch helm_min_con
+arch helm_iron
+amask helm_min_con
+identified 1
 x 11
 y 13
 end
@@ -1462,6 +1986,12 @@ arch floor_ostone1
 x 11
 y 16
 end
+arch bracers_ac
+amask bracers_less_str
+identified 1
+x 11
+y 16
+end
 arch floor_ostone1
 x 11
 y 17
@@ -1470,11 +2000,19 @@ arch floor_ostone1
 x 11
 y 18
 end
+arch low_boots
+amask boots_med_fire
+identified 1
+x 11
+y 18
+end
 arch floor_ostone1
 x 11
 y 19
 end
-arch leggings_less_electricity
+arch leggings_leather
+amask leggings_min_electricity
+identified 1
 x 11
 y 19
 end
@@ -1487,6 +2025,12 @@ x 11
 y 21
 end
 arch floor_ostone1
+x 11
+y 22
+end
+arch chain_mail
+amask armour_min_cold
+identified 1
 x 11
 y 22
 end
@@ -1504,7 +2048,9 @@ arch floor_ostone1
 x 12
 y 1
 end
-arch robe_min_con
+arch robe
+amask robe_min_con
+identified 1
 x 12
 y 1
 end
@@ -1512,11 +2058,29 @@ arch floor_ostone1
 x 12
 y 2
 end
+arch cloak
+amask cloak_sm_acid
+identified 1
+x 12
+y 2
+end
 arch floor_ostone1
 x 12
 y 3
 end
+arch robe
+amask robe_med_cha
+identified 1
+x 12
+y 3
+end
 arch floor_ostone1
+x 12
+y 4
+end
+arch shield
+amask shield_less_poison
+identified 1
 x 12
 y 4
 end
@@ -1528,7 +2092,19 @@ arch floor_ostone1
 x 12
 y 6
 end
+arch girdle_cloth
+amask girdle_med_pow
+identified 1
+x 12
+y 6
+end
 arch floor_ostone1
+x 12
+y 7
+end
+arch girdle_cloth
+amask girdle_min_pow
+identified 1
 x 12
 y 7
 end
@@ -1540,11 +2116,19 @@ arch floor_ostone1
 x 12
 y 9
 end
+arch gauntlets
+amask gauntlet_med_dex
+identified 1
+x 12
+y 9
+end
 arch floor_ostone1
 x 12
 y 10
 end
-arch gauntlet_precision
+arch gauntlets
+amask gauntlet_min_prec
+identified 1
 x 12
 y 10
 end
@@ -1556,11 +2140,19 @@ arch floor_ostone1
 x 12
 y 12
 end
+arch helm_iron
+amask helm_less_elec
+identified 1
+x 12
+y 12
+end
 arch floor_ostone1
 x 12
 y 13
 end
-arch helm_less_fire
+arch helm_iron
+amask helm_min_fire
+identified 1
 x 12
 y 13
 end
@@ -1576,6 +2168,12 @@ arch floor_ostone1
 x 12
 y 16
 end
+arch bracers_ac
+amask bracers_less_con
+identified 1
+x 12
+y 16
+end
 arch floor_ostone1
 x 12
 y 17
@@ -1584,11 +2182,19 @@ arch floor_ostone1
 x 12
 y 18
 end
+arch leggings_leather
+amask leggings_sm_acid
+identified 1
+x 12
+y 18
+end
 arch floor_ostone1
 x 12
 y 19
 end
-arch leggings_less_poison
+arch leggings_leather
+amask leggings_min_poison
+identified 1
 x 12
 y 19
 end
@@ -1601,6 +2207,12 @@ x 12
 y 21
 end
 arch floor_ostone1
+x 12
+y 22
+end
+arch chain_mail
+amask armour_min_elec
+identified 1
 x 12
 y 22
 end
@@ -1618,7 +2230,9 @@ arch floor_ostone1
 x 13
 y 1
 end
-arch robe_min_int
+arch robe
+amask robe_min_int
+identified 1
 x 13
 y 1
 end
@@ -1626,11 +2240,29 @@ arch floor_ostone1
 x 13
 y 2
 end
+arch cloak
+amask cloak_med_fire
+identified 1
+x 13
+y 2
+end
 arch floor_ostone1
 x 13
 y 3
 end
+arch cape
+amask cape_woe
+identified 1
+x 13
+y 3
+end
 arch floor_ostone1
+x 13
+y 4
+end
+arch shield
+amask shield_less_acid
+identified 1
 x 13
 y 4
 end
@@ -1642,7 +2274,19 @@ arch floor_ostone1
 x 13
 y 6
 end
+arch girdle_cloth
+amask girdle_med_int
+identified 1
+x 13
+y 6
+end
 arch floor_ostone1
+x 13
+y 7
+end
+arch girdle
+amask girdle_min_wis
+identified 1
 x 13
 y 7
 end
@@ -1654,7 +2298,19 @@ arch floor_ostone1
 x 13
 y 9
 end
+arch gauntlets
+amask gauntlet_med_str
+identified 1
+x 13
+y 9
+end
 arch floor_ostone1
+x 13
+y 10
+end
+arch gauntlets
+amask gauntlet_less_prec
+identified 1
 x 13
 y 10
 end
@@ -1666,15 +2322,29 @@ arch floor_ostone1
 x 13
 y 12
 end
+arch helm_iron
+amask helm_less_cold
+identified 1
+x 13
+y 12
+end
 arch floor_ostone1
 x 13
 y 13
 end
-arch helm_less_cold
+arch helm_iron
+amask helm_min_cold
+identified 1
 x 13
 y 13
 end
 arch floor_ostone1
+x 13
+y 14
+end
+arch helm_iron
+amask helm_med_acid
+identified 1
 x 13
 y 14
 end
@@ -1686,6 +2356,12 @@ arch floor_ostone1
 x 13
 y 16
 end
+arch bracers_cloth
+amask bracers_less_int
+identified 1
+x 13
+y 16
+end
 arch floor_ostone1
 x 13
 y 17
@@ -1694,11 +2370,19 @@ arch floor_ostone1
 x 13
 y 18
 end
+arch leggings_leather
+amask leggings_sm_poison
+identified 1
+x 13
+y 18
+end
 arch floor_ostone1
 x 13
 y 19
 end
-arch leggings_less_acid
+arch leggings_leather
+amask leggings_min_acid
+identified 1
 x 13
 y 19
 end
@@ -1711,6 +2395,12 @@ x 13
 y 21
 end
 arch floor_ostone1
+x 13
+y 22
+end
+arch chain_mail
+amask armour_min_poison
+identified 1
 x 13
 y 22
 end
@@ -1728,7 +2418,9 @@ arch floor_ostone1
 x 14
 y 1
 end
-arch robe_min_pow
+arch robe
+amask robe_min_pow
+identified 1
 x 14
 y 1
 end
@@ -1736,11 +2428,29 @@ arch floor_ostone1
 x 14
 y 2
 end
+arch cloak
+amask cloak_med_cold
+identified 1
+x 14
+y 2
+end
 arch floor_ostone1
 x 14
 y 3
 end
+arch cape
+amask cape_med_fire
+identified 1
+x 14
+y 3
+end
 arch floor_ostone1
+x 14
+y 4
+end
+arch shield
+amask shield_sm_fire
+identified 1
 x 14
 y 4
 end
@@ -1752,7 +2462,19 @@ arch floor_ostone1
 x 14
 y 6
 end
+arch girdle
+amask girdle_med_con
+identified 1
+x 14
+y 6
+end
 arch floor_ostone1
+x 14
+y 7
+end
+arch girdle
+amask girdle_min_cha
+identified 1
 x 14
 y 7
 end
@@ -1764,7 +2486,19 @@ arch floor_ostone1
 x 14
 y 9
 end
+arch gauntlets
+amask gauntlet_med_prec
+identified 1
+x 14
+y 9
+end
 arch floor_ostone1
+x 14
+y 10
+end
+arch gauntlets
+amask gauntlet_less_str
+identified 1
 x 14
 y 10
 end
@@ -1776,15 +2510,29 @@ arch floor_ostone1
 x 14
 y 12
 end
+arch helm_iron
+amask helm_less_fire
+identified 1
+x 14
+y 12
+end
 arch floor_ostone1
 x 14
 y 13
 end
-arch helm_less_elec
+arch helm_iron
+amask helm_min_elec
+identified 1
 x 14
 y 13
 end
 arch floor_ostone1
+x 14
+y 14
+end
+arch helm_iron
+amask helm_med_poison
+identified 1
 x 14
 y 14
 end
@@ -1796,6 +2544,12 @@ arch floor_ostone1
 x 14
 y 16
 end
+arch bracers_ac
+amask bracers_less_cha
+identified 1
+x 14
+y 16
+end
 arch floor_ostone1
 x 14
 y 17
@@ -1804,7 +2558,19 @@ arch floor_ostone1
 x 14
 y 18
 end
+arch leggings_leather
+amask leggings_sm_electricity
+identified 1
+x 14
+y 18
+end
 arch floor_ostone1
+x 14
+y 19
+end
+arch low_boots
+amask boots_less_fire
+identified 1
 x 14
 y 19
 end
@@ -1817,6 +2583,12 @@ x 14
 y 21
 end
 arch floor_ostone1
+x 14
+y 22
+end
+arch chain_mail
+amask armour_min_acid
+identified 1
 x 14
 y 22
 end
@@ -1834,7 +2606,9 @@ arch floor_ostone1
 x 15
 y 1
 end
-arch robe_min_wis
+arch robe
+amask robe_min_wis
+identified 1
 x 15
 y 1
 end
@@ -1842,11 +2616,29 @@ arch floor_ostone1
 x 15
 y 2
 end
+arch cloak
+amask cloak_med_elec
+identified 1
+x 15
+y 2
+end
 arch floor_ostone1
 x 15
 y 3
 end
+arch cape
+amask cape_med_cold
+identified 1
+x 15
+y 3
+end
 arch floor_ostone1
+x 15
+y 4
+end
+arch shield
+amask shield_sm_cold
+identified 1
 x 15
 y 4
 end
@@ -1858,7 +2650,19 @@ arch floor_ostone1
 x 15
 y 6
 end
+arch girdle
+amask girdle_med_dex
+identified 1
+x 15
+y 6
+end
 arch floor_ostone1
+x 15
+y 7
+end
+arch girdle
+amask girdle_less_str
+identified 1
 x 15
 y 7
 end
@@ -1870,7 +2674,19 @@ arch floor_ostone1
 x 15
 y 9
 end
+arch gauntlets
+amask gauntlet_sm_dam
+identified 1
+x 15
+y 9
+end
 arch floor_ostone1
+x 15
+y 10
+end
+arch gauntlets
+amask gauntlet_less_dex
+identified 1
 x 15
 y 10
 end
@@ -1882,15 +2698,29 @@ arch floor_ostone1
 x 15
 y 12
 end
+arch helm_iron
+amask helm_sm_con
+identified 1
+x 15
+y 12
+end
 arch floor_ostone1
 x 15
 y 13
 end
-arch helm_less_poison
+arch helm_iron
+amask helm_min_poison
+identified 1
 x 15
 y 13
 end
 arch floor_ostone1
+x 15
+y 14
+end
+arch helm_iron
+amask helm_med_elec
+identified 1
 x 15
 y 14
 end
@@ -1902,6 +2732,12 @@ arch floor_ostone1
 x 15
 y 16
 end
+arch bracers_cloth
+amask bracers_less_pow
+identified 1
+x 15
+y 16
+end
 arch floor_ostone1
 x 15
 y 17
@@ -1910,7 +2746,19 @@ arch floor_ostone1
 x 15
 y 18
 end
+arch leggings_leather
+amask leggings_sm_cold
+identified 1
+x 15
+y 18
+end
 arch floor_ostone1
+x 15
+y 19
+end
+arch low_boots
+amask boots_less_cold
+identified 1
 x 15
 y 19
 end
@@ -1923,6 +2771,12 @@ x 15
 y 21
 end
 arch floor_ostone1
+x 15
+y 22
+end
+arch chain_mail
+amask armour_less_fire
+identified 1
 x 15
 y 22
 end
@@ -1940,11 +2794,19 @@ arch floor_ostone1
 x 16
 y 1
 end
-arch robe_min_cha
+arch robe
+amask robe_min_cha
+identified 1
 x 16
 y 1
 end
 arch floor_ostone1
+x 16
+y 2
+end
+arch cloak
+amask cloak_med_poison
+identified 1
 x 16
 y 2
 end
@@ -1956,6 +2818,12 @@ arch floor_ostone1
 x 16
 y 4
 end
+arch shield
+amask shield_sm_elec
+identified 1
+x 16
+y 4
+end
 arch floor_ostone1
 x 16
 y 5
@@ -1964,7 +2832,19 @@ arch floor_ostone1
 x 16
 y 6
 end
+arch girdle
+amask girdle_med_str
+identified 1
+x 16
+y 6
+end
 arch floor_ostone1
+x 16
+y 7
+end
+arch girdle
+amask girdle_less_dex
+identified 1
 x 16
 y 7
 end
@@ -1976,7 +2856,19 @@ arch floor_ostone1
 x 16
 y 9
 end
+arch gauntlets
+amask gauntlet_sm_cha
+identified 1
+x 16
+y 9
+end
 arch floor_ostone1
+x 16
+y 10
+end
+arch gauntlets
+amask gauntlet_less_con
+identified 1
 x 16
 y 10
 end
@@ -1988,15 +2880,29 @@ arch floor_ostone1
 x 16
 y 12
 end
+arch helm_iron
+amask helm_sm_cha
+identified 1
+x 16
+y 12
+end
 arch floor_ostone1
 x 16
 y 13
 end
-arch helm_less_acid
+arch helm_iron
+amask helm_min_acid
+identified 1
 x 16
 y 13
 end
 arch floor_ostone1
+x 16
+y 14
+end
+arch helm_iron
+amask helm_med_cold
+identified 1
 x 16
 y 14
 end
@@ -2008,6 +2914,12 @@ arch floor_ostone1
 x 16
 y 16
 end
+arch bracers_ac
+amask bracers_less_wis
+identified 1
+x 16
+y 16
+end
 arch floor_ostone1
 x 16
 y 17
@@ -2016,7 +2928,19 @@ arch floor_ostone1
 x 16
 y 18
 end
+arch leggings_leather
+amask leggings_sm_fire
+identified 1
+x 16
+y 18
+end
 arch floor_ostone1
+x 16
+y 19
+end
+arch low_boots
+amask boots_less_elec
+identified 1
 x 16
 y 19
 end
@@ -2029,6 +2953,12 @@ x 16
 y 21
 end
 arch floor_ostone1
+x 16
+y 22
+end
+arch chain_mail
+amask armour_less_cold
+identified 1
 x 16
 y 22
 end
@@ -2046,11 +2976,19 @@ arch floor_ostone1
 x 17
 y 1
 end
-arch cape_woe
+arch robe
+amask robe_less_str
+identified 1
 x 17
 y 1
 end
 arch floor_ostone1
+x 17
+y 2
+end
+arch cloak
+amask cloak_med_acid
+identified 1
 x 17
 y 2
 end
@@ -2062,6 +3000,12 @@ arch floor_ostone1
 x 17
 y 4
 end
+arch shield
+amask shield_sm_poison
+identified 1
+x 17
+y 4
+end
 arch floor_ostone1
 x 17
 y 5
@@ -2070,7 +3014,19 @@ arch floor_ostone1
 x 17
 y 6
 end
+arch girdle
+amask girdle_sm_charisma
+identified 1
+x 17
+y 6
+end
 arch floor_ostone1
+x 17
+y 7
+end
+arch girdle
+amask girdle_less_con
+identified 1
 x 17
 y 7
 end
@@ -2082,7 +3038,19 @@ arch floor_ostone1
 x 17
 y 9
 end
+arch gauntlets
+amask gauntlet_sm_wis
+identified 1
+x 17
+y 9
+end
 arch floor_ostone1
+x 17
+y 10
+end
+arch gloves_cloth
+amask gauntlet_less_int
+identified 1
 x 17
 y 10
 end
@@ -2094,11 +3062,30 @@ arch floor_ostone1
 x 17
 y 12
 end
+arch hat_feather
+name feathered hat
+amask helm_sm_pow
+identified 1
+x 17
+y 12
+end
 arch floor_ostone1
 x 17
 y 13
 end
+arch helm_iron
+amask helm_less_str
+identified 1
+x 17
+y 13
+end
 arch floor_ostone1
+x 17
+y 14
+end
+arch helm_iron
+amask helm_med_fire
+identified 1
 x 17
 y 14
 end
@@ -2110,6 +3097,12 @@ arch floor_ostone1
 x 17
 y 16
 end
+arch bracers_ac
+amask bracers_sm_dexterity
+identified 1
+x 17
+y 16
+end
 arch floor_ostone1
 x 17
 y 17
@@ -2118,7 +3111,19 @@ arch floor_ostone1
 x 17
 y 18
 end
+arch low_boots
+amask boots_sm_acid
+identified 1
+x 17
+y 18
+end
 arch floor_ostone1
+x 17
+y 19
+end
+arch low_boots
+amask boots_less_poison
+identified 1
 x 17
 y 19
 end
@@ -2131,6 +3136,12 @@ x 17
 y 21
 end
 arch floor_ostone1
+x 17
+y 22
+end
+arch chain_mail
+amask armour_less_elec
+identified 1
 x 17
 y 22
 end
@@ -2148,11 +3159,19 @@ arch floor_ostone1
 x 18
 y 1
 end
-arch cape_med_fire
+arch robe
+amask robe_less_dex
+identified 1
 x 18
 y 1
 end
 arch floor_ostone1
+x 18
+y 2
+end
+arch robe
+amask robe_less_cha
+identified 1
 x 18
 y 2
 end
@@ -2164,6 +3183,12 @@ arch floor_ostone1
 x 18
 y 4
 end
+arch shield
+amask shield_sm_acid
+identified 1
+x 18
+y 4
+end
 arch floor_ostone1
 x 18
 y 5
@@ -2172,7 +3197,19 @@ arch floor_ostone1
 x 18
 y 6
 end
+arch girdle
+amask girdle_sm_wisdom
+identified 1
+x 18
+y 6
+end
 arch floor_ostone1
+x 18
+y 7
+end
+arch girdle_cloth
+amask girdle_less_int
+identified 1
 x 18
 y 7
 end
@@ -2184,7 +3221,19 @@ arch floor_ostone1
 x 18
 y 9
 end
+arch gloves_cloth
+amask gauntlet_sm_pow
+identified 1
+x 18
+y 9
+end
 arch floor_ostone1
+x 18
+y 10
+end
+arch gloves_cloth
+amask gauntlet_less_pow
+identified 1
 x 18
 y 10
 end
@@ -2196,11 +3245,29 @@ arch floor_ostone1
 x 18
 y 12
 end
+arch helm_iron
+amask helm_sm_wis
+identified 1
+x 18
+y 12
+end
 arch floor_ostone1
 x 18
 y 13
 end
+arch helm_iron
+amask helm_less_dex
+identified 1
+x 18
+y 13
+end
 arch floor_ostone1
+x 18
+y 14
+end
+arch helm_iron
+amask helm_sm_acid
+identified 1
 x 18
 y 14
 end
@@ -2212,6 +3279,12 @@ arch floor_ostone1
 x 18
 y 16
 end
+arch bracers_ac
+amask bracers_sm_strength
+identified 1
+x 18
+y 16
+end
 arch floor_ostone1
 x 18
 y 17
@@ -2220,7 +3293,19 @@ arch floor_ostone1
 x 18
 y 18
 end
+arch low_boots
+amask boots_sm_poison
+identified 1
+x 18
+y 18
+end
 arch floor_ostone1
+x 18
+y 19
+end
+arch low_boots
+amask boots_less_acid
+identified 1
 x 18
 y 19
 end
@@ -2233,6 +3318,12 @@ x 18
 y 21
 end
 arch floor_ostone1
+x 18
+y 22
+end
+arch chain_mail
+amask armour_less_poison
+identified 1
 x 18
 y 22
 end
@@ -2250,11 +3341,19 @@ arch floor_ostone1
 x 19
 y 1
 end
-arch cape_med_cold
+arch robe
+amask robe_less_con
+identified 1
 x 19
 y 1
 end
 arch floor_ostone1
+x 19
+y 2
+end
+arch robe
+amask robe_sm_str
+identified 1
 x 19
 y 2
 end
@@ -2266,6 +3365,12 @@ arch floor_ostone1
 x 19
 y 4
 end
+arch shield
+amask shield_med_fire
+identified 1
+x 19
+y 4
+end
 arch floor_ostone1
 x 19
 y 5
@@ -2274,7 +3379,19 @@ arch floor_ostone1
 x 19
 y 6
 end
+arch girdle_cloth
+amask girdle_sm_power
+identified 1
+x 19
+y 6
+end
 arch floor_ostone1
+x 19
+y 7
+end
+arch girdle_cloth
+amask girdle_less_pow
+identified 1
 x 19
 y 7
 end
@@ -2286,7 +3403,19 @@ arch floor_ostone1
 x 19
 y 9
 end
+arch gloves_cloth
+amask gauntlet_sm_int
+identified 1
+x 19
+y 9
+end
 arch floor_ostone1
+x 19
+y 10
+end
+arch gauntlets
+amask gauntlet_less_wis
+identified 1
 x 19
 y 10
 end
@@ -2298,11 +3427,31 @@ arch floor_ostone1
 x 19
 y 12
 end
+arch hat_feather
+name feathered hat
+amask helm_sm_int
+identified 1
+x 19
+y 12
+end
 arch floor_ostone1
 x 19
 y 13
 end
+arch hat_feather
+name feathered hat
+amask helm_less_int
+identified 1
+x 19
+y 13
+end
 arch floor_ostone1
+x 19
+y 14
+end
+arch helm_iron
+amask helm_sm_poison
+identified 1
 x 19
 y 14
 end
@@ -2314,6 +3463,12 @@ arch floor_ostone1
 x 19
 y 16
 end
+arch bracers_ac
+amask bracers_sm_constitution
+identified 1
+x 19
+y 16
+end
 arch floor_ostone1
 x 19
 y 17
@@ -2322,7 +3477,19 @@ arch floor_ostone1
 x 19
 y 18
 end
+arch low_boots
+amask boots_sm_elec
+identified 1
+x 19
+y 18
+end
 arch floor_ostone1
+x 19
+y 19
+end
+arch leggings_leather
+amask leggings_less_fire
+identified 1
 x 19
 y 19
 end
@@ -2335,6 +3502,12 @@ x 19
 y 21
 end
 arch floor_ostone1
+x 19
+y 22
+end
+arch chain_mail
+amask armour_less_acid
+identified 1
 x 19
 y 22
 end
@@ -2352,7 +3525,19 @@ arch floor_ostone1
 x 20
 y 1
 end
+arch robe
+amask robe_less_int
+identified 1
+x 20
+y 1
+end
 arch floor_ostone1
+x 20
+y 2
+end
+arch robe
+amask robe_sm_dex
+identified 1
 x 20
 y 2
 end
@@ -2364,6 +3549,12 @@ arch floor_ostone1
 x 20
 y 4
 end
+arch shield
+amask shield_med_cold
+identified 1
+x 20
+y 4
+end
 arch floor_ostone1
 x 20
 y 5
@@ -2372,7 +3563,19 @@ arch floor_ostone1
 x 20
 y 6
 end
+arch girdle_cloth
+amask girdle_sm_intelligence
+identified 1
+x 20
+y 6
+end
 arch floor_ostone1
+x 20
+y 7
+end
+arch girdle
+amask girdle_less_wis
+identified 1
 x 20
 y 7
 end
@@ -2384,7 +3587,19 @@ arch floor_ostone1
 x 20
 y 9
 end
+arch gauntlets
+amask gauntlet_sm_con
+identified 1
+x 20
+y 9
+end
 arch floor_ostone1
+x 20
+y 10
+end
+arch gauntlets
+amask gauntlet_less_cha
+identified 1
 x 20
 y 10
 end
@@ -2396,11 +3611,29 @@ arch floor_ostone1
 x 20
 y 12
 end
+arch helm_iron
+amask helm_sm_dex
+identified 1
+x 20
+y 12
+end
 arch floor_ostone1
 x 20
 y 13
 end
+arch helm_iron
+amask helm_less_wis
+identified 1
+x 20
+y 13
+end
 arch floor_ostone1
+x 20
+y 14
+end
+arch helm_iron
+amask helm_sm_elec
+identified 1
 x 20
 y 14
 end
@@ -2412,6 +3645,12 @@ arch floor_ostone1
 x 20
 y 16
 end
+arch bracers_cloth
+amask bracers_sm_intelligence
+identified 1
+x 20
+y 16
+end
 arch floor_ostone1
 x 20
 y 17
@@ -2420,7 +3659,19 @@ arch floor_ostone1
 x 20
 y 18
 end
+arch low_boots
+amask boots_sm_cold
+identified 1
+x 20
+y 18
+end
 arch floor_ostone1
+x 20
+y 19
+end
+arch leggings_leather
+amask leggings_less_cold
+identified 1
 x 20
 y 19
 end
@@ -2433,6 +3684,12 @@ x 20
 y 21
 end
 arch floor_ostone1
+x 20
+y 22
+end
+arch chain_mail
+amask armour_sm_fire
+identified 1
 x 20
 y 22
 end
@@ -2450,7 +3707,19 @@ arch floor_ostone1
 x 21
 y 1
 end
+arch robe
+amask robe_less_pow
+identified 1
+x 21
+y 1
+end
 arch floor_ostone1
+x 21
+y 2
+end
+arch robe
+amask robe_sm_con
+identified 1
 x 21
 y 2
 end
@@ -2462,6 +3731,12 @@ arch floor_ostone1
 x 21
 y 4
 end
+arch shield
+amask shield_med_elec
+identified 1
+x 21
+y 4
+end
 arch floor_ostone1
 x 21
 y 5
@@ -2470,7 +3745,19 @@ arch floor_ostone1
 x 21
 y 6
 end
+arch girdle
+amask girdle_sm_constitution
+identified 1
+x 21
+y 6
+end
 arch floor_ostone1
+x 21
+y 7
+end
+arch girdle
+amask girdle_less_cha
+identified 1
 x 21
 y 7
 end
@@ -2482,7 +3769,19 @@ arch floor_ostone1
 x 21
 y 9
 end
+arch gauntlets
+amask gauntlet_sm_dex
+identified 1
+x 21
+y 9
+end
 arch floor_ostone1
+x 21
+y 10
+end
+arch gauntlets
+amask gauntlet_less_dam
+identified 1
 x 21
 y 10
 end
@@ -2494,11 +3793,30 @@ arch floor_ostone1
 x 21
 y 12
 end
+arch helm_iron
+amask helm_sm_str
+identified 1
+x 21
+y 12
+end
 arch floor_ostone1
 x 21
 y 13
 end
+arch hat_feather
+name feathered hat
+amask helm_less_pow
+identified 1
+x 21
+y 13
+end
 arch floor_ostone1
+x 21
+y 14
+end
+arch helm_iron
+amask helm_sm_cold
+identified 1
 x 21
 y 14
 end
@@ -2510,6 +3828,12 @@ arch floor_ostone1
 x 21
 y 16
 end
+arch bracers_ac
+amask bracers_sm_charisma
+identified 1
+x 21
+y 16
+end
 arch floor_ostone1
 x 21
 y 17
@@ -2518,7 +3842,18 @@ arch floor_ostone1
 x 21
 y 18
 end
+arch low_boots
+amask boots_sm_fire
+identified 1
+x 21
+y 18
+end
 arch floor_ostone1
+x 21
+y 19
+end
+arch leggings_leather
+amask leggings_less_electricity
 x 21
 y 19
 end
@@ -2531,6 +3866,12 @@ x 21
 y 21
 end
 arch floor_ostone1
+x 21
+y 22
+end
+arch chain_mail
+amask armour_sm_cold
+identified 1
 x 21
 y 22
 end
@@ -2548,7 +3889,19 @@ arch floor_ostone1
 x 22
 y 1
 end
+arch robe
+amask robe_less_wis
+identified 1
+x 22
+y 1
+end
 arch floor_ostone1
+x 22
+y 2
+end
+arch robe
+amask robe_sm_int
+identified 1
 x 22
 y 2
 end
@@ -2556,7 +3909,19 @@ arch floor_ostone1
 x 22
 y 3
 end
+arch shield
+amask shield_med_acid
+identified 1
+x 22
+y 3
+end
 arch floor_ostone1
+x 22
+y 4
+end
+arch shield
+amask shield_med_poison
+identified 1
 x 22
 y 4
 end
@@ -2568,7 +3933,19 @@ arch floor_ostone1
 x 22
 y 6
 end
+arch girdle
+amask girdle_sm_dexterity
+identified 1
+x 22
+y 6
+end
 arch floor_ostone1
+x 22
+y 7
+end
+arch girdle
+amask girdle_sm_strength
+identified 1
 x 22
 y 7
 end
@@ -2580,7 +3957,19 @@ arch floor_ostone1
 x 22
 y 9
 end
+arch gauntlets
+amask gauntlet_sm_str
+identified 1
+x 22
+y 9
+end
 arch floor_ostone1
+x 22
+y 10
+end
+arch gauntlets
+amask gauntlet_sm_prec
+identified 1
 x 22
 y 10
 end
@@ -2592,11 +3981,29 @@ arch floor_ostone1
 x 22
 y 12
 end
+arch helm_iron
+amask helm_less_con
+identified 1
+x 22
+y 12
+end
 arch floor_ostone1
 x 22
 y 13
 end
+arch helm_iron
+amask helm_less_cha
+identified 1
+x 22
+y 13
+end
 arch floor_ostone1
+x 22
+y 14
+end
+arch helm_iron
+amask helm_sm_fire
+identified 1
 x 22
 y 14
 end
@@ -2608,6 +4015,12 @@ arch floor_ostone1
 x 22
 y 16
 end
+arch bracers_cloth
+amask bracers_sm_power
+identified 1
+x 22
+y 16
+end
 arch floor_ostone1
 x 22
 y 17
@@ -2616,11 +4029,29 @@ arch floor_ostone1
 x 22
 y 18
 end
+arch leggings_leather
+amask leggings_less_acid
+identified 1
+x 22
+y 18
+end
 arch floor_ostone1
 x 22
 y 19
 end
+arch leggings_leather
+amask leggings_less_poison
+identified 1
+x 22
+y 19
+end
 arch floor_ostone1
+x 22
+y 20
+end
+arch leggings_leather
+amask leggings_med_acid
+identified 1
 x 22
 y 20
 end

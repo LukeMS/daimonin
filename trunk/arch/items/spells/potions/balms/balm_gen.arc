@@ -9,4 +9,5 @@ material 512
 can_stack 1
 weight 250
 value 5
+level 1
 end
