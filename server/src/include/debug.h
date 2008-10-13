@@ -91,6 +91,9 @@
 
 /* Uncomment this to enable some verbose pathfinding debug messages */
 /* #define DEBUG_PATHFINDING */
+
+/* find_next_object(): object.c */
+/*#define DEBUG_FNO*/
 #endif /* ifndef PRODUCTION_SYSTEM */
 
 #ifdef DEBUG_FIX_PLAYER
