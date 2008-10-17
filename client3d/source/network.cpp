@@ -120,7 +120,7 @@ void Network::AddIntToString(String &sl, int data, bool shortInt)
 //================================================================================================
 String &Network::getError()
 {
-    static String strError = "";
+    static String strError;
 #ifdef WIN32
     strError = StringConverter::toString(WSAGetLastError());
 #else
@@ -863,23 +863,23 @@ void Network::contactMetaserver()
 {
     clearMetaServerData();
     csocket.fd = NO_SOCKET;
-    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "");
-    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Query metaserver...");
+    GuiManager::getSingleton().addTextline(GuiManager::WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "");
+    GuiManager::getSingleton().addTextline(GuiManager::WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Query metaserver...");
     std::stringstream strBuf;
     strBuf << "Trying " << DEFAULT_METASERVER << " " << DEFAULT_METASERVER_PORT;
-    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, strBuf.str().c_str());
+    GuiManager::getSingleton().addTextline(GuiManager::WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, strBuf.str().c_str());
     if (OpenSocket(DEFAULT_METASERVER, DEFAULT_METASERVER_PORT))
     {
         read_metaserver_data();
         CloseSocket();
-        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "done.");
+        GuiManager::getSingleton().addTextline(GuiManager::WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "done.");
     }
     else
-        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Metaserver failed! Using default list.", 0x00ff0000);
+        GuiManager::getSingleton().addTextline(GuiManager::WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Metaserver failed! Using default list.", 0x00ff0000);
     add_metaserver_data("daimonin.game-server.cc", "daimonin.game-server.cc"   , DEFAULT_SERVER_PORT, -1, "internet", "~#ff00ff00STABLE",                        "Main Server", "", "");
     add_metaserver_data("Test-Server"            , "test-server.game-server.cc", DEFAULT_SERVER_PORT, -1, "internet", "~#ffffff00UNSTABLE",                      "Test Server", "", "");
     add_metaserver_data("127.0.0.1"              , "127.0.0.1"                 , DEFAULT_SERVER_PORT, -1, "local"   , "Start server before you try to connect.", "Localhost."           , "", "");
-    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Select a server.");
+    GuiManager::getSingleton().addTextline(GuiManager::WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Select a server.");
 }
 
 //================================================================================================
@@ -1014,7 +1014,7 @@ void Network::add_metaserver_data(const char *ip, const char *server, int port, 
     strRow+= desc1; strRow+= ";";
     strRow+=server;
     strRow+=(player <0)?",-":","+StringConverter::toString(player);
-    GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_SERVERSELECT, GuiManager::GUI_MSG_ADD_TABLEROW, GuiImageset::GUI_TABLE, (void*) strRow.c_str());
+    GuiManager::getSingleton().addTableRow(GuiManager::WIN_SERVERSELECT, GuiImageset::GUI_TABLE, strRow.c_str());
 }
 
 //================================================================================================
@@ -1030,7 +1030,7 @@ const char *Network::get_metaserver_info(int node, int infoLineNr)
 //================================================================================================
 void Network::clearMetaServerData()
 {
-    GuiManager::getSingleton().clearTable(GuiManager::GUI_WIN_SERVERSELECT, GuiImageset::GUI_TABLE);
+    GuiManager::getSingleton().clearTable(GuiManager::WIN_SERVERSELECT, GuiImageset::GUI_TABLE);
     if (!mvServer.size()) return;
     for (std::vector<Server*>::iterator i = mvServer.begin(); i != mvServer.end(); ++i)
         delete (*i);

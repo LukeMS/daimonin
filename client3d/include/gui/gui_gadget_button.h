@@ -56,6 +56,11 @@ public:
         draw();
     }
     void draw();
+    bool isVisible()
+    {
+        return mIsVisible;
+    }
+    void setVisible(bool visible);
 
 private:
     // ////////////////////////////////////////////////////////////////////

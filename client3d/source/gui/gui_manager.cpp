@@ -40,21 +40,13 @@ using namespace Ogre;
 
 static const int TOOLTIP_SIZE = 1 << 8;
 static const unsigned long TOOLTIP_DELAY = 2000; // Wait x ms before showing the tooltip.
-const int   GuiManager::SUM_WIN_DIGITS = (int)log10((float)GuiManager::GUI_WIN_SUM) +1;
+const int   GuiManager::SUM_WIN_DIGITS = (int)log10((float)GuiManager::WIN_SUM) +1;
 const char *GuiManager::GUI_MATERIAL_NAME     = "GUI/Window";
 const char *GuiManager::OVERLAY_ELEMENT_TYPE  = "Panel"; // defined in Ogre::OverlayElementFactory.h
 const char *GuiManager::OVERLAY_RESOURCE_NAME = "_Overlay";
 const char *GuiManager::ELEMENT_RESOURCE_NAME = "_OverlayElement";
 const char *GuiManager::TEXTURE_RESOURCE_NAME = "_Texture";
 const char *GuiManager::MATERIAL_RESOURCE_NAME= "_Material";
-enum
-{
-    MAX_OVERLAY_ZPOS = 550,
-    CSR_OVERLAY_ZPOS = 540,
-    DND_OVERLAY_ZPOS = 530,
-    TTP_OVERLAY_ZPOS = 520,
-    WIN_OVERLAY_ZPOS = 500
-};
 
 #define MANAGER_DESCRIPTION "GUI_"
 const char *RESOURCE_MCURSOR = MANAGER_DESCRIPTION "MCursor";
@@ -62,28 +54,29 @@ const char *RESOURCE_TOOLTIP = MANAGER_DESCRIPTION "Tooltip";
 const char *RESOURCE_WINDOW  = MANAGER_DESCRIPTION "Window";
 const char *RESOURCE_DND     = MANAGER_DESCRIPTION "DnD";
 
-GuiManager::GuiWinNam GuiManager::mGuiWindowNames[GUI_WIN_SUM]=
+unsigned char GuiManager::guiWindowZPos[WIN_SUM];
+GuiManager::WindowID GuiManager::mWindowID[WIN_SUM]=
 {
-    { "Login",         GUI_WIN_LOGIN         },
-    { "ServerSelect",  GUI_WIN_SERVERSELECT  },
-    //{ "Creation",      GUI_WIN_CREATION      },
+    { "Login",         WIN_LOGIN         },
+    { "ServerSelect",  WIN_SERVERSELECT  },
+    //{ "Creation",      WIN_CREATION      },
 
-    { "Win_Equipment", GUI_WIN_EQUIPMENT     },
-    { "Win_Inventory", GUI_WIN_INVENTORY     },
-    { "Win_Trade",     GUI_WIN_TRADE         },
-    { "Win_Shop",      GUI_WIN_SHOP          },
-    { "Win_Container", GUI_WIN_CONTAINER     },
-    { "Win_TileGround",GUI_WIN_TILEGROUND    },
+    { "Win_Equipment", WIN_EQUIPMENT     },
+    { "Win_Inventory", WIN_INVENTORY     },
+    { "Win_Trade",     WIN_TRADE         },
+    { "Win_Shop",      WIN_SHOP          },
+    { "Win_Container", WIN_CONTAINER     },
+    { "Win_TileGround",WIN_TILEGROUND    },
 
-    { "PlayerInfo",    GUI_WIN_PLAYERINFO    },
-    { "PlayerConsole", GUI_WIN_PLAYERCONSOLE },
+    { "PlayerInfo",    WIN_PLAYERINFO    },
+    { "PlayerConsole", WIN_PLAYERCONSOLE },
 
-    { "DialogNPC",     GUI_WIN_NPCDIALOG     },
-    { "TextWindow",    GUI_WIN_TEXTWINDOW    },
-    { "ChatWindow",    GUI_WIN_TEXTWINDOW    },
-    { "Statistics",    GUI_WIN_STATISTICS    },
+    { "DialogNPC",     WIN_NPCDIALOG     },
+    { "TextWindow",    WIN_TEXTWINDOW    },
+    { "ChatWindow",    WIN_TEXTWINDOW    },
+    { "Statistics",    WIN_STATISTICS    },
 };
-class GuiWindow GuiManager::guiWindow[GUI_WIN_SUM];
+class GuiWindow GuiManager::guiWindow[WIN_SUM];
 
 //================================================================================================
 // .
@@ -91,12 +84,13 @@ class GuiWindow GuiManager::guiWindow[GUI_WIN_SUM];
 void GuiManager::Init(int w, int h)
 {
     Logger::log().headline() << "Init GUI";
-    mDragSrcWin     = -1;
+    mDragSrcWin     = NO_ACTIVE_WINDOW;
+    mActiveWindow   = NO_ACTIVE_WINDOW;
+    mTextInputWindow = NO_ACTIVE_WINDOW;
     mScreenWidth    = w;
     mScreenHeight   = h;
     mMouseInside    = true;
     mTooltipRefresh = false;
-    mTextInputActive= false;
     String strTexture = RESOURCE_TOOLTIP; strTexture+= TEXTURE_RESOURCE_NAME;
     mTexture = TextureManager::getSingleton().createManual(strTexture, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
                TEX_TYPE_2D, TOOLTIP_SIZE, TOOLTIP_SIZE, 0, PF_A8R8G8B8, TU_STATIC_WRITE_ONLY,
@@ -108,7 +102,7 @@ void GuiManager::Init(int w, int h)
 //================================================================================================
 // (Re)loads the material and texture or creates them if they dont exist.
 //================================================================================================
-Overlay *GuiManager::loadResources(int w, int h, String name, int posZ)
+Overlay *GuiManager::loadResources(int w, int h, String name)
 {
     String strOverlay = name + OVERLAY_RESOURCE_NAME;
     String strElement = name + ELEMENT_RESOURCE_NAME;
@@ -131,7 +125,6 @@ Overlay *GuiManager::loadResources(int w, int h, String name, int posZ)
             return 0;
         }
         overlay->add2D(static_cast<OverlayContainer*>(element));
-        overlay->setZOrder(posZ);
     }
     OverlayElement *element = overlay->getChild(strElement);
     MaterialPtr material = MaterialManager::getSingleton().getByName(strMaterial);
@@ -188,9 +181,9 @@ Overlay *GuiManager::loadResources(int w, int h, String name, int posZ)
 //================================================================================================
 // (Re)loads the material and texture or creates them if they dont exist.
 //================================================================================================
-void GuiManager::loadResources(int posZ)
+void GuiManager::loadResources()
 {
-    mOverlay= loadResources(TOOLTIP_SIZE, TOOLTIP_SIZE, RESOURCE_TOOLTIP, posZ);
+    mOverlay= loadResources(TOOLTIP_SIZE, TOOLTIP_SIZE, RESOURCE_TOOLTIP);
     String strElement = RESOURCE_TOOLTIP; strElement+= ELEMENT_RESOURCE_NAME;
     mElement= mOverlay->getChild(strElement);
     clearTooltip();
@@ -205,21 +198,21 @@ void GuiManager::loadResources(Ogre::Resource *res)
     Logger::log().info() << "(Re)loading resource " << name;
     if (name.find(RESOURCE_MCURSOR) != std::string::npos)
     {
-        GuiCursor::getSingleton().loadResources(CSR_OVERLAY_ZPOS);
+        GuiCursor::getSingleton().loadResources();
         return;
     }
     if (name.find(RESOURCE_TOOLTIP) != std::string::npos)
     {
-        loadResources(TTP_OVERLAY_ZPOS);
+        loadResources();
         return;
     }
     if (name.find(RESOURCE_WINDOW)  != std::string::npos)
     {
         int window = StringConverter::parseInt(name.substr(name.find_first_of("#")+1, SUM_WIN_DIGITS));
         if (name.find(RESOURCE_DND) != std::string::npos)
-            guiWindow[window].loadDnDResources(WIN_OVERLAY_ZPOS);
+            guiWindow[window].loadDnDResources();
         else
-            guiWindow[window].loadResources(WIN_OVERLAY_ZPOS);
+            guiWindow[window].loadResources();
         return;
     }
     if (name.find(ManResourceLoader::TEMP_RESOURCE) != std::string::npos)
@@ -290,11 +283,9 @@ void GuiManager::parseWindows(const char *fileWindows)
     // ////////////////////////////////////////////////////////////////////
     // Parse the mouse-cursor.
     // ////////////////////////////////////////////////////////////////////
-    GuiImageset::gfxSrcMouse *srcEntry;
     if ((xmlElem = xmlRoot->FirstChildElement("Cursor")) && ((valString = xmlElem->Attribute("name"))))
     {
-        srcEntry = GuiImageset::getSingleton().getStateGfxPosMouse();
-        if (srcEntry)
+        if (GuiImageset::getSingleton().getStateGfxPosMouse())
         {
             mHotSpotX = mHotSpotY =0;
             if ((xmlElem = xmlElem->FirstChildElement("HotSpotOffset")))
@@ -302,8 +293,7 @@ void GuiManager::parseWindows(const char *fileWindows)
                 if ((valString = xmlElem->Attribute("x"))) mHotSpotX = atoi(valString);
                 if ((valString = xmlElem->Attribute("y"))) mHotSpotY = atoi(valString);
             }
-            GuiCursor::getSingleton().Init(srcEntry->w, srcEntry->h, RESOURCE_MCURSOR);
-            GuiCursor::getSingleton().setStateImagePos(srcEntry->state);
+            GuiCursor::getSingleton().Init(RESOURCE_MCURSOR);
         }
         else
         {
@@ -317,14 +307,17 @@ void GuiManager::parseWindows(const char *fileWindows)
     // ////////////////////////////////////////////////////////////////////
     // Init the windows.
     // ////////////////////////////////////////////////////////////////////
+    int z=0;
+    for (int i = 0; i < WIN_SUM; ++i)
+        guiWindowZPos[i] = i; // default zPos.
     for (xmlElem = xmlRoot->FirstChildElement("Window"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Window"))
     {
         if (!(valString = xmlElem->Attribute("name"))) continue;
-        for (int i = 0; i < GUI_WIN_SUM; ++i)
+        for (int winNr = 0; winNr < WIN_SUM; ++winNr)
         {
-            if (!stricmp(mGuiWindowNames[i].name, valString))
+            if (!stricmp(mWindowID[winNr].name, valString))
             {
-                guiWindow[i].Init(xmlElem, WIN_OVERLAY_ZPOS, RESOURCE_WINDOW, RESOURCE_DND, i);
+                guiWindow[winNr].Init(xmlElem, RESOURCE_WINDOW, RESOURCE_DND, winNr, z++);
                 break;
             }
         }
@@ -344,7 +337,7 @@ int GuiManager::addTextline(int window, int element, const char *text, uint32 co
 //================================================================================================
 void GuiManager::freeRecources()
 {
-    for (int i=0; i < GUI_WIN_SUM; ++i) guiWindow[i].freeRecources();
+    for (int i=0; i < WIN_SUM; ++i) guiWindow[i].freeRecources();
     GuiCursor::getSingleton().freeRecources();
     mTexture.setNull();
 }
@@ -358,22 +351,21 @@ bool GuiManager::keyEvent(const int key, const unsigned int keyChar)
     // Key event in npc-dialog window.
     if (GuiDialog::getSingleton().keyEvent(key, keyChar)) return true;
     // We have an active Textinput.
-    if (mTextInputActive)
+    if (mTextInputWindow != NO_ACTIVE_WINDOW && mTextInputWindow == mActiveWindow)
     {
         if (key == OIS::KC_ESCAPE)
         {
-            sendMessage(mActiveWindow, GUI_MSG_TXT_CHANGED, mActiveElement, (void*)mBackupTextInputString.c_str());
-            GuiTextinput::getSingleton().canceled();
-            mTextInputActive = false;
+            setElementText(mTextInputWindow, mTextInputElement, mBackupStrTextInput.c_str());
+            cancelTextInput();
             return true;
         }
         mTextInputUserAction = GuiTextinput::getSingleton().keyEvent(key, keyChar);
         if (GuiTextinput::getSingleton().wasFinished())
         {
             mStrTextInput = GuiTextinput::getSingleton().getText();
-            sendMessage(mActiveWindow, GUI_MSG_TXT_CHANGED, mActiveElement, (void*)mStrTextInput.c_str());
+            setElementText(mTextInputWindow, mTextInputElement, mStrTextInput.c_str());
             GuiTextinput::getSingleton().stop();
-            mTextInputActive = false;
+            mTextInputWindow = NO_ACTIVE_WINDOW;
         }
         return true;
     }
@@ -383,6 +375,7 @@ bool GuiManager::keyEvent(const int key, const unsigned int keyChar)
         // ToDo.
     }
     // Key event in active window.
+    if (mActiveWindow == NO_ACTIVE_WINDOW) return false;
     return guiWindow[mActiveWindow].keyEvent(keyChar, key);
 }
 
@@ -391,23 +384,21 @@ bool GuiManager::keyEvent(const int key, const unsigned int keyChar)
 //================================================================================================
 bool GuiManager::mouseEvent(int mouseAction, Vector3 &mouse)
 {
-    mMouse.x = mouse.x;
-    mMouse.y = mouse.y;
-    mMouse.z = mouse.z;
+    mMouse = mouse;
     GuiCursor::getSingleton().setPos((int)mMouse.x, (int)mMouse.y);
     mMouse.x+= mHotSpotX;
     mMouse.y+= mHotSpotY;
     // ////////////////////////////////////////////////////////////////////
     // Do we have an active drag from a slot?
     // ////////////////////////////////////////////////////////////////////
-    if (mDragSrcWin >= 0)
+    if (mDragSrcWin != NO_ACTIVE_WINDOW)
     {
         if (mouseAction == GuiWindow::BUTTON_RELEASED) // End of dragging.
             //if (guiWindow[mDragSrcWin].mouseEvent(mouseAction, mMouse) == EVENT_DRAG_DONE)
         {
             guiWindow[0].hideDragOverlay();
             mDragDstWin = -1;
-            for (unsigned int w = 0; w < GUI_WIN_SUM; ++w)
+            for (unsigned int w = 0; w < WIN_SUM; ++w)
             {
                 if (guiWindow[w].mouseWithin((int)mMouse.x, (int)mMouse.y))
                 {
@@ -418,7 +409,7 @@ bool GuiManager::mouseEvent(int mouseAction, Vector3 &mouse)
             }
             // Drop the item.
             Item::getSingleton().dropItem(mDragSrcWin, mDragSrcSlot, mDragDstWin, mDragDstSlot);
-            mDragSrcWin = -1;
+            mDragSrcWin = NO_ACTIVE_WINDOW;
         }
         guiWindow[0].moveDragOverlay();
         return true;
@@ -426,11 +417,13 @@ bool GuiManager::mouseEvent(int mouseAction, Vector3 &mouse)
     // ////////////////////////////////////////////////////////////////////
     // Check for mouse action in all windows.
     // ////////////////////////////////////////////////////////////////////
-    for (unsigned int i=0; i < GUI_WIN_SUM; ++i)
+    for (unsigned int i=0; i < WIN_SUM; ++i)
     {
         int ret = guiWindow[i].mouseEvent(mouseAction, mMouse);
         if (ret == EVENT_CHECK_DONE)
         {
+            if (mouseAction == GuiWindow::BUTTON_PRESSED)
+                windowToFront(i);
             mActiveWindow = i;
             return (mMouseInside = true);
         }
@@ -441,33 +434,19 @@ bool GuiManager::mouseEvent(int mouseAction, Vector3 &mouse)
             return true;
         }
     }
-    mMouseInside = false;
-    return false;
-}
-
-//================================================================================================
-// Send a message to a GuiWindow.
-//================================================================================================
-const char *GuiManager::sendMessage(int window, int message, int element, void *value1, void *value2)
-{
-    return guiWindow[window].Message(message, element, value1, value2);
+    return (mMouseInside = false);
 }
 
 //================================================================================================
 // .
 //================================================================================================
-void GuiManager::startTextInput(int window, int winElement, int maxChars, bool blockNumbers, bool blockWhitespaces)
+void GuiManager::startTextInput(int window, int element, int maxChars, bool blockNumbers, bool blockWhitespaces)
 {
-    if (mTextInputActive || !guiWindow[window].isVisible()) return;
-    mTextInputActive = true;
-    mActiveWindow = window;
-    mActiveElement= winElement;
-    const char *tmp = sendMessage(mActiveWindow, GUI_MSG_TXT_GET, mActiveElement);
-    if (tmp)
-        mBackupTextInputString = tmp;
-    else
-        mBackupTextInputString = "";
-    GuiTextinput::getSingleton().setString(mBackupTextInputString);
+    if (mTextInputWindow != NO_ACTIVE_WINDOW || !guiWindow[window].isVisible()) return;
+    mTextInputWindow = window;
+    mTextInputElement= element;
+    mBackupStrTextInput = getElementText(window, element);
+    GuiTextinput::getSingleton().setString(mBackupStrTextInput);
     GuiTextinput::getSingleton().startTextInput(maxChars, blockNumbers, blockWhitespaces);
 }
 
@@ -477,15 +456,7 @@ void GuiManager::startTextInput(int window, int winElement, int maxChars, bool b
 void GuiManager::cancelTextInput()
 {
     GuiTextinput::getSingleton().canceled();
-    mActiveWindow = GUI_WIN_STATISTICS;
-}
-
-//================================================================================================
-// .
-//================================================================================================
-void GuiManager::resetTextInput()
-{
-    GuiTextinput::getSingleton().reset();
+    mTextInputWindow = NO_ACTIVE_WINDOW;
 }
 
 //================================================================================================
@@ -507,9 +478,26 @@ bool GuiManager::finishedTextInput()
 //================================================================================================
 // .
 //================================================================================================
-const char *GuiManager::getTextInput()
+void GuiManager::resetTextInput()
 {
-    return mStrTextInput.c_str();
+    GuiTextinput::getSingleton().reset();
+}
+
+//================================================================================================
+// .
+//================================================================================================
+void GuiManager::windowToFront(int window)
+{
+    unsigned char actPos = guiWindow[window].getZPos();
+    while (actPos != WIN_SUM-1)
+    {
+        guiWindowZPos[actPos] = guiWindowZPos[actPos+1];
+        guiWindow[guiWindowZPos[actPos]].setZPos(actPos);
+        ++actPos;
+    }
+    guiWindowZPos[actPos] = window;
+    guiWindow[window].setZPos(WIN_SUM-1);
+    mActiveWindow = window;
 }
 
 //================================================================================================
@@ -519,9 +507,14 @@ void GuiManager::showWindow(int window, bool visible)
 {
     guiWindow[window].setVisible(visible);
     if (visible)
-        mActiveWindow = window;
-    else
-        mActiveWindow = GUI_WIN_STATISTICS;
+    {
+        windowToFront(window);
+        return;
+    }
+    if (window == mTextInputWindow)
+        mTextInputWindow = NO_ACTIVE_WINDOW;
+    if (window == mActiveWindow)
+        mActiveWindow = NO_ACTIVE_WINDOW;
 }
 
 //================================================================================================
@@ -567,12 +560,12 @@ void GuiManager::update(Real timeSinceLastFrame)
     // ////////////////////////////////////////////////////////////////////
     // Update textinput.
     // ////////////////////////////////////////////////////////////////////
-    if (mTextInputActive)
-        sendMessage(mActiveWindow, GUI_MSG_TXT_CHANGED, mActiveElement, (void*)GuiTextinput::getSingleton().getText());
+    if (mTextInputWindow != NO_ACTIVE_WINDOW)
+        setElementText(mTextInputWindow, mTextInputElement, GuiTextinput::getSingleton().getText());
     // ////////////////////////////////////////////////////////////////////
     // Update windows.
     // ////////////////////////////////////////////////////////////////////
-    for (unsigned int i=0; i < GUI_WIN_SUM; ++i)
+    for (unsigned int i=0; i < WIN_SUM; ++i)
         guiWindow[i].update(timeSinceLastFrame);
     // ////////////////////////////////////////////////////////////////////
     // Update tooltips.

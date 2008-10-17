@@ -43,15 +43,20 @@ GuiTable::GuiTable(TiXmlElement *xmlElement, void *parent):GuiElement(xmlElement
     TiXmlElement *xmlOpt;
     for (xmlOpt = xmlElement->FirstChildElement("Color"); xmlOpt; xmlOpt = xmlOpt->NextSiblingElement("Color"))
     {
-        uint32 *color;
+        uint32 *color = 0;
         if      (!strcmp(xmlOpt->Attribute("type"), "COLOR_ODD_ROWS"))  color = &mColorRowBG[0]; // Color of odd  rows.
         else if (!strcmp(xmlOpt->Attribute("type"), "COLOR_EVEN_ROWS")) color = &mColorRowBG[1]; // Color of even rows.
         else if (!strcmp(xmlOpt->Attribute("type"), "COLOR_SELECTION")) color = &mColorSelect;  // Color of selection.
-        *color = 0x00000000; // default color.
-        if ((tmp = xmlOpt->Attribute("alpha"))) *color+= atoi(tmp) << 24;
-        if ((tmp = xmlOpt->Attribute("red")))   *color+= atoi(tmp) << 16;
-        if ((tmp = xmlOpt->Attribute("green"))) *color+= atoi(tmp) <<  8;
-        if ((tmp = xmlOpt->Attribute("blue")))  *color+= atoi(tmp);
+        if (!color)
+            Logger::log().warning() << "Unknown Color type " << xmlOpt->Attribute("type");
+        else
+        {
+            *color = 0x00000000; // default color.
+            if ((tmp = xmlOpt->Attribute("alpha"))) *color+= atoi(tmp) << 24;
+            if ((tmp = xmlOpt->Attribute("red")))   *color+= atoi(tmp) << 16;
+            if ((tmp = xmlOpt->Attribute("green"))) *color+= atoi(tmp) <<  8;
+            if ((tmp = xmlOpt->Attribute("blue")))  *color+= atoi(tmp);
+        }
     }
     for (xmlOpt = xmlElement->FirstChildElement("Column"); xmlOpt; xmlOpt = xmlOpt->NextSiblingElement("Column"))
     {

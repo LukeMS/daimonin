@@ -32,9 +32,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Ogre;
 
-//static const unsigned long SCROLL_SPEED = 12;
-static const unsigned long SCROLL_SPEED = 4;
-static const Real CLOSING_SPEED  = 10.0f;  // default: 10.0f
+static const Real SCROLL_SPEED = 0.004f;
 
 //================================================================================================
 // Constructor.
@@ -81,10 +79,9 @@ GuiListbox::GuiListbox(TiXmlElement *xmlElement, void *parent):GuiElement(xmlEle
     mSelectedLine = -1;
     mKeyStart = 0;
     mKeyCount = 0;
+    mTime = 0;
 
-    mTime = Root::getSingleton().getTimer()->getMilliseconds();
     TiXmlElement *xmlOpt;
-
     for (xmlOpt = xmlElement->FirstChildElement("Gadget"); xmlOpt; xmlOpt = xmlOpt->NextSiblingElement("Gadget"))
     {
         if (!strcmp(xmlOpt->Attribute("type"), "SCROLLER"))
@@ -144,13 +141,13 @@ void GuiListbox::scrollbarAction(GuiListbox *me, int index, int scroll)
         me->scrollTextHorizontal(scroll);
 }
 
-
 //================================================================================================
 // Add line(s) of text to the ring-buffer (perform auto-clipping).
 //================================================================================================
-int GuiListbox::addTextline(const char *srcText, uint32 default_color)
+int GuiListbox::addTextline(String srcText, uint32 default_color)
 {
-    unsigned char *buf2 = (unsigned char*)GuiTextout::getSingleton().showUserDefinedChars(srcText);
+    GuiTextout::getSingleton().parseUserDefinedChars(srcText);
+    unsigned char *buf2 = (unsigned char*)srcText.c_str();
     // ////////////////////////////////////////////////////////////////////
     // Mask out the sound command.
     // ////////////////////////////////////////////////////////////////////
@@ -302,13 +299,21 @@ const char *GuiListbox::getSelectedKeyword()
 }
 
 //================================================================================================
+// todo: speed up the scrolling speed with the amount of mRowsToScroll.
+//================================================================================================
+void GuiListbox::update(Ogre::Real dTime)
+{
+    mTime += dTime;
+    if (mTime < SCROLL_SPEED || !mRowsToScroll || mDragging) return;
+    mTime = 0;
+    draw();
+}
+
+//================================================================================================
 // Display the textlines.
 //================================================================================================
 void GuiListbox::draw()
 {
-    if (!mRowsToScroll || mDragging) return;
-    if (Root::getSingleton().getTimer()->getMilliseconds() - mTime < SCROLL_SPEED) return;
-    mTime = Root::getSingleton().getTimer()->getMilliseconds();
     Texture *texture = mParent->getTexture();
     // ////////////////////////////////////////////////////////////////////
     // Graphical background.

@@ -41,7 +41,7 @@ public:
         int index;                   /**< Unique number. **/
         bool hideText;               /**< Hide the text e.g. for password input. **/
         Ogre::String text;
-        Ogre::uint32 *LayerWindowBG;           /**< Backup buffer for dynamic text. **/
+        Ogre::uint32 *LayerWindowBG; /**< Backup buffer for dynamic text. **/
         Ogre::uint32 color;
     }
     TextLine;
@@ -97,7 +97,8 @@ public:
         return mMaxFontHeight;
     }
     int getCharWidth(int fontNr, char Char);
-    const char *showUserDefinedChars(const char *XmlUserChars);
+    void parseUserDefinedChars(Ogre::String &txt);
+    Ogre::uint32 alphaBlend(const Ogre::uint32 bg, const Ogre::uint32 gfx);
 
 private:
     // ////////////////////////////////////////////////////////////////////

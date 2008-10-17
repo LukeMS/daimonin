@@ -27,7 +27,7 @@
   <Window name= "Statistics">
     <Size      width= "150" height= "88" />
     <Pos       x= "5" y= "5" zOrder = "50" />
-    <DragArea  x= "0" y= "0" width= "150" height= "17" />
+    <DragArea  x= "0" y= "0" width= "131" height= "17" />
     <Tooltip  text= "This is the Player Info Window." />
     <!--=============================================-->
     <!-- Borderlines                                 -->
@@ -458,7 +458,7 @@
   <Window name= "DialogNPC">
     <Size     width= "303" height= "350" />
     <Pos      x= "200" y= "200" zOrder = "250" />
-    <DragArea x= "0" y= "0" width= "303" height= "29" />
+    <DragArea x= "0" y= "0" width= "284" height= "29" />
     <Tooltip  text= "Conversation Window" />
     <!--=============================================-->
     <!-- Seamless Background                         -->
@@ -565,7 +565,7 @@
     <Size     width= "330" height= "580" />
     <Alignment x= "left" />
     <Pos       x ="5" y= "100" zOrder = "50" />
-    <DragArea x= "0" y= "0" width= "330" height= "30" />
+    <DragArea x= "0" y= "0" width= "279" height= "30" />
     <Tooltip  text= "Equipment window." />
     <!--=============================================-->
     <!-- Seamless Background                         -->
@@ -790,7 +790,7 @@
     <Size     width= "330" height= "580" />
     <Alignment x= "left" />
     <Pos       x ="335" y= "100" zOrder = "50" />
-    <DragArea x= "0" y= "0" width= "330" height= "30" />
+    <DragArea x= "0" y= "0" width= "279" height= "30" />
     <Tooltip  text= "Shop window" />
     <!--=============================================-->
     <!-- Seamless Background                         -->
@@ -1010,6 +1010,11 @@
       <Image name = "Button-01-Close"/>
       <Pos x= "280" y= "4" />
     </Gadget>
+      <Gadget type= "BUTTON"   name = "But_Test">
+      <Image name = "Button-01-Standard"/>
+      <Pos   x= "53" y= "230" />
+      <Label x= "10" y= "8" font="02" text= "Lock" />
+    </Gadget>
   </Window>
 
 
@@ -1021,7 +1026,7 @@
     <Size     width= "330" height= "505" />
     <Alignment x= "left" />
     <Pos       x ="680" y= "120" zOrder = "50" />
-    <DragArea x= "0" y= "0" width= "330" height= "30" />
+    <DragArea x= "0" y= "0" width= "279" height= "30" />
     <Tooltip  text= "Trade window" />
     <!--=============================================-->
     <!-- Seamless Background                         -->
@@ -1227,7 +1232,7 @@
     <Size     width= "330" height= "580" />
     <Alignment x= "left" />
     <Pos       x ="680" y= "100" zOrder = "50" />
-    <DragArea x= "0" y= "0" width= "330" height= "30" />
+    <DragArea x= "0" y= "0" width= "279" height= "30" />
     <Tooltip  text= "Shop window" />
     <!--=============================================-->
     <!-- Seamless Background                         -->
@@ -1367,7 +1372,7 @@
     <Size  width= "330" height= "340" />
     <Alignment x= "left" />
     <Pos       x="580" y= "100" zOrder = "50" />
-    <DragArea  x= "0" y= "0" width= "330" height= "30" />
+    <DragArea  x= "0" y= "0" width= "279" height= "30" />
     <Tooltip  text= "Container1" />
     <!--=============================================-->
     <!-- Seamless Background                         -->

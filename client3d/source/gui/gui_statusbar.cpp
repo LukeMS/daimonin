@@ -43,8 +43,8 @@ const int  BAR_WIDTH = 16;
 GuiStatusbar::GuiStatusbar(TiXmlElement *xmlElement, void *parent):GuiElement(xmlElement, parent)
 {
     mGfxBuffer = 0;
+    mValue = -1;
     setValue(1.0); // default: 100%
-    draw();
 }
 
 //================================================================================================
@@ -56,7 +56,7 @@ GuiStatusbar::~GuiStatusbar()
 }
 
 //================================================================================================
-// .
+// Todo: Replace blit by direct writing to the texture.
 //================================================================================================
 void GuiStatusbar::draw()
 {
@@ -166,9 +166,12 @@ void GuiStatusbar::draw()
 //================================================================================================
 void GuiStatusbar::setValue(Real value)
 {
-    mValue = (int) ((mHeight-2*mLabelPosY) * (1-value));
-    if (mValue > mHeight) mValue = mHeight;
-    if (mValue < 0) mValue = 0;
+    int val = (int) ((mHeight-2*mLabelPosY) * (1-value));
+    if (val < 0) val = 0;
+    if (val > mHeight) val = mHeight;
+    if (mValue != val)
+    {
+        mValue = val;
+        draw();
+    }
 }
-
-

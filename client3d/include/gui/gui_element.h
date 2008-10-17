@@ -90,6 +90,7 @@ protected:
     int mState;                        /**< Actual state of this element. **/
     int mFontNr, mLabelFontNr;
     int mLabelPosX, mLabelPosY;
+    bool mIsVisible;
     bool mBG_Element;                  /**< Do we need a backup of the background before drawing,
                                             or is it part of the background gfx? **/
     Ogre::String mStrLabel;

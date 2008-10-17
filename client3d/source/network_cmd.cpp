@@ -73,7 +73,7 @@ short Network::GetShort_String(unsigned char *data)
 //================================================================================================
 void Network::AccNameSuccess(unsigned char *data, int len)
 {
-    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Account Success");
+    GuiManager::getSingleton().addTextline(GuiManager::WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Account Success");
     Logger::log().error() << "AccNameSuccess";
     /*
     int num = (len)?GetUINT8_String(data):ACCOUNT_STATUS_DISCONNECT;
@@ -113,28 +113,28 @@ void Network::AccountCmd(unsigned char *data, int len)
 {
     int count = 0;
 
-    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Account cmd from server");
+    GuiManager::getSingleton().addTextline(GuiManager::WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Account cmd from server");
 
     ObjectHero::getSingleton().clearAccount();
     // First, get the account status - it tells us too when login failed
     if ((unsigned char)data[count++]) // something is wrong when not ACCOUNT_STATUS_OK (0)
     {
-    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Account fail");
-        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Account does not exist");
-        GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED, GuiImageset::GUI_TEXTBOX_LOGIN_WARN, (void*)"Account does not exist");
+        GuiManager::getSingleton().addTextline(GuiManager::WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Account fail");
+        GuiManager::getSingleton().addTextline(GuiManager::WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Account does not exist");
+        GuiManager::getSingleton().setElementText(GuiManager::WIN_LOGIN, GuiImageset::GUI_TEXTBOX_LOGIN_WARN, "Account does not exist");
         Option::getSingleton().setGameStatus(Option::GAME_STATUS_START);
-/*
-        draw_info_format(COLOR_RED, "Unknown Account: %s", cpl.acc_name);
-        GameStatus = GAME_STATUS_LOGIN_ACCOUNT;
-        LoginInputStep = LOGIN_STEP_NAME;
-        dialog_login_warning_level = DIALOG_LOGIN_WARNING_ACCOUNT_UNKNOWN;
-        cpl.acc_name[0] = 0;
-        open_input_mode(MAX_ACCOUNT_NAME);
-*/
+        /*
+                draw_info_format(COLOR_RED, "Unknown Account: %s", cpl.acc_name);
+                GameStatus = GAME_STATUS_LOGIN_ACCOUNT;
+                LoginInputStep = LOGIN_STEP_NAME;
+                dialog_login_warning_level = DIALOG_LOGIN_WARNING_ACCOUNT_UNKNOWN;
+                cpl.acc_name[0] = 0;
+                open_input_mode(MAX_ACCOUNT_NAME);
+        */
     }
     else // we have account data... set it up and move player to account view mode
     {
-        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Account ok");
+        GuiManager::getSingleton().addTextline(GuiManager::WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Account ok");
 
         for (int nr = 0; nr < ObjectHero::ACCOUNT_MAX_PLAYER; ++nr)
         {
@@ -163,7 +163,7 @@ void Network::DrawInfoCmd(unsigned char *data, int len)
     }
     else
         ++buf;
-    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, buf);
+    GuiManager::getSingleton().addTextline(GuiManager::WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, buf);
 }
 
 //================================================================================================
@@ -478,7 +478,7 @@ void Network::DrawInfoCmd2(unsigned char *data, int len)
         if (tmp) *tmp = 0;
     }
     // we have communication input
-    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, buf); // TESTING!!!
+    GuiManager::getSingleton().addTextline(GuiManager::WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, buf); // TESTING!!!
     /*
         if (tmp && flags & (NDI_PLAYER|NDI_SAY|NDI_SHOUT|NDI_TELL|NDI_GSAY|NDI_EMOTE))
         {
@@ -666,7 +666,7 @@ void Network::TargetObject(unsigned char *data, int len)
     String strTmp = "[";
     strTmp += (char*)data+3;
     strTmp += "] selected";
-    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, strTmp.c_str());
+    GuiManager::getSingleton().addTextline(GuiManager::WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, strTmp.c_str());
     /*
         cpl.target_mode = *data++;
         if (cpl.target_mode)
@@ -679,7 +679,7 @@ void Network::TargetObject(unsigned char *data, int len)
         TileManager::getSingleton().map_udate_flag = 2;
 
         (buf,"TO: %d %d >%s< (len: %d)\n",cpl.target_mode,cpl.target_code,cpl.target_name,len);
-        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN, (void*)buf);
+        GuiManager::getSingleton().addTextline(WIN_TEXTWINDOW, GUI_LIST_MSGWIN, buf);
     */
 }
 
@@ -1298,7 +1298,7 @@ void Network::SetupCmd(unsigned char *buf, int len)
         {
             if (VERSION_CS != atoi((const char*)param))
             {
-                GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "~Your client is outdated!~");
+                GuiManager::getSingleton().addTextline(GuiManager::WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "~Your client is outdated!~");
                 Logger::log().error() << "Client is outdated";
                 CloseClientSocket();
                 SDL_Delay(3250);
@@ -1311,7 +1311,7 @@ void Network::SetupCmd(unsigned char *buf, int len)
         {
             if (VERSION_SC != atoi((const char*)param))
             {
-                GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "~The server is outdated!\nSelect a different one!~");
+                GuiManager::getSingleton().addTextline(GuiManager::WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "~The server is outdated!\nSelect a different one!~");
                 CloseClientSocket();
                 SDL_Delay(3250);
                 return;
@@ -1532,7 +1532,7 @@ void Network::InterfaceCmd(unsigned char *data, int len)
     */
 
 
-//GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, (const char*)(data+1));
+//GuiManager::getSingleton().addTextline(WIN_TEXTWINDOW, GUI_LIST_MSGWIN, (const char*)(data+1));
 
     GuiDialog::getSingleton().reset();
     if (len)
