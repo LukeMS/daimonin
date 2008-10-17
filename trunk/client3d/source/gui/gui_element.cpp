@@ -45,6 +45,7 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
     mPosY  = 0;
     mWidth = 0;
     mHeight= 0;
+    mIsVisible = true;
     mBG_Element = true;
     mGfxSrc    = 0; // No gfx is defined (fallback to color fill).
     mFillColor = 0;

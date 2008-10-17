@@ -47,6 +47,7 @@ GuiImageset::GuiElementNames GuiImageset::mGuiElementNames[GUI_ELEMENTS_SUM]=
     // Unique Buttons (Handled outside of gui_windows).
     { "But_NPC_Accept",     GUI_BUTTON_NPC_ACCEPT },
     { "But_NPC_Decline",    GUI_BUTTON_NPC_DECLINE},
+    { "But_Test"       ,    GUI_BUTTON_TEST},
     // Listboxes.
     { "List_Msg",           GUI_LIST_MSGWIN    },
     { "List_Chat",          GUI_LIST_CHATWIN   },

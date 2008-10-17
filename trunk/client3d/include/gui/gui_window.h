@@ -46,13 +46,6 @@ class GuiWindow
 {
 public:
     enum { TIME_DOUBLECLICK = 200 };
-
-    enum
-    {
-        GUI_ACTION_NONE,
-        GUI_ACTION_START_TEXT_INPUT,
-        GUI_ACTION_SUM
-    };
     /** Mouse Events **/
     enum
     {
@@ -69,18 +62,23 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    ~GuiWindow()
-    {}
-    GuiWindow();
-    void loadResources(int posZ);
-    void loadDnDResources(int posZ);
+    ~GuiWindow() {}
+    GuiWindow()
+    {
+        mInit = false;
+    }
+    void loadDnDResources()
+    {
+        mvSlot[0]->loadResources();
+    }
+    void loadResources();
     void freeRecources();
     bool isVisible()
     {
-        return mOverlay->isVisible();
+        return mInit?mOverlay->isVisible():false;
     }
     void setVisible(bool visible);
-    void Init(TiXmlElement *xmlElem, int zOrder, const char *resourceWin, const char *resourceDnD, int winNr);
+    void Init(TiXmlElement *xmlElem, const char *resourceWin, const char *resourceDnD, int winNr, unsigned char defaultZPos);
     bool keyEvent(const char keyChar, const unsigned char key);
     void update(Ogre::Real timeSinceLastFrame);
     void getTexturseSize(int &w, int &h)
@@ -96,13 +94,18 @@ public:
     {
         return mHeight;
     }
-    const char *Message(int message, int element, void *value1, void *value2);
+    unsigned char getZPos()
+    {
+        return mInit?mOverlay->getZOrder():0;
+    }
+    void setZPos(unsigned char zorder)
+    {
+        if (mInit) mOverlay->setZOrder(zorder);
+    }
     int mouseEvent(int MouseAction, Ogre::Vector3 &mouse);
     bool mouseWithin(int x, int y)
     {
-        if (!isInit || !isVisible() || x < mPosX || x > mPosX + mWidth || y < mPosY || y > mPosY + mHeight)
-            return false;
-        return true;
+        return (!mInit || !isVisible() || x < mPosX || x > mPosX + mWidth || y < mPosY || y > mPosY + mHeight)?false:true;
     }
     const char *getTooltip()
     {
@@ -122,26 +125,34 @@ public:
     }
     void centerWindowOnMouse(int x, int y);
 
+    void setVisible(int element, bool visible);
+    // ////////////////////////////////////////////////////////////////////
+    // GUI_Element stuff.
+    // ////////////////////////////////////////////////////////////////////
+    const Ogre::String &getElementText(int element);
+    void setElementText(int element, const char *text);
+    // ////////////////////////////////////////////////////////////////////
+    // GUI_Statusbar stuff.
+    // ////////////////////////////////////////////////////////////////////
+    void setStatusbarValue(int element, Ogre::Real value);
     // ////////////////////////////////////////////////////////////////////
     // GUI_Table stuff.
     // ////////////////////////////////////////////////////////////////////
     int  getTableSelection(int element);
     int  getTableActivated(int element);
     bool getTableUserBreak(int element);
+    void addTableRow(int element, const char *text);
     void clearTable(int element);
-
     // ////////////////////////////////////////////////////////////////////
     // GUI_Listbox stuff.
     // ////////////////////////////////////////////////////////////////////
     void clearListbox(int element);
     int  addTextline(int element, const char *text, Ogre::uint32 color);
-
     // ////////////////////////////////////////////////////////////////////
     // GUI_Button stuff.
     // ////////////////////////////////////////////////////////////////////
     class GuiGadgetButton *getButtonHandle(int element);
     class GuiGadgetSlot *getSlotHandle(int element);
-
     // ////////////////////////////////////////////////////////////////////
     // GUI_Gadget_Slot stuff.
     // ////////////////////////////////////////////////////////////////////
@@ -168,22 +179,20 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    static int msInstanceNr, mMouseDragging;
+    static int mMouseDragging;
     static Ogre::String mStrTooltip;
     Ogre::String mResourceName;
+    short mPosX, mPosY;
     int mWindowNr;
-    int mMousePressed, mMouseOver;
-    int mPosX, mPosY, mPosZ;
+    int mMouseOver;
     int mWidth, mHeight;
-    int mHeadPosX, mHeadPosY;
-    int mDragPosX1, mDragPosX2, mDragPosY1, mDragPosY2, mDragOldMousePosX, mDragOldMousePosY;
+    int mDragPosX1, mDragPosX2, mDragPosY1, mDragPosY2, mDragOffsetX, mDragOffsetY;
     int mMinimized, mDefaultHeight;
     int mGadgetDrag;
     unsigned int mSumUsedSlots;
-    bool isInit;
+    bool mInit;
     bool mSizeRelative;
     bool mLockSlots; /**< TODO: Lock all slots, so no item can accidental be removed. **/
-    Ogre::SceneNode *mSceneNode;
     std::vector<class GuiTable*>mvTable;
     std::vector<class GuiGraphic*>mvGraphic;
     std::vector<class GuiListbox*>mvListbox;
@@ -193,23 +202,23 @@ private:
     std::vector<class GuiGadgetCombobox*>mvGadgetCombobox;
     std::vector<class GuiGadgetScrollbar*>mvGadgetScrollbar;
     std::vector<GuiTextout::TextLine*>mvTextline;
-    Ogre::Overlay *mOverlay, *mNPC_HeadOverlay;
+    Ogre::Overlay *mOverlay;
     Ogre::OverlayElement *mElement;
-    Ogre::AnimationState *mSpeakAnimState, *mManualAnimState;
     Ogre::PixelBox mSrcPixelBox;
     Ogre::TexturePtr mTexture;
     Ogre::uint32 *mWinLayerBG; /**< Its a backup of the window background to avoid
                                     read access to the window texture and to restore
                                     the background after a dynamic part of the win
-                                    has changed (e.g. button that changed to vivisible)*/
+                                    has changed (e.g. button that changed to inisible)*/
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     static void buttonPressed(GuiWindow *me, int index);
     static void listboxPressed(GuiWindow *me, int index, int line);
+    void checkForOverlappingElements();
     void setHeight(int h);
     void delGadget(int number);
-    void parseWindowData(TiXmlElement *xmlElem, const char *resourceWin, int zOrder);
+    void parseWindowData(TiXmlElement *xmlElem, const char *resourceWin, unsigned char defaultZPos);
     void printParsedTextline(TiXmlElement *xmlElem);
 };
 

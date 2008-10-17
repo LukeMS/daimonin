@@ -48,8 +48,9 @@ public:
     ~GuiListbox();
     void draw();
     void clear();
+    void update(Ogre::Real dTime);
     bool mouseEvent(int MouseAction, int x, int y, int z);
-    int  addTextline(const char *text, Ogre::uint32 color);
+    int  addTextline(Ogre::String text, Ogre::uint32 color);
     const char *extractFirstLineOfText(const char &text);
     const char *getSelectedKeyword(); /**< Returns the keyword found in the selected line. **/
     void setFunction(Callback *c)
@@ -90,7 +91,7 @@ private:
     int  mKeyStart, mKeyCount;
 
     Ogre::uint32 *mGfxBuffer;
-    unsigned long mTime;
+    Ogre::Real mTime;
     class GuiGadgetScrollbar *mScrollBarH, *mScrollBarV;
     Callback *mCallFunc;
     int mLine;

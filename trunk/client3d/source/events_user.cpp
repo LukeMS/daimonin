@@ -158,16 +158,16 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
 
         case OIS::KC_I:
         {
-            GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_EQUIPMENT, true);
-            GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_INVENTORY, true);
+            GuiManager::getSingleton().showWindow(GuiManager::WIN_EQUIPMENT, true);
+            GuiManager::getSingleton().showWindow(GuiManager::WIN_INVENTORY, true);
 
-            GuiManager::getSingleton().setSlotBusyTime(GuiManager::GUI_WIN_INVENTORY, 0, 6);
-            GuiManager::getSingleton().setSlotBusy(GuiManager::GUI_WIN_INVENTORY, 0);
+            GuiManager::getSingleton().setSlotBusyTime(GuiManager::WIN_INVENTORY, 0, 6);
+            GuiManager::getSingleton().setSlotBusy(GuiManager::WIN_INVENTORY, 0);
 
-            //GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_TRADE, true);
-            //GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_SHOP, true);
-//            GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_TILEGROUND, true);
-            GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_CONTAINER, true);
+            //GuiManager::getSingleton().showWindow(GuiManager::WIN_TRADE, true);
+            //GuiManager::getSingleton().showWindow(GuiManager::WIN_SHOP, true);
+//            GuiManager::getSingleton().showWindow(GuiManager::WIN_TILEGROUND, true);
+            GuiManager::getSingleton().showWindow(GuiManager::WIN_CONTAINER, true);
 
 
             // ObjectManager::getSingleton().setPlayerEquipment(ObjectManager::OBJECT_PLAYER, ObjectNPC::BONE_HEAD, 1);
@@ -205,9 +205,9 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
         case OIS::KC_M:
         {
             String strMemUsage = "Memory used for Textures: " + StringConverter::toString(TextureManager::getSingleton().getMemoryUsage()/1024) + " KB";
-            GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, strMemUsage.c_str());
+            GuiManager::getSingleton().addTextline(GuiManager::WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, strMemUsage.c_str());
             strMemUsage = "Memory used for Meshes: " + StringConverter::toString(MeshManager::getSingleton().getMemoryUsage()/1024) + " KB";
-            GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, strMemUsage.c_str());
+            GuiManager::getSingleton().addTextline(GuiManager::WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, strMemUsage.c_str());
             break;
         }
 
@@ -273,7 +273,7 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
         case OIS::KC_W:
         {
             //Network::getSingleton().send_command("/apply", -1, SC_NORMAL);
-            //GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "apply");
+            //GuiManager::getSingleton().addTextline(WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "apply");
             break;
         }
 
@@ -438,6 +438,12 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
 
         case OIS::KC_F1:
         {
+            /*
+                        static bool tst = true;
+                        tst = !tst;
+                        GuiManager::getSingleton().setVisible(GuiManager::WIN_INVENTORY, GuiImageset::GUI_BUTTON_TEST, tst);
+                        break;
+            */
             Vector3 pos = mCamera->getPosition();
             pos.y+= 15;
             Logger::log().error() << "camera pos: " << pos.x << "   " <<pos.y << "   " << pos.z;
@@ -605,7 +611,7 @@ bool Events::mouseMoved(const OIS::MouseEvent &e)
 {
     const int MOUSE_POINTER_SIZE = 10;
     mMouse.x = e.state.X.abs;
-    mMouse.y = e.state.Y.abs;
+    mMouse.y = e.state.Y.abs; // Scrollwheel.
     mMouse.z = e.state.Z.abs;
     if (mMouse.x > e.state.width - MOUSE_POINTER_SIZE) mMouse.x = e.state.width - MOUSE_POINTER_SIZE;
     if (mMouse.y > e.state.height- MOUSE_POINTER_SIZE) mMouse.y = e.state.height- MOUSE_POINTER_SIZE;

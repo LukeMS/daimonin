@@ -50,14 +50,13 @@ public:
     {
         return mState;
     }
-    void Init(int w, int h, const char *resourceName);
-    void loadResources(int posZ);
+    void Init(const char *resourceName);
+    void loadResources();
     void freeRecources();
     static GuiCursor &getSingleton()
     {
         static GuiCursor Singleton; return Singleton;
     }
-    void setStateImagePos(GuiImageset::gfxPos *Entry);
 
 private:
     // ////////////////////////////////////////////////////////////////////
@@ -65,7 +64,7 @@ private:
     // ////////////////////////////////////////////////////////////////////
     int mWidth, mHeight;
     unsigned int mState;
-    GuiImageset::gfxPos gfxSrcPos[GuiImageset::STATE_MOUSE_SUM];
+    GuiImageset::gfxSrcMouse gfxSrcPos;
     Ogre::OverlayElement *mElement;
     Ogre::TexturePtr mTexture;
     Ogre::String mResourceName;

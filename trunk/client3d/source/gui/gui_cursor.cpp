@@ -36,12 +36,13 @@ const int MAX_CURSOR_SIZE = 64;
 //================================================================================================
 // Create an overlay for the mouse-cursor.
 //================================================================================================
-void GuiCursor::Init(int w, int h, const char *resourceName)
+void GuiCursor::Init(const char *resourceName)
 {
+    GuiImageset::gfxSrcMouse *srcEntry = GuiImageset::getSingleton().getStateGfxPosMouse();
     mResourceName = resourceName;
     mState = GuiImageset::STATE_MOUSE_DEFAULT;
-    mWidth = w;
-    mHeight= h;
+    mWidth = srcEntry->w;
+    mHeight= srcEntry->h;
     if      (mWidth < MIN_CURSOR_SIZE) mWidth = MIN_CURSOR_SIZE;
     else if (mWidth > MAX_CURSOR_SIZE) mWidth = MAX_CURSOR_SIZE;
     if      (mHeight< MIN_CURSOR_SIZE) mHeight= MIN_CURSOR_SIZE;
@@ -52,17 +53,19 @@ void GuiCursor::Init(int w, int h, const char *resourceName)
                ManResourceLoader::getSingleton().getLoader());
     mTexture->load();
     mElement->setPosition(0, 0);
+    //draw();
 }
 
 //================================================================================================
 // (Re)loads the material and texture or creates them if they dont exist.
 //================================================================================================
-void GuiCursor::loadResources(int posZ)
+void GuiCursor::loadResources()
 {
-    Overlay *overlay = GuiManager::getSingleton().loadResources(mWidth, mHeight, mResourceName, posZ);
+    Overlay *overlay = GuiManager::getSingleton().loadResources(mWidth, mHeight, mResourceName);
     mElement = overlay->getChild(mResourceName + GuiManager::ELEMENT_RESOURCE_NAME);
-    overlay->show();
     draw();
+    overlay->setZOrder(GuiManager::MAX_OVERLAY_ZPOS);
+    overlay->show();
 }
 
 //================================================================================================
@@ -74,24 +77,13 @@ void GuiCursor::freeRecources()
 }
 
 //================================================================================================
-// Copy the state informations to the private part of the class.
-//================================================================================================
-void GuiCursor::setStateImagePos(GuiImageset::gfxPos *Entry)
-{
-    memcpy(gfxSrcPos, Entry, sizeof(gfxSrcPos));
-    draw();
-}
-
-//================================================================================================
 // Set the state of the mouse-cursor.
 //================================================================================================
 void GuiCursor::setState(unsigned int state)
 {
-    if (state < GuiImageset::STATE_MOUSE_SUM && mState != state)
-    {
-        mState = state;
-        draw();
-    }
+    if (mState == state || state >= GuiImageset::STATE_MOUSE_SUM) return;
+    mState = state;
+    draw();
 }
 
 //================================================================================================
@@ -99,10 +91,11 @@ void GuiCursor::setState(unsigned int state)
 //================================================================================================
 void GuiCursor::draw()
 {
+    GuiImageset::gfxSrcMouse *gfxSrcPos = GuiImageset::getSingleton().getStateGfxPosMouse();
     mTexture->getBuffer()->blitFromMemory(GuiImageset::getSingleton().getPixelBox().getSubVolume(
-                                              Box(gfxSrcPos[mState].x,
-                                                  gfxSrcPos[mState].y,
-                                                  gfxSrcPos[mState].x + mWidth,
-                                                  gfxSrcPos[mState].y + mHeight)),
+                                              Box(gfxSrcPos->state[mState].x,
+                                                  gfxSrcPos->state[mState].y,
+                                                  gfxSrcPos->state[mState].x + mWidth,
+                                                  gfxSrcPos->state[mState].y + mHeight)),
                                           Box(0, 0, mWidth, mHeight));
 }

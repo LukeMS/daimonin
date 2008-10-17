@@ -215,9 +215,9 @@ GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, const char 
 //================================================================================================
 // (Re)loads the material and texture or creates them if they dont exist.
 //================================================================================================
-void GuiGadgetSlot::loadResources(int posZ)
+void GuiGadgetSlot::loadResources()
 {
-    mDnDOverlay = GuiManager::getSingleton().loadResources(ITEM_SIZE, ITEM_SIZE, mResourceName, posZ);
+    mDnDOverlay = GuiManager::getSingleton().loadResources(ITEM_SIZE, ITEM_SIZE, mResourceName);
     mDnDElement = mDnDOverlay->getChild(mResourceName + GuiManager::ELEMENT_RESOURCE_NAME);
     draw();
 }

@@ -34,42 +34,32 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 class GuiManager
 {
 public:
+    enum { MAX_OVERLAY_ZPOS = 650 }; /**< According to Ogre documentation. **/
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    /** Window ids (sorted by zOrder). **/
+    /** Window id's. **/
     enum
     {
-        GUI_WIN_LOGIN,
-        GUI_WIN_SERVERSELECT,
-        // GUI_WIN_CREATION,
-        GUI_WIN_EQUIPMENT,
-        GUI_WIN_INVENTORY,
-        GUI_WIN_TRADE,
-        GUI_WIN_SHOP,
-        GUI_WIN_CONTAINER,
-        GUI_WIN_TILEGROUND,
+        WIN_LOGIN,
+        WIN_SERVERSELECT,
+        // WIN_CREATION,
+        WIN_EQUIPMENT,
+        WIN_INVENTORY,
+        WIN_TRADE,
+        WIN_SHOP,
+        WIN_CONTAINER,
+        WIN_TILEGROUND,
 
-        GUI_WIN_PLAYERINFO,
-        GUI_WIN_PLAYERCONSOLE,
-        GUI_WIN_NPCDIALOG,
-        GUI_WIN_TEXTWINDOW,
-        GUI_WIN_CHATWINDOW,
-        GUI_WIN_STATISTICS,
-        GUI_WIN_SUM
+        WIN_PLAYERINFO,
+        WIN_PLAYERCONSOLE,
+        WIN_NPCDIALOG,
+        WIN_TEXTWINDOW,
+        WIN_CHATWINDOW,
+        WIN_STATISTICS,
+        WIN_SUM
     };
     static const int SUM_WIN_DIGITS; /**< Numbers of digits (For string format) **/
-    enum
-    {
-        GUI_MSG_TXT_GET,
-        GUI_MSG_TXT_CHANGED,
-        GUI_MSG_BAR_CHANGED,
-        GUI_MSG_ADD_TABLEROW,
-        GUI_MSG_BUT_PRESSED,
-        GUI_MSG_GET_SEL_KEY,  /**< Returns the selected keyword **/
-        GUI_MSG_SLOT_REDRAW,
-        GUI_MSG_SUM
-    };
     enum
     {
         EVENT_DRAG_STRT,
@@ -78,16 +68,6 @@ public:
         EVENT_CHECK_DONE,
         EVENT_SUM
     };
-    enum
-    {
-        MSG_CHANGE_TEXT, MSG_BUTTON_PRESSED, MSG_SUM
-    };
-    typedef struct
-    {
-        const char *name;
-        unsigned int index;
-    }
-    GuiWinNam;
 
     static const char *GUI_MATERIAL_NAME;
     static const char *OVERLAY_ELEMENT_TYPE;
@@ -106,7 +86,8 @@ public:
     {
         return mMouseInside;
     }
-    Ogre::Overlay *loadResources(int w, int h, Ogre::String name, int posZ);
+    Ogre::Overlay *loadResources(int w, int h, Ogre::String name);
+    void windowToFront(int window);
     void loadResources(Ogre::Resource *res);
     void freeRecources();
     void Init(int w, int h);
@@ -116,14 +97,12 @@ public:
     void update(Ogre::Real);
     bool mouseEvent(int MouseAction, Ogre::Vector3 &mouse);
     bool keyEvent(const int keyChar, const unsigned int key);
-    const char *sendMessage(int window, int message, int element, void *value1 = 0, void *value2 = 0);
     void setTooltip(const char *text);
     void displaySystemMessage(const char*text);
     void centerWindowOnMouse(int window);
     void showWindow(int window, bool visible);
-    int getScreenWidth()  { return mScreenWidth; }
-    int getScreenHeight() { return mScreenHeight;}
-
+    int getScreenWidth()     { return mScreenWidth; }
+    int getScreenHeight()    { return mScreenHeight;}
     void startTextInput(int window, int winElement, int maxChars, bool blockNumbers=false, bool blockWhitespaces=false);
     void resetTextInput();
     bool brokenTextInput();
@@ -136,7 +115,30 @@ public:
         return true;
     }
     void cancelTextInput();
-    const char *getTextInput();
+    const char *getTextInput() { return mStrTextInput.c_str(); }
+
+    void setVisible(int window, int element, bool visible)
+    {
+        guiWindow[window].setVisible(element, visible);
+    }
+    // ////////////////////////////////////////////////////////////////////
+    // GUI_Element stuff.
+    // ////////////////////////////////////////////////////////////////////
+    const Ogre::String &getElementText(int window, int element)
+    {
+        return guiWindow[window].getElementText(element);
+    }
+    void setElementText(int window, int element, const char *text)
+    {
+        guiWindow[window].setElementText(element, text);
+    }
+    // ////////////////////////////////////////////////////////////////////
+    // GUI_Statusbar stuff.
+    // ////////////////////////////////////////////////////////////////////
+    void setStatusbarValue(int window, int element, Ogre::Real value)
+    {
+        guiWindow[window].setStatusbarValue(element, value);
+    }
     // ////////////////////////////////////////////////////////////////////
     // GUI_Table stuff.
     // ////////////////////////////////////////////////////////////////////
@@ -156,7 +158,10 @@ public:
     {
         guiWindow[window].clearTable(element);
     }
-
+    void addTableRow(int window, int element, const char *text)
+    {
+        guiWindow[window].addTableRow(element, text);
+    }
     // ////////////////////////////////////////////////////////////////////
     // GUI_Lisbox stuff.
     // ////////////////////////////////////////////////////////////////////
@@ -173,7 +178,6 @@ public:
     {
         return guiWindow[window].getButtonHandle(element);
     }
-
     // ////////////////////////////////////////////////////////////////////
     // GUI_gadget_Slot stuff.
     // ////////////////////////////////////////////////////////////////////
@@ -202,27 +206,37 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    static GuiWinNam mGuiWindowNames[GUI_WIN_SUM];
-    static class GuiWindow guiWindow[GUI_WIN_SUM];
+    enum { NO_ACTIVE_WINDOW = -1  };
+    typedef struct
+    {
+        const char *name;
+        unsigned int index;
+    }
+    WindowID;
+    static WindowID mWindowID[WIN_SUM];
+    static class GuiWindow guiWindow[WIN_SUM];
+    static unsigned char guiWindowZPos[WIN_SUM]; /**< The window-numbers are sorted here on the z-pos */
     int mDragSrcWin, mDragSrcSlot;
     int mDragDstWin, mDragDstSlot;
     int mDragSrcContainer, mDragDestContainer;
     int mDragSrcItemPosx, mDragSrcItemPosy; // Set on dragStart for moving back on false drag&drop.
-    int mActiveWindow, mActiveElement;
+    int mTextInputWindow;  /**< The window where a text input is in progress.  */
+    int mTextInputElement; /**< The windows-element where a text input is in progress. */
+    int mActiveWindow;     /**< The window which was selected by the user.     */
+
     int mHotSpotX, mHotSpotY;
     unsigned int mScreenWidth, mScreenHeight;
     unsigned long mTooltipDelay;
     bool mIsDragging;
     bool mMouseInside;       /**< Mouse is used for gui related stuff at the moment. **/
     bool mTooltipRefresh;
-    bool mTextInputActive;
     bool mTextInputUserAction;
     Ogre::Vector3 mMouse;
     Ogre::Overlay *mOverlay;
     Ogre::OverlayElement *mElement;
     Ogre::TexturePtr mTexture;
-    Ogre::String mStrTooltip, mBackupTextInputString;
-    Ogre::String mStrTextInput;
+    Ogre::String mStrTooltip;
+    Ogre::String mStrTextInput, mBackupStrTextInput;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
@@ -230,7 +244,7 @@ private:
     ~GuiManager() {}
     GuiManager(const GuiManager&); // disable copy-constructor.
     void clearTooltip();
-    void loadResources(int posZ);
+    void loadResources();
 };
 
 #endif

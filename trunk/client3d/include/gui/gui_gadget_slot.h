@@ -43,7 +43,7 @@ public:
     // ////////////////////////////////////////////////////////////////////
     GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, const char *resourceName, bool drawOnInit = true);
     ~GuiGadgetSlot();
-    void loadResources(int posZ);
+    void loadResources();
     int mouseEvent(int MouseAction, int x, int y);
     void draw();
     /**

@@ -243,7 +243,7 @@ bool GuiGadgetCombobox::setState(int state)
                         mScrollPos = 0;
                     break;
                 default:
-                    mAction = GuiWindow::GUI_ACTION_START_TEXT_INPUT;
+                    mAction = 1;//GuiWindow::GUI_ACTION_START_TEXT_INPUT;
             }
         }
     }

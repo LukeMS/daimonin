@@ -51,6 +51,7 @@ public:
         // Unique Buttons (Handled outside of gui_windows).
         GUI_BUTTON_NPC_ACCEPT,
         GUI_BUTTON_NPC_DECLINE,
+        GUI_BUTTON_TEST,
         // Listboxes.
         GUI_LIST_MSGWIN,
         GUI_LIST_CHATWIN,

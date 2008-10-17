@@ -801,7 +801,7 @@ void TileManager::setMap(unsigned int x, unsigned int y, short height, char gfx,
 //================================================================================================
 void TileManager::changeChunks()
 {
-    long time = Root::getSingleton().getTimer()->getMicroseconds();
+    unsigned long time = Root::getSingleton().getTimer()->getMicroseconds();
     // Shadow calculation is part of the editor. This is just for testing here.
     {
         for (int z = 0; z <= CHUNK_SIZE_Z; ++z)

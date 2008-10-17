@@ -46,9 +46,9 @@ Item::Item()
     mActItemID[ITEMLIST_CONTAINER] = CONTAINER_UNKNOWN;
     // Link the item lists to the windows containing the slots where
     // the items are displayed.
-    mWindowID[ITEMLIST_GROUND]     = GuiManager::GUI_WIN_TILEGROUND;
-    mWindowID[ITEMLIST_BACKPACK]   = GuiManager::GUI_WIN_INVENTORY;
-    mWindowID[ITEMLIST_CONTAINER]  = GuiManager::GUI_WIN_CONTAINER;
+    mWindowID[ITEMLIST_GROUND]     = GuiManager::WIN_TILEGROUND;
+    mWindowID[ITEMLIST_BACKPACK]   = GuiManager::WIN_INVENTORY;
+    mWindowID[ITEMLIST_CONTAINER]  = GuiManager::WIN_CONTAINER;
 }
 
 //================================================================================================
@@ -74,7 +74,7 @@ void Item::clearContainer(int container)
         GuiManager::getSingleton().clrItem(mWindowID[i]);
         return;
     }
-    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Item::clearContainer failed!");
+    GuiManager::getSingleton().addTextline(GuiManager::WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Item::clearContainer failed!");
 }
 
 //================================================================================================
@@ -181,7 +181,7 @@ Item::sItem *Item::locateItem(int container, unsigned int tag)
 //================================================================================================
 void Item::delItem(unsigned int item, int container)
 {
-    //GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "-- del-- del Item");
+    //GuiManager::getSingleton().addTextline(GuiManager::WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "-- del-- del Item");
     std::list<sItem*>::iterator iter;
     for (int i =0; i < ITEMLIST_SUM; ++i)
     {
@@ -206,7 +206,7 @@ void Item::delItem(unsigned int item, int container)
 //================================================================================================
 bool Item::addItem(sItem *tmpItem, int container)
 {
-    //GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "-- add Item");
+    //GuiManager::getSingleton().addTextline(GuiManager::WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "-- add Item");
     for (int i =0; i < ITEMLIST_SUM; ++i)
     {
         if (mActItemID[i] == container)
@@ -249,10 +249,10 @@ void Item::getInventoryItemFromFloor(int slotNr)
     std::list<sItem*>::iterator iter;
     for (iter = mItemList[ITEMLIST_GROUND].begin(); slotNr-- && iter != mItemList[ITEMLIST_GROUND].end();)  ++iter;
     sprintf(mStrBuffer, "drop %s", (*iter)->d_name.c_str());
-    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, mStrBuffer);
+    GuiManager::getSingleton().addTextline(GuiManager::WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, mStrBuffer);
     // move item to Backpack.
     sprintf(mStrBuffer, "mv %d %d %d", mActItemID[ITEMLIST_BACKPACK], (*iter)->tag, (*iter)->sumItems);
-    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, mStrBuffer);
+    GuiManager::getSingleton().addTextline(GuiManager::WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, mStrBuffer);
     //Network::getSingleton().cs_write_string(mStrBuffer);
     delete *iter;
     mItemList[ITEMLIST_GROUND].erase(iter);
@@ -269,12 +269,12 @@ void Item::dropInventoryItemToFloor(int slotNr)
     std::list<sItem*>::iterator iter;
     for (iter = mItemList[ITEMLIST_BACKPACK].begin(); slotNr-- && iter != mItemList[ITEMLIST_BACKPACK].end();)  ++iter;
     sprintf(mStrBuffer, "drop %s", (*iter)->d_name.c_str());
-    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, mStrBuffer);
+    GuiManager::getSingleton().addTextline(GuiManager::WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, mStrBuffer);
     // move item TO Ground.
     sprintf(mStrBuffer, "mv %d %d %d", mActItemID[ITEMLIST_GROUND], (*iter)->tag, (*iter)->sumItems);
     //Network::getSingleton().cs_write_string(mStrBuffer);
-    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, mStrBuffer);
-    GuiManager::getSingleton().delItem(GuiManager::GUI_WIN_INVENTORY, *iter);
+    GuiManager::getSingleton().addTextline(GuiManager::WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, mStrBuffer);
+    GuiManager::getSingleton().delItem(GuiManager::WIN_INVENTORY, *iter);
     delete *iter;
     mItemList[ITEMLIST_BACKPACK].erase(iter);
 }
@@ -297,7 +297,7 @@ void Item::dropItem(int srcWindow, int srcItemSlot, int dstWindow, int dstItemSl
     // ////////////////////////////////////////////////////////////////////
     // TODO
     sprintf(mStrBuffer, "drag and drop src: %d, %d dest: %d, %d", srcWindow, srcItemSlot, dstWindow, dstItemSlot);
-    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, mStrBuffer);
+    GuiManager::getSingleton().addTextline(GuiManager::WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, mStrBuffer);
     return;
 }
 
@@ -311,10 +311,10 @@ void Item::printAllItems()
     const char *names[ITEMLIST_SUM] = {"Backpack", "Container:", "Ground:" };
     for (int c = 0; c < ITEMLIST_SUM; ++c)
     {
-        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, names[c], 0x00ff0000);
+        GuiManager::getSingleton().addTextline(GuiManager::WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, names[c], 0x00ff0000);
         if (mItemList[ITEMLIST_BACKPACK].empty())
         {
-            GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "<empty>");
+            GuiManager::getSingleton().addTextline(GuiManager::WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "<empty>");
         }
         else
         {
@@ -324,7 +324,7 @@ void Item::printAllItems()
                          " [" + StringConverter::toString(mActItemID[ITEMLIST_BACKPACK]) + "]"+
                          " [" + StringConverter::toString((*iter)->tag) + "]"+
                          " [" + ObjectWrapper::getSingleton().getMeshName((*iter)->face & ~0x8000) + "]";
-                GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, strTmp.c_str());
+                GuiManager::getSingleton().addTextline(GuiManager::WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, strTmp.c_str());
             }
         }
     }

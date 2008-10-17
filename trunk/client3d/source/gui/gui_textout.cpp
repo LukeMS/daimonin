@@ -61,12 +61,10 @@ GuiTextout::GuiTextout()
 {
     mTextGfxBuffer= 0;
     mMaxFontHeight= 0;
-    mTextGfxBuffer= 0;
-    TiXmlElement *xmlRoot, *xmlElem;
-
     // ////////////////////////////////////////////////////////////////////
     // Parse the font extensions.
     // ////////////////////////////////////////////////////////////////////
+    TiXmlElement *xmlRoot, *xmlElem;
     TiXmlDocument doc(FILE_GUI_IMAGESET);
     const char *strTemp;
     if (!doc.LoadFile() || !(xmlRoot = doc.RootElement()) || !(strTemp = xmlRoot->Attribute("file")))
@@ -136,7 +134,7 @@ GuiTextout::~GuiTextout()
     for (std::vector<mSpecialChar*>::iterator i = mvSpecialChar.begin(); i < mvSpecialChar.end(); ++i)
         delete (*i);
     mvSpecialChar.clear();
-    if (mTextGfxBuffer) delete[] mTextGfxBuffer;
+    delete[] mTextGfxBuffer;
 }
 
 //================================================================================================
@@ -427,7 +425,10 @@ void GuiTextout::PrintToBuffer(int width, int height, uint32 *dest_data, const c
     drawText(width, h, dest_data, text, false, fontNr, color);
 }
 
-uint32 alphaBlend(const uint32 bg, const uint32 gfx)
+//================================================================================================
+// .
+//================================================================================================
+uint32 GuiTextout::alphaBlend(const uint32 bg, const uint32 gfx)
 {
     uint32 alpha = gfx >> 24;
     if (alpha == 0x00) return bg;
@@ -444,7 +445,7 @@ uint32 alphaBlend(const uint32 bg, const uint32 gfx)
 //================================================================================================
 void GuiTextout::drawText(int width, int height, uint32 *dest_data, const char *text, bool hideText, unsigned int fontNr, uint32 color)
 {
-    if (fontNr >= mvFont.size()) fontNr = 0;
+    if (fontNr >= (unsigned int)mvFont.size()) fontNr = 0;
     uint32 colorBack = color;
     int srcRow, dstRow, stopX, clipX=0;
     unsigned char chr;
@@ -540,8 +541,7 @@ void GuiTextout::drawText(int width, int height, uint32 *dest_data, const char *
 int GuiTextout::CalcTextWidth(unsigned char *text, unsigned int fontNr)
 {
     int x =0;
-    if (fontNr >= mvFont.size()) fontNr = 0;
-
+    if (fontNr >= (unsigned int)mvFont.size()) fontNr = 0;
     while (*text)
     {
         switch (*text)
@@ -559,6 +559,7 @@ int GuiTextout::CalcTextWidth(unsigned char *text, unsigned int fontNr)
                 ++text;
                 fontNr+= (*text >='a') ? (*text - 87)     : (*text >='A') ? (*text - 55)     :(*text -'0');
                 ++text;
+                if (fontNr >= (unsigned int)mvFont.size()) fontNr = 0;
                 break;
             default:
                 x+= getCharWidth(fontNr, *text);
@@ -571,22 +572,19 @@ int GuiTextout::CalcTextWidth(unsigned char *text, unsigned int fontNr)
 
 //================================================================================================
 // Calculate the gfx-width for the given text.
+// The caller function must check fontNr to bevalid [=< mvFont.size()].
 //================================================================================================
 int GuiTextout::getCharWidth(int fontNr, char Char)
 {
     if ((unsigned char) Char < 32) return 0;
-    if (fontNr >= (int)mvFont.size()) fontNr = 0;
     return mvFont[fontNr]->charWidth[(unsigned char)(Char-32)]-1;
 }
 
 //================================================================================================
-// Calculate the gfx-width for the given text.
+// Replace xml-keycodes by char number in a text.
 //================================================================================================
-const char *GuiTextout::showUserDefinedChars(const char *XmlUserChars)
+void GuiTextout::parseUserDefinedChars(String &txt)
 {
-    static String txt;
-    txt = XmlUserChars;
-    // Look for userdefined chars in the text.
     size_t found;
     char replacement[] = {(char)(STANDARD_CHARS_IN_FONT+32),0};
     for (unsigned int i=0; i < mvSpecialChar.size();++i)
@@ -595,5 +593,4 @@ const char *GuiTextout::showUserDefinedChars(const char *XmlUserChars)
             txt.replace(found, mvSpecialChar[i]->strGfxCode.size(), replacement);
         ++replacement[0];
     }
-    return txt.c_str();
 }

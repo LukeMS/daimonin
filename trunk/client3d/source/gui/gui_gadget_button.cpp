@@ -47,11 +47,33 @@ GuiGadgetButton::~GuiGadgetButton()
 {}
 
 //================================================================================================
+// .
+//================================================================================================
+void GuiGadgetButton::setVisible(bool visible)
+{
+    if (visible == mIsVisible) return;
+    mIsVisible = visible;
+    draw();
+}
+
+//================================================================================================
 // Returns true if the mouse event was on this gadget (so no need to check the other gadgets).
 //================================================================================================
 bool GuiGadgetButton::mouseEvent(int MouseAction, int x, int y)
 {
-    if (x >= mPosX && x <= mPosX + mWidth && y >= mPosY && y <= mPosY + mHeight)
+    if (x < mPosX || x > mPosX + mWidth || y < mPosY || y > mPosY + mHeight)
+    {
+        // Mouse is no longer over the the gadget.
+        if (getState() != GuiImageset::STATE_ELEMENT_DEFAULT)
+        {
+            mMouseOver = false;
+            mMouseButDown = false;
+            setState(GuiImageset::STATE_ELEMENT_DEFAULT);
+            GuiManager::getSingleton().setTooltip("");
+            return true; // No need to check other gadgets.
+        }
+    }
+    else
     {
         if (!mMouseOver)
         {
@@ -74,17 +96,6 @@ bool GuiGadgetButton::mouseEvent(int MouseAction, int x, int y)
         }
         return true; // No need to check other gadgets.
     }
-    else // Mouse is no longer over the the gadget.
-    {
-        if (getState() != GuiImageset::STATE_ELEMENT_DEFAULT)
-        {
-            mMouseOver = false;
-            mMouseButDown = false;
-            setState(GuiImageset::STATE_ELEMENT_DEFAULT);
-            GuiManager::getSingleton().setTooltip("");
-            return true; // No need to check other gadgets.
-        }
-    }
     return false; // No action here, check the other gadgets.
 }
 
@@ -97,6 +108,7 @@ void GuiGadgetButton::draw()
     // ////////////////////////////////////////////////////////////////////
     // Draw label.
     // ////////////////////////////////////////////////////////////////////
+    if (!mIsVisible) return;
     if (mStrLabel != "")
     {
         Texture *texture = mParent->getTexture();

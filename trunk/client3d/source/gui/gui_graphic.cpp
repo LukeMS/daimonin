@@ -40,21 +40,6 @@ GuiGraphic::GuiGraphic(TiXmlElement *xmlElement, void *parent, bool drawOnInit):
 }
 
 //================================================================================================
-// .
-//================================================================================================
-inline uint32 GuiGraphic::alphaBlend(const uint32 bg, const uint32 gfx)
-{
-    uint32 alpha = gfx >> 24;
-    if (alpha == 0x00) return bg;
-    if (alpha == 0xff) return gfx;
-    // We need 1 byte of free space before each color (because of the alpha multiplication),
-    // so we need 2 operations on the 3 colors.
-    uint32 rb = (((gfx & 0x00ff00ff) * alpha) + ((bg & 0x00ff00ff) * (0xff - alpha))) & 0xff00ff00;
-    uint32 g  = (((gfx & 0x0000ff00) * alpha) + ((bg & 0x0000ff00) * (0xff - alpha))) & 0x00ff0000;
-    return (bg & 0xff000000) | ((rb | g) >> 8);
-}
-
-//================================================================================================
 // Draws a graphic.
 // If the gfx is bigger than the source image, the source image will be repeated.
 //================================================================================================
@@ -87,7 +72,7 @@ void GuiGraphic::draw()
                 srcX = 0;
                 for (int x =0; x < mWidth; ++x)
                 {
-                    dst[x] = alphaBlend(dst[x], LayerState[dSrcY + srcX]);
+                    dst[x] = GuiTextout::getSingleton().alphaBlend(dst[x], LayerState[dSrcY + srcX]);
                     if (++srcX >= mGfxSrc->w) srcX = 0; // Repeat the image.
                 }
                 dSrcY+= srcRowSkip;
@@ -109,18 +94,31 @@ void GuiGraphic::draw()
             uint32 *bak = mParent->getLayerBG()+mPosX+mPosY * mParent->getWidth();
             PixelBox pb = texture->getBuffer()->lock(Box(mPosX, mPosY, mPosX+mWidth, mPosY+mHeight), HardwareBuffer::HBL_DISCARD);
             uint32 *dst = (uint32*)pb.data;
-            for (int y =0; y < mHeight; ++y)
+            if (mIsVisible)
             {
-                srcX = 0;
-                for (int x =0; x < mWidth; ++x)
+                for (int y =0; y < mHeight; ++y)
                 {
-                    dst[x] = alphaBlend(bak[x], LayerState[dSrcY + srcX]);
-                    if (++srcX >= mGfxSrc->w) srcX = 0; // Repeat the image.
+                    srcX = 0;
+                    for (int x =0; x < mWidth; ++x)
+                    {
+                        dst[x] = GuiTextout::getSingleton().alphaBlend(bak[x], LayerState[dSrcY + srcX]);
+                        if (++srcX >= mGfxSrc->w) srcX = 0; // Repeat the image.
+                    }
+                    dSrcY+= srcRowSkip;
+                    dst+=texture->getWidth();
+                    bak+=mParent->getWidth();
+                    if (++srcY >= mGfxSrc->h) { srcY = 0; dSrcY =0; } // Repeat the image.
                 }
-                dSrcY+= srcRowSkip;
-                dst+=texture->getWidth();
-                bak+=mParent->getWidth();
-                if (++srcY >= mGfxSrc->h) { srcY = 0; dSrcY =0; } // Repeat the image.
+            }
+            else
+            {
+                for (int y =0; y < mHeight; ++y)
+                {
+                    for (int x =0; x < mWidth; ++x)
+                        dst[x] = bak[x];
+                    dst+=texture->getWidth();
+                    bak+=mParent->getWidth();
+                }
             }
             texture->getBuffer()->unlock();
         }
@@ -151,12 +149,25 @@ void GuiGraphic::draw()
         else
         {
             uint32 *bak = mParent->getLayerBG()+mPosX+mPosY * mParent->getWidth();
-            for (int y = mHeight; y; --y)
+            if (mIsVisible)
             {
-                for (int x= 0; x < mWidth; ++x)
-                    dst[x] = alphaBlend(bak[x], mFillColor);
-                dst+=(int)texture->getWidth();
-                bak+=mParent->getWidth();
+                for (int y = mHeight; y; --y)
+                {
+                    for (int x= 0; x < mWidth; ++x)
+                        dst[x] = GuiTextout::getSingleton().alphaBlend(bak[x], mFillColor);
+                    dst+=(int)texture->getWidth();
+                    bak+=mParent->getWidth();
+                }
+            }
+            else
+            {
+                for (int y = mHeight; y; --y)
+                {
+                    for (int x= 0; x < mWidth; ++x)
+                        dst[x] = mFillColor;
+                    dst+=(int)texture->getWidth();
+                    bak+=mParent->getWidth();
+                }
             }
         }
         texture->getBuffer()->unlock();
@@ -228,9 +239,9 @@ void GuiGraphic::drawSlot(Ogre::uint32 *srcItemData, int busyTime, int sumItems)
             for (int x =0; x < mWidth; ++x)
             {
                 if (x >= off && x < itemSize+off && y>= off && y< itemSize+off)
-                    dst[x] = alphaBlend(alphaBlend(alphaBlend(bak[x],srcSlot[x]),*srcItemData++),*bBuf++);
+                    dst[x] = GuiTextout::getSingleton().alphaBlend(GuiTextout::getSingleton().alphaBlend(GuiTextout::getSingleton().alphaBlend(bak[x],srcSlot[x]),*srcItemData++),*bBuf++);
                 else
-                    dst[x] = alphaBlend(bak[x], srcSlot[x]);
+                    dst[x] = GuiTextout::getSingleton().alphaBlend(bak[x], srcSlot[x]);
             }
             dst+= (int)texture->getWidth();
             bak+= mParent->getWidth();
@@ -248,9 +259,9 @@ void GuiGraphic::drawSlot(Ogre::uint32 *srcItemData, int busyTime, int sumItems)
             for (int x =0; x < mWidth; ++x)
             {
                 if (x>= off && x < itemSize+off && y>= off && y< itemSize+off)
-                    dst[x] = alphaBlend(alphaBlend(bak[x],srcSlot[x]), *srcItemData++);//srcItemData[x-off]);
+                    dst[x] = GuiTextout::getSingleton().alphaBlend(GuiTextout::getSingleton().alphaBlend(bak[x],srcSlot[x]), *srcItemData++);//srcItemData[x-off]);
                 else
-                    dst[x] = alphaBlend(bak[x], srcSlot[x]);
+                    dst[x] = GuiTextout::getSingleton().alphaBlend(bak[x], srcSlot[x]);
             }
             dst+= (int)texture->getWidth();
             bak+= mParent->getWidth();
@@ -310,12 +321,12 @@ void GuiGraphic::drawBusyGfx(int itemSize, int busyTime)
                 if (x < x3)
                 {
                     for (int i=posY+x; i<posY+x3; ++i)
-                        bak[i] = alphaBlend(SLOT_BUSY_COLOR, bak[i]);
+                        bak[i] = GuiTextout::getSingleton().alphaBlend(SLOT_BUSY_COLOR, bak[i]);
                 }
                 else
                 {
                     for (int i=posY+x3; i<posY+x; ++i)
-                        bak[i] = alphaBlend(SLOT_BUSY_COLOR, bak[i]);
+                        bak[i] = GuiTextout::getSingleton().alphaBlend(SLOT_BUSY_COLOR, bak[i]);
                 }
             }
         }
@@ -326,7 +337,7 @@ void GuiGraphic::drawBusyGfx(int itemSize, int busyTime)
             posY = y*itemSize;
             for (int i=posY; i<posY+itemSize/2; ++i)
             {
-                bak[i] = alphaBlend(SLOT_BUSY_COLOR, bak[i]);
+                bak[i] = GuiTextout::getSingleton().alphaBlend(SLOT_BUSY_COLOR, bak[i]);
             }
         }
     }
@@ -372,12 +383,12 @@ void GuiGraphic::drawBusyGfx(int itemSize, int busyTime)
                     if (x < x3)
                     {
                         for (int i=posY+x; i<posY+x3; ++i)
-                            bak[i] = alphaBlend(SLOT_BUSY_COLOR,bak[i]);
+                            bak[i] = GuiTextout::getSingleton().alphaBlend(SLOT_BUSY_COLOR,bak[i]);
                     }
                     else
                     {
                         for (int i=posY+x3; i<posY+x; ++i)
-                            bak[i] = alphaBlend(SLOT_BUSY_COLOR, bak[i]);
+                            bak[i] = GuiTextout::getSingleton().alphaBlend(SLOT_BUSY_COLOR, bak[i]);
                     }
                 }
             }
@@ -388,7 +399,7 @@ void GuiGraphic::drawBusyGfx(int itemSize, int busyTime)
                 posY = y*itemSize;
                 for (int i=posY+itemSize/2; i<posY+itemSize; ++i)
                 {
-                    bak[i] = alphaBlend(SLOT_BUSY_COLOR,bak[i]);
+                    bak[i] = GuiTextout::getSingleton().alphaBlend(SLOT_BUSY_COLOR,bak[i]);
                 }
             }
         }
@@ -397,7 +408,7 @@ void GuiGraphic::drawBusyGfx(int itemSize, int busyTime)
         {
             for (int i=y; i< y+itemSize/2; ++i)
             {
-                bak[i] = alphaBlend(SLOT_BUSY_COLOR, bak[i]);
+                bak[i] = GuiTextout::getSingleton().alphaBlend(SLOT_BUSY_COLOR, bak[i]);
             }
         }
     }
