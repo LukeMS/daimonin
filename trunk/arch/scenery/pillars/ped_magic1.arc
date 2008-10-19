@@ -3,10 +3,7 @@ name magic glow
 face ped_magic1.131
 no_save 1
 type 79
-anim
-ped_magic1.131
-ped_magic1.132
-mina
+animation ped_magic1
 is_animated 1
 anim_speed 1
 speed 1
