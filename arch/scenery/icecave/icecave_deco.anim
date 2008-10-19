@@ -1,0 +1,48 @@
+anim icecave_deco_full
+facings 9
+dummy.111
+icecave_deco_full.u.111
+icecave_deco_full.u.111
+icecave_deco_full.u.111
+icecave_deco_full.u.111
+icecave_deco_full.u.131
+icecave_deco_full.u.131
+icecave_deco_full.u.131
+icecave_deco_full.u.131
+mina
+anim icecave_deco1
+facings 9
+dummy.111
+icecave_deco1.111
+icecave_deco1.111
+icecave_deco1.111
+icecave_deco1.111
+icecave_deco1.131
+icecave_deco1.131
+icecave_deco1.131
+icecave_deco1.131
+mina
+anim icecave_deco2
+facings 9
+dummy.111
+icecave_deco2.111
+icecave_deco2.111
+icecave_deco2.111
+icecave_deco2.111
+icecave_deco2.131
+icecave_deco2.131
+icecave_deco2.131
+icecave_deco2.131
+mina
+anim icecave_deco3
+facings 9
+dummy.111
+icecave_deco3.111
+icecave_deco2.111
+icecave_deco3.111
+icecave_deco3.111
+icecave_deco3.131
+icecave_deco3.131
+icecave_deco3.131
+icecave_deco3.131
+mina
