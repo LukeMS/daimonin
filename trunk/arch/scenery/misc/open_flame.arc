@@ -8,11 +8,7 @@ glow_radius 5
 weight 500
 no_pick 1
 no_pass 1
-anim
-open_flame.101
-open_flame.101
-open_flame.101
-mina
+animation open_flame
 is_animated 1
 anim_speed 4
 speed -0.2
