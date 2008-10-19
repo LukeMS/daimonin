@@ -1,43 +1,18 @@
 Object bed_4a.111
 name bed
 face bed_4a.111
-anim
-facings 9
-dummy.111
-bed_4a.111
-bed_4a.111
-bed_4a.111
-bed_4a.171
-bed_4a.171
-bed_4a.171
-bed_4a.171
-bed_4a.111
-mina
-is_animated 0
-anim_speed 0
+animation bed_4a.111
 is_turnable 1
 direction 1
 no_pick 1
 type 79
 layer 4
 end
+
 Object bed_4b.111
 name bed
 face bed_4b.111
-anim
-facings 9
-dummy.111
-bed_4b.111
-bed_4b.111
-bed_4b.111
-bed_4b.171
-bed_4b.171
-bed_4b.171
-bed_4b.171
-bed_4b.111
-mina
-is_animated 0
-anim_speed 0
+animation bed_4b.111
 is_turnable 1
 direction 1
 no_pick 1
