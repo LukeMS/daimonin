@@ -1,10 +1,7 @@
 Object rock_lake
 name rocks
 face rock_lake.101
-anim
-rock_lake.101
-rock_lake.102
-mina
+animation rock_lake
 speed 0.02
 is_animated 1
 anim_speed 19

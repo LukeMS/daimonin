@@ -17,4 +17,3 @@ material 64
 no_pass 1
 no_pick 1
 end
-

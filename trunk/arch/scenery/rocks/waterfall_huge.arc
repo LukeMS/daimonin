@@ -4,11 +4,7 @@ face waterfall_huge.101
 type 79
 mpart_id 6
 layer 5
-anim
-waterfall_huge.101
-waterfall_huge.102
-waterfall_huge.103
-mina
+animation waterfall_huge
 is_animated 1
 anim_speed 1
 speed 1
@@ -24,15 +20,6 @@ mpart_id 6
 layer 5
 mpart_nr 1
 type 79
-anim
-waterfall_huge.101
-waterfall_huge.102
-waterfall_huge.103
-mina
-is_animated 1
-anim_speed 1
-speed 1
-no_pick 1
 no_pass 1
 blocksview 1
 end
@@ -44,15 +31,6 @@ mpart_id 6
 layer 5
 mpart_nr 2
 type 79
-anim
-waterfall_huge.101
-waterfall_huge.102
-waterfall_huge.103
-mina
-is_animated 1
-anim_speed 1
-speed 1
-no_pick 1
 no_pass 1
 blocksview 1
 end
@@ -64,15 +42,6 @@ mpart_id 6
 layer 5
 mpart_nr 3
 type 79
-anim
-waterfall_huge.101
-waterfall_huge.102
-waterfall_huge.103
-mina
-is_animated 1
-anim_speed 1
-speed 1
-no_pick 1
 end
 More
 Object waterfall_huge_d
@@ -83,15 +52,6 @@ mpart_id 6
 layer 5
 mpart_nr 4
 type 79
-anim
-waterfall_huge.101
-waterfall_huge.102
-waterfall_huge.103
-mina
-is_animated 1
-anim_speed 1
-speed 1
-no_pick 1
 end
 More
 Object waterfall_huge_e
@@ -102,15 +62,6 @@ mpart_id 6
 layer 5
 mpart_nr 5
 type 79
-anim
-waterfall_huge.101
-waterfall_huge.102
-waterfall_huge.103
-mina
-is_animated 1
-anim_speed 1
-speed 1
-no_pick 1
 end
 More
 Object waterfall_huge_f
@@ -120,15 +71,6 @@ mpart_id 6
 layer 5
 mpart_nr 6
 type 79
-anim
-waterfall_huge.101
-waterfall_huge.102
-waterfall_huge.103
-mina
-is_animated 1
-anim_speed 1
-speed 1
-no_pick 1
 end
 More
 Object waterfall_huge_g
@@ -139,15 +81,6 @@ mpart_id 6
 layer 5
 mpart_nr 7
 type 79
-anim
-waterfall_huge.101
-waterfall_huge.102
-waterfall_huge.103
-mina
-is_animated 1
-anim_speed 1
-speed 1
-no_pick 1
 no_pass 1
 end
 More
@@ -159,13 +92,4 @@ mpart_id 6
 layer 5
 mpart_nr 8
 type 79
-anim
-waterfall_huge.101
-waterfall_huge.102
-waterfall_huge.103
-mina
-is_animated 1
-anim_speed 1
-speed 1
-no_pick 1
 end
