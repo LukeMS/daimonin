@@ -8,10 +8,5 @@ is_animated 1
 anim_speed 1
 speed -0.1
 speed_left -1.0
-anim
-bluebottles.101
-bluebottles.102
-bluebottles.103
-bluebottles.104
-mina
+animation bluebottles
 end
