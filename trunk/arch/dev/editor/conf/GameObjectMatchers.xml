@@ -140,4 +140,10 @@
         <TypeNrs numbers="41 66 69 94 95" />
     </GameObjectMatcher> -->
 
+    <!-- Objects to be treated as environment sensors in insertion tool
+    <GameObjectMatcher id="system_environment_sensor" system="true">
+        <title xml:lang="en">Environment Sensor</title>
+        <TypeNrs numbers="133" />
+    </GameObjectMatcher> -->
+
 </GameObjectMatchers>
