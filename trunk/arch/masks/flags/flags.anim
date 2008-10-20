@@ -1,0 +1,108 @@
+anim flag_01
+facings 9
+dummy.111
+flag1.u.151
+flag1.u.151
+flag1.u.151
+flag1.u.131
+flag1.u.131
+flag1.u.131
+flag1.u.131
+flag1.u.151
+mina
+anim flag_02
+facings 9
+dummy.111
+flag2.u.151
+flag2.u.151
+flag2.u.151
+flag2.u.131
+flag2.u.131
+flag2.u.131
+flag2.u.131
+flag2.u.151
+mina
+anim flag_03
+facings 9
+dummy.111
+flag3.u.151
+flag3.u.151
+flag3.u.151
+flag3.u.131
+flag3.u.131
+flag3.u.131
+flag3.u.131
+flag3.u.151
+mina
+anim flag_04
+facings 9
+dummy.111
+flag4.u.151
+flag4.u.151
+flag4.u.151
+flag4.u.131
+flag4.u.131
+flag4.u.131
+flag4.u.131
+flag4.u.151
+mina
+anim flag_05
+facings 9
+dummy.111
+flag5.u.151
+flag5.u.151
+flag5.u.151
+flag5.u.131
+flag5.u.131
+flag5.u.131
+flag5.u.131
+flag5.u.151
+mina
+anim flag_06
+facings 9
+dummy.111
+flag6.u.151
+flag6.u.151
+flag6.u.151
+flag6.u.131
+flag6.u.131
+flag6.u.131
+flag6.u.131
+flag6.u.151
+mina
+anim flag_07
+facings 9
+dummy.111
+flag7.u.151
+flag7.u.151
+flag7.u.151
+flag7.u.131
+flag7.u.131
+flag7.u.131
+flag7.u.131
+flag7.u.151
+mina
+anim wmask_bflag_brown_1
+facings 9
+dummy.111
+flag8.u.151
+flag8.u.131
+flag8.u.131
+flag8.u.151
+flag8.u.151
+flag8.u.131
+flag8.u.131
+flag8.u.151
+mina
+anim wmask_bflag_fire1_1
+facings 9
+dummy.111
+flag9.u.151
+flag9.u.131
+flag9.u.131
+flag9.u.151
+flag9.u.151
+flag9.u.131
+flag9.u.131
+flag9.u.151
+mina

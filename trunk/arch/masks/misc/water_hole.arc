@@ -1,10 +1,7 @@
-Object water hole
+Object water_hole
 name water hole
 face sewer_wall1on.131
-anim
-sewer_wall1on.131
-sewer_wall2on.131
-mina
+animation water_hole
 speed 0.02
 is_animated 1
 anim_speed 19
