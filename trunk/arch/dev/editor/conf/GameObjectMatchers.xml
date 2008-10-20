@@ -140,10 +140,12 @@
         <TypeNrs numbers="41 66 69 94 95" />
     </GameObjectMatcher> -->
 
-    <!-- Objects to be treated as environment sensors in insertion tool
-    <GameObjectMatcher id="system_environment_sensor" system="true">
+    <!-- Objects to be checked by the "Critical slaying characters" map
+         validator. -->
+    <GameObjectMatcher id="system_environment_sensor"> <!-- XXX: should be 'system="true"' to hide from the GUI -->
         <title xml:lang="en">Environment Sensor</title>
+        <title xml:lang="de">Umgebungs-Sensor</title>
         <TypeNrs numbers="133" />
-    </GameObjectMatcher> -->
+    </GameObjectMatcher>
 
 </GameObjectMatchers>
