@@ -5,21 +5,9 @@ layer 2
 no_pick 1
 no_teleport 1
 is_turnable 1
-direction 0
-anim
-facings 9
-fmask_blood_spatter_medium_a.101
-fmask_blood_spatter_medium_a.111
-fmask_blood_spatter_medium_a.121
-fmask_blood_spatter_medium_a.131
-fmask_blood_spatter_medium_a.141
-fmask_blood_spatter_medium_a.151
-fmask_blood_spatter_medium_a.161
-fmask_blood_spatter_medium_a.171
-fmask_blood_spatter_medium_a.181
-mina
+animation blood_spatter_medium_a_fmask
 end
-#
+
 Object blood_spatter_medium_a_wmask
 face wmask_blood_spatter_medium_a.u.131
 type 77
@@ -28,16 +16,5 @@ no_pick 1
 no_teleport 1
 is_turnable 1
 direction 3
-anim
-facings 9
-dummy.111
-dummy.111
-dummy.111
-wmask_blood_spatter_medium_a.u.131
-wmask_blood_spatter_medium_a.u.141
-wmask_blood_spatter_medium_a.u.151
-dummy.111
-dummy.111
-dummy.111
-mina
+animation blood_spatter_medium_a_wmask
 end

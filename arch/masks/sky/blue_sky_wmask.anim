@@ -1,0 +1,48 @@
+anim blue_sky_wmask_a
+facings 9
+dummy.111
+blue_sky_wmask_a.151
+blue_sky_wmask_a.131
+blue_sky_wmask_a.131
+blue_sky_wmask_a.141
+blue_sky_wmask_a.151
+blue_sky_wmask_a.131
+blue_sky_wmask_a.131
+blue_sky_wmask_a.151
+mina
+anim blue_sky_wmask_b
+facings 9
+dummy.111
+blue_sky_wmask_b.151
+blue_sky_wmask_b.131
+blue_sky_wmask_b.131
+blue_sky_wmask_b.141
+blue_sky_wmask_b.151
+blue_sky_wmask_b.131
+blue_sky_wmask_b.131
+blue_sky_wmask_b.151
+mina
+anim blue_sky_wmask_c
+facings 9
+dummy.111
+blue_sky_wmask_c.151
+blue_sky_wmask_c.131
+blue_sky_wmask_c.131
+blue_sky_wmask_c.141
+blue_sky_wmask_c.151
+blue_sky_wmask_c.131
+blue_sky_wmask_c.131
+blue_sky_wmask_c.151
+mina
+anim blue_sky_wmask_d
+facings 9
+dummy.111
+blue_sky_wmask_d.151
+blue_sky_wmask_d.131
+blue_sky_wmask_d.131
+blue_sky_wmask_d.141
+blue_sky_wmask_d.151
+blue_sky_wmask_d.131
+blue_sky_wmask_d.131
+blue_sky_wmask_d.151
+mina
