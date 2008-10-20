@@ -4,20 +4,7 @@ layer 5
 type 79
 mpart_id 3
 face wagon_big.131
-anim
-facings 9
-dummy.111
-wagon_big.131
-wagon_big.131
-wagon_big.131
-wagon_big.151
-wagon_big.151
-wagon_big.151
-wagon_big.151
-wagon_big.131
-mina
-is_animated 0
-anim_speed 0
+animation wagon_big
 is_turnable 1
 direction 1
 no_pass 1
