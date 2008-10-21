@@ -7,12 +7,8 @@ hp 1
 msg
 You detonate a Rune of Weaponmagic!
 endmsg
-anim
-rune_weaponmagic.101
-rune_weaponmagic.101
-mina
+animation rune_weaponmagic
 level 1
-is_animated 0
 anim_speed 1
 is_invisible 1
 no_pick 1

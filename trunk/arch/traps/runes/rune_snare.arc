@@ -7,12 +7,8 @@ hp 1
 msg
 You detonate a Rune of Snare!
 endmsg
-anim
-rune_snare.101
-rune_snare.101
-mina
+animation rune_snare
 level 1
-is_animated 0
 anim_speed 1
 is_invisible 1
 no_pick 1

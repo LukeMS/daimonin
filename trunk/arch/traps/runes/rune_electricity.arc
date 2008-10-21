@@ -7,12 +7,8 @@ hp 1
 msg
 You detonate a Rune of Lightning!
 endmsg
-anim
-rune_electricity.101
-lightning.111
-mina
+animation rune_electricity
 level 1
-is_animated 0
 anim_speed 1
 is_invisible 1
 no_pick 1
