@@ -5,11 +5,7 @@ layer 3
 type 35
 last_grace 40
 sp -1
-anim
-deerhorn.101
-deerhorn.102
-deerhorn.103
-mina
+animation deerhorn
 hp 10
 maxhp 10
 is_animated 1
