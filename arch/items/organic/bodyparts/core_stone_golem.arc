@@ -1,16 +1,7 @@
 Object core_stone_golem
 name stone golem core
 face core_stone_golem.101
-anim
-core_stone_golem.101
-core_stone_golem.102
-core_stone_golem.103
-core_stone_golem.104
-core_stone_golem.105
-core_stone_golem.106
-core_stone_golem.107
-core_stone_golem.108
-mina
+animation core_stone_golem
 is_animated 1
 anim_speed 1
 speed 1

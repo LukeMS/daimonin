@@ -11,18 +11,11 @@ type 86
 weight 500
 value 200
 end
+
 Object heart_beating
 name beating heart
 face heart.102
-anim
-heart.101
-heart.102
-heart.103
-heart.101
-heart.101
-heart.101
-heart.101
-mina
+animation heart_beating
 is_animated 1
 anim_speed .3
 speed 1
