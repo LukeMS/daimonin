@@ -7,12 +7,8 @@ hp 1
 msg
 You detonate a Rune of Light!
 endmsg
-anim
-rune_light.101
-rune_light.101
-mina
+animation rune_light
 level 1
-is_animated 0
 anim_speed 1
 is_invisible 1
 no_pick 1

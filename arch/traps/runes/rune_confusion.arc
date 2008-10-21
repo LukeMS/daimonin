@@ -7,12 +7,8 @@ hp 1
 msg
 You detonate a Rune of Confusion!
 endmsg
-anim
-rune_confusion.101
-rune_confusion.101
-mina
+animation rune_confusion
 level 1
-is_animated 0
 anim_speed 1
 is_invisible 1
 no_pick 1

@@ -7,12 +7,8 @@ hp 1
 msg
 You detonate a Rune of Lifesteal!
 endmsg
-anim
-rune_lifesteal.101
-rune_lifesteal.101
-mina
+animation rune_lifesteal
 level 1
-is_animated 0
 anim_speed 1
 is_invisible 1
 no_pick 1
