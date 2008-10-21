@@ -14,20 +14,8 @@ last_sp 7
 type 13
 sub_type 132
 nrof 1
-anim
-facings 9
-snowball.101
-snowball.111
-snowball.111
-snowball.111
-snowball.111
-snowball.111
-snowball.111
-snowball.111
-snowball.111
-mina
+animation snow_ball
 anim_speed 5
-is_animated 0
 is_thrown 1
 weight 30
 value 1

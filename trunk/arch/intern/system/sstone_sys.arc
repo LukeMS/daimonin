@@ -8,20 +8,8 @@ face sstone.101
 last_sp 4
 can_stack 1
 attack_impact 100
-anim
-facings 9
-sstone.101
-sstone.111
-sstone.111
-sstone.111
-sstone.111
-sstone.111
-sstone.111
-sstone.111
-sstone.111
-mina
+animation sstone
 anim_speed 10
-is_animated 0
 is_turnable 1
 type 13
 sub_type 3
