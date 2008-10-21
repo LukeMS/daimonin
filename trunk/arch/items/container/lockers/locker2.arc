@@ -1,20 +1,7 @@
 Object locker4
 name locker
 face locker4.111
-anim
-facings 9
-dummy.111
-locker4.111
-locker4.111
-locker4.111
-locker4.171
-locker4.171
-locker4.171
-locker4.171
-locker4.111
-mina
-is_animated 0
-anim_speed 0
+animation locker4
 is_turnable 1
 direction 1
 layer 4
@@ -27,23 +14,11 @@ container 12000
 weight 12000
 weapon_speed 1.0
 end
+
 Object locker5
 name locker
 face locker5.111
-anim
-facings 9
-dummy.111
-locker5.111
-locker5.111
-locker5.111
-locker5.171
-locker5.171
-locker5.171
-locker5.171
-locker5.111
-mina
-is_animated 0
-anim_speed 0
+animation locker5
 is_turnable 1
 direction 1
 layer 4

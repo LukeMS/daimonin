@@ -1,20 +1,7 @@
 Object desk1.111
 name desk
 face desk1.111
-anim
-facings 9
-dummy.111
-desk1.111
-desk1.111
-desk1.111
-desk1.171
-desk1.171
-desk1.171
-desk1.171
-desk1.111
-mina
-is_animated 0
-anim_speed 0
+animation desk1.111
 is_turnable 1
 direction 1
 layer 4

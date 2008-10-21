@@ -2,20 +2,7 @@ Object chest_sw_1
 name chest
 other_arch close_chest_sw_1
 face chest_sw_closed.111
-anim
-facings 9
-dummy.111
-chest_sw_closed.111
-chest_sw_closed.111
-chest_sw_closed.111
-chest_sw_closed.171
-chest_sw_closed.171
-chest_sw_closed.171
-chest_sw_closed.171
-chest_sw_closed.111
-mina
-is_animated 0
-anim_speed 0
+animation chest_sw_1
 is_turnable 1
 direction 1
 layer 4

@@ -1,21 +1,7 @@
-name cupboard
 Object cupboard1_wall.111
 name cupboard
 face cupboard1_wall.111
-anim
-facings 9
-dummy.111
-cupboard1_wall.111
-cupboard1_wall.111
-cupboard1_wall.111
-cupboard1_wall.171
-cupboard1_wall.171
-cupboard1_wall.171
-cupboard1_wall.171
-cupboard1_wall.111
-mina
-is_animated 0
-anim_speed 0
+animation cupboard1_wall.111
 is_turnable 1
 direction 1
 layer 4
