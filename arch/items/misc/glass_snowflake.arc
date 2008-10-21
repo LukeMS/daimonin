@@ -1,11 +1,7 @@
 Object snowflake
 name Snowflake
 face glass_snowflake.101
-anim
-glass_snowflake.101
-glass_snowflake.102
-glass_snowflake.103
-mina
+animation snowflake
 is_animated 1
 anim_speed 1
 speed 1
