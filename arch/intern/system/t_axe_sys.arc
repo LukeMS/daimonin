@@ -14,19 +14,7 @@ last_sp 7
 nrof 1
 type 13
 sub_type 131
-anim
-facings 9
-t_axe.101
-t_axe.111
-t_axe.111
-t_axe.111
-t_axe.111
-t_axe.111
-t_axe.111
-t_axe.111
-t_axe.111
-mina
-is_animated 0
+animation t_axe
 anim_speed 5
 is_turnable 1
 is_thrown 1
