@@ -5,10 +5,7 @@ face candle_purp.100
 layer 3
 type 74
 can_stack 1
-anim
-candle_purp.101
-candle_purp.102
-mina
+animation candle_purp
 anim_speed 4
 material 144
 value 470

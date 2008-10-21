@@ -12,9 +12,7 @@ speed -0.02
 no_pick 1
 no_fix_player 1
 is_animated 1
-anim
-glower.101
-mina
+animation glower.101
 msg
 There is no obvious way for you to operate the glower.
 endmsg

@@ -5,11 +5,7 @@ other_arch large_candle_b
 type 74
 layer 3
 no_pick 1
-anim
-large_candle_a.101
-large_candle_a.102
-large_candle_a.103
-mina
+animation large_candle_a
 anim_speed 4
 speed 10
 last_sp 5
@@ -27,11 +23,7 @@ type 74
 sub_type 2
 layer 3
 no_pick 1
-anim
-large_candle_b.101
-large_candle_b.102
-large_candle_b.103
-mina
+animation large_candle_b
 anim_speed 4
 speed 10
 last_sp 4
@@ -49,11 +41,7 @@ type 74
 sub_type 2
 layer 3
 no_pick 1
-anim
-large_candle_c.101
-large_candle_c.102
-large_candle_c.103
-mina
+animation large_candle_c
 anim_speed 4
 speed 10
 last_sp 3
@@ -72,4 +60,3 @@ layer 3
 no_pick 1
 weight 1000
 end
-
