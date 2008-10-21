@@ -10,20 +10,7 @@ weight 1250
 material 144
 food 1
 speed -0.02
-anim
-facings 9
-dummy.111
-lantern_magic.111
-dummy.111
-lantern_magic.131
-dummy.111
-lantern_magic.151
-dummy.111
-lantern_magic.171
-dummy.111
-mina
-is_animated 0
-anim_speed 0
+animation lantern_magic.131
 is_turnable 1
 direction 5
 no_pick 1
@@ -45,20 +32,7 @@ weight 1250
 material 144
 food 1
 speed -0.02
-anim
-facings 9
-dummy.111
-lantern2_magic.111
-dummy.111
-lantern2_magic.171
-dummy.111
-lantern2_magic.111
-dummy.111
-lantern2_magic.171
-dummy.111
-mina
-is_animated 0
-anim_speed 0
+animation lantern2_magic.131
 is_turnable 1
 direction 1
 no_pick 1

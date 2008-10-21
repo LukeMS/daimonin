@@ -4,10 +4,7 @@ race lamp_oil
 layer 3
 face lamp.100
 type 74
-anim
-lamp.101
-lamp.102
-mina
+animation lamp
 anim_speed 4
 material 1024
 material_real 641

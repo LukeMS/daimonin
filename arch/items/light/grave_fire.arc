@@ -4,10 +4,7 @@ layer 4
 name grave fire
 face grave_fire.100
 no_pick 1
-anim
-grave_fire.101
-grave_fire.102
-mina
+animation grave_fire.101
 is_animated 1
 anim_speed 8
 material 64

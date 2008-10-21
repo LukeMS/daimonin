@@ -6,10 +6,7 @@ can_stack 1
 nrof 1
 layer 3
 type 74
-anim
-torch.101
-torch.102
-mina
+animation torch
 anim_speed 4
 material 144
 value 10
