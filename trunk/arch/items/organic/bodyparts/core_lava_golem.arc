@@ -1,12 +1,7 @@
 Object core_lava_golem
 name lava golem core
 face core_lava_golem.101
-anim
-core_lava_golem.101
-core_lava_golem.102
-core_lava_golem.103
-core_lava_golem.102
-mina
+animation core_lava_golem
 is_animated 1
 anim_speed .9
 speed 1
