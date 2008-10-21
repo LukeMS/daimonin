@@ -14,20 +14,8 @@ type 13
 sub_type 132
 nrof 1
 weight 120000
-anim
-facings 9
-snowball2.101
-snowball2.101
-snowball2.101
-snowball2.101
-snowball2.101
-snowball2.101
-snowball2.101
-snowball2.101
-snowball2.101
-mina
+animation snow_ball2
 anim_speed 5
-is_animated 0
 is_thrown 1
 value 2
 end

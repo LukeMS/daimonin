@@ -12,19 +12,7 @@ can_stack 1
 nrof 1
 type 13
 sub_type 129
-anim
-facings 9
-starsofdavid.101
-starsofdavid.111
-starsofdavid.111
-starsofdavid.111
-starsofdavid.111
-starsofdavid.111
-starsofdavid.111
-starsofdavid.111
-starsofdavid.111
-mina
-is_animated 0
+animation starsdavid2
 anim_speed 5
 is_turnable 1
 is_thrown 1
