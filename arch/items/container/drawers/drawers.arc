@@ -1,20 +1,7 @@
 Object drawers1.111
 name drawer
 face drawers1.111
-anim
-facings 9
-dummy.111
-drawers1.111
-drawers1.111
-drawers1.111
-drawers1.171
-drawers1.171
-drawers1.171
-drawers1.171
-drawers1.111
-mina
-is_animated 0
-anim_speed 0
+animation drawers1.111
 is_turnable 1
 direction 1
 layer 4

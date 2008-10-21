@@ -1,20 +1,7 @@
 Object rack.111
 name weapon rack
 face rack.111
-anim
-facings 9
-dummy.111
-rack.111
-rack.111
-rack.111
-rack.171
-rack.171
-rack.171
-rack.171
-rack.111
-mina
-is_animated 0
-anim_speed 0
+animation rack1
 is_turnable 1
 direction 1
 layer 4

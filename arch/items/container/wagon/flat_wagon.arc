@@ -1,20 +1,7 @@
 Object wagon_flat
 name flat wagon
 face flat_wagon.101
-anim
-facings 9
-dummy.111
-flat_wagon.101
-flat_wagon.101
-flat_wagon.101
-flat_wagon.101
-flat_wagon.101
-flat_wagon.101
-flat_wagon.101
-flat_wagon.101
-mina
-is_animated 0
-anim_speed 0
+animation wagon_flat
 is_turnable 1
 direction 1
 layer 4
