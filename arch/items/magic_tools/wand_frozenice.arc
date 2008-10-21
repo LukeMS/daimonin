@@ -3,10 +3,7 @@ name frozenice wand
 layer 3
 face wand_frozenice.101
 sp -1
-anim
-wand_frozenice.101
-wand_frozenice.102
-mina
+animation wand_frozenice
 is_animated 1
 last_grace 12
 anim_speed 5
