@@ -47,59 +47,7 @@ speed -0.06
 run_away 6
 level 1
 weight 1350000
-anim
-facings 25
-dummy.111
-dummy.111
-oclunus.111
-oclunus.111
-oclunus.121
-oclunus.121
-oclunus.131
-oclunus.131
-oclunus.141
-oclunus.141
-oclunus.151
-oclunus.151
-oclunus.161
-oclunus.161
-oclunus.171
-oclunus.171
-oclunus.181
-oclunus.181
-oclunus.111
-oclunus.111
-oclunus.121
-oclunus.121
-oclunus.131
-oclunus.131
-oclunus.141
-oclunus.141
-oclunus.151
-oclunus.151
-oclunus.161
-oclunus.161
-oclunus.171
-oclunus.171
-oclunus.181
-oclunus.181
-oclunus.311
-oclunus.312
-oclunus.321
-oclunus.322
-oclunus.331
-oclunus.332
-oclunus.341
-oclunus.342
-oclunus.351
-oclunus.352
-oclunus.361
-oclunus.362
-oclunus.371
-oclunus.372
-oclunus.381
-oclunus.382
-mina
+animation oclunus
 is_animated 1
 anim_speed 4
 no_pick 1
