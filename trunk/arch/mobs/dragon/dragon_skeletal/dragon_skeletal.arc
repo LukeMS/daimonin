@@ -48,59 +48,7 @@ attack_pierce 100
 speed -0.061
 level 1
 weight 850000
-anim
-facings 25
-dummy.111
-dummy.111
-dragon_skeletal.131
-dragon_skeletal.132
-dragon_skeletal.131
-dragon_skeletal.132
-dragon_skeletal.131
-dragon_skeletal.132
-dragon_skeletal.131
-dragon_skeletal.132
-dragon_skeletal.151
-dragon_skeletal.152
-dragon_skeletal.151
-dragon_skeletal.152
-dragon_skeletal.151
-dragon_skeletal.152
-dragon_skeletal.151
-dragon_skeletal.152
-dragon_skeletal.131
-dragon_skeletal.132
-dragon_skeletal.131
-dragon_skeletal.132
-dragon_skeletal.131
-dragon_skeletal.132
-dragon_skeletal.131
-dragon_skeletal.132
-dragon_skeletal.151
-dragon_skeletal.152
-dragon_skeletal.151
-dragon_skeletal.152
-dragon_skeletal.151
-dragon_skeletal.152
-dragon_skeletal.151
-dragon_skeletal.152
-dragon_skeletal.331
-dragon_skeletal.132
-dragon_skeletal.331
-dragon_skeletal.132
-dragon_skeletal.331
-dragon_skeletal.132
-dragon_skeletal.331
-dragon_skeletal.132
-dragon_skeletal.351
-dragon_skeletal.152
-dragon_skeletal.351
-dragon_skeletal.152
-dragon_skeletal.351
-dragon_skeletal.152
-dragon_skeletal.351
-dragon_skeletal.152
-mina
+animation dragon_skeletal
 is_animated 1
 anim_speed 5
 no_pick 1

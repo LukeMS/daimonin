@@ -52,59 +52,7 @@ attack_acid 50
 speed -0.061
 level 1
 weight 950000
-anim
-facings 25
-dummy.111
-dummy.111
-dragon_blk.131
-dragon_blk.132
-dragon_blk.131
-dragon_blk.132
-dragon_blk.131
-dragon_blk.132
-dragon_blk.131
-dragon_blk.132
-dragon_blk.151
-dragon_blk.152
-dragon_blk.151
-dragon_blk.152
-dragon_blk.151
-dragon_blk.152
-dragon_blk.151
-dragon_blk.152
-dragon_blk.131
-dragon_blk.132
-dragon_blk.131
-dragon_blk.132
-dragon_blk.131
-dragon_blk.132
-dragon_blk.131
-dragon_blk.132
-dragon_blk.151
-dragon_blk.152
-dragon_blk.151
-dragon_blk.152
-dragon_blk.151
-dragon_blk.152
-dragon_blk.151
-dragon_blk.152
-dragon_blk.331
-dragon_blk.132
-dragon_blk.331
-dragon_blk.132
-dragon_blk.331
-dragon_blk.132
-dragon_blk.331
-dragon_blk.132
-dragon_blk.351
-dragon_blk.152
-dragon_blk.351
-dragon_blk.152
-dragon_blk.351
-dragon_blk.152
-dragon_blk.351
-dragon_blk.152
-mina
+animation dragon_black
 is_animated 1
 anim_speed 5
 no_pick 1
