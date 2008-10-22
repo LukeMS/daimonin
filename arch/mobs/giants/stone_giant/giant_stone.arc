@@ -41,59 +41,7 @@ resist_acid 25
 speed -0.054
 level 1
 weight 732500
-anim
-facings 25
-dummy.111
-dummy.111
-giant_stone.131
-giant_stone.331
-giant_stone.131
-giant_stone.331
-giant_stone.131
-giant_stone.331
-giant_stone.131
-giant_stone.331
-giant_stone.151
-giant_stone.351
-giant_stone.151
-giant_stone.351
-giant_stone.151
-giant_stone.351
-giant_stone.151
-giant_stone.351
-giant_stone.331
-giant_stone.131
-giant_stone.331
-giant_stone.131
-giant_stone.331
-giant_stone.131
-giant_stone.331
-giant_stone.131
-giant_stone.351
-giant_stone.151
-giant_stone.351
-giant_stone.151
-giant_stone.351
-giant_stone.151
-giant_stone.351
-giant_stone.151
-giant_stone.331
-giant_stone.332
-giant_stone.331
-giant_stone.332
-giant_stone.331
-giant_stone.332
-giant_stone.331
-giant_stone.332
-giant_stone.351
-giant_stone.352
-giant_stone.351
-giant_stone.352
-giant_stone.351
-giant_stone.352
-giant_stone.351
-giant_stone.352
-mina
+animation giant_stone
 is_animated 1
 anim_speed 4
 no_pick 1

@@ -44,34 +44,7 @@ resist_cold -25
 speed -0.054
 level 1
 weight 652500
-anim
-facings 25
-dummy.111
-giant_fire.111
-giant_fire.121
-giant_fire.131
-giant_fire.141
-giant_fire.151
-giant_fire.161
-giant_fire.171
-giant_fire.181
-giant_fire.111
-giant_fire.121
-giant_fire.131
-giant_fire.141
-giant_fire.151
-giant_fire.161
-giant_fire.171
-giant_fire.181
-giant_fire.111
-giant_fire.121
-giant_fire.131
-giant_fire.141
-giant_fire.151
-giant_fire.161
-giant_fire.171
-giant_fire.181
-mina
+animation giant_fire
 is_animated 1
 anim_speed 4
 no_pick 1
