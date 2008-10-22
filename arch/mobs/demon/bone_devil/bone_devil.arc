@@ -40,34 +40,7 @@ attack_cleave 100
 speed -0.060
 level 1
 weight 162500
-anim
-facings 25
-dummy.111
-bone_devil.111
-bone_devil.121
-bone_devil.131
-bone_devil.141
-bone_devil.151
-bone_devil.161
-bone_devil.171
-bone_devil.181
-bone_devil.111
-bone_devil.121
-bone_devil.131
-bone_devil.141
-bone_devil.151
-bone_devil.161
-bone_devil.171
-bone_devil.181
-bone_devil.111
-bone_devil.121
-bone_devil.131
-bone_devil.141
-bone_devil.151
-bone_devil.161
-bone_devil.171
-bone_devil.181
-mina
+animation bone_devil
 is_animated 1
 anim_speed 4
 no_pick 1
