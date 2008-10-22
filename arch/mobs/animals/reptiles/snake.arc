@@ -38,59 +38,7 @@ speed -0.06
 run_away 10
 level 1
 weight 325000
-anim
-facings 25
-dummy.111
-dummy.111
-snake.131
-snake.132
-snake.131
-snake.132
-snake.131
-snake.132
-snake.131
-snake.132
-snake.151
-snake.152
-snake.151
-snake.152
-snake.151
-snake.152
-snake.151
-snake.152
-snake.131
-snake.132
-snake.131
-snake.132
-snake.131
-snake.132
-snake.131
-snake.132
-snake.151
-snake.152
-snake.151
-snake.152
-snake.151
-snake.152
-snake.151
-snake.152
-snake.133
-snake.132
-snake.133
-snake.132
-snake.133
-snake.132
-snake.133
-snake.132
-snake.153
-snake.152
-snake.153
-snake.152
-snake.153
-snake.152
-snake.153
-snake.152
-mina
+animation snake
 is_animated 1
 anim_speed 4
 no_pick 1

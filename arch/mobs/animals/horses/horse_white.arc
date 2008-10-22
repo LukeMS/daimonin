@@ -38,59 +38,7 @@ speed -0.06
 run_away 10
 level 1
 weight 42000
-anim
-facings 25
-dummy.111
-dummy.111
-horse_white.131
-horse_white.132
-horse_white.131
-horse_white.132
-horse_white.131
-horse_white.132
-horse_white.131
-horse_white.132
-horse_white.151
-horse_white.152
-horse_white.151
-horse_white.152
-horse_white.151
-horse_white.152
-horse_white.151
-horse_white.152
-horse_white.131
-horse_white.132
-horse_white.131
-horse_white.132
-horse_white.131
-horse_white.132
-horse_white.131
-horse_white.132
-horse_white.151
-horse_white.152
-horse_white.151
-horse_white.152
-horse_white.151
-horse_white.152
-horse_white.151
-horse_white.152
-horse_white.131
-horse_white.132
-horse_white.131
-horse_white.132
-horse_white.131
-horse_white.132
-horse_white.131
-horse_white.132
-horse_white.151
-horse_white.152
-horse_white.151
-horse_white.152
-horse_white.151
-horse_white.152
-horse_white.151
-horse_white.152
-mina
+animation horse_white
 is_animated 1
 anim_speed 4
 no_pick 1

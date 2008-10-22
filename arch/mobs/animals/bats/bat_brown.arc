@@ -40,59 +40,7 @@ speed -0.06
 run_away 10
 level 1
 weight 42000
-anim
-facings 25
-dummy.111
-dummy.111
-brnbat.111
-brnbat.112
-brnbat.121
-brnbat.122
-brnbat.131
-brnbat.132
-brnbat.141
-brnbat.142
-brnbat.151
-brnbat.152
-brnbat.161
-brnbat.162
-brnbat.171
-brnbat.172
-brnbat.181
-brnbat.182
-brnbat.111
-brnbat.112
-brnbat.121
-brnbat.122
-brnbat.131
-brnbat.132
-brnbat.141
-brnbat.142
-brnbat.151
-brnbat.152
-brnbat.161
-brnbat.162
-brnbat.171
-brnbat.172
-brnbat.181
-brnbat.182
-brnbat.111
-brnbat.112
-brnbat.121
-brnbat.122
-brnbat.131
-brnbat.132
-brnbat.141
-brnbat.142
-brnbat.151
-brnbat.152
-brnbat.161
-brnbat.162
-brnbat.171
-brnbat.172
-brnbat.181
-brnbat.182
-mina
+animation brnbat
 is_animated 1
 anim_speed 4
 no_pick 1

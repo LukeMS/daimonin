@@ -38,59 +38,7 @@ speed -0.06
 run_away 10
 level 1
 weight 325000
-anim
-facings 25
-dummy.111
-dummy.111
-crocodile.131
-crocodile.132
-crocodile.131
-crocodile.132
-crocodile.131
-crocodile.132
-crocodile.131
-crocodile.132
-crocodile.151
-crocodile.152
-crocodile.151
-crocodile.152
-crocodile.151
-crocodile.152
-crocodile.151
-crocodile.152
-crocodile.131
-crocodile.132
-crocodile.131
-crocodile.132
-crocodile.131
-crocodile.132
-crocodile.131
-crocodile.132
-crocodile.151
-crocodile.152
-crocodile.151
-crocodile.152
-crocodile.151
-crocodile.152
-crocodile.151
-crocodile.152
-crocodile.133
-crocodile.132
-crocodile.133
-crocodile.132
-crocodile.133
-crocodile.132
-crocodile.133
-crocodile.132
-crocodile.153
-crocodile.152
-crocodile.153
-crocodile.152
-crocodile.153
-crocodile.152
-crocodile.153
-crocodile.152
-mina
+animation crocodile
 is_animated 1
 anim_speed 4
 no_pick 1

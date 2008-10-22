@@ -38,34 +38,7 @@ speed -0.06
 run_away 10
 level 1
 weight 325000
-anim
-facings 25
-dummy.111
-larva.131
-larva.131
-larva.131
-larva.131
-larva.151
-larva.151
-larva.151
-larva.151
-larva.131
-larva.131
-larva.131
-larva.131
-larva.151
-larva.151
-larva.151
-larva.151
-larva.131
-larva.131
-larva.131
-larva.131
-larva.151
-larva.151
-larva.151
-larva.151
-mina
+animation larva
 is_animated 1
 anim_speed 4
 no_pick 1

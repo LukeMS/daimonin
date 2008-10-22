@@ -42,59 +42,7 @@ weapon_speed 3.5
 speed -0.05
 level 1
 weight 16250
-anim
-facings 25
-dummy.111
-dummy.111
-green_jelly.111
-green_jelly.112
-green_jelly.111
-green_jelly.112
-green_jelly.111
-green_jelly.112
-green_jelly.111
-green_jelly.112
-green_jelly.111
-green_jelly.112
-green_jelly.111
-green_jelly.112
-green_jelly.111
-green_jelly.112
-green_jelly.111
-green_jelly.112
-green_jelly.111
-green_jelly.112
-green_jelly.111
-green_jelly.112
-green_jelly.111
-green_jelly.112
-green_jelly.111
-green_jelly.112
-green_jelly.111
-green_jelly.112
-green_jelly.111
-green_jelly.112
-green_jelly.111
-green_jelly.112
-green_jelly.111
-green_jelly.112
-green_jelly.111
-green_jelly.112
-green_jelly.111
-green_jelly.112
-green_jelly.111
-green_jelly.112
-green_jelly.111
-green_jelly.112
-green_jelly.111
-green_jelly.112
-green_jelly.111
-green_jelly.112
-green_jelly.111
-green_jelly.112
-green_jelly.111
-green_jelly.112
-mina
+animation jelly_green
 is_animated 1
 anim_speed 4
 no_pick 1

@@ -43,59 +43,7 @@ weapon_speed 3.5
 speed -0.05
 level 1
 weight 12250
-anim
-facings 25
-dummy.111
-dummy.111
-blue_jelly.111
-blue_jelly.112
-blue_jelly.111
-blue_jelly.112
-blue_jelly.111
-blue_jelly.112
-blue_jelly.111
-blue_jelly.112
-blue_jelly.111
-blue_jelly.112
-blue_jelly.111
-blue_jelly.112
-blue_jelly.111
-blue_jelly.112
-blue_jelly.111
-blue_jelly.112
-blue_jelly.111
-blue_jelly.112
-blue_jelly.111
-blue_jelly.112
-blue_jelly.111
-blue_jelly.112
-blue_jelly.111
-blue_jelly.112
-blue_jelly.111
-blue_jelly.112
-blue_jelly.111
-blue_jelly.112
-blue_jelly.111
-blue_jelly.112
-blue_jelly.111
-blue_jelly.112
-blue_jelly.111
-blue_jelly.112
-blue_jelly.111
-blue_jelly.112
-blue_jelly.111
-blue_jelly.112
-blue_jelly.111
-blue_jelly.112
-blue_jelly.111
-blue_jelly.112
-blue_jelly.111
-blue_jelly.112
-blue_jelly.111
-blue_jelly.112
-blue_jelly.111
-blue_jelly.112
-mina
+animation jelly_blue
 is_animated 1
 anim_speed 4
 no_pick 1

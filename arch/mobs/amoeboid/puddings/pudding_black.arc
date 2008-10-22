@@ -43,59 +43,7 @@ weapon_speed 3.5
 speed -0.03
 level 1
 weight 19250
-anim
-facings 25
-dummy.111
-dummy.111
-pudding_black.111
-pudding_black.112
-pudding_black.111
-pudding_black.112
-pudding_black.111
-pudding_black.112
-pudding_black.111
-pudding_black.112
-pudding_black.111
-pudding_black.112
-pudding_black.111
-pudding_black.112
-pudding_black.111
-pudding_black.112
-pudding_black.111
-pudding_black.112
-pudding_black.111
-pudding_black.112
-pudding_black.111
-pudding_black.112
-pudding_black.111
-pudding_black.112
-pudding_black.111
-pudding_black.112
-pudding_black.111
-pudding_black.112
-pudding_black.111
-pudding_black.112
-pudding_black.111
-pudding_black.112
-pudding_black.111
-pudding_black.112
-pudding_black.111
-pudding_black.112
-pudding_black.111
-pudding_black.112
-pudding_black.111
-pudding_black.112
-pudding_black.111
-pudding_black.112
-pudding_black.111
-pudding_black.112
-pudding_black.111
-pudding_black.112
-pudding_black.111
-pudding_black.112
-pudding_black.111
-pudding_black.112
-mina
+animation pudding_black
 is_animated 1
 anim_speed 4
 no_pick 1

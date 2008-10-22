@@ -41,59 +41,7 @@ weapon_speed 3.5
 speed -0.025
 level 1
 weight 11250
-anim
-facings 25
-dummy.111
-dummy.111
-gray_ooze.111
-gray_ooze.112
-gray_ooze.111
-gray_ooze.112
-gray_ooze.111
-gray_ooze.112
-gray_ooze.111
-gray_ooze.112
-gray_ooze.111
-gray_ooze.112
-gray_ooze.111
-gray_ooze.112
-gray_ooze.111
-gray_ooze.112
-gray_ooze.111
-gray_ooze.112
-gray_ooze.111
-gray_ooze.112
-gray_ooze.111
-gray_ooze.112
-gray_ooze.111
-gray_ooze.112
-gray_ooze.111
-gray_ooze.112
-gray_ooze.111
-gray_ooze.112
-gray_ooze.111
-gray_ooze.112
-gray_ooze.111
-gray_ooze.112
-gray_ooze.111
-gray_ooze.112
-gray_ooze.111
-gray_ooze.112
-gray_ooze.111
-gray_ooze.112
-gray_ooze.111
-gray_ooze.112
-gray_ooze.111
-gray_ooze.112
-gray_ooze.111
-gray_ooze.112
-gray_ooze.111
-gray_ooze.112
-gray_ooze.111
-gray_ooze.112
-gray_ooze.111
-gray_ooze.112
-mina
+animation gray_ooze
 is_animated 1
 anim_speed 4
 no_pick 1

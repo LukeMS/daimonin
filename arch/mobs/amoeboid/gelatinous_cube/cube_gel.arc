@@ -41,59 +41,7 @@ weapon_speed 3.5
 speed -0.03
 level 1
 weight 8250
-anim
-facings 25
-dummy.111
-dummy.111
-gel_cube.111
-gel_cube.112
-gel_cube.111
-gel_cube.112
-gel_cube.111
-gel_cube.112
-gel_cube.111
-gel_cube.112
-gel_cube.111
-gel_cube.112
-gel_cube.111
-gel_cube.112
-gel_cube.111
-gel_cube.112
-gel_cube.111
-gel_cube.112
-gel_cube.111
-gel_cube.112
-gel_cube.111
-gel_cube.112
-gel_cube.111
-gel_cube.112
-gel_cube.111
-gel_cube.112
-gel_cube.111
-gel_cube.112
-gel_cube.111
-gel_cube.112
-gel_cube.111
-gel_cube.112
-gel_cube.111
-gel_cube.112
-gel_cube.111
-gel_cube.112
-gel_cube.111
-gel_cube.112
-gel_cube.111
-gel_cube.112
-gel_cube.111
-gel_cube.112
-gel_cube.111
-gel_cube.112
-gel_cube.111
-gel_cube.112
-gel_cube.111
-gel_cube.112
-gel_cube.111
-gel_cube.112
-mina
+animation cube_gel
 is_animated 1
 anim_speed 4
 no_pick 1
