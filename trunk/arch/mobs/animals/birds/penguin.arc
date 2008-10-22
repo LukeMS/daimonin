@@ -39,59 +39,7 @@ speed -0.06
 run_away 10
 level 1
 weight 42000
-anim
-facings 25
-dummy.111
-dummy.111
-penguin.131
-penguin.132
-penguin.131
-penguin.132
-penguin.131
-penguin.132
-penguin.131
-penguin.132
-penguin.151
-penguin.152
-penguin.151
-penguin.152
-penguin.151
-penguin.152
-penguin.151
-penguin.152
-penguin.131
-penguin.132
-penguin.131
-penguin.132
-penguin.131
-penguin.132
-penguin.131
-penguin.132
-penguin.151
-penguin.152
-penguin.151
-penguin.152
-penguin.151
-penguin.152
-penguin.151
-penguin.152
-penguin.131
-penguin.132
-penguin.131
-penguin.132
-penguin.131
-penguin.132
-penguin.131
-penguin.132
-penguin.151
-penguin.152
-penguin.151
-penguin.152
-penguin.151
-penguin.152
-penguin.151
-penguin.152
-mina
+animation penguin
 is_animated 1
 anim_speed 4
 no_pick 1

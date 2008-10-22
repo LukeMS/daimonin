@@ -38,34 +38,7 @@ speed -0.06
 run_away 10
 level 1
 weight 325000
-anim
-facings 25
-dummy.111
-worm.131
-worm.131
-worm.131
-worm.131
-worm.151
-worm.151
-worm.151
-worm.151
-worm.131
-worm.131
-worm.131
-worm.131
-worm.151
-worm.151
-worm.151
-worm.151
-worm.131
-worm.131
-worm.131
-worm.131
-worm.151
-worm.151
-worm.151
-worm.151
-mina
+animation worm
 is_animated 1
 anim_speed 4
 no_pick 1

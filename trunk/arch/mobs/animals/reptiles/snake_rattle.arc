@@ -38,59 +38,7 @@ speed -0.06
 run_away 10
 level 1
 weight 325000
-anim
-facings 25
-dummy.111
-dummy.111
-rattle_snake.131
-rattle_snake.132
-rattle_snake.131
-rattle_snake.132
-rattle_snake.131
-rattle_snake.132
-rattle_snake.131
-rattle_snake.132
-rattle_snake.151
-rattle_snake.152
-rattle_snake.151
-rattle_snake.152
-rattle_snake.151
-rattle_snake.152
-rattle_snake.151
-rattle_snake.152
-rattle_snake.131
-rattle_snake.132
-rattle_snake.131
-rattle_snake.132
-rattle_snake.131
-rattle_snake.132
-rattle_snake.131
-rattle_snake.132
-rattle_snake.151
-rattle_snake.152
-rattle_snake.151
-rattle_snake.152
-rattle_snake.151
-rattle_snake.152
-rattle_snake.151
-rattle_snake.152
-rattle_snake.133
-rattle_snake.134
-rattle_snake.133
-rattle_snake.134
-rattle_snake.133
-rattle_snake.134
-rattle_snake.133
-rattle_snake.134
-rattle_snake.153
-rattle_snake.154
-rattle_snake.153
-rattle_snake.154
-rattle_snake.153
-rattle_snake.154
-rattle_snake.153
-rattle_snake.154
-mina
+animation rattle_snake
 is_animated 1
 anim_speed 4
 no_pick 1

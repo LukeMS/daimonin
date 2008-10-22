@@ -38,38 +38,12 @@ speed -0.03
 run_away 10
 level 1
 weight 325000
-anim
-facings 25
-dummy.111
-rat_a.131
-rat_a.131
-rat_a.131
-rat_a.131
-rat_a.151
-rat_a.151
-rat_a.151
-rat_a.151
-rat_a.131
-rat_a.131
-rat_a.131
-rat_a.131
-rat_a.151
-rat_a.151
-rat_a.151
-rat_a.151
-rat_a.131
-rat_a.131
-rat_a.131
-rat_a.131
-rat_a.151
-rat_a.151
-rat_a.151
-rat_a.151
-mina
+animation rat_a
 is_animated 1
 anim_speed 4
 no_pick 1
 end
+
 Object rat_b
 name Big Rat
 face rat_b.151
@@ -110,38 +84,12 @@ speed -0.03
 run_away 10
 level 1
 weight 325000
-anim
-facings 25
-dummy.111
-rat_b.131
-rat_b.131
-rat_b.131
-rat_b.131
-rat_b.151
-rat_b.151
-rat_b.151
-rat_b.151
-rat_b.131
-rat_b.131
-rat_b.131
-rat_b.131
-rat_b.151
-rat_b.151
-rat_b.151
-rat_b.151
-rat_b.131
-rat_b.131
-rat_b.131
-rat_b.131
-rat_b.151
-rat_b.151
-rat_b.151
-rat_b.151
-mina
+animation rat_b
 is_animated 1
 anim_speed 4
 no_pick 1
 end
+
 Object rat_c
 name Big Rat
 face rat_c.151
@@ -182,38 +130,12 @@ speed -0.03
 run_away 10
 level 1
 weight 325000
-anim
-facings 25
-dummy.111
-rat_c.131
-rat_c.131
-rat_c.131
-rat_c.131
-rat_c.151
-rat_c.151
-rat_c.151
-rat_c.151
-rat_c.131
-rat_c.131
-rat_c.131
-rat_c.131
-rat_c.151
-rat_c.151
-rat_c.151
-rat_c.151
-rat_c.131
-rat_c.131
-rat_c.131
-rat_c.131
-rat_c.151
-rat_c.151
-rat_c.151
-rat_c.151
-mina
+animation rat_c
 is_animated 1
 anim_speed 4
 no_pick 1
 end
+
 Object rat_d
 name Big Rat
 face rat_d.151
@@ -254,34 +176,7 @@ speed -0.03
 run_away 10
 level 1
 weight 325000
-anim
-facings 25
-dummy.111
-rat_d.131
-rat_d.131
-rat_d.131
-rat_d.131
-rat_d.151
-rat_d.151
-rat_d.151
-rat_d.151
-rat_d.131
-rat_d.131
-rat_d.131
-rat_d.131
-rat_d.151
-rat_d.151
-rat_d.151
-rat_d.151
-rat_d.131
-rat_d.131
-rat_d.131
-rat_d.131
-rat_d.151
-rat_d.151
-rat_d.151
-rat_d.151
-mina
+animation rat_d
 is_animated 1
 anim_speed 4
 no_pick 1

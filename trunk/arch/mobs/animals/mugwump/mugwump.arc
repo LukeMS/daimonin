@@ -38,59 +38,7 @@ speed -0.06
 run_away 10
 level 1
 weight 325000
-anim
-facings 25
-dummy.111
-dummy.111
-mugwump.111
-mugwump.112
-mugwump.121
-mugwump.122
-mugwump.131
-mugwump.132
-mugwump.141
-mugwump.142
-mugwump.151
-mugwump.152
-mugwump.161
-mugwump.162
-mugwump.171
-mugwump.172
-mugwump.181
-mugwump.182
-mugwump.211
-mugwump.212
-mugwump.221
-mugwump.222
-mugwump.231
-mugwump.232
-mugwump.241
-mugwump.242
-mugwump.251
-mugwump.252
-mugwump.261
-mugwump.262
-mugwump.271
-mugwump.272
-mugwump.281
-mugwump.282
-mugwump.311
-mugwump.312
-mugwump.321
-mugwump.322
-mugwump.331
-mugwump.332
-mugwump.341
-mugwump.342
-mugwump.351
-mugwump.352
-mugwump.361
-mugwump.362
-mugwump.371
-mugwump.372
-mugwump.381
-mugwump.382
-mina
+animation mugwump
 is_animated 1
 anim_speed 3
 no_pick 1

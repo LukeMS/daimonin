@@ -38,59 +38,7 @@ speed -0.06
 run_away 10
 level 1
 weight 325000
-anim
-facings 25
-dummy.111
-dummy.111
-newt.131
-newt.132
-newt.131
-newt.132
-newt.131
-newt.132
-newt.131
-newt.132
-newt.151
-newt.152
-newt.151
-newt.152
-newt.151
-newt.152
-newt.151
-newt.152
-newt.131
-newt.132
-newt.131
-newt.132
-newt.131
-newt.132
-newt.131
-newt.132
-newt.151
-newt.152
-newt.151
-newt.152
-newt.151
-newt.152
-newt.151
-newt.152
-newt.133
-newt.132
-newt.133
-newt.132
-newt.133
-newt.132
-newt.133
-newt.132
-newt.153
-newt.152
-newt.153
-newt.152
-newt.153
-newt.152
-newt.153
-newt.152
-mina
+animation newt
 is_animated 1
 anim_speed 4
 no_pick 1

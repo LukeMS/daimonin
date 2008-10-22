@@ -42,59 +42,7 @@ weapon_speed 3.5
 speed -0.04
 level 1
 weight 12750
-anim
-facings 25
-dummy.111
-dummy.111
-blob_poison.111
-blob_poison.112
-blob_poison.111
-blob_poison.112
-blob_poison.111
-blob_poison.112
-blob_poison.111
-blob_poison.112
-blob_poison.111
-blob_poison.112
-blob_poison.111
-blob_poison.112
-blob_poison.111
-blob_poison.112
-blob_poison.111
-blob_poison.112
-blob_poison.111
-blob_poison.112
-blob_poison.111
-blob_poison.112
-blob_poison.111
-blob_poison.112
-blob_poison.111
-blob_poison.112
-blob_poison.111
-blob_poison.112
-blob_poison.111
-blob_poison.112
-blob_poison.111
-blob_poison.112
-blob_poison.111
-blob_poison.112
-blob_poison.111
-blob_poison.112
-blob_poison.111
-blob_poison.112
-blob_poison.111
-blob_poison.112
-blob_poison.111
-blob_poison.112
-blob_poison.111
-blob_poison.112
-blob_poison.111
-blob_poison.112
-blob_poison.111
-blob_poison.112
-blob_poison.111
-blob_poison.112
-mina
+animation blob_poison
 is_animated 1
 anim_speed 4
 no_pick 1

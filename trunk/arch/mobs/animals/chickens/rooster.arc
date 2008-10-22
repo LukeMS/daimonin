@@ -39,59 +39,7 @@ speed -0.06
 run_away 10
 level 1
 weight 42000
-anim
-facings 25
-dummy.111
-dummy.111
-rooster.121
-rooster.122
-rooster.121
-rooster.122
-rooster.121
-rooster.122
-rooster.121
-rooster.122
-rooster.161
-rooster.162
-rooster.161
-rooster.162
-rooster.161
-rooster.162
-rooster.161
-rooster.162
-rooster.121
-rooster.122
-rooster.121
-rooster.122
-rooster.121
-rooster.122
-rooster.121
-rooster.122
-rooster.161
-rooster.162
-rooster.161
-rooster.162
-rooster.161
-rooster.162
-rooster.161
-rooster.162
-rooster.121
-rooster.122
-rooster.121
-rooster.122
-rooster.121
-rooster.122
-rooster.121
-rooster.122
-rooster.161
-rooster.162
-rooster.161
-rooster.162
-rooster.161
-rooster.162
-rooster.161
-rooster.162
-mina
+animation rooster
 is_animated 1
 anim_speed 4
 no_pick 1

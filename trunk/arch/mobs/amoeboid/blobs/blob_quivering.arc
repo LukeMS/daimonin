@@ -41,59 +41,7 @@ weapon_speed 3.5
 speed -0.04
 level 1
 weight 15750
-anim
-facings 25
-dummy.111
-dummy.111
-quivering_blob.111
-quivering_blob.112
-quivering_blob.111
-quivering_blob.112
-quivering_blob.111
-quivering_blob.112
-quivering_blob.111
-quivering_blob.112
-quivering_blob.111
-quivering_blob.112
-quivering_blob.111
-quivering_blob.112
-quivering_blob.111
-quivering_blob.112
-quivering_blob.111
-quivering_blob.112
-quivering_blob.111
-quivering_blob.112
-quivering_blob.111
-quivering_blob.112
-quivering_blob.111
-quivering_blob.112
-quivering_blob.111
-quivering_blob.112
-quivering_blob.111
-quivering_blob.112
-quivering_blob.111
-quivering_blob.112
-quivering_blob.111
-quivering_blob.112
-quivering_blob.111
-quivering_blob.112
-quivering_blob.111
-quivering_blob.112
-quivering_blob.111
-quivering_blob.112
-quivering_blob.111
-quivering_blob.112
-quivering_blob.111
-quivering_blob.112
-quivering_blob.111
-quivering_blob.112
-quivering_blob.111
-quivering_blob.112
-quivering_blob.111
-quivering_blob.112
-quivering_blob.111
-quivering_blob.112
-mina
+animation blob_quivering
 is_animated 1
 anim_speed 4
 no_pick 1

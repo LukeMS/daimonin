@@ -43,59 +43,7 @@ weapon_speed 3.5
 speed -0.031
 level 1
 weight 17250
-anim
-facings 25
-dummy.111
-dummy.111
-pudding_red.111
-pudding_red.112
-pudding_red.111
-pudding_red.112
-pudding_red.111
-pudding_red.112
-pudding_red.111
-pudding_red.112
-pudding_red.111
-pudding_red.112
-pudding_red.111
-pudding_red.112
-pudding_red.111
-pudding_red.112
-pudding_red.111
-pudding_red.112
-pudding_red.111
-pudding_red.112
-pudding_red.111
-pudding_red.112
-pudding_red.111
-pudding_red.112
-pudding_red.111
-pudding_red.112
-pudding_red.111
-pudding_red.112
-pudding_red.111
-pudding_red.112
-pudding_red.111
-pudding_red.112
-pudding_red.111
-pudding_red.112
-pudding_red.111
-pudding_red.112
-pudding_red.111
-pudding_red.112
-pudding_red.111
-pudding_red.112
-pudding_red.111
-pudding_red.112
-pudding_red.111
-pudding_red.112
-pudding_red.111
-pudding_red.112
-pudding_red.111
-pudding_red.112
-pudding_red.111
-pudding_red.112
-mina
+animation pudding_red
 is_animated 1
 anim_speed 4
 no_pick 1
