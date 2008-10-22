@@ -40,34 +40,7 @@ attack_cleave 100
 speed -0.060
 level 1
 weight 162500
-anim
-facings 25
-dummy.111
-abomination_small.111
-abomination_small.121
-abomination_small.131
-abomination_small.141
-abomination_small.151
-abomination_small.161
-abomination_small.171
-abomination_small.181
-abomination_small.111
-abomination_small.121
-abomination_small.131
-abomination_small.141
-abomination_small.151
-abomination_small.161
-abomination_small.171
-abomination_small.181
-abomination_small.111
-abomination_small.121
-abomination_small.131
-abomination_small.141
-abomination_small.151
-abomination_small.161
-abomination_small.171
-abomination_small.181
-mina
+animation abomination_small
 is_animated 1
 anim_speed 4
 no_pick 1

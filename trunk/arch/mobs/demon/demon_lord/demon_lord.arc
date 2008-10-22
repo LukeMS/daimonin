@@ -40,34 +40,7 @@ attack_cleave 100
 speed -0.060
 level 1
 weight 162500
-anim
-facings 25
-dummy.111
-demon_lord.111
-demon_lord.121
-demon_lord.131
-demon_lord.141
-demon_lord.151
-demon_lord.161
-demon_lord.171
-demon_lord.181
-demon_lord.111
-demon_lord.121
-demon_lord.131
-demon_lord.141
-demon_lord.151
-demon_lord.161
-demon_lord.171
-demon_lord.181
-demon_lord.111
-demon_lord.121
-demon_lord.131
-demon_lord.141
-demon_lord.151
-demon_lord.161
-demon_lord.171
-demon_lord.181
-mina
+animation demon_lord
 is_animated 1
 anim_speed 4
 no_pick 1
