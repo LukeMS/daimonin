@@ -42,59 +42,7 @@ attack_pierce 100
 speed -0.061
 level 1
 weight 42500
-anim
-facings 25
-dummy.111
-dummy.111
-kobold_shaman.131
-kobold_shaman.132
-kobold_shaman.131
-kobold_shaman.132
-kobold_shaman.131
-kobold_shaman.132
-kobold_shaman.131
-kobold_shaman.132
-kobold_shaman.151
-kobold_shaman.152
-kobold_shaman.151
-kobold_shaman.152
-kobold_shaman.151
-kobold_shaman.152
-kobold_shaman.151
-kobold_shaman.152
-kobold_shaman.131
-kobold_shaman.132
-kobold_shaman.131
-kobold_shaman.132
-kobold_shaman.131
-kobold_shaman.132
-kobold_shaman.131
-kobold_shaman.132
-kobold_shaman.151
-kobold_shaman.152
-kobold_shaman.151
-kobold_shaman.152
-kobold_shaman.151
-kobold_shaman.152
-kobold_shaman.151
-kobold_shaman.152
-kobold_shaman.131
-kobold_shaman.231
-kobold_shaman.131
-kobold_shaman.231
-kobold_shaman.131
-kobold_shaman.231
-kobold_shaman.131
-kobold_shaman.231
-kobold_shaman.151
-kobold_shaman.251
-kobold_shaman.151
-kobold_shaman.251
-kobold_shaman.151
-kobold_shaman.251
-kobold_shaman.151
-kobold_shaman.251
-mina
+animation kobold_shaman
 is_animated 1
 anim_speed 4
 no_pick 1
