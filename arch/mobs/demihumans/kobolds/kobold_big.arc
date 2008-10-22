@@ -41,59 +41,7 @@ attack_slash 100
 speed -0.061
 level 1
 weight 47500
-anim
-facings 25
-dummy.111
-dummy.111
-kobold_big.131
-kobold_big.132
-kobold_big.131
-kobold_big.132
-kobold_big.131
-kobold_big.132
-kobold_big.131
-kobold_big.132
-kobold_big.151
-kobold_big.152
-kobold_big.151
-kobold_big.152
-kobold_big.151
-kobold_big.152
-kobold_big.151
-kobold_big.152
-kobold_big.131
-kobold_big.132
-kobold_big.131
-kobold_big.132
-kobold_big.131
-kobold_big.132
-kobold_big.131
-kobold_big.132
-kobold_big.151
-kobold_big.152
-kobold_big.151
-kobold_big.152
-kobold_big.151
-kobold_big.152
-kobold_big.151
-kobold_big.152
-kobold_big.132
-kobold_big.133
-kobold_big.132
-kobold_big.133
-kobold_big.132
-kobold_big.133
-kobold_big.132
-kobold_big.133
-kobold_big.152
-kobold_big.153
-kobold_big.152
-kobold_big.153
-kobold_big.152
-kobold_big.153
-kobold_big.152
-kobold_big.153
-mina
+animation kobold_big
 is_animated 1
 anim_speed 4
 no_pick 1

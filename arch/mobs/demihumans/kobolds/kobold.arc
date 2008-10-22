@@ -41,59 +41,7 @@ attack_pierce 100
 speed -0.061
 level 1
 weight 42500
-anim
-facings 25
-dummy.111
-dummy.111
-kobold.131
-kobold.132
-kobold.131
-kobold.132
-kobold.131
-kobold.132
-kobold.131
-kobold.132
-kobold.151
-kobold.152
-kobold.151
-kobold.152
-kobold.151
-kobold.152
-kobold.151
-kobold.152
-kobold.131
-kobold.132
-kobold.131
-kobold.132
-kobold.131
-kobold.132
-kobold.131
-kobold.132
-kobold.151
-kobold.152
-kobold.151
-kobold.152
-kobold.151
-kobold.152
-kobold.151
-kobold.152
-kobold.132
-kobold.133
-kobold.132
-kobold.133
-kobold.132
-kobold.133
-kobold.132
-kobold.133
-kobold.152
-kobold.153
-kobold.152
-kobold.153
-kobold.152
-kobold.153
-kobold.152
-kobold.153
-mina
+animation kobold
 is_animated 1
 anim_speed 4
 no_pick 1

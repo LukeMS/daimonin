@@ -41,34 +41,7 @@ attack_slash 100
 speed -0.061
 level 1
 weight 95500
-anim
-facings 25
-dummy.111
-angel_warrior.211
-angel_warrior.221
-angel_warrior.231
-angel_warrior.241
-angel_warrior.251
-angel_warrior.261
-angel_warrior.271
-angel_warrior.281
-angel_warrior.211
-angel_warrior.221
-angel_warrior.231
-angel_warrior.241
-angel_warrior.251
-angel_warrior.261
-angel_warrior.271
-angel_warrior.281
-angel_warrior.211
-angel_warrior.221
-angel_warrior.231
-angel_warrior.241
-angel_warrior.251
-angel_warrior.261
-angel_warrior.271
-angel_warrior.281
-mina
+animation angel_warrior
 is_animated 1
 anim_speed 4
 no_pick 1
