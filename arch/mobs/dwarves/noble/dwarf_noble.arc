@@ -45,34 +45,7 @@ attack_impact 100
 speed -0.057
 level 1
 weight 82250
-anim
-facings 25
-dummy.111
-dwarf_noble.131
-dwarf_noble.131
-dwarf_noble.131
-dwarf_noble.131
-dwarf_noble.151
-dwarf_noble.151
-dwarf_noble.151
-dwarf_noble.151
-dwarf_noble.131
-dwarf_noble.131
-dwarf_noble.131
-dwarf_noble.131
-dwarf_noble.151
-dwarf_noble.151
-dwarf_noble.151
-dwarf_noble.151
-dwarf_noble.131
-dwarf_noble.131
-dwarf_noble.131
-dwarf_noble.131
-dwarf_noble.151
-dwarf_noble.151
-dwarf_noble.151
-dwarf_noble.151
-mina
+animation dwarf_noble
 is_animated 1
 anim_speed 4
 no_pick 1
