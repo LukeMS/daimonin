@@ -37,59 +37,7 @@ attack_pierce 100
 speed -0.053
 level 1
 weight 11500
-anim
-facings 25
-dummy.111
-dummy.111
-wasp_giant.131
-wasp_giant.132
-wasp_giant.131
-wasp_giant.132
-wasp_giant.131
-wasp_giant.132
-wasp_giant.131
-wasp_giant.132
-wasp_giant.151
-wasp_giant.152
-wasp_giant.151
-wasp_giant.152
-wasp_giant.151
-wasp_giant.152
-wasp_giant.151
-wasp_giant.152
-wasp_giant.231
-wasp_giant.132
-wasp_giant.231
-wasp_giant.132
-wasp_giant.231
-wasp_giant.132
-wasp_giant.231
-wasp_giant.132
-wasp_giant.251
-wasp_giant.152
-wasp_giant.251
-wasp_giant.152
-wasp_giant.251
-wasp_giant.152
-wasp_giant.251
-wasp_giant.152
-wasp_giant.231
-wasp_giant.132
-wasp_giant.231
-wasp_giant.132
-wasp_giant.231
-wasp_giant.132
-wasp_giant.231
-wasp_giant.132
-wasp_giant.251
-wasp_giant.152
-wasp_giant.251
-wasp_giant.152
-wasp_giant.251
-wasp_giant.152
-wasp_giant.251
-wasp_giant.152
-mina
+animation wasp_giant
 is_animated 1
 anim_speed 4
 no_pick 1

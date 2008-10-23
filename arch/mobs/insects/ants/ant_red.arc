@@ -39,59 +39,7 @@ attack_cleave 100
 speed -0.053
 level 1
 weight 22500
-anim
-facings 25
-dummy.111
-dummy.111
-ant_red.131
-ant_red.132
-ant_red.131
-ant_red.132
-ant_red.131
-ant_red.132
-ant_red.131
-ant_red.132
-ant_red.151
-ant_red.152
-ant_red.151
-ant_red.152
-ant_red.151
-ant_red.152
-ant_red.151
-ant_red.152
-ant_red.131
-ant_red.132
-ant_red.131
-ant_red.132
-ant_red.131
-ant_red.132
-ant_red.131
-ant_red.132
-ant_red.151
-ant_red.152
-ant_red.151
-ant_red.152
-ant_red.151
-ant_red.152
-ant_red.151
-ant_red.152
-ant_red.131
-ant_red.332
-ant_red.131
-ant_red.332
-ant_red.131
-ant_red.332
-ant_red.131
-ant_red.332
-ant_red.151
-ant_red.352
-ant_red.151
-ant_red.352
-ant_red.151
-ant_red.352
-ant_red.151
-ant_red.352
-mina
+animation ant_red
 is_animated 1
 anim_speed 4
 no_pick 1
