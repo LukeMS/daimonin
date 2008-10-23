@@ -46,59 +46,7 @@ attack_impact 50
 speed -0.0611
 level 1
 weight 452500
-anim
-facings 25
-dummy.111
-dummy.111
-worm_purple.131
-worm_purple.132
-worm_purple.131
-worm_purple.132
-worm_purple.131
-worm_purple.132
-worm_purple.131
-worm_purple.132
-worm_purple.151
-worm_purple.152
-worm_purple.151
-worm_purple.152
-worm_purple.151
-worm_purple.152
-worm_purple.151
-worm_purple.152
-worm_purple.131
-worm_purple.132
-worm_purple.131
-worm_purple.132
-worm_purple.131
-worm_purple.132
-worm_purple.131
-worm_purple.132
-worm_purple.151
-worm_purple.152
-worm_purple.151
-worm_purple.152
-worm_purple.151
-worm_purple.152
-worm_purple.151
-worm_purple.152
-worm_purple.131
-worm_purple.231
-worm_purple.131
-worm_purple.231
-worm_purple.131
-worm_purple.231
-worm_purple.131
-worm_purple.231
-worm_purple.151
-worm_purple.251
-worm_purple.151
-worm_purple.251
-worm_purple.151
-worm_purple.251
-worm_purple.151
-worm_purple.251
-mina
+animation worm_purple
 is_animated 1
 anim_speed 4
 no_pick 1
