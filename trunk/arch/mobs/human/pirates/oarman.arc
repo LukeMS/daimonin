@@ -48,59 +48,7 @@ attack_weaponmagic 30
 speed -0.0495
 level 1
 weight 75000
-anim
-facings 25
-dummy.111
-dummy.111
-oarman.131
-oarman.132
-oarman.131
-oarman.132
-oarman.131
-oarman.132
-oarman.131
-oarman.132
-oarman.131
-oarman.132
-oarman.131
-oarman.132
-oarman.131
-oarman.132
-oarman.131
-oarman.132
-oarman.131
-oarman.132
-oarman.131
-oarman.132
-oarman.131
-oarman.132
-oarman.131
-oarman.132
-oarman.131
-oarman.132
-oarman.131
-oarman.132
-oarman.131
-oarman.132
-oarman.131
-oarman.132
-oarman.131
-oarman.132
-oarman.131
-oarman.132
-oarman.131
-oarman.132
-oarman.131
-oarman.132
-oarman.131
-oarman.132
-oarman.131
-oarman.132
-oarman.131
-oarman.132
-oarman.131
-oarman.132
-mina
+animation oarman
 is_animated 1
 anim_speed 4
 no_pick 1

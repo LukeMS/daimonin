@@ -48,34 +48,7 @@ attack_weaponmagic 30
 speed -0.0495
 level 1
 weight 75000
-anim
-facings 25
-dummy.111
-thief_female.111
-thief_female.121
-thief_female.131
-thief_female.141
-thief_female.151
-thief_female.161
-thief_female.171
-thief_female.181
-thief_female.111
-thief_female.121
-thief_female.131
-thief_female.141
-thief_female.151
-thief_female.161
-thief_female.171
-thief_female.181
-thief_female.111
-thief_female.121
-thief_female.131
-thief_female.141
-thief_female.151
-thief_female.161
-thief_female.171
-thief_female.181
-mina
+animation thief_female
 is_animated 1
 anim_speed 4
 no_pick 1

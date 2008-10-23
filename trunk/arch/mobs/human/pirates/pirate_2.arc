@@ -48,59 +48,7 @@ attack_weaponmagic 30
 speed -0.0495
 level 1
 weight 75000
-anim
-facings 25
-dummy.111
-dummy.111
-pirate_2.131
-pirate_2.132
-pirate_2.131
-pirate_2.132
-pirate_2.131
-pirate_2.132
-pirate_2.131
-pirate_2.132
-pirate_2.131
-pirate_2.132
-pirate_2.131
-pirate_2.132
-pirate_2.131
-pirate_2.132
-pirate_2.131
-pirate_2.132
-pirate_2.131
-pirate_2.132
-pirate_2.131
-pirate_2.132
-pirate_2.131
-pirate_2.132
-pirate_2.131
-pirate_2.132
-pirate_2.131
-pirate_2.132
-pirate_2.131
-pirate_2.132
-pirate_2.131
-pirate_2.132
-pirate_2.131
-pirate_2.132
-pirate_2.133
-pirate_2.134
-pirate_2.133
-pirate_2.134
-pirate_2.133
-pirate_2.134
-pirate_2.133
-pirate_2.134
-pirate_2.133
-pirate_2.134
-pirate_2.133
-pirate_2.134
-pirate_2.133
-pirate_2.134
-pirate_2.133
-pirate_2.134
-mina
+animation pirate_2
 is_animated 1
 anim_speed 4
 no_pick 1

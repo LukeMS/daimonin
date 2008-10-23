@@ -49,59 +49,7 @@ attack_weaponmagic 30
 speed -0.0495
 level 1
 weight 75000
-anim
-facings 25
-dummy.111
-dummy.111
-ranger.131
-ranger.132
-ranger.131
-ranger.132
-ranger.131
-ranger.132
-ranger.131
-ranger.132
-ranger.151
-ranger.152
-ranger.151
-ranger.152
-ranger.151
-ranger.152
-ranger.151
-ranger.152
-ranger.131
-ranger.132
-ranger.131
-ranger.132
-ranger.131
-ranger.132
-ranger.131
-ranger.132
-ranger.151
-ranger.152
-ranger.151
-ranger.152
-ranger.151
-ranger.152
-ranger.151
-ranger.152
-ranger.131
-ranger.132
-ranger.131
-ranger.132
-ranger.131
-ranger.132
-ranger.131
-ranger.132
-ranger.151
-ranger.152
-ranger.151
-ranger.152
-ranger.151
-ranger.152
-ranger.151
-ranger.152
-mina
+animation ranger
 is_animated 1
 anim_speed 4
 no_pick 1

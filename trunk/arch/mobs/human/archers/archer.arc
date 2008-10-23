@@ -49,59 +49,7 @@ attack_weaponmagic 10
 speed -0.049
 level 1
 weight 65000
-anim
-facings 25
-dummy.111
-dummy.111
-archer.131
-archer.132
-archer.131
-archer.132
-archer.131
-archer.132
-archer.131
-archer.132
-archer.151
-archer.152
-archer.151
-archer.152
-archer.151
-archer.152
-archer.151
-archer.152
-archer.131
-archer.132
-archer.131
-archer.132
-archer.131
-archer.132
-archer.131
-archer.132
-archer.151
-archer.152
-archer.151
-archer.152
-archer.151
-archer.152
-archer.151
-archer.152
-archer.131
-archer.132
-archer.131
-archer.132
-archer.131
-archer.132
-archer.131
-archer.132
-archer.151
-archer.152
-archer.151
-archer.152
-archer.151
-archer.152
-archer.151
-archer.152
-mina
+animation archer
 is_animated 1
 anim_speed 4
 no_pick 1

@@ -8,59 +8,7 @@ is_animated 1
 anim_speed 4
 speed -0.025
 direction 5
-anim
-facings 25
-dummy.111
-dummy.111
-pair_human.131
-pair_human.131
-pair_human.131
-pair_human.131
-pair_human.131
-pair_human.131
-pair_human.131
-pair_human.131
-pair_human.151
-pair_human.151
-pair_human.151
-pair_human.151
-pair_human.151
-pair_human.151
-pair_human.151
-pair_human.151
-pair_human.131
-pair_human.131
-pair_human.131
-pair_human.131
-pair_human.131
-pair_human.131
-pair_human.131
-pair_human.131
-pair_human.151
-pair_human.151
-pair_human.151
-pair_human.151
-pair_human.151
-pair_human.151
-pair_human.151
-pair_human.151
-pair_human.131
-pair_human.131
-pair_human.131
-pair_human.131
-pair_human.131
-pair_human.131
-pair_human.131
-pair_human.131
-pair_human.151
-pair_human.151
-pair_human.151
-pair_human.151
-pair_human.151
-pair_human.151
-pair_human.151
-pair_human.151
-mina
+animation pair_human
 no_pass 1
 no_pick 1
 end

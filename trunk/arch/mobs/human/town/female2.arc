@@ -41,59 +41,7 @@ attack_slash 100
 speed -0.047
 level 1
 weight 48500
-anim
-facings 25
-dummy.111
-dummy.111
-female2.131
-female2.132
-female2.131
-female2.132
-female2.131
-female2.132
-female2.131
-female2.132
-female2.151
-female2.152
-female2.151
-female2.152
-female2.151
-female2.152
-female2.151
-female2.152
-female2.131
-female2.132
-female2.131
-female2.132
-female2.131
-female2.132
-female2.131
-female2.132
-female2.151
-female2.152
-female2.151
-female2.152
-female2.151
-female2.152
-female2.151
-female2.152
-female2.131
-female2.132
-female2.131
-female2.132
-female2.131
-female2.132
-female2.131
-female2.132
-female2.151
-female2.152
-female2.151
-female2.152
-female2.151
-female2.152
-female2.151
-female2.152
-mina
+animation female2
 is_animated 1
 anim_speed 4
 no_pick 1

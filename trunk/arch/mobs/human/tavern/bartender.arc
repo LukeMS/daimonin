@@ -41,59 +41,7 @@ attack_slash 100
 speed -0.047
 level 1
 weight 93500
-anim
-facings 25
-dummy.111
-dummy.111
-bartender.131
-bartender.132
-bartender.131
-bartender.132
-bartender.131
-bartender.132
-bartender.131
-bartender.132
-bartender.151
-bartender.152
-bartender.151
-bartender.152
-bartender.151
-bartender.152
-bartender.151
-bartender.152
-bartender.131
-bartender.132
-bartender.131
-bartender.132
-bartender.131
-bartender.132
-bartender.131
-bartender.132
-bartender.151
-bartender.152
-bartender.151
-bartender.152
-bartender.151
-bartender.152
-bartender.151
-bartender.152
-bartender.131
-bartender.132
-bartender.131
-bartender.132
-bartender.131
-bartender.132
-bartender.131
-bartender.132
-bartender.151
-bartender.152
-bartender.151
-bartender.152
-bartender.151
-bartender.152
-bartender.151
-bartender.152
-mina
+animation bartender
 is_animated 1
 anim_speed 4
 no_pick 1
