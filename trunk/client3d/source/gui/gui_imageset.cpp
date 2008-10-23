@@ -68,6 +68,7 @@ GuiImageset::GuiElementNames GuiImageset::mGuiElementNames[GUI_ELEMENTS_SUM]=
     { "Login_ServerInfo2",  GUI_TEXTBOX_SERVER_INFO2     },
     { "Login_ServerInfo3",  GUI_TEXTBOX_SERVER_INFO3     },
     { "Login_LoginWarn",    GUI_TEXTBOX_LOGIN_WARN       },
+    { "Login_PswdVerify",   GUI_TEXTBOX_LOGIN_PSWDVERIFY },
     { "Login_LoginInfo1",   GUI_TEXTBOX_LOGIN_INFO1      },
     { "Login_LoginInfo2",   GUI_TEXTBOX_LOGIN_INFO2      },
     { "Login_LoginInfo3",   GUI_TEXTBOX_LOGIN_INFO3      },

@@ -437,17 +437,17 @@
       <Pos x= "200" y= "63" />
       <Label x= "4" y= "3" font="03" text= "create" />
     </Gadget>
-    <Label   x=  "20" y=  "65" font="03" text= "~#ffffff00Login to your account, or               an account." />
-    <Label   x=  "80" y=  "105" font="03" text= "Account Name: " />
-    <TextBox x= "200" y=  "105" font="03" text= "" width = "110" name= "Input_Login_Name" />
-    <Label   x=  "80" y=  "125" font="03" text= "Password: " />
-    <TextBox x= "200" y=  "125" font="03" hide ="1" text= "" width = "100" name= "Input_Login_Passwd" />
-    <Label   x=  "80" y= "145" font="03" text= "Retype Pswd: " />
+    <Label   x=  "20" y=  "65" font="03" text= "~#ffffff00Login on your account, or               an account." />
+    <Label   x=  "80" y= "105" font="03" text= "Account Name: " />
+    <TextBox x= "200" y= "105" font="03" text= "" width = "110" name= "Input_Login_Name" />
+    <Label   x=  "80" y= "125" font="03" text= "Password: " />
+    <TextBox x= "200" y= "125" font="03" hide ="1" text= "" width = "100" name= "Input_Login_Passwd" />
     <TextBox x= "200" y= "145" font="03" hide ="1" text= "" width = "100" name= "Input_Login_Verify" />
-    <TextBox x= "60" y= "180" font="03" text= "" width = "392" name= "Login_LoginWarn" />
-    <TextBox x= "60" y= "195" font="02" text= "" width = "392" name= "Login_LoginInfo1" />
-    <TextBox x= "60" y= "210" font="02" text= "" width = "392" name= "Login_LoginInfo2" />
-    <TextBox x= "60" y= "225" font="02" text= "" width = "392" name= "Login_LoginInfo3" />
+    <TextBox x=  "80" y= "145" font="03" text= "" width = "392" name= "Login_PswdVerify" />
+    <TextBox x=  "60" y= "180" font="03" text= "" width = "392" name= "Login_LoginWarn" />
+    <TextBox x=  "60" y= "195" font="02" text= "" width = "392" name= "Login_LoginInfo1" />
+    <TextBox x=  "60" y= "210" font="02" text= "" width = "392" name= "Login_LoginInfo2" />
+    <TextBox x=  "60" y= "225" font="02" text= "" width = "392" name= "Login_LoginInfo3" />
   </Window>
 
 
