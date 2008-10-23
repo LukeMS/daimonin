@@ -45,59 +45,7 @@ attack_pierce 100
 speed -0.047
 level 1
 weight 57500
-anim
-facings 25
-dummy.111
-dummy.111
-queen.131
-queen.132
-queen.131
-queen.132
-queen.131
-queen.132
-queen.131
-queen.132
-queen.151
-queen.152
-queen.151
-queen.152
-queen.151
-queen.152
-queen.151
-queen.152
-queen.131
-queen.132
-queen.131
-queen.132
-queen.131
-queen.132
-queen.131
-queen.132
-queen.151
-queen.152
-queen.151
-queen.152
-queen.151
-queen.152
-queen.151
-queen.152
-queen.131
-queen.132
-queen.131
-queen.132
-queen.131
-queen.132
-queen.131
-queen.132
-queen.151
-queen.152
-queen.151
-queen.152
-queen.151
-queen.152
-queen.151
-queen.152
-mina
+animation queen
 is_animated 1
 anim_speed 4
 no_pick 1

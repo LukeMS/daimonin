@@ -45,59 +45,7 @@ attack_slash 100
 speed -0.047
 level 1
 weight 67500
-anim
-facings 25
-dummy.111
-dummy.111
-noble.131
-noble.132
-noble.131
-noble.132
-noble.131
-noble.132
-noble.131
-noble.132
-noble.151
-noble.152
-noble.151
-noble.152
-noble.151
-noble.152
-noble.151
-noble.152
-noble.131
-noble.132
-noble.131
-noble.132
-noble.131
-noble.132
-noble.131
-noble.132
-noble.151
-noble.152
-noble.151
-noble.152
-noble.151
-noble.152
-noble.151
-noble.152
-noble.131
-noble.132
-noble.131
-noble.132
-noble.131
-noble.132
-noble.131
-noble.132
-noble.151
-noble.152
-noble.151
-noble.152
-noble.151
-noble.152
-noble.151
-noble.152
-mina
+animation noble
 is_animated 1
 anim_speed 4
 no_pick 1

@@ -41,59 +41,7 @@ attack_slash 100
 speed -0.047
 level 1
 weight 93500
-anim
-facings 25
-dummy.111
-dummy.111
-peasant.131
-peasant.132
-peasant.131
-peasant.132
-peasant.131
-peasant.132
-peasant.131
-peasant.132
-peasant.151
-peasant.152
-peasant.151
-peasant.152
-peasant.151
-peasant.152
-peasant.151
-peasant.152
-peasant.131
-peasant.132
-peasant.131
-peasant.132
-peasant.131
-peasant.132
-peasant.131
-peasant.132
-peasant.151
-peasant.152
-peasant.151
-peasant.152
-peasant.151
-peasant.152
-peasant.151
-peasant.152
-peasant.131
-peasant.132
-peasant.131
-peasant.132
-peasant.131
-peasant.132
-peasant.131
-peasant.132
-peasant.151
-peasant.152
-peasant.151
-peasant.152
-peasant.151
-peasant.152
-peasant.151
-peasant.152
-mina
+animation peasant
 is_animated 1
 anim_speed 4
 no_pick 1

@@ -48,59 +48,7 @@ attack_weaponmagic 30
 speed -0.047
 level 1
 weight 65000
-anim
-facings 25
-dummy.111
-dummy.111
-mage_old.131
-mage_old.132
-mage_old.131
-mage_old.132
-mage_old.131
-mage_old.132
-mage_old.131
-mage_old.132
-mage_old.151
-mage_old.152
-mage_old.151
-mage_old.152
-mage_old.151
-mage_old.152
-mage_old.151
-mage_old.152
-mage_old.131
-mage_old.132
-mage_old.131
-mage_old.132
-mage_old.131
-mage_old.132
-mage_old.131
-mage_old.132
-mage_old.151
-mage_old.152
-mage_old.151
-mage_old.152
-mage_old.151
-mage_old.152
-mage_old.151
-mage_old.152
-mage_old.131
-mage_old.132
-mage_old.131
-mage_old.132
-mage_old.131
-mage_old.132
-mage_old.131
-mage_old.132
-mage_old.151
-mage_old.152
-mage_old.151
-mage_old.152
-mage_old.151
-mage_old.152
-mage_old.151
-mage_old.152
-mina
+animation mage_old
 is_animated 1
 anim_speed 4
 no_pick 1

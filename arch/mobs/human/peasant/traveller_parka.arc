@@ -41,59 +41,7 @@ attack_slash 100
 speed -0.047
 level 1
 weight 68500
-anim
-facings 25
-dummy.111
-dummy.111
-traveller_parka.131
-traveller_parka.132
-traveller_parka.131
-traveller_parka.132
-traveller_parka.131
-traveller_parka.132
-traveller_parka.131
-traveller_parka.132
-traveller_parka.151
-traveller_parka.152
-traveller_parka.151
-traveller_parka.152
-traveller_parka.151
-traveller_parka.152
-traveller_parka.151
-traveller_parka.152
-traveller_parka.131
-traveller_parka.132
-traveller_parka.131
-traveller_parka.132
-traveller_parka.131
-traveller_parka.132
-traveller_parka.131
-traveller_parka.132
-traveller_parka.151
-traveller_parka.152
-traveller_parka.151
-traveller_parka.152
-traveller_parka.151
-traveller_parka.152
-traveller_parka.151
-traveller_parka.152
-traveller_parka.131
-traveller_parka.132
-traveller_parka.131
-traveller_parka.132
-traveller_parka.131
-traveller_parka.132
-traveller_parka.131
-traveller_parka.132
-traveller_parka.151
-traveller_parka.152
-traveller_parka.151
-traveller_parka.152
-traveller_parka.151
-traveller_parka.152
-traveller_parka.151
-traveller_parka.152
-mina
+animation traveller_parka
 is_animated 1
 anim_speed 4
 no_pick 1

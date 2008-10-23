@@ -49,59 +49,7 @@ attack_weaponmagic 10
 speed -0.048
 level 1
 weight 65000
-anim
-facings 25
-dummy.111
-dummy.111
-sadpriest.121
-sadpriest.121
-sadpriest.121
-sadpriest.121
-sadpriest.121
-sadpriest.121
-sadpriest.121
-sadpriest.121
-sadpriest.161
-sadpriest.161
-sadpriest.161
-sadpriest.161
-sadpriest.161
-sadpriest.161
-sadpriest.161
-sadpriest.161
-sadpriest.121
-sadpriest.121
-sadpriest.121
-sadpriest.121
-sadpriest.121
-sadpriest.121
-sadpriest.121
-sadpriest.121
-sadpriest.161
-sadpriest.161
-sadpriest.161
-sadpriest.161
-sadpriest.161
-sadpriest.161
-sadpriest.161
-sadpriest.161
-sadpriest.121
-sadpriest.121
-sadpriest.121
-sadpriest.121
-sadpriest.121
-sadpriest.121
-sadpriest.121
-sadpriest.121
-sadpriest.161
-sadpriest.161
-sadpriest.161
-sadpriest.161
-sadpriest.161
-sadpriest.161
-sadpriest.161
-sadpriest.161
-mina
+animation sadpriest
 is_animated 1
 anim_speed 4
 no_pick 1

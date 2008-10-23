@@ -47,59 +47,7 @@ attack_weaponmagic 20
 speed -0.049
 level 1
 weight 65500
-anim
-facings 25
-dummy.111
-dummy.111
-monk.131
-monk.132
-monk.131
-monk.132
-monk.131
-monk.132
-monk.131
-monk.132
-monk.151
-monk.152
-monk.151
-monk.152
-monk.151
-monk.152
-monk.151
-monk.152
-monk.131
-monk.132
-monk.131
-monk.132
-monk.131
-monk.132
-monk.131
-monk.132
-monk.151
-monk.152
-monk.151
-monk.152
-monk.151
-monk.152
-monk.151
-monk.152
-monk.131
-monk.132
-monk.131
-monk.132
-monk.131
-monk.132
-monk.131
-monk.132
-monk.151
-monk.152
-monk.151
-monk.152
-monk.151
-monk.152
-monk.151
-monk.152
-mina
+animation monk
 is_animated 1
 anim_speed 4
 no_pick 1

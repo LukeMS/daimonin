@@ -48,34 +48,7 @@ attack_weaponmagic 30
 speed -0.047
 level 1
 weight 65000
-anim
-facings 25
-dummy.111
-seether.101
-seether.101
-seether.101
-seether.101
-seether.101
-seether.101
-seether.101
-seether.101
-seether.101
-seether.101
-seether.101
-seether.101
-seether.101
-seether.101
-seether.101
-seether.101
-seether.101
-seether.101
-seether.101
-seether.101
-seether.101
-seether.101
-seether.101
-seether.101
-mina
+animation seether
 is_animated 1
 anim_speed 4
 no_pick 1

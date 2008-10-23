@@ -47,59 +47,7 @@ attack_weaponmagic 50
 speed -0.048
 level 1
 weight 65500
-anim
-facings 25
-dummy.111
-dummy.111
-smith.141
-smith.142
-smith.141
-smith.142
-smith.141
-smith.142
-smith.141
-smith.142
-smith.141
-smith.142
-smith.141
-smith.142
-smith.141
-smith.142
-smith.141
-smith.142
-smith.141
-smith.142
-smith.141
-smith.142
-smith.141
-smith.142
-smith.141
-smith.142
-smith.141
-smith.142
-smith.141
-smith.142
-smith.141
-smith.142
-smith.141
-smith.142
-smith.141
-smith.142
-smith.141
-smith.142
-smith.141
-smith.142
-smith.141
-smith.142
-smith.141
-smith.142
-smith.141
-smith.142
-smith.141
-smith.142
-smith.141
-smith.142
-mina
+animation smith
 is_animated 1
 anim_speed 4
 no_pick 1

@@ -41,59 +41,7 @@ attack_slash 100
 speed -0.047
 level 1
 weight 93500
-anim
-facings 25
-dummy.111
-dummy.111
-childf2.181
-childf2.182
-childf2.111
-childf2.112
-childf2.121
-childf2.122
-childf2.131
-childf2.132
-childf2.141
-childf2.142
-childf2.151
-childf2.152
-childf2.161
-childf2.162
-childf2.171
-childf2.172
-childf2.181
-childf2.182
-childf2.111
-childf2.112
-childf2.121
-childf2.122
-childf2.131
-childf2.132
-childf2.141
-childf2.142
-childf2.151
-childf2.152
-childf2.161
-childf2.162
-childf2.171
-childf2.172
-childf2.181
-childf2.182
-childf2.111
-childf2.112
-childf2.121
-childf2.122
-childf2.131
-childf2.132
-childf2.141
-childf2.142
-childf2.151
-childf2.152
-childf2.161
-childf2.162
-childf2.171
-childf2.172
-mina
+animation childf2
 is_animated 1
 anim_speed 4
 no_pick 1
