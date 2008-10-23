@@ -38,37 +38,40 @@ using namespace std;
 //================================================================================================
 ServerFile::ServerFile()
 {
-    mRequestFileChain = FILE_SKILLS;
     srv_file[FILE_SKILLS  ].filename = FILE_CLIENT_SKILLS;
     srv_file[FILE_SPELLS  ].filename = FILE_CLIENT_SPELLS;
     srv_file[FILE_SETTINGS].filename = FILE_CLIENT_SETTINGS;
-    srv_file[FILE_ANIMS   ].filename = FILE_CLIENT_ANIMS;
+    srv_file[FILE_ANIMS   ].filename = FILE_CLIENT_ANIMS; // File not used anymore.
     srv_file[FILE_BMAPS   ].filename = FILE_CLIENT_BMAPS;
+    srv_file[FILE_SKILLS  ].status = STATUS_OK;
+    srv_file[FILE_SPELLS  ].status = STATUS_OK;
+    srv_file[FILE_SETTINGS].status = STATUS_OK;
+    srv_file[FILE_ANIMS   ].status = STATUS_OK;
+    srv_file[FILE_BMAPS   ].status = STATUS_OK;
 }
 
 //================================================================================================
-// Get length and checksum from (server sended) files.
+// .
 //================================================================================================
-void ServerFile::getFileAttibutes(int file_enum)
+void ServerFile::checkFileStatus(const char *cmd, char *param, int fileNr)
 {
-    setStatus(file_enum, STATUS_OK);
-    setLength(file_enum, STATUS_OK);
-    setCRC   (file_enum, STATUS_OK);
-    ifstream in(srv_file[file_enum].filename, ios::in | ios::binary);
-    Logger::log().info()  << "- Reading Attributes from " << srv_file[file_enum].filename << "...";
-    if (!in.is_open())
+    Logger::log().info() << "Server file status of ["<< fileNr<< "] " << srv_file[fileNr].filename << "...";
+    if (!strcmp((const char*)param, "OK"))
+    {
+        Logger::log().success(true);
+        srv_file[fileNr].status = STATUS_OK;
+    }
+    else
     {
         Logger::log().success(false);
-        //Logger::log().error()  << "Can't open file '" << srv_file[file_enum].filename << "'.";
-        return;
+        int pos = 0;
+        for (; param[pos]!='|'; ++pos) ;
+        param[pos++] = '\0';
+        srv_file[fileNr].status = STATUS_OUTDATED;
+        setLength(fileNr, atoi(param));
+        param+= pos;
+        setCRC(fileNr, strtoul(param, 0, 16));
     }
-    Logger::log().success(true);
-
-    ostringstream out(ios::binary);
-    in.unsetf(ios::skipws); // don't skip whitespace  (!ios::skipws and ios::binary must be set).
-    copy(istream_iterator<char>(in), istream_iterator<char>(), ostream_iterator<char>(out));
-    setCRC   (file_enum, crc32(1L, (const unsigned char *)out.str().c_str(), (int) out.str().size()));
-    setLength(file_enum, (int)out.str().size());
 }
 
 //================================================================================================
@@ -76,8 +79,24 @@ void ServerFile::getFileAttibutes(int file_enum)
 //================================================================================================
 void ServerFile::checkFiles()
 {
-    Logger::log().info() << "Checking all files coming from server:";
-    for (int i=0; i< FILE_SUM; ++i) getFileAttibutes(i);
+    for (int i=0; i< FILE_SUM; ++i)
+    {
+        ifstream in(srv_file[i].filename, ios::in | ios::binary);
+        if (!in.is_open())
+        {
+            setCRC   (i, 0);
+            setLength(i, 0);
+        }
+        else
+        {
+            ostringstream out(ios::binary);
+            in.unsetf(ios::skipws); // don't skip whitespace  (!ios::skipws and ios::binary must be set).
+            copy(istream_iterator<char>(in), istream_iterator<char>(), ostream_iterator<char>(out));
+            setCRC   (i, crc32(1L, (const unsigned char *)out.str().c_str(), (int)out.str().size()));
+            setLength(i, (int)out.str().size());
+            in.close();
+        }
+    }
 }
 
 //================================================================================================
@@ -85,24 +104,17 @@ void ServerFile::checkFiles()
 //================================================================================================
 bool ServerFile::requestFiles()
 {
-    // File is upToDate.
-    while (srv_file[mRequestFileChain].status == STATUS_OK)
+    for (int i = 0; i < FILE_SUM; ++i)
     {
-        if (++mRequestFileChain >= FILE_SUM)
+        if (srv_file[i].status == STATUS_UPDATING) return false;
+        if (srv_file[i].status != STATUS_OK)
         {
-            mRequestFileChain = FILE_SKILLS;
-            return true;
+            std::stringstream strCmd;
+            strCmd << (unsigned char) i;
+            Network::getSingleton().send_command_binary(Network::CLIENT_CMD_REQUESTFILE, strCmd);
+            srv_file[i].status = STATUS_UPDATING;
+            return false;
         }
     }
-    // File is outdated, ask server for the latest version.
-    if (srv_file[mRequestFileChain].status == STATUS_OUTDATED)
-    {
-        std::stringstream strCmd;
-        strCmd << "rf " << mRequestFileChain;
-        //Network::getSingleton().cs_write_string(strCmd.str().c_str());
-        srv_file[mRequestFileChain].status = STATUS_UPDATING;
-    }
-    return false;
+    return true;
 }
-
-

@@ -78,28 +78,24 @@ struct CmdMapping commands[] =
 const int SUM_SERVER_COMMANDS = sizeof(commands) / sizeof(CmdMapping);
 
 Network::ClientSocket Network::csocket;
-bool Network::abort_thread = false;
-SDL_Thread *Network::input_thread=0;
-SDL_mutex  *Network::input_buffer_mutex =0;
-SDL_cond   *Network::input_buffer_cond =0;
+bool Network::mAbortThread  = false;
+bool Network::mEndianConvert= false;
+SDL_Thread *Network::input_thread =0;
 SDL_Thread *Network::output_thread=0;
-SDL_mutex  *Network::output_buffer_mutex =0;
-SDL_cond   *Network::output_buffer_cond =0;
 SDL_mutex  *Network::socket_mutex =0;
+SDL_mutex  *Network::input_buffer_mutex =0;
+SDL_mutex  *Network::output_buffer_mutex=0;
+SDL_cond   *Network::input_buffer_cond  =0;
+SDL_cond   *Network::output_buffer_cond =0;
 
 // start is the first waiting item in queue, end is the most recent enqueued:
 Network::command_buffer *Network::input_queue_start = 0, *Network::input_queue_end = 0;
 Network::command_buffer *Network::output_queue_start= 0, *Network::output_queue_end= 0;
 
 const int TIMEOUT_MS = 4000;
-const int NO_SOCKET = -1;
-// Maximum size of any packet we expect. Using this makes it so we don't need to
-// allocated and deallocated the same buffer over and over again and the price
-// of using a bit of extra memory. IT also makes the code simpler.
-const int  MAXSOCKBUF            = 128*1024;
-const int  MAX_METASTRING_BUFFER = 128*2013;
-const int  MAX_BUF =  256;
-const int  BIG_BUF = 1024;
+const int NO_SOCKET  = -1;
+const int MAXSOCKBUF = 128*1024; // Maximum size of any packet we expect.
+const int MAX_BUF    = 256;
 
 //================================================================================================
 //
@@ -112,7 +108,7 @@ void Network::AddIntToString(String &sl, int data, bool shortInt)
         sl += (data >> 16) & 0xff;
     }
     sl += (data >>  8) & 0xff;
-    sl += (data      ) & 0xff;
+    sl += (data) & 0xff;
 }
 
 //================================================================================================
@@ -198,7 +194,7 @@ void Network::socket_thread_start()
         output_buffer_mutex= SDL_CreateMutex();
         socket_mutex = SDL_CreateMutex();
     }
-    abort_thread = false;
+    mAbortThread = false;
     input_thread = SDL_CreateThread(reader_thread_loop, NULL);
     if (!input_thread)
         Logger::log().error() <<  "Unable to start socket thread: " << SDL_GetError();
@@ -212,7 +208,7 @@ void Network::socket_thread_start()
 //================================================================================================
 void Network::update()
 {
-    while (1)
+    while (!mAbortThread)
     {
         // Get a read command and remove it from queue.
         SDL_LockMutex(input_buffer_mutex);
@@ -224,7 +220,7 @@ void Network::update()
         else
         {
             int lenHeader = cmd->data[0]&0x80?5:3;
-            Logger::log().error() << "Got server cmd " << (int)(cmd->data[0]&~0x80)-1;
+            Logger::log().error() << "Got server cmd " << (int)(cmd->data[0]&~0x80)-1 << " len (incl. Header) =" << cmd->len;
             commands[(cmd->data[0]&~0x80) - 1].serverCmd(cmd->data+lenHeader, cmd->len-lenHeader);
         }
         command_buffer_free(cmd);
@@ -237,6 +233,7 @@ void Network::update()
 //================================================================================================
 void Network::handle_socket_shutdown()
 {
+    mAbortThread = true;
     Logger::log().info() << "Stopping socket thread.";
     SDL_WaitThread(input_thread, NULL);
     SDL_WaitThread(output_thread, NULL);
@@ -252,6 +249,7 @@ void Network::handle_socket_shutdown()
         SDL_DestroyMutex(output_buffer_mutex);
         SDL_DestroyMutex(socket_mutex);
     */
+    Logger::log().success(true);
 }
 
 //================================================================================================
@@ -312,8 +310,7 @@ void Network::command_buffer_free(command_buffer *buf)
 /* High-level external interface */
 
 //================================================================================================
-// This should be used for all 'command' processing.  Other functions should call this so that
-// proper windowing will be done.
+// This should be used for all 'command' processing.
 // command is the text command, repeat is a count value, or -1 if none is desired and we don't
 // want to reset the current count.
 // force means we must send this command no matter what (ie, it is an administrative type
@@ -326,7 +323,6 @@ int Network::send_command(const char *command, int repeat, int force)
     if (commdiff < 0)
         commdiff += 256;
     ++csocket.command_sent &= 0xff; // max out at 255.
-
     String sl = "ncom ";
     AddIntToString(sl, csocket.command_sent, true);
     AddIntToString(sl, repeat, false);
@@ -336,65 +332,17 @@ int Network::send_command(const char *command, int repeat, int force)
 }
 
 //================================================================================================
-// Add a binary command to the output buffer.
-// If body is NULL, a single-byte command is created from cmd.
-// Otherwise body should include the length and cmd header
+// move a command/buffer to the out buffer so it can be written to the socket.
 //================================================================================================
-int Network::send_command_binary(unsigned char cmd, unsigned char *body, int len, int flags)
+int Network::send_socklist(String msg)
 {
-    command_buffer *buf;
-    if (!body)  // single binary command without tail
-        buf = command_buffer_new(len, body);
-    else
-    {
-        const int MAX_DATA_TAIL_LENGTH = 255;
-        // we have a string with a '/0'
-        if (flags & SEND_CMD_FLAG_STRING) ++len;
-        if (len >= MAX_DATA_TAIL_LENGTH)
-        {
-            Logger::log().error() << "Network::send_command_binary: socket buffer MAX_DATA_TAIL_LENGTH >= " << MAX_DATA_TAIL_LENGTH << " (" << len << ")";
-            CloseClientSocket();
-            return -1;
-        }
-        buf = command_buffer_new(len+3, 0); // we need max len + 1 byte cmd + 2 bytes cmd_len at last
-        // setup the header and copy the data tail
-        if (buf)
-        {
-            int len_copy = len;
-            int data_offset = 1; // our command
-            buf->data[0] = cmd;
-            if (flags & SEND_CMD_FLAG_FIXED)
-            {
-                // this makes no sense for our current protocol
-                if (flags & SEND_CMD_FLAG_STRING)
-                    Logger::log().error() << "Network::send_command_binary: SEND_CMD_FLAG_FIXED and SEND_CMD_FLAG_STRING used together makes no sense!";
-                // for a fixed len we must readjust the buffer len value
-                buf->len = len+1; // pure data block length + cmd tag
-            }
-            else
-            {
-                // we have a dynamic data tail length - let the server know how long it is
-                buf->data[data_offset++] = (uint8) ((len >> 8) & 0xFF);
-                buf->data[data_offset++] = ((uint32) (len)) & 0xFF;
-            }
-            //Logger::log().error() << "send binary cmd: " << (int)cmd << " len: " << len << " (blen:" << buf->len << ") (" << (int)((flags & SEND_CMD_FLAG_FIXED)?-1:buf->data[1]) << "   " << (int)((flags & SEND_CMD_FLAG_FIXED)?-1:buf->data[2]) << ")";
-            memcpy(buf->data+data_offset, body, len_copy);
-            // If the command requests a c-style string ending - add the "\0".
-            // The server will kick you if its missing.
-            // why? as a marker for block but also to ensure a valid string
-            // in the raw read buffer of the server.
-            if (flags & SEND_CMD_FLAG_STRING)
-                buf->data[len_copy+data_offset] = 0;
-        }
-    }
-    if (!buf)
-    {
-        CloseClientSocket();
-        return -1;
-    }
+    command_buffer *buf = command_buffer_new((int)msg.size() + 2, 0);
+    memcpy(buf->data + 2, msg.c_str(), msg.size());
+    buf->data[0] = (unsigned char)((msg.size() >> 8) & 0xFF);
+    buf->data[1] = ((uint32)(msg.size())) & 0xFF;
     SDL_LockMutex(output_buffer_mutex);
     command_buffer_enqueue(buf, &output_queue_start, &output_queue_end);
-    SDL_CondSignal(output_buffer_cond);
+    SDL_CondSignal(output_buffer_cond); // Restart thread.
     SDL_UnlockMutex(output_buffer_mutex);
     return 0;
 }
@@ -404,9 +352,11 @@ int Network::send_command_binary(unsigned char cmd, unsigned char *body, int len
 //================================================================================================
 int Network::send_command_binary(unsigned char cmd, std::stringstream &stream)
 {
-    /// @todo add the missing single cmd. (see function above)
     std::stringstream full_cmd;
-    full_cmd << cmd << '\0' << (unsigned char) (stream.str().size()+1) << stream.str() << '\0';
+    if (stream.str().size() == 1)
+        full_cmd << cmd << (unsigned char*) stream.str().c_str(); // Single byte command.
+    else
+        full_cmd << cmd << '\0' << (unsigned char)(stream.str().size()+1) << stream.str() << '\0';
     command_buffer *buf = command_buffer_new((int)full_cmd.str().size(), (unsigned char*)full_cmd.str().c_str());
     /*
         Logger::log().error() << "command_buffer: " << buf->len << "   " << stream.str().size();
@@ -415,23 +365,7 @@ int Network::send_command_binary(unsigned char cmd, std::stringstream &stream)
     */
     SDL_LockMutex(output_buffer_mutex);
     command_buffer_enqueue(buf, &output_queue_start, &output_queue_end);
-    SDL_CondSignal(output_buffer_cond);
-    SDL_UnlockMutex(output_buffer_mutex);
-    return 0;
-}
-
-//================================================================================================
-// move a command/buffer to the out buffer so it can be written to the socket.
-//================================================================================================
-int Network::send_socklist(String msg)
-{
-    command_buffer *buf = command_buffer_new((int)msg.size() + 2, 0);
-    memcpy(buf->data + 2, msg.c_str(), msg.size());
-    buf->data[0] = (unsigned char) ((msg.size() >> 8) & 0xFF);
-    buf->data[1] = ((uint32) (msg.size())) & 0xFF;
-    SDL_LockMutex(output_buffer_mutex);
-    command_buffer_enqueue(buf, &output_queue_start, &output_queue_end);
-    SDL_CondSignal(output_buffer_cond);
+    SDL_CondSignal(output_buffer_cond); // Restart thread.
     SDL_UnlockMutex(output_buffer_mutex);
     return 0;
 }
@@ -443,80 +377,51 @@ int Network::send_socklist(String msg)
 //================================================================================================
 //
 //================================================================================================
+int Network::strToInt(unsigned char *data, int bytes)
+{
+    if (bytes == 2)
+    {
+        if (mEndianConvert)
+            return (data[0] << 8) + data[1];
+        return (data[1] << 8) + data[0];
+    }
+    if (mEndianConvert)
+        return (data[0] << 24) + (data[1] << 16) + (data[2] << 8) + data[3];
+    return (data[3] << 24) + (data[2] << 16) + (data[1] << 8) + data[0];
+}
+
+//================================================================================================
+//
+//================================================================================================
 int Network::reader_thread_loop(void *)
 {
-    static unsigned char readbuf[MAXSOCKBUF+1];
-    int readbuf_len = 0;
-    int header_len = 0;
-    int cmd_len = -1;
-    int ret;
-    int toread;
     Logger::log().info() << "Reader thread started  ";
-    while (!abort_thread)
+    static unsigned char readbuf[MAXSOCKBUF+1];
+    int cmd_len, pos;
+    while (!mAbortThread)
     {
-        // First, try to read a command length sequence.
-        if (!readbuf_len)
-            toread = 1; // Try to read a command from the socket.
-        else if (!(readbuf[0] & 0x80) && readbuf_len < 3)
-            toread = 3 - readbuf_len; // read in 2 or 1 more bytes.
-        else if ((readbuf[0] & 0x80) && readbuf_len < 5)
-            toread = 5 - readbuf_len; // read in 4 to 1 more bytes.
-        else
+        // Read the command byte.
+        if (!(pos = recv(csocket.fd, (char*)readbuf, 1, 0))) break;
+        int sizeOfLen = readbuf[0] & (1<<7)?4:2;
+        // If bit 7 is set in the cmd, sizeof(cmd_len) = 4 else sizeof(cmd_len) = 2.
+        if (!(pos+= recv(csocket.fd, (char*)readbuf+1, sizeOfLen, 0))) break;
+        cmd_len = strToInt(readbuf+1, sizeOfLen) + pos;
+        if (cmd_len >= MAXSOCKBUF)
         {
-            if (readbuf_len == 3 && !(readbuf[0] & 0x80))
-            {
-                header_len = 3;
-                cmd_len = GetShort_String(readbuf+1);
-            }
-            else if (readbuf_len == 5 && (readbuf[0] & 0x80))
-            {
-                header_len = 5;
-                cmd_len = GetInt_String(readbuf+1);
-
-            }
-            toread = cmd_len + header_len - readbuf_len;
-            if (cmd_len+16 >= MAXSOCKBUF)
-            {
-                Logger::log().error() << "Network::reader_thread_loop: To much data from server.";
-            }
+            Logger::log().error() << "Network::reader_thread_loop: To much data from server.";
+            break;
         }
-        ret = recv(csocket.fd, (char*)readbuf + readbuf_len, toread, 0);
-        if (ret == 0)
-        {
-            // End of file.
-            Logger::log().error() << "Reader thread got EOF trying to read "<< toread << " bytes";
-            goto out;
-        }
-        else if (ret == -1)
-        {
-            // IO error.
-            Logger::log().error() << "Reader thread got error " << getError();
-            goto out;
-        }
-        else
-        {
-            readbuf_len += ret;
-            //Logger::log().error() << "Reader got some data ("<< readbuf_len<< " bytes total)";
-        }
-        // Finished with a command ?
-        if (readbuf_len == cmd_len + header_len && !abort_thread)
-        {
-            // LOG(LOG_DEBUG, "Reader got a full command\n", readbuf_len);
-            command_buffer *buf = command_buffer_new(readbuf_len, readbuf);
-            buf->data[readbuf_len] = 0; // we terminate our buffer for security and incoming raw strings
-            SDL_LockMutex(input_buffer_mutex);
-            command_buffer_enqueue(buf, &input_queue_start, &input_queue_end);
-            SDL_CondSignal(input_buffer_cond);
-            SDL_UnlockMutex(input_buffer_mutex);
-            cmd_len = -1;
-            header_len = 0;
-            readbuf_len = 0;
-        }
+        while (!mAbortThread && cmd_len-pos >0)
+            pos+= recv(csocket.fd, (char*)readbuf+pos, cmd_len-pos, 0);
+        command_buffer *buf = command_buffer_new(cmd_len, readbuf);
+        buf->data[cmd_len] = 0; // We terminate the buffer for security and incoming raw strings.
+        SDL_LockMutex(input_buffer_mutex);
+        command_buffer_enqueue(buf, &input_queue_start, &input_queue_end);
+        SDL_UnlockMutex(input_buffer_mutex);
     }
-out:
-    Logger::log().error() << "Reader thread stopped";
+    Logger::log().info() << "Reader thread stopped";
     CloseClientSocket();
-    return -1;
+    return 0;
 }
 
 //================================================================================================
@@ -527,36 +432,31 @@ int Network::writer_thread_loop(void *)
     Logger::log().info() << "Writer thread started";
     int written, ret;
     command_buffer *buf;
-    while (!abort_thread)
+    while (!mAbortThread)
     {
         written = 0;
         SDL_LockMutex(output_buffer_mutex);
-        while (!output_queue_start && !abort_thread)
-            SDL_CondWait(output_buffer_cond, output_buffer_mutex);
+        SDL_CondWait(output_buffer_cond, output_buffer_mutex);
         buf = command_buffer_dequeue(&output_queue_start, &output_queue_end);
         SDL_UnlockMutex(output_buffer_mutex);
-        if (abort_thread) break;
-        while (written < buf->len && !abort_thread)
+        if (!buf) break; // Happens when this thread is stopped by the main thread.
+        while (written < buf->len && !mAbortThread)
         {
             ret = send(csocket.fd, (char*)buf->data + written, buf->len - written, 0);
             if (ret == 0)
             {
                 Logger::log().error() << "Writer got EOF";
-                goto out;
+                break;
             }
-            else if (ret == -1)
+            if (ret == -1)
             {
-                // IO error.
                 Logger::log().error() << "Writer thread got error " << getError();
-                goto out;
+                break;
             }
-            else
-                written += ret;
+            written += ret;
         }
         command_buffer_free(buf);
-        // Logger::log().error() <<"Writer wrote a command (%d bytes)\n", written); */
     }
-out:
     Logger::log().info() << "Writer thread stopped";
     CloseClientSocket();
     return 0;
@@ -567,14 +467,15 @@ out:
 //================================================================================================
 void Network::CloseSocket()
 {
-    if (csocket.fd == NO_SOCKET)
-        return;
-    csocket.fd = NO_SOCKET;
+    if (csocket.fd == NO_SOCKET) return;
 #ifdef WIN32
+    shutdown(csocket.fd, 2);
     closesocket(csocket.fd);
 #else
+    shutdown(csocket.fd, SHUT_RDWR);
     close(csocket.fd);
 #endif
+    csocket.fd = NO_SOCKET;
 }
 
 //================================================================================================
@@ -582,15 +483,15 @@ void Network::CloseSocket()
 //================================================================================================
 void Network::CloseClientSocket()
 {
-    if (csocket.fd == NO_SOCKET) return;
+    if (csocket.fd == NO_SOCKET)
+        return;
     Logger::log().info() << "CloseClientSocket()";
     SDL_LockMutex(socket_mutex);
     CloseSocket();
     csocket.inbuf = "";
     csocket.outbuf = "";
-    abort_thread = true;
-    SDL_CondSignal(input_buffer_cond);
-    SDL_CondSignal(output_buffer_cond);
+    SDL_CondSignal(input_buffer_cond);  // Restart thread.
+    SDL_CondSignal(output_buffer_cond); // Restart thread.
     SDL_UnlockMutex(socket_mutex);
 }
 
@@ -624,7 +525,7 @@ bool Network::OpenSocket(const char *host, int port)
     struct hostent *hostbn;
     int             oldbufsize;
     int             newbufsize = 65535, buflen = sizeof(int);
-    uint32          start_timer;
+    uint32          timeout;
     struct linger   linger_opt;
     Logger::log().info() <<  "OpenSocket: "<< host;
     // The way to make the sockets work on XP Home - The 'unix' style socket seems to fail under xp home.
@@ -656,12 +557,11 @@ bool Network::OpenSocket(const char *host, int port)
     if (setsockopt(csocket.fd, SOL_SOCKET, SO_LINGER, (char *) &linger_opt, sizeof(struct linger)))
         Logger::log().error() << "BUG: Error on setsockopt LINGER";
     error = 0;
-    start_timer = SDL_GetTicks();
+    timeout = SDL_GetTicks() + TIMEOUT_MS;
     while (connect(csocket.fd, (struct sockaddr *) &insock, sizeof(insock)) == SOCKET_ERROR)
     {
         SDL_Delay(30);
-        // timeout.... without connect will REALLY hang a long time
-        if (start_timer + TIMEOUT_MS < SDL_GetTicks())
+        if (SDL_GetTicks() > timeout)
         {
             csocket.fd = NO_SOCKET;
             return false;
@@ -679,14 +579,13 @@ bool Network::OpenSocket(const char *host, int port)
         return false;
     }
     // we got a connect here!
-
     // Clear nonblock flag
     temp = 0;
     if (ioctlsocket(csocket.fd, FIONBIO, (u_long*)&temp) == -1)
     {
         Logger::log().error() << "ioctlsocket(csocket.fd, FIONBIO , &temp == 0)";
         csocket.fd = NO_SOCKET;
-        return(FALSE);
+        return false;
     }
 
     if (getsockopt(csocket.fd, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, &buflen) == -1)
@@ -694,9 +593,7 @@ bool Network::OpenSocket(const char *host, int port)
     if (oldbufsize < newbufsize)
     {
         if (setsockopt(csocket.fd, SOL_SOCKET, SO_RCVBUF, (char *) &newbufsize, sizeof(&newbufsize)))
-        {
             setsockopt(csocket.fd, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, sizeof(&oldbufsize));
-        }
     }
     Logger::log().info() <<  "Connected to "<< host << "  " <<  port;
     return true;
@@ -712,7 +609,7 @@ bool Network::OpenSocket(const char *host, int port)
     unsigned int  oldbufsize, newbufsize = 65535, buflen = sizeof(int);
     struct linger linger_opt;
     int flags;
-    uint32 start_timer;
+    uint32 timeout;
     // Use new (getaddrinfo()) or old (gethostbyname()) socket API
 #if 0
 //#ifndef HAVE_GETADDRINFO
@@ -756,14 +653,13 @@ bool Network::OpenSocket(const char *host, int port)
         return false;
     }
     // Try to connect.
-    start_timer = SDL_GetTicks();
+    timeout = SDL_GetTicks() + TIMEOUT_MS;
     while (connect(csocket.fd, (struct sockaddr *) &insock, sizeof(insock)) == -1)
     {
         SDL_Delay(3);
-        /* timeout.... without connect will REALLY hang a long time */
-        if (start_timer + TIMEOUT_MS < SDL_GetTicks())
+        if (SDL_GetTicks() > timeout)
         {
-            perror("Can't connect to server");
+            Logger::log().error() << "Can't connect to server";
             csocket.fd = NO_SOCKET;
             return false;
         }
@@ -808,19 +704,19 @@ bool Network::OpenSocket(const char *host, int port)
             return false;
         }
         // Try to connect.
-        start_timer = SDL_GetTicks();
+        timeout = SDL_GetTicks() + TIMEOUT_MS;
         while (connect(csocket.fd, ai->ai_addr, ai->ai_addrlen) != 0)
         {
             SDL_Delay(3);
-            // timeout.... without connect will REALLY hang a long time
-            if (start_timer + TIMEOUT_MS < SDL_GetTicks())
+            if (SDL_GetTicks() > timeout)
             {
                 close(csocket.fd);
                 csocket.fd = NO_SOCKET;
-                goto next_try;
+                break;
             }
         }
-        // Set back to blocking.
+        if (csocket.fd == NO_SOCKET) continue;
+        // Got a connection. Set back to blocking.
         if (fcntl(csocket.fd, F_SETFL, flags) == -1)
         {
             Logger::log().error() << "socket: Error on switching to blocking.";
@@ -828,8 +724,6 @@ bool Network::OpenSocket(const char *host, int port)
             return false;
         }
         break;
-next_try:
-        ;
     }
     freeaddrinfo(res);
     if (csocket.fd == NO_SOCKET)
@@ -887,53 +781,35 @@ void Network::contactMetaserver()
 //================================================================================================
 void Network::read_metaserver_data()
 {
-    int  stat, temp =0;
-    char *ptr = new char[MAX_METASTRING_BUFFER];
-    char *buf = new char[MAX_METASTRING_BUFFER];
+    static String buf = "";
+    int len;
+    char *ptr = new char[MAXSOCKBUF];
     while (1)
     {
+        len = recv(csocket.fd, ptr, MAXSOCKBUF, 0);
+        if (len == -1)
+        {
 #ifdef WIN32
-        stat = recv(csocket.fd, ptr, MAX_METASTRING_BUFFER, 0);
-        if ((stat == -1) && WSAGetLastError() != WSAEWOULDBLOCK)
-        {
-            Logger::log().error() << "Error reading metaserver data!: "<< WSAGetLastError();
-            break;
-        }
-        else
-#else
-        do
-        {
-            stat = recv(csocket.fd, ptr, MAX_METASTRING_BUFFER, 0);
-        }
-        while (stat == -1);
-#endif
-            if (stat > 0)
+            if (WSAGetLastError() != WSAEWOULDBLOCK)
             {
-                if (temp + stat >= MAX_METASTRING_BUFFER)
-                {
-                    memcpy(buf + temp, ptr, temp + stat - MAX_METASTRING_BUFFER - 1);
-                    temp += stat;
-                    break;
-                }
-                memcpy(buf + temp, ptr, stat);
-                temp += stat;
-            }
-            else if (stat == 0)
-            {
-                // connection closed by meta
+                Logger::log().error() << "Error reading metaserver data!: "<< WSAGetLastError();
                 break;
             }
+#endif
+            continue;
+        }
+        if (!len || (int)buf.size() + len >= MAXSOCKBUF) break;
+        buf[len] = '\0';
+        buf += ptr;
     }
-    buf[temp] = 0;
-    parse_metaserver_data(buf);
     delete[] ptr;
-    delete[] buf;
+    parse_metaserver_data(buf);
 }
 
 //================================================================================================
 // Parse the metadata.
 //================================================================================================
-void Network::parse_metaserver_data(String strMetaData)
+void Network::parse_metaserver_data(String &strMetaData)
 {
     String::size_type startPos;
     String::size_type endPos =0;
@@ -942,47 +818,47 @@ void Network::parse_metaserver_data(String strMetaData)
     {
         // Server IP.
         startPos = endPos+0;
-        endPos = strMetaData.find( '|',  startPos);
+        endPos = strMetaData.find('|',  startPos);
         if (endPos == String::npos) break;
         strIP = strMetaData.substr(startPos, endPos-startPos);
         // unknown 1.
         startPos = endPos+1;
-        endPos = strMetaData.find( '|',  startPos);
+        endPos = strMetaData.find('|',  startPos);
         if (endPos == String::npos) break;
         strPort = strMetaData.substr(startPos, endPos-startPos);
         // Server name.
         startPos = endPos+1;
-        endPos = strMetaData.find( '|',  startPos);
+        endPos = strMetaData.find('|',  startPos);
         if (endPos == String::npos) break;
         strName = strMetaData.substr(startPos, endPos-startPos);
         // Number of players online.
         startPos = endPos+1;
-        endPos = strMetaData.find( '|',  startPos);
+        endPos = strMetaData.find('|',  startPos);
         if (endPos == String::npos) break;
         strPlayer = strMetaData.substr(startPos, endPos-startPos);
         // Server version.
         startPos = endPos+1;
-        endPos = strMetaData.find( '|',  startPos);
+        endPos = strMetaData.find('|',  startPos);
         if (endPos == String::npos) break;
         strVersion = strMetaData.substr(startPos, endPos-startPos);
         // Description1
         startPos = endPos+1;
-        endPos = strMetaData.find( '|',  startPos);
+        endPos = strMetaData.find('|',  startPos);
         if (endPos == String::npos) break;
         strDesc1 = strMetaData.substr(startPos, endPos-startPos);
         // Description2.
         startPos = endPos+1;
-        endPos = strMetaData.find( '|',  startPos);
+        endPos = strMetaData.find('|',  startPos);
         if (endPos == String::npos) break;
         strDesc2 = strMetaData.substr(startPos, endPos-startPos);
         startPos = endPos+1;
         // Description3.
-        endPos = strMetaData.find( '|',  startPos);
+        endPos = strMetaData.find('|',  startPos);
         if (endPos == String::npos) break;
         strDesc3 = strMetaData.substr(startPos, endPos-startPos);
         // Description4.
         startPos = endPos+1;
-        endPos = strMetaData.find( '\n',  startPos);
+        endPos = strMetaData.find('\n',  startPos);
         if (endPos == String::npos) endPos = strMetaData.size();
         strDesc4 = strMetaData.substr(startPos, endPos -startPos);
         if (endPos < strMetaData.size()) ++endPos;
@@ -1012,7 +888,7 @@ void Network::add_metaserver_data(const char *ip, const char *server, int port, 
     String strRow;
     strRow+= desc2; strRow+= ";";
     strRow+= desc1; strRow+= ";";
-    strRow+=server;
+    strRow+= server;
     strRow+=(player <0)?",-":","+StringConverter::toString(player);
     GuiManager::getSingleton().addTableRow(GuiManager::WIN_SERVERSELECT, GuiImageset::GUI_TABLE, strRow.c_str());
 }
@@ -1033,6 +909,6 @@ void Network::clearMetaServerData()
     GuiManager::getSingleton().clearTable(GuiManager::WIN_SERVERSELECT, GuiImageset::GUI_TABLE);
     if (!mvServer.size()) return;
     for (std::vector<Server*>::iterator i = mvServer.begin(); i != mvServer.end(); ++i)
-        delete (*i);
+        delete(*i);
     mvServer.clear();
 }

@@ -45,14 +45,12 @@ public:
         FILE_BMAPS,
         FILE_SUM
     };
-
     enum
     {
         STATUS_OK,
         STATUS_OUTDATED,
         STATUS_UPDATING
     };
-
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
@@ -78,7 +76,6 @@ public:
     {
         return srv_file[file_enum].filename;
     }
-
     void setStatus(int file_enum, int value)
     {
         srv_file[file_enum].status = value;
@@ -87,16 +84,13 @@ public:
     {
         srv_file[file_enum].length = value;
     }
-    void setCRC(int file_enum, unsigned int value)
+    void setCRC(int file_enum, unsigned long value)
     {
         srv_file[file_enum].crc = value;
     }
+    void checkFileStatus(const char *cmd, char *param, int fileNr);
     bool requestFiles();
 
-    void updateDone()
-    {
-        srv_file[mRequestFileChain].status = STATUS_OK;
-    }
 
 private:
     // ////////////////////////////////////////////////////////////////////
@@ -104,13 +98,12 @@ private:
     // ////////////////////////////////////////////////////////////////////
     struct _srv_file
     {
-        int          status;
-        int          length;
-        unsigned int crc;
-        const char  *filename;
+        int           status;
+        int           length;
+        unsigned long crc;
+        const char   *filename;
     }
     srv_file[FILE_SUM];
-    int mRequestFileChain;
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.

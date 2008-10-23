@@ -43,6 +43,18 @@ const int  REQUEST_FACE_MAX = 250;
 const char MAX_LEN_LOGIN_NAME = 15;
 const int  DATA_PACKED_CMD = 0x80;
 
+// list of requested files shared between server and client.
+enum
+{
+    DATA_CMD_NO,
+    DATA_CMD_SKILL_LIST,
+    DATA_CMD_SPELL_LIST,
+    DATA_CMD_SETTINGS_LIST,
+    DATA_CMD_ANIM_LIST,
+    DATA_CMD_BMAP_LIST
+};
+
+
 char playerName[80];
 char playerPassword[80];
 int scrolldx, scrolldy;
@@ -52,12 +64,15 @@ enum
     MAP_UPDATE_CMD_SAME, MAP_UPDATE_CMD_NEW, MAP_UPDATE_CMD_CONNECTED
 };
 
+
 //================================================================================================
 // Ascii to int (32bit).
 //================================================================================================
 int Network::GetInt_String(unsigned char *data)
 {
-    return (ntohl((data[0] << 24) + (data[1] << 16) + (data[2] << 8) + data[3]));
+    if (mEndianConvert)
+        return (data[0] << 24) + (data[1] << 16) + (data[2] << 8) + data[3];
+    return (data[3] << 24) + (data[2] << 16) + (data[1] << 8) + data[0];
 }
 
 //================================================================================================
@@ -65,7 +80,9 @@ int Network::GetInt_String(unsigned char *data)
 //================================================================================================
 short Network::GetShort_String(unsigned char *data)
 {
-    return (ntohs(data[0] << 8) + data[1]);
+    if (mEndianConvert)
+        return (data[0] << 8) + data[1];
+    return (data[1] << 8) + data[0];
 }
 
 //================================================================================================
@@ -202,10 +219,10 @@ void Network::Map2Cmd(unsigned char *data, int len)
         if (mapstat == MAP_UPDATE_CMD_NEW)
         {
             TileManager::getSingleton().map_new_flag = true;
-            map_w = (uint8) (data[pos++]);
-            map_h = (uint8) (data[pos++]);
-            xpos =  (uint8) (data[pos++]);
-            ypos =  (uint8) (data[pos++]);
+            map_w = (uint8)(data[pos++]);
+            map_h = (uint8)(data[pos++]);
+            xpos = (uint8)(data[pos++]);
+            ypos = (uint8)(data[pos++]);
             mx = xpos;
             my = ypos;
 //            remove_item_inventory(locate_item(0)); // implicit clear below
@@ -214,9 +231,9 @@ void Network::Map2Cmd(unsigned char *data, int len)
         else
         {
             int xoff, yoff;
-            mapstat = (char) (data[pos++]);
-            xoff = (char) (data[pos++]);
-            yoff = (char) (data[pos++]);
+            mapstat = (char)(data[pos++]);
+            xoff = (char)(data[pos++]);
+            yoff = (char)(data[pos++]);
             xpos = (uint8)(data[pos++]);
             ypos = (uint8)(data[pos++]);
             mx = xpos;
@@ -227,8 +244,8 @@ void Network::Map2Cmd(unsigned char *data, int len)
     }
     else
     {
-        xpos = (uint8) (data[pos++]);
-        ypos = (uint8) (data[pos++]);
+        xpos = (uint8)(data[pos++]);
+        ypos = (uint8)(data[pos++]);
         // we have moved
         if ((xpos - mx || ypos - my))
         {
@@ -277,7 +294,7 @@ void Network::Map2Cmd(unsigned char *data, int len)
         // Like the Zzz for sleep, paralyze msg, etc.
         if (mask & 0x20) // catch the ext. flag...
         {
-            ext_flag = (uint8) (data[pos++]);
+            ext_flag = (uint8)(data[pos++]);
             if (ext_flag & 0x80) // we have player names....
             {
                 char c;
@@ -303,7 +320,7 @@ void Network::Map2Cmd(unsigned char *data, int len)
                 if (pname_flag & 0x02) // l1 ....
                 {
                     i = 0;
-                    while ((c = (char) (data[pos++])))
+                    while ((c = (char)(data[pos++])))
                     {
                         pname3[i++] = c;
                     }
@@ -312,7 +329,7 @@ void Network::Map2Cmd(unsigned char *data, int len)
                 if (pname_flag & 0x01) // l2 ....
                 {
                     i = 0;
-                    while ((c = (char) (data[pos++])))
+                    while ((c = (char)(data[pos++])))
                     {
                         pname4[i++] = c;
                     }
@@ -377,18 +394,18 @@ void Network::Map2Cmd(unsigned char *data, int len)
             }
             if (ext_flag & 0x10)
             {
-                ext2 = (int) (data[pos++]);
+                ext2 = (int)(data[pos++]);
                 if (ext2 & TileMap::FFLAG_PROBE)
-                    probe = (int) (data[pos++]);
+                    probe = (int)(data[pos++]);
                 else
                     probe = 0;
                 TileMap::getSingleton().set_map_ext(x, y, 2, ext2, probe);
             }
             if (ext_flag & 0x20)
             {
-                ext1 = (int) (data[pos++]);
+                ext1 = (int)(data[pos++]);
                 if (ext1 & TileMap::FFLAG_PROBE)
-                    probe = (int) (data[pos++]);
+                    probe = (int)(data[pos++]);
                 else
                     probe = 0;
                 TileMap::getSingleton().set_map_ext(x, y, 1, ext1, probe);
@@ -756,27 +773,27 @@ void Network::StatsCmd(unsigned char *data, int len)
                     case CS_STAT_STR:
                       temp = (int) * (data + i++);
                       if (temp >= cpl.stats.Str)
-                          cpl.warn_statup = TRUE;
+                          cpl.warn_statup = true;
                       else
-                          cpl.warn_statdown = TRUE;
+                          cpl.warn_statdown = true;
 
                       cpl.stats.Str = temp;
                       break;
                     case CS_STAT_INT:
                       temp = (int) * (data + i++);
                       if (temp >= cpl.stats.Int)
-                          cpl.warn_statup = TRUE;
+                          cpl.warn_statup = true;
                       else
-                          cpl.warn_statdown = TRUE;
+                          cpl.warn_statdown = true;
 
                       cpl.stats.Int = temp;
                       break;
                     case CS_STAT_POW:
                       temp = (int) * (data + i++);
                       if (temp >= cpl.stats.Pow)
-                          cpl.warn_statup = TRUE;
+                          cpl.warn_statup = true;
                       else
-                          cpl.warn_statdown = TRUE;
+                          cpl.warn_statdown = true;
 
                       cpl.stats.Pow = temp;
 
@@ -784,9 +801,9 @@ void Network::StatsCmd(unsigned char *data, int len)
                     case CS_STAT_WIS:
                       temp = (int) * (data + i++);
                       if (temp >= cpl.stats.Wis)
-                          cpl.warn_statup = TRUE;
+                          cpl.warn_statup = true;
                       else
-                          cpl.warn_statdown = TRUE;
+                          cpl.warn_statdown = true;
 
                       cpl.stats.Wis = temp;
 
@@ -794,34 +811,34 @@ void Network::StatsCmd(unsigned char *data, int len)
                     case CS_STAT_DEX:
                       temp = (int) * (data + i++);
                       if (temp >= cpl.stats.Dex)
-                          cpl.warn_statup = TRUE;
+                          cpl.warn_statup = true;
                       else
-                          cpl.warn_statdown = TRUE;
+                          cpl.warn_statdown = true;
 
                       cpl.stats.Dex = temp;
                       break;
                     case CS_STAT_CON:
                       temp = (int) * (data + i++);
                       if (temp >= cpl.stats.Con)
-                          cpl.warn_statup = TRUE;
+                          cpl.warn_statup = true;
                       else
-                          cpl.warn_statdown = TRUE;
+                          cpl.warn_statdown = true;
 
                       cpl.stats.Con = temp;
                       break;
                     case CS_STAT_CHA:
                       temp = (int) * (data + i++);
                       if (temp >= cpl.stats.Cha)
-                          cpl.warn_statup = TRUE;
+                          cpl.warn_statup = true;
                       else
-                          cpl.warn_statdown = TRUE;
+                          cpl.warn_statdown = true;
 
                       cpl.stats.Cha = temp;
                       break;
                     case CS_STAT_EXP:
                       temp = GetInt_String(data + i);
                       if (temp < cpl.stats.exp)
-                          cpl.warn_drain = TRUE;
+                          cpl.warn_drain = true;
                       cpl.stats.exp = temp;
                       // get the real level depending on the exp
                       for(x=0;x<=110;x++)
@@ -838,7 +855,7 @@ void Network::StatsCmd(unsigned char *data, int len)
                       cpl.stats.level = (char) * (data + i++);
                       if (cpl.stats.level != cpl.stats.exp_level)
                       {
-                          cpl.warn_drain = TRUE;
+                          cpl.warn_drain = true;
                       }
                       break;
                     case CS_STAT_WC:
@@ -1333,7 +1350,7 @@ void Network::SetupCmd(unsigned char *buf, int len)
         }
         if (!strcmp((const char*)cmd, "sn")) // Sound.
         {
-            if (!strcmp((const char*)param, "FALSE"))
+            if (!strcmp((const char*)param, "false"))
             {
                 ;
             }
@@ -1378,29 +1395,11 @@ void Network::SetupCmd(unsigned char *buf, int len)
 //================================================================================================
 void Network::checkFileStatus(const char *cmd, char *param, int fileNr)
 {
-    if (!strcmp((const char*)param, "FALSE"))
-    {
-        Logger::log().info() << "Get " << cmd << ": " << param;
-        return;
-    }
-    if (strcmp((const char*)param, "OK"))
-    {
-        ServerFile::getSingleton().setStatus(fileNr, ServerFile::STATUS_OUTDATED);
-        for (; *param != 0; ++param)
-        {
-            if (*param == '|')
-            {
-                *param = 0;
-                ServerFile::getSingleton().setLength(fileNr, atoi(param));
-                ServerFile::getSingleton().setCRC   (fileNr, strtoul(param + 1, 0, 16));
-                return;
-            }
-        }
-    }
+    ServerFile::getSingleton().checkFileStatus(cmd, param, fileNr);
 }
 
 //================================================================================================
-// Server has send us a file: uncompress and save it.
+// .
 //================================================================================================
 void Network::DataCmd(unsigned char *data, int len)
 {
@@ -1417,23 +1416,21 @@ void Network::DataCmd(unsigned char *data, int len)
     }
     --len;
     ++data;
-
     // ////////////////////////////////////////////////////////////////////
     // Uncompress if needed.
     // ////////////////////////////////////////////////////////////////////
     char *dest =0;
     if (data_type & DATA_PACKED_CMD)
     {
-        // warning! if the uncompressed size of a incoming compressed(!) file
-        // is larger as this dest_len default setting, the file is cutted and
-        // the rest skiped. Look at the zlib docu for more info.
+        // Warning! if the uncompressed size of a incoming compressed(!) file is larger then
+        // dest_len default setting, the file is cutted and the rest skiped.
+        // Look at the zlib docu for more info.
         unsigned long dest_len = 512 * 1024;
         dest = new char[dest_len];
         uncompress((unsigned char *)dest, &dest_len, (unsigned char *)data, len);
         data = (unsigned char*)dest;
         len  = dest_len;
     }
-
     // ////////////////////////////////////////////////////////////////////
     // Save the file.
     // ////////////////////////////////////////////////////////////////////
@@ -1444,13 +1441,7 @@ void Network::DataCmd(unsigned char *data, int len)
     else
         out.write((char*)data, len);
     delete[] dest;
-
-    ServerFile::getSingleton().updateDone();
-    // ////////////////////////////////////////////////////////////////////
-    // Reload the new file.
-    // ////////////////////////////////////////////////////////////////////
-    //         if (data_cmd-1 == SERVER_FILE_SKILLS) { read_skills(); }
-    //    else if (data_cmd-1 == SERVER_FILE_SPELLS) { read_spells(); }
+    ServerFile::getSingleton().setStatus(data_cmd, ServerFile::STATUS_OK);
 }
 
 //================================================================================================
@@ -1556,7 +1547,7 @@ void Network::InterfaceCmd(unsigned char *data, int len)
                 // Prefilled (and focused) textfield
                 if (gui_interface_npc->used_flag&GUI_INTERFACE_TEXTFIELD)
                 {
-                    gui_interface_npc->input_flag = TRUE;
+                    gui_interface_npc->input_flag = true;
                     open_input_mode(240);
                     textwin_putstring(gui_interface_npc->textfield.text);
                     cpl.input_mode = INPUT_MODE_NPCDIALOG;

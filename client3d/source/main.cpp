@@ -275,6 +275,7 @@ int main(int argc, char **argv)
         // ////////////////////////////////////////////////////////////////////
         // End of mainloop -> Clean up.
         // ////////////////////////////////////////////////////////////////////
+        Logger::log().headline() << "Shutdown";
         Events::getSingleton().freeRecources();
         delete root;
     }

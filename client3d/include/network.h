@@ -221,7 +221,7 @@ private:
     Server;
     std::vector<Server*>mvServer;
 
-    static bool abort_thread;
+    static bool mAbortThread;
     static SDL_Thread *input_thread;
     static SDL_mutex  *input_buffer_mutex;
     static SDL_cond   *input_buffer_cond;
@@ -232,15 +232,17 @@ private:
     static ClientSocket csocket;
     int mActServerNr;
     struct sockaddr_in  insock;       // Server's attributes
+    static bool mEndianConvert;
     bool mInitDone;
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    void parse_metaserver_data(Ogre::String strMetaData);
+    void parse_metaserver_data(Ogre::String &strMetaData);
     Network();
     ~Network();
     Network(const Network&); // disable copy-constructor.
+    static int strToInt(unsigned char *buf, int bytes); /**< Must be private to make it thread safe **/
 };
 
 #endif
