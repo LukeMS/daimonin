@@ -37,59 +37,7 @@ attack_pierce 100
 speed -0.053
 level 1
 weight 8500
-anim
-facings 25
-dummy.111
-dummy.111
-bee_killer.131
-bee_killer.132
-bee_killer.131
-bee_killer.132
-bee_killer.131
-bee_killer.132
-bee_killer.131
-bee_killer.132
-bee_killer.151
-bee_killer.152
-bee_killer.151
-bee_killer.152
-bee_killer.151
-bee_killer.152
-bee_killer.151
-bee_killer.152
-bee_killer.231
-bee_killer.132
-bee_killer.231
-bee_killer.132
-bee_killer.231
-bee_killer.132
-bee_killer.231
-bee_killer.132
-bee_killer.251
-bee_killer.152
-bee_killer.251
-bee_killer.152
-bee_killer.251
-bee_killer.152
-bee_killer.251
-bee_killer.152
-bee_killer.231
-bee_killer.132
-bee_killer.231
-bee_killer.132
-bee_killer.231
-bee_killer.132
-bee_killer.231
-bee_killer.132
-bee_killer.251
-bee_killer.152
-bee_killer.251
-bee_killer.152
-bee_killer.251
-bee_killer.152
-bee_killer.251
-bee_killer.152
-mina
+animation bee_killer
 is_animated 1
 anim_speed 4
 no_pick 1

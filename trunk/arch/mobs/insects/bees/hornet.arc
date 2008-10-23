@@ -38,59 +38,7 @@ attack_poison 10
 speed -0.053
 level 1
 weight 11500
-anim
-facings 25
-dummy.111
-dummy.111
-hornet.111
-hornet.112
-hornet.121
-hornet.122
-hornet.131
-hornet.132
-hornet.141
-hornet.142
-hornet.151
-hornet.152
-hornet.161
-hornet.162
-hornet.171
-hornet.172
-hornet.181
-hornet.182
-hornet.111
-hornet.112
-hornet.121
-hornet.122
-hornet.131
-hornet.132
-hornet.141
-hornet.142
-hornet.151
-hornet.152
-hornet.161
-hornet.162
-hornet.171
-hornet.172
-hornet.181
-hornet.182
-hornet.111
-hornet.112
-hornet.121
-hornet.122
-hornet.131
-hornet.132
-hornet.141
-hornet.142
-hornet.151
-hornet.152
-hornet.161
-hornet.162
-hornet.171
-hornet.172
-hornet.181
-hornet.182
-mina
+animation hornet
 is_animated 1
 anim_speed 4
 no_pick 1
