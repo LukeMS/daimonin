@@ -43,59 +43,7 @@ resist_fear 25
 speed -0.057
 level 1
 weight 483250
-anim
-facings 25
-dummy.111
-dummy.111
-minotaur.131
-minotaur.132
-minotaur.131
-minotaur.132
-minotaur.131
-minotaur.132
-minotaur.131
-minotaur.132
-minotaur.151
-minotaur.152
-minotaur.151
-minotaur.152
-minotaur.151
-minotaur.152
-minotaur.151
-minotaur.152
-minotaur.131
-minotaur.132
-minotaur.131
-minotaur.132
-minotaur.131
-minotaur.132
-minotaur.131
-minotaur.132
-minotaur.151
-minotaur.152
-minotaur.151
-minotaur.152
-minotaur.151
-minotaur.152
-minotaur.151
-minotaur.152
-minotaur.331
-minotaur.132
-minotaur.331
-minotaur.132
-minotaur.331
-minotaur.132
-minotaur.331
-minotaur.132
-minotaur.351
-minotaur.152
-minotaur.351
-minotaur.152
-minotaur.351
-minotaur.152
-minotaur.351
-minotaur.152
-mina
+animation minotaur
 is_animated 1
 anim_speed 4
 no_pick 1
