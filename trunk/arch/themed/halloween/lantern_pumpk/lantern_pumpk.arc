@@ -6,10 +6,7 @@ can_stack 1
 nrof 1
 layer 3
 type 74
-anim
-lantern_pumpk_a.101
-lantern_pumpk_a.102
-mina
+animation lantern_pumpk_a
 anim_speed 4
 material 32
 material_real -1
@@ -30,10 +27,7 @@ can_stack 1
 nrof 1
 layer 3
 type 74
-anim
-lantern_pumpk_b.101
-lantern_pumpk_b.102
-mina
+animation lantern_pumpk_b
 anim_speed 4
 material 32
 material_real -1
@@ -54,10 +48,7 @@ can_stack 1
 nrof 1
 layer 3
 type 74
-anim
-lantern_pumpk_c.101
-lantern_pumpk_c.102
-mina
+animation lantern_pumpk_c
 anim_speed 4
 material 32
 material_real -1
@@ -78,10 +69,7 @@ can_stack 1
 nrof 1
 layer 3
 type 74
-anim
-lantern_pumpk_d.101
-lantern_pumpk_d.102
-mina
+animation lantern_pumpk_d
 anim_speed 4
 material 32
 material_real -1
@@ -93,4 +81,3 @@ speed 0.15
 last_eat 1
 last_sp 3
 end
-

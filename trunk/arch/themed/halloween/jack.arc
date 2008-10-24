@@ -6,27 +6,7 @@ other_arch jack_unlit
 direction 5
 layer 3
 type 74
-anim
-facings 9
-dummy.111
-dummy.111
-dummy.111
-dummy.111
-dummy.111
-dummy.111
-jackolantern.131
-jackolantern.132
-dummy.111
-dummy.111
-jackolantern.151
-jackolantern.152
-dummy.111
-dummy.111
-dummy.111
-dummy.111
-dummy.111
-dummy.111
-mina
+animation jack
 is_animated 1
 is_turnable 1
 anim_speed 4
@@ -40,4 +20,3 @@ speed 0.15
 last_eat 1
 last_sp 5
 end
-
