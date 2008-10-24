@@ -49,59 +49,7 @@ attack_impact 100
 speed -0.061
 level 1
 weight 365000
-anim
-facings 25
-dummy.111
-dummy.111
-troll.131
-troll.131
-troll.131
-troll.131
-troll.131
-troll.131
-troll.131
-troll.131
-troll.151
-troll.151
-troll.151
-troll.151
-troll.151
-troll.151
-troll.151
-troll.151
-troll.131
-troll.131
-troll.131
-troll.131
-troll.131
-troll.131
-troll.131
-troll.131
-troll.151
-troll.151
-troll.151
-troll.151
-troll.151
-troll.151
-troll.151
-troll.151
-troll.131
-troll.132
-troll.131
-troll.132
-troll.131
-troll.132
-troll.131
-troll.132
-troll.151
-troll.152
-troll.151
-troll.152
-troll.151
-troll.152
-troll.151
-troll.152
-mina
+animation troll
 is_animated 1
 anim_speed 5
 no_pick 1

@@ -36,59 +36,7 @@ attack_cleave 100
 speed -0.048
 level 1
 weight 355000
-anim
-facings 25
-dummy.111
-dummy.111
-quickwood.131
-quickwood.132
-quickwood.131
-quickwood.132
-quickwood.131
-quickwood.132
-quickwood.131
-quickwood.132
-quickwood.151
-quickwood.152
-quickwood.151
-quickwood.152
-quickwood.151
-quickwood.152
-quickwood.151
-quickwood.152
-quickwood.131
-quickwood.132
-quickwood.131
-quickwood.132
-quickwood.131
-quickwood.132
-quickwood.131
-quickwood.132
-quickwood.151
-quickwood.152
-quickwood.151
-quickwood.152
-quickwood.151
-quickwood.152
-quickwood.151
-quickwood.152
-quickwood.131
-quickwood.231
-quickwood.131
-quickwood.231
-quickwood.131
-quickwood.231
-quickwood.131
-quickwood.231
-quickwood.151
-quickwood.251
-quickwood.151
-quickwood.251
-quickwood.151
-quickwood.251
-quickwood.151
-quickwood.251
-mina
+animation quickwood
 is_animated 1
 anim_speed 4
 no_pick 1
