@@ -41,59 +41,7 @@ attack_slash 100
 speed -0.047
 level 1
 weight 48500
-anim
-facings 25
-dummy.111
-dummy.111
-dancerf1.111
-dancerf1.112
-dancerf1.111
-dancerf1.112
-dancerf1.111
-dancerf1.112
-dancerf1.111
-dancerf1.112
-dancerf1.111
-dancerf1.112
-dancerf1.111
-dancerf1.112
-dancerf1.111
-dancerf1.112
-dancerf1.111
-dancerf1.112
-dancerf1.111
-dancerf1.112
-dancerf1.111
-dancerf1.112
-dancerf1.111
-dancerf1.112
-dancerf1.111
-dancerf1.112
-dancerf1.111
-dancerf1.112
-dancerf1.111
-dancerf1.112
-dancerf1.111
-dancerf1.112
-dancerf1.111
-dancerf1.112
-dancerf1.111
-dancerf1.112
-dancerf1.111
-dancerf1.112
-dancerf1.111
-dancerf1.112
-dancerf1.111
-dancerf1.112
-dancerf1.111
-dancerf1.112
-dancerf1.111
-dancerf1.112
-dancerf1.111
-dancerf1.112
-dancerf1.111
-dancerf1.112
-mina
+animation dancerf1
 is_animated 1
 anim_speed 4
 no_pick 1
