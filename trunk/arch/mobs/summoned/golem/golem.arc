@@ -39,59 +39,7 @@ attack_impact 100
 speed -0.046
 level 1
 weight 185000
-anim
-facings 25
-dummy.111
-dummy.111
-golem.131
-golem.132
-golem.131
-golem.132
-golem.131
-golem.132
-golem.131
-golem.132
-golem.151
-golem.152
-golem.151
-golem.152
-golem.151
-golem.152
-golem.151
-golem.152
-golem.131
-golem.132
-golem.131
-golem.132
-golem.131
-golem.132
-golem.131
-golem.132
-golem.151
-golem.152
-golem.151
-golem.152
-golem.151
-golem.152
-golem.151
-golem.152
-golem.131
-golem.232
-golem.131
-golem.232
-golem.131
-golem.232
-golem.131
-golem.232
-golem.151
-golem.252
-golem.151
-golem.252
-golem.151
-golem.252
-golem.151
-golem.252
-mina
+animation golem
 is_animated 1
 anim_speed 4
 no_pick 1

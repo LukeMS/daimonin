@@ -39,59 +39,7 @@ attack_impact 100
 speed -0.046
 level 1
 weight 185000
-anim
-facings 25
-dummy.111
-dummy.111
-black_golem_mage.131
-black_golem_mage.132
-black_golem_mage.131
-black_golem_mage.132
-black_golem_mage.131
-black_golem_mage.132
-black_golem_mage.131
-black_golem_mage.132
-black_golem_mage.151
-black_golem_mage.152
-black_golem_mage.151
-black_golem_mage.152
-black_golem_mage.151
-black_golem_mage.152
-black_golem_mage.151
-black_golem_mage.152
-black_golem_mage.131
-black_golem_mage.132
-black_golem_mage.131
-black_golem_mage.132
-black_golem_mage.131
-black_golem_mage.132
-black_golem_mage.131
-black_golem_mage.132
-black_golem_mage.151
-black_golem_mage.152
-black_golem_mage.151
-black_golem_mage.152
-black_golem_mage.151
-black_golem_mage.152
-black_golem_mage.151
-black_golem_mage.152
-black_golem_mage.131
-black_golem_mage.232
-black_golem_mage.131
-black_golem_mage.232
-black_golem_mage.131
-black_golem_mage.232
-black_golem_mage.131
-black_golem_mage.232
-black_golem_mage.151
-black_golem_mage.252
-black_golem_mage.151
-black_golem_mage.252
-black_golem_mage.151
-black_golem_mage.252
-black_golem_mage.151
-black_golem_mage.252
-mina
+animation black_golem_mage
 is_animated 1
 anim_speed 4
 no_pick 1
