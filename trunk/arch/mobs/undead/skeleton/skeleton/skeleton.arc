@@ -41,34 +41,7 @@ attack_slash 100
 speed -0.048
 level 1
 weight 27500
-anim
-facings 25
-dummy.111
-skeleton.131
-skeleton.131
-skeleton.131
-skeleton.131
-skeleton.151
-skeleton.151
-skeleton.151
-skeleton.151
-skeleton.131
-skeleton.131
-skeleton.131
-skeleton.131
-skeleton.151
-skeleton.151
-skeleton.151
-skeleton.151
-skeleton.131
-skeleton.131
-skeleton.131
-skeleton.131
-skeleton.151
-skeleton.151
-skeleton.151
-skeleton.151
-mina
+animation skeleton
 is_animated 1
 anim_speed 4
 no_pick 1

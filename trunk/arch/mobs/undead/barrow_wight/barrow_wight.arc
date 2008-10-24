@@ -44,34 +44,7 @@ attack_paralyze 30
 speed -0.047
 level 1
 weight 62500
-anim
-facings 25
-dummy.111
-barrow_wight.111
-barrow_wight.121
-barrow_wight.131
-barrow_wight.141
-barrow_wight.151
-barrow_wight.161
-barrow_wight.171
-barrow_wight.181
-barrow_wight.111
-barrow_wight.121
-barrow_wight.131
-barrow_wight.141
-barrow_wight.151
-barrow_wight.161
-barrow_wight.171
-barrow_wight.181
-barrow_wight.111
-barrow_wight.121
-barrow_wight.131
-barrow_wight.141
-barrow_wight.151
-barrow_wight.161
-barrow_wight.171
-barrow_wight.181
-mina
+animation barrow_wight
 is_animated 1
 anim_speed 4
 no_pick 1
