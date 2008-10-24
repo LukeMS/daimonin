@@ -41,59 +41,7 @@ resist_acid 25
 speed -0.054
 level 1
 weight 732500
-anim
-facings 25
-dummy.111
-dummy.111
-great_pumpkin.131
-great_pumpkin.132
-great_pumpkin.131
-great_pumpkin.132
-great_pumpkin.131
-great_pumpkin.132
-great_pumpkin.131
-great_pumpkin.132
-great_pumpkin.151
-great_pumpkin.152
-great_pumpkin.151
-great_pumpkin.152
-great_pumpkin.151
-great_pumpkin.152
-great_pumpkin.151
-great_pumpkin.152
-great_pumpkin.131
-great_pumpkin.132
-great_pumpkin.131
-great_pumpkin.132
-great_pumpkin.131
-great_pumpkin.132
-great_pumpkin.131
-great_pumpkin.132
-great_pumpkin.151
-great_pumpkin.152
-great_pumpkin.151
-great_pumpkin.152
-great_pumpkin.151
-great_pumpkin.152
-great_pumpkin.151
-great_pumpkin.152
-great_pumpkin.131
-great_pumpkin.331
-great_pumpkin.131
-great_pumpkin.331
-great_pumpkin.131
-great_pumpkin.331
-great_pumpkin.131
-great_pumpkin.331
-great_pumpkin.151
-great_pumpkin.351
-great_pumpkin.151
-great_pumpkin.351
-great_pumpkin.151
-great_pumpkin.351
-great_pumpkin.151
-great_pumpkin.351
-mina
+animation g_pumpkin
 is_animated 1
 anim_speed 4
 no_pick 1

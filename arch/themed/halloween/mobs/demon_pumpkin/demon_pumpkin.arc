@@ -41,59 +41,7 @@ resist_acid 25
 speed -0.054
 level 1
 weight 732500
-anim
-facings 25
-dummy.111
-dummy.111
-demon_pumpkin.211
-demon_pumpkin.211
-demon_pumpkin.221
-demon_pumpkin.222
-demon_pumpkin.231
-demon_pumpkin.232
-demon_pumpkin.241
-demon_pumpkin.242
-demon_pumpkin.251
-demon_pumpkin.252
-demon_pumpkin.261
-demon_pumpkin.262
-demon_pumpkin.271
-demon_pumpkin.271
-demon_pumpkin.281
-demon_pumpkin.281
-demon_pumpkin.211
-demon_pumpkin.211
-demon_pumpkin.221
-demon_pumpkin.222
-demon_pumpkin.231
-demon_pumpkin.232
-demon_pumpkin.241
-demon_pumpkin.242
-demon_pumpkin.251
-demon_pumpkin.252
-demon_pumpkin.261
-demon_pumpkin.262
-demon_pumpkin.271
-demon_pumpkin.271
-demon_pumpkin.281
-demon_pumpkin.281
-demon_pumpkin.211
-demon_pumpkin.211
-demon_pumpkin.221
-demon_pumpkin.222
-demon_pumpkin.231
-demon_pumpkin.232
-demon_pumpkin.241
-demon_pumpkin.242
-demon_pumpkin.251
-demon_pumpkin.252
-demon_pumpkin.261
-demon_pumpkin.262
-demon_pumpkin.271
-demon_pumpkin.271
-demon_pumpkin.281
-demon_pumpkin.281
-mina
+animation demon_pumpkin
 is_animated 1
 anim_speed 4
 no_pick 1
