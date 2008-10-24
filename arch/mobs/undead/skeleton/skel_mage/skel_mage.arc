@@ -46,59 +46,7 @@ attack_cleave 100
 speed -0.048
 level 1
 weight 28500
-anim
-facings 25
-dummy.111
-dummy.111
-skel_mage.131
-skel_mage.132
-skel_mage.131
-skel_mage.132
-skel_mage.131
-skel_mage.132
-skel_mage.131
-skel_mage.132
-skel_mage.151
-skel_mage.152
-skel_mage.151
-skel_mage.152
-skel_mage.151
-skel_mage.152
-skel_mage.151
-skel_mage.152
-skel_mage.131
-skel_mage.132
-skel_mage.131
-skel_mage.132
-skel_mage.131
-skel_mage.132
-skel_mage.131
-skel_mage.132
-skel_mage.151
-skel_mage.152
-skel_mage.151
-skel_mage.152
-skel_mage.151
-skel_mage.152
-skel_mage.151
-skel_mage.152
-skel_mage.132
-skel_mage.231
-skel_mage.132
-skel_mage.231
-skel_mage.132
-skel_mage.231
-skel_mage.132
-skel_mage.231
-skel_mage.152
-skel_mage.251
-skel_mage.152
-skel_mage.251
-skel_mage.152
-skel_mage.251
-skel_mage.152
-skel_mage.251
-mina
+animation skel_mage
 is_animated 1
 anim_speed 4
 no_pick 1
