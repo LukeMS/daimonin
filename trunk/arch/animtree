@@ -12,7 +12,6 @@
 /mobs/human/archers/archer
 /items/weapon/missile/amun/arrow
 /items/weapon/missile/amun/arrow_fey
-/intern/system/arrow_sys
 /items/weapon/missile/amun/arrow_wintersevent
 /items/weapon/throw/impact/ball
 /items/weapon/throw/impact/ball_winter
@@ -57,7 +56,6 @@
 /masks/sky/blue_sky_wmask_d
 /scenery/swarms/bluebottles/bluebottles
 /items/weapon/missile/amun/bolt
-/intern/system/bolt_sys
 /items/weapon/missile/amun/bolt_wintersevent
 /mobs/demon/bone_devil/bone_devil
 /items/organic/drinkable/bottle_soul
@@ -194,8 +192,6 @@
 /mobs/dwarves/noble/dwarf_noble
 /scenery/water_wheels/dwarf_wheel
 /scenery/water_wheels/dwarf_wheel_2
-/scenery/water_wheels/dwarf_wheelb
-/scenery/water_wheels/dwarf_wheelb_2
 /mobs/elementals/elemental_ice/elemental_ice
 /themed/xmas/elf_toytable
 /themed/xmas/elf_toytable2
@@ -214,9 +210,7 @@
 /magic/fire/firebolt
 /magic/fire/firebreath
 /scenery/hearths/fireplace_left
-/scenery/hearths/fireplace_leftb
 /scenery/hearths/fireplace_right
-/scenery/hearths/fireplace_rightb
 /masks/flags/flag_01
 /masks/flags/flag_02
 /masks/flags/flag_03
@@ -228,8 +222,6 @@
 /masks/lava/fmask_lava_wall.151
 /masks/ruins/fmask_ruin1a.111
 /scenery/fog/fog
-/scenery/fog/fog_glow1
-/scenery/fog/fog_glow2
 /scenery/tools/forge_111
 /mobs/animals/frogs/frog
 /magic/cold/frostbolt
@@ -241,6 +233,7 @@
 /gates/gates/gateTrg1_open
 /gates/gates/gate_closed
 /gates/gates/gate_open
+/items/armour/gauntlets/gauntlet_lich
 /mobs/undead/ghoul/ghoul
 /mobs/giants/fire_giant/giant_fire
 /mobs/giants/frost_giant/giant_frost
@@ -300,7 +293,7 @@
 /mobs/amoeboid/jellies/jelly_red
 /mobs/amoeboid/jellies/jelly_spotted
 /items/container/cookware/kettle
-/scenery/tables/kettle table
+/scenery/tables/kettle_table
 /scenery/benches/kiddy_bench.111
 /mobs/human/nobles/king
 /mobs/human/nobles/king1
@@ -425,7 +418,7 @@
 /mobs/demon/oty/oty
 /mobs/animals/owl/owl_snow
 /mobs/animals/owl/owl_snow_large
-/mobs/human/town/pair_human
+/themed/vday/pair_human
 /mobs/animals/birds/parrot
 /mobs/human/thief/patron
 /mobs/human/peasant/peasant
@@ -508,7 +501,9 @@
 /mobs/human/nobles/queen
 /mobs/plants/quickwood/quickwood
 /mobs/demon/raas/raas
-/items/container/racks/rack.111
+/items/container/racks/rack1
+/items/container/racks/rack2
+/items/container/racks/rack3
 /items/container/chests/treasure_chests/random_chest_black
 /items/container/chests/treasure_chests/random_chest_metal
 /items/container/chests/treasure_chests/random_chest_wood
@@ -586,6 +581,7 @@
 /mobs/human/pirates/ship_captain
 /exits/teleporters/shop_mat
 /scenery/shrines/shrine1.111
+/items/signs/sign_atrillia
 /items/signs/sign_generic
 /items/signs/sign_pub
 /mobs/undead/skeleton/skel_fighter1/skel_fighter1
@@ -601,7 +597,6 @@
 /mobs/animals/reptiles/snake
 /items/weapon/throw/impact/snow_ball
 /items/weapon/throw/impact/snow_ball2
-/intern/system/snowball_sys
 /items/misc/snowflake
 /themed/xmas/snowflakey
 /themed/xmas/mobs/snowman/snowman_evil
@@ -613,7 +608,6 @@
 /special/spinner/spinner
 /items/magic_tools/sr_scepter1
 /items/weapon/missile/amun/sstone
-/intern/system/sstone_sys
 /items/weapon/missile/amun/sstone_wintersevent
 /exits/stairs/stairs_red_down
 /exits/stairs/stairs_red_up
@@ -624,7 +618,6 @@
 /themed/xmas/star_davidt
 /items/weapon/throw/slash/starsdavid
 /items/weapon/throw/slash/starsdavid2
-/intern/system/starsdavid_sys
 /scenery/statues/statue_fire
 /scenery/statues/statue_white2
 /scenery/statues/statue_white3
@@ -633,19 +626,12 @@
 /scenery/misc/straw2.111
 /connectors/handles/switch_wall
 /items/weapon/throw/cleave/t_axe
-/intern/system/t_axe_sys
 /items/weapon/throw/impact/t_boulder
-/intern/system/t_boulder_sys
 /items/weapon/throw/pierce/t_dagger
-/intern/system/t_dagger_sys
 /items/weapon/throw/impact/t_hammer
-/intern/system/t_hammer_sys
 /items/weapon/throw/impact/t_lboulder
-/intern/system/t_lboulder_sys
 /items/weapon/throw/impact/t_rock
-/intern/system/t_rock_sys
 /items/weapon/throw/slash/t_star
-/intern/system/t_star_sys
 /gods/tabernacle/tabernacle_avatar
 /scenery/tables/table_lab1.111
 /scenery/tables/table_lab2.111
@@ -657,7 +643,6 @@
 /exits/misc/tele_rock
 /exits/misc/tele_stone
 /exits/teleporters/teleporter
-/scenery/fog/temp_fog
 /mobs/human/thief/thief_female
 /scenery/chairs/throne.111
 /scenery/wagons/tipper
@@ -697,22 +682,16 @@
 /items/magic_tools/wand
 /items/magic_tools/wand_frozenice
 /mobs/insects/bees/wasp_giant
-/masks/misc/water hole
+/masks/misc/water_hole
 /floors/water/water_still
 /floors/water/water_still_deep
 /floors/water/water_still_deepest
 /scenery/rocks/waterfall_huge
-/scenery/rocks/waterfall_huge_a
-/scenery/rocks/waterfall_huge_b
-/scenery/rocks/waterfall_huge_c
-/scenery/rocks/waterfall_huge_d
-/scenery/rocks/waterfall_huge_e
-/scenery/rocks/waterfall_huge_f
-/scenery/rocks/waterfall_huge_g
-/scenery/rocks/waterfall_huge_h
 /scenery/water/watertrough.111
 /mobs/human/smithy/weapon_smith
 /themed/xmas/white_xmas_tree
+/mobs/human/mages/wizard_fm
+/mobs/human/mages/wizard_white
 /masks/flags/wmask_bflag_brown_1
 /masks/flags/wmask_bflag_fire1_1
 /masks/hearths/wmask_fire_off_1

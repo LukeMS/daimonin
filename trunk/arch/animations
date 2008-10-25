@@ -396,18 +396,6 @@ arrow_fey.161
 arrow_fey.171
 arrow_fey.181
 mina
-anim arrow_sys
-facings 9
-arrow.101
-arrow.111
-arrow.121
-arrow.131
-arrow.141
-arrow.151
-arrow.161
-arrow.171
-arrow.181
-mina
 anim arrow_wintersevent
 facings 9
 arrow_wintersevent.101
@@ -1529,18 +1517,6 @@ bluebottles.103
 bluebottles.104
 mina
 anim bolt
-facings 9
-bolt.101
-bolt.111
-bolt.121
-bolt.131
-bolt.141
-bolt.151
-bolt.161
-bolt.171
-bolt.181
-mina
-anim bolt_sys
 facings 9
 bolt.101
 bolt.111
@@ -5825,16 +5801,6 @@ dwarf_wheel_2.101
 dwarf_wheel_2.102
 dwarf_wheel_2.103
 mina
-anim dwarf_wheelb
-dwarf_wheel.101
-dwarf_wheel.102
-dwarf_wheel.103
-mina
-anim dwarf_wheelb_2
-dwarf_wheel_2.101
-dwarf_wheel_2.102
-dwarf_wheel_2.103
-mina
 anim elemental_ice
 facings 25
 dummy.111
@@ -6315,17 +6281,7 @@ fireplace_left.101
 fireplace_left.102
 fireplace_left.103
 mina
-anim fireplace_leftb
-fireplace_left.101
-fireplace_left.102
-fireplace_left.103
-mina
 anim fireplace_right
-fireplace_right.101
-fireplace_right.102
-fireplace_right.103
-mina
-anim fireplace_rightb
 fireplace_right.101
 fireplace_right.102
 fireplace_right.103
@@ -6454,28 +6410,6 @@ fmask_ruin1a.131
 fmask_ruin1a.111
 mina
 anim fog
-fog.111
-fog.112
-fog.111
-fog.111
-fog.112
-fog.111
-fog.111
-fog.112
-fog.111
-mina
-anim fog_glow1
-fog.111
-fog.112
-fog.111
-fog.111
-fog.112
-fog.111
-fog.111
-fog.112
-fog.111
-mina
-anim fog_glow2
 fog.111
 fog.112
 fog.111
@@ -6986,6 +6920,15 @@ gate_door1.132
 gate_door1.132
 gate_door1.131
 gate_door1.131
+mina
+anim gauntlet_lich
+gauntlets_lich.101
+gauntlets_lich.102
+gauntlets_lich.103
+gauntlets_lich.104
+gauntlets_lich.103
+gauntlets_lich.102
+gauntlets_lich.101
 mina
 anim ghoul
 facings 25
@@ -9606,7 +9549,7 @@ kettle.102
 kettle.103
 kettle.104
 mina
-anim kettle table
+anim kettle_table
 table_round_kettle.101
 table_round_kettle.102
 table_round_kettle.103
@@ -15898,7 +15841,7 @@ raas.151
 raas.351
 raas.153
 mina
-anim rack.111
+anim rack1
 facings 9
 dummy.111
 rack.111
@@ -15909,6 +15852,30 @@ rack.171
 rack.171
 rack.171
 rack.111
+mina
+anim rack2
+facings 9
+dummy.111
+rack2.111
+rack2.111
+rack2.111
+rack2.171
+rack2.171
+rack2.171
+rack2.171
+rack2.111
+mina
+anim rack3
+facings 9
+dummy.111
+rack3.111
+rack3.111
+rack3.111
+rack3.171
+rack3.171
+rack3.171
+rack3.171
+rack3.111
 mina
 anim random_chest_black
 facings 9
@@ -16989,6 +16956,18 @@ shrine1.171
 shrine1.171
 shrine1.111
 mina
+anim sign_atrillia
+facings 9
+dummy.111
+sign_atrillia.151
+sign_atrillia.151
+sign_atrillia.131
+sign_atrillia.131
+sign_atrillia.151
+sign_atrillia.151
+sign_atrillia.131
+sign_atrillia.131
+mina
 anim sign_generic
 facings 9
 dummy.111
@@ -17092,7 +17071,6 @@ skel_fighter1.382
 skel_fighter1.383
 mina
 anim skel_fighter2
-facings 25
 dummy.111
 dummy.111
 dummy.111
@@ -17670,18 +17648,6 @@ snowball2.101
 snowball2.101
 snowball2.101
 mina
-anim snowball_sys
-facings 9
-snowball.101
-snowball.111
-snowball.111
-snowball.111
-snowball.111
-snowball.111
-snowball.111
-snowball.111
-snowball.111
-mina
 anim snowflake
 glass_snowflake.101
 glass_snowflake.102
@@ -18047,18 +18013,6 @@ sstone.111
 sstone.111
 sstone.111
 mina
-anim sstone_sys
-facings 9
-sstone.101
-sstone.111
-sstone.111
-sstone.111
-sstone.111
-sstone.111
-sstone.111
-sstone.111
-sstone.111
-mina
 anim sstone_wintersevent
 facings 9
 sstone_wintersevent.101
@@ -18175,18 +18129,6 @@ starsofdavid.111
 starsofdavid.111
 starsofdavid.111
 mina
-anim starsdavid_sys
-facings 9
-starsdavid.101
-starsdavid.111
-starsdavid.111
-starsdavid.111
-starsdavid.111
-starsdavid.111
-starsdavid.111
-starsdavid.111
-starsdavid.111
-mina
 anim statue_fire
 statue_fire.111
 statue_fire.112
@@ -18285,31 +18227,7 @@ t_axe.111
 t_axe.111
 t_axe.111
 mina
-anim t_axe_sys
-facings 9
-t_axe.101
-t_axe.111
-t_axe.111
-t_axe.111
-t_axe.111
-t_axe.111
-t_axe.111
-t_axe.111
-t_axe.111
-mina
 anim t_boulder
-facings 9
-t_boulder.101
-t_boulder.101
-t_boulder.101
-t_boulder.101
-t_boulder.101
-t_boulder.101
-t_boulder.101
-t_boulder.101
-t_boulder.101
-mina
-anim t_boulder_sys
 facings 9
 t_boulder.101
 t_boulder.101
@@ -18333,31 +18251,7 @@ t_dagger.161
 t_dagger.171
 t_dagger.181
 mina
-anim t_dagger_sys
-facings 9
-t_dagger.101
-t_dagger.111
-t_dagger.121
-t_dagger.131
-t_dagger.141
-t_dagger.151
-t_dagger.161
-t_dagger.171
-t_dagger.181
-mina
 anim t_hammer
-facings 9
-hammer_2.101
-hammer_2.111
-hammer_2.121
-hammer_2.131
-hammer_2.141
-hammer_2.151
-hammer_2.161
-hammer_2.171
-hammer_2.181
-mina
-anim t_hammer_sys
 facings 9
 hammer_2.101
 hammer_2.111
@@ -18381,18 +18275,6 @@ t_lboulder.101
 t_lboulder.101
 t_lboulder.101
 mina
-anim t_lboulder_sys
-facings 9
-t_lboulder.101
-t_lboulder.101
-t_lboulder.101
-t_lboulder.101
-t_lboulder.101
-t_lboulder.101
-t_lboulder.101
-t_lboulder.101
-t_lboulder.101
-mina
 anim t_rock
 facings 9
 t_rock.101
@@ -18405,31 +18287,7 @@ t_rock.101
 t_rock.101
 t_rock.101
 mina
-anim t_rock_sys
-facings 9
-t_rock.101
-t_rock.101
-t_rock.101
-t_rock.101
-t_rock.101
-t_rock.101
-t_rock.101
-t_rock.101
-t_rock.101
-mina
 anim t_star
-facings 9
-t_star.101
-t_star.111
-t_star.111
-t_star.111
-t_star.111
-t_star.111
-t_star.111
-t_star.111
-t_star.111
-mina
-anim t_star_sys
 facings 9
 t_star.101
 t_star.111
@@ -18647,17 +18505,6 @@ mina
 anim teleporter
 exit.101
 exit.102
-mina
-anim temp_fog
-fog.111
-fog.112
-fog.111
-fog.111
-fog.112
-fog.111
-fog.111
-fog.112
-fog.111
 mina
 anim thief_female
 facings 25
@@ -19549,7 +19396,7 @@ wasp_giant.152
 wasp_giant.251
 wasp_giant.152
 mina
-anim water hole
+anim water_hole
 sewer_wall1on.131
 sewer_wall2on.131
 mina
@@ -19572,46 +19419,6 @@ lake_deepest.103
 lake_deepest.104
 mina
 anim waterfall_huge
-waterfall_huge.101
-waterfall_huge.102
-waterfall_huge.103
-mina
-anim waterfall_huge_a
-waterfall_huge.101
-waterfall_huge.102
-waterfall_huge.103
-mina
-anim waterfall_huge_b
-waterfall_huge.101
-waterfall_huge.102
-waterfall_huge.103
-mina
-anim waterfall_huge_c
-waterfall_huge.101
-waterfall_huge.102
-waterfall_huge.103
-mina
-anim waterfall_huge_d
-waterfall_huge.101
-waterfall_huge.102
-waterfall_huge.103
-mina
-anim waterfall_huge_e
-waterfall_huge.101
-waterfall_huge.102
-waterfall_huge.103
-mina
-anim waterfall_huge_f
-waterfall_huge.101
-waterfall_huge.102
-waterfall_huge.103
-mina
-anim waterfall_huge_g
-waterfall_huge.101
-waterfall_huge.102
-waterfall_huge.103
-mina
-anim waterfall_huge_h
 waterfall_huge.101
 waterfall_huge.102
 waterfall_huge.103
@@ -19687,6 +19494,162 @@ xmastreeinside.102
 xmastreeinside.103
 xmastreeinside.104
 xmastreeinside.105
+mina
+anim wizard_fm
+facings 25
+dummy.111
+dummy.111
+dummy.111
+wizard_fm.210
+wizard_fm.211
+wizard_fm.212
+wizard_fm.220
+wizard_fm.221
+wizard_fm.222
+wizard_fm.230
+wizard_fm.231
+wizard_fm.232
+wizard_fm.240
+wizard_fm.241
+wizard_fm.242
+wizard_fm.250
+wizard_fm.251
+wizard_fm.252
+wizard_fm.260
+wizard_fm.261
+wizard_fm.262
+wizard_fm.270
+wizard_fm.271
+wizard_fm.272
+wizard_fm.280
+wizard_fm.281
+wizard_fm.282
+wizard_fm.310
+wizard_fm.311
+wizard_fm.312
+wizard_fm.320
+wizard_fm.321
+wizard_fm.322
+wizard_fm.330
+wizard_fm.331
+wizard_fm.332
+wizard_fm.340
+wizard_fm.341
+wizard_fm.342
+wizard_fm.350
+wizard_fm.351
+wizard_fm.352
+wizard_fm.360
+wizard_fm.361
+wizard_fm.362
+wizard_fm.370
+wizard_fm.371
+wizard_fm.372
+wizard_fm.380
+wizard_fm.381
+wizard_fm.382
+wizard_fm.110
+wizard_fm.111
+wizard_fm.112
+wizard_fm.120
+wizard_fm.121
+wizard_fm.122
+wizard_fm.130
+wizard_fm.131
+wizard_fm.132
+wizard_fm.140
+wizard_fm.141
+wizard_fm.142
+wizard_fm.150
+wizard_fm.151
+wizard_fm.152
+wizard_fm.160
+wizard_fm.161
+wizard_fm.162
+wizard_fm.170
+wizard_fm.171
+wizard_fm.172
+wizard_fm.180
+wizard_fm.181
+wizard_fm.182
+mina
+anim wizard_white
+facings 25
+dummy.111
+dummy.111
+dummy.111
+wizard.111
+wizard.112
+wizard.113
+wizard.121
+wizard.122
+wizard.123
+wizard.131
+wizard.132
+wizard.133
+wizard.141
+wizard.142
+wizard.143
+wizard.151
+wizard.152
+wizard.153
+wizard.161
+wizard.162
+wizard.163
+wizard.171
+wizard.172
+wizard.173
+wizard.181
+wizard.182
+wizard.183
+wizard.211
+wizard.212
+wizard.213
+wizard.221
+wizard.222
+wizard.223
+wizard.231
+wizard.232
+wizard.233
+wizard.241
+wizard.242
+wizard.243
+wizard.251
+wizard.252
+wizard.253
+wizard.261
+wizard.262
+wizard.263
+wizard.271
+wizard.272
+wizard.273
+wizard.281
+wizard.282
+wizard.283
+wizard.311
+wizard.312
+wizard.313
+wizard.321
+wizard.322
+wizard.323
+wizard.331
+wizard.332
+wizard.333
+wizard.341
+wizard.342
+wizard.343
+wizard.351
+wizard.352
+wizard.353
+wizard.361
+wizard.362
+wizard.363
+wizard.371
+wizard.372
+wizard.373
+wizard.381
+wizard.382
+wizard.383
 mina
 anim wmask_bflag_brown_1
 facings 9
