@@ -4,11 +4,7 @@ race lamp_light
 layer 3
 face lamp_snow.101
 type 74
-anim
-lamp_snow.101
-lamp_snow.101
-mina
-is_animated 0
+animation lamp_snow
 anim_speed 4
 material 1024
 material_real 641
