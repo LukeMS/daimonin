@@ -1,13 +1,7 @@
 Object white_xmas_tree
 name large tree
 face xmastreeinside.101
-anim
-xmastreeinside.101
-xmastreeinside.102
-xmastreeinside.103
-xmastreeinside.104
-xmastreeinside.105
-mina
+animation white_xmas_tree
 is_animated 1
 anim_speed -.2
 identified 1

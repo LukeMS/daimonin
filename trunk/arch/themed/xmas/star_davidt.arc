@@ -6,14 +6,7 @@ hp -1
 sp -1
 type 66
 sub_type 1
-anim
-star_davidt.101
-star_davidt.102
-star_davidt.103
-star_davidt.104
-star_davidt.105
-star_davidt.106
-mina
+animation star_davidt
 is_animated 1
 anim_speed 4
 speed 0.1

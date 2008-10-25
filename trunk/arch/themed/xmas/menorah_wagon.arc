@@ -8,10 +8,5 @@ no_teleport 1
 layer 3
 is_animated 1
 anim_speed 4
-anim
-menorah_wagon.101
-menorah_wagon.102
-menorah_wagon.103
-menorah_wagon.104
-mina
+animation menorah_wagon
 end

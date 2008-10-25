@@ -5,18 +5,7 @@ other_arch cane_pole_unlit
 layer 5
 type 74
 glow_radius 5
-anim
-facings 9
-dummy.111
-dummy.111
-dummy.111
-cane_pole.131
-dummy.111
-cane_pole.151
-dummy.111
-dummy.111
-dummy.111
-mina
+animation cane_pole
 speed -0.02
 is_turnable 1
 anim_speed 4
@@ -28,4 +17,3 @@ weight 1250
 material 144
 food 1
 end
-

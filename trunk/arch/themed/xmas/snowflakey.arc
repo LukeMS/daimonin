@@ -2,12 +2,7 @@ Object snowflakey
 name snowflakey
 face snowflakey.101
 identified 1
-anim
-snowflakey.101
-snowflakey.102
-snowflakey.103
-snowflakey.104
-mina
+animation snowflakey
 is_animated 1
 anim_speed 4
 speed 0.1

@@ -7,10 +7,7 @@ grace 10
 layer 3
 can_stack 1
 face figpud2.101
-anim
-figpud2.101
-figpud2.102
-mina
+animation figpud2
 is_animated 1
 anim_speed 3
 type 6
