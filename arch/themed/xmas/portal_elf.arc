@@ -6,11 +6,7 @@ hp -1
 sp -1
 type 66
 sub_type 1
-anim
-portal_elf.101
-portal_elf.102
-portal_elf.103
-mina
+animation portal_elf
 is_animated 1
 anim_speed 4
 speed 0.1

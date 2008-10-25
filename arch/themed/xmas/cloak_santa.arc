@@ -23,12 +23,10 @@ resist_snare 4
 material_real 449
 material 128
 is_animated 1
-anim
-cloak_santa.101
-cloak_santa.102
-mina
+animation cloak_santa
 anim_speed 5
 end
+
 Object scarf
 name scarf
 type 87

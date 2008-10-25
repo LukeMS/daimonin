@@ -39,59 +39,7 @@ attack_impact 100
 speed -0.046
 level 1
 weight 185000
-anim
-facings 25
-dummy.111
-dummy.111
-snowman_evil2.131
-snowman_evil2.132
-snowman_evil2.131
-snowman_evil2.132
-snowman_evil2.131
-snowman_evil2.132
-snowman_evil2.131
-snowman_evil2.132
-snowman_evil2.151
-snowman_evil2.152
-snowman_evil2.151
-snowman_evil2.152
-snowman_evil2.151
-snowman_evil2.152
-snowman_evil2.151
-snowman_evil2.152
-snowman_evil2.131
-snowman_evil2.132
-snowman_evil2.131
-snowman_evil2.132
-snowman_evil2.131
-snowman_evil2.132
-snowman_evil2.131
-snowman_evil2.132
-snowman_evil2.151
-snowman_evil2.152
-snowman_evil2.151
-snowman_evil2.152
-snowman_evil2.151
-snowman_evil2.152
-snowman_evil2.151
-snowman_evil2.152
-snowman_evil2.131
-snowman_evil2.132
-snowman_evil2.131
-snowman_evil2.132
-snowman_evil2.131
-snowman_evil2.132
-snowman_evil2.131
-snowman_evil2.132
-snowman_evil2.151
-snowman_evil2.152
-snowman_evil2.151
-snowman_evil2.152
-snowman_evil2.151
-snowman_evil2.152
-snowman_evil2.151
-snowman_evil2.152
-mina
+animation snowman_evil2
 is_animated 1
 anim_speed 4
 no_pick 1

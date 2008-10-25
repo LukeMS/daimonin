@@ -2,11 +2,7 @@ Object evilelf
 name evil elf toy
 face evilelf.101
 identified 1
-anim
-evilelf.101
-evilelf.102
-evilelf.103
-mina
+animation evilelf
 is_animated 1
 anim_speed 5
 type 79

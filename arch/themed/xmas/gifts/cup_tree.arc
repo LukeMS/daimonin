@@ -2,10 +2,7 @@ Object cup_tree
 name tree mug
 face cup_tree.101
 identified 1
-anim
-cup_tree.101
-cup_tree.102
-mina
+animation cup_tree
 is_animated 1
 anim_speed 5
 type 79
