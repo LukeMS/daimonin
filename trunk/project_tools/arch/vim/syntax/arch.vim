@@ -129,7 +129,7 @@ syntax keyword archAttribute contained nextgroup=archNumber
      \ can_roll can_stack can_use_armour can_see_in_dark can_use_ring
      \ can_use_weapon carrying cha changing con confused connected container
      \ corpse corpse_forced cursed cursed_perm
-     \ damned damned_perm dex direction door_closed
+     \ dam damned damned_perm dex direction door_closed
      \ ego egobound egoclan egolock exp
      \ feared fly_off fly_on flying food friendly
      \ generator glow_radius grace
