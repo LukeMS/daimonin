@@ -30,25 +30,25 @@ highlight def link animComment Comment
 
 " AnimBlocks
 syntax region animAnimBlock contains=animComment,animIdentifier,animAttribute
-     \ matchgroup=animStructure start="\<anim\>"
-     \ matchgroup=animStructure end="\<mina\>"
+     \ matchgroup=animStructure start="^anim\>"
+     \ matchgroup=animStructure end="^mina$"
 syntax match animIdentifier contained
-     \ "\s\S\+$"
+     \ "\s\+\S\+$"hs=s-1
 
 highlight def link animAnimBlock String
 highlight def link animStructure Structure
 highlight def link animIdentifier Identifier
 
 " Attributes
-syntax keyword animAttribute contained nextgroup=animNumber
-     \ facings
+syntax match animAttribute contained nextgroup=animNumber
+     \ "^facings\s\+"
 
 highlight def link animAttribute Keyword
 
 " Values
 syntax match animNumber contained
-     \ "\s\+\-\?\d\+$"
+     \ "\-\?\d\+$"
 
 highlight def link animNumber Number
 
-let b:current_syntax = "anim"
+let b:current_syntax="anim"
