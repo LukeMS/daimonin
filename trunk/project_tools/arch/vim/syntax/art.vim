@@ -45,7 +45,7 @@ highlight def link artIdentifier Identifier
 syntax match artAttribute contained nextgroup=artString
      \ "^\%(artifact\|def_arch\|editor\|name\)\s\+"
 syntax match artAttribute contained nextgroup=artNumber
-     \ "^\%(chance\|difficulty\)\s\+"
+     \ "^\%(chance\|difficulty\|t_style\)\s\+"
 
 highlight def link artAttribute Keyword
 
