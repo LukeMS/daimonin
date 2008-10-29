@@ -2,7 +2,7 @@
 " Language:	Daimonin artifact files
 " Maintainer:	Smacky <smacky@smackysguides.net>
 " Last Change:	2008 Oct 29
-" Remarks:      Includes syntax/art.vim.
+" Remarks:      Includes syntax/arch.vim.
 
 if version < 600
   syntax clear
@@ -46,6 +46,8 @@ syntax match artAttribute contained nextgroup=artString
      \ "^\%(artifact\|def_arch\|editor\|name\)\s\+"
 syntax match artAttribute contained nextgroup=artNumber
      \ "^\%(chance\|difficulty\|t_style\)\s\+"
+syntax match archAttribute contained nextgroup=archNumber
+     \ "^\%(ac_add\|dam_add\|item_level_art\|wc_add\)\s\+"
 
 highlight def link artAttribute Keyword
 
