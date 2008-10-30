@@ -3,13 +3,10 @@
 " Maintainer:	Smacky <smacky@smackysguides.net>
 " Last Change:	2008 Oct 30
 
-if version < 600
-  syntax clear
-elseif exists("b:current_syntax")
+if exists("b:current_syntax")
   finish
 endif
 
-syntax clear
 syntax sync minlines=200
 syntax case ignore
 
