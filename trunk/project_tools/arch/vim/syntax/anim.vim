@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language:	Daimonin anim files
 " Maintainer:	Smacky <smacky@smackysguides.net>
-" Last Change:	2008 Oct 28
+" Last Change:	2008 Oct 30
 
 if version < 600
   syntax clear
@@ -29,26 +29,32 @@ highlight def link animTodo Todo
 highlight def link animComment Comment
 
 " AnimBlocks
-syntax region animAnimBlock contains=animComment,animIdentifier,animAttribute
+syntax region animAnimBlock contains=animComment,animIdentifier,animAttribute,animFace
      \ matchgroup=animStructure start="^anim\>"
      \ matchgroup=animStructure end="^mina$"
 syntax match animIdentifier contained
      \ "\s\+\S\+$"hs=s-1
+syntax match animFace contained contains=animFlag,animXYZ
+     \ "^\S\+$"
+syntax match animFlag contained
+     \ "\.\%(u\|d\)"hs=s+1
+syntax match animXYZ contained
+     \ "\.\%(\a\|\d\)\{3}$"hs=s+1
 
-highlight def link animAnimBlock String
+highlight def link animAnimBlock Error
 highlight def link animStructure Structure
 highlight def link animIdentifier Identifier
+highlight def link animFace String
+highlight def link animFlag Special
+highlight def link animXYZ Special
 
 " Attributes
 syntax match animAttribute contained nextgroup=animNumber
      \ "^facings\s\+"
-
-highlight def link animAttribute Keyword
-
-" Values
 syntax match animNumber contained
      \ "\-\?\d\+$"
 
+highlight def link animAttribute Keyword
 highlight def link animNumber Number
 
 let b:current_syntax="anim"
