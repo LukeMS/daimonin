@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language:	Daimonin artifact files
 " Maintainer:	Smacky <smacky@smackysguides.net>
-" Last Change:	2008 Oct 29
+" Last Change:	2008 Oct 30
 " Remarks:      Includes syntax/arch.vim.
 
 if version < 600
@@ -11,7 +11,7 @@ elseif exists("b:current_syntax")
 endif
 
 syntax clear
-syntax sync minlines=30
+syntax sync minlines=200
 syntax case match
 
 " Errors

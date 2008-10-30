@@ -10,7 +10,7 @@ elseif exists("b:current_syntax")
 endif
 
 syntax clear
-syntax sync minlines=30
+syntax sync minlines=200
 syntax case ignore
 
 " Errors
