@@ -128,8 +128,8 @@ syntax match archFloat contained
 highlight def link archAttribute Keyword
 highlight def link archString String
 highlight def link archFace String
-highlight def link archFlag Special
-highlight def link archXYZ Special
+highlight def link archFlag SpecialChar
+highlight def link archXYZ SpecialChar
 highlight def link archNumber Number
 highlight def link archFloat Float
 

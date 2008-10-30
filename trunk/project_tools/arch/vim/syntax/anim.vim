@@ -45,8 +45,8 @@ highlight def link animAnimBlock Error
 highlight def link animStructure Structure
 highlight def link animIdentifier Identifier
 highlight def link animFace String
-highlight def link animFlag Special
-highlight def link animXYZ Special
+highlight def link animFlag SpecialChar
+highlight def link animXYZ SpecialChar
 
 " Attributes
 syntax match animAttribute contained nextgroup=animNumber
