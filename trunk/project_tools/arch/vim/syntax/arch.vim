@@ -4,13 +4,10 @@
 " Last Change:	2008 Oct 30
 " Remarks:      Includes syntax/anim.vim.
 
-if version < 600
-  syntax clear
-elseif exists("b:current_syntax")
+if exists("b:current_syntax")
   finish
 endif
 
-syntax clear
 syntax sync minlines=200
 syntax case match
 
