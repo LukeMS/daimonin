@@ -1,42 +1,24 @@
 " Vim syntax file
 " Language:	Daimonin artifact files
 " Maintainer:	Smacky <smacky@smackysguides.net>
-" Last Change:	2008 Oct 30
-" Remarks:      Includes syntax/arch.vim.
+" Last Change:	2008 Oct 31
 
 if exists("b:current_syntax")
   finish
 endif
 
+runtime! syntax/arch.vim
+unlet b:current_syntax
+
 syntax sync minlines=200
 syntax case match
 
 
-" Errors
-" ------
-
-" This will catch anything at the top level which is neither a comment nor an
-" object and highlight it as an error.
-syntax match artError contains=artComment
-     \ ".\+"
-
-" Comments
-" --------
-syntax match artComment contains=artTodo
-     \ "#.*$"
-syntax keyword artTodo contained
-     \ FIXME TODO XXX NOTE
-
 " Objects
 " -------
-syntax include syntax/arch.vim
-
-syntax region artObject keepend contains=artComment,artIdentifier,artAttribute,archObject
-     \ matchgroup=artStructure start="^Allowed\>"
-     \ matchgroup=artStructure end="^end$"
-
-syntax match artIdentifier contained
-     \ "\s\+\S\+$"
+syntax region artObject keepend contains=animComment,animIdentifier,artAttribute,archObject
+     \ matchgroup=animStructure start="^Allowed\>"
+     \ matchgroup=animStructure end="^end$"
 
 " Attributes
 " ----------
@@ -59,14 +41,7 @@ syntax match artNumber contained
      \ "\-\?\d\+$"
 
 
-highlight def link artError Error
-
-highlight def link artComment Comment
-highlight def link artTodo Todo
-
 highlight def link artObject Error
-highlight def link artStructure Structure
-highlight def link artIdentifier Identifier
 
 highlight def link artAttribute Keyword
 
