@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language:	Daimonin archetype files
 " Maintainer:	Smacky <smacky@smackysguides.net>
-" Last Change:	2008 Oct 30
+" Last Change:	2008 Oct 31
 " Remarks:      Includes syntax/anim.vim.
 
 if exists("b:current_syntax")
@@ -31,7 +31,7 @@ syntax keyword archTodo contained
 " -------
 syntax include syntax/anim.vim
 
-syntax region archObject contains=archComment,archIdentifier,archAttribute,archMsgBlock,animAnimBlock
+syntax region archObject contains=archComment,archIdentifier,archAttribute,archMsgBlock,archArchBlock,animAnimBlock
      \ matchgroup=archStructure start="^Object\>"
      \ matchgroup=archStructure end="^end$"
 
@@ -46,6 +46,12 @@ syntax match archStructure
 syntax region archMsgBlock contained
      \ matchgroup=archStructure start="^msg$"
      \ matchgroup=archStructure end="^endmsg$"
+
+" ArchBlocks
+" ----------
+syntax region archArchBlock contained contains=archComment,archIdentifier,archAttribute,archMsgBlock
+     \ matchgroup=archStructure start="^arch\>"
+     \ matchgroup=archStructure end="^end$"
 
 " Attributes
 " ----------
@@ -108,6 +114,8 @@ highlight def link archStructure Structure
 highlight def link archIdentifier Identifier
 
 highlight def link archMsgBlock String
+
+highlight def link archArchBlock Error
 
 highlight def link archAttribute Keyword
 highlight def link archString String
