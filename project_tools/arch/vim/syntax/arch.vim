@@ -2,56 +2,38 @@
 " Language:	Daimonin archetype files
 " Maintainer:	Smacky <smacky@smackysguides.net>
 " Last Change:	2008 Oct 31
-" Remarks:      Includes syntax/anim.vim.
 
 if exists("b:current_syntax")
   finish
 endif
 
+runtime! syntax/anim.vim
+unlet b:current_syntax
+
 syntax sync minlines=200
 syntax case match
 
 
-" Errors
-" ------
-
-" This will catch anything at the top level which is neither a comment nor an
-" object and highlight it as an error.
-syntax match archError contains=archComment
-     \ ".\+"
-
-" Comments
-" --------
-syntax match archComment contains=archTodo
-     \ "#.*$"
-syntax keyword archTodo contained
-     \ FIXME TODO XXX NOTE
-
 " Objects
 " -------
-syntax include syntax/anim.vim
+syntax region archObject contains=animComment,animIdentifier,archAttribute,archMsgBlock,archArchBlock,animAnimBlock
+     \ matchgroup=animStructure start="^Object\>"
+     \ matchgroup=animStructure end="^end$"
 
-syntax region archObject contains=archComment,archIdentifier,archAttribute,archMsgBlock,archArchBlock,animAnimBlock
-     \ matchgroup=archStructure start="^Object\>"
-     \ matchgroup=archStructure end="^end$"
-
-syntax match archIdentifier contained
-     \ "\s\+\S\+$"
-
-syntax match archStructure
+syntax match animStructure
      \ "^More$"
 
 " MsgBlocks
 " ---------
 syntax region archMsgBlock contained
-     \ matchgroup=archStructure start="^msg$"
-     \ matchgroup=archStructure end="^endmsg$"
+     \ matchgroup=animStructure start="^msg$"
+     \ matchgroup=animStructure end="^endmsg$"
 
 " ArchBlocks
 " ----------
-syntax region archArchBlock contained contains=archComment,archIdentifier,archAttribute,archMsgBlock
-     \ matchgroup=archStructure start="^arch\>"
-     \ matchgroup=archStructure end="^end$"
+syntax region archArchBlock contained contains=animComment,animIdentifier,archAttribute,archMsgBlock
+     \ matchgroup=animStructure start="^arch\>"
+     \ matchgroup=animStructure end="^end$"
 
 " Attributes
 " ----------
@@ -69,12 +51,8 @@ syntax match archString contained
 " .d) and XYZ substrings are highlighted specially.
 syntax match archAttribute contained nextgroup=archFace
      \ "^\%(face\|inv_face\)\s\+"
-syntax match archFace contained contains=archFlag,archXYZ
+syntax match archFace contained contains=animFlag,animXYZ
      \ "\S\+$"
-syntax match archFlag contained
-     \ "\.\%(u\|d\)"hs=s+1
-syntax match archXYZ contained
-     \ "\.\%(\a\|\d\)\{3}$"hs=s+1
 
 " This attribute takes a treasurelist value. A treasurelist is a special type
 " of string.
@@ -104,14 +82,7 @@ syntax match archFloat contained
      \ "\-\?\d*\.\?\d\+$"
 
 
-highlight def link archError Error
-
-highlight def link archComment Comment
-highlight def link archTodo Todo
-
 highlight def link archObject Error
-highlight def link archStructure Structure
-highlight def link archIdentifier Identifier
 
 highlight def link archMsgBlock String
 

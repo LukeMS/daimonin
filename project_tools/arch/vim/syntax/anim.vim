@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language:	Daimonin anim files
 " Maintainer:	Smacky <smacky@smackysguides.net>
-" Last Change:	2008 Oct 30
+" Last Change:	2008 Oct 31
 
 if exists("b:current_syntax")
   finish
@@ -33,7 +33,7 @@ syntax region animAnimBlock contains=animComment,animIdentifier,animAttribute,an
      \ matchgroup=animStructure end="^mina$"
 
 syntax match animIdentifier contained
-     \ "\s\+\S\+$"hs=s-1
+     \ "\s\+\S\+$"
 
 " This is a face value. A face is a string which is the filename of an image
 " minus the extension (eg, .png). Within this string, flag (.u and .d) and XYZ
