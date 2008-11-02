@@ -6,10 +6,10 @@ face hat_witch.101
 weight 250
 ac 3
 last_heal -12
-protect_impact 1
-protect_cleave 1
-protect_slash 1
-protect_pierce 1
+resist_impact 1
+resist_cleave 1
+resist_slash 1
+resist_pierce 1
 resist_drain 4
 resist_depletion 4
 resist_corruption 4
