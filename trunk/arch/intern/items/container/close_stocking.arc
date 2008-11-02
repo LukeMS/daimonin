@@ -5,7 +5,6 @@ layer 3
 type 121
 no_drop 1
 no_pick 1
-editable 0
 end
 Object close_stocking_bow
 name close stocking
@@ -14,5 +13,4 @@ layer 3
 type 121
 no_drop 1
 no_pick 1
-editable 0
 end
