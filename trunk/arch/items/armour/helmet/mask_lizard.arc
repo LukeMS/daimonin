@@ -5,10 +5,10 @@ type 34
 layer 3
 cha -1
 last_heal 12
-protect_impact 3
-protect_slash 3
-protect_cleave 3
-protect_pierce 3
+resist_impact 3
+resist_slash 3
+resist_cleave 3
+resist_pierce 3
 weight 2100
 value 1700
 material 1024
