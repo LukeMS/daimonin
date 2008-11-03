@@ -35,8 +35,6 @@ syntax match artString contained
 " or negative (signed) or zero.
 syntax match artAttribute contained nextgroup=artNumber
      \ "^\%(chance\|difficulty\|t_style\)\s\+"
-syntax match archAttribute contained nextgroup=archNumber
-     \ "^\%(ac_add\|dam_add\|item_level_art\|wc_add\)\s\+"
 syntax match artNumber contained
      \ "\-\?\d\+$"
 
