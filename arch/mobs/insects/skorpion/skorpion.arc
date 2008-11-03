@@ -1,5 +1,5 @@
 Object skorpion
-name Giant Skorpion
+name Giant Scorpion
 face skorpion.151
 race insect
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
