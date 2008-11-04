@@ -35,9 +35,17 @@ syntax match artIdNot contained
 " character but cannot cross a line boundary. Leading spaces are not included
 " in the string.
 syntax match artAttribute contained nextgroup=artString
-     \ "^\%(artifact\|def_arch\|editor\|name\)\s\+"
+     \ "^\%(editor\|name\)\s\+"
 syntax match artString contained
      \ "\S.*$"
+
+" These attributes take an arch identifer string value. The string may contain
+" only non-white space characters and cannot cross a line boundary. Leading
+" spaces are not included in the string.
+syntax match artAttribute contained nextgroup=artIdString
+     \ "^\%(artifact\|def_arch\)\s\+"
+syntax match artIdString contained
+     \ "\S\+$"
 
 " These attributes take integer values. The value can be positive (unsigned)
 " or negative (signed) or zero.
@@ -55,6 +63,7 @@ highlight def link artIdNot SpecialChar
 
 highlight def link artAttribute Keyword
 
+highlight def link artIdString Identifier
 highlight def link artString String
 highlight def link artNumber Number
 
