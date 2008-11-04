@@ -114,7 +114,7 @@ int open_door(object *op, mapstruct *m, int x, int y, int mode)
                         new_draw_info_format(NDI_UNIQUE, NDI_BROWN, op, "You open the door with the %s.",
                                              query_short_name(key, op));
                     else if (force)
-                        new_draw_info(NDI_UNIQUE, NDI_BROWN, op, "The door is unlocked for you.");
+                        new_draw_info(NDI_UNIQUE, NDI_BROWN, op, "You force the door open.");
                 }
             }
 
