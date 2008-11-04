@@ -16,9 +16,17 @@ syntax case match
 
 " Objects
 " -------
-syntax region artObject keepend contains=animComment,animIdentifier,artAttribute,archObject
+syntax region artObject keepend contains=animComment,artIdentifier,artAttribute,archObject
      \ matchgroup=animStructure start="^Allowed\>"
      \ matchgroup=animStructure end="^end$"
+syntax match artIdentifier contained contains=artIdKeyword,artIdDelimiter,artIdNot
+     \ "\s\S.*$"
+syntax keyword artIdKeyword contained
+     \ all none
+syntax match artIdDelimiter contained
+     \ ","
+syntax match artIdNot contained
+     \ "!"
 
 " Attributes
 " ----------
@@ -40,6 +48,10 @@ syntax match artNumber contained
 
 
 highlight def link artObject Error
+highlight def link artIdentifier Identifier
+highlight def link artIdKeyword Keyword
+highlight def link artIdDelimiter SpecialChar
+highlight def link artIdNot SpecialChar
 
 highlight def link artAttribute Keyword
 
