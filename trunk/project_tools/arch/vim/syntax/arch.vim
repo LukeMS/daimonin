@@ -67,6 +67,14 @@ syntax match archTLparameter contained
 syntax match archTLparameter contained
      \ "[acdimqrsxBCDIMQ]\d*$"
 
+" This attribute takes a path string value.
+syntax match archAttribute contained nextgroup=archPath
+     \ "^editor_folder\s\+"
+syntax match archPath contained contains=archDirSeparator
+     \ "\S\+$"
+syntax match archDirSeparator contained
+     \ "/"
+
 " These attributes take integer values. The value can be positive (unsigned)
 " or negative (signed) or zero.
 syntax match archAttribute contained nextgroup=archNumber
@@ -102,6 +110,8 @@ highlight def link archXYZ SpecialChar
 highlight def link archTLlist String
 highlight def link archTLdelimiter Delimiter
 highlight def link archTLparameter Function
+highlight def link archPath String
+highlight def link archDirSeparator Delimiter
 highlight def link archNumber Number
 highlight def link archBoolean Number
 highlight def link archFloat Float
