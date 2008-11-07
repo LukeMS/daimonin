@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language:	Daimonin archetype files
 " Maintainer:	Smacky <smacky@smackysguides.net>
-" Last Change:	2008 Nov 2
+" Last Change:	2008 Nov 7
 
 if exists("b:current_syntax")
   finish
@@ -42,9 +42,17 @@ syntax region archArchBlock contained contains=animComment,animIdentifier,archAt
 " character but cannot cross a line boundary. Leading spaces are not included
 " in the string.
 syntax match archAttribute contained nextgroup=archString
-     \ "^\%(amask\|animation\|editor_folder\|inv_animation\|item_race\|name\|other_arch\|race\|slaying\|title\)\s\+"
+     \ "^\%(item_race\|name\|race\|slaying\|title\)\s\+"
 syntax match archString contained
      \ "\S.*$"
+
+" These attributes take an arch identifer string value. The string may contain
+" only non-white space characters and cannot cross a line boundary. Leading
+" spaces are not included in the string.
+syntax match archAttribute contained nextgroup=archIdString
+     \ "^\%(amask\|animation\|inv_animation\|other_arch\)\s\+"
+syntax match archIdString contained
+     \ "\S\+$"
 
 " These attributes take a face value. A face is a string which is the filename
 " of an image minus the extension (eg, .png). Within this string, flag (.u and
@@ -104,6 +112,7 @@ highlight def link archArchBlock Error
 
 highlight def link archAttribute Keyword
 highlight def link archString String
+highlight def link archIdString Identifier
 highlight def link archFace String
 highlight def link archFlag SpecialChar
 highlight def link archXYZ SpecialChar
