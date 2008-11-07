@@ -60,7 +60,7 @@ treasure deity_tabernacle
   arch tabernacle_general_info
     chance 10
   more
-  arch god_grace_limit_medium 
+  arch god_grace_limit_medium
 end
 ##############################################################
 #
@@ -1743,7 +1743,7 @@ treasureone armour_start
 end
 #
 treasureone armour_mail
-  arch banded_mail  
+  arch banded_mail
     difficulty 12
     chance 20
     material_quality 80
@@ -2878,7 +2878,8 @@ treasureone wealth_money
   list wealth_rich
   difficulty 80
   chance 15
-  end
+end
+#
 treasure wealth_very_low
   arch wealth
     magic 1
