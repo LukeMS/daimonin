@@ -48,8 +48,10 @@ struct path_segment
     const char             *map;
 };
 
-extern void             return_poolchunk_array_real(void *, uint32, struct mempool *);
-extern void             free_string_shared(const char *str);
+extern void     return_poolchunk_array_real(void *, uint32, struct mempool *);
+extern void     free_string_shared(const char *str);
+extern int      mob_can_see_obj(object *op, object *obj, struct mob_known_obj *known_obj);
+
 static inline void free_path(struct path_segment *p)
 {
     for (; p; p = p->next)
