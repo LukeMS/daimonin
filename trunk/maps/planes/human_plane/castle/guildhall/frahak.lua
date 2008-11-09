@@ -141,7 +141,7 @@ local function topTeachtraps()
     else
         local amount = slevel * slevel * (50+slevel) * 3
         if pl:PayAmount(amount) == 1 then
-            ib:AddMsg("\nYou pay Frah'ak" .. pl:ShowCost(amount) .. "\n")
+            ib:AddMsg("\nYou pay Frah'ak " .. pl:ShowCost(amount) .. "\n")
             ib:AddMsg("Here we go!\n")
             ib:AddMsg("Frah'ak teach some ancient skill.\n") 
             pl:SetSkill(game.TYPE_SKILL, skill, slevel, 0)
