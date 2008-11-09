@@ -1162,7 +1162,7 @@ int obj_in_line_of_sight(object *op, object *obj, rv_vector *rv)
         // Can't see if view blocked, unless mob has x-ray vision
         // and object (player) is in range.
         if (m == NULL || (GET_MAP_FLAGS(m,x,y) & P_BLOCKSVIEW) &&
-            (!QUERY_FLAG(op, FLAG_XRAYS) || !mob_can_see_obj(op, obj)))
+            (!QUERY_FLAG(op, FLAG_XRAYS) || !mob_can_see_obj(op, obj, NULL)))
         {
 //            LOG(llevDebug, "  blocked!\n");
             return FALSE;
