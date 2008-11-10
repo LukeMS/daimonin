@@ -148,4 +148,10 @@
         <TypeNrs numbers="133" />
     </GameObjectMatcher>
 
+    <GameObjectMatcher id="system_monster_only"> <!-- XXX: should be 'system="true"' to hide from the GUI -->
+        <title xml:lang="en">Monster Only</title>
+        <title xml:lang="de">Nur Monster</title>
+        <TypeNrs numbers="80 83" />
+    </GameObjectMatcher>
+
 </GameObjectMatchers>
