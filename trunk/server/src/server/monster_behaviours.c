@@ -1974,7 +1974,7 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
     {
         /* conservative use of the linked spawns - if linked spawns, give enemy signal to all */
         /* only kick the signal here in, when we have a new target */
-        if (!op->enemy && MOB_DATA(op)->spawn_info && MOB_DATA(op)->spawn_info->owner->slaying)
+        if (MOB_DATA(op)->spawn_info && MOB_DATA(op)->spawn_info->owner->slaying)
             send_link_spawn_signal(MOB_DATA(op)->spawn_info->owner, worst_enemy->obj, LINK_SPAWN_ENEMY);
 
         //        LOG(llevDebug,"ai_choose_enemy(): %s's worst enemy is '%s', friendship: %d\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(worst_enemy->ob), worst_enemy->tmp_friendship);

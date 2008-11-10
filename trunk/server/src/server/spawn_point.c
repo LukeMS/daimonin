@@ -446,7 +446,8 @@ void send_link_spawn_signal(object *spawn, object *target, int signal)
                  */
                 enemy = update_npc_knowledge(obj->enemy, target, FRIENDSHIP_ATTACK, 0);
 
-                if(enemy) /* in this mode, we don't force the register */
+                /* in this mode, we don't force the register */
+                if (enemy && !obj->enemy->enemy)
                 {
                     /* we need a "set_enemy" in the ai code beside "choose_enemy" */
                     obj->enemy->enemy = enemy->obj;
