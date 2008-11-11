@@ -154,4 +154,10 @@
         <TypeNrs numbers="80 83" />
     </GameObjectMatcher>
 
+    <GameObjectMatcher id="system_combat_values_objects"> <!-- XXX: should be 'system="true"' to hide from the GUI -->
+        <title xml:lang="en">Objects using &quot;combat_values&quot;</title>
+        <title xml:lang="de">Objekte mit &quot;combat_values&quot;</title>
+        <TypeNrs numbers="5 6 7 13 39 54 62 72 73 80 83 154 158" />
+    </GameObjectMatcher>
+
 </GameObjectMatchers>
