@@ -92,6 +92,43 @@ public:
         CLIENT_CMD_GENERIC,
         CLIENT_CMD_SUM
     };
+    enum console_cmd
+    {
+        CONSOLE_CMD_APPLY,
+        CONSOLE_CMD_BUDDY,
+        CONSOLE_CMD_CFILTER,
+        CONSOLE_CMD_CHANGESKIN,
+        CONSOLE_CMD_CHANNEL,
+        CONSOLE_CMD_FKEY,           //< Function keys (F1...F9)
+        CONSOLE_CMD_IGNORE,
+        CONSOLE_CMD_IMGSTATS,
+        CONSOLE_CMD_KEYBIND,
+        CONSOLE_CMD_KILLS,
+        CONSOLE_CMD_MARKDMBUSTER,
+        CONSOLE_CMD_RDYSPELL,
+        CONSOLE_CMD_RELOADSKIN,
+        CONSOLE_CMD_REPLY,
+        CONSOLE_CMD_RESET,
+        CONSOLE_CMD_SEARCHPATH,
+        CONSOLE_CMD_SETWIN,
+        CONSOLE_CMD_SETWINALPHA,
+        CONSOLE_CMD_SHOUTOFF,
+        CONSOLE_CMD_SHOUTON,
+        CONSOLE_CMD_SLEEPTIMER,
+        CONSOLE_CMD_STATSRESET,
+        CONSOLE_CMD_TARGET,
+        CONSOLE_CMD_TESTSTRETCH,
+        CONSOLE_CMD_SUM,
+    };
+
+    typedef struct
+    {
+        const char *cmd;
+        unsigned int index;
+    }
+    ConsoleCmdString;
+    static ConsoleCmdString mConsoleCmd[CONSOLE_CMD_SUM];
+
     typedef struct command_buffer
     {
         struct command_buffer *next; // Next in queue.
@@ -149,10 +186,9 @@ public:
     static void AddIntToString(Ogre::String &sl, int data, bool shortInt);
     static int reader_thread_loop(void *);
     static int writer_thread_loop(void *);
-    static int send_command(const char *command, int repeat, int force);
-    static int send_command_binary(unsigned char cmd, unsigned char *body, int len, int flags);
     static int send_command_binary(unsigned char cmd, std::stringstream &stream);
-    static int send_socklist(Ogre::String msg);
+    static void send_game_command(const char *command);
+
     void socket_thread_start();
     void setActiveServer(int nr)
     {
@@ -200,7 +236,6 @@ public:
     static void MarkCmd        (unsigned char *data, int len);
     static void AccountCmd     (unsigned char *data, int len);
     // Commands helper.
-    static int  request_face(int, int);
     static void CreatePlayerAccount();
     static void PreParseInfoStat(char *cmd);
     const char *get_metaserver_info(int line, int infoLineNr);
@@ -243,6 +278,8 @@ private:
     ~Network();
     Network(const Network&); // disable copy-constructor.
     static int strToInt(unsigned char *buf, int bytes); /**< Must be private to make it thread safe **/
+    static bool console_command_check(Ogre::String cmd);
+    static void do_console_cmd(Ogre::String &stCmd, int cmd);
 };
 
 #endif

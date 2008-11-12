@@ -82,10 +82,10 @@ int CHUNK_X_LENGTH[TileManager::CHUNK_SIZE_Z];
 //================================================================================================
 void TileChunk::init(int textureSize, int queryMaskLand, int queryMaskWater)
 {
-    mTextureSize = textureSize;
-    mCameraRotation = 3;
-    int sumVertices = 0;
     int cameraStandardPos = 3; // 0° rotation of the camera in CHUNK_START_OFFSET[][] table.
+    mTextureSize = textureSize;
+    mCameraRotation = cameraStandardPos;
+    int sumVertices = 0;
     for (int i=0; i < TileManager::CHUNK_SIZE_Z; ++i)
     {
         CHUNK_X_LENGTH[i] = TileManager::CHUNK_SIZE_X - 2*CHUNK_START_OFFSET[cameraStandardPos][i];
@@ -134,7 +134,7 @@ void TileChunk::init(int textureSize, int queryMaskLand, int queryMaskWater)
     // Attach the tiles to a scenenode.
     // ////////////////////////////////////////////////////////////////////
     SceneNode *node= TileManager::getSingleton().getSceneManager()->getRootSceneNode()->createChildSceneNode();
-    node->setPosition(0, 0, 0);
+    node->setPosition(0,0,0);
     node->attachObject(mEntityLand);
     node->attachObject(mEntityWater);
 }

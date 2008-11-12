@@ -43,36 +43,12 @@ static const unsigned int MIN_LEN_LOGIN_NAME =  3;
 static const unsigned int MAX_LEN_LOGIN_NAME = 12;
 static const unsigned int MIN_LEN_LOGIN_PSWD =  6;
 static const unsigned int MAX_LEN_LOGIN_PSWD = 17;
-const Real CAMERA_OFFSET = 1325;
+const Real CAMERA_OFFSET = TileManager::TILE_SIZE*20;
+const Real CAMERA_RELA_Z = TileManager::TILE_SIZE*3;
 const char *GUI_LOADING_OVERLAY = "GUI_LOADING_OVERLAY";
 const char *GUI_LOADING_OVERLAY_ELEMENT = "GUI_LOADING_OVERLAY_ELEMENT";
 const unsigned long SERVER_TIMEOUT = 5000; // Server timeout in ms.
 const char BINARY_CMD_NEXT = '\0'; // Next commad.
-
-#define AUTO_FILL_PASWD // Delete me!!!
-
-// cmds for fire/move/run - used from move_keys()
-/*
-static char    *directions[10] =
-{
-    "null", "/sw", "/s", "/se", "/w", "/stay", "/e", "/nw", "/n", "/ne"
-};
-
-static char    *directions_name[10] =
-{
-    "null", "southwest", "south", "southeast", "west", "stay", "east", "northwest", "north", "northeast"
-};
-static char    *directionsrun[10] =
-{
-    "/run 0", "/run 6", "/run 5", "/run 4", "/run 7",\
-    "/run 5", "/run 3", "/run 8", "/run 1", "/run 2"
-};
-static char    *directionsfire[10] =
-{
-    "fire 0", "fire 6", "fire 5", "fire 4", "fire 7",\
-    "fire 0", "fire 3", "fire 8", "fire 1", "fire 2"
-};
-*/
 
 //================================================================================================
 // Constructor.
@@ -132,15 +108,16 @@ void Events::setWorldPos(int deltaX, int deltaZ)
 {
     //ParticleManager::getSingleton().pauseAll(true);
     //TileManager::getSingleton().scrollMap(deltaX, deltaZ);
-    if      (deltaX >0 && deltaZ >0) Network::getSingleton().send_command("/sw", -1, Network::SC_FIRERUN);
-    else if (deltaX <0 && deltaZ >0) Network::getSingleton().send_command("/se", -1, Network::SC_FIRERUN);
-    else if (deltaX >0 && deltaZ <0) Network::getSingleton().send_command("/nw", -1, Network::SC_FIRERUN);
-    else if (deltaX <0 && deltaZ <0) Network::getSingleton().send_command("/ne", -1, Network::SC_FIRERUN);
-    else if (deltaX==0 && deltaZ <0) Network::getSingleton().send_command("/n" , -1, Network::SC_FIRERUN);
-    else if (deltaX==0 && deltaZ >0) Network::getSingleton().send_command("/s" , -1, Network::SC_FIRERUN);
-    else if (deltaX >0 && deltaZ==0) Network::getSingleton().send_command("/w" , -1, Network::SC_FIRERUN);
-    else if (deltaX <0 && deltaZ==0) Network::getSingleton().send_command("/e" , -1, Network::SC_FIRERUN);
-
+    std::stringstream strCmd;
+    if      (deltaX >0 && deltaZ >0) strCmd << (char) 1; // sw
+    else if (deltaX <0 && deltaZ >0) strCmd << (char) 3; // se
+    else if (deltaX >0 && deltaZ <0) strCmd << (char) 7; // nw
+    else if (deltaX <0 && deltaZ <0) strCmd << (char) 9; // ne
+    else if (deltaX==0 && deltaZ <0) strCmd << (char) 8; // n
+    else if (deltaX==0 && deltaZ >0) strCmd << (char) 2; // s
+    else if (deltaX >0 && deltaZ==0) strCmd << (char) 4; // w
+    else if (deltaX <0 && deltaZ==0) strCmd << (char) 6; // e
+    Network::getSingleton().send_command_binary(Network::CLIENT_CMD_MOVE, strCmd);
     //TileManager::getSingleton().changeChunks();
     //Vector3 deltaPos = ObjectManager::getSingleton().synchToWorldPos(deltaX, deltaZ);
     //ParticleManager::getSingleton().synchToWorldPos(deltaPos);
@@ -153,7 +130,7 @@ void Events::setWorldPos(int deltaX, int deltaZ)
 bool Events::frameStarted(const FrameEvent& evt)
 {
     static unsigned long timeWaitServer;
-    static String strAccountName, strAccountPswd;
+    static String strAccountName, strAccountPswd, strAccountPlayer;
     if (mWindow->isClosed() || mQuitGame)
         return false;
 
@@ -176,7 +153,7 @@ bool Events::frameStarted(const FrameEvent& evt)
             mCamera->setAspectRatio(Real(VP->getActualWidth()) / Real(VP->getActualHeight()));
             mCamera->setFOVy(Degree(mCameraZoom));
             mCamera->setQueryFlags(ObjectManager::QUERY_CAMERA_MASK);
-            mCamera->setPosition(0, CAMERA_OFFSET, CAMERA_OFFSET);
+            mCamera->setPosition(0, CAMERA_OFFSET, CAMERA_OFFSET+CAMERA_RELA_Z);
             mCamera->pitch(Degree(-36));
             mWorld = mSceneManager->getRootSceneNode()->createChildSceneNode();
             // ////////////////////////////////////////////////////////////////////
@@ -499,16 +476,49 @@ bool Events::frameStarted(const FrameEvent& evt)
 
         case Option::GAME_STATUS_LOGIN_DONE:
         {
-            GuiManager::getSingleton().showWindow(GuiManager::WIN_SERVERSELECT, false);
+            GuiManager::getSingleton().clearTable(GuiManager::WIN_SERVERSELECT, GuiImageset::GUI_TABLE);
+            String strTabel;
+            for (int i = 0; i < ObjectHero::getSingleton().getSumChars(); ++i)
+            {
+                strTabel = ObjectHero::getSingleton().getCharName(i) + ";";
+                strTabel+= ObjectHero::getSingleton().getCharRace(i);
+                strTabel+= " ";
+                strTabel+= ObjectHero::getSingleton().getCharGender(i);
+                strTabel+= ";";
+                strTabel+= StringConverter::toString(ObjectHero::getSingleton().getCharLevel(i));
+                GuiManager::getSingleton().addTableRow(GuiManager::WIN_SERVERSELECT, GuiImageset::GUI_TABLE, strTabel.c_str());
+            }
+            GuiManager::getSingleton().showWindow(GuiManager::WIN_SERVERSELECT, true);
+            GuiManager::getSingleton().setElementText(GuiManager::WIN_SERVERSELECT, GuiImageset::GUI_TEXTBOX_SERVER_INFO1, "Select a character");
             GuiManager::getSingleton().showWindow(GuiManager::WIN_LOGIN, false);
-            Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_CHARACTER);
+            Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_CHOOSE_CHAR);
+            break;
+        }
+
+        case Option::GAME_STATUS_LOGIN_CHOOSE_CHAR:
+        {
+            if (GuiManager::getSingleton().getTableUserBreak(GuiManager::WIN_SERVERSELECT, GuiImageset::GUI_TABLE))
+            {
+                GuiManager::getSingleton().showWindow(GuiManager::WIN_SERVERSELECT, false);
+                Option::getSingleton().setGameStatus(Option::GAME_STATUS_START);
+            }
+            // A character was selected.
+            int select = GuiManager::getSingleton().getTableActivated(GuiManager::WIN_SERVERSELECT, GuiImageset::GUI_TABLE);
+            if (select >=0)
+            {
+                GuiManager::getSingleton().setElementText(GuiManager::WIN_SERVERSELECT, GuiImageset::GUI_TEXTBOX_SERVER_INFO2, " ");
+                GuiManager::getSingleton().setElementText(GuiManager::WIN_SERVERSELECT, GuiImageset::GUI_TEXTBOX_SERVER_INFO3, " ");
+                ObjectHero::getSingleton().setSelected(select);
+                GuiManager::getSingleton().showWindow(GuiManager::WIN_SERVERSELECT, false);
+                Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_CHARACTER);
+            }
             break;
         }
 
         case Option::GAME_STATUS_LOGIN_CHARACTER:
         {
             std::stringstream ssTemp;
-            ssTemp << ObjectHero::getSingleton().getCharName(0);
+            ssTemp << ObjectHero::getSingleton().getSelectedCharName();
             Network::getSingleton().send_command_binary(Network::CLIENT_CMD_ADDME, ssTemp);
 //            GuiManager::getSingleton().addTextline(GuiManager::WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, name.c_str());
             Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_CHARACTER_WAIT);
@@ -604,7 +614,6 @@ bool Events::frameEnded(const FrameEvent& evt)
 {
     if (Option::getSingleton().getGameStatus() < Option::GAME_STATUS_INIT_NET)
         return true;
-
     mInputMouse->capture();
     mInputKeyboard->capture();
     GuiManager::getSingleton().update(evt.timeSinceLastFrame);
@@ -625,12 +634,12 @@ bool Events::frameEnded(const FrameEvent& evt)
             {
                 cameraAngle+= step;
                 mCamera->yaw(Degree(step));
-                mCamera->setPosition(CAMERA_OFFSET*Math::Sin(Degree(cameraAngle)), actPos.y, CAMERA_OFFSET *Math::Cos(Degree(cameraAngle)));
+                mCamera->setPosition(CAMERA_OFFSET*Math::Sin(Degree(cameraAngle)), actPos.y, CAMERA_OFFSET *Math::Cos(Degree(cameraAngle))+CAMERA_RELA_Z);
             }
             else
             {
                 mCamera->yaw(Degree(-cameraAngle));
-                mCamera->setPosition(0, actPos.y, CAMERA_OFFSET);
+                mCamera->setPosition(0, actPos.y, CAMERA_OFFSET+CAMERA_RELA_Z);
                 mCameraRotating = NONE;
                 cameraAngle = 0;
             }
@@ -639,13 +648,13 @@ bool Events::frameEnded(const FrameEvent& evt)
         {
             cameraAngle+= step;
             mCamera->yaw(Degree(step));
-            mCamera->setPosition(CAMERA_OFFSET*Math::Sin(Degree(cameraAngle)), actPos.y, CAMERA_OFFSET *Math::Cos(Degree(cameraAngle)));
+            mCamera->setPosition(CAMERA_OFFSET*Math::Sin(Degree(cameraAngle)), actPos.y, CAMERA_OFFSET *Math::Cos(Degree(cameraAngle))+CAMERA_RELA_Z);
         }
         else if (mCameraRotating == NEGATIVE && cameraAngle >-45)
         {
             cameraAngle-= step;
             mCamera->yaw(Degree(-step));
-            mCamera->setPosition(CAMERA_OFFSET*Math::Sin(Degree(cameraAngle)), actPos.y, CAMERA_OFFSET *Math::Cos(Degree(cameraAngle)));
+            mCamera->setPosition(CAMERA_OFFSET*Math::Sin(Degree(cameraAngle)), actPos.y, CAMERA_OFFSET *Math::Cos(Degree(cameraAngle))+CAMERA_RELA_Z);
         }
         TileManager::getSingleton().rotate(cameraAngle);
     }

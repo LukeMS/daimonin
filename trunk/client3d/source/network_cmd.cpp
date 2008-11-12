@@ -39,10 +39,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Ogre;
 
-const int  REQUEST_FACE_MAX = 250;
-const char MAX_LEN_LOGIN_NAME = 15;
-const int  DATA_PACKED_CMD = 0x80;
-
 // list of requested files shared between server and client.
 enum
 {
@@ -54,16 +50,40 @@ enum
     DATA_CMD_BMAP_LIST
 };
 
-
-char playerName[80];
-char playerPassword[80];
-int scrolldx, scrolldy;
+Network::ConsoleCmdString Network::mConsoleCmd[CONSOLE_CMD_SUM]=
+{
+    { "/apply",         CONSOLE_CMD_APPLY        },
+    { "/buddy",         CONSOLE_CMD_BUDDY        },
+    { "/cfilter",       CONSOLE_CMD_CFILTER      },
+    { "/changeskin",    CONSOLE_CMD_CHANGESKIN   },
+    { "/channel",       CONSOLE_CMD_CHANNEL      },
+    { "/f",             CONSOLE_CMD_FKEY         }, /**< Function keys (F1...F9) */
+    { "/ignore",        CONSOLE_CMD_IGNORE       },
+    { "/imagestats",    CONSOLE_CMD_IMGSTATS     },
+    { "/keybind",       CONSOLE_CMD_KEYBIND      },
+    { "/kills",         CONSOLE_CMD_KILLS        },
+    { "/markdmbuster",  CONSOLE_CMD_MARKDMBUSTER },
+    { "/ready_spell",   CONSOLE_CMD_RDYSPELL     },
+    { "/reloadskinnow", CONSOLE_CMD_RELOADSKIN   },
+    { "/reply",         CONSOLE_CMD_REPLY        },
+    { "/reset",         CONSOLE_CMD_RESET        },
+    { "/searchpath",    CONSOLE_CMD_SEARCHPATH   },
+    { "/setwin",        CONSOLE_CMD_SETWIN       },
+    { "/setwinalpha",   CONSOLE_CMD_SETWINALPHA  },
+    { "/shout_off",     CONSOLE_CMD_SHOUTOFF     },
+    { "/shout_on",      CONSOLE_CMD_SHOUTON      },
+    { "/sleeptimer",    CONSOLE_CMD_SLEEPTIMER   },
+    { "/statreset",     CONSOLE_CMD_STATSRESET   },
+    { "/target",        CONSOLE_CMD_TARGET       },
+    { "/teststretch",   CONSOLE_CMD_TESTSTRETCH  },
+};
 
 enum
 {
-    MAP_UPDATE_CMD_SAME, MAP_UPDATE_CMD_NEW, MAP_UPDATE_CMD_CONNECTED
+    MAP_UPDATE_CMD_SAME,
+    MAP_UPDATE_CMD_NEW,
+    MAP_UPDATE_CMD_CONNECTED
 };
-
 
 //================================================================================================
 // Ascii to int (32bit).
@@ -128,39 +148,26 @@ void Network::AccNameSuccess(unsigned char *data, int len)
 //================================================================================================
 void Network::AccountCmd(unsigned char *data, int len)
 {
-    int count = 0;
-
     GuiManager::getSingleton().addTextline(GuiManager::WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Account cmd from server");
-
     ObjectHero::getSingleton().clearAccount();
     // First, get the account status - it tells us too when login failed
-    if ((unsigned char)data[count++]) // something is wrong when not ACCOUNT_STATUS_OK (0)
+    if (*data) // something is wrong when not ACCOUNT_STATUS_OK (0)
     {
         GuiManager::getSingleton().addTextline(GuiManager::WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Account fail");
         GuiManager::getSingleton().addTextline(GuiManager::WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Account does not exist");
         GuiManager::getSingleton().setElementText(GuiManager::WIN_LOGIN, GuiImageset::GUI_TEXTBOX_LOGIN_WARN, "Account does not exist");
         Option::getSingleton().setGameStatus(Option::GAME_STATUS_START);
-        /*
-                draw_info_format(COLOR_RED, "Unknown Account: %s", cpl.acc_name);
-                GameStatus = GAME_STATUS_LOGIN_ACCOUNT;
-                LoginInputStep = LOGIN_STEP_NAME;
-                dialog_login_warning_level = DIALOG_LOGIN_WARNING_ACCOUNT_UNKNOWN;
-                cpl.acc_name[0] = 0;
-                open_input_mode(MAX_ACCOUNT_NAME);
-        */
     }
     else // we have account data... set it up and move player to account view mode
     {
+        int count = 1;
         GuiManager::getSingleton().addTextline(GuiManager::WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Account ok");
-
         for (int nr = 0; nr < ObjectHero::ACCOUNT_MAX_PLAYER; ++nr)
         {
             if (count >= len) break;
             count += ObjectHero::getSingleton().fillAccount(nr, data+count);
         }
         Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_DONE);
-        //GameStatus = GAME_STATUS_ACCOUNT;
-        //LoginInputStep = LOGIN_STEP_NOTHING;
     }
 }
 
@@ -218,7 +225,6 @@ void Network::Map2Cmd(unsigned char *data, int len)
         pos += (int)mapname.size()+1;
         if (mapstat == MAP_UPDATE_CMD_NEW)
         {
-            TileManager::getSingleton().map_new_flag = true;
             map_w = (uint8)(data[pos++]);
             map_h = (uint8)(data[pos++]);
             xpos = (uint8)(data[pos++]);
@@ -239,7 +245,7 @@ void Network::Map2Cmd(unsigned char *data, int len)
             mx = xpos;
             my = ypos;
 //            remove_item_inventory(locate_item(0)); // implicit clear below
-            TileMap::getSingleton().scroll(xoff, yoff);
+//            TileMap::getSingleton().scroll(xoff, yoff);
         }
     }
     else
@@ -256,12 +262,10 @@ void Network::Map2Cmd(unsigned char *data, int len)
         mx = xpos;
         my = ypos;
     }
-
     if (map_new_flag)
     {
         TileMap::getSingleton().adjust_map_cache(xpos, ypos);
     }
-
     TileMap::getSingleton().mMapData.posx = xpos; // map windows is from range to +MAPWINSIZE_X
     TileMap::getSingleton().mMapData.posy = ypos;
     //Logger::log().info() << "MapPos x: " << xpos << " y: " << ypos << " (nflag: " << map_new_flag << ")";
@@ -270,11 +274,9 @@ void Network::Map2Cmd(unsigned char *data, int len)
         ext_flag = 0;
         ext1 = ext2 = ext3 = 0;
         // first, we get the mask flag - it decribes what we now get
-        mask = GetShort_String(data + pos);
-        pos += 2;
+        mask = GetShort_String(data + pos); pos += 2;
         x = (mask >> 11) & 0x1f;
         y = (mask >>  6) & 0x1f;
-
         // These are the "damage tags" - shows damage an object got from somewhere.
         // ff_flag hold the layer info and how much we got here.
         // 0x08 means a damage comes from unknown or vanished source.
@@ -284,7 +286,6 @@ void Network::Map2Cmd(unsigned char *data, int len)
         {
             TileMap::getSingleton().display_map_clearcell(x, y);
         }
-
         ext3 = ext2 = ext1 = -1;
         pname1[0] = 0;
         pname2[0] = 0;
@@ -303,54 +304,43 @@ void Network::Map2Cmd(unsigned char *data, int len)
                 {
                     i = 0;
                     while ((c = (char) data[pos++]))
-                    {
                         pname1[i++] = c;
-                    }
                     pname1[i] = 0;
                 }
                 if (pname_flag & 0x04) // fm....
                 {
                     i = 0;
                     while ((c = (char) data[pos++]))
-                    {
                         pname2[i++] = c;
-                    }
                     pname2[i] = 0;
                 }
                 if (pname_flag & 0x02) // l1 ....
                 {
                     i = 0;
                     while ((c = (char)(data[pos++])))
-                    {
                         pname3[i++] = c;
-                    }
                     pname3[i] = 0;
                 }
                 if (pname_flag & 0x01) // l2 ....
                 {
                     i = 0;
                     while ((c = (char)(data[pos++])))
-                    {
                         pname4[i++] = c;
-                    }
                     pname4[i] = 0;
                 }
                 if (pname_flag & 0x40)
                 {
-                    height_2 = GetShort_String(data + pos);
-                    pos+=2;
+                    height_2 = GetShort_String(data + pos); pos+=2;
                     c = data[pos++];
                 }
                 if (pname_flag & 0x20)
                 {
-                    height_3 = GetShort_String(data + pos);
-                    pos+=2;
+                    height_3 = GetShort_String(data + pos); pos+=2;
                     c = data[pos++];
                 }
                 if (pname_flag & 0x10)
                 {
-                    height_4 = GetShort_String(data + pos);
-                    pos+=2;
+                    height_4 = GetShort_String(data + pos); pos+=2;
                     c = data[pos++];
                 }
             }
@@ -360,26 +350,22 @@ void Network::Map2Cmd(unsigned char *data, int len)
                 ff_flag = (uint8) data[pos++];
                 if (ff_flag & 0x8)
                 {
-                    ff0 = GetShort_String(data + pos);
-                    pos += 2;
+                    ff0 = GetShort_String(data + pos); pos += 2;
 //                    add_anim(ANIM_KILL, 0, 0, xpos + x, ypos + y, ff0);
                 }
                 if (ff_flag & 0x4)
                 {
-                    ff1 = GetShort_String(data + pos);
-                    pos += 2;
+                    ff1 = GetShort_String(data + pos); pos += 2;
 //                   add_anim(ANIM_DAMAGE, 0, 0, xpos + x, ypos + y, ff1);
                 }
                 if (ff_flag & 0x2)
                 {
-                    ff2 = GetShort_String(data + pos);
-                    pos += 2;
+                    ff2 = GetShort_String(data + pos); pos += 2;
 //                   add_anim(ANIM_DAMAGE, 0, 0, xpos + x, ypos + y, ff2);
                 }
                 if (ff_flag & 0x1)
                 {
-                    ff3 = GetShort_String(data + pos);
-                    pos += 2;
+                    ff3 = GetShort_String(data + pos); pos += 2;
 //                    add_anim(ANIM_DAMAGE, 0, 0, xpos + x, ypos + y, ff3);
                 }
             }
@@ -411,65 +397,49 @@ void Network::Map2Cmd(unsigned char *data, int len)
                 TileMap::getSingleton().set_map_ext(x, y, 1, ext1, probe);
             }
         }
-
         if (mask & 0x10)
         {
             //TileMap::getSingleton().set_map_darkness(x, y, (uint8) (data[pos]));
             ++pos;
         }
-
         // at last, we get the layer faces.
         // a set ext_flag here marks this entry as face from a multi tile arch.
         // we got another byte then which all information we need to display
         // this face in the right way (position and shift offsets)
         if (mask & 0x8) // Layer 0 (Ground tiles).
         {
-            face = GetShort_String(data + pos);
-            pos += 2;
-            request_face(face, 0);
+            face = GetShort_String(data + pos); pos += 2;
             xdata = 0;
-            TileMap::getSingleton().set_map_face(x, y, 0, face, xdata, -1, pname1);
+            int height = GetShort_String(data + pos); pos += 2;
+            TileMap::getSingleton().set_map_face(x, y, 0, face, xdata, -1, pname1, height);
+            //Logger::log().error() << "Layer 0: " << x << " "<< y << " "<< height;
         }
         if (mask & 0x4) // Layer 1 (gras, bridge, ...).
         {
-            face = GetShort_String(data + pos);
-            pos += 2;
-            request_face(face, 0);
+            face = GetShort_String(data + pos); pos += 2;
             xdata = 0;
             if (ext_flag & 0x04) // we have here a multi arch, fetch head offset
-            {
-                xdata = (uint8) data[pos];
-                pos++;
-            }
+                xdata = (uint8) data[pos++];
             TileMap::getSingleton().set_map_face(x, y, 1, face, xdata, ext1, pname2);
         }
         if (mask & 0x2) // Layer 2 (wall, ...).
         {
-            face = GetShort_String(data + pos);
-            pos += 2;
-            request_face(face, 0);
+            face = GetShort_String(data + pos); pos += 2;
             xdata = 0;
             if (ext_flag & 0x02) // we have here a multi arch, fetch head offset
-            {
-                xdata = (uint8) data[pos];
-                pos++;
-            }
+                xdata = (uint8) data[pos++];
             TileMap::getSingleton().set_map_face(x, y, 2, face, xdata, ext2, pname3);
         }
         if (mask & 0x1) // Layer 3 (plant, npc, chair, ...).
         {
-            face = GetShort_String(data + pos);
-            pos += 2;
-            request_face(face, 0);
+            face = GetShort_String(data + pos); pos += 2;
             xdata = 0;
             if (ext_flag & 0x01) // we have here a multi arch, fetch head offset
-            {
-                xdata = (uint8) data[pos];
-                pos++;
-            }
+                xdata = (uint8) data[pos++];
             TileMap::getSingleton().set_map_face(x, y, 3, face, xdata, ext3, pname4);
         }
     } // more tiles
+    TileMap::getSingleton().draw();
 }
 
 //================================================================================================
@@ -643,6 +613,9 @@ enum _spell_sound_id
     SPELL_SOUND_MAX
 };
 
+//================================================================================================
+// .
+//================================================================================================
 void Network::SoundCmd(unsigned char *data, int len)
 {
     if (len != 5)
@@ -1106,7 +1079,7 @@ void Network::PlayerCmd(unsigned char *data, int len)
         obj.maxMana   = 150;
         obj.maxGrace  = 150;
         obj.pos.x     = TileManager::TILE_SIZE * TileManager::CHUNK_SIZE_X/2;
-        obj.pos.z     = TileManager::TILE_SIZE *(TileManager::CHUNK_SIZE_Z-3) - TileManager::TILE_SIZE/2;
+        obj.pos.z     = TileManager::TILE_SIZE *(TileManager::CHUNK_SIZE_Z-6) - TileManager::TILE_SIZE/2;
         obj.level     = 0;
         obj.facing    = -60;
         obj.particleNr=-1;
@@ -1262,7 +1235,6 @@ void Network::GolemCmd(unsigned char *data, int len)
         {
             tmp = strchr(data, ' '); // find start of a name
             face = atoi(tmp + 1);
-            request_face(face, 0);
             tmp = strchr(tmp + 1, ' '); // find start of a name
             (buf, "You lose control of %s.", tmp + 1);
             draw_info(buf, COLOR_WHITE);
@@ -1274,7 +1246,6 @@ void Network::GolemCmd(unsigned char *data, int len)
         {
             tmp = strchr(data, ' '); // find start of a name
             face = atoi(tmp + 1);
-            request_face(face, 0);
             tmp = strchr(tmp + 1, ' '); // find start of a name
             (buf, "You get control of %s.", tmp + 1);
             draw_info(buf, COLOR_WHITE);
@@ -1292,7 +1263,7 @@ void Network::SetupCmd(unsigned char *buf, int len)
 {
     buf+=6; // Skip the endian test - because its crap! Please use htonl()/htons() instead!
     unsigned char *cmd, *param;
-    scrolldy = scrolldx = 0;
+    //scrolldy = scrolldx = 0;
     int pos =0;
     while (1)
     {
@@ -1403,6 +1374,7 @@ void Network::checkFileStatus(const char *cmd, char *param, int fileNr)
 //================================================================================================
 void Network::DataCmd(unsigned char *data, int len)
 {
+    const int DATA_PACKED_CMD = 1<<7;
     // ////////////////////////////////////////////////////////////////////
     // check for valid command:
     // 0 = NC, 1 = SERVER_FILE_SKILLS, 2 = SERVER_FILE_SPELLS, (...)
@@ -1581,17 +1553,6 @@ void Network::MarkCmd(unsigned char *data, int len)
 }
 
 //================================================================================================
-// we got a face - test we have it loaded. If not, say server "send us face cmd "
-// Return: 0 - face not there, requested.  1: face requested or loaded
-// This command collect all new faces and then flush it at once.
-// I insert the flush command after the socket call.
-//================================================================================================
-int Network::request_face(int, int)
-{
-    return 1;
-}
-
-//================================================================================================
 //
 //================================================================================================
 void Network::CreatePlayerAccount()
@@ -1655,7 +1616,6 @@ void Network::ItemUpdateCmd(unsigned char *data, int len)
         if (sendflags & UPD_FACE)
         {
             face = GetInt_String(data + pos);
-            request_face(face, 0);
             pos += 4;
         }
         if (sendflags & UPD_DIRECTION)
@@ -1729,3 +1689,35 @@ void Network::ItemYCmd(unsigned char *data, int len)
 {
     Item::getSingleton().ItemXYCmd(data, len, true);
 }
+
+//================================================================================================
+// Analyze /<cmd> type commands the player has typed in the console or bound to a key.
+// Sort out the "client intern" commands and expand or pre process them for the server.
+// Return: true = don't send command to server
+//         false= send command to server
+//================================================================================================
+bool Network::console_command_check(String cmd)
+{
+    for (int i = 0; i < CONSOLE_CMD_SUM; ++i)
+    {
+        if (StringUtil::startsWith(cmd, mConsoleCmd[i].cmd, true))
+        {
+            int len = (int)strlen(mConsoleCmd[i].cmd);
+Logger::log().error() << "before: " << cmd;
+            cmd = cmd.substr(len, cmd.size()-len);
+Logger::log().error() << "after: " << cmd;
+            do_console_cmd(cmd, i);
+            return true;;
+        }
+    }
+    return false;
+}
+
+//================================================================================================
+//
+//================================================================================================
+void Network::do_console_cmd(String &stCmd, int cmd)
+{
+    return;
+}
+

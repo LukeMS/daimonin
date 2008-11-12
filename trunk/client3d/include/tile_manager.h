@@ -76,7 +76,6 @@ public:
         VERTEX_SUM  // Numer of vertices
     };
     int map_transfer_flag;
-    bool map_new_flag;
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.

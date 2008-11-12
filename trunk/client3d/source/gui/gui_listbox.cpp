@@ -32,7 +32,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Ogre;
 
-static const Real SCROLL_SPEED = 0.004f;
+static const Real SCROLL_SPEED = 0.001f;
 
 //================================================================================================
 // Constructor.
@@ -322,19 +322,17 @@ void GuiListbox::draw()
     {
         // Restore old background into the work-buffer.
         memcpy(mGfxBuffer, mGfxBuffer + mGfxBufferSize, mGfxBufferSize*sizeof(uint32));
-        uint32 *gfxBuf = mGfxBuffer + mWidth * (mFontHeight-mPixelScroll);
-        for (int i=0; i < mMaxVisibleRows+1; ++i)
+        uint32 *gfxBuf = mGfxBuffer + mWidth * (mFontHeight-mPixelScroll-1);
+        for (int i=0; i < mMaxVisibleRows; ++i)
         {
             GuiTextout::getSingleton().PrintToBuffer(mWidth, mFontHeight, gfxBuf,
                     row[(mPrintPos+ (i)-mMaxVisibleRows)& (SIZE_STRING_BUFFER-1)].str.c_str(), mFontNr,
                     row[(mPrintPos+ (i)-mMaxVisibleRows)& (SIZE_STRING_BUFFER-1)].color);
             gfxBuf+= mWidth * mFontHeight;
         }
-        Texture *texture = mParent->getTexture();
         texture->getBuffer()->blitFromMemory(
             PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8 , mGfxBuffer),
             Box(mPosX, mPosY, mPosX + mWidth, mPosY + mHeight));
-
         // The complete row was scrolled.
         if (++mPixelScroll >= mFontHeight)
         {

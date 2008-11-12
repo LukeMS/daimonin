@@ -246,7 +246,7 @@ void ObjectManager::selectObject(MovableObject *mob)
         mSelectedPos = mvNPC[mSelectedObject]->getTilePos();
         mSelectedFriendly = mvNPC[mSelectedObject]->getFriendly();
         String strSelect = "/target !"+ StringConverter::toString(mSelectedPos.x-9) + " " + StringConverter::toString(mSelectedPos.z-9);
-        Network::getSingleton().send_command(strSelect.c_str(), -1, Network::SC_NORMAL);
+        //Network::getSingleton().send_command(strSelect.c_str(), -1, Network::SC_NORMAL);
     }
     else
     {
@@ -279,9 +279,12 @@ void ObjectManager::mousePressed(MovableObject *mob, bool modifier)
         {
             mvNPC[ObjectNPC::HERO]->readyPrimaryWeapon(false);
             ObjectVisuals::getSingleton().select(mvNPC[mSelectedObject], false, false);
-            String strSelect = "/target !"+ StringConverter::toString(mSelectedPos.x-9) + " " + StringConverter::toString(mSelectedPos.z-9);
-            Network::getSingleton().send_command(strSelect.c_str(), -1, Network::SC_NORMAL);
-            Network::getSingleton().send_command("/talk hello", -1, Network::SC_NORMAL);
+
+
+            //String strSelect = "/target !"+ StringConverter::toString(mSelectedPos.x-9) + " " + StringConverter::toString(mSelectedPos.z-9);
+            //Network::getSingleton().send_game_command(strSelect.c_str());
+            //Network::getSingleton().send_game_command("/target 1");
+            Network::getSingleton().send_game_command("talk hello");
         }
     }
     else if (mSelectedType < OBJECT_NPC)
