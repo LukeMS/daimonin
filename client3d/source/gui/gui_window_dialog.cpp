@@ -711,14 +711,14 @@ void GuiDialog::sendCommand(int mode, char *cmd)
     {
         if (mode == 1)
         {
-            Network::getSingleton().send_command(cmd, -1, Network::SC_NORMAL);
+            //Network::getSingleton().send_command(cmd, -1, Network::SC_NORMAL);
             /* if(strncmp(cmd, "/talk ", 6) == 0)
              textwin_addhistory(cmd); */
         }
         else
         {
             String strBuf = "/talk "; strBuf+= cmd;
-            Network::getSingleton().send_command(strBuf.c_str(), -1, Network::SC_NORMAL);
+            //Network::getSingleton().send_command(strBuf.c_str(), -1, Network::SC_NORMAL);
             String msgBuf = "Talking about: "; msgBuf+=cmd;
             //draw_info(msg,COLOR_WHITE);
             //if(mode == 2) textwin_addhistory(buf);

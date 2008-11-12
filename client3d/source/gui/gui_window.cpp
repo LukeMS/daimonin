@@ -375,6 +375,7 @@ inline void GuiWindow::printParsedTextline(TiXmlElement *xmlElem)
 //================================================================================================
 void GuiWindow::centerWindowOnMouse(int x, int y)
 {
+    if (!mInit) return;
     mPosX = (int)(x-mTexture->getWidth())/2;
     mPosY = (int)(y-mTexture->getHeight())/2 - 50;
     mElement->setPosition(mPosX, mPosY);

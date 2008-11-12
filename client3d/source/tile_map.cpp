@@ -181,8 +181,10 @@ void TileMap::set_map_ext(int x, int y, int layer, int ext, int probe)
 //================================================================================================
 // Replace client2d faces by client3d faces.
 //================================================================================================
-void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, char *name)
+void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, char *name, int height)
 {
+    x+=12;
+    y+=20;
     enum {LAYER_TILES, LAYER_TODO1, LAYER_TODO2, LAYER_OBJECTS};
     // ////////////////////////////////////////////////////////////////////
     // Layer: Tiles.
@@ -194,10 +196,7 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
         if (!strTile || !strTile[0])
         {
             //Logger::log().error() << "Unknown tile: " << face << " pos: " << x << ", " << y << "  " << strTile;
-            TileManager::getSingleton().setMap(x, y,
-                                               30, // Height
-                                               8,  // Gfx
-                                               0); // Shadow
+            TileManager::getSingleton().setMap(x, y, height, 8, 0);
         }
         else
         {
@@ -309,22 +308,22 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                 ObjectManager::getSingleton().addMobileObject(obj);
             }
         }
-        /*
-                else if (meshName == "Hero.mesh")
-                {
-                    static bool once = true;
-                    if (once)
-                    {
-                        once = false;
-                        Vector3 pos;
-                        pos.x = TileManager::TILE_SIZE * TileManager::CHUNK_SIZE_X/2;
-                        pos.y = 0;
-                        pos.z = TileManager::TILE_SIZE * (TileManager::CHUNK_SIZE_Z-2) - TileManager::TILE_SIZE/2;
-                        ObjectManager::getSingleton().setPosition(ObjectNPC::HERO, pos);
-                        //Logger::log().error() << "we got the Hero face: " << face;
-                    }
-                }
-        */
+/*
+        else if (meshName == "Hero.mesh")
+        {
+            static bool once = true;
+            if (once)
+            {
+                once = false;
+                Vector3 pos;
+                pos.x = TileManager::TILE_SIZE * 8.5;
+                pos.y = 0;
+                pos.z = TileManager::TILE_SIZE * 8.5;
+                ObjectManager::getSingleton().setPosition(ObjectNPC::HERO, pos);
+                Logger::log().error() << "we got the Hero face: " << face;
+            }
+        }
+*/
         else if (meshName.find("Wall") != std::string::npos)
         {
             /*
@@ -421,19 +420,22 @@ void TileMap::display_map_clearcell(long x, long y)
 }
 
 //================================================================================================
-// ATM this func is .
+//
 //================================================================================================
 void TileMap::scroll(int dx, int dy)
 {
     if (dx || dy) mNeedsRedraw = true;
 }
 
+
 //================================================================================================
 // .
 //================================================================================================
+#include "gui_manager.h"
 void TileMap::draw()
 {
     if (!mNeedsRedraw) return;
+    GuiManager::getSingleton().addTextline(GuiManager::WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "TileMap::draw()");
     TileManager::getSingleton().changeChunks();
     mNeedsRedraw = false;
 }

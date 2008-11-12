@@ -41,7 +41,6 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
 {
     mIdleTime =0;
     static int fogStart = 450;
-
     // ////////////////////////////////////////////////////////////////////
     // GUI keyEvents.
     // ////////////////////////////////////////////////////////////////////
@@ -49,25 +48,20 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
     {
         //e->consume();
         return true;
-
     }
-
     // ////////////////////////////////////////////////////////////////////
     // InGame keyEvent.
     // ////////////////////////////////////////////////////////////////////
     if (Option::getSingleton().getGameStatus() < Option::GAME_STATUS_PLAY) return true;
-    ;
     //mShiftDown = e->isShiftDown();
     switch (e.key)
     {
         case OIS::KC_A:
         {
             //Item::getSingleton().getInventoryItemFromFloor(0);
-
             static int animNr= 0;
             ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_IDLE, animNr);
             if (++animNr >= 16) animNr= 0;
-
             break;
         }
 
@@ -160,16 +154,12 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
         {
             GuiManager::getSingleton().showWindow(GuiManager::WIN_EQUIPMENT, true);
             GuiManager::getSingleton().showWindow(GuiManager::WIN_INVENTORY, true);
-
             GuiManager::getSingleton().setSlotBusyTime(GuiManager::WIN_INVENTORY, 0, 6);
             GuiManager::getSingleton().setSlotBusy(GuiManager::WIN_INVENTORY, 0);
-
             //GuiManager::getSingleton().showWindow(GuiManager::WIN_TRADE, true);
             //GuiManager::getSingleton().showWindow(GuiManager::WIN_SHOP, true);
-//            GuiManager::getSingleton().showWindow(GuiManager::WIN_TILEGROUND, true);
+            //GuiManager::getSingleton().showWindow(GuiManager::WIN_TILEGROUND, true);
             GuiManager::getSingleton().showWindow(GuiManager::WIN_CONTAINER, true);
-
-
             // ObjectManager::getSingleton().setPlayerEquipment(ObjectManager::OBJECT_PLAYER, ObjectNPC::BONE_HEAD, 1);
             break;
         }
@@ -564,6 +554,9 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
     //e->consume();
 }
 
+//================================================================================================
+// .
+//================================================================================================
 bool Events::keyReleased( const OIS::KeyEvent &e )
 {
     //mShiftDown = e->isShiftDown();
@@ -601,7 +594,6 @@ bool Events::keyReleased( const OIS::KeyEvent &e )
             break;
     }
     return true;
-
 }
 
 //================================================================================================
@@ -619,6 +611,9 @@ bool Events::mouseMoved(const OIS::MouseEvent &e)
     return true;
 }
 
+//================================================================================================
+// .
+//================================================================================================
 bool Events::mousePressed(const OIS::MouseEvent &e, OIS::MouseButtonID button)
 {
     // ////////////////////////////////////////////////////////////////////
@@ -639,7 +634,7 @@ bool Events::mousePressed(const OIS::MouseEvent &e, OIS::MouseButtonID button)
             {
                 //Logger::log().warning() << result.size();
                 RaySceneQueryResult::iterator itr = result.begin();
-                //ObjectManager::getSingleton().selectObject(itr->movable);
+                ObjectManager::getSingleton().selectObject(itr->movable);
             }
             else
             {
@@ -677,11 +672,12 @@ bool Events::mousePressed(const OIS::MouseEvent &e, OIS::MouseButtonID button)
     return true;
 }
 
+//================================================================================================
+// .
+//================================================================================================
 bool Events::mouseReleased(const OIS::MouseEvent &e, OIS::MouseButtonID id)
 {
     GuiManager::getSingleton().mouseEvent(GuiWindow::BUTTON_RELEASED, mMouse);
     //e->consume();
     return true;
-
 }
-

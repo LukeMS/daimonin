@@ -234,9 +234,37 @@ public:
     {
         account.count = 0;
     }
+    Ogre::String &getSelectedCharName()
+    {
+        return account.name[account.selected];
+    }
     Ogre::String &getCharName(unsigned int nr)
     {
         return account.name[nr];
+    }
+    const char *getCharRace(unsigned int nr)
+    {
+        if (!account.race[nr])
+            return "Human";
+        return "Elfish";
+    }
+    int getCharLevel(int nr)
+    {
+        return account.level[nr];
+    }
+    const char *getCharGender(unsigned int nr)
+    {
+        if (account.gender[nr])
+            return "Male";
+        return "Female";
+    }
+    void setSelected(int nr)
+    {
+        account.selected = nr;
+    }
+    int getSumChars()
+    {
+        return account.count;
     }
 
 private:
@@ -248,9 +276,9 @@ private:
         int count;    // Number of chars already created.
         int selected; // Actually selected character.
         Ogre::String name[ACCOUNT_MAX_PLAYER]; // List of account chars.
-        int level [ACCOUNT_MAX_PLAYER];
-        int race  [ACCOUNT_MAX_PLAYER];
-        int gender[ACCOUNT_MAX_PLAYER];
+        int  level [ACCOUNT_MAX_PLAYER];
+        int  race  [ACCOUNT_MAX_PLAYER];
+        bool gender[ACCOUNT_MAX_PLAYER];
     } account;
     // ////////////////////////////////////////////////////////////////////
     // Functions.

@@ -106,7 +106,7 @@ public:
     void draw();
     void clear_map(void);
     void display_map_clearcell(long x, long y);
-    void set_map_face(int x, int y, int layer, int face, int pos, int ext, char *name);
+    void set_map_face(int x, int y, int layer, int face, int pos, int ext, char *name, int height =30);
     void scroll(int dx, int dy);
     void InitMapData(const char *name, int xl, int yl, int px, int py);
     void set_map_ext(int x, int y, int layer, int ext, int probe);

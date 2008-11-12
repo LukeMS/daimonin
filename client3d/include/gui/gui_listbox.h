@@ -90,7 +90,7 @@ private:
     int  mGfxBufferSize;
     int  mKeyStart, mKeyCount;
 
-    Ogre::uint32 *mGfxBuffer;
+    Ogre::uint32 *mGfxBuffer, *mTxtBuffer;
     Ogre::Real mTime;
     class GuiGadgetScrollbar *mScrollBarH, *mScrollBarV;
     Callback *mCallFunc;

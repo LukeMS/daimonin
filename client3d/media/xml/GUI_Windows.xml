@@ -525,6 +525,7 @@
       <Pos x= "285" y= "1" />
     </Gadget>
     <Listbox name= "List_NPC" font="02">
+      <Image name = "Background-General"/>
       <Pos x= "10" y= "60" />
       <Range width= "270" height= "248" />
       <Gadget type= "SCROLLER" name = "VScrollbar">

@@ -72,7 +72,7 @@ struct CmdMapping commands[] =
     { Network::BookCmd },        // 25
     { Network::MarkCmd },        // 26
     { Network::AccountCmd },     // 27
-    //{ Network::ChannelMsgCmd },  // 28
+//  { Network::ChannelMsgCmd },  // 28
 };
 
 const int SUM_SERVER_COMMANDS = sizeof(commands) / sizeof(CmdMapping);
@@ -309,42 +309,104 @@ void Network::command_buffer_free(command_buffer *buf)
 
 /* High-level external interface */
 
-//================================================================================================
-// This should be used for all 'command' processing.
-// command is the text command, repeat is a count value, or -1 if none is desired and we don't
-// want to reset the current count.
-// force means we must send this command no matter what (ie, it is an administrative type
-// of command like fire_stop, and failure to send it will cause definate problems.
-// return 1 if command was sent, 0 if not sent.
-//================================================================================================
-int Network::send_command(const char *command, int repeat, int force)
+
+// Strips excess whitespace from string, writing the normalized string to ScratchSpace.
+static char *normalize_string(const char *string)
 {
-    int commdiff = csocket.command_sent - csocket.command_received;
-    if (commdiff < 0)
-        commdiff += 256;
-    ++csocket.command_sent &= 0xff; // max out at 255.
-    String sl = "ncom ";
-    AddIntToString(sl, csocket.command_sent, true);
-    AddIntToString(sl, repeat, false);
-    sl += command;
-    send_socklist(sl);
-    return 1;
+    static char ScratchSpace[MAX_BUF];
+    static char  buf[MAX_BUF], // this will be a wc of string
+    *token = NULL;
+    strcpy(buf, string);
+    // Wipe ScratchSpace clean every time:
+    *ScratchSpace = '\0';
+    // Get the next non-whitespace token from buf and concatenate it and one
+    // trailing whitespace to ScratchSpace:
+    for (token = strtok(buf, " \t"); token != NULL; token = strtok(NULL, " \t"))
+    {
+        strcat(ScratchSpace, token);
+        strcat(ScratchSpace, " ");
+    }
+    // There will be one trailing whitespace left. Get rid of it:
+    ScratchSpace[strlen(ScratchSpace) - 1] = '\0';
+    return ScratchSpace;
+}
+
+// Splits command at the next #
+// returning a pointer to the occurrence (which is overwritten with \0 first) or
+// NULL if no next multicommand is found or command is chat, etc.
+static char *BreakMulticommand(const char *command)
+{
+    char *c = NULL;
+    // Only look for a multicommand if the command is not one of these:
+    if (!(!strnicmp(command, "/tell", 5)
+            || !strnicmp(command, "/say", 4)
+            || !strnicmp(command, "/reply", 6)
+            || !strnicmp(command, "/gsay", 5)
+            || !strnicmp(command, "/shout", 6)
+            || !strnicmp(command, "/talk", 5)
+            || !strnicmp(command, "/channel", 8)
+            || (*command == '-')
+            || !strnicmp(command, "/create", 7)))
+    {
+        if ((c = (char*)strchr(command, '#'))) /* multicommand separator '#' */
+            *c = '\0';
+    }
+    return c;
 }
 
 //================================================================================================
-// move a command/buffer to the out buffer so it can be written to the socket.
+// Send a higher level game command like /tell, /say or other "slash" text commants.
+// Usually, this kind of commands are typed in console or are bound to macros.
+// The underlaying protocol command is CLIENT_CMD_GENERIC, which means its a command holding
+// another command.
+// For realtime or system commands, commands with binary params and such,
+// not a slash command should be used but a new protocol command.
+// Only that commands hold real binary params and can be pre-processed
+// by the server protocol functions.
 //================================================================================================
-int Network::send_socklist(String msg)
+void Network::send_game_command(const char *command)
 {
-    command_buffer *buf = command_buffer_new((int)msg.size() + 2, 0);
-    memcpy(buf->data + 2, msg.c_str(), msg.size());
-    buf->data[0] = (unsigned char)((msg.size() >> 8) & 0xFF);
-    buf->data[1] = ((uint32)(msg.size())) & 0xFF;
-    SDL_LockMutex(output_buffer_mutex);
-    command_buffer_enqueue(buf, &output_queue_start, &output_queue_end);
-    SDL_CondSignal(output_buffer_cond); // Restart thread.
-    SDL_UnlockMutex(output_buffer_mutex);
-    return 0;
+    /*
+    char *token, cmd[1024];
+    // Copy a normalized (leading, trailing, and excess inline whitespace stripped) command to cmd:
+    strcpy(cmd, normalize_string(command));
+    // Now go through cmd, possibly separating multicommands.
+    // Each command (before separation) is pointed to by token:
+    token = cmd;
+    while (token != NULL && *token)
+    {
+        char *end;
+        if (*token != '/' && *token != '-') // if not a command ... its chat  (- is for channel system)
+        {
+            char buf[MAX_BUF];
+            sprintf(buf, "/say %s", token);
+            strcpy(token, buf);
+        }
+        end = BreakMulticommand(token);
+        if (!console_command_check(token))
+        {
+            // Nasty hack. Treat /talk as a special case: lowercase it and
+            // print it to the message window as Topic: foo. -- Smacky 20071210
+            if (!strnicmp(token, "/talk", 5))
+            {
+                int c;
+                for (c = 0; *(token + c) != '\0'; c++)
+                    *(token + c) = tolower(*(token + c));
+                //draw_info_format(COLOR_DGOLD, "Topic: %s", token + 6);
+            }
+        */
+            std::stringstream strCmd;
+            strCmd << command;
+            //Logger::log().error() << "send: " << strCmd.str();
+            send_command_binary(CLIENT_CMD_GENERIC, strCmd);
+/*
+        }
+        if (end != NULL)
+            token = end + 1;
+        else
+            token = NULL;
+    }
+*/
 }
 
 //================================================================================================
@@ -354,15 +416,29 @@ int Network::send_command_binary(unsigned char cmd, std::stringstream &stream)
 {
     std::stringstream full_cmd;
     if (stream.str().size() == 1)
-        full_cmd << cmd << (unsigned char*) stream.str().c_str(); // Single byte command.
+        full_cmd << cmd << (unsigned char*) stream.str().c_str() << '\0'; // Single byte command.
     else
         full_cmd << cmd << '\0' << (unsigned char)(stream.str().size()+1) << stream.str() << '\0';
     command_buffer *buf = command_buffer_new((int)full_cmd.str().size(), (unsigned char*)full_cmd.str().c_str());
-    /*
-        Logger::log().error() << "command_buffer: " << buf->len << "   " << stream.str().size();
+
+
+        Logger::log().error() << "send " << buf->len << " bytes:";
+        String str1="", str2="";
+        char strBuf[12];
         for (int i= 0; i < buf->len; ++i)
-            Logger::log().error() << buf->data[i] << "  " << (int) buf->data[i];
-    */
+        {
+            sprintf(strBuf,"%02x,", buf->data[i]);
+            str1+= strBuf;
+            str2+= " ";
+            if (!buf->data[i])
+                str2+= "|";
+            else
+                str2+= (char)buf->data[i];
+        }
+        Logger::log().error() << str1.substr(0, str1.size()-1);
+        Logger::log().error() << str2;
+
+
     SDL_LockMutex(output_buffer_mutex);
     command_buffer_enqueue(buf, &output_queue_start, &output_queue_end);
     SDL_CondSignal(output_buffer_cond); // Restart thread.

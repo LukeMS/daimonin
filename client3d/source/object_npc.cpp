@@ -165,6 +165,7 @@ void ObjectNPC::moveByCursor(Ogre::Real dTime)
         mTilePos.z+= dz * TileManager::TILE_SIZE*2;
         TileManager::getSingleton().scrollMap(dx, dz);
         ObjectManager::getSingleton().synchToWorldPos(dx*2, dz*2);
+        Events::getSingleton().setWorldPos(dx, dz);
     }
     mNode->setPosition(mTilePos);
 }

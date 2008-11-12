@@ -60,6 +60,7 @@ ObjectHero::ObjectHero()
     map_x = 0;
     map_y = 0;
     magicmap = 0;
+    account.count =0;
 //    RangeFireMode = 0;
 }
 
@@ -68,9 +69,8 @@ ObjectHero::ObjectHero()
 //================================================================================================
 int ObjectHero::fillAccount(int pos, const unsigned char *data)
 {
-    int i = 0;
     account.name[pos] = (const char*)data;
-    i+= (int)account.name[pos].size();
+    int i = (int)account.name[pos].size();
     account.level [pos] = data[++i];
     account.race  [pos] = data[++i];
     account.gender[pos] = data[++i];
