@@ -1,16 +1,6 @@
 <?xml version="1.0"?>
 <!DOCTYPE GameObjectMatchers SYSTEM "GameObjectMatchers.dtd">
 <GameObjectMatchers>
-    <GameObjectMatcher id="background">
-        <title xml:lang="en">Background</title>
-        <title xml:lang="de">Hintergrund</title>
-        <title xml:lang="fr">Fond</title>
-        <title xml:lang="sv">Bakgrund</title>
-        <And>
-            <Attrib name="is_floor" />
-            <Attrib name="no_pick" />
-        </And>
-    </GameObjectMatcher>
     <GameObjectMatcher id="monster">
         <title xml:lang="en">Monster</title>
         <title xml:lang="de">Monster</title>
