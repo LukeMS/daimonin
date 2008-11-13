@@ -80,24 +80,26 @@
         </And>
     </GameObjectMatcher>
 
-    <!-- The following matchers are not yet enabled to not break Gridarta
+    <!-- The system attribute is not yet enabled to not break Gridarta
          releases before r5023. -->
-    <!-- Objects to be treated as floors in insertion tool
-    <GameObjectMatcher id="system_floor" system="true">
+
+    <!-- Objects to be treated as floors in insertion tool -->
+    <GameObjectMatcher id="system_floor"> <!-- XXX: should be 'system="true"' to hide from the GUI -->
         <title xml:lang="en">Floor</title>
         <title xml:lang="de">Boden</title>
         <TypeNrs numbers="65 68 71" />
-    </GameObjectMatcher> -->
+    </GameObjectMatcher>
 
-    <!-- Objects to be put below the floor in insertion tool
-    <GameObjectMatcher id="below_floor" system="true">
+    <!-- Objects to be put below the floor in insertion tool -->
+    <GameObjectMatcher id="system_below_floor"> <!-- XXX: should be 'system="true"' to hide from the GUI -->
         <title xml:lang="en">Below Floor</title>
         <title xml:lang="de">Unter Boden</title>
-        <Attrib name="layer" value="0" />
-    </GameObjectMatcher> -->
+            <TypeNrs numbers="-666" />
+        <!-- <Attrib name="layer" value="0" /> -->
+    </GameObjectMatcher>
 
-    <!-- Objects to be put below the floor in insertion tool
-    <GameObjectMatcher id="system_wall" system="true">
+    <!-- Objects to be put below the floor in insertion tool -->
+    <GameObjectMatcher id="system_wall"> <!-- XXX: should be 'system="true"' to hide from the GUI -->
         <title xml:lang="en">Wall</title>
         <title xml:lang="de">Wand</title>
         <title xml:lang="fr">Murs</title>
@@ -106,10 +108,10 @@
             <TypeNrs numbers="77 79" />
             <Attrib name="no_pass" />
         </And>
-    </GameObjectMatcher> -->
+    </GameObjectMatcher>
 
-    <!-- Objects to be treated as monsters in insertion tool
-    <GameObjectMatcher id="system_monster" system="true">
+    <!-- Objects to be treated as monsters in insertion tool -->
+    <GameObjectMatcher id="system_monster"> <!-- XXX: should be 'system="true"' to hide from the GUI -->
         <title xml:lang="en">Monster</title>
         <title xml:lang="de">Monster</title>
         <title xml:lang="fr">Monstres</title>
@@ -119,16 +121,16 @@
             <Attrib name="monster" />
             <Attrib name="generator" />
         </Or>
-    </GameObjectMatcher> -->
+    </GameObjectMatcher>
 
-    <!-- Objects to be treated as exits by the GUI
-    <GameObjectMatcher id="system_exit" system="true">
+    <!-- Objects to be treated as exits by the GUI -->
+    <GameObjectMatcher id="system_exit"> <!-- XXX: should be 'system="true"' to hide from the GUI -->
         <title xml:lang="en">Exit</title>
         <title xml:lang="de">Ausgang</title>
         <title xml:lang="fr">Sorties</title>
         <title xml:lang="sv">Utgångar</title>
         <TypeNrs numbers="41 66 69 94 95" />
-    </GameObjectMatcher> -->
+    </GameObjectMatcher>
 
     <!-- Objects to be checked by the "Critical slaying characters" map
          validator. -->
