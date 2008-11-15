@@ -1874,16 +1874,16 @@ int command_ban(object *op, char *params)
                     for(ob = gmaster_list_VOL;ob;ob=ob->next)
                         new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob,
                         "BAN: IP %s has been unbanned by %s.\n", name, op->name);
-                       if(strcmp(query_name(ob->objlink.ob),query_name(op)))
-                        sent = TRUE;
+/*                       if(strcmp(query_name(ob->objlink.ob),query_name(op)))
+                        sent = TRUE;*/
                     for(ob = gmaster_list_GM;ob;ob=ob->next)
-                       if(!sent)
+//                       if(!sent)
                         new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob,
                         "BAN: IP %s has been unbanned by %s.\n", name, op->name);
-                       if(strcmp(query_name(ob->objlink.ob),query_name(op)))
-                        sent = TRUE;
+/*                       if(strcmp(query_name(ob->objlink.ob),query_name(op)))
+                        sent = TRUE;*/
                     for(ob = gmaster_list_MM;ob;ob=ob->next)
-                      if(!sent)
+//                      if(!sent)
                        new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob,
                         "BAN: IP %s has been unbanned by %s.\n", name, op->name);
                     remove_ban_entry(ol);
@@ -1909,16 +1909,16 @@ int command_ban(object *op, char *params)
                   for(ob = gmaster_list_VOL;ob;ob=ob->next)
                     new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob,
                         "BAN: Player %s has been unbanned by %s.\n", name, op->name);
-                    if(strcmp(query_name(ob->objlink.ob),query_name(op)))
-                     sent = TRUE;
+/*                    if(strcmp(query_name(ob->objlink.ob),query_name(op)))
+                     sent = TRUE;*/
                   for(ob = gmaster_list_GM;ob;ob=ob->next)
-                   if(!sent)
+//                   if(!sent)
                     new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob,
                         "BAN: Player %s has been unbanned by %s.\n", name, op->name);
-                       if(strcmp(query_name(ob->objlink.ob),query_name(op)))
-                        sent = TRUE;
+/*                       if(strcmp(query_name(ob->objlink.ob),query_name(op)))
+                        sent = TRUE;*/
                   for(ob = gmaster_list_MM;ob;ob=ob->next)
-                   if(!sent)
+//                   if(!sent)
                     new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ob->objlink.ob,
                         "BAN: Player %s has been unbanned by %s.\n", name, op->name);
                     remove_ban_entry(ol);
