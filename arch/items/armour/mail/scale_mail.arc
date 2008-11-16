@@ -73,7 +73,7 @@ resist_impact 45
 resist_slash 45
 resist_cleave 45
 resist_pierce 50
-resist_demonic 10
+resist_aether 10
 weight 19500
 value 255000
 end
