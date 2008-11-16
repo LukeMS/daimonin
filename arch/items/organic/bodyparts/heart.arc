@@ -17,7 +17,7 @@ name beating heart
 face heart.102
 animation heart_beating
 is_animated 1
-anim_speed .3
+anim_speed 1
 speed 1
 item_quality 100
 item_condition 100
