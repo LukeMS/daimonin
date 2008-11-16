@@ -3,7 +3,7 @@ name large tree
 face xmastreeinside.101
 animation white_xmas_tree
 is_animated 1
-anim_speed -.2
+anim_speed 1
 identified 1
 speed 0.1
 item_quality 80

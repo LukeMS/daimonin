@@ -3,7 +3,7 @@ name water golem core
 face core_water_golem.101
 animation core_water_golem
 is_animated 1
-anim_speed .9
+anim_speed 1
 speed 1
 type 79
 layer 3
