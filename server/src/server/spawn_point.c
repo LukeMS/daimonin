@@ -257,14 +257,8 @@ void spawn_point(object *op)
      * the items it is specifically given in a map file, *not* randomitems. */
     sprintf(buf, "%s's loot", mob->name);
     loot = create_singularity(buf);
-
-    for (tmp = mob->inv; tmp; tmp = tmp->below)
-    {
-        object *ob = get_object();
-
-        copy_object(tmp, ob);
-        insert_ob_in_ob(ob, loot);
-    }
+    /* Use insert_spawn_mob_loot() to extract the loot into the loot singularity. */
+    insert_spawn_mob_loot(op, loot, mob->inv);
 
     if (!(mob = spawn_monster(mob, op, op->last_heal)))
     {
