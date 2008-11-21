@@ -1421,7 +1421,7 @@ static int GameObject_Deposit(lua_State *L)
     if (!money.mode)
     {
         val = -1;
-        hooks->new_draw_info(NDI_UNIQUE, 0, WHO, "deposit what?\nUse 'deposit all' or 'deposit 40 gold, 20 silver...'");
+        hooks->new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, WHO, "deposit what?\nUse 'deposit all' or 'deposit 40 gold, 20 silver...'");
     }
     else if (money.mode == MONEYSTRING_ALL)
     {
@@ -1448,7 +1448,7 @@ static int GameObject_Deposit(lua_State *L)
         }
         else
         {
-            hooks->new_draw_info(NDI_UNIQUE, 0, WHO, "You don't have that much money.");
+            hooks->new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, WHO, "You don't have that much money.");
             val = 0;
         }
     }
@@ -1494,7 +1494,7 @@ static int GameObject_Withdraw(lua_State *L)
     if (!money.mode)
     {
         val = -1;
-        hooks->new_draw_info(NDI_UNIQUE, 0, WHO, "withdraw what?\nUse 'withdraw all' or 'withdraw 30 gold, 20 silver....'");
+        hooks->new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, WHO, "withdraw what?\nUse 'withdraw all' or 'withdraw 30 gold, 20 silver....'");
     }
     else if (money.mode == MONEYSTRING_ALL)
     {
@@ -1506,7 +1506,7 @@ static int GameObject_Withdraw(lua_State *L)
     {
         /* just to set a border.... */
         if (money.mithril > 100000 || money.gold > 100000 || money.silver > 1000000 || money.copper > 1000000)
-            hooks->new_draw_info(NDI_UNIQUE, 0, WHO, "withdraw values to high.");
+            hooks->new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, WHO, "withdraw values to high.");
         else
         {
             big_value = money.mithril * hooks->coins_arch[0]->clone.value
@@ -1587,7 +1587,7 @@ static int GameObject_Say(lua_State *L)
         snprintf(buf, sizeof(buf), "%s says: %s", STRING_OBJ_NAME(WHO), message);
         message = buf;
     }
-    hooks->new_info_map(NDI_NAVY|NDI_UNIQUE, WHO->map, WHO->x, WHO->y, range, message);
+    hooks->new_info_map(NDI_UNIQUE | NDI_WHITE, WHO->map, WHO->x, WHO->y, range, message);
 
     return 0;
 }
@@ -1622,16 +1622,16 @@ static int GameObject_SayTo(lua_State *L)
     target = obptr2->data.object;
 
     if(mode == 1)
-        hooks->new_draw_info(NDI_NAVY|NDI_UNIQUE, 0, target, message);
+        hooks->new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, target, message);
     else /* thats default */
     {
         if(mode == 2)
         {
             snprintf(buf, sizeof(buf), "%s talks to %s.", STRING_OBJ_NAME(WHO),STRING_OBJ_NAME(target));
-            hooks->new_info_map_except(NDI_UNIQUE, WHO->map, WHO->x, WHO->y, range, WHO, target, buf);
+            hooks->new_info_map_except(NDI_UNIQUE | NDI_WHITE, WHO->map, WHO->x, WHO->y, range, WHO, target, buf);
         }
         snprintf(buf, sizeof(buf), "%s says: %s", STRING_OBJ_NAME(WHO), message);
-        hooks->new_draw_info(NDI_NAVY|NDI_UNIQUE, 0, target, buf);
+        hooks->new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, target, buf);
     }
 
     return 0;
@@ -1667,18 +1667,18 @@ static int GameObject_ChannelMsg(lua_State *L)
 /* Lua    : object:Write(message, color)                                     */
 /* Info   : Writes a message to a specific player.                           */
 /*          color should be one of the game.COLOR_xxx constants.             */
-/*          default color is game.COLOR_ORANGE | game.COLOR_UNIQUE           */
+/*          default color is game.COLOR_UNIQUE | game.COLOR_NAVY             */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static int GameObject_Write(lua_State *L)
 {
     char       *message;
-    int         color   = NDI_UNIQUE | NDI_ORANGE;
+    int         color = NDI_NAVY;
     lua_object *self;
 
     get_lua_args(L, "Os|i", &self, &message, &color);
 
-    hooks->new_draw_info(color, 0, WHO, message);
+    hooks->new_draw_info(NDI_UNIQUE | color, 0, WHO, message);
 
     return 0;
 }
@@ -1907,7 +1907,7 @@ static int GameObject_JoinGuild(lua_State *L)
     SET_FLAG(WHO, FLAG_FIX_PLAYER);
 
     force = hooks->guild_join(CONTR(WHO), name, s1, sv1, s2, sv2, s3, sv3);
-    hooks->new_draw_info_format(NDI_WHITE, 0, WHO, "you join %s Guild.", name);
+    hooks->new_draw_info_format(NDI_UNIQUE | NDI_NAVY, 0, WHO, "you join %s Guild.", name);
 
     if(force)
         return push_object(L, &GameObject, force);
@@ -2247,7 +2247,7 @@ static int GameObject_AddQuest(lua_State *L)
     /* if we return NULL, the quest can't be given - if we are a player because we it max quests */
     if(WHO->type != PLAYER || hooks->quest_count_pending(WHO) >= QUESTS_PENDING_MAX)
     {
-        hooks->new_draw_info_format(NDI_YELLOW, 0, WHO, "You can't have more as %d open quests.\nRemove one first!", QUESTS_PENDING_MAX);
+        hooks->new_draw_info_format(NDI_UNIQUE | NDI_NAVY, 0, WHO, "You can't have more as %d open quests.\nRemove one first!", QUESTS_PENDING_MAX);
         return 0;
     }
 
@@ -2574,7 +2574,7 @@ static int GameObject_RemoveQuestItem(lua_State *L)
         if(nrof == -1) /* if we don't have an explicit number, use number from kill target */
             nrof = myob->nrof;
 
-        hooks->new_draw_info_format(NDI_WHITE, 0, pl, "%s is removed from your inventory.",
+        hooks->new_draw_info_format(NDI_UNIQUE | NDI_NAVY, 0, pl, "%s is removed from your inventory.",
                 hooks->query_short_name(myob, NULL));
         remove_quest_items(pl->inv, myob, nrof);
     }
@@ -2867,7 +2867,7 @@ static int GameObject_CreateObjectInsideEx(lua_State *L)
     pl = hooks->is_player_inv(myob);
     if(pl)
     {
-        hooks->new_draw_info_format(NDI_WHITE, 0, pl, "you got %d %s",
+        hooks->new_draw_info_format(NDI_UNIQUE | NDI_NAVY, 0, pl, "you got %d %s",
                 nrof?nrof:1, hooks->query_base_name(myob, NULL));
     }
 
@@ -3286,7 +3286,7 @@ static int GameObject_AddMoneyEx(lua_State *L)
         sprintf(buf, "%s%s %d %s",buf,  flag?" and ":"", c, "copper");
 
     strcat(buf, " coin.");
-    hooks->new_draw_info(NDI_WHITE, 0, WHO, buf);
+    hooks->new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, WHO, buf);
 
     return 0;
 }
