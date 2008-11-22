@@ -373,7 +373,7 @@ static inline int aggro_exp_single(object *victim, object *aggro, int base)
 #ifdef DEBUG_AGGRO
         LOG(-1,".. no skill dmg - use guild base dmg\n");
 #endif
-		new_draw_info(NDI_UNIQUE, 0, hitter, "You didn't fight this time.\nYou trained your default guild skills.");
+        new_draw_info(NDI_UNIQUE, 0, hitter, "You didn't fight this time.\nYou trained your default guild skills.");
         if((tmp = pl->highest_skill[pl->base_skill_group[0]]))
         {
             e1 = calc_skill_exp(hitter, victim, 0.55f, tmp->level, &exp);
@@ -521,8 +521,8 @@ static inline int in_group_exp_range(object *victim, object *hitter, object *mem
     LOG(-1,"->%s is out of range!\n", query_name(member));
 #endif
 
-	/* don't give this group member quest items from victim */
-	CONTR(member)->group_status |= GROUP_STATUS_NOQUEST;
+    /* don't give this group member quest items from victim */
+    CONTR(member)->group_status |= GROUP_STATUS_NOQUEST;
     return FALSE;
 }
 
@@ -568,31 +568,31 @@ static inline int aggro_exp_group(object *victim, object *aggro, char *kill_msg)
     LOG(-1," high member: %s (level %d)\n--> exp: %d (%d) --> member exp: %d\n", query_name(high), high->level, exp, t ,exp/CONTR(leader)->group_nrof);
 #endif
 
-	/* exp is 0 - one member used a to high skill to kill */
+    /* exp is 0 - one member used a to high skill to kill */
     if(!exp)
     {
-		party_message(0,NDI_UNIQUE, 0, leader, NULL, "%s has too high level for exp.",query_name(high));
+        party_message(0,NDI_UNIQUE, 0, leader, NULL, "%s has too high level for exp.",query_name(high));
 
-		/* No exp don't means no quests... So, we check it here - and we fake
-		 * a in_group_exp_range() check, so we set NOEXP right for the quest trigger
-		 * check when we drop the vicitim inventory (even when we skip normal
-		 * loot with startequip flag)
-		 */
-		for(tmp=leader;tmp;tmp=CONTR(tmp)->group_next)
-		{
-			player *pl = CONTR(tmp);
+        /* No exp don't means no quests... So, we check it here - and we fake
+         * a in_group_exp_range() check, so we set NOEXP right for the quest trigger
+         * check when we drop the vicitim inventory (even when we skip normal
+         * loot with startequip flag)
+         */
+        for(tmp=leader;tmp;tmp=CONTR(tmp)->group_next)
+        {
+            player *pl = CONTR(tmp);
 
-			if(!in_group_exp_range(victim, aggro->enemy == tmp?NULL:aggro->enemy, tmp))
-				pl->group_status |= GROUP_STATUS_NOQUEST; /* outside map range */
-			else
-				pl->group_status &= ~GROUP_STATUS_NOQUEST;
+            if(!in_group_exp_range(victim, aggro->enemy == tmp?NULL:aggro->enemy, tmp))
+                pl->group_status |= GROUP_STATUS_NOQUEST; /* outside map range */
+            else
+                pl->group_status &= ~GROUP_STATUS_NOQUEST;
 
-			/* check kill quests */
-			if(pl->quests_type_kill && pl->quests_type_kill->inv)
-				check_kill_quest_event(tmp, victim);
-		}
+            /* check kill quests */
+            if(pl->quests_type_kill && pl->quests_type_kill->inv)
+                check_kill_quest_event(tmp, victim);
+        }
 
-		return FALSE;
+        return FALSE;
     }
 
     exp /= CONTR(leader)->group_nrof;
@@ -624,7 +624,7 @@ static inline int aggro_exp_group(object *victim, object *aggro, char *kill_msg)
         pl->group_status &= ~GROUP_STATUS_NOQUEST;
         if(pl->exp_calc_tag == exp_calc_tag)
         {
-			/* aggo_exp_single() checks for check_kill_quest_event() */
+            /* aggo_exp_single() checks for check_kill_quest_event() */
             aggro_exp_single(victim, pl->exp_calc_obj, exp);
         }
         else /* this member has not done any dmg to the mob - assign exp to guild exp list */
@@ -633,13 +633,13 @@ static inline int aggro_exp_group(object *victim, object *aggro, char *kill_msg)
 #ifdef DEBUG_AGGRO
             LOG(-1,".. no skill dmg - use guild base dmg\n");
 #endif
-			new_draw_info(NDI_UNIQUE, 0, tmp, "You didn't fight this time.\nYou trained your default guild skills.");
+            new_draw_info(NDI_UNIQUE, 0, tmp, "You didn't fight this time.\nYou trained your default guild skills.");
 
-			/* check kill quests */
-			if(pl->quests_type_kill && pl->quests_type_kill->inv)
-				check_kill_quest_event(tmp, victim);
+            /* check kill quests */
+            if(pl->quests_type_kill && pl->quests_type_kill->inv)
+                check_kill_quest_event(tmp, victim);
 
-			if((member = pl->highest_skill[pl->base_skill_group[0]]))
+            if((member = pl->highest_skill[pl->base_skill_group[0]]))
             {
                 e = calc_skill_exp(tmp, victim, 0.50f, member->level, &exp);
                 if(pl->base_skill_group_exp[0] != 100)
