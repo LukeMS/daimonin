@@ -325,13 +325,15 @@ static inline int add_aggro_exp(object *hitter, int exp, int skillnr)
         if(CONTR(hitter)->exp_bonus)
         {
             int exp_bonus = (int)(((double)exp/100.0)*(double)CONTR(hitter)->exp_bonus);
-            new_draw_info_format(NDI_UNIQUE, 0,hitter, "You got %d (+%d bonus) exp in %s.",
-                    add_exp(hitter, exp+exp_bonus, skillnr), exp_bonus, skills[skillnr].name);
+            new_draw_info_format(NDI_UNIQUE | NDI_WHITE, 0, hitter, "You got %d (+%d bonus) exp in %s.",
+                                 add_exp(hitter, exp+exp_bonus, skillnr),
+                                 exp_bonus, skills[skillnr].name);
         }
         else
         {
-            new_draw_info_format(NDI_UNIQUE, 0,hitter, "You got %d exp in %s.",
-                    add_exp(hitter, exp, skillnr), skills[skillnr].name);
+            new_draw_info_format(NDI_UNIQUE | NDI_WHITE, 0, hitter, "You got %d exp in %s.",
+                                 add_exp(hitter, exp, skillnr),
+                                 skills[skillnr].name);
         }
         return TRUE;
     }
@@ -373,7 +375,7 @@ static inline int aggro_exp_single(object *victim, object *aggro, int base)
 #ifdef DEBUG_AGGRO
         LOG(-1,".. no skill dmg - use guild base dmg\n");
 #endif
-        new_draw_info(NDI_UNIQUE, 0, hitter, "You didn't fight this time.\nYou trained your default guild skills.");
+        new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, hitter, "You didn't fight this time.\nYou trained your default guild skills.");
         if((tmp = pl->highest_skill[pl->base_skill_group[0]]))
         {
             e1 = calc_skill_exp(hitter, victim, 0.55f, tmp->level, &exp);
@@ -446,7 +448,7 @@ static inline int aggro_exp_single(object *victim, object *aggro, int base)
 
     /* if *all* possible skill exp has been zero because mob was to low - drop a message */
     if(ret == FALSE)
-        new_draw_info_format( NDI_UNIQUE, 0, hitter, "Your enemy was too low for exp.");
+        new_draw_info_format(NDI_UNIQUE | NDI_GREY, 0, hitter, "Your enemy was too low for exp.");
 
     return ret;
 }
@@ -571,7 +573,8 @@ static inline int aggro_exp_group(object *victim, object *aggro, char *kill_msg)
     /* exp is 0 - one member used a to high skill to kill */
     if(!exp)
     {
-        party_message(0,NDI_UNIQUE, 0, leader, NULL, "%s has too high level for exp.",query_name(high));
+        party_message(0, NDI_UNIQUE | NDI_GREY, 0, leader, NULL, "%s has too high level for exp.",
+                      query_name(high));
 
         /* No exp don't means no quests... So, we check it here - and we fake
          * a in_group_exp_range() check, so we set NOEXP right for the quest trigger
@@ -633,7 +636,7 @@ static inline int aggro_exp_group(object *victim, object *aggro, char *kill_msg)
 #ifdef DEBUG_AGGRO
             LOG(-1,".. no skill dmg - use guild base dmg\n");
 #endif
-            new_draw_info(NDI_UNIQUE, 0, tmp, "You didn't fight this time.\nYou trained your default guild skills.");
+            new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, tmp, "You didn't fight this time.\nYou trained your default guild skills.");
 
             /* check kill quests */
             if(pl->quests_type_kill && pl->quests_type_kill->inv)
