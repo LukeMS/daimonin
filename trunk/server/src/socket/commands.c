@@ -1017,6 +1017,10 @@ void cs_cmd_checkname(char *buf, int len, NewSocket *ns)
         return;
     }
 
+    /* lowercase account names */
+    for (i = name_len - 1; i >= 0; i--)
+       buf[i] = tolower(buf[i]);
+
     /* the client should block any invalid name - if we have one here its bogus */
     if(!account_name_valid(buf))
     {
@@ -1069,7 +1073,7 @@ void cs_cmd_login(char *buf, int len, NewSocket *ns)
 {
     char *pass;
     account_status ret = ACCOUNT_STATUS_OK;
-    int mode, name_len, pass_len;
+    int mode, name_len, pass_len, i;
 
     if (!buf || len<(PARM_SIZE_CHAR*5) || buf[len-1] || ns->status != Ns_Login)
     {
@@ -1087,11 +1091,15 @@ void cs_cmd_login(char *buf, int len, NewSocket *ns)
         return;
     }
 
+    /* lowercase account names */
+    for (i = name_len - 1; i >= 0; i--)
+       buf[i] = tolower(buf[i]);
+
     pass = buf+name_len+1;
     pass_len = strlen(pass);
     /* is the password in right size? Don't allow pass = name and ensure name is valid */
     if(pass_len < MIN_ACCOUNT_PASSWORD || pass_len > MAX_ACCOUNT_PASSWORD 
-                                       || !strcmp(buf,pass) || !account_name_valid(buf) )
+                                       || !strcasecmp(buf,pass) || !account_name_valid(buf) )
     {
         ns->status = Ns_Dead;
         return;
@@ -1129,7 +1137,7 @@ void cs_cmd_login(char *buf, int len, NewSocket *ns)
 /* try to add (login) a player <name> from account logged in on socket ns */
 void cs_cmd_addme(char *buf, int len, NewSocket *ns)
 {
-    int        name_len;
+    int        name_len, i;
     player     *pl = NULL;
     addme_login_msg error_msg;
     const char *hash_name;
@@ -1142,7 +1150,18 @@ void cs_cmd_addme(char *buf, int len, NewSocket *ns)
 
     /* the client MUST have send us a valid name. If not we are very, very angry ... */
     name_len = strlen(buf);
-    if(name_len < MIN_PLAYER_NAME || name_len > MAX_PLAYER_NAME || !player_name_valid(buf))
+    if(name_len < MIN_PLAYER_NAME || name_len > MAX_PLAYER_NAME)
+    {
+        ns->status = Ns_Dead;
+        return;
+    }
+
+    /* Capitalise player names */
+    for (i = name_len - 1; i > 0; i--)
+       buf[i] = tolower(buf[i]);
+    buf[0] = toupper(buf[0]);
+
+    if (!player_name_valid(buf))
     {
         ns->status = Ns_Dead;
         return;
@@ -1206,7 +1225,7 @@ void cs_cmd_addme(char *buf, int len, NewSocket *ns)
  */
 void cs_cmd_newchar(char *buf, int len, NewSocket *ns)
 {
-    int     gender, race, skill_nr, name_len, ret = ADDME_MSG_OK;
+    int     gender, race, skill_nr, name_len, ret = ADDME_MSG_OK, i;
     char    filename[MAX_BUF];
 
     if (ns->pl_account.nrof_chars == ACCOUNT_MAX_PLAYER || !buf || len < (4+MIN_PLAYER_NAME)
@@ -1221,7 +1240,18 @@ void cs_cmd_newchar(char *buf, int len, NewSocket *ns)
     skill_nr = GetChar_Buffer(buf);
 
     name_len = strlen(buf);
-    if(name_len < MIN_PLAYER_NAME || name_len > MAX_PLAYER_NAME || !player_name_valid(buf))
+    if(name_len < MIN_PLAYER_NAME || name_len > MAX_PLAYER_NAME)
+    {
+        ns->status = Ns_Dead;
+        return;
+    }
+
+    /* Capitalise player names */
+    for (i = name_len - 1; i > 0; i--)
+       buf[i] = tolower(buf[i]);
+    buf[0] = toupper(buf[0]);
+
+    if (!player_name_valid(buf))
     {
         ns->status = Ns_Dead;
         return;
@@ -1287,7 +1317,7 @@ void cs_cmd_newchar(char *buf, int len, NewSocket *ns)
  */
 void cs_cmd_delchar(char *buf, int len, NewSocket *ns)
 {
-    int name_len, ret;
+    int name_len, ret, i;
 
     if (!ns->pl_account.nrof_chars || !buf || len < (1+MIN_PLAYER_NAME)
                                 || len > (1+MAX_PLAYER_NAME) || buf[len-1] || ns->status != Ns_Account)
@@ -1297,7 +1327,18 @@ void cs_cmd_delchar(char *buf, int len, NewSocket *ns)
     }
 
     name_len = strlen(buf);
-    if(name_len < MIN_PLAYER_NAME || name_len > MAX_PLAYER_NAME || !player_name_valid(buf))
+    if(name_len < MIN_PLAYER_NAME || name_len > MAX_PLAYER_NAME)
+    {
+        ns->status = Ns_Dead;
+        return;
+    }
+
+    /* Capitalise player names */
+    for (i = name_len - 1; i > 0; i--)
+       buf[i] = tolower(buf[i]);
+    buf[0] = toupper(buf[0]);
+
+    if (!player_name_valid(buf))
     {
         ns->status = Ns_Dead;
         return;
