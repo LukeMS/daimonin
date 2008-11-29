@@ -17,6 +17,8 @@ local q_status_1 = q_mgr_1:GetStatus()
 local q_status_2 = q_mgr_2:GetStatus()
 local q_status_3 = q_mgr_3:GetStatus()
 
+local ds = DataStore("gh_fanrir", pl)
+
 local ib = InterfaceBuilder()
 
 -- We need the quest descriptions both for the dialogue and for the quest
@@ -96,8 +98,13 @@ local function topicGreeting()
 end
 
 local function figureOutWeapon()
+    -- if player has already been given a weapon, don't give him another
+    if ds:Get("given weapon") then
+        return
+    end
+
     -- First we need to find out the player's weapon skill
-    skillitems = {
+    local skillitems = {
         [game:GetSkillNr("slash weapons") ] = "shortsword",
         [game:GetSkillNr("impact weapons")] = "mstar_small",
         [game:GetSkillNr("cleave weapons")] = "axe_small",
@@ -194,6 +201,7 @@ local function topicAccept()
 
             new_weapon = figureOutWeapon()
             if new_weapon then
+                ds:Set("given weapon", true)
                 me:SayTo(pl, "Here, take this weapon for the task")
                 tmp = pl:CreateObjectInsideEx(new_weapon, 1, game.IDENTIFIED)
                 pl:Apply(tmp, game.APPLY_ALWAYS)
