@@ -206,6 +206,9 @@ int execute_process(char *p_path, char *exe_name, char *parms, char *output, int
     sprintf(cmd,"\"%s\" %s", exe_name, parms);
     //printf("CMD.... %s (%s)\n", cmd, prg_path);
 
+	// try to move the client to the fullscreen focus when calling from installer over the updater
+	if(!strcmp(exe_name, PROCESS_CLIENT))
+		siStartupInfo.dwFlags |= STARTF_RUNFULLSCREEN;
 
     if (CreateProcess(p_path, cmd, 0, 0, TRUE,
                       CREATE_DEFAULT_ERROR_MODE, 0, 0, &siStartupInfo,

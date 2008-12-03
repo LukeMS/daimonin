@@ -87,6 +87,16 @@
 
 extern int zip_extract(char *zipArchive, char *destDir);
 
+#ifdef WIN32
+#define PROCESS_UPDATER "daimonin_start.exe"
+#define SYSTEM_OS_TAG 'w'
+#define PROCESS_CLIENT "daimonin.exe"
+#else
+#define PROCESS_UPDATER "daimonin_start"
+#define SYSTEM_OS_TAG 'l'
+#define PROCESS_CLIENT "./daimonin"
+#endif
+
 extern int execute_process(char *p_path, char *exe_name, char *parms, char *output, int seconds_to_wait);
 
 #ifndef WIN32
