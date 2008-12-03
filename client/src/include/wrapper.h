@@ -89,6 +89,8 @@ int             strcasecmp(char *s1, char *s2);
 #endif
 
 extern char * PHYSFS_fgets(char * const str, const int size, PHYSFS_File *const fp);
+extern void print_SDL_versions();
+extern void print_SDL_version(char* preamble, SDL_version* v);
 
 
 #endif

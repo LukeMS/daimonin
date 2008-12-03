@@ -628,3 +628,18 @@ char * PHYSFS_fgets(char * const str, const int size, PHYSFS_File *const fp)
 
     return str;
 }
+
+/* Flush the SDL version to the client log */
+void print_SDL_version(char* preamble, SDL_version* v)
+{
+	LOG(LOG_MSG, "%s %u.%u.%u\n", preamble, v->major, v->minor, v->patch);
+}
+
+void print_SDL_versions()
+{
+	SDL_version ver;
+	SDL_VERSION(&ver);
+	print_SDL_version("SDL compile-time version", &ver);
+	ver = *SDL_Linked_Version();
+	print_SDL_version("SDL runtime version", &ver);
+}

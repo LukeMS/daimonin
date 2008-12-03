@@ -1629,7 +1629,9 @@ int main(int argc, char *argv[])
         }
         exit(1);
     }
-    atexit(SDL_Quit);
+	print_SDL_versions();
+	
+	atexit(SDL_Quit);
     signal(SIGSEGV, SIG_DFL); /* allows better debugging under linux by removing SDL parachute for this signal */
 
 /* Start the physfs-system */
