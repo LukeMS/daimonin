@@ -34,16 +34,6 @@
 #define FOLDER_PATCH "update/patch/"
 #define NOTES_FILE "update/update.notes"
 
-#ifdef WIN32
-#define PROCESS_UPDATER "daimonin_start.exe"
-#define SYSTEM_OS_TAG 'w'
-#define PROCESS_CLIENT "daimonin.exe"
-#else
-#define PROCESS_UPDATER "daimonin_start"
-#define SYSTEM_OS_TAG 'l'
-#define PROCESS_CLIENT "./daimonin"
-#endif
-
 #define MAX_DIR_PATH 2048 /* maximal full path we support.      */
 char version_path[MAX_DIR_PATH], process_path[MAX_DIR_PATH], output[4096],
 prg_path[MAX_DIR_PATH], file_path[MAX_DIR_PATH], parms[MAX_DIR_PATH];
