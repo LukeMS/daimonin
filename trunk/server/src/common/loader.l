@@ -1092,7 +1092,16 @@ char *get_ob_diff(const object *op, const object *op2) {
   if(op->slaying && op->slaying!=op2->slaying)
     buf_end = append_simple(append_line(append_simple(buf_end, "slaying "), op->slaying), "\n");
   if(op->msg && op->msg!=op2->msg)
-    buf_end = append_simple(append_multiline(append_simple(buf_end,"msg\n"), op->msg), "endmsg\n");
+  {
+    /* Books can have extremely long msg blocks which overflow buf and crash
+     * the server when dumped. So lets not do that. This could be so for other
+     * objects too, but this is just a quick fix for the one that has caused me
+     * problems -- Smacky 20081205 */
+    if (op->type == BOOK)
+      buf_end = append_simple(append_multiline(append_simple(buf_end,"msg\n"), "TEXT REMOVED\n"), "endmsg\n");
+    else
+      buf_end = append_simple(append_multiline(append_simple(buf_end,"msg\n"), op->msg), "endmsg\n");
+  }
   if(op->other_arch!=op2->other_arch&&op->other_arch!=NULL &&
      op->other_arch->name) {
     sprintf(buf2,"other_arch %s\n",op->other_arch->name);
