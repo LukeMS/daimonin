@@ -30,12 +30,10 @@ end
 Allowed none
 chance 1
 artifact book_dai_vol1
-def_arch book
+def_arch tome
 editor 2:items/readable/books
 Object
-name Daimonin's History
-face tome.101
-title Vol. 1
+name Daimonin's History, vol. I
 msg
 <t t="The Beginning...">
 ... is lost in time and darkness. It was the age known as days of the elder races. The elves whisper about it sometimes. Ancient races of living fire, horned reptiles and creaping slimes fought endless wars against each other. Eventually the wars weakened them. Maybe they did't notice the new races that had risen on their planes and world, before it was too late. No one knows. Even the oldest secret libraries of the dwarves hold no answers. And so it happened that the so called "new races" joined forces, and in a long brutal war they finally defeated the elder ones!
@@ -50,12 +48,10 @@ end
 Allowed none
 chance 1
 artifact book_dai_vol2
-def_arch book
+def_arch tome
 editor 2:items/readable/books
 Object
-name Daimonin's History
-face tome.101
-title Vol. 2
+name Daimonin's History, vol. II
 msg
 <t t="The Result...">
 ... is now known as the forces of chaos. From this foul birth creatures arose, different from all that was ever known before. They beared an unnatural hatred towards all living things, and a destructive influence against all that existed. The pure evil was born, the powers of hell and the curse of undead living.New deities rose and came to power. Moroch, the dark hand of chaos. Xelembarg, the insatiable. Aksh'Ziggurath, the one of 1000 children. Jehalem, the eater of life. And many more. Some people believe that behind these known deities an even  greater horrific force would hide, lurking in the lowest planes, waiting for it's time to appear. Yet more powerful evil was created in the days of the unholy pact. Demons and devils were formed and the less powerful breeds of the unholy pact were chosen as their leaders: Bhaal, Demogorg, Orcanus, Asmodeus and others.
@@ -70,12 +66,10 @@ end
 Allowed none
 chance 1
 artifact book_dai_vol3
-def_arch book
+def_arch tome
 editor 2:items/readable/books
 Object
-name Daimonin's History
-face tome.101
-title Vol. 3
+name Daimonin's History, vol. III
 msg
 <t t="Unfortunately...">
 ... the natural long life of the semi-immortal races had left them with a slow birth rate. An attribute which had not been taken heed of in peaceful times, now impended to make their fate. The small number of children could not compensate for the countless dead on the battlefields. Desperateness lay on the empire like a slowly spreading disease, without hope for cure. The forces of chaos noticed the weakness of their enemies. They commenced a new breeding phase to replenish their armies, and this time they could operate on the main sphere freely. It is said that Moroch and Jehalem took captured elves, dwarves and other fair creatures to torture them cruelly and interbreed them with demons and primitive life. That was the birth of the cursed races of orcs and goblins, as well as many other savage demihumans and foul natural creatures.
@@ -93,12 +87,10 @@ end
 Allowed none
 chance 1
 artifact book_dai_vol4
-def_arch book
+def_arch tome
 editor 2:items/readable/books
 Object
-name Daimonin's History
-face tome.101
-title Vol. 4
+name Daimonin's History, vol. IV
 msg
 <t t="The first time...">
 ... chaos noticed the human race in freedom was by the time the chaosgod Moroch destroyed an outlying and somewhat isolated elven empire. It appeared to him that the elves had aquired a few primitive servants, which he found a remarkable unusual relationship to have, for elves. Once the empire was layed in ashes and ruins, after the last group of elves was dead and mutilated, Moroch did no longer care about the servants he had seen, and so he left the place, satisfied with his victory. By chance, many hundred years later, which is a very short timespan for Moroch, the dark hand of chaos looked back at the former elven empire. To his surprise, he did not find a dead wasteland, as expected. There was no elven empire anymore, but in it's place a large primitive human settlement of small villages and nomads.
@@ -113,12 +105,10 @@ end
 Allowed none
 chance 1
 artifact book_dai_vol5
-def_arch book
+def_arch tome
 editor 2:items/readable/books
 Object
-name Daimonin's History
-face tome.101
-title Vol. 5
+name Daimonin's History, vol. V
 msg
 <t t="Driven by that...">
 ... he hurried back to the place where his own dark forces had destroyed an elven empire 2300 years ago... and Moroch found human dwellings once again! And this time, he was no longer amused with what he saw. Before him lay an empire of humans, uncomparable bigger than the first one he met, dozens of different kingdoms, and they was no longer primitive. These peoples had already built stone walls around their cities, they had learned to read, and had discovered the first, simple forms of magic. Even more, these humans had established contact with other races. They were just about to expand through the main sphere!
@@ -136,12 +126,10 @@ end
 Allowed none
 chance 1
 artifact book_dai_vol6
-def_arch book
+def_arch tome
 editor 2:items/readable/books
 Object
-name Daimonin's History
-face tome.101
-title Vol. 6
+name Daimonin's History, vol. VI
 msg
 <t t="It was said ...">
 ... these artifact would have the power to summon a bound soul of a nearly dead elder and recreate him in healthy state of body. In spite of this, the semi-immortal races had never shown interest in these stories, as it was also known that the artifact would drain a small amount of life force for every time a summoning took place. Due to their nature, the old council races could not even think about bound souls and spended life force. Madness and agony would be the result for a semi-immortal. It was, perhaps, different with humans. The sacrifice of life force should not concern them at all because they was "bleeding" their life force in the process of aging all the time. If anything, it meant that a few people would have to die a bit earlier than usual, but who would mind that in their position? But no human ever had tested it. The Deva itself had no answer about that question just the message that the artifact would be a chance ... a chance when humans would be able to find and to use it.
@@ -158,12 +146,10 @@ end
 Allowed none
 chance 1
 artifact book_dai_vol7
-def_arch book
+def_arch tome
 editor 2:items/readable/books
 Object
-name Daimonin's History
-face tome.101
-title Vol. 7
+name Daimonin's History, vol. VII
 msg
 <t t="Moroch...">
 ... rallied all of his forces for a final battle. He aimed to destroy the artifact, which was located in the central magical fortress of the Thraal home planet. To accomplish this, all human lines of defence would have to be penetrated. Hence, Moroch decided that the price of victory was high enough to risk joining the battle personally. The dark hand of chaos formed a tremendous avatar, and then transferred his spirit into this creation. Humans were shocked to see a huge horrific shape trudging towards them, leading the dark army into battle. Neither arrows nor fire could stop it, and soon it towered in front of the inner perimeter walls. With a single ear-battering punch, the avatar tore a large breech into the wall and the magic defense.
