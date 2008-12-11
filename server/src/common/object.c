@@ -3008,25 +3008,42 @@ object *locate_beacon(shstr *id)
  */
 static void beacon_initializer(object *op)
 {
-    LOG(llevDebug, "Initializing beacon (%s)\n", STRING_OBJ_NAME(op));
+    object *parent;
 
-    if(op->custom_attrset) {
-        LOG(llevBug, "BUG: beacon (%s) initialized twice\n", STRING_OBJ_NAME(op));
-        return;
-    }
-    if(op->name == NULL) {
-        LOG(llevBug, "BUG: beacon with NULL name\n");
-        return;
+    /* Beacons must be unique so do not register beacons in SPAWN_POINT_MOBs */
+    for (parent = op->env; parent; parent = parent->env)
+    {
+        if (parent->type == SPAWN_POINT_MOB)
+            return;
     }
 
-    /* Store original name in the attrset, so that a name change
-     * doesn't mess things up */
+    LOG(llevDebug, "DEBUG:: %s/beacon_initializer(): Initializing beacon (%s[%d]).\n",
+        __FILE__, STRING_OBJ_NAME(op), op->count);
+
+    if (op->custom_attrset)
+    {
+        LOG(llevBug, "  BUG:: Beacon initialized twice (%s[%d])!\n",
+            STRING_OBJ_NAME(op), op->count);
+        return;
+    }
+    else if (!op->name)
+    {
+        LOG(llevBug, "BUG:: Beacon with NULL name (NULL[%d])!\n",
+            op->count);
+        return;
+    }
+
+    /* Store original name in the attrset, so that a name change doesn't mess
+     * things up */
     op->custom_attrset = (void *)op->name;
     add_refcount(op->name);
-    if(! hashtable_insert(beacon_table, op->custom_attrset, op))
+
+    if (!hashtable_insert(beacon_table, op->custom_attrset, op))
     {
-        /* Replace existing entry TODO: speed up with hashtable_replace() or something similar */
-        LOG(llevDebug, "  Replacing already registered beacon.\n");
+        /* Replace existing entry TODO: speed up with hashtable_replace() or
+         * something similar */
+        LOG(llevDebug, "DEBUG:: %s/beacon_initializer(): Replacing already registered beacon (%s[%d]!\n",
+            __FILE__, op->custom_attrset, op->count);
         hashtable_erase(beacon_table, op->custom_attrset);
         hashtable_insert(beacon_table, op->custom_attrset, op);
     }
