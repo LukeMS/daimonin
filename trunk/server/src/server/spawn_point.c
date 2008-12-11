@@ -224,8 +224,9 @@ void spawn_point(object *op)
     {
         next = tmp->below;
 
-        /* ignore events (scripts) */
-        if (tmp->type == TYPE_EVENT_OBJECT)
+        /* ignore events (scripts) and beacons */
+        if (tmp->type == TYPE_EVENT_OBJECT ||
+            tmp->type == TYPE_BEACON)
             continue;
 
         if (tmp->type != SPAWN_POINT_MOB)
@@ -270,6 +271,9 @@ void spawn_point(object *op)
     /* normal spawning may be interrupted by a script, allowing you to do
      * clever things to the mob. This is an apply event because trigger is
      * already used in the case of connected spawn points. */
+    /* Note that beacons must be unique, so will not be registered in
+     * script-interrupted spawns, and are in fact removed (because such spawns
+     * can be infinite). */
     tag = mob->count;
     if (trigger_object_plugin_event(EVENT_APPLY, op, mob, loot, NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
     {
@@ -277,6 +281,16 @@ void spawn_point(object *op)
         {
             mob->last_eat = 0;
             insert_spawn_mob_loot(op, mob, loot->inv);
+
+            /* remove any beacons in the newly spawned mob's inv */
+            next = mob;
+            while (next)
+            {
+                if (next->type == TYPE_BEACON)
+                    remove_ob(next);
+                next = find_next_object(next, TYPE_BEACON, FNO_MODE_ALL, mob);
+            }
+
             fix_monster(mob); /* fix all the values and add in possible abilities or forces ... */
         }
 
@@ -311,8 +325,20 @@ void spawn_point(object *op)
 
     SET_MULTI_FLAG(mob, FLAG_SPAWN_MOB); /* FINISH: now mark our mob as a spawn */
     fix_monster(mob); /* fix all the values and add in possible abilities or forces ... */
-    if (!insert_ob_in_map(mob, mob->map, op, 0)) /* *now* all is done - *now* put it on map */
-        return;
+
+    /* *now* all is done - *now* put it on map */
+    if (!insert_ob_in_map(mob, mob->map, op, 0))
+        LOG(llevBug, "BUG:: %s/spawn_point(): Could not insert mob (%s[%d]) in map!\n",
+            __FILE__, STRING_OBJ_NAME(op), op->count);
+
+    /* initialise any beacons in the newly spawned mob's inv */
+    next = mob;
+    while (next)
+    {
+        if (next->type == TYPE_BEACON)
+            object_initializers[TYPE_BEACON](next);
+        next = find_next_object(next, TYPE_BEACON, FNO_MODE_ALL, mob);
+    }
 }
 
 /*
