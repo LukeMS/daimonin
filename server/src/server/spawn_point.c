@@ -286,9 +286,9 @@ void spawn_point(object *op)
             next = mob;
             while (next)
             {
-                if (next->type == TYPE_BEACON)
-                    remove_ob(next);
                 next = find_next_object(next, TYPE_BEACON, FNO_MODE_ALL, mob);
+                if (next)
+                    remove_ob(next);
             }
 
             fix_monster(mob); /* fix all the values and add in possible abilities or forces ... */
@@ -335,9 +335,9 @@ void spawn_point(object *op)
     next = mob;
     while (next)
     {
-        if (next->type == TYPE_BEACON)
-            object_initializers[TYPE_BEACON](next);
         next = find_next_object(next, TYPE_BEACON, FNO_MODE_ALL, mob);
+        if (next)
+            object_initializers[TYPE_BEACON](next);
     }
 }
 
