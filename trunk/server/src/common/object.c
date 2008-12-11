@@ -3008,13 +3008,33 @@ object *locate_beacon(shstr *id)
  */
 static void beacon_initializer(object *op)
 {
-    object *parent;
+    object *parent = op;
 
     /* Beacons must be unique so do not register beacons in SPAWN_POINT_MOBs */
-    for (parent = op->env; parent; parent = parent->env)
+    do
     {
-        if (parent->type == SPAWN_POINT_MOB)
-            return;
+        if (parent->env)
+        {
+            parent = parent->env;
+            if (parent->type == SPAWN_POINT_MOB)
+                return;
+        }
+    }
+    while (!parent->map);
+
+    /* At this point, parent must be on a map so check its type. Beacons do not
+     * get registered -- in fact, get removed -- on instances (which by their
+     * nature can have multiple examples loaded at the same time for different
+     * players. TODO Perhaps a better way would be to add the instance path to
+     * the beacon name here, so beacons can be used on instances and are still
+     * unique. However, an allowance for this also needs to be built into
+     * locate_beacon() and I am too lazy ATM -- Smacky 20081211 */
+    if (parent->map->map_status & MAP_STATUS_INSTANCE)
+    {
+        LOG(llevDebug, "DEBUG:: %s/beacon_initializer(): Ignoring and removing beacon on instance (%s[%d]).\n",
+            __FILE__, STRING_OBJ_NAME(op), op->count);
+        remove_ob(op);
+        return;
     }
 
     LOG(llevDebug, "DEBUG:: %s/beacon_initializer(): Initializing beacon (%s[%d]).\n",
