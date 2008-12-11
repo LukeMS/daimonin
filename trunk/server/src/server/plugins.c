@@ -85,6 +85,7 @@ struct plugin_hooklist  hooklist    =
     create_unique_path_sh,
     reload_behaviours,
     clear_mob_knowns,
+    command_target,
     hashtable_new, hashtable_delete, hashtable_clear,
     hashtable_find, hashtable_insert, hashtable_erase,
     hashtable_iterator, hashtable_iterator_next,

@@ -91,6 +91,7 @@ static struct method_decl GameObject_methods[] =
     {"GetQuest",               (lua_CFunction) GameObject_GetQuest},
     {"GetRepairCost",          (lua_CFunction) GameObject_GetRepairCost},
     {"GetSkill",               (lua_CFunction) GameObject_GetSkill},
+    {"GetTarget",              (lua_CFunction) GameObject_GetTarget},
 /*  {"GetUnmodifiedAttribute", (lua_CFunction) GameObject_GetUnmodifiedAttribute}, */
     {"GetVector",              (lua_CFunction) GameObject_GetVector},
     {"IdentifyItem",           (lua_CFunction) GameObject_IdentifyItem},
@@ -125,6 +126,7 @@ static struct method_decl GameObject_methods[] =
     {"SetRank",                (lua_CFunction) GameObject_SetRank},
     {"SetSaveBed",             (lua_CFunction) GameObject_SetSaveBed},
     {"SetSkill",               (lua_CFunction) GameObject_SetSkill},
+    {"SetTarget",              (lua_CFunction) GameObject_SetTarget},
     {"ShowCost",               (lua_CFunction) GameObject_ShowCost},
     {"Sound",                  (lua_CFunction) GameObject_Sound},
     {"StartNewInstance",       (lua_CFunction) GameObject_StartNewInstance},
@@ -3775,6 +3777,60 @@ static int GameObject_GetGroup(lua_State *L)
     }
 
     return 1;
+}
+
+/*****************************************************************************/
+/* Name   : GameObject_GetTarget                                             */
+/* Lua    : object:GetTarget()                                               */
+/* Info   : Only works for player objects. Other types generate an error.    */
+/*          The function takes no arguments.                                 */
+/*          The return is the object that is the current target.             */
+/* Status : Untested                                                         */
+/* Notes  : To be expanded to handle monsters.                               */
+/*****************************************************************************/
+static int GameObject_GetTarget(lua_State *L)
+{
+    lua_object *self;
+
+    get_lua_args(L, "O", &self);
+
+    /* Only players can have targets */
+    if (WHO->type == PLAYER && CONTR(WHO))
+        return push_object(L, &GameObject, CONTR(WHO)->target_object);
+    else
+        return luaL_error(L, "GetTarget() can only be called on a player!");
+}
+
+/*****************************************************************************/
+/* Name   : GameObject_SetTarget                                             */
+/* Lua    : object:SetTarget()                                               */
+/* Info   : Only works for player objects. Other types generate an error.    */
+/*          The mandatory argument is a string: "enemy", "friend" or "self". */
+/*          The return is the object which is the new target.                */
+/* Status : Untested                                                         */
+/* Notes  : To be expanded to handle monsters.                               */
+/*****************************************************************************/
+static int GameObject_SetTarget(lua_State *L)
+{
+    lua_object *self;
+    char       *relationship;
+    object     *target;
+
+    get_lua_args(L, "Os", &self, &relationship);
+
+    /* Only players can have targets */
+    if (WHO->type != PLAYER || CONTR(WHO) == NULL)
+        return luaL_error(L, "SetTarget() can only be called on a player!");
+
+    /* Find an appropriate target according to the parameters */
+    if (!strcmp(relationship, "enemy"))
+        hooks->command_target(WHO, "0");
+    else if (!strcmp(relationship, "friend"))
+        hooks->command_target(WHO, "1");
+    else if (!strcmp(relationship, "self"))
+        hooks->command_target(WHO, "2");
+
+    return push_object(L, &GameObject, CONTR(WHO)->target_object);
 }
 
 

@@ -126,6 +126,7 @@ static int  GameObject_SetQuestStatus(lua_State *L);
 static int  GameObject_SetRank(lua_State *L);
 static int  GameObject_SetSaveBed(lua_State *L);
 static int  GameObject_SetSkill(lua_State *L);
+static int  GameObject_SetTarget(lua_State *L);
 static int  GameObject_ShowCost(lua_State *L);
 static int  GameObject_Sound(lua_State *L);
 static int  GameObject_StartNewInstance(lua_State *L);
