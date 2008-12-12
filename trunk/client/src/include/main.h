@@ -27,12 +27,12 @@ extern _server_char    *first_server_char;
 extern _server_char     new_character; /* if we login as new char, thats the values of it we set */
 
 /* global endian templates (send from server) */
-extern int		endian_do16;	/* if FALSE we don't must shift! */
-extern int		endian_do32;	/* if FALSE we don't must shift! */
-extern int		endian_shift16[2]; /* shift values */
-extern int		endian_shift32[4];
-extern uint32	endian_int32;	/* thats the 0x04030201 32bit endian */
-extern uint16	endian_int16;   /* thats the 0x0201 short endian */
+extern int      endian_do16;    /* if FALSE we don't must shift! */
+extern int      endian_do32;    /* if FALSE we don't must shift! */
+extern int      endian_shift16[2]; /* shift values */
+extern int      endian_shift32[4];
+extern uint32   endian_int32;   /* thats the 0x04030201 32bit endian */
+extern uint16   endian_int16;   /* thats the 0x0201 short endian */
 
 //#define SKIN_POS_QUICKSLOT_X 518
 //#define SKIN_POS_QUICKSLOT_Y 109
@@ -86,7 +86,7 @@ _keymap;
 typedef struct _server
 {
     struct _server *next;   /* go on in list. NULL: no following this node*/
-	char           *name;
+    char           *name;
     char           *nameip;
     char           *version;
     char           *desc1;
@@ -464,9 +464,9 @@ extern int          debug_layer[MAXFACES];
 extern int          music_global_fade; /* global flag for polling music fade out */
 
 extern _game_status GameStatus;     /* THE game status 2*/
-extern int			GameStatusSelect; /* select next game status: create or login for exmaple */
-extern int			ShowLocalServer;		/* show local server in the meta list */
-extern char			GlobalClientVersion[64]; /* the client version */
+extern int          GameStatusSelect; /* select next game status: create or login for exmaple */
+extern int          ShowLocalServer;        /* show local server in the meta list */
+extern char         GlobalClientVersion[64]; /* the client version */
 extern int          MapStatusX;             /* map x,y len */
 extern int          MapStatusY;
 extern int          SoundStatus;            /* SoundStatus 0=no 1= yes */
