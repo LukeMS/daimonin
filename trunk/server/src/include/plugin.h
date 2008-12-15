@@ -344,6 +344,7 @@ struct plugin_hooklist
     void  (*reload_behaviours)(object *op);
     void  (*clear_mob_knowns)(object *op, struct mob_known_obj **first, hashtable *ht);
     int (*command_target)(object *, char *);
+    int (*get_friendship)(object *, object *); 
 
     hashtable *(*hashtable_new)(hashtable_size_t (*hash_func)(const hashtable_const_key_t), int (*equals_func)(const hashtable_const_key_t, const hashtable_const_key_t), hashtable_const_key_t deleted_key, hashtable_const_key_t empty_key, hashtable_size_t num_buckets);
     void (*hashtable_delete)(hashtable *ht);
