@@ -86,6 +86,7 @@ struct plugin_hooklist  hooklist    =
     reload_behaviours,
     clear_mob_knowns,
     command_target,
+    get_friendship,
     hashtable_new, hashtable_delete, hashtable_clear,
     hashtable_find, hashtable_insert, hashtable_erase,
     hashtable_iterator, hashtable_iterator_next,
