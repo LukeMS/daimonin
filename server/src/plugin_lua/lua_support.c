@@ -420,6 +420,7 @@ static inline lua_object * get_object_arg(lua_State *L, int pos, lua_class *clas
 
 /* Parse function/method arguments (similar to PyArg_ParseTuple())
  * fmt codes:
+ *  b - boolean
  *  s - string
  *  i - integer (int)
  *  I - integer (int64)
@@ -538,6 +539,12 @@ void get_lua_args(lua_State *L, const char *fmt, ...)
               /* string */
               luaL_checklstring(L, pos, NULL);
               *va_arg(ap, const char * *) = lua_tostring(L, pos);
+              break;
+
+            case 'b':
+              /* boolean */
+              luaL_checknumber(L, pos);
+              *va_arg(ap, int *) = lua_toboolean(L, pos);
               break;
 
             default:
