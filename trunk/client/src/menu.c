@@ -387,7 +387,7 @@ int client_command_check(char *cmd)
 
         if ((stpar1==-1) || (stpar2==-1))
         {
-                draw_info_format(COLOR_WHITE,"Sleeptimer OFF\nUsage: /slepptimer HH:MM");
+                draw_info_format(COLOR_WHITE,"Sleeptimer OFF\nUsage: /sleeptimer HH:MM");
                 options.sleepcounter = FALSE;
         }
         else
