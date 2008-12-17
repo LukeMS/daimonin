@@ -71,6 +71,7 @@ static struct method_decl GameObject_methods[] =
     {"GetAlignmentForce",      (lua_CFunction) GameObject_GetAlignmentForce},
     {"GetAnimation",           (lua_CFunction) GameObject_GetAnimation},
     {"GetArchName",            (lua_CFunction) GameObject_GetArchName},
+    {"GetCombatMode",          (lua_CFunction) GameObject_GetCombatMode},
     {"GetEquipment",           (lua_CFunction) GameObject_GetEquipment},
     {"GetFace",                (lua_CFunction) GameObject_GetFace},
     {"GetGender",              (lua_CFunction) GameObject_GetGender},
@@ -116,6 +117,7 @@ static struct method_decl GameObject_methods[] =
     {"SendCustomCommand",      (lua_CFunction) GameObject_SendCustomCommand},
     {"SetAlignment",           (lua_CFunction) GameObject_SetAlignment},
     {"SetAnimation",           (lua_CFunction) GameObject_SetAnimation},
+    {"SetCombatMode",          (lua_CFunction) GameObject_SetCombatMode},
     {"SetFace",                (lua_CFunction) GameObject_SetFace},
     {"SetGender",              (lua_CFunction) GameObject_SetGender},
     {"SetGod",                 (lua_CFunction) GameObject_SetGod},
@@ -3920,6 +3922,54 @@ static int GameObject_SetTarget(lua_State *L)
     }
 
     return push_object(L, &GameObject, CONTR(WHO)->target_object);
+}
+
+/*****************************************************************************/
+/* Name   : GameObject_GetCombatMode                                         */
+/* Lua    : object:GetCombatMode()                                           */
+/* Info   : Only works for player objects. Other types generate an error.    */
+/*          The function takes no arguments.                                 */
+/*          The return is true if object is in combat mode, false otherwise. */
+/* Status : Untested/Stable                                                  */
+/*****************************************************************************/
+static int GameObject_GetCombatMode(lua_State *L)
+{
+    lua_object *self;
+
+    get_lua_args(L, "O", &self);
+
+    if (WHO->type != PLAYER || CONTR(WHO) == NULL)
+        return luaL_error(L, "GetCombatMode() can only be called on a player!");
+
+    lua_pushboolean(L, CONTR(WHO)->combat_mode);
+
+    return 1;
+}
+
+/*****************************************************************************/
+/* Name   : GameObject_SetCombatMode                                         */
+/* Lua    : object:SetCombatMode(mode)                                       */
+/* Info   : Only works for player objects. Other types generate an error.    */
+/*          The mandatory argument is true to turn on combat mode, false to  */
+/*          turn it off.                                                     */
+/*          The return is the new combat mode (so true or false).            */
+/* Status : Untested/Stable                                                  */
+/*****************************************************************************/
+static int GameObject_SetCombatMode(lua_State *L)
+{
+    lua_object *self;
+    int         mode;
+
+    get_lua_args(L, "Ob", &self, &mode);
+
+    /* Only players have combat mode */
+    if (WHO->type != PLAYER || CONTR(WHO) == NULL)
+        return luaL_error(L, "SetCombatMode() can only be called on a player!");
+
+    CONTR(WHO)->combat_mode = (mode = (mode) ? 1 : 0);
+    lua_pushboolean(L, mode);
+
+    return 1;
 }
 
 
