@@ -3807,25 +3807,29 @@ static int GameObject_GetTarget(lua_State *L)
 /* Name   : GameObject_SetTarget                                             */
 /* Lua    : object:SetTarget(target)                                         */
 /* Info   : Only works for player objects. Other types generate an error.    */
-/*          The mandatory argument is either a string or an object. If a     */
-/*          string it can be either one of the three keywords, "enemy",      */
-/*          "friend" or "self", or an arbitrary string (all are case         */
-/*          sensitive). If a keyword, the *next* available target of that    */
-/*          kind is targetted, according to the normal rules. If an arbitray */
-/*          string, all available enemies then friends are targetted until   */
-/*          one with a name matching the string is found. If an object, that */
-/*          object is targetted, if possible.                                */
+/*          The mandatory argument is a number, a string, or an object.      */
+/*          If a number, it should be one of the game.TARGET_* constants. The*/
+/*          *next* available target of that kind is targeted, according to   */
+/*          the normal rules.                                                */
+/*          If a string (it is case sensitive), all available enemies then   */
+/*          friends are targeted until one with a name matching the string is*/
+/*          found.                                                           */
+/*          If an object, that object is targeted, if possible.              */
 /*          The return is the object which is the new target, or nil.        */
 /* Status : Untested/Stable                                                  */
-/* Notes  : To be expanded to handle monsters.                               */
+/* TODO   : To be expanded to handle monsters.                               */
 /*****************************************************************************/
 static int GameObject_SetTarget(lua_State *L)
 {
     lua_object *self,
                *whatptr;
     char       *name = NULL;
+    int         mode = -1;
+    char        buf[2];
 
-    if (lua_isstring(L, 2))
+    if (lua_isnumber(L, 2))
+        get_lua_args(L, "Oi", &self, &mode);
+    else if (lua_isstring(L, 2))
         get_lua_args(L, "Os", &self, &name);
     else
         get_lua_args(L, "OO", &self, &whatptr);
@@ -3834,66 +3838,26 @@ static int GameObject_SetTarget(lua_State *L)
     if (WHO->type != PLAYER || CONTR(WHO) == NULL)
         return luaL_error(L, "SetTarget() can only be called on a player!");
 
-    /* No name? This means an object was specified, so check if it's an enemy
-     * or a friend and cycle through the appropriate targets until we have it
-     * or have looped right round (which means it is not in range/visible so
-     * return nil). */
-    if (!name)
+    /* If the parameter is a number, find *next* appropriate target. */
+    if (lua_isnumber(L, 2))
     {
-        char    buf[2];
-        object *original = NULL,
-               *current = NULL;
+        if (mode < TARGET_ENEMY || mode > TARGET_SELF)
+            return luaL_error(L, "SetTarget() passed invalid mode (%d)!", mode);
 
-        /* TODO: the is it an enemy or a friend check is currently(?) very
-         * simple (see c_new.c/command_target()). But to keep the checks in
-         * sync, they a new function might be needed, ie, int isfriend() (OTOH
-         * maybe we'll move to a more complex system of relationship
-         * determination than just enemy vs friend? -- Smacky 20081214 */
-        if (hooks->get_friendship(WHO, WHAT) < FRIENDSHIP_HELP) // enemy
-            sprintf(buf, "%d", 0);
-        else // friend
-            sprintf(buf, "%d", 1);
-
-        CONTR(WHO)->target_object = NULL; // force a new search
+        sprintf(buf, "%d", mode);
         hooks->command_target(WHO, buf);
-        current = original = CONTR(WHO)->target_object; // the start of our loop
-
-        if (current)
-        {
-            do
-            {
-                if (current == WHAT)
-                    break;
-
-                hooks->command_target(WHO, buf);
-                current = CONTR(WHO)->target_object;
-            }
-            while (current && current != original);
-
-            if (current != WHAT)
-                CONTR(WHO)->target_object = NULL;
-        }
     }
-    /* Otherwise, check if name is one of the relationship keywords, and find
-     * the *next* appropriate target. */
-    else if (!strcmp(name, "enemy"))
-        hooks->command_target(WHO, "0");
-    else if (!strcmp(name, "friend"))
-        hooks->command_target(WHO, "1");
-    else if (!strcmp(name, "self"))
-        hooks->command_target(WHO, "2");
-    /* Otherwise, we're looking for just an object with the given name. We
-     * don't know if it is a friend or enemy, or if there are more than one
-     * objects in range with that name, or anything. So simply cycle through
-     * all nearby enemies then all nearby friends, stopping as soon as we have
-     * a target with the right name. */
-    else
+    /* If the parameter is a string, we're looking for just an object with the
+     * given name. We don't know if it is a friend or enemy, or if there are
+     * more than one objects in range with that name, or anything. So simply
+     * cycle through all nearby enemies then all nearby friends, stopping as
+     * soon as we have a target with the right name. */
+    else if (lua_isstring(L, 2))
     {
         int i;
 
-        for (i = 0; i <= 1; i++)
+        for (i = TARGET_ENEMY; i <= TARGET_FRIEND; i++)
         {
-            char    buf[2];
             object *original = NULL,
                    *current = NULL;
 
@@ -3918,6 +3882,44 @@ static int GameObject_SetTarget(lua_State *L)
                 if (current && strcmp(current->name, name))
                     CONTR(WHO)->target_object = NULL;
             }
+        }
+    }
+    /* If the parameter is an object, check if it's an enemy or a friend and
+     * cycle through the appropriate targets until we have it or have looped
+     * right round (which means it is not in range/visible so return nil). */
+    else
+    {
+        object *original = NULL,
+               *current = NULL;
+
+        /* TODO: the is it an enemy or a friend check is currently(?) very
+         * simple (see c_new.c/command_target()). But to keep the checks in
+         * sync, they a new function might be needed, ie, int isfriend() (OTOH
+         * maybe we'll move to a more complex system of relationship
+         * determination than just enemy vs friend? -- Smacky 20081214 */
+        if (hooks->get_friendship(WHO, WHAT) < FRIENDSHIP_HELP) // enemy
+            sprintf(buf, "%d", TARGET_ENEMY);
+        else // friend
+            sprintf(buf, "%d", TARGET_FRIEND);
+
+        CONTR(WHO)->target_object = NULL; // force a new search
+        hooks->command_target(WHO, buf);
+        current = original = CONTR(WHO)->target_object; // the start of our loop
+
+        if (current)
+        {
+            do
+            {
+                if (current == WHAT)
+                    break;
+
+                hooks->command_target(WHO, buf);
+                current = CONTR(WHO)->target_object;
+            }
+            while (current && current != original);
+
+            if (current != WHAT)
+                CONTR(WHO)->target_object = NULL;
         }
     }
 

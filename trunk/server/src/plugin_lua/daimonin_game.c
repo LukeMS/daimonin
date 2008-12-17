@@ -575,6 +575,11 @@ static struct constant_decl Game_constants[] =
     {"NPC_INTERFACE_MODE_NPC",   NPC_INTERFACE_MODE_NPC},
     {"NPC_INTERFACE_MODE_QLIST", NPC_INTERFACE_MODE_QLIST},
 
+    /* Target modes (commands.h) */
+    {"TARGET_ENEMY",  TARGET_ENEMY},
+    {"TARGET_FRIEND", TARGET_FRIEND},
+    {"TARGET_SELF",   TARGET_SELF},
+
     {NULL, 0}
 };
 
