@@ -975,7 +975,9 @@ static int Game_Log(lua_State *L)
 /*              gold                                                         */
 /*              silver                                                       */
 /*              copper                                                       */
-/* Status : Untested                                                         */
+/* Status : Unfinished                                                       */
+/* TODO   : While this works as described, it is likely to change somewhat so*/
+/*          probably should not be used ATM.                                 */
 /*****************************************************************************/
 static int Game_EnumerateCoins(lua_State *L)
 {
