@@ -113,4 +113,8 @@ extern const int    CommandsSize, WizCommandsSize, CommunicationCommandSize;
 #define EMOTE_THINK 54
 #define EMOTE_ME    55
 
+#define TARGET_ENEMY  0
+#define TARGET_FRIEND 1
+#define TARGET_SELF   2
+
 #endif
