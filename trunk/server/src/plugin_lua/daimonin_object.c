@@ -3966,8 +3966,9 @@ static int GameObject_SetCombatMode(lua_State *L)
     if (WHO->type != PLAYER || CONTR(WHO) == NULL)
         return luaL_error(L, "SetCombatMode() can only be called on a player!");
 
-    CONTR(WHO)->combat_mode = (mode = (mode) ? 1 : 0);
-    lua_pushboolean(L, mode);
+    CONTR(WHO)->combat_mode = (mode) ? 0 : 1; // set to *opposite* of what we want
+    hooks->command_combat(WHO, NULL);
+    lua_pushboolean(L, CONTR(WHO)->combat_mode);
 
     return 1;
 }
