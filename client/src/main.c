@@ -410,10 +410,9 @@ void init_game_data(void)
     gui_interface_book = NULL;
     LoginInputStep = LOGIN_STEP_NAME;
 
-    options.cli_name[0]='\0';
-    options.cli_server=0;
-
+    options.cli_account[0]='\0';
     options.cli_pass[0]='\0';
+    options.cli_server=0;
 
     options.resolution = 0;
     options.channelformat=0;
@@ -891,11 +890,9 @@ Boolean game_status_chain(void)
         /* the choices are in event.c by pressing RETURN on Login or Create Character */
         LoginInputStep = LOGIN_STEP_NAME;
 
-        /* autologin disabled */
-        /*
-        if (options.cli_name[0] || options.cli_pass[0] || options.cli_server)
-           GameStatus=GAME_STATUS_ADDME;
-        */
+        /* autologin */
+        if (options.cli_account[0] || options.cli_pass[0])
+           GameStatus = GAME_STATUS_LOGIN_ACCOUNT;
     }
     /* CREATE NEW ACCOUNT: Try to find a valid account name, gather password and create AND login to the acount */
     else if (GameStatus == GAME_STATUS_LOGIN_NEW)
@@ -992,16 +989,14 @@ Boolean game_status_chain(void)
     {
         if(LoginInputStep == LOGIN_STEP_NAME)
         {
-            /* autologin disabled */
-            /*
-            if (options.cli_name[0])
+            /* autologin */
+            if (options.cli_account[0])
             {
-                strcpy(InputString,options.cli_name);
+                strcpy(InputString, options.cli_account);
+                options.cli_account[0] = '\0'; // we generally only try once
                 InputStringFlag = FALSE;
                 InputStringEndFlag = TRUE;
-                options.cli_name[0]='\0'; // we generally only try once
             }
-            */
 
             if (InputStringEscFlag)
                 GameStatus = GAME_STATUS_LOGIN_BREAK;
@@ -1033,16 +1028,14 @@ Boolean game_status_chain(void)
         {
             textwin_clearhistory();
 
-            /* autologin disabled */
-            /*
+            /* autologin */
             if (options.cli_pass[0])
             {
-                strcpy(InputString,options.cli_pass);
+                strcpy(InputString, options.cli_pass);
                 options.cli_pass[0] = '\0';
-                InputStringFlag=FALSE;
-                InputStringEndFlag=TRUE;
+                InputStringFlag = FALSE;
+                InputStringEndFlag = TRUE;
             }
-            */
 
             if (InputStringEscFlag)
                 GameStatus = GAME_STATUS_LOGIN_BREAK;
@@ -1552,11 +1545,11 @@ int main(int argc, char *argv[])
             argServerPort = atoi(argv[argc]);
             --argc;
         }
-        else if (strcmp(argv[argc-1], "-player") == 0)
+        else if (strcmp(argv[argc-1], "-account") == 0)
         {
-            strncpy(options.cli_name,argv[argc],39);
-            options.cli_name[39]='\0'; /* sanity \0 */
-            options.cli_name[0] = toupper(options.cli_name[0]);
+            strncpy(options.cli_account,argv[argc],39);
+            options.cli_account[39]='\0'; /* sanity \0 */
+            options.cli_account[0] = toupper(options.cli_account[0]);
             --argc;
         }
 #if (1)
@@ -1600,7 +1593,7 @@ int main(int argc, char *argv[])
             char    tmp[1024];
 //            sprintf(tmp, "Usage: %s [-server <name>] [-port <num>]\n", argv[0]);
 #ifdef DEVELOPMENT
-            sprintf(tmp, "Usage: %s -player <playername> -pass <password> [-server <n>]\n1 - daimonin.game-server.cc\n2-test-server.game-server.cc\n3-localhost\n", argv[0]);
+            sprintf(tmp, "Usage: %s -account <accountname> -pass <password> [-server <n>]\n1 - daimonin.game-server.cc\n2-test-server.game-server.cc\n3-localhost\n", argv[0]);
 #endif
             LOG(LOG_MSG, "%s", tmp);
             fprintf(stderr, tmp);
