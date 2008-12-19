@@ -477,7 +477,7 @@ void get_lua_args(lua_State *L, const char *fmt, ...)
             }
         }
 
-        if (nextnil && lua_isnil(L, pos))
+        if ((optional || nextnil) && lua_isnil(L, pos))
         {
             *va_arg(ap, void * *) = NULL;
             pos++;
