@@ -100,7 +100,7 @@ static struct mob_known_obj *find_known_obj(object *source, object *target)
 /* Lua    : ai:ForbidMoveDirection(dir)                                      */
 /* Info   : In a movement behaviour, add dir to the list of forbidden        */
 /*          directions, but don't select a specific movement.                */
-/* Status : Tested                                                           */
+/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int AI_ForbidMoveDirection(lua_State *L)
 {
@@ -127,7 +127,7 @@ static int AI_ForbidMoveDirection(lua_State *L)
 /* Info   : In a movement behaviour, see if dir is in the list of forbidden  */
 /*          directions. It can have been added by an earlier behaviour or by */
 /*          yourself.                                                        */
-/* Status : Tested                                                           */
+/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int AI_IsMoveDirectionAllowed(lua_State *L)
 {
@@ -154,7 +154,7 @@ static int AI_IsMoveDirectionAllowed(lua_State *L)
 /* Name   : AI_MoveRespondDirection                                          */
 /* Lua    : ai:MoveRespondDirection(dir)                                     */
 /* Info   : In a movement behaviour, set the reponse direction to dir        */
-/* Status : Untested                                                         */
+/* Status : Untested/Stable                                                  */
 /*****************************************************************************/
 static int AI_MoveRespondDirection(lua_State *L)
 {
@@ -183,7 +183,7 @@ static int AI_MoveRespondDirection(lua_State *L)
 /* Info   : In a movement behaviour, add dir as a reponse direction          */
 /*          (It is possible to add multiple possible directions, and then a  */
 /*           random one is chosen from the ones in the list).                */
-/* Status : Untested                                                         */
+/* Status : Untested/Stable                                                  */
 /*****************************************************************************/
 static int AI_MoveRespondDirections(lua_State *L)
 {
@@ -216,7 +216,7 @@ static int AI_MoveRespondDirections(lua_State *L)
 /* Info   : In a movement behaviour, set the reponse to the specified map    */
 /*          coordinate. The pathfinding system will then take over to find   */
 /*          the best way of getting there                                    */
-/* Status : Untested                                                         */
+/* Status : Untested/Stable                                                  */
 /*****************************************************************************/
 static int AI_MoveRespondCoordinate(lua_State *L)
 {
@@ -246,7 +246,7 @@ static int AI_MoveRespondCoordinate(lua_State *L)
 /* Lua    : ai:MoveRespondObject(obj)                                        */
 /* Info   : In a movement behaviour, set the reponse to the specified object */
 /*          The pathfinding system will then take over to find the best way  */
-/* Status : Tested                                                           */
+/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int AI_MoveRespondObject(lua_State *L)
 {
@@ -274,7 +274,7 @@ static int AI_MoveRespondObject(lua_State *L)
 /* Lua    : ai:Knows(obj)                                                    */
 /* Info   : Returns true if the AI "knows about" obj, i.e. obj has been      */
 /*          observed and memorized by the AI.                                */
-/* Status : Tested                                                           */
+/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int AI_Knows(lua_State *L)
 {
@@ -294,7 +294,7 @@ static int AI_Knows(lua_State *L)
 /* Lua    : ai:Register(obj, friendship_change, attraction_change)           */
 /* Info   : Add obj to the AI's memory and/or change the friendship and      */
 /*          attraction values for obj                                        */
-/* Status : Untested                                                           */
+/* Status : Tested/Stable                                                      */
 /*****************************************************************************/
 static int AI_Register(lua_State *L)
 {
@@ -314,7 +314,7 @@ static int AI_Register(lua_State *L)
 /* Lua    : ai:UsesDistanceAttack(obj)                                       */
 /* Info   : Returns true if obj is known to make use of distance attacks     */
 /*          Always returns false if obj is not known at all by the AI        */
-/* Status : Untested                                                           */
+/* Status : Untested/Stable                                                    */
 /*****************************************************************************/
 static int AI_UsesDistanceAttack(lua_State *L)
 {
@@ -340,7 +340,7 @@ static int AI_UsesDistanceAttack(lua_State *L)
 /* Lua    : ai:GetFriendship(obj)                                            */
 /* Info   : Returns the AI's friendship value towards obj                    */
 /*          Always returns 0 if obj is not known at all by the AI            */
-/* Status : Tested                                                           */
+/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int AI_GetFriendship(lua_State *L)
 {
@@ -365,7 +365,7 @@ static int AI_GetFriendship(lua_State *L)
 /* Lua    : ai:GetAttraction(obj)                                            */
 /* Info   : Returns the obj's attraction value on the AI                     */
 /*          Always returns 0 if obj is not known at all by the AI            */
-/* Status : Unfinished!                                                      */
+/* Status : Unfinished                                                       */
 /*****************************************************************************/
 static int AI_GetAttraction(lua_State *L)
 {
@@ -396,7 +396,7 @@ static int AI_GetAttraction(lua_State *L)
 /*          - Map of last observation                                        */
 /*          - x coordinate on map                                            */
 /*          - y coordinate on map                                            */
-/* Status : Unfinished!                                                      */
+/* Status : Unfinished                                                       */
 /*****************************************************************************/
 static int AI_LastSeen(lua_State *L)
 {
@@ -425,7 +425,7 @@ static int AI_LastSeen(lua_State *L)
 /* Name   : AI_GetKnownMobs                                                  */
 /* Lua    : ai:GetKnownMobs()                                                */
 /* Info   : Returns an array with all mobs known by the AI                   */
-/* Status : Tested                                                           */
+/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int AI_GetKnownMobs(lua_State *L)
 {
@@ -450,7 +450,7 @@ static int AI_GetKnownMobs(lua_State *L)
 /* Name   : AI_GetKnownObjects                                               */
 /* Lua    : ai:GetKnownObjects()                                             */
 /* Info   : Returns an array with all objects known by the AI                */
-/* Status : Untested                                                         */
+/* Status : Untested/Stable                                                  */
 /*****************************************************************************/
 static int AI_GetKnownObjects(lua_State *L)
 {
@@ -475,7 +475,7 @@ static int AI_GetKnownObjects(lua_State *L)
 /* Name   : AI_ForgetKnownMobs                                               */
 /* Lua    : ai:ForgetKnownMobs()                                             */
 /* Info   : Clears the AIs memory of any registered mobs, npcs or players    */
-/* Status : Untested                                                         */
+/* Status : Untested/Stable                                                  */
 /*****************************************************************************/
 static int AI_ForgetKnownMobs(lua_State *L)
 {
@@ -493,7 +493,7 @@ static int AI_ForgetKnownMobs(lua_State *L)
 /* Lua    : ai:ForgetKnownObjects()                                          */
 /* Info   : Clears the AIs memory of any registered objects                  */
 /*          (not mobs/npcs or players)                                       */
-/* Status : Untested                                                         */
+/* Status : Untested/Stable                                                  */
 /*****************************************************************************/
 static int AI_ForgetKnownObjects(lua_State *L)
 {
@@ -513,7 +513,7 @@ static int AI_ForgetKnownObjects(lua_State *L)
 /*          behaviours and their parameters)                                 */
 /*          To visualize the layout of the table you can try something like  */
 /*          print(DataStore.Serialize(ai:GetBehaviourlist()))                */
-/* Status : Tested                                                           */
+/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int AI_GetBehaviourlist(lua_State *L)
 {
@@ -663,7 +663,7 @@ static int AI_GetBehaviourlist(lua_State *L)
 /* Info   : Recreates the AI from a new AI object in its mobs inventory      */
 /*          (if there's no such AI object, defaults are used as usual)       */
 /* Version: Introduced in beta 4 pre3                                        */
-/* Status : Tested                                                           */
+/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int AI_ReloadBehaviourlist(lua_State *L)
 {

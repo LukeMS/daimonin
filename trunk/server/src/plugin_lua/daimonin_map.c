@@ -215,11 +215,11 @@ static int Map_ReadyInheritedMap(lua_State *L)
 /*****************************************************************************/
 /* Name   : Map_Delete                                                       */
 /* Lua    : map:Delete(flags)                                                */
-/* Status : Stable                                                           */
 /* Info   : Remove the map from memory and map list. Release all objects.    */
 /*          if flag is non-zero the map is physically deleted too! For multi */
 /*          the effect is the same as for false but unique or instance maps  */
 /*          are physically deleted.                                          */
+/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int Map_Delete(lua_State *L)
 {
@@ -286,7 +286,7 @@ static int Map_Delete(lua_State *L)
 /* Name   : Map_GetFirstObjectOnSquare                                       */
 /* Lua    : map:GetFirstObjectOnSquare(x, y)                                 */
 /* Info   : Gets the bottom object on the tile. Use obj.above to browse objs */
-/* Status : Stable                                                           */
+/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int Map_GetFirstObjectOnSquare(lua_State *L)
 {
@@ -316,7 +316,7 @@ static int Map_GetFirstObjectOnSquare(lua_State *L)
 /*          between 0-1280 (compare with map.light_level.) Since this scale  */
 /*          is uncapped, it is possible to sense a light source in full      */
 /*          daylight (map.darkness=7) with mode==1                           */
-/* Status : Stable                                                           */
+/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int Map_GetBrightnessOnSquare(lua_State *L)
 {
@@ -351,7 +351,7 @@ static int Map_GetBrightnessOnSquare(lua_State *L)
 /* Name   : Map_IsWallOnSquare                                               */
 /* Lua    : map:IsWallOnSquare(x, y)                                         */
 /* Info   : returns true if the square at x,y is a wall                      */
-/* Status : Stable                                                           */
+/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int Map_IsWallOnSquare(lua_State *L)
 {
@@ -367,7 +367,7 @@ static int Map_IsWallOnSquare(lua_State *L)
 /*****************************************************************************/
 /* Name   : Map_MapTileAt                                                    */
 /* Lua    : map:MapTileAt(x, y)                                              */
-/* Status : untested                                                         */
+/* Status : Tested/Stable                                                    */
 /* TODO   : do someting about the new modified coordinates too?              */
 /*****************************************************************************/
 static int Map_MapTileAt(lua_State *L)
@@ -391,8 +391,8 @@ static int Map_MapTileAt(lua_State *L)
 /*****************************************************************************/
 /* Name   : Map_Save                                                         */
 /* Lua    : map:Save(flag)                                                   */
-/* Status : Stable                                                           */
 /* Info   : Save the map. If flag is 1, unload map from memory               */
+/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int Map_Save(lua_State *L)
 {
@@ -422,7 +422,7 @@ static int Map_Save(lua_State *L)
 /*          soundnumber should be one of the game.SOUND_xxx constants        */
 /*          If soundtype is game.SOUNDTYPE_SPELL, then the sound number      */
 /*          should be a spell number, to play the sound of that spell        */
-/* Status : Tested                                                           */
+/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int Map_PlaySound(lua_State *L)
 {
@@ -443,7 +443,7 @@ static int Map_PlaySound(lua_State *L)
 /*          Starting point x,y for all players in distance                   */
 /*          color should be one of the game.COLOR_xxx constants.             */
 /*          default color is game.COLOR_BLUE | game.COLOR_UNIQUE             */
-/* Status : Tested                                                           */
+/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 
 static int Map_Message(lua_State *L)
@@ -463,7 +463,7 @@ static int Map_Message(lua_State *L)
 /* Name   : Map_CreateObject                                                 */
 /* Lua    : map:CreateObject(arch_name, x, y)                                */
 /* Info   :                                                                  */
-/* Status : Untested                                                         */
+/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int Map_CreateObject(lua_State *L)
 {
