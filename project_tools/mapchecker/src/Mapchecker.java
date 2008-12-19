@@ -14,7 +14,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import javax.swing.event.*;
-import java.util.regex.*;
 import com.jtechlabs.ui.widget.directorychooser.*;
 
 /**
@@ -131,6 +130,7 @@ public class Mapchecker extends JFrame
 
             addWindowListener(new WindowAdapter()
             {
+                @Override
                 public void windowClosing(WindowEvent e)
                 {
                     buttonExit.doClick();
@@ -237,6 +237,7 @@ public class Mapchecker extends JFrame
 
     private class TBrowseListener implements ActionListener
     {
+        @Override
         public void actionPerformed(ActionEvent e)
         {
  //           final JDirectoryChooser dc = new JDirectoryChooser();
@@ -256,6 +257,7 @@ public class Mapchecker extends JFrame
 
     private class TopLevelListener implements DocumentListener
     {
+        @Override
         public void insertUpdate(DocumentEvent e)
         {
             topLevelDir = topLevel.getText();
@@ -264,6 +266,7 @@ public class Mapchecker extends JFrame
                 buttonCheck.setEnabled(true);
         }
 
+        @Override
         public void changedUpdate(DocumentEvent e)
         {
             boolean tf = true;
@@ -275,6 +278,7 @@ public class Mapchecker extends JFrame
             buttonCheck.setEnabled(tf);
         }
         
+        @Override
         public void removeUpdate(DocumentEvent e)
         {            
             boolean tf = true;
@@ -289,6 +293,7 @@ public class Mapchecker extends JFrame
 
     private class LBrowseListener implements ActionListener
     {
+        @Override
         public void actionPerformed(ActionEvent e)
         {
             JFileChooser fc = new JFileChooser();
@@ -312,6 +317,7 @@ public class Mapchecker extends JFrame
 
     private class LogTextListener implements DocumentListener
     {
+        @Override
         public void insertUpdate(DocumentEvent e)
         {
                 logFileSet = true;
@@ -320,6 +326,7 @@ public class Mapchecker extends JFrame
                     buttonCheck.setEnabled(true);
         }
         
+        @Override
         public void changedUpdate(DocumentEvent e)
         {
             if (logText.getDocument().getLength() == 0)
@@ -336,6 +343,7 @@ public class Mapchecker extends JFrame
             }
         }
         
+        @Override
         public void removeUpdate(DocumentEvent e)
         {           
             if (logText.getDocument().getLength() == 0)
@@ -355,6 +363,7 @@ public class Mapchecker extends JFrame
 
     private class CheckListener implements ActionListener
     {
+        @Override
         public void actionPerformed(ActionEvent e)
         {
             boolean ok = true;
@@ -391,6 +400,7 @@ public class Mapchecker extends JFrame
 
     private class ExitListener implements ActionListener
     {
+        @Override
         public void actionPerformed(ActionEvent e)
         {
             boolean allowExit = false;
