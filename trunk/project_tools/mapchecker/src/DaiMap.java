@@ -250,24 +250,24 @@ public class DaiMap
     
     private String getLine()
     {
-        String line = null;
+        String localLine = null;
         try
         {
-            line = in.readLine();
+            localLine = in.readLine();
             
             // Eat message blocks
-            if ((line != null) && line.startsWith("msg"))
+            if ((localLine != null) && localLine.startsWith("msg"))
             {
-                while ((line != null) && !line.startsWith("endmsg"))
-                    line = in.readLine();
-                line = in.readLine();
+                while ((localLine != null) && !localLine.startsWith("endmsg"))
+                    localLine = in.readLine();
+                localLine = in.readLine();
             }
         }
         catch (IOException ex)
         {
             ex.printStackTrace();
         }
-        return line;
+        return localLine;
     }
 
     private boolean isAbsPath(int n)
@@ -278,7 +278,7 @@ public class DaiMap
     private String getNormalisedPath(String s)
     {
         File    f;
-        String  path = "";
+        String  localPath = "";
         if (s.substring(0, 1).equals("/"))
         {
             f = new File(mapRootDir, s.substring(1));
@@ -289,14 +289,14 @@ public class DaiMap
         }
         try
         {
-            path = f.getCanonicalPath();
+            localPath = f.getCanonicalPath();
         }
         catch (IOException ex)
         {
 //            ex.printStackTrace();
-            path = s;
+            localPath = s;
         }
-        return path;
+        return localPath;
     }
     /** Returns true if the file is a valid map file */
     public boolean isValid()
