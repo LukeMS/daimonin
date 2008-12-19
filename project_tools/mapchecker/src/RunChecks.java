@@ -74,6 +74,7 @@ public class RunChecks extends Thread
         version = v;
     }
     
+    @Override
     public void run()
     {
         checkActive = true;
@@ -232,7 +233,7 @@ public class RunChecks extends Thread
     private void buildArchList()
     {
         BufferedReader in;
-        String line = null;
+        String archLine = null;
         String object = "";
         String name   = "";
         String title  = "";
@@ -255,13 +256,13 @@ public class RunChecks extends Thread
             return;
         }
 
-        line = getLine(in);
-        while (line != null)
+        archLine = getLine(in);
+        while (archLine != null)
         {
 
-            if (line.startsWith("Object"))
+            if (archLine.startsWith("Object"))
             {
-                object = line.substring(7);
+                object = archLine.substring(7);
                 if (object.startsWith("floor"))
                 {
                     int i = 0;
@@ -275,23 +276,23 @@ public class RunChecks extends Thread
                 title      = "";
                 other_arch = "";
             }
-            else if (line.startsWith("name"))
-                name = line.substring(5);
-            else if (line.startsWith("title"))
-                title = line.substring(6);
-            else if (line.startsWith("other_arch"))
-                other_arch = line.substring(11);
-            else if (line.startsWith("layer"))
-                layer = Integer.parseInt(line.substring(6));
-            else if (line.startsWith("type"))
-                type = Integer.parseInt(line.substring(5));
-            else if (line.startsWith("walk_on"))
-                walk_on = Integer.parseInt(line.substring(8)) == 1;
-            else if (line.startsWith("fly_on"))
-                fly_on = Integer.parseInt(line.substring(7)) == 1;
-            else if (line.startsWith("sys_object"))
-                system = Integer.parseInt(line.substring(11)) == 1;
-            else if (line.equals("end"))
+            else if (archLine.startsWith("name"))
+                name = archLine.substring(5);
+            else if (archLine.startsWith("title"))
+                title = archLine.substring(6);
+            else if (archLine.startsWith("other_arch"))
+                other_arch = archLine.substring(11);
+            else if (archLine.startsWith("layer"))
+                layer = Integer.parseInt(archLine.substring(6));
+            else if (archLine.startsWith("type"))
+                type = Integer.parseInt(archLine.substring(5));
+            else if (archLine.startsWith("walk_on"))
+                walk_on = Integer.parseInt(archLine.substring(8)) == 1;
+            else if (archLine.startsWith("fly_on"))
+                fly_on = Integer.parseInt(archLine.substring(7)) == 1;
+            else if (archLine.startsWith("sys_object"))
+                system = Integer.parseInt(archLine.substring(11)) == 1;
+            else if (archLine.equals("end"))
             {
                 if (type == exitType)
                     exitMap.put(object, new ArchExit(object, walk_on, fly_on));
@@ -300,7 +301,7 @@ public class RunChecks extends Thread
                 archMap.put(object, obj);
                 archCount++;
             }
-            line = getLine(in);
+            archLine = getLine(in);
         }
 
         try
@@ -364,31 +365,31 @@ public class RunChecks extends Thread
  
     private String getLine(BufferedReader in)
     {
-        String line = null;
+        String archLine = null;
         try
         {
-            line = in.readLine();
+            archLine = in.readLine();
 
             // Eat message blocks
-            if ((line != null) && line.startsWith("msg"))
+            if ((archLine != null) && archLine.startsWith("msg"))
             {
-                while ((line != null) && !line.startsWith("endmsg"))
-                    line = in.readLine();
-                line = in.readLine();
+                while ((archLine != null) && !archLine.startsWith("endmsg"))
+                    archLine = in.readLine();
+                archLine = in.readLine();
             }
         }
         catch (IOException ex)
         {
             ex.printStackTrace();
         }
-        return line;
+        return archLine;
     }
     
     private boolean buildTree(File map)
     {
         boolean ok = false;
         String  s;
-        DaiMap     m;
+        DaiMap  m;
         
         File[]  dirList = map.listFiles();
         if (dirList == null)
@@ -441,7 +442,7 @@ public class RunChecks extends Thread
     {
         BufferedReader  in = null;
         DaiObject arch;
-        String line = null;
+        String artLine = null;
         String artifact = "";
         String def_arch   = "";
         String name = "";
@@ -462,14 +463,14 @@ public class RunChecks extends Thread
             return;
         }
 
-        line = getLine(in);
-        while (line != null)
+        artLine = getLine(in);
+        while (artLine != null)
         {
-            if (line.startsWith("#"))
+            if (artLine.startsWith("#"))
             {
                 // ignore comment
             }
-            else if (line.startsWith("Allowed"))
+            else if (artLine.startsWith("Allowed"))
             {
                 artifact = "";
                 def_arch = "";
@@ -478,19 +479,19 @@ public class RunChecks extends Thread
                 layer = 0;
                 type = 0;
             }
-            else if (line.startsWith("artifact"))
-                artifact = line.substring(9);
-            else if (line.startsWith("def_arch"))
-                def_arch = line.substring(9);
-            else if (line.startsWith("name"))
-                name = line.substring(5);
-            else if (line.startsWith("title"))
-                title = line.substring(6);
-            else if (line.startsWith("layer"))
-                layer = Integer.parseInt(line.substring(6));
-            else if (line.startsWith("type"))
-                type = Integer.parseInt(line.substring(5));
-            else if (line.equals("end"))
+            else if (artLine.startsWith("artifact"))
+                artifact = artLine.substring(9);
+            else if (artLine.startsWith("def_arch"))
+                def_arch = artLine.substring(9);
+            else if (artLine.startsWith("name"))
+                name = artLine.substring(5);
+            else if (artLine.startsWith("title"))
+                title = artLine.substring(6);
+            else if (artLine.startsWith("layer"))
+                layer = Integer.parseInt(artLine.substring(6));
+            else if (artLine.startsWith("type"))
+                type = Integer.parseInt(artLine.substring(5));
+            else if (artLine.equals("end"))
             {
                 if (archMap.containsKey(def_arch))
                 {
@@ -518,7 +519,7 @@ public class RunChecks extends Thread
                             + "\r\n\tbut archetype does not exist.");
                 }
             }
-            line = getLine(in);
+            artLine = getLine(in);
         }
         try
         {
