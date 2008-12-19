@@ -621,7 +621,7 @@ int Game_init(lua_State *L)
 /* Lua    : game:UpgradeApartment(map_old, map_new, x, y)                    */
 /* Info   : Transfer all items with "no_pick 0" setting from map_old         */
 /*          to position x,y on map new.                                      */
-/* Status : Stable                                                           */
+/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int Game_UpgradeApartment(lua_State *L)
 {
@@ -644,7 +644,7 @@ static int Game_UpgradeApartment(lua_State *L)
 /*****************************************************************************/
 /* Name   : Game_LoadObject                                                  */
 /* Lua    : game:LoadObject(string)                                          */
-/* Status : Untested                                                         */
+/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int Game_LoadObject(lua_State *L)
 {
@@ -670,7 +670,7 @@ static int Game_LoadObject(lua_State *L)
 /* Info   : Case insensitive string comparision. Returns 1 if the two        */
 /*          strings are the same, or 0 if they differ.                       */
 /*          secondstring can contain regular expressions.                    */
-/* Status : Stable                                                           */
+/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int Game_MatchString(lua_State *L)
 {
@@ -699,7 +699,7 @@ static int Game_MatchString(lua_State *L)
 /*          If map_path is taken from the path attribute of a unique or      */
 /*          instance map, this function will actually load the unique map or */
 /*          the instance. This is how e.g. paths to apartment maps are stored*/
-/* Status : Stable                                                           */
+/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int Game_ReadyMap(lua_State *L)
 {
@@ -757,7 +757,7 @@ static int Game_ReadyMap(lua_State *L)
 /*****************************************************************************/
 /* Name   : Game_FindPlayer                                                  */
 /* Lua    : game:FindPlayer(name)                                            */
-/* Status : Tested                                                           */
+/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int Game_FindPlayer(lua_State *L)
 {
@@ -784,7 +784,7 @@ static int Game_FindPlayer(lua_State *L)
 /* Name   : Game_GetSpellNr                                                  */
 /* Lua    : game:GetSpellNr(name)                                            */
 /* Info   : Gets the number of the named spell. -1 if no such spell exists   */
-/* Status : Tested                                                           */
+/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int Game_GetSpellNr(lua_State *L)
 {
@@ -801,7 +801,7 @@ static int Game_GetSpellNr(lua_State *L)
 /* Name   : Game_GetSkillNr                                                  */
 /* Lua    : game:GetSkillNr(name)                                            */
 /* Info   : Gets the number of the named skill. -1 if no such skill exists   */
-/* Status : Tested                                                           */
+/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int Game_GetSkillNr(lua_State *L)
 {
@@ -821,7 +821,7 @@ static int Game_GetSkillNr(lua_State *L)
 /*          (Useful for datastore and coroutine usage).                      */
 /*          This is the only lua function that doesn't generate an error if  */
 /*          given an invalid object.                                         */
-/* Status : Tested                                                           */
+/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int Game_IsValid(lua_State *L)
 {
@@ -853,7 +853,7 @@ static int Game_IsValid(lua_State *L)
 /* Info   : Locates the named beacon if it is in memory. Returns nil         */
 /*          otherwise                                                        */
 /*          Beacons are very useful for locating objects or locations on maps*/
-/* Status : Tested                                                           */
+/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int Game_LocateBeacon(lua_State *L)
 {
@@ -887,7 +887,7 @@ static int Game_LocateBeacon(lua_State *L)
 /*          dayofweek_name - weekday as string                               */
 /*          month_name - month as string                                     */
 /*          season_name - season as string                                   */
-/* Status : Untested                                                         */
+/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int Game_GetTime(lua_State *L)
 {
@@ -954,7 +954,7 @@ static int Game_GetTime(lua_State *L)
 /*          security reasons (both might terminate the server).              */
 /*          The lua "print()" function is redirected to LOG_INFO             */
 /* Version: Introduced in beta 4 pre3                                        */
-/* Status : Untested                                                         */
+/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int Game_Log(lua_State *L)
 {
