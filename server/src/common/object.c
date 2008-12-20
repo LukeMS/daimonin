@@ -3157,7 +3157,7 @@ object *find_next_object(object *op, uint8 type, uint8 mode, object *root)
             next->name, next->count);
 #endif
 
-        if (root && next == root || next == root->env)
+        if (root && (next == root || next == root->env))
         {
 #ifdef DEBUG_FNO
             LOG(llevDebug, " ROOT!");
