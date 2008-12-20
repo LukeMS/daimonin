@@ -65,6 +65,7 @@ static struct method_decl GameObject_methods[] =
     {"DoKnowSpell",            (lua_CFunction) GameObject_DoKnowSpell},
     {"Drop",                   (lua_CFunction) GameObject_Drop},
     {"FindMarkedObject",       (lua_CFunction) GameObject_FindMarkedObject},
+    {"FindNextObject",         (lua_CFunction) GameObject_FindNextObject},
     {"FindSkill",              (lua_CFunction) GameObject_FindSkill},
     {"Fix",                    (lua_CFunction) GameObject_Fix},
     {"GetAI",                  (lua_CFunction) GameObject_GetAI},
@@ -3974,6 +3975,43 @@ static int GameObject_SetCombatMode(lua_State *L)
     lua_pushboolean(L, CONTR(WHO)->combat_mode);
 
     return 1;
+}
+
+/*****************************************************************************/
+/* Name   : GameObject_FindNextObject                                        */
+/* Lua    : object:FindNextObject(type, mode, root, arch_name, name, title)  */
+/* Info   : Returns the next object in object's local inventory tree, or nil.*/
+/* Status : Untested/Stable                                                  */
+/* TODO   : Proper doc.                                                      */
+/*          Extended return.                                                 */
+/*****************************************************************************/
+static int GameObject_FindNextObject(lua_State *L)
+{
+    lua_object *self,
+               *whatptr = NULL;
+    object     *next;
+    int         type,
+                mode = FNO_MODE_ALL;
+    char       *arch_name = NULL,
+               *name = NULL,
+               *title = NULL;
+    archetype  *arch = NULL;
+
+    get_lua_args(L, "Oi|iOsss", &self, &type, &mode, &whatptr, &arch_name, &name, &title);
+    next = WHO;
+
+    while (next)
+    {
+        next = hooks->find_next_object(next, (uint8)type, (uint8)mode, (whatptr) ? WHAT : NULL);
+
+        if (next &&
+            (!arch_name || (next->arch && next->arch->name && !strcmp(arch_name, next->arch->name))) &&
+            (!name || (next->name && !strcmp(name, next->name))) &&
+            (!title || (next->title && !strcmp(title, next->title))))
+            break;
+    }
+
+    return push_object(L, &GameObject, next);
 }
 
 
