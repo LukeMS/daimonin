@@ -66,6 +66,7 @@ static int  GameObject_Destruct(lua_State *L);
 static int  GameObject_DoKnowSpell(lua_State *L);
 static int  GameObject_Drop(lua_State *L);
 static int  GameObject_FindMarkedObject(lua_State *L);
+static int  GameObject_FindNextObject(lua_State *L);
 static int  GameObject_FindSkill(lua_State *L);
 static int  GameObject_Fix(lua_State *L);
 static int  GameObject_GetAI(lua_State *L);

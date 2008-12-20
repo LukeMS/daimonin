@@ -2,7 +2,7 @@ arch map
 name Testmap - Core Methods
 msg
 Created:  2003-06-04 Daimonin Map Editor
-Modified: 2008-07-27 smacky
+Modified: 2008-12-19 smacky
 endmsg
 width 24
 height 24
@@ -196,8 +196,7 @@ arch floor_ostone1
 x 1
 y 5
 end
-arch double_handle-trigger1
-direction 7
+arch trigger_lever
 x 1
 y 5
 arch event_obj
