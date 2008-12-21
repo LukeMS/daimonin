@@ -20,7 +20,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-	The author can be reached via e-mail to info@daimonin.net
+    The author can be reached via e-mail to info@daimonin.net
 */
 
 /*
@@ -114,11 +114,11 @@ void esrv_update_skills(player *pl)
 void esrv_update_stats(player *pl)
 {
     int         i, group_update = 0; /* set to true when a group update stat has changed */
-	sockbuf_struct * AddIf_SOCKBUF_PTR;
+    sockbuf_struct * AddIf_SOCKBUF_PTR;
     uint16      flags;
 
-	SOCKBUF_REQUEST_BUFFER(&pl->socket, 128);
-	AddIf_SOCKBUF_PTR = ACTIVE_SOCKBUF(&pl->socket);
+    SOCKBUF_REQUEST_BUFFER(&pl->socket, 128);
+    AddIf_SOCKBUF_PTR = ACTIVE_SOCKBUF(&pl->socket);
 
     /* small trick: we want send the hp bar of our target to the player.
      * We want send a char with x% the target has of full hp.
@@ -172,9 +172,9 @@ void esrv_update_stats(player *pl)
         AddIfShort(pl->last_dps, pl->dps, CS_STAT_DAM);
         AddIfShort(pl->last_food_status, pl->food_status, CS_STAT_FOOD);
 
-		AddIfShort(pl->dist_last_wc, pl->dist_wc, CS_STAT_DIST_WC);
-		AddIfShort(pl->dist_last_dps, pl->dist_dps, CS_STAT_DIST_DPS);
-		AddIfInt(pl->dist_last_action_time, pl->dist_action_time, CS_STAT_DIST_TIME);
+        AddIfShort(pl->dist_last_wc, pl->dist_wc, CS_STAT_DIST_WC);
+        AddIfShort(pl->dist_last_dps, pl->dist_dps, CS_STAT_DIST_DPS);
+        AddIfInt(pl->dist_last_action_time, pl->dist_action_time, CS_STAT_DIST_TIME);
     }
 
     for (i = 0; i < NROFSKILLGROUPS_ACTIVE; i++)
@@ -210,14 +210,14 @@ void esrv_update_stats(player *pl)
         SockBuf_AddChar( AddIf_SOCKBUF_PTR , CS_STAT_EXT_TITLE);
         i = (int) strlen(pl->ext_title);
         SockBuf_AddChar( AddIf_SOCKBUF_PTR , i+1);
-		SockBuf_AddString( AddIf_SOCKBUF_PTR, pl->ext_title, i);
+        SockBuf_AddString( AddIf_SOCKBUF_PTR, pl->ext_title, i);
         pl->socket.ext_title_flag = 0;
     }
     /* Only send it away if we have some actual data */
     if (SOCKBUF_REQUEST_BUFSIZE( AddIf_SOCKBUF_PTR ))
-		SOCKBUF_REQUEST_FINISH(&pl->socket, BINARY_CMD_STATS, SOCKBUF_DYNAMIC);
-	else
-		SOCKBUF_REQUEST_RESET(&pl->socket);
+        SOCKBUF_REQUEST_FINISH(&pl->socket, BINARY_CMD_STATS, SOCKBUF_DYNAMIC);
+    else
+        SOCKBUF_REQUEST_RESET(&pl->socket);
 
     if(group_update && pl->group_status & GROUP_STATUS_GROUP && pl->update_ticker != ROUND_TAG)
         party_client_group_update(pl->ob, group_update);
@@ -228,16 +228,16 @@ void esrv_update_stats(player *pl)
 void esrv_new_player(player *pl, uint32 weight)
 {
     int len;
-	sockbuf_struct *sptr;
+    sockbuf_struct *sptr;
 
-	SOCKBUF_REQUEST_BUFFER(&pl->socket, 128);
-	sptr = ACTIVE_SOCKBUF(&pl->socket);
+    SOCKBUF_REQUEST_BUFFER(&pl->socket, 128);
+    sptr = ACTIVE_SOCKBUF(&pl->socket);
 
-	SockBuf_AddInt(sptr, pl->ob->count);
+    SockBuf_AddInt(sptr, pl->ob->count);
     SockBuf_AddInt(sptr, weight);
     SockBuf_AddInt(sptr, pl->ob->face->number);
     SockBuf_AddChar(sptr,(len=strlen(pl->ob->name)));
-	SockBuf_AddString(sptr, pl->ob->name, len);
+    SockBuf_AddString(sptr, pl->ob->name, len);
 
-	SOCKBUF_REQUEST_FINISH(&pl->socket, BINARY_CMD_PLAYER, SOCKBUF_DYNAMIC);
+    SOCKBUF_REQUEST_FINISH(&pl->socket, BINARY_CMD_PLAYER, SOCKBUF_DYNAMIC);
 }
