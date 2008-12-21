@@ -158,8 +158,8 @@ struct attribute_decl GameObject_attributes[] =
     {"message",               FIELDTYPE_SHSTR,     offsetof(object, msg),                       0,                  0},
     /* TODO: limited to >=0 */
     {"weight",                FIELDTYPE_SINT32,    offsetof(object, weight),                    0,                  0},
-    {"weight_limit",          FIELDTYPE_UINT32,    offsetof(object, weight_limit),              0,                  0},
-    {"carrying",              FIELDTYPE_SINT32,    offsetof(object, carrying),                  0,                  0},
+    {"weight_limit",          FIELDTYPE_UINT32,    offsetof(object, weight_limit),              FIELDFLAG_PLAYER_READONLY, 0},
+    {"carrying",              FIELDTYPE_SINT32,    offsetof(object, carrying),                  FIELDFLAG_READONLY, 0},
     {"path_attuned",          FIELDTYPE_UINT32,    offsetof(object, path_attuned),              0,                  0},
     {"path_repelled",         FIELDTYPE_UINT32,    offsetof(object, path_repelled),             0,                  0},
     {"path_denied",           FIELDTYPE_UINT32,    offsetof(object, path_denied),               0,                  0},
@@ -493,6 +493,7 @@ static const char *GameObject_flags[NUM_FLAGS + 1 + 1] =
 static int GameObject_setAttribute(lua_State *L, lua_object *obj, struct attribute_decl *attrib, int before)
 {
     object *who = obj->data.object;
+    object *pl = hooks->is_player_inv(who);
 
 #if 0
     /* Pre-setting hook -- is this necessary? */
@@ -500,8 +501,13 @@ static int GameObject_setAttribute(lua_State *L, lua_object *obj, struct attribu
         ;
 #endif
 
+    /* recalculate carrying when a script changes an inventory object's
+     * weight */
+    if (attrib->offset == offsetof(object, weight) && pl)
+        pl->carrying = hooks->sum_weight(pl);
+
     /* update player inv when needed */
-    hooks->esrv_send_item(hooks->is_player_inv(who), who);
+    hooks->esrv_send_item(pl, who);
 
     /* Special handling for some player stuff */
     if (who->type == PLAYER)

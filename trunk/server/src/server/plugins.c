@@ -89,6 +89,7 @@ struct plugin_hooklist  hooklist    =
     get_friendship,
     command_combat,
     find_next_object,
+    sum_weight,
     hashtable_new, hashtable_delete, hashtable_clear,
     hashtable_find, hashtable_insert, hashtable_erase,
     hashtable_iterator, hashtable_iterator_next,
