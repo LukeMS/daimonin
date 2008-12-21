@@ -20,7 +20,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-	The author can be reached via e-mail to info@daimonin.net
+    The author can be reached via e-mail to info@daimonin.net
 */
 
 /* This containes item logic for client/server.  IT doesn't contain
@@ -42,13 +42,13 @@ static int      check_container(object *pl, object *con);
  */
 inline void add_stringlen_to_sockbuf(char *buf, sockbuf_struct *sl)
 {
-	int len;
+    int len;
 
-	len = strlen(buf);
-	if (len > 254)
-		len = 254;
-	SockBuf_AddChar(sl, len+1);
-	SockBuf_AddString(sl, buf, len);
+    len = strlen(buf);
+    if (len > 254)
+        len = 254;
+    SockBuf_AddChar(sl, len+1);
+    SockBuf_AddString(sl, buf, len);
 }
 
 /*******************************************************************************
@@ -137,7 +137,7 @@ unsigned int query_flags(object *op)
 void esrv_draw_look(object *pl)
 {
     NewSocket  *ns = &CONTR(pl)->socket;
-	sockbuf_struct *sbptr;
+    sockbuf_struct *sbptr;
     char       *tmp_sp;
     object     *head, *tmp, *last;
     int         len, flags, got_one = 0, anim_speed, start_look = 0, end_look = 0;
@@ -154,8 +154,8 @@ void esrv_draw_look(object *pl)
     /* another layer feature: grap last (top) object without browsing the objects */
     tmp = GET_MAP_OB_LAST(pl->map, pl->x, pl->y);
 
-	SOCKBUF_REQUEST_BUFFER(ns, SOCKET_SIZE_MEDIUM);
-	sbptr = ACTIVE_SOCKBUF(ns); /* we have *some* to do here, perhaps the compiler can use a native ptr better */
+    SOCKBUF_REQUEST_BUFFER(ns, SOCKET_SIZE_MEDIUM);
+    sbptr = ACTIVE_SOCKBUF(ns); /* we have *some* to do here, perhaps the compiler can use a native ptr better */
 
     SockBuf_AddInt(sbptr, 0);
     SockBuf_AddInt(sbptr, 0);
@@ -168,8 +168,8 @@ void esrv_draw_look(object *pl)
         SockBuf_AddInt(sbptr, prev_item_face->number);
         SockBuf_AddChar(sbptr, 0);
         sprintf(buf, "A'pply (click) to see %d previous items", NUM_LOOK_OBJECTS);
-		add_stringlen_to_sockbuf(buf, sbptr);
-		sbptr = ACTIVE_SOCKBUF(ns);
+        add_stringlen_to_sockbuf(buf, sbptr);
+        sbptr = ACTIVE_SOCKBUF(ns);
         SockBuf_AddShort(sbptr, 0);
         SockBuf_AddChar(sbptr, 0);
         SockBuf_AddInt(sbptr, 0);
@@ -206,8 +206,8 @@ void esrv_draw_look(object *pl)
             SockBuf_AddInt(sbptr, next_item_face->number);
             SockBuf_AddChar(sbptr, 0);
             sprintf(buf, "A'pply (click) to see next group of items");
-			add_stringlen_to_sockbuf(buf, sbptr);
-			sbptr = ACTIVE_SOCKBUF(ns);
+            add_stringlen_to_sockbuf(buf, sbptr);
+            sbptr = ACTIVE_SOCKBUF(ns);
             SockBuf_AddShort(sbptr, 0);
             SockBuf_AddChar(sbptr, 0);
             SockBuf_AddInt(sbptr, 0);
@@ -271,12 +271,12 @@ void esrv_draw_look(object *pl)
         {
             len = 128; /* 127 chars + 0 marker */
             SockBuf_AddChar(sbptr, len);
-			SockBuf_AddString(sbptr, tmp_sp, len-1);
+            SockBuf_AddString(sbptr, tmp_sp, len-1);
         }
         else
         {
             SockBuf_AddChar(sbptr, len+1);
-			SockBuf_AddString(sbptr, tmp_sp, len);
+            SockBuf_AddString(sbptr, tmp_sp, len);
         }
 
         /* handle animations... this will change 100% when we add client
@@ -325,11 +325,11 @@ void esrv_draw_look(object *pl)
 
     if (got_one || (!got_one && !ns->below_clear))
     {
-		SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_ITEMY, SOCKBUF_DYNAMIC);
+        SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_ITEMY, SOCKBUF_DYNAMIC);
         ns->below_clear=0;
     }
-	else
-		SOCKBUF_REQUEST_RESET(ns);
+    else
+        SOCKBUF_REQUEST_RESET(ns);
 }
 
 
@@ -339,8 +339,8 @@ void esrv_draw_look(object *pl)
  */
 int esrv_draw_DM_inv(object *pl, object *op)
 {
-	NewSocket  *ns = &CONTR(pl)->socket;
-	sockbuf_struct *sbptr = ACTIVE_SOCKBUF(ns);
+    NewSocket  *ns = &CONTR(pl)->socket;
+    sockbuf_struct *sbptr = ACTIVE_SOCKBUF(ns);
     char   *tmp_sp, *tmp_in_inv = "in inventory", *tmp_end_inv = "end of inventory";
     object *tmp, *head;
     int     got_one = 0, flags, len, anim_speed;
@@ -351,8 +351,8 @@ int esrv_draw_DM_inv(object *pl, object *op)
     SockBuf_AddInt(sbptr, blank_face->number);
     len = strlen(tmp_in_inv);
     SockBuf_AddChar(sbptr, len+1);
-	add_stringlen_to_sockbuf(tmp_in_inv, sbptr);
-	sbptr = ACTIVE_SOCKBUF(ns);
+    add_stringlen_to_sockbuf(tmp_in_inv, sbptr);
+    sbptr = ACTIVE_SOCKBUF(ns);
     SockBuf_AddShort(sbptr, 0);
     SockBuf_AddChar(sbptr, 0);
     SockBuf_AddInt(sbptr, 0);
@@ -402,12 +402,12 @@ int esrv_draw_DM_inv(object *pl, object *op)
         {
             len = 128; /* 127 chars + 0 marker */
             SockBuf_AddChar(sbptr, len);
-			SockBuf_AddString(sbptr, tmp_sp, len-1);
+            SockBuf_AddString(sbptr, tmp_sp, len-1);
         }
         else
         {
             SockBuf_AddChar(sbptr, len+1);
-			SockBuf_AddString(sbptr, tmp_sp, len);
+            SockBuf_AddString(sbptr, tmp_sp, len);
         }
 
         /* handle animations... this will change 100% when we add client
@@ -435,12 +435,12 @@ int esrv_draw_DM_inv(object *pl, object *op)
         SockBuf_AddInt(sbptr, tmp->nrof);
         got_one++;
 
-		if (tmp->inv) /* oh well... another container to flush */
-		{
+        if (tmp->inv) /* oh well... another container to flush */
+        {
             got_one = esrv_draw_DM_inv(pl, tmp);
             /* 2008-08-28 Alderan: fix for double mempool-free bug */
             sbptr = ACTIVE_SOCKBUF(ns);
-		}
+        }
     } /* for loop */
 
     SockBuf_AddInt(sbptr, 0);
@@ -449,8 +449,8 @@ int esrv_draw_DM_inv(object *pl, object *op)
     SockBuf_AddInt(sbptr, blank_face->number);
     len = strlen(tmp_end_inv);
     SockBuf_AddChar(sbptr, len+1);
-	add_stringlen_to_sockbuf(tmp_end_inv, sbptr);
-	sbptr = ACTIVE_SOCKBUF(ns);
+    add_stringlen_to_sockbuf(tmp_end_inv, sbptr);
+    sbptr = ACTIVE_SOCKBUF(ns);
     SockBuf_AddShort(sbptr, 0);
     SockBuf_AddChar(sbptr, 0);
     SockBuf_AddInt(sbptr, 0);
@@ -459,19 +459,19 @@ int esrv_draw_DM_inv(object *pl, object *op)
 
 void esrv_close_container(object *op)
 {
-	NewSocket *ns = &CONTR(op)->socket;
+    NewSocket *ns = &CONTR(op)->socket;
 
-	/*LOG(-1,"close container of: %s\n", query_name(op));*/
-	SOCKBUF_REQUEST_BUFFER(ns, SOCKET_SIZE_SMALL);
-	SockBuf_AddInt(ACTIVE_SOCKBUF(ns), -1); /* container mode flag */
-	SockBuf_AddInt(ACTIVE_SOCKBUF(ns), -1);
-	SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_ITEMX, SOCKBUF_DYNAMIC);
+    /*LOG(-1,"close container of: %s\n", query_name(op));*/
+    SOCKBUF_REQUEST_BUFFER(ns, SOCKET_SIZE_SMALL);
+    SockBuf_AddInt(ACTIVE_SOCKBUF(ns), -1); /* container mode flag */
+    SockBuf_AddInt(ACTIVE_SOCKBUF(ns), -1);
+    SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_ITEMX, SOCKBUF_DYNAMIC);
 }
 
 
 static int esrv_send_inventory_DM(object *pl, object *op)
 {
-	sockbuf_struct *sbptr = ACTIVE_SOCKBUF(&CONTR(pl)->socket);
+    sockbuf_struct *sbptr = ACTIVE_SOCKBUF(&CONTR(pl)->socket);
     object *tmp;
     int     flags, got_one = 0, anim_speed, len;
     char    item_n[MAX_BUF];
@@ -522,13 +522,13 @@ static int esrv_send_inventory_DM(object *pl, object *op)
         }
         else
         {
-			SockBuf_AddInt(sbptr, 0xffffffff);
+            SockBuf_AddInt(sbptr, 0xffffffff);
         }
         strncpy(item_n, query_base_name(tmp, pl), 127);
         item_n[127] = 0;
         len = strlen(item_n);
         SockBuf_AddChar(sbptr, len+1);
-		SockBuf_AddString(sbptr, item_n, len);
+        SockBuf_AddString(sbptr, item_n, len);
         if (tmp->inv_animation_id)
         {
             SockBuf_AddShort(sbptr, tmp->inv_animation_id);
@@ -576,15 +576,15 @@ static int esrv_send_inventory_DM(object *pl, object *op)
  */
 void esrv_send_inventory(object *pl, object *op)
 {
-	NewSocket  *ns = &CONTR(pl)->socket;
-	sockbuf_struct *sbptr;
+    NewSocket  *ns = &CONTR(pl)->socket;
+    sockbuf_struct *sbptr;
     object     *tmp;
     int         flags, got_one = 0, anim_speed, len;
     char        item_n[MAX_BUF];
 
     /*LOG(llevDebug,"send inventory of: %s\n", query_name(op));*/
-	SOCKBUF_REQUEST_BUFFER(ns, SOCKET_SIZE_MEDIUM);
-	sbptr = ACTIVE_SOCKBUF(ns);
+    SOCKBUF_REQUEST_BUFFER(ns, SOCKET_SIZE_MEDIUM);
+    sbptr = ACTIVE_SOCKBUF(ns);
 
     if (pl != op) /* in this case we send a container inventory! */
     {
@@ -653,13 +653,13 @@ void esrv_send_inventory(object *pl, object *op)
             }
             else
             {
-				SockBuf_AddInt(sbptr, 0xffffffff);
+                SockBuf_AddInt(sbptr, 0xffffffff);
             }
             strncpy(item_n, query_base_name(tmp, pl), 127);
             item_n[127] = 0;
             len = strlen(item_n);
             SockBuf_AddChar(sbptr, len+1);
-			SockBuf_AddString(sbptr, item_n, len);
+            SockBuf_AddString(sbptr, item_n, len);
             if (tmp->inv_animation_id)
             {
                 SockBuf_AddShort(sbptr, tmp->inv_animation_id);
@@ -704,19 +704,19 @@ void esrv_send_inventory(object *pl, object *op)
         }
     }
 
-	if (got_one || pl != op) /* container can be empty... */
-		SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_ITEMY, SOCKBUF_DYNAMIC);
-	else
-		SOCKBUF_REQUEST_RESET(ns);
+    if (got_one || pl != op) /* container can be empty... */
+        SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_ITEMY, SOCKBUF_DYNAMIC);
+    else
+        SOCKBUF_REQUEST_RESET(ns);
 }
 
 
 static void esrv_update_item_send(int flags, object *pl, object *op)
 {
-	NewSocket		*ns = &CONTR(pl)->socket;
-	sockbuf_struct	*sbptr;
+    NewSocket        *ns = &CONTR(pl)->socket;
+    sockbuf_struct    *sbptr;
 
-	/*LOG(llevDebug,"update item: %s\n", query_name(op));*/
+    /*LOG(llevDebug,"update item: %s\n", query_name(op));*/
     /* If we have a request to send the player item, skip a few checks. */
     if (op != pl)
     {
@@ -724,10 +724,10 @@ static void esrv_update_item_send(int flags, object *pl, object *op)
             return;
     }
 
-	SOCKBUF_REQUEST_BUFFER(ns, SOCKET_SIZE_MEDIUM);
-	sbptr = ACTIVE_SOCKBUF(ns);
+    SOCKBUF_REQUEST_BUFFER(ns, SOCKET_SIZE_MEDIUM);
+    sbptr = ACTIVE_SOCKBUF(ns);
 
-	SockBuf_AddShort(sbptr, flags);
+    SockBuf_AddShort(sbptr, flags);
     SockBuf_AddInt(sbptr, op->count);
 
     if (flags & UPD_LOCATION)
@@ -766,14 +766,14 @@ static void esrv_update_item_send(int flags, object *pl, object *op)
     }
     if (flags & UPD_NAME)
     {
-		int     len;
-		char    item_n[MAX_BUF];
+        int     len;
+        char    item_n[MAX_BUF];
 
-		strncpy(item_n, query_base_name(op, pl), 127);
-		item_n[127] = 0;
-		len = strlen(item_n);
-		SockBuf_AddChar(sbptr, len);
-		SockBuf_AddString(sbptr, item_n, len);
+        strncpy(item_n, query_base_name(op, pl), 127);
+        item_n[127] = 0;
+        len = strlen(item_n);
+        SockBuf_AddChar(sbptr, len);
+        SockBuf_AddString(sbptr, item_n, len);
     }
     if (flags & UPD_ANIM)
     {
@@ -817,7 +817,7 @@ static void esrv_update_item_send(int flags, object *pl, object *op)
         SockBuf_AddChar(sbptr, op->item_condition);
     }
 
-	SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_UPITEM, SOCKBUF_DYNAMIC);
+    SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_UPITEM, SOCKBUF_DYNAMIC);
 }
 
 /* Updates object *op for player *pl.  flags is a list of values to update
@@ -849,10 +849,10 @@ void esrv_update_item(int flags, object *pl, object *op)
 
 static void esrv_send_item_send(object *pl, object *op)
 {
-	NewSocket		*ns = &CONTR(pl)->socket;
-	sockbuf_struct	*sbptr;
-    int				anim_speed, len;
-    char			item_n[MAX_BUF];
+    NewSocket        *ns = &CONTR(pl)->socket;
+    sockbuf_struct    *sbptr;
+    int                anim_speed, len;
+    char            item_n[MAX_BUF];
 
 
     if(!pl ||!op)
@@ -868,10 +868,10 @@ static void esrv_send_item_send(object *pl, object *op)
 
     /*LOG(-1,"send item: %s\n", query_name(op));*/
 
-	SOCKBUF_REQUEST_BUFFER(ns, SOCKET_SIZE_MEDIUM);
-	sbptr = ACTIVE_SOCKBUF(ns);
+    SOCKBUF_REQUEST_BUFFER(ns, SOCKET_SIZE_MEDIUM);
+    sbptr = ACTIVE_SOCKBUF(ns);
 
-	SockBuf_AddInt(sbptr, -4); /* no delinv */
+    SockBuf_AddInt(sbptr, -4); /* no delinv */
     SockBuf_AddInt(sbptr, (op->env ? op->env->count : 0));
     SockBuf_AddInt(sbptr, op->count);
     SockBuf_AddInt(sbptr, query_flags(op));
@@ -922,14 +922,14 @@ static void esrv_send_item_send(object *pl, object *op)
         }
         else
         {
-			SockBuf_AddInt(sbptr, 0xffffffff);
+            SockBuf_AddInt(sbptr, 0xffffffff);
         }
     }
-	strncpy(item_n, query_base_name(op, pl), 127);
-	item_n[127] = 0;
-	len = strlen(item_n);
-	SockBuf_AddChar(sbptr, len+1);
-	SockBuf_AddString(sbptr, item_n, len);
+    strncpy(item_n, query_base_name(op, pl), 127);
+    item_n[127] = 0;
+    len = strlen(item_n);
+    SockBuf_AddChar(sbptr, len+1);
+    SockBuf_AddString(sbptr, item_n, len);
 
     if (op->env && op->inv_animation_id)
     {
@@ -959,7 +959,7 @@ static void esrv_send_item_send(object *pl, object *op)
     SockBuf_AddChar(sbptr, anim_speed);
     SockBuf_AddInt(sbptr, op->nrof);
 
-	SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_ITEMX, SOCKBUF_DYNAMIC);
+    SOCKBUF_REQUEST_FINISH(ns, BINARY_CMD_ITEMX, SOCKBUF_DYNAMIC);
 }
 
 void esrv_send_item(object *pl, object *op)
@@ -990,9 +990,9 @@ void esrv_send_item(object *pl, object *op)
 
 static inline void esrv_del_item_send(player *pl, int tag)
 {
-	SOCKBUF_REQUEST_BUFFER(&pl->socket, SOCKET_SIZE_SMALL);
-	SockBuf_AddInt(ACTIVE_SOCKBUF(&pl->socket), tag);
-	SOCKBUF_REQUEST_FINISH(&pl->socket, BINARY_CMD_DELITEM, SOCKBUF_DYNAMIC);
+    SOCKBUF_REQUEST_BUFFER(&pl->socket, SOCKET_SIZE_SMALL);
+    SockBuf_AddInt(ACTIVE_SOCKBUF(&pl->socket), tag);
+    SOCKBUF_REQUEST_FINISH(&pl->socket, BINARY_CMD_DELITEM, SOCKBUF_DYNAMIC);
 }
 
 /* Tells the client to delete an item.
