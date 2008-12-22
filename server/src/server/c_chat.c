@@ -459,6 +459,7 @@ int command_talk(object *op, char *params)
     /* lets see we have a target which CAN respond to our talk cmd */
     if (t_obj && CONTR(op)->target_object_count == t_obj->count)
     {
+#if 0
         /* why i do this and not direct distance calculation?
          * because the player perhaps has leaved the mapset with the
          * target which will invoke some nasty searchings.
@@ -496,6 +497,34 @@ int command_talk(object *op, char *params)
         /* our target is out of the response area - tell it the player and close the interface */
         new_draw_info(NDI_UNIQUE, 0, op, "Your talk target is not in range.");
         send_clear_interface(CONTR(op));
+#else
+        if (on_same_map(op, t_obj) &&
+            CONTR(op)->blocked_los[t_obj->x][t_obj->y] <= BLOCKED_LOS_BLOCKSVIEW && // visible
+            !(CONTR(op)->blocked_los[t_obj->x][t_obj->y] & BLOCKED_LOS_BLOCKSVIEW)) // not blocksview
+        {
+            if (t_obj->event_flags & EVENT_FLAG_TALK)
+                trigger_object_plugin_event(EVENT_TALK, t_obj, op, NULL,
+                                            params, NULL, NULL, NULL,
+                                            SCRIPT_FIX_ACTIVATOR);
+            else
+            {
+                send_clear_interface(CONTR(op));
+
+                if(t_obj->msg)
+                    new_draw_info(NDI_NAVY | NDI_UNIQUE, 0, op, t_obj->msg);
+                else
+                    new_draw_info_format(NDI_NAVY | NDI_UNIQUE, 0, op, "%s has nothing to say.", query_name(t_obj));
+            }
+        }
+        else
+        {
+            /* our target is out of the response area - tell it the player and close the interface */
+            new_draw_info(NDI_UNIQUE, 0, op, "Your talk target is not in range.");
+            send_clear_interface(CONTR(op));
+        }
+
+        return 1;
+#endif
     }
     else /* we have target nothing or an invalid /talk target - lets fire up auto-target selection */
     {
