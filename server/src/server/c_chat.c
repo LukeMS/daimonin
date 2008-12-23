@@ -459,7 +459,7 @@ int command_talk(object *op, char *params)
     /* lets see we have a target which CAN respond to our talk cmd */
     if (t_obj && CONTR(op)->target_object_count == t_obj->count)
     {
-#if 1
+#if 0
         /* why i do this and not direct distance calculation?
          * because the player perhaps has leaved the mapset with the
          * target which will invoke some nasty searchings.
@@ -498,30 +498,42 @@ int command_talk(object *op, char *params)
         new_draw_info(NDI_UNIQUE, 0, op, "Your talk target is not in range.");
         send_clear_interface(CONTR(op));
 #else
-        if (on_same_map(op, t_obj) &&
-            CONTR(op)->blocked_los[t_obj->x][t_obj->y] <= BLOCKED_LOS_BLOCKSVIEW && // visible
-            !(CONTR(op)->blocked_los[t_obj->x][t_obj->y] & BLOCKED_LOS_BLOCKSVIEW)) // not blocksview
-        {
-            if (t_obj->event_flags & EVENT_FLAG_TALK)
-                trigger_object_plugin_event(EVENT_TALK, t_obj, op, NULL,
-                                            params, NULL, NULL, NULL,
-                                            SCRIPT_FIX_ACTIVATOR);
-            else
-            {
-                send_clear_interface(CONTR(op));
+        /* This allows *visible* targets to be talked to. So if they are
+         * onscreen you can talk to them -- I hope Gecko was right above about
+         * 'nasty' searches -- Smacky 20081223 */
+        rv_vector rv;
 
-                if(t_obj->msg)
-                    new_draw_info(NDI_NAVY | NDI_UNIQUE, 0, op, t_obj->msg);
+        /* Is the target on this mapset and not too far away? */
+        if (get_rangevector(op, t_obj, &rv, 0) &&
+            rv.distance <= MAX(MAP_CLIENT_X / 2, MAP_CLIENT_Y / 2))
+        {
+            int x = MAP_CLIENT_X / 2 + rv.distance_x,
+                y = MAP_CLIENT_Y / 2 + rv.distance_y;
+
+            /* Is it visible to the player? */
+            if (CONTR(op)->blocked_los[x][y] <= BLOCKED_LOS_BLOCKSVIEW)
+            {
+                if (t_obj->event_flags & EVENT_FLAG_TALK)
+                    trigger_object_plugin_event(EVENT_TALK, t_obj, op, NULL,
+                                                params, NULL, NULL, NULL,
+                                                SCRIPT_FIX_ACTIVATOR);
                 else
-                    new_draw_info_format(NDI_NAVY | NDI_UNIQUE, 0, op, "%s has nothing to say.", query_name(t_obj));
+                {
+                    send_clear_interface(CONTR(op));
+
+                    if(t_obj->msg)
+                        new_draw_info(NDI_NAVY | NDI_UNIQUE, 0, op, t_obj->msg);
+                    else
+                        new_draw_info_format(NDI_NAVY | NDI_UNIQUE, 0, op, "%s has nothing to say.", query_name(t_obj));
+                }
+
+                return 1;
             }
         }
-        else
-        {
-            /* our target is out of the response area - tell it the player and close the interface */
-            new_draw_info(NDI_UNIQUE, 0, op, "Your talk target is not in range.");
-            send_clear_interface(CONTR(op));
-        }
+
+        /* our target is out of the response area - tell it the player and close the interface */
+        new_draw_info(NDI_UNIQUE, 0, op, "Your talk target is not in range.");
+        send_clear_interface(CONTR(op));
 
         return 1;
 #endif
