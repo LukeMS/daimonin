@@ -459,7 +459,7 @@ int command_talk(object *op, char *params)
     /* lets see we have a target which CAN respond to our talk cmd */
     if (t_obj && CONTR(op)->target_object_count == t_obj->count)
     {
-#if 0
+#if 1
         /* why i do this and not direct distance calculation?
          * because the player perhaps has leaved the mapset with the
          * target which will invoke some nasty searchings.
