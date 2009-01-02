@@ -1,3 +1,5 @@
+; Updated to comply with minor script-fu changes to comply with GIMP v2.6
+
 ;1) Adds Alpha Channel (if not already there) 
 ;2) Selects all pure white (or color of my choice would be nice) 
 ;3) Clears selection 
@@ -38,7 +40,7 @@
 
 (script-fu-register
 	"script-fu-daimonin-add-alpha"                  ;func name
-	"Add Alpha"                                     ;menu label
+	"_Add Alpha"                                     ;menu label
 	"Daimonin - Add alpha layer"                    ;description
 	"Torchwood"					;author
 	"Copyright 2007, Jim White"			;copyright notice
@@ -49,4 +51,4 @@
 	SF-COLOR       "Color to erase"        '(255 255 255)
 )
 
-(script-fu-menu-register "script-fu-daimonin-add-alpha" "<Image>/Daimonin")
+(script-fu-menu-register "script-fu-daimonin-add-alpha" "<Image>/_Daimonin")
