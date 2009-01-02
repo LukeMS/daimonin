@@ -1,3 +1,4 @@
+; Updated to comply with minor script-fu changes to comply with GIMP v2.6
 
 (define (script-fu-daimonin-crop img tdrawable)
 
@@ -9,11 +10,11 @@
 			(theImageHeight (car (gimp-image-height img)))
 
 			; Define variables to store the layer size and offsets after autocrop
-			(theCroppedWidth)
-			(theCroppedHeight)
-			(theCroppedOffsets)
-			(theCroppedX)
-			(theCroppedY)
+			(theCroppedWidth 0)
+			(theCroppedHeight 0)
+			(theCroppedOffsets 0)
+			(theCroppedX 0)
+			(theCroppedY 0)
 
 		)
 	
@@ -43,7 +44,7 @@
 
 (script-fu-register
 	"script-fu-daimonin-crop"			;func name
-	"Crop"						;menu label
+	"_Crop"						;menu label
 	"Crop empty space from top and right of image"  ;description
 	"Torchwood"                                     ;author
 	"Copyright 2007, Jim White"			;copyright notice
@@ -52,4 +53,4 @@
 	SF-IMAGE       "Input image"    0
 	SF-DRAWABLE    "Input drawable" 0
 )
-(script-fu-menu-register "script-fu-daimonin-crop" "<Image>/Daimonin")
+(script-fu-menu-register "script-fu-daimonin-crop" "<Image>/_Daimonin")

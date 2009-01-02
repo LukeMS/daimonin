@@ -1,3 +1,5 @@
+; Updated to comply with minor script-fu changes to comply with GIMP v2.6
+
 (define (script-fu-daimonin-tile-frame pattern size inDirections endFrame onlyLastFrame start end inBorderWidth borderColour saveGIMP keepImagesOpen)
 
 
@@ -16,33 +18,33 @@
 				(baseWidth 48)
 				(baseHeight 70)
 	
-				(tileWidth)
-				(tileHeight)
+				(tileWidth 0)
+				(tileHeight 0)
 
-				(imgWidth)
-				(imgHeight)
+				(imgWidth 0)
+				(imgHeight 0)
 
-				(img)
-				(gridLayer)
+				(img 0)
+				(gridLayer 0)
 
-				(curWidth)
-				(curHeight)
+				(curWidth 0)
+				(curHeight 0)
 
 				(segment (cons-array 4 'double))
 	
 				(numFiles 0)
-				(fileName)
-				(tileLayer)
+				(fileName 0)
+				(tileLayer 0)
 
-				(numDirections)
-				(colOffset)
-				(fileSuffix)
+				(numDirections 0)
+				(colOffset 0)
+				(fileSuffix 0)
 	
-				(curTileColumn)
-				(curTileRow)
-				(curAction)
+				(curTileColumn 0)
+				(curTileRow 0)
+				(curAction 0)
 
-                        (numDirections)
+                        (numDirections 0)
 
 				; Convert inBorderWidth to actual border width
 				(borderWidth (+ (* 2 inBorderWidth) 1))
@@ -173,6 +175,8 @@
 				(set! curTileRow (+ curTileRow 1))
 			)
 
+			; Force the image to crop back to the calculated size
+			(gimp-image-crop img imgWidth imgHeight 0 0)
 
 			; Create a file name for the new image
 ;			(set! fileName (string-append pattern "." (number->string frame) (number->string inDirections)))
@@ -228,11 +232,11 @@
 	(let*
 		(
 			(firstFrame 1)
-			(curFrame)
-			(animImg)
-			(newLayer)
-			(animFileName)
-			(frameFileName)
+			(curFrame 0)
+			(animImg 0)
+			(newLayer 0)
+			(animFileName 0)
+			(frameFileName 0)
 		)
 
 
@@ -324,7 +328,7 @@
 ; Register function with GIMP
 (script-fu-register 
    "script-fu-daimonin-tile-frame"         ;func name 
-   "Tile"               ;menu label 
+   "_Tile"               ;menu label 
    "Daimonin - Tile a set of Images"      ;description 
    "Torchwood"               ;author 
    "Copyright 2007, Jim White"         ;copyright notice 
@@ -333,7 +337,7 @@
    SF-STRING   "File base name (+ path) to tile"    ""
    SF-VALUE    "Tile size factor" "1"
    SF-OPTION   "Directions" '("1 - 8" "1 - 4" "5 - 8")
-   SF-VALUE    "Last animation frame number" "1"
+   SF-VALUE    "Last animation frame number" "4"
    SF-TOGGLE   "Tile only last frame" FALSE
    SF-OPTION   "Start Action" '("0 - Resting" "1 - Standing" "2 - Running" "3 - Attacking")
    SF-OPTION   "End Action"   '("0 - Resting" "1 - Standing" "2 - Running" "3 - Attacking")
@@ -342,4 +346,4 @@
    SF-TOGGLE   "Save XCF GIMP format file only (no png file, no animated gif created)"  FALSE
    SF-TOGGLE   "Keep images open" FALSE
 ) 
-(script-fu-menu-register "script-fu-daimonin-tile-frame" "<Toolbox>/Xtns/Daimonin")
+(script-fu-menu-register "script-fu-daimonin-tile-frame" "<Image>/_Daimonin")

@@ -1,10 +1,12 @@
+; Updated to comply with minor script-fu changes to comply with GIMP v2.6
 
 (define (script-fu-daimonin-batch pattern doAlpha cutColour doUnsharp inRadius inAmount inThreshold doShadow shadowZOffset doIndexed doCrop)
 	(let*
 		(
-			(isIndexed)
-			(shadowLayer)
-			(layerList)
+			(isIndexed 0)
+			(shadowLayer 0)
+			(layerList 0)
+			(shadowXCrop 0)
 
 			; Get list of files using 'pattern' supplied
 			(numfiles (car (file-glob pattern 1))) 
@@ -62,6 +64,13 @@
 						; For simple, single layer, files this will work
 						(set! shadowLayer (aref layerList 1))
 
+						; Adding shadow can grow image on the left - so chop this back off else images will
+						; be misaligned in game
+						(set! shadowXCrop (car (gimp-drawable-offsets drawable)))
+						(if (> shadowXCrop 0)
+							(gimp-image-crop image (- (car (gimp-image-width image)) shadowXCrop) (car (gimp-image-height image)) shadowXCrop 0)
+						)
+
 						(gimp-layer-resize-to-image-size shadowLayer)
 						(gimp-layer-set-offsets shadowLayer 0 shadowZOffset)
 
@@ -110,7 +119,7 @@
 
 (script-fu-register
 	"script-fu-daimonin-batch"                      ;func name
-	"Batch Process"					;menu label
+	"_Batch Process"					;menu label
 	"Daimonin - Batch process a set of Images"      ;description
 	"Torchwood"					;author
 	"Copyright 2007, Jim White"			;copyright notice
@@ -126,5 +135,5 @@
 	SF-TOGGLE	"Add Perspective Shadow"        TRUE
 	SF-ADJUSTMENT	"Shadow Z Offset"		'(0 0 50 1 5 0 0)
 	SF-TOGGLE	"Convert to Indexed"		FALSE
-	SF-TOGGLE	"Crop"				FALSE)
-(script-fu-menu-register "script-fu-daimonin-batch" "<Toolbox>/Xtns/Daimonin")
+	SF-TOGGLE	"Crop"				TRUE)
+(script-fu-menu-register "script-fu-daimonin-batch" "<Image>/_Daimonin")
