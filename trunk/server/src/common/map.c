@@ -28,6 +28,14 @@
 #include <unistd.h>
 #endif /* win32 */
 
+/* Default values for a few non-zero attributes. */
+#define MAP_DEFAULT_X          24
+#define MAP_DEFAULT_Y          24
+#define MAP_DEFAULT_RESET_TIME MIN(MAP_MAXRESET, 7200)
+#define MAP_DEFAULT_SWAP_TIME  MAX(MAP_MINTIMEOUT, 300)
+#define MAP_DEFAULT_DIFFICULTY 1
+#define MAP_DEFAULT_DARKNESS    -1
+
 int global_darkness_table[MAX_DARKNESS + 1] =
 {
     0, 20, 40, 80, 160, 320, 640, 1280
@@ -342,16 +350,17 @@ mapstruct * get_linked_map()
     /* The maps used to pick up default x and y values from the
      * map archetype.  Mimic that behaviour.
      */
-    MAP_WIDTH(map) = 16;
-    MAP_HEIGHT(map) = 16;
-    MAP_RESET_TIMEOUT(map) = 7200;
-    MAP_TIMEOUT(map) = 300;
-    /* default light of a map is full daylight */
-    MAP_DARKNESS(map) = -1;
-    map->light_value = global_darkness_table[MAX_DARKNESS];
+    MAP_WIDTH(map) = MAP_DEFAULT_X;
+    MAP_HEIGHT(map) = MAP_DEFAULT_Y;
+    MAP_RESET_TIMEOUT(map) = MAP_DEFAULT_RESET_TIME;
+    MAP_TIMEOUT(map) = MAP_DEFAULT_SWAP_TIME;
+    MAP_DIFFICULTY(map) = MAP_DEFAULT_DIFFICULTY;
+    MAP_DARKNESS(map) = MAP_DEFAULT_DARKNESS;
 
-    MAP_ENTER_X(map) = 1;
-    MAP_ENTER_Y(map) = 1;
+    if (MAP_DEFAULT_DARKNESS == -1)
+        map->light_value = global_darkness_table[MAX_DARKNESS];
+    else
+        map->light_value = global_darkness_table[MAP_DEFAULT_DARKNESS];
 
     /* We insert a dummy sentinel first in the activelist. This simplifies
      * work later */
@@ -514,52 +523,150 @@ static int load_map_header(FILE *fp, mapstruct *m, int flags)
             if (msgpos != 0)
                 FREE_AND_COPY_HASH(m->msg, msgbuf);
         }
+        /* enter_x is the default x (west-east) entry point. On a
+         * non-production server we assume a specific map width (see below) so
+         * we can also assume a range for this value. The default is 0, which
+         * is necessarily always the nothernmost row of squares. */
         else if (!strcmp(key, "enter_x"))
         {
-            m->enter_x = atoi(value);
+            int v = atoi(value);
+
+#ifndef PRODUCTION_SYSTEM
+            if (v < 0 || v >= MAP_DEFAULT_X)
+                LOG(llevDebug, "DEBUG:: Illegal map enter X coord %d (should be 0 to %d)!\n",
+                    v, (MAP_DEFAULT_X - 1));
+#endif
+
+            m->enter_x = v;
         }
+        /* enter_y is the default y (north-south) entry point. On a
+         * non-production server we assume a specific map height (see below) so
+         * we can also assume a range for this value. The default is 0, which
+         * is necessarily always the westernmost column of squares. */
         else if (!strcmp(key, "enter_y"))
         {
-            m->enter_y = atoi(value);
+            int v = atoi(value);
+
+#ifndef PRODUCTION_SYSTEM
+            if (v < 0 || v >= MAP_DEFAULT_Y)
+                LOG(llevDebug, "DEBUG:: Illegal map enter Y coord %d (should be 0 to %d)!\n",
+                    v, (MAP_DEFAULT_Y - 1));
+#endif
+
+            m->enter_y = v;
         }
+        /* width is the total number of x (west-east) squares. There is a
+         * default which should be stuck to and any deviation on a
+         * non-production will produce a debug warning. However this is not
+         * enforced and once the map gets to a production server the
+         * non-standard width is assumed to be intentional so no warning is
+         * given. */
         else if (!strcmp(key, "width"))
         {
-            m->width = atoi(value);
+            int v = atoi(value);
+
+#ifndef PRODUCTION_SYSTEM
+            if (v != MAP_DEFAULT_X)
+                LOG(llevDebug, "DEBUG:: Illegal map width %d (should be %d)!\n",
+                    v, MAP_DEFAULT_X);
+#endif
+
+            m->width = v;
         }
+        /* height is the total number of y (north-south) squares. There is a
+         * default which should be stuck to and any deviation on a
+         * non-production will produce a debug warning. However this is not
+         * enforced and once the map gets to a production server the
+         * non-standard height is assumed to be intentional so no warning is
+         * given. */
         else if (!strcmp(key, "height"))
         {
-            m->height = atoi(value);
+            int v = atoi(value);
+
+#ifndef PRODUCTION_SYSTEM
+            if (v != MAP_DEFAULT_Y)
+                LOG(llevDebug, "DEBUG:: Illegal map height %d (should be %d)!\n",
+                    v, MAP_DEFAULT_Y);
+#endif
+
+            m->height = v;
         }
         else if (!strcmp(key, "reset_timeout"))
         {
-            m->reset_timeout = atoi(value);
+            int v = atoi(value);
+
+#ifdef MAP_RESET
+#ifdef MAP_MAXRESET
+            if (v < 0 || v > MAP_MAXRESET)
+                LOG(llevBug, "BUG:: Illegal map reset time %d (must be 0 to %d, defaulting to %d)!\n",
+                    v, MAP_DEFAULT_RESET_TIME, MAP_MAXRESET);
+#else
+            if (v < 0)
+                LOG(llevBug, "BUG:: Illegal map reset time %d (must be positive, defaulting to %d)!\n",
+                    v, MAP_DEFAULT_RESET_TIME);
+#endif
+            else
+#endif
+                m->reset_timeout = v;
         }
         else if (!strcmp(key, "swap_time"))
         {
-            m->timeout = atoi(value);
+            int v = atoi(value);
+
+            if (v < MAP_MINTIMEOUT || v > MAP_MAXTIMEOUT)
+                LOG(llevBug, "BUG:: Illegal map swap time %d (must be %d to %d, defaulting to %d)!\n",
+                    v, MAP_MINTIMEOUT, MAP_MAXTIMEOUT, MAP_DEFAULT_SWAP_TIME);
+            else
+                m->timeout = v;
         }
+        /* difficulty is a 'recommended player level' for that map *for a
+         * single player*, so follows the same restriction (1 to MAXLEVEL). It
+         * is used in a number of situations to autogenerate treasure and
+         * autocalculate monster stats and environment damage. The default is
+         * 1. */
         else if (!strcmp(key, "difficulty"))
         {
-            m->difficulty = atoi(value);
+            int v = atoi(value);
+
+            if (v < 1 || v > MAXLEVEL)
+               LOG(llevBug, "BUG:: Ilegal map difficulty %d (must be 1 to %d, defaulting to 1)!\n",
+                   v, MAXLEVEL);
+            else
+                m->difficulty = v;
         }
+        /* darkness is a 'coarse' way to set a map's ambient light levels. As a
+         * special case, darkness can be -1 which means full daylight (ie, the
+         * mapper does not need to know the value of MAX_DARKNESS and the map
+         * will cope if this value ever changes in the server); darkness -1 is
+         * *not* the same as outdoor 1 (see below). The default is -1. */
         else if (!strcmp(key, "darkness"))
         {
-            MAP_DARKNESS(m) = atoi(value);
-            if (MAP_DARKNESS(m) == -1)
-                m->light_value = global_darkness_table[MAX_DARKNESS];
-            else
+            int v = atoi(value);
+
+            if (v < -1 || v > MAX_DARKNESS)
             {
-                if (MAP_DARKNESS(m) < 0 || MAP_DARKNESS(m) > MAX_DARKNESS)
-                {
-                    LOG(llevBug, "\nBug: Illegal map darkness %d, setting to %d\n", MAP_DARKNESS(m), MAX_DARKNESS);
-                    MAP_DARKNESS(m) = MAX_DARKNESS;
-                }
-                m->light_value = global_darkness_table[MAP_DARKNESS(m)];
+                LOG(llevBug, "BUG:: Illegal map difficulty %d (must be -1 to %d, defaulting to -1)!\n",
+                    v, MAX_DARKNESS);
+            }
+            else if (v != -1)
+            {
+                m->darkness = v;
+                m->light_value = global_darkness_table[v];
             }
         }
+        /* light is a 'finer' way to set a map's ambient light levels. Mappers
+         * shouldn't explicitly set light as darkness takes care of it. */
+        /* TODO: I think perhaps the following else if block should even be
+         * removed -- Smacky 20081228 */
         else if (!strcmp(key, "light"))
         {
-            m->light_value = atoi(value);
+            int v = atoi(value);
+
+            if (v < 0)
+                LOG(llevBug, "BUG:: Illegal map light %d (must be positive, defaulting to 0)!\n",
+                    v);
+
+            m->light_value = v;
 
             /* i assume that the default map_flags settings is 0 - so we don't handle <flagset> 0 */
         }
@@ -613,6 +720,8 @@ static int load_map_header(FILE *fp, mapstruct *m, int flags)
             if (atoi(value))
                 m->map_flags |= MAP_FLAG_PVP;
         }
+        /* outdoor 1 means the map has variable ambient light over the course of
+         * a day, up to a maximum as given in darkness (see above). */
         else if (!strcmp(key, "outdoor"))
         {
             if (atoi(value))
@@ -1555,11 +1664,6 @@ mapstruct * load_map(const char *filename, const char *src_name, int flags, shst
     LOG(llevDebug, "close. ");
     fclose(fp);
     LOG(llevDebug, "post set. ");
-    if (!MAP_DIFFICULTY(m))
-    {
-        /*LOG(llevBug, "BUG: Map %s has difficulty 0. Changing to 1 (non special item area).\n", filename);*/
-        MAP_DIFFICULTY(m) = 1;
-    }
     set_map_reset_time(m);
     LOG(llevDebug, "done!\n");
     return (m);
