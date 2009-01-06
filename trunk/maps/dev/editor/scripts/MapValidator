@@ -25,6 +25,7 @@ void checkMap(File mapFile, String mapPath) {
         log("- cannot load map file");
         return;
     }
+
     ErrorCollector errorCollector;
     try {
         try {
@@ -57,8 +58,9 @@ void checkMap(File mapFile, String mapPath) {
 
         sb.append(validationError);
 
-        GameObject gameObject = validationError.getGameObject();
-        if (gameObject != null) {
+        Iterator it2 = validationError.getGameObjects().iterator();
+        while (it2.hasNext()) {
+            GameObject gameObject = it2.next();
             sb.append(" [").append(gameObject.getBestName()).append(']');
         }
 
@@ -86,7 +88,7 @@ try {
         baseDirectory = baseDirectory.substring(0, baseDirectory.length() - 1);
     }
 
-    String mapDefaultFolder = globalSettings.getMapDefaultFolder();
+    String mapDefaultFolder = globalSettings.getMapsDirectory().getPath();
     String rootDirectory = mapDefaultFolder + baseDirectory;
     Iterator it = new RecursiveFileIterator(new File(rootDirectory));
     while (it.hasNext()) {
