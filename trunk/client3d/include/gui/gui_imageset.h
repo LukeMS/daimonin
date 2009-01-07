@@ -157,6 +157,9 @@ public:
     typedef struct
     {
         Ogre::String name;
+#ifdef D_DEBUG
+        bool isUsed; /**< Used by any gui-elements, or an orphaned entry? **/
+#endif
         int w, h;
         gfxPos state[STATE_ELEMENT_SUM];
     }
@@ -182,6 +185,7 @@ public:
     }
     const char *getElementName(int i);
     int getElementIndex(int i);
+    void delBackgroundElements();
 
 private:
     // ////////////////////////////////////////////////////////////////////

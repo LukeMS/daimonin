@@ -25,7 +25,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <cmath>
 #include <tinyxml.h>
 #include <OISKeyboard.h>
-#include <OgreFontManager.h>
 #include "define.h"
 #include "gui_manager.h"
 #include "gui_window_dialog.h"
@@ -86,7 +85,7 @@ void GuiManager::Init(int w, int h)
     Logger::log().headline() << "Init GUI";
     mDragSrcWin     = NO_ACTIVE_WINDOW;
     mActiveWindow   = NO_ACTIVE_WINDOW;
-    mTextInputWindow = NO_ACTIVE_WINDOW;
+    mTextInputWindow= NO_ACTIVE_WINDOW;
     mScreenWidth    = w;
     mScreenHeight   = h;
     mMouseInside    = true;
@@ -171,7 +170,6 @@ Overlay *GuiManager::loadResources(int w, int h, String name)
     // We must clear the whole texture (textures have always 2^n size while our gfx can be smaller).
     memset(texture->getBuffer()->lock(HardwareBuffer::HBL_DISCARD), 0x00, texture->getWidth()*texture->getHeight()*sizeof(uint32));
     texture->getBuffer()->unlock();
-
     material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(strTexture);
     element->setDimensions(texture->getWidth(), texture->getHeight());
     element->setMaterialName(strMaterial);

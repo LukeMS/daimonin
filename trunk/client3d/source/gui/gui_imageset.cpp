@@ -21,15 +21,8 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
-#include <Ogre.h>
-#include <tinyxml.h>
-#include <OgreFontManager.h>
 #include "define.h"
 #include "gui_imageset.h"
-#include "gui_manager.h"
-#include "gui_window.h"
-#include "gui_cursor.h"
-#include "resourceloader.h"
 #include "option.h"
 #include "logger.h"
 
@@ -132,6 +125,10 @@ GuiImageset::~GuiImageset()
 {
     for (std::vector<gfxSrcEntry*>::iterator i = mvSrcEntry.begin(); i < mvSrcEntry.end(); ++i)
     {
+#ifdef D_DEBUG
+        if (!(*i)->isUsed)
+            Logger::log().info() << "Element '" << (*i)->name << "' is defined in " << FILE_GUI_IMAGESET << " but is not used by the GUI.";
+#endif
         delete (*i);
     }
     mvSrcEntry.clear();
@@ -181,6 +178,9 @@ void GuiImageset::parseXML(const char *fileImageSet)
         {
             gfxSrcEntry *Entry = new gfxSrcEntry;
             Entry->name = strTemp;
+#ifdef D_DEBUG
+            Entry->isUsed = false;
+#endif
             if ((strTemp = xmlElem->Attribute("width" ))) Entry->w = atoi(strTemp);
             if ((strTemp = xmlElem->Attribute("height"))) Entry->h = atoi(strTemp);
             if (parseStates(xmlElem, Entry->state, STATE_ELEMENT_SUM, false))
@@ -263,7 +263,12 @@ GuiImageset::gfxSrcEntry *GuiImageset::getStateGfxPositions(const char* guiImage
         for (unsigned int j = 0; j < mvSrcEntry.size(); ++j)
         {
             if (!stricmp(guiImage, mvSrcEntry[j]->name.c_str()))
+            {
+#ifdef D_DEBUG
+                mvSrcEntry[j]->isUsed = true;
+#endif
                 return mvSrcEntry[j];
+            }
         }
     }
     return 0;
@@ -287,4 +292,13 @@ int GuiImageset::getElementIndex(int i)
     if (i < GUI_ELEMENTS_SUM)
         return mGuiElementNames[i].index;
     return -1;
+}
+
+//================================================================================================
+// Delete all elements belonging to the background.
+// Will be called after the window background was drawn.
+//================================================================================================
+void delBackgroundElements()
+{
+    // todo.
 }

@@ -61,7 +61,7 @@ private:
     /**
      ** Returns the actual date and time.
      *****************************************************************************/
-    const char* now();
+    const std::string now();
 
     class LogEntry
     {

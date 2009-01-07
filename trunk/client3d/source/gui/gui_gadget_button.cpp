@@ -32,12 +32,11 @@ using namespace Ogre;
 //================================================================================================
 // .
 //================================================================================================
-GuiGadgetButton::GuiGadgetButton(TiXmlElement *xmlElement, void *parent, bool drawOnInit):GuiGraphic(xmlElement, parent, drawOnInit)
+GuiGadgetButton::GuiGadgetButton(TiXmlElement *xmlElement, void *parent):GuiElement(xmlElement, parent)
 {
     mCallFunc = 0;
     mMouseOver = false;
     mMouseButDown = false;
-    if (drawOnInit) draw();
 }
 
 //================================================================================================
@@ -68,7 +67,7 @@ bool GuiGadgetButton::mouseEvent(int MouseAction, int x, int y)
         {
             mMouseOver = false;
             mMouseButDown = false;
-            setState(GuiImageset::STATE_ELEMENT_DEFAULT);
+            if (setState(GuiImageset::STATE_ELEMENT_DEFAULT)) draw();
             GuiManager::getSingleton().setTooltip("");
             return true; // No need to check other gadgets.
         }
@@ -78,20 +77,20 @@ bool GuiGadgetButton::mouseEvent(int MouseAction, int x, int y)
         if (!mMouseOver)
         {
             mMouseOver = true;
-            setState(GuiImageset::STATE_ELEMENT_M_OVER);
+            if (setState(GuiImageset::STATE_ELEMENT_M_OVER)) draw();
             GuiManager::getSingleton().setTooltip(mStrTooltip.c_str());
             return true;
         }
         if (MouseAction == GuiWindow::BUTTON_PRESSED && !mMouseButDown)
         {
             mMouseButDown = true;
-            setState(GuiImageset::STATE_ELEMENT_PUSHED);
+            if (setState(GuiImageset::STATE_ELEMENT_PUSHED)) draw();
             return true;
         }
         if (MouseAction == GuiWindow::BUTTON_RELEASED && mMouseButDown)
         {
             mMouseButDown = false;
-            setState(GuiImageset::STATE_ELEMENT_DEFAULT);
+            if (setState(GuiImageset::STATE_ELEMENT_DEFAULT)) draw();
             activated();
         }
         return true; // No need to check other gadgets.
@@ -104,7 +103,7 @@ bool GuiGadgetButton::mouseEvent(int MouseAction, int x, int y)
 //================================================================================================
 void GuiGadgetButton::draw()
 {
-    GuiGraphic::draw();
+    GuiElement::draw();
     // ////////////////////////////////////////////////////////////////////
     // Draw label.
     // ////////////////////////////////////////////////////////////////////

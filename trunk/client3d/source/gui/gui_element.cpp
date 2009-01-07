@@ -43,10 +43,9 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
     mFontNr= 0;
     mPosX  = 0;
     mPosY  = 0;
-    mWidth = 0;
-    mHeight= 0;
+    mWidth = 1; // Default value (must be >0).
+    mHeight= 1; // Default value (must be >0).
     mIsVisible = true;
-    mBG_Element = true;
     mGfxSrc    = 0; // No gfx is defined (fallback to color fill).
     mFillColor = 0;
     mParent= (GuiWindow*)parent;
@@ -55,9 +54,9 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
     // ////////////////////////////////////////////////////////////////////
     // Parse the element.
     // ////////////////////////////////////////////////////////////////////
+    mIndex = BACKGROUND_GFX_ID;
     if ((tmp = xmlElem->Attribute("name")))
     {
-        mBG_Element = false;   // This ins an interactive element (not a part of the bg gfx).
         for (int i = 0; i < GuiImageset::GUI_ELEMENTS_SUM; ++i)
         {
             if (!stricmp(GuiImageset::getSingleton().getElementName(i), tmp))
@@ -81,7 +80,7 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
             }
             else
             {
-                Logger::log().warning() << tmp << " was defined in '" << FILE_GUI_WINDOWS
+                Logger::log().warning() << "Image " << tmp << " was defined in '" << FILE_GUI_WINDOWS
                 << "' but the gfx-data in '" << FILE_GUI_IMAGESET << "' is missing.";
             }
         }
@@ -112,7 +111,7 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
     // ////////////////////////////////////////////////////////////////////
     // Parse the size (if given).
     // ////////////////////////////////////////////////////////////////////
-    if ((xmlGadget = xmlElem->FirstChildElement("Range")))
+    if ((xmlGadget = xmlElem->FirstChildElement("Size")))
     {
         if ((tmp = xmlGadget->Attribute("width")))  mWidth = atoi(tmp);
         if ((tmp = xmlGadget->Attribute("height"))) mHeight= atoi(tmp);
@@ -139,6 +138,7 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
     {
         if ((tmp = xmlGadget->Attribute("text"))) mStrTooltip = tmp;
     }
+    mIsVisible = true;
 }
 
 //================================================================================================
@@ -149,8 +149,41 @@ bool GuiElement::setState(int state)
     if (state < GuiImageset::STATE_ELEMENT_SUM && mState != state)
     {
         mState = state;
-        draw();
         return true;
     }
     return false;
+}
+
+//================================================================================================
+// Draws a graphic to the window texture.
+// If the gfx is bigger than the source image, the source image will be repeated.
+//================================================================================================
+void GuiElement::draw()
+{
+    Texture *texture = mParent->getTexture();
+    uint32 *bak = mParent->getLayerBG() + mPosX + mPosY*mParent->getWidth();
+    PixelBox pb = texture->getBuffer()->lock(Box(mPosX, mPosY, mPosX+mWidth, mPosY+mHeight), HardwareBuffer::HBL_DISCARD);
+    uint32 *dst = (uint32*)pb.data;
+    // Draws a gfx into the window texture.
+    if (mGfxSrc)
+    {
+        PixelBox src = mParent->getPixelBox()->getSubVolume(Box(mGfxSrc->state[mState].x, mGfxSrc->state[mState].y,
+                       mGfxSrc->state[mState].x + mGfxSrc->w, mGfxSrc->state[mState].y + mGfxSrc->h));
+        int srcRowSkip = (int)mParent->getPixelBox()->getWidth();
+        if (mIndex == BACKGROUND_GFX_ID) // This gfx is part of the background.
+            GuiGraphic::getSingleton().drawGfxToBuffer(mWidth, mHeight, mGfxSrc->w, mGfxSrc->h, (uint32*)src.data, bak, bak, srcRowSkip, mParent->getWidth(), mParent->getWidth());
+        else if (mIsVisible)
+            GuiGraphic::getSingleton().drawGfxToBuffer(mWidth, mHeight, mGfxSrc->w, mGfxSrc->h, (uint32*)src.data, bak, dst, srcRowSkip, mParent->getWidth(), (int)texture->getWidth());
+    }
+    // Draws a color area to the window texture.
+    else
+    {
+        if (mIndex == BACKGROUND_GFX_ID) // The gfx is part of the background.
+            GuiGraphic::getSingleton().drawColorToBuffer(mWidth, mHeight, mFillColor, bak, mParent->getWidth());
+        else if (mIsVisible)
+            GuiGraphic::getSingleton().drawColorToBuffer(mWidth, mHeight, mFillColor, bak, dst, mParent->getWidth(), (int)texture->getWidth());
+    }
+    if (mIndex == BACKGROUND_GFX_ID ||!mIsVisible)
+        GuiGraphic::getSingleton().restoreWindowBG(mWidth, mHeight, bak, dst, mParent->getWidth(), (int)texture->getWidth());
+    texture->getBuffer()->unlock();
 }

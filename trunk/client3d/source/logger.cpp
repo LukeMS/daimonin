@@ -22,6 +22,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
 #include <ctime>
+#include <sstream>
+#include <iomanip>
 #include <exception>
 #include "logger.h"
 
@@ -67,21 +69,20 @@ Logger::~Logger()
 //================================================================================================
 // Returns the actual date/time.
 //================================================================================================
-const char* Logger::now()
+const std::string Logger::now()
 {
-    static char dateStr[50];
-#ifdef WIN32
-    _strdate(dateStr);
-    _strtime(dateStr+9);
-    dateStr[8] = ' ';
-#else
-    struct tm newtime;
-    time_t ltime;
-    ltime = time(&ltime);
-    localtime_r(&ltime, &newtime);
-    asctime_r(&newtime, dateStr);
-#endif
-    return dateStr;
+    std::time_t timestamp;
+    time(&timestamp);
+    tm *tdata = localtime(&timestamp);
+    std::ostringstream os;
+    os.fill('0');
+    os << std::setw(2) << tdata->tm_mday <<
+    '.'<< std::setw(2) << tdata->tm_mon+1 <<
+    '.'<< std::setw(2) << tdata->tm_year+1900 <<
+    ' '<< std::setw(2) << tdata->tm_hour <<
+    ':'<< std::setw(2) << tdata->tm_min <<
+    ':'<< std::setw(2) << tdata->tm_sec;
+    return os.str();
 }
 
 //================================================================================================

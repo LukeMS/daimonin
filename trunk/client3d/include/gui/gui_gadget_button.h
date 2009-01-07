@@ -32,14 +32,14 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 /**
  ** This class provides an interactive button.
  *****************************************************************************/
-class GuiGadgetButton: public GuiGraphic
+class GuiGadgetButton: public GuiElement
 {
 public:
     typedef void (Callback) (class GuiWindow *parent, int index);
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    GuiGadgetButton(TiXmlElement *xmlElement, void *parent, bool drawOnInit = true);
+    GuiGadgetButton(TiXmlElement *xmlElement, void *parent);
     ~GuiGadgetButton();
     bool mouseEvent(int MouseAction, int x, int y);
     void setFunction(Callback *c)

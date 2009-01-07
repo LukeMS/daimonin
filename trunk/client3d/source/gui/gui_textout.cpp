@@ -426,21 +426,6 @@ void GuiTextout::PrintToBuffer(int width, int height, uint32 *dest_data, const c
 }
 
 //================================================================================================
-// .
-//================================================================================================
-uint32 GuiTextout::alphaBlend(const uint32 bg, const uint32 gfx)
-{
-    uint32 alpha = gfx >> 24;
-    if (alpha == 0x00) return bg;
-    if (alpha == 0xff) return gfx;
-    // We need 1 byte of free space before each color (because of the alpha multiplication),
-    // so we need 2 operations on the 3 colors.
-    uint32 rb = (((gfx & 0x00ff00ff) * alpha) + ((bg & 0x00ff00ff) * (0xff - alpha))) & 0xff00ff00;
-    uint32 g  = (((gfx & 0x0000ff00) * alpha) + ((bg & 0x0000ff00) * (0xff - alpha))) & 0x00ff0000;
-    return (bg & 0xff000000) | ((rb | g) >> 8);
-}
-
-//================================================================================================
 // Print text into a given background. All stuff beyond width/height will be clipped.
 //================================================================================================
 void GuiTextout::drawText(int width, int height, uint32 *dest_data, const char *text, bool hideText, unsigned int fontNr, uint32 color)
@@ -511,7 +496,7 @@ void GuiTextout::drawText(int width, int height, uint32 *dest_data, const char *
                     for (int y =(int)mvFont[fontNr]->height < height?(int)mvFont[fontNr]->height:height; y; --y)
                     {
                         for (int x = 0; x < stopX; ++x)
-                            dest_data[dstRow + x] = alphaBlend(dest_data[dstRow + x], color + (mvFont[fontNr]->data[srcRow + x] & 0xff000000));
+                            dest_data[dstRow + x] = GuiGraphic::getSingleton().alphaBlend(dest_data[dstRow + x], color + (mvFont[fontNr]->data[srcRow + x] & 0xff000000));
                         srcRow+= mvFont[fontNr]->textureWidth;
                         dstRow+= width;
                     }
@@ -521,7 +506,7 @@ void GuiTextout::drawText(int width, int height, uint32 *dest_data, const char *
                     for (int y =(int)mvFont[fontNr]->height < height?(int)mvFont[fontNr]->height:height; y; --y)
                     {
                         for (int x = 0; x < stopX; ++x)
-                            dest_data[dstRow + x] = alphaBlend(dest_data[dstRow + x], mvFont[fontNr]->data[srcRow + x]);
+                            dest_data[dstRow + x] = GuiGraphic::getSingleton().alphaBlend(dest_data[dstRow + x], mvFont[fontNr]->data[srcRow + x]);
                         srcRow+= mvFont[fontNr]->textureWidth;
                         dstRow+= width;
                     }
@@ -572,12 +557,11 @@ int GuiTextout::CalcTextWidth(unsigned char *text, unsigned int fontNr)
 
 //================================================================================================
 // Calculate the gfx-width for the given text.
-// The caller function must check fontNr to bevalid [=< mvFont.size()].
+// The caller function must check fontNr to be valid [< mvFont.size()].
 //================================================================================================
-int GuiTextout::getCharWidth(int fontNr, char Char)
+int GuiTextout::getCharWidth(int fontNr, unsigned char Char)
 {
-    if ((unsigned char) Char < 32) return 0;
-    return mvFont[fontNr]->charWidth[(unsigned char)(Char-32)]-1;
+    return (Char<32)?0:mvFont[fontNr]->charWidth[Char-32]-1;
 }
 
 //================================================================================================
