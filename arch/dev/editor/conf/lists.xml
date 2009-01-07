@@ -328,4 +328,14 @@
 <listentry value="144" name="Long vert pace" />
 <listentry value="176" name="Use waypoints" />
 </list> 
+
+<list name="colour">
+<listentry value="0" name="&lt;none&gt;" />
+<listentry value="1" name="green" />
+<listentry value="2" name="blue" />
+<listentry value="3" name="yellow" />
+<listentry value="4" name="orange" />
+<listentry value="5" name="red" />
+<listentry value="6" name="purple" />
+</list>
 </lists>

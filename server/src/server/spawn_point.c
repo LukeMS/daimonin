@@ -25,47 +25,170 @@
 
 #include <global.h>
 
+static object *spawn_monster(object *mob, object *spawn);
+static inline int spawn_point_darkness(object *spoint, int darkness);
+static void insert_spawn_mob_loot(object *op, object *mob, object *tmp);
+static inline objectlink *get_linked_spawn(object *spawn);
+
 /* drop a monster on the map, by copying a monster object or
  * monster object head. Add treasures.
  */
-static object * spawn_monster(object *gen, object *orig, int range)
+static object *spawn_monster(object *mob, object *spawn)
 {
-    int         i;
-    object     *op, *head = NULL, *prev = NULL, *ret = NULL;
-    archetype  *at  = gen->arch;
+    object     *head = NULL,
+               *prev = NULL,
+               *monster = NULL;
+    archetype  *at = mob->arch;
+    int         i = find_first_free_spot2(at, spawn->map, spawn->x, spawn->y,
+                                          0, spawn->last_heal),
+                diff = spawn->map->difficulty;
 
-    i = find_first_free_spot2(at, orig->map, orig->x, orig->y, 0, range);
+    /* No free spot? No spawn. */
     if (i == -1)
         return NULL;
-    while (at != NULL)
+
+    while (at)
     {
-        op = get_object();
-        if (head == NULL) /* copy single/head from spawn inventory */
+        object *part = get_object();
+
+        if (!head) /* copy single/head from spawn inventory */
         {
-            gen->type = MONSTER;
-            copy_object(gen, op);
-            gen->type = SPAWN_POINT_MOB;
-            ret = op;
+            mob->type = MONSTER;
+            copy_object(mob, part);
+            mob->type = SPAWN_POINT_MOB;
+            monster = part;
         }
         else /* but the tails for multi arch from the clones */
         {
-            copy_object(&at->clone, op);
+            copy_object(&at->clone, part);
         }
-        op->x = orig->x + freearr_x[i] + at->clone.x;
-        op->y = orig->y + freearr_y[i] + at->clone.y;
-        op->map = orig->map;
-        if (head != NULL)
-            op->head = head,prev->more = op;
-        if (OBJECT_FREE(op))
+
+        part->map = spawn->map;
+        part->x = spawn->x + freearr_x[i] + at->clone.x;
+        part->y = spawn->y + freearr_y[i] + at->clone.y;
+
+        if (head)
+        {
+            part->head = head;
+            prev->more = part;
+        }
+
+        if (OBJECT_FREE(part))
             return NULL;
-        if (op->randomitems != NULL)
-            create_treasure_list(op->randomitems, op, 0, op->level ? op->level : orig->map->difficulty, ART_CHANCE_UNSET, 0);
-        if (head == NULL)
-            head = op;
-        prev = op;
+
+        /* In fact only the head has a randomitems attribute */
+        if (part->randomitems)
+            create_treasure_list(part->randomitems, part, 0,
+                                 (part->level > 0) ? part->level : diff,
+                                 ART_CHANCE_UNSET, 0);
+
+        if (!head)
+            head = part;
+
+        prev = part;
         at = at->more;
     }
-    return ret; /* return object ptr to our spawn */
+
+    if (monster)
+    {
+        /* TODO: Would it be better to stick the autogen stuff in the
+         * spawnpoint rather than each spawn mob?
+         * PROS: * Probably more unclaimed attributes to play with in
+         *         spawnpoints.
+         *       * Easier/quicker for mappers (which is half the point) to set
+         *         the autogen stuff once for spawnpoints with multiple
+         *         potential spawns.
+         *       * Can be simply nullified/changed from a script, though it is
+         *         perfectly possible for a script to change the autogen values
+         *         per mob, just an extra step.
+         * CONS: * Less flexible to do it per spawnpoint than per mob. */
+        /* monster->item_quality autogenerates the mob's level as the
+         * appropriate colour for the map difficulty. */
+        if (monster->item_quality)
+        {
+            int level = MAX(1, MIN(monster->level, 127)),
+                min,
+                max;
+
+            switch (monster->item_quality)
+            {
+                case 1: /* green */
+                    min = level_color[diff].green;
+                    max = level_color[diff].blue - 1;
+                    break;
+
+                case 2: /* blue*/
+                    min = level_color[diff].blue;
+                    max = level_color[diff].yellow - 1;
+                    break;
+
+                case 3: /* yellow */
+                    min = level_color[diff].yellow;
+                    max = level_color[diff].orange - 1;
+                    break;
+
+                case 4: /* orange */
+                    min = level_color[diff].orange;
+                    max = level_color[diff].red - 1;
+                    break;
+
+                case 5: /* red */
+                    min = level_color[diff].red;
+                    max = level_color[diff].purple - 1;
+                    break;
+
+                case 6: /* purple */
+                    min = level_color[diff].purple;
+                    max = min + 1;
+                    break;
+
+                default:
+                    min = level;
+                    max = min;
+            }
+
+            /* The old value of monster->level is the minimum the new value can be.
+             * monster->level can be > MAXLEVEL (but must be < 200). */
+            /* FIXME: Currently the level cap is 127. This is because for some
+             * reason level is sint8 in object.h. Making it unsigned or more
+             * bits would seem a more sensible move, but as level is used all
+             * over the place for all sorts of things, I can't be bothered to
+             * do all the testing such a change would need, hence the cap. */
+            monster->level = random_roll(MAX(level, MIN(min, 127)),
+                                         MAX(level, MIN(max, 127)));
+        }
+
+        /* monster->item_condition modifies the mob's attack_ and resist_
+         * attributes *that are non-zero in the arch and unchanged in the
+         * obj*. */
+        if (monster->item_condition > 0)
+        {
+            for (i = 0; i < NROFATTACKS; i++)
+            {
+                int arcattack = monster->arch->clone.attack[i],
+                    objattack = monster->attack[i],
+                    arcresist = monster->arch->clone.resist[i],
+                    objresist = monster->resist[i];
+
+                if (arcattack != 0 && objattack == arcattack)
+                {
+                    objattack += random_roll(0 - monster->item_condition,
+                                             monster->item_condition);
+                    monster->attack[i] = MAX(0, MIN(objattack, 200));
+                }
+
+                /* resistances of 100 mean immunity. Don't mess with that. */
+                if (arcresist != 0 && arcresist != 100 && objresist == arcresist)
+                {
+                    objresist += random_roll(0 - monster->item_condition,
+                                             monster->item_condition);
+                    monster->resist[i] = MAX(-100, MIN(objresist, 100));
+                }
+            }
+        }
+    }
+
+    return monster;
 }
 
 /* check the current darkness on this map allows to spawn
@@ -261,7 +384,7 @@ void spawn_point(object *op)
     /* Use insert_spawn_mob_loot() to extract the loot into the loot singularity. */
     insert_spawn_mob_loot(op, loot, mob->inv);
 
-    if (!(mob = spawn_monster(mob, op, op->last_heal)))
+    if (!(mob = spawn_monster(mob, op)))
     {
         mark_object_removed(loot);
 
