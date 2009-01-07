@@ -194,7 +194,7 @@ private:
     bool mSizeRelative;
     bool mLockSlots; /**< TODO: Lock all slots, so no item can accidental be removed. **/
     std::vector<class GuiTable*>mvTable;
-    std::vector<class GuiGraphic*>mvGraphic;
+    std::vector<class GuiElement*>mvGraphic;
     std::vector<class GuiListbox*>mvListbox;
     std::vector<class GuiStatusbar*>mvStatusbar;
     std::vector<class GuiGadgetSlot*>mvSlot;

@@ -96,9 +96,8 @@ public:
     {
         return mMaxFontHeight;
     }
-    int getCharWidth(int fontNr, char Char);
+    int getCharWidth(int fontNr, unsigned char Char);
     void parseUserDefinedChars(Ogre::String &txt);
-    Ogre::uint32 alphaBlend(const Ogre::uint32 bg, const Ogre::uint32 gfx);
 
 private:
     // ////////////////////////////////////////////////////////////////////

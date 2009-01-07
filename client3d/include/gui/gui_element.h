@@ -39,8 +39,8 @@ public:
     // ////////////////////////////////////////////////////////////////////
     GuiElement(TiXmlElement *xmlElement, void *parent);
     virtual ~GuiElement() {};
-    virtual void draw() =0;
-    bool setState(int state);
+    void draw();
+    bool setState(int state); /**< Returns true if the state was changed. **/
     int getState()
     {
         return mState;
@@ -70,15 +70,7 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    enum
-    {
-        TYPE_GFX,
-        TYPE_BUTTON,
-        TYPE_BUTTON_CHECK,
-        TYPE_BUTTON_RADIO,
-        TYPE_SLIDER,
-        TYPE_SUM
-    };
+    enum { BACKGROUND_GFX_ID = -1 };
 
 protected:
     // ////////////////////////////////////////////////////////////////////
@@ -91,15 +83,12 @@ protected:
     int mFontNr, mLabelFontNr;
     int mLabelPosX, mLabelPosY;
     bool mIsVisible;
-    bool mBG_Element;                  /**< Do we need a backup of the background before drawing,
-                                            or is it part of the background gfx? **/
     Ogre::String mStrLabel;
     Ogre::String mStrTooltip;
     Ogre::uint32 mFillColor;
     class GuiWindow *mParent;          /**< Pointer to the parent window. **/
     unsigned char mLabelColor[3];
-    GuiImageset::gfxSrcEntry *mGfxSrc; /**< Pointer to the infos for locating the gfx in the AtlasTexture
-                                            or 0 if a simple colorfill is used for this element. **/
+    GuiImageset::gfxSrcEntry *mGfxSrc; /**< Pointer to the gfx-data structure or 0 for a colorfill. **/
 };
 
 #endif

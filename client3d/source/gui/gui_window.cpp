@@ -63,7 +63,7 @@ void GuiWindow::freeRecources()
         delete (*i);
     mvListbox.clear();
     // Delete the graphics.
-    for (std::vector<GuiGraphic*>::iterator i = mvGraphic.begin(); i < mvGraphic.end(); ++i)
+    for (std::vector<GuiElement*>::iterator i = mvGraphic.begin(); i < mvGraphic.end(); ++i)
         delete (*i);
     mvGraphic.clear();
     // Delete the statusbars.
@@ -203,14 +203,21 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, const char *resourceDnD, 
     mOverlay->hide();
     mElement->setPosition(mPosX, mPosY);
     setZPos(defaultZPos);
+
+
+
     // ////////////////////////////////////////////////////////////////////
     // Parse the graphics.
     // ////////////////////////////////////////////////////////////////////
     for (xmlElem = xmlRoot->FirstChildElement("Graphic"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Graphic"))
     {
-        mvGraphic.push_back(new GuiGraphic(xmlElem, this));
+        GuiElement *gfx = new GuiElement(xmlElem, this);
+        gfx->draw();
+        if (gfx->getIndex() == GuiElement::BACKGROUND_GFX_ID)
+            delete gfx;
+        else
+            mvGraphic.push_back(gfx);
     }
-
     // ////////////////////////////////////////////////////////////////////
     // Parse the Label.
     // ////////////////////////////////////////////////////////////////////
@@ -309,6 +316,7 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, const char *resourceDnD, 
         {
             GuiGadgetButton *button = new GuiGadgetButton(xmlElem, this);
             button->setFunction(this->buttonPressed);
+            button->draw();
             mvGadgetButton.push_back(button);
         }
         else if ( !strcmp(xmlElem->Attribute("type"), "SLOT"))

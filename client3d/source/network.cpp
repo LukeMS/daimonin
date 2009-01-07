@@ -309,7 +309,7 @@ void Network::command_buffer_free(command_buffer *buf)
 
 /* High-level external interface */
 
-
+/*
 // Strips excess whitespace from string, writing the normalized string to ScratchSpace.
 static char *normalize_string(const char *string)
 {
@@ -348,11 +348,12 @@ static char *BreakMulticommand(const char *command)
             || (*command == '-')
             || !strnicmp(command, "/create", 7)))
     {
-        if ((c = (char*)strchr(command, '#'))) /* multicommand separator '#' */
+        if ((c = (char*)strchr(command, '#'))) // multicommand separator '#'
             *c = '\0';
     }
     return c;
 }
+*/
 
 //================================================================================================
 // Send a higher level game command like /tell, /say or other "slash" text commants.

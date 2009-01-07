@@ -21,32 +21,38 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
-#ifndef GUI_GRAPHIC_H
-#define GUI_GRAPHIC_H
-
-#include <Ogre.h>
-#include <tinyxml.h>
-#include "gui_element.h"
 
 /**
  ** This class provides a graphical element, drawn into a gui element.
  *****************************************************************************/
-class GuiGraphic : public GuiElement
+#ifndef GUI_GRAPHIC_H
+#define GUI_GRAPHIC_H
+
+#include <Ogre.h>
+
+class GuiGraphic
 {
 public:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    GuiGraphic(TiXmlElement *xmlElement, void *parent, bool drawOnInit = true);
-    ~GuiGraphic() {};
-    void draw();
-    void drawSlot(Ogre::uint32 *gfxDataItem, int busyTime, int sumItems);
+    static GuiGraphic &getSingleton()
+    {
+        static GuiGraphic Singleton; return Singleton;
+    }
+    void restoreWindowBG(int w, int h, Ogre::uint32 *bak, Ogre::uint32 *dst, int bakRowSkip, int dstRowSkip);
+    void drawGfxToBuffer(int w, int h, int srcW, int srcH, Ogre::uint32 *src, Ogre::uint32 *bak, Ogre::uint32 *dst, int srcRowSkip, int bakRowSkip, int dstRowSkip);
+    void drawColorToBuffer(int w, int h, Ogre::uint32 color, Ogre::uint32 *dst, int dstRowSkip);
+    void drawColorToBuffer(int w, int h, Ogre::uint32 color, Ogre::uint32 *bak, Ogre::uint32 *dst, int bakRowSkip, int dstRowSkip);
+    Ogre::uint32 alphaBlend(const Ogre::uint32 bg, const Ogre::uint32 gfx);
+
 private:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    Ogre::uint32 alphaBlend(const Ogre::uint32 bg, const Ogre::uint32 gfx);
-    inline void drawBusyGfx(int itemSize, int busyTime);
+    GuiGraphic()  {};
+    ~GuiGraphic() {};
+    GuiGraphic(const GuiGraphic&); // disable copy-constructor.
 };
 
 #endif

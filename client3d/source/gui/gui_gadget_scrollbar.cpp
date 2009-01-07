@@ -68,9 +68,9 @@ GuiGadgetScrollbar::GuiGadgetScrollbar(TiXmlElement *xmlElement, void *parent, v
         if (!strcmp(xmlOpt->Attribute("type"), "BUTTON"))
         {
             if (!strcmp(xmlOpt->Attribute("name"), "But_ScrollUp"))
-                mButScrollUp = new GuiGadgetButton(xmlOpt, parent, false);
+                mButScrollUp = new GuiGadgetButton(xmlOpt, parent);
             else if (!strcmp(xmlOpt->Attribute("name"), "But_ScrollDown"))
-                mButScrollDown = new GuiGadgetButton(xmlOpt, parent, false);
+                mButScrollDown = new GuiGadgetButton(xmlOpt, parent);
         }
     }
     mDragging = false;

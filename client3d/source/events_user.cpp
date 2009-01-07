@@ -428,12 +428,12 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
 
         case OIS::KC_F1:
         {
-            /*
+
                         static bool tst = true;
                         tst = !tst;
                         GuiManager::getSingleton().setVisible(GuiManager::WIN_INVENTORY, GuiImageset::GUI_BUTTON_TEST, tst);
                         break;
-            */
+
             Vector3 pos = mCamera->getPosition();
             pos.y+= 15;
             Logger::log().error() << "camera pos: " << pos.x << "   " <<pos.y << "   " << pos.z;

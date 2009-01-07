@@ -83,6 +83,7 @@ private:
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     void updateSliderPos(int type, int offset);
+    void arrangeButtons(int x1, int y1, int x2, int y2);
     void activated(int index, int value)
     {
         if (mCallFunc) mCallFunc((GuiListbox *)mParentElement, index, value);
