@@ -3761,6 +3761,16 @@
     A value of -4 means monster will be shown until darkness is 4 or higher.
     Note that this is a exclusive notation. 0 means "show always" (default).
   </attribute>
+  <attribute arch="item_quality" editor="relative level" type="list_colour">
+    The monster will spawn with its level set so that it is this colour
+    relative to the map difficulty.
+  </attribute>
+  <attribute arch="item_condition" editor="attack and resist modifier" type="int">
+    All attacks and resist that are non-zero in the arch and unmodified in the
+    object will be varied by +- a random amount &lt;= to this value. In
+    addition, attacks modified in this way are constrained to 0-200 and resists
+    to -100-100.
+  </attribute>
 </section>
 <section name="melee">
   <attribute arch="dam" editor="damage" type="int">
