@@ -3423,12 +3423,9 @@
     *try* to use per active tick a special ability like spellcasting,
     throwing, etc.
   </attribute>
-  <attribute arch="int" editor="detect hidden" type="int">
-    The &lt;detect hidden&gt; value gives monsters the ability to find
-    hidden/invisible creatures. Higher values make for better
-    detection-skills. Enabling &lt;see invisible&gt; makes this value
-    obsolete.
-  </attribute>
+</section>
+
+<section name="sensory">
   <attribute arch="wis" editor="sensing range" type="int">
     &lt;sensing range&gt; determines how close a player needs to be before
     the creature wakes up. This is done as a square, for reasons of speed.
@@ -3436,17 +3433,30 @@
     11x11 square of the monster will wake the monster up. If the player
     has stealth, the size of this square is reduced in half plus 1.
   </attribute>
-  <attribute arch="see_invisible" editor="see invisible" type="bool">
-    A monster with the ability to &lt;see invisible&gt; cannot be fooled
-    with by invisible or hiding players. This flag is a must-have
-    for high-level monsters. When a monster is unable to detect
-    invisible players, it can be killed without fighting back.
+  <attribute arch="int" editor="detect hidden" type="int">
+    The &lt;detect hidden&gt; value gives monsters the ability to find
+    hidden/invisible creatures. Higher values make for better
+    detection-skills. Enabling &lt;see invisible&gt; makes this value
+    obsolete.
   </attribute>
   <attribute arch="can_see_in_dark" editor="see in darkness" type="bool">
     A monster with the ability to &lt;see in darkness&gt; cannot be fooled
     by spells of darkness or dark maps. This flag is a "should-have"
     for high-level monsters. When a monster is unable to see in
     darkness, players can cast darkness and sneak around it safely.
+  </attribute>
+  <attribute arch="xrays" editor="xray vision" type="bool">
+    A monster with &lt;xray vision&gt; does not have its &lt;sensing range&gt;
+    blocked by solid obstacles (like walls).
+    Useful for &lt;ethereal&gt; monsters (who can pass through walls, so it
+    often makes sense for them to be able to see through walls too -- but be
+    careful: this makes them VERY dangerous!
+  </attribute>
+  <attribute arch="see_invisible" editor="see invisible" type="bool">
+    A monster with the ability to &lt;see invisible&gt; cannot be fooled
+    with by invisible or hiding players. This flag is a must-have
+    for high-level monsters. When a monster is unable to detect
+    invisible players, it can be killed without fighting back.
   </attribute>
 </section>
 
@@ -3916,12 +3926,9 @@
     *try* to use per active tick a special ability like spellcasting,
     throwing, etc.
   </attribute>
-  <attribute arch="int" editor="detect hidden" type="int">
-    The &lt;detect hidden&gt; value gives monsters the ability to find
-    hidden/invisible creatures. Higher values make for better
-    detection-skills. Enabling &lt;see invisible&gt; makes this value
-    obsolete.
-  </attribute>
+</section>
+
+<section name="sensory">
   <attribute arch="wis" editor="sensing range" type="int">
     &lt;sensing range&gt; determines how close a player needs to be before
     the creature wakes up. This is done as a square, for reasons of speed.
@@ -3929,17 +3936,30 @@
     11x11 square of the monster will wake the monster up. If the player
     has stealth, the size of this square is reduced in half plus 1.
   </attribute>
-  <attribute arch="see_invisible" editor="see invisible" type="bool">
-    A monster with the ability to &lt;see invisible&gt; cannot be fooled
-    with by invisible or hiding players. This flag is a must-have
-    for high-level monsters. When a monster is unable to detect
-    invisible players, it can be killed without fighting back.
+  <attribute arch="int" editor="detect hidden" type="int">
+    The &lt;detect hidden&gt; value gives monsters the ability to find
+    hidden/invisible creatures. Higher values make for better
+    detection-skills. Enabling &lt;see invisible&gt; makes this value
+    obsolete.
   </attribute>
   <attribute arch="can_see_in_dark" editor="see in darkness" type="bool">
     A monster with the ability to &lt;see in darkness&gt; cannot be fooled
     by spells of darkness or dark maps. This flag is a "should-have"
     for high-level monsters. When a monster is unable to see in
     darkness, players can cast darkness and sneak around it safely.
+  </attribute>
+  <attribute arch="xrays" editor="xray vision" type="bool">
+    A monster with &lt;xray vision&gt; does not have its &lt;sensing range&gt;
+    blocked by solid obstacles (like walls).
+    Useful for &lt;ethereal&gt; monsters (who can pass through walls, so it
+    often makes sense for them to be able to see through walls too -- but be
+    careful: this makes them VERY dangerous!
+  </attribute>
+  <attribute arch="see_invisible" editor="see invisible" type="bool">
+    A monster with the ability to &lt;see invisible&gt; cannot be fooled
+    with by invisible or hiding players. This flag is a must-have
+    for high-level monsters. When a monster is unable to detect
+    invisible players, it can be killed without fighting back.
   </attribute>
 </section>
 
