@@ -33,10 +33,10 @@
         <title xml:lang="de">Wand</title>
         <title xml:lang="fr">Murs</title>
         <title xml:lang="sv">Väggar</title>
-        <And>
-            <TypeNrs numbers="77 79" />
+        <Or>
+            <TypeNrs numbers="77" />
             <Attrib name="no_pass" />
-        </And>
+        </Or>
     </GameObjectMatcher>
     <GameObjectMatcher id="connected">
         <title xml:lang="en">Connected</title>
@@ -105,8 +105,8 @@
         <title xml:lang="fr">Murs</title>
         <title xml:lang="sv">Väggar</title>
         <And>
-            <TypeNrs numbers="77 79" />
-            <Attrib name="no_pass" />
+            <TypeNrs numbers="77" />
+            <Attrib name="layer" value="7" op="ne" />
         </And>
     </GameObjectMatcher>
 
