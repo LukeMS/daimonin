@@ -32,26 +32,36 @@
 
 static int static_walk_semaphore = FALSE; /* see walk_off/walk_on functions  */
 
+int freearr_x[SIZEOFFREE] =
+{
+    0,
+    0, 1, 1, 1, 0, -1, -1, -1, /* SIZEOFFREE1 */
+    0, 1, 2, 2, 2, 2, 2, 1, 0, -1, -2, -2, -2, -2, -2, -1, /* SIZEOFFREE2 */
+    0, 1, 2, 3, 3, 3, 3, 3, 3, 3, 2, 1, 0, -1, -2, -3, -3, -3, -3, -3, -3, -3, -2, -1 /* SIZEOFFREE */
+};
 
-int                     freearr_x[SIZEOFFREE]                               =
+int freearr_y[SIZEOFFREE] =
 {
-    0, 0, 1, 1, 1, 0, -1, -1, -1, 0, 1, 2, 2, 2, 2, 2, 1, 0, -1, -2, -2, -2, -2, -2, -1, 0, 1, 2, 3, 3, 3, 3, 3, 3, 3,
-    2, 1, 0, -1, -2, -3, -3, -3, -3, -3, -3, -3, -2, -1
+    0,
+    -1, -1, 0, 1, 1, 1, 0, -1, /* SIZEOFFREE1 */
+    -2, -2, -2, -1, 0, 1, 2, 2, 2, 2, 2, 1, 0, -1, -2, -2, /* SIZEOFFREE2 */
+    -3, -3, -3, -3, -2, -1, 0, 1, 2, 3, 3, 3, 3, 3, 3, 3, 2, 1, 0, -1, -2, -3, -3, -3 /* SIZEOFFREE */
 };
-int                     freearr_y[SIZEOFFREE]                               =
+
+int maxfree[SIZEOFFREE] =
 {
-    0, -1, -1, 0, 1, 1, 1, 0, -1, -2, -2, -2, -1, 0, 1, 2, 2, 2, 2, 2, 1, 0, -1, -2, -2, -3, -3, -3, -3, -2, -1, 0, 1,
-    2, 3, 3, 3, 3, 3, 3, 3, 2, 1, 0, -1, -2, -3, -3, -3
+    0,
+    9, 10, 13, 14, 17, 18, 21, 22, /* SIZEOFFREE1 */
+    25, 26, 27, 30, 31, 32, 33, 36, 37, 39, 39, 42, 43, 44, 45, 48, /* SIZEOFFREE2 */
+    49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49 /* SIZEOFFREE */
 };
-int                     maxfree[SIZEOFFREE]                                 =
+
+int freedir[SIZEOFFREE] =
 {
-    0, 9, 10, 13, 14, 17, 18, 21, 22, 25, 26, 27, 30, 31, 32, 33, 36, 37, 39, 39, 42, 43, 44, 45, 48, 49, 49, 49, 49,
-    49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49
-};
-int                     freedir[SIZEOFFREE]                                 =
-{
-    0, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 2, 2, 3, 4, 4, 4, 5, 6, 6, 6, 7, 8, 8, 8, 1, 2, 2, 2, 2, 2, 3, 4, 4, 4, 4, 4, 5, 6,
-    6, 6, 6, 6, 7, 8, 8, 8, 8, 8
+    0,
+    1, 2, 3, 4, 5, 6, 7, 8, /* SIZEOFFREE1 */
+    1, 2, 2, 2, 3, 4, 4, 4, 5, 6, 6, 6, 7, 8, 8, 8, /* SIZEOFFREE2 */
+    1, 2, 2, 2, 2, 2, 3, 4, 4, 4, 4, 4, 5, 6, 6, 6, 6, 6, 7, 8, 8, 8, 8, 8 /* SIZEOFFREE */
 };
 
 /** Object management functions **/
@@ -2683,6 +2693,11 @@ int find_free_spot(archetype *at, mapstruct *m, int x, int y, int start, int sto
 {
     int         i, index = 0;
     static int  altern[SIZEOFFREE];
+
+    /* Prevent invalid indexing. */
+    start = MAX(0, MIN(start, SIZEOFFREE - 1));
+    stop = MIN(0, MIN(stop, SIZEOFFREE - 1));
+
     for (i = start; i < stop; i++)
     {
         if (!arch_blocked(at, NULL, m, x + freearr_x[i], y + freearr_y[i]))
@@ -2690,12 +2705,15 @@ int find_free_spot(archetype *at, mapstruct *m, int x, int y, int start, int sto
         else if (wall(m, x + freearr_x[i], y + freearr_y[i]) && maxfree[i] < stop)
             stop = maxfree[i];
     }
+
     if (!index)
         return -1;
+
     return altern[RANDOM() % index];
 }
 
 /*
+ *
  * find_first_free_spot(archetype, mapstruct, x, y) works like
  * find_free_spot(), but it will search max number of squares.
  * But it will return the first available spot, not a random choice.
@@ -2713,16 +2731,6 @@ int find_first_free_spot(archetype *at, mapstruct *m, int x, int y)
     return -1;
 }
 
-int find_first_free_spot2(archetype *at, mapstruct *m, int x, int y, int start, int range)
-{
-    int i;
-    for (i = start; i < range; i++)
-    {
-        if (!arch_blocked(at, NULL, m, x + freearr_x[i], y + freearr_y[i]))
-            return i;
-    }
-    return -1;
-}
 /*
  * find_dir(map, x, y, exclude) will search some close squares in the
  * given map at the given coordinates for live objects.

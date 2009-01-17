@@ -869,18 +869,18 @@ int check_insertion_allowed(object *op, mapstruct *map, int x, int y, int flags)
     {
         /* Search for a random free spot in the maximum radius. */
         if (flags & MAP_STATUS_MAX_RANDOM_POS)
-            i = find_free_spot(op->arch, map, x, y, 0, SIZEOFFREE + 1);
+            i = find_free_spot(op->arch, map, x, y, 0, SIZEOFFREE - 1);
         /* Search for a random free spot in a progressive radius. */
         else if (flags & MAP_STATUS_RANDOM_POS)
         {
-            i = find_free_spot(op->arch, map, x, y, 0, SIZEOFFREE1 + 1);
+            i = find_free_spot(op->arch, map, x, y, 0, SIZEOFFREE1);
 
             if (i == -1)
             {
-                i = find_free_spot(op->arch, map, x, y, SIZEOFFREE1 + 2, SIZEOFFREE2 + 1);
+                i = find_free_spot(op->arch, map, x, y, SIZEOFFREE1 + 1, SIZEOFFREE2);
 
                 if (i == -1)
-                    i = find_free_spot(op->arch, map, x, y, SIZEOFFREE2 + 2, SIZEOFFREE + 1);
+                    i = find_free_spot(op->arch, map, x, y, SIZEOFFREE2 + 1, SIZEOFFREE - 1);
             }
         }
         /* If the default spot is blocked, find the first free spot. */

@@ -39,8 +39,8 @@ static object *spawn_monster(object *mob, object *spawn)
                *prev = NULL,
                *monster = NULL;
     archetype  *at = mob->arch;
-    int         i = find_first_free_spot2(at, spawn->map, spawn->x, spawn->y,
-                                          0, spawn->last_heal),
+    int         i = check_insertion_allowed(mob, spawn->map, spawn->x, spawn->y,
+                                            MAP_STATUS_FREE_POS_ONLY),
                 diff = spawn->map->difficulty;
 
     /* No free spot? No spawn. */
