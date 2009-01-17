@@ -39,9 +39,16 @@ static object *spawn_monster(object *mob, object *spawn)
                *prev = NULL,
                *monster = NULL;
     archetype  *at = mob->arch;
-    int         i = check_insertion_allowed(mob, spawn->map, spawn->x, spawn->y,
-                                            MAP_STATUS_FREE_POS_ONLY),
+    int         i,
+                flags = MAP_STATUS_FREE_POS_ONLY,
                 diff = spawn->map->difficulty;
+
+    if (spawn->last_heal == 0)
+        return NULL;
+    else if (spawn->last_heal == 1)
+        flags |= MAP_STATUS_FIXED_POS;
+
+    i = check_insertion_allowed(mob, spawn->map, spawn->x, spawn->y, flags);
 
     /* No free spot? No spawn. */
     if (i == -1)
