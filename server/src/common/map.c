@@ -645,7 +645,7 @@ static int load_map_header(FILE *fp, mapstruct *m, int flags)
 
             if (v < -1 || v > MAX_DARKNESS)
             {
-                LOG(llevBug, "BUG:: Illegal map difficulty %d (must be -1 to %d, defaulting to -1)!\n",
+                LOG(llevBug, "BUG:: Illegal map darkness %d (must be -1 to %d, defaulting to -1)!\n",
                     v, MAX_DARKNESS);
             }
             else if (v != -1)
