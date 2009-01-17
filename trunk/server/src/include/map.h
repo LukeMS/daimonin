@@ -89,14 +89,15 @@
 
 #define MAP_STATUS_ORIGINAL         0x10 /* map is an original map - generate treasures! */
 #define MAP_STATUS_FIXED_POS        0x20 /* enter map with fixed postion, don't search for a free spot */
-#define MAP_STATUS_RANDOM_POS       0x40 /* search for a random free spot around our insertation point */
-#define MAP_STATUS_FREE_POS_ONLY    0x80 /* only execute enter_map_xx() when there is a free spot! */
+#define MAP_STATUS_MAX_RANDOM_POS   0x40 /* search for a random free spot in the maximum radius (as defined by SIZEOFFREE) */
+#define MAP_STATUS_RANDOM_POS       0x80 /* search for a random free spot in a progressive radius */
+#define MAP_STATUS_FREE_POS_ONLY    0x100 /* only execute enter_map_xx() when there is a free spot! */
 
-#define MAP_STATUS_NO_FALLBACK      0x100 /* when map loading fails, don't try to load savebed, emergency or another fallback map */
-#define MAP_STATUS_LOAD_ONLY        0x200 /* signal for map loader func to return after successful read_map_name() */
-#define MAP_STATUS_FIXED_LOGIN      0x400 /* same as MAP_FIXEDLOGIN() - useful for dynamic setting */
+#define MAP_STATUS_NO_FALLBACK      0x200 /* when map loading fails, don't try to load savebed, emergency or another fallback map */
+#define MAP_STATUS_LOAD_ONLY        0x400 /* signal for map loader func to return after successful read_map_name() */
+#define MAP_STATUS_FIXED_LOGIN      0x800 /* same as MAP_FIXEDLOGIN() - useful for dynamic setting */
 
-#define MAP_STATUS_ARTIFACT     0x1000 /* unusued: tells load_object we load a artifact object/block */
+#define MAP_STATUS_ARTIFACT         0x1000 /* unusued: tells load_object we load a artifact object/block */
 /* used to mask out map_status to get the map type */
 #define MAP_STATUS_TYPE(_f)     (_f&(MAP_STATUS_MULTI|MAP_STATUS_UNIQUE|MAP_STATUS_INSTANCE|MAP_STATUS_STYLE))
 

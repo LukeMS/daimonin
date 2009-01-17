@@ -621,11 +621,16 @@ int GameObject_init(lua_State *L)
 /*          WARNING: a script developer must have in mind that SetPosition() */
 /*          can result in the destruction of the transferred object. The     */
 /*          return value is important to check!                              */
-/*          flags can be some combinations of:                               */
+/*          flags are:                                                       */
 /*            game.MFLAG_FIXED_POS - insert on x,y EVEN if the spot not free */
-/*            game.MFLAG_RANDOM_POS - insert on a free random spot near x,y  */
+/*            game.MFLAG_MAX_RANDOM_POS - insert on a random spot near x,y in*/
+/*              the maximum radius.                                          */
+/*            game.MFLAG_RANDOM_POS - insert on a random spot near x,y in a  */
+/*              progressive radius.                                          */
 /*            game.MFLAG_FREE_POS_ONLY - only insert on a free position,     */
-/*            return with fail when there is no free spot                    */
+/*              return with fail when there is no free spot.                 */
+/*          Of these, the first three are in order of precedence while the   */
+/*          last may be used in conjunction with any of the others.          */
 /*          Examples:                                                        */
 /*          obj:SetPosition(x, y) - same as obj:SetPosition(obj.map, x,y)    */
 /*          obj:SetPosition(game:ReadyMap("/a_map"), x, y) - multiplayer map */
