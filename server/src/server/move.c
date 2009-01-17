@@ -842,6 +842,68 @@ static void enter_random_map(object *pl, object *exit_ob)
 }
 #endif
 
+/* Try to find a spot for op on map on or near x, y depending on flags.
+ * flags are:
+ *   MAP_STATUS_FIXED_POS: insert at default position.
+ *   MAP_STATUS_MAX_RANDOM_POS: insert at random position in the maximum radius.
+ *   MAP_STATUS_RANDOM_POS: insert at random position in a progressive radius.
+ *   MAP_STATUS_FREE_POS_ONLY: insert at free position only.
+ * Of these, the first three are listed in order of precedence, while the last
+ * can be used in conjunction with any of the others.
+ * If a spot is found, the return is >= 0. This is the index into
+ * freearr_x/freearr_y. Otherwise, the return is -1. */
+int check_insertion_allowed(object *op, mapstruct *map, int x, int y, int flags)
+{
+    int     i = 0;
+    object *tmp;
+
+    if (flags & MAP_STATUS_FIXED_POS)
+    {
+        /* if we force position x, y AND we force free spot only check & return
+         * when its blocked. */
+        if (flags & MAP_STATUS_FREE_POS_ONLY &&
+            arch_blocked(op->arch, op, map, x, y))
+            return -1;
+    }
+    else
+    {
+        /* Search for a random free spot in the maximum radius. */
+        if (flags & MAP_STATUS_MAX_RANDOM_POS)
+            i = find_free_spot(op->arch, map, x, y, 0, SIZEOFFREE + 1);
+        /* Search for a random free spot in a progressive radius. */
+        else if (flags & MAP_STATUS_RANDOM_POS)
+        {
+            i = find_free_spot(op->arch, map, x, y, 0, SIZEOFFREE1 + 1);
+
+            if (i == -1)
+            {
+                i = find_free_spot(op->arch, map, x, y, SIZEOFFREE1 + 2, SIZEOFFREE2 + 1);
+
+                if (i == -1)
+                    i = find_free_spot(op->arch, map, x, y, SIZEOFFREE2 + 2, SIZEOFFREE + 1);
+            }
+        }
+        /* If the default spot is blocked, find the first free spot. */
+        else
+        {
+            if (arch_blocked(op->arch, op, map, x, y))
+                i = find_first_free_spot(op->arch, map, x, y);
+        }
+
+        /* Couldn't find a free spot? If we have specified free spot only, this
+         * means failure. Otherwise, force to the default spot. */
+        if (i == -1)
+        {
+            if (flags & MAP_STATUS_FREE_POS_ONLY)
+                return -1;
+            else
+                return 0;
+        }
+    }
+
+    return i;
+}
+
 /*
 * enter_map():  Moves the player and pets from current map (if any) to
 * new map.  map, x, y must be set.  map is the map we are moving the
@@ -876,43 +938,8 @@ int enter_map(object *op, object *originator, mapstruct *newmap, int x, int y, i
         y = MAP_ENTER_Y(newmap);
     }
 
-    /* try to find a spot for our object depending on the settings (most times set by exit objects) */
-    if (flags&MAP_STATUS_FIXED_POS)
-    {
-        /* if we force position x,y AND we force free spot only check & return when its blocked */
-        if(flags & MAP_STATUS_FREE_POS_ONLY)
-        {
-            if(arch_blocked(op->arch, op, newmap, x, y))
-                return 0;
-        }
-
-    }
-    else
-    {
-        if(flags & MAP_STATUS_RANDOM_POS)
-        {
-            i = find_free_spot(op->arch, newmap, x, y, 0, SIZEOFFREE1 + 1);
-            if (i == -1)
-            {
-                i = find_free_spot(op->arch, newmap, x, y, 1, SIZEOFFREE2 + 1);
-                if (i == -1)
-                    i = find_free_spot(op->arch, newmap, x, y, 1, SIZEOFFREE + 1);
-            }
-        }
-        else
-        {
-            if(arch_blocked(op->arch, op, newmap, x, y))
-                i = find_first_free_spot(op->arch, newmap, x, y);
-        }
-
-        if (i == -1)
-        {
-            if(flags & MAP_STATUS_FREE_POS_ONLY)
-                return 0;
-            i = 0; /* we force a insertation on default spot */
-        }
-    } /* end if looking for free spot */
-
+    if ((i = check_insertion_allowed(op, newmap, x, y, flags)) == -1)
+        return 0;
 
     /* If it is a player login, he has yet to be inserted anyplace.
     * otherwise, we need to deal with removing the playe here.
