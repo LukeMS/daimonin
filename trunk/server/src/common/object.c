@@ -95,6 +95,13 @@ static inline void activelist_remove_inline(object *op)
  * call to process_events() */
 static inline void activelist_insert_inline(object *op)
 {
+    object *tmp;
+
+    /* Do not insert if op is a descendant of a sys_object. */
+    for (tmp = op->env; tmp; tmp = tmp->env)
+        if (QUERY_FLAG(tmp, FLAG_SYS_OBJECT))
+             return;
+
     /* If already on any active list, don't do anything */
     if(QUERY_FLAG(op, FLAG_IN_ACTIVELIST))
         return;
