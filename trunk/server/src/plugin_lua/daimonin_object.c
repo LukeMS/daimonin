@@ -622,15 +622,17 @@ int GameObject_init(lua_State *L)
 /*          can result in the destruction of the transferred object. The     */
 /*          return value is important to check!                              */
 /*          flags are:                                                       */
-/*            game.MFLAG_FIXED_POS - insert on x,y EVEN if the spot not free */
-/*            game.MFLAG_MAX_RANDOM_POS - insert on a random spot near x,y in*/
-/*              the maximum radius.                                          */
-/*            game.MFLAG_RANDOM_POS - insert on a random spot near x,y in a  */
-/*              progressive radius.                                          */
-/*            game.MFLAG_FREE_POS_ONLY - only insert on a free position,     */
-/*              return with fail when there is no free spot.                 */
-/*          Of these, the first three are in order of precedence while the   */
-/*          last may be used in conjunction with any of the others.          */
+/*            game.MFLAG_FIXED_POS - fixed location                          */
+/*            game.MFLAG_RANDOM_POS_1 - random location, 1 square radius     */
+/*            game.MFLAG_RANDOM_POS_2 - random location, 2 square radius     */
+/*            game.MFLAG_RANDOM_POS_3 - random location, 3 square radius     */
+/*            game.MFLAG_RANDOM_POS - random location, progressive radius    */
+/*            game.MFLAG_FREE_POS_ONLY - first available location/free spot  */
+/*              only.                                                        */
+/*          Of these, the first five are in order of precedence while the    */
+/*          last may be used in conjunction with any of the others or on its */
+/*          own (IOW only the last is actually a flag). If none are given    */
+/*          the default is fixed location.                                   */
 /*          Examples:                                                        */
 /*          obj:SetPosition(x, y) - same as obj:SetPosition(obj.map, x,y)    */
 /*          obj:SetPosition(game:ReadyMap("/a_map"), x, y) - multiplayer map */
@@ -642,30 +644,34 @@ int GameObject_init(lua_State *L)
 /*****************************************************************************/
 static int GameObject_SetPosition(lua_State *L)
 {
-    int         x, y, flags=0, ret=0;
-    lua_object *self, *where;
-    mapstruct *new_map = NULL;
+    lua_object *self;
+    mapstruct  *new_map;
+    int         x,
+                y,
+                flags = MAP_STATUS_FIXED_POS,
+                ret;
 
     /* Small hack to allow optional first map parameter */
     if(lua_isuserdata(L, 2))
     {
+        lua_object *where;
+
         get_lua_args(L, "OMii|i", &self, &where, &x, &y, &flags);
         new_map = where->data.map;
     }
     else
     {
         get_lua_args(L, "Oii|i", &self, &x, &y, &flags);
-        new_map = WHO->map;
-        if(new_map == NULL)
+
+        if((new_map = WHO->map) == NULL)
             luaL_error(L, "Short-form of SetPosition() used, but the object didn't have a map");
     }
 
     ret = hooks->enter_map(WHO, NULL, new_map, x, y, flags);
-
     lua_pushnumber(L, ret);
+
     return 1;
 }
-
 
 /*****************************************************************************/
 /* Name   : GameObject_ReadyUniqueMap                                        */
