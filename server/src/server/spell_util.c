@@ -896,7 +896,7 @@ int summon_monster(object *op, object *caster, int dir, archetype *at, int spell
         }
 
     if (!dir)
-        dir = find_free_spot(NULL, op->map, op->x, op->y, 1, 9);
+        dir = find_free_spot(NULL, NULL, op->map, op->x, op->y, 1, SIZEOFFREE1);
 
     if (dir != -1)
     {
@@ -2728,7 +2728,7 @@ void put_a_monster(object *op, const char *monstername)
     /* first we check the closest square for free squares */
     if ((at = find_archetype(monstername)) == NULL)
         return;
-    dir = find_first_free_spot(at, op->map, op->x, op->y);
+    dir = find_first_free_spot(at, NULL, op->map, op->x, op->y);
     if (dir != -1)
     {
         /* This is basically grabbed for generate monster.  Fixed 971225 to

@@ -313,7 +313,7 @@ void generate_monster(object *gen)
         LOG(llevBug, "BUG: Generator without other_arch: %s\n", query_name(gen));
         return;
     }
-    i = find_free_spot(at, gen->map, gen->x, gen->y, 1, 9);
+    i = find_free_spot(at, NULL, gen->map, gen->x, gen->y, 1, SIZEOFFREE1);
     if (i == -1)
         return;
     while (at != NULL)
@@ -469,7 +469,7 @@ void move_gate(object *op)
             if (op->map == tmp->map && (IS_LIVE(tmp) || !QUERY_FLAG(tmp, FLAG_NO_PICK) || QUERY_FLAG(tmp, FLAG_CAN_ROLL)))
             {
                 /* If it has speed, it should move itself, otherwise: */
-                int i   = find_free_spot(tmp->arch, op->map, op->x, op->y, 1, 9);
+                int i   = find_free_spot(tmp->arch, tmp, op->map, op->x, op->y, 1, SIZEOFFREE1);
 
                 /* If there is a free spot, move the object someplace */
                 if (i != -1)
@@ -844,7 +844,7 @@ void change_object(object *op)
              * changed status) is that the object jumps about for no
              * player-obvious reason if, eg, it is on the same square as a
              * player during the change -- Smacky 20080704 */
-            j = find_first_free_spot(tmp->arch, op->map, op->x, op->y);
+            j = find_first_free_spot(tmp->arch, tmp, op->map, op->x, op->y);
             if (j != -1)  /* Found a free spot */
             {
                 if (op->type == TYPE_LIGHT_APPLY && tmp->other_arch)

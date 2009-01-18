@@ -2676,7 +2676,7 @@ object *present_arch_in_ob_temp(archetype *at, object *op)
 }
 
 /*
- * find_free_spot(archetype, map, x, y, start, stop) will search for
+ * find_free_spot(archetype, object, map, x, y, start, stop) will search for
  * a spot at the given map and coordinates which will be able to contain
  * the given archetype.  start and stop specifies how many squares
  * to search (see the freearr_x/y[] definition).
@@ -2689,10 +2689,12 @@ object *present_arch_in_ob_temp(archetype *at, object *op)
  * pieces.
  */
 
-int find_free_spot(archetype *at, mapstruct *m, int x, int y, int start, int stop)
+int find_free_spot(archetype *at, object *op, mapstruct *m, int x, int y, int start, int stop)
 {
-    int         i, index = 0;
-    static int  altern[SIZEOFFREE];
+    int        i,
+               index = 0;
+    static int altern[SIZEOFFREE];
+    object     *terrain = (op && IS_LIVE(op)) ? op : NULL; // FIXME: Cheap solution
 
     /* Prevent invalid indexing. */
     start = MAX(0, MIN(start, SIZEOFFREE - 1));
@@ -2700,7 +2702,7 @@ int find_free_spot(archetype *at, mapstruct *m, int x, int y, int start, int sto
 
     for (i = start; i < stop; i++)
     {
-        if (!arch_blocked(at, NULL, m, x + freearr_x[i], y + freearr_y[i]))
+        if (!arch_blocked(at, terrain, m, x + freearr_x[i], y + freearr_y[i]))
             altern[index++] = i;
         else if (wall(m, x + freearr_x[i], y + freearr_y[i]) && maxfree[i] < stop)
             stop = maxfree[i];
@@ -2714,18 +2716,20 @@ int find_free_spot(archetype *at, mapstruct *m, int x, int y, int start, int sto
 
 /*
  *
- * find_first_free_spot(archetype, mapstruct, x, y) works like
+ * find_first_free_spot(archetype, object, mapstruct, x, y) works like
  * find_free_spot(), but it will search max number of squares.
  * But it will return the first available spot, not a random choice.
  * Changed 0.93.2: Have it return -1 if there is no free spot available.
  */
 
-int find_first_free_spot(archetype *at, mapstruct *m, int x, int y)
+int find_first_free_spot(archetype *at, object *op, mapstruct *m, int x, int y)
 {
-    int i;
+    int     i;
+    object *terrain = (op && IS_LIVE(op)) ? op : NULL; // FIXME: Cheap solution
+
     for (i = 0; i < SIZEOFFREE; i++)
     {
-        if (!arch_blocked(at, NULL, m, x + freearr_x[i], y + freearr_y[i]))
+        if (!arch_blocked(at, terrain, m, x + freearr_x[i], y + freearr_y[i]))
             return i;
     }
     return -1;

@@ -194,7 +194,7 @@ object * place_chest(int treasureoptions, int x, int y, mapstruct *map, mapstruc
     int     i, xl, yl;
 
     /* first, find a place to put the chest. */
-    i = find_first_free_spot(find_archetype("chest"), map, x, y);
+    i = find_first_free_spot(find_archetype("chest"), NULL, map, x, y);
     xl = x + freearr_x[i]; yl = y + freearr_y[i];
 
     /* if the placement is blocked, return a fail. */
@@ -344,7 +344,7 @@ int keyplace(mapstruct *map, int x, int y, char *keycode, int door_flag, int n_k
         /* if we don't find a good keymaster, drop the key on the ground. */
         if (the_keymaster == NULL)
         {
-            int freeindex   = find_first_free_spot(the_key->arch, map, i, j);
+            int freeindex   = find_first_free_spot(the_key->arch, NULL, map, i, j);
             kx = i + freearr_x[freeindex];
             ky = j + freearr_y[freeindex];
         }
@@ -613,7 +613,7 @@ void find_enclosed_spot(mapstruct *map, int *cx, int *cy, RMParms *RP)
         }
     }
     /* give up and return the closest free spot. */
-    i = find_first_free_spot(find_archetype("chest"), map, x, y);
+    i = find_first_free_spot(find_archetype("chest"), NULL, map, x, y);
     if (i != -1 && i < SIZEOFFREE)
     {
         *cx = x + freearr_x[i];
