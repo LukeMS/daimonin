@@ -2696,7 +2696,7 @@ int find_free_spot(archetype *at, mapstruct *m, int x, int y, int start, int sto
 
     /* Prevent invalid indexing. */
     start = MAX(0, MIN(start, SIZEOFFREE - 1));
-    stop = MIN(0, MIN(stop, SIZEOFFREE - 1));
+    stop = MAX(0, MIN(stop, SIZEOFFREE - 1));
 
     for (i = start; i < stop; i++)
     {
