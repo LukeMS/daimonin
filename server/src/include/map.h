@@ -86,18 +86,23 @@
 #define MAP_STATUS_UNIQUE           0x02 /* like apartment - (map is inside /players folder) */
 #define MAP_STATUS_INSTANCE         0x04 /* this is an instance (map is inside /instance) */
 #define MAP_STATUS_STYLE            0x08 /* we load a special random map style map - we don't set speed for objects inside! */
-
 #define MAP_STATUS_ORIGINAL         0x10 /* map is an original map - generate treasures! */
-#define MAP_STATUS_FIXED_POS        0x20 /* enter map with fixed postion, don't search for a free spot */
-#define MAP_STATUS_MAX_RANDOM_POS   0x40 /* search for a random free spot in the maximum radius (as defined by SIZEOFFREE) */
-#define MAP_STATUS_RANDOM_POS       0x80 /* search for a random free spot in a progressive radius */
-#define MAP_STATUS_FREE_POS_ONLY    0x100 /* only execute enter_map_xx() when there is a free spot! */
 
-#define MAP_STATUS_NO_FALLBACK      0x200 /* when map loading fails, don't try to load savebed, emergency or another fallback map */
-#define MAP_STATUS_LOAD_ONLY        0x400 /* signal for map loader func to return after successful read_map_name() */
-#define MAP_STATUS_FIXED_LOGIN      0x800 /* same as MAP_FIXEDLOGIN() - useful for dynamic setting */
+/* The first five flags below are in fact technically unnecessary (see
+ * move.c/check_insertion_allowed()) but are retained for backwards
+ * compatibility. */
+#define MAP_STATUS_FIXED_POS        0x20 /* fixed location */
+#define MAP_STATUS_RANDOM_POS_1     0x40 /* random location, 1 square radius */
+#define MAP_STATUS_RANDOM_POS_2     0x80 /* random location, 2 squares radius */
+#define MAP_STATUS_RANDOM_POS_3     0x100 /* random location, 3 squares radius */
+#define MAP_STATUS_RANDOM_POS       0x200 /* random location, progressive radius */
+#define MAP_STATUS_FREE_POS_ONLY    0x400 /* free spot only */
 
-#define MAP_STATUS_ARTIFACT         0x1000 /* unusued: tells load_object we load a artifact object/block */
+#define MAP_STATUS_NO_FALLBACK      0x800 /* when map loading fails, don't try to load savebed, emergency or another fallback map */
+#define MAP_STATUS_LOAD_ONLY        0x1000 /* signal for map loader func to return after successful read_map_name() */
+#define MAP_STATUS_FIXED_LOGIN      0x2000 /* same as MAP_FIXEDLOGIN() - useful for dynamic setting */
+
+#define MAP_STATUS_ARTIFACT         0x4000 /* unusued: tells load_object we load a artifact object/block */
 /* used to mask out map_status to get the map type */
 #define MAP_STATUS_TYPE(_f)     (_f&(MAP_STATUS_MULTI|MAP_STATUS_UNIQUE|MAP_STATUS_INSTANCE|MAP_STATUS_STYLE))
 

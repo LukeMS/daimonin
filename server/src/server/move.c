@@ -842,37 +842,48 @@ static void enter_random_map(object *pl, object *exit_ob)
 }
 #endif
 
-/* Try to find a spot for op on map on or near x, y depending on flags.
- * flags are:
- *   MAP_STATUS_FIXED_POS: insert at default position.
- *   MAP_STATUS_MAX_RANDOM_POS: insert at random position in the maximum radius.
- *   MAP_STATUS_RANDOM_POS: insert at random position in a progressive radius.
- *   MAP_STATUS_FREE_POS_ONLY: insert at free position only.
- * Of these, the first three are listed in order of precedence, while the last
- * can be used in conjunction with any of the others.
+/* Try to find a spot for op on map on or near x, y depending on mode and
+ * freeonly.
  * If a spot is found, the return is >= 0. This is the index into
  * freearr_x/freearr_y. Otherwise, the return is -1. */
-int check_insertion_allowed(object *op, mapstruct *map, int x, int y, int flags)
+int check_insertion_allowed(object *op, mapstruct *map, int x, int y, int mode, int freeonly)
 {
-    int     i = 0;
-    object *tmp;
+    int i;
 
-    if (flags & MAP_STATUS_FIXED_POS)
+    switch (mode)
     {
-        /* if we force position x, y AND we force free spot only check & return
-         * when its blocked. */
-        if (flags & MAP_STATUS_FREE_POS_ONLY &&
-            arch_blocked(op->arch, op, map, x, y))
-            return -1;
-    }
-    else
-    {
-        /* Search for a random free spot in the maximum radius. */
-        if (flags & MAP_STATUS_MAX_RANDOM_POS)
+        /* first available location */
+        case 1:
+            i = find_first_free_spot(op->arch, map, x, y);
+
+            break;
+
+        /* Fixed location. */
+        case 2:
+            i = (arch_blocked(op->arch, op, map, x, y)) ? -1 : 0;
+
+            break;
+
+        /* Random location, 1 squares radius. */
+        case 3:
+            i = find_free_spot(op->arch, map, x, y, 0, SIZEOFFREE1);
+
+            break;
+
+        /* Random location, 2 squares radius. */
+        case 4:
+            i = find_free_spot(op->arch, map, x, y, 0, SIZEOFFREE2);
+
+            break;
+
+        /* Random location, 3 squares radius. */
+        case 5:
             i = find_free_spot(op->arch, map, x, y, 0, SIZEOFFREE - 1);
-        /* Search for a random free spot in a progressive radius. */
-        else if (flags & MAP_STATUS_RANDOM_POS)
-        {
+
+            break;
+
+        /* Random location, progressive radius. */
+        case 6:
             i = find_free_spot(op->arch, map, x, y, 0, SIZEOFFREE1);
 
             if (i == -1)
@@ -882,23 +893,28 @@ int check_insertion_allowed(object *op, mapstruct *map, int x, int y, int flags)
                 if (i == -1)
                     i = find_free_spot(op->arch, map, x, y, SIZEOFFREE2 + 1, SIZEOFFREE - 1);
             }
-        }
-        /* If the default spot is blocked, find the first free spot. */
-        else
-        {
-            if (arch_blocked(op->arch, op, map, x, y))
-                i = find_first_free_spot(op->arch, map, x, y);
-        }
 
-        /* Couldn't find a free spot? If we have specified free spot only, this
-         * means failure. Otherwise, force to the default spot. */
-        if (i == -1)
-        {
-            if (flags & MAP_STATUS_FREE_POS_ONLY)
-                return -1;
-            else
-                return 0;
-        }
+            break;
+
+        default:
+            LOG(llevDebug, "DEBUG:: %s/check_insertion_allowed(): Illegal mode (defaulting to first available location)!\n",
+                __FILE__);
+            i = find_first_free_spot(op->arch, map, x, y);
+    }
+
+#if 0
+    LOG(llevDebug, "DEBUG: %s/check_insertion_allowed(): mode=%d, freeonly=%d, i=%d\n",
+        __FILE__, mode, freeonly, i);
+#endif
+
+    /* Couldn't find a free spot? If we have specified free spot only, this
+     * means failure. Otherwise, force to the default spot. */
+    if (i == -1)
+    {
+        if (freeonly)
+            return -1;
+        else
+            return 0;
     }
 
     return i;
@@ -914,10 +930,12 @@ int check_insertion_allowed(object *op, mapstruct *map, int x, int y, int flags)
 */
 int enter_map(object *op, object *originator, mapstruct *newmap, int x, int y, int flags)
 {
-    int         i       = 0;
-    object      *tmp;
-    mapstruct   *oldmap  = op->map;
-    player      *pl;
+    int        mode,
+               freeonly,
+               i;
+    object    *tmp;
+    mapstruct *oldmap = op->map;
+    player    *pl;
 
     if (op->head)
     {
@@ -938,7 +956,22 @@ int enter_map(object *op, object *originator, mapstruct *newmap, int x, int y, i
         y = MAP_ENTER_Y(newmap);
     }
 
-    if ((i = check_insertion_allowed(op, newmap, x, y, flags)) == -1)
+    if (flags & MAP_STATUS_RANDOM_POS)
+        mode = 6;
+    else if (flags & MAP_STATUS_RANDOM_POS_3)
+        mode = 5;
+    else if (flags & MAP_STATUS_RANDOM_POS_2)
+        mode = 4;
+    else if (flags & MAP_STATUS_RANDOM_POS_1)
+        mode = 3;
+    else if (flags & MAP_STATUS_FIXED_POS)
+        mode = 2;
+    else
+        mode = 1;
+
+    freeonly = (flags & MAP_STATUS_FREE_POS_ONLY) ? 1 : 0;
+
+    if ((i = check_insertion_allowed(op, newmap, x, y, mode, freeonly)) == -1)
         return 0;
 
     /* If it is a player login, he has yet to be inserted anyplace.
