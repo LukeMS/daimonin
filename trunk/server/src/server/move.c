@@ -206,7 +206,7 @@ int teleport(object *teleporter, uint8 tele_type, object *user)
     }
 
     other_teleporter = altern[RANDOM() % nrofalt];
-    k = find_free_spot(user->arch, other_teleporter->map, other_teleporter->x, other_teleporter->y, 1, 9);
+    k = find_free_spot(user->arch, user, other_teleporter->map, other_teleporter->x, other_teleporter->y, 1, SIZEOFFREE1);
     if (k == -1)
         return 0;
 
@@ -854,7 +854,7 @@ int check_insertion_allowed(object *op, mapstruct *map, int x, int y, int mode, 
     {
         /* first available location */
         case 1:
-            i = find_first_free_spot(op->arch, map, x, y);
+            i = find_first_free_spot(op->arch, op, map, x, y);
 
             break;
 
@@ -866,32 +866,32 @@ int check_insertion_allowed(object *op, mapstruct *map, int x, int y, int mode, 
 
         /* Random location, 1 squares radius. */
         case 3:
-            i = find_free_spot(op->arch, map, x, y, 0, SIZEOFFREE1);
+            i = find_free_spot(op->arch, op, map, x, y, 0, SIZEOFFREE1);
 
             break;
 
         /* Random location, 2 squares radius. */
         case 4:
-            i = find_free_spot(op->arch, map, x, y, 0, SIZEOFFREE2);
+            i = find_free_spot(op->arch, op, map, x, y, 0, SIZEOFFREE2);
 
             break;
 
         /* Random location, 3 squares radius. */
         case 5:
-            i = find_free_spot(op->arch, map, x, y, 0, SIZEOFFREE - 1);
+            i = find_free_spot(op->arch, op, map, x, y, 0, SIZEOFFREE - 1);
 
             break;
 
         /* Random location, progressive radius. */
         case 6:
-            i = find_free_spot(op->arch, map, x, y, 0, SIZEOFFREE1);
+            i = find_free_spot(op->arch, op, map, x, y, 0, SIZEOFFREE1);
 
             if (i == -1)
             {
-                i = find_free_spot(op->arch, map, x, y, SIZEOFFREE1 + 1, SIZEOFFREE2);
+                i = find_free_spot(op->arch, op, map, x, y, SIZEOFFREE1 + 1, SIZEOFFREE2);
 
                 if (i == -1)
-                    i = find_free_spot(op->arch, map, x, y, SIZEOFFREE2 + 1, SIZEOFFREE - 1);
+                    i = find_free_spot(op->arch, op, map, x, y, SIZEOFFREE2 + 1, SIZEOFFREE - 1);
             }
 
             break;
@@ -899,7 +899,7 @@ int check_insertion_allowed(object *op, mapstruct *map, int x, int y, int mode, 
         default:
             LOG(llevDebug, "DEBUG:: %s/check_insertion_allowed(): Illegal mode (defaulting to first available location)!\n",
                 __FILE__);
-            i = find_first_free_spot(op->arch, map, x, y);
+            i = find_first_free_spot(op->arch, op, map, x, y);
     }
 
 #if 0
@@ -1017,7 +1017,7 @@ int enter_map(object *op, object *originator, mapstruct *newmap, int x, int y, i
         /* Update any golems */
         if (pl->golem != NULL)
         {
-            int i   = find_free_spot(pl->golem->arch, newmap, x, y, 1, SIZEOFFREE + 1);
+            int i   = find_free_spot(pl->golem->arch, op, newmap, x, y, 1, SIZEOFFREE + 1);
 
             remove_ob(pl->golem);
             if (check_walk_off(pl->golem, NULL, MOVE_APPLY_VANISHED) != CHECK_WALK_OK)

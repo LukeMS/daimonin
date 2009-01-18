@@ -557,7 +557,7 @@ int damage_ob(object *op, int dam, object *hitter, int env_attack)
                 }
                 if (unaggressive)
                     SET_FLAG(tmp, FLAG_UNAGGRESSIVE);
-                j = find_first_free_spot(tmp->arch, op->map, op->x, op->y);
+                j = find_first_free_spot(tmp->arch, tmp, op->map, op->x, op->y);
                 if (j >= 0)
                 {
                     /* Found spot to put this monster */
