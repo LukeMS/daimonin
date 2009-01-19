@@ -2101,24 +2101,33 @@
   </attribute>
 </section>
 <section name="insertion">
-  <attribute arch="last_sp" editor="insert at random spot" type="bool">
-    If this flag is set, the destination values are used in a
-    special way - instead of marking a fixed position, they are used to
-    define a "drop area" where the player drops randomly.
+  <attribute arch="last_heal" editor="fixed location" type="bool">
+    If set, the activator is inserted at the square at &lt;destination x&gt;,
+    &lt;destination y&gt;, whether or not that spot is free (but see also
+    &lt;do not force insertion&gt; below).
+    Overrides &lt;random location, progressive radius&gt;.
   </attribute>
-  <attribute arch="last_heal" editor="insert at fixed spot" type="bool">
-    If set, the player will be put exactly on the position we defined above.
-    If not set, the server will check the surrounding for a free space.
-    Fixed spot will overrule the search for a free spot AND will force
-    an insertion even when the spot is not free. Use careful.
+  <attribute arch="last_sp" editor="random location, progressive radius" type="bool">
+    If set, first the square at &lt;destination x&gt;, &lt;destination y&gt; is
+    checked. Then, if that is not free, the 8 surrounding squares are checked.
+    Then, if none are free, the 16 surrounding squares are checked. Finally, if
+    none are free, the 24 surrounding squares are checked. The activator is
+    inserted at the first free spot found or the default spot if none are free
+    (but see also &lt;do not force insertion&gt; below).
+    Is overridden by &lt;fixed location&gt;.
   </attribute>
-  <attribute arch="last_grace" editor="insert at free spot only" type="bool">
-    If set, the player will be put ONLY on a free spot or insertion will fail.
-    If not set, the server will still look for a free spot (if fixed spot is
-    not set) but will do a forced insertion to x,y when there is no free spot
-    (thats default mode).
-    Insert at free spot only can be used in combination with fixed or random
-    spot flag.
+  <attribute arch="last_grace" editor="first available location/do not force insertion" type="bool">
+    The interpretation of this flag depends if either &lt;fixed location&gt; or
+    &lt;random location, progressive radius&gt; above are set.
+    If neither are set but this is, first the square at &lt;destination x&gt;,
+    &lt;destination y&gt; is checked. Then, if that is not free, the 8
+    surrounding squares are checked. The activator is inserted at the first
+    free spot found. Insertion fails if none are free.
+    If neither are set and this is also unset, the insertion is as above, but
+    the activator is inserted at the default spot if none are free (insertiion
+    never fails).
+    If either are set and so is this, the activator is not inserted at the
+    default spot if no free spot is found.
   </attribute>
 </section>
 <section name="move flags">
