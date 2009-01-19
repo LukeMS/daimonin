@@ -3574,16 +3574,33 @@
     and then slain, the spawn point will try to generate
     another one. ]]>
   </description>
+<section name="activation">
   <attribute arch="speed" editor="speed" type="float">
     The &lt;speed&gt; determines how often a spawn point will
     check itself and/or the mob. If there is no mob, the
     spawn point will try to spawn a mob.
   </attribute>
   <attribute arch="last_grace" editor="spawn chance" type="int">
-  Defines the base spawn chance. Value 0 means to try spawning
-  every active tick. -1 means no spawn try.
-  Value >0 means spawn probability is 1/value+1 per active tick.
+    Defines the base spawn chance. Value 0 means to try spawning
+    every active tick. -1 means no spawn try.
+    Value >0 means spawn probability is 1/value+1 per active tick.
   </attribute>
+<section name="linked spawn">
+  <attribute arch="slaying" editor="link tag" type="string">
+    All spawn points of the map with the same link tag will
+    linked together and work as 'linked spawns (mobs)'.
+  </attribute>
+  <attribute arch="cha" editor="link rank" type="int">
+    A basic 'rank' system for linked spawns:
+    A mob from a linked spawn will go to the aid of another mob sharing the
+    same &lt;link tag&gt; but whose &lt;link rank&gt; is higher, even if it
+    means switching enemies.
+    If the other &lt;link rank&gt; is the same, the mob will only go to its
+    comrade's aid if it is not already engaged.
+    If the other &lt;link rank&gt; is lower, the mob will not aid its
+    underling.
+  </attribute>
+</section>
   <attribute arch="sp" editor="forced spawn" type="int">
     If -1 at start, the spawn point will do a normal spawn.
     If set to 0-9999, the spawn point will be forced to spawn
@@ -3591,28 +3608,16 @@
     ONE TIME when the spawn point is called the first time.
     See SPAWN POINT MOB objects for more information.
   </attribute>
-  <attribute arch="last_heal" editor="spawn range" type="int">
-    Size of an area around the spawn point where the mob should
-    be placed randomly. If this value is set to 0, spawn point
-    will find no free place. If set to 1, it test the space where
-    the spawn point itself is. Increasing the value will start a search
-    around the spot, starting in the south. value 2 search spot 0,-1,
-    value 3 spot 1,-1, 4 = 1,0 ...
-    Warning: The Test will ONLY be done for the head - so careful when
-    inserting big monsters on the map. Depending on the "free" area,
-    the spawn point will drop the mob somewhere in the free area.
-  </attribute>
-<section name="linked">
-  <attribute arch="slaying" editor="link tag" type="string">
-    All spawn points of the map with the same link tag will
-    linked together and work as 'linked spawns (mobs)'.
-  </attribute>
-</section>
-<section name="connection">
   <attribute arch="connected" editor="connection" type="int">
     If a connection value is set, the spawn point will try to spawn
-    whenever the connection is triggered. If you use this, you will probably
-    want to set spawn chance to 0, and spawn speed to 0.
+    whenever the connection is triggered.
+    If you set this, you wil should also set &lt;speed&gt; and
+    &lt;spawn chance&gt; to 0.
+  </attribute>
+</section>
+<section name="insertion">
+  <attribute arch="last_heal" editor="insertion mode" type="list_insertion">
+    Controls how the spawn point inserts its spawn into the map.
   </attribute>
 </section>
 </type>
