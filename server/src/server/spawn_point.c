@@ -46,7 +46,7 @@ static object *spawn_monster(object *mob, object *spawn)
         return NULL;
 
     i = check_insertion_allowed(mob, spawn->map, spawn->x, spawn->y,
-                                spawn->last_heal, 1);
+                                spawn->last_heal, 1, 1);
 
     /* No free spot? No spawn. */
     if (i == -1)
