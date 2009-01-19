@@ -1017,7 +1017,7 @@ int enter_map(object *op, object *originator, mapstruct *newmap, int x, int y, i
         /* Update any golems */
         if (pl->golem != NULL)
         {
-            int i   = find_free_spot(pl->golem->arch, op, newmap, x, y, 1, SIZEOFFREE + 1);
+            int i   = find_free_spot(pl->golem->arch, op, newmap, x, y, 1, SIZEOFFREE - 1);
 
             remove_ob(pl->golem);
             if (check_walk_off(pl->golem, NULL, MOVE_APPLY_VANISHED) != CHECK_WALK_OK)
