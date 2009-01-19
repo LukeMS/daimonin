@@ -2676,8 +2676,8 @@ object *present_arch_in_ob_temp(archetype *at, object *op)
 }
 
 /*
- * find_free_spot(archetype, object, map, x, y, start, stop) will search for
- * a spot at the given map and coordinates which will be able to contain
+ * find_free_spot(archetype, object, map, x, y, los, start, stop) will search
+ * for a spot at the given map and coordinates which will be able to contain
  * the given archetype.  start and stop specifies how many squares
  * to search (see the freearr_x/y[] definition).
  * It returns a random choice among the alternatives found.
@@ -2689,7 +2689,7 @@ object *present_arch_in_ob_temp(archetype *at, object *op)
  * pieces.
  */
 
-int find_free_spot(archetype *at, object *op, mapstruct *m, int x, int y, int start, int stop)
+int find_free_spot(archetype *at, object *op, mapstruct *m, int x, int y, int los, int start, int stop)
 {
     int        i,
                index = 0;
@@ -2704,7 +2704,9 @@ int find_free_spot(archetype *at, object *op, mapstruct *m, int x, int y, int st
     {
         if (!arch_blocked(at, terrain, m, x + freearr_x[i], y + freearr_y[i]))
             altern[index++] = i;
-        else if (wall(m, x + freearr_x[i], y + freearr_y[i]) && maxfree[i] < stop)
+        else if (los &&
+                 (wall(m, x + freearr_x[i], y + freearr_y[i]) &&
+                  maxfree[i] < stop))
             stop = maxfree[i];
     }
 

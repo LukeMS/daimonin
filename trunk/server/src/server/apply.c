@@ -1108,7 +1108,7 @@ static int apply_shop_mat(object *shop_mat, object *op)
         if (QUERY_FLAG(op, FLAG_UNPAID))
         {
             /* Somebody dropped an unpaid item, just move to an adjacent place. */
-            int i   = find_free_spot(op->arch, op, op->map, op->x, op->y, 1, SIZEOFFREE1);
+            int i   = find_free_spot(op->arch, op, op->map, op->x, op->y, 0, 1, SIZEOFFREE1);
             if (i != -1)
             {
                 rv = enter_map(op, shop_mat, op->map,op->x + freearr_x[i], op->y + freearr_y[i], MAP_STATUS_FIXED_POS);
@@ -1144,7 +1144,7 @@ static int apply_shop_mat(object *shop_mat, object *op)
             * they are not on the mat anymore
             */
 
-        int i   = find_free_spot(op->arch, op, op->map, op->x, op->y, 1, SIZEOFFREE1);
+        int i   = find_free_spot(op->arch, op, op->map, op->x, op->y, 0, 1, SIZEOFFREE1);
         if (i == -1)
         {
             LOG(llevBug, "BUG: Internal shop-mat problem (map:%s object:%s pos: %d,%d).\n", op->map->name, op->name,
@@ -1920,7 +1920,7 @@ static void apply_treasure(object *op, object *tmp)
         if (treas->type == MONSTER)
         {
             /* Monsters can be trapped in treasure chests */
-            int i   = find_free_spot(treas->arch, treas, op->map, treas->x, treas->y, 0, SIZEOFFREE1);
+            int i   = find_free_spot(treas->arch, treas, op->map, treas->x, treas->y, 0, 0, SIZEOFFREE1);
             if (i != -1)
             {
                 treas->x += freearr_x[i];

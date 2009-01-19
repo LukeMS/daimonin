@@ -896,7 +896,7 @@ int summon_monster(object *op, object *caster, int dir, archetype *at, int spell
         }
 
     if (!dir)
-        dir = find_free_spot(NULL, NULL, op->map, op->x, op->y, 1, SIZEOFFREE1);
+        dir = find_free_spot(NULL, NULL, op->map, op->x, op->y, 0, 1, SIZEOFFREE1);
 
     if (dir != -1)
     {

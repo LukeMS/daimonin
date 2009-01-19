@@ -209,7 +209,7 @@ void pet_follow_owner(object *pet)
         return;
     }
 
-    dir = find_free_spot(pet->arch, pet, pet->owner->map, pet->owner->x, pet->owner->y, 1, SIZEOFFREE - 1);
+    dir = find_free_spot(pet->arch, pet, pet->owner->map, pet->owner->x, pet->owner->y, 1, 1, SIZEOFFREE - 1);
     if (dir == -1)
     {
 //        new_draw_info_format(NDI_UNIQUE, 0, pet->owner, "Your %s has disappeared (no space).", query_name(pet));
