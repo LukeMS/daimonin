@@ -2124,7 +2124,7 @@
     surrounding squares are checked. The activator is inserted at the first
     free spot found. Insertion fails if none are free.
     If neither are set and this is also unset, the insertion is as above, but
-    the activator is inserted at the default spot if none are free (insertiion
+    the activator is inserted at the default spot if none are free (insertion
     never fails).
     If either are set and so is this, the activator is not inserted at the
     default spot if no free spot is found.
