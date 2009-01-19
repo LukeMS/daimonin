@@ -1469,7 +1469,7 @@ int summon_pet(object *op, int dir, SpellTypeFrom item)
         return 0;
     }
     if (!dir)
-        dir = find_free_spot(at, NULL, op->map, op->x, op->y, 1, 1, SIZEOFFREE - 1);
+        dir = find_free_spot(at, NULL, op->map, op->x, op->y, INS_WITHIN_LOS, 1, SIZEOFFREE - 1);
     /* careful here - we give clone as settings for terrain to arch_blocked() */
     if ((dir == -1) || arch_blocked(at, &at->clone, op->map, op->x + freearr_x[dir], op->y + freearr_y[dir]))
     {
@@ -3182,7 +3182,7 @@ int summon_cult_monsters(object *op, int old_dir)
         }
         /* Now lets see if we can find a place for this monster. */
         if (!dir)
-            dir = find_free_spot(mon->arch, mon, op->map, op->x, op->y, 1, 1, SIZEOFFREE - 1);
+            dir = find_free_spot(mon->arch, mon, op->map, op->x, op->y, INS_WITHIN_LOS, 1, SIZEOFFREE - 1);
 
         /* This only checks for the head of the monster.  We still need
          * to check for the body.  But if there is no space for the
@@ -3317,7 +3317,7 @@ int summon_avatar(object *op, object *caster, int dir, archetype *at, int spelln
             return 0;
         }
     if (!dir)
-        dir = find_free_spot(at, NULL, op->map, op->x, op->y, 1, 1, SIZEOFFREE - 1);
+        dir = find_free_spot(at, NULL, op->map, op->x, op->y, INS_WITHIN_LOS, 1, SIZEOFFREE - 1);
 
     if ((dir == -1) || arch_blocked(at, NULL, op->map, op->x + freearr_x[dir], op->y + freearr_y[dir]))
     {

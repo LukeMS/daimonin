@@ -3619,6 +3619,10 @@
   <attribute arch="last_heal" editor="insertion mode" type="list_insertion">
     Controls how the spawn point inserts its spawn into the map.
   </attribute>
+  <attribute arch="last_eat" editor="insert within LOS" type="bool">
+    If set, the spawn will only be inserted within LOS of the spawn point
+    (meaning it will not spawn on the other side of a wall).
+  </attribute>
 </section>
 </type>
 

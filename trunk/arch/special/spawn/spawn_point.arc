@@ -9,6 +9,7 @@ speed -0.00317
 last_grace 8
 last_sp -1
 last_heal 1
+last_eat 1
 no_pick 1
 no_teleport 1
 end

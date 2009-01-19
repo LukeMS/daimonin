@@ -2676,9 +2676,9 @@ object *present_arch_in_ob_temp(archetype *at, object *op)
 }
 
 /*
- * find_free_spot(archetype, object, map, x, y, los, start, stop) will search
- * for a spot at the given map and coordinates which will be able to contain
- * the given archetype.  start and stop specifies how many squares
+ * find_free_spot(archetype, object, map, x, y, ins_flags, start, stop) will
+ * search for a spot at the given map and coordinates which will be able to
+ * contain the given archetype.  start and stop specifies how many squares
  * to search (see the freearr_x/y[] definition).
  * It returns a random choice among the alternatives found.
  * start and stop are where to start relative to the free_arr array (1,9
@@ -2689,11 +2689,11 @@ object *present_arch_in_ob_temp(archetype *at, object *op)
  * pieces.
  */
 
-int find_free_spot(archetype *at, object *op, mapstruct *m, int x, int y, int los, int start, int stop)
+int find_free_spot(archetype *at, object *op, mapstruct *m, int x, int y, int ins_flags, int start, int stop)
 {
-    int        i,
-               index = 0;
-    static int altern[SIZEOFFREE];
+    int         i,
+                index = 0;
+    static int  altern[SIZEOFFREE];
     object     *terrain = (op && IS_LIVE(op)) ? op : NULL; // FIXME: Cheap solution
 
     /* Prevent invalid indexing. */
@@ -2704,7 +2704,7 @@ int find_free_spot(archetype *at, object *op, mapstruct *m, int x, int y, int lo
     {
         if (!arch_blocked(at, terrain, m, x + freearr_x[i], y + freearr_y[i]))
             altern[index++] = i;
-        else if (los &&
+        else if ((ins_flags & INS_WITHIN_LOS) &&
                  (wall(m, x + freearr_x[i], y + freearr_y[i]) &&
                   maxfree[i] < stop))
             stop = maxfree[i];
