@@ -843,10 +843,10 @@ static void enter_random_map(object *pl, object *exit_ob)
 #endif
 
 /* Try to find a spot for op on map on or near x, y depending on mode and
- * freeonly.
+ * ins_flags.
  * If a spot is found, the return is >= 0. This is the index into
  * freearr_x/freearr_y. Otherwise, the return is -1. */
-int check_insertion_allowed(object *op, mapstruct *map, int x, int y, int mode, int freeonly, int los)
+int check_insertion_allowed(object *op, mapstruct *map, int x, int y, int mode, int ins_flags)
 {
     int i;
 
@@ -872,13 +872,13 @@ int check_insertion_allowed(object *op, mapstruct *map, int x, int y, int mode, 
 
         /* Random location, 2 squares radius. */
         case 4:
-            i = find_free_spot(op->arch, op, map, x, y, los, 0, SIZEOFFREE2);
+            i = find_free_spot(op->arch, op, map, x, y, ins_flags, 0, SIZEOFFREE2);
 
             break;
 
         /* Random location, 3 squares radius. */
         case 5:
-            i = find_free_spot(op->arch, op, map, x, y, los, 0, SIZEOFFREE - 1);
+            i = find_free_spot(op->arch, op, map, x, y, ins_flags, 0, SIZEOFFREE - 1);
 
             break;
 
@@ -888,10 +888,10 @@ int check_insertion_allowed(object *op, mapstruct *map, int x, int y, int mode, 
 
             if (i == -1)
             {
-                i = find_free_spot(op->arch, op, map, x, y, los, SIZEOFFREE1 + 1, SIZEOFFREE2);
+                i = find_free_spot(op->arch, op, map, x, y, ins_flags, SIZEOFFREE1 + 1, SIZEOFFREE2);
 
                 if (i == -1)
-                    i = find_free_spot(op->arch, op, map, x, y, los, SIZEOFFREE2 + 1, SIZEOFFREE - 1);
+                    i = find_free_spot(op->arch, op, map, x, y, ins_flags, SIZEOFFREE2 + 1, SIZEOFFREE - 1);
             }
 
             break;
@@ -911,7 +911,7 @@ int check_insertion_allowed(object *op, mapstruct *map, int x, int y, int mode, 
      * means failure. Otherwise, force to the default spot. */
     if (i == -1)
     {
-        if (freeonly)
+        if (ins_flags & INS_NO_FORCE)
             return -1;
         else
             return 0;
@@ -931,7 +931,7 @@ int check_insertion_allowed(object *op, mapstruct *map, int x, int y, int mode, 
 int enter_map(object *op, object *originator, mapstruct *newmap, int x, int y, int flags)
 {
     int        mode,
-               freeonly,
+               ins_flags = INS_WITHIN_LOS,
                i;
     object    *tmp;
     mapstruct *oldmap = op->map;
@@ -969,9 +969,10 @@ int enter_map(object *op, object *originator, mapstruct *newmap, int x, int y, i
     else
         mode = 1;
 
-    freeonly = (flags & MAP_STATUS_FREE_POS_ONLY) ? 1 : 0;
+    if (flags & MAP_STATUS_FREE_POS_ONLY)
+        ins_flags |= INS_NO_FORCE;
 
-    if ((i = check_insertion_allowed(op, newmap, x, y, mode, freeonly, 1)) == -1)
+    if ((i = check_insertion_allowed(op, newmap, x, y, mode, ins_flags)) == -1)
         return 0;
 
     /* If it is a player login, he has yet to be inserted anyplace.
