@@ -338,4 +338,14 @@
 <listentry value="5" name="red" />
 <listentry value="6" name="purple" />
 </list>
+
+<list name="insertion">
+<listentry value="0" name="&lt;do not insert&gt;" />
+<listentry value="1" name="first available location" />
+<listentry value="2" name="fixed location" />
+<listentry value="3" name="random location, 1 square radius" />
+<listentry value="4" name="random location, 2 squares radius" />
+<listentry value="5" name="random location, 3 squares radius" />
+<listentry value="6" name="random location, progressive radius" />
+</list>
 </lists>
