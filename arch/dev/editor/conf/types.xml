@@ -3585,6 +3585,20 @@
     every active tick. -1 means no spawn try.
     Value >0 means spawn probability is 1/value+1 per active tick.
   </attribute>
+  <attribute arch="sp" editor="forced spawn" type="int">
+    If -1 at start, the spawn point will do a normal spawn.
+    If set to 0-9999, the spawn point will be forced to spawn
+    the mob with the nearest set chance (lower or same value)
+    ONE TIME when the spawn point is called the first time.
+    See SPAWN POINT MOB objects for more information.
+  </attribute>
+  <attribute arch="connected" editor="connection" type="int">
+    If a connection value is set, the spawn point will try to spawn
+    whenever the connection is triggered.
+    If you set this, you wil should also set &lt;speed&gt; and
+    &lt;spawn chance&gt; to 0.
+  </attribute>
+</section>
 <section name="linked spawn">
   <attribute arch="slaying" editor="link tag" type="string">
     All spawn points of the map with the same link tag will
@@ -3599,20 +3613,6 @@
     comrade's aid if it is not already engaged.
     If the other &lt;link rank&gt; is lower, the mob will not aid its
     underling.
-  </attribute>
-</section>
-  <attribute arch="sp" editor="forced spawn" type="int">
-    If -1 at start, the spawn point will do a normal spawn.
-    If set to 0-9999, the spawn point will be forced to spawn
-    the mob with the nearest set chance (lower or same value)
-    ONE TIME when the spawn point is called the first time.
-    See SPAWN POINT MOB objects for more information.
-  </attribute>
-  <attribute arch="connected" editor="connection" type="int">
-    If a connection value is set, the spawn point will try to spawn
-    whenever the connection is triggered.
-    If you set this, you wil should also set &lt;speed&gt; and
-    &lt;spawn chance&gt; to 0.
   </attribute>
 </section>
 <section name="insertion">
