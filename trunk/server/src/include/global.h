@@ -510,6 +510,8 @@ extern int                      freearr_x[SIZEOFFREE];
 extern int                      freearr_y[SIZEOFFREE];
 extern int                      maxfree[SIZEOFFREE];
 extern int                      freedir[SIZEOFFREE];
+extern int                      freeback[SIZEOFFREE];
+extern int                      freeback2[SIZEOFFREE];
 extern Settings                 settings;
 extern player_arch_template     player_arch_list[MAX_PLAYER_ARCH];
 

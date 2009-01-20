@@ -64,6 +64,22 @@ int freedir[SIZEOFFREE] =
     1, 2, 2, 2, 2, 2, 3, 4, 4, 4, 4, 4, 5, 6, 6, 6, 6, 6, 7, 8, 8, 8, 8, 8 /* SIZEOFFREE */
 };
 
+int freeback[SIZEOFFREE] =
+{
+    0,
+    0, 0, 0, 0, 0, 0, 0, 0, /* SIZEOFFREE1 */
+    1, 1, 2, 3, 3, 3, 4, 5, 5, 5, 6, 7, 7, 7, 8, 1, /*SIZEOFFREE1 */
+    9, 9, 10, 11, 12, 13, 13, 13, 14, 15, 16, 17, 17, 17, 18, 19, 20, 21, 21, 21, 22, 23, 24, 9 /* SIZEOFFREE */
+};
+
+int freeback2[SIZEOFFREE] =
+{
+    0,
+    0, 0, 0, 0, 0, 0, 0, 0, /* SIZEOFFREE1 */
+    1, 2, 2, 2, 3, 4, 4, 4, 5, 6, 6, 6, 7, 8, 8, 8, /*SIZEOFFREE1 */
+    9, 10, 11, 11, 11, 12, 13, 14, 15, 15, 15, 16, 17, 18, 19, 19, 19, 20, 21, 22, 22, 22, 23, 24 /* SIZEOFFREE */
+};
+
 /** Object management functions **/
 
 
@@ -2702,12 +2718,33 @@ int find_free_spot(archetype *at, object *op, mapstruct *m, int x, int y, int in
 
     for (i = start; i < stop; i++)
     {
-        if (!arch_blocked(at, terrain, m, x + freearr_x[i], y + freearr_y[i]))
+        int bflag = 0;
+
+        /* The archetype won't fit. */
+        if (arch_blocked(at, terrain, m, x + freearr_x[i], y + freearr_y[i]))
+            continue;
+
+        if (i > 8 &&
+            ins_flags & INS_WITHIN_LOS)
+        {
+            int j;
+
+            for (j = freeback[i]; j; j = freeback[j])
+            {
+                if (wall(m, x + freearr_x[j], y + freearr_y[j]))
+                {
+                    bflag = 1;
+
+                    break;
+                }
+            }
+
+            if (wall(m, x + freearr_x[freeback2[i]], y + freearr_y[freeback2[i]]))
+                bflag = 1;
+        }
+
+        if (!bflag)
             altern[index++] = i;
-        else if ((ins_flags & INS_WITHIN_LOS) &&
-                 (wall(m, x + freearr_x[i], y + freearr_y[i]) &&
-                  maxfree[i] < stop))
-            stop = maxfree[i];
     }
 
     if (!index)
