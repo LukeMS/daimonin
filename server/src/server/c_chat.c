@@ -469,7 +469,7 @@ int command_talk(object *op, char *params)
          * "nasty searches" are only done if requested (RV_RECURSIVE_SEARCH)
          * and are also only useful for long distances (which talk shouldn't be).
          */
-        for (i = 0; i <= SIZEOFFREE; i++)
+        for (i = 0; i < SIZEOFFREE; i++)
         {
             xt = op->x + freearr_x[i];
             yt = op->y + freearr_y[i];
@@ -540,7 +540,7 @@ int command_talk(object *op, char *params)
     }
     else /* we have target nothing or an invalid /talk target - lets fire up auto-target selection */
     {
-        for (i = 0; i <= SIZEOFFREE; i++)
+        for (i = 0; i < SIZEOFFREE; i++)
         {
             xt = op->x + freearr_x[i];
             yt = op->y + freearr_y[i];
