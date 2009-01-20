@@ -2697,8 +2697,8 @@ int find_free_spot(archetype *at, object *op, mapstruct *m, int x, int y, int in
     object     *terrain = (op && IS_LIVE(op)) ? op : NULL; // FIXME: Cheap solution
 
     /* Prevent invalid indexing. */
-    start = MAX(0, MIN(start, SIZEOFFREE - 1));
-    stop = MAX(0, MIN(stop, SIZEOFFREE - 1));
+    start = MAX(0, MIN(start, SIZEOFFREE));
+    stop = MAX(0, MIN(stop, SIZEOFFREE));
 
     for (i = start; i < stop; i++)
     {

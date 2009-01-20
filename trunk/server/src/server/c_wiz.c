@@ -675,7 +675,7 @@ int command_summon(object *op, char *params)
         new_draw_info(NDI_UNIQUE, 0, op, "That player can't be summoned right now.");
         return 1;
     }
-    i = find_free_spot(op->arch, op, op->map, op->x, op->y, 0, 1, SIZEOFFREE1);
+    i = find_free_spot(op->arch, op, op->map, op->x, op->y, 0, 1, SIZEOFFREE1 + 1);
     if (i == -1)
         i = 0;
 
@@ -725,7 +725,7 @@ int command_teleport(object *op, char *params)
         new_draw_info(NDI_UNIQUE, 0, op, "You can't teleport to that player right now.");
         return 1;
     }
-    i = find_free_spot(pl->ob->arch, pl->ob, pl->ob->map, pl->ob->x, pl->ob->y, 0, 1, SIZEOFFREE1);
+    i = find_free_spot(pl->ob->arch, pl->ob, pl->ob->map, pl->ob->x, pl->ob->y, 0, 1, SIZEOFFREE1 + 1);
     if (i == -1)
         i = 0;
 

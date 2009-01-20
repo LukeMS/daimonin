@@ -43,7 +43,7 @@ static void free_container_monster(object *monster, object *op)
     remove_ob(monster); /* in container, no walk off check */
     monster->x = container->x;
     monster->y = container->y;
-    i = find_free_spot(monster->arch, monster, op->map, monster->x, monster->y, 0, 0, SIZEOFFREE1);
+    i = find_free_spot(monster->arch, monster, op->map, monster->x, monster->y, 0, 0, SIZEOFFREE1 + 1);
     if (i != -1)
     {
         monster->x += freearr_x[i];
