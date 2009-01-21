@@ -32,6 +32,17 @@
 
 static int static_walk_semaphore = FALSE; /* see walk_off/walk_on functions  */
 
+/* The following arrays contain information necessary to check up to a 7x7 grid
+ * of squares. */
+/* freearr_x/y contain the x and y offsets for the 48 squares. The array
+ * indices map to the squares as follows:
+ *   43 44 45 46 47 48 25
+ *   42 21 22 23 24 09 26
+ *   41 20 07 08 01 10 27
+ *   40 19 06 00 02 11 28
+ *   39 18 05 04 03 12 29
+ *   38 17 16 15 14 13 30
+ *   37 36 35 34 33 32 31 */
 int freearr_x[SIZEOFFREE] =
 {
     0,
@@ -48,6 +59,10 @@ int freearr_y[SIZEOFFREE] =
     -3, -3, -3, -3, -2, -1, 0, 1, 2, 3, 3, 3, 3, 3, 3, 3, 2, 1, 0, -1, -2, -3, -3, -3 /* SIZEOFFREE */
 };
 
+/* maxfree is now only used by free_dir(). It is used to cut a search short
+ * when a wall is encountered. However, it produces some highly suspect
+ * results. */
+/* TODO: Replace with the same LOS logic used in find_free_spot() -- Smacky 20090121 */
 int maxfree[SIZEOFFREE] =
 {
     0,
@@ -56,6 +71,7 @@ int maxfree[SIZEOFFREE] =
     49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49 /* SIZEOFFREE */
 };
 
+/* freedir is the dir from 00 (the central square) to each index square. */
 int freedir[SIZEOFFREE] =
 {
     0,
@@ -64,6 +80,8 @@ int freedir[SIZEOFFREE] =
     1, 2, 2, 2, 2, 2, 3, 4, 4, 4, 4, 4, 5, 6, 6, 6, 6, 6, 7, 8, 8, 8, 8, 8 /* SIZEOFFREE */
 };
 
+/* freeback and freeback2 are the indices you arrive at when you take one step
+ * from the current square towards the central square. */
 int freeback[SIZEOFFREE] =
 {
     0,
@@ -80,8 +98,176 @@ int freeback2[SIZEOFFREE] =
     9, 10, 11, 11, 11, 12, 13, 14, 15, 15, 15, 16, 17, 18, 19, 19, 19, 20, 21, 22, 22, 22, 23, 24 /* SIZEOFFREE */
 };
 
-/** Object management functions **/
+/* find_free_spot(archetype, object, map, x, y, ins_flags, start, stop) will
+ * search for a spot at the given map and coordinates which will be able to
+ * contain the given archetype.  start and stop specifies how many squares
+ * to search (see the freearr_x/y[] definition).
+ * It returns a random choice among the alternatives found.
+ * start and stop are where to start relative to the free_arr array (1,9
+ * does all 4 immediate directions).  This returns the index into the
+ * array of the free spot, -1 if no spot available (dir 0 = x,y)
+ * Note - this only checks to see if there is space for the head of the
+ * object - if it is a multispace object, this should be called for all
+ * pieces. */
+int find_free_spot(archetype *at, object *op, mapstruct *m, int x, int y, int ins_flags, int start, int stop)
+{
+    int         i,
+                index = 0;
+    static int  altern[SIZEOFFREE];
+    object     *terrain = (op && IS_LIVE(op)) ? op : NULL; // FIXME: Cheap solution
 
+    /* Prevent invalid indexing. */
+    start = MAX(0, MIN(start, SIZEOFFREE));
+    stop = MAX(0, MIN(stop, SIZEOFFREE));
+
+    for (i = start; i < stop; i++)
+    {
+        int bflag = 0;
+
+        /* The archetype won't fit. */
+        if (arch_blocked(at, terrain, m, x + freearr_x[i], y + freearr_y[i]))
+            continue;
+
+        if (i > 8 &&
+            ins_flags & INS_WITHIN_LOS)
+        {
+            int j;
+
+            for (j = freeback[i]; j; j = freeback[j])
+            {
+                if (wall(m, x + freearr_x[j], y + freearr_y[j]))
+                {
+                    bflag = 1;
+
+                    break;
+                }
+            }
+
+            if (wall(m, x + freearr_x[freeback2[i]], y + freearr_y[freeback2[i]]))
+                bflag = 1;
+        }
+
+        if (!bflag)
+            altern[index++] = i;
+    }
+
+    if (!index)
+        return -1;
+
+    return altern[RANDOM() % index];
+}
+
+/* find_first_free_spot(archetype, object, mapstruct, x, y) works like
+ * find_free_spot(), but it will search max number of squares.
+ * But it will return the first available spot, not a random choice.
+ * Changed 0.93.2: Have it return -1 if there is no free spot available. */
+int find_first_free_spot(archetype *at, object *op, mapstruct *m, int x, int y)
+{
+    int     i;
+    object *terrain = (op && IS_LIVE(op)) ? op : NULL; // FIXME: Cheap solution
+
+    for (i = 0; i < SIZEOFFREE; i++)
+    {
+        if (!arch_blocked(at, terrain, m, x + freearr_x[i], y + freearr_y[i]))
+            return i;
+    }
+
+    return -1;
+}
+
+/* find_dir(map, x, y, exclude) will search some close squares in the
+ * given map at the given coordinates for live objects.
+ * It will not considered the object given as exlude among possible
+ * live objects.
+ * It returns the direction toward the first/closest live object if finds
+ * any, otherwise 0. */
+int find_dir(mapstruct *m, int x, int y, object *exclude)
+{
+    int         i, xt, yt, max = SIZEOFFREE;
+    mapstruct  *mt;
+    object     *tmp;
+
+    if (exclude && exclude->head)
+        exclude = exclude->head;
+
+    for (i = 1; i < max; i++)
+    {
+        xt = x + freearr_x[i];
+        yt = y + freearr_y[i];
+        if (wall(m, xt, yt))
+            max = maxfree[i];
+        else
+        {
+            if (!(mt = out_of_map(m, &xt, &yt)))
+                continue;
+            tmp = GET_MAP_OB(mt, xt, yt);
+            while (tmp
+                != NULL
+                && ((tmp != NULL && !QUERY_FLAG(tmp, FLAG_MONSTER) && tmp->type != PLAYER)
+                 || (tmp == exclude || (tmp->head && tmp->head == exclude))))
+                tmp = tmp->above;
+            if (tmp != NULL)
+                return freedir[i];
+        }
+    }
+    return 0;
+}
+
+/* find_dir_2(delta-x,delta-y) will return a direction in which
+ * an object which has subtracted the x and y coordinates of another
+ * object, needs to travel toward it. */
+int find_dir_2(int x, int y)
+{
+    int q;
+    if (!y)
+        q = -300 * x;
+    else
+        q = x * 100 / y;
+    if (y > 0)
+    {
+        if (q < -242)
+            return 3 ;
+        if (q < -41)
+            return 2 ;
+        if (q < 41)
+            return 1 ;
+        if (q < 242)
+            return 8 ;
+        return 7 ;
+    }
+    if (q < -242)
+        return 7 ;
+    if (q < -41)
+        return 6 ;
+    if (q < 41)
+        return 5 ;
+    if (q < 242)
+        return 4 ;
+    return 3 ;
+}
+
+/* absdir(int): Returns a number between 1 and 8, which represent
+ * the "absolute" direction of a number (it actually takes care of
+ * "overflow" in previous calculations of a direction). */
+int absdir(int d)
+{
+    if (d < 1)
+        d +=((uint32)((d/-8)*8))+8;
+    if (d > 8)
+        d -= ((uint32)((d-1)/8))*8;
+    return d;
+}
+
+/* dirdiff(dir1, dir2) returns how many 45-degrees differences there is
+ * between two directions (which are expected to be absolute (see absdir()) */
+int dirdiff(int dir1, int dir2)
+{
+    int d;
+    d = abs(dir1 - dir2);
+    if (d > 4)
+        d = 8 - d;
+    return d;
+}
 
 /*
  * Utility functions for inserting & removing objects
@@ -2689,195 +2875,6 @@ object *present_arch_in_ob_temp(archetype *at, object *op)
         if (tmp->arch == at && QUERY_FLAG(tmp,FLAG_IS_USED_UP))
             return tmp;
     return NULL;
-}
-
-/*
- * find_free_spot(archetype, object, map, x, y, ins_flags, start, stop) will
- * search for a spot at the given map and coordinates which will be able to
- * contain the given archetype.  start and stop specifies how many squares
- * to search (see the freearr_x/y[] definition).
- * It returns a random choice among the alternatives found.
- * start and stop are where to start relative to the free_arr array (1,9
- * does all 4 immediate directions).  This returns the index into the
- * array of the free spot, -1 if no spot available (dir 0 = x,y)
- * Note - this only checks to see if there is space for the head of the
- * object - if it is a multispace object, this should be called for all
- * pieces.
- */
-
-int find_free_spot(archetype *at, object *op, mapstruct *m, int x, int y, int ins_flags, int start, int stop)
-{
-    int         i,
-                index = 0;
-    static int  altern[SIZEOFFREE];
-    object     *terrain = (op && IS_LIVE(op)) ? op : NULL; // FIXME: Cheap solution
-
-    /* Prevent invalid indexing. */
-    start = MAX(0, MIN(start, SIZEOFFREE));
-    stop = MAX(0, MIN(stop, SIZEOFFREE));
-
-    for (i = start; i < stop; i++)
-    {
-        int bflag = 0;
-
-        /* The archetype won't fit. */
-        if (arch_blocked(at, terrain, m, x + freearr_x[i], y + freearr_y[i]))
-            continue;
-
-        if (i > 8 &&
-            ins_flags & INS_WITHIN_LOS)
-        {
-            int j;
-
-            for (j = freeback[i]; j; j = freeback[j])
-            {
-                if (wall(m, x + freearr_x[j], y + freearr_y[j]))
-                {
-                    bflag = 1;
-
-                    break;
-                }
-            }
-
-            if (wall(m, x + freearr_x[freeback2[i]], y + freearr_y[freeback2[i]]))
-                bflag = 1;
-        }
-
-        if (!bflag)
-            altern[index++] = i;
-    }
-
-    if (!index)
-        return -1;
-
-    return altern[RANDOM() % index];
-}
-
-/*
- *
- * find_first_free_spot(archetype, object, mapstruct, x, y) works like
- * find_free_spot(), but it will search max number of squares.
- * But it will return the first available spot, not a random choice.
- * Changed 0.93.2: Have it return -1 if there is no free spot available.
- */
-
-int find_first_free_spot(archetype *at, object *op, mapstruct *m, int x, int y)
-{
-    int     i;
-    object *terrain = (op && IS_LIVE(op)) ? op : NULL; // FIXME: Cheap solution
-
-    for (i = 0; i < SIZEOFFREE; i++)
-    {
-        if (!arch_blocked(at, terrain, m, x + freearr_x[i], y + freearr_y[i]))
-            return i;
-    }
-    return -1;
-}
-
-/*
- * find_dir(map, x, y, exclude) will search some close squares in the
- * given map at the given coordinates for live objects.
- * It will not considered the object given as exlude among possible
- * live objects.
- * It returns the direction toward the first/closest live object if finds
- * any, otherwise 0.
- */
-
-int find_dir(mapstruct *m, int x, int y, object *exclude)
-{
-    int         i, xt, yt, max = SIZEOFFREE;
-    mapstruct  *mt;
-    object     *tmp;
-
-    if (exclude && exclude->head)
-        exclude = exclude->head;
-
-    for (i = 1; i < max; i++)
-    {
-        xt = x + freearr_x[i];
-        yt = y + freearr_y[i];
-        if (wall(m, xt, yt))
-            max = maxfree[i];
-        else
-        {
-            if (!(mt = out_of_map(m, &xt, &yt)))
-                continue;
-            tmp = GET_MAP_OB(mt, xt, yt);
-            while (tmp
-                != NULL
-                && ((tmp != NULL && !QUERY_FLAG(tmp, FLAG_MONSTER) && tmp->type != PLAYER)
-                 || (tmp == exclude || (tmp->head && tmp->head == exclude))))
-                tmp = tmp->above;
-            if (tmp != NULL)
-                return freedir[i];
-        }
-    }
-    return 0;
-}
-
-/*
- * find_dir_2(delta-x,delta-y) will return a direction in which
- * an object which has subtracted the x and y coordinates of another
- * object, needs to travel toward it.
- */
-
-int find_dir_2(int x, int y)
-{
-    int q;
-    if (!y)
-        q = -300 * x;
-    else
-        q = x * 100 / y;
-    if (y > 0)
-    {
-        if (q < -242)
-            return 3 ;
-        if (q < -41)
-            return 2 ;
-        if (q < 41)
-            return 1 ;
-        if (q < 242)
-            return 8 ;
-        return 7 ;
-    }
-    if (q < -242)
-        return 7 ;
-    if (q < -41)
-        return 6 ;
-    if (q < 41)
-        return 5 ;
-    if (q < 242)
-        return 4 ;
-    return 3 ;
-}
-
-/*
- * absdir(int): Returns a number between 1 and 8, which represent
- * the "absolute" direction of a number (it actually takes care of
- * "overflow" in previous calculations of a direction).
- */
-
-int absdir(int d)
-{
-    if (d < 1)
-        d +=((uint32)((d/-8)*8))+8;
-    if (d > 8)
-        d -= ((uint32)((d-1)/8))*8;
-    return d;
-}
-
-/*
- * dirdiff(dir1, dir2) returns how many 45-degrees differences there is
- * between two directions (which are expected to be absolute (see absdir())
- */
-
-int dirdiff(int dir1, int dir2)
-{
-    int d;
-    d = abs(dir1 - dir2);
-    if (d > 4)
-        d = 8 - d;
-    return d;
 }
 
 /*
