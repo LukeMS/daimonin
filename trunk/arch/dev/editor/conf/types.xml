@@ -144,6 +144,9 @@
   <attribute arch="is_turnable" editor="is turnable" type="bool">
   System flag. Object can be turned to the directions.
   </attribute>
+  <attribute arch="terrain_flag" editor="can move on" type="bitmask_terrain">
+    Defines on which kind of terrain this object can move/be moved.
+  </attribute>
   <attribute arch="speed_left" editor="start speed" type="float">
     NOTE: without speed != 0, this value is not used. Only use
     for objects with speed (active objects)!
@@ -611,11 +614,6 @@
   </description>
   <attribute arch_begin="msg" arch_end="endmsg" editor="description" type="text">
     This text may describe the object.
-  </attribute>
-    <attribute arch="terrain_flag" editor="can move on" type="bitmask_terrain">
-    These settings define on which kind of terrain this
-    object can be pushed to. If set to nothing, the object will not move.
-    The flag moveable must also be set to allow pushing.
   </attribute>
 </type>
 
