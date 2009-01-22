@@ -605,7 +605,7 @@ mapstruct *enter_map_by_name(object *op, const char *path, const char *src_path,
     }
 
     /* have in mind that op can be destroyed by enter_map() */
-    enter_map(op, NULL, newmap, x, y, flags);
+    enter_map(op, NULL, newmap, x, y, flags, 0);
 
     return newmap;
 }
@@ -778,7 +778,7 @@ int enter_map_by_exit(object *op, object *exit_ob)
         flags |=  MAP_STATUS_RANDOM_POS;
 
     /* if 1 was returned from enter_map() object was destroyed in the meantime! */
-    if(enter_map( op, NULL, newmap, EXIT_X(exit_ob), EXIT_Y(exit_ob), flags))
+    if(enter_map( op, NULL, newmap, EXIT_X(exit_ob), EXIT_Y(exit_ob), flags, INS_NO_FORCE | INS_WITHIN_LOS))
         return FALSE;
 
     /* some "exits" like a pit will move you for sure to a new map - but for a price ... */
@@ -837,7 +837,7 @@ static void enter_random_map(object *pl, object *exit_ob)
         y = EXIT_Y(exit_ob) = MAP_ENTER_Y(new_map);
         FREE_AND_COPY_HASH(EXIT_PATH(exit_ob), newmap_name);
         FREE_AND_COPY_HASH(new_map->path, newmap_name);
-        enter_map(pl, new_map, x, y, 0);
+        enter_map(pl, new_map, x, y, 0, 0);
     }
 }
 #endif
@@ -927,12 +927,11 @@ int check_insertion_allowed(object *op, mapstruct *map, int x, int y, int mode, 
 * player to - it could be the map he just came from.
 * The place the object is put on is x,y. Depending on setting MAP_STATUS_FIXED_POS
 * the function tries to find a free spot around it or use it as fixed position.
-* @return 1 if object was destroyed, 0 otherwise.
+* @return 0 if successful, 1 if object was destroyed, 2 if insertion failed.
 */
-int enter_map(object *op, object *originator, mapstruct *newmap, int x, int y, int flags)
+int enter_map(object *op, object *originator, mapstruct *newmap, int x, int y, int flags, int ins_flags)
 {
     int        mode,
-               ins_flags = INS_WITHIN_LOS,
                i;
     object    *tmp;
     mapstruct *oldmap = op->map;
@@ -974,7 +973,7 @@ int enter_map(object *op, object *originator, mapstruct *newmap, int x, int y, i
         ins_flags |= INS_NO_FORCE;
 
     if ((i = check_insertion_allowed(op, newmap, x, y, mode, ins_flags)) == -1)
-        return 0;
+        return 2; // insertion failed
 
     /* If it is a player login, he has yet to be inserted anyplace.
     * otherwise, we need to deal with removing the playe here.
@@ -983,7 +982,7 @@ int enter_map(object *op, object *originator, mapstruct *newmap, int x, int y, i
     {
         remove_ob(op);
         if (check_walk_off(op, originator, MOVE_APPLY_DEFAULT) != CHECK_WALK_OK)
-            return 1;
+            return 1; // object destroyed
     }
 
 #if 0
@@ -1000,14 +999,18 @@ int enter_map(object *op, object *originator, mapstruct *newmap, int x, int y, i
     };
 #endif
 
+    x += freearr_x[i];
+    y += freearr_y[i];
+
     /* set single or all part of a multi arch */
-    for (tmp = op; tmp != NULL; tmp = tmp->more)
+    for (tmp = op; tmp; tmp = tmp->more)
     {
-        tmp->x = tmp->arch->clone.x + x + freearr_x[i];
-        tmp->y = tmp->arch->clone.y + y + freearr_y[i];
+        tmp->x = x + tmp->arch->clone.x;
+        tmp->y = y + tmp->arch->clone.y;
     }
+
     if (!insert_ob_in_map(op, newmap, originator, 0))
-        return 1;
+        return 1; // object destroyed
 
     newmap->timeout = 0;
 
@@ -1019,7 +1022,7 @@ int enter_map(object *op, object *originator, mapstruct *newmap, int x, int y, i
         /* Update any golems */
         if (pl->golem != NULL)
         {
-            int i   = find_free_spot(pl->golem->arch, op, newmap, x, y, 1, 1, SIZEOFFREE);
+            int i   = find_free_spot(pl->golem->arch, op, newmap, x, y, INS_WITHIN_LOS, 1, SIZEOFFREE);
 
             remove_ob(pl->golem);
             if (check_walk_off(pl->golem, NULL, MOVE_APPLY_VANISHED) != CHECK_WALK_OK)
@@ -1061,5 +1064,6 @@ int enter_map(object *op, object *originator, mapstruct *newmap, int x, int y, i
         swap_below_max(newmap->path);
 #endif
     }
-    return 0;
+
+    return 0; // success!
 }

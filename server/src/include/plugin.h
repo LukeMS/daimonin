@@ -361,7 +361,7 @@ struct plugin_hooklist
     char *(*normalize_path)(const char *src, const char *dst, char *path);
     mapstruct *(*enter_map_by_name)(object *op, const char *path, const char *src_path, int x, int y, int flags);
     int (*enter_map_by_exit)(object *op, object *exit_ob);
-    int (*enter_map)(object *op, object *originator, mapstruct *newmap, int x, int y, int flags);
+    int (*enter_map)(object *op, object *originator, mapstruct *newmap, int x, int y, int flags, int ins_flags);
     const char *(*create_instance_path_sh)(player * const pl, const char * const name, int flags);
     void (*clean_tmp_map)(mapstruct *m);
     int (*map_to_player_unlink)(mapstruct *m);
