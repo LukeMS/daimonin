@@ -269,12 +269,13 @@ typedef struct obj
 /* These are flags passed to insert_ob_in_map(), insert_ob_in_ob(),
  * find_free_spot(), and check_insertion_allowed(). Note that not all flags are
  * meaningful for all functions. */
-#define INS_NO_MERGE    0x0001
-#define INS_NO_WALK_ON  0x0002
+#define INS_NO_MERGE       0x0001
+#define INS_NO_WALK_ON     0x0002
 /* used intern from insert_xx to track multiarch problems - don't use! */
-#define INS_TAIL_MARKER 0x0004
-#define INS_NO_FORCE    0x0008
-#define INS_WITHIN_LOS  0x0010
+#define INS_TAIL_MARKER    0x0004
+#define INS_NO_FORCE       0x0008
+#define INS_WITHIN_LOS     0x0010
+#define INS_IGNORE_TERRAIN 0x0020
 
 /* Waypoint macros */
 #define WP_FLAG_ACTIVE      FLAG_CURSED
