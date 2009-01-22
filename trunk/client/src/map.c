@@ -723,11 +723,19 @@ void map_draw_map(void)
 //                                        if (y < (MAP_MAX_SIZE - 1) / 2)
 //                                            sprite_blt_map(face_sprite, xl, yl - 22, NULL, &bltfx, 0);
 //                                    }
+#if 0
                                     if ((FaceList[index].flags & FACE_FLAG_D3) || (FaceList[index].flags & FACE_FLAG_D1))
                                     {
                                         if (x < (MAP_MAX_SIZE - 1) / 2 || y < (MAP_MAX_SIZE - 1) / 2)
                                             sprite_blt_map(face_sprite, xl, yl - 22, NULL, &bltfx, 0);
                                     }
+#else
+                                     /* We don't care about the Dx flags on
+                                      * DOUBLE images because our draw area is
+                                      * symmetrical. */
+                                    if (x < (MAP_MAX_SIZE - 1) / 2 || y < (MAP_MAX_SIZE - 1) / 2)
+                                        sprite_blt_map(face_sprite, xl, yl - 22, NULL, &bltfx, 0);
+#endif
                                 }
                             }
 
