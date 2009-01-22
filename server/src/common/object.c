@@ -114,7 +114,9 @@ int find_free_spot(archetype *at, object *op, mapstruct *m, int x, int y, int in
     int         i,
                 index = 0;
     static int  altern[SIZEOFFREE];
-    object     *terrain = (op && IS_LIVE(op)) ? op : NULL; // FIXME: Cheap solution
+    object     *terrain = (op &&
+                           op->terrain_flag &&
+                           !(ins_flags & INS_IGNORE_TERRAIN)) ? op : NULL;
 
     /* Prevent invalid indexing. */
     start = MAX(0, MIN(start, SIZEOFFREE));
@@ -164,7 +166,7 @@ int find_free_spot(archetype *at, object *op, mapstruct *m, int x, int y, int in
 int find_first_free_spot(archetype *at, object *op, mapstruct *m, int x, int y)
 {
     int     i;
-    object *terrain = (op && IS_LIVE(op)) ? op : NULL; // FIXME: Cheap solution
+    object *terrain = (op && op->terrain_flag) ? op : NULL;
 
     for (i = 0; i < SIZEOFFREE; i++)
     {
