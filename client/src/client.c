@@ -189,12 +189,39 @@ static void face_flag_extension(int pnum, char *buf)
                 goto finish_face_cmd_j1;
         }
         /* lets set the right flags for the tags */
+#if 0
         if (((FaceList[pnum].flags & FACE_FLAG_UP) && *(stemp + tc) == '5') || *(stemp + tc) == '1')
             FaceList[pnum].flags |= FACE_FLAG_D1;
         else if (*(stemp + tc) == '3')
             FaceList[pnum].flags |= FACE_FLAG_D3;
         else if (*(stemp + tc) == '4' || *(stemp + tc) == '8' || *(stemp + tc) == '0')
             FaceList[pnum].flags |= (FACE_FLAG_D3 | FACE_FLAG_D1);
+#else
+        /* The Dx flags are only relevant to UP images (see map.c). */
+        if ((FaceList[pnum].flags & FACE_FLAG_UP))
+        {
+            switch (*(stemp + tc))
+            {
+                case '0':
+                case '2':
+                case '4':
+                case '6':
+                case '8':
+                    FaceList[pnum].flags |= (FACE_FLAG_D3 | FACE_FLAG_D1);
+                    break;
+
+                case '1':
+                case '5':
+                    FaceList[pnum].flags |= FACE_FLAG_D1;
+                    break;
+
+                case '3':
+                case '7':
+                    FaceList[pnum].flags |= FACE_FLAG_D3;
+                    break;
+            }
+        }
+#endif
     }
 finish_face_cmd_j1: /* error jump from for() */
     return;
