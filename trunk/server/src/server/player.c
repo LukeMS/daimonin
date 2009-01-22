@@ -734,7 +734,7 @@ void kill_player(object *op)
         }
 
         /* teleport defeated player to new destination*/
-        enter_map(op, NULL, op->map, x, y, 0);
+        enter_map(op, NULL, op->map, x, y, 0, 0);
         return;
     }
 

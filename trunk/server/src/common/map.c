@@ -2450,7 +2450,7 @@ void map_to_player_link(mapstruct *m, int x, int y, int flag)
         {
             pl->dm_removed_from_map = 0;
             if(m)
-                enter_map(pl->ob, NULL, m, x==-1?pl->ob->x:x, y==-1?pl->ob->y:y, m->map_status);
+                enter_map(pl->ob, NULL, m, (x == -1) ? pl->ob->x :x, (y == -1) ? pl->ob->y : y, m->map_status, 0);
             else if(!flag)
                 enter_map_by_name(pl->ob, pl->savebed_map, pl->orig_savebed_map, pl->bed_x, pl->bed_y, pl->bed_status);
             else /* if flag == TRUE move to emergency map! */

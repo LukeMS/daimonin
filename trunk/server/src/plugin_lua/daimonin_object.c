@@ -616,23 +616,31 @@ int GameObject_init(lua_State *L)
 /* FUNCTIONSTART -- Here all the Lua plugin functions come */
 /*****************************************************************************/
 /* Name   : GameObject_SetPosition                                           */
-/* Lua    : object:SetPosition(map, x, y, flags)                             */
-/* Info   : Teleports op to x,y of object.map or map (when given).           */
+/* Lua    : object:SetPosition(map, x, y, mode, ins_flags)                   */
+/* Info   : Teleports op to x,y of object.map or map (when given) according  */
+/*          to mode and ins_flags.                                           */
 /*          WARNING: a script developer must have in mind that SetPosition() */
 /*          can result in the destruction of the transferred object. The     */
 /*          return value is important to check!                              */
-/*          flags are:                                                       */
-/*            game.MFLAG_FIXED_POS - fixed location                          */
-/*            game.MFLAG_RANDOM_POS_1 - random location, 1 square radius     */
-/*            game.MFLAG_RANDOM_POS_2 - random location, 2 square radius     */
-/*            game.MFLAG_RANDOM_POS_3 - random location, 3 square radius     */
-/*            game.MFLAG_RANDOM_POS - random location, progressive radius    */
+/*          mode is:                                                         */
+/*            game.MFLAG_FIXED_POS - fixed location.                         */
+/*            game.MFLAG_RANDOM_POS_1 - random location, 1 square radius.    */
+/*            game.MFLAG_RANDOM_POS_2 - random location, 2 square radius.    */
+/*            game.MFLAG_RANDOM_POS_3 - random location, 3 square radius.    */
+/*            game.MFLAG_RANDOM_POS - random location, progressive radius.   */
 /*            game.MFLAG_FREE_POS_ONLY - first available location/free spot  */
 /*              only.                                                        */
 /*          Of these, the first five are in order of precedence while the    */
 /*          last may be used in conjunction with any of the others or on its */
-/*          own (IOW only the last is actually a flag). If none are given    */
-/*          the default is fixed location.                                   */
+/*          own (IOW the last is actually flag). If none are, given the      */
+/*          default is fixed location.                                       */
+/*          ins_flags are any combination of zero or more of:                */
+/*            game.INS_NO_FORCE - do not insert at the default spot if no    */
+/*              free spot is found.                                          */
+/*            game.INS_WITHIN_LOS - insert only within LOS of default spot.  */
+/*            game.INS_IGNORE_TERRAIN - ignore terrain when deciding if a    */
+/*              spot is free.                                                */
+/*          If none are given, the default is ignore terrain.                */ 
 /*          Examples:                                                        */
 /*          obj:SetPosition(x, y) - same as obj:SetPosition(obj.map, x,y)    */
 /*          obj:SetPosition(game:ReadyMap("/a_map"), x, y) - multiplayer map */
@@ -649,6 +657,8 @@ static int GameObject_SetPosition(lua_State *L)
     int         x,
                 y,
                 flags = MAP_STATUS_FIXED_POS,
+                ins_flags = INS_IGNORE_TERRAIN,
+                mode,
                 ret;
 
     /* Small hack to allow optional first map parameter */
@@ -656,18 +666,18 @@ static int GameObject_SetPosition(lua_State *L)
     {
         lua_object *where;
 
-        get_lua_args(L, "OMii|i", &self, &where, &x, &y, &flags);
+        get_lua_args(L, "OMii|ii", &self, &where, &x, &y, &flags, &ins_flags);
         new_map = where->data.map;
     }
     else
     {
-        get_lua_args(L, "Oii|i", &self, &x, &y, &flags);
+        get_lua_args(L, "Oii|ii", &self, &x, &y, &flags, &ins_flags);
 
         if((new_map = WHO->map) == NULL)
             luaL_error(L, "Short-form of SetPosition() used, but the object didn't have a map");
     }
 
-    ret = hooks->enter_map(WHO, NULL, new_map, x, y, flags);
+    ret = hooks->enter_map(WHO, NULL, new_map, x, y, flags, ins_flags);
     lua_pushnumber(L, ret);
 
     return 1;

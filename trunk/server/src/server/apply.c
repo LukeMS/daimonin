@@ -1111,7 +1111,7 @@ static int apply_shop_mat(object *shop_mat, object *op)
             int i   = find_free_spot(op->arch, op, op->map, op->x, op->y, 0, 1, SIZEOFFREE1 + 1);
             if (i != -1)
             {
-                rv = enter_map(op, shop_mat, op->map,op->x + freearr_x[i], op->y + freearr_y[i], MAP_STATUS_FIXED_POS);
+                rv = enter_map(op, shop_mat, op->map,op->x + freearr_x[i], op->y + freearr_y[i], MAP_STATUS_FIXED_POS, 0);
             }
         }
         /* Removed code that checked for multipart objects - it appears that

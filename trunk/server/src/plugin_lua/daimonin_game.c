@@ -173,6 +173,11 @@ static struct constant_decl Game_constants[] =
     {"MFLAG_LOAD_ONLY",     MAP_STATUS_LOAD_ONLY},
     {"MFLAG_FIXED_LOGIN",   MAP_STATUS_FIXED_LOGIN},
 
+    /* insertion flags (object.h) */
+    {"INS_NO_FORCE",       INS_NO_FORCE},
+    {"INS_WITHIN_LOS",     INS_WITHIN_LOS},
+    {"INS_IGNORE_TERRAIN", INS_IGNORE_TERRAIN},
+
     /* quest trigger sub types (define.h) */
     {"QUEST_NORMAL",   ST1_QUEST_TRIGGER_NORMAL},
     {"QUEST_KILL",     ST1_QUEST_TRIGGER_KILL},

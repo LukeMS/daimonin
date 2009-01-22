@@ -910,7 +910,7 @@ void move_teleporter(object *op)
             if(trigger_object_plugin_event(EVENT_TRIGGER,
                         op, tmp, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
                     continue;
-            enter_map(tmp, op, tmp->map, EXIT_X(op), EXIT_Y(op), 0);
+            enter_map(tmp, op, tmp->map, EXIT_X(op), EXIT_Y(op), 0, INS_NO_FORCE | INS_WITHIN_LOS);
         }
         else
         {
