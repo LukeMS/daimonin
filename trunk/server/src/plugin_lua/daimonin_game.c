@@ -46,7 +46,9 @@ static struct method_decl Game_methods[] =
     {NULL, NULL}
 };
 
-static struct constant_decl Game_constants[] =
+static struct constant_decl *Game_constants = NULL;
+
+static struct constant_decl preset_game_constants[] =
 {
     /* directions (constants not defined by server) */
     {"NORTH",     1},
@@ -196,94 +198,6 @@ static struct constant_decl Game_constants[] =
     {"GUILD_IN",  ST1_GUILD_IN},
     {"GUILD_OLD", ST1_GUILD_OLD},
 
-    /* soundtypes (sounds.h) */
-    {"SOUNDTYPE_NORMAL", SOUND_NORMAL},
-    {"SOUNDTYPE_SPELL",  SOUND_SPELL},
-
-    /* normal sounds (sounds.h) */
-    {"SOUND_LEVEL_UP",       SOUND_LEVEL_UP},
-    {"SOUND_FIRE_ARROW",     SOUND_FIRE_ARROW},
-    {"SOUND_LEARN_SPELL",    SOUND_LEARN_SPELL},
-    {"SOUND_FUMBLE_SPELL",   SOUND_FUMBLE_SPELL},
-    {"SOUND_WAND_POOF",      SOUND_WAND_POOF},
-    {"SOUND_OPEN_DOOR",      SOUND_OPEN_DOOR},
-    {"SOUND_PUSH_PLAYER",    SOUND_PUSH_PLAYER},
-    {"SOUND_HIT_IMPACT",     SOUND_HIT_IMPACT},
-    {"SOUND_HIT_CLEAVE",     SOUND_HIT_CLEAVE},
-    {"SOUND_HIT_SLASH",      SOUND_HIT_SLASH},
-    {"SOUND_HIT_PIERCE",     SOUND_HIT_PIERCE},
-    {"SOUND_MISS_BLOCK",     SOUND_MISS_BLOCK},
-    {"SOUND_MISS_HAND",      SOUND_MISS_HAND},
-    {"SOUND_MISS_MOB",       SOUND_MISS_MOB},
-    {"SOUND_MISS_PLAYER",    SOUND_MISS_PLAYER},
-    {"SOUND_PET_IS_KILLED",  SOUND_PET_IS_KILLED},
-    {"SOUND_PLAYER_DIES",    SOUND_PLAYER_DIES},
-    {"SOUND_OB_EVAPORATE",   SOUND_OB_EVAPORATE},
-    {"SOUND_OB_EXPLODE",     SOUND_OB_EXPLODE},
-    {"SOUND_PLAYER_KILLS",   SOUND_PLAYER_KILLS},
-    {"SOUND_TURN_HANDLE",    SOUND_TURN_HANDLE},
-    {"SOUND_FALL_HOLE",      SOUND_FALL_HOLE},
-    {"SOUND_DRINK_POISON",   SOUND_DRINK_POISON},
-    {"SOUND_DROP_THROW",     SOUND_DROP_THROW},
-    {"SOUND_LOSE_SOME",      SOUND_LOSE_SOME},
-    {"SOUND_THROW",          SOUND_THROW},
-    {"SOUND_GATE_OPEN",      SOUND_GATE_OPEN},
-    {"SOUND_GATE_CLOSE",     SOUND_GATE_CLOSE},
-    {"SOUND_OPEN_CONTAINER", SOUND_OPEN_CONTAINER},
-    {"SOUND_GROWL",          SOUND_GROWL},
-    {"SOUND_ARROW_HIT",      SOUND_ARROW_HIT},
-    {"SOUND_DOOR_CLOSE",     SOUND_DOOR_CLOSE},
-    {"SOUND_TELEPORT",       SOUND_TELEPORT},
-    {"SOUND_CLICK",          SOUND_CLICK},
-
-    /* spell sounds (sounds.h) */
-    {"SOUND_MAGIC_DEFAULT",     SOUND_MAGIC_DEFAULT},
-    {"SOUND_MAGIC_ACID",        SOUND_MAGIC_ACID},
-    {"SOUND_MAGIC_ANIMATE",     SOUND_MAGIC_ANIMATE},
-    {"SOUND_MAGIC_AVATAR",      SOUND_MAGIC_AVATAR},
-    {"SOUND_MAGIC_BOMB",        SOUND_MAGIC_BOMB},
-    {"SOUND_MAGIC_BULLET1",     SOUND_MAGIC_BULLET1},
-    {"SOUND_MAGIC_BULLET2",     SOUND_MAGIC_BULLET2},
-    {"SOUND_MAGIC_CANCEL",      SOUND_MAGIC_CANCEL},
-    {"SOUND_MAGIC_COMET",       SOUND_MAGIC_COMET},
-    {"SOUND_MAGIC_CONFUSION",   SOUND_MAGIC_CONFUSION},
-    {"SOUND_MAGIC_CREATE",      SOUND_MAGIC_CREATE},
-    {"SOUND_MAGIC_DARK",        SOUND_MAGIC_DARK},
-    {"SOUND_MAGIC_DEATH",       SOUND_MAGIC_DEATH},
-    {"SOUND_MAGIC_DESTRUCTION", SOUND_MAGIC_DESTRUCTION},
-    {"SOUND_MAGIC_ELEC",        SOUND_MAGIC_ELEC},
-    {"SOUND_MAGIC_FEAR",        SOUND_MAGIC_FEAR},
-    {"SOUND_MAGIC_FIRE",        SOUND_MAGIC_FIRE},
-    {"SOUND_MAGIC_FIREBALL1",   SOUND_MAGIC_FIREBALL1},
-    {"SOUND_MAGIC_FIREBALL2",   SOUND_MAGIC_FIREBALL2},
-    {"SOUND_MAGIC_HWORD",       SOUND_MAGIC_HWORD},
-    {"SOUND_MAGIC_ICE",         SOUND_MAGIC_ICE},
-    {"SOUND_MAGIC_INVISIBLE",   SOUND_MAGIC_INVISIBLE},
-    {"SOUND_MAGIC_INVOKE",      SOUND_MAGIC_INVOKE},
-    {"SOUND_MAGIC_INVOKE2",     SOUND_MAGIC_INVOKE2},
-    {"SOUND_MAGIC_MAGIC",       SOUND_MAGIC_MAGIC},
-    {"SOUND_MAGIC_MANABALL",    SOUND_MAGIC_MANABALL},
-    {"SOUND_MAGIC_MISSILE",     SOUND_MAGIC_MISSILE},
-    {"SOUND_MAGIC_MMAP",        SOUND_MAGIC_MMAP},
-    {"SOUND_MAGIC_ORB",         SOUND_MAGIC_ORB},
-    {"SOUND_MAGIC_PARALYZE",    SOUND_MAGIC_PARALYZE},
-    {"SOUND_MAGIC_POISON",      SOUND_MAGIC_POISON},
-    {"SOUND_MAGIC_PROTECTION",  SOUND_MAGIC_PROTECTION},
-    {"SOUND_MAGIC_RSTRIKE",     SOUND_MAGIC_RSTRIKE},
-    {"SOUND_MAGIC_RUNE",        SOUND_MAGIC_RUNE},
-    {"SOUND_MAGIC_SBALL",       SOUND_MAGIC_SBALL},
-    {"SOUND_MAGIC_SLOW",        SOUND_MAGIC_SLOW},
-    {"SOUND_MAGIC_SNOWSTORM",   SOUND_MAGIC_SNOWSTORM},
-    {"SOUND_MAGIC_STAT",        SOUND_MAGIC_STAT},
-    {"SOUND_MAGIC_STEAMBOLT",   SOUND_MAGIC_STEAMBOLT},
-    {"SOUND_MAGIC_SUMMON1",     SOUND_MAGIC_SUMMON1},
-    {"SOUND_MAGIC_SUMMON2",     SOUND_MAGIC_SUMMON2},
-    {"SOUND_MAGIC_SUMMON3",     SOUND_MAGIC_SUMMON3},
-    {"SOUND_MAGIC_TELEPORT",    SOUND_MAGIC_TELEPORT},
-    {"SOUND_MAGIC_TURN",        SOUND_MAGIC_TURN},
-    {"SOUND_MAGIC_WALL",        SOUND_MAGIC_WALL},
-    {"SOUND_MAGIC_WALL2",       SOUND_MAGIC_WALL2},
-    {"SOUND_MAGIC_WOUND",       SOUND_MAGIC_WOUND},
 
     /* Argh, the object types. Make sure to keep up-to date if any are added/removed (define.h) */
     {"TYPE_PLAYER",           PLAYER},
@@ -586,9 +500,8 @@ static struct constant_decl Game_constants[] =
     /* Target modes (commands.h) */
     {"TARGET_ENEMY",  TARGET_ENEMY},
     {"TARGET_FRIEND", TARGET_FRIEND},
-    {"TARGET_SELF",   TARGET_SELF},
+    {"TARGET_SELF",   TARGET_SELF}
 
-    {NULL, 0}
 };
 
 lua_class Game =
@@ -599,7 +512,7 @@ lua_class Game =
     NULL,
     NULL,
     Game_methods,
-    Game_constants,
+    NULL,   /* address of Game_constants set in Game_init */
     NULL,
     NULL,
     NULL,
@@ -610,11 +523,162 @@ lua_class Game =
 
 int Game_init(lua_State *L)
 {
+    int     i;
+    char    buf[64];
+    char    string[64];
+    char    name[32];
+    char    prefix[32];
+    FILE    *sf;
+    size_t  size_presets = sizeof(preset_game_constants);
+    int     num_presets = size_presets / sizeof(struct constant_decl);
+    int     start_found = 0;
+    int     type_count  = 0;
+    int     sound_count = 0;
+    int     num_sounds  = 0;
+    size_t  size_sounds = 0;
+    int     index;
+
+    // Try to open sound file
+    if (!(sf = fopen(SOUNDS_FILE, "r")))
+    {
+        LOG(llevBug,"ERROR: Can't find file %s.\n", SOUNDS_FILE);
+    }
+    else
+    {
+        // Quick-scan the file to count number of soundtype and sound entries
+        while (fgets(buf, sizeof(buf), sf) != NULL)
+        {
+            // Strip trailing newline character(s) (allow for \r\n or \n)
+            buf[strcspn(buf, "\r\n")] = '\0';
+
+            if ((strlen(buf) == 0) || (buf[0] == '#'))
+                continue;
+
+            if (!strcmp(buf, "*end"))
+                break;
+
+            if (strncmp(buf, "*start", 6) == 0)
+            {
+                strtok(buf, "|"); // discard *start
+                sscanf(strtok(NULL, "|"), "%d", &type_count); // count of soundtypes
+            }
+            else if ((type_count > 0) && (buf[0] == '*'))
+            {
+                // New soundtype
+                type_count--;
+                strtok(buf, "|");   // discard type id this time
+                strtok(NULL, "|");  // discard type name this time
+                strtok(NULL, "|");  // discard prefix this time
+                sscanf(strtok(NULL, "|"), "%d", &sound_count);  // number of sounds in this section
+                num_sounds += sound_count + 1;      // number of sounds plus soundtype entry
+            }
+
+            // If all sound types processed, leave the loop
+            if (type_count == 0)
+                break;
+        }
+
+        // Rewind the file ready for the re-scan for all the info
+        rewind(sf);
+    }
+
+    // Calculate space required for sounds entries
+    size_sounds = num_sounds * sizeof(struct constant_decl);
+
+    // Allocate space for preset constants + sounds constants + terminator
+    Game_constants = malloc(size_presets + size_sounds + sizeof(struct constant_decl));
+
+    // Copy the preset constants
+    for (i = 0; i < num_presets; i++)
+    {
+        Game_constants[i].name  = preset_game_constants[i].name;
+        Game_constants[i].value = preset_game_constants[i].value;
+    }
+
+    // If the sounds file was successfully opened, scan for sound types and sounds
+    // and append the entries to the Game_constants array
+    if (sf)
+    {
+        // Index into Game_constants array starts at num_presets
+        index = num_presets;
+
+        while (fgets(buf, sizeof(buf), sf) != NULL)
+        {
+            // Strip trailing newline character(s) (allow for \r\n or \n)
+            buf[strcspn(buf, "\r\n")] = '\0';
+
+            if ((strlen(buf) == 0) || (buf[0] == '#'))
+                continue;
+
+            if (!strcmp(buf, "*end"))
+                break;
+
+            // Do nothing until start line passed
+            if (!start_found)
+            {
+                if (strncmp(buf, "*start", 6) == 0)
+                    start_found = 1;
+            }
+            else if (buf[0] == '*')
+            {
+                // sound type line
+                // store the id
+                sscanf(strtok(buf, "|"), "*%d", &Game_constants[index].value);
+
+                // get the name, uppercase it and prefix with "SOUNDTYPE_"
+                strcpy(name, strtok(NULL, "|"));
+                strcpy(string, "SOUNDTYPE_");
+                strcat(string, _strupr(name));
+                Game_constants[index++].name = _strdup(string); // duplicate into array
+
+                // save the prefix
+                strcpy(prefix, strtok(NULL, "|"));
+            }
+            else if (buf[0] == '+')
+            {
+                // sound line
+                // store the id
+                sscanf(strtok(buf, "|"), "+%d", &Game_constants[index].value);
+
+                // get the name, uppercase it and prefix with prefix
+                strcpy(name, strtok(NULL, "|"));
+                strcpy(string, prefix);
+                strcat(string, _strupr(name));
+                Game_constants[index++].name = _strdup(string); // duplicate into array
+            }
+        }
+
+        // Close the file
+        fclose(sf);
+    }
+
+    // Append the null terminator
+    Game_constants[num_presets+num_sounds].name = NULL;
+    Game_constants[num_presets+num_sounds].value = 0;
+
+    // Set the pointer in the class structure
+    Game.constants = Game_constants;
+
     init_class(L, &Game);
 
     return 0;
 }
 
+// Free the memory allocated for game constants
+void Game_free()
+{
+    int     i = 0;
+
+    if (Game_constants == NULL)
+        return;
+
+    while (Game_constants[i].name != NULL)
+    {
+        free(Game_constants[i++].name);
+    }
+    free(Game_constants);
+    Game_constants = NULL;
+}
 
 /****************************************************************************/
 /*                                                                          */

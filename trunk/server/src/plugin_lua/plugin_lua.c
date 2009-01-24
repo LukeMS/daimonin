@@ -868,7 +868,10 @@ MODULEAPI CFParm * removePlugin(CFParm *PParm)
 
     hooks->free_mempool(pool_luacontext);
 
-    return NULL;
+    /* free memory allocated for game constants */
+    Game_free();
+
+   return NULL;
 }
 
 /*****************************************************************************/
