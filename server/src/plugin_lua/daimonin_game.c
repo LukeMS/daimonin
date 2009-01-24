@@ -530,11 +530,13 @@ char *str_dup(const char *str)
     return ret;
 }
 
+// Uppercase string
 char *str_upr(char *str)
 {
     int i;
     for (i = 0; i < (int)strlen(str); i++)
         str[i] = toupper(str[i]);
+    return str;
 }
 
 int Game_init(lua_State *L)
