@@ -521,6 +521,22 @@ lua_class Game =
     0
 };
 
+// Helper string functions
+// Duplicate string
+char *str_dup(const char *str)
+{
+    char *ret = (char *)malloc(strlen(str) + 1);
+    strcpy(ret, str);
+    return ret;
+}
+
+char *str_upr(char *str)
+{
+    int i;
+    for (i = 0; i < (int)strlen(str); i++)
+        str[i] = toupper(str[i]);
+}
+
 int Game_init(lua_State *L)
 {
     int     i;
@@ -628,8 +644,8 @@ int Game_init(lua_State *L)
                 // get the name, uppercase it and prefix with "SOUNDTYPE_"
                 strcpy(name, strtok(NULL, "|"));
                 strcpy(string, "SOUNDTYPE_");
-                strcat(string, _strupr(name));
-                Game_constants[index++].name = _strdup(string); // duplicate into array
+                strcat(string, str_upr(name));
+                Game_constants[index++].name = str_dup(string); // duplicate into array
 
                 // save the prefix
                 strcpy(prefix, strtok(NULL, "|"));
@@ -643,8 +659,8 @@ int Game_init(lua_State *L)
                 // get the name, uppercase it and prefix with prefix
                 strcpy(name, strtok(NULL, "|"));
                 strcpy(string, prefix);
-                strcat(string, _strupr(name));
-                Game_constants[index++].name = _strdup(string); // duplicate into array
+                strcat(string, str_upr(name));
+                Game_constants[index++].name = str_dup(string); // duplicate into array
             }
         }
 
