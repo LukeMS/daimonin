@@ -29,6 +29,9 @@
 /* First the required header files - only the CF module interface and Lua */
 #include <plugin_lua.h>
 
+/* Sound data file */
+#define SOUNDS_FILE "./lib/sounds.dat"
+
 /* Game methods */
 static int  Game_EnumerateCoins(lua_State *L);
 static int  Game_FindPlayer(lua_State *L);
