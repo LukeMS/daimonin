@@ -48,35 +48,8 @@ static int          special_sounds[SPECIAL_SOUND_INIT];
 
 
 #ifdef INSTALL_SOUND
-_wave               Sounds[SOUND_MAX + SPELL_SOUND_MAX];
 
-static char        *sound_files[SOUND_MAX]              =
-    {
-        "event01.wav", "bow1.wav", "learnspell.wav", "missspell.wav", "rod.wav", "door.wav", "push.wav",
-        "hit_impact.wav" /* 8 */, "hit_cleave.wav", "hit_slash.wav", "hit_pierce.wav", "hit_block.wav", "hit_hand.wav",
-        "miss_mob1.wav", "miss_player1.wav", "petdead.wav" /* 16 */, "playerdead.wav", "explosion.wav", "explosion.wav",
-        "kill.wav", "pull.wav", "fallhole.wav", "poison.wav", "drop.wav" /* 24 */, "lose_some.wav", "throw.wav",
-        "gate_open.wav", "gate_close.wav", "open_container.wav", "growl.wav", "arrow_hit.wav", "door_close.wav",
-        "teleport.wav", "scroll.wav", "step1.wav" /* here starts client side sounds */, "step2.wav", "pray.wav",
-        "console.wav", "click_fail.wav", "change1.wav", "warning_food.wav", "warning_drain.wav", "warning_statup.wav",
-        "warning_statdown.wav", "warning_hp.wav", "warning_hp2.wav", "weapon_attack.wav", "weapon_hold.wav", "get.wav",
-        "book.wav", "page.wav", "heartbeat.wav"
-
-    };
-
-static char        *spell_sound_files[SPELL_SOUND_MAX]  =
-    {
-        "magic_default.wav", "magic_acid.wav", "magic_animate.wav", "magic_avatar.wav", "magic_bomb.wav",
-        "magic_bullet1.wav", "magic_bullet2.wav", "magic_cancel.wav", "magic_comet.wav", "magic_confusion.wav",
-        "magic_create.wav", "magic_dark.wav", "magic_death.wav", "magic_destruction.wav", "magic_elec.wav",
-        "magic_fear.wav", "magic_fire.wav", "magic_fireball1.wav", "magic_fireball2.wav", "magic_hword.wav",
-        "magic_ice.wav", "magic_invisible.wav", "magic_invoke.wav", "magic_invoke2.wav", "magic_magic.wav",
-        "magic_manaball.wav", "magic_missile.wav", "magic_mmap.wav", "magic_orb.wav", "magic_paralyze.wav",
-        "magic_poison.wav", "magic_protection.wav", "magic_rstrike.wav", "magic_rune.wav", "magic_sball.wav",
-        "magic_slow.wav", "magic_snowstorm.wav", "magic_stat.wav", "magic_steambolt.wav", "magic_summon1.wav",
-        "magic_summon2.wav", "magic_summon3.wav", "magic_teleport.wav", "magic_turn.wav", "magic_wall.wav",
-        "magic_walls.wav", "magic_wound.wav"
-    };
+static _sounds sounds = {0, NULL};
 
 #endif
 
@@ -86,6 +59,98 @@ static char        *spell_sound_files[SPELL_SOUND_MAX]  =
 static void musicDone(void); /* callback function for background music */
 static void sound_start_music(char *fname, int vol, int fade, int loop);
 
+
+/* Load the sounds file */
+void load_sounds(void)
+{
+#ifdef INSTALL_SOUND
+    char    buf[64];
+    FILE    *stream;
+    int     state = 0;
+    char    name[32];
+    char    file[64];
+    int     type_count  = 0;
+    int     type_index  = -1;
+    int     sound_count = 0;
+    int     sound_index = -1;
+
+
+
+    if (!(stream = fopen_wrapper(SOUNDS_FILE, "r")))
+    {
+        LOG(LOG_ERROR,"ERROR: Can't find file %s.\n", SOUNDS_FILE);
+        return;
+    }
+    while (fgets(buf, sizeof(buf), stream) != NULL)
+    {
+        // Strip trailing newline character(s) (allow for \r\n or \n)
+        buf[strcspn(buf, "\r\n")] = '\0';
+
+        if ((strlen(buf) == 0) || (buf[0] == '#'))
+            continue;
+
+        if (!strcmp(buf, "*end"))
+            break;
+
+        switch (state)
+        {
+        case 0:
+            // Looking for start line
+            if (strncmp(buf, "*start", 6) == 0)
+            {
+                strtok(buf, "|"); // discard *start
+                sscanf(strtok(NULL, "|"), "%d", &type_count); // count of soundtypes
+                sounds.count = type_count;
+
+                // Allocate memory
+                sounds.types = malloc(type_count * sizeof(_soundtype));
+
+                state++;
+            }
+            break;
+
+        case 1:
+            // Looking for soundtype introducer
+            if ((type_count > 0) && (buf[0] == '*'))
+            {
+                // New soundtype
+                type_count--;
+                type_index++;
+                sscanf(strtok(buf, "|"), "*%d", &sounds.types[type_index].id);
+                strcpy(name, strtok(NULL, "|"));
+                strtok(NULL, "|");  // discard prefix
+                sscanf(strtok(NULL, "|"), "%d", &sound_count);
+                sounds.types[type_index].count = sound_count;
+                sounds.types[type_index].name = _strdup(name);
+                sounds.types[type_index].sounds = malloc(sound_count * sizeof(_sound)); // space for sounds
+                sound_index = -1;
+                state++;
+            }
+            break;
+
+        case 2:
+            // Process sound
+            if ((sound_count > 0) && (buf[0] == '+'))
+            {
+                // Process sound
+                sound_count--;
+                sound_index++;
+                sscanf(strtok(buf, "|"), "+%d", &sounds.types[type_index].sounds[sound_index].id);
+                strcpy(name, strtok(NULL, "|"));
+                strcpy(file, strtok(NULL, "|"));
+                sounds.types[type_index].sounds[sound_index].name = _strdup(name);
+                sounds.types[type_index].sounds[sound_index].file = _strdup(file);
+            }
+
+            if (sound_count == 0)
+                state--;            // Look for next soundtype
+            break;
+        }
+    }
+
+    fclose(stream);
+#endif
+}
 
 void sound_init(void)
 {
@@ -132,28 +197,24 @@ void sound_deinit(void)
 void sound_loadall(void)
 {
 #ifdef INSTALL_SOUND
-    register int i,ii;
+    int     i, j;
     char    buf[2048];
 
     if (SoundSystem != SOUND_SYSTEM_ON)
         return;
 
-    for (i = 0; i < SOUND_MAX; i++)
+    load_sounds();
+    for (i = 0; i < sounds.count; i++)
     {
-        sprintf(buf, "%s%s", GetSfxDirectory(), sound_files[i]);
-        Sounds[i].sound = NULL;
-        Sounds[i].sound = Mix_LoadWAV_wrapper(buf);
-        if (!Sounds[i].sound)
-            LOG(LOG_ERROR, "sound_loadall: missing sound file %s\n", buf);
+        for (j = 0; j < sounds.types[i].count; j++)
+        {
+            sprintf(buf, "%s%s", GetSfxDirectory(), sounds.types[i].sounds[j].file);
+            sounds.types[i].sounds[j].sound = Mix_LoadWAV_wrapper(buf);
+            if (!sounds.types[i].sounds[j].sound)
+                LOG(LOG_ERROR, "sound_loadall: missing sound file %s\n", buf);
+        }
     }
-    for (ii = 0; ii < SPELL_SOUND_MAX; ii++)
-    {
-        sprintf(buf, "%s%s", GetSfxDirectory(), spell_sound_files[ii]);
-        Sounds[i + ii].sound = NULL;
-        Sounds[i + ii].sound = Mix_LoadWAV_wrapper(buf);
-        if (!Sounds[i + ii].sound)
-            LOG(LOG_ERROR, "sound_loadall: missing sound file %s\n", buf);
-    }
+
 #endif
 }
 
@@ -161,20 +222,56 @@ void sound_freeall(void)
 {
 #ifdef INSTALL_SOUND
 
-    register int i;
+    register int i, j;
 
     if (SoundSystem != SOUND_SYSTEM_ON)
         return;
 
-    for (i = 0; i < SOUND_MAX + SPELL_SOUND_MAX; i++)
+    for (i = 0; i < sounds.count; i++)
     {
-        Mix_FreeChunk(Sounds[i].sound);
+        free(sounds.types[i].name);
+        for (j = 0; j < sounds.types[i].count; j++)
+        {
+            free(sounds.types[i].sounds[j].name);
+            free(sounds.types[i].sounds[j].file);
+            Mix_FreeChunk(sounds.types[i].sounds[j].sound);
+        }
+        free(sounds.types[i].sounds);
     }
+    free(sounds.types);
 #endif
 }
 
+Mix_Chunk *find_sound_by_id(int type_id, int sound_id)
+{
+    _soundtype  *type = NULL;
+    Mix_Chunk   *sound = NULL;
+    int          i;
 
-void calculate_map_sound(int soundnr, int xoff, int yoff, int flags)
+    for (i = 0; i < sounds.count; i++)
+    {
+        if (sounds.types[i].id == type_id)
+        {
+            type = &sounds.types[i];
+            break;
+        }
+    }
+
+    if (type)
+    {
+        for (i = 0; i < type->count; i++)
+        {
+            if (type->sounds[i].id == sound_id)
+            {
+                sound = type->sounds[i].sound;
+                break;
+            }
+        }
+    }
+    return sound;
+}
+
+void calculate_map_sound(int type_id, int sound_id, int xoff, int yoff, int flags)
 {
     /* we got xoff/yoff relative to 0, when this will change, exchange 0
      * with the right default position */
@@ -203,7 +300,7 @@ void calculate_map_sound(int soundnr, int xoff, int yoff, int flags)
     if (xoff < 0) /* now mark this is left or right pane. left is *(-1) */
         pane *= -1;
 
-    sound_play_effect(soundnr, 0, pane, distance);
+    sound_play_effect(type_id, sound_id, 0, pane, distance);
 #endif
 }
 
@@ -211,7 +308,7 @@ void calculate_map_sound(int soundnr, int xoff, int yoff, int flags)
    we define panning as -255 (total left) or +255 (total right)
    Return: Channel (id) of the sound. -1 = error
    */
-int sound_play_effect(int soundid, uint32 flag, int pan, int vol)
+int sound_play_effect(int type_id, int sound_id, uint32 flag, int pan, int vol)
 {
 #ifdef INSTALL_SOUND
     int tmp;
@@ -219,7 +316,7 @@ int sound_play_effect(int soundid, uint32 flag, int pan, int vol)
     if (SoundSystem != SOUND_SYSTEM_ON)
         return -1;
 
-    tmp = Mix_PlayChannel(-1, Sounds[soundid].sound, 0);
+    tmp = Mix_PlayChannel(-1, find_sound_by_id(type_id, sound_id), 0);
     if (tmp != -1)
     {
         int l = 255, r = 255;
@@ -263,7 +360,7 @@ int sound_test_playing(int channel)
 #endif
 }
 
-void sound_play_one_repeat(int soundid, int special_id)
+void sound_play_one_repeat(int type_id, int sound_id, int special_id)
 {
 #ifdef INSTALL_SOUND
 
@@ -277,7 +374,7 @@ void sound_play_one_repeat(int soundid, int special_id)
         if (Mix_Playing(special_sounds[special_id]))
             return;
     }
-    tmp = Mix_PlayChannel(-1, Sounds[soundid].sound, 0);
+    tmp = Mix_PlayChannel(-1, find_sound_by_id(type_id, sound_id), 0);
     if (tmp == -1)
     {
         /* we failed... */

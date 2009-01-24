@@ -316,17 +316,17 @@ static int key_login_select_menu(SDL_KeyboardEvent *key)
         switch (key->keysym.sym)
         {
         case SDLK_UP:
-            sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+            sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, 100);
             GameStatusSelect == GAME_STATUS_LOGIN_ACCOUNT?(GameStatusSelect=GAME_STATUS_LOGIN_NEW):(GameStatusSelect=GAME_STATUS_LOGIN_ACCOUNT);
             break;
 
         case SDLK_DOWN:
-            sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+            sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, 100);
             GameStatusSelect==GAME_STATUS_LOGIN_ACCOUNT?(GameStatusSelect=GAME_STATUS_LOGIN_NEW):(GameStatusSelect=GAME_STATUS_LOGIN_ACCOUNT);
             break;
 
         case SDLK_RETURN:
-            sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+            sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, 100);
             dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
             open_input_mode(MAX_ACCOUNT_NAME);
             LoginInputStep = LOGIN_STEP_NAME;
@@ -334,7 +334,7 @@ static int key_login_select_menu(SDL_KeyboardEvent *key)
             break;
 
         case SDLK_ESCAPE:
-            sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+            sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, 100);
             SOCKET_CloseClientSocket(&csocket);
             GameStatus = GAME_STATUS_INIT;
             return(0);
@@ -354,13 +354,13 @@ static int key_account_menu(SDL_KeyboardEvent *key)
         switch (key->keysym.sym)
         {
         case SDLK_UP:
-            sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+            sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, 100);
             if(account.count && --account.selected < 0)
                 account.selected = account.count-1;
             break;
 
         case SDLK_DOWN:
-            sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+            sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, 100);
             if(account.count && ++account.selected > account.count-1)
                     account.selected = 0;
             break;
@@ -368,7 +368,7 @@ static int key_account_menu(SDL_KeyboardEvent *key)
         case SDLK_c:
             if(account.count < ACCOUNT_MAX_PLAYER)
             {
-                sound_play_effect(SOUND_PAGE, 0, 0, 100);
+                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_PAGE, 0, 0, 100);
                 GameStatus = GAME_STATUS_ACCOUNT_CHAR_CREATE;
             }
             break;
@@ -376,7 +376,7 @@ static int key_account_menu(SDL_KeyboardEvent *key)
         case SDLK_d:
             if(account.count)
             {
-                sound_play_effect(SOUND_PAGE, 0, 0, 100);
+                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_PAGE, 0, 0, 100);
                 GameStatus = GAME_STATUS_ACCOUNT_CHAR_DEL;
                 /* the player must write "delete" , then we allow deletion of the selected char name */
                 reset_input_mode();
@@ -388,7 +388,7 @@ static int key_account_menu(SDL_KeyboardEvent *key)
             break;
 
         case SDLK_RETURN:
-            sound_play_effect(SOUND_PAGE, 0, 0, 100);
+            sound_play_effect(SOUNDTYPE_CLIENT, SOUND_PAGE, 0, 0, 100);
 
             /* put client in wait modus... 2 choices:
             * a.) login fails - we will get a BINARY_CMD_ACCOUNT with error msg
@@ -410,7 +410,7 @@ static int key_account_menu(SDL_KeyboardEvent *key)
             break;
 
         case SDLK_ESCAPE:
-            sound_play_effect(SOUND_PAGE, 0, 0, 100);
+            sound_play_effect(SOUNDTYPE_CLIENT, SOUND_PAGE, 0, 0, 100);
             SOCKET_CloseClientSocket(&csocket);
             GameStatus = GAME_STATUS_INIT;
             return(0);
@@ -729,32 +729,32 @@ int Event_PollInputDevice(void)
                         case 12: // PLAYERDOLL
                             if (!options.playerdoll) // Actually this shouldn't be necessary as the widget should already be hidden, but JIC
                             {
-                                sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+                                sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
                                 cur_widget[widget_mouse_event.owner].show = FALSE;
                                 f_custom_cursor = 0;
                                 SDL_ShowCursor(1);
                             }
                             else
-                                sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
                             break;
                         case 17: // MAININV
                         case 19: // CONSOLE
                         case 20: // NUMBER
-                            sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                            sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
                             break;
                         case 21: // STATOMETER
                             if (!options.statsupdate) // Actually this shouldn't be necessary as the widget should already be hidden, but JIC
                             {
-                                sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+                                sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
                                 cur_widget[widget_mouse_event.owner].show = FALSE;
                                 f_custom_cursor = 0;
                                 SDL_ShowCursor(1);
                             }
                             else
-                                sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
                             break;
                         default:
-                            sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+                            sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
                             cur_widget[widget_mouse_event.owner].show = FALSE;
                             f_custom_cursor = 0;
                             SDL_ShowCursor(1);
@@ -1131,7 +1131,7 @@ static void key_string_event(SDL_KeyboardEvent *key)
                                 /* Allow only these chars for account names. */
                                 if ((c < 'a' || c > 'z') &&
                                     (c < 'A' || c > 'Z') &&
-                                    (c < '0' || c > '9') && 
+                                    (c < '0' || c > '9') &&
                                     (c != '-' && c != '_'))
                                     c = 0;
                                 break;
@@ -1182,7 +1182,7 @@ static void key_string_event(SDL_KeyboardEvent *key)
                 }
 
                 if (c == 0)
-                    sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                    sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
                 else
                 {
                     for (i = InputCount; i >= CurrentCursorPos; i--)
@@ -1252,7 +1252,7 @@ int key_event(SDL_KeyboardEvent *key)
                 {
                     if (key->keysym.sym != SDLK_ESCAPE)
                     {
-                        sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+                        sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, 100);
                         strcpy(bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].keyname,
                                SDL_GetKeyName(key->keysym.sym));
                         bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].key = key->keysym.sym;
@@ -1341,7 +1341,7 @@ int key_event(SDL_KeyboardEvent *key)
                 }
                 else
                     esc_menu_flag = FALSE;
-                sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+                sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, 100);
                 break;
 
             default:
@@ -1373,7 +1373,7 @@ Boolean check_menu_macros(char *text)
             cpl.menustatus = MENU_NO;
         }
 
-        sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+        sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, 100);
         reset_keys();
         return TRUE;
     }
@@ -1390,7 +1390,7 @@ Boolean check_menu_macros(char *text)
         }
         else
             cpl.menustatus = MENU_NO;
-        sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+        sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, 100);
         reset_keys();
         return TRUE;
     }
@@ -1408,7 +1408,7 @@ Boolean check_menu_macros(char *text)
             save_keybind_file(KEYBIND_FILE);
             cpl.menustatus = MENU_NO;
         }
-        sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+        sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, 100);
         reset_keys();
         return TRUE;
     }
@@ -1425,7 +1425,7 @@ Boolean check_menu_macros(char *text)
         }
         else
             cpl.menustatus = MENU_NO;
-        sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+        sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, 100);
         reset_keys();
         return TRUE;
     }
@@ -1558,7 +1558,7 @@ Boolean process_macro_keys(int id, int value)
 
     case KEYFUNC_SPELL:
         map_udate_flag = 2;
-        sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+        sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, 100);
         if (cpl.menustatus == MENU_KEYBIND)
             save_keybind_file(KEYBIND_FILE);
 
@@ -1577,7 +1577,7 @@ Boolean process_macro_keys(int id, int value)
         if (cpl.menustatus == MENU_KEYBIND)
             save_keybind_file(KEYBIND_FILE);
 
-        sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+        sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, 100);
         if (cpl.menustatus != MENU_SKILL)
             cpl.menustatus = MENU_SKILL;
         else
@@ -1593,7 +1593,7 @@ Boolean process_macro_keys(int id, int value)
             cpl.menustatus = MENU_STATUS;
         else
             cpl.menustatus = MENU_NO;
-        sound_play_effect(SOUND_SCROLL, 0, 0, 0);
+        sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, 0);
         reset_keys();
         break;
     case KEYFUNC_KEYBIND:
@@ -1608,13 +1608,13 @@ Boolean process_macro_keys(int id, int value)
             save_keybind_file(KEYBIND_FILE);
             cpl.menustatus = MENU_NO;
         }
-        sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+        sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, 100);
         reset_keys();
         break;
 
     case KEYFUNC_CONSOLE:
         show_help_screen = 0;
-        sound_play_effect(SOUND_CONSOLE, 0, 0, 100);
+        sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CONSOLE, 0, 0, 100);
         reset_keys();
         if (cpl.input_mode == INPUT_MODE_NO)
         {
@@ -1812,7 +1812,7 @@ Boolean process_macro_keys(int id, int value)
             return FALSE;
         }
         /*collectAll:*/
-        sound_play_effect(SOUND_GET, 0, 0, 100);
+        sound_play_effect(SOUNDTYPE_CLIENT, SOUND_GET, 0, 0, 100);
         sprintf(buf, "get %s", it->s_name);
         draw_info(buf, COLOR_DGOLD);
         send_inv_move(loc, tag, nrof);
@@ -1862,7 +1862,7 @@ Boolean process_macro_keys(int id, int value)
             save_keybind_file(KEYBIND_FILE);
 
         cpl.menustatus = MENU_NO;
-        sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+        sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, 100);
         if (show_help_screen_new)
             show_help_screen_new = FALSE;
         else
@@ -1871,7 +1871,7 @@ Boolean process_macro_keys(int id, int value)
 
         /*
                 cpl.menustatus = MENU_NO;
-                sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+                sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, 100);
                 if (show_help_screen)
                 {
                     if (++show_help_screen > MAX_HELP_SCREEN)
@@ -1917,7 +1917,7 @@ Boolean process_macro_keys(int id, int value)
 
         if (it->locked)
         {
-            sound_play_effect(SOUND_CLICKFAIL, 0, 0, 100);
+            sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, 100);
             draw_info("unlock item first!", COLOR_DGOLD);
             return FALSE;
         }
@@ -1940,7 +1940,7 @@ Boolean process_macro_keys(int id, int value)
             cpl.num_text[250] = 0;
             return FALSE;
         }
-        sound_play_effect(SOUND_DROP, 0, 0, 100);
+        sound_play_effect(SOUNDTYPE_NORMAL, SOUND_DROP, 0, 0, 100);
         sprintf(buf, "drop %s", it->s_name);
         draw_info(buf, COLOR_DGOLD);
         send_inv_move(loc, tag, nrof);
@@ -2401,7 +2401,7 @@ static void check_esc_menu_keys(int key)
             save_quickslots_entrys();
             SOCKET_CloseClientSocket(&csocket);
         }
-        sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+        sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, 100);
         esc_menu_flag = FALSE;
         break;
 
@@ -2468,11 +2468,11 @@ void check_menu_keys(int menu, int key)
             if (gui_interface_book->page_show<0)
             {
                 gui_interface_book->page_show=0;
-                sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             }
             else
             {
-                sound_play_effect(SOUND_PAGE, 0, 0, MENU_SOUND_VOL);
+                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_PAGE, 0, 0, MENU_SOUND_VOL);
             }
             break;
         case SDLK_RIGHT:
@@ -2480,11 +2480,11 @@ void check_menu_keys(int menu, int key)
             if (gui_interface_book->page_show>(gui_interface_book->pages-1))
             {
                 gui_interface_book->page_show=(gui_interface_book->pages-1)&~1;
-                sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             }
             else
             {
-                sound_play_effect(SOUND_PAGE, 0, 0, MENU_SOUND_VOL);
+                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_PAGE, 0, 0, MENU_SOUND_VOL);
             }
             break;
         }
@@ -2507,7 +2507,7 @@ void check_menu_keys(int menu, int key)
                 draw_info_format(COLOR_WHITE, "Talking about: %s", gui_interface_npc->link[gui_interface_npc->link_selected-1].link);
                 */
                 gui_interface_npc->link_selected=0;
-                sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+                sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
                 reset_input_mode();
                 break;
             }
@@ -2519,7 +2519,7 @@ void check_menu_keys(int menu, int key)
                 draw_info_format(COLOR_WHITE, "Talking about: %s", gui_interface_npc->link[gui_interface_npc->link_selected-1].link);
                 */
                 gui_interface_npc->keyword_selected=0;
-                sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+                sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
                 reset_input_mode();
                 break;
             }
@@ -2533,7 +2533,7 @@ void check_menu_keys(int menu, int key)
             textwin_putstring("");
             cpl.input_mode = INPUT_MODE_NPCDIALOG;
             gui_interface_npc->input_flag = TRUE;
-            sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+            sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
             HistoryPos = 0;
             break;
 
@@ -2739,10 +2739,10 @@ void check_menu_keys(int menu, int key)
                             gui_interface_npc->link_selected=0;
                     }
                 }
-                sound_play_effect(SOUND_GET, 0, 0, 100);
+                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_GET, 0, 0, 100);
             }
             else
-                sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             break;
             /* select prize */
         case SDLK_DOWN:
@@ -2758,7 +2758,7 @@ void check_menu_keys(int menu, int key)
                     if (gui_interface_npc->icon[i-1].mode == 'S' )
                     {
                         gui_interface_npc->selected = i;
-                        sound_play_effect(SOUND_GET, 0, 0, 100);
+                        sound_play_effect(SOUNDTYPE_CLIENT, SOUND_GET, 0, 0, 100);
                         break;
                     }
                 }
@@ -2777,7 +2777,7 @@ void check_menu_keys(int menu, int key)
                     if (gui_interface_npc->icon[i-1].mode == 'S' )
                     {
                         gui_interface_npc->selected = i;
-                        sound_play_effect(SOUND_GET, 0, 0, MENU_SOUND_VOL);
+                        sound_play_effect(SOUNDTYPE_CLIENT, SOUND_GET, 0, 0, MENU_SOUND_VOL);
                         break;
                     }
                 }
@@ -2792,7 +2792,7 @@ void check_menu_keys(int menu, int key)
             {
                 gui_interface_npc->yoff=0;
                 if (menuRepeatKey != SDLK_PAGEUP)
-                    sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                    sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             }
             menuRepeatKey = SDLK_PAGEUP;
             if (gui_interface_npc->yoff < INTERFACE_WINLEN_NPC-gui_interface_npc->win_length)
@@ -2811,7 +2811,7 @@ void check_menu_keys(int menu, int key)
             {
                 gui_interface_npc->yoff = INTERFACE_WINLEN_NPC-gui_interface_npc->win_length;
                 if (menuRepeatKey != SDLK_PAGEDOWN)
-                    sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                    sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             }
             menuRepeatKey = SDLK_PAGEDOWN;
             if (gui_interface_npc->yoff < INTERFACE_WINLEN_NPC-gui_interface_npc->win_length)
@@ -2829,7 +2829,7 @@ void check_menu_keys(int menu, int key)
         /* lets check we have a named button pressed or clicked inside the npc gui */
         if (gui_npc_accept)
         {
-            sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+            sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, 100);
             if (gui_interface_npc->accept.command[0]!='\0')
             {
                 char cmd[1024];
@@ -2856,7 +2856,7 @@ void check_menu_keys(int menu, int key)
         }
         else if (gui_npc_decline)
         {
-            sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+            sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, 100);
             if (gui_interface_npc->decline.command[0]!='\0')
             {
                 char cmd[1024];
@@ -2877,12 +2877,12 @@ void check_menu_keys(int menu, int key)
         {
         case SDLK_LEFT:
             option_list_set.key_change = -1;
-            /*sound_play_effect(SOUND_SCROLL,0,0,MENU_SOUND_VOL);*/
+            /*sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL,0,0,MENU_SOUND_VOL);*/
             menuRepeatKey = SDLK_LEFT;
             break;
         case SDLK_RIGHT:
             option_list_set.key_change = 1;
-            /*sound_play_effect(SOUND_SCROLL,0,0,MENU_SOUND_VOL);*/
+            /*sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL,0,0,MENU_SOUND_VOL);*/
             menuRepeatKey = SDLK_RIGHT;
             break;
         case SDLK_UP:
@@ -2891,7 +2891,7 @@ void check_menu_keys(int menu, int key)
                 if (option_list_set.entry_nr > 0)
                     option_list_set.entry_nr--;
                 else
-                    sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                    sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             }
             else
             {
@@ -2901,7 +2901,7 @@ void check_menu_keys(int menu, int key)
                     option_list_set.entry_nr = 0;
                 }
                 else
-                    sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                    sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             }
             menuRepeatKey = SDLK_UP;
             break;
@@ -2917,7 +2917,7 @@ void check_menu_keys(int menu, int key)
                 if (opt[i].name[0] && opt[i].name[0] != '#')
                     option_list_set.entry_nr++;
                 else
-                    sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                    sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             }
             else
             {
@@ -2927,12 +2927,12 @@ void check_menu_keys(int menu, int key)
                     option_list_set.entry_nr = 0;
                 }
                 else
-                    sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                    sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             }
             menuRepeatKey = SDLK_DOWN;
             break;
         case SDLK_d:
-            sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+            sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
             map_udate_flag = 2;
             if (cpl.menustatus == MENU_KEYBIND)
                 save_keybind_file(KEYBIND_FILE);
@@ -3031,10 +3031,10 @@ void check_menu_keys(int menu, int key)
             {
                 fire_mode_tab[FIRE_MODE_SKILL].skill = &skill_list[skill_list_set.group_nr].entry[skill_list_set.entry_nr];
                 RangeFireMode = FIRE_MODE_SKILL;
-                sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+                sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
             }
             else
-                sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             map_udate_flag = 2;
             cpl.menustatus = MENU_NO;
             reset_keys();
@@ -3045,10 +3045,10 @@ void check_menu_keys(int menu, int key)
                 if (skill_list_set.entry_nr > 0)
                 {
                     if (skill_list[skill_list_set.group_nr].entry[--skill_list_set.entry_nr].flag == LIST_ENTRY_KNOWN)
-                        sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+                        sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
                 }
                 else
-                    sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                    sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             }
             else
             {
@@ -3058,7 +3058,7 @@ void check_menu_keys(int menu, int key)
                     skill_list_set.entry_nr = 0;
                 }
                 else
-                    sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                    sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             }
             menuRepeatKey = SDLK_UP;
             break;
@@ -3068,10 +3068,10 @@ void check_menu_keys(int menu, int key)
                 if (skill_list_set.entry_nr < DIALOG_LIST_ENTRY - 1)
                 {
                     if (skill_list[skill_list_set.group_nr].entry[++skill_list_set.entry_nr].flag == LIST_ENTRY_KNOWN)
-                        sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+                        sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
                 }
                 else
-                    sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                    sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             }
             else
             {
@@ -3081,7 +3081,7 @@ void check_menu_keys(int menu, int key)
                     skill_list_set.entry_nr = 0;
                 }
                 else
-                    sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                    sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             }
             menuRepeatKey = SDLK_DOWN;
             break;
@@ -3122,10 +3122,10 @@ void check_menu_keys(int menu, int key)
             {
                 fire_mode_tab[FIRE_MODE_SPELL].spell = &spell_list[spell_list_set.group_nr].entry[spell_list_set.class_nr][spell_list_set.entry_nr];
                 RangeFireMode = FIRE_MODE_SPELL;
-                sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+                sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
             }
             else
-                sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             map_udate_flag = 2;
             cpl.menustatus = MENU_NO;
             reset_keys();
@@ -3134,19 +3134,19 @@ void check_menu_keys(int menu, int key)
             if (spell_list_set.class_nr > 0)
             {
                 spell_list_set.class_nr--;
-                sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+                sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
             }
             else
-                sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             break;
         case SDLK_RIGHT:
             if (spell_list_set.class_nr < SPELL_LIST_CLASS - 1)
             {
                 spell_list_set.class_nr++;
-                sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+                sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
             }
             else
-                sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             break;
         case SDLK_UP:
             if (!shiftPressed)
@@ -3154,10 +3154,10 @@ void check_menu_keys(int menu, int key)
                 if (spell_list_set.entry_nr > 0)
                 {
                     if (spell_list[spell_list_set.group_nr].entry[spell_list_set.class_nr][--spell_list_set.entry_nr].flag == LIST_ENTRY_KNOWN)
-                        sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+                        sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
                 }
                 else
-                    sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                    sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             }
             else
             {
@@ -3167,7 +3167,7 @@ void check_menu_keys(int menu, int key)
                     spell_list_set.entry_nr = 0;
                 }
                 else
-                    sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                    sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             }
             menuRepeatKey = SDLK_UP;
             break;
@@ -3177,10 +3177,10 @@ void check_menu_keys(int menu, int key)
                 if (spell_list_set.entry_nr < DIALOG_LIST_ENTRY - 1)
                 {
                     if (spell_list[spell_list_set.group_nr].entry[spell_list_set.class_nr][++spell_list_set.entry_nr].flag == LIST_ENTRY_KNOWN)
-                        sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+                        sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
                 }
                 else
-                    sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                    sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             }
             else
             {
@@ -3190,7 +3190,7 @@ void check_menu_keys(int menu, int key)
                     spell_list_set.entry_nr = 0;
                 }
                 else
-                    sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                    sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             }
             menuRepeatKey = SDLK_DOWN;
             break;
@@ -3206,10 +3206,10 @@ void check_menu_keys(int menu, int key)
                 if (bindkey_list_set.entry_nr > 0)
                 {
                     if (bindkey_list[bindkey_list_set.group_nr].entry[--bindkey_list_set.entry_nr].text[0])
-                        sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+                        sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
                 }
                 else
-                    sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                    sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             }
             else
             {
@@ -3219,7 +3219,7 @@ void check_menu_keys(int menu, int key)
                     bindkey_list_set.entry_nr = 0;
                 }
                 else
-                    sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                    sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             }
             menuRepeatKey = SDLK_UP;
             break;
@@ -3229,10 +3229,10 @@ void check_menu_keys(int menu, int key)
                 if (bindkey_list_set.entry_nr < OPTWIN_MAX_OPT - 1)
                 {
                     if (bindkey_list[bindkey_list_set.group_nr].entry[++bindkey_list_set.entry_nr].text[0])
-                        sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+                        sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
                 }
                 else
-                    sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                    sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             }
             else
             {
@@ -3243,33 +3243,33 @@ void check_menu_keys(int menu, int key)
                     bindkey_list_set.entry_nr = 0;
                 }
                 else
-                    sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                    sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
             }
             menuRepeatKey = SDLK_DOWN;
             break;
         case SDLK_d:
             save_keybind_file(KEYBIND_FILE);
-            sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+            sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
             map_udate_flag = 2;
             cpl.menustatus = MENU_NO;
             reset_keys();
-            sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+            sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
             break;
         case SDLK_RETURN:
-            sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+            sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
             keybind_status = KEYBIND_STATUS_EDIT;
             reset_keys();
             open_input_mode(240);
             textwin_putstring(bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].text);
             cpl.input_mode = INPUT_MODE_GETKEY;
-            sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+            sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
             break;
         case SDLK_r:
-            sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+            sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
             bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].repeatflag = bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].repeatflag
                     ? FALSE
                     : TRUE;
-            sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+            sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
             break;
         }
         break;
@@ -3286,12 +3286,12 @@ void check_menu_keys(int menu, int key)
             if (new_character.skill_selected == -1)
             {
                 dialog_new_char_warn = 2;
-                sound_play_effect(SOUND_CLICKFAIL, 0, 0, 100);
+                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, 100);
                 break;
             }
             dialog_new_char_warn = 0;
             reset_input_mode();
-            cpl.name[0] = 0;  
+            cpl.name[0] = 0;
             InputStringFlag=TRUE;
             InputStringEndFlag=FALSE;
             open_input_mode(MAX_PLAYER_NAME);
@@ -3309,13 +3309,13 @@ void check_menu_keys(int menu, int key)
         case SDLK_UP:
             if (--create_list_set.entry_nr < 0)
                 create_list_set.entry_nr = 1;
-            sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+            sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
             menuRepeatKey = -1;
             break;
         case SDLK_DOWN:
             if (++create_list_set.entry_nr >= 2)
                 create_list_set.entry_nr = 0;
-            sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+            sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
             menuRepeatKey = -1;
             break;
         }

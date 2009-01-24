@@ -139,24 +139,7 @@ void SoundCmd(char *data, int len)
     num = GetUINT16_String(data + 2);
     type = GetUINT8_String(data+4);
 
-    if (type == SOUND_SPELL)
-    {
-        if (num < 0 || num >= SPELL_SOUND_MAX)
-        {
-            LOG(LOG_ERROR, "Got invalid spell sound id: %d\n", num);
-            return;
-        }
-        num += SOUND_MAX; /* this maps us to the spell sound table part */
-    }
-    else
-    {
-        if (num < 0 || num >= SOUND_MAX)
-        {
-            LOG(LOG_ERROR, "Got invalid sound id: %d\n", num);
-            return;
-        }
-    }
-    calculate_map_sound(num, x, y, 0);
+    calculate_map_sound(type, num, x, y, 0);
 }
 
 
@@ -204,7 +187,7 @@ void SetupCmd(char *buf, int len)
 
         if (!strcmp(cmd, "sc") || !strcmp(cmd, "cs"))
         {
-            if( (!strcmp(cmd, "sc") && strcmp(param, VERSION_SC)) || 
+            if( (!strcmp(cmd, "sc") && strcmp(param, VERSION_SC)) ||
                                 (!strcmp(cmd, "cs") && strcmp(param, VERSION_CS)) )
             {
                 char tmpbuf[MAX_BUF];
@@ -383,7 +366,7 @@ void Face1Cmd(char *data, int len)
     finish_face_cmd(pnum, checksum, face);
 }
 
-/* Handles when the server says we can't be added. 
+/* Handles when the server says we can't be added.
  */
 void AddMeFail(char *data, int len)
 {
@@ -450,7 +433,7 @@ void AddMeFail(char *data, int len)
          if(GameStatus == GAME_STATUS_ACCOUNT_CHAR_NAME_WAIT)
          {
              reset_input_mode();
-             cpl.name[0] = 0;  
+             cpl.name[0] = 0;
              InputStringFlag=TRUE;
              InputStringEndFlag=FALSE;
              open_input_mode(MAX_PLAYER_NAME);
@@ -492,7 +475,7 @@ void AccNameSuccess(char *data, int len)
         else /* something is wrong, try again */
         {
             GameStatus = GAME_STATUS_LOGIN_NEW;
-            sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+            sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, 100);
             open_input_mode(MAX_ACCOUNT_PASSWORD);
         }
     }
@@ -509,7 +492,7 @@ void ImageCmd(char *data, int len)
 
     pnum = GetSINT32_String(data);
     plen = GetSINT32_String(data + 4);
- 
+
     if (len < 8 || (len - 8) < plen)
     {
         LOG(LOG_ERROR, "PixMapCmd: Lengths don't compare (%d,%d)\n", (len - 8), plen);
@@ -664,9 +647,9 @@ void TargetObject(char *data, int len)
 {
     cpl.target_mode = *data++;
     if (cpl.target_mode)
-        sound_play_effect(SOUND_WEAPON_ATTACK, 0, 0, 100);
+        sound_play_effect(SOUNDTYPE_CLIENT, SOUND_WEAPON_ATTACK, 0, 0, 100);
     else
-        sound_play_effect(SOUND_WEAPON_HOLD, 0, 0, 100);
+        sound_play_effect(SOUNDTYPE_CLIENT, SOUND_WEAPON_HOLD, 0, 0, 100);
     cpl.target_color = *data++;
     cpl.target_code = *data++;
     strcpy(cpl.target_name, (const char *)data);
@@ -1243,7 +1226,7 @@ void BookCmd(char *data, int len)
 {
     int mode;
 
-    sound_play_effect(SOUND_BOOK, 0, 0, 100);
+    sound_play_effect(SOUNDTYPE_CLIENT, SOUND_BOOK, 0, 0, 100);
     cpl.menustatus = MENU_BOOK;
 
     mode = *((int*)data);
@@ -1264,7 +1247,7 @@ void InterfaceCmd(char *data, int len)
     if ((gui_interface_npc && gui_interface_npc->status != GUI_INTERFACE_STATUS_WAIT) &&
             ((!len && cpl.menustatus == MENU_NPC) || (len && cpl.menustatus != MENU_NPC)))
     {
-        sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+        sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, 100);
     }
     reset_keys();
     cpl.input_mode = INPUT_MODE_NO;
@@ -1521,9 +1504,9 @@ void Map2Cmd(char *data, int len)
             display_mapscroll(xpos - mx, ypos - my);
 
             if(++step%2)
-                    sound_play_effect(SOUND_STEP1,0,0,100);
+                    sound_play_effect(SOUNDTYPE_CLIENT, SOUND_STEP1,0,0,100);
             else
-                    sound_play_effect(SOUND_STEP2,0,0,100);
+                    sound_play_effect(SOUNDTYPE_CLIENT, SOUND_STEP2,0,0,100);
 
         }
 
@@ -2204,7 +2187,7 @@ void AccountCmd(char *data, int len)
     int count = 0;
     int ac_status;
 
-    /* First, get the account status - it tells us too when login failed */ 
+    /* First, get the account status - it tells us too when login failed */
     ac_status = GetSINT8_String(data+count++);
     if(ac_status) /* something is wrong when not ACCOUNT_STATUS_OK (0) */
     {
@@ -2212,7 +2195,7 @@ void AccountCmd(char *data, int len)
         GameStatus = GAME_STATUS_LOGIN_ACCOUNT;
         LoginInputStep = LOGIN_STEP_NAME;
         dialog_login_warning_level = DIALOG_LOGIN_WARNING_ACCOUNT_UNKNOWN;
-        cpl.acc_name[0] = 0;  
+        cpl.acc_name[0] = 0;
         open_input_mode(MAX_ACCOUNT_NAME);
 
     }

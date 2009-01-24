@@ -44,7 +44,7 @@ extern _sound_system    SoundSystem;
 #define MUSIC_MODE_FORCED 4 /* thats needed for some map event sounds */
 
 /* sound ids. */
-typedef enum _sound_id
+typedef enum _normal_sound_id
 {
     SOUND_EVENT01,
     SOUND_BOW01,
@@ -83,6 +83,10 @@ typedef enum _sound_id
     SOUND_DOOR_CLOSE,
     SOUND_TELEPORT,
     SOUND_SCROLL,
+} _normal_sound_id;
+
+typedef enum _client_sound_id
+{
     /* here we have client side sounds - add server
     * sounds BEFORE this.
     */
@@ -106,11 +110,8 @@ typedef enum _sound_id
     SOUND_HEARTBEAT,
     SOUND_MAX
 }
-_sound_id1;
+_client_sound_id;
 
-/* to call a spell sound here, do
- * SOUND_MAX + SOUND_MAGIC_xxx
- */
 /* this enum should be same as in server */
 typedef enum _spell_sound_id
 {
@@ -162,8 +163,14 @@ typedef enum _spell_sound_id
     SOUND_MAGIC_WALL2,
     SOUND_MAGIC_WOUND,
     SPELL_SOUND_MAX
-}   _sound_id;
+}   _spell_sound_id;
 
+typedef enum _soundtype_id
+{
+    SOUNDTYPE_NORMAL,
+    SOUNDTYPE_SPELL,
+    SOUNDTYPE_CLIENT
+} _soundtype_id;
 
 #ifdef INSTALL_SOUND
 typedef struct _wave
@@ -173,6 +180,30 @@ typedef struct _wave
     int         soundpos;       /* Current play position */
 }
 _wave;
+
+typedef struct _sound
+{
+    int         id;
+    char       *name;
+    char       *file;
+    Mix_Chunk  *sound;
+    Uint32      soundlen;       /* Length of wave data - is this used by SDL? */
+    int         soundpos;       /* Current play position - is this used by SDL? */
+} _sound;
+
+typedef struct _soundtype
+{
+    int         id;
+    int         count;          // number of sounds in soundtype
+    char       *name;
+    _sound     *sounds;
+} _soundtype;
+
+typedef struct _sounds
+{
+    int         count;      // number of soundtypes
+    _soundtype *types;
+} _sounds;
 
 typedef struct music_data
 {
@@ -184,8 +215,6 @@ typedef struct music_data
     int                 vol;
 }
 music_data;
-
-extern _wave        Sounds[];
 
 extern music_data   music;           /* thats the music we just play - if NULL, no music */
 extern music_data   music_new;
@@ -205,12 +234,16 @@ void    sound_fillerup(void *unused, Uint8 *stream, int len);
 void    sound_init(void);
 void    sound_deinit(void);
 
+void    load_sounds(void);
+
 void    sound_loadall(void);
 void    sound_freeall(void);
 
-void    calculate_map_sound(int soundnr, int xoff, int yoff, int flags);
-int     sound_play_effect(int soundid, uint32 flag, int pan, int vol);
-void    sound_play_one_repeat(int soundid, int special_id);
+Mix_Chunk      *find_sound_by_id(int type_id, int sound_id);
+
+void    calculate_map_sound(int type_id, int sound_id, int xoff, int yoff, int flags);
+int     sound_play_effect(int type_id, int sound_id, uint32 flag, int pan, int vol);
+void    sound_play_one_repeat(int type_id, int sound_id, int special_id);
 
 int     sound_test_playing(int channel);
 

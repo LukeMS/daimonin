@@ -53,7 +53,7 @@ void do_console(int x, int y)
     show_help_screen = 0;
     if (InputStringEscFlag == TRUE)
     {
-        sound_play_effect(SOUND_CONSOLE, 0, 0, 100);
+        sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CONSOLE, 0, 0, 100);
         reset_keys();
         cpl.input_mode = INPUT_MODE_NO;
         cur_widget[IN_CONSOLE_ID].show = FALSE;
@@ -62,7 +62,7 @@ void do_console(int x, int y)
     /* if set, we got a finished input!*/
     if (InputStringFlag == FALSE && InputStringEndFlag == TRUE)
     {
-        sound_play_effect(SOUND_CONSOLE, 0, 0, 100);
+        sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CONSOLE, 0, 0, 100);
         if (InputString[0])
         {
             /*
@@ -118,7 +118,7 @@ int client_command_check(char *cmd)
                             {
                                 fire_mode_tab[FIRE_MODE_SPELL].spell = &spell_list[i].entry[0][ii];
                                 RangeFireMode = FIRE_MODE_SPELL;
-                                sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+                                sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
                                 draw_info("spell ready.", COLOR_GREEN);
                                 return TRUE;
                             }
@@ -132,7 +132,7 @@ int client_command_check(char *cmd)
                             {
                                 fire_mode_tab[FIRE_MODE_SPELL].spell = &spell_list[i].entry[1][ii];
                                 RangeFireMode = FIRE_MODE_SPELL;
-                                sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+                                sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
                                 draw_info("spell ready.", COLOR_GREEN);
                                 return TRUE;
                             }
@@ -476,7 +476,7 @@ int client_command_check(char *cmd)
             save_keybind_file(KEYBIND_FILE);
             cpl.menustatus = MENU_NO;
         }
-        sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+        sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, 100);
         reset_keys();
         return TRUE;
     }
@@ -612,9 +612,9 @@ void do_number(int x, int y)
                 sprintf(buf, "%s %d from %d %s", cpl.nummode == NUM_MODE_GET ? "get" : "drop", tmp, cpl.nrof,
                         cpl.num_text);
                 if (cpl.nummode == NUM_MODE_GET)
-                    sound_play_effect(SOUND_GET, 0, 0, 100);
+                    sound_play_effect(SOUNDTYPE_CLIENT, SOUND_GET, 0, 0, 100);
                 else
-                    sound_play_effect(SOUND_DROP, 0, 0, 100);
+                    sound_play_effect(SOUNDTYPE_NORMAL, SOUND_DROP, 0, 0, 100);
 
                 draw_info(buf, COLOR_DGOLD);
             }
@@ -635,7 +635,7 @@ void do_keybind_input(void)
     if (InputStringEscFlag == TRUE)
     {
         reset_keys();
-        sound_play_effect(SOUND_CLICKFAIL, 0, 0, 100);
+        sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, 100);
         cpl.input_mode = INPUT_MODE_NO;
         keybind_status = KEYBIND_STATUS_NO;
         map_udate_flag = 2;
@@ -668,7 +668,7 @@ void do_npcdialog_input(void)
     if (InputStringEscFlag == TRUE)
     {
         reset_keys();
-        sound_play_effect(SOUND_CLICKFAIL, 0, 0, 100);
+        sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, 100);
         cpl.input_mode = INPUT_MODE_NO;
         map_udate_flag = 2;
         gui_interface_npc->input_flag = FALSE;
@@ -1703,8 +1703,8 @@ void load_settings(void)
                     while (fgets(buf, HUGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
                         ;
                     sscanf(adjust_string(buf), "%d %d %d %d %d %d %d\n",
-                           &serv_char->stats[0], 
-                           &serv_char->stats[1], &serv_char->stats[2], &serv_char->stats[3], 
+                           &serv_char->stats[0],
+                           &serv_char->stats[1], &serv_char->stats[2], &serv_char->stats[3],
                            &serv_char->stats[4], &serv_char->stats[5], &serv_char->stats[6]);
 
                     while (fgets(buf, HUGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
@@ -2222,13 +2222,13 @@ void widget_quickslots_mouse_event(int x, int y, int MEvent)
                                        */
                     if (!locate_item_from_inv(cpl.ob->inv, cpl.win_quick_tag))
                     {
-                        sound_play_effect(SOUND_CLICKFAIL, 0, 0, 100);
+                        sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, 100);
                         draw_info("Only items from main inventory allowed in quickbar!", COLOR_WHITE);
                     }
                     else
                     {
                         char      buf[256];
-                        sound_play_effect(SOUND_GET, 0, 0, 100); /* no bug - we 'get' it in quickslots */
+                        sound_play_effect(SOUNDTYPE_CLIENT, SOUND_GET, 0, 0, 100); /* no bug - we 'get' it in quickslots */
                         sprintf(buf, "set F%d to %s", ind + 1, locate_item(cpl.win_quick_tag)->s_name);
                         draw_info(buf, COLOR_DGOLD);
                     }
