@@ -142,6 +142,9 @@ extern MODULEAPI int        HandleGlobalEvent(CFParm *CFP);
 /* Called to start the Lua interpreter. */
 extern MODULEAPI void       init_Daimonin_Lua();
 
+/* free memory allocated for game constants */
+extern void       Game_free();
+
 /* This is the new-style hook data */
 struct plugin_hooklist *hooks;
 /* And a macro to hookify LOG: */
@@ -265,8 +268,8 @@ typedef enum
 /* Type used for numeric constants */
 struct constant_decl
 {
-    const char *name;
-    const int   value;
+    char *name;
+    int   value;
 };
 
 struct method_decl
