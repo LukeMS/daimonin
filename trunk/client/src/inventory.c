@@ -169,7 +169,7 @@ void widget_inventory_event(int x, int y, SDL_Event event)
         }
         else if (draggingInvItem(DRAG_GET_STATUS) == DRAG_IWIN_BELOW)
         {
-            sound_play_effect(SOUND_GET, 0, 0, 100);
+            sound_play_effect(SOUNDTYPE_CLIENT, SOUND_GET, 0, 0, 100);
             process_macro_keys(KEYFUNC_GET, 0);
         }
         draggingInvItem(DRAG_NONE);

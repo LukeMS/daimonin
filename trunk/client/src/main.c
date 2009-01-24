@@ -335,7 +335,6 @@ static void load_version_file(void)
     fclose(stream);
 }
 
-
 /* pre init, overrule in hardware module if needed */
 void init_game_data(void)
 {
@@ -1387,7 +1386,7 @@ static void play_heartbeat_sound(void)
         else if (cpl.target_color == COLOR_ORANGE) volume = 80;
         else if (cpl.target_color == COLOR_RED)    volume = 90;
         else                                       volume = 100;
-        sound_play_effect(SOUND_HEARTBEAT, 0, 0, volume);
+        sound_play_effect(SOUNDTYPE_CLIENT, SOUND_HEARTBEAT, 0, 0, volume);
         tick = LastTick;
     }
 }
@@ -1403,24 +1402,24 @@ static void play_action_sounds(void)
     if (cpl.warn_hp)
     {
         if (cpl.warn_hp == 2) /* more as 10% damage */
-            sound_play_effect(SOUND_WARN_HP2, 0, 0, 100);
+            sound_play_effect(SOUNDTYPE_CLIENT, SOUND_WARN_HP2, 0, 0, 100);
         else
-            sound_play_effect(SOUND_WARN_HP, 0, 0, 100);
+            sound_play_effect(SOUNDTYPE_CLIENT, SOUND_WARN_HP, 0, 0, 100);
         cpl.warn_hp = 0;
     }
     if (cpl.warn_statdown)
     {
-        sound_play_one_repeat(SOUND_WARN_STATDOWN, SPECIAL_SOUND_STATDOWN);
+        sound_play_one_repeat(SOUNDTYPE_CLIENT, SOUND_WARN_STATDOWN, SPECIAL_SOUND_STATDOWN);
         cpl.warn_statdown = FALSE;
     }
     if (cpl.warn_statup)
     {
-        sound_play_one_repeat(SOUND_WARN_STATUP, SPECIAL_SOUND_STATUP);
+        sound_play_one_repeat(SOUNDTYPE_CLIENT, SOUND_WARN_STATUP, SPECIAL_SOUND_STATUP);
         cpl.warn_statup = FALSE;
     }
     if (cpl.warn_drain)
     {
-        sound_play_one_repeat(SOUND_WARN_DRAIN, SPECIAL_SOUND_DRAIN);
+        sound_play_one_repeat(SOUNDTYPE_CLIENT, SOUND_WARN_DRAIN, SPECIAL_SOUND_DRAIN);
         cpl.warn_drain = FALSE;
     }
 }
@@ -1623,7 +1622,7 @@ int main(int argc, char *argv[])
         exit(1);
     }
 	print_SDL_versions();
-	
+
 	atexit(SDL_Quit);
     signal(SIGSEGV, SIG_DFL); /* allows better debugging under linux by removing SDL parachute for this signal */
 

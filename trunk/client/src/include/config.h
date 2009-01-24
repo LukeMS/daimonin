@@ -55,6 +55,7 @@
 
 #define KEYBIND_FILE "settings/keys.dat"
 #define OPTION_FILE  "settings/options.dat"
+#define SOUNDS_FILE  "settings/sounds.dat"
 #define ARCHDEF_FILE "archdef.dat"
 
 #define INTERFACE_FILE "settings/interface.gui"

@@ -1806,7 +1806,7 @@ void show_interface_npc(int mark)
             if (gui_interface_npc->icon_select && !gui_interface_npc->selected)
             {
                 draw_info("select a item first.", COLOR_GREEN);
-                sound_play_effect(SOUND_CLICKFAIL, 0, 0, 100);
+                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICKFAIL, 0, 0, 100);
                 return;
 
             }
@@ -2083,7 +2083,7 @@ void gui_interface_mouse(SDL_Event *e)
 
     if (mx >= 345 && mx <= 354 && my >=32 && my <= 41) // close button
     {
-        sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+        sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, 100);
         reset_gui_interface();
     }
     else if (mx >= 339 && mx <= 350) // scroll buttons
@@ -2129,22 +2129,22 @@ void gui_interface_mouse(SDL_Event *e)
             LOG(-1,"%s\n",keyword);
             if (element == GUI_INTERFACE_ICON)
             {
-                sound_play_effect(SOUND_GET, 0, 0, 100);
+                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_GET, 0, 0, 100);
                 gui_interface_npc->selected = index;
             }
             else if (element == GUI_INTERFACE_MESSAGE)
             {
-                sound_play_effect(SOUND_GET, 0, 0, 100);
+                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_GET, 0, 0, 100);
                 gui_interface_send_command(0, keyword);
             }
             else if (element == GUI_INTERFACE_REWARD)
             {
-                sound_play_effect(SOUND_GET, 0, 0, 100);
+                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_GET, 0, 0, 100);
                 gui_interface_send_command(0, keyword);
             }
             else if (element == GUI_INTERFACE_LINK)
             {
-                sound_play_effect(SOUND_GET, 0, 0, 100);
+                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_GET, 0, 0, 100);
                 if (keyword[0]!='/')
                     gui_interface_send_command(0, keyword);
                 else
@@ -2170,7 +2170,7 @@ void gui_interface_mousemove(SDL_Event *e)
     {
 //        if (element == GUI_INTERFACE_ICON)
 //        {
-//            sound_play_effect(SOUND_GET, 0, 0, 100);
+//            sound_play_effect(SOUNDTYPE_CLIENT, SOUND_GET, 0, 0, 100);
 //            gui_interface_npc->selected = index;
 //        }
         if (element == GUI_INTERFACE_MESSAGE)
