@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Document Type Definition External Subset for Daimonin sound effects file.
+- Author: <a href="mailto:jeff@enborne.f2s.com">Jeff Goodenough</a>
+-->
+
+<!-- sound effects
+- Contents: sound effect elements (any number)
+-->
+<!ELEMENT sounds (soundtype*)>
+
+<!-- soundtype defines a sound type with its number, name and prefix.
+- @id must be a unique number, starting with 0.
+- @name must be a string
+- @prefix must be a string - this is the prefix applied to the lua string
+-  for each sound in this type
+
+At the moment there are three types - normal, spell and client
+-->
+<!ELEMENT soundtype (sound*)>
+<!ATTLIST soundtype
+id   CDATA #REQUIRED
+type CDATA #REQUIRED
+prefix CDATA #REQUIRED
+>
+
+<!-- sound defines a single sound with its number, name and file name.
+- @id must be a unique number, starting with 0.
+- @name must be a string
+- @file must be a string
+-->
+<!ELEMENT sound EMPTY>
+<!ATTLIST sound
+id   CDATA #REQUIRED
+name CDATA #REQUIRED
+file CDATA #REQUIRED
+>

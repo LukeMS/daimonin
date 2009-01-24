@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sounds SYSTEM "xml/sounds.dtd">
+<sounds>
+<!--
+#########################################################
+# You may add new sounds to this file, but only between #
+# the comments. You must not change the definitions     #
+# outside the comments.                                 #
+#########################################################
+-->
+    <soundtype id="0"   type="normal"   prefix="SOUND_">
+        <sound id="0"   name="level_up"         file="event01.wav" />
+        <sound id="1"   name="fire_arrow"       file="bow1.wav" />
+        <sound id="2"   name="learn_spell"      file="learnspell.wav" />
+        <sound id="3"   name="fumble_spell"     file="missspell.wav" />
+        <sound id="4"   name="wand_poof"        file="rod.wav" />
+        <sound id="5"   name="open_door"        file="door.wav" />
+        <sound id="6"   name="push_player"      file="push.wav" />
+        <sound id="7"   name="hit_impact"       file="hit_impact.wav" />
+        <sound id="8"   name="hit_cleave"       file="hit_cleave.wav" />
+        <sound id="9"   name="hit_slash"        file="hit_slash.wav" />
+        <sound id="10"  name="hit_pierce"       file="hit_pierce.wav" />
+        <sound id="11"  name="miss_block"       file="hit_block.wav" />
+        <sound id="12"  name="miss_hand"        file="hit_hand.wav" />
+        <sound id="13"  name="miss_mob"         file="miss_mob1.wav" />
+        <sound id="14"  name="miss_player"      file="miss_player1.wav" />
+        <sound id="15"  name="pet_is_killed"    file="petdead.wav" />
+        <sound id="16"  name="player_dies"      file="playerdead.wav" />
+        <sound id="17"  name="ob_evaporate"     file="explosion.wav" />
+        <sound id="18"  name="ob_explode"       file="explosion.wav" />
+        <sound id="19"  name="player_kills"     file="kill.wav" />
+        <sound id="20"  name="turn_handle"      file="pull.wav" />
+        <sound id="21"  name="fall_hole"        file="fallhole.wav" />
+        <sound id="22"  name="drink_poison"     file="poison.wav" />
+        <sound id="23"  name="drop_throw"       file="drop.wav" />
+        <sound id="24"  name="lose_some"        file="lose_some.wav" />
+        <sound id="25"  name="throw"            file="throw.wav" />
+        <sound id="26"  name="gate_open"        file="gate_open.wav" />
+        <sound id="27"  name="gate_close"       file="gate_close.wav" />
+        <sound id="28"  name="open_container"   file="open_container.wav" />
+        <sound id="29"  name="growl"            file="growl.wav" />
+        <sound id="30"  name="arrow_hit"        file="arrow_hit.wav" />
+        <sound id="31"  name="door_close"       file="door_close.wav" />
+        <sound id="32"  name="teleport"         file="teleport.wav" />
+        <sound id="33"  name="click"            file="scroll.wav" />
+        <!-- Add new normal sounds below this line -->
+        <sound id="34"  name="clock"            file="clock.wav" />
+        <!-- Add new normal sounds above this line -->
+    </soundtype>
+    <soundtype id="1"   type="spell"    prefix="SOUND_MAGIC_">
+        <sound id="0"   name="default"          file="magic_default.wav" />
+        <sound id="1"   name="acid"             file="magic_acid.wav" />
+        <sound id="2"   name="animate"          file="magic_animate.wav" />
+        <sound id="3"   name="avatar"           file="magic_avatar.wav" />
+        <sound id="4"   name="bomb"             file="magic_bomb.wav" />
+        <sound id="5"   name="bullet1"          file="magic_bullet1.wav" />
+        <sound id="6"   name="bullet2"          file="magic_bullet2.wav" />
+        <sound id="7"   name="cancel"           file="magic_cancel.wav" />
+        <sound id="8"   name="comet"            file="magic_comet.wav" />
+        <sound id="9"   name="confusion"        file="magic_confusion.wav" />
+        <sound id="10"  name="create"           file="magic_create.wav" />
+        <sound id="11"  name="dark"             file="magic_dark.wav" />
+        <sound id="12"  name="death"            file="magic_death.wav" />
+        <sound id="13"  name="destruction"      file="magic_destruction.wav" />
+        <sound id="14"  name="elec"             file="magic_elec.wav" />
+        <sound id="15"  name="fear"             file="magic_fear.wav" />
+        <sound id="16"  name="fire"             file="magic_fire.wav" />
+        <sound id="17"  name="fireball1"        file="magic_fireball1.wav" />
+        <sound id="18"  name="fireball2"        file="magic_fireball2.wav" />
+        <sound id="19"  name="hword"            file="magic_hword.wav" />
+        <sound id="20"  name="ice"              file="magic_ice.wav" />
+        <sound id="21"  name="invisible"        file="magic_invisible.wav" />
+        <sound id="22"  name="invoke"           file="magic_invoke.wav" />
+        <sound id="23"  name="invoke2"          file="magic_invoke2.wav" />
+        <sound id="24"  name="magic"            file="magic_magic.wav" />
+        <sound id="25"  name="manaball"         file="magic_manaball.wav" />
+        <sound id="26"  name="missile"          file="magic_missile.wav" />
+        <sound id="27"  name="mmap"             file="magic_mmap.wav" />
+        <sound id="28"  name="orb"              file="magic_orb.wav" />
+        <sound id="29"  name="paralyze"         file="magic_paralyze.wav" />
+        <sound id="30"  name="poison"           file="magic_poison.wav" />
+        <sound id="31"  name="protection"       file="magic_protection.wav" />
+        <sound id="32"  name="rstrike"          file="magic_rstrike.wav" />
+        <sound id="33"  name="rune"             file="magic_rune.wav" />
+        <sound id="34"  name="sball"            file="magic_sball.wav" />
+        <sound id="35"  name="slow"             file="magic_slow.wav" />
+        <sound id="36"  name="snowstorm"        file="magic_snowstorm.wav" />
+        <sound id="37"  name="stat"             file="magic_stat.wav" />
+        <sound id="38"  name="steambolt"        file="magic_steambolt.wav" />
+        <sound id="39"  name="summon1"          file="magic_summon1.wav" />
+        <sound id="40"  name="summon2"          file="magic_summon2.wav" />
+        <sound id="41"  name="summon3"          file="magic_summon3.wav" />
+        <sound id="42"  name="teleport"         file="magic_teleport.wav" />
+        <sound id="43"  name="turn"             file="magic_turn.wav" />
+        <sound id="44"  name="wall"             file="magic_wall.wav" />
+        <sound id="45"  name="wall2"            file="magic_walls.wav" />
+        <sound id="46"  name="wound"            file="magic_wound.wav" />
+        <!-- Add new magic sounds below this line -->
+        <!-- Add new magic sounds above this line -->
+    </soundtype>
+    <soundtype id="2"   type="client"   prefix="SOUND_">
+        <sound id="0"   name="step1"            file="step1.wav" />
+        <sound id="1"   name="step2"            file="step2.wav" />
+        <sound id="2"   name="pray"             file="pray.wav" />
+        <sound id="3"   name="console"          file="console.wav" />
+        <sound id="4"   name="clickfail"        file="click_fail.wav" />
+        <sound id="5"   name="change1"          file="change1.wav" />
+        <sound id="6"   name="warn_food"        file="warning_food.wav" />
+        <sound id="7"   name="warn_drain"       file="warning_drain.wav" />
+        <sound id="8"   name="warn_statup"      file="warning_statup.wav" />
+        <sound id="9"   name="warn_statdown"    file="warning_statdown.wav" />
+        <sound id="10"  name="warn_hp"          file="warning_hp.wav" />
+        <sound id="11"  name="warn_hp2"         file="warning_hp2.wav" />
+        <sound id="12"  name="weapon_attack"    file="weapon_attack.wav" />
+        <sound id="13"  name="weapon_hold"      file="weapon_hold.wav" />
+        <sound id="14"  name="get"              file="get.wav" />
+        <sound id="15"  name="book"             file="book.wav" />
+        <sound id="16"  name="page"             file="page.wav" />
+        <sound id="17"  name="heartbeat"        file="heartbeat.wav" />
+        <!-- Add new client sounds below this line -->
+        <!-- Add new client sounds above this line -->
+    </soundtype>
+</sounds>
