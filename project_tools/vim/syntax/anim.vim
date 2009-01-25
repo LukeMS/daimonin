@@ -41,7 +41,7 @@ syntax match animIdentifier contained
 syntax match animFace contained contains=animFlag,animXYZ
      \ "^\S\+$"
 syntax match animFlag contained
-     \ "\.\%(u\|d\)"hs=s+1
+     \ "\.\%(a\|b\|d\|u\)"hs=s+1
 syntax match animXYZ contained
      \ "\.\%(\a\|\d\)\{3}$"hs=s+1
 
