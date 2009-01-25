@@ -602,12 +602,12 @@ void map_draw_map(void)
 
                             if (x < (MAP_MAX_SIZE - 1) / 2 || y < (MAP_MAX_SIZE - 1) / 2)
                             {
-                                if ((i = FaceList[index].alt_b) != -1)
+                                if ((i = FaceList[index].alt_a) != -1)
                                     face_sprite = FaceList[i].sprite;
                             }
                             else
                             {
-                                if ((i = FaceList[index].alt_a) != -1)
+                                if ((i = FaceList[index].alt_b) != -1)
                                     face_sprite = FaceList[i].sprite;
                             }
                         }
