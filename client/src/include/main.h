@@ -305,18 +305,21 @@ struct statometer statometer;
 
 extern time_t sleeptime;
 
-#define FACE_FLAG_NO        0
-#define FACE_FLAG_DOUBLE    1       /* this is a double wall type */
-#define FACE_FLAG_UP        2       /* this is a upper part of something */
-#define FACE_FLAG_D1        4       /* this is a x1x object (animation or direction) */
-#define FACE_FLAG_D3        8       /* this is a x3x object (animation or direction) */
-#define FACE_REQUESTED      16      /* face requested from server - do it only one time */
+#define FACE_FLAG_NO          0
+#define FACE_FLAG_ALTERNATIVE 1  /* this has an alternative image */
+#define FACE_FLAG_DOUBLE      2  /* this is a double wall type */
+#define FACE_FLAG_UP          4  /* this is a upper part of something */
+#define FACE_FLAG_D1          8  /* this is a x1x object (animation or direction) */
+#define FACE_FLAG_D3          16 /* this is a x3x object (animation or direction) */
+#define FACE_REQUESTED        32 /* face requested from server - do it only one time */
 
 typedef struct _face_struct
 {
-    struct _Sprite *sprite; /* our face data. if != null, face is loaded*/
-    char           *name;               /* our face name. if != null, face is requested*/
-    uint32          checksum;       /* checksum of face */
+    struct _Sprite *sprite;   /* our face data. if != null, face is loaded*/
+    char           *name;     /* our face name. if != null, face is requested*/
+    int             alt_a;    /* index of alternative face */
+    int             alt_b;    /* index of alternative face */
+    uint32          checksum; /* checksum of face */
     int             flags;
 }
 _face_struct;

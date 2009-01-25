@@ -173,56 +173,112 @@ static void face_flag_extension(int pnum, char *buf)
     char   *stemp;
 
     FaceList[pnum].flags = FACE_FLAG_NO;
-    /* check for the "double"/"up" tag in the picture name */
-    if ((stemp = strstr(buf, ".d")))
+
+    /* Check for the "alt a"/"alt b"/"double"/"up" tag in the picture name. */
+    if ((stemp = strstr(buf, ".a")))
+    {
+        char fname[HUGE_BUF];
+        int  i;
+
+        FaceList[pnum].flags |= FACE_FLAG_ALTERNATIVE;
+
+        /* Strip off any path information and the file extension, and replace
+         * .a with .b. */
+        if ((stemp = strrchr(buf, '/')))
+            stemp++;
+        else
+            stemp = buf;
+        strcpy(fname, stemp);
+        *(fname + (strlen(fname) - 4)) = '\0';
+        *(strstr(fname, ".a") + 1) = 'b';
+
+        /* Look for fname in the bmap table, requesting it if necessary. */
+        if ((i = get_facenum_from_name(fname)) == -1)
+            LOG(LOG_MSG, "%s/face_flag_extension(): %s could not be found in bmaptype_table!\n",
+                __FILE__, fname);
+        else
+        {
+            request_face(i);
+
+            /* Set our_ref. */
+            FaceList[pnum].alt_a = -1;
+            FaceList[pnum].alt_b = i;
+
+            /* Set your_ref. */
+            FaceList[i].alt_a = pnum;
+            FaceList[i].alt_b = -1;
+        }
+    }
+    else if ((stemp = strstr(buf, ".b")))
+    {
+        char fname[HUGE_BUF];
+        int  i;
+
+        FaceList[pnum].flags |= FACE_FLAG_ALTERNATIVE;
+
+        /* Strip off any path information and the file extension, and replace
+         * .b with .a. */
+        if ((stemp = strrchr(buf, '/')))
+            stemp++;
+        else
+            stemp = buf;
+        strcpy(fname, stemp);
+        *(fname + (strlen(fname) - 4)) = '\0';
+        *(strstr(fname, ".b") + 1) = 'a';
+
+        /* Look for fname in the bmap table, requesting it if necessary. */
+        if ((i = get_facenum_from_name(fname)) == -1)
+            LOG(LOG_MSG, "%s/face_flag_extension(): %s could not be found in bmaptype_table!\n",
+                __FILE__, fname);
+        else
+        {
+            request_face(i);
+
+            /* Set our_ref. */
+            FaceList[pnum].alt_a = i;
+            FaceList[pnum].alt_b = -1;
+
+            /* Set your_ref. */
+            FaceList[i].alt_a = -1;
+            FaceList[i].alt_b = pnum;
+        }
+    }
+    else if ((stemp = strstr(buf, ".d")))
         FaceList[pnum].flags |= FACE_FLAG_DOUBLE;
     else if ((stemp = strstr(buf, ".u")))
-        FaceList[pnum].flags |= FACE_FLAG_UP;
-
-    /* Now the facing stuff: if some tag was there, lets grap the facing info */
-    if (FaceList[pnum].flags && stemp)
     {
         int tc;
+
+        FaceList[pnum].flags |= FACE_FLAG_UP;
+
         for (tc = 0; tc < 4; tc++)
         {
             if (!*(stemp + tc)) /* has the string a '0' before our anim tags */
                 goto finish_face_cmd_j1;
         }
-        /* lets set the right flags for the tags */
-#if 0
-        if (((FaceList[pnum].flags & FACE_FLAG_UP) && *(stemp + tc) == '5') || *(stemp + tc) == '1')
-            FaceList[pnum].flags |= FACE_FLAG_D1;
-        else if (*(stemp + tc) == '3')
-            FaceList[pnum].flags |= FACE_FLAG_D3;
-        else if (*(stemp + tc) == '4' || *(stemp + tc) == '8' || *(stemp + tc) == '0')
-            FaceList[pnum].flags |= (FACE_FLAG_D3 | FACE_FLAG_D1);
-#else
-        /* The Dx flags are only relevant to UP images (see map.c). */
-        if ((FaceList[pnum].flags & FACE_FLAG_UP))
+
+        switch (*(stemp + tc))
         {
-            switch (*(stemp + tc))
-            {
-                case '0':
-                case '2':
-                case '4':
-                case '6':
-                case '8':
-                    FaceList[pnum].flags |= (FACE_FLAG_D3 | FACE_FLAG_D1);
-                    break;
+            case '0':
+            case '2':
+            case '4':
+            case '6':
+            case '8':
+                FaceList[pnum].flags |= (FACE_FLAG_D3 | FACE_FLAG_D1);
+                break;
 
-                case '1':
-                case '5':
-                    FaceList[pnum].flags |= FACE_FLAG_D1;
-                    break;
+            case '1':
+            case '5':
+                FaceList[pnum].flags |= FACE_FLAG_D1;
+                break;
 
-                case '3':
-                case '7':
-                    FaceList[pnum].flags |= FACE_FLAG_D3;
-                    break;
-            }
+            case '3':
+            case '7':
+                FaceList[pnum].flags |= FACE_FLAG_D3;
+                break;
         }
-#endif
     }
+
 finish_face_cmd_j1: /* error jump from for() */
     return;
 }
