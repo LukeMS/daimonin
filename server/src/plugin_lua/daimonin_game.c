@@ -685,7 +685,11 @@ int Game_init(lua_State *L)
 // Free the memory allocated for game constants
 void Game_free()
 {
-    int     i = 0;
+    size_t  size_presets = sizeof(preset_game_constants);
+    int     num_presets = size_presets / sizeof(struct constant_decl);
+
+    // Don't try to free preset names
+    int     i = num_presets;
 
     if (Game_constants == NULL)
         return;
