@@ -593,6 +593,25 @@ void map_draw_map(void)
                     {
                         index = index_tmp & ~0x8000;
                         face_sprite = FaceList[index].sprite;
+
+                        /* If it's got an alternative image and it's not in the
+                         * bottom quadrant, use the alternative sprite. */
+                        if (FaceList[index].flags & FACE_FLAG_ALTERNATIVE)
+                        {
+                            int i;
+
+                            if (x < (MAP_MAX_SIZE - 1) / 2 || y < (MAP_MAX_SIZE - 1) / 2)
+                            {
+                                if ((i = FaceList[index].alt_a) != -1)
+                                    face_sprite = FaceList[i].sprite;
+                            }
+                            else
+                            {
+                                if ((i = FaceList[index].alt_b) != -1)
+                                    face_sprite = FaceList[i].sprite;
+                            }
+                        }
+
                         if (!face_sprite)
                         {
                             index = MAX_FACE_TILES - 1;
@@ -691,53 +710,57 @@ void map_draw_map(void)
 
                             yl = (yl - map->height) + player_height_offset;
 
-                            if (FaceList[index].flags & FACE_FLAG_UP)
+                            /* These faces have alternative images. This has
+                             * already been sorted out above, so just blt it. */
+                            if (FaceList[index].flags & FACE_FLAG_ALTERNATIVE)
+                                sprite_blt_map(face_sprite, xl, yl, NULL, &bltfx, stretch);
+                            /* Double faces are shown twice, one above the
+                             * other, when not lower on the screen than the
+                             * player. This simulates high walls without
+                             * oscuring the user's view. */
+                            else if (FaceList[index].flags & FACE_FLAG_DOUBLE)
                             {
+                                /* Blt face once in normal position. */
+                                sprite_blt_map(face_sprite, xl, yl, NULL, &bltfx, stretch);
+ 
+                                /* If it's not in the bottom quadrant of the
+                                 * map, blt it again 'higher up' on the same
+                                 * square. */
+                                if (x < (MAP_MAX_SIZE - 1) / 2 || y < (MAP_MAX_SIZE - 1) / 2)
+                                    sprite_blt_map(face_sprite, xl, yl - 22, NULL, &bltfx, 0);
+                            }
+                            /* These faces are only shown when they are in a
+                             * position which would be visible to the player. */
+                            else if (FaceList[index].flags & FACE_FLAG_UP)
+                            {
+                                int bltflag = 0; // prevents drawing the same face twice
+ 
+                                /* If the face is dir [0124568] and in the top
+                                 * or right quadrant or on the central square,
+                                 * blt it. */
                                 if (FaceList[index].flags & FACE_FLAG_D1)
                                 {
-                                    if (((y <= (MAP_MAX_SIZE - 1) / 2) && (x <= (MAP_MAX_SIZE - 1) / 2))
-                                        || ((y < (MAP_MAX_SIZE - 1) / 2) && (x > (MAP_MAX_SIZE - 1) / 2)))
+                                    if (((x <= (MAP_MAX_SIZE - 1) / 2) && (y <= (MAP_MAX_SIZE - 1) / 2))
+                                        || ((x > (MAP_MAX_SIZE - 1) / 2) && (y < (MAP_MAX_SIZE - 1) / 2)))
+                                    {
                                         sprite_blt_map(face_sprite, xl, yl, NULL, &bltfx, 0);
+                                        bltflag = 1;
+                                    }
                                 }
-                                if (FaceList[index].flags & FACE_FLAG_D3)
+ 
+                                /* If the face is dir [0234768] and in the top
+                                 * or left quadrant or on the central square,
+                                 * blt it. */
+                                if (!bltflag && FaceList[index].flags & FACE_FLAG_D3)
                                 {
-                                    if (((y <= (MAP_MAX_SIZE - 1) / 2) && (x <= (MAP_MAX_SIZE - 1) / 2))
-                                        || ((y > (MAP_MAX_SIZE - 1) / 2) && (x < (MAP_MAX_SIZE - 1) / 2)))
+                                    if (((x <= (MAP_MAX_SIZE - 1) / 2) && (y <= (MAP_MAX_SIZE - 1) / 2))
+                                        || ((x < (MAP_MAX_SIZE - 1) / 2) && (y > (MAP_MAX_SIZE - 1) / 2)))
                                         sprite_blt_map(face_sprite, xl, yl, NULL, &bltfx, 0);
                                 }
                             }
+                            /* Anything else. Just blt it. */
                             else
                                 sprite_blt_map(face_sprite, xl, yl, NULL, &bltfx, stretch);
-
-                            /* here we handle high & low walls - for example when
-                             * you enter a house or something. The wall will be drawn
-                             * low and higher wall mask will be removed, when the wall
-                             * is in front of you.
-                             */
-                            if (FaceList[index].flags)
-                            {
-                                if (FaceList[index].flags & FACE_FLAG_DOUBLE)
-                                {
-//                                    if (FaceList[index].flags & FACE_FLAG_D1)
-//                                    {
-//                                        if (y < (MAP_MAX_SIZE - 1) / 2)
-//                                            sprite_blt_map(face_sprite, xl, yl - 22, NULL, &bltfx, 0);
-//                                    }
-#if 0
-                                    if ((FaceList[index].flags & FACE_FLAG_D3) || (FaceList[index].flags & FACE_FLAG_D1))
-                                    {
-                                        if (x < (MAP_MAX_SIZE - 1) / 2 || y < (MAP_MAX_SIZE - 1) / 2)
-                                            sprite_blt_map(face_sprite, xl, yl - 22, NULL, &bltfx, 0);
-                                    }
-#else
-                                     /* We don't care about the Dx flags on
-                                      * DOUBLE images because our draw area is
-                                      * symmetrical. */
-                                    if (x < (MAP_MAX_SIZE - 1) / 2 || y < (MAP_MAX_SIZE - 1) / 2)
-                                        sprite_blt_map(face_sprite, xl, yl - 22, NULL, &bltfx, 0);
-#endif
-                                }
-                            }
 
                             /* have we a playername? then print it! */
                             if (options.player_names && map->pname[k][0])
