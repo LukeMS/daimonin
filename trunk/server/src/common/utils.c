@@ -212,3 +212,24 @@ int clipped_percent(int a, int b)
     return rv;
 }
 
+// Helper string functions
+// Duplicate string
+char *str_dup(const char *str)
+{
+    char *ret = (char *)malloc(strlen(str) + 1);
+
+    strcpy(ret, str);
+
+    return ret;
+}
+
+// Uppercase string
+char *str_upr(char *str)
+{
+    int i;
+
+    for (i = 0; i < (int)strlen(str); i++)
+        str[i] = toupper(str[i]);
+
+    return str;
+}
