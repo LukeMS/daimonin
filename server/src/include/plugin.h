@@ -370,6 +370,8 @@ struct plugin_hooklist
     char* (*normalize_path_direct)(const char *src, const char *dst, char *path);
     const char* (*path_to_name)(const char *file);
     void (*reset_instance_data)(player *pl);
+    char *(*str_dup)(const char *str);
+    char *(*str_upr)(char *str);
 
     /* Global variables */
     Animations **animations;
