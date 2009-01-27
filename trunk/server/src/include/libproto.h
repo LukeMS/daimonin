@@ -236,7 +236,7 @@ extern void             dump_mempool_statistics(object *op, int *sum_used, int *
 extern int				do_throw(object *op, int dir);
 extern int				fire_bow(object *op, int dir);
 extern object          *find_arrow(object *op, const char *type);
-extern object		   *create_missile(object * const owner, const object * const bow, 
+extern object		   *create_missile(object * const owner, const object * const bow,
 											  object *const missile, const int dir);
 extern void             move_missile(object *op);
 extern void             stop_missile(object *op);
@@ -397,8 +397,6 @@ extern int              buf_overflow(const char *buf1, const char *buf2, int buf
 extern int              transform_name_string(char *name);
 extern void             bitstostring(long bits, int num, char *str);
 extern int              clipped_percent(int a, int b);
-extern char            *str_dup(const char *str);
-extern char            *str_upr(char *str);
 /* view_map.c */
 void            draw_client_map(object *pl);
 void            draw_client_map2(object *pl);
