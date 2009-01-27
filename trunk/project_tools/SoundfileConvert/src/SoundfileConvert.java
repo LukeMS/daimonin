@@ -200,8 +200,8 @@ public class SoundfileConvert
                 {
                     nodeCount = soundtype.getChildNodes().getLength();
                     soundtypeId = Integer.parseInt(soundtype.getAttribute("id"));
-                    type = soundtype.getAttribute("type");
-                    prefix = soundtype.getAttribute("prefix");
+                    type = soundtype.getAttribute("type").toUpperCase();
+                    prefix = soundtype.getAttribute("prefix").toUpperCase();
                     s1 = String.format("*%d|%s|%s|%d", soundtypeId,
                             type, prefix, nodeCount);
                     out.println(s1);
@@ -209,7 +209,7 @@ public class SoundfileConvert
                     while (sound != null)
                     {
                         soundId = Integer.parseInt(sound.getAttribute("id"));
-                        name = sound.getAttribute("name");
+                        name = sound.getAttribute("name").toUpperCase();
                         file = sound.getAttribute("file");
                         s1 = String.format("+%d|%s|%s", soundId, name, file);
                         out.println(s1);
