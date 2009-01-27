@@ -629,7 +629,7 @@ int Game_init(lua_State *L)
                 strcpy(name, strtok(NULL, "|"));
                 strcpy(string, "SOUNDTYPE_");
                 strcat(string, name);
-                Game_constants[index++].name = hooks->str_dup(string); // duplicate into array
+                Game_constants[index++].name = hooks->strdup_local(string); // duplicate into array
 
                 // save the prefix
                 strcpy(prefix, strtok(NULL, "|"));
@@ -644,7 +644,7 @@ int Game_init(lua_State *L)
                 strcpy(name, strtok(NULL, "|"));
                 strcpy(string, prefix);
                 strcat(string, name);
-                Game_constants[index++].name = hooks->str_dup(string); // duplicate into array
+                Game_constants[index++].name = hooks->strdup_local(string); // duplicate into array
             }
         }
 

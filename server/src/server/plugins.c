@@ -105,8 +105,7 @@ struct plugin_hooklist  hooklist    =
     normalize_path_direct,
     path_to_name,
     reset_instance_data,
-    str_dup,
-    str_upr,
+    strdup_local,
 
     /* global variables */
     &animations, &new_faces, global_darkness_table, coins_arch,

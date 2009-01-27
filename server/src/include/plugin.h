@@ -344,7 +344,7 @@ struct plugin_hooklist
     void  (*reload_behaviours)(object *op);
     void  (*clear_mob_knowns)(object *op, struct mob_known_obj **first, hashtable *ht);
     int (*command_target)(object *, char *);
-    int (*get_friendship)(object *, object *); 
+    int (*get_friendship)(object *, object *);
     int (*command_combat)(object *, char *);
     object *(*find_next_object)(object *, uint8, uint8, object *);
     sint32 (*sum_weight)(object *);
@@ -370,8 +370,7 @@ struct plugin_hooklist
     char* (*normalize_path_direct)(const char *src, const char *dst, char *path);
     const char* (*path_to_name)(const char *file);
     void (*reset_instance_data)(player *pl);
-    char *(*str_dup)(const char *str);
-    char *(*str_upr)(char *str);
+    char *(*strdup_local)(const char *str);
 
     /* Global variables */
     Animations **animations;
