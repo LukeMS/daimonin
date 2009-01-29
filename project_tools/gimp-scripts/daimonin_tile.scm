@@ -1,4 +1,5 @@
 ; Updated to comply with minor script-fu changes to comply with GIMP v2.6
+; Updated to improve GIF animation, by merging each layer with a white background
 
 (define (script-fu-daimonin-tile-frame pattern size inDirections endFrame onlyLastFrame start end inBorderWidth borderColour saveGIMP keepImagesOpen)
 
@@ -179,7 +180,6 @@
 			(gimp-image-crop img imgWidth imgHeight 0 0)
 
 			; Create a file name for the new image
-;			(set! fileName (string-append pattern "." (number->string frame) (number->string inDirections)))
 			(set! fileName (string-append pattern "." (number->string frame) fileSuffix))
 
 
@@ -235,6 +235,7 @@
 			(curFrame 0)
 			(animImg 0)
 			(newLayer 0)
+			(whiteLayer 0)
 			(animFileName 0)
 			(frameFileName 0)
 		)
@@ -266,6 +267,7 @@
 						; Create a new image to hold the animation
 						(set! animImg (car (gimp-image-new 1 1 RGB)))
 
+						;Obsolete code:
 						;(set! newLayer (car (gimp-layer-new animImg 1 1 RGB-IMAGE "Background" 100 NORMAL-MODE)))
 						;(gimp-image-add-layer animImg newLayer 0)
 
@@ -283,8 +285,19 @@
 
 					(if (and (= saveGIMP FALSE) (> endFrame firstFrame))
 						(begin
+							; Add a new layer - fill later with white
+							(set! whiteLayer (car (gimp-layer-new animImg 1 1 RGB "white" 100 0)))
+							(gimp-image-add-layer animImg whiteLayer -1)
+
+							; Import the actual animation frame, add to image and resize image to match new layer size
 							(set! newLayer (car (gimp-file-load-layer RUN-NONINTERACTIVE animImg frameFileName)))
 							(gimp-image-add-layer animImg newLayer -1)
+							(gimp-image-resize-to-layers animImg)
+
+							; Resize the white layer, fill with white and merge animation frame down into it
+							(gimp-layer-resize-to-image-size whiteLayer)
+							(gimp-drawable-fill whiteLayer WHITE-FILL)
+							(gimp-image-merge-down animImg newLayer CLIP-TO-IMAGE)
 						)
 					)
 
@@ -302,7 +315,7 @@
 						(set! animFileName (string-append pattern ".gif"))
 
 						(gimp-image-set-filename animImg animFileName)
-						(file-gif-save RUN-NONINTERACTIVE animImg newLayer animFileName animFileName 0 1 500 2)
+						(file-gif-save RUN-NONINTERACTIVE animImg 1 animFileName animFileName 0 1 500 2)
 						(gimp-image-clean-all animImg)
 
 
