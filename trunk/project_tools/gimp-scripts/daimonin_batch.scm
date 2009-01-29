@@ -132,7 +132,7 @@
 	SF-ADJUSTMENT	"Radius"			'(5 0.1 120 0.1 1 1 0)
 	SF-ADJUSTMENT	"Amount"			'(0.5 0 10 0.01 0.1 1 0)
 	SF-ADJUSTMENT	"Threshold"			'(0 0 255 1 10 0 0)
-	SF-TOGGLE	"Add Perspective Shadow"        TRUE
+	SF-TOGGLE	"Add Perspective Shadow"        FALSE
 	SF-ADJUSTMENT	"Shadow Z Offset"		'(0 0 50 1 5 0 0)
 	SF-TOGGLE	"Convert to Indexed"		FALSE
 	SF-TOGGLE	"Crop"				TRUE)

@@ -28,7 +28,8 @@ BE SURE TO READ THE SETTING PART OF SCRIPT AND HOW TO MAKE CHANGES TO CONFIGURAT
 
 3.2 Open/make your model. Make sure the model is 1 x 1 x 1.5 tiles large!!! Resize it if it is not!
 
-3.3 Change to the desired name mask for the images. Get to know image (and arch) naming conventions, if you don't already: 
+3.3 Open the daimex script in Blender's text editor. Change to the desired name mask for the images. 
+Get to know image (and arch) naming conventions, if you don't already: 
 http://www.daimonin.net/index.php?name=PNphpBB2&file=viewtopic&t=3879&start=0
 
 3.4 Check if you like the directory, to which the rendered images are saved. 
@@ -77,4 +78,14 @@ Umm, also, I'm not responsible for any damage done by the script, you are using 
 22.10.2007 v0.2	- Initial public release
 21.11.2007 v0.3 - Rotation bug fix; changed deprecated stuff
 13.4.2008  v0.4 - Object approach - multiple configurations/runs in one script
+27.1.2009  v0.5 - New light setup, allowing shadows and a tip by Torchwood, also little documentation change
+
+6. Tips
+
+6.1 How to make semi-transparent shadows by Torchwood: 
+You add a new mesh object to your scene - a flat plane. 
+Align this to the 'ground' level (i.e. just under the feet of the actual object). 
+Add a single material and under the material/shaders tab, set the "only shadow" option. 
+This has the effect of making the plane invisible (so it doesn't appear in the rendered image), 
+but making the plane receive shadows - which then DO appear in the final rendered image.
 
