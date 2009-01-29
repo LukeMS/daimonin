@@ -310,12 +310,16 @@
 
 					(begin
 						(gimp-image-resize-to-layers animImg)
+
+						; newLayer gets modified when we do the merge-down command, so re-get the active layer
+						(set! newLayer (car (gimp-image-get-active-layer animImg))) 
+
 						(gimp-image-convert-indexed animImg FS-DITHER MAKE-PALETTE 255 FALSE TRUE "")
 
 						(set! animFileName (string-append pattern ".gif"))
 
 						(gimp-image-set-filename animImg animFileName)
-						(file-gif-save RUN-NONINTERACTIVE animImg 1 animFileName animFileName 0 1 500 2)
+						(file-gif-save RUN-NONINTERACTIVE animImg newLayer animFileName animFileName 0 1 500 2)
 						(gimp-image-clean-all animImg)
 
 
