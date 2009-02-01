@@ -40,6 +40,7 @@ public:
     // ////////////////////////////////////////////////////////////////////
     GuiStatusbar(TiXmlElement *xmlElement, void *parent);
     ~GuiStatusbar();
+    int sendMsg(int element, void *parm1 =0, void *parm2 =0, void *parm3 =0);
     void draw();
     void setValue(Ogre::Real value);
 

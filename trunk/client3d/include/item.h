@@ -137,6 +137,7 @@ bool inv_updated:1;          /**< Container was updated **/
     void getInventoryItemFromFloor(int slotNr);
     bool update(sItem *tmpItem, int newContainerID, bool bflag);
     int  getContainerID(unsigned int ItemID);
+    const char *getItemGfxName(int itemFace);
     sItem *locateItem(int container, unsigned int tag);
     void printAllItems();
     void setBackpackID(int id)

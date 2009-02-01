@@ -46,14 +46,7 @@ public:
     // ////////////////////////////////////////////////////////////////////
     GuiTable(TiXmlElement *xmlElement, void *parent);
     ~GuiTable();
-    void clear();                             /**< Clear the whole table.   **/
-    void addRow(const char *row);             /**< Add a row to the table.  **/
-    void setRow(int row, const char *rowTxt); /**< Set new values to a row. **/
-    bool getUserBreak();
-    bool mouseEvent(int MouseAction, int x, int y);
-    bool keyEvent(const char keyChar, const unsigned char key);
-    int  getSelectedRow();
-    int  getActivatedRow();
+    int sendMsg(int element, void *parm1 =0, void *parm2 =0, void *parm3 =0);
 
 private:
     // ////////////////////////////////////////////////////////////////////
@@ -83,7 +76,15 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    void draw(); /**< Draw the background of the table. **/
+    inline int getUserBreak();
+    inline int getSelectedRow();
+    inline int getActivatedRow();
+    inline int keyEvent(const char *keyChar, const unsigned char *key);
+    inline int mouseEvent(int *MouseAction, int *x, int *y);
+    inline void clear();                             /**< Clear the whole table.   **/
+    inline void addRow(const char *row);
+    inline void setRow(int row, const char *rowTxt); /**< Set new values to a row. **/
+    void draw();                                     /**< Draw the background of the table. **/
     void drawSelection(int newSelection);
     void drawRow(int row, Ogre::uint32 color);
 };

@@ -206,11 +206,14 @@ void GuiManager::loadResources(Ogre::Resource *res)
     }
     if (name.find(RESOURCE_WINDOW)  != std::string::npos)
     {
-        int window = StringConverter::parseInt(name.substr(name.find_first_of("#")+1, SUM_WIN_DIGITS));
+
         if (name.find(RESOURCE_DND) != std::string::npos)
-            guiWindow[window].loadDnDResources();
-        else
-            guiWindow[window].loadResources();
+        {
+            guiWindow[0].loadResources(true);
+            return;
+        }
+        int window = StringConverter::parseInt(name.substr(name.find_first_of("#")+1, SUM_WIN_DIGITS));
+        guiWindow[window].loadResources(false);
         return;
     }
     if (name.find(ManResourceLoader::TEMP_RESOURCE) != std::string::npos)
@@ -325,14 +328,6 @@ void GuiManager::parseWindows(const char *fileWindows)
 //================================================================================================
 // .
 //================================================================================================
-int GuiManager::addTextline(int window, int element, const char *text, uint32 color)
-{
-    return guiWindow[window].addTextline(element, text, color);
-}
-
-//================================================================================================
-// .
-//================================================================================================
 void GuiManager::freeRecources()
 {
     for (int i=0; i < WIN_SUM; ++i) guiWindow[i].freeRecources();
@@ -374,7 +369,7 @@ bool GuiManager::keyEvent(const int key, const unsigned int keyChar)
     }
     // Key event in active window.
     if (mActiveWindow == NO_ACTIVE_WINDOW) return false;
-    return guiWindow[mActiveWindow].keyEvent(keyChar, key);
+    return (int) guiWindow[mActiveWindow].keyEvent(keyChar, key);
 }
 
 //================================================================================================
@@ -401,7 +396,7 @@ bool GuiManager::mouseEvent(int mouseAction, Vector3 &mouse)
                 if (guiWindow[w].mouseWithin((int)mMouse.x, (int)mMouse.y))
                 {
                     mDragDstWin = w;
-                    mDragDstSlot = guiWindow[w].getMouseOverSlot((int)mMouse.x, (int)mMouse.y);
+                    //mDragDstSlot = guiWindow[w].getMouseOverSlot((int)mMouse.x, (int)mMouse.y);
                     break;
                 }
             }
@@ -415,6 +410,7 @@ bool GuiManager::mouseEvent(int mouseAction, Vector3 &mouse)
     // ////////////////////////////////////////////////////////////////////
     // Check for mouse action in all windows.
     // ////////////////////////////////////////////////////////////////////
+    //if (guiWindow[mActiveWindow].mouseEvent(mouseAction, mMouse) == EVENT_CHECK_DONE) return (mMouseInside = true);
     for (unsigned int i=0; i < WIN_SUM; ++i)
     {
         int ret = guiWindow[i].mouseEvent(mouseAction, mMouse);
@@ -486,6 +482,7 @@ void GuiManager::resetTextInput()
 //================================================================================================
 void GuiManager::windowToFront(int window)
 {
+    if (mActiveWindow == window) return;
     unsigned char actPos = guiWindow[window].getZPos();
     while (actPos != WIN_SUM-1)
     {

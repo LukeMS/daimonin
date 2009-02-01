@@ -130,6 +130,30 @@ void GuiListbox::clear()
 //================================================================================================
 // .
 //================================================================================================
+int GuiListbox::sendMsg(int message, void *parm1, void *parm2, void *parm3)
+{
+    switch (message)
+    {
+        case GuiManager::MSG_ADD_ROW:
+        {
+            uint32 color = (uint32) parm2;
+            if (!color) color = 0x00ffffff;
+            addRow((const char*)parm1, color);
+            return 0;
+        }
+        case GuiManager::MSG_CLEAR:
+            clear();
+            return 0;
+        default:
+            return 0;
+    }
+}
+
+
+
+//================================================================================================
+// .
+//================================================================================================
 void GuiListbox::scrollbarAction(GuiListbox *me, int index, int scroll)
 {
     if (index >= GuiGadgetScrollbar::BUTTON_V_ADD)
@@ -144,7 +168,7 @@ void GuiListbox::scrollbarAction(GuiListbox *me, int index, int scroll)
 //================================================================================================
 // Add line(s) of text to the ring-buffer (perform auto-clipping).
 //================================================================================================
-int GuiListbox::addTextline(String srcText, uint32 default_color)
+int GuiListbox::addRow(String srcText, uint32 default_color)
 {
     GuiTextout::getSingleton().parseUserDefinedChars(srcText);
     unsigned char *buf2 = (unsigned char*)srcText.c_str();
@@ -253,6 +277,8 @@ int GuiListbox::addTextline(String srcText, uint32 default_color)
     return linecount;
 }
 
+
+
 //================================================================================================
 // Returns true if the mouse event was on this gadget (so no need to check the other gadgets).
 //================================================================================================
@@ -277,7 +303,7 @@ bool GuiListbox::mouseEvent(int MouseAction, int x, int y, int z)
         {
             // On a mulitline text, give back the first line.
             mSelectedLine -=row[mSelectedLine & (SIZE_STRING_BUFFER-1)].startLine;
-            activated(mSelectedLine);
+            //return "MSG_LINE_PRESSED"; activated(mSelectedLine);
         }
         else
             mSelectedLine = -1;

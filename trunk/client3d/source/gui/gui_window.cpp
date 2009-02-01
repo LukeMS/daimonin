@@ -26,6 +26,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "define.h"
 #include "logger.h"
 #include "gui_window.h"
+#include "gui_table.h"
 #include "gui_cursor.h"
 #include "gui_manager.h"
 #include "gui_imageset.h"
@@ -40,40 +41,21 @@ using namespace Ogre;
 const int MIN_GFX_SIZE = 1 << 2;
 int GuiWindow::mMouseDragging = -1;
 String GuiWindow::mStrTooltip ="";
+GuiGadgetSlot *GuiWindow::mSlotReference = 0;
 
 //================================================================================================
 // Destructor.
 //================================================================================================
 void GuiWindow::freeRecources()
 {
-    // Delete the slots.
-    for (std::vector<GuiGadgetSlot*>::iterator i = mvSlot.begin(); i < mvSlot.end(); ++i)
+    for (std::vector<GuiElement*>::iterator i = mvElement.begin(); i < mvElement.end(); ++i)
         delete (*i);
-    mvSlot.clear();
-    // Delete the buttons.
-    for (std::vector<GuiGadgetButton*>::iterator i = mvGadgetButton.begin(); i < mvGadgetButton.end(); ++i)
-        delete (*i);
-    mvGadgetButton.clear();
-    // Delete the comboboxes.
-    for (std::vector<GuiGadgetCombobox*>::iterator i = mvGadgetCombobox.begin(); i < mvGadgetCombobox.end(); ++i)
-        delete (*i);
-    mvGadgetCombobox.clear();
-    // Delete the listboxes.
-    for (std::vector<GuiListbox*>::iterator i = mvListbox.begin(); i < mvListbox.end(); ++i)
-        delete (*i);
-    mvListbox.clear();
-    // Delete the graphics.
-    for (std::vector<GuiElement*>::iterator i = mvGraphic.begin(); i < mvGraphic.end(); ++i)
-        delete (*i);
-    mvGraphic.clear();
+    mvElement.clear();
+
     // Delete the statusbars.
     for (std::vector<GuiStatusbar*>::iterator i = mvStatusbar.begin(); i < mvStatusbar.end(); ++i)
         delete (*i);
     mvStatusbar.clear();
-    // Delete the tables.
-    for (std::vector<GuiTable*>::iterator i = mvTable.begin(); i < mvTable.end(); ++i)
-        delete (*i);
-    mvTable.clear();
     // Delete the textlines.
     for (std::vector<GuiTextout::TextLine*>::iterator i = mvTextline.begin(); i < mvTextline.end(); ++i)
     {
@@ -203,21 +185,38 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, const char *resourceDnD, 
     mOverlay->hide();
     mElement->setPosition(mPosX, mPosY);
     setZPos(defaultZPos);
-
-
-
     // ////////////////////////////////////////////////////////////////////
-    // Parse the graphics.
+    // Parse the child elements.
     // ////////////////////////////////////////////////////////////////////
     for (xmlElem = xmlRoot->FirstChildElement("Graphic"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Graphic"))
     {
         GuiElement *gfx = new GuiElement(xmlElem, this);
         gfx->draw();
-        if (gfx->getIndex() == GuiElement::BACKGROUND_GFX_ID)
-            delete gfx;
-        else
-            mvGraphic.push_back(gfx);
+        delete gfx;
     }
+    for (xmlElem = xmlRoot->FirstChildElement("Table"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Table"))
+    {
+        if (!(strTmp = xmlElem->Attribute("name"))) continue;
+        mvElement.push_back(new GuiTable(xmlElem, this));
+    }
+    for (xmlElem = xmlRoot->FirstChildElement("Listbox"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Listbox"))
+    {
+        if (!(strTmp = xmlElem->Attribute("name"))) continue;
+        mvElement.push_back(new GuiListbox(xmlElem, this));
+    }
+    for (xmlElem = xmlRoot->FirstChildElement("Button"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Button"))
+    {
+        if (!(strTmp = xmlElem->Attribute("name"))) continue;
+        mvElement.push_back(new GuiGadgetButton(xmlElem, this, true));
+    }
+    for (xmlElem = xmlRoot->FirstChildElement("Slot"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Slot"))
+    {
+        String resName = mResourceName+"_"; resName+= resourceDnD;
+        GuiGadgetSlot *slot = new GuiGadgetSlot(xmlElem, this, resName.c_str());
+        if (!mSlotReference) mSlotReference = slot;
+        mvElement.push_back(slot);
+    }
+
     // ////////////////////////////////////////////////////////////////////
     // Parse the Label.
     // ////////////////////////////////////////////////////////////////////
@@ -282,24 +281,6 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, const char *resourceDnD, 
         GuiTextout::getSingleton().Print(textline, mTexture.getPointer());
     }
     // ////////////////////////////////////////////////////////////////////
-    // Parse the listboxes.
-    // ////////////////////////////////////////////////////////////////////
-    for (xmlElem = xmlRoot->FirstChildElement("Listbox"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Listbox"))
-    {
-        if (!(strTmp = xmlElem->Attribute("name"))) continue;
-        GuiListbox *listbox = new GuiListbox(xmlElem, this);
-        listbox->setFunction(this->listboxPressed);
-        mvListbox.push_back(listbox);
-    }
-    // ////////////////////////////////////////////////////////////////////
-    // Parse the tables.
-    // ////////////////////////////////////////////////////////////////////
-    for (xmlElem = xmlRoot->FirstChildElement("Table"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Table"))
-    {
-        if (!(strTmp = xmlElem->Attribute("name"))) continue;
-        mvTable.push_back(new GuiTable(xmlElem, this));
-    }
-    // ////////////////////////////////////////////////////////////////////
     // Parse the Statusbars.
     // ////////////////////////////////////////////////////////////////////
     for (xmlElem = xmlRoot->FirstChildElement("Statusbar"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Statusbar"))
@@ -307,38 +288,33 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, const char *resourceDnD, 
         if (!(strTmp = xmlElem->Attribute("image_name"))) continue;
         mvStatusbar.push_back(new GuiStatusbar(xmlElem, this));
     }
-    // ////////////////////////////////////////////////////////////////////
-    // Parse the gadgets.
-    // ////////////////////////////////////////////////////////////////////
-    for (xmlElem = xmlRoot->FirstChildElement("Gadget"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Gadget"))
-    {
-        if ( !strcmp(xmlElem->Attribute("type"), "BUTTON"))
-        {
-            GuiGadgetButton *button = new GuiGadgetButton(xmlElem, this);
-            button->setFunction(this->buttonPressed);
-            button->draw();
-            mvGadgetButton.push_back(button);
-        }
-        else if ( !strcmp(xmlElem->Attribute("type"), "SLOT"))
-        {
-            String resName = mResourceName+"_"; resName+= resourceDnD;
-            mvSlot.push_back(new GuiGadgetSlot(xmlElem, this, resName.c_str()));
-        }
-        else if ( !strcmp(xmlElem->Attribute("type"), "COMBOBOX"))
-        {
-            GuiGadgetCombobox *combobox = new GuiGadgetCombobox(xmlElem, this);
-            mvGadgetCombobox.push_back(combobox);
-        }
-        else
-            Logger::log().warning() << xmlElem->Attribute("type") << " is not a defined gadget type.";
-    }
 }
+
+//================================================================================================
+//
+//================================================================================================
+int GuiWindow::sendMsg(int element, int message, void *parm1, void *parm2, void *parm3)
+{
+    for (unsigned int i = 0; i < mvElement.size(); ++i)
+    {
+        if (mvElement[i]->getIndex() == element)
+            return mvElement[i]->sendMsg(message, parm1, parm2, parm3);
+    }
+    return -1;
+}
+
+
 
 //================================================================================================
 // (Re)loads the material and texture or creates them if they dont exist.
 //================================================================================================
-void GuiWindow::loadResources()
+void GuiWindow::loadResources(bool slot)
 {
+    if (slot)
+    {
+        mSlotReference->loadResources();
+        return;
+    }
     mOverlay = GuiManager::getSingleton().loadResources(mWidth, mHeight, mResourceName);
     if (mOverlay)
         mElement = mOverlay->getChild(mResourceName + GuiManager::ELEMENT_RESOURCE_NAME);
@@ -392,14 +368,15 @@ void GuiWindow::centerWindowOnMouse(int x, int y)
 //================================================================================================
 // Key event.
 //================================================================================================
-bool GuiWindow::keyEvent(const char keyChar, const unsigned char key)
+int GuiWindow::keyEvent(const char keyChar, const unsigned char key)
 {
-    for (unsigned int i = 0; i < mvTable.size(); ++i)
+    for (unsigned int i = 0; i < mvElement.size(); ++i)
     {
-        if (mvTable[i]->keyEvent(keyChar, key))
-            return true;
+
+        if (mvElement[i]->sendMsg(GuiManager::MSG_GET_KEY_EVENT, (void*)&keyChar, (void*)&key) == GuiManager::EVENT_CHECK_DONE)
+            return GuiManager::EVENT_CHECK_DONE;
     }
-    return false;
+    return GuiManager::EVENT_CHECK_NEXT;
 }
 
 //================================================================================================
@@ -451,221 +428,32 @@ int GuiWindow::mouseEvent(int MouseAction, Vector3 &mouse)
     // ////////////////////////////////////////////////////////////////////
     // Look for a mouse event in a child element.
     // ////////////////////////////////////////////////////////////////////
-    int sumPressed = 0;
-    for (unsigned int i = 0; i < mvGadgetButton.size(); ++i)
-    {   // We dont return on a true return value - to avoid 2 buttons selected at same time..
-        // This will still happen when their gfx is overlapping.
-        if (mvGadgetButton[i]->mouseEvent(MouseAction, x, y)) ++sumPressed;
-    }
-    if (sumPressed) return GuiManager::EVENT_CHECK_DONE;
-
-    for (unsigned int i = 0; i < mvSlot.size(); ++i)
+    for (unsigned int i = 0; i < mvElement.size(); ++i)
     {
-        if (mvSlot[i]->mouseEvent(MouseAction, x, y) == GuiManager::EVENT_DRAG_STRT)
+        int event = mvElement[i]->sendMsg(GuiManager::MSG_GET_MOUSE_EVENT, (void*)&MouseAction, (void*)&x, (void*)&y);
+        if (event != GuiManager::EVENT_CHECK_NEXT)
         {
-            mGadgetDrag = i;
-            return GuiManager::EVENT_DRAG_STRT;
+            if (event == GuiManager::EVENT_DRAG_STRT)
+            {
+                mGadgetDrag = i;
+                return event;
+            }
+            if (event == GuiManager::EVENT_USER_ACTION)
+                buttonPressed(this, mvElement[i]->getIndex());
+            return GuiManager::EVENT_CHECK_DONE;
         }
-    }
-    for (unsigned int i = 0; i < mvGadgetCombobox.size(); ++i)
-    {
-//        if (mvGadgetCombobox[i]->mouseEvent(MouseAction, x, y))
-//            return true;
-    }
-    for (unsigned int i = 0; i < mvListbox.size(); ++i)
-    {
-        if (mvListbox[i]->mouseEvent(MouseAction, x, y, (int) mouse.z))
-            return GuiManager::EVENT_CHECK_DONE;
-    }
-    for (unsigned int i = 0; i < mvTable.size(); ++i)
-    {
-        if (mvTable[i]->mouseEvent(MouseAction, x, y))
-            return GuiManager::EVENT_CHECK_DONE;
     }
     return GuiManager::EVENT_CHECK_DONE;
 }
 
 //================================================================================================
-// Returns the buttonhandle, or 0 if the button was not found.
+//
 //================================================================================================
-class GuiGadgetButton *GuiWindow::getButtonHandle(int element)
+/*
+void GuiWindow::getElement(int element)
 {
-    for (unsigned int i = 0; i < mvGadgetButton.size() ; ++i)
-    {
-        if (mvGadgetButton[i]->getIndex() == element)
-            return mvGadgetButton[i];
-    }
-    return 0;
 }
-
-//================================================================================================
-// Add a row to the table.
-//================================================================================================
-void GuiWindow::addTableRow(int element, const char *text)
-{
-    for (unsigned int i = 0; i < mvTable.size() ; ++i)
-    {
-        if (mvTable[i]->getIndex() == element)
-        {
-            mvTable[i]->addRow(text);
-            return;
-        }
-    }
-}
-
-//================================================================================================
-// Returns the selected element of a table, or -1 when no entry was selected.
-//================================================================================================
-int GuiWindow::getTableSelection(int element)
-{
-    for (unsigned int i = 0; i < mvTable.size() ; ++i)
-    {
-        if (mvTable[i]->getIndex() == element)
-            return mvTable[i]->getSelectedRow();
-    }
-    return -1;
-}
-
-//================================================================================================
-// Returns the activated element (dblclk or return) of a table, or -1 when no entry was activeted.
-//================================================================================================
-int GuiWindow::getTableActivated(int element)
-{
-    for (unsigned int i = 0; i < mvTable.size() ; ++i)
-    {
-        if (mvTable[i]->getIndex() == element)
-            return mvTable[i]->getActivatedRow();
-    }
-    return -1;
-}
-
-//================================================================================================
-// User pressed ESC.
-//================================================================================================
-bool GuiWindow::getTableUserBreak(int element)
-{
-    for (unsigned int i = 0; i < mvTable.size() ; ++i)
-    {
-        if (mvTable[i]->getIndex() == element)
-            return mvTable[i]->getUserBreak();
-    }
-    return -1;
-}
-
-//================================================================================================
-// Clear the whole table..
-//================================================================================================
-void GuiWindow::clearTable(int element)
-{
-    for (unsigned int i = 0; i < mvTable.size() ; ++i)
-    {
-        if (mvTable[i]->getIndex() == element)
-        {
-            mvTable[i]->clear();
-            return;
-        }
-    }
-}
-
-//================================================================================================
-// Sets the time for a slot to be busy.
-//================================================================================================
-void GuiWindow::setSlotBusyTime(int element, Real busyTime)
-{
-    if (element < (int)mvSlot.size())
-        mvSlot[element]->setBusyTime(busyTime);
-}
-
-//================================================================================================
-// Set the slot to busy.
-//================================================================================================
-void GuiWindow::setSlotBusy(int element)
-{
-    if (element < (int)mvSlot.size())
-        mvSlot[element]->setBusy();
-}
-
-//================================================================================================
-// Add a textline to a listbox.
-//================================================================================================
-int GuiWindow::addTextline(int element, const char *text, uint32 color)
-{
-    for (unsigned int i = 0; i < mvListbox.size() ; ++i)
-    {
-        if (mvListbox[i]->getIndex() == element)
-            return mvListbox[i]->addTextline(text, color);
-    }
-    return 0;
-}
-
-//================================================================================================
-// Clear the whole list.
-//================================================================================================
-void GuiWindow::clearListbox(int element)
-{
-    for (unsigned int i = 0; i < mvListbox.size() ; ++i)
-    {
-        if (mvListbox[i]->getIndex() == element)
-        {
-            mvListbox[i]->clear();
-            return ;
-        }
-    }
-}
-
-//================================================================================================
-// Returns the slot number, or -1 if the mouse is not within a slot.
-//================================================================================================
-int GuiWindow::getMouseOverSlot(int x, int y)
-{
-    for (unsigned int i = 0; i < mvSlot.size(); ++i)
-    {
-        if (mvSlot[i]->mouseWithin(x - mPosX, y - mPosY))
-            return i;
-    }
-    return -1;
-}
-
-//================================================================================================
-// Adds an item to the slots.
-//================================================================================================
-void GuiWindow::addItem(Item::sItem *item)
-{
-    if (mSumUsedSlots < mvSlot.size())
-        mvSlot[mSumUsedSlots++]->setItem(item);
-}
-
-//================================================================================================
-// Delete an item from a slot.
-//================================================================================================
-void GuiWindow::delItem(Item::sItem *item)
-{
-    for (unsigned int i = 0; i < mSumUsedSlots; ++i)
-    {
-        if (item == mvSlot[i]->getItem())
-        {
-            if (i < mSumUsedSlots-1)
-            {
-                // Found the item that will be deleted.
-                for (; i < mSumUsedSlots; ++i)
-                    mvSlot[i]->setItem(mvSlot[i+1]->getItem());
-            }
-            mvSlot[--mSumUsedSlots]->setItem(0);
-            return;
-        }
-    }
-    Logger::log().error() << "GuiWindow::delItem(): cant find item " << item->d_name;
-}
-
-//================================================================================================
-// Set all slots to empty.
-//================================================================================================
-void GuiWindow::clrItem()
-{
-    for (unsigned int i = 0; i < mvSlot.size(); ++i)
-        mvSlot[i]->setItem(0);
-    mSumUsedSlots = 0;
-}
+*/
 
 //================================================================================================
 // Show/hide the window.
@@ -674,18 +462,6 @@ void GuiWindow::setVisible(bool visible)
 {
     if (!mInit) return;
     if (!visible) mOverlay->hide(); else mOverlay->show();
-}
-
-//================================================================================================
-// Show/hide a child element.
-//================================================================================================
-void GuiWindow::setVisible(int element, bool visible)
-{
-    for (unsigned int i = 0; i < mvGadgetButton.size() ; ++i)
-    {
-        if (mvGadgetButton[i]->getIndex() == element)
-            mvGadgetButton[i]->setVisible(visible);
-    }
 }
 
 //================================================================================================
@@ -710,11 +486,6 @@ const String &GuiWindow::getElementText(int element)
         if (mvTextline[i]->index == element)
             return mvTextline[i]->text;
     }
-    for (unsigned int i = 0; i < mvGadgetCombobox.size() ; ++i)
-    {
-        //        if (mvGadgetCombobox[i]->getIndex() == element)
-        //            return mvGadgetCombobox[i]->getText();
-    }
     // Only reached if a false elemnt was given as parameter.
     // To make the compiler happy, we give back a "random" string.
     return mStrTooltip;
@@ -731,15 +502,6 @@ void GuiWindow::setElementText(int element, const char *text)
         {
             mvTextline[i]->text = text;
             GuiTextout::getSingleton().Print(mvTextline[i], mTexture.getPointer());
-            return;
-        }
-    }
-    for (unsigned int i = 0; i < mvGadgetCombobox.size() ; ++i)
-    {
-        if (mvGadgetCombobox[i]->getIndex() == element)
-        {
-            mvGadgetCombobox[i]->setText(text);
-            mvGadgetCombobox[i]->draw();
             return;
         }
     }
@@ -765,24 +527,8 @@ void GuiWindow::update(Real timeSinceLastFrame)
 {
     if (!mInit || !mOverlay->isVisible()) return;
     // ToDo. Update drag animation (move back on wrong drag).
-    for (unsigned int i = 0; i < mvSlot.size(); ++i)
-        mvSlot[i]->update(timeSinceLastFrame);
-    for (unsigned int i = 0; i < mvListbox.size(); ++i)
-        mvListbox[i]->update(timeSinceLastFrame);
-}
-
-//================================================================================================
-// Button event inside a listbox.
-//================================================================================================
-void GuiWindow::listboxPressed(GuiWindow *me, int index, int line)
-{
-    Sound::getSingleton().playStream(Sound::BUTTON_CLICK);
-    switch (index)
-    {
-        case GuiImageset::GUI_LIST_NPC:
-            GuiDialog::getSingleton().mouseEvent(line);
-            return;
-    }
+    for (unsigned int i = 0; i < mvElement.size(); ++i)
+        mvElement[i]->update(timeSinceLastFrame);
 }
 
 //================================================================================================
@@ -798,6 +544,13 @@ void GuiWindow::buttonPressed(GuiWindow *me, int index)
             me->setVisible(false);
             return;
             // Unique buttons.
+        case GuiImageset::GUI_LIST_NPC:
+        {
+            //int line = mvElement[GuiImageset::GUI_LIST_NPC]->recvMsg(..."getSelectedLine");
+            int line = 0;
+            GuiDialog::getSingleton().mouseEvent(line);
+            return;
+        }
         case GuiImageset::GUI_BUTTON_NPC_ACCEPT:
             GuiDialog::getSingleton().buttonEvent(0);
             return;
@@ -806,5 +559,5 @@ void GuiWindow::buttonPressed(GuiWindow *me, int index)
             return;
     }
     // Not yet supported elements...
-    GuiManager::getSingleton().addTextline(GuiManager::WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "button event from <anonymous> element.");
+    GuiManager::getSingleton().sendMsg(GuiManager::WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, (void*)"button event from <anonymous> element.");
 }

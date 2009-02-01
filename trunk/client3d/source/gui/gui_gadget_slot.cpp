@@ -43,7 +43,6 @@ const uint32 SLOT_BUSY_COLOR     = 0xdd777777;
 const uint32 SLOT_QUANTITY_COLOR = 0x00888888;
 const char UNKONWN_ITEM_GFX_FILENAME[] = "item_noGfx.png";
 const int  UNKNOWN_ITEM_GFX = 0;
-const int  BITS_FACEFILTER = ~0x8000; // Filter to extract the face number (gfx-id).
 String GuiGadgetSlot::mResourceName = "";
 Overlay *GuiGadgetSlot::mDnDOverlay =0;
 OverlayElement *GuiGadgetSlot::mDnDElement =0;
@@ -62,7 +61,7 @@ GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, const char 
 {
     std::string filename;
     mSlotNr = ++uid;
-    mItem = 0;
+    mItemGfxID = -1;
     mBusyTime = 1.0;  // Default time for a slot to be busy (MUST be > 0).
     mBusyOldVal = -1;
     mBusyTimeExpired = 0;
@@ -237,6 +236,43 @@ GuiGadgetSlot::~GuiGadgetSlot()
 }
 
 //================================================================================================
+//
+//================================================================================================
+int GuiGadgetSlot::sendMsg(int message, void *parm1, void *parm2, void *parm3)
+{
+//    switch (message)
+    {
+        return -1;
+    }
+}
+
+//================================================================================================
+//
+//================================================================================================
+void GuiGadgetSlot::setItem(const char *gfxName, int quantity)
+{
+    for (unsigned int i = 0; i < mvAtlasGfxName.size(); ++i)
+    {
+        if (mvAtlasGfxName[i] == gfxName)
+        {
+            mItemGfxID = i;
+            mQuantity = quantity;
+            draw();
+        }
+    }
+}
+
+//================================================================================================
+// Get the item pos in the item-texture-atlas.
+//================================================================================================
+int GuiGadgetSlot::getTextureAtlasPos(const char *gfxName)
+{
+    for (unsigned int i =0; i < mvAtlasGfxName.size(); ++i)
+        if (mvAtlasGfxName[i] == gfxName) return i;
+    return UNKNOWN_ITEM_GFX; // No gfx for this Item was found.
+}
+
+//================================================================================================
 // Draw a busy gfx over the slot.
 //================================================================================================
 void GuiGadgetSlot::update(Real dTime)
@@ -276,7 +312,7 @@ int GuiGadgetSlot::mouseEvent(int MouseAction, int x, int y)
             GuiManager::getSingleton().setTooltip(mStrTooltip.c_str());
             return GuiManager::EVENT_CHECK_NEXT;
         }
-        if (MouseAction == GuiWindow::BUTTON_PRESSED && mItem)
+        if (MouseAction == GuiWindow::BUTTON_PRESSED && mItemGfxID >= 0)
         {
             mDragSlot = mActiveSlot;
             drawDragItem();
@@ -298,29 +334,11 @@ int GuiGadgetSlot::mouseEvent(int MouseAction, int x, int y)
 }
 
 //================================================================================================
-// Get the item pos in the item-texture-atlas.
-//================================================================================================
-int GuiGadgetSlot::getTextureAtlasPos(int itemFace)
-{
-    return getTextureAtlasPos(ObjectWrapper::getSingleton().getMeshName(itemFace & BITS_FACEFILTER));
-}
-
-//================================================================================================
-// Get the item pos in the item-texture-atlas.
-//================================================================================================
-int GuiGadgetSlot::getTextureAtlasPos(const char *gfxName)
-{
-    for (unsigned int i =0; i < mvAtlasGfxName.size(); ++i)
-        if (mvAtlasGfxName[i] == gfxName) return i;
-    return UNKNOWN_ITEM_GFX; // No gfx for this Item was found.
-}
-
-//================================================================================================
 //
 //================================================================================================
 void GuiGadgetSlot::drawDragItem()
 {
-    if (!mItem) return;
+    if (!mItemGfxID < 0) return;
     if (mDnDTexture.isNull())
     {
         mDnDTexture = TextureManager::getSingleton().createManual(mResourceName+GuiManager::TEXTURE_RESOURCE_NAME,
@@ -329,8 +347,7 @@ void GuiGadgetSlot::drawDragItem()
                       ManResourceLoader::getSingleton().getLoader());
         mDnDTexture->load();
     }
-    int gfxNr = getTextureAtlasPos(mItem->face);
-    mDnDTexture->getBuffer()->blitFromMemory(mAtlasTexture.getPixelBox().getSubVolume(Box(0, ITEM_SIZE * gfxNr, ITEM_SIZE, ITEM_SIZE *(gfxNr+1))));
+    mDnDTexture->getBuffer()->blitFromMemory(mAtlasTexture.getPixelBox().getSubVolume(Box(0, ITEM_SIZE * mItemGfxID, ITEM_SIZE, ITEM_SIZE *(mItemGfxID+1))));
     moveDragOverlay();
     mDnDOverlay->show();
 }
@@ -341,7 +358,12 @@ void GuiGadgetSlot::drawDragItem()
 //================================================================================================
 void GuiGadgetSlot::draw()
 {
-    if (!mIsVisible || !mItem)
+
+
+    return;
+
+
+    if (!mIsVisible || !mItemGfxID)
     {
         GuiElement::draw();
         return;
@@ -364,8 +386,7 @@ void GuiGadgetSlot::draw()
     // ////////////////////////////////////////////////////////////////////
     int dX  = (mWidth  - ITEM_SIZE) /2;
     int dY  = (mHeight - ITEM_SIZE) /2;
-    int gfxNr = getTextureAtlasPos(mItem->face);
-    PixelBox src = mAtlasTexture.getPixelBox().getSubVolume(Box(0, ITEM_SIZE * gfxNr, ITEM_SIZE, ITEM_SIZE *(gfxNr+1)));
+    PixelBox src = mAtlasTexture.getPixelBox().getSubVolume(Box(0, ITEM_SIZE * mItemGfxID, ITEM_SIZE, ITEM_SIZE *(mItemGfxID+1)));
     uint32 *dst = mGfxBuf + dX + dY * MAX_SIZE;
     GuiGraphic::getSingleton().drawGfxToBuffer(ITEM_SIZE, ITEM_SIZE, ITEM_SIZE, ITEM_SIZE, (uint32*)src.data, dst, dst, ITEM_SIZE, MAX_SIZE, MAX_SIZE);
     // ////////////////////////////////////////////////////////////////////

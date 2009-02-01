@@ -435,7 +435,7 @@ void TileMap::scroll(int dx, int dy)
 void TileMap::draw()
 {
     if (!mNeedsRedraw) return;
-    GuiManager::getSingleton().addTextline(GuiManager::WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "TileMap::draw()");
+    GuiManager::getSingleton().sendMsg(GuiManager::WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, (void*)"TileMap::draw()");
     TileManager::getSingleton().changeChunks();
     mNeedsRedraw = false;
 }

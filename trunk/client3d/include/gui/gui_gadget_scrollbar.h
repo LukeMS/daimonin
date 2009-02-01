@@ -55,13 +55,15 @@ public:
     // ////////////////////////////////////////////////////////////////////
     GuiGadgetScrollbar(TiXmlElement *xmlElement, void *parent, void *parentElement);
     ~GuiGadgetScrollbar();
+    int sendMsg(int element, void *parm1 =0, void *parm2 =0, void *parm3 =0);
+
     void resize(int newWidth, int newHeight);
     void updateSliderSize(int actPos, int maxVisPos, int maxPos = -1);
     void setFunction(Callback *c)
     {
         mCallFunc = c;
     }
-    bool mouseEvent(int MouseAction, int x, int y);
+    int mouseEvent(int MouseAction, int x, int y);
     void draw();
 private:
     // ////////////////////////////////////////////////////////////////////

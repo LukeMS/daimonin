@@ -30,13 +30,32 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 using namespace Ogre;
 
 //================================================================================================
+//
+//================================================================================================
+int GuiGadgetButton::sendMsg(int message, void *parm1, void *parm2, void *parm3)
+{
+    switch (message)
+    {
+        case GuiManager::MSG_GET_KEY_EVENT:
+            return keyEvent((const char*)parm1, (const unsigned char*)parm2);
+        case GuiManager::MSG_GET_MOUSE_EVENT:
+            return mouseEvent((int*)parm1, (int*)parm2, (int*)parm3);
+        case GuiManager::MSG_SET_VISIBLE:
+            setVisible((bool*)parm1);
+            return 0;
+        default:
+            return -1;
+    }
+}
+
+//================================================================================================
 // .
 //================================================================================================
-GuiGadgetButton::GuiGadgetButton(TiXmlElement *xmlElement, void *parent):GuiElement(xmlElement, parent)
+GuiGadgetButton::GuiGadgetButton(TiXmlElement *xmlElement, void *parent, bool drawOnInit):GuiElement(xmlElement, parent)
 {
-    mCallFunc = 0;
     mMouseOver = false;
     mMouseButDown = false;
+    if (drawOnInit) draw();
 }
 
 //================================================================================================
@@ -56,11 +75,20 @@ void GuiGadgetButton::setVisible(bool visible)
 }
 
 //================================================================================================
+//
+//================================================================================================
+int GuiGadgetButton::keyEvent(const char *keyChar, const unsigned char *key)
+{
+    return 0;
+}
+
+
+//================================================================================================
 // Returns true if the mouse event was on this gadget (so no need to check the other gadgets).
 //================================================================================================
-bool GuiGadgetButton::mouseEvent(int MouseAction, int x, int y)
+int GuiGadgetButton::mouseEvent(int *MouseAction, int *x, int *y)
 {
-    if (x < mPosX || x > mPosX + mWidth || y < mPosY || y > mPosY + mHeight)
+    if (!mouseWithin(*x, *y))
     {
         // Mouse is no longer over the the gadget.
         if (getState() != GuiImageset::STATE_ELEMENT_DEFAULT)
@@ -69,7 +97,7 @@ bool GuiGadgetButton::mouseEvent(int MouseAction, int x, int y)
             mMouseButDown = false;
             if (setState(GuiImageset::STATE_ELEMENT_DEFAULT)) draw();
             GuiManager::getSingleton().setTooltip("");
-            return true; // No need to check other gadgets.
+            return GuiManager::EVENT_CHECK_DONE; // No need to check other gadgets.
         }
     }
     else
@@ -79,23 +107,23 @@ bool GuiGadgetButton::mouseEvent(int MouseAction, int x, int y)
             mMouseOver = true;
             if (setState(GuiImageset::STATE_ELEMENT_M_OVER)) draw();
             GuiManager::getSingleton().setTooltip(mStrTooltip.c_str());
-            return true;
+            return GuiManager::EVENT_CHECK_DONE;
         }
-        if (MouseAction == GuiWindow::BUTTON_PRESSED && !mMouseButDown)
+        if (*MouseAction == GuiWindow::BUTTON_PRESSED && !mMouseButDown)
         {
             mMouseButDown = true;
             if (setState(GuiImageset::STATE_ELEMENT_PUSHED)) draw();
-            return true;
+            return GuiManager::EVENT_CHECK_DONE;
         }
-        if (MouseAction == GuiWindow::BUTTON_RELEASED && mMouseButDown)
+        if (*MouseAction == GuiWindow::BUTTON_RELEASED && mMouseButDown)
         {
             mMouseButDown = false;
             if (setState(GuiImageset::STATE_ELEMENT_DEFAULT)) draw();
-            activated();
+            return GuiManager::EVENT_USER_ACTION;
         }
-        return true; // No need to check other gadgets.
+        return GuiManager::EVENT_CHECK_DONE; // No need to check other gadgets.
     }
-    return false; // No action here, check the other gadgets.
+    return GuiManager::EVENT_CHECK_NEXT; // No action here, check the other gadgets.
 }
 
 //================================================================================================
