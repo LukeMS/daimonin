@@ -27,7 +27,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <Ogre.h>
 #include <tinyxml.h>
 #include "gui_element.h"
-#include "gui_gadget_scrollbar.h"
+#include "gui_element_scrollbar.h"
 
 /**
  ** This class handles the display of scrollable text and/or graphics in a
@@ -42,9 +42,6 @@ public:
     GuiListbox(TiXmlElement *xmlElement, void *parent);
     ~GuiListbox();
     int sendMsg(int element, void *parm1 =0, void *parm2 =0, void *parm3 =0);
-
-
-
     void draw();
     void clear();
     void update(Ogre::Real dTime);

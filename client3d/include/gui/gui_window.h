@@ -28,12 +28,12 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <Ogre.h>
 #include "item.h"
 #include "gui_textout.h"
-#include "gui_gadget_slot.h"
-#include "gui_gadget_button.h"
-#include "gui_gadget_combobox.h"
-#include "gui_gadget_scrollbar.h"
-#include "gui_listbox.h"
-#include "gui_statusbar.h"
+#include "gui_element_slot.h"
+#include "gui_element_button.h"
+#include "gui_element_combobox.h"
+#include "gui_element_scrollbar.h"
+#include "gui_element_listbox.h"
+#include "gui_element_statusbar.h"
 
 // Define: Gadget elements are small interactive objects.
 

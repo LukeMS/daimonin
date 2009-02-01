@@ -25,7 +25,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <OISKeyboard.h>
 #include <OgreHardwarePixelBuffer.h>
 #include "logger.h"
-#include "gui_table.h"
+#include "gui_element_table.h"
 #include "gui_window.h"
 #include "gui_manager.h"
 

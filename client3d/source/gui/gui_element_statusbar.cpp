@@ -24,7 +24,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <tinyxml.h>
 #include <OgreHardwarePixelBuffer.h>
 #include "define.h"
-#include "gui_statusbar.h"
+#include "gui_element_statusbar.h"
 #include "logger.h"
 #include "gui_window.h"
 
