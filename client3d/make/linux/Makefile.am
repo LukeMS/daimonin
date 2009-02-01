@@ -33,16 +33,16 @@ client3d_SOURCES = \
 	../../source/gui/gui_animation.cpp \
 	../../source/gui/gui_cursor.cpp \
 	../../source/gui/gui_element.cpp \
-	../../source/gui/gui_gadget_slot.cpp \
-	../../source/gui/gui_gadget_combobox.cpp \
-	../../source/gui/gui_gadget_button.cpp \
-	../../source/gui/gui_gadget_scrollbar.cpp \
+	../../source/gui/gui_element_slot.cpp \
+	../../source/gui/gui_element_combobox.cpp \
+	../../source/gui/gui_element_button.cpp \
+	../../source/gui/gui_element_scrollbar.cpp \
+	../../source/gui/gui_element_table.cpp \
+	../../source/gui/gui_element_listbox.cpp \
+	../../source/gui/gui_element_statusbar.cpp \
 	../../source/gui/gui_graphic.cpp \
 	../../source/gui/gui_imageset.cpp \
-	../../source/gui/gui_table.cpp \
-	../../source/gui/gui_listbox.cpp \
 	../../source/gui/gui_manager.cpp \
-	../../source/gui/gui_statusbar.cpp \
 	../../source/gui/gui_textout.cpp \
 	../../source/gui/gui_window.cpp \
 	../../source/gui/gui_window_dialog.cpp \
