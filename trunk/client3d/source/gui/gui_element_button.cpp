@@ -22,7 +22,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
 #include "logger.h"
-#include "gui_gadget_button.h"
+#include "gui_element_button.h"
 #include "gui_textout.h"
 #include "gui_window.h"
 #include "gui_manager.h"

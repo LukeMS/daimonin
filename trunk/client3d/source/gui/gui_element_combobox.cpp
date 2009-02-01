@@ -24,7 +24,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <tinyxml.h>
 #include <OgreHardwarePixelBuffer.h>
 #include "define.h"
-#include "gui_gadget_combobox.h"
+#include "gui_element_combobox.h"
 #include "gui_textout.h"
 #include "gui_window.h"
 #include "logger.h"

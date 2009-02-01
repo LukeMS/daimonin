@@ -27,8 +27,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <Ogre.h>
 #include <tinyxml.h>
 #include "gui_element.h"
-#include "gui_listbox.h"
-#include "gui_gadget_button.h"
+#include "gui_element_listbox.h"
+#include "gui_element_button.h"
 
 /**
  ** This class provides an interactive scrollbar.
