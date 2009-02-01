@@ -37,9 +37,15 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
+    /** All functions that are called from outside the gui are using the Message system. **/
+    virtual int sendMsg(int message, void *parm1 =0, void *parm2 =0, void *parm3 =0);
+
+    /** Internal gui functions **/
     GuiElement(TiXmlElement *xmlElement, void *parent);
     virtual ~GuiElement() {};
-    void draw();
+    virtual void update(Ogre::Real deltaTime) {} /**< Animations, drag'n'drop, etc **/
+    virtual void draw();
+
     bool setState(int state); /**< Returns true if the state was changed. **/
     int getState()
     {
@@ -62,10 +68,6 @@ public:
     {
         return mHeight;
     }
-    const char *getTooltip()
-    {
-        return mStrTooltip.c_str();
-    }
 
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
@@ -84,11 +86,17 @@ protected:
     int mLabelPosX, mLabelPosY;
     bool mIsVisible;
     Ogre::String mStrLabel;
-    Ogre::String mStrTooltip;
+
+    Ogre::String mStrTooltip; // REMOVE ME: Wrong place - this is not partr of the elment core.
+
     Ogre::uint32 mFillColor;
     class GuiWindow *mParent;          /**< Pointer to the parent window. **/
-    unsigned char mLabelColor[3];
+    unsigned char mLabelColor[3]; //  Change this to uint32. we must support alpha here.
     GuiImageset::gfxSrcEntry *mGfxSrc; /**< Pointer to the gfx-data structure or 0 for a colorfill. **/
+    bool mouseWithin(int x, int y)
+    {
+        return !(x < mPosX || x > mPosX + mWidth || y < mPosY || y > mPosY + mHeight);
+    }
 };
 
 #endif

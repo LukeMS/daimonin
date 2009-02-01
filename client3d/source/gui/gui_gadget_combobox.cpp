@@ -33,6 +33,11 @@ using namespace Ogre;
 
 // needs to be rewritten!
 
+int GuiGadgetCombobox::sendMsg(int element, void *parm1, void *parm2, void *parm3)
+{
+    return 0;
+}
+
 GuiGadgetCombobox::GuiGadgetCombobox(TiXmlElement *xmlElement, void *parent) :GuiElement(xmlElement, parent)
 {
     /*

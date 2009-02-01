@@ -37,26 +37,20 @@ class GuiListbox : public GuiElement
 {
 public:
     // ////////////////////////////////////////////////////////////////////
-    // Variables / Constants.
-    // ////////////////////////////////////////////////////////////////////
-    typedef void (Callback) (class GuiWindow *parent, int index, int line);
-
-    // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     GuiListbox(TiXmlElement *xmlElement, void *parent);
     ~GuiListbox();
+    int sendMsg(int element, void *parm1 =0, void *parm2 =0, void *parm3 =0);
+
+
+
     void draw();
     void clear();
     void update(Ogre::Real dTime);
     bool mouseEvent(int MouseAction, int x, int y, int z);
-    int  addTextline(Ogre::String text, Ogre::uint32 color);
     const char *extractFirstLineOfText(const char &text);
     const char *getSelectedKeyword(); /**< Returns the keyword found in the selected line. **/
-    void setFunction(Callback *c)
-    {
-        mCallFunc = c;
-    }
 
 private:
     // ////////////////////////////////////////////////////////////////////
@@ -93,16 +87,12 @@ private:
     Ogre::uint32 *mGfxBuffer, *mTxtBuffer;
     Ogre::Real mTime;
     class GuiGadgetScrollbar *mScrollBarH, *mScrollBarV;
-    Callback *mCallFunc;
     int mLine;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    void activated(int line)
-    {
-        if (mCallFunc) mCallFunc((GuiWindow *)mParent, mIndex, line);
-    }
     static void scrollbarAction(GuiListbox *me, int index, int scroll);
+    int  addRow(Ogre::String text, Ogre::uint32 color);
     void scrollTextVertical(int offset);
     void scrollTextHorizontal(int offset);
 };

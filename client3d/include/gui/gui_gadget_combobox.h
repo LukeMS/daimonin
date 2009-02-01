@@ -48,6 +48,7 @@ public:
 
     GuiGadgetCombobox(TiXmlElement *xmlElement, void *parent);
     ~GuiGadgetCombobox();
+    int sendMsg(int element, void *parm1 =0, void *parm2 =0, void *parm3 =0);
     void draw();
     void setText(const char *value);
     bool setState(int state);

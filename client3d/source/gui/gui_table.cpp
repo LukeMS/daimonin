@@ -27,6 +27,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "logger.h"
 #include "gui_table.h"
 #include "gui_window.h"
+#include "gui_manager.h"
 
 using namespace Ogre;
 
@@ -82,6 +83,7 @@ GuiTable::GuiTable(TiXmlElement *xmlElement, void *parent):GuiElement(xmlElement
         mHeightRow+= GuiTextout::getSingleton().getFontHeight((*i)->fontNr) + TEXT_OFFSET;
     mHeightColumnLabel = GuiTextout::getSingleton().getFontHeight(mFontNr);
     clear();
+    draw();
 }
 
 //================================================================================================
@@ -99,77 +101,111 @@ GuiTable::~GuiTable()
 }
 
 //================================================================================================
-// Returns true if the key event happened here (so no need to check the other gadgets).
+//
 //================================================================================================
-bool GuiTable::keyEvent(const char keyChar, const unsigned char key)
+int GuiTable::sendMsg(int message, void *parm1, void *parm2, void *parm3)
 {
-    if (key == OIS::KC_UP)
+    switch (message)
     {
-        if (mSelectedRow <= 0)  return true;
-        drawSelection(mSelectedRow-1);
-        return (mSeletedRowChanged = true);
+        case GuiManager::MSG_ADD_ROW:
+            addRow((const char*)parm1);
+            return 0;
+        case GuiManager::MSG_CLEAR:
+            clear();
+            return 0;
+        case GuiManager::MSG_GET_USERBREAK:
+            return getUserBreak();
+        case GuiManager::MSG_GET_SELECTION:
+            return getSelectedRow();
+        case GuiManager::MSG_GET_ACTIVATED:
+            return getActivatedRow();
+        case GuiManager::MSG_GET_KEY_EVENT:
+            return keyEvent((const char*)parm1, (const unsigned char*)parm2);
+        case GuiManager::MSG_GET_MOUSE_EVENT:
+            return mouseEvent((int*)parm1, (int*)parm2, (int*)parm3);
+        default:
+            return -1;
     }
-    if (key == OIS::KC_DOWN)
-    {
-        if (mSelectedRow+1 >= (int)mvRow.size())  return true;
-        drawSelection(mSelectedRow+1);
-        return (mSeletedRowChanged = true);
-    }
-    if (key == OIS::KC_RETURN) // || key == OIS::KC_NUMPADENTER)
-        return (mRowActivated = true);
-    if (key == OIS::KC_ESCAPE)
-        return (mUserBreak = true);
-    return false;
-}
-
-//================================================================================================
-// Returns true if the mouse event was on this gadget (so no need to check the other gadgets).
-//================================================================================================
-bool GuiTable::mouseEvent(int MouseAction, int x, int y)
-{
-    if (x < mPosX || x > mPosX + mWidth || y < mPosY || y > mPosY + mHeight)
-        return false;
-    int row = (y-mPosY-mHeightColumnLabel) / mHeightRow;
-    if (row <0 || row >= (int)mvRow.size()) return true;
-
-    if (MouseAction == GuiWindow::BUTTON_RELEASED)
-    {
-        static unsigned long time =0;
-        {
-            if (Root::getSingleton().getTimer()->getMilliseconds()- time < GuiWindow::TIME_DOUBLECLICK)
-                return (mRowActivated = true);
-        }
-        time = Root::getSingleton().getTimer()->getMilliseconds();
-    }
-    if (MouseAction == GuiWindow::BUTTON_PRESSED)
-    {
-        if (mSelectedRow != row)
-        {
-            drawSelection(row);
-            return (mSeletedRowChanged = true);
-        }
-    }
-    return true;
 }
 
 //================================================================================================
 // If a user-break was detected return true once.
 //================================================================================================
-bool GuiTable::getUserBreak()
+int GuiTable::getUserBreak()
 {
-    if (!mUserBreak)
-        return false;
+    if (!mUserBreak) return 0;
     mUserBreak = false;
-    return true;
+    return -1;
 }
 
 //================================================================================================
-// Add a row to the table. Each col is separated by ',' , each subRow is separated by ';'
+// Returns EVENT_CHECK_DONE if the key event happened here (so no need to check the other gadgets).
 //================================================================================================
-void GuiTable::addRow(const char *row)
+int GuiTable::keyEvent(const char *keyChar, const unsigned char *key)
 {
-    mvRow.push_back(row);
-    drawSelection((int)mvRow.size()-1);
+    if (*key == OIS::KC_UP)
+    {
+        if (mSelectedRow > 0)
+        {
+            drawSelection(mSelectedRow-1);
+            mSeletedRowChanged = true;
+        }
+        return GuiManager::EVENT_CHECK_DONE;
+    }
+    if (*key == OIS::KC_DOWN)
+    {
+        if (mSelectedRow+1 < (int)mvRow.size())
+        {
+            drawSelection(mSelectedRow+1);
+            mSeletedRowChanged = true;
+        }
+        return GuiManager::EVENT_CHECK_DONE;
+    }
+    if (*key == OIS::KC_RETURN) // || key == OIS::KC_NUMPADENTER)
+    {
+        mRowActivated = true;
+        return GuiManager::EVENT_CHECK_DONE;
+    }
+    if (*key == OIS::KC_ESCAPE)
+    {
+        mUserBreak = true;
+        return GuiManager::EVENT_CHECK_DONE;
+    }
+    return GuiManager::EVENT_CHECK_NEXT;
+}
+
+//================================================================================================
+// Returns true if the mouse event was on this gadget (so no need to check the other gadgets).
+//================================================================================================
+int GuiTable::mouseEvent(int *MouseAction, int *x, int *y)
+{
+    if (!mouseWithin(*x,*y))
+        return GuiManager::EVENT_CHECK_NEXT;
+    int row = (*y-mPosY-mHeightColumnLabel) / mHeightRow;
+    if (row <0 || row >= (int)mvRow.size()) return true;
+
+    if (*MouseAction == GuiWindow::BUTTON_RELEASED)
+    {
+        static unsigned long time =0;
+        {
+            if (Root::getSingleton().getTimer()->getMilliseconds()- time < GuiWindow::TIME_DOUBLECLICK)
+            {
+                mRowActivated = true;
+                return GuiManager::EVENT_USER_ACTION;
+            }
+        }
+        time = Root::getSingleton().getTimer()->getMilliseconds();
+    }
+    if (*MouseAction == GuiWindow::BUTTON_PRESSED)
+    {
+        if (mSelectedRow != row)
+        {
+            drawSelection(row);
+            mSeletedRowChanged = true;
+            return GuiManager::EVENT_CHECK_DONE;
+        }
+    }
+    return GuiManager::EVENT_CHECK_DONE;
 }
 
 //================================================================================================
@@ -216,6 +252,14 @@ int GuiTable::getSelectedRow()
     return mSelectedRow;
 }
 
+//================================================================================================
+// Add a row to the table. Each col is separated by ',' , each subRow is separated by ';'
+//================================================================================================
+void GuiTable::addRow(const char *row)
+{
+    mvRow.push_back(row);
+    drawSelection((int)mvRow.size()-1);
+}
 //================================================================================================
 // Draw the Headline and Background of the table.
 //================================================================================================

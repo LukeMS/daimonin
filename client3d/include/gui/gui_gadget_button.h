@@ -35,39 +35,32 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 class GuiGadgetButton: public GuiElement
 {
 public:
-    typedef void (Callback) (class GuiWindow *parent, int index);
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    GuiGadgetButton(TiXmlElement *xmlElement, void *parent);
+    GuiGadgetButton(TiXmlElement *xmlElement, void *parent, bool drawOnInit);
     ~GuiGadgetButton();
-    bool mouseEvent(int MouseAction, int x, int y);
-    void setFunction(Callback *c)
-    {
-        mCallFunc = c;
-    }
-    void activated()
-    {
-        if (mCallFunc) mCallFunc((GuiWindow *)mParent, mIndex);
-    }
-    void setLabel(const char*newText)
-    {
-        mStrLabel = newText;
-        draw();
-    }
+    int sendMsg(int element, void *parm1 =0, void *parm2 =0, void *parm3 =0);
+    int mouseEvent(int *MouseAction, int *x, int *y);
     void draw();
     bool isVisible()
     {
         return mIsVisible;
     }
     void setVisible(bool visible);
+    int keyEvent(const char *keyChar, const unsigned char *key);
+    void setLabel(const char*newText)
+    {
+        mStrLabel = newText;
+        draw();
+    }
 
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    Callback *mCallFunc;
     bool mMouseOver, mMouseButDown;
+
 };
 
 #endif

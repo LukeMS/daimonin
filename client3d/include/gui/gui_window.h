@@ -32,8 +32,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "gui_gadget_button.h"
 #include "gui_gadget_combobox.h"
 #include "gui_gadget_scrollbar.h"
-#include "gui_table.h"
-#include "gui_graphic.h"
 #include "gui_listbox.h"
 #include "gui_statusbar.h"
 
@@ -67,11 +65,7 @@ public:
     {
         mInit = false;
     }
-    void loadDnDResources()
-    {
-        mvSlot[0]->loadResources();
-    }
-    void loadResources();
+    void loadResources(bool dnd);
     void freeRecources();
     bool isVisible()
     {
@@ -79,7 +73,7 @@ public:
     }
     void setVisible(bool visible);
     void Init(TiXmlElement *xmlElem, const char *resourceWin, const char *resourceDnD, int winNr, unsigned char defaultZPos);
-    bool keyEvent(const char keyChar, const unsigned char key);
+    int keyEvent(const char keyChar, const unsigned char key);
     void update(Ogre::Real timeSinceLastFrame);
     void getTexturseSize(int &w, int &h)
     {
@@ -125,7 +119,9 @@ public:
     }
     void centerWindowOnMouse(int x, int y);
 
-    void setVisible(int element, bool visible);
+    int sendMsg(int element, int message, void *parm1, void *parm2, void *parm3);
+
+
     // ////////////////////////////////////////////////////////////////////
     // GUI_Element stuff.
     // ////////////////////////////////////////////////////////////////////
@@ -136,49 +132,27 @@ public:
     // ////////////////////////////////////////////////////////////////////
     void setStatusbarValue(int element, Ogre::Real value);
     // ////////////////////////////////////////////////////////////////////
-    // GUI_Table stuff.
-    // ////////////////////////////////////////////////////////////////////
-    int  getTableSelection(int element);
-    int  getTableActivated(int element);
-    bool getTableUserBreak(int element);
-    void addTableRow(int element, const char *text);
-    void clearTable(int element);
-    // ////////////////////////////////////////////////////////////////////
-    // GUI_Listbox stuff.
-    // ////////////////////////////////////////////////////////////////////
-    void clearListbox(int element);
-    int  addTextline(int element, const char *text, Ogre::uint32 color);
-    // ////////////////////////////////////////////////////////////////////
-    // GUI_Button stuff.
-    // ////////////////////////////////////////////////////////////////////
-    class GuiGadgetButton *getButtonHandle(int element);
-    class GuiGadgetSlot *getSlotHandle(int element);
-    // ////////////////////////////////////////////////////////////////////
     // GUI_Gadget_Slot stuff.
     // ////////////////////////////////////////////////////////////////////
-    void setSlotBusyTime(int element, Ogre::Real busyTime);
-    void setSlotBusy(int element);
-    void addItem(Item::sItem *item);
-    void delItem(Item::sItem *item);
-    void clrItem();
+    class GuiGadgetSlot *getSlotHandle(int element);
     int getDragSlot()
     {
         return mGadgetDrag;
     }
     void hideDragOverlay()
     {
-        mvSlot[0]->hideDragOverlay();
+        if (mSlotReference) mSlotReference->hideDragOverlay();
     }
     void moveDragOverlay()
     {
-        mvSlot[0]->moveDragOverlay();
+        if (mSlotReference) mSlotReference->moveDragOverlay();
     }
-    int getMouseOverSlot(int x, int y);
 
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
+    static GuiGadgetSlot *mSlotReference;
     static int mMouseDragging;
     static Ogre::String mStrTooltip;
     Ogre::String mResourceName;
@@ -193,13 +167,15 @@ private:
     bool mInit;
     bool mSizeRelative;
     bool mLockSlots; /**< TODO: Lock all slots, so no item can accidental be removed. **/
-    std::vector<class GuiTable*>mvTable;
-    std::vector<class GuiElement*>mvGraphic;
-    std::vector<class GuiListbox*>mvListbox;
+
+    std::vector<class GuiElement*>mvElement;
+
+//    std::vector<class GuiElement*>mvGraphic;
+//    std::vector<class GuiTable*>mvTable;
+//    std::vector<class GuiListbox*>mvListbox;
+//    std::vector<class GuiGadgetButton *>mvGadgetButton;
+//    std::vector<class GuiGadgetSlot*>mvSlot;
     std::vector<class GuiStatusbar*>mvStatusbar;
-    std::vector<class GuiGadgetSlot*>mvSlot;
-    std::vector<class GuiGadgetButton *>mvGadgetButton;
-    std::vector<class GuiGadgetCombobox*>mvGadgetCombobox;
     std::vector<class GuiGadgetScrollbar*>mvGadgetScrollbar;
     std::vector<GuiTextout::TextLine*>mvTextline;
     Ogre::Overlay *mOverlay;
@@ -214,7 +190,6 @@ private:
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     static void buttonPressed(GuiWindow *me, int index);
-    static void listboxPressed(GuiWindow *me, int index, int line);
     void checkForOverlappingElements();
     void setHeight(int h);
     void delGadget(int number);

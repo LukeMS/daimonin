@@ -71,10 +71,10 @@ void Item::clearContainer(int container)
         for (std::list<sItem*>::const_iterator iter = mItemList[i].begin(); iter!= mItemList[i].end(); ++iter)
             delete *iter;
         mItemList[i].clear();
-        GuiManager::getSingleton().clrItem(mWindowID[i]);
+        //GuiManager::getSingleton().clrItem(mWindowID[i]);
         return;
     }
-    GuiManager::getSingleton().addTextline(GuiManager::WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Item::clearContainer failed!");
+    GuiManager::getSingleton().sendMsg(GuiManager::WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, (void*)"Item::clearContainer failed!");
 }
 
 //================================================================================================
@@ -191,7 +191,7 @@ void Item::delItem(unsigned int item, int container)
             {
                 if ((*iter)->tag == item)
                 {
-                    GuiManager::getSingleton().delItem(mWindowID[i], *iter);
+                    //GuiManager::getSingleton().delItem(mWindowID[i], *iter);
                     delete *iter;
                     mItemList[i].erase(iter);
                     return;
@@ -211,7 +211,7 @@ bool Item::addItem(sItem *tmpItem, int container)
     {
         if (mActItemID[i] == container)
         {
-            GuiManager::getSingleton().addItem(mWindowID[i], tmpItem);
+            //GuiManager::getSingleton().addItem(mWindowID[i], tmpItem);
             mItemList[i].push_back(tmpItem);
             return true;
         }
@@ -249,10 +249,10 @@ void Item::getInventoryItemFromFloor(int slotNr)
     std::list<sItem*>::iterator iter;
     for (iter = mItemList[ITEMLIST_GROUND].begin(); slotNr-- && iter != mItemList[ITEMLIST_GROUND].end();)  ++iter;
     sprintf(mStrBuffer, "drop %s", (*iter)->d_name.c_str());
-    GuiManager::getSingleton().addTextline(GuiManager::WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, mStrBuffer);
+    GuiManager::getSingleton().sendMsg(GuiManager::WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, (void*)mStrBuffer);
     // move item to Backpack.
     sprintf(mStrBuffer, "mv %d %d %d", mActItemID[ITEMLIST_BACKPACK], (*iter)->tag, (*iter)->sumItems);
-    GuiManager::getSingleton().addTextline(GuiManager::WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, mStrBuffer);
+   GuiManager::getSingleton().sendMsg(GuiManager::WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, (void*)mStrBuffer);
     //Network::getSingleton().cs_write_string(mStrBuffer);
     delete *iter;
     mItemList[ITEMLIST_GROUND].erase(iter);
@@ -269,12 +269,12 @@ void Item::dropInventoryItemToFloor(int slotNr)
     std::list<sItem*>::iterator iter;
     for (iter = mItemList[ITEMLIST_BACKPACK].begin(); slotNr-- && iter != mItemList[ITEMLIST_BACKPACK].end();)  ++iter;
     sprintf(mStrBuffer, "drop %s", (*iter)->d_name.c_str());
-    GuiManager::getSingleton().addTextline(GuiManager::WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, mStrBuffer);
+    GuiManager::getSingleton().sendMsg(GuiManager::WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, (void*)mStrBuffer);
     // move item TO Ground.
     sprintf(mStrBuffer, "mv %d %d %d", mActItemID[ITEMLIST_GROUND], (*iter)->tag, (*iter)->sumItems);
     //Network::getSingleton().cs_write_string(mStrBuffer);
-    GuiManager::getSingleton().addTextline(GuiManager::WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, mStrBuffer);
-    GuiManager::getSingleton().delItem(GuiManager::WIN_INVENTORY, *iter);
+    GuiManager::getSingleton().sendMsg(GuiManager::WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, (void*)mStrBuffer);
+    //GuiManager::getSingleton().delItem(GuiManager::WIN_INVENTORY, *iter);
     delete *iter;
     mItemList[ITEMLIST_BACKPACK].erase(iter);
 }
@@ -297,8 +297,17 @@ void Item::dropItem(int srcWindow, int srcItemSlot, int dstWindow, int dstItemSl
     // ////////////////////////////////////////////////////////////////////
     // TODO
     sprintf(mStrBuffer, "drag and drop src: %d, %d dest: %d, %d", srcWindow, srcItemSlot, dstWindow, dstItemSlot);
-    GuiManager::getSingleton().addTextline(GuiManager::WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, mStrBuffer);
+    GuiManager::getSingleton().sendMsg(GuiManager::WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, (void*)mStrBuffer);
     return;
+}
+
+//================================================================================================
+// Get the item pos in the item-texture-atlas.
+//================================================================================================
+const char *Item::getItemGfxName(int itemFace)
+{
+    const int  BITS_FACEFILTER = ~0x8000; // Filter to extract the face number (gfx-id).
+    return ObjectWrapper::getSingleton().getMeshName(itemFace & BITS_FACEFILTER);
 }
 
 //================================================================================================
@@ -311,10 +320,10 @@ void Item::printAllItems()
     const char *names[ITEMLIST_SUM] = {"Backpack", "Container:", "Ground:" };
     for (int c = 0; c < ITEMLIST_SUM; ++c)
     {
-        GuiManager::getSingleton().addTextline(GuiManager::WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, names[c], 0x00ff0000);
+        GuiManager::getSingleton().sendMsg(GuiManager::WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, (void*)names[c], (void*)0x00ff0000);
         if (mItemList[ITEMLIST_BACKPACK].empty())
         {
-            GuiManager::getSingleton().addTextline(GuiManager::WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "<empty>");
+            GuiManager::getSingleton().sendMsg(GuiManager::WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, (void*)"<empty>");
         }
         else
         {
@@ -324,7 +333,7 @@ void Item::printAllItems()
                          " [" + StringConverter::toString(mActItemID[ITEMLIST_BACKPACK]) + "]"+
                          " [" + StringConverter::toString((*iter)->tag) + "]"+
                          " [" + ObjectWrapper::getSingleton().getMeshName((*iter)->face & ~0x8000) + "]";
-                GuiManager::getSingleton().addTextline(GuiManager::WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, strTmp.c_str());
+                GuiManager::getSingleton().sendMsg(GuiManager::WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, (void*)strTmp.c_str());
             }
         }
     }

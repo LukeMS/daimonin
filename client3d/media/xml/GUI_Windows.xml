@@ -46,10 +46,10 @@
       <Size width= "148" height= "17" />
     </Graphic>
     <Label  x= "35" y= "4" font="02" text= "Statistics" />
-    <Gadget type= "BUTTON"  name = "But_Close">
+    <Button name = "But_Close">
       <Image name = "Button-01-Close"/>
       <Pos x= "132" y= "1" />
-    </Gadget>
+    </Button>
     <!--=============================================-->
     <!-- Window Body                                 -->
     <!--=============================================-->
@@ -89,10 +89,10 @@
     <!--=============================================-->
     <!-- Window Tiltle                               -->
     <!--=============================================-->
-    <Gadget type= "BUTTON"  name = "Buton_info">
+    <Button name = "Buton_info">
       <Image name = "Player-Info-Button"/>
       <Pos x= "70" y= "8" />
-    </Gadget>
+    </Button>
     <Graphic>
       <Image name = "Player-Portrait"/>
       <Pos x= "8" y= "9" />
@@ -160,12 +160,12 @@
          <Color type= "BAR_PASSIVE" red=   "0" green=   "0" blue=  "0" alpha = "255" />
          <Color type= "BAR_M_OVER"  red= "188" green= "158" blue= "81" alpha = "255" />
          <Color type= "BAR_ACTIVE"  red=  "80" green= "100" blue= "60" alpha = "255" />
-         <Gadget type= "BUTTON" name = "But_ScrollUp"  >
+         <Button name = "But_ScrollUp"  >
             <Image name = "Button-01-Up" />
-         </Gadget>
-         <Gadget type= "BUTTON" name = "But_ScrollDown">
+         </Button>
+         <Button name = "But_ScrollDown">
             <Image name = "Button-01-Down"/>
-         </Gadget>
+         </Button>
       </Gadget>
     </Listbox>
   </Window>
@@ -230,12 +230,12 @@
          <Color type= "BAR_PASSIVE" red=   "0" green=   "0" blue=  "0" alpha = "255" />
          <Color type= "BAR_M_OVER"  red= "188" green= "158" blue= "81" alpha = "255" />
          <Color type= "BAR_ACTIVE"  red=  "80" green= "100" blue= "60" alpha = "255" />
-         <Gadget type= "BUTTON" name = "But_ScrollUp"  >
+         <Button name = "But_ScrollUp"  >
             <Image name = "Button-01-Up" />
-         </Gadget>
-         <Gadget type= "BUTTON" name = "But_ScrollDown" >
+         </Button>
+         <Button name = "But_ScrollDown" >
             <Image name = "Button-01-Down"/>
-         </Gadget>
+         </Button>
       </Gadget>
     </Listbox>
   </Window>
@@ -432,11 +432,11 @@
     <!--=============================================-->
     <!-- Layer 1                                     -->
     <!--=============================================-->
-    <Gadget type= "BUTTON"  name = "But_CreateAccount">
+    <Button name = "But_CreateAccount">
       <Image name = "Button-01-Standard"/>
       <Pos x= "200" y= "63" />
       <Label x= "4" y= "3" font="03" text= "create" />
-    </Gadget>
+    </Button>
     <Label   x=  "20" y=  "65" font="03" text= "~#ffffff00Login on your account, or               an account." />
     <Label   x=  "80" y= "105" font="03" text= "Account Name: " />
     <TextBox x= "200" y= "105" font="03" text= "" width = "110" name= "Input_Login_Name" />
@@ -520,10 +520,10 @@
     <!-- Layer 1                                     -->
     <!--=============================================-->
     <TextBox x= "55" y= "8" font="04" text= "Dialog Window" width = "230" name= "NPC_Headline" />
-    <Gadget type= "BUTTON"  name = "But_Close">
+    <Button  name = "But_Close">
       <Image name = "Button-01-Close"/>
       <Pos x= "285" y= "1" />
-    </Gadget>
+    </Button>
     <Listbox name= "List_NPC" font="02">
       <Image name = "Background-General"/>
       <Pos x= "10" y= "60" />
@@ -536,25 +536,25 @@
          <Color type= "BAR_PASSIVE" red=   "0" green=   "0" blue=  "0" alpha = "255" />
          <Color type= "BAR_M_OVER"  red= "188" green= "158" blue= "81" alpha = "255" />
          <Color type= "BAR_ACTIVE"  red=  "80" green= "100" blue= "60" alpha = "255" />
-         <Gadget type= "BUTTON" name = "But_ScrollUp"  >
+         <Button name = "But_ScrollUp"  >
             <Image name = "Button-01-Up"/>
-         </Gadget>
-         <Gadget type= "BUTTON" name = "But_ScrollDown">
+         </Button>
+         <Button name = "But_ScrollDown">
             <Image name = "Button-01-Down"/>
-         </Gadget>
+         </Button>
       </Gadget>
     </Listbox>
-    <Gadget type= "BUTTON"  name = "But_NPC_Accept">
+    <Button  name = "But_NPC_Accept">
       <Image name = "Button-01-Standard"/>
       <Pos   x= "10" y= "320" />
       <Label x= "5" y= "5" font="02" text= "" />
-    </Gadget>
+    </Button>
     <TextBox x= "70" y= "325" font="02" hide ="0" text= "Enter your text here..." width = "222" name= "Input_NPC_Dialog" />
-    <Gadget type= "BUTTON"  name = "But_NPC_Decline">
+    <Button  name = "But_NPC_Decline">
       <Image name = "Button-01-Standard"/>
       <Label x= "5" y= "5" font="02" text= "" />
       <Pos x= "238" y= "320" />
-    </Gadget>
+    </Button>
   </Window>
 
 
@@ -642,14 +642,14 @@
     <!--=============================================-->
     <!-- Layer 1 slots and icons                     -->
     <!--=============================================-->
-    <Gadget type= "SLOT"  name = "Slot">
+    <Slot name = "Slot">
       <Image name = "Item-Slot" bg_item_image_filename ="item_bg_amulet.png"/>
       <Pos x= "30" y= "60" />
-    </Gadget>
-    <Gadget type= "SLOT"  name = "Slot">
+    </Slot>
+    <Slot name = "Slot">
       <Image name = "Item-Slot" bg_item_image_filename ="item_bg_righthand.png"/>
       <Pos x= "23" y= "297" />
-    </Gadget>
+    </Slot>
 
     <Graphic>
       <Image name = "Equipment-Bracers"/>
@@ -754,32 +754,32 @@
       <Pos x= "250" y= "535" />
       <Size width= "71" height= "27" />
     </Graphic>
-    <Gadget type= "BUTTON"   name = "Tab_Stats">
+    <Button   name = "Tab_Stats">
      <Image name = "Button-01-Standard"/>
       <Pos   x= "13" y= "538" />
       <Label x= "10" y= "8" font="02" text= "Stats" />
-    </Gadget>
-    <Gadget type= "BUTTON"  name = "Tab_Skills">
+    </Button>
+    <Button  name = "Tab_Skills">
       <Image name = "Button-01-Standard"/>
       <Pos   x= "93" y= "538" />
       <Label x= "10" y= "8" font="02" text= "Skills" />
-    </Gadget>
-    <Gadget type= "BUTTON"  name = "Tab_Protection">
+    </Button>
+    <Button  name = "Tab_Protection">
       <Image name = "Button-01-Standard"/>
       <Pos   x= "173" y= "538" />
       <Label x= "10" y= "8" font="02" text= "Stats" />
-    </Gadget>
-    <Gadget type= "BUTTON"  name = "Tab_Experience">
+    </Button>
+    <Button  name = "Tab_Experience">
       <Image name = "Button-01-Standard"/>
       <Pos   x= "253" y= "538" />
       <Label x= "10" y= "8" font="02" text= "Stats" />
-    </Gadget>
+    </Button>
     <TextBox x= "60" y= "8" font="03" text= "Equipment Window" width = "230" name= "Inv_Equipment" />
     <TextBox x= "40" y= "24" font="02" text= "999 kg" width = "54" name= "Inv_Equip_Weight" />
-    <Gadget type= "BUTTON"  name = "But_Close">
+    <Button  name = "But_Close">
       <Image name = "Button-01-Close"/>
       <Pos x= "280" y= "4" />
-    </Gadget>
+    </Button>
   </Window>
 
 
@@ -862,45 +862,45 @@
     <!--=============================================-->
     <!-- Layer 1 slots and icons                     -->
     <!--=============================================-->
-    <Gadget type= "SLOT"  name = "Slot">
+    <Slot name = "Slot">
       <Image name = "Item-Slot"/>
       <Pos x= "17" y= "89" />
-    </Gadget>
+    </Slot>
 
-    <Gadget type= "SLOT"  name = "Slot">
+    <Slot name = "Slot">
       <Image name = "Item-Slot"/>
       <Pos x= "90" y= "89" />
-    </Gadget>
+    </Slot>
 
-    <Gadget type= "SLOT"  name = "Slot">
+    <Slot name = "Slot">
       <Image name = "Item-Slot"/>
       <Pos x= "163" y= "89" />
-    </Gadget>
+    </Slot>
 
-    <Gadget type= "SLOT"  name = "Slot">
+    <Slot name = "Slot">
       <Image name = "Item-Slot"/>
       <Pos x= "236" y= "89" />
-    </Gadget>
+    </Slot>
 
-    <Gadget type= "SLOT"  name = "Slot">
+    <Slot name = "Slot">
       <Image name = "Item-Slot"/>
       <Pos x= "17" y= "162" />
-    </Gadget>
+    </Slot>
 
-    <Gadget type= "SLOT"  name = "Slot">
+    <Slot name = "Slot">
       <Image name = "Item-Slot"/>
       <Pos x= "90" y= "162" />
-    </Gadget>
+    </Slot>
 
-    <Gadget type= "SLOT"  name = "Slot">
+    <Slot name = "Slot">
       <Image name = "Item-Slot" />
       <Pos x= "163" y= "162" />
-    </Gadget>
+    </Slot>
 
-    <Gadget type= "SLOT"  name = "Slot">
+    <Slot name = "Slot">
       <Image name = "Item-Slot"/>
       <Pos x= "236" y= "162" />
-    </Gadget>
+    </Slot>
 
     <Graphic>
       <Image name = "Monney-Copper"/>
@@ -957,65 +957,65 @@
       <Image name = "Button-02-Outline"/>
       <Pos x= "250" y= "500" />
     </Graphic>
-    <Gadget type= "BUTTON"   name = "Tab_Stats">
+    <Button   name = "Tab_Stats">
       <Image name = "Button-01-Standard"/>
       <Pos   x= "13" y= "473" />
       <Label x= "10" y= "8" font="02" text= "Weapons" />
-    </Gadget>
-    <Gadget type= "BUTTON"  name = "Tab_Skills">
+    </Button>
+    <Button  name = "Tab_Skills">
       <Image name = "Button-01-Standard"/>
       <Pos   x= "93" y= "473" />
       <Label x= "10" y= "8" font="02" text= "Shields" />
-    </Gadget>
-    <Gadget type= "BUTTON"  name = "Tab_Protection">
+    </Button>
+    <Button  name = "Tab_Protection">
       <Image name = "Button-01-Standard"/>
       <Pos   x= "173" y= "473" />
       <Label x= "10" y= "8" font="02" text= "Polyveg's" />
-    </Gadget>
-    <Gadget type= "BUTTON"  name = "Tab_Experience">
+    </Button>
+    <Button  name = "Tab_Experience">
       <Image name = "Button-01-Standard"/>
       <Pos   x= "253" y= "473" />
       <Label x= "10" y= "8" font="02" text= "Potions" />
-    </Gadget>
-    <Gadget type= "BUTTON"   name = "Tab_Stats">
+    </Button>
+    <Button   name = "Tab_Stats">
       <Image name = "Button-01-Standard"/>
       <Pos   x= "13" y= "503" />
       <Label x= "10" y= "8" font="02" text= "Cats" />
-    </Gadget>
-    <Gadget type= "BUTTON"  name = "Tab_Skills">
+    </Button>
+    <Button  name = "Tab_Skills">
       <Image name = "Button-01-Standard"/>
       <Pos   x= "93" y= "503" />
       <Label x= "10" y= "8" font="02" text= "Dogs" />
-    </Gadget>
-    <Gadget type= "BUTTON"  name = "Tab_Protection">
+    </Button>
+    <Button  name = "Tab_Protection">
       <Image name = "Button-01-Standard"/>
       <Pos   x= "173" y= "503" />
       <Label x= "10" y= "8" font="02" text= "Time" />
-    </Gadget>
-    <Gadget type= "BUTTON"  name = "Tab_Experience">
+    </Button>
+    <Button  name = "Tab_Experience">
       <Image name = "Button-01-Standard"/>
       <Pos   x= "253" y= "503" />
       <Label x= "10" y= "8" font="02" text= "Text" />
-    </Gadget>
-    <Gadget type= "BUTTON"  name = "Next_page">
+    </Button>
+    <Button  name = "Next_page">
       <Image name = "Button-01-Next"/>
       <Pos   x= "301" y= "543" />
       <Label x= "10" y= "8" font="02" text= "" />
-    </Gadget>
-    <Gadget type= "BUTTON"  name = "Prev_Page">
+    </Button>
+    <Button  name = "Prev_Page">
       <Image name = "Button-01-Prev"/>
       <Pos   x= "6" y= "543" />
       <Label x= "10" y= "8" font="02" text= "" />
-    </Gadget>
-    <Gadget type= "BUTTON"  name = "But_Close">
+    </Button>
+    <Button  name = "But_Close">
       <Image name = "Button-01-Close"/>
       <Pos x= "280" y= "4" />
-    </Gadget>
-      <Gadget type= "BUTTON" name = "But_Test">
+    </Button>
+      <Button name = "But_Test">
       <Image name = "Button-01-Standard"/>
       <Pos   x= "53" y= "230" />
       <Label x= "10" y= "8" font="02" text= "Lock" />
-    </Gadget>
+    </Button>
   </Window>
 
 
@@ -1196,16 +1196,16 @@
       <Pos x= "50" y= "227" />
       <Size width= "71" height= "27" />
     </Graphic>
-    <Gadget type= "BUTTON"   name = "Tab_Lock">
+    <Button   name = "Tab_Lock">
       <Image name = "Button-01-Standard"/>
       <Pos   x= "53" y= "230" />
       <Label x= "10" y= "8" font="02" text= "Lock" />
-    </Gadget>
-    <Gadget type= "BUTTON"  name = "Tab_Trade">
+    </Button>
+    <Button  name = "Tab_Trade">
       <Image name = "Button-01-Standard"/>
       <Pos   x= "213" y= "230" />
       <Label x= "10" y= "8" font="02" text= "Trade" />
-    </Gadget>
+    </Button>
 
     <TextBox x= "15" y= "42" font="02" text= "10" width = "60" name= "Engine_SumTris" />
     <TextBox x= "75" y= "42" font="02" text= "100" width = "60" name= "Engine_SumTris" />
@@ -1218,10 +1218,10 @@
     <TextBox x= "195" y= "305" font="02" text= "10000" width = "60" name= "Engine_SumTris" />
     <TextBox x= "255" y= "305" font="02" text= "10.25612 kg" width = "60" name= "Engine_SumTris" />
 
-    <Gadget type= "BUTTON"  name = "But_Close">
+    <Button  name = "But_Close">
       <Image name = "Button-01-Close"/>
       <Pos x= "280" y= "4" />
-    </Gadget>
+    </Button>
   </Window>
 
 
@@ -1340,28 +1340,28 @@
       <Pos x= "210" y= "480" />
       <Size width= "71" height= "27" />
     </Graphic>
-    <Gadget type= "BUTTON"   name = "Tab_Buy">
+    <Button   name = "Tab_Buy">
       <Image name = "Button-01-Standard"/>
       <Pos   x= "52" y= "483" />
       <Label x= "10" y= "8" font="02" text= "Buy" />
-    </Gadget>
-    <Gadget type= "BUTTON"  name = "Tab_Sell">
+    </Button>
+    <Button  name = "Tab_Sell">
       <Image name = "Button-01-Standard"/>
       <Pos   x= "213" y= "483 " />
       <Label x= "10" y= "8" font="02" text= "Sell" />
-    </Gadget>
-    <Gadget type= "BUTTON"  name = "Next_page">
+    </Button>
+    <Button  name = "Next_page">
       <Image name = "Button-01-Next"/>
       <Pos   x= "301" y= "543" />
-    </Gadget>
-    <Gadget type= "BUTTON"  name = "Prev_Page">
+    </Button>
+    <Button  name = "Prev_Page">
       <Image name = "Button-01-Prev"/>
       <Pos   x= "6" y= "543" />
-    </Gadget>
-    <Gadget type= "BUTTON"  name = "But_Close">
+    </Button>
+    <Button  name = "But_Close">
       <Image name = "Button-01-Close"/>
       <Pos x= "280" y= "4" />
-    </Gadget>
+    </Button>
   </Window>
 
 
@@ -1446,10 +1446,10 @@
     <!--=============================================-->
     <!-- Layer 1 slots and icons                     -->
     <!--=============================================-->
-    <Gadget type= "SLOT"  name = "Slot">
+    <Slot name = "Slot">
       <Image name = "Item-Slot" bg_item_image_filename ="item_bg_scroll.png"/>
       <Pos x= "17" y= "89" />
-    </Gadget>
+    </Slot>
     <Graphic>
       <Image name = "Monney-Copper"/>
       <Pos x= "11" y= "11" />
@@ -1477,14 +1477,14 @@
       <Image name = "Button-02-Outline"/>
       <Pos x= "127" y= "317" />
     </Graphic>
-    <Gadget type= "BUTTON"  name = "Tab_12">
+    <Button  name = "Tab_12">
       <Image name = "Button-01-Standard"/>
       <Pos   x= "130" y= "310" />
       <Label x= "10" y= "8" font="02" text= "Take all" />
-    </Gadget>
-    <Gadget type= "BUTTON"  name = "But_Close">
+    </Button>
+    <Button  name = "But_Close">
       <Image name = "Button-01-Close"/>
       <Pos x= "280" y= "4" />
-    </Gadget>
+    </Button>
   </Window>
 </XML>

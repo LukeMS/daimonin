@@ -154,8 +154,8 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
         {
             GuiManager::getSingleton().showWindow(GuiManager::WIN_EQUIPMENT, true);
             GuiManager::getSingleton().showWindow(GuiManager::WIN_INVENTORY, true);
-            GuiManager::getSingleton().setSlotBusyTime(GuiManager::WIN_INVENTORY, 0, 6);
-            GuiManager::getSingleton().setSlotBusy(GuiManager::WIN_INVENTORY, 0);
+            //GuiManager::getSingleton().setSlotBusyTime(GuiManager::WIN_INVENTORY, 0, 6);
+            //GuiManager::getSingleton().setSlotBusy(GuiManager::WIN_INVENTORY, 0);
             //GuiManager::getSingleton().showWindow(GuiManager::WIN_TRADE, true);
             //GuiManager::getSingleton().showWindow(GuiManager::WIN_SHOP, true);
             //GuiManager::getSingleton().showWindow(GuiManager::WIN_TILEGROUND, true);
@@ -195,9 +195,9 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
         case OIS::KC_M:
         {
             String strMemUsage = "Memory used for Textures: " + StringConverter::toString(TextureManager::getSingleton().getMemoryUsage()/1024) + " KB";
-            GuiManager::getSingleton().addTextline(GuiManager::WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, strMemUsage.c_str());
+            GuiManager::getSingleton().sendMsg(GuiManager::WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, (void*)strMemUsage.c_str());
             strMemUsage = "Memory used for Meshes: " + StringConverter::toString(MeshManager::getSingleton().getMemoryUsage()/1024) + " KB";
-            GuiManager::getSingleton().addTextline(GuiManager::WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, strMemUsage.c_str());
+            GuiManager::getSingleton().sendMsg(GuiManager::WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, (void*)strMemUsage.c_str());
             break;
         }
 
@@ -431,7 +431,7 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
 
                         static bool tst = true;
                         tst = !tst;
-                        GuiManager::getSingleton().setVisible(GuiManager::WIN_INVENTORY, GuiImageset::GUI_BUTTON_TEST, tst);
+                        GuiManager::getSingleton().sendMsg(GuiManager::WIN_INVENTORY, GuiImageset::GUI_BUTTON_TEST, GuiManager::MSG_SET_VISIBLE,(void*) tst);
                         break;
 
             Vector3 pos = mCamera->getPosition();

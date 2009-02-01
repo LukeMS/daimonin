@@ -26,7 +26,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <Ogre.h>
 #include <tinyxml.h>
-#include "item.h"
 #include "gui_element.h"
 #include "gui_cursor.h"
 
@@ -43,25 +42,11 @@ public:
     // ////////////////////////////////////////////////////////////////////
     GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, const char *resourceName);
     ~GuiGadgetSlot();
+    int sendMsg(int message, void *parm1 =0, void *parm2 =0, void *parm3 =0);
     void loadResources();
     int mouseEvent(int MouseAction, int x, int y);
     void draw();
-    /**
-     ** Put an item into the slot.
-     ** @param item 0 to empty the slot.
-     *****************************************************************************/
-    void setItem(Item::sItem *item)
-    {
-        mItem = item;
-        draw();
-    }
-    /**
-     ** Get the item within the slot.
-     *****************************************************************************/
-    Item::sItem *getItem()
-    {
-        return mItem;
-    }
+    void setItem(const char *gxName, int quantity);
     /**
      ** Sets the time where the slot cannot be accessed.
      *****************************************************************************/
@@ -98,20 +83,21 @@ private:
     static Ogre::TexturePtr mDnDTexture;
     static Ogre::String mResourceName;
     static Ogre::uint32 mGfxBuf[MAX_SIZE*MAX_SIZE]; /**< A buffer to build the slot graphic (slot-gfx + item-gfx + busy-gfx). **/
-    static int mDragSlot;                          /**< Slot where the drag was started. **/
-    static int mActiveSlot;                        /**< Slot the mouse is currently over. **/
-    int mSlotNr;                                   /**< Unique number. **/
-    int mSlotGfxBG;                                /**< The gfx number of the background gfx (will only be shown if slot is empty **/
-    Item::sItem *mItem;                            /**< The Item which is currently in the slot. **/
-    Ogre::Real mBusyTime;                          /**< Slot is busy for this amount of time. **/
-    Ogre::Real mBusyTimeExpired;                   /**< Already expired time. **/
-    Ogre::Real mBusyOldVal;                        /**< Indicates if the busy gfx needs a redraw. **/
+    static int mDragSlot;                           /**< Slot where the drag was started. **/
+    static int mActiveSlot;                         /**< Slot the mouse is currently over. **/
+
+    int mSlotNr;                                    /**< Unique number. **/
+    int mSlotGfxBG;                                 /**< The gfx number of the background gfx (will only be shown if slot is empty **/
+    int mItemGfxID;                                 /**< The item which is currently in the slot. **/
+    int mQuantity;                                  /**< Quantity of items in the slot. **/
+    Ogre::Real mBusyTime;                           /**< Slot is busy for this amount of time. **/
+    Ogre::Real mBusyTimeExpired;                    /**< Already expired time. **/
+    Ogre::Real mBusyOldVal;                         /**< Indicates if the busy gfx needs a redraw. **/
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
+    int getTextureAtlasPos(const char *gfxName);
     void drawDragItem();
-    int getTextureAtlasPos(int itemFace);
-    int getTextureAtlasPos(const char* gfx);
     void drawBusy(int busyTime);
 };
 

@@ -62,11 +62,26 @@ public:
     static const int SUM_WIN_DIGITS; /**< Numbers of digits (For string format) **/
     enum
     {
+        EVENT_CHECK_DONE,
+        EVENT_CHECK_NEXT,
+        EVENT_USER_ACTION,
         EVENT_DRAG_STRT,
         EVENT_DRAG_DONE,
-        EVENT_CHECK_NEXT,
-        EVENT_CHECK_DONE,
         EVENT_SUM
+    };
+
+    enum
+    {
+        MSG_CLEAR,
+        MSG_UPDATE,
+        MSG_ADD_ROW,
+        MSG_GET_USERBREAK,
+        MSG_GET_SELECTION,
+        MSG_GET_ACTIVATED,
+        MSG_GET_KEY_EVENT,
+        MSG_GET_MOUSE_EVENT,
+        MSG_SET_VISIBLE,
+        MSG_SUM
     };
 
     static const char *GUI_MATERIAL_NAME;
@@ -117,10 +132,11 @@ public:
     void cancelTextInput();
     const char *getTextInput() { return mStrTextInput.c_str(); }
 
-    void setVisible(int window, int element, bool visible)
+    int sendMsg(int window, int element, int message, void *parm1 =0, void *parm2 =0, void *parm3 =0)
     {
-        guiWindow[window].setVisible(element, visible);
+        return guiWindow[window].sendMsg(element, message, parm1, parm2, parm3);
     }
+
     // ////////////////////////////////////////////////////////////////////
     // GUI_Element stuff.
     // ////////////////////////////////////////////////////////////////////
@@ -138,68 +154,6 @@ public:
     void setStatusbarValue(int window, int element, Ogre::Real value)
     {
         guiWindow[window].setStatusbarValue(element, value);
-    }
-    // ////////////////////////////////////////////////////////////////////
-    // GUI_Table stuff.
-    // ////////////////////////////////////////////////////////////////////
-    int getTableUserBreak(int window, int element)
-    {
-        return guiWindow[window].getTableUserBreak(element);
-    }
-    int getTableSelection(int window, int element)
-    {
-        return guiWindow[window].getTableSelection(element);
-    }
-    int getTableActivated(int window, int element)
-    {
-        return guiWindow[window].getTableActivated(element);
-    }
-    void clearTable(int window, int element)
-    {
-        guiWindow[window].clearTable(element);
-    }
-    void addTableRow(int window, int element, const char *text)
-    {
-        guiWindow[window].addTableRow(element, text);
-    }
-    // ////////////////////////////////////////////////////////////////////
-    // GUI_Lisbox stuff.
-    // ////////////////////////////////////////////////////////////////////
-    void clearListbox(int window, int element)
-    {
-        guiWindow[window].clearListbox(element);
-    }
-    int addTextline(int window, int element, const char *text, Ogre::uint32 color = 0x00ffffff);
-
-    // ////////////////////////////////////////////////////////////////////
-    // GUI_Button stuff.
-    // ////////////////////////////////////////////////////////////////////
-    class GuiGadgetButton *getButtonHandle(int window, int element)
-    {
-        return guiWindow[window].getButtonHandle(element);
-    }
-    // ////////////////////////////////////////////////////////////////////
-    // GUI_gadget_Slot stuff.
-    // ////////////////////////////////////////////////////////////////////
-    void setSlotBusyTime(int window, int element, Ogre::Real busyTime)
-    {
-        guiWindow[window].setSlotBusyTime(element, busyTime);
-    }
-    void setSlotBusy(int window, int element)
-    {
-        guiWindow[window].setSlotBusy(element);
-    }
-    void addItem(int window, Item::sItem *item)
-    {
-        guiWindow[window].addItem(item);
-    }
-    void delItem(int window, Item::sItem *item)
-    {
-        guiWindow[window].delItem(item);
-    }
-    void clrItem(int window)
-    {
-        guiWindow[window].clrItem();
     }
 
 private:

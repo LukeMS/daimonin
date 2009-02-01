@@ -39,6 +39,10 @@ const int SLIDER_INNER_OFFSET = 3;
 // Keep slider-pos when lines were added.
 
 
+int GuiGadgetScrollbar::sendMsg(int element, void *parm1, void *parm2, void *parm3)
+{
+    return 0;
+}
 //================================================================================================
 // Constructor.
 //================================================================================================
@@ -63,15 +67,12 @@ GuiGadgetScrollbar::GuiGadgetScrollbar(TiXmlElement *xmlElement, void *parent, v
         if ((tmp = xmlOpt->Attribute("blue" ))) *color+= atoi(tmp) << 16;
         if ((tmp = xmlOpt->Attribute("alpha"))) *color+= atoi(tmp) << 24;
     }
-    for (xmlOpt = xmlElement->FirstChildElement("Gadget"); xmlOpt; xmlOpt = xmlOpt->NextSiblingElement("Gadget"))
+    for (xmlOpt = xmlElement->FirstChildElement("Button"); xmlOpt; xmlOpt = xmlOpt->NextSiblingElement("Button"))
     {
-        if (!strcmp(xmlOpt->Attribute("type"), "BUTTON"))
-        {
-            if (!strcmp(xmlOpt->Attribute("name"), "But_ScrollUp"))
-                mButScrollUp = new GuiGadgetButton(xmlOpt, parent);
-            else if (!strcmp(xmlOpt->Attribute("name"), "But_ScrollDown"))
-                mButScrollDown = new GuiGadgetButton(xmlOpt, parent);
-        }
+        if (!strcmp(xmlOpt->Attribute("name"), "But_ScrollUp"))
+            mButScrollUp = new GuiGadgetButton(xmlOpt, parent, false);
+        else if (!strcmp(xmlOpt->Attribute("name"), "But_ScrollDown"))
+            mButScrollDown = new GuiGadgetButton(xmlOpt, parent, false);
     }
     mDragging = false;
     mMouseOver = false;
@@ -94,25 +95,25 @@ GuiGadgetScrollbar::~GuiGadgetScrollbar()
 //================================================================================================
 // Mouse action in parent window.
 //================================================================================================
-bool GuiGadgetScrollbar::mouseEvent(int MouseAction, int x, int y)
+int GuiGadgetScrollbar::mouseEvent(int MouseAction, int x, int y)
 {
     // Test the right/up button.
-    if (!mDragging && mButScrollUp && mButScrollUp->mouseEvent(MouseAction, x, y))
+    if (!mDragging && mButScrollUp && mButScrollUp->mouseEvent(&MouseAction, &x, &y))
     {
         if (MouseAction == GuiWindow::BUTTON_RELEASED)
         {
             updateSliderPos(mHorizontal?BUTTON_H_ADD:BUTTON_V_ADD, -1);
         }
-        return true;
+        return GuiManager::EVENT_CHECK_DONE;
     }
     // Test the left/down button.
-    if (!mDragging && mButScrollDown && mButScrollDown->mouseEvent(MouseAction, x, y))
+    if (!mDragging && mButScrollDown && mButScrollDown->mouseEvent(&MouseAction, &x, &y))
     {
         if (MouseAction == GuiWindow::BUTTON_RELEASED)
         {
             updateSliderPos(mHorizontal?BUTTON_H_SUB:BUTTON_V_SUB, +1);
         }
-        return true;
+        return GuiManager::EVENT_CHECK_DONE;
     }
     // Test the slider.
     if (mDragging ||
@@ -143,7 +144,7 @@ bool GuiGadgetScrollbar::mouseEvent(int MouseAction, int x, int y)
         {
             updateSliderPos(mHorizontal?SLIDER_H:SLIDER_V, y-dragSliderPos);
         }
-        return true; // No need to check other gadgets.
+        return GuiManager::EVENT_CHECK_DONE; // No need to check other gadgets.
     }
     else  // Mouse is no longer over the the gadget.
     {
@@ -153,12 +154,12 @@ bool GuiGadgetScrollbar::mouseEvent(int MouseAction, int x, int y)
             mMouseButDown = false;
             setState(GuiImageset::STATE_ELEMENT_DEFAULT);
             GuiManager::getSingleton().setTooltip("");
-            return true; // No need to check other gadgets.
+            return GuiManager::EVENT_CHECK_DONE; // No need to check other gadgets.
         }
     }
     // If dragging is active, the parent window stays active if the mouse moves outside the window.
-    if (mDragging) return true;
-    return false; // No action here, check the other gadgets.
+    if (mDragging) return GuiManager::EVENT_CHECK_DONE;
+    return GuiManager::EVENT_CHECK_NEXT; // No action here, check the other gadgets.
 }
 
 //================================================================================================

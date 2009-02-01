@@ -27,8 +27,14 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "gui_element.h"
 #include "gui_imageset.h"
 #include "gui_window.h"
+#include "gui_manager.h"
 
 using namespace Ogre;
+
+int GuiElement::sendMsg(int message, void *parm1, void *parm2, void *parm3)
+{
+    return 0;
+}
 
 //================================================================================================
 // Parse a gui element.
