@@ -6,8 +6,8 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="..\..\..\client3d_d.exe" prefix_auto="0" extension_auto="0" />
-				<Option working_dir="..\..\..\..\client3d" />
+				<Option output="..\..\..\debug\client3d_d.exe" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="..\..\..\debug" />
 				<Option object_output=".\obj\Debug" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -20,10 +20,10 @@
 				<Linker>
 					<Add library="OgreMain_d" />
 					<Add library="OIS_d" />
-					<Add directory="..\..\..\" />
+					<Add directory="..\..\..\debug\" />
 				</Linker>
 				<ExtraCommands>
-					<Add after=".\..\..\_Tools_\cp.exe plugins_d.cfg ..\..\..\plugins.cfg" />
+					<Add after=".\..\..\_Tools_\cp.exe plugins_d.cfg ..\..\..\debug\plugins.cfg" />
 					<Mode after="always" />
 				</ExtraCommands>
 			</Target>
@@ -126,16 +126,16 @@
 		<Unit filename="..\..\..\include\gui\gui_animation.h" />
 		<Unit filename="..\..\..\include\gui\gui_cursor.h" />
 		<Unit filename="..\..\..\include\gui\gui_element.h" />
-		<Unit filename="..\..\..\include\gui\gui_gadget_button.h" />
-		<Unit filename="..\..\..\include\gui\gui_gadget_combobox.h" />
-		<Unit filename="..\..\..\include\gui\gui_gadget_scrollbar.h" />
-		<Unit filename="..\..\..\include\gui\gui_gadget_slot.h" />
+		<Unit filename="..\..\..\include\gui\gui_element_button.h" />
+		<Unit filename="..\..\..\include\gui\gui_element_combobox.h" />
+		<Unit filename="..\..\..\include\gui\gui_element_listbox.h" />
+		<Unit filename="..\..\..\include\gui\gui_element_scrollbar.h" />
+		<Unit filename="..\..\..\include\gui\gui_element_slot.h" />
+		<Unit filename="..\..\..\include\gui\gui_element_statusbar.h" />
+		<Unit filename="..\..\..\include\gui\gui_element_table.h" />
 		<Unit filename="..\..\..\include\gui\gui_graphic.h" />
 		<Unit filename="..\..\..\include\gui\gui_imageset.h" />
-		<Unit filename="..\..\..\include\gui\gui_listbox.h" />
 		<Unit filename="..\..\..\include\gui\gui_manager.h" />
-		<Unit filename="..\..\..\include\gui\gui_statusbar.h" />
-		<Unit filename="..\..\..\include\gui\gui_table.h" />
 		<Unit filename="..\..\..\include\gui\gui_textinput.h" />
 		<Unit filename="..\..\..\include\gui\gui_textout.h" />
 		<Unit filename="..\..\..\include\gui\gui_window.h" />
@@ -163,26 +163,36 @@
 		<Unit filename="..\..\..\include\tile_manager.h" />
 		<Unit filename="..\..\..\include\tile_map.h" />
 		<Unit filename="..\..\..\include\tile_map_wrapper.h" />
-		<Unit filename="..\..\CodingStyle.txt" />
-		<Unit filename="ReadMe.txt" />
-		<Unit filename="..\..\..\media\xml\GUI_ImageSet.xml" />
-		<Unit filename="..\..\..\media\xml\GUI_Windows.xml" />
-		<Unit filename="..\..\..\media\xml\NPC_Visuals.xml" />
+		<Unit filename="..\..\CodingStyle.txt">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="ReadMe.txt">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="..\..\..\media\xml\GUI_ImageSet.xml">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="..\..\..\media\xml\GUI_Windows.xml">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="..\..\..\media\xml\NPC_Visuals.xml">
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="..\..\..\source\events.cpp" />
 		<Unit filename="..\..\..\source\events_user.cpp" />
 		<Unit filename="..\..\..\source\gui\gui_animation.cpp" />
 		<Unit filename="..\..\..\source\gui\gui_cursor.cpp" />
 		<Unit filename="..\..\..\source\gui\gui_element.cpp" />
-		<Unit filename="..\..\..\source\gui\gui_gadget_button.cpp" />
-		<Unit filename="..\..\..\source\gui\gui_gadget_combobox.cpp" />
-		<Unit filename="..\..\..\source\gui\gui_gadget_scrollbar.cpp" />
-		<Unit filename="..\..\..\source\gui\gui_gadget_slot.cpp" />
+		<Unit filename="..\..\..\source\gui\gui_element_button.cpp" />
+		<Unit filename="..\..\..\source\gui\gui_element_combobox.cpp" />
+		<Unit filename="..\..\..\source\gui\gui_element_listbox.cpp" />
+		<Unit filename="..\..\..\source\gui\gui_element_scrollbar.cpp" />
+		<Unit filename="..\..\..\source\gui\gui_element_slot.cpp" />
+		<Unit filename="..\..\..\source\gui\gui_element_statusbar.cpp" />
+		<Unit filename="..\..\..\source\gui\gui_element_table.cpp" />
 		<Unit filename="..\..\..\source\gui\gui_graphic.cpp" />
 		<Unit filename="..\..\..\source\gui\gui_imageset.cpp" />
-		<Unit filename="..\..\..\source\gui\gui_listbox.cpp" />
 		<Unit filename="..\..\..\source\gui\gui_manager.cpp" />
-		<Unit filename="..\..\..\source\gui\gui_statusbar.cpp" />
-		<Unit filename="..\..\..\source\gui\gui_table.cpp" />
 		<Unit filename="..\..\..\source\gui\gui_textout.cpp" />
 		<Unit filename="..\..\..\source\gui\gui_window.cpp" />
 		<Unit filename="..\..\..\source\gui\gui_window_dialog.cpp" />
