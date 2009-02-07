@@ -1,6 +1,6 @@
 ; Updated to comply with minor script-fu changes to comply with GIMP v2.6
 
-(define (script-fu-daimonin-batch pattern doAlpha cutColour doUnsharp inRadius inAmount inThreshold doShadow shadowZOffset doIndexed doCrop)
+(define (script-fu-daimonin-batch pattern doAlpha cutColour doUnsharp inRadius inAmount inThreshold doShadow shadowZOffset doIndexed doCrop rsmulti)
 	(let*
 		(
 			(isIndexed 0)
@@ -98,7 +98,7 @@
 
 
 				(if (= doCrop TRUE)
-					(script-fu-daimonin-crop image drawable)
+					(script-fu-daimonin-crop image drawable rsmulti)
 				)
 
 
@@ -135,5 +135,7 @@
 	SF-TOGGLE	"Add Perspective Shadow"        FALSE
 	SF-ADJUSTMENT	"Shadow Z Offset"		'(0 0 50 1 5 0 0)
 	SF-TOGGLE	"Convert to Indexed"		FALSE
-	SF-TOGGLE	"Crop"				TRUE)
+	SF-TOGGLE	"Crop"				TRUE
+	SF-VALUE    "Tile size factor"            "1"
+)
 (script-fu-menu-register "script-fu-daimonin-batch" "<Image>/_Daimonin")

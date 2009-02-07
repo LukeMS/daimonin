@@ -5,7 +5,7 @@
 
 
 	; Define a local procedure that handles a single frame
-	(define (script-fu-daimonin-tile-frame-local pattern size inDirections frame start end inBorderWidth borderColour saveGIMP keepImagesOpen)
+	(define (script-fu-daimonin-tile-frame-local pass pattern size actualImgWidth inDirections frame start end inBorderWidth borderColour saveGIMP keepImagesOpen)
 		; Local function to update a 4 point array
 		(define (update-segment! s x0 y0 x1 y1)
 			(aset s 0 x0)
@@ -22,8 +22,12 @@
 				(tileWidth 0)
 				(tileHeight 0)
 
-				(imgWidth 0)
-				(imgHeight 0)
+				(aTileWidth 0)
+				(TileOffsetX 0)
+				(maxImgWidth 0)
+
+				(imgWidth 1)
+				(imgHeight 1)
 
 				(img 0)
 				(gridLayer 0)
@@ -47,17 +51,15 @@
 
                         (numDirections 0)
 
+				(nominalOffset 0)
+
 				; Convert inBorderWidth to actual border width
 				(borderWidth (+ (* 2 inBorderWidth) 1))
-			)
+
+			) ; end of variable declaration
 
 			(gimp-context-push)
 			(gimp-message-set-handler ERROR-CONSOLE) 
-
-
-			; Set size of a single "tile"
-			(set! tileWidth (* baseWidth size))
-			(set! tileHeight (* baseHeight size))
 
 
 			; Check inDirections and set parameters
@@ -86,51 +88,70 @@
 			)
 
 
-			; Calculate overall image size
-			; 8 (or 4) colums (for 8 (or 4) directions) + borders
-			; rows depend on start and end actions (would normally be 1, 3, but could be 4 for resting images)
-			(set! imgWidth (+ (* tileWidth numDirections) (* borderWidth (+ numDirections 1))))
-			(set! imgHeight (+ (* tileHeight (+ end (- start) 1)) (* borderWidth (+ end (- start) 2))))
+			; Image size and grip preparation - only need to do on pass 2
+			(if (= pass 2)
+				(begin
+					; Set size of a single "tile"
+					(set! tileWidth actualImgWidth)
+					(set! tileHeight (* baseHeight size))
 
 
-			; Create the new image
+					; Calculate nominal offset for non-wide images
+					(set! nominalOffset (/ (- actualImgWidth (* baseWidth size)) 2))
+
+
+					; Calculate overall image size
+					; 8 (or 4) colums (for 8 (or 4) directions) + borders
+					; rows depend on start and end actions (would normally be 1, 3, but could be 4 for resting images)
+					(set! imgWidth (+ (* tileWidth numDirections) (* borderWidth (+ numDirections 1))))
+					(set! imgHeight (+ (* tileHeight (+ end (- start) 1)) (* borderWidth (+ end (- start) 2))))
+				)
+			)
+
+
+			; Create the new image, only used as temp on pass 1
 			(set! img (car (gimp-image-new imgWidth imgHeight RGB)))
 
 
-			; Add Create and add the base grid layer
-			(set! gridLayer (car (gimp-layer-new img imgWidth imgHeight RGB-IMAGE "Grid" 100 NORMAL-MODE)))
-			(gimp-image-add-layer img gridLayer 0)
+			; Only need to do stuff with the image on pass 2
+			(if (= pass 2)
+				(begin
+
+					; Add Create and add the base grid layer
+					(set! gridLayer (car (gimp-layer-new img imgWidth imgHeight RGB-IMAGE "Grid" 100 NORMAL-MODE)))
+					(gimp-image-add-layer img gridLayer 0)
 
 
-			; Set grid layer to be transparent and fill
-			(gimp-layer-add-alpha gridLayer)
-			(gimp-drawable-fill gridLayer TRANSPARENT-FILL)
+					; Set grid layer to be transparent and fill
+					(gimp-layer-add-alpha gridLayer)
+					(gimp-drawable-fill gridLayer TRANSPARENT-FILL)
 
 
-			; Set brush/colour to draw grid
-			(gimp-context-set-foreground borderColour)
-			(gimp-context-set-brush (string-append "Circle (0" (number->string borderWidth) ")"))
+					; Set brush/colour to draw grid
+					(gimp-context-set-foreground borderColour)
+					(gimp-context-set-brush (string-append "Circle (0" (number->string borderWidth) ")"))
 
-			; Need to set the starting position for grid lines (to the centre of the border)
-			(set! curWidth (/ (- borderWidth 1) 2))
-			(set! curHeight curWidth)
+					; Need to set the starting position for grid lines (to the centre of the border)
+					(set! curWidth (/ (- borderWidth 1) 2))
+					(set! curHeight curWidth)
 
 
-			; Draw grid vertical lines
-			(while (<= curWidth imgWidth)
-				(update-segment! segment curWidth 0 curWidth (- imgHeight 1))
-				(gimp-pencil gridLayer 4 segment)
-				(set! curWidth (+ curWidth tileWidth borderWidth))
+					; Draw grid vertical lines
+					(while (<= curWidth imgWidth)
+						(update-segment! segment curWidth 0 curWidth (- imgHeight 1))
+						(gimp-pencil gridLayer 4 segment)
+						(set! curWidth (+ curWidth tileWidth borderWidth))
+					)
+
+
+					; Draw grid horizontal lines
+					(while (<= curHeight imgHeight)
+						(update-segment! segment 0 curHeight (- imgWidth 1) curHeight)
+						(gimp-pencil gridLayer 4 segment)
+						(set! curHeight (+ curHeight tileHeight borderWidth))
+					)
+				)
 			)
-
-
-			; Draw grid horizontal lines
-			(while (<= curHeight imgHeight)
-				(update-segment! segment 0 curHeight (- imgWidth 1) curHeight)
-				(gimp-pencil gridLayer 4 segment)
-				(set! curHeight (+ curHeight tileHeight borderWidth))
-			)
-
 
 			; Now add the images
 			(set! curAction start)
@@ -142,7 +163,6 @@
 
 				(while (<= curTileColumn numDirections)
 
-
 					; Build the file name
 					(set! fileName (string-append pattern "." (number->string curAction) (number->string (+ curTileColumn colOffset)) (number->string frame) ".png"))
 
@@ -153,18 +173,45 @@
 
 						(begin
 	
-							(gimp-message (string-append "Found file: " fileName))
+							;(gimp-message (string-append "Found file: " fileName))
 
 
 							; Load this file as a new layer in our image
 							(set! tileLayer (car (gimp-file-load-layer RUN-NONINTERACTIVE img fileName)))
-							(gimp-image-add-layer img tileLayer -1)
 
 
-							; Position the new layer correctly in the grid
-							(gimp-layer-set-offsets tileLayer (- (* (+ tileWidth borderWidth) curTileColumn) tileWidth)
-							                                  (- (* (+ tileHeight borderWidth) curTileRow) (car (gimp-drawable-height tileLayer))))
-						
+							; Get width of this loaded image
+							(set! aTileWidth (car (gimp-drawable-width tileLayer)))
+
+
+							(if (= pass 2)
+								(begin
+									; Add new loaded layer to image
+									(gimp-image-add-layer img tileLayer -1)
+
+
+									; Calculate the X offset within the tile
+									(set! TileOffsetX (/ (- actualImgWidth aTileWidth) 2))
+									; If offset is small, then we have a non-centred image, so use fixed offset = 1/2 * (tileWidth - rsmultiWidth)
+									(if (> TileOffsetX nominalOffset)
+										(set! TileOffsetX nominalOffset)
+									)
+
+
+									; Position the new layer correctly in the grid
+									(gimp-layer-set-offsets tileLayer (+ (- (* (+ tileWidth borderWidth) curTileColumn) tileWidth) TileOffsetX)
+									                                  (- (* (+ tileHeight borderWidth) curTileRow) (car (gimp-drawable-height tileLayer))))
+
+								)
+
+								; else
+
+								(begin
+									(if (< maxImgWidth aTileWidth)
+										(set! maxImgWidth aTileWidth)
+									)
+								)
+							)						
 						)
 					)
 
@@ -176,43 +223,51 @@
 				(set! curTileRow (+ curTileRow 1))
 			)
 
-			; Force the image to crop back to the calculated size
-			(gimp-image-crop img imgWidth imgHeight 0 0)
-
-			; Create a file name for the new image
-			(set! fileName (string-append pattern "." (number->string frame) fileSuffix))
-
-
-			(if (= saveGIMP TRUE)
+			(if (= pass 2)
 				(begin
+					; Force the image to crop back to the calculated size
+					(gimp-image-crop img imgWidth imgHeight 0 0)
 
-					(set! fileName (string-append fileName ".xcf"))
+					; Create a file name for the new image
+					(set! fileName (string-append pattern "." (number->string frame) fileSuffix))
 
+
+					(if (= saveGIMP TRUE)
+						(begin
+
+							(set! fileName (string-append fileName ".xcf"))
+
+						)
+
+						; else ...
+						(begin
+
+							; Merge all layers into 1
+							(gimp-image-merge-visible-layers img EXPAND-AS-NECESSARY)
+							(set! gridLayer (car (gimp-image-get-active-drawable img)))
+
+							(set! fileName (string-append fileName ".png"))
+						)
+					)
+
+
+					; Save the file
+					(gimp-image-set-filename img fileName)
+					(gimp-file-save RUN-NONINTERACTIVE img gridLayer fileName fileName)
+					(gimp-image-clean-all img)
+
+
+					(if (= keepImagesOpen TRUE)
+						(begin
+							(gimp-displays-flush)
+							(gimp-display-new img)
+						)
+					)
 				)
 
-				; else ...
-				(begin
+				; else
+				(gimp-image-clean-all img)
 
-					; Merge all layers into 1
-					(gimp-image-merge-visible-layers img EXPAND-AS-NECESSARY)
-					(set! gridLayer (car (gimp-image-get-active-drawable img)))
-
-					(set! fileName (string-append fileName ".png"))
-				)
-			)
-
-
-			; Save the file
-			(gimp-image-set-filename img fileName)
-			(gimp-file-save RUN-NONINTERACTIVE img gridLayer fileName fileName)
-			(gimp-image-clean-all img)
-
-
-			(if (= keepImagesOpen TRUE)
-				(begin
-					(gimp-displays-flush)
-					(gimp-display-new img)
-				)
 			)
 
 
@@ -220,11 +275,17 @@
 			(gimp-context-pop)
 
 
-			; Return the gridLayer to the calling function
-			fileName
-
-		)
-	)
+			; Return filename or maxTileWidth to the calling function
+			(if (= pass 2)
+				(begin
+					fileName
+				)
+				(begin
+					maxImgWidth
+				)
+			)
+		) ; end of (let* statement
+	) ; end of function defn
 	
 
 	
@@ -238,16 +299,17 @@
 			(whiteLayer 0)
 			(animFileName 0)
 			(frameFileName 0)
+			(curImgWidth 0)
+			(maxImgWidth 0)
 		)
 
+
+		(gimp-message-set-handler ERROR-CONSOLE) 
 
 		; Check actions are OK - i.e. end => start
 		(if (< end start)
 
-			(begin
-				(gimp-message-set-handler MESSAGE-BOX)
-				(gimp-message "'END' action must not be less than 'START' action")
-			)
+			(gimp-message "'END' action must not be less than 'START' action")
 	
 			; else ...
 
@@ -261,27 +323,36 @@
 				(set! curFrame firstFrame)
 
 
+				; Create a new image to hold the animation
 				(if (and (= saveGIMP FALSE) (> endFrame firstFrame))
-
-					(begin
-						; Create a new image to hold the animation
-						(set! animImg (car (gimp-image-new 1 1 RGB)))
-
-						;Obsolete code:
-						;(set! newLayer (car (gimp-layer-new animImg 1 1 RGB-IMAGE "Background" 100 NORMAL-MODE)))
-						;(gimp-image-add-layer animImg newLayer 0)
-
-
-						; Set grid layer to be transparent and fill
-						;(gimp-layer-add-alpha newLayer)
-						;(gimp-drawable-fill newLayer TRANSPARENT-FILL)
-					)
+					(set! animImg (car (gimp-image-new 1 1 RGB)))
 				)
 
 
+				; 1st pass - get max tile width
+				(gimp-message "Starting pass 1 ...")
 				(while (<= curFrame endFrame)
+					(gimp-message (string-append "Scanning animation frame: " (number->string curFrame)))
 
-					(set! frameFileName (script-fu-daimonin-tile-frame-local pattern size inDirections curFrame start end inBorderWidth borderColour saveGIMP keepImagesOpen))
+					(set! curImgWidth (script-fu-daimonin-tile-frame-local 1 pattern size 0 inDirections curFrame start end inBorderWidth borderColour saveGIMP keepImagesOpen))
+				
+					(if (> curImgWidth maxImgWidth)
+						(set! maxImgWidth curImgWidth)
+					)
+				
+					(set! curFrame (+ curFrame 1))
+				)
+
+
+				(set! curFrame firstFrame)
+
+
+				; 2nd pass - do actual work!
+				(gimp-message "Starting pass 2 ...")
+				(while (<= curFrame endFrame)
+					(gimp-message (string-append "Building animation frame: " (number->string curFrame)))
+
+					(set! frameFileName (script-fu-daimonin-tile-frame-local 2 pattern size maxImgWidth inDirections curFrame start end inBorderWidth borderColour saveGIMP keepImagesOpen))
 
 					(if (and (= saveGIMP FALSE) (> endFrame firstFrame))
 						(begin
@@ -309,6 +380,8 @@
 				(if (and (= saveGIMP FALSE) (> endFrame firstFrame))
 
 					(begin
+						(gimp-message "Creating GIF image ...")
+
 						(gimp-image-resize-to-layers animImg)
 
 						; newLayer gets modified when we do the merge-down command, so re-get the active layer
@@ -316,7 +389,7 @@
 
 						(gimp-image-convert-indexed animImg FS-DITHER MAKE-PALETTE 255 FALSE TRUE "")
 
-						(set! animFileName (string-append pattern ".gif"))
+						(set! animFileName (string-append pattern "." (number->string inDirections) ".gif"))
 
 						(gimp-image-set-filename animImg animFileName)
 						(file-gif-save RUN-NONINTERACTIVE animImg newLayer animFileName animFileName 0 1 500 2)
@@ -334,7 +407,7 @@
 				)
 
 
-				(gimp-message-set-handler MESSAGE-BOX)
+				(gimp-message-set-handler MESSAGE-BOX) 
 				(gimp-message "Finished!")
 			)
 		)
