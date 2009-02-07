@@ -18,6 +18,7 @@ This is a script for Blender which renders area 1x1x1.5 tiles in centre of scene
 2. INSTALLATION
 
 Unpack the stuff anywhere :)
+Note:  For best results, place daimex.py inside the .scripts file under the Blender installation folder.
 
 
 3. SETTING UP
@@ -81,6 +82,7 @@ Umm, also, I'm not responsible for any damage done by the script, you are using 
 27.01.2009 v0.5 - New light setup, allowing shadows and a tip by Torchwood, also little documentation change
 07.02.2009 v0.6 - Added ability to render wide images (150px), which allows image to extend outside of normal tile width.
                   Recommended to use GIMP crop script developed by Torchwood to crop back to minimum size.
+                  See daimex-exec.py for an example of how to use and configure inside Blender.
 
 6. Tips
 
