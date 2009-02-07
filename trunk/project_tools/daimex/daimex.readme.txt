@@ -75,10 +75,12 @@ Umm, also, I'm not responsible for any damage done by the script, you are using 
 
 5. CHANGE-LOG
 
-22.10.2007 v0.2	- Initial public release
+22.10.2007 v0.2 - Initial public release
 21.11.2007 v0.3 - Rotation bug fix; changed deprecated stuff
-13.4.2008  v0.4 - Object approach - multiple configurations/runs in one script
-27.1.2009  v0.5 - New light setup, allowing shadows and a tip by Torchwood, also little documentation change
+13.04.2008 v0.4 - Object approach - multiple configurations/runs in one script
+27.01.2009 v0.5 - New light setup, allowing shadows and a tip by Torchwood, also little documentation change
+07.02.2009 v0.6 - Added ability to render wide images (150px), which allows image to extend outside of normal tile width.
+                  Recommended to use GIMP crop script developed by Torchwood to crop back to minimum size.
 
 6. Tips
 
