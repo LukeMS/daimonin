@@ -1,10 +1,9 @@
   ##########################################################################################
  # DAIMEX - script for Blender, for rendering and formating for use in Daimonin 2d client #
 ##########################################################################################
-  # See settings starting on line 42! #
  # To run the script press ALT+P     #
 #####################################
- # version 0.5 #
+ # version 0.6 #
 ###############
 
 # Use CatRoom rendering filter for sharpest results
@@ -71,7 +70,8 @@ class Daimex:
     # so for default image of 48px x 70px = 1x1 daimonin tiles (1,5 high - height of full walls) leave 1 here, for 2x2x3 daim tiles use 2
     rsmulti = 1
     
-    #use the scripts own lightning (one rotating sun) and turn off all other lights during rendering
+    #use the scripts own lightning (two rotating suns and one rotating spotlight for shadows) and turn off all other lights during rendering
+    #lights with name beginning "daimex_" are NOT removed from the scene
     usescriptlamp = 1
 
     # direction which your model is facing
@@ -91,6 +91,7 @@ class Daimex:
     
     # ADVANCED SETTINGS - don't configure unless you know what you are doing
     rsx = 48    # standard image width
+    rsxwide = 150 # wide image width
     rsy = 70    # standard image height
     orframes = False    # if to override default time-line/renderer start/end frames
     framestart = 1
@@ -102,13 +103,20 @@ class Daimex:
     camcend = 100.0 # camera clipping start (FOV)
     camlocx = 0.0
     camlocy = -21.0
+
     camlocz = 14.4 #14.2
+    camloczWide = 12.7 # camera z position for wide images
+    # Note:  Scale objects to approx 0.47 to keep same size in wide images vs. normal images
+
     camrotx = 62.0
     camroty = 0.0
     camrotz = 0.0
 
-    sunenergy = .8
+    sunenergy = 0.8
     sundist = 20.0
+
+    spotenergy = 0.8
+    spotdist = 20.0
 
     #sunlocx = -9.7 #-0.7
     #sunlocy = -15.85 
@@ -136,6 +144,8 @@ class Daimex:
     spotshadowsoftness = 12
     spotshadowsamples = 6
 
+    wideimage = False
+
     ################
     pix2 = (math.pi * 2)
     uhx = pix2 / directions
@@ -148,10 +158,17 @@ class Daimex:
         try:
             #set up renderer
             render = self.scene.getRenderingContext()
+
             brsx = render.imageSizeX()
-            render.imageSizeX(self.rsx*self.rsmulti)
+
+            if (self.wideimage == False):
+                render.imageSizeX(self.rsx*self.rsmulti)
+            else:
+                render.imageSizeX(self.rsxwide*self.rsmulti)
+
             brsy = render.imageSizeY()
             render.imageSizeY(self.rsy*self.rsmulti)
+
             render.setRenderPath("")
             render.enableRGBAColor()
             render.setImageType(Blender.Scene.Render.PNG)
@@ -167,7 +184,12 @@ class Daimex:
             daimexcam.dofDist = self.camdofdist
             daimexcam.scale = self.camscale
             cam.link(daimexcam)
-            cam.setLocation(self.camlocx, self.camlocy, self.camlocz)
+
+            if (self.wideimage == False):
+                cam.setLocation(self.camlocx, self.camlocy, self.camlocz)
+            else:
+                cam.setLocation(self.camlocx, self.camlocy, self.camloczWide)
+
             cam.setEuler([((self.camrotx/180.0)*math.pi), ((self.camroty/180.0)*math.pi), ((self.camrotz/180.0)*math.pi)])
             self.scene.objects.link(cam)
             
@@ -175,8 +197,11 @@ class Daimex:
                 remlamps = []
                 for ob in self.scene.objects:
                     if ob.type == 'Lamp':
-                        remlamps.append(ob.name)
-                        self.scene.objects.unlink(ob)
+
+                        # Lamps with name beginning "daimex_" will NOT be removed from the scene
+                        if ob.name.find("daimex_") <> 0:
+                            remlamps.append(ob.name)
+                            self.scene.objects.unlink(ob)
 
                 # create sun
                 suny = Blender.Object.New("Lamp" ,"daimex_sun")
@@ -198,8 +223,8 @@ class Daimex:
                 # create spotlight for shadows
                 spot = Blender.Object.New("Lamp", "daimex_lamp")
                 daimexspot = Blender.Lamp.New("Spot")
-                daimexspot.setEnergy(self.sunenergy)
-                daimexspot.setDist(self.sundist)
+                daimexspot.setEnergy(self.spotenergy)
+                daimexspot.setDist(self.spotdist)
                 daimexspot.setSoftness(self.spotshadowsoftness)
                 daimexspot.setSamples(self.spotshadowsamples)
                 spot.link(daimexspot)
@@ -309,11 +334,11 @@ def rotateobj(name):
 # (I am unsure if this will work, because of how Blender uses python)
 
 # create an instance of Daimex class with:
-instance1 = Daimex()
+#instance1 = Daimex()
 
 #then change some settings if you like, for example:
-instance1.filename = "type_description_a.1"
+#instance1.filename = "type_description_a.1"
 
 #and run the script with:
-instance1.run()
+#instance1.run()
 
