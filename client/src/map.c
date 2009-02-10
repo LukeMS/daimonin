@@ -554,9 +554,9 @@ void map_draw_map(void)
         for (alpha = 0; alpha < MAP_MAX_SIZE; alpha++)
         {
             xt = yt = -1;
-            while (xt < alpha || yt < alpha)
+            while (xt < (alpha - 1) || yt < alpha)
             {
-                if (xt < alpha) /* draw x row from 0 to alpha with y = alpha */
+                if (xt < (alpha - 1)) /* draw x row from 0 to alpha with y = alpha */
                 {
                     x = ++xt;
                     y = alpha;
