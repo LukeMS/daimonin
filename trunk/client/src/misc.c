@@ -308,11 +308,11 @@ void smiley_convert(char *msg)
             else if (msg[j] == 'p') actChar = 137;
             else if (msg[j] == 'P') actChar = 137;
         }
-        else if ((msg[i] == (unsigned char)'8') || (msg[i] == (unsigned char)'B') && (msg[i+1] == ')'))
+        else if (((msg[i] == (unsigned char)'8') || (msg[i] == (unsigned char)'B')) && (msg[i+1] == ')'))
         {
             actChar=135;
         }
-        else if ((msg[i] == (unsigned char)'8') || (msg[i] == (unsigned char)'B') && (msg[i+2] == ')') && (msg[i+1] == '-'))
+        else if (((msg[i] == (unsigned char)'8') || (msg[i] == (unsigned char)'B')) && (msg[i+2] == ')') && (msg[i+1] == '-'))
         {
             actChar=135;
             move=2;
