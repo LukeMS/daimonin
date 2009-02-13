@@ -256,25 +256,91 @@ int isqrt(int n)
 void smiley_convert(char *msg)
 {
     unsigned char   actChar;
-    int             i;
+    int             i, j, move;
+
 
     for (i = 0; msg[i] != 0; i++)
     {
+        actChar = 0;
+        move = 1;
         if (msg[i] == (unsigned char)':')
         {
-            actChar = 0;
-            if (msg[i+1] == ')') actChar = 128;      /* we replace it with the 'ASCII'-code of the smiley in systemfont */
-            else if (msg[i+1] == '(') actChar = 129;
-            else if (msg[i+1] == 'D') actChar = 130;
-            else if (msg[i+1] == '|') actChar = 131;
-            else if (msg[i+1] == 'o') actChar = 132;
-            else if (msg[i+1] == 'p') actChar = 133;
-
-            if (actChar!=0)
+            j = i + 1;
+            if (msg[j] == '\'' && msg[j+1] == '(')
             {
-                msg[i]=actChar;
-                memmove(&msg[i+1],&msg[i+2],strlen(&msg[i+2])+1);
+                actChar = 138;
+                move=2;
             }
+            else if (msg[j] == '-')
+            {
+                j++;
+                move++;
+            }
+            switch (msg[j])
+            {
+                case ')': actChar=128; break;  /* we replace it with the 'ASCII'-code of the smiley in systemfont */
+                case '(': actChar=129; break;
+                case 'D': actChar=130; break;
+                case '|': actChar=131; break;
+                case 'o':
+                case 'O':
+                case '0': actChar=132; break;
+                case 'p':
+                case 'P': actChar=133; break;
+
+                case 's':
+                case 'S': actChar=139; break;
+                case 'x':
+                case 'X': actChar=140; break;
+            }
+
+        }
+        else if (msg[i] == (unsigned char)';')
+        {
+            j = i + 1;
+            if (msg[j] == '-')
+            {
+                j++;
+                move++;
+            }
+
+            if (msg[j] == ')') actChar = 134;
+            else if (msg[j] == 'p') actChar = 137;
+            else if (msg[j] == 'P') actChar = 137;
+        }
+        else if ((msg[i] == (unsigned char)'8') || (msg[i] == (unsigned char)'B') && (msg[i+1] == ')'))
+        {
+            actChar=135;
+        }
+        else if ((msg[i] == (unsigned char)'8') || (msg[i] == (unsigned char)'B') && (msg[i+2] == ')') && (msg[i+1] == '-'))
+        {
+            actChar=135;
+            move=2;
+        }
+        else if ((msg[i] == (unsigned char)'^' && msg[i+2] == '^') && ((msg[i+1] == '_' ) || (msg[i+1] == '-')))
+        {
+            actChar = 136;
+            move=2;
+        }
+        else if ((msg[i] == (unsigned char)'>') && (msg[i+1] == (unsigned char)':'))
+        {
+            j=i+2;
+            move=2;
+            if (msg[j] == '-')
+            {
+                move++;
+                j++;
+            }
+            if (msg[j]==')')
+                actChar=141;
+            else if (msg[j]=='D')
+                actChar=142;
+        }
+
+        if (actChar!=0)
+        {
+            msg[i]=actChar;
+            memmove(&msg[i+1],&msg[i+1+move],strlen(&msg[i+1+move])+1);
         }
     }
 
