@@ -3231,10 +3231,8 @@ object *find_next_object(object *op, uint8 type, uint8 mode, object *root)
         }
 
         if (next->inv &&
-            ((mode == FNO_MODE_CONTAINERS &&
-              (next->type == CONTAINER ||
-               next->type == SPAWN_POINT_MOB) ||
-             mode == FNO_MODE_ALL)))
+            ((mode == FNO_MODE_CONTAINERS && (next->type == CONTAINER || next->type == SPAWN_POINT_MOB)) ||
+             mode == FNO_MODE_ALL))
         {
             next = next->inv;
 #ifdef DEBUG_FNO

@@ -973,7 +973,10 @@ void move_player_mover(object *op)
         dir = random_roll(1, 8);
     for (victim = GET_BOTTOM_MAP_OB(op); victim != NULL; victim = victim->above)
     {
-        if (IS_LIVE(victim) && !IS_AIRBORNE(victim) || op->stats.maxhp)
+        /* Not convinced this is entirely correct. I think may it should be:
+         *   if (op->stats.maxhp && IS_LIVE(victim) && !IS_AIRBORNE(victim))
+         * -- Smacky 20090220 */
+        if ((IS_LIVE(victim) && !IS_AIRBORNE(victim)) || op->stats.maxhp)
         {
             if (QUERY_FLAG(op, FLAG_LIFESAVE) && op->stats.hp-- < 0)
             {
