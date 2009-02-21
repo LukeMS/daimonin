@@ -152,6 +152,7 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
 
         case OIS::KC_I:
         {
+            GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_CHATWIN, GuiManager::MSG_ADD_ROW, (void*)"Show inventory");
             GuiManager::getSingleton().showWindow(GuiManager::WIN_EQUIPMENT, true);
             GuiManager::getSingleton().showWindow(GuiManager::WIN_INVENTORY, true);
             //GuiManager::getSingleton().setSlotBusyTime(GuiManager::WIN_INVENTORY, 0, 6);
@@ -195,9 +196,9 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
         case OIS::KC_M:
         {
             String strMemUsage = "Memory used for Textures: " + StringConverter::toString(TextureManager::getSingleton().getMemoryUsage()/1024) + " KB";
-            GuiManager::getSingleton().sendMsg(GuiManager::WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, (void*)strMemUsage.c_str());
+            GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_CHATWIN, GuiManager::MSG_ADD_ROW, (void*)strMemUsage.c_str());
             strMemUsage = "Memory used for Meshes: " + StringConverter::toString(MeshManager::getSingleton().getMemoryUsage()/1024) + " KB";
-            GuiManager::getSingleton().sendMsg(GuiManager::WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, (void*)strMemUsage.c_str());
+            GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_CHATWIN, GuiManager::MSG_ADD_ROW, (void*)strMemUsage.c_str());
             break;
         }
 
@@ -263,7 +264,7 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
         case OIS::KC_W:
         {
             //Network::getSingleton().send_command("/apply", -1, SC_NORMAL);
-            //GuiManager::getSingleton().addTextline(WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "apply");
+            //GuiManager::getSingleton().addTextline(WIN_TEXTWINDOW, GUI_LIST_CHATWIN, "apply");
             break;
         }
 
@@ -431,7 +432,7 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
 
                         static bool tst = true;
                         tst = !tst;
-                        GuiManager::getSingleton().sendMsg(GuiManager::WIN_INVENTORY, GuiImageset::GUI_BUTTON_TEST, GuiManager::MSG_SET_VISIBLE,(void*) tst);
+                        GuiManager::getSingleton().sendMsg(GuiManager::GUI_BUTTON_TEST, GuiManager::MSG_SET_VISIBLE,(void*) tst);
                         break;
 
             Vector3 pos = mCamera->getPosition();
@@ -607,7 +608,7 @@ bool Events::mouseMoved(const OIS::MouseEvent &e)
     mMouse.z = e.state.Z.abs;
     if (mMouse.x > e.state.width - MOUSE_POINTER_SIZE) mMouse.x = e.state.width - MOUSE_POINTER_SIZE;
     if (mMouse.y > e.state.height- MOUSE_POINTER_SIZE) mMouse.y = e.state.height- MOUSE_POINTER_SIZE;
-    GuiManager::getSingleton().mouseEvent(GuiWindow::MOUSE_MOVEMENT, mMouse);
+    GuiManager::getSingleton().mouseEvent(GuiManager::MOUSE_MOVEMENT, mMouse);
     return true;
 }
 
@@ -617,9 +618,9 @@ bool Events::mouseMoved(const OIS::MouseEvent &e)
 bool Events::mousePressed(const OIS::MouseEvent &e, OIS::MouseButtonID button)
 {
     // ////////////////////////////////////////////////////////////////////
-    // First check if the mouse action is within the gui..
+    // First check if the mouse action is within the gui.
     // ////////////////////////////////////////////////////////////////////
-    if (GuiManager::getSingleton().mouseEvent(GuiWindow::BUTTON_PRESSED, mMouse)) return true;
+    if (GuiManager::getSingleton().mouseEvent(GuiManager::BUTTON_PRESSED, mMouse)) return true;
     // ////////////////////////////////////////////////////////////////////
     // Right button for selection and menu.
     // ////////////////////////////////////////////////////////////////////
@@ -677,7 +678,7 @@ bool Events::mousePressed(const OIS::MouseEvent &e, OIS::MouseButtonID button)
 //================================================================================================
 bool Events::mouseReleased(const OIS::MouseEvent &e, OIS::MouseButtonID id)
 {
-    GuiManager::getSingleton().mouseEvent(GuiWindow::BUTTON_RELEASED, mMouse);
+    GuiManager::getSingleton().mouseEvent(GuiManager::BUTTON_RELEASED, mMouse);
     //e->consume();
     return true;
 }

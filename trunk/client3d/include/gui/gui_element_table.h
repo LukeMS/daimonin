@@ -79,8 +79,8 @@ private:
     inline int getUserBreak();
     inline int getSelectedRow();
     inline int getActivatedRow();
-    inline int keyEvent(const char *keyChar, const unsigned char *key);
-    inline int mouseEvent(int *MouseAction, int *x, int *y);
+    int keyEvent(const int keyChar, const unsigned int key);
+    int mouseEvent(int MouseAction, int x, int y, int z);
     inline void clear();                             /**< Clear the whole table.   **/
     inline void addRow(const char *row);
     inline void setRow(int row, const char *rowTxt); /**< Set new values to a row. **/

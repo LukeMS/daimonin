@@ -33,12 +33,12 @@ using namespace Ogre;
 
 // needs to be rewritten!
 
-int GuiGadgetCombobox::sendMsg(int element, void *parm1, void *parm2, void *parm3)
+int GuiElementCombobox::sendMsg(int element, void *parm1, void *parm2, void *parm3)
 {
     return 0;
 }
 
-GuiGadgetCombobox::GuiGadgetCombobox(TiXmlElement *xmlElement, void *parent) :GuiElement(xmlElement, parent)
+GuiElementCombobox::GuiElementCombobox(TiXmlElement *xmlElement, void *parent) :GuiElement(xmlElement, parent)
 {
     /*
     // ////////////////////////////////////////////////////////////////////
@@ -83,144 +83,17 @@ GuiGadgetCombobox::GuiGadgetCombobox(TiXmlElement *xmlElement, void *parent) :Gu
     */
 }
 
-GuiGadgetCombobox::~GuiGadgetCombobox()
+GuiElementCombobox::~GuiElementCombobox()
 {
     if ( mGfxBuffer )
         delete[] mGfxBuffer;
 }
 
-void GuiGadgetCombobox::draw()
+void GuiElementCombobox::draw()
 {
-    // ////////////////////////////////////////////////////////////////////
-    // Save background if needed.
-    // ////////////////////////////////////////////////////////////////////
-    Texture *texture = mParent->getTexture();
-    PixelBox *mSrcPixelBox = mParent->getPixelBox();
-
-    if ( mDispDropdown )
-    {
-        if (!mGfxBuffer)
-        {
-
-            bw = mWidth;
-            // Bet changing the height like this is gona break something in some future
-            if ( mNeedsScroll )
-                mHeight += mViewport;
-            else
-                mHeight += mVirtualHeight;
-
-            mGfxBuffer = new uint32[bw * (mHeight-mEntryHeight)];
-            texture->getBuffer()->blitToMemory(
-                Box(mPosX, mPosY+ mEntryHeight, mPosX + bw, mPosY+ mHeight),
-                PixelBox(bw, mHeight - mEntryHeight, 1, PF_A8R8G8B8 , mGfxBuffer));
-        }
-    }
-
-    // ////////////////////////////////////////////////////////////////////
-    // Draw gaget background.
-    // ////////////////////////////////////////////////////////////////////
-    PixelBox src = mSrcPixelBox->getSubVolume(Box(
-                       mGfxSrc->state[0].x,
-                       mGfxSrc->state[0].y,
-                       mGfxSrc->state[0].x + mWidth,
-                       mGfxSrc->state[0].y + mHeight));
-    texture->getBuffer()->blitFromMemory(src, Box(mPosX, mPosY, mPosX + mWidth, mPosY + mHeight));
-
-    // ////////////////////////////////////////////////////////////////////
-    // Draw the down button is it is given ( else this will turn into an entry box
-    // ////////////////////////////////////////////////////////////////////
-    if (srcButton)
-    {
-        PixelBox srcbtn = mSrcPixelBox->getSubVolume(Box(
-                              srcButton->state[0].x,
-                              srcButton->state[0].y,
-                              srcButton->state[0].x + srcButton->w,
-                              srcButton->state[0].y + srcButton->h));
-        texture->getBuffer()->blitFromMemory(srcbtn, Box(mPosX + mWidth - srcButton->w, mPosY, mPosX + mWidth, mPosY + mEntryHeight));
-    }
-
-    // ////////////////////////////////////////////////////////////////////
-    // Draw the current line of text
-    // ////////////////////////////////////////////////////////////////////
-    GuiTextout::TextLine label;
-    label.index= -1;
-    label.hideText= false;
-    label.font = mLabelFontNr;
-    label.x1 = mPosX + mLabelPosX;
-    if ( srcButton )
-        label.x2 = label.x1 + mWidth - srcButton->w - mLabelPosX;
-    else
-        label.x2 = label.x1 + mWidth - mLabelPosX;
-    label.y1 = mPosY+ mLabelPosY;
-    label.y2 = label.y1 + GuiTextout::getSingleton().getFontHeight(label.font) - mLabelPosY;
-    label.text = mvOption[0];
-    GuiTextout::getSingleton().Print(&label, texture);
-
-    // ////////////////////////////////////////////////////////////////////
-    // Draw the dropdown lines, each line will only be the height of the
-    // text no extra spacing at the moment
-    // ////////////////////////////////////////////////////////////////////
-    if ( mDispDropdown )
-    {
-        label.x1 = mPosX+ mLabelPosX;
-        label.x2 = label.x1 + mWidth - mLabelPosX;
-        if ( mNeedsScroll )
-        {
-            // The up button is deciding the width of the bar at the moment
-            if (srcScrollbarUp)
-            {
-                PixelBox srcbtn = mSrcPixelBox->getSubVolume(Box(
-                                      srcScrollbarUp->state[0].x,
-                                      srcScrollbarUp->state[0].y,
-                                      srcScrollbarUp->state[0].x + srcScrollbarUp->w,
-                                      srcScrollbarUp->state[0].y + srcScrollbarUp->h));
-                texture->getBuffer()->blitFromMemory(srcbtn, Box(mPosX + mWidth - srcScrollbarUp->w, mPosY + mEntryHeight, mPosX + mWidth, mPosY + mEntryHeight + srcScrollbarUp->h));
-                label.x2 -= srcScrollbarUp->w;
-            }
-            if (srcScrollbarDown)
-            {
-                PixelBox srcbtn = mSrcPixelBox->getSubVolume(Box(
-                                      srcScrollbarDown->state[0].x,
-                                      srcScrollbarDown->state[0].y,
-                                      srcScrollbarDown->state[0].x + srcScrollbarDown->w,
-                                      srcScrollbarDown->state[0].y + srcScrollbarDown->h));
-                texture->getBuffer()->blitFromMemory(srcbtn, Box(mPosX + mWidth - srcScrollbarDown->w, mPosY + mEntryHeight + mViewport - srcScrollbarDown->h, mPosX + mWidth, mPosY + mEntryHeight + mViewport));
-            }
-        }
-        for ( unsigned int i = 1 ; i < mvOption.size() ; i++ )
-        {
-            label.y1 = mPosY + mEntryHeight + GuiTextout::getSingleton().getFontHeight(label.font) * (i-1) - mScrollPos;
-            label.y2 = label.y1 + GuiTextout::getSingleton().getFontHeight(label.font);
-            label.text = mvOption[i];
-            if ( label.y2 < (unsigned int) mPosY + mEntryHeight )
-                continue;
-            if ( label.y1 < (unsigned int) mPosY + mEntryHeight )
-                label.y1 = mPosY + mEntryHeight;
-            // If the text need clipping and if so dont continue throw the list
-            if ( label.y2 > texture->getSrcHeight())
-            {
-                label.y2 = (int)texture->getSrcHeight();
-                GuiTextout::getSingleton().Print(&label, texture);
-                break;
-            }
-
-            GuiTextout::getSingleton().Print(&label, texture);
-        }
-
-    }
-    else if ( mGfxBuffer )
-    {
-        texture->getBuffer()->blitFromMemory(
-            PixelBox(bw, mHeight - mEntryHeight, 1, PF_A8R8G8B8 , mGfxBuffer),
-            Box(mPosX, mPosY+ mEntryHeight, mPosX + bw, mPosY+ mHeight));
-
-        delete[] mGfxBuffer;
-        mGfxBuffer = NULL;
-        mHeight = mEntryHeight;
-    }
 }
 
-bool GuiGadgetCombobox::setState(int state)
+bool GuiElementCombobox::setState(int state)
 {
     if ( mState != state && mState == GuiImageset::STATE_ELEMENT_PUSHED)
     {
@@ -234,15 +107,15 @@ bool GuiGadgetCombobox::setState(int state)
         {
             switch ( mButton )
             {
-                case GUI_GADGET_COMBOBOX_DDBUTTON:
+                case GUI_ELEMENT_COMBOBOX_DDBUTTON:
                     mDispDropdown = true;
                     break;
-                case GUI_GADGET_COMBOBOX_SCROLL_DOWN:
+                case GUI_ELEMENT_COMBOBOX_SCROLL_DOWN:
                     mScrollPos += 5;
                     if ( mScrollPos > mVirtualHeight - mViewport )
                         mScrollPos = mVirtualHeight - mViewport;
                     break;
-                case GUI_GADGET_COMBOBOX_SCROLL_UP:
+                case GUI_ELEMENT_COMBOBOX_SCROLL_UP:
                     mScrollPos -= 5;
                     if ( mScrollPos < 0 )
                         mScrollPos = 0;
@@ -256,18 +129,18 @@ bool GuiGadgetCombobox::setState(int state)
     return GuiElement::setState(state);
 }
 
-void GuiGadgetCombobox::setText(const char *value)
+void GuiElementCombobox::setText(const char *value)
 {
     mvOption[0] = value;
 }
 
-const char *GuiGadgetCombobox::getText()
+const char *GuiElementCombobox::getText()
 {
     return mvOption[0].c_str();
 }
 
 /*
-bool GuiGadgetCombobox::mouseOver(int x, int y)
+bool GuiElementCombobox::mouseOver(int x, int y)
 {
     if ( GuiElement::mouseOver(x,y) )
     {
@@ -288,20 +161,20 @@ bool GuiGadgetCombobox::mouseOver(int x, int y)
             {
                 mActiveDropdownOption = -1;
                 if ( y - mPosY - mEntryHeight < srcScrollbarUp->height )
-                    mButton = GUI_GADGET_COMBOBOX_SCROLL_UP;
+                    mButton = GUI_ELEMENT_COMBOBOX_SCROLL_UP;
                 else if ( y - mPosY - mEntryHeight > mViewport - srcScrollbarUp->height )
-                    mButton = GUI_GADGET_COMBOBOX_SCROLL_DOWN;
+                    mButton = GUI_ELEMENT_COMBOBOX_SCROLL_DOWN;
                 else
-                    mButton = GUI_GADGET_COMBOBOX_SCROLL_BAR;
+                    mButton = GUI_ELEMENT_COMBOBOX_SCROLL_BAR;
             }
         }
         else
         {
             mActiveDropdownOption = -1;
             if( srcButton && x > mPosX + mWidth - srcButton->width )
-                mButton = GUI_GADGET_COMBOBOX_DDBUTTON;
+                mButton = GUI_ELEMENT_COMBOBOX_DDBUTTON;
             else
-                mButton = GUI_GADGET_COMBOBOX_NONE;
+                mButton = GUI_ELEMENT_COMBOBOX_NONE;
         }
 
         return true;

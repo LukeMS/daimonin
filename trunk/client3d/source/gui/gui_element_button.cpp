@@ -32,14 +32,10 @@ using namespace Ogre;
 //================================================================================================
 //
 //================================================================================================
-int GuiGadgetButton::sendMsg(int message, void *parm1, void *parm2, void *parm3)
+int GuiElementButton::sendMsg(int message, void *parm1, void *parm2, void *parm3)
 {
     switch (message)
     {
-        case GuiManager::MSG_GET_KEY_EVENT:
-            return keyEvent((const char*)parm1, (const unsigned char*)parm2);
-        case GuiManager::MSG_GET_MOUSE_EVENT:
-            return mouseEvent((int*)parm1, (int*)parm2, (int*)parm3);
         case GuiManager::MSG_SET_VISIBLE:
             setVisible((bool*)parm1);
             return 0;
@@ -51,7 +47,7 @@ int GuiGadgetButton::sendMsg(int message, void *parm1, void *parm2, void *parm3)
 //================================================================================================
 // .
 //================================================================================================
-GuiGadgetButton::GuiGadgetButton(TiXmlElement *xmlElement, void *parent, bool drawOnInit):GuiElement(xmlElement, parent)
+GuiElementButton::GuiElementButton(TiXmlElement *xmlElement, void *parent, bool drawOnInit):GuiElement(xmlElement, parent)
 {
     mMouseOver = false;
     mMouseButDown = false;
@@ -61,13 +57,13 @@ GuiGadgetButton::GuiGadgetButton(TiXmlElement *xmlElement, void *parent, bool dr
 //================================================================================================
 // .
 //================================================================================================
-GuiGadgetButton::~GuiGadgetButton()
+GuiElementButton::~GuiElementButton()
 {}
 
 //================================================================================================
 // .
 //================================================================================================
-void GuiGadgetButton::setVisible(bool visible)
+void GuiElementButton::setVisible(bool visible)
 {
     if (visible == mIsVisible) return;
     mIsVisible = visible;
@@ -75,20 +71,11 @@ void GuiGadgetButton::setVisible(bool visible)
 }
 
 //================================================================================================
-//
-//================================================================================================
-int GuiGadgetButton::keyEvent(const char *keyChar, const unsigned char *key)
-{
-    return 0;
-}
-
-
-//================================================================================================
 // Returns true if the mouse event was on this gadget (so no need to check the other gadgets).
 //================================================================================================
-int GuiGadgetButton::mouseEvent(int *MouseAction, int *x, int *y)
+int GuiElementButton::mouseEvent(int MouseAction, int x, int y, int z)
 {
-    if (!mouseWithin(*x, *y))
+    if (!mouseWithin(x, y))
     {
         // Mouse is no longer over the the gadget.
         if (getState() != GuiImageset::STATE_ELEMENT_DEFAULT)
@@ -97,28 +84,29 @@ int GuiGadgetButton::mouseEvent(int *MouseAction, int *x, int *y)
             mMouseButDown = false;
             if (setState(GuiImageset::STATE_ELEMENT_DEFAULT)) draw();
             GuiManager::getSingleton().setTooltip("");
-            return GuiManager::EVENT_CHECK_DONE; // No need to check other gadgets.
+            return GuiManager::EVENT_CHECK_NEXT;
         }
     }
-    else
+    else // Mousecursor is over the button.
     {
         if (!mMouseOver)
         {
             mMouseOver = true;
             if (setState(GuiImageset::STATE_ELEMENT_M_OVER)) draw();
-            GuiManager::getSingleton().setTooltip(mStrTooltip.c_str());
+            //GuiManager::getSingleton().setTooltip(mStrTooltip.c_str());
+            GuiManager::getSingleton().setTooltip("Testing!");
             return GuiManager::EVENT_CHECK_DONE;
         }
-        if (*MouseAction == GuiWindow::BUTTON_PRESSED && !mMouseButDown)
+        if (MouseAction == GuiManager::BUTTON_PRESSED && !mMouseButDown)
         {
             mMouseButDown = true;
             if (setState(GuiImageset::STATE_ELEMENT_PUSHED)) draw();
             return GuiManager::EVENT_CHECK_DONE;
         }
-        if (*MouseAction == GuiWindow::BUTTON_RELEASED && mMouseButDown)
+        if (MouseAction == GuiManager::BUTTON_RELEASED && mMouseButDown)
         {
             mMouseButDown = false;
-            if (setState(GuiImageset::STATE_ELEMENT_DEFAULT)) draw();
+            if (setState(GuiImageset::STATE_ELEMENT_M_OVER)) draw();
             return GuiManager::EVENT_USER_ACTION;
         }
         return GuiManager::EVENT_CHECK_DONE; // No need to check other gadgets.
@@ -129,39 +117,21 @@ int GuiGadgetButton::mouseEvent(int *MouseAction, int *x, int *y)
 //================================================================================================
 // Draw the guiElement.
 //================================================================================================
-void GuiGadgetButton::draw()
+void GuiElementButton::draw()
 {
     GuiElement::draw();
-    // ////////////////////////////////////////////////////////////////////
     // Draw label.
-    // ////////////////////////////////////////////////////////////////////
-    if (!mIsVisible) return;
-    if (mStrLabel != "")
+    if (!mIsVisible || !mStrLabel.size()) return;
+    int offX = 0, offY = 0;
+    if (mState == GuiImageset::STATE_ELEMENT_PUSHED)
     {
-        Texture *texture = mParent->getTexture();
-        GuiTextout::TextLine label;
-        label.hideText= false;
-        label.index= -1;
-        label.font = mLabelFontNr;
-        label.color= 0x00ffffff;
-        label.x1 = mPosX+ mLabelPosX;
-        label.y1 = mPosY+ mLabelPosY;
-        label.x2 = label.x1 + mWidth;
-        label.y2 = label.y1 + GuiTextout::getSingleton().getFontHeight(label.font);
-        if (mState == GuiImageset::STATE_ELEMENT_PUSHED)
-        {
-            ++label.x1;
-            ++label.y1;
-        }
-        label.text = "";
-        for (unsigned int i=0; i < mStrLabel.size(); ++i)
-            if (mStrLabel[i] != '~') label.text+=mStrLabel[i];
-        label.color= 0;
-        GuiTextout::getSingleton().Print(&label, texture);
-        --label.x1;
-        --label.y1;
-        label.text = mStrLabel;
-        label.color= 0x00ffffff;
-        GuiTextout::getSingleton().Print(&label, texture);
+        ++offX;
+        ++offY;
     }
+    Texture *texture = mParent->getTexture();
+    PixelBox pb = texture->getBuffer()->lock(Box(mPosX+mLabelPosX+offX, mPosY+mLabelPosY+offY, mWidth+mPosX-offX, mHeight+mPosY-offY), HardwareBuffer::HBL_NO_OVERWRITE);
+    GuiTextout::getSingleton().printText(mWidth-mLabelPosX-2*offX, mHeight-mLabelPosY-2*offY, (uint32*)pb.data, pb.rowPitch,
+                                         mParent->getLayerBG() + mPosX+mLabelPosX+offX + (mPosY+mLabelPosY+offY)*mParent->getWidth(), mParent->getWidth(),
+                                         mStrLabel.c_str(), mLabelFontNr, 0x00ffffff);
+    texture->getBuffer()->unlock();
 }

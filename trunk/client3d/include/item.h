@@ -150,7 +150,7 @@ private:
     // ////////////////////////////////////////////////////////////////////
     std::list<sItem*> mItemList[ITEMLIST_SUM];
     int mActItemID[ITEMLIST_SUM]; /**< ID of the actual itemContainer **/
-    int mWindowID[ITEMLIST_SUM];  /**< ID of window containing the slots for the items **/
+    int mSlotID[ITEMLIST_SUM];    /**< ID of the slots for the items **/
     char mStrBuffer[256];
     // ////////////////////////////////////////////////////////////////////
     // Functions.

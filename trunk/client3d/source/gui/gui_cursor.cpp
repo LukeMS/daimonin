@@ -40,7 +40,7 @@ void GuiCursor::Init(const char *resourceName)
 {
     GuiImageset::gfxSrcMouse *srcEntry = GuiImageset::getSingleton().getStateGfxPosMouse();
     mResourceName = resourceName;
-    mState = GuiImageset::STATE_MOUSE_DEFAULT;
+    mState = GuiManager::STATE_MOUSE_DEFAULT;
     mWidth = srcEntry->w;
     mHeight= srcEntry->h;
     if      (mWidth < MIN_CURSOR_SIZE) mWidth = MIN_CURSOR_SIZE;
@@ -81,7 +81,7 @@ void GuiCursor::freeRecources()
 //================================================================================================
 void GuiCursor::setState(unsigned int state)
 {
-    if (mState == state || state >= GuiImageset::STATE_MOUSE_SUM) return;
+    if (mState == state || state >= GuiManager::STATE_MOUSE_SUM) return;
     mState = state;
     draw();
 }

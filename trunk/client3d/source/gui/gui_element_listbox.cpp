@@ -82,22 +82,17 @@ GuiListbox::GuiListbox(TiXmlElement *xmlElement, void *parent):GuiElement(xmlEle
     mTime = 0;
 
     TiXmlElement *xmlOpt;
-    for (xmlOpt = xmlElement->FirstChildElement("Gadget"); xmlOpt; xmlOpt = xmlOpt->NextSiblingElement("Gadget"))
+    for (xmlOpt = xmlElement->FirstChildElement("Element"); xmlOpt; xmlOpt = xmlOpt->NextSiblingElement("Element"))
     {
         if (!strcmp(xmlOpt->Attribute("type"), "SCROLLER"))
         {
             if (!strcmp(xmlOpt->Attribute("name"), "VScrollbar"))
-            {
-                mScrollBarV= new GuiGadgetScrollbar(xmlOpt, mParent, this);
-                mScrollBarV->setFunction(this->scrollbarAction);
-            }
-            else if (!strcmp(xmlOpt->Attribute("name"), "HScrollbar"))
-            {
-                mScrollBarH= new GuiGadgetScrollbar(xmlOpt, mParent, this);
-                mScrollBarH->setFunction(this->scrollbarAction);
-            }
+                mScrollBarV= new GuiElementScrollbar(xmlOpt, mParent, this);
+            if (!strcmp(xmlOpt->Attribute("name"), "HScrollbar"))
+                mScrollBarH= new GuiElementScrollbar(xmlOpt, mParent, this);
         }
     }
+    draw();
 }
 
 //================================================================================================
@@ -147,22 +142,6 @@ int GuiListbox::sendMsg(int message, void *parm1, void *parm2, void *parm3)
         default:
             return 0;
     }
-}
-
-
-
-//================================================================================================
-// .
-//================================================================================================
-void GuiListbox::scrollbarAction(GuiListbox *me, int index, int scroll)
-{
-    if (index >= GuiGadgetScrollbar::BUTTON_V_ADD)
-    {
-        if (me->mActLines > me->mMaxVisibleRows)
-            me->scrollTextVertical(scroll);
-    }
-    else
-        me->scrollTextHorizontal(scroll);
 }
 
 //================================================================================================
@@ -277,19 +256,25 @@ int GuiListbox::addRow(String srcText, uint32 default_color)
     return linecount;
 }
 
-
-
 //================================================================================================
 // Returns true if the mouse event was on this gadget (so no need to check the other gadgets).
 //================================================================================================
-bool GuiListbox::mouseEvent(int MouseAction, int x, int y, int z)
+int GuiListbox::mouseEvent(int MouseAction, int x, int y, int z)
 {
     // z is the mousewheel +/0/-
     // Scrollbar action?
-    if (mScrollBarV && mScrollBarV->mouseEvent(MouseAction, x, y)) return true;
-    if (mScrollBarH && mScrollBarH->mouseEvent(MouseAction, x, y)) return true;
+    if (mScrollBarV && mScrollBarV->mouseEvent(MouseAction, x, y, z) == GuiManager::EVENT_USER_ACTION)
+    {
+        scrollTextVertical(mScrollBarV->getScrollOffset());
+        return GuiManager::EVENT_CHECK_DONE;
+    }
+    if (mScrollBarH && mScrollBarH->mouseEvent(MouseAction, x, y, z) == GuiManager::EVENT_USER_ACTION)
+    {
+        scrollTextVertical(mScrollBarV->getScrollOffset());
+        return GuiManager::EVENT_CHECK_DONE;
+    }
     // Mouseclick within the textarea?
-    if (MouseAction != GuiWindow::BUTTON_PRESSED || x< mPosX || x> mPosX+mWidth || y< mPosY || y> mPosY+mHeight) return false;
+    if (MouseAction != GuiManager::BUTTON_PRESSED || x< mPosX || x> mPosX+mWidth || y< mPosY || y> mPosY+mHeight) return false;
     if (mVScrollOffset)
     {
         if (mVScrollOffset <0) mVScrollOffset =0;
@@ -308,7 +293,44 @@ bool GuiListbox::mouseEvent(int MouseAction, int x, int y, int z)
         else
             mSelectedLine = -1;
     }
-    return true;
+    return GuiManager::EVENT_CHECK_DONE;
+}
+
+//================================================================================================
+// .
+//================================================================================================
+void GuiListbox::scrollTextVertical(int offset)
+{
+//    offset = offset*5;
+    if (mActLines < mMaxVisibleRows || !offset) return; // Nothing to scroll.
+    if (offset < 0)
+    {
+        if (mVScrollOffset >= mActLines)  return;
+        mVScrollOffset-= offset;
+        if (mVScrollOffset > mActLines-mMaxVisibleRows) mVScrollOffset = mActLines-mMaxVisibleRows;
+    }
+    else
+    {
+        if (!mVScrollOffset) return;
+        mVScrollOffset-= offset;
+        if (mVScrollOffset <0) mVScrollOffset = 0;
+    }
+    uint32 *gfxBuf = mGfxBuffer;
+    // Restore old background into the work-buffer.
+    memcpy(mGfxBuffer, mGfxBuffer + mGfxBufferSize, mGfxBufferSize*sizeof(uint32));
+    for (int i= -mMaxVisibleRows; i; ++i)
+    {
+        GuiTextout::getSingleton().printText(mWidth, mFontHeight, gfxBuf, mWidth, gfxBuf, mWidth,
+                                             row[(mPrintPos+i-mVScrollOffset) & (SIZE_STRING_BUFFER-1)].str.c_str(), mFontNr,
+                                             row[(mPrintPos+i-mVScrollOffset) & (SIZE_STRING_BUFFER-1)].color);
+        gfxBuf+= mWidth * mFontHeight;
+    }
+    Texture *texture = mParent->getTexture();
+    texture->getBuffer()->blitFromMemory(
+        PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8 , mGfxBuffer),
+        Box(mPosX, mPosY, mPosX + mWidth, mPosY + mHeight));
+    if (mScrollBarV)
+        mScrollBarV->updateSliderSize(SIZE_STRING_BUFFER, mVScrollOffset, mMaxVisibleRows, mActLines);
 }
 
 //================================================================================================
@@ -319,7 +341,6 @@ const char *GuiListbox::getSelectedKeyword()
     if (mSelectedLine <0) return 0;
     const char *textline = row[mSelectedLine].str.c_str();
     // Extract the keyword.
-
     mSelectedLine = -1;
     return textline;
 }
@@ -351,9 +372,10 @@ void GuiListbox::draw()
         uint32 *gfxBuf = mGfxBuffer + mWidth * (mFontHeight-mPixelScroll-1);
         for (int i=0; i < mMaxVisibleRows; ++i)
         {
-            GuiTextout::getSingleton().PrintToBuffer(mWidth, mFontHeight, gfxBuf,
-                    row[(mPrintPos+ (i)-mMaxVisibleRows)& (SIZE_STRING_BUFFER-1)].str.c_str(), mFontNr,
-                    row[(mPrintPos+ (i)-mMaxVisibleRows)& (SIZE_STRING_BUFFER-1)].color);
+            uint32 color = row[(mPrintPos+i-mMaxVisibleRows)& (SIZE_STRING_BUFFER-1)].color;
+            GuiTextout::getSingleton().printText(mWidth, mFontHeight, mGfxBuffer, mWidth,
+                                                 mGfxBuffer, mWidth,
+                                                 row[(mPrintPos+i-mMaxVisibleRows)& (SIZE_STRING_BUFFER-1)].str.c_str(), mFontNr, color);
             gfxBuf+= mWidth * mFontHeight;
         }
         texture->getBuffer()->blitFromMemory(
@@ -377,9 +399,10 @@ void GuiListbox::draw()
         {
             // Print it to the (invisible) last line of the listbox.
             memcpy(mGfxBuffer+ mWidth * mHeight, mGfxBuffer + mGfxBufferSize, mWidth * mFontHeight*sizeof(uint32));
-            GuiTextout::getSingleton().PrintToBuffer(mWidth, mFontHeight, mGfxBuffer + mWidth * mHeight,
-                    row[(mPrintPos)& (SIZE_STRING_BUFFER-1)].str.c_str(), mFontNr,
-                    row[(mPrintPos)& (SIZE_STRING_BUFFER-1)].color);
+            uint32 color = row[(mPrintPos)& (SIZE_STRING_BUFFER-1)].color;
+            GuiTextout::getSingleton().printText(mWidth, mFontHeight, mGfxBuffer + mWidth * mHeight, mWidth,
+                                                 mGfxBuffer + mWidth * mHeight, mWidth,
+                                                 row[(mPrintPos)& (SIZE_STRING_BUFFER-1)].str.c_str(), mFontNr, color);
         }
         texture->getBuffer()->blitFromMemory(
             PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8 , mGfxBuffer + mWidth * mPixelScroll),
@@ -398,34 +421,7 @@ void GuiListbox::draw()
     // Handle Vertical Scrollbar.
     // ////////////////////////////////////////////////////////////////////
     if (mScrollBarV)
-    {
-        mScrollBarV->updateSliderSize(mPrintPos, mMaxVisibleRows, mActLines);
-    }
-}
-
-//================================================================================================
-// .
-//================================================================================================
-void GuiListbox::scrollTextVertical(int offset)
-{
-    // Pay attention to the ring buffer.
-    if (mPrintPos> SIZE_STRING_BUFFER)
-        offset+= mPrintPos & (SIZE_STRING_BUFFER-1);
-    mVScrollOffset = offset==0?-1:offset;
-    uint32 *gfxBuf = mGfxBuffer;
-    // Restore old background into the work-buffer.
-    memcpy(mGfxBuffer, mGfxBuffer + mGfxBufferSize, mGfxBufferSize*sizeof(uint32));
-    for (int i=0; i < mMaxVisibleRows+1; ++i)
-    {
-        GuiTextout::getSingleton().PrintToBuffer(mWidth, mFontHeight, gfxBuf,
-                row[(offset+i)& (SIZE_STRING_BUFFER-1)].str.c_str(), mFontNr,
-                row[(offset+i)& (SIZE_STRING_BUFFER-1)].color);
-        gfxBuf+= mWidth * mFontHeight;
-    }
-    Texture *texture = mParent->getTexture();
-    texture->getBuffer()->blitFromMemory(
-        PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8 , mGfxBuffer),
-        Box(mPosX, mPosY, mPosX + mWidth, mPosY + mHeight));
+        mScrollBarV->updateSliderSize(SIZE_STRING_BUFFER, mVScrollOffset, mMaxVisibleRows, mActLines);
 }
 
 //================================================================================================

@@ -26,6 +26,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <Ogre.h>
 #include <OISKeyboard.h>
+#include "gui_window.h"
 #include "sound.h"
 
 /**

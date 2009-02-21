@@ -261,7 +261,7 @@ bool ObjectNPC::update(const FrameEvent& event)
         }
         Real health = Ogre::Real(mDrawnHP) / Ogre::Real(mMaxHP);
         if (!mIndex)
-            GuiManager::getSingleton().setStatusbarValue(GuiManager::WIN_PLAYERCONSOLE, GuiImageset::GUI_STATUSBAR_PLAYER_HEALTH, health);
+            GuiManager::getSingleton().setStatusbarValue(GuiManager::WIN_PLAYERCONSOLE, GuiManager::GUI_STATUSBAR_PLAYER_HEALTH, health);
         else
             ObjectVisuals::getSingleton().setLifebar(health);
     }

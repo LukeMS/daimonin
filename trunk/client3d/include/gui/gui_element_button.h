@@ -21,8 +21,8 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
-#ifndef GUI_GADGET_BUTTON_H
-#define GUI_GADGET_BUTTON_H
+#ifndef GUI_ELEMENT_BUTTON_H
+#define GUI_ELEMENT_BUTTON_H
 
 #include <Ogre.h>
 #include <tinyxml.h>
@@ -32,23 +32,23 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 /**
  ** This class provides an interactive button.
  *****************************************************************************/
-class GuiGadgetButton: public GuiElement
+class GuiElementButton: public GuiElement
 {
 public:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    GuiGadgetButton(TiXmlElement *xmlElement, void *parent, bool drawOnInit);
-    ~GuiGadgetButton();
+    GuiElementButton(TiXmlElement *xmlElement, void *parent, bool drawOnInit);
+    ~GuiElementButton();
     int sendMsg(int element, void *parm1 =0, void *parm2 =0, void *parm3 =0);
-    int mouseEvent(int *MouseAction, int *x, int *y);
+    int mouseEvent(int MouseAction, int x, int y, int z);
     void draw();
     bool isVisible()
     {
         return mIsVisible;
     }
     void setVisible(bool visible);
-    int keyEvent(const char *keyChar, const unsigned char *key);
+    int keyEvent(const int *keyChar, const unsigned char *key);
     void setLabel(const char*newText)
     {
         mStrLabel = newText;

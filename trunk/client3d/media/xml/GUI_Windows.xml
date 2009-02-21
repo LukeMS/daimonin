@@ -28,7 +28,7 @@
     <Size      width= "150" height= "88" />
     <Pos       x= "5" y= "5" />
     <DragArea  x= "0" y= "0" width= "131" height= "17" />
-    <Tooltip  text= "This is the Player Info Window." />
+    <Tooltip  text= "This window shows the engine statistics." />
     <!--=============================================-->
     <!-- Borderlines                                 -->
     <!--=============================================-->
@@ -38,14 +38,16 @@
       <Size width= "150" height= "88" />
     </Graphic>
     <!--=============================================-->
-    <!-- Window Tiltle                               -->
+    <!-- Window Title                                -->
     <!--=============================================-->
     <Graphic>
       <Pos x= "1" y= "1" />
       <Color red= "80" green= "100" blue= "60" alpha = "255" />
       <Size width= "148" height= "17" />
     </Graphic>
-    <Label  x= "35" y= "4" font="02" text= "Statistics" />
+    <TextBox>
+      <Label x= "45" y= "5" font="02" red= "255" green= "255" blue= "255" text= "Statistics" />
+    </TextBox>
     <Button name = "But_Close">
       <Image name = "Button-01-Close"/>
       <Pos x= "132" y= "1" />
@@ -56,16 +58,32 @@
     <Graphic>
       <Pos x= "1" y= "19" />
       <Color red= "70" green= "90" blue= "50" alpha = "150" />
-      <Size width= "148" height= "79" />
+      <Size width= "148" height= "68" />
     </Graphic>
-    <Label   x=  "05" y= "25" font="02" text= "Current FPS:" />
-    <TextBox x= "100" y= "25" font="02" text= "000.0" width = "45" name= "Engine_CurrentFPS" />
-    <Label   x=  "05" y= "40" font="02" text= "Best FPS:" />
-    <TextBox x= "100" y= "40" font="02" text= "000.0" width = "45" name= "Engine_BestFPS" />
-    <Label   x=  "05" y= "55" font="00" text= "Worst FPS:" />
-    <TextBox x= "100" y= "55" font="00" text= "000.0" width = "45" name= "Engine_WorstFPS" />
-    <Label   x=  "05" y= "70" font="02" text= "Triangles:" />
-    <TextBox x= "100" y= "70" font="02" text= "0000"  width = "45" name= "Engine_SumTris" />
+    <TextBox>
+      <Label x=   "5" y= "25" font="02" text= "Current FPS:" />
+    </TextBox>
+    <TextBox name= "Engine_CurrentFPS">
+      <Label x= "100" y= "25" font="02" text= "000.0" />
+    </TextBox>
+    <TextBox>
+      <Label x=   "5" y= "40" font="02" text= "Best FPS:" />
+    </TextBox>
+    <TextBox name= "Engine_BestFPS">
+      <Label x= "100" y= "40" font="02" text= "000.0" />
+    </TextBox>
+    <TextBox>
+      <Label x=   "5" y= "55" font="02" text= "Worst FPS:" />
+    </TextBox>
+    <TextBox name= "Engine_WorstFPS">
+      <Label x= "100" y= "55" font="02" text= "000.0" />
+    </TextBox>
+    <TextBox>
+      <Label x=   "5" y= "70" font="02" text= "Triangles:" />
+    </TextBox>
+    <TextBox name= "Engine_SumTris">
+      <Label x= "100" y= "70" font="02" text= "0000" />
+    </TextBox>
   </Window>
 
 
@@ -87,11 +105,11 @@
       <Size width= "348" height= "88" />
     </Graphic>
     <!--=============================================-->
-    <!-- Window Tiltle                               -->
+    <!-- Window Title                                -->
     <!--=============================================-->
     <Button name = "Buton_info">
       <Image name = "Player-Info-Button"/>
-      <Pos x= "70" y= "8" />
+      <Pos x= "70" y= "2" />
     </Button>
     <Graphic>
       <Image name = "Player-Portrait"/>
@@ -148,11 +166,11 @@
       <Size width= "9" height= "9" />
     </Graphic>
 
-    <Listbox name= "List_Msg" font="02">
+    <Listbox name= "List_Chat" font="02">
       <Pos x= "1" y= "18" />
       <Size width= "262" height= "251" />
       <Color red= "60" green= "56" blue= "31" alpha = "200" />
-      <Gadget type= "SCROLLER" name = "VScrollbar">
+      <Element type= "SCROLLER" name = "VScrollbar">
          <Pos x= "263" y= "18" />
          <Size width= "16" height= "251" />
          <Color type= "BACKGROUND"  red=  "56" green=  "60" blue= "49" alpha = "255" />
@@ -166,7 +184,7 @@
          <Button name = "But_ScrollDown">
             <Image name = "Button-01-Down"/>
          </Button>
-      </Gadget>
+      </Element>
     </Listbox>
   </Window>
 
@@ -222,7 +240,7 @@
       <Pos x= "1" y= "18" />
       <Size width= "262" height= "251" />
       <Color red= "60" green= "56" blue= "31" alpha = "200" />
-      <Gadget type= "SCROLLER" name = "VScrollbar">
+      <Element type= "SCROLLER" name = "VScrollbar">
          <Pos x= "263" y= "18" />
          <Size width= "16" height= "251" />
          <Color type= "BACKGROUND"  red=  "56" green=  "60" blue= "49" alpha = "255" />
@@ -236,7 +254,7 @@
          <Button name = "But_ScrollDown" >
             <Image name = "Button-01-Down"/>
          </Button>
-      </Gadget>
+      </Element>
     </Listbox>
   </Window>
 
@@ -266,7 +284,9 @@
       <Pos x= "9" y= "0" />
       <Size width= "508" height= "4" />
     </Graphic>
-    <Label x=  "225" y= "8" font="04" text= "Login" />
+    <TextBox>
+      <Label x= "210" y= "2" font="04" red= "255" green= "255" blue= "255" text= "Login" />
+    </TextBox>
     <Graphic>
       <Image name = "Bar-Horizontal-Bottom"/>
       <Pos x= "4" y= "30" />
@@ -357,9 +377,18 @@
       <SubRow font="02" red=  "128" green=  "128" blue= "128" alpha = "255" />
       <SubRow font="01" red=  "128" green=  "128" blue= "128" alpha = "255" />
     </Table>
-    <TextBox x= "60" y= "420" font="03" text= "" width = "392" name= "Login_ServerInfo1" />
-    <TextBox x= "60" y= "440" font="02" text= "" width = "392" name= "Login_ServerInfo2" />
-    <TextBox x= "60" y= "455" font="03" text= "" width = "392" name= "Login_ServerInfo3" />
+    <TextBox name= "Login_ServerInfo1">
+      <Label x= "60" y= "420" font="03" text= "" />
+      <Size width= "392" />
+    </TextBox>
+    <TextBox name= "Login_ServerInfo2">
+      <Label x= "60" y= "420" font="02" text= "" />
+      <Size width= "392" />
+    </TextBox>
+    <TextBox name= "Login_ServerInfo3">
+      <Label x= "60" y= "420" font="03" text= "" />
+      <Size width= "392" />
+    </TextBox>
   </Window>
 
 
@@ -398,7 +427,9 @@
       <Pos x= "503" y= "0" />
       <Size width= "9" height= "9" />
     </Graphic>
-    <Label x=  "225" y= "8" font="04" text= "Login" />
+    <TextBox>
+      <Label x= "225" y= "2" font="04" text= "Login" />
+    </TextBox>
     <Graphic>
       <Image name = "Bar-Horizontal-Top"/>
       <Pos x= "5" y= "30" />
@@ -437,17 +468,47 @@
       <Pos x= "200" y= "63" />
       <Label x= "4" y= "3" font="03" text= "create" />
     </Button>
-    <Label   x=  "20" y=  "65" font="03" text= "~#ffffff00Login on your account, or               an account." />
-    <Label   x=  "80" y= "105" font="03" text= "Account Name: " />
-    <TextBox x= "200" y= "105" font="03" text= "" width = "110" name= "Input_Login_Name" />
-    <Label   x=  "80" y= "125" font="03" text= "Password: " />
-    <TextBox x= "200" y= "125" font="03" hide ="1" text= "" width = "100" name= "Input_Login_Passwd" />
-    <TextBox x= "200" y= "145" font="03" hide ="1" text= "" width = "100" name= "Input_Login_Verify" />
-    <TextBox x=  "80" y= "145" font="03" text= "" width = "392" name= "Login_PswdVerify" />
-    <TextBox x=  "60" y= "180" font="03" text= "" width = "392" name= "Login_LoginWarn" />
-    <TextBox x=  "60" y= "195" font="02" text= "" width = "392" name= "Login_LoginInfo1" />
-    <TextBox x=  "60" y= "210" font="02" text= "" width = "392" name= "Login_LoginInfo2" />
-    <TextBox x=  "60" y= "225" font="02" text= "" width = "392" name= "Login_LoginInfo3" />
+    <TextBox>
+      <Label x= "20" y= "65" font="03" text= "~#ffffff00Login on your account, or               an account." />
+    </TextBox>
+    <TextBox>
+      <Label x= "80" y= "105" font="03" text= "Account Name: " />
+    </TextBox>
+    <TextBox name= "Input_Login_Name" >
+      <Label x= "200" y= "105" font="03" text= "" />
+      <Size width= "110" />
+    </TextBox>
+    <TextBox>
+      <Label x= "80" y= "125" font="03" text= "Password: " />
+    </TextBox>
+    <TextBox name= "Input_Login_Passwd" hide= "1">
+      <Label x= "200" y= "125" font="03" text= "" />
+      <Size width= "100" />
+    </TextBox>
+    <TextBox name= "Input_Login_Verify" hide= "1" >
+      <Label x= "200" y= "145" font="03" text= "" />
+      <Size width= "100" />
+    </TextBox>
+    <TextBox name= "Login_PswdVerify" >
+      <Label x= "80" y= "145" font="03" text= "" />
+      <Size width= "392" />
+    </TextBox>
+    <TextBox name= "Login_LoginWarn" >
+      <Label x= "80" y= "180" font="03" text= "" />
+      <Size width= "392" />
+    </TextBox>
+    <TextBox name= "Login_LoginInfo1" >
+      <Label x= "80" y= "195" font="02" text= "" />
+      <Size width= "392" />
+    </TextBox>
+    <TextBox name= "Login_LoginInfo2" >
+      <Label x= "80" y= "210" font="02" text= "" />
+      <Size width= "392" />
+    </TextBox>
+    <TextBox name= "Login_LoginInfo3" >
+      <Label x= "80" y= "225" font="02" text= "" />
+      <Size width= "392" />
+    </TextBox>
   </Window>
 
 
@@ -519,7 +580,10 @@
     <!--=============================================-->
     <!-- Layer 1                                     -->
     <!--=============================================-->
-    <TextBox x= "55" y= "8" font="04" text= "Dialog Window" width = "230" name= "NPC_Headline" />
+    <TextBox name= "NPC_Headline" >
+      <Label x= "55" y= "2" font="04" text= "Dialog Window" />
+      <Size width= "230" />
+    </TextBox>
     <Button  name = "But_Close">
       <Image name = "Button-01-Close"/>
       <Pos x= "285" y= "1" />
@@ -528,7 +592,7 @@
       <Image name = "Background-General"/>
       <Pos x= "10" y= "60" />
       <Size width= "270" height= "248" />
-      <Gadget type= "SCROLLER" name = "VScrollbar">
+      <Element type= "SCROLLER" name = "VScrollbar">
          <Pos x= "284" y= "60" />
          <Size width= "16" height= "248" />
          <Color type= "BACKGROUND"  red=  "56" green=  "60" blue= "49" alpha = "255" />
@@ -542,14 +606,17 @@
          <Button name = "But_ScrollDown">
             <Image name = "Button-01-Down"/>
          </Button>
-      </Gadget>
+      </Element>
     </Listbox>
     <Button  name = "But_NPC_Accept">
       <Image name = "Button-01-Standard"/>
       <Pos   x= "10" y= "320" />
       <Label x= "5" y= "5" font="02" text= "" />
     </Button>
-    <TextBox x= "70" y= "325" font="02" hide ="0" text= "Enter your text here..." width = "222" name= "Input_NPC_Dialog" />
+    <TextBox name= "Input_NPC_Dialog" >
+      <Label x= "70" y= "325" font="02" text= "Enter your text here..." />
+      <Size width= "222" />
+    </TextBox>
     <Button  name = "But_NPC_Decline">
       <Image name = "Button-01-Standard"/>
       <Label x= "5" y= "5" font="02" text= "" />
@@ -757,25 +824,31 @@
     <Button   name = "Tab_Stats">
      <Image name = "Button-01-Standard"/>
       <Pos   x= "13" y= "538" />
-      <Label x= "10" y= "8" font="02" text= "Stats" />
+      <Label x= "5" y= "4" font="02" text= "Stats" />
     </Button>
     <Button  name = "Tab_Skills">
       <Image name = "Button-01-Standard"/>
       <Pos   x= "93" y= "538" />
-      <Label x= "10" y= "8" font="02" text= "Skills" />
+      <Label x= "5" y= "4" font="02" text= "Skills" />
     </Button>
     <Button  name = "Tab_Protection">
       <Image name = "Button-01-Standard"/>
       <Pos   x= "173" y= "538" />
-      <Label x= "10" y= "8" font="02" text= "Stats" />
+      <Label x= "5" y= "4" font="06" text= "Stats" />
     </Button>
     <Button  name = "Tab_Experience">
       <Image name = "Button-01-Standard"/>
       <Pos   x= "253" y= "538" />
-      <Label x= "10" y= "8" font="02" text= "Stats" />
+      <Label x= "5" y= "4" font="02" text= "Stats" />
     </Button>
-    <TextBox x= "60" y= "8" font="03" text= "Equipment Window" width = "230" name= "Inv_Equipment" />
-    <TextBox x= "40" y= "24" font="02" text= "999 kg" width = "54" name= "Inv_Equip_Weight" />
+    <TextBox name= "Inv_Equipment" >
+      <Label x= "60" y= "2" font="03" text= "Equipment Window" />
+      <Size width= "222" />
+    </TextBox>
+    <TextBox name= "Inv_Equip_Weight" >
+      <Label x= "40" y= "24" font="02" text= "999 kg" />
+      <Size width= "54" />
+    </TextBox>
     <Button  name = "But_Close">
       <Image name = "Button-01-Close"/>
       <Pos x= "280" y= "4" />
@@ -867,7 +940,7 @@
       <Pos x= "17" y= "89" />
     </Slot>
 
-    <Slot name = "Slot">
+    <Slot name = "Slot_Inventory">
       <Image name = "Item-Slot"/>
       <Pos x= "90" y= "89" />
     </Slot>
@@ -960,52 +1033,52 @@
     <Button   name = "Tab_Stats">
       <Image name = "Button-01-Standard"/>
       <Pos   x= "13" y= "473" />
-      <Label x= "10" y= "8" font="02" text= "Weapons" />
+      <Label x= "5" y= "4" font="02" text= "Weapons" />
     </Button>
     <Button  name = "Tab_Skills">
       <Image name = "Button-01-Standard"/>
       <Pos   x= "93" y= "473" />
-      <Label x= "10" y= "8" font="02" text= "Shields" />
+      <Label x= "5" y= "4" font="02" text= "Shields" />
     </Button>
     <Button  name = "Tab_Protection">
       <Image name = "Button-01-Standard"/>
       <Pos   x= "173" y= "473" />
-      <Label x= "10" y= "8" font="02" text= "Polyveg's" />
+      <Label x= "5" y= "4" font="02" text= "Polyveg's" />
     </Button>
     <Button  name = "Tab_Experience">
       <Image name = "Button-01-Standard"/>
       <Pos   x= "253" y= "473" />
-      <Label x= "10" y= "8" font="02" text= "Potions" />
+      <Label x= "5" y= "4" font="02" text= "Potions" />
     </Button>
     <Button   name = "Tab_Stats">
       <Image name = "Button-01-Standard"/>
       <Pos   x= "13" y= "503" />
-      <Label x= "10" y= "8" font="02" text= "Cats" />
+      <Label x= "5" y= "4" font="02" text= "Cats" />
     </Button>
     <Button  name = "Tab_Skills">
       <Image name = "Button-01-Standard"/>
       <Pos   x= "93" y= "503" />
-      <Label x= "10" y= "8" font="02" text= "Dogs" />
+      <Label x= "5" y= "4" font="02" text= "Dogs" />
     </Button>
     <Button  name = "Tab_Protection">
       <Image name = "Button-01-Standard"/>
       <Pos   x= "173" y= "503" />
-      <Label x= "10" y= "8" font="02" text= "Time" />
+      <Label x= "5" y= "4" font="02" text= "Time" />
     </Button>
     <Button  name = "Tab_Experience">
       <Image name = "Button-01-Standard"/>
       <Pos   x= "253" y= "503" />
-      <Label x= "10" y= "8" font="02" text= "Text" />
+      <Label x= "5" y= "4" font="02" text= "Text" />
     </Button>
     <Button  name = "Next_page">
       <Image name = "Button-01-Next"/>
       <Pos   x= "301" y= "543" />
-      <Label x= "10" y= "8" font="02" text= "" />
+      <Label x= "5" y= "4" font="02" text= "" />
     </Button>
     <Button  name = "Prev_Page">
       <Image name = "Button-01-Prev"/>
       <Pos   x= "6" y= "543" />
-      <Label x= "10" y= "8" font="02" text= "" />
+      <Label x= "5" y= "4" font="02" text= "" />
     </Button>
     <Button  name = "But_Close">
       <Image name = "Button-01-Close"/>
@@ -1014,7 +1087,7 @@
       <Button name = "But_Test">
       <Image name = "Button-01-Standard"/>
       <Pos   x= "53" y= "230" />
-      <Label x= "10" y= "8" font="02" text= "Lock" />
+      <Label x= "5" y= "4" font="02" text= "Lock1" />
     </Button>
   </Window>
 
@@ -1196,27 +1269,16 @@
       <Pos x= "50" y= "227" />
       <Size width= "71" height= "27" />
     </Graphic>
-    <Button   name = "Tab_Lock">
+    <Button  name = "Tab_Lock">
       <Image name = "Button-01-Standard"/>
       <Pos   x= "53" y= "230" />
-      <Label x= "10" y= "8" font="02" text= "Lock" />
+      <Label x= "5" y= "4" font="02" text= "Lock2" />
     </Button>
     <Button  name = "Tab_Trade">
       <Image name = "Button-01-Standard"/>
       <Pos   x= "213" y= "230" />
-      <Label x= "10" y= "8" font="02" text= "Trade" />
+      <Label x= "5" y= "4" font="02" text= "Trade" />
     </Button>
-
-    <TextBox x= "15" y= "42" font="02" text= "10" width = "60" name= "Engine_SumTris" />
-    <TextBox x= "75" y= "42" font="02" text= "100" width = "60" name= "Engine_SumTris" />
-    <TextBox x= "135" y= "42" font="02" text= "1000" width = "60" name= "Engine_SumTris" />
-    <TextBox x= "195" y= "42" font="02" text= "10000" width = "60" name= "Engine_SumTris" />
-    <TextBox x= "255" y= "42" font="02" text= "10000 kg" width = "60" name= "Engine_SumTris" />
-    <TextBox x= "15" y= "305" font="02" text= "10" width = "60" name= "Engine_SumTris" />
-    <TextBox x= "75" y= "305" font="02" text= "100" width = "60" name= "Engine_SumTris" />
-    <TextBox x= "135" y= "305" font="02" text= "1000" width = "60" name= "Engine_SumTris" />
-    <TextBox x= "195" y= "305" font="02" text= "10000" width = "60" name= "Engine_SumTris" />
-    <TextBox x= "255" y= "305" font="02" text= "10.25612 kg" width = "60" name= "Engine_SumTris" />
 
     <Button  name = "But_Close">
       <Image name = "Button-01-Close"/>
@@ -1343,12 +1405,12 @@
     <Button   name = "Tab_Buy">
       <Image name = "Button-01-Standard"/>
       <Pos   x= "52" y= "483" />
-      <Label x= "10" y= "8" font="02" text= "Buy" />
+      <Label x= "5" y= "4" font="02" text= "Buy" />
     </Button>
     <Button  name = "Tab_Sell">
       <Image name = "Button-01-Standard"/>
       <Pos   x= "213" y= "483 " />
-      <Label x= "10" y= "8" font="02" text= "Sell" />
+      <Label x= "5" y= "4" font="02" text= "Sell" />
     </Button>
     <Button  name = "Next_page">
       <Image name = "Button-01-Next"/>
@@ -1480,7 +1542,7 @@
     <Button  name = "Tab_12">
       <Image name = "Button-01-Standard"/>
       <Pos   x= "130" y= "310" />
-      <Label x= "10" y= "8" font="02" text= "Take all" />
+      <Label x= "5" y= "4" font="02" text= "Take all" />
     </Button>
     <Button  name = "But_Close">
       <Image name = "Button-01-Close"/>

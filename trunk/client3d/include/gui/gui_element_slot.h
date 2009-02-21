@@ -21,8 +21,8 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
-#ifndef GUI_GADGET_SLOT_H
-#define GUI_GADGET_SLOT_H
+#ifndef GUI_ELEMENT_SLOT_H
+#define GUI_ELEMENT_SLOT_H
 
 #include <Ogre.h>
 #include <tinyxml.h>
@@ -33,15 +33,15 @@ this program; If not, see <http://www.gnu.org/licenses/>.
  ** This class provides an slot that can hold an item.
     Drag'n'Drop is supported.
  *****************************************************************************/
-class GuiGadgetSlot: public GuiElement
+class GuiElementSlot: public GuiElement
 {
 public:
     enum { ITEM_SIZE = 48 , MAX_SIZE = 64};
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, const char *resourceName);
-    ~GuiGadgetSlot();
+    GuiElementSlot(TiXmlElement *xmlElement, void *parent, const char *resourceName);
+    ~GuiElementSlot();
     int sendMsg(int message, void *parm1 =0, void *parm2 =0, void *parm3 =0);
     void loadResources();
     int mouseEvent(int MouseAction, int x, int y);

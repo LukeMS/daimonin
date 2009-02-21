@@ -25,7 +25,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #define GUI_MANAGER_H
 
 #include <Ogre.h>
-#include "gui_window.h"
 
 /**
  ** This is the interface to the world outside.
@@ -38,6 +37,72 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
+    enum
+    {
+        /** Element id's. **/
+        // TextValues.
+        GUI_TEXTBOX_STAT_CUR_FPS,
+        GUI_TEXTBOX_STAT_BEST_FPS,
+        GUI_TEXTBOX_STAT_WORST_FPS,
+        GUI_TEXTBOX_STAT_SUM_TRIS,
+        GUI_TEXTBOX_SERVER_INFO1,
+        GUI_TEXTBOX_SERVER_INFO2,
+        GUI_TEXTBOX_SERVER_INFO3,
+        GUI_TEXTBOX_LOGIN_INFO1,
+        GUI_TEXTBOX_LOGIN_INFO2,
+        GUI_TEXTBOX_LOGIN_INFO3,
+        GUI_TEXTBOX_LOGIN_WARN,
+        GUI_TEXTBOX_LOGIN_PSWDVERIFY,
+        GUI_TEXTBOX_NPC_HEADLINE,
+        GUI_TEXTBOX_INV_EQUIP,
+        GUI_TEXTBOX_INV_EQUIP_WEIGHT,
+        // TextInput
+        GUI_TEXTINPUT_LOGIN_NAME,
+        GUI_TEXTINPUT_LOGIN_PASSWD,
+        GUI_TEXTINPUT_LOGIN_VERIFY,
+        GUI_TEXTINPUT_NPC_DIALOG,
+        // Standard Buttons (Handled inside of gui_windows).
+        GUI_BUTTON_CLOSE,
+        GUI_BUTTON_OK,
+        GUI_BUTTON_CANCEL,
+        GUI_BUTTON_MINIMIZE,
+        GUI_BUTTON_MAXIMIZE,
+        GUI_BUTTON_RESIZE,
+        // Unique Buttons (Handled outside of gui_windows).
+        GUI_BUTTON_NPC_ACCEPT,
+        GUI_BUTTON_NPC_DECLINE,
+        GUI_BUTTON_TEST,
+        // Listboxes.
+        GUI_LIST_MSGWIN,
+        GUI_LIST_CHATWIN,
+        GUI_LIST_NPC,
+        GUI_LIST_UP,
+        GUI_LIST_DOWN,
+        GUI_LIST_LEFT,
+        GUI_LIST_RIGHT,
+        // StatusBars.
+        GUI_STATUSBAR_NPC_HEALTH,
+        GUI_STATUSBAR_NPC_MANA,
+        GUI_STATUSBAR_NPC_GRACE,
+
+        GUI_STATUSBAR_PLAYER_MANA,
+        GUI_STATUSBAR_PLAYER_GRACE,
+        GUI_STATUSBAR_PLAYER_HEALTH,
+        // Table
+        GUI_TABLE,
+        // Combobox
+        GUI_COMBOBOX_TEST,
+        // Slots
+        GUI_SLOT_QUICKSLOT,
+        GUI_SLOT_EQUIPMENT,
+        GUI_SLOT_INVENTORY,
+        GUI_SLOT_CONTAINER,
+        GUI_SLOT_TRADE_OFFER,
+        GUI_SLOT_TRADE_RETURN,
+        GUI_SLOT_SHOP,
+        // Sum of all entries.
+        GUI_ELEMENTS_SUM
+    };
     /** Window id's. **/
     enum
     {
@@ -70,19 +135,59 @@ public:
         EVENT_SUM
     };
 
+    /** Mouse Events **/
+    enum
+    {
+        MOUSE_MOVEMENT,
+        MOUSE_RESIZING,
+        BUTTON_PRESSED,
+        BUTTON_CLICKED,
+        BUTTON_RELEASED,
+        DRAGGING,
+        DRAG_ENTER,
+        DRAG_EXIT,
+    };
+
     enum
     {
         MSG_CLEAR,
         MSG_UPDATE,
         MSG_ADD_ROW,
+        MSG_ADD_ITEM,
+        MSG_DEL_ITEM,
         MSG_GET_USERBREAK,
         MSG_GET_SELECTION,
         MSG_GET_ACTIVATED,
-        MSG_GET_KEY_EVENT,
-        MSG_GET_MOUSE_EVENT,
+        MSG_SET_TEXT,
         MSG_SET_VISIBLE,
         MSG_SUM
     };
+
+    /** Actual state of the mouse cursor: **/
+    enum
+    {
+        STATE_MOUSE_DEFAULT,             /**< Default. **/
+        STATE_MOUSE_PUSHED,              /**< Any button down. **/
+        STATE_MOUSE_TALK,
+        STATE_MOUSE_SHORT_RANGE_ATTACK,
+        STATE_MOUSE_LONG_RANGE_ATTACK,
+        STATE_MOUSE_OPEN,
+        STATE_MOUSE_CAST,
+        STATE_MOUSE_DRAGGING,            /**< Dragging in action. **/
+        STATE_MOUSE_RESIZING,            /**< Resizing a window. **/
+        STATE_MOUSE_PICKUP,
+        STATE_MOUSE_STOP,
+        STATE_MOUSE_SUM
+    };
+
+    static const Ogre::uint32 COLOR_BLACK;
+    static const Ogre::uint32 COLOR_BLUE;
+    static const Ogre::uint32 COLOR_GREEN;
+    static const Ogre::uint32 COLOR_LBLUE;
+    static const Ogre::uint32 COLOR_RED;
+    static const Ogre::uint32 COLOR_PINK;
+    static const Ogre::uint32 COLOR_YELLOW;
+    static const Ogre::uint32 COLOR_WHITE;
 
     static const char *GUI_MATERIAL_NAME;
     static const char *OVERLAY_ELEMENT_TYPE;
@@ -110,10 +215,14 @@ public:
     void parseImageset(const char *XML_imageset_file);
     void parseWindows (const char *XML_windows_file);
     void update(Ogre::Real);
+    int getElementIndex(const char *name, int windowID = -1, int getElementIndex = -1);
     bool mouseEvent(int MouseAction, Ogre::Vector3 &mouse);
     bool keyEvent(const int keyChar, const unsigned int key);
-    void setTooltip(const char *text);
-    void displaySystemMessage(const char*text);
+    void setTooltip(const char *text, bool systemMessage = false);
+    void displaySystemMessage(const char *text)
+    {
+        setTooltip(text, true);
+    }
     void centerWindowOnMouse(int window);
     void showWindow(int window, bool visible);
     int getScreenWidth()     { return mScreenWidth; }
@@ -122,6 +231,10 @@ public:
     void resetTextInput();
     bool brokenTextInput();
     bool finishedTextInput();
+    void setMouseState(int action);
+    void loadRawFont(const char *filename);
+    int calcTextWidth(unsigned char *text, int fontNr);
+    void resizeBuildBuffer(size_t size);
     bool getUserAction()
     {
         if (!mTextInputUserAction)
@@ -131,30 +244,8 @@ public:
     }
     void cancelTextInput();
     const char *getTextInput() { return mStrTextInput.c_str(); }
-
-    int sendMsg(int window, int element, int message, void *parm1 =0, void *parm2 =0, void *parm3 =0)
-    {
-        return guiWindow[window].sendMsg(element, message, parm1, parm2, parm3);
-    }
-
-    // ////////////////////////////////////////////////////////////////////
-    // GUI_Element stuff.
-    // ////////////////////////////////////////////////////////////////////
-    const Ogre::String &getElementText(int window, int element)
-    {
-        return guiWindow[window].getElementText(element);
-    }
-    void setElementText(int window, int element, const char *text)
-    {
-        guiWindow[window].setElementText(element, text);
-    }
-    // ////////////////////////////////////////////////////////////////////
-    // GUI_Statusbar stuff.
-    // ////////////////////////////////////////////////////////////////////
-    void setStatusbarValue(int window, int element, Ogre::Real value)
-    {
-        guiWindow[window].setStatusbarValue(element, value);
-    }
+    int sendMsg(int element, int message, void *parm1 =0, void *parm2 =0, void *parm3 =0);
+    void setStatusbarValue(int window, int element, Ogre::Real value);
 
 private:
     // ////////////////////////////////////////////////////////////////////
@@ -167,9 +258,18 @@ private:
         unsigned int index;
     }
     WindowID;
+    typedef struct
+    {
+        short windowNr;
+        short winElementNr;
+        const char *name;
+        short index;
+    }
+    ElementID;
+
     static WindowID mWindowID[WIN_SUM];
-    static class GuiWindow guiWindow[WIN_SUM];
-    static unsigned char guiWindowZPos[WIN_SUM]; /**< The window-numbers are sorted here on the z-pos */
+    static ElementID mStateStruct[GUI_ELEMENTS_SUM];
+    static short mWindowZPos[WIN_SUM]; /**< The window-numbers are sorted here on the z-pos */
     int mDragSrcWin, mDragSrcSlot;
     int mDragDstWin, mDragDstSlot;
     int mDragSrcContainer, mDragDestContainer;
@@ -182,9 +282,9 @@ private:
     unsigned int mScreenWidth, mScreenHeight;
     unsigned long mTooltipDelay;
     bool mIsDragging;
-    bool mMouseInside;       /**< Mouse is used for gui related stuff at the moment. **/
-    bool mTooltipRefresh;
+    bool mMouseInside;          /**< Mouse is used for gui related stuff at the moment. **/
     bool mTextInputUserAction;
+    Ogre::uint32 *mBuildBuffer;  /**< Needed for blitFromMemory(). **/
     Ogre::Vector3 mMouse;
     Ogre::Overlay *mOverlay;
     Ogre::OverlayElement *mElement;
@@ -197,7 +297,7 @@ private:
     GuiManager()  {}
     ~GuiManager() {}
     GuiManager(const GuiManager&); // disable copy-constructor.
-    void clearTooltip();
+    void drawTooltip();
     void loadResources();
 };
 
