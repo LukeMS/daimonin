@@ -43,6 +43,8 @@ public:
     /** Internal gui functions **/
     GuiElement(TiXmlElement *xmlElement, void *parent);
     virtual ~GuiElement() {};
+    virtual int mouseEvent(int MouseAction, int x, int y, int z);
+    virtual int keyEvent(const int keyChar, const unsigned int key);
     virtual void update(Ogre::Real deltaTime) {} /**< Animations, drag'n'drop, etc **/
     virtual void draw();
 
@@ -72,26 +74,23 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    enum { BACKGROUND_GFX_ID = -1 };
 
 protected:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    int mIndex;                        /**< Unique number. **/
-    int mPosX, mPosY;                  /**< Position of this element. **/
-    int mWidth, mHeight;               /**< Dimension of this element. **/
-    int mState;                        /**< Actual state of this element. **/
-    int mFontNr, mLabelFontNr;
-    int mLabelPosX, mLabelPosY;
+    int mIndex;                            /**< Unique number. -1 means its a bg-gfx (no interaction) **/
+    unsigned short mPosX, mPosY;           /**< Pixeloffset from the upper-left corner of the window). **/
+    unsigned short mWidth, mHeight;        /**< Dimension of this element. **/
+    unsigned short mState;                 /**< Actual state of this element. **/
+    unsigned short mFontNr, mLabelFontNr;
+    unsigned short mLabelPosX, mLabelPosY;
     bool mIsVisible;
     Ogre::String mStrLabel;
-
     Ogre::String mStrTooltip; // REMOVE ME: Wrong place - this is not partr of the elment core.
-
     Ogre::uint32 mFillColor;
+    Ogre::uint32 mLabelColor;
     class GuiWindow *mParent;          /**< Pointer to the parent window. **/
-    unsigned char mLabelColor[3]; //  Change this to uint32. we must support alpha here.
     GuiImageset::gfxSrcEntry *mGfxSrc; /**< Pointer to the gfx-data structure or 0 for a colorfill. **/
     bool mouseWithin(int x, int y)
     {

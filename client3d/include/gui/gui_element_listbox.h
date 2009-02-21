@@ -45,7 +45,7 @@ public:
     void draw();
     void clear();
     void update(Ogre::Real dTime);
-    bool mouseEvent(int MouseAction, int x, int y, int z);
+    int mouseEvent(int MouseAction, int x, int y, int z);
     const char *extractFirstLineOfText(const char &text);
     const char *getSelectedKeyword(); /**< Returns the keyword found in the selected line. **/
 
@@ -83,12 +83,11 @@ private:
 
     Ogre::uint32 *mGfxBuffer, *mTxtBuffer;
     Ogre::Real mTime;
-    class GuiGadgetScrollbar *mScrollBarH, *mScrollBarV;
+    class GuiElementScrollbar *mScrollBarH, *mScrollBarV;
     int mLine;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    static void scrollbarAction(GuiListbox *me, int index, int scroll);
     int  addRow(Ogre::String text, Ogre::uint32 color);
     void scrollTextVertical(int offset);
     void scrollTextHorizontal(int offset);

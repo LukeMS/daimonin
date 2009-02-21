@@ -32,6 +32,8 @@ using namespace Ogre;
 
 //#define LOG_TIMING
 
+Ogre::SceneManager *TileManager::mSceneManager = 0;
+
 //////// Only for TESTING
 #include <stdio.h>
 void TileManager::loadLvl()
@@ -56,7 +58,8 @@ void TileManager::saveLvl()
 void TileManager::freeRecources()
 {
     mMapchunk.freeRecources();
-    mSceneManager->destroyQuery(mRaySceneQuery);
+    if (mSceneManager)
+        mSceneManager->destroyQuery(mRaySceneQuery);
 }
 
 //================================================================================================

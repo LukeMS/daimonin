@@ -25,15 +25,26 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "logger.h"
 #include "define.h"
 #include "gui_element.h"
+#include "gui_graphic.h"
 #include "gui_imageset.h"
 #include "gui_window.h"
 #include "gui_manager.h"
 
 using namespace Ogre;
 
-int GuiElement::sendMsg(int message, void *parm1, void *parm2, void *parm3)
+int GuiElement::sendMsg(int, void *, void *, void *)
 {
     return 0;
+}
+
+int GuiElement::mouseEvent(int, int, int, int)
+{
+    return GuiManager::EVENT_CHECK_NEXT; // No action here, check the other gadgets.
+}
+
+int GuiElement::keyEvent(const int, const unsigned int)
+{
+    return GuiManager::EVENT_CHECK_NEXT;
 }
 
 //================================================================================================
@@ -41,43 +52,29 @@ int GuiElement::sendMsg(int message, void *parm1, void *parm2, void *parm3)
 //================================================================================================
 GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
 {
-    TiXmlElement *xmlGadget;
+    TiXmlElement *xmlElement;
     String strValue;
     const char *tmp;
     // Set default values.
     mState = GuiImageset::STATE_ELEMENT_DEFAULT;
     mFontNr= 0;
-    mPosX  = 0;
-    mPosY  = 0;
-    mWidth = 1; // Default value (must be >0).
-    mHeight= 1; // Default value (must be >0).
+    mWidth = 1; mHeight= 1; // Default values (must be 2).
     mIsVisible = true;
     mGfxSrc    = 0; // No gfx is defined (fallback to color fill).
     mFillColor = 0;
     mParent= (GuiWindow*)parent;
     int maxX, maxY;
-    mParent->getTexturseSize(maxX, maxY);
+    mParent->getSize(maxX, maxY);
     // ////////////////////////////////////////////////////////////////////
     // Parse the element.
     // ////////////////////////////////////////////////////////////////////
-    mIndex = BACKGROUND_GFX_ID;
-    if ((tmp = xmlElem->Attribute("name")))
-    {
-        for (int i = 0; i < GuiImageset::GUI_ELEMENTS_SUM; ++i)
-        {
-            if (!stricmp(GuiImageset::getSingleton().getElementName(i), tmp))
-            {
-                mIndex = GuiImageset::getSingleton().getElementIndex(i);
-                break;
-            }
-        }
-    }
+    mIndex = GuiManager::getSingleton().getElementIndex(xmlElem->Attribute("name"), mParent->getID(), mParent->getSumElements());
     // ////////////////////////////////////////////////////////////////////
     // Parse the background image (if given).
     // ////////////////////////////////////////////////////////////////////
-    if ((xmlGadget = xmlElem->FirstChildElement("Image")))
+    if ((xmlElement = xmlElem->FirstChildElement("Image")))
     {
-        if ((tmp = xmlGadget->Attribute("name")))
+        if ((tmp = xmlElement->Attribute("name")))
         {
             if ((mGfxSrc = GuiImageset::getSingleton().getStateGfxPositions(tmp)))
             {
@@ -94,55 +91,59 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
     // ////////////////////////////////////////////////////////////////////
     // Parse the color (if given).
     // ////////////////////////////////////////////////////////////////////
-    if ((xmlGadget = xmlElem->FirstChildElement("Color")))
+    if ((xmlElement = xmlElem->FirstChildElement("Color")))
     {
         // PixelFormat: ARGB.
-        if ((tmp = xmlGadget->Attribute("red"  ))) mFillColor = atoi(tmp) << 16;
-        if ((tmp = xmlGadget->Attribute("green"))) mFillColor+= atoi(tmp) <<  8;
-        if ((tmp = xmlGadget->Attribute("blue" ))) mFillColor+= atoi(tmp);
-        if ((tmp = xmlGadget->Attribute("alpha"))) mFillColor+= atoi(tmp) << 24;
+        if ((tmp = xmlElement->Attribute("red"  ))) mFillColor = atoi(tmp) << 16;
+        if ((tmp = xmlElement->Attribute("green"))) mFillColor+= atoi(tmp) <<  8;
+        if ((tmp = xmlElement->Attribute("blue" ))) mFillColor+= atoi(tmp);
+        if ((tmp = xmlElement->Attribute("alpha"))) mFillColor+= atoi(tmp) << 24;
     }
 
     if ((tmp = xmlElem->Attribute("font"))) mFontNr  = atoi(tmp);
     // ////////////////////////////////////////////////////////////////////
     // Parse the position.
     // ////////////////////////////////////////////////////////////////////
-    if ((xmlGadget = xmlElem->FirstChildElement("Pos")))
+    mPosX = 0; mPosY = 0;
+    if ((xmlElement = xmlElem->FirstChildElement("Pos")))
     {
-        if ((tmp = xmlGadget->Attribute("x"))) mPosX = atoi(tmp);
-        if ((tmp = xmlGadget->Attribute("y"))) mPosY = atoi(tmp);
+        if ((tmp = xmlElement->Attribute("x"))) mPosX = atoi(tmp);
+        if ((tmp = xmlElement->Attribute("y"))) mPosY = atoi(tmp);
     }
     if (mPosX > maxX-2) mPosX = maxX-2;
     if (mPosY > maxY-2) mPosY = maxY-2;
     // ////////////////////////////////////////////////////////////////////
     // Parse the size (if given).
     // ////////////////////////////////////////////////////////////////////
-    if ((xmlGadget = xmlElem->FirstChildElement("Size")))
+    if ((xmlElement = xmlElem->FirstChildElement("Size")))
     {
-        if ((tmp = xmlGadget->Attribute("width")))  mWidth = atoi(tmp);
-        if ((tmp = xmlGadget->Attribute("height"))) mHeight= atoi(tmp);
+        if ((tmp = xmlElement->Attribute("width")))  mWidth = atoi(tmp);
+        if ((tmp = xmlElement->Attribute("height"))) mHeight= atoi(tmp);
     }
-    if (mPosX + mWidth > maxX) mWidth = maxX-mPosX-1;
-    if (mPosY + mHeight >maxY) mHeight= maxY-mPosY-1;
+    if (mPosX + mWidth >= maxX) mWidth = maxX-mPosX;
+    if (mPosY + mHeight>= maxY) mHeight= maxY-mPosY;
     // ////////////////////////////////////////////////////////////////////
-    // Parse the label  (if given).
+    // Parse the label (if given).
     // ////////////////////////////////////////////////////////////////////
-    if ((xmlGadget = xmlElem->FirstChildElement("Label")))
+    mLabelPosX = 0; mLabelPosY = 0; mLabelFontNr = 0, mLabelColor = 0;
+    if ((xmlElement = xmlElem->FirstChildElement("Label")))
     {
-        if ((tmp = xmlGadget->Attribute("x")))  mLabelPosX  = atoi(tmp);
-        if ((tmp = xmlGadget->Attribute("y")))  mLabelPosY  = atoi(tmp);
-        if ((tmp = xmlGadget->Attribute("font")))  mLabelFontNr= atoi(tmp);
-        if ((tmp = xmlGadget->Attribute("red")))   mLabelColor[0]= (unsigned char) atoi(tmp);
-        if ((tmp = xmlGadget->Attribute("green"))) mLabelColor[1]= (unsigned char) atoi(tmp);
-        if ((tmp = xmlGadget->Attribute("blue")))  mLabelColor[2]= (unsigned char) atoi(tmp);
-        if ((tmp = xmlGadget->Attribute("text")))  mStrLabel = tmp;
+        if ((tmp = xmlElement->Attribute("x"))) mLabelPosX  = (unsigned short)atoi(tmp);
+        if ((tmp = xmlElement->Attribute("y"))) mLabelPosY  = (unsigned short)atoi(tmp);
+        if (mLabelPosX >= maxX-2) mLabelPosX = 0;
+        if (mLabelPosY >= maxY-2) mLabelPosY = 0;
+        if ((tmp = xmlElement->Attribute("font")))  mLabelFontNr= atoi(tmp);
+        if ((tmp = xmlElement->Attribute("red")))   mLabelColor+= atoi(tmp) << 16;
+        if ((tmp = xmlElement->Attribute("green"))) mLabelColor+= atoi(tmp) << 8;
+        if ((tmp = xmlElement->Attribute("blue")))  mLabelColor+= atoi(tmp);
+        if ((tmp = xmlElement->Attribute("text")))  mStrLabel = tmp;
     }
     // ////////////////////////////////////////////////////////////////////
     // Parse the Tooltip entry.
     // ////////////////////////////////////////////////////////////////////
-    if ((xmlGadget = xmlElem->FirstChildElement("Tooltip")))
+    if ((xmlElement = xmlElem->FirstChildElement("Tooltip")))
     {
-        if ((tmp = xmlGadget->Attribute("text"))) mStrTooltip = tmp;
+        if ((tmp = xmlElement->Attribute("text"))) mStrTooltip = tmp;
     }
     mIsVisible = true;
 }
@@ -176,7 +177,7 @@ void GuiElement::draw()
         PixelBox src = mParent->getPixelBox()->getSubVolume(Box(mGfxSrc->state[mState].x, mGfxSrc->state[mState].y,
                        mGfxSrc->state[mState].x + mGfxSrc->w, mGfxSrc->state[mState].y + mGfxSrc->h));
         int srcRowSkip = (int)mParent->getPixelBox()->getWidth();
-        if (mIndex == BACKGROUND_GFX_ID) // This gfx is part of the background.
+        if (mIndex < 0) // This gfx is part of the background.
             GuiGraphic::getSingleton().drawGfxToBuffer(mWidth, mHeight, mGfxSrc->w, mGfxSrc->h, (uint32*)src.data, bak, bak, srcRowSkip, mParent->getWidth(), mParent->getWidth());
         else if (mIsVisible)
             GuiGraphic::getSingleton().drawGfxToBuffer(mWidth, mHeight, mGfxSrc->w, mGfxSrc->h, (uint32*)src.data, bak, dst, srcRowSkip, mParent->getWidth(), (int)texture->getWidth());
@@ -184,12 +185,12 @@ void GuiElement::draw()
     // Draws a color area to the window texture.
     else
     {
-        if (mIndex == BACKGROUND_GFX_ID) // The gfx is part of the background.
+        if (mIndex < 0) // The gfx is part of the background.
             GuiGraphic::getSingleton().drawColorToBuffer(mWidth, mHeight, mFillColor, bak, mParent->getWidth());
         else if (mIsVisible)
             GuiGraphic::getSingleton().drawColorToBuffer(mWidth, mHeight, mFillColor, bak, dst, mParent->getWidth(), (int)texture->getWidth());
     }
-    if (mIndex == BACKGROUND_GFX_ID ||!mIsVisible)
+    if (mIndex < 0 || !mIsVisible)
         GuiGraphic::getSingleton().restoreWindowBG(mWidth, mHeight, bak, dst, mParent->getWidth(), (int)texture->getWidth());
     texture->getBuffer()->unlock();
 }

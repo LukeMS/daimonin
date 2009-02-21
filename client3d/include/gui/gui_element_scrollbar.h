@@ -21,8 +21,8 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
-#ifndef GUI_GADGET_SCROLLBAR_H
-#define GUI_GADGET_SCROLLBAR_H
+#ifndef GUI_ELEMENT_SCROLLBAR_H
+#define GUI_ELEMENT_SCROLLBAR_H
 
 #include <Ogre.h>
 #include <tinyxml.h>
@@ -34,7 +34,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
  ** This class provides an interactive scrollbar.
  ** Its a helper class for scrolling graphical stuff within gui elements.
  *****************************************************************************/
-class GuiGadgetScrollbar : public GuiElement
+class GuiElementScrollbar : public GuiElement
 {
 
 public:
@@ -53,43 +53,32 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    GuiGadgetScrollbar(TiXmlElement *xmlElement, void *parent, void *parentElement);
-    ~GuiGadgetScrollbar();
+    GuiElementScrollbar(TiXmlElement *xmlElement, void *parent, void *parentElement);
+    ~GuiElementScrollbar();
     int sendMsg(int element, void *parm1 =0, void *parm2 =0, void *parm3 =0);
-
+    int getScrollOffset();
     void resize(int newWidth, int newHeight);
-    void updateSliderSize(int actPos, int maxVisPos, int maxPos = -1);
-    void setFunction(Callback *c)
-    {
-        mCallFunc = c;
-    }
-    int mouseEvent(int MouseAction, int x, int y);
+    void updateSliderSize(int actPos, int scrollOffset, int maxVisPos, int maxPos = -1);
+    int mouseEvent(int MouseAction, int x, int y, int z);
     void draw();
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    int mSliderPos,  mMaxSliderPos;
-    int mSliderSize, mMaxSliderSize;
+    int mSliderPos, mSliderSize, mMaxSliderSize;
     int mStartX, mStopX, mStartY, mStopY;
+    int mLastScrollAmount;
+    float mPixelScrollToLineScroll;
     bool mHorizontal, mDragging;
     bool mMouseOver, mMouseButDown;
     Ogre::uint32 *mGfxBuffer;
     Ogre::uint32 mColorBackground, mColorBorderline, mColorBarPassive, mColorBarM_Over, mColorBarActive;
-    float mSingleLineSize;
-    class GuiGadgetButton *mButScrollUp, *mButScrollDown;
-    void *mParentElement;
-    Callback *mCallFunc;
-
+    class GuiElementButton *mButScrollUp, *mButScrollDown;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    void updateSliderPos(int type, int offset);
     void arrangeButtons(int x1, int y1, int x2, int y2);
-    void activated(int index, int value)
-    {
-        if (mCallFunc) mCallFunc((GuiListbox *)mParentElement, index, value);
-    }
+    bool mouseOverSlider(int x, int y);
 };
 
 #endif

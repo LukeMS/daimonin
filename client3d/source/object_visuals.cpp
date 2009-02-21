@@ -29,7 +29,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "object_visuals.h"
 #include "particle_manager.h"
 #include "object_manager.h"
-#include "gui_textout.h"
 #include "gui_manager.h"
 
 using namespace Ogre;
@@ -195,7 +194,7 @@ void ObjectVisuals::setLifebar(Real percent, int barWidth)
 
     int x1 = (TEXTURE_SIZE - barWidth)/2;
     int xfill =  (int)(percent * barWidth);
-    PixelBox pb = mHardwarePB->lock (Box(x1, TEXTURE_SIZE-12, x1 + barWidth-1, TEXTURE_SIZE-1), HardwareBuffer::HBL_DISCARD);
+    PixelBox pb = mHardwarePB->lock(Box(x1, TEXTURE_SIZE-12, x1 + barWidth-1, TEXTURE_SIZE-1), HardwareBuffer::HBL_DISCARD);
     uint32 * dest_data = (uint32*)pb.data;
     for (int x = 0; x < barWidth; ++x) dest_data[x] = 0xff000000;
     dest_data+= TEXTURE_SIZE;
@@ -248,10 +247,10 @@ void ObjectVisuals::select(ObjectNPC *npc, bool showLifebar, bool showInteractMe
     mNode[VISUAL_LIFEBAR]->setInheritOrientation(false);
     const int FONT_NR = 3;
     const char *name = npc->getNickName().c_str();
-    int len = GuiTextout::getSingleton().CalcTextWidth((unsigned char*)name, FONT_NR);
+    int len = GuiManager::getSingleton().calcTextWidth((unsigned char*)name, FONT_NR);
     if (len >TEXTURE_SIZE) len = TEXTURE_SIZE;
     len = (TEXTURE_SIZE - len) /2;
-    PixelBox pb = mHardwarePB->lock (Box(0, 0, TEXTURE_SIZE, TEXTURE_SIZE), HardwareBuffer::HBL_DISCARD);
+    PixelBox pb = mHardwarePB->lock(Box(0, 0, TEXTURE_SIZE, TEXTURE_SIZE), HardwareBuffer::HBL_DISCARD);
     // Clear the whole texture.
     uint32 *dest_data = (uint32*)pb.data;
     for (int i=0; i < TEXTURE_SIZE*TEXTURE_SIZE; ++i) *dest_data++ = 0;
@@ -311,7 +310,7 @@ void ObjectVisuals::unselect()
 void ObjectVisuals::setDefaultAction(int action)
 {
     mDefaultAction = action;
-    GuiCursor::getSingleton().setState(action);
+    GuiManager::getSingleton().setMouseState(action);
 }
 
 //===================================================
@@ -336,13 +335,13 @@ void ObjectVisuals::highlight(ObjectNPC *obj, bool showDefaultAction, bool keySh
         mObjectNPC->getEntity()->getSubEntity(i)->setMaterialName("Object_Highlight");
     if (showDefaultAction)
     {
-        if      (obj->getFriendly() >0) setDefaultAction(GuiImageset::STATE_MOUSE_TALK);
+        if      (obj->getFriendly() >0) setDefaultAction(GuiManager::STATE_MOUSE_TALK);
         else if (obj->getFriendly() <0)
         {
             if (keyShiftDown)
-                setDefaultAction(GuiImageset::STATE_MOUSE_LONG_RANGE_ATTACK);
+                setDefaultAction(GuiManager::STATE_MOUSE_LONG_RANGE_ATTACK);
             else
-                setDefaultAction(GuiImageset::STATE_MOUSE_SHORT_RANGE_ATTACK);
+                setDefaultAction(GuiManager::STATE_MOUSE_SHORT_RANGE_ATTACK);
         }
     }
 }
@@ -354,7 +353,7 @@ void ObjectVisuals::highlight(ObjectStatic *obj, bool showDefaultAction, bool ke
 {
     if (showDefaultAction)
     {
-        setDefaultAction(GuiImageset::STATE_MOUSE_OPEN);
+        setDefaultAction(GuiManager::STATE_MOUSE_OPEN);
     }
 }
 
@@ -376,5 +375,5 @@ void ObjectVisuals::highlightOff()
             mObjStatic->getEntity()->getSubEntity(i)->setMaterialName(strMaterialNameBackup);
         mObjStatic = 0;
     }
-    setDefaultAction(GuiImageset::STATE_MOUSE_DEFAULT);
+    setDefaultAction(GuiManager::STATE_MOUSE_DEFAULT);
 }

@@ -28,83 +28,24 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Ogre;
 
-GuiImageset::GuiElementNames GuiImageset::mGuiElementNames[GUI_ELEMENTS_SUM]=
-{
-    // Standard Buttons (Handled inside of gui_windows).
-    { "But_Close",          GUI_BUTTON_CLOSE    },
-    { "But_OK",             GUI_BUTTON_OK       },
-    { "But_Cancel",         GUI_BUTTON_CANCEL   },
-    { "But_Min",            GUI_BUTTON_MINIMIZE },
-    { "But_Max",            GUI_BUTTON_MAXIMIZE },
-    { "But_Resize",         GUI_BUTTON_RESIZE   },
-    // Unique Buttons (Handled outside of gui_windows).
-    { "But_NPC_Accept",     GUI_BUTTON_NPC_ACCEPT },
-    { "But_NPC_Decline",    GUI_BUTTON_NPC_DECLINE},
-    { "But_Test"       ,    GUI_BUTTON_TEST},
-    // Listboxes.
-    { "List_Msg",           GUI_LIST_MSGWIN    },
-    { "List_Chat",          GUI_LIST_CHATWIN   },
-    { "List_NPC",           GUI_LIST_NPC       },
-    // Statusbar.
-    { "Bar_Health",         GUI_STATUSBAR_NPC_HEALTH    },
-    { "Bar_Mana",           GUI_STATUSBAR_PLAYER_MANA   },
-    { "Bar_Grace",          GUI_STATUSBAR_PLAYER_GRACE  },
-    { "Bar_PlayerHealth",   GUI_STATUSBAR_PLAYER_HEALTH },
-    { "Bar_PlayerMana",     GUI_STATUSBAR_NPC_MANA      },
-    { "Bar_PlayerGrace",    GUI_STATUSBAR_NPC_GRACE     },
-    // TextValues.
-    { "Engine_CurrentFPS",  GUI_TEXTVALUE_STAT_CUR_FPS   },
-    { "Engine_BestFPS",     GUI_TEXTVALUE_STAT_BEST_FPS  },
-    { "Engine_WorstFPS",    GUI_TEXTVALUE_STAT_WORST_FPS },
-    { "Engine_SumTris",     GUI_TEXTVALUE_STAT_SUM_TRIS  },
-    { "Login_ServerInfo1",  GUI_TEXTBOX_SERVER_INFO1     },
-    { "Login_ServerInfo2",  GUI_TEXTBOX_SERVER_INFO2     },
-    { "Login_ServerInfo3",  GUI_TEXTBOX_SERVER_INFO3     },
-    { "Login_LoginWarn",    GUI_TEXTBOX_LOGIN_WARN       },
-    { "Login_PswdVerify",   GUI_TEXTBOX_LOGIN_PSWDVERIFY },
-    { "Login_LoginInfo1",   GUI_TEXTBOX_LOGIN_INFO1      },
-    { "Login_LoginInfo2",   GUI_TEXTBOX_LOGIN_INFO2      },
-    { "Login_LoginInfo3",   GUI_TEXTBOX_LOGIN_INFO3      },
-    { "NPC_Headline",       GUI_TEXTBOX_NPC_HEADLINE     },
-    { "Inv_Equipment",      GUI_TEXTBOX_INV_EQUIP        },
-    { "Inv_Equip_Weight",   GUI_TEXTBOX_INV_EQUIP_WEIGHT },
-    // TextInput.
-    { "Input_Login_Name",   GUI_TEXTINPUT_LOGIN_NAME   },
-    { "Input_Login_Passwd", GUI_TEXTINPUT_LOGIN_PASSWD },
-    { "Input_Login_Verify", GUI_TEXTINPUT_LOGIN_VERIFY },
-    { "Input_NPC_Dialog",   GUI_TEXTINPUT_NPC_DIALOG   },
-    // Table
-    { "Table_Server",       GUI_TABLE },
-    // Combobox.
-    { "ComboBoxTest",       GUI_COMBOBOX_TEST  },
-    // Gadget_Slot
-    { "Slot_Quickslot",     GUI_SLOT_QUICKSLOT    },
-    { "Slot_Equipment",     GUI_SLOT_EQUIPMENT    },
-    { "Slot_Inventory",     GUI_SLOT_INVENTORY    },
-    { "Slot_Container",     GUI_SLOT_CONTAINER    },
-    { "Slot_TradeOffer",    GUI_SLOT_TRADE_OFFER  },
-    { "Slot_TradeReturn",   GUI_SLOT_TRADE_RETURN },
-    { "Slot_Shop",          GUI_SLOT_SHOP         },
-};
-
 // Mouse states.
-GuiImageset::GuiElementNames GuiImageset::mMouseState[STATE_MOUSE_SUM]=
+GuiImageset::StateNames mMouseState[GuiManager::STATE_MOUSE_SUM]=
 {
-    { "Default",           STATE_MOUSE_DEFAULT            },
-    { "Pushed",            STATE_MOUSE_PUSHED             },
-    { "Talk",              STATE_MOUSE_TALK               },
-    { "Attack-ShortRange", STATE_MOUSE_SHORT_RANGE_ATTACK },
-    { "Attack-LongRange",  STATE_MOUSE_LONG_RANGE_ATTACK  },
-    { "Open",              STATE_MOUSE_OPEN               },
-    { "Cast",              STATE_MOUSE_CAST               },
-    { "Dragging",          STATE_MOUSE_DRAGGING           },
-    { "Resizing",          STATE_MOUSE_RESIZING           },
-    { "PickUp",            STATE_MOUSE_PICKUP             },
-    { "Stop",              STATE_MOUSE_STOP               },
+    { "Default",           GuiManager::STATE_MOUSE_DEFAULT            },
+    { "Pushed",            GuiManager::STATE_MOUSE_PUSHED             },
+    { "Talk",              GuiManager::STATE_MOUSE_TALK               },
+    { "Attack-ShortRange", GuiManager::STATE_MOUSE_SHORT_RANGE_ATTACK },
+    { "Attack-LongRange",  GuiManager::STATE_MOUSE_LONG_RANGE_ATTACK  },
+    { "Open",              GuiManager::STATE_MOUSE_OPEN               },
+    { "Cast",              GuiManager::STATE_MOUSE_CAST               },
+    { "Dragging",          GuiManager::STATE_MOUSE_DRAGGING           },
+    { "Resizing",          GuiManager::STATE_MOUSE_RESIZING           },
+    { "PickUp",            GuiManager::STATE_MOUSE_PICKUP             },
+    { "Stop",              GuiManager::STATE_MOUSE_STOP               },
 };
 
 // GuiElement states.
-GuiImageset::GuiElementNames GuiImageset::mElementState[STATE_ELEMENT_SUM]=
+GuiImageset::StateNames GuiImageset::mElementState[STATE_ELEMENT_SUM]=
 {
     { "Default",   STATE_ELEMENT_DEFAULT },
     { "Pressed",   STATE_ELEMENT_PUSHED  },
@@ -165,7 +106,7 @@ void GuiImageset::parseXML(const char *fileImageSet)
             gfxSrcMouse *Entry = new gfxSrcMouse;
             if ((strTemp = xmlElem->Attribute("width" ))) Entry->w  = atoi(strTemp);
             if ((strTemp = xmlElem->Attribute("height"))) Entry->h = atoi(strTemp);
-            if (parseStates(xmlElem, Entry->state, STATE_MOUSE_SUM, true))
+            if (parseStates(xmlElem, Entry->state, GuiManager::STATE_MOUSE_SUM, true))
                 mSrcEntryMouse = Entry;
             else
             {
@@ -195,15 +136,6 @@ void GuiImageset::parseXML(const char *fileImageSet)
     Logger::log().info() << (int) mvSrcEntry.size() +1 << " Image Entries were parsed."; // +1 because of mouseCursor.
     mImageSetImg.load(mStrImageSetGfxFile, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
     mSrcPixelBox = mImageSetImg.getPixelBox();
-
-    // ////////////////////////////////////////////////////////////////////
-    // If requested (by cmd-line) print all element names.
-    // ////////////////////////////////////////////////////////////////////
-    if (Option::getSingleton().getIntValue(Option::CMDLINE_LOG_GUI_ELEMENTS))
-    {
-        Logger::log().info() << "These elements are currently known and can be used in " << FILE_GUI_WINDOWS<< ":";
-        for (int i =0; i < GUI_ELEMENTS_SUM; ++i) Logger::log().warning() << mGuiElementNames[i].name;
-    }
 }
 
 //================================================================================================
@@ -272,33 +204,4 @@ GuiImageset::gfxSrcEntry *GuiImageset::getStateGfxPositions(const char* guiImage
         }
     }
     return 0;
-}
-
-//================================================================================================
-// .
-//================================================================================================
-const char *GuiImageset::getElementName(int i)
-{
-    if (i < GUI_ELEMENTS_SUM && mGuiElementNames[i].name)
-        return mGuiElementNames[i].name;
-    return "ERROR";
-}
-
-//================================================================================================
-// .
-//================================================================================================
-int GuiImageset::getElementIndex(int i)
-{
-    if (i < GUI_ELEMENTS_SUM)
-        return mGuiElementNames[i].index;
-    return -1;
-}
-
-//================================================================================================
-// Delete all elements belonging to the background.
-// Will be called after the window background was drawn.
-//================================================================================================
-void delBackgroundElements()
-{
-    // todo.
 }

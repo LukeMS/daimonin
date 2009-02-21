@@ -30,6 +30,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "gui_element_slot.h"
 #include "gui_textout.h"
 #include "gui_window.h"
+#include "gui_graphic.h"
 #include "gui_manager.h"
 #include "item.h"
 #include "option.h"
@@ -43,21 +44,21 @@ const uint32 SLOT_BUSY_COLOR     = 0xdd777777;
 const uint32 SLOT_QUANTITY_COLOR = 0x00888888;
 const char UNKONWN_ITEM_GFX_FILENAME[] = "item_noGfx.png";
 const int  UNKNOWN_ITEM_GFX = 0;
-String GuiGadgetSlot::mResourceName = "";
-Overlay *GuiGadgetSlot::mDnDOverlay =0;
-OverlayElement *GuiGadgetSlot::mDnDElement =0;
-Image GuiGadgetSlot::mAtlasTexture;
-TexturePtr GuiGadgetSlot::mDnDTexture;
-std::vector<Ogre::String> GuiGadgetSlot::mvAtlasGfxName;
-int GuiGadgetSlot::mDragSlot =  -1;
-int GuiGadgetSlot::mActiveSlot= -1;
+String GuiElementSlot::mResourceName = "";
+Overlay *GuiElementSlot::mDnDOverlay =0;
+OverlayElement *GuiElementSlot::mDnDElement =0;
+Image GuiElementSlot::mAtlasTexture;
+TexturePtr GuiElementSlot::mDnDTexture;
+std::vector<Ogre::String> GuiElementSlot::mvAtlasGfxName;
+int GuiElementSlot::mDragSlot =  -1;
+int GuiElementSlot::mActiveSlot= -1;
 int uid = -1;
-uint32 GuiGadgetSlot::mGfxBuf[GuiGadgetSlot::MAX_SIZE*GuiGadgetSlot::MAX_SIZE];
+uint32 GuiElementSlot::mGfxBuf[GuiElementSlot::MAX_SIZE*GuiElementSlot::MAX_SIZE];
 
 //================================================================================================
 // Constructor.
 //================================================================================================
-GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, const char *resourceName):GuiElement(xmlElement, parent)
+GuiElementSlot::GuiElementSlot(TiXmlElement *xmlElement, void *parent, const char *resourceName):GuiElement(xmlElement, parent)
 {
     std::string filename;
     mSlotNr = ++uid;
@@ -199,11 +200,10 @@ GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, const char 
     // ////////////////////////////////////////////////////////////////////
     // Look for a background graphic (its a png from the item folder).
     // ////////////////////////////////////////////////////////////////////
-    TiXmlElement *xmlGadget;
-    if ((xmlGadget = xmlElement->FirstChildElement("Image")))
+    if ((xmlElement = xmlElement->FirstChildElement("Image")))
     {
         const char *tmp;
-        if ((tmp = xmlGadget->Attribute("bg_item_image_filename")))
+        if ((tmp = xmlElement->Attribute("bg_item_image_filename")))
             mSlotGfxBG = getTextureAtlasPos(tmp);
         else
             mSlotGfxBG = -1;
@@ -219,7 +219,7 @@ GuiGadgetSlot::GuiGadgetSlot(TiXmlElement *xmlElement, void *parent, const char 
 //================================================================================================
 // (Re)loads the material and texture or creates them if they dont exist.
 //================================================================================================
-void GuiGadgetSlot::loadResources()
+void GuiElementSlot::loadResources()
 {
     mDnDOverlay = GuiManager::getSingleton().loadResources(ITEM_SIZE, ITEM_SIZE, mResourceName);
     mDnDElement = mDnDOverlay->getChild(mResourceName + GuiManager::ELEMENT_RESOURCE_NAME);
@@ -229,7 +229,7 @@ void GuiGadgetSlot::loadResources()
 //================================================================================================
 // Destructor.
 //================================================================================================
-GuiGadgetSlot::~GuiGadgetSlot()
+GuiElementSlot::~GuiElementSlot()
 {
     mDnDTexture.setNull();
     mvAtlasGfxName.clear();
@@ -238,18 +238,22 @@ GuiGadgetSlot::~GuiGadgetSlot()
 //================================================================================================
 //
 //================================================================================================
-int GuiGadgetSlot::sendMsg(int message, void *parm1, void *parm2, void *parm3)
+int GuiElementSlot::sendMsg(int message, void *parm1, void *parm2, void *parm3)
 {
-//    switch (message)
+    switch (message)
     {
-        return -1;
+        case GuiManager::MSG_ADD_ITEM:
+        {
+            setItem(mvAtlasGfxName[1].c_str(), 1); // Just testing
+        }
     }
+    return -1;
 }
 
 //================================================================================================
 //
 //================================================================================================
-void GuiGadgetSlot::setItem(const char *gfxName, int quantity)
+void GuiElementSlot::setItem(const char *gfxName, int quantity)
 {
     for (unsigned int i = 0; i < mvAtlasGfxName.size(); ++i)
     {
@@ -265,7 +269,7 @@ void GuiGadgetSlot::setItem(const char *gfxName, int quantity)
 //================================================================================================
 // Get the item pos in the item-texture-atlas.
 //================================================================================================
-int GuiGadgetSlot::getTextureAtlasPos(const char *gfxName)
+int GuiElementSlot::getTextureAtlasPos(const char *gfxName)
 {
     for (unsigned int i =0; i < mvAtlasGfxName.size(); ++i)
         if (mvAtlasGfxName[i] == gfxName) return i;
@@ -275,7 +279,7 @@ int GuiGadgetSlot::getTextureAtlasPos(const char *gfxName)
 //================================================================================================
 // Draw a busy gfx over the slot.
 //================================================================================================
-void GuiGadgetSlot::update(Real dTime)
+void GuiElementSlot::update(Real dTime)
 {
     if (!mBusyTimeExpired) return;
     mBusyTimeExpired += dTime;
@@ -291,7 +295,7 @@ void GuiGadgetSlot::update(Real dTime)
 //================================================================================================
 // Test if Mouse is over this slot.
 //================================================================================================
-bool GuiGadgetSlot::mouseWithin(int x, int y)
+bool GuiElementSlot::mouseWithin(int x, int y)
 {
     if (x < mPosX || x > mPosX + mWidth || y < mPosY || y > mPosY + mHeight)
         return false;
@@ -301,7 +305,7 @@ bool GuiGadgetSlot::mouseWithin(int x, int y)
 //================================================================================================
 // .
 //================================================================================================
-int GuiGadgetSlot::mouseEvent(int MouseAction, int x, int y)
+int GuiElementSlot::mouseEvent(int MouseAction, int x, int y)
 {
     if (mouseWithin(x, y))
     {
@@ -312,7 +316,7 @@ int GuiGadgetSlot::mouseEvent(int MouseAction, int x, int y)
             GuiManager::getSingleton().setTooltip(mStrTooltip.c_str());
             return GuiManager::EVENT_CHECK_NEXT;
         }
-        if (MouseAction == GuiWindow::BUTTON_PRESSED && mItemGfxID >= 0)
+        if (MouseAction == GuiManager::BUTTON_PRESSED && mItemGfxID >= 0)
         {
             mDragSlot = mActiveSlot;
             drawDragItem();
@@ -336,9 +340,9 @@ int GuiGadgetSlot::mouseEvent(int MouseAction, int x, int y)
 //================================================================================================
 //
 //================================================================================================
-void GuiGadgetSlot::drawDragItem()
+void GuiElementSlot::drawDragItem()
 {
-    if (!mItemGfxID < 0) return;
+    if (mItemGfxID < 0) return;
     if (mDnDTexture.isNull())
     {
         mDnDTexture = TextureManager::getSingleton().createManual(mResourceName+GuiManager::TEXTURE_RESOURCE_NAME,
@@ -356,14 +360,9 @@ void GuiGadgetSlot::drawDragItem()
 
 // .
 //================================================================================================
-void GuiGadgetSlot::draw()
+void GuiElementSlot::draw()
 {
-
-
-    return;
-
-
-    if (!mIsVisible || !mItemGfxID)
+    if (!mIsVisible || mItemGfxID < 0)
     {
         GuiElement::draw();
         return;
@@ -406,7 +405,7 @@ void GuiGadgetSlot::draw()
 //================================================================================================
 // Draws the busy gfx into the build buffer.
 //================================================================================================
-void GuiGadgetSlot::drawBusy(int angle)
+void GuiElementSlot::drawBusy(int angle)
 {
     int x2,x3,y2,dY,dX,xStep,yStep,delta,posY;
     uint32 *dst = mGfxBuf;

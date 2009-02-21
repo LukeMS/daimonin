@@ -21,8 +21,8 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
-#ifndef GUI_GADGET_COMBOBOX_H
-#define GUI_GADGET_COMBOBOX_H
+#ifndef GUI_ELEMENT_COMBOBOX_H
+#define GUI_ELEMENT_COMBOBOX_H
 
 #include <Ogre.h>
 #include <tinyxml.h>
@@ -32,22 +32,22 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 /**
  ** This class provides an interactive combobox.
  *****************************************************************************/
-class GuiGadgetCombobox : public GuiElement
+class GuiElementCombobox : public GuiElement
 {
 
 public:
     enum
     {
-        GUI_GADGET_COMBOBOX_NONE,
-        GUI_GADGET_COMBOBOX_DDBUTTON,
-        GUI_GADGET_COMBOBOX_SCROLL_UP,
-        GUI_GADGET_COMBOBOX_SCROLL_DOWN,
-        GUI_GADGET_COMBOBOX_SCROLL_BAR,
-        GUI_GADGET_COMBOBOX_SUM
+        GUI_ELEMENT_COMBOBOX_NONE,
+        GUI_ELEMENT_COMBOBOX_DDBUTTON,
+        GUI_ELEMENT_COMBOBOX_SCROLL_UP,
+        GUI_ELEMENT_COMBOBOX_SCROLL_DOWN,
+        GUI_ELEMENT_COMBOBOX_SCROLL_BAR,
+        GUI_ELEMENT_COMBOBOX_SUM
     };
 
-    GuiGadgetCombobox(TiXmlElement *xmlElement, void *parent);
-    ~GuiGadgetCombobox();
+    GuiElementCombobox(TiXmlElement *xmlElement, void *parent);
+    ~GuiElementCombobox();
     int sendMsg(int element, void *parm1 =0, void *parm2 =0, void *parm3 =0);
     void draw();
     void setText(const char *value);

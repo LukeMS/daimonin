@@ -34,39 +34,16 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    typedef struct
-    {
-        unsigned int x1, y1, x2, y2; /**< Area for printing the text. **/
-        int font;                    /**< Font number. **/
-        int index;                   /**< Unique number. **/
-        bool hideText;               /**< Hide the text e.g. for password input. **/
-        Ogre::String text;
-        Ogre::uint32 *LayerWindowBG; /**< Backup buffer for dynamic text. **/
-        Ogre::uint32 color;
-    }
-    TextLine;
-
-    enum { MAX_TEXTLINE_LEN = 1024 };
-
     enum
     {
         FONT_SYSTEM, FONT_SMALL, FONT_NORMAL, FONT_BIG, FONT_SUM
     };
-
     enum
     {
         STANDARD_CHARS_IN_FONT = 96,
         SPECIAL_CHARS_IN_FONT  = 127,
         CHARS_IN_FONT          = STANDARD_CHARS_IN_FONT+SPECIAL_CHARS_IN_FONT,
     };
-    static const Ogre::uint32 COLOR_BLACK;
-    static const Ogre::uint32 COLOR_BLUE;
-    static const Ogre::uint32 COLOR_GREEN;
-    static const Ogre::uint32 COLOR_LBLUE;
-    static const Ogre::uint32 COLOR_RED;
-    static const Ogre::uint32 COLOR_PINK;
-    static const Ogre::uint32 COLOR_YELLOW;
-    static const Ogre::uint32 COLOR_WHITE;
     static const char TXT_CMD_HIGHLIGHT;
     static const char TXT_CMD_LOWLIGHT;
     static const char TXT_CMD_LINK;
@@ -84,17 +61,13 @@ public:
     }
     void loadRawFont(const char *filename);
     void loadTTFont (const char *filename, const char *size, const char *resolution);
-    void createBuffer();
-    void Print(TextLine *line, Ogre::Texture *texture, bool textureIsLocked = false);
-    void PrintToBuffer(int width, int height, Ogre::uint32 *dest_data, const char*text, unsigned int font, Ogre::uint32 color = COLOR_WHITE);
-    int CalcTextWidth(unsigned char *text, unsigned int fontNr = 0);
+    void printText(int width, int height, Ogre::uint32 *dst, int dstLineSkip,
+        Ogre::uint32 *bak, int bakLineSkip, const char *txt, unsigned int fontNr,
+        Ogre::uint32 color = 0xffffffff, bool hideText = false);
+    int calcTextWidth(const unsigned char *text, unsigned int fontNr = 0);
     int getFontHeight(int fontNr)
     {
         return mvFont[fontNr]->height;
-    }
-    int getMaxFontHeight()
-    {
-        return mMaxFontHeight;
     }
     int getCharWidth(int fontNr, unsigned char Char);
     void parseUserDefinedChars(Ogre::String &txt);
@@ -135,9 +108,6 @@ private:
 
     std::vector<mFont*>mvFont;
     std::vector<mSpecialChar*>mvSpecialChar;
-    Ogre::PixelBox *mPb;
-    Ogre::uint32 *mTextGfxBuffer;
-    unsigned int mMaxFontHeight;
     static const Ogre::uint32 TXT_COLOR_DEFAULT;
     static const Ogre::uint32 TXT_COLOR_LOWLIGHT;
     static const Ogre::uint32 TXT_COLOR_HIGHLIGHT;
@@ -148,7 +118,6 @@ private:
     GuiTextout();
     ~GuiTextout();
     GuiTextout(const GuiTextout&); // disable copy-constructor.
-    void drawText(int width, int height, Ogre::uint32 *dest_data, const char *text, bool hideText, unsigned int fontNr = 0, Ogre::uint32 color = 0x00ffffff);
 };
 
 #endif

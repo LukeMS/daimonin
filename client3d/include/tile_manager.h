@@ -141,7 +141,7 @@ private:
                                     Bit 15: Mirror shadow on Z-Axis (SHADOW_MIRROX_Z). **/
     }mapStruct;
     mapStruct mMap[MAP_SIZE+2][MAP_SIZE+2];
-    Ogre::SceneManager *mSceneManager;
+    static Ogre::SceneManager *mSceneManager;
     Ogre::RaySceneQuery *mRaySceneQuery;
     TileChunk mMapchunk;
     Ogre::Vector3 mTris[4];

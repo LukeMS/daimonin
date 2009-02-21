@@ -39,6 +39,7 @@ client3d_SOURCES = \
 	../../source/gui/gui_element_scrollbar.cpp \
 	../../source/gui/gui_element_table.cpp \
 	../../source/gui/gui_element_listbox.cpp \
+	../../source/gui/gui_element_textbox.cpp \
 	../../source/gui/gui_element_statusbar.cpp \
 	../../source/gui/gui_graphic.cpp \
 	../../source/gui/gui_imageset.cpp \

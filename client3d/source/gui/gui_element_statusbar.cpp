@@ -107,7 +107,6 @@ void GuiStatusbar::draw()
         // ////////////////////////////////////////////////////////////////////
         // The dynamic part.
         // ////////////////////////////////////////////////////////////////////
-        uint32 barColor=  0xff000000+ (mLabelColor[2] << 16) + (mLabelColor[1] << 8) +mLabelColor[0];
         for (int y = mLabelPosY + mValue; y < mHeight-mLabelPosY; ++y)
         {
             for (int x= mLabelPosX; x < mWidth-mLabelPosX; ++x)
@@ -116,9 +115,9 @@ void GuiStatusbar::draw()
                 if (color & 0xff000000)
                 {
                     pixColor = color & 0xff000000;
-                    pixColor+= ((barColor&0x0000ff) < (color& 0x0000ff))? barColor & 0x0000ff : color & 0x0000ff;
-                    pixColor+= ((barColor&0x00ff00) < (color& 0x00ff00))? barColor & 0x00ff00 : color & 0x00ff00;
-                    pixColor+= ((barColor&0xff0000) < (color& 0xff0000))? barColor & 0xff0000 : color & 0xff0000;
+                    pixColor+= ((mLabelColor&0x0000ff) < (color& 0x0000ff))? mLabelColor&0x0000ff : color & 0x0000ff;
+                    pixColor+= ((mLabelColor&0x00ff00) < (color& 0x00ff00))? mLabelColor&0x00ff00 : color & 0x00ff00;
+                    pixColor+= ((mLabelColor&0xff0000) < (color& 0xff0000))? mLabelColor&0xff0000 : color & 0xff0000;
                     mGfxBuffer[y*mWidth + x] = pixColor;
                 }
             }
