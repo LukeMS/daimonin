@@ -3476,7 +3476,7 @@
   </attribute>
 </section>
 
-<section name="behave">
+<section name="behaviour">
   <attribute arch="unaggressive" editor="unaggressive" type="bool">
     &lt;unaggressive&gt; monsters do not attack unless attacked first. If
     attacked at any time, the unaggressive status will be removed forever.
@@ -3988,7 +3988,7 @@
   </attribute>
 </section>
 
-<section name="behave">
+<section name="behaviour">
   <attribute arch="unaggressive" editor="unaggressive" type="bool">
     &lt;unaggressive&gt; monsters do not attack unless attacked first. If
     attacked at any time, the unaggressive status will be removed forever.
