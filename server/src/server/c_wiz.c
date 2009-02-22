@@ -647,31 +647,22 @@ int command_dm_connections(object *op, char *params)
 {
     char buf[256];
 	objectlink *ol;
-    int nr;
+    int nr = 2;
 
 	/* allowed for VOL and higher */
 	if(CONTR(op)->gmaster_mode < GMASTER_MODE_VOL)
 		return 0;
 
-    if (params == NULL)
+    if ((params == NULL) || (sscanf(params, "%d", &nr) != 1))
     {
         new_draw_info(NDI_UNIQUE, 0, op, "Usage: /dm_connections <number>");
         return 0;
     }
 
-    sscanf(params, "%d", &nr);
-
     if(nr < 2)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "WARNING: Miminum connections from single IP must be at least 2.");
         nr = 2;
-    }
-
-    /* Put in a hard-coded max limit.  Note:  Previous was max limit of 2 connections!  10 should be plenty ... */
-    if (nr > 10)
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "WARNING: Maximum connections from single IP for VOLs is 10.");
-        nr = 10;
     }
 
     settings.max_cons_from_one_ip = nr;
