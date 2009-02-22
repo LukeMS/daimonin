@@ -30,7 +30,8 @@
 
 struct Settings settings    =
 {
-    0,                      /* well be set from create_client_settings() */
+    2,                      /* default max connections from single ip address */
+    0,                      /* will be set from create_client_settings() */
     0,                      /* mute level = if set players below this level can't shout*/
     TRUE,                   /* login_allow */
     "",                     /* login_ip */
@@ -1049,7 +1050,7 @@ void fatal_signal(int make_core, int close_sockets)
 #endif
         /* this line will try to save all player files when the server crashed.
          * thats good to avoid dubing but a evil source to destroy the player
-         * files. Thats one of the biggest problems we can have, so i disabled 
+         * files. Thats one of the biggest problems we can have, so i disabled
          * this line
          */
         /* command_kick(NULL, NULL); */

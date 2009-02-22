@@ -1,4 +1,4 @@
-/* alchemy.c */	
+/* alchemy.c */
 char                       *cauldron_sound(void);
 void                        attempt_do_alchemy(object *caster, object *cauldron);
 int                         content_recipe_value(object *op);
@@ -224,6 +224,7 @@ void                        fire(object *op, int dir);
 int							fire_magic_tool(object *owner, object *op, int dir);
 int                         command_cast_spell(object *op, char *params);
 /* c_wiz.c */
+int							command_dm_connections(object *op, char *params);
 int							command_dmload(object *op, char *params);
 int							check_dmload(const char*name, const char *pwd);
 int                         command_setgod(object *op, char *params);

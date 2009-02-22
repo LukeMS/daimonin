@@ -187,7 +187,7 @@ static int pre_process_command(NewSocket *nsock) // use this for debugging
                 return TRUE;
             }
         }
-        
+
         /* TODO: enable command queue post flush for state move commands */
 
         /*
@@ -583,7 +583,7 @@ static int check_ip_ban(NewSocket *sock, char *ip)
                      * connects from that IP, we KICK the login
                      * with the highest idle time
              */
-            if (count > 1)
+            if (count > (settings.max_cons_from_one_ip - 1))
             {
                 LOG(llevDebug, "check_ip_ban(): connection flood: mark player %s Ns_Dead (IP %s)\n",
                     query_name(pl->ob), ptmp->socket.ip_host);

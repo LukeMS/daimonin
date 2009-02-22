@@ -595,7 +595,7 @@ int command_generate(object *op, char *params)
         }
             head = insert_ob_in_ob(head, op);
 			esrv_send_item(op, head);
-		
+
     }
     return 1;
   }
@@ -638,6 +638,53 @@ int command_mutelevel(object *op, char *params)
         new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, buf);
 
     return 1;
+}
+
+/* This command allows a DM to set the max number of connections from a single IP (previously hardcoded to 2),
+* Added by Torchwood, 2009-02-20
+*/
+int command_dm_connections(object *op, char *params)
+{
+    char buf[256];
+	objectlink *ol;
+    int nr;
+
+	/* allowed for VOL and higher */
+	if(CONTR(op)->gmaster_mode < GMASTER_MODE_VOL)
+		return 0;
+
+    if (params == NULL)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "Usage: /dm_connections <number>");
+        return 0;
+    }
+
+    sscanf(params, "%d", &nr);
+
+    if(nr < 2)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "WARNING: Miminum connections from single IP must be at least 2.");
+        nr = 2;
+    }
+
+    /* Put in a hard-coded max limit.  Note:  Previous was max limit of 2 connections!  10 should be plenty ... */
+    if (nr > 10)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "WARNING: Maximum connections from single IP for VOLs is 10.");
+        nr = 10;
+    }
+
+    settings.max_cons_from_one_ip = nr;
+	sprintf(buf, "SET: max connections from single IP set to %d!\n", nr);
+
+    for(ol = gmaster_list_VOL;ol;ol=ol->next)
+        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, buf);
+    for(ol = gmaster_list_GM;ol;ol=ol->next)
+        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, buf);
+    for(ol = gmaster_list_MM;ol;ol=ol->next)
+        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, buf);
+
+	return 1;
 }
 
 int command_summon(object *op, char *params)
