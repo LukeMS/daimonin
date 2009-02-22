@@ -316,7 +316,7 @@ typedef enum
 #define MONEYSTRING_AMOUNT   1
 #define MONEYSTRING_ALL     -1
 
-#define COSTSTRING_SHORT  0 
+#define COSTSTRING_SHORT  0
 #define COSTSTRING_FULL   1
 #define COSTSTRING_APPROX 2
 
@@ -437,6 +437,7 @@ typedef struct ban_struct
 
 typedef struct Settings
 {
+	int								max_cons_from_one_ip;	    /* Maximum number of concurrent connections from a single IP address, default = 2 */
     int                             player_races;       /* number of player race arches in client_settings */
     int                             mutelevel;          /* default FALSE - if TRUE player < level 2 can't shout */
     int                             login_allow;        /* if set to FALSE, login_ip is checked */

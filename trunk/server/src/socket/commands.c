@@ -112,7 +112,8 @@ CommArray_s Commands[]                  =
     {"vol",          command_vol,            1.0f},
     {"mw",           command_mw,             1.0f},
     /* VOL/GM/DM */
-	{"mutelevel",      command_mutelevel,1.0},
+	{"mutelevel",      command_mutelevel,1.0f},
+	{"dm_connections",  command_dm_connections, 1.0f},
     {"dm_list",        command_dm_list,1.0f},
     {"malloc",            command_malloc,   0.0},        /* check the server stats */
     {"kick",            command_kickcmd, 0.0},            /* kick with a 1m temp login ban */
@@ -1098,7 +1099,7 @@ void cs_cmd_login(char *buf, int len, NewSocket *ns)
     pass = buf+name_len+1;
     pass_len = strlen(pass);
     /* is the password in right size? Don't allow pass = name and ensure name is valid */
-    if(pass_len < MIN_ACCOUNT_PASSWORD || pass_len > MAX_ACCOUNT_PASSWORD 
+    if(pass_len < MIN_ACCOUNT_PASSWORD || pass_len > MAX_ACCOUNT_PASSWORD
                                        || !strcasecmp(buf,pass) || !account_name_valid(buf) )
     {
         ns->status = Ns_Dead;
