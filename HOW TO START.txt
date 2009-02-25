@@ -1,4 +1,4 @@
-Welcome to Daimonin BETA 2
+Welcome to Daimonin BETA 4
 
 Read first README - it will give you a overview about this package.
 
