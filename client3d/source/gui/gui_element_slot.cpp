@@ -53,7 +53,6 @@ std::vector<Ogre::String> GuiElementSlot::mvAtlasGfxName;
 int GuiElementSlot::mDragSlot =  -1;
 int GuiElementSlot::mActiveSlot= -1;
 int uid = -1;
-uint32 GuiElementSlot::mGfxBuf[GuiElementSlot::MAX_SIZE*GuiElementSlot::MAX_SIZE];
 
 //================================================================================================
 // Constructor.
@@ -313,7 +312,7 @@ int GuiElementSlot::mouseEvent(int MouseAction, int x, int y)
         {
             mActiveSlot = mSlotNr;
             if (setState(GuiImageset::STATE_ELEMENT_M_OVER)) draw();
-            GuiManager::getSingleton().setTooltip(mStrTooltip.c_str());
+            //GuiManager::getSingleton().setTooltip(mStrTooltip.c_str());
             return GuiManager::EVENT_CHECK_NEXT;
         }
         if (MouseAction == GuiManager::BUTTON_PRESSED && mItemGfxID >= 0)
@@ -370,24 +369,25 @@ void GuiElementSlot::draw()
     // ////////////////////////////////////////////////////////////////////
     // Draw the slot-gfx to the build-buffer.
     // ////////////////////////////////////////////////////////////////////
+    uint32 *dst = GuiManager::getSingleton().getBuildBuffer();
     uint32 *bak = mParent->getLayerBG() + mPosX + mPosY*mParent->getWidth();
     if (mGfxSrc)
     {
         PixelBox src = mParent->getPixelBox()->getSubVolume(Box(mGfxSrc->state[mState].x, mGfxSrc->state[mState].y,
                        mGfxSrc->state[mState].x + mGfxSrc->w, mGfxSrc->state[mState].y + mGfxSrc->h));
         int srcRowSkip = (int)mParent->getPixelBox()->getWidth();
-        GuiGraphic::getSingleton().drawGfxToBuffer(mWidth, mHeight, mGfxSrc->w, mGfxSrc->h, (uint32*)src.data, bak, mGfxBuf, srcRowSkip, mParent->getWidth(), MAX_SIZE);
+        GuiGraphic::getSingleton().drawGfxToBuffer(mWidth, mHeight, mGfxSrc->w, mGfxSrc->h, (uint32*)src.data, bak, dst, srcRowSkip, mParent->getWidth(), MAX_SIZE);
     }
     else
-        GuiGraphic::getSingleton().drawColorToBuffer(mWidth, mHeight, mFillColor, bak, mGfxBuf, mParent->getWidth(), MAX_SIZE);
+        GuiGraphic::getSingleton().drawColorToBuffer(mWidth, mHeight, mFillColor, bak, dst, mParent->getWidth(), MAX_SIZE);
     // ////////////////////////////////////////////////////////////////////
     // Draw the item-gfx to the build-buffer.
     // ////////////////////////////////////////////////////////////////////
     int dX  = (mWidth  - ITEM_SIZE) /2;
     int dY  = (mHeight - ITEM_SIZE) /2;
     PixelBox src = mAtlasTexture.getPixelBox().getSubVolume(Box(0, ITEM_SIZE * mItemGfxID, ITEM_SIZE, ITEM_SIZE *(mItemGfxID+1)));
-    uint32 *dst = mGfxBuf + dX + dY * MAX_SIZE;
-    GuiGraphic::getSingleton().drawGfxToBuffer(ITEM_SIZE, ITEM_SIZE, ITEM_SIZE, ITEM_SIZE, (uint32*)src.data, dst, dst, ITEM_SIZE, MAX_SIZE, MAX_SIZE);
+    uint32 *buf = dst + dX + dY * MAX_SIZE;
+    GuiGraphic::getSingleton().drawGfxToBuffer(ITEM_SIZE, ITEM_SIZE, ITEM_SIZE, ITEM_SIZE, (uint32*)src.data, buf, buf, ITEM_SIZE, MAX_SIZE, MAX_SIZE);
     // ////////////////////////////////////////////////////////////////////
     // Draw the busy-gfx to the build-buffer.
     // ////////////////////////////////////////////////////////////////////
@@ -396,10 +396,7 @@ void GuiElementSlot::draw()
     // ////////////////////////////////////////////////////////////////////
     // Copy the build-buffer to the window texture.
     // ////////////////////////////////////////////////////////////////////
-    Texture *texture = mParent->getTexture();
-    PixelBox pb = texture->getBuffer()->lock(Box(mPosX, mPosY, mPosX+mWidth, mPosY+mHeight), HardwareBuffer::HBL_DISCARD);
-    GuiGraphic::getSingleton().restoreWindowBG(mWidth, mHeight, mGfxBuf, (uint32*)pb.data, MAX_SIZE, (int)texture->getWidth());
-    texture->getBuffer()->unlock();
+    mParent->getTexture()->getBuffer()->blitFromMemory(PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8, dst), Box(mPosX, mPosY, mPosX+mWidth, mPosY+mHeight));
 }
 
 //================================================================================================
@@ -408,7 +405,7 @@ void GuiElementSlot::draw()
 void GuiElementSlot::drawBusy(int angle)
 {
     int x2,x3,y2,dY,dX,xStep,yStep,delta,posY;
-    uint32 *dst = mGfxBuf;
+    uint32 *dst = GuiManager::getSingleton().getBuildBuffer();;
     int x = mWidth/2;
     int y = mHeight/2;
     if (angle == 180)
@@ -514,10 +511,3 @@ void GuiElementSlot::drawBusy(int angle)
         GuiGraphic::getSingleton().drawColorToBuffer(mWidth/2, mHeight, SLOT_BUSY_COLOR, dst, MAX_SIZE);
     }
 }
-
-/*
-    long time = Root::getSingleton().getTimer()->getMilliseconds();
-    for (int z = 0; z < 500; ++z)
-    {}
-    Logger::log().error() <<"time: "<<  Root::getSingleton().getTimer()->getMilliseconds() - time;
-*/

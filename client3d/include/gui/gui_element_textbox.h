@@ -21,64 +21,46 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
-#ifndef GUI_ELEMENT_SCROLLBAR_H
-#define GUI_ELEMENT_SCROLLBAR_H
+#ifndef GUI_ELEMENT_TETBOX_H
+#define GUI_ELEMENT_TETBOX_H
 
 #include <Ogre.h>
 #include <tinyxml.h>
-#include "gui_element.h"
-#include "gui_element_listbox.h"
-#include "gui_element_button.h"
+#include "gui_graphic.h"
+#include "gui_window.h"
 
 /**
- ** This class provides an interactive scrollbar.
- ** Its a helper class for scrolling graphical stuff within gui elements.
+ ** This class provides an interactive button.
  *****************************************************************************/
-class GuiElementScrollbar : public GuiElement
+class GuiElementTextbox: public GuiElement
 {
-
 public:
-    enum
-    {
-        // Horizontal Elements.
-        BUTTON_H_ADD,
-        BUTTON_H_SUB,
-        SLIDER_H,
-        // Vertical Elements.
-        BUTTON_V_ADD,
-        BUTTON_V_SUB,
-        SLIDER_V
-    };
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    GuiElementScrollbar(TiXmlElement *xmlElement, void *parent, void *parentElement);
-    ~GuiElementScrollbar();
-    //int sendMsg(int element, void *parm1 =0, void *parm2 =0, void *parm3 =0);
-    int getScrollOffset();
-    void resize(int newWidth, int newHeight);
-    void updateSliderSize(int actPos, int scrollOffset, int maxVisPos, int maxPos = -1);
-    int mouseEvent(int MouseAction, int x, int y, int mouseWheel);
+    GuiElementTextbox(TiXmlElement *xmlElement, void *parent);
+    ~GuiElementTextbox();
+    int sendMsg(int element, void *parm1 =0, void *parm2 =0, void *parm3 =0);
+    int mouseEvent(int MouseAction, int x, int y, int z);
     void draw();
+    bool isVisible()
+    {
+        return mIsVisible;
+    }
+    void setVisible(bool visible);
+    int keyEvent(const int *keyChar, const unsigned char *key);
+    void setLabel(const char*newText)
+    {
+        mStrLabel = newText;
+        draw();
+    }
 
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    int mSliderPos, mSliderSize, mMaxSliderSize;
-    int mStartX, mStopX, mStartY, mStopY;
-    int mLastScrollAmount;
-    bool mHorizontal, mDragging;
+    Ogre::String mStrTooltip;
     bool mMouseOver, mMouseButDown;
-    float mPixelScrollToLineScroll; /**< When slider scrolls 1 pixel, the parent element must scroll x lines. **/
-    Ogre::uint32 *mGfxBuffer;
-    Ogre::uint32 mColorBackground, mColorBorderline, mColorBarPassive, mColorBarM_Over, mColorBarActive;
-    class GuiElementButton *mButScrollUp, *mButScrollDown;
-    // ////////////////////////////////////////////////////////////////////
-    // Functions.
-    // ////////////////////////////////////////////////////////////////////
-    void arrangeButtons(int x1, int y1, int x2, int y2);
-    bool mouseOverSlider(int x, int y);
 };
 
 #endif

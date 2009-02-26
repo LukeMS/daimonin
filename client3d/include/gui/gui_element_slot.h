@@ -82,10 +82,8 @@ private:
     static Ogre::OverlayElement *mDnDElement;
     static Ogre::TexturePtr mDnDTexture;
     static Ogre::String mResourceName;
-    static Ogre::uint32 mGfxBuf[MAX_SIZE*MAX_SIZE]; /**< A buffer to build the slot graphic (slot-gfx + item-gfx + busy-gfx). **/
     static int mDragSlot;                           /**< Slot where the drag was started. **/
     static int mActiveSlot;                         /**< Slot the mouse is currently over. **/
-
     int mSlotNr;                                    /**< Unique number. **/
     int mSlotGfxBG;                                 /**< The gfx number of the background gfx (will only be shown if slot is empty **/
     int mItemGfxID;                                 /**< The item which is currently in the slot. **/

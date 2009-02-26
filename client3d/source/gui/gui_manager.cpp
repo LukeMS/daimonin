@@ -34,6 +34,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "option.h"
 #include "logger.h"
 #include "resourceloader.h"
+#include "item.h"
 
 using namespace Ogre;
 
@@ -251,13 +252,11 @@ void GuiManager::Init(int w, int h)
 
 //================================================================================================
 // Buildbuffer is used to draw the gui elements before blitting them to the texture.
-// The lock()/unlock() alternative gave me some problems (GNU/Linux only) when locking only
-// parts of the texture-buffer.
 //================================================================================================
 void GuiManager::resizeBuildBuffer(size_t newSize)
 {
     static size_t size = 0;
-    if (newSize != size)
+    if (size < newSize)
     {
         delete[] mBuildBuffer;
         mBuildBuffer = new uint32[newSize];
@@ -335,7 +334,7 @@ Overlay *GuiManager::loadResources(int w, int h, String name)
     }
     // We must clear the whole texture (textures have always 2^n size while our gfx can be smaller).
     int size = texture->getWidth()*texture->getHeight()*sizeof(uint32);
-    memset(texture->getBuffer()->lock(0, size, HardwareBuffer::HBL_DISCARD), 0xFF, size);
+    memset(texture->getBuffer()->lock(0, size, HardwareBuffer::HBL_DISCARD), 0x00, size);
     texture->getBuffer()->unlock();
     material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(strTexture);
     element->setDimensions(texture->getWidth(), texture->getHeight());
@@ -568,7 +567,7 @@ bool GuiManager::mouseEvent(int mouseAction, Vector3 &mouse)
             mDragDstWin = -1;
             for (unsigned int w = 0; w < WIN_SUM; ++w)
             {
-                if (guiWindow[w].mouseWithin((int)mMouse.x, (int)mMouse.y), (int) mMouse.z)
+                if (guiWindow[w].mouseWithin((int)mMouse.x, (int)mMouse.y))
                 {
                     mDragDstWin = w;
                     //mDragDstSlot = guiWindow[w].getMouseOverSlot((int)mMouse.x, (int)mMouse.y);

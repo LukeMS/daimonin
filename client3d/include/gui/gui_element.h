@@ -46,31 +46,18 @@ public:
     virtual int mouseEvent(int MouseAction, int x, int y, int z);
     virtual int keyEvent(const int keyChar, const unsigned int key);
     virtual void update(Ogre::Real deltaTime) {} /**< Animations, drag'n'drop, etc **/
-    virtual void draw();
+    virtual void draw(bool uploadToTexture = true);
 
-    bool setState(int state); /**< Returns true if the state was changed. **/
-    int getState()
-    {
-        return mState;
-    }
-    int getIndex()
-    {
-        return mIndex;
-    }
+    int getState()  { return mState;  }
+    int getIndex()  { return mIndex;  }
+    int getWidth()  { return mWidth;  }
+    int getHeight() { return mHeight; }
+    bool setState(int state);              /**< Returns true if the state was changed. **/
     void setPosition(int x, int y)
     {
         mPosX = x;
         mPosY = y;
     }
-    int getWidth()
-    {
-        return mWidth;
-    }
-    int getHeight()
-    {
-        return mHeight;
-    }
-
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
@@ -80,18 +67,20 @@ protected:
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     int mIndex;                            /**< Unique number. -1 means its a bg-gfx (no interaction) **/
-    unsigned short mPosX, mPosY;           /**< Pixeloffset from the upper-left corner of the window). **/
+    unsigned short mPosX, mPosY;           /**< Pixeloffset from the upper-left corner of the window. **/
     unsigned short mWidth, mHeight;        /**< Dimension of this element. **/
     unsigned short mState;                 /**< Actual state of this element. **/
     unsigned short mFontNr, mLabelFontNr;
     unsigned short mLabelPosX, mLabelPosY;
     bool mIsVisible;
     Ogre::String mStrLabel;
-    Ogre::String mStrTooltip; // REMOVE ME: Wrong place - this is not partr of the elment core.
-    Ogre::uint32 mFillColor;
     Ogre::uint32 mLabelColor;
-    class GuiWindow *mParent;          /**< Pointer to the parent window. **/
-    GuiImageset::gfxSrcEntry *mGfxSrc; /**< Pointer to the gfx-data structure or 0 for a colorfill. **/
+    Ogre::uint32 mFillColor;
+    class GuiWindow *mParent;              /**< Pointer to the parent window. **/
+    GuiImageset::gfxSrcEntry *mGfxSrc;     /**< Pointer to the gfx-data structure or 0 for a colorfill. **/
+    // ////////////////////////////////////////////////////////////////////
+    // Functions.
+    // ////////////////////////////////////////////////////////////////////
     bool mouseWithin(int x, int y)
     {
         return !(x < mPosX || x > mPosX + mWidth || y < mPosY || y > mPosY + mHeight);

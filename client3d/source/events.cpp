@@ -95,6 +95,7 @@ void Events::freeRecources()
     }
     TileManager  ::getSingleton().freeRecources();
     ObjectManager::getSingleton().freeRecources();
+    Network      ::getSingleton().freeRecources();
     GuiManager   ::getSingleton().freeRecources();
     Sound        ::getSingleton().freeRecources();
     ObjectVisuals::getSingleton().freeRecources();
@@ -275,13 +276,13 @@ bool Events::frameStarted(const FrameEvent& evt)
             GuiManager::getSingleton().showWindow(GuiManager::WIN_TEXTWINDOW, true);
             GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, (void*)"Welcome to ~Daimonin 3D~.");
             GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, (void*)"You need a running server to start the game!");
-
+/*
             for (int i = 0; i < 120; ++i)
             {
                 String txt = "Pos: "  + StringConverter::toString(i);
               GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, (void*)txt.c_str());
             }
-
+*/
             Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
             break;
         }

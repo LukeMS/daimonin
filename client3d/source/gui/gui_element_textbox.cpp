@@ -22,7 +22,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
 #include "logger.h"
-#include "gui_element_button.h"
+#include "gui_element_textbox.h"
 #include "gui_textout.h"
 #include "gui_window.h"
 #include "gui_manager.h"
@@ -32,12 +32,16 @@ using namespace Ogre;
 //================================================================================================
 //
 //================================================================================================
-int GuiElementButton::sendMsg(int message, void *parm1, void *parm2, void *parm3)
+int GuiElementTextbox::sendMsg(int message, void *parm1, void *parm2, void *parm3)
 {
     switch (message)
     {
         case GuiManager::MSG_SET_VISIBLE:
             setVisible((bool*)parm1);
+            return 0;
+        case GuiManager::MSG_SET_TEXT:
+            mStrLabel = (const char*) parm1;
+            draw();
             return 0;
         default:
             return -1;
@@ -47,28 +51,38 @@ int GuiElementButton::sendMsg(int message, void *parm1, void *parm2, void *parm3
 //================================================================================================
 // .
 //================================================================================================
-GuiElementButton::GuiElementButton(TiXmlElement *xmlElement, void *parent, bool drawOnInit):GuiElement(xmlElement, parent)
+GuiElementTextbox::GuiElementTextbox(TiXmlElement *xmlElement, void *parent):GuiElement(xmlElement, parent)
 {
     const char *tmp;
     if ((xmlElement = xmlElement->FirstChildElement("Tooltip")))
     {
         if ((tmp = xmlElement->Attribute("text"))) mStrTooltip = tmp;
     }
+    const int MINIMAL_ELEMENT_SIZE = 2;
     mMouseOver = false;
     mMouseButDown = false;
-    if (drawOnInit) draw();
+    int maxX, maxY;
+    mParent->getSize(maxX, maxY);
+    if (mWidth <= MINIMAL_ELEMENT_SIZE) // No value was set in the xml-file.
+        mWidth = GuiTextout::getSingleton().calcTextWidth((const unsigned char*)mStrLabel.c_str(), mLabelFontNr);
+    if (mHeight<= MINIMAL_ELEMENT_SIZE) // No value was set in the xml-file.
+        mHeight= GuiTextout::getSingleton().getFontHeight(mLabelFontNr);
+    // Clip the text.
+    if (mLabelPosX + mWidth >= maxX) mWidth  = maxX - mLabelPosX - 1;
+    if (mLabelPosY + mHeight>= maxY) mHeight = maxY - mLabelPosY - 1;
+    draw();
 }
 
 //================================================================================================
 // .
 //================================================================================================
-GuiElementButton::~GuiElementButton()
+GuiElementTextbox::~GuiElementTextbox()
 {}
 
 //================================================================================================
 // .
 //================================================================================================
-void GuiElementButton::setVisible(bool visible)
+void GuiElementTextbox::setVisible(bool visible)
 {
     if (visible == mIsVisible) return;
     mIsVisible = visible;
@@ -78,7 +92,7 @@ void GuiElementButton::setVisible(bool visible)
 //================================================================================================
 // Returns true if the mouse event was on this gadget (so no need to check the other gadgets).
 //================================================================================================
-int GuiElementButton::mouseEvent(int MouseAction, int x, int y, int z)
+int GuiElementTextbox::mouseEvent(int MouseAction, int x, int y, int z)
 {
     if (!mouseWithin(x, y))
     {
@@ -92,7 +106,7 @@ int GuiElementButton::mouseEvent(int MouseAction, int x, int y, int z)
             return GuiManager::EVENT_CHECK_NEXT;
         }
     }
-    else // Mousecursor is over the button.
+    else
     {
         if (!mMouseOver)
         {
@@ -110,7 +124,7 @@ int GuiElementButton::mouseEvent(int MouseAction, int x, int y, int z)
         if (MouseAction == GuiManager::BUTTON_RELEASED && mMouseButDown)
         {
             mMouseButDown = false;
-            if (setState(GuiImageset::STATE_ELEMENT_M_OVER)) draw();
+            if (setState(GuiImageset::STATE_ELEMENT_DEFAULT)) draw();
             return GuiManager::EVENT_USER_ACTION;
         }
         return GuiManager::EVENT_CHECK_DONE; // No need to check other gadgets.
@@ -121,22 +135,10 @@ int GuiElementButton::mouseEvent(int MouseAction, int x, int y, int z)
 //================================================================================================
 // Draw the guiElement.
 //================================================================================================
-void GuiElementButton::draw()
+void GuiElementTextbox::draw()
 {
-    GuiElement::draw(false);
-    // Draw label.
     uint32 *dst = GuiManager::getSingleton().getBuildBuffer();
-    int offX = 0, offY = 0;
-    if (mIsVisible && mStrLabel.size())
-    {
-        if (mState == GuiImageset::STATE_ELEMENT_PUSHED)
-        {
-            ++offX;
-            ++offY;
-        }
-        GuiTextout::getSingleton().printText(mWidth-mLabelPosX-2*offX, mHeight-mLabelPosY-2*offY, dst+mLabelPosX+offX + (mLabelPosY+offY)*mWidth, mWidth,
-                                             mParent->getLayerBG() + mPosX+mLabelPosX+offX + (mPosY+mLabelPosY+offY)*mParent->getWidth(), mParent->getWidth(),
-                                             mStrLabel.c_str(), mLabelFontNr, 0x00ffffff);
-    }
-    mParent->getTexture()->getBuffer()->blitFromMemory(PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8, dst), Box(mPosX, mPosY, mPosX+mWidth, mPosY+mHeight));
+    GuiTextout::getSingleton().printText(mWidth, mHeight, dst, mWidth,
+        mParent->getLayerBG() + mLabelPosX + mLabelPosY*mParent->getWidth(), mParent->getWidth(), mStrLabel.c_str(), mLabelFontNr, mLabelColor);
+    mParent->getTexture()->getBuffer()->blitFromMemory(PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8, dst), Box(mLabelPosX, mLabelPosY, mLabelPosX+mWidth, mLabelPosY+mHeight));
 }

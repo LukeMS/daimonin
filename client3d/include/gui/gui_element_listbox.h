@@ -62,13 +62,7 @@ private:
         unsigned char startLine; /**< Offset to the start line of the mulitline text. **/
     }
     row[SIZE_STRING_BUFFER];
-    Ogre::Real mClose;                 /**< If closed, only the headline is visible. **/
-    Ogre::Real mLastHeight;            /**< The height before window was closed. **/
-    Ogre::Real mMinHeight, mMaxHeight;
-    Ogre::Real mFirstYPos;
-    bool mIsClosing, mIsOpening; /**< User pressed open/close button. **/
     bool mVisible;
-    bool mDragging;
     int  mVScrollOffset;         /**< At which amount the scrollbar was scrolled. **/
     int  mPixelScroll;           /**< Number of pixel already scrolled. **/
     int  mRowsToScroll;          /**< Rows left to scroll. **/
@@ -80,11 +74,9 @@ private:
     int  mSelectedLine;
     int  mGfxBufferSize;
     int  mKeyStart, mKeyCount;
-
-    Ogre::uint32 *mGfxBuffer, *mTxtBuffer;
+    Ogre::uint32 *mGfxBuffer;
     Ogre::Real mTime;
     class GuiElementScrollbar *mScrollBarH, *mScrollBarV;
-    int mLine;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////

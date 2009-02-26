@@ -129,43 +129,6 @@ public:
     ConsoleCmdString;
     static ConsoleCmdString mConsoleCmd[CONSOLE_CMD_SUM];
 
-    typedef struct command_buffer
-    {
-        struct command_buffer *next; // Next in queue.
-        struct command_buffer *prev; // Previous in queue.
-        int len;
-        unsigned char *data;
-    }
-    command_buffer;
-    static command_buffer *input_queue_start,  *input_queue_end;
-    static command_buffer *output_queue_start, *output_queue_end;
-
-    typedef struct
-    {
-        Ogre::String nameip;
-        Ogre::String version;
-        Ogre::String desc1;
-        Ogre::String desc2;
-        Ogre::String desc3;
-        Ogre::String desc4;
-        int player;
-        int port;
-    }
-    mStructServer;
-
-    typedef struct
-    {
-        int fd;
-        Ogre::String inbuf;
-        Ogre::String outbuf;
-        // These are used for the newer 'windowing' method of commands -
-        // number of last command sent, number of received confirmation
-        int command_sent, command_received;
-        // Time (in ms) players commands currently take to execute
-        int command_time;
-    }
-    ClientSocket;
-
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
@@ -174,34 +137,21 @@ public:
         static Network Singleton; return Singleton;
     }
     bool Init();
-    void clearMetaServerData();
-
-    static int   GetInt_String(unsigned char *data);
-    static short GetShort_String(unsigned char *data);
-    static command_buffer *command_buffer_new(unsigned int len, unsigned char *data);
-    static command_buffer *command_buffer_dequeue(command_buffer **queue_start, command_buffer **queue_end);
-    static void command_buffer_free(command_buffer *buf);
-    static void command_buffer_enqueue(command_buffer *buf, command_buffer **queue_start, command_buffer **queue_end);
-    static void checkFileStatus(const char *cmd, char *param, int fileNr);
-    static void AddIntToString(Ogre::String &sl, int data, bool shortInt);
-    static int reader_thread_loop(void *);
-    static int writer_thread_loop(void *);
-    static int send_command_binary(unsigned char cmd, std::stringstream &stream);
+    bool OpenActiveServerSocket();
+    static void CloseSocket();
     static void send_game_command(const char *command);
-
+    static int  send_command_binary(unsigned char cmd, std::stringstream &stream);
+    static int  GetInt_String(unsigned char *data);
+    static short GetShort_String(unsigned char *data);
+    void clearMetaServerData();
     void socket_thread_start();
     void setActiveServer(int nr)
     {
         mActServerNr = nr;
     }
     bool InitSocket();
-    bool OpenSocket(const char *host, int port);
-    bool OpenActiveServerSocket();
-    static void CloseSocket();
-    static void CloseClientSocket();
-    static Ogre::String &getError();
     void read_metaserver_data();
-    void handle_socket_shutdown();
+    void freeRecources();
     void update();
     void contactMetaserver();
     void add_metaserver_data(const char *ip, const char *server, int port, int player, const char *ver,
@@ -256,30 +206,50 @@ private:
     Server;
     std::vector<Server*>mvServer;
 
+    typedef struct command_buffer
+    {
+        struct command_buffer *next; // Next in queue.
+        struct command_buffer *prev; // Previous in queue.
+        int len;
+        unsigned char *data;
+    }
+    command_buffer;
+
+    static int mSocket;
     static bool mAbortThread;
-    static SDL_Thread *input_thread;
-    static SDL_mutex  *input_buffer_mutex;
-    static SDL_cond   *input_buffer_cond;
-    static SDL_Thread *output_thread;
-    static SDL_mutex  *output_buffer_mutex;
-    static SDL_cond   *output_buffer_cond;
-    static SDL_mutex  *socket_mutex;
-    static ClientSocket csocket;
+    static bool mEndianConvert;
+    static SDL_Thread *mInputThread;
+    static SDL_Thread *mOutputThread;
+    static SDL_mutex  *mMutex;
+    static SDL_cond   *mInputCond;
+    static SDL_cond   *mOutputCond;
+    static command_buffer *mInputQueueStart,  *mInputQueueEnd;
+    static command_buffer *mOutputQueueStart, *mOutputQueueEnd;
+
     int mActServerNr;
     struct sockaddr_in  insock;       // Server's attributes
-    static bool mEndianConvert;
-    bool mInitDone;
-
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     void parse_metaserver_data(Ogre::String &strMetaData);
-    Network();
-    ~Network();
+    Network()  {};
+    ~Network() {};
     Network(const Network&); // disable copy-constructor.
+    bool OpenSocket(const char *host, int port);
+    static void CloseClientSocket();
+    static Ogre::String &getError();
+    static command_buffer *command_buffer_new(unsigned int len, unsigned char *data);
+    static command_buffer *command_buffer_dequeue(command_buffer **queue_start, command_buffer **queue_end);
     static int strToInt(unsigned char *buf, int bytes); /**< Must be private to make it thread safe **/
     static bool console_command_check(Ogre::String cmd);
     static void do_console_cmd(Ogre::String &stCmd, int cmd);
+    static void command_buffer_free(command_buffer *buf);
+    static void command_buffer_enqueue(command_buffer *buf, command_buffer **queue_start, command_buffer **queue_end);
+    static void checkFileStatus(const char *cmd, char *param, int fileNr);
+    static void AddIntToString(Ogre::String &sl, int data, bool shortInt);
+    static int reader_thread_loop(void *);
+    static int writer_thread_loop(void *);
+
 };
 
 #endif

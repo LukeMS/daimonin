@@ -429,7 +429,6 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
 
         case OIS::KC_F1:
         {
-
                         static bool tst = true;
                         tst = !tst;
                         GuiManager::getSingleton().sendMsg(GuiManager::GUI_BUTTON_TEST, GuiManager::MSG_SET_VISIBLE,(void*) tst);
@@ -604,8 +603,8 @@ bool Events::mouseMoved(const OIS::MouseEvent &e)
 {
     const int MOUSE_POINTER_SIZE = 10;
     mMouse.x = e.state.X.abs;
-    mMouse.y = e.state.Y.abs; // Scrollwheel.
-    mMouse.z = e.state.Z.abs;
+    mMouse.y = e.state.Y.abs;
+    mMouse.z = e.state.Z.rel; // Mouse-wheel.
     if (mMouse.x > e.state.width - MOUSE_POINTER_SIZE) mMouse.x = e.state.width - MOUSE_POINTER_SIZE;
     if (mMouse.y > e.state.height- MOUSE_POINTER_SIZE) mMouse.y = e.state.height- MOUSE_POINTER_SIZE;
     GuiManager::getSingleton().mouseEvent(GuiManager::MOUSE_MOVEMENT, mMouse);

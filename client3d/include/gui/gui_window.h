@@ -26,12 +26,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <vector>
 #include <Ogre.h>
-#include "item.h"
-#include "gui_textout.h"
 #include "gui_element_slot.h"
 #include "gui_element_statusbar.h"
-
-// Define: Element elements are small interactive objects.
 
 /**
  ** This class provides a graphical window.
@@ -63,14 +59,14 @@ public:
         w = mWidth;
         h = mHeight;
     }
-    int getWidth()
-    {
-        return mWidth;
-    }
-    int getHeight()
-    {
-        return mHeight;
-    }
+    int getWidth()                 { return mWidth;    }
+    int getHeight()                { return mHeight;   }
+    bool isInit()                  { return mInit;     }
+    int getID()                    { return mWindowNr; }
+    int getSumElements()           { return (int)mvElement.size(); }
+    Ogre::Texture *getTexture()    { return mTexture.getPointer(); }
+    Ogre::PixelBox *getPixelBox()  { return &mSrcPixelBox;   }
+    Ogre::uint32 *getLayerBG()     { return mWinLayerBG;     }
     unsigned char getZPos()
     {
         return mInit?mOverlay->getZOrder():0;
@@ -83,22 +79,6 @@ public:
     bool mouseWithin(int x, int y)
     {
         return (!mInit || !isVisible() || x < mPosX || x > mPosX + mWidth || y < mPosY || y > mPosY + mHeight)?false:true;
-    }
-    const char *getTooltip()
-    {
-        return mStrTooltip.c_str();
-    }
-    Ogre::Texture *getTexture()
-    {
-        return mTexture.getPointer();
-    }
-    Ogre::PixelBox *getPixelBox()
-    {
-        return &mSrcPixelBox;
-    }
-    Ogre::uint32 *getLayerBG()
-    {
-        return mWinLayerBG;
     }
     void centerWindowOnMouse(int x, int y);
     int sendMsg(int elementNr, int message, void *parm1, void *parm2, void *parm3);
@@ -122,23 +102,12 @@ public:
         if (mSlotReference) mSlotReference->moveDragOverlay();
     }
 
-    int getID();
-    int getSumElements()
-    {
-        return (int)mvElement.size();
-    }
-    bool isInit()
-    {
-        return mInit;
-    }
-
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     static GuiElementSlot *mSlotReference;
     static int mMouseDragging;
-    static Ogre::String mStrTooltip;
     Ogre::String mResourceName;
     short mPosX, mPosY;
     int mWindowNr;
@@ -151,9 +120,8 @@ private:
     bool mInit;
     bool mSizeRelative;
     bool mLockSlots; /**< TODO: Lock all slots, so no item can accidental be removed. **/
-
     std::vector<class GuiElement*>mvElement;
-    std::vector<class GuiStatusbar*>mvStatusbar;
+    std::vector<class GuiStatusbar*>mvStatusbar; // Todo: change this to mvElement!
     Ogre::Overlay *mOverlay;
     Ogre::OverlayElement *mElement;
     Ogre::PixelBox mSrcPixelBox;

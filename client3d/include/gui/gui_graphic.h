@@ -23,7 +23,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 
 /**
- ** This class provides a graphical element, drawn into a gui element.
+ ** This class provides draw functions.
  *****************************************************************************/
 #ifndef GUI_GRAPHIC_H
 #define GUI_GRAPHIC_H
@@ -38,7 +38,8 @@ public:
     // ////////////////////////////////////////////////////////////////////
     static GuiGraphic &getSingleton()
     {
-        static GuiGraphic Singleton; return Singleton;
+        static GuiGraphic Singleton;
+        return Singleton;
     }
     void restoreWindowBG(int w, int h, Ogre::uint32 *bak, Ogre::uint32 *dst, int bakRowSkip, int dstRowSkip);
     void drawGfxToBuffer(int w, int h, int srcW, int srcH, Ogre::uint32 *src, Ogre::uint32 *bak, Ogre::uint32 *dst, int srcRowSkip, int bakRowSkip, int dstRowSkip);
