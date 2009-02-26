@@ -34,22 +34,9 @@ const int MIN_SLIDER_SIZE = 15;
 const int SLIDER_INNER_OFFSET = 3;
 
 // TODO:
-// Disable slider if it doesnt fit into the window.
-// Print a warning (logfile) if the up/down buttons dont fit into the window.
+// Disable buttons/slider if they doesnt fit into the window.
 // Keep slider-pos when lines were added.
-
-
-int GuiElementScrollbar::sendMsg(int element, void *parm1, void *parm2, void *parm3)
-{
-    return 0;
-}
-
-int GuiElementScrollbar::getScrollOffset()
-{
-    int scroll = mLastScrollAmount;
-    mLastScrollAmount = 0;
-    return scroll;
-}
+// support horizontal scrollbar.
 
 //================================================================================================
 // Constructor.
@@ -102,10 +89,20 @@ GuiElementScrollbar::~GuiElementScrollbar()
 //================================================================================================
 //
 //================================================================================================
+int GuiElementScrollbar::getScrollOffset()
+{
+    int scroll = mLastScrollAmount;
+    mLastScrollAmount = 0;
+    return scroll;
+}
+
+//================================================================================================
+//
+//================================================================================================
 bool GuiElementScrollbar::mouseOverSlider(int x, int y)
 {
     if (mHorizontal)
-        return false; // todo
+        return false;
     else
         return (x > mStartX && x < mStopX && y > mStartY + mSliderPos && y < mStartY + mSliderPos + mSliderSize );
 }
@@ -131,7 +128,6 @@ int GuiElementScrollbar::mouseEvent(int MouseAction, int x, int y, int z)
         }
     }
     // Test the slider.
-    // Todo: support mouswheel.
     if (mDragging || mouseOverSlider(x,y))
     {
         static float dragDelta = 0;
@@ -140,7 +136,7 @@ int GuiElementScrollbar::mouseEvent(int MouseAction, int x, int y, int z)
         {
             mMouseOver = true;
             if (setState(GuiImageset::STATE_ELEMENT_M_OVER)) draw();
-            GuiManager::getSingleton().setTooltip(mStrTooltip.c_str());
+            //GuiManager::getSingleton().setTooltip(mStrTooltip.c_str());
             return GuiManager::EVENT_CHECK_DONE;
         }
         if (MouseAction == GuiManager::BUTTON_PRESSED && !mMouseButDown)
@@ -311,7 +307,7 @@ void GuiElementScrollbar::resize(int newWidth, int newHeight)
     }
     int w = mStopX-mStartX;
     int h = mStopY-mStartY;
-    delete[] mGfxBuffer; // delete a NULL-Pointer is save in c++.
+    delete[] mGfxBuffer;
     mGfxBuffer = new uint32[w*h];
 
     // Background.

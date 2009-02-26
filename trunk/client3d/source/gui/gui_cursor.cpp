@@ -26,7 +26,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "gui_imageset.h"
 #include "gui_manager.h"
 #include "resourceloader.h"
-#include "logger.h"
 
 using namespace Ogre;
 

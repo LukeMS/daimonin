@@ -200,12 +200,10 @@ public:
     // ////////////////////////////////////////////////////////////////////
     static GuiManager &getSingleton()
     {
-        static GuiManager singleton; return singleton;
+        static GuiManager singleton;
+        return singleton;
     }
-    bool mouseInsideGui()
-    {
-        return mMouseInside;
-    }
+    bool mouseInsideGui() { return mMouseInside; }
     Ogre::Overlay *loadResources(int w, int h, Ogre::String name);
     void windowToFront(int window);
     void loadResources(Ogre::Resource *res);
@@ -219,14 +217,12 @@ public:
     bool mouseEvent(int MouseAction, Ogre::Vector3 &mouse);
     bool keyEvent(const int keyChar, const unsigned int key);
     void setTooltip(const char *text, bool systemMessage = false);
-    void displaySystemMessage(const char *text)
-    {
-        setTooltip(text, true);
-    }
+    void displaySystemMessage(const char *text) { setTooltip(text, true); }
     void centerWindowOnMouse(int window);
     void showWindow(int window, bool visible);
-    int getScreenWidth()     { return mScreenWidth; }
-    int getScreenHeight()    { return mScreenHeight;}
+    Ogre::uint32 *getBuildBuffer()    { return mBuildBuffer;}
+    int getScreenWidth()    { return mScreenWidth; }
+    int getScreenHeight()   { return mScreenHeight;}
     void startTextInput(int window, int winElement, int maxChars, bool blockNumbers=false, bool blockWhitespaces=false);
     void resetTextInput();
     bool brokenTextInput();
@@ -282,9 +278,9 @@ private:
     unsigned int mScreenWidth, mScreenHeight;
     unsigned long mTooltipDelay;
     bool mIsDragging;
-    bool mMouseInside;          /**< Mouse is used for gui related stuff at the moment. **/
+    bool mMouseInside;           /**< Mouse is used for gui related stuff at the moment. **/
     bool mTextInputUserAction;
-    Ogre::uint32 *mBuildBuffer;  /**< Needed for blitFromMemory(). **/
+    Ogre::uint32 *mBuildBuffer;  /**< Buffer to draw all graphics before blitting them into the texture. **/
     Ogre::Vector3 mMouse;
     Ogre::Overlay *mOverlay;
     Ogre::OverlayElement *mElement;

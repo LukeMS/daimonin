@@ -43,7 +43,6 @@ using namespace Ogre;
 
 const int MIN_GFX_SIZE = 1 << 2;
 int GuiWindow::mMouseDragging = -1;
-String GuiWindow::mStrTooltip ="";
 GuiElementSlot *GuiWindow::mSlotReference = 0;
 
 //================================================================================================
@@ -51,16 +50,14 @@ GuiElementSlot *GuiWindow::mSlotReference = 0;
 //================================================================================================
 void GuiWindow::freeRecources()
 {
-    for (std::vector<GuiElement*>::iterator i = mvElement.begin(); i < mvElement.end(); ++i)
-        delete (*i);
-    mvElement.clear();
-
-    // Delete the statusbars.
+    // Delete the statusbars. WILL BE REPLACED...
     for (std::vector<GuiStatusbar*>::iterator i = mvStatusbar.begin(); i < mvStatusbar.end(); ++i)
         delete (*i);
     mvStatusbar.clear();
 
-    // Set all shared pointer to null.
+    for (std::vector<GuiElement*>::iterator i = mvElement.begin(); i < mvElement.end(); ++i)
+        delete (*i);
+    mvElement.clear();
     delete[] mWinLayerBG;
     mTexture.setNull();
     mInit = false;
@@ -84,11 +81,6 @@ void GuiWindow::Init(TiXmlElement *xmlElem, const char *resourceWin, const char 
     mSrcPixelBox = GuiImageset::getSingleton().getPixelBox();
     mInit = true;
     parseWindowData(xmlElem, resourceDnD, defaultZPos);
-}
-
-int GuiWindow::getID()
-{
-    return mWindowNr;
 }
 
 //================================================================================================
@@ -168,13 +160,6 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, const char *resourceDnD, 
         if (mDragPosX2 > mWidth) mDragPosX2 = mWidth;
         if ((strTmp = xmlElem->Attribute("height"))) mDragPosY2 = mDragPosY1 + atoi(strTmp);
         if (mDragPosY2 > mHeight) mDragPosY2 = mHeight;
-    }
-    // ////////////////////////////////////////////////////////////////////
-    // Parse the Tooltip entries.
-    // ////////////////////////////////////////////////////////////////////
-    if ((xmlElem = xmlRoot->FirstChildElement("Tooltip")))
-    { // We will show tooltip only if mouse is over the moving area.
-        if ((strTmp = xmlElem->Attribute("text"))) mStrTooltip = strTmp;
     }
     // ////////////////////////////////////////////////////////////////////
     // Now we have all data to create the window..

@@ -24,6 +24,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "object_equipment.h"
 #include "particle_manager.h"
 #include "sound.h"
+#include "gui_manager.h"
 #include "events.h"
 #include "option.h"
 #include "logger.h"
@@ -269,6 +270,8 @@ ObjectEquipment::ObjectEquipment(Entity *parentEntity)
     setTexture(0, 0, 0);
     setTexture(2, 1, 0); setTexture(3, 2, 0); setTexture(4, 3, 0);
     setTexture(5, 4, 0); setTexture(6, 5, 0); setTexture(7, 6, 0);
+    // We need a buffer to draw the gfx, before we blit it to the texture.
+    GuiManager::getSingleton().resizeBuildBuffer(MAX_MODEL_TEXTURE_SIZE*MAX_MODEL_TEXTURE_SIZE);
 }
 
 //================================================================================================
@@ -277,17 +280,11 @@ ObjectEquipment::ObjectEquipment(Entity *parentEntity)
 inline void ObjectEquipment::drawBopyPart(sPicture &picPart, uint32 texColor, uint32 texNumber)
 {
     uint32 srcColor, dstColor;
+    uint32 *dst = GuiManager::getSingleton().getBuildBuffer();
+    uint32 *buf = dst;
     uint32 *texRace = (uint32*)shadowImage.getData();
     int srcWidth = (int)shadowImage.getWidth();
-    int dstWidth = (int)mTexture->getWidth();
     texColor = texRace[texColor & 0xff];
-    PixelBox pb = mTexture->getBuffer()->lock(
-                      Box(picPart.dstX,
-                          picPart.dstY,
-                          picPart.dstX + picPart.w,
-                          picPart.dstY + picPart.h),
-                      HardwareBuffer::HBL_NORMAL);
-    uint32 *dst = (uint32*)pb.data;
     // Fill the buffer with the selected color (darkened by the shadow texture).
     for (int y=0; y < picPart.h; ++y)
     {
@@ -306,12 +303,12 @@ inline void ObjectEquipment::drawBopyPart(sPicture &picPart, uint32 texColor, ui
                     srcColor <<= 8;
                     if ((dstColor & 0xff0000) >= srcColor) dstColor-= srcColor; else dstColor-= dstColor & 0xff0000;
                 }
-                dst[x] = dstColor;
+                *buf = dstColor;
             }
+            ++buf;
         }
-        dst+= dstWidth;
     }
-    mTexture->getBuffer()->unlock();
+    mTexture->getBuffer()->blitFromMemory(PixelBox(picPart.w, picPart.h, 1, PF_A8R8G8B8, dst), Box(picPart.dstX, picPart.dstY, picPart.dstX+picPart.w, picPart.dstY+picPart.h));
 
 #ifdef WRITE_MODELTEXTURE_TO_FILE
     // Write the model-texture as png to disk.

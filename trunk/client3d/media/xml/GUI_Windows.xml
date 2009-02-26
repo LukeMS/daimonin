@@ -28,7 +28,6 @@
     <Size      width= "150" height= "88" />
     <Pos       x= "5" y= "5" />
     <DragArea  x= "0" y= "0" width= "131" height= "17" />
-    <Tooltip  text= "This window shows the engine statistics." />
     <!--=============================================-->
     <!-- Borderlines                                 -->
     <!--=============================================-->
@@ -95,7 +94,6 @@
     <Size      width= "348" height= "88" />
     <Alignment x= "center" />
     <Pos       x ="0" y= "0" />
-    <Tooltip  text= "This is the Player Info Window." />
     <!--=============================================-->
     <!-- Window Body                                 -->
     <!--=============================================-->
@@ -109,7 +107,7 @@
     <!--=============================================-->
     <Button name = "Buton_info">
       <Image name = "Player-Info-Button"/>
-      <Pos x= "70" y= "2" />
+      <Pos x= "70" y= "8" />
     </Button>
     <Graphic>
       <Image name = "Player-Portrait"/>
@@ -128,7 +126,6 @@
     <Alignment x="right" />
     <Pos       x= "280"  y= "0" />
     <DragArea  x= "0"    y= "0" width= "280" height= "18" />
-    <Tooltip  text= "Chat Window." />
 
     <Graphic>
       <Image name = "Background-General"/>
@@ -198,7 +195,6 @@
     <Alignment x="right" />
     <Pos       x= "280"  y= "269" />
     <DragArea  x= "0"    y= "0" width= "280" height= "18" />
-    <Tooltip  text= "Message Window." />
 
     <Graphic>
       <Image name = "Background-General"/>
@@ -267,7 +263,6 @@
     <Size     width= "512" height= "512" />
     <Pos      x= "200" y= "200" />
     <DragArea x= "0" y= "0" width= "512" height= "29" />
-    <Tooltip  text= "Select your server." />
     <!--=============================================-->
     <!-- Seamless Background                         -->
     <!--=============================================-->
@@ -400,7 +395,6 @@
     <Size     width= "512" height= "512" />
     <Pos      x= "200" y= "200" />
     <DragArea x= "0" y= "0" width= "512" height= "29" />
-    <Tooltip  text= "Select the server." />
     <!--=============================================-->
     <!-- Seamless Background                         -->
     <!--=============================================-->
@@ -520,7 +514,6 @@
     <Size     width= "303" height= "350" />
     <Pos      x= "200" y= "200" />
     <DragArea x= "0" y= "0" width= "284" height= "29" />
-    <Tooltip  text= "Conversation Window" />
     <!--=============================================-->
     <!-- Seamless Background                         -->
     <!--=============================================-->
@@ -634,7 +627,6 @@
     <Alignment x= "left" />
     <Pos       x ="5" y= "100" />
     <DragArea x= "0" y= "0" width= "279" height= "30" />
-    <Tooltip  text= "Equipment window." />
     <!--=============================================-->
     <!-- Seamless Background                         -->
     <!--=============================================-->
@@ -865,7 +857,6 @@
     <Alignment x= "left" />
     <Pos       x ="335" y= "100" />
     <DragArea x= "0" y= "0" width= "279" height= "30" />
-    <Tooltip  text= "Shop window" />
     <!--=============================================-->
     <!-- Seamless Background                         -->
     <!--=============================================-->
@@ -1088,6 +1079,7 @@
       <Image name = "Button-01-Standard"/>
       <Pos   x= "53" y= "230" />
       <Label x= "5" y= "4" font="02" text= "Lock1" />
+      <Tooltip  text= "This button says: Lock1" />
     </Button>
   </Window>
 
@@ -1101,7 +1093,6 @@
     <Alignment x= "left" />
     <Pos       x ="680" y= "120" />
     <DragArea x= "0" y= "0" width= "279" height= "30" />
-    <Tooltip  text= "Trade window" />
     <!--=============================================-->
     <!-- Seamless Background                         -->
     <!--=============================================-->
@@ -1296,7 +1287,6 @@
     <Alignment x= "left" />
     <Pos       x ="680" y= "100" />
     <DragArea x= "0" y= "0" width= "279" height= "30" />
-    <Tooltip  text= "Shop window" />
     <!--=============================================-->
     <!-- Seamless Background                         -->
     <!--=============================================-->
@@ -1436,7 +1426,6 @@
     <Alignment x= "left" />
     <Pos       x="580" y= "100" />
     <DragArea  x= "0" y= "0" width= "279" height= "30" />
-    <Tooltip  text= "Container1" />
     <!--=============================================-->
     <!-- Seamless Background                         -->
     <!--=============================================-->

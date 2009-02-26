@@ -28,6 +28,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "gui_element_table.h"
 #include "gui_window.h"
 #include "gui_manager.h"
+#include "gui_textout.h"
 
 using namespace Ogre;
 
@@ -261,36 +262,31 @@ void GuiTable::addRow(const char *row)
 //================================================================================================
 void GuiTable::draw()
 {
-    Texture *texture = mParent->getTexture();
-    int startX = mPosX;
+    uint32 *dst = GuiManager::getSingleton().getBuildBuffer();
+    uint32 *bak = mParent->getLayerBG() + mPosX + mPosY*mParent->getWidth();
+    // Draws a gfx into the window texture.
+    int startX = 0;
     for (std::vector<ColumnEntry*>::iterator i = mvColumn.begin(); i < mvColumn.end(); ++i)
     {
         if ((*i)->label.size())
         {
-            Texture *texture = mParent->getTexture();
-            PixelBox pb = texture->getBuffer()->lock(Box(startX, mPosY, startX+(*i)->width, mPosY+mHeightColumnLabel), HardwareBuffer::HBL_DISCARD);
-            GuiTextout::getSingleton().printText((*i)->width, mHeightColumnLabel, (uint32*)pb.data, texture->getWidth(),
-                                                 mParent->getLayerBG() + startX + mPosY*mParent->getWidth(), mParent->getWidth(),
+            GuiTextout::getSingleton().printText((*i)->width, mHeightColumnLabel, dst + startX, mWidth,
+                                                 bak + startX, mParent->getWidth(),
                                                  (*i)->label.c_str(), mFontNr, 0x00ffffff);
-            texture->getBuffer()->unlock();
         }
         startX+= (*i)->width;
     }
     // Draw the line background.
-    PixelBox pb = texture->getBuffer()->lock(Box(mPosX, mPosY+mHeightColumnLabel, mPosX+mWidth, mPosY+mHeight), HardwareBuffer::HBL_DISCARD);
-    uint32 *dest_data = (uint32*)pb.data;
+    uint32 *buf = dst + mHeightColumnLabel * mWidth;
     int y = 0, h = mHeightColumnLabel;
     while (h < mHeight)
     {
         for (int line =0; line < mHeightRow && h++ < mHeight; ++line)
-        {
             for (int x = 0; x < mWidth; ++x)
-                dest_data[x] = mColorRowBG[y&1];
-            dest_data+=texture->getWidth();
-        }
+                *buf++ = mColorRowBG[y&1];
         ++y;
     }
-    texture->getBuffer()->unlock();
+    mParent->getTexture()->getBuffer()->blitFromMemory(PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8, dst), Box(mPosX, mPosY, mPosX+mWidth, mPosY+mHeight));
 }
 
 //================================================================================================
@@ -309,26 +305,21 @@ void GuiTable::drawSelection(int newSelection)
 void GuiTable::drawRow(int row, uint32 bgColor)
 {
     if (row < 0) return;
-    Texture *texture = mParent->getTexture();
-    int offset = mHeightColumnLabel + row * mHeightRow;
+    uint32 *dst = GuiManager::getSingleton().getBuildBuffer();
     // Draw the background.
-    PixelBox pb = texture->getBuffer()->lock(Box(mPosX, mPosY+offset, mPosX+mWidth, mPosY+offset+mHeightRow), HardwareBuffer::HBL_DISCARD);
-    uint32 *dest_data = (uint32*)pb.data;
-    for (int line =0; line < mHeightRow; ++line)
-    {
-        for (int x = 0; x < mWidth; ++x)
-            dest_data[x] = bgColor;
-        dest_data+=texture->getWidth();
-    }
+    uint32 *buf = dst;
+    for (int i =0; i < mHeightRow*mWidth; ++i)
+        *buf++ = bgColor;
     // Print the text.
+    buf = dst + TEXT_OFFSET + TEXT_OFFSET*mWidth;
     if (mvRow[row].size())
     {
-        int x1, y1 = TEXT_OFFSET;
+        int offX, fontHeight;
         std::string::size_type colStart, colEnd, subRowStrt, subRowEnd = 0;
         for (std::vector<SubRowEntry*>::iterator subRow = mvSubRow.begin(); subRow < mvSubRow.end(); ++subRow)
         {
-            int fontHeight = GuiTextout::getSingleton().getFontHeight((*subRow)->fontNr);
-            x1 = TEXT_OFFSET;
+            offX = 0;
+            fontHeight = GuiTextout::getSingleton().getFontHeight((*subRow)->fontNr);
             subRowStrt = subRowEnd;
             subRowEnd = mvRow[row].find(SEPARATOR_SUBROW, subRowStrt);
             if (subRowEnd == std::string::npos) subRowEnd = mvRow[row].size();
@@ -339,14 +330,15 @@ void GuiTable::drawRow(int row, uint32 bgColor)
                 colEnd = mvRow[row].find(SEPARATOR_COL, colStart);
                 if (colEnd > subRowEnd || colEnd == std::string::npos)
                     colEnd = subRowEnd;
-                GuiTextout::getSingleton().printText((*col)->width, fontHeight, (uint32*)pb.data + x1 +  y1*texture->getWidth(), texture->getWidth(),
+                GuiTextout::getSingleton().printText((*col)->width, fontHeight, buf + offX, mWidth,
                                                      &bgColor, 0, mvRow[row].substr(colStart, colEnd-colStart).c_str(), (*subRow)->fontNr, (*subRow)->color);
                 if (++colEnd >= subRowEnd) break;
-                x1 += (*col)->width;
+                offX += (*col)->width;
             }
             if (++subRowEnd >= mvRow[row].size()) break;
-            y1+= fontHeight;
+            buf+= fontHeight*mWidth;
         }
     }
-    texture->getBuffer()->unlock();
+    int offY = mPosY+mHeightColumnLabel + row * mHeightRow;
+    mParent->getTexture()->getBuffer()->blitFromMemory(PixelBox(mWidth, mHeightRow, 1, PF_A8R8G8B8, dst), Box(mPosX, offY, mPosX+mWidth, offY+mHeightRow));
 }

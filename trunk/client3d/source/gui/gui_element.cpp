@@ -32,16 +32,25 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Ogre;
 
+//================================================================================================
+//
+//================================================================================================
 int GuiElement::sendMsg(int, void *, void *, void *)
 {
     return 0;
 }
 
+//================================================================================================
+//
+//================================================================================================
 int GuiElement::mouseEvent(int, int, int, int)
 {
     return GuiManager::EVENT_CHECK_NEXT; // No action here, check the other gadgets.
 }
 
+//================================================================================================
+//
+//================================================================================================
 int GuiElement::keyEvent(const int, const unsigned int)
 {
     return GuiManager::EVENT_CHECK_NEXT;
@@ -55,15 +64,15 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
     TiXmlElement *xmlElement;
     String strValue;
     const char *tmp;
+    int maxX, maxY;
     // Set default values.
     mState = GuiImageset::STATE_ELEMENT_DEFAULT;
     mFontNr= 0;
-    mWidth = 1; mHeight= 1; // Default values (must be 2).
+    mWidth = 1; mHeight= 1; // Default values (must be 1).
     mIsVisible = true;
     mGfxSrc    = 0; // No gfx is defined (fallback to color fill).
     mFillColor = 0;
     mParent= (GuiWindow*)parent;
-    int maxX, maxY;
     mParent->getSize(maxX, maxY);
     // ////////////////////////////////////////////////////////////////////
     // Parse the element.
@@ -122,6 +131,7 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
     }
     if (mPosX + mWidth >= maxX) mWidth = maxX-mPosX;
     if (mPosY + mHeight>= maxY) mHeight= maxY-mPosY;
+    GuiManager::getSingleton().resizeBuildBuffer(mWidth*mHeight);
     // ////////////////////////////////////////////////////////////////////
     // Parse the label (if given).
     // ////////////////////////////////////////////////////////////////////
@@ -138,13 +148,8 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
         if ((tmp = xmlElement->Attribute("blue")))  mLabelColor+= atoi(tmp);
         if ((tmp = xmlElement->Attribute("text")))  mStrLabel = tmp;
     }
-    // ////////////////////////////////////////////////////////////////////
-    // Parse the Tooltip entry.
-    // ////////////////////////////////////////////////////////////////////
-    if ((xmlElement = xmlElem->FirstChildElement("Tooltip")))
-    {
-        if ((tmp = xmlElement->Attribute("text"))) mStrTooltip = tmp;
-    }
+/*
+*/
     mIsVisible = true;
 }
 
@@ -165,12 +170,10 @@ bool GuiElement::setState(int state)
 // Draws a graphic to the window texture.
 // If the gfx is bigger than the source image, the source image will be repeated.
 //================================================================================================
-void GuiElement::draw()
+void GuiElement::draw(bool uploadToTexture)
 {
-    Texture *texture = mParent->getTexture();
+    uint32 *dst = GuiManager::getSingleton().getBuildBuffer();
     uint32 *bak = mParent->getLayerBG() + mPosX + mPosY*mParent->getWidth();
-    PixelBox pb = texture->getBuffer()->lock(Box(mPosX, mPosY, mPosX+mWidth, mPosY+mHeight), HardwareBuffer::HBL_DISCARD);
-    uint32 *dst = (uint32*)pb.data;
     // Draws a gfx into the window texture.
     if (mGfxSrc)
     {
@@ -180,7 +183,7 @@ void GuiElement::draw()
         if (mIndex < 0) // This gfx is part of the background.
             GuiGraphic::getSingleton().drawGfxToBuffer(mWidth, mHeight, mGfxSrc->w, mGfxSrc->h, (uint32*)src.data, bak, bak, srcRowSkip, mParent->getWidth(), mParent->getWidth());
         else if (mIsVisible)
-            GuiGraphic::getSingleton().drawGfxToBuffer(mWidth, mHeight, mGfxSrc->w, mGfxSrc->h, (uint32*)src.data, bak, dst, srcRowSkip, mParent->getWidth(), (int)texture->getWidth());
+            GuiGraphic::getSingleton().drawGfxToBuffer(mWidth, mHeight, mGfxSrc->w, mGfxSrc->h, (uint32*)src.data, bak, dst, srcRowSkip, mParent->getWidth(), mWidth);
     }
     // Draws a color area to the window texture.
     else
@@ -188,9 +191,10 @@ void GuiElement::draw()
         if (mIndex < 0) // The gfx is part of the background.
             GuiGraphic::getSingleton().drawColorToBuffer(mWidth, mHeight, mFillColor, bak, mParent->getWidth());
         else if (mIsVisible)
-            GuiGraphic::getSingleton().drawColorToBuffer(mWidth, mHeight, mFillColor, bak, dst, mParent->getWidth(), (int)texture->getWidth());
+            GuiGraphic::getSingleton().drawColorToBuffer(mWidth, mHeight, mFillColor, bak, dst, mParent->getWidth(), mWidth);
     }
     if (mIndex < 0 || !mIsVisible)
-        GuiGraphic::getSingleton().restoreWindowBG(mWidth, mHeight, bak, dst, mParent->getWidth(), (int)texture->getWidth());
-    texture->getBuffer()->unlock();
+        GuiGraphic::getSingleton().restoreWindowBG(mWidth, mHeight, bak, dst, mParent->getWidth(), mWidth);
+    if (uploadToTexture)
+        mParent->getTexture()->getBuffer()->blitFromMemory(PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8, dst), Box(mPosX, mPosY, mPosX+mWidth, mPosY+mHeight));
 }
