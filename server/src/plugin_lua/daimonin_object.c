@@ -616,13 +616,13 @@ int GameObject_init(lua_State *L)
 /* FUNCTIONSTART -- Here all the Lua plugin functions come */
 /*****************************************************************************/
 /* Name   : GameObject_SetPosition                                           */
-/* Lua    : object:SetPosition(map, x, y, mode, ins_flags)                   */
+/* Lua    : object:SetPosition(map, x, y, flags, ins_flags)                  */
 /* Info   : Teleports op to x,y of object.map or map (when given) according  */
-/*          to mode and ins_flags.                                           */
+/*          to flags and ins_flags.                                          */
 /*          WARNING: a script developer must have in mind that SetPosition() */
 /*          can result in the destruction of the transferred object. The     */
 /*          return value is important to check!                              */
-/*          mode is:                                                         */
+/*          flags are:                                                       */
 /*            game.MFLAG_FIXED_POS - fixed location.                         */
 /*            game.MFLAG_RANDOM_POS_1 - random location, 1 square radius.    */
 /*            game.MFLAG_RANDOM_POS_2 - random location, 2 square radius.    */
@@ -632,8 +632,7 @@ int GameObject_init(lua_State *L)
 /*              only.                                                        */
 /*          Of these, the first five are in order of precedence while the    */
 /*          last may be used in conjunction with any of the others or on its */
-/*          own (IOW the last is actually flag). If none are, given the      */
-/*          default is fixed location.                                       */
+/*          own. If none are, given the default is fixed location.           */
 /*          ins_flags are any combination of zero or more of:                */
 /*            game.INS_NO_FORCE - do not insert at the default spot if no    */
 /*              free spot is found.                                          */
@@ -658,7 +657,6 @@ static int GameObject_SetPosition(lua_State *L)
                 y,
                 flags = MAP_STATUS_FIXED_POS,
                 ins_flags = INS_IGNORE_TERRAIN,
-                mode,
                 ret;
 
     /* Small hack to allow optional first map parameter */
