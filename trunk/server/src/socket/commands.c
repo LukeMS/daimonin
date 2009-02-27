@@ -112,8 +112,8 @@ CommArray_s Commands[]                  =
     {"vol",          command_vol,            1.0f},
     {"mw",           command_mw,             1.0f},
     /* VOL/GM/DM */
-	{"mutelevel",      command_mutelevel,1.0f},
-	{"dm_connections",  command_dm_connections, 1.0f},
+    {"mutelevel",      command_mutelevel,1.0f},
+    {"dm_connections",  command_dm_connections, 1.0f},
     {"dm_list",        command_dm_list,1.0f},
     {"malloc",            command_malloc,   0.0},        /* check the server stats */
     {"kick",            command_kickcmd, 0.0},            /* kick with a 1m temp login ban */
@@ -197,7 +197,7 @@ CommArray_s WizCommands[]           =
     /*
     TODO: fix password related commands who changed by the account patch
     {"dm_pwd", command_dm_password,0.0},
-    {"dm_load",	command_dmload,0.0}, // disabled because account patch
+    {"dm_load", command_dmload,0.0}, // disabled because account patch
 
     {"dropall",        command_dropall,        1.0},
     {"listen", command_listen,    0.0}, // our channel system should work different
@@ -245,15 +245,15 @@ void init_commands()
 
 CommArray_s * find_command_element(char *cmd, CommArray_s *commarray, int commsize)
 {
-	CommArray_s    *asp, dummy;
-	char           *cp;
+    CommArray_s    *asp, dummy;
+    char           *cp;
 
-	for (cp = cmd; *cp; cp++)
-		*cp = tolower(*cp);
+    for (cp = cmd; *cp; cp++)
+        *cp = tolower(*cp);
 
-	dummy.name = cmd;
-	asp = (CommArray_s *) bsearch((void *) &dummy, (void *) commarray, commsize, sizeof(CommArray_s), compare_A);
-	return asp;
+    dummy.name = cmd;
+    asp = (CommArray_s *) bsearch((void *) &dummy, (void *) commarray, commsize, sizeof(CommArray_s), compare_A);
+    return asp;
 }
 
 #define DEBUG_PROCESS_QUEUE
@@ -978,7 +978,7 @@ void cs_cmd_fire(char *params, int len, NewSocket *ns)
     /* first, call move_player() to determinate we CAN move.
     * have in mind we are perhaps confused - so dir can change!
     */
-    dir = 	move_player(op, dir, FALSE);
+    dir =     move_player(op, dir, FALSE);
 
     if(dir == -1) /* move_player() disallow our move! */
         return;

@@ -221,19 +221,19 @@ void                        party_client_group_kill(object *member);
 void                        party_client_group_update(object *member, int flag);
 /* c_range.c */
 void                        fire(object *op, int dir);
-int							fire_magic_tool(object *owner, object *op, int dir);
+int                         fire_magic_tool(object *owner, object *op, int dir);
 int                         command_cast_spell(object *op, char *params);
 /* c_wiz.c */
-int							command_dm_connections(object *op, char *params);
-int							command_dmload(object *op, char *params);
-int							check_dmload(const char*name, const char *pwd);
+int                         command_dm_connections(object *op, char *params);
+int                         command_dmload(object *op, char *params);
+int                         check_dmload(const char*name, const char *pwd);
 int                         command_setgod(object *op, char *params);
 int                         command_kickcmd(object *op, char *params);
 int                         command_kick(object *op, char *params);
 int                         command_shutdown(object *op, char *params);
 int                         command_goto(object *op, char *params);
 int                         command_generate(object *op, char *params);
-int							command_mutelevel(object *op, char *params);
+int                         command_mutelevel(object *op, char *params);
 int                         command_summon(object *op, char *params);
 int                         command_teleport(object *op, char *params);
 int                         command_create(object *op, char *params);
@@ -507,7 +507,7 @@ CFParm                     *CFMapSave(CFParm *PParm);
 CFParm                     *CFMapDelete(CFParm *PParm);
 CFParm                     *CFWDestructObject(CFParm *PParm);
 CFParm                     *CFInterface(CFParm *PParm);
-void						send_plugin_custom_message(object *pl, char *buf);
+void                        send_plugin_custom_message(object *pl, char *buf);
 
 /* resurrection.c */
 void                        dead_player(object *op);

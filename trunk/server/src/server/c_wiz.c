@@ -594,7 +594,7 @@ int command_generate(object *op, char *params)
             prev = tmp;
         }
             head = insert_ob_in_ob(head, op);
-			esrv_send_item(op, head);
+            esrv_send_item(op, head);
 
     }
     return 1;
@@ -646,12 +646,12 @@ int command_mutelevel(object *op, char *params)
 int command_dm_connections(object *op, char *params)
 {
     char buf[256];
-	objectlink *ol;
+    objectlink *ol;
     int nr = 2;
 
-	/* allowed for VOL and higher */
-	if(CONTR(op)->gmaster_mode < GMASTER_MODE_VOL)
-		return 0;
+    /* allowed for VOL and higher */
+    if(CONTR(op)->gmaster_mode < GMASTER_MODE_VOL)
+        return 0;
 
     if ((params == NULL) || (sscanf(params, "%d", &nr) != 1))
     {
@@ -666,7 +666,7 @@ int command_dm_connections(object *op, char *params)
     }
 
     settings.max_cons_from_one_ip = nr;
-	sprintf(buf, "SET: max connections from single IP set to %d!\n", nr);
+    sprintf(buf, "SET: max connections from single IP set to %d!\n", nr);
 
     for(ol = gmaster_list_VOL;ol;ol=ol->next)
         new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, buf);
@@ -675,7 +675,7 @@ int command_dm_connections(object *op, char *params)
     for(ol = gmaster_list_MM;ol;ol=ol->next)
         new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob, buf);
 
-	return 1;
+    return 1;
 }
 
 int command_summon(object *op, char *params)
