@@ -18,7 +18,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-	The author can be reached via e-mail to info@daimonin.net
+    The author can be reached via e-mail to info@daimonin.net
 */
 
 #include <global.h>
@@ -456,8 +456,8 @@ static int socket_prepare_commands(NewSocket *ns) // use this for debugging
 void remove_ns_dead_player(player *pl)
 {
 
-	LOG(llevDebug, "remove_ns_dead_player(%s): state:%d gmaster:%d g_status:%d\n", STRING_OBJ_NAME(pl->ob),pl->state,
-		pl->gmaster_mode, pl->group_status);
+    LOG(llevDebug, "remove_ns_dead_player(%s): state:%d gmaster:%d g_status:%d\n", STRING_OBJ_NAME(pl->ob),pl->state,
+        pl->gmaster_mode, pl->group_status);
     if (!(pl->state & ST_DEAD))
     {
         /* remove the player from global gmaster lists */
@@ -520,18 +520,18 @@ static int check_ip_ban(NewSocket *sock, char *ip)
      * So we skip the oldest login automatically.
      */
 
-	/* check we have limited server access */
-	if(!settings.login_allow)
-	{
-		if(strcmp(settings.login_ip, ip))
-		{
-			LOG(llevDebug, "login_allow-failed: IP don't match login_ip:%s\n", settings.login_ip);
-			sock->status = Ns_Dead;
-			return FALSE;
-		}
-		else
-			LOG(llevDebug, "login_allow-OK: IP match login_ip:%s\n", settings.login_ip);
-	}
+    /* check we have limited server access */
+    if(!settings.login_allow)
+    {
+        if(strcmp(settings.login_ip, ip))
+        {
+            LOG(llevDebug, "login_allow-failed: IP don't match login_ip:%s\n", settings.login_ip);
+            sock->status = Ns_Dead;
+            return FALSE;
+        }
+        else
+            LOG(llevDebug, "login_allow-OK: IP match login_ip:%s\n", settings.login_ip);
+    }
 
     count = 0;
     for (i = socket_info.allocated_sockets - 1; i > 0; i--)

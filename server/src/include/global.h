@@ -437,7 +437,7 @@ typedef struct ban_struct
 
 typedef struct Settings
 {
-	int								max_cons_from_one_ip;	    /* Maximum number of concurrent connections from a single IP address, default = 2 */
+    int                             max_cons_from_one_ip; /* Maximum number of concurrent connections from a single IP address, default = 2 */
     int                             player_races;       /* number of player race arches in client_settings */
     int                             mutelevel;          /* default FALSE - if TRUE player < level 2 can't shout */
     int                             login_allow;        /* if set to FALSE, login_ip is checked */
@@ -471,7 +471,7 @@ typedef struct Settings
      */
     int                             meta_on : 1;        /* True if we should send updates */
     char                            meta_server[MAX_BUF]; /* Hostname/ip addr of the metaserver */
-	char                            meta_name[MAX_BUF];   /* Servername listed in the meta server list */
+    char                            meta_name[MAX_BUF];   /* Servername listed in the meta server list */
     char                            meta_host[MAX_BUF]; /* Hostname of this host */
     uint16                          meta_port;          /* Port number to use for updates */
     char                            meta_comment[MAX_BUF]; /* Comment we send to the metaserver */
