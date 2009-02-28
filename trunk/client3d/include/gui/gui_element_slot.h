@@ -42,7 +42,7 @@ public:
     // ////////////////////////////////////////////////////////////////////
     GuiElementSlot(TiXmlElement *xmlElement, void *parent, const char *resourceName);
     ~GuiElementSlot();
-    int sendMsg(int message, void *parm1 =0, void *parm2 =0, void *parm3 =0);
+    int sendMsg(int message, const char *text, Ogre::uint32 param);
     void loadResources();
     int mouseEvent(int MouseAction, int x, int y);
     void draw();

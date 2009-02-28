@@ -46,7 +46,7 @@ public:
     // ////////////////////////////////////////////////////////////////////
     GuiTable(TiXmlElement *xmlElement, void *parent);
     ~GuiTable();
-    int sendMsg(int element, void *parm1 =0, void *parm2 =0, void *parm3 =0);
+    int sendMsg(int message, const char *text, Ogre::uint32 param);
 
 private:
     // ////////////////////////////////////////////////////////////////////

@@ -30,8 +30,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "gui_element_scrollbar.h"
 
 /**
- ** This class handles the display of scrollable text and/or graphics in a
- ** window. The type can be GFX_FILL or COLOR_FILL.
+ ** This class handles the display of scrollable text and/or graphics.
+ ** It has no own backgroud graphics or color.
  *****************************************************************************/
 class GuiListbox : public GuiElement
 {
@@ -41,7 +41,7 @@ public:
     // ////////////////////////////////////////////////////////////////////
     GuiListbox(TiXmlElement *xmlElement, void *parent);
     ~GuiListbox();
-    int sendMsg(int element, void *parm1 =0, void *parm2 =0, void *parm3 =0);
+    int sendMsg(int message, const char *text, Ogre::uint32 param);
     void draw();
     void clear();
     void update(Ogre::Real dTime);
@@ -62,6 +62,7 @@ private:
         unsigned char startLine; /**< Offset to the start line of the mulitline text. **/
     }
     row[SIZE_STRING_BUFFER];
+    bool mScroll;
     bool mVisible;
     int  mVScrollOffset;         /**< At which amount the scrollbar was scrolled. **/
     int  mPixelScroll;           /**< Number of pixel already scrolled. **/
@@ -72,9 +73,7 @@ private:
     int  mFontHeight;
     int  mActLines;
     int  mSelectedLine;
-    int  mGfxBufferSize;
     int  mKeyStart, mKeyCount;
-    Ogre::uint32 *mGfxBuffer;
     Ogre::Real mTime;
     class GuiElementScrollbar *mScrollBarH, *mScrollBarV;
     // ////////////////////////////////////////////////////////////////////

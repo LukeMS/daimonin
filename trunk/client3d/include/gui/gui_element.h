@@ -37,14 +37,11 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    /** All functions that are called from outside the gui are using the Message system. **/
-    virtual int sendMsg(int message, void *parm1 =0, void *parm2 =0, void *parm3 =0);
-
-    /** Internal gui functions **/
     GuiElement(TiXmlElement *xmlElement, void *parent);
     virtual ~GuiElement() {};
-    virtual int mouseEvent(int MouseAction, int x, int y, int z);
+    virtual int sendMsg(int message, const char *text, Ogre::uint32 param);
     virtual int keyEvent(const int keyChar, const unsigned int key);
+    virtual int mouseEvent(int MouseAction, int x, int y, int z);
     virtual void update(Ogre::Real deltaTime) {} /**< Animations, drag'n'drop, etc **/
     virtual void draw(bool uploadToTexture = true);
 

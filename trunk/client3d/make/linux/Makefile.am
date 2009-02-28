@@ -46,7 +46,6 @@ client3d_SOURCES = \
 	../../source/gui/gui_manager.cpp \
 	../../source/gui/gui_textout.cpp \
 	../../source/gui/gui_window.cpp \
-	../../source/gui/gui_window_dialog.cpp \
 	../../source/tile_chunk.cpp \
 	../../source/tile_manager.cpp \
 	../../source/tile_map.cpp \
@@ -58,6 +57,7 @@ client3d_SOURCES = \
 	../../source/main.cpp \
 	../../source/network.cpp \
 	../../source/network_cmd.cpp \
+	../../source/network_cmd_interface.cpp \
 	../../source/network_serverfile.cpp \
 	../../source/object_equipment.cpp \
 	../../source/object_animate.cpp \

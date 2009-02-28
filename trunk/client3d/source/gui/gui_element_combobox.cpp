@@ -33,7 +33,7 @@ using namespace Ogre;
 
 // needs to be rewritten!
 
-int GuiElementCombobox::sendMsg(int element, void *parm1, void *parm2, void *parm3)
+int GuiElementCombobox::sendMsg(int message, const char *text, uint32 param)
 {
     return 0;
 }

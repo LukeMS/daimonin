@@ -126,6 +126,7 @@
     <Alignment x="right" />
     <Pos       x= "280"  y= "0" />
     <DragArea  x= "0"    y= "0" width= "280" height= "18" />
+    <Color red="60" green="56" blue="31" alpha="200"/>
 
     <Graphic>
       <Image name = "Background-General"/>
@@ -162,11 +163,10 @@
       <Pos x= "271" y= "9" />
       <Size width= "9" height= "9" />
     </Graphic>
-
     <Listbox name= "List_Chat" font="02">
       <Pos x= "1" y= "18" />
       <Size width= "262" height= "251" />
-      <Color red= "60" green= "56" blue= "31" alpha = "200" />
+      <Color red= "88" green= "88" blue= "88" alpha = "200" />
       <Element type= "SCROLLER" name = "VScrollbar">
          <Pos x= "263" y= "18" />
          <Size width= "16" height= "251" />
@@ -191,10 +191,11 @@
   <!--WINDOW: Message Window                       -->
   <!--#############################################-->
   <Window name= "TextWindow">
-    <Size     width= "280" height= "269" />
+    <Size      width= "280" height= "269" />
     <Alignment x="right" />
     <Pos       x= "280"  y= "269" />
     <DragArea  x= "0"    y= "0" width= "280" height= "18" />
+    <Color red="60" green="56" blue="31" alpha="200"/>
 
     <Graphic>
       <Image name = "Background-General"/>
@@ -233,9 +234,8 @@
     </Graphic>
 
     <Listbox name= "List_Msg" font="02">
-      <Pos x= "1" y= "18" />
-      <Size width= "262" height= "251" />
-      <Color red= "60" green= "56" blue= "31" alpha = "200" />
+      <Pos x= "0" y= "18" />
+      <Size width= "263" height= "251" />
       <Element type= "SCROLLER" name = "VScrollbar">
          <Pos x= "263" y= "18" />
          <Size width= "16" height= "251" />
@@ -274,6 +274,7 @@
     <!--=============================================-->
     <!-- Layer 0                                     -->
     <!--=============================================-->
+
     <Graphic>
       <Image name = "Bar-Horizontal-Top"/>
       <Pos x= "9" y= "0" />

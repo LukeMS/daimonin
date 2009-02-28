@@ -54,7 +54,7 @@ public:
     // ////////////////////////////////////////////////////////////////////
     GuiElementScrollbar(TiXmlElement *xmlElement, void *parent, void *parentElement);
     ~GuiElementScrollbar();
-    //int sendMsg(int element, void *parm1 =0, void *parm2 =0, void *parm3 =0);
+    //int sendMsg(int message, const char *text, Ogre::uint32 param);
     int getScrollOffset();
     void resize(int newWidth, int newHeight);
     void updateSliderSize(int actPos, int scrollOffset, int maxVisPos, int maxPos = -1);

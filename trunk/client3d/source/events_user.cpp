@@ -152,7 +152,7 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
 
         case OIS::KC_I:
         {
-            GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_CHATWIN, GuiManager::MSG_ADD_ROW, (void*)"Show inventory");
+            GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_CHATWIN, GuiManager::MSG_ADD_ROW, "Show inventory");
             GuiManager::getSingleton().showWindow(GuiManager::WIN_EQUIPMENT, true);
             GuiManager::getSingleton().showWindow(GuiManager::WIN_INVENTORY, true);
             //GuiManager::getSingleton().setSlotBusyTime(GuiManager::WIN_INVENTORY, 0, 6);
@@ -196,14 +196,15 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
         case OIS::KC_M:
         {
             String strMemUsage = "Memory used for Textures: " + StringConverter::toString(TextureManager::getSingleton().getMemoryUsage()/1024) + " KB";
-            GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_CHATWIN, GuiManager::MSG_ADD_ROW, (void*)strMemUsage.c_str());
+            GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_CHATWIN, GuiManager::MSG_ADD_ROW, strMemUsage.c_str());
             strMemUsage = "Memory used for Meshes: " + StringConverter::toString(MeshManager::getSingleton().getMemoryUsage()/1024) + " KB";
-            GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_CHATWIN, GuiManager::MSG_ADD_ROW, (void*)strMemUsage.c_str());
+            GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_CHATWIN, GuiManager::MSG_ADD_ROW, strMemUsage.c_str());
             break;
         }
 
         case OIS::KC_O:
         {
+            GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_CHATWIN, GuiManager::MSG_ADD_ROW, "Show inventory");
             // ObjectManager::getSingleton().setPlayerEquipment(ObjectManager::OBJECT_PLAYER, ObjectNPC::BONE_SHIELD_HAND, 1);
             break;
         }
@@ -429,10 +430,10 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
 
         case OIS::KC_F1:
         {
-                        static bool tst = true;
-                        tst = !tst;
-                        GuiManager::getSingleton().sendMsg(GuiManager::GUI_BUTTON_TEST, GuiManager::MSG_SET_VISIBLE,(void*) tst);
-                        break;
+            static bool tst = 1;
+            tst = !tst;
+            GuiManager::getSingleton().sendMsg(GuiManager::GUI_BUTTON_TEST, GuiManager::MSG_SET_VISIBLE, "", tst);
+            break;
 
             Vector3 pos = mCamera->getPosition();
             pos.y+= 15;
@@ -646,7 +647,7 @@ bool Events::mousePressed(const OIS::MouseEvent &e, OIS::MouseButtonID button)
         }
     }
     // ////////////////////////////////////////////////////////////////////
-    // Left button for movement & standard action.
+    // Left button for standard action.
     // ////////////////////////////////////////////////////////////////////
     else if (button == OIS::MB_Left)
     {
@@ -680,4 +681,12 @@ bool Events::mouseReleased(const OIS::MouseEvent &e, OIS::MouseButtonID id)
     GuiManager::getSingleton().mouseEvent(GuiManager::BUTTON_RELEASED, mMouse);
     //e->consume();
     return true;
+}
+
+//================================================================================================
+// The user clicked on an element.
+//================================================================================================
+void Events::elementClicked(int element)
+{
+    GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "pressed");
 }

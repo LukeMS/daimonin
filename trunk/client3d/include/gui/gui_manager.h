@@ -106,6 +106,8 @@ public:
     /** Window id's. **/
     enum
     {
+        /** The first window in this list MUST be initialized.
+            Because guiWindow[0].xyz() will be used to access some static stuff. **/
         WIN_LOGIN,
         WIN_SERVERSELECT,
         // WIN_CREATION,
@@ -212,7 +214,7 @@ public:
     void reloadTexture(Ogre::String &name);
     void parseImageset(const char *XML_imageset_file);
     void parseWindows (const char *XML_windows_file);
-    void update(Ogre::Real);
+    int update(Ogre::Real);  /**< Returns the clicked element or -1 when nothing was clicked. **/
     int getElementIndex(const char *name, int windowID = -1, int getElementIndex = -1);
     bool mouseEvent(int MouseAction, Ogre::Vector3 &mouse);
     bool keyEvent(const int keyChar, const unsigned int key);
@@ -240,7 +242,7 @@ public:
     }
     void cancelTextInput();
     const char *getTextInput() { return mStrTextInput.c_str(); }
-    int sendMsg(int element, int message, void *parm1 =0, void *parm2 =0, void *parm3 =0);
+    int sendMsg(int element, int message, const char *text = 0, Ogre::uint32 param = 0x00ffffff);
     void setStatusbarValue(int window, int element, Ogre::Real value);
 
 private:

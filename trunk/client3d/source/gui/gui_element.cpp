@@ -35,7 +35,7 @@ using namespace Ogre;
 //================================================================================================
 //
 //================================================================================================
-int GuiElement::sendMsg(int, void *, void *, void *)
+int GuiElement::sendMsg(int, const char *, uint32)
 {
     return 0;
 }
@@ -148,8 +148,6 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
         if ((tmp = xmlElement->Attribute("blue")))  mLabelColor+= atoi(tmp);
         if ((tmp = xmlElement->Attribute("text")))  mStrLabel = tmp;
     }
-/*
-*/
     mIsVisible = true;
 }
 
