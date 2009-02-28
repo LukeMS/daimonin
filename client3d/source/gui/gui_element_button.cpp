@@ -32,12 +32,12 @@ using namespace Ogre;
 //================================================================================================
 //
 //================================================================================================
-int GuiElementButton::sendMsg(int message, void *parm1, void *parm2, void *parm3)
+int GuiElementButton::sendMsg(int message, const char *text, uint32 param)
 {
     switch (message)
     {
         case GuiManager::MSG_SET_VISIBLE:
-            setVisible((bool*)parm1);
+            setVisible(param?true:false);
             return 0;
         default:
             return -1;

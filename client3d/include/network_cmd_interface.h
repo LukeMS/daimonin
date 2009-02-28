@@ -21,8 +21,8 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
-#ifndef DIALOG_INTERFACE_H
-#define DIALOG_INTERFACE_H
+#ifndef NETWORK_CMD_INTERFACE_H
+#define NETWORK_CMD_INTERFACE_H
 
 #include <Ogre.h>
 #include "define.h"
@@ -30,7 +30,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 /**
  ** This class provides a graphical dialog window.
  *****************************************************************************/
-class GuiDialog
+class CmdInterface
 {
 public:
 
@@ -74,9 +74,9 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    static GuiDialog &getSingleton()
+    static CmdInterface &getSingleton()
     {
-        static GuiDialog Singleton;
+        static CmdInterface Singleton;
         return Singleton;
     }
     void show();
@@ -199,9 +199,9 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    GuiDialog();
-    ~GuiDialog();
-    GuiDialog(const GuiDialog&); // disable copy-constructor.
+    CmdInterface();
+    ~CmdInterface();
+    CmdInterface(const CmdInterface&); // disable copy-constructor.
     bool cmd_head     (char *data, int &pos);
     bool cmd_link     (char *data, int &pos);
     bool cmd_who      (char *data, int &pos);

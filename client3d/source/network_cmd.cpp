@@ -31,7 +31,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "tile_map.h"
 #include "tile_manager.h"
 #include "gui_manager.h"
-#include "gui_window_dialog.h" // Todo: its forbidden to include gui-files other than gui_manager.h. wrap the calls in gui_manager
 #include "network_serverfile.h"
 #include "object_manager.h"
 #include "object_hero.h"
@@ -110,7 +109,7 @@ short Network::GetShort_String(unsigned char *data)
 //================================================================================================
 void Network::AccNameSuccess(unsigned char *data, int len)
 {
-    GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, (void*)"Account Success");
+    GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "Account Success");
     Logger::log().error() << "AccNameSuccess";
     /*
     int num = (len)?GetUINT8_String(data):ACCOUNT_STATUS_DISCONNECT;
@@ -148,20 +147,20 @@ void Network::AccNameSuccess(unsigned char *data, int len)
 //================================================================================================
 void Network::AccountCmd(unsigned char *data, int len)
 {
-    GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, (void*)"Account cmd from server");
+    GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "Account cmd from server");
     ObjectHero::getSingleton().clearAccount();
     // First, get the account status - it tells us too when login failed
     if (*data) // something is wrong when not ACCOUNT_STATUS_OK (0)
     {
-        GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, (void*)"Account fail");
-        GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, (void*)"Account does not exist");
+        GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "Account fail");
+        GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "Account does not exist");
         //GuiManager::getSingleton().setElementText(GuiManager::GUI_TEXTBOX_LOGIN_WARN, "Account does not exist");
         Option::getSingleton().setGameStatus(Option::GAME_STATUS_START);
     }
     else // we have account data... set it up and move player to account view mode
     {
         int count = 1;
-        GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, (void*)"Account ok");
+        GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "Account ok");
         for (int nr = 0; nr < ObjectHero::ACCOUNT_MAX_PLAYER; ++nr)
         {
             if (count >= len) break;
@@ -187,7 +186,7 @@ void Network::DrawInfoCmd(unsigned char *data, int len)
     }
     else
         ++buf;
-    GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, (void*)buf);
+    GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, buf);
 }
 
 //================================================================================================
@@ -465,7 +464,7 @@ void Network::DrawInfoCmd2(unsigned char *data, int len)
         if (tmp) *tmp = 0;
     }
     // we have communication input
-    GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, (void*)buf); // TESTING!!!
+    GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, buf); // TESTING!!!
     /*
         if (tmp && flags & (NDI_PLAYER|NDI_SAY|NDI_SHOUT|NDI_TELL|NDI_GSAY|NDI_EMOTE))
         {
@@ -656,7 +655,7 @@ void Network::TargetObject(unsigned char *data, int len)
     String strTmp = "[";
     strTmp += (char*)data+3;
     strTmp += "] selected";
-    GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, (void*)strTmp.c_str());
+    GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, strTmp.c_str());
     /*
         cpl.target_mode = *data++;
         if (cpl.target_mode)
@@ -1286,7 +1285,7 @@ void Network::SetupCmd(unsigned char *buf, int len)
         {
             if (VERSION_CS != atoi((const char*)param))
             {
-                GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, (void*)"~Your client is outdated!~");
+                GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "~Your client is outdated!~");
                 Logger::log().error() << "Client is outdated";
                 CloseClientSocket();
                 SDL_Delay(3250);
@@ -1299,7 +1298,7 @@ void Network::SetupCmd(unsigned char *buf, int len)
         {
             if (VERSION_SC != atoi((const char*)param))
             {
-                GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, (void*)"~The server is outdated!\nSelect a different one!~");
+                GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "~The server is outdated!\nSelect a different one!~");
                 CloseClientSocket();
                 SDL_Delay(3250);
                 return;
@@ -1480,54 +1479,6 @@ void Network::GroupUpdateCmd(unsigned char *data, int len)
     */
 }
 
-//================================================================================================
-// .
-//================================================================================================
-void Network::InterfaceCmd(unsigned char *data, int len)
-{
-    //TileManager::getSingleton().map_udate_flag = 2;
-    /*
-        if ((gui_interface_npc && gui_interface_npc->status != GUI_INTERFACE_STATUS_WAIT) &&
-                ((!len && cpl.menustatus == MENU_NPC) || (len && cpl.menustatus != MENU_NPC)))
-        {
-            //sound_play_effect(SOUND_SCROLL, 0, 0, 100);
-        }
-    */
-
-
-//GuiManager::getSingleton().addTextline(WIN_TEXTWINDOW, GUI_LIST_MSGWIN, (const char*)(data+1));
-
-    GuiDialog::getSingleton().reset();
-    if (len)
-    {
-        int mode = *data;
-        int pos =1;
-        if (!GuiDialog::getSingleton().load(mode, (char*)data, len, pos))
-        {
-            Logger::log().error() << "INVALID GUI CMD";
-            return;
-        }
-        GuiDialog::getSingleton().show();
-
-
-        /*
-                gui_interface_npc->win_length = precalc_interface_npc();
-                interface_mode = mode;
-                cpl.menustatus = MENU_NPC;
-                gui_interface_npc->startx = 400-(Bitmaps[BITMAP_NPC_INTERFACE]->bitmap->w / 2);
-                gui_interface_npc->starty = 50;
-                // Prefilled (and focused) textfield
-                if (gui_interface_npc->used_flag&GUI_INTERFACE_TEXTFIELD)
-                {
-                    gui_interface_npc->input_flag = true;
-                    open_input_mode(240);
-                    textwin_putstring(gui_interface_npc->textfield.text);
-                    cpl.input_mode = INPUT_MODE_NPCDIALOG;
-                    HistoryPos = 0;
-                }
-        */
-    }
-}
 
 //================================================================================================
 // .

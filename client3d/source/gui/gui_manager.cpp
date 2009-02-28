@@ -27,7 +27,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <OISKeyboard.h>
 #include "define.h"
 #include "gui_manager.h"
-#include "gui_window_dialog.h"
+#include "network_cmd_interface.h"
 #include "gui_window.h"
 #include "gui_cursor.h"
 #include "gui_textinput.h"
@@ -177,13 +177,12 @@ void GuiManager::loadRawFont(const char *filename)
 //================================================================================================
 // .
 //================================================================================================
-int GuiManager::sendMsg(int element, int message, void *parm1, void *parm2, void *parm3)
+int GuiManager::sendMsg(int element, int message, const char *text, uint32 param)
 {
-    //if (message == 8 && element > 22) return -1;
     for (unsigned int i = 0; i < GUI_ELEMENTS_SUM; ++i)
     {
         if (element == mStateStruct[i].index && guiWindow[mStateStruct[i].windowNr].isInit())
-            return guiWindow[mStateStruct[i].windowNr].sendMsg(mStateStruct[i].winElementNr, message, parm1, parm2, parm3);
+            return guiWindow[mStateStruct[i].windowNr].sendMsg(mStateStruct[i].winElementNr, message, text, param);
     }
     return -1;
 }
@@ -333,7 +332,7 @@ Overlay *GuiManager::loadResources(int w, int h, String name)
         }
     }
     // We must clear the whole texture (textures have always 2^n size while our gfx can be smaller).
-    int size = texture->getWidth()*texture->getHeight()*sizeof(uint32);
+    size_t size = texture->getWidth()*texture->getHeight()*sizeof(uint32);
     memset(texture->getBuffer()->lock(0, size, HardwareBuffer::HBL_DISCARD), 0x00, size);
     texture->getBuffer()->unlock();
     material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(strTexture);
@@ -515,14 +514,12 @@ void GuiManager::freeRecources()
 //================================================================================================
 bool GuiManager::keyEvent(const int key, const unsigned int keyChar)
 {
-    // Key event in npc-dialog window.
-    if (GuiDialog::getSingleton().keyEvent(key, keyChar)) return true;
     // We have an active Textinput.
     if (mTextInputWindow != NO_ACTIVE_WINDOW && mTextInputWindow == mActiveWindow)
     {
         if (key == OIS::KC_ESCAPE)
         {
-            sendMsg(mTextInputElement, GuiManager::MSG_SET_TEXT, (void*) mBackupStrTextInput.c_str());
+            sendMsg(mTextInputElement, GuiManager::MSG_SET_TEXT, mBackupStrTextInput.c_str());
             cancelTextInput();
             return true;
         }
@@ -530,7 +527,7 @@ bool GuiManager::keyEvent(const int key, const unsigned int keyChar)
         if (GuiTextinput::getSingleton().wasFinished())
         {
             mStrTextInput = GuiTextinput::getSingleton().getText();
-            sendMsg(mTextInputElement, GuiManager::MSG_SET_TEXT, (void*)mStrTextInput.c_str());
+            sendMsg(mTextInputElement, GuiManager::MSG_SET_TEXT, mStrTextInput.c_str());
             GuiTextinput::getSingleton().stop();
             mTextInputWindow = NO_ACTIVE_WINDOW;
         }
@@ -543,6 +540,10 @@ bool GuiManager::keyEvent(const int key, const unsigned int keyChar)
     }
     // Key event in active window.
     if (mActiveWindow == NO_ACTIVE_WINDOW) return false;
+
+    String str = "hier " + StringConverter::toString(mActiveWindow);
+    GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_CHATWIN, GuiManager::MSG_ADD_ROW, str.c_str());
+
     return (guiWindow[mActiveWindow].keyEvent(keyChar, key) == EVENT_CHECK_DONE);
 }
 
@@ -589,10 +590,7 @@ bool GuiManager::mouseEvent(int mouseAction, Vector3 &mouse)
     {
         int ret = guiWindow[mWindowZPos[WIN_SUM-i-1]].mouseEvent(mouseAction, mMouse);
         if (ret == EVENT_CHECK_DONE)
-        {
-            mActiveWindow = i;
             return (mMouseInside = true);
-        }
         if (ret == EVENT_DRAG_STRT)
         {
             mDragSrcWin = i;
@@ -685,14 +683,15 @@ void GuiManager::showWindow(int window, bool visible)
 
 //================================================================================================
 // Update all gui stuff.
+// Returns the clicked element, or -1 when nothing was clicked.
 //================================================================================================
-void GuiManager::update(Real timeSinceLastFrame)
+int GuiManager::update(Real timeSinceLastFrame)
 {
     // ////////////////////////////////////////////////////////////////////
     // Update textinput.
     // ////////////////////////////////////////////////////////////////////
     if (mTextInputWindow != NO_ACTIVE_WINDOW)
-        sendMsg(mTextInputElement, GuiManager::MSG_SET_TEXT, (void*)GuiTextinput::getSingleton().getText());
+        sendMsg(mTextInputElement, GuiManager::MSG_SET_TEXT, GuiTextinput::getSingleton().getText());
     // ////////////////////////////////////////////////////////////////////
     // Update windows.
     // ////////////////////////////////////////////////////////////////////
@@ -703,6 +702,10 @@ void GuiManager::update(Real timeSinceLastFrame)
     // ////////////////////////////////////////////////////////////////////
     if (mTooltipDelay && Root::getSingleton().getTimer()->getMilliseconds() > mTooltipDelay)
         drawTooltip();
+    // ////////////////////////////////////////////////////////////////////
+    // Return the clicked element.
+    // ////////////////////////////////////////////////////////////////////
+    return guiWindow[0].getElementPressed();
 }
 
 //================================================================================================
@@ -747,7 +750,7 @@ void GuiManager::drawTooltip()
     int fontHeight = GuiTextout::getSingleton().getFontHeight(GuiTextout::FONT_SYSTEM);
     for (sumLines = 0; sumLines < MAX_TOOLTIP_LINES; ++sumLines)
     {
-        stop = mStrTooltip.find(TOOLTIP_LINEBREAK_SIGN, start);
+        stop = (int)mStrTooltip.find(TOOLTIP_LINEBREAK_SIGN, start);
         if (stop == (int)std::string::npos)
         {
             if (start < (int)mStrTooltip.size())

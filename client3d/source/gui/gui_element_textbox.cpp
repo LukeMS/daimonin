@@ -32,15 +32,15 @@ using namespace Ogre;
 //================================================================================================
 //
 //================================================================================================
-int GuiElementTextbox::sendMsg(int message, void *parm1, void *parm2, void *parm3)
+int GuiElementTextbox::sendMsg(int message, const char *text, uint32 param)
 {
     switch (message)
     {
         case GuiManager::MSG_SET_VISIBLE:
-            setVisible((bool*)parm1);
+            setVisible(param?true:false);
             return 0;
         case GuiManager::MSG_SET_TEXT:
-            mStrLabel = (const char*) parm1;
+            mStrLabel = text;
             draw();
             return 0;
         default:

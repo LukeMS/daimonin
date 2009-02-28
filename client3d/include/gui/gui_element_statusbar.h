@@ -40,7 +40,7 @@ public:
     // ////////////////////////////////////////////////////////////////////
     GuiStatusbar(TiXmlElement *xmlElement, void *parent);
     ~GuiStatusbar();
-    int sendMsg(int element, void *parm1 =0, void *parm2 =0, void *parm3 =0);
+    int sendMsg(int message, const char *text, Ogre::uint32 param);
     void draw();
     void setValue(Ogre::Real value);
 

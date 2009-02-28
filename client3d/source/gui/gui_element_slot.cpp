@@ -237,13 +237,13 @@ GuiElementSlot::~GuiElementSlot()
 //================================================================================================
 //
 //================================================================================================
-int GuiElementSlot::sendMsg(int message, void *parm1, void *parm2, void *parm3)
+int GuiElementSlot::sendMsg(int message, const char *text, uint32 param)
 {
     switch (message)
     {
         case GuiManager::MSG_ADD_ITEM:
         {
-            setItem(mvAtlasGfxName[1].c_str(), 1); // Just testing
+            setItem(mvAtlasGfxName[1].c_str(), param); // Just testing
         }
     }
     return -1;

@@ -81,7 +81,7 @@ public:
         return (!mInit || !isVisible() || x < mPosX || x > mPosX + mWidth || y < mPosY || y > mPosY + mHeight)?false:true;
     }
     void centerWindowOnMouse(int x, int y);
-    int sendMsg(int elementNr, int message, void *parm1, void *parm2, void *parm3);
+    int sendMsg(int elementNr, int message, const char *text, Ogre::uint32 param);
     // ////////////////////////////////////////////////////////////////////
     // GUI_Statusbar stuff.
     // ////////////////////////////////////////////////////////////////////
@@ -101,6 +101,12 @@ public:
     {
         if (mSlotReference) mSlotReference->moveDragOverlay();
     }
+    int getElementPressed()
+    {
+        int ret = mElementClicked;
+        mElementClicked = -1;
+        return ret;
+    }
 
 private:
     // ////////////////////////////////////////////////////////////////////
@@ -108,6 +114,7 @@ private:
     // ////////////////////////////////////////////////////////////////////
     static GuiElementSlot *mSlotReference;
     static int mMouseDragging;
+    static int mElementClicked; /**< Number of the element that was clicked with left mousebutton. -1 for none. **/
     Ogre::String mResourceName;
     short mPosX, mPosY;
     int mWindowNr;
@@ -133,7 +140,7 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    static void buttonPressed(GuiWindow *me, int index);
+    static void elementAction(GuiWindow *me, int index);
     void checkForOverlappingElements();
     void setHeight(int h);
     void delElement(int number);

@@ -116,6 +116,7 @@ private:
     // ////////////////////////////////////////////////////////////////////
     Events() {};
     ~Events() {};
+    void elementClicked(int element);
     bool checkUsername(const char *name);
     bool frameStarted (const Ogre::FrameEvent &evt);
     bool frameEnded   (const Ogre::FrameEvent &evt);

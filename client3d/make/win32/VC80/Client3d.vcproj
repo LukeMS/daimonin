@@ -229,6 +229,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\network_cmd_interface.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\network_serverfile.cpp"
 				>
 			</File>
@@ -348,6 +352,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\source\gui\gui_element_textbox.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\source\gui\gui_graphic.cpp"
 					>
 				</File>
@@ -365,10 +373,6 @@
 				</File>
 				<File
 					RelativePath="..\..\..\source\gui\gui_window.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\source\gui\gui_window_dialog.cpp"
 					>
 				</File>
 			</Filter>
@@ -399,6 +403,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\include\network.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\include\network_cmd_interface.h"
 				>
 			</File>
 			<File
@@ -533,6 +541,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\include\gui\gui_element_textbox.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\include\gui\gui_graphic.h"
 					>
 				</File>
@@ -554,10 +566,6 @@
 				</File>
 				<File
 					RelativePath="..\..\..\include\gui\gui_window.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\include\gui\gui_window_dialog.h"
 					>
 				</File>
 			</Filter>

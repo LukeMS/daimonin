@@ -33,7 +33,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "gui_element_textbox.h"
 #include "gui_element_listbox.h"
 #include "gui_element_button.h"
-#include "gui_window_dialog.h"
 #include "option.h"
 #include "sound.h"
 #include "events.h"
@@ -43,6 +42,7 @@ using namespace Ogre;
 
 const int MIN_GFX_SIZE = 1 << 2;
 int GuiWindow::mMouseDragging = -1;
+int GuiWindow::mElementClicked = -1;
 GuiElementSlot *GuiWindow::mSlotReference = 0;
 
 //================================================================================================
@@ -147,7 +147,7 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, const char *resourceDnD, 
         }
     }
     // ////////////////////////////////////////////////////////////////////
-    // Parse the Dragging entries.
+    // Parse the Dragging entry.
     // ////////////////////////////////////////////////////////////////////
     mDragPosX1 = mDragPosX2 = mDragPosY1 = mDragPosY2 = -100;
     if ((xmlElem = xmlRoot->FirstChildElement("DragArea")))
@@ -165,7 +165,22 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, const char *resourceDnD, 
     // Now we have all data to create the window..
     // ////////////////////////////////////////////////////////////////////
     mWinLayerBG = new uint32[mWidth * mHeight];
-    memset(mWinLayerBG, 0x00, mWidth * mHeight * sizeof(uint32));
+    if ((xmlElem = xmlRoot->FirstChildElement("Color")))
+    {
+        // PixelFormat: ARGB.
+        uint32 color;
+        if ((strTmp = xmlElem->Attribute("red"  ))) color = atoi(strTmp) << 16;
+        if ((strTmp = xmlElem->Attribute("green"))) color+= atoi(strTmp) <<  8;
+        if ((strTmp = xmlElem->Attribute("blue" ))) color+= atoi(strTmp);
+        if ((strTmp = xmlElem->Attribute("alpha"))) color+= atoi(strTmp) << 24;
+        uint32 *dst = mWinLayerBG;
+        for (int i=0; i < mWidth*mHeight; ++i)
+            *dst++ = color;
+    }
+    else
+    {
+        memset(mWinLayerBG, 0x00, mWidth * mHeight * sizeof(uint32));
+    }
     mTexture = TextureManager::getSingleton().createManual(mResourceName + GuiManager::TEXTURE_RESOURCE_NAME,
                ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, TEX_TYPE_2D, mWidth, mHeight, 0, PF_A8R8G8B8,
                TU_STATIC_WRITE_ONLY, ManResourceLoader::getSingleton().getLoader());
@@ -338,7 +353,10 @@ int GuiWindow::mouseEvent(int MouseAction, Vector3 &mouse)
                 return event;
             }
             if (event == GuiManager::EVENT_USER_ACTION)
-                buttonPressed(this, mvElement[i]->getIndex());
+            {
+                elementAction(this, mvElement[i]->getIndex());
+                return event;
+            }
             return GuiManager::EVENT_CHECK_DONE;
         }
     }
@@ -393,38 +411,27 @@ void GuiWindow::update(Real timeSinceLastFrame)
 //================================================================================================
 //
 //================================================================================================
-int GuiWindow::sendMsg(int elementNr, int message, void *parm1, void *parm2, void *parm3)
+int GuiWindow::sendMsg(int elementNr, int message, const char *text, Ogre::uint32 param)
 {
-    return mvElement[elementNr]->sendMsg(message, parm1, parm2, parm3);
+    return mvElement[elementNr]->sendMsg(message, text, param);
 }
 
 //================================================================================================
 // Button event.
 //================================================================================================
-void GuiWindow::buttonPressed(GuiWindow *me, int index)
+void GuiWindow::elementAction(GuiWindow *me, int index)
 {
     Sound::getSingleton().playStream(Sound::BUTTON_CLICK);
     switch (index)
     {
-            // Standard buttons.
+            // Standard buttons. (close, resize, ...)
         case GuiManager::GUI_BUTTON_CLOSE:
             me->setVisible(false);
-            return;
-            // Unique buttons.
-        case GuiManager::GUI_LIST_NPC:
-        {
-            //int line = mvElement[GuiImageset::GUI_LIST_NPC]->recvMsg(..."getSelectedLine");
-            int line = 0;
-            GuiDialog::getSingleton().mouseEvent(line);
-            return;
-        }
-        case GuiManager::GUI_BUTTON_NPC_ACCEPT:
-            GuiDialog::getSingleton().buttonEvent(0);
-            return;
-        case GuiManager::GUI_BUTTON_NPC_DECLINE:
-            GuiDialog::getSingleton().buttonEvent(1);
-            return;
+            break;
+        default:
+            mElementClicked = index;
+            if (index <0)
+                GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "~#00ffff00CLICK: No entry in GuiManager::mStateStruct[]");
+            break;
     }
-    // Not yet supported elements...
-    GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_CHATWIN, GuiManager::MSG_ADD_ROW, (void*)"button event from <anonymous> element.");
 }

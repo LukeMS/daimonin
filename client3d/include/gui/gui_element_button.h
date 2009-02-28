@@ -40,7 +40,7 @@ public:
     // ////////////////////////////////////////////////////////////////////
     GuiElementButton(TiXmlElement *xmlElement, void *parent, bool drawOnInit);
     ~GuiElementButton();
-    int sendMsg(int element, void *parm1 =0, void *parm2 =0, void *parm3 =0);
+    int sendMsg(int message, const char *text, Ogre::uint32 param);
     int mouseEvent(int MouseAction, int x, int y, int z);
     void draw();
     bool isVisible()

@@ -40,7 +40,7 @@ const int  BAR_WIDTH = 16;
 //================================================================================================
 // .
 //================================================================================================
-int GuiStatusbar::sendMsg(int element, void *parm1, void *parm2, void *parm3)
+int GuiStatusbar::sendMsg(int message, const char *text, uint32 param)
 {
     return 0;
 }

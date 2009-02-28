@@ -255,6 +255,7 @@ void ObjectManager::selectObject(MovableObject *mob)
     }
 }
 
+#include "gui_manager.h"
 //================================================================================================
 // Mouse button was pressed - lets do the right thing.
 //================================================================================================
@@ -280,6 +281,7 @@ void ObjectManager::mousePressed(MovableObject *mob, bool modifier)
             mvNPC[ObjectNPC::HERO]->readyPrimaryWeapon(false);
             ObjectVisuals::getSingleton().select(mvNPC[mSelectedObject], false, false);
 
+            GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_CHATWIN, GuiManager::MSG_ADD_ROW, "talk hello");
 
             //String strSelect = "/target !"+ StringConverter::toString(mSelectedPos.x-9) + " " + StringConverter::toString(mSelectedPos.z-9);
             //Network::getSingleton().send_game_command(strSelect.c_str());

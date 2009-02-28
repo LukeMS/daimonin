@@ -30,7 +30,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <SDL_thread.h>
 #include <SDL_mutex.h>
 #ifdef WIN32
-#include <winsock.h>
+#include <winsock2.h>
 #else
 #include <sys/socket.h>
 #include <sys/types.h>
