@@ -1400,7 +1400,7 @@ void drop_ob_inv(object *ob)
         {
             corpse = arch_to_object(race_corpse->corpse);
             corpse->x = ob->x;corpse->y = ob->y;corpse->map = ob->map;
-            corpse->weight = ob->weight;
+            corpse->weight = (sint32)(ob->weight * 0.50);
         }
     }
 
