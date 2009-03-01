@@ -45,9 +45,6 @@ public:
         INPUT_MODE_CURSOR_SELECTION, /**< Input modus: move cursor in a selection field. **/
         INPUT_MODE_SUM               /**< Sum of input modes **/
     };
-
-    enum { CURSOR_FREQUENCY = 500 };
-
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
@@ -111,18 +108,11 @@ public:
      *****************************************************************************/
     const char *getText(bool hideText = false, bool showTextCursor = true)
     {
-        static clock_t time = Ogre::Root::getSingleton().getTimer()->getMilliseconds();
         static bool cursorOn = true;
         if (!showTextCursor || mFinished || mCanceled)
-        {
             return mStrTextInput.c_str();
-        }
         mStrTextInputWithCursor = mStrTextInput;
-        if (Ogre::Root::getSingleton().getTimer()->getMilliseconds() - time > CURSOR_FREQUENCY)
-        {
-            time =  Ogre::Root::getSingleton().getTimer()->getMilliseconds();
-            cursorOn = !cursorOn;
-        }
+        cursorOn = !cursorOn;
         if (cursorOn)
             mStrTextInputWithCursor.insert(mCursorPos, GuiTextout::CURSOR);
         else

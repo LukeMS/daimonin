@@ -44,10 +44,10 @@ void Network::InterfaceCmd(unsigned char *data, int len)
         }
     */
 
-
+/*
 String str = "len: " + StringConverter::toString(len);
 GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_CHATWIN, GuiManager::MSG_ADD_ROW, str.c_str());
-
+*/
     CmdInterface::getSingleton().reset();
     //if (len)
     {

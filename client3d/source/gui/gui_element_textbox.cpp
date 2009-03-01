@@ -41,6 +41,7 @@ int GuiElementTextbox::sendMsg(int message, const char *text, uint32 param)
             return 0;
         case GuiManager::MSG_SET_TEXT:
             mStrLabel = text;
+            mLabelColor = param;
             draw();
             return 0;
         default:

@@ -62,21 +62,21 @@ const char *RESOURCE_DND     = MANAGER_DESCRIPTION "DnD";
 short GuiManager::mWindowZPos[WIN_SUM];
 GuiManager::WindowID GuiManager::mWindowID[WIN_SUM]=
 {
-    { "Login",         WIN_LOGIN         },
-    { "ServerSelect",  WIN_SERVERSELECT  },
-    //{ "Creation",      WIN_CREATION      },
-    { "Win_Equipment", WIN_EQUIPMENT     },
-    { "Win_Inventory", WIN_INVENTORY     },
-    { "Win_Trade",     WIN_TRADE         },
-    { "Win_Shop",      WIN_SHOP          },
-    { "Win_Container", WIN_CONTAINER     },
-    { "Win_TileGround",WIN_TILEGROUND    },
-    { "PlayerInfo",    WIN_PLAYERINFO    },
-    { "PlayerConsole", WIN_PLAYERCONSOLE },
-    { "DialogNPC",     WIN_NPCDIALOG     },
-    { "TextWindow",    WIN_TEXTWINDOW    },
-    { "ChatWindow",    WIN_CHATWINDOW    },
-    { "Statistics",    WIN_STATISTICS    },
+    { "Win_Login",         WIN_LOGIN         },
+    { "Win_ServerSelect",  WIN_SERVERSELECT  },
+    { "Win_Equipment",     WIN_EQUIPMENT     },
+    { "Win_Inventory",     WIN_INVENTORY     },
+    { "Win_Trade",         WIN_TRADE         },
+    { "Win_Shop",          WIN_SHOP          },
+    { "Win_Container",     WIN_CONTAINER     },
+    { "Win_TileGround",    WIN_TILEGROUND    },
+    { "Win_Dialog",        WIN_NPCDIALOG     },
+    { "Win_PlayerInfo",    WIN_PLAYERINFO    },
+    { "Win_TextWindow",    WIN_TEXTWINDOW    },
+    { "Win_ChatWindow",    WIN_CHATWINDOW    },
+    { "Win_Statistics",    WIN_STATISTICS    },
+    { "Win_PlayerConsole", WIN_PLAYERCONSOLE },
+//  { "Win_Creation",      WIN_CREATION      },
 };
 
 class GuiWindow guiWindow[GuiManager::WIN_SUM];
@@ -524,10 +524,10 @@ bool GuiManager::keyEvent(const int key, const unsigned int keyChar)
             return true;
         }
         mTextInputUserAction = GuiTextinput::getSingleton().keyEvent(key, keyChar);
+        mStrTextInput = GuiTextinput::getSingleton().getText();
+        sendMsg(mTextInputElement, GuiManager::MSG_SET_TEXT, mStrTextInput.c_str());
         if (GuiTextinput::getSingleton().wasFinished())
         {
-            mStrTextInput = GuiTextinput::getSingleton().getText();
-            sendMsg(mTextInputElement, GuiManager::MSG_SET_TEXT, mStrTextInput.c_str());
             GuiTextinput::getSingleton().stop();
             mTextInputWindow = NO_ACTIVE_WINDOW;
         }
@@ -540,10 +540,6 @@ bool GuiManager::keyEvent(const int key, const unsigned int keyChar)
     }
     // Key event in active window.
     if (mActiveWindow == NO_ACTIVE_WINDOW) return false;
-
-    String str = "hier " + StringConverter::toString(mActiveWindow);
-    GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_CHATWIN, GuiManager::MSG_ADD_ROW, str.c_str());
-
     return (guiWindow[mActiveWindow].keyEvent(keyChar, key) == EVENT_CHECK_DONE);
 }
 
@@ -690,8 +686,15 @@ int GuiManager::update(Real timeSinceLastFrame)
     // ////////////////////////////////////////////////////////////////////
     // Update textinput.
     // ////////////////////////////////////////////////////////////////////
+    static clock_t time = Root::getSingleton().getTimer()->getMilliseconds();
     if (mTextInputWindow != NO_ACTIVE_WINDOW)
-        sendMsg(mTextInputElement, GuiManager::MSG_SET_TEXT, GuiTextinput::getSingleton().getText());
+    {
+        if (Root::getSingleton().getTimer()->getMilliseconds() - time > CURSOR_FREQUENCY)
+        {
+            time = Root::getSingleton().getTimer()->getMilliseconds();
+            sendMsg(mTextInputElement, GuiManager::MSG_SET_TEXT, GuiTextinput::getSingleton().getText());
+        }
+    }
     // ////////////////////////////////////////////////////////////////////
     // Update windows.
     // ////////////////////////////////////////////////////////////////////

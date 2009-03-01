@@ -37,7 +37,8 @@ static const Real SCROLL_SPEED = 0.001f;
 // Todo:
 // - softscrolling must be implemented again (log(x) speedup on the amount of mRowsToScroll).
 // - horizontal scrollbar.
-// - keyword/link mousclick support
+// - keyword/link mouseclick support
+// - support gfx elements (they will be splitt over x lines if they are bigger then fontsize).
 
 //================================================================================================
 // Constructor.
@@ -71,14 +72,13 @@ GuiListbox::GuiListbox(TiXmlElement *xmlElement, void *parent):GuiElement(xmlEle
 void GuiListbox::clear()
 {
     mTime = 0;
-    mScroll = false;
     mKeyStart = 0;
     mKeyCount = 0;
     mPrintPos = 0;
     mActLines = 0;
     mBufferPos= 0;
     mPixelScroll = 0;
-    mRowsToScroll= 0;
+    mRowsToPrint = 0;
     mSelectedLine = -1;
     mVScrollOffset=  0;
     draw();
@@ -198,12 +198,12 @@ int GuiListbox::addRow(String srcText, uint32 default_color)
             row[mBufferPos & (SIZE_STRING_BUFFER-1)].keyword_clipped = mKeyStart;
             row[mBufferPos & (SIZE_STRING_BUFFER-1)].startLine = startLine++;
             ++mBufferPos;
-            ++mRowsToScroll;
+            ++mRowsToPrint;
             ++linecount;
+            if (mActLines >= mMaxVisibleRows)   ++mPrintPos;
             if (mActLines < SIZE_STRING_BUFFER) ++mActLines;
             dstPos = w = 0;
             if (buf2[srcPos] == ' ') ++srcPos;
-
             // hack: because of autoclip we must scan every line again.
             for (unsigned char *text = buf; *text; ++text)
                 if (*text == GuiTextout::TXT_CMD_LINK)
@@ -212,7 +212,6 @@ int GuiListbox::addRow(String srcText, uint32 default_color)
                 mKeyStart = 0x1000;
             else
                 mKeyStart = 0;
-
             if (!buf2[srcPos])
                 break;
         }
@@ -245,7 +244,8 @@ int GuiListbox::mouseEvent(int MouseAction, int x, int y, int mouseWheel)
         return GuiManager::EVENT_CHECK_DONE;
     }
     // Mouseclick within the textarea?
-    if (MouseAction != GuiManager::BUTTON_PRESSED || x< mPosX || x> mPosX+mWidth || y< mPosY || y> mPosY+mHeight) return false;
+    if (MouseAction != GuiManager::BUTTON_PRESSED || x< mPosX || x> mPosX+mWidth || y< mPosY || y> mPosY+mHeight)
+        return GuiManager::EVENT_CHECK_NEXT;
     if (mVScrollOffset)
     {
         if (mVScrollOffset <0) mVScrollOffset =0;
@@ -284,8 +284,9 @@ const char *GuiListbox::getSelectedKeyword()
 //================================================================================================
 void GuiListbox::update(Ogre::Real dTime)
 {
-    mTime += dTime;
-    if (mTime < SCROLL_SPEED || !mRowsToScroll) return;
+    if (!mRowsToPrint) return;
+    if ((mTime += dTime) < SCROLL_SPEED) return;
+    --mRowsToPrint;
     mTime = 0;
     draw();
 }
@@ -298,20 +299,11 @@ void GuiListbox::draw()
     uint32 *bak = mParent->getLayerBG() + mPosX + mPosY*mParent->getWidth();
     uint32 *dst = GuiManager::getSingleton().getBuildBuffer();
     GuiGraphic::getSingleton().restoreWindowBG(mWidth, mHeight, bak, dst, mParent->getWidth(), mWidth);
-    if (!mScroll && mRowsToScroll >= mMaxVisibleRows)
-    {
-        mRowsToScroll-= mMaxVisibleRows;
-        mScroll = true;
-    }
-    if (mScroll && mRowsToScroll)
-    {
-        --mRowsToScroll;
-        ++mPrintPos;
-    }
-    int pos =0;
+    int pos =0, offset = 0;
     for (int y = mActLines<mMaxVisibleRows?mMaxVisibleRows-mActLines:0; y < mMaxVisibleRows; ++y)
     {
-        GuiTextout::getSingleton().printText(mWidth, mFontHeight, dst+ y*mFontHeight*mWidth, mWidth, bak, mParent->getWidth(),
+        offset = y*mFontHeight;
+        GuiTextout::getSingleton().printText(mWidth, mFontHeight, dst+offset*mWidth, mWidth, bak+offset*mParent->getWidth(), mParent->getWidth(),
                                              row[(mPrintPos-mVScrollOffset+pos)& (SIZE_STRING_BUFFER-1)].str.c_str(), mFontNr,
                                              row[(mPrintPos-mVScrollOffset+pos)& (SIZE_STRING_BUFFER-1)].color);
         ++pos;

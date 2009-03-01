@@ -111,6 +111,7 @@ private:
     static const Ogre::uint32 TXT_COLOR_DEFAULT;
     static const Ogre::uint32 TXT_COLOR_LOWLIGHT;
     static const Ogre::uint32 TXT_COLOR_HIGHLIGHT;
+    static const Ogre::uint32 TXT_COLOR_LINK;
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.

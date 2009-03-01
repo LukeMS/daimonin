@@ -43,10 +43,6 @@ public:
     int sendMsg(int message, const char *text, Ogre::uint32 param);
     int mouseEvent(int MouseAction, int x, int y, int z);
     void draw();
-    bool isVisible()
-    {
-        return mIsVisible;
-    }
     void setVisible(bool visible);
     int keyEvent(const int *keyChar, const unsigned char *key);
     void setLabel(const char*newText)

@@ -135,7 +135,7 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
     // ////////////////////////////////////////////////////////////////////
     // Parse the label (if given).
     // ////////////////////////////////////////////////////////////////////
-    mLabelPosX = 0; mLabelPosY = 0; mLabelFontNr = 0, mLabelColor = 0;
+    mLabelPosX = 0; mLabelPosY = 0; mLabelFontNr = 0, mLabelColor = 0x00ffffff;
     if ((xmlElement = xmlElem->FirstChildElement("Label")))
     {
         if ((tmp = xmlElement->Attribute("x"))) mLabelPosX  = (unsigned short)atoi(tmp);
