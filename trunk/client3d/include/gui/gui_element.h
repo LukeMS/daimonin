@@ -45,10 +45,11 @@ public:
     virtual void update(Ogre::Real deltaTime) {} /**< Animations, drag'n'drop, etc **/
     virtual void draw(bool uploadToTexture = true);
 
-    int getState()  { return mState;  }
-    int getIndex()  { return mIndex;  }
-    int getWidth()  { return mWidth;  }
-    int getHeight() { return mHeight; }
+    int getState()   { return mState;  }
+    int getIndex()   { return mIndex;  }
+    int getWidth()   { return mWidth;  }
+    int getHeight()  { return mHeight; }
+    bool isVisible() { return mIsVisible; }
     bool setState(int state);              /**< Returns true if the state was changed. **/
     void setPosition(int x, int y)
     {

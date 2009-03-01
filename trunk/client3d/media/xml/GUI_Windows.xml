@@ -24,7 +24,7 @@
   <!--#############################################-->
   <!--WINDOW: Engine Statistics                    -->
   <!--#############################################-->
-  <Window name= "Statistics">
+  <Window name= "Win_Statistics">
     <Size      width= "150" height= "88" />
     <Pos       x= "5" y= "5" />
     <DragArea  x= "0" y= "0" width= "131" height= "17" />
@@ -90,7 +90,7 @@
   <!--#############################################-->
   <!--WINDOW: Player info                          -->
   <!--#############################################-->
-  <Window name= "PlayerInfo">
+  <Window name= "Win_PlayerInfo">
     <Size      width= "348" height= "88" />
     <Alignment x= "center" />
     <Pos       x ="0" y= "0" />
@@ -121,7 +121,7 @@
   <!--#############################################-->
   <!--WINDOW: Chat Window                          -->
   <!--#############################################-->
-  <Window name= "ChatWindow">
+  <Window name= "Win_ChatWindow">
     <Size     width= "280" height= "269" />
     <Alignment x="right" />
     <Pos       x= "280"  y= "0" />
@@ -190,7 +190,7 @@
   <!--#############################################-->
   <!--WINDOW: Message Window                       -->
   <!--#############################################-->
-  <Window name= "TextWindow">
+  <Window name= "Win_TextWindow">
     <Size      width= "280" height= "269" />
     <Alignment x="right" />
     <Pos       x= "280"  y= "269" />
@@ -259,7 +259,7 @@
   <!--#############################################-->
   <!--WINDOW: Server Select                        -->
   <!--#############################################-->
-  <Window name= "ServerSelect">
+  <Window name= "Win_ServerSelect">
     <Size     width= "512" height= "512" />
     <Pos      x= "200" y= "200" />
     <DragArea x= "0" y= "0" width= "512" height= "29" />
@@ -392,7 +392,7 @@
   <!--#############################################-->
   <!--WINDOW: Login                                -->
   <!--#############################################-->
-  <Window name= "Login">
+  <Window name= "Win_Login">
     <Size     width= "512" height= "512" />
     <Pos      x= "200" y= "200" />
     <DragArea x= "0" y= "0" width= "512" height= "29" />
@@ -511,7 +511,7 @@
   <!--#############################################-->
   <!--WINDOW: NPC Dialog                           -->
   <!--#############################################-->
-  <Window name= "DialogNPC">
+  <Window name= "Win_Dialog">
     <Size     width= "303" height= "350" />
     <Pos      x= "200" y= "200" />
     <DragArea x= "0" y= "0" width= "284" height= "29" />
@@ -576,14 +576,10 @@
     <!--=============================================-->
     <TextBox name= "NPC_Headline" >
       <Label x= "55" y= "2" font="04" text= "Dialog Window" />
-      <Size width= "230" />
+      <Size width= "225" />
     </TextBox>
-    <Button  name = "But_Close">
-      <Image name = "Button-01-Close"/>
-      <Pos x= "285" y= "1" />
-    </Button>
+
     <Listbox name= "List_NPC" font="02">
-      <Image name = "Background-General"/>
       <Pos x= "10" y= "60" />
       <Size width= "270" height= "248" />
       <Element type= "SCROLLER" name = "VScrollbar">
@@ -602,6 +598,7 @@
          </Button>
       </Element>
     </Listbox>
+
     <Button  name = "But_NPC_Accept">
       <Image name = "Button-01-Standard"/>
       <Pos   x= "10" y= "320" />
@@ -616,6 +613,12 @@
       <Label x= "5" y= "5" font="02" text= "" />
       <Pos x= "238" y= "320" />
     </Button>
+
+    <Button  name = "But_Close">
+      <Image name = "Button-01-Close"/>
+      <Pos x= "285" y= "1" />
+    </Button>
+
   </Window>
 
 

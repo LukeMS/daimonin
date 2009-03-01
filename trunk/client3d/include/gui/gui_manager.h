@@ -110,20 +110,19 @@ public:
             Because guiWindow[0].xyz() will be used to access some static stuff. **/
         WIN_LOGIN,
         WIN_SERVERSELECT,
-        // WIN_CREATION,
         WIN_EQUIPMENT,
         WIN_INVENTORY,
         WIN_TRADE,
         WIN_SHOP,
         WIN_CONTAINER,
         WIN_TILEGROUND,
-
-        WIN_PLAYERINFO,
-        WIN_PLAYERCONSOLE,
         WIN_NPCDIALOG,
+        WIN_PLAYERINFO,
         WIN_TEXTWINDOW,
         WIN_CHATWINDOW,
         WIN_STATISTICS,
+        WIN_PLAYERCONSOLE,
+        //WIN_CREATION,
         WIN_SUM
     };
     static const int SUM_WIN_DIGITS; /**< Numbers of digits (For string format) **/
@@ -249,7 +248,8 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    enum { NO_ACTIVE_WINDOW = -1  };
+    enum { NO_ACTIVE_WINDOW =  -1 };
+    enum { CURSOR_FREQUENCY = 500 };
     typedef struct
     {
         const char *name;

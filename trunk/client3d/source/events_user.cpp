@@ -167,6 +167,10 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
 
         case OIS::KC_J:
         {
+            GuiManager::getSingleton().showWindow(GuiManager::WIN_EQUIPMENT, false);
+            GuiManager::getSingleton().showWindow(GuiManager::WIN_INVENTORY, false);
+            GuiManager::getSingleton().showWindow(GuiManager::WIN_CONTAINER, false);
+
             /*
                         Vector3 pos = TileManager::getSingleton().getTileInterface()->get_Selection();
                         sObject obj;

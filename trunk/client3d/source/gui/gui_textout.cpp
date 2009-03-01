@@ -43,6 +43,7 @@ const char GuiTextout::TXT_CMD_CHANGE_FONT = '@'; // followed by 2 chars (atoi -
 const char GuiTextout::CURSOR[] = { GuiTextout::STANDARD_CHARS_IN_FONT+31, 0 };
 const uint32 GuiTextout::TXT_COLOR_HIGHLIGHT = 0x0000ff00;
 const uint32 GuiTextout::TXT_COLOR_LOWLIGHT  = 0x00ffffff;
+const uint32 GuiTextout::TXT_COLOR_LINK      = 0x00ff2233;
 const uint32 FONT_ENDX_SIGN = 0xff00ff00;
 
 //================================================================================================
@@ -297,12 +298,15 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
     // Create Text Cursor (for text input).
     // ////////////////////////////////////////////////////////////////////
     for (unsigned int x = 0; x < fnt->charWidth[STANDARD_CHARS_IN_FONT-1]; ++x)
-        fnt->data[x + fnt->charStart[STANDARD_CHARS_IN_FONT-1] + (fnt->height-2)*fnt->textureWidth] = 0xffffffff;
+    {
+        fnt->data[x + fnt->charStart[STANDARD_CHARS_IN_FONT-1] + (fnt->height-2)*fnt->textureWidth] = 0xff000000;
+        fnt->data[x + fnt->charStart[STANDARD_CHARS_IN_FONT-1] + (fnt->height-1)*fnt->textureWidth] = 0x99000000;
+    }
     fnt->baseline = iSize;
     // ////////////////////////////////////////////////////////////////////
     // Create a raw font.
     // ////////////////////////////////////////////////////////////////////
-    if (Option::getSingleton().getIntValue(Option::CMDLINE_CREATE_RAW_FONTS))
+    //if (Option::getSingleton().getIntValue(Option::CMDLINE_CREATE_RAW_FONTS))
     {
         Image img;
         // ////////////////////////////////////////////////////////////////////
@@ -329,8 +333,6 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
             }
         }
         // write font to disc.
-        // This is broken in the codeblocks sdk version of ogre1.2.x (width > 1024 will be clipped).
-        // Use GNU/Linux or VC to get it done.
         img = img.loadDynamicImage((unsigned char*)fnt->data, fnt->textureWidth, fnt->height, 1, PF_A8R8G8B8);
         String rawFilename = "./NoLonger";
         rawFilename+= filename;
@@ -430,6 +432,13 @@ void GuiTextout::printText(int width, int height, uint32 *dst, int dstLineSkip, 
         // Parse format commands.
         switch (*text)
         {
+            case TXT_CMD_LINK:
+                if (!*(++text)) goto textDone;
+                if (color!= TXT_COLOR_LINK)
+                    color = TXT_COLOR_LINK;
+                else
+                    color = fontColor  & 0x00ffffff;
+                break;
             case TXT_CMD_LOWLIGHT:
                 if (!*(++text)) goto textDone;
                 if (color!= TXT_COLOR_LOWLIGHT)

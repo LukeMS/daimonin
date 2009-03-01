@@ -377,28 +377,34 @@ void Network::send_game_command(const char *command)
 //================================================================================================
 int Network::send_command_binary(unsigned char cmd, std::stringstream &stream)
 {
-    std::stringstream full_cmd;
-    if (stream.str().size() == 1)
-        full_cmd << cmd << (unsigned char*) stream.str().c_str() << '\0'; // Single byte command.
-    else
-        full_cmd << cmd << '\0' << (unsigned char)(stream.str().size()+1) << stream.str() << '\0';
-    command_buffer *buf = command_buffer_new((int)full_cmd.str().size(), (unsigned char*)full_cmd.str().c_str());
-    /*
-    Logger::log().error() << "send " << buf->len << " bytes:";
-    String str1="", str2="";
-    char strBuf[12];
-    for (int i= 0; i < buf->len; ++i)
+    command_buffer *buf;
+    if (stream.str().size() == 1) // Single byte command.
     {
-        sprintf(strBuf,"%02x,", buf->data[i]);
-        str1+= strBuf;
-        str2+= " ";
-        if (!buf->data[i])
-            str2+= "|";
-        else
-            str2+= (char)buf->data[i];
+        unsigned char full_cmd[2] = { cmd, (unsigned char) *stream.str().c_str() };
+        buf = command_buffer_new(2, full_cmd);
     }
-    Logger::log().error() << str1.substr(0, str1.size()-1);
-    Logger::log().error() << str2;
+    else
+    {
+        std::stringstream full_cmd;
+        full_cmd << cmd << '\0' << (unsigned char)(stream.str().size()+1) << stream.str() << '\0';
+        buf = command_buffer_new((int)full_cmd.str().size(), (unsigned char*)full_cmd.str().c_str());
+    }
+    /*
+        Logger::log().error() << "send " << buf->len << " bytes:";
+        String str1="", str2="";
+        char strBuf[12];
+        for (int i= 0; i < buf->len; ++i)
+        {
+            sprintf(strBuf,"%02x,", buf->data[i]);
+            str1+= strBuf;
+            str2+= " ";
+            if (!buf->data[i])
+                str2+= "|";
+            else
+                str2+= (char)buf->data[i];
+        }
+        Logger::log().error() << str1.substr(0, str1.size()-1);
+        Logger::log().error() << str2;
     */
     SDL_LockMutex(mMutex);
     command_buffer_enqueue(buf, &mOutputQueueStart, &mOutputQueueEnd);

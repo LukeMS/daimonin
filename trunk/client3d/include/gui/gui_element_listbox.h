@@ -62,16 +62,14 @@ private:
         unsigned char startLine; /**< Offset to the start line of the mulitline text. **/
     }
     row[SIZE_STRING_BUFFER];
-    bool mScroll;
-    bool mVisible;
     int  mVScrollOffset;         /**< At which amount the scrollbar was scrolled. **/
     int  mPixelScroll;           /**< Number of pixel already scrolled. **/
-    int  mRowsToScroll;          /**< Rows left to scroll. **/
-    int  mMaxVisibleRows;        /**< Number of rows fitting into the window. **/
-    int  mPrintPos;
-    int  mBufferPos;
+    int  mRowsToPrint;           /**< Rows left to print. **/
+    int  mMaxVisibleRows;        /**< Number of rows fitting into the listbox. **/
+    int  mPrintPos;              /**< First entry in the ring-buffer to print. **/
+    int  mBufferPos;             /**< Next free entry in the ring-buffer. **/
+    int  mActLines;              /**< Actual filled entries in the ring-buffer **/
     int  mFontHeight;
-    int  mActLines;
     int  mSelectedLine;
     int  mKeyStart, mKeyCount;
     Ogre::Real mTime;
