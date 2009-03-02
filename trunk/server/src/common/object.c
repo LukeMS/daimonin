@@ -1392,16 +1392,35 @@ void drop_ob_inv(object *ob)
     if(ob->enemy && ob->enemy->type == PLAYER && ob->enemy_count == ob->enemy->count)
         pl = CONTR(ob->enemy);
 
-    /* create race corpse and/or drop stuff to floor */
-    if ((QUERY_FLAG(ob, FLAG_CORPSE) && !QUERY_FLAG(ob, FLAG_STARTEQUIP)) || QUERY_FLAG(ob, FLAG_CORPSE_FORCED))
+    /* create corpse and/or drop stuff to floor */
+    if ((QUERY_FLAG(ob, FLAG_CORPSE) && !QUERY_FLAG(ob, FLAG_STARTEQUIP)) ||
+        QUERY_FLAG(ob, FLAG_CORPSE_FORCED))
     {
-        racelink   *race_corpse = find_racelink(ob->race);
-        if (race_corpse)
-        {
-            corpse = arch_to_object(race_corpse->corpse);
-            corpse->x = ob->x;corpse->y = ob->y;corpse->map = ob->map;
-            corpse->weight = (sint32)(ob->weight * 0.50);
-        }
+        char buf[MAX_BUF];
+
+        /* Create the corpse object. */
+        /* TODO: Change the corpse attribute from boolean to an arch name so
+         * that the corpse arch can be variable (ie, different capacities for a
+         * gnat and a demon) and not hardwired in to the code -- Smacky 20090302 */
+        corpse = get_archetype("corpse_default");
+
+        /* Give thie corpse the correct face -- this is the 0th entry of the
+         * mob's animation (corpses are not animated). */
+        /* TODO: The check for dummy.111 is temporary -- it's to suppress
+         * ingame errors (showing the dummy.111 face) while the arches are
+         * being changed. */
+        strcpy(buf, new_faces[animations[ob->animation_id].faces[0]].name);
+
+        if (strcmp(buf, "dummy.111"))
+            corpse->face = &new_faces[animations[ob->animation_id].faces[0]];
+
+        /* The corpse will go on the same square as (m)ob->head. */
+        corpse->map = ob->map;
+        corpse->x = ob->x;
+        corpse->y = ob->y;
+
+        /* ALL corpses are half the weight of the living mob! */
+        corpse->weight = (sint32)(ob->weight * 0.50);
     }
 
     tmp_op = ob->inv;
