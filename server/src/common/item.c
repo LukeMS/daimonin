@@ -282,7 +282,7 @@ char * query_short_name(const object *const op, const object *const caller)
                   {
                       safe_strcat(buf, " (bounty of your group", &len, sizeof(buf));
                       if (QUERY_FLAG(op, FLAG_BEEN_APPLIED))
-                          safe_strcat(buf, ", DISTURBED", &len, sizeof(buf));
+                          safe_strcat(buf, ", SEARCHED", &len, sizeof(buf));
                       safe_strcat(buf, ")", &len, sizeof(buf));
                   }
                   else /* its a different group */
@@ -299,11 +299,11 @@ char * query_short_name(const object *const op, const object *const caller)
                       safe_strcat(buf, op->slaying, &len, sizeof(buf));
                       if ((caller && caller->name == op->slaying) &&
                           QUERY_FLAG(op, FLAG_BEEN_APPLIED))
-                          safe_strcat(buf, ", DISTURBED", &len, sizeof(buf));
+                          safe_strcat(buf, ", SEARCHED", &len, sizeof(buf));
                       safe_strcat(buf, ")", &len, sizeof(buf));
                   }
                   else if (QUERY_FLAG(op, FLAG_BEEN_APPLIED))
-                      safe_strcat(buf, " (DISTURBED)", &len, sizeof(buf));
+                      safe_strcat(buf, " (SEARCHED)", &len, sizeof(buf));
               }
           }
           break;
@@ -566,7 +566,7 @@ char *query_base_name(object *op, object *caller)
                   {
                       safe_strcat(buf, " (bounty of your group", &len, sizeof(buf));
                       if (QUERY_FLAG(op, FLAG_BEEN_APPLIED))
-                          safe_strcat(buf, ", DISTURBED", &len, sizeof(buf));
+                          safe_strcat(buf, ", SEARCHED", &len, sizeof(buf));
                       safe_strcat(buf, ")", &len, sizeof(buf));
                   }
                   else /* its a different group */
@@ -583,11 +583,11 @@ char *query_base_name(object *op, object *caller)
                       safe_strcat(buf, op->slaying, &len, sizeof(buf));
                       if ((caller && caller->name == op->slaying) &&
                           QUERY_FLAG(op, FLAG_BEEN_APPLIED))
-                          safe_strcat(buf, ", DISTURBED", &len, sizeof(buf));
+                          safe_strcat(buf, ", SEARCHED", &len, sizeof(buf));
                       safe_strcat(buf, ")", &len, sizeof(buf));
                   }
                   else if (QUERY_FLAG(op, FLAG_BEEN_APPLIED))
-                      safe_strcat(buf, " (DISTURBED)", &len, sizeof(buf));
+                      safe_strcat(buf, " (SEARCHED)", &len, sizeof(buf));
               }
           }
           break;
