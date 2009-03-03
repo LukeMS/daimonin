@@ -271,26 +271,39 @@ char * query_short_name(const object *const op, const object *const caller)
               }
           }
 
-        if (op->sub_type1 >= ST1_CONTAINER_NORMAL_group)
-        {
-            if (op->sub_type1 == ST1_CONTAINER_CORPSE_group)
-            {
-                if(!caller)
-                    safe_strcat(buf, " (bounty of a group)", &len, sizeof(buf));
-                else if(CONTR(caller)->group_status & GROUP_STATUS_GROUP &&
-                            CONTR(CONTR(caller)->group_leader)->group_id == op->stats.maxhp)
-                    safe_strcat(buf, " (bounty of your group)", &len, sizeof(buf));
-                else /* its a different group */
-                    safe_strcat(buf, " (bounty of another group)", &len, sizeof(buf));
-            }
-        }
-        else if (op->sub_type1 >= ST1_CONTAINER_NORMAL_player)
+          if (op->sub_type1 >= ST1_CONTAINER_NORMAL_group)
           {
-              if (op->sub_type1 == ST1_CONTAINER_CORPSE_player && op->slaying)
+              if (op->sub_type1 == ST1_CONTAINER_CORPSE_group)
               {
-                  safe_strcat(buf, " (bounty of ", &len, sizeof(buf));
-                  safe_strcat(buf, op->slaying, &len, sizeof(buf));
-                  safe_strcat(buf, ")", &len, sizeof(buf));
+                  if(!caller)
+                      safe_strcat(buf, " (bounty of a group)", &len, sizeof(buf));
+                  else if(CONTR(caller)->group_status & GROUP_STATUS_GROUP &&
+                              CONTR(CONTR(caller)->group_leader)->group_id == op->stats.maxhp)
+                  {
+                      safe_strcat(buf, " (bounty of your group", &len, sizeof(buf));
+                      if (QUERY_FLAG(op, FLAG_BEEN_APPLIED))
+                          safe_strcat(buf, ", DISTURBED", &len, sizeof(buf));
+                      safe_strcat(buf, ")", &len, sizeof(buf));
+                  }
+                  else /* its a different group */
+                      safe_strcat(buf, " (bounty of another group)", &len, sizeof(buf));
+              }
+          }
+          else if (op->sub_type1 >= ST1_CONTAINER_NORMAL_player)
+          {
+              if (op->sub_type1 == ST1_CONTAINER_CORPSE_player)
+              {
+                  if (op->slaying)
+                  {
+                      safe_strcat(buf, " (bounty of ", &len, sizeof(buf));
+                      safe_strcat(buf, op->slaying, &len, sizeof(buf));
+                      if ((caller && caller->name == op->slaying) &&
+                          QUERY_FLAG(op, FLAG_BEEN_APPLIED))
+                          safe_strcat(buf, ", DISTURBED", &len, sizeof(buf));
+                      safe_strcat(buf, ")", &len, sizeof(buf));
+                  }
+                  else if (QUERY_FLAG(op, FLAG_BEEN_APPLIED))
+                      safe_strcat(buf, " (DISTURBED)", &len, sizeof(buf));
               }
           }
           break;
@@ -549,19 +562,32 @@ char *query_base_name(object *op, object *caller)
                   if(!caller)
                       safe_strcat(buf, " (bounty of a group)", &len, sizeof(buf));
                   else if(CONTR(caller)->group_status & GROUP_STATUS_GROUP &&
-                      CONTR(CONTR(caller)->group_leader)->group_id == op->stats.maxhp)
-                      safe_strcat(buf, " (bounty of your group)", &len, sizeof(buf));
+                              CONTR(CONTR(caller)->group_leader)->group_id == op->stats.maxhp)
+                  {
+                      safe_strcat(buf, " (bounty of your group", &len, sizeof(buf));
+                      if (QUERY_FLAG(op, FLAG_BEEN_APPLIED))
+                          safe_strcat(buf, ", DISTURBED", &len, sizeof(buf));
+                      safe_strcat(buf, ")", &len, sizeof(buf));
+                  }
                   else /* its a different group */
                       safe_strcat(buf, " (bounty of another group)", &len, sizeof(buf));
               }
           }
           else if (op->sub_type1 >= ST1_CONTAINER_NORMAL_player)
           {
-              if (op->sub_type1 == ST1_CONTAINER_CORPSE_player && op->slaying)
+              if (op->sub_type1 == ST1_CONTAINER_CORPSE_player)
               {
-                  safe_strcat(buf, " (bounty of ", &len, sizeof(buf));
-                  safe_strcat(buf, op->slaying, &len, sizeof(buf));
-                  safe_strcat(buf, ")", &len, sizeof(buf));
+                  if (op->slaying)
+                  {
+                      safe_strcat(buf, " (bounty of ", &len, sizeof(buf));
+                      safe_strcat(buf, op->slaying, &len, sizeof(buf));
+                      if ((caller && caller->name == op->slaying) &&
+                          QUERY_FLAG(op, FLAG_BEEN_APPLIED))
+                          safe_strcat(buf, ", DISTURBED", &len, sizeof(buf));
+                      safe_strcat(buf, ")", &len, sizeof(buf));
+                  }
+                  else if (QUERY_FLAG(op, FLAG_BEEN_APPLIED))
+                      safe_strcat(buf, " (DISTURBED)", &len, sizeof(buf));
               }
           }
           break;

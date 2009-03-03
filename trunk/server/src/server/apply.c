@@ -1009,6 +1009,7 @@ int esrv_apply_container(object *op, object *sack)
         }
 
         new_draw_info_format(NDI_UNIQUE, 0, op, "You open %s.", query_name(sack));
+        SET_FLAG(sack, FLAG_BEEN_APPLIED);
         container_link(CONTR(op), sack);
     }
     else/* sack is in players inventory */
@@ -1016,6 +1017,7 @@ int esrv_apply_container(object *op, object *sack)
         if (QUERY_FLAG(sack, FLAG_APPLIED)) /* readied sack becoming open */
         {
             new_draw_info_format(NDI_UNIQUE, 0, op, "You open %s.", query_name(sack));
+            SET_FLAG(sack, FLAG_BEEN_APPLIED);
             container_link(CONTR(op), sack);
         }
         else
