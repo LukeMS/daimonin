@@ -409,7 +409,21 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
                         {
                             LOG(llevInfo, "Double login! Kicking older instance! (%d) ", kick_loop);
                             Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, double_login_warning, strlen(double_login_warning));
+#if 0
+                            /* I don't fully understand why but if we close fp
+                             * here, the fgets() below SIGSEGVs. Well the reason
+                             * is clear (reading from a closed stream), but
+                             * what I don't understand is that player_save()
+                             * closes the same stream anyway! I assume it is
+                             * because fp is a local variable to either
+                             * function, so we don't want to NULL this local fp
+                             * that we're going to then read...
+                             * An alternative might be to close iit here, then
+                             * fopen() it again (with all the checks that
+                             * implies) just before we fgets()...
+                             * But this is simpler and works -- Smacky 20090303 */
                             fclose(fp); /* we will rewrite the file when saving beyond! close it first */
+#endif
                             player_save(ptmp->ob);
                             ptmp->state &= ~ST_PLAYING;
                             ptmp->state |= ST_ZOMBIE;
