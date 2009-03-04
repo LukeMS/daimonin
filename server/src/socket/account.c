@@ -352,8 +352,6 @@ account_status account_delete_player(Account *ac, char *name)
 */
 int account_name_valid(char *cp)
 {
-    char *tmp=cp;
-
     if(strchr(cp,' ')) /* we have any ' ' char? Then its invalid*/
         return FALSE;
 
