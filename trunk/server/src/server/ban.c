@@ -130,7 +130,7 @@ void save_ban_file(void)
             remove_ban_entry(ol); /* is not valid anymore, gc it on the fly */
         else
         {
-            fprintf(fp, "%s _ %d %ld\n",ol->objlink.ban->name, ol->objlink.ban->ticks_init,
+            fprintf(fp, "%s _ %d %d\n", ol->objlink.ban->name, ol->objlink.ban->ticks_init,
                                         ol->objlink.ban->ticks_init==-1?-1:(int)(ol->objlink.ban->ticks-pticks));
         }
     }
@@ -142,7 +142,7 @@ void save_ban_file(void)
             remove_ban_entry(ol);
         else
         {
-            fprintf(fp, "_ %s %d %ld\n",ol->objlink.ban->ip?ol->objlink.ban->ip:"_", ol->objlink.ban->ticks_init,
+            fprintf(fp, "_ %s %d %d\n", ol->objlink.ban->ip?ol->objlink.ban->ip:"_", ol->objlink.ban->ticks_init,
                 ol->objlink.ban->ticks_init==-1?-1:(int)(ol->objlink.ban->ticks-pticks));
         }
     }
@@ -284,7 +284,6 @@ int check_banned(NewSocket *ns, const char *name, char *ip)
     else /* compare ip */
     {
         char *ban_tmp;
-        int   ctr = 0;
         char *ban_buf_ip;
         int   match;    /* should really be bool */
 
