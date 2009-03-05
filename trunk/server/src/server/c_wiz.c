@@ -41,6 +41,7 @@
 #include <arpa/inet.h>
 #endif
 
+#if 0 /* disabled because account patch */
 typedef struct dmload_struct {
     char    name[32];
     char    password[32];
@@ -53,6 +54,8 @@ static struct dmload_struct dmload_value = {"",""};
 * browse active list, all players and even all maps - this IS a super special command,
 * don't care about cpu usage. Its important to patch or fix objects online.
 */
+#endif
+
 /*
  * Helper function get an object somewhere in the game
  * Returns the object which has the count-variable equal to the argument.
@@ -315,7 +318,7 @@ int command_generate(object *op, char *params)
     int         nrof, i, magic, set_magic = 0, set_nrof = 0, gotquote, gotspace;
     char        buf[MAX_BUF], *cp, *bp = buf, *bp2, *bp3, *bp4 = NULL, *obp, *cp2;
     archetype  *at;
-    artifact   *art = NULL, *art2 = NULL;
+    artifact   *art = NULL;
 
     if (!op)
         return 0;
@@ -595,7 +598,7 @@ int command_generate(object *op, char *params)
         }
             head = insert_ob_in_ob(head, op);
             esrv_send_item(op, head);
-
+        
     }
     return 1;
   }
@@ -1895,7 +1898,7 @@ int command_ban(object *op, char *params)
         if(name && name[0]!='\0')
         {
             const char *name_hash;
-            int success = FALSE, sent = FALSE;
+            int success = FALSE; //, sent = FALSE;
 
             for(ol = ban_list_ip;ol;ol=ol_tmp)
             {
