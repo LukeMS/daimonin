@@ -1927,7 +1927,7 @@ void DataCmd(char *data, int len)
      * as this dest_len default setting, the file is cutted and
      * the rest skiped. Look at the zlib docu for more info.
      */
-    unsigned long  dest_len    = 512 * 1024;
+    unsigned long  dest_len    = 1024 * 1024;
     unsigned char *dest;
 
     dest = malloc(dest_len);
