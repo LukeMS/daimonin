@@ -856,6 +856,7 @@ void create_anim_tmp()
             {
                 i = get_facenum_from_name(cmd);
 
+#if 0
                 if (i == -1)
                 {
                     /* if we are here then we have a picture name in the anims file
@@ -864,6 +865,8 @@ void create_anim_tmp()
                     i = 0;
                     LOG(LOG_ERROR, "read_anim_tmp: Invalid anim name >%s< - set to #0 (bug.101)!\n", cmd);
                 }
+#endif
+
                 if (old_format)
                 {
                     faces[numfaces++]=i;
