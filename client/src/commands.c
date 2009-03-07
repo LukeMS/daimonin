@@ -1927,14 +1927,23 @@ void DataCmd(char *data, int len)
      * as this dest_len default setting, the file is cutted and
      * the rest skiped. Look at the zlib docu for more info.
      */
-    unsigned long  dest_len    = 1024 * 1024;
-    unsigned char *dest;
+    unsigned long dest_len;
+    unsigned char *dest = NULL;
 
-    dest = malloc(dest_len);
+
     data_comp = (data_type & DATA_PACKED_CMD);
 
     len--;
     data++;
+
+    if (data_comp)
+    {
+        dest_len = GetUINT32_String(data);
+        dest = malloc(dest_len);
+        len-=4;
+        data+=4;
+        LOG(LOG_DEBUG, "data cmd: compressed file(len:%d->destlen:%d)\n", len, dest_len);
+    }
 
     switch (data_type & ~DATA_PACKED_CMD)
     {
@@ -2009,7 +2018,8 @@ void DataCmd(char *data, int len)
             LOG(LOG_ERROR, "data cmd: unknown type %d (len:%d)\n", data_type, len);
             break;
     }
-    free(dest);
+    if (dest!=NULL)
+        free(dest);
 }
 
 #ifdef USE_CHANNELS
