@@ -49,7 +49,13 @@ static void load_srv_files(char *fname, int id, int cmd)
     SrvClientFiles[id].len_ucomp = numread;
     numread = flen * 2;
     comp_tmp = (unsigned char *) malloc(numread);
-    compress2(comp_tmp+1, &numread, file_tmp+1, flen, Z_BEST_COMPRESSION);
+    numread-=4;
+    compress2(comp_tmp+5, &numread, file_tmp+1, flen, Z_BEST_COMPRESSION);
+
+
+    if (numread>(0xFFFFFFFF))
+        LOG(llevError, "\nERROR: Size of compressed file %s exceeds size of uint32\nload_srv_files in startup.c needs update!\n", fname);
+
     /* we prepare the files with the right commands - so we can flush
      * then direct from this buffer to the client.
      */
@@ -57,8 +63,9 @@ static void load_srv_files(char *fname, int id, int cmd)
     {
         /* copy the compressed file in the right buffer */
 		*comp_tmp = (char) (cmd|DATA_PACKED_CMD);
-		SrvClientFiles[id].sockbuf = SOCKBUF_COMPOSE( BINARY_CMD_DATA, NULL, (char *)comp_tmp, numread+1, SOCKBUF_FLAG_STATIC);
-		SrvClientFiles[id].len = numread+1;
+		*((uint32 *)(comp_tmp+1))=(uint32)(flen); //we send as uint32 the uncompressed filesize
+		SrvClientFiles[id].sockbuf = SOCKBUF_COMPOSE( BINARY_CMD_DATA, NULL, (char *)comp_tmp, numread+5, SOCKBUF_FLAG_STATIC);
+		SrvClientFiles[id].len = numread+5;
     }
     else
     {
@@ -135,7 +142,7 @@ static void create_client_settings(void)
             else if (line == 6) /* thats the default start values */
             {
                 sscanf(buf, "%d %d %d %d %d %d %d\n",
-                &player_arch_list[race].str, &player_arch_list[race].dex, 
+                &player_arch_list[race].str, &player_arch_list[race].dex,
                 &player_arch_list[race].con, &player_arch_list[race].intel,
                 &player_arch_list[race].wis, &player_arch_list[race].pow, &player_arch_list[race].cha);
                 race++;
@@ -154,12 +161,12 @@ static void create_client_settings(void)
     /* flush the loaded info to LOG so we can see what we have */
     LOG(llevInfo, "Loaded %d player race templates:\n", settings.player_races);
     for(line=0; line < race;line++)
-        LOG(llevInfo, "%s %s %s %s stats: %d %d %d %d %d %d %d\n", 
+        LOG(llevInfo, "%s %s %s %s stats: %d %d %d %d %d %d %d\n",
         player_arch_list[line].p_arch[0]?player_arch_list[line].p_arch[0]->clone.name:"NULL",
         player_arch_list[line].p_arch[1]?player_arch_list[line].p_arch[1]->clone.name:"NULL",
         player_arch_list[line].p_arch[2]?player_arch_list[line].p_arch[2]->clone.name:"NULL",
         player_arch_list[line].p_arch[3]?player_arch_list[line].p_arch[3]->clone.name:"NULL",
-        player_arch_list[line].str, player_arch_list[line].dex, 
+        player_arch_list[line].str, player_arch_list[line].dex,
         player_arch_list[line].con, player_arch_list[line].intel, player_arch_list[line].wis,
         player_arch_list[line].pow, player_arch_list[line].cha);
     LOG(llevInfo, "done.\n");

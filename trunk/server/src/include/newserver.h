@@ -140,7 +140,11 @@ typedef struct _sockbuf_struct
 	memcpy((_sl)->buf+(_sl)->len,(_data),(_len)); \
 	(_sl)->len+=(_len); \
 	(_sl)->buf[(_sl)->len++] = (char) 0;}
-
+#define SockBuf_AddStringNonTerminated(_sl,_data,_len) \
+	{if((int)((_sl)->len+(_len)+1)>=(_sl)->bufsize) \
+	(_sl)=socket_buffer_adjust((_sl),(_len)+1); \
+	memcpy((_sl)->buf+(_sl)->len,(_data),(_len)); \
+	(_sl)->len+=(_len);}
 
 /* helper macro to add a single command to a socket */
 #define Write_Command_To_Socket(_ns_,_cmd_) \
@@ -182,7 +186,7 @@ typedef struct NewSocket_struct
 {
         int                 fd;
         struct pl_player    *pl;                /* if != NULL this socket is part of a player struct */
-        struct _account     pl_account;            /* every socket is related to an account or waiting for one */ 
+        struct _account     pl_account;            /* every socket is related to an account or waiting for one */
         command_struct      *cmd_start;         /* pointer to the list of incoming commands in process */
         command_struct      *cmd_end;
 		sockbuf_struct      *sockbuf_start;		/* pointer to the list of prepared outgoing packages in process */
