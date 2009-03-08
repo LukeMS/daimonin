@@ -185,7 +185,6 @@ private:
     }
     mIcon[MAX_ELEMENT];
 
-    bool mVisible;
     bool mIcon_select;
     bool mLink_selected;
     int mMode;

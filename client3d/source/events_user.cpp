@@ -343,6 +343,14 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
 
         case OIS::KC_1:
         {
+
+            GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "ABCDEF^Found me! Dies ist ein besonders langer link! Der Link geht ueber mehr als eine Zeile. Aber egal ^Kein Link mehr ^123^11111");
+            GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "ABCDEF^Link1^1234^Link2^5678^Link3^90123");
+            GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "ABCDEF~#ff0000ff12345678901234567890qwedghldflghdffdjghft34z89t6gfdiug76349zbh4oeu8jlghdfljgrtzuiop~");
+            break;
+
+
+
             //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_WEAPON_HAND, 1);
             //static int color =0;
             //ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_TEXTURE, 0, ObjectNPC::TEXTURE_POS_SKIN, color++);
@@ -692,5 +700,5 @@ bool Events::mouseReleased(const OIS::MouseEvent &e, OIS::MouseButtonID id)
 //================================================================================================
 void Events::elementClicked(int element)
 {
-    GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "pressed");
+    //GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "pressed");
 }

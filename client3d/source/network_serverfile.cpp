@@ -104,13 +104,13 @@ void ServerFile::checkFiles()
 //================================================================================================
 bool ServerFile::requestFiles()
 {
-    for (int i = 0; i < FILE_SUM; ++i)
+    for (unsigned char i = 0; i < FILE_SUM; ++i)
     {
         if (srv_file[i].status == STATUS_UPDATING) return false;
         if (srv_file[i].status != STATUS_OK)
         {
             std::stringstream strCmd;
-            strCmd << (unsigned char) i;
+            strCmd << i;
             Network::getSingleton().send_command_binary(Network::CLIENT_CMD_REQUESTFILE, strCmd);
             srv_file[i].status = STATUS_UPDATING;
             return false;
