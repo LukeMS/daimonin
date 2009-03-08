@@ -103,7 +103,6 @@ int get_bmap_id(char *name)
 //================================================================================================
 CmdInterface::CmdInterface()
 {
-    mVisible = false;
 }
 
 //================================================================================================
@@ -508,17 +507,17 @@ void CmdInterface::format_gui_interface()
     // ////////////////////////////////////////////////////////////////////
     if (mUsed_flag & GUI_INTERFACE_DECLINE && !(mUsed_flag & GUI_INTERFACE_ACCEPT))
     {
+        Logger::log().error() << " if (mUsed_flag & GUI_INTERFACE_DECLINE && !(mUsed_flag & GUI_INTERFACE_ACCEPT))";
+
         if (butDecline.label.empty())
             butDecline.label = "~D~ecline";
         mUsed_flag |= GUI_INTERFACE_ACCEPT;
-        butAccept.command="";
-        butAccept.label="";
-//        GuiManager::getSingleton().getButtonHandle(GuiManager::WIN_NPCDIALOG, GuiImageset::GUI_BUTTON_NPC_ACCEPT)->setLabel(butAccept.label.c_str());
-//        GuiManager::getSingleton().getButtonHandle(GuiManager::WIN_NPCDIALOG, GuiImageset::GUI_BUTTON_NPC_DECLINE)->setLabel(butDecline.label.c_str());
+        butAccept.command ="";
+        butAccept.label ="~A~ccept";
     }
-
     else if (mUsed_flag & GUI_INTERFACE_ACCEPT)
     {
+        Logger::log().error() << "else if (mUsed_flag & GUI_INTERFACE_ACCEPT)";
         if (butAccept.label.empty())
             butAccept.label = "~A~ccept";
         if (mUsed_flag & GUI_INTERFACE_DECLINE)
@@ -532,25 +531,26 @@ void CmdInterface::format_gui_interface()
             butDecline.command= "";
             butDecline.label  = "";
         }
-//        GuiManager::getSingleton().getButtonHandle(GuiManager::WIN_NPCDIALOG, GuiImageset::GUI_BUTTON_NPC_ACCEPT)->setLabel(butAccept.label.c_str());
-//        GuiManager::getSingleton().getButtonHandle(GuiManager::WIN_NPCDIALOG, GuiImageset::GUI_BUTTON_NPC_DECLINE)->setLabel(butDecline.label.c_str());
     }
-
     else if (mUsed_flag & GUI_INTERFACE_BUTTON) // means: single button
     {
+        Logger::log().error() << "else if (mUsed_flag & GUI_INTERFACE_BUTTON) // means: single button";
         mUsed_flag |=GUI_INTERFACE_ACCEPT; // yes, thats right! we fake the accept button
-        Logger::log().error() << butAccept.label;
         if (butAccept.label.empty())
         {
-            butAccept.label= "";
+            butAccept.label= "~B~ye";
             butAccept.command="";
         }
-        else
-
-            butDecline.label="";
+        butDecline.label="";
         butDecline.command="";
-//        GuiManager::getSingleton().getButtonHandle(GuiManager::WIN_NPCDIALOG, GuiImageset::GUI_BUTTON_NPC_ACCEPT)->setLabel(butAccept.label.c_str());
-//        GuiManager::getSingleton().getButtonHandle(GuiManager::WIN_NPCDIALOG, GuiImageset::GUI_BUTTON_NPC_DECLINE)->setLabel(butDecline.label.c_str());
+    }
+    else /* no accept/decline and no button? set it to 'Bye' default button */
+    {
+        mUsed_flag |=GUI_INTERFACE_ACCEPT;
+        butDecline.label  = "";
+        butDecline.command= "";
+        butAccept.label= "~B~ye";
+        butAccept.command="";
     }
 }
 
@@ -574,9 +574,6 @@ void CmdInterface::reset()
 bool CmdInterface::load(int mode, char *data, int len, int pos)
 {
 
-
-//    GuiManager::getSingleton().getButtonHandle(GuiManager::WIN_NPCDIALOG, GuiImageset::GUI_BUTTON_NPC_ACCEPT)->setLabel("");
-//    GuiManager::getSingleton().getButtonHandle(GuiManager::WIN_NPCDIALOG, GuiImageset::GUI_BUTTON_NPC_DECLINE)->setLabel("");
     int cmd      = INTERFACE_CMD_NO; // we have a open '<' and a command is active the string is related to this cmd.
     int cmd_mode = INTERFACE_CMD_NO; // when we collect outside a cmd tag strings,
     int flag_start=0, flag_end=0;
@@ -637,57 +634,68 @@ bool CmdInterface::load(int mode, char *data, int len, int pos)
                         cmd = INTERFACE_CMD_HEAD;
                         if (!cmd_head(data, pos)) return false;
                         mUsed_flag |=GUI_INTERFACE_HEAD;
+                        Logger::log().error() << "INTERFACE_CMD_HEAD";
                         break;
                     case 'm': // title & text - what he has to say
                         cmd = INTERFACE_CMD_MESSAGE;
                         if (!cmd_message(data, pos)) return false;
                         mUsed_flag |=GUI_INTERFACE_MESSAGE;
+                        Logger::log().error() << "GUI_INTERFACE_MESSAGE";
                         break;
                     case 'r': // reward info
                         cmd = INTERFACE_CMD_REWARD;
                         if (!cmd_reward(data, pos)) return false;
                         mUsed_flag |=GUI_INTERFACE_REWARD;
+                        Logger::log().error() << "INTERFACE_CMD_REWARD";
                         break;
                     case 'w': // who info
                         cmd = INTERFACE_CMD_WHO;
                         if (!cmd_who(data, pos)) return false;
                         mUsed_flag |=GUI_INTERFACE_WHO;
+                        Logger::log().error() << "INTERFACE_CMD_WHO";
                         break;
                     case 'x': // xtended info
                         cmd = INTERFACE_CMD_XTENDED;
                         if (!cmd_xtended(data, pos)) return false;
                         mUsed_flag |=GUI_INTERFACE_XTENDED;
+                        Logger::log().error() << "INTERFACE_CMD_XTENDED";
                         break;
                     case 'l': // define a "link" string line
                         cmd = INTERFACE_CMD_LINK;
                         if (!cmd_link(data, pos)) return false;
                         ++mLink_count;
+                        Logger::log().error() << "INTERFACE_CMD_LINK";
                         break;
                     case 'i': // define a "icon" - graphical presentation of reward or message part
                         cmd = INTERFACE_CMD_ICON;
                         if (!cmd_icon(data, pos)) return false;
                         ++mIcon_count;
+                        Logger::log().error() << "INTERFACE_CMD_ICON";
                         break;
                     case 'a': // define accept button
                         cmd = INTERFACE_CMD_ACCEPT;
                         if (!cmd_button(butAccept, data, pos)) return false;
                         mUsed_flag |=GUI_INTERFACE_ACCEPT;
+                        Logger::log().error() << "INTERFACE_CMD_ACCEPT";
                         break;
                     case 'b': // define single button
                         cmd = INTERFACE_CMD_BUTTON;
                         if (!cmd_button(butAccept, data, pos)) return false;
                         // we use the accept button struct for single buttons too
                         mUsed_flag |=GUI_INTERFACE_BUTTON;
+                        Logger::log().error() << "INTERFACE_CMD_BUTTON";
                         break;
                     case 'd': // define decline button
                         cmd = INTERFACE_CMD_DECLINE;
                         if (!cmd_button(butDecline, data, pos)) return false;
                         mUsed_flag |=GUI_INTERFACE_DECLINE;
+                        Logger::log().error() << "INTERFACE_CMD_DECLINE";
                         break;
                     case 't': // textfield contents
                         cmd = INTERFACE_CMD_TEXTFIELD;
                         if (!cmd_textfield(data, pos)) return false;
                         mUsed_flag |=GUI_INTERFACE_TEXTFIELD;
+                        Logger::log().error() << "INTERFACE_CMD_TEXTFIELD";
                         break;
                     default:
                         Logger::log().error() << "NPC Dialog -> Bad command tag: " << data;
@@ -711,11 +719,21 @@ normal_char:
     format_gui_interface();
 
 
-
-
+    if (butAccept.label.empty())
+        GuiManager::getSingleton().sendMsg(GuiManager::GUI_BUTTON_NPC_ACCEPT, GuiManager::MSG_SET_VISIBLE, "", false);
+    else
+    {
+        GuiManager::getSingleton().sendMsg(GuiManager::GUI_BUTTON_NPC_ACCEPT,  GuiManager::MSG_SET_TEXT, butAccept.label.c_str());
+        GuiManager::getSingleton().sendMsg(GuiManager::GUI_BUTTON_NPC_ACCEPT, GuiManager::MSG_SET_VISIBLE, "", true);
+    }
+    if (butDecline.label.empty())
+        GuiManager::getSingleton().sendMsg(GuiManager::GUI_BUTTON_NPC_DECLINE, GuiManager::MSG_SET_VISIBLE, "", false);
+    else
+    {
+        GuiManager::getSingleton().sendMsg(GuiManager::GUI_BUTTON_NPC_DECLINE,  GuiManager::MSG_SET_TEXT, butDecline.label.c_str());
+        GuiManager::getSingleton().sendMsg(GuiManager::GUI_BUTTON_NPC_DECLINE, GuiManager::MSG_SET_VISIBLE, "", true);
+    }
     GuiManager::getSingleton().showWindow(GuiManager::WIN_NPCDIALOG, true);
-    mVisible = true;
-
     return true;
 }
 
@@ -791,8 +809,6 @@ void CmdInterface::sendCommand(int mode, char *cmd)
 //================================================================================================
 void CmdInterface::show()
 {
-
-
     if (mUsed_flag & GUI_INTERFACE_HEAD)
     {   // print head
         GuiManager::getSingleton().sendMsg(GuiManager::GUI_TEXTBOX_NPC_HEADLINE, GuiManager::MSG_SET_TEXT, mHead.body_text.c_str());
@@ -807,7 +823,10 @@ void CmdInterface::show()
     {
         mReward.line_count = GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_NPC, GuiManager::MSG_ADD_ROW, "");
         for (int i=0; i< mLink_count; ++i)
-            mReward.line_count = GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_NPC, GuiManager::MSG_ADD_ROW, mLink[i].link.c_str(), GuiManager::COLOR_GREEN);
+        {
+            String link = "^" + mLink[i].link + "°" + mLink[i].cmd + "^";
+            mReward.line_count = GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_NPC, GuiManager::MSG_ADD_ROW, link.c_str(), GuiManager::COLOR_GREEN);
+        }
     }
     // reward is also used as "objective"
     if (mUsed_flag & GUI_INTERFACE_REWARD)
@@ -953,14 +972,6 @@ void CmdInterface::show()
 //================================================================================================
 bool CmdInterface::keyEvent(const char keyChar, const unsigned char key)
 {
-    if (!mVisible || mStatus == GUI_INTERFACE_STATUS_WAIT) return false;
-    if (key == OIS::KC_ESCAPE)
-    {
-        GuiManager::getSingleton().showWindow(GuiManager::WIN_NPCDIALOG, false);
-        mVisible = false;
-        return true;
-    }
-    //if (mUsed_flag & GUI_INTERFACE_ACCEPT) return false;
     return false;
 }
 
@@ -1145,4 +1156,3 @@ bool CmdInterface::getElement(int line, int *element, int *index, String *keywor
         */
     return false;
 }
-

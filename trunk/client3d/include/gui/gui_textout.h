@@ -46,11 +46,16 @@ public:
     };
     static const char TXT_CMD_HIGHLIGHT;
     static const char TXT_CMD_LOWLIGHT;
+    static const char TXT_CMD_SEPARATOR;
     static const char TXT_CMD_LINK;
     static const char TXT_CMD_SOUND;
     static const char TXT_SUB_CMD_COLOR; // followed by 8 chars (atoi -> uint32).
     static const char TXT_CMD_CHANGE_FONT; // followed by 2 chars (atoi -> char).
     static const char CURSOR[];
+    static const Ogre::uint32 TXT_COLOR_DEFAULT;
+    static const Ogre::uint32 TXT_COLOR_LOWLIGHT;
+    static const Ogre::uint32 TXT_COLOR_HIGHLIGHT;
+    static const Ogre::uint32 TXT_COLOR_LINK;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
@@ -62,14 +67,16 @@ public:
     void loadRawFont(const char *filename);
     void loadTTFont (const char *filename, const char *size, const char *resolution);
     void printText(int width, int height, Ogre::uint32 *dst, int dstLineSkip,
-        Ogre::uint32 *bak, int bakLineSkip, const char *txt, unsigned int fontNr,
-        Ogre::uint32 color = 0xffffffff, bool hideText = false);
-    int calcTextWidth(const unsigned char *text, unsigned int fontNr = 0);
+                   Ogre::uint32 *bak, int bakLineSkip, const char *txt, unsigned int fontNr,
+                   Ogre::uint32 color = 0xffffffff, bool hideText = false);
+    int calcTextWidth(const char *text, unsigned int fontNr = 0);
+    const char *getTextendColor(Ogre::String &strText);
     int getFontHeight(int fontNr)
     {
         return mvFont[fontNr]->height;
     }
     int getCharWidth(int fontNr, unsigned char Char);
+    int getLastCharPosition(const char *text, unsigned int fontNr, int width);
     void parseUserDefinedChars(Ogre::String &txt);
 
 private:
@@ -108,10 +115,6 @@ private:
 
     std::vector<mFont*>mvFont;
     std::vector<mSpecialChar*>mvSpecialChar;
-    static const Ogre::uint32 TXT_COLOR_DEFAULT;
-    static const Ogre::uint32 TXT_COLOR_LOWLIGHT;
-    static const Ogre::uint32 TXT_COLOR_HIGHLIGHT;
-    static const Ogre::uint32 TXT_COLOR_LINK;
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.

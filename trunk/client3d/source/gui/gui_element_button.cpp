@@ -39,6 +39,13 @@ int GuiElementButton::sendMsg(int message, const char *text, uint32 param)
         case GuiManager::MSG_SET_VISIBLE:
             setVisible(param?true:false);
             return 0;
+        case GuiManager::MSG_SET_TEXT:
+            if (mStrLabel != text)
+            {
+                mStrLabel = text;
+                draw();
+            }
+            return 0;
         default:
             return -1;
     }
@@ -126,16 +133,12 @@ void GuiElementButton::draw()
     GuiElement::draw(false);
     // Draw label.
     uint32 *dst = GuiManager::getSingleton().getBuildBuffer();
-    int offX = 0, offY = 0;
-    if (mIsVisible && mStrLabel.size())
+    if (mIsVisible && !mStrLabel.empty())
     {
-        if (mState == GuiImageset::STATE_ELEMENT_PUSHED)
-        {
-            ++offX;
-            ++offY;
-        }
-        GuiTextout::getSingleton().printText(mWidth-mLabelPosX-2*offX, mHeight-mLabelPosY-2*offY, dst+mLabelPosX+offX + (mLabelPosY+offY)*mWidth, mWidth,
-                                             mParent->getLayerBG() + mPosX+mLabelPosX+offX + (mPosY+mLabelPosY+offY)*mParent->getWidth(), mParent->getWidth(),
+        int offset = (mState == GuiImageset::STATE_ELEMENT_PUSHED)?1:0;
+        GuiTextout::getSingleton().printText(mWidth-mLabelPosX-2*offset, mHeight-mLabelPosY-offset,
+                                             dst+mLabelPosX+offset + (mLabelPosY+2*offset)*mWidth, mWidth,
+                                             dst+mLabelPosX+offset + (mLabelPosY+2*offset)*mWidth, mWidth,
                                              mStrLabel.c_str(), mLabelFontNr, 0x00ffffff);
     }
     mParent->getTexture()->getBuffer()->blitFromMemory(PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8, dst), Box(mPosX, mPosY, mPosX+mWidth, mPosY+mHeight));

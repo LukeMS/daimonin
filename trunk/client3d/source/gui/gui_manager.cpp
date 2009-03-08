@@ -153,7 +153,7 @@ const uint32 GuiManager::COLOR_WHITE = 0xffffffff;
 //================================================================================================
 // .
 //================================================================================================
-int GuiManager::calcTextWidth(unsigned char *text, int fontNr)
+int GuiManager::calcTextWidth(const char *text, int fontNr)
 {
     return GuiTextout::getSingleton().calcTextWidth(text, fontNr);
 }
@@ -778,7 +778,7 @@ void GuiManager::drawTooltip()
     int maxWidth = 0;
     for (int i = 0; i < sumLines; ++i)
     {
-        txtWidth[i] = calcTextWidth((unsigned char*)line[i].c_str(), GuiTextout::FONT_SYSTEM);
+        txtWidth[i] = calcTextWidth(line[i].c_str(), GuiTextout::FONT_SYSTEM);
         if (txtWidth[i] > TOOLTIP_SIZE) txtWidth[i] = TOOLTIP_SIZE;
         if (txtWidth[i] > maxWidth) maxWidth = txtWidth[i];
     }

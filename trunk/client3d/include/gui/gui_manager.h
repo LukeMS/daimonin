@@ -230,7 +230,7 @@ public:
     bool finishedTextInput();
     void setMouseState(int action);
     void loadRawFont(const char *filename);
-    int calcTextWidth(unsigned char *text, int fontNr);
+    int calcTextWidth(const char *text, int fontNr);
     void resizeBuildBuffer(size_t size);
     bool getUserAction()
     {

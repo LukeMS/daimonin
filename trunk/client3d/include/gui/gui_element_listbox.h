@@ -41,12 +41,11 @@ public:
     // ////////////////////////////////////////////////////////////////////
     GuiListbox(TiXmlElement *xmlElement, void *parent);
     ~GuiListbox();
-    int sendMsg(int message, const char *text, Ogre::uint32 param);
     void draw();
     void clear();
     void update(Ogre::Real dTime);
+    int sendMsg(int message, const char *text, Ogre::uint32 param);
     int mouseEvent(int MouseAction, int x, int y, int z);
-    const char *extractFirstLineOfText(const char &text);
     const char *getSelectedKeyword(); /**< Returns the keyword found in the selected line. **/
 
 private:
@@ -57,22 +56,20 @@ private:
     struct _row
     {
         Ogre::String str;
+        Ogre::String keyword;   /**< All keywords in this row. Separated by KEYWORD_SEPARATOR. **/
         Ogre::uint32 color;
-        int keyword_clipped;
-        unsigned char startLine; /**< Offset to the start line of the mulitline text. **/
     }
     row[SIZE_STRING_BUFFER];
-    int  mVScrollOffset;         /**< At which amount the scrollbar was scrolled. **/
-    int  mPixelScroll;           /**< Number of pixel already scrolled. **/
-    int  mRowsToPrint;           /**< Rows left to print. **/
-    int  mMaxVisibleRows;        /**< Number of rows fitting into the listbox. **/
-    int  mPrintPos;              /**< First entry in the ring-buffer to print. **/
-    int  mBufferPos;             /**< Next free entry in the ring-buffer. **/
-    int  mActLines;              /**< Actual filled entries in the ring-buffer **/
+    int  mVScrollOffset;        /**< At which amount the scrollbar was scrolled. **/
+    int  mPixelScroll;          /**< Number of pixel already scrolled. **/
+    int  mRowsToPrint;          /**< Rows left to print. **/
+    int  mMaxVisibleRows;       /**< Number of rows fitting into the listbox. **/
+    int  mPrintPos;             /**< First entry in the ring-buffer to print. **/
+    int  mBufferPos;            /**< Next free entry in the ring-buffer. **/
+    int  mActLines;             /**< Actual filled entries in the ring-buffer **/
     int  mFontHeight;
-    int  mSelectedLine;
-    int  mKeyStart, mKeyCount;
     Ogre::Real mTime;
+    Ogre::String mClickedKeyWord;
     class GuiElementScrollbar *mScrollBarH, *mScrollBarV;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
@@ -80,6 +77,7 @@ private:
     int  addRow(Ogre::String text, Ogre::uint32 color);
     void scrollTextVertical(int offset);
     void scrollTextHorizontal(int offset);
+    const char *extractKeyword(int x, int y);
 };
 
 #endif

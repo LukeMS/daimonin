@@ -37,6 +37,7 @@ using namespace Ogre;
 const char GuiTextout::TXT_CMD_HIGHLIGHT   = '~';
 const char GuiTextout::TXT_CMD_LOWLIGHT    = -80; // prevent anjuta and codeblocks problems with the degree character.
 const char GuiTextout::TXT_CMD_LINK        = '^';
+const char GuiTextout::TXT_CMD_SEPARATOR   = '#';
 const char GuiTextout::TXT_CMD_SOUND       = '§';
 const char GuiTextout::TXT_SUB_CMD_COLOR   = '#'; // followed by 8 chars (atoi -> uint32).
 const char GuiTextout::TXT_CMD_CHANGE_FONT = '@'; // followed by 2 chars (atoi -> char).
@@ -306,7 +307,7 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
     // ////////////////////////////////////////////////////////////////////
     // Create a raw font.
     // ////////////////////////////////////////////////////////////////////
-    //if (Option::getSingleton().getIntValue(Option::CMDLINE_CREATE_RAW_FONTS))
+    if (Option::getSingleton().getIntValue(Option::CMDLINE_CREATE_RAW_FONTS))
     {
         Image img;
         // ////////////////////////////////////////////////////////////////////
@@ -353,7 +354,7 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
 //================================================================================================
 // Calculate the gfx-width for the given text.
 //================================================================================================
-int GuiTextout::calcTextWidth(const unsigned char *text, unsigned int fontNr)
+int GuiTextout::calcTextWidth(const char *text, unsigned int fontNr)
 {
     int x =0;
     if (fontNr >= (unsigned int)mvFont.size()) fontNr = 0;
@@ -364,14 +365,18 @@ int GuiTextout::calcTextWidth(const unsigned char *text, unsigned int fontNr)
             case TXT_CMD_LOWLIGHT:
                 ++text;
                 break;
+            case TXT_CMD_LINK:
+                if (*++text == TXT_SUB_CMD_COLOR && (!*++text || !*++text)) break;
+                break;
             case TXT_CMD_HIGHLIGHT:
-                if (!*(++text)) break;
-                if (*text == TXT_SUB_CMD_COLOR) text+= 8; // format: "#xxxxxxxx".
+                if (!*++text) break;
+                if (*text == TXT_SUB_CMD_COLOR)
+                    text+= strlen("#ff00ff00");
                 break;
             case TXT_CMD_CHANGE_FONT:
-                if (!*(++text)) break;
+                if (!*++text) break;
                 fontNr = (*text >='a') ? (*text - 87) <<4 : (*text >='A') ? (*text - 55) <<4 :(*text -'0') <<4;
-                if (!*(++text)) break;
+                if (!*++text) break;
                 fontNr+= (*text >='a') ? (*text - 87)     : (*text >='A') ? (*text - 55)     :(*text -'0');
                 ++text;
                 if (fontNr >= (unsigned int)mvFont.size()) fontNr = 0;
@@ -383,6 +388,89 @@ int GuiTextout::calcTextWidth(const unsigned char *text, unsigned int fontNr)
         }
     }
     return x;
+}
+
+//================================================================================================
+// Returns the pos of the last char fitting into the width, or -1 for the whole string.
+//================================================================================================
+int GuiTextout::getLastCharPosition(const char *text, unsigned int fontNr, int width)
+{
+    int pos =0, len = (int)strlen(text);
+    if (fontNr >= (unsigned int)mvFont.size()) fontNr = 0;
+    while (pos < len && width >0)
+    {
+        switch (text[pos])
+        {
+            case TXT_CMD_LOWLIGHT:
+                ++pos;
+                break;
+            case TXT_CMD_LINK:
+                if (text[++pos] == TXT_CMD_SEPARATOR) pos+= 2;
+                break;
+            case TXT_CMD_HIGHLIGHT:
+                if (text[++pos] == TXT_CMD_SEPARATOR) pos+= (int)strlen("#ff00ff00");
+                break;
+            case TXT_CMD_CHANGE_FONT:
+                if (!text[++pos]) break;
+                fontNr = (text[pos] >='a') ? (text[pos] - 87) <<4 : (text[pos] >='A') ? (text[pos] - 55) <<4 :(text[pos] -'0') <<4;
+                if (!text[++pos]) break;
+                fontNr+= (text[pos] >='a') ? (text[pos] - 87)     : (text[pos] >='A') ? (text[pos] - 55)     :(text[pos] -'0');
+                ++pos;
+                if (fontNr >= (unsigned int)mvFont.size()) fontNr = 0;
+                break;
+            case '\n':
+            case '\0':
+                break;
+            default:
+                width-= getCharWidth(fontNr, text[pos]);
+                ++pos;
+                break;
+        }
+    }
+    return pos;
+}
+
+//================================================================================================
+// Returns the color (as a string) of the last char in a text.
+//================================================================================================
+const char *GuiTextout::getTextendColor(String &strText)
+{
+    static char color[] = "~#ff000000\0";
+    color[0] = '\0';
+    const char *text = strText.c_str();
+    while (*text)
+    {
+        switch (*text)
+        {
+            case TXT_CMD_LINK:
+                color[0] = color[0]?'\0':TXT_CMD_LINK;
+                color[1] = '\0';
+                break;
+            case TXT_CMD_LOWLIGHT:
+                color[0] = color[0]?'\0':TXT_CMD_LOWLIGHT;
+                color[1] = '\0';
+                break;
+            case TXT_CMD_HIGHLIGHT:
+                if (color[0])
+                {
+                    color[0] = '\0';
+                    break;
+                }
+                color[0] = TXT_CMD_HIGHLIGHT;
+                color[1] = '\0';
+                if (*(text+1) != TXT_SUB_CMD_COLOR || !*(text+1)) break;
+                for (int i= 1; i <= 9; ++i)
+                {
+                    if (!*++text) return color;
+                    color[i] = *text;
+                }
+                break;
+            default:
+                break;
+        }
+        ++text;
+    }
+    return color;
 }
 
 //================================================================================================
@@ -420,7 +508,8 @@ void GuiTextout::printText(int width, int height, uint32 *dst, int dstLineSkip, 
 
     int srcRow, bakRow, dstRow, stopX, clipX=0;
     unsigned char chr;
-    uint32 aktColor, color = fontColor & 0x00ffffff; // Alpha part comes from the font.
+    fontColor&= 0x00ffffff; // Alpha part comes from the font.
+    uint32 actColor, color = fontColor;
 
     while (*text)
     {
@@ -433,51 +522,39 @@ void GuiTextout::printText(int width, int height, uint32 *dst, int dstLineSkip, 
         switch (*text)
         {
             case TXT_CMD_LINK:
-                if (!*(++text)) goto textDone;
-                if (color!= TXT_COLOR_LINK)
-                    color = TXT_COLOR_LINK;
-                else
-                    color = fontColor  & 0x00ffffff;
+                color = (color!= fontColor)?fontColor:TXT_COLOR_LINK;
+                if (*(text+1) == TXT_SUB_CMD_COLOR)
+                {
+                    ++text;
+                    if (!*++text) goto textDone;
+                }
                 break;
             case TXT_CMD_LOWLIGHT:
-                if (!*(++text)) goto textDone;
-                if (color!= TXT_COLOR_LOWLIGHT)
-                    color = TXT_COLOR_LOWLIGHT;
-                else
-                    color = fontColor  & 0x00ffffff;
+                color = (color!= fontColor)?fontColor:TXT_COLOR_LOWLIGHT;
                 break;
             case TXT_CMD_HIGHLIGHT:
-                if (!*(++text)) goto textDone;
-                if (color != TXT_COLOR_HIGHLIGHT)
+                // Parse the highlight color (8 byte hex string to uint32).
+                if (*(text+1) == TXT_SUB_CMD_COLOR)
                 {
-                    // Parse the highlight color (8 byte hex string to uint32).
-                    if (*text == TXT_SUB_CMD_COLOR)
+                    ++text;
+                    color =0;
+                    for (int i = 28; i>=0; i-=4)
                     {
-                        fontColor =0;
-                        for (int i = 28; i>=0; i-=4)
-                        {
-                            if (!*(++text)) goto textDone;
-                            fontColor += (*text >='a') ? (*text - 87) <<i : (*text >='A') ? (*text - 55) <<i :(*text -'0') <<i;
-                        }
-                        if (!*(++text)) goto textDone;
-                        fontColor&= 0x00ffffff;
-                        color = fontColor;
+                        if (!*++text) goto textDone;
+                        color += (*text >='a') ? (*text - 87) <<i : (*text >='A') ? (*text - 55) <<i :(*text -'0') <<i;
                     }
-                    // Use standard highlight color.
-                    else color = TXT_COLOR_HIGHLIGHT;
+                    color&= 0x00ffffff;
                 }
-                else color = fontColor & 0x00ffffff;
+                else
+                    color = (color!= fontColor)?fontColor:TXT_COLOR_HIGHLIGHT;
                 break;
             case TXT_CMD_CHANGE_FONT:
-                if (!*(++text)) goto textDone;
-                //int base= mvFont[fontNr]->baseline;
+                if (!*++text) goto textDone;
                 fontNr = (*text >='a') ? (*text - 87) <<4 : (*text >='A') ? (*text - 55) <<4 :(*text -'0') <<4;
-                if (!*(++text)) goto textDone;
+                if (!*++text) goto textDone;
                 fontNr+= (*text >='a') ? (*text - 87)     : (*text >='A') ? (*text - 55)     :(*text -'0');
-                if (!*(++text)) goto textDone;
                 if (fontNr >= (unsigned int)mvFont.size()) fontNr = 0;
                 break;
-
             default:
                 chr = (*text - 32);
                 if (chr > CHARS_IN_FONT) chr = 0; // Unknown chars will be displayed as space.
@@ -497,20 +574,20 @@ void GuiTextout::printText(int width, int height, uint32 *dst, int dstLineSkip, 
                     srcRow-= deltaHeight/2 * mvFont[fontNr]->textureWidth; // just a hack
                     deltaHeight = 0;
                 }
-                aktColor = (chr < STANDARD_CHARS_IN_FONT)?color:0; // Special chars always keep their own color.
+                actColor = (chr < STANDARD_CHARS_IN_FONT)?color:0; // Special chars always keep their own color.
                 if (!bakLineSkip) // Background is a simple colorfill.
                 {
                     for (int y =0; y < deltaHeight; ++y)
                     {
                         for (int x = 0; x < stopX; ++x)
-                             dst[dstRow + x] = *bak;
+                            dst[dstRow + x] = *bak;
                         dstRow+= dstLineSkip;
                     }
                     //for (int y =(int)mvFont[fontNr]->height < height?(int)mvFont[fontNr]->height:height; y; --y)
                     for (int y =deltaHeight; y < height; ++y)
                     {
                         for (int x = 0; x < stopX; ++x)
-                            dst[dstRow + x] = GuiGraphic::getSingleton().alphaBlend(*bak, aktColor + mvFont[fontNr]->data[srcRow + x]);
+                            dst[dstRow + x] = GuiGraphic::getSingleton().alphaBlend(*bak, actColor + mvFont[fontNr]->data[srcRow + x]);
                         srcRow+= mvFont[fontNr]->textureWidth;
                         dstRow+= dstLineSkip;
                     }
@@ -529,7 +606,7 @@ void GuiTextout::printText(int width, int height, uint32 *dst, int dstLineSkip, 
                     for (int y =deltaHeight; y < height; ++y)
                     {
                         for (int x = 0; x < stopX; ++x)
-                            dst[dstRow + x] = GuiGraphic::getSingleton().alphaBlend(bak[bakRow + x], aktColor + mvFont[fontNr]->data[srcRow + x]);
+                            dst[dstRow + x] = GuiGraphic::getSingleton().alphaBlend(bak[bakRow + x], actColor + mvFont[fontNr]->data[srcRow + x]);
                         srcRow+= mvFont[fontNr]->textureWidth;
                         dstRow+= dstLineSkip;
                         bakRow+= bakLineSkip;
@@ -539,9 +616,9 @@ void GuiTextout::printText(int width, int height, uint32 *dst, int dstLineSkip, 
                 clipX+= stopX;
                 if (clipX >= width) goto textDone;
                 dst+= stopX;
-                ++text;
                 break;
         }
+        ++text;
     }
 textDone: // Fill the space right of the text with the background.
     if (!bakLineSkip) // Background is a simple colorfill.

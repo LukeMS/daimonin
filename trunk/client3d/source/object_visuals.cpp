@@ -247,7 +247,7 @@ void ObjectVisuals::select(ObjectNPC *npc, bool showLifebar, bool showInteractMe
     mNode[VISUAL_LIFEBAR]->setInheritOrientation(false);
     const int FONT_NR = 3;
     const char *name = npc->getNickName().c_str();
-    int len = GuiManager::getSingleton().calcTextWidth((unsigned char*)name, FONT_NR);
+    int len = GuiManager::getSingleton().calcTextWidth(name, FONT_NR);
     if (len >TEXTURE_SIZE) len = TEXTURE_SIZE;
     len = (TEXTURE_SIZE - len) /2;
     PixelBox pb = mHardwarePB->lock(Box(0, 0, TEXTURE_SIZE, TEXTURE_SIZE), HardwareBuffer::HBL_DISCARD);

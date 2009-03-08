@@ -65,7 +65,7 @@ GuiElementTextbox::GuiElementTextbox(TiXmlElement *xmlElement, void *parent):Gui
     int maxX, maxY;
     mParent->getSize(maxX, maxY);
     if (mWidth <= MINIMAL_ELEMENT_SIZE) // No value was set in the xml-file.
-        mWidth = GuiTextout::getSingleton().calcTextWidth((const unsigned char*)mStrLabel.c_str(), mLabelFontNr);
+        mWidth = GuiTextout::getSingleton().calcTextWidth(mStrLabel.c_str(), mLabelFontNr);
     if (mHeight<= MINIMAL_ELEMENT_SIZE) // No value was set in the xml-file.
         mHeight= GuiTextout::getSingleton().getFontHeight(mLabelFontNr);
     // Clip the text.
