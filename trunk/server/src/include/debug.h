@@ -51,7 +51,7 @@
 
 /* debug the fix_xxxxxx flow */
 #define DEBUG_FIX_PLAYER
-/*#define DEBUG_FIX_PLAYER_SKIPPED */
+#define DEBUG_FIX_PLAYER_SKIPPED
 #define DEBUG_FIX_MONSTER
 
 /* force traverse loading and process of all player files inside /server/data/players */
