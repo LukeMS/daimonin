@@ -1918,6 +1918,9 @@ void fix_player(object *op)
     }
     else if (inv_see_flag) /* and !FLAG_SEE_INVISIBLE */
         pl->socket.update_tile = 0;
+
+    /* Update the client. */
+    esrv_send_inventory(pl->ob, op);
 }
 
 /*
