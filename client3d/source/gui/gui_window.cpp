@@ -347,17 +347,18 @@ int GuiWindow::mouseEvent(int MouseAction, Vector3 &mouse)
         int event = mvElement[i]->mouseEvent(MouseAction, x, y, (int)mouse.z);
         if (event != GuiManager::EVENT_CHECK_NEXT)
         {
-            if (event == GuiManager::EVENT_DRAG_STRT)
-            {
-                mElementDrag = i;
-                return event;
-            }
             if (event == GuiManager::EVENT_USER_ACTION)
             {
-                elementAction(this, mvElement[i]->getIndex());
-                return event;
+                mElementClicked = mvElement[i]->getIndex();
+                if (mElementClicked == GuiManager::GUI_BUTTON_CLOSE)
+                {
+                    setVisible(false);
+                    return GuiManager::EVENT_CHECK_DONE;
+                }
             }
-            return GuiManager::EVENT_CHECK_DONE;
+            if (event == GuiManager::EVENT_DRAG_STRT)
+                mElementDrag = i;
+            return event;
         }
     }
     return GuiManager::EVENT_CHECK_DONE;
@@ -417,21 +418,9 @@ int GuiWindow::sendMsg(int elementNr, int message, const char *text, Ogre::uint3
 }
 
 //================================================================================================
-// Button event.
+//
 //================================================================================================
-void GuiWindow::elementAction(GuiWindow *me, int index)
+const char *GuiWindow::getInfo(int elementNr, int info)
 {
-    Sound::getSingleton().playStream(Sound::BUTTON_CLICK);
-    switch (index)
-    {
-            // Standard buttons. (close, resize, ...)
-        case GuiManager::GUI_BUTTON_CLOSE:
-            me->setVisible(false);
-            break;
-        default:
-            mElementClicked = index;
-            if (index <0)
-                GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "~#00ffff00CLICK: No entry in GuiManager::mStateStruct[]");
-            break;
-    }
+    return mvElement[elementNr]->getInfo(info);
 }

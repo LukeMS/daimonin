@@ -82,6 +82,7 @@ public:
     }
     void centerWindowOnMouse(int x, int y);
     int sendMsg(int elementNr, int message, const char *text, Ogre::uint32 param);
+    const char *getInfo(int elementNr, int info);
     // ////////////////////////////////////////////////////////////////////
     // GUI_Statusbar stuff.
     // ////////////////////////////////////////////////////////////////////
@@ -140,7 +141,6 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    static void elementAction(GuiWindow *me, int index);
     void checkForOverlappingElements();
     void setHeight(int h);
     void delElement(int number);

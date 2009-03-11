@@ -70,7 +70,6 @@ public:
         GuiCursor::getSingleton().getPos(x, y);
         mDnDElement->setPosition(x, y);
     }
-    bool mouseWithin(int x, int y);
 
 private:
     // ////////////////////////////////////////////////////////////////////

@@ -43,6 +43,14 @@ int GuiElement::sendMsg(int, const char *, uint32)
 //================================================================================================
 //
 //================================================================================================
+const char *GuiElement::getInfo(int info)
+{
+    return 0;
+}
+
+//================================================================================================
+//
+//================================================================================================
 int GuiElement::mouseEvent(int, int, int, int)
 {
     return GuiManager::EVENT_CHECK_NEXT; // No action here, check the other gadgets.
@@ -69,7 +77,7 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
     mState = GuiImageset::STATE_ELEMENT_DEFAULT;
     mFontNr= 0;
     mWidth = 1; mHeight= 1; // Default values (must be 1).
-    mIsVisible = true;
+    mVisible = true;
     mGfxSrc    = 0; // No gfx is defined (fallback to color fill).
     mFillColor = 0;
     mParent= (GuiWindow*)parent;
@@ -148,7 +156,7 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
         if ((tmp = xmlElement->Attribute("blue")))  mLabelColor+= atoi(tmp);
         if ((tmp = xmlElement->Attribute("text")))  mStrLabel = tmp;
     }
-    mIsVisible = true;
+    mVisible = true;
 }
 
 //================================================================================================
@@ -162,6 +170,16 @@ bool GuiElement::setState(int state)
         return true;
     }
     return false;
+}
+
+//================================================================================================
+// .
+//================================================================================================
+void GuiElement::setVisible(bool visible)
+{
+    if (visible == mVisible) return;
+    mVisible = visible;
+    draw();
 }
 
 //================================================================================================
@@ -180,7 +198,7 @@ void GuiElement::draw(bool uploadToTexture)
         int srcRowSkip = (int)mParent->getPixelBox()->getWidth();
         if (mIndex < 0) // This gfx is part of the background.
             GuiGraphic::getSingleton().drawGfxToBuffer(mWidth, mHeight, mGfxSrc->w, mGfxSrc->h, (uint32*)src.data, bak, bak, srcRowSkip, mParent->getWidth(), mParent->getWidth());
-        else if (mIsVisible)
+        else if (mVisible)
             GuiGraphic::getSingleton().drawGfxToBuffer(mWidth, mHeight, mGfxSrc->w, mGfxSrc->h, (uint32*)src.data, bak, dst, srcRowSkip, mParent->getWidth(), mWidth);
     }
     // Draws a color area to the window texture.
@@ -188,10 +206,10 @@ void GuiElement::draw(bool uploadToTexture)
     {
         if (mIndex < 0) // The gfx is part of the background.
             GuiGraphic::getSingleton().drawColorToBuffer(mWidth, mHeight, mFillColor, bak, mParent->getWidth());
-        else if (mIsVisible)
+        else if (mVisible)
             GuiGraphic::getSingleton().drawColorToBuffer(mWidth, mHeight, mFillColor, bak, dst, mParent->getWidth(), mWidth);
     }
-    if (mIndex < 0 || !mIsVisible)
+    if (mIndex < 0 || !mVisible)
         GuiGraphic::getSingleton().restoreWindowBG(mWidth, mHeight, bak, dst, mParent->getWidth(), mWidth);
     if (uploadToTexture)
         mParent->getTexture()->getBuffer()->blitFromMemory(PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8, dst), Box(mPosX, mPosY, mPosX+mWidth, mPosY+mHeight));

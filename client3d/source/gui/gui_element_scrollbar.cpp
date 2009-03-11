@@ -35,7 +35,7 @@ const int SLIDER_INNER_OFFSET = 3;
 
 // TODO:
 // Disable buttons/slider if they doesnt fit into the window.
-// Keep slider-pos when lines were added.
+// Keep slider-pos (or jump to last line?) when lines were added.
 // support horizontal scrollbar.
 
 //================================================================================================
@@ -111,17 +111,22 @@ bool GuiElementScrollbar::mouseOverSlider(int x, int y)
 // Mouse action in parent window.
 // Slider must stick to the mousecursor while scrolling.
 //================================================================================================
-int GuiElementScrollbar::mouseEvent(int MouseAction, int x, int y, int z)
+int GuiElementScrollbar::mouseEvent(int MouseAction, int x, int y, int mouseWheel)
 {
-    // Test the buttons.
+    // Test the buttons and the mouswheel.
     if (!mDragging)
     {
-        if (mButScrollUp && mButScrollUp->mouseEvent(MouseAction, x, y, z) == GuiManager::EVENT_USER_ACTION)
+        if (mouseWheel)
+        {
+            mLastScrollAmount = mouseWheel>0?-1:+1;
+            return GuiManager::EVENT_USER_ACTION;
+        }
+        if (mButScrollUp && mButScrollUp->mouseEvent(MouseAction, x, y, mouseWheel) == GuiManager::EVENT_USER_ACTION)
         {
             mLastScrollAmount = -1;
             return GuiManager::EVENT_USER_ACTION;
         }
-        if (mButScrollDown && mButScrollDown->mouseEvent(MouseAction, x, y, z) == GuiManager::EVENT_USER_ACTION)
+        if (mButScrollDown && mButScrollDown->mouseEvent(MouseAction, x, y, mouseWheel) == GuiManager::EVENT_USER_ACTION)
         {
             mLastScrollAmount = +1;
             return GuiManager::EVENT_USER_ACTION;
@@ -224,15 +229,12 @@ void GuiElementScrollbar::draw()
         case GuiImageset::STATE_ELEMENT_PUSHED:
             color = mColorBarActive;
             break;
-
         case GuiImageset::STATE_ELEMENT_PASSIVE:
             color = mColorBarPassive;
             break;
-
         case GuiImageset::STATE_ELEMENT_M_OVER:
             color = mColorBarM_Over;
             break;
-
         default:
             color = mColorBorderline;
             break;
@@ -278,10 +280,12 @@ void GuiElementScrollbar::draw()
 }
 
 //================================================================================================
-// Resize the complete scrollbar.
+// Resize the complete scrollbar. Value of <0 means keep the current value.
 //================================================================================================
 void GuiElementScrollbar::resize(int newWidth, int newHeight)
 {
+    if (newWidth < 0) newWidth = mWidth;
+    if (newHeight< 0) newHeight= mHeight;
     if (newWidth == mWidth && newHeight == mHeight && mGfxBuffer) return;
     if (mHorizontal)
     {

@@ -22,8 +22,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
 #include <tinyxml.h>
-#include <OgreHardwarePixelBuffer.h>
-#include "define.h"
 #include "logger.h"
 #include "gui_manager.h"
 #include "gui_textout.h"
@@ -32,36 +30,24 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Ogre;
 
-static const Real SCROLL_SPEED = 0.001f;
-const unsigned int MAX_KEYWORD_LEN = 255;
-const char *KEYWORD_SEPARATOR = "#";
-
 // Todo:
-// - softscrolling must be implemented again (log(x) speedup on the amount of mRowsToScroll).
 // - support gfx elements (they will be splitt over some lines if they are bigger then fontsize).
+
+String GuiListbox::mKeywordPressed;
 
 //================================================================================================
 // Constructor.
 //================================================================================================
 GuiListbox::GuiListbox(TiXmlElement *xmlElement, void *parent):GuiElement(xmlElement, parent)
 {
-    // ////////////////////////////////////////////////////////////////////
-    // Create buffer to hold the pixel information of the listbox.
-    // ////////////////////////////////////////////////////////////////////
     mFontHeight = GuiTextout::getSingleton().getFontHeight(mFontNr);
     mMaxVisibleRows  = (int)((float)mHeight / (float)mFontHeight + 0.5);
     if (mMaxVisibleRows < 1) mMaxVisibleRows = 1;
     mScrollBarV = 0;
-    mScrollBarH = 0;
     for (TiXmlElement *xmlOpt = xmlElement->FirstChildElement("Element"); xmlOpt; xmlOpt = xmlOpt->NextSiblingElement("Element"))
     {
-        if (!strcmp(xmlOpt->Attribute("type"), "SCROLLER"))
-        {
-            if (!strcmp(xmlOpt->Attribute("name"), "VScrollbar"))
-                mScrollBarV= new GuiElementScrollbar(xmlOpt, mParent, this);
-            if (!strcmp(xmlOpt->Attribute("name"), "HScrollbar"))
-                mScrollBarH= new GuiElementScrollbar(xmlOpt, mParent, this);
-        }
+        if (!strcmp(xmlOpt->Attribute("type"), "SCROLLER") && !strcmp(xmlOpt->Attribute("name"), "VScrollbar"))
+            mScrollBarV= new GuiElementScrollbar(xmlOpt, mParent, this);
     }
     clear();
 }
@@ -71,13 +57,12 @@ GuiListbox::GuiListbox(TiXmlElement *xmlElement, void *parent):GuiElement(xmlEle
 //================================================================================================
 void GuiListbox::clear()
 {
-    mTime = 0;
     mPrintPos = 0;
     mActLines = 0;
     mBufferPos= 0;
     mPixelScroll = 0;
     mRowsToPrint = 0;
-    mVScrollOffset=  0;
+    mVScrollOffset=0;
     draw();
 }
 
@@ -87,7 +72,6 @@ void GuiListbox::clear()
 GuiListbox::~GuiListbox()
 {
     delete mScrollBarV;
-    delete mScrollBarH;
 }
 
 //================================================================================================
@@ -98,7 +82,7 @@ int GuiListbox::sendMsg(int message, const char *text, uint32 color)
     switch (message)
     {
         case GuiManager::MSG_ADD_ROW:
-            addRow(text, color);
+            addText(text, color);
             return 0;
         case GuiManager::MSG_CLEAR:
             clear();
@@ -109,13 +93,28 @@ int GuiListbox::sendMsg(int message, const char *text, uint32 color)
 }
 
 //================================================================================================
+// .
+//================================================================================================
+const char *GuiListbox::getInfo(int info)
+{
+    switch (info)
+    {
+        case GuiManager::INFO_KEYWORD:
+            return mKeywordPressed.c_str();
+        default:
+            return 0;
+    }
+}
+
+//================================================================================================
 // Add line(s) of text to the ring-buffer (perform auto-clipping).
 //================================================================================================
-int GuiListbox::addRow(String strText, uint32 stdColor)
+int GuiListbox::addText(const char *txt, uint32 stdColor)
 {
-    if (strText.empty()) return 0;
+    if (!txt) return 0; // We MUST check for NULL, so we can't use String for the first parameter of addText().
+    String strText = txt;
     // ////////////////////////////////////////////////////////////////////
-    // Mask out the sound commands.
+    // Mask out all sound commands.
     // ////////////////////////////////////////////////////////////////////
     size_t start, stop, link;
     while ((start = strText.find(GuiTextout::TXT_CMD_SOUND))!= std::string::npos)
@@ -125,13 +124,12 @@ int GuiListbox::addRow(String strText, uint32 stdColor)
         strText.erase(start, stop-start+1);
     }
     GuiTextout::getSingleton().parseUserDefinedChars(strText);
-
     // ////////////////////////////////////////////////////////////////////
     // Keywords:
-    // - Insert after each keyword start a "#x" (x == keyword number).
+    // - Insert a "#x" (x == keyword number) after each keyword start.
     // - The keywords will be stored in keyword entry of the textrow.
     // ////////////////////////////////////////////////////////////////////
-    String strKeys;
+    String keyword;
     link = stop = 0;
     char keySign[] = { '#', '1', '\0' };
     while ((start = strText.find(GuiTextout::TXT_CMD_LINK, stop))!= std::string::npos)
@@ -140,7 +138,8 @@ int GuiListbox::addRow(String strText, uint32 stdColor)
         {
             stop = strText.find(GuiTextout::TXT_CMD_LINK, start);
             if (stop == std::string::npos) stop = strText.size();
-            strKeys+= strText.substr(link, stop-link) + KEYWORD_SEPARATOR;
+            ++link;
+            keyword+= strText.substr(link, stop-link) + GuiTextout::TXT_CMD_SEPARATOR;
             strText.erase(link, stop-link);
             stop = link;
         }
@@ -148,7 +147,7 @@ int GuiListbox::addRow(String strText, uint32 stdColor)
         {
             stop = strText.find(GuiTextout::TXT_CMD_LINK, start);
             if (stop == std::string::npos) stop = strText.size();
-            strKeys+= strText.substr(start, stop-start) + KEYWORD_SEPARATOR;
+            keyword+= strText.substr(start, stop-start) + GuiTextout::TXT_CMD_SEPARATOR;
         }
         strText.insert(start, keySign);
         stop+=3;
@@ -186,9 +185,9 @@ int GuiListbox::addRow(String strText, uint32 stdColor)
             stop = pos;
         }
         strLine = strLine.substr(0, ++stop).c_str();
-        row[mBufferPos & (SIZE_STRING_BUFFER-1)].str = strLine;
+        row[mBufferPos & (SIZE_STRING_BUFFER-1)].text = strLine;
         row[mBufferPos & (SIZE_STRING_BUFFER-1)].color= stdColor;
-        row[mBufferPos & (SIZE_STRING_BUFFER-1)].keyword= strKeys;
+        row[mBufferPos & (SIZE_STRING_BUFFER-1)].keyword= keyword;
         ++mBufferPos;
         ++mRowsToPrint;
         ++sumLines;
@@ -203,42 +202,28 @@ int GuiListbox::addRow(String strText, uint32 stdColor)
 }
 
 //================================================================================================
-// Return the clicked keyword.
-//================================================================================================
-const char *GuiListbox::getSelectedKeyword()
-{
-    return mClickedKeyWord.c_str();
-}
-
-//============================ ====================================================================
 // Returns true if the mouse event was on this gadget (so no need to check the other gadgets).
 //================================================================================================
 int GuiListbox::mouseEvent(int MouseAction, int x, int y, int mouseWheel)
 {
-    if (mouseWheel)
-    {
-        scrollTextVertical((mouseWheel>0)?-1:+1);
-        return GuiManager::EVENT_CHECK_DONE;
-    }
     // Scrollbar action?
     if (mScrollBarV && mScrollBarV->mouseEvent(MouseAction, x, y, mouseWheel) == GuiManager::EVENT_USER_ACTION)
     {
         scrollTextVertical(mScrollBarV->getScrollOffset());
         return GuiManager::EVENT_CHECK_DONE;
     }
-    if (mScrollBarH && mScrollBarH->mouseEvent(MouseAction, x, y, mouseWheel) == GuiManager::EVENT_USER_ACTION)
+    // MouseAction within the textarea?
+    if (!mouseWithin(x, y))
+        return GuiManager::EVENT_CHECK_NEXT;
+    if (mouseWheel)
     {
-        scrollTextVertical(mScrollBarV->getScrollOffset());
+        scrollTextVertical((mouseWheel>0)?-1:+1);
         return GuiManager::EVENT_CHECK_DONE;
     }
-    // Mouseclick within the textarea?
-    if (MouseAction != GuiManager::BUTTON_PRESSED || x< mPosX || x> mPosX+mWidth || y< mPosY || y> mPosY+mHeight)
-        return GuiManager::EVENT_CHECK_NEXT;
-    const char *keyword = extractKeyword(x, y);
-    if (keyword)
+    if (MouseAction == GuiManager::BUTTON_RELEASED)
     {
-        GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_CHATWIN, GuiManager::MSG_ADD_ROW, keyword);
-        return GuiManager::EVENT_USER_ACTION;
+        if (extractKeyword(x, y))
+            return GuiManager::EVENT_USER_ACTION;
     }
     return GuiManager::EVENT_CHECK_DONE;
 }
@@ -246,15 +231,15 @@ int GuiListbox::mouseEvent(int MouseAction, int x, int y, int mouseWheel)
 //================================================================================================
 //
 //================================================================================================
-const char *GuiListbox::extractKeyword(int mouseX, int mouseY)
+bool GuiListbox::extractKeyword(int mouseX, int mouseY)
 {
-    static String strKey;
     char key[] = { GuiTextout::TXT_CMD_LINK, GuiTextout::TXT_CMD_SEPARATOR, '\0'};
     int clickedLine = mMaxVisibleRows-(mouseY - mPosY)/ mFontHeight;
     clickedLine = (mActLines-clickedLine-mVScrollOffset) & (SIZE_STRING_BUFFER-1);
-    strKey  = row[clickedLine].keyword;
-    if (strKey.empty()) return 0; // No keyword.
-    String strLine = row[clickedLine].str;
+    mKeywordPressed  = row[clickedLine].keyword;
+    if (mKeywordPressed.empty()) return false; // No keyword.
+    String strLine = row[clickedLine].text;
+    mouseX-=mPosX;
     size_t stringPosClicked = GuiTextout::getSingleton().getLastCharPosition(strLine.c_str(), mFontNr, mouseX);
     // ////////////////////////////////////////////////////////////////////
     // First look right of the click.
@@ -265,23 +250,23 @@ const char *GuiListbox::extractKeyword(int mouseX, int mouseY)
     while (posKeySign ==  std::string::npos) // Because of clipping, a keyword can go over more then 1 row.
     {
         ++testLine &= (SIZE_STRING_BUFFER-1);
-        if (row[testLine].keyword != strKey) return 0; // Already reached the next textline.
-        strLine = row[testLine].str;
+        if (row[testLine].keyword != mKeywordPressed) return false; // Already reached the next textline.
+        strLine = row[testLine].text;
         posKeySign = strLine.find(key[0]);
     }
     // Found a keyword sign. If its a start sign, we are not over a keyword.
-    if (strLine[posKeySign+1] == key[1]) return 0;
+    if (strLine[posKeySign+1] == key[1]) return false;
     // ////////////////////////////////////////////////////////////////////
     // Now, that we know that right from the click is an end sign.
     // We must find the start sign left of the click.
     // ////////////////////////////////////////////////////////////////////
-    strLine = row[clickedLine].str;
+    strLine = row[clickedLine].text;
     posKeySign = strLine.rfind(key, stringPosClicked);
     while (posKeySign == std::string::npos) // Because of clipping, a keyword can go over more then 1 row.
     {
         --clickedLine &= (SIZE_STRING_BUFFER-1);
-        if (row[clickedLine].keyword != strKey) return 0; // Already reached the next textline.
-        strLine = row[clickedLine].str;
+        if (row[clickedLine].keyword != mKeywordPressed) return false; // Already reached the next textline.
+        strLine = row[clickedLine].text;
         posKeySign = strLine.rfind(key);
     }
     int nrKeyword = strLine[posKeySign+2] - '0';
@@ -290,9 +275,9 @@ const char *GuiListbox::extractKeyword(int mouseX, int mouseY)
     // ////////////////////////////////////////////////////////////////////
     posKeySign = 0;
     while (--nrKeyword)
-        posKeySign = strKey.find(KEYWORD_SEPARATOR, posKeySign) +1;
-    strKey = strKey.substr(posKeySign, strKey.find(KEYWORD_SEPARATOR, posKeySign)-posKeySign).c_str();
-    return strKey.c_str();
+        posKeySign = mKeywordPressed.find(GuiTextout::TXT_CMD_SEPARATOR, posKeySign) +1;
+    mKeywordPressed = mKeywordPressed.substr(posKeySign, mKeywordPressed.find(GuiTextout::TXT_CMD_SEPARATOR, posKeySign)-posKeySign);
+    return true;
 }
 
 //================================================================================================
@@ -301,9 +286,7 @@ const char *GuiListbox::extractKeyword(int mouseX, int mouseY)
 void GuiListbox::update(Ogre::Real dTime)
 {
     if (!mRowsToPrint) return;
-    if ((mTime += dTime) < SCROLL_SPEED) return;
     --mRowsToPrint;
-    mTime = 0;
     draw();
 }
 
@@ -320,7 +303,7 @@ void GuiListbox::draw()
     {
         offset = y*mFontHeight;
         GuiTextout::getSingleton().printText(mWidth, mFontHeight, dst+offset*mWidth, mWidth, bak+offset*mParent->getWidth(), mParent->getWidth(),
-                                             row[(mPrintPos-mVScrollOffset+pos)& (SIZE_STRING_BUFFER-1)].str.c_str(), mFontNr,
+                                             row[(mPrintPos-mVScrollOffset+pos)& (SIZE_STRING_BUFFER-1)].text.c_str(), mFontNr,
                                              row[(mPrintPos-mVScrollOffset+pos)& (SIZE_STRING_BUFFER-1)].color);
         ++pos;
     }
@@ -353,11 +336,4 @@ void GuiListbox::scrollTextVertical(int offset)
         if (mVScrollOffset <0) mVScrollOffset = 0;
     }
     draw();
-}
-
-//================================================================================================
-// .
-//================================================================================================
-void GuiListbox::scrollTextHorizontal(int offset)
-{
 }

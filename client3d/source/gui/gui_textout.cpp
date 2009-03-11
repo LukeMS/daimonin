@@ -34,10 +34,11 @@ using namespace Ogre;
 
 #define INC_ALPHA
 
+const char GuiTextout::TXT_CMD_SEPARATOR   = '#';
 const char GuiTextout::TXT_CMD_HIGHLIGHT   = '~';
 const char GuiTextout::TXT_CMD_LOWLIGHT    = -80; // prevent anjuta and codeblocks problems with the degree character.
 const char GuiTextout::TXT_CMD_LINK        = '^';
-const char GuiTextout::TXT_CMD_SEPARATOR   = '#';
+const char GuiTextout::TXT_CMD_INFO        = '|';
 const char GuiTextout::TXT_CMD_SOUND       = '§';
 const char GuiTextout::TXT_SUB_CMD_COLOR   = '#'; // followed by 8 chars (atoi -> uint32).
 const char GuiTextout::TXT_CMD_CHANGE_FONT = '@'; // followed by 2 chars (atoi -> char).
@@ -45,6 +46,7 @@ const char GuiTextout::CURSOR[] = { GuiTextout::STANDARD_CHARS_IN_FONT+31, 0 };
 const uint32 GuiTextout::TXT_COLOR_HIGHLIGHT = 0x0000ff00;
 const uint32 GuiTextout::TXT_COLOR_LOWLIGHT  = 0x00ffffff;
 const uint32 GuiTextout::TXT_COLOR_LINK      = 0x00ff2233;
+const uint32 GuiTextout::TXT_COLOR_INFO      = 0x00ffff00;
 const uint32 FONT_ENDX_SIGN = 0xff00ff00;
 
 //================================================================================================
@@ -352,74 +354,111 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
 }
 
 //================================================================================================
+// Replace xml-keycodes by char number in a text.
+//================================================================================================
+void GuiTextout::parseUserDefinedChars(String &txt)
+{
+    size_t found;
+    char replacement[] = {(char)(STANDARD_CHARS_IN_FONT+32),0};
+    for (unsigned int i=0; i < mvSpecialChar.size();++i)
+    {
+        while ((found = txt.find(mvSpecialChar[i]->strGfxCode))!= String::npos)
+            txt.replace(found, mvSpecialChar[i]->strGfxCode.size(), replacement);
+        ++replacement[0];
+    }
+}
+
+//================================================================================================
+//
+//================================================================================================
+int GuiTextout::hexToInt(const char *text, int len, uint32 &value)
+{
+    int pos =0;
+    value =0;
+    for (int i = (len-1)*4; i >= 0; i-=4)
+    {
+        if (!text[pos]) break;
+        value += (text[pos] >='a') ? (text[pos] - 87) <<i : (text[pos] >='A') ? (text[pos] - 55) <<i :(text[pos] -'0') <<i;
+        ++pos;
+    }
+    return pos;
+}
+
+//================================================================================================
 // Calculate the gfx-width for the given text.
+// The caller function must check fontNr to be valid [< mvFont.size()].
+//================================================================================================
+int GuiTextout::getCharWidth(int fontNr, unsigned char Char)
+{
+    return (Char<32)?0:mvFont[fontNr]->charWidth[Char-32]-1;
+}
+
+//================================================================================================
+// Calculate the gfx-width for the given text. Formattings will be ignored.
 //================================================================================================
 int GuiTextout::calcTextWidth(const char *text, unsigned int fontNr)
 {
-    int x =0;
+    int width =0;
     if (fontNr >= (unsigned int)mvFont.size()) fontNr = 0;
     while (*text)
     {
         switch (*text)
         {
+            case TXT_CMD_INFO:
             case TXT_CMD_LOWLIGHT:
                 ++text;
                 break;
             case TXT_CMD_LINK:
-                if (*++text == TXT_SUB_CMD_COLOR && (!*++text || !*++text)) break;
+                if (*++text == TXT_CMD_SEPARATOR)
+                    for (int i = 0; i < 2; ++i) // #x
+                        if (!*++text) break;
                 break;
             case TXT_CMD_HIGHLIGHT:
-                if (!*++text) break;
-                if (*text == TXT_SUB_CMD_COLOR)
-                    text+= strlen("#ff00ff00");
+                if (*++text == TXT_SUB_CMD_COLOR)
+                    for (int i = 0; i < 9; ++i) // #ff00ff00
+                        if (!*++text) break;
                 break;
             case TXT_CMD_CHANGE_FONT:
-                if (!*++text) break;
-                fontNr = (*text >='a') ? (*text - 87) <<4 : (*text >='A') ? (*text - 55) <<4 :(*text -'0') <<4;
-                if (!*++text) break;
-                fontNr+= (*text >='a') ? (*text - 87)     : (*text >='A') ? (*text - 55)     :(*text -'0');
-                ++text;
+                text+= hexToInt(++text, 2, fontNr);
                 if (fontNr >= (unsigned int)mvFont.size()) fontNr = 0;
                 break;
             default:
-                x+= getCharWidth(fontNr, *text);
+                width+= getCharWidth(fontNr, *text);
                 ++text;
                 break;
         }
     }
-    return x;
+    return width;
 }
 
 //================================================================================================
-// Returns the pos of the last char fitting into the width, or -1 for the whole string.
+// Returns the pos of the last char fitting into the width.
 //================================================================================================
 int GuiTextout::getLastCharPosition(const char *text, unsigned int fontNr, int width)
 {
-    int pos =0, len = (int)strlen(text);
+    int pos =0;
     if (fontNr >= (unsigned int)mvFont.size()) fontNr = 0;
-    while (pos < len && width >0)
+    while (width > 0 && text[pos])
     {
         switch (text[pos])
         {
+            case TXT_CMD_INFO:
             case TXT_CMD_LOWLIGHT:
                 ++pos;
                 break;
             case TXT_CMD_LINK:
-                if (text[++pos] == TXT_CMD_SEPARATOR) pos+= 2;
+                if (text[++pos] == TXT_CMD_SEPARATOR)
+                    for (int i = 0; i < 2; ++i) // #x
+                        if (!text[++pos]) break;
                 break;
             case TXT_CMD_HIGHLIGHT:
-                if (text[++pos] == TXT_CMD_SEPARATOR) pos+= (int)strlen("#ff00ff00");
+                if (text[++pos] == TXT_CMD_SEPARATOR)
+                    for (int i = 0; i < 9; ++i) // #ff00ff00
+                        if (!text[++pos]) break;
                 break;
             case TXT_CMD_CHANGE_FONT:
-                if (!text[++pos]) break;
-                fontNr = (text[pos] >='a') ? (text[pos] - 87) <<4 : (text[pos] >='A') ? (text[pos] - 55) <<4 :(text[pos] -'0') <<4;
-                if (!text[++pos]) break;
-                fontNr+= (text[pos] >='a') ? (text[pos] - 87)     : (text[pos] >='A') ? (text[pos] - 55)     :(text[pos] -'0');
-                ++pos;
+                pos+= hexToInt(text+(++pos), 2, fontNr);
                 if (fontNr >= (unsigned int)mvFont.size()) fontNr = 0;
-                break;
-            case '\n':
-            case '\0':
                 break;
             default:
                 width-= getCharWidth(fontNr, text[pos]);
@@ -444,6 +483,10 @@ const char *GuiTextout::getTextendColor(String &strText)
         {
             case TXT_CMD_LINK:
                 color[0] = color[0]?'\0':TXT_CMD_LINK;
+                color[1] = '\0';
+                break;
+            case TXT_CMD_INFO:
+                color[0] = color[0]?'\0':TXT_CMD_INFO;
                 color[1] = '\0';
                 break;
             case TXT_CMD_LOWLIGHT:
@@ -471,30 +514,6 @@ const char *GuiTextout::getTextendColor(String &strText)
         ++text;
     }
     return color;
-}
-
-//================================================================================================
-// Calculate the gfx-width for the given text.
-// The caller function must check fontNr to be valid [< mvFont.size()].
-//================================================================================================
-int GuiTextout::getCharWidth(int fontNr, unsigned char Char)
-{
-    return (Char<32)?0:mvFont[fontNr]->charWidth[Char-32]-1;
-}
-
-//================================================================================================
-// Replace xml-keycodes by char number in a text.
-//================================================================================================
-void GuiTextout::parseUserDefinedChars(String &txt)
-{
-    size_t found;
-    char replacement[] = {(char)(STANDARD_CHARS_IN_FONT+32),0};
-    for (unsigned int i=0; i < mvSpecialChar.size();++i)
-    {
-        while ((found = txt.find(mvSpecialChar[i]->strGfxCode))!= String::npos)
-            txt.replace(found, mvSpecialChar[i]->strGfxCode.size(), replacement);
-        ++replacement[0];
-    }
 }
 
 //================================================================================================
@@ -531,6 +550,9 @@ void GuiTextout::printText(int width, int height, uint32 *dst, int dstLineSkip, 
                 break;
             case TXT_CMD_LOWLIGHT:
                 color = (color!= fontColor)?fontColor:TXT_COLOR_LOWLIGHT;
+                break;
+            case TXT_CMD_INFO:
+                color = (color!= fontColor)?fontColor:TXT_COLOR_INFO;
                 break;
             case TXT_CMD_HIGHLIGHT:
                 // Parse the highlight color (8 byte hex string to uint32).

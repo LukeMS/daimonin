@@ -81,16 +81,6 @@ GuiElementTextbox::~GuiElementTextbox()
 {}
 
 //================================================================================================
-// .
-//================================================================================================
-void GuiElementTextbox::setVisible(bool visible)
-{
-    if (visible == mIsVisible) return;
-    mIsVisible = visible;
-    draw();
-}
-
-//================================================================================================
 // Returns true if the mouse event was on this gadget (so no need to check the other gadgets).
 //================================================================================================
 int GuiElementTextbox::mouseEvent(int MouseAction, int x, int y, int z)

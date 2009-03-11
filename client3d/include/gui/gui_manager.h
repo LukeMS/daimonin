@@ -39,7 +39,12 @@ public:
     // ////////////////////////////////////////////////////////////////////
     enum
     {
-        /** Element id's. **/
+        /** User action on these elements will be handled inside the gui only. **/
+        GUI_BUTTON_CLOSE,
+        GUI_BUTTON_MINIMIZE,
+        GUI_BUTTON_MAXIMIZE,
+        GUI_BUTTON_RESIZE,
+        /** User action on these elements will be send to the world outside. **/
         // TextValues.
         GUI_TEXTBOX_STAT_CUR_FPS,
         GUI_TEXTBOX_STAT_BEST_FPS,
@@ -61,14 +66,7 @@ public:
         GUI_TEXTINPUT_LOGIN_PASSWD,
         GUI_TEXTINPUT_LOGIN_VERIFY,
         GUI_TEXTINPUT_NPC_DIALOG,
-        // Standard Buttons (Handled inside of gui_windows).
-        GUI_BUTTON_CLOSE,
-        GUI_BUTTON_OK,
-        GUI_BUTTON_CANCEL,
-        GUI_BUTTON_MINIMIZE,
-        GUI_BUTTON_MAXIMIZE,
-        GUI_BUTTON_RESIZE,
-        // Unique Buttons (Handled outside of gui_windows).
+        // Buttons.
         GUI_BUTTON_NPC_ACCEPT,
         GUI_BUTTON_NPC_DECLINE,
         GUI_BUTTON_TEST,
@@ -151,6 +149,7 @@ public:
 
     enum
     {
+        MSG_CLOSE_PARENT_WIN,
         MSG_CLEAR,
         MSG_UPDATE,
         MSG_ADD_ROW,
@@ -162,6 +161,12 @@ public:
         MSG_SET_TEXT,
         MSG_SET_VISIBLE,
         MSG_SUM
+    };
+
+    enum
+    {
+        INFO_KEYWORD,
+        INFO_SUM
     };
 
     /** Actual state of the mouse cursor: **/
@@ -204,7 +209,6 @@ public:
         static GuiManager singleton;
         return singleton;
     }
-    bool mouseInsideGui() { return mMouseInside; }
     Ogre::Overlay *loadResources(int w, int h, Ogre::String name);
     void windowToFront(int window);
     void loadResources(Ogre::Resource *res);
@@ -213,9 +217,9 @@ public:
     void reloadTexture(Ogre::String &name);
     void parseImageset(const char *XML_imageset_file);
     void parseWindows (const char *XML_windows_file);
-    int update(Ogre::Real);  /**< Returns the clicked element or -1 when nothing was clicked. **/
+    void update(Ogre::Real);  /**< Returns the clicked element or -1 when nothing was clicked. **/
     int getElementIndex(const char *name, int windowID = -1, int getElementIndex = -1);
-    bool mouseEvent(int MouseAction, Ogre::Vector3 &mouse);
+    int mouseEvent(int MouseAction, Ogre::Vector3 &mouse);
     bool keyEvent(const int keyChar, const unsigned int key);
     void setTooltip(const char *text, bool systemMessage = false);
     void displaySystemMessage(const char *text) { setTooltip(text, true); }
@@ -240,8 +244,10 @@ public:
         return true;
     }
     void cancelTextInput();
+    int getElementPressed();
     const char *getTextInput() { return mStrTextInput.c_str(); }
     int sendMsg(int element, int message, const char *text = 0, Ogre::uint32 param = 0x00ffffff);
+    const char *getInfo(int elementNr, int info);
     void setStatusbarValue(int window, int element, Ogre::Real value);
 
 private:
@@ -280,7 +286,6 @@ private:
     unsigned int mScreenWidth, mScreenHeight;
     unsigned long mTooltipDelay;
     bool mIsDragging;
-    bool mMouseInside;           /**< Mouse is used for gui related stuff at the moment. **/
     bool mTextInputUserAction;
     Ogre::uint32 *mBuildBuffer;  /**< Buffer to draw all graphics before blitting them into the texture. **/
     Ogre::Vector3 mMouse;

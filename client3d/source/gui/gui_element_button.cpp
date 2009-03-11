@@ -73,16 +73,6 @@ GuiElementButton::~GuiElementButton()
 {}
 
 //================================================================================================
-// .
-//================================================================================================
-void GuiElementButton::setVisible(bool visible)
-{
-    if (visible == mIsVisible) return;
-    mIsVisible = visible;
-    draw();
-}
-
-//================================================================================================
 // Returns true if the mouse event was on this gadget (so no need to check the other gadgets).
 //================================================================================================
 int GuiElementButton::mouseEvent(int MouseAction, int x, int y, int z)
@@ -133,7 +123,7 @@ void GuiElementButton::draw()
     GuiElement::draw(false);
     // Draw label.
     uint32 *dst = GuiManager::getSingleton().getBuildBuffer();
-    if (mIsVisible && !mStrLabel.empty())
+    if (mVisible && !mStrLabel.empty())
     {
         int offset = (mState == GuiImageset::STATE_ELEMENT_PUSHED)?1:0;
         GuiTextout::getSingleton().printText(mWidth-mLabelPosX-2*offset, mHeight-mLabelPosY-offset,

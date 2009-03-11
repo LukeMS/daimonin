@@ -329,6 +329,7 @@ static char *BreakMulticommand(const char *command)
 //================================================================================================
 void Network::send_game_command(const char *command)
 {
+    if (!command) return;
     /*
     char *token, cmd[1024];
     // Copy a normalized (leading, trailing, and excess inline whitespace stripped) command to cmd:
@@ -358,9 +359,12 @@ void Network::send_game_command(const char *command)
                 //draw_info_format(COLOR_DGOLD, "Topic: %s", token + 6);
             }
         */
+
     std::stringstream strCmd;
+    if (*command == '/') ++command;
     strCmd << command;
-    //Logger::log().error() << "send: " << strCmd.str();
+    //String str = "send: " + strCmd.str();
+    //GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_CHATWIN, GuiManager::MSG_ADD_ROW, str.c_str());
     send_command_binary(CLIENT_CMD_GENERIC, strCmd);
     /*
             }
