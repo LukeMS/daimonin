@@ -292,16 +292,6 @@ void GuiElementSlot::update(Real dTime)
 }
 
 //================================================================================================
-// Test if Mouse is over this slot.
-//================================================================================================
-bool GuiElementSlot::mouseWithin(int x, int y)
-{
-    if (x < mPosX || x > mPosX + mWidth || y < mPosY || y > mPosY + mHeight)
-        return false;
-    return true;
-}
-
-//================================================================================================
 // .
 //================================================================================================
 int GuiElementSlot::mouseEvent(int MouseAction, int x, int y)
@@ -361,7 +351,7 @@ void GuiElementSlot::drawDragItem()
 //================================================================================================
 void GuiElementSlot::draw()
 {
-    if (!mIsVisible || mItemGfxID < 0)
+    if (!mVisible || mItemGfxID < 0)
     {
         GuiElement::draw();
         return;

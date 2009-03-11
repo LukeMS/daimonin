@@ -587,7 +587,9 @@ bool Events::frameStarted(const FrameEvent& evt)
                 mRaySceneQuery->setRay(mCamera->getCameraToViewportRay(mMouse.x / mWindow->getWidth(), mMouse.y / mWindow->getHeight()));
                 mRaySceneQuery->setQueryMask(ObjectManager::QUERY_NPC_MASK | ObjectManager::QUERY_CONTAINER);
                 RaySceneQueryResult &result = mRaySceneQuery->execute();
-                if (!result.empty() && !GuiManager::getSingleton().mouseInsideGui())
+                if (!result.empty()
+                //&& !GuiManager::getSingleton().mouseInsideGui()
+                )
                 {
                     // Mouse is over an object.
                     RaySceneQueryResult::iterator itr = result.begin();
@@ -623,8 +625,7 @@ bool Events::frameEnded(const FrameEvent& evt)
         return true;
     mInputMouse->capture();
     mInputKeyboard->capture();
-    int element = GuiManager::getSingleton().update(evt.timeSinceLastFrame);
-    if (element >=0) elementClicked(element);
+    GuiManager::getSingleton().update(evt.timeSinceLastFrame);
     Network::getSingleton().update();
     // ////////////////////////////////////////////////////////////////////
     // Update camera movement.

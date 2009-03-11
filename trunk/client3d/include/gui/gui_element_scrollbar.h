@@ -56,9 +56,10 @@ public:
     ~GuiElementScrollbar();
     //int sendMsg(int message, const char *text, Ogre::uint32 param);
     int getScrollOffset();
+    int mouseEvent(int MouseAction, int x, int y, int mouseWheel);
+    void stopDragging() { mDragging = false; mMouseButDown = false; }
     void resize(int newWidth, int newHeight);
     void updateSliderSize(int actPos, int scrollOffset, int maxVisPos, int maxPos = -1);
-    int mouseEvent(int MouseAction, int x, int y, int mouseWheel);
     void draw();
 
 private:

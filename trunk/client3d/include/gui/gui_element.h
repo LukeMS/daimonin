@@ -41,20 +41,25 @@ public:
     virtual ~GuiElement() {};
     virtual int sendMsg(int message, const char *text, Ogre::uint32 param);
     virtual int keyEvent(const int keyChar, const unsigned int key);
-    virtual int mouseEvent(int MouseAction, int x, int y, int z);
+    virtual int mouseEvent(int MouseAction, int x, int y, int mouseWheel);
     virtual void update(Ogre::Real deltaTime) {} /**< Animations, drag'n'drop, etc **/
     virtual void draw(bool uploadToTexture = true);
-
+    virtual const char *getInfo(int info);
     int getState()   { return mState;  }
     int getIndex()   { return mIndex;  }
     int getWidth()   { return mWidth;  }
     int getHeight()  { return mHeight; }
-    bool isVisible() { return mIsVisible; }
+    bool Visible()   { return mVisible;}
     bool setState(int state);              /**< Returns true if the state was changed. **/
+    void setVisible(bool visible);
     void setPosition(int x, int y)
     {
         mPosX = x;
         mPosY = y;
+    }
+    bool mouseWithin(int x, int y)
+    {
+        return (x > mPosX && x < mPosX + mWidth && y > mPosY && y < mPosY + mHeight);
     }
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
@@ -70,7 +75,7 @@ protected:
     unsigned short mState;                 /**< Actual state of this element. **/
     unsigned short mFontNr, mLabelFontNr;
     unsigned short mLabelPosX, mLabelPosY;
-    bool mIsVisible;
+    bool mVisible;
     Ogre::String mStrLabel;
     Ogre::uint32 mLabelColor;
     Ogre::uint32 mFillColor;
@@ -79,10 +84,6 @@ protected:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    bool mouseWithin(int x, int y)
-    {
-        return !(x < mPosX || x > mPosX + mWidth || y < mPosY || y > mPosY + mHeight);
-    }
 };
 
 #endif

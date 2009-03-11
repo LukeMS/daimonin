@@ -45,22 +45,25 @@ public:
     void clear();
     void update(Ogre::Real dTime);
     int sendMsg(int message, const char *text, Ogre::uint32 param);
+    const char *getInfo(int info);
     int mouseEvent(int MouseAction, int x, int y, int z);
-    const char *getSelectedKeyword(); /**< Returns the keyword found in the selected line. **/
 
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    enum {SIZE_STRING_BUFFER = 1 << 7};  /**< MUST be power of 2. **/
+    enum { SIZE_STRING_BUFFER = 1 << 7 }; /**< MUST be power of 2. **/
+    enum { MAX_KEYWORD_LEN    = 255    };
+
     struct _row
     {
-        Ogre::String str;
+        Ogre::String text;
         Ogre::String keyword;   /**< All keywords in this row. Separated by KEYWORD_SEPARATOR. **/
         Ogre::uint32 color;
     }
     row[SIZE_STRING_BUFFER];
-    int  mVScrollOffset;        /**< At which amount the scrollbar was scrolled. **/
+    static Ogre::String mKeywordPressed;
+    int  mVScrollOffset;        /**< At which amount the vertical scrollbar was scrolled. **/
     int  mPixelScroll;          /**< Number of pixel already scrolled. **/
     int  mRowsToPrint;          /**< Rows left to print. **/
     int  mMaxVisibleRows;       /**< Number of rows fitting into the listbox. **/
@@ -68,16 +71,13 @@ private:
     int  mBufferPos;            /**< Next free entry in the ring-buffer. **/
     int  mActLines;             /**< Actual filled entries in the ring-buffer **/
     int  mFontHeight;
-    Ogre::Real mTime;
-    Ogre::String mClickedKeyWord;
-    class GuiElementScrollbar *mScrollBarH, *mScrollBarV;
+    class GuiElementScrollbar *mScrollBarV;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    int  addRow(Ogre::String text, Ogre::uint32 color);
+    int  addText(const char *text, Ogre::uint32 color);
     void scrollTextVertical(int offset);
-    void scrollTextHorizontal(int offset);
-    const char *extractKeyword(int x, int y);
+    bool extractKeyword(int x, int y);
 };
 
 #endif

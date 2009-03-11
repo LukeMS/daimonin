@@ -48,6 +48,7 @@ public:
     static const char TXT_CMD_LOWLIGHT;
     static const char TXT_CMD_SEPARATOR;
     static const char TXT_CMD_LINK;
+    static const char TXT_CMD_INFO;
     static const char TXT_CMD_SOUND;
     static const char TXT_SUB_CMD_COLOR; // followed by 8 chars (atoi -> uint32).
     static const char TXT_CMD_CHANGE_FONT; // followed by 2 chars (atoi -> char).
@@ -56,6 +57,7 @@ public:
     static const Ogre::uint32 TXT_COLOR_LOWLIGHT;
     static const Ogre::uint32 TXT_COLOR_HIGHLIGHT;
     static const Ogre::uint32 TXT_COLOR_LINK;
+    static const Ogre::uint32 TXT_COLOR_INFO;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
@@ -75,7 +77,6 @@ public:
     {
         return mvFont[fontNr]->height;
     }
-    int getCharWidth(int fontNr, unsigned char Char);
     int getLastCharPosition(const char *text, unsigned int fontNr, int width);
     void parseUserDefinedChars(Ogre::String &txt);
 
@@ -122,6 +123,8 @@ private:
     GuiTextout();
     ~GuiTextout();
     GuiTextout(const GuiTextout&); // disable copy-constructor.
+    int getCharWidth(int fontNr, unsigned char Char);
+    int hexToInt(const char *text, int len, Ogre::uint32 &value);
 };
 
 #endif

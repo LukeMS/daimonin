@@ -25,6 +25,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "option.h"
 #include "item.h"
 #include "events.h"
+#include "sound.h"
 #include "network.h"
 #include "gui_manager.h"
 #include "object_manager.h"
@@ -346,6 +347,7 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
 
             GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "ABCDEF^Found me! Dies ist ein besonders langer link! Der Link geht ueber mehr als eine Zeile. Aber egal ^Kein Link mehr ^123^11111");
             GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "ABCDEF^Link1^1234^Link2^5678^Link3^90123");
+            GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "ABCDEF|Hello|90123");
             GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "ABCDEF~#ff0000ff12345678901234567890qwedghldflghdffdjghft34z89t6gfdiug76349zbh4oeu8jlghdfljgrtzuiop~");
             break;
 
@@ -632,7 +634,9 @@ bool Events::mousePressed(const OIS::MouseEvent &e, OIS::MouseButtonID button)
     // ////////////////////////////////////////////////////////////////////
     // First check if the mouse action is within the gui.
     // ////////////////////////////////////////////////////////////////////
-    if (GuiManager::getSingleton().mouseEvent(GuiManager::BUTTON_PRESSED, mMouse)) return true;
+    int ret =  GuiManager::getSingleton().mouseEvent(GuiManager::BUTTON_PRESSED, mMouse);
+    if (ret == GuiManager::EVENT_CHECK_DONE)
+        return true;
     // ////////////////////////////////////////////////////////////////////
     // Right button for selection and menu.
     // ////////////////////////////////////////////////////////////////////
@@ -690,15 +694,35 @@ bool Events::mousePressed(const OIS::MouseEvent &e, OIS::MouseButtonID button)
 //================================================================================================
 bool Events::mouseReleased(const OIS::MouseEvent &e, OIS::MouseButtonID id)
 {
-    GuiManager::getSingleton().mouseEvent(GuiManager::BUTTON_RELEASED, mMouse);
-    //e->consume();
+    int ret = GuiManager::getSingleton().mouseEvent(GuiManager::BUTTON_RELEASED, mMouse);
+    if (ret == GuiManager::EVENT_USER_ACTION)
+        elementClicked(GuiManager::getSingleton().getElementPressed());
     return true;
 }
 
 //================================================================================================
-// The user clicked on an element.
+// The user clicked an element.
 //================================================================================================
 void Events::elementClicked(int element)
 {
-    //GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "pressed");
+    Sound::getSingleton().playStream(Sound::BUTTON_CLICK);
+    const char *buf;
+    switch (element)
+    {
+        case GuiManager::GUI_BUTTON_CLOSE:
+            GuiManager::getSingleton().sendMsg(element, GuiManager::MSG_CLOSE_PARENT_WIN);
+            break;
+        case GuiManager::GUI_LIST_MSGWIN:
+        case GuiManager::GUI_LIST_CHATWIN:
+            buf = GuiManager::getSingleton().getInfo(element, GuiManager::INFO_KEYWORD);
+            if (buf) GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_CHATWIN, GuiManager::MSG_ADD_ROW, buf);
+            GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_CHATWIN, GuiManager::MSG_ADD_ROW, "");
+
+            break;
+        case GuiManager::GUI_LIST_NPC:
+            Network::getSingleton().send_game_command(GuiManager::getSingleton().getInfo(element, GuiManager::INFO_KEYWORD));
+            break;
+        default:
+            GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_CHATWIN, GuiManager::MSG_ADD_ROW, "Anonymous element was clicked.");
+    }
 }

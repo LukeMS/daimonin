@@ -83,14 +83,13 @@ class GuiWindow guiWindow[GuiManager::WIN_SUM];
 
 GuiManager::ElementID GuiManager::mStateStruct[GUI_ELEMENTS_SUM]=
 {
-    // Standard Buttons (Handled inside of gui_windows).
+    /** User action on these elements will be handled inside the gui only.**/
     { -1, -1, "But_Close",          GUI_BUTTON_CLOSE    },
-    { -1, -1, "But_OK",             GUI_BUTTON_OK       },
-    { -1, -1, "But_Cancel",         GUI_BUTTON_CANCEL   },
     { -1, -1, "But_Min",            GUI_BUTTON_MINIMIZE },
     { -1, -1, "But_Max",            GUI_BUTTON_MAXIMIZE },
     { -1, -1, "But_Resize",         GUI_BUTTON_RESIZE   },
-    // Unique Buttons (Handled outside of gui_windows).
+    /** User action on these elements will be send to the world outside. **/
+    // Buttons.
     { -1, -1, "But_NPC_Accept",     GUI_BUTTON_NPC_ACCEPT },
     { -1, -1, "But_NPC_Decline",    GUI_BUTTON_NPC_DECLINE},
     { -1, -1, "But_Test"       ,    GUI_BUTTON_TEST},
@@ -149,7 +148,6 @@ const uint32 GuiManager::COLOR_PINK  = 0xffff00ff;
 const uint32 GuiManager::COLOR_YELLOW= 0xffffff00;
 const uint32 GuiManager::COLOR_WHITE = 0xffffffff;
 
-
 //================================================================================================
 // .
 //================================================================================================
@@ -190,6 +188,19 @@ int GuiManager::sendMsg(int element, int message, const char *text, uint32 param
 //================================================================================================
 // .
 //================================================================================================
+const char *GuiManager::getInfo(int element, int info)
+{
+    for (unsigned int i = 0; i < GUI_ELEMENTS_SUM; ++i)
+    {
+        if (element == mStateStruct[i].index && guiWindow[mStateStruct[i].windowNr].isInit())
+            return guiWindow[mStateStruct[i].windowNr].getInfo(mStateStruct[i].winElementNr, info);
+    }
+    return 0;
+}
+
+//================================================================================================
+// .
+//================================================================================================
 int GuiManager::getElementIndex(const char *name, int windowID, int winElementNr)
 {
     if (name)
@@ -213,6 +224,13 @@ int GuiManager::getElementIndex(const char *name, int windowID, int winElementNr
 //================================================================================================
 // .
 //================================================================================================
+int GuiManager::getElementPressed()
+{
+    return guiWindow[0].getElementPressed();
+}
+//================================================================================================
+// .
+//================================================================================================
 void GuiManager::setStatusbarValue(int window, int element, Ogre::Real value)
 {
     guiWindow[window].setStatusbarValue(element, value);
@@ -230,7 +248,6 @@ void GuiManager::Init(int w, int h)
     mScreenWidth    = w;
     mScreenHeight   = h;
     mBuildBuffer    = 0;
-    mMouseInside    = true;
     mTooltipDelay   = 0;
     String strTexture = RESOURCE_TOOLTIP; strTexture+= TEXTURE_RESOURCE_NAME;
     mTexture = TextureManager::getSingleton().createManual(strTexture, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
@@ -546,7 +563,7 @@ bool GuiManager::keyEvent(const int key, const unsigned int keyChar)
 //================================================================================================
 // .
 //================================================================================================
-bool GuiManager::mouseEvent(int mouseAction, Vector3 &mouse)
+int GuiManager::mouseEvent(int mouseAction, Vector3 &mouse)
 {
     mMouse = mouse;
     GuiCursor::getSingleton().setPos((int)mMouse.x, (int)mMouse.y);
@@ -576,25 +593,25 @@ bool GuiManager::mouseEvent(int mouseAction, Vector3 &mouse)
             mDragSrcWin = NO_ACTIVE_WINDOW;
         }
         guiWindow[0].moveDragOverlay();
-        return true;
+        return GuiManager::EVENT_CHECK_DONE;;
     }
     // ////////////////////////////////////////////////////////////////////
     // Check for mouse action in all windows.
     // ////////////////////////////////////////////////////////////////////
-    //if (guiWindow[mActiveWindow].mouseEvent(mouseAction, mMouse) == EVENT_CHECK_DONE) return (mMouseInside = true);
+    //if (guiWindow[mActiveWindow].mouseEvent(mouseAction, mMouse) == EVENT_CHECK_DONE) return;
     for (unsigned int i = 0; i < WIN_SUM; ++i)
     {
         int ret = guiWindow[mWindowZPos[WIN_SUM-i-1]].mouseEvent(mouseAction, mMouse);
-        if (ret == EVENT_CHECK_DONE)
-            return (mMouseInside = true);
+        if (ret == EVENT_CHECK_DONE || ret == EVENT_USER_ACTION)
+            return ret;
         if (ret == EVENT_DRAG_STRT)
         {
             mDragSrcWin = i;
             mDragSrcSlot= guiWindow[i].getDragSlot();
-            return true;
+            return GuiManager::EVENT_CHECK_DONE;
         }
     }
-    return (mMouseInside = false);
+    return GuiManager::EVENT_CHECK_NEXT;
 }
 
 //================================================================================================
@@ -681,7 +698,7 @@ void GuiManager::showWindow(int window, bool visible)
 // Update all gui stuff.
 // Returns the clicked element, or -1 when nothing was clicked.
 //================================================================================================
-int GuiManager::update(Real timeSinceLastFrame)
+void GuiManager::update(Real timeSinceLastFrame)
 {
     // ////////////////////////////////////////////////////////////////////
     // Update textinput.
@@ -705,10 +722,6 @@ int GuiManager::update(Real timeSinceLastFrame)
     // ////////////////////////////////////////////////////////////////////
     if (mTooltipDelay && Root::getSingleton().getTimer()->getMilliseconds() > mTooltipDelay)
         drawTooltip();
-    // ////////////////////////////////////////////////////////////////////
-    // Return the clicked element.
-    // ////////////////////////////////////////////////////////////////////
-    return guiWindow[0].getElementPressed();
 }
 
 //================================================================================================
