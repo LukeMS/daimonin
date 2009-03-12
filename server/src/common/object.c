@@ -431,11 +431,11 @@ void object_gc()
 int CAN_MERGE(object *ob1, object *ob2)
 {
     /* just some quick hack checks */
-	if (!QUERY_FLAG(ob1, FLAG_CAN_STACK))
-		return 0;
+    if (!QUERY_FLAG(ob1, FLAG_CAN_STACK))
+        return 0;
 
-	if (ob1->type == MONEY && ob1->type == ob2->type && ob1->arch == ob2->arch)
-		return 1;
+    if (ob1->type == MONEY && ob1->type == ob2->type && ob1->arch == ob2->arch)
+        return 1;
 
     /* just a brain dead long check for things NEVER NEVER should be different
      * this is true under all circumstances for all objects.
@@ -510,21 +510,21 @@ int CAN_MERGE(object *ob1, object *ob2)
         return 0;
 
 
-	/* very special check... we have to ignore the applied flag
-	 * for stacked items like arrows. This will be enhanced perhaps
-	 * in the future for more stacked and applyable items.
-	 */
-	if(ob1->flags[2] != ob2->flags[2])
-	{
-		if(ob1->type == ARROW)
-		{
-			if((ob1->flags[2] | 0x200000) != (ob2->flags[2] | 0x200000))
-				return 0;
+    /* very special check... we have to ignore the applied flag
+     * for stacked items like arrows. This will be enhanced perhaps
+     * in the future for more stacked and applyable items.
+     */
+    if(ob1->flags[2] != ob2->flags[2])
+    {
+        if(ob1->type == ARROW)
+        {
+            if((ob1->flags[2] | 0x200000) != (ob2->flags[2] | 0x200000))
+                return 0;
 
-		}
-		else
-			return 0;
-	}
+        }
+        else
+            return 0;
+    }
 
 
     if (ob1->randomitems != ob2->randomitems
@@ -532,8 +532,8 @@ int CAN_MERGE(object *ob1, object *ob2)
      || (ob1->flags[0] | 0x70000) != (ob2->flags[0] | 0x70000)
    ||   /* we ignore REMOVED and BEEN_APPLIED */
         ob1->flags[1] != ob2->flags[1]
-	|| ob1->flags[3] != ob2->flags[3]
-	|| ob1->flags[4] != ob2->flags[4]
+    || ob1->flags[3] != ob2->flags[3]
+    || ob1->flags[4] != ob2->flags[4]
      || ob1->path_attuned != ob2->path_attuned
      || ob1->path_repelled != ob2->path_repelled
      || ob1->path_denied != ob2->path_denied
@@ -1466,15 +1466,15 @@ void drop_ob_inv(object *ob)
 
             /* if we have a corpse put the item in it */
             if (corpse)
-			{
-				if(!tmp_op->item_level && !tmp_op->level && tmp_op->type != RING && tmp_op->type != AMULET)
-				{
-					SET_FLAG(tmp_op, FLAG_IDENTIFIED);
-					SET_FLAG(tmp_op, FLAG_KNOWN_CURSED);
-					SET_FLAG(tmp_op, FLAG_KNOWN_MAGICAL);
-				}
+            {
+                if(!tmp_op->item_level && !tmp_op->level && tmp_op->type != RING && tmp_op->type != AMULET)
+                {
+                    SET_FLAG(tmp_op, FLAG_IDENTIFIED);
+                    SET_FLAG(tmp_op, FLAG_KNOWN_CURSED);
+                    SET_FLAG(tmp_op, FLAG_KNOWN_MAGICAL);
+                }
                 insert_ob_in_ob(tmp_op, corpse);
-			}
+            }
             else
             {
                 /* don't drop traps from a container to the floor.
@@ -1484,12 +1484,12 @@ void drop_ob_inv(object *ob)
                  */
                 if (tmp_op->type != RUNE)
                 {
-					if(!tmp_op->item_level && !tmp_op->level && tmp_op->type != RING && tmp_op->type != AMULET)
-					{
-						SET_FLAG(tmp_op, FLAG_IDENTIFIED);
-						SET_FLAG(tmp_op, FLAG_KNOWN_CURSED);
-						SET_FLAG(tmp_op, FLAG_KNOWN_MAGICAL);
-					}
+                    if(!tmp_op->item_level && !tmp_op->level && tmp_op->type != RING && tmp_op->type != AMULET)
+                    {
+                        SET_FLAG(tmp_op, FLAG_IDENTIFIED);
+                        SET_FLAG(tmp_op, FLAG_KNOWN_CURSED);
+                        SET_FLAG(tmp_op, FLAG_KNOWN_MAGICAL);
+                    }
                     if (ob->env)
                     {
                         insert_ob_in_ob(tmp_op, ob->env);
@@ -1791,7 +1791,7 @@ void remove_ob(object *op)
         if(! QUERY_FLAG(op, FLAG_SYS_OBJECT))
                 sub_weight(op, op->nrof);
 
-		otmp = is_player_inv(op->env); /* get first otmp but do fix_player AFTER op is removed! */
+        otmp = is_player_inv(op->env); /* get first otmp but do fix_player AFTER op is removed! */
 
         if (op->above != NULL)
             op->above->below = op->below;
@@ -1809,14 +1809,14 @@ void remove_ob(object *op)
         op->map = NULL;
         op->env = NULL;
 
-		/* NO_FIX_PLAYER is set when a great many changes are being
-		* made to players inventory.  If set, avoiding the call to save cpu time.
-		* the flag is set from outside... perhaps from a drop_all() function.
-		*/
-		if (otmp && CONTR(otmp) && !QUERY_FLAG(otmp, FLAG_NO_FIX_PLAYER))
-			FIX_PLAYER(otmp,"remove_ob: env remove");
+        /* NO_FIX_PLAYER is set when a great many changes are being
+        * made to players inventory.  If set, avoiding the call to save cpu time.
+        * the flag is set from outside... perhaps from a drop_all() function.
+        */
+        if (otmp && CONTR(otmp) && !QUERY_FLAG(otmp, FLAG_NO_FIX_PLAYER))
+            FIX_PLAYER(otmp,"remove_ob: env remove");
 
-		return;
+        return;
     }
 
     /* If we get here, we are removing it from a map */
@@ -2344,24 +2344,24 @@ object * get_split_ob(object *orig_ob, uint32 nr)
     object *tmp, *event;
     int     is_removed;
 
-	if(!orig_ob)
-		return NULL;
+    if(!orig_ob)
+        return NULL;
 
-	is_removed  = (QUERY_FLAG(orig_ob, FLAG_REMOVED) != 0);
+    is_removed  = (QUERY_FLAG(orig_ob, FLAG_REMOVED) != 0);
 
     if (orig_ob->nrof < nr)
     {
-		LOG(llevDebug, "get_split_ob(): There are only %d %ss.", orig_ob->nrof ? orig_ob->nrof : 1, query_name(orig_ob));
+        LOG(llevDebug, "get_split_ob(): There are only %d %ss.", orig_ob->nrof ? orig_ob->nrof : 1, query_name(orig_ob));
         return NULL;
     }
 
-	if (orig_ob->env == NULL && orig_ob->map->in_memory != MAP_IN_MEMORY)
-	{
-		LOG(llevDebug, "get_split_ob(): Tried to split object whose map is not in memory.\n");
-		return NULL;
-	}
+    if (orig_ob->env == NULL && orig_ob->map->in_memory != MAP_IN_MEMORY)
+    {
+        LOG(llevDebug, "get_split_ob(): Tried to split object whose map is not in memory.\n");
+        return NULL;
+    }
 
-	newob = get_object();
+    newob = get_object();
     copy_object(orig_ob, newob);
 
     /* Gecko: copy inventory (event objects)  */
@@ -2375,56 +2375,56 @@ object * get_split_ob(object *orig_ob, uint32 nr)
         }
     }
     orig_ob->nrof -= nr;
-	newob->nrof = nr;
+    newob->nrof = nr;
 
     if (orig_ob->nrof < 1)
     {
         if (!is_removed)
-		{
-			if(orig_ob->env->type == PLAYER) /* update client view */
-				esrv_del_item(CONTR(orig_ob->env), orig_ob->count, orig_ob->env);
+        {
+            if(orig_ob->env->type == PLAYER) /* update client view */
+                esrv_del_item(CONTR(orig_ob->env), orig_ob->count, orig_ob->env);
             remove_ob(orig_ob);
-		}
+        }
         check_walk_off(orig_ob, NULL, MOVE_APPLY_VANISHED);
     }
     else if (!is_removed)
     {
-		if (orig_ob->env != NULL && !QUERY_FLAG(orig_ob, FLAG_SYS_OBJECT))
-		{
-			/* sub weight will not call fix_player for players - its to low level! */
-			sub_weight(orig_ob, nr);
-			fix_player_weight(is_player_inv(orig_ob->env));
-		}
+        if (orig_ob->env != NULL && !QUERY_FLAG(orig_ob, FLAG_SYS_OBJECT))
+        {
+            /* sub weight will not call fix_player for players - its to low level! */
+            sub_weight(orig_ob, nr);
+            fix_player_weight(is_player_inv(orig_ob->env));
+        }
 
-		esrv_update_item(UPD_NROF|UPD_WEIGHT, orig_ob->env, orig_ob);
+        esrv_update_item(UPD_NROF|UPD_WEIGHT, orig_ob->env, orig_ob);
 
-		/* will a stack in a chest where you remove one from the stack trigger
-		* a button under the chest because the weight of the chest has changed now?
-		* we have to check it!
-		* Doing a ->env loop will work.. but is there no more clever way?
-		* Also ensure the below view is updated right.
-		*/
-		if(orig_ob->map)
-		{
-			tmp = orig_ob;
-			GET_MAP_SPACE_PTR(tmp->map, tmp->x, tmp->y)->update_tile++;
-		}
-		else
-		{
-			for(tmp = orig_ob->env;tmp;tmp = tmp->env)
-			{
-				if(tmp->map && tmp->map->in_memory == MAP_IN_MEMORY) /* we are on a map */
-					break;
-			}
-		}
+        /* will a stack in a chest where you remove one from the stack trigger
+        * a button under the chest because the weight of the chest has changed now?
+        * we have to check it!
+        * Doing a ->env loop will work.. but is there no more clever way?
+        * Also ensure the below view is updated right.
+        */
+        if(orig_ob->map)
+        {
+            tmp = orig_ob;
+            GET_MAP_SPACE_PTR(tmp->map, tmp->x, tmp->y)->update_tile++;
+        }
+        else
+        {
+            for(tmp = orig_ob->env;tmp;tmp = tmp->env)
+            {
+                if(tmp->map && tmp->map->in_memory == MAP_IN_MEMORY) /* we are on a map */
+                    break;
+            }
+        }
 
-		/* force an update of the map spot facking a insertation */
-		if(tmp)
-		{
-			/* force a weight check for buttons */
-			update_object(orig_ob, UP_OBJ_INSERT); 
-			check_walk_on(orig_ob, tmp, 0);
-		}
+        /* force an update of the map spot facking a insertation */
+        if(tmp)
+        {
+            /* force a weight check for buttons */
+            update_object(orig_ob, UP_OBJ_INSERT); 
+            check_walk_on(orig_ob, tmp, 0);
+        }
     }
 
     return newob;
@@ -2572,9 +2572,9 @@ object * insert_ob_in_ob(object *op, object *where)
     {
         for (tmp = where->inv; tmp != NULL; tmp = tmp->below)
         {
-			/* tricky: only really "same" objects can merge.
-			 * if the ->arch is different, it can be never the same object
-			 */
+            /* tricky: only really "same" objects can merge.
+             * if the ->arch is different, it can be never the same object
+             */
             if (tmp->arch == op->arch && CAN_MERGE(tmp, op))
             {
                 remove_ob(tmp); /* and fix old object's links (we will insert it further down)*/
