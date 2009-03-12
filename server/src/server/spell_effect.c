@@ -2304,7 +2304,7 @@ int cast_detection(object *op, object *target, int type)
           for (tmp = target->inv; tmp; tmp = tmp->below)
           {
               if (!QUERY_FLAG(tmp, FLAG_SYS_OBJECT)
-               && (!QUERY_FLAG(tmp, FLAG_KNOWN_MAGICAL) && !QUERY_FLAG(tmp, FLAG_IDENTIFIED) && is_magical(tmp)))
+               && (!QUERY_FLAG(tmp, FLAG_KNOWN_MAGICAL) && is_magical(tmp)))
               {
                   SET_FLAG(tmp, FLAG_KNOWN_MAGICAL);
                   suc = TRUE;
@@ -2319,7 +2319,7 @@ int cast_detection(object *op, object *target, int type)
           for (tmp = GET_MAP_OB(m, nx, ny); tmp != NULL; tmp = tmp->above)
           {
               if (!QUERY_FLAG(tmp, FLAG_SYS_OBJECT)
-               && (!QUERY_FLAG(tmp, FLAG_KNOWN_MAGICAL) && !QUERY_FLAG(tmp, FLAG_IDENTIFIED) && is_magical(tmp)))
+               && (!QUERY_FLAG(tmp, FLAG_KNOWN_MAGICAL) && is_magical(tmp)))
               {
                   SET_FLAG(tmp, FLAG_KNOWN_MAGICAL);
                   suc = TRUE;
@@ -2444,7 +2444,7 @@ static int cast_detection_old(object *op, object *target,int type) {
         switch(type) {
 
             case SP_DETECT_MAGIC:
-            if (!QUERY_FLAG(tmp,FLAG_KNOWN_MAGICAL) && !QUERY_FLAG(tmp, FLAG_IDENTIFIED) &&
+            if (!QUERY_FLAG(tmp,FLAG_KNOWN_MAGICAL) &&
                 is_magical(tmp)) {
 
                 SET_FLAG(tmp,FLAG_KNOWN_MAGICAL);

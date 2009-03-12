@@ -679,6 +679,13 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_FLY_ON         26 /* As WALK_ON, but only with FLAG_FLYING */
 #define FLAG_FLY_OFF        27 /* As WALK_OFF, but only with FLAG_FLYING */
 #define FLAG_IS_USED_UP     28 /* When (--food<0) the object will exit */
+/* IDENTIFIED, KNOWN_CURSED, and KNOWN_MAGICAL are three distinct flags.
+ * IDENTIFIED *implies* the other two, so it makes little sense to flag an
+ * object as IDENTIFIED only, but the onus here is on the arch/map/function
+ * setting the flags. It is not appropriate to set KNOWN_* on the presence of
+ * IDENTIIFIED. To this end, the KNOWN flags should be queried directly, not
+ * presumed by querying IDENTIFIED.
+ * -- Smacky 20090312 */
 #define FLAG_IDENTIFIED     29 /* item is identified */
 #define FLAG_REFLECTING     30 /* Object reflects from walls (lightning) */
 #define FLAG_CHANGING       31 /* Changes to other_arch when anim is done*/

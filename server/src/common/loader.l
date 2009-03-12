@@ -166,11 +166,16 @@ WS	[ \t]*{NL}?
 	                tmp->item_condition = tmp->item_quality;
 				}
 
-				if(QUERY_FLAG(tmp,FLAG_IDENTIFIED))
+#if 0
+				/* Buggers up merging. These are 3 distinct flags and should be tested for
+				 * separately. As such, IDENTIFIED should not set the other two in any case.
+				 * -- Smacky 20090312 */
+				if (QUERY_FLAG(tmp, FLAG_IDENTIFIED))
 				{
-					SET_FLAG(tmp,FLAG_KNOWN_MAGICAL);
-					SET_FLAG(tmp,FLAG_KNOWN_CURSED);
+				    SET_FLAG(tmp, FLAG_KNOWN_MAGICAL);
+				    SET_FLAG(tmp, FLAG_KNOWN_CURSED);
 				}
+#endif
 				/* artificate the item */
 				if(amask_art)
 					give_artifact_abilities(tmp, amask_art);
@@ -438,12 +443,7 @@ op->oz= op->z;
 ^no_attack{S}				SET_OR_CLEAR_FLAG(op, FLAG_NO_ATTACK, IVAL);
 ^invulnerable{S}			SET_OR_CLEAR_FLAG(op, FLAG_INVULNERABLE, IVAL);
 ^friendly{S}			    SET_OR_CLEAR_FLAG(op, FLAG_FRIENDLY, IVAL);
-^identified{S}	    {	if (IVAL) {
-			    SET_FLAG(op, FLAG_IDENTIFIED);
-			    CLEAR_FLAG(op, FLAG_KNOWN_MAGICAL);
-			}
-			else CLEAR_FLAG(op, FLAG_IDENTIFIED);
-		    }
+^identified{S}	    SET_OR_CLEAR_FLAG(op, FLAG_IDENTIFIED, IVAL);
 ^reflecting{S}	    SET_OR_CLEAR_FLAG(op, FLAG_REFLECTING, IVAL);
 ^changing{S} 	    SET_OR_CLEAR_FLAG(op, FLAG_CHANGING, IVAL);
 ^splitting{S}	    SET_OR_CLEAR_FLAG(op, FLAG_SPLITTING, IVAL);
@@ -869,11 +869,16 @@ int load_object(void *fp, object *op, void *mybuffer, int bufstate, int map_flag
 		copy_object_data(singularity,op); /* yep, this is right - op is a reference from outside */
 	}
 
-	if(QUERY_FLAG(op,FLAG_IDENTIFIED))
+#if 0
+	/* Buggers up merging. These are 3 distinct flags and should be tested for
+	 * separately. As such, IDENTIFIED should not set the other two in any case.
+	 * -- Smacky 20090312 */
+	if (QUERY_FLAG(op, FLAG_IDENTIFIED))
 	{
-		SET_FLAG(op,FLAG_KNOWN_MAGICAL);
-		SET_FLAG(op,FLAG_KNOWN_CURSED);
+	    SET_FLAG(op, FLAG_KNOWN_MAGICAL);
+	    SET_FLAG(op, FLAG_KNOWN_CURSED);
 	}
+#endif
   /* we set here the material real values.
    * we do: If item_quality == 0 AND material defines a base
    * material, then use material_real to set quality & condition.

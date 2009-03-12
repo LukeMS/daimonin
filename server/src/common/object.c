@@ -1029,11 +1029,18 @@ void copy_object(object *op2, object *op)
     ADD_REF_NOT_NULL_HASH(op->slaying);
     ADD_REF_NOT_NULL_HASH(op->msg);
 
+#if 0
+/* Buggers up merging. These are 3 distinct flags and should be tested for
+ * separately. As such, IDENTIFIED should not set the other two in any case.
+ * Especially, in a function whose purpose is to copy an object, we should not
+ * then modify the copy so it is no longer identical to the original.
+ * -- Smacky 20090312 */
     if (QUERY_FLAG(op, FLAG_IDENTIFIED))
     {
         SET_FLAG(op, FLAG_KNOWN_MAGICAL);
         SET_FLAG(op, FLAG_KNOWN_CURSED);
     }
+#endif
 
     /* perhaps we have a custom treasurelist. Then we need to
      * increase the refcount here.
@@ -1082,11 +1089,18 @@ void copy_object_data(object *op2, object *op)
     ADD_REF_NOT_NULL_HASH(op->slaying);
     ADD_REF_NOT_NULL_HASH(op->msg);
 
+#if 0
+/* Buggers up merging. These are 3 distinct flags and should be tested for
+ * separately. As such, IDENTIFIED should not set the other two in any case.
+ * Especially, in a function whose purpose is to copy an object, we should not
+ * then modify the copy so it is no longer identical to the original.
+ * -- Smacky 20090312 */
     if (QUERY_FLAG(op, FLAG_IDENTIFIED))
     {
         SET_FLAG(op, FLAG_KNOWN_MAGICAL);
         SET_FLAG(op, FLAG_KNOWN_CURSED);
     }
+#endif
 
     /* perhaps we have a custom treasurelist. Then we need to
      * increase the refcount here.
