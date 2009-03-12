@@ -2630,18 +2630,10 @@ int apply_special(object *who, object *op, int aflags)
 
         if (!(aflags & AP_NO_MERGE))
         {
-            tag_t   del_tag = op->count;
-            object *cont    = op->env;
             tmp = merge_ob(op, NULL);
-            if (who->type == PLAYER)
-            {
-                if (tmp)
-                {
-                    /* it was merged */
-                    esrv_del_item(pl, del_tag, cont);
-                    op = tmp;
-                }
-            }
+
+            if (who->type == PLAYER && tmp)
+                esrv_del_item(pl, tmp->count, tmp->env);
         }
 
         if (who->type == PLAYER)

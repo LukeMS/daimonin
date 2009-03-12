@@ -374,7 +374,11 @@ op->oz= op->z;
 #endif
 #endif
 }
-^can_stack{S}				SET_OR_CLEAR_FLAG(op, FLAG_CAN_STACK, IVAL);
+^can_stack{S}				{
+						if (IVAL && !op->nrof)
+							op->nrof = 1;
+						SET_OR_CLEAR_FLAG(op, FLAG_CAN_STACK, IVAL);
+					}
 ^nrof{S}					op->nrof= atol(yval());
 ^level{S}					op->level = IVAL;
 ^direction{S}				op->facing=op->anim_last_facing =op->direction = (IVAL%9);

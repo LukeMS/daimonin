@@ -430,11 +430,15 @@ void object_gc()
 
 int CAN_MERGE(object *ob1, object *ob2)
 {
-    /* just some quick hack checks */
-    if (!QUERY_FLAG(ob1, FLAG_CAN_STACK))
+    /* Non-stackable objects of course cannot merge. */
+    if (!QUERY_FLAG(ob1, FLAG_CAN_STACK) ||
+        !QUERY_FLAG(ob2, FLAG_CAN_STACK))
         return 0;
 
-    if (ob1->type == MONEY && ob1->type == ob2->type && ob1->arch == ob2->arch)
+    /* Coins merge according to arch only. */
+    if (ob1->type == MONEY &&
+        ob2->type == MONEY &&
+        ob1->arch == ob2->arch)
         return 1;
 
     /* just a brain dead long check for things NEVER NEVER should be different
@@ -577,35 +581,70 @@ int CAN_MERGE(object *ob1, object *ob2)
 }
 
 /*
- * merge_ob(op,top):
+ * merge_ob(op,tmp):
  *
- * This function goes through all objects below and including top, and
- * merges op to the first matching object.
- * If top is NULL, it is calculated.
- * Returns pointer to object if it succeded in the merge, otherwise NULL
+ * This function goes through all objects above and including tmp, and
+ * merges the first matching object with op.
+ * If tmp is NULL, it is calculated.
+ * A mergeable object must have FLAG_CAN_STACK and nrof > 0. The two objects
+ * to merge must then pass the CAN_MERGE() test (above). If successful,
+ * tmp->nrof is added to op->nrof then set to 0 (meaning tmp is no longer
+ * mergeable). tmp is also marked for removal.
+ * Returns pointer to op if it succeded in the merge, otherwise NULL
  */
-
-object * merge_ob(object *op, object *top)
+object * merge_ob(object *op, object *tmp)
 {
-    if (!op->nrof)
-        return 0;
-    if (top == NULL)
-        for (top = op; top != NULL && top->above != NULL; top = top->above)
-            ;
-    for (; top != NULL; top = top->below)
+    /* Nothing to merge with or op is non-stackable or has nrof 0, */
+    if (!op || !QUERY_FLAG(op, FLAG_CAN_STACK) || !op->nrof)
+        return NULL;
+
+    /* Calculate tmp. It is a bug to attempt a merge with an obj in limbo. */
+    if (tmp == NULL)
     {
-        if (top == op)
-            continue;
-        if (CAN_MERGE(op, top))
+        if (op->map)
+            tmp = GET_MAP_OB(op->map, op->x, op->y);
+        else if (op->env)
+            for (tmp = op->env->inv; tmp && tmp->below; tmp = tmp->below)
+                ;
+        else
         {
-            top->nrof += op->nrof;
-            op->weight = 0; /* Don't want any adjustements now */
-            remove_ob(op); /* this is right: no check off */
-            return top;
+            LOG(llevBug, "BUG:: %s/merge_ob(): op (%s[%d]) has neither map nor environment!",
+                __FILE__, op->name, op->count);
+
+            return NULL;
         }
     }
+
+    /* Ascend through tmps sibling, looking for a match with op. */
+    for (; tmp; tmp = tmp->above)
+    {
+        /* Don't merge with yourself! */
+        if (tmp == op)
+            continue;
+
+        /* Just merge with the first match. This should be fine as previous
+         * merges will have taken care of other matches: there should never be
+         * a situation where there are more than two mergeable objects on a
+         * square/in an env. */
+        if (tmp->nrof && CAN_MERGE(op, tmp))
+        {
+#if DEBUG_MERGE_OB
+            LOG(llevDebug,"DEBUG:: %s/merge_ob(): Merging %s[%d] = %d to %s[%d] = %d!\n",
+                __FILE__,
+                tmp->name, tmp->count, tmp->nrof,
+                op->name, op->count, op->nrof);
+#endif
+            op->nrof = op->nrof + tmp->nrof;
+            tmp->nrof = 0;
+            remove_ob(tmp); /* this is right: no check off */
+
+            return op;
+        }
+    }
+
     return NULL;
 }
+
 
 /* calculates the weight an object is carrying.
  * its not recursive itself but the caller will take care of it.
@@ -2010,7 +2049,11 @@ object *insert_ob_in_map(object *const op, mapstruct *m, object *const originato
         }
     }
 
-    CLEAR_FLAG(op, FLAG_REMOVED);
+    /* A stackable object with nrof 0 is junk.
+     * We do this because otherwise objects marked for removal by merge_ob()
+     * can be un-removed here. */
+    if (QUERY_FLAG(op, FLAG_CAN_STACK) && !op->nrof)
+        return NULL;
 
 #ifdef POSITION_DEBUG
     op->ox = op->x;
@@ -2039,23 +2082,10 @@ object *insert_ob_in_map(object *const op, mapstruct *m, object *const originato
         op->y = y;
     }
 
-    if (op->nrof && !(flag & INS_NO_MERGE))
-    {
-        for (tmp = GET_MAP_OB(m, x, y); tmp != NULL; tmp = tmp->above)
-        {
-            if (CAN_MERGE(op, tmp))
-            {
-                op->nrof += tmp->nrof;
-                /* a bit tricky remove_ob() without check off.
-                 * technically, this happens: arrow x/y is falling on the stack
-                 * of perhaps 10 arrows. IF a teleporter is called, the whole 10
-                 * arrows are teleported.Thats a right effect.
-                 */
-                remove_ob(tmp);
-            }
-        }
-    }
+    if (!(flag & INS_NO_MERGE))
+        (void)merge_ob(op, NULL);
 
+    CLEAR_FLAG(op, FLAG_REMOVED);
     SET_FLAG(op, FLAG_OBJECT_WAS_MOVED); /* we need this for FLY/MOVE_ON/OFF */
     CLEAR_FLAG(op, FLAG_APPLIED);       /* nothing on the floor can be applied */
     CLEAR_FLAG(op, FLAG_INV_LOCKED);    /* or locked */
@@ -2563,17 +2593,20 @@ object * insert_ob_in_ob(object *op, object *where)
         LOG(llevBug, "BUG: Trying to insert (ob) inserted object.\n%s\n", errmsg);
         return op;
     }
+
     if (where == NULL)
     {
         dump_object(op);
         LOG(llevBug, "BUG: Trying to put object in NULL.\n%s\n", errmsg);
         return op;
     }
+
     if (where->head)
     {
         LOG(llevBug, "BUG: Tried to insert object wrong part of multipart object.\n");
         where = where->head;
     }
+
     if (op->more)
     {
         LOG(llevError, "ERROR: Tried to insert multipart object %s (%d) in %s (%d)\n",
@@ -2581,26 +2614,12 @@ object * insert_ob_in_ob(object *op, object *where)
         return op;
     }
 
-    /* Merge objects? */
-    if (QUERY_FLAG(op, FLAG_CAN_STACK))
-    {
-        for (tmp = where->inv; tmp != NULL; tmp = tmp->below)
-        {
-            /* tricky: only really "same" objects can merge.
-             * if the ->arch is different, it can be never the same object
-             */
-            if (tmp->arch == op->arch && CAN_MERGE(tmp, op))
-            {
-                remove_ob(tmp); /* and fix old object's links (we will insert it further down)*/
-                tmp->nrof += op->nrof;
-                op = tmp;
-                break;
-            }
-        }
-    }
+    /* A stackable object with nrof 0 is junk.
+     * We do this because otherwise objects marked for removal by merge_ob()
+     * can be un-removed here. */
+    if (QUERY_FLAG(op, FLAG_CAN_STACK) && !op->nrof)
+        return NULL;
 
-    CLEAR_FLAG(op, FLAG_REMOVED);
-    SET_FLAG(op, FLAG_OBJECT_WAS_MOVED);
     op->map = NULL;
     op->env = where;
     op->above = NULL;
@@ -2611,12 +2630,10 @@ object * insert_ob_in_ob(object *op, object *where)
     op->ox = 0,op->oy = 0;
 #endif
 
-    /* See if op moved between maps/containers */
-    if(op->speed && op->map != old_map)
-    {
-        // LOG(llevDebug, "Object moved between maps: %s (%s -> %s)\n", STRING_OBJ_NAME(op), STRING_MAP_PATH(old_map), STRING_MAP_PATH(op->map));
-        activelist_remove_inline(op);
-    }
+    (void)merge_ob(op, NULL);
+
+    CLEAR_FLAG(op, FLAG_REMOVED);
+    SET_FLAG(op, FLAG_OBJECT_WAS_MOVED);
 
     /* Client has no idea of ordering so lets not bother ordering it here.
      * It sure simplifies this function...
@@ -2628,6 +2645,13 @@ object * insert_ob_in_ob(object *op, object *where)
         op->below = where->inv;
         op->below->above = op;
         where->inv = op;
+    }
+
+    /* See if op moved between maps/containers */
+    if(op->speed && op->map != old_map)
+    {
+        LOG(llevDebug, "Object moved between maps: %s (%s -> %s)\n", STRING_OBJ_NAME(op), STRING_MAP_PATH(old_map), STRING_MAP_PATH(op->map));
+        activelist_remove_inline(op);
     }
 
     if(! QUERY_FLAG(op, FLAG_SYS_OBJECT))

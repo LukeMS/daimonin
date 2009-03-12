@@ -563,7 +563,7 @@ void stop_missile(object *op)
 	{
 		op = fix_stopped_missile(op);
 		if (op)
-			merge_ob(op, NULL);
+			(void)merge_ob(op, NULL);
 	}
 }
 

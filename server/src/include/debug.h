@@ -94,6 +94,9 @@
 
 /* find_next_object(): object.c */
 /*#define DEBUG_FNO*/
+
+/* merge_ob(): object.c */
+/*#define DEBUG_MERGE_OB*/
 #endif /* ifndef PRODUCTION_SYSTEM */
 
 #ifdef DEBUG_FIX_PLAYER
