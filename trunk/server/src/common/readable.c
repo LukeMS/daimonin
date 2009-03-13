@@ -1215,8 +1215,12 @@ char * artifact_msg(int level, int booksize)
         }
 
         SET_FLAG(tmp, FLAG_IDENTIFIED);
-        SET_FLAG(tmp, FLAG_KNOWN_MAGICAL);
-        SET_FLAG(tmp, FLAG_KNOWN_CURSED);
+
+        if (is_magical(tmp))
+            SET_FLAG(tmp, FLAG_KNOWN_MAGICAL);
+
+        if (is_cursed_or_damned(tmp))
+            SET_FLAG(tmp, FLAG_KNOWN_CURSED);
 
         sprintf(buf,"<t t=\"%s %s\">\n", tmp->name, tmp->title?tmp->title:"");
         strcat(retbuf,buf);

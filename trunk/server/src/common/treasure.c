@@ -1021,8 +1021,12 @@ int create_all_treasures(treasure *t, object *op, int flag, int difficulty, int 
                     if (op->type == TREASURE && QUERY_FLAG(op, FLAG_IDENTIFIED))
                     {
                         SET_FLAG(tmp, FLAG_IDENTIFIED);
-                        SET_FLAG(tmp, FLAG_KNOWN_MAGICAL);
-                        SET_FLAG(tmp, FLAG_KNOWN_CURSED);
+
+                        if (is_magical(tmp))
+                            SET_FLAG(tmp, FLAG_KNOWN_MAGICAL);
+
+                        if (is_cursed_or_damned(tmp))
+                            SET_FLAG(tmp, FLAG_KNOWN_CURSED);
                     }
                 }
                 else /* we have a wealth object - expand it to real money */
@@ -1181,8 +1185,12 @@ int create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty, 
             if (op->type == TREASURE && QUERY_FLAG(op, FLAG_IDENTIFIED))
             {
                 SET_FLAG(tmp, FLAG_IDENTIFIED);
-                SET_FLAG(tmp, FLAG_KNOWN_MAGICAL);
-                SET_FLAG(tmp, FLAG_KNOWN_CURSED);
+
+                if (is_magical(tmp))
+                    SET_FLAG(tmp, FLAG_KNOWN_MAGICAL);
+
+                if (is_cursed_or_damned(tmp))
+                    SET_FLAG(tmp, FLAG_KNOWN_CURSED);
             }
         }
         else /* we have a wealth object - expand it to real money */
@@ -2151,8 +2159,12 @@ int fix_generated_item(object **op_ptr, object *creator, int difficulty, int a_c
     if (flags & GT_IDENTIFIED)
     {
         SET_FLAG(op, FLAG_IDENTIFIED);
-        SET_FLAG(op, FLAG_KNOWN_MAGICAL);
-        SET_FLAG(op, FLAG_KNOWN_CURSED);
+
+        if (is_magical(op))
+            SET_FLAG(op, FLAG_KNOWN_MAGICAL);
+
+        if (is_cursed_or_damned(op))
+            SET_FLAG(op, FLAG_KNOWN_CURSED);
     }
     if (!(flags & GT_ENVIRONMENT))
         fix_flesh_item(op, creator);
