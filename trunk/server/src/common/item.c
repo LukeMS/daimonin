@@ -1287,7 +1287,7 @@ void identify(object *op)
     /*
      * We want autojoining of equal objects:
      */
-    if (QUERY_FLAG(op, FLAG_CURSED) || QUERY_FLAG(op, FLAG_DAMNED))
+    if (is_cursed_or_damned(op))
         SET_FLAG(op, FLAG_KNOWN_CURSED);
 
     if (is_magical(op))

@@ -3066,7 +3066,7 @@ int auto_apply(object *op)
               if (tmp == NULL)
                   return 0;
 
-              if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))
+              if (is_cursed_or_damned(tmp))
               {
                   tmp = NULL;
               }

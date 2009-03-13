@@ -45,7 +45,7 @@ sint64 query_cost(object *tmp, object *who, int flag)
     /* handle identified items */
     if (QUERY_FLAG(tmp, FLAG_IDENTIFIED) || !need_identify(tmp))
     {
-        if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))
+        if (is_cursed_or_damned(tmp))
             return 0;
 		else if (tmp->type == GEM || tmp->type == TYPE_JEWEL || tmp->type == TYPE_PEARL || tmp->type == TYPE_NUGGET) /* selling unidentified gems is *always* stupid */
 			val = tmp->value * number;
