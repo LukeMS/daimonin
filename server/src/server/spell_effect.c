@@ -1665,6 +1665,7 @@ void cancellation(object *op)
     else/* Nullify this object. */ if (FABS(op->magic) <= (random_roll(0, 5)))
     {
         op->magic = 0;
+        CLEAR_FLAG(op, FLAG_IS_MAGICAL);
         CLEAR_FLAG(op, FLAG_DAMNED);
         CLEAR_FLAG(op, FLAG_CURSED);
         CLEAR_FLAG(op, FLAG_KNOWN_MAGICAL);
