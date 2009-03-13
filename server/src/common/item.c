@@ -458,7 +458,7 @@ char  *query_name_full(const object *op, const object *caller)
             safe_strcat(buf[use_buf], " (cursed)", &len, HUGE_BUF);
     }
 
-    if (QUERY_FLAG(op, FLAG_KNOWN_MAGICAL) && QUERY_FLAG(op, FLAG_IS_MAGICAL))
+    if (QUERY_FLAG(op, FLAG_KNOWN_MAGICAL) && is_magical(op))
         safe_strcat(buf[use_buf], " (magical)", &len, HUGE_BUF);
     if (QUERY_FLAG(op, FLAG_APPLIED))
     {
@@ -1290,7 +1290,7 @@ void identify(object *op)
     if (QUERY_FLAG(op, FLAG_CURSED) || QUERY_FLAG(op, FLAG_DAMNED))
         SET_FLAG(op, FLAG_KNOWN_CURSED);
 
-    if (QUERY_FLAG(op, FLAG_IS_MAGICAL))
+    if (is_magical(op))
         SET_FLAG(op, FLAG_KNOWN_MAGICAL);
 
     if (op->type == POTION && op->arch != (archetype *) NULL)
