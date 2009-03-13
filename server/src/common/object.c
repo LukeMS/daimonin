@@ -1076,8 +1076,11 @@ void copy_object(object *op2, object *op)
  * -- Smacky 20090312 */
     if (QUERY_FLAG(op, FLAG_IDENTIFIED))
     {
-        SET_FLAG(op, FLAG_KNOWN_MAGICAL);
-        SET_FLAG(op, FLAG_KNOWN_CURSED);
+        if (is_magical(op))
+            SET_FLAG(op, FLAG_KNOWN_MAGICAL);
+
+        if (is_cursed_or_damned(op))
+            SET_FLAG(op, FLAG_KNOWN_CURSED);
     }
 #endif
 
@@ -1136,8 +1139,11 @@ void copy_object_data(object *op2, object *op)
  * -- Smacky 20090312 */
     if (QUERY_FLAG(op, FLAG_IDENTIFIED))
     {
-        SET_FLAG(op, FLAG_KNOWN_MAGICAL);
-        SET_FLAG(op, FLAG_KNOWN_CURSED);
+        if (is_magical(op))
+            SET_FLAG(op, FLAG_KNOWN_MAGICAL);
+
+        if (is_cursed_or_damned(op))
+            SET_FLAG(op, FLAG_KNOWN_CURSED);
     }
 #endif
 
@@ -1523,8 +1529,12 @@ void drop_ob_inv(object *ob)
                 if(!tmp_op->item_level && !tmp_op->level && tmp_op->type != RING && tmp_op->type != AMULET)
                 {
                     SET_FLAG(tmp_op, FLAG_IDENTIFIED);
-                    SET_FLAG(tmp_op, FLAG_KNOWN_CURSED);
-                    SET_FLAG(tmp_op, FLAG_KNOWN_MAGICAL);
+
+                    if (is_magical(tmp_op))
+                        SET_FLAG(tmp_op, FLAG_KNOWN_MAGICAL);
+
+                    if (is_cursed_or_damned(tmp_op))
+                        SET_FLAG(tmp_op, FLAG_KNOWN_CURSED);
                 }
                 insert_ob_in_ob(tmp_op, corpse);
             }
@@ -1540,8 +1550,12 @@ void drop_ob_inv(object *ob)
                     if(!tmp_op->item_level && !tmp_op->level && tmp_op->type != RING && tmp_op->type != AMULET)
                     {
                         SET_FLAG(tmp_op, FLAG_IDENTIFIED);
-                        SET_FLAG(tmp_op, FLAG_KNOWN_CURSED);
-                        SET_FLAG(tmp_op, FLAG_KNOWN_MAGICAL);
+
+                        if (is_magical(tmp_op))
+                            SET_FLAG(tmp_op, FLAG_KNOWN_MAGICAL);
+
+                        if (is_cursed_or_damned(tmp_op))
+                            SET_FLAG(tmp_op, FLAG_KNOWN_CURSED);
                     }
                     if (ob->env)
                     {

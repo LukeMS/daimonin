@@ -172,8 +172,11 @@ WS	[ \t]*{NL}?
 				 * -- Smacky 20090312 */
 				if (QUERY_FLAG(tmp, FLAG_IDENTIFIED))
 				{
-				    SET_FLAG(tmp, FLAG_KNOWN_MAGICAL);
-				    SET_FLAG(tmp, FLAG_KNOWN_CURSED);
+					if (is_magical(tmp))
+						SET_FLAG(tmp, FLAG_KNOWN_MAGICAL);
+
+					if (is_cursed_or_damned(tmp))
+						SET_FLAG(tmp, FLAG_KNOWN_CURSED);
 				}
 #endif
 				/* artificate the item */
@@ -879,8 +882,11 @@ int load_object(void *fp, object *op, void *mybuffer, int bufstate, int map_flag
 	 * -- Smacky 20090312 */
 	if (QUERY_FLAG(op, FLAG_IDENTIFIED))
 	{
-	    SET_FLAG(op, FLAG_KNOWN_MAGICAL);
-	    SET_FLAG(op, FLAG_KNOWN_CURSED);
+		if (is_magical(op))
+			SET_FLAG(op, FLAG_KNOWN_MAGICAL);
+
+		if (is_cursed_or_damned(op))
+			SET_FLAG(op, FLAG_KNOWN_CURSED);
 	}
 #endif
   /* we set here the material real values.

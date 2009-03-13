@@ -2838,8 +2838,12 @@ static object *CreateObjectInside_body(lua_State *L, object *where, char *archna
     if (id)
     {
         SET_FLAG(myob, FLAG_IDENTIFIED);
-        SET_FLAG(myob, FLAG_KNOWN_MAGICAL);
-        SET_FLAG(myob, FLAG_KNOWN_CURSED);
+
+        if (is_magical(myob))
+            SET_FLAG(myob, FLAG_KNOWN_MAGICAL);
+
+        if (is_cursed_or_damned(myob))
+            SET_FLAG(myob, FLAG_KNOWN_CURSED);
     }
     if (nrof > 1)
         myob->nrof = nrof;
