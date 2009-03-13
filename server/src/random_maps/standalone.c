@@ -102,7 +102,7 @@ int auto_apply(object *op)
                   && --i);
               if (tmp == NULL)
                   return 0;
-              if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))
+              if (is_cursed_or_damned(tmp))
               {
                   free_object(tmp);
                   tmp = NULL;

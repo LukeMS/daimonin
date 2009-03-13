@@ -153,7 +153,7 @@ int apply_potion(object *op, object *tmp)
                 force->stats.food = 1;
 
             /* negative effects because cursed or damned */
-            if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))
+            if (is_cursed_or_damned(tmp))
             {
                 /* now we have a bit work because we change (multiply,...) the
                          * base values of the potion - that can invoke out of bounce
@@ -233,7 +233,7 @@ int apply_potion(object *op, object *tmp)
         {
             object     *depl;
             archetype  *at;
-            if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))
+            if (is_cursed_or_damned(tmp))
             {
                 if (QUERY_FLAG(tmp, FLAG_DAMNED))
                 {
@@ -280,7 +280,7 @@ int apply_potion(object *op, object *tmp)
         {
             int success_flag = 0, hp_flag = 0, sp_flag = 0, grace_flag = 0;
 
-            if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))
+            if (is_cursed_or_damned(tmp))
             {
                 /* jump in by random - goto power */
                 if (RANDOM() % 2)
@@ -463,8 +463,7 @@ int check_item(object *op, const char *item)
     {
         if (op->arch->name == item)
         {
-            if (!QUERY_FLAG(op, FLAG_CURSED) && !QUERY_FLAG(op, FLAG_DAMNED)
-                /* Loophole bug? -FD- */ && !QUERY_FLAG(op, FLAG_UNPAID))
+            if (!is_cursed_or_damned(op) /* Loophole bug? -FD- */ && !QUERY_FLAG(op, FLAG_UNPAID))
             {
                 if (op->nrof == 0)/* this is necessary for artifact sacrifices --FD-- */
                     count++;
@@ -2525,7 +2524,7 @@ int apply_special(object *who, object *op, int aflags)
         /* always apply, so no reason to unapply */
         if (basic_flag == AP_APPLY)
             return 0;
-        if (op->item_condition && !(aflags & AP_IGNORE_CURSE) && (QUERY_FLAG(op, FLAG_CURSED) || QUERY_FLAG(op, FLAG_DAMNED)))
+        if (op->item_condition && !(aflags & AP_IGNORE_CURSE) && (is_cursed_or_damned(op)))
         {
             new_draw_info_format(NDI_UNIQUE, 0, who, "No matter how hard you try, you just can't remove it!");
             return 1;
@@ -2892,7 +2891,7 @@ int apply_special(object *who, object *op, int aflags)
     if (QUERY_FLAG(op, FLAG_PERM_DAMNED))
         SET_FLAG(op, FLAG_DAMNED);
 
-    if (QUERY_FLAG(op, FLAG_CURSED) || QUERY_FLAG(op, FLAG_DAMNED))
+    if (is_cursed_or_damned(op))
     {
         if (who->type == PLAYER)
         {
@@ -3156,7 +3155,7 @@ void apply_player_light(object *who, object *op)
 
     if (QUERY_FLAG(op, FLAG_APPLIED))
     {
-        if ((QUERY_FLAG(op, FLAG_CURSED) || QUERY_FLAG(op, FLAG_DAMNED)))
+        if (is_cursed_or_damned(op))
         {
             new_draw_info_format(NDI_UNIQUE, 0, who, "No matter how hard you try, you just can't remove it!");
             return;
@@ -3251,7 +3250,7 @@ void apply_player_light(object *who, object *op)
                 {
                     if (tmp->type == op->type && QUERY_FLAG(tmp, FLAG_APPLIED) && tmp != op)
                     {
-                        if ((QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)))
+                        if (is_cursed_or_damned(tmp))
                         {
                             new_draw_info_format(NDI_UNIQUE, 0, who,
                                     "No matter how hard you try, you just can't remove it!");

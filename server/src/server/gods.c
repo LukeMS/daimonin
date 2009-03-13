@@ -525,7 +525,7 @@ static int god_removes_curse(object *op, int remove_damnation)
     {
         if (QUERY_FLAG(tmp, FLAG_DAMNED) && !remove_damnation)
             continue;
-        if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))
+        if (is_cursed_or_damned(tmp))
         {
             success = 1;
             CLEAR_FLAG(tmp, FLAG_DAMNED);

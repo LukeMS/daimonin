@@ -133,9 +133,7 @@ int item_matched_string(object *pl, object *op, const char *name)
         /* unpaid is a little more specific */
         if (!strcmp(cp, "unpaid") && QUERY_FLAG(op, FLAG_UNPAID))
             return 2;
-        if (!strcmp(cp, "cursed")
-         && QUERY_FLAG(op, FLAG_KNOWN_CURSED)
-         && (QUERY_FLAG(op, FLAG_CURSED) || QUERY_FLAG(op, FLAG_DAMNED)))
+        if (!strcmp(cp, "cursed") && QUERY_FLAG(op, FLAG_KNOWN_CURSED) && is_cursed_or_damned(op))
             return 2;
         if (!strcmp(cp, "unlocked") && !QUERY_FLAG(op, FLAG_INV_LOCKED))
             return 2;

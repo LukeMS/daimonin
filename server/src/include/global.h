@@ -330,6 +330,7 @@ typedef enum
 #define move_object(__op, __dir) move_ob(__op,__dir,__op)
 
 #define is_magical(__op_) QUERY_FLAG(__op_,FLAG_IS_MAGICAL)
+#define is_cursed_or_damned(__op_) (QUERY_FLAG(__op_, FLAG_CURSED) || QUERY_FLAG(__op_, FLAG_DAMNED))
 
 #define NUM_COLORS          13
 

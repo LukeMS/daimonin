@@ -663,8 +663,7 @@ int do_skill_detect_curse(object *pl)
      * run out of unidented items
      */
     for (tmp = pl->inv; tmp; tmp = tmp->below)
-        if (!QUERY_FLAG(tmp, FLAG_KNOWN_CURSED) &&
-            (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)))
+        if (!QUERY_FLAG(tmp, FLAG_KNOWN_CURSED) && is_cursed_or_damned(tmp))
         {
             SET_FLAG(tmp, FLAG_KNOWN_CURSED);
             esrv_update_item(UPD_FLAGS, pl, tmp);
