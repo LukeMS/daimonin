@@ -114,7 +114,7 @@ unsigned int query_flags(object *op)
         else if (QUERY_FLAG(op, FLAG_CURSED))
             flags |= F_CURSED;
     }
-    if (QUERY_FLAG(op, FLAG_KNOWN_MAGICAL) && QUERY_FLAG(op, FLAG_IS_MAGICAL))
+    if (QUERY_FLAG(op, FLAG_KNOWN_MAGICAL) && is_magical(op))
         flags |= F_MAGIC;
     if (QUERY_FLAG(op, FLAG_UNPAID))
         flags |= F_UNPAID;
