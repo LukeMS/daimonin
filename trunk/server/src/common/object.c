@@ -411,24 +411,12 @@ void object_gc()
     }
 }
 
-/* Moved this out of define.h and in here, since this is the only file
- * it is used in.  Also, make it an inline function for cleaner
- * design.
- *
- * Function examines the 2 objects given to it, and returns true if
+/* Function examines the 2 objects given to it, and returns true if
  * they can be merged together.
  *
- * Note that this function appears a lot longer than the macro it
- * replaces - this is mostly for clarity - a decent compiler should hopefully
- * reduce this to the same efficiency.
- *
- * Check nrof variable *before* calling CAN_MERGE()
- *
  * Improvements made with merge:  Better checking on potion, and also
- * check weight
- */
-
-int CAN_MERGE(object *ob1, object *ob2)
+ * check weight. */
+static inline int can_merge(object *ob1, object *ob2)
 {
     /* Non-stackable objects of course cannot merge. */
     if (!QUERY_FLAG(ob1, FLAG_CAN_STACK) ||
@@ -496,7 +484,7 @@ int CAN_MERGE(object *ob1, object *ob2)
         for (tmp1 = ob1->inv; tmp1; tmp1 = tmp1->below)
         {
             for (tmp2 = ob2->inv; tmp2; tmp2 = tmp2->below)
-                if (CAN_MERGE(tmp1, tmp2))
+                if (can_merge(tmp1, tmp2))
                     break;
             if (!tmp2) /* Couldn't find something to merge event from ob1 with? */
                 return 0;
@@ -590,7 +578,7 @@ int CAN_MERGE(object *ob1, object *ob2)
  * merges the first matching object with op.
  * If tmp is NULL, it is calculated.
  * A mergeable object must have FLAG_CAN_STACK and nrof > 0. The two objects
- * to merge must then pass the CAN_MERGE() test (above). If successful,
+ * to merge must then pass the can_merge() test (above). If successful,
  * tmp->nrof is added to op->nrof then set to 0 (meaning tmp is no longer
  * mergeable). tmp is also marked for removal.
  * Returns pointer to op if it succeded in the merge, otherwise NULL
@@ -629,7 +617,7 @@ object * merge_ob(object *op, object *tmp)
          * merges will have taken care of other matches: there should never be
          * a situation where there are more than two mergeable objects on a
          * square/in an env. */
-        if (tmp->nrof && CAN_MERGE(op, tmp))
+        if (tmp->nrof && can_merge(op, tmp))
         {
 #if DEBUG_MERGE_OB
             LOG(llevDebug,"DEBUG:: %s/merge_ob(): Merging %s[%d] = %d to %s[%d] = %d!\n",
