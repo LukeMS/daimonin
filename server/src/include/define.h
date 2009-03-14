@@ -662,8 +662,9 @@ error - Your ANSI C compiler should be defining __STDC__;
                                 */
 #define FLAG_FRIENDLY       15 /* Will help players */
 /*
- *  FLAG_OBJECT_WAS_MOVED, REMOVED and BEEN_APPLIED are direct used from CAN_MERGE - change it too when
- * you move this flag! See also FLAG_APPLIED
+ *  FLAG_OBJECT_WAS_MOVED, REMOVED and BEEN_APPLIED are direct used from
+ *  object.c/can_merge() - change it too when you move this flag! See also
+ *  FLAG_APPLIED
  */
 #define FLAG_REMOVED        16 /* Object is not in any map or invenory */
 #define FLAG_BEEN_APPLIED   17 /* The object has been applied in the past - its "identified by using" */
@@ -758,7 +759,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 /* flag 82 is free */
 #define FLAG_IS_MALE        83 /* gender flags. it effects only player & mobs */
 #define FLAG_IS_FEMALE      84 /* is not female nor male, it is a neuter */
-/* don't move flag_applied without adjusting CAN_MERGE! */
+/* don't move flag_applied without adjusting object.c/can_merge()! */
 #define FLAG_APPLIED        85 /* Object is ready for use by living */
 #define FLAG_INV_LOCKED     86 /* Item will not be dropped from inventory */
 #define FLAG_IS_WOODED      87 /* Item is wooded terrain */

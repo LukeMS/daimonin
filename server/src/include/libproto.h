@@ -242,7 +242,6 @@ extern void             move_missile(object *op);
 extern void             stop_missile(object *op);
 /* object.c */
 extern void             mark_object_removed(object *ob);
-extern int              CAN_MERGE(object *ob1, object *ob2);
 extern object          *merge_ob(object *op, object *tmp);
 extern sint32           sum_weight(object *op);
 extern object          *is_player_inv(object *op);
