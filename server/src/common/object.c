@@ -441,6 +441,22 @@ int CAN_MERGE(object *ob1, object *ob2)
         ob1->arch == ob2->arch)
         return 1;
 
+    /* Gecko: Moved out special handling of event object nrof */
+    if ((!ob1->nrof || !ob2->nrof) &&
+         ob1->type != TYPE_EVENT_OBJECT)
+        return 0;
+
+    /* important: don't merge objects with glow_radius set - or we come
+    * in heavy side effect situations. Because we really not know what
+    * our calling function will do after this merge (and the calling function
+    * then must first find out a merge has happen or not). The sense of stacks
+    * are to store inactive items. Because glow_radius items can be active even
+    * when not apllied, merging is simply wrong here. MT.
+    */
+    if (ob1->glow_radius ||
+        ob2->glow_radius)
+        return 0;
+
     /* just a brain dead long check for things NEVER NEVER should be different
      * this is true under all circumstances for all objects.
      */
@@ -458,18 +474,6 @@ int CAN_MERGE(object *ob1, object *ob2)
      || ob1->value != ob2->value
      || ob1->weight != ob2->weight
      || ob1->stats.food != ob2->stats.food)
-        return 0;
-
-
-    /* Gecko: Moved out special handling of event object nrof */
-    /* important: don't merge objects with glow_radius set - or we come
-    * in heavy side effect situations. Because we really not know what
-    * our calling function will do after this merge (and the calling function
-    * then must first find out a merge has happen or not). The sense of stacks
-    * are to store inactive items. Because glow_radius items can be active even
-    * when not apllied, merging is simply wrong here. MT.
-    */
-    if (((!ob1->nrof || !ob2->nrof) && ob1->type != TYPE_EVENT_OBJECT) || ob1->glow_radius || ob2->glow_radius)
         return 0;
 
     /* Gecko: added bad special check for event objects
@@ -534,10 +538,10 @@ int CAN_MERGE(object *ob1, object *ob2)
     if (ob1->randomitems != ob2->randomitems
      || ob1->other_arch != ob2->other_arch
      || (ob1->flags[0] | 0x70000) != (ob2->flags[0] | 0x70000)
-   ||   /* we ignore REMOVED and BEEN_APPLIED */
+     ||   /* we ignore REMOVED and BEEN_APPLIED */
         ob1->flags[1] != ob2->flags[1]
-    || ob1->flags[3] != ob2->flags[3]
-    || ob1->flags[4] != ob2->flags[4]
+     || ob1->flags[3] != ob2->flags[3]
+     || ob1->flags[4] != ob2->flags[4]
      || ob1->path_attuned != ob2->path_attuned
      || ob1->path_repelled != ob2->path_repelled
      || ob1->path_denied != ob2->path_denied
@@ -547,7 +551,6 @@ int CAN_MERGE(object *ob1, object *ob2)
      || ob1->magic != ob2->magic
      || ob1->item_level != ob2->item_level
      || ob1->item_skill != ob2->item_skill
-     || ob1->glow_radius != ob2->glow_radius
      || ob1->level != ob2->level)
         return 0;
 
