@@ -3030,30 +3030,38 @@ int was_destroyed(const object *const op, const tag_t old_tag)
 /* but it was simple to make and allows reusing the load_object function.    */
 /* Remember not to use load_object_str in a time-critical situation.         */
 /* Also remember that multiparts objects are not supported for now.          */
+/* Rewritten to read the object deefinition from a string as the name suggests
+ * rather than a file (uses LO_MEMORYMODE), which should avoid the above speed
+ * issues and potential problems with the file being overwritten by a
+ * concurrent call to load_object_str() (ie, via scripts using
+ * game:LoadObject()). Also, multipart object loading is supported in Dai.
+ * -- Smacky 20090314 */
 object * load_object_str(char *obstr)
 {
-    object *op;
-    FILE   *tempfile;
-    void   *mybuffer;
-    char    filename[MAX_BUF];
-    sprintf(filename, "%s/cfloadobstr2044", settings.tmpdir);
-    tempfile = fopen(filename, "w+");
-    if (tempfile == NULL)
+    object *ob;
+
+    /* Basic checks that obstr is reasonable. */
+    if (strncmp(obstr, "arch ", 5) ||
+        strcmp(obstr + strlen(obstr) - 4, "\nend"))
     {
-        LOG(llevError, "ERROR: load_object_str(): Unable to access load object temp file\n");
+        LOG(llevBug, "BUG:: %s/load_object_str(): invalid form of object definition string: >%s<\n",
+            __FILE__, obstr);
+
         return NULL;
-    };
-    fprintf(tempfile, obstr);
+    }
 
-    op = get_object();
+    ob = get_object();
 
-    rewind(tempfile);
-    mybuffer = create_loader_buffer(tempfile);
-    load_object(tempfile, op, mybuffer, LO_REPEAT, 0);
-    delete_loader_buffer(mybuffer);
-    LOG(llevDebug, " load str completed, object=%s\n", query_name(op));
-    fclose(tempfile);
-    return op;
+    if (!load_object(obstr, ob, NULL, LO_MEMORYMODE, 0))
+    {
+        LOG(llevBug, "BUG:: %s/load_object_str(): load_object() failed!",
+            __FILE__);
+        remove_ob(ob);
+
+        return NULL;
+    }
+
+    return ob;
 }
 
 

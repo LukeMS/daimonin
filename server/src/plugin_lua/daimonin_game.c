@@ -724,20 +724,18 @@ static int Game_UpgradeApartment(lua_State *L)
 /*****************************************************************************/
 static int Game_LoadObject(lua_State *L)
 {
-    object *whoptr;
-    char   *dumpob;
-    CFParm *CFR, CFP;
     lua_object *self;
+    char       *obstr;
+    object     *ob;
 
-    get_lua_args(L, "Gs", &self, &dumpob);
+    get_lua_args(L, "Gs", &self, &obstr);
 
-    /* First step: We create the object */
-    CFP.Value[0] = (void *) (dumpob);
-    CFR = (PlugHooks[HOOK_LOADOBJECT]) (&CFP);
-    whoptr = (object *) (CFR->Value[0]);
-    free(CFR);
+    ob = hooks->load_object_str(obstr);
 
-    return push_object(L, &GameObject, whoptr);
+    if (!ob)
+        return luaL_error(L, "game:LoadObject(): Could not create object!");
+
+    return push_object(L, &GameObject, ob);
 }
 
 /*****************************************************************************/

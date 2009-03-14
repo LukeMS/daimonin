@@ -90,6 +90,7 @@ struct plugin_hooklist  hooklist    =
     command_combat,
     find_next_object,
     sum_weight,
+    load_object_str,
     hashtable_new, hashtable_delete, hashtable_clear,
     hashtable_find, hashtable_insert, hashtable_erase,
     hashtable_iterator, hashtable_iterator_next,
