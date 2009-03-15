@@ -36,15 +36,14 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 class GuiElementSlot: public GuiElement
 {
 public:
-    enum { ITEM_SIZE = 48 , MAX_SIZE = 64};
+    enum { MAX_SIZE = 64};
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    GuiElementSlot(TiXmlElement *xmlElement, void *parent, const char *resourceName);
-    ~GuiElementSlot();
+    GuiElementSlot(TiXmlElement *xmlElement, void *parent);
+    ~GuiElementSlot() {};
     int sendMsg(int message, const char *text, Ogre::uint32 param);
-    void loadResources();
-    int mouseEvent(int MouseAction, int x, int y);
+    int mouseEvent(int MouseAction, int x, int y, int z);
     void draw();
     void setItem(const char *gxName, int quantity);
     /**
@@ -60,29 +59,14 @@ public:
         mBusyTimeExpired = 0.001; // Something > 0 to start the busy-animation.
     }
     void update(Ogre::Real dTime);
-    static void hideDragOverlay()
-    {
-        mDnDOverlay->hide();
-    }
-    static void moveDragOverlay()
-    {
-        Ogre::Real x, y;
-        GuiCursor::getSingleton().getPos(x, y);
-        mDnDElement->setPosition(x, y);
-    }
 
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    static std::vector<Ogre::String> mvAtlasGfxName;
-    static Ogre::Image mAtlasTexture;
-    static Ogre::Overlay *mDnDOverlay;
-    static Ogre::OverlayElement *mDnDElement;
-    static Ogre::TexturePtr mDnDTexture;
-    static Ogre::String mResourceName;
     static int mDragSlot;                           /**< Slot where the drag was started. **/
     static int mActiveSlot;                         /**< Slot the mouse is currently over. **/
+    int mItemSize;
     int mSlotNr;                                    /**< Unique number. **/
     int mSlotGfxBG;                                 /**< The gfx number of the background gfx (will only be shown if slot is empty **/
     int mItemGfxID;                                 /**< The item which is currently in the slot. **/
@@ -94,7 +78,6 @@ private:
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     int getTextureAtlasPos(const char *gfxName);
-    void drawDragItem();
     void drawBusy(int busyTime);
 };
 

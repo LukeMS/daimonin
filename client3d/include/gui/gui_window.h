@@ -51,7 +51,7 @@ public:
         return mInit?mOverlay->isVisible():false;
     }
     void setVisible(bool visible);
-    void Init(TiXmlElement *xmlElem, const char *resourceWin, const char *resourceDnD, int winNr, unsigned char defaultZPos);
+    void Init(TiXmlElement *xmlElem, const char *resourceWin, int winNr, unsigned char defaultZPos);
     int keyEvent(const int keyChar, const unsigned int key);
     void update(Ogre::Real timeSinceLastFrame);
     void getSize(int &w, int &h)
@@ -94,14 +94,6 @@ public:
     {
         return mElementDrag;
     }
-    void hideDragOverlay()
-    {
-        if (mSlotReference) mSlotReference->hideDragOverlay();
-    }
-    void moveDragOverlay()
-    {
-        if (mSlotReference) mSlotReference->moveDragOverlay();
-    }
     int getElementPressed()
     {
         int ret = mElementClicked;
@@ -113,7 +105,6 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    static GuiElementSlot *mSlotReference;
     static int mMouseDragging;
     static int mElementClicked; /**< Number of the element that was clicked with left mousebutton. -1 for none. **/
     Ogre::String mResourceName;
@@ -144,7 +135,7 @@ private:
     void checkForOverlappingElements();
     void setHeight(int h);
     void delElement(int number);
-    void parseWindowData(TiXmlElement *xmlElem, const char *resourceWin, unsigned char defaultZPos);
+    void parseWindowData(TiXmlElement *xmlElem, unsigned char defaultZPos);
 };
 
 #endif

@@ -196,7 +196,7 @@ void Network::DrawInfoCmd(unsigned char *data, int len)
 void Network::AddMeFail(unsigned char *data, int len)
 {
     Logger::log().error() << "addme_failed received.\n";
-    CloseSocket();
+    CloseSocket(mSocket);
     SDL_Delay(1250);
     Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
 }
@@ -1353,7 +1353,7 @@ void Network::SetupCmd(unsigned char *buf, int len)
         }
         Logger::log().error() << "Got setup for a command we don't understand: " << cmd << " " << param;
         Option::getSingleton().setGameStatus(Option::GAME_STATUS_START);
-        CloseSocket();
+        CloseClientSocket();
         SDL_Delay(3250);
         return;
     }

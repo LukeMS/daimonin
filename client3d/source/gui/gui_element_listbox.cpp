@@ -302,7 +302,7 @@ void GuiListbox::draw()
     for (int y = mActLines<mMaxVisibleRows?mMaxVisibleRows-mActLines:0; y < mMaxVisibleRows; ++y)
     {
         offset = y*mFontHeight;
-        GuiTextout::getSingleton().printText(mWidth, mFontHeight, dst+offset*mWidth, mWidth, bak+offset*mParent->getWidth(), mParent->getWidth(),
+        GuiTextout::getSingleton().printText(mWidth, mFontHeight, dst+offset*mWidth, mWidth, dst+offset*mWidth, mWidth,
                                              row[(mPrintPos-mVScrollOffset+pos)& (SIZE_STRING_BUFFER-1)].text.c_str(), mFontNr,
                                              row[(mPrintPos-mVScrollOffset+pos)& (SIZE_STRING_BUFFER-1)].color);
         ++pos;

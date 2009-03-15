@@ -37,9 +37,11 @@ using namespace Ogre;
 // Init all static Elemnts.
 //===================================================
 
-const int TEXTURE_SIZE = 128;
+const int  TEXTURE_SIZE = 128;
+const int  CHARNAME_FONT_NR = 3;
 const char MATERIAL_NAME[] = "NPC_Visuals";
-const char TEXTURE_NAME[] = "TexVisuals";
+const char TEXTURE_NAME[]  = "TexVisuals";
+
 
 //===================================================
 // Free all recources.
@@ -48,21 +50,6 @@ void ObjectVisuals::freeRecources()
 {
     mHardwarePB.setNull();
     delete[] mTexBuffer;
-}
-
-//===================================================
-// .
-//===================================================
-ObjectVisuals::~ObjectVisuals()
-{}
-
-//===================================================
-// .
-//===================================================
-ObjectVisuals::ObjectVisuals()
-{
-    mObjStatic = 0;
-    mObjectNPC = 0;
 }
 
 //===================================================
@@ -166,14 +153,11 @@ void ObjectVisuals::setPosLifebar(Vector3 pos)
 
 //===================================================
 // Draw the Lifebar for a NPC.
+// Will be replace by an window with all the stats.
 //===================================================
 void ObjectVisuals::setLifebar(Real percent, int barWidth)
 {
-    if (percent <=0.0)
-    {
-        unselect();
-        return;
-    }
+    if (percent <=0.0) return;
     if (barWidth > TEXTURE_SIZE) barWidth = TEXTURE_SIZE;
     uint32 color, dColor;
     if (percent > 0.5)
@@ -191,11 +175,24 @@ void ObjectVisuals::setLifebar(Real percent, int barWidth)
         color = 0xff5f0000;
         dColor= 0x00160000;
     }
-
+/*
+    int len = GuiManager::getSingleton().calcTextWidth(mStrName.c_str(), CHARNAME_FONT_NR);
+    if (len >TEXTURE_SIZE) len = TEXTURE_SIZE;
+    len = (TEXTURE_SIZE - len) /2;
+    // Print NPC name.
+    dest_data = (uint32*)pb.data + (TEXTURE_SIZE-1-28) * TEXTURE_SIZE + len;
+    if (!mStrName.empty())
+        GuiManager::getSingleton().printText(TEXTURE_SIZE, TEXTURE_SIZE, dest_data, TEXTURE_SIZE, dest_data, TEXTURE_SIZE, mStrName.c_str(), CHARNAME_FONT_NR, 0x00000000);
     int x1 = (TEXTURE_SIZE - barWidth)/2;
+*/
     int xfill =  (int)(percent * barWidth);
-    PixelBox pb = mHardwarePB->lock(Box(x1, TEXTURE_SIZE-12, x1 + barWidth-1, TEXTURE_SIZE-1), HardwareBuffer::HBL_DISCARD);
-    uint32 * dest_data = (uint32*)pb.data;
+    PixelBox pb = mHardwarePB->lock(Box(0, 0, TEXTURE_SIZE, TEXTURE_SIZE), HardwareBuffer::HBL_DISCARD);
+    uint32 *dest_data = (uint32*)pb.data;
+
+    // Clear the whole texture.
+    for (int i=0; i < TEXTURE_SIZE*TEXTURE_SIZE; ++i) *dest_data++ = 0;
+
+    dest_data = (uint32*)pb.data;
     for (int x = 0; x < barWidth; ++x) dest_data[x] = 0xff000000;
     dest_data+= TEXTURE_SIZE;
     for (int y = 0; y < 9; ++y)
@@ -205,7 +202,6 @@ void ObjectVisuals::setLifebar(Real percent, int barWidth)
             dest_data[x] = (x > xfill)?0xff000000:color;
         }
         color+= (y < 4)?dColor:dColor*-1;
-        //color = 0xff005f00;
         dest_data+= TEXTURE_SIZE;
     }
     for (int x = 0; x < barWidth; ++x) dest_data[x] = 0xff000000;
@@ -215,81 +211,52 @@ void ObjectVisuals::setLifebar(Real percent, int barWidth)
 //===================================================
 // Select a NPC.
 //===================================================
-void ObjectVisuals::select(ObjectNPC *npc, bool showLifebar, bool showInteractMenu)
+void ObjectVisuals::select(const AxisAlignedBox &AABB, SceneNode *node, int friendly, Real percent, const char *name)
 {
+    /*
+        int index = PARTICLE_COLOR_NEUTRAL_STRT;
+    */
     // ////////////////////////////////////////////////////////////////////
     // Selection ring.
     // ////////////////////////////////////////////////////////////////////
     if (mNode[VISUAL_SELECTION]) mNode[VISUAL_SELECTION]->getParentSceneNode()->removeAndDestroyChild(mNode[VISUAL_SELECTION]->getName());
-    mNode[VISUAL_SELECTION] =npc->getSceneNode()->createChildSceneNode();
+    mNode[VISUAL_SELECTION] = node->createChildSceneNode();
     mNode[VISUAL_SELECTION]->attachObject(mPSystem);
     int index;
-    if      (npc->getFriendly() >0) index = PARTICLE_COLOR_FRIEND_STRT;
-    else if (npc->getFriendly() <0) index = PARTICLE_COLOR_ENEMY_STRT;
-    else                            index = PARTICLE_COLOR_NEUTRAL_STRT;
+    if      (friendly >0) index = PARTICLE_COLOR_FRIEND_STRT;
+    else if (friendly <0) index = PARTICLE_COLOR_ENEMY_STRT;
+    else                  index = PARTICLE_COLOR_NEUTRAL_STRT;
     mPSystem->setVisible(true);
     mPSystem->clear();
     ParticleManager::getSingleton().setColorRange(mPSystem, particleColor[index], particleColor[index+1]);
-    const AxisAlignedBox &AABB = npc->getEntity()->getBoundingBox();
-    float sizeX = (AABB.getMaximum().x -AABB.getMinimum().x) * 1.5;
-    float sizeZ = (AABB.getMaximum().z -AABB.getMinimum().z) * 1.5;
+
+    float sizeX = (AABB.getMaximum().x -AABB.getMinimum().x) * 1.8;
+    float sizeZ = (AABB.getMaximum().z -AABB.getMinimum().z) * 1.8;
     if (sizeZ > sizeX) sizeX = sizeZ;
     ParticleManager::getSingleton().setEmitterSize(mPSystem, sizeX, sizeX, true);
     // ////////////////////////////////////////////////////////////////////
     // Lifebar.
     // ////////////////////////////////////////////////////////////////////
-    if (!showLifebar) return;
-    if (mNode[VISUAL_LIFEBAR]) mNode[VISUAL_LIFEBAR]->getParentSceneNode()->removeAndDestroyChild(mNode[VISUAL_LIFEBAR]->getName());
-    mNode[VISUAL_LIFEBAR] = mNode[VISUAL_SELECTION]->getParentSceneNode()->createChildSceneNode();
-    mNode[VISUAL_LIFEBAR]->attachObject(mEntity[VISUAL_LIFEBAR]);
-    Vector3 pos = mNode[VISUAL_LIFEBAR]->getPosition();
-    mNode[VISUAL_LIFEBAR]->setPosition((AABB.getMinimum().x-AABB.getMinimum().x)/2, AABB.getMaximum().y +20, pos.z);
-    mNode[VISUAL_LIFEBAR]->setInheritOrientation(false);
-    const int FONT_NR = 3;
-    const char *name = npc->getNickName().c_str();
-    int len = GuiManager::getSingleton().calcTextWidth(name, FONT_NR);
-    if (len >TEXTURE_SIZE) len = TEXTURE_SIZE;
-    len = (TEXTURE_SIZE - len) /2;
-    PixelBox pb = mHardwarePB->lock(Box(0, 0, TEXTURE_SIZE, TEXTURE_SIZE), HardwareBuffer::HBL_DISCARD);
-    // Clear the whole texture.
-    uint32 *dest_data = (uint32*)pb.data;
-    for (int i=0; i < TEXTURE_SIZE*TEXTURE_SIZE; ++i) *dest_data++ = 0;
-    // Print NPC name.
-    dest_data = (uint32*)pb.data + (TEXTURE_SIZE-1-28) * TEXTURE_SIZE + len;
-    //GuiTextout::getSingleton().PrintToBuffer(TEXTURE_SIZE, 16, dest_data, name, FONT_NR,  0x00000000);
-    mHardwarePB->unlock();
-    setLifebar(npc->getHealthPercentage());
-    // ////////////////////////////////////////////////////////////////////
-    // Menu.
-    // ////////////////////////////////////////////////////////////////////
-    if (showInteractMenu)
+    if (percent >= 0)
     {
-        GuiManager::getSingleton().centerWindowOnMouse(GuiManager::WIN_PLAYERCONSOLE);
-        GuiManager::getSingleton().showWindow(GuiManager::WIN_PLAYERCONSOLE, true);
+        if (mNode[VISUAL_LIFEBAR]) mNode[VISUAL_LIFEBAR]->getParentSceneNode()->removeAndDestroyChild(mNode[VISUAL_LIFEBAR]->getName());
+        mNode[VISUAL_LIFEBAR] = mNode[VISUAL_SELECTION]->getParentSceneNode()->createChildSceneNode();
+        mNode[VISUAL_LIFEBAR]->attachObject(mEntity[VISUAL_LIFEBAR]);
+        Vector3 pos = mNode[VISUAL_LIFEBAR]->getPosition();
+        mNode[VISUAL_LIFEBAR]->setPosition((AABB.getMinimum().x-AABB.getMinimum().x)/2, AABB.getMaximum().y +20, pos.z);
+        mNode[VISUAL_LIFEBAR]->setInheritOrientation(false);
+        mStrName = name;
+        setLifebar(percent);
     }
 }
 
-//===================================================
-// Select a static object.
-//===================================================
-void ObjectVisuals::select(ObjectStatic *obj, bool showLifebar, bool showInteractMenu)
+/*
+void ObjectVisuals::selectPlayer()
 {
-    // ////////////////////////////////////////////////////////////////////
-    // Selection ring.
-    // ////////////////////////////////////////////////////////////////////
-    if (mNode[VISUAL_SELECTION]) mNode[VISUAL_SELECTION]->getParentSceneNode()->removeAndDestroyChild(mNode[VISUAL_SELECTION]->getName());
-    mNode[VISUAL_SELECTION] =obj->getSceneNode()->createChildSceneNode();
-    mNode[VISUAL_SELECTION]->attachObject(mPSystem);
-    int index = PARTICLE_COLOR_NEUTRAL_STRT;
-    mPSystem->setVisible(true);
-    mPSystem->clear();
-    ParticleManager::getSingleton().setColorRange(mPSystem, particleColor[index], particleColor[index+1]);
-    const AxisAlignedBox &AABB = obj->getEntity()->getBoundingBox();
-    float sizeX = (AABB.getMaximum().x -AABB.getMinimum().x) * 2.0;
-    float sizeZ = (AABB.getMaximum().z -AABB.getMinimum().z) * 2.0;
-    if (sizeX < sizeZ) sizeX = sizeZ;
-    ParticleManager::getSingleton().setEmitterSize(mPSystem, sizeX, sizeX, true);
+    GuiManager::getSingleton().centerWindowOnMouse(GuiManager::WIN_PLAYERCONSOLE);
+    GuiManager::getSingleton().showWindow(GuiManager::WIN_PLAYERCONSOLE, true);
 }
+*/
 
 //===================================================
 // Unselect.
@@ -307,73 +274,23 @@ void ObjectVisuals::unselect()
 //===================================================
 // .
 //===================================================
-void ObjectVisuals::setDefaultAction(int action)
+void ObjectVisuals::highlight(bool staticObject, int friendly, bool highlight)
 {
-    mDefaultAction = action;
-    GuiManager::getSingleton().setMouseState(action);
-}
-
-//===================================================
-// .
-//===================================================
-void ObjectVisuals::highlight(ObjectNPC *obj, bool showDefaultAction, bool keyShiftDown)
-{
-    static bool shiftDown = keyShiftDown;
-    if ((!obj || mObjectNPC == obj) && shiftDown == keyShiftDown) return;
-    shiftDown = keyShiftDown;
-    highlightOff();
-    mObjectNPC = obj;
-    // Backup the name of the original material.
-    strMaterialNameBackup = obj->getEntity()->getSubEntity(0)->getMaterialName();
-    // Take the texture of the model for our highlighted material.
-    MaterialPtr orgMaterial = MaterialManager::getSingleton().getByName(obj->getEntity()->getSubEntity(0)->getMaterialName());
-    String strTexture = orgMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->getTextureName();
-    MaterialPtr highlightMaterial = MaterialManager::getSingleton().getByName("Object_Highlight");
-    highlightMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(strTexture);
-    // Set the highlighted material for the model.
-    for (unsigned int i =0; i<mObjectNPC->getEntity()->getNumSubEntities(); ++i)
-        mObjectNPC->getEntity()->getSubEntity(i)->setMaterialName("Object_Highlight");
-    if (showDefaultAction)
+    if (!highlight)
     {
-        if      (obj->getFriendly() >0) setDefaultAction(GuiManager::STATE_MOUSE_TALK);
-        else if (obj->getFriendly() <0)
-        {
-            if (keyShiftDown)
-                setDefaultAction(GuiManager::STATE_MOUSE_LONG_RANGE_ATTACK);
-            else
-                setDefaultAction(GuiManager::STATE_MOUSE_SHORT_RANGE_ATTACK);
-        }
-    }
-}
-
-//===================================================
-// .
-//===================================================
-void ObjectVisuals::highlight(ObjectStatic *obj, bool showDefaultAction, bool keyShiftDown)
-{
-    if (showDefaultAction)
-    {
-        setDefaultAction(GuiManager::STATE_MOUSE_OPEN);
-    }
-}
-
-//===================================================
-// Switch off highlighting.
-//===================================================
-void ObjectVisuals::highlightOff()
-{
-    if (mObjectNPC)
-    {
-        for (unsigned int i =0; i<mObjectNPC->getEntity()->getNumSubEntities(); ++i)
-            mObjectNPC->getEntity()->getSubEntity(i)->setMaterialName(strMaterialNameBackup);
-        mObjectNPC =0;
-    }
-    if (mObjStatic)
-    {
+        GuiManager::getSingleton().setMouseState(GuiManager::STATE_MOUSE_DEFAULT);
         return;
-        for (unsigned int i =0; i<mObjStatic->getEntity()->getNumSubEntities(); ++i)
-            mObjStatic->getEntity()->getSubEntity(i)->setMaterialName(strMaterialNameBackup);
-        mObjStatic = 0;
     }
-    setDefaultAction(GuiManager::STATE_MOUSE_DEFAULT);
+    if (!staticObject)
+    {
+        int action;
+        if      (friendly >0) action = GuiManager::STATE_MOUSE_TALK;
+        else if (friendly <0) action = Events::getSingleton().isShiftDown()?GuiManager::STATE_MOUSE_LONG_RANGE_ATTACK:GuiManager::STATE_MOUSE_SHORT_RANGE_ATTACK;
+        else                  action = GuiManager::STATE_MOUSE_DEFAULT;
+        GuiManager::getSingleton().setMouseState(action);
+    }
+    else
+    {
+        GuiManager::getSingleton().setMouseState(GuiManager::STATE_MOUSE_OPEN);
+    }
 }

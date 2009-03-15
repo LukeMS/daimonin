@@ -57,7 +57,6 @@ const char *GuiManager::MATERIAL_RESOURCE_NAME= "_Material";
 const char *RESOURCE_MCURSOR = MANAGER_DESCRIPTION "MCursor";
 const char *RESOURCE_TOOLTIP = MANAGER_DESCRIPTION "Tooltip";
 const char *RESOURCE_WINDOW  = MANAGER_DESCRIPTION "Window";
-const char *RESOURCE_DND     = MANAGER_DESCRIPTION "DnD";
 
 short GuiManager::mWindowZPos[WIN_SUM];
 GuiManager::WindowID GuiManager::mWindowID[WIN_SUM]=
@@ -154,6 +153,15 @@ const uint32 GuiManager::COLOR_WHITE = 0xffffffff;
 int GuiManager::calcTextWidth(const char *text, int fontNr)
 {
     return GuiTextout::getSingleton().calcTextWidth(text, fontNr);
+}
+
+//================================================================================================
+// .
+//================================================================================================
+void GuiManager::printText(int width, int height, uint32 *dst, int dstLineSkip,
+                           uint32 *bak, int bakLineSkip, const char *txt, unsigned int fontNr, uint32 color, bool hideText)
+{
+    GuiTextout::getSingleton().printText(width, height, dst, dstLineSkip, bak, bakLineSkip, txt, fontNr, color, hideText);
 }
 
 //================================================================================================
@@ -388,12 +396,6 @@ void GuiManager::loadResources(Ogre::Resource *res)
     }
     if (name.find(RESOURCE_WINDOW)  != std::string::npos)
     {
-
-        if (name.find(RESOURCE_DND) != std::string::npos)
-        {
-            guiWindow[0].loadResources(true);
-            return;
-        }
         int window = StringConverter::parseInt(name.substr(name.find_first_of("#")+1, SUM_WIN_DIGITS));
         guiWindow[window].loadResources(false);
         return;
@@ -508,7 +510,7 @@ void GuiManager::parseWindows(const char *fileWindows)
         {
             if (!stricmp(mWindowID[winNr].name, valString))
             {
-                guiWindow[winNr].Init(xmlElem, RESOURCE_WINDOW, RESOURCE_DND, winNr, z++);
+                guiWindow[winNr].Init(xmlElem, RESOURCE_WINDOW, winNr, z++);
                 break;
             }
         }
@@ -577,7 +579,7 @@ int GuiManager::mouseEvent(int mouseAction, Vector3 &mouse)
         if (mouseAction == BUTTON_RELEASED) // End of dragging.
             //if (guiWindow[mDragSrcWin].mouseEvent(mouseAction, mMouse) == EVENT_DRAG_DONE)
         {
-            guiWindow[0].hideDragOverlay();
+            mOverlay->hide();
             mDragDstWin = -1;
             for (unsigned int w = 0; w < WIN_SUM; ++w)
             {
@@ -592,7 +594,7 @@ int GuiManager::mouseEvent(int mouseAction, Vector3 &mouse)
             Item::getSingleton().dropItem(mDragSrcWin, mDragSrcSlot, mDragDstWin, mDragDstSlot);
             mDragSrcWin = NO_ACTIVE_WINDOW;
         }
-        guiWindow[0].moveDragOverlay();
+        mElement->setPosition((int)mMouse.x-24, (int)mMouse.y-24);
         return GuiManager::EVENT_CHECK_DONE;;
     }
     // ////////////////////////////////////////////////////////////////////
@@ -608,6 +610,7 @@ int GuiManager::mouseEvent(int mouseAction, Vector3 &mouse)
         {
             mDragSrcWin = i;
             mDragSrcSlot= guiWindow[i].getDragSlot();
+            mElement->setPosition((int)mMouse.x-24, (int)mMouse.y-24);
             return GuiManager::EVENT_CHECK_DONE;
         }
     }
@@ -840,3 +843,18 @@ void GuiManager::drawTooltip()
     }
     mOverlay->show();
 }
+
+//================================================================================================
+// Draw the tooltip. Clipping is performed.
+//================================================================================================
+void GuiManager::drawDragElement(const PixelBox &src)
+{
+    size_t size = mTexture->getWidth()*mTexture->getHeight()*sizeof(uint32);
+    memset(mTexture->getBuffer()->lock(0, size, HardwareBuffer::HBL_DISCARD), 0x00, size);
+    mTexture->getBuffer()->unlock();
+    size = src.getWidth();
+    mTexture->getBuffer()->blitFromMemory(src, Box(0, 0, size, size));
+    mOverlay->show();
+}
+
+

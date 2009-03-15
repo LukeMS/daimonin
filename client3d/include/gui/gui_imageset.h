@@ -40,6 +40,7 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
+    enum { ITEM_SIZE = 48 };
     typedef struct
     {
         const char *name;
@@ -96,26 +97,32 @@ public:
         return mSrcEntryMouse;
     }
     gfxSrcEntry *getStateGfxPositions(const char* guiImage);
-    Ogre::PixelBox &getPixelBox()
+    const Ogre::PixelBox &getPixelBox()
     {
         return mSrcPixelBox;
     }
     void delBackgroundElements();
+    int getItemId(const char *gfxName);
+    const Ogre::PixelBox &getItemPB(int itemId);
 
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     gfxSrcMouse *mSrcEntryMouse;
-    std::vector<gfxSrcEntry*>mvSrcEntry;
+    std::vector<gfxSrcEntry*> mvSrcEntry;
+    std::vector<Ogre::String> mvAtlasGfxName;
     Ogre::String mStrImageSetGfxFile;
     Ogre::Image mImageSetImg;
     Ogre::PixelBox mSrcPixelBox;
+    Ogre::Image mAtlasTexture;
+    Ogre::PixelBox mSrcPb;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     GuiImageset();
     ~GuiImageset();
+    void parseItems();
     GuiImageset(const GuiImageset&); // disable copy-constructor
     bool parseStates(TiXmlElement *xmlElem, gfxPos *Entry, int sum_state, bool mouseStates);
 };

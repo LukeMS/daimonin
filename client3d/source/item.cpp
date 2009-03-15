@@ -179,7 +179,6 @@ Item::sItem *Item::locateItem(int container, unsigned int tag)
 //================================================================================================
 void Item::delItem(unsigned int item, int container)
 {
-    //GuiManager::getSingleton().addTextline(GuiManager::WIN_CHATWINDOW, GuiImageset::GUI_LIST_CHATWIN, "-- del-- del Item");
     std::list<sItem*>::iterator iter;
     for (int i =0; i < ITEMLIST_SUM; ++i)
     {
@@ -204,13 +203,12 @@ void Item::delItem(unsigned int item, int container)
 //================================================================================================
 bool Item::addItem(sItem *tmpItem, int container)
 {
-    //GuiManager::getSingleton().addTextline(GuiManager::WIN_CHATWINDOW, GuiImageset::GUI_LIST_CHATWIN, "-- add Item");
     for (int i =0; i < ITEMLIST_SUM; ++i)
     {
         if (mActItemID[i] == container)
         {
             mItemList[i].push_back(tmpItem);
-            GuiManager::getSingleton().sendMsg(mSlotID[i], GuiManager::MSG_ADD_ITEM, "", 2); // Just testing...
+            GuiManager::getSingleton().sendMsg(mSlotID[i], GuiManager::MSG_ADD_ITEM, getItemGfxName(tmpItem->face), tmpItem->sumItems);
             return true;
         }
     }
@@ -224,7 +222,7 @@ bool Item::update(sItem *tmpItem, int newContainerID, bool bflag)
 {
 
 
-    return false;
+//    return false;
 
 
     int actContainerID = getContainerID(tmpItem->tag);

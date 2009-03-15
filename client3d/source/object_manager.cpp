@@ -32,6 +32,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Ogre;
 
+const char MATERIAL_HIGHLIGHT[] = "MatObjectHighlight";
+
 //================================================================================================
 // Defines:
 // * static: fixed to a single pos, does not have ai (stones, walls, trees, ...)
@@ -213,21 +215,41 @@ void ObjectManager::freeRecources()
 //================================================================================================
 // Highlight the object.
 //================================================================================================
-void ObjectManager::highlightObject(MovableObject *mob)
+void ObjectManager::highlightObject(MovableObject *mob, bool highlight)
 {
-    if (!mob) return;
-    extractObject(mob);
-    if  (mSelectedType >= OBJECT_NPC)
+    static String strMaterialBak;
+    static Entity *entity = 0;
+    if (highlight)
     {
-        if (mSelectedObject != ObjectNPC::HERO)
-            ObjectVisuals::getSingleton().highlight(mvNPC[mSelectedObject],
-                                                    mSelectedObject != ObjectNPC::HERO,
-                                                    Events::getSingleton().isShiftDown());
+        if (!mob) return;
+        extractObject(mob);
+        if  (mSelectedType >= OBJECT_NPC)
+        {
+            if (entity || mSelectedObject == ObjectNPC::HERO) return;
+            entity = mvNPC[mSelectedObject]->getEntity();
+            ObjectVisuals::getSingleton().highlight(false, mvNPC[mSelectedObject]->getFriendly(), true);
+        }
+        else
+        {
+            if (entity) return;
+            entity = mvStatic[mSelectedObject]->getEntity();
+            ObjectVisuals::getSingleton().highlight(true, 0, true);
+        }
+        // Set the highlighted material for the model.
+        strMaterialBak = entity->getSubEntity(0)->getMaterialName();
+        MaterialPtr orgMaterial = MaterialManager::getSingleton().getByName(strMaterialBak);
+        MaterialPtr newMaterial = orgMaterial->clone(MATERIAL_HIGHLIGHT);
+        newMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setColourOperationEx(LBX_MODULATE_X2, LBS_MANUAL, LBS_TEXTURE, ColourValue(1.0, 1.0, 1.0));
+        for (unsigned int i = 0; i < entity->getNumSubEntities(); ++i)
+            entity->getSubEntity(i)->setMaterialName(MATERIAL_HIGHLIGHT);
+        return;
     }
-    else
-        ObjectVisuals::getSingleton().highlight(mvStatic[mSelectedObject],
-                                                true,
-                                                Events::getSingleton().isShiftDown());
+    if (!entity) return;
+    for (unsigned int i = 0; i < entity->getNumSubEntities(); ++i)
+        entity->getSubEntity(i)->setMaterialName(strMaterialBak);
+    entity =0;
+    MaterialManager::getSingleton().remove(MATERIAL_HIGHLIGHT);
+    ObjectVisuals::getSingleton().highlight(false, 0, false);
 }
 
 //================================================================================================
@@ -238,24 +260,30 @@ void ObjectManager::selectObject(MovableObject *mob)
     if (mvNPC[ObjectNPC::HERO]->isMoving()) return;
     if (mvNPC[ObjectNPC::HERO]->getHealth() <= 0) return;
 
+
     extractObject(mob);
     if  (mSelectedType >= OBJECT_NPC)
     {
-        bool notHero = mSelectedObject != ObjectNPC::HERO;
-        ObjectVisuals::getSingleton().select(mvNPC[mSelectedObject], notHero, notHero);
+        ObjectVisuals::getSingleton().select(mvNPC[mSelectedObject]->getEntity()->getBoundingBox(),
+                                             mvNPC[mSelectedObject]->getSceneNode(),
+                                             mvNPC[mSelectedObject]->getFriendly(),
+                                             mvNPC[mSelectedObject]->getHealthPercentage(),
+                                             mvNPC[mSelectedObject]->getNickName().c_str());
         mSelectedPos = mvNPC[mSelectedObject]->getTilePos();
-        mSelectedFriendly = mvNPC[mSelectedObject]->getFriendly();
-        String strSelect = "/target !"+ StringConverter::toString(mSelectedPos.x-9) + " " + StringConverter::toString(mSelectedPos.z-9);
-        //Network::getSingleton().send_command(strSelect.c_str(), -1, Network::SC_NORMAL);
+        /*
+                mvNPC[mSelectedObject]->getFriendly();
+                String strSelect = "/target !"+ StringConverter::toString(mSelectedPos.x-9) + " " + StringConverter::toString(mSelectedPos.z-9);
+                Network::getSingleton().send_command(strSelect.c_str(), -1, Network::SC_NORMAL);
+        */
     }
     else
     {
-        ObjectVisuals::getSingleton().select(mvStatic[mSelectedObject], false);
+        ObjectVisuals::getSingleton().select(mvStatic[mSelectedObject]->getEntity()->getBoundingBox(),
+                                             mvStatic[mSelectedObject]->getSceneNode(), 0, -1, 0);
         mSelectedPos = mvStatic[mSelectedObject]->getTilePos();
     }
 }
 
-#include "gui_manager.h"
 //================================================================================================
 // Mouse button was pressed - lets do the right thing.
 //================================================================================================
@@ -270,7 +298,11 @@ void ObjectManager::mousePressed(MovableObject *mob, bool modifier)
         if (mvNPC[mSelectedObject]->getFriendly() <0)
         {
             mSelectedPos = mvNPC[mSelectedObject]->getTilePos();
-            ObjectVisuals::getSingleton().select(mvNPC[mSelectedObject], true, false);
+            ObjectVisuals::getSingleton().select(mvNPC[mSelectedObject]->getEntity()->getBoundingBox(),
+                                                 mvNPC[mSelectedObject]->getSceneNode(),
+                                                 mvNPC[mSelectedObject]->getFriendly(),
+                                                 mvNPC[mSelectedObject]->getHealthPercentage(),
+                                                 mvNPC[mSelectedObject]->getNickName().c_str());
             if (modifier)
                 mvNPC[ObjectNPC::HERO]->attackLongRange(mvNPC[mSelectedObject]);
             else
@@ -279,7 +311,11 @@ void ObjectManager::mousePressed(MovableObject *mob, bool modifier)
         else
         {
             mvNPC[ObjectNPC::HERO]->readyPrimaryWeapon(false);
-            ObjectVisuals::getSingleton().select(mvNPC[mSelectedObject], false, false);
+            ObjectVisuals::getSingleton().select(mvNPC[mSelectedObject]->getEntity()->getBoundingBox(),
+                                                 mvNPC[mSelectedObject]->getSceneNode(),
+                                                 mvNPC[mSelectedObject]->getFriendly(),
+                                                 mvNPC[mSelectedObject]->getHealthPercentage(),
+                                                 mvNPC[mSelectedObject]->getNickName().c_str());
             //GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_CHATWIN, GuiManager::MSG_ADD_ROW, "talk hello");
             //String strSelect = "/target !"+ StringConverter::toString(mSelectedPos.x-9) + " " + StringConverter::toString(mSelectedPos.z-9);
             //Network::getSingleton().send_game_command(strSelect.c_str());
@@ -294,7 +330,6 @@ void ObjectManager::mousePressed(MovableObject *mob, bool modifier)
         mvStatic[mSelectedObject]->activate();
     }
 }
-
 
 //================================================================================================
 // Extract ObjectType and ObjectNr out of the entity name.

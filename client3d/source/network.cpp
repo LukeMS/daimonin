@@ -33,9 +33,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Ogre;
 
-#define DEFAULT_SERVER_PORT 13327
-#define DEFAULT_METASERVER_PORT 13326
-#define DEFAULT_METASERVER "damn.informatik.uni-bremen.de"
+const int DEFAULT_METASERVER_PORT = 13326;
+const char *DEFAULT_METASERVER = "www.daimonin.com";
 
 struct CmdMapping
 {
@@ -79,9 +78,9 @@ const int SUM_SERVER_COMMANDS = sizeof(commands) / sizeof(CmdMapping);
 
 SDL_Thread *Network::mInputThread =0;
 SDL_Thread *Network::mOutputThread=0;
-SDL_mutex  *Network::mMutex =0;
-SDL_cond   *Network::mInputCond  =0;
 SDL_cond   *Network::mOutputCond =0;
+SDL_mutex  *Network::mMutex =0;
+
 // start is the first waiting item in queue, end is the most recent enqueued:
 Network::command_buffer *Network::mInputQueueStart = 0, *Network::mInputQueueEnd = 0;
 Network::command_buffer *Network::mOutputQueueStart= 0, *Network::mOutputQueueEnd= 0;
@@ -127,10 +126,16 @@ String &Network::getError()
     return strError;
 }
 
+//================================================================================================
+//
+//================================================================================================
 void Network::freeRecources()
 {
     mAbortThread = true;
     CloseClientSocket();
+#ifdef WIN32
+    WSACleanup();
+#endif
     if (!mMutex) return;
     SDL_WaitThread(mInputThread, NULL);  // Stopping reader thread.
     SDL_WaitThread(mOutputThread, NULL); // Stopping writer thread.
@@ -140,7 +145,6 @@ void Network::freeRecources()
     while (mOutputQueueStart)
         command_buffer_free(command_buffer_dequeue(&mOutputQueueStart, &mOutputQueueEnd));
     SDL_DestroyMutex(mMutex);
-    SDL_DestroyCond(mInputCond);
     SDL_DestroyCond(mOutputCond);
     clearMetaServerData();
     mMutex = 0;
@@ -151,7 +155,6 @@ void Network::freeRecources()
 //================================================================================================
 bool Network::Init()
 {
-    if (mMutex) return false;
     Logger::log().headline() << "Starting Network";
 #ifdef WIN32
     WSADATA w;
@@ -167,7 +170,6 @@ bool Network::Init()
             }
         }
     }
-    Logger::log().info() <<  "Using socket version " << w.wVersion;
 #endif
     return true;
 }
@@ -178,16 +180,13 @@ bool Network::Init()
 void Network::socket_thread_start()
 {
     if (mMutex) return;
-    mInputCond  = SDL_CreateCond();
     mOutputCond = SDL_CreateCond();
     mMutex = SDL_CreateMutex();
     mAbortThread = false;
     mInputThread = SDL_CreateThread(reader_thread_loop, NULL);
-    if (!mInputThread)
-        Logger::log().error() <<  "Unable to start input thread: " << SDL_GetError();
+    if (!mInputThread)  Logger::log().error() <<  "Unable to start input thread: " << SDL_GetError();
     mOutputThread = SDL_CreateThread(writer_thread_loop, NULL);
-    if (!mOutputThread)
-        Logger::log().error() <<  "Unable to start output thread: " << SDL_GetError();
+    if (!mOutputThread) Logger::log().error() <<  "Unable to start output thread: " << SDL_GetError();
 }
 
 //================================================================================================
@@ -412,7 +411,7 @@ int Network::send_command_binary(unsigned char cmd, std::stringstream &stream)
     */
     SDL_LockMutex(mMutex);
     command_buffer_enqueue(buf, &mOutputQueueStart, &mOutputQueueEnd);
-    SDL_CondSignal(mOutputCond); // Restart thread.
+    SDL_CondSignal(mOutputCond);
     SDL_UnlockMutex(mMutex);
     return 0;
 }
@@ -509,18 +508,17 @@ int Network::writer_thread_loop(void *)
 //================================================================================================
 //
 //================================================================================================
-void Network::CloseSocket()
+void Network::CloseSocket(int &socket)
 {
-    if (mSocket == NO_SOCKET) return;
+    if (socket == NO_SOCKET) return;
 #ifdef WIN32
-    shutdown(mSocket, SD_BOTH); // Do we have to wait here for WSAAsyncSelect() to send a FD_CLOSE?
-    closesocket(mSocket);
-    WSACleanup();
+    shutdown(socket, SD_BOTH); // Do we have to wait here for WSAAsyncSelect() to send a FD_CLOSE?
+    closesocket(socket);
 #else
-    shutdown(mSocket, SHUT_RDWR);
-    close(mSocket);
+    shutdown(socket, SHUT_RDWR);
+    close(socket);
 #endif
-    mSocket = NO_SOCKET;
+    socket = NO_SOCKET;
 }
 
 //================================================================================================
@@ -530,11 +528,8 @@ void Network::CloseClientSocket()
 {
     if (!mMutex) return;
     SDL_LockMutex(mMutex);
-    CloseSocket();
-    SDL_UnlockMutex(mMutex);
-    SDL_LockMutex(mMutex);
-    SDL_CondSignal(mInputCond);  // Restart thread.
-    SDL_CondSignal(mOutputCond); // Restart thread.
+    CloseSocket(mSocket);
+    SDL_CondSignal(mOutputCond);
     SDL_UnlockMutex(mMutex);
 }
 
@@ -543,7 +538,7 @@ void Network::CloseClientSocket()
 //================================================================================================
 bool Network::OpenActiveServerSocket()
 {
-    if (!OpenSocket(mvServer[mActServerNr]->ip.c_str(), mvServer[mActServerNr]->port))
+    if (!OpenSocket(mvServer[mActServerNr]->ip.c_str(), mvServer[mActServerNr]->port, mSocket))
         return false;
     int tmp = 1;
     if (setsockopt(mSocket, IPPROTO_TCP, TCP_NODELAY, (char *) &tmp, sizeof(tmp)))
@@ -558,52 +553,47 @@ bool Network::OpenActiveServerSocket()
 //================================================================================================
 //
 //================================================================================================
-bool Network::OpenSocket(const char *host, int port)
+bool Network::OpenSocket(const char *host, int port, int &sock)
 {
-    int             error;
-    long            temp;
-    struct hostent *hostbn;
-    int             oldbufsize;
-    int             newbufsize = 65535, buflen = sizeof(int);
-    uint32          timeout;
-    struct linger   linger_opt;
-    Logger::log().info() <<  "OpenSocket: "<< host;
+    Logger::log().info() <<  "OpenSocket: " << host << " " << port;
     // The way to make the sockets work on XP Home - The 'unix' style socket seems to fail under xp home.
-    mSocket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+    sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+    struct sockaddr_in insock;
     insock.sin_family = AF_INET;
     insock.sin_port = htons((unsigned short) port);
     if (isdigit(*host))
         insock.sin_addr.s_addr = inet_addr(host);
     else
     {
-        hostbn = gethostbyname(host);
+        struct hostent *hostbn = gethostbyname(host);
         if (hostbn == (struct hostent *) NULL)
         {
             Logger::log().warning() <<  "Unknown host: "<< host;
-            mSocket = NO_SOCKET;
+            sock = NO_SOCKET;
             return false;
         }
         memcpy(&insock.sin_addr, hostbn->h_addr, hostbn->h_length);
     }
-    temp = 1;   // non-block
-    if (ioctlsocket(mSocket, FIONBIO, (u_long*)&temp) == -1)
+    long temp = 1;   // non-block
+    if (ioctlsocket(sock, FIONBIO, (u_long*)&temp) == -1)
     {
-        Logger::log().error() << "ioctlsocket(mSocket, FIONBIO , &temp)";
-        mSocket = NO_SOCKET;
+        Logger::log().error() << "ioctlsocket(socket, FIONBIO , &temp)";
+        sock = NO_SOCKET;
         return false;
     }
+    struct linger linger_opt;
     linger_opt.l_onoff = 1;
     linger_opt.l_linger = 5;
-    if (setsockopt(mSocket, SOL_SOCKET, SO_LINGER, (char *) &linger_opt, sizeof(struct linger)))
+    if (setsockopt(sock, SOL_SOCKET, SO_LINGER, (char *) &linger_opt, sizeof(struct linger)))
         Logger::log().error() << "BUG: Error on setsockopt LINGER";
-    error = 0;
-    timeout = SDL_GetTicks() + TIMEOUT_MS;
-    while (connect(mSocket, (struct sockaddr *) &insock, sizeof(insock)) == SOCKET_ERROR)
+    int error = 0;
+    uint32 timeout = SDL_GetTicks() + TIMEOUT_MS;
+    while (connect(sock, (struct sockaddr *) &insock, sizeof(insock)) == SOCKET_ERROR)
     {
         SDL_Delay(30);
         if (SDL_GetTicks() > timeout)
         {
-            mSocket = NO_SOCKET;
+            sock = NO_SOCKET;
             return false;
         }
         int errorNr = WSAGetLastError();
@@ -615,25 +605,25 @@ bool Network::OpenSocket(const char *host, int port)
             continue;
         }
         Logger::log().warning() <<  "Connect Error: " << errorNr;
-        mSocket = NO_SOCKET;
+        sock = NO_SOCKET;
         return false;
     }
     // we got a connect here!
     // Clear nonblock flag
     temp = 0;
-    if (ioctlsocket(mSocket, FIONBIO, (u_long*)&temp) == -1)
+    if (ioctlsocket(sock, FIONBIO, (u_long*)&temp) == -1)
     {
-        Logger::log().error() << "ioctlsocket(mSocket, FIONBIO , &temp == 0)";
-        mSocket = NO_SOCKET;
+        Logger::log().error() << "ioctlsocket(Socket, FIONBIO , &temp == 0)";
+        sock = NO_SOCKET;
         return false;
     }
-
-    if (getsockopt(mSocket, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, &buflen) == -1)
+    int oldbufsize, newbufsize = 65535, buflen = sizeof(int);
+    if (getsockopt(sock, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, &buflen) == -1)
         oldbufsize = 0;
     if (oldbufsize < newbufsize)
     {
-        if (setsockopt(mSocket, SOL_SOCKET, SO_RCVBUF, (char *) &newbufsize, sizeof(&newbufsize)))
-            setsockopt(mSocket, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, sizeof(&oldbufsize));
+        if (setsockopt(sock, SOL_SOCKET, SO_RCVBUF, (char *) &newbufsize, sizeof(&newbufsize)))
+            setsockopt(sock, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, sizeof(&oldbufsize));
     }
     Logger::log().info() <<  "Connected to "<< host << "  " <<  port;
     return true;
@@ -644,18 +634,14 @@ bool Network::OpenSocket(const char *host, int port)
 //================================================================================================
 //
 //================================================================================================
-bool Network::OpenSocket(const char *host, int port)
+bool Network::OpenSocket(const char *host, int port, int &sock)
 {
-    unsigned int  oldbufsize, newbufsize = 65535, buflen = sizeof(int);
-    struct linger linger_opt;
-    int flags;
-    uint32 timeout;
     // Use new (getaddrinfo()) or old (gethostbyname()) socket API
 #if 0
-//#ifndef HAVE_GETADDRINFO
+    //#ifndef HAVE_GETADDRINFO
     // This method is preferable unless IPv6 is required, due to buggy distros. See mantis 0000425
     struct protoent *protox;
-    struct sockaddr_in  insock;
+    struct sockaddr_in insock;
     Logger::log().info() << "Opening to " << host << " " << port;
     protox = getprotobyname("tcp");
     if (protox == (struct protoent *) NULL)
@@ -663,11 +649,11 @@ bool Network::OpenSocket(const char *host, int port)
         Logger::log().error() << "Error on getting prorobyname (tcp)";
         return false;
     }
-    mSocket = socket(PF_INET, SOCK_STREAM, protox->p_proto);
-    if (mSocket == -1)
+    sock = socket(PF_INET, SOCK_STREAM, protox->p_proto);
+    if (sock == -1)
     {
         Logger::log().error() << "init_connection:  Error on socket command.";
-        mSocket = NO_SOCKET;
+        sock = NO_SOCKET;
         return false;
     }
     insock.sin_family = AF_INET;
@@ -685,30 +671,30 @@ bool Network::OpenSocket(const char *host, int port)
         memcpy(&insock.sin_addr, hostbn->h_addr, hostbn->h_length);
     }
     // Set non-blocking.
-    flags = fcntl(mSocket, F_GETFL);
-    if (fcntl(mSocket, F_SETFL, flags | O_NONBLOCK) == -1)
+    int flags = fcntl(sock, F_GETFL);
+    if (fcntl(sock, F_SETFL, flags | O_NONBLOCK) == -1)
     {
         Logger::log().error() << "socket: Error on switching to non-blocking.\n";
-        mSocket = NO_SOCKET;
+        sock = NO_SOCKET;
         return false;
     }
     // Try to connect.
-    timeout = SDL_GetTicks() + TIMEOUT_MS;
-    while (connect(mSocket, (struct sockaddr *) &insock, sizeof(insock)) == -1)
+    uint32 timeout = SDL_GetTicks() + TIMEOUT_MS;
+    while (connect(sock, (struct sockaddr *) &insock, sizeof(insock)) == -1)
     {
         SDL_Delay(3);
         if (SDL_GetTicks() > timeout)
         {
             Logger::log().error() << "Can't connect to server";
-            mSocket = NO_SOCKET;
+            sock = NO_SOCKET;
             return false;
         }
     }
     // Set back to blocking.
-    if (fcntl(mSocket, F_SETFL, flags) == -1)
+    if (fcntl(sock, F_SETFL, flags) == -1)
     {
         Logger::log().error() << "socket: Error on switching to blocking.";
-        mSocket = NO_SOCKET;
+        sock = NO_SOCKET;
         return false;
     }
 #else
@@ -729,61 +715,63 @@ bool Network::OpenSocket(const char *host, int port)
     {
         getnameinfo(ai->ai_addr, ai->ai_addrlen, hostaddr, sizeof(hostaddr), NULL, 0, NI_NUMERICHOST);
         Logger::log().info() << "  Trying " << hostaddr;
-        mSocket = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
-        if (mSocket == -1)
+        sock = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
+        if (sock == -1)
         {
-            mSocket = NO_SOCKET;
+            sock = NO_SOCKET;
             continue;
         }
         // Set non-blocking.
-        flags = fcntl(mSocket, F_GETFL);
-        if (fcntl(mSocket, F_SETFL, flags | O_NONBLOCK) == -1)
+        int flags = fcntl(sock, F_GETFL);
+        if (fcntl(sock, F_SETFL, flags | O_NONBLOCK) == -1)
         {
             Logger::log().error() << "socket: Error on switching to non-blocking.";
-            mSocket = NO_SOCKET;
+            sock = NO_SOCKET;
             return false;
         }
         // Try to connect.
-        timeout = SDL_GetTicks() + TIMEOUT_MS;
-        while (connect(mSocket, ai->ai_addr, ai->ai_addrlen) != 0)
+        uint32 timeout = SDL_GetTicks() + TIMEOUT_MS;
+        while (connect(sock, ai->ai_addr, ai->ai_addrlen) != 0)
         {
             SDL_Delay(3);
             if (SDL_GetTicks() > timeout)
             {
-                close(mSocket);
-                mSocket = NO_SOCKET;
+                close(sock);
+                sock = NO_SOCKET;
                 break;
             }
         }
-        if (mSocket == NO_SOCKET) continue;
+        if (sock == NO_SOCKET) continue;
         // Got a connection. Set back to blocking.
-        if (fcntl(mSocket, F_SETFL, flags) == -1)
+        if (fcntl(sock, F_SETFL, flags) == -1)
         {
             Logger::log().error() << "socket: Error on switching to blocking.";
-            mSocket = NO_SOCKET;
+            sock = NO_SOCKET;
             return false;
         }
         break;
     }
     freeaddrinfo(res);
-    if (mSocket == NO_SOCKET)
+    if (sock == NO_SOCKET)
     {
         Logger::log().error() << "Can't connect to server";
         return false;
     }
 #endif
+    unsigned int oldbufsize, newbufsize = 65535, buflen = sizeof(int);
+    struct linger linger_opt;
     linger_opt.l_onoff = 1;
     linger_opt.l_linger = 5;
-    if (setsockopt(mSocket, SOL_SOCKET, SO_LINGER, (char *) &linger_opt, sizeof(struct linger)))
+    if (setsockopt(sock, SOL_SOCKET, SO_LINGER, (char *) &linger_opt, sizeof(struct linger)))
         Logger::log().error() <<  "BUG: Error on setsockopt LINGER";
-    if (getsockopt(mSocket, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, &buflen) == -1)
+    if (getsockopt(sock, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, &buflen) == -1)
         oldbufsize = 0;
     if (oldbufsize < newbufsize)
     {
-        if (setsockopt(mSocket, SOL_SOCKET, SO_RCVBUF, (char *) &newbufsize, sizeof(&newbufsize)))
+        if (setsockopt(sock, SOL_SOCKET, SO_RCVBUF, (char *) &newbufsize, sizeof(&newbufsize)))
         {
             Logger::log().error() << "socket: setsockopt unable to set output buf size to " << newbufsize;
-            setsockopt(mSocket, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, sizeof(&oldbufsize));
+            setsockopt(sock, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, sizeof(&oldbufsize));
         }
     }
     return true;
@@ -796,37 +784,41 @@ bool Network::OpenSocket(const char *host, int port)
 void Network::contactMetaserver()
 {
     clearMetaServerData();
-    mSocket = NO_SOCKET;
     GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "");
     GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "Query metaserver...");
-    std::stringstream strBuf;
-    strBuf << "Trying " << DEFAULT_METASERVER << " " << DEFAULT_METASERVER_PORT;
-    GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, strBuf.str().c_str());
-    if (OpenSocket(DEFAULT_METASERVER, DEFAULT_METASERVER_PORT))
+    String str = "Trying "; str+= DEFAULT_METASERVER; str+= " " + StringConverter::toString(DEFAULT_METASERVER_PORT);
+    GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, str.c_str());
+    int socket = NO_SOCKET;
+    if (OpenSocket(DEFAULT_METASERVER, DEFAULT_METASERVER_PORT, socket))
     {
-        read_metaserver_data();
-        CloseSocket();
+        read_metaserver_data(socket);
+        CloseSocket(socket);
         GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "done.");
     }
     else
+    {
         GuiManager::getSingleton().sendMsg( GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "Metaserver failed! Using default list.", 0x00ff0000);
-    add_metaserver_data("daimonin.game-server.cc", "daimonin.game-server.cc"   , DEFAULT_SERVER_PORT, -1, "internet", "~#ff00ff00STABLE",                        "Main Server", "", "");
-    add_metaserver_data("Test-Server"            , "test-server.game-server.cc", DEFAULT_SERVER_PORT, -1, "internet", "~#ffffff00UNSTABLE",                      "Test Server", "", "");
-    add_metaserver_data("127.0.0.1"              , "127.0.0.1"                 , DEFAULT_SERVER_PORT, -1, "local"   , "Start server before you try to connect.", "Localhost."           , "", "");
+        String str = " 28|Test_Server|62.75.168.180|13327|Unknown|-|See_and_play_here_the_newest_maps_&_features!\n"
+                     "223|Daimonin   |62.75.224.80 |13327|Unknown|-|Public_Daimonin_game_server_from_www.daimonin.com\n";
+        add_metaserver_data(str);
+    }
+    str = "223|Localhost  |127.0.0.1|13327|Unknown|-|Start server before you try to connect.\n";
+    add_metaserver_data(str);
     GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "Select a server.");
 }
 
 //================================================================================================
 // We used our core connect routine to connect to metaserver, this is the special read one.
 //================================================================================================
-void Network::read_metaserver_data()
+void Network::read_metaserver_data(int &socket)
 {
+
     static String buf = "";
     int len;
     char *ptr = new char[MAXSOCKBUF];
     while (1)
     {
-        len = recv(mSocket, ptr, MAXSOCKBUF, 0);
+        len = recv(socket, ptr, MAXSOCKBUF, 0);
         if (len == -1)
         {
 #ifdef WIN32
@@ -844,94 +836,66 @@ void Network::read_metaserver_data()
         buf += ptr;
     }
     delete[] ptr;
-    parse_metaserver_data(buf);
-}
-
-//================================================================================================
-// Parse the metadata.
-//================================================================================================
-void Network::parse_metaserver_data(String &strMetaData)
-{
-    String::size_type startPos;
-    String::size_type endPos =0;
-    String strIP, strPort, strName, strPlayer, strVersion, strDesc1, strDesc2, strDesc3, strDesc4;
-    while (1)
-    {
-        // Server IP.
-        startPos = endPos+0;
-        endPos = strMetaData.find('|',  startPos);
-        if (endPos == String::npos) break;
-        strIP = strMetaData.substr(startPos, endPos-startPos);
-        // unknown 1.
-        startPos = endPos+1;
-        endPos = strMetaData.find('|',  startPos);
-        if (endPos == String::npos) break;
-        strPort = strMetaData.substr(startPos, endPos-startPos);
-        // Server name.
-        startPos = endPos+1;
-        endPos = strMetaData.find('|',  startPos);
-        if (endPos == String::npos) break;
-        strName = strMetaData.substr(startPos, endPos-startPos);
-        // Number of players online.
-        startPos = endPos+1;
-        endPos = strMetaData.find('|',  startPos);
-        if (endPos == String::npos) break;
-        strPlayer = strMetaData.substr(startPos, endPos-startPos);
-        // Server version.
-        startPos = endPos+1;
-        endPos = strMetaData.find('|',  startPos);
-        if (endPos == String::npos) break;
-        strVersion = strMetaData.substr(startPos, endPos-startPos);
-        // Description1
-        startPos = endPos+1;
-        endPos = strMetaData.find('|',  startPos);
-        if (endPos == String::npos) break;
-        strDesc1 = strMetaData.substr(startPos, endPos-startPos);
-        // Description2.
-        startPos = endPos+1;
-        endPos = strMetaData.find('|',  startPos);
-        if (endPos == String::npos) break;
-        strDesc2 = strMetaData.substr(startPos, endPos-startPos);
-        startPos = endPos+1;
-        // Description3.
-        endPos = strMetaData.find('|',  startPos);
-        if (endPos == String::npos) break;
-        strDesc3 = strMetaData.substr(startPos, endPos-startPos);
-        // Description4.
-        startPos = endPos+1;
-        endPos = strMetaData.find('\n',  startPos);
-        if (endPos == String::npos) endPos = strMetaData.size();
-        strDesc4 = strMetaData.substr(startPos, endPos -startPos);
-        if (endPos < strMetaData.size()) ++endPos;
-        // Add the server to the linked list.
-        add_metaserver_data(strIP.c_str(), strName.c_str(), atoi(strPort.c_str()), atoi(strPlayer.c_str()), strVersion.c_str(),
-                            strDesc1.c_str(),  strDesc2.c_str(),  strDesc3.c_str(),  strDesc4.c_str());
-    }
+    add_metaserver_data(buf);
 }
 
 //================================================================================================
 // Add server data to a linked list.
 //================================================================================================
-void Network::add_metaserver_data(const char *ip, const char *server, int port, int player, const char *ver,
-                                  const char *desc1, const char *desc2, const char *desc3, const char *desc4)
+void Network::add_metaserver_data(String strMetaData)
 {
-    Server *node = new Server;
-    node->player = player;
-    node->port   = DEFAULT_SERVER_PORT;
-    node->name   = server;
-    node->ip     = ip;
-    node->version= ver;
-    node->desc[0] = desc1;
-    node->desc[1] = desc2;
-    node->desc[2] = desc3;
-    node->desc[3] = desc4;
-    mvServer.push_back(node);
-    String strRow;
-    strRow+= desc2; strRow+= ";";
-    strRow+= desc1; strRow+= ";";
-    strRow+= server;
-    strRow+=(player <0)?",-":","+StringConverter::toString(player);
-    GuiManager::getSingleton().sendMsg(GuiManager::GUI_TABLE, GuiManager::MSG_ADD_ROW, strRow.c_str());
+    enum
+    {
+        DATA_DESC1,
+        DATA_NAME,
+        DATA_IP,
+        DATA_PORT,
+        DATA_VERSION,
+        DATA_PLAYER,
+        DATA_INFO,
+        DATA_SUM
+    };
+    String strData[DATA_SUM];
+    size_t ServerEnd, ServerStart = 0;
+    while (1)
+    {
+        ServerEnd = strMetaData.find('\n',  ServerStart);
+        if (ServerEnd == String::npos) break;
+        size_t endPos, startPos = ServerStart;
+        for (int i = 0; i < DATA_SUM; ++i)
+        {
+            endPos = strMetaData.find('|',  startPos);
+            if (endPos >= ServerEnd) endPos = ServerEnd;
+            strData[i] = strMetaData.substr(startPos, endPos-startPos);
+            Logger::log().error() <<  strData[i];
+            if (endPos == ServerEnd) break;
+            startPos = ++endPos;
+        }
+        // Add a server.
+        Server *node = new Server;
+        node->player = atoi(strData[DATA_PLAYER].c_str());
+        node->port   = atoi(strData[DATA_PORT].c_str());
+        node->name   = strData[DATA_NAME];
+        node->ip     = strData[DATA_IP];
+        node->version= strData[DATA_VERSION];
+        node->desc[0]= strData[DATA_DESC1];
+        node->desc[1]= strData[DATA_INFO];
+        node->desc[2]= strData[DATA_DESC1];
+        node->desc[3]= strData[DATA_DESC1];
+        mvServer.push_back(node);
+
+        String strRow = "~#ff00ff00";
+        if      (strData[DATA_NAME].find("Test")      != String::npos) strRow = "~#ffff0000";
+        else if (strData[DATA_NAME].find("Localhost") != String::npos) strRow = "~#ffffffff";
+        strRow+= node->name+ "~;";
+        strRow+= "~#ffffffa8" + node->ip +"~ (Version: "+ node->version +");";
+        strRow+= "~#ffffffff" + strData[DATA_INFO];
+        strRow+=(node->player <0)?",-":","+strData[DATA_PLAYER];
+
+        GuiManager::getSingleton().sendMsg(GuiManager::GUI_TABLE, GuiManager::MSG_ADD_ROW, strRow.c_str());
+        // Next server
+        ServerStart = ++ServerEnd;
+    }
 }
 
 //================================================================================================

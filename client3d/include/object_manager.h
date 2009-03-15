@@ -111,7 +111,7 @@ public:
     void mousePressed(Ogre::MovableObject *mob, bool modifier);
     void Event(int obj_type, int action, int val1=0, int val2=0, int val3=0);
     void setEquipment(int npcID, int bone, int type, int itemID);
-    void highlightObject(Ogre::MovableObject *mob);
+    void highlightObject(Ogre::MovableObject *mob, bool highlight);
     void shoot(int missle, ObjectNPC *srcMob, ObjectNPC *dstMob);
     void readyPrimaryWeapon(int npc, bool ready)
     {
@@ -179,6 +179,7 @@ public:
     }
     void targetObjectAttackNPC(int npcIndex); // just a hack. Server will handle this.
     bool createFlipBook(Ogre::String meshName, int sumRotations = 8);
+
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
@@ -187,7 +188,7 @@ private:
     std::vector<ObjectStatic*> mvStatic;
     std::vector<ObjectNPC*   > mvNPC;
     std::vector<ObjectMissile*> mvMissile;
-    int mSelectedType, mSelectedObject, mSelectedFriendly;
+    int mSelectedType, mSelectedObject;
     Ogre::Vector3 mSelectedPos;
     // ////////////////////////////////////////////////////////////////////
     // Functions.

@@ -65,19 +65,13 @@ public:
     void Init();
     void freeRecources();
     /** health < 0 disables the lifebar. */
-    void select(ObjectNPC    *obj, bool showLifebar = true, bool showInteractMenu = false);
-    void select(ObjectStatic *obj, bool showLifebar = true, bool showInteractMenu = false);
-    void highlight(ObjectNPC    *obj, bool showDefaultAction, bool keyShiftDown);
-    void highlight(ObjectStatic *obj, bool showDefaultAction, bool keyShiftDown);
-    void highlightOff();                /**< Switch off highlighting **/
+    void select(const Ogre::AxisAlignedBox &AABB, Ogre::SceneNode *node, int friendly, Ogre::Real percent, const char *name);
     void unselect();
+    void highlight(bool staticObject, int friendly, bool highlight);
     void setPosLifebar(Ogre::Vector3 pos);
     void setLifebar(Ogre::Real percent, int barWidth = 128);
     void blit(const Ogre::HardwarePixelBufferSharedPtr &src, const Ogre::Image::Box &srcBox, const Ogre::Image::Box &dstBox);
-    const Ogre::AxisAlignedBox &getBoundingBox()
-    {
-        return mAABB;
-    }
+
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
@@ -90,20 +84,16 @@ private:
     Ogre::Image mImage;
     Ogre::PixelBox mSrcPixelBox;
     unsigned char *mTexBuffer;
-    Ogre::AxisAlignedBox mAABB;
-    ObjectStatic *mObjStatic;
-    ObjectNPC *mObjectNPC;
-    Ogre::String strMaterialNameBackup;
+    Ogre::String mStrName;
     int mDefaultAction;
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    ObjectVisuals();
-    ~ObjectVisuals();
+    ObjectVisuals()  {};
+    ~ObjectVisuals() {};
     ObjectVisuals(const ObjectVisuals&); // disable copy-constructor.
     void buildEntity(int index, const char *meshName, const char *entityName);
-    void setDefaultAction(int action);
 };
 
 #endif

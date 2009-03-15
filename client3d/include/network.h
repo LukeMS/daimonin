@@ -138,7 +138,8 @@ public:
     }
     bool Init();
     bool OpenActiveServerSocket();
-    static void CloseSocket();
+    static void CloseSocket(int &socket);
+    static void CloseClientSocket();
     static void send_game_command(const char *command);
     static int  send_command_binary(unsigned char cmd, std::stringstream &stream);
     static int  GetInt_String(unsigned char *data);
@@ -150,12 +151,11 @@ public:
         mActServerNr = nr;
     }
     bool InitSocket();
-    void read_metaserver_data();
+    void read_metaserver_data(int &socket);
     void freeRecources();
     void update();
     void contactMetaserver();
-    void add_metaserver_data(const char *ip, const char *server, int port, int player, const char *ver,
-                             const char *desc1, const char *desc2, const char *desc3, const char *desc4);
+    void add_metaserver_data(Ogre::String metaData);
     // Commands
     static void DrawInfoCmd    (unsigned char *data, int len);
     static void AddMeFail      (unsigned char *data, int len);
@@ -221,22 +221,19 @@ private:
     static SDL_Thread *mInputThread;
     static SDL_Thread *mOutputThread;
     static SDL_mutex  *mMutex;
-    static SDL_cond   *mInputCond;
     static SDL_cond   *mOutputCond;
+    static SDL_cond   *mInputCond;
     static command_buffer *mInputQueueStart,  *mInputQueueEnd;
     static command_buffer *mOutputQueueStart, *mOutputQueueEnd;
 
     int mActServerNr;
-    struct sockaddr_in  insock;       // Server's attributes
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    void parse_metaserver_data(Ogre::String &strMetaData);
     Network()  {};
     ~Network() {};
     Network(const Network&); // disable copy-constructor.
-    bool OpenSocket(const char *host, int port);
-    static void CloseClientSocket();
+    bool OpenSocket(const char *host, int port, int &socket);
     static Ogre::String &getError();
     static command_buffer *command_buffer_new(unsigned int len, unsigned char *data);
     static command_buffer *command_buffer_dequeue(command_buffer **queue_start, command_buffer **queue_end);
@@ -249,7 +246,6 @@ private:
     static void AddIntToString(Ogre::String &sl, int data, bool shortInt);
     static int reader_thread_loop(void *);
     static int writer_thread_loop(void *);
-
 };
 
 #endif
