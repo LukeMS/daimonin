@@ -276,19 +276,13 @@ bool Events::frameStarted(const FrameEvent& evt)
             GuiManager::getSingleton().showWindow(GuiManager::WIN_TEXTWINDOW, true);
             GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "Welcome to ~Daimonin 3D~.");
             GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "You need a running server to start the game!");
-            /*
-                        for (int i = 0; i < 120; ++i)
-                        {
-                            String txt = "Pos: "  + StringConverter::toString(i);
-                          GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, txt.c_str());
-                        }
-            */
             Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
             break;
         }
 
         case Option::GAME_STATUS_INIT_NET:
         {
+            Network::getSingleton().freeRecources();
             Network::getSingleton().Init();
             Option::getSingleton().setGameStatus(Option::GAME_STATUS_META);
             break;
@@ -296,6 +290,7 @@ bool Events::frameStarted(const FrameEvent& evt)
 
         case Option::GAME_STATUS_META:
         {
+            //Network::getSingleton().CloseClientSocket();
             Network::getSingleton().contactMetaserver();
             Option::getSingleton().setGameStatus(Option::GAME_STATUS_START);
             break;
@@ -332,7 +327,6 @@ bool Events::frameStarted(const FrameEvent& evt)
 
         case Option::GAME_STATUS_CONNECT:
         {
-            //GuiManager::getSingleton().showWindow(WIN_SERVERSELECT, false);
             if (!Network::getSingleton().OpenActiveServerSocket())
             {
                 GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "Connection failed!");
@@ -373,7 +367,9 @@ bool Events::frameStarted(const FrameEvent& evt)
             if ((Root::getSingleton().getTimer()->getMicroseconds() - timeWaitServer)/1000 > SERVER_TIMEOUT)
             {
                 // Server doesn't understand our setup command. This is a bug!
-                GuiManager::getSingleton().sendMsg(GuiManager::GUI_TEXTBOX_SERVER_INFO3, GuiManager::MSG_SET_TEXT, "~#ffff0000Server timeout on setup command!");
+                GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "~#ffff0000-------------------------------------------------");
+                GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "~#ffff0000Server timeout on setup command!");
+                GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "~#ffff0000-------------------------------------------------");
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_START);
             }
             break;
@@ -404,7 +400,6 @@ bool Events::frameStarted(const FrameEvent& evt)
             if (GuiManager::getSingleton().brokenTextInput())
             {
                 Logger::log().error() <<  "User break on login.";
-                Network::getSingleton().CloseSocket();
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
                 break;
             }
@@ -437,7 +432,6 @@ bool Events::frameStarted(const FrameEvent& evt)
             if (GuiManager::getSingleton().brokenTextInput())
             {
                 Logger::log().error() <<  "User break on login.";
-                Network::getSingleton().CloseSocket();
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
                 break;
             }
@@ -593,12 +587,12 @@ bool Events::frameStarted(const FrameEvent& evt)
                 {
                     // Mouse is over an object.
                     RaySceneQueryResult::iterator itr = result.begin();
-                    ObjectManager::getSingleton().highlightObject(itr->movable);
+                    ObjectManager::getSingleton().highlightObject(itr->movable, true);
                 }
                 else
                 {
                     // Mouse is (no longer) over an object.
-                    ObjectVisuals::getSingleton().highlightOff();
+                    ObjectManager::getSingleton().highlightObject(0, false);
                 }
                 mSceneManager->destroyQuery(mRaySceneQuery);
                 time = Root::getSingleton().getTimer()->getMilliseconds();

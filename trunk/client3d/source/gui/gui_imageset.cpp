@@ -25,6 +25,11 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "gui_imageset.h"
 #include "option.h"
 #include "logger.h"
+#ifdef WIN32
+#include <windows.h>
+#else
+#include <dirent.h>
+#endif
 
 using namespace Ogre;
 
@@ -53,6 +58,9 @@ GuiImageset::StateNames GuiImageset::mElementState[STATE_ELEMENT_SUM]=
     { "Passive",   STATE_ELEMENT_PASSIVE },
 };
 
+const char UNKONWN_ITEM_GFX_FILENAME[] = "item_noGfx.png";
+const int  UNKNOWN_ITEM_GFX = 0;
+
 //================================================================================================
 // .
 //================================================================================================
@@ -74,6 +82,7 @@ GuiImageset::~GuiImageset()
     }
     mvSrcEntry.clear();
     delete mSrcEntryMouse;
+    mvAtlasGfxName.clear();
 }
 
 //================================================================================================
@@ -81,10 +90,10 @@ GuiImageset::~GuiImageset()
 //================================================================================================
 void GuiImageset::parseXML(const char *fileImageSet)
 {
+    // ////////////////////////////////////////////////////////////////////
+    // Parse the imageset.
+    // ////////////////////////////////////////////////////////////////////
     Logger::log().headline() << "Parsing the imageset";
-    // ////////////////////////////////////////////////////////////////////
-    // Check for a working description file.
-    // ////////////////////////////////////////////////////////////////////
     TiXmlElement *xmlRoot, *xmlElem;
     TiXmlDocument doc(fileImageSet);
     const char *strTemp;
@@ -95,9 +104,7 @@ void GuiImageset::parseXML(const char *fileImageSet)
     }
     mStrImageSetGfxFile = strTemp;
     Logger::log().info() << "Parsing the ImageSet file '" << mStrImageSetGfxFile << "'.";
-    // ////////////////////////////////////////////////////////////////////
     // Parse the gfx coordinates.
-    // ////////////////////////////////////////////////////////////////////
     for (xmlElem = xmlRoot->FirstChildElement("Image"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Image"))
     {
         if (!(strTemp = xmlElem->Attribute("name"))) continue;
@@ -136,6 +143,10 @@ void GuiImageset::parseXML(const char *fileImageSet)
     Logger::log().info() << (int) mvSrcEntry.size() +1 << " Image Entries were parsed."; // +1 because of mouseCursor.
     mImageSetImg.load(mStrImageSetGfxFile, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
     mSrcPixelBox = mImageSetImg.getPixelBox();
+    // ////////////////////////////////////////////////////////////////////
+    // Parse the items.
+    // ////////////////////////////////////////////////////////////////////
+    parseItems();
 }
 
 //================================================================================================
@@ -204,4 +215,160 @@ GuiImageset::gfxSrcEntry *GuiImageset::getStateGfxPositions(const char* guiImage
         }
     }
     return 0;
+}
+
+//================================================================================================
+// Parse the Items
+//================================================================================================
+void GuiImageset::parseItems()
+{
+    String filename;
+    // ////////////////////////////////////////////////////////////////////
+    // Create the item texture atlas.
+    // ////////////////////////////////////////////////////////////////////
+    if (Option::getSingleton().getIntValue(Option::CMDLINE_CREATE_ITEMS))
+    {
+        bool unknownGfxFound = false;
+        std::vector<std::string> itemFilename;
+#ifdef WIN32
+        filename = PATH_ITEM_TEXTURES;
+        filename+="\\*.png";
+        BOOL found = true;
+        WIN32_FIND_DATA FindFileData;
+        HANDLE handle=FindFirstFile(filename.c_str(), &FindFileData);
+        while (handle && found)
+        {
+            if (!strstr(FindFileData.cFileName, FILE_ITEM_TEXTURE_ATLAS))
+            {
+                // Force the unknown item gfx to be the first gfx.
+                if (!strcmp(FindFileData.cFileName, UNKONWN_ITEM_GFX_FILENAME))
+                {
+                    itemFilename.insert(itemFilename.begin(), FindFileData.cFileName);
+                    unknownGfxFound = true;
+                }
+                else
+                    itemFilename.push_back(FindFileData.cFileName);
+            }
+            found = FindNextFile(handle, &FindFileData);
+        }
+#else
+        struct dirent *dir_entry;
+        DIR *dir = opendir(PATH_ITEM_TEXTURES); // Open the current directory
+        while ((dir_entry = readdir(dir)))
+        {
+            if (strstr(dir_entry->d_name, ".png") && !strstr(dir_entry->d_name, FILE_ITEM_TEXTURE_ATLAS))
+            {
+                // Force the unknown item gfx to be the first gfx.
+                if (!strcmp(dir_entry->d_name, UNKONWN_ITEM_GFX_FILENAME))
+                {
+                    itemFilename.insert(itemFilename.begin(), dir_entry->d_name);
+                    unknownGfxFound = true;
+                }
+                else
+                    itemFilename.push_back(dir_entry->d_name);
+            }
+        }
+        closedir(dir);
+#endif
+        if (itemFilename.empty())
+        {
+            Logger::log().error() << "Could not find any item graphics in " << PATH_ITEM_TEXTURES;
+            return;
+        }
+        if (!unknownGfxFound)
+        {
+            Logger::log().error() << "Could not find the gfx for an unknown item (filename: " << UNKONWN_ITEM_GFX_FILENAME
+            << " in folder " << PATH_ITEM_TEXTURES << ").";
+        }
+        Image itemImage, itemAtlas;
+        uint32 *itemBuffer = new uint32[ITEM_SIZE * ITEM_SIZE * itemFilename.size()];
+        uint32 *nextPos = itemBuffer;
+        itemAtlas = itemAtlas.loadDynamicImage((unsigned char*)itemBuffer, ITEM_SIZE, ITEM_SIZE * itemFilename.size(), 1, PF_A8R8G8B8);
+        for (unsigned int i = 0; i < itemFilename.size(); ++i)
+        {
+            itemImage.load(itemFilename[i], ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+            if (itemImage.getHeight() != ITEM_SIZE || itemImage.getWidth() != ITEM_SIZE)
+            {
+                Logger::log().warning() << "CreateItemAtlas: Unsupported image size. Only Items of "
+                << (int)ITEM_SIZE << " * " << (int)ITEM_SIZE << " pixel are allowed "<< "[" << itemFilename[i] << "].";
+                break;
+            }
+            if (itemImage.getFormat() != PF_A8R8G8B8)
+            {
+                Logger::log().warning() << "CreateItemAtlas: Unsupported image format ("<< itemImage.getFormat() <<")."
+                << " Only 32bit [ARGB] png format is allowed "<< "[" << itemFilename[i] << "].";
+                break;
+            }
+            memcpy(nextPos, itemImage.getData(), ITEM_SIZE * ITEM_SIZE * sizeof(uint32));
+            nextPos+=ITEM_SIZE * ITEM_SIZE;
+        }
+        // ////////////////////////////////////////////////////////////////////
+        // Write the data to disc.
+        // ////////////////////////////////////////////////////////////////////
+        filename = PATH_ITEM_TEXTURES;
+        filename+= "/";
+        filename+= FILE_ITEM_TEXTURE_ATLAS;
+        filename+= ".png";
+        itemAtlas.save(filename);
+        filename.replace(filename.find(".png"), 4, ".txt");
+        std::ofstream txtFile(filename.c_str(), std::ios::out | std::ios::binary);
+        txtFile << "# This file holds the content of the image-texture-atlas." << std::endl;
+        txtFile << "# The filename for an undefined/missing gfx must be: " << UNKONWN_ITEM_GFX_FILENAME << std::endl;
+        if (txtFile)
+        {
+            for (unsigned int i = 0; i < itemFilename.size(); ++i)
+                txtFile << itemFilename[i] << std::endl;
+        }
+        txtFile.close();
+        itemFilename.clear();
+        delete[] itemBuffer;
+    }
+    // ////////////////////////////////////////////////////////////////////
+    // Read in the gfxpos of the items.
+    // ////////////////////////////////////////////////////////////////////
+    filename = PATH_ITEM_TEXTURES;
+    filename+= "/";
+    filename+= FILE_ITEM_TEXTURE_ATLAS;
+    filename+= ".txt";
+    std::ifstream txtFile;
+    txtFile.open(filename.c_str(), std::ios::in | std::ios::binary);
+    if (!txtFile)
+    {
+        Logger::log().error() << "Error on file " << filename;
+    }
+    getline(txtFile, filename); // skip the comment.
+    getline(txtFile, filename); // skip the comment.
+    while (getline(txtFile, filename))
+    {
+        mvAtlasGfxName.push_back(filename);
+    }
+    txtFile.close();
+    // ////////////////////////////////////////////////////////////////////
+    // Read in the texture atlas.
+    // ////////////////////////////////////////////////////////////////////
+    filename = FILE_ITEM_TEXTURE_ATLAS;
+    filename+= ".png";
+    mAtlasTexture.load(filename, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+}
+
+//================================================================================================
+// Get the item Id.
+//================================================================================================
+int GuiImageset::getItemId(const char *gfxName)
+{
+    for (unsigned int i = 0; i < mvAtlasGfxName.size(); ++i)
+    {
+        if (mvAtlasGfxName[i] == gfxName)
+            return i;
+    }
+    return UNKNOWN_ITEM_GFX;
+}
+
+//================================================================================================
+// Get the pixelbox of an item.
+//================================================================================================
+const PixelBox &GuiImageset::getItemPB(int itemNr)
+{
+    mSrcPb = mAtlasTexture.getPixelBox().getSubVolume(Box(0, ITEM_SIZE * itemNr, ITEM_SIZE, ITEM_SIZE *(itemNr+1)));
+    return mSrcPb;
 }

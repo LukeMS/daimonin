@@ -43,7 +43,6 @@ using namespace Ogre;
 const int MIN_GFX_SIZE = 1 << 2;
 int GuiWindow::mMouseDragging = -1;
 int GuiWindow::mElementClicked = -1;
-GuiElementSlot *GuiWindow::mSlotReference = 0;
 
 //================================================================================================
 // Destructor.
@@ -66,7 +65,7 @@ void GuiWindow::freeRecources()
 //================================================================================================
 // Build a window out of a xml description file.
 //================================================================================================
-void GuiWindow::Init(TiXmlElement *xmlElem, const char *resourceWin, const char *resourceDnD, int winNr, unsigned char defaultZPos)
+void GuiWindow::Init(TiXmlElement *xmlElem, const char *resourceWin, int winNr, unsigned char defaultZPos)
 {
     mOverlay = 0;
     mWinLayerBG = 0;
@@ -80,13 +79,13 @@ void GuiWindow::Init(TiXmlElement *xmlElem, const char *resourceWin, const char 
     mResourceName+= "#" + StringConverter::toString(mWindowNr, GuiManager::SUM_WIN_DIGITS, '0');
     mSrcPixelBox = GuiImageset::getSingleton().getPixelBox();
     mInit = true;
-    parseWindowData(xmlElem, resourceDnD, defaultZPos);
+    parseWindowData(xmlElem, defaultZPos);
 }
 
 //================================================================================================
 // Parse the xml window data..
 //================================================================================================
-void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, const char *resourceDnD, unsigned char defaultZPos)
+void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, unsigned char defaultZPos)
 {
     TiXmlElement *xmlElem;
     const char *strTmp;
@@ -223,10 +222,8 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, const char *resourceDnD, 
     }
     for (xmlElem = xmlRoot->FirstChildElement("Slot"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Slot"))
     {
-        String resName = mResourceName+"_"; resName+= resourceDnD;
-        GuiElementSlot *slot = new GuiElementSlot(xmlElem, this, resName.c_str());
-        if (!mSlotReference) mSlotReference = slot;
-        mvElement.push_back(slot);
+        if (!(strTmp = xmlElem->Attribute("name"))) continue;
+        mvElement.push_back(new GuiElementSlot(xmlElem, this));
     }
     // ////////////////////////////////////////////////////////////////////
     // Parse the Statusbars.
@@ -243,11 +240,6 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, const char *resourceDnD, 
 //================================================================================================
 void GuiWindow::loadResources(bool slot)
 {
-    if (slot)
-    {
-        mSlotReference->loadResources();
-        return;
-    }
     mOverlay = GuiManager::getSingleton().loadResources(mWidth, mHeight, mResourceName);
     if (mOverlay)
         mElement = mOverlay->getChild(mResourceName + GuiManager::ELEMENT_RESOURCE_NAME);

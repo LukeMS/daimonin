@@ -249,6 +249,10 @@ public:
     int sendMsg(int element, int message, const char *text = 0, Ogre::uint32 param = 0x00ffffff);
     const char *getInfo(int elementNr, int info);
     void setStatusbarValue(int window, int element, Ogre::Real value);
+    void printText(int width, int height, Ogre::uint32 *dst, int dstLineSkip,
+                   Ogre::uint32 *bak, int bakLineSkip, const char *txt, unsigned int fontNr,
+                   Ogre::uint32 color = 0xffffffff, bool hideText = false);
+    void drawDragElement(const Ogre::PixelBox &src);
 
 private:
     // ////////////////////////////////////////////////////////////////////
