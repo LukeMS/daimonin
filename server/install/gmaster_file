@@ -15,4 +15,4 @@
 #
 # The following (which allows any player to be any type of gmaster) is useful
 # on local servers for testing. Just uncomment the next line:
-#*:*:*:MM
+#*/*/*/MM
