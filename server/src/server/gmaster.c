@@ -157,7 +157,7 @@ int load_gmaster_file(void)
     {
         if (line_buf[0] == '#')
             continue;
-        if (sscanf(line_buf, "%[^:]:%[^:]:%[^:]:%s%[\n\r]", name, passwd, host, mode, dummy) < 3)
+        if (sscanf(line_buf, "%[^/]/%[^/]/%[^/]/%s%[\n\r]", name, passwd, host, mode, dummy) < 3)
             LOG(llevBug, "BUG: malformed gmaster_file entry: %s\n", line_buf);
         else
         {
@@ -184,8 +184,8 @@ void add_gmaster_file_entry(char *name, char *passwd, char *host, int mode_id)
 
     ol = get_gmaster_node();
 
-sprintf( ol->objlink.gm->entry, "%s:%s:%s:%s", name, passwd, host,
-             mode_id==GMASTER_MODE_MM?"MM":(mode_id==GMASTER_MODE_GM?"GM":(mode_id==GMASTER_MODE_VOL?"VOL":"MW")));
+    sprintf(ol->objlink.gm->entry, "%s/%s/%s/%s", name, passwd, host,
+            mode_id==GMASTER_MODE_MM?"MM":(mode_id==GMASTER_MODE_GM?"GM":(mode_id==GMASTER_MODE_VOL?"VOL":"MW")));
     strcpy(ol->objlink.gm->name,name);
     strcpy(ol->objlink.gm->password,passwd);
     strcpy(ol->objlink.gm->host,host);
@@ -345,7 +345,7 @@ void write_gmaster_file(void)
         return;
     }
     fprintf(fp, "# GMASTER_FILE (file is changed from server at runtime)\n");
-    fprintf(fp, "# entry <name>:*:*:GM will allow player <name> to be GM or VOL\n");
+    fprintf(fp, "# entry <name>/*/*/GM will allow player <name> to be GM or VOL\n");
 
     for(ol = gmaster_list;ol;ol=ol->next)
         fprintf(fp, "%s\n", ol->objlink.gm->entry);

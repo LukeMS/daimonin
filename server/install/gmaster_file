@@ -1,15 +1,15 @@
 # GMASTER_FILE (file is changed from server at runtime)
 #
-# <name>:<password>:<host>:<mode>
+# <name>/<password>/<host>/<mode>
 #
-# <name> is a character name. May be '*' for any name. Must not contain the ':'
+# <name> is a character name. May be '*' for any name. Must not contain the '/'
 # character.
 #
 # <password> is a login password. May be '*' for any password. Must not
-# contain the ':' character.
+# contain the '/' character.
 #
-# <host> is an IP address. May be '*' for any host. Must not contain the ':'
-# character. THIS DOES NOT WORK AS IPv6 USES ':' IN THE HOST NAME.
+# <host> is an IP address. May be '*' for any host. Must not contain the '/'
+# character.
 #
 # <mode> is one of MW, VOL, GM, or MM.
 #
