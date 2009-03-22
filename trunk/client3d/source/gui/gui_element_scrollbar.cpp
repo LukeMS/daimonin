@@ -21,8 +21,6 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
-#include <tinyxml.h>
-#include "define.h"
 #include "logger.h"
 #include "gui_window.h"
 #include "gui_manager.h"

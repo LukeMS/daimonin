@@ -21,22 +21,17 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
-#include <Ogre.h>
-#include <tinyxml.h>
-#include "define.h"
 #include "logger.h"
 #include "gui_window.h"
 #include "gui_cursor.h"
 #include "gui_manager.h"
 #include "gui_imageset.h"
+#include "gui_element_slot.h"
 #include "gui_element_table.h"
 #include "gui_element_textbox.h"
 #include "gui_element_listbox.h"
 #include "gui_element_button.h"
-#include "option.h"
-#include "sound.h"
-#include "events.h"
-#include "resourceloader.h"
+#include "gui_element_statusbar.h"
 
 using namespace Ogre;
 
@@ -49,11 +44,6 @@ int GuiWindow::mElementClicked = -1;
 //================================================================================================
 void GuiWindow::freeRecources()
 {
-    // Delete the statusbars. WILL BE REPLACED...
-    for (std::vector<GuiStatusbar*>::iterator i = mvStatusbar.begin(); i < mvStatusbar.end(); ++i)
-        delete (*i);
-    mvStatusbar.clear();
-
     for (std::vector<GuiElement*>::iterator i = mvElement.begin(); i < mvElement.end(); ++i)
         delete (*i);
     mvElement.clear();
@@ -167,8 +157,8 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, unsigned char defaultZPos
     if ((xmlElem = xmlRoot->FirstChildElement("Color")))
     {
         // PixelFormat: ARGB.
-        uint32 color;
-        if ((strTmp = xmlElem->Attribute("red"  ))) color = atoi(strTmp) << 16;
+        uint32 color = 0;
+        if ((strTmp = xmlElem->Attribute("red"  ))) color+= atoi(strTmp) << 16;
         if ((strTmp = xmlElem->Attribute("green"))) color+= atoi(strTmp) <<  8;
         if ((strTmp = xmlElem->Attribute("blue" ))) color+= atoi(strTmp);
         if ((strTmp = xmlElem->Attribute("alpha"))) color+= atoi(strTmp) << 24;
@@ -182,7 +172,7 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, unsigned char defaultZPos
     }
     mTexture = TextureManager::getSingleton().createManual(mResourceName + GuiManager::TEXTURE_RESOURCE_NAME,
                ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, TEX_TYPE_2D, mWidth, mHeight, 0, PF_A8R8G8B8,
-               TU_STATIC_WRITE_ONLY, ManResourceLoader::getSingleton().getLoader());
+               TU_STATIC_WRITE_ONLY, GuiManager::getSingleton().getLoader());
     mTexture->load();
     mOverlay->hide();
     mElement->setPosition(mPosX, mPosY);
@@ -225,13 +215,10 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, unsigned char defaultZPos
         if (!(strTmp = xmlElem->Attribute("name"))) continue;
         mvElement.push_back(new GuiElementSlot(xmlElem, this));
     }
-    // ////////////////////////////////////////////////////////////////////
-    // Parse the Statusbars.
-    // ////////////////////////////////////////////////////////////////////
     for (xmlElem = xmlRoot->FirstChildElement("Statusbar"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Statusbar"))
     {
-        if (!(strTmp = xmlElem->Attribute("image_name"))) continue;
-        mvStatusbar.push_back(new GuiStatusbar(xmlElem, this));
+        if (!(strTmp = xmlElem->Attribute("name"))) continue;
+        mvElement.push_back(new GuiStatusbar(xmlElem, this));
     }
 }
 
@@ -366,18 +353,6 @@ void GuiWindow::setVisible(bool visible)
 }
 
 //================================================================================================
-// Change the value of the statusbar.
-//================================================================================================
-void GuiWindow::setStatusbarValue(int element, Real value)
-{
-    for (unsigned int i = 0; i < mvStatusbar.size() ; ++i)
-    {
-        if (mvStatusbar[i]->getIndex() == element)
-            mvStatusbar[i]->setValue(value);
-    }
-}
-
-//================================================================================================
 // Change the height of this window.
 //================================================================================================
 void GuiWindow::setHeight(int newHeight)
@@ -412,7 +387,7 @@ int GuiWindow::sendMsg(int elementNr, int message, const char *text, Ogre::uint3
 //================================================================================================
 //
 //================================================================================================
-const char *GuiWindow::getInfo(int elementNr, int info)
+const char *GuiWindow::sendMsg(int elementNr, int info)
 {
-    return mvElement[elementNr]->getInfo(info);
+    return mvElement[elementNr]->sendMsg(info);
 }

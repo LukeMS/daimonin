@@ -175,16 +175,16 @@ void ObjectVisuals::setLifebar(Real percent, int barWidth)
         color = 0xff5f0000;
         dColor= 0x00160000;
     }
-/*
-    int len = GuiManager::getSingleton().calcTextWidth(mStrName.c_str(), CHARNAME_FONT_NR);
-    if (len >TEXTURE_SIZE) len = TEXTURE_SIZE;
-    len = (TEXTURE_SIZE - len) /2;
-    // Print NPC name.
-    dest_data = (uint32*)pb.data + (TEXTURE_SIZE-1-28) * TEXTURE_SIZE + len;
-    if (!mStrName.empty())
-        GuiManager::getSingleton().printText(TEXTURE_SIZE, TEXTURE_SIZE, dest_data, TEXTURE_SIZE, dest_data, TEXTURE_SIZE, mStrName.c_str(), CHARNAME_FONT_NR, 0x00000000);
-    int x1 = (TEXTURE_SIZE - barWidth)/2;
-*/
+    /*
+        int len = GuiManager::getSingleton().calcTextWidth(mStrName.c_str(), CHARNAME_FONT_NR);
+        if (len >TEXTURE_SIZE) len = TEXTURE_SIZE;
+        len = (TEXTURE_SIZE - len) /2;
+        // Print NPC name.
+        dest_data = (uint32*)pb.data + (TEXTURE_SIZE-1-28) * TEXTURE_SIZE + len;
+        if (!mStrName.empty())
+            GuiManager::getSingleton().printText(TEXTURE_SIZE, TEXTURE_SIZE, dest_data, TEXTURE_SIZE, mStrName.c_str(), CHARNAME_FONT_NR, 0x00000000);
+        int x1 = (TEXTURE_SIZE - barWidth)/2;
+    */
     int xfill =  (int)(percent * barWidth);
     PixelBox pb = mHardwarePB->lock(Box(0, 0, TEXTURE_SIZE, TEXTURE_SIZE), HardwareBuffer::HBL_DISCARD);
     uint32 *dest_data = (uint32*)pb.data;
@@ -248,6 +248,7 @@ void ObjectVisuals::select(const AxisAlignedBox &AABB, SceneNode *node, int frie
         mStrName = name;
         setLifebar(percent);
     }
+    GuiManager::getSingleton().showWindow(GuiManager::WIN_PLAYERTARGET, true);
 }
 
 /*
@@ -268,7 +269,7 @@ void ObjectVisuals::unselect()
     if (mPSystem)             mPSystem->setVisible(false);
     mNode[VISUAL_SELECTION] = 0;
     mNode[VISUAL_LIFEBAR] = 0;
-    GuiManager::getSingleton().showWindow(GuiManager::WIN_PLAYERCONSOLE, false);
+    GuiManager::getSingleton().showWindow(GuiManager::WIN_PLAYERTARGET, false);
 }
 
 //===================================================

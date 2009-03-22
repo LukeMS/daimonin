@@ -20,6 +20,7 @@ GNU GPL for 3d-Client and the licenses of the other code concerned.
 You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
+
 #include <Ogre.h>
 #include "gui_animation.h"
 

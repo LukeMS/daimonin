@@ -39,8 +39,8 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    TileChunk() {};
-    ~TileChunk() {};
+    TileChunk()  {}
+    ~TileChunk() {}
     void init(int textureSize, int queryMaskLand, int queryMaskWater);
     void update();
     void rotate(Ogre::Real cameraAngle);

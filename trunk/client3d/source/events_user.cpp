@@ -147,20 +147,22 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
 
         case OIS::KC_H:
         {
+            static int val = 100;
+            GuiManager::getSingleton().print(GuiManager::GUI_LIST_CHATWIN, StringConverter::toString(val).c_str());
+            GuiManager::getSingleton().setValue(GuiManager::GUI_STATUSBAR_NPC_HEALTH, val--);
             //ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, 0,ObjectAnimate::STATE_HIT1);
             break;
         }
 
         case OIS::KC_I:
         {
-            GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_CHATWIN, GuiManager::MSG_ADD_ROW, "Show inventory");
             GuiManager::getSingleton().showWindow(GuiManager::WIN_EQUIPMENT, true);
             GuiManager::getSingleton().showWindow(GuiManager::WIN_INVENTORY, true);
             //GuiManager::getSingleton().setSlotBusyTime(GuiManager::WIN_INVENTORY, 0, 6);
             //GuiManager::getSingleton().setSlotBusy(GuiManager::WIN_INVENTORY, 0);
             //GuiManager::getSingleton().showWindow(GuiManager::WIN_TRADE, true);
             //GuiManager::getSingleton().showWindow(GuiManager::WIN_SHOP, true);
-            //GuiManager::getSingleton().showWindow(GuiManager::WIN_TILEGROUND, true);
+            GuiManager::getSingleton().showWindow(GuiManager::WIN_PLAYERTARGET, true);
             GuiManager::getSingleton().showWindow(GuiManager::WIN_CONTAINER, true);
             // ObjectManager::getSingleton().setPlayerEquipment(ObjectManager::OBJECT_PLAYER, ObjectNPC::BONE_HEAD, 1);
             break;
@@ -201,15 +203,15 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
         case OIS::KC_M:
         {
             String strMemUsage = "Memory used for Textures: " + StringConverter::toString(TextureManager::getSingleton().getMemoryUsage()/1024) + " KB";
-            GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_CHATWIN, GuiManager::MSG_ADD_ROW, strMemUsage.c_str());
+            GuiManager::getSingleton().print(GuiManager::GUI_LIST_CHATWIN, strMemUsage.c_str());
             strMemUsage = "Memory used for Meshes: " + StringConverter::toString(MeshManager::getSingleton().getMemoryUsage()/1024) + " KB";
-            GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_CHATWIN, GuiManager::MSG_ADD_ROW, strMemUsage.c_str());
+            GuiManager::getSingleton().print(GuiManager::GUI_LIST_CHATWIN, strMemUsage.c_str());
             break;
         }
 
         case OIS::KC_O:
         {
-            GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_CHATWIN, GuiManager::MSG_ADD_ROW, "Show inventory");
+            GuiManager::getSingleton().print(GuiManager::GUI_LIST_CHATWIN, "Show inventory");
             // ObjectManager::getSingleton().setPlayerEquipment(ObjectManager::OBJECT_PLAYER, ObjectNPC::BONE_SHIELD_HAND, 1);
             break;
         }
@@ -344,14 +346,11 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
 
         case OIS::KC_1:
         {
-
-            GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "ABCDEF^Found me! Dies ist ein besonders langer link! Der Link geht ueber mehr als eine Zeile. Aber egal ^Kein Link mehr ^123^11111");
-            GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "ABCDEF^Link1^1234^Link2^5678^Link3^90123");
-            GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "ABCDEF|Hello|90123");
-            GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "ABCDEF~#ff0000ff12345678901234567890qwedghldflghdffdjghft34z89t6gfdiug76349zbh4oeu8jlghdfljgrtzuiop~");
+            GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "ABCDEF^Found me! Dies ist ein besonders langer link! Der Link geht ueber mehr als eine Zeile. Aber egal ^Kein Link mehr ^123^11111");
+            GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "ABCDEF^Link1^1234^Link2^5678^Link3^90123");
+            GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "ABCDEF|Hello|90123");
+            GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "ABCDEF~#ff0000ff12345678901234567890qwedghldflghdffdjghft34z89t6gfdiug76349zbh4oeu8jlghdfljgrtzuiop~");
             break;
-
-
 
             //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_WEAPON_HAND, 1);
             //static int color =0;
@@ -446,7 +445,7 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
         {
             static bool tst = 1;
             tst = !tst;
-            GuiManager::getSingleton().sendMsg(GuiManager::GUI_BUTTON_TEST, GuiManager::MSG_SET_VISIBLE, "", tst);
+            GuiManager::getSingleton().setVisible(GuiManager::GUI_BUTTON_TEST, tst);
             break;
 
             Vector3 pos = mCamera->getPosition();
@@ -697,6 +696,12 @@ bool Events::mouseReleased(const OIS::MouseEvent &e, OIS::MouseButtonID id)
     int ret = GuiManager::getSingleton().mouseEvent(GuiManager::BUTTON_RELEASED, mMouse);
     if (ret == GuiManager::EVENT_USER_ACTION)
         elementClicked(GuiManager::getSingleton().getElementPressed());
+    else if (ret == GuiManager::EVENT_DRAG_DONE)
+    {
+        //GuiManager::getSingleton().getDragDestElement();
+        //Item::getSingleton().dropItem(mDragSrcWin, mDragSrcSlot, mDragDstWin, mDragDstSlot);
+        GuiManager::getSingleton().print(GuiManager::GUI_LIST_CHATWIN, "Drag done.");
+    }
     return true;
 }
 
@@ -710,19 +715,18 @@ void Events::elementClicked(int element)
     switch (element)
     {
         case GuiManager::GUI_BUTTON_CLOSE:
-            GuiManager::getSingleton().sendMsg(element, GuiManager::MSG_CLOSE_PARENT_WIN);
+            GuiManager::getSingleton().closeParentWin(element);
             break;
         case GuiManager::GUI_LIST_MSGWIN:
         case GuiManager::GUI_LIST_CHATWIN:
-            buf = GuiManager::getSingleton().getInfo(element, GuiManager::INFO_KEYWORD);
-            if (buf) GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_CHATWIN, GuiManager::MSG_ADD_ROW, buf);
-            GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_CHATWIN, GuiManager::MSG_ADD_ROW, "");
-
+            buf = GuiManager::getSingleton().getKeyword(element);
+            if (buf) GuiManager::getSingleton().print(GuiManager::GUI_LIST_CHATWIN, buf);
+            GuiManager::getSingleton().print(GuiManager::GUI_LIST_CHATWIN, "");
             break;
         case GuiManager::GUI_LIST_NPC:
-            Network::getSingleton().send_game_command(GuiManager::getSingleton().getInfo(element, GuiManager::INFO_KEYWORD));
+            Network::getSingleton().send_game_command(GuiManager::getSingleton().getKeyword(element));
             break;
         default:
-            GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_CHATWIN, GuiManager::MSG_ADD_ROW, "Anonymous element was clicked.");
+            GuiManager::getSingleton().print(GuiManager::GUI_LIST_CHATWIN, "Anonymous element was clicked.");
     }
 }

@@ -27,8 +27,14 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <Ogre.h>
 
 /**
- ** This is the interface to the world outside.
- ** Alawys use this class to access the gui from outside.
+ ** This class manages the gui functionality.
+ ** ONLY this class is needed to be included from the outside.
+ **
+ ** Dependencies:
+ ** <Ogre.h>
+ ** <tinyxml.h>
+ ** <OISKeyboard.h>
+ ** "logger.h"
  *****************************************************************************/
 class GuiManager
 {
@@ -82,7 +88,6 @@ public:
         GUI_STATUSBAR_NPC_HEALTH,
         GUI_STATUSBAR_NPC_MANA,
         GUI_STATUSBAR_NPC_GRACE,
-
         GUI_STATUSBAR_PLAYER_MANA,
         GUI_STATUSBAR_PLAYER_GRACE,
         GUI_STATUSBAR_PLAYER_HEALTH,
@@ -119,7 +124,7 @@ public:
         WIN_TEXTWINDOW,
         WIN_CHATWINDOW,
         WIN_STATISTICS,
-        WIN_PLAYERCONSOLE,
+        WIN_PLAYERTARGET,
         //WIN_CREATION,
         WIN_SUM
     };
@@ -146,12 +151,10 @@ public:
         DRAG_ENTER,
         DRAG_EXIT,
     };
-
     enum
     {
-        MSG_CLOSE_PARENT_WIN,
+        MSG_CLOSE_PARENT,
         MSG_CLEAR,
-        MSG_UPDATE,
         MSG_ADD_ROW,
         MSG_ADD_ITEM,
         MSG_DEL_ITEM,
@@ -159,14 +162,9 @@ public:
         MSG_GET_SELECTION,
         MSG_GET_ACTIVATED,
         MSG_SET_TEXT,
+        MSG_SET_VALUE,
         MSG_SET_VISIBLE,
-        MSG_SUM
-    };
-
-    enum
-    {
-        INFO_KEYWORD,
-        INFO_SUM
+        MSG_GET_KEYWORD
     };
 
     /** Actual state of the mouse cursor: **/
@@ -201,6 +199,8 @@ public:
     static const char *ELEMENT_RESOURCE_NAME;
     static const char *TEXTURE_RESOURCE_NAME;
     static const char *MATERIAL_RESOURCE_NAME;
+    static const char *FILE_DESCRIPTION_WINDOWS;
+    static const char *FILE_DESCRIPTION_IMAGESET;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
@@ -209,33 +209,41 @@ public:
         static GuiManager singleton;
         return singleton;
     }
-    Ogre::Overlay *loadResources(int w, int h, Ogre::String name);
-    void windowToFront(int window);
-    void loadResources(Ogre::Resource *res);
+    void Init(int w, int h, bool createMedia, bool printInfo, const char *soundActionFailed, const char *pathDescription, const char *pathTextures);
+
+    Ogre::uint32 *getBuildBuffer()    { return mBuildBuffer;}
+    void resizeBuildBuffer(size_t size);
+
+    static Ogre::Overlay *loadResources(int w, int h, Ogre::String name);
+    static void loadResources(Ogre::Resource *res);
     void freeRecources();
-    void Init(int w, int h);
-    void reloadTexture(Ogre::String &name);
-    void parseImageset(const char *XML_imageset_file);
-    void parseWindows (const char *XML_windows_file);
-    void update(Ogre::Real);  /**< Returns the clicked element or -1 when nothing was clicked. **/
-    int getElementIndex(const char *name, int windowID = -1, int getElementIndex = -1);
-    int mouseEvent(int MouseAction, Ogre::Vector3 &mouse);
-    bool keyEvent(const int keyChar, const unsigned int key);
-    void setTooltip(const char *text, bool systemMessage = false);
-    void displaySystemMessage(const char *text) { setTooltip(text, true); }
+
+    void windowToFront(int window);
     void centerWindowOnMouse(int window);
     void showWindow(int window, bool visible);
-    Ogre::uint32 *getBuildBuffer()    { return mBuildBuffer;}
+    void parseWindows ();
+
+    void update(Ogre::Real);  /**< Returns the clicked element or -1 when nothing was clicked. **/
+    void setTooltip(const char *text, bool systemMessage = false);
+    void displaySystemMessage(const char *text) { setTooltip(text, true); }
+
+    void playSound(const char *filename);
+    const char *getNextSound();
+
+    void setMouseState(int action);
     int getScreenWidth()    { return mScreenWidth; }
     int getScreenHeight()   { return mScreenHeight;}
+    int getElementIndex(const char *name, int windowID = -1, int getElementIndex = -1);
+
+    int mouseEvent(int MouseAction, Ogre::Vector3 &mouse);
+    bool keyEvent(const int keyChar, const unsigned int key);
+
     void startTextInput(int window, int winElement, int maxChars, bool blockNumbers=false, bool blockWhitespaces=false);
     void resetTextInput();
     bool brokenTextInput();
     bool finishedTextInput();
-    void setMouseState(int action);
-    void loadRawFont(const char *filename);
+
     int calcTextWidth(const char *text, int fontNr);
-    void resizeBuildBuffer(size_t size);
     bool getUserAction()
     {
         if (!mTextInputUserAction)
@@ -246,13 +254,26 @@ public:
     void cancelTextInput();
     int getElementPressed();
     const char *getTextInput() { return mStrTextInput.c_str(); }
-    int sendMsg(int element, int message, const char *text = 0, Ogre::uint32 param = 0x00ffffff);
-    const char *getInfo(int elementNr, int info);
-    void setStatusbarValue(int window, int element, Ogre::Real value);
     void printText(int width, int height, Ogre::uint32 *dst, int dstLineSkip,
                    Ogre::uint32 *bak, int bakLineSkip, const char *txt, unsigned int fontNr,
                    Ogre::uint32 color = 0xffffffff, bool hideText = false);
     void drawDragElement(const Ogre::PixelBox &src);
+    bool getMediaCreation()
+    {
+        return mCreateMedia;
+    }
+    bool getPrintInfo()
+    {
+        return mPrintInfo;
+    }
+    const Ogre::String &getPathDescription()
+    {
+        return mPathDescription;
+    }
+    const Ogre::String &getPathTextures()
+    {
+        return mPathTextures;
+    }
 
 private:
     // ////////////////////////////////////////////////////////////////////
@@ -260,6 +281,7 @@ private:
     // ////////////////////////////////////////////////////////////////////
     enum { NO_ACTIVE_WINDOW =  -1 };
     enum { CURSOR_FREQUENCY = 500 };
+
     typedef struct
     {
         const char *name;
@@ -278,26 +300,30 @@ private:
     static WindowID mWindowID[WIN_SUM];
     static ElementID mStateStruct[GUI_ELEMENTS_SUM];
     static short mWindowZPos[WIN_SUM]; /**< The window-numbers are sorted here on the z-pos */
-    int mDragSrcWin, mDragSrcSlot;
-    int mDragDstWin, mDragDstSlot;
-    int mDragSrcContainer, mDragDestContainer;
+    int mDragSrcWin, mDragSrcSlot, mDragSrcContainer;
+    int mDragDstWin, mDragDstSlot, mDragDstContainer;
     int mDragSrcItemPosx, mDragSrcItemPosy; // Set on dragStart for moving back on false drag&drop.
-    int mTextInputWindow;  /**< The window where a text input is in progress.  */
-    int mTextInputElement; /**< The windows-element where a text input is in progress. */
-    int mActiveWindow;     /**< The window which was selected by the user.     */
+    int mTextInputWindow;   /**< The window where a text input is in progress. */
+    int mTextInputElement;  /**< The windows-element where a text input is in progress. */
+    int mActiveWindow;      /**< The window which was selected by the user. */
+    bool mCreateMedia;      /**< Create all media (e.g. atlastextures, raw-fonts). */
+    bool mPrintInfo;        /**< Print gui information into the logfile. */
 
     int mHotSpotX, mHotSpotY;
     unsigned int mScreenWidth, mScreenHeight;
     unsigned long mTooltipDelay;
     bool mIsDragging;
     bool mTextInputUserAction;
+    std::vector<Ogre::String>mvSound;
     Ogre::uint32 *mBuildBuffer;  /**< Buffer to draw all graphics before blitting them into the texture. **/
     Ogre::Vector3 mMouse;
-    Ogre::Overlay *mOverlay;
-    Ogre::OverlayElement *mElement;
+    static Ogre::Overlay *mOverlay;
+    static Ogre::OverlayElement *mElement;
     Ogre::TexturePtr mTexture;
+    Ogre::String mSoundWrongInput;
     Ogre::String mStrTooltip;
     Ogre::String mStrTextInput, mBackupStrTextInput;
+    Ogre::String mPathDescription, mPathTextures;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
@@ -305,7 +331,34 @@ private:
     ~GuiManager() {}
     GuiManager(const GuiManager&); // disable copy-constructor.
     void drawTooltip();
-    void loadResources();
+    int sendMsg(int element, int message, const char *text, Ogre::uint32 param = 0x00ffffff);
+    const char *sendMsg(int elementNr, int info);
+    class ResourceLoader : public Ogre::ManualResourceLoader
+    {
+    public:
+        ResourceLoader()  {}
+        ~ResourceLoader() {}
+        /** Called by Ogre when a manual created resource needs to be reloaded. **/
+        void loadResource(Ogre::Resource *resource) { loadResources(resource); }
+    };
+    static class ResourceLoader mLoader;
+
+public:
+    static ResourceLoader *getLoader() { return &mLoader; }
+    int print(int element, const char *text,
+              Ogre::uint32 color = 0xffffffff)                   { return sendMsg(element, MSG_ADD_ROW,  text, color); }
+    void clear(int element)                                      { sendMsg(element, MSG_CLEAR,       0); }
+    void closeParentWin(int element)                             { sendMsg(element, MSG_CLOSE_PARENT,0); }
+    void setText(int element, const char *text)                  { sendMsg(element, MSG_SET_TEXT, text); }
+    void addLine(int element, const char *text)                  { sendMsg(element, MSG_ADD_ROW,  text); }
+    void addItem(int element, const char *itemGfx, int sumItems) { sendMsg(element, MSG_ADD_ITEM,itemGfx, sumItems); }
+    void delItem(int element, const char *itemGfx, int sumItems) { sendMsg(element, MSG_DEL_ITEM,    0); }
+    void setValue(int element, int value)                        { sendMsg(element, MSG_SET_VALUE,   0, value); }
+    void setVisible(int element, bool value)                     { sendMsg(element, MSG_SET_VISIBLE, 0, value==true?1:0); }
+    bool getUserBreak(int element)                               { return sendMsg(element, MSG_GET_USERBREAK, 0)?true:false; }
+    int  getSelection(int element)                               { return sendMsg(element, MSG_GET_SELECTION, 0); }
+    int  getActivated(int element)                               { return sendMsg(element, MSG_GET_ACTIVATED, 0); }
+    const char *getKeyword(int element)                          { return sendMsg(element, (int)MSG_GET_KEYWORD); }
 };
 
 #endif

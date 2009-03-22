@@ -71,8 +71,8 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    GuiCursor()  {};
-    ~GuiCursor() {};
+    GuiCursor()  {}
+    ~GuiCursor() {}
     GuiCursor(const GuiCursor&); // disable copy-constructor.
     void draw();
 };

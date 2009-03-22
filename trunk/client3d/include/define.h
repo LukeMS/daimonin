@@ -28,33 +28,27 @@ const char PRG_NAME[] =  "Daimonin Ogre3d Client";
 //================================================================================================
 // All pathes MUST be placed here!
 //================================================================================================
-const char FILE_SYSTEM_FONT[]        = "SystemFont.png";
-const char FILE_ITEM_TEXTURE_ATLAS[] = "ItemTextureAtlas";
+const char PATH_DESCRIPTION[]        = "./media/xml/";
+const char PATH_TEXTURES[]           = "./media/textures/";
+const char PATH_SAMPLES[]            = "./media/sound/";
+//const char PATH_MODEL_DESCRIPTION[]  = "./media/models/";
+
+const char FILE_OPTIONS[]            = "./options.dat";
 const char FILE_DAIMONIN_P0[]        = "./daimonin.p0";
 const char FILE_BMAPS_P0[]           = "./bmaps.p0";
 //const char FILE_ARCHDEF[]            = "./archdef.dat";
-const char FILE_OPTIONS[]            = "./options.dat";
-
-const char FILE_GUI_IMAGESET[]       = "./media/xml/GUI_ImageSet.xml";
-const char FILE_GUI_WINDOWS[]        = "./media/xml/GUI_Windows.xml";
-const char FILE_NPC_VISUALS[]        = "./media/xml/NPC_Visuals.xml";
 
 const char FILE_CLIENT_SPELLS[]      = "./srv_files/client_spells";
 const char FILE_CLIENT_SKILLS[]      = "./srv_files/client_skills";
 const char FILE_CLIENT_SETTINGS[]    = "./srv_files/client_settings";
 const char FILE_CLIENT_BMAPS[]       = "./srv_files/client_bmap";
 const char FILE_CLIENT_ANIMS[]       = "./srv_files/client_anims";
-
 const char FILE_BMAPS_UNIQUE[]       = "./srv_files/bmaps_unique";      /**< The objects from bmaps without animation states */
 const char FILE_BMAPS_CONVERT[]      = "./srv_files/bmaps_convert";     /**< This file holds the unique client2d and client3d obj names */
 const char FILE_BMAPS_CLIENT3D[]     = "./srv_files/bmaps_3d";          /**< The final client3d object file */
 //const char FILE_BMAPS_TMP[]          = "./srv_files/bmaps.tmp";
 //const char FILE_ANIMS_TMP[]          = "./srv_files/anims.tmp";
-
-//const char PATH_MODEL_DESCRIPTION[]  = "./media/models/";
-const char PATH_TEXTURES[]           = "./media/textures/";
+const char FILE_NPC_VISUALS[]        = "./media/xml/NPC_Visuals.xml";
 const char PATH_TILE_TEXTURES[]      = "./media/textures/tiles/";
-const char PATH_ITEM_TEXTURES[]      = "./media/textures/items/";
-const char PATH_SAMPLES[]            = "./media/sound/";
 
 #endif

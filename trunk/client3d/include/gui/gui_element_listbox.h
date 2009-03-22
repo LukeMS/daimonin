@@ -45,7 +45,7 @@ public:
     void clear();
     void update(Ogre::Real dTime);
     int sendMsg(int message, const char *text, Ogre::uint32 param);
-    const char *getInfo(int info);
+    const char *sendMsg(int info);
     int mouseEvent(int MouseAction, int x, int y, int z);
 
 private:

@@ -21,11 +21,8 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
-#include <OgreHardwarePixelBuffer.h>
 #include "gui_cursor.h"
-#include "gui_imageset.h"
 #include "gui_manager.h"
-#include "resourceloader.h"
 
 using namespace Ogre;
 
@@ -49,7 +46,7 @@ void GuiCursor::Init(const char *resourceName)
     String strTexture = resourceName; strTexture+= GuiManager::TEXTURE_RESOURCE_NAME;
     mTexture = TextureManager::getSingleton().createManual(strTexture, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
                TEX_TYPE_2D, mWidth, mHeight, 0, PF_A8R8G8B8, TU_STATIC_WRITE_ONLY,
-               ManResourceLoader::getSingleton().getLoader());
+               GuiManager::getSingleton().getLoader());
     mTexture->load();
     mElement->setPosition(0, 0);
     //draw();

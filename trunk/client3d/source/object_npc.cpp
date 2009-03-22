@@ -40,7 +40,6 @@ const int   TURN_SPEED   = 400;
 const Real  WALK_PRECISON= 1.0f;
 const float BIG_LAGGING  = 0.04f;
 const float TIME_BEFORE_CORPSE_VANISHES = 2.0f;
-const Real  STATUS_BAR_FILLTIME = 1.2;  // Time to draw the statusbar from 0 to 100%.
 
 //================================================================================================
 // Init all static Elemnts.
@@ -76,7 +75,6 @@ ObjectNPC::ObjectNPC(sObject &obj, bool spawn):ObjectStatic(obj)
     mDefend  = obj.defend;
     mMaxHP   = obj.maxHP;
     mActHP   = obj.maxHP;
-    mDrawnHP = obj.maxHP;
     mMaxMana = obj.maxMana;
     mActMana = obj.maxMana;
     mMaxGrace= obj.maxGrace;
@@ -245,26 +243,11 @@ bool ObjectNPC::update(const FrameEvent& event)
     //  if (!mAnim->isMovement()) return;
     // ////////////////////////////////////////////////////////////////////
     // Draw the Stats.
-    // Status changes are drawn step by step just because it looks better.
     // ////////////////////////////////////////////////////////////////////
-    if (mDrawnHP != mActHP)
-    {
-        if (mDrawnHP < mActHP)
-        {
-            mDrawnHP += ((event.timeSinceLastFrame/STATUS_BAR_FILLTIME) * mMaxHP);
-            if (mDrawnHP > mActHP) mDrawnHP = mActHP;
-        }
-        else
-        {
-            mDrawnHP -= ((event.timeSinceLastFrame/STATUS_BAR_FILLTIME) * mMaxHP);
-            if (mDrawnHP < mActHP) mDrawnHP = mActHP;
-        }
-        Real health = Ogre::Real(mDrawnHP) / Ogre::Real(mMaxHP);
-        if (!mIndex)
-            GuiManager::getSingleton().setStatusbarValue(GuiManager::WIN_PLAYERCONSOLE, GuiManager::GUI_STATUSBAR_PLAYER_HEALTH, health);
-        else
-            ObjectVisuals::getSingleton().setLifebar(health);
-    }
+    if (!mIndex)
+        ;//GuiManager::getSingleton().setValue(GuiManager::GUI_STATUSBAR_PLAYER_HEALTH, (mActHP*100) / mMaxHP);
+    else //if (mIndex == mIsSelected)
+        GuiManager::getSingleton().setValue(GuiManager::GUI_STATUSBAR_NPC_HEALTH, (mActHP*100) / mMaxHP);
     // ////////////////////////////////////////////////////////////////////
     // Ready / unready weapon.
     // ////////////////////////////////////////////////////////////////////
@@ -531,7 +514,6 @@ bool ObjectNPC::movePosition(int deltaX, int deltaZ)
 void ObjectNPC::setDamage(int damage)
 {
     if (mActHP <=0) return;
-    mDrawnHP = mActHP; /**< The health shown in the statusbar. **/
     mActHP-= damage;
     if (mActHP <= 0)
     {

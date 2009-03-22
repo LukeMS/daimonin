@@ -22,14 +22,12 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
 #include <Ogre.h>
-#include "network.h"
 #include "logger.h"
 #include "option.h"
 #include "define.h"
-#include "network_serverfile.h"
+#include "network.h"
 #include "tile_manager.h"
 #include "gui_manager.h"
-#include "option.h"
 
 using namespace Ogre;
 
@@ -363,7 +361,7 @@ void Network::send_game_command(const char *command)
     if (*command == '/') ++command;
     strCmd << command;
     //String str = "send: " + strCmd.str();
-    //GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_CHATWIN, GuiManager::MSG_ADD_ROW, str.c_str());
+    //GuiManager::getSingleton().print(GuiManager::GUI_LIST_CHATWIN, str.c_str());
     send_command_binary(CLIENT_CMD_GENERIC, strCmd);
     /*
             }
@@ -456,8 +454,11 @@ int Network::reader_thread_loop(void *)
             Logger::log().error() << "Network::reader_thread_loop: To much data from server.";
             break;
         }
-        while (!mAbortThread && cmd_len-pos >0)
+        while (cmd_len-pos >0)
+        {
+            if (mAbortThread) return 0;
             pos+= recv(mSocket, (char*)readbuf+pos, cmd_len-pos, 0);
+        }
         command_buffer *buf = command_buffer_new(cmd_len, readbuf);
         buf->data[cmd_len] = 0; // We terminate the buffer for security and incoming raw strings.
         SDL_LockMutex(mMutex);
@@ -784,27 +785,27 @@ bool Network::OpenSocket(const char *host, int port, int &sock)
 void Network::contactMetaserver()
 {
     clearMetaServerData();
-    GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "");
-    GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "Query metaserver...");
+    GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "");
+    GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "Query metaserver...");
     String str = "Trying "; str+= DEFAULT_METASERVER; str+= " " + StringConverter::toString(DEFAULT_METASERVER_PORT);
-    GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, str.c_str());
+    GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, str.c_str());
     int socket = NO_SOCKET;
     if (OpenSocket(DEFAULT_METASERVER, DEFAULT_METASERVER_PORT, socket))
     {
         read_metaserver_data(socket);
         CloseSocket(socket);
-        GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "done.");
+        GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "done.");
     }
     else
     {
-        GuiManager::getSingleton().sendMsg( GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "Metaserver failed! Using default list.", 0x00ff0000);
-        String str = " 28|Test_Server|62.75.168.180|13327|Unknown|-|See_and_play_here_the_newest_maps_&_features!\n"
-                     "223|Daimonin   |62.75.224.80 |13327|Unknown|-|Public_Daimonin_game_server_from_www.daimonin.com\n";
+        GuiManager::getSingleton().print( GuiManager::GUI_LIST_MSGWIN, "Metaserver failed! Using default list.", 0xffffffa8);
+        str = " 28|Test_Server|62.75.168.180|13327|Unknown|-|See_and_play_here_the_newest_maps_&_features!\n"
+              "223|Daimonin   |62.75.224.80 |13327|Unknown|-|Public_Daimonin_game_server_from_www.daimonin.com\n";
         add_metaserver_data(str);
     }
     str = "223|Localhost  |127.0.0.1|13327|Unknown|-|Start server before you try to connect.\n";
     add_metaserver_data(str);
-    GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "Select a server.");
+    GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "Select a server.");
 }
 
 //================================================================================================
@@ -812,8 +813,8 @@ void Network::contactMetaserver()
 //================================================================================================
 void Network::read_metaserver_data(int &socket)
 {
-
-    static String buf = "";
+    static String buf;
+    buf = "";
     int len;
     char *ptr = new char[MAXSOCKBUF];
     while (1)
@@ -832,7 +833,7 @@ void Network::read_metaserver_data(int &socket)
             continue;
         }
         if (!len || (int)buf.size() + len >= MAXSOCKBUF) break;
-        buf[len] = '\0';
+        ptr[len] = '\0';
         buf += ptr;
     }
     delete[] ptr;
@@ -867,7 +868,6 @@ void Network::add_metaserver_data(String strMetaData)
             endPos = strMetaData.find('|',  startPos);
             if (endPos >= ServerEnd) endPos = ServerEnd;
             strData[i] = strMetaData.substr(startPos, endPos-startPos);
-            Logger::log().error() <<  strData[i];
             if (endPos == ServerEnd) break;
             startPos = ++endPos;
         }
@@ -888,11 +888,11 @@ void Network::add_metaserver_data(String strMetaData)
         if      (strData[DATA_NAME].find("Test")      != String::npos) strRow = "~#ffff0000";
         else if (strData[DATA_NAME].find("Localhost") != String::npos) strRow = "~#ffffffff";
         strRow+= node->name+ "~;";
-        strRow+= "~#ffffffa8" + node->ip +"~ (Version: "+ node->version +");";
+        strRow+= "~#ffffffa8" + node->ip +"~ (Version: " + node->version + ");";
         strRow+= "~#ffffffff" + strData[DATA_INFO];
         strRow+=(node->player <0)?",-":","+strData[DATA_PLAYER];
-
-        GuiManager::getSingleton().sendMsg(GuiManager::GUI_TABLE, GuiManager::MSG_ADD_ROW, strRow.c_str());
+        std::replace(strRow.begin(), strRow.end(), '_', ' ');
+        GuiManager::getSingleton().addLine(GuiManager::GUI_TABLE, strRow.c_str());
         // Next server
         ServerStart = ++ServerEnd;
     }
@@ -911,8 +911,8 @@ const char *Network::get_metaserver_info(int node, int infoLineNr)
 //================================================================================================
 void Network::clearMetaServerData()
 {
-    GuiManager::getSingleton().sendMsg(GuiManager::GUI_TABLE, GuiManager::MSG_CLEAR);
-    if (!mvServer.size()) return;
+    GuiManager::getSingleton().clear(GuiManager::GUI_TABLE);
+    if (mvServer.empty()) return;
     for (std::vector<Server*>::iterator i = mvServer.begin(); i != mvServer.end(); ++i)
         delete(*i);
     mvServer.clear();

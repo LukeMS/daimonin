@@ -26,9 +26,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <Ogre.h>
 #include <OISKeyboard.h>
-#include "gui_window.h"
 #include "gui_textout.h"
-#include "sound.h"
 
 /**
  ** TextInput class which handles the keyboard input for the Dialog class.
@@ -106,7 +104,7 @@ public:
      ** Returns the input text.
      ** @param showTextCursor Shows the cursor within the text.
      *****************************************************************************/
-    const char *getText(bool hideText = false, bool showTextCursor = true)
+    const char *getText(bool showTextCursor = true)
     {
         static bool cursorOn = true;
         if (!showTextCursor || mFinished || mCanceled)
@@ -209,7 +207,7 @@ public:
                     || (mBlockNumbers  && (keyChar >= '0' && keyChar <= '9'))
                     || (mBlockWhiteSpace && (keyChar <'A' || keyChar > 'z')))
             {
-                Sound::getSingleton().playStream(Sound::BUTTON_CLICK);
+                GuiManager::getSingleton().playSound("");
                 return true;
             }
             mStrTextInput.insert(mCursorPos,1,keyChar);
@@ -255,7 +253,7 @@ private:
     // Variables.
     // ////////////////////////////////////////////////////////////////////
     /** The maximum number of selectable entries for a selection field. **/
-    static const unsigned int MAX_SELECTION_ENTRIES = 20;
+    enum { MAX_SELECTION_ENTRIES = 20 };
     unsigned int mActValue, mMaxValue;
     unsigned int mMaxChars;
     unsigned int mCursorPos;
@@ -268,10 +266,8 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    GuiTextinput()
-    {}
-    ~GuiTextinput()
-    {}
+    GuiTextinput()  {}
+    ~GuiTextinput() {}
     GuiTextinput(const GuiTextinput&);
 };
 

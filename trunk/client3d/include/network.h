@@ -230,8 +230,8 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    Network()  {};
-    ~Network() {};
+    Network()  {}
+    ~Network() {}
     Network(const Network&); // disable copy-constructor.
     bool OpenSocket(const char *host, int port, int &socket);
     static Ogre::String &getError();

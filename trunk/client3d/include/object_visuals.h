@@ -90,8 +90,8 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    ObjectVisuals()  {};
-    ~ObjectVisuals() {};
+    ObjectVisuals()  {}
+    ~ObjectVisuals() {}
     ObjectVisuals(const ObjectVisuals&); // disable copy-constructor.
     void buildEntity(int index, const char *meshName, const char *entityName);
 };

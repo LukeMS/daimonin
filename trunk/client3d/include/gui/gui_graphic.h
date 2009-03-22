@@ -51,8 +51,8 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    GuiGraphic()  {};
-    ~GuiGraphic() {};
+    GuiGraphic()  {}
+    ~GuiGraphic() {}
     GuiGraphic(const GuiGraphic&); // disable copy-constructor.
 };
 

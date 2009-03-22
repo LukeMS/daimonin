@@ -308,22 +308,22 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                 ObjectManager::getSingleton().addMobileObject(obj);
             }
         }
-/*
-        else if (meshName == "Hero.mesh")
-        {
-            static bool once = true;
-            if (once)
-            {
-                once = false;
-                Vector3 pos;
-                pos.x = TileManager::TILE_SIZE * 8.5;
-                pos.y = 0;
-                pos.z = TileManager::TILE_SIZE * 8.5;
-                ObjectManager::getSingleton().setPosition(ObjectNPC::HERO, pos);
-                Logger::log().error() << "we got the Hero face: " << face;
-            }
-        }
-*/
+        /*
+                else if (meshName == "Hero.mesh")
+                {
+                    static bool once = true;
+                    if (once)
+                    {
+                        once = false;
+                        Vector3 pos;
+                        pos.x = TileManager::TILE_SIZE * 8.5;
+                        pos.y = 0;
+                        pos.z = TileManager::TILE_SIZE * 8.5;
+                        ObjectManager::getSingleton().setPosition(ObjectNPC::HERO, pos);
+                        Logger::log().error() << "we got the Hero face: " << face;
+                    }
+                }
+        */
         else if (meshName.find("Wall") != std::string::npos)
         {
             /*
@@ -435,7 +435,7 @@ void TileMap::scroll(int dx, int dy)
 void TileMap::draw()
 {
     if (!mNeedsRedraw) return;
-    GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "TileMap::draw()");
+    GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "TileMap::draw()");
     TileManager::getSingleton().changeChunks();
     mNeedsRedraw = false;
 }
