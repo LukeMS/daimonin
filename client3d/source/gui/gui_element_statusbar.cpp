@@ -21,28 +21,53 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
-#include <tinyxml.h>
-#include "define.h"
-#include "gui_window.h"
-#include "gui_element_statusbar.h"
 #include "logger.h"
+#include "gui_element_statusbar.h"
 
 using namespace Ogre;
 
-// TODO
-// 3d    type hor/vert
-// plain type hor/vert
-// gfx   type hor/vert
-
-const int  BAR_WIDTH = 16;
-
+const Real STATUS_BAR_FILLTIME = 1.2;  // Time to draw the statusbar from 0 to 100%.
 
 //================================================================================================
 // .
 //================================================================================================
-int GuiStatusbar::sendMsg(int message, const char *text, uint32 param)
+int GuiStatusbar::sendMsg(int message, const char *text, uint32 value)
 {
+    if (message == GuiManager::MSG_SET_VALUE)
+        setValue(value);
     return 0;
+}
+
+//================================================================================================
+//
+//================================================================================================
+void GuiStatusbar::update(Ogre::Real dTime)
+{
+    if (mDrawn == mValue) return;
+    if (mSmoothChange)
+    {
+        if (mDrawn < mValue)
+        {
+            mDrawn += (int)((dTime/STATUS_BAR_FILLTIME) * mLength);
+            if (mDrawn > mValue) mDrawn = mValue;
+        }
+        else
+        {
+            mDrawn -= (int)((dTime/STATUS_BAR_FILLTIME) * mLength);
+            if (mDrawn < mValue) mDrawn = mValue;
+        }
+    }
+    else
+        mDrawn = mValue;
+    draw();
+}
+
+//================================================================================================
+// Set the length of the statusbar. (0.0f ... 1.0f)
+//================================================================================================
+void GuiStatusbar::setValue(int value)
+{
+    mValue = (value <= 0)?0:(value*mLength)/100;
 }
 
 //================================================================================================
@@ -50,135 +75,102 @@ int GuiStatusbar::sendMsg(int message, const char *text, uint32 param)
 //================================================================================================
 GuiStatusbar::GuiStatusbar(TiXmlElement *xmlElement, void *parent):GuiElement(xmlElement, parent)
 {
-    mGfxBuffer = 0;
-    mValue = -1;
-    setValue(1.0); // default: 100%
+    const char *tmp = xmlElement->Attribute("smooth");
+    mSmoothChange = (tmp && atoi(tmp))?true:false;
+    TiXmlElement *xmlElem = xmlElement->FirstChildElement("Color");
+    mAutoColor = (xmlElem && xmlElem->Attribute("auto"))?true:false;
+    mWidth -= mWidth&1?1:0;  // Make it even.
+    mHeight-= mHeight&1?1:0; // Make it even.
+    if (mWidth>mHeight)
+    {
+        mVertical = false;
+        mDiameter = mHeight;
+        mLength   = mWidth;
+    }
+    else
+    {
+        mVertical = true;
+        mDiameter = mWidth;
+        mLength   = mHeight;
+    }
+    mDrawn = mValue = mLength;
+    draw();
 }
 
 //================================================================================================
-// .
-//================================================================================================
-GuiStatusbar::~GuiStatusbar()
-{
-    delete[] mGfxBuffer;
-}
-
-//================================================================================================
-// Todo: Replace blit by direct writing to the texture.
+//
 //================================================================================================
 void GuiStatusbar::draw()
 {
-    Texture *texture = mParent->getTexture();
-    PixelBox *pb = mParent->getPixelBox();
-    // ////////////////////////////////////////////////////////////////////
-    // Save the original background.
-    // ////////////////////////////////////////////////////////////////////
-    if (!mGfxBuffer)
+    if (!mVisible)
     {
-        mGfxBuffer = new uint32[mWidth * mHeight];
-        texture->getBuffer()->blitToMemory(
-            Box(mPosX, mPosY, mPosX + mWidth, mPosY + mHeight),
-            PixelBox(mWidth, mHeight, 1, PF_A8B8G8R8, mGfxBuffer));
+        GuiElement::draw();
+        return;
     }
-    // ////////////////////////////////////////////////////////////////////
-    // Restore background into a tmp buffer.
-    // ////////////////////////////////////////////////////////////////////
-    //TODO
-
-    // ////////////////////////////////////////////////////////////////////
-    // Draw the bar into a temp buffer.
-    // ////////////////////////////////////////////////////////////////////
+    uint32 *dst = GuiManager::getSingleton().getBuildBuffer();
     if (mGfxSrc)
+        drawGfxBar(dst);
+    else
+        drawColorBar(dst);
+    mParent->getTexture()->getBuffer()->blitFromMemory(PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8, dst), Box(mPosX, mPosY, mPosX+mWidth, mPosY+mHeight));
+}
+
+//================================================================================================
+//
+//================================================================================================
+void GuiStatusbar::drawColorBar(uint32 *dst)
+{
+    if (mAutoColor)
     {
-        // ////////////////////////////////////////////////////////////////////
-        // Background part.
-        // ////////////////////////////////////////////////////////////////////
-        uint32 *src = (uint32*)pb->data;
-        uint32 color, pixColor;
-        for (int y = 0; y < mHeight; ++y)
+        if      (mDrawn > mLength/2) mFillColor= 0x0000ff00; // green bar.
+        else if (mDrawn > mLength/3) mFillColor= 0x00ffff00; // yellow bar.
+        else                         mFillColor= 0x00ff0000; // red bar.
+    }
+    uint32 dColor;
+    dColor = ((mFillColor & 0x00ff0000)/ (mDiameter/2+1)) & 0x00ff0000;
+    dColor+= ((mFillColor & 0x0000ff00)/ (mDiameter/2+1)) & 0x0000ff00;
+    dColor+= ((mFillColor & 0x000000ff)/ (mDiameter/2+1)) & 0x000000ff;
+    uint32 color = 0xff000000 + dColor;
+    if (mVertical)
+    {
+        for (int x=0; x < mDiameter/2; ++x)
         {
-            for (int x= 0; x < mWidth; ++x)
+            for (int y = 0; y < mLength - mDrawn; ++y)
             {
-                color = src[(y+mGfxSrc->state[0].y) * pb->getWidth() + x+mGfxSrc->state[0].x];
-                if (color & 0xff000000)
-                {
-                    mGfxBuffer[y*mWidth + x] = color;
-                }
+                dst[y*mWidth + x] = 0xff000000;
+                dst[y*mWidth + mDiameter-x-1] = 0xff000000;;
             }
-        }
-        // ////////////////////////////////////////////////////////////////////
-        // The dynamic part.
-        // ////////////////////////////////////////////////////////////////////
-        for (int y = mLabelPosY + mValue; y < mHeight-mLabelPosY; ++y)
-        {
-            for (int x= mLabelPosX; x < mWidth-mLabelPosX; ++x)
+            for (int y = mLength - mDrawn; y < mLength; ++y)
             {
-                color = src[(y+mGfxSrc->state[0].y) * pb->getWidth() + x+mGfxSrc->state[0].x];
-                if (color & 0xff000000)
-                {
-                    pixColor = color & 0xff000000;
-                    pixColor+= ((mLabelColor&0x0000ff) < (color& 0x0000ff))? mLabelColor&0x0000ff : color & 0x0000ff;
-                    pixColor+= ((mLabelColor&0x00ff00) < (color& 0x00ff00))? mLabelColor&0x00ff00 : color & 0x00ff00;
-                    pixColor+= ((mLabelColor&0xff0000) < (color& 0xff0000))? mLabelColor&0xff0000 : color & 0xff0000;
-                    mGfxBuffer[y*mWidth + x] = pixColor;
-                }
+                dst[y*mWidth + x] = color;
+                dst[y*mWidth + mDiameter-x-1] = color;
             }
+            color+= dColor;
         }
     }
     else
     {
-        // ////////////////////////////////////////////////////////////////////
-        // Draw the bar into a temp buffer.
-        // ////////////////////////////////////////////////////////////////////
-        int x, y, offset;
-        uint32 color;
-        uint32 dColor = 0x00000000;
-        dColor+=(((mFillColor & 0x00ff0000)/ 6) & 0x00ff0000);
-        dColor+=(((mFillColor & 0x0000ff00)/ 6) & 0x0000ff00);
-        dColor+=(((mFillColor & 0x000000ff)/ 6) & 0x000000ff);
-
-        // Draw top of the bar.
-        color = mFillColor;
-        for (offset =3, y= mValue-5; y < mValue; ++y)
+        for (int y=0; y < mDiameter/2; ++y)
         {
-            for (x=offset; x <= BAR_WIDTH-offset; ++x) mGfxBuffer[y*mWidth +x] = color;
-            if (y < mValue-3) --offset;
-            color+= dColor;
-        }
-
-        // Draw the bar.
-        color = 0xff000000;
-        for (offset= 3, x=0; x <= BAR_WIDTH/2; ++x)
-        {
-            if (x == 1 || x == 3) --offset;
-            //    for (y = mValue+5-offset; y < mHeight-offset; ++y)
-            for (y = mHeight-offset; y > mValue-offset; --y)
+            for (int x = 0; x < mDrawn; ++x)
             {
-                mGfxBuffer[y*mWidth + x] = color;
-                mGfxBuffer[y*mWidth + BAR_WIDTH-x] = color;
+                dst[y*mWidth + x]           = color;
+                dst[(mDiameter-y-1)*mWidth + x] = color;
+            }
+            for (int x = mDrawn; x < mLength; ++x)
+            {
+                dst[y*mWidth + x] = 0xff000000;
+                dst[(mDiameter-y-1)*mWidth + x] = 0xff000000;;
             }
             color+= dColor;
         }
     }
-    // ////////////////////////////////////////////////////////////////////
-    // Blit buffer into the window-texture.
-    // ////////////////////////////////////////////////////////////////////
-    texture->getBuffer()->blitFromMemory(
-        PixelBox(mWidth, mHeight, 1, PF_A8B8G8R8, mGfxBuffer),
-        Box(mPosX, mPosY, mPosX + mWidth, mPosY + mHeight));
 }
 
 //================================================================================================
-// .
+//
 //================================================================================================
-void GuiStatusbar::setValue(Real value)
+void GuiStatusbar::drawGfxBar(uint32 *dst)
 {
-    int val = (int) ((mHeight-2*mLabelPosY) * (1-value));
-    if (val < 0) val = 0;
-    if (val > mHeight) val = mHeight;
-    if (mValue != val)
-    {
-        mValue = val;
-        draw();
-    }
+    // todo
 }

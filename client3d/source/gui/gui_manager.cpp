@@ -21,44 +21,51 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
-#include <Ogre.h>
 #include <cmath>
 #include <tinyxml.h>
 #include <OISKeyboard.h>
-#include "define.h"
+#include "logger.h"
 #include "gui_manager.h"
-#include "network_cmd_interface.h"
 #include "gui_window.h"
 #include "gui_cursor.h"
 #include "gui_textinput.h"
-#include "option.h"
-#include "logger.h"
-#include "resourceloader.h"
-#include "item.h"
 
 using namespace Ogre;
 
+class GuiManager::ResourceLoader GuiManager::mLoader;
+Overlay        *GuiManager::mOverlay = 0;
+OverlayElement *GuiManager::mElement = 0;
+
+const int   GuiManager::SUM_WIN_DIGITS = (int)log10((float)GuiManager::WIN_SUM) +1;
+const char *GuiManager::GUI_MATERIAL_NAME       = "GUI/Window";
+const char *GuiManager::OVERLAY_ELEMENT_TYPE    = "Panel"; // defined in Ogre::OverlayElementFactory.h
+const char *GuiManager::OVERLAY_RESOURCE_NAME   = "_Overlay";
+const char *GuiManager::ELEMENT_RESOURCE_NAME   = "_OverlayElement";
+const char *GuiManager::TEXTURE_RESOURCE_NAME   = "_Texture";
+const char *GuiManager::MATERIAL_RESOURCE_NAME  = "_Material";
+const char *GuiManager::FILE_DESCRIPTION_WINDOWS  = "GUI_Windows.xml";
+const char *GuiManager::FILE_DESCRIPTION_IMAGESET = "GUI_ImageSet.xml";
+const uint32 GuiManager::COLOR_BLACK = 0xff000000;
+const uint32 GuiManager::COLOR_BLUE  = 0xff0000ff;
+const uint32 GuiManager::COLOR_GREEN = 0xff00ff00;
+const uint32 GuiManager::COLOR_LBLUE = 0xff00ffff;
+const uint32 GuiManager::COLOR_RED   = 0xffff0000;
+const uint32 GuiManager::COLOR_PINK  = 0xffff00ff;
+const uint32 GuiManager::COLOR_YELLOW= 0xffffff00;
+const uint32 GuiManager::COLOR_WHITE = 0xffffffff;
+
 const int BORDER = 8;
+const int TOOLTIP_SIZE = 1 << 8;
+const unsigned long TOOLTIP_DELAY = 2000; // Wait x ms before showing the tooltip.
 const uint32 BORDER_COLOR = 0xff888888;
 const uint32 BACKGR_COLOR = 0xff444488;
+const char *FILE_SYSTEM_FONT = "SystemFont.png";
+const char *RESOURCE_MCURSOR = "GUI_MCursor";
+const char *RESOURCE_TOOLTIP = "GUI_Tooltip";
+const char *RESOURCE_WINDOW  = "GUI_Window";
+const char *RESOURCE_TEMP    = "GUI_Temp";
 const char *TOOLTIP_LINEBREAK_SIGN = "#";
 
-static const int TOOLTIP_SIZE = 1 << 8;
-static const unsigned long TOOLTIP_DELAY = 2000; // Wait x ms before showing the tooltip.
-const int   GuiManager::SUM_WIN_DIGITS = (int)log10((float)GuiManager::WIN_SUM) +1;
-const char *GuiManager::GUI_MATERIAL_NAME     = "GUI/Window";
-const char *GuiManager::OVERLAY_ELEMENT_TYPE  = "Panel"; // defined in Ogre::OverlayElementFactory.h
-const char *GuiManager::OVERLAY_RESOURCE_NAME = "_Overlay";
-const char *GuiManager::ELEMENT_RESOURCE_NAME = "_OverlayElement";
-const char *GuiManager::TEXTURE_RESOURCE_NAME = "_Texture";
-const char *GuiManager::MATERIAL_RESOURCE_NAME= "_Material";
-
-#define MANAGER_DESCRIPTION "GUI_"
-const char *RESOURCE_MCURSOR = MANAGER_DESCRIPTION "MCursor";
-const char *RESOURCE_TOOLTIP = MANAGER_DESCRIPTION "Tooltip";
-const char *RESOURCE_WINDOW  = MANAGER_DESCRIPTION "Window";
-
-short GuiManager::mWindowZPos[WIN_SUM];
 GuiManager::WindowID GuiManager::mWindowID[WIN_SUM]=
 {
     { "Win_Login",         WIN_LOGIN         },
@@ -74,11 +81,12 @@ GuiManager::WindowID GuiManager::mWindowID[WIN_SUM]=
     { "Win_TextWindow",    WIN_TEXTWINDOW    },
     { "Win_ChatWindow",    WIN_CHATWINDOW    },
     { "Win_Statistics",    WIN_STATISTICS    },
-    { "Win_PlayerConsole", WIN_PLAYERCONSOLE },
+    { "Win_PlayerTarget",  WIN_PLAYERTARGET  },
 //  { "Win_Creation",      WIN_CREATION      },
 };
 
 class GuiWindow guiWindow[GuiManager::WIN_SUM];
+short GuiManager::mWindowZPos[WIN_SUM];
 
 GuiManager::ElementID GuiManager::mStateStruct[GUI_ELEMENTS_SUM]=
 {
@@ -138,15 +146,6 @@ GuiManager::ElementID GuiManager::mStateStruct[GUI_ELEMENTS_SUM]=
     { -1, -1, "Slot_Shop",          GUI_SLOT_SHOP         },
 };
 
-const uint32 GuiManager::COLOR_BLACK = 0xff000000;
-const uint32 GuiManager::COLOR_BLUE  = 0xff0000ff;
-const uint32 GuiManager::COLOR_GREEN = 0xff00ff00;
-const uint32 GuiManager::COLOR_LBLUE = 0xff00ffff;
-const uint32 GuiManager::COLOR_RED   = 0xffff0000;
-const uint32 GuiManager::COLOR_PINK  = 0xffff00ff;
-const uint32 GuiManager::COLOR_YELLOW= 0xffffff00;
-const uint32 GuiManager::COLOR_WHITE = 0xffffffff;
-
 //================================================================================================
 // .
 //================================================================================================
@@ -175,14 +174,6 @@ void GuiManager::setMouseState(int action)
 //================================================================================================
 // .
 //================================================================================================
-void GuiManager::loadRawFont(const char *filename)
-{
-    GuiTextout::getSingleton().loadRawFont(FILE_SYSTEM_FONT);
-}
-
-//================================================================================================
-// .
-//================================================================================================
 int GuiManager::sendMsg(int element, int message, const char *text, uint32 param)
 {
     for (unsigned int i = 0; i < GUI_ELEMENTS_SUM; ++i)
@@ -196,14 +187,38 @@ int GuiManager::sendMsg(int element, int message, const char *text, uint32 param
 //================================================================================================
 // .
 //================================================================================================
-const char *GuiManager::getInfo(int element, int info)
+const char *GuiManager::sendMsg(int element, int info)
 {
     for (unsigned int i = 0; i < GUI_ELEMENTS_SUM; ++i)
     {
         if (element == mStateStruct[i].index && guiWindow[mStateStruct[i].windowNr].isInit())
-            return guiWindow[mStateStruct[i].windowNr].getInfo(mStateStruct[i].winElementNr, info);
+            return guiWindow[mStateStruct[i].windowNr].sendMsg(mStateStruct[i].winElementNr, info);
     }
     return 0;
+}
+
+//================================================================================================
+// .
+//================================================================================================
+void GuiManager::playSound(const char *filename)
+{
+    if (!filename) return;
+    if (!filename[0])
+        mvSound.push_back(mSoundWrongInput);
+    else
+        mvSound.push_back(filename);
+}
+
+//================================================================================================
+// .
+//================================================================================================
+const char *GuiManager::getNextSound()
+{
+    if (mvSound.empty()) return 0;
+    String strSound = mvSound[0];
+    //Logger::log().warning() << "Gui Manager sound cmd: " << strSound;
+    mvSound.erase(mvSound.begin());
+    return strSound.c_str();
 }
 
 //================================================================================================
@@ -236,18 +251,11 @@ int GuiManager::getElementPressed()
 {
     return guiWindow[0].getElementPressed();
 }
-//================================================================================================
-// .
-//================================================================================================
-void GuiManager::setStatusbarValue(int window, int element, Ogre::Real value)
-{
-    guiWindow[window].setStatusbarValue(element, value);
-}
 
 //================================================================================================
 // .
 //================================================================================================
-void GuiManager::Init(int w, int h)
+void GuiManager::Init(int w, int h, bool createMedia, bool printInfo, const char *soundActionFailed, const char *pathDescription, const char *pathTextures)
 {
     Logger::log().headline() << "Init GUI";
     mDragSrcWin     = NO_ACTIVE_WINDOW;
@@ -255,23 +263,27 @@ void GuiManager::Init(int w, int h)
     mTextInputWindow= NO_ACTIVE_WINDOW;
     mScreenWidth    = w;
     mScreenHeight   = h;
+    mCreateMedia    = createMedia;
+    mPrintInfo      = printInfo;
+    mSoundWrongInput=soundActionFailed;
+    mPathDescription= pathDescription;
+    mPathTextures   = pathTextures; //mPathTextures += PATH_EXTENSION;
     mBuildBuffer    = 0;
     mTooltipDelay   = 0;
     String strTexture = RESOURCE_TOOLTIP; strTexture+= TEXTURE_RESOURCE_NAME;
     mTexture = TextureManager::getSingleton().createManual(strTexture, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-               TEX_TYPE_2D, TOOLTIP_SIZE, TOOLTIP_SIZE, 0, PF_A8R8G8B8, TU_STATIC_WRITE_ONLY,
-               ManResourceLoader::getSingleton().getLoader());
+               TEX_TYPE_2D, TOOLTIP_SIZE, TOOLTIP_SIZE, 0, PF_A8R8G8B8, TU_STATIC_WRITE_ONLY, getLoader());
     mTexture->load();
     resizeBuildBuffer(TOOLTIP_SIZE*TOOLTIP_SIZE);
     mElement->setPosition((mScreenWidth-mTexture->getWidth())/3*2, (mScreenHeight-mTexture->getHeight())/2);
-    // ////////////////////////////////////////////////////////////////////
     // If requested (by cmd-line) print all element names.
-    // ////////////////////////////////////////////////////////////////////
-    if (Option::getSingleton().getIntValue(Option::CMDLINE_LOG_GUI_ELEMENTS))
+    if (mPrintInfo)
     {
-        Logger::log().info() << "These elements are currently known and can be used in " << FILE_GUI_WINDOWS<< ":";
+        Logger::log().info() << "These elements are currently known and can be used in " << FILE_DESCRIPTION_WINDOWS<< ":";
         for (int i =0; i < GUI_ELEMENTS_SUM; ++i) Logger::log().warning() << mStateStruct[i].name;
     }
+    // Load the default font.
+    GuiTextout::getSingleton().loadRawFont(FILE_SYSTEM_FONT);
 }
 
 //================================================================================================
@@ -349,7 +361,7 @@ Overlay *GuiManager::loadResources(int w, int h, String name)
     if (texture.isNull())
     {
         texture = TextureManager::getSingleton().createManual(strTexture, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-                  TEX_TYPE_2D, w, h, 0, PF_A8R8G8B8, TU_STATIC_WRITE_ONLY, ManResourceLoader::getSingleton().getLoader());
+                  TEX_TYPE_2D, w, h, 0, PF_A8R8G8B8, TU_STATIC_WRITE_ONLY, getLoader());
         if (texture.isNull())
         {
             Logger::log().error() << "Could not create " << strTexture;
@@ -367,17 +379,6 @@ Overlay *GuiManager::loadResources(int w, int h, String name)
 }
 
 //================================================================================================
-// (Re)loads the material and texture or creates them if they dont exist.
-//================================================================================================
-void GuiManager::loadResources()
-{
-    mOverlay= loadResources(TOOLTIP_SIZE, TOOLTIP_SIZE, RESOURCE_TOOLTIP);
-    String strElement = RESOURCE_TOOLTIP; strElement+= ELEMENT_RESOURCE_NAME;
-    mElement= mOverlay->getChild(strElement);
-    //drawTooltip();
-}
-
-//================================================================================================
 // Reload a manual resource.
 //================================================================================================
 void GuiManager::loadResources(Ogre::Resource *res)
@@ -391,7 +392,9 @@ void GuiManager::loadResources(Ogre::Resource *res)
     }
     if (name.find(RESOURCE_TOOLTIP) != std::string::npos)
     {
-        loadResources();
+        mOverlay= loadResources(TOOLTIP_SIZE, TOOLTIP_SIZE, RESOURCE_TOOLTIP);
+        String strElement = RESOURCE_TOOLTIP; strElement+= ELEMENT_RESOURCE_NAME;
+        mElement= mOverlay->getChild(strElement);
         return;
     }
     if (name.find(RESOURCE_WINDOW)  != std::string::npos)
@@ -400,7 +403,7 @@ void GuiManager::loadResources(Ogre::Resource *res)
         guiWindow[window].loadResources(false);
         return;
     }
-    if (name.find(ManResourceLoader::TEMP_RESOURCE) != std::string::npos)
+    if (name.find(RESOURCE_TEMP) != std::string::npos)
     {
         // No problem for a temporary resource to loose its content. Reloading will be ignored.
         return;
@@ -417,33 +420,32 @@ void GuiManager::centerWindowOnMouse(int window)
 }
 
 //================================================================================================
-// Parse the Image data.
-//================================================================================================
-void GuiManager::parseImageset(const char *XML_imageset_file)
-{
-    GuiImageset::getSingleton().parseXML(XML_imageset_file);
-}
-
-//================================================================================================
 // Parse the windows data.
 //================================================================================================
-void GuiManager::parseWindows(const char *fileWindows)
+void GuiManager::parseWindows()
 {
+    // ////////////////////////////////////////////////////////////////////
+    // Parse the imageset.
+    // ////////////////////////////////////////////////////////////////////
+    String file = mPathDescription + FILE_DESCRIPTION_IMAGESET;
+    GuiImageset::getSingleton().parseXML(file.c_str(), mCreateMedia);
+    // ////////////////////////////////////////////////////////////////////
+    // Parse the windows.
+    // ////////////////////////////////////////////////////////////////////
     TiXmlElement *xmlRoot, *xmlElem;
-    TiXmlDocument doc(fileWindows);
+    file = mPathDescription + FILE_DESCRIPTION_WINDOWS;
+    TiXmlDocument doc(file.c_str());
     const char *valString;
-    // ////////////////////////////////////////////////////////////////////
     // Check for a working window description.
-    // ////////////////////////////////////////////////////////////////////
-    if (!doc.LoadFile(fileWindows) || !(xmlRoot = doc.RootElement()))
+    if (!doc.LoadFile() || !(xmlRoot = doc.RootElement()))
     {
-        Logger::log().error() << "XML-File '" << fileWindows << "' is missing or broken.";
+        Logger::log().error() << "XML-File '" << file << "' is missing or broken.";
         return;
     }
     if ((valString = xmlRoot->Attribute("name")))
-        Logger::log().info() << "Parsing '" << valString << "' in file" << fileWindows << ".";
+        Logger::log().info() << "Parsing '" << valString << "' in file" << file << ".";
     else
-        Logger::log().error() << "File '" << fileWindows << "' has no name entry.";
+        Logger::log().error() << "File '" << file << "' has no name entry.";
     // ////////////////////////////////////////////////////////////////////
     // Parse the fonts.
     // ////////////////////////////////////////////////////////////////////
@@ -471,7 +473,7 @@ void GuiManager::parseWindows(const char *fileWindows)
     }
     else
     {
-        Logger::log().error() << "CRITICAL: No fonts found in " << fileWindows;
+        Logger::log().error() << "CRITICAL: No fonts found in " << file;
     }
     // ////////////////////////////////////////////////////////////////////
     // Parse the mouse-cursor.
@@ -495,7 +497,7 @@ void GuiManager::parseWindows(const char *fileWindows)
     }
     else
     {
-        Logger::log().error() << "File '" << fileWindows << "' has no mouse-cursor defined.";
+        Logger::log().error() << "File '" << file << "' has no mouse-cursor defined.";
     }
     // ////////////////////////////////////////////////////////////////////
     // Init the windows.
@@ -525,6 +527,7 @@ void GuiManager::freeRecources()
     for (int i=0; i < WIN_SUM; ++i) guiWindow[i].freeRecources();
     GuiCursor::getSingleton().freeRecources();
     mTexture.setNull();
+    mvSound.clear();
 }
 
 //================================================================================================
@@ -538,13 +541,13 @@ bool GuiManager::keyEvent(const int key, const unsigned int keyChar)
     {
         if (key == OIS::KC_ESCAPE)
         {
-            sendMsg(mTextInputElement, GuiManager::MSG_SET_TEXT, mBackupStrTextInput.c_str());
+            setText(mTextInputElement, mBackupStrTextInput.c_str());
             cancelTextInput();
             return true;
         }
         mTextInputUserAction = GuiTextinput::getSingleton().keyEvent(key, keyChar);
         mStrTextInput = GuiTextinput::getSingleton().getText();
-        sendMsg(mTextInputElement, GuiManager::MSG_SET_TEXT, mStrTextInput.c_str());
+        setText(mTextInputElement, mStrTextInput.c_str());
         if (GuiTextinput::getSingleton().wasFinished())
         {
             GuiTextinput::getSingleton().stop();
@@ -591,11 +594,11 @@ int GuiManager::mouseEvent(int mouseAction, Vector3 &mouse)
                 }
             }
             // Drop the item.
-            Item::getSingleton().dropItem(mDragSrcWin, mDragSrcSlot, mDragDstWin, mDragDstSlot);
             mDragSrcWin = NO_ACTIVE_WINDOW;
+            return GuiManager::EVENT_DRAG_DONE;
         }
         mElement->setPosition((int)mMouse.x-24, (int)mMouse.y-24);
-        return GuiManager::EVENT_CHECK_DONE;;
+        return GuiManager::EVENT_CHECK_DONE;
     }
     // ////////////////////////////////////////////////////////////////////
     // Check for mouse action in all windows.
@@ -712,7 +715,7 @@ void GuiManager::update(Real timeSinceLastFrame)
         if (Root::getSingleton().getTimer()->getMilliseconds() - time > CURSOR_FREQUENCY)
         {
             time = Root::getSingleton().getTimer()->getMilliseconds();
-            sendMsg(mTextInputElement, GuiManager::MSG_SET_TEXT, GuiTextinput::getSingleton().getText());
+            setText(mTextInputElement, GuiTextinput::getSingleton().getText());
         }
     }
     // ////////////////////////////////////////////////////////////////////
@@ -829,7 +832,7 @@ void GuiManager::drawTooltip()
     for (int i = 0; i < sumLines; ++i)
     {
         dest = back + BORDER + (BORDER + i*fontHeight) * w;
-        GuiTextout::getSingleton().printText(maxWidth, fontHeight, dest, w, &color, 0, line[i].c_str(), GuiTextout::FONT_SYSTEM, 0x00ffffff);
+        GuiTextout::getSingleton().printText(maxWidth, fontHeight, dest, w, color, line[i].c_str(), GuiTextout::FONT_SYSTEM);
     }
     mTexture->getBuffer()->unlock();
     if (mTooltipDelay)
@@ -837,9 +840,9 @@ void GuiManager::drawTooltip()
         x = (int)mMouse.x+40;
         y = (int)mMouse.y+40;
         if (x+ maxWidth > (int)mScreenWidth)  x = mScreenWidth - maxWidth-40;
-        if (y+ endY > (int)mScreenHeight) y = mScreenHeight- endY-40;
+        if (y+ endY     > (int)mScreenHeight) y = mScreenHeight- endY-40;
         mElement->setPosition(x,y);
-        mTooltipDelay =0;
+        mTooltipDelay = 0;
     }
     mOverlay->show();
 }
@@ -856,5 +859,3 @@ void GuiManager::drawDragElement(const PixelBox &src)
     mTexture->getBuffer()->blitFromMemory(src, Box(0, 0, size, size));
     mOverlay->show();
 }
-
-

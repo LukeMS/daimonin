@@ -25,6 +25,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "logger.h"
 #include "gui_manager.h"
 #include "gui_textout.h"
+#include "gui_graphic.h"
 #include "gui_window.h"
 #include "gui_element_listbox.h"
 
@@ -95,11 +96,11 @@ int GuiListbox::sendMsg(int message, const char *text, uint32 color)
 //================================================================================================
 // .
 //================================================================================================
-const char *GuiListbox::getInfo(int info)
+const char *GuiListbox::sendMsg(int info)
 {
     switch (info)
     {
-        case GuiManager::INFO_KEYWORD:
+        case GuiManager::MSG_GET_KEYWORD:
             return mKeywordPressed.c_str();
         default:
             return 0;
@@ -120,7 +121,7 @@ int GuiListbox::addText(const char *txt, uint32 stdColor)
     while ((start = strText.find(GuiTextout::TXT_CMD_SOUND))!= std::string::npos)
     {
         stop = strText.find('\n', start); // Sound cmd ends with a linebreak.
-        Logger::log().warning() << "Listbox->Sound cmd: " << strText.substr(start+1, stop-start-1).c_str();
+        GuiManager::getSingleton().playSound(strText.substr(start+1, stop-start-1).c_str());
         strText.erase(start, stop-start+1);
     }
     GuiTextout::getSingleton().parseUserDefinedChars(strText);
@@ -302,7 +303,7 @@ void GuiListbox::draw()
     for (int y = mActLines<mMaxVisibleRows?mMaxVisibleRows-mActLines:0; y < mMaxVisibleRows; ++y)
     {
         offset = y*mFontHeight;
-        GuiTextout::getSingleton().printText(mWidth, mFontHeight, dst+offset*mWidth, mWidth, dst+offset*mWidth, mWidth,
+        GuiTextout::getSingleton().printText(mWidth, mFontHeight, dst+offset*mWidth, mWidth,
                                              row[(mPrintPos-mVScrollOffset+pos)& (SIZE_STRING_BUFFER-1)].text.c_str(), mFontNr,
                                              row[(mPrintPos-mVScrollOffset+pos)& (SIZE_STRING_BUFFER-1)].color);
         ++pos;

@@ -21,9 +21,7 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
-#include <Ogre.h>
 #include "logger.h"
-#include "define.h"
 #include "gui_element.h"
 #include "gui_graphic.h"
 #include "gui_imageset.h"
@@ -43,7 +41,7 @@ int GuiElement::sendMsg(int, const char *, uint32)
 //================================================================================================
 //
 //================================================================================================
-const char *GuiElement::getInfo(int info)
+const char *GuiElement::sendMsg(int info)
 {
     return 0;
 }
@@ -76,7 +74,8 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
     // Set default values.
     mState = GuiImageset::STATE_ELEMENT_DEFAULT;
     mFontNr= 0;
-    mWidth = 1; mHeight= 1; // Default values (must be 1).
+    mWidth = MIN_SIZE;
+    mHeight= MIN_SIZE;
     mVisible = true;
     mGfxSrc    = 0; // No gfx is defined (fallback to color fill).
     mFillColor = 0;
@@ -100,8 +99,8 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
             }
             else
             {
-                Logger::log().warning() << "Image " << tmp << " was defined in '" << FILE_GUI_WINDOWS
-                << "' but the gfx-data in '" << FILE_GUI_IMAGESET << "' is missing.";
+                Logger::log().warning() << "Image " << tmp << " was defined in '" << GuiManager::FILE_DESCRIPTION_WINDOWS
+                << "' but the gfx-data in '" << GuiManager::FILE_DESCRIPTION_IMAGESET << "' is missing.";
             }
         }
     }
@@ -138,7 +137,9 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
         if ((tmp = xmlElement->Attribute("height"))) mHeight= atoi(tmp);
     }
     if (mPosX + mWidth >= maxX) mWidth = maxX-mPosX;
+    else if (mWidth < MIN_SIZE) mWidth = MIN_SIZE;
     if (mPosY + mHeight>= maxY) mHeight= maxY-mPosY;
+    else if (mHeight< MIN_SIZE) mHeight= MIN_SIZE;
     GuiManager::getSingleton().resizeBuildBuffer(mWidth*mHeight);
     // ////////////////////////////////////////////////////////////////////
     // Parse the label (if given).

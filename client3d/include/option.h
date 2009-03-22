@@ -47,7 +47,6 @@ public:
         GAME_STATUS_INIT_SPELL,        /**< Init the spells. **/
         GAME_STATUS_INIT_PARTICLE,     /**< Init the particles. **/
         GAME_STATUS_INIT_OBJECT,       /**< Init the objects. **/
-        GAME_STATUS_INIT_GUI_IMAGESET, /**< Parse the IMageSet. **/
         GAME_STATUS_INIT_GUI_WINDOWS,  /**< Parse the Windows. **/
         GAME_STATUS_INIT_TILE,         /**< Init the tile-engine. **/
         GAME_STATUS_INIT_GUI,          /**< Init the GUI. **/
@@ -91,17 +90,14 @@ public:
         HIGH_TEXTURE_DETAILS,
         HIGH_TILES_DETAILS,
         UPDATE_NETWORK,
-
-        CMDLINE_LOG_GUI_ELEMENTS,
-        CMDLINE_CREATE_RAW_FONTS,
-        CMDLINE_CREATE_TILE_TEXTURES,
+        CMDLINE_GUI_INFORMATION,
+        CMDLINE_CREATE_MEDIA,
+        CMDLINE_CREATE_IMPOSTERS,
         CMDLINE_SERVER_NAME,
         CMDLINE_SERVER_PORT,
         CMDLINE_TILEENGINE_LOD,
         CMDLINE_OFF_SOUND,
         CMDLINE_SHOW_BOUNDING_BOX,
-        CMDLINE_CREATE_IMPOSTERS,
-        CMDLINE_CREATE_ITEMS,
         SUM_OPTIONS
     };
     enum enumLoginType

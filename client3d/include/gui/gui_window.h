@@ -26,8 +26,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <vector>
 #include <Ogre.h>
-#include "gui_element_slot.h"
-#include "gui_element_statusbar.h"
+#include <tinyxml.h>
 
 /**
  ** This class provides a graphical window.
@@ -82,14 +81,7 @@ public:
     }
     void centerWindowOnMouse(int x, int y);
     int sendMsg(int elementNr, int message, const char *text, Ogre::uint32 param);
-    const char *getInfo(int elementNr, int info);
-    // ////////////////////////////////////////////////////////////////////
-    // GUI_Statusbar stuff.
-    // ////////////////////////////////////////////////////////////////////
-    void setStatusbarValue(int element, Ogre::Real value);
-    // ////////////////////////////////////////////////////////////////////
-    // GUI_Element_Slot stuff.
-    // ////////////////////////////////////////////////////////////////////
+    const char *sendMsg(int elementNr, int info);
     int getDragSlot()
     {
         return mElementDrag;
@@ -120,7 +112,6 @@ private:
     bool mSizeRelative;
     bool mLockSlots; /**< TODO: Lock all slots, so no item can accidental be removed. **/
     std::vector<class GuiElement*>mvElement;
-    std::vector<class GuiStatusbar*>mvStatusbar; // Todo: change this to mvElement!
     Ogre::Overlay *mOverlay;
     Ogre::OverlayElement *mElement;
     Ogre::PixelBox mSrcPixelBox;

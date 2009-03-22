@@ -54,11 +54,10 @@ int GuiElementTextbox::sendMsg(int message, const char *text, uint32 param)
 //================================================================================================
 GuiElementTextbox::GuiElementTextbox(TiXmlElement *xmlElement, void *parent):GuiElement(xmlElement, parent)
 {
-    const char *tmp;
+    const char *tmp = xmlElement->Attribute("hide");
+    mHideText = (tmp && atoi(tmp))?true:false;
     if ((xmlElement = xmlElement->FirstChildElement("Tooltip")))
-    {
         if ((tmp = xmlElement->Attribute("text"))) mStrTooltip = tmp;
-    }
     const int MINIMAL_ELEMENT_SIZE = 2;
     mMouseOver = false;
     mMouseButDown = false;
@@ -73,12 +72,6 @@ GuiElementTextbox::GuiElementTextbox(TiXmlElement *xmlElement, void *parent):Gui
     if (mLabelPosY + mHeight>= maxY) mHeight = maxY - mLabelPosY - 1;
     draw();
 }
-
-//================================================================================================
-// .
-//================================================================================================
-GuiElementTextbox::~GuiElementTextbox()
-{}
 
 //================================================================================================
 // Returns true if the mouse event was on this gadget (so no need to check the other gadgets).
@@ -130,6 +123,6 @@ void GuiElementTextbox::draw()
 {
     uint32 *dst = GuiManager::getSingleton().getBuildBuffer();
     GuiTextout::getSingleton().printText(mWidth, mHeight, dst, mWidth,
-        mParent->getLayerBG() + mLabelPosX + mLabelPosY*mParent->getWidth(), mParent->getWidth(), mStrLabel.c_str(), mLabelFontNr, mLabelColor);
+                                         mParent->getLayerBG() + mLabelPosX + mLabelPosY*mParent->getWidth(), mParent->getWidth(), mStrLabel.c_str(), mLabelFontNr, mLabelColor, mHideText);
     mParent->getTexture()->getBuffer()->blitFromMemory(PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8, dst), Box(mLabelPosX, mLabelPosY, mLabelPosX+mWidth, mLabelPosY+mHeight));
 }

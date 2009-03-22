@@ -25,7 +25,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #define GUI_ELEMENT_H
 
 #include <Ogre.h>
-#include <tinyxml.h>
+#include "gui_window.h"
 #include "gui_imageset.h"
 
 /**
@@ -38,13 +38,13 @@ public:
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     GuiElement(TiXmlElement *xmlElement, void *parent);
-    virtual ~GuiElement() {};
+    virtual ~GuiElement() {}
     virtual int sendMsg(int message, const char *text, Ogre::uint32 param);
     virtual int keyEvent(const int keyChar, const unsigned int key);
     virtual int mouseEvent(int MouseAction, int x, int y, int mouseWheel);
     virtual void update(Ogre::Real deltaTime) {} /**< Animations, drag'n'drop, etc **/
     virtual void draw(bool uploadToTexture = true);
-    virtual const char *getInfo(int info);
+    virtual const char *sendMsg(int info);
     int getState()   { return mState;  }
     int getIndex()   { return mIndex;  }
     int getWidth()   { return mWidth;  }
@@ -69,6 +69,7 @@ protected:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
+    enum { MIN_SIZE = 2 };                 /**< Minimal size of an element. **/
     int mIndex;                            /**< Unique number. -1 means its a bg-gfx (no interaction) **/
     unsigned short mPosX, mPosY;           /**< Pixeloffset from the upper-left corner of the window. **/
     unsigned short mWidth, mHeight;        /**< Dimension of this element. **/
@@ -81,9 +82,6 @@ protected:
     Ogre::uint32 mFillColor;
     class GuiWindow *mParent;              /**< Pointer to the parent window. **/
     GuiImageset::gfxSrcEntry *mGfxSrc;     /**< Pointer to the gfx-data structure or 0 for a colorfill. **/
-    // ////////////////////////////////////////////////////////////////////
-    // Functions.
-    // ////////////////////////////////////////////////////////////////////
 };
 
 #endif

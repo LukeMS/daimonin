@@ -21,15 +21,14 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
-#include "define.h"
-#include "gui_imageset.h"
-#include "option.h"
-#include "logger.h"
 #ifdef WIN32
 #include <windows.h>
 #else
 #include <dirent.h>
 #endif
+#include "logger.h"
+#include "gui_imageset.h"
+#include "gui_manager.h"
 
 using namespace Ogre;
 
@@ -58,8 +57,11 @@ GuiImageset::StateNames GuiImageset::mElementState[STATE_ELEMENT_SUM]=
     { "Passive",   STATE_ELEMENT_PASSIVE },
 };
 
+const char FILE_ITEM_TEXTURE_ATLAS[]   = "Atlas_Gui_Items";
+const char PATH_ITEM_DESCRIPTION[]     = "items/";
 const char UNKONWN_ITEM_GFX_FILENAME[] = "item_noGfx.png";
 const int  UNKNOWN_ITEM_GFX = 0;
+
 
 //================================================================================================
 // .
@@ -76,7 +78,7 @@ GuiImageset::~GuiImageset()
     {
 #ifdef D_DEBUG
         if (!(*i)->isUsed)
-            Logger::log().info() << "Element '" << (*i)->name << "' is defined in " << FILE_GUI_IMAGESET << " but is not used by the GUI.";
+            Logger::log().info() << "Element '" << (*i)->name << "' is defined in " << GuiManager::FILE_DESCRIPTION_IMAGESET << " but is not used by the GUI.";
 #endif
         delete (*i);
     }
@@ -88,7 +90,7 @@ GuiImageset::~GuiImageset()
 //================================================================================================
 // Parse the gfx data from the imageset.
 //================================================================================================
-void GuiImageset::parseXML(const char *fileImageSet)
+void GuiImageset::parseXML(const char *fileImageSet, bool createItemAtlas)
 {
     // ////////////////////////////////////////////////////////////////////
     // Parse the imageset.
@@ -146,7 +148,7 @@ void GuiImageset::parseXML(const char *fileImageSet)
     // ////////////////////////////////////////////////////////////////////
     // Parse the items.
     // ////////////////////////////////////////////////////////////////////
-    parseItems();
+    parseItems(createItemAtlas);
 }
 
 //================================================================================================
@@ -220,19 +222,20 @@ GuiImageset::gfxSrcEntry *GuiImageset::getStateGfxPositions(const char* guiImage
 //================================================================================================
 // Parse the Items
 //================================================================================================
-void GuiImageset::parseItems()
+void GuiImageset::parseItems(bool createItemAtlas)
 {
-    String filename;
+    String fileAtlasGfx = FILE_ITEM_TEXTURE_ATLAS; fileAtlasGfx+= ".png";
+    String fileAtlasTxt = GuiManager::getSingleton().getPathTextures() + PATH_ITEM_DESCRIPTION + FILE_ITEM_TEXTURE_ATLAS + ".txt";
+    String path = GuiManager::getSingleton().getPathTextures() + PATH_ITEM_DESCRIPTION;
     // ////////////////////////////////////////////////////////////////////
     // Create the item texture atlas.
     // ////////////////////////////////////////////////////////////////////
-    if (Option::getSingleton().getIntValue(Option::CMDLINE_CREATE_ITEMS))
+    //if (createItemAtlas)
     {
         bool unknownGfxFound = false;
         std::vector<std::string> itemFilename;
 #ifdef WIN32
-        filename = PATH_ITEM_TEXTURES;
-        filename+="\\*.png";
+        String filename = path + "\\*.png";
         BOOL found = true;
         WIN32_FIND_DATA FindFileData;
         HANDLE handle=FindFirstFile(filename.c_str(), &FindFileData);
@@ -253,7 +256,7 @@ void GuiImageset::parseItems()
         }
 #else
         struct dirent *dir_entry;
-        DIR *dir = opendir(PATH_ITEM_TEXTURES); // Open the current directory
+        DIR *dir = opendir(path.c_str()); // Open the current directory
         while ((dir_entry = readdir(dir)))
         {
             if (strstr(dir_entry->d_name, ".png") && !strstr(dir_entry->d_name, FILE_ITEM_TEXTURE_ATLAS))
@@ -272,13 +275,13 @@ void GuiImageset::parseItems()
 #endif
         if (itemFilename.empty())
         {
-            Logger::log().error() << "Could not find any item graphics in " << PATH_ITEM_TEXTURES;
+            Logger::log().error() << "Could not find any item graphics in " << path;
             return;
         }
         if (!unknownGfxFound)
         {
             Logger::log().error() << "Could not find the gfx for an unknown item (filename: " << UNKONWN_ITEM_GFX_FILENAME
-            << " in folder " << PATH_ITEM_TEXTURES << ").";
+            << " in folder " << path << ").";
         }
         Image itemImage, itemAtlas;
         uint32 *itemBuffer = new uint32[ITEM_SIZE * ITEM_SIZE * itemFilename.size()];
@@ -305,13 +308,8 @@ void GuiImageset::parseItems()
         // ////////////////////////////////////////////////////////////////////
         // Write the data to disc.
         // ////////////////////////////////////////////////////////////////////
-        filename = PATH_ITEM_TEXTURES;
-        filename+= "/";
-        filename+= FILE_ITEM_TEXTURE_ATLAS;
-        filename+= ".png";
-        itemAtlas.save(filename);
-        filename.replace(filename.find(".png"), 4, ".txt");
-        std::ofstream txtFile(filename.c_str(), std::ios::out | std::ios::binary);
+        itemAtlas.save(GuiManager::getSingleton().getPathTextures() + fileAtlasGfx);
+        std::ofstream txtFile(fileAtlasTxt.c_str(), std::ios::out | std::ios::binary);
         txtFile << "# This file holds the content of the image-texture-atlas." << std::endl;
         txtFile << "# The filename for an undefined/missing gfx must be: " << UNKONWN_ITEM_GFX_FILENAME << std::endl;
         if (txtFile)
@@ -326,29 +324,22 @@ void GuiImageset::parseItems()
     // ////////////////////////////////////////////////////////////////////
     // Read in the gfxpos of the items.
     // ////////////////////////////////////////////////////////////////////
-    filename = PATH_ITEM_TEXTURES;
-    filename+= "/";
-    filename+= FILE_ITEM_TEXTURE_ATLAS;
-    filename+= ".txt";
     std::ifstream txtFile;
-    txtFile.open(filename.c_str(), std::ios::in | std::ios::binary);
+    txtFile.open(fileAtlasTxt.c_str(), std::ios::in | std::ios::binary);
     if (!txtFile)
     {
-        Logger::log().error() << "Error on file " << filename;
+        Logger::log().error() << "Error on file " << fileAtlasTxt;
+        return;
     }
-    getline(txtFile, filename); // skip the comment.
-    getline(txtFile, filename); // skip the comment.
-    while (getline(txtFile, filename))
-    {
-        mvAtlasGfxName.push_back(filename);
-    }
+    getline(txtFile, fileAtlasTxt); // skip the comment.
+    getline(txtFile, fileAtlasTxt); // skip the comment.
+    while (getline(txtFile, fileAtlasTxt))
+        mvAtlasGfxName.push_back(fileAtlasTxt);
     txtFile.close();
     // ////////////////////////////////////////////////////////////////////
     // Read in the texture atlas.
     // ////////////////////////////////////////////////////////////////////
-    filename = FILE_ITEM_TEXTURE_ATLAS;
-    filename+= ".png";
-    mAtlasTexture.load(filename, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+    mAtlasTexture.load(fileAtlasGfx, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
 }
 
 //================================================================================================

@@ -21,9 +21,7 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
-#include <tinyxml.h>
 #include <OISKeyboard.h>
-#include <OgreHardwarePixelBuffer.h>
 #include "logger.h"
 #include "gui_element_table.h"
 #include "gui_window.h"
@@ -331,7 +329,7 @@ void GuiTable::drawRow(int row, uint32 bgColor)
                 if (colEnd > subRowEnd || colEnd == std::string::npos)
                     colEnd = subRowEnd;
                 GuiTextout::getSingleton().printText((*col)->width, fontHeight, buf + offX, mWidth,
-                                                     &bgColor, 0, mvRow[row].substr(colStart, colEnd-colStart).c_str(), (*subRow)->fontNr, (*subRow)->color);
+                                                     bgColor, mvRow[row].substr(colStart, colEnd-colStart).c_str(), (*subRow)->fontNr, (*subRow)->color);
                 if (++colEnd >= subRowEnd) break;
                 offX += (*col)->width;
             }

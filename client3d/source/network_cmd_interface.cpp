@@ -44,10 +44,10 @@ void Network::InterfaceCmd(unsigned char *data, int len)
         }
     */
 
-/*
-String str = "len: " + StringConverter::toString(len);
-GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_CHATWIN, GuiManager::MSG_ADD_ROW, str.c_str());
-*/
+    /*
+    String str = "len: " + StringConverter::toString(len);
+    GuiManager::getSingleton().print(GuiManager::GUI_LIST_CHATWIN, str.c_str());
+    */
     CmdInterface::getSingleton().reset();
     //if (len)
     {
@@ -565,7 +565,7 @@ void CmdInterface::reset()
     mLink_count =0;
     mUsed_flag =0;
     mStatus = 0;
-    GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_NPC, GuiManager::MSG_CLEAR);
+    GuiManager::getSingleton().clear(GuiManager::GUI_LIST_NPC);
 }
 
 //================================================================================================
@@ -720,18 +720,18 @@ normal_char:
 
 
     if (butAccept.label.empty())
-        GuiManager::getSingleton().sendMsg(GuiManager::GUI_BUTTON_NPC_ACCEPT, GuiManager::MSG_SET_VISIBLE, "", false);
+        GuiManager::getSingleton().setVisible(GuiManager::GUI_BUTTON_NPC_ACCEPT, false);
     else
     {
-        GuiManager::getSingleton().sendMsg(GuiManager::GUI_BUTTON_NPC_ACCEPT,  GuiManager::MSG_SET_TEXT, butAccept.label.c_str());
-        GuiManager::getSingleton().sendMsg(GuiManager::GUI_BUTTON_NPC_ACCEPT, GuiManager::MSG_SET_VISIBLE, "", true);
+        GuiManager::getSingleton().setText(GuiManager::GUI_BUTTON_NPC_ACCEPT, butAccept.label.c_str());
+        GuiManager::getSingleton().setVisible(GuiManager::GUI_BUTTON_NPC_ACCEPT, true);
     }
     if (butDecline.label.empty())
-        GuiManager::getSingleton().sendMsg(GuiManager::GUI_BUTTON_NPC_DECLINE, GuiManager::MSG_SET_VISIBLE, "", false);
+        GuiManager::getSingleton().setVisible(GuiManager::GUI_BUTTON_NPC_DECLINE, false);
     else
     {
-        GuiManager::getSingleton().sendMsg(GuiManager::GUI_BUTTON_NPC_DECLINE,  GuiManager::MSG_SET_TEXT, butDecline.label.c_str());
-        GuiManager::getSingleton().sendMsg(GuiManager::GUI_BUTTON_NPC_DECLINE, GuiManager::MSG_SET_VISIBLE, "", true);
+        GuiManager::getSingleton().setText(GuiManager::GUI_BUTTON_NPC_DECLINE, butDecline.label.c_str());
+        GuiManager::getSingleton().setVisible(GuiManager::GUI_BUTTON_NPC_DECLINE, true);
     }
     GuiManager::getSingleton().showWindow(GuiManager::WIN_NPCDIALOG, true);
     return true;
@@ -811,30 +811,30 @@ void CmdInterface::show()
 {
     if (mUsed_flag & GUI_INTERFACE_HEAD)
     {   // print head
-        GuiManager::getSingleton().sendMsg(GuiManager::GUI_TEXTBOX_NPC_HEADLINE, GuiManager::MSG_SET_TEXT, mHead.body_text.c_str());
+        GuiManager::getSingleton().setText(GuiManager::GUI_TEXTBOX_NPC_HEADLINE, mHead.body_text.c_str());
     }
     if (mUsed_flag & GUI_INTERFACE_MESSAGE)
     {
-        mMessage.line_count = GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_NPC, GuiManager::MSG_ADD_ROW, mMessage.title.c_str(), GuiManager::COLOR_YELLOW);
-        mMessage.line_count+= GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_NPC, GuiManager::MSG_ADD_ROW, "");
-        mMessage.line_count+= GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_NPC, GuiManager::MSG_ADD_ROW, mMessage.body_text.c_str());
+        mMessage.line_count = GuiManager::getSingleton().print(GuiManager::GUI_LIST_NPC, mMessage.title.c_str(), GuiManager::COLOR_YELLOW);
+        mMessage.line_count+= GuiManager::getSingleton().print(GuiManager::GUI_LIST_NPC, "");
+        mMessage.line_count+= GuiManager::getSingleton().print(GuiManager::GUI_LIST_NPC, mMessage.body_text.c_str());
     }
     if (mLink_count)
     {
-        mReward.line_count = GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_NPC, GuiManager::MSG_ADD_ROW, "");
+        mReward.line_count = GuiManager::getSingleton().print(GuiManager::GUI_LIST_NPC, "");
         for (int i=0; i< mLink_count; ++i)
         {
             String link = "^" + mLink[i].link + "°" + mLink[i].cmd + "^";
-            mReward.line_count = GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_NPC, GuiManager::MSG_ADD_ROW, link.c_str(), GuiManager::COLOR_GREEN);
+            mReward.line_count = GuiManager::getSingleton().print(GuiManager::GUI_LIST_NPC, link.c_str(), GuiManager::COLOR_GREEN);
         }
     }
     // reward is also used as "objective"
     if (mUsed_flag & GUI_INTERFACE_REWARD)
     {
-        mReward.line_count = GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_NPC, GuiManager::MSG_ADD_ROW, "");
-        mReward.line_count+= GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_NPC, GuiManager::MSG_ADD_ROW, mReward.title.c_str(), GuiManager::COLOR_YELLOW);
-        mReward.line_count+= GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_NPC, GuiManager::MSG_ADD_ROW, "");
-        mReward.line_count+= GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_NPC, GuiManager::MSG_ADD_ROW, mReward.body_text.c_str());
+        mReward.line_count = GuiManager::getSingleton().print(GuiManager::GUI_LIST_NPC, "");
+        mReward.line_count+= GuiManager::getSingleton().print(GuiManager::GUI_LIST_NPC, mReward.title.c_str(), GuiManager::COLOR_YELLOW);
+        mReward.line_count+= GuiManager::getSingleton().print(GuiManager::GUI_LIST_NPC, "");
+        mReward.line_count+= GuiManager::getSingleton().print(GuiManager::GUI_LIST_NPC, mReward.body_text.c_str());
         // only print the "Your rewards:" message when there is one
         if (mReward.copper || mReward.gold || mReward.silver || mReward.mithril || mIcon_count)
         {
@@ -859,7 +859,7 @@ void CmdInterface::show()
                 //sprite_blt(Bitmaps[BITMAP_COIN_MITHRIL], x + 200, y + yoff+9, NULL, NULL);
                 strMsg = "Your rewards: "; strMsg+=  mReward.mithril;
             }
-            GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_NPC, GuiManager::MSG_ADD_ROW, strMsg.c_str());
+            GuiManager::getSingleton().print(GuiManager::GUI_LIST_NPC, strMsg.c_str());
         }
     }
     /*
@@ -991,7 +991,7 @@ void CmdInterface::buttonEvent(int index)
     {
         if (mIcon_select && !mSelected)
         {
-            GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "select an item first.");
+            GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "select an item first.");
             Sound::getSingleton().playStream(Sound::BUTTON_CLICK); // SOUND_CLICKFAIL
             return;
         }
@@ -1035,12 +1035,12 @@ void CmdInterface::mouseEvent(int line)
         {
             Sound::getSingleton().playStream(Sound::BUTTON_CLICK); // SOUND_GET
             sendCommand(0, (char*)keyword.c_str());
-            GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, "Message pressed");
+            GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "Message pressed");
             return;
         }
         else if (element == GUI_INTERFACE_LINK)
         {
-            GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_MSGWIN, GuiManager::MSG_ADD_ROW, keyword.c_str());
+            GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, keyword.c_str());
             Sound::getSingleton().playStream(Sound::BUTTON_CLICK); // SOUND_GET
             sendCommand(keyword[0]!='/'?0:1, (char*)keyword.c_str());
             //GuiManager::getSingleton().addTextline(WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "Link pressed");

@@ -187,9 +187,9 @@ void Sound::playStream(int id)
     //set3DPos(id, );
 }
 
-void Sound::playStream(char *file, bool loop)
+void Sound::playStream(const char *file, bool loop)
 {
-    if (!mInit) return;
+    if (!mInit || !file) return;
     std::string filename = PATH_SAMPLES;
     filename+= file;
     int options = FMOD_HARDWARE | FMOD_2D;

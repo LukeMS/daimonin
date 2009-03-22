@@ -27,36 +27,39 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <Ogre.h>
 #include <tinyxml.h>
 #include "gui_element.h"
-#include "gui_cursor.h"
 
 /**
  ** This class provides an slot that can hold an item.
-    Drag'n'Drop is supported.
+ ** Drag'n'Drop is supported.
  *****************************************************************************/
 class GuiElementSlot: public GuiElement
 {
 public:
-    enum { MAX_SIZE = 64};
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     GuiElementSlot(TiXmlElement *xmlElement, void *parent);
-    ~GuiElementSlot() {};
+    ~GuiElementSlot() {}
     int sendMsg(int message, const char *text, Ogre::uint32 param);
     int mouseEvent(int MouseAction, int x, int y, int z);
     void draw();
     void setItem(const char *gxName, int quantity);
     /**
-     ** Sets the time where the slot cannot be accessed.
+     ** Sets the time while the slot cannot be accessed.
+     ** The current busy animation will be stopped.
      *****************************************************************************/
     void setBusyTime(Ogre::Real time)
     {
         mBusyTime = time;
-        mBusyTimeExpired = 0;
+        setBusy(false);
     }
-    void setBusy()
+    void setBusy(bool busy)
     {
-        mBusyTimeExpired = 0.001; // Something > 0 to start the busy-animation.
+        mBusyTimeExpired = busy?0.001:0.000;
+    }
+    bool empty()
+    {
+        return (mItemGfxID < 0);
     }
     void update(Ogre::Real dTime);
 
@@ -64,16 +67,16 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    static int mDragSlot;                           /**< Slot where the drag was started. **/
-    static int mActiveSlot;                         /**< Slot the mouse is currently over. **/
-    int mItemSize;
-    int mSlotNr;                                    /**< Unique number. **/
-    int mSlotGfxBG;                                 /**< The gfx number of the background gfx (will only be shown if slot is empty **/
-    int mItemGfxID;                                 /**< The item which is currently in the slot. **/
-    int mQuantity;                                  /**< Quantity of items in the slot. **/
-    Ogre::Real mBusyTime;                           /**< Slot is busy for this amount of time. **/
-    Ogre::Real mBusyTimeExpired;                    /**< Already expired time. **/
-    Ogre::Real mBusyOldVal;                         /**< Indicates if the busy gfx needs a redraw. **/
+    static int mDragSlot;         /**< Slot where the drag was started. **/
+    static int mActiveSlot;       /**< Slot the mouse is currently over. **/
+    int mItemGfxSize;             /**< The size of the Item-gfx. **/
+    int mSlotNr;                  /**< Unique number. **/
+    int mSlotGfxBG;               /**< The gfx number of the background gfx (will only be shown if slot is empty **/
+    int mItemGfxID;               /**< The item which is currently in the slot. **/
+    int mQuantity;                /**< Quantity of items in the slot. **/
+    Ogre::Real mBusyTime;         /**< Slot is busy for this amount of time. **/
+    Ogre::Real mBusyTimeExpired;  /**< Already expired time. **/
+    Ogre::Real mBusyOldVal;       /**< Indicates if the busy gfx needs a redraw. **/
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////

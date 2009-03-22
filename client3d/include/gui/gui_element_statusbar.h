@@ -39,18 +39,27 @@ public:
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     GuiStatusbar(TiXmlElement *xmlElement, void *parent);
-    ~GuiStatusbar();
+    ~GuiStatusbar() {}
     int sendMsg(int message, const char *text, Ogre::uint32 param);
     void draw();
-    void setValue(Ogre::Real value);
+    void setValue(int value);
+    void update(Ogre::Real dTime);
 
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    bool mHorizontal;
+    bool mVertical;
+    bool mAutoColor;            /**< Change the color from green to red depending on the filling percentage. **/
+    bool mSmoothChange;         /**< Change the filling percentage in small steps to the new value. **/
+    int mLength, mDiameter;
     int mValue;
-    Ogre::uint32 *mGfxBuffer;
+    int mDrawn;
+    // ////////////////////////////////////////////////////////////////////
+    // Functions.
+    // ////////////////////////////////////////////////////////////////////
+    void drawGfxBar(Ogre::uint32 *dst);
+    void drawColorBar(Ogre::uint32 *dst);
 };
 
 #endif

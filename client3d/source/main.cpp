@@ -26,7 +26,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "define.h"
 #include "events.h"
 #include "option.h"
-#include "resourceloader.h"
 
 using namespace Ogre;
 
@@ -46,28 +45,19 @@ bool parseCmdLine(const char *cmd, const char *value)
             Option::getSingleton().setStrValue(Option::CMDLINE_CREATE_IMPOSTERS, value);
             ++options;
         }
-        if ((cmd[1] == 'l' || !stricmp(cmd, "--list")) && !stricmp(value, "gui"))
+        if ((cmd[1] == 'g' || !stricmp(cmd, "--guiinfo")))
         {
-            Logger::log().info() << "You told me to list all interactive gui-elements.";
-            Option::getSingleton().setIntValue(Option::CMDLINE_LOG_GUI_ELEMENTS, true);
+            Logger::log().info() << "You told me to print gui infos.";
+            Option::getSingleton().setIntValue(Option::CMDLINE_GUI_INFORMATION, true);
             ++options;
         }
-        if ((cmd[1] == 'c' || !stricmp(cmd, "--create")) && !stricmp(value, "rawfonts"))
+        if ((cmd[1] == 'm' || !stricmp(cmd, "--media")))
         {
-            Logger::log().info() << "You told me to create a raw-font from every ttf." << FILE_GUI_WINDOWS;
-            Option::getSingleton().setIntValue(Option::CMDLINE_CREATE_RAW_FONTS, true);
-            ++options;
-        }
-        if ((cmd[1] == 'c' || !stricmp(cmd, "--create")) && !stricmp(value, "items"))
-        {
-            Logger::log().info() << "You told me to create the items-texture-atlas." << FILE_GUI_WINDOWS;
-            Option::getSingleton().setIntValue(Option::CMDLINE_CREATE_ITEMS, true);
-            ++options;
-        }
-        if ((cmd[1] == 'c' || !stricmp(cmd, "--create")) && !stricmp(value, "tileTextures"))
-        {
-            Logger::log().info() << "You told me to create all textures for the TileEngine.";
-            Option::getSingleton().setIntValue(Option::CMDLINE_CREATE_TILE_TEXTURES, true);
+            Logger::log().info() << "You told me to create the media stuff:";
+            Logger::log().info() << "- Item Atlastexture";
+            Logger::log().info() << "- Tile Atlastexture";
+            Logger::log().info() << "- Raw fonts";
+            Option::getSingleton().setIntValue(Option::CMDLINE_CREATE_MEDIA, true);
             ++options;
         }
         if ((cmd[1] == 's' || !stricmp(cmd, "--server")))
@@ -104,10 +94,8 @@ bool parseCmdLine(const char *cmd, const char *value)
     if (!options)
     {
         std::cout << "\nusage:\n"
-                  << "--list gui              -l  gui\n"
-                  << "--create rawFonts       -c  rawFonts\n"
-                  << "--create items          -c  items\n"
-                  << "--create tileTextures   -c  tileTextures\n"
+                  << "--guiinfo               -g  Prints some informations about the gui\n"
+                  << "--media                 -m  Create atlastextures and raw-fonts\n"
                   << "--server <name>         -s  <name>\n"
                   << "--port   <num>          -p  <num>\n"
                   << "--lod    <num>              Set LoD for the TileEngine\n"
@@ -224,8 +212,8 @@ int main(int argc, char **argv)
         try
         {
             // try to create a 64MB texture in Video Ram.
-            mTexture = TextureManager::getSingleton().#(ManResourceLoader::TEMP_RESOURCE + "64 MB", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-                       TEX_TYPE_2D, 4096, 4096, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY, ManResourceLoader::getSingleton().getLoader());
+            mTexture = TextureManager::getSingleton().createManual("64 MB", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+                       TEX_TYPE_2D, 4096, 4096, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY, 0);
             mTexture->unload();
             mTexture.setNull();
             Option::getSingleton().setIntValue(Option::HIGH_TEXTURE_DETAILS, true);
@@ -235,10 +223,10 @@ int main(int argc, char **argv)
             mTexture.setNull();
             try
             { // try to create a 32MB texture in Video Ram.
-                mTexture = TextureManager::getSingleton().createManual(ManResourceLoader::TEMP_RESOURCE + "16MB #1", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-                           TEX_TYPE_2D, 2048, 2048, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY, ManResourceLoader::getSingleton().getLoader());
-                mTextur2 = TextureManager::getSingleton().createManual(ManResourceLoader::TEMP_RESOURCE + "16MB #2", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-                           TEX_TYPE_2D, 2048, 2048, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY, ManResourceLoader::getSingleton().getLoader());
+                mTexture = TextureManager::getSingleton().createManual("16MB #1", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+                           TEX_TYPE_2D, 2048, 2048, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY, 0);
+                mTextur2 = TextureManager::getSingleton().createManual("16MB #2", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+                           TEX_TYPE_2D, 2048, 2048, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY, 0);
                 mTexture->unload();
                 mTextur2->unload();
                 mTexture.setNull();
@@ -249,11 +237,13 @@ int main(int argc, char **argv)
             {
                 Logger::log().warning() << "Your gfx-card seems to have less than 64 MB";
                 Logger::log().warning() << "Switching to minimal Details.";
+                Logger::log().warning() << "Can't load TTF's with size > 16 on this gfx-card. You must use raw-fonts instead!";
                 Option::getSingleton().setIntValue(Option::HIGH_TEXTURE_DETAILS, false);
                 Option::getSingleton().setIntValue(Option::HIGH_TILES_DETAILS, false);
             }
             Logger::log().warning() << "Your gfx-card seems to only have 64 MB";
-            Logger::log().warning() << "High texture details and large ttf-fonts support will be disabled.";
+            Logger::log().warning() << "High texture details will be disabled.";
+            Logger::log().warning() << "Can't load TTF's with size > 16 on this gfx-card. You must use raw-fonts instead!";
             Option::getSingleton().setIntValue(Option::HIGH_TEXTURE_DETAILS, false);
         }
     */

@@ -35,8 +35,8 @@ private:
     class ResourceLoader : public Ogre::ManualResourceLoader
     {
     public:
-        ResourceLoader() {};
-        ~ResourceLoader() {};
+        ResourceLoader()  {}
+        ~ResourceLoader() {}
 
         /**
         ** This function is called by Ogre

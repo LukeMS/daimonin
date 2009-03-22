@@ -66,7 +66,7 @@ public:
     void createDummy();
     void createStream(int id);
     void playStream(int id);
-    void playStream(char *filename, bool loop =false);
+    void playStream(const char *filename, bool loop =false);
     void stopStream(int id);
     void set3DPos( unsigned int channel,  float &posX, float &posY, float &posZ );
     void setVolume( unsigned int channel, float volume =-1);

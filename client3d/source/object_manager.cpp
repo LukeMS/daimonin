@@ -316,7 +316,7 @@ void ObjectManager::mousePressed(MovableObject *mob, bool modifier)
                                                  mvNPC[mSelectedObject]->getFriendly(),
                                                  mvNPC[mSelectedObject]->getHealthPercentage(),
                                                  mvNPC[mSelectedObject]->getNickName().c_str());
-            //GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_CHATWIN, GuiManager::MSG_ADD_ROW, "talk hello");
+            //GuiManager::getSingleton().print(GuiManager::GUI_LIST_CHATWIN, "talk hello");
             //String strSelect = "/target !"+ StringConverter::toString(mSelectedPos.x-9) + " " + StringConverter::toString(mSelectedPos.z-9);
             //Network::getSingleton().send_game_command(strSelect.c_str());
             //Network::getSingleton().send_game_command("/target 1");

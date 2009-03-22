@@ -67,12 +67,6 @@ GuiElementButton::GuiElementButton(TiXmlElement *xmlElement, void *parent, bool 
 }
 
 //================================================================================================
-// .
-//================================================================================================
-GuiElementButton::~GuiElementButton()
-{}
-
-//================================================================================================
 // Returns true if the mouse event was on this gadget (so no need to check the other gadgets).
 //================================================================================================
 int GuiElementButton::mouseEvent(int MouseAction, int x, int y, int z)
@@ -127,7 +121,6 @@ void GuiElementButton::draw()
     {
         int offset = (mState == GuiImageset::STATE_ELEMENT_PUSHED)?1:0;
         GuiTextout::getSingleton().printText(mWidth-mLabelPosX-2*offset, mHeight-mLabelPosY-offset,
-                                             dst+mLabelPosX+offset + (mLabelPosY+2*offset)*mWidth, mWidth,
                                              dst+mLabelPosX+offset + (mLabelPosY+2*offset)*mWidth, mWidth,
                                              mStrLabel.c_str(), mLabelFontNr, 0x00ffffff);
     }

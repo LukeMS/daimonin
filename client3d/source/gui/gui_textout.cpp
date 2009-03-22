@@ -20,11 +20,9 @@ GNU GPL for 3d-Client and the licenses of the other code concerned.
 You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
-#include <OgreHardwareBuffer.h>
-#include <OgreHardwarePixelBuffer.h>
+#include <OgreResourceGroupManager.h>
 #include <OgreFontManager.h>
-#include "define.h"
-#include "option.h"
+#include "gui_manager.h"
 #include "gui_graphic.h"
 #include "gui_textout.h"
 #include "gui_imageset.h"
@@ -58,11 +56,12 @@ GuiTextout::GuiTextout()
     // Parse the font extensions.
     // ////////////////////////////////////////////////////////////////////
     TiXmlElement *xmlRoot, *xmlElem;
-    TiXmlDocument doc(FILE_GUI_IMAGESET);
+    String file = GuiManager::getSingleton().getPathDescription() + GuiManager::FILE_DESCRIPTION_IMAGESET;
+    TiXmlDocument doc(file.c_str());
     const char *strTemp;
     if (!doc.LoadFile() || !(xmlRoot = doc.RootElement()) || !(strTemp = xmlRoot->Attribute("file")))
     {
-        Logger::log().error() << "XML-File '" << FILE_GUI_IMAGESET << "' is broken or missing.";
+        Logger::log().error() << "XML-File '" << file << "' is broken or missing.";
         return;
     }
     // ////////////////////////////////////////////////////////////////////
@@ -135,7 +134,15 @@ GuiTextout::~GuiTextout()
 void GuiTextout::loadRawFont(const char *filename)
 {
     Image image;
-    image.load(filename, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+    try
+    {
+        image.load(filename, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+    }
+    catch (Exception&)
+    {
+        Logger::log().error() << "RAW-Font " << filename << " was not found!";
+        return;
+    }
     size_t size = image.getHeight() * image.getWidth();
     mFont *fnt = new mFont;
     mvFont.push_back(fnt);
@@ -185,13 +192,19 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
     pairList["size"]      = StringConverter::toString(iSize);
     pairList["resolution"]= StringConverter::toString(iReso);
     // pairList["antialias_colour"]= "true"; // doesn't seems to work.
-    if (iSize > 16 && !Option::getSingleton().getIntValue(Option::HIGH_TEXTURE_DETAILS))
+    FontPtr pFont;
+    try
     {
-        Logger::log().warning() << "Can't load TTF's with size > 16 on this gfx-card. You must use raw-fonts instead!";
+        pFont = FontManager::getSingleton().create("tmpFont", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, false, 0, &pairList);
+        pFont->load();
+    }
+    catch (Exception&)
+    {
+        Logger::log().warning() << "Your gfx-card doesn't have enough Memory to load the TTF-Font with a size of " << size << ".";
+        Logger::log().warning() << "You must use raw-fonts instead!";
+        if (!pFont.isNull()) FontManager::getSingleton().remove(pFont->getName());
         return;
     }
-    FontPtr pFont = FontManager::getSingleton().create("tmpFont", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, false, 0, &pairList);
-    pFont->load();
     MaterialPtr pMaterial = pFont.getPointer()->getMaterial();
     String strTexture = pMaterial.getPointer()->getTechnique(0)->getPass(0)->getTextureUnitState(0)->getTextureName();
     TexturePtr pTexture = TextureManager::getSingleton().getByName(strTexture);
@@ -235,7 +248,6 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
         fnt->charStart[i] = fnt->charStart[i-1] + fnt->charWidth[i-1];
         fnt->charWidth[i] = 2;
     }
-
     // ////////////////////////////////////////////////////////////////////
     // blit the whole font texture to memory.
     // ////////////////////////////////////////////////////////////////////
@@ -309,7 +321,7 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
     // ////////////////////////////////////////////////////////////////////
     // Create a raw font.
     // ////////////////////////////////////////////////////////////////////
-    if (Option::getSingleton().getIntValue(Option::CMDLINE_CREATE_RAW_FONTS))
+    if (GuiManager::getSingleton().getMediaCreation())
     {
         Image img;
         // ////////////////////////////////////////////////////////////////////
@@ -337,12 +349,16 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
         }
         // write font to disc.
         img = img.loadDynamicImage((unsigned char*)fnt->data, fnt->textureWidth, fnt->height, 1, PF_A8R8G8B8);
-        String rawFilename = "./NoLonger";
+        String rawFilename = GuiManager::getSingleton().getPathTextures() + "fonts/NoLonger_";
         rawFilename+= filename;
         rawFilename.resize(rawFilename.size()-4); // Cut extension.
         rawFilename+= '_'+ StringConverter::toString(iSize, 3, '0');
         rawFilename+= '_'+ StringConverter::toString(iReso, 3, '0');
         rawFilename+= ".png";
+
+
+
+
         img.save(rawFilename);
     }
     // ////////////////////////////////////////////////////////////////////
@@ -419,7 +435,8 @@ int GuiTextout::calcTextWidth(const char *text, unsigned int fontNr)
                         if (!*++text) break;
                 break;
             case TXT_CMD_CHANGE_FONT:
-                text+= hexToInt(++text, 2, fontNr);
+                ++text;
+                text+= hexToInt(text, 2, fontNr);
                 if (fontNr >= (unsigned int)mvFont.size()) fontNr = 0;
                 break;
             default:
@@ -457,7 +474,8 @@ int GuiTextout::getLastCharPosition(const char *text, unsigned int fontNr, int w
                         if (!text[++pos]) break;
                 break;
             case TXT_CMD_CHANGE_FONT:
-                pos+= hexToInt(text+(++pos), 2, fontNr);
+                ++pos;
+                pos+= hexToInt(text+pos, 2, fontNr);
                 if (fontNr >= (unsigned int)mvFont.size()) fontNr = 0;
                 break;
             default:
@@ -518,7 +536,6 @@ const char *GuiTextout::getTextendColor(String &strText)
 
 //================================================================================================
 // Alphablend a text with a gfx/color into a given background. Clipping is performed.
-// @param bakLineSkip : When 0 the background will be filled with the color from *bak
 //================================================================================================
 void GuiTextout::printText(int width, int height, uint32 *dst, int dstLineSkip, uint32 *bak, int bakLineSkip, const char *txt, unsigned int fontNr, uint32 fontColor, bool hideText)
 {

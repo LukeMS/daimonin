@@ -50,7 +50,7 @@ public:
     static const char TXT_CMD_LINK;
     static const char TXT_CMD_INFO;
     static const char TXT_CMD_SOUND;
-    static const char TXT_SUB_CMD_COLOR; // followed by 8 chars (atoi -> uint32).
+    static const char TXT_SUB_CMD_COLOR;   // followed by 8 chars (atoi -> uint32).
     static const char TXT_CMD_CHANGE_FONT; // followed by 2 chars (atoi -> char).
     static const char CURSOR[];
     static const Ogre::uint32 TXT_COLOR_DEFAULT;
@@ -68,9 +68,35 @@ public:
     }
     void loadRawFont(const char *filename);
     void loadTTFont (const char *filename, const char *size, const char *resolution);
-    void printText(int width, int height, Ogre::uint32 *dst, int dstLineSkip,
-                   Ogre::uint32 *bak, int bakLineSkip, const char *txt, unsigned int fontNr,
-                   Ogre::uint32 color = 0xffffffff, bool hideText = false);
+    /**
+     ** Alphablends a text with a single color.
+     *****************************************************************************/
+    void printText(int width, int height,
+                   Ogre::uint32 *dst, int dstLineSkip,
+                   Ogre::uint32 colorBG,
+                   const char *txt, unsigned int fontNr,
+                   Ogre::uint32 fontColor = 0xffffffff, bool hideText = false)
+    {
+        printText(width, height, dst, dstLineSkip, &colorBG, 0, txt, fontNr, fontColor, hideText);
+    }
+    /**
+     ** Alphablends a text with a graphic.
+     *****************************************************************************/
+    void printText(int width, int height,
+                   Ogre::uint32 *dst, int dstLineSkip,
+                   const char *txt, unsigned int fontNr,
+                   Ogre::uint32 fontColor = 0xffffffff, bool hideText = false)
+    {
+        printText(width, height, dst, dstLineSkip, dst, dstLineSkip, txt, fontNr, fontColor, hideText);
+    }
+    /**
+     ** Alphablends a text with a graphic to a new buffer.
+     *****************************************************************************/
+    void printText(int width, int height,
+                   Ogre::uint32 *dst, int dstLineSkip,
+                   Ogre::uint32 *bak, int bakLineSkip,
+                   const char *txt, unsigned int fontNr,
+                   Ogre::uint32 fontColor = 0xffffffff, bool hideText = false);
     int calcTextWidth(const char *text, unsigned int fontNr = 0);
     const char *getTextendColor(Ogre::String &strText);
     int getFontHeight(int fontNr)

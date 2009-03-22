@@ -26,8 +26,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <Ogre.h>
 #include <tinyxml.h>
-#include "gui_graphic.h"
-#include "gui_window.h"
+#include "gui_element.h"
 
 /**
  ** This class provides an interactive button.
@@ -39,11 +38,11 @@ public:
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     GuiElementButton(TiXmlElement *xmlElement, void *parent, bool drawOnInit);
-    ~GuiElementButton();
+    ~GuiElementButton() {}
     int sendMsg(int message, const char *text, Ogre::uint32 param);
     int mouseEvent(int MouseAction, int x, int y, int z);
-    void draw();
     int keyEvent(const int *keyChar, const unsigned char *key);
+    void draw();
     void setLabel(const char*newText)
     {
         mStrLabel = newText;
