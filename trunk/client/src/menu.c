@@ -1336,7 +1336,6 @@ void read_bmaps_p0(void)
     int     bufsize, len, num, pos;
     unsigned int crc;
     char   buf[HUGE_BUF], line_buf[256];
-    struct stat bmap_stat, pic_stat;
 
     if ((fpic = fopen_wrapper(FILE_DAIMONIN_P0, "rb")) == NULL)
     {
@@ -1345,25 +1344,7 @@ void read_bmaps_p0(void)
         unlink(FILE_BMAPS_P0);
         exit(0);
     }
-    /* get time stamp of the file daimonin.p0 */
-    fstat(fileno(fpic), &pic_stat);
 
-    /* try to open bmaps_p0 file */
-    if ((fbmap = fopen_wrapper(FILE_BMAPS_P0, "r")) == NULL)
-        goto create_bmaps;
-
-    /* get time stamp of the file */
-    fstat(fileno(fbmap), &bmap_stat);
-    fclose(fbmap);
-
-    if (difftime(pic_stat.st_mtime, bmap_stat.st_mtime) > 0.0f)
-        goto create_bmaps;
-
-    fclose(fpic);
-    load_bmaps_p0();
-    return;
-
-create_bmaps: /* if we are here, then we have to (re)create the bmaps.p0 file */
     if ((fbmap = fopen_wrapper(FILE_BMAPS_P0, "w")) == NULL)
     {
         LOG(LOG_ERROR, "FATAL: Can't create bmaps.p0 file!\n");
