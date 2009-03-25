@@ -26,7 +26,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Ogre;
 
-const Real STATUS_BAR_FILLTIME = 1.2;  // Time to draw the statusbar from 0 to 100%.
+const Real ANIMATION_SPEED = 1.2;
 
 //================================================================================================
 // .
@@ -48,12 +48,12 @@ void GuiStatusbar::update(Ogre::Real dTime)
     {
         if (mDrawn < mValue)
         {
-            mDrawn += (int)((dTime/STATUS_BAR_FILLTIME) * mLength);
+            mDrawn += (dTime*mLength) / ANIMATION_SPEED;
             if (mDrawn > mValue) mDrawn = mValue;
         }
         else
         {
-            mDrawn -= (int)((dTime/STATUS_BAR_FILLTIME) * mLength);
+            mDrawn -= (dTime*mLength) / ANIMATION_SPEED;
             if (mDrawn < mValue) mDrawn = mValue;
         }
     }
@@ -75,10 +75,11 @@ void GuiStatusbar::setValue(int value)
 //================================================================================================
 GuiStatusbar::GuiStatusbar(TiXmlElement *xmlElement, void *parent):GuiElement(xmlElement, parent)
 {
-    const char *tmp = xmlElement->Attribute("smooth");
-    mSmoothChange = (tmp && atoi(tmp))?true:false;
+    const char *temp = xmlElement->Attribute("smooth");
+    mSmoothChange = (temp && atoi(temp))?true:false;
     TiXmlElement *xmlElem = xmlElement->FirstChildElement("Color");
-    mAutoColor = (xmlElem && xmlElem->Attribute("auto"))?true:false;
+    temp = xmlElem->Attribute("auto");
+    mAutoColor = (temp && atoi(temp))?true:false;
     mWidth -= mWidth&1?1:0;  // Make it even.
     mHeight-= mHeight&1?1:0; // Make it even.
     if (mWidth>mHeight)
@@ -140,7 +141,7 @@ void GuiStatusbar::drawColorBar(uint32 *dst)
                 dst[y*mWidth + x] = 0xff000000;
                 dst[y*mWidth + mDiameter-x-1] = 0xff000000;;
             }
-            for (int y = mLength - mDrawn; y < mLength; ++y)
+            for (int y = mLength - (int)mDrawn; y < mLength; ++y)
             {
                 dst[y*mWidth + x] = color;
                 dst[y*mWidth + mDiameter-x-1] = color;
@@ -157,7 +158,7 @@ void GuiStatusbar::drawColorBar(uint32 *dst)
                 dst[y*mWidth + x]           = color;
                 dst[(mDiameter-y-1)*mWidth + x] = color;
             }
-            for (int x = mDrawn; x < mLength; ++x)
+            for (int x = (int)mDrawn; x < mLength; ++x)
             {
                 dst[y*mWidth + x] = 0xff000000;
                 dst[(mDiameter-y-1)*mWidth + x] = 0xff000000;;

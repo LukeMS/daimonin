@@ -22,11 +22,9 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
 #include "logger.h"
-#include "gui_element_slot.h"
 #include "gui_textout.h"
-#include "gui_window.h"
 #include "gui_graphic.h"
-#include "gui_manager.h"
+#include "gui_element_slot.h"
 
 using namespace Ogre;
 
@@ -34,7 +32,7 @@ const uint32 SLOT_BUSY_COLOR     = 0xdd777777;
 const uint32 SLOT_QUANTITY_COLOR = 0x00888888;
 int GuiElementSlot::mDragSlot =  -1;
 int GuiElementSlot::mActiveSlot= -1;
-int uid = -1;
+int GuiElementSlot::uid = -1;
 
 //================================================================================================
 // Constructor.
@@ -42,7 +40,6 @@ int uid = -1;
 GuiElementSlot::GuiElementSlot(TiXmlElement *xmlElement, void *parent):GuiElement(xmlElement, parent)
 {
     mSlotNr = ++uid;
-    mItemGfxSize = GuiImageset::ITEM_SIZE;
     mItemGfxID = -1;
     mBusyTime = 1.0;  // Default time for a slot to be busy (MUST be > 0).
     mBusyOldVal = -1;
@@ -57,7 +54,7 @@ GuiElementSlot::GuiElementSlot(TiXmlElement *xmlElement, void *parent):GuiElemen
         else
             mSlotGfxBG = -1;
     }
-    if (mItemGfxSize > mWidth || mItemGfxSize > mHeight)
+    if (GuiImageset::ITEM_SIZE > mWidth || GuiImageset::ITEM_SIZE > mHeight)
         Logger::log().warning() << "GuiElementSlot: Item-gfx is bigger than the slot-gfx.";
     draw();
 }
@@ -168,19 +165,19 @@ void GuiElementSlot::draw()
     uint32 *bak = mParent->getLayerBG() + mPosX + mPosY*mParent->getWidth();
     if (mGfxSrc)
     {
-        PixelBox src = mParent->getPixelBox()->getSubVolume(Box(mGfxSrc->state[mState].x, mGfxSrc->state[mState].y,
+        PixelBox src = GuiImageset::getSingleton().getPixelBox().getSubVolume(Box(mGfxSrc->state[mState].x, mGfxSrc->state[mState].y,
                        mGfxSrc->state[mState].x + mGfxSrc->w, mGfxSrc->state[mState].y + mGfxSrc->h));
-        int srcRowSkip = (int)mParent->getPixelBox()->getWidth();
+        int srcRowSkip = (int)GuiImageset::getSingleton().getPixelBox().getWidth();
         GuiGraphic::getSingleton().drawGfxToBuffer(mWidth, mHeight, mGfxSrc->w, mGfxSrc->h, (uint32*)src.data, bak, dst, srcRowSkip, mParent->getWidth(), mWidth);
     }
     else
         GuiGraphic::getSingleton().drawColorToBuffer(mWidth, mHeight, mFillColor, bak, dst, mParent->getWidth(), mWidth);
     // Draw the item-gfx to the build-buffer.
-    int dX  = (mWidth  - mItemGfxSize) /2;
-    int dY  = (mHeight - mItemGfxSize) /2;
+    int dX  = (mWidth  - GuiImageset::ITEM_SIZE) /2;
+    int dY  = (mHeight - GuiImageset::ITEM_SIZE) /2;
     PixelBox src = GuiImageset::getSingleton().getItemPB(mItemGfxID);
     uint32 *buf = dst + dX + dY * mWidth;
-    GuiGraphic::getSingleton().drawGfxToBuffer(mItemGfxSize, mItemGfxSize, mItemGfxSize, mItemGfxSize, (uint32*)src.data, buf, buf, mItemGfxSize, mWidth, mWidth);
+    GuiGraphic::getSingleton().drawGfxToBuffer(GuiImageset::ITEM_SIZE, GuiImageset::ITEM_SIZE, GuiImageset::ITEM_SIZE, GuiImageset::ITEM_SIZE, (uint32*)src.data, buf, buf, GuiImageset::ITEM_SIZE, mWidth, mWidth);
     // Draw the busy-gfx to the build-buffer.
     if (mBusyTimeExpired) drawBusy((int)mBusyOldVal);
     // Copy the build-buffer to the window texture.
@@ -299,3 +296,37 @@ void GuiElementSlot::drawBusy(int angle)
         GuiGraphic::getSingleton().drawColorToBuffer(mWidth/2, mHeight, SLOT_BUSY_COLOR, dst, mWidth);
     }
 }
+
+int GuiElementSlotGroup::uid = -1;
+
+//================================================================================================
+// Destructor.
+//================================================================================================
+GuiElementSlotGroup::~GuiElementSlotGroup()
+{
+    for (std::vector<GuiElementSlot*>::iterator i = mvSlot.begin(); i < mvSlot.end(); ++i)
+        delete (*i);
+    mvSlot.clear();
+}
+
+//================================================================================================
+// Constructor.
+//================================================================================================
+GuiElementSlotGroup::GuiElementSlotGroup(TiXmlElement *xmlRoot, void *parent):GuiElement(xmlRoot, parent)
+{
+    mGroupNr = ++uid;
+    mCols = mWidth / GuiImageset::ITEM_SIZE;
+    mRows = mHeight/ GuiImageset::ITEM_SIZE;
+    for (TiXmlElement *xmlElem = xmlRoot->FirstChildElement("Slot"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Slot"))
+    {
+        if (xmlElem->Attribute("name"))
+            mvSlot.push_back(new GuiElementSlot(xmlElem, this));
+    }
+    if ((int)mvSlot.size() > mCols*mRows)
+        Logger::log().warning() << "Not enough space in '" << xmlRoot->Attribute("name")
+        << "' to draw " << mvSlot.size() << " slots.";
+
+    draw();
+}
+
+// "Slots_Inventory" GUI_SLOTGROUP_INVENTORY

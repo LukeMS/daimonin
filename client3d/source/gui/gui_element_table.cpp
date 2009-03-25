@@ -23,10 +23,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <OISKeyboard.h>
 #include "logger.h"
-#include "gui_element_table.h"
-#include "gui_window.h"
-#include "gui_manager.h"
 #include "gui_textout.h"
+#include "gui_element_table.h"
 
 using namespace Ogre;
 

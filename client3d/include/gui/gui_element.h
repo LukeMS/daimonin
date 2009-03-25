@@ -24,7 +24,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef GUI_ELEMENT_H
 #define GUI_ELEMENT_H
 
-#include <Ogre.h>
 #include "gui_window.h"
 #include "gui_imageset.h"
 

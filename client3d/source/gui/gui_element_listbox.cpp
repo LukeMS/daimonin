@@ -21,18 +21,12 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
-#include <tinyxml.h>
 #include "logger.h"
-#include "gui_manager.h"
 #include "gui_textout.h"
 #include "gui_graphic.h"
-#include "gui_window.h"
 #include "gui_element_listbox.h"
 
 using namespace Ogre;
-
-// Todo:
-// - support gfx elements (they will be splitt over some lines if they are bigger then fontsize).
 
 String GuiListbox::mKeywordPressed;
 
@@ -44,6 +38,8 @@ GuiListbox::GuiListbox(TiXmlElement *xmlElement, void *parent):GuiElement(xmlEle
     mFontHeight = GuiTextout::getSingleton().getFontHeight(mFontNr);
     mMaxVisibleRows  = (int)((float)mHeight / (float)mFontHeight + 0.5);
     if (mMaxVisibleRows < 1) mMaxVisibleRows = 1;
+    if (mWidth < GuiImageset::ITEM_SIZE || mHeight < GuiImageset::ITEM_SIZE)
+        Logger::log().warning() << "The size of the listbox " << GuiManager::getSingleton().getElementName(mIndex) << " is smaller than the size of an item.";
     mScrollBarV = 0;
     for (TiXmlElement *xmlOpt = xmlElement->FirstChildElement("Element"); xmlOpt; xmlOpt = xmlOpt->NextSiblingElement("Element"))
     {
@@ -84,6 +80,9 @@ int GuiListbox::sendMsg(int message, const char *text, uint32 color)
     {
         case GuiManager::MSG_ADD_ROW:
             addText(text, color);
+            return 0;
+        case GuiManager::MSG_ADD_ITEM:
+            addItem(GuiImageset::getSingleton().getItemId(text), color);
             return 0;
         case GuiManager::MSG_CLEAR:
             clear();
@@ -155,7 +154,7 @@ int GuiListbox::addText(const char *txt, uint32 stdColor)
         ++keySign[1];
     }
     // ////////////////////////////////////////////////////////////////////
-    // Add the rows to the ringbuffer.
+    // Add the row(s) to the ringbuffer.
     // ////////////////////////////////////////////////////////////////////
     String strLine="";
     int sumLines = 0;
@@ -203,6 +202,29 @@ int GuiListbox::addText(const char *txt, uint32 stdColor)
 }
 
 //================================================================================================
+// Add an item.
+//================================================================================================
+int GuiListbox::addItem(int itemId, uint32 stdColor)
+{
+    int sumRowsForItem = GuiImageset::ITEM_SIZE / mFontHeight +1;
+    String strKeyword = "$" + StringConverter::toString(itemId);
+    int sumLines= 0;
+    for (int i = 0; i < sumRowsForItem; ++i)
+    {
+        row[mBufferPos & (SIZE_STRING_BUFFER-1)].text = " ";
+        row[mBufferPos & (SIZE_STRING_BUFFER-1)].color= stdColor;
+        row[mBufferPos & (SIZE_STRING_BUFFER-1)].keyword= strKeyword;
+        strKeyword = ""; // Only the first line holds the item information.
+        ++mBufferPos;
+        ++mRowsToPrint;
+        ++sumLines;
+        if (mActLines >= mMaxVisibleRows)   ++mPrintPos;
+        if (mActLines < SIZE_STRING_BUFFER) ++mActLines;
+    }
+    return sumRowsForItem;
+}
+
+//================================================================================================
 // Returns true if the mouse event was on this gadget (so no need to check the other gadgets).
 //================================================================================================
 int GuiListbox::mouseEvent(int MouseAction, int x, int y, int mouseWheel)
@@ -237,7 +259,7 @@ bool GuiListbox::extractKeyword(int mouseX, int mouseY)
     char key[] = { GuiTextout::TXT_CMD_LINK, GuiTextout::TXT_CMD_SEPARATOR, '\0'};
     int clickedLine = mMaxVisibleRows-(mouseY - mPosY)/ mFontHeight;
     clickedLine = (mActLines-clickedLine-mVScrollOffset) & (SIZE_STRING_BUFFER-1);
-    mKeywordPressed  = row[clickedLine].keyword;
+    mKeywordPressed= row[clickedLine].keyword;
     if (mKeywordPressed.empty()) return false; // No keyword.
     String strLine = row[clickedLine].text;
     mouseX-=mPosX;
@@ -299,20 +321,35 @@ void GuiListbox::draw()
     uint32 *bak = mParent->getLayerBG() + mPosX + mPosY*mParent->getWidth();
     uint32 *dst = GuiManager::getSingleton().getBuildBuffer();
     GuiGraphic::getSingleton().restoreWindowBG(mWidth, mHeight, bak, dst, mParent->getWidth(), mWidth);
-    int pos =0, offset = 0;
+    int tmp, pos = 0, offset = 0;
     for (int y = mActLines<mMaxVisibleRows?mMaxVisibleRows-mActLines:0; y < mMaxVisibleRows; ++y)
     {
         offset = y*mFontHeight;
+        // ////////////////////////////////////////////////////////////////////
+        // Draw item.
+        // ////////////////////////////////////////////////////////////////////
+        tmp = (mPrintPos-mVScrollOffset+pos)& (SIZE_STRING_BUFFER-1);
+        if (row[tmp].keyword[0] == '$')
+        {
+            tmp = atoi(row[tmp].keyword.substr(1).c_str());
+            PixelBox src = GuiImageset::getSingleton().getItemPB(tmp);
+            tmp = GuiImageset::ITEM_SIZE;
+            //GuiGraphic::getSingleton().restoreWindowBG(tmp, tmp, (uint32*)src.data, dst+offset*mWidth, tmp, mWidth);
+            GuiGraphic::getSingleton().drawGfxToBuffer(tmp, tmp, tmp, tmp, (uint32*)src.data, bak+offset*mWidth, dst+offset*mWidth, tmp, mParent->getWidth(), mWidth);
+        }
+        // ////////////////////////////////////////////////////////////////////
+        // Draw text.
+        // ////////////////////////////////////////////////////////////////////
         GuiTextout::getSingleton().printText(mWidth, mFontHeight, dst+offset*mWidth, mWidth,
                                              row[(mPrintPos-mVScrollOffset+pos)& (SIZE_STRING_BUFFER-1)].text.c_str(), mFontNr,
                                              row[(mPrintPos-mVScrollOffset+pos)& (SIZE_STRING_BUFFER-1)].color);
         ++pos;
     }
     mParent->getTexture()->getBuffer()->blitFromMemory(
-        PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8 , dst /*+ mWidth * mPixelScroll*/),
+        PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8 , dst),
         Box(mPosX, mPosY, mPosX + mWidth, mPosY + mHeight));
     // ////////////////////////////////////////////////////////////////////
-    // Handle Vertical Scrollbar.
+    // Vertical Scrollbar.
     // ////////////////////////////////////////////////////////////////////
     if (mScrollBarV)
         mScrollBarV->updateSliderSize(SIZE_STRING_BUFFER, mVScrollOffset, mMaxVisibleRows, mActLines);

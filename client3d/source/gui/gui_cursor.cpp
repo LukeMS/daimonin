@@ -22,7 +22,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
 #include "gui_cursor.h"
-#include "gui_manager.h"
 
 using namespace Ogre;
 

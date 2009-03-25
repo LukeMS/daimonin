@@ -24,7 +24,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef TEXTINPUT_H
 #define TEXTINPUT_H
 
-#include <Ogre.h>
 #include <OISKeyboard.h>
 #include "gui_textout.h"
 

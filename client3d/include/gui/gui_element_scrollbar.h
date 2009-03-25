@@ -24,8 +24,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef GUI_ELEMENT_SCROLLBAR_H
 #define GUI_ELEMENT_SCROLLBAR_H
 
-#include <Ogre.h>
-#include <tinyxml.h>
 #include "gui_element.h"
 #include "gui_element_button.h"
 

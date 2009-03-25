@@ -24,8 +24,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef GUI_LISTBOX_H
 #define GUI_LISTBOX_H
 
-#include <Ogre.h>
-#include <tinyxml.h>
 #include "gui_element.h"
 #include "gui_element_scrollbar.h"
 
@@ -57,9 +55,10 @@ private:
 
     struct _row
     {
-        Ogre::String text;
-        Ogre::String keyword;   /**< All keywords in this row. Separated by KEYWORD_SEPARATOR. **/
         Ogre::uint32 color;
+        Ogre::String text;
+        Ogre::String keyword;   /**< All keywords in this row. Separated by "#"
+                                     OR "$" followed by a number for an item index. **/
     }
     row[SIZE_STRING_BUFFER];
     static Ogre::String mKeywordPressed;
@@ -76,6 +75,7 @@ private:
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     int  addText(const char *text, Ogre::uint32 color);
+    int  addItem(int itemId, Ogre::uint32 color);
     void scrollTextVertical(int offset);
     bool extractKeyword(int x, int y);
 };

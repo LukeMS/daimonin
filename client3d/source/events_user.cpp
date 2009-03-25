@@ -148,9 +148,15 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
         case OIS::KC_H:
         {
             static int val = 100;
-            GuiManager::getSingleton().print(GuiManager::GUI_LIST_CHATWIN, StringConverter::toString(val).c_str());
-            GuiManager::getSingleton().setValue(GuiManager::GUI_STATUSBAR_NPC_HEALTH, val--);
+            val=0;
+            //GuiManager::getSingleton().print(GuiManager::GUI_LIST_CHATWIN, StringConverter::toString(val).c_str());
+            //GuiManager::getSingleton().setValue(GuiManager::GUI_STATUSBAR_PLAYER_MANA, val);
             //ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, 0,ObjectAnimate::STATE_HIT1);
+            //GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "Test 1");
+            //GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "Test 2");
+            GuiManager::getSingleton().addItem(GuiManager::GUI_LIST_MSGWIN, "gbn", 0xffffffff);
+            GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "Test 3");
+            GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "Test 4");
             break;
         }
 

@@ -24,7 +24,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef GUI_CURSOR_H
 #define GUI_CURSOR_H
 
-#include <Ogre.h>
 #include "gui_imageset.h"
 
 /**

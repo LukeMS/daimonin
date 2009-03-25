@@ -41,13 +41,13 @@ public:
     ~GuiWindow() {}
     GuiWindow()
     {
-        mInit = false;
+        mOverlay = 0;
     }
-    void loadResources(bool dnd);
+    void loadResources();
     void freeRecources();
     bool isVisible()
     {
-        return mInit?mOverlay->isVisible():false;
+        return mOverlay?mOverlay->isVisible():false;
     }
     void setVisible(bool visible);
     void Init(TiXmlElement *xmlElem, const char *resourceWin, int winNr, unsigned char defaultZPos);
@@ -60,31 +60,29 @@ public:
     }
     int getWidth()                 { return mWidth;    }
     int getHeight()                { return mHeight;   }
-    bool isInit()                  { return mInit;     }
     int getID()                    { return mWindowNr; }
     int getSumElements()           { return (int)mvElement.size(); }
+    Ogre::uint32  *getLayerBG()    { return mWinLayerBG; }
     Ogre::Texture *getTexture()    { return mTexture.getPointer(); }
-    Ogre::PixelBox *getPixelBox()  { return &mSrcPixelBox;   }
-    Ogre::uint32 *getLayerBG()     { return mWinLayerBG;     }
     unsigned char getZPos()
     {
-        return mInit?mOverlay->getZOrder():0;
+        return mOverlay?mOverlay->getZOrder():0;
     }
     void setZPos(unsigned char zorder)
     {
-        if (mInit) mOverlay->setZOrder(zorder);
+        if (mOverlay) mOverlay->setZOrder(zorder);
     }
     int mouseEvent(int MouseAction, Ogre::Vector3 &mouse);
     bool mouseWithin(int x, int y)
     {
-        return (!mInit || !isVisible() || x < mPosX || x > mPosX + mWidth || y < mPosY || y > mPosY + mHeight)?false:true;
+        return (isVisible() && x > mPosX && x < mPosX + mWidth && y > mPosY && y < mPosY + mHeight)?true:false;
     }
     void centerWindowOnMouse(int x, int y);
     int sendMsg(int elementNr, int message, const char *text, Ogre::uint32 param);
     const char *sendMsg(int elementNr, int info);
     int getDragSlot()
     {
-        return mElementDrag;
+        return mDragElement;
     }
     int getElementPressed()
     {
@@ -92,41 +90,28 @@ public:
         mElementClicked = -1;
         return ret;
     }
+    void checkForOverlappingElements();
 
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    static int mMouseDragging;
-    static int mElementClicked; /**< Number of the element that was clicked with left mousebutton. -1 for none. **/
-    Ogre::String mResourceName;
+    static int mDragWindowNr;   /**< Number of the window  which is currently moved by the user.    -1 for none. **/
+    static int mDragElement;    /**< Number of the element which is currently moved by the user.    -1 for none. **/
+    static int mElementClicked; /**< Number of the element which was clicked with left mousebutton. -1 for none. **/
+    static int mDragOffsetX, mDragOffsetY;
     short mPosX, mPosY;
     int mWindowNr;
-    int mMouseOver;
     int mWidth, mHeight;
-    int mDragPosX1, mDragPosX2, mDragPosY1, mDragPosY2, mDragOffsetX, mDragOffsetY;
-    int mMinimized, mDefaultHeight;
-    int mElementDrag;
-    unsigned int mSumUsedSlots;
-    bool mInit;
-    bool mSizeRelative;
-    bool mLockSlots; /**< TODO: Lock all slots, so no item can accidental be removed. **/
+    int mDragPosX1, mDragPosX2, mDragPosY1, mDragPosY2;
+    bool mLockSlots;            /**< Lock all slots, so no item can accidental be removed. **/
     std::vector<class GuiElement*>mvElement;
+    Ogre::String mResourceName;
     Ogre::Overlay *mOverlay;
     Ogre::OverlayElement *mElement;
-    Ogre::PixelBox mSrcPixelBox;
     Ogre::TexturePtr mTexture;
-    Ogre::uint32 *mWinLayerBG; /**< Its a backup of the window background to avoid
-                                    read access to the window texture and to restore
-                                    the background after a dynamic part of the win
-                                    has changed (e.g. button that changed to inisible)*/
-    // ////////////////////////////////////////////////////////////////////
-    // Functions.
-    // ////////////////////////////////////////////////////////////////////
-    void checkForOverlappingElements();
-    void setHeight(int h);
-    void delElement(int number);
-    void parseWindowData(TiXmlElement *xmlElem, unsigned char defaultZPos);
+    Ogre::uint32 *mWinLayerBG;  /**< Backup of the window texture to restore the background after a dynamic
+                                     element has changed (e.g. button that changed to invisible) */
 };
 
 #endif

@@ -394,7 +394,7 @@ bool Events::frameStarted(const FrameEvent& evt)
             static bool errorMsgNeedsToBeCleared = false;
             if (GuiManager::getSingleton().brokenTextInput())
             {
-                Logger::log().error() <<  "User break on login.";
+                Logger::log().error() << "User break on login.";
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
                 break;
             }

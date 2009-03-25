@@ -25,7 +25,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #define GUI_IMAGESET_H
 
 #include <vector>
-#include <Ogre.h>
 #include <tinyxml.h>
 #include "gui_manager.h"
 
@@ -120,7 +119,7 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    GuiImageset();
+    GuiImageset() {}
     ~GuiImageset();
     void parseItems(bool createItemAtlas);
     GuiImageset(const GuiImageset&); // disable copy-constructor
