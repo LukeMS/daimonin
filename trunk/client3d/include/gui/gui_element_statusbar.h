@@ -24,8 +24,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef GUI_STATUSBAR_H
 #define GUI_STATUSBAR_H
 
-#include <Ogre.h>
-#include <tinyxml.h>
 #include "gui_element.h"
 
 /**
@@ -54,7 +52,7 @@ private:
     bool mSmoothChange;         /**< Change the filling percentage in small steps to the new value. **/
     int mLength, mDiameter;
     int mValue;
-    int mDrawn;
+    Ogre::Real mDrawn;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////

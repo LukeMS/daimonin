@@ -22,10 +22,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
 #include "logger.h"
-#include "gui_element_textbox.h"
 #include "gui_textout.h"
-#include "gui_window.h"
-#include "gui_manager.h"
+#include "gui_element_textbox.h"
 
 using namespace Ogre;
 

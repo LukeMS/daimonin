@@ -21,12 +21,9 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
-#include <tinyxml.h>
-#include <OgreHardwarePixelBuffer.h>
-#include "gui_element_combobox.h"
-#include "gui_textout.h"
-#include "gui_window.h"
 #include "logger.h"
+#include "gui_textout.h"
+#include "gui_element_combobox.h"
 
 using namespace Ogre;
 

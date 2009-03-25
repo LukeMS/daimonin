@@ -22,7 +22,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
 #include <cmath>
-#include <tinyxml.h>
 #include <OISKeyboard.h>
 #include "logger.h"
 #include "gui_manager.h"
@@ -105,12 +104,12 @@ GuiManager::ElementID GuiManager::mStateStruct[GUI_ELEMENTS_SUM]=
     { -1, -1, "List_Chat",          GUI_LIST_CHATWIN   },
     { -1, -1, "List_NPC",           GUI_LIST_NPC       },
     // Statusbar.
+    { -1, -1, "Bar_PlayerMana",     GUI_STATUSBAR_NPC_MANA      },
+    { -1, -1, "Bar_PlayerGrace",    GUI_STATUSBAR_NPC_GRACE     },
     { -1, -1, "Bar_Health",         GUI_STATUSBAR_NPC_HEALTH    },
     { -1, -1, "Bar_Mana",           GUI_STATUSBAR_PLAYER_MANA   },
     { -1, -1, "Bar_Grace",          GUI_STATUSBAR_PLAYER_GRACE  },
     { -1, -1, "Bar_PlayerHealth",   GUI_STATUSBAR_PLAYER_HEALTH },
-    { -1, -1, "Bar_PlayerMana",     GUI_STATUSBAR_NPC_MANA      },
-    { -1, -1, "Bar_PlayerGrace",    GUI_STATUSBAR_NPC_GRACE     },
     // TextValues.
     { -1, -1, "Engine_CurrentFPS",  GUI_TEXTBOX_STAT_CUR_FPS   },
     { -1, -1, "Engine_BestFPS",     GUI_TEXTBOX_STAT_BEST_FPS  },
@@ -137,21 +136,22 @@ GuiManager::ElementID GuiManager::mStateStruct[GUI_ELEMENTS_SUM]=
     // Combobox.
     { -1, -1, "ComboBoxTest",       GUI_COMBOBOX_TEST  },
     // Element_Slot
-    { -1, -1, "Slot_Quickslot",     GUI_SLOT_QUICKSLOT    },
-    { -1, -1, "Slot_Equipment",     GUI_SLOT_EQUIPMENT    },
-    { -1, -1, "Slot_Inventory",     GUI_SLOT_INVENTORY    },
-    { -1, -1, "Slot_Container",     GUI_SLOT_CONTAINER    },
-    { -1, -1, "Slot_TradeOffer",    GUI_SLOT_TRADE_OFFER  },
-    { -1, -1, "Slot_TradeReturn",   GUI_SLOT_TRADE_RETURN },
-    { -1, -1, "Slot_Shop",          GUI_SLOT_SHOP         },
+    { -1, -1, "Slot_Quickslot",     GUI_SLOT_QUICKSLOT      },
+    { -1, -1, "Slot_Equipment",     GUI_SLOT_EQUIPMENT      },
+    { -1, -1, "Slot_Inventory",     GUI_SLOT_INVENTORY      },
+    { -1, -1, "Slots_Inventory",    GUI_SLOTGROUP_INVENTORY },
+    { -1, -1, "Slot_Container",     GUI_SLOT_CONTAINER      },
+    { -1, -1, "Slot_TradeOffer",    GUI_SLOT_TRADE_OFFER    },
+    { -1, -1, "Slot_TradeReturn",   GUI_SLOT_TRADE_RETURN   },
+    { -1, -1, "Slot_Shop",          GUI_SLOT_SHOP           },
 };
 
 //================================================================================================
 // .
 //================================================================================================
-int GuiManager::calcTextWidth(const char *text, int fontNr)
+const char *GuiManager::getElementName(int index)
 {
-    return GuiTextout::getSingleton().calcTextWidth(text, fontNr);
+    return (index >= GUI_ELEMENTS_SUM)?0:mStateStruct[index].name;
 }
 
 //================================================================================================
@@ -178,7 +178,7 @@ int GuiManager::sendMsg(int element, int message, const char *text, uint32 param
 {
     for (unsigned int i = 0; i < GUI_ELEMENTS_SUM; ++i)
     {
-        if (element == mStateStruct[i].index && guiWindow[mStateStruct[i].windowNr].isInit())
+        if (element == mStateStruct[i].index)
             return guiWindow[mStateStruct[i].windowNr].sendMsg(mStateStruct[i].winElementNr, message, text, param);
     }
     return -1;
@@ -191,7 +191,7 @@ const char *GuiManager::sendMsg(int element, int info)
 {
     for (unsigned int i = 0; i < GUI_ELEMENTS_SUM; ++i)
     {
-        if (element == mStateStruct[i].index && guiWindow[mStateStruct[i].windowNr].isInit())
+        if (element == mStateStruct[i].index)
             return guiWindow[mStateStruct[i].windowNr].sendMsg(mStateStruct[i].winElementNr, info);
     }
     return 0;
@@ -400,7 +400,7 @@ void GuiManager::loadResources(Ogre::Resource *res)
     if (name.find(RESOURCE_WINDOW)  != std::string::npos)
     {
         int window = StringConverter::parseInt(name.substr(name.find_first_of("#")+1, SUM_WIN_DIGITS));
-        guiWindow[window].loadResources(false);
+        guiWindow[window].loadResources();
         return;
     }
     if (name.find(RESOURCE_TEMP) != std::string::npos)
@@ -797,7 +797,7 @@ void GuiManager::drawTooltip()
     int maxWidth = 0;
     for (int i = 0; i < sumLines; ++i)
     {
-        txtWidth[i] = calcTextWidth(line[i].c_str(), GuiTextout::FONT_SYSTEM);
+        txtWidth[i] = GuiTextout::getSingleton().calcTextWidth(line[i].c_str(), GuiTextout::FONT_SYSTEM);
         if (txtWidth[i] > TOOLTIP_SIZE) txtWidth[i] = TOOLTIP_SIZE;
         if (txtWidth[i] > maxWidth) maxWidth = txtWidth[i];
     }

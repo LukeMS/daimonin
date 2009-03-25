@@ -24,9 +24,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef GUI_TABLE_H
 #define GUI_TABLE_H
 
-#include <vector>
-#include <Ogre.h>
-#include <tinyxml.h>
 #include "gui_element.h"
 
 /** --------------------------------------------------------------------------

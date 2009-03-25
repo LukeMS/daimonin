@@ -20,13 +20,13 @@ GNU GPL for 3d-Client and the licenses of the other code concerned.
 You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
+
 #include <OgreResourceGroupManager.h>
 #include <OgreFontManager.h>
-#include "gui_manager.h"
-#include "gui_graphic.h"
-#include "gui_textout.h"
-#include "gui_imageset.h"
 #include "logger.h"
+#include "gui_textout.h"
+#include "gui_graphic.h"
+#include "gui_imageset.h"
 
 using namespace Ogre;
 

@@ -22,11 +22,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
 #include "logger.h"
-#include "gui_element.h"
 #include "gui_graphic.h"
-#include "gui_imageset.h"
-#include "gui_window.h"
-#include "gui_manager.h"
+#include "gui_element.h"
 
 using namespace Ogre;
 
@@ -78,7 +75,7 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
     mHeight= MIN_SIZE;
     mVisible = true;
     mGfxSrc    = 0; // No gfx is defined (fallback to color fill).
-    mFillColor = 0;
+    mFillColor = 0xffffffff;
     mParent= (GuiWindow*)parent;
     mParent->getSize(maxX, maxY);
     // ////////////////////////////////////////////////////////////////////
@@ -194,9 +191,9 @@ void GuiElement::draw(bool uploadToTexture)
     // Draws a gfx into the window texture.
     if (mGfxSrc)
     {
-        PixelBox src = mParent->getPixelBox()->getSubVolume(Box(mGfxSrc->state[mState].x, mGfxSrc->state[mState].y,
+        PixelBox src = GuiImageset::getSingleton().getPixelBox().getSubVolume(Box(mGfxSrc->state[mState].x, mGfxSrc->state[mState].y,
                        mGfxSrc->state[mState].x + mGfxSrc->w, mGfxSrc->state[mState].y + mGfxSrc->h));
-        int srcRowSkip = (int)mParent->getPixelBox()->getWidth();
+        int srcRowSkip = (int)GuiImageset::getSingleton().getPixelBox().getWidth();
         if (mIndex < 0) // This gfx is part of the background.
             GuiGraphic::getSingleton().drawGfxToBuffer(mWidth, mHeight, mGfxSrc->w, mGfxSrc->h, (uint32*)src.data, bak, bak, srcRowSkip, mParent->getWidth(), mParent->getWidth());
         else if (mVisible)

@@ -28,7 +28,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #endif
 #include "logger.h"
 #include "gui_imageset.h"
-#include "gui_manager.h"
 
 using namespace Ogre;
 
@@ -61,13 +60,6 @@ const char FILE_ITEM_TEXTURE_ATLAS[]   = "Atlas_Gui_Items";
 const char PATH_ITEM_DESCRIPTION[]     = "items/";
 const char UNKONWN_ITEM_GFX_FILENAME[] = "item_noGfx.png";
 const int  UNKNOWN_ITEM_GFX = 0;
-
-
-//================================================================================================
-// .
-//================================================================================================
-GuiImageset::GuiImageset()
-{}
 
 //================================================================================================
 // .
@@ -347,10 +339,13 @@ void GuiImageset::parseItems(bool createItemAtlas)
 //================================================================================================
 int GuiImageset::getItemId(const char *gfxName)
 {
-    for (unsigned int i = 0; i < mvAtlasGfxName.size(); ++i)
+    if (gfxName)
     {
-        if (mvAtlasGfxName[i] == gfxName)
-            return i;
+        for (unsigned int i = 0; i < mvAtlasGfxName.size(); ++i)
+        {
+            if (mvAtlasGfxName[i] == gfxName)
+                return i;
+        }
     }
     return UNKNOWN_ITEM_GFX;
 }

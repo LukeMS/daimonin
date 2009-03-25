@@ -24,12 +24,10 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef GUI_ELEMENT_SLOT_H
 #define GUI_ELEMENT_SLOT_H
 
-#include <Ogre.h>
-#include <tinyxml.h>
 #include "gui_element.h"
 
 /**
- ** This class provides an slot that can hold an item.
+ ** This class provides a slot that can hold an item.
  ** Drag'n'Drop is supported.
  *****************************************************************************/
 class GuiElementSlot: public GuiElement
@@ -69,7 +67,7 @@ private:
     // ////////////////////////////////////////////////////////////////////
     static int mDragSlot;         /**< Slot where the drag was started. **/
     static int mActiveSlot;       /**< Slot the mouse is currently over. **/
-    int mItemGfxSize;             /**< The size of the Item-gfx. **/
+    static int uid;               /**< Unique number generator. **/
     int mSlotNr;                  /**< Unique number. **/
     int mSlotGfxBG;               /**< The gfx number of the background gfx (will only be shown if slot is empty **/
     int mItemGfxID;               /**< The item which is currently in the slot. **/
@@ -82,6 +80,24 @@ private:
     // ////////////////////////////////////////////////////////////////////
     int getTextureAtlasPos(const char *gfxName);
     void drawBusy(int busyTime);
+};
+
+/**
+ ** This class provides a group of slots.
+ *****************************************************************************/
+class GuiElementSlotGroup: public GuiElement
+{
+public:
+    GuiElementSlotGroup(TiXmlElement *xmlElement, void *parent);
+    ~GuiElementSlotGroup();
+private:
+    // ////////////////////////////////////////////////////////////////////
+    // Variables / Constants.
+    // ////////////////////////////////////////////////////////////////////
+    static int uid;               /**< Unique number generator. **/
+    int mGroupNr;                 /**< Unique number. **/
+    int mCols, mRows;
+    std::vector<class GuiElementSlot*>mvSlot;
 };
 
 #endif

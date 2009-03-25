@@ -24,9 +24,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef GUI_ELEMENT_COMBOBOX_H
 #define GUI_ELEMENT_COMBOBOX_H
 
-#include <Ogre.h>
-#include <tinyxml.h>
-#include "gui_imageset.h"
 #include "gui_element.h"
 
 /**

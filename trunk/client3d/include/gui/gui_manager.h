@@ -51,27 +51,6 @@ public:
         GUI_BUTTON_MAXIMIZE,
         GUI_BUTTON_RESIZE,
         /** User action on these elements will be send to the world outside. **/
-        // TextValues.
-        GUI_TEXTBOX_STAT_CUR_FPS,
-        GUI_TEXTBOX_STAT_BEST_FPS,
-        GUI_TEXTBOX_STAT_WORST_FPS,
-        GUI_TEXTBOX_STAT_SUM_TRIS,
-        GUI_TEXTBOX_SERVER_INFO1,
-        GUI_TEXTBOX_SERVER_INFO2,
-        GUI_TEXTBOX_SERVER_INFO3,
-        GUI_TEXTBOX_LOGIN_INFO1,
-        GUI_TEXTBOX_LOGIN_INFO2,
-        GUI_TEXTBOX_LOGIN_INFO3,
-        GUI_TEXTBOX_LOGIN_WARN,
-        GUI_TEXTBOX_LOGIN_PSWDVERIFY,
-        GUI_TEXTBOX_NPC_HEADLINE,
-        GUI_TEXTBOX_INV_EQUIP,
-        GUI_TEXTBOX_INV_EQUIP_WEIGHT,
-        // TextInput
-        GUI_TEXTINPUT_LOGIN_NAME,
-        GUI_TEXTINPUT_LOGIN_PASSWD,
-        GUI_TEXTINPUT_LOGIN_VERIFY,
-        GUI_TEXTINPUT_NPC_DIALOG,
         // Buttons.
         GUI_BUTTON_NPC_ACCEPT,
         GUI_BUTTON_NPC_DECLINE,
@@ -80,17 +59,34 @@ public:
         GUI_LIST_MSGWIN,
         GUI_LIST_CHATWIN,
         GUI_LIST_NPC,
-        GUI_LIST_UP,
-        GUI_LIST_DOWN,
-        GUI_LIST_LEFT,
-        GUI_LIST_RIGHT,
         // StatusBars.
-        GUI_STATUSBAR_NPC_HEALTH,
         GUI_STATUSBAR_NPC_MANA,
         GUI_STATUSBAR_NPC_GRACE,
+        GUI_STATUSBAR_NPC_HEALTH,
         GUI_STATUSBAR_PLAYER_MANA,
         GUI_STATUSBAR_PLAYER_GRACE,
         GUI_STATUSBAR_PLAYER_HEALTH,
+        // TextValues.
+        GUI_TEXTBOX_STAT_CUR_FPS,
+        GUI_TEXTBOX_STAT_BEST_FPS,
+        GUI_TEXTBOX_STAT_WORST_FPS,
+        GUI_TEXTBOX_STAT_SUM_TRIS,
+        GUI_TEXTBOX_SERVER_INFO1,
+        GUI_TEXTBOX_SERVER_INFO2,
+        GUI_TEXTBOX_SERVER_INFO3,
+        GUI_TEXTBOX_LOGIN_WARN,
+        GUI_TEXTBOX_LOGIN_PSWDVERIFY,
+        GUI_TEXTBOX_LOGIN_INFO1,
+        GUI_TEXTBOX_LOGIN_INFO2,
+        GUI_TEXTBOX_LOGIN_INFO3,
+        GUI_TEXTBOX_NPC_HEADLINE,
+        GUI_TEXTBOX_INV_EQUIP,
+        GUI_TEXTBOX_INV_EQUIP_WEIGHT,
+        // TextInput
+        GUI_TEXTINPUT_LOGIN_NAME,
+        GUI_TEXTINPUT_LOGIN_PASSWD,
+        GUI_TEXTINPUT_LOGIN_VERIFY,
+        GUI_TEXTINPUT_NPC_DIALOG,
         // Table
         GUI_TABLE,
         // Combobox
@@ -99,6 +95,7 @@ public:
         GUI_SLOT_QUICKSLOT,
         GUI_SLOT_EQUIPMENT,
         GUI_SLOT_INVENTORY,
+        GUI_SLOTGROUP_INVENTORY,
         GUI_SLOT_CONTAINER,
         GUI_SLOT_TRADE_OFFER,
         GUI_SLOT_TRADE_RETURN,
@@ -192,7 +189,6 @@ public:
     static const Ogre::uint32 COLOR_PINK;
     static const Ogre::uint32 COLOR_YELLOW;
     static const Ogre::uint32 COLOR_WHITE;
-
     static const char *GUI_MATERIAL_NAME;
     static const char *OVERLAY_ELEMENT_TYPE;
     static const char *OVERLAY_RESOURCE_NAME;
@@ -227,13 +223,16 @@ public:
     void setTooltip(const char *text, bool systemMessage = false);
     void displaySystemMessage(const char *text) { setTooltip(text, true); }
 
-    void playSound(const char *filename);
-    const char *getNextSound();
+    /** The gui doesn't play sounds but stores the filesnames in a string-vector.
+        This vector will be accessed via getNextSound() from outside the gui. **/
+    void playSound(const char *filename); /**< Stores the filename of a sound in a string-vector. **/
+    const char *getNextSound();           /**< Returns the first sound and delete it from the string-vector. **/
 
     void setMouseState(int action);
     int getScreenWidth()    { return mScreenWidth; }
     int getScreenHeight()   { return mScreenHeight;}
     int getElementIndex(const char *name, int windowID = -1, int getElementIndex = -1);
+    const char *getElementName(int index);
 
     int mouseEvent(int MouseAction, Ogre::Vector3 &mouse);
     bool keyEvent(const int keyChar, const unsigned int key);
@@ -243,7 +242,6 @@ public:
     bool brokenTextInput();
     bool finishedTextInput();
 
-    int calcTextWidth(const char *text, int fontNr);
     bool getUserAction()
     {
         if (!mTextInputUserAction)
@@ -314,7 +312,7 @@ private:
     unsigned long mTooltipDelay;
     bool mIsDragging;
     bool mTextInputUserAction;
-    std::vector<Ogre::String>mvSound;
+    std::vector<Ogre::String> mvSound;
     Ogre::uint32 *mBuildBuffer;  /**< Buffer to draw all graphics before blitting them into the texture. **/
     Ogre::Vector3 mMouse;
     static Ogre::Overlay *mOverlay;
@@ -331,7 +329,7 @@ private:
     ~GuiManager() {}
     GuiManager(const GuiManager&); // disable copy-constructor.
     void drawTooltip();
-    int sendMsg(int element, int message, const char *text, Ogre::uint32 param = 0x00ffffff);
+    int sendMsg(int element, int message, const char *text, Ogre::uint32 param = COLOR_WHITE);
     const char *sendMsg(int elementNr, int info);
     class ResourceLoader : public Ogre::ManualResourceLoader
     {
@@ -345,20 +343,20 @@ private:
 
 public:
     static ResourceLoader *getLoader() { return &mLoader; }
+    void clear(int element)                                   { sendMsg(element, MSG_CLEAR,       0); }
+    void closeParentWin(int element)                          { sendMsg(element, MSG_CLOSE_PARENT,0); }
+    void setText(int element, const char *text)               { sendMsg(element, MSG_SET_TEXT, text); }
+    void addLine(int element, const char *text)               { sendMsg(element, MSG_ADD_ROW,  text); }
+    void addItem(int element, const char *itemGfx, int param) { sendMsg(element, MSG_ADD_ITEM,itemGfx, param); }
+    void delItem(int element, const char *itemGfx)            { sendMsg(element, MSG_DEL_ITEM,    0); }
+    void setValue(int element, int value)                     { sendMsg(element, MSG_SET_VALUE,   0, value); }
+    void setVisible(int element, bool value)                  { sendMsg(element, MSG_SET_VISIBLE, 0, value==true?1:0); }
+    bool getUserBreak(int element)                            { return sendMsg(element, MSG_GET_USERBREAK, 0)?true:false; }
+    int getSelection(int element)                             { return sendMsg(element, MSG_GET_SELECTION, 0); }
+    int getActivated(int element)                             { return sendMsg(element, MSG_GET_ACTIVATED, 0); }
     int print(int element, const char *text,
-              Ogre::uint32 color = 0xffffffff)                   { return sendMsg(element, MSG_ADD_ROW,  text, color); }
-    void clear(int element)                                      { sendMsg(element, MSG_CLEAR,       0); }
-    void closeParentWin(int element)                             { sendMsg(element, MSG_CLOSE_PARENT,0); }
-    void setText(int element, const char *text)                  { sendMsg(element, MSG_SET_TEXT, text); }
-    void addLine(int element, const char *text)                  { sendMsg(element, MSG_ADD_ROW,  text); }
-    void addItem(int element, const char *itemGfx, int sumItems) { sendMsg(element, MSG_ADD_ITEM,itemGfx, sumItems); }
-    void delItem(int element, const char *itemGfx, int sumItems) { sendMsg(element, MSG_DEL_ITEM,    0); }
-    void setValue(int element, int value)                        { sendMsg(element, MSG_SET_VALUE,   0, value); }
-    void setVisible(int element, bool value)                     { sendMsg(element, MSG_SET_VISIBLE, 0, value==true?1:0); }
-    bool getUserBreak(int element)                               { return sendMsg(element, MSG_GET_USERBREAK, 0)?true:false; }
-    int  getSelection(int element)                               { return sendMsg(element, MSG_GET_SELECTION, 0); }
-    int  getActivated(int element)                               { return sendMsg(element, MSG_GET_ACTIVATED, 0); }
-    const char *getKeyword(int element)                          { return sendMsg(element, (int)MSG_GET_KEYWORD); }
+              Ogre::uint32 color = COLOR_WHITE)               { return sendMsg(element, MSG_ADD_ROW,  text, color); }
+    const char *getKeyword(int element)                       { return sendMsg(element, (int)MSG_GET_KEYWORD); }
 };
 
 #endif

@@ -24,8 +24,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef GUI_ELEMENT_TETBOX_H
 #define GUI_ELEMENT_TETBOX_H
 
-#include <Ogre.h>
-#include <tinyxml.h>
 #include "gui_element.h"
 
 /**
