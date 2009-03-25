@@ -1567,6 +1567,7 @@ void show_newplayer_server(void)
         {
             sprite_blt(Bitmaps[BITMAP_LOGIN_INP], x + 132, y + 345, NULL, NULL);
             sprintf(namebuf, "%s%c", InputString, '_');
+            namebuf[0] = toupper(namebuf[0]);
             StringBlt(ScreenSurface, &SystemFont, namebuf, x + 138, y + 347, COLOR_WHITE, NULL, NULL);
         }
         else
