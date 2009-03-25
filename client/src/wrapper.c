@@ -532,7 +532,7 @@ int parse_metaserver_data(char *info)
     {
         for (j = 0; j < i; j++)
         {
-            if (strcmp(entries[j].name, entries[j+1].name) > 0)
+            if (strcmp(entries[tag[j]].name, entries[tag[j+1]].name) > 0)
             {
                 k = tag[j];
                 tag[j] = tag[j+1];
