@@ -328,10 +328,10 @@ void second_artifact_pass(FILE *fp)
 }
 
 /*
-* recusively traverse the given directory and search for *.art files
-* and process them like they are part of the original artifact file
+* Traverse the given directory and search for *.art files and process them like
+* they are part of the original artifact file.
 */
-static void traverse_artifact_files(char* start_dir, int mode)
+static void traverse_artifact_files(char* start_dir, int recursive, int mode)
 {
     DIR* dir;                    /* pointer to the scanned directory. */
     struct dirent* entry=NULL;   /* pointer to one directory entry.   */
@@ -377,21 +377,24 @@ static void traverse_artifact_files(char* start_dir, int mode)
         /* is this a directory? */
         if (S_ISDIR(dir_stat.st_mode))
         {
-            /* Change into the new directory */
-            if (chdir(entry->d_name) == -1)
+            if (recursive)
             {
-                fprintf(stderr, "Cannot chdir into '%s': ", entry->d_name);
-                perror("");
-                continue;
-            }
-            /* check this directory */
-            traverse_artifact_files(NULL, mode);
+                /* Change into the new directory */
+                if (chdir(entry->d_name) == -1)
+                {
+                    fprintf(stderr, "Cannot chdir into '%s': ", entry->d_name);
+                    perror("");
+                    continue;
+                }
+                /* check this directory */
+                traverse_artifact_files(NULL, 1, mode);
 
-            /* finally, restore the original working directory. */
-            if (chdir("..") == -1)
-            {
-                fprintf(stderr, "Cannot chdir back to '%s': ", cwd);
-                perror("");
+                /* finally, restore the original working directory. */
+                if (chdir("..") == -1)
+                {
+                    fprintf(stderr, "Cannot chdir back to '%s': ", cwd);
+                    perror("");
+                }
             }
         }
         else
@@ -461,8 +464,11 @@ void load_artifacts(int mode)
     fclose(fp);
     LOG(llevDebug, "done.\n");
 
-    /* now traverse the maps directory and the single map sets for *.art files */
-    traverse_artifact_files(settings.mapdir, mode);
+    /* now non-recursively traverse the arch directory for *.art files */
+    traverse_artifact_files(settings.datadir, 0, mode);
+
+    /* now recursively traverse the maps directory and the single map sets for *.art files */
+    traverse_artifact_files(settings.mapdir, 1, mode);
 
     if(mode == ARTIFACTS_FIRST_PASS)
     {
