@@ -14,7 +14,7 @@ their parents in addition to what they've learned as apprentices
 in their craft. Females has the same stats as males.
 char Half-Elf
 human_m.isw.111 8 3 3 0 0 0
-1 half_elf_male	human_male.141
+1 half_elf_male	half_elf_male.141
 1 half_elf_female half_elf_female.141
 0 x x
 0 x x
