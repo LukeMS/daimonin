@@ -2,7 +2,7 @@
 #
 # <name>/<password>/<host>/<mode>
 #
-# <name> is a character name. May be '*' for any name. Must not contain the '/'
+# <name> is a account name. May be '*' for any name. Must not contain the '/'
 # character.
 #
 # <password> is a login password. May be '*' for any password. Must not
