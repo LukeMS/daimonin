@@ -144,6 +144,92 @@ treasure player_human_female
   arch guild_force
 end
 #
+treasure player_elf_male
+  arch redrose
+    magic_chance 0
+    artifact_chance 0
+  more
+  arch shirt
+    magic_chance 0
+    artifact_chance 0
+  more
+  arch pants
+    magic_chance 0
+    artifact_chance 0
+  more
+  arch torch
+    magic_chance 0
+    artifact_chance 0
+  more
+  arch torch
+    magic_chance 0
+    artifact_chance 0
+  more
+  list player_starting_wealth
+    magic_chance 0
+    artifact_chance 0
+  more
+  arch skill_use_magic_item
+  more
+  arch skill_literacy
+  more
+  arch skill_throwing
+  more
+  arch skill_punching
+  more
+  arch rank_force
+  more
+  arch alignment_force
+    title true neutral
+  more
+  arch age_force_elf
+  more
+  arch guild_force
+end
+#
+treasure player_elf_female
+  arch pinkrose
+    magic_chance 0
+    artifact_chance 0
+  more
+  arch dress
+    magic_chance 0
+    artifact_chance 0
+  more
+  arch pants
+    magic_chance 0
+    artifact_chance 0
+  more
+  arch torch
+    magic_chance 0
+    artifact_chance 0
+  more
+  arch torch
+    magic_chance 0
+    artifact_chance 0
+  more
+  list player_starting_wealth
+    magic_chance 0
+    artifact_chance 0
+  more
+  arch skill_use_magic_item
+  more
+  arch skill_punching
+  more
+  arch skill_literacy
+  more
+  arch skill_throwing
+  more
+  arch rank_force
+  more
+  arch alignment_force
+    title true neutral
+  more
+  arch age_force_elf
+  more
+  arch guild_force
+end
+#
 treasure player_half_elf_male
   arch shirt
     magic_chance 0

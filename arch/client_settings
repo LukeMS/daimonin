@@ -2,9 +2,9 @@
 # This is a server generated file!
 # Don't change anything here!
 char Human
-human_m.isw.111 8 3 3 0 0 0
-1 human_male human_male.141
-1 human_female human_female.141
+human_male.151 8 3 3 0 0 0
+1 human_male human_male.151
+1 human_female human_female.151
 0 x x
 0 x x
 13 13 13 12 13 13 12
@@ -12,10 +12,21 @@ Humans are the generalists of the races.
 They are fit for any trade, and usually pick up a skill from
 their parents in addition to what they've learned as apprentices
 in their craft. Females has the same stats as males.
+char Elf
+elf_male.151 8 3 3 0 0 0
+1 elf_male elf_male.151
+1 elf_female elf_female.151
+0 x x
+0 x x
+12 15 11 13 11 15 11
++-----------------------------+
+|   This space intentionally  |
+|         left blank          |
++-----------------------------+
 char Half-Elf
-human_m.isw.111 8 3 3 0 0 0
-1 half_elf_male	half_elf_male.141
-1 half_elf_female half_elf_female.141
+half_elf_male.151 8 3 3 0 0 0
+1 half_elf_male half_elf_male.151
+1 half_elf_female half_elf_female.151
 0 x x
 0 x x
 13 14 12 12 12 14 12
@@ -24,9 +35,9 @@ which elvish blood in the 2nd or 3rd generation. Real half bloods
 are normally counted to the elves. Half-elves are very similiar to
 humans but a bit more focused to power and dexterity.
 char Dwarf
-dwarf.161 8 3 3 0 0 0
-1 dwarf_male dwarf.161
-1 dwarf_female dwarf.161
+dwarf.151 8 3 3 0 0 0
+1 dwarf_male dwarf.151
+1 dwarf_female dwarf.151
 0 x x
 0 x x
 14 12 14 12 13 12 12
