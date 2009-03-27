@@ -345,7 +345,19 @@ void write_gmaster_file(void)
         return;
     }
     fprintf(fp, "# GMASTER_FILE (file is changed from server at runtime)\n");
-    fprintf(fp, "# entry <name>/*/*/GM will allow player <name> to be GM or VOL\n");
+    fprintf(fp, "#\n");
+    fprintf(fp, "# <name>/<password>/<host>/<mode>\n");
+    fprintf(fp, "#\n");
+    fprintf(fp, "# <name> is a account name. May be '*' for any name. Must not contain the '/'\n");
+    fprintf(fp, "# character.\n");
+    fprintf(fp, "#\n");
+    fprintf(fp, "# <password> is a login password. May be '*' for any password. Must not\n");
+    fprintf(fp, "# contain the '/' character.\n");
+    fprintf(fp, "#\n");
+    fprintf(fp, "# <host> is an IP address. May be '*' for any host. Must not contain the '/'\n");
+    fprintf(fp, "# character.\n");
+    fprintf(fp, "#\n");
+    fprintf(fp, "# <mode> is one of MW, VOL, GM, or MM.\n");
 
     for(ol = gmaster_list;ol;ol=ol->next)
         fprintf(fp, "%s\n", ol->objlink.gm->entry);
