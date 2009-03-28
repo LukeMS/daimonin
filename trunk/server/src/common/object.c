@@ -2589,7 +2589,7 @@ object * decrease_ob_nr(object *op, uint32 i)
 
 object * insert_ob_in_ob(object *op, object *where)
 {
-    object *tmp, *otmp;
+    object *otmp;
     mapstruct *old_map = op->map;
 
     if (!QUERY_FLAG(op, FLAG_REMOVED))
