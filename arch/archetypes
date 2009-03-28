@@ -81,8 +81,8 @@ bow_attack_enemy
 spell_attack_enemy
 endmsg
 editor_folder ai/arch_defaults
-other_arch guard
 face ai.101
+other_arch guard
 sys_object 1
 end
 Object empty_ai
@@ -126,8 +126,8 @@ actions:
 melee_attack_enemy
 endmsg
 editor_folder ai/race_defaults
-race dog
 face ai.101
+race dog
 sys_object 1
 end
 Object ai_horse
@@ -157,8 +157,8 @@ actions:
 melee_attack_enemy
 endmsg
 editor_folder ai/race_defaults
-race horse
 face ai.101
+race horse
 sys_object 1
 end
 Object slime_race_ai
@@ -180,16 +180,16 @@ actions:
 melee_attack_enemy
 endmsg
 editor_folder ai/race_defaults
-race slimes
 face ai.101
+race slimes
 sys_object 1
 end
 Object altar
 type 18
 editor_folder connectors/altars
+face altar.111
 slaying food
 layer 4
-face altar.111
 food 10
 sp -1
 animation altar
@@ -202,9 +202,9 @@ end
 Object broken_altar
 type 18
 editor_folder connectors/altars
+face broken_altar.111
 slaying food
 layer 4
-face broken_altar.111
 food 10
 sp -1
 animation broken_altar
@@ -218,12 +218,12 @@ Object altar_trigger
 name altar
 type 31
 editor_folder connectors/altars
+face altar.111
 slaying food
 food 5
 layer 4
 level 1
 sp -1
-face altar.111
 animation altar_trigger
 is_turnable 1
 direction 1
@@ -236,8 +236,8 @@ Object button_plate
 name large button
 type 92
 editor_folder connectors/buttons
-layer 3
 face button_big.101
+layer 3
 animation button_plate
 anim_speed 1
 no_pick 1
@@ -250,8 +250,8 @@ Object button_small
 name small button
 type 92
 editor_folder connectors/buttons
-layer 3
 face button_small.101
+layer 3
 animation button_small
 anim_speed 1
 no_pick 1
@@ -264,8 +264,8 @@ Object button_trigger
 name button
 type 30
 editor_folder connectors/buttons
-layer 3
 face button_small.101
+layer 3
 animation button_trigger
 anim_speed 1
 weight 1
@@ -279,10 +279,10 @@ Object handle_lever
 name big lever
 type 93
 editor_folder connectors/handles
+face lever.111
 layer 3
 no_pick 1
 no_teleport 1
-face lever.111
 animation handle_lever
 is_turnable 1
 direction 1
@@ -291,10 +291,10 @@ Object switch_wall
 name switch
 type 93
 editor_folder connectors/handles
+face switch_wall.111
 layer 5
 no_pick 1
 no_teleport 1
-face switch_wall.111
 animation switch_wall
 anim_speed 1
 is_turnable 1
@@ -304,10 +304,10 @@ Object trigger_lever
 name lever
 type 27
 editor_folder connectors/handles
+face lever.111
 layer 3
 no_pick 1
 no_teleport 1
-face lever.111
 animation trigger_lever
 is_turnable 1
 direction 1
@@ -317,8 +317,8 @@ Object check_inv
 name check_inv
 type 64
 editor_folder connectors/pedestals
-layer 3
 face pedestal.111
+layer 3
 animation check_inv
 is_turnable 1
 direction 1
@@ -332,9 +332,9 @@ Object detector
 name detector
 type 51
 editor_folder connectors/pedestals
+face pedestal.111
 slaying player
 layer 3
-face pedestal.111
 animation detector
 is_turnable 1
 direction 1
@@ -347,9 +347,9 @@ Object pedestal
 name pedestal
 type 17
 editor_folder connectors/pedestals
+face pedestal.111
 layer 3
 slaying player
-face pedestal.111
 animation pedestal
 is_turnable 1
 direction 1
@@ -362,9 +362,9 @@ Object pedestal_trigger
 name pedestal
 type 32
 editor_folder connectors/pedestals
+face pedestal.111
 slaying player
 layer 3
-face pedestal.111
 animation pedestal_trigger
 is_turnable 1
 direction 1
@@ -415,12 +415,357 @@ maxhp 10
 hp 10
 layer 0
 end
+Object curtain1
+name red curtain
+type 20
+msg
+You need a special key to open this door.
+endmsg
+editor_folder doors/curtain
+face curtain1.111
+layer 5
+sub_type 1
+blocksview 1
+door_closed 1
+sp 5
+pass_thru 1
+no_pick 1
+direction 1
+animation curtain1
+is_animated 0
+anim_speed 1
+is_turnable 1
+end
+Object door1_locked
+name metal door
+type 20
+msg
+You need a special key to open this door.
+endmsg
+editor_folder doors/metal
+face door_lock1.111
+layer 5
+blocksview 1
+door_closed 1
+sp 5
+pass_thru 1
+no_pick 1
+animation door1_locked
+is_animated 0
+anim_speed 1
+is_turnable 1
+direction 1
+end
+Object door1_locked_wreath
+name metal door
+type 20
+msg
+You need a special key to open this door.
+endmsg
+editor_folder doors/metal
+face door_lock1_wreath.111
+layer 5
+blocksview 1
+door_closed 1
+sp 5
+pass_thru 1
+no_pick 1
+animation door1_locked_wreath
+is_animated 0
+anim_speed 1
+is_turnable 1
+direction 1
+end
+Object gate1_locked
+name metal gate
+type 20
+msg
+You need a special key to open this gate.
+endmsg
+editor_folder doors/metal
+face gate_lock1.111
+layer 5
+door_closed 1
+pass_thru 1
+sp 5
+animation gate1_locked
+is_animated 0
+anim_speed 1
+is_turnable 1
+direction 1
+no_pick 1
+end
+Object door_redcross
+name wooden door
+type 20
+msg
+You need a special key to open this door.
+endmsg
+editor_folder doors/wooden
+face door_redcross.111
+layer 5
+blocksview 1
+door_closed 1
+sp 5
+pass_thru 1
+no_pick 1
+direction 1
+animation door_redcross
+is_animated 0
+anim_speed 1
+is_turnable 1
+end
+Object door_wood1
+name wooden door
+type 20
+msg
+You need a special key to open this door.
+endmsg
+editor_folder doors/wooden
+face door_wood1.111
+layer 5
+blocksview 1
+door_closed 1
+sp 5
+pass_thru 1
+no_pick 1
+direction 1
+animation door_wood1
+is_animated 0
+anim_speed 1
+is_turnable 1
+end
+Object door_wood2
+name wooden door
+type 20
+msg
+You need a special key to open this door.
+endmsg
+editor_folder doors/wooden
+face door_wood2.111
+layer 5
+blocksview 1
+door_closed 1
+sp 5
+pass_thru 1
+no_pick 1
+direction 1
+animation door_wood2
+is_animated 0
+anim_speed 1
+is_turnable 1
+end
+Object door_wood4
+name wooden door
+type 20
+msg
+You need a special key to open this door.
+endmsg
+editor_folder doors/wooden
+face door_wood4.111
+layer 5
+blocksview 0
+door_closed 1
+sp 5
+pass_thru 1
+no_pick 1
+direction 1
+animation door_wood4
+is_animated 0
+anim_speed 1
+is_turnable 1
+end
+Object bluebottles
+name bluebottles
+type 79
+editor_folder effects/bluebottles
+face bluebottles.101
+layer 7
+no_pick 1
+is_animated 1
+anim_speed 1
+speed -0.1
+speed_left -1.0
+animation bluebottles
+end
+Object fog
+type 79
+editor_folder effects/fog
+face fog.111
+other_arch fog
+terrain_flag 65535
+layer 7
+animation fog
+is_animated 1
+anim_speed 4
+flying 1
+no_pick 1
+is_used_up 1
+invulnerable 1
+material 1
+changing 1
+generator 1
+speed -0.003
+speed_left -1.0
+blocksview 1
+end
+Object fog_glow1
+name strange glowing fog
+type 79
+editor_folder effects/fog
+face fog.111
+layer 7
+other_arch fog_glow1
+terrain_flag 65535
+animation fog
+is_animated 1
+anim_speed 4
+flying 1
+no_pick 1
+is_used_up 1
+invulnerable 1
+material 1
+changing 1
+generator 1
+speed -0.003
+speed_left -1.0
+blocksview 0
+end
+Object fog_glow2
+name strange glowing fog
+type 79
+editor_folder effects/fog
+face fog.111
+layer 7
+terrain_flag 65535
+other_arch fog_glow2
+animation fog
+is_animated 1
+anim_speed 4
+flying 1
+no_pick 1
+is_used_up 1
+invulnerable 1
+material 1
+changing 1
+generator 1
+speed -0.003
+speed_left -1.0
+blocksview 0
+end
+Object temp_fog
+name fog
+type 79
+editor_folder effects/fog
+face fog.111
+layer 7
+animation fog
+is_animated 1
+anim_speed 4
+food 2
+flying 1
+no_pick 1
+is_used_up 1
+invulnerable 1
+material 1
+speed 0.01
+blocksview 1
+end
+Object level_up
+name magical sparkle
+type 79
+editor_folder effects/level_up
+face sparkle_lup.101
+layer 7
+animation level_up
+is_animated 1
+anim_speed 1
+speed 1
+is_used_up 1
+no_pick 1
+food 9
+end
+Object meffect_blue
+name magic glow
+type 79
+editor_folder effects/spell_effect
+face effect1_blue.101
+layer 7
+no_save 1
+animation meffect_blue
+is_animated 1
+anim_speed 1
+speed 1
+is_used_up 1
+no_pick 1
+food 5
+end
+Object meffect_green
+name magic glow
+type 79
+editor_folder effects/spell_effect
+face effect1_green.101
+layer 7
+no_save 1
+animation meffect_green
+is_animated 1
+anim_speed 1
+speed 1
+is_used_up 1
+no_pick 1
+food 5
+end
+Object meffect_pink
+name magic glow
+type 79
+editor_folder effects/spell_effect
+face effect1_pink.101
+layer 7
+no_save 1
+animation meffect_pink
+is_animated 1
+anim_speed 1
+speed 1
+is_used_up 1
+no_pick 1
+food 5
+end
+Object meffect_purple
+name magic glow
+type 79
+editor_folder effects/spell_effect
+face effect1_purple.101
+layer 7
+no_save 1
+animation meffect_purple
+is_animated 1
+anim_speed 1
+speed 1
+is_used_up 1
+no_pick 1
+food 5
+end
+Object meffect_yellow
+name magic glow
+type 79
+editor_folder effects/spell_effect
+face effect1_yellow.101
+layer 7
+no_save 1
+animation meffect_yellow
+is_animated 1
+anim_speed 1
+speed 1
+is_used_up 1
+no_pick 1
+food 5
+end
 Object ladder_down
 name ladder going down
 type 66
 editor_folder exits/ladders
-layer 5
 face ladder_down.151
+layer 5
 no_pick 1
 no_teleport 1
 animation ladder_down
@@ -435,8 +780,8 @@ Object ladder_up
 name ladder going up
 type 66
 editor_folder exits/ladders
-layer 5
 face ladder_up.151
+layer 5
 no_pick 1
 no_teleport 1
 animation ladder_up
@@ -451,8 +796,8 @@ Object ladder_down2
 name ladder going down
 type 66
 editor_folder exits/ladders
-layer 5
 face ladder_square_down.111
+layer 5
 no_pick 1
 no_teleport 1
 animation ladder_down2
@@ -467,8 +812,8 @@ Object ladder_down3
 name ladder going down
 type 66
 editor_folder exits/ladders
-layer 5
 face ladder_round_down.111
+layer 5
 no_pick 1
 no_teleport 1
 animation ladder_down3
@@ -483,8 +828,8 @@ Object ladder_down_rough
 name ladder going down
 type 66
 editor_folder exits/ladders
-layer 5
 face ladder_down_rough.151
+layer 5
 no_pick 1
 is_turnable 1
 direction 5
@@ -496,8 +841,8 @@ Object ladder_up_rough
 name ladder going up
 type 66
 editor_folder exits/ladders
-layer 5
 face ladder_up_rough.151
+layer 5
 no_pick 1
 is_turnable 1
 direction 5
@@ -509,8 +854,8 @@ Object ladder_up_rough2
 name ladder going up
 type 66
 editor_folder exits/ladders
-layer 5
 face ladder_up_rough2.151
+layer 5
 no_pick 1
 is_turnable 1
 direction 5
@@ -522,8 +867,8 @@ Object ladder_down_vege
 name ladder going down
 type 66
 editor_folder exits/ladders
-layer 5
 face ladder_down_vege.151
+layer 5
 no_pick 1
 no_teleport 1
 animation ladder_down_vege
@@ -538,8 +883,8 @@ Object ladder_up_vege
 name ladder going up
 type 66
 editor_folder exits/ladders
-layer 5
 face ladder_up_vege.151
+layer 5
 no_pick 1
 no_teleport 1
 animation ladder_up_vege
@@ -600,9 +945,9 @@ Object tele_rock
 name mysterious rock
 type 66
 editor_folder exits/misc
+face tele_rock.101
 sub_type 1
 layer 5
-face tele_rock.101
 hp -1
 sp -1
 no_pick 1
@@ -614,9 +959,9 @@ Object tele_stone
 name mysterious stone
 type 66
 editor_folder exits/misc
+face tele_stone.101
 sub_type 1
 layer 5
-face tele_stone.101
 hp -1
 sp -1
 no_pick 1
@@ -628,10 +973,10 @@ Object well_stone
 name stone well
 type 66
 editor_folder exits/misc
+face well_stone.101
 no_teleport 1
 hp -1
 sp -1
-face well_stone.101
 layer 5
 no_pick 1
 end
@@ -639,12 +984,12 @@ Object pit_closed
 name pit
 type 94
 editor_folder exits/pits
+face hole.108
 no_pick 1
 no_teleport 1
 hp -1
 sp -1
 layer 4
-face hole.108
 animation pit_closed
 anim_speed 0
 is_animated 0
@@ -655,12 +1000,12 @@ Object pit_open
 name pit
 type 94
 editor_folder exits/pits
+face hole.101
 hp -1
 sp -1
 layer 4
 no_teleport 1
 no_pick 1
-face hole.101
 animation pit_open
 anim_speed 0
 is_animated 0
@@ -672,9 +1017,9 @@ Object portal_big
 name big portal
 type 66
 editor_folder exits/portals
+face portal_big.101
 sub_type 1
 layer 5
-face portal_big.101
 hp -1
 sp -1
 no_pick 1
@@ -854,8 +1199,8 @@ Object shop_mat
 name shop teleporter
 type 69
 editor_folder exits/teleporters
-layer 4
 face exit.101
+layer 4
 no_pick 1
 animation shop_mat
 player_only 1
@@ -2937,8 +3282,8 @@ Object floor_grit2
 name floor
 type 71
 editor_folder floors/grit
-no_teleport 1
 face floor_grit2.101
+no_teleport 1
 layer 1
 terrain_type 1
 no_pick 1
@@ -2947,8 +3292,8 @@ Object floor_grit3a
 name floor
 type 71
 editor_folder floors/grit
-no_teleport 1
 face floor_grit3a.101
+no_teleport 1
 layer 1
 terrain_type 1
 no_pick 1
@@ -2957,8 +3302,8 @@ Object floor_grit3b
 name floor
 type 71
 editor_folder floors/grit
-no_teleport 1
 face floor_grit3b.101
+no_teleport 1
 layer 1
 terrain_type 1
 no_pick 1
@@ -2967,8 +3312,8 @@ Object floor_grit3c
 name floor
 type 71
 editor_folder floors/grit
-no_teleport 1
 face floor_grit3c.101
+no_teleport 1
 layer 1
 terrain_type 1
 no_pick 1
@@ -2977,8 +3322,8 @@ Object floor_grit4a
 name floor
 type 71
 editor_folder floors/grit
-no_teleport 1
 face floor_grit4a.101
+no_teleport 1
 layer 1
 terrain_type 1
 no_pick 1
@@ -2987,8 +3332,8 @@ Object floor_grit4b
 name floor
 type 71
 editor_folder floors/grit
-no_teleport 1
 face floor_grit4b.101
+no_teleport 1
 layer 1
 terrain_type 1
 no_pick 1
@@ -2997,8 +3342,8 @@ Object floor_grit4c
 name floor
 type 71
 editor_folder floors/grit
-no_teleport 1
 face floor_grit4c.101
+no_teleport 1
 layer 1
 terrain_type 1
 no_pick 1
@@ -3007,8 +3352,8 @@ Object floor_grit4d
 name floor
 type 71
 editor_folder floors/grit
-no_teleport 1
 face floor_grit4d.101
+no_teleport 1
 layer 1
 terrain_type 1
 no_pick 1
@@ -4177,9 +4522,9 @@ Object shop_floor
 name shop floor
 type 68
 editor_folder floors/shop
+face shop_empty.111
 layer 1
 no_teleport 1
-face shop_empty.111
 terrain_type 1
 no_pick 1
 no_magic 1
@@ -5272,8 +5617,8 @@ Object ability_bow
 name ability bow
 type 14
 editor_folder forces/ability
-race missile_sys
 face force.101
+race missile_sys
 identified 1
 last_grace 10
 sub_type 128
@@ -5288,8 +5633,8 @@ Object ability_cause_lig_wound
 name ability cause light wounds
 type 110
 editor_folder forces/ability
-identified 1
 face force.101
+identified 1
 is_magical 1
 last_grace 10
 sys_object 1
@@ -5377,8 +5722,8 @@ Object ability_mbullet
 name ability magic bullet
 type 110
 editor_folder forces/ability
-identified 1
 face force.101
+identified 1
 sys_object 1
 is_magical 1
 last_grace 10
@@ -5390,8 +5735,8 @@ Object ability_stone_throw
 name rock thrower
 type 14
 editor_folder forces/ability
-race rock_sys
 face force.101
+race rock_sys
 identified 1
 last_grace 10
 sub_type 128
@@ -5404,8 +5749,8 @@ end
 Object blindness
 type 114
 editor_folder forces/forces
-sys_object 1
 face force.101
+sys_object 1
 identified 1
 sub_type 8
 speed 0.05
@@ -5416,8 +5761,8 @@ end
 Object confusion
 type 114
 editor_folder forces/forces
-sys_object 1
 face force.101
+sys_object 1
 identified 1
 sub_type 7
 speed 0.05
@@ -5480,8 +5825,8 @@ msg
 You can't control your sphincter.
 endmsg
 editor_folder forces/disease
-sys_object 1
 face force.101
+sys_object 1
 other_arch disgusting_puddle
 wc 0
 thac0 0
@@ -5503,8 +5848,8 @@ Object disgusting_puddle
 name stinking puddle of diarrhea
 type 79
 editor_folder forces/disease
-layer 3
 face dia_icor.101
+layer 3
 identified 1
 thac0 0
 thacm 0
@@ -5517,8 +5862,8 @@ end
 Object immunity
 type 98
 editor_folder forces/disease
-title immunity
 face force.101
+title immunity
 identified 1
 sys_object 1
 end
@@ -5538,8 +5883,8 @@ You feel more hungry than usual.  You also feel an urge
 to refer to yourself in plural.
 endmsg
 editor_folder forces/disease
-sys_object 1
 face force.101
+sys_object 1
 attack_internal 100
 dam 1
 wc 1
@@ -5566,8 +5911,8 @@ msg
 You have warts.  They are ugly and annoying.
 endmsg
 editor_folder forces/disease
-sys_object 1
 face force.101
+sys_object 1
 attack_internal 100
 dam 1
 wc 1
@@ -5600,8 +5945,8 @@ end
 Object fear
 type 114
 editor_folder forces/forces
-sys_object 1
 face force.101
+sys_object 1
 identified 1
 sub_type 4
 speed 0.05
@@ -5613,8 +5958,8 @@ Object force
 name force
 type 114
 editor_folder forces/forces
-layer 0
 face force.101
+layer 0
 identified 1
 sys_object 1
 no_drop 1
@@ -5624,8 +5969,8 @@ end
 Object paralyze
 type 114
 editor_folder forces/forces
-sys_object 1
 face force.101
+sys_object 1
 identified 1
 sub_type 6
 speed 0.05
@@ -5652,8 +5997,8 @@ end
 Object slowness
 type 114
 editor_folder forces/forces
-sys_object 1
 face force.101
+sys_object 1
 exp -1
 identified 1
 last_heal 25
@@ -5666,8 +6011,8 @@ end
 Object snare
 type 114
 editor_folder forces/forces
-sys_object 1
 face force.101
+sys_object 1
 identified 1
 last_heal 25
 sub_type 5
@@ -5680,12 +6025,12 @@ Object gate_open
 name gate
 type 91
 editor_folder gates/gates
+face gate_door1.114
 layer 5
 attack_impact 100
 no_teleport 1
 no_pick 1
 pass_thru 1
-face gate_door1.114
 animation gate_open
 is_turnable 1
 anim_speed 0
@@ -5699,10 +6044,10 @@ Object gate_closed
 name gate
 type 91
 editor_folder gates/gates
+face gate_door1.111
 no_teleport 1
 layer 5
 no_pick 1
-face gate_door1.111
 animation gate_closed
 anim_speed 0
 is_turnable 1
@@ -5721,11 +6066,11 @@ Object gateTrg1
 name gate
 type 26
 editor_folder gates/gates
+face gate_door1.111
 attack_impact 100
 layer 5
 no_pick 1
 no_teleport 1
-face gate_door1.111
 animation gateTrg1
 is_turnable 1
 direction 1
@@ -5745,12 +6090,12 @@ Object gateTrg1_open
 name gate
 type 26
 editor_folder gates/gates
+face gate_door1.114
 attack_impact 100
 layer 5
 no_pick 1
 no_teleport 1
 pass_thru 1
-face gate_door1.114
 animation gateTrg1_open
 is_turnable 1
 direction 1
@@ -5771,11 +6116,11 @@ Object grate_open
 name grate
 type 91
 editor_folder gates/grates
+face grate_door1.114
 layer 5
 no_teleport 1
 attack_impact 100
 no_pick 1
-face grate_door1.114
 animation grate_open
 direction 1
 is_turnable 1
@@ -5791,10 +6136,10 @@ Object grate_closed
 name grate
 type 91
 editor_folder gates/grates
+face grate_door1.111
 no_teleport 1
 layer 5
 no_pick 1
-face grate_door1.111
 animation grate_closed
 anim_speed 0
 direction 1
@@ -5813,11 +6158,11 @@ Object grateTrg1
 name gate
 type 26
 editor_folder gates/grates
+face grate_door1.111
 attack_impact 100
 layer 5
 no_pick 1
 no_teleport 1
-face grate_door1.111
 animation grateTrg1
 is_turnable 1
 direction 1
@@ -5837,12 +6182,12 @@ Object grateTrg1_open
 name gate
 type 26
 editor_folder gates/grates
+face grate_door1.114
 attack_impact 100
 layer 5
 no_pick 1
 no_teleport 1
 pass_thru 1
-face grate_door1.114
 animation grateTrg1_open
 is_turnable 1
 direction 1
@@ -5863,11 +6208,11 @@ Object portcullis_open
 name portcullis
 type 91
 editor_folder gates/portcullises
+face portcullis.114
 layer 5
 no_teleport 1
 attack_impact 100
 no_pick 1
-face portcullis.114
 animation portcullis_open
 direction 1
 is_turnable 1
@@ -5883,10 +6228,10 @@ Object portcullis_closed
 name portcullis
 type 91
 editor_folder gates/portcullises
+face portcullis.111
 no_teleport 1
 layer 5
 no_pick 1
-face portcullis.111
 animation portcullis_closed
 anim_speed 0
 direction 1
@@ -5905,11 +6250,11 @@ Object portcullisTrg
 name portcullis
 type 26
 editor_folder gates/portcullises
+face portcullis.111
 attack_impact 100
 layer 5
 no_pick 1
 no_teleport 1
-face portcullis.111
 animation portcullisTrg
 is_turnable 1
 direction 1
@@ -5929,12 +6274,12 @@ Object portcullisTrg_open
 name portcullis
 type 26
 editor_folder gates/portcullises
+face portcullis.114
 attack_impact 100
 layer 5
 no_pick 1
 no_teleport 1
 pass_thru 1
-face portcullis.114
 animation portcullisTrg_open
 is_turnable 1
 direction 1
@@ -5958,11 +6303,11 @@ msg
 The Tabernacle of Life
 endmsg
 editor_folder gods/tabernacle
+face dummy.111
 title Moroch
 randomitems deity_tabernacle
 no_pick 1
 layer 6
-face dummy.111
 race animal,bird,slime,insect,reptile
 animation Tabernacle
 is_animated 1
@@ -6000,8 +6345,8 @@ Object altar_tabernacle
 name Altar of the Tabernacle
 type 56
 editor_folder gods/tabernacle
-other_arch Tabernacle
 face altar_default.111
+other_arch Tabernacle
 layer 4
 animation altar_tabernacle
 is_animated 0
@@ -6072,27 +6417,27 @@ end
 Object aggro_history
 type 127
 editor_folder intern
+face ah.101
 layer 0
 no_save 1
 sys_object 1
-face ah.101
 no_drop 1
 end
 Object base_info
 type 101
 editor_folder intern
+face info.101
 layer 0
 sys_object 1
-face info.101
 no_drop 1
 end
 Object dmg_info
 type 128
 editor_folder intern
+face dmg.101
 layer 0
 no_save 1
 sys_object 1
-face dmg.101
 no_drop 1
 end
 Object empty_archetype
@@ -6104,10 +6449,10 @@ Object tabernacle_avatar_info
 name avatar
 type 8
 editor_folder intern
+face power.101
 layer 0
 sys_object 1
 other_arch tabernacle_avatar
-face power.101
 end
 Object tabernacle_general_info
 name message
@@ -6116,50 +6461,50 @@ msg
 You feel a bond with the powers of the Tabernacle.
 endmsg
 editor_folder intern
+face power.101
 layer 0
 sys_object 1
-face power.101
 end
 Object tabernacle_holy_servant_info
 name holy servant
 type 8
 editor_folder intern
+face power.101
 layer 0
 sys_object 1
 other_arch ant_red
-face power.101
 end
 Object god_cure_blindness
 name heal spell
 type 8
 editor_folder intern
+face power.101
 sys_object 1
 slaying cure blindness
-face power.101
 end
 Object god_cure_confusion
 name heal spell
 type 8
 editor_folder intern
+face power.101
 sys_object 1
 slaying cure confusion
-face power.101
 end
 Object god_cure_disease
 name heal spell
 type 8
 editor_folder intern
+face power.101
 sys_object 1
 slaying cure disease
-face power.101
 end
 Object god_cure_poison
 name heal spell
 type 8
 editor_folder intern
+face power.101
 sys_object 1
 slaying cure poison
-face power.101
 end
 Object god_grace_limit_high
 name grace limit
@@ -6197,74 +6542,74 @@ Object god_remove_curse
 name remove curse
 type 8
 editor_folder intern
-sys_object 1
 face power.101
+sys_object 1
 end
 Object god_remove_damnation
 name remove damnation
 type 8
 editor_folder intern
-sys_object 1
 face power.101
+sys_object 1
 end
 Object god_remove_depletion
 name heal depletion
 type 8
 editor_folder intern
-sys_object 1
 face power.101
+sys_object 1
 end
 Object god_restore_grace
 name restore grace
 type 8
 editor_folder intern
-sys_object 1
 face power.101
+sys_object 1
 end
 Object god_restore_hitpoints
 name restore hitpoints
 type 8
 editor_folder intern
-sys_object 1
 face power.101
+sys_object 1
 end
 Object god_restore_spellpoints_high
 name restore spellpoints
 type 8
 editor_folder intern
+face power.101
 sys_object 1
 maxsp 150
-face power.101
 end
 Object god_restore_spellpoints_low
 name restore spellpoints
 type 8
 editor_folder intern
+face power.101
 sys_object 1
 maxsp 80
-face power.101
 end
 Object god_restore_spellpoints_medium
 name restore spellpoints
 type 8
 editor_folder intern
+face power.101
 sys_object 1
 maxsp 100
-face power.101
 end
 Object god_restore_spellpoints_very_high
 name restore spellpoints
 type 8
 editor_folder intern
+face power.101
 sys_object 1
 maxsp 200
-face power.101
 end
 Object gravestone
 type 38
 editor_folder intern
-layer 3
 face gravestone.101
+layer 3
 identified 1
 item_quality 100
 item_condition 100
@@ -6308,8 +6653,8 @@ Object close_bag
 name close the bag
 type 121
 editor_folder intern
-layer 3
 face close_bag.101
+layer 3
 no_pick 1
 no_drop 1
 identified 1
@@ -6318,8 +6663,8 @@ Object cauldron_open
 name close the cauldron
 type 121
 editor_folder intern
-layer 3
 face cauldron_open.101
+layer 3
 no_pick 1
 no_drop 1
 end
@@ -6461,8 +6806,8 @@ Object close_key_ring
 name close the key ring
 type 121
 editor_folder intern
-layer 3
 face close_keys.101
+layer 3
 no_drop 1
 no_pick 1
 identified 1
@@ -6471,8 +6816,8 @@ Object close_luggage
 name close the luggage
 type 121
 editor_folder intern
-layer 3
 face close_lugg.101
+layer 3
 no_pick 1
 no_drop 1
 identified 1
@@ -6597,10 +6942,10 @@ Object potion_generic_poi
 name potion
 type 5
 editor_folder intern
+face potion_gen.101
 nrof 1
 layer 3
 sp -1
-face potion_gen.101
 inv_face potion_gen.101
 last_grace 13
 can_stack 1
@@ -6660,7 +7005,6 @@ type 22
 layer 0
 sys_object 1
 slaying /planes/human_plane/castle/castle_030a
-face info.101
 hp 18
 sp 1
 value 300
@@ -6670,6 +7014,7 @@ Object alignment_force
 name ALIGNMENT_FORCE
 type 114
 editor_folder intern
+face force.101
 layer 0
 item_quality 100
 item_condition 100
@@ -6679,7 +7024,6 @@ known_magical 1
 known_cursed 1
 sys_object 1
 applied 1
-face force.101
 no_drop 1
 speed 0
 end
@@ -6687,6 +7031,7 @@ Object guild_force
 name GUILD_FORCE
 type 140
 editor_folder intern
+face force.101
 item_quality 100
 item_condition 100
 nrof 1
@@ -6702,13 +7047,13 @@ last_grace 100
 magic 100
 state 100
 layer 0
-face force.101
 no_drop 1
 speed 0
 end
 Object player_force
 type 114
 editor_folder intern
+face force.101
 sys_object 1
 applied 1
 item_quality 100
@@ -6718,13 +7063,13 @@ identified 1
 known_magical 1
 known_cursed 1
 layer 0
-face force.101
 no_drop 1
 speed 0
 end
 Object player_info
 type 79
 editor_folder intern
+face info.101
 sys_object 1
 applied 0
 no_drop 1
@@ -6735,12 +7080,12 @@ nrof 1
 identified 1
 known_magical 1
 known_cursed 1
-face info.101
 end
 Object rank_force
 name RANK_FORCE
 type 114
 editor_folder intern
+face force.101
 sys_object 1
 applied 1
 layer 0
@@ -6750,7 +7095,6 @@ nrof 1
 identified 1
 known_magical 1
 known_cursed 1
-face force.101
 no_drop 1
 speed 0
 end
@@ -6758,6 +7102,7 @@ Object age_force
 name age force
 type 67
 editor_folder intern
+face force.101
 layer 0
 sys_object 1
 item_quality 100
@@ -6767,7 +7112,6 @@ identified 1
 known_magical 1
 known_cursed 1
 applied 1
-face force.101
 no_drop 1
 speed 0
 end
@@ -6775,6 +7119,7 @@ Object age_force_dwarf
 name age_force_dwarf
 type 67
 editor_folder intern
+face force.101
 layer 0
 sys_object 1
 item_quality 100
@@ -6789,7 +7134,28 @@ identified 1
 known_magical 1
 known_cursed 1
 applied 1
+no_drop 1
+speed 0
+end
+Object age_force_elf
+name age_force_elf
+type 67
+editor_folder intern
 face force.101
+layer 0
+sys_object 1
+item_quality 100
+item_condition 100
+nrof 1
+identified 1
+known_magical 1
+known_cursed 1
+applied 1
+title elf age force (artifacts generic)
+hp 21
+maxhp 100
+sp   0
+grace  0
 no_drop 1
 speed 0
 end
@@ -6797,6 +7163,7 @@ Object age_force_half_elf
 name age_force_half_elf
 type 67
 editor_folder intern
+face force.101
 layer 0
 sys_object 1
 item_quality 100
@@ -6811,7 +7178,6 @@ hp 21
 maxhp 100
 sp   0
 grace  0
-face force.101
 no_drop 1
 speed 0
 end
@@ -6819,6 +7185,7 @@ Object age_force_human
 name age_force_human
 type 67
 editor_folder intern
+face force.101
 title human age force (artifacts generic)
 hp 21
 maxhp 80
@@ -6833,7 +7200,6 @@ identified 1
 known_magical 1
 known_cursed 1
 applied 1
-face force.101
 no_drop 1
 speed 0
 end
@@ -6841,8 +7207,8 @@ Object corpse_pl
 name player corpse
 type 122
 editor_folder intern
-layer 3
 face corpse_pl.101
+layer 3
 sub_type 1
 identified 1
 sub_type 2
@@ -6856,6 +7222,7 @@ end
 Object dwarf_female
 type 1
 editor_folder intern
+face dwarf.151
 race dwarf
 randomitems player_dwarf_female
 layer 6
@@ -6869,7 +7236,6 @@ terrain_flag 1
 weapon_speed 3.5
 container 110000
 speed 0.95
-face dwarf.151
 animation dwarf_female
 is_animated 1
 anim_speed 3
@@ -6893,8 +7259,8 @@ end
 Object dwarf_male
 type 1
 editor_folder intern
-race dwarf
 face dwarf.151
+race dwarf
 randomitems player_dwarf_male
 layer 6
 can_open_door 1
@@ -6927,9 +7293,84 @@ is_player 1
 weight 95000
 food 750
 end
+Object elf_female
+type 1
+editor_folder intern
+face elf_female.151
+race elf
+randomitems player_elf_female
+layer 6
+can_open_door 1
+is_female 1
+no_pick 1
+direction 5
+identified 1
+is_neutral 1
+container 105000
+weapon_speed 3.5
+speed 0.95
+terrain_flag 1
+animation elf_female
+is_animated 1
+anim_speed 4
+level 1
+ac 1
+wc 1
+thac0 85
+thacm 5
+hp -1
+maxhp 8
+sp -1
+maxsp 3
+grace -1
+maxgrace 3
+can_use_armour 1
+can_use_weapon 1
+is_player 1
+weight 70000
+food 750
+end
+Object elf_male
+type 1
+editor_folder intern
+face elf_male.151
+race elf
+randomitems player_elf_male
+layer 6
+can_open_door 1
+is_male 1
+no_pick 1
+direction 5
+identified 1
+is_neutral 1
+container 105000
+weapon_speed 3.5
+speed 0.95
+terrain_flag 1
+animation elf_male
+is_animated 1
+anim_speed 4
+level 1
+ac 1
+wc 1
+thac0 85
+thacm 5
+hp -1
+maxhp 8
+sp -1
+maxsp 3
+grace -1
+maxgrace 3
+can_use_armour 1
+can_use_weapon 1
+is_player 1
+weight 70000
+food 750
+end
 Object half_elf_female
 type 1
 editor_folder intern
+face half_elf_female.151
 race half-elf
 randomitems player_half_elf_female
 layer 6
@@ -6943,7 +7384,6 @@ terrain_flag 1
 container 100000
 weapon_speed 3.5
 speed 0.95
-face half_elf_female.151
 animation half_elf_female
 is_animated 1
 anim_speed 3
@@ -6967,8 +7407,8 @@ end
 Object half_elf_male
 type 1
 editor_folder intern
-race half-elf
 face half_elf_male.151
+race half-elf
 randomitems player_half_elf_male
 layer 6
 can_open_door 1
@@ -7004,6 +7444,7 @@ end
 Object human_female
 type 1
 editor_folder intern
+face human_female.151
 race human
 randomitems player_human_female
 layer 6
@@ -7017,7 +7458,6 @@ terrain_flag 1
 container 105000
 weapon_speed 3.5
 speed 0.95
-face human_female.151
 animation human_female
 is_animated 1
 anim_speed 3
@@ -7041,8 +7481,8 @@ end
 Object human_male
 type 1
 editor_folder intern
-race human
 face human_male.151
+race human
 randomitems player_human_male
 layer 6
 can_open_door 1
@@ -7078,6 +7518,7 @@ end
 Object quest_container
 type 120
 editor_folder intern
+face quest_con.101
 sys_object 1
 applied 0
 no_drop 1
@@ -7088,16 +7529,15 @@ nrof 1
 identified 1
 known_magical 1
 known_cursed 1
-face quest_con.101
 end
 Object quest_info
 type 136
 editor_folder intern
+face info.101
 sys_object 1
 applied 0
 no_drop 1
 layer 0
-face info.101
 end
 Object skill_alchemy
 name alchemy
@@ -7161,8 +7601,8 @@ Object skill_clawing
 name clawing
 type 43
 editor_folder intern
-sub_type 0
 face skill.101
+sub_type 0
 sys_object 1
 item_quality 100
 item_condition 100
@@ -7183,8 +7623,8 @@ Object skill_disarm_trap
 name disarm traps
 type 43
 editor_folder intern
-sub_type 1
 face skill.101
+sub_type 1
 sys_object 1
 item_quality 100
 item_condition 100
@@ -7202,6 +7642,7 @@ Object experience_agility
 name agility
 type 44
 editor_folder intern
+face exp.101
 sub_type 0
 sys_object 1
 no_drop 1
@@ -7211,7 +7652,6 @@ nrof 1
 identified 1
 known_magical 1
 known_cursed 1
-face exp.101
 level 1
 exp 0
 dex 1
@@ -7220,6 +7660,7 @@ Object experience_charisma
 name personality
 type 44
 editor_folder intern
+face exp.101
 sub_type 1
 sys_object 1
 item_quality 100
@@ -7228,7 +7669,6 @@ nrof 1
 identified 1
 known_magical 1
 known_cursed 1
-face exp.101
 no_drop 1
 level 1
 exp 0
@@ -7238,6 +7678,7 @@ Object experience_mental
 name mental
 type 44
 editor_folder intern
+face exp.101
 item_quality 100
 item_condition 100
 nrof 1
@@ -7245,7 +7686,6 @@ identified 1
 known_magical 1
 known_cursed 1
 sub_type 2
-face exp.101
 sys_object 1
 no_drop 1
 level 1
@@ -7256,6 +7696,7 @@ Object experience_misc
 name misc
 type 44
 editor_folder intern
+face exp.101
 item_quality 100
 item_condition 100
 nrof 1
@@ -7264,7 +7705,6 @@ known_magical 1
 known_cursed 1
 sub_type 6
 sys_object 1
-face exp.101
 no_drop 1
 level 1
 exp 0
@@ -7273,6 +7713,7 @@ Object experience_physical
 name physique
 type 44
 editor_folder intern
+face exp.101
 sub_type 3
 sys_object 1
 item_quality 100
@@ -7281,7 +7722,6 @@ nrof 1
 identified 1
 known_magical 1
 known_cursed 1
-face exp.101
 no_drop 1
 level 1
 exp 0
@@ -7292,8 +7732,8 @@ Object experience_power
 name magic
 type 44
 editor_folder intern
-sub_type 4
 face exp.101
+sub_type 4
 item_quality 100
 item_condition 100
 nrof 1
@@ -7310,6 +7750,7 @@ Object experience_wis
 name wisdom
 type 44
 editor_folder intern
+face exp.101
 sub_type 5
 item_quality 100
 item_condition 100
@@ -7318,7 +7759,6 @@ identified 1
 known_magical 1
 known_cursed 1
 sys_object 1
-face exp.101
 no_drop 1
 level 1
 exp 0
@@ -7328,6 +7768,7 @@ Object skill_find_traps
 name find traps
 type 43
 editor_folder intern
+face skill.101
 item_quality 100
 item_condition 100
 nrof 1
@@ -7335,7 +7776,6 @@ identified 1
 known_magical 1
 known_cursed 1
 sub_type 1
-face skill.101
 sys_object 1
 last_eat 2
 no_drop 1
@@ -7347,8 +7787,8 @@ Object skill_flame_touch
 name flame touch
 type 43
 editor_folder intern
-sub_type 0
 face skill.101
+sub_type 0
 sys_object 1
 item_quality 100
 item_condition 100
@@ -7369,8 +7809,8 @@ Object skill_hide
 name hide in shadows
 type 43
 editor_folder intern
-sub_type 1
 face skill.101
+sub_type 1
 item_quality 100
 item_condition 100
 nrof 1
@@ -7388,8 +7828,8 @@ Object skill_identify
 name identify items
 type 43
 editor_folder intern
-sub_type 1
 face skill.101
+sub_type 1
 sys_object 1
 item_quality 100
 item_condition 100
@@ -7408,8 +7848,8 @@ Object skill_inscription
 name inscription
 type 43
 editor_folder intern
-sub_type 2
 face skill.101
+sub_type 2
 sys_object 1
 item_quality 100
 item_condition 100
@@ -7447,8 +7887,8 @@ Object skill_jumping
 name jumping
 type 43
 editor_folder intern
-sub_type 1
 face skill.101
+sub_type 1
 item_quality 100
 item_condition 100
 nrof 1
@@ -7467,9 +7907,9 @@ Object skill_karate
 name karate
 type 43
 editor_folder intern
+face skill.101
 weapon_speed 3.0
 attack_impact 100
-face skill.101
 dam 75
 item_quality 100
 item_condition 100
@@ -7513,8 +7953,8 @@ Object skill_literacy
 name common literacy
 type 43
 editor_folder intern
-sub_type 2
 face skill.101
+sub_type 2
 magic 2
 item_quality 100
 item_condition 100
@@ -7551,8 +7991,8 @@ Object skill_thaumaturgy
 name magic lore
 type 43
 editor_folder intern
-sub_type 2
 face skill.101
+sub_type 2
 magic 6
 item_quality 100
 item_condition 100
@@ -7570,8 +8010,8 @@ Object skill_meditation
 name meditation
 type 43
 editor_folder intern
-sub_type 1
 face skill.101
+sub_type 1
 sys_object 1
 item_quality 100
 item_condition 100
@@ -7589,9 +8029,9 @@ Object skill_climbing
 name mountaineer
 type 43
 editor_folder intern
+face skill.101
 sub_type 2
 sys_object 1
-face skill.101
 item_quality 100
 item_condition 100
 nrof 1
@@ -7608,6 +8048,7 @@ Object skill_oratory
 name oratory
 type 43
 editor_folder intern
+face skill.101
 sub_type 1
 item_quality 100
 item_condition 100
@@ -7616,7 +8057,6 @@ identified 1
 known_magical 1
 known_cursed 1
 no_drop 1
-face skill.101
 magic 1
 sp 12
 sys_object 1
@@ -7628,6 +8068,7 @@ Object skill_praying
 name divine prayers
 type 43
 editor_folder intern
+face skill.101
 sub_type 2
 item_quality 100
 item_condition 100
@@ -7635,7 +8076,6 @@ nrof 1
 identified 1
 known_magical 1
 known_cursed 1
-face skill.101
 item_quality 100
 item_condition 100
 nrof 1
@@ -7654,8 +8094,8 @@ Object skill_punching
 name punching
 type 43
 editor_folder intern
-weapon_speed 4.0
 face skill.101
+weapon_speed 4.0
 attack_impact 100
 dam 38
 item_quality 100
@@ -7724,8 +8164,8 @@ Object skill_xbow_archery
 name crossbow archery
 type 43
 editor_folder intern
-sub_type 0
 face skill.101
+sub_type 0
 last_grace 0
 wc 0
 sys_object 1
@@ -7747,8 +8187,8 @@ Object skill_remove_trap
 name remove traps
 type 43
 editor_folder intern
-sub_type 1
 face skill.101
+sub_type 1
 item_quality 100
 item_condition 100
 nrof 1
@@ -7766,6 +8206,7 @@ Object skill_sense_curse
 name sense curse
 type 43
 editor_folder intern
+face skill.101
 sub_type 1
 item_quality 100
 item_condition 100
@@ -7773,7 +8214,6 @@ nrof 1
 identified 1
 known_magical 1
 known_cursed 1
-face skill.101
 sys_object 1
 no_drop 1
 sp 14
@@ -7786,8 +8226,8 @@ Object skill_sense_magic
 name sense magic
 type 43
 editor_folder intern
-sub_type 1
 face skill.101
+sub_type 1
 item_quality 100
 item_condition 100
 nrof 1
@@ -7806,8 +8246,8 @@ Object skill_set_trap
 name set traps
 type 43
 editor_folder intern
-sub_type 1
 face skill.101
+sub_type 1
 sys_object 1
 item_quality 100
 item_condition 100
@@ -7826,8 +8266,8 @@ Object skill_singing
 name singing
 type 43
 editor_folder intern
-sub_type 1
 face skill.101
+sub_type 1
 item_quality 100
 item_condition 100
 nrof 1
@@ -7846,6 +8286,7 @@ Object skill_smithery
 name smithery lore
 type 43
 editor_folder intern
+face skill.101
 sub_type 2
 item_quality 100
 item_condition 100
@@ -7853,7 +8294,6 @@ nrof 1
 identified 1
 known_magical 1
 known_cursed 1
-face skill.101
 sys_object 1
 magic 6
 no_drop 1
@@ -7866,8 +8306,8 @@ Object skill_spellcasting
 name wizardry spells
 type 43
 editor_folder intern
-sub_type 0
 face skill.101
+sub_type 0
 sys_object 1
 item_quality 100
 item_condition 100
@@ -7906,6 +8346,7 @@ Object skill_throwing
 name throwing
 type 43
 editor_folder intern
+face skill.101
 last_grace 0
 wc 0
 sub_type 0
@@ -7915,7 +8356,6 @@ nrof 1
 identified 1
 known_magical 1
 known_cursed 1
-face skill.101
 sys_object 1
 no_drop 1
 sp 25
@@ -7928,6 +8368,7 @@ Object skill_use_magic_item
 name magic devices
 type 43
 editor_folder intern
+face skill.101
 sub_type 0
 item_quality 100
 item_condition 100
@@ -7935,7 +8376,6 @@ nrof 1
 identified 1
 known_magical 1
 known_cursed 1
-face skill.101
 sys_object 1
 no_drop 1
 magic 4
@@ -7948,8 +8388,8 @@ Object skill_2h_mastery
 name two-hand mastery
 type 43
 editor_folder intern
-sub_type 2
 face skill.101
+sub_type 2
 sys_object 1
 item_quality 100
 item_condition 100
@@ -7967,6 +8407,7 @@ Object skill_pole_mastery
 name polearm mastery
 type 43
 editor_folder intern
+face skill.101
 sub_type 2
 item_quality 100
 item_condition 100
@@ -7976,7 +8417,6 @@ known_magical 1
 known_cursed 1
 sys_object 1
 no_drop 1
-face skill.101
 magic 3
 sp 41
 level 1
@@ -7986,8 +8426,8 @@ Object skill_cleave_weapon
 name cleave weapons
 type 43
 editor_folder intern
-sub_type 0
 face skill.101
+sub_type 0
 item_quality 100
 item_condition 100
 nrof 1
@@ -8006,8 +8446,8 @@ Object skill_impact_weapon
 name impact weapons
 type 43
 editor_folder intern
-sub_type 0
 face skill.101
+sub_type 0
 sys_object 1
 item_quality 100
 item_condition 100
@@ -8026,9 +8466,9 @@ Object skill_pierce_weapon
 name pierce weapons
 type 43
 editor_folder intern
+face skill.101
 sub_type 0
 sys_object 1
-face skill.101
 magic 3
 item_quality 100
 item_condition 100
@@ -8046,8 +8486,8 @@ Object skill_slash_weapon
 name slash weapons
 type 43
 editor_folder intern
-sub_type 0
 face skill.101
+sub_type 0
 sys_object 1
 item_quality 100
 item_condition 100
@@ -8066,8 +8506,8 @@ Object skill_woodsman
 name ranger lore
 type 43
 editor_folder intern
-sub_type 2
 face skill.101
+sub_type 2
 item_quality 100
 item_condition 100
 nrof 1
@@ -8084,19 +8524,19 @@ end
 Object spawn_info
 type 84
 editor_folder intern
+face info.101
 layer 0
 identified 1
 sys_object 1
-face info.101
 no_drop 1
 end
 Object arrow_sys
 name arrow_sys
 type 13
 editor_folder intern
+face arrow.101
 layer 0
 race missile_sys
-face arrow.101
 last_sp 5
 attack_pierce 100
 sub_type 1
@@ -8116,6 +8556,7 @@ Object bolt_sys
 name bolt_sys
 type 13
 editor_folder intern
+face bolt.101
 layer 0
 race missile_sys
 identified 1
@@ -8124,7 +8565,6 @@ attack_cleave 100
 last_sp 4
 sub_type 2
 can_stack 1
-face bolt.101
 animation bolt
 anim_speed 1
 is_turnable 1
@@ -8161,11 +8601,11 @@ Object sstone_sys
 name sstone_sys
 type 13
 editor_folder intern
+face sstone.101
 race missile_sys
 identified 1
 sys_object 1
 layer 0
-face sstone.101
 last_sp 4
 can_stack 1
 attack_impact 100
@@ -8209,10 +8649,10 @@ Object t_axe_sys
 name t_axe_sys
 type 13
 editor_folder intern
+face t_axe.101
 race rock_sys
 identified 1
 sys_object 1
-face t_axe.101
 layer 0
 attack_cleave 100
 dam 32
@@ -8235,11 +8675,11 @@ Object t_boulder_sys
 name t_boulder_sys
 type 13
 editor_folder intern
+face t_boulder.101
 race rock_sys
 identified 1
 sys_object 1
 layer 0
-face t_boulder.101
 attack_impact 100
 last_sp 7
 dam 30
@@ -8260,11 +8700,11 @@ Object t_dagger_sys
 name t_dagger_sys
 type 13
 editor_folder intern
+face t_dagger.101
 race rock_sys
 identified 1
 sys_object 1
 layer 0
-face t_dagger.101
 attack_pierce 100
 dam 32
 wc 45
@@ -8286,11 +8726,11 @@ Object t_hammer_sys
 name t_hammer_sys
 type 13
 editor_folder intern
+face hammer_2.101
 race rock_sys
 identified 1
 sys_object 1
 layer 0
-face hammer_2.101
 attack_impact 100
 dam 32
 wc 45
@@ -8312,11 +8752,11 @@ Object t_lboulder_sys
 name t_lboulder_sys
 type 13
 editor_folder intern
+face t_lboulder.101
 race rock_sys
 identified 1
 sys_object 1
 layer 0
-face t_lboulder.101
 attack_impact 100
 last_grace 18
 last_sp 7
@@ -8336,11 +8776,11 @@ Object t_rock_sys
 name t_rock_sys
 type 13
 editor_folder intern
+face t_rock.101
 layer 0
 race rock_sys
 identified 1
 sys_object 1
-face t_rock.101
 attack_impact 100
 dam 10
 last_grace 10
@@ -8360,10 +8800,10 @@ Object t_star_sys
 name t_star_sys
 type 13
 editor_folder intern
+face t_star.101
 race rock_sys
 identified 1
 sys_object 1
-face t_star.101
 layer 0
 attack_slash 100
 dam 32
@@ -8399,8 +8839,8 @@ end
 Object wealth
 type 125
 editor_folder intern
-value 4
 face wealth.101
+value 4
 sys_object 1
 no_pick 1
 layer 0
@@ -8409,12 +8849,12 @@ Object ash
 name pile
 type 73
 editor_folder items/alchemy
+face ash.101
 title of ash
 can_stack 1
 nrof 1
 item_quality 100
 item_condition 100
-face ash.101
 layer 3
 material 16
 is_dust 1
@@ -8425,10 +8865,10 @@ Object eye_newt
 name newt's eye
 type 73
 editor_folder items/alchemy
+face eye_newt.101
 nrof 1
 item_quality 100
 item_condition 100
-face eye_newt.101
 can_stack 1
 layer 3
 material 32
@@ -8439,11 +8879,11 @@ Object feather
 name feather
 type 73
 editor_folder items/alchemy
+face feather.101
 nrof 1
 item_quality 100
 item_condition 100
 can_stack 1
-face feather.101
 layer 3
 material 32
 weight 10
@@ -8453,11 +8893,11 @@ Object gravedirt
 name pile
 type 73
 editor_folder items/alchemy
+face dirt.101
 title of graveyard dirt
 nrof 1
 item_quality 100
 item_condition 100
-face dirt.101
 layer 3
 can_stack 1
 material 64
@@ -8469,10 +8909,10 @@ Object pulp_yew
 name yew tree pulp
 type 73
 editor_folder items/alchemy
+face pulp_yew.101
 nrof 1
 item_quality 100
 item_condition 100
-face pulp_yew.101
 can_stack 1
 layer 3
 material 64
@@ -8483,11 +8923,11 @@ Object root_mandrake
 name mandrake root
 type 73
 editor_folder items/alchemy
+face root_mandrake.101
 nrof 1
 item_quality 100
 item_condition 100
 can_stack 1
-face root_mandrake.101
 layer 3
 material 64
 weight 200
@@ -8497,10 +8937,10 @@ Object seed_a
 name seeds
 type 73
 editor_folder items/alchemy
+face seed_a.101
 nrof 1
 item_quality 100
 item_condition 100
-face seed_a.101
 layer 3
 can_stack 1
 material 32
@@ -8511,11 +8951,11 @@ Object seed_b
 name seed
 type 73
 editor_folder items/alchemy
+face seed_b.101
 nrof 1
 can_stack 1
 item_quality 100
 item_condition 100
-face seed_b.101
 layer 3
 material 32
 weight 120
@@ -8525,12 +8965,12 @@ Object sulfur
 name pile
 type 73
 editor_folder items/alchemy
+face sulfur.101
 title of sulfur
 nrof 1
 item_quality 100
 can_stack 1
 item_condition 100
-face sulfur.101
 layer 3
 material 64
 is_dust 1
@@ -8773,8 +9213,8 @@ Object bracers_ac
 name bracers
 type 104
 editor_folder items/armour
-layer 3
 face bracers_ac.101
+layer 3
 ac 1
 last_heal 40
 item_skill 4
@@ -8791,8 +9231,8 @@ Object bracers_wintersevent
 name winters event bracers
 type 104
 editor_folder items/armour
-layer 3
 face bracers_wintersevent.101
+layer 3
 ac 2
 item_skill 4
 resist_impact 12
@@ -8812,8 +9252,8 @@ Object bracers_cloth
 name bracers
 type 104
 editor_folder items/armour
-layer 3
 face bracers_cloth.101
+layer 3
 ac 4
 last_heal -44
 item_level 4
@@ -8839,8 +9279,8 @@ Object bracers_leather
 name bracers
 type 104
 editor_folder items/armour
-layer 3
 face bracers_leather.101
+layer 3
 ac 1
 resist_impact 4
 resist_slash 4
@@ -8938,8 +9378,8 @@ Object gauntlets
 name chain gauntlets
 type 100
 editor_folder items/armour
-layer 3
 face gauntlets_chain.101
+layer 3
 ac 1
 last_heal 32
 item_level 5
@@ -8956,8 +9396,8 @@ Object gauntlets_leather
 name gauntlets
 type 100
 editor_folder items/armour
-layer 3
 face gauntlets_leather.101
+layer 3
 ac 1
 resist_impact 6
 resist_cleave 6
@@ -8972,8 +9412,8 @@ Object gauntlets_scale
 name plate gauntlets
 type 100
 editor_folder items/armour
-layer 3
 face gauntlets_plate.101
+layer 3
 ac 1
 last_heal 40
 item_level 10
@@ -8990,8 +9430,8 @@ Object gauntlets_plate
 name plate gauntlets
 type 100
 editor_folder items/armour
-layer 3
 face gauntlets_silver.101
+layer 3
 ac 2
 last_heal 45
 item_level 15
@@ -9009,8 +9449,8 @@ Object gauntlets_spiked
 name spiked gauntlets
 type 100
 editor_folder items/armour
-layer 3
 face gauntlets_spiked.101
+layer 3
 material_real 193
 material 8
 ac 1
@@ -9026,8 +9466,8 @@ Object gloves
 name gloves
 type 100
 editor_folder items/armour
-layer 3
 face gloves.101
+layer 3
 resist_impact 4
 resist_cleave 4
 resist_slash 4
@@ -9066,8 +9506,8 @@ Object belt
 name belt
 type 113
 editor_folder items/armour
-layer 3
 face belt.101
+layer 3
 resist_pierce 8
 resist_impact 8
 resist_cleave 8
@@ -9085,8 +9525,8 @@ Object girdle
 name girdle
 type 113
 editor_folder items/armour
-layer 3
 face girdle.101
+layer 3
 resist_pierce 2
 resist_impact 2
 resist_cleave 2
@@ -9100,8 +9540,8 @@ Object girdle_cloth
 name girdle
 type 113
 editor_folder items/armour
-layer 3
 face girdle_cloth.101
+layer 3
 ac 4
 item_level 6
 item_skill 5
@@ -9181,8 +9621,8 @@ Object hat_blue
 name  blue colored hat
 type 34
 editor_folder items/armour
-layer 3
 face hat_wiz.101
+layer 3
 weight 250
 ac 4
 last_heal -12
@@ -9206,8 +9646,8 @@ Object hat_feather
 name  feathered hat
 type 34
 editor_folder items/armour
-layer 3
 face hat_feather.101
+layer 3
 weight 200
 ac 5
 last_heal -12
@@ -9231,15 +9671,15 @@ Object hat_witch
 name  witch hat
 type 34
 editor_folder items/armour
-layer 3
 face hat_witch.101
+layer 3
 weight 250
 ac 3
 last_heal -12
-protect_impact 1
-protect_cleave 1
-protect_slash 1
-protect_pierce 1
+resist_impact 1
+resist_cleave 1
+resist_slash 1
+resist_pierce 1
 resist_drain 4
 resist_depletion 4
 resist_corruption 4
@@ -9256,8 +9696,8 @@ Object helm_battle
 name battle helm
 type 34
 editor_folder items/armour
-layer 3
 face helm_battle.101
+layer 3
 last_heal 64
 ac 2
 item_level 17
@@ -9274,8 +9714,8 @@ Object helm_bronze
 name helm
 type 34
 editor_folder items/armour
-layer 3
 face helm_bronze.101
+layer 3
 last_heal 44
 ac 2
 item_level 10
@@ -9293,8 +9733,8 @@ Object helm_field
 name field helm
 type 34
 editor_folder items/armour
-layer 3
 face helm_field.101
+layer 3
 last_heal 38
 ac 2
 item_level 10
@@ -9312,8 +9752,8 @@ Object full_helmet
 name full helmet
 type 34
 editor_folder items/armour
-layer 3
 face fullhelmet.101
+layer 3
 last_heal 36
 ac 2
 item_level 10
@@ -9331,8 +9771,8 @@ Object helm_guard
 name guard helm
 type 34
 editor_folder items/armour
-layer 3
 face helm_guard.101
+layer 3
 last_heal 80
 ac 3
 item_level 30
@@ -9350,8 +9790,8 @@ Object helm_horn
 name horned helm
 type 34
 editor_folder items/armour
-layer 3
 face helm_horn.101
+layer 3
 last_heal 26
 ac 1
 resist_impact 5
@@ -9385,8 +9825,8 @@ Object helm_leather
 name  cap
 type 34
 editor_folder items/armour
-layer 3
 face helm_leather.101
+layer 3
 weight 900
 ac 1
 resist_impact 4
@@ -9401,8 +9841,8 @@ Object helm_plate
 name plate helm
 type 34
 editor_folder items/armour
-layer 3
 face helm_plate.101
+layer 3
 last_heal 60
 ac 2
 item_level 17
@@ -9420,8 +9860,8 @@ Object helm_war
 name war helm
 type 34
 editor_folder items/armour
-layer 3
 face helm_war.101
+layer 3
 last_heal 60
 ac 2
 item_level 17
@@ -9439,8 +9879,8 @@ Object helm_samurai
 name samurai horned helm
 type 34
 editor_folder items/armour
-layer 3
 face helmet_samurai_horned.101
+layer 3
 last_heal 38
 ac 2
 item_level 10
@@ -9462,10 +9902,10 @@ face mask_lizard.101
 layer 3
 cha -1
 last_heal 12
-protect_impact 3
-protect_slash 3
-protect_cleave 3
-protect_pierce 3
+resist_impact 3
+resist_slash 3
+resist_cleave 3
+resist_pierce 3
 weight 2100
 value 1700
 material 1024
@@ -9479,10 +9919,10 @@ face mask_skelly.101
 layer 3
 cha -1
 last_heal 12
-protect_impact 3
-protect_slash 3
-protect_cleave 3
-protect_pierce 3
+resist_impact 3
+resist_slash 3
+resist_cleave 3
+resist_pierce 3
 weight 2100
 value 1700
 material 1024
@@ -9492,8 +9932,8 @@ Object legs_chain
 name chain legs
 type 143
 editor_folder items/armour
-layer 3
 face legs_chain.101
+layer 3
 ac 2
 last_heal 40
 item_level 5
@@ -9510,8 +9950,8 @@ Object legs_frozenice
 name frozenice legs
 type 143
 editor_folder items/armour
-layer 3
 face legs_frozenice.101
+layer 3
 ac 2
 last_heal 40
 item_level 5
@@ -9530,8 +9970,8 @@ Object legs_leather
 name legs
 type 143
 editor_folder items/armour
-layer 3
 face legs_leather.101
+layer 3
 ac 1
 resist_impact 6
 resist_cleave 6
@@ -9546,8 +9986,8 @@ Object legs_plate
 name plate legs
 type 143
 editor_folder items/armour
-layer 3
 face legs_plate.101
+layer 3
 ac 3
 last_heal 48
 item_level 10
@@ -9633,8 +10073,8 @@ Object bone_armour
 name bone armour
 type 16
 editor_folder items/armour
-layer 3
 face bone_armour.101
+layer 3
 last_heal 81
 last_sp 100
 ac 6
@@ -9673,8 +10113,8 @@ Object breastplate
 name breastplate
 type 16
 editor_folder items/armour
-layer 3
 face breastplate.101
+layer 3
 last_heal 130
 item_level 20
 item_skill 4
@@ -9693,8 +10133,8 @@ Object brigandine
 name brigandine
 type 16
 editor_folder items/armour
-layer 3
 face brigandine.101
+layer 3
 last_heal 96
 last_sp 8
 material 2
@@ -9733,8 +10173,8 @@ Object chain_mail
 name chain mail
 type 16
 editor_folder items/armour
-layer 3
 face chainmail.101
+layer 3
 last_heal 96
 last_sp 100
 material 2
@@ -9795,8 +10235,8 @@ Object dress
 name dress
 type 16
 editor_folder items/armour
-layer 3
 face dress.101
+layer 3
 ac 2
 last_heal -40
 resist_impact 4
@@ -9820,8 +10260,8 @@ Object dress_evening_blue
 name dress
 type 16
 editor_folder items/armour
-layer 3
 face dress_evening_blue.101
+layer 3
 ac 1
 item_skill 5
 last_heal -40
@@ -9846,8 +10286,8 @@ Object dress_evening_red
 name dress
 type 16
 editor_folder items/armour
-layer 3
 face dress_evening_red.101
+layer 3
 ac 1
 item_skill 5
 last_heal -40
@@ -9872,8 +10312,8 @@ Object dress_midnight
 name dress
 type 16
 editor_folder items/armour
-layer 3
 face dress_midnight.101
+layer 3
 ac 3
 item_skill 5
 last_heal -40
@@ -9898,8 +10338,8 @@ Object coat
 name coat
 type 16
 editor_folder items/armour
-layer 3
 face coat.101
+layer 3
 ac 5
 item_skill 5
 last_heal -40
@@ -9924,8 +10364,8 @@ Object coat_expensive
 name coat
 type 16
 editor_folder items/armour
-layer 3
 face coat_exp.101
+layer 3
 ac 6
 item_skill 5
 last_heal -40
@@ -9950,8 +10390,8 @@ Object coat_simple
 name coat
 type 16
 editor_folder items/armour
-layer 3
 face coat_simple.101
+layer 3
 ac 4
 item_skill 5
 last_heal -40
@@ -9976,8 +10416,8 @@ Object coat_mage
 name mage coat
 type 16
 editor_folder items/armour
-layer 3
 face mage_robe.101
+layer 3
 ac 8
 item_level 8
 item_skill 5
@@ -10023,8 +10463,8 @@ Object leather_armour
 name armour
 type 16
 editor_folder items/armour
-layer 3
 face leather_ar.101
+layer 3
 ac 3
 resist_impact 10
 resist_cleave 15
@@ -10039,8 +10479,8 @@ Object leather_cuirass
 name cuirass
 type 16
 editor_folder items/armour
-layer 3
 face leather_cuirass.101
+layer 3
 last_sp 100
 ac 6
 item_level 7
@@ -10058,8 +10498,8 @@ Object padded_armour
 name padded armour
 type 16
 editor_folder items/armour
-layer 3
 face leather_padded.101
+layer 3
 ac 2
 resist_impact 8
 resist_slash 10
@@ -10074,8 +10514,8 @@ Object padded_cloth
 name padded cloth armour
 type 16
 editor_folder items/armour
-layer 3
 face cloth_padded.101
+layer 3
 ac 4
 item_skill 5
 last_heal -8
@@ -10100,8 +10540,8 @@ Object leather_spiked
 name spiked armour
 type 16
 editor_folder items/armour
-layer 3
 face leather_spiked.101
+layer 3
 last_sp 25
 ac 4
 resist_impact 12
@@ -10117,8 +10557,8 @@ Object leather_studded
 name studded armour
 type 16
 editor_folder items/armour
-layer 3
 face leather_studded.101
+layer 3
 last_sp 50
 ac 5
 item_level 3
@@ -10136,8 +10576,8 @@ Object ring_mail
 name ring mail
 type 16
 editor_folder items/armour
-layer 3
 face ring_mail.101
+layer 3
 last_heal 21
 last_sp 50
 material 2
@@ -10312,8 +10752,8 @@ Object plate_field
 name field plate
 type 16
 editor_folder items/armour
-layer 3
 face plate_field.101
+layer 3
 last_heal 130
 item_level 22
 item_skill 4
@@ -10332,8 +10772,8 @@ Object plate_full
 name full plate
 type 16
 editor_folder items/armour
-layer 3
 face plate_full.101
+layer 3
 last_heal 130
 item_level 23
 item_skill 4
@@ -10352,8 +10792,8 @@ Object plate_mail
 name plate mail
 type 16
 editor_folder items/armour
-layer 3
 face plate_mail.101
+layer 3
 last_heal 136
 item_level 25
 item_skill 4
@@ -10394,8 +10834,8 @@ Object scale_armour
 name armour
 type 16
 editor_folder items/armour
-layer 3
 face scale_armour.101
+layer 3
 last_heal 82
 last_sp 100
 ac 6
@@ -10650,7 +11090,7 @@ resist_impact 45
 resist_slash 45
 resist_cleave 45
 resist_pierce 50
-resist_demonic 10
+resist_aether 10
 weight 19500
 value 255000
 end
@@ -10658,8 +11098,8 @@ Object shirt
 name shirt
 type 16
 editor_folder items/armour
-layer 3
 face shirt.101
+layer 3
 ac 1
 last_heal -1
 resist_impact 4
@@ -10695,8 +11135,8 @@ Object shield_frozenice
 name frozenice shield
 type 33
 editor_folder items/armour
-layer 3
 face shield_frozenice.101
+layer 3
 ac 14
 wc 2
 item_level 8
@@ -10725,8 +11165,8 @@ Object ball_and_chain
 name ball and chain
 type 33
 editor_folder items/armour
-layer 3
 face ball_and_chain.101
+layer 3
 ac 6
 wc 2
 item_level 4
@@ -10745,8 +11185,8 @@ Object shield_battle
 name battle shield
 type 33
 editor_folder items/armour
-layer 3
 face shield_battle.101
+layer 3
 ac 14
 last_heal 68
 item_skill 4
@@ -10764,8 +11204,8 @@ Object blade_stopper
 name blade stopper
 type 33
 editor_folder items/armour
-layer 3
 face blade_stopper.101
+layer 3
 ac 14
 item_level 28
 item_skill 4
@@ -10801,8 +11241,8 @@ Object shield_round
 name round shield
 type 33
 editor_folder items/armour
-layer 3
 face shield_round.101
+layer 3
 ac 8
 item_level 3
 item_skill 4
@@ -10820,8 +11260,8 @@ Object buckler
 name buckler
 type 33
 editor_folder items/armour
-layer 3
 face buckler.101
+layer 3
 ac 6
 wc 1
 resist_impact 6
@@ -10837,8 +11277,8 @@ Object net_cloth
 name net
 type 33
 editor_folder items/armour
-layer 3
 face net_cloth.101
+layer 3
 ac 14
 last_heal -62
 wc 2
@@ -10866,8 +11306,8 @@ Object shield
 name shield
 type 33
 editor_folder items/armour
-layer 3
 face shield.101
+layer 3
 ac 8
 item_level 3
 item_skill 4
@@ -10885,8 +11325,8 @@ Object shield_bone
 name bone shield
 type 33
 editor_folder items/armour
-layer 3
 face shield_bone.101
+layer 3
 ac 10
 item_level 9
 item_skill 6
@@ -10903,8 +11343,8 @@ Object shield_chitin
 name shield
 type 33
 editor_folder items/armour
-layer 3
 face shield_chitin.101
+layer 3
 ac 10
 item_level 9
 item_skill 6
@@ -10921,8 +11361,8 @@ Object shield_defender
 name defender
 type 33
 editor_folder items/armour
-layer 3
 face shield_defender.101
+layer 3
 ac 12
 last_heal 48
 item_level 19
@@ -10940,8 +11380,8 @@ Object shield_demon
 name demon shield
 type 33
 editor_folder items/armour
-layer 3
 face shield_demon.101
+layer 3
 ac 12
 item_level 19
 last_heal 46
@@ -10960,8 +11400,8 @@ Object shield_protector
 name protector
 type 33
 editor_folder items/armour
-layer 3
 face shield_protector.101
+layer 3
 ac 12
 last_heal 50
 item_skill 4
@@ -10979,8 +11419,8 @@ Object shield_war
 name war shield
 type 33
 editor_folder items/armour
-layer 3
 face shield_war.101
+layer 3
 ac 14
 item_skill 4
 item_level 28
@@ -10998,8 +11438,8 @@ Object shield_eye
 name eye shield
 type 33
 editor_folder items/armour
-layer 3
 face shield_eye.101
+layer 3
 ac 10
 item_level 9
 last_heal 36
@@ -11017,8 +11457,8 @@ Object shield_heater
 name heater shield
 type 33
 editor_folder items/armour
-layer 3
 face shield_heater.101
+layer 3
 ac 10
 item_level 9
 item_skill 4
@@ -11036,8 +11476,8 @@ Object shield_high
 name high shield
 type 33
 editor_folder items/armour
-layer 3
 face shield_high.101
+layer 3
 ac 10
 last_heal 40
 item_skill 4
@@ -11055,8 +11495,8 @@ Object shield_kite
 name kite shield
 type 33
 editor_folder items/armour
-layer 3
 face shield_kite.101
+layer 3
 ac 8
 item_level 3
 item_skill 4
@@ -11074,8 +11514,8 @@ Object shield_scale
 name shield
 type 33
 editor_folder items/armour
-layer 3
 face shield_scale_white.101
+layer 3
 ac 10
 item_level 9
 item_skill 4
@@ -11093,8 +11533,8 @@ Object shield_holy
 name holy shield
 type 33
 editor_folder items/armour
-layer 3
 face shield_holy.101
+layer 3
 ac 14
 item_level 28
 item_skill 5
@@ -11112,8 +11552,8 @@ Object shield_skull
 name skull shield
 type 33
 editor_folder items/armour
-layer 3
 face shield_skull.101
+layer 3
 ac 15
 item_level 36
 last_heal 72
@@ -11132,8 +11572,8 @@ Object shoulder_chain
 name chain shoulders
 type 142
 editor_folder items/armour
-layer 3
 face shoulder_chain.101
+layer 3
 ac 1
 last_heal 40
 item_level 5
@@ -11151,8 +11591,8 @@ Object shoulder_cloth
 name shoulders
 type 142
 editor_folder items/armour
-layer 3
 face shoulder_cloth.101
+layer 3
 ac 6
 item_level 4
 item_skill 5
@@ -11178,8 +11618,8 @@ Object shoulder_frozenice
 name frozenice shoulders
 type 142
 editor_folder items/armour
-layer 3
 face shoulders_frozenice.101
+layer 3
 ac 1
 last_heal 40
 item_level 5
@@ -11199,8 +11639,8 @@ Object shoulder_leather
 name shoulders
 type 142
 editor_folder items/armour
-layer 3
 face shoulder_leather.101
+layer 3
 ac 1
 resist_impact 6
 resist_cleave 6
@@ -11215,8 +11655,8 @@ Object shoulder_plate
 name plate shoulder
 type 142
 editor_folder items/armour
-layer 3
 face shoulder_plate.101
+layer 3
 ac 1
 last_heal 48
 item_level 10
@@ -11234,8 +11674,8 @@ Object shoulder_scale
 name scale shoulders
 type 142
 editor_folder items/armour
-layer 3
 face shoulder_scale.101
+layer 3
 ac 1
 last_heal 41
 item_level 8
@@ -11253,9 +11693,9 @@ Object book
 name book
 type 8
 editor_folder items/books
+face book.101
 identified 1
 layer 3
-face book.101
 material 1
 value 12
 weight 1200
@@ -11264,8 +11704,8 @@ Object tome
 name tome
 type 8
 editor_folder items/books
-layer 3
 face tome.101
+layer 3
 identified 1
 material 1
 value 15
@@ -11275,8 +11715,8 @@ Object bag
 name bag
 type 122
 editor_folder items/container
-other_arch close_bag
 face bag.101
+other_arch close_bag
 layer 3
 level 1
 material 128
@@ -11290,9 +11730,9 @@ Object pouch
 name pouch
 type 122
 editor_folder items/container
+face pouch.101
 other_arch close_pouch
 race gold and jewels
-face pouch.101
 layer 3
 level 1
 material 8
@@ -11306,8 +11746,8 @@ Object r_sack
 name rucksack
 type 122
 editor_folder items/container
-other_arch close_rsack
 face r_sack.101
+other_arch close_rsack
 layer 3
 level 1
 material 8
@@ -11321,8 +11761,8 @@ Object sack
 name sack
 type 122
 editor_folder items/container
-other_arch close_sack
 face sack.101
+other_arch close_sack
 layer 3
 level 1
 material 128
@@ -11336,8 +11776,8 @@ Object chest
 name chest
 type 122
 editor_folder items/container
-other_arch close_chest1_111
 face chest_mm_closed.111
+other_arch close_chest1_111
 animation chest
 is_turnable 1
 direction 1
@@ -11356,8 +11796,8 @@ Object chest_m
 name chest
 type 122
 editor_folder items/container
-other_arch close_chest_m1_1
 face chest_lm_closed.111
+other_arch close_chest_m1_1
 animation chest_m
 is_turnable 1
 direction 1
@@ -11376,8 +11816,8 @@ Object chest_w1
 name chest
 type 122
 editor_folder items/container
-other_arch close_chest_w1_1
 face chest_lw_closed.111
+other_arch close_chest_w1_1
 animation chest_w1
 is_turnable 1
 direction 1
@@ -11396,8 +11836,8 @@ Object chest_4.111
 name chest
 type 122
 editor_folder items/container
-other_arch close_chest_4.111
 face chest_mw_closed.111
+other_arch close_chest_4.111
 animation chest_4.111
 is_turnable 1
 direction 1
@@ -11416,8 +11856,8 @@ Object chest_sm_1
 name chest
 type 122
 editor_folder items/container
-other_arch close_chest_sm_1
 face chest_sm_closed.111
+other_arch close_chest_sm_1
 animation chest_sm_1
 is_turnable 1
 direction 1
@@ -11436,8 +11876,8 @@ Object chest_sw_1
 name chest
 type 122
 editor_folder items/container
-other_arch close_chest_sw_1
 face chest_sw_closed.111
+other_arch close_chest_sw_1
 animation chest_sw_1
 is_turnable 1
 direction 1
@@ -11456,8 +11896,8 @@ Object chest7_111
 name chest
 type 122
 editor_folder items/container
-other_arch close_chest7_111
 face chest_mm2_closed.111
+other_arch close_chest7_111
 animation chest7_111
 is_turnable 1
 direction 1
@@ -11476,9 +11916,9 @@ Object depositbox
 name deposit box
 type 122
 editor_folder items/container
+face depositbox.101
 other_arch close_dbox
 race gold and jewels
-face depositbox.101
 no_pick 1
 identified 1
 level 1
@@ -11576,8 +12016,8 @@ Object cauldron
 name cauldron
 type 122
 editor_folder items/container
-other_arch cauldron_open
 face cauldron.101
+other_arch cauldron_open
 layer 4
 identified 1
 no_pick 1
@@ -11593,8 +12033,8 @@ Object bad_cauldron
 name cracked cauldron
 type 122
 editor_folder items/container
-other_arch cauldron_open
 face cauldron.101
+other_arch cauldron_open
 layer 4
 identified 1
 no_pick 1
@@ -11696,9 +12136,9 @@ Object key_ring
 name key ring
 type 122
 editor_folder items/container
+face key_ring.101
 other_arch close_key_ring
 race keys
-face key_ring.101
 layer 3
 level 1
 material 2
@@ -11814,8 +12254,8 @@ Object mailbox
 name mailbox
 type 122
 editor_folder items/container
-other_arch close_mail
 face mailbox.101
+other_arch close_mail
 layer 4
 no_pick 1
 identified 1
@@ -11832,10 +12272,10 @@ Object quiver
 name arrow quiver
 type 122
 editor_folder items/container
+face quiver.101
 race arrows
 food 13
 other_arch close_quiver
-face quiver.101
 level 1
 layer 3
 material 8
@@ -11849,10 +12289,10 @@ Object quiver_b
 name bolt quiver
 type 122
 editor_folder items/container
+face quiver_b.101
 race crossbow bolts
 food 13
 other_arch close_quiver_b
-face quiver_b.101
 layer 3
 level 1
 material 8
@@ -11866,11 +12306,11 @@ Object quiver_s
 name stone quiver
 type 122
 editor_folder items/container
+face quiver_s.101
 race sling stones
 food 13
 layer 3
 other_arch close_quiver_s
-face quiver_s.101
 level 1
 material 8
 material_real 193
@@ -11900,8 +12340,8 @@ Object saddle
 name saddle
 type 122
 editor_folder items/container
-other_arch saddle_close
 face saddle.101
+other_arch saddle_close
 layer 3
 level 1
 material 8
@@ -12273,10 +12713,10 @@ Object coppercoin
 name coin
 type 36
 editor_folder items/jewel
+face coppercoin.101
 race gold and jewels
 layer 3
 identified 1
-face coppercoin.101
 can_stack 1
 nrof 1
 item_quality 100
@@ -12290,10 +12730,10 @@ Object goldcoin
 name coin
 type 36
 editor_folder items/jewel
+face goldcoin.101
 identified 1
 race gold and jewels
 layer 3
-face goldcoin.101
 can_stack 1
 nrof 1
 item_quality 100
@@ -12307,10 +12747,10 @@ Object mitcoin
 name coin
 type 36
 editor_folder items/jewel
+face mit_coin.101
 identified 1
 layer 3
 race gold and jewels
-face mit_coin.101
 can_stack 1
 nrof 1
 item_quality 100
@@ -12324,11 +12764,11 @@ Object silvercoin
 name coin
 type 36
 editor_folder items/jewel
+face silvercoin.101
 identified 1
 layer 3
 race gold and jewels
 can_stack 1
-face silvercoin.101
 nrof 1
 item_quality 100
 item_condition 100
@@ -12341,9 +12781,9 @@ Object gem_generic
 name gem
 type 60
 editor_folder items/jewel
+face gem_clear.101
 race gold and jewels
 layer 3
-face gem_clear.101
 can_stack 1
 nrof 1
 value 3
@@ -12357,9 +12797,9 @@ Object jewel_generic
 name jewel
 type 116
 editor_folder items/jewel
+face jewel_clear.101
 race gold and jewels
 layer 3
-face jewel_clear.101
 can_stack 1
 item_quality 100
 item_condition 100
@@ -12373,9 +12813,9 @@ Object nugget_generic
 name nugget
 type 117
 editor_folder items/jewel
+face nugget_silver_s.101
 race gold and jewels
 layer 3
-face nugget_silver_s.101
 nrof 1
 material 1024
 can_stack 1
@@ -12389,9 +12829,9 @@ Object pearl_generic
 name pearl
 type 135
 editor_folder items/jewel
+face pearl.101
 race gold and jewels
 layer 3
-face pearl.101
 item_quality 100
 can_stack 1
 item_condition 100
@@ -12405,12 +12845,12 @@ Object key2
 name strange key
 type 21
 editor_folder items/keys
+face key2.111
 race keys
 item_quality 100
 item_condition 100
 slaying set_individual_value
 layer 3
-face key2.111
 value 100
 weight 100
 startequip 1
@@ -12419,12 +12859,12 @@ Object key_blue
 name strange key
 type 21
 editor_folder items/keys
+face key_blue.111
 layer 3
 race keys
 item_quality 100
 item_condition 100
 slaying set_individual_value
-face key_blue.111
 value 100
 weight 100
 startequip 1
@@ -12433,13 +12873,12 @@ Object key_wintersevent
 name Journan's Key
 type 21
 editor_folder items/keys
+face key_blue.111
 layer 3
 race keys
-face key_wintersevent.111
 item_quality 100
 item_condition 100
 slaying 887744
-face key_blue.111
 value 100
 weight 100
 startequip 1
@@ -12448,12 +12887,12 @@ Object key_brown
 name strange key
 type 21
 editor_folder items/keys
+face key_brown.111
 layer 3
 race keys
 item_quality 100
 item_condition 100
 slaying set_individual_value
-face key_brown.111
 value 100
 weight 100
 startequip 1
@@ -12462,12 +12901,12 @@ Object key_eretomb
 name eretomb cellar key
 type 21
 editor_folder items/keys
+face key_eretomb
 layer 3
 race keys
 item_quality 100
 item_condition 100
 slaying set_individual_value
-face key_eretomb
 value 100
 weight 100
 startequip 1
@@ -12476,8 +12915,8 @@ Object candle_purp
 name candle
 type 74
 editor_folder items/light
-other_arch candle_purp_burnt
 face candle_purp.100
+other_arch candle_purp_burnt
 layer 3
 can_stack 1
 animation candle_purp
@@ -12495,8 +12934,8 @@ Object candle_purp_burnt
 name burnt out candle
 type 74
 editor_folder items/light
-layer 3
 face candle_purp_burnt.101
+layer 3
 can_stack 1
 sub_type 2
 material 144
@@ -12507,8 +12946,8 @@ Object candlelight1.101
 name candles
 type 74
 editor_folder items/light
-layer 4
 face candlelight1.100
+layer 4
 no_pick 1
 animation candlelight1.101
 is_animated 1
@@ -12524,8 +12963,8 @@ Object candlelight2.101
 name candles
 type 74
 editor_folder items/light
-layer 4
 face candlelight2.100
+layer 4
 no_pick 1
 animation candlelight2.101
 is_animated 1
@@ -12541,8 +12980,8 @@ Object candlelight3.101
 name candles
 type 74
 editor_folder items/light
-layer 4
 face candlelight3.100
+layer 4
 no_pick 1
 animation candlelight3.101
 is_animated 1
@@ -12558,8 +12997,8 @@ Object candlelight4.101
 name candle
 type 74
 editor_folder items/light
-layer 4
 face candlelight4.100
+layer 4
 no_pick 1
 animation candlelight4.101
 is_animated 1
@@ -12610,8 +13049,8 @@ Object grave_fire.101
 name grave fire
 type 74
 editor_folder items/light
-layer 4
 face grave_fire.100
+layer 4
 no_pick 1
 animation grave_fire.101
 is_animated 1
@@ -12627,9 +13066,9 @@ Object lamp
 name lamp
 type 74
 editor_folder items/light
+face lamp.100
 race lamp_oil
 layer 3
-face lamp.100
 animation lamp
 anim_speed 4
 material 1024
@@ -12646,8 +13085,8 @@ Object lamp_pole
 name pole lamp
 type 74
 editor_folder items/light
-layer 5
 face lamp_pole.100
+layer 5
 is_animated 1
 animation lamp_pole
 glow_radius 5
@@ -12681,9 +13120,9 @@ Object lamp_snow
 name snow lamp
 type 74
 editor_folder items/light
+face lamp_snow.101
 race lamp_light
 layer 3
-face lamp_snow.101
 animation lamp_snow
 anim_speed 4
 material 1024
@@ -12701,8 +13140,8 @@ Object lamp_wall
 name attached lamp
 type 74
 editor_folder items/light
-layer 5
 face lamp_wall.111
+layer 5
 other_arch lamp_wall_1_unlit
 glow_radius 5
 animation lamp_wall
@@ -12827,9 +13266,9 @@ Object oil_lamp
 name lamp oil
 type 82
 editor_folder items/light
+face oil_lamp.101
 race lamp_oil
 layer 3
-face oil_lamp.101
 material 512
 value 22
 weight 400
@@ -12841,8 +13280,8 @@ Object torch
 name torch
 type 74
 editor_folder items/light
-other_arch torch_burnt
 face torch.100
+other_arch torch_burnt
 can_stack 1
 nrof 1
 layer 3
@@ -12861,8 +13300,8 @@ Object torch_burnt
 name burnt out torch
 type 74
 editor_folder items/light
-layer 3
 face torch_burnt.101
+layer 3
 can_stack 1
 sub_type 2
 material 144
@@ -12873,8 +13312,8 @@ Object torch_skull_wall_1
 name attached skull torch
 type 74
 editor_folder items/light
-layer 5
 face torch_skull_wall.111
+layer 5
 other_arch torch_skull_wall_1_unlit
 glow_radius 5
 animation torch_skull_wall_1
@@ -12894,8 +13333,8 @@ Object torch_wall_1
 name attached torch
 type 74
 editor_folder items/light
-layer 5
 face torch_wall.110
+layer 5
 other_arch torch_wall_1_unlit
 glow_radius 5
 is_animated 1
@@ -12966,9 +13405,9 @@ Object power_crystal
 name glowing crystal
 type 156
 editor_folder items/magic_tools
+face power_crystal.101
 maxsp 1000
 layer 3
-face power_crystal.101
 animation power_crystal
 is_animated 1
 anim_speed 5
@@ -12999,8 +13438,8 @@ Object rod_light
 name rod
 type 3
 editor_folder items/magic_tools
-layer 3
 face rod_light.101
+layer 3
 sp -1
 last_grace 22
 animation rod_light
@@ -13018,8 +13457,8 @@ Object sr_scepter1
 name rod
 type 3
 editor_folder items/magic_tools
-layer 3
 face sr_scepter1.101
+layer 3
 sp -1
 last_grace 35
 animation sr_scepter1
@@ -13035,8 +13474,8 @@ end
 Object wand
 type 109
 editor_folder items/magic_tools
-layer 3
 face wand.101
+layer 3
 sp -1
 animation wand
 is_animated 1
@@ -13051,8 +13490,8 @@ Object wand_frozenice
 name frozenice wand
 type 109
 editor_folder items/magic_tools
-layer 3
 face wand_frozenice.101
+layer 3
 sp -1
 animation wand_frozenice
 is_animated 1
@@ -13161,8 +13600,8 @@ Object coal_lump
 name lump
 type 79
 editor_folder items/misc
-title of coal
 face jewel_winter.101
+title of coal
 layer 3
 material_real 65
 material 2
@@ -13278,8 +13717,8 @@ Object bread1
 name bread
 type 6
 editor_folder items/organic
-can_stack 1
 face bread02.101
+can_stack 1
 last_eat 10
 hp 20
 sp 3
@@ -13411,9 +13850,9 @@ Object claw_demon
 name demon's claw
 type 86
 editor_folder items/organic
+face claw_demon.101
 layer 3
 identified 1
-face claw_demon.101
 can_stack 1
 item_quality 100
 item_condition 100
@@ -13429,7 +13868,7 @@ editor_folder items/organic
 face core_ice_golem.101
 animation core_ice_golem
 is_animated 1
-anim_speed .9
+anim_speed 1
 speed 1
 can_stack 1
 layer 3
@@ -13445,7 +13884,7 @@ editor_folder items/organic
 face core_lava_golem.101
 animation core_lava_golem
 is_animated 1
-anim_speed .9
+anim_speed 1
 speed 1
 layer 3
 can_stack 1
@@ -13476,7 +13915,7 @@ editor_folder items/organic
 face core_water_golem.101
 animation core_water_golem
 is_animated 1
-anim_speed .9
+anim_speed 1
 speed 1
 layer 3
 can_stack 1
@@ -13489,9 +13928,9 @@ Object eye
 name eye
 type 86
 editor_folder items/organic
+face eye.101
 layer 3
 identified 1
-face eye.101
 item_quality 100
 item_condition 100
 material_real -1
@@ -13503,9 +13942,9 @@ Object eye_beholder
 name beholder eye
 type 86
 editor_folder items/organic
+face eye_beholder.101
 layer 3
 identified 1
-face eye_beholder.101
 item_quality 100
 item_condition 100
 material_real -1
@@ -13518,9 +13957,9 @@ Object head_ant_queen
 name ant queen head
 type 86
 editor_folder items/organic
+face head_ant_queen.101
 layer 3
 identified 1
-face head_ant_queen.101
 item_quality 100
 item_condition 100
 material_real -1
@@ -13533,9 +13972,9 @@ Object head_snake
 name snake head
 type 86
 editor_folder items/organic
+face head_snake.101
 layer 3
 identified 1
-face head_snake.101
 item_quality 100
 item_condition 100
 material_real -1
@@ -13548,9 +13987,9 @@ Object heart
 name heart
 type 86
 editor_folder items/organic
+face heart.101
 layer 3
 identified 1
-face heart.101
 item_quality 100
 item_condition 100
 material_real -1
@@ -13565,7 +14004,7 @@ editor_folder items/organic
 face heart.102
 animation heart_beating
 is_animated 1
-anim_speed .3
+anim_speed 1
 speed 1
 item_quality 100
 item_condition 100
@@ -13579,9 +14018,9 @@ Object horns_demon
 name demon's horns
 type 86
 editor_folder items/organic
+face horns_demon.101
 layer 3
 identified 1
-face horns_demon.101
 item_quality 100
 item_condition 100
 material_real -1
@@ -13594,9 +14033,9 @@ Object stinger_bee
 name bee stinger
 type 86
 editor_folder items/organic
+face stinger_bee.101
 layer 3
 identified 1
-face stinger_bee.101
 item_quality 100
 item_condition 100
 material_real -1
@@ -13609,9 +14048,9 @@ Object tail_rat
 name rat's tail
 type 86
 editor_folder items/organic
+face tail_rat.101
 layer 3
 identified 1
-face tail_rat.101
 item_quality 100
 item_condition 100
 material_real -1
@@ -13623,8 +14062,8 @@ Object tooth
 name tooth
 type 86
 editor_folder items/organic
-layer 3
 face tooth.101
+layer 3
 item_quality 100
 item_condition 100
 identified 1
@@ -13869,8 +14308,8 @@ Object flesh_generic
 name piece of flesh
 type 72
 editor_folder items/organic
-nrof 1
 face skin.101
+nrof 1
 item_quality 100
 item_condition 100
 can_stack 1
@@ -13884,6 +14323,7 @@ Object poison_food
 name booze
 type 7
 editor_folder items/organic
+face booze.101
 title of poison
 layer 3
 dam 3
@@ -13898,7 +14338,6 @@ speed_left 0.015
 attack_poison 100
 item_quality 100
 item_condition 100
-face booze.101
 nrof 1
 material 32
 material_real -1
@@ -14395,13 +14834,13 @@ Object olive_oil
 name olive oil
 type 6
 editor_folder items/organic
+face olive_oil.101
 last_eat 10
 hp 20
 sp 3
 grace 2
 can_stack 1
 layer 3
-face olive_oil.101
 identified 1
 nrof 1
 material 32
@@ -14540,8 +14979,8 @@ Object water_poison
 name water
 type 7
 editor_folder items/organic
-title of poison
 face water_poison.101
+title of poison
 last_heal 6
 dam 3
 str -5
@@ -14722,9 +15161,9 @@ Object cleric_book
 name prayerbook
 type 85
 editor_folder items/spells
+face book_cleric.101
 layer 3
 sp -1
-face book_cleric.101
 sub_type 1
 material 1
 value 150
@@ -14735,9 +15174,9 @@ Object book_spell
 name spellbook
 type 85
 editor_folder items/spells
+face book_spell.101
 layer 3
 sp -1
-face book_spell.101
 nrof 1
 sub_type 2
 material 1
@@ -14748,10 +15187,10 @@ Object balm_generic
 name balm
 type 5
 editor_folder items/spells
+face balm_gen.101
 nrof 1
 layer 3
 sp -1
-face balm_gen.101
 material 512
 can_stack 1
 weight 250
@@ -14762,10 +15201,10 @@ Object dust_generic
 name dust
 type 5
 editor_folder items/spells
+face dust_gen.101
 nrof 1
 layer 3
 sp -1
-face dust_gen.101
 last_grace 13
 can_stack 1
 last_sp 7
@@ -14780,10 +15219,10 @@ Object potion_generic
 name potion
 type 5
 editor_folder items/spells
+face potion_gen.101
 nrof 1
 layer 3
 sp -1
-face potion_gen.101
 inv_face potion_gen.101
 last_grace 13
 can_stack 1
@@ -14825,8 +15264,8 @@ Object ring_generic
 name ring
 type 70
 editor_folder items/talisman
-layer 3
 face ring_tin.101
+layer 3
 value 500
 weight 20
 material_real 641
@@ -14952,8 +15391,8 @@ Object axe_small
 name small axe
 type 15
 editor_folder items/weapon
-layer 3
 face axe_small.101
+layer 3
 attack_cleave 100
 weapon_speed 2.25
 dam 27
@@ -14968,8 +15407,8 @@ Object pick_axe
 name pick axe
 type 15
 editor_folder items/weapon
-layer 3
 face pick_axe.101
+layer 3
 attack_cleave 100
 weapon_speed 2.3
 dam 30
@@ -14984,8 +15423,8 @@ Object whip
 name whip
 type 15
 editor_folder items/weapon
-layer 3
 face whip.101
+layer 3
 attack_cleave 100
 weapon_speed 2.1
 dam 25
@@ -15000,8 +15439,8 @@ Object axe_great
 name great axe
 type 15
 editor_folder items/weapon
-layer 3
 face axe_great.101
+layer 3
 attack_cleave 100
 weapon_speed 3.5
 item_level 10
@@ -15019,8 +15458,8 @@ Object cleaver_battle
 name battle cleaver
 type 15
 editor_folder items/weapon
-layer 3
 face cleaver_battle.101
+layer 3
 attack_cleave 100
 weapon_speed 4.1
 item_level 10
@@ -15038,8 +15477,8 @@ Object axe
 name axe
 type 15
 editor_folder items/weapon
-layer 3
 face axe.101
+layer 3
 attack_cleave 100
 weapon_speed 2.45
 item_level 3
@@ -15056,8 +15495,8 @@ Object axe_hand
 name hand axe
 type 15
 editor_folder items/weapon
-layer 3
 face axe_hand.101
+layer 3
 attack_cleave 100
 weapon_speed 2.35
 item_level 3
@@ -15074,8 +15513,8 @@ Object axe_war
 name war axe
 type 15
 editor_folder items/weapon
-layer 3
 face axe_war.101
+layer 3
 attack_cleave 100
 weapon_speed 2.4
 item_level 3
@@ -15092,8 +15531,8 @@ Object cleaver_war
 name war cleaver
 type 15
 editor_folder items/weapon
-layer 3
 face cleaver_war.101
+layer 3
 attack_cleave 100
 weapon_speed 2.5
 item_level 3
@@ -15110,8 +15549,8 @@ Object axe_battle
 name battle axe
 type 15
 editor_folder items/weapon
-layer 3
 face axe_battle.101
+layer 3
 attack_cleave 100
 weapon_speed 2.65
 item_level 7
@@ -15128,8 +15567,8 @@ Object axe_broad
 name broad axe
 type 15
 editor_folder items/weapon
-layer 3
 face axe_broad.101
+layer 3
 attack_cleave 100
 weapon_speed 2.7
 item_level 7
@@ -15146,8 +15585,8 @@ Object axe_double
 name double axe
 type 15
 editor_folder items/weapon
-layer 3
 face axe_double.101
+layer 3
 attack_cleave 100
 weapon_speed 2.55
 item_level 7
@@ -15164,8 +15603,8 @@ Object whip_war
 name war whip
 type 15
 editor_folder items/weapon
-layer 3
 face whip_war.101
+layer 3
 attack_cleave 100
 weapon_speed 2.5
 item_level 7
@@ -15611,8 +16050,8 @@ Object dagger
 name dagger
 type 15
 editor_folder items/weapon
-layer 3
 face dagger.101
+layer 3
 weapon_speed 1.9
 attack_pierce 100
 dam 27
@@ -15627,8 +16066,8 @@ Object dagger_large
 name large dagger
 type 15
 editor_folder items/weapon
-layer 3
 face dagger_large.101
+layer 3
 weapon_speed 1.95
 attack_pierce 100
 dam 26
@@ -15643,8 +16082,8 @@ Object dagger_small
 name small dagger
 type 15
 editor_folder items/weapon
-layer 3
 face dagger_small.101
+layer 3
 weapon_speed 1.85
 attack_pierce 100
 dam 25
@@ -15659,8 +16098,8 @@ Object flamberge
 name flamberge
 type 15
 editor_folder items/weapon
-layer 3
 face flamberge.101
+layer 3
 weapon_speed 2.75
 attack_pierce 100
 item_level 10
@@ -15678,8 +16117,8 @@ Object saber_willow
 name willow leaf saber
 type 15
 editor_folder items/weapon
-layer 3
 face saber2.101
+layer 3
 weapon_speed 2.7
 attack_pierce 100
 item_level 10
@@ -15697,8 +16136,8 @@ Object shiavona
 name shiavona
 type 15
 editor_folder items/weapon
-layer 3
 face shiavona.101
+layer 3
 weapon_speed 2.55
 attack_pierce 100
 item_level 10
@@ -15716,8 +16155,8 @@ Object spatha
 name spatha
 type 15
 editor_folder items/weapon
-layer 3
 face spatha.101
+layer 3
 weapon_speed 2.60
 attack_pierce 100
 item_level 10
@@ -15735,8 +16174,8 @@ Object athame
 name athame
 type 15
 editor_folder items/weapon
-layer 3
 face athame.101
+layer 3
 weapon_speed 2.15
 attack_pierce 100
 item_level 3
@@ -15753,8 +16192,8 @@ Object cutlass
 name cutlass
 type 15
 editor_folder items/weapon
-layer 3
 face cutlass.101
+layer 3
 weapon_speed 2.05
 attack_pierce 100
 item_level 3
@@ -15771,8 +16210,8 @@ Object sai
 name sai
 type 15
 editor_folder items/weapon
-layer 3
 face sai.101
+layer 3
 weapon_speed 2.1
 attack_pierce 100
 item_level 3
@@ -15789,8 +16228,8 @@ Object tanto
 name tanto
 type 15
 editor_folder items/weapon
-layer 3
 face tanto.101
+layer 3
 weapon_speed 2.0
 attack_pierce 100
 item_level 3
@@ -15807,8 +16246,8 @@ Object degen
 name degen
 type 15
 editor_folder items/weapon
-layer 3
 face degen.101
+layer 3
 weapon_speed 2.25
 attack_pierce 100
 item_level 7
@@ -15825,8 +16264,8 @@ Object pallasch
 name pallasch
 type 15
 editor_folder items/weapon
-layer 3
 face pallasch.101
+layer 3
 weapon_speed 2.3
 attack_pierce 100
 item_level 7
@@ -15843,8 +16282,8 @@ Object rapier
 name rapier
 type 15
 editor_folder items/weapon
-layer 3
 face rapier.101
+layer 3
 weapon_speed 2.35
 attack_pierce 100
 item_level 7
@@ -15861,8 +16300,8 @@ Object saber
 name saber
 type 15
 editor_folder items/weapon
-layer 3
 face saber.101
+layer 3
 weapon_speed 2.2
 attack_pierce 100
 item_level 7
@@ -15879,8 +16318,8 @@ Object sabre_icicle
 name icicle sabre
 type 15
 editor_folder items/weapon
-layer 3
 face sabre_icicle.101
+layer 3
 weapon_speed 2.7
 attack_pierce 100
 item_level 10
@@ -15898,8 +16337,8 @@ Object sai_ice
 name ice sais
 type 15
 editor_folder items/weapon
-layer 3
 face sais_ice.101
+layer 3
 weapon_speed 2.1
 attack_pierce 90
 attack_cold 10
@@ -15918,8 +16357,8 @@ Object sai_frozenice
 name frozenice sai
 type 15
 editor_folder items/weapon
-layer 3
 face sais_frozenice.101
+layer 3
 weapon_speed 2.75
 attack_pierce 80
 attack_cold 20
@@ -15939,8 +16378,8 @@ Object baselard
 name baselard
 type 15
 editor_folder items/weapon
-layer 3
 face baselard.101
+layer 3
 weapon_speed 1.95
 attack_slash 100
 dam 26
@@ -15955,8 +16394,8 @@ Object shortsword
 name shortsword
 type 15
 editor_folder items/weapon
-layer 3
 face shortsword.101
+layer 3
 weapon_speed 2.05
 attack_slash 100
 dam 27
@@ -15971,8 +16410,8 @@ Object tulwar
 name tulwar
 type 15
 editor_folder items/weapon
-layer 3
 face tulwar.101
+layer 3
 weapon_speed 2.0
 attack_slash 100
 dam 26
@@ -15987,8 +16426,8 @@ Object broadsword
 name broadsword
 type 15
 editor_folder items/weapon
-layer 3
 face broadsword.101
+layer 3
 weapon_speed 3.05
 attack_slash 100
 item_level 10
@@ -16006,8 +16445,8 @@ Object falchion
 name falchion
 type 15
 editor_folder items/weapon
-layer 3
 face falchion.101
+layer 3
 weapon_speed 2.75
 attack_slash 100
 item_level 10
@@ -16025,8 +16464,8 @@ Object muleijian
 name mulei-jian
 type 15
 editor_folder items/weapon
-layer 3
 face muleijian.101
+layer 3
 weapon_speed 3.00
 attack_slash 100
 item_level 10
@@ -16044,8 +16483,8 @@ Object zuijian
 name zui-jian
 type 15
 editor_folder items/weapon
-layer 3
 face zuijian.101
+layer 3
 weapon_speed 3.05
 attack_slash 100
 item_level 10
@@ -16063,8 +16502,8 @@ Object gladius
 name gladius
 type 15
 editor_folder items/weapon
-layer 3
 face gladius.101
+layer 3
 weapon_speed 2.25
 attack_slash 100
 item_level 3
@@ -16081,8 +16520,8 @@ Object ninjato
 name ninjato
 type 15
 editor_folder items/weapon
-layer 3
 face ninjato.101
+layer 3
 weapon_speed 2.1
 attack_slash 100
 item_level 3
@@ -16099,8 +16538,8 @@ Object sword
 name sword
 type 15
 editor_folder items/weapon
-layer 3
 face sword.101
+layer 3
 weapon_speed 2.2
 attack_slash 100
 item_level 3
@@ -16117,8 +16556,8 @@ Object sword_curved
 name curved sword
 type 15
 editor_folder items/weapon
-layer 3
 face sword_curved.101
+layer 3
 weapon_speed 2.3
 attack_slash 100
 item_level 3
@@ -16135,8 +16574,8 @@ Object wakizashi
 name wakizashi
 type 15
 editor_folder items/weapon
-layer 3
 face wakizashi.101
+layer 3
 weapon_speed 2.15
 attack_slash 100
 item_level 3
@@ -16153,8 +16592,8 @@ Object bastardsword
 name bastardsword
 type 15
 editor_folder items/weapon
-layer 3
 face bastardsword.101
+layer 3
 weapon_speed 2.35
 attack_slash 100
 item_level 7
@@ -16171,8 +16610,8 @@ Object katana
 name katana
 type 15
 editor_folder items/weapon
-layer 3
 face katana.101
+layer 3
 weapon_speed 2.3
 attack_slash 100
 item_level 7
@@ -16189,8 +16628,8 @@ Object kopis
 name kopis
 type 15
 editor_folder items/weapon
-layer 3
 face kopis.101
+layer 3
 weapon_speed 2.4
 attack_slash 100
 item_level 7
@@ -16207,8 +16646,8 @@ Object longsword
 name longsword
 type 15
 editor_folder items/weapon
-layer 3
 face longsword.101
+layer 3
 weapon_speed 2.45
 attack_slash 100
 item_level 7
@@ -16225,8 +16664,8 @@ Object scimitar
 name scimitar
 type 15
 editor_folder items/weapon
-layer 3
 face scimitar.101
+layer 3
 weapon_speed 2.4
 attack_slash 100
 item_level 7
@@ -16243,8 +16682,8 @@ Object scythe_military
 name military scythe
 type 15
 editor_folder items/weapon
-layer 3
 face scythe_military.101
+layer 3
 weapon_speed 2.5
 attack_slash 100
 item_level 7
@@ -16261,8 +16700,8 @@ Object taiqiang
 name tai-qiang
 type 15
 editor_folder items/weapon
-layer 3
 face taiqiang.101
+layer 3
 weapon_speed 2.35
 attack_slash 100
 item_level 7
@@ -16279,8 +16718,8 @@ Object tsurugi
 name tsurugi
 type 15
 editor_folder items/weapon
-layer 3
 face tsurugi.101
+layer 3
 weapon_speed 2.3
 attack_slash 100
 item_level 7
@@ -16297,8 +16736,8 @@ Object scimitar_frozenice
 name frozenice scimitar
 type 15
 editor_folder items/weapon
-layer 3
 face scimitar_frozenice.101
+layer 3
 weapon_speed 2.35
 attack_slash 80
 attack_cold 20
@@ -16317,8 +16756,8 @@ Object sword_frozenice
 name frozenice broadsword
 type 15
 editor_folder items/weapon
-layer 3
 face sword_frozenice.101
+layer 3
 weapon_speed 3.05
 attack_slash 80
 attack_cold 20
@@ -16338,8 +16777,8 @@ Object axe_2h
 name 2h axe
 type 15
 editor_folder items/weapon
-layer 3
 face axe_2h.101
+layer 3
 attack_cleave 100
 weapon_speed 4.25
 item_level 15
@@ -16357,8 +16796,8 @@ Object axe_2h_battle
 name 2h battle axe
 type 15
 editor_folder items/weapon
-layer 3
 face axe_2h_battle.101
+layer 3
 attack_cleave 100
 weapon_speed 4.3
 dam 178
@@ -16376,8 +16815,8 @@ Object axe_2h_great
 name 2h great axe
 type 15
 editor_folder items/weapon
-layer 3
 face axe_2h_great.101
+layer 3
 attack_cleave 100
 weapon_speed 4.35
 dam 180
@@ -16395,8 +16834,8 @@ Object axe_2h_war
 name 2h war axe
 type 15
 editor_folder items/weapon
-layer 3
 face axe_2h_war.101
+layer 3
 attack_cleave 100
 weapon_speed 4.35
 item_level 15
@@ -16414,8 +16853,8 @@ Object doubleji
 name double ji
 type 15
 editor_folder items/weapon
-layer 3
 face doubleji.101
+layer 3
 attack_cleave 100
 weapon_speed 3.95
 item_level 15
@@ -16433,8 +16872,8 @@ Object mattock
 name mattock
 type 15
 editor_folder items/weapon
-layer 3
 face mattock.101
+layer 3
 attack_cleave 100
 weapon_speed 4.4
 item_level 15
@@ -16452,8 +16891,8 @@ Object bajh_frozenice
 name frozenice bajh
 type 15
 editor_folder items/weapon
-layer 3
 face bajh_frozenice.101
+layer 3
 attack_cleave 80
 attack_cold 20
 weapon_speed 4.25
@@ -16473,8 +16912,8 @@ Object bo
 name bo
 type 15
 editor_folder items/weapon
-layer 3
 face bo.101
+layer 3
 weapon_speed 4.25
 attack_impact 100
 dam 178
@@ -16492,8 +16931,8 @@ Object club_giant
 name giant club
 type 15
 editor_folder items/weapon
-layer 3
 face club_giant.101
+layer 3
 weapon_speed 4.15
 attack_impact 100
 dam 175
@@ -16511,8 +16950,8 @@ Object club_giant_spiked
 name giant spiked club
 type 15
 editor_folder items/weapon
-layer 3
 face club_giant_spiked.101
+layer 3
 weapon_speed 4.2
 attack_impact 100
 item_level 15
@@ -16530,8 +16969,8 @@ Object hammer_giant
 name giant hammer
 type 15
 editor_folder items/weapon
-layer 3
 face hammer_giant.101
+layer 3
 weapon_speed 4.15
 attack_impact 100
 item_level 15
@@ -16549,8 +16988,8 @@ Object hammer_swar_giant
 name spiked war hammer
 type 15
 editor_folder items/weapon
-layer 3
 face hammer_swar_giant.101
+layer 3
 weapon_speed 4.1
 attack_impact 100
 item_level 15
@@ -16568,8 +17007,8 @@ Object hammer_war_giant
 name war hammer
 type 15
 editor_folder items/weapon
-layer 3
 face hammer_war_giant.101
+layer 3
 weapon_speed 4.4
 attack_impact 100
 dam 191
@@ -16587,8 +17026,8 @@ Object mstar_2h
 name 2h-morningstar
 type 15
 editor_folder items/weapon
-layer 3
 face mstar_2h.101
+layer 3
 weapon_speed 4.35
 attack_impact 100
 dam 163
@@ -16606,8 +17045,8 @@ Object quaterstaff
 name quaterstaff
 type 15
 editor_folder items/weapon
-layer 3
 face quaterstaff.101
+layer 3
 weapon_speed 4.25
 attack_impact 100
 dam 191
@@ -16625,6 +17064,7 @@ Object dory
 name dory
 type 15
 editor_folder items/weapon
+face dory.101
 layer 3
 weapon_speed 3.75
 attack_pierce 100
@@ -16632,7 +17072,6 @@ item_level 15
 item_skill 4
 last_heal 40
 sub_type 6
-face dory.101
 material 18
 material_real 65
 dam 167
@@ -16644,6 +17083,7 @@ Object forc
 name forc
 type 15
 editor_folder items/weapon
+face forc.101
 layer 3
 weapon_speed 3.9
 attack_pierce 100
@@ -16651,7 +17091,6 @@ item_level 15
 item_skill 4
 last_heal 40
 sub_type 6
-face forc.101
 material 18
 material_real 65
 dam 165
@@ -16663,6 +17102,7 @@ Object forc_military
 name military forc
 type 15
 editor_folder items/weapon
+face forc_military.101
 layer 3
 weapon_speed 3.95
 attack_pierce 100
@@ -16670,7 +17110,6 @@ item_level 15
 item_skill 4
 last_heal 40
 sub_type 6
-face forc_military.101
 material 18
 material_real 65
 dam 165
@@ -16682,6 +17121,7 @@ Object spear
 name spear
 type 15
 editor_folder items/weapon
+face spear.101
 layer 3
 weapon_speed 4.0
 attack_pierce 100
@@ -16689,7 +17129,6 @@ item_level 15
 item_skill 4
 last_heal 40
 sub_type 6
-face spear.101
 material 18
 material_real 65
 dam 160
@@ -16701,6 +17140,7 @@ Object trident
 name trident
 type 15
 editor_folder items/weapon
+face trident.101
 layer 3
 weapon_speed 4.05
 attack_pierce 100
@@ -16708,7 +17148,6 @@ item_level 15
 item_skill 4
 last_heal 40
 sub_type 6
-face trident.101
 material 2
 material_real 65
 dam 175
@@ -16720,6 +17159,7 @@ Object xuqiang
 name xu-qiang
 type 15
 editor_folder items/weapon
+face xuqiang.101
 layer 3
 weapon_speed 3.90
 attack_pierce 100
@@ -16727,7 +17167,6 @@ item_level 15
 item_skill 4
 last_heal 40
 sub_type 6
-face xuqiang.101
 material 18
 material_real 65
 dam 160
@@ -16739,6 +17178,7 @@ Object claymore
 name claymore
 type 15
 editor_folder items/weapon
+face claymore.101
 layer 3
 weapon_speed 4.2
 attack_slash 100
@@ -16746,7 +17186,6 @@ sub_type 5
 item_level 15
 item_skill 4
 last_heal 40
-face claymore.101
 material 2
 material_real 65
 dam 170
@@ -16758,6 +17197,7 @@ Object fujian
 name fu-jian
 type 15
 editor_folder items/weapon
+face fujian.101
 layer 3
 weapon_speed 4.00
 attack_slash 100
@@ -16765,7 +17205,6 @@ sub_type 5
 item_level 15
 item_skill 4
 last_heal 40
-face fujian.101
 material 2
 material_real 65
 dam 178
@@ -16777,6 +17216,7 @@ Object no_dachi
 name no-dachi
 type 15
 editor_folder items/weapon
+face no_dachi.101
 layer 3
 weapon_speed 4.05
 attack_slash 100
@@ -16784,7 +17224,6 @@ sub_type 5
 item_level 15
 item_skill 4
 last_heal 40
-face no_dachi.101
 material 2
 material_real 65
 dam 175
@@ -16796,6 +17235,7 @@ Object panzerstecher
 name Panzerstecher
 type 15
 editor_folder items/weapon
+face panzerstecher.101
 layer 3
 weapon_speed 4.0
 attack_slash 100
@@ -16803,7 +17243,6 @@ item_level 15
 item_skill 4
 last_heal 40
 sub_type 5
-face panzerstecher.101
 material 2
 material_real 65
 dam 180
@@ -16815,6 +17254,7 @@ Object scythe_war
 name war scythe
 type 15
 editor_folder items/weapon
+face scythe_war.101
 layer 3
 weapon_speed 4.3
 attack_slash 100
@@ -16822,7 +17262,6 @@ item_level 15
 item_skill 4
 last_heal 40
 sub_type 5
-face scythe_war.101
 material 18
 material_real 65
 dam 172
@@ -16834,6 +17273,7 @@ Object sword2h
 name two-handed sword
 type 15
 editor_folder items/weapon
+face sword2h.101
 layer 3
 weapon_speed 4.15
 attack_slash 100
@@ -16841,7 +17281,6 @@ item_level 15
 item_skill 4
 last_heal 40
 sub_type 5
-face sword2h.101
 material 2
 material_real 65
 dam 173
@@ -16853,6 +17292,7 @@ Object sword_double
 name double sword
 type 15
 editor_folder items/weapon
+face sword_double.101
 layer 3
 weapon_speed 4.0
 attack_slash 100
@@ -16860,7 +17300,6 @@ sub_type 5
 item_level 15
 item_skill 4
 last_heal 40
-face sword_double.101
 material 2
 material_real 65
 dam 174
@@ -16872,6 +17311,7 @@ Object sword_great
 name great sword
 type 15
 editor_folder items/weapon
+face sword_great.101
 layer 3
 weapon_speed 4.3
 attack_slash 100
@@ -16879,7 +17319,6 @@ item_level 15
 item_skill 4
 last_heal 40
 sub_type 5
-face sword_great.101
 material 2
 material_real 65
 dam 175
@@ -16891,8 +17330,8 @@ Object bardiche
 name bardiche
 type 15
 editor_folder items/weapon
-layer 3
 face bardiche.101
+layer 3
 item_level 17
 item_skill 4
 attack_cleave 100
@@ -16911,8 +17350,8 @@ Object fuji
 name fu-ji
 type 15
 editor_folder items/weapon
-layer 3
 face fuji.101
+layer 3
 item_level 17
 item_skill 4
 attack_cleave 100
@@ -16931,8 +17370,8 @@ Object halberd
 name halberd
 type 15
 editor_folder items/weapon
-layer 3
 face halberd.101
+layer 3
 attack_cleave 100
 weapon_speed 5.6
 last_heal 35
@@ -16951,8 +17390,8 @@ Object spetum
 name spetum
 type 15
 editor_folder items/weapon
-layer 3
 face spetum.101
+layer 3
 attack_cleave 100
 weapon_speed 5.65
 last_heal 35
@@ -16971,8 +17410,8 @@ Object taiji
 name tai-ji
 type 15
 editor_folder items/weapon
-layer 3
 face taiji.101
+layer 3
 item_level 17
 item_skill 4
 attack_cleave 100
@@ -16991,8 +17430,8 @@ Object voulge
 name voulge
 type 15
 editor_folder items/weapon
-layer 3
 face voulge.101
+layer 3
 attack_cleave 100
 item_level 17
 item_skill 4
@@ -17011,8 +17450,8 @@ Object bec_de_corbin
 name bec de corbin
 type 15
 editor_folder items/weapon
-layer 3
 face bec_de_corbin.101
+layer 3
 weapon_speed 5.8
 attack_impact 100
 item_level 17
@@ -17031,8 +17470,8 @@ Object lucern_hammer
 name lucern hammer
 type 15
 editor_folder items/weapon
-layer 3
 face lucern_hammer.101
+layer 3
 weapon_speed 5.6
 attack_impact 100
 dam 180
@@ -17051,6 +17490,7 @@ Object bill_guisarme
 name bill-guisarme
 type 15
 editor_folder items/weapon
+face bill_guisarme.101
 layer 3
 weapon_speed 5.35
 attack_pierce 100
@@ -17058,7 +17498,6 @@ item_level 17
 item_skill 4
 last_heal 35
 sub_type 10
-face bill_guisarme.101
 material 18
 material_real 65
 dam 165
@@ -17071,6 +17510,7 @@ Object guisarme
 name guisarme
 type 15
 editor_folder items/weapon
+face guisarme.101
 layer 3
 weapon_speed 5.4
 attack_pierce 100
@@ -17078,7 +17518,6 @@ item_level 17
 item_skill 4
 last_heal 35
 sub_type 10
-face guisarme.101
 material 18
 material_real 65
 dam 175
@@ -17091,6 +17530,7 @@ Object partisan
 name partisan
 type 15
 editor_folder items/weapon
+face partisan.101
 layer 3
 weapon_speed 5.45
 attack_pierce 100
@@ -17098,7 +17538,6 @@ item_level 17
 item_skill 4
 last_heal 35
 sub_type 10
-face partisan.101
 material 18
 material_real 65
 dam 170
@@ -17111,6 +17550,7 @@ Object pike
 name pike
 type 15
 editor_folder items/weapon
+face pike.101
 layer 3
 weapon_speed 5.3
 attack_pierce 100
@@ -17118,7 +17558,6 @@ item_level 17
 item_skill 4
 last_heal 35
 sub_type 10
-face pike.101
 material 18
 material_real 65
 dam 155
@@ -17131,6 +17570,7 @@ Object ranseur
 name ranseur
 type 15
 editor_folder items/weapon
+face ranseur.101
 layer 3
 weapon_speed 5.3
 item_level 17
@@ -17138,7 +17578,6 @@ item_skill 4
 last_heal 35
 attack_pierce 100
 sub_type 10
-face ranseur.101
 material 18
 material_real 65
 dam 160
@@ -17151,6 +17590,7 @@ Object fauchard
 name fauchard
 type 15
 editor_folder items/weapon
+face fauchard.101
 layer 3
 weapon_speed 5.45
 attack_slash 100
@@ -17158,7 +17598,6 @@ item_level 17
 item_skill 4
 last_heal 35
 sub_type 9
-face fauchard.101
 material 18
 material_real 65
 dam 160
@@ -17171,6 +17610,7 @@ Object glaive
 name glaive
 type 15
 editor_folder items/weapon
+face glaive.101
 layer 3
 weapon_speed 5.5
 attack_slash 100
@@ -17178,7 +17618,6 @@ sub_type 9
 item_level 17
 item_skill 4
 last_heal 35
-face glaive.101
 material 18
 material_real 65
 dam 175
@@ -17191,6 +17630,7 @@ Object naginata
 name naginata
 type 15
 editor_folder items/weapon
+face naginata.101
 layer 3
 weapon_speed 5.4
 item_level 17
@@ -17198,7 +17638,6 @@ item_skill 4
 last_heal 35
 attack_slash 100
 sub_type 9
-face naginata.101
 material 18
 material_real 65
 dam 175
@@ -17211,6 +17650,7 @@ Object zuidao
 name zui-dao
 type 15
 editor_folder items/weapon
+face zuidao.101
 layer 3
 weapon_speed 5.3
 item_level 17
@@ -17218,7 +17658,6 @@ item_skill 4
 last_heal 35
 attack_slash 100
 sub_type 9
-face zuidao.101
 material 18
 material_real 65
 dam 170
@@ -17231,6 +17670,7 @@ Object zuipudao
 name zui-pudao
 type 15
 editor_folder items/weapon
+face zuipudao.101
 layer 3
 weapon_speed 5.3
 item_level 17
@@ -17238,7 +17678,6 @@ item_skill 4
 last_heal 35
 attack_slash 100
 sub_type 9
-face zuipudao.101
 material 18
 material_real 65
 dam 170
@@ -17251,9 +17690,9 @@ Object arrow
 name arrow
 type 13
 editor_folder items/weapon
+face arrow.101
 layer 3
 race arrows
-face arrow.101
 last_sp 5
 attack_pierce 100
 sub_type 1
@@ -17271,9 +17710,9 @@ Object arrow_wintersevent
 name winters event arrow
 type 13
 editor_folder items/weapon
+face arrow_wintersevent.101
 layer 3
 race arrows
-face arrow_wintersevent.101
 last_sp 5
 attack_pierce 100
 attack_cold 10
@@ -17292,13 +17731,13 @@ Object bolt
 name bolt
 type 13
 editor_folder items/weapon
+face bolt.101
 layer 3
 race crossbow bolts
 attack_cleave 100
 last_sp 4
 sub_type 2
 can_stack 1
-face bolt.101
 animation bolt
 anim_speed 1
 is_turnable 1
@@ -17312,6 +17751,7 @@ Object bolt_wintersevent
 name winters event bolt
 type 13
 editor_folder items/weapon
+face bolt_wintersevent.101
 layer 3
 race crossbow bolts
 attack_cleave 100
@@ -17319,7 +17759,6 @@ attack_cold 10
 last_sp 4
 sub_type 2
 can_stack 1
-face bolt_wintersevent.101
 animation bolt_wintersevent
 anim_speed 1
 is_turnable 1
@@ -17333,9 +17772,9 @@ Object sstone
 name sling stone
 type 13
 editor_folder items/weapon
+face sstone.101
 race sling stones
 layer 3
-face sstone.101
 last_sp 4
 can_stack 1
 attack_impact 100
@@ -17353,9 +17792,9 @@ Object sstone_wintersevent
 name winters event sling stone
 type 13
 editor_folder items/weapon
+face sstone_wintersevent.101
 race sling stones
 layer 3
-face sstone_wintersevent.101
 last_sp 4
 can_stack 1
 attack_impact 100
@@ -17374,6 +17813,7 @@ Object bow
 name bow
 type 14
 editor_folder items/weapon
+face bow.101
 layer 3
 race arrows
 dam 34
@@ -17385,7 +17825,6 @@ item_level 7
 item_skill 1
 material 16
 material_real 258
-face bow.101
 weight 1300
 value 450
 end
@@ -17393,6 +17832,7 @@ Object bow_ice
 name ice bow
 type 14
 editor_folder items/weapon
+face bow_ice.101
 layer 3
 race arrows
 dam 34
@@ -17404,7 +17844,6 @@ item_level 7
 item_skill 1
 material 16
 material_real 258
-face bow_ice.101
 weight 1300
 value 450
 is_named 1
@@ -17413,6 +17852,7 @@ Object bow_long
 name long bow
 type 14
 editor_folder items/weapon
+face bow_long.101
 layer 3
 race arrows
 last_grace 8
@@ -17424,7 +17864,6 @@ last_sp 5
 sub_type 1
 material 16
 material_real 258
-face bow_long.101
 weight 1700
 value 1450
 end
@@ -17432,6 +17871,7 @@ Object bow_short
 name short bow
 type 14
 editor_folder items/weapon
+face bow_short.101
 layer 3
 race arrows
 last_grace 8
@@ -17441,7 +17881,6 @@ last_sp 4
 sub_type 1
 material 16
 material_real 258
-face bow_short.101
 weight 1300
 value 350
 end
@@ -17449,6 +17888,7 @@ Object crossbow
 name crossbow
 type 14
 editor_folder items/weapon
+face crossbow.101
 layer 3
 race crossbow bolts
 sub_type 2
@@ -17456,7 +17896,6 @@ item_level 7
 item_skill 1
 material 16
 material_real 258
-face crossbow.101
 weight 2500
 last_grace 10
 dam 44
@@ -17468,6 +17907,7 @@ Object crossbow_ice
 name ice crossbow
 type 14
 editor_folder items/weapon
+face crossbow_ice.101
 layer 3
 race crossbow bolts
 sub_type 2
@@ -17475,7 +17915,6 @@ item_level 7
 item_skill 1
 material 16
 material_real 258
-face crossbow_ice.101
 weight 2500
 last_grace 10
 dam 44
@@ -17488,6 +17927,7 @@ Object crossbow_large
 name large crossbow
 type 14
 editor_folder items/weapon
+face crossbow_large.101
 layer 3
 race crossbow bolts
 sub_type 2
@@ -17495,7 +17935,6 @@ item_level 19
 item_skill 1
 material 16
 material_real 258
-face crossbow_large.101
 weight 4250
 last_grace 11
 dam 46
@@ -17507,12 +17946,12 @@ Object crossbow_small
 name small crossbow
 type 14
 editor_folder items/weapon
+face crossbow_small.101
 layer 3
 race crossbow bolts
 sub_type 2
 material 16
 material_real 258
-face crossbow_small.101
 weight 1250
 dam 42
 last_grace 10
@@ -17524,6 +17963,7 @@ Object sling
 name sling
 type 14
 editor_folder items/weapon
+face sling.101
 layer 3
 race sling stones
 sub_type 3
@@ -17531,7 +17971,6 @@ material 8
 material_real 193
 item_level 7
 item_skill 1
-face sling.101
 last_grace 8
 dam 34
 wc 45
@@ -17543,6 +17982,7 @@ Object sling_heavy
 name heavy sling
 type 14
 editor_folder items/weapon
+face sling_heavy.101
 layer 3
 race sling stones
 sub_type 3
@@ -17550,7 +17990,6 @@ item_level 19
 item_skill 1
 material 8
 material_real 193
-face sling_heavy.101
 last_grace 8
 dam 36
 wc 45
@@ -17562,12 +18001,12 @@ Object sling_small
 name small sling
 type 14
 editor_folder items/weapon
+face sling_small.101
 layer 3
 race sling stones
 sub_type 3
 material 8
 material_real 193
-face sling_small.101
 last_grace 8
 dam 30
 wc 45
@@ -17579,6 +18018,7 @@ Object sling_staff
 name staff sling
 type 14
 editor_folder items/weapon
+face sling_staff.101
 layer 3
 race sling stones
 sub_type 3
@@ -17586,7 +18026,6 @@ item_level 19
 item_skill 1
 material 8
 material_real 193
-face sling_staff.101
 last_grace 8
 dam 32
 wc 45
@@ -17599,6 +18038,7 @@ Object slingshot
 name slingshot
 type 14
 editor_folder items/weapon
+face slingshot.101
 layer 3
 race sling stones
 sub_type 3
@@ -17606,7 +18046,6 @@ material 8
 material_real 193
 item_level 7
 item_skill 1
-face slingshot.101
 last_grace 8
 dam 26
 wc 40
@@ -17618,8 +18057,8 @@ Object t_axe
 name throwing axe
 type 13
 editor_folder items/weapon
-race rock
 face t_axe.101
+race rock
 layer 3
 attack_cleave 100
 dam 32
@@ -17727,9 +18166,9 @@ Object t_boulder
 name boulder
 type 13
 editor_folder items/weapon
+face t_boulder.101
 race rock
 layer 3
-face t_boulder.101
 attack_impact 100
 last_sp 7
 dam 30
@@ -17750,9 +18189,9 @@ Object t_hammer
 name throwing hammer
 type 13
 editor_folder items/weapon
+face hammer_2.101
 race rock
 layer 3
-face hammer_2.101
 attack_impact 100
 dam 32
 wc 45
@@ -17774,9 +18213,9 @@ Object t_lboulder
 name large boulder
 type 13
 editor_folder items/weapon
+face t_lboulder.101
 race rock
 layer 3
-face t_lboulder.101
 attack_impact 100
 last_grace 18
 last_sp 7
@@ -17796,9 +18235,9 @@ Object t_rock
 name rock
 type 13
 editor_folder items/weapon
+face t_rock.101
 race rock
 layer 3
-face t_rock.101
 attack_impact 100
 dam 10
 last_grace 10
@@ -17818,9 +18257,9 @@ Object t_dagger
 name throwing dagger
 type 13
 editor_folder items/weapon
+face t_dagger.101
 race rock
 layer 3
-face t_dagger.101
 attack_pierce 100
 dam 32
 wc 45
@@ -17890,8 +18329,8 @@ Object t_star
 name throwing star
 type 13
 editor_folder items/weapon
-race rock
 face t_star.101
+race rock
 layer 3
 attack_slash 100
 dam 32
@@ -17914,8 +18353,8 @@ Object bullet
 name magic bullet
 type 2
 editor_folder magic/bullet
-layer 7
 face bullet.101
+layer 7
 level 1
 no_save 1
 attack_weaponmagic 100
@@ -17970,8 +18409,8 @@ Object frostbolt
 name frostbolt
 type 12
 editor_folder magic/cold
-layer 7
 face icestorm.101
+layer 7
 level 1
 no_save 1
 attack_cold 100
@@ -18000,13 +18439,13 @@ Object icestorm
 name ice
 type 88
 editor_folder magic/cold
+face icestorm.101
 layer 7
 level 1
 no_save 1
 last_heal 12
 use_dmg_info 1
 glow_radius 1
-face icestorm.101
 animation icestorm
 is_animated 1
 anim_speed 3
@@ -18025,8 +18464,8 @@ Object firebolt
 name firebolt
 type 12
 editor_folder magic/fire
-layer 7
 face fire.101
+layer 7
 level 1
 no_save 1
 attack_fire 100
@@ -18055,6 +18494,7 @@ Object firebreath
 name fire
 type 88
 editor_folder magic/fire
+face fire.101
 layer 7
 walk_on 1
 last_heal 12
@@ -18062,7 +18502,6 @@ use_dmg_info 1
 fly_on 1
 no_save 1
 glow_radius 1
-face fire.101
 animation firebreath
 is_animated 1
 anim_speed 4
@@ -18080,8 +18519,8 @@ Object lightning
 name lightning
 type 12
 editor_folder magic/lightning
-layer 7
 face lightning.111
+layer 7
 level 1
 no_save 1
 attack_electricity 100
@@ -18128,88 +18567,13 @@ hp 14
 flying 1
 no_pick 1
 end
-Object meffect_blue
-name magic glow
-type 79
-editor_folder magic/spell_effect
-face effect1_blue.101
-layer 7
-no_save 1
-animation meffect_blue
-is_animated 1
-anim_speed 1
-speed 1
-is_used_up 1
-no_pick 1
-food 5
-end
-Object meffect_green
-name magic glow
-type 79
-editor_folder magic/spell_effect
-face effect1_green.101
-layer 7
-no_save 1
-animation meffect_green
-is_animated 1
-anim_speed 1
-speed 1
-is_used_up 1
-no_pick 1
-food 5
-end
-Object meffect_pink
-name magic glow
-type 79
-editor_folder magic/spell_effect
-face effect1_pink.101
-layer 7
-no_save 1
-animation meffect_pink
-is_animated 1
-anim_speed 1
-speed 1
-is_used_up 1
-no_pick 1
-food 5
-end
-Object meffect_purple
-name magic glow
-type 79
-editor_folder magic/spell_effect
-face effect1_purple.101
-layer 7
-no_save 1
-animation meffect_purple
-is_animated 1
-anim_speed 1
-speed 1
-is_used_up 1
-no_pick 1
-food 5
-end
-Object meffect_yellow
-name magic glow
-type 79
-editor_folder magic/spell_effect
-face effect1_yellow.101
-layer 7
-no_save 1
-animation meffect_yellow
-is_animated 1
-anim_speed 1
-speed 1
-is_used_up 1
-no_pick 1
-food 5
-end
 Object cause_wounds
 name cause light wounds
 type 2
 editor_folder magic/wounds
+face wounds.101
 no_save 1
 layer 7
-face wounds.101
 animation cause_wounds
 is_animated 1
 last_sp 12
@@ -19309,6 +19673,17 @@ face pile_floor3.101
 no_teleport 1
 layer 2
 no_pick 1
+end
+Object doorway_wood1_1
+name doorway
+type 77
+editor_folder masks/doorway
+face doorway_wood1.111
+animation doorway_wood1_1
+is_turnable 1
+direction 1
+no_pick 1
+layer 7
 end
 Object earth_m1
 name earth
@@ -20987,8 +21362,8 @@ Object fmask_ruin1a.111
 name ruin parts
 type 28
 editor_folder masks/ruins
-layer 2
 face fmask_ruin1a.111
+layer 2
 animation fmask_ruin1a.111
 is_turnable 1
 direction 1
@@ -20998,32 +21373,32 @@ Object fmask_ruin1_s1.101
 name ruin parts
 type 28
 editor_folder masks/ruins
-layer 2
 face fmask_ruin1_s1.101
+layer 2
 no_pick 1
 end
 Object fmask_ruin1_s2.101
 name ruin parts
 type 28
 editor_folder masks/ruins
-layer 2
 face fmask_ruin1_s2.101
+layer 2
 no_pick 1
 end
 Object fmask_ruin1_s3.101
 name ruin parts
 type 28
 editor_folder masks/ruins
-layer 2
 face fmask_ruin1_s3.101
+layer 2
 no_pick 1
 end
 Object fmask_ruin1_s4.101
 name ruin parts
 type 28
 editor_folder masks/ruins
-layer 2
 face fmask_ruin1_s4.101
+layer 2
 no_pick 1
 end
 Object wmask_ruin1a.111
@@ -21250,8 +21625,8 @@ Object blue_sky_wmask_a
 name blue sky
 type 77
 editor_folder masks/sky
-layer 7
 face blue_sky_wmask_a.151
+layer 7
 no_pick 1
 animation blue_sky_wmask_a
 is_turnable 1
@@ -21261,8 +21636,8 @@ Object blue_sky_wmask_b
 name blue sky
 type 77
 editor_folder masks/sky
-layer 7
 face blue_sky_wmask_b.151
+layer 7
 no_pick 1
 animation blue_sky_wmask_b
 is_turnable 1
@@ -21272,8 +21647,8 @@ Object blue_sky_wmask_c
 name blue sky
 type 77
 editor_folder masks/sky
-layer 7
 face blue_sky_wmask_c.151
+layer 7
 no_pick 1
 animation blue_sky_wmask_c
 is_turnable 1
@@ -21283,8 +21658,8 @@ Object blue_sky_wmask_d
 name blue sky
 type 77
 editor_folder masks/sky
-layer 7
 face blue_sky_wmask_d.151
+layer 7
 no_pick 1
 animation blue_sky_wmask_d
 is_turnable 1
@@ -21813,8 +22188,8 @@ Object blob_acid
 name Acid Blob
 type 80
 editor_folder mobs/amoeboid
-race slime
 face blob_acid.111
+race slime
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d64;loot_melee&d18
 layer 6
 direction 5
@@ -21863,8 +22238,8 @@ Object blob_poison
 name Poison Blob
 type 80
 editor_folder mobs/amoeboid
-race slime
 face blob_poison.111
+race slime
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d64;loot_melee&d18
 layer 6
 direction 5
@@ -21962,8 +22337,8 @@ Object cube_gel
 name Gelatinous Cube
 type 80
 editor_folder mobs/amoeboid
-race slime
 face gel_cube.111
+race slime
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d64;loot_melee&d18
 layer 6
 direction 5
@@ -22265,8 +22640,8 @@ Object gray_ooze
 name Gray Ooze
 type 80
 editor_folder mobs/amoeboid
-race slime
 face gray_ooze.111
+race slime
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d64;loot_melee&d18
 layer 6
 direction 5
@@ -22998,8 +23373,8 @@ Object rooster
 name Rooster
 type 80
 editor_folder mobs/animals
-race chicken
 face rooster.121
+race chicken
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
 layer 6
 direction 5
@@ -24200,8 +24575,8 @@ Object corpse_default
 name decaying corpse
 type 122
 editor_folder mobs/corpses
-layer 3
 face corpse_default.101
+layer 3
 sub_type 1
 material 32
 weapon_speed 1.0
@@ -24211,158 +24586,6 @@ food 20
 is_used_up 1
 speed 0.01
 identified 1
-no_pick 1
-invulnerable 1
-end
-Object corpse_goblinoid
-name decaying goblinoid corpse
-type 122
-editor_folder mobs/corpses
-race goblin
-layer 3
-identified 1
-face corpse_goblinoid.101
-sub_type 1
-material 32
-weapon_speed 1.0
-container 350000
-weight 60000
-no_pick 1
-invulnerable 1
-food 20
-speed 0.01
-is_used_up 1
-end
-Object corpse_demon
-name demon corpse
-type 122
-editor_folder mobs/corpses
-race demon
-layer 3
-face corpse_demon.101
-sub_type 1
-material 32
-weapon_speed 1.0
-container 350000
-weight 120000
-food 20
-is_used_up 1
-speed 0.01
-identified 1
-no_pick 1
-invulnerable 1
-end
-Object corpse_golem
-name golem corpse
-type 122
-editor_folder mobs/corpses
-race golem
-layer 3
-face corpse_golem.101
-sub_type 1
-material 32
-weapon_speed 1.0
-container 350000
-identified 1
-weight 120000
-no_pick 1
-food 20
-speed 0.01
-is_used_up 1
-invulnerable 1
-end
-Object corpse_half_elf
-name decaying half-elf corpse
-type 122
-editor_folder mobs/corpses
-race half-elf
-layer 3
-identified 1
-face corpse_human.101
-sub_type 1
-material 32
-weapon_speed 1.0
-container 350000
-weight 60000
-food 20
-speed 0.01
-is_used_up 1
-no_pick 1
-invulnerable 1
-end
-Object corpse_human
-name decaying human corpse
-type 122
-editor_folder mobs/corpses
-race human
-layer 3
-identified 1
-face corpse_human.101
-sub_type 1
-material 32
-weapon_speed 1.0
-container 350000
-weight 60000
-food 20
-speed 0.01
-is_used_up 1
-no_pick 1
-invulnerable 1
-end
-Object corpse_ice_golem
-name ice golem corpse
-type 122
-editor_folder mobs/corpses
-race golem_ice
-layer 3
-face corpse_ice_golem.101
-sub_type 1
-material 32
-weapon_speed 1.0
-container 350000
-identified 1
-weight 120000
-no_pick 1
-food 20
-speed 0.01
-is_used_up 1
-invulnerable 1
-end
-Object corpse_insect
-name decaying insect corpse
-type 122
-editor_folder mobs/corpses
-race insect
-layer 3
-face corpse_insect.101
-sub_type 1
-material 32
-weight 20000
-weapon_speed 1.0
-container 350000
-no_pick 1
-invulnerable 1
-food 20
-identified 1
-speed 0.01
-is_used_up 1
-end
-Object corpse_nest
-name destroyed nest
-type 122
-editor_folder mobs/corpses
-race nest
-layer 3
-identified 1
-face nest_destroyed.101
-sub_type 1
-material 32
-weapon_speed 1.0
-container 350000
-weight 60000
-food 20
-speed 0.01
-is_used_up 1
 no_pick 1
 invulnerable 1
 end
@@ -26506,8 +26729,8 @@ Object giant_fire
 name Fire Giant
 type 80
 editor_folder mobs/giants
-race giant
 face giant_fire.151
+race giant
 randomitems loot&s1;wealth_normal&D65;loot_base&D17,s1;loot_magic&d27,s1;loot_melee&d20,s1
 layer 6
 direction 5
@@ -26558,8 +26781,8 @@ Object giant_frost
 name Frost Giant
 type 80
 editor_folder mobs/giants
-race giant
 face frost_giant.353
+race giant
 randomitems loot&s2;wealth_normal&D65;loot_base&D17,s2;loot_magic&d27,s2;loot_melee&d20,s2
 layer 6
 direction 5
@@ -26758,8 +26981,8 @@ Object archer
 name Archer
 type 80
 editor_folder mobs/human
-race human
 face archer.151
+race human
 randomitems skill_bow;loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
 layer 6
 direction 5
@@ -26815,8 +27038,8 @@ Object childf1
 name Child
 type 80
 editor_folder mobs/human
-race human
 face childf1.151
+race human
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
 layer 6
 direction 5
@@ -26864,8 +27087,8 @@ Object childf2
 name Child
 type 80
 editor_folder mobs/human
-race human
 face childf2.151
+race human
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
 layer 6
 direction 5
@@ -26913,8 +27136,8 @@ Object childm1
 name Child
 type 80
 editor_folder mobs/human
-race human
 face childm1.151
+race human
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
 layer 6
 direction 5
@@ -26962,8 +27185,8 @@ Object childm2
 name Child
 type 80
 editor_folder mobs/human
-race human
 face childm2.151
+race human
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
 layer 6
 direction 5
@@ -27011,8 +27234,8 @@ Object guard
 name Guard
 type 80
 editor_folder mobs/human
-race human
 face guard1.151
+race human
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
 layer 6
 direction 5
@@ -27067,8 +27290,8 @@ Object guard2
 name Guard
 type 80
 editor_folder mobs/human
-race human
 face guard2.151
+race human
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
 layer 6
 direction 5
@@ -27123,8 +27346,8 @@ Object guard_pole
 name Guard
 type 80
 editor_folder mobs/human
-race human
 face guard_pole.151
+race human
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
 layer 6
 direction 5
@@ -27179,8 +27402,8 @@ Object guard_royal
 name Royal Guard
 type 80
 editor_folder mobs/human
-race human
 face guard_royal.151
+race human
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
 layer 6
 direction 5
@@ -27235,8 +27458,8 @@ Object mage_old
 name Old Mage
 type 80
 editor_folder mobs/human
-race human
 face mage_old.151
+race human
 randomitems spells_mage;loot;wealth_normal&D65;loot_base&D17;loot_magic&d11;loot_melee&d37
 layer 6
 direction 5
@@ -27291,8 +27514,8 @@ Object seether
 name Seether
 type 80
 editor_folder mobs/human
-race human
 face seether.101
+race human
 randomitems spells_mage;loot;wealth_normal&D65;loot_base&D17;loot_magic&d11;loot_melee&d37
 layer 6
 direction 5
@@ -27347,8 +27570,8 @@ Object wizard_fm
 name Wizard
 type 80
 editor_folder mobs/human
-race human
 face wizard_fm.151
+race human
 randomitems spells_mage;loot;wealth_normal&D65;loot_base&D17;loot_magic&d11;loot_melee&d37
 layer 6
 direction 5
@@ -27403,8 +27626,8 @@ Object wizard_white
 name Wizard
 type 80
 editor_folder mobs/human
-race human
 face wizard.151
+race human
 randomitems spells_mage;loot;wealth_normal&D65;loot_base&D17;loot_magic&d11;loot_melee&d37
 layer 6
 direction 5
@@ -27459,8 +27682,8 @@ Object monk
 name Monk
 type 80
 editor_folder mobs/human
-race human
 face monk.151
+race human
 layer 6
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
 direction 5
@@ -27514,8 +27737,8 @@ Object king
 name King
 type 80
 editor_folder mobs/human
-race human
 face king.151
+race human
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
 layer 6
 direction 5
@@ -27567,8 +27790,8 @@ Object noble
 name Noble
 type 80
 editor_folder mobs/human
-race human
 face noble.151
+race human
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
 layer 6
 direction 5
@@ -27620,8 +27843,8 @@ Object queen
 name Queen
 type 80
 editor_folder mobs/human
-race human
 face queen.151
+race human
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
 layer 6
 direction 5
@@ -27673,8 +27896,8 @@ Object hobo_old
 name Old Hobo
 type 80
 editor_folder mobs/human
-race human
 face hobo_old.151
+race human
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
 layer 6
 direction 5
@@ -27722,8 +27945,8 @@ Object peasant
 name Peasant
 type 80
 editor_folder mobs/human
-race human
 face peasant.151
+race human
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
 layer 6
 direction 5
@@ -27820,8 +28043,8 @@ Object traveller_parka
 name Traveller
 type 80
 editor_folder mobs/human
-race human
 face traveller_parka.151
+race human
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
 layer 6
 direction 5
@@ -27869,8 +28092,8 @@ Object traveller_wife
 name Traveller
 type 80
 editor_folder mobs/human
-race human
 face traveller_wife.151
+race human
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
 layer 6
 direction 5
@@ -27974,8 +28197,8 @@ Object pirate
 name Pirate
 type 80
 editor_folder mobs/human
-race human
 face pirate.131
+race human
 randomitems skill_bow;loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
 layer 6
 direction 5
@@ -28198,8 +28421,8 @@ Object ship_captain
 name Ship Captain
 type 80
 editor_folder mobs/human
-race human
 face ship_captain.131
+race human
 randomitems skill_bow;loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
 layer 6
 direction 5
@@ -28254,8 +28477,8 @@ Object priest_church
 name Church Priest
 type 80
 editor_folder mobs/human
-race human
 face priest_church.151
+race human
 randomitems spells_priest;loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
 layer 6
 direction 5
@@ -28311,8 +28534,8 @@ Object priest_green
 name Priest
 type 80
 editor_folder mobs/human
-race human
 face priest_green.151
+race human
 randomitems spells_priest;loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
 layer 6
 direction 5
@@ -28368,8 +28591,8 @@ Object priest_robed
 name Robed Priest
 type 80
 editor_folder mobs/human
-race human
 face priest_robed.131
+race human
 randomitems spells_priest;loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
 layer 6
 direction 5
@@ -28425,8 +28648,8 @@ Object sadpriest
 name Sad Priest
 type 80
 editor_folder mobs/human
-race human
 face sadpriest.161
+race human
 randomitems spells_priest;loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
 layer 6
 direction 5
@@ -28482,8 +28705,8 @@ Object ranger
 name Ranger
 type 80
 editor_folder mobs/human
-race human
 face ranger.151
+race human
 randomitems skill_bow;loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
 layer 6
 direction 5
@@ -28539,8 +28762,8 @@ Object smith
 name Smith
 type 80
 editor_folder mobs/human
-race human
 face smith.141
+race human
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
 layer 6
 direction 5
@@ -28649,8 +28872,8 @@ Object barmaid
 name Barmaid
 type 80
 editor_folder mobs/human
-race human
 face barmaid.131
+race human
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
 layer 6
 direction 5
@@ -28698,8 +28921,8 @@ Object bartender
 name Bartender
 type 80
 editor_folder mobs/human
-race human
 face bartender.151
+race human
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
 layer 6
 direction 5
@@ -28747,8 +28970,8 @@ Object chef
 name Chef
 type 80
 editor_folder mobs/human
-race human
 face chef.131
+race human
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
 layer 6
 direction 5
@@ -28851,8 +29074,8 @@ Object thief_female
 name Thief
 type 80
 editor_folder mobs/human
-race human
 face thief_female.151
+race human
 randomitems skill_bow;loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
 layer 6
 direction 5
@@ -28907,8 +29130,8 @@ Object female1
 name Woman
 type 80
 editor_folder mobs/human
-race human
 face female1.151
+race human
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
 layer 6
 direction 5
@@ -28956,8 +29179,8 @@ Object female2
 name Woman
 type 80
 editor_folder mobs/human
-race human
 face female2.151
+race human
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
 layer 6
 direction 5
@@ -29005,8 +29228,8 @@ Object woman_old
 name Old Woman
 type 80
 editor_folder mobs/human
-race human
 face woman_old.151
+race human
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
 layer 6
 direction 5
@@ -29373,7 +29596,7 @@ anim_speed 4
 no_pick 1
 end
 Object skorpion
-name Giant Skorpion
+name Giant Scorpion
 type 80
 editor_folder mobs/insects
 face skorpion.151
@@ -31777,6 +32000,7 @@ msg
 You need a special key to open this door.
 endmsg
 editor_folder scenery/bars_and_countertops
+face door_bar1.111
 layer 5
 sub_type 1
 door_closed 1
@@ -31784,7 +32008,6 @@ sp 5
 pass_thru 1
 no_pick 1
 direction 1
-face door_bar1.111
 animation door_bar1
 anim_speed 1
 is_turnable 1
@@ -32090,8 +32313,8 @@ Object coffin_wood.111
 name wooden coffin
 type 79
 editor_folder scenery/burial_paraphernalia
-layer 5
 face coffin_wood.111
+layer 5
 animation coffin_wood.111
 is_turnable 1
 direction 1
@@ -32102,8 +32325,8 @@ Object coffin_stone.111
 name stone coffin
 type 79
 editor_folder scenery/burial_paraphernalia
-layer 5
 face coffin_stone.111
+layer 5
 animation coffin_stone.111
 is_turnable 1
 direction 1
@@ -32114,8 +32337,8 @@ Object grave1.111
 name grave
 type 79
 editor_folder scenery/burial_paraphernalia
-layer 5
 face grave1.111
+layer 5
 animation grave1.111
 is_turnable 1
 direction 1
@@ -32126,8 +32349,8 @@ Object grave2.111
 name grave
 type 79
 editor_folder scenery/burial_paraphernalia
-layer 5
 face grave2.111
+layer 5
 animation grave2.111
 is_turnable 1
 direction 1
@@ -32138,8 +32361,8 @@ Object grave_open.111
 name open grave
 type 79
 editor_folder scenery/burial_paraphernalia
-layer 5
 face grave_open.111
+layer 5
 animation grave_open.111
 is_turnable 1
 direction 1
@@ -32150,8 +32373,8 @@ Object grave_cross1.111
 name grave
 type 79
 editor_folder scenery/burial_paraphernalia
-layer 5
 face grave_cross1.111
+layer 5
 animation grave_cross1.111
 is_turnable 1
 direction 1
@@ -32162,8 +32385,8 @@ Object grave_cross2.111
 name grave
 type 79
 editor_folder scenery/burial_paraphernalia
-layer 5
 face grave_cross2.111
+layer 5
 animation grave_cross2.111
 is_turnable 1
 direction 1
@@ -32174,8 +32397,8 @@ Object obelisk.101
 name obelisk
 type 79
 editor_folder scenery/burial_paraphernalia
-layer 5
 face obelisk.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -32313,8 +32536,8 @@ Object cave_pillar1
 name cave pillar
 type 79
 editor_folder scenery/cave
-layer 5
 face cave_pillar1.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -32322,8 +32545,8 @@ Object cave_pillar2
 name cave pillar
 type 79
 editor_folder scenery/cave
-layer 5
 face cave_pillar2.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -32331,8 +32554,8 @@ Object cave_pillar3
 name cave pillar
 type 79
 editor_folder scenery/cave
-layer 5
 face cave_pillar3.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -32340,8 +32563,8 @@ Object cave_pillar4
 name cave pillar
 type 79
 editor_folder scenery/cave
-layer 5
 face cave_pillar4.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -32349,8 +32572,8 @@ Object cave_pillar5
 name cave pillar
 type 79
 editor_folder scenery/cave
-layer 5
 face cave_pillar5.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -33042,20 +33265,6 @@ glow_radius 3
 no_pick 1
 no_pass 1
 end
-Object level_up
-name magical sparkle
-type 79
-editor_folder scenery/effects
-face sparkle_lup.101
-layer 7
-animation level_up
-is_animated 1
-anim_speed 1
-speed 1
-is_used_up 1
-no_pick 1
-food 9
-end
 Object flagwall_short_brick1.111
 name Pond Wall
 type 77
@@ -33091,89 +33300,6 @@ face flagwall_short_brick1.181
 layer 5
 no_pick 1
 no_pass 0
-end
-Object fog
-type 79
-editor_folder scenery/fog
-face fog.111
-other_arch fog
-terrain_flag 65535
-layer 7
-animation fog
-is_animated 1
-anim_speed 4
-flying 1
-no_pick 1
-is_used_up 1
-invulnerable 1
-material 1
-changing 1
-generator 1
-speed -0.003
-speed_left -1.0
-blocksview 1
-end
-Object fog_glow1
-name strange glowing fog
-type 79
-editor_folder scenery/fog
-layer 7
-face fog.111
-other_arch fog_glow1
-terrain_flag 65535
-animation fog
-is_animated 1
-anim_speed 4
-flying 1
-no_pick 1
-is_used_up 1
-invulnerable 1
-material 1
-changing 1
-generator 1
-speed -0.003
-speed_left -1.0
-blocksview 0
-end
-Object fog_glow2
-name strange glowing fog
-type 79
-editor_folder scenery/fog
-face fog.111
-layer 7
-terrain_flag 65535
-other_arch fog_glow2
-animation fog
-is_animated 1
-anim_speed 4
-flying 1
-no_pick 1
-is_used_up 1
-invulnerable 1
-material 1
-changing 1
-generator 1
-speed -0.003
-speed_left -1.0
-blocksview 0
-end
-Object temp_fog
-name fog
-type 79
-editor_folder scenery/fog
-face fog.111
-layer 7
-animation fog
-is_animated 1
-anim_speed 4
-food 2
-flying 1
-no_pick 1
-is_used_up 1
-invulnerable 1
-material 1
-speed 0.01
-blocksview 1
 end
 Object fireplace_right
 name fireplace
@@ -33213,7 +33339,6 @@ name fireplace
 type 79
 mpart_id 2
 mpart_nr 1
-face fireplace_right_off.101
 layer 5
 no_pick 1
 x 1
@@ -33256,7 +33381,6 @@ name fireplace
 type 79
 mpart_id 1
 mpart_nr 1
-face fireplace_left_off.101
 layer 5
 no_pick 1
 y 1
@@ -33377,8 +33501,8 @@ Object icecave_pillar1
 name ice cave pillar
 type 79
 editor_folder scenery/icecave
-layer 5
 face icecave_pillar1.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -33386,8 +33510,8 @@ Object icecave_pillar2
 name ice cave pillar
 type 79
 editor_folder scenery/icecave
-layer 5
 face icecave_pillar2.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -33395,8 +33519,8 @@ Object icecave_pillar3
 name ice cave pillar
 type 79
 editor_folder scenery/icecave
-layer 5
 face icecave_pillar3.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -33404,8 +33528,8 @@ Object icecave_pillar4
 name ice cave pillar
 type 79
 editor_folder scenery/icecave
-layer 5
 face icecave_pillar4.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -33413,8 +33537,8 @@ Object icecave_pillar5
 name ice cave pillar
 type 79
 editor_folder scenery/icecave
-layer 5
 face icecave_pillar5.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -33491,8 +33615,8 @@ name stonehenge
 type 79
 mpart_id 3
 editor_folder scenery/megaliths
-layer 5
 face stonehenge.111
+layer 5
 animation stonehenge
 is_turnable 1
 direction 1
@@ -33537,40 +33661,40 @@ Object cardinal_giant_a
 name cardinal statue
 type 79
 editor_folder scenery/misc
+face cardinal_giant.131
 blocksview 1
 no_pass 1
 layer 5
-face cardinal_giant.131
 no_pick 1
 end
 Object cardinal_giant_b
 name cardinal statue
 type 79
 editor_folder scenery/misc
+face cardinal_giant.151
 blocksview 1
 no_pass 1
 layer 5
-face cardinal_giant.151
 no_pick 1
 end
 Object cardinal_giant_c
 name cardinal statue
 type 79
 editor_folder scenery/misc
+face cardinal_giant.231
 blocksview 1
 no_pass 1
 layer 5
-face cardinal_giant.231
 no_pick 1
 end
 Object cardinal_giant_d
 name cardinal statue
 type 79
 editor_folder scenery/misc
+face cardinal_giant.251
 blocksview 1
 no_pass 1
 layer 5
-face cardinal_giant.251
 no_pick 1
 end
 Object mirror_big.111
@@ -33588,8 +33712,8 @@ Object open_flame
 name flame
 type 79
 editor_folder scenery/misc
-layer 3
 face open_flame.101
+layer 3
 material 144
 glow_radius 5
 weight 500
@@ -33696,8 +33820,8 @@ Object ped_black
 name pedestal
 type 79
 editor_folder scenery/pillars
-layer 5
 face ped_black.111
+layer 5
 animation ped_black
 is_turnable 1
 direction 1
@@ -33708,8 +33832,8 @@ Object ped_black_h1
 name pedestal
 type 79
 editor_folder scenery/pillars
-layer 5
 face ped_black_h1.111
+layer 5
 animation ped_black_h1
 is_turnable 1
 direction 1
@@ -33720,8 +33844,8 @@ Object ped_black_hs1
 name pedestal
 type 79
 editor_folder scenery/pillars
-layer 5
 face ped_black_hs1.111
+layer 5
 animation ped_black_hs1
 is_turnable 1
 direction 1
@@ -33732,8 +33856,8 @@ Object ped_black_hw1
 name pedestal
 type 79
 editor_folder scenery/pillars
-layer 5
 face ped_black_hw1.111
+layer 5
 animation ped_black_hw1
 is_turnable 1
 direction 1
@@ -33744,8 +33868,8 @@ Object ped_black_hws1
 name pedestal
 type 79
 editor_folder scenery/pillars
-layer 5
 face ped_black_hws1.111
+layer 5
 animation ped_black_hws1
 is_turnable 1
 direction 1
@@ -33756,8 +33880,8 @@ Object ped_white
 name pedestal
 type 79
 editor_folder scenery/pillars
-layer 5
 face ped_white.111
+layer 5
 animation ped_white
 is_turnable 1
 direction 1
@@ -33768,8 +33892,8 @@ Object ped_white_h1
 name pedestal
 type 79
 editor_folder scenery/pillars
-layer 5
 face ped_white_h1.111
+layer 5
 animation ped_white_h1
 is_turnable 1
 direction 1
@@ -33780,8 +33904,8 @@ Object ped_white_hs1
 name pedestal
 type 79
 editor_folder scenery/pillars
-layer 5
 face ped_white_hs1.111
+layer 5
 animation ped_white_hs1
 is_turnable 1
 direction 1
@@ -33792,8 +33916,8 @@ Object ped_white_hw1
 name pedestal
 type 79
 editor_folder scenery/pillars
-layer 5
 face ped_white_hw1.111
+layer 5
 animation ped_white_hw1
 is_turnable 1
 direction 1
@@ -33804,8 +33928,8 @@ Object ped_white_hws1
 name pedestal
 type 79
 editor_folder scenery/pillars
-layer 5
 face ped_white_hws1.111
+layer 5
 animation ped_white_hws1
 is_turnable 1
 direction 1
@@ -33816,8 +33940,8 @@ Object ped_white_hw2
 name pedestal
 type 79
 editor_folder scenery/pillars
-layer 5
 face ped_white_hw2.111
+layer 5
 animation ped_white_hw2
 is_turnable 1
 direction 1
@@ -33828,8 +33952,8 @@ Object ped_white_hw3
 name pedestal
 type 79
 editor_folder scenery/pillars
-layer 5
 face ped_white_hw3.111
+layer 5
 animation ped_white_hw3
 is_turnable 1
 direction 1
@@ -33840,8 +33964,8 @@ Object ped_white_ww1
 name pedestal
 type 79
 editor_folder scenery/pillars
-layer 5
 face ped_white_ww1.111
+layer 5
 animation ped_white_ww1
 is_turnable 1
 direction 1
@@ -33852,8 +33976,8 @@ Object ped_white_ww2
 name pedestal
 type 79
 editor_folder scenery/pillars
-layer 5
 face ped_white_ww2.111
+layer 5
 animation ped_white_ww2
 is_turnable 1
 direction 1
@@ -33864,8 +33988,8 @@ Object pillar_black1a
 name dark pillar
 type 79
 editor_folder scenery/pillars
-layer 5
 face pillar_black1a.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -33873,8 +33997,8 @@ Object pillar_black1b
 name dark pillar
 type 79
 editor_folder scenery/pillars
-layer 5
 face pillar_black1b.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -33882,8 +34006,8 @@ Object pillar_black1c
 name dark pillar
 type 79
 editor_folder scenery/pillars
-layer 5
 face pillar_black1c.111
+layer 5
 animation pillar_black1c
 is_turnable 1
 direction 1
@@ -33894,8 +34018,8 @@ Object pillar_black1d
 name dark pillar
 type 79
 editor_folder scenery/pillars
-layer 5
 face pillar_black1d.111
+layer 5
 animation pillar_black1d
 is_turnable 1
 direction 1
@@ -33906,8 +34030,8 @@ Object pillar_black2a
 name dark pillar
 type 79
 editor_folder scenery/pillars
-layer 5
 face pillar_black2a.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -33915,8 +34039,8 @@ Object pillar_black2b
 name dark pillar
 type 79
 editor_folder scenery/pillars
-layer 5
 face pillar_black2b.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -33924,8 +34048,8 @@ Object pillar_black2c
 name dark pillar
 type 79
 editor_folder scenery/pillars
-layer 5
 face pillar_black2c.111
+layer 5
 animation pillar_black2c
 is_turnable 1
 direction 1
@@ -33936,8 +34060,8 @@ Object pillar_black2d
 name dark pillar
 type 79
 editor_folder scenery/pillars
-layer 5
 face pillar_black2d.111
+layer 5
 animation pillar_black2d
 is_turnable 1
 direction 1
@@ -33949,8 +34073,8 @@ name blue pillar
 type 79
 mpart_id 3
 editor_folder scenery/pillars
-layer 5
 face pillar_blue.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -33993,8 +34117,8 @@ name blue pillar
 type 79
 mpart_id 3
 editor_folder scenery/pillars
-layer 5
 face pillar_blue1.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -34037,8 +34161,8 @@ name blue pillar
 type 79
 mpart_id 3
 editor_folder scenery/pillars
-layer 5
 face pillar_blue2.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -34081,8 +34205,8 @@ name blue pillar
 type 79
 mpart_id 3
 editor_folder scenery/pillars
-layer 5
 face pillar_blue3.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -34125,8 +34249,8 @@ name blue pillar
 type 79
 mpart_id 3
 editor_folder scenery/pillars
-layer 5
 face pillar_blue4.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -34169,8 +34293,8 @@ name blue pillar
 type 79
 mpart_id 3
 editor_folder scenery/pillars
-layer 5
 face pillar_blue5.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -34213,8 +34337,8 @@ name blue pillar
 type 79
 mpart_id 3
 editor_folder scenery/pillars
-layer 5
 face pillar_blue6.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -34256,8 +34380,8 @@ Object pillar_blue7
 name blue pillar
 type 79
 editor_folder scenery/pillars
-layer 5
 face pillar_blue7.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -34265,8 +34389,8 @@ Object pillar_blue8
 name blue pillar
 type 79
 editor_folder scenery/pillars
-layer 5
 face pillar_blue8.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -34274,8 +34398,8 @@ Object pillar_blue9
 name blue pillar
 type 79
 editor_folder scenery/pillars
-layer 5
 face pillar_blue9.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -34283,8 +34407,8 @@ Object pillar_blue10
 name blue pillar
 type 79
 editor_folder scenery/pillars
-layer 5
 face pillar_blue10.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -34292,8 +34416,8 @@ Object pillar_rune1
 name runed pillar
 type 79
 editor_folder scenery/pillars
-layer 5
 face pillar_rune1.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -34301,8 +34425,8 @@ Object pillar_rune2
 name runed pillar
 type 79
 editor_folder scenery/pillars
-layer 5
 face pillar_rune2.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -34310,8 +34434,8 @@ Object pillar_rune3
 name runed pillar
 type 79
 editor_folder scenery/pillars
-layer 5
 face pillar_rune3.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -34319,8 +34443,8 @@ Object pillar_rune4
 name runed pillar
 type 79
 editor_folder scenery/pillars
-layer 5
 face pillar_rune4.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -34328,8 +34452,8 @@ Object pillar_rune5
 name runed pillar
 type 79
 editor_folder scenery/pillars
-layer 5
 face pillar_rune5.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -34337,8 +34461,8 @@ Object pillar_rune6
 name runed pillar
 type 79
 editor_folder scenery/pillars
-layer 5
 face pillar_rune6.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -34346,8 +34470,8 @@ Object pillar_rune7
 name runed pillar
 type 79
 editor_folder scenery/pillars
-layer 5
 face pillar_rune7.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -34355,8 +34479,8 @@ Object pillar_rune8
 name runed pillar
 type 79
 editor_folder scenery/pillars
-layer 5
 face pillar_rune8.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -34364,8 +34488,8 @@ Object pillar_small_01
 name pillar
 type 79
 editor_folder scenery/pillars
-layer 5
 face pillar_small_01.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -34373,8 +34497,8 @@ Object pillar_small_02
 name pillar
 type 79
 editor_folder scenery/pillars
-layer 5
 face pillar_small_02.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -34382,8 +34506,8 @@ Object pillar_small_03
 name pillar
 type 79
 editor_folder scenery/pillars
-layer 5
 face pillar_small_03.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -34391,8 +34515,8 @@ Object pillar_small_04
 name pillar
 type 79
 editor_folder scenery/pillars
-layer 5
 face pillar_small_04.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -34400,8 +34524,8 @@ Object pillar_white1a
 name white pillar
 type 79
 editor_folder scenery/pillars
-layer 5
 face pillar_white1a.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -34409,8 +34533,8 @@ Object pillar_white1b
 name white pillar
 type 79
 editor_folder scenery/pillars
-layer 5
 face pillar_white1b.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -34418,8 +34542,8 @@ Object pillar_white1c
 name white pillar
 type 79
 editor_folder scenery/pillars
-layer 5
 face pillar_white1c.111
+layer 5
 animation pillar_white1c
 is_turnable 1
 direction 1
@@ -34430,8 +34554,8 @@ Object pillar_white1d
 name white pillar
 type 79
 editor_folder scenery/pillars
-layer 5
 face pillar_white1d.111
+layer 5
 animation pillar_white1d
 is_turnable 1
 direction 1
@@ -34442,8 +34566,8 @@ Object pillar_white2a
 name white pillar
 type 79
 editor_folder scenery/pillars
-layer 5
 face pillar_white2a.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -34451,8 +34575,8 @@ Object pillar_white2b
 name white pillar
 type 79
 editor_folder scenery/pillars
-layer 5
 face pillar_white2b.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -34460,8 +34584,8 @@ Object pillar_white2c
 name white pillar
 type 79
 editor_folder scenery/pillars
-layer 5
 face pillar_white2c.111
+layer 5
 animation pillar_white2c
 is_turnable 1
 direction 1
@@ -34472,8 +34596,8 @@ Object pillar_white2d
 name white pillar
 type 79
 editor_folder scenery/pillars
-layer 5
 face pillar_white2d.111
+layer 5
 animation pillar_white2d
 is_turnable 1
 direction 1
@@ -34484,8 +34608,8 @@ Object pillar_black_big1
 name dark pillar
 type 79
 editor_folder scenery/pillars
-layer 5
 face pillar_black_big1.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -34493,8 +34617,8 @@ Object pillar_dark_s
 name dark pillar
 type 79
 editor_folder scenery/pillars
-layer 5
 face pillar_dark_s.d.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -34502,8 +34626,8 @@ Object pillar_dark2a
 name dark pillar
 type 79
 editor_folder scenery/pillars
-layer 5
 face pillar_dark2a.d.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -34511,8 +34635,8 @@ Object pillar_dark2b
 name dark pillar
 type 79
 editor_folder scenery/pillars
-layer 5
 face pillar_dark2b.d.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -34520,8 +34644,8 @@ Object pillar_dark2c
 name dark pillar
 type 79
 editor_folder scenery/pillars
-layer 5
 face pillar_dark2c.d.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -34529,8 +34653,8 @@ Object cactus
 name cactus
 type 79
 editor_folder scenery/plants
-layer 4
 face cactus.101
+layer 4
 is_wooded 1
 no_pick 1
 end
@@ -34538,8 +34662,8 @@ Object cactus1
 name cactus
 type 79
 editor_folder scenery/plants
-layer 5
 face cactus1.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -34548,8 +34672,8 @@ Object cactus2
 name cactus
 type 79
 editor_folder scenery/plants
-layer 5
 face cactus2.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -34558,8 +34682,8 @@ Object cactus3
 name cactus
 type 79
 editor_folder scenery/plants
-layer 5
 face cactus3.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -34568,8 +34692,8 @@ Object cactus4
 name cactus
 type 79
 editor_folder scenery/plants
-layer 5
 face cactus4.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -34578,8 +34702,8 @@ Object cactus5
 name cactus
 type 79
 editor_folder scenery/plants
-layer 5
 face cactus5.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -34588,136 +34712,136 @@ Object plant_flower1
 name flower
 type 79
 editor_folder scenery/plants
-layer 4
 face plant_flower1.101
+layer 4
 no_pick 1
 end
 Object plant_flower2
 name flower
 type 79
 editor_folder scenery/plants
-layer 4
 face plant_flower2.101
+layer 4
 no_pick 1
 end
 Object plant_flower3
 name flower
 type 79
 editor_folder scenery/plants
-layer 4
 face plant_flower3.101
+layer 4
 no_pick 1
 end
 Object plant_flower4
 name flower
 type 79
 editor_folder scenery/plants
-layer 4
 face plant_flower4.101
+layer 4
 no_pick 1
 end
 Object plant_flower5
 name flower
 type 79
 editor_folder scenery/plants
-layer 4
 face plant_flower5.101
+layer 4
 no_pick 1
 end
 Object plant_flower6
 name flower
 type 79
 editor_folder scenery/plants
-layer 4
 face plant_flower6.101
+layer 4
 no_pick 1
 end
 Object plant_flower7
 name flower
 type 79
 editor_folder scenery/plants
-layer 4
 face plant_flower7.101
+layer 4
 no_pick 1
 end
 Object plant_flower8
 name flower
 type 79
 editor_folder scenery/plants
-layer 4
 face plant_flower8.101
+layer 4
 no_pick 1
 end
 Object plant_flower9
 name flower
 type 79
 editor_folder scenery/plants
-layer 4
 face plant_flower9.101
+layer 4
 no_pick 1
 end
 Object plant_flower10
 name flower
 type 79
 editor_folder scenery/plants
-layer 4
 face plant_flower10.101
+layer 4
 no_pick 1
 end
 Object plant_flower11
 name flower
 type 79
 editor_folder scenery/plants
-layer 4
 face plant_flower11.101
+layer 4
 no_pick 1
 end
 Object plant_flower12
 name flower
 type 79
 editor_folder scenery/plants
-layer 4
 face plant_flower12.101
+layer 4
 no_pick 1
 end
 Object plant_flower13
 name flower
 type 79
 editor_folder scenery/plants
-layer 4
 face plant_flower13.101
+layer 4
 no_pick 1
 end
 Object plant_flower14
 name flower
 type 79
 editor_folder scenery/plants
-layer 4
 face plant_flower14.101
+layer 4
 no_pick 1
 end
 Object red_flower
 name flower
 type 79
 editor_folder scenery/plants
-layer 4
 face red_flower.101
+layer 4
 no_pick 1
 end
 Object spike_flower
 name flower
 type 79
 editor_folder scenery/plants
-layer 4
 face spike_flower.101
+layer 4
 no_pick 1
 end
 Object red_flowers
 name flower
 type 79
 editor_folder scenery/plants
-layer 4
 face red_flowers.101
+layer 4
 no_pick 1
 end
 Object mushroom_spot1
@@ -34740,32 +34864,32 @@ Object mushroom_giant1
 name giant mushroom
 type 79
 editor_folder scenery/plants
-layer 4
 face mushroom_giant1.101
+layer 4
 no_pick 1
 end
 Object mushroom_giant2
 name giant mushroom
 type 79
 editor_folder scenery/plants
-layer 4
 face mushroom_giant2.101
+layer 4
 no_pick 1
 end
 Object mushroom_giant3
 name giant mushroom
 type 79
 editor_folder scenery/plants
-layer 4
 face mushroom_giant3.101
+layer 4
 no_pick 1
 end
 Object mushroom_medium1
 name mushroom
 type 79
 editor_folder scenery/plants
-layer 4
 face mushroom_medium1.101
+layer 4
 animation mushroom_medium1
 is_animated 1
 anim_speed 4
@@ -34776,88 +34900,88 @@ Object plant_mushroom1
 name mushroom
 type 79
 editor_folder scenery/plants
-layer 4
 face plant_mushroom1.101
+layer 4
 no_pick 1
 end
 Object plant_mushroom2
 name mushroom
 type 79
 editor_folder scenery/plants
-layer 4
 face plant_mushroom2.101
+layer 4
 no_pick 1
 end
 Object plant_mushroom3
 name mushroom
 type 79
 editor_folder scenery/plants
-layer 4
 face plant_mushroom3.101
+layer 4
 no_pick 1
 end
 Object plant_mushroom4
 name mushroom
 type 79
 editor_folder scenery/plants
-layer 4
 face plant_mushroom4.101
+layer 4
 no_pick 1
 end
 Object plant_mushroom5
 name mushroom
 type 79
 editor_folder scenery/plants
-layer 4
 face plant_mushroom5.101
+layer 4
 no_pick 1
 end
 Object pumpkin_01
 name pumpkin
 type 79
 editor_folder scenery/plants
-layer 4
 face pumpkin_01.101
+layer 4
 no_pick 1
 end
 Object pumpkin_02
 name pumpkin
 type 79
 editor_folder scenery/plants
-layer 4
 face pumpkin_02.101
+layer 4
 no_pick 1
 end
 Object pumpkin_03
 name pumpkin
 type 79
 editor_folder scenery/plants
-layer 4
 face pumpkin_03.101
+layer 4
 no_pick 1
 end
 Object pumpkin_04
 name pumpkin
 type 79
 editor_folder scenery/plants
-layer 4
 face pumpkin_04.101
+layer 4
 no_pick 1
 end
 Object pumpkin_05
 name pumpkin
 type 79
 editor_folder scenery/plants
-layer 4
 face pumpkin_05.101
+layer 4
 no_pick 1
 end
 Object pumpkin_06
 name pumpkin
 type 79
 editor_folder scenery/plants
-layer 4
 face pumpkin_06.101
+layer 4
 no_pick 1
 end
 Object plant_big1
@@ -34884,40 +35008,40 @@ Object potted_plant1
 name potted plant
 type 79
 editor_folder scenery/plants
-layer 4
 face potted_plant1.101
+layer 4
 no_pick 1
 end
 Object potted_plant2
 name potted plant
 type 79
 editor_folder scenery/plants
-layer 4
 face potted_plant2.101
+layer 4
 no_pick 1
 end
 Object potted_plant3
 name potted plant
 type 79
 editor_folder scenery/plants
-layer 4
 face potted_plant3.101
+layer 4
 no_pick 1
 end
 Object potted_plant4
 name potted plant
 type 79
 editor_folder scenery/plants
-layer 4
 face potted_plant4.101
+layer 4
 no_pick 1
 end
 Object potted_plant5
 name potted plant
 type 79
 editor_folder scenery/plants
-layer 4
 face potted_plant5.101
+layer 4
 no_pick 1
 end
 Object table_plant1
@@ -34933,176 +35057,176 @@ Object plant1
 name plant
 type 79
 editor_folder scenery/plants
-layer 4
 face plant1.101
+layer 4
 no_pick 1
 end
 Object plant2
 name plant
 type 79
 editor_folder scenery/plants
-layer 4
 face plant2.101
+layer 4
 no_pick 1
 end
 Object plant3
 name plant
 type 79
 editor_folder scenery/plants
-layer 4
 face plant3.101
+layer 4
 no_pick 1
 end
 Object plant4
 name plant
 type 79
 editor_folder scenery/plants
-layer 4
 face plant4.101
+layer 4
 no_pick 1
 end
 Object plant5
 name plant
 type 79
 editor_folder scenery/plants
-layer 4
 face plant5.101
+layer 4
 no_pick 1
 end
 Object plant6
 name plant
 type 79
 editor_folder scenery/plants
-layer 4
 face plant6.101
+layer 4
 no_pick 1
 end
 Object plant7
 name plant
 type 79
 editor_folder scenery/plants
-layer 4
 face plant7.101
+layer 4
 no_pick 1
 end
 Object plant8
 name plant
 type 79
 editor_folder scenery/plants
-layer 4
 face plant8.101
+layer 4
 no_pick 1
 end
 Object plant9
 name plant
 type 79
 editor_folder scenery/plants
-layer 4
 face plant9.101
+layer 4
 no_pick 1
 end
 Object plant10
 name plant
 type 79
 editor_folder scenery/plants
-layer 4
 face plant10.101
+layer 4
 no_pick 1
 end
 Object plant11
 name plant
 type 79
 editor_folder scenery/plants
-layer 4
 face plant11.101
+layer 4
 no_pick 1
 end
 Object plant12
 name plant
 type 79
 editor_folder scenery/plants
-layer 4
 face plant12.101
+layer 4
 no_pick 1
 end
 Object plant13
 name plant
 type 79
 editor_folder scenery/plants
-layer 4
 face plant13.101
+layer 4
 no_pick 1
 end
 Object plant14
 name plant
 type 79
 editor_folder scenery/plants
-layer 4
 face plant14.101
+layer 4
 no_pick 1
 end
 Object plant15
 name plant
 type 79
 editor_folder scenery/plants
-layer 4
 face plant15.101
+layer 4
 no_pick 1
 end
 Object plant16
 name plant
 type 79
 editor_folder scenery/plants
-layer 4
 face plant16.101
+layer 4
 no_pick 1
 end
 Object plant17
 name plant
 type 79
 editor_folder scenery/plants
-layer 4
 face plant17.101
+layer 4
 no_pick 1
 end
 Object plant18
 name plant
 type 79
 editor_folder scenery/plants
-layer 4
 face plant18.101
+layer 4
 no_pick 1
 end
 Object plant19
 name plant
 type 79
 editor_folder scenery/plants
-layer 4
 face plant19.101
+layer 4
 no_pick 1
 end
 Object plant20
 name plant
 type 79
 editor_folder scenery/plants
-layer 4
 face plant20.101
+layer 4
 no_pick 1
 end
 Object plant21
 name plant
 type 79
 editor_folder scenery/plants
-layer 4
 face plant21.101
+layer 4
 no_pick 1
 end
 Object plant22
 name plant
 type 79
 editor_folder scenery/plants
-layer 4
 face plant22.101
+layer 4
 no_pick 1
 end
 Object thorns
@@ -35119,8 +35243,8 @@ Object water_lily
 name water lily
 type 79
 editor_folder scenery/plants
-layer 4
 face water_lily1.101
+layer 4
 no_pick 1
 no_teleport 1
 end
@@ -35128,8 +35252,8 @@ Object water_lily2
 name water lily
 type 79
 editor_folder scenery/plants
-layer 4
 face water_lily2.101
+layer 4
 no_pick 1
 no_teleport 1
 end
@@ -35137,8 +35261,8 @@ Object water_lily3
 name water lily
 type 79
 editor_folder scenery/plants
-layer 4
 face water_lily3.101
+layer 4
 no_pick 1
 no_teleport 1
 end
@@ -35146,8 +35270,8 @@ Object water_plant1
 name water plant
 type 79
 editor_folder scenery/plants
-layer 4
 face water_plant1.101
+layer 4
 no_pick 1
 no_teleport 1
 end
@@ -35155,8 +35279,8 @@ Object water_plant2
 name water plant
 type 79
 editor_folder scenery/plants
-layer 4
 face water_plant2.101
+layer 4
 no_pick 1
 no_teleport 1
 end
@@ -35164,8 +35288,8 @@ Object water_plant3
 name water plant
 type 79
 editor_folder scenery/plants
-layer 4
 face water_plant3.101
+layer 4
 no_pick 1
 no_teleport 1
 end
@@ -35173,8 +35297,8 @@ Object water_plant4
 name water plant
 type 79
 editor_folder scenery/plants
-layer 4
 face water_plant4.101
+layer 4
 no_pick 1
 no_teleport 1
 end
@@ -35182,8 +35306,8 @@ Object water_plant5
 name water plant
 type 79
 editor_folder scenery/plants
-layer 4
 face water_plant5.101
+layer 4
 no_pick 1
 no_teleport 1
 end
@@ -35191,8 +35315,8 @@ Object water_plant6
 name water plant
 type 79
 editor_folder scenery/plants
-layer 4
 face water_plant6.101
+layer 4
 no_pick 1
 no_teleport 1
 end
@@ -35200,16 +35324,16 @@ Object pool_poison
 name poison pool
 type 79
 editor_folder scenery/pools
-layer 5
 face pool_poison.101
+layer 5
 no_pick 1
 end
 Object stone_1
 name polished rock
 type 79
 editor_folder scenery/rocks
-layer 5
 face rock_bb1.101
+layer 5
 material 64
 no_pass 1
 no_pick 1
@@ -35218,8 +35342,8 @@ Object stone_2
 name polished rock
 type 79
 editor_folder scenery/rocks
-layer 5
 face rock_bb2.101
+layer 5
 material 64
 no_pass 1
 no_pick 1
@@ -35481,9 +35605,9 @@ Object rock_big1
 name rock
 type 79
 editor_folder scenery/rocks
+face rock_big1.101
 layer 5
 blocksview 1
-face rock_big1.101
 material 64
 weight 1500000
 no_pass 1
@@ -35493,8 +35617,8 @@ Object rock_big2
 name rock
 type 79
 editor_folder scenery/rocks
-layer 5
 face rock_big2.101
+layer 5
 material 64
 weight 1500000
 no_pass 1
@@ -35505,9 +35629,9 @@ Object rock_big3
 name rock
 type 79
 editor_folder scenery/rocks
+face rock_big3.101
 layer 5
 blocksview 1
-face rock_big3.101
 material 64
 weight 1500000
 no_pass 1
@@ -35562,8 +35686,8 @@ Object rock_big11
 name rock
 type 79
 editor_folder scenery/rocks
-layer 5
 face rock_big11.101
+layer 5
 material 64
 weight 1500000
 no_pass 1
@@ -35574,9 +35698,9 @@ Object rock_big12
 name rock
 type 79
 editor_folder scenery/rocks
+face rock_big12.101
 layer 5
 blocksview 1
-face rock_big12.101
 material 64
 weight 1500000
 no_pass 1
@@ -35586,8 +35710,8 @@ Object rock_big13
 name rock
 type 79
 editor_folder scenery/rocks
-layer 5
 face rock_big13.101
+layer 5
 material 64
 weight 1500000
 no_pass 1
@@ -35598,8 +35722,8 @@ Object rock_big14
 name rock
 type 79
 editor_folder scenery/rocks
-layer 5
 face rock_big14.101
+layer 5
 material 64
 weight 1500000
 no_pass 1
@@ -35610,8 +35734,8 @@ Object rock_big15
 name rock
 type 79
 editor_folder scenery/rocks
-layer 5
 face rock_big15.101
+layer 5
 material 64
 weight 1500000
 no_pass 1
@@ -35622,8 +35746,8 @@ Object rock_big16
 name rock
 type 79
 editor_folder scenery/rocks
-layer 5
 face rock_big16.101
+layer 5
 material 64
 weight 1500000
 no_pass 1
@@ -35634,8 +35758,8 @@ Object rock_big2_waterfall
 name rock waterfall
 type 79
 editor_folder scenery/rocks
-layer 5
 face rock_big2_waterfall.131
+layer 5
 material 64
 weight 1500000
 no_pass 1
@@ -35650,8 +35774,8 @@ Object rock_big2_waterfall2
 name rock waterfall
 type 79
 editor_folder scenery/rocks
-layer 5
 face rock_big2_waterfall.151
+layer 5
 material 64
 weight 1500000
 no_pass 1
@@ -35708,8 +35832,8 @@ Object rock_step1
 name rocks
 type 79
 editor_folder scenery/rocks
-layer 5
 face rock_step1.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -35717,8 +35841,8 @@ Object rock_step2
 name rocks
 type 79
 editor_folder scenery/rocks
-layer 5
 face rock_step2.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -35726,8 +35850,8 @@ Object rock_step3
 name rocks
 type 79
 editor_folder scenery/rocks
-layer 5
 face rock_step3.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -35735,9 +35859,9 @@ Object rock_wall1
 name rocks
 type 79
 editor_folder scenery/rocks
+face rock_wall1.101
 blocksview 1
 layer 5
-face rock_wall1.101
 no_pass 1
 no_pick 1
 end
@@ -35746,9 +35870,9 @@ name rocks
 type 79
 mpart_id 3
 editor_folder scenery/rocks
+face rock_wall2.101
 blocksview 1
 layer 5
-face rock_wall2.101
 no_pass 1
 no_pick 1
 end
@@ -35794,9 +35918,9 @@ name rocks
 type 79
 mpart_id 3
 editor_folder scenery/rocks
+face rock_wall3.101
 blocksview 1
 layer 5
-face rock_wall3.101
 no_pass 1
 no_pick 1
 end
@@ -35842,9 +35966,9 @@ name rocks
 type 79
 mpart_id 3
 editor_folder scenery/rocks
+face rock_wall4.101
 blocksview 1
 layer 5
-face rock_wall4.101
 no_pass 1
 no_pick 1
 end
@@ -35890,9 +36014,9 @@ name rocks
 type 79
 mpart_id 3
 editor_folder scenery/rocks
+face rock_wall5.101
 blocksview 1
 layer 5
-face rock_wall5.101
 no_pass 1
 no_pick 1
 end
@@ -35938,9 +36062,9 @@ name rocks
 type 79
 mpart_id 3
 editor_folder scenery/rocks
+face rock_wall6.101
 blocksview 1
 layer 5
-face rock_wall6.101
 no_pass 1
 no_pick 1
 end
@@ -35986,9 +36110,9 @@ name rocks
 type 79
 mpart_id 3
 editor_folder scenery/rocks
+face rock_wall7.101
 blocksview 1
 layer 5
-face rock_wall7.101
 no_pass 1
 no_pick 1
 end
@@ -36034,9 +36158,9 @@ name rocks
 type 79
 mpart_id 3
 editor_folder scenery/rocks
+face rock_wall8.101
 layer 5
 blocksview 1
-face rock_wall8.101
 no_pass 1
 no_pick 1
 end
@@ -36082,9 +36206,9 @@ name rocks
 type 79
 mpart_id 3
 editor_folder scenery/rocks
+face rock_wall3_exit.131
 layer 5
 blocksview 1
-face rock_wall3_exit.131
 no_pick 1
 end
 More
@@ -36126,9 +36250,9 @@ name rocks
 type 79
 mpart_id 3
 editor_folder scenery/rocks
+face rock_wall3_exit.151
 layer 5
 blocksview 1
-face rock_wall3_exit.151
 no_pick 1
 end
 More
@@ -36170,9 +36294,9 @@ name rocks
 type 79
 mpart_id 3
 editor_folder scenery/rocks
+face snowy_rock_wall2.101
 blocksview 1
 layer 5
-face snowy_rock_wall2.101
 no_pass 1
 no_pick 1
 end
@@ -36218,9 +36342,9 @@ name rocks
 type 79
 mpart_id 3
 editor_folder scenery/rocks
+face snowy_rock_wall3.101
 layer 5
 blocksview 1
-face snowy_rock_wall3.101
 no_pass 1
 no_pick 1
 end
@@ -36266,9 +36390,9 @@ name rocks
 type 79
 mpart_id 3
 editor_folder scenery/rocks
+face snowy_rock_wall4.101
 layer 5
 blocksview 1
-face snowy_rock_wall4.101
 no_pass 1
 no_pick 1
 end
@@ -36314,8 +36438,8 @@ name rocks
 type 79
 mpart_id 3
 editor_folder scenery/rocks
-layer 5
 face snowy_rock_wall5.101
+layer 5
 no_pass 1
 blocksview 1
 no_pick 1
@@ -36362,8 +36486,8 @@ name rocks
 type 79
 mpart_id 3
 editor_folder scenery/rocks
-layer 5
 face snowy_rock_wall6.101
+layer 5
 no_pass 1
 no_pick 1
 blocksview 1
@@ -36410,9 +36534,9 @@ name rocks
 type 79
 mpart_id 3
 editor_folder scenery/rocks
+face snowy_rock_wall8.101
 blocksview 1
 layer 5
-face snowy_rock_wall8.101
 no_pass 1
 no_pick 1
 end
@@ -36457,9 +36581,9 @@ Object snowy_rock_big1
 name rocks
 type 79
 editor_folder scenery/rocks
+face snowy_rock_big1.101
 layer 5
 blocksview 1
-face snowy_rock_big1.101
 no_pass 1
 no_pick 1
 end
@@ -36467,9 +36591,9 @@ Object snowy_rock_big2
 name rocks
 type 79
 editor_folder scenery/rocks
+face snowy_rock_big2.101
 layer 5
 blocksview 1
-face snowy_rock_big2.101
 no_pass 1
 no_pick 1
 end
@@ -36637,44 +36761,44 @@ Object pillar_ruin1b.101
 name pillar
 type 79
 editor_folder scenery/ruins
+face pillar_ruin1b.101
 layer 5
 no_pass 1
-face pillar_ruin1b.101
 no_pick 1
 end
 Object pillar_ruin1c.101
 name pillar
 type 79
 editor_folder scenery/ruins
+face pillar_ruin1c.101
 layer 5
 no_pass 1
-face pillar_ruin1c.101
 no_pick 1
 end
 Object pillar_ruin1d.101
 name pillar
 type 79
 editor_folder scenery/ruins
+face pillar_ruin1d.101
 layer 5
 no_pass 1
-face pillar_ruin1d.101
 no_pick 1
 end
 Object pillar_ruin1e.101
 name pillar
 type 79
 editor_folder scenery/ruins
+face pillar_ruin1e.101
 layer 5
 no_pass 1
-face pillar_ruin1e.101
 no_pick 1
 end
 Object scarecrow.111
 name scarecrow
 type 79
 editor_folder scenery/scarecrows
-layer 5
 face scarecrow.111
+layer 5
 animation scarecrow.111
 is_turnable 1
 direction 1
@@ -36685,8 +36809,8 @@ Object sewer_close.101
 name closed sewer hole
 type 79
 editor_folder scenery/sewers
-layer 5
 face sewer_close.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -36694,8 +36818,8 @@ Object sewer_plate.101
 name sewer hole plate
 type 79
 editor_folder scenery/sewers
-layer 5
 face sewer_plate.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -36703,8 +36827,8 @@ Object sewer_plate2.101
 name sewer hole plate
 type 79
 editor_folder scenery/sewers
-layer 5
 face sewer_plate2.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -36712,8 +36836,8 @@ Object sewer_plate3.101
 name sewer hole plate
 type 79
 editor_folder scenery/sewers
-layer 5
 face sewer_plate3.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -36722,8 +36846,8 @@ name igloo
 type 79
 mpart_id 3
 editor_folder scenery/shelters
-layer 5
 face igloo.151
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -36766,8 +36890,8 @@ name igloo
 type 79
 mpart_id 3
 editor_folder scenery/shelters
-layer 5
 face igloo.131
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -36810,8 +36934,8 @@ name small tent
 type 79
 mpart_id 3
 editor_folder scenery/shelters
-layer 5
 face tent_small.131
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -36854,8 +36978,8 @@ name small tent
 type 79
 mpart_id 3
 editor_folder scenery/shelters
-layer 5
 face tent_small.151
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -36898,8 +37022,8 @@ name large tent
 type 79
 mpart_id 3
 editor_folder scenery/shelters
-layer 5
 face tent_large.131
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -36942,8 +37066,8 @@ name large tent
 type 79
 mpart_id 3
 editor_folder scenery/shelters
-layer 5
 face tent_large.151
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -36996,10 +37120,10 @@ Object statue_fire_black1
 name statue
 type 79
 editor_folder scenery/statues
+face statue_fire_black1.101
 blocksview 1
 no_pass 1
 layer 5
-face statue_fire_black1.101
 no_pick 1
 end
 Object statue_fire
@@ -37020,60 +37144,60 @@ Object statue_hero_a
 name statue
 type 79
 editor_folder scenery/statues
+face statue_hero_a.101
 blocksview 1
 no_pass 1
 layer 5
-face statue_hero_a.101
 no_pick 1
 end
 Object statue_hero_b
 name statue
 type 79
 editor_folder scenery/statues
+face statue_hero_b.101
 blocksview 1
 no_pass 1
 layer 5
-face statue_hero_b.101
 no_pick 1
 end
 Object statue_hero_c
 name statue
 type 79
 editor_folder scenery/statues
+face statue_hero_c.101
 blocksview 1
 no_pass 1
 layer 5
-face statue_hero_c.101
 no_pick 1
 end
 Object statue_black1
 name statue
 type 79
 editor_folder scenery/statues
+face statue_black1.101
 blocksview 1
 no_pass 1
 layer 5
-face statue_black1.101
 no_pick 1
 end
 Object statue_black_big1
 name statue
 type 79
 editor_folder scenery/statues
+face statue_black_big1.101
 blocksview 1
 no_pass 1
 layer 5
-face statue_black_big1.101
 no_pick 1
 end
 Object statue_black_small1
 name statue
 type 79
 editor_folder scenery/statues
+face statue_black_small1.101
 blocksview 1
 no_pass 1
 layer 5
-face statue_black_small1.101
 no_pick 1
 end
 Object statue_white
@@ -37127,8 +37251,8 @@ Object stone1
 name stone
 type 79
 editor_folder scenery/stones
-layer 4
 face stone1.101
+layer 4
 material 64
 no_pick 1
 end
@@ -37136,8 +37260,8 @@ Object stone2
 name stone
 type 79
 editor_folder scenery/stones
-layer 4
 face stone2.101
+layer 4
 material 64
 no_pick 1
 end
@@ -37145,8 +37269,8 @@ Object stone3
 name stone
 type 79
 editor_folder scenery/stones
-layer 4
 face stone3.101
+layer 4
 material 64
 no_pick 1
 end
@@ -37154,8 +37278,8 @@ Object stone4
 name stone
 type 79
 editor_folder scenery/stones
-layer 4
 face stone4.101
+layer 4
 material 64
 no_pick 1
 end
@@ -37163,8 +37287,8 @@ Object stone5
 name stone
 type 79
 editor_folder scenery/stones
-layer 4
 face stone5.101
+layer 4
 material 64
 no_pick 1
 end
@@ -37172,8 +37296,8 @@ Object stone6
 name stone
 type 79
 editor_folder scenery/stones
-layer 4
 face stone6.101
+layer 4
 material 64
 no_pick 1
 end
@@ -37181,23 +37305,10 @@ Object small_stones
 name small stones
 type 79
 editor_folder scenery/stones
-layer 4
 face small_stones.101
+layer 4
 material 64
 no_pick 1
-end
-Object bluebottles
-name bluebottles
-type 79
-editor_folder scenery/swarms
-face bluebottles.101
-layer 7
-no_pick 1
-is_animated 1
-anim_speed 1
-speed -0.1
-speed_left -1.0
-animation bluebottles
 end
 Object table_round1
 name table
@@ -37339,8 +37450,8 @@ Object target.111
 name target
 type 79
 editor_folder scenery/targets
-layer 5
 face target.111
+layer 5
 animation target.111
 is_turnable 1
 direction 1
@@ -37415,8 +37526,8 @@ Object au_tree1
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face au_tree1.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -37425,8 +37536,8 @@ Object au_tree2
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face au_tree2.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -37435,8 +37546,8 @@ Object au_tree3
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face au_tree3.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -37445,8 +37556,8 @@ Object lo_tree1
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face lo_tree1.101
+layer 5
 no_pick 1
 no_pass 1
 blocksview 1
@@ -37456,8 +37567,8 @@ Object lo_tree2
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face lo_tree2.101
+layer 5
 no_pick 1
 no_pass 1
 blocksview 1
@@ -37467,8 +37578,8 @@ Object lo_tree3
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face lo_tree3.101
+layer 5
 no_pick 1
 no_pass 1
 blocksview 1
@@ -37478,8 +37589,8 @@ Object lo_tree4
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face lo_tree4.101
+layer 5
 no_pick 1
 no_pass 1
 blocksview 1
@@ -37489,8 +37600,8 @@ Object lo_tree5
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face lo_tree5.101
+layer 5
 no_pick 1
 no_pass 1
 blocksview 1
@@ -37501,8 +37612,8 @@ name tree
 type 79
 mpart_id 3
 editor_folder scenery/trees
-layer 5
 face lo_tree6.101
+layer 5
 no_pass 1
 no_pick 1
 blocksview 1
@@ -37549,8 +37660,8 @@ name tree
 type 79
 mpart_id 15
 editor_folder scenery/trees
-layer 5
 face lo_tree7.101
+layer 5
 no_pick 1
 end
 More
@@ -37728,80 +37839,80 @@ Object tree_stump_a
 name tree stump
 type 79
 editor_folder scenery/trees
-layer 4
 face tree_stump_a.101
+layer 4
 no_pick 1
 end
 Object tree_stump_b
 name tree stump
 type 79
 editor_folder scenery/trees
-layer 4
 face tree_stump_b.101
+layer 4
 no_pick 1
 end
 Object tree_stump_c
 name tree stump
 type 79
 editor_folder scenery/trees
-layer 4
 face tree_stump_c.101
+layer 4
 no_pick 1
 end
 Object tree_stump_d
 name tree stump
 type 79
 editor_folder scenery/trees
-layer 4
 face tree_stump_d.101
+layer 4
 no_pick 1
 end
 Object tree_stump_e
 name tree stump
 type 79
 editor_folder scenery/trees
-layer 4
 face tree_stump_e.101
+layer 4
 no_pick 1
 end
 Object tree_stump_large_a
 name tree stump
 type 79
 editor_folder scenery/trees
-layer 4
 face tree_stump_large_a.101
+layer 4
 no_pick 1
 end
 Object tree_stump_large_b
 name tree stump
 type 79
 editor_folder scenery/trees
-layer 4
 face tree_stump_large_b.101
+layer 4
 no_pick 1
 end
 Object tree_stump_large_c
 name tree stump
 type 79
 editor_folder scenery/trees
-layer 4
 face tree_stump_large_c.101
+layer 4
 no_pick 1
 end
 Object tree_stump_large_d
 name tree stump
 type 79
 editor_folder scenery/trees
-layer 4
 face tree_stump_large_d.101
+layer 4
 no_pick 1
 end
 Object tree_apple
 name apple tree
 type 79
 editor_folder scenery/trees
-layer 5
 face apple_tree.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -37810,8 +37921,8 @@ Object tree_cuta
 name old tree
 type 79
 editor_folder scenery/trees
-layer 4
 face tree_cut1.101
+layer 4
 is_wooded 1
 no_pick 1
 end
@@ -37819,8 +37930,8 @@ Object tree_orange
 name orange tree
 type 79
 editor_folder scenery/trees
-layer 5
 face orange_tree.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -37829,48 +37940,48 @@ Object tree_branch1
 name branch
 type 79
 editor_folder scenery/trees
-layer 4
 face tree_branch1.101
+layer 4
 no_pick 1
 end
 Object tree_branch2
 name branch
 type 79
 editor_folder scenery/trees
-layer 4
 face tree_branch2.101
+layer 4
 no_pick 1
 end
 Object tree_branch3
 name branch
 type 79
 editor_folder scenery/trees
-layer 4
 face tree_branch3.101
+layer 4
 no_pick 1
 end
 Object tree_branch1_winter
 name branch
 type 79
 editor_folder scenery/trees
-layer 4
 face tree_branch1_winter.101
+layer 4
 no_pick 1
 end
 Object tree_branch2_winter
 name branch
 type 79
 editor_folder scenery/trees
-layer 4
 face tree_branch2_winter.101
+layer 4
 no_pick 1
 end
 Object tree_branch3_winter
 name branch
 type 79
 editor_folder scenery/trees
-layer 4
 face tree_branch3_winter.101
+layer 4
 no_pick 1
 end
 Object tree_small
@@ -37895,8 +38006,8 @@ Object tree_stone1
 name stone tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree_stone1.101
+layer 5
 no_pass 1
 no_pick 1
 end
@@ -37904,8 +38015,8 @@ Object woods_2
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree_b.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -37914,8 +38025,8 @@ Object woods_tree
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree_c.101
+layer 5
 no_pick 1
 is_wooded 1
 end
@@ -37923,8 +38034,8 @@ Object tree_big
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree_big.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -37933,8 +38044,8 @@ Object tree_big2
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree_big2.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -37943,8 +38054,8 @@ Object tree_big3
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree_big3.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -37953,8 +38064,8 @@ Object tree_big4
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree_big4.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -37963,8 +38074,8 @@ Object tree_big5
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree_big5.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -37973,8 +38084,8 @@ Object tree_big4b
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree_big4b.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -37983,8 +38094,8 @@ Object tree_big5b
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree_big5b.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -37993,8 +38104,8 @@ Object tree20
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree20.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -38003,8 +38114,8 @@ Object tree21
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree21.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -38013,8 +38124,8 @@ Object tree22
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree22.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -38023,8 +38134,8 @@ Object tree23
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree23.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -38033,8 +38144,8 @@ Object tree24
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree24.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -38043,8 +38154,8 @@ Object tree25
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree25.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -38053,8 +38164,8 @@ Object tree26
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree26.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -38063,8 +38174,8 @@ Object tree27
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree27.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -38073,8 +38184,8 @@ Object tree28
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree28.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -38083,8 +38194,8 @@ Object tree29
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree29.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -38093,8 +38204,8 @@ Object tree30
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree30.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -38103,8 +38214,8 @@ Object tree31
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree31.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -38113,8 +38224,8 @@ Object tree32
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree32.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -38123,8 +38234,8 @@ Object tree33
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree33.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -38133,8 +38244,8 @@ Object tree34
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree34.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -38143,8 +38254,8 @@ Object tree35
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree35.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -38153,8 +38264,8 @@ Object tree36
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree36.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -38163,8 +38274,8 @@ Object tree37
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree37.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -38173,8 +38284,8 @@ Object tree38
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree38.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -38183,8 +38294,8 @@ Object tree39
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree39.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -38193,8 +38304,8 @@ Object tree40
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree40.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -38203,8 +38314,8 @@ Object tree41
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree41.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -38213,8 +38324,8 @@ Object tree42
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree42.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -38223,8 +38334,8 @@ Object tree43
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree43.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -38233,8 +38344,8 @@ Object tree44
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree44.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -38243,8 +38354,8 @@ Object tree45
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree45.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -38253,8 +38364,8 @@ Object tree46
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree46.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -38263,8 +38374,8 @@ Object tree47
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree47.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -38273,8 +38384,8 @@ Object tree48
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree48.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -38283,8 +38394,8 @@ Object tree49
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree49.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -38293,8 +38404,8 @@ Object tree50
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree50.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -38303,8 +38414,8 @@ Object tree51
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree51.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -38313,8 +38424,8 @@ Object tree_burned1
 name burned tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree_burned1.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -38323,8 +38434,8 @@ Object tree_burned2
 name burned tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree_burned2.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -38333,8 +38444,8 @@ Object tree_burned2_winter
 name burned tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree_burned2_winter.101
+layer 5
 no_pick 1
 no_pass 1
 blocksview 1
@@ -38344,8 +38455,8 @@ Object tree_burned3
 name burned tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree_burned3.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -38354,8 +38465,8 @@ Object tree_burned4
 name burned tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree_burned4.101
+layer 5
 no_pick 1
 no_pass 1
 is_wooded 1
@@ -38364,8 +38475,8 @@ Object snowy_pinetree1
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face snowy_pinetree1.101
+layer 5
 no_pick 1
 no_pass 1
 blocksview 1
@@ -38375,8 +38486,8 @@ Object snowy_pinetree2
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face snowy_pinetree2.101
+layer 5
 no_pick 1
 no_pass 1
 blocksview 1
@@ -38386,8 +38497,8 @@ Object tree_big5_winter
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree_big5_winter.101
+layer 5
 no_pick 1
 no_pass 1
 blocksview 1
@@ -38397,8 +38508,8 @@ Object snowy_autree2
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face snowy_autree2.101
+layer 5
 no_pick 1
 no_pass 1
 blocksview 1
@@ -38408,8 +38519,8 @@ Object snowy_burnedtree1
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face snowy_burnedtree1.101
+layer 5
 no_pick 1
 no_pass 1
 blocksview 1
@@ -38419,8 +38530,8 @@ Object snowy_burnedtree2
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face snowy_burnedtree2.101
+layer 5
 no_pick 1
 no_pass 1
 blocksview 1
@@ -38430,8 +38541,8 @@ Object snowy_tree1
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face snowy_tree1.101
+layer 5
 no_pick 1
 no_pass 1
 blocksview 1
@@ -38441,8 +38552,8 @@ Object snowy_tree2
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face snowy_tree2.101
+layer 5
 no_pick 1
 no_pass 1
 blocksview 1
@@ -38452,8 +38563,8 @@ Object snowy_tree_big1
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face snowy_tree_big1.101
+layer 5
 no_pick 1
 no_pass 1
 blocksview 1
@@ -38463,8 +38574,8 @@ Object snowy_tree_big2
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face snowy_tree_big2.101
+layer 5
 no_pick 1
 no_pass 1
 blocksview 1
@@ -38474,8 +38585,8 @@ Object snowy_tree_bigb1
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face snowy_tree_bigb1.101
+layer 5
 no_pick 1
 no_pass 1
 blocksview 1
@@ -38485,8 +38596,8 @@ Object snowy_tree_bigb2
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face snowy_tree_bigb2.101
+layer 5
 no_pick 1
 no_pass 1
 blocksview 1
@@ -38496,8 +38607,8 @@ Object snowy_treeb1
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face snowy_treeb1.101
+layer 5
 no_pick 1
 no_pass 1
 blocksview 1
@@ -38507,8 +38618,8 @@ Object tree32_winter
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree32_winter.101
+layer 5
 no_pick 1
 no_pass 1
 blocksview 1
@@ -38518,8 +38629,8 @@ Object tree33_winter
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree33_winter.101
+layer 5
 no_pick 1
 no_pass 1
 blocksview 1
@@ -38529,8 +38640,8 @@ Object tree27_winter
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree27_winter.101
+layer 5
 no_pick 1
 no_pass 1
 blocksview 1
@@ -38540,8 +38651,8 @@ Object tree43_winter
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree43_winter.101
+layer 5
 no_pick 1
 no_pass 1
 blocksview 1
@@ -38551,8 +38662,8 @@ Object tree44_winter
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree44_winter.101
+layer 5
 no_pick 1
 no_pass 1
 blocksview 1
@@ -38562,8 +38673,8 @@ Object tree45_winter
 name tree
 type 79
 editor_folder scenery/trees
-layer 5
 face tree45_winter.101
+layer 5
 no_pick 1
 no_pass 1
 blocksview 1
@@ -38585,8 +38696,8 @@ name big wagon
 type 79
 mpart_id 3
 editor_folder scenery/wagons
-layer 5
 face wagon_big.131
+layer 5
 animation wagon_big
 is_turnable 1
 direction 1
@@ -39061,11 +39172,11 @@ Object magic_wall
 name magic wall
 type 62
 editor_folder special/magic_walls
+face magic_wall.101
 alive 1
 layer 5
 direction 1
 level 1
-face magic_wall.101
 animation magic_wall
 is_animated 0
 is_turnable 1
@@ -39107,8 +39218,8 @@ end
 Object beacon
 type 137
 editor_folder special/movement
-no_pick 1
 face beacon.101
+no_pick 1
 sys_object 1
 end
 Object marker
@@ -39125,12 +39236,12 @@ end
 Object waypoint
 type 119
 editor_folder special/movement
+face waypoint.101
 sp 0
 exp 0
 wc 0
 ac 0
 cursed 0
-face waypoint.101
 sys_object 1
 end
 Object mover
@@ -39166,18 +39277,18 @@ end
 Object quest_trigger
 type 129
 editor_folder special/quest
+face quest.101
 sys_object 1
 applied 0
 no_drop 1
 layer 0
-face quest.101
 end
 Object bed_save
 name save bed
 type 106
 editor_folder special/savebed
-layer 3
 face bed_save.111
+layer 3
 weight 200000
 value 1
 no_pick 1
@@ -39185,18 +39296,19 @@ no_magic 1
 damned 1
 end
 Object spawn_point
+name spawn point
 type 81
 editor_folder special/spawn
-other_arch spawn_info
 face spawn_point.101
-last_grace 8
-speed -0.00317
-no_teleport 1
-last_sp -1
-last_heal 9
-sys_object 1
 layer 0
+sys_object 1
+other_arch spawn_info
+speed -0.00317
+last_grace 8
+last_sp -1
+last_heal 1
 no_pick 1
+no_teleport 1
 end
 Object spinner
 name spinner
@@ -39289,8 +39401,8 @@ Object jack
 name jack'o'lantern
 type 74
 editor_folder themed/halloween
-race lamp_oil
 face jackolantern.151
+race lamp_oil
 other_arch jack_unlit
 direction 5
 layer 3
@@ -39312,9 +39424,9 @@ Object candle_fuel
 name little candle
 type 82
 editor_folder themed/halloween
+face candle_fuel.101
 race jack_lantern
 layer 3
-face candle_fuel.101
 material 144
 value 22
 weight 100
@@ -39326,8 +39438,8 @@ Object lantern_pumpk_a
 name Jack'O'Lantern
 type 74
 editor_folder themed/halloween
-race jack_lantern
 face lantern_pumpk_a.100
+race jack_lantern
 can_stack 1
 nrof 1
 layer 3
@@ -39347,8 +39459,8 @@ Object lantern_pumpk_b
 name Jack'O'Lantern
 type 74
 editor_folder themed/halloween
-race jack_lantern
 face lantern_pumpk_b.100
+race jack_lantern
 can_stack 1
 nrof 1
 layer 3
@@ -39368,8 +39480,8 @@ Object lantern_pumpk_c
 name Jack'O'Lantern
 type 74
 editor_folder themed/halloween
-race jack_lantern
 face lantern_pumpk_c.100
+race jack_lantern
 can_stack 1
 nrof 1
 layer 3
@@ -39389,8 +39501,8 @@ Object lantern_pumpk_d
 name Jack'O'Lantern
 type 74
 editor_folder themed/halloween
-race jack_lantern
 face lantern_pumpk_d.100
+race jack_lantern
 can_stack 1
 nrof 1
 layer 3
@@ -39459,8 +39571,8 @@ Object g_pumpkin
 name Evil Pumpkin
 type 80
 editor_folder themed/halloween
-race pumpkin
 face great_pumpkin.151
+race pumpkin
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
 layer 6
 direction 5
@@ -39747,8 +39859,8 @@ Object dancerf1
 name Dancer
 type 80
 editor_folder themed/vday
-race human
 face dancerf1.111
+race human
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
 layer 6
 direction 5
@@ -39796,8 +39908,8 @@ Object dancerm1
 name Dancer
 type 80
 editor_folder themed/vday
-race human
 face dancerm1.111
+race human
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_magic&d27;loot_melee&d22
 layer 6
 direction 5
@@ -39860,8 +39972,8 @@ Object belt_santa
 name santa's elastic waistband
 type 113
 editor_folder themed/xmas
-layer 3
 face belt_santa.101
+layer 3
 ac 4
 item_level 6
 item_skill 5
@@ -40008,8 +40120,8 @@ Object christmas_r_sack
 name christmas rucksack
 type 122
 editor_folder themed/xmas
-other_arch open_christmas_r_sack
 face christmas_r_sack.101
+other_arch open_christmas_r_sack
 layer 3
 level 1
 material 8
@@ -40023,8 +40135,8 @@ Object chtree_big5b
 name tree
 type 79
 editor_folder themed/xmas
-layer 5
 face chtree_big5b.101
+layer 5
 animation chtree_big5b
 is_animated 1
 anim_speed 4
@@ -40038,8 +40150,8 @@ Object xmastreeinside
 name christmas tree
 type 79
 editor_folder themed/xmas
-layer 5
 face xmastreeinside.101
+layer 5
 animation xmastreeinside
 is_animated 1
 anim_speed 4
@@ -40054,8 +40166,8 @@ name christmas tree
 type 79
 mpart_id 3
 editor_folder themed/xmas
-layer 5
 face xmastree.101
+layer 5
 animation xmastree
 is_animated 1
 anim_speed 4
@@ -40173,8 +40285,8 @@ Object elf_toytable
 name elf's table
 type 79
 editor_folder themed/xmas
-layer 4
 face elf_toytable.111
+layer 4
 animation elf_toytable
 is_animated 1
 anim_speed 4
@@ -40187,8 +40299,8 @@ Object elf_toytable2
 name elf's table
 type 79
 editor_folder themed/xmas
-layer 4
 face elf_toytable.171
+layer 4
 animation elf_toytable2
 is_animated 1
 anim_speed 4
@@ -40201,13 +40313,13 @@ Object figpud
 name Fig Pudding
 type 6
 editor_folder themed/xmas
+face figpud.101
 last_eat 10
 hp 10
 sp 10
 can_stack 1
 grace 10
 layer 3
-face figpud.101
 animation figpud
 is_animated 1
 anim_speed 3
@@ -40222,13 +40334,13 @@ Object figpud2
 name Fig Pudding
 type 6
 editor_folder themed/xmas
+face figpud2.101
 last_eat 10
 hp 10
 sp 10
 grace 10
 layer 3
 can_stack 1
-face figpud2.101
 animation figpud2
 is_animated 1
 anim_speed 3
@@ -40260,8 +40372,8 @@ Object gift
 name wrapped gift
 type 122
 editor_folder themed/xmas
-other_arch close_gift
 face gift_closed.111
+other_arch close_gift
 layer 3
 level 1
 material 1
@@ -40275,8 +40387,8 @@ Object gift_b
 name wrapped gift
 type 122
 editor_folder themed/xmas
-other_arch open_gift_bow
 face gift_bow_close.111
+other_arch open_gift_bow
 layer 3
 level 1
 material 1
@@ -40560,8 +40672,8 @@ Object legs_santa
 name santa's plate legs
 type 143
 editor_folder themed/xmas
-layer 3
 face legs_santa.101
+layer 3
 ac 3
 last_heal 48
 item_level 10
@@ -40911,8 +41023,8 @@ Object snowman_evil
 name Snowman
 type 80
 editor_folder themed/xmas
-race snowcreature
 face snowman_evil.151
+race snowcreature
 randomitems loot&s2;wealth_normal&D65;loot_base&D17,s2;loot_magic&d27,s2;loot_melee&d22,s2
 layer 6
 direction 5
@@ -40958,8 +41070,8 @@ Object snowman_evil2
 name Big Snowman
 type 80
 editor_folder themed/xmas
-race snowcreature
 face snowman_evil2.151
+race snowcreature
 randomitems loot&s2;wealth_normal&D65;loot_base&D17,s2;loot_magic&d27,s2;loot_melee&d22,s2
 layer 6
 direction 5
@@ -41082,8 +41194,8 @@ Object santahat
 name Santa's Hat
 type 34
 editor_folder themed/xmas
-layer 3
 face santahat.101
+layer 3
 weight 250
 ac 2
 last_heal -12
@@ -41107,8 +41219,8 @@ Object shield_holly_small
 name small holly shield
 type 33
 editor_folder themed/xmas
-layer 3
 face shield_holly_small.101
+layer 3
 ac 8
 item_level 3
 item_skill 4
@@ -41127,8 +41239,8 @@ Object shield_holly
 name large holly shield
 type 33
 editor_folder themed/xmas
-layer 3
 face shield_holly.101
+layer 3
 ac 10
 item_level 9
 item_skill 6
@@ -41146,8 +41258,8 @@ Object shoulder_santa
 name santa shoulders
 type 142
 editor_folder themed/xmas
-layer 3
 face shoulders_santa.101
+layer 3
 ac 6
 item_level 4
 item_skill 5
@@ -41244,8 +41356,8 @@ Object stocking
 name stocking
 type 122
 editor_folder themed/xmas
-other_arch close_stocking
 face stocking.101
+other_arch close_stocking
 layer 3
 level 1
 material 1
@@ -41259,8 +41371,8 @@ Object stocking_bow
 name stocking
 type 122
 editor_folder themed/xmas
-other_arch close_stocking_bow
 face stocking_bow.101
+other_arch close_stocking_bow
 layer 3
 level 1
 material 1
@@ -41304,7 +41416,7 @@ editor_folder themed/xmas
 face xmastreeinside.101
 animation white_xmas_tree
 is_animated 1
-anim_speed -.2
+anim_speed 1
 identified 1
 speed 0.1
 item_quality 80
@@ -41329,8 +41441,8 @@ Object xmas_present_green
 name Christmas Present
 type 122
 editor_folder themed/xmas
-other_arch xmas_present_green_open
 face xmas_present_green_close.101
+other_arch xmas_present_green_open
 no_pick 1
 layer 3
 level 1
@@ -41345,8 +41457,8 @@ Object xmas_present_red
 name Christmas Present
 type 122
 editor_folder themed/xmas
-other_arch xmas_present_red_open
 face xmas_present_red_close.101
+other_arch xmas_present_red_open
 no_pick 1
 layer 3
 level 1
@@ -41361,8 +41473,8 @@ Object xmas_present_white
 name Christmas Present
 type 122
 editor_folder themed/xmas
-other_arch xmas_present_white_open
 face xmas_present_white_close.101
+other_arch xmas_present_white_open
 no_pick 1
 layer 3
 level 1
@@ -41377,8 +41489,8 @@ Object xmas_present_yellow
 name Christmas Present
 type 122
 editor_folder themed/xmas
-other_arch xmas_present_yellow_open
 face xmas_present_yellow_close.101
+other_arch xmas_present_yellow_open
 no_pick 1
 layer 3
 level 1
@@ -41465,8 +41577,8 @@ Object trap_diseased_needle
 name diseased parts
 type 154
 editor_folder traps/traps
-sub_type 128
 face needle.101
+sub_type 128
 randomitems traps_needle_diseases
 hp 1
 animation trap_diseased_needle
@@ -41505,8 +41617,8 @@ msg
 You detonate a Rune of Acid!
 endmsg
 editor_folder traps/runes
-layer 4
 face rune_acid.101
+layer 4
 hp 1
 animation rune_acid
 level 1
@@ -41525,8 +41637,8 @@ msg
 You detonate a Rune of Aether!
 endmsg
 editor_folder traps/runes
-layer 4
 face rune_aether.101
+layer 4
 hp 1
 animation rune_aether
 level 1
@@ -41545,8 +41657,8 @@ msg
 You detonate a Rune of Chaos!
 endmsg
 editor_folder traps/runes
-layer 4
 face rune_chaos.101
+layer 4
 hp 1
 animation rune_chaos
 level 1
@@ -41565,8 +41677,8 @@ msg
 You detonate a Rune of Frost!
 endmsg
 editor_folder traps/runes
-layer 4
 face rune_cold.101
+layer 4
 hp 1
 animation rune_cold
 level 1
@@ -41585,8 +41697,8 @@ msg
 You detonate a Rune of Confusion!
 endmsg
 editor_folder traps/runes
-layer 4
 face rune_confusion.101
+layer 4
 hp 1
 animation rune_confusion
 level 1
@@ -41605,8 +41717,8 @@ msg
 You detonate a Rune of Corruption!
 endmsg
 editor_folder traps/runes
-layer 4
 face rune_corruption.101
+layer 4
 hp 1
 animation rune_corruption
 level 1
@@ -41625,8 +41737,8 @@ msg
 You detonate a Rune of Death!
 endmsg
 editor_folder traps/runes
-layer 4
 face rune_death.101
+layer 4
 hp 1
 animation rune_death
 level 1
@@ -41645,8 +41757,8 @@ msg
 You detonate a Rune of Depletion!
 endmsg
 editor_folder traps/runes
-layer 4
 face rune_depletion.101
+layer 4
 hp 1
 animation rune_depletion
 level 1
@@ -41665,8 +41777,8 @@ msg
 You detonate a Rune of Drain!
 endmsg
 editor_folder traps/runes
-layer 4
 face rune_drain.101
+layer 4
 hp 1
 animation rune_drain
 level 1
@@ -41685,8 +41797,8 @@ msg
 You detonate a Rune of Lightning!
 endmsg
 editor_folder traps/runes
-layer 4
 face rune_electricity.101
+layer 4
 hp 1
 animation rune_electricity
 level 1
@@ -41705,8 +41817,8 @@ msg
 You detonate a Rune of Fear!
 endmsg
 editor_folder traps/runes
-layer 4
 face rune_fear.101
+layer 4
 hp 1
 animation rune_fear
 level 1
@@ -41725,8 +41837,8 @@ msg
 You detonate a Rune of Fire!
 endmsg
 editor_folder traps/runes
-layer 4
 face rune_fire.101
+layer 4
 hp 1
 animation rune_fire
 level 1
@@ -41745,8 +41857,8 @@ msg
 You detonate a Rune of Godpower!
 endmsg
 editor_folder traps/runes
-layer 4
 face rune_godpower.101
+layer 4
 hp 1
 animation rune_godpower
 level 1
@@ -41765,8 +41877,8 @@ msg
 You detonate a Rune of Lifesteal!
 endmsg
 editor_folder traps/runes
-layer 4
 face rune_lifesteal.101
+layer 4
 hp 1
 animation rune_lifesteal
 level 1
@@ -41785,8 +41897,8 @@ msg
 You detonate a Rune of Light!
 endmsg
 editor_folder traps/runes
-layer 4
 face rune_light.101
+layer 4
 hp 1
 animation rune_light
 level 1
@@ -41805,8 +41917,8 @@ msg
 You detonate a Rune of Magic!
 endmsg
 editor_folder traps/runes
-layer 4
 face rune_magic.101
+layer 4
 hp 1
 animation rune_magic
 level 1
@@ -41825,8 +41937,8 @@ msg
 You detonate a Rune of Nether!
 endmsg
 editor_folder traps/runes
-layer 4
 face rune_nether.101
+layer 4
 hp 1
 animation rune_nether
 level 1
@@ -41845,8 +41957,8 @@ msg
 You detonate a Rune of Paralyze!
 endmsg
 editor_folder traps/runes
-layer 4
 face rune_paralyze.101
+layer 4
 hp 1
 animation rune_paralyze
 level 1
@@ -41865,8 +41977,8 @@ msg
 You detonate a Rune of Poison!
 endmsg
 editor_folder traps/runes
-layer 4
 face rune_poison.101
+layer 4
 hp 1
 animation rune_poison
 level 1
@@ -41885,8 +41997,8 @@ msg
 You detonate a Rune of Psionic!
 endmsg
 editor_folder traps/runes
-layer 4
 face rune_psionic.101
+layer 4
 hp 1
 animation rune_psionic
 level 1
@@ -41905,8 +42017,8 @@ msg
 You detonate a Rune of Shadow!
 endmsg
 editor_folder traps/runes
-layer 4
 face rune_shadow.101
+layer 4
 hp 1
 animation rune_shadow
 level 1
@@ -41925,8 +42037,8 @@ msg
 You detonate a Rune of Slow!
 endmsg
 editor_folder traps/runes
-layer 4
 face rune_slow.101
+layer 4
 hp 1
 animation rune_slow
 level 1
@@ -41945,8 +42057,8 @@ msg
 You detonate a Rune of Snare!
 endmsg
 editor_folder traps/runes
-layer 4
 face rune_snare.101
+layer 4
 hp 1
 animation rune_snare
 level 1
@@ -41965,8 +42077,8 @@ msg
 You detonate a Rune of Sonic!
 endmsg
 editor_folder traps/runes
-layer 4
 face rune_sonic.101
+layer 4
 hp 1
 animation rune_sonic
 level 1
@@ -41985,8 +42097,8 @@ msg
 You detonate a Rune of Weaponmagic!
 endmsg
 editor_folder traps/runes
-layer 4
 face rune_weaponmagic.101
+layer 4
 hp 1
 animation rune_weaponmagic
 level 1
@@ -42035,8 +42147,8 @@ Object trapdoor
 name trapdoor
 type 95
 editor_folder traps/traps
-layer 4
 face trapdoor_1.101
+layer 4
 animation trapdoor
 anim_speed 4
 walk_on 1
@@ -42613,177 +42725,6 @@ layer 5
 no_pick 1
 no_pass 1
 end
-Object curtain1
-name red curtain
-type 20
-msg
-You need a special key to open this door.
-endmsg
-editor_folder walls/doors
-layer 5
-sub_type 1
-blocksview 1
-door_closed 1
-sp 5
-pass_thru 1
-no_pick 1
-direction 1
-face curtain1.111
-animation curtain1
-is_animated 0
-anim_speed 1
-is_turnable 1
-end
-Object door1_locked
-name metal door
-type 20
-msg
-You need a special key to open this door.
-endmsg
-editor_folder walls/doors
-layer 5
-blocksview 1
-door_closed 1
-sp 5
-pass_thru 1
-no_pick 1
-face door_lock1.111
-animation door1_locked
-is_animated 0
-anim_speed 1
-is_turnable 1
-direction 1
-end
-Object door1_locked_wreath
-name metal door
-type 20
-msg
-You need a special key to open this door.
-endmsg
-editor_folder walls/doors
-layer 5
-blocksview 1
-door_closed 1
-sp 5
-pass_thru 1
-no_pick 1
-face door_lock1_wreath.111
-animation door1_locked_wreath
-is_animated 0
-anim_speed 1
-is_turnable 1
-direction 1
-end
-Object door_redcross
-name wooden door
-type 20
-msg
-You need a special key to open this door.
-endmsg
-editor_folder walls/doors
-layer 5
-blocksview 1
-door_closed 1
-sp 5
-pass_thru 1
-no_pick 1
-direction 1
-face door_redcross.111
-animation door_redcross
-is_animated 0
-anim_speed 1
-is_turnable 1
-end
-Object door_wood1
-name wooden door
-type 20
-msg
-You need a special key to open this door.
-endmsg
-editor_folder walls/doors
-layer 5
-blocksview 1
-door_closed 1
-sp 5
-pass_thru 1
-no_pick 1
-direction 1
-face door_wood1.111
-animation door_wood1
-is_animated 0
-anim_speed 1
-is_turnable 1
-end
-Object door_wood2
-name wooden door
-type 20
-msg
-You need a special key to open this door.
-endmsg
-editor_folder walls/doors
-layer 5
-blocksview 1
-door_closed 1
-sp 5
-pass_thru 1
-no_pick 1
-direction 1
-face door_wood2.111
-animation door_wood2
-is_animated 0
-anim_speed 1
-is_turnable 1
-end
-Object door_wood4
-name wooden door
-type 20
-msg
-You need a special key to open this door.
-endmsg
-editor_folder walls/doors
-layer 5
-blocksview 0
-door_closed 1
-sp 5
-pass_thru 1
-no_pick 1
-direction 1
-face door_wood4.111
-animation door_wood4
-is_animated 0
-anim_speed 1
-is_turnable 1
-end
-Object gate1_locked
-name metal gate
-type 20
-msg
-You need a special key to open this gate.
-endmsg
-editor_folder walls/doors
-layer 5
-door_closed 1
-pass_thru 1
-sp 5
-face gate_lock1.111
-animation gate1_locked
-is_animated 0
-anim_speed 1
-is_turnable 1
-direction 1
-no_pick 1
-end
-Object doorway_wood1_1
-name doorway
-type 77
-editor_folder walls/doorways
-face doorway_wood1.111
-animation doorway_wood1_1
-is_turnable 1
-direction 1
-no_pick 1
-layer 7
-end
 Object wall_dungeon1.111
 name dungeon wall
 type 77
@@ -43135,13 +43076,13 @@ msg
 You need a special key to open this door.
 endmsg
 editor_folder walls/fence
+face fence_01_gate_closed.112
 layer 5
 door_closed 1
 sp 5
 pass_thru 1
 no_pick 1
 direction 1
-face fence_01_gate_closed.112
 animation fence_gate_01
 anim_speed 1
 is_turnable 1
@@ -44343,7 +44284,7 @@ Object honeycomb_wall.111
 name wall
 type 77
 editor_folder walls/honeycomb
-face wall_honey.a.111
+face wall_honey_a.111
 blocksview 1
 layer 5
 no_pick 1
@@ -44353,7 +44294,7 @@ Object honeycomb_wall.131
 name wall
 type 77
 editor_folder walls/honeycomb
-face wall_honey.a.131
+face wall_honey_a.131
 blocksview 1
 layer 5
 no_pick 1
@@ -44363,7 +44304,7 @@ Object honeycomb_wall.141
 name wall
 type 77
 editor_folder walls/honeycomb
-face wall_honey.a.141
+face wall_honey_a.141
 blocksview 1
 layer 5
 no_pick 1
@@ -44373,7 +44314,7 @@ Object honeycomb_wall.181
 name wall
 type 77
 editor_folder walls/honeycomb
-face wall_honey.a.181
+face wall_honey_a.181
 blocksview 1
 layer 5
 no_pick 1
