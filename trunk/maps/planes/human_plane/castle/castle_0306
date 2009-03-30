@@ -2,6 +2,7 @@ arch map
 name Wilderness near Stonehaven§jungle1.ogg|0|-1
 msg
 Created:  2004-07-16 Daimonin Map Editor
+Modified: 2009-03-29 smacky
 endmsg
 width 24
 height 24
@@ -616,11 +617,6 @@ x 3
 y 20
 end
 arch grassd_1
-x 3
-y 21
-end
-arch floor_dark1a
-no_pass 1
 x 3
 y 21
 end
@@ -2334,11 +2330,6 @@ x 14
 y 21
 end
 arch grassd_1
-x 14
-y 22
-end
-arch floor_dark1a
-no_pass 1
 x 14
 y 22
 end

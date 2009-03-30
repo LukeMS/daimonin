@@ -2,6 +2,7 @@ arch map
 name Stonehaven§ColeChurchyOrHoly.ogg|0|-1
 msg
 Created:  2004-06-09 Daimonin Map Editor
+Modified: 2009-03-29 smacky
 endmsg
 width 24
 height 24
@@ -90,11 +91,8 @@ end
 arch plant_flower7
 y 10
 end
-arch light4
-y 10
-end
 arch lantern2_magic.131
-direction 5
+direction 7
 y 10
 end
 arch wmask_wanted
@@ -119,11 +117,8 @@ end
 arch grassd_2
 y 12
 end
-arch light4
-y 12
-end
 arch lantern2_magic.131
-direction 5
+direction 7
 y 12
 end
 arch wmask_wanted
@@ -1011,10 +1006,6 @@ arch glower.101
 x 6
 y 4
 end
-arch light4
-x 6
-y 4
-end
 arch floor_marble4f
 x 6
 y 5
@@ -1046,10 +1037,6 @@ x 6
 y 8
 end
 arch glower.101
-x 6
-y 8
-end
-arch light4
 x 6
 y 8
 end
@@ -1087,10 +1074,6 @@ arch glower.101
 x 6
 y 12
 end
-arch light4
-x 6
-y 12
-end
 arch floor_marble4f
 x 6
 y 13
@@ -1125,10 +1108,6 @@ arch glower.101
 x 6
 y 16
 end
-arch light4
-x 6
-y 16
-end
 arch floor_marble4f
 x 6
 y 17
@@ -1160,10 +1139,6 @@ x 6
 y 20
 end
 arch glower.101
-x 6
-y 20
-end
-arch light4
 x 6
 y 20
 end
@@ -1692,15 +1667,7 @@ arch floor_marble4f
 x 10
 y 21
 end
-arch floor_marble4f
-x 10
-y 21
-end
 arch glower.101
-x 10
-y 21
-end
-arch light3
 x 10
 y 21
 end
@@ -1717,10 +1684,6 @@ x 10
 y 23
 end
 arch lantern2_magic.131
-x 10
-y 23
-end
-arch light4
 x 10
 y 23
 end
@@ -1766,10 +1729,6 @@ x 11
 y 6
 end
 arch candlelight4.101
-x 11
-y 6
-end
-arch light3
 x 11
 y 6
 end
@@ -1908,10 +1867,10 @@ y 2
 end
 arch exit
 name Portal to the Human Plane
-face portal_big.101
 animation portal_big
 anim_speed 2
 glow_radius 3
+face portal_big.101
 x 12
 y 2
 arch event_obj
@@ -2084,6 +2043,7 @@ x 13
 y 2
 end
 arch flagwall_short_brick1.131
+layer 4
 x 13
 y 2
 end
@@ -2141,10 +2101,6 @@ x 13
 y 6
 end
 arch candlelight4.101
-x 13
-y 6
-end
-arch light3
 x 13
 y 6
 end
@@ -2371,10 +2327,6 @@ arch glower.101
 x 14
 y 21
 end
-arch light3
-x 14
-y 21
-end
 arch floor_marble4f
 x 14
 y 22
@@ -2388,10 +2340,6 @@ x 14
 y 23
 end
 arch lantern2_magic.131
-x 14
-y 23
-end
-arch light4
 x 14
 y 23
 end
@@ -2804,10 +2752,6 @@ arch glower.101
 x 18
 y 4
 end
-arch light4
-x 18
-y 4
-end
 arch floor_marble4f
 x 18
 y 5
@@ -2825,10 +2769,6 @@ x 18
 y 8
 end
 arch glower.101
-x 18
-y 8
-end
-arch light4
 x 18
 y 8
 end
@@ -2852,10 +2792,6 @@ arch glower.101
 x 18
 y 12
 end
-arch light4
-x 18
-y 12
-end
 arch floor_marble4f
 x 18
 y 13
@@ -2876,10 +2812,6 @@ arch glower.101
 x 18
 y 16
 end
-arch light4
-x 18
-y 16
-end
 arch floor_marble4f
 x 18
 y 17
@@ -2897,10 +2829,6 @@ x 18
 y 20
 end
 arch glower.101
-x 18
-y 20
-end
-arch light4
 x 18
 y 20
 end

@@ -2,6 +2,7 @@ arch map
 name Stonehaven
 msg
 Created:  2004-06-09 Daimonin Map Editor
+Modified: 2009-03-29 smacky
 endmsg
 width 24
 height 24
@@ -57,7 +58,6 @@ arch floor_grit2
 y 7
 end
 arch torch_wall_1
-last_sp 2
 y 7
 end
 arch floor_grit2
@@ -115,7 +115,6 @@ arch floor_grit4c
 y 20
 end
 arch torch_wall_1
-last_sp 1
 y 20
 end
 arch floor_grit4c
@@ -364,10 +363,6 @@ arch plant14
 x 2
 y 10
 end
-arch plant2
-x 2
-y 10
-end
 arch grass_thick1
 x 2
 y 11
@@ -588,10 +583,10 @@ x 3
 y 20
 end
 arch handle_lever
-face switch_wall.111
 animation switch_wall
 connected 177
 direction 3
+face switch_wall.111
 x 3
 y 20
 end
@@ -1032,7 +1027,6 @@ x 6
 y 10
 end
 arch torch_wall_1
-last_sp 2
 direction 7
 x 6
 y 10
@@ -1054,7 +1048,6 @@ x 6
 y 14
 end
 arch torch_wall_1
-last_sp 2
 direction 7
 x 6
 y 14
@@ -1076,7 +1069,6 @@ x 6
 y 18
 end
 arch torch_wall_1
-last_sp 2
 direction 7
 x 6
 y 18
@@ -1112,7 +1104,6 @@ x 6
 y 23
 end
 arch torch_wall_1
-last_sp 2
 direction 7
 x 6
 y 23
@@ -1733,10 +1724,10 @@ x 10
 y 20
 end
 arch handle_lever
-face switch_wall.111
 animation switch_wall
 connected 176
 direction 3
+face switch_wall.111
 x 10
 y 20
 end
@@ -2089,10 +2080,10 @@ x 12
 y 20
 end
 arch handle_lever
-face switch_wall.111
 animation switch_wall
 connected 176
 direction 3
+face switch_wall.111
 x 12
 y 20
 end
@@ -2140,9 +2131,7 @@ x 13
 y 5
 end
 arch torch_wall_1
-direction 5
-glow_radius 5
-is_animated 1
+direction 7
 x 13
 y 5
 end
@@ -2171,9 +2160,7 @@ x 13
 y 11
 end
 arch torch_wall_1
-direction 5
-glow_radius 5
-is_animated 1
+direction 7
 x 13
 y 11
 end
@@ -2202,9 +2189,7 @@ x 13
 y 17
 end
 arch torch_wall_1
-direction 5
-glow_radius 5
-is_animated 1
+direction 7
 x 13
 y 17
 end
@@ -2630,7 +2615,6 @@ x 16
 y 20
 end
 arch torch_wall_1
-last_sp 2
 x 16
 y 20
 end

@@ -2,6 +2,7 @@ arch map
 name Stonehaven
 msg
 Created:  2004-06-11 Daimonin Map Editor
+Modified: 2009-03-29 smacky
 endmsg
 width 24
 height 24
@@ -72,8 +73,6 @@ arch floor_fs_grey1a
 y 11
 end
 arch torch_wall_1
-glow_radius 5
-is_animated 1
 y 11
 end
 arch floor_fs_grey1a
@@ -100,9 +99,6 @@ end
 arch candlelight4.101
 y 16
 end
-arch light4
-y 16
-end
 arch floor_fs_grey1a
 y 17
 end
@@ -116,9 +112,6 @@ arch carpet2.111
 y 18
 end
 arch candlelight4.101
-y 18
-end
-arch light4
 y 18
 end
 arch floor_fs_grey1a
@@ -130,9 +123,6 @@ end
 arch candlelight4.101
 y 19
 end
-arch light4
-y 19
-end
 arch floor_fs_grey1a
 y 20
 end
@@ -146,9 +136,6 @@ arch carpet2.111
 y 21
 end
 arch candlelight4.101
-y 21
-end
-arch light4
 y 21
 end
 arch floor_fs_grey1a
@@ -384,8 +371,6 @@ x 2
 y 11
 end
 arch torch_wall_1
-glow_radius 5
-is_animated 1
 x 2
 y 11
 end
@@ -617,10 +602,6 @@ arch candlelight4.101
 x 3
 y 16
 end
-arch light4
-x 3
-y 16
-end
 arch floor_fs_grey1a
 x 3
 y 17
@@ -638,10 +619,6 @@ x 3
 y 18
 end
 arch candlelight4.101
-x 3
-y 18
-end
-arch light4
 x 3
 y 18
 end
@@ -657,10 +634,6 @@ arch candlelight4.101
 x 3
 y 19
 end
-arch light4
-x 3
-y 19
-end
 arch floor_fs_grey1a
 x 3
 y 20
@@ -678,10 +651,6 @@ x 3
 y 21
 end
 arch candlelight4.101
-x 3
-y 21
-end
-arch light4
 x 3
 y 21
 end
@@ -760,10 +729,6 @@ x 4
 y 7
 end
 arch glower.101
-x 4
-y 7
-end
-arch light2
 x 4
 y 7
 end
@@ -1156,10 +1121,6 @@ arch glower.101
 x 6
 y 16
 end
-arch light6
-x 6
-y 16
-end
 arch floor_fs_grey1a
 x 6
 y 17
@@ -1215,10 +1176,6 @@ x 6
 y 21
 end
 arch glower.101
-x 6
-y 21
-end
-arch light6
 x 6
 y 21
 end
@@ -1420,10 +1377,6 @@ arch glower.101
 x 8
 y 9
 end
-arch light2
-x 8
-y 9
-end
 arch floor_fs_grey1a
 x 8
 y 10
@@ -1453,10 +1406,6 @@ x 8
 y 14
 end
 arch glower.101
-x 8
-y 14
-end
-arch light6
 x 8
 y 14
 end
@@ -1506,10 +1455,6 @@ x 8
 y 22
 end
 arch glower.101
-x 8
-y 22
-end
-arch light6
 x 8
 y 22
 end
@@ -2236,10 +2181,6 @@ arch candlelight3.101
 x 13
 y 15
 end
-arch light1
-x 13
-y 15
-end
 arch floor_wood4d
 x 13
 y 16
@@ -2254,10 +2195,6 @@ x 13
 y 17
 end
 arch candlelight3.101
-x 13
-y 17
-end
-arch light1
 x 13
 y 17
 end
@@ -2879,11 +2816,7 @@ x 18
 y 6
 end
 arch lantern2_magic.131
-direction 5
-x 18
-y 6
-end
-arch light4
+direction 7
 x 18
 y 6
 end
@@ -2896,11 +2829,7 @@ x 18
 y 8
 end
 arch lantern2_magic.131
-direction 5
-x 18
-y 8
-end
-arch light4
+direction 7
 x 18
 y 8
 end
@@ -2951,11 +2880,7 @@ x 18
 y 16
 end
 arch lantern2_magic.131
-direction 5
-x 18
-y 16
-end
-arch light4
+direction 7
 x 18
 y 16
 end
@@ -2968,11 +2893,7 @@ x 18
 y 18
 end
 arch lantern2_magic.131
-direction 5
-x 18
-y 18
-end
-arch light4
+direction 7
 x 18
 y 18
 end

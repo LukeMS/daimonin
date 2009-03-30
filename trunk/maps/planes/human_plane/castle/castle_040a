@@ -2,6 +2,7 @@ arch map
 name Guild Hall§ColeForeverPiano.ogg|0|-1
 msg
 Created:  2004-07-16 Daimonin Map Editor
+Modified: 2009-03-29 smacky
 endmsg
 width 24
 height 24
@@ -225,12 +226,6 @@ x 1
 y 15
 end
 arch candlelight4.101
-glow_radius 3
-direction 3
-x 1
-y 15
-end
-arch light2
 x 1
 y 15
 end
@@ -545,10 +540,6 @@ direction 3
 x 3
 y 10
 end
-arch light5
-x 3
-y 10
-end
 arch floor_flagm1
 x 3
 y 11
@@ -839,8 +830,6 @@ x 4
 y 20
 end
 arch candlelight4.101
-glow_radius 3
-direction 3
 x 4
 y 20
 end
@@ -1010,8 +999,6 @@ x 5
 y 16
 end
 arch candlelight4.101
-glow_radius 3
-direction 3
 x 5
 y 16
 end
@@ -1386,10 +1373,6 @@ x 7
 y 10
 end
 arch lantern2_magic.131
-x 7
-y 10
-end
-arch light3
 x 7
 y 10
 end
@@ -1868,8 +1851,6 @@ x 9
 y 19
 end
 arch candlelight4.101
-glow_radius 3
-direction 3
 x 9
 y 19
 end
@@ -1959,10 +1940,6 @@ arch lantern2_magic.131
 x 10
 y 10
 end
-arch light3
-x 10
-y 10
-end
 arch floor_flagm1
 x 10
 y 11
@@ -2004,8 +1981,6 @@ x 10
 y 15
 end
 arch candlelight4.101
-glow_radius 3
-direction 3
 x 10
 y 15
 end
@@ -2030,14 +2005,25 @@ arch magic_mouth
 msg
 Welcome to the Happy Noob!
 endmsg
+direction 8
 x 10
 y 17
-arch event_obj
-name Lua
-sub_type 10
-race /scripts/welcome.lua
-slaying 678
 end
+arch magic_mouth
+msg
+Welcome to the Happy Noob!
+endmsg
+direction 7
+x 10
+y 17
+end
+arch magic_mouth
+msg
+Welcome to the Happy Noob!
+endmsg
+direction 6
+x 10
+y 17
 end
 arch shop_floor_normal
 x 10
@@ -2114,10 +2100,6 @@ x 11
 y 4
 end
 arch floor_wood3c
-x 11
-y 5
-end
-arch urn.101
 x 11
 y 5
 end
@@ -2199,9 +2181,9 @@ msg
 -------The Happy Noob---------
 *Come in and sample our fine ales*
 endmsg
-face sign_pub.111
 animation sign_pub
 direction 3
+face sign_pub.111
 x 11
 y 15
 arch event_obj
@@ -2219,10 +2201,6 @@ direction 7
 x 11
 y 16
 end
-arch light3
-x 11
-y 16
-end
 arch floor_flagm1
 x 11
 y 17
@@ -2237,10 +2215,6 @@ y 18
 end
 arch lantern2_magic.131
 direction 7
-x 11
-y 18
-end
-arch light3
 x 11
 y 18
 end
@@ -2639,10 +2613,6 @@ x 14
 y 13
 end
 arch lantern_magic.131
-x 14
-y 13
-end
-arch light5
 x 14
 y 13
 end

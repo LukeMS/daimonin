@@ -774,8 +774,6 @@ x 5
 y 13
 end
 arch torch_wall_1
-glow_radius 5
-is_animated 1
 x 5
 y 13
 end
@@ -1322,8 +1320,6 @@ x 9
 y 13
 end
 arch torch_wall_1
-glow_radius 5
-is_animated 1
 x 9
 y 13
 end
@@ -2545,8 +2541,6 @@ x 17
 y 13
 end
 arch torch_wall_1
-glow_radius 5
-is_animated 1
 x 17
 y 13
 end
@@ -3390,8 +3384,6 @@ x 23
 y 13
 end
 arch torch_wall_1
-glow_radius 5
-is_animated 1
 x 23
 y 13
 end

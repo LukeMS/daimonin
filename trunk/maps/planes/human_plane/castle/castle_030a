@@ -2,6 +2,7 @@ arch map
 name Guild Hall§ColeForeverPiano.ogg|0|-1
 msg
 Created:  2004-07-16 Daimonin Map Editor
+Modified: 2009-03-30 smacky
 endmsg
 width 24
 height 24
@@ -418,7 +419,6 @@ y 17
 arch golem
 name Dummy
 type 83
-face scarecrow.131
 is_animated 0
 glow_radius 1
 no_pass 1
@@ -431,6 +431,7 @@ con 99
 reg_f 1
 unaggressive 1
 stand_still 1
+face scarecrow.131
 end
 end
 arch grassd_6
@@ -493,8 +494,8 @@ x 3
 y 4
 end
 arch grate_closed
-face grate_door1.131
 direction 3
+face grate_door1.131
 x 3
 y 4
 end
@@ -519,8 +520,8 @@ x 3
 y 7
 end
 arch grate_closed
-face grate_door1.131
 direction 3
+face grate_door1.131
 x 3
 y 7
 arch beacon
@@ -540,10 +541,6 @@ x 3
 y 9
 end
 arch lantern2_magic.131
-x 3
-y 9
-end
-arch light3
 x 3
 y 9
 end
@@ -785,11 +782,7 @@ x 4
 y 12
 end
 arch lantern_magic.131
-direction 5
-x 4
-y 12
-end
-arch light5
+direction 3
 x 4
 y 12
 end
@@ -2198,11 +2191,7 @@ x 12
 y 19
 end
 arch lantern_magic.131
-direction 7
-x 12
-y 19
-end
-arch light5
+direction 1
 x 12
 y 19
 end
@@ -2286,10 +2275,6 @@ x 13
 y 7
 end
 arch candlelight4.101
-x 13
-y 7
-end
-arch light3
 x 13
 y 7
 end
@@ -2678,10 +2663,6 @@ direction 7
 x 15
 y 10
 end
-arch light3
-x 15
-y 10
-end
 arch floor_flagm1
 x 15
 y 11
@@ -2700,10 +2681,6 @@ y 12
 end
 arch lantern2_magic.131
 direction 7
-x 15
-y 12
-end
-arch light3
 x 15
 y 12
 end
@@ -3196,10 +3173,11 @@ name boxes
 msg
 You move the boxes aside and slip through the hole, unnoticed.
 endmsg
-face box2.101
+is_turnable 0
 slaying guildhall/guildhall_a_030a
 hp 18
 sp 8
+face box2.101
 x 18
 y 8
 arch event_obj
@@ -3228,11 +3206,7 @@ x 18
 y 10
 end
 arch lantern_magic.131
-direction 3
-x 18
-y 10
-end
-arch light5
+
 x 18
 y 10
 end
@@ -3317,7 +3291,6 @@ y 17
 arch golem
 name shooting_range_target
 type 83
-face target.131
 is_animated 0
 no_pass 1
 level 100
@@ -3363,6 +3336,7 @@ resist_fear 250
 resist_slow 250
 resist_paralyze 250
 resist_snare 250
+face target.131
 end
 end
 arch floor_sand_d2
@@ -3983,10 +3957,10 @@ x 22
 y 8
 arch smith
 type 83
-face weapon_smith.141
 animation weapon_smith
 glow_radius 7
 level 25
+face weapon_smith.141
 arch event_obj
 name lua
 sub_type 13

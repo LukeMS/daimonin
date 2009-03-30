@@ -2,6 +2,7 @@ arch map
 name Stonehaven
 msg
 Created:  2004-06-06 Daimonin Map Editor
+Modified: 2009-03-30 smacky
 endmsg
 width 24
 height 24
@@ -377,9 +378,6 @@ end
 arch plant2
 x 3
 end
-arch plant2
-x 3
-end
 arch grass_thick2
 x 3
 y 1
@@ -513,6 +511,9 @@ x 3
 y 23
 end
 arch grass_thickm5
+x 4
+end
+arch grass_thick2
 x 4
 end
 arch grass_thick2
@@ -663,7 +664,10 @@ arch grassd_7
 x 4
 y 23
 end
-arch grass_thickm6
+arch grass_thickm5
+x 5
+end
+arch grass_thick2
 x 5
 end
 arch grass_thick2
@@ -679,10 +683,6 @@ x 5
 y 2
 end
 arch plant8
-x 5
-y 2
-end
-arch plant_flower8
 x 5
 y 2
 end
@@ -703,10 +703,6 @@ x 5
 y 5
 end
 arch plant4
-x 5
-y 5
-end
-arch plant_flower8
 x 5
 y 5
 end
@@ -743,9 +739,7 @@ x 5
 y 11
 end
 arch torch_wall_1
-direction 5
-glow_radius 5
-is_animated 1
+direction 7
 x 5
 y 11
 end
@@ -809,7 +803,10 @@ arch grassd_3
 x 5
 y 23
 end
-arch grass_thickm6
+arch grass_thickm5
+x 6
+end
+arch grass_thick2
 x 6
 end
 arch grass_thick2
@@ -944,7 +941,10 @@ arch grassd_5
 x 6
 y 23
 end
-arch grass_thickm6
+arch grass_thickm5
+x 7
+end
+arch grass_thick2
 x 7
 end
 arch grass_thick2
@@ -979,14 +979,6 @@ arch plant8
 x 7
 y 4
 end
-arch plant2
-x 7
-y 4
-end
-arch plant_flower4
-x 7
-y 4
-end
 arch grass_thick2
 x 7
 y 5
@@ -1016,8 +1008,6 @@ x 7
 y 9
 end
 arch torch_wall_1
-glow_radius 5
-is_animated 1
 x 7
 y 9
 end
@@ -1105,7 +1095,10 @@ arch fwall_fstone2
 x 7
 y 23
 end
-arch grass_thickm6
+arch grass_thickm5
+x 8
+end
+arch grass_thick2
 x 8
 end
 arch grass_thick2
@@ -1206,9 +1199,7 @@ x 8
 y 18
 end
 arch torch_wall_1
-direction 5
-glow_radius 5
-is_animated 1
+direction 7
 x 8
 y 18
 end
@@ -1233,13 +1224,14 @@ x 8
 y 23
 end
 arch torch_wall_1
-direction 5
-glow_radius 5
-is_animated 1
+direction 7
 x 8
 y 23
 end
-arch grass_thickm6
+arch grass_thickm5
+x 9
+end
+arch grass_thick2
 x 9
 end
 arch grass_thick2
@@ -1278,15 +1270,11 @@ arch plant2
 x 9
 y 6
 end
-arch plant_flower8
-x 9
-y 6
-end
-arch wall_flagstone1_w.111
-x 9
-y 6
-end
 arch floor_fstone2a
+x 9
+y 7
+end
+arch fwall_fstone2_w.151
 x 9
 y 7
 end
@@ -1354,7 +1342,10 @@ arch floor_fstone2a
 x 9
 y 23
 end
-arch grass_thickm6
+arch grass_thickm5
+x 10
+end
+arch grass_thick2
 x 10
 end
 arch grass_thick2
@@ -1373,10 +1364,6 @@ arch plant2
 x 10
 y 2
 end
-arch plant_flower3
-x 10
-y 2
-end
 arch grass_thick2
 x 10
 y 3
@@ -1386,10 +1373,6 @@ x 10
 y 4
 end
 arch plant8
-x 10
-y 4
-end
-arch plant4
 x 10
 y 4
 end
@@ -1491,7 +1474,10 @@ arch floor_fstone2a
 x 10
 y 23
 end
-arch grass_thickm6
+arch grass_thickm5
+x 11
+end
+arch grass_thick2
 x 11
 end
 arch grass_thick2
@@ -1515,10 +1501,6 @@ x 11
 y 3
 end
 arch plant8
-x 11
-y 3
-end
-arch plant2
 x 11
 y 3
 end
@@ -1731,10 +1713,6 @@ arch plant8
 x 12
 y 7
 end
-arch plant_flower8
-x 12
-y 7
-end
 arch grass_thick1
 x 12
 y 8
@@ -2209,7 +2187,7 @@ arch floor_fstone2a
 x 15
 y 13
 end
-arch wall_flagstone1_w.131
+arch fwall_fstone2_w.131
 x 15
 y 13
 end

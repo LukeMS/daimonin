@@ -2,6 +2,7 @@ arch map
 name Stonehaven
 msg
 Created:  2004-06-09 Daimonin Map Editor
+Modified: 2009-03-29 smacky
 endmsg
 width 24
 height 24
@@ -2052,9 +2053,7 @@ x 13
 y 5
 end
 arch torch_wall_1
-direction 5
-glow_radius 5
-is_animated 1
+direction 7
 x 13
 y 5
 end
@@ -2083,9 +2082,7 @@ x 13
 y 11
 end
 arch torch_wall_1
-direction 5
-glow_radius 5
-is_animated 1
+direction 7
 x 13
 y 11
 end
@@ -2114,9 +2111,7 @@ x 13
 y 17
 end
 arch torch_wall_1
-direction 5
-glow_radius 5
-is_animated 1
+direction 7
 x 13
 y 17
 end
@@ -2145,9 +2140,7 @@ x 13
 y 23
 end
 arch torch_wall_1
-direction 5
-glow_radius 5
-is_animated 1
+direction 7
 x 13
 y 23
 end
@@ -2555,11 +2548,6 @@ direction 5
 x 17
 y 2
 end
-arch chains3.151
-direction 5
-x 17
-y 2
-end
 arch grassd_4
 x 17
 y 3
@@ -2582,11 +2570,6 @@ x 17
 y 4
 end
 arch plant1_wall.151
-direction 5
-x 17
-y 4
-end
-arch chains3.151
 direction 5
 x 17
 y 4
@@ -2625,11 +2608,6 @@ direction 5
 x 17
 y 7
 end
-arch plant1_wall.151
-direction 5
-x 17
-y 7
-end
 arch grassd_4
 x 17
 y 8
@@ -2652,11 +2630,6 @@ x 17
 y 9
 end
 arch ring_wall.151
-direction 5
-x 17
-y 9
-end
-arch plant1_wall.151
 direction 5
 x 17
 y 9
@@ -2746,11 +2719,6 @@ x 17
 y 17
 end
 arch ring_wall.151
-direction 5
-x 17
-y 17
-end
-arch plant1_wall.151
 direction 5
 x 17
 y 17
@@ -3094,10 +3062,6 @@ x 19
 y 6
 end
 arch ring_wall.151
-x 19
-y 6
-end
-arch plant1_wall.151
 x 19
 y 6
 end

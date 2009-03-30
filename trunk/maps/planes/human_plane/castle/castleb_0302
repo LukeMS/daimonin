@@ -2,6 +2,7 @@ arch map
 name Woman's Basement§barrenlands.ogg|0|-1
 msg
 Created:  2005-11-28 Unislash
+Modified: 2009-03-29 smacky
 endmsg
 width 24
 height 24
@@ -13,16 +14,106 @@ tileset_id 36
 tileset_x 0
 tileset_y 0
 end
+arch blocked
+end
+arch blocked
+y 1
+end
+arch blocked
+y 2
+end
+arch blocked
+y 3
+end
+arch blocked
+y 4
+end
+arch blocked
+y 5
+end
+arch blocked
+y 6
+end
+arch blocked
+y 7
+end
+arch blocked
+y 8
+end
+arch blocked
+y 9
+end
+arch blocked
+y 10
+end
+arch blocked
+y 11
+end
+arch blocked
+y 12
+end
+arch blocked
+y 13
+end
+arch blocked
+y 14
+end
+arch blocked
+y 15
+end
+arch blocked
+y 16
+end
+arch blocked
+y 17
+end
+arch blocked
+y 18
+end
+arch blocked
+y 19
+end
+arch blocked
+y 20
+end
+arch blocked
+y 21
+end
+arch blocked
+y 22
+end
+arch blocked
+y 23
+end
+arch blocked
+x 1
+end
+arch blocked
+x 1
+y 1
+end
+arch floor_wood3d
+x 1
+y 2
+end
 arch wall_dungeon1.181
 x 1
 y 2
 end
-arch wall_dungeon1.131
+arch floor_wood3d
 x 1
 y 3
 end
 arch wall_dungeon1.131
 x 1
+y 3
+end
+arch floor_wood3d
+x 1
+y 4
+end
+arch wall_dungeon1.131
+x 1
 y 4
 end
 arch plant1_wall.151
@@ -30,18 +121,42 @@ direction 7
 x 1
 y 4
 end
-arch wall_dungeon1.131
+arch floor_wood3d
 x 1
 y 5
 end
 arch wall_dungeon1.131
 x 1
+y 5
+end
+arch floor_wood3d
+x 1
 y 6
+end
+arch wall_dungeon1.131
+x 1
+y 6
+end
+arch blocked
+x 1
+y 7
+end
+arch blocked
+x 1
+y 8
+end
+arch floor_wood3d
+x 1
+y 9
 end
 arch wall_dungeon1.181
 x 1
 y 9
 end
+arch floor_wood3d
+x 1
+y 10
+end
 arch wall_dungeon1.131
 x 1
 y 10
@@ -50,6 +165,10 @@ arch plant1_wall.151
 direction 7
 x 1
 y 10
+end
+arch floor_wood3d
+x 1
+y 11
 end
 arch wall_dungeon1.131
 x 1
@@ -60,12 +179,20 @@ direction 7
 x 1
 y 11
 end
-arch wall_dungeon1.131
+arch floor_wood3d
 x 1
 y 12
 end
 arch wall_dungeon1.131
 x 1
+y 12
+end
+arch floor_wood3d
+x 1
+y 13
+end
+arch wall_dungeon1.131
+x 1
 y 13
 end
 arch plant1_wall.151
@@ -73,13 +200,25 @@ direction 7
 x 1
 y 13
 end
-arch wall_dungeon1.131
+arch floor_wood3d
 x 1
 y 14
 end
 arch wall_dungeon1.131
 x 1
+y 14
+end
+arch floor_wood3d
+x 1
 y 15
+end
+arch wall_dungeon1.131
+x 1
+y 15
+end
+arch floor_wood3d
+x 1
+y 16
 end
 arch wall_dungeon1.131
 x 1
@@ -90,13 +229,52 @@ direction 7
 x 1
 y 16
 end
-arch wall_dungeon1.131
+arch floor_wood3d
 x 1
 y 17
 end
 arch wall_dungeon1.131
 x 1
+y 17
+end
+arch floor_wood3d
+x 1
 y 18
+end
+arch wall_dungeon1.131
+x 1
+y 18
+end
+arch blocked
+x 1
+y 19
+end
+arch blocked
+x 1
+y 20
+end
+arch blocked
+x 1
+y 21
+end
+arch blocked
+x 1
+y 22
+end
+arch blocked
+x 1
+y 23
+end
+arch blocked
+x 2
+end
+arch blocked
+x 2
+y 1
+end
+arch floor_wood3d
+x 2
+y 2
 end
 arch wall_dungeon1.111
 x 2
@@ -134,9 +312,17 @@ arch wall_dungeon1.111
 x 2
 y 6
 end
+arch floor_wood3d
+x 2
+y 7
+end
 arch wall_dungeon1.131
 x 2
 y 7
+end
+arch floor_wood3d
+x 2
+y 8
 end
 arch wall_dungeon1.131
 x 2
@@ -146,6 +332,10 @@ arch plant1_wall.151
 direction 7
 x 2
 y 8
+end
+arch floor_wood3d
+x 2
+y 9
 end
 arch wall_dungeon1.141
 x 2
@@ -226,6 +416,37 @@ end
 arch wall_dungeon1.111
 x 2
 y 18
+end
+arch blocked
+x 2
+y 19
+end
+arch blocked
+x 2
+y 20
+end
+arch blocked
+x 2
+y 21
+end
+arch blocked
+x 2
+y 22
+end
+arch blocked
+x 2
+y 23
+end
+arch blocked
+x 3
+end
+arch blocked
+x 3
+y 1
+end
+arch floor_wood3d
+x 3
+y 2
 end
 arch wall_dungeon1.111
 x 3
@@ -332,6 +553,37 @@ end
 arch wall_dungeon1.111
 x 3
 y 18
+end
+arch blocked
+x 3
+y 19
+end
+arch blocked
+x 3
+y 20
+end
+arch blocked
+x 3
+y 21
+end
+arch blocked
+x 3
+y 22
+end
+arch blocked
+x 3
+y 23
+end
+arch blocked
+x 4
+end
+arch blocked
+x 4
+y 1
+end
+arch floor_wood3d
+x 4
+y 2
 end
 arch wall_dungeon1.111
 x 4
@@ -457,6 +709,37 @@ arch wall_dungeon1.111
 x 4
 y 18
 end
+arch blocked
+x 4
+y 19
+end
+arch blocked
+x 4
+y 20
+end
+arch blocked
+x 4
+y 21
+end
+arch blocked
+x 4
+y 22
+end
+arch blocked
+x 4
+y 23
+end
+arch blocked
+x 5
+end
+arch blocked
+x 5
+y 1
+end
+arch floor_wood3d
+x 5
+y 2
+end
 arch wall_dungeon1.111
 x 5
 y 2
@@ -570,6 +853,37 @@ arch wall_dungeon1.111
 x 5
 y 18
 end
+arch blocked
+x 5
+y 19
+end
+arch blocked
+x 5
+y 20
+end
+arch blocked
+x 5
+y 21
+end
+arch blocked
+x 5
+y 22
+end
+arch blocked
+x 5
+y 23
+end
+arch blocked
+x 6
+end
+arch blocked
+x 6
+y 1
+end
+arch floor_wood3d
+x 6
+y 2
+end
 arch wall_dungeon1.111
 x 6
 y 2
@@ -597,6 +911,22 @@ end
 arch wall_dungeon1.141
 x 6
 y 6
+end
+arch blocked
+x 6
+y 7
+end
+arch blocked
+x 6
+y 8
+end
+arch blocked
+x 6
+y 9
+end
+arch floor_wood3d
+x 6
+y 10
 end
 arch wall_dungeon1.111
 x 6
@@ -666,6 +996,37 @@ arch wall_dungeon1.111
 x 6
 y 18
 end
+arch blocked
+x 6
+y 19
+end
+arch blocked
+x 6
+y 20
+end
+arch blocked
+x 6
+y 21
+end
+arch blocked
+x 6
+y 22
+end
+arch blocked
+x 6
+y 23
+end
+arch blocked
+x 7
+end
+arch blocked
+x 7
+y 1
+end
+arch floor_wood3d
+x 7
+y 2
+end
 arch wall_dungeon1.111
 x 7
 y 2
@@ -690,13 +1051,33 @@ arch wall_dungeon1.111
 x 7
 y 5
 end
+arch blocked
+x 7
+y 6
+end
+arch blocked
+x 7
+y 7
+end
+arch floor_wood3d
+x 7
+y 8
+end
 arch wall_dungeon1.181
 x 7
 y 8
 end
+arch floor_wood3d
+x 7
+y 9
+end
 arch wall_dungeon1.131
 x 7
 y 9
+end
+arch floor_wood3d
+x 7
+y 10
 end
 arch wall_dungeon1.141
 x 7
@@ -796,6 +1177,37 @@ arch wall_dungeon1.141
 x 7
 y 18
 end
+arch blocked
+x 7
+y 19
+end
+arch blocked
+x 7
+y 20
+end
+arch blocked
+x 7
+y 21
+end
+arch blocked
+x 7
+y 22
+end
+arch blocked
+x 7
+y 23
+end
+arch blocked
+x 8
+end
+arch blocked
+x 8
+y 1
+end
+arch floor_wood3d
+x 8
+y 2
+end
 arch wall_dungeon1.111
 x 8
 y 2
@@ -815,6 +1227,18 @@ end
 arch wall_dungeon1.111
 x 8
 y 5
+end
+arch blocked
+x 8
+y 6
+end
+arch blocked
+x 8
+y 7
+end
+arch floor_wood3d
+x 8
+y 8
 end
 arch wall_dungeon1.111
 x 8
@@ -904,6 +1328,37 @@ arch wall_dungeon1.111
 x 8
 y 18
 end
+arch blocked
+x 8
+y 19
+end
+arch blocked
+x 8
+y 20
+end
+arch blocked
+x 8
+y 21
+end
+arch blocked
+x 8
+y 22
+end
+arch blocked
+x 8
+y 23
+end
+arch blocked
+x 9
+end
+arch blocked
+x 9
+y 1
+end
+arch floor_wood3d
+x 9
+y 2
+end
 arch wall_dungeon1.111
 x 9
 y 2
@@ -927,6 +1382,18 @@ end
 arch wall_dungeon1.111
 x 9
 y 5
+end
+arch blocked
+x 9
+y 6
+end
+arch blocked
+x 9
+y 7
+end
+arch floor_wood3d
+x 9
+y 8
 end
 arch wall_dungeon1.111
 x 9
@@ -1024,6 +1491,37 @@ arch wall_dungeon1.111
 x 9
 y 18
 end
+arch blocked
+x 9
+y 19
+end
+arch blocked
+x 9
+y 20
+end
+arch blocked
+x 9
+y 21
+end
+arch blocked
+x 9
+y 22
+end
+arch blocked
+x 9
+y 23
+end
+arch blocked
+x 10
+end
+arch blocked
+x 10
+y 1
+end
+arch floor_wood3d
+x 10
+y 2
+end
 arch wall_dungeon1.111
 x 10
 y 2
@@ -1051,6 +1549,18 @@ end
 arch wall_dungeon1.111
 x 10
 y 5
+end
+arch blocked
+x 10
+y 6
+end
+arch blocked
+x 10
+y 7
+end
+arch floor_wood3d
+x 10
+y 8
 end
 arch wall_dungeon1.111
 x 10
@@ -1132,6 +1642,10 @@ arch wall_dungeon1.111
 x 10
 y 18
 end
+arch floor_wood3d
+x 10
+y 19
+end
 arch wall_dungeon1.131
 x 10
 y 19
@@ -1141,6 +1655,10 @@ direction 7
 x 10
 y 19
 end
+arch floor_wood3d
+x 10
+y 20
+end
 arch wall_dungeon1.131
 x 10
 y 20
@@ -1149,10 +1667,33 @@ arch plant1_wall.151
 direction 7
 x 10
 y 20
+end
+arch floor_wood3d
+x 10
+y 21
 end
 arch wall_dungeon1.131
 x 10
 y 21
+end
+arch blocked
+x 10
+y 22
+end
+arch blocked
+x 10
+y 23
+end
+arch blocked
+x 11
+end
+arch blocked
+x 11
+y 1
+end
+arch floor_wood3d
+x 11
+y 2
 end
 arch wall_dungeon1.111
 x 11
@@ -1178,6 +1719,10 @@ arch wall_dungeon1.111
 x 11
 y 5
 end
+arch floor_wood3d
+x 11
+y 6
+end
 arch wall_dungeon1.131
 x 11
 y 6
@@ -1187,13 +1732,29 @@ direction 7
 x 11
 y 6
 end
-arch wall_dungeon1.131
+arch floor_wood3d
 x 11
 y 7
 end
 arch wall_dungeon1.131
 x 11
+y 7
+end
+arch floor_wood3d
+x 11
 y 8
+end
+arch wall_dungeon1.131
+x 11
+y 8
+end
+arch blocked
+x 11
+y 9
+end
+arch floor_wood3d
+x 11
+y 10
 end
 arch wall_dungeon1.111
 x 11
@@ -1275,6 +1836,25 @@ arch wall_dungeon1.111
 x 11
 y 21
 end
+arch blocked
+x 11
+y 22
+end
+arch blocked
+x 11
+y 23
+end
+arch blocked
+x 12
+end
+arch blocked
+x 12
+y 1
+end
+arch floor_wood3d
+x 12
+y 2
+end
 arch wall_dungeon1.111
 x 12
 y 2
@@ -1322,6 +1902,14 @@ end
 arch wall_dungeon1.111
 x 12
 y 8
+end
+arch blocked
+x 12
+y 9
+end
+arch floor_wood3d
+x 12
+y 10
 end
 arch wall_dungeon1.111
 x 12
@@ -1411,6 +1999,25 @@ arch wall_dungeon1.111
 x 12
 y 21
 end
+arch blocked
+x 12
+y 22
+end
+arch blocked
+x 12
+y 23
+end
+arch blocked
+x 13
+end
+arch blocked
+x 13
+y 1
+end
+arch floor_wood3d
+x 13
+y 2
+end
 arch wall_dungeon1.111
 x 13
 y 2
@@ -1459,6 +2066,14 @@ end
 arch wall_dungeon1.111
 x 13
 y 8
+end
+arch blocked
+x 13
+y 9
+end
+arch floor_wood3d
+x 13
+y 10
 end
 arch wall_dungeon1.111
 x 13
@@ -1532,6 +2147,25 @@ arch wall_dungeon1.111
 x 13
 y 21
 end
+arch blocked
+x 13
+y 22
+end
+arch blocked
+x 13
+y 23
+end
+arch blocked
+x 14
+end
+arch blocked
+x 14
+y 1
+end
+arch floor_wood3d
+x 14
+y 2
+end
 arch wall_dungeon1.111
 x 14
 y 2
@@ -1584,6 +2218,10 @@ arch wall_dungeon1.111
 x 14
 y 8
 end
+arch floor_wood3d
+x 14
+y 9
+end
 arch wall_dungeon1.131
 x 14
 y 9
@@ -1592,6 +2230,10 @@ arch plant1_wall.151
 direction 7
 x 14
 y 9
+end
+arch floor_wood3d
+x 14
+y 10
 end
 arch wall_dungeon1.141
 x 14
@@ -1642,6 +2284,14 @@ arch wall_dungeon1.141
 x 14
 y 16
 end
+arch blocked
+x 14
+y 17
+end
+arch floor_wood3d
+x 14
+y 18
+end
 arch wall_dungeon1.111
 x 14
 y 18
@@ -1674,6 +2324,10 @@ arch wall_dungeon1.111
 x 14
 y 21
 end
+arch floor_wood3d
+x 14
+y 22
+end
 arch wall_dungeon1.131
 x 14
 y 22
@@ -1683,9 +2337,36 @@ direction 7
 x 14
 y 22
 end
+arch floor_wood3d
+x 14
+y 23
+end
 arch wall_dungeon1.131
 x 14
 y 23
+end
+arch blocked
+x 15
+end
+arch blocked
+x 15
+y 1
+end
+arch blocked
+x 15
+y 2
+end
+arch blocked
+x 15
+y 3
+end
+arch blocked
+x 15
+y 4
+end
+arch floor_wood3d
+x 15
+y 5
 end
 arch wall_dungeon1.111
 x 15
@@ -1740,6 +2421,26 @@ arch wall_dungeon1.111
 x 15
 y 13
 end
+arch blocked
+x 15
+y 14
+end
+arch blocked
+x 15
+y 15
+end
+arch blocked
+x 15
+y 16
+end
+arch blocked
+x 15
+y 17
+end
+arch floor_wood3d
+x 15
+y 18
+end
 arch wall_dungeon1.111
 x 15
 y 18
@@ -1780,9 +2481,16 @@ arch wall_dungeon1.111
 x 15
 y 23
 end
+arch floor_wood3d
+x 16
+end
 arch wall_dungeon1.181
 x 16
 end
+arch floor_wood3d
+x 16
+y 1
+end
 arch wall_dungeon1.131
 x 16
 y 1
@@ -1792,6 +2500,10 @@ direction 7
 x 16
 y 1
 end
+arch floor_wood3d
+x 16
+y 2
+end
 arch wall_dungeon1.131
 x 16
 y 2
@@ -1800,10 +2512,22 @@ arch plant1_wall.151
 direction 7
 x 16
 y 2
+end
+arch floor_wood3d
+x 16
+y 3
 end
 arch wall_dungeon1.131
 x 16
 y 3
+end
+arch blocked
+x 16
+y 4
+end
+arch floor_wood3d
+x 16
+y 5
 end
 arch wall_dungeon1.111
 x 16
@@ -1861,6 +2585,26 @@ arch wall_dungeon1.111
 x 16
 y 13
 end
+arch blocked
+x 16
+y 14
+end
+arch blocked
+x 16
+y 15
+end
+arch blocked
+x 16
+y 16
+end
+arch blocked
+x 16
+y 17
+end
+arch floor_wood3d
+x 16
+y 18
+end
 arch wall_dungeon1.111
 x 16
 y 18
@@ -1896,6 +2640,9 @@ end
 arch wall_dungeon1.111
 x 16
 y 23
+end
+arch floor_wood3d
+x 17
 end
 arch wall_dungeon1.111
 x 17
@@ -1942,6 +2689,10 @@ direction 7
 x 17
 y 3
 end
+arch floor_wood3d
+x 17
+y 4
+end
 arch wall_dungeon1.131
 x 17
 y 4
@@ -1951,9 +2702,21 @@ direction 7
 x 17
 y 4
 end
+arch floor_wood3d
+x 17
+y 5
+end
 arch wall_dungeon1.131
 x 17
 y 5
+end
+arch blocked
+x 17
+y 6
+end
+arch floor_wood3d
+x 17
+y 7
 end
 arch wall_dungeon1.111
 x 17
@@ -2007,6 +2770,34 @@ arch wall_dungeon1.141
 x 17
 y 13
 end
+arch blocked
+x 17
+y 14
+end
+arch blocked
+x 17
+y 15
+end
+arch blocked
+x 17
+y 16
+end
+arch blocked
+x 17
+y 17
+end
+arch blocked
+x 17
+y 18
+end
+arch blocked
+x 17
+y 19
+end
+arch floor_wood3d
+x 17
+y 20
+end
 arch wall_dungeon1.111
 x 17
 y 20
@@ -2030,6 +2821,9 @@ end
 arch wall_dungeon1.111
 x 17
 y 23
+end
+arch floor_wood3d
+x 18
 end
 arch wall_dungeon1.111
 x 18
@@ -2083,6 +2877,66 @@ arch wall_dungeon1.111
 x 18
 y 5
 end
+arch blocked
+x 18
+y 6
+end
+arch blocked
+x 18
+y 7
+end
+arch blocked
+x 18
+y 8
+end
+arch blocked
+x 18
+y 9
+end
+arch blocked
+x 18
+y 10
+end
+arch blocked
+x 18
+y 11
+end
+arch blocked
+x 18
+y 12
+end
+arch blocked
+x 18
+y 13
+end
+arch blocked
+x 18
+y 14
+end
+arch blocked
+x 18
+y 15
+end
+arch blocked
+x 18
+y 16
+end
+arch blocked
+x 18
+y 17
+end
+arch blocked
+x 18
+y 18
+end
+arch blocked
+x 18
+y 19
+end
+arch floor_wood3d
+x 18
+y 20
+end
 arch wall_dungeon1.111
 x 18
 y 20
@@ -2115,6 +2969,9 @@ arch wall_dungeon1.111
 x 18
 y 23
 end
+arch floor_wood3d
+x 19
+end
 arch wall_dungeon1.111
 x 19
 end
@@ -2125,7 +2982,8 @@ arch floor_wood2_d1
 x 19
 y 1
 end
-arch corpse_half_elf
+arch arch_misc
+face corpse_pl.101
 x 19
 y 1
 end
@@ -2151,7 +3009,8 @@ arch light1
 x 19
 y 3
 end
-arch corpse_human
+arch arch_misc
+face corpse_pl.101
 x 19
 y 3
 end
@@ -2171,30 +3030,74 @@ arch wall_dungeon1.111
 x 19
 y 5
 end
+arch blocked
+x 19
+y 6
+end
+arch blocked
+x 19
+y 7
+end
+arch blocked
+x 19
+y 8
+end
+arch blocked
+x 19
+y 9
+end
+arch blocked
+x 19
+y 10
+end
+arch floor_wood3d
+x 19
+y 11
+end
 arch wall_dungeon1.181
 x 19
 y 11
 end
-arch wall_dungeon1.131
+arch floor_wood3d
 x 19
 y 12
 end
 arch wall_dungeon1.131
 x 19
+y 12
+end
+arch floor_wood3d
+x 19
 y 13
 end
 arch wall_dungeon1.131
+x 19
+y 13
+end
+arch floor_wood3d
 x 19
 y 14
 end
 arch wall_dungeon1.131
 x 19
+y 14
+end
+arch floor_wood3d
+x 19
+y 15
+end
+arch wall_dungeon1.131
+x 19
 y 15
 end
 arch plant1_wall.151
 direction 7
 x 19
 y 15
+end
+arch floor_wood3d
+x 19
+y 16
 end
 arch wall_dungeon1.131
 x 19
@@ -2205,13 +3108,25 @@ direction 7
 x 19
 y 16
 end
-arch wall_dungeon1.131
+arch floor_wood3d
 x 19
 y 17
 end
 arch wall_dungeon1.131
 x 19
+y 17
+end
+arch floor_wood3d
+x 19
 y 18
+end
+arch wall_dungeon1.131
+x 19
+y 18
+end
+arch floor_wood3d
+x 19
+y 19
 end
 arch wall_dungeon1.131
 x 19
@@ -2221,6 +3136,10 @@ arch plant1_wall.151
 direction 7
 x 19
 y 19
+end
+arch floor_wood3d
+x 19
+y 20
 end
 arch wall_dungeon1.141
 x 19
@@ -2253,6 +3172,9 @@ arch wall_dungeon1.111
 x 19
 y 23
 end
+arch floor_wood3d
+x 20
+end
 arch wall_dungeon1.111
 x 20
 end
@@ -2283,10 +3205,6 @@ arch floor_wood2_d2
 x 20
 y 3
 end
-arch light1
-x 20
-y 3
-end
 arch candlelight4.101
 x 20
 y 3
@@ -2307,6 +3225,10 @@ arch wall_dungeon1.111
 x 20
 y 5
 end
+arch floor_wood3d
+x 20
+y 6
+end
 arch wall_dungeon1.131
 x 20
 y 6
@@ -2315,6 +3237,10 @@ arch wall_blood3
 direction 7
 x 20
 y 6
+end
+arch floor_wood3d
+x 20
+y 7
 end
 arch wall_dungeon1.131
 x 20
@@ -2325,6 +3251,10 @@ direction 7
 x 20
 y 7
 end
+arch floor_wood3d
+x 20
+y 8
+end
 arch wall_dungeon1.131
 x 20
 y 8
@@ -2334,18 +3264,30 @@ direction 7
 x 20
 y 8
 end
-arch wall_dungeon1.131
+arch floor_wood3d
 x 20
 y 9
 end
 arch wall_dungeon1.131
 x 20
+y 9
+end
+arch floor_wood3d
+x 20
+y 10
+end
+arch wall_dungeon1.131
+x 20
 y 10
 end
 arch plant1_wall.151
 direction 7
 x 20
 y 10
+end
+arch floor_wood3d
+x 20
+y 11
 end
 arch wall_dungeon1.141
 x 20
@@ -2442,6 +3384,9 @@ end
 arch wall_dungeon1.111
 x 20
 y 23
+end
+arch floor_wood3d
+x 21
 end
 arch wall_dungeon1.111
 x 21
@@ -2600,6 +3545,9 @@ end
 arch wall_dungeon1.111
 x 21
 y 23
+end
+arch floor_wood3d
+x 22
 end
 arch wall_dungeon1.111
 x 22
@@ -2768,6 +3716,21 @@ arch wall_dungeon1.141
 x 22
 y 23
 end
+arch blocked
+x 23
+end
+arch blocked
+x 23
+y 1
+end
+arch blocked
+x 23
+y 2
+end
+arch floor_wood3d
+x 23
+y 3
+end
 arch wall_dungeon1.111
 x 23
 y 3
@@ -2867,4 +3830,36 @@ end
 arch wall_dungeon1.141
 x 23
 y 15
+end
+arch blocked
+x 23
+y 16
+end
+arch blocked
+x 23
+y 17
+end
+arch blocked
+x 23
+y 18
+end
+arch blocked
+x 23
+y 19
+end
+arch blocked
+x 23
+y 20
+end
+arch blocked
+x 23
+y 21
+end
+arch blocked
+x 23
+y 22
+end
+arch blocked
+x 23
+y 23
 end

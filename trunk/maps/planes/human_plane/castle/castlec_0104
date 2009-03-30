@@ -988,10 +988,6 @@ arch glower.101
 x 6
 y 6
 end
-arch light6
-x 6
-y 6
-end
 arch floor_fs_grey1a
 x 6
 y 7
@@ -1038,10 +1034,6 @@ x 6
 y 15
 end
 arch candlelight3.101
-x 6
-y 15
-end
-arch light4
 x 6
 y 15
 end
@@ -1397,10 +1389,6 @@ x 8
 y 23
 end
 arch wall_dungeon1.141
-x 8
-y 23
-end
-arch light3
 x 8
 y 23
 end
@@ -1881,10 +1869,6 @@ x 11
 y 20
 end
 arch candlelight4.101
-x 11
-y 20
-end
-arch light2
 x 11
 y 20
 end
@@ -2802,10 +2786,6 @@ arch candlelight4.101
 x 17
 y 19
 end
-arch light2
-x 17
-y 19
-end
 arch floor_fs_grey1a
 x 17
 y 20
@@ -3055,10 +3035,6 @@ x 19
 y 9
 end
 arch candlelight4.101
-x 19
-y 9
-end
-arch light3
 x 19
 y 9
 end

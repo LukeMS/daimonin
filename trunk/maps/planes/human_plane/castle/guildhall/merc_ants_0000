@@ -2,6 +2,7 @@ arch map
 name Guild Hall - Abandoned Cellar§spokyspace.ogg|0|-1
 msg
 Created:  2005-11-28 Unknown Combat Dummy
+Modified: 2009-03-30 smacky
 endmsg
 width 24
 height 24
@@ -11,6 +12,267 @@ tile_path_1 merc_ants_0001
 tileset_id 112
 tileset_x 0
 tileset_y 0
+end
+arch blocked
+end
+arch blocked
+y 1
+end
+arch blocked
+y 2
+end
+arch blocked
+y 3
+end
+arch blocked
+y 4
+end
+arch blocked
+y 5
+end
+arch blocked
+y 6
+end
+arch blocked
+y 7
+end
+arch blocked
+y 8
+end
+arch blocked
+y 9
+end
+arch blocked
+y 10
+end
+arch blocked
+y 11
+end
+arch blocked
+y 12
+end
+arch blocked
+y 13
+end
+arch blocked
+y 14
+end
+arch blocked
+y 15
+end
+arch blocked
+y 16
+end
+arch blocked
+y 17
+end
+arch blocked
+y 18
+end
+arch blocked
+y 19
+end
+arch blocked
+y 20
+end
+arch blocked
+y 21
+end
+arch blocked
+y 22
+end
+arch blocked
+y 23
+end
+arch blocked
+x 1
+end
+arch blocked
+x 1
+y 1
+end
+arch blocked
+x 1
+y 2
+end
+arch blocked
+x 1
+y 3
+end
+arch blocked
+x 1
+y 4
+end
+arch blocked
+x 1
+y 5
+end
+arch blocked
+x 1
+y 6
+end
+arch blocked
+x 1
+y 7
+end
+arch blocked
+x 1
+y 8
+end
+arch blocked
+x 1
+y 9
+end
+arch blocked
+x 1
+y 10
+end
+arch blocked
+x 1
+y 11
+end
+arch blocked
+x 1
+y 12
+end
+arch blocked
+x 1
+y 13
+end
+arch blocked
+x 1
+y 14
+end
+arch blocked
+x 1
+y 15
+end
+arch blocked
+x 1
+y 16
+end
+arch blocked
+x 1
+y 17
+end
+arch blocked
+x 1
+y 18
+end
+arch blocked
+x 1
+y 19
+end
+arch blocked
+x 1
+y 20
+end
+arch blocked
+x 1
+y 21
+end
+arch blocked
+x 1
+y 22
+end
+arch blocked
+x 1
+y 23
+end
+arch blocked
+x 2
+end
+arch blocked
+x 2
+y 1
+end
+arch blocked
+x 2
+y 2
+end
+arch blocked
+x 2
+y 3
+end
+arch blocked
+x 2
+y 4
+end
+arch blocked
+x 2
+y 5
+end
+arch blocked
+x 2
+y 6
+end
+arch blocked
+x 2
+y 7
+end
+arch blocked
+x 2
+y 8
+end
+arch blocked
+x 2
+y 9
+end
+arch blocked
+x 2
+y 10
+end
+arch blocked
+x 2
+y 11
+end
+arch blocked
+x 2
+y 12
+end
+arch blocked
+x 2
+y 13
+end
+arch blocked
+x 2
+y 14
+end
+arch blocked
+x 2
+y 15
+end
+arch blocked
+x 2
+y 16
+end
+arch blocked
+x 2
+y 17
+end
+arch blocked
+x 2
+y 18
+end
+arch blocked
+x 2
+y 19
+end
+arch blocked
+x 2
+y 20
+end
+arch blocked
+x 2
+y 21
+end
+arch blocked
+x 2
+y 22
+end
+arch blocked
+x 2
+y 23
 end
 arch floor_earth1e
 x 3
@@ -90,6 +352,62 @@ arch fwall_wood1b
 x 3
 y 9
 end
+arch blocked
+x 3
+y 10
+end
+arch blocked
+x 3
+y 11
+end
+arch blocked
+x 3
+y 12
+end
+arch blocked
+x 3
+y 13
+end
+arch blocked
+x 3
+y 14
+end
+arch blocked
+x 3
+y 15
+end
+arch blocked
+x 3
+y 16
+end
+arch blocked
+x 3
+y 17
+end
+arch blocked
+x 3
+y 18
+end
+arch blocked
+x 3
+y 19
+end
+arch blocked
+x 3
+y 20
+end
+arch blocked
+x 3
+y 21
+end
+arch blocked
+x 3
+y 22
+end
+arch blocked
+x 3
+y 23
+end
 arch floor_earth1a
 x 4
 end
@@ -161,6 +479,62 @@ end
 arch fwall_wood1c
 x 4
 y 9
+end
+arch blocked
+x 4
+y 10
+end
+arch blocked
+x 4
+y 11
+end
+arch blocked
+x 4
+y 12
+end
+arch blocked
+x 4
+y 13
+end
+arch blocked
+x 4
+y 14
+end
+arch blocked
+x 4
+y 15
+end
+arch blocked
+x 4
+y 16
+end
+arch blocked
+x 4
+y 17
+end
+arch blocked
+x 4
+y 18
+end
+arch blocked
+x 4
+y 19
+end
+arch blocked
+x 4
+y 20
+end
+arch blocked
+x 4
+y 21
+end
+arch blocked
+x 4
+y 22
+end
+arch blocked
+x 4
+y 23
 end
 arch floor_earth1a
 x 5
@@ -308,6 +682,26 @@ end
 arch fwall_wood1a
 x 5
 y 18
+end
+arch blocked
+x 5
+y 19
+end
+arch blocked
+x 5
+y 20
+end
+arch blocked
+x 5
+y 21
+end
+arch blocked
+x 5
+y 22
+end
+arch blocked
+x 5
+y 23
 end
 arch floor_earth1b
 x 6
@@ -476,6 +870,29 @@ arch fwall_wood1c
 x 6
 y 18
 end
+arch blocked
+x 6
+y 19
+end
+arch blocked
+x 6
+y 20
+end
+arch blocked
+x 6
+y 21
+end
+arch blocked
+x 6
+y 22
+end
+arch blocked
+x 6
+y 23
+end
+arch blocked
+x 7
+end
 arch fstone1a
 x 7
 y 1
@@ -601,6 +1018,29 @@ arch fwall_wood1b
 x 7
 y 18
 end
+arch blocked
+x 7
+y 19
+end
+arch blocked
+x 7
+y 20
+end
+arch blocked
+x 7
+y 21
+end
+arch blocked
+x 7
+y 22
+end
+arch blocked
+x 7
+y 23
+end
+arch blocked
+x 8
+end
 arch fstone1a
 x 8
 y 1
@@ -718,6 +1158,29 @@ arch fwall_wood1b
 x 8
 y 18
 end
+arch blocked
+x 8
+y 19
+end
+arch blocked
+x 8
+y 20
+end
+arch blocked
+x 8
+y 21
+end
+arch blocked
+x 8
+y 22
+end
+arch blocked
+x 8
+y 23
+end
+arch blocked
+x 9
+end
 arch fstone1c
 x 9
 y 1
@@ -821,6 +1284,29 @@ end
 arch fwall_wood1b
 x 9
 y 18
+end
+arch blocked
+x 9
+y 19
+end
+arch blocked
+x 9
+y 20
+end
+arch blocked
+x 9
+y 21
+end
+arch blocked
+x 9
+y 22
+end
+arch blocked
+x 9
+y 23
+end
+arch blocked
+x 10
 end
 arch fstone1b
 x 10
@@ -955,6 +1441,37 @@ arch fwall_wood1b
 x 10
 y 18
 end
+arch blocked
+x 10
+y 19
+end
+arch blocked
+x 10
+y 20
+end
+arch blocked
+x 10
+y 21
+end
+arch blocked
+x 10
+y 22
+end
+arch blocked
+x 10
+y 23
+end
+arch blocked
+x 11
+end
+arch blocked
+x 11
+y 1
+end
+arch blocked
+x 11
+y 2
+end
 arch fstone1b
 x 11
 y 3
@@ -1067,6 +1584,37 @@ arch fwall_wood1c
 x 11
 y 18
 end
+arch blocked
+x 11
+y 19
+end
+arch blocked
+x 11
+y 20
+end
+arch blocked
+x 11
+y 21
+end
+arch blocked
+x 11
+y 22
+end
+arch blocked
+x 11
+y 23
+end
+arch blocked
+x 12
+end
+arch blocked
+x 12
+y 1
+end
+arch blocked
+x 12
+y 2
+end
 arch fstone1c
 x 12
 y 3
@@ -1154,6 +1702,37 @@ end
 arch fwall_wood1a
 x 12
 y 18
+end
+arch blocked
+x 12
+y 19
+end
+arch blocked
+x 12
+y 20
+end
+arch blocked
+x 12
+y 21
+end
+arch blocked
+x 12
+y 22
+end
+arch blocked
+x 12
+y 23
+end
+arch blocked
+x 13
+end
+arch blocked
+x 13
+y 1
+end
+arch blocked
+x 13
+y 2
 end
 arch fstone1a
 x 13
@@ -1256,6 +1835,37 @@ arch fwall_wood1b
 x 13
 y 18
 end
+arch blocked
+x 13
+y 19
+end
+arch blocked
+x 13
+y 20
+end
+arch blocked
+x 13
+y 21
+end
+arch blocked
+x 13
+y 22
+end
+arch blocked
+x 13
+y 23
+end
+arch blocked
+x 14
+end
+arch blocked
+x 14
+y 1
+end
+arch blocked
+x 14
+y 2
+end
 arch fstone1b
 x 14
 y 3
@@ -1355,6 +1965,37 @@ end
 arch fwall_wood1a
 x 14
 y 18
+end
+arch blocked
+x 14
+y 19
+end
+arch blocked
+x 14
+y 20
+end
+arch blocked
+x 14
+y 21
+end
+arch blocked
+x 14
+y 22
+end
+arch blocked
+x 14
+y 23
+end
+arch blocked
+x 15
+end
+arch blocked
+x 15
+y 1
+end
+arch blocked
+x 15
+y 2
 end
 arch fstone1a
 x 15
@@ -1473,6 +2114,37 @@ arch fwall_wood1a
 x 15
 y 18
 end
+arch blocked
+x 15
+y 19
+end
+arch blocked
+x 15
+y 20
+end
+arch blocked
+x 15
+y 21
+end
+arch blocked
+x 15
+y 22
+end
+arch blocked
+x 15
+y 23
+end
+arch blocked
+x 16
+end
+arch blocked
+x 16
+y 1
+end
+arch blocked
+x 16
+y 2
+end
 arch fstone1a
 x 16
 y 3
@@ -1556,6 +2228,37 @@ end
 arch fwall_wood1c
 x 16
 y 18
+end
+arch blocked
+x 16
+y 19
+end
+arch blocked
+x 16
+y 20
+end
+arch blocked
+x 16
+y 21
+end
+arch blocked
+x 16
+y 22
+end
+arch blocked
+x 16
+y 23
+end
+arch blocked
+x 17
+end
+arch blocked
+x 17
+y 1
+end
+arch blocked
+x 17
+y 2
 end
 arch fstone1c
 x 17
@@ -1648,6 +2351,37 @@ end
 arch fwall_wood1c
 x 17
 y 18
+end
+arch blocked
+x 17
+y 19
+end
+arch blocked
+x 17
+y 20
+end
+arch blocked
+x 17
+y 21
+end
+arch blocked
+x 17
+y 22
+end
+arch blocked
+x 17
+y 23
+end
+arch blocked
+x 18
+end
+arch blocked
+x 18
+y 1
+end
+arch blocked
+x 18
+y 2
 end
 arch fstone1b
 x 18
@@ -1789,6 +2523,37 @@ arch fwall_wood1c
 x 18
 y 18
 end
+arch blocked
+x 18
+y 19
+end
+arch blocked
+x 18
+y 20
+end
+arch blocked
+x 18
+y 21
+end
+arch blocked
+x 18
+y 22
+end
+arch blocked
+x 18
+y 23
+end
+arch blocked
+x 19
+end
+arch blocked
+x 19
+y 1
+end
+arch blocked
+x 19
+y 2
+end
 arch fstone1c
 x 19
 y 3
@@ -1873,6 +2638,37 @@ arch fwall_wood1a
 x 19
 y 18
 end
+arch blocked
+x 19
+y 19
+end
+arch blocked
+x 19
+y 20
+end
+arch blocked
+x 19
+y 21
+end
+arch blocked
+x 19
+y 22
+end
+arch blocked
+x 19
+y 23
+end
+arch blocked
+x 20
+end
+arch blocked
+x 20
+y 1
+end
+arch blocked
+x 20
+y 2
+end
 arch fstone1c
 x 20
 y 3
@@ -2000,4 +2796,309 @@ end
 arch fwall_wood1c
 x 20
 y 18
+end
+arch blocked
+x 20
+y 19
+end
+arch blocked
+x 20
+y 20
+end
+arch blocked
+x 20
+y 21
+end
+arch blocked
+x 20
+y 22
+end
+arch blocked
+x 20
+y 23
+end
+arch blocked
+x 21
+end
+arch blocked
+x 21
+y 1
+end
+arch blocked
+x 21
+y 2
+end
+arch blocked
+x 21
+y 3
+end
+arch blocked
+x 21
+y 4
+end
+arch blocked
+x 21
+y 5
+end
+arch blocked
+x 21
+y 6
+end
+arch blocked
+x 21
+y 7
+end
+arch blocked
+x 21
+y 8
+end
+arch blocked
+x 21
+y 9
+end
+arch blocked
+x 21
+y 10
+end
+arch blocked
+x 21
+y 11
+end
+arch blocked
+x 21
+y 12
+end
+arch blocked
+x 21
+y 13
+end
+arch blocked
+x 21
+y 14
+end
+arch blocked
+x 21
+y 15
+end
+arch blocked
+x 21
+y 16
+end
+arch blocked
+x 21
+y 17
+end
+arch blocked
+x 21
+y 18
+end
+arch blocked
+x 21
+y 19
+end
+arch blocked
+x 21
+y 20
+end
+arch blocked
+x 21
+y 21
+end
+arch blocked
+x 21
+y 22
+end
+arch blocked
+x 21
+y 23
+end
+arch blocked
+x 22
+end
+arch blocked
+x 22
+y 1
+end
+arch blocked
+x 22
+y 2
+end
+arch blocked
+x 22
+y 3
+end
+arch blocked
+x 22
+y 4
+end
+arch blocked
+x 22
+y 5
+end
+arch blocked
+x 22
+y 6
+end
+arch blocked
+x 22
+y 7
+end
+arch blocked
+x 22
+y 8
+end
+arch blocked
+x 22
+y 9
+end
+arch blocked
+x 22
+y 10
+end
+arch blocked
+x 22
+y 11
+end
+arch blocked
+x 22
+y 12
+end
+arch blocked
+x 22
+y 13
+end
+arch blocked
+x 22
+y 14
+end
+arch blocked
+x 22
+y 15
+end
+arch blocked
+x 22
+y 16
+end
+arch blocked
+x 22
+y 17
+end
+arch blocked
+x 22
+y 18
+end
+arch blocked
+x 22
+y 19
+end
+arch blocked
+x 22
+y 20
+end
+arch blocked
+x 22
+y 21
+end
+arch blocked
+x 22
+y 22
+end
+arch blocked
+x 22
+y 23
+end
+arch blocked
+x 23
+end
+arch blocked
+x 23
+y 1
+end
+arch blocked
+x 23
+y 2
+end
+arch blocked
+x 23
+y 3
+end
+arch blocked
+x 23
+y 4
+end
+arch blocked
+x 23
+y 5
+end
+arch blocked
+x 23
+y 6
+end
+arch blocked
+x 23
+y 7
+end
+arch blocked
+x 23
+y 8
+end
+arch blocked
+x 23
+y 9
+end
+arch blocked
+x 23
+y 10
+end
+arch blocked
+x 23
+y 11
+end
+arch blocked
+x 23
+y 12
+end
+arch blocked
+x 23
+y 13
+end
+arch blocked
+x 23
+y 14
+end
+arch blocked
+x 23
+y 15
+end
+arch blocked
+x 23
+y 16
+end
+arch blocked
+x 23
+y 17
+end
+arch blocked
+x 23
+y 18
+end
+arch blocked
+x 23
+y 19
+end
+arch blocked
+x 23
+y 20
+end
+arch blocked
+x 23
+y 21
+end
+arch blocked
+x 23
+y 22
+end
+arch blocked
+x 23
+y 23
 end

@@ -2,6 +2,7 @@ arch map
 name Stonehaven
 msg
 Created:  2004-06-13 Daimonin Map Editor
+Modified: 2009-03-30 smacky
 endmsg
 width 24
 height 24
@@ -754,8 +755,6 @@ x 5
 y 13
 end
 arch torch_wall_1
-glow_radius 5
-is_animated 1
 x 5
 y 13
 end
@@ -822,10 +821,6 @@ x 6
 y 2
 end
 arch plant2
-x 6
-y 2
-end
-arch plant8
 x 6
 y 2
 end
@@ -1392,11 +1387,11 @@ arch grass_thick1
 x 10
 y 7
 end
-arch wall_flagstone1_w.111
-x 10
-y 7
-end
 arch floor_fstone2a
+x 10
+y 8
+end
+arch fwall_fstone2_w.151
 x 10
 y 8
 end
@@ -1664,18 +1659,6 @@ x 12
 y 7
 end
 arch plant14
-x 12
-y 7
-end
-arch plant2
-x 12
-y 7
-end
-arch plant8
-x 12
-y 7
-end
-arch plant_flower8
 x 12
 y 7
 end
@@ -1957,10 +1940,6 @@ x 14
 y 9
 end
 arch plant2
-x 14
-y 9
-end
-arch plant8
 x 14
 y 9
 end
@@ -2277,10 +2256,6 @@ arch plant2
 x 16
 y 12
 end
-arch plant_flower8
-x 16
-y 12
-end
 arch grass_thick1
 x 16
 y 13
@@ -2293,7 +2268,7 @@ arch floor_fstone2a
 x 16
 y 14
 end
-arch wall_flagstone1_w.131
+arch fwall_fstone2_w.131
 x 16
 y 14
 end
@@ -2415,10 +2390,6 @@ arch plant8
 x 17
 y 9
 end
-arch plant_flower3
-x 17
-y 9
-end
 arch grass_thick1
 x 17
 y 10
@@ -2464,10 +2435,6 @@ x 17
 y 16
 end
 arch plant8
-x 17
-y 16
-end
-arch plant_flower4
 x 17
 y 16
 end
@@ -2527,10 +2494,6 @@ x 18
 y 2
 end
 arch plant11
-x 18
-y 2
-end
-arch plant8
 x 18
 y 2
 end
@@ -2919,10 +2882,6 @@ arch plant8
 x 20
 y 18
 end
-arch plant_flower8
-x 20
-y 18
-end
 arch grass_thick1
 x 20
 y 19
@@ -2931,19 +2890,11 @@ arch plant4
 x 20
 y 19
 end
-arch plant2
-x 20
-y 19
-end
 arch grass_thick1
 x 20
 y 20
 end
 arch plant2
-x 20
-y 20
-end
-arch plant_flower3
 x 20
 y 20
 end
@@ -3007,10 +2958,6 @@ x 21
 y 7
 end
 arch plant14
-x 21
-y 7
-end
-arch plant2
 x 21
 y 7
 end
@@ -3178,10 +3125,6 @@ x 22
 y 11
 end
 arch plant2
-x 22
-y 11
-end
-arch plant8
 x 22
 y 11
 end

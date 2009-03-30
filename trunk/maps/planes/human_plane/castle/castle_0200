@@ -2,6 +2,7 @@ arch map
 name Stonehaven
 msg
 Created:  2004-06-06 Daimonin Map Editor
+Modified: 2009-03-30 smacky
 endmsg
 width 24
 height 24
@@ -52,8 +53,6 @@ arch floor_fstone2a
 y 8
 end
 arch torch_wall_1
-glow_radius 5
-is_animated 1
 y 8
 end
 arch floor_fstone2a
@@ -589,10 +588,6 @@ arch fwall_fstone2
 x 4
 y 11
 end
-arch floor_dark1a
-x 4
-y 12
-end
 arch grass_thick1
 x 4
 y 12
@@ -712,8 +707,6 @@ x 5
 y 8
 end
 arch torch_wall_1
-glow_radius 5
-is_animated 1
 x 5
 y 8
 end
@@ -841,10 +834,6 @@ end
 arch tree30
 x 6
 y 5
-end
-arch grassd_6
-x 6
-y 6
 end
 arch grassd_1
 x 6
@@ -1434,7 +1423,7 @@ arch floor_fstone2a
 x 10
 y 15
 end
-arch wall_flagstone1_w.111
+arch fwall_fstone2_w.151
 x 10
 y 15
 end
@@ -1656,8 +1645,6 @@ x 12
 y 5
 end
 arch torch_wall_1
-glow_radius 5
-is_animated 1
 x 12
 y 5
 end
@@ -2242,7 +2229,7 @@ arch floor_fstone2a
 x 16
 y 9
 end
-arch wall_flagstone1_w.131
+arch fwall_fstone2_w.131
 x 16
 y 9
 end
