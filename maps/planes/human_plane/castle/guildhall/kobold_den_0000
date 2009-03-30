@@ -2,6 +2,7 @@ arch map
 name Kobold Den§100-dreamybells.ogg|0|-1
 msg
 Created:  2004-03-22 Daimonin Map Editor
+Modified: 2009-03-30 smacky
 endmsg
 width 24
 height 24
@@ -486,8 +487,6 @@ x 2
 y 16
 end
 arch torch_wall_1
-glow_radius 5
-is_animated 1
 x 2
 y 16
 end
@@ -515,10 +514,8 @@ arch floor_grit4a
 x 2
 y 21
 end
-arch corpse_goblinoid
+arch corpse_default
 name kobold corpse
-speed 0
-is_used_up 0
 x 2
 y 21
 arch note
@@ -528,7 +525,6 @@ Me Warning all!
 Water rotten our weapons.
 Me rotten storage master.
 endmsg
-no_pick 1
 end
 end
 arch floor_grit4a
@@ -554,8 +550,6 @@ x 3
 y 1
 end
 arch torch_wall_1
-glow_radius 5
-is_animated 1
 x 3
 y 1
 end
@@ -588,8 +582,6 @@ x 3
 y 6
 end
 arch torch_wall_1
-glow_radius 5
-is_animated 1
 x 3
 y 6
 end
@@ -1122,8 +1114,6 @@ x 6
 y 20
 end
 arch torch_wall_1
-glow_radius 5
-is_animated 1
 x 6
 y 20
 end
@@ -1238,9 +1228,6 @@ x 7
 y 16
 end
 arch torch_wall_1
-direction 5
-glow_radius 5
-is_animated 1
 x 7
 y 16
 end
@@ -1347,8 +1334,6 @@ x 8
 y 10
 end
 arch torch_wall_1
-glow_radius 5
-is_animated 1
 x 8
 y 10
 end
@@ -1902,8 +1887,6 @@ x 12
 y 3
 end
 arch torch_wall_1
-glow_radius 5
-is_animated 1
 x 12
 y 3
 end
@@ -2184,8 +2167,6 @@ x 13
 y 20
 end
 arch torch_wall_1
-glow_radius 5
-is_animated 1
 x 13
 y 20
 end
@@ -2601,9 +2582,6 @@ x 16
 y 7
 end
 arch torch_wall_1
-direction 5
-glow_radius 5
-is_animated 1
 x 16
 y 7
 end
@@ -2914,14 +2892,12 @@ arch floor_grit4a
 x 18
 y 3
 end
-arch torch_wall_1
-direction 5
-glow_radius 5
-is_animated 1
+arch sand_dm6
 x 18
 y 3
 end
-arch sand_dm6
+arch torch_wall_1
+direction 7
 x 18
 y 3
 end
@@ -2993,8 +2969,6 @@ x 18
 y 11
 end
 arch torch_wall_1
-glow_radius 5
-is_animated 1
 x 18
 y 11
 end
@@ -3035,9 +3009,7 @@ x 18
 y 17
 end
 arch torch_wall_1
-direction 5
-glow_radius 5
-is_animated 1
+direction 7
 x 18
 y 17
 end

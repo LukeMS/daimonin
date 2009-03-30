@@ -2,6 +2,7 @@ arch map
 name Stonehaven
 msg
 Created:  2004-06-11 Daimonin Map Editor
+Modified: 2009-03-29 smacky
 endmsg
 width 24
 height 24
@@ -73,8 +74,6 @@ arch floor_orange1
 y 14
 end
 arch torch_wall_1
-glow_radius 5
-is_animated 1
 y 14
 end
 arch floor_fs_grey1a
@@ -544,10 +543,6 @@ arch grassd_3
 x 4
 y 4
 end
-arch light4
-x 4
-y 4
-end
 arch lantern_magic.131
 direction 7
 x 4
@@ -645,12 +640,13 @@ arch floor_fs_grey1a
 x 4
 y 21
 end
-arch rack.111
+arch chair1_111
+direction 7
 x 4
 y 21
 end
-arch chair1_111
-direction 7
+arch rack.111
+layer 5
 x 4
 y 21
 end
@@ -741,13 +737,7 @@ arch floor_fs_grey1a
 x 5
 y 14
 end
-arch wall_flagstone1b.131
-x 5
-y 14
-end
 arch torch_wall_1
-glow_radius 5
-is_animated 1
 x 5
 y 14
 end
@@ -818,10 +808,6 @@ arch grassd_7
 x 6
 end
 arch grassd_1
-x 6
-y 1
-end
-arch light4
 x 6
 y 1
 end
@@ -940,10 +926,6 @@ arch glower.101
 x 6
 y 19
 end
-arch light5
-x 6
-y 19
-end
 arch floor_fs_grey1a
 x 6
 y 20
@@ -956,12 +938,13 @@ arch floor_fs_grey1a
 x 6
 y 21
 end
-arch rack.111
+arch chair1_111
+direction 3
 x 6
 y 21
 end
-arch chair1_111
-direction 3
+arch rack.111
+layer 5
 x 6
 y 21
 end
@@ -1577,10 +1560,6 @@ arch grassd_7
 x 11
 y 11
 end
-arch light4
-x 11
-y 11
-end
 arch lantern_magic.131
 direction 7
 x 11
@@ -1816,10 +1795,6 @@ arch grassd_7
 x 13
 y 8
 end
-arch light4
-x 13
-y 8
-end
 arch lantern_magic.131
 x 13
 y 8
@@ -1972,10 +1947,6 @@ x 14
 y 14
 end
 arch grassd_1
-x 14
-y 15
-end
-arch plant17
 x 14
 y 15
 end
@@ -2668,12 +2639,8 @@ arch grassd_3
 x 19
 y 21
 end
-arch light4
-x 19
-y 21
-end
 arch lantern2_magic.131
-direction 5
+direction 7
 x 19
 y 21
 end
@@ -2685,12 +2652,8 @@ arch grassd_8
 x 19
 y 23
 end
-arch light4
-x 19
-y 23
-end
 arch lantern2_magic.131
-direction 5
+direction 7
 x 19
 y 23
 end
@@ -3035,10 +2998,6 @@ x 22
 y 16
 end
 arch grassd_8
-x 22
-y 17
-end
-arch light4
 x 22
 y 17
 end

@@ -2,6 +2,7 @@ arch map
 name Stonehaven§ColeStandard.ogg|0|-1
 msg
 Created:  2004-06-09 Daimonin Map Editor
+Modified: 2009-03-30 smacky
 endmsg
 width 24
 height 24
@@ -162,15 +163,11 @@ end
 arch wall_stone_1
 x 1
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 1
 y 1
 end
-arch exit
-type 69
+arch shop_mat
 x 1
 y 1
 end
@@ -178,17 +175,11 @@ arch light1
 x 1
 y 1
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 1
 y 2
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 1
 y 3
 end
@@ -199,10 +190,7 @@ unpaid 1
 x 1
 y 3
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 1
 y 4
 end
@@ -213,10 +201,7 @@ unpaid 1
 x 1
 y 4
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 1
 y 5
 end
@@ -227,10 +212,7 @@ unpaid 1
 x 1
 y 5
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 1
 y 6
 end
@@ -246,10 +228,7 @@ direction 7
 x 1
 y 6
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 1
 y 7
 end
@@ -265,10 +244,7 @@ direction 7
 x 1
 y 7
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 1
 y 8
 end
@@ -279,10 +255,7 @@ unpaid 1
 x 1
 y 8
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 1
 y 9
 end
@@ -293,10 +266,7 @@ unpaid 1
 x 1
 y 9
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 1
 y 10
 end
@@ -312,10 +282,7 @@ direction 7
 x 1
 y 10
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 1
 y 11
 end
@@ -350,10 +317,7 @@ nrof 10
 x 1
 y 13
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 1
 y 14
 end
@@ -364,10 +328,7 @@ unpaid 1
 x 1
 y 14
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 1
 y 15
 end
@@ -383,10 +344,7 @@ direction 7
 x 1
 y 15
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 1
 y 16
 end
@@ -402,10 +360,7 @@ direction 7
 x 1
 y 16
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 1
 y 17
 end
@@ -451,10 +406,7 @@ end
 arch wall_stone_1
 x 2
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 2
 y 1
 end
@@ -462,10 +414,7 @@ arch shop_floor
 x 2
 y 2
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 2
 y 3
 end
@@ -476,10 +425,7 @@ unpaid 1
 x 2
 y 3
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 2
 y 4
 end
@@ -494,10 +440,7 @@ unpaid 1
 x 2
 y 4
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 2
 y 5
 end
@@ -508,10 +451,7 @@ unpaid 1
 x 2
 y 5
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 2
 y 6
 end
@@ -522,10 +462,7 @@ unpaid 1
 x 2
 y 6
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 2
 y 7
 end
@@ -541,10 +478,7 @@ unpaid 1
 x 2
 y 7
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 2
 y 8
 end
@@ -555,10 +489,7 @@ unpaid 1
 x 2
 y 8
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 2
 y 9
 end
@@ -570,10 +501,7 @@ unpaid 1
 x 2
 y 9
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 2
 y 10
 end
@@ -588,10 +516,7 @@ unpaid 1
 x 2
 y 10
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 2
 y 11
 end
@@ -625,10 +550,7 @@ nrof 10
 x 2
 y 13
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 2
 y 14
 end
@@ -671,10 +593,7 @@ nrof 25
 x 2
 y 16
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 2
 y 17
 end
@@ -724,10 +643,7 @@ end
 arch wall_stone_1
 x 3
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 3
 y 1
 end
@@ -735,17 +651,11 @@ arch light1
 x 3
 y 1
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 3
 y 2
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 3
 y 3
 end
@@ -756,10 +666,7 @@ unpaid 1
 x 3
 y 3
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 3
 y 4
 end
@@ -774,10 +681,7 @@ unpaid 1
 x 3
 y 4
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 3
 y 5
 end
@@ -788,10 +692,7 @@ unpaid 1
 x 3
 y 5
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 3
 y 6
 end
@@ -802,10 +703,7 @@ unpaid 1
 x 3
 y 6
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 3
 y 7
 end
@@ -820,10 +718,7 @@ unpaid 1
 x 3
 y 7
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 3
 y 8
 end
@@ -834,10 +729,7 @@ unpaid 1
 x 3
 y 8
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 3
 y 9
 end
@@ -848,10 +740,7 @@ unpaid 1
 x 3
 y 9
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 3
 y 10
 end
@@ -866,17 +755,11 @@ unpaid 1
 x 3
 y 10
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 3
 y 11
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 3
 y 12
 end
@@ -887,10 +770,7 @@ unpaid 1
 x 3
 y 12
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 3
 y 13
 end
@@ -905,10 +785,7 @@ unpaid 1
 x 3
 y 13
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 3
 y 14
 end
@@ -919,10 +796,7 @@ unpaid 1
 x 3
 y 14
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 3
 y 15
 end
@@ -933,10 +807,7 @@ unpaid 1
 x 3
 y 15
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 3
 y 16
 end
@@ -953,10 +824,7 @@ nrof 5
 x 3
 y 16
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 3
 y 17
 end
@@ -1006,10 +874,7 @@ end
 arch wall_stone_1
 x 4
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 4
 y 1
 end
@@ -1017,17 +882,11 @@ arch light1
 x 4
 y 1
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 4
 y 2
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 4
 y 3
 end
@@ -1038,10 +897,7 @@ unpaid 1
 x 4
 y 3
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 4
 y 4
 end
@@ -1052,10 +908,7 @@ unpaid 1
 x 4
 y 4
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 4
 y 5
 end
@@ -1066,10 +919,7 @@ unpaid 1
 x 4
 y 5
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 4
 y 6
 end
@@ -1080,10 +930,7 @@ unpaid 1
 x 4
 y 6
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 4
 y 7
 end
@@ -1094,10 +941,7 @@ unpaid 1
 x 4
 y 7
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 4
 y 8
 end
@@ -1108,10 +952,7 @@ unpaid 1
 x 4
 y 8
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 4
 y 9
 end
@@ -1122,10 +963,7 @@ unpaid 1
 x 4
 y 9
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 4
 y 10
 end
@@ -1136,17 +974,11 @@ unpaid 1
 x 4
 y 10
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 4
 y 11
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 4
 y 12
 end
@@ -1157,10 +989,7 @@ unpaid 1
 x 4
 y 12
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 4
 y 13
 end
@@ -1171,10 +1000,7 @@ unpaid 1
 x 4
 y 13
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 4
 y 14
 end
@@ -1185,10 +1011,7 @@ unpaid 1
 x 4
 y 14
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 4
 y 15
 end
@@ -1199,10 +1022,7 @@ unpaid 1
 x 4
 y 15
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 4
 y 16
 end
@@ -1213,10 +1033,7 @@ unpaid 1
 x 4
 y 16
 end
-arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
+arch shop_floor
 x 4
 y 17
 end
@@ -1263,9 +1080,6 @@ arch wall_stone_1
 x 5
 end
 arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
 x 5
 y 1
 end
@@ -1274,9 +1088,6 @@ x 5
 y 1
 end
 arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
 x 5
 y 2
 end
@@ -1285,9 +1096,6 @@ x 5
 y 2
 end
 arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
 x 5
 y 3
 end
@@ -1296,9 +1104,6 @@ x 5
 y 3
 end
 arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
 x 5
 y 4
 end
@@ -1307,9 +1112,6 @@ x 5
 y 4
 end
 arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
 x 5
 y 5
 end
@@ -1318,9 +1120,6 @@ x 5
 y 5
 end
 arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
 x 5
 y 6
 end
@@ -1329,9 +1128,6 @@ x 5
 y 6
 end
 arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
 x 5
 y 7
 end
@@ -1340,9 +1136,6 @@ x 5
 y 7
 end
 arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
 x 5
 y 8
 end
@@ -1351,9 +1144,6 @@ x 5
 y 8
 end
 arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
 x 5
 y 9
 end
@@ -1362,9 +1152,6 @@ x 5
 y 9
 end
 arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
 x 5
 y 10
 end
@@ -1373,9 +1160,6 @@ x 5
 y 10
 end
 arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
 x 5
 y 11
 end
@@ -1384,9 +1168,6 @@ x 5
 y 11
 end
 arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
 x 5
 y 12
 end
@@ -1395,9 +1176,6 @@ x 5
 y 12
 end
 arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
 x 5
 y 13
 end
@@ -1406,9 +1184,6 @@ x 5
 y 13
 end
 arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
 x 5
 y 14
 end
@@ -1417,9 +1192,6 @@ x 5
 y 14
 end
 arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
 x 5
 y 15
 end
@@ -1428,9 +1200,6 @@ x 5
 y 15
 end
 arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
 x 5
 y 16
 end
@@ -1439,9 +1208,6 @@ x 5
 y 16
 end
 arch shop_floor_normal
-type 68
-no_magic 1
-no_magic 1
 x 5
 y 17
 end
@@ -1502,8 +1268,7 @@ no_cleric 1
 x 6
 y 1
 end
-arch exit
-type 69
+arch shop_mat
 x 6
 y 1
 end
@@ -1548,10 +1313,6 @@ x 6
 y 7
 end
 arch candlelight4.101
-x 6
-y 7
-end
-arch light3
 x 6
 y 7
 end
@@ -1614,10 +1375,10 @@ arch smith
 name Lathair
 type 83
 title (Smith)
-face weapon_smith.141
 animation weapon_smith
 level 30
 direction 3
+face weapon_smith.141
 arch event_obj
 name Lua
 sub_type 13
@@ -2073,11 +1834,7 @@ x 9
 y 8
 end
 arch lantern2_magic.131
-direction 5
-x 9
-y 8
-end
-arch light4
+direction 7
 x 9
 y 8
 end
@@ -2090,11 +1847,7 @@ x 9
 y 10
 end
 arch lantern2_magic.131
-direction 5
-x 9
-y 10
-end
-arch light4
+direction 7
 x 9
 y 10
 end
@@ -2177,12 +1930,8 @@ arch grassd_7
 x 9
 y 19
 end
-arch light7
-x 9
-y 19
-end
 arch lantern_magic.131
-direction 5
+direction 3
 x 9
 y 19
 end
@@ -2214,12 +1963,8 @@ arch plant17
 x 9
 y 23
 end
-arch light7
-x 9
-y 23
-end
 arch lantern_magic.131
-direction 5
+direction 3
 x 9
 y 23
 end
@@ -2849,12 +2594,8 @@ arch grassd_8
 x 13
 y 19
 end
-arch light7
-x 13
-y 19
-end
 arch lantern_magic.131
-direction 1
+direction 7
 x 13
 y 19
 end
@@ -2883,10 +2624,7 @@ x 13
 y 23
 end
 arch lantern_magic.131
-x 13
-y 23
-end
-arch light7
+direction 7
 x 13
 y 23
 end
@@ -2894,9 +2632,6 @@ arch floor_wood2_l2
 x 14
 end
 arch candlelight4.101
-x 14
-end
-arch light7
 x 14
 end
 arch floor_wood2_l2
@@ -2932,10 +2667,6 @@ arch glower.101
 x 14
 y 4
 end
-arch light9
-x 14
-y 4
-end
 arch floor_wood2_l2
 x 14
 y 5
@@ -2964,10 +2695,6 @@ arch candlelight4.101
 x 14
 y 7
 end
-arch light7
-x 14
-y 7
-end
 arch floor_wood2_l2
 x 14
 y 8
@@ -2986,10 +2713,6 @@ x 14
 y 9
 end
 arch bed_1a.111
-name Save Bed
-type 106
-no_magic 1
-damned 1
 x 14
 y 9
 end
@@ -3173,10 +2896,6 @@ x 15
 y 9
 end
 arch bed_1b.111
-name Save Bed
-type 106
-no_magic 1
-damned 1
 x 15
 y 9
 end
@@ -3604,10 +3323,6 @@ arch grassd_6
 x 17
 y 19
 end
-arch light4
-x 17
-y 19
-end
 arch lantern2_magic.131
 x 17
 y 19
@@ -3792,14 +3507,25 @@ arch magic_mouth
 msg
 Welcome to the Stonehaven Hotel!
 endmsg
+direction 8
 x 18
 y 18
-arch event_obj
-name Lua
-sub_type 10
-race /scripts/welcome.lua
-slaying 128
 end
+arch magic_mouth
+msg
+Welcome to the Stonehaven Hotel!
+endmsg
+direction 2
+x 18
+y 18
+end
+arch magic_mouth
+msg
+Welcome to the Stonehaven Hotel!
+endmsg
+direction 1
+x 18
+y 18
 end
 arch grassd_4
 x 18
@@ -3833,9 +3559,6 @@ arch floor_wood2_l2
 x 19
 end
 arch candlelight4.101
-x 19
-end
-arch light6
 x 19
 end
 arch floor_wood2_l2
@@ -3917,10 +3640,6 @@ x 19
 y 9
 end
 arch bed_1a.111
-name Save Bed
-type 106
-no_magic 1
-damned 1
 x 19
 y 9
 end
@@ -3986,10 +3705,6 @@ x 19
 y 18
 end
 arch grassd_2
-x 19
-y 19
-end
-arch light4
 x 19
 y 19
 end
@@ -4094,14 +3809,6 @@ x 20
 y 9
 end
 arch bed_1b.111
-name Save Bed
-type 106
-no_magic 1
-damned 1
-x 20
-y 9
-end
-arch carpet1.111
 x 20
 y 9
 end
@@ -4270,10 +3977,6 @@ x 21
 y 10
 end
 arch candlelight4.101
-x 21
-y 10
-end
-arch light6
 x 21
 y 10
 end

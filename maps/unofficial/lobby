@@ -4,9 +4,9 @@ msg
 Created:  2003-06-04 Bjorn Axelsson <gecko@acc.umu.se>
 
 Contributions are welcome!
+Modified: 2009-03-30 smacky
 endmsg
 width 24
-darkness -1
 height 24
 difficulty 1
 tileset_id 49
@@ -108,7 +108,7 @@ arch wall_stone1_3
 y 15
 end
 arch wmask_bflag_fire1_1
-direction 5
+direction 3
 y 15
 end
 arch floor_ostone1
@@ -430,9 +430,6 @@ end
 arch wall_stone1_1
 x 3
 end
-arch wall_stone1_1
-x 3
-end
 arch floor_ostone1
 x 3
 y 1
@@ -615,10 +612,6 @@ end
 arch floor_ostone1
 x 4
 y 17
-end
-arch floor_ostone1
-x 4
-y 18
 end
 arch floor_ostone1
 x 4

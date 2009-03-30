@@ -2,6 +2,7 @@ arch map
 name Stonehaven
 msg
 Created:  2004-06-11 Daimonin Map Editor
+Modified: 2009-03-30 smacky
 endmsg
 width 24
 height 24
@@ -112,8 +113,6 @@ arch floor_fs_grey1a
 y 21
 end
 arch torch_wall_1
-glow_radius 5
-is_animated 1
 y 21
 end
 arch chair1_111
@@ -209,8 +208,6 @@ x 1
 y 18
 end
 arch torch_wall_1
-glow_radius 5
-is_animated 1
 x 1
 y 18
 end
@@ -334,8 +331,6 @@ x 2
 y 21
 end
 arch torch_wall_1
-glow_radius 5
-is_animated 1
 x 2
 y 21
 end
@@ -431,8 +426,6 @@ x 3
 y 18
 end
 arch torch_wall_1
-glow_radius 5
-is_animated 1
 x 3
 y 18
 end
@@ -599,10 +592,6 @@ arch glower.101
 x 4
 y 23
 end
-arch light2
-x 4
-y 23
-end
 arch floor_fs_grey1a
 x 5
 end
@@ -619,10 +608,6 @@ x 5
 y 3
 end
 arch glower.101
-x 5
-y 3
-end
-arch light9
 x 5
 y 3
 end
@@ -677,10 +662,6 @@ x 5
 y 13
 end
 arch glower.101
-x 5
-y 13
-end
-arch light9
 x 5
 y 13
 end
@@ -1103,10 +1084,6 @@ x 8
 y 21
 end
 arch glower.101
-x 8
-y 21
-end
-arch light2
 x 8
 y 21
 end
@@ -2532,11 +2509,7 @@ x 18
 y 5
 end
 arch lantern2_magic.131
-direction 5
-x 18
-y 5
-end
-arch light4
+direction 7
 x 18
 y 5
 end
@@ -2549,11 +2522,7 @@ x 18
 y 7
 end
 arch lantern2_magic.131
-direction 5
-x 18
-y 7
-end
-arch light4
+direction 7
 x 18
 y 7
 end
@@ -2604,11 +2573,7 @@ x 18
 y 17
 end
 arch lantern2_magic.131
-direction 5
-x 18
-y 17
-end
-arch light4
+direction 7
 x 18
 y 17
 end
@@ -2621,11 +2586,7 @@ x 18
 y 19
 end
 arch lantern2_magic.131
-direction 5
-x 18
-y 19
-end
-arch light4
+direction 7
 x 18
 y 19
 end

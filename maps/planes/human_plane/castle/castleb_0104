@@ -2,9 +2,11 @@ arch map
 name Secret Chamber
 msg
 Created:  2006-02-26 Unknown Combat Dummy
+Modified: 2009-03-29 smacky
 endmsg
 width 24
 height 24
+difficulty 1
 darkness 2
 tile_path_1 castleb_0105
 tile_path_2 castleb_0204
@@ -13,6 +15,23 @@ tileset_id 39
 tileset_x 0
 tileset_y 24
 end
+arch blocked
+end
+arch blocked
+y 1
+end
+arch blocked
+y 2
+end
+arch blocked
+y 3
+end
+arch blocked
+y 4
+end
+arch floor_fs_grey1d
+y 5
+end
 arch wall_dungeon1.111
 y 5
 end
@@ -20,9 +39,6 @@ arch floor_fs_grey1a
 y 6
 end
 arch torch_wall_1
-y 6
-end
-arch light4
 y 6
 end
 arch floor_fs_grey1a
@@ -48,6 +64,62 @@ y 12
 end
 arch light4
 y 12
+end
+arch blocked
+y 13
+end
+arch blocked
+y 14
+end
+arch blocked
+y 15
+end
+arch blocked
+y 16
+end
+arch blocked
+y 17
+end
+arch blocked
+y 18
+end
+arch blocked
+y 19
+end
+arch blocked
+y 20
+end
+arch blocked
+y 21
+end
+arch blocked
+y 22
+end
+arch blocked
+y 23
+end
+arch blocked
+x 1
+end
+arch blocked
+x 1
+y 1
+end
+arch blocked
+x 1
+y 2
+end
+arch blocked
+x 1
+y 3
+end
+arch blocked
+x 1
+y 4
+end
+arch floor_fs_grey1d
+x 1
+y 5
 end
 arch wall_dungeon1.111
 x 1
@@ -95,6 +167,73 @@ arch wall_dungeon1.111
 x 1
 y 12
 end
+arch blocked
+x 1
+y 13
+end
+arch blocked
+x 1
+y 14
+end
+arch blocked
+x 1
+y 15
+end
+arch blocked
+x 1
+y 16
+end
+arch blocked
+x 1
+y 17
+end
+arch blocked
+x 1
+y 18
+end
+arch blocked
+x 1
+y 19
+end
+arch blocked
+x 1
+y 20
+end
+arch blocked
+x 1
+y 21
+end
+arch blocked
+x 1
+y 22
+end
+arch blocked
+x 1
+y 23
+end
+arch blocked
+x 2
+end
+arch blocked
+x 2
+y 1
+end
+arch blocked
+x 2
+y 2
+end
+arch blocked
+x 2
+y 3
+end
+arch blocked
+x 2
+y 4
+end
+arch floor_fs_grey1d
+x 2
+y 5
+end
 arch wall_dungeon1.111
 x 2
 y 5
@@ -139,6 +278,77 @@ arch wall_dungeon1.141
 x 2
 y 12
 end
+arch blocked
+x 2
+y 13
+end
+arch blocked
+x 2
+y 14
+end
+arch blocked
+x 2
+y 15
+end
+arch blocked
+x 2
+y 16
+end
+arch blocked
+x 2
+y 17
+end
+arch blocked
+x 2
+y 18
+end
+arch blocked
+x 2
+y 19
+end
+arch blocked
+x 2
+y 20
+end
+arch blocked
+x 2
+y 21
+end
+arch blocked
+x 2
+y 22
+end
+arch blocked
+x 2
+y 23
+end
+arch blocked
+x 3
+end
+arch blocked
+x 3
+y 1
+end
+arch blocked
+x 3
+y 2
+end
+arch blocked
+x 3
+y 3
+end
+arch blocked
+x 3
+y 4
+end
+arch blocked
+x 3
+y 5
+end
+arch floor_fs_grey1d
+x 3
+y 6
+end
 arch wall_dungeon1.111
 x 3
 y 6
@@ -166,6 +376,81 @@ end
 arch wall_dungeon1.111
 x 3
 y 11
+end
+arch blocked
+x 3
+y 12
+end
+arch blocked
+x 3
+y 13
+end
+arch blocked
+x 3
+y 14
+end
+arch blocked
+x 3
+y 15
+end
+arch blocked
+x 3
+y 16
+end
+arch blocked
+x 3
+y 17
+end
+arch blocked
+x 3
+y 18
+end
+arch blocked
+x 3
+y 19
+end
+arch blocked
+x 3
+y 20
+end
+arch blocked
+x 3
+y 21
+end
+arch blocked
+x 3
+y 22
+end
+arch blocked
+x 3
+y 23
+end
+arch blocked
+x 4
+end
+arch blocked
+x 4
+y 1
+end
+arch blocked
+x 4
+y 2
+end
+arch blocked
+x 4
+y 3
+end
+arch blocked
+x 4
+y 4
+end
+arch blocked
+x 4
+y 5
+end
+arch floor_fs_grey1d
+x 4
+y 6
 end
 arch wall_dungeon1.111
 x 4
@@ -199,6 +484,81 @@ arch wall_dungeon1.111
 x 4
 y 11
 end
+arch blocked
+x 4
+y 12
+end
+arch blocked
+x 4
+y 13
+end
+arch blocked
+x 4
+y 14
+end
+arch blocked
+x 4
+y 15
+end
+arch blocked
+x 4
+y 16
+end
+arch blocked
+x 4
+y 17
+end
+arch blocked
+x 4
+y 18
+end
+arch blocked
+x 4
+y 19
+end
+arch blocked
+x 4
+y 20
+end
+arch blocked
+x 4
+y 21
+end
+arch blocked
+x 4
+y 22
+end
+arch blocked
+x 4
+y 23
+end
+arch blocked
+x 5
+end
+arch blocked
+x 5
+y 1
+end
+arch blocked
+x 5
+y 2
+end
+arch blocked
+x 5
+y 3
+end
+arch blocked
+x 5
+y 4
+end
+arch blocked
+x 5
+y 5
+end
+arch floor_fs_grey1d
+x 5
+y 6
+end
 arch wall_dungeon1.111
 x 5
 y 6
@@ -208,10 +568,6 @@ x 5
 y 7
 end
 arch torch_wall_1
-x 5
-y 7
-end
-arch light4
 x 5
 y 7
 end
@@ -243,6 +599,81 @@ arch light4
 x 5
 y 11
 end
+arch blocked
+x 5
+y 12
+end
+arch blocked
+x 5
+y 13
+end
+arch blocked
+x 5
+y 14
+end
+arch blocked
+x 5
+y 15
+end
+arch blocked
+x 5
+y 16
+end
+arch blocked
+x 5
+y 17
+end
+arch blocked
+x 5
+y 18
+end
+arch blocked
+x 5
+y 19
+end
+arch blocked
+x 5
+y 20
+end
+arch blocked
+x 5
+y 21
+end
+arch blocked
+x 5
+y 22
+end
+arch blocked
+x 5
+y 23
+end
+arch blocked
+x 6
+end
+arch blocked
+x 6
+y 1
+end
+arch blocked
+x 6
+y 2
+end
+arch blocked
+x 6
+y 3
+end
+arch blocked
+x 6
+y 4
+end
+arch blocked
+x 6
+y 5
+end
+arch floor_fs_grey1d
+x 6
+y 6
+end
 arch wall_dungeon1.111
 x 6
 y 6
@@ -275,12 +706,87 @@ arch wall_dungeon1.111
 x 6
 y 11
 end
-arch wall_dungeon1.131
+arch blocked
+x 6
+y 12
+end
+arch blocked
+x 6
+y 13
+end
+arch blocked
+x 6
+y 14
+end
+arch blocked
+x 6
+y 15
+end
+arch blocked
+x 6
+y 16
+end
+arch blocked
+x 6
+y 17
+end
+arch blocked
+x 6
+y 18
+end
+arch blocked
+x 6
+y 19
+end
+arch blocked
+x 6
+y 20
+end
+arch blocked
+x 6
+y 21
+end
+arch blocked
+x 6
+y 22
+end
+arch blocked
+x 6
+y 23
+end
+arch floor_fs_grey1d
 x 7
 end
 arch wall_dungeon1.131
 x 7
+end
+arch floor_fs_grey1d
+x 7
 y 1
+end
+arch wall_dungeon1.131
+x 7
+y 1
+end
+arch blocked
+x 7
+y 2
+end
+arch blocked
+x 7
+y 3
+end
+arch blocked
+x 7
+y 4
+end
+arch blocked
+x 7
+y 5
+end
+arch floor_fs_grey1d
+x 7
+y 6
 end
 arch wall_dungeon1.111
 x 7
@@ -309,6 +815,54 @@ end
 arch wall_dungeon1.111
 x 7
 y 11
+end
+arch blocked
+x 7
+y 12
+end
+arch blocked
+x 7
+y 13
+end
+arch blocked
+x 7
+y 14
+end
+arch blocked
+x 7
+y 15
+end
+arch blocked
+x 7
+y 16
+end
+arch blocked
+x 7
+y 17
+end
+arch blocked
+x 7
+y 18
+end
+arch blocked
+x 7
+y 19
+end
+arch blocked
+x 7
+y 20
+end
+arch blocked
+x 7
+y 21
+end
+arch blocked
+x 7
+y 22
+end
+arch blocked
+x 7
+y 23
 end
 arch floor_fs_grey1a
 x 8
@@ -317,9 +871,6 @@ arch torch_wall_1
 direction 7
 x 8
 end
-arch light4
-x 8
-end
 arch floor_fs_grey1a
 x 8
 y 1
@@ -328,12 +879,20 @@ arch wall_dungeon1.111
 x 8
 y 1
 end
-arch wall_dungeon1.131
+arch floor_fs_grey1d
 x 8
 y 2
 end
 arch wall_dungeon1.131
 x 8
+y 2
+end
+arch floor_fs_grey1d
+x 8
+y 3
+end
+arch wall_dungeon1.131
+x 8
 y 3
 end
 arch wmask_bflag_fire1_1
@@ -341,18 +900,30 @@ direction 7
 x 8
 y 3
 end
-arch wall_dungeon1.131
+arch floor_fs_grey1d
 x 8
 y 4
 end
 arch wall_dungeon1.131
 x 8
+y 4
+end
+arch floor_fs_grey1d
+x 8
+y 5
+end
+arch wall_dungeon1.131
+x 8
 y 5
 end
 arch wmask_bflag_fire1_1
 direction 7
 x 8
 y 5
+end
+arch floor_fs_grey1d
+x 8
+y 6
 end
 arch wall_dungeon1.141
 x 8
@@ -382,6 +953,54 @@ arch wall_dungeon1.111
 x 8
 y 11
 end
+arch blocked
+x 8
+y 12
+end
+arch blocked
+x 8
+y 13
+end
+arch blocked
+x 8
+y 14
+end
+arch blocked
+x 8
+y 15
+end
+arch blocked
+x 8
+y 16
+end
+arch blocked
+x 8
+y 17
+end
+arch blocked
+x 8
+y 18
+end
+arch blocked
+x 8
+y 19
+end
+arch blocked
+x 8
+y 20
+end
+arch blocked
+x 8
+y 21
+end
+arch blocked
+x 8
+y 22
+end
+arch blocked
+x 8
+y 23
+end
 arch floor_fs_grey1a
 x 9
 end
@@ -403,10 +1022,6 @@ y 4
 end
 arch torch_wall_1
 direction 7
-x 9
-y 4
-end
-arch light4
 x 9
 y 4
 end
@@ -446,12 +1061,20 @@ arch wall_dungeon1.111
 x 9
 y 11
 end
-arch wall_dungeon1.131
+arch floor_fs_grey1d
 x 9
 y 12
 end
 arch wall_dungeon1.131
 x 9
+y 12
+end
+arch floor_fs_grey1d
+x 9
+y 13
+end
+arch wall_dungeon1.131
+x 9
 y 13
 end
 arch wmask_bflag_fire1_1
@@ -459,13 +1082,25 @@ direction 7
 x 9
 y 13
 end
-arch wall_dungeon1.131
+arch floor_fs_grey1d
 x 9
 y 14
 end
 arch wall_dungeon1.131
 x 9
+y 14
+end
+arch floor_fs_grey1d
+x 9
 y 15
+end
+arch wall_dungeon1.131
+x 9
+y 15
+end
+arch floor_fs_grey1d
+x 9
+y 16
 end
 arch wall_dungeon1.131
 x 9
@@ -476,13 +1111,41 @@ direction 7
 x 9
 y 16
 end
-arch wall_dungeon1.131
+arch floor_fs_grey1d
 x 9
 y 17
 end
 arch wall_dungeon1.131
 x 9
+y 17
+end
+arch floor_fs_grey1d
+x 9
 y 18
+end
+arch wall_dungeon1.131
+x 9
+y 18
+end
+arch blocked
+x 9
+y 19
+end
+arch blocked
+x 9
+y 20
+end
+arch blocked
+x 9
+y 21
+end
+arch blocked
+x 9
+y 22
+end
+arch blocked
+x 9
+y 23
 end
 arch floor_fs_grey1a
 x 10
@@ -556,10 +1219,6 @@ direction 7
 x 10
 y 15
 end
-arch light4
-x 10
-y 15
-end
 arch floor_fs_grey1a
 x 10
 y 16
@@ -579,6 +1238,26 @@ end
 arch wall_dungeon1.111
 x 10
 y 18
+end
+arch blocked
+x 10
+y 19
+end
+arch blocked
+x 10
+y 20
+end
+arch blocked
+x 10
+y 21
+end
+arch blocked
+x 10
+y 22
+end
+arch blocked
+x 10
+y 23
 end
 arch floor_fs_grey1a
 x 11
@@ -663,6 +1342,26 @@ arch wall_dungeon1.111
 x 11
 y 18
 end
+arch blocked
+x 11
+y 19
+end
+arch blocked
+x 11
+y 20
+end
+arch blocked
+x 11
+y 21
+end
+arch blocked
+x 11
+y 22
+end
+arch blocked
+x 11
+y 23
+end
 arch floor_fs_grey1a
 x 12
 end
@@ -765,6 +1464,26 @@ end
 arch wall_dungeon1.111
 x 12
 y 18
+end
+arch blocked
+x 12
+y 19
+end
+arch blocked
+x 12
+y 20
+end
+arch blocked
+x 12
+y 21
+end
+arch blocked
+x 12
+y 22
+end
+arch blocked
+x 12
+y 23
 end
 arch floor_fs_grey1a
 x 13
@@ -866,6 +1585,22 @@ arch light4
 x 13
 y 11
 end
+arch blocked
+x 13
+y 12
+end
+arch blocked
+x 13
+y 13
+end
+arch blocked
+x 13
+y 14
+end
+arch floor_fs_grey1d
+x 13
+y 15
+end
 arch wall_dungeon1.111
 x 13
 y 15
@@ -890,6 +1625,26 @@ arch wall_dungeon1.111
 x 13
 y 18
 end
+arch blocked
+x 13
+y 19
+end
+arch blocked
+x 13
+y 20
+end
+arch blocked
+x 13
+y 21
+end
+arch blocked
+x 13
+y 22
+end
+arch blocked
+x 13
+y 23
+end
 arch floor_fs_grey1a
 x 14
 end
@@ -906,6 +1661,30 @@ end
 arch wall_dungeon1.141
 x 14
 y 1
+end
+arch blocked
+x 14
+y 2
+end
+arch blocked
+x 14
+y 3
+end
+arch blocked
+x 14
+y 4
+end
+arch blocked
+x 14
+y 5
+end
+arch blocked
+x 14
+y 6
+end
+arch floor_fs_grey1d
+x 14
+y 7
 end
 arch wall_dungeon1.111
 x 14
@@ -927,17 +1706,37 @@ arch wall_dungeon1.111
 x 14
 y 10
 end
+arch blocked
+x 14
+y 11
+end
+arch floor_fs_grey1d
+x 14
+y 12
+end
 arch wall_dungeon1.181
 x 14
 y 12
 end
-arch wall_dungeon1.131
+arch floor_fs_grey1d
 x 14
 y 13
 end
 arch wall_dungeon1.131
 x 14
+y 13
+end
+arch floor_fs_grey1d
+x 14
 y 14
+end
+arch wall_dungeon1.131
+x 14
+y 14
+end
+arch floor_fs_grey1d
+x 14
+y 15
 end
 arch wall_dungeon1.141
 x 14
@@ -978,13 +1777,64 @@ direction 7
 x 14
 y 18
 end
-arch wall_dungeon1.131
+arch floor_fs_grey1d
 x 14
 y 19
 end
 arch wall_dungeon1.131
 x 14
+y 19
+end
+arch floor_fs_grey1d
+x 14
 y 20
+end
+arch wall_dungeon1.131
+x 14
+y 20
+end
+arch blocked
+x 14
+y 21
+end
+arch blocked
+x 14
+y 22
+end
+arch blocked
+x 14
+y 23
+end
+arch blocked
+x 15
+end
+arch blocked
+x 15
+y 1
+end
+arch blocked
+x 15
+y 2
+end
+arch blocked
+x 15
+y 3
+end
+arch blocked
+x 15
+y 4
+end
+arch blocked
+x 15
+y 5
+end
+arch blocked
+x 15
+y 6
+end
+arch floor_fs_grey1d
+x 15
+y 7
 end
 arch wall_dungeon1.111
 x 15
@@ -1009,6 +1859,14 @@ end
 arch wall_dungeon1.111
 x 15
 y 10
+end
+arch blocked
+x 15
+y 11
+end
+arch floor_fs_grey1d
+x 15
+y 12
 end
 arch wall_dungeon1.111
 x 15
@@ -1040,10 +1898,6 @@ direction 7
 x 15
 y 15
 end
-arch light4
-x 15
-y 15
-end
 arch chest_w1
 direction 5
 x 15
@@ -1070,10 +1924,6 @@ direction 7
 x 15
 y 19
 end
-arch light4
-x 15
-y 19
-end
 arch floor_fs_grey1a
 x 15
 y 20
@@ -1081,6 +1931,49 @@ end
 arch wall_dungeon1.111
 x 15
 y 20
+end
+arch blocked
+x 15
+y 21
+end
+arch blocked
+x 15
+y 22
+end
+arch blocked
+x 15
+y 23
+end
+arch blocked
+x 16
+end
+arch blocked
+x 16
+y 1
+end
+arch blocked
+x 16
+y 2
+end
+arch blocked
+x 16
+y 3
+end
+arch blocked
+x 16
+y 4
+end
+arch blocked
+x 16
+y 5
+end
+arch blocked
+x 16
+y 6
+end
+arch floor_fs_grey1d
+x 16
+y 7
 end
 arch wall_dungeon1.111
 x 16
@@ -1101,6 +1994,14 @@ end
 arch wall_dungeon1.111
 x 16
 y 10
+end
+arch blocked
+x 16
+y 11
+end
+arch floor_fs_grey1d
+x 16
+y 12
 end
 arch wall_dungeon1.111
 x 16
@@ -1146,6 +2047,49 @@ arch wall_dungeon1.111
 x 16
 y 20
 end
+arch blocked
+x 16
+y 21
+end
+arch blocked
+x 16
+y 22
+end
+arch blocked
+x 16
+y 23
+end
+arch blocked
+x 17
+end
+arch blocked
+x 17
+y 1
+end
+arch blocked
+x 17
+y 2
+end
+arch blocked
+x 17
+y 3
+end
+arch blocked
+x 17
+y 4
+end
+arch blocked
+x 17
+y 5
+end
+arch blocked
+x 17
+y 6
+end
+arch floor_fs_grey1d
+x 17
+y 7
+end
 arch wall_dungeon1.111
 x 17
 y 7
@@ -1155,10 +2099,6 @@ x 17
 y 8
 end
 arch torch_wall_1
-x 17
-y 8
-end
-arch light4
 x 17
 y 8
 end
@@ -1174,6 +2114,10 @@ arch wall_dungeon1.111
 x 17
 y 10
 end
+arch floor_fs_grey1d
+x 17
+y 11
+end
 arch wall_dungeon1.131
 x 17
 y 11
@@ -1182,6 +2126,10 @@ arch wmask_bflag_fire1_1
 direction 7
 x 17
 y 11
+end
+arch floor_fs_grey1d
+x 17
+y 12
 end
 arch wall_dungeon1.141
 x 17
@@ -1192,10 +2140,6 @@ x 17
 y 13
 end
 arch torch_wall_1
-x 17
-y 13
-end
-arch light4
 x 17
 y 13
 end
@@ -1234,6 +2178,49 @@ end
 arch wall_dungeon1.111
 x 17
 y 20
+end
+arch blocked
+x 17
+y 21
+end
+arch blocked
+x 17
+y 22
+end
+arch blocked
+x 17
+y 23
+end
+arch blocked
+x 18
+end
+arch blocked
+x 18
+y 1
+end
+arch blocked
+x 18
+y 2
+end
+arch blocked
+x 18
+y 3
+end
+arch blocked
+x 18
+y 4
+end
+arch blocked
+x 18
+y 5
+end
+arch blocked
+x 18
+y 6
+end
+arch floor_fs_grey1d
+x 18
+y 7
 end
 arch wall_dungeon1.111
 x 18
@@ -1329,6 +2316,49 @@ arch light4
 x 18
 y 20
 end
+arch blocked
+x 18
+y 21
+end
+arch blocked
+x 18
+y 22
+end
+arch blocked
+x 18
+y 23
+end
+arch blocked
+x 19
+end
+arch blocked
+x 19
+y 1
+end
+arch blocked
+x 19
+y 2
+end
+arch blocked
+x 19
+y 3
+end
+arch blocked
+x 19
+y 4
+end
+arch blocked
+x 19
+y 5
+end
+arch blocked
+x 19
+y 6
+end
+arch floor_fs_grey1d
+x 19
+y 7
+end
 arch wall_dungeon1.111
 x 19
 y 7
@@ -1408,6 +2438,49 @@ end
 arch wall_dungeon1.111
 x 19
 y 20
+end
+arch blocked
+x 19
+y 21
+end
+arch blocked
+x 19
+y 22
+end
+arch blocked
+x 19
+y 23
+end
+arch blocked
+x 20
+end
+arch blocked
+x 20
+y 1
+end
+arch blocked
+x 20
+y 2
+end
+arch blocked
+x 20
+y 3
+end
+arch blocked
+x 20
+y 4
+end
+arch blocked
+x 20
+y 5
+end
+arch blocked
+x 20
+y 6
+end
+arch floor_fs_grey1d
+x 20
+y 7
 end
 arch wall_dungeon1.111
 x 20
@@ -1497,6 +2570,69 @@ arch wall_dungeon1.111
 x 20
 y 20
 end
+arch blocked
+x 20
+y 21
+end
+arch blocked
+x 20
+y 22
+end
+arch blocked
+x 20
+y 23
+end
+arch blocked
+x 21
+end
+arch blocked
+x 21
+y 1
+end
+arch blocked
+x 21
+y 2
+end
+arch blocked
+x 21
+y 3
+end
+arch blocked
+x 21
+y 4
+end
+arch blocked
+x 21
+y 5
+end
+arch blocked
+x 21
+y 6
+end
+arch blocked
+x 21
+y 7
+end
+arch blocked
+x 21
+y 8
+end
+arch blocked
+x 21
+y 9
+end
+arch blocked
+x 21
+y 10
+end
+arch blocked
+x 21
+y 11
+end
+arch floor_fs_grey1d
+x 21
+y 12
+end
 arch wall_dungeon1.111
 x 21
 y 12
@@ -1506,10 +2642,6 @@ x 21
 y 13
 end
 arch torch_wall_1
-x 21
-y 13
-end
-arch light4
 x 21
 y 13
 end
@@ -1544,6 +2676,69 @@ end
 arch wall_dungeon1.111
 x 21
 y 20
+end
+arch blocked
+x 21
+y 21
+end
+arch blocked
+x 21
+y 22
+end
+arch blocked
+x 21
+y 23
+end
+arch blocked
+x 22
+end
+arch blocked
+x 22
+y 1
+end
+arch blocked
+x 22
+y 2
+end
+arch blocked
+x 22
+y 3
+end
+arch blocked
+x 22
+y 4
+end
+arch blocked
+x 22
+y 5
+end
+arch blocked
+x 22
+y 6
+end
+arch blocked
+x 22
+y 7
+end
+arch blocked
+x 22
+y 8
+end
+arch blocked
+x 22
+y 9
+end
+arch blocked
+x 22
+y 10
+end
+arch blocked
+x 22
+y 11
+end
+arch floor_fs_grey1d
+x 22
+y 12
 end
 arch wall_dungeon1.111
 x 22
@@ -1635,4 +2830,111 @@ end
 arch light4
 x 22
 y 20
+end
+arch blocked
+x 22
+y 21
+end
+arch blocked
+x 22
+y 22
+end
+arch blocked
+x 22
+y 23
+end
+arch blocked
+x 23
+end
+arch blocked
+x 23
+y 1
+end
+arch blocked
+x 23
+y 2
+end
+arch blocked
+x 23
+y 3
+end
+arch blocked
+x 23
+y 4
+end
+arch blocked
+x 23
+y 5
+end
+arch blocked
+x 23
+y 6
+end
+arch blocked
+x 23
+y 7
+end
+arch blocked
+x 23
+y 8
+end
+arch blocked
+x 23
+y 9
+end
+arch blocked
+x 23
+y 10
+end
+arch blocked
+x 23
+y 11
+end
+arch blocked
+x 23
+y 12
+end
+arch blocked
+x 23
+y 13
+end
+arch blocked
+x 23
+y 14
+end
+arch blocked
+x 23
+y 15
+end
+arch blocked
+x 23
+y 16
+end
+arch blocked
+x 23
+y 17
+end
+arch blocked
+x 23
+y 18
+end
+arch blocked
+x 23
+y 19
+end
+arch blocked
+x 23
+y 20
+end
+arch blocked
+x 23
+y 21
+end
+arch blocked
+x 23
+y 22
+end
+arch blocked
+x 23
+y 23
 end

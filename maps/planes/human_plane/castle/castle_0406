@@ -2,6 +2,7 @@ arch map
 name Wilderness near Stonehaven§jungle1.ogg|0|-1
 msg
 Created:  2004-07-16 Daimonin Map Editor
+Modified: 2009-03-29 smacky
 endmsg
 width 24
 height 24
@@ -581,9 +582,6 @@ end
 arch tree_big3
 x 4
 end
-arch tree_big2
-x 4
-end
 arch grassd_3
 x 4
 y 1
@@ -1005,10 +1003,6 @@ x 6
 y 21
 end
 arch plant17
-x 6
-y 21
-end
-arch plant_flower6
 x 6
 y 21
 end
