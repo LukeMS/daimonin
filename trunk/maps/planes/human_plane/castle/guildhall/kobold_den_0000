@@ -525,6 +525,7 @@ Me Warning all!
 Water rotten our weapons.
 Me rotten storage master.
 endmsg
+no_pick 1
 end
 end
 arch floor_grit4a
