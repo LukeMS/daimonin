@@ -1,8 +1,9 @@
 arch map
 name Guild Hall§ColeForeverPiano.ogg|0|-1
 msg
-Created:  2004-07-16 Daimonin Map Editor
-Modified: 2009-03-29 smacky
+Creator: Daimonin Map Editor
+Date:    7/16/2004
+Modified: 2009-04-01 smacky
 endmsg
 width 24
 height 24
@@ -167,7 +168,7 @@ arch well_stone
 msg
 You slide yourself down the well a bit, and find a ladder to climb down.
 endmsg
-slaying guildhall/guildhall_a_040a
+slaying guildhall/guildhall-a-040a
 hp 1
 sp 6
 x 1
@@ -825,11 +826,12 @@ arch carpet1.111
 x 4
 y 20
 end
-arch wall_stone_1
+arch candlelight4.101
+
 x 4
 y 20
 end
-arch candlelight4.101
+arch wall_stone_1
 x 4
 y 20
 end
@@ -1675,11 +1677,11 @@ arch shop_floor_normal
 x 8
 y 20
 end
-arch wall_stone_1
+arch carpet1.111
 x 8
 y 20
 end
-arch carpet1.111
+arch wall_stone_1
 x 8
 y 20
 end
@@ -2881,7 +2883,7 @@ x 16
 y 3
 end
 arch spawn_point
-slaying chicken group
+slaying chicken_group
 x 16
 y 3
 arch chicken_large
@@ -2902,7 +2904,7 @@ x 16
 y 4
 end
 arch spawn_point
-slaying chicken group
+slaying chicken_group
 x 16
 y 4
 arch chicken_large
@@ -3045,7 +3047,7 @@ x 17
 y 3
 end
 arch spawn_point
-slaying chicken group
+slaying chicken_group
 x 17
 y 3
 arch chicken_large
