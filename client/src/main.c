@@ -411,7 +411,7 @@ void init_game_data(void)
 
     options.cli_account[0]='\0';
     options.cli_pass[0]='\0';
-    options.cli_server=0;
+    options.cli_server=-1;
 
     options.resolution = 0;
     options.channelformat=0;
@@ -737,23 +737,28 @@ Boolean game_status_chain(void)
 
         switch (options.cli_server)
         {
-            case 1:
-                strcpy(ServerName,"daimonin.game-server.cc"); /* BAD BAD BAD, i know... but we don't want to have a real -server option */
-                ServerPort=13327;
-                GameStatus = GAME_STATUS_STARTCONNECT;
-                break;
-            case 2:
-                strcpy(ServerName,"test-server.game-server.cc"); /* BAD BAD BAD, i know... but we don't want to have a real -server option */
-                ServerPort=13327;
-                GameStatus = GAME_STATUS_STARTCONNECT;
-                break;
-            case 3:
+            case 0: /* Local */
                 strcpy(ServerName,"127.0.0.1"); /* BAD BAD BAD, i know... but we don't want to have a real -server option */
                 ServerPort=13327;
                 GameStatus = GAME_STATUS_STARTCONNECT;
                 break;
+            case 1: /* Main */
+                strcpy(ServerName,"daimonin.game-server.cc"); /* BAD BAD BAD, i know... but we don't want to have a real -server option */
+                ServerPort=13327;
+                GameStatus = GAME_STATUS_STARTCONNECT;
+                break;
+            case 2: /* Test */
+                strcpy(ServerName,"test-server.game-server.cc"); /* BAD BAD BAD, i know... but we don't want to have a real -server option */
+                ServerPort=13327;
+                GameStatus = GAME_STATUS_STARTCONNECT;
+                break;
+            case 3: /* Dev */
+                strcpy(ServerName,"www.daimonin.org"); /* BAD BAD BAD, i know... but we don't want to have a real -server option */
+                ServerPort=13327;
+                GameStatus = GAME_STATUS_STARTCONNECT;
+                break;
         }
-        options.cli_server=0; /* only try once */
+        options.cli_server=-1; /* only try once */
     }
     else if (GameStatus == GAME_STATUS_STARTCONNECT)
     {
