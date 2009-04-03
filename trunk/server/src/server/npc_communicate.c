@@ -29,13 +29,16 @@
  * TODO: Iam not sure it would make sense for a FLAG_ANSWERSAY flag.
  * which drops the ->msg as default answer. I don't think so, lets use
  * scripts for it.
+ * Return 1 or 0 according to event.returnvalue. I am not sure why we even have
+ * this func. Why not simply call trigger_object_plugin_event() directly below?
+ * -- Smacky 20090403
  */
 static int talk_to_object(object *op, object *npc, char *txt)
 {
-    trigger_object_plugin_event(EVENT_SAY,
-            npc, op, NULL, txt, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR);
-
-    return 0;
+    return (trigger_object_plugin_event(EVENT_SAY,
+                                        npc, op, NULL, txt,
+                                        NULL, NULL, NULL,
+                                        SCRIPT_FIX_ACTIVATOR));
 }
 
 /* This function is not to understimate when player talk alot
@@ -90,21 +93,19 @@ void communicate(object *op, char *txt)
         return;
     }
 
-    sprintf(buf, "%s says: ", query_name(op));
-    strncat(buf, txt, MAX_BUF - strlen(buf) - 1);
-    buf[MAX_BUF - 1] = 0;
-
-    flags = NDI_WHITE;
-    if(op->type == PLAYER)
-        flags |= (NDI_SAY | NDI_PLAYER);
-
-    new_info_map(flags, op->map, op->x, op->y, MAP_INFO_NORMAL, buf);
-
     /* Players can chat with a marked object in their inventory */
     if(op->type == PLAYER && (npc = find_marked_object(op)))
-        trigger_object_plugin_event(EVENT_SAY, npc, op, NULL,
-                txt, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR);
+    {
+        /* If script returns 1, the say is not passed on.
+         * This simulates the player whispering to something in his inv. */
+        if (trigger_object_plugin_event(EVENT_SAY,
+                                        npc, op, NULL, txt,
+                                        NULL, NULL, NULL,
+                                        SCRIPT_FIX_ACTIVATOR))
+            return;
+    }
 
+    /* Search nearby for NPCs and magic ears. */
     for (i = 0; i <= SIZEOFFREE2; i++)
     {
         xt = op->x + freearr_x[i];
@@ -118,11 +119,31 @@ void communicate(object *op, char *txt)
                 {
                     /* search but avoid talking to self */
                     if ((npc->type == MAGIC_EAR || QUERY_FLAG(npc, FLAG_ALIVE)) && op != npc)
-                        talk_to_object(op, npc, txt);
+                    {
+                        /* If script returns 1, the say is not passed on.
+                         * Mappers must take care when a say script return 1
+                         * because subsequent say scripts in the area won't get
+                         * a look in and players will not hear the message!
+                         * TODO: Prioritise which objects get to react to
+                         * SAYs -- eg, NPCs first then magic ears. */
+                        if (talk_to_object(op, npc, txt))
+                            return;
+                    }
                 }
             }
         }
     }
+
+    /* Broadcast the say to others (players) nearby. */
+    sprintf(buf, "%s says: ", query_name(op));
+    strncat(buf, txt, MAX_BUF - strlen(buf) - 1);
+    buf[MAX_BUF - 1] = 0;
+
+    flags = NDI_WHITE;
+    if(op->type == PLAYER)
+        flags |= (NDI_SAY | NDI_PLAYER);
+
+    new_info_map(flags, op->map, op->x, op->y, MAP_INFO_NORMAL, buf);
 }
 
 /* open a (npc) gui communication interface */
