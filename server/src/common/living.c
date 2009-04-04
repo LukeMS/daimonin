@@ -239,7 +239,7 @@ void check_stat_bounds(living *stats)
  * It is the calling functions responsibilty to check to see if the object
  * can be applied or not.
  */
-int change_abil(object *op, object *tmp, int nopostfix)
+int change_abil(object *op, object *tmp)
 {
     int    applied = (QUERY_FLAG(tmp, FLAG_APPLIED)) ? 1 : -1,
            i,
@@ -303,8 +303,6 @@ int change_abil(object *op, object *tmp, int nopostfix)
      * change_ability then might as well call it from here
      */
     FIX_PLAYER(op, "change_abil");
-    if (nopostfix)
-        SET_FLAG(op, FLAG_NO_FIX_PLAYER); // is cleared later on
 
     if (tmp->attack[ATNR_CONFUSION])
     {

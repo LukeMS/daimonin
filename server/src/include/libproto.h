@@ -113,7 +113,7 @@ extern void             set_attr_value(living *stats, int attr, signed char valu
 extern void             change_attr_value(living *stats, int attr, signed char value);
 extern signed char      get_attr_value(const living *const stats, const int attr);
 extern void             check_stat_bounds(living *stats);
-extern int              change_abil(object *op, object *tmp, int nopostfix);
+extern int              change_abil(object *op, object *tmp);
 extern void             corrupt_stat(object *op);
 extern void             drain_stat(object *op);
 extern void             drain_specific_stat(object *op, int deplete_stats);

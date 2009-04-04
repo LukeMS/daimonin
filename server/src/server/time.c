@@ -365,7 +365,7 @@ void remove_force(object *op)
     CLEAR_FLAG(op, FLAG_APPLIED);
     remove_ob(op);
     if(env->type == PLAYER)
-        change_abil(env, op, 0);
+        change_abil(env, op);
     else
         FIX_PLAYER(env ,"remove force - bug? fix monster?");
     check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
