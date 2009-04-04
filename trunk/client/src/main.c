@@ -1793,7 +1793,7 @@ int main(int argc, char *argv[])
             SYSTEM_End();
             return(0);
         }
-        if (event.type == SDL_KEYUP || event.type == SDL_KEYDOWN || event.type == SDL_MOUSEBUTTONDOWN || options.cli_server)
+        if (event.type == SDL_KEYUP || event.type == SDL_KEYDOWN || event.type == SDL_MOUSEBUTTONDOWN || options.cli_server > -1)
         {
             reset_keys();
             break;
