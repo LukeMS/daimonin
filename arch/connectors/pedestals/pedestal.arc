@@ -1,8 +1,9 @@
 Object pedestal
-name pedestal
-layer 3
-slaying player
 type 17
+layer 0
+sys_object 1
+name pedestal
+slaying player
 face pedestal.111
 animation pedestal
 is_turnable 1

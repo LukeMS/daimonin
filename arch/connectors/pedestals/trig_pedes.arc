@@ -1,8 +1,9 @@
 Object pedestal_trigger
+type 32
+layer 0
+sys_object 1
 name pedestal
 slaying player
-layer 3
-type 32
 face pedestal.111
 animation pedestal_trigger
 is_turnable 1
