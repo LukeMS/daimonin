@@ -11,9 +11,6 @@ darkness 2
 tile_path_3 castleb_0104
 tile_path_6 castleb_0204
 tile_path_7 castleb_0004
-tileset_id 39
-tileset_x 0
-tileset_y 0
 end
 arch blocked
 end

@@ -9,9 +9,6 @@ difficulty 1
 tile_path_3 phantom_attack_0201
 tile_path_4 phantom_attack_0100
 tile_path_7 phantom_attack_0101
-tileset_id 8
-tileset_x 0
-tileset_y 0
 end
 arch grassd_1
 end

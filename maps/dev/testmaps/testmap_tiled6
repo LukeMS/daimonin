@@ -12,9 +12,6 @@ tile_path_3 testmap_tiled9
 tile_path_4 testmap_tiled5
 tile_path_7 testmap_tiled8
 tile_path_8 testmap_tiled2
-tileset_id 20
-tileset_x 19
-tileset_y -19
 end
 arch floor_sand_d1
 end

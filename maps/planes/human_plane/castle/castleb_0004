@@ -10,9 +10,6 @@ difficulty 1
 darkness 2
 tile_path_2 castleb_0104
 tile_path_5 castleb_0105
-tileset_id 39
-tileset_x -24
-tileset_y 24
 end
 arch blocked
 end

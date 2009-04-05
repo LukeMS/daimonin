@@ -5,9 +5,6 @@ Created:  2005-11-28 Unknown Combat Dummy
 endmsg
 width 24
 height 24
-tileset_id 57
-tileset_x 0
-tileset_y 0
 end
 arch xyz 
 x 7

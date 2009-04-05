@@ -9,9 +9,6 @@ height 24
 difficulty 1
 darkness 1
 tile_path_2 guildhall_a_040a
-tileset_id 38
-tileset_x 0
-tileset_y 0
 end
 arch blocked
 end

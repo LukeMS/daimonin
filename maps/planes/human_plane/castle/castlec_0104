@@ -6,9 +6,6 @@ endmsg
 width 24
 height 24
 darkness 2
-tileset_id 72
-tileset_x 0
-tileset_y 0
 end
 arch floor_fs_grey1a
 end

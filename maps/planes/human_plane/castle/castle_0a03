@@ -16,9 +16,6 @@ tile_path_5 castle_0004
 tile_path_6 castle_0002
 tile_path_7 castle_0b02
 tile_path_8 colosseum/colosseum_0a04
-tileset_id 5
-tileset_x 72
-tileset_y -168
 end
 arch grass_thick1
 end

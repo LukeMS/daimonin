@@ -10,9 +10,6 @@ difficulty 1
 outdoor 1
 tile_path_4 castle_0502
 tile_path_7 castle_0501
-tileset_id 5
-tileset_x 240
-tileset_y -144
 end
 arch grassd_2
 end

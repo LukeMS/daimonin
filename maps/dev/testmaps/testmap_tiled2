@@ -12,9 +12,6 @@ tile_path_3 testmap_tiled5
 tile_path_4 testmap_tiled1
 tile_path_6 testmap_tiled6
 tile_path_7 testmap_tiled4
-tileset_id 20
-tileset_x 0
-tileset_y -38
 end
 arch floor_grit1
 end

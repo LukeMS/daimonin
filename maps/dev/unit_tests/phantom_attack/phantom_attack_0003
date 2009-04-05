@@ -10,9 +10,6 @@ tile_path_1 phantom_attack_0002
 tile_path_2 phantom_attack_0103
 tile_path_4 phantom_attack_-103
 tile_path_5 phantom_attack_0102
-tileset_id 8
-tileset_x -20
-tileset_y 30
 end
 arch grassd_1
 end

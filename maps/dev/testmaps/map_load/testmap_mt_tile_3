@@ -12,9 +12,6 @@ endmsg
 tile_path_1 /dev/testmaps/map_load/testmap_mt_tile_2
 tile_path_4 /dev/testmaps/map_load/testmap_mt_tile_4
 tile_path_8 /dev/testmaps/map_load/testmap_mt_tile_1
-tileset_id 87
-tileset_x 0
-tileset_y 17
 end
 arch floor_blue1
 end

@@ -14,9 +14,6 @@ tile_path_4 mountain_0402
 tile_path_5 castle/castle_0200
 tile_path_7 forest_0602
 tile_path_8 castle/castle_0000
-tileset_id 5
-tileset_x 120
-tileset_y -72
 end
 arch grassd_2
 end

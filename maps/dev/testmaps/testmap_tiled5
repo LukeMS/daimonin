@@ -15,9 +15,6 @@ tile_path_5 testmap_tiled3
 tile_path_6 testmap_tiled9
 tile_path_7 testmap_tiled7
 tile_path_8 testmap_tiled1
-tileset_id 20
-tileset_x 0
-tileset_y -19
 end
 arch grass_flowers2
 end

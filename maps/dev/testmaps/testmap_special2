@@ -9,9 +9,6 @@ enter_x 1
 enter_y 1
 difficulty 1
 tile_path_4 testmap_special
-tileset_id 41
-tileset_x 0
-tileset_y 0
 end
 arch floor_ostone1
 end

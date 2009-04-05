@@ -9,9 +9,6 @@ difficulty 1
 tile_path_2 testmap_waypoints3
 tile_path_4 testmap_waypoints
 tile_path_6 testmap_waypoints4
-tileset_id 32
-tileset_x 24
-tileset_y 0
 end
 arch floor_ostone1
 end
