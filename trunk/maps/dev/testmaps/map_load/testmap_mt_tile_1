@@ -11,9 +11,6 @@ difficulty 1
 tile_path_2 /dev/testmaps/map_load/testmap_mt_tile_2
 tile_path_3 /dev/testmaps/map_load/testmap_mt_tile_4
 tile_path_6 /dev/testmaps/map_load/testmap_mt_tile_3
-tileset_id 87
-tileset_x -17
-tileset_y 0
 end
 arch floor_ostone1
 end

@@ -8,9 +8,6 @@ height 24
 difficulty 1
 darkness 1
 tile_path_4 guildhall_a_030a
-tileset_id 38
-tileset_x 24
-tileset_y 0
 end
 arch floor_flagstone1c
 end

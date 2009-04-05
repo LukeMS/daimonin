@@ -10,9 +10,6 @@ darkness 2
 tile_path_2 testmap_tiled2
 tile_path_3 testmap_tiled4
 tile_path_6 testmap_tiled5
-tileset_id 20
-tileset_x -19
-tileset_y -38
 end
 arch floor_grey1a1
 end

@@ -14,9 +14,6 @@ tile_path_4 castle_0006
 tile_path_6 castle_0205
 tile_path_7 castle_0005
 tile_path_8 marsh/marsh_0305
-tileset_id 5
-tileset_x 120
-tileset_y -240
 end
 arch grass_thick2
 end

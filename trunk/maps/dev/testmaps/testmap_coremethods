@@ -8,9 +8,6 @@ width 24
 height 24
 difficulty 1
 darkness 7
-tileset_id 144
-tileset_x 0
-tileset_y 0
 end
 arch floor_ostone1
 end

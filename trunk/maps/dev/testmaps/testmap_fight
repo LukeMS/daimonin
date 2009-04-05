@@ -6,9 +6,6 @@ endmsg
 width 32
 height 32
 difficulty 1
-tileset_id 111
-tileset_x 0
-tileset_y 0
 end
 arch floor_ostone6
 end

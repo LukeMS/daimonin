@@ -10,9 +10,6 @@ difficulty 1
 tile_path_1 testmap_tiled6
 tile_path_4 testmap_tiled8
 tile_path_8 testmap_tiled5
-tileset_id 20
-tileset_x 19
-tileset_y 0
 end
 arch floor_stone_b3
 end

@@ -12,9 +12,6 @@ endmsg
 tile_path_1 /dev/testmaps/map_load/testmap_mt_tile_1
 tile_path_2 /dev/testmaps/map_load/testmap_mt_tile_3
 tile_path_5 /dev/testmaps/map_load/testmap_mt_tile_2
-tileset_id 87
-tileset_x -17
-tileset_y 17
 end
 arch floor_ostone1
 end

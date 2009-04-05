@@ -7,9 +7,6 @@ width 24
 height 24
 difficulty 1
 darkness 1
-tileset_id 29
-tileset_x 0
-tileset_y 0
 end
 arch floor_sand_d2
 end

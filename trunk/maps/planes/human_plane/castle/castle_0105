@@ -17,9 +17,6 @@ tile_path_5 castle_0206
 tile_path_6 castle_0204
 tile_path_7 castle_0004
 tile_path_8 castle_0006
-tileset_id 5
-tileset_x 120
-tileset_y -216
 end
 arch grassd_2
 end

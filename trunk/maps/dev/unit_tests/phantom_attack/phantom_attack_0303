@@ -8,9 +8,6 @@ height 10
 difficulty 1
 tile_path_4 phantom_attack_0203
 tile_path_8 phantom_attack_0202
-tileset_id 8
-tileset_x 10
-tileset_y 30
 end
 arch grassd_1
 end
