@@ -1,8 +1,9 @@
 Object detector
+type 51
+layer 0
+sys_object 1
 name detector
 slaying player
-layer 3
-type 51 
 face pedestal.111
 animation detector
 is_turnable 1

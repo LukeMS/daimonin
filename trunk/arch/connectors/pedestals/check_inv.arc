@@ -1,7 +1,8 @@
 Object check_inv
-name check_inv
 type 64
-layer 3
+layer 0
+sys_object 1
+name check_inv
 face pedestal.111
 animation check_inv
 is_turnable 1
