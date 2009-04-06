@@ -430,6 +430,7 @@ void spawn_point(object *op)
                     remove_ob(next);
             }
 
+            SET_MULTI_FLAG(mob, FLAG_SCRIPT_MOB); /* FINISH: now mark our mob as a script-interrupted spawn */
             fix_monster(mob); /* fix all the values and add in possible abilities or forces ... */
         }
 
