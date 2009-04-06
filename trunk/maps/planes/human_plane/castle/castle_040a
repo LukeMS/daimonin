@@ -165,7 +165,7 @@ arch well_stone
 msg
 You slide yourself down the well a bit, and find a ladder to climb down.
 endmsg
-slaying guildhall/guildhall-a-040a
+slaying guildhall/guildhall_a_040a
 hp 1
 sp 6
 x 1
