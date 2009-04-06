@@ -800,8 +800,12 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_NO_INVENTORY       108 /* special flag to avoid load/save of the inventory of an object */
 /* flag 109 is free */
 #define FLAG_SYS_OBJECT         110 /* thats old invisible - now sys_object (which are invisible) */
-/* flag 111 is free */
-
+#define FLAG_SCRIPT_MOB         111 /* monsters with this flag are created by a
+                                     * spawn point but the process is
+                                     * interrupted by a script so the mob does
+                                     * not have a spawn info object inside its
+                                     * inventory. See also 118.
+                                     */
 #define FLAG_UNPAID             112 /* Object hasn't been paid for yet */
 #define FLAG_IS_AGED            113 /* if set, object falls under heavy ageing effects */
 #define FLAG_MAKE_INVISIBLE     114 /* if a applyable item has this set, he makes the wearer invisible */
@@ -812,6 +816,7 @@ error - Your ANSI C compiler should be defining __STDC__;
                                      */
 #define FLAG_SPAWN_MOB          118 /* monster with this flag are created by spawn point
                                      * and have a spawn info object inside inventory
+                                     * See also 111.
                                      */
 #define FLAG_NO_TELEPORT        119 /* objects with this flags will not be teleported
                                      * from teleporters. Except, they are in a inventory
@@ -857,7 +862,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_IS_EGOCLAN         138     /* item is bound to clan (if not set, always to player (not implemented) */
 #define FLAG_IS_EGOLOCK         139     /* the bound is permanent - can't be remove (not implemented) */
 
-/* FREE flag: 59, 109, 11*/
+/* FREE flag: 59, 109*/
 
 #define NUM_FLAGS       139 /* Should always be equal to the last defined flag */
 #define NUM_FLAGS_32    5   /* the number of uint32 we need to store all flags */

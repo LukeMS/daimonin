@@ -452,7 +452,7 @@ static const char *GameObject_flags[NUM_FLAGS + 1 + 1] =
 
     /* 110 */
     "f_sys_object",
-    NULL,
+    "?f_script_mob_flag",
     "f_unpaid",
     "f_is_aged",
     "f_make_invisible",

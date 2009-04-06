@@ -998,7 +998,7 @@ NULL /*free*/, NULL /*free*/, "is_male",
 "is_dust", "no_steal", "one_hit", NULL /*client_sent*/, "berserk", "no_attack",	/* 100 */
 "invulnerable", "quest_item", "is_traped", "proof_phy",  "proof_ele", /* 105 */
 "proof_mag", "proof_sph", "no_inv", NULL /*free*/, "sys_object", /* 110 */
-NULL /*free*/,"unpaid","is_aged","make_invisible" , "make_ethereal","is_player",
+NULL /*script-interrupted spawn*/,"unpaid","is_aged","make_invisible" , "make_ethereal","is_player",
 "is_named",NULL /* spawn mob flag */, "no_teleport", "corpse", "corpse_forced",
 "player_only", "no_cleric", "one_drop", "cursed_perm", "damned_perm", "door_closed",
 "was_reflected", "is_missile","can_reflect_missile","can_reflect_spell","is_assassin",
