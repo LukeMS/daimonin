@@ -637,9 +637,10 @@ void DrawInfoCmd2(char *data, int len)
         /*LOG(-1,"IGNORE?: player >%s<\n", data);*/
         if (flags & NDI_EMOTE)
             flags &= ~NDI_PLAYER;
+
+        if (options.smileys)
+            smiley_convert(buf);
     }
-    if (options.smileys)
-        smiley_convert(buf);
     draw_info(buf, flags);
 }
 
