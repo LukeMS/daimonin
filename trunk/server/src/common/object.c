@@ -626,14 +626,7 @@ object * merge_ob(object *op, object *tmp)
                 op->name, op->count, op->nrof);
 #endif
             op->nrof = op->nrof + tmp->nrof;
-            tmp->nrof = 0;
-            remove_ob(tmp); /* this is right: no check off */
-
-            if (op->env &&
-                op->env->type == CONTAINER &&
-                op->env->attacked_by &&
-                op->env->attacked_by->type == PLAYER)
-                esrv_del_item(NULL, tmp->count, op->env);
+            (void)decrease_ob_nr(tmp, tmp->nrof);
 
             return op;
         }
