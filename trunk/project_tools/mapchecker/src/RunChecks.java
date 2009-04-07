@@ -966,9 +966,9 @@ public class RunChecks extends Thread
                     }
                     if (hasMob)
                     {
-                        // Empty spawn point
-                        logMapsquareError("Warning", shortPath, x, y, "monster/NPC not in spawn point");
-                        warnings++;
+                        // Missing spawn point
+                        logMapsquareError("Error", shortPath, x, y, "monster/NPC not in spawn point");
+                        errors++;
                     }
 
                     // Look for map-level objects on same layer (apart from 0 and 1)
