@@ -1298,76 +1298,75 @@ int write_scroll(object *pl, object *scroll)
  * command_search loop. It seemed easier to have a separate command,
  * rather than overhaul the existing code - this makes sure things
  * still work for those people who don't want to have skill code
- * implemented.
- */
-
-int find_traps(object *pl, int level)
+ * implemented. */
+int find_traps(object *op, int level)
 {
-    object     *tmp, *tmp2;
-    mapstruct  *m;
-    int         xt, yt, i, suc = 0;
-    /*First we search all around us for runes and traps, which are
-      all type RUNE */
+    uint8 i,
+          found = 0,
+          aware = 0;
+
+    /* Search the squares in the 8 directions. */
     for (i = 0; i < 9; i++)
     {
-        /*  Check everything in the square for trapness */
-        xt = pl->x + freearr_x[i];
-        yt = pl->y + freearr_y[i];
-        if (!(m = out_of_map(pl->map, &xt, &yt)))
+        int         xt = op->x + freearr_x[i],
+                    yt = op->y + freearr_y[i];
+        mapstruct  *m;
+        object     *next,
+                   *this;
+
+        /* Ensure the square isn't out of bounds. */
+        if (!(m = out_of_map(op->map, &xt, &yt)))
             continue;
-        for (tmp = get_map_ob(m, xt, yt); tmp != NULL; tmp = tmp->above)
+ 
+        next = get_map_ob(m, xt, yt);
+        while ((this = next))
         {
-            /*  And now we'd better do an inventory traversal of each
-                of these objects' inventory */
-            if (pl != tmp && (tmp->type == PLAYER || tmp->type == MONSTER))
+            /* this is the object on the map, that is the current object under
+             * consideration. */
+            object *that = this;
+
+            next = this->above;
+
+            /* op, players, and monsters are opaque to find traps. */
+            if (that == op || that->type == PLAYER || that->type == MONSTER)
                 continue;
 
-            for (tmp2 = tmp->inv; tmp2 != NULL; tmp2 = tmp2->below)
+            /* Otherwise, check that and (if necessary) inventory of that. */
+            while (that)
             {
-                if (tmp2->type == RUNE)
+                if (that->type == RUNE && that->stats.Cha > 1)
                 {
-                    if (trap_see(pl, tmp2, level))
+                    if (trap_see(op, that, level))
                     {
-                        trap_show(tmp2, tmp);
-                        tmp2->stats.Cha = 1;
-                        if (!suc)
-                            suc = 1;
+                        trap_show(that, this);
+                        found++;
                     }
                     else
-                    {
-                        /* give out a "we have found signs of traps"
-                                         * if the traps level is not 1.5 times higher.
-                                         */
-                        if (tmp2->level <= (level * 1.8f))
-                            suc = 2;
-                    }
+                        if (that->level <= (level * 1.8f))
+                            aware = 1;
                 }
-            }
-
-            if (tmp->type == RUNE)
-            {
-                if (trap_see(pl, tmp, level))
-                {
-                    trap_show(tmp, tmp);
-                    tmp->stats.Cha = 1;
-                    if (!suc)
-                        suc = 1;
-                }
-                else
-                {
-                    /* give out a "we have found signs of traps"
-                                 * if the traps level is not 1.5 times higher.
-                                 */
-                    if (tmp->level <= (level * 1.8f))
-                        suc = 2;
-                }
+                that = find_next_object(that, RUNE, FNO_MODE_CONTAINERS, that);
             }
         }
     }
-    if (!suc)
-        new_draw_info(NDI_UNIQUE, 0, pl, "You can't detect any trap here.");
-    else if (suc == 2)
-        new_draw_info(NDI_UNIQUE, 0, pl, "You detect trap signs...!");
+
+   /* Only players get messages. */
+    if (op->type == PLAYER && CONTR(op))
+    {
+        if (!found)
+        {
+            new_draw_info(NDI_UNIQUE, 0, op, "You find no new traps this time...");
+            if (aware)
+                new_draw_info(NDI_UNIQUE, 0, op, "But you find signs of traps hidden beyond your skill...");
+        }
+        else
+        {
+            new_draw_info_format(NDI_UNIQUE, 0, op, "You find %d new traps!",
+                                                      found);
+            if (aware)
+                new_draw_info(NDI_UNIQUE, 0, op, "You also find signs of more traps hidden beyond your skill...");
+        }
+    }
 
     return 0;
 }
