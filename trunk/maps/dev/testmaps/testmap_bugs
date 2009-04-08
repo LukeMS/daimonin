@@ -2,11 +2,12 @@ arch map
 name Testmap - Bugs
 msg
 Created:  2003-06-04 Daimonin Map Editor
+Modified: 2008-08-21 smacky
 endmsg
 width 24
 height 24
 difficulty 1
-darkness 1280
+darkness 5
 end
 arch floor_ostone1
 end
@@ -272,6 +273,7 @@ arch santahat
 name Cube's Loot
 end
 arch event_obj
+name Lua
 sub_type 6
 race GelantinousCubeScript.lua
 end
@@ -669,6 +671,14 @@ arch floor_ostone1
 x 4
 y 5
 end
+arch sign
+msg
+This floor has two traps on it, one hidden, the other pre-found.
+'/use_skill find traps' in such a situation used to cause the server to hang (not crash).
+endmsg
+x 4
+y 5
+end
 arch floor_ostone1
 x 4
 y 6
@@ -773,7 +783,18 @@ arch floor_ostone1
 x 5
 y 4
 end
-arch floor_ostone1
+arch floor_ostone9
+x 5
+y 5
+end
+arch trap_bear_trap
+x 5
+y 5
+end
+arch trap_bear_trap
+layer 4
+cha 1
+sys_object 0
 x 5
 y 5
 end

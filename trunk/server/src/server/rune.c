@@ -381,8 +381,8 @@ int trap_see(object *op, object *trap, int level)
              MAX(5,
                  ((int) ((float) (op->map->difficulty + trap->level + trap->stats.Cha - op->level) / 10.0 * 50.0))))))
     {
-        sprintf(buf, "You spot a %s (lvl %d)!", trap->name, trap->level);
-        new_draw_info(NDI_UNIQUE, 0, op, buf);
+        // sprintf(buf, "You spot a %s (lvl %d)!", trap->name, trap->level);
+        // new_draw_info(NDI_UNIQUE, 0, op, buf);
         return 1;
     }
     return 0;
