@@ -2528,7 +2528,6 @@ object * decrease_ob_nr(object *op, uint32 i)
         }
         else /* we removed all! */
         {
-            op->nrof = 0;
             if (tmp)
             {
                 if (tmp->type != CONTAINER)
@@ -2537,6 +2536,7 @@ object * decrease_ob_nr(object *op, uint32 i)
                     esrv_del_item(NULL, op->count, op->env);
             }
             remove_ob(op);
+            op->nrof = 0;
         }
     }
     else
