@@ -411,6 +411,126 @@ void object_gc()
     }
 }
 
+/* calculates the weight an object is carrying.
+ * its not recursive itself but the caller will take care of it.
+ * thats for example the recursive flex loader and load_objects().
+ */
+sint32 sum_weight(object *op)
+{
+    sint32  sum;
+    object *inv;
+
+    for (sum = 0, inv = op->inv; inv != NULL; inv = inv->below)
+    {
+        if (QUERY_FLAG(inv, FLAG_SYS_OBJECT))
+            continue;
+
+        if(inv->type == CONTAINER && inv->weapon_speed != 1.0f)
+            sum += inv->damage_round_tag + inv->weight; /* thats the precalculated, modified weight + container weight */
+        else
+            sum += WEIGHT(inv);
+    }
+
+    /* we have a magical container? then precalculate the modified weight */
+    if(op->type == CONTAINER && op->weapon_speed != 1.0f)
+        op->damage_round_tag = (uint32)((float)sum * op->weapon_speed);
+
+    return sum;
+}
+
+/*
+ * add_weight(object, nrof) adds the specified weight for op * nrof to the ->env of op,
+ * and also updates how much the environment(s) is/are carrying.
+ * don't call add_weight() for SYS_OBJECTs
+ */
+static inline void add_weight(const object *item, const uint32 nrof)
+{
+    object *op;
+    sint32 weight;
+
+    if(!(op = item->env))
+        return;
+
+    if(item->type == CONTAINER && item->weapon_speed != 1.0f)
+        weight = item->damage_round_tag + item->weight; /* no stacking container, ignore nrof */
+    else
+        weight = WEIGHT_NROF(item, nrof);
+    if(!weight)
+        return;
+
+    do
+    {
+        if(QUERY_FLAG(op, FLAG_SYS_OBJECT))
+            return;
+
+        /* we have a magical container modifying the weight by its magic? */
+        if(op->type == CONTAINER)
+        {
+            op->carrying += weight;
+            /* we modify weight to what the magical container has changed it */
+            if(op->weapon_speed != 1.0f)
+            {
+                weight = op->damage_round_tag;
+                op->damage_round_tag = (uint32)((float)op->carrying * op->weapon_speed);
+                weight = (op->damage_round_tag - weight); /* modified inventory weight */
+            }
+        }
+        else
+            op->carrying += weight;
+
+        /* we have to update the view for clients. If this object is in a player inventory or
+         * an player viewed open container which is INSIDE a player then update the view.
+         */
+        if(op->env && (op->env->type == PLAYER ||
+            (op->env->type == CONTAINER && op->env->attacked_by && op->env->env && op->env->env->type == PLAYER)))
+            esrv_update_item(UPD_WEIGHT, op->env->type == PLAYER?op->env:op->env->env, op);
+    }
+    while((op = op->env));
+}
+
+/*
+ * sub_weight() recursively (outwards) subtracts a number from the
+ * weight of an object (and what is carried by it's environment(s)).
+ */
+static inline void sub_weight(object *item, sint32 nrof)
+{
+    object *op;
+    sint32 weight;
+
+    if(!(op = item->env))
+        return;
+
+    if(item->type == CONTAINER && item->weapon_speed != 1.0f)
+        weight = item->damage_round_tag + item->weight; /* no stacking container, ignore nrof */
+    else
+        weight = WEIGHT_NROF(item, nrof);
+    if(!weight)
+        return;
+
+    do
+    {
+        if(QUERY_FLAG(op, FLAG_SYS_OBJECT))
+            return;
+
+        /* we have a magical container modifying the weight by its magic? */
+        if(op->type == CONTAINER && op->weapon_speed != 1.0f)
+        {
+            op->carrying -= weight;
+            /* we modify weight to what the magical container has changed it */
+            weight = op->damage_round_tag;
+            op->damage_round_tag = (uint32)((float)op->carrying * op->weapon_speed);
+            weight -= op->damage_round_tag;
+        }
+        else
+            op->carrying -= weight;
+
+        if(op->env && (op->env->type == PLAYER ||
+            (op->env->type == CONTAINER && op->env->attacked_by && op->env->env && op->env->env->type == PLAYER)))
+            esrv_update_item(UPD_WEIGHT, op->env->type == PLAYER?op->env:op->env->env, op);
+    }
+    while((op = op->env));
+}
+
 /* Function examines the 2 objects given to it, and returns true if
  * they can be merged together.
  *
@@ -626,6 +746,17 @@ object * merge_ob(object *op, object *tmp)
                 op->name, op->count, op->nrof);
 #endif
             op->nrof = op->nrof + tmp->nrof;
+
+            if (!QUERY_FLAG(tmp, FLAG_SYS_OBJECT))
+            {
+                object *pl;
+
+                sub_weight(tmp, tmp->nrof);
+
+                if ((pl = is_player_inv(tmp)))
+                    fix_player_weight(pl);
+            }
+
             (void)decrease_ob_nr(tmp, tmp->nrof);
 
             return op;
@@ -633,127 +764,6 @@ object * merge_ob(object *op, object *tmp)
     }
 
     return NULL;
-}
-
-
-/* calculates the weight an object is carrying.
- * its not recursive itself but the caller will take care of it.
- * thats for example the recursive flex loader and load_objects().
- */
-sint32 sum_weight(object *op)
-{
-    sint32  sum;
-    object *inv;
-
-    for (sum = 0, inv = op->inv; inv != NULL; inv = inv->below)
-    {
-        if (QUERY_FLAG(inv, FLAG_SYS_OBJECT))
-            continue;
-
-        if(inv->type == CONTAINER && inv->weapon_speed != 1.0f)
-            sum += inv->damage_round_tag + inv->weight; /* thats the precalculated, modified weight + container weight */
-        else
-            sum += WEIGHT(inv);
-    }
-
-    /* we have a magical container? then precalculate the modified weight */
-    if(op->type == CONTAINER && op->weapon_speed != 1.0f)
-        op->damage_round_tag = (uint32)((float)sum * op->weapon_speed);
-
-    return sum;
-}
-
-/*
- * add_weight(object, nrof) adds the specified weight for op * nrof to the ->env of op,
- * and also updates how much the environment(s) is/are carrying.
- * don't call add_weight() for SYS_OBJECTs
- */
-static inline void add_weight(const object *item, const uint32 nrof)
-{
-    object *op;
-    sint32 weight;
-
-    if(!(op = item->env))
-        return;
-
-    if(item->type == CONTAINER && item->weapon_speed != 1.0f)
-        weight = item->damage_round_tag + item->weight; /* no stacking container, ignore nrof */
-    else
-        weight = WEIGHT_NROF(item, nrof);
-    if(!weight)
-        return;
-
-    do
-    {
-        if(QUERY_FLAG(op, FLAG_SYS_OBJECT))
-            return;
-
-        /* we have a magical container modifying the weight by its magic? */
-        if(op->type == CONTAINER)
-        {
-            op->carrying += weight;
-            /* we modify weight to what the magical container has changed it */
-            if(op->weapon_speed != 1.0f)
-            {
-                weight = op->damage_round_tag;
-                op->damage_round_tag = (uint32)((float)op->carrying * op->weapon_speed);
-                weight = (op->damage_round_tag - weight); /* modified inventory weight */
-            }
-        }
-        else
-            op->carrying += weight;
-
-        /* we have to update the view for clients. If this object is in a player inventory or
-         * an player viewed open container which is INSIDE a player then update the view.
-         */
-        if(op->env && (op->env->type == PLAYER ||
-            (op->env->type == CONTAINER && op->env->attacked_by && op->env->env && op->env->env->type == PLAYER)))
-            esrv_update_item(UPD_WEIGHT, op->env->type == PLAYER?op->env:op->env->env, op);
-    }
-    while((op = op->env));
-}
-
-/*
- * sub_weight() recursively (outwards) subtracts a number from the
- * weight of an object (and what is carried by it's environment(s)).
- */
-static inline void sub_weight(object *item, sint32 nrof)
-{
-    object *op;
-    sint32 weight;
-
-    if(!(op = item->env))
-        return;
-
-    if(item->type == CONTAINER && item->weapon_speed != 1.0f)
-        weight = item->damage_round_tag + item->weight; /* no stacking container, ignore nrof */
-    else
-        weight = WEIGHT_NROF(item, nrof);
-    if(!weight)
-        return;
-
-    do
-    {
-        if(QUERY_FLAG(op, FLAG_SYS_OBJECT))
-            return;
-
-        /* we have a magical container modifying the weight by its magic? */
-        if(op->type == CONTAINER && op->weapon_speed != 1.0f)
-        {
-            op->carrying -= weight;
-            /* we modify weight to what the magical container has changed it */
-            weight = op->damage_round_tag;
-            op->damage_round_tag = (uint32)((float)op->carrying * op->weapon_speed);
-            weight -= op->damage_round_tag;
-        }
-        else
-            op->carrying -= weight;
-
-        if(op->env && (op->env->type == PLAYER ||
-            (op->env->type == CONTAINER && op->env->attacked_by && op->env->env && op->env->env->type == PLAYER)))
-            esrv_update_item(UPD_WEIGHT, op->env->type == PLAYER?op->env:op->env->env, op);
-    }
-    while((op = op->env));
 }
 
 /*
