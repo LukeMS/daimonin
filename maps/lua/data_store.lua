@@ -154,6 +154,10 @@ function _data_store._save(time, player, b_force)
                         -- print("DataStore: saving stored data for player "..player.." in "..filename)
                         f:write(_data_store._serialize(v._data))
                         f:close()
+                        if player then
+                            -- At this stage FindPlayer() is guaranteed successful
+                            game:FindPlayer():PlayerSave()
+                        end
                     end
                 end
             end
