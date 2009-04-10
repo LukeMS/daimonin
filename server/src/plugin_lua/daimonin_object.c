@@ -108,6 +108,7 @@ static struct method_decl GameObject_methods[] =
     {"PayForItem",             (lua_CFunction) GameObject_PayForItem},
     {"PayAmount",              (lua_CFunction) GameObject_PayAmount},
     {"PickUp",                 (lua_CFunction) GameObject_PickUp},
+    {"PlayerSave",             (lua_CFunction) GameObject_PlayerSave},
     {"ReadyUniqueMap",         (lua_CFunction) GameObject_ReadyUniqueMap},
     {"Remove",                 (lua_CFunction) GameObject_Remove},
     {"RemoveQuestItem",        (lua_CFunction) GameObject_RemoveQuestItem},
@@ -4041,6 +4042,35 @@ static int GameObject_FindNextObject(lua_State *L)
     }
 
     return push_object(L, &GameObject, next);
+}
+
+/*****************************************************************************/
+/* Name   : GameObject_PlayerSave                                            */
+/* Lua    : object:PlayerSave()                                              */
+/* Info   : Forces saving the player file (inv and location and current      */
+/*          status) to disk.                                                 */
+/*          Only works for player objects. Other types generate an error.    */
+/*          The function takes no arguments.                                 */
+/* Return : true if the save occurred, false otherwise.                      */
+/* Note   : Forcing a player save is /usually/ unnecessary; disk access is   */
+/*          relatively slow and scripts which do this can form bottlenecks   */
+/*          which will impact server performance. So do not use this unless  */
+/*          you really need to; for the most part, trust to the server to    */
+/*          automatically save the player file as needed.                    */
+/* Status : Untested/Stable                                                  */
+/*****************************************************************************/
+static int GameObject_PlayerSave(lua_State *L)
+{
+    lua_object *self;
+
+    get_lua_args(L, "O", &self);
+
+    if (WHO->type != PLAYER || CONTR(WHO) == NULL)
+        return luaL_error(L, "PlayerSave() can only be called on a player!");
+
+    lua_pushboolean(L, hooks->player_save(WHO));
+
+    return 1;
 }
 
 

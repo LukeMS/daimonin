@@ -108,6 +108,7 @@ static int  GameObject_NrofQuestItem(lua_State *L);
 static int  GameObject_PayAmount(lua_State *L);
 static int  GameObject_PayForItem(lua_State *L);
 static int  GameObject_PickUp(lua_State *L);
+static int  GameObject_PlayerSave(lua_State *L);
 static int  GameObject_ReadyUniqueMap(lua_State *L);
 static int  GameObject_Remove(lua_State *L);
 static int  GameObject_RemoveQuestItem(lua_State *L);
