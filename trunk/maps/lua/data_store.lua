@@ -156,7 +156,7 @@ function _data_store._save(time, player, b_force)
                         f:close()
                         if player then
                             -- At this stage FindPlayer() is guaranteed successful
-                            game:FindPlayer():PlayerSave()
+                            game:FindPlayer(player):PlayerSave()
                         end
                     end
                 end
