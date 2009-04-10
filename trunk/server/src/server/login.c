@@ -423,8 +423,11 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
                              * implies) just before we fgets()...
                              * But this is simpler and works -- Smacky 20090303 */
                             fclose(fp); /* we will rewrite the file when saving beyond! close it first */
-#endif
+                            /* This looks to be superfluous as player_save()
+                             * will be called anyway by remove_ns_dead_player().
+                             * -- Smacky 20090410 */
                             player_save(ptmp->ob);
+#endif
                             ptmp->state &= ~ST_PLAYING;
                             ptmp->state |= ST_ZOMBIE;
                             ptmp->socket.status = Ns_Dead;
