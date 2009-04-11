@@ -201,10 +201,11 @@ local function topicAccept()
 
             new_weapon = figureOutWeapon()
             if new_weapon then
-                ds:Set("given weapon", true)
                 me:SayTo(pl, "Here, take this weapon for the task")
                 tmp = pl:CreateObjectInsideEx(new_weapon, 1, game.IDENTIFIED)
                 pl:Apply(tmp, game.APPLY_ALWAYS)
+                pl:PlayerSave()
+                ds:Set("given weapon", true)
             end
         end
     else
