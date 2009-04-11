@@ -1304,11 +1304,13 @@ int command_save(object *op, char *params)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "You can not save on unholy ground");
     }
+#if 0 // no longer needed with accounts patch
     else if (!op->stats.exp)
     {
         new_draw_info(NDI_UNIQUE, 0, op,
                 "To avoid too many unused player accounts you must get some exp before you can save!");
     }
+#endif
     else
     {
         if (player_save(op))
