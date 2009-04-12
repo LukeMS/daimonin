@@ -3258,6 +3258,7 @@ object *find_next_object(object *op, uint8 type, uint8 mode, object *root)
         LOG(llevDebug, "\n >");
 #endif
     }
+#if 0
     else if (op->env)
     {
         next = op->env;
@@ -3265,6 +3266,7 @@ object *find_next_object(object *op, uint8 type, uint8 mode, object *root)
         LOG(llevDebug, "\n ^");
 #endif
     }
+#endif
 
     while (1)
     {
