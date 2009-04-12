@@ -3134,19 +3134,19 @@ object *locate_beacon(shstr *id)
  */
 static void beacon_initializer(object *op)
 {
-    object *parent;
+    object *parent = op;
 
     /* Beacons must be unique so do not register beacons in SPAWN_POINT_MOBs */
-    for (parent = op; parent->env; parent = parent->env)
+    do
     {
-        if (parent->type == SPAWN_POINT_MOB)
-            return;
+        if (parent->env)
+        {
+            parent = parent->env;
+            if (parent->type == SPAWN_POINT_MOB)
+                return;
+        }
     }
-
-    /* No env and no map means the beacon is in a mob's loot singularity
-     * (during the spawn process) so ignore it). */
-    if (!parent->map)
-        return;
+    while (!parent->map);
 
     /* At this point, parent must be on a map so check its type. Beacons do not
      * get registered -- in fact, get removed -- on instances (which by their
@@ -3258,7 +3258,6 @@ object *find_next_object(object *op, uint8 type, uint8 mode, object *root)
         LOG(llevDebug, "\n >");
 #endif
     }
-#if 0
     else if (op->env)
     {
         next = op->env;
@@ -3266,7 +3265,6 @@ object *find_next_object(object *op, uint8 type, uint8 mode, object *root)
         LOG(llevDebug, "\n ^");
 #endif
     }
-#endif
 
     while (1)
     {
