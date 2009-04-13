@@ -305,11 +305,11 @@ void remove_gmaster_mode(player *pl)
 {
     int gmaster_mode = pl->gmaster_mode;
 
-    pl->gmaster_mode = GMASTER_MODE_NO;
     new_draw_info_format(NDI_UNIQUE, 0, pl->ob, "%s mode deactivated.",
         (gmaster_mode == GMASTER_MODE_MM) ? "MM" : ((gmaster_mode == GMASTER_MODE_GM) ? "GM" : (gmaster_mode==GMASTER_MODE_VOL?"VOL":"MW")));
 
     remove_gmaster_list(pl);
+    pl->gmaster_mode = GMASTER_MODE_NO;
 
     if(gmaster_mode == GMASTER_MODE_MM)
     {
