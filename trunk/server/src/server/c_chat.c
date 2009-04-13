@@ -230,19 +230,19 @@ int command_gsay(object *op, char *params)
 
     for(ol = gmaster_list_MM;ol;ol=ol->next)
     {
-        if (op != ol->objlink.ob && CONTR(ol->objlink.ob) && CONTR(op)->group_leader != CONTR(ol->objlink.ob)->group_leader)
+        if (op != ol->objlink.ob && CONTR(op)->group_leader != CONTR(ol->objlink.ob)->group_leader)
             new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf);
     }
 
     for(ol = gmaster_list_GM;ol;ol=ol->next)
     {
-        if (op != ol->objlink.ob && CONTR(ol->objlink.ob) && CONTR(op)->group_leader != CONTR(ol->objlink.ob)->group_leader)
+        if (op != ol->objlink.ob && CONTR(op)->group_leader != CONTR(ol->objlink.ob)->group_leader)
             new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf);
     }
 
     for(ol = gmaster_list_VOL;ol;ol=ol->next)
     {
-        if (op != ol->objlink.ob && CONTR(ol->objlink.ob) && CONTR(op)->group_leader != CONTR(ol->objlink.ob)->group_leader)
+        if (op != ol->objlink.ob && CONTR(op)->group_leader != CONTR(ol->objlink.ob)->group_leader)
             new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf);
     }
 
