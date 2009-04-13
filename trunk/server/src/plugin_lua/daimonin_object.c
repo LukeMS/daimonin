@@ -2467,7 +2467,7 @@ static int GameObject_AddQuestItem(lua_State *L)
 
     if(i_face && *i_face !='\0') /* "" will skip the face setting */
     {
-        id = hooks->find_face(i_face, -1);
+        id = hooks->FindFace(i_face, -1);
         if(id == -1)
             luaL_error(L, "no such face exists: %s", STRING_SAFE(i_face));
         else
@@ -3634,7 +3634,7 @@ static int GameObject_SetFace(lua_State *L)
 
     get_lua_args(L, "Os", &self, &face);
 
-    id = hooks->find_face(face, -1);
+    id = hooks->FindFace(face, -1);
     if(id == -1)
         luaL_error(L, "no such face exists: %s", STRING_SAFE(face));
 
@@ -3660,7 +3660,7 @@ static int GameObject_SetInvFace(lua_State *L)
 
     get_lua_args(L, "Os", &self, &face);
 
-    id = hooks->find_face(face, -1);
+    id = hooks->FindFace(face, -1);
     if(id == -1)
         luaL_error(L, "no such face exists: %s", STRING_SAFE(face));
 
