@@ -3232,7 +3232,7 @@ void init_object_initializers()
  * environment). */
 object *find_next_object(object *op, uint8 type, uint8 mode, object *root)
 {
-    object *next = NULL;
+    object *next;
 
 #ifdef DEBUG_FNO
     LOG(llevDebug, "DEBUG:: %s/find_next_object(%s[%d], %d, %d, %s[%d]):",
@@ -3241,72 +3241,16 @@ object *find_next_object(object *op, uint8 type, uint8 mode, object *root)
         mode, (root) ? root->name : "NULL", (root) ? root->count : 0);
 #endif
 
-    if (op->inv &&
-        (mode == FNO_MODE_INV_ONLY ||
-         (mode == FNO_MODE_CONTAINERS &&
-          (op->type == PLAYER ||
-           op->type == MONSTER ||
-           op->type == CONTAINER ||
-           op->type == SPAWN_POINT_MOB)) ||
-         mode == FNO_MODE_ALL))
-    {
-        next = op->inv;
-#ifdef DEBUG_FNO
-        LOG(llevDebug, "\n v");
-#endif
-    }
-    else if (op->below && !op->map)
-    {
-        next = op->below;
-#ifdef DEBUG_FNO
-        LOG(llevDebug, "\n >");
-#endif
-    }
-#if 0
-    else if (op->env)
-    {
-        next = op->env;
-#ifdef DEBUG_FNO
-        LOG(llevDebug, "\n ^");
-#endif
-    }
-#endif
+    next = op;
 
-    while (1)
+    do
     {
-        /* These are the only ways to break out of this loop, so it's important
-         * to get them right. */
-        if (!next)
-        {
-#ifdef DEBUG_FNO
-            LOG(llevDebug, " NULL!");
-#endif
-            break;
-        }
-
-#ifdef DEBUG_FNO
-        LOG(llevDebug, " %s[%d]",
-            next->name, next->count);
-#endif
-
-        if (root && (next == root || next == root->env))
-        {
-#ifdef DEBUG_FNO
-            LOG(llevDebug, " ROOT!");
-#endif
-            next = NULL;
-            break;
-        }
-        else if (!type || next->type == type)
-        {
-#ifdef DEBUG_FNO
-            LOG(llevDebug, " MATCHES!\n");
-#endif
-            break;
-        }
-
         if (next->inv &&
-            ((mode == FNO_MODE_CONTAINERS && (next->type == CONTAINER || next->type == SPAWN_POINT_MOB)) ||
+            ((mode == FNO_MODE_CONTAINERS &&
+              (next->type == PLAYER ||
+               next->type == MONSTER ||
+               next->type == CONTAINER ||
+               next->type == SPAWN_POINT_MOB)) ||
              mode == FNO_MODE_ALL))
         {
             next = next->inv;
@@ -3318,20 +3262,22 @@ object *find_next_object(object *op, uint8 type, uint8 mode, object *root)
         {
             object *tmp = NULL;
 
-            while (!tmp && !next->map)
+            while (!tmp && next->env)
             {
                 if (next == root)
                     break;
                 next = next->env;
-                tmp = (!next->map) ? next->below : NULL;
+                tmp = (next->env) ? next->below : NULL;
 #ifdef DEBUG_FNO
                 LOG(llevDebug, "\n ^ %s[%d]",
                     next->name, next->count);
 #endif
             }
+
             if (next != root)
             {
                 next = tmp;
+
                 if (mode != FNO_MODE_ALL)
                     while (next && QUERY_FLAG(next, FLAG_SYS_OBJECT))
                         if (root && (next = next->below) == root)
@@ -3354,11 +3300,35 @@ object *find_next_object(object *op, uint8 type, uint8 mode, object *root)
             LOG(llevDebug, " >");
 #endif
         }
-    }
 
+        if (next)
+        {
 #ifdef DEBUG_FNO
-    LOG(llevDebug, "\n");
+            LOG(llevDebug, " %s[%d]",
+                next->name, next->count);
 #endif
+
+            if (root && (next == root || next == root->env))
+            {
+#ifdef DEBUG_FNO
+                LOG(llevDebug, " ROOT!\n");
+#endif
+                next = NULL;
+            }
+            else if (!type || next->type == type)
+            {
+#ifdef DEBUG_FNO
+                LOG(llevDebug, " MATCHES!\n");
+#endif
+                break;
+            }
+        }
+        else
+#ifdef DEBUG_FNO
+            LOG(llevDebug, " NULL!\n");
+#endif
+    }
+    while (next);
     
     return next;
 }
