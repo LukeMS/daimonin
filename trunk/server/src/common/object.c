@@ -3324,9 +3324,11 @@ object *find_next_object(object *op, uint8 type, uint8 mode, object *root)
             }
         }
         else
+        {
 #ifdef DEBUG_FNO
             LOG(llevDebug, " NULL!\n");
 #endif
+        }
     }
     while (next);
     
