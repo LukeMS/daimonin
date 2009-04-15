@@ -195,8 +195,12 @@ public:
     static const char *ELEMENT_RESOURCE_NAME;
     static const char *TEXTURE_RESOURCE_NAME;
     static const char *MATERIAL_RESOURCE_NAME;
-    static const char *FILE_DESCRIPTION_WINDOWS;
-    static const char *FILE_DESCRIPTION_IMAGESET;
+    static const char *FILE_ITEM_ATLAS;
+    static const char *FILE_SYSTEM_FONT;
+    static const char *FILE_ITEM_UNKNOWN;
+    /** Read only description files **/
+    static const char *FILE_TXT_WINDOWS;
+    static const char *FILE_TXT_IMAGESET;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
@@ -205,7 +209,7 @@ public:
         static GuiManager singleton;
         return singleton;
     }
-    void Init(int w, int h, bool createMedia, bool printInfo, const char *soundActionFailed, const char *pathDescription, const char *pathTextures);
+    void Init(int w, int h, bool createMedia, bool printInfo, const char *soundActionFailed, const char *pathTxt, const char *pathGfx, const char *pathFonts, const char *pathItems);
 
     Ogre::uint32 *getBuildBuffer()    { return mBuildBuffer;}
     void resizeBuildBuffer(size_t size);
@@ -272,6 +276,14 @@ public:
     {
         return mPathTextures;
     }
+    const Ogre::String &getPathItems()
+    {
+        return mPathTexturesItems;
+    }
+    const Ogre::String &getPathFonts()
+    {
+        return mPathTexturesFonts;
+    }
 
 private:
     // ////////////////////////////////////////////////////////////////////
@@ -321,7 +333,7 @@ private:
     Ogre::String mSoundWrongInput;
     Ogre::String mStrTooltip;
     Ogre::String mStrTextInput, mBackupStrTextInput;
-    Ogre::String mPathDescription, mPathTextures;
+    Ogre::String mPathDescription, mPathTextures, mPathTexturesFonts, mPathTexturesItems;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////

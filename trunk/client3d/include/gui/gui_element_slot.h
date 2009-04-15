@@ -36,7 +36,7 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    GuiElementSlot(TiXmlElement *xmlElement, void *parent);
+    GuiElementSlot(TiXmlElement *xmlElement, void *parent, bool drawOnInit);
     ~GuiElementSlot() {}
     int sendMsg(int message, const char *text, Ogre::uint32 param);
     int mouseEvent(int MouseAction, int x, int y, int z);
@@ -88,8 +88,14 @@ private:
 class GuiElementSlotGroup: public GuiElement
 {
 public:
+    // ////////////////////////////////////////////////////////////////////
+    // Functions.
+    // ////////////////////////////////////////////////////////////////////
     GuiElementSlotGroup(TiXmlElement *xmlElement, void *parent);
     ~GuiElementSlotGroup();
+    void draw();
+    int mouseEvent(int MouseAction, int x, int y, int z);
+
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.

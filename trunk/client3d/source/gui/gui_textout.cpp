@@ -56,7 +56,7 @@ GuiTextout::GuiTextout()
     // Parse the font extensions.
     // ////////////////////////////////////////////////////////////////////
     TiXmlElement *xmlRoot, *xmlElem;
-    String file = GuiManager::getSingleton().getPathDescription() + GuiManager::FILE_DESCRIPTION_IMAGESET;
+    String file = GuiManager::getSingleton().getPathDescription() + GuiManager::FILE_TXT_IMAGESET;
     TiXmlDocument doc(file.c_str());
     const char *strTemp;
     if (!doc.LoadFile() || !(xmlRoot = doc.RootElement()) || !(strTemp = xmlRoot->Attribute("file")))
@@ -347,18 +347,14 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
                 x1+= fnt->textureWidth;
             }
         }
-        // write font to disc.
+        // write font to disc. We have to change the filename because the font is no longer original.
         img = img.loadDynamicImage((unsigned char*)fnt->data, fnt->textureWidth, fnt->height, 1, PF_A8R8G8B8);
-        String rawFilename = GuiManager::getSingleton().getPathTextures() + "fonts/NoLonger_";
+        String rawFilename = GuiManager::getSingleton().getPathFonts() + "NoLonger_";
         rawFilename+= filename;
         rawFilename.resize(rawFilename.size()-4); // Cut extension.
         rawFilename+= '_'+ StringConverter::toString(iSize, 3, '0');
         rawFilename+= '_'+ StringConverter::toString(iReso, 3, '0');
         rawFilename+= ".png";
-
-
-
-
         img.save(rawFilename);
     }
     // ////////////////////////////////////////////////////////////////////

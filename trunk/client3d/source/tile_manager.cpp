@@ -324,7 +324,7 @@ void TileManager::createAtlasTexture(int textureSize, bool fixFilteringErrors, u
         copyShadowToAtlas(dstBuf);
         // Save the Atlastexture.
         dstImage.loadDynamicImage(dstBuf, textureSize, textureSize, 1, PF_A8R8G8B8, true);
-        String dstFilename = PATH_TILE_TEXTURES;
+        String dstFilename = PATH_GFX_TILES;
         dstFilename+= "Atlas_"+ StringConverter::toString(nr,2,'0') + "_";
         for (unsigned short s = textureSize; s >= textureSize/4; s/=2)
         {
@@ -526,7 +526,7 @@ void TileManager::copyFilterToAtlas(uchar *dstBuf)
 //================================================================================================
 bool TileManager::loadImage(Image &image, const Ogre::String &strFilename)
 {
-    std::string strTemp = PATH_TILE_TEXTURES + strFilename;
+    std::string strTemp = PATH_GFX_TILES + strFilename;
     std::ifstream chkFile;
     chkFile.open(strTemp.c_str());
     if (!chkFile) return false;
@@ -963,7 +963,7 @@ void TileManager::createFilterTemplate()
         if (y < size/2) ++offset; else --offset;
         p+=4*size*RGB;
     }
-    String filename = PATH_TILE_TEXTURES;
+    String filename = PATH_GFX_TILES;
     filename+= "TemplateFilter.png";
     dstImage.save(filename);
     delete[] dstBuf;

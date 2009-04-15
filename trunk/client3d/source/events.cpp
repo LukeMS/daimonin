@@ -162,7 +162,7 @@ bool Events::frameStarted(const FrameEvent& evt)
             GuiManager::getSingleton().Init(mWindow->getWidth(), mWindow->getHeight(),
                                             Option::getSingleton().getIntValue(Option::CMDLINE_CREATE_MEDIA)?true:false,
                                             Option::getSingleton().getIntValue(Option::CMDLINE_GUI_INFORMATION)?true:false,
-                                            "console.wav", PATH_DESCRIPTION, PATH_TEXTURES);
+                                            "console.wav", PATH_TXT, PATH_GFX, PATH_GFX_FONTS, PATH_GFX_ITEMS);
             // Show the loading-gfx.
             Overlay *overlay = OverlayManager::getSingleton().create(GUI_LOADING_OVERLAY);
             overlay->setZOrder(400);

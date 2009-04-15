@@ -37,7 +37,7 @@ int GuiElementSlot::uid = -1;
 //================================================================================================
 // Constructor.
 //================================================================================================
-GuiElementSlot::GuiElementSlot(TiXmlElement *xmlElement, void *parent):GuiElement(xmlElement, parent)
+GuiElementSlot::GuiElementSlot(TiXmlElement *xmlElement, void *parent, bool drawOnInit):GuiElement(xmlElement, parent)
 {
     mSlotNr = ++uid;
     mItemGfxID = -1;
@@ -56,7 +56,7 @@ GuiElementSlot::GuiElementSlot(TiXmlElement *xmlElement, void *parent):GuiElemen
     }
     if (GuiImageset::ITEM_SIZE > mWidth || GuiImageset::ITEM_SIZE > mHeight)
         Logger::log().warning() << "GuiElementSlot: Item-gfx is bigger than the slot-gfx.";
-    draw();
+    if (drawOnInit) draw();
 }
 
 //================================================================================================
@@ -315,18 +315,57 @@ GuiElementSlotGroup::~GuiElementSlotGroup()
 GuiElementSlotGroup::GuiElementSlotGroup(TiXmlElement *xmlRoot, void *parent):GuiElement(xmlRoot, parent)
 {
     mGroupNr = ++uid;
-    mCols = mWidth / GuiImageset::ITEM_SIZE;
-    mRows = mHeight/ GuiImageset::ITEM_SIZE;
-    for (TiXmlElement *xmlElem = xmlRoot->FirstChildElement("Slot"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Slot"))
+    const char *tmp = xmlRoot->Attribute("slots");
+    int sumSlots = tmp?atoi(tmp):0;
+    if (sumSlots <= 0)
     {
-        if (xmlElem->Attribute("name"))
-            mvSlot.push_back(new GuiElementSlot(xmlElem, this));
+        Logger::log().error() << "Wrong settings in slotgroup '" << xmlRoot->Attribute("name") << "'. Number of slots not defined.";
+        return;
     }
-    if ((int)mvSlot.size() > mCols*mRows)
-        Logger::log().warning() << "Not enough space in '" << xmlRoot->Attribute("name")
-        << "' to draw " << mvSlot.size() << " slots.";
-
+    TiXmlElement *xmlSlot = xmlRoot->FirstChildElement("Slot");
+    int x = mWidth;
+    int y = mHeight;
+    for (int i = 0; i < sumSlots; ++i)
+    {
+        mvSlot.push_back(new GuiElementSlot(xmlSlot, mParent, false));
+        int size = mvSlot[i]->getWidth();
+        x-= size;
+        if (x < 0)
+        {
+            x = mWidth-size;
+            y-= size;
+            if (x < 0 || y < 0)
+            {
+                Logger::log().error() << "Wrong settings in slotgroup '" << xmlRoot->Attribute("name")
+                << "'. Number of slots not doesn't fit into the slotgroup.";
+                break;
+            }
+        }
+        mvSlot[i]->setPosition(x, y);
+    }
     draw();
+}
+
+//================================================================================================
+//
+//================================================================================================
+void GuiElementSlotGroup::draw()
+{
+    for (unsigned int i = 0; i < mvSlot.size(); ++i)
+        mvSlot[i]->draw();
+}
+
+//================================================================================================
+//
+//================================================================================================
+int GuiElementSlotGroup::mouseEvent(int MouseAction, int x, int y, int z)
+{
+    for (unsigned int i = 0; i < mvSlot.size(); ++i)
+    {
+        int ret = mvSlot[i]->mouseEvent(MouseAction, x, y, z);
+        if (ret != GuiManager::EVENT_CHECK_NEXT)  return ret;
+    }
+    return GuiManager::EVENT_CHECK_NEXT;
 }
 
 // "Slots_Inventory" GUI_SLOTGROUP_INVENTORY

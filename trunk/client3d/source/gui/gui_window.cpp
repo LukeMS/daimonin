@@ -34,7 +34,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Ogre;
 
-const int MIN_GFX_SIZE = 1 << 2;
 int GuiWindow::mDragOffsetX = -1;
 int GuiWindow::mDragOffsetY = -1;
 int GuiWindow::mDragElement = -1;
@@ -59,8 +58,8 @@ void GuiWindow::freeRecources()
 void GuiWindow::Init(TiXmlElement *xmlRoot, const char *resourceWin, int winNr, unsigned char defaultZPos)
 {
     mWinLayerBG = 0;
-    mHeight = MIN_GFX_SIZE;
-    mWidth  = MIN_GFX_SIZE;
+    mHeight = GuiElement::MIN_SIZE;
+    mWidth  = GuiElement::MIN_SIZE;
     mWindowNr = winNr;
     mResourceName = resourceWin;
     mResourceName+= "#" + StringConverter::toString(mWindowNr, GuiManager::SUM_WIN_DIGITS, '0');
@@ -77,9 +76,9 @@ void GuiWindow::Init(TiXmlElement *xmlRoot, const char *resourceWin, int winNr, 
     {
         if ((strTmp = xmlElem->Attribute("width")))  mWidth = atoi(strTmp);
         if ((strTmp = xmlElem->Attribute("height"))) mHeight= atoi(strTmp);
-        if (mWidth < MIN_GFX_SIZE) mWidth  = MIN_GFX_SIZE;
+        if (mWidth < GuiElement::MIN_SIZE) mWidth  = GuiElement::MIN_SIZE;
         if (mWidth > screenW) mWidth = screenW;
-        if (mHeight< MIN_GFX_SIZE) mHeight = MIN_GFX_SIZE;
+        if (mHeight< GuiElement::MIN_SIZE) mHeight = GuiElement::MIN_SIZE;
         if (mHeight > screenH) mHeight = screenH;
     }
     // ////////////////////////////////////////////////////////////////////
@@ -196,12 +195,12 @@ void GuiWindow::Init(TiXmlElement *xmlRoot, const char *resourceWin, int winNr, 
     for (xmlElem = xmlRoot->FirstChildElement("Slot"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Slot"))
     {
         if (xmlElem->Attribute("name"))
-            mvElement.push_back(new GuiElementSlot(xmlElem, this));
+            mvElement.push_back(new GuiElementSlot(xmlElem, this, true));
     }
-    for (xmlElem = xmlRoot->FirstChildElement("SlotGroup"); xmlElem; xmlElem = xmlElem->NextSiblingElement("SlotGroup"))
+    for (xmlElem = xmlRoot->FirstChildElement("Slotgroup"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Slotgroup"))
     {
         if (xmlElem->Attribute("name"))
-            mvElement.push_back(new GuiElementSlot(xmlElem, this));
+            mvElement.push_back(new GuiElementSlotGroup(xmlElem, this));
     }
     for (xmlElem = xmlRoot->FirstChildElement("Statusbar"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Statusbar"))
     {

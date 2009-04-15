@@ -69,7 +69,6 @@ private:
     bool mHorizontal, mDragging;
     bool mMouseOver, mMouseButDown;
     float mPixelScrollToLineScroll; /**< When slider scrolls 1 pixel, the parent element must scroll x lines. **/
-    Ogre::uint32 *mGfxBuffer;
     Ogre::uint32 mColorBackground, mColorBorderline, mColorBarPassive, mColorBarM_Over, mColorBarActive;
     class GuiElementButton *mButScrollUp, *mButScrollDown;
     // ////////////////////////////////////////////////////////////////////

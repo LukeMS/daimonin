@@ -34,6 +34,10 @@ class GuiElement
 {
 public:
     // ////////////////////////////////////////////////////////////////////
+    // Variables / Constants.
+    // ////////////////////////////////////////////////////////////////////
+    enum { MIN_SIZE = 1<<2 };              /**< Minimal graphic size of an element. **/
+    // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     GuiElement(TiXmlElement *xmlElement, void *parent);
@@ -50,7 +54,6 @@ public:
     int getHeight()  { return mHeight; }
     bool Visible()   { return mVisible;}
     bool setState(int state);              /**< Returns true if the state was changed. **/
-    void setVisible(bool visible);
     void setPosition(int x, int y)
     {
         mPosX = x;
@@ -60,15 +63,11 @@ public:
     {
         return (x > mPosX && x < mPosX + mWidth && y > mPosY && y < mPosY + mHeight);
     }
-    // ////////////////////////////////////////////////////////////////////
-    // Variables / Constants.
-    // ////////////////////////////////////////////////////////////////////
 
 protected:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    enum { MIN_SIZE = 2 };                 /**< Minimal size of an element. **/
     int mIndex;                            /**< Unique number. -1 means its a bg-gfx (no interaction) **/
     unsigned short mPosX, mPosY;           /**< Pixeloffset from the upper-left corner of the window. **/
     unsigned short mWidth, mHeight;        /**< Dimension of this element. **/
