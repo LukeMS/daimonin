@@ -67,9 +67,8 @@ GuiElementScrollbar::GuiElementScrollbar(TiXmlElement *xmlElement, void *parent,
     mDragging = false;
     mMouseOver = false;
     mMouseButDown = false;
-    mGfxBuffer = 0; // Buffer to hold the pixel information.
     mSliderPos = 0;
-    resize(mWidth, mHeight);
+    resize(-1, -1);
 }
 
 //================================================================================================
@@ -77,7 +76,6 @@ GuiElementScrollbar::GuiElementScrollbar(TiXmlElement *xmlElement, void *parent,
 //================================================================================================
 GuiElementScrollbar::~GuiElementScrollbar()
 {
-    delete[] mGfxBuffer;
     delete mButScrollUp;
     delete mButScrollDown;
 }
@@ -217,9 +215,11 @@ void GuiElementScrollbar::updateSliderSize(int sizeStrBuffer, int scrollOffset, 
 //================================================================================================
 void GuiElementScrollbar::draw()
 {
-    int x1, x2, y1, y2, w;
-    w = mStopX-mStartX;
+    int x1, x2, y1, y2;
+    int w = mStopX-mStartX;
+    int h = mStopY-mStartY;
     uint32 color;
+    uint32 *dst = GuiManager::getSingleton().getBuildBuffer();
     switch (mState)
     {
         case GuiImageset::STATE_ELEMENT_PUSHED:
@@ -246,14 +246,28 @@ void GuiElementScrollbar::draw()
             for (int x = SLIDER_INNER_OFFSET; x < mMaxSliderSize; ++x)
             {
                 if (x > x1 && x < x2)
-                    mGfxBuffer[y * w + x] = color;
+                    dst[y * w + x] = color;
                 else
-                    mGfxBuffer[y * w + x] = mColorBackground;
+                    dst[y * w + x] = mColorBackground;
             }
         }
     }
     else
     {
+        // Background.
+        for (int i= 0; i < w*h; ++i) dst[i] = mColorBackground;
+        // Horizontal borderlines.
+        for (int x = 1; x < w-1; ++x)
+        {
+            dst[   1 *w +x] = mColorBorderline;
+            dst[(h-2)*w +x] = mColorBorderline;
+        }
+        // Vertical borderlines.
+        for (int y = 2; y < h-2; ++y)
+        {
+            dst[y*w +  1] = mColorBorderline;
+            dst[y*w +w-2] = mColorBorderline;
+        }
         x1 = SLIDER_INNER_OFFSET +1;
         x2 = w - SLIDER_INNER_OFFSET -1;
         y1 = mSliderPos + SLIDER_INNER_OFFSET;
@@ -263,15 +277,15 @@ void GuiElementScrollbar::draw()
             for (int x = x1; x < x2; ++x)
             {
                 if (y > y1 && y < y2)
-                    mGfxBuffer[y * w + x] = color;
+                    dst[y * w + x] = color;
                 else
-                    mGfxBuffer[y * w + x] = mColorBackground;
+                    dst[y * w + x] = mColorBackground;
             }
         }
     }
     // Blit.
     mParent->getTexture()->getBuffer()->blitFromMemory(
-        PixelBox(mStopX- mStartX, mStopY-mStartY, 1, PF_A8B8G8R8, mGfxBuffer),
+        PixelBox(mStopX- mStartX, mStopY-mStartY, 1, PF_A8B8G8R8, dst),
         Box(mStartX, mStartY, mStopX, mStopY));
 }
 
@@ -280,9 +294,9 @@ void GuiElementScrollbar::draw()
 //================================================================================================
 void GuiElementScrollbar::resize(int newWidth, int newHeight)
 {
+    if (newWidth == mWidth && newHeight == mHeight) return;
     if (newWidth < 0) newWidth = mWidth;
     if (newHeight< 0) newHeight= mHeight;
-    if (newWidth == mWidth && newHeight == mHeight && mGfxBuffer) return;
     if (mHorizontal)
     {
         mStartX = mPosX + mButScrollDown->getWidth();
@@ -305,25 +319,7 @@ void GuiElementScrollbar::resize(int newWidth, int newHeight)
         mMaxSliderSize = (mStopY -mStartY - SLIDER_INNER_OFFSET-1);
         mSliderSize = (mSliderSize*newHeight) /mHeight;
     }
-    int w = mStopX-mStartX;
-    int h = mStopY-mStartY;
-    delete[] mGfxBuffer;
-    mGfxBuffer = new uint32[w*h];
-
-    // Background.
-    for (int xy = 0; xy < w*h; ++xy) mGfxBuffer[xy] = mColorBackground;
-    // Horizontal borderlines.
-    for (int x = 1; x < w-1; ++x)
-    {
-        mGfxBuffer[   1 *w +x] = mColorBorderline;
-        mGfxBuffer[(h-2)*w +x] = mColorBorderline;
-    }
-    // Vertical borderlines.
-    for (int y = 2; y < h-2; ++y)
-    {
-        mGfxBuffer[y*w +  1] = mColorBorderline;
-        mGfxBuffer[y*w +w-2] = mColorBorderline;
-    }
+    GuiManager::getSingleton().resizeBuildBuffer((mStopX-mStartX)*(mStopY-mStartY));
     if (mButScrollUp)   mButScrollUp->draw();
     if (mButScrollDown) mButScrollDown->draw();
     //updateSliderSize(1, 1);

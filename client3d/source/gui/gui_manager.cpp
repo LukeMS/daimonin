@@ -42,8 +42,13 @@ const char *GuiManager::OVERLAY_RESOURCE_NAME   = "_Overlay";
 const char *GuiManager::ELEMENT_RESOURCE_NAME   = "_OverlayElement";
 const char *GuiManager::TEXTURE_RESOURCE_NAME   = "_Texture";
 const char *GuiManager::MATERIAL_RESOURCE_NAME  = "_Material";
-const char *GuiManager::FILE_DESCRIPTION_WINDOWS  = "GUI_Windows.xml";
-const char *GuiManager::FILE_DESCRIPTION_IMAGESET = "GUI_ImageSet.xml";
+
+const char *GuiManager::FILE_TXT_WINDOWS  = "GUI_Windows.xml";
+const char *GuiManager::FILE_TXT_IMAGESET = "GUI_ImageSet.xml";
+const char *GuiManager::FILE_ITEM_ATLAS   = "Atlas_Gui_Items.png";
+const char *GuiManager::FILE_ITEM_UNKNOWN = "item_noGfx.png";
+const char *GuiManager::FILE_SYSTEM_FONT  = "SystemFont.png";
+
 const uint32 GuiManager::COLOR_BLACK = 0xff000000;
 const uint32 GuiManager::COLOR_BLUE  = 0xff0000ff;
 const uint32 GuiManager::COLOR_GREEN = 0xff00ff00;
@@ -58,7 +63,6 @@ const int TOOLTIP_SIZE = 1 << 8;
 const unsigned long TOOLTIP_DELAY = 2000; // Wait x ms before showing the tooltip.
 const uint32 BORDER_COLOR = 0xff888888;
 const uint32 BACKGR_COLOR = 0xff444488;
-const char *FILE_SYSTEM_FONT = "SystemFont.png";
 const char *RESOURCE_MCURSOR = "GUI_MCursor";
 const char *RESOURCE_TOOLTIP = "GUI_Tooltip";
 const char *RESOURCE_WINDOW  = "GUI_Window";
@@ -255,7 +259,7 @@ int GuiManager::getElementPressed()
 //================================================================================================
 // .
 //================================================================================================
-void GuiManager::Init(int w, int h, bool createMedia, bool printInfo, const char *soundActionFailed, const char *pathDescription, const char *pathTextures)
+void GuiManager::Init(int w, int h, bool createMedia, bool printInfo, const char *soundActionFailed, const char *pathTxt, const char *pathGfx, const char *pathFonts, const char *pathItems)
 {
     Logger::log().headline() << "Init GUI";
     mDragSrcWin     = NO_ACTIVE_WINDOW;
@@ -265,11 +269,13 @@ void GuiManager::Init(int w, int h, bool createMedia, bool printInfo, const char
     mScreenHeight   = h;
     mCreateMedia    = createMedia;
     mPrintInfo      = printInfo;
-    mSoundWrongInput=soundActionFailed;
-    mPathDescription= pathDescription;
-    mPathTextures   = pathTextures; //mPathTextures += PATH_EXTENSION;
     mBuildBuffer    = 0;
     mTooltipDelay   = 0;
+    mSoundWrongInput=soundActionFailed;
+    mPathTextures      = pathGfx;
+    mPathDescription   = pathTxt;
+    mPathTexturesFonts = pathFonts;
+    mPathTexturesItems = pathItems;
     String strTexture = RESOURCE_TOOLTIP; strTexture+= TEXTURE_RESOURCE_NAME;
     mTexture = TextureManager::getSingleton().createManual(strTexture, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
                TEX_TYPE_2D, TOOLTIP_SIZE, TOOLTIP_SIZE, 0, PF_A8R8G8B8, TU_STATIC_WRITE_ONLY, getLoader());
@@ -279,7 +285,7 @@ void GuiManager::Init(int w, int h, bool createMedia, bool printInfo, const char
     // If requested (by cmd-line) print all element names.
     if (mPrintInfo)
     {
-        Logger::log().info() << "These elements are currently known and can be used in " << FILE_DESCRIPTION_WINDOWS<< ":";
+        Logger::log().info() << "These elements are currently known and can be used in " << FILE_TXT_WINDOWS<< ":";
         for (int i =0; i < GUI_ELEMENTS_SUM; ++i) Logger::log().warning() << mStateStruct[i].name;
     }
     // Load the default font.
@@ -427,13 +433,13 @@ void GuiManager::parseWindows()
     // ////////////////////////////////////////////////////////////////////
     // Parse the imageset.
     // ////////////////////////////////////////////////////////////////////
-    String file = mPathDescription + FILE_DESCRIPTION_IMAGESET;
+    String file = mPathDescription + FILE_TXT_IMAGESET;
     GuiImageset::getSingleton().parseXML(file.c_str(), mCreateMedia);
     // ////////////////////////////////////////////////////////////////////
     // Parse the windows.
     // ////////////////////////////////////////////////////////////////////
     TiXmlElement *xmlRoot, *xmlElem;
-    file = mPathDescription + FILE_DESCRIPTION_WINDOWS;
+    file = mPathDescription + FILE_TXT_WINDOWS;
     TiXmlDocument doc(file.c_str());
     const char *valString;
     // Check for a working window description.

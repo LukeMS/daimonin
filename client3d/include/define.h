@@ -24,15 +24,22 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef DEFINE_H
 #define DEFINE_H
 
-const char PRG_NAME[] =  "Daimonin Ogre3d Client";
+const char PRG_NAME[] = "Daimonin Ogre3d Client";
 //================================================================================================
-// All pathes MUST be placed here!
+// All pathes of the whole project MUST be placed here!
 //================================================================================================
-const char PATH_DESCRIPTION[]        = "./media/xml/";
-const char PATH_TEXTURES[]           = "./media/textures/";
-const char PATH_SAMPLES[]            = "./media/sound/";
-//const char PATH_MODEL_DESCRIPTION[]  = "./media/models/";
+const char PATH_SND[]       = "./media/sound/";
+const char PATH_GFX[]       = "./media/textures/";
+const char PATH_GFX_FONTS[] = "./media/textures/fonts/";
+const char PATH_GFX_ITEMS[] = "./media/textures/items/"; /**< The item graphics to build the Item-Atlas-Texture. **/
+const char PATH_GFX_TILES[] = "./media/textures/tiles/"; /**< The tile graphics to build the Item-Atlas-Texture. **/
+const char PATH_TXT[]       = "./media/xml/";
+const char PATH_SRV[]       = "./srv_files/";
 
+//================================================================================================
+// Filenames
+//================================================================================================
+const char FILE_NPC_VISUALS[]        = "NPC_Visuals.xml";
 const char FILE_OPTIONS[]            = "./options.dat";
 const char FILE_DAIMONIN_P0[]        = "./daimonin.p0";
 const char FILE_BMAPS_P0[]           = "./bmaps.p0";
@@ -48,7 +55,5 @@ const char FILE_BMAPS_CONVERT[]      = "./srv_files/bmaps_convert";     /**< Thi
 const char FILE_BMAPS_CLIENT3D[]     = "./srv_files/bmaps_3d";          /**< The final client3d object file */
 //const char FILE_BMAPS_TMP[]          = "./srv_files/bmaps.tmp";
 //const char FILE_ANIMS_TMP[]          = "./srv_files/anims.tmp";
-const char FILE_NPC_VISUALS[]        = "./media/xml/NPC_Visuals.xml";
-const char PATH_TILE_TEXTURES[]      = "./media/textures/tiles/";
 
 #endif

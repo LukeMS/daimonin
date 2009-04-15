@@ -142,7 +142,7 @@ void Sound::createDummy()
         0x01,0x00,0x08,0x00,0x00,0x00,0x66,0x61,0x63,0x74,0x04,0x00,0x00,0x00,0x8E,0x00,
         0x00,0x00,0x64,0x61,0x74,0x61,0x8E,0x00,0x00,0x00,0x80,0x80,0x80,0x80,0x80,0x80
     };
-    std::string filename = PATH_SAMPLES;
+    std::string filename = PATH_SND;
     filename += mSoundFiles[DUMMY].filename;
     ofstream out(filename.c_str(), ios::binary);
     if (!out)
@@ -158,7 +158,7 @@ void Sound::createDummy()
 //================================================================================================
 void Sound::createStream(int id)
 {
-    std::string filename = PATH_SAMPLES;
+    std::string filename = PATH_SND;
     filename += mSoundFiles[id].filename;
     int options = FMOD_HARDWARE;
     options |= mSoundFiles[id].isMusic?FMOD_LOOP_NORMAL:FMOD_LOOP_OFF;
@@ -190,7 +190,7 @@ void Sound::playStream(int id)
 void Sound::playStream(const char *file, bool loop)
 {
     if (!mInit || !file) return;
-    std::string filename = PATH_SAMPLES;
+    std::string filename = PATH_SND;
     filename+= file;
     int options = FMOD_HARDWARE | FMOD_2D;
     options |= (loop)?FMOD_LOOP_NORMAL:FMOD_LOOP_OFF;

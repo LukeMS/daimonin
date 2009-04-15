@@ -63,14 +63,15 @@ void ObjectVisuals::Init()
     // Check for a working description file.
     // ////////////////////////////////////////////////////////////////////
     TiXmlElement *xmlRoot, *xmlElem, *xmlColor;
-    TiXmlDocument doc(FILE_NPC_VISUALS);
+    String filename = PATH_TXT; filename+= FILE_NPC_VISUALS;
+    TiXmlDocument doc(filename.c_str());
     const char *strTemp;
     if (!doc.LoadFile() || !(xmlRoot = doc.RootElement()))
     {
         Logger::log().error() << "XML-File '" << FILE_NPC_VISUALS << "' is broken or missing.";
         return;
     }
-    Logger::log().info() << "Parsing the ImageSet file '" << FILE_NPC_VISUALS << "'.";
+    Logger::log().info() << "Parsing the file '" << FILE_NPC_VISUALS << "'.";
     // ////////////////////////////////////////////////////////////////////
     // Parse the gfx coordinates.
     // ////////////////////////////////////////////////////////////////////

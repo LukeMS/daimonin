@@ -24,14 +24,22 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "logger.h"
 #include "gui_graphic.h"
 #include "gui_element.h"
+#include "gui_textout.h"
 
 using namespace Ogre;
 
 //================================================================================================
 //
 //================================================================================================
-int GuiElement::sendMsg(int, const char *, uint32)
+int GuiElement::sendMsg(int message, const char *, uint32 param)
 {
+    if (message == GuiManager::MSG_SET_VISIBLE)
+    {
+        bool visible = param?true:false;
+        if (visible == mVisible) return 0;
+        mVisible = visible;
+        draw();
+    }
     return 0;
 }
 
@@ -65,26 +73,22 @@ int GuiElement::keyEvent(const int, const unsigned int)
 GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
 {
     TiXmlElement *xmlElement;
-    String strValue;
     const char *tmp;
     int maxX, maxY;
     // Set default values.
     mState = GuiImageset::STATE_ELEMENT_DEFAULT;
-    mFontNr= 0;
-    mWidth = MIN_SIZE;
-    mHeight= MIN_SIZE;
     mVisible = true;
-    mGfxSrc    = 0; // No gfx is defined (fallback to color fill).
-    mFillColor = 0xffffffff;
     mParent= (GuiWindow*)parent;
     mParent->getSize(maxX, maxY);
+    mWidth = mHeight = 0;
     // ////////////////////////////////////////////////////////////////////
     // Parse the element.
     // ////////////////////////////////////////////////////////////////////
     mIndex = GuiManager::getSingleton().getElementIndex(xmlElem->Attribute("name"), mParent->getID(), mParent->getSumElements());
     // ////////////////////////////////////////////////////////////////////
-    // Parse the background image (if given).
+    // Parse the background image.
     // ////////////////////////////////////////////////////////////////////
+    mGfxSrc = 0; // No gfx defined (fallback to color fill).
     if ((xmlElement = xmlElem->FirstChildElement("Image")))
     {
         if ((tmp = xmlElement->Attribute("name")))
@@ -96,14 +100,15 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
             }
             else
             {
-                Logger::log().warning() << "Image " << tmp << " was defined in '" << GuiManager::FILE_DESCRIPTION_WINDOWS
-                << "' but the gfx-data in '" << GuiManager::FILE_DESCRIPTION_IMAGESET << "' is missing.";
+                Logger::log().warning() << "Image " << tmp << " was defined in '" << GuiManager::FILE_TXT_WINDOWS
+                << "' but the gfx-data in '" << GuiManager::FILE_TXT_IMAGESET << "' is missing.";
             }
         }
     }
     // ////////////////////////////////////////////////////////////////////
-    // Parse the color (if given).
+    // Parse the fillcolor.
     // ////////////////////////////////////////////////////////////////////
+    mFillColor = GuiManager::COLOR_WHITE;
     if ((xmlElement = xmlElem->FirstChildElement("Color")))
     {
         // PixelFormat: ARGB.
@@ -112,8 +117,11 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
         if ((tmp = xmlElement->Attribute("blue" ))) mFillColor+= atoi(tmp);
         if ((tmp = xmlElement->Attribute("alpha"))) mFillColor+= atoi(tmp) << 24;
     }
-
-    if ((tmp = xmlElem->Attribute("font"))) mFontNr  = atoi(tmp);
+    // ////////////////////////////////////////////////////////////////////
+    // Parse the font number.
+    // ////////////////////////////////////////////////////////////////////
+    tmp = xmlElem->Attribute("font");
+    mFontNr = tmp?atoi(tmp):GuiTextout::FONT_SYSTEM;
     // ////////////////////////////////////////////////////////////////////
     // Parse the position.
     // ////////////////////////////////////////////////////////////////////
@@ -122,39 +130,40 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
     {
         if ((tmp = xmlElement->Attribute("x"))) mPosX = atoi(tmp);
         if ((tmp = xmlElement->Attribute("y"))) mPosY = atoi(tmp);
+        if (mPosX > maxX - MIN_SIZE/2) mPosX = maxX - MIN_SIZE/2;
+        if (mPosY > maxY - MIN_SIZE/2) mPosY = maxY - MIN_SIZE/2;
     }
-    if (mPosX > maxX-2) mPosX = maxX-2;
-    if (mPosY > maxY-2) mPosY = maxY-2;
     // ////////////////////////////////////////////////////////////////////
-    // Parse the size (if given).
+    // Parse the size.
     // ////////////////////////////////////////////////////////////////////
     if ((xmlElement = xmlElem->FirstChildElement("Size")))
     {
         if ((tmp = xmlElement->Attribute("width")))  mWidth = atoi(tmp);
         if ((tmp = xmlElement->Attribute("height"))) mHeight= atoi(tmp);
     }
-    if (mPosX + mWidth >= maxX) mWidth = maxX-mPosX;
-    else if (mWidth < MIN_SIZE) mWidth = MIN_SIZE;
-    if (mPosY + mHeight>= maxY) mHeight= maxY-mPosY;
-    else if (mHeight< MIN_SIZE) mHeight= MIN_SIZE;
+    if (mWidth < MIN_SIZE) mWidth = MIN_SIZE;
+    if (mPosX + mWidth > maxX) mWidth = maxX - mPosX;
+    if (mHeight< MIN_SIZE) mHeight= MIN_SIZE;
+    if (mPosY + mHeight> maxY) mHeight= maxY - mPosY;
     GuiManager::getSingleton().resizeBuildBuffer(mWidth*mHeight);
     // ////////////////////////////////////////////////////////////////////
-    // Parse the label (if given).
+    // Parse the label.
     // ////////////////////////////////////////////////////////////////////
-    mLabelPosX = 0; mLabelPosY = 0; mLabelFontNr = 0, mLabelColor = 0x00ffffff;
+    mLabelPosX  = mLabelPosY = 0;
+    mLabelColor = GuiManager::COLOR_WHITE;
+    mLabelFontNr= GuiTextout::FONT_SYSTEM;
     if ((xmlElement = xmlElem->FirstChildElement("Label")))
     {
-        if ((tmp = xmlElement->Attribute("x"))) mLabelPosX  = (unsigned short)atoi(tmp);
-        if ((tmp = xmlElement->Attribute("y"))) mLabelPosY  = (unsigned short)atoi(tmp);
-        if (mLabelPosX >= maxX-2) mLabelPosX = 0;
-        if (mLabelPosY >= maxY-2) mLabelPosY = 0;
+        if ((tmp = xmlElement->Attribute("x"))) mLabelPosX = (unsigned short)atoi(tmp);
+        if ((tmp = xmlElement->Attribute("y"))) mLabelPosY = (unsigned short)atoi(tmp);
+        if (mLabelPosX > maxX - MIN_SIZE/2) mLabelPosX = maxX - MIN_SIZE/2;
+        if (mLabelPosY > maxY - MIN_SIZE/2) mLabelPosY = maxY - MIN_SIZE/2;
         if ((tmp = xmlElement->Attribute("font")))  mLabelFontNr= atoi(tmp);
         if ((tmp = xmlElement->Attribute("red")))   mLabelColor+= atoi(tmp) << 16;
         if ((tmp = xmlElement->Attribute("green"))) mLabelColor+= atoi(tmp) << 8;
         if ((tmp = xmlElement->Attribute("blue")))  mLabelColor+= atoi(tmp);
         if ((tmp = xmlElement->Attribute("text")))  mStrLabel = tmp;
     }
-    mVisible = true;
 }
 
 //================================================================================================
@@ -168,16 +177,6 @@ bool GuiElement::setState(int state)
         return true;
     }
     return false;
-}
-
-//================================================================================================
-// .
-//================================================================================================
-void GuiElement::setVisible(bool visible)
-{
-    if (visible == mVisible) return;
-    mVisible = visible;
-    draw();
 }
 
 //================================================================================================

@@ -56,10 +56,7 @@ GuiImageset::StateNames GuiImageset::mElementState[STATE_ELEMENT_SUM]=
     { "Passive",   STATE_ELEMENT_PASSIVE },
 };
 
-const char FILE_ITEM_TEXTURE_ATLAS[]   = "Atlas_Gui_Items";
-const char PATH_ITEM_DESCRIPTION[]     = "items/";
-const char UNKONWN_ITEM_GFX_FILENAME[] = "item_noGfx.png";
-const int  UNKNOWN_ITEM_GFX = 0;
+const int UNKNOWN_ITEM_GFX = 0;
 
 //================================================================================================
 // .
@@ -70,7 +67,7 @@ GuiImageset::~GuiImageset()
     {
 #ifdef D_DEBUG
         if (!(*i)->isUsed)
-            Logger::log().info() << "Element '" << (*i)->name << "' is defined in " << GuiManager::FILE_DESCRIPTION_IMAGESET << " but is not used by the GUI.";
+            Logger::log().info() << "Element '" << (*i)->name << "' is defined in " << GuiManager::FILE_TXT_IMAGESET << " but is not used by the GUI.";
 #endif
         delete (*i);
     }
@@ -216,13 +213,14 @@ GuiImageset::gfxSrcEntry *GuiImageset::getStateGfxPositions(const char* guiImage
 //================================================================================================
 void GuiImageset::parseItems(bool createItemAtlas)
 {
-    String fileAtlasGfx = FILE_ITEM_TEXTURE_ATLAS; fileAtlasGfx+= ".png";
-    String fileAtlasTxt = GuiManager::getSingleton().getPathTextures() + PATH_ITEM_DESCRIPTION + FILE_ITEM_TEXTURE_ATLAS + ".txt";
-    String path = GuiManager::getSingleton().getPathTextures() + PATH_ITEM_DESCRIPTION;
+    String path = GuiManager::getSingleton().getPathItems();
+    String fileAtlasGfx = GuiManager::FILE_ITEM_ATLAS;
+    String fileAtlasTxt = path + GuiManager::FILE_ITEM_ATLAS;
+    fileAtlasTxt.replace(fileAtlasTxt.size()-3, fileAtlasTxt.size(), "txt");
     // ////////////////////////////////////////////////////////////////////
     // Create the item texture atlas.
     // ////////////////////////////////////////////////////////////////////
-    //if (createItemAtlas)
+    if (createItemAtlas)
     {
         bool unknownGfxFound = false;
         std::vector<std::string> itemFilename;
@@ -233,17 +231,14 @@ void GuiImageset::parseItems(bool createItemAtlas)
         HANDLE handle=FindFirstFile(filename.c_str(), &FindFileData);
         while (handle && found)
         {
-            if (!strstr(FindFileData.cFileName, FILE_ITEM_TEXTURE_ATLAS))
+            // Force the unknown item gfx to be the first gfx.
+            if (!strcmp(FindFileData.cFileName, GuiManager::FILE_ITEM_UNKNOWN))
             {
-                // Force the unknown item gfx to be the first gfx.
-                if (!strcmp(FindFileData.cFileName, UNKONWN_ITEM_GFX_FILENAME))
-                {
-                    itemFilename.insert(itemFilename.begin(), FindFileData.cFileName);
-                    unknownGfxFound = true;
-                }
-                else
-                    itemFilename.push_back(FindFileData.cFileName);
+                itemFilename.insert(itemFilename.begin(), FindFileData.cFileName);
+                unknownGfxFound = true;
             }
+            else
+                itemFilename.push_back(FindFileData.cFileName);
             found = FindNextFile(handle, &FindFileData);
         }
 #else
@@ -251,10 +246,10 @@ void GuiImageset::parseItems(bool createItemAtlas)
         DIR *dir = opendir(path.c_str()); // Open the current directory
         while ((dir_entry = readdir(dir)))
         {
-            if (strstr(dir_entry->d_name, ".png") && !strstr(dir_entry->d_name, FILE_ITEM_TEXTURE_ATLAS))
+            if (strstr(dir_entry->d_name, ".png"))
             {
                 // Force the unknown item gfx to be the first gfx.
-                if (!strcmp(dir_entry->d_name, UNKONWN_ITEM_GFX_FILENAME))
+                if (!strcmp(dir_entry->d_name, GuiManager::FILE_ITEM_UNKNOWN))
                 {
                     itemFilename.insert(itemFilename.begin(), dir_entry->d_name);
                     unknownGfxFound = true;
@@ -272,7 +267,7 @@ void GuiImageset::parseItems(bool createItemAtlas)
         }
         if (!unknownGfxFound)
         {
-            Logger::log().error() << "Could not find the gfx for an unknown item (filename: " << UNKONWN_ITEM_GFX_FILENAME
+            Logger::log().error() << "Could not find the gfx for an unknown item (filename: " << GuiManager::FILE_ITEM_UNKNOWN
             << " in folder " << path << ").";
         }
         Image itemImage, itemAtlas;
@@ -303,7 +298,7 @@ void GuiImageset::parseItems(bool createItemAtlas)
         itemAtlas.save(GuiManager::getSingleton().getPathTextures() + fileAtlasGfx);
         std::ofstream txtFile(fileAtlasTxt.c_str(), std::ios::out | std::ios::binary);
         txtFile << "# This file holds the content of the image-texture-atlas." << std::endl;
-        txtFile << "# The filename for an undefined/missing gfx must be: " << UNKONWN_ITEM_GFX_FILENAME << std::endl;
+        txtFile << "# The filename for an undefined/missing gfx must be: " << GuiManager::FILE_ITEM_UNKNOWN << std::endl;
         if (txtFile)
         {
             for (unsigned int i = 0; i < itemFilename.size(); ++i)

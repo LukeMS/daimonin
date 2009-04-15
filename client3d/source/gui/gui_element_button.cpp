@@ -34,9 +34,6 @@ int GuiElementButton::sendMsg(int message, const char *text, uint32 param)
 {
     switch (message)
     {
-        case GuiManager::MSG_SET_VISIBLE:
-            setVisible(param?true:false);
-            return 0;
         case GuiManager::MSG_SET_TEXT:
             if (mStrLabel != text)
             {

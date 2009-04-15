@@ -38,10 +38,8 @@ public:
     GuiElementTextbox(TiXmlElement *xmlElement, void *parent);
     ~GuiElementTextbox() {}
     int sendMsg(int message, const char *text, Ogre::uint32 param);
-    int mouseEvent(int MouseAction, int x, int y, int z);
-    int keyEvent(const int *keyChar, const unsigned char *key);
     void draw();
-    void setLabel(const char*newText)
+    void setLabel(const char *newText)
     {
         mStrLabel = newText;
         draw();
@@ -53,7 +51,6 @@ private:
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     Ogre::String mStrTooltip;
-    bool mMouseOver, mMouseButDown;
     bool mHideText;
 };
 
