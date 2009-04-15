@@ -131,7 +131,7 @@ int player_save(object *op)
     else
     {
         force = present_arch_in_ob(at, op);
-    
+
         if (force)
             drain_level = force->level;
     }
@@ -174,7 +174,7 @@ int player_save(object *op)
 
     /* we back up the old file - then we try to move our new file
      * on the position of the old, just backuped one.
-     * If that fails, we fallback to our backup and try to put 
+     * If that fails, we fallback to our backup and try to put
      * it back
      */
     if(have_file) /* backup only if there is an old file */
@@ -191,7 +191,7 @@ int player_save(object *op)
 
         LOG(llevBug,"BUG: tmpfile: %s to filename: %s renaming failed: errno %d\n", tmpfilename, filename, errno);
         LOG(llevDebug,"Restoring backupfile %s\n", backupfile);
-        
+
         if(!have_file) /* failed to write file? no old file? give up */
             return 0;
 
@@ -339,6 +339,13 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
 
 #ifdef USE_CHANNELS
     int     with_channels = FALSE;
+    int     channelcount=0;
+    /* we limit channels in save file for now to 256 entrys */
+    char    chantemp[256][MAX_BUF];
+
+    char channelname[MAX_CHANNEL_NAME+1];
+    char shortcut;
+    unsigned long mute=0;
 #endif
 #ifdef PLUGINS
     CFParm      CFP;
@@ -450,12 +457,12 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
         fclose(fp);
         return ADDME_MSG_INTERNAL; /* addme_fail error with internal! */
     }
-    
+
     /* Here we go.. at this point we will put this player on the map, whatever happens
-     * If needed we overrule bogus loaded stats but we WILL put a valid player in the 
+     * If needed we overrule bogus loaded stats but we WILL put a valid player in the
      * game. That also means we don't deal with freeing pl or objects here anymore.
      * We put a valid player in the game and after this the higher engine function
-     * will take care about this player. 
+     * will take care about this player.
      */
 
     pl = get_player_struct(); /* will return the struct with safe base values! */
@@ -578,15 +585,11 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
 #ifdef USE_CHANNELS
         else if (!strcmp(buf,"channels"))
         {
-            char channelname[MAX_CHANNEL_NAME+1];
-            char shortcut;
-            unsigned long mute=0;
-            with_channels=TRUE;
-            for (i=1; i<= value; i++)
+            with_channels = TRUE;
+            channelcount=value;
+            for (i=1; (i<= value) && (i<256); i++)
             {
-                fscanf(fp,"%s %c %d\n",channelname,&shortcut, &mute);
-                /* lets only store the channels first - lets do the login AFTER we closed the stream */
-              /*  loginAddPlayerToChannel(pl, channelname, shortcut, mute);*/
+                fgets(chantemp[i-1], MAX_BUF, fp);
             }
         }
 #endif
@@ -680,7 +683,7 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
     {
         pl->p_ver = PLAYER_FILE_VERSION_DEFAULT; /* new version */
         /* do some stuff here is needed */
-    } 
+    }
 
     /* at this moment, the inventory is reverse loaded.
      * Lets exchange it here.
@@ -730,6 +733,7 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
         set_dragon_name(op, abil, skin);
     }
     */
+
 
     CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
     FIX_PLAYER(op ,"check login - first fix");
@@ -823,15 +827,24 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
     GlobalEvent(&CFP);
 #endif
 
-    /* if we add more BORN, "first time used / first time loaded" stuff, do it before this line */
-    pl->state &= ~ST_BORN;
-
 #ifdef USE_CHANNELS
     /* channel-system: we check if the playerfile has the channels tag */
     /* if not, add all the default channels */
-    if (!with_channels)
+    /* ALSO we check for the BORN flag, if its set the player is freshly
+       created, so we add the default channels as well */
+    if ((!with_channels) || (pl->state & ST_BORN))
         addDefaultChannels(pl);
+
+    /* defered channeljoin */
+    for (i=1; (i<= channelcount) && (i<256); i++)
+    {
+        sscanf(chantemp[i-1],"%s %c %d\n",channelname,&shortcut, &mute);
+        loginAddPlayerToChannel(pl, channelname, shortcut, mute);
+    }
 #endif
+
+    /* if we add more BORN, "first time used / first time loaded" stuff, do it before this line */
+    pl->state &= ~ST_BORN;
 
     /* and finally the player appears on the map */
     enter_map_by_name(op, pl->maplevel, pl->orig_map, pl->map_x, pl->map_y, pl->map_status);
@@ -893,13 +906,13 @@ addme_login_msg player_create(NewSocket *ns, player **pl_ret, char *name, int ra
     int             skillnr[]       = {SK_SLASH_WEAP, SK_MELEE_WEAPON, SK_CLEAVE_WEAP, SK_PIERCE_WEAP};
     char            *skillitem[]     = {"shortsword", "mstar_small", "axe_small", "dagger_large"};
 
-    /* do some sanity checks. *ns, *pl and the name are checked by caller */ 
+    /* do some sanity checks. *ns, *pl and the name are checked by caller */
 
     /* race & gender values in range? This values MUST fit or client is hacked or damaged */
     if(race < 0 || race >= settings.player_races || gender < 0 || gender >= MAX_RACE_GENDER)
         return ADDME_MSG_DISCONNECT;
 
-    /* check we have a valid player race object arch. MUST fit too */ 
+    /* check we have a valid player race object arch. MUST fit too */
     if(!(p_arch = player_arch_list[race].p_arch[gender]))
         return ADDME_MSG_DISCONNECT;
 
@@ -951,7 +964,7 @@ addme_login_msg player_create(NewSocket *ns, player **pl_ret, char *name, int ra
     SET_ANIMATION(op, 4 * (NUM_ANIMATIONS(op) / NUM_FACINGS(op))); /* So player faces south */
     CLEAR_FLAG(op, FLAG_WIZ);
     FREE_AND_CLEAR_HASH2(op->msg);
-    op->carrying = sum_weight(op); 
+    op->carrying = sum_weight(op);
 
     CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
     /* this is more or less a fake flagging - ensure you delete it before object release */

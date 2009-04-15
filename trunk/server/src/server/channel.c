@@ -735,9 +735,9 @@ void sendChannelEmote(player *pl,struct player_channel *pl_channel, char *params
 void addDefaultChannels(player *pl)
 {
 //    loginAddPlayerToChannel(pl,"Auction",0,-1,0);
-    loginAddPlayerToChannel(pl,"Quest",0,-1);
-    loginAddPlayerToChannel(pl,"General",0,-1);
-    loginAddPlayerToChannel(pl,"Help",0,-1);
+    loginAddPlayerToChannel(pl,"Quest",0,0);
+    loginAddPlayerToChannel(pl,"General",0,0);
+    loginAddPlayerToChannel(pl,"Help",0,0);
     pl->channel_count=3;
     return;
 }
