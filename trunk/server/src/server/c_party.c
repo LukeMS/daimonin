@@ -600,6 +600,23 @@ void party_client_group_update(object *member, int flag)
 	/* broadcast command to all members */
 	sockbuf = SOCKBUF_COMPOSE( BINARY_CMD_GROUP_UPDATE, NULL, buf, SOCKBUF_DYNAMIC, 0);
     for(tmp=plm->group_leader;tmp;tmp=CONTR(tmp)->group_next)
-		SOCKBUF_ADD_TO_SOCKET(&CONTR(tmp)->socket, sockbuf); /* broadcast the sockbuf */
+    {
+        /* Alderan, 2009-04-17:
+         * don't ask me why, but if we have a WorkingBuffer, and after that attach a
+         * Broadcast Buffer, the working buffer isn't send to the client.
+         * So we have to make this difference here
+         * It seems that problem is only in esrv_update_stats(), which is called in
+         * THE main socket loop doeric_server.
+         * MT please have a look
+         */
+        if (tmp==member)
+        {
+            SOCKBUF_REQUEST_BUFFER(&CONTR(member)->socket, strlen(buf)+1);
+            SockBuf_AddString(ACTIVE_SOCKBUF(&CONTR(member)->socket), buf, strlen(buf)+1);
+            SOCKBUF_REQUEST_FINISH(&CONTR(member)->socket, BINARY_CMD_GROUP_UPDATE, SOCKBUF_DYNAMIC);
+        }
+        else
+            SOCKBUF_ADD_TO_SOCKET(&CONTR(tmp)->socket, sockbuf); /* broadcast the sockbuf */
+    }
 	SOCKBUF_COMPOSE_FREE(sockbuf);
 }
