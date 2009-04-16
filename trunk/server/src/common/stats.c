@@ -71,7 +71,10 @@ void stats_event(stats_event_type type, ...)
        || (ts->tm_year != last_year))
     {
         if(fp)
-          fclose(fp);
+        {
+            fclose(fp);
+            fp = NULL;
+        }
         /* format: YYYYMMDD-HH- */
         sprintf(filename_base, "%.4d%.2d%.2d-%.2d-", ts->tm_year + 1900, ts->tm_mon + 1, ts->tm_mday, ts->tm_hour);
         /* Find files with same base name and get counter (XX) */
