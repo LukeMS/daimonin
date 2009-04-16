@@ -6,5 +6,5 @@ is_turnable 1
 direction 1
 no_pick 1
 type 77
-layer 5
+layer 7
 end
