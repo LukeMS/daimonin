@@ -1630,17 +1630,17 @@ void Map2Cmd(char *data, int len)
                 }
                 if (ff_flag & 0x4)
                 {
-                    ff1 = GetUINT16_String(data + pos); pos += 2;
+                    ff1 = GetSINT16_String(data + pos); pos += 2;
                     add_anim(ANIM_SELF_DAMAGE, 0, 0, options.mapstart_x+(int)((MAP_START_XOFF+20)*(options.zoom/100.0)), options.mapstart_y+(int)((146+50)*(options.zoom/100.0)), ff1);
                 }
                 if (ff_flag & 0x2)
                 {
-                    ff2 = GetUINT16_String(data + pos); pos += 2;
+                    ff2 = GetSINT16_String(data + pos); pos += 2;
                     add_anim(ANIM_DAMAGE, 0, 0, xpos + x, ypos + y, ff2);
                 }
                 if (ff_flag & 0x1)
                 {
-                    ff3 = GetUINT16_String(data + pos); pos += 2;
+                    ff3 = GetSINT16_String(data + pos); pos += 2;
                     add_anim(ANIM_DAMAGE, 0, 0, xpos + x, ypos + y, ff3);
                 }
 //                LOG(LOG_DEBUG,"Damage: ff_flag %x, (%d, %d, %d, %d)",ff_flag, ff0, ff1, ff2, ff3);
