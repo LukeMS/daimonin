@@ -103,6 +103,8 @@ void load_ban_file(void)
         else
             add_ban_entry(!strcmp(name, "_") ? NULL : name, !strcmp(ip, "_") ? NULL : ip, ticks, ticks_left); /* "_" is a placeholder for IP only */
     }
+
+    fclose(dmfile);
 }
 
 /* save the valid ban_file entries.

@@ -142,6 +142,7 @@ account_status account_load(Account *ac, char *name, char *pass)
     if (fgets(bufall, MAX_BUF, fp) == NULL)
     {
         LOG(llevDebug, "\nBUG: corrupt account file %s!\n", filename);
+        fclose(fp);
         return ACCOUNT_STATUS_CORRUPT;
     }
     else
