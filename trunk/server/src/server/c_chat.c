@@ -254,7 +254,6 @@ int command_gsay(object *op, char *params)
 	{
 #ifdef USE_CHANNELS
         SOCKBUF_ADD_TO_SOCKET(&CONTR(tmp)->socket, sockbuf);
-        SOCKBUF_COMPOSE_FREE(sockbuf);
 #else
         new_draw_info(NDI_GSAY | NDI_PLAYER | NDI_UNIQUE | NDI_YELLOW, 0, tmp, buf);
 #endif
