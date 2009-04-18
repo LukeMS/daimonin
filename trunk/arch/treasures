@@ -3628,7 +3628,7 @@ treasure loot_magic
     list magic_useup
       chance 81
     no
-      arch potion_generic_poi
+      arch potion_improve
         difficulty 6
     end
   end
