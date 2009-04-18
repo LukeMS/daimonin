@@ -1287,7 +1287,7 @@ char * spellpath_msg(int level, int booksize)
     if (path == -1)
         strcat(retbuf, "having no known spell path.\n");
     else
-        sprintf(retbuf, "%sbelonging to the path of %s:\n\n", retbuf, spellpathnames[path]);
+        sprintf(strchr(retbuf, '\0'), "belonging to the path of %s:\n\n", spellpathnames[path]);
 
     /* Now go through the entire list of spells. Add appropriate spells
      * in our message buffer
@@ -1422,7 +1422,7 @@ void make_formula_book(object *book, int level)
         /* item name */
         if (formula->title != shstr_cons.NONE)
         {
-            sprintf(retbuf, "%sThe %s of %s", retbuf, op_name, formula->title);
+            sprintf(strchr(retbuf, '\0'), "The %s of %s", op_name, formula->title);
             /* This results in things like pile of philo. sulfur.
                * while philo. sulfur may look better, without this,
                * you get things like 'the wise' because its missing the
@@ -1433,7 +1433,7 @@ void make_formula_book(object *book, int level)
         }
         else
         {
-            sprintf(retbuf, "%sThe %s", retbuf, op_name);
+            sprintf(strchr(retbuf, '\0'), "The %s", op_name);
             sprintf(title, "%s: %s", formula_book_name[RANDOM() % (sizeof(formula_book_name) / sizeof(char *))], op_name);
             if (at->clone.title)
             {
@@ -1519,8 +1519,7 @@ char * god_info_msg(int level, int booksize)
     name = god->name;
 
     /* preamble.. */
-    sprintf(retbuf, "<t t=\"%s\">This document contains knowledge concerning\n", name);
-    sprintf(retbuf, "%sthe deity %s", retbuf, name);
+    sprintf(retbuf, "<t t=\"%s\">This document contains knowledge concerning\nthe deity %s", name, name);
 
     /* Always have as default information the god's descriptive terms. */
     if (nstrtok(god->msg, ",") > 0)
@@ -1563,7 +1562,7 @@ char * god_info_msg(int level, int booksize)
                         sprintf(tmpbuf, "following \n races:%s", strtoktolin(enemy, ","));
                     else
                         sprintf(tmpbuf, "race of%s", strtoktolin(enemy, ","));
-                    sprintf(buf, "%s%s\n ---\n", buf, tmpbuf);
+                    sprintf(strchr(buf, '\0'), "%s\n ---\n", tmpbuf);
                 }
         }
         if (level == 4 && RANDOM() % 2)
@@ -1598,7 +1597,7 @@ char * god_info_msg(int level, int booksize)
                         sprintf(tmpbuf, "following \n races:%s", strtoktolin(race, ","));
                     else
                         sprintf(tmpbuf, "race of%s", strtoktolin(race, ","));
-                    sprintf(buf, "%s%s\n ---\n", buf, tmpbuf);
+                    sprintf(strchr(buf, '\0'), "%s\n ---\n", tmpbuf);
                 }
         }
         if (level == 6 && RANDOM() % 2)
