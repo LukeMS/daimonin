@@ -3305,21 +3305,21 @@ static int GameObject_AddMoneyEx(lua_State *L)
     strcpy(buf, "You got");
     if(m)
     {
-        sprintf(buf, "%s %d %s", buf, m, "mithril");
+        sprintf(strchr(buf, '\0'), " %d %s", m, "mithril");
         flag = TRUE;
     }
     if(g)
     {
-        sprintf(buf, "%s%s %d %s",buf,  flag?" and ":"", g,"gold");
+        sprintf(strchr(buf, '\0'), "%s %d %s", flag?" and ":"", g,"gold");
         flag = TRUE;
     }
     if(s)
     {
-        sprintf(buf, "%s%s %d %s",buf,  flag?" and ":"", s, "silver");
+        sprintf(strchr(buf, '\0'), "%s %d %s", flag?" and ":"", s, "silver");
         flag = TRUE;
     }
     if(c)
-        sprintf(buf, "%s%s %d %s",buf,  flag?" and ":"", c, "copper");
+        sprintf(strchr(buf, '\0'), "%s %d %s", flag?" and ":"", c, "copper");
 
     strcat(buf, " coin.");
     hooks->new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, WHO, buf);

@@ -1204,7 +1204,7 @@ int command_setskill(object *op, char *params)
 
         sprintf(buf, "Usage: setskill [who] [skill nr] [level]\nSkills/Nr: ");
         for(i=0;i<NROFSKILLS;i++)
-            sprintf(buf,"%s,%s(%d)", buf,  skills[i].name,i);
+            sprintf(strchr(buf, '\0'), ",%s(%d)", skills[i].name,i);
         new_draw_info(NDI_UNIQUE, 0, op, buf);
         return 1;
     }
@@ -1295,7 +1295,7 @@ int command_addexp(object *op, char *params)
 
         sprintf(buf, "Usage: addexp [who] [skill nr] [exp]\nSkills/Nr: ");
         for(i=0;i<NROFSKILLS;i++)
-            sprintf(buf,"%s%s(%d), ", buf,  skills[i].name,i);
+            sprintf(strchr(buf, '\0'), "%s(%d), ", skills[i].name,i);
         new_draw_info(NDI_UNIQUE, 0, op, buf);
         return 1;
     }

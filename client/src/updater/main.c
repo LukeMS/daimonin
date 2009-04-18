@@ -1145,10 +1145,9 @@ int calc_md5(char *filename, char *outputbuf)
         return FALSE;
     }
     /* convert the hex to string */
-    memset(outputbuf, 0, sizeof(outputbuf));
     for (i=0;i<16;i++)
     {
-        sprintf(outputbuf, "%s%02x",outputbuf, (unsigned char)buf[i]);
+        sprintf(outputbuf+2*i, "%02x", (unsigned char)buf[i]);
     }
 
     fclose(stream);
