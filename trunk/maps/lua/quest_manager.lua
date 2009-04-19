@@ -1,258 +1,378 @@
--- QUEST FUNCTIONS
+-------------------------------------------------------------------------------
+-- quest_manager.lua
+--
+-- High-level API for managing quests.
+-------------------------------------------------------------------------------
+QuestManager = { }
 
-QuestManager = {}
+---------------------------------------
+-- Meet... da management!
+---------------------------------------
+-------------------
+-- qm:New() constructs a new, blank qm table (the return value).
+-------------------
+function QuestManager:New(player, quest, level, skill, repeats)
+    assert(type(player) == "GameObject" and
+           player.type == game.TYPE_PLAYER,
+           "Arg #1 must be player GameObject!")
+    assert(type(quest) == "string" or
+           (type(quest) == "GameObject" and quest.type == game.TYPE_QUEST_TRIGGER),
+           "Arg #2 must be string or quest trigger object!")
+    assert(type(level) == "number" or
+           level == nil,
+           "Arg #3 must be number or nil!")
+    assert(type(skill) == "number" or
+           skill == nil,
+           "Arg #4 must be number or nil!")
+    assert(type(repeats) == "number" or
+           repeats == nil,
+           "Arg #5 must be number or nil!")
+    if level == nil then
+        level = 1
+    end
+    if skill == nil then
+        skill = game.ITEM_SKILL_NO
+    end
+    if repeats == nil then
+        repeats = 0
+    end
 
--- Create a new QuestManager for the given quest object and player
--- Mandatory parameters:
--- player: a player object or in some cases nil
--- quest: a quest object or a quest name or nil
--- Optional parameters:
--- level: require that the player is at least this level in the given skill
--- skill: require the given _lev in this skill to start the quest.
-function QuestManager:New(player, quest, level, skill)
-    local obj = {
-        player = player, 
-        quest_trigger = nil, 
-        required = {}, 
-        status = nil,
-        name = nil,
-        step = nil,
-        end_step = nil
+    local qm = {
+        player = player,
+        name,
+        trigger,
+        required = { },
+        status,
+        step = 0,
+        end_step = 0,
+        level = level,
+        skill = skill,
+        repeats = repeats
     }
-   
-    assert(player == nil or (type(player) == "GameObject" and player.type == game.TYPE_PLAYER), "player parameter must be nil or a player")
-    
-    assert(quest == nil or type(quest) == "string" or (type(quest) == "GameObject" and quest.type == game.TYPE_QUEST_TRIGGER), "quest parameter must be nil, a string or a quest trigger object")
 
     if type(quest) == "string" then
-        obj.name = quest
-        if player ~= nil then
-            quest = player:GetQuest(quest)
-        else
-            quest = nil
-        end
+        qm.name = quest
+        qm.trigger = player:GetQuest(quest)
     elseif type(quest) == "GameObject" then
-        obj.name = quest.name
+        qm.name = quest.name
+        qm.trigger = quest
     end
-    obj.quest_trigger = quest
-   
-    obj.step = 0
-    obj.end_step = 0
+    setmetatable(qm, { __metatable = QuestManager,
+                       __index = QuestManager })
 
-    -- Optional parameters
-    if level == nil or skill == nil then
-        obj.level = 1
-        obj.skill = game.ITEM_SKILL_NO
-    else 
-        obj.level = level
-        obj.skill = skill
-    end
-
-    setmetatable(obj, QuestManager._metatable)
-    return obj
+    return qm
 end
 
-QuestManager._metatable = { __index = QuestManager }
 setmetatable(QuestManager, { __call = QuestManager.New })
 
--- Get the status of the quest.
--- Will return one of: 
---   game.QSTAT_NO - Quest is not yet accepted, but ok to start
---   game.QSTAT_ACTIVE - Quest is started, but not finished
---   game.QSTAT_SOLVED - Quest is solved, but not rewarded
---   game.QSTAT_DONE - Quest is finished, rewarded and closed
---   game.QSTAT_DISALLOW - player lacks level or previous required quest.
+---------------------------------------
+-- Methods
+---------------------------------------
+-------------------
+-- qm:GetStatus() both sets qm.status and returns that value.
+-------------------
 function QuestManager:GetStatus()
-    -- If there's no cached status value, create it
+    local function getstatus(qm)
+        if qm.trigger== nil then
+            if qm.required ~= nil then
+                for v in qm.required do
+                    local obj = qm.player:GetQuest(v)
+
+                    if obj == nil or obj.food ~= -1 then
+                        return game.QSTAT_DISALLOW
+                    end
+                end
+            end
+            if qm.player:CheckQuestLevel(qm.level, qm.skill) == false then
+                return game.QSTAT_DISALLOW
+            else
+                return game.QSTAT_NO
+            end
+        else
+            ---------
+            -- Step is an unfinished server-side feature...
+            ---------
+            if qm.trigger.magic < qm.step then
+                return game.QSTAT_NO
+            elseif qm.trigger.environment.name == "QC: list done" then
+                if qm.trigger.food == -1 then
+                    return game.QSTAT_DONE
+                else
+                    return game.QSTAT_NO
+                end
+            end
+            ---------
+            -- For normal quests check generic quest status.
+            ---------
+            if qm.trigger.sub_type_1 == game.QUEST_NORMAL then
+                if qm.trigger.state ~= qm.trigger.magic then
+                    return game.QSTAT_ACTIVE
+                end
+            ---------
+            -- For kill quests check that all kills are done.
+            ---------
+            elseif qm.trigger.sub_type_1 == game.QUEST_KILL then
+                for obj in obj_inventory(qm.trigger) do
+                    if obj.last_sp > obj.level then
+                        return game.QSTAT_ACTIVE
+                    end
+                end
+            ---------
+            -- For killitem quests check that all killitems are collected.
+            ---------
+            elseif qm.trigger.sub_type_1 == game.QUEST_KILLITEM then
+                for obj in obj_inventory(qm.trigger) do
+                    if obj.inventory.quantity > obj:NrofQuestItem() then
+                        return game.QSTAT_ACTIVE
+                    end
+                end
+            ---------
+            -- For item quests check that the quested item is retrieved.
+            ---------
+            else -- if qm.trigger.sub_type_1 == game.QUEST_ITEM then
+                for obj in obj_inventory(qm.trigger) do
+                    if obj.quantity > obj:NrofQuestItem() then
+                        return game.QSTAT_ACTIVE
+                    end
+                end
+            end
+        end
+        ---------
+        -- If we get to here, the quest must be solved.
+        ---------
+        return game.QSTAT_SOLVED
+    end
     if self.status == nil then
-        self.status = self:_GetStatus(self.step, self.level, self.skill, self.required)
+        self.status = getstatus(self)
     end
     return self.status
 end
 
--- _qstep: the quest step to check for (normally 0)
--- _lev: require that the player is at least this level in the given _skill
--- _skill: require the given _lev in this skill to start the quest.
--- required: table of names of quests that must be solved before this quest (or nil) 
-function QuestManager:_GetStatus(_qstep, _lev, _skill, required)
-    local _qobj = self.quest_trigger
-    local _who = self.player
-    
-    assert(_who ~= nil, "player object must not be nil")
-
-    if _qobj == nil then
-        if required ~= nil then
-            for _qreq in required do
-                local _qr = _who:GetQuest(_qreq)
-                if _qr == nil or _qr.last_eat ~= -1 then
-                    return game.QSTAT_DISALLOW
-                end
-            end
-        end
-        if _who:CheckQuestLevel(_lev, _skill) == false then
-            return game.QSTAT_DISALLOW
-        end
-        return game.QSTAT_NO
-    end
-    
-    -- "step" is basically an unfinished server-side feature...
-    if _qobj.magic < _qstep then
-        return game.QSTAT_NO -- FIXME Really NO?
-    elseif _qobj.last_eat == -1 then
-        -- Already rewarded
-        return game.QSTAT_DONE
-    end
-
-    if _qobj.sub_type_1 == game.QUEST_KILL then
-        -- Check that all kills are done
-        for _kcount in obj_inventory(_qobj) do
-            if _kcount.last_sp > _kcount.level then
-                return game.QSTAT_ACTIVE
-            end
-        end
-    elseif _qobj.sub_type_1 == game.QUEST_KILLITEM then
-        -- Check that all killitems are collected
-        for _kcount in obj_inventory(_qobj) do
-            if _kcount.inventory.quantity > _kcount:NrofQuestItem() then
-                return game.QSTAT_ACTIVE
-            end
-        end
-    elseif _qobj.sub_type_1 == game.QUEST_ITEM then
-        -- Check that the quested item is retrieved
-        for _kcount in obj_inventory(_qobj) do
-            if _kcount.quantity > _kcount:NrofQuestItem() then
-                return game.QSTAT_ACTIVE
-            end
-        end
-    else
-        -- Check generic quest status
-        if _qobj.state ~= _qobj.magic then
-            return game.QSTAT_ACTIVE
-        end
-    end
-    return game.QSTAT_SOLVED
-end
-
--- Write a "checklist" for the quest to the given InterfaceBuilder object
-function QuestManager:AddItemList(_ib)
-    local _ic
-    local _qobj = self.quest_trigger
-
-    _ib:AddMsg("\n|Quest Status|\n")
-    if _qobj.sub_type_1 == game.QUEST_KILL then
-        for _kcount in obj_inventory(_qobj) do
-            if _kcount.last_sp > _kcount.level then
-                _ib:AddMsg("\n  ".._kcount.name ..": " .. _kcount.level .. "/" .. _kcount.last_sp)
-            else
-                _ib:AddMsg("\n  ~".. _kcount.name ..": " .. _kcount.level .. "/" .. _kcount.last_sp .. " (complete)~")
-            end
-        end
-    elseif _qobj.sub_type_1 == game.QUEST_ITEM then
-        for _kcount in obj_inventory(_qobj) do
-            _ic = _kcount:NrofQuestItem()
-            if _kcount.quantity > _ic then
-                _ib:AddMsg("\n  ".._kcount.name ..": " .. _ic .. "/" .. _kcount.quantity)
-            else
-                _ib:AddMsg("\n  ~".. _kcount.name ..": " .. _ic .. "/" .. _kcount.quantity .. " (complete)~")
-            end
-        end
-    elseif _qobj.sub_type_1 == game.QUEST_KILLITEM then
-        for _kcount in obj_inventory(_qobj) do
-            _ic = _kcount:NrofQuestItem()
-            if _kcount.inventory.quantity > _ic then
-                _ib:AddMsg("\n  ".. _kcount.inventory.name ..": " .. _ic .. "/" .. _kcount.last_sp)
-            else
-                _ib:AddMsg("\n  ~".. _kcount.inventory.name ..": " .. _ic .. "/" .. _kcount.last_sp .. " (complete)~")
-            end
-        end
-    else
-        if _qobj.state == _qobj.magic then
-            _ib:AddMsg("\n  ~Complete!~")
-        else
-            _ib:AddMsg("\n  Incomplete")
-        end
-    end
-    _ib:AddMsg("\n")
-end
-
--- Set the finish "step" for QUEST_NORMAL
+-------------------
+-- qm:SetFinalStep() sets the finishing step required for a normal quest.
+-------------------
 function QuestManager:SetFinalStep(step)
-    assert(not self:IsRegistered(), "The final step must be set up before registering")
+    assert(type(step) == "number",
+           "Arg #1 must be number!")
+
+    assert(self.trigger == nil,
+           "Final step must be set before registering quest!")
+
     self.end_step = step
 end
 
--- Add a quest that must be completed before this
--- Either give a name string, or another questmanager as parameter
-function QuestManager:AddRequiredQuest(name_or_manager)
-    if type(name_or_manager) == "string" then
-        self.required[name_or_manager] = true
+-------------------
+-- qm:AddRequiredQuest() adds a quest which must be completed before this one
+-- can be.
+-------------------
+function QuestManager:AddRequiredQuest(quest)
+    assert(type(quest) == "string" or
+           getmetatable(quest) == QuestManager or
+           (type(quest) == "GameObject" and quest.type == game.TYPE_QUEST_TRIGGER),
+           "Arg #1 must be string, QuestManager, or quest object!")
+
+    if type(quest) == "string" then
+        self.required[quest] = true
     else
-        assert(getmetatable(name_or_manager) == QuestManager._metatable, "Must have a name string or QuestManager object as input")
-        self.required[name_or_manager.name] = true
+        self.required[quest.name] = true
+    end
+    self.status = nil -- clear cache
+end
+
+-------------------
+-- qm:RegisterQuest() creates a new quest from qm (qm.trigger must be nil),
+-- returning true if the quest could be added, false otherwise.
+-------------------
+function QuestManager:RegisterQuest(qtype, ib)
+    assert(type(qtype) == "number",
+           "Arg #1 must be number!")
+    assert(getmetatable(ib) == InterfaceBuilder,
+           "Arg #2 must be InterfaceBuilder!")
+
+    assert(self.trigger == nil,
+           "Quest already registered!")
+    assert(type(self.name) == "string",
+           "Quest doesn't have a name!")
+
+    ---------
+    -- Remove any clickable keywords from the GUI.
+    ---------
+    local text = string.gsub(ib:Build(), "%^", "")
+
+    if SENTInce_AWARE then
+        self.trigger = self.player:AddQuest(self.name, qtype, self.step,
+                                            self.end_step, self.level,
+                                            self.skill, text, self.repeats)
+    else
+        self.trigger = self.player:AddQuest(self.name, qtype, self.step,
+                                            self.end_step, self.level,
+                                            self.skill, text)
     end
 
     self.status = nil -- clear cache
+
+    return self.trigger ~= nil
 end
 
--- Create a new quest for a QuestManager with a nil quest
--- mode: game.QUEST_KILLITEM etc
--- ib: InterfaceBuilder object that contains the quest description
--- returns: true if the quest could be added, false otherwise.
-function QuestManager:RegisterQuest(mode, ib)
-    assert(self.quest_trigger == nil, "This quest was already registered?")
-    assert(self.name ~= nil, "The quest doesn't have a name.")
+-------------------
+-- qm:IsRegistered() returns true if qm's quest is registered with the server.
+-------------------
+function QuestManager:IsRegistered()
+    return self.trigger ~= nil
+end
 
-    -- Remove any clickable keywords from the interface. They won't work anyway.
-    local qlist_text = string.gsub(ib:Build(), "%^", "")
+-------------------
+-- qm:AddItemList() writes a 'checklist' for qm.
+-- If ib points to an InterfaceBuilder table it will append this list, with a
+-- leading and a trailing newline, to the message block body and also return
+-- a string of the list. If ib is nil it will just return the string.
+-------------------
+function QuestManager:AddItemList(ib)
+    assert(getmetatable(ib) == InterfaceBuilder or
+           ib == nil,
+           "Arg #1 must be InterfaceBuilder or nil!")
 
-    self.quest_trigger = self.player:AddQuest(self.name, mode, self.step, self.end_step, self.level, self.skill, qlist_text)
+    local title, body = "|Quest Status:| ", ""
+    local flag = true
+
+    ---------
+    -- For normal quests just report if it is complete or not.
+    ---------
+    if self.trigger.sub_type_1 == game.QUEST_NORMAL then
+        if self.trigger.state ~= self.trigger.magic then
+            flag = false
+        end
+    ---------
+    -- For kill quests report the kills killed/kills required.
+    ---------
+    elseif self.trigger.sub_type_1 == game.QUEST_KILL then
+        for obj in obj_inventory(self.trigger) do
+            if obj.last_sp > obj.level then
+                body = body .. "\n  " .. obj.name .. ": ~" .. obj.level .. "~/~" .. obj.last_sp .. "~"
+                flag = false
+            else
+                body = body .. "\n  ~" .. obj.name .. ": ~" .. obj.level .. "~/~" .. obj.last_sp .. "~ (|complete|)"
+            end
+        end
+    ---------
+    -- For killitem quests report the killitems retrieved/killitems required.
+    ---------
+    elseif self.trigger.sub_type_1 == game.QUEST_KILLITEM then
+        for obj in obj_inventory(self.trigger) do
+            local quantity = obj:NrofQuestItem()
+
+            if obj.inventory.quantity > quantity then
+                body = body .. "\n  " .. obj.inventory.name .. ": ~" .. quantity .. "~/~" .. obj.last_sp .. "~"
+                flag = false
+            else
+                body = body .. "\n  ~" .. obj.inventory.name .. ": ~" .. quantity .. "~/~" .. obj.last_sp .. "~ (|complete|)"
+            end
+        end
+    ---------
+    -- For item quests report the items retrieved/items required.
+    ---------
+    else -- if self.trigger.sub_type_1 == game.QUEST_ITEM then
+        for obj in obj_inventory(self.trigger) do
+            local quantity = obj:NrofQuestItem()
+
+            if obj.quantity > quantity then
+                body = body .. "\n  " .. obj.name .. ": ~" .. quantity .. "~/~" .. obj.quantity .. "~"
+                flag = false
+            else
+                body = body .. "\n  ~" .. obj.name .. ": ~" .. quantity .. "~/~" .. obj.quantity .. "~ (|complete|)"
+            end
+        end
+    end
+    ---------
+    -- Overall, is the quest complete?
+    ---------
+    if flag == true then
+        title = title .. "|Complete!|"
+    else
+        title = title .. "Incomplete"
+    end
+    ---------
+    -- Possibly append the list to ib.message.body, and definitely return it.
+    ---------
+    if ib then
+        ib:AddMsg("\n" .. title .. body .. "\n")
+    end
+
+    return title .. body
+end
+
+-------------------
+-- qm:AddQuestTarget() is a wrapper for object:AddQuestTarget().
+-------------------
+function QuestManager:AddQuestTarget(...)
+    assert(self.trigger,
+           "Quest not registered!")
+
     self.status = nil -- clear cache
 
-    return self.quest_trigger ~= nil
+    return self.trigger:AddQuestTarget(unpack(arg))
 end
 
--- Return true if this manager's quest is registered with the server
-function QuestManager:IsRegistered()
-    return self.quest_trigger ~= nil
+-------------------
+-- qm:AddQuestItem() is a wrapper for object:AddQuestItem().
+-------------------
+function QuestManager:AddQuestItem(...)
+    assert(self.trigger,
+           "Quest not registered!")
+
+    self.status = nil -- clear cache
+
+    return self.trigger:AddQuestItem(unpack(arg))
 end
 
--- remove kill/collect quest items from the player's inventory
+-------------------
+-- qm:RemoveQuestItems() removes killitem or item quest items from the player's
+-- inventory.
+-------------------
 function QuestManager:RemoveQuestItems()
-    assert(self.quest_trigger ~= nil, "The quest isn't registered")
-    local mode = self.quest_trigger.sub_type_1
-    if mode == game.QUEST_ITEM then
-        self.quest_trigger:RemoveQuestItem()
-    elseif mode == game.QUEST_KILLITEM then
-        for obj in obj_inventory(self.quest_trigger) do
+    assert(self.trigger,
+           "Quest not registered!")
+
+    if self.trigger.sub_type_1 == game.QUEST_KILLITEM then
+        for obj in obj_inventory(self.trigger) do
             obj:RemoveQuestItem()
         end
-    else
-        print("QuestManager: Sorry, don't know what to do about quest items from quest " .. self.quest_trigger.name)     
+    elseif self.trigger.sub_type_1 == game.QUEST_ITEM then
+        self.trigger:RemoveQuestItem()
     end
 end
 
--- Mark the quest as finished
--- You need to register the quest before calling this
+-------------------
+-- qm:Finish() marks the quest as finished.
+-- On SENTInce aware servers quests keep the repeat count in food. This is
+-- handled automatically by the server (common/quest.c set_quest_status()).
+-- Unaware server no nothing of repeatable quests and do not use food at all.
+-- SENTInced qm.lua reads food in order to get the quest status (see above).
+-- This is fine on a SENTInce aware server where food is set as just said, but
+-- unaware servers need explicit help from this script.
+-------------------
 function QuestManager:Finish()
-    assert(self.quest_trigger ~= nil, "The quest isn't registered")
-	self.quest_trigger:SetQuestStatus(-1)
-    self.status = nil -- clear cache
-end
+    assert(self.trigger,
+           "Quest not registered!")
 
--- Wrapper for object:AddQuestTarget()
--- You need to register the quest before calling this
--- Use this for QUEST_KILL or QUEST_KILLITEM quests
--- Returns a quest target object which you _must_ call AddQuestItem() on for KILLITEM quests
-function QuestManager:AddQuestTarget(...)
-    assert(self.quest_trigger ~= nil, "The quest isn't registered")
-    self.status = nil -- clear cache
-    return self.quest_trigger:AddQuestTarget(unpack(arg))
-end
+    local status
 
--- Wrapper for object:AddQuestItem()
--- You need to register the quest before calling this
-function QuestManager:AddQuestItem(...)
-    assert(self.quest_trigger ~= nil, "The quest isn't registered")
+    if SENTInce_AWARE then
+        status = self.trigger.food
+    else
+        status = self.trigger.last_eat
+    end
+
+    if status > -1 then
+        status = status - 1
+    else
+        status = -1
+    end
+
+    if not SENTInce_AWARE then
+        self.trigger.food = status
+    end
+
+    self.trigger:SetQuestStatus(status)
     self.status = nil -- clear cache
-    return self.quest_trigger:AddQuestItem(unpack(arg))
 end
