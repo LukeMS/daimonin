@@ -367,7 +367,6 @@ int dispel_rune(object *op, int dir, int risk)
 
 int trap_see(object *op, object *trap, int level)
 {
-    char    buf[MAX_BUF];
     int     chance;
 
     chance = random_roll(0, 99);
