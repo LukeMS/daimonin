@@ -12,33 +12,14 @@ Now some tips for the packages and OS.
 
 Playing with Laptops
 --------------------
-The base installation assume a num-pad keyboard. But every
-key there is bind with a macro to the num-pad. Its easily to
-change to every key you want.
+The keys.dat file in the settings directory defines the
+default keybindings. It assumes a num-pad and binds movement
+to the num-pad keys.
 
-To change:
-Start the client and connect to the server. After you have
-logged in press F11 for the keybind menu!
-
-These macros are bound the the num-pad:
-?M_CONSOLE       - opens the text console (enter on num-pad)
-?M_NORTH         - move north ('9' on num-pad)
-?M_NORTHEAST     - move northeast ('6' on num-pad)
-?M_EAST          - move east ('3' on num-pad)
-?M_SOUTHEAST     - move southeast ('2' on num-pad)
-?M_SOUTH         - move south ('1' on num-pad)
-?M_SOUTHWEST     - move southwest ('4' on num-pad)
-?M_WEST          - move west ('7' on num-pad)
-?M_NORTHWEST     - move northwest ('8' on num-pad)
-?M_STAY          - stay or target self ('5' on num-pad)
-
-To change this key, just move in the keybind menu over them
-with the cursor keys, pres 'E' for Edit, return because
-you don't want change the text/macro and then the key you
-want assign this macro to. Do it for every of this keys
-and then pres 'D' for done. You can do it for every key
-except the internal menu keys. This will allow you to
-customize the client like you want.
+For laptops where this is not convenient, an alternative
+set of bindings is provided in keys-laptop.dat. To use,
+simply rename keys.dat as keys-full.dat and keys-laptop.dat
+as keys.dat.
 
 
 MS Windows (98, XP, ...)
