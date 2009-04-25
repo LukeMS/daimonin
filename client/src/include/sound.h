@@ -239,7 +239,9 @@ void    load_sounds(void);
 void    sound_loadall(void);
 void    sound_freeall(void);
 
+#ifdef INSTALL_SOUND
 Mix_Chunk      *find_sound_by_id(int type_id, int sound_id);
+#endif
 
 void    calculate_map_sound(int type_id, int sound_id, int xoff, int yoff, int flags);
 int     sound_play_effect(int type_id, int sound_id, uint32 flag, int pan, int vol);
