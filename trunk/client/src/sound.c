@@ -250,6 +250,7 @@ void sound_freeall(void)
 #endif
 }
 
+#ifdef INSTALL_SOUND
 Mix_Chunk *find_sound_by_id(int type_id, int sound_id)
 {
     _soundtype  *type = NULL;
@@ -278,6 +279,7 @@ Mix_Chunk *find_sound_by_id(int type_id, int sound_id)
     }
     return sound;
 }
+#endif
 
 void calculate_map_sound(int type_id, int sound_id, int xoff, int yoff, int flags)
 {

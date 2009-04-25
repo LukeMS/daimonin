@@ -125,6 +125,7 @@ SDL_Surface *IMG_Load_wrapper (const char *file)
     return IMG_Load(file_path(file, "r"));
 }
 
+#ifdef INSTALL_SOUND
 Mix_Chunk *Mix_LoadWAV_wrapper(const char *fname)
 {
     return Mix_LoadWAV(file_path(fname, "r"));
@@ -134,3 +135,4 @@ Mix_Music *Mix_LoadMUS_wrapper(const char *file)
 {
     return Mix_LoadMUS(file_path(file, "r"));
 }
+#endif
