@@ -430,10 +430,10 @@ void resume_detached_contexts()
             }
 
             if(context->resume_time < 0) {
-                terminate_lua_context(context);
 #ifdef LUA_DEBUG_ALL
                 LOG(llevDebug, "LUA - Terminating context (%s)\n", context->file);
 #endif
+                terminate_lua_context(context);
             }
         }
     }
