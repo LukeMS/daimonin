@@ -777,10 +777,10 @@ MODULEAPI int HandleEvent(CFParm *PParm)
 
     if (res)
     {
-        terminate_lua_context(context);
 #ifdef LUA_DEBUG_ALL
         LOG(llevDebug, "LUA - Terminating context due to runtime error (%s)\n", context->file);
 #endif
+        terminate_lua_context(context);
         return 0;
     }
 
@@ -816,10 +816,10 @@ MODULEAPI int HandleEvent(CFParm *PParm)
     ret = context->returnvalue;
 
     if(context->resume_time == -1) {
-        terminate_lua_context(context);
 #ifdef LUA_DEBUG
         LOG(llevDebug, "LUA - done and terminated, returncode: %d\n", ret);
 #endif
+        terminate_lua_context(context);
     } else {
 #ifdef LUA_DEBUG
         LOG(llevDebug, "LUA - backgrounded\n");
