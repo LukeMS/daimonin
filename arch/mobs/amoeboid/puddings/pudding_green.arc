@@ -37,7 +37,7 @@ resist_confusion 100
 resist_fear 100
 resist_poison 100
 dam 55
-resist_poison 80
+attack_poison 80
 attack_pierce 20
 weapon_speed 3.5
 speed -0.031
