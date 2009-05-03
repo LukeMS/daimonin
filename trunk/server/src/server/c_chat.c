@@ -421,156 +421,134 @@ int command_tell(object *op, char *params)
     return 1;
 }
 
-
+/* command_talk() handles a player attempting to /talk.
+ *
+ * The way it all works is:
+ * 
+ * When a player gives a /talk command first the server checks if he has a
+ * marked inv item to talk to. If not, it checks his target. If he doesn't have
+ * one or it's a player or invalid, we do a normal target cycle but ignoring
+ * players (so both enemies and friends are fine),
+ * 
+ * If we still can't find a target, a message is given (There's no-one around
+ * to talk to!).
+ * 
+ * If we found, or already had, a target, try to talk to it. Here we query its
+ * sensing range (which is halved if the mob is asleep). If it's not in range
+ * (or is out of LOS) we say so.
+ * 
+ * If it is in range, we run the attached talk script, if any, as normal. After
+ * this is run we wake up the mob. This means the script can check me.f_sleep
+ * and respond accordingly if the player woke up the mob. ;) */
 int command_talk(object *op, char *params)
 {
+    player     *pl;
     object     *t_obj;
     int         i, xt, yt;
     mapstruct  *m;
 
     /* we don't allow npc top npc talk here */
-    if (op->type != PLAYER)
+    if (op->type != PLAYER || !(pl = CONTR(op)))
         return 0;
 
     if (!params)
     {
-        send_clear_interface(CONTR(op));
+        send_clear_interface(pl);
+
         return 0;
     }
 
     params = cleanup_chat_string(params);
+
     /* this happens when whitespace only string was submited */
     if (!params || *params == '\0')
     {
-        send_clear_interface(CONTR(op));
+        send_clear_interface(pl);
+
         return 0;
     }
 
-    /* Players can chat with a marked object in their inventory */
-    if(op->type == PLAYER && (t_obj = find_marked_object(op)) && (t_obj->event_flags & EVENT_FLAG_TALK))
+    /* If we have a marked, talkable object in the inventory, talk to it. */
+    if ((t_obj = find_marked_object(op)) &&
+       (t_obj->event_flags & EVENT_FLAG_TALK))
     {
-        trigger_object_plugin_event(EVENT_TALK, t_obj, op, NULL,
-                params, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR);
-        return 0;
-    }
-
-    t_obj = CONTR(op)->target_object;
-    /* lets see we have a target which CAN respond to our talk cmd */
-    if (t_obj && CONTR(op)->target_object_count == t_obj->count)
-    {
-#if 0
-        /* why i do this and not direct distance calculation?
-         * because the player perhaps has leaved the mapset with the
-         * target which will invoke some nasty searchings.
-         */
-        /*
-         * TODO: the above comment makes little sense, since
-         * "nasty searches" are only done if requested (RV_RECURSIVE_SEARCH)
-         * and are also only useful for long distances (which talk shouldn't be).
-         */
-        for (i = 0; i < SIZEOFFREE; i++)
-        {
-            xt = op->x + freearr_x[i];
-            yt = op->y + freearr_y[i];
-            if (!(m = out_of_map(op->map, &xt, &yt)))
-                continue;
-
-            if (m == t_obj->map && xt == t_obj->x && yt == t_obj->y)
-            {
-                if (t_obj->event_flags & EVENT_FLAG_TALK)
-                    trigger_object_plugin_event(EVENT_TALK, t_obj, op, NULL,
-                            params, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR);
-                else
-                {
-                    send_clear_interface(CONTR(op));
-                    if(t_obj->msg)
-                        new_draw_info(NDI_NAVY | NDI_UNIQUE, 0, op, t_obj->msg);
-                    else
-                        new_draw_info_format(NDI_NAVY | NDI_UNIQUE, 0, op, "%s has nothing to say.", query_name(t_obj));
-                }
-
-                return 1;
-            }
-        }
-
-        /* our target is out of the response area - tell it the player and close the interface */
-        new_draw_info(NDI_UNIQUE, 0, op, "Your talk target is not in range.");
-        send_clear_interface(CONTR(op));
-#else
-        /* This allows *visible* targets to be talked to. So if they are
-         * onscreen you can talk to them -- I hope Gecko was right above about
-         * 'nasty' searches -- Smacky 20081223 */
-        rv_vector rv;
-
-        /* Is the target on this mapset and not too far away? */
-        if (get_rangevector(op, t_obj, &rv, 0) &&
-            rv.distance <= MAX(MAP_CLIENT_X / 2, MAP_CLIENT_Y / 2))
-        {
-            int x = MAP_CLIENT_X / 2 + rv.distance_x,
-                y = MAP_CLIENT_Y / 2 + rv.distance_y;
-
-            /* Is it visible to the player? */
-            if (CONTR(op)->blocked_los[x][y] <= BLOCKED_LOS_BLOCKSVIEW)
-            {
-                if (t_obj->event_flags & EVENT_FLAG_TALK)
-                    trigger_object_plugin_event(EVENT_TALK, t_obj, op, NULL,
-                                                params, NULL, NULL, NULL,
-                                                SCRIPT_FIX_ACTIVATOR);
-                else
-                {
-                    send_clear_interface(CONTR(op));
-
-                    if(t_obj->msg)
-                        new_draw_info(NDI_NAVY | NDI_UNIQUE, 0, op, t_obj->msg);
-                    else
-                        new_draw_info_format(NDI_NAVY | NDI_UNIQUE, 0, op, "%s has nothing to say.", query_name(t_obj));
-                }
-
-                return 1;
-            }
-        }
-
-        /* our target is out of the response area - tell it the player and close the interface */
-        new_draw_info(NDI_UNIQUE, 0, op, "Your talk target is not in range.");
-        send_clear_interface(CONTR(op));
+        trigger_object_plugin_event(EVENT_TALK,
+                                    t_obj, op, NULL, params,
+                                    NULL, NULL, NULL,
+                                    SCRIPT_FIX_ACTIVATOR);
 
         return 1;
-#endif
     }
-    else /* we have target nothing or an invalid /talk target - lets fire up auto-target selection */
-    {
-        for (i = 0; i < SIZEOFFREE; i++)
-        {
-            xt = op->x + freearr_x[i];
-            yt = op->y + freearr_y[i];
-            if (!(m = out_of_map(op->map, &xt, &yt)))
-                continue;
 
-            for (t_obj = get_map_ob(m, xt, yt); t_obj; t_obj = t_obj->above)
+    /* If we have no or an invalid target or a valid target which is a player
+     * (talk is player-mob only), look for a new one. */
+    if (!OBJECT_VALID(pl->target_object, pl->target_object_count) ||
+        pl->target_object->type == PLAYER)
+    {
+        pl->target_object == NULL;
+
+        command_target(op, "3");
+    }
+
+    /* If we now have a valid target and it's in LOS and within it's sensing
+     * range (modified if it is asleep), talk to it. */
+    if (OBJECT_VALID(pl->target_object, pl->target_object_count))
+    {
+        rv_vector rv;
+
+        t_obj = pl->target_object;
+
+        /* Is the target on this mapset and not too far away? */
+        if (get_rangevector(op, t_obj, &rv, 0))
+        {
+            int range = MAX(1, t_obj->stats.Wis);
+
+            if (QUERY_FLAG(t_obj, FLAG_SLEEP))
+                range = MAX(1, range / 2);
+
+            if (rv.distance <= range)
             {
-                if((IS_LIVE(t_obj) || t_obj->type == MONSTER) && t_obj->type != PLAYER) /* be sure we can target it! */
+                int x = pl->socket.mapx_2 + rv.distance_x,
+                    y = pl->socket.mapy_2 + rv.distance_y;
+
+                /* Is it visible to the player? */
+                if (pl->blocked_los[x][y] <= BLOCKED_LOS_BLOCKSVIEW)
                 {
                     if (t_obj->event_flags & EVENT_FLAG_TALK)
+                        trigger_object_plugin_event(EVENT_TALK,
+                                                    t_obj, op, NULL, params,
+                                                    NULL, NULL, NULL,
+                                                    SCRIPT_FIX_ACTIVATOR);
+                    else
                     {
-                        CONTR(op)->target_object = t_obj;
-                        CONTR(op)->target_object_count = t_obj->count;
-                        trigger_object_plugin_event(EVENT_TALK, t_obj, op, NULL,
-                                params, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR);
-                        return 1;
+                        send_clear_interface(pl);
+
+                        if(t_obj->msg)
+                            new_draw_info(NDI_NAVY | NDI_UNIQUE, 0, op, t_obj->msg);
+                        else
+                            new_draw_info_format(NDI_NAVY | NDI_UNIQUE, 0, op, "%s has nothing to say.",
+                                                 query_name(t_obj));
                     }
-                    else if(t_obj->msg)
-                    {
-                        CONTR(op)->target_object = t_obj;
-                        CONTR(op)->target_object_count = t_obj->count;
-                        new_draw_info(NDI_NAVY | NDI_UNIQUE, 0, op, t_obj->msg);
-                        return 1;
-                    }
+
+                    /* Wake up target. Do it hear so the script can check
+                     * me.f_sleep to see if the player's yakking interrupted
+                     * the mob's snooze. */
+                    CLEAR_FLAG(t_obj, FLAG_SLEEP);
+
+                   return 1;
                 }
             }
         }
     }
 
-    send_clear_interface(CONTR(op));
+    send_clear_interface(pl);
+
+    /* If we have a target, it must be out of range. */
+    if (t_obj)
+        new_draw_info(NDI_UNIQUE, 0, op, "Your talk target is not in range!");
+    else
+        new_draw_info(NDI_UNIQUE, 0, op, "There's no-one around to talk to!");
+
     return 1;
 }
 
