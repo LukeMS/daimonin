@@ -714,7 +714,7 @@ void widget_show_number(int x, int y)
     tmp.w = 238;
 
     sprite_blt(Bitmaps[BITMAP_NUMBER], x, y, NULL, NULL);
-    sprintf(buf, "%s how much from %d %s", cpl.nummode == NUM_MODE_GET ? "get" : "drop", cpl.nrof, cpl.num_text);
+    sprintf(buf, "%s how many from %d %s", cpl.nummode == NUM_MODE_GET ? "get" : "drop", cpl.nrof, cpl.num_text);
     StringBlt(ScreenSurface, &SystemFont, buf, x + 8, y + 6, COLOR_HGOLD, &tmp, NULL);
     StringBlt(ScreenSurface, &SystemFont,
               show_input_string(InputString, &SystemFont, Bitmaps[BITMAP_NUMBER]->bitmap->w - 22), x + 8, y + 25,
