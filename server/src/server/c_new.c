@@ -242,6 +242,10 @@ static int valid_new_target(object *op, object *candidate)
  * includes all potential targets but gives a big risk for unintentional attacks
  * on neutral targets. Gecko 2006-05-01
  */
+/* "target talk" targets both enemies and friends (first come, first served),
+ * but exempts player. BTW this entire targetting system, this function
+ * particularly, needs a rewrite.
+ * -- Smacky 20090502 */
 int command_target(object *op, char *params)
 {
     mapstruct  *m;
@@ -456,6 +460,68 @@ int command_target(object *op, char *params)
         CONTR(op)->target_level = op->level;
         CONTR(op)->target_object_count = op->count;
         CONTR(op)->target_map_pos = 0;
+    }
+    else if (params[0] == '3') /* talk */
+    {
+        /* If we have a valid target already, search from there, else start
+         * afresh. */
+        n = (OBJECT_VALID(CONTR(op)->target_object,
+                          CONTR(op)->target_object_count)) ?
+            CONTR(op)->target_map_pos : 0;
+        nt = -1;
+
+        /* The target was invalid so make sure it is nullified. */
+        if (!n)
+            CONTR(op)->target_object = NULL;
+
+        for (; n < NROF_MAP_NODE && n != nt; n++)
+        {
+            int xx = map_pos_array[n][MAP_POS_X],
+                yy = map_pos_array[n][MAP_POS_Y];
+
+            if (nt == -1)
+                nt = n;
+
+            xt = op->x + xx;
+            yt = op->y + yy;
+            xx += CONTR(op)->socket.mapx_2;
+            yy += CONTR(op)->socket.mapy_2;
+            block = CONTR(op)->blocked_los[xx][yy];
+
+            if (block > BLOCKED_LOS_BLOCKSVIEW ||
+                !(m = out_of_map(op->map, &xt, &yt)))
+            {
+                if ((n + 1) == NROF_MAP_NODE)
+                    n = -1;
+
+                continue;
+            }
+
+            /* we can have more as one possible target
+             * on a square - but i try this first without
+             * handle it.
+             */
+            for (tmp = get_map_ob(m, xt, yt); tmp != NULL; tmp = tmp->above)
+            {
+                head = (tmp->head) ? tmp->head : tmp;
+
+                if (head->type != PLAYER && // talk is for player-mob only.
+                    valid_new_target(op, head))
+                {
+                    /* This can happen when our old target has moved to next
+                     * position. */
+                    CONTR(op)->target_object = head;
+                    CONTR(op)->target_level = head->level;
+                    CONTR(op)->target_object_count = head->count;
+                    CONTR(op)->target_map_pos = n;
+
+                    goto found_target;
+                }
+            }
+
+            if ((n + 1) == NROF_MAP_NODE) /* force a full loop */
+                n = -1;
+        }
     }
     else /* TODO: ok... try to use params as a name */
     {
