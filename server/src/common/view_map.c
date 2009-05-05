@@ -275,7 +275,21 @@ void draw_client_map2(object *pl)
     SockBuf_AddChar(sbptr, pl_ptr->map_update_cmd); /* marker */
     if(pl_ptr->map_update_cmd != MAP_UPDATE_CMD_SAME)
     {
+#if 0
         SockBuf_AddString(sbptr, pl->map->name, strlen(pl->map->name));
+#else
+        char buf[MAX_BUF];
+
+        strcpy(buf, pl->map->name);
+
+        if (pl->map->music)
+        {
+           strcat(buf, "§");
+           strcat(buf, pl->map->music);
+        }
+
+        SockBuf_AddString(sbptr, buf, strlen(buf));
+#endif
 
         if(pl_ptr->map_update_cmd == MAP_UPDATE_CMD_CONNECTED)
         {
