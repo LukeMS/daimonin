@@ -1499,7 +1499,10 @@ void Map2Cmd(char *data, int len)
             UpdateMapName(mapname);
         }
         else
+        {
             UpdateMapName(mapname);
+            sound_fadeout_music(0);
+        }
 #endif
     }
     else
