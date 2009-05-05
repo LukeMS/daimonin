@@ -502,6 +502,10 @@ static int load_map_header(FILE *fp, mapstruct *m, int flags)
             *end = 0;
             FREE_AND_COPY_HASH(m->name, value);
         }
+        else if (!strcmp(key,"background_music"))
+        {
+            FREE_AND_COPY_HASH(m->music, value);
+        }
         else if (!strcmp(key, "msg"))
         {
             while (fgets(buf, HUGE_BUF - 1, fp) != NULL)
@@ -979,6 +983,8 @@ int new_save_map(mapstruct *m, int flag)
     fprintf(fp, "arch map\n");
     if (m->name)
         fprintf(fp, "name %s\n", m->name);
+    if (m->music)
+        fprintf(fp, "background_music %s\n", m->music);
     if (!flag)
         fprintf(fp, "swap_time %d\n", m->swap_time);
     if (m->reset_timeout)
@@ -1193,6 +1199,7 @@ void free_map(mapstruct *m, int flag)
     }
 
     FREE_AND_CLEAR_HASH(m->name);
+    FREE_AND_CLEAR_HASH(m->music);
     FREE_AND_CLEAR_HASH(m->msg);
     FREE_AND_CLEAR_HASH(m->cached_dist_map);
     FREE_AND_CLEAR_HASH(m->reference);

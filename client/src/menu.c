@@ -1097,8 +1097,7 @@ void show_status(void)
     */
 }
 
-
-
+#if 0
 int init_media_tag(char *tag)
 {
     char   *p1, *p2, buf[256];
@@ -1160,6 +1159,63 @@ int init_media_tag(char *tag)
     }
     return ret;
 }
+#else
+/* The name and file of this func makes little sense anymore, as the so-called
+ * 'media tag' is only used for a map's background music. But maybe someone
+ * will come up with other usefull media types in the future.
+ *
+ * We no longer allow PNG media. This is because PNG media makes no sense now
+ * that we have floating widgets, etc. AFAIK it was only ever used in the old
+ * <=B3 tutorial to show the keypad image (if indeed it was even used there).
+ * In any case, Gridarta assumes it is for music only so I doubt very much that
+ * anyone has used it otherwise.
+ *
+ * When we drop support for § completely, we can remove this func and move
+ * the code into UpdateMapMusic() in map.c.
+ *
+ * ATM we still use pipes to separate the parameters, mainly because it is just
+ * easier that way. These may be changed or removed in the future. */
+int init_media_tag(char *tag)
+{
+    char *p1,
+         *p2,
+          buf[256];
+    int   temp;
+
+    if (tag == NULL)
+    {
+        LOG(LOG_MSG, "MediaTagError: Tag == NULL\n");
+
+        return 0;
+    }
+
+    p1 = strchr(tag, '|');
+    p2 = strrchr(tag, '|');
+
+    if (p1 == NULL || p2 == NULL)
+    {
+        LOG(LOG_MSG, "MediaTagError: Parameter == NULL (%x %x)\n",
+            p1, p2);
+
+        return 0;
+    }
+
+    *p1++ = 0;
+    *p2++ = 0;
+
+    if (strstr(tag + 1, ".ogg"))
+    {
+        sound_play_music(tag + 1, options.music_volume, 2000, atoi(p2),
+                         atoi(p1), MUSIC_MODE_NORMAL);
+
+        return 1;
+    }
+
+    LOG(LOG_MSG, "MediaTagError: Unrecognised media (not .OGG)\n");
+
+    return 0;
+}
+#endif
 
 int blt_window_slider(_Sprite *slider, int maxlen, int winlen, int startoff, int len, int x, int y)
 {

@@ -1453,6 +1453,7 @@ void Map2Cmd(char *data, int len)
     char    pname1[64], pname2[64], pname3[64], pname4[64];
     char mapname[256];
     uint16  face;
+    char *media_tag;
 
     mapstat = (uint8) (data[pos++]);
     map_transfer_flag = 0;
@@ -1487,7 +1488,19 @@ void Map2Cmd(char *data, int len)
             remove_item_inventory(locate_item(0)); /* implicit clear below */
             display_mapscroll(xoff, yoff);
         }
+#if 0
         UpdateMapName(mapname);
+#else
+        /* We now split mapname at § here rather than in UpdateMapName(). */
+        if ((media_tag = strchr(mapname, '§')))
+        {
+            UpdateMapMusic(media_tag);
+            *media_tag = '\0';
+            UpdateMapName(mapname);
+        }
+        else
+            UpdateMapName(mapname);
+#endif
     }
     else
     {
