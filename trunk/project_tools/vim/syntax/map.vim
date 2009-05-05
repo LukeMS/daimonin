@@ -31,7 +31,7 @@ syntax region mapArchBlock contains=animComment,animIdentifier,mapAttribute,arch
 " character but cannot cross a line boundary. Leading spaces are not included
 " in the string.
 syntax match mapAttribute contained nextgroup=mapString
-     \ "^\%(name\|orig_path\|orig_tile_path_1\|orig_tile_path_2\|orig_tile_path_3\|orig_tile_path_4\|orig_tile_path_5\|orig_tile_path_6\|orig_tile_path_7\|orig_tile_path_8\|reference\|tile_path_1\|tile_path_2\|tile_path_3\|tile_path_4\|tile_path_5\|tile_path_6\|tile_path_7\|tile_path_8\)\s\+"
+     \ "^\%(background_music\|name\|orig_path\|orig_tile_path_1\|orig_tile_path_2\|orig_tile_path_3\|orig_tile_path_4\|orig_tile_path_5\|orig_tile_path_6\|orig_tile_path_7\|orig_tile_path_8\|reference\|tile_path_1\|tile_path_2\|tile_path_3\|tile_path_4\|tile_path_5\|tile_path_6\|tile_path_7\|tile_path_8\)\s\+"
 syntax match mapString contained
      \ "\S.*$"
 

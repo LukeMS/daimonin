@@ -285,6 +285,10 @@ void draw_info(char *str, int flags)
     {
         color = COLOR_HGOLD;
     }
+
+/* Eventually, it will no longer be necessary to worry about § characters, so
+ * we can remove much of the following. */
+#if 1
     /*
      * first: we set all white spaces (char<32) to 32 to remove really all odd stuff.
      * except 0x0a - this is EOL for us and will be set to
@@ -326,6 +330,20 @@ void draw_info(char *str, int flags)
         free(buf2);
         return;
     }
+#else
+    /*
+     * first: we set all white spaces (char<32) to 32 to remove really all odd stuff.
+     * except 0x0a - this is EOL for us and will be set to
+     * 0 to mark C style end of string
+     */
+    for (i = 0; buf2[i] != 0; i++)
+    {
+        if ((unsigned char)buf2[i] < 32 && buf2[i] != 0x0a)
+        {
+            buf2[i] = 32;
+        }
+    }
+#endif
 
     /*
      * ok, here we must cut a string to make it fit in window

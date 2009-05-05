@@ -371,6 +371,7 @@ typedef struct mapdef
 
     /* hash strings... */
     shstr          *name;                   /* Name of map as given by its creator */
+    shstr          *music;                  /* Filename of background music file */
     shstr          *msg;                    /* Message map creator may have left */
     shstr          *path;                   /* Filename of the map (shared string now) */
     shstr          *orig_path;              /* same as above but the original pathes - non unique or instanced */

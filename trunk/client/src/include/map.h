@@ -112,6 +112,7 @@ extern void             map_draw_map(void);
 extern void             display_mapscroll(int dx, int dy);
 extern void             InitMapData(int xl, int yl, int px, int py);
 extern void             UpdateMapName(char *name);
+extern void             UpdateMapMusic(char *tag);
 extern void             set_map_ext(int x, int y, int layer, int ext, int probe);
 extern void             map_draw_map_clear(void);
 extern void             load_mapdef_dat(void);

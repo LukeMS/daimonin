@@ -284,6 +284,16 @@ void malloc_info(object *op)
 void current_map_info(object *op)
 {
     mapstruct  *m   = op->map;
+#if 0
+    /* When we remove the media tag completely, there will be no need to split
+     * m->name. */
+
+    if (!m)
+        return;
+
+    new_draw_info_format(NDI_UNIQUE, 0, op, "%s (%s)\n",
+                         m->name, m->path);
+#else
     char        buf[128], *tmp;
 
     if (!m)
@@ -294,6 +304,7 @@ void current_map_info(object *op)
     if (tmp)
         *tmp = 0;
     new_draw_info_format(NDI_UNIQUE, 0, op, "%s (%s)", buf, m->path);
+#endif
 
     if (QUERY_FLAG(op, FLAG_WIZ))
     {
