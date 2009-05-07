@@ -399,3 +399,4 @@ extern int              clipped_percent(int a, int b);
 /* view_map.c */
 void            draw_client_map(object *pl);
 void            draw_client_map2(object *pl);
+void            set_personal_light(player *pl, int value);

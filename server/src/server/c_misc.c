@@ -644,28 +644,26 @@ int command_dm_stealth(object *op, char *params)
     return 0;
 }
 
-/* '/dm_light x' switches the map light (darkness) level for player op /only/.
- * If x is not specified, it toggles dm_light between off (0) and fullbeams
- * (MAX_DARKNESS).
- * Otherwise, x must be a number between 0 and MAX_DARKNESS.
- * Note that on an outdoors map dm_light kills the *visible* variable lighting
- * (for op only) (this is intentional as during map testing variable lighting
- * is rarely useful). */
+/* '/dm_light x' switches the map master's personal light to
+ * 1 <= x <= MAX_DARKNESS, or turns it off (x=0).
+ * '/dm_light' toggles personal_light between off (0) and fullbeams
+ * (MAX_DARKNESS). */
 int command_dm_light(object *op, char *params)
 {
-    if (op->type == PLAYER && CONTR(op)->gmaster_mode == GMASTER_MODE_MM)
+    player *pl;
+
+    if (op->type == PLAYER &&
+        (pl = CONTR(op)) &&
+        pl->gmaster_mode == GMASTER_MODE_MM)
     {
-        uint32 dm_light = 0;
+        int personal_light = (pl->personal_light) ? 0 : MAX_DARKNESS;
 
-        if (params == NULL || !sscanf(params, "%d", &dm_light))
-            dm_light = (CONTR(op)->dm_light) ? 0 : MAX_DARKNESS;
-
-        if (dm_light > MAX_DARKNESS)
-            dm_light = MAX_DARKNESS;
-
-        CONTR(op)->dm_light = dm_light & 0x07;
-        new_draw_info_format(NDI_UNIQUE, 0, op, "Switch dm_light to %d",
-                             CONTR(op)->dm_light);
+        if (params)
+            sscanf(params, "%d", &personal_light);
+        set_personal_light(pl, personal_light);
+        new_draw_info_format(NDI_UNIQUE, 0, op, "Switch personal light %s (%d).",
+                             (pl->personal_light) ? "to" : "off",
+                             pl->personal_light);
 
         return 1;
     }
