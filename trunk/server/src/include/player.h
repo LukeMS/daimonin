@@ -145,9 +145,9 @@ typedef struct pl_player
 	/* some dm flags */
     uint32              dm_invis            : 1;    /* 1= is invisible, see invisible */
 	uint32              dm_stealth          : 1;            /* 1= no "XX enter the game" and no entry in /who */
-	uint32              dm_light            : 3;            /* must be enough bits to hold MAX_DARKNESS */
 	uint32              dm_removed_from_map : 1;    /* internal dm flag: player was removed from a map */
 
+	uint32              personal_light      : 3;   /* must be enough bits to hold MAX_DARKNESS */
 	uint32              known_spell         : 1;   /* True if you know the spell of the wand */
 	uint32              last_known_spell    : 1;   /* What was last updated with draw_stats() */
 	uint32              update_skills       : 1;   /* update skill list when set */

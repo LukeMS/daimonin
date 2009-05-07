@@ -243,7 +243,7 @@ void draw_client_map2(object *pl)
     player         *pl_ptr = CONTR(pl);
     object         *tmp = NULL, *tmph = NULL, *pname2 = NULL, *pname3 = NULL, *pname4 = NULL;
     int             x, y, ax, ay, d, nx, ny, probe_tmp;
-    int             x_start, dm_light = 0;
+    int             x_start, personal_light = 0;
     int             dark, flag_tmp, special_vision;
     int             quick_pos_1, quick_pos_2, quick_pos_3;
     int             inv_flag    = QUERY_FLAG(pl, FLAG_SEE_INVISIBLE) ? 0 : 1;
@@ -260,8 +260,8 @@ void draw_client_map2(object *pl)
     int tile_count  = 0;
 #endif
 
-    if (pl_ptr->dm_light)
-        dm_light = global_darkness_table[pl_ptr->dm_light];
+    if (pl_ptr->personal_light)
+        personal_light = global_darkness_table[pl_ptr->personal_light];
 
     wdark = darkness_table[world_darkness];
     special_vision = (QUERY_FLAG(pl, FLAG_XRAYS) ? 1 : 0) | (QUERY_FLAG(pl, FLAG_SEE_IN_DARK) ? 2 : 0);
@@ -404,11 +404,11 @@ void draw_client_map2(object *pl)
                 /* lets calc the darkness/light value for this tile.*/
                 if (MAP_OUTDOORS(m) && wdark <= m->light_value)
                 {
-                    d = msp->light_value + ((!dm_light) ? wdark : dm_light);
+                    d = msp->light_value + ((!personal_light) ? wdark : personal_light);
                 }
                 else
                 {
-                    d = msp->light_value + ((!dm_light) ? m->light_value : dm_light);
+                    d = msp->light_value + ((!personal_light) ? m->light_value : personal_light);
                 }
 
                 if (d <= 0) /* tile is not normal visible */
@@ -923,3 +923,22 @@ void draw_client_map2(object *pl)
         SOCKBUF_REQUEST_RESET(ns);
 }
 
+/* set_personal_light() sets pl->personal_light to 0 <= value <= MAX_DARKNESS.
+ * Note that on an outdoors map personal_light kills the *visible* variable
+ * lighting (for pl only) (this was intentional when personal_light (then
+ * dm_light) was just for MM use as during map testing variable lighting is
+ * rarely useful; now however normal players can have personal_light so it's
+ * not so useful = FIXME ;)). */
+void set_personal_light(player *pl, int value)
+{
+    if (!pl)
+        return;
+
+    if (value < 0)
+        value += (((value / -MAX_DARKNESS) * MAX_DARKNESS)) + MAX_DARKNESS;
+
+    if (value > MAX_DARKNESS)
+        value -= (((value - 1) / MAX_DARKNESS)) * MAX_DARKNESS;
+
+    pl->personal_light = (uint32)value;
+}
