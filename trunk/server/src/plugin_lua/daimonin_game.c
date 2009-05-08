@@ -500,8 +500,21 @@ static struct constant_decl preset_game_constants[] =
     /* Target modes (commands.h) */
     {"TARGET_ENEMY",  TARGET_ENEMY},
     {"TARGET_FRIEND", TARGET_FRIEND},
-    {"TARGET_SELF",   TARGET_SELF}
+    {"TARGET_SELF",   TARGET_SELF},
 
+    /* Personal light (global.h) */
+    /* Bizarrely higher numbers mean brighter so really MAX_DARKNESS means
+     * MIN_DARKNESS. */
+    /* FIXME: Currently there is some confusion about total darkness.
+     * Officially, the server recognises 0 as total dark, but Gridarta does
+     * not. A comment in global.h says: "(MAX_DARKNESS) number of darkness
+     * level. Add +1 for "total dark", so ATM total dark would be 8. But this
+     * is no good because maps would not stay synced to server changes -- total
+     * dark must be a constant value.
+     * -- Smacky 20090508 */
+    {"PERSONAL_LIGHT_OFF", 0},
+    {"PERSONAL_LIGHT_MIN", 1},
+    {"PERSONAL_LIGHT_MAX", MAX_DARKNESS}
 };
 
 lua_class Game =

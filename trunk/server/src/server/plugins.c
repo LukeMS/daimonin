@@ -161,6 +161,7 @@ struct plugin_hooklist  hooklist    =
     return_poolchunk_array_real,
     /* S */
     sell_item,
+    set_personal_light,
     set_quest_status,
     spring_trap,
     strdup_local,
