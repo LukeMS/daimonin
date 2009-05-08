@@ -2525,11 +2525,6 @@ Castle Command
 endmsg
 x 16
 y 5
-arch event_obj
-name Lua
-sub_type 12
-race /scripts/examine_sign.lua
-end
 end
 arch floor_grey3
 x 16

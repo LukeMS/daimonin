@@ -54,11 +54,6 @@ Cell 6 -- VACANCY
 endmsg
 direction 7
 y 8
-arch event_obj
-name Lua
-sub_type 12
-race /scripts/examine_sign.lua
-end
 arch beacon
 name stonehaven jail cell 6 proclamation
 end
@@ -73,11 +68,6 @@ Cell 5 -- VACANCY
 endmsg
 direction 7
 y 9
-arch event_obj
-name Lua
-sub_type 12
-race /scripts/examine_sign.lua
-end
 arch beacon
 name stonehaven jail cell 5 proclamation
 end
@@ -99,11 +89,6 @@ Cell 4 -- VACANCY
 endmsg
 direction 7
 y 10
-arch event_obj
-name Lua
-sub_type 12
-race /scripts/examine_sign.lua
-end
 arch beacon
 name stonehaven jail cell 4 proclamation
 end
@@ -125,11 +110,6 @@ Cell 3 -- VACANCY
 endmsg
 direction 7
 y 12
-arch event_obj
-name Lua
-sub_type 12
-race /scripts/examine_sign.lua
-end
 arch beacon
 name stonehaven jail cell 3 proclamation
 end
@@ -144,11 +124,6 @@ Cell 2 -- VACANCY
 endmsg
 direction 7
 y 13
-arch event_obj
-name Lua
-sub_type 12
-race /scripts/examine_sign.lua
-end
 arch beacon
 name stonehaven jail cell 2 proclamation
 end
@@ -163,11 +138,6 @@ Cell 1 -- VACANCY
 endmsg
 direction 7
 y 14
-arch event_obj
-name Lua
-sub_type 12
-race /scripts/examine_sign.lua
-end
 arch beacon
 name stonehaven jail cell 1 proclamation
 end
