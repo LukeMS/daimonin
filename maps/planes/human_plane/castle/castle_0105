@@ -1651,11 +1651,6 @@ msg
 "To The Royal Gardens And Counsel Buildings" is engraved in the signpost with well written gold letters.
 endmsg
 x 11
-arch event_obj
-name Lua
-sub_type 12
-race /scripts/examine_sign.lua
-end
 end
 arch floor_grit2
 x 11

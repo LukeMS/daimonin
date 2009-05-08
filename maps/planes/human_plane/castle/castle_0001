@@ -1499,11 +1499,6 @@ is_invisible 1
 sys_object 1
 x 9
 y 20
-arch event_obj
-name Lua
-sub_type 12
-race /scripts/examine_sign.lua
-end
 end
 arch grassd_8
 player_only 1
@@ -1638,11 +1633,6 @@ DO NOT FEED THE ANIMALS!
 endmsg
 x 10
 y 17
-arch event_obj
-name Lua
-sub_type 12
-race /scripts/examine_sign.lua
-end
 end
 arch grassd_8
 x 10
@@ -2291,11 +2281,6 @@ DO NOT FEED THE ANIMALS!
 endmsg
 x 14
 y 22
-arch event_obj
-name Lua
-sub_type 12
-race /scripts/examine_sign.lua
-end
 end
 arch grassd_7
 x 14

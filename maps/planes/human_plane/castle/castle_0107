@@ -1617,11 +1617,6 @@ South: Stonehaven Castle
 endmsg
 x 10
 y 1
-arch event_obj
-name Lua
-sub_type 12
-race /scripts/examine_sign.lua
-end
 end
 arch grassd_7
 x 10
@@ -2028,11 +2023,6 @@ Take note that there have been enemy sightings, and to further prevent any injur
 endmsg
 x 12
 y 4
-arch event_obj
-name Lua
-sub_type 12
-race /scripts/examine_sign.lua
-end
 end
 arch floor_grit3b
 x 12
