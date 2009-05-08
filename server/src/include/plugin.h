@@ -402,6 +402,7 @@ struct plugin_hooklist
     void (*return_poolchunk_array_real)(void *, uint32, struct mempool *);
     /* S */
     void (*sell_item)(object *, object *, sint64);
+    void (*set_personal_light)(player *, int);
     void (*set_quest_status)(struct obj *, int, int);
     void (*spring_trap)(object *, object *);
     char *(*strdup_local)(const char *);

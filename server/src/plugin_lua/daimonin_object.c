@@ -87,6 +87,7 @@ static struct method_decl GameObject_methods[] =
     {"GetMoney",               (lua_CFunction) GameObject_GetMoney},
     {"GetName",                (lua_CFunction) GameObject_GetName},
     {"GetNextPlayerInfo",      (lua_CFunction) GameObject_GetNextPlayerInfo},
+    {"GetPersonalLight",       (lua_CFunction) GameObject_GetPersonalLight},
     {"GetPets",                (lua_CFunction) GameObject_GetPets},
     {"GetPlayerInfo",          (lua_CFunction) GameObject_GetPlayerInfo},
     {"GetPlayerWeightLimit",   (lua_CFunction) GameObject_GetPlayerWeightLimit},
@@ -125,6 +126,7 @@ static struct method_decl GameObject_methods[] =
     {"SetGod",                 (lua_CFunction) GameObject_SetGod},
     {"SetInvAnimation",        (lua_CFunction) GameObject_SetInvAnimation},
     {"SetInvFace",             (lua_CFunction) GameObject_SetInvFace},
+    {"SetPersonalLight",       (lua_CFunction) GameObject_SetPersonalLight},
     {"SetPosition",            (lua_CFunction) GameObject_SetPosition},
     {"SetQuestStatus",         (lua_CFunction) GameObject_SetQuestStatus},
     {"SetRank",                (lua_CFunction) GameObject_SetRank},
@@ -4072,6 +4074,55 @@ static int GameObject_PlayerSave(lua_State *L)
 
     return 1;
 }
+/*****************************************************************************/
+/* Name   : GameObject_GetPersonalLight                                      */
+/* Lua    : object:GetPersonalLight()                                        */
+/* Info   : Only works for player objects. Other types generate an error.    */
+/*          The function takes no arguments.                                 */
+/*          The return is the object's personal light value (0 means off).   */
+/* Status : Untested/Stable                                                  */
+/*****************************************************************************/
+static int GameObject_GetPersonalLight(lua_State *L)
+{
+    lua_object *self;
+
+    get_lua_args(L, "O", &self);
+
+    if (WHO->type != PLAYER || CONTR(WHO) == NULL)
+        return luaL_error(L, "GetPersonalLight() can only be called on a player!");
+
+    lua_pushnumber(L, CONTR(WHO)->personal_light);
+
+    return 1;
+}
+
+/*****************************************************************************/
+/* Name   : GameObject_SetPersonalLight                                      */
+/* Lua    : object:SetPersonalLight(mode)                                    */
+/* Info   : Only works for player objects. Other types generate an error.    */
+/*          The mandatory argument is the personal light value to set (this  */
+/*          will be normalised to the range 0 <= value <= MAX_DARKNESS). A   */
+/*          value of 0 means turn it off.                                    */
+/*          The return is the new personal light setting.                    */
+/* Status : Untested/Stable                                                  */
+/*****************************************************************************/
+static int GameObject_SetPersonalLight(lua_State *L)
+{
+    lua_object *self;
+    int         value;
+
+    get_lua_args(L, "Oi", &self, &value);
+
+    /* Only players have combat mode */
+    if (WHO->type != PLAYER || CONTR(WHO) == NULL)
+        return luaL_error(L, "SetPersonalLight() can only be called on a player!");
+
+    hooks->set_personal_light(CONTR(WHO), value);
+    lua_pushnumber(L, CONTR(WHO)->personal_light);
+
+    return 1;
+}
+
 
 
 /* FUNCTIONEND -- End of the GameObject methods. */
