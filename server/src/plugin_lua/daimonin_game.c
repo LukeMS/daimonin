@@ -524,6 +524,7 @@ lua_class Game =
     0,
     NULL,
     NULL,
+    NULL,
     Game_methods,
     NULL,   /* address of Game_constants set in Game_init */
     NULL,

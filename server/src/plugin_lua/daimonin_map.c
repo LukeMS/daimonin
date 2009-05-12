@@ -101,6 +101,37 @@ static int Map_setFlag(lua_State *L, lua_object *obj, uint32 flagno)
     return 0;
 }
 
+/* Compare two objects for equality */
+static int Map_eq(struct lua_State *L)
+{
+    lua_object *lhs = lua_touserdata(L, 1);
+    lua_object *rhs = lua_touserdata(L, 2);
+
+    /* Should actually never happen. */
+    if ((!lhs || lhs->class->type != LUATYPE_MAP) ||
+        (!rhs || rhs->class->type != LUATYPE_MAP))
+    {
+        LOG(llevBug, "BUG:: %s/Map_eq(): Either/both LHS/RHS not Map objects!\n",
+            __FILE__);
+
+        return luaL_error(L, "Map_eq: Either/both LHS/RHS not Map objects!");
+    }
+
+    /* Test for LHS invalidity. */
+    if (!lhs->class->isValid(L, lhs))
+        return luaL_error(L, "Map_eq: LHS invalid!");
+
+    /* Test for RHS invalidity. */
+    if (!rhs->class->isValid(L, rhs))
+        return luaL_error(L, "Map_eq: RHS invalid!");
+
+    /* Compare tags. */
+    lua_pushboolean(L, (lhs->tag == rhs->tag));
+
+    return 1;
+}
+
+
 /* Return a string representation of this object (useful for debugging) */
 static int Map_toString(lua_State *L)
 {
@@ -134,6 +165,7 @@ lua_class Map =
     LUATYPE_MAP,
     "Map",
     0,
+    Map_eq,
     Map_toString,
     Map_attributes,
     Map_methods,
