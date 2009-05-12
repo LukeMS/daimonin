@@ -1178,9 +1178,7 @@ int init_media_tag(char *tag)
 int init_media_tag(char *tag)
 {
     char *p1,
-         *p2,
-          buf[256];
-    int   temp;
+         *p2;
 
     if (tag == NULL)
     {
