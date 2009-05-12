@@ -230,6 +230,7 @@ typedef struct lua_class_s
     const char             *name;
     int                     meta;    /* ref to the metatable for class objects */
 
+    lua_CFunction           eq;
     lua_CFunction           toString;
 
     struct attribute_decl  *attributes;

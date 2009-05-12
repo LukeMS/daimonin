@@ -568,6 +568,36 @@ static int GameObject_getFlag(lua_State *L, lua_object *obj, uint32 flagno)
     return 1;
 }
 
+/* Compare two objects for equality */
+static int GameObject_eq(struct lua_State *L)
+{
+    lua_object *lhs = lua_touserdata(L, 1);
+    lua_object *rhs = lua_touserdata(L, 2);
+
+    /* Should actually never happen. */
+    if ((!lhs || lhs->class->type != LUATYPE_OBJECT) ||
+        (!rhs || rhs->class->type != LUATYPE_OBJECT))
+    {
+        LOG(llevBug, "BUG:: %s/GameObject_eq(): Either/both LHS/RHS not GameObject objects!\n",
+            __FILE__);
+
+        return luaL_error(L, "GameObject_eq: Either/both LHS/RHS not GameObject objects!");
+    }
+
+    /* Test for LHS invalidity. */
+    if (!lhs->class->isValid(L, lhs))
+        return luaL_error(L, "GameObject_eq: LHS invalid!");
+
+    /* Test for RHS invalidity. */
+    if (!rhs->class->isValid(L, rhs))
+        return luaL_error(L, "GameObject_eq: RHS invalid!");
+
+    /* Compare tags. */
+    lua_pushboolean(L, (lhs->tag == rhs->tag));
+
+    return 1;
+}
+
 /* toString method for GameObjects */
 static int GameObject_toString(lua_State *L)
 {
@@ -592,6 +622,7 @@ lua_class GameObject  =
     LUATYPE_OBJECT,
     "GameObject",
     0,
+    GameObject_eq,
     GameObject_toString,
     GameObject_attributes,
     GameObject_methods,

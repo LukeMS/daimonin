@@ -682,6 +682,36 @@ static int AI_ReloadBehaviourlist(lua_State *L)
 /* Lua object management code                                               */
 /****************************************************************************/
 
+/* Compare two objects for equality */
+static int AI_eq(struct lua_State *L)
+{
+    lua_object *lhs = lua_touserdata(L, 1);
+    lua_object *rhs = lua_touserdata(L, 2);
+
+    /* Should actually never happen. */
+    if ((!lhs || lhs->class->type != LUATYPE_AI) ||
+        (!rhs || rhs->class->type != LUATYPE_AI))
+    {
+        LOG(llevBug, "BUG:: %s/AI_eq(): Either/both LHS/RHS not AI objects!\n",
+            __FILE__);
+
+        return luaL_error(L, "AI_eq: Either/both LHS/RHS not AI objects!");
+    }
+
+    /* Test for LHS invalidity. */
+    if (!lhs->class->isValid(L, lhs))
+        return luaL_error(L, "AI_eq: LHS invalid!");
+
+    /* Test for RHS invalidity. */
+    if (!rhs->class->isValid(L, rhs))
+        return luaL_error(L, "AI_eq: RHS invalid!");
+
+    /* Compare tags. */
+    lua_pushboolean(L, (lhs->tag == rhs->tag));
+
+    return 1;
+}
+
 /* toString method for AI objects */
 static int AI_toString(lua_State *L)
 {
@@ -703,7 +733,7 @@ static int AI_isValid(lua_State *L, lua_object *obj)
 
 lua_class   AI  =
 {
-    LUATYPE_AI, "AI", 0, AI_toString, AI_attributes, AI_methods, NULL,
+    LUATYPE_AI, "AI", 0, AI_eq, AI_toString, AI_attributes, AI_methods, NULL,
     NULL, NULL, NULL, NULL, AI_isValid, 0
 };
 

@@ -97,7 +97,7 @@ static struct attribute_decl    Event_attributes[]  =
 /* Basic script classes */
 lua_class Event =
 {
-    LUATYPE_EVENT, "Event", 0, NULL, Event_attributes, NULL,
+    LUATYPE_EVENT, "Event", 0, NULL, NULL, Event_attributes, NULL,
     NULL, NULL, NULL, NULL, NULL, Event_isValid, 0
 };
 

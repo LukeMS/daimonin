@@ -41,22 +41,22 @@ static int  set_attribute(lua_State *L, lua_object *obj, struct attribute_decl *
 /* Internally used pseudo-classes, not accessible from scripts */
 static lua_class    Attribute   =
 {
-    LUATYPE_ATTRIBUTE, "Attribute", 0, NULL,
+    LUATYPE_ATTRIBUTE, "Attribute", 0, NULL, NULL,
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0
 };
 static lua_class    Method      =
 {
-    LUATYPE_METHOD, "Method", 0, NULL,
+    LUATYPE_METHOD, "Method", 0, NULL, NULL,
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0
 };
 static lua_class    Constant    =
 {
-    LUATYPE_CONSTANT, "Constant", 0, NULL,
+    LUATYPE_CONSTANT, "Constant", 0, NULL, NULL,
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0
 };
 static lua_class    Flag        =
 {
-    LUATYPE_FLAG, "Flag", 0, NULL,
+    LUATYPE_FLAG, "Flag", 0, NULL, NULL,
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0
 };
 
@@ -673,7 +673,10 @@ int init_class(struct lua_State *L, lua_class *class)
     lua_rawset(L, -3);     /* stack: metatable */
 
     lua_pushstring(L, "__eq");
-    lua_pushcclosure(L, eq_generic, 0);
+    if (class->eq)
+        lua_pushcclosure(L, class->eq, 0);
+    else
+        lua_pushcclosure(L, eq_generic, 0);
     lua_rawset(L, -3);     /* stack: metatable */
 
     lua_pushstring(L, "__tostring");
