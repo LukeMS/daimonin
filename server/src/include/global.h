@@ -604,7 +604,7 @@ EXTERN long                     nrofallowedstr;     /* Only used in malloc_info(
 EXTERN object                   void_container; /* Container for objects without env or map */
 
 EXTERN char                     global_string_buf4096[HUGE_BUF];
-EXTERN char                     errmsg[HUGE_BUF];
+EXTERN char                     errmsg[HUGE_BUF*6]; /* Must be at least as large as buf in get_ob_dif JRG 13-May-2009 */
 EXTERN long                     ob_count;
 
 EXTERN int                      global_race_counter; /* global race counter */

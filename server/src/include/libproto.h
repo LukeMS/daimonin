@@ -246,7 +246,7 @@ extern sint32           sum_weight(object *op);
 extern object          *is_player_inv(object *op);
 extern void             dump_object2(const object *op);
 extern void             dump_object(const object *op);
-extern void             dump_me(object *op, char *outstr);
+extern void             dump_me(object *op, char *outstr, size_t bufsize);
 extern void             dump_all_objects(void);
 extern void             free_all_object_data(void);
 extern object          *get_owner(object *op);

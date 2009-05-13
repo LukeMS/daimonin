@@ -1023,6 +1023,7 @@ CFParm * CFWFindGod(CFParm *PParm)
 /* dump_me wrapper.                                                          */
 /*****************************************************************************/
 /* 0 - object to dump;                                                       */
+/* JRG 13-May-2009 added size parameter to dump_me                           */
 /*****************************************************************************/
 CFParm * CFWDumpObject(CFParm *PParm)
 {
@@ -1031,7 +1032,7 @@ CFParm * CFWDumpObject(CFParm *PParm)
     /*    object* ob; not used */
     val = (char *) (malloc(sizeof(char) * 10240));
     CFP = (CFParm *) (malloc(sizeof(CFParm)));
-    dump_me((object *) (PParm->Value[0]), val);
+    dump_me((object *) (PParm->Value[0]), val, 10240);
     CFP->Value[0] = (void *) (val);
     return CFP;
 }
