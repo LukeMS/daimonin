@@ -444,8 +444,6 @@ int command_talk(object *op, char *params)
 {
     player     *pl;
     object     *t_obj;
-    int         i, xt, yt;
-    mapstruct  *m;
 
     /* we don't allow npc top npc talk here */
     if (op->type != PLAYER || !(pl = CONTR(op)))
@@ -485,7 +483,7 @@ int command_talk(object *op, char *params)
     if (!OBJECT_VALID(pl->target_object, pl->target_object_count) ||
         pl->target_object->type == PLAYER)
     {
-        pl->target_object == NULL;
+        pl->target_object = NULL;
 
         command_target(op, "3");
     }
@@ -501,7 +499,7 @@ int command_talk(object *op, char *params)
         /* Is the target on this mapset and not too far away? */
         if (get_rangevector(op, t_obj, &rv, 0))
         {
-            int range = MAX(1, t_obj->stats.Wis);
+            unsigned int range = MAX(1, t_obj->stats.Wis);
 
             if (QUERY_FLAG(t_obj, FLAG_SLEEP))
                 range = MAX(1, range / 2);
