@@ -1112,9 +1112,12 @@ char *get_ob_diff(const object *op, const object *op2) {
      * the server when dumped. So lets not do that. This could be so for other
      * objects too, but this is just a quick fix for the one that has caused me
      * problems -- Smacky 20081205 */
-    if (op->type == BOOK)
-      buf_end = append_simple(append_multiline(append_simple(buf_end,"msg\n"), "TEXT REMOVED\n"), "endmsg\n");
-    else
+    /* JRG 13-May-2009 Hopefully this is now fixed elsewhere, so we can
+     * keep book contents.
+     */
+//    if (op->type == BOOK)
+//      buf_end = append_simple(append_multiline(append_simple(buf_end,"msg\n"), "TEXT REMOVED\n"), "endmsg\n");
+//    else
       buf_end = append_simple(append_multiline(append_simple(buf_end,"msg\n"), op->msg), "endmsg\n");
   }
   if(op->other_arch!=op2->other_arch&&op->other_arch!=NULL &&

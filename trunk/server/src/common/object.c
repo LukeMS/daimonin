@@ -843,7 +843,8 @@ void dump_object(const object *op)
 /* GROS - Dumps an object. Return the result into a string                   */
 /* Note that no checking is done for the validity of the target string, so   */
 /* you need to be sure that you allocated enough space for it.               */
-void dump_me(object *op, char *outstr)
+/* JRG 13-May-2009 Additional parameter tells this function size of buffer.  */
+void dump_me(object *op, char *outstr, size_t bufsize)
 {
     char   *cp;
 
@@ -860,7 +861,10 @@ void dump_me(object *op, char *outstr)
         strcat(outstr, op->arch->name ? op->arch->name : "(null)");
         strcat(outstr, "\n");
         if ((cp = get_ob_diff(op, &empty_archetype->clone)) != NULL)
-            strcat(outstr, cp);
+        {
+            // JRG The 32 here is to allow for the arch/name/end text
+            strcat(outstr, ((strlen(cp) + 32) > bufsize) ? "(overflow)" : cp);
+        }
         strcat(outstr, "end\n");
     }
     else
@@ -2470,7 +2474,7 @@ object * get_split_ob(object *orig_ob, uint32 nr)
         if(tmp)
         {
             /* force a weight check for buttons */
-            update_object(orig_ob, UP_OBJ_INSERT); 
+            update_object(orig_ob, UP_OBJ_INSERT);
             check_walk_on(orig_ob, tmp, 0);
         }
     }
@@ -3331,6 +3335,6 @@ object *find_next_object(object *op, uint8 type, uint8 mode, object *root)
         }
     }
     while (next);
-    
+
     return next;
 }
