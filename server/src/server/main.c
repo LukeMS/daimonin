@@ -217,39 +217,43 @@ void process_players2(mapstruct *map)
           || (QUERY_FLAG(pl->target_object, FLAG_IS_INVISIBLE) && !QUERY_FLAG(pl->ob, FLAG_SEE_INVISIBLE))))
             send_target_command(pl);
 
-        /* now use the new target system to hit our target... Don't hit non
-        * friendly objects, ourself or when we are not in combat mode.
-        */
-        if (pl->ob->weapon_speed_left <= 0
-            && pl->ob->map
-            && pl->target_object
-            && pl->combat_mode
-            /*
-            && OBJECT_ACTIVE(pl->target_object)
-            && pl->target_object_count != pl->ob->count
-            */
-            && get_friendship(pl->ob, pl->target_object) < FRIENDSHIP_HELP)
+        if (pl->ob->weapon_speed_left <= 0)
         {
-                /* now we force target as enemy */
-                pl->ob->enemy = pl->target_object;
-                pl->ob->enemy_count = pl->target_object_count;
+            /* tell the client the skill cooldown time has ran out, it should only transmit this once */
+            pl->action_timer = 0;
 
-                /* quick check our target is still valid: count ok? (freed...), not
-                * removed, not a bet or object we self own (TODO: group pets!)
-                * Note: i don't do a invisible check here... this will happen one
-                * at end of this round... so, we have a "object turn invisible and
-                * we do a last hit here"
+            /* now use the new target system to hit our target... Don't hit non
+            * friendly objects, ourself or when we are not in combat mode.
+            */
+            if(pl->ob->map
+                && pl->target_object
+                && pl->combat_mode
+                /*
+                && OBJECT_ACTIVE(pl->target_object)
+                && pl->target_object_count != pl->ob->count
                 */
-                if (!OBJECT_VALID(pl->ob->enemy, pl->ob->enemy_count) || pl->ob->enemy->owner == pl->ob)
-                    pl->ob->enemy = NULL;
-                else if (is_melee_range(pl->ob, pl->ob->enemy))
-                {
-                    /* tell our enemy we swing at him now */
-                    update_npc_knowledge(pl->ob->enemy, pl->ob, FRIENDSHIP_TRY_ATTACK, 0);
-                    pl->rest_mode = 0;
-                    skill_attack(pl->ob->enemy, pl->ob, 0, NULL);
-                    pl->ob->weapon_speed_left += FABS(pl->ob->weapon_speed);
-                }
+                && get_friendship(pl->ob, pl->target_object) < FRIENDSHIP_HELP)
+            {
+                    /* now we force target as enemy */
+                    pl->ob->enemy = pl->target_object;
+                    pl->ob->enemy_count = pl->target_object_count;
+
+                    /* quick check our target is still valid: count ok? (freed...), not
+                    * removed, not a bet or object we self own (TODO: group pets!)
+                    * Note: i don't do a invisible check here... this will happen one
+                    * at end of this round... so, we have a "object turn invisible and
+                    * we do a last hit here"
+                    */
+                    if (!OBJECT_VALID(pl->ob->enemy, pl->ob->enemy_count) || pl->ob->enemy->owner == pl->ob)
+                        pl->ob->enemy = NULL;
+                    else if (is_melee_range(pl->ob, pl->ob->enemy))
+                    {
+                        /* tell our enemy we swing at him now */
+                        update_npc_knowledge(pl->ob->enemy, pl->ob, FRIENDSHIP_TRY_ATTACK, 0);
+                        pl->rest_mode = 0;
+                        skill_attack(pl->ob->enemy, pl->ob, 0, NULL);
+                    }
+            }
         }
 
         if (pl->ob->speed_left > pl->ob->speed)

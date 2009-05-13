@@ -898,6 +898,11 @@ void StatsCmd(char *data, int len)
                     set_weight_limit(GetUINT32_String(data + i));
                     i += 4;
                     break;
+                case CS_STAT_ACTION_TIME:
+                    cpl.action_timer = ((float)ABS(GetSINT32_String(data + i)))/1000.0f;
+                    i += 4;
+                    WIDGET_REDRAW(SKILL_EXP_ID);
+                    break;
                 case CS_STAT_SKILLEXP_AGILITY:
                 case CS_STAT_SKILLEXP_PERSONAL:
                 case CS_STAT_SKILLEXP_MENTAL:

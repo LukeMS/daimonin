@@ -233,6 +233,51 @@ void check_stat_bounds(living *stats)
         stats->Cha = MIN_STAT;
 }
 
+/*
+ * This is mainly used by forces that can modify stats, which are caused by being hit with poison attacks, eating food, etc.
+ * It's here to make sure the force doesn't make the player stats go out of range (< 1 or > MAX_STAT).
+ */
+
+object * check_obj_stat_buffs(object *ob, object *pl)
+{
+    if (ob->stats.Str <= -pl->stats.Str)
+        ob->stats.Str = -(pl->stats.Str - 1);
+    else if (ob->stats.Str > MAX_STAT - pl->stats.Str)
+        ob->stats.Str = MAX_STAT - pl->stats.Str;
+
+    if (ob->stats.Dex <= -pl->stats.Dex)
+        ob->stats.Dex = -(pl->stats.Dex - 1);
+    else if (ob->stats.Dex > MAX_STAT - pl->stats.Dex)
+        ob->stats.Dex = MAX_STAT - pl->stats.Dex;
+
+    if (ob->stats.Con <= -pl->stats.Con)
+        ob->stats.Con = -(pl->stats.Con - 1);
+    else if (ob->stats.Con > MAX_STAT - pl->stats.Con)
+        ob->stats.Con = MAX_STAT - pl->stats.Con;
+
+    if (ob->stats.Int <= -pl->stats.Int)
+        ob->stats.Int = -(pl->stats.Int - 1);
+    else if (ob->stats.Int > MAX_STAT - pl->stats.Int)
+        ob->stats.Int = MAX_STAT - pl->stats.Int;
+
+    if (ob->stats.Pow <= -pl->stats.Pow)
+        ob->stats.Pow = -(pl->stats.Pow - 1);
+    else if (ob->stats.Pow > MAX_STAT - pl->stats.Pow)
+        ob->stats.Pow = MAX_STAT - pl->stats.Pow;
+
+    if (ob->stats.Wis <= -pl->stats.Wis)
+        ob->stats.Wis = -(pl->stats.Wis - 1);
+    else if (ob->stats.Wis > MAX_STAT - pl->stats.Wis)
+        ob->stats.Wis = MAX_STAT - pl->stats.Wis;
+
+    if (ob->stats.Cha <= -pl->stats.Cha)
+        ob->stats.Cha = -(pl->stats.Cha - 1);
+    else if (ob->stats.Cha > MAX_STAT - pl->stats.Cha)
+        ob->stats.Cha = MAX_STAT - pl->stats.Cha;
+
+    return ob;
+}
+
 /* return 1 if we sucessfully changed a stat, 0 if nothing was changed. */
 /* applied is set to 1 if we are applying the object, -1 if we are removing
  * the object.

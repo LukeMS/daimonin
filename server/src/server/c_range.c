@@ -39,7 +39,7 @@
 void fire(object *op, int dir)
 {
 	object *weap;
-	int ticks;
+	float ticks;
 	player *pl			= CONTR(op);
 
 	/* NOT IMPLEMENTED IN B4: check for loss of invisiblity/hide */
@@ -59,14 +59,20 @@ void fire(object *op, int dir)
 			return;
 
 		if (weap->sub_type1 == RANGE_WEAP_BOW)
-			ticks = SK_MISSILE_WEAPON;
+		{
+			if (!change_skill(op, SK_MISSILE_WEAPON)) /* we have a skill to throw? */
+			    return;
+		}
 		else if (weap->sub_type1 == RANGE_WEAP_XBOWS)
-			ticks = SK_XBOW_WEAP;
+		{
+			if (!change_skill(op, SK_XBOW_WEAP)) /* we have a skill to throw? */
+			    return;
+		}
 		else
-			ticks = SK_SLING_WEAP;
-
-		if (!change_skill(op, ticks)) /* we have a skill to throw? */
-			return;
+		{
+			if (!change_skill(op, SK_SLING_WEAP)) /* we have a skill to throw? */
+			    return;
+		}
 
 		if (!check_skill_action_time(op, op->chosen_skill)) /* are we idle from other action? */
 			return;
@@ -100,15 +106,15 @@ void fire(object *op, int dir)
 	}
 
 	/* finally, our action above has cost time... */
-	LOG(llevDebug, "AC-fire: %d\n", ticks);
+	LOG(llevDebug, "AC-fire: %2.2f\n", ticks);
 	set_action_time(op, ticks);
 }
 
 /* owner fires op (which is a rod, horn or wand)
 */
-int fire_magic_tool(object *op, object *weap, int dir)
+float fire_magic_tool(object *op, object *weap, int dir)
 {
-	int ticks = 0;
+	float ticks = 0.0f;
 
 	switch(weap->type)
 	{
@@ -164,7 +170,7 @@ int fire_magic_tool(object *op, object *weap, int dir)
 		break;
 	}
 
-	ticks = op->chosen_skill->stats.sp;
+	ticks = (float) (weap->last_grace) * RANGED_DELAY_TIME;
 
 	return ticks;
 }
@@ -270,6 +276,7 @@ int command_cast_spell(object *op, char *params)
     char       *cp              = NULL;
     int         spnum = -1, spnum2 = -1;  /* number of spell that is being cast */
     int         value;
+    float       ticks;
 
     if (!CONTR(op)->nrofknownspells && !QUERY_FLAG(op, FLAG_WIZ))
     {
@@ -332,8 +339,9 @@ int command_cast_spell(object *op, char *params)
 
     if (value)
     {
-		LOG(llevDebug, "AC-spells(%d): %d\n", spnum, spells[spnum].time);
-        set_action_time(op, spells[spnum].time);
+        ticks = (float) (spells[spnum].time) * RANGED_DELAY_TIME;
+		LOG(llevDebug, "AC-spells(%d): %2.2f\n", spnum, ticks);
+        set_action_time(op, ticks);
 
         if (spells[spnum].flags & SPELL_DESC_WIS)
             op->stats.grace -= value;

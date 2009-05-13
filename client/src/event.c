@@ -108,10 +108,12 @@ int itemExamined = 0;
 
 
 /* cmds for fire/move/run - used from move_keys()*/
+#ifdef DEBUG_TEXT
 static char    *directions_name[10]     =
     {
         "null", "southwest", "south", "southeast", "west", "stay", "east", "northwest", "north", "northeast"
     };
+#endif
 static char    *directionsrun[10]       =
     {
         "/run 0", "/run 6", "/run 5", "/run 4", "/run 7",\
@@ -1228,7 +1230,9 @@ int key_event(SDL_KeyboardEvent *key)
             case SDLK_LALT:
             case SDLK_RALT:
                 send_game_command("/run_stop");
-                /*draw_info("run_stop",COLOR_DGOLD);*/
+#ifdef DEBUG_TEXT
+                draw_info("run_stop",COLOR_DGOLD);
+#endif
                 cpl.run_on = FALSE;
                 break;
             case SDLK_RCTRL:
@@ -1471,7 +1475,9 @@ void check_keys(int key)
                 /* if no key macro, submit the text as cmd*/
                 if (check_macro_keys(bindkey_list[j].entry[i].text))
                 {
+#ifdef DEBUG_TEXT
                     draw_info(bindkey_list[j].entry[i].text, COLOR_DGOLD);
+#endif
                     strcpy(buf, bindkey_list[j].entry[i].text);
                     if (!client_command_check(buf))
                         send_game_command(buf);
@@ -1630,8 +1636,10 @@ Boolean process_macro_keys(int id, int value)
     case KEYFUNC_RUN:
         if (!(cpl.runkey_on = cpl.runkey_on ? FALSE : TRUE))
             send_game_command("/run_stop");
+#ifdef DEBUG_TEXT
         sprintf(buf, "runmode %s", cpl.runkey_on ? "on" : "off");
-        /*draw_info(buf,COLOR_DGOLD);*/
+        draw_info(buf,COLOR_DGOLD);
+#endif
         break;
     case KEYFUNC_MOVE:
         move_keys(value);
@@ -1670,8 +1678,10 @@ Boolean process_macro_keys(int id, int value)
 
         if (tag == -1 || !locate_item(tag))
             return FALSE;
+#ifdef DEBUG_TEXT
         sprintf(buf, "apply %s", locate_item(tag)->s_name);
         draw_info(buf, COLOR_DGOLD);
+#endif
         client_send_apply(tag);
         return FALSE;
         break;
@@ -1683,8 +1693,10 @@ Boolean process_macro_keys(int id, int value)
         if (tag == -1 || !locate_item(tag))
             return FALSE;
         client_send_examine(tag);
+#ifdef DEBUG_TEXT
         sprintf(buf, "examine %s", locate_item(tag)->s_name);
         draw_info(buf, COLOR_DGOLD);
+#endif
         return FALSE;
         break;
     case KEYFUNC_MARK:
@@ -1813,8 +1825,10 @@ Boolean process_macro_keys(int id, int value)
         }
         /*collectAll:*/
         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_GET, 0, 0, 100);
+#ifdef DEBUG_TEXT
         sprintf(buf, "get %s", it->s_name);
         draw_info(buf, COLOR_DGOLD);
+#endif
         send_inv_move(loc, tag, nrof);
         return FALSE;
 
@@ -1941,8 +1955,10 @@ Boolean process_macro_keys(int id, int value)
             return FALSE;
         }
         sound_play_effect(SOUNDTYPE_NORMAL, SOUND_DROP, 0, 0, 100);
+#ifdef DEBUG_TEXT
         sprintf(buf, "drop %s", it->s_name);
         draw_info(buf, COLOR_DGOLD);
+#endif
         send_inv_move(loc, tag, nrof);
         return FALSE;
         break;
@@ -2103,8 +2119,10 @@ void quickslot_key(SDL_KeyboardEvent *key, int slot)
             }
             if (locate_item(quick_slots[slot].shared.tag))
             {
+#ifdef DEBUG_TEXT
                 sprintf(buf, "F%d quick apply %s", slot + 1, locate_item(quick_slots[slot].shared.tag)->s_name);
                 draw_info(buf, COLOR_DGOLD);
+#endif
                 client_send_apply(quick_slots[slot].shared.tag);
                 return;
             }
@@ -2117,7 +2135,9 @@ void quickslot_key(SDL_KeyboardEvent *key, int slot)
 static void move_keys(int num)
 {
     char    buf[256];
+#ifdef DEBUG_TEXT
     char    msg[256];
+#endif
 
     if (show_help_screen_new)
     {
@@ -2142,7 +2162,9 @@ static void move_keys(int num)
     if ((cpl.runkey_on || cpl.run_on) && (!cpl.firekey_on && !cpl.fire_on)) /* runmode on, or ALT key trigger */
     {
         send_game_command(directionsrun[num]);
+#ifdef DEBUG_TEXT
         strcpy(buf, "run ");
+#endif
     }
     /* thats the range menu - we handle it messages unique */
     else if (cpl.firekey_on || cpl.fire_on)
@@ -2162,7 +2184,6 @@ static void move_keys(int num)
 /*            sprintf(buf, "/%s %d %d %s", directionsfire[num], RangeFireMode, -1,
                     fire_mode_tab[RangeFireMode].skill->name);
 */
-            sprintf(msg, "use %s %s", fire_mode_tab[RangeFireMode].skill->name, directions_name[num]);
         }
         else if (RangeFireMode == FIRE_MODE_SPELL)
         {
@@ -2175,31 +2196,37 @@ static void move_keys(int num)
 /*            sprintf(buf, "/%s %d %d %s", directionsfire[num], RangeFireMode, -1,
                     fire_mode_tab[RangeFireMode].spell->name);
 */
-            sprintf(msg, "cast %s %s", fire_mode_tab[RangeFireMode].spell->name, directions_name[num]);
         }
         else
         {
             itemid = fire_mode_tab[RangeFireMode].item;
-/*
-            sprintf(buf, "/%s %d %d %d", directionsfire[num], RangeFireMode, fire_mode_tab[RangeFireMode].item,
+
+/*            sprintf(buf, "/%s %d %d %d", directionsfire[num], RangeFireMode, fire_mode_tab[RangeFireMode].item,
                     fire_mode_tab[RangeFireMode].amun);
 */
-        }
-
-
-        if (RangeFireMode == FIRE_MODE_BOW)
-        {
-            if (fire_mode_tab[FIRE_MODE_BOW].item == FIRE_ITEM_NO)
+            if (RangeFireMode == FIRE_MODE_BOW)
             {
-                draw_info("no range weapon selected.", COLOR_WHITE);
-                return;
+                if (fire_mode_tab[FIRE_MODE_BOW].item == FIRE_ITEM_NO)
+                {
+                    draw_info("no range weapon selected.", COLOR_WHITE);
+                    return;
+                }
             }
-            sprintf(msg, "fire %s", directions_name[num]);
         }
 
         /* atm we only use direction, mode and the skill/spell name */
         send_fire_command(num, RangeFireMode, tmp_name);
+
+#ifdef DEBUG_TEXT
+        if (RangeFireMode == FIRE_MODE_SKILL)
+            sprintf(msg, "use %s %s", fire_mode_tab[RangeFireMode].skill->name, directions_name[num]);
+        else if (RangeFireMode == FIRE_MODE_SPELL)
+            sprintf(msg, "cast %s %s", fire_mode_tab[RangeFireMode].spell->name, directions_name[num]);
+        else if (RangeFireMode == FIRE_MODE_BOW)
+            sprintf(msg, "fire %s", directions_name[num]);
+
         draw_info(msg,COLOR_DGOLD);
+#endif
         return;
     }
     else
@@ -2207,8 +2234,10 @@ static void move_keys(int num)
         send_move_command(num, 0);
         buf[0] = 0;
     }
+#ifdef DEBUG_TEXT
     strcat(buf, directions_name[num]);
-    /*draw_info(buf,COLOR_DGOLD);*/
+    draw_info(buf,COLOR_DGOLD);
+#endif
 }
 
 
@@ -2260,7 +2289,9 @@ static void key_repeat(void)
                                 strcpy(buf, bindkey_list[j].entry[i].text);
                                 if (!client_command_check(buf))
                                     send_game_command(buf);
+#ifdef DEBUG_TEXT
                                 draw_info(bindkey_list[j].entry[i].text, COLOR_DGOLD);
+#endif
                             }
                         }
                     }
