@@ -26,9 +26,9 @@
 
 /* player throws a throw item (which are special arrows)
  */
-int do_throw(object *op, int dir)
+float do_throw(object *op, int dir)
 {
-	int ticks;
+	float ticks;
 	object *throw_arrow;
 	player *pl = CONTR(op);
 
@@ -59,11 +59,11 @@ int do_throw(object *op, int dir)
 
 	/* used action time - hotfix for possible action timer bug */
 	LOG(llevDebug, "AC-TICKS: item %s ->%d for skill %s ->%d.\n", query_name(throw_arrow),throw_arrow->last_grace,query_name(op->chosen_skill),op->chosen_skill->last_grace);
-	ticks = throw_arrow->last_grace + op->chosen_skill->last_grace;
+	ticks = (float) (throw_arrow->last_grace + op->chosen_skill->last_grace) * RANGED_DELAY_TIME;
 	if(!ticks)
 	{
 		LOG(llevDebug, "ACBUG: ticks = 0\n");
-		ticks = 10;
+		ticks = 1.25f;
 	}
 
 	create_missile(op, NULL, throw_arrow, dir);
@@ -74,9 +74,9 @@ int do_throw(object *op, int dir)
 /*
  *  Player fires a bow.
  */
-int fire_bow(object *op, int dir)
+float fire_bow(object *op, int dir)
 {
-	int ticks;
+	float ticks;
 	object *bow, *arrow;
 	player *pl = CONTR(op);
 
@@ -115,14 +115,14 @@ int fire_bow(object *op, int dir)
 	}
 
 	/* used action time */
-	LOG(llevDebug, "AC-TICKS: bow %s ->%d arrow %s ->%d for skill %s ->%d.\n", 
-		query_name(bow),bow->last_grace,query_name(arrow),arrow->last_grace,
-		query_name(op->chosen_skill),op->chosen_skill->last_grace);
-	ticks = arrow->last_grace + bow->last_grace + op->chosen_skill->last_grace;
+	LOG(llevDebug, "AC-TICKS: bow %s ->%2.2f arrow %s ->%2.2f for skill %s ->%2.2f.\n", 
+		query_name(bow),(float) (bow->last_grace) * RANGED_DELAY_TIME,query_name(arrow),(float) (arrow->last_grace) * RANGED_DELAY_TIME,
+		query_name(op->chosen_skill),(float) (op->chosen_skill->last_grace) * RANGED_DELAY_TIME);
+	ticks = (float) (arrow->last_grace + bow->last_grace + op->chosen_skill->last_grace) * RANGED_DELAY_TIME;
 	if(!ticks)
 	{
 		LOG(llevDebug, "ACBUG: ticks = 0\n");
-		ticks = 10;
+		ticks = 1.25f;
 	}
 
 	create_missile(op, bow, arrow, dir);

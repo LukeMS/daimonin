@@ -113,8 +113,7 @@ extern void             set_attr_value(living *stats, int attr, signed char valu
 extern void             change_attr_value(living *stats, int attr, signed char value);
 extern signed char      get_attr_value(const living *const stats, const int attr);
 extern void             check_stat_bounds(living *stats);
-extern int              change_abil(object *op, object *tmp);
-extern void             corrupt_stat(object *op);
+extern int              change_abil(object *op, object *tmp);extern object          *check_obj_stat_buffs(object *ob, object *pl);extern void             corrupt_stat(object *op);
 extern void             drain_stat(object *op);
 extern void             drain_specific_stat(object *op, int deplete_stats);
 extern void             drain_level(object *op, int level, int mode, int ticks);
@@ -233,8 +232,8 @@ extern void             return_poolchunk_array_real(void *data, uint32 arraysize
 extern void            *get_poolchunk_array_real(struct mempool *pool, uint32 arraysize_exp);
 extern void             dump_mempool_statistics(object *op, int *sum_used, int *sum_alloc);
 /* missile.c */
-extern int				do_throw(object *op, int dir);
-extern int				fire_bow(object *op, int dir);
+extern float			do_throw(object *op, int dir);
+extern float			fire_bow(object *op, int dir);
 extern object          *find_arrow(object *op, const char *type);
 extern object		   *create_missile(object * const owner, const object * const bow,
 											  object *const missile, const int dir);

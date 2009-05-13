@@ -1626,71 +1626,53 @@ void poison_player(object *op, object *hitter, float dam)
                 /* her we handle consuming poison */
                 if (hitter->type == POISON)
                 {
-                    create_food_buf_force(op, hitter, tmp); /* this insert the food force in player too */
+                    create_food_buf_force(op, hitter, tmp); /* this calculates the food force and inserts it into the player */
                     new_draw_info(NDI_UNIQUE, 0, op, "You suddenly feel very ill.");
                 }
                 else /* and here we have hit with weapon or something */
                 {
+                    /* this is where we deal with stat loss from poison attacks */
                     if (op->stats.Con > 1 && !(RANDOM() % 2))
                     {
                         tmp->stats.Con = (sint8) ((hitter->level / 2 + RANDOM() % (hitter->level * 8 + 1) / 10) * 0.1f + 2.0f);
-                        if (tmp->stats.Con >= op->stats.Con)
-                            tmp->stats.Con = op->stats.Con - 1;
                         tmp->stats.Con *= -1;
                     }
-
                     if (op->stats.Str > 1 && !(RANDOM() % 2))
                     {
                         tmp->stats.Str = (sint8) ((hitter->level / 2 + RANDOM() % (hitter->level * 8 + 1) / 10) * 0.1f + 2.0f);
-                        if (tmp->stats.Str >= op->stats.Str)
-                            tmp->stats.Str = op->stats.Str - 1;
                         tmp->stats.Str *= -1;
                     }
-
                     if (op->stats.Dex > 1 && !(RANDOM() % 2))
                     {
                         tmp->stats.Dex = (sint8) ((hitter->level / 2 + RANDOM() % (hitter->level * 8 + 1) / 10) * 0.1f + 2.0f);
-                        if (tmp->stats.Dex >= op->stats.Dex)
-                            tmp->stats.Dex = op->stats.Dex - 1;
                         tmp->stats.Dex *= -1;
                     }
-
                     if (op->stats.Int > 1 && !(RANDOM() % 2))
                     {
                         tmp->stats.Int = (sint8) ((hitter->level / 2 + RANDOM() % (hitter->level * 8 + 1) / 10) * 0.1f + 2.0f);
-                        if (tmp->stats.Int >= op->stats.Int)
-                            tmp->stats.Int = op->stats.Int - 1;
                         tmp->stats.Int *= -1;
                     }
-
                     if (op->stats.Cha > 1 && !(RANDOM() % 2))
                     {
                         tmp->stats.Cha = (sint8) ((hitter->level / 2 + RANDOM() % (hitter->level * 8 + 1) / 10) * 0.1f + 2.0f);
-                        if (tmp->stats.Cha >= op->stats.Cha)
-                            tmp->stats.Cha = op->stats.Cha - 1;
                         tmp->stats.Cha *= -1;
                     }
-
                     if (op->stats.Pow > 1 && !(RANDOM() % 2))
                     {
                         tmp->stats.Pow = (sint8) ((hitter->level / 2 + RANDOM() % (hitter->level * 8 + 1) / 10) * 0.1f + 2.0f);
-                        if (tmp->stats.Pow >= op->stats.Pow)
-                            tmp->stats.Pow = op->stats.Pow - 1;
                         tmp->stats.Pow *= -1;
                     }
-
                     if (op->stats.Wis > 1 && !(RANDOM() % 2))
                     {
                         tmp->stats.Wis = (sint8) ((hitter->level / 2 + RANDOM() % (hitter->level * 8 + 1) / 10) * 0.1f + 2.0f);
-                        if (tmp->stats.Wis >= op->stats.Wis)
-                            tmp->stats.Wis = op->stats.Wis - 1;
                         tmp->stats.Wis *= -1;
                     }
 
+                    tmp = check_obj_stat_buffs(tmp, op);
                     new_draw_info_format(NDI_UNIQUE, 0, op, "%s has poisoned you!", query_name(hitter));
-                    insert_ob_in_ob(tmp, op);
                     SET_FLAG(tmp, FLAG_APPLIED);
-                    FIX_PLAYER(op ,"attack - poison");
+                    insert_ob_in_ob(tmp, op);
+                    FIX_PLAYER(op , "attack - poison");
                 }
             }
             else /* its a mob! */

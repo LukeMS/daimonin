@@ -138,6 +138,7 @@ int do_skill(object *op, int dir, char *string)
 {
     int success = 0;        /* needed for monster_skill_use() too */
     int skill   = op->chosen_skill->stats.sp;
+    float ticks = 0.0f;
 
     /*LOG(-1,"DO SKILL: skill %s ->%d\n", op->chosen_skill->name, get_skill_time(op,skill));*/
 
@@ -254,8 +255,9 @@ int do_skill(object *op, int dir, char *string)
 
     if (op->type == PLAYER)
 	{
-		LOG(llevDebug, "AC-skills(%d): %d\n", skill, skills[skill].time);
-		set_action_time(op, skills[skill].time);
+	    ticks = (float) (skills[skill].time) * RANGED_DELAY_TIME;
+		LOG(llevDebug, "AC-skills(%d): %2.2f\n", skill, ticks);
+		set_action_time(op, ticks);
 	}
 
     /* this is a good place to add experience for successfull use of skills.
@@ -905,6 +907,7 @@ int do_skill_attack(object *tmp, object *op, char *string)
 {
     int     success;
     char    buf[MAX_BUF], *name = query_name(tmp);
+    float   ticks = 0.0f;
 
     if (op->type == PLAYER)
     {
@@ -924,15 +927,15 @@ int do_skill_attack(object *tmp, object *op, char *string)
                 return 0;
             }
         }
-    }
-    /* if we have 'ready weapon' but no 'melee weapons' skill readied
-     * this will flip to that skill. This is only window dressing for
-     * the players--no need to do this for monsters.
-     */
-    if ( op->type == PLAYER && QUERY_FLAG(op, FLAG_READY_WEAPON)
-         && (!op->chosen_skill || op->chosen_skill->stats.sp != CONTR(op)->set_skill_weapon))
-    {
-        change_skill(op, CONTR(op)->set_skill_weapon);
+        /* if we have 'ready weapon' but no 'melee weapons' skill readied
+         * this will flip to that skill. This is only window dressing for
+         * the players--no need to do this for monsters.
+         */
+        if (QUERY_FLAG(op, FLAG_READY_WEAPON)
+             && (!op->chosen_skill || op->chosen_skill->stats.sp != CONTR(op)->set_skill_weapon))
+        {
+            change_skill(op, CONTR(op)->set_skill_weapon);
+        }
     }
 
     success = attack_ob(tmp, op, NULL);
@@ -947,6 +950,14 @@ int do_skill_attack(object *tmp, object *op, char *string)
         else if (tmp->type == PLAYER)
             new_draw_info_format(NDI_UNIQUE, 0, tmp, "%s %s you!", query_name(op), buf);
     }
+
+    /* set the skill delay from the attack so we can't use other skills during the cooldown time */
+    if (op->type == PLAYER)
+    {
+        ticks = FABS(CONTR(op)->ob->weapon_speed);
+	    LOG(llevDebug, "AC-melee: %2.2f\n", ticks);
+	    set_action_time(op, ticks);
+	}
 
     return success;
 }
@@ -980,13 +991,23 @@ int SK_level(object *op)
 }
 
 /* sets the action timer for skills like throwing, archery, casting... */
-void set_action_time(object *op, int t)
+void set_action_time(object *op, float t)
 {
 	if (op->type != PLAYER)
 		return;
 
-	CONTR(op)->action_timer = ROUND_TAG + t;
-	LOG(llevDebug, "ActionTimer for %s (skill %s): +%d\n", query_name(op), query_name(op->chosen_skill), t);
+	CONTR(op)->ob->weapon_speed_left += FABS(t);
+	LOG(llevDebug, "ActionTimer for %s (skill %s): +%2.2f\n", query_name(op), query_name(op->chosen_skill), t);
+
+	/* update the value for the client */
+    CONTR(op)->action_timer = (int) (CONTR(op)->ob->weapon_speed_left / pticks_second / WEAPON_SWING_TIME * 1000.0f);
+
+    /* a little trick here, we want the server to always update the client with the new skill delay time,
+     * even if the value is identical to the one sent before. this is because the client pre-emptively ticks
+     * this down, so the client would need to be updated again that there is a new delay time.
+     * to do this, we make it negative if the last value sent was positive, and the client uses ABS on it */
+    if (CONTR(op)->last_action_timer > 0)
+        CONTR(op)->action_timer *= -1;
 }
 
 /* player only: we check the action time for a skill.
@@ -999,54 +1020,11 @@ int check_skill_action_time(object *op, object *skill)
     if(!skill)
         return FALSE;
 
-    switch (skill->stats.sp)
+    if (CONTR(op)->ob->weapon_speed_left > 0.0f)
     {
-        /* spells */
-        case SK_PRAYING:
-        case SK_SPELL_CASTING:
-            if (CONTR(op)->action_timer > ROUND_TAG)
-            {
-                new_draw_info_format(NDI_UNIQUE, 0, op, "You can cast in %2.2f seconds again.",
-                        (float) (CONTR(op)->action_timer - ROUND_TAG) / pticks_second);
-                return FALSE;
-            }
-            break;
-
-            /* archery */
-        case SK_SLING_WEAP:
-        case SK_XBOW_WEAP:
-        case SK_MISSILE_WEAPON:
-            if (CONTR(op)->action_timer > ROUND_TAG)
-            {
-                new_draw_info_format(NDI_UNIQUE, 0, op, "You can shoot again in %2.2f seconds.",
-                        (float) (CONTR(op)->action_timer - ROUND_TAG) / pticks_second);
-                return FALSE;
-            }
-            break;
-
-        case SK_USE_MAGIC_ITEM:
-          if (CONTR(op)->action_timer > ROUND_TAG)
-          {
-              new_draw_info_format(NDI_UNIQUE, 0, op, "You can use a device again in %2.2f seconds.",
-                                   (float) (CONTR(op)->action_timer - ROUND_TAG) / pticks_second);
-              return FALSE;
-          }
-
-        case SK_THROWING:
-          if (CONTR(op)->action_timer > ROUND_TAG)
-          {
-              new_draw_info_format(NDI_UNIQUE, 0, op, "You can throw again in %2.2f seconds.",
-                                   (float) (CONTR(op)->action_timer - ROUND_TAG) / pticks_second);
-              return FALSE;
-          }
-        default:
-			if (CONTR(op)->action_timer > ROUND_TAG)
-			{
-				new_draw_info_format(NDI_UNIQUE, 0, op, "You can use this skill in %2.2f seconds again.",
-					(float) (CONTR(op)->action_timer - ROUND_TAG) / pticks_second);
-				return FALSE;
-			}
-          break;
+        /* update the value for the client */
+        CONTR(op)->action_timer = (int) (CONTR(op)->ob->weapon_speed_left / pticks_second / WEAPON_SWING_TIME * 1000.0f);
+        return FALSE;
     }
 
     return TRUE;

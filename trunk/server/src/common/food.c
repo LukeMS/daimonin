@@ -267,6 +267,8 @@ void create_food_buf_force(object *who, object *food, object *force)
     if (food->speed_left)
         force->speed = food->speed_left;
 
+    force = check_obj_stat_buffs(force, who);
+
     SET_FLAG(force, FLAG_APPLIED);
     force = insert_ob_in_ob(force, who);
     if(who->type == PLAYER)

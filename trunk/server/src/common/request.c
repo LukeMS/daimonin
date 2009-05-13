@@ -175,6 +175,8 @@ void esrv_update_stats(player *pl)
         AddIfShort(pl->dist_last_wc, pl->dist_wc, CS_STAT_DIST_WC);
         AddIfShort(pl->dist_last_dps, pl->dist_dps, CS_STAT_DIST_DPS);
         AddIfInt(pl->dist_last_action_time, pl->dist_action_time, CS_STAT_DIST_TIME);
+		
+		AddIfInt(pl->last_action_timer, pl->action_timer, CS_STAT_ACTION_TIME);
     }
 
     for (i = 0; i < NROFSKILLGROUPS_ACTIVE; i++)

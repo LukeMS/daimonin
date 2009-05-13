@@ -25,6 +25,9 @@
 
 #define DEVELOPMENT
 
+/* this gives feedback text based on input */
+//#define DEBUG_TEXT
+
 /* uncomment this to enable the channel support in the client */
 #define USE_CHANNELS
 
@@ -50,8 +53,8 @@
 #define DEFAULT_SERVER_PORT 13327
 #define DEFAULT_METASERVER_PORT 13326
 
-#define VERSION_CS "991027"
-#define VERSION_SC "991027"
+#define VERSION_CS "991028"
+#define VERSION_SC "991028"
 
 #define KEYBIND_FILE "settings/keys.dat"
 #define OPTION_FILE  "settings/options.dat"

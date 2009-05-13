@@ -221,8 +221,7 @@ void                        party_client_group_kill(object *member);
 void                        party_client_group_update(object *member, int flag);
 /* c_range.c */
 void                        fire(object *op, int dir);
-int                         fire_magic_tool(object *owner, object *op, int dir);
-int                         command_cast_spell(object *op, char *params);
+float						fire_magic_tool(object *owner, object *op, int dir);int                         command_cast_spell(object *op, char *params);
 /* c_wiz.c */
 int                         command_dm_connections(object *op, char *params);
 int                         command_dmload(object *op, char *params);
@@ -583,7 +582,7 @@ int                         attack_hth(object *pl, int dir, char *string);
 int                         skill_attack(object *tmp, object *pl, int dir, char *string);
 int                         do_skill_attack(object *tmp, object *op, char *string);
 int                         SK_level(object *op);
-void                        set_action_time(object *op, int ticks);
+void                        set_action_time(object *op, float ticks);
 int                         check_skill_action_time(object *op, object *skill);
 int                         get_skill_stat1(object *op);
 int                         get_skill_stat2(object *op);

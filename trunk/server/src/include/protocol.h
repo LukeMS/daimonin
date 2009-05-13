@@ -221,6 +221,8 @@ enum
 #define CS_STAT_DIST_DPS    34
 #define CS_STAT_DIST_TIME   35
 
+#define CS_STAT_ACTION_TIME   36
+
 /* Start & end of skill experience + skill level, inclusive. */
 #define CS_STAT_SKILLEXP_START      118
 #define CS_STAT_SKILLEXP_END        129

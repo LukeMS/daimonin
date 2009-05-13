@@ -182,6 +182,7 @@ void init_player_data(void)
     cpl.stats.speed = 100.0f;
     cpl.stats.spell_fumble = 0.0f;
     cpl.stats.weapon_sp = 0;
+    cpl.action_timer = 0.0f;
     cpl.input_text[0] = '\0';
     cpl.range[0] = '\0';
 
@@ -759,8 +760,24 @@ void widget_show_skill_exp(int x, int y)
     long int liTExp = 0;
     long int liTExpTNL = 0;
     float fLExpPercent = 0;
+	static int action_tick = 0;
+
 	multi = line = 0;
 
+    /* pre-emptively tick down the skill delay timer */
+    if (cpl.action_timer > 0)
+    {
+        if (LastTick - action_tick > 125)
+        {
+            cpl.action_timer -= (float) (LastTick - action_tick) / 1000.0f;
+            if (cpl.action_timer < 0)
+                cpl.action_timer = 0;
+            action_tick = LastTick;
+            WIDGET_REDRAW(SKILL_EXP_ID);
+        }
+    }
+    else
+        action_tick = LastTick;
 
     if (!widgetSF[SKILL_EXP_ID])
         widgetSF[SKILL_EXP_ID]=SDL_ConvertSurface(Bitmaps[BITMAP_SKILL_EXP_BG]->bitmap,
@@ -863,6 +880,8 @@ void widget_show_skill_exp(int x, int y)
             if (skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level==MAX_LEVEL)
                 sprintf(buf, "more levels in 2 weeks (tm)");
             StringBlt(widgetSF[SKILL_EXP_ID], &SystemFont, buf, 28, 9, COLOR_WHITE, NULL, NULL);
+            sprintf(buf, "%1.2f sec", cpl.action_timer);
+            StringBlt(widgetSF[SKILL_EXP_ID], &SystemFont, buf, 160, -1, COLOR_WHITE, NULL, NULL);
             /* END robed's exp-display-Patch */
         }
         sprite_blt(Bitmaps[BITMAP_EXP_SKILL_BORDER], 143, 11, NULL, &bltfx);

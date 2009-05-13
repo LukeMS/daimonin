@@ -149,7 +149,9 @@ void send_game_command(const char *command)
                 int c;
                 for (c = 0; *(token + c) != '\0'; c++)
                     *(token + c) = tolower(*(token + c));
+#ifdef DEBUG_TEXT
                 draw_info_format(COLOR_DGOLD, "Topic: %s", token + 6);
+#endif
             }
 
             /* put the slash command inside the protocol command GENERIC */
