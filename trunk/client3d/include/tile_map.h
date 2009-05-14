@@ -45,22 +45,6 @@ public:
         FFLAG_PROBE     =1 << 7, // object s target of player.
     };
 
-    typedef struct
-    {
-        int xoff;       // X-offset.
-        int yoff;       // Y-offset.
-    }
-    _multi_part_tile;
-
-    typedef struct
-    {
-        int xlen;       // natural xlen of the whole multi arch.
-        int ylen;       // same for ylen.
-        _multi_part_tile part[16];
-    }
-    _multi_part_obj;
-    _multi_part_obj MultiArchs[16];
-
     struct _mMapData
     {
         Ogre::String name;
@@ -74,13 +58,13 @@ public:
 
     typedef struct
     {
-        short         faces[MAXFACES];
-        short         pos[MAXFACES];
-        bool          fog_of_war;
-        unsigned char ext[MAXFACES];
-        char          pname[MAXFACES][32];
-        unsigned char probe[MAXFACES];
-        unsigned char darkness;
+        short faces[MAXFACES];
+        short pos[MAXFACES];
+        bool  fog_of_war;
+        char  pname[MAXFACES][32];
+        Ogre::uchar ext[MAXFACES];
+        Ogre::uchar probe[MAXFACES];
+        Ogre::uchar darkness;
     }
     MapCell;
     char *TheMapCache;
@@ -131,7 +115,7 @@ private:
     // ////////////////////////////////////////////////////////////////////
     TileMap();
     ~TileMap();
-    TileMap( const TileMap& ); // disable copy-constructor.
+    TileMap(const TileMap&); // disable copy-constructor.
 };
 
 #endif

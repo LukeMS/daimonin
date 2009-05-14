@@ -62,7 +62,7 @@ ParticleSystem *ParticleManager::addNodeObject(SceneNode *node, const char* pScr
     sParticles *obj = new sParticles;
     mvParticle.push_back(obj);
     obj->lifeTime = lifeTime;
-    obj->pSystem  = Events::getSingleton().GetSceneManager()->createParticleSystem("pS_"+StringConverter::toString(mCounter++), pScript);
+    obj->pSystem  = Events::getSingleton().getSceneManager()->createParticleSystem("pS_"+StringConverter::toString(mCounter++), pScript);
     obj->pSystem->setBoundsAutoUpdated(false);
     //obj->pSystem->setRenderQueueGroup(RENDER_QUEUE_6);
     obj->entity = 0;
@@ -82,7 +82,7 @@ ParticleSystem *ParticleManager::addBoneObject(Entity *ent, const char* strBone,
     sParticles *obj = new sParticles;
     mvParticle.push_back(obj);
     obj->lifeTime = lifeTime;
-    obj->pSystem = Events::getSingleton().GetSceneManager()->createParticleSystem("pS_"+StringConverter::toString(mCounter++), pScript);
+    obj->pSystem = Events::getSingleton().getSceneManager()->createParticleSystem("pS_"+StringConverter::toString(mCounter++), pScript);
     obj->pSystem->setBoundsAutoUpdated(false);
     obj->delNodeOnCleanup = false;
     obj->sceneNode = 0;
@@ -101,11 +101,11 @@ ParticleSystem *ParticleManager::addFreeObject(Vector3 pos, const char *pScript,
     sParticles *obj = new sParticles;
     mvParticle.push_back(obj);
     obj->lifeTime = lifeTime;
-    obj->pSystem= Events::getSingleton().GetSceneManager()->createParticleSystem("pS_"+StringConverter::toString(mCounter++), pScript);
+    obj->pSystem= Events::getSingleton().getSceneManager()->createParticleSystem("pS_"+StringConverter::toString(mCounter++), pScript);
     //obj->pSystem->setBoundsAutoUpdated(false);
     obj->entity = 0;
     obj->delNodeOnCleanup = true;
-    obj->sceneNode= Events::getSingleton().GetSceneManager()->getRootSceneNode()->createChildSceneNode();
+    obj->sceneNode= Events::getSingleton().getSceneManager()->getRootSceneNode()->createChildSceneNode();
     obj->sceneNode->attachObject(obj->pSystem);
     obj->sceneNode->setPosition(pos);
     obj->neededSync = SYNC_PARTICLES | SYNC_EMITTERS;
@@ -140,7 +140,7 @@ void ParticleManager::update(Real dTime)
                 if ((*i)->sceneNode)
                     (*i)->sceneNode->detachObject((*i)->pSystem);
             }
-            Events::getSingleton().GetSceneManager()->destroyParticleSystem((*i)->pSystem);
+            Events::getSingleton().getSceneManager()->destroyParticleSystem((*i)->pSystem);
             delete (*i);
             i = mvParticle.erase(i);
         }

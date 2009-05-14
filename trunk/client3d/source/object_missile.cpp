@@ -58,8 +58,8 @@ ObjectMissile::ObjectMissile(int type, ObjectNPC *srcMob, ObjectNPC *dstMob)
 {
     // Create a missle.
     mType = type;
-    mNode = Events::getSingleton().GetSceneManager()->getRootSceneNode()->createChildSceneNode();
-    Entity *mEntity = Events::getSingleton().GetSceneManager()->createEntity(
+    mNode = Events::getSingleton().getSceneManager()->getRootSceneNode()->createChildSceneNode();
+    Entity *mEntity = Events::getSingleton().getSceneManager()->createEntity(
                           "Mob"+ StringConverter::toString(++msUnique, 6, '0'),
                           "Arrow.mesh");
     mEntity->setQueryFlags(ObjectManager::QUERY_ENVIRONMENT_MASK);

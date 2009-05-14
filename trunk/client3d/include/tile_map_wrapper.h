@@ -30,8 +30,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "define.h"
 #include "logger.h"
 
-
-
 // QUICK HACK
 // This will be replaced when the new map protocol is ready.
 
@@ -43,8 +41,7 @@ public:
     // ////////////////////////////////////////////////////////////////////
     static ObjectWrapper &getSingleton()
     {
-        static ObjectWrapper Singleton;
-        return Singleton;
+        static ObjectWrapper Singleton; return Singleton;
     }
 
     /** Read the bmaps file from 2d client. All animations states are cut.
@@ -121,11 +118,7 @@ public:
         }
 
         std::ofstream fbmapOut(FILE_BMAPS_CLIENT3D, std::ios::out | std::ios::binary);
-        if (!fbmapOut)
-        {
-            return;
-        }
-
+        if (!fbmapOut) return;
         mStrBuf ="";
         int sumPics =0;
         // save it to file.
@@ -143,7 +136,6 @@ public:
             delete (*i);
         mvConvEntry.clear();
     }
-
 
     void readObjects()
     {
@@ -241,7 +233,7 @@ private:
             bmpType *entry = new bmpType;
             sscanf(mStrBuf.c_str(), "%s %s %s", nameT, nameT, name);
             entry->name2d = name;
-            if (entry->name2d.find("wall",  0) == std::string::npos && entry->name2d.find("door",  0) == std::string::npos)
+            if (entry->name2d.find("wall", 0) == std::string::npos && entry->name2d.find("door", 0) == std::string::npos)
             {
                 // Cut the animation number.
                 entry->name2d = entry->name2d.substr(0, entry->name2d.find( '.'));

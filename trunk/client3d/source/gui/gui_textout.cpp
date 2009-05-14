@@ -21,7 +21,6 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
-#include <OgreResourceGroupManager.h>
 #include <OgreFontManager.h>
 #include "logger.h"
 #include "gui_textout.h"
@@ -30,11 +29,9 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Ogre;
 
-#define INC_ALPHA
-
 const char GuiTextout::TXT_CMD_SEPARATOR   = '#';
 const char GuiTextout::TXT_CMD_HIGHLIGHT   = '~';
-const char GuiTextout::TXT_CMD_LOWLIGHT    = -80; // prevent anjuta and codeblocks problems with the degree character.
+const char GuiTextout::TXT_CMD_LOWLIGHT    = -80; // prevent anjuta-ide problems with the degree character.
 const char GuiTextout::TXT_CMD_LINK        = '^';
 const char GuiTextout::TXT_CMD_INFO        = '|';
 const char GuiTextout::TXT_CMD_SOUND       = '§';
@@ -176,7 +173,7 @@ void GuiTextout::loadRawFont(const char *filename)
 //================================================================================================
 // Load a TTFont into main memory.
 //================================================================================================
-void GuiTextout::loadTTFont(const char *filename, const char *size, const char *reso)
+void GuiTextout::loadTTFont(const char *filename, const char *size, const char *reso, bool createRawFont)
 {
     // Load the font.
     if (!filename) return;
@@ -220,13 +217,13 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
     // Space char.
     FloatRect rect = pFont->getGlyphTexCoords(33);
     fnt->height =0;
-    fnt->charWidth[0] = (unsigned char)((rect.right-rect.left)*texW)+1; // 1 extra pixel for the endOfChar sign.
+    fnt->charWidth[0] = (uchar)((rect.right-rect.left)*texW)+1; // 1 extra pixel for the endOfChar sign.
     fnt->charStart[0] = 0;
     // Standard chars.
     for (unsigned int i=1; i < STANDARD_CHARS_IN_FONT-1; ++i)
     {
         rect = pFont->getGlyphTexCoords(32+i);
-        fnt->charWidth[i]= (unsigned char) ((rect.right-rect.left)*texW)+1; // 1 extra pixel for the endOfChar sign.
+        fnt->charWidth[i]= (uchar) ((rect.right-rect.left)*texW)+1; // 1 extra pixel for the endOfChar sign.
         fnt->charStart[i] = fnt->charStart[i-1] + fnt->charWidth[i-1];
         if (fnt->height< (unsigned int) ((rect.bottom-rect.top)*texH))
             fnt->height= (unsigned int) ((rect.bottom-rect.top)*texH);
@@ -274,10 +271,9 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
             for (int y = y1; y < y1+fnt->height; ++y)
             {
                 fnt->data[fnt->charStart[i]+x + yPos] = ttfData[x1+x + y*texture->getWidth()]& 0xff000000;
-#ifdef INC_ALPHA
+                // For a better looking font, increase alpha a bit.
                 if (fnt->data[fnt->charStart[i]+x + yPos])
-                    fnt->data[fnt->charStart[i]+x + yPos]|= 0x07000000;
-#endif
+                    fnt->data[fnt->charStart[i]+x + yPos] |= 0x0f000000;
                 yPos+= fnt->textureWidth;
             }
         }
@@ -296,7 +292,8 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
         uint32 *srcData = static_cast<uint32*>(src.data);
         int rowSkip = (int) srcPixelBox.getWidth();
         int dSrcY = 0, dDstY =0;
-
+        int offY = ((fnt->height-4-mvSpecialChar[k]->h)/2);
+        offY *= (offY < 0)?0:fnt->textureWidth;
         for (int y =0; y < mvSpecialChar[k]->h; ++y)
         {
             for (int x =0; x < mvSpecialChar[k]->w; ++x)
@@ -308,7 +305,6 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
         }
         ++k;
     }
-
     // ////////////////////////////////////////////////////////////////////
     // Create Text Cursor (for text input).
     // ////////////////////////////////////////////////////////////////////
@@ -321,7 +317,7 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
     // ////////////////////////////////////////////////////////////////////
     // Create a raw font.
     // ////////////////////////////////////////////////////////////////////
-    if (GuiManager::getSingleton().getMediaCreation())
+    if (createRawFont)
     {
         Image img;
         // ////////////////////////////////////////////////////////////////////
@@ -331,7 +327,7 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
         static int fontNr = -1;
         uint32 *sysFontBuf = new uint32[texture->getWidth()*texture->getHeight()];
         texture->getBuffer()->blitToMemory(PixelBox(texture->getWidth(), texture->getHeight(), 1, PF_A8R8G8B8, sysFontBuf));
-        img = img.loadDynamicImage((unsigned char*)sysFontBuf, texture->getWidth(), texture->getHeight(), PF_A8R8G8B8);
+        img = img.loadDynamicImage((uchar*)sysFontBuf, texture->getWidth(), texture->getHeight(), PF_A8R8G8B8);
         img.save("./OgreFont"+StringConverter::toString(++fontNr,3,'0')+".png");
         */
         // ////////////////////////////////////////////////////////////////////
@@ -348,7 +344,7 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
             }
         }
         // write font to disc. We have to change the filename because the font is no longer original.
-        img = img.loadDynamicImage((unsigned char*)fnt->data, fnt->textureWidth, fnt->height, 1, PF_A8R8G8B8);
+        img = img.loadDynamicImage((uchar*)fnt->data, fnt->textureWidth, fnt->height, 1, PF_A8R8G8B8);
         String rawFilename = GuiManager::getSingleton().getPathFonts() + "NoLonger_";
         rawFilename+= filename;
         rawFilename.resize(rawFilename.size()-4); // Cut extension.
@@ -383,14 +379,14 @@ void GuiTextout::parseUserDefinedChars(String &txt)
 //================================================================================================
 //
 //================================================================================================
-int GuiTextout::hexToInt(const char *text, int len, uint32 &value)
+int GuiTextout::hexToInt(const char *text, int len, uint32 &result)
 {
-    int pos =0;
-    value =0;
+    int pos = 0;
+    result = 0;
     for (int i = (len-1)*4; i >= 0; i-=4)
     {
-        if (!text[pos]) break;
-        value += (text[pos] >='a') ? (text[pos] - 87) <<i : (text[pos] >='A') ? (text[pos] - 55) <<i :(text[pos] -'0') <<i;
+        if (!text[pos]) break; // Text is shorter than len had told us.
+        result += (text[pos] >='a') ? (text[pos] - 87) <<i : (text[pos] >='A') ? (text[pos] - 55) <<i :(text[pos] -'0') <<i;
         ++pos;
     }
     return pos;
@@ -400,7 +396,7 @@ int GuiTextout::hexToInt(const char *text, int len, uint32 &value)
 // Calculate the gfx-width for the given text.
 // The caller function must check fontNr to be valid [< mvFont.size()].
 //================================================================================================
-int GuiTextout::getCharWidth(int fontNr, unsigned char Char)
+int GuiTextout::getCharWidth(int fontNr, uchar Char)
 {
     return (Char<32)?0:mvFont[fontNr]->charWidth[Char-32]-1;
 }
@@ -431,8 +427,7 @@ int GuiTextout::calcTextWidth(const char *text, unsigned int fontNr)
                         if (!*++text) break;
                 break;
             case TXT_CMD_CHANGE_FONT:
-                ++text;
-                text+= hexToInt(text, 2, fontNr);
+                text+= hexToInt(++text, 2, fontNr);
                 if (fontNr >= (unsigned int)mvFont.size()) fontNr = 0;
                 break;
             default:
@@ -470,8 +465,7 @@ int GuiTextout::getLastCharPosition(const char *text, unsigned int fontNr, int w
                         if (!text[++pos]) break;
                 break;
             case TXT_CMD_CHANGE_FONT:
-                ++pos;
-                pos+= hexToInt(text+pos, 2, fontNr);
+                pos+= hexToInt(text+ ++pos, 2, fontNr);
                 if (fontNr >= (unsigned int)mvFont.size()) fontNr = 0;
                 break;
             default:
@@ -484,9 +478,9 @@ int GuiTextout::getLastCharPosition(const char *text, unsigned int fontNr, int w
 }
 
 //================================================================================================
-// Returns the color (as a string) of the last char in a text.
+// Returns the color code (as a string) of the last char in a text.
 //================================================================================================
-const char *GuiTextout::getTextendColor(String &strText)
+const char *GuiTextout::getTextendColor(const String &strText)
 {
     static char color[] = "~#ff000000\0";
     color[0] = '\0';
@@ -533,19 +527,21 @@ const char *GuiTextout::getTextendColor(String &strText)
 //================================================================================================
 // Alphablend a text with a gfx/color into a given background. Clipping is performed.
 //================================================================================================
-void GuiTextout::printText(int width, int height, uint32 *dst, int dstLineSkip, uint32 *bak, int bakLineSkip, const char *txt, unsigned int fontNr, uint32 fontColor, bool hideText)
+void GuiTextout::printText(int width, int height, uint32 *dst, int dstLineSkip, uint32 *bak, int bakLineSkip,
+                           const char *txt, unsigned int fontNr, uint32 fontColor, bool hideText, uint32 borderColor)
 {
     const char *text = (!txt)?"":txt; // Prevent trouble when txt is NULL.
     if (fontNr >= (unsigned int)mvFont.size()) fontNr = 0;
 
     int srcRow, bakRow, dstRow, stopX, clipX=0;
-    unsigned char chr;
+    uchar chr;
     fontColor&= 0x00ffffff; // Alpha part comes from the font.
+    if (borderColor) borderColor|=0xff000000;
     uint32 actColor, color = fontColor;
 
     while (*text)
     {
-        if ((unsigned char) *text < 32)
+        if ((uchar) *text < 32)
         {
             ++text;
             continue;
@@ -571,25 +567,17 @@ void GuiTextout::printText(int width, int height, uint32 *dst, int dstLineSkip, 
                 // Parse the highlight color (8 byte hex string to uint32).
                 if (*(text+1) == TXT_SUB_CMD_COLOR)
                 {
-                    ++text;
-                    color =0;
-                    for (int i = 28; i>=0; i-=4)
-                    {
-                        if (!*++text) goto textDone;
-                        color += (*text >='a') ? (*text - 87) <<i : (*text >='A') ? (*text - 55) <<i :(*text -'0') <<i;
-                    }
+                    text+= 2;
+                    text+= hexToInt(text, 8, color);
                     color&= 0x00ffffff;
+                    continue;
                 }
-                else
-                    color = (color!= fontColor)?fontColor:TXT_COLOR_HIGHLIGHT;
+                color = (color!= fontColor)?fontColor:TXT_COLOR_HIGHLIGHT;
                 break;
             case TXT_CMD_CHANGE_FONT:
-                if (!*++text) goto textDone;
-                fontNr = (*text >='a') ? (*text - 87) <<4 : (*text >='A') ? (*text - 55) <<4 :(*text -'0') <<4;
-                if (!*++text) goto textDone;
-                fontNr+= (*text >='a') ? (*text - 87)     : (*text >='A') ? (*text - 55)     :(*text -'0');
+                text+= hexToInt(++text, 2, fontNr);
                 if (fontNr >= (unsigned int)mvFont.size()) fontNr = 0;
-                break;
+                continue;
             default:
                 chr = (*text - 32);
                 if (chr > CHARS_IN_FONT) chr = 0; // Unknown chars will be displayed as space.
@@ -612,6 +600,7 @@ void GuiTextout::printText(int width, int height, uint32 *dst, int dstLineSkip, 
                 actColor = (chr < STANDARD_CHARS_IN_FONT)?color:0; // Special chars always keep their own color.
                 if (!bakLineSkip) // Background is a simple colorfill.
                 {
+                    // First fill the space above the text, if text is smaller then the textarea.
                     for (int y =0; y < deltaHeight; ++y)
                     {
                         for (int x = 0; x < stopX; ++x)
@@ -619,16 +608,35 @@ void GuiTextout::printText(int width, int height, uint32 *dst, int dstLineSkip, 
                         dstRow+= dstLineSkip;
                     }
                     //for (int y =(int)mvFont[fontNr]->height < height?(int)mvFont[fontNr]->height:height; y; --y)
-                    for (int y =deltaHeight; y < height; ++y)
+                    if (borderColor)
                     {
-                        for (int x = 0; x < stopX; ++x)
-                            dst[dstRow + x] = GuiGraphic::getSingleton().alphaBlend(*bak, actColor + mvFont[fontNr]->data[srcRow + x]);
-                        srcRow+= mvFont[fontNr]->textureWidth;
-                        dstRow+= dstLineSkip;
+                        for (int y =deltaHeight; y < height; ++y)
+                        {
+                            for (int x = 0; x < stopX; ++x)
+                            {
+                                if (mvFont[fontNr]->data[srcRow + x])
+                                    dst[dstRow+x] = GuiGraphic::getSingleton().alphaBlend(borderColor, actColor + mvFont[fontNr]->data[srcRow + x]);
+                                else
+                                    dst[dstRow+x] = *bak;
+                            }
+                            srcRow+= mvFont[fontNr]->textureWidth;
+                            dstRow+= dstLineSkip;
+                        }
+                    }
+                    else
+                    {
+                        for (int y =deltaHeight; y < height; ++y)
+                        {
+                            for (int x = 0; x < stopX; ++x)
+                                dst[dstRow + x] = GuiGraphic::getSingleton().alphaBlend(*bak, actColor + mvFont[fontNr]->data[srcRow + x]); // oldversion without bordercolor
+                            srcRow+= mvFont[fontNr]->textureWidth;
+                            dstRow+= dstLineSkip;
+                        }
                     }
                 }
                 else // Background is a graphic.
                 {
+                    // First fill the space above the text, if text is smaller then the textarea.
                     bakRow = 0;
                     for (int y =0; y < deltaHeight; ++y)
                     {
@@ -638,13 +646,32 @@ void GuiTextout::printText(int width, int height, uint32 *dst, int dstLineSkip, 
                         bakRow+= bakLineSkip;
                     }
                     //for (int y =(int)mvFont[fontNr]->height < height?(int)mvFont[fontNr]->height:height; y; --y)
-                    for (int y =deltaHeight; y < height; ++y)
+                    if (borderColor)
                     {
-                        for (int x = 0; x < stopX; ++x)
-                            dst[dstRow + x] = GuiGraphic::getSingleton().alphaBlend(bak[bakRow + x], actColor + mvFont[fontNr]->data[srcRow + x]);
-                        srcRow+= mvFont[fontNr]->textureWidth;
-                        dstRow+= dstLineSkip;
-                        bakRow+= bakLineSkip;
+                        for (int y =deltaHeight; y < height; ++y)
+                        {
+                            for (int x = 0; x < stopX; ++x)
+                            {
+                                if (mvFont[fontNr]->data[srcRow + x])
+                                    dst[dstRow+x] = GuiGraphic::getSingleton().alphaBlend(borderColor, actColor + mvFont[fontNr]->data[srcRow + x]);
+                                else
+                                    dst[dstRow+x] = bak[bakRow + x];
+                            }
+                            srcRow+= mvFont[fontNr]->textureWidth;
+                            dstRow+= dstLineSkip;
+                            bakRow+= bakLineSkip;
+                        }
+                    }
+                    else
+                    {
+                        for (int y =deltaHeight; y < height; ++y)
+                        {
+                            for (int x = 0; x < stopX; ++x)
+                                dst[dstRow + x] = GuiGraphic::getSingleton().alphaBlend(bak[bakRow + x], actColor + mvFont[fontNr]->data[srcRow + x]);
+                            srcRow+= mvFont[fontNr]->textureWidth;
+                            dstRow+= dstLineSkip;
+                            bakRow+= bakLineSkip;
+                        }
                     }
                     bak+= stopX;
                 }

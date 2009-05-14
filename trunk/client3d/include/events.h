@@ -46,34 +46,18 @@ public:
     {
         static Events Singleton; return Singleton;
     }
-    void Init(Ogre::RenderWindow* win, Ogre::SceneManager *mSceneMgr);
+    void Init(Ogre::RenderWindow *win, Ogre::SceneManager *mSceneMgr);
     void freeRecources();
-    Ogre::SceneManager *GetSceneManager()
+    void setWorldPos(int posX, int posZ);
+    Ogre::SceneManager *getSceneManager() const
     {
         return mSceneManager;
     }
-    Ogre::SceneNode *GetWorldNode()
-    {
-        return mWorld;
-    }
-    const Ogre::Vector3 &getWorldPos()
-    {
-        return mWorld->getPosition();
-    }
-    void setWorldPos(int posX, int posZ);
-    Ogre::Camera *getCamera()
+    Ogre::Camera *getCamera() const
     {
         return mCamera;
     }
-    Ogre::Real getCamCornerX()
-    {
-        return mCamCornerX;
-    }
-    Ogre::Real getCamCornerY()
-    {
-        return mCamCornerY;
-    }
-    bool isShiftDown()
+    bool isShiftDown() const
     {
         return mShiftDown;
     }
@@ -96,9 +80,9 @@ private:
         POSITIVE,
         NEGATIVE,
     } mCameraRotating;
+
     bool mQuitGame;
     bool mShiftDown;
-    int mSceneDetailIndex;
     OIS::InputManager *mInputManager;
     OIS::Keyboard     *mInputKeyboard;
     OIS::Mouse        *mInputMouse;
@@ -106,7 +90,6 @@ private:
     Ogre::Vector3 mMouse;
     Ogre::Camera* mCamera;
     Ogre::Real mCameraZoom;
-    Ogre::Real mCamCornerX, mCamCornerY;
     Ogre::SceneNode *mWorld;
     Ogre::SceneManager *mSceneManager;
     Ogre::RenderWindow* mWindow;
@@ -116,6 +99,7 @@ private:
     // ////////////////////////////////////////////////////////////////////
     Events()  {}
     ~Events() {}
+    Events(const Events&); // disable copy-constructor.
     void elementClicked(int element);
     bool checkUsername(const char *name);
     bool frameStarted (const Ogre::FrameEvent &evt);

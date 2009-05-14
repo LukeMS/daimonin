@@ -31,21 +31,20 @@ this program; If not, see <http://www.gnu.org/licenses/>.
  *****************************************************************************/
 class GuiElementCombobox : public GuiElement
 {
-
 public:
     enum
     {
-        GUI_ELEMENT_COMBOBOX_NONE,
-        GUI_ELEMENT_COMBOBOX_DDBUTTON,
-        GUI_ELEMENT_COMBOBOX_SCROLL_UP,
-        GUI_ELEMENT_COMBOBOX_SCROLL_DOWN,
-        GUI_ELEMENT_COMBOBOX_SCROLL_BAR,
-        GUI_ELEMENT_COMBOBOX_SUM
+        ELEMENT_COMBOBOX_NONE,
+        ELEMENT_COMBOBOX_DDBUTTON,
+        ELEMENT_COMBOBOX_SCROLL_UP,
+        ELEMENT_COMBOBOX_SCROLL_DOWN,
+        ELEMENT_COMBOBOX_SCROLL_BAR,
+        ELEMENT_COMBOBOX_SUM
     };
 
-    GuiElementCombobox(TiXmlElement *xmlElement, void *parent);
-    ~GuiElementCombobox();
-    int sendMsg(int message, const char *text, Ogre::uint32 param);
+    GuiElementCombobox(TiXmlElement *xmlElement, const void *parent);
+    ~GuiElementCombobox() {}
+    int sendMsg(const int message, const char *text, Ogre::uint32 param, const char *text2);
     void draw();
     void setText(const char *value);
     bool setState(int state);
@@ -77,4 +76,4 @@ private:
     std::vector<int> mvValue;
 };
 
-#endif // GUI_COMBOBOX_H
+#endif

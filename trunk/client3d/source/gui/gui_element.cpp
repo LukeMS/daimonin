@@ -31,29 +31,6 @@ using namespace Ogre;
 //================================================================================================
 //
 //================================================================================================
-int GuiElement::sendMsg(int message, const char *, uint32 param)
-{
-    if (message == GuiManager::MSG_SET_VISIBLE)
-    {
-        bool visible = param?true:false;
-        if (visible == mVisible) return 0;
-        mVisible = visible;
-        draw();
-    }
-    return 0;
-}
-
-//================================================================================================
-//
-//================================================================================================
-const char *GuiElement::sendMsg(int info)
-{
-    return 0;
-}
-
-//================================================================================================
-//
-//================================================================================================
 int GuiElement::mouseEvent(int, int, int, int)
 {
     return GuiManager::EVENT_CHECK_NEXT; // No action here, check the other gadgets.
@@ -70,16 +47,16 @@ int GuiElement::keyEvent(const int, const unsigned int)
 //================================================================================================
 // Parse a gui element.
 //================================================================================================
-GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
+GuiElement::GuiElement(TiXmlElement *xmlElem, const void *parent)
 {
     TiXmlElement *xmlElement;
     const char *tmp;
-    int maxX, maxY;
     // Set default values.
     mState = GuiImageset::STATE_ELEMENT_DEFAULT;
     mVisible = true;
     mParent= (GuiWindow*)parent;
-    mParent->getSize(maxX, maxY);
+    int maxX = mParent->getWidth();
+    int maxY = mParent->getHeight();
     mWidth = mHeight = 0;
     // ////////////////////////////////////////////////////////////////////
     // Parse the element.
@@ -162,21 +139,29 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
         if ((tmp = xmlElement->Attribute("red")))   mLabelColor+= atoi(tmp) << 16;
         if ((tmp = xmlElement->Attribute("green"))) mLabelColor+= atoi(tmp) << 8;
         if ((tmp = xmlElement->Attribute("blue")))  mLabelColor+= atoi(tmp);
-        if ((tmp = xmlElement->Attribute("text")))  mStrLabel = tmp;
+        if ((tmp = xmlElement->Attribute("text")))  mLabelString = tmp;
     }
 }
 
 //================================================================================================
 // Set the state.
 //================================================================================================
-bool GuiElement::setState(int state)
+bool GuiElement::setState(uchar state)
 {
-    if (state < GuiImageset::STATE_ELEMENT_SUM && mState != state)
-    {
-        mState = state;
-        return true;
-    }
-    return false;
+    if (mState == state || state >= GuiImageset::STATE_ELEMENT_SUM)
+        return false;
+    mState = state;
+    return true;
+}
+
+//================================================================================================
+// .
+//================================================================================================
+void GuiElement::setVisible(bool visible)
+{
+    if (visible == mVisible) return;
+    mVisible = visible;
+    draw(true);
 }
 
 //================================================================================================

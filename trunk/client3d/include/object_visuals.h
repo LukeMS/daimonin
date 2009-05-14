@@ -33,7 +33,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
  *****************************************************************************/
 class ObjectVisuals
 {
-
 public:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
@@ -76,14 +75,14 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    Ogre::ParticleSystem *mPSystem; /**< If <>0 Selection is a particleSystem else Selection is a gfx. **/
+    Ogre::ParticleSystem *mPSystem; /**< If !0 Selection is a particleSystem else Selection is a gfx. **/
     Ogre::Entity *mEntity[VISUAL_SUM];
     Ogre::SceneNode *mNode[VISUAL_SUM];
     Ogre::ColourValue particleColor[PARTICLE_COLOR_SUM];
     Ogre::HardwarePixelBufferSharedPtr mHardwarePB;
     Ogre::Image mImage;
     Ogre::PixelBox mSrcPixelBox;
-    unsigned char *mTexBuffer;
+    Ogre::uchar *mTexBuffer;
     Ogre::String mStrName;
     int mDefaultAction;
 

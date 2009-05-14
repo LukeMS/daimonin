@@ -28,8 +28,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "tile_chunk.h"
 
 /**
- ** This singleto class handles all tile related stuff in the worldmap.
- ** A tile is build out of 8 trinagles (=4 suvbtiles) arranged in this way:
+ ** This singleton class handles all tile related stuff in the worldmap.
+ ** A tile is build out of 8 trianles (=4 subtiles) arranged in this way:
  ** +--+--+
  ** |\ | /|
  ** | \|/ |
@@ -55,37 +55,43 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    enum { RGB = 3, RGBA = 4       }; /**< Pixelsize. */
-    enum { SHADOW_NONE      =    0 }; /**< Shadow gfx number for no shadow. */
-    enum { SHADOW_GRID      =    1 }; /**< Shadow gfx number for grid-gfx. */
-    enum { SHADOW_MIRROX_X  = 1<<14}; /**< Mirror the shadow on X-Axis. */
-    enum { SHADOW_MIRROX_Z  = 1<<15}; /**< Mirror the shadow on Z-Axis. */
-    enum { TILE_SIZE        = 1<<6 }; /**< Rendersize of a tile. */
-    enum { MAX_TEXTURE_SIZE = 2048 }; /**< Atlas- and Rendertexture size for highest quality. */
-    enum { COLS_SRC_TILES   =    8 }; /**< Number of tile columns in the atlastexture. */
-    enum { MAP_SIZE         =   42 }; /**< Number of tiles in the worldmap (on x ynd z axis). */
-    enum { CHUNK_SIZE_X     =   42 }; /**< . */
-    enum { CHUNK_SIZE_Z     =   32 }; /**< . */
-    enum { MAX_MAP_SETS     =   16 }; /**< The maximum numbers of AtlasTextures to be created by createAtlasTexture(...). */
+    enum { RGB = 3, RGBA = 4           }; /**< Pixelsize. **/
+    enum { SHADOW_NONE          =    0 }; /**< Shadow gfx number for no shadow. **/
+    enum { SHADOW_GRID          =    1 }; /**< Shadow gfx number for grid-gfx. **/
+    enum { SHADOW_MIRROX_X      = 1<<14}; /**< Mirror the shadow on X-Axis. **/
+    enum { SHADOW_MIRROX_Z      = 1<<15}; /**< Mirror the shadow on Z-Axis. **/
+    enum { TILE_SIZE            = 1<< 6}; /**< Rendersize of a tile. **/
+    enum { MAX_TEXTURE_SIZE     = 2048 }; /**< Atlas- and Rendertexture size for highest quality. **/
+    enum { SUM_ATLAS_RESOLUTIONS= 1<< 2}; /**< How many resolutions of the atlastexture to create. **/
+    enum { COLS_SRC_TILES       =    8 }; /**< Number of tile columns in the atlastexture. **/
+    enum { MAP_SIZE             =   42 }; /**< Number of tiles in the worldmap (on x and z axis). **/
+    enum { CHUNK_SIZE_X         =   42 }; /**< Size of the world on x-axiss. **/
+    enum { CHUNK_SIZE_Z         =   32 }; /**< Size of the world on z-axiss. **/
+    enum { MAX_MAP_SETS         =   16 }; /**< The maximum numbers of AtlasTextures to be created by createAtlasTexture(...). **/
     enum
     {
-        VERTEX_TL,  // Top/Left.
-        VERTEX_TR,  // Top/Right.
-        VERTEX_BL,  // Bottom/Left.
-        VERTEX_BR,  // Bottom/Right.
-        VERTEX_SUM  // Numer of vertices
+        VERTEX_TL, /**< Top/Left. **/
+        VERTEX_TR, /**< Top/Right. **/
+        VERTEX_BL, /**< Bottom/Left. **/
+        VERTEX_BR, /**< Bottom/Right. **/
+        VERTEX_SUM /**< Numer of vertices **/
     };
-    int map_transfer_flag;
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    void Init(Ogre::SceneManager *SceneManager, int queryMaskLand, int queryMaskWater, int lod = 1, bool createAtlasTexture = true);
+    /** Init the tileengine.
+     ** @param SceneManager   The ogre scenemanager.
+     ** @param queryMaskLand  The query mask for land tiles.
+     ** @param queryMaskWater The query mask for water tiles.
+     ** @param lod            Level of detail for the atlastexture (0: 2048x2048 to 3: 256x256).
+     ** @param createAtlas    Create the atlas textures from the single tiles.
+     *****************************************************************************/
+    void Init(Ogre::SceneManager *SceneManager, int queryMaskLand, int queryMaskWater, int lod = 1, bool createAtlas = true);
     void freeRecources();
     static TileManager &getSingleton()
     {
-        static TileManager Singleton;
-        return Singleton;
+        static TileManager Singleton; return Singleton;
     }
     Ogre::SceneManager* getSceneManager()
     {
@@ -131,7 +137,7 @@ private:
     /**  TileEngine struct which holds the worldmap. **/
     typedef struct _mapStruct
     {
-        unsigned char  gfx;    /**< Graphic of VERTEX_TL. **/
+        Ogre::uchar  gfx;      /**< Graphic of VERTEX_TL. **/
         unsigned short height; /**< Height of VERTEX_TL. **/
         unsigned short shadow; /**< Shadow that VERTEX_TL is casting.
                                          0: No shadow.
@@ -158,17 +164,20 @@ private:
     TileManager() {}
     ~TileManager() {}
     TileManager(const TileManager&); /**< disable copy-constructor. **/
-    /** **************************************************************************
-     **  groupNr -1: create all groups found in the media folder.
-     ** **************************************************************************/
-    void createAtlasTexture(int textureSize, bool fixFilteringErrors, unsigned int groupNr = MAX_MAP_SETS);
+
+    /** Create the atlastexture in different resoulutions.
+     ** @param maxTextureSize The maximum size of the atlas to create.
+     ** @param groupNr        How many atlas groups to create. -1 to create all groups found in the media folder.
+     *****************************************************************************/
+    void createAtlasTexture(int maxTextureSize, unsigned int groupNr = MAX_MAP_SETS);
     bool copyTileToAtlas  (Ogre::uchar *dstBuf);
     void copyFilterToAtlas(Ogre::uchar *dstBuf);
     void copyShadowToAtlas(Ogre::uchar *dstBuf);
-    void copySubTile(Ogre::uchar* src, int srcX, int srcY, Ogre::uchar *dst, int dstX, int dstY, int size, bool srcAlpha);
+    void copySubTile(Ogre::uchar *src, int srcX, int srcY, Ogre::uchar *dst, int dstX, int dstY, int size, bool srcAlpha);
     bool vertexPick(Ogre::Ray *mouseRay, int x, int z, int pos);
     void highlightVertex(int x, int z);
     int  calcHeight(int vert0, int vert1, int vert2, int posX, int posZ);
+    /// Create a template to make it easier for the artists to create a filterset.
     void createFilterTemplate();
     unsigned short calcShadow(int x, int z);
 };

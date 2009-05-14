@@ -25,9 +25,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #define OPTION_H
 
 #include <Ogre.h>
-#include <fstream>
-#include <sstream>
-#include <iostream>
 
 /**
  ** This singleton class handles all options the user and the engine can set.
@@ -129,7 +126,7 @@ public:
     optionStruct;
 
     static optionStruct optStruct[SEPARATOR];
-    static Ogre::String  optValue[SUM_OPTIONS - SEPARATOR-1];
+    static Ogre::String optValue[SUM_OPTIONS - SEPARATOR-1];
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.
@@ -155,13 +152,9 @@ public:
     int getIntValue(enumOption option)
     {
         if (option < SEPARATOR)
-        {
             return optStruct[option].intValue;
-        }
         else
-        {
             return atoi(optValue[option - SEPARATOR-1].c_str());
-        }
     }
 
     void setIntValue(enumOption option, int value)
@@ -182,25 +175,17 @@ public:
     void setStrValue(enumOption option, const char *value)
     {
         if (option < SEPARATOR)
-        {
             optStruct[option].txtValue = value;
-        }
         else
-        {
             optValue[option - SEPARATOR-1] = value;
-        }
     }
 
     const char *getStrValue(enumOption option)
     {
         if (option < SEPARATOR)
-        {
             return optStruct[option].txtValue.c_str();
-        }
         else
-        {
             return optValue[option - SEPARATOR-1].c_str();
-        }
     }
 
     bool setGameStatus(int status)

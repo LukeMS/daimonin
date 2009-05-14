@@ -28,13 +28,21 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 using namespace Ogre;
 
 // needs to be rewritten!
+// - drop down list as table?
+// - drop down list texture from tooltip?
 
-int GuiElementCombobox::sendMsg(int message, const char *text, uint32 param)
+//================================================================================================
+//
+//================================================================================================
+int GuiElementCombobox::sendMsg(const int message, const char *text, uint32 param, const char *text2)
 {
     return 0;
 }
 
-GuiElementCombobox::GuiElementCombobox(TiXmlElement *xmlElement, void *parent) :GuiElement(xmlElement, parent)
+//================================================================================================
+//
+//================================================================================================
+GuiElementCombobox::GuiElementCombobox(TiXmlElement *xmlElement, const void *parent) :GuiElement(xmlElement, parent)
 {
     /*
     // ////////////////////////////////////////////////////////////////////
@@ -79,16 +87,16 @@ GuiElementCombobox::GuiElementCombobox(TiXmlElement *xmlElement, void *parent) :
     */
 }
 
-GuiElementCombobox::~GuiElementCombobox()
-{
-    if ( mGfxBuffer )
-        delete[] mGfxBuffer;
-}
-
+//================================================================================================
+//
+//================================================================================================
 void GuiElementCombobox::draw()
 {
 }
 
+//================================================================================================
+//
+//================================================================================================
 bool GuiElementCombobox::setState(int state)
 {
     if ( mState != state && mState == GuiImageset::STATE_ELEMENT_PUSHED)
@@ -103,21 +111,21 @@ bool GuiElementCombobox::setState(int state)
         {
             switch ( mButton )
             {
-                case GUI_ELEMENT_COMBOBOX_DDBUTTON:
+                case ELEMENT_COMBOBOX_DDBUTTON:
                     mDispDropdown = true;
                     break;
-                case GUI_ELEMENT_COMBOBOX_SCROLL_DOWN:
+                case ELEMENT_COMBOBOX_SCROLL_DOWN:
                     mScrollPos += 5;
                     if ( mScrollPos > mVirtualHeight - mViewport )
                         mScrollPos = mVirtualHeight - mViewport;
                     break;
-                case GUI_ELEMENT_COMBOBOX_SCROLL_UP:
+                case ELEMENT_COMBOBOX_SCROLL_UP:
                     mScrollPos -= 5;
                     if ( mScrollPos < 0 )
                         mScrollPos = 0;
                     break;
                 default:
-                    mAction = 1;//GuiWindow::GUI_ACTION_START_TEXT_INPUT;
+                    mAction = 1;//GuiWindow::ACTION_START_TEXT_INPUT;
             }
         }
     }
@@ -125,17 +133,26 @@ bool GuiElementCombobox::setState(int state)
     return GuiElement::setState(state);
 }
 
+//================================================================================================
+//
+//================================================================================================
 void GuiElementCombobox::setText(const char *value)
 {
     mvOption[0] = value;
 }
 
+//================================================================================================
+//
+//================================================================================================
 const char *GuiElementCombobox::getText()
 {
     return mvOption[0].c_str();
 }
 
 /*
+//================================================================================================
+//
+//================================================================================================
 bool GuiElementCombobox::mouseOver(int x, int y)
 {
     if ( GuiElement::mouseOver(x,y) )
@@ -157,20 +174,20 @@ bool GuiElementCombobox::mouseOver(int x, int y)
             {
                 mActiveDropdownOption = -1;
                 if ( y - mPosY - mEntryHeight < srcScrollbarUp->height )
-                    mButton = GUI_ELEMENT_COMBOBOX_SCROLL_UP;
+                    mButton = ELEMENT_COMBOBOX_SCROLL_UP;
                 else if ( y - mPosY - mEntryHeight > mViewport - srcScrollbarUp->height )
-                    mButton = GUI_ELEMENT_COMBOBOX_SCROLL_DOWN;
+                    mButton = ELEMENT_COMBOBOX_SCROLL_DOWN;
                 else
-                    mButton = GUI_ELEMENT_COMBOBOX_SCROLL_BAR;
+                    mButton = ELEMENT_COMBOBOX_SCROLL_BAR;
             }
         }
         else
         {
             mActiveDropdownOption = -1;
             if( srcButton && x > mPosX + mWidth - srcButton->width )
-                mButton = GUI_ELEMENT_COMBOBOX_DDBUTTON;
+                mButton = ELEMENT_COMBOBOX_DDBUTTON;
             else
-                mButton = GUI_ELEMENT_COMBOBOX_NONE;
+                mButton = ELEMENT_COMBOBOX_NONE;
         }
 
         return true;

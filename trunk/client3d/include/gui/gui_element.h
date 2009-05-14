@@ -36,50 +36,87 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    enum { MIN_SIZE = 1<<2 };              /**< Minimal graphic size of an element. **/
+    enum { MIN_SIZE = 1 << 2 }; /**< Minimal graphic size of an element. **/
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    GuiElement(TiXmlElement *xmlElement, void *parent);
+    GuiElement(TiXmlElement *xmlElement, const void *parent);
     virtual ~GuiElement() {}
-    virtual int sendMsg(int message, const char *text, Ogre::uint32 param);
+
+    /** Send a message from GuiManager with max 2 parameters and returns max. 2 values.
+     ** @param message The message/command for the element.
+     ** @param text    parameter and/or return string value.
+     ** @param param   parameter and/or return integer value.
+     ** @param text2   Additional text parameter.
+     *****************************************************************************/
+    virtual void sendMsg(const int message, Ogre::String &text, Ogre::uint32 &param, const char *text2) {}
+
     virtual int keyEvent(const int keyChar, const unsigned int key);
-    virtual int mouseEvent(int MouseAction, int x, int y, int mouseWheel);
-    virtual void update(Ogre::Real deltaTime) {} /**< Animations, drag'n'drop, etc **/
+    virtual int mouseEvent(const int mouseAction, int mouseX, int mouseY, int mouseWheel);
+
+    /** Update an element. Used for drag'n'drop, animations, etc.
+     ** @param deltaTime The time since the last frame.
+     *****************************************************************************/
+    virtual void update(Ogre::Real deltaTime) {}
+
+    /** Draw an element into the parent window.
+     ** @param uploadToTexture When false the gfx is not yet copied to the texture.
+     **                        This way texture write access can be optimized for
+     **                        multi layer graphics.
+     *****************************************************************************/
     virtual void draw(bool uploadToTexture = true);
-    virtual const char *sendMsg(int info);
-    int getState()   { return mState;  }
-    int getIndex()   { return mIndex;  }
-    int getWidth()   { return mWidth;  }
-    int getHeight()  { return mHeight; }
-    bool Visible()   { return mVisible;}
-    bool setState(int state);              /**< Returns true if the state was changed. **/
-    void setPosition(int x, int y)
+    Ogre::uint16 getWidth()  const { return mWidth;  }
+    Ogre::uint16 getHeight() const { return mHeight; }
+
+    /** Set the state of the element.
+     ** @param  state The state is the look of the element.
+     ** @return Returns true if the state was changed.
+     *****************************************************************************/
+    bool setState(const Ogre::uchar state);
+
+    /** Set the position of the element.
+     ** @param x The x-pos in pixel from the top-left pos of the parent window.
+     ** @param y The y-pos in pixel from the top-left pos of the parent window.
+     *****************************************************************************/
+    void setPosition(const int x, const int y)
     {
         mPosX = x;
         mPosY = y;
     }
-    bool mouseWithin(int x, int y)
+
+    /** Returns true if the mouse is within the borders of this element.
+     ** @param x The mouse x-pos in pixel.
+     ** @param y The mouse y-pos in pixel.
+     *****************************************************************************/
+    bool mouseWithin(const int x, const int y) const
     {
-        return (x > mPosX && x < mPosX + mWidth && y > mPosY && y < mPosY + mHeight);
+        return !(!mVisible || x < mPosX || x > mPosX + mWidth || y < mPosY || y > mPosY + mHeight);
     }
+    /// Returns the unique numer of this element.
+    int getIndex() const { return mIndex;  }
 
 protected:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    int mIndex;                            /**< Unique number. -1 means its a bg-gfx (no interaction) **/
-    unsigned short mPosX, mPosY;           /**< Pixeloffset from the upper-left corner of the window. **/
-    unsigned short mWidth, mHeight;        /**< Dimension of this element. **/
-    unsigned short mState;                 /**< Actual state of this element. **/
-    unsigned short mFontNr, mLabelFontNr;
-    unsigned short mLabelPosX, mLabelPosY;
+    int mIndex;                          /**< Unique number. -1 means its a background-gfx (no interaction) **/
     bool mVisible;
-    Ogre::String mStrLabel;
-    Ogre::uint32 mLabelColor;
-    Ogre::uint32 mFillColor;
-    class GuiWindow *mParent;              /**< Pointer to the parent window. **/
-    GuiImageset::gfxSrcEntry *mGfxSrc;     /**< Pointer to the gfx-data structure or 0 for a colorfill. **/
+    GuiWindow *mParent;                  /**< Pointer to the parent window. **/
+    Ogre::uchar mState;                  /**< Actual state of this element. **/
+    Ogre::uint16 mPosX, mPosY;           /**< Pixeloffset from the upper-left corner of the window. **/
+    Ogre::uint16 mWidth, mHeight;        /**< Dimension of this element. **/
+    Ogre::uint16 mFontNr, mLabelFontNr;
+    Ogre::uint16 mLabelPosX, mLabelPosY;
+    Ogre::String mLabelString;
+    Ogre::uint32 mLabelColor;            /**< The textcolor of the label. **/
+    Ogre::uint32 mFillColor;             /**< The fill color of the element. Only used when mGfxSrc is null. **/
+    GuiImageset::gfxSrcEntry *mGfxSrc;   /**< Pointer to the gfx-data structure or 0 for a colorfill. **/
+
+    // ////////////////////////////////////////////////////////////////////
+    // Functions.
+    // ////////////////////////////////////////////////////////////////////
+    bool isVisible() const { return mVisible; }
+    void setVisible(bool visible);
 };
 
 #endif

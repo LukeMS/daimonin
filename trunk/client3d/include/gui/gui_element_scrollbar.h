@@ -33,29 +33,15 @@ this program; If not, see <http://www.gnu.org/licenses/>.
  *****************************************************************************/
 class GuiElementScrollbar : public GuiElement
 {
-
 public:
-    enum
-    {
-        // Horizontal Elements.
-        BUTTON_H_ADD,
-        BUTTON_H_SUB,
-        SLIDER_H,
-        // Vertical Elements.
-        BUTTON_V_ADD,
-        BUTTON_V_SUB,
-        SLIDER_V
-    };
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    GuiElementScrollbar(TiXmlElement *xmlElement, void *parent, void *parentElement);
+    GuiElementScrollbar(TiXmlElement *xmlElement, const void *parent, const void *parentElement);
     ~GuiElementScrollbar();
-    //int sendMsg(int message, const char *text, Ogre::uint32 param);
     int getScrollOffset();
-    int mouseEvent(int MouseAction, int x, int y, int mouseWheel);
+    virtual int mouseEvent(const int mouseAction, int mouseX, int mouseY, int mouseWheel);
     void stopDragging() { mDragging = false; mMouseButDown = false; }
-    void resize(int newWidth, int newHeight);
     void updateSliderSize(int actPos, int scrollOffset, int maxVisPos, int maxPos = -1);
     void draw();
 
@@ -70,11 +56,10 @@ private:
     bool mMouseOver, mMouseButDown;
     float mPixelScrollToLineScroll; /**< When slider scrolls 1 pixel, the parent element must scroll x lines. **/
     Ogre::uint32 mColorBackground, mColorBorderline, mColorBarPassive, mColorBarM_Over, mColorBarActive;
-    class GuiElementButton *mButScrollUp, *mButScrollDown;
+    GuiElementButton *mButScrollUp, *mButScrollDown;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    void arrangeButtons(int x1, int y1, int x2, int y2);
     bool mouseOverSlider(int x, int y);
 };
 

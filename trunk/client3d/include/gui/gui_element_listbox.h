@@ -37,14 +37,11 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    GuiListbox(TiXmlElement *xmlElement, void *parent);
+    GuiListbox(TiXmlElement *xmlElement, const void *parent);
     ~GuiListbox();
-    void draw();
-    void clear();
-    void update(Ogre::Real dTime);
-    int sendMsg(int message, const char *text, Ogre::uint32 param);
-    const char *sendMsg(int info);
-    int mouseEvent(int MouseAction, int x, int y, int z);
+    virtual void update(Ogre::Real dTime);
+    virtual void sendMsg(const int message, Ogre::String &text, Ogre::uint32 &param, const char *text2);
+    virtual int mouseEvent(const int mouseAction, int mouseX, int mouseY, int mouseWheel);
 
 private:
     // ////////////////////////////////////////////////////////////////////
@@ -70,13 +67,15 @@ private:
     int  mBufferPos;            /**< Next free entry in the ring-buffer. **/
     int  mActLines;             /**< Actual filled entries in the ring-buffer **/
     int  mFontHeight;
-    class GuiElementScrollbar *mScrollBarV;
+    GuiElementScrollbar *mScrollBarV;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     int  addText(const char *text, Ogre::uint32 color);
-    int  addItem(int itemId, Ogre::uint32 color);
+    int  addItem(const int itemId, Ogre::uint32 color);
     void scrollTextVertical(int offset);
+    void clear();
+    void draw();
     bool extractKeyword(int x, int y);
 };
 

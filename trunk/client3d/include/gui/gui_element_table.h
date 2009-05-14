@@ -33,7 +33,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
  ** Columns are separated by ',' in the row-text.
  ** @todo add gfx-columnn support.
  ** @todo add scrollbars.
- ** @todo change the seletionbar to a gfx (alpha) and draw it on top of the row..
+ ** @todo change the seletionbar to a gfx (alpha) and draw it on top of the row.
  *****************************************************************************/
 class GuiTable : public GuiElement
 {
@@ -41,9 +41,9 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    GuiTable(TiXmlElement *xmlElement, void *parent);
+    GuiTable(TiXmlElement *xmlElement, const void *parent);
     ~GuiTable();
-    int sendMsg(int message, const char *text, Ogre::uint32 param);
+    virtual void sendMsg(const int message, Ogre::String &text, Ogre::uint32 &param, const char *text2);
 
 private:
     // ////////////////////////////////////////////////////////////////////
@@ -55,19 +55,21 @@ private:
         Ogre::String label; /**< Label of the column. **/
     } ColumnEntry;
     std::vector<ColumnEntry*>mvColumn; /**< Columns in a single row. **/
+
     typedef struct
     {
         Ogre::uint32 color; /**< Default color of the subrow. **/
         int fontNr;         /**< Default font  of the subrow. **/
     } SubRowEntry;
+
     std::vector<SubRowEntry*>mvSubRow;
     std::vector<Ogre::String>mvRow;
     bool mUserBreak;
-    bool mRowActivated;                /**< A row was activated by the user.(double-click lmb or return key) **/
-    bool mSeletedRowChanged;           /**< The selected row has changed by the user (crsr up/down or lmb). **/
+    bool mRowActivated;          /**< A row was activated by the user.(double-click lmb or return key) **/
+    bool mSeletedRowChanged;     /**< The selected row has changed by the user (crsr up/down or lmb). **/
     int  mHeightColumnLabel;
     int  mHeightRow;
-    int  mSelectedRow;                 /**< The actual selected row. **/
+    int  mSelectedRow;           /**< The actual selected row. **/
     Ogre::uint32 mColorRowBG[2];
     Ogre::uint32 mColorSelect;
     // ////////////////////////////////////////////////////////////////////
@@ -76,14 +78,14 @@ private:
     inline int getUserBreak();
     inline int getSelectedRow();
     inline int getActivatedRow();
-    int keyEvent(const int keyChar, const unsigned int key);
-    int mouseEvent(int MouseAction, int x, int y, int z);
     inline void clear();                             /**< Clear the whole table.   **/
     inline void addRow(const char *row);
-    inline void setRow(int row, const char *rowTxt); /**< Set new values to a row. **/
+    inline void setRow(const int row, const char *rowTxt); /**< Set new values to a row. **/
+    virtual int keyEvent(const int keyChar, const unsigned int key);
+    virtual int mouseEvent(const int mouseAction, int mouseX, int mouseY, int mouseWheel);
     void draw();                                     /**< Draw the background of the table. **/
     void drawSelection(int newSelection);
-    void drawRow(int row, Ogre::uint32 color);
+    void drawRow(const int row, Ogre::uint32 color);
 };
 
 #endif

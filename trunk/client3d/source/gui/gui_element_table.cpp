@@ -35,7 +35,7 @@ const int  TEXT_OFFSET = 2; // Text offset in pixel x/y from the topleft border.
 //================================================================================================
 // Constructor.
 //================================================================================================
-GuiTable::GuiTable(TiXmlElement *xmlElement, void *parent):GuiElement(xmlElement, parent)
+GuiTable::GuiTable(TiXmlElement *xmlElement, const void *parent):GuiElement(xmlElement, parent)
 {
     const char *tmp;
     TiXmlElement *xmlOpt;
@@ -100,24 +100,25 @@ GuiTable::~GuiTable()
 //================================================================================================
 //
 //================================================================================================
-int GuiTable::sendMsg(int message, const char *text, uint32 param)
+void GuiTable::sendMsg(const int message, Ogre::String &text, Ogre::uint32 &param, const char *text2)
 {
     switch (message)
     {
         case GuiManager::MSG_ADD_ROW:
-            addRow(text);
-            return 0;
+            addRow(text.c_str());
+            return;
         case GuiManager::MSG_CLEAR:
             clear();
-            return 0;
+            return;
         case GuiManager::MSG_GET_USERBREAK:
-            return getUserBreak();
+            param = getUserBreak();
+            return;
         case GuiManager::MSG_GET_SELECTION:
-            return getSelectedRow();
+            param = getSelectedRow();
+            return;
         case GuiManager::MSG_GET_ACTIVATED:
-            return getActivatedRow();
-        default:
-            return -1;
+            param = getActivatedRow();
+            return;
     }
 }
 
@@ -170,14 +171,14 @@ int GuiTable::keyEvent(const int keyChar, const unsigned int key)
 //================================================================================================
 // Returns true if the mouse event was on this gadget (so no need to check the other gadgets).
 //================================================================================================
-int GuiTable::mouseEvent(int MouseAction, int x, int y, int z)
+int GuiTable::mouseEvent(const int mouseAction, int mouseX, int mouseY, int mouseWheel)
 {
-    if (!mouseWithin(x,y))
+    if (!mouseWithin(mouseX, mouseY))
         return GuiManager::EVENT_CHECK_NEXT;
-    int row = (y-mPosY-mHeightColumnLabel) / mHeightRow;
+    int row = (mouseY-mPosY-mHeightColumnLabel) / mHeightRow;
     if (row <0 || row >= (int)mvRow.size()) return true;
 
-    if (MouseAction == GuiManager::BUTTON_RELEASED)
+    if (mouseAction == GuiManager::BUTTON_RELEASED)
     {
         static unsigned long time =0;
         {
@@ -189,7 +190,7 @@ int GuiTable::mouseEvent(int MouseAction, int x, int y, int z)
         }
         time = Root::getSingleton().getTimer()->getMilliseconds();
     }
-    if (MouseAction == GuiManager::BUTTON_PRESSED)
+    if (mouseAction == GuiManager::BUTTON_PRESSED)
     {
         if (mSelectedRow != row)
         {
@@ -204,7 +205,7 @@ int GuiTable::mouseEvent(int MouseAction, int x, int y, int z)
 //================================================================================================
 // Change an existing row.
 //================================================================================================
-void GuiTable::setRow(int row, const char *text)
+void GuiTable::setRow(const int row, const char *text)
 {
     drawRow(row, (row == mSelectedRow)?mColorSelect:mColorRowBG[row&1]);
 }

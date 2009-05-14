@@ -27,7 +27,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include "gui_element.h"
 
 /**
- ** This class provides an interactive button.
+ ** This class provides a textbox.
  *****************************************************************************/
 class GuiElementTextbox: public GuiElement
 {
@@ -35,16 +35,9 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    GuiElementTextbox(TiXmlElement *xmlElement, void *parent);
+    GuiElementTextbox(TiXmlElement *xmlElement, const void *parent);
     ~GuiElementTextbox() {}
-    int sendMsg(int message, const char *text, Ogre::uint32 param);
-    void draw();
-    void setLabel(const char *newText)
-    {
-        mStrLabel = newText;
-        draw();
-    }
-    const char *getLabel() { return mStrTooltip.c_str(); }
+    virtual void sendMsg(const int message, Ogre::String &text, Ogre::uint32 &param, const char *text2);
 
 private:
     // ////////////////////////////////////////////////////////////////////
@@ -52,6 +45,16 @@ private:
     // ////////////////////////////////////////////////////////////////////
     Ogre::String mStrTooltip;
     bool mHideText;
+
+    // ////////////////////////////////////////////////////////////////////
+    // Functions.
+    // ////////////////////////////////////////////////////////////////////
+    void draw();
+    void setLabel(const char *newText)
+    {
+        mLabelString = newText;
+        draw();
+    }
 };
 
 #endif

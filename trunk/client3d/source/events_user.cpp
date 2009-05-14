@@ -149,14 +149,14 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
         {
             static int val = 100;
             val=0;
-            //GuiManager::getSingleton().print(GuiManager::GUI_LIST_CHATWIN, StringConverter::toString(val).c_str());
-            //GuiManager::getSingleton().setValue(GuiManager::GUI_STATUSBAR_PLAYER_MANA, val);
+            //GuiManager::getSingleton().print(GuiManager::LIST_CHATWIN, StringConverter::toString(val).c_str());
+            //GuiManager::getSingleton().setValue(GuiManager::STATUSBAR_PLAYER_MANA, val);
             //ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, 0,ObjectAnimate::STATE_HIT1);
-            //GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "Test 1");
-            //GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "Test 2");
-            GuiManager::getSingleton().addItem(GuiManager::GUI_LIST_MSGWIN, "gbn", 0xffffffff);
-            GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "Test 3");
-            GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "Test 4");
+            //GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Test 1");
+            //GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Test 2");
+            GuiManager::getSingleton().addItem(GuiManager::LIST_MSGWIN, "gbn", 0xffffffff, "tooltt");
+            GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Test 3");
+            GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Test 4");
             break;
         }
 
@@ -209,15 +209,15 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
         case OIS::KC_M:
         {
             String strMemUsage = "Memory used for Textures: " + StringConverter::toString(TextureManager::getSingleton().getMemoryUsage()/1024) + " KB";
-            GuiManager::getSingleton().print(GuiManager::GUI_LIST_CHATWIN, strMemUsage.c_str());
+            GuiManager::getSingleton().print(GuiManager::LIST_CHATWIN, strMemUsage.c_str());
             strMemUsage = "Memory used for Meshes: " + StringConverter::toString(MeshManager::getSingleton().getMemoryUsage()/1024) + " KB";
-            GuiManager::getSingleton().print(GuiManager::GUI_LIST_CHATWIN, strMemUsage.c_str());
+            GuiManager::getSingleton().print(GuiManager::LIST_CHATWIN, strMemUsage.c_str());
             break;
         }
 
         case OIS::KC_O:
         {
-            GuiManager::getSingleton().print(GuiManager::GUI_LIST_CHATWIN, "Show inventory");
+            GuiManager::getSingleton().print(GuiManager::LIST_CHATWIN, "Show inventory");
             // ObjectManager::getSingleton().setPlayerEquipment(ObjectManager::OBJECT_PLAYER, ObjectNPC::BONE_SHIELD_HAND, 1);
             break;
         }
@@ -277,13 +277,15 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
 
         case OIS::KC_W:
         {
+            GuiManager::getSingleton().print(GuiManager::LIST_CHATWIN, "Client3d commands:");
             //Network::getSingleton().send_command("/apply", -1, SC_NORMAL);
-            //GuiManager::getSingleton().addTextline(WIN_TEXTWINDOW, GUI_LIST_CHATWIN, "apply");
+            //GuiManager::getSingleton().addTextline(WIN_TEXTWINDOW, LIST_CHATWIN, "apply");
             break;
         }
 
         case OIS::KC_X:
         {
+            /*
             for (int z=22; z ; --z)
             {
                 for (int x = z; x < 47; ++x)
@@ -291,6 +293,7 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
                     TileManager::getSingleton().setMap(x, z, 15, 2);
                 }
             }
+            */
             /*
                         String filename = "./shadowtest.txt";
                         std::ifstream txtFile;
@@ -335,29 +338,33 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
         break;
 
         case OIS::KC_Y:
-            mSceneDetailIndex = (mSceneDetailIndex+1)%3;
-            switch (mSceneDetailIndex)
+        {
+            static int sceneDetailIndex =0;
+            sceneDetailIndex = (++sceneDetailIndex)%3;
+            switch (sceneDetailIndex)
             {
-                case 0 :
+                case 0:
                     mCamera->setPolygonMode(PM_SOLID);
                     break ;
-                case 1 :
+                case 1:
                     mCamera->setPolygonMode(PM_WIREFRAME);
                     break ;
-                case 2 :
+                case 2:
                     mCamera->setPolygonMode(PM_POINTS);
                     break ;
             }
-            break;
+        }
+        break;
 
         case OIS::KC_1:
         {
-            GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "ABCDEF^Found me! Dies ist ein besonders langer link! Der Link geht ueber mehr als eine Zeile. Aber egal ^Kein Link mehr ^123^11111");
-            GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "ABCDEF^Link1^1234^Link2^5678^Link3^90123");
-            GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "ABCDEF|Hello|90123");
-            GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "ABCDEF~#ff0000ff12345678901234567890qwedghldflghdffdjghft34z89t6gfdiug76349zbh4oeu8jlghdfljgrtzuiop~");
+            /*
+            GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "ABCDEF^Found me! Dies ist ein besonders langer link! Der Link geht ueber mehr als eine Zeile. Aber egal ^Kein Link mehr ^123^11111");
+            GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "ABCDEF^Link1^1234^Link2^5678^Link3^90123");
+            GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "ABCDEF|Hello|90123");
+            GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "ABCDEF~#ff0000ff12345678901234567890qwedghldflghdffdjghft34z89t6gfdiug76349zbh4oeu8jlghdfljgrtzuiop~");
             break;
-
+            */
             //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_WEAPON_HAND, 1);
             //static int color =0;
             //ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_TEXTURE, 0, ObjectNPC::TEXTURE_POS_SKIN, color++);
@@ -451,7 +458,7 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
         {
             static bool tst = 1;
             tst = !tst;
-            GuiManager::getSingleton().setVisible(GuiManager::GUI_BUTTON_TEST, tst);
+            GuiManager::getSingleton().setVisible(GuiManager::BUTTON_TEST, tst);
             break;
 
             Vector3 pos = mCamera->getPosition();
@@ -577,7 +584,7 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
 //================================================================================================
 // .
 //================================================================================================
-bool Events::keyReleased( const OIS::KeyEvent &e )
+bool Events::keyReleased(const OIS::KeyEvent &e)
 {
     //mShiftDown = e->isShiftDown();
     switch (e.key)
@@ -634,7 +641,7 @@ bool Events::mouseMoved(const OIS::MouseEvent &e)
 //================================================================================================
 // .
 //================================================================================================
-bool Events::mousePressed(const OIS::MouseEvent &e, OIS::MouseButtonID button)
+bool Events::mousePressed(const OIS::MouseEvent &e, const OIS::MouseButtonID button)
 {
     // ////////////////////////////////////////////////////////////////////
     // First check if the mouse action is within the gui.
@@ -697,7 +704,7 @@ bool Events::mousePressed(const OIS::MouseEvent &e, OIS::MouseButtonID button)
 //================================================================================================
 // .
 //================================================================================================
-bool Events::mouseReleased(const OIS::MouseEvent &e, OIS::MouseButtonID id)
+bool Events::mouseReleased(const OIS::MouseEvent &e, const OIS::MouseButtonID id)
 {
     int ret = GuiManager::getSingleton().mouseEvent(GuiManager::BUTTON_RELEASED, mMouse);
     if (ret == GuiManager::EVENT_USER_ACTION)
@@ -706,7 +713,7 @@ bool Events::mouseReleased(const OIS::MouseEvent &e, OIS::MouseButtonID id)
     {
         //GuiManager::getSingleton().getDragDestElement();
         //Item::getSingleton().dropItem(mDragSrcWin, mDragSrcSlot, mDragDstWin, mDragDstSlot);
-        GuiManager::getSingleton().print(GuiManager::GUI_LIST_CHATWIN, "Drag done.");
+        GuiManager::getSingleton().print(GuiManager::LIST_CHATWIN, "Drag done.");
     }
     return true;
 }
@@ -720,19 +727,19 @@ void Events::elementClicked(int element)
     const char *buf;
     switch (element)
     {
-        case GuiManager::GUI_BUTTON_CLOSE:
+        case GuiManager::BUTTON_CLOSE:
             GuiManager::getSingleton().closeParentWin(element);
             break;
-        case GuiManager::GUI_LIST_MSGWIN:
-        case GuiManager::GUI_LIST_CHATWIN:
+        case GuiManager::LIST_MSGWIN:
+        case GuiManager::LIST_CHATWIN:
             buf = GuiManager::getSingleton().getKeyword(element);
-            if (buf) GuiManager::getSingleton().print(GuiManager::GUI_LIST_CHATWIN, buf);
-            GuiManager::getSingleton().print(GuiManager::GUI_LIST_CHATWIN, "");
+            if (buf) GuiManager::getSingleton().print(GuiManager::LIST_CHATWIN, buf);
+            GuiManager::getSingleton().print(GuiManager::LIST_CHATWIN, "");
             break;
-        case GuiManager::GUI_LIST_NPC:
+        case GuiManager::LIST_NPC:
             Network::getSingleton().send_game_command(GuiManager::getSingleton().getKeyword(element));
             break;
         default:
-            GuiManager::getSingleton().print(GuiManager::GUI_LIST_CHATWIN, "Anonymous element was clicked.");
+            GuiManager::getSingleton().print(GuiManager::LIST_CHATWIN, "Anonymous element was clicked.");
     }
 }

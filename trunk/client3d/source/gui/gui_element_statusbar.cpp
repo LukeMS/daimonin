@@ -31,11 +31,10 @@ const Real ANIMATION_SPEED = 1.2;
 //================================================================================================
 // .
 //================================================================================================
-int GuiStatusbar::sendMsg(int message, const char *text, uint32 value)
+void GuiStatusbar::sendMsg(const int message, Ogre::String &text, Ogre::uint32 &param, const char *text2)
 {
     if (message == GuiManager::MSG_SET_VALUE)
-        setValue(value);
-    return 0;
+        setValue(param);
 }
 
 //================================================================================================
@@ -73,7 +72,7 @@ void GuiStatusbar::setValue(int value)
 //================================================================================================
 // .
 //================================================================================================
-GuiStatusbar::GuiStatusbar(TiXmlElement *xmlElement, void *parent):GuiElement(xmlElement, parent)
+GuiStatusbar::GuiStatusbar(TiXmlElement *xmlElement, const void *parent):GuiElement(xmlElement, parent)
 {
     const char *temp = xmlElement->Attribute("smooth");
     mSmoothChange = (temp && atoi(temp))?true:false;
@@ -82,17 +81,17 @@ GuiStatusbar::GuiStatusbar(TiXmlElement *xmlElement, void *parent):GuiElement(xm
     mAutoColor = (temp && atoi(temp))?true:false;
     mWidth -= mWidth&1?1:0;  // Make it even.
     mHeight-= mHeight&1?1:0; // Make it even.
-    if (mWidth>mHeight)
+    if (mWidth > mHeight)
     {
-        mVertical = false;
-        mDiameter = mHeight;
-        mLength   = mWidth;
+        mHorizontal= true;
+        mDiameter  = mHeight;
+        mLength    = mWidth;
     }
     else
     {
-        mVertical = true;
-        mDiameter = mWidth;
-        mLength   = mHeight;
+        mHorizontal= false;
+        mDiameter  = mWidth;
+        mLength    = mHeight;
     }
     mDrawn = mValue = mLength;
     draw();
@@ -105,7 +104,7 @@ void GuiStatusbar::draw()
 {
     if (!mVisible)
     {
-        GuiElement::draw();
+        GuiElement::draw(true);
         return;
     }
     uint32 *dst = GuiManager::getSingleton().getBuildBuffer();
@@ -132,14 +131,14 @@ void GuiStatusbar::drawColorBar(uint32 *dst)
     dColor+= ((mFillColor & 0x0000ff00)/ (mDiameter/2+1)) & 0x0000ff00;
     dColor+= ((mFillColor & 0x000000ff)/ (mDiameter/2+1)) & 0x000000ff;
     uint32 color = 0xff000000 + dColor;
-    if (mVertical)
+    if (mHorizontal)
     {
         for (int x=0; x < mDiameter/2; ++x)
         {
             for (int y = 0; y < mLength - mDrawn; ++y)
             {
                 dst[y*mWidth + x] = 0xff000000;
-                dst[y*mWidth + mDiameter-x-1] = 0xff000000;;
+                dst[y*mWidth + mDiameter-x-1] = 0xff000000;
             }
             for (int y = mLength - (int)mDrawn; y < mLength; ++y)
             {
@@ -155,13 +154,13 @@ void GuiStatusbar::drawColorBar(uint32 *dst)
         {
             for (int x = 0; x < mDrawn; ++x)
             {
-                dst[y*mWidth + x]           = color;
+                dst[y*mWidth + x] = color;
                 dst[(mDiameter-y-1)*mWidth + x] = color;
             }
             for (int x = (int)mDrawn; x < mLength; ++x)
             {
                 dst[y*mWidth + x] = 0xff000000;
-                dst[(mDiameter-y-1)*mWidth + x] = 0xff000000;;
+                dst[(mDiameter-y-1)*mWidth + x] = 0xff000000;
             }
             color+= dColor;
         }

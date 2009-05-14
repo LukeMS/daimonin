@@ -30,10 +30,12 @@ using namespace Ogre;
 
 String GuiListbox::mKeywordPressed;
 
+// todo: fade out lines (each one separatly) after an amount of time.
+//       highlight the keyword when mouse is over.
 //================================================================================================
 // Constructor.
 //================================================================================================
-GuiListbox::GuiListbox(TiXmlElement *xmlElement, void *parent):GuiElement(xmlElement, parent)
+GuiListbox::GuiListbox(TiXmlElement *xmlElement, const void *parent):GuiElement(xmlElement, parent)
 {
     mFontHeight = GuiTextout::getSingleton().getFontHeight(mFontNr);
     mMaxVisibleRows  = (int)((float)mHeight / (float)mFontHeight + 0.5);
@@ -74,35 +76,22 @@ GuiListbox::~GuiListbox()
 //================================================================================================
 // .
 //================================================================================================
-int GuiListbox::sendMsg(int message, const char *text, uint32 color)
+void GuiListbox::sendMsg(const int message, Ogre::String &text, Ogre::uint32 &color, const char *text2)
 {
     switch (message)
     {
         case GuiManager::MSG_ADD_ROW:
-            addText(text, color);
-            return 0;
+            addText(text.c_str(), color);
+            return;
         case GuiManager::MSG_ADD_ITEM:
-            addItem(GuiImageset::getSingleton().getItemId(text), color);
-            return 0;
+            addItem(GuiImageset::getSingleton().getItemId(text.c_str()), color);
+            return;
         case GuiManager::MSG_CLEAR:
             clear();
-            return 0;
-        default:
-            return 0;
-    }
-}
-
-//================================================================================================
-// .
-//================================================================================================
-const char *GuiListbox::sendMsg(int info)
-{
-    switch (info)
-    {
+            return;
         case GuiManager::MSG_GET_KEYWORD:
-            return mKeywordPressed.c_str();
-        default:
-            return 0;
+            text = mKeywordPressed;
+            return;
     }
 }
 
@@ -134,20 +123,17 @@ int GuiListbox::addText(const char *txt, uint32 stdColor)
     char keySign[] = { '#', '1', '\0' };
     while ((start = strText.find(GuiTextout::TXT_CMD_LINK, stop))!= std::string::npos)
     {
-        if ((link = strText.find(GuiTextout::TXT_CMD_LOWLIGHT, ++start)) != std::string::npos)
+        link = strText.find(GuiTextout::TXT_CMD_LOWLIGHT, ++start);
+        stop = strText.find(GuiTextout::TXT_CMD_LINK, start);
+        if (stop == std::string::npos) stop = strText.size();
+        if (link == std::string::npos)
+            keyword+= strText.substr(start, stop-start) + GuiTextout::TXT_CMD_SEPARATOR;
+        else
         {
-            stop = strText.find(GuiTextout::TXT_CMD_LINK, start);
-            if (stop == std::string::npos) stop = strText.size();
             ++link;
             keyword+= strText.substr(link, stop-link) + GuiTextout::TXT_CMD_SEPARATOR;
             strText.erase(link, stop-link);
             stop = link;
-        }
-        else
-        {
-            stop = strText.find(GuiTextout::TXT_CMD_LINK, start);
-            if (stop == std::string::npos) stop = strText.size();
-            keyword+= strText.substr(start, stop-start) + GuiTextout::TXT_CMD_SEPARATOR;
         }
         strText.insert(start, keySign);
         stop+=3;
@@ -204,9 +190,9 @@ int GuiListbox::addText(const char *txt, uint32 stdColor)
 //================================================================================================
 // Add an item.
 //================================================================================================
-int GuiListbox::addItem(int itemId, uint32 stdColor)
+int GuiListbox::addItem(const int itemId, uint32 stdColor)
 {
-    int sumRowsForItem = GuiImageset::ITEM_SIZE / mFontHeight +1;
+    const int sumRowsForItem = GuiImageset::ITEM_SIZE / mFontHeight +1;
     String strKeyword = "$" + StringConverter::toString(itemId);
     int sumLines= 0;
     for (int i = 0; i < sumRowsForItem; ++i)
@@ -227,25 +213,36 @@ int GuiListbox::addItem(int itemId, uint32 stdColor)
 //================================================================================================
 // Returns true if the mouse event was on this gadget (so no need to check the other gadgets).
 //================================================================================================
-int GuiListbox::mouseEvent(int MouseAction, int x, int y, int mouseWheel)
+int GuiListbox::mouseEvent(const int mouseAction, int mouseX, int mouseY, int mouseWheel)
 {
     // Scrollbar action?
-    if (mScrollBarV && mScrollBarV->mouseEvent(MouseAction, x, y, mouseWheel) == GuiManager::EVENT_USER_ACTION)
+    if (mScrollBarV)
     {
-        scrollTextVertical(mScrollBarV->getScrollOffset());
-        return GuiManager::EVENT_CHECK_DONE;
+        int ret = mScrollBarV->mouseEvent(mouseAction, mouseX, mouseY, mouseWheel);
+        if (ret == GuiManager::EVENT_CHECK_DONE)
+            return ret;
+        if (ret == GuiManager::EVENT_USER_ACTION)
+        {
+            scrollTextVertical(mScrollBarV->getScrollOffset());
+            return GuiManager::EVENT_CHECK_DONE;
+        }
     }
-    // MouseAction within the textarea?
-    if (!mouseWithin(x, y))
+    // mouseAction within the textarea?
+    if (!mouseWithin(mouseX, mouseY))
         return GuiManager::EVENT_CHECK_NEXT;
     if (mouseWheel)
     {
         scrollTextVertical((mouseWheel>0)?-1:+1);
         return GuiManager::EVENT_CHECK_DONE;
     }
-    if (MouseAction == GuiManager::BUTTON_RELEASED)
+    if (mouseAction == GuiManager::MOUSE_MOVEMENT)
     {
-        if (extractKeyword(x, y))
+        if (extractKeyword(mouseX, mouseY)) GuiManager::getSingleton().print(GuiManager::LIST_CHATWIN, "keywird");
+        return GuiManager::EVENT_CHECK_DONE;
+    }
+    if (mouseAction == GuiManager::BUTTON_RELEASED)
+    {
+        if (extractKeyword(mouseX, mouseY))
             return GuiManager::EVENT_USER_ACTION;
     }
     return GuiManager::EVENT_CHECK_DONE;
@@ -342,7 +339,7 @@ void GuiListbox::draw()
         // ////////////////////////////////////////////////////////////////////
         GuiTextout::getSingleton().printText(mWidth, mFontHeight, dst+offset*mWidth, mWidth,
                                              row[(mPrintPos-mVScrollOffset+pos)& (SIZE_STRING_BUFFER-1)].text.c_str(), mFontNr,
-                                             row[(mPrintPos-mVScrollOffset+pos)& (SIZE_STRING_BUFFER-1)].color);
+                                             row[(mPrintPos-mVScrollOffset+pos)& (SIZE_STRING_BUFFER-1)].color, false);
         ++pos;
     }
     mParent->getTexture()->getBuffer()->blitFromMemory(

@@ -25,7 +25,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #define ObjectEquipment_H
 
 #include <Ogre.h>
-#include "define.h"
 
 /**
  ** This class handles all equipment of an object like weapon, armour, etc.
@@ -100,7 +99,7 @@ private:
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     static sPicture picHands[4], picArms[4], picShoes[2], picBody[2], picLegs[2], picFace, picHair, picBelt[2];
-    static unsigned char *mTexImageBuf;
+    static Ogre::uchar *mTexImageBuf;
     static Ogre::Image shadowImage;
     enum
     {

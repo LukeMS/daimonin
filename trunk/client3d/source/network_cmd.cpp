@@ -87,7 +87,7 @@ enum
 //================================================================================================
 // Ascii to int (32bit).
 //================================================================================================
-int Network::GetInt_String(unsigned char *data)
+int Network::GetInt_String(uchar *data)
 {
     if (mEndianConvert)
         return (data[0] << 24) + (data[1] << 16) + (data[2] << 8) + data[3];
@@ -97,7 +97,7 @@ int Network::GetInt_String(unsigned char *data)
 //================================================================================================
 // Ascii to short (16bit).
 //================================================================================================
-short Network::GetShort_String(unsigned char *data)
+short Network::GetShort_String(uchar *data)
 {
     if (mEndianConvert)
         return (data[0] << 8) + data[1];
@@ -107,9 +107,9 @@ short Network::GetShort_String(unsigned char *data)
 //================================================================================================
 // .
 //================================================================================================
-void Network::AccNameSuccess(unsigned char *data, int len)
+void Network::AccNameSuccess(uchar *data, int len)
 {
-    GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "Account Success");
+    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Account Success");
     Logger::log().error() << "AccNameSuccess";
     /*
     int num = (len)?GetUINT8_String(data):ACCOUNT_STATUS_DISCONNECT;
@@ -145,20 +145,20 @@ void Network::AccNameSuccess(unsigned char *data, int len)
 //================================================================================================
 // Server is sending us our account data or the reason why not
 //================================================================================================
-void Network::AccountCmd(unsigned char *data, int len)
+void Network::AccountCmd(uchar *data, int len)
 {
-    GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "Account cmd from server");
+    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Account cmd from server");
     ObjectHero::getSingleton().clearAccount();
     // First, get the account status - it tells us too when login failed
     if (*data) // something is wrong when not ACCOUNT_STATUS_OK (0)
     {
-        GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "~#ffff0000Account doesn't exist or wrong password~");
+        GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "~#ffff0000Account doesn't exist or wrong password~");
         Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
     }
     else // we have account data... set it up and move player to account view mode
     {
         int count = 1;
-        GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "Account ok");
+        GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Account ok");
         for (int nr = 0; nr < ObjectHero::ACCOUNT_MAX_PLAYER; ++nr)
         {
             if (count >= len) break;
@@ -172,7 +172,7 @@ void Network::AccountCmd(unsigned char *data, int len)
 //================================================================================================
 // .
 //================================================================================================
-void Network::DrawInfoCmd(unsigned char *data, int len)
+void Network::DrawInfoCmd(uchar *data, int len)
 {
     // int color   = atoi(data);
     // Todo: Convert indexed color into rgb and add it to the text.
@@ -184,14 +184,14 @@ void Network::DrawInfoCmd(unsigned char *data, int len)
     }
     else
         ++buf;
-    GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, buf);
+    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, buf);
 }
 
 //================================================================================================
 // Handles when the server says we can't be added.  In reality, we need to close the connection
 // and quit out, because the client is going to close us down anyways.
 //================================================================================================
-void Network::AddMeFail(unsigned char *data, int len)
+void Network::AddMeFail(uchar *data, int len)
 {
     Logger::log().error() << "addme_failed received.\n";
     CloseSocket(mSocket);
@@ -202,7 +202,7 @@ void Network::AddMeFail(unsigned char *data, int len)
 //================================================================================================
 // .
 //================================================================================================
-void Network::Map2Cmd(unsigned char *data, int len)
+void Network::Map2Cmd(uchar *data, int len)
 {
     static int map_w=0, map_h=0,mx=0,my=0;
     int     mask, x, y, pos = 0, ext_flag, xdata;
@@ -215,7 +215,7 @@ void Network::Map2Cmd(unsigned char *data, int len)
     uint16  face;
 
     mapstat = (data[pos++]);
-    TileManager::getSingleton().map_transfer_flag = 0;
+    //TileManager::getSingleton().map_transfer_flag = 0;
     if (mapstat != MAP_UPDATE_CMD_SAME)
     {
         mapname = (char*)data + pos;
@@ -442,7 +442,7 @@ void Network::Map2Cmd(unsigned char *data, int len)
 //================================================================================================
 // .
 //================================================================================================
-void Network::DrawInfoCmd2(unsigned char *data, int len)
+void Network::DrawInfoCmd2(uchar *data, int len)
 {
     char *tmp= 0, buf[2048];
 //    int flags = GetShort_String(data);
@@ -462,7 +462,7 @@ void Network::DrawInfoCmd2(unsigned char *data, int len)
         if (tmp) *tmp = 0;
     }
     // we have communication input
-    GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, buf); // TESTING!!!
+    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, buf); // TESTING!!!
     /*
         if (tmp && flags & (NDI_PLAYER|NDI_SAY|NDI_SHOUT|NDI_TELL|NDI_GSAY|NDI_EMOTE))
         {
@@ -613,7 +613,7 @@ enum _spell_sound_id
 //================================================================================================
 // .
 //================================================================================================
-void Network::SoundCmd(unsigned char *data, int len)
+void Network::SoundCmd(uchar *data, int len)
 {
     if (len != 5)
     {
@@ -648,12 +648,12 @@ void Network::SoundCmd(unsigned char *data, int len)
 //================================================================================================
 // .
 //================================================================================================
-void Network::TargetObject(unsigned char *data, int len)
+void Network::TargetObject(uchar *data, int len)
 {
     String strTmp = "[";
     strTmp += (char*)data+3;
     strTmp += "] selected";
-    GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, strTmp.c_str());
+    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, strTmp.c_str());
     /*
         cpl.target_mode = *data++;
         if (cpl.target_mode)
@@ -666,14 +666,14 @@ void Network::TargetObject(unsigned char *data, int len)
         TileManager::getSingleton().map_udate_flag = 2;
 
         (buf,"TO: %d %d >%s< (len: %d)\n",cpl.target_mode,cpl.target_code,cpl.target_name,len);
-        GuiManager::getSingleton().addTextline(WIN_TEXTWINDOW, GUI_LIST_MSGWIN, buf);
+        GuiManager::getSingleton().addTextline(WIN_TEXTWINDOW, LIST_MSGWIN, buf);
     */
 }
 
 //================================================================================================
 // .
 //================================================================================================
-void Network::StatsCmd(unsigned char *data, int len)
+void Network::StatsCmd(uchar *data, int len)
 {
     /*
         int     i   = 0, x;
@@ -961,7 +961,7 @@ void Network::StatsCmd(unsigned char *data, int len)
 //================================================================================================
 // .
 //================================================================================================
-void Network::ImageCmd(unsigned char *data, int len)
+void Network::ImageCmd(uchar *data, int len)
 {
     /*
         int     pnum, plen;
@@ -992,7 +992,7 @@ void Network::ImageCmd(unsigned char *data, int len)
 //================================================================================================
 // .
 //================================================================================================
-void Network::Face1Cmd(unsigned char *data, int len)
+void Network::Face1Cmd(uchar *data, int len)
 {
     /*
     int pnum = GetShort_String(data);
@@ -1006,7 +1006,7 @@ void Network::Face1Cmd(unsigned char *data, int len)
 //================================================================================================
 // .
 //================================================================================================
-void Network::SkillRdyCmd(unsigned char *data, int len)
+void Network::SkillRdyCmd(uchar *data, int len)
 {
     /*
         strcpy(cpl.skill_name, data);
@@ -1035,7 +1035,7 @@ void Network::SkillRdyCmd(unsigned char *data, int len)
 // Copies relevant data from the archetype to the object.
 // Only copies data that was not set in the object structure.
 //================================================================================================
-void Network::PlayerCmd(unsigned char *data, int len)
+void Network::PlayerCmd(uchar *data, int len)
 {
     Option::getSingleton().setGameStatus(Option::GAME_STATUS_PLAY);
     Item::getSingleton().setBackpackID(GetInt_String(data));
@@ -1089,11 +1089,11 @@ void Network::PlayerCmd(unsigned char *data, int len)
 //================================================================================================
 // .
 //================================================================================================
-void Network::SpelllistCmd(unsigned char *data, int len)
+void Network::SpelllistCmd(uchar *data, int len)
 {
     /*
         int     i, ii, mode;
-        unsigned char   *tmp, *tmp2;
+        uchar   *tmp, *tmp2;
         char    name[256];
 
         // we grap our mode
@@ -1154,10 +1154,10 @@ void Network::SpelllistCmd(unsigned char *data, int len)
 //================================================================================================
 // .
 //================================================================================================
-void Network::SkilllistCmd(unsigned char *data, int len)
+void Network::SkilllistCmd(uchar *data, int len)
 {
     /*
-        unsigned char *tmp, *tmp2, *tmp3, *tmp4;
+        uchar *tmp, *tmp2, *tmp3, *tmp4;
         int     l, e, i, ii, mode;
         char    name[256];
 
@@ -1220,7 +1220,7 @@ void Network::SkilllistCmd(unsigned char *data, int len)
 //================================================================================================
 // .
 //================================================================================================
-void Network::GolemCmd(unsigned char *data, int len)
+void Network::GolemCmd(uchar *data, int len)
 {
     /*
         int     mode, face;
@@ -1256,10 +1256,10 @@ void Network::GolemCmd(unsigned char *data, int len)
 //================================================================================================
 // Server send us the setup cmd..
 //================================================================================================
-void Network::SetupCmd(unsigned char *buf, int len)
+void Network::SetupCmd(uchar *buf, int len)
 {
     buf+=6; // Skip the endian test - because its crap! Please use htonl()/htons() instead!
-    unsigned char *cmd, *param;
+    uchar *cmd, *param;
     //scrolldy = scrolldx = 0;
     int pos =0;
     while (1)
@@ -1283,7 +1283,7 @@ void Network::SetupCmd(unsigned char *buf, int len)
         {
             if (VERSION_CS != atoi((const char*)param))
             {
-                GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "~Your client is outdated!~");
+                GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "~Your client is outdated!~");
                 Logger::log().error() << "Client is outdated";
                 CloseClientSocket();
                 SDL_Delay(3250);
@@ -1296,7 +1296,7 @@ void Network::SetupCmd(unsigned char *buf, int len)
         {
             if (VERSION_SC != atoi((const char*)param))
             {
-                GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "~The server is outdated!\nSelect a different one!~");
+                GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "~The server is outdated!\nSelect a different one!~");
                 CloseClientSocket();
                 SDL_Delay(3250);
                 return;
@@ -1369,15 +1369,15 @@ void Network::checkFileStatus(const char *cmd, char *param, int fileNr)
 //================================================================================================
 // .
 //================================================================================================
-void Network::DataCmd(unsigned char *data, int len)
+void Network::DataCmd(uchar *data, int len)
 {
     const int DATA_PACKED_CMD = 1<<7;
     // ////////////////////////////////////////////////////////////////////
     // check for valid command:
     // 0 = NC, 1 = SERVER_FILE_SKILLS, 2 = SERVER_FILE_SPELLS, (...)
     // ////////////////////////////////////////////////////////////////////
-    unsigned char data_type = data[0];
-    unsigned char data_cmd  = (data_type &~DATA_PACKED_CMD) -1;
+    uchar data_type = data[0];
+    uchar data_cmd  = (data_type &~DATA_PACKED_CMD) -1;
     if (data_cmd >= ServerFile::FILE_SUM)
     {
         Logger::log().error()  << "data cmd: unknown type " << data_type << " (len:" << len << ")";
@@ -1396,8 +1396,8 @@ void Network::DataCmd(unsigned char *data, int len)
         // Look at the zlib docu for more info.
         unsigned long dest_len = 512 * 1024;
         dest = new char[dest_len];
-        uncompress((unsigned char *)dest, &dest_len, (unsigned char *)data, len);
-        data = (unsigned char*)dest;
+        uncompress((uchar *)dest, &dest_len, (uchar *)data, len);
+        data = (uchar*)dest;
         len  = dest_len;
     }
     // ////////////////////////////////////////////////////////////////////
@@ -1416,7 +1416,7 @@ void Network::DataCmd(unsigned char *data, int len)
 //================================================================================================
 // .
 //================================================================================================
-void Network::GroupCmd(unsigned char *data, int len)
+void Network::GroupCmd(uchar *data, int len)
 {
     /*
         char    name[64], *tmp;
@@ -1445,7 +1445,7 @@ void Network::GroupCmd(unsigned char *data, int len)
 //================================================================================================
 // Someone want invite us to a group.
 //================================================================================================
-void Network::GroupInviteCmd(unsigned char *data, int len)
+void Network::GroupInviteCmd(uchar *data, int len)
 {
     /*
         if(global_group_status != GROUP_NO) // bug
@@ -1461,7 +1461,7 @@ void Network::GroupInviteCmd(unsigned char *data, int len)
 //================================================================================================
 // .
 //================================================================================================
-void Network::GroupUpdateCmd(unsigned char *data, int len)
+void Network::GroupUpdateCmd(uchar *data, int len)
 {
     /*
         if (!len) return;
@@ -1481,7 +1481,7 @@ void Network::GroupUpdateCmd(unsigned char *data, int len)
 //================================================================================================
 // .
 //================================================================================================
-void Network::BookCmd(unsigned char *data, int len)
+void Network::BookCmd(uchar *data, int len)
 {
     /*
         sound_play_effect(SOUND_BOOK, 0, 0, 100);
@@ -1496,7 +1496,7 @@ void Network::BookCmd(unsigned char *data, int len)
 //================================================================================================
 // .
 //================================================================================================
-void Network::MarkCmd(unsigned char *data, int len)
+void Network::MarkCmd(uchar *data, int len)
 {
     //cpl.mark_count = GetInt_String(data);
 }
@@ -1513,7 +1513,7 @@ void Network::CreatePlayerAccount()
 //================================================================================================
 // UpdateItemCmd updates some attributes of an item.
 //================================================================================================
-void Network::ItemUpdateCmd(unsigned char *data, int len)
+void Network::ItemUpdateCmd(uchar *data, int len)
 {
     /*
         int     weight, loc, tag, face, sendflags, flags, pos = 0, nlen, anim, nrof, quality=254, condition=254;
@@ -1609,7 +1609,7 @@ void Network::ItemUpdateCmd(unsigned char *data, int len)
 //================================================================================================
 // .
 //================================================================================================
-void Network::ItemDeleteCmd(unsigned char *data, int len)
+void Network::ItemDeleteCmd(uchar *data, int len)
 {
     int pos = 0, tag;
     while (pos < len)
@@ -1624,9 +1624,9 @@ void Network::ItemDeleteCmd(unsigned char *data, int len)
 }
 
 //================================================================================================
-// ItemCmd with sort order normal (add to end.
+// ItemCmd with sort order normal (add to end).
 //================================================================================================
-void Network::ItemXCmd(unsigned char *data, int len)
+void Network::ItemXCmd(uchar *data, int len)
 {
     Item::getSingleton().ItemXYCmd(data, len, false);
 }
@@ -1634,7 +1634,7 @@ void Network::ItemXCmd(unsigned char *data, int len)
 //================================================================================================
 // ItemCmd with sort order reversed (add to front).
 //================================================================================================
-void Network::ItemYCmd(unsigned char *data, int len)
+void Network::ItemYCmd(uchar *data, int len)
 {
     Item::getSingleton().ItemXYCmd(data, len, true);
 }
@@ -1656,7 +1656,7 @@ bool Network::console_command_check(String cmd)
             cmd = cmd.substr(len, cmd.size()-len);
             Logger::log().error() << "after: " << cmd;
             do_console_cmd(cmd, i);
-            return true;;
+            return true;
         }
     }
     return false;

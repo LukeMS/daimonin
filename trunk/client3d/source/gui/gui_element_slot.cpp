@@ -37,7 +37,7 @@ int GuiElementSlot::uid = -1;
 //================================================================================================
 // Constructor.
 //================================================================================================
-GuiElementSlot::GuiElementSlot(TiXmlElement *xmlElement, void *parent, bool drawOnInit):GuiElement(xmlElement, parent)
+GuiElementSlot::GuiElementSlot(TiXmlElement *xmlElement, const void *parent, bool drawOnInit):GuiElement(xmlElement, parent)
 {
     mSlotNr = ++uid;
     mItemGfxID = -1;
@@ -62,40 +62,39 @@ GuiElementSlot::GuiElementSlot(TiXmlElement *xmlElement, void *parent, bool draw
 //================================================================================================
 //
 //================================================================================================
-int GuiElementSlot::sendMsg(int message, const char *text, uint32 param)
+void GuiElementSlot::sendMsg(const int message, Ogre::String &text, Ogre::uint32 &param, const char *text2)
 {
     switch (message)
     {
         case GuiManager::MSG_ADD_ITEM:
-            setItem(text, param);
-            return 0;
+            setItem(text.c_str(), param, text2);
+            return;
         case GuiManager::MSG_DEL_ITEM:
-            setItem(0, -1);
-            return 0;
+            setItem(0, -1, 0);
+            return;
     }
-    return -1;
 }
 
 //================================================================================================
 //
 //================================================================================================
-void GuiElementSlot::setItem(const char *gfxName, int quantity)
+void GuiElementSlot::setItem(const char *gfxName, int quantity, const char *itemName)
 {
-    /*
-        static bool once = false;
-        if (once) return;
-        once = true;
-        String str = "-- add Item";
-        str+= gfxName;
-        GuiManager::getSingleton().sendMsg(GuiManager::GUI_LIST_CHATWIN, GuiManager::MSG_ADD_ROW, str.c_str());
-    */
+    //GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, gfxName);
     if (quantity >= 0)
     {
+        mStrTooltip = itemName;
         mItemGfxID = GuiImageset::getSingleton().getItemId(gfxName);
-        mQuantity = quantity;
+        if (quantity > 1)
+            mStrQuantity = (quantity <= 999)?StringConverter::toString(quantity):"###";
+        else
+            mStrQuantity = "";
     }
-    else
+    else // empty slot.
+    {
+        mStrTooltip = "";
         mItemGfxID = -1;
+    }
     draw();
 }
 
@@ -118,20 +117,21 @@ void GuiElementSlot::update(Real dTime)
 //================================================================================================
 // .
 //================================================================================================
-int GuiElementSlot::mouseEvent(int MouseAction, int x, int y, int z)
+int GuiElementSlot::mouseEvent(const int mouseAction, int mouseX, int mouseY, int mouseWheel)
 {
-    if (mouseWithin(x, y))
+    if (mouseWithin(mouseX, mouseY))
     {
         if (mActiveSlot != mSlotNr)
         {
             mActiveSlot = mSlotNr;
             if (setState(GuiImageset::STATE_ELEMENT_M_OVER)) draw();
-            //GuiManager::getSingleton().setTooltip(mStrTooltip.c_str());
+            GuiManager::getSingleton().setTooltip(mStrTooltip.c_str());
             return GuiManager::EVENT_CHECK_NEXT;
         }
-        if (MouseAction == GuiManager::BUTTON_PRESSED && mItemGfxID >= 0)
+        if (mouseAction == GuiManager::BUTTON_PRESSED && mItemGfxID >= 0)
         {
             mDragSlot = mActiveSlot;
+            GuiManager::getSingleton().setTooltip("");
             GuiManager::getSingleton().drawDragElement(GuiImageset::getSingleton().getItemPB(mItemGfxID));
             return GuiManager::EVENT_DRAG_STRT;
         }
@@ -139,9 +139,9 @@ int GuiElementSlot::mouseEvent(int MouseAction, int x, int y, int z)
     }
     else // Mouse is no longer over this slot.
     {
-        if (getState() != GuiImageset::STATE_ELEMENT_DEFAULT)
+        if (setState(GuiImageset::STATE_ELEMENT_DEFAULT))
         {
-            if (setState(GuiImageset::STATE_ELEMENT_DEFAULT)) draw();
+            draw();
             mActiveSlot = -1;
             GuiManager::getSingleton().setTooltip("");
             return GuiManager::EVENT_CHECK_DONE;
@@ -157,7 +157,7 @@ void GuiElementSlot::draw()
 {
     if (!mVisible || mItemGfxID < 0)
     {
-        GuiElement::draw();
+        GuiElement::draw(true);
         return;
     }
     // Draw the empty slot-gfx to the build-buffer.
@@ -178,6 +178,12 @@ void GuiElementSlot::draw()
     PixelBox src = GuiImageset::getSingleton().getItemPB(mItemGfxID);
     uint32 *buf = dst + dX + dY * mWidth;
     GuiGraphic::getSingleton().drawGfxToBuffer(GuiImageset::ITEM_SIZE, GuiImageset::ITEM_SIZE, GuiImageset::ITEM_SIZE, GuiImageset::ITEM_SIZE, (uint32*)src.data, buf, buf, GuiImageset::ITEM_SIZE, mWidth, mWidth);
+    // Print the number of items.
+
+    if (!mStrQuantity.empty())
+        GuiTextout::getSingleton().printText(mWidth-mLabelPosX, mHeight-mLabelPosY,
+                                             buf + mLabelPosX + mLabelPosY*mWidth, mWidth,
+                                             mStrQuantity.c_str(), mLabelFontNr, 0x00ffffff, false, 0x00555555);
     // Draw the busy-gfx to the build-buffer.
     if (mBusyTimeExpired) drawBusy((int)mBusyOldVal);
     // Copy the build-buffer to the window texture.
@@ -190,7 +196,7 @@ void GuiElementSlot::draw()
 void GuiElementSlot::drawBusy(int angle)
 {
     int x2,x3,y2,dY,dX,xStep,yStep,delta,posY;
-    uint32 *dst = GuiManager::getSingleton().getBuildBuffer();;
+    uint32 *dst = GuiManager::getSingleton().getBuildBuffer();
     int x = mWidth/2;
     int y = mHeight/2;
     if (angle == 180)
@@ -297,6 +303,11 @@ void GuiElementSlot::drawBusy(int angle)
     }
 }
 
+
+
+
+
+
 int GuiElementSlotGroup::uid = -1;
 
 //================================================================================================
@@ -312,7 +323,7 @@ GuiElementSlotGroup::~GuiElementSlotGroup()
 //================================================================================================
 // Constructor.
 //================================================================================================
-GuiElementSlotGroup::GuiElementSlotGroup(TiXmlElement *xmlRoot, void *parent):GuiElement(xmlRoot, parent)
+GuiElementSlotGroup::GuiElementSlotGroup(TiXmlElement *xmlRoot, const void *parent):GuiElement(xmlRoot, parent)
 {
     mGroupNr = ++uid;
     const char *tmp = xmlRoot->Attribute("slots");
@@ -323,17 +334,25 @@ GuiElementSlotGroup::GuiElementSlotGroup(TiXmlElement *xmlRoot, void *parent):Gu
         return;
     }
     TiXmlElement *xmlSlot = xmlRoot->FirstChildElement("Slot");
+    TiXmlElement *xmlElem = xmlSlot->FirstChildElement("Space");
+    mSpaceX = mSpaceY = 0;
+    if (xmlElem)
+    {
+        if ((tmp = xmlElem->Attribute("x"))) mSpaceX = (unsigned short)atoi(tmp);
+        if ((tmp = xmlElem->Attribute("y"))) mSpaceY = (unsigned short)atoi(tmp);
+    }
     int x = mWidth;
     int y = mHeight;
     for (int i = 0; i < sumSlots; ++i)
     {
-        mvSlot.push_back(new GuiElementSlot(xmlSlot, mParent, false));
-        int size = mvSlot[i]->getWidth();
-        x-= size;
+        GuiElementSlot *slot = new GuiElementSlot(xmlSlot, mParent, false);
+        mvSlot.push_back(slot);
+        int size = slot->getWidth();
+        x-= size+mSpaceX;
         if (x < 0)
         {
-            x = mWidth-size;
-            y-= size;
+            x = mWidth-size-mSpaceX;
+            y-= size+mSpaceY;
             if (x < 0 || y < 0)
             {
                 Logger::log().error() << "Wrong settings in slotgroup '" << xmlRoot->Attribute("name")
@@ -341,7 +360,7 @@ GuiElementSlotGroup::GuiElementSlotGroup(TiXmlElement *xmlRoot, void *parent):Gu
                 break;
             }
         }
-        mvSlot[i]->setPosition(x, y);
+        mvSlot[i]->setPosition(mPosX+x, mPosY+y);
     }
     draw();
 }
@@ -358,14 +377,36 @@ void GuiElementSlotGroup::draw()
 //================================================================================================
 //
 //================================================================================================
-int GuiElementSlotGroup::mouseEvent(int MouseAction, int x, int y, int z)
+int GuiElementSlotGroup::mouseEvent(const int mouseAction, int mouseX, int mouseY, int mouseWheel)
 {
     for (unsigned int i = 0; i < mvSlot.size(); ++i)
     {
-        int ret = mvSlot[i]->mouseEvent(MouseAction, x, y, z);
+        int ret = mvSlot[i]->mouseEvent(mouseAction, mouseX, mouseY, mouseWheel);
         if (ret != GuiManager::EVENT_CHECK_NEXT)  return ret;
     }
     return GuiManager::EVENT_CHECK_NEXT;
 }
 
-// "Slots_Inventory" GUI_SLOTGROUP_INVENTORY
+//================================================================================================
+//
+//================================================================================================
+void GuiElementSlotGroup::sendMsg(const int message, Ogre::String &text, Ogre::uint32 &param, const char *text2)
+{
+    switch (message)
+    {
+        case GuiManager::MSG_ADD_ITEM:
+            for (unsigned int i = 0; i < mvSlot.size(); ++i)
+            {
+                if (mvSlot[i]->empty())
+                {
+                    mvSlot[i]->setItem(text.c_str(), (int)param, text2);
+                    break;
+                }
+            }
+            return;
+        case GuiManager::MSG_DEL_ITEM:
+            //mvSlot[i]->setItem(0, -1);
+            //GuiManager::getSingleton().setTooltip("");
+            return;
+    }
+}

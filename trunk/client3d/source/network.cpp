@@ -36,7 +36,7 @@ const char *DEFAULT_METASERVER = "www.daimonin.com";
 
 struct CmdMapping
 {
-    void (*serverCmd)(unsigned char *, int len);
+    void (*serverCmd)(uchar *, int len);
 };
 struct CmdMapping commands[] =
 {
@@ -91,7 +91,7 @@ const int MAX_BUF    = 256;
 int Network::mSocket = NO_SOCKET;
 bool Network::mAbortThread  = true;
 bool Network::mEndianConvert= false;
-unsigned char readbuf[MAXSOCKBUF+1];
+uchar readbuf[MAXSOCKBUF+1];
 
 //================================================================================================
 //
@@ -192,7 +192,7 @@ void Network::socket_thread_start()
 //================================================================================================
 void Network::update()
 {
-    while (!mAbortThread)
+    if (!mAbortThread)
     {
         // Get a read command and remove it from queue.
         SDL_LockMutex(mMutex);
@@ -204,7 +204,7 @@ void Network::update()
         else
         {
             int lenHeader = cmd->data[0]&0x80?5:3;
-            Logger::log().error() << "Got server cmd " << (int)(cmd->data[0]&~0x80)-1 << " len (incl. Header) =" << cmd->len;
+            //Logger::log().error() << "Got server cmd " << (int)(cmd->data[0]&~0x80)-1 << " len (incl. Header) =" << cmd->len;
             commands[(cmd->data[0]&~0x80) - 1].serverCmd(cmd->data+lenHeader, cmd->len-lenHeader);
         }
         command_buffer_free(cmd);
@@ -214,12 +214,12 @@ void Network::update()
 //================================================================================================
 // .
 //================================================================================================
-Network::command_buffer *Network::command_buffer_new(unsigned int len, unsigned char *data)
+Network::command_buffer *Network::command_buffer_new(unsigned int len, uchar *data)
 {
     command_buffer *buf = new command_buffer;
     buf->next = buf->prev = NULL;
     buf->len = len;
-    buf->data = new unsigned char[len+1];
+    buf->data = new uchar[len+1];
     if (data) memcpy(buf->data, data, len);
     buf->data[len] = 0; // Buffer overflow sentinel.
     return buf;
@@ -361,7 +361,7 @@ void Network::send_game_command(const char *command)
     if (*command == '/') ++command;
     strCmd << command;
     //String str = "send: " + strCmd.str();
-    //GuiManager::getSingleton().print(GuiManager::GUI_LIST_CHATWIN, str.c_str());
+    //GuiManager::getSingleton().print(GuiManager::LIST_CHATWIN, str.c_str());
     send_command_binary(CLIENT_CMD_GENERIC, strCmd);
     /*
             }
@@ -376,19 +376,19 @@ void Network::send_game_command(const char *command)
 //================================================================================================
 //
 //================================================================================================
-int Network::send_command_binary(unsigned char cmd, std::stringstream &stream)
+int Network::send_command_binary(uchar cmd, std::stringstream &stream)
 {
     command_buffer *buf;
     if (stream.str().size() == 1) // Single byte command.
     {
-        unsigned char full_cmd[2] = { cmd, (unsigned char) *stream.str().c_str() };
+        uchar full_cmd[2] = { cmd, (uchar) *stream.str().c_str() };
         buf = command_buffer_new(2, full_cmd);
     }
     else
     {
         std::stringstream full_cmd;
-        full_cmd << cmd << '\0' << (unsigned char)(stream.str().size()+1) << stream.str() << '\0';
-        buf = command_buffer_new((int)full_cmd.str().size(), (unsigned char*)full_cmd.str().c_str());
+        full_cmd << cmd << '\0' << (uchar)(stream.str().size()+1) << stream.str() << '\0';
+        buf = command_buffer_new((int)full_cmd.str().size(), (uchar*)full_cmd.str().c_str());
     }
     /*
         Logger::log().error() << "send " << buf->len << " bytes:";
@@ -421,7 +421,7 @@ int Network::send_command_binary(unsigned char cmd, std::stringstream &stream)
 //================================================================================================
 //
 //================================================================================================
-int Network::strToInt(unsigned char *data, int bytes)
+int Network::strToInt(uchar *data, int bytes)
 {
     if (bytes == 2)
     {
@@ -785,27 +785,27 @@ bool Network::OpenSocket(const char *host, int port, int &sock)
 void Network::contactMetaserver()
 {
     clearMetaServerData();
-    GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "");
-    GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "Query metaserver...");
+    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "");
+    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Query metaserver...");
     String str = "Trying "; str+= DEFAULT_METASERVER; str+= " " + StringConverter::toString(DEFAULT_METASERVER_PORT);
-    GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, str.c_str());
+    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, str.c_str());
     int socket = NO_SOCKET;
     if (OpenSocket(DEFAULT_METASERVER, DEFAULT_METASERVER_PORT, socket))
     {
         read_metaserver_data(socket);
         CloseSocket(socket);
-        GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "done.");
+        GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "done.");
     }
     else
     {
-        GuiManager::getSingleton().print( GuiManager::GUI_LIST_MSGWIN, "Metaserver failed! Using default list.", 0xffffffa8);
+        GuiManager::getSingleton().print( GuiManager::LIST_MSGWIN, "Metaserver failed! Using default list.", 0xffffffa8);
         str = " 28|Test_Server|62.75.168.180|13327|Unknown|-|See_and_play_here_the_newest_maps_&_features!\n"
               "223|Daimonin   |62.75.224.80 |13327|Unknown|-|Public_Daimonin_game_server_from_www.daimonin.com\n";
         add_metaserver_data(str);
     }
     str = "223|Localhost  |127.0.0.1|13327|Unknown|-|Start server before you try to connect.\n";
     add_metaserver_data(str);
-    GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "Select a server.");
+    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Select a server.");
 }
 
 //================================================================================================
@@ -892,7 +892,7 @@ void Network::add_metaserver_data(String strMetaData)
         strRow+= "~#ffffffff" + strData[DATA_INFO];
         strRow+=(node->player <0)?",-":","+strData[DATA_PLAYER];
         std::replace(strRow.begin(), strRow.end(), '_', ' ');
-        GuiManager::getSingleton().addLine(GuiManager::GUI_TABLE, strRow.c_str());
+        GuiManager::getSingleton().addLine(GuiManager::TABLE, strRow.c_str());
         // Next server
         ServerStart = ++ServerEnd;
     }
@@ -911,7 +911,7 @@ const char *Network::get_metaserver_info(int node, int infoLineNr)
 //================================================================================================
 void Network::clearMetaServerData()
 {
-    GuiManager::getSingleton().clear(GuiManager::GUI_TABLE);
+    GuiManager::getSingleton().clear(GuiManager::TABLE);
     if (mvServer.empty()) return;
     for (std::vector<Server*>::iterator i = mvServer.begin(); i != mvServer.end(); ++i)
         delete(*i);

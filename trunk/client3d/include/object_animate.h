@@ -121,7 +121,7 @@ private:
     Ogre::Real mTimeLeft, mTimeLeft2;
     Ogre::AnimationState *mActState, *mActState2;
     std::vector<Ogre::AnimationState*>mAnimState;
-    unsigned char mAnimGroupEntries[ANIM_GROUP_SUM];
+    Ogre::uchar mAnimGroupEntries[ANIM_GROUP_SUM];
     static const char *StateNames[ANIM_GROUP_SUM];
     // ////////////////////////////////////////////////////////////////////
     // Functions.

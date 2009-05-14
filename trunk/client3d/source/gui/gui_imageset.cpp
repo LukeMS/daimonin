@@ -131,9 +131,10 @@ void GuiImageset::parseXML(const char *fileImageSet, bool createItemAtlas)
             }
         }
     }
-    Logger::log().info() << (int) mvSrcEntry.size() +1 << " Image Entries were parsed."; // +1 because of mouseCursor.
-    mImageSetImg.load(mStrImageSetGfxFile, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-    mSrcPixelBox = mImageSetImg.getPixelBox();
+    Logger::log().list() << (int) mvSrcEntry.size() +1 << " Image Entries were parsed."; // +1 because of mouseCursor.
+    static Image image;
+    image.load(mStrImageSetGfxFile, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+    mGuiGfxPixelBox = image.getPixelBox();
     // ////////////////////////////////////////////////////////////////////
     // Parse the items.
     // ////////////////////////////////////////////////////////////////////
@@ -273,7 +274,7 @@ void GuiImageset::parseItems(bool createItemAtlas)
         Image itemImage, itemAtlas;
         uint32 *itemBuffer = new uint32[ITEM_SIZE * ITEM_SIZE * itemFilename.size()];
         uint32 *nextPos = itemBuffer;
-        itemAtlas = itemAtlas.loadDynamicImage((unsigned char*)itemBuffer, ITEM_SIZE, ITEM_SIZE * itemFilename.size(), 1, PF_A8R8G8B8);
+        itemAtlas = itemAtlas.loadDynamicImage((uchar*)itemBuffer, ITEM_SIZE, ITEM_SIZE * itemFilename.size(), 1, PF_A8R8G8B8);
         for (unsigned int i = 0; i < itemFilename.size(); ++i)
         {
             itemImage.load(itemFilename[i], ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
@@ -326,7 +327,9 @@ void GuiImageset::parseItems(bool createItemAtlas)
     // ////////////////////////////////////////////////////////////////////
     // Read in the texture atlas.
     // ////////////////////////////////////////////////////////////////////
-    mAtlasTexture.load(fileAtlasGfx, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+    static Image image;
+    image.load(fileAtlasGfx, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+    mItemPixelBox = image.getPixelBox();
 }
 
 //================================================================================================
@@ -350,6 +353,7 @@ int GuiImageset::getItemId(const char *gfxName)
 //================================================================================================
 const PixelBox &GuiImageset::getItemPB(int itemNr)
 {
-    mSrcPb = mAtlasTexture.getPixelBox().getSubVolume(Box(0, ITEM_SIZE * itemNr, ITEM_SIZE, ITEM_SIZE *(itemNr+1)));
-    return mSrcPb;
+    static PixelBox pb;
+    pb = mItemPixelBox.getSubVolume(Box(0, ITEM_SIZE * itemNr, ITEM_SIZE, ITEM_SIZE *(itemNr+1)));
+    return (pb);
 }

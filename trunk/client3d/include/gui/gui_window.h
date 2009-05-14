@@ -50,39 +50,36 @@ public:
         return mOverlay?mOverlay->isVisible():false;
     }
     void setVisible(bool visible);
-    void Init(TiXmlElement *xmlElem, const char *resourceWin, int winNr, unsigned char defaultZPos);
-    int keyEvent(const int keyChar, const unsigned int key);
+    void Init(TiXmlElement *xmlElem, const char *resourceWin, int winNr, Ogre::uchar defaultZPos);
     void update(Ogre::Real timeSinceLastFrame);
-    void getSize(int &w, int &h)
-    {
-        w = mWidth;
-        h = mHeight;
-    }
-    int getWidth()                 { return mWidth;    }
-    int getHeight()                { return mHeight;   }
-    int getID()                    { return mWindowNr; }
-    int getSumElements()           { return (int)mvElement.size(); }
-    Ogre::uint32  *getLayerBG()    { return mWinLayerBG; }
-    Ogre::Texture *getTexture()    { return mTexture.getPointer(); }
-    unsigned char getZPos()
+    const int keyEvent(const int keyChar, const unsigned int key);
+    const int mouseEvent(const int mouseAction, Ogre::Vector3 &mouse);
+    const int getID() const              { return mWindowNr; }
+    const int getSumElements() const     { return (int)mvElement.size(); }
+    const Ogre::uint16 getWidth() const  { return mWidth; }
+    const Ogre::uint16 getHeight() const { return mHeight; }
+    Ogre::uint32  *getLayerBG() const { return mWinLayerBG; }
+    Ogre::Texture *getTexture() const { return mTexture.getPointer(); }
+    const Ogre::uchar getZPos() const
     {
         return mOverlay?mOverlay->getZOrder():0;
     }
-    void setZPos(unsigned char zorder)
+    void setZPos(Ogre::uchar zorder)
     {
         if (mOverlay) mOverlay->setZOrder(zorder);
     }
-    int mouseEvent(int MouseAction, Ogre::Vector3 &mouse);
     bool mouseWithin(int x, int y)
     {
-        return (isVisible() && x > mPosX && x < mPosX + mWidth && y > mPosY && y < mPosY + mHeight)?true:false;
+        return !(!isVisible() || x < mPosX || x > mPosX + mWidth || y < mPosY || y > mPosY + mHeight);
     }
+    void mouseLeftWindow();
     void centerWindowOnMouse(int x, int y);
-    int sendMsg(int elementNr, int message, const char *text, Ogre::uint32 param);
-    const char *sendMsg(int elementNr, int info);
+    void sendMsg(int elementNr, int message, Ogre::String &text, Ogre::uint32 &param, const char *text2);
     int getDragSlot()
     {
-        return mDragElement;
+        int ret = mDragElement;
+        mDragElement = -1;
+        return ret;
     }
     int getElementPressed()
     {
@@ -99,14 +96,15 @@ private:
     static int mDragWindowNr;   /**< Number of the window  which is currently moved by the user.    -1 for none. **/
     static int mDragElement;    /**< Number of the element which is currently moved by the user.    -1 for none. **/
     static int mElementClicked; /**< Number of the element which was clicked with left mousebutton. -1 for none. **/
-    static int mDragOffsetX, mDragOffsetY;
-    short mPosX, mPosY;
-    int mWindowNr;
-    int mWidth, mHeight;
-    int mDragPosX1, mDragPosX2, mDragPosY1, mDragPosY2;
+    static int mDragOffsetX;    /**< The x-offset from mouse position to left window border. **/
+    static int mDragOffsetY;    /**< The y-offset from mouse position to top window border. **/
+    int mWindowNr;              /**< Unique window number. **/
+    int mLastMouseOverElement;  /**< The last element the mouse was over.  -1 for none. **/
     bool mLockSlots;            /**< Lock all slots, so no item can accidental be removed. **/
+    short mPosX, mPosY;         /**< The position of the window within the screen. **/
+    Ogre::String mResourceName; /**< The unique name for all ogre resources (e.g. texture) used in this window. **/
     std::vector<class GuiElement*>mvElement;
-    Ogre::String mResourceName;
+    Ogre::uint16 mWidth, mHeight;
     Ogre::Overlay *mOverlay;
     Ogre::OverlayElement *mElement;
     Ogre::TexturePtr mTexture;
