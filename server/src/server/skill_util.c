@@ -254,11 +254,11 @@ int do_skill(object *op, int dir, char *string)
      */
 
     if (op->type == PLAYER)
-	{
-	    ticks = (float) (skills[skill].time) * RANGED_DELAY_TIME;
-		LOG(llevDebug, "AC-skills(%d): %2.2f\n", skill, ticks);
-		set_action_time(op, ticks);
-	}
+    {
+        ticks = (float) (skills[skill].time) * RANGED_DELAY_TIME;
+        LOG(llevDebug, "AC-skills(%d): %2.2f\n", skill, ticks);
+        set_action_time(op, ticks);
+    }
 
     /* this is a good place to add experience for successfull use of skills.
      * Note that add_exp() will figure out player/monster experience
@@ -475,12 +475,12 @@ int check_skill_to_apply(object *who, object *item)
           else if (tmp == WEAP_1H_PIERCE)
               skill = SK_PIERCE_WEAP;
           break;
-		case ARROW:
-			if(item->sub_type1 > 127)
-			{
-				skill = SK_THROWING;
-				break;
-			}
+        case ARROW:
+            if(item->sub_type1 > 127)
+            {
+                skill = SK_THROWING;
+                break;
+            }
 
         case BOW:
           tmp = item->sub_type1;
@@ -707,13 +707,13 @@ int use_skill(object *op, char *string)
         if (op->chosen_skill->sub_type1 != ST1_SKILL_USE)
             new_draw_info(NDI_UNIQUE, 0, op, "You can't use this skill in this way.");
         else
-		{
-			if (!check_skill_action_time(op, op->chosen_skill)) /* are we idle from other action? */
-				return 0;
+        {
+            if (!check_skill_action_time(op, op->chosen_skill)) /* are we idle from other action? */
+                return 0;
 
-			if (do_skill(op, op->facing, string))
+            if (do_skill(op, op->facing, string))
             return 1;
-		}
+        }
     }
     return 0;
 }
@@ -732,11 +732,11 @@ int change_skill(object *who, int sk_index)
 {
     object *tmp;
 
-	if (who->chosen_skill && who->chosen_skill->stats.sp == sk_index)
+    if (who->chosen_skill && who->chosen_skill->stats.sp == sk_index)
         return 1;
 
-	LOG(llevDebug, "APPLYcs: %s change %s to %s.\n", query_name(who), query_name(who->chosen_skill), 
-																sk_index>=0?skills[sk_index].name:"INVALID");
+    LOG(llevDebug, "APPLYcs: %s change %s to %s.\n", query_name(who), query_name(who->chosen_skill), 
+                                                                sk_index>=0?skills[sk_index].name:"INVALID");
 
     if (sk_index >= 0 && sk_index < NROFSKILLS && (tmp = find_skill(who, sk_index)) != NULL)
     {
@@ -749,11 +749,11 @@ int change_skill(object *who, int sk_index)
     }
 
     if (who->chosen_skill)
-	{
+    {
         if (apply_special(who, who->chosen_skill, AP_UNAPPLY))
             LOG(llevBug, "BUG: change_skill(): can't unapply old skill (%s - %d)\n", who->name, sk_index);
-		FIX_PLAYER(who, "change_skill AP_UNAPPLY");
-	}
+        FIX_PLAYER(who, "change_skill AP_UNAPPLY");
+    }
     if (sk_index >= 0)
         new_draw_info_format(NDI_UNIQUE, 0, who, "You have no knowledge of %s.", skills[sk_index].name);
     return 0;
@@ -771,12 +771,12 @@ int change_skill_to_skill(object *who, object *skl)
         return 1;       /* Quick sanity check */
 
 
-	if (who->chosen_skill == skl)
+    if (who->chosen_skill == skl)
         return 0;
 
-	/*LOG(llevDebug, "APPLYcsts: %s change %s to %s.\n", query_name(who), query_name(who->chosen_skill), query_name(skl));*/
+    /*LOG(llevDebug, "APPLYcsts: %s change %s to %s.\n", query_name(who), query_name(who->chosen_skill), query_name(skl));*/
 
-	if (skl->env != who)
+    if (skl->env != who)
     {
         /*LOG(llevDebug, "BUG: change_skill_to_skill: skill is not in players inventory (%s - %s)\n", query_name(who), query_name(skl));*/
         return 1;
@@ -955,9 +955,9 @@ int do_skill_attack(object *tmp, object *op, char *string)
     if (op->type == PLAYER)
     {
         ticks = FABS(CONTR(op)->ob->weapon_speed);
-	    LOG(llevDebug, "AC-melee: %2.2f\n", ticks);
-	    set_action_time(op, ticks);
-	}
+        LOG(llevDebug, "AC-melee: %2.2f\n", ticks);
+        set_action_time(op, ticks);
+    }
 
     return success;
 }
@@ -993,13 +993,13 @@ int SK_level(object *op)
 /* sets the action timer for skills like throwing, archery, casting... */
 void set_action_time(object *op, float t)
 {
-	if (op->type != PLAYER)
-		return;
+    if (op->type != PLAYER)
+        return;
 
-	CONTR(op)->ob->weapon_speed_left += FABS(t);
-	LOG(llevDebug, "ActionTimer for %s (skill %s): +%2.2f\n", query_name(op), query_name(op->chosen_skill), t);
+    CONTR(op)->ob->weapon_speed_left += FABS(t);
+    LOG(llevDebug, "ActionTimer for %s (skill %s): +%2.2f\n", query_name(op), query_name(op->chosen_skill), t);
 
-	/* update the value for the client */
+    /* update the value for the client */
     CONTR(op)->action_timer = (int) (CONTR(op)->ob->weapon_speed_left / pticks_second / WEAPON_SWING_TIME * 1000.0f);
 
     /* a little trick here, we want the server to always update the client with the new skill delay time,
