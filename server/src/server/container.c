@@ -445,7 +445,8 @@ int sack_can_hold(const object *const pl, const object *const sack, const object
     else
     {
         if(sack->weight_limit == 0 || (sack->weight_limit > 0 && sack->weight_limit > sack->carrying + (sint32)
-        ((op->type==CONTAINER && op->weapon_speed!=1.0f)?((sint32)op->damage_round_tag+op->weight):WEIGHT_NROF(op, nrof))))
+          ((op->type==CONTAINER && op->weapon_speed!=1.0f)?
+          ((sint32)op->damage_round_tag+op->weight):(sint32)(WEIGHT_NROF(op, nrof)))))
             return TRUE;
 
         new_draw_info_format(NDI_UNIQUE, 0, pl, "The %s is too heavy for the %s!",
