@@ -3165,13 +3165,13 @@ static void beacon_initializer(object *op)
      *  -- Smacky 20090414 */
     if (!MAP_MULTI(parent->map))
     {
-        LOG(llevDebug, "DEBUG:: %s/beacon_initializer(): Ignoring and removing beacon on instance (%s[%d]).\n",
+        LOG(llevDebug, "\nDEBUG:: %s/beacon_initializer(): Ignoring and removing beacon on instance (%s[%d]).\n",
             __FILE__, STRING_OBJ_NAME(op), op->count);
         remove_ob(op);
         return;
     }
 
-    LOG(llevDebug, "DEBUG:: %s/beacon_initializer(): Initializing beacon (%s[%d]).\n",
+    LOG(llevDebug, "\nDEBUG:: %s/beacon_initializer(): Initializing beacon (%s[%d]).\n",
         __FILE__, STRING_OBJ_NAME(op), op->count);
 
     if (op->custom_attrset)
