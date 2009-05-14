@@ -221,7 +221,8 @@ void                        party_client_group_kill(object *member);
 void                        party_client_group_update(object *member, int flag);
 /* c_range.c */
 void                        fire(object *op, int dir);
-float						fire_magic_tool(object *owner, object *op, int dir);int                         command_cast_spell(object *op, char *params);
+float                       fire_magic_tool(object *owner, object *op, int dir);
+int                         command_cast_spell(object *op, char *params);
 /* c_wiz.c */
 int                         command_dm_connections(object *op, char *params);
 int                         command_dmload(object *op, char *params);
