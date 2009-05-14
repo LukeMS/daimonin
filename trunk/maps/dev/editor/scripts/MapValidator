@@ -93,10 +93,14 @@ try {
     Iterator it = new RecursiveFileIterator(new File(rootDirectory));
     while (it.hasNext()) {
         File file = it.next();
+        String name = file.getName();
+        String path = file.getPath();
         if (file.isFile()
-        && file.getPath().startsWith(rootDirectory)
-        && !file.getName().equalsIgnoreCase("README")
-        && !file.getName().endsWith(".msg")) {
+        && path.startsWith(rootDirectory)
+        && !path.contains("/.dedit/")
+        && !name.equalsIgnoreCase("README")
+        && !name.endsWith(".msg")
+        && !name.endsWith(".lua")) {
             checkMap(file, file.getPath().substring(mapDefaultFolder.length()));
         }
     }
