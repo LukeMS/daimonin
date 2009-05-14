@@ -48,7 +48,6 @@ void GuiCursor::Init(const char *resourceName)
                GuiManager::getSingleton().getLoader());
     mTexture->load();
     mElement->setPosition(0, 0);
-    //draw();
 }
 
 //================================================================================================
@@ -57,10 +56,10 @@ void GuiCursor::Init(const char *resourceName)
 void GuiCursor::loadResources()
 {
     Overlay *overlay = GuiManager::getSingleton().loadResources(mWidth, mHeight, mResourceName);
-    mElement = overlay->getChild(mResourceName + GuiManager::ELEMENT_RESOURCE_NAME);
-    draw();
     overlay->setZOrder(GuiManager::MAX_OVERLAY_ZPOS);
     overlay->show();
+    mElement = overlay->getChild(mResourceName + GuiManager::ELEMENT_RESOURCE_NAME);
+    draw();
 }
 
 //================================================================================================
@@ -74,7 +73,7 @@ void GuiCursor::freeRecources()
 //================================================================================================
 // Set the state of the mouse-cursor.
 //================================================================================================
-void GuiCursor::setState(unsigned int state)
+void GuiCursor::setState(uchar state)
 {
     if (mState == state || state >= GuiManager::STATE_MOUSE_SUM) return;
     mState = state;

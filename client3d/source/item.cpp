@@ -31,6 +31,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Ogre;
 
+//#define D_DEBUG
+
 //================================================================================================
 // Init all static Elemnts.
 //================================================================================================
@@ -44,9 +46,9 @@ Item::Item()
     mActItemID[ITEMLIST_BACKPACK]  = CONTAINER_UNKNOWN;
     mActItemID[ITEMLIST_CONTAINER] = CONTAINER_UNKNOWN;
     // Link the item lists to the gui-slots-elemnts where the items are displayed.
-    mSlotID[ITEMLIST_GROUND]     = GuiManager::GUI_SLOT_INVENTORY;
-    mSlotID[ITEMLIST_BACKPACK]   = GuiManager::GUI_SLOT_EQUIPMENT;
-    mSlotID[ITEMLIST_CONTAINER]  = GuiManager::GUI_SLOT_CONTAINER;
+    mSlotID[ITEMLIST_GROUND]     = GuiManager::SLOT_EQUIPMENT;
+    mSlotID[ITEMLIST_BACKPACK]   = GuiManager::SLOTGROUP_INVENTORY;
+    mSlotID[ITEMLIST_CONTAINER]  = GuiManager::SLOT_CONTAINER;
 }
 
 //================================================================================================
@@ -72,13 +74,13 @@ void Item::clearContainer(int container)
         //GuiManager::getSingleton().clrItem(mSlotID[i]);
         return;
     }
-    GuiManager::getSingleton().print(GuiManager::GUI_LIST_CHATWIN, "Item::clearContainer failed!");
+    GuiManager::getSingleton().print(GuiManager::LIST_CHATWIN, "Item::clearContainer failed!");
 }
 
 //================================================================================================
 // Add all Items to Inventory, Backpack, Ground or open Container.
 //================================================================================================
-void Item::ItemXYCmd(unsigned char *data, int len, bool bflag)
+void Item::ItemXYCmd(uchar *data, int len, bool bflag)
 {
     int pos = 0;
     int mode      = Network::getSingleton().GetInt_String(data + pos); pos+= 4;
@@ -123,12 +125,17 @@ void Item::ItemXYCmd(unsigned char *data, int len, bool bflag)
             tmpItem->item_skill= 0;
         }
         tmpItem->d_name = "";
-        for (int i = data[pos++]; i; --i)
+        for (int i = data[pos++]; i>1; --i)
             tmpItem->d_name+= data[pos++];
+        ++pos; // skip '\0'
         tmpItem->animation_id = Network::getSingleton().GetShort_String(data + pos);  pos += 2;
         tmpItem->anim_speed = data[pos++];
         tmpItem->sumItems = Network::getSingleton().GetInt_String(data + pos); pos += 4;
-        Logger::log().warning() << "Add item: " << tmpItem->d_name << "  gfx-id: " << tmpItem->face; // Just for testing.
+#ifdef D_DEBUG
+        String strDebug = "Add item: " + tmpItem->d_name + "  gfx-id: " + StringConverter::toString(tmpItem->face);
+        Logger::log().warning() << strDebug;
+        GuiManager::getSingleton().print(GuiManager::LIST_CHATWIN, strDebug.c_str());
+#endif
         if (!update(tmpItem, container, bflag))
         {
             Logger::log().error() << "<Item::ItemXYCmd> Unknown container ID: " << container << " for item " << tmpItem->d_name;
@@ -141,7 +148,7 @@ void Item::ItemXYCmd(unsigned char *data, int len, bool bflag)
 //================================================================================================
 // Returns the container in which the item is located.
 //================================================================================================
-int Item::getContainerID(unsigned int ItemID)
+const int Item::getContainerID(unsigned int ItemID)
 {
     std::list<sItem*>::iterator iter;
     for (int i =0; i < ITEMLIST_SUM; ++i)
@@ -159,7 +166,7 @@ int Item::getContainerID(unsigned int ItemID)
 //  Returns pointer to the item which tag is given.
 //  returns 0 if item was not found.
 //================================================================================================
-Item::sItem *Item::locateItem(int container, unsigned int tag)
+const Item::sItem *Item::locateItem(int container, unsigned int tag)
 {
     std::list<sItem*>::iterator iter;
     for (int i =0; i < ITEMLIST_SUM; ++i)
@@ -208,7 +215,8 @@ bool Item::addItem(sItem *tmpItem, int container)
         if (mActItemID[i] == container)
         {
             mItemList[i].push_back(tmpItem);
-            GuiManager::getSingleton().addItem(mSlotID[i], getItemGfxName(tmpItem->face), tmpItem->sumItems);
+            GuiManager::getSingleton().addItem(mSlotID[i], getItemGfxName(tmpItem->face),
+                                               tmpItem->sumItems, tmpItem->d_name.c_str());
             return true;
         }
     }
@@ -220,18 +228,13 @@ bool Item::addItem(sItem *tmpItem, int container)
 //================================================================================================
 bool Item::update(sItem *tmpItem, int newContainerID, bool bflag)
 {
-
-
-//    return false;
-
-
     int actContainerID = getContainerID(tmpItem->tag);
-    // The item doesn't have a container yet.
+    // The item doesn't has a container yet.
     if (actContainerID == CONTAINER_UNKNOWN)
     {
         return addItem(tmpItem, newContainerID);
     }
-    // Move the item into a new container.
+    // Move the item into an existing container.
     if (actContainerID != newContainerID)
     {
         delItem(tmpItem->tag, actContainerID);
@@ -246,15 +249,16 @@ bool Item::update(sItem *tmpItem, int newContainerID, bool bflag)
 //================================================================================================
 void Item::getInventoryItemFromFloor(int slotNr)
 {
+    char buffer[256];
     if (slotNr >= (int)mItemList[ITEMLIST_GROUND].size()) return;
     std::list<sItem*>::iterator iter;
     for (iter = mItemList[ITEMLIST_GROUND].begin(); slotNr-- && iter != mItemList[ITEMLIST_GROUND].end();)  ++iter;
-    sprintf(mStrBuffer, "drop %s", (*iter)->d_name.c_str());
-    GuiManager::getSingleton().print(GuiManager::GUI_LIST_CHATWIN, mStrBuffer);
+    sprintf(buffer, "drop %s", (*iter)->d_name.c_str());
+    GuiManager::getSingleton().print(GuiManager::LIST_CHATWIN, buffer);
     // move item to Backpack.
-    sprintf(mStrBuffer, "mv %d %d %d", mActItemID[ITEMLIST_BACKPACK], (*iter)->tag, (*iter)->sumItems);
-    GuiManager::getSingleton().print(GuiManager::GUI_LIST_CHATWIN, mStrBuffer);
-    //Network::getSingleton().cs_write_string(mStrBuffer);
+    sprintf(buffer, "mv %d %d %d", mActItemID[ITEMLIST_BACKPACK], (*iter)->tag, (*iter)->sumItems);
+    GuiManager::getSingleton().print(GuiManager::LIST_CHATWIN, buffer);
+    //Network::getSingleton().cs_write_string(buffer);
     delete *iter;
     mItemList[ITEMLIST_GROUND].erase(iter);
     return;
@@ -267,14 +271,15 @@ void Item::dropInventoryItemToFloor(int slotNr)
 {
     //int sumItems = 1;
     //sound_play_effect(SOUND_DROP, 0, 0, 100);
+    char buffer[256];
     std::list<sItem*>::iterator iter;
     for (iter = mItemList[ITEMLIST_BACKPACK].begin(); slotNr-- && iter != mItemList[ITEMLIST_BACKPACK].end();)  ++iter;
-    sprintf(mStrBuffer, "drop %s", (*iter)->d_name.c_str());
-    GuiManager::getSingleton().print(GuiManager::GUI_LIST_CHATWIN, mStrBuffer);
+    sprintf(buffer, "drop %s", (*iter)->d_name.c_str());
+    GuiManager::getSingleton().print(GuiManager::LIST_CHATWIN, buffer);
     // move item TO Ground.
-    sprintf(mStrBuffer, "mv %d %d %d", mActItemID[ITEMLIST_GROUND], (*iter)->tag, (*iter)->sumItems);
-    //Network::getSingleton().cs_write_string(mStrBuffer);
-    GuiManager::getSingleton().print(GuiManager::GUI_LIST_CHATWIN, mStrBuffer);
+    sprintf(buffer, "mv %d %d %d", mActItemID[ITEMLIST_GROUND], (*iter)->tag, (*iter)->sumItems);
+    //Network::getSingleton().cs_write_string(buffer);
+    GuiManager::getSingleton().print(GuiManager::LIST_CHATWIN, buffer);
     //GuiManager::getSingleton().delItem(GuiManager::WIN_INVENTORY, *iter);
     delete *iter;
     mItemList[ITEMLIST_BACKPACK].erase(iter);
@@ -297,8 +302,9 @@ void Item::dropItem(int srcWindow, int srcItemSlot, int dstWindow, int dstItemSl
     // Drop inside a window.
     // ////////////////////////////////////////////////////////////////////
     // TODO
-    sprintf(mStrBuffer, "drag and drop src: %d, %d dest: %d, %d", srcWindow, srcItemSlot, dstWindow, dstItemSlot);
-    GuiManager::getSingleton().print(GuiManager::GUI_LIST_CHATWIN, mStrBuffer);
+    char buffer[256];
+    sprintf(buffer, "drag and drop src: %d, %d dest: %d, %d", srcWindow, srcItemSlot, dstWindow, dstItemSlot);
+    GuiManager::getSingleton().print(GuiManager::LIST_CHATWIN, buffer);
     return;
 }
 
@@ -307,8 +313,8 @@ void Item::dropItem(int srcWindow, int srcItemSlot, int dstWindow, int dstItemSl
 //================================================================================================
 const char *Item::getItemGfxName(int itemFace)
 {
-    const int  BITS_FACEFILTER = ~0x8000; // Filter to extract the face number (gfx-id).
-    return ObjectWrapper::getSingleton().getMeshName(itemFace & BITS_FACEFILTER);
+    const int MASK_FACEFILTER = ~0x8000; // Filter to extract the face number (gfx-id).
+    return ObjectWrapper::getSingleton().getMeshName(itemFace & MASK_FACEFILTER);
 }
 
 //================================================================================================
@@ -321,10 +327,10 @@ void Item::printAllItems()
     const char *names[ITEMLIST_SUM] = {"Backpack", "Container:", "Ground:" };
     for (int c = 0; c < ITEMLIST_SUM; ++c)
     {
-        GuiManager::getSingleton().print(GuiManager::GUI_LIST_CHATWIN, names[c], 0x00ff0000);
+        GuiManager::getSingleton().print(GuiManager::LIST_CHATWIN, names[c], 0x00ff0000);
         if (mItemList[ITEMLIST_BACKPACK].empty())
         {
-            GuiManager::getSingleton().print(GuiManager::GUI_LIST_CHATWIN, "<empty>");
+            GuiManager::getSingleton().print(GuiManager::LIST_CHATWIN, "<empty>");
         }
         else
         {
@@ -334,7 +340,7 @@ void Item::printAllItems()
                          " [" + StringConverter::toString(mActItemID[ITEMLIST_BACKPACK]) + "]"+
                          " [" + StringConverter::toString((*iter)->tag) + "]"+
                          " [" + ObjectWrapper::getSingleton().getMeshName((*iter)->face & ~0x8000) + "]";
-                GuiManager::getSingleton().print(GuiManager::GUI_LIST_CHATWIN, strTmp.c_str());
+                GuiManager::getSingleton().print(GuiManager::LIST_CHATWIN, strTmp.c_str());
             }
         }
     }

@@ -34,6 +34,7 @@ using namespace Ogre;
 class GuiManager::ResourceLoader GuiManager::mLoader;
 Overlay        *GuiManager::mOverlay = 0;
 OverlayElement *GuiManager::mElement = 0;
+bool GuiManager::mPrintInfo = false;
 
 const int   GuiManager::SUM_WIN_DIGITS = (int)log10((float)GuiManager::WIN_SUM) +1;
 const char *GuiManager::GUI_MATERIAL_NAME       = "GUI/Window";
@@ -91,63 +92,62 @@ GuiManager::WindowID GuiManager::mWindowID[WIN_SUM]=
 class GuiWindow guiWindow[GuiManager::WIN_SUM];
 short GuiManager::mWindowZPos[WIN_SUM];
 
-GuiManager::ElementID GuiManager::mStateStruct[GUI_ELEMENTS_SUM]=
+GuiManager::ElementID GuiManager::mStateStruct[ELEMENTS_SUM]=
 {
     /** User action on these elements will be handled inside the gui only.**/
-    { -1, -1, "But_Close",          GUI_BUTTON_CLOSE    },
-    { -1, -1, "But_Min",            GUI_BUTTON_MINIMIZE },
-    { -1, -1, "But_Max",            GUI_BUTTON_MAXIMIZE },
-    { -1, -1, "But_Resize",         GUI_BUTTON_RESIZE   },
+    { -1, -1, "But_Close",          BUTTON_CLOSE    },
+    { -1, -1, "But_Min",            BUTTON_MINIMIZE },
+    { -1, -1, "But_Max",            BUTTON_MAXIMIZE },
+    { -1, -1, "But_Resize",         BUTTON_RESIZE   },
     /** User action on these elements will be send to the world outside. **/
     // Buttons.
-    { -1, -1, "But_NPC_Accept",     GUI_BUTTON_NPC_ACCEPT },
-    { -1, -1, "But_NPC_Decline",    GUI_BUTTON_NPC_DECLINE},
-    { -1, -1, "But_Test"       ,    GUI_BUTTON_TEST},
+    { -1, -1, "But_NPC_Accept",     BUTTON_NPC_ACCEPT },
+    { -1, -1, "But_NPC_Decline",    BUTTON_NPC_DECLINE},
+    { -1, -1, "But_Test"       ,    BUTTON_TEST},
     // Listboxes.
-    { -1, -1, "List_Msg",           GUI_LIST_MSGWIN    },
-    { -1, -1, "List_Chat",          GUI_LIST_CHATWIN   },
-    { -1, -1, "List_NPC",           GUI_LIST_NPC       },
+    { -1, -1, "List_Msg",           LIST_MSGWIN    },
+    { -1, -1, "List_Chat",          LIST_CHATWIN   },
+    { -1, -1, "List_NPC",           LIST_NPC       },
     // Statusbar.
-    { -1, -1, "Bar_PlayerMana",     GUI_STATUSBAR_NPC_MANA      },
-    { -1, -1, "Bar_PlayerGrace",    GUI_STATUSBAR_NPC_GRACE     },
-    { -1, -1, "Bar_Health",         GUI_STATUSBAR_NPC_HEALTH    },
-    { -1, -1, "Bar_Mana",           GUI_STATUSBAR_PLAYER_MANA   },
-    { -1, -1, "Bar_Grace",          GUI_STATUSBAR_PLAYER_GRACE  },
-    { -1, -1, "Bar_PlayerHealth",   GUI_STATUSBAR_PLAYER_HEALTH },
+    { -1, -1, "Bar_PlayerMana",     STATUSBAR_NPC_MANA      },
+    { -1, -1, "Bar_PlayerGrace",    STATUSBAR_NPC_GRACE     },
+    { -1, -1, "Bar_Health",         STATUSBAR_NPC_HEALTH    },
+    { -1, -1, "Bar_Mana",           STATUSBAR_PLAYER_MANA   },
+    { -1, -1, "Bar_Grace",          STATUSBAR_PLAYER_GRACE  },
+    { -1, -1, "Bar_PlayerHealth",   STATUSBAR_PLAYER_HEALTH },
     // TextValues.
-    { -1, -1, "Engine_CurrentFPS",  GUI_TEXTBOX_STAT_CUR_FPS   },
-    { -1, -1, "Engine_BestFPS",     GUI_TEXTBOX_STAT_BEST_FPS  },
-    { -1, -1, "Engine_WorstFPS",    GUI_TEXTBOX_STAT_WORST_FPS },
-    { -1, -1, "Engine_SumTris",     GUI_TEXTBOX_STAT_SUM_TRIS  },
-    { -1, -1, "Login_ServerInfo1",  GUI_TEXTBOX_SERVER_INFO1     },
-    { -1, -1, "Login_ServerInfo2",  GUI_TEXTBOX_SERVER_INFO2     },
-    { -1, -1, "Login_ServerInfo3",  GUI_TEXTBOX_SERVER_INFO3     },
-    { -1, -1, "Login_LoginWarn",    GUI_TEXTBOX_LOGIN_WARN       },
-    { -1, -1, "Login_PswdVerify",   GUI_TEXTBOX_LOGIN_PSWDVERIFY },
-    { -1, -1, "Login_LoginInfo1",   GUI_TEXTBOX_LOGIN_INFO1      },
-    { -1, -1, "Login_LoginInfo2",   GUI_TEXTBOX_LOGIN_INFO2      },
-    { -1, -1, "Login_LoginInfo3",   GUI_TEXTBOX_LOGIN_INFO3      },
-    { -1, -1, "NPC_Headline",       GUI_TEXTBOX_NPC_HEADLINE     },
-    { -1, -1, "Inv_Equipment",      GUI_TEXTBOX_INV_EQUIP        },
-    { -1, -1, "Inv_Equip_Weight",   GUI_TEXTBOX_INV_EQUIP_WEIGHT },
+    { -1, -1, "Engine_CurrentFPS",  TEXTBOX_STAT_CUR_FPS   },
+    { -1, -1, "Engine_BestFPS",     TEXTBOX_STAT_BEST_FPS  },
+    { -1, -1, "Engine_WorstFPS",    TEXTBOX_STAT_WORST_FPS },
+    { -1, -1, "Engine_SumTris",     TEXTBOX_STAT_SUM_TRIS  },
+    { -1, -1, "Login_ServerInfo1",  TEXTBOX_SERVER_INFO1     },
+    { -1, -1, "Login_ServerInfo2",  TEXTBOX_SERVER_INFO2     },
+    { -1, -1, "Login_ServerInfo3",  TEXTBOX_SERVER_INFO3     },
+    { -1, -1, "Login_LoginWarn",    TEXTBOX_LOGIN_WARN       },
+    { -1, -1, "Login_PswdVerify",   TEXTBOX_LOGIN_PSWDVERIFY },
+    { -1, -1, "Login_LoginInfo1",   TEXTBOX_LOGIN_INFO1      },
+    { -1, -1, "Login_LoginInfo2",   TEXTBOX_LOGIN_INFO2      },
+    { -1, -1, "Login_LoginInfo3",   TEXTBOX_LOGIN_INFO3      },
+    { -1, -1, "NPC_Headline",       TEXTBOX_NPC_HEADLINE     },
+    { -1, -1, "Inv_Equipment",      TEXTBOX_INV_EQUIP        },
+    { -1, -1, "Inv_Equip_Weight",   TEXTBOX_INV_EQUIP_WEIGHT },
     // TextInput.
-    { -1, -1, "Input_Login_Name",   GUI_TEXTINPUT_LOGIN_NAME   },
-    { -1, -1, "Input_Login_Passwd", GUI_TEXTINPUT_LOGIN_PASSWD },
-    { -1, -1, "Input_Login_Verify", GUI_TEXTINPUT_LOGIN_VERIFY },
-    { -1, -1, "Input_NPC_Dialog",   GUI_TEXTINPUT_NPC_DIALOG   },
+    { -1, -1, "Input_Login_Name",   TEXTINPUT_LOGIN_NAME   },
+    { -1, -1, "Input_Login_Passwd", TEXTINPUT_LOGIN_PASSWD },
+    { -1, -1, "Input_Login_Verify", TEXTINPUT_LOGIN_VERIFY },
+    { -1, -1, "Input_NPC_Dialog",   TEXTINPUT_NPC_DIALOG   },
     // Table
-    { -1, -1, "Table_Server",       GUI_TABLE },
+    { -1, -1, "Table_Server",       TABLE },
     // Combobox.
-    { -1, -1, "ComboBoxTest",       GUI_COMBOBOX_TEST  },
+    { -1, -1, "ComboBoxTest",       COMBOBOX_TEST  },
     // Element_Slot
-    { -1, -1, "Slot_Quickslot",     GUI_SLOT_QUICKSLOT      },
-    { -1, -1, "Slot_Equipment",     GUI_SLOT_EQUIPMENT      },
-    { -1, -1, "Slot_Inventory",     GUI_SLOT_INVENTORY      },
-    { -1, -1, "Slots_Inventory",    GUI_SLOTGROUP_INVENTORY },
-    { -1, -1, "Slot_Container",     GUI_SLOT_CONTAINER      },
-    { -1, -1, "Slot_TradeOffer",    GUI_SLOT_TRADE_OFFER    },
-    { -1, -1, "Slot_TradeReturn",   GUI_SLOT_TRADE_RETURN   },
-    { -1, -1, "Slot_Shop",          GUI_SLOT_SHOP           },
+    { -1, -1, "Slot_Quickslot",     SLOT_QUICKSLOT      },
+    { -1, -1, "Slot_Equipment",     SLOT_EQUIPMENT      },
+    { -1, -1, "Slot_Inventory",     SLOTGROUP_INVENTORY },
+    { -1, -1, "Slot_Container",     SLOT_CONTAINER      },
+    { -1, -1, "Slot_TradeOffer",    SLOT_TRADE_OFFER    },
+    { -1, -1, "Slot_TradeReturn",   SLOT_TRADE_RETURN   },
+    { -1, -1, "Slot_Shop",          SLOT_SHOP           },
 };
 
 //================================================================================================
@@ -155,7 +155,7 @@ GuiManager::ElementID GuiManager::mStateStruct[GUI_ELEMENTS_SUM]=
 //================================================================================================
 const char *GuiManager::getElementName(int index)
 {
-    return (index >= GUI_ELEMENTS_SUM)?0:mStateStruct[index].name;
+    return (index >= ELEMENTS_SUM)?0:mStateStruct[index].name;
 }
 
 //================================================================================================
@@ -178,27 +178,18 @@ void GuiManager::setMouseState(int action)
 //================================================================================================
 // .
 //================================================================================================
-int GuiManager::sendMsg(int element, int message, const char *text, uint32 param)
+void GuiManager::sendMsg(int element, Message message, const char *text, uint32 param, const char *text2)
 {
-    for (unsigned int i = 0; i < GUI_ELEMENTS_SUM; ++i)
+    for (unsigned int i = 0; i < ELEMENTS_SUM; ++i)
     {
         if (element == mStateStruct[i].index)
-            return guiWindow[mStateStruct[i].windowNr].sendMsg(mStateStruct[i].winElementNr, message, text, param);
+        {
+            mMsgRetStr = !text?"":text;
+            mMsgRetInt = param;
+            guiWindow[mStateStruct[i].windowNr].sendMsg(mStateStruct[i].winElementNr, message, mMsgRetStr, mMsgRetInt, text2);
+            return;
+        }
     }
-    return -1;
-}
-
-//================================================================================================
-// .
-//================================================================================================
-const char *GuiManager::sendMsg(int element, int info)
-{
-    for (unsigned int i = 0; i < GUI_ELEMENTS_SUM; ++i)
-    {
-        if (element == mStateStruct[i].index)
-            return guiWindow[mStateStruct[i].windowNr].sendMsg(mStateStruct[i].winElementNr, info);
-    }
-    return 0;
 }
 
 //================================================================================================
@@ -232,7 +223,7 @@ int GuiManager::getElementIndex(const char *name, int windowID, int winElementNr
 {
     if (name)
     {
-        for (int i = 0; i < GUI_ELEMENTS_SUM; ++i)
+        for (int i = 0; i < ELEMENTS_SUM; ++i)
         {
             if (mStateStruct[i].name && !stricmp(mStateStruct[i].name, name))
             {
@@ -286,7 +277,7 @@ void GuiManager::Init(int w, int h, bool createMedia, bool printInfo, const char
     if (mPrintInfo)
     {
         Logger::log().info() << "These elements are currently known and can be used in " << FILE_TXT_WINDOWS<< ":";
-        for (int i =0; i < GUI_ELEMENTS_SUM; ++i) Logger::log().warning() << mStateStruct[i].name;
+        for (int i =0; i < ELEMENTS_SUM; ++i) Logger::log().warning() << mStateStruct[i].name;
     }
     // Load the default font.
     GuiTextout::getSingleton().loadRawFont(FILE_SYSTEM_FONT);
@@ -390,7 +381,7 @@ Overlay *GuiManager::loadResources(int w, int h, String name)
 void GuiManager::loadResources(Ogre::Resource *res)
 {
     String name = res->getName();
-    Logger::log().info() << "(Re)loading resource " << name;
+    if (mPrintInfo) Logger::log().info() << "(Re)loading resource " << name;
     if (name.find(RESOURCE_MCURSOR) != std::string::npos)
     {
         GuiCursor::getSingleton().loadResources();
@@ -471,11 +462,12 @@ void GuiManager::parseWindows()
                 GuiTextout::getSingleton().loadTTFont(
                     xmlElem->Attribute("name"),
                     xmlElem->Attribute("size"),
-                    xmlElem->Attribute("resolution"));
+                    xmlElem->Attribute("resolution"),
+                    mCreateMedia);
                 ++sumEntries;
             }
         }
-        Logger::log().info() << sumEntries << " Fonts were parsed.";
+        Logger::log().list() << sumEntries << " Fonts were parsed.";
     }
     else
     {
@@ -508,9 +500,7 @@ void GuiManager::parseWindows()
     // ////////////////////////////////////////////////////////////////////
     // Init the windows.
     // ////////////////////////////////////////////////////////////////////
-    int z=0;
-    for (int i = 0; i < WIN_SUM; ++i)
-        mWindowZPos[i] = i; // default zPos.
+    mSumDefinedWindows = 0;
     for (xmlElem = xmlRoot->FirstChildElement("Window"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Window"))
     {
         if (!(valString = xmlElem->Attribute("name"))) continue;
@@ -518,11 +508,14 @@ void GuiManager::parseWindows()
         {
             if (!stricmp(mWindowID[winNr].name, valString))
             {
-                guiWindow[winNr].Init(xmlElem, RESOURCE_WINDOW, winNr, z++);
+                // todo: check if a window was defined more than once.
+                mWindowZPos[mSumDefinedWindows] = winNr;
+                guiWindow[winNr].Init(xmlElem, RESOURCE_WINDOW, winNr, mSumDefinedWindows++);
                 break;
             }
         }
     }
+    Logger::log().list() << mSumDefinedWindows << " Windows were parsed.";
 }
 
 //================================================================================================
@@ -609,12 +602,21 @@ int GuiManager::mouseEvent(int mouseAction, Vector3 &mouse)
     // ////////////////////////////////////////////////////////////////////
     // Check for mouse action in all windows.
     // ////////////////////////////////////////////////////////////////////
-    //if (guiWindow[mActiveWindow].mouseEvent(mouseAction, mMouse) == EVENT_CHECK_DONE) return;
+    mMouseWithin = false;
     for (unsigned int i = 0; i < WIN_SUM; ++i)
     {
         int ret = guiWindow[mWindowZPos[WIN_SUM-i-1]].mouseEvent(mouseAction, mMouse);
+        if (ret != EVENT_OUTSIDE_WIN) mMouseWithin = true;
         if (ret == EVENT_CHECK_DONE || ret == EVENT_USER_ACTION)
+        {
+            static int lastWindow = mWindowZPos[WIN_SUM-i-1];
+            if (lastWindow != mWindowZPos[WIN_SUM-i-1])
+            {
+                guiWindow[lastWindow].mouseLeftWindow();
+                lastWindow = mWindowZPos[WIN_SUM-i-1];
+            }
             return ret;
+        }
         if (ret == EVENT_DRAG_STRT)
         {
             mDragSrcWin = i;
@@ -625,7 +627,7 @@ int GuiManager::mouseEvent(int mouseAction, Vector3 &mouse)
     }
     return GuiManager::EVENT_CHECK_NEXT;
 }
-
+#
 //================================================================================================
 // .
 //================================================================================================
@@ -677,15 +679,15 @@ void GuiManager::resetTextInput()
 //================================================================================================
 void GuiManager::windowToFront(int window)
 {
-    unsigned char actPos = guiWindow[window].getZPos();
-    while (actPos < WIN_SUM-1)
+    uchar actPos = guiWindow[window].getZPos();
+    while (actPos < mSumDefinedWindows-1)
     {
         mWindowZPos[actPos] = mWindowZPos[actPos+1];
         guiWindow[mWindowZPos[actPos]].setZPos(actPos);
         ++actPos;
     }
-    mWindowZPos[WIN_SUM-1] = window;
-    guiWindow[window].setZPos(WIN_SUM-1);
+    mWindowZPos[mSumDefinedWindows-1] = window;
+    guiWindow[window].setZPos(mSumDefinedWindows-1);
     mActiveWindow = window;
 }
 
@@ -708,7 +710,6 @@ void GuiManager::showWindow(int window, bool visible)
 
 //================================================================================================
 // Update all gui stuff.
-// Returns the clicked element, or -1 when nothing was clicked.
 //================================================================================================
 void GuiManager::update(Real timeSinceLastFrame)
 {

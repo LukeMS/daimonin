@@ -112,7 +112,7 @@ ObjectNPC::ObjectNPC(sObject &obj, bool spawn):ObjectStatic(obj)
     // ////////////////////////////////////////////////////////////////////
     // Attach the blob shadow to the npc.
     // ////////////////////////////////////////////////////////////////////
-    ManualObject* blob = static_cast<ManualObject*>(Events::getSingleton().GetSceneManager()->createMovableObject("Mob_"+ StringConverter::toString(mIndex, 10, '0'), ManualObjectFactory::FACTORY_TYPE_NAME));
+    ManualObject* blob = static_cast<ManualObject*>(Events::getSingleton().getSceneManager()->createMovableObject("Mob_"+ StringConverter::toString(mIndex, 10, '0'), ManualObjectFactory::FACTORY_TYPE_NAME));
     blob->begin("Material_blob_shadow");
     const AxisAlignedBox &AABB = mEntity->getBoundingBox();
     float sizeX = (AABB.getMaximum().x -AABB.getMinimum().x);
@@ -245,9 +245,9 @@ bool ObjectNPC::update(const FrameEvent& event)
     // Draw the Stats.
     // ////////////////////////////////////////////////////////////////////
     if (!mIndex)
-        ;//GuiManager::getSingleton().setValue(GuiManager::GUI_STATUSBAR_PLAYER_HEALTH, (mActHP*100) / mMaxHP);
+        ;//GuiManager::getSingleton().setValue(GuiManager::STATUSBAR_PLAYER_HEALTH, (mActHP*100) / mMaxHP);
     else //if (mIndex == mIsSelected)
-        GuiManager::getSingleton().setValue(GuiManager::GUI_STATUSBAR_NPC_HEALTH, (mActHP*100) / mMaxHP);
+        GuiManager::getSingleton().setValue(GuiManager::STATUSBAR_NPC_HEALTH, (mActHP*100) / mMaxHP);
     // ////////////////////////////////////////////////////////////////////
     // Ready / unready weapon.
     // ////////////////////////////////////////////////////////////////////

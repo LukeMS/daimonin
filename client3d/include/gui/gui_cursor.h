@@ -35,23 +35,31 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    void setPos(int x, int y)
+    /** Set the position of the mouse cursor.
+     ** @param x The x-pos in pixel.
+     ** @param y The y-pos in pixel.
+     *****************************************************************************/
+    void setPos(const int x, const int y)
     {
         mElement->setPosition(x, y);
     }
-    void getPos(Ogre::Real &x, Ogre::Real &y)
-    {
-        y = mElement->getTop() - mHeight/2;
-        x = mElement->getLeft()- mWidth/2;
-    }
-    void setState(unsigned int state);
-    int  getState()
-    {
-        return mState;
-    }
+
+    /** Set the state of the mouse cursor.
+     ** @param state The state is the look of the mouse cursor.
+     *****************************************************************************/
+    void setState(Ogre::uchar state);
+
+    /** Init the mouse cursor.
+     ** @param resourceName An unique name for creationg the Ogre resources.
+     *****************************************************************************/
     void Init(const char *resourceName);
+
+    /// (Re)load all Ogre resources.
     void loadResources();
+
+    /// Free all Ogre resources. Must be called before the destructor.
     void freeRecources();
+
     static GuiCursor &getSingleton()
     {
         static GuiCursor Singleton; return Singleton;
@@ -61,18 +69,20 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    int mWidth, mHeight;
-    unsigned int mState;
-    GuiImageset::gfxSrcMouse gfxSrcPos;
+    Ogre::uchar mState;
+    Ogre::uint16 mWidth, mHeight;
     Ogre::OverlayElement *mElement;
     Ogre::TexturePtr mTexture;
     Ogre::String mResourceName;
+    GuiImageset::gfxSrcMouse gfxSrcPos;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     GuiCursor()  {}
     ~GuiCursor() {}
-    GuiCursor(const GuiCursor&); // disable copy-constructor.
+    /// Disable copy-constructor.
+    GuiCursor(const GuiCursor&);
+    /// Draws the mouse-cursor into its texture.
     void draw();
 };
 

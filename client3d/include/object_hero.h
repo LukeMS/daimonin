@@ -45,39 +45,34 @@ public:
     enum {MAX_SKILL = 6};
     typedef enum _attacks
     {
-        /* We start with the double used attacks - for resist & protection too */
-        /* damage type: physical */
-        ATNR_PHYSICAL, /* = impact */
+        /// We start with the double used attacks - for resist & protection too.
+        /// damage type: physical
+        ATNR_PHYSICAL, /**< = impact **/
         ATNR_SLASH,
         ATNR_CLEAVE,
         ATNR_PIERCE,
-
-        /* damage type: elemental */
+        /// damage type: elemental.
         ATNR_FIRE,
         ATNR_COLD,
         ATNR_ELECTRICITY,
         ATNR_POISON,
         ATNR_ACID,
         ATNR_SONIC,
-
-        /* damage type: magical */
+        /// damage type: magical.
         ATNR_FORCE,
         ATNR_PSIONIC,
         ATNR_LIGHT,
         ATNR_SHADOW,
         ATNR_LIFESTEAL,
-
-        /* damage type: sphere */
+        /// damage type: sphere.
         ATNR_AETHER,
         ATNR_NETHER,
         ATNR_CHAOS,
         ATNR_DEATH,
-
-        /* damage: type only effect by invulnerable */
+        /// damage: type only effect by invulnerable.
         ATNR_WEAPONMAGIC,
         ATNR_GODPOWER,
-
-        /* at this point attack effects starts - only resist maps to it */
+        /// at this point attack effects starts - only resist maps to it
         ATNR_DRAIN,
         ATNR_DEPLETION,
         ATNR_CORRUPTION,
@@ -88,15 +83,14 @@ public:
         ATNR_SLOW,
         ATNR_PARALYZE,
         ATNR_SNARE,
-
-        /* and the real special one here */
+        /// and the real special one here.
         ATNR_INTERNAL,
-        NROFATTACKS /* index (= 32 ATM) */
+        SUM_ATTACKS
     }_attacks;
 
     typedef enum rangetype
     {
-        range_bottom        = -1,
+        range_bottom        =-1,
         range_none          = 0,
         range_bow           = 1,
         range_magic         = 2,
@@ -111,25 +105,26 @@ public:
     typedef struct
     {
         int  Str, Dex, Con, Wis, Cha, Int, Pow;
-        int  wc, ac;     /* Weapon Class and Armour Class */
+        int  wc;          /**< Weapon class **/
+        int  ac;          /**< Armour Class **/
         int  level;
-        int  hp;         /* Hit Points. */
+        int  hp;          /**< Hit Points (life). **/
         int  maxhp;
-        int  sp;         /* Spell points.  Used to cast spells. */
-        int  maxsp;      /* Max spell points. */
-        int  grace;      /* Spell points.  Used to cast spells. */
-        int  maxgrace;       /* Max spell points. */
+        int  sp;          /**< Spell points.  Used to cast spells. **/
+        int  maxsp;       /**< Max spell points. **/
+        int  grace;       /**< Grace points.  Used for prayers. */
+        int  maxgrace;    /**< Max grace points. **/
         int  exp_level;
-        int  exp;            /* Experience */
-        int  food;       /* How much food in stomach.  0 = starved. */
-        int  dam;            /* How much damage this object does when hitting */
-        int  speed;      /* Gets converted to a float for display*/
-        float weapon_sp;      /* Gets converted to a float for display */
-        unsigned int flags;      /* contains fire on/run on flags */
-        bool   protection_change; /* Resistant value has changed */
-        short  protection[NROFATTACKS];     /* Resistant values */
-        short  skill_level[MAX_SKILL];  /* Level and experience totals for */
-        int    skill_exp[MAX_SKILL];    /* skills */
+        int  exp;           /**< Experience **/
+        int  food;          /**< How much food in stomach. 0 = starved. **/
+        int  dam;           /**< How much damage this object does when hitting **/
+        int  speed;         /**< Walking speed. **/
+        float weapon_sp;    /**< Weapon speed. **/
+        unsigned int flags;       /**< contains fire on/run on flags **/
+        bool   protection_change; /**< Resistant value has changed **/
+        short  protection[SUM_ATTACKS]; /**< Resistant values **/
+        short  skill_level[MAX_SKILL];  /**< Level totals for skills **/
+        int    skill_exp[MAX_SKILL];    /**< Experience totals for skills **/
     }
     Stats;
 
@@ -169,13 +164,13 @@ public:
     int input_mode; // mode: no, console(textstring), numinput
     int nummode;
 
-    float gen_hp; // hp, mana and grace reg.
-    float gen_sp;
-    float gen_grace;
+    float gen_hp;    /**< Hitpoint regeneration speed **/
+    float gen_sp;    /**< Spellpoint regeneration speed **/
+    float gen_grace; /**< Grace regeneration speed **/
 
-    bool no_echo; // If TRUE, don't echo keystrokes
-    bool fire_on; // True if fire key is pressed = action key (ALT;CTRL)
-    bool run_on; // True if run key is on = action key (ALT;CTRL)
+    bool no_echo; /**< If true, don't echo keystrokes **/
+    bool fire_on; /**< If true, fire key is pressed = action key (ALT;CTRL) **/
+    bool run_on;  /**< If true, run key is on = action key (ALT;CTRL) **/
     bool resize_twin;
     bool resize_twin_marker;
     bool firekey_on; // True if fire key is pressed = permanent mode
@@ -197,15 +192,15 @@ public:
 //    Input_State input_state; // What the input state is
     rangetype shoottype; // What type of range attack player has
 
-    unsigned char *magicmap; // Magic map data
-    unsigned char showmagic; // If 0, show normal map, otherwise, show magic map.
+    Ogre::uchar *magicmap; // Magic map data
+    Ogre::uchar showmagic; // If 0, show normal map, otherwise, show magic map.
 
-    unsigned char command_window; // How many outstanding commands to allow
-    unsigned char ready_spell; // Index to spell that is readied
+    Ogre::uchar command_window; // How many outstanding commands to allow
+    Ogre::uchar ready_spell; // Index to spell that is readied
 // player knows
-    unsigned char map_x, map_y; // These are offset values. See object.c
+    Ogre::uchar map_x, map_y; // These are offset values. See object.c
 
-    char target_hp; // hp of our target in %
+    char target_hp; /**<  hp of our target in % **/
     std::string last_command; // Last command entered
     std::string input_text; // keys typed (for long commands)
     std::string spells[255]; // List of all the spells the
@@ -213,14 +208,14 @@ public:
     std::string num_text;
     std::string skill_name;
     std::string rankandname;
-    std::string pname; // Name of char
-    std::string title; // Race & Profession of character
-    std::string rank; // rank
-    std::string race; // alignment
-    std::string godname; // alignment
+    std::string pname; /**<  Name of char **/
+    std::string title; /**< Race & Profession of character **/
+    std::string rank;
+    std::string race;
+    std::string godname;
     std::string alignment; // alignment
-    std::string gender; // Gender
-    std::string range; // Range attack chosen
+    std::string gender;
+    std::string range; /**<  Range attack chosen. **/
     std::string player_reply;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
@@ -229,40 +224,36 @@ public:
     {
         static ObjectHero Singleton; return Singleton;
     }
-    int fillAccount(int count, const unsigned char *data);
+    int fillAccount(int count, const Ogre::uchar *data);
     void clearAccount()
     {
         account.count = 0;
     }
-    Ogre::String &getSelectedCharName()
+    const Ogre::String &getSelectedCharName() const
     {
         return account.name[account.selected];
     }
-    Ogre::String &getCharName(unsigned int nr)
+    const Ogre::String &getCharName(unsigned int nr) const
     {
         return account.name[nr];
     }
-    const char *getCharRace(unsigned int nr)
+    const char *getCharRace(unsigned int nr) const
     {
-        if (!account.race[nr])
-            return "Human";
-        return "Elfish";
+        return (!account.race[nr])?"Human":"Elfish";
     }
-    int getCharLevel(int nr)
+    int getCharLevel(int nr) const
     {
         return account.level[nr];
     }
-    const char *getCharGender(unsigned int nr)
+    const char *getCharGender(unsigned int nr) const
     {
-        if (account.gender[nr])
-            return "Male";
-        return "Female";
+        return (account.gender[nr])?"Male":"Female";
     }
     void setSelected(int nr)
     {
         account.selected = nr;
     }
-    int getSumChars()
+    int getSumChars() const
     {
         return account.count;
     }
@@ -273,9 +264,9 @@ private:
     // ////////////////////////////////////////////////////////////////////
     struct _Account
     {
-        int count;    // Number of chars already created.
-        int selected; // Actually selected character.
-        Ogre::String name[ACCOUNT_MAX_PLAYER]; // List of account chars.
+        int count;    /**< Number of chars already created. **/
+        int selected; /**< Actually selected character. **/
+        Ogre::String name[ACCOUNT_MAX_PLAYER]; /**< List of account chars. **/
         int  level [ACCOUNT_MAX_PLAYER];
         int  race  [ACCOUNT_MAX_PLAYER];
         bool gender[ACCOUNT_MAX_PLAYER];

@@ -36,12 +36,12 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    GuiElementSlot(TiXmlElement *xmlElement, void *parent, bool drawOnInit);
+    GuiElementSlot(TiXmlElement *xmlElement, const void *parent, bool drawOnInit);
     ~GuiElementSlot() {}
-    int sendMsg(int message, const char *text, Ogre::uint32 param);
-    int mouseEvent(int MouseAction, int x, int y, int z);
+    virtual void sendMsg(const int message, Ogre::String &text, Ogre::uint32 &param, const char *text2);
+    virtual int mouseEvent(const int mouseAction, int mouseX, int mouseY, int mouseWheel);
     void draw();
-    void setItem(const char *gxName, int quantity);
+    void setItem(const char *gxName, int quantity, const char *itemName);
     /**
      ** Sets the time while the slot cannot be accessed.
      ** The current busy animation will be stopped.
@@ -59,7 +59,7 @@ public:
     {
         return (mItemGfxID < 0);
     }
-    void update(Ogre::Real dTime);
+    virtual void update(Ogre::Real dTime);
 
 private:
     // ////////////////////////////////////////////////////////////////////
@@ -71,10 +71,11 @@ private:
     int mSlotNr;                  /**< Unique number. **/
     int mSlotGfxBG;               /**< The gfx number of the background gfx (will only be shown if slot is empty **/
     int mItemGfxID;               /**< The item which is currently in the slot. **/
-    int mQuantity;                /**< Quantity of items in the slot. **/
     Ogre::Real mBusyTime;         /**< Slot is busy for this amount of time. **/
     Ogre::Real mBusyTimeExpired;  /**< Already expired time. **/
     Ogre::Real mBusyOldVal;       /**< Indicates if the busy gfx needs a redraw. **/
+    Ogre::String mStrQuantity;    /**< Quantity of items in the slot. **/
+    Ogre::String mStrTooltip;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
@@ -91,18 +92,19 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    GuiElementSlotGroup(TiXmlElement *xmlElement, void *parent);
+    GuiElementSlotGroup(TiXmlElement *xmlElement, const void *parent);
     ~GuiElementSlotGroup();
+    virtual void sendMsg(const int message, Ogre::String &text, Ogre::uint32 &param, const char *text2);
+    virtual int mouseEvent(const int mouseAction, int mouseX, int mouseY, int mouseWheel);
     void draw();
-    int mouseEvent(int MouseAction, int x, int y, int z);
 
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    static int uid;               /**< Unique number generator. **/
-    int mGroupNr;                 /**< Unique number. **/
-    int mCols, mRows;
+    static int uid;                  /**< Unique number generator. **/
+    unsigned short mGroupNr;         /**< Unique number. **/
+    unsigned short mSpaceX, mSpaceY; /**< Free space between the slots. **/
     std::vector<class GuiElementSlot*>mvSlot;
 };
 

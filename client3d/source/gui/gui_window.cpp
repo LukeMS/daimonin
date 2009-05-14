@@ -55,19 +55,20 @@ void GuiWindow::freeRecources()
 //================================================================================================
 // Build a window out of a xml description file.
 //================================================================================================
-void GuiWindow::Init(TiXmlElement *xmlRoot, const char *resourceWin, int winNr, unsigned char defaultZPos)
+void GuiWindow::Init(TiXmlElement *xmlRoot, const char *resourceWin, int winNr, uchar defaultZPos)
 {
     mWinLayerBG = 0;
+    mLastMouseOverElement = -1;
     mHeight = GuiElement::MIN_SIZE;
     mWidth  = GuiElement::MIN_SIZE;
     mWindowNr = winNr;
     mResourceName = resourceWin;
     mResourceName+= "#" + StringConverter::toString(mWindowNr, GuiManager::SUM_WIN_DIGITS, '0');
     TiXmlElement *xmlElem;
-    const char *strTmp;
     int screenH = GuiManager::getSingleton().getScreenHeight();
     int screenW = GuiManager::getSingleton().getScreenWidth();
-    if ((strTmp = xmlRoot->Attribute("name")))
+    const char *strTmp = xmlRoot->Attribute("name");
+    if (strTmp && GuiManager::getSingleton().getPrintInfo())
         Logger::log().info() << "Parsing window: " << strTmp;
     // ////////////////////////////////////////////////////////////////////
     // Parse the Size entries.
@@ -116,21 +117,6 @@ void GuiWindow::Init(TiXmlElement *xmlRoot, const char *resourceWin, int winNr, 
             else if (aY==0) mPosY =(screenH- mHeight) /2 + atoi(strTmp);
             else mPosY = atoi(strTmp);
         }
-    }
-    // ////////////////////////////////////////////////////////////////////
-    // Parse the Dragging entry.
-    // ////////////////////////////////////////////////////////////////////
-    mDragPosX1 = mDragPosX2 = mDragPosY1 = mDragPosY2 = -100;
-    if ((xmlElem = xmlRoot->FirstChildElement("DragArea")))
-    {
-        if ((strTmp = xmlElem->Attribute("x")))      mDragPosX1 = atoi(strTmp);
-        if (mDragPosX1 > mWidth) mDragPosX1 = mWidth-1;
-        if ((strTmp = xmlElem->Attribute("y")))      mDragPosY1 = atoi(strTmp);
-        if (mDragPosY1 > mHeight) mDragPosY1 = mHeight-1;
-        if ((strTmp = xmlElem->Attribute("width")))  mDragPosX2 = mDragPosX1 + atoi(strTmp);
-        if (mDragPosX2 > mWidth) mDragPosX2 = mWidth;
-        if ((strTmp = xmlElem->Attribute("height"))) mDragPosY2 = mDragPosY1 + atoi(strTmp);
-        if (mDragPosY2 > mHeight) mDragPosY2 = mHeight;
     }
     // ////////////////////////////////////////////////////////////////////
     // Now we have all data to create the window.
@@ -245,7 +231,7 @@ void GuiWindow::centerWindowOnMouse(int x, int y)
 //================================================================================================
 // Key event.
 //================================================================================================
-int GuiWindow::keyEvent(const int keyChar, const unsigned int key)
+const int GuiWindow::keyEvent(const int keyChar, const unsigned int key)
 {
     if (!isVisible()) return GuiManager::EVENT_CHECK_NEXT;
     for (unsigned int i = 0; i < mvElement.size(); ++i)
@@ -259,23 +245,22 @@ int GuiWindow::keyEvent(const int keyChar, const unsigned int key)
 //================================================================================================
 // Mouse Event.
 //================================================================================================
-int GuiWindow::mouseEvent(int MouseAction, Vector3 &mouse)
+const int GuiWindow::mouseEvent(const int mouseAction, Vector3 &mouse)
 {
-    if (!isVisible()) return GuiManager::EVENT_CHECK_NEXT;
     // ////////////////////////////////////////////////////////////////////
-    // user is moving the window.
+    // User is moving the window.
     // ////////////////////////////////////////////////////////////////////
     if (mDragWindowNr >= 0)
     {
         if (mDragWindowNr != mWindowNr) // User moves another window.
             return GuiManager::EVENT_CHECK_NEXT;
-        if (MouseAction == GuiManager::BUTTON_RELEASED)
+        if (mouseAction == GuiManager::BUTTON_RELEASED)
         {
             //GuiCursor::getSingleton().setState(GuiImageset::STATE_MOUSE_DEFAULT);
             mDragWindowNr= -1;
             return GuiManager::EVENT_CHECK_DONE;
         }
-        if (MouseAction == GuiManager::MOUSE_MOVEMENT)
+        if (mouseAction == GuiManager::MOUSE_MOVEMENT)
         {
             mPosX = (int)mouse.x - mDragOffsetX;
             mPosY = (int)mouse.y - mDragOffsetY;
@@ -287,47 +272,68 @@ int GuiWindow::mouseEvent(int MouseAction, Vector3 &mouse)
     // Is the mouse inside the window?
     // ////////////////////////////////////////////////////////////////////
     if (!mouseWithin((int)mouse.x, (int)mouse.y))
-        return GuiManager::EVENT_CHECK_NEXT;
-    // ////////////////////////////////////////////////////////////////////
-    // Is the mouse within the "drag to move window" area?
-    // ////////////////////////////////////////////////////////////////////
-    int x = (int)mouse.x - mPosX;
-    int y = (int)mouse.y - mPosY;
-    if (MouseAction == GuiManager::BUTTON_PRESSED)
     {
-        GuiManager::getSingleton().windowToFront(mWindowNr);
-        if (x > mDragPosX1 && x < mDragPosX2 && y > mDragPosY1 && y < mDragPosY2)
-        {
-            //GuiCursor::getSingleton().setState(GuiImageset::STATE_MOUSE_PUSHED);
-            mDragOffsetX = x;
-            mDragOffsetY = y;
-            mDragWindowNr = mWindowNr;
-            return GuiManager::EVENT_CHECK_DONE;
-        }
+        mouseLeftWindow();
+        return GuiManager::EVENT_OUTSIDE_WIN;
     }
     // ////////////////////////////////////////////////////////////////////
     // Look for a mouse event in a child element.
     // ////////////////////////////////////////////////////////////////////
+    int x = (int)mouse.x - mPosX;
+    int y = (int)mouse.y - mPosY;
     for (unsigned int i = 0; i < mvElement.size(); ++i)
     {
-        int event = mvElement[i]->mouseEvent(MouseAction, x, y, (int)mouse.z);
+        int event = mvElement[i]->mouseEvent(mouseAction, x, y, (int)mouse.z);
         if (event != GuiManager::EVENT_CHECK_NEXT)
         {
+            mLastMouseOverElement = i;
             if (event == GuiManager::EVENT_USER_ACTION)
             {
                 mElementClicked = mvElement[i]->getIndex();
-                if (mElementClicked == GuiManager::GUI_BUTTON_CLOSE)
+                if (mElementClicked == GuiManager::BUTTON_CLOSE)
                 {
                     setVisible(false);
                     return GuiManager::EVENT_CHECK_DONE;
                 }
             }
-            if (event == GuiManager::EVENT_DRAG_STRT)
-                mDragElement = i;
+            else if (event == GuiManager::EVENT_DRAG_STRT)
+                mDragElement = i; // Drag from a slot.
             return event;
         }
     }
+    // ////////////////////////////////////////////////////////////////////
+    // When the mouse is not over a child element, window can be moved.
+    // ////////////////////////////////////////////////////////////////////
+    if (mouseAction == GuiManager::BUTTON_PRESSED)
+    {
+        //GuiCursor::getSingleton().setState(GuiImageset::STATE_MOUSE_PUSHED);
+        GuiManager::getSingleton().windowToFront(mWindowNr);
+        mDragOffsetX = x;
+        mDragOffsetY = y;
+        mDragWindowNr = mWindowNr;
+    }
+    mLastMouseOverElement = -1;
     return GuiManager::EVENT_CHECK_DONE;
+}
+
+//================================================================================================
+// On overlapping windows with overlapping elements: When the mouse leaves a window
+// we need to set back the default state of the "mouse-over-element".
+//================================================================================================
+void GuiWindow::mouseLeftWindow()
+{
+    if (mLastMouseOverElement >= 0)
+    {
+        mvElement[mLastMouseOverElement]->mouseEvent(-1, -1, -1, -1);
+        mLastMouseOverElement = -1;
+    }
+    /*
+        if (mDragElement >= 0)
+        {
+            mvElement[mDragElement]->mouseEvent(-1, -1, -1, -1);
+            GuiManager::getSingleton().print(GuiManager::LIST_CHATWIN, StringConverter::toString(mDragElement).c_str());
+        }
+    */
 }
 
 //================================================================================================
@@ -342,7 +348,7 @@ void GuiWindow::setVisible(bool visible)
 //================================================================================================
 // Update the window.
 //================================================================================================
-void GuiWindow::update(Real timeSinceLastFrame)
+void GuiWindow::update(Ogre::Real timeSinceLastFrame)
 {
     if (!isVisible()) return;
     // ToDo. Update drag animation (move back on wrong drag).
@@ -353,15 +359,8 @@ void GuiWindow::update(Real timeSinceLastFrame)
 //================================================================================================
 //
 //================================================================================================
-int GuiWindow::sendMsg(int elementNr, int message, const char *text, Ogre::uint32 param)
+void GuiWindow::sendMsg(int elementNr, int message, String &text, uint32 &param, const char *text2)
 {
-    return (mvElement.empty())?-1:mvElement[elementNr]->sendMsg(message, text, param);
-}
-
-//================================================================================================
-//
-//================================================================================================
-const char *GuiWindow::sendMsg(int elementNr, int info)
-{
-    return (mvElement.empty())?0:mvElement[elementNr]->sendMsg(info);
+    if (!mvElement.empty())
+        mvElement[elementNr]->sendMsg((int)message, text, param, text2);
 }

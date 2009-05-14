@@ -35,17 +35,12 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    GuiElementButton(TiXmlElement *xmlElement, void *parent, bool drawOnInit);
+    GuiElementButton(TiXmlElement *xmlElement, const void *parent, const bool drawOnInit);
     ~GuiElementButton() {}
-    int sendMsg(int message, const char *text, Ogre::uint32 param);
-    int mouseEvent(int MouseAction, int x, int y, int z);
-    int keyEvent(const int *keyChar, const unsigned char *key);
+    /// @copydoc GuiElement::sendMsg
+    virtual void sendMsg(const int message, Ogre::String &text, Ogre::uint32 &param, const char *text2);
+    virtual int mouseEvent(const int mouseAction, int mouseX, int mouseY, int mouseWheel);
     void draw();
-    void setLabel(const char*newText)
-    {
-        mStrLabel = newText;
-        draw();
-    }
 
 private:
     // ////////////////////////////////////////////////////////////////////
@@ -54,6 +49,17 @@ private:
     Ogre::String mStrTooltip;
     bool mMouseOver, mMouseButDown;
 
+    // ////////////////////////////////////////////////////////////////////
+    // Functions.
+    // ////////////////////////////////////////////////////////////////////
+    /** Set a new label text for a button.
+     ** @param newText The button label.
+     *****************************************************************************/
+    void setLabel(const Ogre::String newText)
+    {
+        mLabelString = newText;
+        draw();
+    }
 };
 
 #endif

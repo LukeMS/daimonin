@@ -64,11 +64,11 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    /** The terrain must have a land- AND a waterSubmesh. If there is no data for it, we create a dummy. **/
+    /// The terrain must have a land- AND a waterSubmesh. If there is no data for it, we create a dummy.
     void createDummySubMesh(Ogre::SubMesh *submesh);
     void createIndexData(Ogre::SubMesh *submesh, int sumVertices);
     void calcNormal(Ogre::Real x1, Ogre::Real z1, Ogre::Real x2, Ogre::Real z2, Ogre::Real x3, Ogre::Real z3);
-    void setVertex(Ogre::Vector3 &pos, Ogre::Real posTexX, Ogre::Real posTexZ, Ogre::Real posShadowX, Ogre::Real posShadowZ, int offset);
+    void setVertex(const Ogre::Vector3 &pos, Ogre::Real posTexX, Ogre::Real posTexZ, Ogre::Real posShadowX, Ogre::Real posShadowZ, int offset);
     void changeLand();
     void changeWater();
     int  calcTextureUnitSorting(int l0, int l1, int l2);

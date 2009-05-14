@@ -25,9 +25,8 @@
   <!--WINDOW: Engine Statistics                    -->
   <!--#############################################-->
   <Window name= "Win_Statistics">
-    <Size      width= "150" height= "88" />
-    <Pos       x= "5" y= "5" />
-    <DragArea  x= "0" y= "0" width= "131" height= "17" />
+    <Size width= "150" height= "88" />
+    <Pos  x= "5" y= "5" />
     <!--=============================================-->
     <!-- Borderlines                                 -->
     <!--=============================================-->
@@ -125,7 +124,6 @@
     <Size     width= "280" height= "269" />
     <Alignment x="right" />
     <Pos       x= "280"  y= "0" />
-    <DragArea  x= "0"    y= "0" width= "280" height= "18" />
     <Color red="60" green="56" blue="31" alpha="200"/>
 
     <Graphic>
@@ -194,7 +192,6 @@
     <Size      width= "280" height= "269" />
     <Alignment x="right" />
     <Pos       x= "280"  y= "269" />
-    <DragArea  x= "0"    y= "0" width= "280" height= "18" />
     <Color red="60" green="56" blue="31" alpha="200"/>
 
     <Graphic>
@@ -260,9 +257,8 @@
   <!--WINDOW: Server Select                        -->
   <!--#############################################-->
   <Window name= "Win_ServerSelect">
-    <Size     width= "512" height= "512" />
-    <Pos      x= "200" y= "200" />
-    <DragArea x= "0" y= "0" width= "512" height= "29" />
+    <Size width= "512" height= "512" />
+    <Pos  x= "200" y= "200" />
     <!--=============================================-->
     <!-- Seamless Background                         -->
     <!--=============================================-->
@@ -274,14 +270,13 @@
     <!--=============================================-->
     <!-- Layer 0                                     -->
     <!--=============================================-->
-
     <Graphic>
       <Image name = "Bar-Horizontal-Top"/>
       <Pos x= "9" y= "0" />
       <Size width= "508" height= "4" />
     </Graphic>
     <TextBox>
-      <Label x= "210" y= "2" font="04" red= "255" green= "255" blue= "255" text= "Login" />
+      <Label x= "210" y= "6" font="04" red= "255" green= "255" blue= "255" text= "Login1" />
     </TextBox>
     <Graphic>
       <Image name = "Bar-Horizontal-Bottom"/>
@@ -393,9 +388,8 @@
   <!--WINDOW: Login                                -->
   <!--#############################################-->
   <Window name= "Win_Login">
-    <Size     width= "512" height= "512" />
-    <Pos      x= "200" y= "200" />
-    <DragArea x= "0" y= "0" width= "512" height= "29" />
+    <Size width= "512" height= "512" />
+    <Pos  x= "200" y= "200" />
     <!--=============================================-->
     <!-- Seamless Background                         -->
     <!--=============================================-->
@@ -459,9 +453,9 @@
     <!-- Layer 1                                     -->
     <!--=============================================-->
     <Button name = "But_CreateAccount">
-      <Image name = "Button-01-Standard"/>
+      <Image name = "Button-02-Standard"/>
       <Pos x= "200" y= "63" />
-      <Label x= "4" y= "3" font="03" text= "create" />
+      <Label x= "4" y= "2" font="03" text= "create" />
     </Button>
     <TextBox>
       <Label x= "20" y= "65" font="03" text= "~#ffffff00Login on your account, or               an account." />
@@ -512,9 +506,8 @@
   <!--WINDOW: NPC Dialog                           -->
   <!--#############################################-->
   <Window name= "Win_Dialog">
-    <Size     width= "303" height= "350" />
-    <Pos      x= "200" y= "200" />
-    <DragArea x= "0" y= "0" width= "284" height= "29" />
+    <Size width= "303" height= "350" />
+    <Pos  x= "200" y= "200" />
     <!--=============================================-->
     <!-- Seamless Background                         -->
     <!--=============================================-->
@@ -599,18 +592,17 @@
       </Element>
     </Listbox>
 
+    <!--<TextBox name= "Input_NPC_Dialog" >-->
+
     <Button  name = "But_NPC_Accept">
-      <Image name = "Button-01-Standard"/>
+      <Image name = "Button-02-Standard"/>
       <Pos   x= "10" y= "320" />
-      <Label x= "5" y= "5" font="02" text= "" />
+      <Label x= "5" y= "3" font="02" text= "" />
     </Button>
-    <TextBox name= "Input_NPC_Dialog" >
-      <Label x= "70" y= "325" font="02" text= "Enter your text here..." />
-      <Size width= "222" />
-    </TextBox>
+
     <Button  name = "But_NPC_Decline">
-      <Image name = "Button-01-Standard"/>
-      <Label x= "5" y= "5" font="02" text= "" />
+      <Image name = "Button-02-Standard"/>
+      <Label x= "5" y= "3" font="02" text= "" />
       <Pos x= "238" y= "320" />
     </Button>
 
@@ -630,7 +622,6 @@
     <Size     width= "330" height= "580" />
     <Alignment x= "left" />
     <Pos       x ="5" y= "100" />
-    <DragArea x= "0" y= "0" width= "279" height= "30" />
     <!--=============================================-->
     <!-- Seamless Background                         -->
     <!--=============================================-->
@@ -818,28 +809,27 @@
       <Size width= "71" height= "27" />
     </Graphic>
     <Button   name = "Tab_Stats">
-     <Image name = "Button-01-Standard"/>
+     <Image name = "Button-02-Standard"/>
       <Pos   x= "13" y= "538" />
-      <Label x= "5" y= "4" font="02" text= "Stats" />
+      <Label x= "5" y= "3" font="02" text= "Stats" />
     </Button>
     <Button  name = "Tab_Skills">
-      <Image name = "Button-01-Standard"/>
+      <Image name = "Button-02-Standard"/>
       <Pos   x= "93" y= "538" />
-      <Label x= "5" y= "4" font="02" text= "Skills" />
+      <Label x= "5" y= "3" font="02" text= "Skills" />
     </Button>
     <Button  name = "Tab_Protection">
-      <Image name = "Button-01-Standard"/>
+      <Image name = "Button-02-Standard"/>
       <Pos   x= "173" y= "538" />
-      <Label x= "5" y= "4" font="06" text= "Stats" />
+      <Label x= "5" y= "3" font="06" text= "Stats" />
     </Button>
     <Button  name = "Tab_Experience">
-      <Image name = "Button-01-Standard"/>
+      <Image name = "Button-02-Standard"/>
       <Pos   x= "253" y= "538" />
-      <Label x= "5" y= "4" font="02" text= "Stats" />
+      <Label x= "5" y= "3" font="02" text= "Stats" />
     </Button>
     <TextBox name= "Inv_Equipment" >
       <Label x= "60" y= "2" font="03" text= "Equipment Window" />
-      <Size width= "222" />
     </TextBox>
     <TextBox name= "Inv_Equip_Weight" >
       <Label x= "40" y= "24" font="02" text= "999 kg" />
@@ -847,7 +837,7 @@
     </TextBox>
     <Button  name = "But_Close">
       <Image name = "Button-01-Close"/>
-      <Pos x= "280" y= "4" />
+      <Pos x= "280" y= "3" />
     </Button>
   </Window>
 
@@ -860,7 +850,6 @@
     <Size     width= "330" height= "580" />
     <Alignment x= "left" />
     <Pos       x ="335" y= "100" />
-    <DragArea x= "0" y= "0" width= "279" height= "30" />
     <!--=============================================-->
     <!-- Seamless Background                         -->
     <!--=============================================-->
@@ -930,45 +919,15 @@
     <!--=============================================-->
     <!-- Layer 1 slots and icons                     -->
     <!--=============================================-->
-    <Slot name = "Slot">
-      <Image name = "Item-Slot"/>
-      <Pos x= "17" y= "89" />
-    </Slot>
-
-    <Slot name = "Slot_Inventory">
-      <Image name = "Item-Slot"/>
-      <Pos x= "90" y= "89" />
-    </Slot>
-
-    <Slot name = "Slot">
-      <Image name = "Item-Slot"/>
-      <Pos x= "163" y= "89" />
-    </Slot>
-
-    <Slot name = "Slot">
-      <Image name = "Item-Slot"/>
-      <Pos x= "236" y= "89" />
-    </Slot>
-
-    <Slot name = "Slot">
-      <Image name = "Item-Slot"/>
-      <Pos x= "17" y= "162" />
-    </Slot>
-
-    <Slot name = "Slot">
-      <Image name = "Item-Slot"/>
-      <Pos x= "90" y= "162" />
-    </Slot>
-
-    <Slot name = "Slot">
-      <Image name = "Item-Slot" />
-      <Pos x= "163" y= "162" />
-    </Slot>
-
-    <Slot name = "Slot">
-      <Image name = "Item-Slot"/>
-      <Pos x= "236" y= "162" />
-    </Slot>
+    <Slotgroup name = "Slot_Inventory" slots = "13">
+      <Pos x= "10" y= "30" />
+      <Size width= "290" height= "200" />
+      <Slot name = "Slot">
+        <Image name = "Item-Slot" bg_item_image_filename ="item_bg_amulet.png"/>
+        <Label x= "1" y= "2" font="03" /> <!-- Used for number of items text. -->
+        <Space x= "2" y= "2" />
+      </Slot>
+    </Slotgroup>
 
     <Graphic>
       <Image name = "Monney-Copper"/>
@@ -1026,68 +985,60 @@
       <Pos x= "250" y= "500" />
     </Graphic>
     <Button   name = "Tab_Stats">
-      <Image name = "Button-01-Standard"/>
+      <Image name = "Button-02-Standard"/>
       <Pos   x= "13" y= "473" />
-      <Label x= "5" y= "4" font="02" text= "Weapons" />
+      <Label x= "5" y= "3" font="02" text= "Weapons" />
     </Button>
     <Button  name = "Tab_Skills">
-      <Image name = "Button-01-Standard"/>
+      <Image name = "Button-02-Standard"/>
       <Pos   x= "93" y= "473" />
-      <Label x= "5" y= "4" font="02" text= "Shields" />
+      <Label x= "5" y= "3" font="02" text= "Shields" />
     </Button>
     <Button  name = "Tab_Protection">
-      <Image name = "Button-01-Standard"/>
+      <Image name = "Button-02-Standard"/>
       <Pos   x= "173" y= "473" />
-      <Label x= "5" y= "4" font="02" text= "Polyveg's" />
+      <Label x= "5" y= "3" font="02" text= "Polyveg's" />
     </Button>
     <Button  name = "Tab_Experience">
-      <Image name = "Button-01-Standard"/>
+      <Image name = "Button-02-Standard"/>
       <Pos   x= "253" y= "473" />
-      <Label x= "5" y= "4" font="02" text= "Potions" />
+      <Label x= "5" y= "3" font="02" text= "Potions" />
     </Button>
     <Button   name = "Tab_Stats">
-      <Image name = "Button-01-Standard"/>
+      <Image name = "Button-02-Standard"/>
       <Pos   x= "13" y= "503" />
-      <Label x= "5" y= "4" font="02" text= "Cats" />
+      <Label x= "5" y= "3" font="02" text= "Cats" />
     </Button>
     <Button  name = "Tab_Skills">
-      <Image name = "Button-01-Standard"/>
+      <Image name = "Button-02-Standard"/>
       <Pos   x= "93" y= "503" />
-      <Label x= "5" y= "4" font="02" text= "Dogs" />
+      <Label x= "5" y= "3" font="02" text= "Dogs" />
     </Button>
     <Button  name = "Tab_Protection">
-      <Image name = "Button-01-Standard"/>
+      <Image name = "Button-02-Standard"/>
       <Pos   x= "173" y= "503" />
-      <Label x= "5" y= "4" font="02" text= "Time" />
+      <Label x= "5" y= "3" font="02" text= "Time" />
     </Button>
     <Button  name = "Tab_Experience">
-      <Image name = "Button-01-Standard"/>
+      <Image name = "Button-02-Standard"/>
       <Pos   x= "253" y= "503" />
-      <Label x= "5" y= "4" font="02" text= "Text" />
+      <Label x= "5" y= "3" font="02" text= "Text" />
     </Button>
     <Button  name = "Next_page">
       <Image name = "Button-01-Next"/>
       <Pos   x= "301" y= "543" />
-      <Label x= "5" y= "4" font="02" text= "" />
+      <Label x= "5" y= "3" font="02" text= "" />
     </Button>
     <Button  name = "Prev_Page">
       <Image name = "Button-01-Prev"/>
       <Pos   x= "6" y= "543" />
-      <Label x= "5" y= "4" font="02" text= "" />
+      <Label x= "5" y= "3" font="02" text= "" />
     </Button>
     <Button  name = "But_Close">
       <Image name = "Button-01-Close"/>
-      <Pos x= "280" y= "4" />
-    </Button>
-      <Button name = "But_Test">
-      <Image name = "Button-01-Standard"/>
-      <Pos   x= "53" y= "230" />
-      <Label x= "5" y= "4" font="02" text= "Lock1" />
-      <Tooltip  text= "This button says: Lock1" />
+      <Pos x= "280" y= "3" />
     </Button>
   </Window>
-
-
 
   <!--#############################################-->
   <!--WINDOW: Trading                              -->
@@ -1096,7 +1047,6 @@
     <Size     width= "330" height= "505" />
     <Alignment x= "left" />
     <Pos       x ="680" y= "120" />
-    <DragArea x= "0" y= "0" width= "279" height= "30" />
     <!--=============================================-->
     <!-- Seamless Background                         -->
     <!--=============================================-->
@@ -1265,12 +1215,12 @@
       <Size width= "71" height= "27" />
     </Graphic>
     <Button  name = "Tab_Lock">
-      <Image name = "Button-01-Standard"/>
+      <Image name = "Button-02-Standard"/>
       <Pos   x= "53" y= "230" />
       <Label x= "5" y= "4" font="02" text= "Lock2" />
     </Button>
     <Button  name = "Tab_Trade">
-      <Image name = "Button-01-Standard"/>
+      <Image name = "Button-02-Standard"/>
       <Pos   x= "213" y= "230" />
       <Label x= "5" y= "4" font="02" text= "Trade" />
     </Button>
@@ -1290,7 +1240,6 @@
     <Size     width= "330" height= "580" />
     <Alignment x= "left" />
     <Pos       x ="680" y= "100" />
-    <DragArea x= "0" y= "0" width= "279" height= "30" />
     <!--=============================================-->
     <!-- Seamless Background                         -->
     <!--=============================================-->
@@ -1397,12 +1346,12 @@
       <Size width= "71" height= "27" />
     </Graphic>
     <Button   name = "Tab_Buy">
-      <Image name = "Button-01-Standard"/>
+      <Image name = "Button-02-Standard"/>
       <Pos   x= "52" y= "483" />
       <Label x= "5" y= "4" font="02" text= "Buy" />
     </Button>
     <Button  name = "Tab_Sell">
-      <Image name = "Button-01-Standard"/>
+      <Image name = "Button-02-Standard"/>
       <Pos   x= "213" y= "483 " />
       <Label x= "5" y= "4" font="02" text= "Sell" />
     </Button>
@@ -1429,7 +1378,6 @@
     <Size  width= "330" height= "340" />
     <Alignment x= "left" />
     <Pos       x="580" y= "100" />
-    <DragArea  x= "0" y= "0" width= "279" height= "30" />
     <!--=============================================-->
     <!-- Seamless Background                         -->
     <!--=============================================-->
@@ -1533,7 +1481,7 @@
       <Pos x= "127" y= "317" />
     </Graphic>
     <Button  name = "Tab_12">
-      <Image name = "Button-01-Standard"/>
+      <Image name = "Button-02-Standard"/>
       <Pos   x= "130" y= "310" />
       <Label x= "5" y= "4" font="02" text= "Take all" />
     </Button>
@@ -1542,4 +1490,40 @@
       <Pos x= "280" y= "4" />
     </Button>
   </Window>
+
+    <!--#############################################-->
+    <!--WINDOW: Target                               -->
+    <!--#############################################-->
+  <Window name= "Win_PlayerTarget">
+    <Size width= "255" height= "255" />
+    <Pos  x="580" y= "100" />
+    <!--=============================================-->
+    <!-- Seamless Background                         -->
+    <!--=============================================-->
+    <Graphic>
+      <Image name = "Background-General"/>
+      <Pos x= "0" y= "0" />
+      <Size width= "255" height= "255" />
+    </Graphic>
+    <Statusbar name = "Bar_Health">
+      <Color red= "255" green= "0" blue= "0" />
+      <Pos x= "2" y= "2" />
+      <Size width= "16" height= "100" />
+    </Statusbar>
+    <Statusbar name = "Bar_Mana" smooth = "1">
+      <Color auto ="1" />
+      <Pos x= "20" y= "2" />
+      <Size width= "16" height= "100" />
+    </Statusbar>
+    <Statusbar name = "Bar_Grace">
+      <Color red= "255" green= "255" blue= "0" />
+      <Pos x= "38" y= "2" />
+      <Size width= "16" height= "100" />
+    </Statusbar>
+    <Button  name = "But_Close">
+      <Image name = "Button-01-Close"/>
+      <Pos x= "236" y= "4" />
+    </Button>
+  </Window>
+
 </XML>

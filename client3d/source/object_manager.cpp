@@ -316,7 +316,7 @@ void ObjectManager::mousePressed(MovableObject *mob, bool modifier)
                                                  mvNPC[mSelectedObject]->getFriendly(),
                                                  mvNPC[mSelectedObject]->getHealthPercentage(),
                                                  mvNPC[mSelectedObject]->getNickName().c_str());
-            //GuiManager::getSingleton().print(GuiManager::GUI_LIST_CHATWIN, "talk hello");
+            //GuiManager::getSingleton().print(GuiManager::LIST_CHATWIN, "talk hello");
             //String strSelect = "/target !"+ StringConverter::toString(mSelectedPos.x-9) + " " + StringConverter::toString(mSelectedPos.z-9);
             //Network::getSingleton().send_game_command(strSelect.c_str());
             //Network::getSingleton().send_game_command("/target 1");
@@ -419,7 +419,7 @@ bool ObjectManager::createFlipBook(String meshName, int sumRotations)
     Entity *entity;
     try
     {
-        entity  = Events::getSingleton().GetSceneManager()->createEntity("FlipBookEntity", meshName);
+        entity  = Events::getSingleton().getSceneManager()->createEntity("FlipBookEntity", meshName);
     }
     catch (...)
     {
@@ -431,7 +431,7 @@ bool ObjectManager::createFlipBook(String meshName, int sumRotations)
     const AxisAlignedBox &AABB = entity->getBoundingBox();
     Real entityRadius = (AABB.getMaximum() - AABB.getCenter()).length();
 
-    SceneNode *node = Events::getSingleton().GetSceneManager()->getRootSceneNode()->createChildSceneNode("FlipBookNode");
+    SceneNode *node = Events::getSingleton().getSceneManager()->getRootSceneNode()->createChildSceneNode("FlipBookNode");
     node->attachObject(entity);
     node->setPosition(-AABB.getCenter());
 
@@ -443,7 +443,7 @@ bool ObjectManager::createFlipBook(String meshName, int sumRotations)
     RenderTexture *renderTarget = texture->getBuffer()->getRenderTarget();
     renderTarget->setAutoUpdated(false);
 
-    Camera *camera = Events::getSingleton().GetSceneManager()->createCamera("tmpCamera");
+    Camera *camera = Events::getSingleton().getSceneManager()->createCamera("tmpCamera");
     camera->setLodBias(1000.0f);
     camera->setPosition(0, 0, entityRadius + 1.5f);
     camera->setAspectRatio(1.0f);
@@ -459,8 +459,8 @@ bool ObjectManager::createFlipBook(String meshName, int sumRotations)
     viewport->setBackgroundColour(ColourValue(1.0f, 1.0f, 1.0f, 0.0f));
 
     // Render only the queues in the special case list.
-    Events::getSingleton().GetSceneManager()->setSpecialCaseRenderQueueMode(Ogre::SceneManager::SCRQM_INCLUDE);
-    Events::getSingleton().GetSceneManager()->addSpecialCaseRenderQueue(RENDER_QUEUE_MAIN);
+    Events::getSingleton().getSceneManager()->setSpecialCaseRenderQueueMode(Ogre::SceneManager::SCRQM_INCLUDE);
+    Events::getSingleton().getSceneManager()->addSpecialCaseRenderQueue(RENDER_QUEUE_MAIN);
     entity->setRenderQueueGroup(RENDER_QUEUE_MAIN);
     const float divFactor = 1.0f / sumRotations;
     for (int i = 0; i < sumRotations; ++i)
@@ -470,17 +470,17 @@ bool ObjectManager::createFlipBook(String meshName, int sumRotations)
         node->yaw(Degree(180.0f/(sumRotations-1)));
     }
     renderTarget->writeContentsToFile("Animation2d_"+ meshName + ".png");
-    Events::getSingleton().GetSceneManager()->removeSpecialCaseRenderQueue(RENDER_QUEUE_MAIN);
+    Events::getSingleton().getSceneManager()->removeSpecialCaseRenderQueue(RENDER_QUEUE_MAIN);
     //Render all except the queues in the special case list.
-    Events::getSingleton().GetSceneManager()->setSpecialCaseRenderQueueMode(SceneManager::SCRQM_EXCLUDE);
+    Events::getSingleton().getSceneManager()->setSpecialCaseRenderQueueMode(SceneManager::SCRQM_EXCLUDE);
     // ////////////////////////////////////////////////////////////////////
     // Cleanup.
     // ////////////////////////////////////////////////////////////////////
     renderTarget->removeViewport(0);
     node->detachAllObjects();
-    Events::getSingleton().GetSceneManager()->destroyCamera(camera);
-    Events::getSingleton().GetSceneManager()->destroyEntity(entity);
-    Events::getSingleton().GetSceneManager()->destroySceneNode("FlipBookNode");
+    Events::getSingleton().getSceneManager()->destroyCamera(camera);
+    Events::getSingleton().getSceneManager()->destroyEntity(entity);
+    Events::getSingleton().getSceneManager()->destroySceneNode("FlipBookNode");
     TextureManager::getSingleton().remove("FlipBookTexture");
     texture.setNull();
     return true;

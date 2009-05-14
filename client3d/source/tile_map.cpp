@@ -431,11 +431,11 @@ void TileMap::scroll(int dx, int dy)
 //================================================================================================
 // .
 //================================================================================================
-#include "gui_manager.h"
+//#include "gui_manager.h"
 void TileMap::draw()
 {
     if (!mNeedsRedraw) return;
-    GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "TileMap::draw()");
+    //GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "TileMap::draw()");
     TileManager::getSingleton().changeChunks();
     mNeedsRedraw = false;
 }

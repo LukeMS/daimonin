@@ -21,39 +21,19 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
-#include "logger.h"
 #include "gui_textout.h"
 #include "gui_element_button.h"
 
 using namespace Ogre;
 
 //================================================================================================
-//
+// Constructor.
 //================================================================================================
-int GuiElementButton::sendMsg(int message, const char *text, uint32 param)
+GuiElementButton::GuiElementButton(TiXmlElement *xmlElement, const void *parent, const bool drawOnInit):GuiElement(xmlElement, parent)
 {
-    switch (message)
-    {
-        case GuiManager::MSG_SET_TEXT:
-            if (mStrLabel != text)
-            {
-                mStrLabel = text;
-                draw();
-            }
-            return 0;
-        default:
-            return -1;
-    }
-}
-
-//================================================================================================
-// .
-//================================================================================================
-GuiElementButton::GuiElementButton(TiXmlElement *xmlElement, void *parent, bool drawOnInit):GuiElement(xmlElement, parent)
-{
-    const char *tmp;
     if ((xmlElement = xmlElement->FirstChildElement("Tooltip")))
     {
+        const char *tmp;
         if ((tmp = xmlElement->Attribute("text"))) mStrTooltip = tmp;
     }
     mMouseOver = false;
@@ -62,18 +42,34 @@ GuiElementButton::GuiElementButton(TiXmlElement *xmlElement, void *parent, bool 
 }
 
 //================================================================================================
+// Message handling.
+//================================================================================================
+void GuiElementButton::sendMsg(const int message, String &text, uint32 &param, const char *text2)
+{
+    switch (message)
+    {
+        case GuiManager::MSG_SET_VISIBLE:
+            setVisible(param?true:false);
+            return;
+        case GuiManager::MSG_SET_TEXT:
+            setLabel(text);
+            return;
+    }
+}
+
+//================================================================================================
 // Returns true if the mouse event was on this gadget (so no need to check the other gadgets).
 //================================================================================================
-int GuiElementButton::mouseEvent(int MouseAction, int x, int y, int z)
+int GuiElementButton::mouseEvent(const int mouseAction, int mouseX, int mouseY, int mouseWheel)
 {
-    if (!mouseWithin(x, y))
+    if (!mouseWithin(mouseX, mouseY))
     {
-        // Mouse is no longer over the the gadget.
-        if (getState() != GuiImageset::STATE_ELEMENT_DEFAULT)
+        // Mouse is no longer over the gadget.
+        if (setState(GuiImageset::STATE_ELEMENT_DEFAULT))
         {
             mMouseOver = false;
             mMouseButDown = false;
-            if (setState(GuiImageset::STATE_ELEMENT_DEFAULT)) draw();
+            draw();
             GuiManager::getSingleton().setTooltip("");
             return GuiManager::EVENT_CHECK_NEXT;
         }
@@ -87,13 +83,13 @@ int GuiElementButton::mouseEvent(int MouseAction, int x, int y, int z)
             GuiManager::getSingleton().setTooltip(mStrTooltip.c_str());
             return GuiManager::EVENT_CHECK_DONE;
         }
-        if (MouseAction == GuiManager::BUTTON_PRESSED && !mMouseButDown)
+        if (mouseAction == GuiManager::BUTTON_PRESSED && !mMouseButDown)
         {
             mMouseButDown = true;
             if (setState(GuiImageset::STATE_ELEMENT_PUSHED)) draw();
             return GuiManager::EVENT_CHECK_DONE;
         }
-        if (MouseAction == GuiManager::BUTTON_RELEASED && mMouseButDown)
+        if (mouseAction == GuiManager::BUTTON_RELEASED && mMouseButDown)
         {
             mMouseButDown = false;
             if (setState(GuiImageset::STATE_ELEMENT_M_OVER)) draw();
@@ -112,12 +108,12 @@ void GuiElementButton::draw()
     GuiElement::draw(false);
     // Draw label.
     uint32 *dst = GuiManager::getSingleton().getBuildBuffer();
-    if (mVisible && !mStrLabel.empty())
+    if (mVisible && !mLabelString.empty())
     {
         int offset = (mState == GuiImageset::STATE_ELEMENT_PUSHED)?1:0;
         GuiTextout::getSingleton().printText(mWidth-mLabelPosX-2*offset, mHeight-mLabelPosY-offset,
                                              dst+mLabelPosX+offset + (mLabelPosY+2*offset)*mWidth, mWidth,
-                                             mStrLabel.c_str(), mLabelFontNr, 0x00ffffff);
+                                             mLabelString.c_str(), mLabelFontNr, 0x00ffffff);
     }
     mParent->getTexture()->getBuffer()->blitFromMemory(PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8, dst), Box(mPosX, mPosY, mPosX+mWidth, mPosY+mHeight));
 }

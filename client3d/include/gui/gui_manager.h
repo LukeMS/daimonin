@@ -46,64 +46,63 @@ public:
     enum
     {
         /** User action on these elements will be handled inside the gui only. **/
-        GUI_BUTTON_CLOSE,
-        GUI_BUTTON_MINIMIZE,
-        GUI_BUTTON_MAXIMIZE,
-        GUI_BUTTON_RESIZE,
+        BUTTON_CLOSE,
+        BUTTON_MINIMIZE,
+        BUTTON_MAXIMIZE,
+        BUTTON_RESIZE,
         /** User action on these elements will be send to the world outside. **/
         // Buttons.
-        GUI_BUTTON_NPC_ACCEPT,
-        GUI_BUTTON_NPC_DECLINE,
-        GUI_BUTTON_TEST,
+        BUTTON_NPC_ACCEPT,
+        BUTTON_NPC_DECLINE,
+        BUTTON_TEST,
         // Listboxes.
-        GUI_LIST_MSGWIN,
-        GUI_LIST_CHATWIN,
-        GUI_LIST_NPC,
+        LIST_MSGWIN,
+        LIST_CHATWIN,
+        LIST_NPC,
         // StatusBars.
-        GUI_STATUSBAR_NPC_MANA,
-        GUI_STATUSBAR_NPC_GRACE,
-        GUI_STATUSBAR_NPC_HEALTH,
-        GUI_STATUSBAR_PLAYER_MANA,
-        GUI_STATUSBAR_PLAYER_GRACE,
-        GUI_STATUSBAR_PLAYER_HEALTH,
+        STATUSBAR_NPC_MANA,
+        STATUSBAR_NPC_GRACE,
+        STATUSBAR_NPC_HEALTH,
+        STATUSBAR_PLAYER_MANA,
+        STATUSBAR_PLAYER_GRACE,
+        STATUSBAR_PLAYER_HEALTH,
         // TextValues.
-        GUI_TEXTBOX_STAT_CUR_FPS,
-        GUI_TEXTBOX_STAT_BEST_FPS,
-        GUI_TEXTBOX_STAT_WORST_FPS,
-        GUI_TEXTBOX_STAT_SUM_TRIS,
-        GUI_TEXTBOX_SERVER_INFO1,
-        GUI_TEXTBOX_SERVER_INFO2,
-        GUI_TEXTBOX_SERVER_INFO3,
-        GUI_TEXTBOX_LOGIN_WARN,
-        GUI_TEXTBOX_LOGIN_PSWDVERIFY,
-        GUI_TEXTBOX_LOGIN_INFO1,
-        GUI_TEXTBOX_LOGIN_INFO2,
-        GUI_TEXTBOX_LOGIN_INFO3,
-        GUI_TEXTBOX_NPC_HEADLINE,
-        GUI_TEXTBOX_INV_EQUIP,
-        GUI_TEXTBOX_INV_EQUIP_WEIGHT,
+        TEXTBOX_STAT_CUR_FPS,
+        TEXTBOX_STAT_BEST_FPS,
+        TEXTBOX_STAT_WORST_FPS,
+        TEXTBOX_STAT_SUM_TRIS,
+        TEXTBOX_SERVER_INFO1,
+        TEXTBOX_SERVER_INFO2,
+        TEXTBOX_SERVER_INFO3,
+        TEXTBOX_LOGIN_WARN,
+        TEXTBOX_LOGIN_PSWDVERIFY,
+        TEXTBOX_LOGIN_INFO1,
+        TEXTBOX_LOGIN_INFO2,
+        TEXTBOX_LOGIN_INFO3,
+        TEXTBOX_NPC_HEADLINE,
+        TEXTBOX_INV_EQUIP,
+        TEXTBOX_INV_EQUIP_WEIGHT,
         // TextInput
-        GUI_TEXTINPUT_LOGIN_NAME,
-        GUI_TEXTINPUT_LOGIN_PASSWD,
-        GUI_TEXTINPUT_LOGIN_VERIFY,
-        GUI_TEXTINPUT_NPC_DIALOG,
+        TEXTINPUT_LOGIN_NAME,
+        TEXTINPUT_LOGIN_PASSWD,
+        TEXTINPUT_LOGIN_VERIFY,
+        TEXTINPUT_NPC_DIALOG,
         // Table
-        GUI_TABLE,
+        TABLE,
         // Combobox
-        GUI_COMBOBOX_TEST,
+        COMBOBOX_TEST,
         // Slots
-        GUI_SLOT_QUICKSLOT,
-        GUI_SLOT_EQUIPMENT,
-        GUI_SLOT_INVENTORY,
-        GUI_SLOTGROUP_INVENTORY,
-        GUI_SLOT_CONTAINER,
-        GUI_SLOT_TRADE_OFFER,
-        GUI_SLOT_TRADE_RETURN,
-        GUI_SLOT_SHOP,
+        SLOT_QUICKSLOT,
+        SLOT_EQUIPMENT,
+        SLOTGROUP_INVENTORY,
+        SLOT_CONTAINER,
+        SLOT_TRADE_OFFER,
+        SLOT_TRADE_RETURN,
+        SLOT_SHOP,
         // Sum of all entries.
-        GUI_ELEMENTS_SUM
+        ELEMENTS_SUM
     };
-    /** Window id's. **/
+    /// Window id's.
     enum
     {
         /** The first window in this list MUST be initialized.
@@ -133,10 +132,11 @@ public:
         EVENT_USER_ACTION,
         EVENT_DRAG_STRT,
         EVENT_DRAG_DONE,
+        EVENT_OUTSIDE_WIN,
         EVENT_SUM
     };
 
-    /** Mouse Events **/
+    /// Mouse Events
     enum
     {
         MOUSE_MOVEMENT,
@@ -148,10 +148,11 @@ public:
         DRAG_ENTER,
         DRAG_EXIT,
     };
-    enum
+    typedef enum
     {
         MSG_CLOSE_PARENT,
         MSG_CLEAR,
+        MSG_REDRAW,
         MSG_ADD_ROW,
         MSG_ADD_ITEM,
         MSG_DEL_ITEM,
@@ -162,9 +163,9 @@ public:
         MSG_SET_VALUE,
         MSG_SET_VISIBLE,
         MSG_GET_KEYWORD
-    };
+    }Message;
 
-    /** Actual state of the mouse cursor: **/
+    /// Actual state of the mouse cursor:
     enum
     {
         STATE_MOUSE_DEFAULT,             /**< Default. **/
@@ -198,7 +199,7 @@ public:
     static const char *FILE_ITEM_ATLAS;
     static const char *FILE_SYSTEM_FONT;
     static const char *FILE_ITEM_UNKNOWN;
-    /** Read only description files **/
+    /// Read only description files.
     static const char *FILE_TXT_WINDOWS;
     static const char *FILE_TXT_IMAGESET;
     // ////////////////////////////////////////////////////////////////////
@@ -210,9 +211,8 @@ public:
         return singleton;
     }
     void Init(int w, int h, bool createMedia, bool printInfo, const char *soundActionFailed, const char *pathTxt, const char *pathGfx, const char *pathFonts, const char *pathItems);
-
-    Ogre::uint32 *getBuildBuffer()    { return mBuildBuffer;}
     void resizeBuildBuffer(size_t size);
+    Ogre::uint32 *getBuildBuffer() const { return mBuildBuffer;}
 
     static Ogre::Overlay *loadResources(int w, int h, Ogre::String name);
     static void loadResources(Ogre::Resource *res);
@@ -221,7 +221,7 @@ public:
     void windowToFront(int window);
     void centerWindowOnMouse(int window);
     void showWindow(int window, bool visible);
-    void parseWindows ();
+    void parseWindows();
 
     void update(Ogre::Real);  /**< Returns the clicked element or -1 when nothing was clicked. **/
     void setTooltip(const char *text, bool systemMessage = false);
@@ -233,12 +233,12 @@ public:
     const char *getNextSound();           /**< Returns the first sound and delete it from the string-vector. **/
 
     void setMouseState(int action);
-    int getScreenWidth()    { return mScreenWidth; }
-    int getScreenHeight()   { return mScreenHeight;}
+    int getScreenWidth() const  { return mScreenWidth; }
+    int getScreenHeight() const { return mScreenHeight;}
     int getElementIndex(const char *name, int windowID = -1, int getElementIndex = -1);
     const char *getElementName(int index);
 
-    int mouseEvent(int MouseAction, Ogre::Vector3 &mouse);
+    int mouseEvent(const int mouseAction, Ogre::Vector3 &mouse);
     bool keyEvent(const int keyChar, const unsigned int key);
 
     void startTextInput(int window, int winElement, int maxChars, bool blockNumbers=false, bool blockWhitespaces=false);
@@ -255,35 +255,35 @@ public:
     }
     void cancelTextInput();
     int getElementPressed();
-    const char *getTextInput() { return mStrTextInput.c_str(); }
+    const char *getTextInput() const { return mStrTextInput.c_str(); }
     void printText(int width, int height, Ogre::uint32 *dst, int dstLineSkip,
                    Ogre::uint32 *bak, int bakLineSkip, const char *txt, unsigned int fontNr,
                    Ogre::uint32 color = 0xffffffff, bool hideText = false);
     void drawDragElement(const Ogre::PixelBox &src);
-    bool getMediaCreation()
-    {
-        return mCreateMedia;
-    }
-    bool getPrintInfo()
-    {
-        return mPrintInfo;
-    }
-    const Ogre::String &getPathDescription()
-    {
-        return mPathDescription;
-    }
-    const Ogre::String &getPathTextures()
-    {
-        return mPathTextures;
-    }
-    const Ogre::String &getPathItems()
-    {
-        return mPathTexturesItems;
-    }
-    const Ogre::String &getPathFonts()
-    {
-        return mPathTexturesFonts;
-    }
+    bool getMediaCreation() const { return mCreateMedia; } /**< Returns the command-line setting for (re)creating all media stuff. **/
+    bool getPrintInfo() const     { return mPrintInfo;   } /**< Returns the command-line setting for printing infos about the gui. **/
+    bool mouseInsideGui() const   { return mMouseWithin; }
+    const Ogre::String &getPathDescription() const { return mPathDescription; }
+    const Ogre::String &getPathTextures() const    { return mPathTextures;    }
+    const Ogre::String &getPathItems() const       { return mPathTexturesItems; }
+    const Ogre::String &getPathFonts() const       { return mPathTexturesFonts; }
+
+    void clear(int element)                                   { sendMsg(element, MSG_CLEAR); }
+    void closeParentWin(int element)                          { sendMsg(element, MSG_CLOSE_PARENT); }
+    void setText(int element, const char *text)               { sendMsg(element, MSG_SET_TEXT, text); }
+    void addLine(int element, const char *text)               { sendMsg(element, MSG_ADD_ROW, text); }
+    void addItem(int element, const char *itemGfx,
+                 int param, const char *tooltip)              { sendMsg(element, MSG_ADD_ITEM,itemGfx, param, tooltip); }
+    void delItem(int element, const char *itemGfx)            { sendMsg(element, MSG_DEL_ITEM); }
+    void setValue(int element, int value)                     { sendMsg(element, MSG_SET_VALUE, 0, value); }
+    void setVisible(int element, bool value)                  { sendMsg(element, MSG_SET_VISIBLE, 0, value==true?1:0); }
+    bool getUserBreak(int element)                            { sendMsg(element, MSG_GET_USERBREAK); return mMsgRetInt>0; }
+    int getSelection(int element)                             { sendMsg(element, MSG_GET_SELECTION); return mMsgRetInt; }
+    int getActivated(int element)                             { sendMsg(element, MSG_GET_ACTIVATED); return mMsgRetInt; }
+    int print(int element, const char *text,
+              Ogre::uint32 color = COLOR_WHITE)               { sendMsg(element, MSG_ADD_ROW, text, color); return mMsgRetInt;}
+    const char *getKeyword(int element)                       { sendMsg(element, MSG_GET_KEYWORD); return mMsgRetStr.c_str();}
+
 
 private:
     // ////////////////////////////////////////////////////////////////////
@@ -308,21 +308,23 @@ private:
     ElementID;
 
     static WindowID mWindowID[WIN_SUM];
-    static ElementID mStateStruct[GUI_ELEMENTS_SUM];
+    static ElementID mStateStruct[ELEMENTS_SUM];
     static short mWindowZPos[WIN_SUM]; /**< The window-numbers are sorted here on the z-pos */
     int mDragSrcWin, mDragSrcSlot, mDragSrcContainer;
     int mDragDstWin, mDragDstSlot, mDragDstContainer;
     int mDragSrcItemPosx, mDragSrcItemPosy; // Set on dragStart for moving back on false drag&drop.
-    int mTextInputWindow;   /**< The window where a text input is in progress. */
-    int mTextInputElement;  /**< The windows-element where a text input is in progress. */
-    int mActiveWindow;      /**< The window which was selected by the user. */
-    bool mCreateMedia;      /**< Create all media (e.g. atlastextures, raw-fonts). */
-    bool mPrintInfo;        /**< Print gui information into the logfile. */
-
-    int mHotSpotX, mHotSpotY;
+    int mTextInputWindow;        /**< The window where a text input is in progress. */
+    int mTextInputElement;       /**< The windows-element where a text input is in progress. */
+    int mActiveWindow;           /**< The window which was selected by the user. */
+    int mSumDefinedWindows;      /**< Number of windows created by GuiManager. */
+    int mHotSpotX, mHotSpotY;    /**< Hotspot offset for the mouse. */
+    bool mCreateMedia;           /**< Create all media (e.g. atlastextures, raw-fonts). */
+    static bool mPrintInfo;      /**< Print gui information into the logfile. */
+    bool mMouseWithin;           /**< True if the mouse is within the gui. */
+    Ogre::uint32 mMsgRetInt;     /**< Return Value of the sendMsg() system of type int. */
+    Ogre::String mMsgRetStr;     /**< Return Value of the sendMsg() system of type string. */
     unsigned int mScreenWidth, mScreenHeight;
-    unsigned long mTooltipDelay;
-    bool mIsDragging;
+    unsigned long mTooltipDelay; /**< Delay for the tooltip to show up. */
     bool mTextInputUserAction;
     std::vector<Ogre::String> mvSound;
     Ogre::uint32 *mBuildBuffer;  /**< Buffer to draw all graphics before blitting them into the texture. **/
@@ -330,7 +332,7 @@ private:
     static Ogre::Overlay *mOverlay;
     static Ogre::OverlayElement *mElement;
     Ogre::TexturePtr mTexture;
-    Ogre::String mSoundWrongInput;
+    Ogre::String mSoundWrongInput; /**< Filename of the sound 'wrong user input'. **/
     Ogre::String mStrTooltip;
     Ogre::String mStrTextInput, mBackupStrTextInput;
     Ogre::String mPathDescription, mPathTextures, mPathTexturesFonts, mPathTexturesItems;
@@ -341,34 +343,20 @@ private:
     ~GuiManager() {}
     GuiManager(const GuiManager&); // disable copy-constructor.
     void drawTooltip();
-    int sendMsg(int element, int message, const char *text, Ogre::uint32 param = COLOR_WHITE);
-    const char *sendMsg(int elementNr, int info);
+    void sendMsg(int element, Message message, const char *text = 0, Ogre::uint32 param = COLOR_WHITE, const char *text2 = 0);
+
     class ResourceLoader : public Ogre::ManualResourceLoader
     {
     public:
         ResourceLoader()  {}
         ~ResourceLoader() {}
-        /** Called by Ogre when a manual created resource needs to be reloaded. **/
+        /// Called by Ogre when a manual created resource needs to be reloaded.
         void loadResource(Ogre::Resource *resource) { loadResources(resource); }
     };
-    static class ResourceLoader mLoader;
+    static ResourceLoader mLoader;
 
 public:
     static ResourceLoader *getLoader() { return &mLoader; }
-    void clear(int element)                                   { sendMsg(element, MSG_CLEAR,       0); }
-    void closeParentWin(int element)                          { sendMsg(element, MSG_CLOSE_PARENT,0); }
-    void setText(int element, const char *text)               { sendMsg(element, MSG_SET_TEXT, text); }
-    void addLine(int element, const char *text)               { sendMsg(element, MSG_ADD_ROW,  text); }
-    void addItem(int element, const char *itemGfx, int param) { sendMsg(element, MSG_ADD_ITEM,itemGfx, param); }
-    void delItem(int element, const char *itemGfx)            { sendMsg(element, MSG_DEL_ITEM,    0); }
-    void setValue(int element, int value)                     { sendMsg(element, MSG_SET_VALUE,   0, value); }
-    void setVisible(int element, bool value)                  { sendMsg(element, MSG_SET_VISIBLE, 0, value==true?1:0); }
-    bool getUserBreak(int element)                            { return sendMsg(element, MSG_GET_USERBREAK, 0)?true:false; }
-    int getSelection(int element)                             { return sendMsg(element, MSG_GET_SELECTION, 0); }
-    int getActivated(int element)                             { return sendMsg(element, MSG_GET_ACTIVATED, 0); }
-    int print(int element, const char *text,
-              Ogre::uint32 color = COLOR_WHITE)               { return sendMsg(element, MSG_ADD_ROW,  text, color); }
-    const char *getKeyword(int element)                       { return sendMsg(element, (int)MSG_GET_KEYWORD); }
 };
 
 #endif

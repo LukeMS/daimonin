@@ -109,7 +109,7 @@ void ObjectVisuals::Init()
     tmpMaterial->setDepthCheckEnabled(true);
     tmpMaterial->setDepthWriteEnabled(true);
 
-    mTexBuffer = new unsigned char[TEXTURE_SIZE * TEXTURE_SIZE * sizeof(uint32)];
+    mTexBuffer = new uchar[TEXTURE_SIZE * TEXTURE_SIZE * sizeof(uint32)];
     Image image;
     image.loadDynamicImage(mTexBuffer, TEXTURE_SIZE, TEXTURE_SIZE, PF_A8B8G8R8);
     TexturePtr pTexture = TextureManager::getSingleton().loadImage(TEXTURE_NAME, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, image, TEX_TYPE_2D);
@@ -130,7 +130,7 @@ void ObjectVisuals::buildEntity(int index, const char *meshName, const char *ent
 {
     Real h = 20.0, w = 10.0;
     String strMob = "Mob"+ StringConverter::toString(index, 3, '0');
-    ManualObject* mob = static_cast<ManualObject*>(Events::getSingleton().GetSceneManager()->createMovableObject(strMob, ManualObjectFactory::FACTORY_TYPE_NAME));
+    ManualObject* mob = static_cast<ManualObject*>(Events::getSingleton().getSceneManager()->createMovableObject(strMob, ManualObjectFactory::FACTORY_TYPE_NAME));
 
     mob->begin(MATERIAL_NAME);
 
@@ -142,7 +142,7 @@ void ObjectVisuals::buildEntity(int index, const char *meshName, const char *ent
     mob->triangle(3, 2, 1);
     mob->end();
     mob->convertToMesh(meshName);
-    mEntity[index]=Events::getSingleton().GetSceneManager()->createEntity(entityName, meshName);
+    mEntity[index]=Events::getSingleton().getSceneManager()->createEntity(entityName, meshName);
     mEntity[index]->setQueryFlags(ObjectManager::QUERY_NPC_SELECT_MASK);
 }
 

@@ -91,16 +91,16 @@ bool inv_updated:1;          /**< Container was updated **/
         unsigned short anim_state;   /**< last face in sequence drawn **/
         unsigned short last_anim;    /**< How many ticks have passed since we last animated **/
         /**<  when item's inventory is modified, draw routines can use this to redraw things **/
-        unsigned int  flagsval;       /**< Unmodified flags value as sent from the server **/
-        unsigned char apply_type;    /**< How item is applied (worn/wield/etc) **/
-        unsigned char type;          /**< Item type for ordering **/
-        unsigned char itype;
-        unsigned char stype;
-        unsigned char item_qua;
-        unsigned char item_con;
-        unsigned char item_skill;
-        unsigned char item_level;
-        unsigned char direction;
+        unsigned int flagsval;       /**< Unmodified flags value as sent from the server **/
+        Ogre::uchar apply_type;      /**< How item is applied (worn/wield/etc) **/
+        Ogre::uchar type;            /**< Item type for ordering **/
+        Ogre::uchar itype;
+        Ogre::uchar stype;
+        Ogre::uchar item_qua;
+        Ogre::uchar item_con;
+        Ogre::uchar item_skill;
+        Ogre::uchar item_level;
+        Ogre::uchar direction;
     }
     sItem;
     enum
@@ -125,25 +125,25 @@ bool inv_updated:1;          /**< Container was updated **/
     // ////////////////////////////////////////////////////////////////////
     static Item &getSingleton()
     {
-        static Item Singleton;
-        return Singleton;
+        static Item Singleton; return Singleton;
     }
     void dropItem(int srcWindow, int srcSlot, int dstWindow, int dstSlot);
-    void ItemXYCmd(unsigned char *data, int len, bool bflag);
+    void ItemXYCmd(Ogre::uchar *data, int len, bool bflag);
     void clearContainer(int container);
     void delItem(unsigned int item, int container);
     bool addItem(sItem *tmpItem, int container);
     void dropInventoryItemToFloor(int slotNr);
     void getInventoryItemFromFloor(int slotNr);
     bool update(sItem *tmpItem, int newContainerID, bool bflag);
-    int  getContainerID(unsigned int ItemID);
+    const int  getContainerID(unsigned int ItemID);
     const char *getItemGfxName(int itemFace);
-    sItem *locateItem(int container, unsigned int tag);
+    const sItem *locateItem(int container, unsigned int tag);
     void printAllItems();
     void setBackpackID(int id)
     {
         mActItemID[ITEMLIST_BACKPACK] = id;
     }
+
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
@@ -151,7 +151,6 @@ private:
     std::list<sItem*> mItemList[ITEMLIST_SUM];
     int mActItemID[ITEMLIST_SUM]; /**< ID of the actual itemContainer **/
     int mSlotID[ITEMLIST_SUM];    /**< ID of the slots for the items **/
-    char mStrBuffer[256];
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
@@ -159,4 +158,5 @@ private:
     ~Item();
     Item(const Item&); // disable copy-constructor.
 };
+
 #endif

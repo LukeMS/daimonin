@@ -39,11 +39,10 @@ private:
         ~ResourceLoader() {}
 
         /**
-        ** This function is called by Ogre
-        ** when a manual created resource needs to be reloaded.
-        ** All Managers, with manual loaded resources, are called
-        ** until the.responsible one was found.
-        *****************************************************************************/
+         ** This function is called by Ogre when a manual created resource
+         ** needs to be reloaded. All Managers, with manual loaded resources,
+         ** are called until the responsible one was found.
+         *****************************************************************************/
         void loadResource(Ogre::Resource *resource);
     } Loader;
     ManResourceLoader()  {}

@@ -161,17 +161,11 @@ public:
     }
     ObjectNPC *getObjectNPC(unsigned int index)
     {
-        if (index < mvNPC.size())
-            return mvNPC[index];
-        else
-            return 0;
+        return (index < mvNPC.size())?mvNPC[index]:0;
     }
     ObjectNPC *getSelectedNPC()
     {
-        if (mSelectedObject >= 0)
-            return mvNPC[mSelectedObject];
-        else
-            return 0;
+        return (mSelectedObject >= 0)?mvNPC[mSelectedObject]:0;
     }
     const Ogre::Vector3 getTargetedPos()
     {

@@ -30,7 +30,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 /**
  ** This singleton class stores the graphic positions of all gui elements.
- ** All graphics are stored in a single gfx-file.
+ ** All graphics are stored in an atlas file.
  ** Each graphic can have serveral states (like: pressed, mouse over, etc).
  *****************************************************************************/
 class GuiImageset
@@ -47,16 +47,21 @@ public:
     }
     StateNames;
 
-    /** Actual state of an GuiElement: **/
+    /// Possible states of a GuiElement (max 256).
     enum
     {
         STATE_ELEMENT_DEFAULT,
         STATE_ELEMENT_PUSHED,
         STATE_ELEMENT_M_OVER,  /**< Mouse over. **/
         STATE_ELEMENT_PASSIVE, /**< Disabled. **/
+        /// Extra states for checkbuttons.
+        STATE_ELEMENT_CHECKED,
+        STATE_ELEMENT_CHECKED_PUSHED,
+        STATE_ELEMENT_CHECKED_M_OVER,  /**< Mouse over. **/
+        STATE_ELEMENT_CHECKED_PASSIVE, /**< Disabled. **/
         STATE_ELEMENT_SUM
     };
-    static StateNames mElementState[STATE_ELEMENT_SUM];
+    static StateNames mElementState[STATE_ELEMENT_SUM & 0xff];
 
     typedef struct
     {
@@ -67,7 +72,7 @@ public:
     typedef struct
     {
         int w, h;
-        gfxPos state[GuiManager::STATE_MOUSE_SUM];
+        gfxPos state[GuiManager::STATE_MOUSE_SUM & 0xff];
     }
     gfxSrcMouse;
 
@@ -75,7 +80,7 @@ public:
     {
         Ogre::String name;
 #ifdef D_DEBUG
-        bool isUsed; /**< Used by any gui-elements, or an orphaned entry? **/
+        bool isUsed; /**< Actual used by a gui-element, or an orphaned entry? **/
 #endif
         int w, h;
         gfxPos state[STATE_ELEMENT_SUM];
@@ -90,19 +95,18 @@ public:
         static GuiImageset singleton; return singleton;
     }
     void parseXML(const char *XML_imageset_file, bool createItemAtlas);
-    /**  Returns the array of the gfx positions for the mouse-cursor. **/
+    ///  Returns the array of the gfx positions for the mouse-cursor.
     gfxSrcMouse *getStateGfxPosMouse()
     {
         return mSrcEntryMouse;
     }
-    gfxSrcEntry *getStateGfxPositions(const char* guiImage);
+    gfxSrcEntry *getStateGfxPositions(const char *guiImage);
+    const Ogre::PixelBox &getItemPB(int itemId);
     const Ogre::PixelBox &getPixelBox()
     {
-        return mSrcPixelBox;
+        return mGuiGfxPixelBox;
     }
-    void delBackgroundElements();
     int getItemId(const char *gfxName);
-    const Ogre::PixelBox &getItemPB(int itemId);
 
 private:
     // ////////////////////////////////////////////////////////////////////
@@ -112,17 +116,16 @@ private:
     std::vector<gfxSrcEntry*> mvSrcEntry;
     std::vector<Ogre::String> mvAtlasGfxName;
     Ogre::String mStrImageSetGfxFile;
-    Ogre::Image mImageSetImg;
-    Ogre::PixelBox mSrcPixelBox;
-    Ogre::Image mAtlasTexture;
-    Ogre::PixelBox mSrcPb;
+    Ogre::PixelBox mGuiGfxPixelBox;
+    Ogre::PixelBox mItemPixelBox;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     GuiImageset() {}
     ~GuiImageset();
-    void parseItems(bool createItemAtlas);
     GuiImageset(const GuiImageset&); // disable copy-constructor
+
+    void parseItems(bool createItemAtlas);
     bool parseStates(TiXmlElement *xmlElem, gfxPos *Entry, int sum_state, bool mouseStates);
 };
 

@@ -41,21 +41,21 @@ public:
         MAX_LINKS = 25,
     };
 
-    /** Which area of the interface is used. **/
+    /// Which area of the interface is used.
     enum
     {
-        GUI_INTERFACE_HEAD     = 1 << 0,
-        GUI_INTERFACE_MESSAGE  = 1 << 1,
-        GUI_INTERFACE_REWARD   = 1 << 2,
-        GUI_INTERFACE_ACCEPT   = 1 << 3,
-        GUI_INTERFACE_TEXTFIELD= 1 << 4,
-        GUI_INTERFACE_DECLINE  = 1 << 5,
-        GUI_INTERFACE_BUTTON   = 1 << 6,
-        GUI_INTERFACE_WHO      = 1 << 7,
-        // internal, don't use.
-        GUI_INTERFACE_XTENDED  = 1 << 8,
-        GUI_INTERFACE_ICON     = 1 << 9,
-        GUI_INTERFACE_LINK     = 1 <<10,
+        INTERFACE_HEAD     = 1 << 0,
+        INTERFACE_MESSAGE  = 1 << 1,
+        INTERFACE_REWARD   = 1 << 2,
+        INTERFACE_ACCEPT   = 1 << 3,
+        INTERFACE_TEXTFIELD= 1 << 4,
+        INTERFACE_DECLINE  = 1 << 5,
+        INTERFACE_BUTTON   = 1 << 6,
+        INTERFACE_WHO      = 1 << 7,
+        /// internal, don't use.
+        INTERFACE_XTENDED  = 1 << 8,
+        INTERFACE_ICON     = 1 << 9,
+        INTERFACE_LINK     = 1 <<10,
     };
 
     enum
@@ -67,8 +67,8 @@ public:
 
     enum
     {
-        GUI_INTERFACE_STATUS_NORMAL,
-        GUI_INTERFACE_STATUS_WAIT
+        INTERFACE_STATUS_NORMAL,
+        INTERFACE_STATUS_WAIT
     };
 
     // ////////////////////////////////////////////////////////////////////
@@ -76,14 +76,13 @@ public:
     // ////////////////////////////////////////////////////////////////////
     static CmdInterface &getSingleton()
     {
-        static CmdInterface Singleton;
-        return Singleton;
+        static CmdInterface Singleton; return Singleton;
     }
     void show();
     void reset();
     void buttonEvent(int index);
     void mouseEvent(int index);
-    bool keyEvent(const char keyChar, const unsigned char key);
+    bool keyEvent(const char keyChar, const Ogre::uchar key);
     bool load(int mode, char *data, int len, int pos);
 
 private:
@@ -116,10 +115,10 @@ private:
 
     struct _mHead
     {
-        int face;           /**< ID of the picture.       **/
-        Ogre::String name;        /**< Name of the picture.     **/
+        int face;               /**< ID of the picture. **/
+        Ogre::String name;      /**< Name of the picture. **/
         //_Sprite *picture; /**< Pointer to the gfx data. **/
-        Ogre::String body_text;   /**< Title-text of the head.  **/
+        Ogre::String body_text; /**< Title-text of the head. **/
     }
     mHead;
 
@@ -175,9 +174,9 @@ private:
     struct _mIcon
     {
         char mode;
-        int num;           /**< ID of the icon. **/
+        int num;            /**< ID of the icon. **/
         Ogre::String title;
-        Ogre::String name;       /**< Picture name. **/
+        Ogre::String name;  /**< Picture name. **/
         //item element;
         //_Sprite *picture;/**< Pointer to the gfx data. **/
         char *second_line;

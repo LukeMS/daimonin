@@ -223,7 +223,7 @@ void TileChunk::calcNormal(Real x1, Real z1, Real x2, Real z2, Real x3, Real z3)
 //================================================================================================
 // Set all data for a vertex
 //================================================================================================
-void TileChunk::setVertex(Vector3 &pos, Real posTexX, Real posTexZ, Real posShadowX, Real posShadowZ, int p)
+void TileChunk::setVertex(const Vector3 &pos, Real posTexX, Real posTexZ, Real posShadowX, Real posShadowZ, int p)
 {
     static const int TEXTURE_UNIT_SORT[][6]=
     {
@@ -297,17 +297,17 @@ void TileChunk::changeLand()
         {1 * TEX_SIZE, 2 * TEX_SIZE, 3 * TEX_SIZE, 0 * TEX_SIZE}, // Texture Unit 2.1 (vertical)
         {0 * TEX_SIZE, 1 * TEX_SIZE, 2 * TEX_SIZE, 3 * TEX_SIZE}, // Texture Unit 2.2 (horizontal)
     };
-    int scrollX, scrollZ, texUnit0, texUnit1, texUnit2, texUnitShadow, mirror, sortPos, offX, offZ;
+    int mapScrollX, mapScrollY, texUnit0, texUnit1, texUnit2, texUnitShadow, mirror, sortPos, offX, offZ;
 
     HardwareVertexBufferSharedPtr vbuf = mMeshLand->getSubMesh(0)->vertexData->vertexBufferBinding->getBuffer(0);
     mPosVBuf = static_cast<Real*>(vbuf->lock(HardwareBuffer::HBL_DISCARD));
-    TileManager::getSingleton().getMapScroll(scrollX, scrollZ);
+    TileManager::getSingleton().getMapScroll(mapScrollX, mapScrollY);
     for (int z = 0; z < TileManager::CHUNK_SIZE_Z; ++z)
     {
-        offZ = (z+scrollZ)&3;
+        offZ = (z+mapScrollY)&3;
         for (int x = CHUNK_START_OFFSET[mCameraRotation][z]; x < CHUNK_START_OFFSET[mCameraRotation][z]+CHUNK_X_LENGTH[z]; ++x)
         {
-            offX = (x-scrollX)&3;
+            offX = (x-mapScrollX)&3;
             // Shadow gfx
             texUnitShadow = TileManager::getSingleton().getMapShadow(x, z);
             mTexPosInAtlas[7] = (Real) ((texUnitShadow&127)/7);
@@ -316,7 +316,7 @@ void TileChunk::changeLand()
             mirror = texUnitShadow >> 14;
 
             // Tile gfx.
-            if ((x-scrollX)&1)
+            if ((x-mapScrollX)&1)
             {
                 if (z&1) // bottom-right subtile.
                 {
@@ -450,10 +450,6 @@ void TileChunk::update()
 void TileChunk::changeWater()
 {
     SubMesh *submesh = mMeshWater->getSubMesh(0);
-    createDummySubMesh(submesh);
-
-    return;
-
     // ////////////////////////////////////////////////////////////////////
     // Count the Vertices in this chunk.
     // ////////////////////////////////////////////////////////////////////
@@ -473,7 +469,7 @@ void TileChunk::changeWater()
     // When we don't have any water on the map, we create a dummy mesh.
     // That way we won't run in any trouble because of uninitialized stuff.
     // ////////////////////////////////////////////////////////////////////
-    if (!numVertices)
+    //if (!numVertices)
     {
         createDummySubMesh(submesh);
         return;
@@ -481,7 +477,6 @@ void TileChunk::changeWater()
     // ////////////////////////////////////////////////////////////////////
     // Create VertexData.
     // ////////////////////////////////////////////////////////////////////
-    int mapX, mapZ;
     delete submesh->vertexData;
     VertexData* vdata = new VertexData();
     vdata->vertexCount = numVertices;
@@ -498,21 +493,22 @@ void TileChunk::changeWater()
     WaveHigh+= offsetWave;
     if (WaveHigh >1.7 || WaveHigh < -1.7) offsetWave*=-1;
     Real* pReal = static_cast<Real*>(vbuf0->lock(HardwareBuffer::HBL_DISCARD));
-    Real q1, q2, offX, offZ;
-    for (int x = 0; x < TileManager::CHUNK_SIZE_X; ++x)
+    int x, y;
+    TileManager::getSingleton().getMapScroll(x, y);
+    Real q1, q2, offX = (x&2)*0.25, offY = (y&2)*0.25;
+    for (x = 0; x < TileManager::CHUNK_SIZE_X; ++x)
     {
-        for (int z = 0; z < TileManager::CHUNK_SIZE_Z; ++z)
+        offX += 0.25; if (offX > 0.75) offX = 0;
+        for (y = 0; y < TileManager::CHUNK_SIZE_Z; ++y)
         {
-            if (TileManager::getSingleton().getMapHeight(x, z, TileManager::VERTEX_TL) < WATERLEVEL || TileManager::getSingleton().getMapHeight(x, z, TileManager::VERTEX_TR) < WATERLEVEL ||
-                    TileManager::getSingleton().getMapHeight(x, z, TileManager::VERTEX_BL) < WATERLEVEL || TileManager::getSingleton().getMapHeight(x, z, TileManager::VERTEX_BR) < WATERLEVEL)
+            offY += 0.25; if (offY > 0.75) offY = 0;
+            if (TileManager::getSingleton().getMapHeight(x, y, TileManager::VERTEX_TL) < WATERLEVEL || TileManager::getSingleton().getMapHeight(x, y, TileManager::VERTEX_TR) < WATERLEVEL ||
+                    TileManager::getSingleton().getMapHeight(x, y, TileManager::VERTEX_BL) < WATERLEVEL || TileManager::getSingleton().getMapHeight(x, y, TileManager::VERTEX_BR) < WATERLEVEL)
             {
                 // ////////////////////////////////////////////////////////////////////
                 // Position.
                 // ////////////////////////////////////////////////////////////////////
-                TileManager::getSingleton().getMapScroll(mapX, mapZ);
-                mapX-=x;
-                mapZ-=z;
-                if ((mapX&1) != (mapZ&1))
+                if (y&1)
                 {
                     q1 = WATERLEVEL + WaveHigh;
                     q2 = WATERLEVEL - WaveHigh;
@@ -522,62 +518,60 @@ void TileChunk::changeWater()
                     q1 = WATERLEVEL - WaveHigh;
                     q2 = WATERLEVEL + WaveHigh;
                 }
-                offX = 1-(Real)(mapX&3) * 0.25;
-                offZ = 1-(Real)(mapZ&3) * 0.25;
                 // 1. Triangle
                 *pReal++ = TileManager::TILE_SIZE * x;
                 *pReal++ = q1;
-                *pReal++ = TileManager::TILE_SIZE * z;
+                *pReal++ = TileManager::TILE_SIZE * y;
                 *pReal++ = 0;
                 *pReal++ = 1;
                 *pReal++ = 0;
                 *pReal++ = offX;
-                *pReal++ = offZ;
+                *pReal++ = offY;
 
                 *pReal++ = TileManager::TILE_SIZE * x;
                 *pReal++ = q2;
-                *pReal++ = TileManager::TILE_SIZE * (z+1);
+                *pReal++ = TileManager::TILE_SIZE * (y+1);
                 *pReal++ = 0;
                 *pReal++ = 1;
                 *pReal++ = 0;
                 *pReal++ = offX;
-                *pReal++ = 0.25;
+                *pReal++ = offY+0.25;
 
                 *pReal++ = TileManager::TILE_SIZE * (x+1);
                 *pReal++ = q2;
-                *pReal++ = TileManager::TILE_SIZE * z;
+                *pReal++ = TileManager::TILE_SIZE * y;
                 *pReal++ = 0;
                 *pReal++ = 1;
                 *pReal++ = 0;
-                *pReal++ = 0.25;
-                *pReal++ = offZ;
+                *pReal++ = offX+0.25;
+                *pReal++ = offY;
                 // 2. Triangle
                 *pReal++ = TileManager::TILE_SIZE * (x+1);
                 *pReal++ = q2;
-                *pReal++ = TileManager::TILE_SIZE * z;
+                *pReal++ = TileManager::TILE_SIZE * y;
                 *pReal++ = 0;
                 *pReal++ = 1;
                 *pReal++ = 0;
-                *pReal++ = 0.25;
-                *pReal++ = offZ;
+                *pReal++ = offX+0.25;
+                *pReal++ = offY;
 
                 *pReal++ = TileManager::TILE_SIZE * x;
                 *pReal++ = q2;
-                *pReal++ = TileManager::TILE_SIZE * (z+1);
+                *pReal++ = TileManager::TILE_SIZE * (y+1);
                 *pReal++ = 0;
                 *pReal++ = 1;
                 *pReal++ = 0;
                 *pReal++ = offX;
-                *pReal++ = 0.25;
+                *pReal++ = offY+0.25;
 
                 *pReal++ = TileManager::TILE_SIZE * (x+1);
-                *pReal++= q1;
-                *pReal++ = TileManager::TILE_SIZE * (z+1);
+                *pReal++ = q1;
+                *pReal++ = TileManager::TILE_SIZE * (y+1);
                 *pReal++ = 0;
                 *pReal++ = 1;
                 *pReal++ = 0;
-                *pReal++ = 0.25;
-                *pReal++ = 0.25;
+                *pReal++ = offX+0.25;
+                *pReal++ = offY+0.25;
             }
         }
     }

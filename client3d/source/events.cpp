@@ -269,8 +269,8 @@ bool Events::frameStarted(const FrameEvent& evt)
             OverlayManager::getSingleton().destroy(GUI_LOADING_OVERLAY);
             GuiManager::getSingleton().showWindow(GuiManager::WIN_CHATWINDOW, true);
             GuiManager::getSingleton().showWindow(GuiManager::WIN_TEXTWINDOW, true);
-            GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "Welcome to ~Daimonin 3D~.");
-            GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "You need a running server to start the game!");
+            GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Welcome to ~Daimonin 3D~.");
+            GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "You need a running server to start the game!");
             Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
             break;
         }
@@ -297,23 +297,23 @@ bool Events::frameStarted(const FrameEvent& evt)
             GuiManager::getSingleton().showWindow(GuiManager::WIN_LOGIN, false);
             GuiManager::getSingleton().showWindow(GuiManager::WIN_SERVERSELECT, true);
             Option::getSingleton().setGameStatus(Option::GAME_STATUS_STARTCONNECT);
-            GuiManager::getSingleton().setText(GuiManager::GUI_TEXTBOX_SERVER_INFO1, "Select a server");
+            GuiManager::getSingleton().setText(GuiManager::TEXTBOX_SERVER_INFO1, "Select a server");
             break;
         }
 
         case Option::GAME_STATUS_STARTCONNECT:
         {
-            if (GuiManager::getSingleton().getUserBreak(GuiManager::GUI_TABLE))
+            if (GuiManager::getSingleton().getUserBreak(GuiManager::TABLE))
             {
                 GuiManager::getSingleton().showWindow(GuiManager::WIN_SERVERSELECT, false);
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_PLAY);
             }
             // A server was selected.
-            int select = GuiManager::getSingleton().getActivated(GuiManager::GUI_TABLE);
+            int select = GuiManager::getSingleton().getActivated(GuiManager::TABLE);
             if (select >=0)
             {
-                GuiManager::getSingleton().setText(GuiManager::GUI_TEXTBOX_SERVER_INFO2, " ");
-                GuiManager::getSingleton().setText(GuiManager::GUI_TEXTBOX_SERVER_INFO3, " ");
+                GuiManager::getSingleton().setText(GuiManager::TEXTBOX_SERVER_INFO2, " ");
+                GuiManager::getSingleton().setText(GuiManager::TEXTBOX_SERVER_INFO3, " ");
                 Network::getSingleton().setActiveServer(select);
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_CONNECT);
             }
@@ -324,14 +324,14 @@ bool Events::frameStarted(const FrameEvent& evt)
         {
             if (!Network::getSingleton().OpenActiveServerSocket())
             {
-                GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "Connection failed!");
-                GuiManager::getSingleton().setText(GuiManager::GUI_TEXTBOX_SERVER_INFO2, "~#ffff0000Connection failed!");
+                GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Connection failed!");
+                GuiManager::getSingleton().setText(GuiManager::TEXTBOX_SERVER_INFO2, "~#ffff0000Connection failed!");
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_START);
                 break;
             }
             Network::getSingleton().socket_thread_start();
-            GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "Connected. Sending Setup Command.");
-            GuiManager::getSingleton().setText(GuiManager::GUI_TEXTBOX_SERVER_INFO2, "~#ff00ff00Connected!");
+            GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Connected. Sending Setup Command.");
+            GuiManager::getSingleton().setText(GuiManager::TEXTBOX_SERVER_INFO2, "~#ff00ff00Connected!");
             Option::getSingleton().setGameStatus(Option::GAME_STATUS_SETUP);
             break;
         }
@@ -362,9 +362,9 @@ bool Events::frameStarted(const FrameEvent& evt)
             if ((Root::getSingleton().getTimer()->getMicroseconds() - timeWaitServer)/1000 > SERVER_TIMEOUT)
             {
                 // Server doesn't understand our setup command. This is a bug!
-                GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "~#ffff0000-------------------------------------------------");
-                GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "~#ffff0000Server timeout on setup command!");
-                GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "~#ffff0000-------------------------------------------------");
+                GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "~#ffff0000-------------------------------------------------");
+                GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "~#ffff0000Server timeout on setup command!");
+                GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "~#ffff0000-------------------------------------------------");
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_START);
             }
             break;
@@ -380,10 +380,10 @@ bool Events::frameStarted(const FrameEvent& evt)
 
         case Option::GAME_STATUS_LOGIN:
         {
-            TileMap::getSingleton().clear_map();
+            TileMap::getSingleton().clear_map(); // Eats up MUCH time in debug mode.
             GuiManager::getSingleton().showWindow(GuiManager::WIN_SERVERSELECT, false);
             GuiManager::getSingleton().showWindow(GuiManager::WIN_LOGIN, true);
-            GuiManager::getSingleton().startTextInput(GuiManager::WIN_LOGIN, GuiManager::GUI_TEXTINPUT_LOGIN_NAME, MAX_LEN_LOGIN_NAME, true, true);
+            GuiManager::getSingleton().startTextInput(GuiManager::WIN_LOGIN, GuiManager::TEXTINPUT_LOGIN_NAME, MAX_LEN_LOGIN_NAME, true, true);
             Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_NAME);
             break;
         }
@@ -400,7 +400,7 @@ bool Events::frameStarted(const FrameEvent& evt)
             }
             if (GuiManager::getSingleton().getUserAction() && errorMsgNeedsToBeCleared)
             {
-                GuiManager::getSingleton().setText(GuiManager::GUI_TEXTBOX_LOGIN_WARN, " ");
+                GuiManager::getSingleton().setText(GuiManager::TEXTBOX_LOGIN_WARN, " ");
                 errorMsgNeedsToBeCleared = false;
             }
             // Wait for user to finish the textinput.
@@ -411,12 +411,12 @@ bool Events::frameStarted(const FrameEvent& evt)
             {
                 String strMsg = "~#ffff0000Username length must be between " + StringConverter::toString(MIN_LEN_LOGIN_NAME)+
                                 " and " + StringConverter::toString(MAX_LEN_LOGIN_NAME) + " chars!~";
-                GuiManager::getSingleton().setText(GuiManager::GUI_TEXTBOX_LOGIN_WARN, strMsg.c_str());
-                GuiManager::getSingleton().startTextInput(GuiManager::WIN_LOGIN, GuiManager::GUI_TEXTINPUT_LOGIN_NAME, MAX_LEN_LOGIN_NAME, true, true);
+                GuiManager::getSingleton().setText(GuiManager::TEXTBOX_LOGIN_WARN, strMsg.c_str());
+                GuiManager::getSingleton().startTextInput(GuiManager::WIN_LOGIN, GuiManager::TEXTINPUT_LOGIN_NAME, MAX_LEN_LOGIN_NAME, true, true);
                 errorMsgNeedsToBeCleared = true;
                 break;
             }
-            GuiManager::getSingleton().startTextInput(GuiManager::WIN_LOGIN, GuiManager::GUI_TEXTINPUT_LOGIN_PASSWD, MAX_LEN_LOGIN_PSWD, false, false);
+            GuiManager::getSingleton().startTextInput(GuiManager::WIN_LOGIN, GuiManager::TEXTINPUT_LOGIN_PASSWD, MAX_LEN_LOGIN_PSWD, false, false);
             Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_PASWD);
             break;
         }
@@ -432,7 +432,7 @@ bool Events::frameStarted(const FrameEvent& evt)
             }
             if (GuiManager::getSingleton().getUserAction() && errorMsgNeedsToBeCleared)
             {
-                GuiManager::getSingleton().setText(GuiManager::GUI_TEXTBOX_LOGIN_WARN, " ");
+                GuiManager::getSingleton().setText(GuiManager::TEXTBOX_LOGIN_WARN, " ");
                 errorMsgNeedsToBeCleared = false;
             }
             // Wait for user to finish the textinput.
@@ -442,8 +442,8 @@ bool Events::frameStarted(const FrameEvent& evt)
             {
                 String strMsg = "~#ffff0000Password length must be between " + StringConverter::toString(MIN_LEN_LOGIN_PSWD)+
                                 " and " + StringConverter::toString(MAX_LEN_LOGIN_PSWD) + " chars!~";
-                GuiManager::getSingleton().setText(GuiManager::GUI_TEXTBOX_LOGIN_WARN, strMsg.c_str());
-                GuiManager::getSingleton().startTextInput(GuiManager::WIN_LOGIN, GuiManager::GUI_TEXTINPUT_LOGIN_PASSWD, MAX_LEN_LOGIN_PSWD, false, false);
+                GuiManager::getSingleton().setText(GuiManager::TEXTBOX_LOGIN_WARN, strMsg.c_str());
+                GuiManager::getSingleton().startTextInput(GuiManager::WIN_LOGIN, GuiManager::TEXTINPUT_LOGIN_PASSWD, MAX_LEN_LOGIN_PSWD, false, false);
                 errorMsgNeedsToBeCleared = true;
                 break;
             }
@@ -464,7 +464,7 @@ bool Events::frameStarted(const FrameEvent& evt)
             if ((Root::getSingleton().getTimer()->getMicroseconds() - timeWaitServer)/1000 > SERVER_TIMEOUT)
             {
                 // Server doesn't understand our login command. Can only happen while coding/testing.
-                GuiManager::getSingleton().setText(GuiManager::GUI_TEXTBOX_LOGIN_WARN, "~#ffff0000Server timeout on account login!");
+                GuiManager::getSingleton().setText(GuiManager::TEXTBOX_LOGIN_WARN, "~#ffff0000Server timeout on account login!");
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_START);
             }
             break;
@@ -472,7 +472,7 @@ bool Events::frameStarted(const FrameEvent& evt)
 
         case Option::GAME_STATUS_LOGIN_DONE:
         {
-            GuiManager::getSingleton().clear(GuiManager::GUI_TABLE);
+            GuiManager::getSingleton().clear(GuiManager::TABLE);
             String strTabel;
             for (int i = 0; i < ObjectHero::getSingleton().getSumChars(); ++i)
             {
@@ -480,10 +480,10 @@ bool Events::frameStarted(const FrameEvent& evt)
                 strTabel+= ObjectHero::getSingleton().getCharRace(i);   strTabel+= " ";
                 strTabel+= ObjectHero::getSingleton().getCharGender(i); strTabel+= ";";
                 strTabel+= StringConverter::toString(ObjectHero::getSingleton().getCharLevel(i));
-                GuiManager::getSingleton().addLine(GuiManager::GUI_TABLE, strTabel.c_str());
+                GuiManager::getSingleton().addLine(GuiManager::TABLE, strTabel.c_str());
             }
             GuiManager::getSingleton().showWindow(GuiManager::WIN_SERVERSELECT, true);
-            GuiManager::getSingleton().setText(GuiManager::GUI_TEXTBOX_SERVER_INFO1, "Select a character");
+            GuiManager::getSingleton().setText(GuiManager::TEXTBOX_SERVER_INFO1, "Select a character");
             GuiManager::getSingleton().showWindow(GuiManager::WIN_LOGIN, false);
             Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_CHOOSE_CHAR);
             break;
@@ -491,17 +491,17 @@ bool Events::frameStarted(const FrameEvent& evt)
 
         case Option::GAME_STATUS_LOGIN_CHOOSE_CHAR:
         {
-            if (GuiManager::getSingleton().getUserBreak(GuiManager::GUI_TABLE))
+            if (GuiManager::getSingleton().getUserBreak(GuiManager::TABLE))
             {
                 GuiManager::getSingleton().showWindow(GuiManager::WIN_SERVERSELECT, false);
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_START);
             }
             // A character was selected.
-            int select = GuiManager::getSingleton().getActivated(GuiManager::GUI_TABLE);
+            int select = GuiManager::getSingleton().getActivated(GuiManager::TABLE);
             if (select >=0)
             {
-                GuiManager::getSingleton().setText(GuiManager::GUI_TEXTBOX_SERVER_INFO2, " ");
-                GuiManager::getSingleton().setText(GuiManager::GUI_TEXTBOX_SERVER_INFO3, " ");
+                GuiManager::getSingleton().setText(GuiManager::TEXTBOX_SERVER_INFO2, " ");
+                GuiManager::getSingleton().setText(GuiManager::TEXTBOX_SERVER_INFO3, " ");
                 ObjectHero::getSingleton().setSelected(select);
                 GuiManager::getSingleton().showWindow(GuiManager::WIN_SERVERSELECT, false);
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_CHARACTER);
@@ -514,7 +514,7 @@ bool Events::frameStarted(const FrameEvent& evt)
             std::stringstream ssTemp;
             ssTemp << ObjectHero::getSingleton().getSelectedCharName();
             Network::getSingleton().send_command_binary(Network::CLIENT_CMD_ADDME, ssTemp);
-//            GuiManager::getSingleton().addTextline(GuiManager::WIN_CHATWINDOW, GuiManager::GUI_LIST_MSGWIN, name.c_str());
+//            GuiManager::getSingleton().addTextline(GuiManager::WIN_CHATWINDOW, GuiManager::LIST_MSGWIN, name.c_str());
             Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_CHARACTER_WAIT);
             break;
         }
@@ -540,21 +540,20 @@ bool Events::frameStarted(const FrameEvent& evt)
                     GuiManager::getSingleton().showWindow(GuiManager::WIN_STATISTICS, true);
                     GuiManager::getSingleton().showWindow(GuiManager::WIN_PLAYERINFO, true);
                     mWindow->resetStatistics();
-                    GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "");
-                    GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "Client3d commands:");
-                    GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "Press ~1 ... 8~ to change cloth.");
-                    GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "Hold shift for a ranged attack.");
-                    GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "Press ~!keyg~ for grid. ");
-                    GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "Press ~!keya~ to change Idle animation.");
-                    GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "Press ~!keyb~ to change Attack animation.");
-                    GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "Press ~!keyc~ to change Agility animation.");
-                    GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "Press ~!keyp~ to ready/unready primary weapon.");
-                    GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "Press ~!keys~ to ready/unready secondary weapon.");
-                    GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "Press ~!keyq~ to start attack animation.");
-                    GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "Press ~PGUP/PGDOWN~ to rotate camera.");
-                    GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "Press ~HOME~ to freeze camera rotation.");
-                    GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "Press ~!keyi~ for Inventory.");
-                    GuiManager::getSingleton().print(GuiManager::GUI_LIST_MSGWIN, "Example of user defined chars: :( :) :D :P !key-spc");
+                    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Client3d commands:");
+                    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~1 ... 8~ to change cloth.");
+                    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Hold shift for a ranged attack.");
+                    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~!keyg~ for grid. ");
+                    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~!keya~ to change Idle animation.");
+                    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~!keyb~ to change Attack animation.");
+                    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~!keyc~ to change Agility animation.");
+                    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~!keyp~ to ready/unready primary weapon.");
+                    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~!keys~ to ready/unready secondary weapon.");
+                    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~!keyq~ to start attack animation.");
+                    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~PGUP/PGDN~ to rotate camera.");
+                    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~HOME~ to freeze camera rotation.");
+                    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~!keyi~ for Inventory.");
+                    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Example of user defined chars: :( :) :D :P !key-spc");
                     // Can crash the client...
                     //ObjectManager::getSingleton().setNameNPC(ObjectNPC::HERO, strAccountName.c_str());
                     //Sound::getSingleton().playStream(Sound::GREETS_VISITOR);
@@ -574,8 +573,7 @@ bool Events::frameStarted(const FrameEvent& evt)
                 mRaySceneQuery->setRay(mCamera->getCameraToViewportRay(mMouse.x / mWindow->getWidth(), mMouse.y / mWindow->getHeight()));
                 mRaySceneQuery->setQueryMask(ObjectManager::QUERY_NPC_MASK | ObjectManager::QUERY_CONTAINER);
                 RaySceneQueryResult &result = mRaySceneQuery->execute();
-                if (!result.empty()
-                        //&& !GuiManager::getSingleton().mouseInsideGui()
+                if (!result.empty() && !GuiManager::getSingleton().mouseInsideGui()
                    )
                 {
                     // Mouse is over an object.
@@ -664,16 +662,16 @@ bool Events::frameEnded(const FrameEvent& evt)
         const RenderTarget::FrameStats& stats = mWindow->getStatistics();
         std::stringstream strBuf;
         strBuf << std::fixed << std::setprecision(1) << stats.lastFPS;
-        GuiManager::getSingleton().setText(GuiManager::GUI_TEXTBOX_STAT_CUR_FPS, strBuf.str().c_str());
+        GuiManager::getSingleton().setText(GuiManager::TEXTBOX_STAT_CUR_FPS, strBuf.str().c_str());
         strBuf.rdbuf()->str(""); // delete stringstream buffer.
         strBuf << std::fixed << std::setprecision(1) << stats.bestFPS;
-        GuiManager::getSingleton().setText(GuiManager::GUI_TEXTBOX_STAT_BEST_FPS, strBuf.str().c_str());
+        GuiManager::getSingleton().setText(GuiManager::TEXTBOX_STAT_BEST_FPS, strBuf.str().c_str());
         strBuf.rdbuf()->str(""); // delete stringstream buffer.
         strBuf << std::fixed << std::setprecision(1) << stats.worstFPS;
-        GuiManager::getSingleton().setText(GuiManager::GUI_TEXTBOX_STAT_WORST_FPS, strBuf.str().c_str());
+        GuiManager::getSingleton().setText(GuiManager::TEXTBOX_STAT_WORST_FPS, strBuf.str().c_str());
         strBuf.rdbuf()->str(""); // delete stringstream buffer.
         strBuf << std::fixed << std::setprecision(1) << stats.triangleCount;
-        GuiManager::getSingleton().setText(GuiManager::GUI_TEXTBOX_STAT_SUM_TRIS, strBuf.str().c_str());
+        GuiManager::getSingleton().setText(GuiManager::TEXTBOX_STAT_SUM_TRIS, strBuf.str().c_str());
         skipFrames = 100;
     }
     return true;

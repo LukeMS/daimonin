@@ -73,7 +73,7 @@ public:
     //void attackObjectOnTile(TilePosOLD pos);
     void addToMap();
     void setEnemy();
-    const unsigned char getBoundingRadius() const
+    const Ogre::uchar getBoundingRadius() const
     {
         return mBoundingRadius;
     }
@@ -147,7 +147,7 @@ private:
         READY_WEAPON_SECONDARY_DROP = 1 << 6, /**< Prepare to unready the secondare weapon. **/
     };
 
-    unsigned char mBoundingRadius; /**< The radius of subtiles, the NPC stands on. Used for pathfinding. **/
+    Ogre::uchar mBoundingRadius; /**< The radius of subtiles, the NPC stands on. Used for pathfinding. **/
     bool mAutoMoving;
     bool mTalking;
     void moveByCursor(Ogre::Real dTime);

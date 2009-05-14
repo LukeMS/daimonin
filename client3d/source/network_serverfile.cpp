@@ -21,14 +21,9 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
-#include <fstream>
-#include <sstream>
-#include <iterator>
-#include <iomanip>
 #include "network_serverfile.h"
 #include "network.h"
 #include "logger.h"
-#include "define.h"
 #include "zlib.h"
 
 using namespace std;

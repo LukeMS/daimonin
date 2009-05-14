@@ -82,7 +82,7 @@ const char *meshName[][ObjectEquipment::ITEM_SUM]=
 };
 
 unsigned long ObjectEquipment::mIndex =0;
-unsigned char *ObjectEquipment::mTexImageBuf = 0;
+uchar *ObjectEquipment::mTexImageBuf = 0;
 Image ObjectEquipment::shadowImage;
 
 //const uint32 MASK_COLOR = 0xffc638db; // This is our mask. Pixel with this color will not be drawn.
@@ -318,7 +318,7 @@ inline void ObjectEquipment::drawBopyPart(sPicture &picPart, uint32 texColor, ui
         uint32 *tmpBuf = new uint32[mTexture->getWidth()*mTexture->getHeight()];
         mTexture->getBuffer()->blitToMemory(PixelBox(mTexture->getWidth(), mTexture->getHeight(), 1, PF_A8R8G8B8, tmpBuf));
         Image img;
-        img = img.loadDynamicImage((unsigned char*)tmpBuf, mTexture->getWidth(), mTexture->getHeight(), PF_A8R8G8B8);
+        img = img.loadDynamicImage((uchar*)tmpBuf, mTexture->getWidth(), mTexture->getHeight(), PF_A8R8G8B8);
         img.save(file);
         delete[] tmpBuf;
     }
@@ -404,7 +404,7 @@ void ObjectEquipment::equipItem(unsigned int bone, int type, int itemID, int par
     {
         static unsigned long itemIndex =0;
         String tmpName = "Item_" + StringConverter::toString(++itemIndex, 8, '0');
-        mItem[bone].entity= Events::getSingleton().GetSceneManager()->createEntity(tmpName, meshName[type][itemID]);
+        mItem[bone].entity= Events::getSingleton().getSceneManager()->createEntity(tmpName, meshName[type][itemID]);
         mItem[bone].entity->setQueryFlags(ObjectManager::QUERY_EQUIPMENT_MASK);
         mParentEntity->attachObjectToBone(boneName[bone], mItem[bone].entity);
     }
@@ -418,7 +418,7 @@ void ObjectEquipment::dropItem(int bone)
     if (mItem[bone].entity)
     {
         mParentEntity->detachObjectFromBone(mItem[bone].entity);
-        Events::getSingleton().GetSceneManager()->destroyEntity(mItem[bone].entity);
+        Events::getSingleton().getSceneManager()->destroyEntity(mItem[bone].entity);
         mItem[bone].entity =0;
     }
     if (mItem[bone].particle)

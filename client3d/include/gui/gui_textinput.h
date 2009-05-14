@@ -49,25 +49,25 @@ public:
     {
         static GuiTextinput singleton; return singleton;
     }
-    void addString(Ogre::String &addString)
+    void addString(const Ogre::String &addString)
     {
         mStrTextInput+= addString;
     }
-    void setString(Ogre::String &newString)
+    void setString(const Ogre::String &newString)
     {
         mStrTextInput = newString;
     }
-    /** Clears the the input text. **/
+    /// Clears the the input text.
     void clearText()
     {
         mStrTextInput = "";
     }
-    /** Finish the text input **/
+    /// Finish the text input
     void finished()
     {
         mFinished = true;
     };
-    /** Cancel the text input **/
+    /// Cancel the text input
     void canceled()
     {
         mCanceled = true;
@@ -251,7 +251,7 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Variables.
     // ////////////////////////////////////////////////////////////////////
-    /** The maximum number of selectable entries for a selection field. **/
+    /// The maximum number of selectable entries for a selection field.
     enum { MAX_SELECTION_ENTRIES = 20 };
     unsigned int mActValue, mMaxValue;
     unsigned int mMaxChars;

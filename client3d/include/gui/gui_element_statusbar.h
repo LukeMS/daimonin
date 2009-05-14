@@ -36,26 +36,27 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    GuiStatusbar(TiXmlElement *xmlElement, void *parent);
+    GuiStatusbar(TiXmlElement *xmlElement, const void *parent);
     ~GuiStatusbar() {}
-    int sendMsg(int message, const char *text, Ogre::uint32 param);
-    void draw();
-    void setValue(int value);
-    void update(Ogre::Real dTime);
+    virtual void sendMsg(const int message, Ogre::String &text, Ogre::uint32 &param, const char *text2);
+    virtual void update(Ogre::Real dTime);
 
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    bool mVertical;
-    bool mAutoColor;            /**< Change the color from green to red depending on the filling percentage. **/
-    bool mSmoothChange;         /**< Change the filling percentage in small steps to the new value. **/
-    int mLength, mDiameter;
+    bool mHorizontal;
+    bool mAutoColor;    /**< Change the color from green to red depending on the filling percentage. **/
+    bool mSmoothChange; /**< Change the filling percentage in small steps to the new value. **/
+    int mDiameter;
+    int mLength;
     int mValue;
-    Ogre::Real mDrawn;
+    Ogre::Real mDrawn;  /**< The currently drawn part of mValue. **/
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
+    void setValue(int value);
+    void draw();
     void drawGfxBar(Ogre::uint32 *dst);
     void drawColorBar(Ogre::uint32 *dst);
 };

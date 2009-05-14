@@ -37,21 +37,21 @@ const int SLIDER_INNER_OFFSET = 3;
 //================================================================================================
 // Constructor.
 //================================================================================================
-GuiElementScrollbar::GuiElementScrollbar(TiXmlElement *xmlElement, void *parent, void *parentElement):GuiElement(xmlElement, parent)
+GuiElementScrollbar::GuiElementScrollbar(TiXmlElement *xmlElement, const void *parent, const void *parentElement):GuiElement(xmlElement, parent)
 {
     mButScrollUp  = 0;
     mButScrollDown= 0;
     mHorizontal = (mWidth > mHeight);
-    uint32 *color = 0;
-    const char *tmp;
     TiXmlElement *xmlOpt;
     for (xmlOpt = xmlElement->FirstChildElement("Color"); xmlOpt; xmlOpt = xmlOpt->NextSiblingElement("Color"))
     {
+        uint32 *color = 0;
         if      (!strcmp(xmlOpt->Attribute("type"), "BACKGROUND"))  color = &mColorBackground;
         else if (!strcmp(xmlOpt->Attribute("type"), "BORDERLINE"))  color = &mColorBorderline;
         else if (!strcmp(xmlOpt->Attribute("type"), "BAR_PASSIVE")) color = &mColorBarPassive;
         else if (!strcmp(xmlOpt->Attribute("type"), "BAR_M_OVER"))  color = &mColorBarM_Over;
         else if (!strcmp(xmlOpt->Attribute("type"), "BAR_ACTIVE"))  color = &mColorBarActive;
+        const char *tmp;
         if ((tmp = xmlOpt->Attribute("red"  ))) *color = atoi(tmp);
         if ((tmp = xmlOpt->Attribute("green"))) *color+= atoi(tmp) <<  8;
         if ((tmp = xmlOpt->Attribute("blue" ))) *color+= atoi(tmp) << 16;
@@ -68,7 +68,28 @@ GuiElementScrollbar::GuiElementScrollbar(TiXmlElement *xmlElement, void *parent,
     mMouseOver = false;
     mMouseButDown = false;
     mSliderPos = 0;
-    resize(-1, -1);
+    if (mHorizontal)
+    {
+        mStartX = mPosX + mButScrollDown->getWidth();
+        mStartY = mPosY;
+        mStopX  = mPosX + mWidth - mButScrollDown->getWidth();
+        mStopY  = mPosY + mHeight;
+        mButScrollUp->setPosition(mStopX, mPosY);
+        mButScrollDown->setPosition(mPosX, mPosY);
+        mMaxSliderSize = (mStopX -mStartX - SLIDER_INNER_OFFSET-1);
+    }
+    else
+    {
+        mStartX = mPosX;
+        mStartY = mPosY + mButScrollDown->getHeight();
+        mStopX  = mPosX + mButScrollDown->getWidth();
+        mStopY  = mPosY + mHeight - mButScrollDown->getHeight();
+        mButScrollDown->setPosition(mStartX, mStopY);
+        mButScrollUp->setPosition(mPosX, mPosY);
+        mMaxSliderSize = (mStopY -mStartY - SLIDER_INNER_OFFSET-1);
+    }
+    if (mButScrollUp)   mButScrollUp->draw();
+    if (mButScrollDown) mButScrollDown->draw();
 }
 
 //================================================================================================
@@ -98,16 +119,36 @@ bool GuiElementScrollbar::mouseOverSlider(int x, int y)
     if (mHorizontal)
         return false;
     else
-        return (x > mStartX && x < mStopX && y > mStartY + mSliderPos && y < mStartY + mSliderPos + mSliderSize );
+        return !(x < mStartX || x > mStopX || y < mStartY + mSliderPos || y > mStartY + mSliderPos + mSliderSize);
 }
 
 //================================================================================================
 // Mouse action in parent window.
 // Slider must stick to the mousecursor while scrolling.
 //================================================================================================
-int GuiElementScrollbar::mouseEvent(int MouseAction, int x, int y, int mouseWheel)
+int GuiElementScrollbar::mouseEvent(const int mouseAction, int mouseX, int mouseY, int mouseWheel)
 {
+    // ////////////////////////////////////////////////////////////////////
+    // Mouse has left the window. Set the states to default.
+    // ////////////////////////////////////////////////////////////////////
+    if (mouseAction <0)
+    {
+        if (setState(GuiImageset::STATE_ELEMENT_DEFAULT))
+        {
+            draw();
+            stopDragging();
+            mMouseOver = false;
+        }
+        else
+        {
+            if (mButScrollUp) mButScrollUp->mouseEvent(-1,-1,-1,-1);
+            if (mButScrollDown) mButScrollDown->mouseEvent(-1,-1,-1,-1);
+        }
+        return GuiManager::EVENT_CHECK_DONE; // No need to check other gadgets.
+    }
+    // ////////////////////////////////////////////////////////////////////
     // Test the buttons and the mouswheel.
+    // ////////////////////////////////////////////////////////////////////
     if (!mDragging)
     {
         if (mouseWheel)
@@ -115,47 +156,60 @@ int GuiElementScrollbar::mouseEvent(int MouseAction, int x, int y, int mouseWhee
             mLastScrollAmount = mouseWheel>0?-1:+1;
             return GuiManager::EVENT_USER_ACTION;
         }
-        if (mButScrollUp && mButScrollUp->mouseEvent(MouseAction, x, y, mouseWheel) == GuiManager::EVENT_USER_ACTION)
+        if (mButScrollUp)
         {
-            mLastScrollAmount = -1;
-            return GuiManager::EVENT_USER_ACTION;
-        }
-        if (mButScrollDown && mButScrollDown->mouseEvent(MouseAction, x, y, mouseWheel) == GuiManager::EVENT_USER_ACTION)
+            int ret = mButScrollUp->mouseEvent(mouseAction, mouseX, mouseY, mouseWheel);
+            if (ret == GuiManager::EVENT_CHECK_DONE)
+                return ret;
+            if (ret == GuiManager::EVENT_USER_ACTION)
+            {
+                mLastScrollAmount = -1;
+                return ret;
+            }
+         }
+        if (mButScrollDown)
         {
-            mLastScrollAmount = +1;
-            return GuiManager::EVENT_USER_ACTION;
+            int ret = mButScrollDown->mouseEvent(mouseAction, mouseX, mouseY, mouseWheel);
+            if (ret == GuiManager::EVENT_CHECK_DONE)
+                return ret;
+            if (ret == GuiManager::EVENT_USER_ACTION)
+            {
+                mLastScrollAmount = +1;
+                return ret;
+            }
         }
     }
+    // ////////////////////////////////////////////////////////////////////
     // Test the slider.
-    if (mDragging || mouseOverSlider(x,y))
+    // ////////////////////////////////////////////////////////////////////
+    if (mDragging || mouseOverSlider(mouseX, mouseY))
     {
         static float dragDelta = 0;
         static int dragSliderPos = 0;
+        // Mouse has just arrived over the slider.
         if (!mMouseOver)
         {
             mMouseOver = true;
             if (setState(GuiImageset::STATE_ELEMENT_M_OVER)) draw();
-            //GuiManager::getSingleton().setTooltip(mStrTooltip.c_str());
             return GuiManager::EVENT_CHECK_DONE;
         }
-        if (MouseAction == GuiManager::BUTTON_PRESSED && !mMouseButDown)
+        // Mousebutton was pressed.
+        if (mouseAction == GuiManager::BUTTON_PRESSED && !mMouseButDown)
         {
             mDragging = true;
             mMouseButDown = true;
-            dragSliderPos = y;
+            dragSliderPos = mouseY;
             dragDelta = 0;
             if (setState(GuiImageset::STATE_ELEMENT_PUSHED)) draw();
             return GuiManager::EVENT_CHECK_DONE;
         }
-        if (MouseAction == GuiManager::BUTTON_RELEASED && mMouseButDown)
+        // Mousebutton was released.
+        if (mouseAction == GuiManager::BUTTON_RELEASED && mMouseButDown)
         {
             mDragging = false;
             mMouseButDown = false;
-            if (mouseOverSlider(x,y))
-            {
+            if (mouseOverSlider(mouseX, mouseY))
                 if (setState(GuiImageset::STATE_ELEMENT_M_OVER)) draw();
-                return GuiManager::EVENT_USER_ACTION;
-            }
             else
             {
                 if (setState(GuiImageset::STATE_ELEMENT_DEFAULT)) draw();
@@ -163,29 +217,27 @@ int GuiElementScrollbar::mouseEvent(int MouseAction, int x, int y, int mouseWhee
             }
             return GuiManager::EVENT_CHECK_DONE;
         }
-        if (MouseAction == GuiManager::MOUSE_MOVEMENT && mDragging)
+        if (mouseAction == GuiManager::MOUSE_MOVEMENT && mDragging)
         {
-            if (y > mStartY && y < mStartY+mMaxSliderSize)
+            if (mouseY > mStartY && mouseY < mStartY+mMaxSliderSize)
             {
-                mLastScrollAmount = (int) ((y-dragSliderPos) / mPixelScrollToLineScroll + dragDelta);
-                dragDelta = ((y-dragSliderPos) / mPixelScrollToLineScroll + dragDelta) - mLastScrollAmount;
-                dragSliderPos = y;
+                mLastScrollAmount = (int) ((mouseY-dragSliderPos) / mPixelScrollToLineScroll + dragDelta);
+                dragDelta = ((mouseY-dragSliderPos) / mPixelScrollToLineScroll + dragDelta) - mLastScrollAmount;
+                dragSliderPos = mouseY;
                 return GuiManager::EVENT_USER_ACTION;
             }
         }
         return GuiManager::EVENT_CHECK_DONE; // No need to check other gadgets.
     }
-    // Mouse is no longer over the the gadget.
-    if (getState() != GuiImageset::STATE_ELEMENT_DEFAULT)
+    // ////////////////////////////////////////////////////////////////////
+    // Mouse is no longer over the slider.
+    // ////////////////////////////////////////////////////////////////////
+    if (setState(GuiImageset::STATE_ELEMENT_DEFAULT))
     {
         mMouseOver = false;
         mMouseButDown = false;
-        if (setState(GuiImageset::STATE_ELEMENT_DEFAULT)) draw();
-        GuiManager::getSingleton().setTooltip("");
-        return GuiManager::EVENT_CHECK_NEXT;
+        draw();
     }
-    // If dragging is active, the parent window stays active if the mouse moves outside the window.
-    if (mDragging) return GuiManager::EVENT_CHECK_DONE;
     return GuiManager::EVENT_CHECK_NEXT; // No action here, check the other gadgets.
 }
 
@@ -215,13 +267,30 @@ void GuiElementScrollbar::updateSliderSize(int sizeStrBuffer, int scrollOffset, 
 //================================================================================================
 void GuiElementScrollbar::draw()
 {
-    int x1, x2, y1, y2;
+    uint32 *dst = GuiManager::getSingleton().getBuildBuffer();
     int w = mStopX-mStartX;
     int h = mStopY-mStartY;
+    // Background.
+    for (int xy = 0; xy < w*h; ++xy) dst[xy] = mColorBackground;
+    // Horizontal borderlines.
+    for (int x = 1; x < w-1; ++x)
+    {
+        dst[   1 *w +x] = mColorBorderline;
+        dst[(h-2)*w +x] = mColorBorderline;
+    }
+    // Vertical borderlines.
+    for (int y = 2; y < h-2; ++y)
+    {
+        dst[y*w +  1] = mColorBorderline;
+        dst[y*w +w-2] = mColorBorderline;
+    }
     uint32 color;
-    uint32 *dst = GuiManager::getSingleton().getBuildBuffer();
     switch (mState)
     {
+        case GuiImageset::STATE_ELEMENT_DEFAULT:
+            color = mColorBorderline;
+            stopDragging();
+            break;
         case GuiImageset::STATE_ELEMENT_PUSHED:
             color = mColorBarActive;
             break;
@@ -235,6 +304,7 @@ void GuiElementScrollbar::draw()
             color = mColorBorderline;
             break;
     }
+    int x1, x2, y1, y2;
     if (mHorizontal)
     {
         x1 = mSliderPos + SLIDER_INNER_OFFSET;
@@ -245,29 +315,12 @@ void GuiElementScrollbar::draw()
         {
             for (int x = SLIDER_INNER_OFFSET; x < mMaxSliderSize; ++x)
             {
-                if (x > x1 && x < x2)
-                    dst[y * w + x] = color;
-                else
-                    dst[y * w + x] = mColorBackground;
+                dst[y*w + x] = (x > x1 && x < x2)?color:mColorBackground;
             }
         }
     }
     else
     {
-        // Background.
-        for (int i= 0; i < w*h; ++i) dst[i] = mColorBackground;
-        // Horizontal borderlines.
-        for (int x = 1; x < w-1; ++x)
-        {
-            dst[   1 *w +x] = mColorBorderline;
-            dst[(h-2)*w +x] = mColorBorderline;
-        }
-        // Vertical borderlines.
-        for (int y = 2; y < h-2; ++y)
-        {
-            dst[y*w +  1] = mColorBorderline;
-            dst[y*w +w-2] = mColorBorderline;
-        }
         x1 = SLIDER_INNER_OFFSET +1;
         x2 = w - SLIDER_INNER_OFFSET -1;
         y1 = mSliderPos + SLIDER_INNER_OFFSET;
@@ -276,10 +329,7 @@ void GuiElementScrollbar::draw()
         {
             for (int x = x1; x < x2; ++x)
             {
-                if (y > y1 && y < y2)
-                    dst[y * w + x] = color;
-                else
-                    dst[y * w + x] = mColorBackground;
+                dst[y*w + x] = (y > y1 && y < y2)?color:mColorBackground;
             }
         }
     }
@@ -287,40 +337,4 @@ void GuiElementScrollbar::draw()
     mParent->getTexture()->getBuffer()->blitFromMemory(
         PixelBox(mStopX- mStartX, mStopY-mStartY, 1, PF_A8B8G8R8, dst),
         Box(mStartX, mStartY, mStopX, mStopY));
-}
-
-//================================================================================================
-// Resize the complete scrollbar. Value of <0 means keep the current value.
-//================================================================================================
-void GuiElementScrollbar::resize(int newWidth, int newHeight)
-{
-    if (newWidth == mWidth && newHeight == mHeight) return;
-    if (newWidth < 0) newWidth = mWidth;
-    if (newHeight< 0) newHeight= mHeight;
-    if (mHorizontal)
-    {
-        mStartX = mPosX + mButScrollDown->getWidth();
-        mStartY = mPosY;
-        mStopX  = mPosX + mWidth - mButScrollDown->getWidth();
-        mStopY  = mPosY + mHeight;
-        mButScrollUp->setPosition(mStopX, mPosY);
-        mButScrollDown->setPosition(mPosX, mPosY);
-        mMaxSliderSize = (mStopX -mStartX - SLIDER_INNER_OFFSET-1);
-        mSliderSize = (mSliderSize*newWidth) /mWidth;
-    }
-    else
-    {
-        mStartX = mPosX;
-        mStartY = mPosY + mButScrollDown->getHeight();
-        mStopX  = mPosX + mButScrollDown->getWidth();
-        mStopY  = mPosY + mHeight - mButScrollDown->getHeight();
-        mButScrollDown->setPosition(mStartX, mStopY);
-        mButScrollUp->setPosition(mPosX, mPosY);
-        mMaxSliderSize = (mStopY -mStartY - SLIDER_INNER_OFFSET-1);
-        mSliderSize = (mSliderSize*newHeight) /mHeight;
-    }
-    GuiManager::getSingleton().resizeBuildBuffer((mStopX-mStartX)*(mStopY-mStartY));
-    if (mButScrollUp)   mButScrollUp->draw();
-    if (mButScrollDown) mButScrollDown->draw();
-    //updateSliderSize(1, 1);
 }

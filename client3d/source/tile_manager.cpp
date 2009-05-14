@@ -75,8 +75,7 @@ void TileManager::Init(SceneManager* SceneMgr, int queryMaskLand, int queryMaskW
     mSelectedVertexX = mSelectedVertexZ = 0; // Tile picking.
     mSceneManager = SceneMgr;
     mRaySceneQuery = mSceneManager->createRayQuery(Ray());
-    mLod = lod&3;
-    //mLod = 3;
+    mLod = lod&(SUM_ATLAS_RESOLUTIONS-1);
     int textureSize = MAX_TEXTURE_SIZE >> mLod;
     Logger::log().info() << "Setting LoD to " << mLod << ". Atlas size is " << textureSize << "x" << textureSize<< ".";
     if (createAtlas)
@@ -307,7 +306,7 @@ void TileManager::copyShadowToAtlas(uchar *dstBuf)
 //================================================================================================
 // Collect all tiles and filters into a single RGBA-image.
 //================================================================================================
-void TileManager::createAtlasTexture(int textureSize, bool fixFilteringErrors, unsigned int startGroup)
+void TileManager::createAtlasTexture(int textureSize, unsigned int startGroup)
 {
     int stopGroup = startGroup+1;
     if (startGroup >= (unsigned int) MAX_MAP_SETS)
@@ -326,7 +325,7 @@ void TileManager::createAtlasTexture(int textureSize, bool fixFilteringErrors, u
         dstImage.loadDynamicImage(dstBuf, textureSize, textureSize, 1, PF_A8R8G8B8, true);
         String dstFilename = PATH_GFX_TILES;
         dstFilename+= "Atlas_"+ StringConverter::toString(nr,2,'0') + "_";
-        for (unsigned short s = textureSize; s >= textureSize/4; s/=2)
+        for (unsigned short s = textureSize; s >= textureSize/(1<<(SUM_ATLAS_RESOLUTIONS-1)); s/=2)
         {
             dstImage.save(dstFilename + StringConverter::toString(s, 4, '0') + ".png");
             dstImage.resize(s/2, s/2, Image::FILTER_BILINEAR);
@@ -463,7 +462,7 @@ void TileManager::copySubTile(uchar* src, int srcX, int srcY, uchar *dst, int ds
             *dst++ = *src++;
             *dst++ = *src++;
             *dst++ = *src++;
-            *dst++ = (alpha)?*src++:0xff;;
+            *dst++ = (alpha)?*src++:0xff;
         }
         src+= size*3*alphaPixel;
         dst+= (MAX_TEXTURE_SIZE-size) * RGBA;

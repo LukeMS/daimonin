@@ -30,33 +30,34 @@ using namespace Ogre;
 //================================================================================================
 //
 //================================================================================================
-int GuiElementTextbox::sendMsg(int message, const char *text, uint32 param)
+void GuiElementTextbox::sendMsg(const int message, Ogre::String &text, Ogre::uint32 &param, const char *text2)
 {
     switch (message)
     {
+        case GuiManager::MSG_SET_VISIBLE:
+            setVisible(param?true:false);
+            return;
         case GuiManager::MSG_SET_TEXT:
-            mStrLabel = text;
+            mLabelString = text;
             mLabelColor = param;
             draw();
-            return 0;
-        default:
-            return -1;
+            return;
     }
 }
 
 //================================================================================================
 // .
 //================================================================================================
-GuiElementTextbox::GuiElementTextbox(TiXmlElement *xmlElement, void *parent):GuiElement(xmlElement, parent)
+GuiElementTextbox::GuiElementTextbox(TiXmlElement *xmlElement, const void *parent):GuiElement(xmlElement, parent)
 {
     const char *tmp = xmlElement->Attribute("hide");
     mHideText = (tmp && atoi(tmp))?true:false;
     if ((xmlElement = xmlElement->FirstChildElement("Tooltip")))
         if ((tmp = xmlElement->Attribute("text"))) mStrTooltip = tmp;
-    int maxX, maxY;
-    mParent->getSize(maxX, maxY);
+    int maxX = mParent->getWidth();
+    int maxY = mParent->getHeight();
     if (mWidth <= GuiElement::MIN_SIZE) // No value was set in the xml-file.
-        mWidth  = GuiTextout::getSingleton().calcTextWidth(mStrLabel.c_str(), mLabelFontNr);
+        mWidth  = GuiTextout::getSingleton().calcTextWidth(mLabelString.c_str(), mLabelFontNr);
     if (mHeight<= GuiElement::MIN_SIZE) // No value was set in the xml-file.
         mHeight = GuiTextout::getSingleton().getFontHeight(mLabelFontNr);
     // Clip the text.
@@ -72,6 +73,6 @@ void GuiElementTextbox::draw()
 {
     uint32 *dst = GuiManager::getSingleton().getBuildBuffer();
     GuiTextout::getSingleton().printText(mWidth, mHeight, dst, mWidth,
-                                         mParent->getLayerBG() + mLabelPosX + mLabelPosY*mParent->getWidth(), mParent->getWidth(), mStrLabel.c_str(), mLabelFontNr, mLabelColor, mHideText);
+                                         mParent->getLayerBG() + mLabelPosX + mLabelPosY*mParent->getWidth(), mParent->getWidth(), mLabelString.c_str(), mLabelFontNr, mLabelColor, mHideText);
     mParent->getTexture()->getBuffer()->blitFromMemory(PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8, dst), Box(mLabelPosX, mLabelPosY, mLabelPosX+mWidth, mLabelPosY+mHeight));
 }

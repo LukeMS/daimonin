@@ -91,7 +91,6 @@ public:
     void checkFileStatus(const char *cmd, char *param, int fileNr);
     bool requestFiles();
 
-
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
@@ -112,7 +111,6 @@ private:
     ~ServerFile()
     {}
     ServerFile(const ServerFile&); // disable copy-constructor.
-    void getFileAttibutes(int file_enum);
 };
 
 #endif

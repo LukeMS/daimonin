@@ -55,14 +55,6 @@ public:
     enum {SC_NORMAL, SC_FIRERUN, SC_ALWAYS};
     enum {VERSION_CS = 991027};
     enum {VERSION_SC = 991027};
-    // flags for send_command_binary()
-    enum
-    {
-        SEND_CMD_FLAG_DYNAMIC = 1 << 0, // Data tail length can vary, add 2 length bytes
-        SEND_CMD_FLAG_STRING  = 1 << 1, // add a '\0' to the outbuffer string as sanity set
-        SEND_CMD_FLAG_NOSTRING= 1 << 2, // no add of  '\0'
-        SEND_CMD_FLAG_FIXED   = 1 << 3, // the the command as fixed, without length tag (server knows length)
-    };
 
     // List of client to server (cs) binary command tags.
     enum client_cmd
@@ -141,9 +133,9 @@ public:
     static void CloseSocket(int &socket);
     static void CloseClientSocket();
     static void send_game_command(const char *command);
-    static int  send_command_binary(unsigned char cmd, std::stringstream &stream);
-    static int  GetInt_String(unsigned char *data);
-    static short GetShort_String(unsigned char *data);
+    static int  send_command_binary(Ogre::uchar cmd, std::stringstream &stream);
+    static int  GetInt_String(Ogre::uchar *data);
+    static short GetShort_String(Ogre::uchar *data);
     void clearMetaServerData();
     void socket_thread_start();
     void setActiveServer(int nr)
@@ -157,34 +149,34 @@ public:
     void contactMetaserver();
     void add_metaserver_data(Ogre::String metaData);
     // Commands
-    static void DrawInfoCmd    (unsigned char *data, int len);
-    static void AddMeFail      (unsigned char *data, int len);
-    static void Map2Cmd        (unsigned char *data, int len);
-    static void DrawInfoCmd2   (unsigned char *data, int len);
-    static void ItemXCmd       (unsigned char *data, int len);
-    static void SoundCmd       (unsigned char *data, int len);
-    static void TargetObject   (unsigned char *data, int len);
-    static void ItemUpdateCmd  (unsigned char *data, int len);
-    static void ItemDeleteCmd  (unsigned char *data, int len);
-    static void StatsCmd       (unsigned char *data, int len);
-    static void ImageCmd       (unsigned char *data, int len);
-    static void Face1Cmd       (unsigned char *data, int len);
-    static void SkillRdyCmd    (unsigned char *data, int len);
-    static void PlayerCmd      (unsigned char *data, int len);
-    static void SpelllistCmd   (unsigned char *data, int len);
-    static void SkilllistCmd   (unsigned char *data, int len);
-    static void GolemCmd       (unsigned char *data, int len);
-    static void AccNameSuccess (unsigned char *data, int len);
-    static void SetupCmd       (unsigned char *data, int len);
-    static void DataCmd        (unsigned char *data, int len);
-    static void ItemYCmd       (unsigned char *data, int len);
-    static void GroupCmd       (unsigned char *data, int len);
-    static void GroupInviteCmd (unsigned char *data, int len);
-    static void GroupUpdateCmd (unsigned char *data, int len);
-    static void InterfaceCmd   (unsigned char *data, int len);
-    static void BookCmd        (unsigned char *data, int len);
-    static void MarkCmd        (unsigned char *data, int len);
-    static void AccountCmd     (unsigned char *data, int len);
+    static void DrawInfoCmd    (Ogre::uchar *data, int len);
+    static void AddMeFail      (Ogre::uchar *data, int len);
+    static void Map2Cmd        (Ogre::uchar *data, int len);
+    static void DrawInfoCmd2   (Ogre::uchar *data, int len);
+    static void ItemXCmd       (Ogre::uchar *data, int len);
+    static void SoundCmd       (Ogre::uchar *data, int len);
+    static void TargetObject   (Ogre::uchar *data, int len);
+    static void ItemUpdateCmd  (Ogre::uchar *data, int len);
+    static void ItemDeleteCmd  (Ogre::uchar *data, int len);
+    static void StatsCmd       (Ogre::uchar *data, int len);
+    static void ImageCmd       (Ogre::uchar *data, int len);
+    static void Face1Cmd       (Ogre::uchar *data, int len);
+    static void SkillRdyCmd    (Ogre::uchar *data, int len);
+    static void PlayerCmd      (Ogre::uchar *data, int len);
+    static void SpelllistCmd   (Ogre::uchar *data, int len);
+    static void SkilllistCmd   (Ogre::uchar *data, int len);
+    static void GolemCmd       (Ogre::uchar *data, int len);
+    static void AccNameSuccess (Ogre::uchar *data, int len);
+    static void SetupCmd       (Ogre::uchar *data, int len);
+    static void DataCmd        (Ogre::uchar *data, int len);
+    static void ItemYCmd       (Ogre::uchar *data, int len);
+    static void GroupCmd       (Ogre::uchar *data, int len);
+    static void GroupInviteCmd (Ogre::uchar *data, int len);
+    static void GroupUpdateCmd (Ogre::uchar *data, int len);
+    static void InterfaceCmd   (Ogre::uchar *data, int len);
+    static void BookCmd        (Ogre::uchar *data, int len);
+    static void MarkCmd        (Ogre::uchar *data, int len);
+    static void AccountCmd     (Ogre::uchar *data, int len);
     // Commands helper.
     static void CreatePlayerAccount();
     static void PreParseInfoStat(char *cmd);
@@ -211,7 +203,7 @@ private:
         struct command_buffer *next; // Next in queue.
         struct command_buffer *prev; // Previous in queue.
         int len;
-        unsigned char *data;
+        Ogre::uchar *data;
     }
     command_buffer;
 
@@ -235,9 +227,9 @@ private:
     Network(const Network&); // disable copy-constructor.
     bool OpenSocket(const char *host, int port, int &socket);
     static Ogre::String &getError();
-    static command_buffer *command_buffer_new(unsigned int len, unsigned char *data);
+    static command_buffer *command_buffer_new(unsigned int len, Ogre::uchar *data);
     static command_buffer *command_buffer_dequeue(command_buffer **queue_start, command_buffer **queue_end);
-    static int strToInt(unsigned char *buf, int bytes); /**< Must be private to make it thread safe **/
+    static int strToInt(Ogre::uchar *buf, int bytes); /**< Must be private to make it thread safe **/
     static bool console_command_check(Ogre::String cmd);
     static void do_console_cmd(Ogre::String &stCmd, int cmd);
     static void command_buffer_free(command_buffer *buf);
