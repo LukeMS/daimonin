@@ -42,9 +42,8 @@
         <sound id="30"  name="arrow_hit"        file="arrow_hit.wav" />
         <sound id="31"  name="door_close"       file="door_close.wav" />
         <sound id="32"  name="teleport"         file="teleport.wav" />
-        <sound id="33"  name="click"            file="scroll.wav" />
         <!-- Add new normal sounds below this line -->
-        <sound id="34"  name="clock"            file="clock.wav" />
+        <sound id="33"  name="clock"            file="clock.wav" />
         <!-- Add new normal sounds above this line -->
     </soundtype>
     <soundtype id="1"   type="spell"    prefix="SOUND_MAGIC_">
@@ -103,20 +102,21 @@
         <sound id="1"   name="step2"            file="step2.wav" />
         <sound id="2"   name="pray"             file="pray.wav" />
         <sound id="3"   name="console"          file="console.wav" />
-        <sound id="4"   name="clickfail"        file="click_fail.wav" />
-        <sound id="5"   name="change1"          file="change1.wav" />
-        <sound id="6"   name="warn_food"        file="warning_food.wav" />
-        <sound id="7"   name="warn_drain"       file="warning_drain.wav" />
-        <sound id="8"   name="warn_statup"      file="warning_statup.wav" />
-        <sound id="9"   name="warn_statdown"    file="warning_statdown.wav" />
-        <sound id="10"  name="warn_hp"          file="warning_hp.wav" />
-        <sound id="11"  name="warn_hp2"         file="warning_hp2.wav" />
-        <sound id="12"  name="weapon_attack"    file="weapon_attack.wav" />
-        <sound id="13"  name="weapon_hold"      file="weapon_hold.wav" />
-        <sound id="14"  name="get"              file="get.wav" />
-        <sound id="15"  name="book"             file="book.wav" />
-        <sound id="16"  name="page"             file="page.wav" />
-        <sound id="17"  name="heartbeat"        file="heartbeat.wav" />
+        <sound id="4"   name="click"            file="scroll.wav" />
+        <sound id="5"   name="clickfail"        file="click_fail.wav" />
+        <sound id="6"   name="change1"          file="change1.wav" />
+        <sound id="7"   name="warn_food"        file="warning_food.wav" />
+        <sound id="8"   name="warn_drain"       file="warning_drain.wav" />
+        <sound id="9"   name="warn_statup"      file="warning_statup.wav" />
+        <sound id="10"  name="warn_statdown"    file="warning_statdown.wav" />
+        <sound id="11"  name="warn_hp"          file="warning_hp.wav" />
+        <sound id="12"  name="warn_hp2"         file="warning_hp2.wav" />
+        <sound id="13"  name="weapon_attack"    file="weapon_attack.wav" />
+        <sound id="14"  name="weapon_hold"      file="weapon_hold.wav" />
+        <sound id="15"  name="get"              file="get.wav" />
+        <sound id="16"  name="book"             file="book.wav" />
+        <sound id="17"  name="page"             file="page.wav" />
+        <sound id="18"  name="heartbeat"        file="heartbeat.wav" />
         <!-- Add new client sounds below this line -->
         <!-- Add new client sounds above this line -->
     </soundtype>
