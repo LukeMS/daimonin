@@ -22,7 +22,7 @@
 046 0 "." "?M_MCON/reply "
 044 0 "," "?M_MCON/tell "
 039 0 "'" "?M_MCON/shout "
-035 0 "#" "?M_MCON/gsay "
+048 0 "0" "?M_MCON/gsay "
 045 0 "-" "?M_MCON-"
 
 +"Inventory"
