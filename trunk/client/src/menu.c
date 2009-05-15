@@ -118,7 +118,7 @@ int client_command_check(char *cmd)
                             {
                                 fire_mode_tab[FIRE_MODE_SPELL].spell = &spell_list[i].entry[0][ii];
                                 RangeFireMode = FIRE_MODE_SPELL;
-                                sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+                                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, MENU_SOUND_VOL);
                                 draw_info("spell ready.", COLOR_GREEN);
                                 return TRUE;
                             }
@@ -132,7 +132,7 @@ int client_command_check(char *cmd)
                             {
                                 fire_mode_tab[FIRE_MODE_SPELL].spell = &spell_list[i].entry[1][ii];
                                 RangeFireMode = FIRE_MODE_SPELL;
-                                sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+                                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, MENU_SOUND_VOL);
                                 draw_info("spell ready.", COLOR_GREEN);
                                 return TRUE;
                             }
@@ -476,7 +476,7 @@ int client_command_check(char *cmd)
             save_keybind_file(KEYBIND_FILE);
             cpl.menustatus = MENU_NO;
         }
-        sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, 100);
+        sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, 100);
         reset_keys();
         return TRUE;
     }

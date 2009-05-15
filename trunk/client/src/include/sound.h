@@ -82,7 +82,6 @@ typedef enum _normal_sound_id
     SOUND_ARROW_HIT,
     SOUND_DOOR_CLOSE,
     SOUND_TELEPORT,
-    SOUND_SCROLL,
 } _normal_sound_id;
 
 typedef enum _client_sound_id
@@ -94,6 +93,7 @@ typedef enum _client_sound_id
     SOUND_STEP2,
     SOUND_PRAY,
     SOUND_CONSOLE,
+    SOUND_CLICK,
     SOUND_CLICKFAIL,
     SOUND_CHANGE1,
     SOUND_WARN_FOOD,

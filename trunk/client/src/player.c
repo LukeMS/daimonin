@@ -459,7 +459,7 @@ void        widget_menubuttons_event(int x, int y, int MEvent)
             }
             else if (dy >= 51 && dy <= 74) /* close online help  */
             {
-                sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, 100);
+                sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, 100);
                 show_help_screen = 0;
             }
         }
