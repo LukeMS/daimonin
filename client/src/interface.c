@@ -2083,7 +2083,7 @@ void gui_interface_mouse(SDL_Event *e)
 
     if (mx >= 345 && mx <= 354 && my >=32 && my <= 41) // close button
     {
-        sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, 100);
+        sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, 100);
         reset_gui_interface();
     }
     else if (mx >= 339 && mx <= 350) // scroll buttons

@@ -475,7 +475,7 @@ void AccNameSuccess(char *data, int len)
         else /* something is wrong, try again */
         {
             GameStatus = GAME_STATUS_LOGIN_NEW;
-            sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, 100);
+            sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, 100);
             open_input_mode(MAX_ACCOUNT_PASSWORD);
         }
     }
@@ -1253,7 +1253,7 @@ void InterfaceCmd(char *data, int len)
     if ((gui_interface_npc && gui_interface_npc->status != GUI_INTERFACE_STATUS_WAIT) &&
             ((!len && cpl.menustatus == MENU_NPC) || (len && cpl.menustatus != MENU_NPC)))
     {
-        sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, 100);
+        sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, 100);
     }
     reset_keys();
     cpl.input_mode = INPUT_MODE_NO;

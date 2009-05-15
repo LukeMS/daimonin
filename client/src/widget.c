@@ -727,7 +727,7 @@ int widget_event_mousemv(int x,int y, SDL_Event *event)
                     if (done)
                     {
     //                    draw_info_format(COLOR_RED, "%s l=%d r=%d t=%d b=%d", cur_widget[nID].name, LEFT(nID), RIGHT(nID), TOP(nID), BOTTOM(nID));
-                        sound_play_effect(SOUNDTYPE_NORMAL, SOUND_SCROLL, 0, 0, 10);
+                        sound_play_effect(SOUNDTYPE_CLIENT, SOUND_CLICK, 0, 0, 10);
                         event->motion.xrel = event->motion.yrel = 0; // acts as a brake, preventing mID from 'skipping' through a stack of nodes
                         SDL_PushEvent(event);
                         break;
