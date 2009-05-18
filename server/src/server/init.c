@@ -301,7 +301,7 @@ static void load_settings()
             continue;
         /* eliminate newline */
         i = strlen(buf) - 1;
-        while(isspace(buf[i]))
+        while(i > -1 && isspace(buf[i]))
             --i;
         buf[i + 1] = '\0';
 
