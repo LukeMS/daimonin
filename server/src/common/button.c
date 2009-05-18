@@ -34,6 +34,8 @@ static void signal_connection(object *op, oblinkpt *olp, object *activator, obje
 {
     object     *tmp;
     objectlink *ol;
+    int         raceval = 0;
+    int         sound_id;
 
     /* tmp->weight_limit == state of trigger */
 
@@ -92,12 +94,28 @@ static void signal_connection(object *op, oblinkpt *olp, object *activator, obje
               /* Ignore map loading triggers */
               if(ignore_trigger_events)
                   break;
+
+              /* Ignore button up, otherwise two of everything for everybody else */
+              if (op->weight_limit == 0)
+                  break;
+
               if (!tmp->stats.food || tmp->last_eat < tmp->stats.food)
               {
                   new_info_map(NDI_UNIQUE | NDI_NAVY, tmp->map, tmp->x, tmp->y, MAP_INFO_NORMAL, tmp->msg);
                   if (tmp->stats.food)
                       tmp->last_eat++;
               }
+              if (tmp->race)
+              {
+                  sscanf(tmp->race, "%d", &raceval);
+                  if (raceval && tmp->slaying)
+                  {
+                      sound_id = lookup_sound(raceval-1, tmp->slaying);
+                      if (sound_id >= 0)
+                          play_sound_map(tmp->map, tmp->x, tmp->y, sound_id, raceval-1);
+                  }
+              }
+
               break;
 
             case ALTAR:
