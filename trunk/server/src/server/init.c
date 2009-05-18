@@ -1334,7 +1334,7 @@ void init_library()
     init_vars();
     init_block();
     LOG(llevInfo, "Daimonin Server, v%s\n", VERSION);
-    LOG(llevInfo, "Copyright (C) 2002-2005 Michael Toennies.\n");
+    LOG(llevInfo, "Copyright (C) 2002-2009 Michael Toennies.\n");
     ReadBmapNames();
     init_anim();        /* Must be after we read in the bitmaps */
     init_archetypes();  /* Reads all archetypes from file */
