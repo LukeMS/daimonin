@@ -166,7 +166,7 @@ int lookup_sound(int type_id, const char* soundname)
     {
         for (i = 0; i < type->count; i++)
         {
-            if (stricmp(type->sounds[i].name, soundname) == 0)
+            if (strcasecmp(type->sounds[i].name, soundname) == 0)
             {
                 id = i;
                 break;
