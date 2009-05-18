@@ -5136,6 +5136,18 @@
     If activating your magic_mouth this way, the message will not only be
     printed to one player, but all players on the current map.
   </attribute>
+  <attribute arch="race" editor="sound type" type="list_soundtype">
+    Choose the type of sound you want a magic mouth to play when triggered. This setting is
+    ignored for signs.
+  </attribute>
+  <attribute arch="slaying" editor="sound" type="string">
+    Enter the sound for the chosen sound type you want a magic mouth to play
+    when triggered. This setting is ignored for signs.
+    You will need to check documentation for valid sound names. Here is a brief selection...
+    Normal: level_up, ob_explode, door_open, gate_close, clock.
+    Magic: default, acid, bomb, fireball1, manaball.
+    Client: warn_food, warn_drain, warn_hp2, heartbeat.
+  </attribute>
   <attribute arch="walk_on" editor="activate by walking" type="bool">
     If set, the player gets the message when walking on top of the object.
     This is the typical configuration

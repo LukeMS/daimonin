@@ -25,6 +25,35 @@
 #ifndef SOUNDS_H
 #define SOUNDS_H
 
+/*
+ * The name of the sound definition file
+ */
+#define SOUND_FILE "sounds.dat"
+
+/*
+ * New sound system
+ * Server only needs sound id and name for lookup.
+ */
+typedef struct _sound
+{
+    int         id;
+    char       *name;
+} _sound;
+
+typedef struct _soundtype
+{
+    int         id;
+    int         count;          // number of sounds in soundtype
+    char       *name;
+    _sound     *sounds;
+} _soundtype;
+
+typedef struct _sounds
+{
+    int         count;      // number of soundtypes
+    _soundtype *types;
+} _sounds;
+
 /* if we send a sound to the client, this defines what
  * kind of sound we have and how the client use the
  * sound number.

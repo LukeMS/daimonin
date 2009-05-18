@@ -150,11 +150,11 @@
 <listentry value="0" name="&lt;undefined&gt;" />
 
 <listentry value="1" name="paper: standard paper" />
- <listentry value="10" name="paper: rice paper" />   
+ <listentry value="10" name="paper: rice paper" />
 <listentry value="11" name="paper: parchment" />
  <listentry value="14" name="paper: vellum" />
-<listentry value="15" name="paper: demon vellum" /> 
- <listentry value="16" name="paper: papyrus" />   
+<listentry value="15" name="paper: demon vellum" />
+ <listentry value="16" name="paper: papyrus" />
 
 <listentry value="65" name="hard metal: iron" />
 <listentry value="66" name="hard metal: hardened iron" />
@@ -185,7 +185,7 @@
 <listentry value="138" name="crystal: aquamarine" />
 <listentry value="139" name="crystal: opal" />
 <listentry value="140" name="crystal: amethyst" />
- <listentry value="141" name="crystal: amber" />   
+ <listentry value="141" name="crystal: amber" />
 
 <listentry value="193" name="leather: soft leather" />
 <listentry value="194" name="leather: hardened leather" />
@@ -205,20 +205,20 @@
 <listentry value="208" name="leather: dragon leather" />
 
 <listentry value="257" name="wood: pine" />
-<listentry value="258" name="wood: spruce" />   
+<listentry value="258" name="wood: spruce" />
 <listentry value="259" name="wood: cedar" />
 <listentry value="260" name="wood: ash" />
-<listentry value="261" name="wood: yew" />   
+<listentry value="261" name="wood: yew" />
 <listentry value="262" name="wood: birch" />
 <listentry value="263" name="wood: hickory" />
 <listentry value="264" name="wood: cherry" />
 <listentry value="265" name="wood: walnut" />
 <listentry value="266" name="wood: maple" />
-<listentry value="267" name="wood: elm" /> 
+<listentry value="267" name="wood: elm" />
 <listentry value="268" name="wood: red elm" />
 <listentry value="269" name="wood: rosewood" />
-<listentry value="270" name="wood: pernambuco" />    
-<listentry value="271" name="wood: white oak" />    
+<listentry value="270" name="wood: pernambuco" />
+<listentry value="271" name="wood: white oak" />
 <listentry value="272" name="wood: red oak" />
 
 <listentry value="321" name="organic: organic" />
@@ -239,23 +239,23 @@
 <listentry value="387" name="stone: basalt" />
 <listentry value="388" name="stone: limestone" />
 <listentry value="389" name="stone: shale" />
-<listentry value="390" name="stone: gypsum" /> 
+<listentry value="390" name="stone: gypsum" />
 <listentry value="391" name="stone: marble" />
 <listentry value="392" name="stone: granite" />
-<listentry value="393" name="stone: quartz" /> 
-<listentry value="394" name="stone: obsidian" />  
-<listentry value="395" name="stone: brimstone" /> 
+<listentry value="393" name="stone: quartz" />
+<listentry value="394" name="stone: obsidian" />
+<listentry value="395" name="stone: brimstone" />
 <listentry value="396" name="stone: bloodstone" />
 <listentry value="397" name="stone: pyrite" />
 <listentry value="398" name="stone: lignite" />
-<listentry value="399" name="stone: cinnabar" /> 
+<listentry value="399" name="stone: cinnabar" />
 <listentry value="400" name="stone: phosphate" />
-<listentry value="401" name="stone: galena" />    
- 
-<listentry value="449" name="cloth: wool" />   
+<listentry value="401" name="stone: galena" />
+
+<listentry value="449" name="cloth: wool" />
 <listentry value="450" name="cloth: linen" />
 <listentry value="451" name="cloth: rat hair" />
-<listentry value="452" name="cloth: dog hair" />    
+<listentry value="452" name="cloth: dog hair" />
 <listentry value="453" name="cloth: cat hair" />
 <listentry value="454" name="cloth: mugwump hair" />
 <listentry value="455" name="cloth: wildcat hair" />
@@ -263,9 +263,9 @@
 <listentry value="457" name="cloth: horse hair" />
 <listentry value="458" name="cloth: giant hair" />
 <listentry value="459" name="cloth: minotaur hair" />
-<listentry value="460" name="cloth: worm silk" />    
+<listentry value="460" name="cloth: worm silk" />
 <listentry value="461" name="cloth: spider silk" />
-<listentry value="462" name="cloth: angel hair" />   
+<listentry value="462" name="cloth: angel hair" />
 <listentry value="463" name="cloth: unicorn hair" />
 <listentry value="464" name="cloth: elven hair" />
 
@@ -288,18 +288,18 @@
 <listentry value="706" name="bone: human bone" />
 <listentry value="707" name="bone: elven bone" />
 <listentry value="708" name="bone: dwarven bone" />
-<listentry value="709" name="bone: rat bone" /> 
+<listentry value="709" name="bone: rat bone" />
 <listentry value="710" name="bone: cat bone" />
-<listentry value="711" name="bone: dog bone" /> 
-<listentry value="712" name="bone: kobold bone" /> 
+<listentry value="711" name="bone: dog bone" />
+<listentry value="712" name="bone: kobold bone" />
 <listentry value="713" name="bone: ogre bone" />
-<listentry value="714" name="bone: orc bone" /> 
+<listentry value="714" name="bone: orc bone" />
 <listentry value="715" name="bone: gnoll bone" />
-<listentry value="716" name="bone: giant bone" /> 
-<listentry value="717" name="bone: troll bone" /> 
+<listentry value="716" name="bone: giant bone" />
+<listentry value="717" name="bone: troll bone" />
 <listentry value="718" name="bone: minotaur bone" />
 <listentry value="719" name="bone: dragon bone" />
-<listentry value="720" name="bone: demon bone" />    
+<listentry value="720" name="bone: demon bone" />
 
 <listentry value="769" name="ice: (default ice)" />
 </list>
@@ -327,7 +327,7 @@
 <listentry value="128" name="Short vert pace" />
 <listentry value="144" name="Long vert pace" />
 <listentry value="176" name="Use waypoints" />
-</list> 
+</list>
 
 <list name="colour">
 <listentry value="0" name="&lt;none&gt;" />
@@ -347,5 +347,12 @@
 <listentry value="4" name="random location, 2 squares radius" />
 <listentry value="5" name="random location, 3 squares radius" />
 <listentry value="6" name="random location, progressive radius" />
+</list>
+
+<list name="soundtype">
+<listentry value="0" name="none" />
+<listentry value="1" name="normal" />
+<listentry value="2" name="magic" />
+<listentry value="3" name="client" />
 </list>
 </lists>

@@ -1339,6 +1339,7 @@ void init_library()
     init_anim();        /* Must be after we read in the bitmaps */
     init_archetypes();  /* Reads all archetypes from file */
     init_clocks();
+    init_sounds();
 
     init_lists_and_tables(); /* Initializes some global lists and tables */
     init_global_sockbufs();
