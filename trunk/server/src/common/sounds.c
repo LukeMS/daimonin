@@ -31,6 +31,151 @@
 #define MAX_SOUND_DISTANCE 12
 #define MAX_SOUND_DISTANCE_SQUARED POW2(MAX_SOUND_DISTANCE)
 
+static _sounds sounds = {0, NULL};
+
+/*
+ * Load sound definitions from sound file
+ */
+
+// Helper string function
+// Duplicate string
+char *str_dup(const char *str)
+{
+    char *ret = (char *)malloc(strlen(str) + 1);
+    strcpy(ret, str);
+    return ret;
+}
+
+void init_sounds()
+{
+    char    buf[MAX_BUF];
+    FILE    *fp;
+    int     state = 0;
+    char    name[32];
+    char    prefix[32];
+    int     type_count  = 0;
+    int     type_index  = -1;
+    int     sound_count = 0;
+    int     sound_index = -1;
+
+    sprintf(buf, "%s/%s", settings.datadir, SOUND_FILE);
+    LOG(llevDebug, "Reading sound definitions from %s...", STRING_SAFE(buf));
+    if ((fp = fopen(buf, "r")) == NULL)
+        LOG(llevError, "ERROR: Can not open sound definitions file Filename=%s\n", STRING_SAFE(buf));
+    while (fgets(buf, MAX_BUF - 1, fp) != NULL)
+    {
+        // Strip trailing newline character(s) (allow for \r\n or \n)
+        buf[strcspn(buf, "\r\n")] = '\0';
+
+        if ((strlen(buf) == 0) || (buf[0] == '#'))
+            continue;
+
+        if (!strcmp(buf, "*end"))
+            break;
+
+        switch (state)
+        {
+        case 0:
+            // Looking for start line
+            if (strncmp(buf, "*start", 6) == 0)
+            {
+                strtok(buf, "|"); // discard *start
+                sscanf(strtok(NULL, "|"), "%d", &type_count); // count of soundtypes
+                sounds.count = type_count;
+
+                // Allocate memory
+                sounds.types = malloc(type_count * sizeof(_soundtype));
+
+                state++;
+            }
+            break;
+
+        case 1:
+            // Looking for soundtype introducer
+            if ((type_count > 0) && (buf[0] == '*'))
+            {
+                // New soundtype
+                type_count--;
+                type_index++;
+                sscanf(strtok(buf, "|"), "*%d", &sounds.types[type_index].id);
+                strcpy(name, strtok(NULL, "|"));
+                strtok(NULL, "|"); // discard prefix
+                sscanf(strtok(NULL, "|"), "%d", &sound_count);
+                sounds.types[type_index].count = sound_count;
+                sounds.types[type_index].name = str_dup(name);
+                sounds.types[type_index].sounds = malloc(sound_count * sizeof(_sound)); // space for sounds
+                sound_index = -1;
+                state++;
+            }
+            break;
+
+        case 2:
+            // Process sound
+            if ((sound_count > 0) && (buf[0] == '+'))
+            {
+                // Process sound
+                sound_count--;
+                sound_index++;
+                sscanf(strtok(buf, "|"), "+%d", &sounds.types[type_index].sounds[sound_index].id);
+                strcpy(name, strtok(NULL, "|"));
+                sounds.types[type_index].sounds[sound_index].name = str_dup(name);
+            }
+
+            if (sound_count == 0)
+                state--;            // Look for next soundtype
+            break;
+        }
+    }
+    fclose(fp);
+    LOG(llevDebug, "done.\n");
+}
+
+void free_sounds()
+{
+    int     i, j;
+
+    LOG(llevDebug, "Freeing sound definitions\n");
+    for (i = 0; i < sounds.count; i++)
+    {
+        free(sounds.types[i].name);
+        for (j = 0; j < sounds.types[i].count; j++)
+        {
+            free(sounds.types[i].sounds[j].name);
+        }
+        free(sounds.types[i].sounds);
+    }
+    free(sounds.types);
+}
+
+int lookup_sound(int type_id, const char* soundname)
+{
+    _soundtype  *type = NULL;
+    int         id = -1;
+    int         i;
+
+    for (i = 0; i < sounds.count; i++)
+    {
+        if (sounds.types[i].id == type_id)
+        {
+            type = &sounds.types[i];
+            break;
+        }
+    }
+
+    if (type)
+    {
+        for (i = 0; i < type->count; i++)
+        {
+            if (stricmp(type->sounds[i].name, soundname) == 0)
+            {
+                id = i;
+                break;
+            }
+        }
+    }
+    return id;
+}
+
 void play_sound_player_only(player *pl, int soundnum, int soundtype, int x, int y)
 {
 	NewSocket *ns = &pl->socket;

@@ -93,6 +93,9 @@ void            esrv_new_player(player *pl, uint32 weight);
 /* startup.c */
 void            init_srv_files(void);
 /* sounds.c */
+void            init_sounds(void);
+void            free_sounds(void);
+int             lookup_sound(int type_id, const char* soundname);
 void            play_sound_player_only(player *pl, int soundnum, int soundtype, int x, int y);
 void            play_sound_map(mapstruct *map, int x, int y, int sound_num, int sound_type);
 /* write.c */

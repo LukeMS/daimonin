@@ -561,6 +561,7 @@ void cleanup_without_exit()
     free_all_readable();
     free_all_god();
     free_all_anim();
+    free_sounds();
     free_strings();
     free_lists_and_tables();
     cleanup_all_behavioursets();

@@ -1167,6 +1167,9 @@ static int apply_shop_mat(object *shop_mat, object *op)
 
 static void apply_sign(object *op, object *sign)
 {
+    int raceval = 0;
+    int sound_id;
+
     if (sign->stats.food)
     {
         if (sign->last_eat >= sign->stats.food)
@@ -1222,6 +1225,8 @@ static void apply_sign(object *op, object *sign)
         return;
 
     /* sign */
+    if (sign->race)
+        sscanf(sign->race, "%d", &raceval);
     if (!QUERY_FLAG(sign, FLAG_SYS_OBJECT))
     {
         if (!sign->msg)
@@ -1235,8 +1240,17 @@ static void apply_sign(object *op, object *sign)
         }
     }
     /* magic mouth */
-    else if (sign->msg && (sign->direction == 0 || sign->direction == op->direction))
-        new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, sign->msg);
+    else if ((sign->msg || (raceval && sign->slaying)) && (sign->direction == 0 || sign->direction == op->direction))
+    {
+        if (sign->msg)
+            new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, sign->msg);
+        if (raceval && sign->slaying)
+        {
+            sound_id = lookup_sound(raceval-1, sign->slaying);
+            if (sound_id >= 0)
+                play_sound_player_only(CONTR(op), sound_id, raceval-1, 0, 0);
+        }
+    }
 }
 
 
