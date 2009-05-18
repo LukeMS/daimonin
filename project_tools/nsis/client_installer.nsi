@@ -97,6 +97,10 @@ Section "Client (required)"
   CreateDirectory $INSTDIR\update
   SetOutPath $INSTDIR\update
   File "update\*.*"
+  ; sfx directory
+  CreateDirectory $INSTDIR\sfx
+  SetOutPath $INSTDIR\sfx
+  File "sfx\*.*"
   ; Revert back to installation directory, otherwise we will get shortcuts linking to the update directory.
   SetOutPath $INSTDIR
   
@@ -127,14 +131,10 @@ Section "Uninstall"
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Daimonin-B5"
   DeleteRegKey HKLM SOFTWARE\Daimonin-B5
 
-  ; Remove files
-  Delete $INSTDIR\*.*
-
   ; Remove shortcuts, if any
-  Delete "$SMPROGRAMS\Daimonin-B5\*.*"
+  RMDir /r /REBOOTOK "$SMPROGRAMS\Daimonin-B5"
 
-  ; Remove directories used
-  RMDir "$SMPROGRAMS\Daimonin-B5"
-  RMDir /r "$INSTDIR"
+  RMDir /r /REBOOTOK "$INSTDIR"
 SectionEnd
 ; EOF
+
