@@ -95,8 +95,9 @@ static void signal_connection(object *op, oblinkpt *olp, object *activator, obje
               if(ignore_trigger_events)
                   break;
 
-              /* Ignore button up, otherwise two of everything for everybody else */
-              if (op->weight_limit == 0)
+              /* Ignore button up, otherwise two of everything for everybody else, */
+              /* unless it's a timer or else it only triggers every other time. */
+              if ((op->weight_limit == 0) && (op->type != TYPE_TIMER))
                   break;
 
               if (!tmp->stats.food || tmp->last_eat < tmp->stats.food)
