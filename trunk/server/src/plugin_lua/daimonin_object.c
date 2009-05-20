@@ -2267,13 +2267,10 @@ static int GameObject_CreatePlayerForce(lua_State *L)
 
     get_lua_args(L, "Os|i", &whereptr, &txt, &time);
 
-    myob = hooks->get_archetype("player_force");
+    myob = hooks->arch_to_object(hooks->find_archetype("player_force"));
 
-    if (!myob || strncmp(STRING_OBJ_NAME(myob), "singularity", 11) == 0)
-    {
-        LOG(llevDebug, "Lua WARNING:: CreatePlayerForce: Can't find archtype 'player_force'\n");
-        luaL_error(L, "Can't find archtype 'player_force'");
-    }
+    if (!myob)
+        return luaL_error(L, "object:CreatePlayerForce(): Can't find archetype 'player_force'");
 
     /* For temporary forces */
     if (time > 0)
@@ -2316,13 +2313,10 @@ static int GameObject_AddQuest(lua_State *L)
         return 0;
     }
 
-    myob = hooks->get_archetype("quest_trigger");
+    myob = hooks->arch_to_object(hooks->find_archetype("quest_trigger"));
 
-    if (!myob || strncmp(STRING_OBJ_NAME(myob), "singularity", 11) == 0)
-    {
-        LOG(llevDebug, "Lua WARNING:: AddQuest: Cant't find archtype 'quest_trigger'\n");
-        luaL_error(L, "Can't find archtype 'quest_trigger'");
-    }
+    if (!myob)
+        return luaL_error(L, "object:AddQuest(): Can't find archetype 'quest_trigger'");
 
     /* store name & arch name of the quest obj. so we can id it later */
     FREE_AND_COPY_HASH(myob->name, name);
@@ -2416,12 +2410,10 @@ static int GameObject_AddQuestTarget(lua_State *L)
 
     get_lua_args(L, "Oiis|s|s|s", &self, &chance, &nrof, &kill_arch, &kill_name, &kill_sym_name1, &kill_sym_name2);
 
-    myob = hooks->get_archetype("quest_info");
-    if(!myob)
-    {
-        LOG(llevBug, "Lua Warning -> AddQuestTarget:: Can't find quest_info arch!");
-        return 0;
-    }
+    myob = hooks->arch_to_object(hooks->find_archetype("quest_info"));
+
+    if (!myob)
+        return luaL_error(L, "object:AddQuestTarget(): Can't find archetype 'quest_info'");
 
     myob->last_grace = chance;
     myob->last_sp = nrof; /* can be overruled by ->inv objects */
@@ -2491,11 +2483,15 @@ static int GameObject_AddQuestItem(lua_State *L)
 
     get_lua_args(L, "Oiss|s|s", &self, &nrof, &i_arch, &i_face, &i_name, &i_title);
 
-    myob = hooks->get_archetype(i_arch);
-    if(!myob)
+    myob = hooks->arch_to_object(hooks->find_archetype(i_arch));
+
+    if (!myob)
     {
-        LOG(llevBug, "Lua Warning -> AddQuestTarget:: Can't find quest_info arch!");
-        return 0;
+        char buf[MAX_BUF];
+
+        sprintf(buf, "object:AddQuestItem(): Can't find archetype '%s'", i_arch);
+
+        return luaL_error(L, buf);
     }
 
     if(i_face && *i_face !='\0') /* "" will skip the face setting */
@@ -2690,7 +2686,15 @@ static int GameObject_CheckOneDropQuest(lua_State *L)
 
     get_lua_args(L, "Os|s", &self, &arch_name, &name, &title);
 
-    arch = hooks->find_archetype(arch_name); /* no arch - nothing to find */
+    if (!(arch = hooks->find_archetype(arch_name)))
+    {
+        char buf[MAX_BUF];
+
+        sprintf(buf, "object:CheckOneDropQuest(): Can't find archetype '%s'", arch);
+
+        return luaL_error(L, buf);
+    }
+
     name_hash = hooks->find_string(name);
     if(title)
         title_hash = hooks->find_string(title);
@@ -2748,18 +2752,15 @@ static int GameObject_AddOneDropQuest(lua_State *L)
 static int GameObject_CreatePlayerInfo(lua_State *L)
 {
     char       *txt;
-    char        txt2[16]    = "player_info";
     object     *myob;
     lua_object *whereptr;
 
     get_lua_args(L, "Os", &whereptr, &txt);
 
-    myob = hooks->get_archetype(txt2);
-    if (!myob || strncmp(STRING_OBJ_NAME(myob), "singularity", 11) == 0)
-    {
-        LOG(llevDebug, "Lua WARNING:: CreatePlayerInfo: Cant't find archtype 'player_info'\n");
-        luaL_error(L, "Cant't find archtype 'player_info'");
-    }
+    myob = hooks->arch_to_object(hooks->find_archetype("player_info"));
+
+    if (!myob)
+        return luaL_error(L, "object:CreatePlayerInfo(): Can't find archetype 'player_info'");
 
     /* setup the info and put it in activator */
     FREE_AND_COPY_HASH(myob->name, txt);
@@ -2837,13 +2838,11 @@ static int GameObject_CreateInvisibleInside(lua_State *L)
 
     get_lua_args(L, "Os", &whereptr, &txt);
 
-    myob = hooks->get_archetype("force");
+    myob = hooks->arch_to_object(hooks->find_archetype("force"));
 
-    if (!myob || strncmp(STRING_OBJ_NAME(myob), "singularity", 11) == 0)
-    {
-        LOG(llevDebug, "Lua WARNING:: CFCreateInvisibleInside: Can't find archtype 'force'\n");
-        luaL_error(L, "Cant't find archtype 'force'");
-    }
+    if (!myob)
+        return luaL_error(L, "object:CreateInvisibleInside(): Can't find archetype 'force'");
+
     myob->speed = 0.0;
     CFP.Value[0] = (void *) (myob);
     (PlugHooks[HOOK_UPDATESPEED]) (&CFP);
@@ -2859,12 +2858,19 @@ static int GameObject_CreateInvisibleInside(lua_State *L)
 /* code body of the CreateObjectInside functions */
 static object *CreateObjectInside_body(lua_State *L, object *where, char *archname, int id, int nrof, int value)
 {
-    object *myob = hooks->get_archetype(archname);
+    object *myob;
     object *retobj;
-    if (!myob || strncmp(STRING_OBJ_NAME(myob), "singularity", 11) == 0)
+
+    myob = hooks->arch_to_object(hooks->find_archetype(archname));
+
+    if (!myob)
     {
-        LOG(llevDebug, "BUG GameObject_CreateObjectInside(): ob:>%s< = NULL!\n", STRING_OBJ_NAME(myob));
-        luaL_error(L, "Failed to create the object. Did you use an existing arch?");
+        char buf[MAX_BUF];
+
+        sprintf(buf, "object:CreateObjectInside(): Can't find archetype '%s'", archname);
+        luaL_error(L, buf);
+
+        return NULL;
     }
 
     if (value != -1) /* -1 means, we use original value */
