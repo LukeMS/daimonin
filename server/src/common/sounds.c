@@ -37,15 +37,6 @@ static _sounds sounds = {0, NULL};
  * Load sound definitions from sound file
  */
 
-// Helper string function
-// Duplicate string
-char *str_dup(const char *str)
-{
-    char *ret = (char *)malloc(strlen(str) + 1);
-    strcpy(ret, str);
-    return ret;
-}
-
 void init_sounds()
 {
     char    buf[MAX_BUF];
@@ -101,7 +92,7 @@ void init_sounds()
                 strtok(NULL, "|"); // discard prefix
                 sscanf(strtok(NULL, "|"), "%d", &sound_count);
                 sounds.types[type_index].count = sound_count;
-                sounds.types[type_index].name = str_dup(name);
+                sounds.types[type_index].name = strdup_local(name);
                 sounds.types[type_index].sounds = malloc(sound_count * sizeof(_sound)); // space for sounds
                 sound_index = -1;
                 state++;
@@ -117,7 +108,7 @@ void init_sounds()
                 sound_index++;
                 sscanf(strtok(buf, "|"), "+%d", &sounds.types[type_index].sounds[sound_index].id);
                 strcpy(name, strtok(NULL, "|"));
-                sounds.types[type_index].sounds[sound_index].name = str_dup(name);
+                sounds.types[type_index].sounds[sound_index].name = strdup_local(name);
             }
 
             if (sound_count == 0)
