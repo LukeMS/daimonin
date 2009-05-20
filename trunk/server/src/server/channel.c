@@ -100,7 +100,7 @@ int command_channel(object *ob, char *params)
 
                    ) || ob->level<channel->enter_lvl))
                         continue;
-                if(pl_channel=findPlayerChannelFromName(CONTR(ob),CONTR(ob), channel->name, TRUE))
+                if((pl_channel=findPlayerChannelFromName(CONTR(ob),CONTR(ob), channel->name, TRUE)))
                     new_draw_info_format(NDI_UNIQUE|channel->color, 0, ob, "*(%d) [%c] %s", channel->pl_count, pl_channel->shortcut, channel->name);
                 else
                     new_draw_info_format(NDI_UNIQUE|channel->color, 0, ob, "   (%d) [%c] %s", channel->pl_count, channel->shortcut, channel->name);

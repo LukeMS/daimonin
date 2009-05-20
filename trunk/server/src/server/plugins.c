@@ -375,7 +375,7 @@ void initPlugins(void)
 
     n = 0;
 
-    while (currentfile = readdir(plugdir))
+    while ((currentfile = readdir(plugdir)))
     {
         if (strcmp(currentfile->d_name, ".."))
         {
