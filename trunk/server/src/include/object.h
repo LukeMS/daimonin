@@ -300,4 +300,9 @@ typedef struct obj
 #define FNO_MODE_CONTAINERS 1
 #define FNO_MODE_ALL        2
 
+/* Goes through I's /full/ inv. At the end O either is the last item in the inv
+ * or NULL if I has no inv. */
+#define GET_INV_BOTTOM(I, O) \
+        for ((O) = (I)->inv; (O)->below; (O) = (O)->below)
+
 #endif
