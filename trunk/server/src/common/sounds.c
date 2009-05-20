@@ -52,7 +52,6 @@ void init_sounds()
     FILE    *fp;
     int     state = 0;
     char    name[32];
-    char    prefix[32];
     int     type_count  = 0;
     int     type_index  = -1;
     int     sound_count = 0;
