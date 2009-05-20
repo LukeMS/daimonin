@@ -982,14 +982,14 @@ void ai_avoid_line_of_fire(object *op, struct mob_behaviour_param *params, move_
 
             /* Area-like "missiles" */
             case CONE:
-                if ((rv = get_known_obj_rv(op, tmp, 0))) 
+                if ((rv = get_known_obj_rv(op, tmp, 0)))
                 {
                     if(rv->distance == 0) {
                         response->forbidden |= (1 << 0);
                     } else {
                         /* stats.sp is the cone's direction. We check if the mob is in a
                          * cone of the found object */
-                        if(tmp->obj->stats.sp == 0 || 
+                        if(tmp->obj->stats.sp == 0 ||
                                 dirdiff(absdir(rv->direction + 4), tmp->obj->stats.sp) <= 1)
                         {
                             /* Simply try to retreat out of the way. */
@@ -1010,7 +1010,7 @@ void ai_avoid_line_of_fire(object *op, struct mob_behaviour_param *params, move_
             case LIGHTNING:
             case BOMB:
                 /* TODO: Really step out of the way, not only out of the area */
-                if ((rv = get_known_obj_rv(op, tmp, 0))) 
+                if ((rv = get_known_obj_rv(op, tmp, 0)))
                 {
                     if(rv->distance <= 1) {
                         response->forbidden |= (1 << rv->direction);
@@ -1125,7 +1125,7 @@ void ai_move_towards_enemy(object *op, struct mob_behaviour_param *params, move_
         MOB_DATA(op)->enemy->friendship /= 2;
         MOB_DATA(op)->enemy->tmp_friendship = 0;
 
-        /* Note: this may eventually make the mob forget about the enemy and go home, 
+        /* Note: this may eventually make the mob forget about the enemy and go home,
          * but e.g. linked spawns will get reaggroed by their friends. */
     }
 
@@ -1398,7 +1398,7 @@ void ai_run_away_from_enemy(object *op, struct mob_behaviour_param *params, move
             response->data.direction = absdir(rv->direction + 4);
             op->speed_left-=0.5f;/* let him move away "scared" - with weak legs */
         }
-        else 
+        else
         {
             response->type = MOVE_RESPONSE_DIR;
             response->data.direction = RANDOM() % 8 + 1; /* Run randomly */
@@ -1459,7 +1459,7 @@ void ai_run_away_from_repulsive_object(object *op, struct mob_behaviour_param *p
             response->type = MOVE_RESPONSE_DIR;
             response->data.direction = absdir(rv->direction + 4);
         }
-        else 
+        else
         {
             response->type = MOVE_RESPONSE_DIR;
             response->data.direction = RANDOM() % 8 + 1; /* Run randomly */
@@ -1467,7 +1467,7 @@ void ai_run_away_from_repulsive_object(object *op, struct mob_behaviour_param *p
 
         /* Regain senses? FIXME: doesn't play very well with the run_away_from_enemy behaviour */
         if (!rv || (int)rv->distance > AIPARAM_INT(AIPARAM_RUN_AWAY_FROM_REPULSIVE_OBJECT_DISTANCE_THRESHOLD))
-            if (!(RANDOM() % 4)) 
+            if (!(RANDOM() % 4))
                 CLEAR_FLAG(op, FLAG_SCARED);
     }
 }
@@ -1491,7 +1491,7 @@ void ai_stay_near_home(object *op, struct mob_behaviour_param *params, move_resp
     /* TODO: optimization: pointer to the base ob in mob_data */
     if(!(base = insert_base_info_object(op)) || !base->slaying)
         return;
-        
+
     /* If mob isn't already home */
     if (op->x == base->x && op->y == base->y && op->map->orig_path == base->slaying)
         return;
@@ -1509,7 +1509,7 @@ void ai_stay_near_home(object *op, struct mob_behaviour_param *params, move_resp
                 NULL, map, base->x, base->y,
                 &rv, distflags))
         return;
-    
+
     if((int)rv.distance >= maxdist) {
         response->forbidden |= (1 << absdir(rv.direction+2));
         response->forbidden |= (1 << absdir(rv.direction+3));
@@ -1686,7 +1686,6 @@ void ai_look_for_enemy_missiles(object *op, struct mob_behaviour_param *params)
 
         for (; obj; obj = obj->active_next)
         {
-            int type = 0;
             switch(obj->type) {
                 case BULLET:
                 case MMISSILE:
@@ -1698,8 +1697,8 @@ void ai_look_for_enemy_missiles(object *op, struct mob_behaviour_param *params)
                 case LIGHTNING:
                 case CONE:
                 case BOMB:
-             
-                    if (obj->owner == NULL || get_friendship(op, obj->owner) <= FRIENDSHIP_ATTACK) 
+
+                    if (obj->owner == NULL || get_friendship(op, obj->owner) <= FRIENDSHIP_ATTACK)
                     {
                         struct mob_known_obj *known = hashtable_find(MOB_DATA(op)->known_objs_ht, obj);
                         if(! known)
@@ -1858,7 +1857,7 @@ void ai_attraction(object *op, struct mob_behaviour_param *params)
 
         /* Attraction/fear for other mobs is calculated from the
          * perceived relative combad strength */
-        if(tmp->tmp_friendship > FRIENDSHIP_HELP) 
+        if(tmp->tmp_friendship > FRIENDSHIP_HELP)
         {
             if(tmp->tmp_attraction >= 0)
                 tmp->tmp_attraction += relative_combat_strength(op, tmp->obj);

@@ -121,7 +121,7 @@ int player_save(object *op)
     fprintf(fp, "channels %d\n",pl->channel_count);
     for (pl_channel=pl->channels;pl_channel;pl_channel=pl_channel->next_channel)
     {
-        fprintf(fp,"%s %c %d\n",pl_channel->channel->name, pl_channel->shortcut, pl_channel->mute_counter);
+        fprintf(fp,"%s %c %lu\n",pl_channel->channel->name, pl_channel->shortcut, pl_channel->mute_counter);
     }
 #endif
 
@@ -201,7 +201,9 @@ int player_save(object *op)
          * perhaps a DM can repair this by hand...
          */
         GETTIMEOFDAY(&now);
-        sprintf(filename, "%s.tmp.lu",tmpfilename, now.tv_sec);
+        /* Remove unused argument, but keep the original, in case someone wants to fix the format */
+        /*sprintf(filename, "%s.tmp.lu",tmpfilename, now.tv_sec);*/
+        sprintf(filename, "%s.tmp.lu",tmpfilename);
         rename(tmpfilename, filename);
         unlink(tmpfilename); /* last sanity - kill this now 100% invalid tmpfilename */
     }
@@ -838,7 +840,7 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
     /* defered channeljoin */
     for (i=1; (i<= channelcount) && (i<256); i++)
     {
-        sscanf(chantemp[i-1],"%s %c %d\n",channelname,&shortcut, &mute);
+        sscanf(chantemp[i-1],"%s %c %lu\n",channelname,&shortcut, &mute);
         loginAddPlayerToChannel(pl, channelname, shortcut, mute);
     }
 #endif
@@ -904,7 +906,7 @@ addme_login_msg player_create(NewSocket *ns, player **pl_ret, char *name, int ra
     object          *op = NULL;
     archetype       *p_arch;
     int             skillnr[]       = {SK_SLASH_WEAP, SK_MELEE_WEAPON, SK_CLEAVE_WEAP, SK_PIERCE_WEAP};
-    char            *skillitem[]     = {"shortsword", "mstar_small", "axe_small", "dagger_large"};
+/*    char            *skillitem[]     = {"shortsword", "mstar_small", "axe_small", "dagger_large"}; */ /* unused */
 
     /* do some sanity checks. *ns, *pl and the name are checked by caller */
 
