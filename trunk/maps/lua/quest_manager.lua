@@ -78,8 +78,14 @@ function QuestManager:GetStatus()
                 for v in qm.required do
                     local obj = qm.player:GetQuest(v)
 
-                    if obj == nil or obj.food ~= -1 then
-                        return game.QSTAT_DISALLOW
+                    if SENTInce_SERVER then
+                        if obj == nil or obj.food ~= -1 then
+                            return game.QSTAT_DISALLOW
+                        end
+                    else
+                        if obj == nil or obj.last_eat ~= -1 then
+                            return game.QSTAT_DISALLOW
+                        end
                     end
                 end
             end
@@ -95,10 +101,18 @@ function QuestManager:GetStatus()
             if qm.trigger.magic < qm.step then
                 return game.QSTAT_NO
             elseif qm.trigger.environment.name == "QC: list done" then
-                if qm.trigger.food == -1 then
-                    return game.QSTAT_DONE
+                if SENTInce_SERVER then
+                    if qm.trigger.food == -1 then
+                        return game.QSTAT_DONE
+                    else
+                        return game.QSTAT_NO
+                    end
                 else
-                    return game.QSTAT_NO
+                    if qm.trigger.last_eat == -1 then
+                        return game.QSTAT_DONE
+                    else
+                        return game.QSTAT_NO
+                    end
                 end
             end
             ---------
@@ -195,8 +209,9 @@ function QuestManager:RegisterQuest(qtype, ib)
            "Quest doesn't have a name!")
 
     ---------
-    -- Remove any clickable keywords from the GUI.
+    -- Remove mode tag from reward block and any clickable keywords.
     ---------
+    ib.activecoins = false
     local text = string.gsub(ib:Build(), "%^", "")
 
     if SENTInce_AWARE then
@@ -357,7 +372,7 @@ function QuestManager:Finish()
 
     local status
 
-    if SENTInce_AWARE then
+    if SENTInce_SERVER then
         status = self.trigger.food
     else
         status = self.trigger.last_eat
@@ -369,8 +384,10 @@ function QuestManager:Finish()
         status = -1
     end
 
-    if not SENTInce_AWARE then
+    if SENTInce_SERVER then
         self.trigger.food = status
+    else
+        self.trigger.last_eat = status
     end
 
     self.trigger:SetQuestStatus(status)
