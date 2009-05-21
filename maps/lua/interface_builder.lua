@@ -31,6 +31,7 @@ function InterfaceBuilder:New()
         header,
         message,
         description,
+        activecoins = false,
         icons,
         activeicons = true,
         links,
@@ -126,6 +127,16 @@ function InterfaceBuilder:Build()
         end
 
         interface = interface .. '<r'
+
+        if SENTInce_FULL then
+            if self.activecoins == true then
+                interface = interface .. 'm="1"'
+            end
+        elseif SENTInce_AWARE then
+            if self.activecoins == true then
+                interface = interface .. '1="1"'
+            end
+        end
 
         if v.title ~= nil then
             interface = interface .. 't="' .. tostring(v.title) .. '"'
@@ -383,7 +394,19 @@ function InterfaceBuilder:Unbuild(interface)
     if tag == nil then
         ib.description = nil
     else
-        local title, body, copper, silver, gold, mithril
+        local mode, title, body, copper, silver, gold, mithril
+
+        if SENTInce_FULL then
+            _, _, mode = string.find(tag, 'm%s*=%s*"([^"]*)"')
+        elseif SENTInce_AWARE then
+            _, _, mode = string.find(tag, '1%s*=%s*"([^"]*)"')
+        end
+
+        if mode ~= nil and tonumber(mode) ~= 0 then
+            self.activecoins = true
+        else
+            self.activecoins = false
+        end
 
         _, _, title = string.find(tag, 't%s*=%s*"([^"]*)"')
         _, _, body = string.find(tag, 'b%s*=%s*"([^"]*)"')
@@ -781,6 +804,22 @@ function InterfaceBuilder:SetCoins(copper, silver, gold, mithril)
     end
 end
 
+-------------------
+-- ib:DeactivateCoins() disables the client playing a sound when the coins
+-- pseudo-block is shown. This is the default state.
+-------------------
+function InterfaceBuilder:DeactivateCoins()
+    self.activecoins = false
+end
+
+-------------------
+-- ib:ActivateCoins() enables the client to play a sound when the coins
+-- pseudo-block is shown.
+-------------------
+function InterfaceBuilder:ActivateCoins()
+    self.activecoins = true
+end
+
 ---------------------------------------
 -- The icons block.
 ---------------------------------------
@@ -893,8 +932,9 @@ function InterfaceBuilder:SelectOff()
 end
 
 -------------------
--- ib:ActivateIcons() and ib:SelectOn() activate icons. The latter is preserved
--- for backwards compatibility only. Its use is deprecated.
+-- ib:ActivateIcons() and ib:SelectOn() activate icons. This is the default
+-- state. The latter is preserved for backwards compatibility only. Its use is
+-- deprecated.
 -------------------
 function InterfaceBuilder:ActivateIcons()
     self.activeicons = true
