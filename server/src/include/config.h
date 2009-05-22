@@ -47,14 +47,6 @@
     Depending on OS, this can be a big difference.).
  */
 
-/* Channelsystem: uncomment this line to compile it in */
-/* you HAVE to also enable this in the lua-plugin (plugin_lua.h)!!! */
-#define USE_CHANNELS
-/* when defined, annouces the system at login */
-#define ANNOUNCE_CHANNELS
-
-#define USE_TILESTRETCHER
-
 /* Location of read-only machine independent data */
 #ifndef DATADIR
 #define DATADIR "./lib"
@@ -148,6 +140,7 @@
 *
 * Short list of features, and what to search for:
 * ALCHEMY - enables alchemy code
+* ANNOUNCE_CHANNELS - announce the channel system at login (requires USE_CHANNELS)
 * BALANCED_STAT_LOSS - Based death stat depletion on level etc?
 * DEBUG - more verbose message logging?
 * MAP_CLIENT_X, MAP_CLIENT_Y - determines max size client map will receive
@@ -159,7 +152,9 @@
 * SECURE - Allow overriding values with run time flags?
 * SPELL_* - various spell related options
 * STAT_LOSS_ON_DEATH - toggle between stat loss or stat depletion
+* USE_CHANNELS - enables channel system
 * USE_LIGHTING - enable light/darkness & light sources
+* USE_TILESTRETCHER - enables tilestretcher for uneven ground surface
 *
 ***********************************************************************/
 
@@ -170,6 +165,11 @@
  */
 
 #define ALCHEMY
+
+/* When defined, annouces the channel system at login. Be sure that
+ * USE_CHANNELS is defined below! (Stoopid alphabetical arrangement)
+ */
+#define ANNOUNCE_CHANNELS
 
 /* Use balanced stat loss code?
  * This code is a little more merciful with repeated stat loss at lower
@@ -329,6 +329,10 @@
 
 #define STAT_LOSS_ON_DEATH FALSE
 
+/* you HAVE to also enable this in the lua-plugin (plugin_lua.h)!!! */
+#define USE_CHANNELS
+
+#define USE_TILESTRETCHER
 
 /***********************************************************************
  * SECTION 2 - Machine/Compiler specific stuff.
