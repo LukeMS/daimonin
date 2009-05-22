@@ -217,7 +217,7 @@ function QuestManager:RegisterQuest(qtype, ib)
     ib.activecoins = false
     local text = string.gsub(ib:Build(), "%^", "")
 
-    if SENTInce_AWARE then
+    if game.SENTInce_SERVER then
         self.trigger = self.player:AddQuest(self.name, qtype, self.step,
                                             self.end_step, self.level,
                                             self.skill, text, self.repeats)
