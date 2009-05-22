@@ -73,17 +73,20 @@ setmetatable(QuestManager, { __call = QuestManager.New })
 -------------------
 function QuestManager:GetStatus()
     local function getstatus(qm)
-        if qm.trigger== nil then
+        if qm.trigger == nil then
             if qm.required ~= nil then
                 for v in qm.required do
                     local obj = qm.player:GetQuest(v)
 
-                    if SENTInce_SERVER then
-                        if obj == nil or obj.food ~= -1 then
+                    if game.SENTInce_SERVER then
+                        if obj == nil or
+                           obj.food ~= -1 or
+                           obj.last_eat ~= -1 then
                             return game.QSTAT_DISALLOW
                         end
                     else
-                        if obj == nil or obj.last_eat ~= -1 then
+                        if obj == nil or
+                           obj.last_eat ~= -1 then
                             return game.QSTAT_DISALLOW
                         end
                     end
@@ -101,7 +104,7 @@ function QuestManager:GetStatus()
             if qm.trigger.magic < qm.step then
                 return game.QSTAT_NO
             elseif qm.trigger.environment.name == "QC: list done" then
-                if SENTInce_SERVER then
+                if game.SENTInce_SERVER then
                     if qm.trigger.food == -1 then
                         return game.QSTAT_DONE
                     else
@@ -372,7 +375,7 @@ function QuestManager:Finish()
 
     local status
 
-    if SENTInce_SERVER then
+    if game.SENTInce_SERVER then
         status = self.trigger.food
     else
         status = self.trigger.last_eat
@@ -384,7 +387,7 @@ function QuestManager:Finish()
         status = -1
     end
 
-    if SENTInce_SERVER then
+    if game.SENTInce_SERVER then
         self.trigger.food = status
     else
         self.trigger.last_eat = status
