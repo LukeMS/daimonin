@@ -514,7 +514,15 @@ static struct constant_decl preset_game_constants[] =
      * -- Smacky 20090508 */
     {"PERSONAL_LIGHT_OFF", 0},
     {"PERSONAL_LIGHT_MIN", 1},
-    {"PERSONAL_LIGHT_MAX", MAX_DARKNESS}
+    {"PERSONAL_LIGHT_MAX", MAX_DARKNESS},
+
+    /* SENTInce aware server? (config.h) */
+#ifndef SENTInce_SERVER
+    {"SENTInce_SERVER", 0}
+#else
+    {"SENTInce_SERVER", 1}
+#endif
+
 };
 
 lua_class Game =
