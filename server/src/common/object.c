@@ -781,6 +781,7 @@ object * is_player_inv(object *op)
  * The result of the dump is stored in the static global errmsg array.
  */
 
+#if 0
 void dump_object2(const object *op)
 {
     char   *cp;
@@ -824,6 +825,26 @@ void dump_object2(const object *op)
         strcat(errmsg, "end\n");
     }
 }
+#else
+void dump_object2(const object *op)
+{
+    char   *cp;
+    /*  object *tmp;*/
+
+    if (op->arch != NULL)
+    {
+        cp = get_ob_diff(op, &empty_archetype->clone);
+        sprintf(strchr(errmsg, '\0'), "arch %s\ncount %d\n%send\n",
+                (op->arch->name) ? op->arch->name : "(null)", op->count,
+                (cp) ? cp : "");
+    }
+    else
+    {
+        sprintf(strchr(errmsg, '\0'), "Object %s\nend\n",
+                (op->name) ? op->name : "(null)");
+    }
+}
+#endif
 
 /*
  * Dumps an object.  Returns output in the static global errmsg array.
