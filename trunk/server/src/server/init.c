@@ -708,6 +708,7 @@ static void help()
 }
 
 /* Signal handlers: */
+#ifndef WIN32
 
 static void rec_sigsegv(int i)
 {
@@ -767,6 +768,7 @@ static void rec_sigterm(int i)
     fatal_signal(0, 1);
 }
 
+#endif
 
 static void init_signals()
 {
