@@ -532,7 +532,7 @@ void party_client_group_status(object *member)
 /* tell a member that he has no group! */
 void party_client_group_kill(object *member)
 {
-	Write_String_To_Socket(&CONTR(member)->socket, BINARY_CMD_GROUP, NOT_LEGAL_POINTER, 1);
+	Write_Command_To_Socket(&CONTR(member)->socket, BINARY_CMD_GROUP);
 }
 
 /* TODO: optimize update handling
