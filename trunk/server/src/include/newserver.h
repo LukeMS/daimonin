@@ -121,6 +121,14 @@ typedef struct _sockbuf_struct
 	unsigned char	*buf;
 } sockbuf_struct;
 
+/*
+ * The following definition was copied from plugin_lua.h. Write_String_To_Socket used to be
+ * called with a NULL buf parameter when not wanted, but this gave a warning with the -Wall
+ * switch when substituted in the call to memcpy in SockBuf_AddString. Using this instead
+ * avoids that warning.
+ */
+#define NOT_LEGAL_POINTER ((void *)(0x01))
+
 /* help functions to write in requested socket buffers */
 #define SockBuf_AddChar(_sl_,_c_) \
 	{if((int)((_sl_)->len+1)>=(_sl_)->bufsize) \
@@ -154,7 +162,7 @@ typedef struct _sockbuf_struct
 /* helper macro to add a command with string data block */
 #define Write_String_To_Socket(_ns_,_cmd_,_buf_,_len_) \
 	{SOCKBUF_REQUEST_BUFFER((_ns_),(_len_)+1); \
-	if(_buf_ != NULL) \
+	if((_buf_) != NOT_LEGAL_POINTER) \
 	SockBuf_AddString(ACTIVE_SOCKBUF(_ns_),(_buf_),(_len_)); \
 	SOCKBUF_REQUEST_FINISH((_ns_), (_cmd_), SOCKBUF_DYNAMIC);}
 
