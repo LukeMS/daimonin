@@ -111,7 +111,7 @@ static char *BreakMulticommand(const char *command)
 void send_game_command(const char *command)
 {
     SockList    sl;
-    char *token, cmd[HUGE_BUF];
+    char *token, cmd[LARGE_BUF];
 
     /* Copy a normalized (leading, trailing, and excess inline whitespace-
     * stripped) command to cmd:
@@ -179,7 +179,7 @@ static void face_flag_extension(int pnum, char *buf)
     /* Check for the "alt a"/"alt b"/"double"/"up" tag in the picture name. */
     if ((stemp = strstr(buf, ".a")))
     {
-        char fname[HUGE_BUF];
+        char fname[LARGE_BUF];
         int  i;
 
         FaceList[pnum].flags |= FACE_FLAG_ALTERNATIVE;
@@ -213,7 +213,7 @@ static void face_flag_extension(int pnum, char *buf)
     }
     else if ((stemp = strstr(buf, ".b")))
     {
-        char fname[HUGE_BUF];
+        char fname[LARGE_BUF];
         int  i;
 
         FaceList[pnum].flags |= FACE_FLAG_ALTERNATIVE;

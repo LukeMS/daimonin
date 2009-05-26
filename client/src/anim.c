@@ -657,7 +657,7 @@ void create_anim_tmp()
     FILE       *stream, *ftmp;
     int         i, j, k, l, count = 1, anim_len = 0, facings=0, numfaces=0 , dirframepos = 0;
     uint8       seqnum, dirnum, delay=0, frames=0;
-    char        buf[HUGE_BUF], cmd[HUGE_BUF];
+    char        buf[LARGE_BUF], cmd[LARGE_BUF];
     char        anim_cmd[2048];
     Boolean     anim = FALSE, sequence=FALSE, dir=FALSE, old_format = TRUE;
     uint16      faces[1024]; /* temp face buffer for old anims */
@@ -680,7 +680,7 @@ void create_anim_tmp()
         exit(0);
     }
 
-    while (fgets(buf, HUGE_BUF - 1, stream) != NULL)
+    while (fgets(buf, LARGE_BUF - 1, stream) != NULL)
     {
         sscanf(buf, "%s", cmd);
         if (anim == FALSE) /* we are outside a anim body ? */

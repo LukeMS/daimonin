@@ -173,7 +173,7 @@ void textwin_init()
 
 void draw_info_format(int flags,char *format,...)
 {
-    char    buf[HUGE_BUF];
+    char    buf[LARGE_BUF];
     va_list ap;
 
     va_start(ap, format);

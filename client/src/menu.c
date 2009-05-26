@@ -1343,8 +1343,8 @@ void read_anims(void)
 /* after we tested and/or created bmaps.p0 - load the data from it */
 static void load_bmaps_p0(void)
 {
-    char    buf[HUGE_BUF];
-    char    name[HUGE_BUF];
+    char    buf[LARGE_BUF];
+    char    name[LARGE_BUF];
     int     len, pos, num;
     unsigned int crc;
     _bmaptype  *at;
@@ -1361,7 +1361,7 @@ static void load_bmaps_p0(void)
         unlink(FILE_BMAPS_P0);
         exit(0);
     }
-    while (fgets(buf, HUGE_BUF - 1, fbmap) != NULL)
+    while (fgets(buf, LARGE_BUF - 1, fbmap) != NULL)
     {
         sscanf(buf, "%d %d %x %d %s", &num, &pos, &crc, &len, name);
 
@@ -1389,7 +1389,7 @@ void read_bmaps_p0(void)
     char *cp;
     int     bufsize, len, num, pos;
     unsigned int crc;
-    char   buf[HUGE_BUF], line_buf[256];
+    char   buf[LARGE_BUF], line_buf[256];
 
     if ((fpic = fopen_wrapper(FILE_DAIMONIN_P0, "rb")) == NULL)
     {
@@ -1409,7 +1409,7 @@ void read_bmaps_p0(void)
     }
     temp_buf = malloc((bufsize = 24 * 1024));
 
-    while (fgets(buf, HUGE_BUF - 1, fpic) != NULL)
+    while (fgets(buf, LARGE_BUF - 1, fpic) != NULL)
     {
         if (strncmp(buf, "IMAGE ", 6) != 0)
         {
@@ -1479,7 +1479,7 @@ void delete_bmap_tmp(void)
 static int load_bmap_tmp(void)
 {
     FILE   *stream;
-    char    buf[HUGE_BUF], name[HUGE_BUF];
+    char    buf[LARGE_BUF], name[LARGE_BUF];
     int     i = 0, len, pos;
     unsigned int crc;
 
@@ -1490,7 +1490,7 @@ static int load_bmap_tmp(void)
         SYSTEM_End(); /* fatal */
         exit(0);
     }
-    while (fgets(buf, HUGE_BUF - 1, stream) != NULL)
+    while (fgets(buf, LARGE_BUF - 1, stream) != NULL)
     {
         sscanf(buf, "%d %d %x %s\n", &pos, &len, &crc, name);
         bmaptype_table[i].crc = crc;
@@ -1509,7 +1509,7 @@ static int load_bmap_tmp(void)
 int read_bmap_tmp(void)
 {
     FILE       *stream, *fbmap0;
-    char        buf[HUGE_BUF], name[HUGE_BUF];
+    char        buf[LARGE_BUF], name[LARGE_BUF];
     struct stat stat_bmap, stat_tmp, stat_bp0;
     int len;
     unsigned int crc;
@@ -1562,7 +1562,7 @@ create_bmap_tmp:
                      * loaded bmap table (from bmaps.p0) and create with
                      * this information the bmaps.tmp file.
                      */
-            while (fgets(buf, HUGE_BUF - 1, stream) != NULL)
+            while (fgets(buf, LARGE_BUF - 1, stream) != NULL)
             {
                 sscanf(buf, "%x %x %s", &len, &crc, name);
                 at = find_bmap(name);
@@ -1672,9 +1672,9 @@ int get_bmap_id(char *name)
 void load_settings(void)
 {
     FILE   *stream;
-    char    buf[HUGE_BUF], buf1[HUGE_BUF], buf2[HUGE_BUF];
-    char    cmd[HUGE_BUF];
-    char    para[HUGE_BUF];
+    char    buf[LARGE_BUF], buf1[LARGE_BUF], buf2[LARGE_BUF];
+    char    cmd[LARGE_BUF];
+    char    para[LARGE_BUF];
     int     para_count = 0, last_cmd = 0;
     int     tmp_level   = 0;
 
@@ -1682,7 +1682,7 @@ void load_settings(void)
     LOG(LOG_DEBUG, "Loading %s....\n", FILE_CLIENT_SETTINGS);
     if ((stream = fopen_wrapper(FILE_CLIENT_SETTINGS, "rb")) != NULL)
     {
-        while (fgets(buf, HUGE_BUF - 1, stream) != NULL)
+        while (fgets(buf, LARGE_BUF - 1, stream) != NULL)
         {
             if (buf[0] == '#' || buf[0] == '\0')
                 continue;
@@ -1700,61 +1700,61 @@ void load_settings(void)
                     strcpy(serv_char->name, para);
 
                     /* get next legal line */
-                    while (fgets(buf, HUGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
+                    while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
                         ;
                     sscanf(adjust_string(buf), "%s %d %d %d %d %d %d", buf1, &serv_char->bar[0], &serv_char->bar[1],
                            &serv_char->bar[2], &serv_char->bar_add[0], &serv_char->bar_add[1], &serv_char->bar_add[2]);
 
                     serv_char->pic_id = get_bmap_id(buf1);
 
-                    while (fgets(buf, HUGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
+                    while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
                         ;
                     sscanf(adjust_string(buf), "%d %s %s", &serv_char->gender[0], buf1, buf2);
                     serv_char->char_arch[0] = malloc(strlen(buf1) + 1);
                     strcpy(serv_char->char_arch[0], buf1);
                     serv_char->face_id[0] = get_bmap_id(buf2);
 
-                    while (fgets(buf, HUGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
+                    while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
                         ;
                     sscanf(adjust_string(buf), "%d %s %s", &serv_char->gender[1], buf1, buf2);
                     serv_char->char_arch[1] = malloc(strlen(buf1) + 1);
                     strcpy(serv_char->char_arch[1], buf1);
                     serv_char->face_id[1] = get_bmap_id(buf2);
 
-                    while (fgets(buf, HUGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
+                    while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
                         ;
                     sscanf(adjust_string(buf), "%d %s %s", &serv_char->gender[2], buf1, buf2);
                     serv_char->char_arch[2] = malloc(strlen(buf1) + 1);
                     strcpy(serv_char->char_arch[2], buf1);
                     serv_char->face_id[2] = get_bmap_id(buf2);
 
-                    while (fgets(buf, HUGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
+                    while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
                         ;
                     sscanf(adjust_string(buf), "%d %s %s", &serv_char->gender[3], buf1, buf2);
                     serv_char->char_arch[3] = malloc(strlen(buf1) + 1);
                     strcpy(serv_char->char_arch[3], buf1);
                     serv_char->face_id[3] = get_bmap_id(buf2);
 
-                    while (fgets(buf, HUGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
+                    while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
                         ;
                     sscanf(adjust_string(buf), "%d %d %d %d %d %d %d\n",
                            &serv_char->stats[0],
                            &serv_char->stats[1], &serv_char->stats[2], &serv_char->stats[3],
                            &serv_char->stats[4], &serv_char->stats[5], &serv_char->stats[6]);
 
-                    while (fgets(buf, HUGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
+                    while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
                         ;
                     serv_char->desc[0] = malloc(strlen(adjust_string(buf)) + 1);
                     strcpy(serv_char->desc[0], buf);
-                    while (fgets(buf, HUGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
+                    while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
                         ;
                     serv_char->desc[1] = malloc(strlen(adjust_string(buf)) + 1);
                     strcpy(serv_char->desc[1], buf);
-                    while (fgets(buf, HUGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
+                    while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
                         ;
                     serv_char->desc[2] = malloc(strlen(adjust_string(buf)) + 1);
                     strcpy(serv_char->desc[2], buf);
-                    while (fgets(buf, HUGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
+                    while (fgets(buf, LARGE_BUF - 1, stream) != NULL && (buf[0] == '#' || buf[0] == '\0'))
                         ;
                     serv_char->desc[3] = malloc(strlen(adjust_string(buf)) + 1);
                     strcpy(serv_char->desc[3], buf);
