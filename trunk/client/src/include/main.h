@@ -37,7 +37,11 @@ extern uint16   endian_int16;   /* thats the 0x0201 short endian */
 //#define SKIN_POS_QUICKSLOT_X 518
 //#define SKIN_POS_QUICKSLOT_Y 109
 
-#define HUGE_BUF 1024
+#define TINY_BUF   64
+#define SMALL_BUF  128
+#define MEDIUM_BUF 256
+#define LARGE_BUF  1024
+#define HUGE_BUF   4096
 
 #define SDL_DEFAULT_REPEAT_DELAY        500
 #define SDL_DEFAULT_REPEAT_INTERVAL     30
