@@ -102,7 +102,9 @@ static void signal_connection(object *op, oblinkpt *olp, object *activator, obje
 
               if (!tmp->stats.food || tmp->last_eat < tmp->stats.food)
               {
-                  new_info_map(NDI_UNIQUE | NDI_NAVY, tmp->map, tmp->x, tmp->y, MAP_INFO_NORMAL, tmp->msg);
+                  /* Don't send null buffer if sound only */
+                  if (tmp->msg)
+                      new_info_map(NDI_UNIQUE | NDI_NAVY, tmp->map, tmp->x, tmp->y, MAP_INFO_NORMAL, tmp->msg);
                   if (tmp->stats.food)
                       tmp->last_eat++;
               }
