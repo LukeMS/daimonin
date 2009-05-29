@@ -441,7 +441,7 @@ static treasure * load_treasure(FILE *fp, int *t_style, int *a_chance)
             t->magic_chance = value;
         else if (sscanf(cp, "difficulty %d", &value))
             t->difficulty = value;
-        else if (!strncmp(cp, "yes", strlen("yes")))
+        else if (!strncmp(cp, "yes", 3))
         {
             t_style2 = T_STYLE_UNSET;
             a_chance2 = ART_CHANCE_UNSET;
@@ -451,7 +451,7 @@ static treasure * load_treasure(FILE *fp, int *t_style, int *a_chance)
             if (t->next_yes->t_style == T_STYLE_UNSET)
                 t->next_yes->t_style = t_style2;
         }
-        else if (!strncmp(cp, "no", strlen("no")))
+        else if (!strncmp(cp, "no", 2))
         {
             t_style2 = T_STYLE_UNSET;
             a_chance2 = ART_CHANCE_UNSET;
@@ -461,9 +461,9 @@ static treasure * load_treasure(FILE *fp, int *t_style, int *a_chance)
             if (t->next_no->t_style == T_STYLE_UNSET)
                 t->next_no->t_style = t_style2;
         }
-        else if (!strncmp(cp, "end", strlen("end")))
+        else if (!strncmp(cp, "end", 3))
             return t;
-        else if (!strncmp(cp, "more", strlen("more")))
+        else if (!strncmp(cp, "more", 4))
         {
             t_style2 = T_STYLE_UNSET;
             a_chance2 = ART_CHANCE_UNSET;

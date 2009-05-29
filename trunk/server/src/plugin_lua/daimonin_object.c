@@ -2690,7 +2690,7 @@ static int GameObject_CheckOneDropQuest(lua_State *L)
     {
         char buf[MAX_BUF];
 
-        sprintf(buf, "object:CheckOneDropQuest(): Can't find archetype '%s'", arch);
+        sprintf(buf, "object:CheckOneDropQuest(): Can't find archetype '%s'", arch_name);
 
         return luaL_error(L, buf);
     }
