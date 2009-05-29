@@ -209,7 +209,7 @@ int command_channel(object *ob, char *params)
 //            new_draw_info_format(NDI_UNIQUE, 0, ob, "Colorsyntax: -<channelname>!color <1-210>");
             return 1;
         }
-//        if (!strncasecmp(params,"color",strlen("color")))
+//        if (!strncasecmp(params,"color",5))
 //        {
 //            int color;
 //            if (sscanf(params,"color %d",&color)==EOF)
@@ -223,20 +223,20 @@ int command_channel(object *ob, char *params)
 //            }
 //        }
         /* we simply map the !mute-command to the command_channel_mute*/
-        else if(!strncasecmp(params,"mute",strlen("mute")))
+        else if(!strncasecmp(params,"mute",4))
         {
             char    buf3[256];
             sprintf(buf3,"%s %s",pl_channel->channel->name,params+5);
             command_channel_mute(ob, buf3);
             return 1;
         }
-        else if (!strncasecmp(params, "mod", strlen("mod")))
+        else if (!strncasecmp(params, "mod", 3))
         {
             modify_channel_params(pl_channel,params+4);
         }
-        else if (!strncasecmp(params, "add", strlen("add")))
+        else if (!strncasecmp(params, "add", 3))
             forceAddPlayerToChannel(pl_channel, params+4);
-        else if (!strncasecmp(params, "kick", strlen("kick")))
+        else if (!strncasecmp(params, "kick", 4))
             kickPlayerFromChannel(pl_channel, params+5);
 
         return 1;
