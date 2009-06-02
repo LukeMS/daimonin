@@ -774,54 +774,60 @@ int command_dumpactivelist(object *op, char *params)
     return 0;
 }
 
-/* special test server/ map wizard server command to shutdown the server
- * using the shutdown command with special signal for map update
- * On a test server the command is avaible for GMs and on a 30 sec
- * counter. On a normal server its a DM command and on a 5 min counter.
+/* Reboots the server (recompile code, update arches and maps).
+ * On a test server the command is available for MWs and MMs on a 30 second
+ * counter. A stream name may be given -- ie, /restart stream -- to compile the
+ * trunk server with that stream added.
+ * On a normal server it's a MM-only command on a 5 min counter with no param.
  */
 int command_restart(object *ob, char *params)
 {
-    char  buf[MAX_BUF];
 #ifdef _TESTSERVER
+    char  buf[MAX_BUF];
     FILE *fp;
-    int   t = 30;
 
-    if(ob && CONTR(ob)->gmaster_mode < GMASTER_MODE_GM)
+    if (ob &&
+        (CONTR(ob)->gmaster_mode != GMASTER_MODE_MW &&
+         CONTR(ob)->gmaster_mode != GMASTER_MODE_MM))
         return 0;
+
     LOG(llevSystem,"write stream file...\n");
     sprintf(buf, "%s/%s", settings.localdir, "stream");
+
     if ((fp = fopen(buf, "w")) == NULL)
     {
         LOG(llevBug, "BUG: Cannot open %s for writing\n", buf);
-        return;
+
+        return -1;
     }
+
     if (params)
         fprintf(fp, "%s", params);
     else
         fprintf(fp, "(null)");
-    fclose(fp);
-#else
-    int t = 300;
 
-    if(ob && CONTR(ob)->gmaster_mode < GMASTER_MODE_MM)
-        return 0;
-#endif
-    strcpy(buf, "Shutdown Agent started with /restart");
-#ifdef _TESTSERVER
-    if (params)
-    {
-        strcat(buf, " ");
-        strcat(buf, params);
-    }
-#endif
-    strcat(buf, "!\n");
+    fclose(fp);
+
+    sprintf(buf, "'/restart%s%s' issued by %s\nServer will recompile and arches and maps will be updated!",
+            (params) ? " " : "", (params) ? params : "", STRING_OBJ_NAME(ob));
     LOG(llevSystem, buf);
-    shutdown_agent(t, EXIT_RESETMAP, "restart shutdown - server will recompile and update arches and maps!");
-    new_draw_info_format(NDI_UNIQUE | NDI_GREEN, 0, ob, "shutdown agent started! (timer set to %d seconds).", t);
+    shutdown_agent(30, EXIT_RESETMAP, buf);
 
     return 0;
-}
+#else
+    char buf[MAX_BUF];
 
+    if(ob && CONTR(ob)->gmaster_mode != GMASTER_MODE_MM)
+        return 0;
+
+    sprintf(buf, "'/restart' issued by %s\nServer will recompile and arches and maps will be updated!",
+            STRING_OBJ_NAME(ob));
+    LOG(llevSystem, buf);
+    shutdown_agent(300, EXIT_RESETMAP, buf);
+
+    return 0;
+#endif
+}
 
 int command_start_shutdown(object *op, char *params)
 {
