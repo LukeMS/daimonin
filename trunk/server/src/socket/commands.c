@@ -118,8 +118,6 @@ CommArray_s Commands[]                  =
     {"malloc",            command_malloc,   0.0},        /* check the server stats */
     {"kick",            command_kickcmd, 0.0},            /* kick with a 1m temp login ban */
     {"generate",        command_generate, 0.0},
-    {"restart",         command_restart,0.0},
-    {"dm_stealth", command_dm_stealth,0.0},
     {"inventory",        command_inventory,1.0f},    /* inv check of player x for exampel to check quest items */
     {"mute",            command_mute,1.0f},            /* max 5 min for VOL */
 
@@ -176,7 +174,8 @@ CommArray_s WizCommands[]           =
     {"setskill", command_setskill,0.0},
     {"maps", command_maps,   0.0},
     {"dump", command_dump,0.0}, /* dump info of object nr. x */
-
+    {"restart", command_restart,0.0},
+    {"dm_stealth", command_dm_stealth,0.0},
     {"dm_invis", command_dm_invis,0.0},
     {"dm_dev", command_dm_dev,0.0},
     {"dm_light", command_dm_light,0.0},
