@@ -78,7 +78,7 @@ function QuestManager:GetStatus()
                 for v in qm.required do
                     local obj = qm.player:GetQuest(v)
 
-                    if game.SENTInce_SERVER then
+                    if game.SENTInce_SERVER == 1 then
                         if obj == nil or
                            obj.food ~= -1 or
                            obj.last_eat ~= -1 then
@@ -104,7 +104,7 @@ function QuestManager:GetStatus()
             if qm.trigger.magic < qm.step then
                 return game.QSTAT_NO
             elseif qm.trigger.environment.name == "QC: list done" then
-                if game.SENTInce_SERVER then
+                if game.SENTInce_SERVER == 1  then
                     if qm.trigger.food == -1 then
                         return game.QSTAT_DONE
                     else
@@ -217,7 +217,7 @@ function QuestManager:RegisterQuest(qtype, ib)
     ib.activecoins = false
     local text = string.gsub(ib:Build(), "%^", "")
 
-    if game.SENTInce_SERVER then
+    if game.SENTInce_SERVER == 1  then
         self.trigger = self.player:AddQuest(self.name, qtype, self.step,
                                             self.end_step, self.level,
                                             self.skill, text, self.repeats)
@@ -375,7 +375,7 @@ function QuestManager:Finish()
 
     local status
 
-    if game.SENTInce_SERVER then
+    if game.SENTInce_SERVER == 1  then
         status = self.trigger.food
     else
         status = self.trigger.last_eat
@@ -387,7 +387,7 @@ function QuestManager:Finish()
         status = -1
     end
 
-    if game.SENTInce_SERVER then
+    if game.SENTInce_SERVER == 1  then
         self.trigger.food = status
     else
         self.trigger.last_eat = status
