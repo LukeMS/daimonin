@@ -238,7 +238,7 @@ void free_gmaster_list()
         free_gmaster_node(ol);
 }
 
-/* set a gmaster mode to a player: DM, GM or VOL
+/* set a gmaster mode to a player: MM, MW, GM, or VOL
  */
 void set_gmaster_mode(player *pl, int mode)
 {
@@ -249,7 +249,11 @@ void set_gmaster_mode(player *pl, int mode)
     pl->gmaster_mode = mode;
     pl->gmaster_node = add_gmaster_list(pl); /* link player to list of gmasters */
 
-    if(mode == GMASTER_MODE_MM)
+#ifdef _TESTSERVER
+    if (mode == GMASTER_MODE_MW || mode == GMASTER_MODE_MM)
+#else
+    if (mode == GMASTER_MODE_MM)
+#endif
     {
         SET_FLAG(pl->ob, FLAG_WIZ);
         SET_FLAG(pl->ob, FLAG_WIZPASS);
@@ -261,10 +265,11 @@ void set_gmaster_mode(player *pl, int mode)
     }
 
     pl->socket.ext_title_flag =1;
-    new_draw_info_format( NDI_UNIQUE, 0, pl->ob, "%s mode activated for %s!",
-                          mode==GMASTER_MODE_MM ? "MM" : (mode==GMASTER_MODE_GM ?"GM" : (mode==GMASTER_MODE_VOL?"VOL":"MW")) ,pl->ob->name);
+    new_draw_info_format(NDI_UNIQUE, 0, pl->ob, "%s mode activated for %s!",
+                         (mode == GMASTER_MODE_MM) ? "MM" : ((mode == GMASTER_MODE_GM) ? "GM" : ((mode == GMASTER_MODE_VOL) ? "VOL" : "MW")),
+                         pl->ob->name);
 #ifdef _TESTSERVER
-    if (mode == GMASTER_MODE_GM || mode == GMASTER_MODE_MM)
+    if (mode == GMASTER_MODE_MW || mode == GMASTER_MODE_MM)
     {
         char  buf[MAX_BUF];
         FILE *fp;
@@ -303,24 +308,28 @@ void set_gmaster_mode(player *pl, int mode)
  */
 void remove_gmaster_mode(player *pl)
 {
-    int gmaster_mode = pl->gmaster_mode;
+    int mode = pl->gmaster_mode;
 
     new_draw_info_format(NDI_UNIQUE, 0, pl->ob, "%s mode deactivated.",
-        (gmaster_mode == GMASTER_MODE_MM) ? "MM" : ((gmaster_mode == GMASTER_MODE_GM) ? "GM" : (gmaster_mode==GMASTER_MODE_VOL?"VOL":"MW")));
+        (mode == GMASTER_MODE_MM) ? "MM" : ((mode == GMASTER_MODE_GM) ? "GM" : ((mode == GMASTER_MODE_VOL) ? "VOL" : "MW")));
 
     remove_gmaster_list(pl);
     pl->gmaster_mode = GMASTER_MODE_NO;
 
-    if(gmaster_mode == GMASTER_MODE_MM)
+#ifdef _TESTSERVER
+    if (mode == GMASTER_MODE_MW || mode == GMASTER_MODE_MM)
+#else
+    if (mode == GMASTER_MODE_MM)
+#endif
     {
-        /* remove the DM power settings */
+        /* remove the power settings */
         CLEAR_FLAG(pl->ob, FLAG_WIZ);
         CLEAR_FLAG(pl->ob, FLAG_WIZPASS);
         CLEAR_MULTI_FLAG(pl->ob, FLAG_FLYING);
-        /* bit of a cheat, but by doing this we avoid a fix when going into DM
+        /* bit of a cheat, but by doing this we avoid a fix when going into wiz
          * mode and slight confusion. */
         pl->dm_invis = 0;
-        FIX_PLAYER(pl->ob, "remove DM mode");
+        FIX_PLAYER(pl->ob, "remove wiz mode");
         pl->socket.update_tile = 0;
         esrv_send_inventory(pl->ob, pl->ob);
         pl->update_los = 1;
