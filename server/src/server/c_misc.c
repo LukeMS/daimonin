@@ -85,14 +85,16 @@ int command_spell_reset(object *op, char *params)
     return 1;
 }
 
-/* '/motd' displays the MOTD. DMs can also set the MOTD:
- *   '/motd default' restores the server-set MOTD (actually deletes the DM-set
- *   one).
- *   '/motd <message>' sets the DM-set MOTD. */
+/* '/motd' displays the MOTD. GMs and MMs can also set the MOTD:
+ *   '/motd default' restores the server-set MOTD (actually deletes the
+ *   GMASTER-set one).
+ *   '/motd <message>' sets the GMASTER-set MOTD. */
 int command_motd(object *op, char *params)
 {
 #ifdef MOTD
-    if (CONTR(op)->gmaster_mode == GMASTER_MODE_MM && params)
+    if (params &&
+        (CONTR(op)->gmaster_mode == GMASTER_MODE_GM ||
+         CONTR(op)->gmaster_mode == GMASTER_MODE_MM))
     {
         char  buf[MAX_BUF];
         FILE *fp;
