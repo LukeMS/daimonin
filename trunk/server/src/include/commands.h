@@ -53,9 +53,19 @@ typedef struct
 } CommArray_s;
 
 
-extern CommArray_s  Commands[], WizCommands[], CommunicationCommands[];
+extern CommArray_s Commands[];
+extern CommArray_s CommunicationCommands[];
+extern CommArray_s CommandsVOL[];
+extern CommArray_s CommandsGM[];
+extern CommArray_s CommandsMW[];
+extern CommArray_s CommandsMM[];
 
-extern const int    CommandsSize, WizCommandsSize, CommunicationCommandSize;
+extern const int CommandsSize;
+extern const int CommunicationCommandsSize;
+extern const int CommandsVOLSize;
+extern const int CommandsGMSize;
+extern const int CommandsMWSize;
+extern const int CommandsMMSize;
 
 #define EMOTE_NOD   1
 #define EMOTE_DANCE 2

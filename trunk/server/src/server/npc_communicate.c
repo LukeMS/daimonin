@@ -84,7 +84,7 @@ void communicate(object *op, char *txt)
                 cp = NULL;
         }
 
-        csp = find_command_element(buf, CommunicationCommands, CommunicationCommandSize);
+        csp = find_command_element(buf, CommunicationCommands, CommunicationCommandsSize);
         if (csp)
         {
             csp->func(op, cp);
