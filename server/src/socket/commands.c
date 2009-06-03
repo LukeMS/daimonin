@@ -58,80 +58,58 @@ _CmdMapping cs_commands[]    =
 /*
  * Normal game commands
  */
-CommArray_s Commands[]                  =
+extern CommArray_s Commands[] =
 {
-    {"apply",        command_apply,          1.0f},
-    /* should be variable */
-    {"target",       command_target,         0.1f}, /* enter combat and attack object in reach */
-    {"combat",       command_combat,         0.1f}, /* toggle attack mode of player */
-    {"rest",         command_resting,        1.0f},
-    {"run",          command_run,            1.0f},
-    {"run_stop",     command_run_stop,       0.01f},
-    {"cast",         command_cast_spell,     0.0f},
-    {"push",         command_push_object,    1.0f},
-    {"right",        command_turn_right,     1.0f},
-    {"left",         command_turn_left,      1.0f},
-    /* use time comes from spells! */
-    {"say",          command_say,            1.0f},
-    {"gsay",         command_gsay,           1.0f},
-    {"shout",        command_shout,          1.0f},
-    {"tell",         command_tell,           1.0f},
-    {"talk",         command_talk,           1.0f},
-    {"who",          command_who,            5.0f},
-    {"qlist",        command_questlist,      5.0f},
-    {"mapinfo",      command_mapinfo,        5.0f},
-    {"motd",         command_motd,           5.0f},
-    {"usekeys",      command_usekeys,        1.0f},
-    {"time",         command_time,           1.0f},
-    {"version",      command_version,        1.0f},
-    {"help",         command_help,           1.0f},
-    {"save",         command_save,           1.0f},
-    {"use_skill",    command_uskill,         0.1f},
-    {"ready_skill",  command_rskill,         0.1f},
-    {"silent_login", command_silent_login,   0.0f},
-    {"egobind",      command_egobind,        1.0f},
-
+    {"apply",         command_apply,          1.0f}, /* should be variable */
+    {"target",        command_target,         0.1f}, /* enter combat and attack object in reach */
+    {"combat",        command_combat,         0.1f}, /* toggle attack mode of player */
+    {"rest",          command_resting,        1.0f},
+    {"run",           command_run,            1.0f},
+    {"run_stop",      command_run_stop,       0.01f},
+    {"cast",          command_cast_spell,     0.0f}, /* use time comes from spells! */
+    {"push",          command_push_object,    1.0f},
+    {"right",         command_turn_right,     1.0f},
+    {"left",          command_turn_left,      1.0f},
+    {"say",           command_say,            1.0f},
+    {"gsay",          command_gsay,           1.0f},
+    {"shout",         command_shout,          1.0f},
+    {"tell",          command_tell,           1.0f},
+    {"talk",          command_talk,           1.0f},
+    {"who",           command_who,            5.0f},
+    {"qlist",         command_questlist,      5.0f},
+    {"mapinfo",       command_mapinfo,        5.0f},
+    {"motd",          command_motd,           5.0f},
+    {"usekeys",       command_usekeys,        1.0f},
+    {"time",          command_time,           1.0f},
+    {"version",       command_version,        1.0f},
+    {"help",          command_help,           1.0f},
+    {"save",          command_save,           1.0f},
+    {"use_skill",     command_uskill,         0.1f},
+    {"ready_skill",   command_rskill,         0.1f},
+    {"silent_login",  command_silent_login,   0.0f},
+    {"egobind",       command_egobind,        1.0f},
+    /* group commands */
+    {"invite",        command_party_invite,   4.0f},
+    {"join",          command_party_join,     0.1f},
+    {"deny",          command_party_deny,     0.1f},
+    {"leave",         command_party_leave,    4.0f},
+    {"remove",        command_party_remove,   4.0f},
 #ifdef USE_CHANNELS
-    {"channel",      command_channel,        1.0f}, /* channel system */
+    {"channel",       command_channel,        1.0f}, /* channel system */
     {"createchannel", command_channel_create, 1.0f}, /* channel system */
     {"deletechannel", command_channel_delete, 1.0f}, /* channel system */
-    {"channelmute",  command_channel_mute,     1.0f}, /* channel system */
+    {"channelmute",   command_channel_mute,   1.0f}, /* channel system */
 #endif
 #ifdef _TESTSERVER
-    {"stuck",        command_stuck,          0.0},
+    {"stuck",         command_stuck,          0.0f},
 #endif
-    /* group commands */
-    {"invite",        command_party_invite,    4.0f},
-    {"join",            command_party_join,        0.1f},
-    {"deny",            command_party_deny,        0.1f},
-    {"leave",        command_party_leave,    4.0f},
-    {"remove",        command_party_remove,    4.0f},
-
-    {"mm",           command_mm,             1.0f},
-    {"gm",           command_gm,             1.0f},
-    {"vol",          command_vol,            1.0f},
-    {"mw",           command_mw,             1.0f},
-    /* VOL/GM/DM */
-    {"mutelevel",      command_mutelevel,1.0f},
-    {"dm_connections",  command_dm_connections, 1.0f},
-    {"dm_list",        command_dm_list,1.0f},
-    {"malloc",            command_malloc,   0.0},        /* check the server stats */
-    {"kick",            command_kickcmd, 0.0},            /* kick with a 1m temp login ban */
-    {"generate",        command_generate, 0.0},
-    {"inventory",        command_inventory,1.0f},    /* inv check of player x for exampel to check quest items */
-    {"mute",            command_mute,1.0f},            /* max 5 min for VOL */
-
-    /* GM/DM */
-    {"summon",            command_summon,1.0},
-    {"teleport",        command_teleport,1.0f},
-    {"ban",            command_ban,0.0},
-    {"gm_set",          command_gm_set,         0.0f},
-    {"silence",        command_silence,0.0},
-    {"gm_set",          command_gm_set,         0.0f},
-    {"ip",              command_ip,             0.0f},
+    {"mm",            command_mm,             1.0f},
+    {"gm",            command_gm,             1.0f},
+    {"vol",           command_vol,            1.0f},
+    {"mw",            command_mw,             1.0f},
 };
 
-CommArray_s CommunicationCommands[] =
+extern CommArray_s CommunicationCommands[] =
 {
     /* begin emotions */
     {"nod", command_nod,         1.0}, {"dance", command_dance,     1.0}, {"kiss", command_kiss,       1.0},
@@ -155,42 +133,67 @@ CommArray_s CommunicationCommands[] =
     {"me", command_me,           1.0},
 };
 
-/*
- * Wizard commands (for both)
- */
-CommArray_s WizCommands[]           =
+extern CommArray_s CommandsVOL[] =
 {
-    {"dm_set",          command_dm_set,         0.0f},
-    {"plugin",command_loadplugin,0.0},
-    {"pluglist",command_listplugins,0.0},
-    /* DM/WIZ commands */
-    {"goto", command_goto,0.0},
-    {"shutdown", command_start_shutdown,0.0},
-    {"shutdown_now", command_shutdown, 0.0},
-    {"resetmap", command_reset,0.0},
-    {"plugout",command_unloadplugin,0.0},
-    {"create", command_create,0.0},
-    {"addexp", command_addexp,0.0},
-    {"setskill", command_setskill,0.0},
-    {"maps", command_maps,   0.0},
-    {"dump", command_dump,0.0}, /* dump info of object nr. x */
-    {"restart", command_restart,0.0},
-    {"dm_stealth", command_dm_stealth,0.0},
-    {"dm_invis", command_dm_invis,0.0},
-    {"dm_dev", command_dm_dev,0.0},
-    {"dm_light", command_dm_light,0.0},
-    {"d_active", command_dumpactivelist,0.0},
-    {"d_arches", command_dumpallarchetypes,0.0},
-    {"d_maps", command_dumpallmaps,0.0},
-    {"d_map", command_dumpmap,0.0},
-    {"d_objects", command_dumpallobjects,0.0},
-    {"d_belowfull", command_dumpbelowfull,0.0},
-    {"d_below", command_dumpbelow,0.0},
-    {"d_hash", command_sstable,  0.0},
-    {"set_map_light", command_setmaplight,0.0},
-    {"stats", command_stats,0.0},
-    {"check_fd", command_check_fd,0.0},
-    {"dm_speed", command_speed,0.0},
+    {"mutelevel",      command_mutelevel,      1.0f},
+    {"dm_list",        command_dm_list,        1.0f},
+    {"kick",           command_kickcmd,        0.0f},
+    {"mute",           command_mute,           1.0f},
+    {"ip",             command_ip,             0.0f},
+};
+
+extern CommArray_s CommandsGM[] =
+{
+    {"dm_connections", command_dm_connections, 1.0f},
+    {"generate",       command_generate,       0.0f},
+    {"inventory",      command_inventory,      1.0f},
+    {"summon",         command_summon,         1.0f},
+    {"teleport",       command_teleport,       1.0f},
+    {"ban",            command_ban,            0.0f},
+    {"silence",        command_silence,        0.0f},
+    {"gm_set",         command_gm_set,         0.0f},
+};
+
+extern CommArray_s CommandsMW[] =
+{
+    {"summon",        command_summon,      1.0f},
+    {"teleport",      command_teleport,    1.0f},
+    {"resetmap",      command_reset,       0.0f},
+    {"goto",          command_goto,        0.0f},
+    {"addexp",        command_addexp,      0.0f},
+    {"setskill",      command_setskill,    0.0f},
+    {"restart",       command_restart,     0.0f},
+    {"dm_stealth",    command_dm_stealth,  0.0f},
+    {"dm_invis",      command_dm_invis,    0.0f},
+    {"dm_dev",        command_dm_dev,      0.0f},
+    {"dm_light",      command_dm_light,    0.0f},
+    {"set_map_light", command_setmaplight, 0.0f},
+    {"generate",      command_generate,    0.0f},
+};
+
+extern CommArray_s CommandsMM[] =
+{
+    {"dm_set",       command_dm_set,            0.0f},
+    {"plugin",       command_loadplugin,        0.0f},
+    {"pluglist",     command_listplugins,       0.0f},
+    {"shutdown",     command_start_shutdown,    0.0f},
+    {"shutdown_now", command_shutdown,          0.0f},
+    {"plugout",      command_unloadplugin,      0.0f},
+    {"create",       command_create,            0.0f},
+    {"maps",         command_maps,              0.0f},
+    {"dump",         command_dump,              0.0f},
+    {"dm_speed",     command_speed,             0.0f},
+    {"d_active",     command_dumpactivelist,    0.0f},
+    {"d_arches",     command_dumpallarchetypes, 0.0f},
+    {"d_maps",       command_dumpallmaps,       0.0f},
+    {"d_map",        command_dumpmap,           0.0f},
+    {"d_objects",    command_dumpallobjects,    0.0f},
+    {"d_belowfull",  command_dumpbelowfull,     0.0f},
+    {"d_below",      command_dumpbelow,         0.0f},
+    {"d_hash",       command_sstable,           0.0f},
+    {"stats",        command_stats,             0.0f},
+    {"check_fd",     command_check_fd,          0.0f},
+    {"malloc",       command_malloc,            0.0f},
 
     /* old, outdated or disabled commands */
     /*
@@ -226,9 +229,12 @@ CommArray_s WizCommands[]           =
 };
 
 /* sort the commands for faster access */
-const int   CommandsSize                = sizeof(Commands) / sizeof(CommArray_s);
-const int   CommunicationCommandSize    = sizeof(CommunicationCommands) / sizeof(CommArray_s);
-const int   WizCommandsSize = sizeof(WizCommands) / sizeof(CommArray_s);
+extern const int CommandsSize = sizeof(Commands) / sizeof(CommArray_s);
+extern const int CommunicationCommandsSize = sizeof(CommunicationCommands) / sizeof(CommArray_s);
+extern const int CommandsVOLSize = sizeof(CommandsVOL) / sizeof(CommArray_s);
+extern const int CommandsGMSize = sizeof(CommandsGM) / sizeof(CommArray_s);
+extern const int CommandsMWSize = sizeof(CommandsMW) / sizeof(CommArray_s);
+extern const int CommandsMMSize = sizeof(CommandsMM) / sizeof(CommArray_s);
 
 static int compare_A(const void *a, const void *b)
 {
@@ -238,8 +244,11 @@ static int compare_A(const void *a, const void *b)
 void init_commands()
 {
     qsort((char *) Commands, CommandsSize, sizeof(CommArray_s), compare_A);
-    qsort((char *) CommunicationCommands, CommunicationCommandSize, sizeof(CommArray_s), compare_A);
-    qsort((char *) WizCommands, WizCommandsSize, sizeof(CommArray_s), compare_A);
+    qsort((char *) CommunicationCommands, CommunicationCommandsSize, sizeof(CommArray_s), compare_A);
+    qsort((char *) CommandsVOL, CommandsVOLSize, sizeof(CommArray_s), compare_A);
+    qsort((char *) CommandsGM, CommandsGMSize, sizeof(CommArray_s), compare_A);
+    qsort((char *) CommandsMW, CommandsMWSize, sizeof(CommArray_s), compare_A);
+    qsort((char *) CommandsMM, CommandsMMSize, sizeof(CommArray_s), compare_A);
 }
 
 CommArray_s * find_command_element(char *cmd, CommArray_s *commarray, int commsize)
@@ -343,10 +352,27 @@ void cs_cmd_generic(char *buf, int len, NewSocket *ns)
         csp = find_command_element(buf, Commands, CommandsSize);
 
     if (!csp)
-        csp = find_command_element(buf, CommunicationCommands, CommunicationCommandSize);
+        csp = find_command_element(buf, CommunicationCommands, CommunicationCommandsSize);
 
-    if (!csp && QUERY_FLAG(ob, FLAG_WIZ))
-        csp = find_command_element(buf, WizCommands, WizCommandsSize);
+    if (!csp &&
+        (pl->gmaster_mode == GMASTER_MODE_VOL ||
+         pl->gmaster_mode == GMASTER_MODE_GM ||
+         pl->gmaster_mode == GMASTER_MODE_MM))
+        csp = find_command_element(buf, CommandsVOL, CommandsVOLSize);
+
+    if (!csp &&
+        (pl->gmaster_mode == GMASTER_MODE_GM ||
+         pl->gmaster_mode == GMASTER_MODE_MM))
+        csp = find_command_element(buf, CommandsGM, CommandsGMSize);
+
+    if (!csp &&
+        (pl->gmaster_mode == GMASTER_MODE_MW ||
+         pl->gmaster_mode == GMASTER_MODE_MM))
+        csp = find_command_element(buf, CommandsMW, CommandsMWSize);
+
+    if (!csp &&
+        pl->gmaster_mode == GMASTER_MODE_MM)
+        csp = find_command_element(buf, CommandsMM, CommandsMMSize);
 
     if (csp == NULL)
     {

@@ -1090,49 +1090,123 @@ static void help_topics(object *op, int what)
     closedir(dirp);
 }
 
-static void show_commands(object *op, int what)
+static void show_commands(object *op)
 {
-    char            line[80];
-    int             i, size, namelen, linelen = 0;
-    CommArray_s    *ap;
-    extern CommArray_s                      Commands[], WizCommands[];
-    extern const int CommandsSize, WizCommandsSize;
+    CommArray_s *ap[6];
+    int          size[6],
+                 i;
 
-    switch (what)
+    for (i = 0; i < 6; i++)
     {
-        case 1:
-          ap = WizCommands;
-          size = WizCommandsSize;
-          new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, "\nWiz commands:");
-          break;
-        case 2:
-          ap = CommunicationCommands;
-          size = CommunicationCommandSize;
-          new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, "\nEmotes:");
-          break;
+        ap[i] = NULL;
+        size[i] = -1;
+    }
+
+    switch (CONTR(op)->gmaster_mode)
+    {
+        case GMASTER_MODE_VOL:
+            ap[0] = Commands;
+            ap[1] = CommunicationCommands;
+            ap[2] = CommandsVOL;
+            size[0] = CommandsSize;
+            size[1] = CommunicationCommandsSize;
+            size[2] = CommandsVOLSize;
+
+            break;
+
+        case GMASTER_MODE_GM:
+            ap[0] = Commands;
+            ap[1] = CommunicationCommands;
+            ap[2] = CommandsVOL;
+            ap[3] = CommandsGM;
+            size[0] = CommandsSize;
+            size[1] = CommunicationCommandsSize;
+            size[2] = CommandsVOLSize;
+            size[3] = CommandsGMSize;
+
+            break;
+
+        case GMASTER_MODE_MW:
+            ap[0] = Commands;
+            ap[1] = CommunicationCommands;
+            ap[2] = CommandsMW;
+            size[0] = CommandsSize;
+            size[1] = CommunicationCommandsSize;
+            size[2] = CommandsMWSize;
+
+            break;
+
+        case GMASTER_MODE_MM:
+            ap[0] = Commands;
+            ap[1] = CommunicationCommands;
+            ap[2] = CommandsVOL;
+            ap[3] = CommandsGM;
+            ap[4] = CommandsMW;
+            ap[5] = CommandsMM;
+            size[0] = CommandsSize;
+            size[1] = CommunicationCommandsSize;
+            size[2] = CommandsVOLSize;
+            size[3] = CommandsGMSize;
+            size[4] = CommandsMWSize;
+            size[5] = CommandsMMSize;
+
+            break;
+
         default:
-          ap = Commands;
-          size = CommandsSize;
-          new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, "\nCommands:");
-          break;
+            ap[0] = Commands;
+            ap[1] = CommunicationCommands;
+            size[0] = CommandsSize;
+            size[1] = CommunicationCommandsSize;
     }
 
-    line[0] = '\0';
-    for (i = 0; i < size; i++)
+    for (i = 0; i < 6 && ap[i]; i++)
     {
-        namelen = strlen(ap[i].name);
-        linelen += namelen + 1;
-        if (linelen > 42)
+        char line[80];
+        int  linelen,
+             j;
+
+        if (ap[i] == Commands)
+            new_draw_info(NDI_UNIQUE, 0, op, "\n~Normal Commands~:");
+        else if (ap[i] == CommunicationCommands)
+            new_draw_info(NDI_UNIQUE, 0, op, "\n~Emotes~:");
+        else if (ap[i] == CommandsVOL)
+            new_draw_info(NDI_UNIQUE, 0, op, "\n~VOL Commands~:");
+        else if (ap[i] == CommandsGM)
+            new_draw_info(NDI_UNIQUE, 0, op, "\n~GM Commands~:");
+        else if (ap[i] == CommandsMW)
+            new_draw_info(NDI_UNIQUE, 0, op, "\n~MW Commands~:");
+        else if (ap[i] == CommandsMM)
+            new_draw_info(NDI_UNIQUE, 0, op, "\n~MM Commands~:");
+        else
         {
-            new_draw_info(NDI_UNIQUE, 0, op, line);
-            sprintf(line, " %s", ap[i].name);
-            linelen = namelen + 1;
-            continue;
+            LOG(llevDebug, "DEBUG:: %s/show_commands(): Unknown command structure!\n",
+                __FILE__);
+
+            return;
         }
-        strcat(line, " ");
-        strcat(line, ap[i].name);
+
+        line[0] = '\0';
+        linelen = 0;
+
+        for (j = 0; j < size[i]; j++)
+        {
+            int namelen;
+
+            namelen = (int)strlen(ap[i][j].name);
+            linelen += namelen + 1;
+
+            if (linelen > 42)
+            {
+                new_draw_info(NDI_UNIQUE, 0, op, line);
+                sprintf(line, " %s", ap[i][j].name);
+                linelen = namelen + 1;
+            }
+            else
+                sprintf(strchr(line, '\0'), " %s", ap[i][j].name);
+        }
+
+        new_draw_info(NDI_UNIQUE, 0, op, line);
     }
-    new_draw_info(NDI_UNIQUE, 0, op, line);
 }
 
 int command_resting(object *op, char *params)
@@ -1210,13 +1284,10 @@ int command_help(object *op, char *params)
     /*
      * Commands list
      */
-    if (!strcmp(params, "emotes"))
+    if (!strcmp(params, "commands"))
     {
-        /*show_commands(op, 0);*/
-        show_commands(op, 2); /* show comm commands */
-        /*
-           if (QUERY_FLAG(op, FLAG_WIZ))
-             show_commands(op, 1);*/
+        show_commands(op);
+
         return 0;
     }
 
