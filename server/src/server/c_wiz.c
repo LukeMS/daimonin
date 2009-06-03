@@ -167,9 +167,6 @@ int command_kickcmd(object *ob, char *params)
 {
     int ticks;
 
-    if(ob && CONTR(ob)->gmaster_mode < GMASTER_MODE_VOL)
-        return 0;
-
     if(!command_kick(ob, params))
         return 0;
 
@@ -196,7 +193,7 @@ int command_kick(object *ob, char *params)
     int                 ret=0;
     objectlink         *ol;
 
-    if(ob && CONTR(ob)->gmaster_mode < GMASTER_MODE_VOL)
+    if (ob->type != PLAYER)
         return 0;
 
     if (ob && params == NULL)
@@ -320,12 +317,9 @@ int command_generate(object *op, char *params)
     archetype  *at;
     artifact   *art = NULL;
 
-    if (!op)
+    if (!op || op->type != PLAYER)
         return 0;
-//    if(op && CONTR(op)->gmaster_mode <= GMASTER_MODE_VOL)
-//        return 0;
-   if(op && (CONTR(op)->gmaster_mode == GMASTER_MODE_GM || CONTR(op)->gmaster_mode == GMASTER_MODE_MM))
-   {
+
     if (params == NULL)
     {
         new_draw_info(NDI_UNIQUE, 0, op,
@@ -596,14 +590,11 @@ int command_generate(object *op, char *params)
                 tmp->head = head,prev->more = tmp;
             prev = tmp;
         }
-            head = insert_ob_in_ob(head, op);
-            esrv_send_item(op, head);
-        
+        head = insert_ob_in_ob(head, op);
+        esrv_send_item(op, head);
     }
+
     return 1;
-  }
-  else
-    return 0;
 }
 
 
@@ -612,10 +603,6 @@ int command_mutelevel(object *op, char *params)
     char buf[256];
     int lvl = 0;
     objectlink *ol;
-
-    /* allowed for VOL and higher */
-    if(CONTR(op)->gmaster_mode < GMASTER_MODE_VOL)
-        return 0;
 
     if (op && params == NULL)
     {
@@ -652,10 +639,6 @@ int command_dm_connections(object *op, char *params)
     objectlink *ol;
     int nr = 2;
 
-    /* allowed for VOL and higher */
-    if(CONTR(op)->gmaster_mode < GMASTER_MODE_VOL)
-        return 0;
-
     if ((params == NULL) || (sscanf(params, "%d", &nr) != 1))
     {
         new_draw_info(NDI_UNIQUE, 0, op, "Usage: /dm_connections <number>");
@@ -685,10 +668,6 @@ int command_summon(object *op, char *params)
 {
     int     i;
     player *pl;
-
-    /* allowed for GM and DM only */
-    if(CONTR(op)->gmaster_mode < GMASTER_MODE_GM)
-        return 0;
 
     if (!op)
         return 0;
@@ -736,10 +715,6 @@ int command_teleport(object *op, char *params)
     int     i;
     player *pl;
 
-    /* allowed for GM and DM only */
-    if(CONTR(op)->gmaster_mode < GMASTER_MODE_GM)
-        return 0;
-
     if (!op)
         return 0;
 
@@ -785,9 +760,7 @@ int command_create(object *op, char *params)
     archetype  *at;
     artifact   *art = NULL;
 
-    if (!op)
-        return 0;
-    if(op && CONTR(op)->gmaster_mode != GMASTER_MODE_MM)
+    if (!op || op->type != PLAYER)
         return 0;
 
     if (params == NULL)
@@ -1083,10 +1056,6 @@ int command_inventory(object *op, char *params)
     object *tmp;
     int     i;
 
-    /* allowed for GM and DM only */
-    if(CONTR(op)->gmaster_mode < GMASTER_MODE_GM)
-        return 0;
-
     if (!params)
     {
         inventory(op, NULL);
@@ -1285,8 +1254,6 @@ int command_addexp(object *op, char *params)
     int     exp, snr;
     object *exp_skill, *exp_ob;
     player *pl;
-    if(op && CONTR(op)->gmaster_mode != GMASTER_MODE_MM)
-        return 0;
 
     if (params == NULL || sscanf(params, "%s %d %d", buf, &snr, &exp) != 3)
     {
@@ -1352,8 +1319,7 @@ int command_addexp(object *op, char *params)
 int command_speed(object *op, char *params)
 {
     long i;
-    if(op && CONTR(op)->gmaster_mode != GMASTER_MODE_MM)
-        return 0;
+
     if (params == NULL || !sscanf(params, "%ld", &i))
     {
         new_draw_info_format(NDI_UNIQUE, 0, op, "Current speed is %ld ums (%f ticks/second)", pticks_ums, pticks_second);
@@ -1464,8 +1430,6 @@ int command_reset(object *op, char *params)
     int             count;
     mapstruct      *m;
     player         *pl;
-    if(op && CONTR(op)->gmaster_mode != GMASTER_MODE_MM)
-        return 0;
 
     if (params == NULL)
         m = has_been_loaded_sh(op->map->path);
@@ -1618,9 +1582,6 @@ int command_mute(object *op, char *params)
     if (!params)
         return 0;
 
-    if(CONTR(op)->gmaster_mode == GMASTER_MODE_NO)
-        return 0;
-
     sscanf(params, "%s %d", name, &seconds);
     pl= find_player(name);
     if(pl == NULL)
@@ -1750,9 +1711,6 @@ int command_ban(object *op, char *params)
     char *name, name_buf[MAX_BUF]="";
     int ticks=0;
     char *str;
-
-    if(CONTR(op)->gmaster_mode < GMASTER_MODE_VOL)
-        return 0;
 
     if (!params)
         goto ban_usage;
@@ -2052,9 +2010,6 @@ int command_dm_list(object *op, char *params)
 {
     objectlink *ol;
 
-    if(CONTR(op)->gmaster_mode == GMASTER_MODE_NO)
-        return 0;
-
     new_draw_info(NDI_UNIQUE, 0, op, "MM/GM/VOL online");
     new_draw_info(NDI_UNIQUE, 0, op, "--- --- ---");
     for(ol = gmaster_list_MW;ol;ol=ol->next)
@@ -2081,9 +2036,6 @@ int command_dm_set(object *op, char *params)
 {
     char *str;
 
-
-    if(CONTR(op)->gmaster_mode != GMASTER_MODE_MM)
-        return 0;
 
     if (!params)
         goto d_set_usage;
@@ -2161,7 +2113,7 @@ int command_dm_set(object *op, char *params)
     }
 
 d_set_usage:
-    new_draw_info(NDI_UNIQUE, 0, op, "Usage: /dm_set  list | add | remove <entry>");
+    new_draw_info(NDI_UNIQUE, 0, op, "Usage: /dm_set list | add | remove <entry>");
 
     return 1;
 }
@@ -2169,10 +2121,6 @@ d_set_usage:
 int command_gm_set(object *op, char *params)
 {
     char *str;
-
-
-    if(CONTR(op)->gmaster_mode < GMASTER_MODE_GM)
-        return 0;
 
     if (!params)
         goto g_set_usage;
@@ -2208,7 +2156,8 @@ int command_gm_set(object *op, char *params)
         {
             int mode_id = check_gmaster_file_entry(name, passwd, host, mode);
 
-            if(mode_id == GMASTER_MODE_NO || mode_id == GMASTER_MODE_MM)
+            if (mode_id != GMASTER_MODE_VOL &&
+                mode_id != GMASTER_MODE_GM)
             {
                 new_draw_info(NDI_UNIQUE, 0, op, "/gm_set: invalid parameter.");
                 return 1;
@@ -2231,28 +2180,29 @@ int command_gm_set(object *op, char *params)
         {
             if(!strcmp(str,ol->objlink.gm->entry)) /* found a entry */
             {
-               char name[MAX_BUF], passwd[MAX_BUF], host[MAX_BUF], mode[MAX_BUF];
-               int mode_id = check_gmaster_file_entry(name, passwd, host, mode);
-              if(mode_id < GMASTER_MODE_MM)
-              {
-                /* delete the entry... */
-                LOG(llevSystem, "GMASTER:: /gm_set remove %s invoked by %s\n", str, query_name(op));
+                char name[MAX_BUF], passwd[MAX_BUF], host[MAX_BUF], mode[MAX_BUF];
+                int mode_id = check_gmaster_file_entry(name, passwd, host, mode);
 
-                new_draw_info_format(NDI_UNIQUE, 0, op, "/gm_set: remove entry %s", str);
-                remove_gmaster_file_entry(ol);
-                new_draw_info(NDI_UNIQUE, 0, op, "write back gmaster_file...");
-                write_gmaster_file(); /* create a new file */
-                new_draw_info(NDI_UNIQUE, 0, op, "update gmaster rights...");
-                update_gmaster_file(); /* control rights of all active VOL/GM/DM */
-                new_draw_info(NDI_UNIQUE, 0, op, "done.");
+                if (mode_id != GMASTER_MODE_VOL &&
+                    mode_id != GMASTER_MODE_GM)
+                {
+                    new_draw_info(NDI_UNIQUE, 0, op, "/gm_set: invalid parameter.");
+                }
+                else
+                {
+                    /* delete the entry... */
+                    LOG(llevSystem, "GMASTER:: /gm_set remove %s invoked by %s\n", str, query_name(op));
+
+                    new_draw_info_format(NDI_UNIQUE, 0, op, "/gm_set: remove entry %s", str);
+                    remove_gmaster_file_entry(ol);
+                    new_draw_info(NDI_UNIQUE, 0, op, "write back gmaster_file...");
+                    write_gmaster_file(); /* create a new file */
+                    new_draw_info(NDI_UNIQUE, 0, op, "update gmaster rights...");
+                    update_gmaster_file(); /* control rights of all active VOL/GM/DM */
+                    new_draw_info(NDI_UNIQUE, 0, op, "done.");
+                }
 
                 return 1;
-               }
-               else
-               {
-                 new_draw_info(NDI_UNIQUE, 0, op, "/gm_set: invalid parameter.");
-                 return 1;
-               }
             }
         }
 
@@ -2347,9 +2297,6 @@ int command_loadplugin(object *op, char *params)
 {
     char    buf[MAX_BUF];
 
-    if (CONTR(op)->gmaster_mode != GMASTER_MODE_MM)
-        return 1;
-
     if (!params) /* fix crash bug with no paramaters -- Gramlath 3/30/2007 */
     {
         new_draw_info(NDI_UNIQUE, 0, op, "Usage: plugin [file name]");
@@ -2367,9 +2314,6 @@ int command_loadplugin(object *op, char *params)
 /* are not loaded.                                                           */
 int command_unloadplugin(object *op, char *params)
 {
-    if (CONTR(op)->gmaster_mode != GMASTER_MODE_MM)
-        return 1;
-
     if (!params) /* fix crash bug with no paramaters -- Gramlath 3/30/2007 */
     {
         new_draw_info(NDI_UNIQUE, 0, op, "Usage: plugout [plugin name]");
@@ -2382,9 +2326,6 @@ int command_unloadplugin(object *op, char *params)
 int command_ip(object *op, char *params)
 {
     player *pl;
-     if(CONTR(op)->gmaster_mode < GMASTER_MODE_VOL)
-      return 0;
-
 
     pl = find_player(params);
 
