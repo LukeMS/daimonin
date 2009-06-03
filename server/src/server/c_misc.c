@@ -404,10 +404,6 @@ int command_who(object *op, char *params)
 
 int command_malloc(object *op, char *params)
 {
-
-    if(CONTR(op)->gmaster_mode < GMASTER_MODE_VOL)
-        return 0;
-
 #ifdef MEMPOOL_TRACKING
     if (params)
     {
@@ -602,10 +598,11 @@ int command_dumpallarchetypes(object *op, char *params)
 
 int command_dm_dev(object *op, char *params)
 {
-    if (op->type == PLAYER && CONTR(op)->gmaster_mode == GMASTER_MODE_MM)
-    {
-        command_goto(op, "/dev/testmaps/testmap_main 2 2");
-    }
+    if (op->type != PLAYER)
+        return -1;
+
+    command_goto(op, "/dev/testmaps/testmap_main 2 2");
+
     return 0;
 }
 
@@ -614,13 +611,13 @@ int command_dm_dev(object *op, char *params)
  * mode/logs in. */
 int command_dm_invis(object *op, char *params)
 {
-    if (op->type == PLAYER && CONTR(op))
-    {
-        CONTR(op)->dm_invis = (CONTR(op)->dm_invis) ? 0 : 1;
-        new_draw_info_format(NDI_UNIQUE, 0, op, "toggled dm_invis to %d",
-                             CONTR(op)->dm_invis);
-        FIX_PLAYER(op, "command dm_invis");
-    }
+    if (op->type != PLAYER)
+        return -1;
+
+    CONTR(op)->dm_invis = (CONTR(op)->dm_invis) ? 0 : 1;
+    new_draw_info_format(NDI_UNIQUE, 0, op, "toggled dm_invis to %d",
+                         CONTR(op)->dm_invis);
+    FIX_PLAYER(op, "command dm_invis");
 
     return 0;
 }
@@ -632,20 +629,25 @@ int command_dm_invis(object *op, char *params)
  * mode is active. */
 int command_dm_stealth(object *op, char *params)
 {
-    if (op->type == PLAYER && CONTR(op)->gmaster_mode > GMASTER_MODE_VOL)
-    {
-        if (CONTR(op)->dm_stealth)
-        {
-            new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, NULL, "%s has entered the game.", query_name(op));
-            CONTR(op)->dm_stealth = 0;
-        }
-        else
-            CONTR(op)->dm_stealth = 1;
-        new_draw_info_format(NDI_UNIQUE, 0, op, "toggled dm_stealth to %d", CONTR(op)->dm_stealth);
-    }
+    if (op->type != PLAYER)
+        return -1;
+
+   if (CONTR(op)->dm_stealth)
+   {
+       new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, NULL, "%s has entered the game.",
+                            query_name(op));
+       CONTR(op)->dm_stealth = 0;
+   }
+   else
+       CONTR(op)->dm_stealth = 1;
+
+   new_draw_info_format(NDI_UNIQUE, 0, op, "toggled dm_stealth to %d",
+                        CONTR(op)->dm_stealth);
+
 #ifdef USE_CHANNELS
-    channel_dm_stealth(CONTR(op),CONTR(op)->dm_stealth);
+    channel_dm_stealth(CONTR(op), CONTR(op)->dm_stealth);
 #endif
+
     return 0;
 }
 
@@ -656,22 +658,20 @@ int command_dm_stealth(object *op, char *params)
 int command_dm_light(object *op, char *params)
 {
     player *pl;
+    int     personal_light;
 
-    if (op->type == PLAYER &&
-        (pl = CONTR(op)) &&
-        pl->gmaster_mode == GMASTER_MODE_MM)
-    {
-        int personal_light = (pl->personal_light) ? 0 : MAX_DARKNESS;
+    if (op->type != PLAYER)
+        return -1;
 
-        if (params)
-            sscanf(params, "%d", &personal_light);
-        set_personal_light(pl, personal_light);
-        new_draw_info_format(NDI_UNIQUE, 0, op, "Switch personal light %s (%d).",
-                             (pl->personal_light) ? "to" : "off",
-                             pl->personal_light);
+    pl = CONTR(op);
+    personal_light = (pl->personal_light) ? 0 : MAX_DARKNESS;
 
-        return 1;
-    }
+    if (params)
+        sscanf(params, "%d", &personal_light);
+
+    set_personal_light(pl, personal_light);
+    new_draw_info_format(NDI_UNIQUE, 0, op, "Switch personal light %s (%d).",
+                         (pl->personal_light) ? "to" : "off", pl->personal_light);
 
     return 0;
 }
@@ -791,10 +791,8 @@ int command_restart(object *ob, char *params)
     char  buf[MAX_BUF];
     FILE *fp;
 
-    if (ob &&
-        (CONTR(ob)->gmaster_mode != GMASTER_MODE_MW &&
-         CONTR(ob)->gmaster_mode != GMASTER_MODE_MM))
-        return 0;
+    if (ob->type != PLAYER)
+        return -1;
 
     LOG(llevSystem,"write stream file...\n");
     sprintf(buf, "%s/%s", settings.localdir, "stream");
@@ -822,8 +820,8 @@ int command_restart(object *ob, char *params)
 #else
     char buf[MAX_BUF];
 
-    if(ob && CONTR(ob)->gmaster_mode != GMASTER_MODE_MM)
-        return 0;
+    if (ob->type != PLAYER)
+        return -1;
 
     sprintf(buf, "'/restart' issued by %s\nServer will recompile and arches and maps will be updated!",
             STRING_OBJ_NAME(ob));
