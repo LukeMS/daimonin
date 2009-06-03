@@ -86,7 +86,7 @@ static int check_mute(object *op, int mode)
         (CONTR(op)->gmaster_mode == GMASTER_MODE_NO ||
          CONTR(op)->gmaster_mode == GMASTER_MODE_MW))
     {
-        new_draw_info_format(NDI_UNIQUE | NDI_ORANGE, 0, op, "You need be level %d or higher for shout/tell!",
+        new_draw_info_format(NDI_UNIQUE | NDI_ORANGE, 0, op, "You need to be level %d or higher for shout/tell!",
                              settings.mutelevel);
 
         return FALSE;
