@@ -79,8 +79,12 @@ static int check_mute(object *op, int mode)
     if(op->type != PLAYER || CONTR(op)==NULL)
         return TRUE;
 
-    /* players less than settings.shout_lvl cannot shout due to spam problems.  DMs and GMs are exempt. */
-    if(mode != MUTE_MODE_SAY && op->level < settings.mutelevel && CONTR(op)->gmaster_mode < GMASTER_MODE_GM)
+    /* players less than settings.shout_lvl cannot shout due to spam problems.
+     * VOLs, GMs, and MMs are exempt. */
+    if ((CONTR(op)->gmaster_mode != GMASTER_MODE_VOL &&
+         CONTR(op)->gmaster_mode != GMASTER_MODE_GM &&
+         CONTR(op)->gmaster_mode != GMASTER_MODE_MM) &&
+        (mode == MUTE_MODE_SAY || op->level < settings.mutelevel))
     {
         new_draw_info_format(NDI_UNIQUE | NDI_ORANGE, 0, op, "You need be level %d or higher for shout/tell!",settings.mutelevel);
         new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, op, "for help press F12 or read the GAME GUIDES at");
@@ -309,7 +313,6 @@ int command_tell(object *op, char *params)
     char        buf[MAX_BUF], *name = NULL, *msg = NULL;
     char        buf2[MAX_BUF];
     player     *pl;
-    int        wiz;
 
     if(!check_mute(op, MUTE_MODE_SHOUT))
         return 0;
@@ -397,10 +400,16 @@ int command_tell(object *op, char *params)
                 {
                     if (pl->ob != ol->objlink.ob && op != ol->objlink.ob)
                         new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf2);
-                }
+               }
             }
-            wiz = QUERY_FLAG(op, FLAG_WIZ);
-            if (pl->dm_stealth && CONTR(op)->gmaster_mode < GMASTER_MODE_GM)
+
+            /* Stealthed MMs still grt telss but do not reveal their presence
+             * to other than GMs and MMs. FIXME MWs can be stealthed too
+             * because dm_stealth combines two functions: hide from mobs, and
+             * hide from players. */
+            if (pl->dm_stealth &&
+                (CONTR(op)->gmaster_mode != GMASTER_MODE_GM &&
+                 CONTR(op)->gmaster_mode != GMASTER_MODE_MM))
             {
                 sprintf(buf, "%s tells you (dm_stealth): ", op->name);
                 strncat(buf, msg, MAX_BUF - strlen(buf) - 1);
@@ -557,7 +566,11 @@ static void emote_other(object *op, object *target, char *str, char *buf, char *
 
     if (target && target->name)
         name = target->name;
-    if (CONTR(target)->dm_stealth && CONTR(op)->gmaster_mode < GMASTER_MODE_GM)
+
+    /* Only GMs and MMs can emote stealthed MMs. FIXME: MWs too! */
+    if (CONTR(target)->dm_stealth &&
+        (CONTR(op)->gmaster_mode != GMASTER_MODE_GM &&
+         CONTR(op)->gmaster_mode != GMASTER_MODE_MM))
        {
           new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
           return;
