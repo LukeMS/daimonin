@@ -212,15 +212,30 @@ int check_gmaster_list(player *pl, int mode)
     {
         /*LOG(-1,"CHECK: %s - %s - %s -%d\n",ol->objlink.gm->name,
                 ol->objlink.gm->password,ol->objlink.gm->host,ol->objlink.gm->mode );*/
-        if ( ol->objlink.gm->mode >= mode /* allow a GM to activate VOL mode for example */
-             && (!strcmp(ol->objlink.gm->name, "*") || !strcasecmp(pl->account_name, ol->objlink.gm->name))
-             && (!strcmp(ol->objlink.gm->password, "*")
+        if ((!strcmp(ol->objlink.gm->name, "*") ||
+             !strcasecmp(pl->account_name, ol->objlink.gm->name)) &&
+            (!strcmp(ol->objlink.gm->password, "*")
 #if 0 /* disabled by account patch */
              || !strcmp(pl->socket.account.pwd, ol->objlink.gm->password)
 #endif
-             )
-             && (!strcmp(ol->objlink.gm->host, "*") || !strcasecmp(pl->socket.ip_host, ol->objlink.gm->host)))
-            return TRUE;
+            ) &&
+           (!strcmp(ol->objlink.gm->host, "*") ||
+            !strcasecmp(pl->socket.ip_host, ol->objlink.gm->host)))
+        {
+             /* Obviously you can become the GMASTER you're listed as. */
+            if (ol->objlink.gm->mode == mode)
+                return TRUE;
+            /* GMs can become VOLs. */
+            else if (ol->objlink.gm->mode == GMASTER_MODE_GM &&
+                mode == GMASTER_MODE_VOL)
+                return TRUE;
+            /* MMs can become anything. */
+            else if (ol->objlink.gm->mode == GMASTER_MODE_MM &&
+                     (mode == GMASTER_MODE_VOL ||
+                      mode == GMASTER_MODE_GM ||
+                      mode == GMASTER_MODE_MW))
+                return TRUE;
+        }
     }
 
     return FALSE;
