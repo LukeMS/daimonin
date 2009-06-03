@@ -81,14 +81,14 @@ static int check_mute(object *op, int mode)
 
     /* players less than settings.shout_lvl cannot shout due to spam problems.
      * VOLs, GMs, and MMs are exempt. */
-    if ((CONTR(op)->gmaster_mode != GMASTER_MODE_VOL &&
-         CONTR(op)->gmaster_mode != GMASTER_MODE_GM &&
-         CONTR(op)->gmaster_mode != GMASTER_MODE_MM) &&
-        (mode == MUTE_MODE_SAY || op->level < settings.mutelevel))
+    if (mode == MUTE_MODE_SHOUT &&
+        op->level < settings.mutelevel &&
+        (CONTR(op)->gmaster_mode == GMASTER_MODE_NO ||
+         CONTR(op)->gmaster_mode == GMASTER_MODE_MW))
     {
-        new_draw_info_format(NDI_UNIQUE | NDI_ORANGE, 0, op, "You need be level %d or higher for shout/tell!",settings.mutelevel);
-        new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, op, "for help press F12 or read the GAME GUIDES at");
-        new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, op, "HTTP://WWW.DAIMONIN.NET");
+        new_draw_info_format(NDI_UNIQUE | NDI_ORANGE, 0, op, "You need be level %d or higher for shout/tell!",
+                             settings.mutelevel);
+
         return FALSE;
     }
 
