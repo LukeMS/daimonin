@@ -58,7 +58,7 @@ _CmdMapping cs_commands[]    =
 /*
  * Normal game commands
  */
-extern CommArray_s Commands[] =
+CommArray_s Commands[] =
 {
     {"apply",         command_apply,          1.0f}, /* should be variable */
     {"target",        command_target,         0.1f}, /* enter combat and attack object in reach */
@@ -109,7 +109,7 @@ extern CommArray_s Commands[] =
     {"mw",            command_mw,             1.0f},
 };
 
-extern CommArray_s CommunicationCommands[] =
+CommArray_s CommunicationCommands[] =
 {
     /* begin emotions */
     {"nod", command_nod,         1.0}, {"dance", command_dance,     1.0}, {"kiss", command_kiss,       1.0},
@@ -133,7 +133,7 @@ extern CommArray_s CommunicationCommands[] =
     {"me", command_me,           1.0},
 };
 
-extern CommArray_s CommandsVOL[] =
+CommArray_s CommandsVOL[] =
 {
     {"mutelevel",      command_mutelevel,      1.0f},
     {"dm_list",        command_dm_list,        1.0f},
@@ -142,7 +142,7 @@ extern CommArray_s CommandsVOL[] =
     {"ip",             command_ip,             0.0f},
 };
 
-extern CommArray_s CommandsGM[] =
+CommArray_s CommandsGM[] =
 {
     {"dm_connections", command_dm_connections, 1.0f},
     {"generate",       command_generate,       0.0f},
@@ -154,7 +154,7 @@ extern CommArray_s CommandsGM[] =
     {"gm_set",         command_gm_set,         0.0f},
 };
 
-extern CommArray_s CommandsMW[] =
+CommArray_s CommandsMW[] =
 {
     {"summon",        command_summon,      1.0f},
     {"teleport",      command_teleport,    1.0f},
@@ -171,7 +171,7 @@ extern CommArray_s CommandsMW[] =
     {"generate",      command_generate,    0.0f},
 };
 
-extern CommArray_s CommandsMM[] =
+CommArray_s CommandsMM[] =
 {
     {"dm_set",       command_dm_set,            0.0f},
     {"plugin",       command_loadplugin,        0.0f},
@@ -229,12 +229,12 @@ extern CommArray_s CommandsMM[] =
 };
 
 /* sort the commands for faster access */
-extern const int CommandsSize = sizeof(Commands) / sizeof(CommArray_s);
-extern const int CommunicationCommandsSize = sizeof(CommunicationCommands) / sizeof(CommArray_s);
-extern const int CommandsVOLSize = sizeof(CommandsVOL) / sizeof(CommArray_s);
-extern const int CommandsGMSize = sizeof(CommandsGM) / sizeof(CommArray_s);
-extern const int CommandsMWSize = sizeof(CommandsMW) / sizeof(CommArray_s);
-extern const int CommandsMMSize = sizeof(CommandsMM) / sizeof(CommArray_s);
+const int CommandsSize = sizeof(Commands) / sizeof(CommArray_s);
+const int CommunicationCommandsSize = sizeof(CommunicationCommands) / sizeof(CommArray_s);
+const int CommandsVOLSize = sizeof(CommandsVOL) / sizeof(CommArray_s);
+const int CommandsGMSize = sizeof(CommandsGM) / sizeof(CommArray_s);
+const int CommandsMWSize = sizeof(CommandsMW) / sizeof(CommArray_s);
+const int CommandsMMSize = sizeof(CommandsMM) / sizeof(CommArray_s);
 
 static int compare_A(const void *a, const void *b)
 {
