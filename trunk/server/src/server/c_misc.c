@@ -330,7 +330,9 @@ int command_who(object *op, char *params)
 
     for (pl = first_player; pl != NULL; pl = pl->next)
     {
-        if (pl->dm_stealth && CONTR(op)->gmaster_mode < GMASTER_MODE_VOL)
+        if (pl->dm_stealth &&
+            (CONTR(op)->gmaster_mode != GMASTER_MODE_GM &&
+             CONTR(op)->gmaster_mode != GMASTER_MODE_MM))
             continue;
 
         if (pl->ob->map == NULL)
@@ -349,7 +351,8 @@ int command_who(object *op, char *params)
             else
                 sex = "neuter";
 
-            if (CONTR(op)->gmaster_mode >= GMASTER_MODE_GM)
+            if (CONTR(op)->gmaster_mode == GMASTER_MODE_GM ||
+                CONTR(op)->gmaster_mode == GMASTER_MODE_MM)
             {
                 int off = 0, tmp, tmp1;
                 if ((tmp = strlen(pl->ob->map->path)) > (22 - ((tmp1 = strlen(pl->ob->name)))))
