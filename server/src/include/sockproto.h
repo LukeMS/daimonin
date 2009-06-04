@@ -8,7 +8,8 @@ void            account_send_client(NewSocket *ns, int stats);
 account_status  account_delete_player(Account *ac, char *name);
 int             account_name_valid(char *cp);
 /* commands.c */
-CommArray_s     *find_command_element(char *cmd, CommArray_s *commarray, int commsize);
+CommArray_s    *find_command(char *cmd, player *pl);
+CommArray_s    *find_command_element(char *cmd, CommArray_s *commarray, int commsize);
 void            process_command_queue(NewSocket *ns, player *pl);
 void            cs_cmd_generic(char *buf, int len, NewSocket *ns);
 void            cs_cmd_setup(char *buf, int len, NewSocket *ns);

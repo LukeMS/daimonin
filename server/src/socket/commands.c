@@ -251,6 +251,45 @@ void init_commands()
     qsort((char *) CommandsMM, CommandsMMSize, sizeof(CommArray_s), compare_A);
 }
 
+/* Finds cmd if it exists for pl (determined by gmaster_mode). */
+CommArray_s *find_command(char *cmd, player *pl)
+{
+    CommArray_s *csp = NULL,
+                 plug_csp;
+
+    if (find_plugin_command(cmd, pl->ob, &plug_csp))
+        csp = &plug_csp;
+
+    if (!csp)
+        csp = find_command_element(cmd, Commands, CommandsSize);
+
+    if (!csp)
+        csp = find_command_element(cmd, CommunicationCommands,
+                                   CommunicationCommandsSize);
+
+    if (!csp &&
+        (pl->gmaster_mode == GMASTER_MODE_VOL ||
+         pl->gmaster_mode == GMASTER_MODE_GM ||
+         pl->gmaster_mode == GMASTER_MODE_MM))
+        csp = find_command_element(cmd, CommandsVOL, CommandsVOLSize);
+
+    if (!csp &&
+        (pl->gmaster_mode == GMASTER_MODE_GM ||
+         pl->gmaster_mode == GMASTER_MODE_MM))
+        csp = find_command_element(cmd, CommandsGM, CommandsGMSize);
+
+    if (!csp &&
+        (pl->gmaster_mode == GMASTER_MODE_MW ||
+         pl->gmaster_mode == GMASTER_MODE_MM))
+        csp = find_command_element(cmd, CommandsMW, CommandsMWSize);
+
+    if (!csp &&
+        pl->gmaster_mode == GMASTER_MODE_MM)
+        csp = find_command_element(cmd, CommandsMM, CommandsMMSize);
+
+     return csp;
+}    
+
 CommArray_s * find_command_element(char *cmd, CommArray_s *commarray, int commsize)
 {
     CommArray_s    *asp, dummy;
@@ -315,7 +354,7 @@ void process_command_queue(NewSocket *ns, player *pl)
 */
 void cs_cmd_generic(char *buf, int len, NewSocket *ns)
 {
-    CommArray_s    *csp = NULL, plug_csp;
+    CommArray_s    *csp = NULL;
     char           *cp;
     player *pl = ns->pl;
     object *ob;
@@ -345,36 +384,7 @@ void cs_cmd_generic(char *buf, int len, NewSocket *ns)
             cp = NULL;
     }
 
-    if(find_plugin_command(buf, ob, &plug_csp))
-        csp = &plug_csp;
-
-    if (!csp)
-        csp = find_command_element(buf, Commands, CommandsSize);
-
-    if (!csp)
-        csp = find_command_element(buf, CommunicationCommands, CommunicationCommandsSize);
-
-    if (!csp &&
-        (pl->gmaster_mode == GMASTER_MODE_VOL ||
-         pl->gmaster_mode == GMASTER_MODE_GM ||
-         pl->gmaster_mode == GMASTER_MODE_MM))
-        csp = find_command_element(buf, CommandsVOL, CommandsVOLSize);
-
-    if (!csp &&
-        (pl->gmaster_mode == GMASTER_MODE_GM ||
-         pl->gmaster_mode == GMASTER_MODE_MM))
-        csp = find_command_element(buf, CommandsGM, CommandsGMSize);
-
-    if (!csp &&
-        (pl->gmaster_mode == GMASTER_MODE_MW ||
-         pl->gmaster_mode == GMASTER_MODE_MM))
-        csp = find_command_element(buf, CommandsMW, CommandsMWSize);
-
-    if (!csp &&
-        pl->gmaster_mode == GMASTER_MODE_MM)
-        csp = find_command_element(buf, CommandsMM, CommandsMMSize);
-
-    if (csp == NULL)
+    if (!(csp = find_command(buf, pl)))
     {
         new_draw_info_format(NDI_UNIQUE, 0, ob, "'/%s' is not a valid command.", buf);
         return;
