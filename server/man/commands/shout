@@ -1,7 +1,4 @@
-
- ***** shout command *****
-
-syntax: /shout message
-
-where 'message' is the text you 
-want to appear in the shout channel.
+~Syntax~: /shout <message>
+~Purpose~: Send <message> to all players.
+ 
+~See also~: /gsay /reply /say /tell

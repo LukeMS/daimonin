@@ -1,20 +1,4 @@
-
- ***** reply command *****
-
-syntax: /reply message
-
-this command allows to reply to 
-the last player that has send you 
-private message.
-
-'message' is the text you want to 
-send back.
-
-IMPORTANT: this commands allows for
-private conversations. no other player
-than 'player_name' is able to listen
-to this message.
-also, be careful with /reply. this 
-command tends to mess up things when 
-you are talking with more than 1 person
-via private messages.
+~Syntax~: /reply <message>
+~Purpose~: Send <message> to the last player who sent you a tell only.
+ 
+~See also~: /gsay /tell /say /shout

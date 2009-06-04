@@ -1,8 +1,2 @@
-
- ***** who command *****
-
-syntax: /who
-
-This command shows all players
-online. Also /who reveals player's
-level.
+~Syntax~: /who
+~Purpose~: Lists all players online, and displays various information about them according to your gmaster privileges.

@@ -1,8 +1,4 @@
-
- ***** remove command (group) *****
- * group leaders only
-
-syntax: /remove <name>
-
-where name is the player you want
-to remove (kick) from the group. 
+~Syntax~: /remove <player>
+~Purpose~: Kick <player> from your group. Only available to group leaders.
+ 
+~See also~: /deny /gsay /invite /join /leave

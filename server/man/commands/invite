@@ -1,11 +1,13 @@
-
- ***** invite command (group) *****
- * group leaders only
-
-syntax: /invite <name> | allow <name> | on | off
-
-where name is the name of the player you want
-to invite to your group.
-Use '/invite off' to disallow anyone to invite you.
-'/invite on' will allow anyone to invite you and
-'/invite allow <name>' only player <name>.
+~Syntax~: /invite <player>
+~Purpose~: Sends an invitation to <player> to join your group. Only available to group leaders.
+ 
+~Syntax~: /invite off
+~Purpose~: Automatically declines all invitations sent to you.
+ 
+~Syntax~: /invite on
+~Purpose~: Automatically accepts all invitations sent to you.
+ 
+~Syntax~: /invite allow <player>
+~Purpose~: Automatically accepts invitations sent to you, but only from <player>.
+ 
+~See also~: /deny /gsay /join /leave /remove
