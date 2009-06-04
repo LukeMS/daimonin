@@ -1296,10 +1296,12 @@ int command_help(object *op, char *params)
 //
 //            return 0;
 //        }
+        new_draw_info_format(NDI_UNIQUE | NDI_YELLOW, 0, op, "Help for command %s:",
+                             params);
+
         if (!find_command(params + 1, CONTR(op)))
         {
-            new_draw_info_format(NDI_UNIQUE | NDI_WHITE, 0, op, "Unknown command: %s!",
-                                 params);
+            new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "Unrecognised command!");
 
             return 0;
         }
@@ -1308,8 +1310,7 @@ int command_help(object *op, char *params)
 
         if ((fp = fopen(filename, "r")) == NULL)
         {
-            new_draw_info_format(NDI_UNIQUE | NDI_WHITE, 0, op, "No help available on command: %s!",
-                                 params);
+            new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "None available!");
 
             return 0;
         }
