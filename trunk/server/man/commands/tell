@@ -1,16 +1,4 @@
+~Syntax~: /tell <player> <message>
+~Purpose~: Send <message> to <player> only.
 
- ***** tell command *****
-
-syntax: /tell player_name message
-
-where 'player_name' is exact name
-of player to which this message
-should go,
-and where 'message' is the text you 
-want player with 'player_name'
-to recieve.
-
-IMPORTANT: this commands allows for
-private conversations. No other player
-than 'player_name' is able to listen
-to this message.
+~See also~: /gsay /reply /say /shout

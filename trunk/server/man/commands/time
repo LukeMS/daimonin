@@ -1,8 +1,2 @@
-
- ***** time command *****
-
-syntax: /time
-
-Time commands shows exact date and time.
-These correspond to in-game time, not
-real-life time.
+~Syntax~: /time
+~Purpose~: Show the in-game date and time.

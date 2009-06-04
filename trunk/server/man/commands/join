@@ -1,7 +1,4 @@
-
- ***** join command (group) *****
-
-syntax: /join
-
-will let join you a group after someone
-invited you. See also 'deny'.
+~Syntax~: /join
+~Purpose~: Accept an invitation to join a group.
+ 
+~See also~: /deny /gsay /invite /leave /remove
