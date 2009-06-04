@@ -1316,7 +1316,7 @@ int command_help(object *op, char *params)
 
         while (fgets(line, MAX_BUF, fp))
         {
-            len = (int)strlen(line) - 2;
+            len = (int)strlen(line) - 1;
 
             if (line[len] == '\n')
                 line[len] = '\0';
