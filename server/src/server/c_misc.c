@@ -1241,63 +1241,100 @@ int command_help(object *op, char *params)
     char        filename[MAX_BUF], line[MAX_BUF];
     int         len;
 
-    /*
-       * Main help page?
-     */
+    /* Main help page?  */
     if (!params)
     {
         sprintf(filename, "%s/def_help", HELPDIR);
+
         if ((fp = fopen(filename, "r")) == NULL)
         {
             LOG(llevBug, "BUG: Can't open %s\n", filename);
             /*perror("Can't read default help");*/
+
             return 0;
         }
+
         while (fgets(line, MAX_BUF, fp))
         {
             line[MAX_BUF - 1] = '\0';
             len = strlen(line) - 1;
+
             if (line[len] == '\n')
                 line[len] = '\0';
             new_draw_info(NDI_UNIQUE, 0, op, line);
         }
         fclose(fp);
+
         return 0;
     }
-
-    /*
-     * Topics list
-     */
-    if (!strcmp(params, "list"))
+    /* Topics list */
+    else if (!strcmp(params, "list"))
     {
         new_draw_info(NDI_UNIQUE, 0, op, "\n**** list of help topics ****");
         help_topics(op, 3);
         help_topics(op, 0);
+
         if (QUERY_FLAG(op, FLAG_WIZ))
             help_topics(op, 1);
+
         return 0;
     }
-
-    /*
-     * Commands list
-     */
-    if (!strcmp(params, "commands"))
+    /* Commands list */
+    else if (!strcmp(params, "commands"))
     {
         show_commands(op);
 
         return 0;
     }
-
-    /*
-     * User wants info about command
-     */
-    if (strchr(params, '.') || strchr(params, ' ') || strchr(params, '/'))
+    /* /command */
+    else if (params[0] == '/')
     {
-        sprintf(line, "Illegal characters in '%s'", params);
-        new_draw_info(NDI_UNIQUE, 0, op, line);
+//        if (strpbrk(params + 1, " ./\\"))
+//        {
+//            sprintf(line, "Illegal characters in '%s'", params);
+//            new_draw_info(NDI_UNIQUE, 0, op, line);
+//
+//            return 0;
+//        }
+        if (!find_command(params + 1, CONTR(op)))
+        {
+            new_draw_info_format(NDI_UNIQUE | NDI_WHITE, 0, op, "Unknown command: %s!",
+                                 params);
+
+            return 0;
+        }
+
+        sprintf(filename, "%s/commands%s", HELPDIR, params);
+
+        if ((fp = fopen(filename, "r")) == NULL)
+        {
+            new_draw_info_format(NDI_UNIQUE | NDI_WHITE, 0, op, "No help available on command: %s!",
+                                 params);
+
+            return 0;
+        }
+
+        while (fgets(line, MAX_BUF, fp))
+        {
+            len = (int)strlen(line) - 2;
+
+            if (line[len] == '\n')
+                line[len] = '\0';
+
+            new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, line);
+        }
+
+        fclose(fp);
+
         return 0;
     }
 
+    /* Unknown topic */
+    new_draw_info_format(NDI_UNIQUE, 0, op, "No help available on '%s'",
+                         params);
+
+    return 0;
+#if 0
     sprintf(filename, "%s/commands/%s", HELPDIR, params);
     if (stat(filename, &st) || !S_ISREG(st.st_mode))
     {
@@ -1337,14 +1374,7 @@ int command_help(object *op, char *params)
     }
     fclose(fp);
     return 0;
-
-    /*
-     * No_help -escape
-     */
-    nohelp:
-    sprintf(line, "No help availble on '%s'", params);
-    new_draw_info(NDI_UNIQUE, 0, op, line);
-    return 0;
+#endif
 }
 
 
