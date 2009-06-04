@@ -1164,22 +1164,21 @@ static void show_commands(object *op)
 
     for (i = 0; i < 6 && ap[i]; i++)
     {
-        char line[80];
-        int  linelen,
-             j;
+        int  j;
+        char buf[MAX_BUF];
 
         if (ap[i] == Commands)
-            new_draw_info(NDI_UNIQUE, 0, op, "\n~Normal Commands~:");
+            new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, op, "\nNormal Commands");
         else if (ap[i] == CommunicationCommands)
-            new_draw_info(NDI_UNIQUE, 0, op, "\n~Emotes~:");
+            new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, op, "\nEmotes");
         else if (ap[i] == CommandsVOL)
-            new_draw_info(NDI_UNIQUE, 0, op, "\n~VOL Commands~:");
+            new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, op, "\nVOL Commands");
         else if (ap[i] == CommandsGM)
-            new_draw_info(NDI_UNIQUE, 0, op, "\n~GM Commands~:");
+            new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, op, "\nGM Commands");
         else if (ap[i] == CommandsMW)
-            new_draw_info(NDI_UNIQUE, 0, op, "\n~MW Commands~:");
+            new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, op, "\nMW Commands");
         else if (ap[i] == CommandsMM)
-            new_draw_info(NDI_UNIQUE, 0, op, "\n~MM Commands~:");
+            new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, op, "\nMM Commands");
         else
         {
             LOG(llevDebug, "DEBUG:: %s/show_commands(): Unknown command structure!\n",
@@ -1188,27 +1187,22 @@ static void show_commands(object *op)
             return;
         }
 
-        line[0] = '\0';
-        linelen = 0;
-
-        for (j = 0; j < size[i]; j++)
+        for (j = 0, buf[0] = '\0'; j < size[i]; j++)
         {
-            int namelen;
-
-            namelen = (int)strlen(ap[i][j].name);
-            linelen += namelen + 1;
-
-            if (linelen > 42)
+            /* TODO: This calculation can be removed, and the following
+             * new_draw_info() moved to inside this for loop by having the
+             * client handle NDI_UNIQUE properly (well, at all).
+             * -- Smacky 20090604 */
+            if (strlen(buf) + strlen(ap[i][j].name) > 42)
             {
-                new_draw_info(NDI_UNIQUE, 0, op, line);
-                sprintf(line, " %s", ap[i][j].name);
-                linelen = namelen + 1;
+                new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, buf);
+                buf[0] = '\0';
             }
-            else
-                sprintf(strchr(line, '\0'), " %s", ap[i][j].name);
+
+            sprintf(strchr(buf, '\0'), " /%s ~+~", ap[i][j].name);
         }
 
-        new_draw_info(NDI_UNIQUE, 0, op, line);
+        new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, buf);
     }
 }
 
