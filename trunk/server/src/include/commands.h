@@ -50,18 +50,19 @@ typedef struct
     char               *name;
     CommFunc            func;
     float               time;           /* How long it takes to execute this command */
+    char               *type;
 } CommArray_s;
 
 
 extern CommArray_s Commands[];
-extern CommArray_s CommunicationCommands[];
+extern CommArray_s EmoteCommands[];
 extern CommArray_s CommandsVOL[];
 extern CommArray_s CommandsGM[];
 extern CommArray_s CommandsMW[];
 extern CommArray_s CommandsMM[];
 
 extern const int CommandsSize;
-extern const int CommunicationCommandsSize;
+extern const int EmoteCommandsSize;
 extern const int CommandsVOLSize;
 extern const int CommandsGMSize;
 extern const int CommandsMWSize;

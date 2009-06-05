@@ -1095,6 +1095,38 @@ static void help_topics(object *op, int what)
 
 static void show_commands(object *op)
 {
+#if 0
+    char         buf[MAX_BUF],
+                 head[MAX_BUF],
+                 line[MAX_BUF];
+    CommArray_s *csp;
+    int          i;
+
+    for (buf[0] = '\0', head[0] = '\0', line[0] = '\0', i = 0;
+         (csp = find_command(buf, CONTR(op), sizeof(buf), i));
+         buf[0] = '\0', i++ )
+    {
+        if (strcmp(head, buf))
+        {
+            strcpy(head, buf);
+            new_draw_info_format(NDI_UNIQUE | NDI_YELLOW, 0, op, "\n%s", head);
+        }
+
+        /* TODO: This calculation can be removed, and the following
+         * new_draw_info() moved to inside this for loop by having the
+         * client handle NDI_UNIQUE properly (well, at all).
+         * -- Smacky 20090604 */
+        if (strlen(line) + strlen(csp->name) > 42)
+        {
+            new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, line);
+            line[0] = '\0';
+        }
+
+        sprintf(strchr(line, '\0'), " /%s ~+~", csp->name);
+    }
+
+    new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, line);
+#else
     CommArray_s *ap[6];
     int          size[6],
                  i;
@@ -1109,21 +1141,21 @@ static void show_commands(object *op)
     {
         case GMASTER_MODE_VOL:
             ap[0] = Commands;
-            ap[1] = CommunicationCommands;
+            ap[1] = EmoteCommands;
             ap[2] = CommandsVOL;
             size[0] = CommandsSize;
-            size[1] = CommunicationCommandsSize;
+            size[1] = EmoteCommandsSize;
             size[2] = CommandsVOLSize;
 
             break;
 
         case GMASTER_MODE_GM:
             ap[0] = Commands;
-            ap[1] = CommunicationCommands;
+            ap[1] = EmoteCommands;
             ap[2] = CommandsVOL;
             ap[3] = CommandsGM;
             size[0] = CommandsSize;
-            size[1] = CommunicationCommandsSize;
+            size[1] = EmoteCommandsSize;
             size[2] = CommandsVOLSize;
             size[3] = CommandsGMSize;
 
@@ -1131,23 +1163,23 @@ static void show_commands(object *op)
 
         case GMASTER_MODE_MW:
             ap[0] = Commands;
-            ap[1] = CommunicationCommands;
+            ap[1] = EmoteCommands;
             ap[2] = CommandsMW;
             size[0] = CommandsSize;
-            size[1] = CommunicationCommandsSize;
+            size[1] = EmoteCommandsSize;
             size[2] = CommandsMWSize;
 
             break;
 
         case GMASTER_MODE_MM:
             ap[0] = Commands;
-            ap[1] = CommunicationCommands;
+            ap[1] = EmoteCommands;
             ap[2] = CommandsVOL;
             ap[3] = CommandsGM;
             ap[4] = CommandsMW;
             ap[5] = CommandsMM;
             size[0] = CommandsSize;
-            size[1] = CommunicationCommandsSize;
+            size[1] = EmoteCommandsSize;
             size[2] = CommandsVOLSize;
             size[3] = CommandsGMSize;
             size[4] = CommandsMWSize;
@@ -1157,9 +1189,9 @@ static void show_commands(object *op)
 
         default:
             ap[0] = Commands;
-            ap[1] = CommunicationCommands;
+            ap[1] = EmoteCommands;
             size[0] = CommandsSize;
-            size[1] = CommunicationCommandsSize;
+            size[1] = EmoteCommandsSize;
     }
 
     for (i = 0; i < 6 && ap[i]; i++)
@@ -1169,7 +1201,7 @@ static void show_commands(object *op)
 
         if (ap[i] == Commands)
             new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, op, "\nNormal Commands");
-        else if (ap[i] == CommunicationCommands)
+        else if (ap[i] == EmoteCommands)
             new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, op, "\nEmotes");
         else if (ap[i] == CommandsVOL)
             new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, op, "\nVOL Commands");
@@ -1204,6 +1236,7 @@ static void show_commands(object *op)
 
         new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, buf);
     }
+#endif
 }
 
 int command_resting(object *op, char *params)
@@ -1289,6 +1322,8 @@ int command_help(object *op, char *params)
     /* /command */
     else if (params[0] == '/')
     {
+        CommArray_s *csp;
+
 //        if (strpbrk(params + 1, " ./\\"))
 //        {
 //            sprintf(line, "Illegal characters in '%s'", params);
@@ -1299,23 +1334,25 @@ int command_help(object *op, char *params)
         new_draw_info_format(NDI_UNIQUE | NDI_YELLOW, 0, op, "Help for command %s:",
                              params);
 
-        if (!find_command(params + 1, CONTR(op)))
+        if (!(csp = find_command(params + 1, CONTR(op))))
         {
             new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "Unrecognised command!");
 
             return 0;
         }
 
-        sprintf(filename, "%s/commands%s", HELPDIR, params);
+        new_draw_info_format(NDI_UNIQUE | NDI_WHITE, 0, op, "~Type~: %s command\n",
+                             csp->type);
+        sprintf(filename, "%s/commands/%s", HELPDIR, params + 1);
 
         if ((fp = fopen(filename, "r")) == NULL)
         {
-            new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "None available!");
+            new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "No more available!");
 
             return 0;
         }
 
-        while (fgets(line, MAX_BUF, fp))
+        while (fgets(line, (int)sizeof(line), fp))
         {
             len = (int)strlen(line) - 1;
 

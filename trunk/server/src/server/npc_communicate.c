@@ -84,7 +84,7 @@ void communicate(object *op, char *txt)
                 cp = NULL;
         }
 
-        csp = find_command_element(buf, CommunicationCommands, CommunicationCommandsSize);
+        csp = find_command_element(buf, EmoteCommands, EmoteCommandsSize, -1);
         if (csp)
         {
             csp->func(op, cp);
