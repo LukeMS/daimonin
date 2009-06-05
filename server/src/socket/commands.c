@@ -60,140 +60,175 @@ _CmdMapping cs_commands[]    =
  */
 CommArray_s Commands[] =
 {
-    {"apply",         command_apply,          1.0f}, /* should be variable */
-    {"target",        command_target,         0.1f}, /* enter combat and attack object in reach */
-    {"combat",        command_combat,         0.1f}, /* toggle attack mode of player */
-    {"rest",          command_resting,        1.0f},
-    {"run",           command_run,            1.0f},
-    {"run_stop",      command_run_stop,       0.01f},
-    {"cast",          command_cast_spell,     0.0f}, /* use time comes from spells! */
-    {"push",          command_push_object,    1.0f},
-    {"right",         command_turn_right,     1.0f},
-    {"left",          command_turn_left,      1.0f},
-    {"say",           command_say,            1.0f},
-    {"gsay",          command_gsay,           1.0f},
-    {"shout",         command_shout,          1.0f},
-    {"tell",          command_tell,           1.0f},
-    {"talk",          command_talk,           1.0f},
-    {"who",           command_who,            5.0f},
-    {"qlist",         command_questlist,      5.0f},
-    {"mapinfo",       command_mapinfo,        5.0f},
-    {"motd",          command_motd,           5.0f},
-    {"usekeys",       command_usekeys,        1.0f},
-    {"time",          command_time,           1.0f},
-    {"version",       command_version,        1.0f},
-    {"help",          command_help,           1.0f},
-    {"save",          command_save,           1.0f},
-    {"use_skill",     command_uskill,         0.1f},
-    {"ready_skill",   command_rskill,         0.1f},
-    {"silent_login",  command_silent_login,   0.0f},
-    {"egobind",       command_egobind,        1.0f},
+    {"apply",         command_apply,          1.0f, "Normal"}, /* should be variable */
+    {"target",        command_target,         0.1f, "Normal"}, /* enter combat and attack object in reach */
+    {"combat",        command_combat,         0.1f, "Normal"}, /* toggle attack mode of player */
+    {"rest",          command_resting,        1.0f, "Normal"},
+    {"run",           command_run,            1.0f, "Normal"},
+    {"run_stop",      command_run_stop,       0.0f, "Normal"},
+    {"cast",          command_cast_spell,     0.0f, "Normal"}, /* use time comes from spells! */
+    {"push",          command_push_object,    1.0f, "Normal"},
+    {"right",         command_turn_right,     1.0f, "Normal"},
+    {"left",          command_turn_left,      1.0f, "Normal"},
+    {"say",           command_say,            1.0f, "Normal"},
+    {"gsay",          command_gsay,           1.0f, "Normal"},
+    {"shout",         command_shout,          1.0f, "Normal"},
+    {"tell",          command_tell,           1.0f, "Normal"},
+    {"talk",          command_talk,           1.0f, "Normal"},
+    {"who",           command_who,            5.0f, "Normal"},
+    {"qlist",         command_questlist,      5.0f, "Normal"},
+    {"mapinfo",       command_mapinfo,        5.0f, "Normal"},
+    {"motd",          command_motd,           5.0f, "Normal"},
+    {"usekeys",       command_usekeys,        1.0f, "Normal"},
+    {"time",          command_time,           1.0f, "Normal"},
+    {"version",       command_version,        1.0f, "Normal"},
+    {"help",          command_help,           1.0f, "Normal"},
+    {"save",          command_save,           1.0f, "Normal"},
+    {"use_skill",     command_uskill,         0.1f, "Normal"},
+    {"ready_skill",   command_rskill,         0.1f, "Normal"},
+    {"silent_login",  command_silent_login,   0.0f, "Normal"},
+    {"egobind",       command_egobind,        1.0f, "Normal"},
     /* group commands */
-    {"invite",        command_party_invite,   4.0f},
-    {"join",          command_party_join,     0.1f},
-    {"deny",          command_party_deny,     0.1f},
-    {"leave",         command_party_leave,    4.0f},
-    {"remove",        command_party_remove,   4.0f},
+    {"invite",        command_party_invite,   4.0f, "Normal"},
+    {"join",          command_party_join,     0.1f, "Normal"},
+    {"deny",          command_party_deny,     0.1f, "Normal"},
+    {"leave",         command_party_leave,    4.0f, "Normal"},
+    {"remove",        command_party_remove,   4.0f, "Normal"},
 #ifdef USE_CHANNELS
-    {"channel",       command_channel,        1.0f}, /* channel system */
-    {"createchannel", command_channel_create, 1.0f}, /* channel system */
-    {"deletechannel", command_channel_delete, 1.0f}, /* channel system */
-    {"channelmute",   command_channel_mute,   1.0f}, /* channel system */
+    {"channel",       command_channel,        1.0f, "Normal"}, /* channel system */
+    {"createchannel", command_channel_create, 1.0f, "Normal"}, /* channel system */
+    {"deletechannel", command_channel_delete, 1.0f, "Normal"}, /* channel system */
+    {"channelmute",   command_channel_mute,   1.0f, "Normal"}, /* channel system */
 #endif
 #ifdef _TESTSERVER
-    {"stuck",         command_stuck,          0.0f},
+    {"stuck",         command_stuck,          0.0f, "Normal"},
 #endif
-    {"mm",            command_mm,             1.0f},
-    {"gm",            command_gm,             1.0f},
-    {"vol",           command_vol,            1.0f},
-    {"mw",            command_mw,             1.0f},
+    {"mm",            command_mm,             1.0f, "Normal"},
+    {"gm",            command_gm,             1.0f, "Normal"},
+    {"vol",           command_vol,            1.0f, "Normal"},
+    {"mw",            command_mw,             1.0f, "Normal"},
 };
 
-CommArray_s CommunicationCommands[] =
+CommArray_s EmoteCommands[] =
 {
-    /* begin emotions */
-    {"nod", command_nod,         1.0}, {"dance", command_dance,     1.0}, {"kiss", command_kiss,       1.0},
-    {"bounce", command_bounce,   1.0}, {"smile", command_smile,     1.0}, {"cackle", command_cackle,   1.0},
-    {"laugh", command_laugh,     1.0}, {"giggle", command_giggle,   1.0}, {"shake", command_shake,     1.0},
-    {"puke", command_puke,       1.0}, {"growl", command_growl,     1.0}, {"scream", command_scream,   1.0},
-    {"sigh", command_sigh,       1.0}, {"sulk", command_sulk,       1.0}, {"hug", command_hug,         1.0},
-    {"cry", command_cry,         1.0}, {"poke", command_poke,       1.0}, {"accuse", command_accuse,   1.0},
-    {"grin", command_grin,       1.0}, {"bow", command_bow,         1.0}, {"clap", command_clap,       1.0},
-    {"blush", command_blush,     1.0}, {"burp", command_burp,       1.0}, {"chuckle", command_chuckle, 1.0},
-    {"cough", command_cough,     1.0}, {"flip", command_flip,       1.0}, {"frown", command_frown,     1.0},
-    {"gasp", command_gasp,       1.0}, {"glare", command_glare,     1.0}, {"groan", command_groan,     1.0},
-    {"hiccup", command_hiccup,   1.0}, {"lick", command_lick,       1.0}, {"pout", command_pout,       1.0},
-    {"shiver", command_shiver,   1.0}, {"shrug", command_shrug,     1.0}, {"slap", command_slap,       1.0},
-    {"smirk", command_smirk,     1.0}, {"snap", command_snap,       1.0}, {"sneeze", command_sneeze,   1.0},
-    {"snicker", command_snicker, 1.0}, {"sniff", command_sniff,     1.0}, {"snore", command_snore,     1.0},
-    {"spit", command_spit,       1.0}, {"strut", command_strut,     1.0}, {"thank", command_thank,     1.0},
-    {"twiddle", command_twiddle, 1.0}, {"wave", command_wave,       1.0}, {"whistle", command_whistle, 1.0},
-    {"wink", command_wink,       1.0}, {"yawn", command_yawn,       1.0}, {"beg", command_beg,         1.0},
-    {"bleed", command_bleed,     1.0}, {"cringe", command_cringe,   1.0}, {"think", command_think,     1.0},
-    {"me", command_me,           1.0},
+    {"nod",     command_nod,     1.0f, "Emote"},
+    {"bounce",  command_bounce,  1.0f, "Emote"},
+    {"laugh",   command_laugh,   1.0f, "Emote"},
+    {"puke",    command_puke,    1.0f, "Emote"},
+    {"sigh",    command_sigh,    1.0f, "Emote"},
+    {"cry",     command_cry,     1.0f, "Emote"},
+    {"grin",    command_grin,    1.0f, "Emote"},
+    {"blush",   command_blush,   1.0f, "Emote"},
+    {"cough",   command_cough,   1.0f, "Emote"},
+    {"gasp",    command_gasp,    1.0f, "Emote"},
+    {"hiccup",  command_hiccup,  1.0f, "Emote"},
+    {"shiver",  command_shiver,  1.0f, "Emote"},
+    {"smirk",   command_smirk,   1.0f, "Emote"},
+    {"snicker", command_snicker, 1.0f, "Emote"},
+    {"spit",    command_spit,    1.0f, "Emote"},
+    {"twiddle", command_twiddle, 1.0f, "Emote"},
+    {"wink",    command_wink,    1.0f, "Emote"},
+    {"bleed",   command_bleed,   1.0f, "Emote"},
+    {"me",      command_me,      1.0f, "Emote"},
+    {"dance",   command_dance,   1.0f, "Emote"},
+    {"smile",   command_smile,   1.0f, "Emote"},
+    {"giggle",  command_giggle,  1.0f, "Emote"},
+    {"growl",   command_growl,   1.0f, "Emote"},
+    {"sulk",    command_sulk,    1.0f, "Emote"},
+    {"poke",    command_poke,    1.0f, "Emote"},
+    {"bow",     command_bow,     1.0f, "Emote"},
+    {"burp",    command_burp,    1.0f, "Emote"},
+    {"flip",    command_flip,    1.0f, "Emote"},
+    {"glare",   command_glare,   1.0f, "Emote"},
+    {"lick",    command_lick,    1.0f, "Emote"},
+    {"shrug",   command_shrug,   1.0f, "Emote"},
+    {"snap",    command_snap,    1.0f, "Emote"},
+    {"sniff",   command_sniff,   1.0f, "Emote"},
+    {"strut",   command_strut,   1.0f, "Emote"},
+    {"wave",    command_wave,    1.0f, "Emote"},
+    {"yawn",    command_yawn,    1.0f, "Emote"},
+    {"cringe",  command_cringe,  1.0f, "Emote"},
+    {"kiss",    command_kiss,    1.0f, "Emote"},
+    {"cackle",  command_cackle,  1.0f, "Emote"},
+    {"shake",   command_shake,   1.0f, "Emote"},
+    {"scream",  command_scream,  1.0f, "Emote"},
+    {"hug",     command_hug,     1.0f, "Emote"},
+    {"accuse",  command_accuse,  1.0f, "Emote"},
+    {"clap",    command_clap,    1.0f, "Emote"},
+    {"chuckle", command_chuckle, 1.0f, "Emote"},
+    {"frown",   command_frown,   1.0f, "Emote"},
+    {"groan",   command_groan,   1.0f, "Emote"},
+    {"pout",    command_pout,    1.0f, "Emote"},
+    {"slap",    command_slap,    1.0f, "Emote"},
+    {"sneeze",  command_sneeze,  1.0f, "Emote"},
+    {"snore",   command_snore,   1.0f, "Emote"},
+    {"thank",   command_thank,   1.0f, "Emote"},
+    {"whistle", command_whistle, 1.0f, "Emote"},
+    {"beg",     command_beg,     1.0f, "Emote"},
+    {"think",   command_think,   1.0f, "Emote"},
 };
 
 CommArray_s CommandsVOL[] =
 {
-    {"mutelevel",      command_mutelevel,      1.0f},
-    {"dm_list",        command_dm_list,        1.0f},
-    {"kick",           command_kickcmd,        0.0f},
-    {"mute",           command_mute,           1.0f},
-    {"ip",             command_ip,             0.0f},
+    {"mutelevel", command_mutelevel, 1.0f, "VOL"},
+    {"dm_list",   command_dm_list,   1.0f, "VOL"},
+    {"kick",      command_kickcmd,   0.0f, "VOL"},
+    {"mute",      command_mute,      1.0f, "VOL"},
+    {"ip",        command_ip,        0.0f, "VOL"},
 };
 
 CommArray_s CommandsGM[] =
 {
-    {"dm_connections", command_dm_connections, 1.0f},
-    {"generate",       command_generate,       0.0f},
-    {"inventory",      command_inventory,      1.0f},
-    {"summon",         command_summon,         1.0f},
-    {"teleport",       command_teleport,       1.0f},
-    {"ban",            command_ban,            0.0f},
-    {"silence",        command_silence,        0.0f},
-    {"gm_set",         command_gm_set,         0.0f},
+    {"dm_connections", command_dm_connections, 1.0f, "GM"},
+    {"generate",       command_generate,       0.0f, "GM"},
+    {"inventory",      command_inventory,      1.0f, "GM"},
+    {"summon",         command_summon,         1.0f, "GM"},
+    {"teleport",       command_teleport,       1.0f, "GM"},
+    {"ban",            command_ban,            0.0f, "GM"},
+    {"silence",        command_silence,        0.0f, "GM"},
+    {"gm_set",         command_gm_set,         0.0f, "GM"},
 };
 
 CommArray_s CommandsMW[] =
 {
-    {"summon",        command_summon,      1.0f},
-    {"teleport",      command_teleport,    1.0f},
-    {"resetmap",      command_reset,       0.0f},
-    {"goto",          command_goto,        0.0f},
-    {"addexp",        command_addexp,      0.0f},
-    {"setskill",      command_setskill,    0.0f},
-    {"restart",       command_restart,     0.0f},
-    {"dm_stealth",    command_dm_stealth,  0.0f},
-    {"dm_invis",      command_dm_invis,    0.0f},
-    {"dm_dev",        command_dm_dev,      0.0f},
-    {"dm_light",      command_dm_light,    0.0f},
-    {"set_map_light", command_setmaplight, 0.0f},
-    {"generate",      command_generate,    0.0f},
+    {"summon",        command_summon,      1.0f, "MW"},
+    {"teleport",      command_teleport,    1.0f, "MW"},
+    {"resetmap",      command_reset,       0.0f, "MW"},
+    {"goto",          command_goto,        0.0f, "MW"},
+    {"addexp",        command_addexp,      0.0f, "MW"},
+    {"setskill",      command_setskill,    0.0f, "MW"},
+    {"restart",       command_restart,     0.0f, "MW"},
+    {"dm_stealth",    command_dm_stealth,  0.0f, "MW"},
+    {"dm_invis",      command_dm_invis,    0.0f, "MW"},
+    {"dm_dev",        command_dm_dev,      0.0f, "MW"},
+    {"dm_light",      command_dm_light,    0.0f, "MW"},
+    {"set_map_light", command_setmaplight, 0.0f, "MW"},
+    {"generate",      command_generate,    0.0f, "MW"},
 };
 
 CommArray_s CommandsMM[] =
 {
-    {"dm_set",       command_dm_set,            0.0f},
-    {"plugin",       command_loadplugin,        0.0f},
-    {"pluglist",     command_listplugins,       0.0f},
-    {"shutdown",     command_start_shutdown,    0.0f},
-    {"shutdown_now", command_shutdown,          0.0f},
-    {"plugout",      command_unloadplugin,      0.0f},
-    {"create",       command_create,            0.0f},
-    {"maps",         command_maps,              0.0f},
-    {"dump",         command_dump,              0.0f},
-    {"dm_speed",     command_speed,             0.0f},
-    {"d_active",     command_dumpactivelist,    0.0f},
-    {"d_arches",     command_dumpallarchetypes, 0.0f},
-    {"d_maps",       command_dumpallmaps,       0.0f},
-    {"d_map",        command_dumpmap,           0.0f},
-    {"d_objects",    command_dumpallobjects,    0.0f},
-    {"d_belowfull",  command_dumpbelowfull,     0.0f},
-    {"d_below",      command_dumpbelow,         0.0f},
-    {"d_hash",       command_sstable,           0.0f},
-    {"stats",        command_stats,             0.0f},
-    {"check_fd",     command_check_fd,          0.0f},
-    {"malloc",       command_malloc,            0.0f},
+    {"dm_set",       command_dm_set,            0.0f, "MM"},
+    {"plugin",       command_loadplugin,        0.0f, "MM"},
+    {"pluglist",     command_listplugins,       0.0f, "MM"},
+    {"shutdown",     command_start_shutdown,    0.0f, "MM"},
+    {"shutdown_now", command_shutdown,          0.0f, "MM"},
+    {"plugout",      command_unloadplugin,      0.0f, "MM"},
+    {"create",       command_create,            0.0f, "MM"},
+    {"maps",         command_maps,              0.0f, "MM"},
+    {"dump",         command_dump,              0.0f, "MM"},
+    {"dm_speed",     command_speed,             0.0f, "MM"},
+    {"d_active",     command_dumpactivelist,    0.0f, "MM"},
+    {"d_arches",     command_dumpallarchetypes, 0.0f, "MM"},
+    {"d_maps",       command_dumpallmaps,       0.0f, "MM"},
+    {"d_map",        command_dumpmap,           0.0f, "MM"},
+    {"d_objects",    command_dumpallobjects,    0.0f, "MM"},
+    {"d_belowfull",  command_dumpbelowfull,     0.0f, "MM"},
+    {"d_below",      command_dumpbelow,         0.0f, "MM"},
+    {"d_hash",       command_sstable,           0.0f, "MM"},
+    {"stats",        command_stats,             0.0f, "MM"},
+    {"check_fd",     command_check_fd,          0.0f, "MM"},
+    {"malloc",       command_malloc,            0.0f, "MM"},
 
     /* old, outdated or disabled commands */
     /*
@@ -230,7 +265,7 @@ CommArray_s CommandsMM[] =
 
 /* sort the commands for faster access */
 const int CommandsSize = sizeof(Commands) / sizeof(CommArray_s);
-const int CommunicationCommandsSize = sizeof(CommunicationCommands) / sizeof(CommArray_s);
+const int EmoteCommandsSize = sizeof(EmoteCommands) / sizeof(CommArray_s);
 const int CommandsVOLSize = sizeof(CommandsVOL) / sizeof(CommArray_s);
 const int CommandsGMSize = sizeof(CommandsGM) / sizeof(CommArray_s);
 const int CommandsMWSize = sizeof(CommandsMW) / sizeof(CommArray_s);
@@ -244,62 +279,76 @@ static int compare_A(const void *a, const void *b)
 void init_commands()
 {
     qsort((char *) Commands, CommandsSize, sizeof(CommArray_s), compare_A);
-    qsort((char *) CommunicationCommands, CommunicationCommandsSize, sizeof(CommArray_s), compare_A);
+    qsort((char *) EmoteCommands, EmoteCommandsSize, sizeof(CommArray_s), compare_A);
     qsort((char *) CommandsVOL, CommandsVOLSize, sizeof(CommArray_s), compare_A);
     qsort((char *) CommandsGM, CommandsGMSize, sizeof(CommArray_s), compare_A);
     qsort((char *) CommandsMW, CommandsMWSize, sizeof(CommArray_s), compare_A);
     qsort((char *) CommandsMM, CommandsMMSize, sizeof(CommArray_s), compare_A);
 }
 
-/* Finds cmd if it exists for pl (determined by gmaster_mode). */
+/* Finds cmd if it exists for pl (determined by gmaster_mode). 
+ * If so, the particular command element is returned. Otherwise, NULL is
+ * returned. */
 CommArray_s *find_command(char *cmd, player *pl)
 {
-    CommArray_s *csp = NULL,
-                 plug_csp;
+    CommArray_s *csp,
+                 plugin_csp;
 
-    if (find_plugin_command(cmd, pl->ob, &plug_csp))
-        csp = &plug_csp;
+    if (find_plugin_command(cmd, pl->ob, &plugin_csp))
+    {
+        csp = &plugin_csp;
 
-    if (!csp)
-        csp = find_command_element(cmd, Commands, CommandsSize);
+        return csp;
+    }
+    else if((csp = find_command_element(cmd, Commands, CommandsSize, -1)))
+        return csp;
+    else if ((csp = find_command_element(cmd, EmoteCommands, EmoteCommandsSize, -1)))
+        return csp;
+    else if ((pl->gmaster_mode == GMASTER_MODE_VOL ||
+              pl->gmaster_mode == GMASTER_MODE_GM ||
+              pl->gmaster_mode == GMASTER_MODE_MM) &&
+            (csp = find_command_element(cmd, CommandsVOL, CommandsVOLSize, -1)))
+        return csp;
+    else if ((pl->gmaster_mode == GMASTER_MODE_GM ||
+              pl->gmaster_mode == GMASTER_MODE_MM) &&
+             (csp = find_command_element(cmd, CommandsGM, CommandsGMSize, -1)))
+        return csp;
+    else if ((pl->gmaster_mode == GMASTER_MODE_MW ||
+              pl->gmaster_mode == GMASTER_MODE_MM) &&
+             (csp = find_command_element(cmd, CommandsMW, CommandsMWSize, -1)))
+        return csp;
+    else if (pl->gmaster_mode == GMASTER_MODE_MM &&
+             (csp = find_command_element(cmd, CommandsMM, CommandsMMSize, -1)))
+        return csp;
 
-    if (!csp)
-        csp = find_command_element(cmd, CommunicationCommands,
-                                   CommunicationCommandsSize);
+    return NULL;
+}
 
-    if (!csp &&
-        (pl->gmaster_mode == GMASTER_MODE_VOL ||
-         pl->gmaster_mode == GMASTER_MODE_GM ||
-         pl->gmaster_mode == GMASTER_MODE_MM))
-        csp = find_command_element(cmd, CommandsVOL, CommandsVOLSize);
-
-    if (!csp &&
-        (pl->gmaster_mode == GMASTER_MODE_GM ||
-         pl->gmaster_mode == GMASTER_MODE_MM))
-        csp = find_command_element(cmd, CommandsGM, CommandsGMSize);
-
-    if (!csp &&
-        (pl->gmaster_mode == GMASTER_MODE_MW ||
-         pl->gmaster_mode == GMASTER_MODE_MM))
-        csp = find_command_element(cmd, CommandsMW, CommandsMWSize);
-
-    if (!csp &&
-        pl->gmaster_mode == GMASTER_MODE_MM)
-        csp = find_command_element(cmd, CommandsMM, CommandsMMSize);
-
-     return csp;
-}    
-
-CommArray_s * find_command_element(char *cmd, CommArray_s *commarray, int commsize)
+CommArray_s *find_command_element(char *cmd, CommArray_s *commarray, int commsize, int i)
 {
     CommArray_s    *asp, dummy;
     char           *cp;
+
+    if (i >= commsize)
+    {
+        LOG(llevBug, "BUG:: %s/find_command_element(): Invalid element!\n",
+            __FILE__);
+
+        return NULL;
+    }
 
     for (cp = cmd; *cp; cp++)
         *cp = tolower(*cp);
 
     dummy.name = cmd;
-    asp = (CommArray_s *) bsearch((void *) &dummy, (void *) commarray, commsize, sizeof(CommArray_s), compare_A);
+
+    if (i >= 0)
+        asp = &commarray[i];
+    else
+        asp = (CommArray_s *)bsearch((void *)&dummy, (void *)commarray,
+                                      commsize, sizeof(CommArray_s),
+                                      compare_A);
+
     return asp;
 }
 
