@@ -294,7 +294,7 @@ CommArray_s *find_command(char *cmd, player *pl)
     CommArray_s *csp,
                  plugin_csp;
 
-    if (find_plugin_command(cmd, pl->ob, &plugin_csp))
+    if (find_plugin_command(cmd, (pl) ? pl->ob : NULL, &plugin_csp))
     {
         csp = &plugin_csp;
 
@@ -304,20 +304,24 @@ CommArray_s *find_command(char *cmd, player *pl)
         return csp;
     else if ((csp = find_command_element(cmd, EmoteCommands, EmoteCommandsSize, -1)))
         return csp;
-    else if ((pl->gmaster_mode == GMASTER_MODE_VOL ||
-              pl->gmaster_mode == GMASTER_MODE_GM ||
-              pl->gmaster_mode == GMASTER_MODE_MM) &&
+    else if ((!pl ||
+              (pl->gmaster_mode == GMASTER_MODE_VOL ||
+               pl->gmaster_mode == GMASTER_MODE_GM ||
+               pl->gmaster_mode == GMASTER_MODE_MM)) &&
             (csp = find_command_element(cmd, CommandsVOL, CommandsVOLSize, -1)))
         return csp;
-    else if ((pl->gmaster_mode == GMASTER_MODE_GM ||
-              pl->gmaster_mode == GMASTER_MODE_MM) &&
+    else if ((!pl ||
+              (pl->gmaster_mode == GMASTER_MODE_GM ||
+               pl->gmaster_mode == GMASTER_MODE_MM)) &&
              (csp = find_command_element(cmd, CommandsGM, CommandsGMSize, -1)))
         return csp;
-    else if ((pl->gmaster_mode == GMASTER_MODE_MW ||
-              pl->gmaster_mode == GMASTER_MODE_MM) &&
+    else if ((!pl ||
+              (pl->gmaster_mode == GMASTER_MODE_MW ||
+               pl->gmaster_mode == GMASTER_MODE_MM)) &&
              (csp = find_command_element(cmd, CommandsMW, CommandsMWSize, -1)))
         return csp;
-    else if (pl->gmaster_mode == GMASTER_MODE_MM &&
+    else if ((!pl ||
+              pl->gmaster_mode == GMASTER_MODE_MM) &&
              (csp = find_command_element(cmd, CommandsMM, CommandsMMSize, -1)))
         return csp;
 
