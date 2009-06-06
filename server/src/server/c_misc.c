@@ -1334,7 +1334,7 @@ int command_help(object *op, char *params)
         new_draw_info_format(NDI_UNIQUE | NDI_YELLOW, 0, op, "Help for command %s:",
                              params);
 
-        if (!(csp = find_command(params + 1, CONTR(op))))
+        if (!(csp = find_command(params + 1, NULL)))
         {
             new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "Unrecognised command!");
 
