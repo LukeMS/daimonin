@@ -1,13 +1,13 @@
+~Category~: Group
+
 ~Syntax~: /invite <player>
 ~Purpose~: Sends an invitation to <player> to join your group. Only available to group leaders.
- 
+
 ~Syntax~: /invite off
 ~Purpose~: Automatically declines all invitations sent to you.
- 
+
 ~Syntax~: /invite on
 ~Purpose~: Automatically accepts all invitations sent to you.
- 
+
 ~Syntax~: /invite allow <player>
 ~Purpose~: Automatically accepts invitations sent to you, but only from <player>.
- 
-~See also~: /deny /gsay /join /leave /remove

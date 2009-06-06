@@ -1,4 +1,4 @@
+~Category~: Chat
+
 ~Syntax~: /shout <message>
 ~Purpose~: Send <message> to all players.
- 
-~See also~: /gsay /reply /say /tell
