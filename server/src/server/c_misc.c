@@ -1355,7 +1355,7 @@ int command_help(object *op, char *params)
             len = (int)strlen(line) - 1;
 
             if (line[len] == '\n')
-                line[len] = '\0';
+                line[len] = (len) ? '\0' : ' ';
 
             new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, line);
         }
