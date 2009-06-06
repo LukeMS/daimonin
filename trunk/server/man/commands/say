@@ -1,0 +1,4 @@
+~Category~: Chat
+
+~Syntax~: /say <message>
+~Purpose~: Send <message> to all players nearby (mobs and other things can also here you).
