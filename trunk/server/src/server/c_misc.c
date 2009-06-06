@@ -1341,8 +1341,6 @@ int command_help(object *op, char *params)
             return 0;
         }
 
-        new_draw_info_format(NDI_UNIQUE | NDI_WHITE, 0, op, "~Type~: %s command\n",
-                             csp->type);
         sprintf(filename, "%s/commands/%s", HELPDIR, params + 1);
 
         if ((fp = fopen(filename, "r")) == NULL)
