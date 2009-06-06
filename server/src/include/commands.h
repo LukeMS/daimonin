@@ -50,7 +50,6 @@ typedef struct
     char               *name;
     CommFunc            func;
     float               time;           /* How long it takes to execute this command */
-    char               *type;
 } CommArray_s;
 
 
