@@ -1,0 +1,7 @@
+~Category~: Item
+
+~Syntax~: /egobind
+~Purpose~: Shows the egobind id of the marked item in your inventory.
+
+~Syntax~: /egobind <id>
+~Purpose~: Egobinds the item with id <id> to you.

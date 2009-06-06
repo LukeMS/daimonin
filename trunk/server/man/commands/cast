@@ -1,0 +1,4 @@
+~Category~: Spell
+
+~Syntax~: /cast <spell>
+~Purpose~: Casts <spell> (which may be a spell or a prayer).

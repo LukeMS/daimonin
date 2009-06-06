@@ -1,0 +1,4 @@
+~Category~: Skill
+
+~Syntax~: /ready_skill <skill>
+~Purpose~: Readys <skill> as the skill you will use next by default.

@@ -1,0 +1,10 @@
+~Category~: System
+
+~Syntax~: /motd
+~Purpose~: Shows the current Message Of The Day.
+
+~Syntax~: /motd default
+~Purpose~: Resets the MOTD to the server default. Only available to GMs and MMs.
+
+~Syntax~: /motd <message>
+~Purpose~: Sets the MOTD to <meesage>. Only available to GMs and MMs.

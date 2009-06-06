@@ -1,0 +1,4 @@
+~Category~: NPC
+
+~Syntax~: /talk <message>
+~Purpose~: Communicates <message> to the NPC you have targeted.
