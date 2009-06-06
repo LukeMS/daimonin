@@ -1,4 +1,4 @@
+~Category~: Chat
+
 ~Syntax~: /reply <message>
 ~Purpose~: Send <message> to the last player who sent you a tell only.
- 
-~See also~: /gsay /tell /say /shout

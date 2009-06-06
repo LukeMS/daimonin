@@ -1,4 +1,4 @@
+~Category~: Group
+
 ~Syntax~: /remove <player>
 ~Purpose~: Kick <player> from your group. Only available to group leaders.
- 
-~See also~: /deny /gsay /invite /join /leave
