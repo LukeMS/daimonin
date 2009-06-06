@@ -1,0 +1,10 @@
+~Category~: System
+
+~Syntax~: /help
+~Purpose~: Shows the main help page.
+
+~Syntax~: /help <category>
+~Purpose~: Shows the help page for <category>.
+
+~Syntax~: /help /<command>
+~Purpose~: Shows the help page for /<command>.

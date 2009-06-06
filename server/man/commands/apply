@@ -1,0 +1,4 @@
+~Category~: Item
+
+~Syntax~: /apply <item>
+~Purpose~: 'Uses' <item>. For example, applying a hat puts it on, applying a sword wields it, and applying a wand waves it.
