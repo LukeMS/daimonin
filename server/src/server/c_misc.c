@@ -82,7 +82,7 @@ void map_info(object *op)
 int command_spell_reset(object *op, char *params)
 {
     /*init_spell_param(); */
-    return 1;
+    return 0;
 }
 
 /* '/motd' displays the MOTD. GMs and MMs can also set the MOTD:
@@ -125,18 +125,16 @@ int command_motd(object *op, char *params)
 
     display_motd(op);
 
-    return 1;
+    return 0;
 }
 
 int command_bug(object *op, char *params)
 {
-    char    buf[MAX_BUF];
+    char buf[MAX_BUF];
 
-    if (params == NULL)
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "what bugs?");
+    if (!params)
         return 1;
-    }
+
     strcpy(buf, op->name);
     strcat(buf, " bug-reports: ");
     strncat(buf, ++params, MAX_BUF - strlen(buf));
@@ -144,7 +142,8 @@ int command_bug(object *op, char *params)
     bug_report(buf);
     new_draw_info(NDI_ALL | NDI_UNIQUE, 1, NULL, buf);
     new_draw_info(NDI_UNIQUE, 0, op, "OK, thanks!");
-    return 1;
+
+    return 0;
 }
 
 
@@ -326,7 +325,7 @@ int command_who(object *op, char *params)
     const char *sex;
 
     if (!op)
-        return 1;
+        return 0;
 
     for (pl = first_player; pl != NULL; pl = pl->next)
     {
@@ -380,7 +379,7 @@ int command_who(object *op, char *params)
         if (!fgets(buf, MAX_BUF, fp))
         {
             LOG(llevBug, "BUG: error in stream file\n");
-            return;
+            return 0;
         }
         if ((cp = strchr(buf, '\n')))
             *cp = '\0';
@@ -399,7 +398,8 @@ int command_who(object *op, char *params)
         fclose(fp);
     }
 #endif
-    return 1;
+
+    return 0;
 }
 
 int command_malloc(object *op, char *params)
@@ -410,10 +410,7 @@ int command_malloc(object *op, char *params)
         int force_flag = 0, i;
 
         if (strcmp(params, "free") && strcmp(params, "force"))
-        {
-            new_draw_info(NDI_UNIQUE, 0, op, "Usage: /malloc [free | force]");
             return 1;
-        }
 
         if (strcmp(params, "force") == 0)
             force_flag = 1;
@@ -425,19 +422,21 @@ int command_malloc(object *op, char *params)
 #endif
 
     malloc_info(op);
-    return 1;
+    return 0;
 }
 
 int command_mapinfo(object *op, char *params)
 {
     current_map_info(op);
-    return 1;
+
+    return 0;
 }
 
 int command_maps(object *op, char *params)
 {
     map_info(op);
-    return 1;
+
+    return 0;
 }
 
 int command_sstable(object *op, char *params)
@@ -459,41 +458,50 @@ int command_sstable(object *op, char *params)
     tmp = ss_dump_table(flags);
     LOG(llevSystem, "%s\n", tmp);
     new_draw_info(NDI_UNIQUE, 0, op, tmp);
-    return 1;
+
+    return 0;
 }
 
 
 int command_time(object *op, char *params)
 {
     print_tod(op);
-    return 1;
+
+    return 0;
 }
 
 int command_archs(object *op, char *params)
 {
     arch_info(op);
-    return 1;
+
+    return 0;
 }
 
 int command_debug(object *op, char *params)
 {
     int     i;
     char    buf[MAX_BUF];
+
     if (params == NULL || !sscanf(params, "%d", &i))
     {
         sprintf(buf, "Global debug level is %d.", settings.debug);
         new_draw_info(NDI_UNIQUE, 0, op, buf);
-        return 1;
+
+        return 0;
     }
+
     if (op != NULL && !QUERY_FLAG(op, FLAG_WIZ))
     {
         new_draw_info(NDI_UNIQUE, 0, op, "Privileged command.");
-        return 1;
+
+        return 0;
     }
+
     settings.debug = (enum LogLevel) FABS(i);
     sprintf(buf, "Set debug level to %d.", i);
     new_draw_info(NDI_UNIQUE, 0, op, buf);
-    return 1;
+
+    return 0;
 }
 
 
@@ -507,16 +515,21 @@ int command_dumpbelowfull(object *op, char *params)
 
     new_draw_info(NDI_UNIQUE, 0, op, "DUMP OBJECTS OF THIS TILE");
     new_draw_info(NDI_UNIQUE, 0, op, "-------------------");
+
     for (tmp = get_map_ob(op->map, op->x, op->y); tmp; tmp = tmp->above)
     {
         if (tmp == op) /* exclude the DM player object */
             continue;
+
         dump_object(tmp);
         new_draw_info(NDI_UNIQUE, 0, op, errmsg);
+
         if (tmp->above && tmp->above != op)
             new_draw_info(NDI_UNIQUE, 0, op, ">next object<");
     }
+
     new_draw_info(NDI_UNIQUE, 0, op, "------------------");
+
     return 0;
 }
 
@@ -528,16 +541,20 @@ int command_dumpbelow(object *op, char *params)
 
     new_draw_info(NDI_UNIQUE, 0, op, "DUMP OBJECTS OF THIS TILE");
     new_draw_info(NDI_UNIQUE, 0, op, "-------------------");
+
     for (tmp = get_map_ob(op->map, op->x, op->y); tmp; tmp = tmp->above, i++)
     {
         if (tmp == op) /* exclude the DM player object */
             continue;
+
         sprintf(buf, "#%d  >%s<  >%s<  >%s<", i, query_name(tmp),
                 tmp->arch ? (tmp->arch->name ? tmp->arch->name : "no arch name") : "NO ARCH",
                 tmp->env ? query_name(tmp->env) : "");
         new_draw_info(NDI_UNIQUE, 0, op, buf);
     }
+
     new_draw_info(NDI_UNIQUE, 0, op, "------------------");
+
     return 0;
 }
 
@@ -563,6 +580,7 @@ int command_wizpass(object *op, char *params)
         new_draw_info(NDI_UNIQUE, 0, op, "You will now be stopped by walls.\n");
         CLEAR_FLAG(op, FLAG_WIZPASS);
     }
+
     return 0;
 }
 
@@ -572,11 +590,13 @@ int command_dumpallobjects(object *op, char *params)
     struct puddle_info *puddle = pool_object->first_puddle_info;
     unsigned int i;
     object *obj;
+
     while(puddle)
     {
         for(i=0; i<pool_object->expand_size; i++)
         {
             obj = MEM_USERDATA((char *)puddle->first_chunk + i * (sizeof(struct mempool_chunk) + pool_object->chunksize));
+
             if(! OBJECT_FREE(obj))
                 LOG(llevDebug, "obj '%s'-(%s) %x (%d)(%s) #=%d\n", STRING_OBJ_NAME(obj),
                         STRING_OBJ_ARCH_NAME(obj), obj, obj->count,
@@ -586,12 +606,14 @@ int command_dumpallobjects(object *op, char *params)
         puddle = puddle->next;
     }
 #endif
+
     return 0;
 }
 
 int command_dumpallarchetypes(object *op, char *params)
 {
     dump_all_archetypes();
+
     return 0;
 }
 
@@ -599,7 +621,7 @@ int command_dumpallarchetypes(object *op, char *params)
 int command_dm_dev(object *op, char *params)
 {
     if (op->type != PLAYER)
-        return -1;
+        return 0;
 
     command_goto(op, "/dev/testmaps/testmap_main 2 2");
 
@@ -612,7 +634,7 @@ int command_dm_dev(object *op, char *params)
 int command_dm_invis(object *op, char *params)
 {
     if (op->type != PLAYER)
-        return -1;
+        return 0;
 
     CONTR(op)->dm_invis = (CONTR(op)->dm_invis) ? 0 : 1;
     new_draw_info_format(NDI_UNIQUE, 0, op, "toggled dm_invis to %d",
@@ -630,7 +652,7 @@ int command_dm_invis(object *op, char *params)
 int command_dm_stealth(object *op, char *params)
 {
     if (op->type != PLAYER)
-        return -1;
+        return 0;
 
    if (CONTR(op)->dm_stealth)
    {
@@ -661,7 +683,7 @@ int command_dm_light(object *op, char *params)
     int     personal_light;
 
     if (op->type != PLAYER)
-        return -1;
+        return 0;
 
     pl = CONTR(op);
     personal_light = (pl->personal_light) ? 0 : MAX_DARKNESS;
@@ -687,10 +709,8 @@ int command_dm_password (object *op, char *params)
     char name[MAX_BUF]="", pwd[MAX_BUF]="";
 
     if(params==NULL || !sscanf(params, "%s %s", name, pwd) || name[0] == 0 || pwd[0]== 0)
-    {
-        new_draw_info(NDI_UNIQUE, 0,op, "dm_pwd: missing/invalid parameter\nUsage: /dm_pwd <playername> <new password>");
-        return 0;
-    }
+        return 1;
+
     transform_name_string(name);
 
     /* we have now 2 strings - name and password - lets check there is a player file for that name */
@@ -698,6 +718,7 @@ int command_dm_password (object *op, char *params)
     if (access(pfile, F_OK)==-1)
     {
         new_draw_info_format(NDI_UNIQUE, 0,op, "dm_pwd: player %s don't exists or has no player file!", name);
+
         return 0;
     }
 
@@ -709,12 +730,14 @@ int command_dm_password (object *op, char *params)
     if((fp=fopen(pfile,"r"))==NULL)
     {
         new_draw_info_format(NDI_UNIQUE, 0,op, "dm_pwd: error open file %s!", pfile);
+
         return 0;
     }
 
     if((fpout=fopen(outfile,"w"))==NULL)
     {
         new_draw_info_format(NDI_UNIQUE, 0,op, "dm_pwd: error open file %s!", outfile);
+
         return 0;
     }
 
@@ -772,6 +795,7 @@ int command_dumpactivelist(object *op, char *params)
         /*new_draw_info(NDI_UNIQUE, 0,op, buf); It will overflow the send buffer with many player online */
         LOG(llevSystem, "%s\n", buf);
     }
+
     sprintf(buf, "active objects: %d (dumped to log)", count);
     new_draw_info(NDI_UNIQUE, 0, op, buf);
     LOG(llevSystem, "%s\n", buf);
@@ -791,9 +815,6 @@ int command_restart(object *ob, char *params)
     char  buf[MAX_BUF];
     FILE *fp;
 
-    if (ob->type != PLAYER)
-        return -1;
-
     LOG(llevSystem,"write stream file...\n");
     sprintf(buf, "%s/%s", settings.localdir, "stream");
 
@@ -801,7 +822,7 @@ int command_restart(object *ob, char *params)
     {
         LOG(llevBug, "BUG: Cannot open %s for writing\n", buf);
 
-        return -1;
+        return 0;
     }
 
     if (params)
@@ -820,9 +841,6 @@ int command_restart(object *ob, char *params)
 #else
     char buf[MAX_BUF];
 
-    if (ob->type != PLAYER)
-        return -1;
-
     sprintf(buf, "'/restart' issued by %s\nServer will recompile and arches and maps will be updated!",
             STRING_OBJ_NAME(ob));
     LOG(llevSystem, buf);
@@ -837,13 +855,11 @@ int command_start_shutdown(object *op, char *params)
     char   *bp  = NULL;
     int     i   = -2;
 
-    if (params == NULL)
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "DM usage: /start_shutdown <-1 ... x>");
-        return 0;
-    }
+    if (!params)
+        return 1;
 
     sscanf(params, "%d ", &i);
+
     if ((bp = strchr(params, ' ')) != NULL)
         bp++;
 
@@ -851,10 +867,7 @@ int command_start_shutdown(object *op, char *params)
         bp = NULL;
 
     if (i < -1)
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "DM usage: /start_shutdown <-1 ... x>");
-        return 0;
-    }
+        return 1;
 
     LOG(llevSystem, "Shutdown Agent started!\n");
     shutdown_agent(i, EXIT_SHUTODWN, bp);
@@ -869,7 +882,7 @@ int command_setmaplight(object *op, char *params)
     char    buf[256];
 
     if (params == NULL || !sscanf(params, "%d", &i))
-        return 0;
+        return 1;
 
     if (i < -1)
         i = -1;
@@ -892,12 +905,14 @@ int command_dumpmap(object *op, char *params)
 {
     if (op)
         dump_map(op->map);
+
     return 0;
 }
 
 int command_dumpallmaps(object *op, char *params)
 {
     dump_all_maps();
+
     return 0;
 }
 
@@ -905,6 +920,7 @@ int command_printlos(object *op, char *params)
 {
     if (op)
         print_los(op);
+
     return 0;
 }
 
@@ -912,6 +928,7 @@ int command_printlos(object *op, char *params)
 int command_version(object *op, char *params)
 {
     version(op);
+
     return 0;
 }
 
@@ -934,13 +951,13 @@ int command_listen(object *op, char *params)
     int i;
 
     if (params == NULL || !sscanf(params, "%d", &i))
-    {
-        new_draw_info_format(NDI_UNIQUE, 0, op, "Set listen to what (presently %d)?", CONTR(op)->listening);
         return 1;
-    }
+
     CONTR(op)->listening = (char) i;
-    new_draw_info_format(NDI_UNIQUE, 0, op, "Your verbose level is now %d.", i);
-    return 1;
+    new_draw_info_format(NDI_UNIQUE, 0, op, "Your verbosity level is now %d.",
+                         i);
+
+    return 0;
 }
 
 /* Prints out some useful information for the character.  Everything we print
@@ -951,7 +968,8 @@ int command_listen(object *op, char *params)
 int command_statistics(object *pl, char *params)
 {
     if (pl->type != PLAYER || !CONTR(pl))
-        return 1;
+        return 0;
+
     new_draw_info_format(NDI_UNIQUE, 0, pl, "  Experience: %d", pl->stats.exp);
     new_draw_info_format(NDI_UNIQUE, 0, pl, "  Next Level: %d", GET_LEVEL_EXP(pl->level + 1));
     new_draw_info(NDI_UNIQUE, 0, pl, "\nStat       Nat/Real/Max");
@@ -978,7 +996,8 @@ int command_statistics(object *pl, char *params)
 int command_fix_me(object *op, char *params)
 {
     FIX_PLAYER(op ,"command fix_me");
-    return 1;
+
+    return 0;
 }
 
 
@@ -992,7 +1011,8 @@ int command_logs(object *op, char *params)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "Nobody is currently logging kills.");
     }
-    return 1;
+
+    return 0;
 }
 
 int command_usekeys(object *op, char *params)
@@ -1005,8 +1025,10 @@ int command_usekeys(object *op, char *params)
 
     if (!params)
     {
-        new_draw_info_format(NDI_UNIQUE, 0, op, "usekeys is set to %s", types[CONTR(op)->usekeys]);
-        return 1;
+        new_draw_info_format(NDI_UNIQUE, 0, op, "usekeys is set to %s",
+                             types[CONTR(op)->usekeys]);
+
+        return 0;
     }
 
     if (!strcmp(params, "inventory"))
@@ -1016,19 +1038,19 @@ int command_usekeys(object *op, char *params)
     else if (!strcmp(params, "containers"))
         CONTR(op)->usekeys = containers;
     else
-    {
-        new_draw_info_format(NDI_UNIQUE, 0, op,
-                             "usekeys: Unknown options %s, valid options are inventory, keyrings, containers", params);
-             return 0;
-    }
-    new_draw_info_format(NDI_UNIQUE, 0, op, "usekeys %s set to %s", (oldtype == CONTR(op)->usekeys ? "" : "now"),
+         return 1;
+
+    new_draw_info_format(NDI_UNIQUE, 0, op, "usekeys %s set to %s",
+                         (oldtype == CONTR(op)->usekeys ? "" : "now"),
                          types[CONTR(op)->usekeys]);
-    return 1;
+
+    return 0;
 }
 
 int command_resistances(object *op, char *params)
 {
     int i;
+
     if (!op)
         return 0;
 
@@ -1037,8 +1059,10 @@ int command_resistances(object *op, char *params)
         if (i == ATNR_INTERNAL)
             continue;
 
-        new_draw_info_format(NDI_UNIQUE, 0, op, "%-20s %+5d", attack_name[i], op->resist[i]);
+        new_draw_info_format(NDI_UNIQUE, 0, op, "%-20s %+5d",
+                             attack_name[i], op->resist[i]);
     }
+
     return 0;
 }
 /*
@@ -1264,6 +1288,7 @@ int command_resting(object *op, char *params)
         pl->rest_mode = pl->rest_sitting = 1;
         pl->resting_reg_timer = RESTING_DEFAULT_SEC_TIMER;
     }
+
     return 0;
 }
 
@@ -1476,7 +1501,8 @@ int command_save(object *op, char *params)
             op->map->in_memory=MAP_IN_MEMORY;
         }*/
     }
-    return 1;
+
+    return 0;
 }
 
 
@@ -1500,11 +1526,13 @@ int command_style_map_info(object *op, char *params)
             }
         }
     }
+
     new_draw_info_format(NDI_UNIQUE, 0, op, "Style maps loaded:    %d", maps_used);
     new_draw_info(NDI_UNIQUE, 0, op, "Memory used, not");
     new_draw_info_format(NDI_UNIQUE, 0, op, "including objects:    %d", mapmem);
     new_draw_info_format(NDI_UNIQUE, 0, op, "Style objects:        %d", objects_used);
     new_draw_info_format(NDI_UNIQUE, 0, op, "Mem for objects:      %d", objects_used * sizeof(object));
+
     return 0;
 }
 
@@ -1518,7 +1546,8 @@ int command_silent_login(object *op, char *params)
         new_draw_info(NDI_UNIQUE, 0, op, "Silent login enabled.");
     else
         new_draw_info(NDI_UNIQUE, 0, op, "Silent login disabled.");
-    return 1;
+
+    return 0;
 }
 
 /* get_subdir creates the directory for the player file structure
@@ -1547,8 +1576,7 @@ char *get_subdir(const char *name)
 int command_stuck(object *op, char *params)
 {
     if (op->type == PLAYER && CONTR(op))
-    {
         command_goto(op, "/planes/human_plane/castle/castle_030a 5 11");
-	}
+
     return 0;
 }
