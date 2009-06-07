@@ -35,6 +35,7 @@
 static char * cleanup_chat_string(char *ustring)
 {
     char *ptr;
+    int   flag; // 0/1 whether non-space has been found
 
     if (!ustring)
         return NULL;
@@ -48,8 +49,7 @@ static char * cleanup_chat_string(char *ustring)
         return NULL;
 
     /* now clear all control chars */
-    ptr = ustring;
-    for (ptr = ustring; *ptr != '\0'; ptr++)
+    for (ptr = ustring, flag = 0; *ptr != '\0'; ptr++)
     {
         switch(*ptr)
         {
@@ -61,10 +61,13 @@ static char * cleanup_chat_string(char *ustring)
                 *ptr = ' ';
                 break;
             default:
+                if (!isspace(*ptr))
+                    flag = 1;
                 break;
         }
     }
-    return ustring;
+
+    return (flag) ? ustring : NULL;
 }
 
 /* check the player communication commands for a simple time based mute.
@@ -181,16 +184,11 @@ int command_say(object *op, char *params)
     if(!check_mute(op, MUTE_MODE_SAY))
         return 0;
 
-    if (!params)
-        return 0;
+    /* this happens when whitespace only string was submited */
+    if (!params || !(params = cleanup_chat_string(params)))
+        return 1;
 
     LOG(llevInfo, "CLOG SAY:%s >%s<\n", query_name(op), params);
-
-    params = cleanup_chat_string(params);
-    /* this happens when whitespace only string was submited */
-    if (!params || *params == '\0')
-        return 0;
-
     communicate(op, params);
 
     return 0;
@@ -199,10 +197,9 @@ int command_say(object *op, char *params)
 
 int command_gsay(object *op, char *params)
 {
-    char    buf[MAX_BUF];
-    objectlink *ol;
-    object *tmp;
-
+    char            buf[MAX_BUF];
+    objectlink     *ol;
+    object         *tmp;
 #ifdef USE_CHANNELS
     sockbuf_struct *sockbuf;
 #endif
@@ -210,17 +207,13 @@ int command_gsay(object *op, char *params)
     if(!check_mute(op, MUTE_MODE_SAY))
         return 0;
 
-    if (!params)
-        return 0;
-
     /* message: client sided */
     if(!(CONTR(op)->group_status & GROUP_STATUS_GROUP))
-        return 0;
+        return 1;
 
-    params = cleanup_chat_string(params);
     /* this happens when whitespace only string was submited */
-    if (!params || *params == '\0')
-        return 0;
+    if (!params || !(params = cleanup_chat_string(params)))
+        return 1;
 
     /* moved down, cause if whitespace is shouted, then no need to log it */
     LOG(llevInfo,"CLOG GSAY:%s >%s<\n", query_name(op), params);
@@ -266,7 +259,7 @@ int command_gsay(object *op, char *params)
     SOCKBUF_COMPOSE_FREE(sockbuf);
 #endif
 
-    return 1;
+    return 0;
 }
 
 int command_shout(object *op, char *params)
@@ -280,13 +273,9 @@ int command_shout(object *op, char *params)
     if(!check_mute(op, MUTE_MODE_SHOUT))
         return 0;
 
-    if (!params)
-        return 0;
-
-    params = cleanup_chat_string(params);
     /* this happens when whitespace only string was submited */
-    if (!params || *params == '\0')
-        return 0;
+    if (!params || !(params = cleanup_chat_string(params)))
+        return 1;
 
     /* moved down, cause if whitespace is shouted, then no need to log it */
     LOG(llevInfo,"CLOG SHOUT:%s >%s<\n", query_name(op), params);
@@ -304,7 +293,8 @@ int command_shout(object *op, char *params)
     CFP.Value[2] = (void *) (params);
     GlobalEvent(&CFP);
 #endif
-    return 1;
+
+    return 0;
 }
 
 int command_tell(object *op, char *params)
@@ -317,18 +307,15 @@ int command_tell(object *op, char *params)
     if(!check_mute(op, MUTE_MODE_SHOUT))
         return 0;
 
-    if (!params)
-        return 0;
+    
+    /* this happens when whitespace only string was submited */
+    if (!params || !(params = cleanup_chat_string(params)))
+        return 1;
 
     LOG(llevInfo, "CLOG TELL:%s >%s<\n", query_name(op), params);
-
-    params = cleanup_chat_string(params);
-    /* this happens when whitespace only string was submited */
-    if (!params || *params == '\0')
-        return 0;
-
     name = params;
     msg = strchr(name, ' ');
+
     if (msg)
     {
         *(msg++) = 0;
@@ -337,30 +324,26 @@ int command_tell(object *op, char *params)
     }
 
     if (!name)
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "Tell whom what?");
         return 1;
-    }
 
     transform_name_string(name); /* we have a name. be sure its "Xxxxx" */
+
     if (!(name_hash = find_string(name))) /* if its not in the hash table there is 100% no player */
     {
         new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
-        return 1;
+
+        return 0;
     }
 
     if (!msg)
-    {
-        sprintf(buf, "Tell %s what?", name);
-        new_draw_info(NDI_UNIQUE, 0, op, buf);
         return 1;
-    }
 
     /* now we can simply compare the name ptr values */
     if (op->name == name_hash)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "You tell yourself the news. Very smart.");
-        return 1;
+
+        return 0;
     }
 
     /* we have a name_hash but still we need to confirm we get the right player.
@@ -422,12 +405,12 @@ int command_tell(object *op, char *params)
                 sprintf(buf2, "You tell %s: %s", name, msg);
                 new_draw_info(NDI_PLAYER | NDI_UNIQUE, 0, op, buf2);
                 new_draw_info(NDI_TELL | NDI_PLAYER | NDI_UNIQUE | NDI_NAVY, 0, pl->ob, buf);
-                return 1;
+                return 0;
             }
         }
     }
     new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
-    return 1;
+    return 0;
 }
 
 /* command_talk() handles a player attempting to /talk.
@@ -454,25 +437,18 @@ int command_talk(object *op, char *params)
     player     *pl;
     object     *t_obj;
 
-    /* we don't allow npc top npc talk here */
+    /* we don't allow npc to npc talk here */
     if (op->type != PLAYER || !(pl = CONTR(op)))
-        return 0;
+        return 1;
 
-    if (!params)
-    {
-        send_clear_interface(pl);
-
-        return 0;
-    }
-
-    params = cleanup_chat_string(params);
+    
 
     /* this happens when whitespace only string was submited */
-    if (!params || *params == '\0')
+    if (!params || !(params = cleanup_chat_string(params)))
     {
         send_clear_interface(pl);
 
-        return 0;
+        return 1;
     }
 
     /* If we have a marked, talkable object in the inventory, talk to it. */
@@ -484,7 +460,7 @@ int command_talk(object *op, char *params)
                                     NULL, NULL, NULL,
                                     SCRIPT_FIX_ACTIVATOR);
 
-        return 1;
+        return 0;
     }
 
     /* If we have no or an invalid target or a valid target which is a player
@@ -542,7 +518,7 @@ int command_talk(object *op, char *params)
                      * the mob's snooze. */
                     CLEAR_FLAG(t_obj, FLAG_SLEEP);
 
-                   return 1;
+                   return 0;
                 }
             }
         }
@@ -556,7 +532,7 @@ int command_talk(object *op, char *params)
     else
         new_draw_info(NDI_UNIQUE, 0, op, "There's no-one around to talk to!");
 
-    return 1;
+    return 0;
 }
 
 
@@ -870,12 +846,12 @@ static int basic_emote(object *op, char *params, int emotion)
       : "NO CTRL!!",
         emotion);
 
-    params = cleanup_chat_string(params);
-    if (params && *params == '\0') /* illegal name? */
-        params = NULL;
-    else {
+    
+    if (!params || (params = cleanup_chat_string(params)))
+    {
         /* name is ok but be sure we have something like "Xxxxx" */
-        if (emotion != EMOTE_ME) {
+        if (emotion != EMOTE_ME)
+        {
             /* But only capitalize on those emotes that are for sure a player name param. */
             if(op->type == PLAYER)
                 transform_name_string(params);
@@ -1117,12 +1093,11 @@ static int basic_emote(object *op, char *params, int emotion)
               sprintf(buf2, "Anything in particular that you'd care to think " "about?");
               break;
             case EMOTE_ME:
-              sprintf(buf2, "usage: /me <emote to display>");
-              if (op->type == PLAYER)
-                  new_draw_info(NDI_UNIQUE, 0, op, buf2);
-              return(0);
-              /* do nothing, since we specified nothing to do */
-              break;
+//              sprintf(buf2, "usage: /me <emote to display>");
+//              if (op->type == PLAYER)
+//                  new_draw_info(NDI_UNIQUE, 0, op, buf2);
+                /* do nothing, since we specified nothing to do */
+              return 1;
             default:
               sprintf(buf, "%s dances with glee.", op->name);
               sprintf(buf2, "You are a nut.");
@@ -1131,7 +1106,7 @@ static int basic_emote(object *op, char *params, int emotion)
         new_info_map_except(NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, op, op, buf);
         if (op->type == PLAYER)
             new_draw_info(NDI_UNIQUE, 0, op, buf2);
-        return(0);
+        return 0;
     }
     else /* we have params */
     {
@@ -1143,7 +1118,7 @@ static int basic_emote(object *op, char *params, int emotion)
             new_info_map_except(NDI_EMOTE | NDI_PLAYER | NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, op, op, buf);
             if (op->type == PLAYER)
                 new_draw_info(NDI_UNIQUE, 0, op, buf2);
-            return(0);
+            return 0;
         }
         else /* here we handle player & npc emotes with parameter */
         {
