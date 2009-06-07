@@ -2323,20 +2323,27 @@ int command_unloadplugin(object *op, char *params)
     removeOnePlugin(params);
     return 1;
 }
+
 int command_ip(object *op, char *params)
 {
     player *pl;
 
-    pl = find_player(params);
+    if (!params)
+    {
+        new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "Syntax error: Try ~/help /ip~.");
 
-    if(!pl)
-     {
-       new_draw_info(NDI_UNIQUE, 0, op, "IP of Who?");
-       return 0;
-     }
-    else
-     {
-       new_draw_info_format(NDI_UNIQUE, 0, op, "IP of %s is %s", params, pl->socket.ip_host);
-       return 1;
-     }
+        return 1;
+    }
+
+    if (!(pl = find_player(params)))
+    {
+        new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "No such player!");
+
+        return 1;
+    }
+
+    new_draw_info_format(NDI_UNIQUE | NDI_WHITE, 0, op, "IP of %s is %s",
+                         params, pl->socket.ip_host);
+
+    return 0;
 }
