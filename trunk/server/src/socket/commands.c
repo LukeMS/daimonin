@@ -451,8 +451,11 @@ void cs_cmd_generic(char *buf, int len, NewSocket *ns)
                              buf, (cp) ? cp : "");
 
     ob->speed_left -= csp->time;
-    csp->func(ob, cp);
 
+    /* command_foo() funcs return zero/non-zero to indicate success/failure. */
+    if (csp->func(ob, cp))
+        new_draw_info_format(NDI_UNIQUE | NDI_WHITE, 0, ob, "Syntax error: Try ~/help /%s~",
+                             buf);
 }
 
 /* This is the Setup cmd - easy first implementation */
