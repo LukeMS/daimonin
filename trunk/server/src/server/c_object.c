@@ -51,12 +51,11 @@ object * find_best_object_match(object *pl, char *params)
 int command_uskill(object *pl, char *params)
 {
     if (!params)
-    {
-        new_draw_info(NDI_UNIQUE, 0, pl, "Usage: use_skill <skill name>");
-        return 0;
-    }
+        return 1;
+
     if (pl->type == PLAYER)
         CONTR(pl)->rest_mode = 0;
+
     return use_skill(pl, params);
 }
 
@@ -65,18 +64,18 @@ int command_rskill(object *pl, char *params)
     int skillno;
 
     if (!params)
-    {
-        new_draw_info(NDI_UNIQUE, 0, pl, "Usage: ready_skill <skill name>");
-        return 0;
-    }
+        return 1;
+
     if (pl->type == PLAYER)
         CONTR(pl)->rest_mode = 0;
-    skillno = lookup_skill_by_name(params);
-    if (skillno == -1)
+
+    if ((skillno = lookup_skill_by_name(params)) == -1)
     {
         new_draw_info_format(NDI_UNIQUE, 0, pl, "Couldn't find the skill %s", params);
+
         return 0;
     }
+
     return change_skill(pl, skillno);
 }
 
@@ -88,11 +87,10 @@ int command_egobind ( object *pl, char *params)
     if(pl->type != PLAYER || !CONTR(pl))
         return 0;
 
-    mark = find_marked_object(pl);
-
-    if(!mark)
+    if (!(mark = find_marked_object(pl)))
     {
         new_draw_info(NDI_UNIQUE, 0,pl, "First MARK an ego item, then type: /egobind ");
+
         return 0;
     }
 
@@ -100,20 +98,22 @@ int command_egobind ( object *pl, char *params)
     if(!QUERY_FLAG(mark, FLAG_IS_EGOITEM) || QUERY_FLAG(mark, FLAG_IS_EGOBOUND))
     {
         new_draw_info_format(NDI_UNIQUE, 0,pl, "Your marked item %s is not an unbound ego item!", query_name(mark));
+
         return 0;
     }
 
     if(!params)
     {
         new_draw_info_format(NDI_UNIQUE, 0,pl, "To bind the %s type: /egobind %d", query_name(mark), mark->count);
-        return 0;
 
+        return 0;
     }
 
     /* be sure we REALLY bind the marked and previous announced item! */
     if(mark->count != (uint32) strtoul(params, NULL, 10))
     {
         new_draw_info_format(NDI_UNIQUE, 0,pl, "The numbers don't match!\nTo bind the %s type: /egobind %d", query_name(mark), mark->count);
+
         return 0;
     }
 
@@ -122,46 +122,48 @@ int command_egobind ( object *pl, char *params)
     esrv_update_item (UPD_NAME, pl, mark);
     play_sound_player_only (CONTR(pl), SOUND_LEARN_SPELL, SOUND_NORMAL, 0, 0);
 
-    return 1;
+    return 0;
 }
 
 int command_apply(object *op, char *params)
 {
-    if (op->type == PLAYER)
-        CONTR(op)->rest_mode = 0;
-    if (!params)
-    {
-        player_apply_below(op);
-        return 0;
-    }
-    else
-    {
         enum apply_flag aflag   = 0;
         object         *inv;
 
-        while (*params == ' ')
-            params++;
-        if (!strncmp(params, "-a ", 3))
-        {
-            aflag = AP_APPLY;
-            params += 3;
-        }
-        if (!strncmp(params, "-u ", 3))
-        {
-            aflag = AP_UNAPPLY;
-            params += 3;
-        }
-        while (*params == ' ')
-            params++;
+    if (op->type == PLAYER)
+        CONTR(op)->rest_mode = 0;
 
-        inv = find_best_object_match(op, params);
-        if (inv)
-        {
-            player_apply(op, inv, aflag, 0);
-        }
-        else
-            new_draw_info_format(NDI_UNIQUE, 0, op, "Could not find any match to the %s.", params);
+    if (!params)
+    {
+        player_apply_below(op);
+
+        return 0;
     }
+
+    while (*params == ' ')
+        params++;
+
+    if (!strncmp(params, "-a ", 3))
+    {
+        aflag = AP_APPLY;
+        params += 3;
+    }
+
+    if (!strncmp(params, "-u ", 3))
+    {
+        aflag = AP_UNAPPLY;
+        params += 3;
+    }
+
+    while (*params == ' ')
+        params++;
+
+    if ((inv = find_best_object_match(op, params)))
+        player_apply(op, inv, aflag, 0);
+    else
+        new_draw_info_format(NDI_UNIQUE, 0, op, "Could not find any match to the %s.",
+                             params);
+
     return 0;
 }
 
@@ -175,6 +177,7 @@ int command_dropall(object *op, char *params)
     if (op->inv == NULL)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "Nothing to drop!");
+
         return 0;
     }
 
@@ -298,51 +301,55 @@ int command_drop(object *op, char *params)
     int     did_one = 0;
 
     if (!params)
+        return 1;
+
+    for (tmp = op->inv; tmp; tmp = next)
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "Drop what?");
-        return 0;
-    }
-    else
-    {
-        for (tmp = op->inv; tmp; tmp = next)
+        next = tmp->below;
+
+        if (QUERY_FLAG(tmp, FLAG_NO_DROP) || IS_SYS_INVISIBLE(tmp))
+            continue;
+
+        if (item_matched_string(op, tmp, params))
         {
-            next = tmp->below;
-            if (QUERY_FLAG(tmp, FLAG_NO_DROP) || IS_SYS_INVISIBLE(tmp))
-                continue;
-            if (item_matched_string(op, tmp, params))
-            {
-                drop(op, tmp);
-                did_one = 1;
-            }
+            drop(op, tmp);
+            did_one = 1;
         }
-        if (!did_one)
-            new_draw_info(NDI_UNIQUE, 0, op, "Nothing to drop.");
     }
+
+    if (!did_one)
+        new_draw_info(NDI_UNIQUE, 0, op, "Nothing to drop.");
+
     if (op->type == PLAYER)
         CONTR(op)->count = 0;
+
     return 0;
 }
 
 int command_examine(object *op, char *params)
 {
+    object *tmp;
+
     if (op->type == PLAYER)
         CONTR(op)->rest_mode = 0;
+
     if (!params)
     {
-        object *tmp = op->below;
-        while (tmp && !LOOK_OBJ(tmp))
+        while ((tmp = op->below) &&
+               !LOOK_OBJ(tmp))
             tmp = tmp->below;
+
         if (tmp)
             examine(op, tmp, TRUE);
     }
     else
     {
-        object *tmp = find_best_object_match(op, params);
-        if (tmp)
+        if ((tmp = find_best_object_match(op, params)))
             examine(op, tmp, TRUE);
         else
             new_draw_info_format(NDI_UNIQUE, 0, op, "Could not find an object that matches %s", params);
     }
+
     return 0;
 }
 
