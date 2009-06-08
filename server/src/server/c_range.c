@@ -38,141 +38,141 @@
 */
 void fire(object *op, int dir)
 {
-	object *weap;
-	float ticks;
-	player *pl			= CONTR(op);
+    object *weap;
+    float ticks;
+    player *pl            = CONTR(op);
 
-	/* NOT IMPLEMENTED IN B4: check for loss of invisiblity/hide */
-	if (action_makes_visible(op))
-		make_visible(op);
+    /* NOT IMPLEMENTED IN B4: check for loss of invisiblity/hide */
+    if (action_makes_visible(op))
+        make_visible(op);
 
-	/* get our range weapon. Its always here */
-	if(!pl || !(weap = pl->equipment[PLAYER_EQUIP_BOW]))
-		return;
+    /* get our range weapon. Its always here */
+    if(!pl || !(weap = pl->equipment[PLAYER_EQUIP_BOW]))
+        return;
 
-	/* ATM we can have here a bow, arrows (AKA special throw items), rod, horns and wands */
+    /* ATM we can have here a bow, arrows (AKA special throw items), rod, horns and wands */
 
-	if(weap->type == BOW)
-	{
-		/* ok, a bow... a bow needs arrows.. quick sanity check */
-		if(!pl->equipment[PLAYER_EQUIP_AMUN])
-			return;
+    if(weap->type == BOW)
+    {
+        /* ok, a bow... a bow needs arrows.. quick sanity check */
+        if(!pl->equipment[PLAYER_EQUIP_AMUN])
+            return;
 
-		if (weap->sub_type1 == RANGE_WEAP_BOW)
-		{
-			if (!change_skill(op, SK_MISSILE_WEAPON)) /* we have a skill to throw? */
-			    return;
-		}
-		else if (weap->sub_type1 == RANGE_WEAP_XBOWS)
-		{
-			if (!change_skill(op, SK_XBOW_WEAP)) /* we have a skill to throw? */
-			    return;
-		}
-		else
-		{
-			if (!change_skill(op, SK_SLING_WEAP)) /* we have a skill to throw? */
-			    return;
-		}
+        if (weap->sub_type1 == RANGE_WEAP_BOW)
+        {
+            if (!change_skill(op, SK_MISSILE_WEAPON)) /* we have a skill to throw? */
+                return;
+        }
+        else if (weap->sub_type1 == RANGE_WEAP_XBOWS)
+        {
+            if (!change_skill(op, SK_XBOW_WEAP)) /* we have a skill to throw? */
+                return;
+        }
+        else
+        {
+            if (!change_skill(op, SK_SLING_WEAP)) /* we have a skill to throw? */
+                return;
+        }
 
-		if (!check_skill_action_time(op, op->chosen_skill)) /* are we idle from other action? */
-			return;
+        if (!check_skill_action_time(op, op->chosen_skill)) /* are we idle from other action? */
+            return;
 
-		/* there should no need to control the arrows type and stuff.
-		* whatever is applied here SHOULD be usable for bow, or fix_player()
-		* and apply functions has failed.
-		*/
-		ticks = fire_bow(op, dir);
+        /* there should no need to control the arrows type and stuff.
+        * whatever is applied here SHOULD be usable for bow, or fix_player()
+        * and apply functions has failed.
+        */
+        ticks = fire_bow(op, dir);
 
-	}
-	else if(weap->type == ARROW)
-	{
-		if (!change_skill(op, SK_THROWING)) /* we have a skill to throw? */
-			return;
+    }
+    else if(weap->type == ARROW)
+    {
+        if (!change_skill(op, SK_THROWING)) /* we have a skill to throw? */
+            return;
 
-		if (!check_skill_action_time(op, op->chosen_skill)) /* are we idle from other action? */
-			return;
+        if (!check_skill_action_time(op, op->chosen_skill)) /* are we idle from other action? */
+            return;
 
-		ticks = do_throw(op, dir);
-	}
-	else /* we fire a rod, horn or wand */
-	{
-		if (!change_skill(op, SK_USE_MAGIC_ITEM)) /* we have a skill to use them? */
-			return;
+        ticks = do_throw(op, dir);
+    }
+    else /* we fire a rod, horn or wand */
+    {
+        if (!change_skill(op, SK_USE_MAGIC_ITEM)) /* we have a skill to use them? */
+            return;
 
-		if (!check_skill_action_time(op, op->chosen_skill))
-			return;
+        if (!check_skill_action_time(op, op->chosen_skill))
+            return;
 
-		ticks = fire_magic_tool(op, weap, dir);
-	}
+        ticks = fire_magic_tool(op, weap, dir);
+    }
 
-	/* finally, our action above has cost time... */
-	LOG(llevDebug, "AC-fire: %2.2f\n", ticks);
-	set_action_time(op, ticks);
+    /* finally, our action above has cost time... */
+    LOG(llevDebug, "AC-fire: %2.2f\n", ticks);
+    set_action_time(op, ticks);
 }
 
 /* owner fires op (which is a rod, horn or wand)
 */
 float fire_magic_tool(object *op, object *weap, int dir)
 {
-	float ticks = 0.0f;
+    float ticks = 0.0f;
 
-	switch(weap->type)
-	{
-	case WAND:
-		/* a wand can be used up but still applied... */
-		if (weap->stats.food <= 0)
-		{
-			play_sound_player_only(CONTR(op), SOUND_WAND_POOF, SOUND_NORMAL, 0, 0);
-			new_draw_info(NDI_UNIQUE, 0, op, "The wand says poof.");
-		}
-		else /* the wands fire the spell */
-		{
-			new_draw_info(NDI_UNIQUE, 0, op, "fire wand");
-			if (cast_spell(op, weap, dir, weap->stats.sp, 0, spellWand, NULL))
-			{
-				SET_FLAG(op, FLAG_BEEN_APPLIED); /* You now know something about it */
-				if (!(--weap->stats.food))
-				{
-					object   *tmp;
-					if (weap->arch)
-					{
-						CLEAR_FLAG(weap, FLAG_ANIMATE);
-						weap->face = weap->arch->clone.face;
-						weap->speed = 0;
-						update_ob_speed(weap);
-					}
-					if ((tmp = is_player_inv(weap)))
-						esrv_update_item(UPD_ANIM, tmp, weap);
-				}
-			}
-		}
-		break;
+    switch(weap->type)
+    {
+    case WAND:
+        /* a wand can be used up but still applied... */
+        if (weap->stats.food <= 0)
+        {
+            play_sound_player_only(CONTR(op), SOUND_WAND_POOF, SOUND_NORMAL, 0, 0);
+            new_draw_info(NDI_UNIQUE, 0, op, "The wand says poof.");
+        }
+        else /* the wands fire the spell */
+        {
+            new_draw_info(NDI_UNIQUE, 0, op, "fire wand");
+            if (cast_spell(op, weap, dir, weap->stats.sp, 0, spellWand, NULL))
+            {
+                SET_FLAG(op, FLAG_BEEN_APPLIED); /* You now know something about it */
+                if (!(--weap->stats.food))
+                {
+                    object   *tmp;
+                    if (weap->arch)
+                    {
+                        CLEAR_FLAG(weap, FLAG_ANIMATE);
+                        weap->face = weap->arch->clone.face;
+                        weap->speed = 0;
+                        update_ob_speed(weap);
+                    }
+                    if ((tmp = is_player_inv(weap)))
+                        esrv_update_item(UPD_ANIM, tmp, weap);
+                }
+            }
+        }
+        break;
 
-	case ROD:
-	case HORN:
-		if (weap->stats.hp < spells[weap->stats.sp].sp)
-		{
-			play_sound_player_only(CONTR(op), SOUND_WAND_POOF, SOUND_NORMAL, 0, 0);
-			if (weap->type == ROD)
-				new_draw_info(NDI_UNIQUE, 0, op, "The rod whines for a while, but nothing happens.");
-			else
-				new_draw_info(NDI_UNIQUE, 0, op, "No matter how hard you try you can't get another note out.");
-		}
-		else
-		{
-			/*new_draw_info_format(NDI_ALL|NDI_UNIQUE,5,NULL,"Use %s - cast spell %d\n",weap->name,weap->stats.sp);*/
-			if (cast_spell(op, weap, dir, weap->stats.sp, 0, weap->type == ROD ? spellRod : spellHorn, NULL))
-			{
-				SET_FLAG(op, FLAG_BEEN_APPLIED); /* You now know something about it */
-				drain_rod_charge(weap);
-			}
-		}
-		break;
-	}
+    case ROD:
+    case HORN:
+        if (weap->stats.hp < spells[weap->stats.sp].sp)
+        {
+            play_sound_player_only(CONTR(op), SOUND_WAND_POOF, SOUND_NORMAL, 0, 0);
+            if (weap->type == ROD)
+                new_draw_info(NDI_UNIQUE, 0, op, "The rod whines for a while, but nothing happens.");
+            else
+                new_draw_info(NDI_UNIQUE, 0, op, "No matter how hard you try you can't get another note out.");
+        }
+        else
+        {
+            /*new_draw_info_format(NDI_ALL|NDI_UNIQUE,5,NULL,"Use %s - cast spell %d\n",weap->name,weap->stats.sp);*/
+            if (cast_spell(op, weap, dir, weap->stats.sp, 0, weap->type == ROD ? spellRod : spellHorn, NULL))
+            {
+                SET_FLAG(op, FLAG_BEEN_APPLIED); /* You now know something about it */
+                drain_rod_charge(weap);
+            }
+        }
+        break;
+    }
 
-	ticks = (float) (weap->last_grace) * RANGED_DELAY_TIME;
+    ticks = (float) (weap->last_grace) * RANGED_DELAY_TIME;
 
-	return ticks;
+    return ticks;
 }
 
 
@@ -278,17 +278,16 @@ int command_cast_spell(object *op, char *params)
     int         value;
     float       ticks;
 
-    if (!CONTR(op)->nrofknownspells && !QUERY_FLAG(op, FLAG_WIZ))
+    if (!CONTR(op)->nrofknownspells &&
+        !QUERY_FLAG(op, FLAG_WIZ))
     {
         new_draw_info(NDI_UNIQUE, 0, op, "You don't know any spells.");
+
         return 0;
     }
 
-    if (params == NULL)
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "Cast which spell?");
-        return 0;
-    }
+    if (!params)
+        return 1;
 
     /* When we control a golem we can't cast again - if we do, it breaks control */
     if (CONTR(op)->golem != NULL)
@@ -299,15 +298,15 @@ int command_cast_spell(object *op, char *params)
     }
 
     /* This assumes simply that if the name of
-        * the spell being cast as input by the player is shorter than or
-        * equal to the length of the spell name, then there is no options
-        * but if it is longer, then everything after the spell name is
-        * an option.  It determines if the spell name is shorter or
-        * longer by first iterating through the actual spell names, checking
-        * to the length of the typed in name.  If that fails, then it checks
-        * to the length of each spell name.  If that passes, it assumes that
-        * anything after the length of the actual spell name is extra options
-        * typed in by the player (ie: marking rune Hello there)
+     * the spell being cast as input by the player is shorter than or
+     * equal to the length of the spell name, then there is no options
+     * but if it is longer, then everything after the spell name is
+     * an option.  It determines if the spell name is shorter or
+     * longer by first iterating through the actual spell names, checking
+     * to the length of the typed in name.  If that fails, then it checks
+     * to the length of each spell name.  If that passes, it assumes that
+     * anything after the length of the actual spell name is extra options
+     * typed in by the player (ie: marking rune Hello there)
      */
     if (((spnum2 = spnum = find_spell_byname(op, params, 0)) < 0) && ((spnum = find_spell_byname(op, params, 1)) >= 0))
     {
@@ -321,14 +320,15 @@ int command_cast_spell(object *op, char *params)
     if (spnum == -1)
     {
         new_draw_info_format(NDI_UNIQUE, 0, op, "You don't know the spell %s.", params);
+
         return 0;
     }
 
 
-	if (!change_skill(op, (spells[spnum].type == SPELL_TYPE_PRIEST ? SK_PRAYING : SK_SPELL_CASTING)))
-	{
+    if (!change_skill(op, (spells[spnum].type == SPELL_TYPE_PRIEST ? SK_PRAYING : SK_SPELL_CASTING)))
+    {
         if (!QUERY_FLAG(op, FLAG_WIZ))
-			return 0;
+            return 0;
     }
 
     /* we still recover from a casted spell before */
@@ -340,7 +340,7 @@ int command_cast_spell(object *op, char *params)
     if (value)
     {
         ticks = (float) (spells[spnum].time) * RANGED_DELAY_TIME;
-		LOG(llevDebug, "AC-spells(%d): %2.2f\n", spnum, ticks);
+        LOG(llevDebug, "AC-spells(%d): %2.2f\n", spnum, ticks);
         set_action_time(op, ticks);
 
         if (spells[spnum].flags & SPELL_DESC_WIS)
@@ -348,6 +348,7 @@ int command_cast_spell(object *op, char *params)
         else
             op->stats.sp -= value;
     }
-    return 1;
+
+    return 0;
 }
 
