@@ -71,14 +71,16 @@ static int  map_pos_array[][2]  =
 int command_run(object *op, char *params)
 {
     CONTR(op)->run_on = 1;
-	move_player(op, params ? atoi(params) : 0, TRUE);
-	return 1;
+    move_player(op, params ? atoi(params) : 0, TRUE);
+
+    return 0;
 }
 
 int command_run_stop(object *op, char *params)
 {
     CONTR(op)->run_on = 0;
-    return 1;
+
+    return 0;
 }
 
 
@@ -184,17 +186,17 @@ void send_target_command(player *pl)
 int command_questlist(object *op, char *params)
 {
     if (!op || op->type != PLAYER || !CONTR(op))
-        return 1;
+        return 0;
 
     send_quest_list(op);
 
-    return 1;
+    return 0;
 }
 
 int command_combat(object *op, char *params)
 {
     if (!op || !op->map || op->type != PLAYER || !CONTR(op))
-        return 1;
+        return 0;
 
     CONTR(op)->rest_sitting = CONTR(op)->rest_mode = 0;
 
@@ -207,7 +209,8 @@ int command_combat(object *op, char *params)
     update_pets_combat_mode(op);
 
     send_target_command(CONTR(op));
-    return 1;
+
+    return 0;
 }
 
 
@@ -253,7 +256,10 @@ int command_target(object *op, char *params)
     int         jump_in, jump_in_n = 0, get_ob_flag;
     int         n, nt, xt, yt, block;
 
-    if (!op || !op->map || op->type != PLAYER || !CONTR(op) || !params || params[0] == 0)
+    if (!op || !op->map || op->type != PLAYER || !CONTR(op))
+        return 0;
+
+    if (!params || params[0] == '\0')
         return 1;
 
     /* !x y = mouse map target */
@@ -529,8 +535,10 @@ int command_target(object *op, char *params)
         CONTR(op)->target_object = NULL; /* dummy */
     }
 
-    found_target : send_target_command(CONTR(op));
-    return 1;
+found_target:
+    send_target_command(CONTR(op));
+
+    return 0;
 }
 
 
