@@ -228,7 +228,6 @@ int                         command_dm_connections(object *op, char *params);
 int                         command_dmload(object *op, char *params);
 int                         check_dmload(const char*name, const char *pwd);
 int                         command_setgod(object *op, char *params);
-int                         command_kickcmd(object *op, char *params);
 int                         command_kick(object *op, char *params);
 int                         command_shutdown(object *op, char *params);
 int                         command_goto(object *op, char *params);
@@ -458,6 +457,7 @@ void                        dragon_ability_gain(object *who, int atnr, int level
 int                         atnr_is_dragon_enabled(int attacknr);
 int                         is_dragon_pl(object *op);
 void                        reset_instance_data(player *pl);
+void                        kick_player(player *pl);
 /* plugins.c */
 object                     *get_event_object(object *op, int event_nr);
 int                         trigger_object_plugin_event(int event_type,

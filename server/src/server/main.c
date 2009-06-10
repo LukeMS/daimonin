@@ -708,7 +708,7 @@ void shutdown_agent(int timer, int ret, char *reason)
             if (--real_count <= 0)
             {
                 LOG(llevSystem, "SERVER SHUTDOWN STARTED\n");
-                command_kick(NULL, NULL);
+                kick_player(NULL);
                 cleanup(ret_signal);
             }
         }

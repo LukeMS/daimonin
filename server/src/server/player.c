@@ -1484,3 +1484,40 @@ void reset_instance_data(player *pl)
         FREE_AND_CLEAR_HASH(pl->instance_name);
     }
 }
+
+/* kick_player(NULL) global kicks *all* players.
+ * kick_player(player) kicks the specific player.
+ */
+void kick_player(player *pl)
+{
+    player *tmp;
+
+    for (tmp = first_player; tmp; tmp = tmp->next)
+    {
+        if (!pl ||
+            tmp == pl)
+        {
+            /* Save the player. */
+            if (player_save(tmp->ob))
+                LOG(llevInfo, "Saving player %s: Success!\n",
+                    query_name(tmp->ob));
+            else
+                LOG(llevInfo, "Saving player %s: FAILED!\n",
+                    query_name(tmp->ob));
+
+            /* Kick the player. */
+            activelist_remove(tmp->ob);
+            remove_ob(tmp->ob);
+            check_walk_off(tmp->ob, NULL, MOVE_APPLY_VANISHED);
+            tmp->ob->direction = 0;
+            LOG(llevInfo, "%s is kicked out of the game.\n",
+                query_name(tmp->ob));
+            container_unlink(CONTR(tmp->ob), NULL);
+            CONTR(tmp->ob)->socket.status = Ns_Dead;
+
+            /* Just one player to kick? Leave now that it's done. */
+            if (pl)
+                return;
+        }
+    }
+}
