@@ -406,15 +406,21 @@ void process_command_queue(NewSocket *ns, player *pl)
 */
 void cs_cmd_generic(char *buf, int len, NewSocket *ns)
 {
-    CommArray_s    *csp = NULL;
-    char           *cp;
-    player *pl = ns->pl;
-    object *ob;
+    player      *pl;
+    object      *ob;
+    char        *cp;
+    CommArray_s *csp;
 
     /* we assume that our slash command is always a zero terminated string */
-    if (!buf || !len || buf[len] != 0 || !pl || !pl->ob || ns->status != Ns_Playing)
+    if (!buf ||
+        !len ||
+        buf[len] != '\0' ||
+        !(pl = ns->pl) ||
+        !pl->ob ||
+        ns->status != Ns_Playing)
     {
         ns->status = Ns_Dead;
+
         return;
     }
 
@@ -422,23 +428,25 @@ void cs_cmd_generic(char *buf, int len, NewSocket *ns)
 
     if (!(pl->state & ST_PLAYING))
     {
-        new_draw_info_format(NDI_UNIQUE, 0, ob, "You can not issue commands - state is not ST_PLAYING (%s)", buf);
+        new_draw_info_format(NDI_UNIQUE, 0, ob, "You can not issue commands - state is not ST_PLAYING (%s)",
+                             buf);
+
         return;
     }
 
     /* remove the command from the parameters */
-    cp = strchr(buf, ' ');
-    if (cp)
+    if ((cp = strchr(buf, ' ')))
     {
         *(cp++) = '\0';
         cp = cleanup_string(cp);
-        if (cp && *cp == '\0')
-            cp = NULL;
     }
 
+    /* Find the command. */
     if (!(csp = find_command(buf, pl)))
     {
-        new_draw_info_format(NDI_UNIQUE, 0, ob, "'/%s' is not a valid command.", buf);
+        new_draw_info_format(NDI_UNIQUE, 0, ob, "'/%s' is not a valid command.",
+                             buf);
+
         return;
     }
 
