@@ -177,15 +177,77 @@ int command_setgod(object *op, char *params)
     return 0;
 }
 
-/* command_kickcmd is called when a gmaster triggers the command.
- * command_kick is also used internal to force a player logout.
- */
-int command_kickcmd(object *ob, char *params)
+int command_kick(object *op, char *params)
 {
-    int ticks;
+    player     *pl;
+    const char *kicker_name,
+               *kickee_name;
+    objectlink *ol;
+    int         ticks;
 
-    if (command_kick(ob, params))
+    if (!op)
+        return 0;
+
+    if (!params)
         return 1;
+
+    if (!(pl = find_player(params)))
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
+
+        return 0;
+    }
+
+#if 0 // Kicking yourself is funny, a real votewinner :)
+    if (pl->ob == op)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "You can't kick yourself!");
+
+        return 0;
+    }
+#endif
+
+    /* Remember the names before we get kickhappy. */
+    kicker_name = query_name(op);
+    kickee_name = query_name(pl->ob);
+
+    /* Get kickhappy. */
+    kick_player(pl);
+
+    /* Hopefully impossible. */
+    if ((pl = find_player(params)))
+    {
+        LOG(llevBug, "BUG:: %s/command_kick(): %s is kickproof!\n",
+            __FILE__, kickee_name);
+        new_draw_info_format(NDI_UNIQUE, 0, op, "%s has resisted your kick!",
+                             kickee_name);
+
+        return 0;
+    }
+
+    /* Log it and tell everyone so justice is seen to be done, or at least we
+     * all get a good laugh. */
+    LOG(llevInfo, "KICKCMD: %s issued /kick %s\n",
+        kicker_name, kickee_name);
+    new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, op, "%s is kicked out of the game.",
+                         kickee_name);
+
+    /* Tell all VOLs/GMs/MMs particularly. TODO: use VOL channel not individual
+     * NDIs. */
+    for(ol = gmaster_list_VOL; ol; ol = ol->next)
+        new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob,
+            "KICK: Player %s has been kicked by %s\n",
+            kickee_name, kicker_name);
+
+    for(ol = gmaster_list_GM; ol; ol = ol->next)
+        new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob,
+            "KICK: Player %s has been kicked by %s\n",
+            kickee_name, kicker_name);
+
+    for(ol = gmaster_list_MM; ol; ol = ol->next)
+        new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob,
+            "KICK: Player %s has been kicked by %s\n",
+            kickee_name, kicker_name);
 
     /* we kicked player params succesfull.
      * Now we give him a 1min temp ban, so he can
@@ -193,101 +255,11 @@ int command_kickcmd(object *ob, char *params)
      * If its a "technical" kick, the 10 sec is a protection.
      * Perhaps we want reset a map or whatever.
      */
-    ticks = (int) (pticks_second*60.0f);
+    ticks = (int)(pticks_second * 60.0f);
     add_ban_entry(params, NULL, ticks, ticks);
 
     return 0;
 }
-
-/* called command_kick(NULL,NULL) or command_kick(op,<player name>.
- * NULl,NULL will global kick *all* players, the 2nd format only <player name>.
- * op,NULL is invalid
- */
-int command_kick(object *ob, char *params)
-{
-    struct pl_player   *pl;
-    const char         *name_hash = NULL;
-    objectlink         *ol;
-
-    if (ob->type != PLAYER)
-        return 0;
-
-    if (ob && params == NULL)
-        return 1;
-
-    if (ob)
-    {
-        transform_name_string(params);
-        if (!(name_hash = find_string(params)))
-        {
-            new_draw_info(NDI_UNIQUE, 0, ob, "No such player.");
-
-            return 0;
-        }
-    }
-
-    if (ob && ob->name == name_hash)
-    {
-        new_draw_info_format(NDI_UNIQUE, 0, ob, "You can't /kick yourself!");
-
-        return 0;
-    }
-
-    if (!ob)
-    {
-        for(pl=first_player;pl!=NULL;pl=pl->next)
-        {
-            if(player_save(pl->ob))
-                LOG(llevInfo, "Saving player %s: Success!\n", query_name(pl->ob));
-            else
-                LOG(llevInfo, "Saving player %s: FAILED!\n", query_name(pl->ob));
-        }
-
-    }
-    else
-        player_save(ob);
-
-    for (pl = first_player; pl != NULL; pl = pl->next)
-    {
-        if (!ob || (pl->ob != ob && pl->ob->name && pl->ob->name == name_hash))
-        {
-            object *op;
-
-            op = pl->ob;
-            activelist_remove(op);
-            remove_ob(op);
-            check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
-            op->direction = 0;
-
-            if(ob)
-                LOG(llevInfo, "KICKCMD: %s issued /kick %s\n", query_name(ob), query_name(op));
-
-            if (params)
-                new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, ob, "%s is kicked out of the game.", query_name(op));
-
-            LOG(llevInfo, "%s is kicked out of the game.\n", query_name(op));
-
-            for(ol = gmaster_list_VOL;ol;ol=ol->next)
-                new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob,
-                    "KICK: Player %s has been kicked by %s\n", query_name(op), query_name(ob));
-
-            for(ol = gmaster_list_GM;ol;ol=ol->next)
-                new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob,
-                    "KICK: Player %s has been kicked by %s\n", query_name(op), query_name(ob));
-
-            for(ol = gmaster_list_MM;ol;ol=ol->next)
-                new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_RED, 0, ol->objlink.ob,
-                    "KICK: Player %s has been kicked by %s\n", query_name(op), query_name(ob));
-
-            container_unlink(CONTR(op), NULL);
-            CONTR(op)->socket.status = Ns_Dead;
-        }
-    }
-
-    /* not reached for NULL, NULL calling */
-    return 0;
-}
-
 
 int command_shutdown(object *op, char *params)
 {
@@ -298,7 +270,7 @@ int command_shutdown(object *op, char *params)
     }
 
     LOG(llevSystem, "SERVER SHUTDOWN STARTED\n");
-    command_kick(NULL, NULL);
+    kick_player(NULL);
     cleanup(EXIT_SHUTODWN);
     /* not reached - server will terminate itself before that line */
 
@@ -1934,7 +1906,9 @@ int command_ban(object *op, char *params)
 
                 add_banlist_name(op, name, ticks);
                 save_ban_file();
-                command_kick(op, name);
+
+                if ((pl = find_player(name)))
+                    kick_player(pl);
 
                 return 0;
             }
@@ -2023,7 +1997,7 @@ int command_ban(object *op, char *params)
                                          "BAN: Player %s and IP %s have been banned by %s for %d seconds.\n",
                                          query_name(pl->ob), pl->socket.ip_host, op->name, ticks / 8);
 
-                command_kick(op, query_name(pl->ob));
+                kick_player(pl);
             }
 
             return 0;

@@ -1055,7 +1055,7 @@ void fatal_signal(int make_core, int close_sockets)
          * files. Thats one of the biggest problems we can have, so i disabled
          * this line
          */
-        /* command_kick(NULL, NULL); */
+        /* kick_player(NULL); */
         clean_tmp_files(FALSE);
         write_book_archive();
         write_todclock();   /* lets just write the clock here */

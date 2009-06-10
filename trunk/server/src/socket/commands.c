@@ -171,7 +171,7 @@ CommArray_s CommandsVOL[] =
 {
     {"mutelevel", command_mutelevel, 1.0f, 1},
     {"dm_list",   command_dm_list,   1.0f, 1},
-    {"kick",      command_kickcmd,   0.0f, 1},
+    {"kick",      command_kick,      0.0f, 1},
     {"mute",      command_mute,      1.0f, 1},
     {"ip",        command_ip,        0.0f, 1},
 };
