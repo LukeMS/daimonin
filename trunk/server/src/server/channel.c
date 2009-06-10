@@ -39,21 +39,22 @@ int command_channel(object *ob, char *params)
     struct  player_channel  *pl_channel=NULL;
     struct  player_channel  *cpl=NULL;
 
-
-    channelname[0]=0;
     if (!params)
     {
         printChannelUsage(ob);
+
         return 1;
     }
 
     /* Command Parser */
-    channelnamelen=strcspn(params,"-+ :?*!%");
-    if (channelnamelen>MAX_CHANNEL_NAME)
+    if ((channelnamelen = strcspn(params, "-+ :?*!%")) > MAX_CHANNEL_NAME)
     {
         new_draw_info_format(NDI_UNIQUE, 0, ob, "Channelname is too long!");
-        return 1;                   /* Dont know, if i have to return 0, 1 or -1 if failing :)*/
+
+        return 0;
     }
+
+    channelname[0]=0;
     strncpy(channelname,params,channelnamelen);
     channelname[channelnamelen]=0;
     mode=params[channelnamelen];
@@ -62,7 +63,8 @@ int command_channel(object *ob, char *params)
     if (strlen(params)>210)
     {
         new_draw_info_format(NDI_UNIQUE, 0, ob, "Message too long!");
-        return 1;
+
+        return 0;
     }
     /* end command-parser */
 
@@ -74,13 +76,13 @@ int command_channel(object *ob, char *params)
         {
             CONTR(ob)->channels_on=FALSE;
             new_draw_info_format(NDI_UNIQUE, 0, ob, "You have all Channels temporally disabled");
-            return 1;
+            return 0;
         }
         if ((mode=='+') && (params[0]==0)) /* temp-on-off without leaving */
         {
             CONTR(ob)->channels_on=TRUE;
             new_draw_info_format(NDI_UNIQUE, 0, ob, "You listen to all your channels again.");
-            return 1;
+            return 0;
         }
         if ((mode=='?') && (params[0]==0)) /* List all channels */
         {
@@ -105,7 +107,7 @@ int command_channel(object *ob, char *params)
                 else
                     new_draw_info_format(NDI_UNIQUE|channel->color, 0, ob, "   (%d) [%c] %s", channel->pl_count, channel->shortcut, channel->name);
             }
-            return 1;
+            return 0;
         }
         /* no global command...*/
         printChannelUsage(ob);
@@ -116,7 +118,7 @@ int command_channel(object *ob, char *params)
     if (mode=='+')  /* join channel */
     {
         addPlayerToChannel(CONTR(ob),channelname,params);
-        return 1;
+        return 0;
     }
 
     /* for all channelfuntions except joining we need the pointer of the desired channel in player's channel-list*/
@@ -137,11 +139,11 @@ int command_channel(object *ob, char *params)
     {
         removeChannelFromPlayer(CONTR(ob), pl_channel);
         new_draw_info_format(NDI_UNIQUE, 0, ob, "You leave channel %s",pl_channel->channel->name);
-        return 1;
+        return 0;
     }
     else if (mode=='?') /* list players on channel */
     {
-        new_draw_info_format(NDI_UNIQUE, 0, ob, "On this channel listens:");
+        new_draw_info_format(NDI_UNIQUE, 0, ob, "Listening on this channel:");
 
         /* ATM unfortunatly we can only send one player at a line,
          * cause clients append a newline to new_draw_info's
@@ -152,7 +154,7 @@ int command_channel(object *ob, char *params)
             if (!cpl->pl->dm_stealth)
                 new_draw_info_format(NDI_UNIQUE, 0, ob, "%s",cpl->pl->ob->name);
         }
-        return 1;
+        return 0;
     }
     else if (mode==' ') /* normal channelmessage */
     {
@@ -161,15 +163,16 @@ int command_channel(object *ob, char *params)
         {
             return 1;
         }
-        /* Check for lvl-post restrictions. >=VOL can always post. */
-        if (ob->level<pl_channel->channel->post_lvl && CONTR(ob)->gmaster_mode < GMASTER_MODE_VOL)
+        /* Check for lvl-post restrictions. Gmasters can always post. */
+        if (ob->level<pl_channel->channel->post_lvl &&
+            CONTR(ob)->gmaster_mode == GMASTER_MODE_NO)
         {
             new_draw_info_format(NDI_UNIQUE, 0, ob, "You need at least level %d to post on this channel.",pl_channel->channel->post_lvl);
-            return 1;
+            return 0;
         }
         if (check_channel_mute(pl_channel))
             sendChannelMessage(CONTR(ob),pl_channel, params);
-        return 1;
+        return 0;
     }
     else if (mode==':') /* emoted channelmessage */
     {
@@ -180,11 +183,11 @@ int command_channel(object *ob, char *params)
         if (ob->level<pl_channel->channel->post_lvl && CONTR(ob)->gmaster_mode < GMASTER_MODE_VOL)
         {
             new_draw_info_format(NDI_UNIQUE, 0, ob, "You need at least level %d to post on this channel.",pl_channel->channel->post_lvl);
-            return 1;
+            return 0;
         }
         if (check_channel_mute(pl_channel))
             sendChannelEmote(CONTR(ob),pl_channel, params);
-        return 1;
+        return 0;
     }
     else if (mode=='*')
     {
@@ -198,8 +201,11 @@ int command_channel(object *ob, char *params)
             lines=10; /*players have 10 lines limit */
 
         sendChannelHist(pl_channel,lines);
-#endif
+
+        return 0;
+#else
         return 1;
+#endif
     }
     else if (mode=='!')
     {
@@ -227,8 +233,7 @@ int command_channel(object *ob, char *params)
         {
             char    buf3[256];
             sprintf(buf3,"%s %s",pl_channel->channel->name,params+5);
-            command_channel_mute(ob, buf3);
-            return 1;
+            return command_channel_mute(ob, buf3);
         }
         else if (!strncasecmp(params, "mod", 3))
         {
@@ -239,31 +244,31 @@ int command_channel(object *ob, char *params)
         else if (!strncasecmp(params, "kick", 4))
             kickPlayerFromChannel(pl_channel, params+5);
 
-        return 1;
+        return 0;
     }
     else if (mode=='%')   /* change player's shortcut */
     {
         if (strlen(params)==0)
         {
             new_draw_info_format(NDI_UNIQUE, 0, ob, "Current shortcut for channel %s is %c.",pl_channel->channel->name, pl_channel->shortcut);
-            return 1;
+            return 0;
         }
         if (strlen(params)>1)
         {
             new_draw_info_format(NDI_UNIQUE, 0, ob, "Shortcut can only be one char or number!");
-            return 1;
+            return 0;
         }
         if ((params[0]=='+') || (params[0]=='-') || (params[0]==' ') || (params[0]=='*') || (params[0]=='%') || (params[0]=='!') || (params[0]==':') || (params[0]=='#'))
         {
             new_draw_info_format(NDI_UNIQUE, 0, ob, "This Shortcut can't be used!");
-            return 1;
+            return 0;
         }
         pl_channel->shortcut=params[0];
         new_draw_info_format(NDI_UNIQUE, 0, ob, "Shortcut for channel %s changed to %c.",pl_channel->channel->name,pl_channel->shortcut);
-        return 1;
+        return 0;
     }
 
-    return 1;
+    return 0;
 }
 /**
  * Add Player To a Channel with the player-channel-linklist
@@ -539,7 +544,7 @@ struct player_channel *final_addChannelToPlayer(player *pl, struct channels *cha
     return node;
 }
 
-
+/* TODO: This will be replaced by online help. */
 void printChannelUsage(object *ob)
 {
     new_draw_info_format(NDI_UNIQUE, 0, ob, "Usage:\n       -<channel>[ ][:]<Text>");
@@ -1100,21 +1105,19 @@ int command_channel_mute(object *ob, char *params)
     char playername[256]="";
     int seconds=0;
 
-    if (CONTR(ob)->gmaster_mode < GMASTER_MODE_VOL)
-        return 0;
     if (!params)
-    {
-        new_draw_info_format(NDI_UNIQUE, 0, ob, "Syntax: /channemute <channel> <who> <howmuch>");
+//    {
+//        new_draw_info_format(NDI_UNIQUE, 0, ob, "Syntax: /channemute <channel> <who> <howmuch>");
         return 1;
-    }
+//    }
 
     sscanf(params, "%s %s %d", channelname, playername, &seconds);
 
     if(seconds<0)
-    {
-        new_draw_info_format(NDI_UNIQUE, 0, ob, "/channelmute command: illegal seconds parameter (%d)", seconds);
-        return 0;
-    }
+//    {
+//        new_draw_info_format(NDI_UNIQUE, 0, ob, "/channelmute command: illegal seconds parameter (%d)", seconds);
+        return 1;
+//    }
 
     for (channel=channel_list_start;channel;channel=channel->next)
     {
@@ -1153,9 +1156,7 @@ int command_channel_mute(object *ob, char *params)
         cpl->mute_counter = pticks+seconds*(1000000/MAX_TIME);
     }
 
-    return 1;
-
-
+    return 0;
 }
 
 int command_channel_delete(object *ob, char *params)
@@ -1163,13 +1164,11 @@ int command_channel_delete(object *ob, char *params)
     struct channels *channel=NULL, *ch_ptr1=NULL;
     struct player_channel *cpl;
 
-    if (CONTR(ob)->gmaster_mode < GMASTER_MODE_VOL)
-        return 0;
     if (!params)
-    {
-        new_draw_info_format(NDI_UNIQUE, 0, ob, "Syntax: /deletechannel <name>");
+//    {
+//        new_draw_info_format(NDI_UNIQUE, 0, ob, "Syntax: /deletechannel <name>");
         return 1;
-    }
+//    }
     for (channel=channel_list_start;channel;channel=channel->next)
     {
         if (!strcasecmp(channel->name,params))
@@ -1180,7 +1179,7 @@ int command_channel_delete(object *ob, char *params)
     if (!channel)
     {
         new_draw_info_format(NDI_UNIQUE, 0, ob, "No channel with that name.");
-        return 1;
+        return 0;
     }
 
     for (cpl=channel->players;cpl;cpl=cpl->next_player)
@@ -1197,7 +1196,7 @@ int command_channel_delete(object *ob, char *params)
            free(channel);
            LOG(llevInfo, "CLOG Delete:>%s<: %s\n", ob->name, params);
            save_channels();
-           return 1;
+           return 0;
         }
     }
     return 0;
