@@ -2,6 +2,7 @@ arch map
 name Testmaps - Misc
 msg
 Created:  2003-04-13 Daimonin Map Editor
+Modified: 2009-06-12 smacky
 endmsg
 width 17
 height 17
@@ -168,34 +169,11 @@ arch floor_ostone1
 x 1
 y 6
 end
-arch sign
-name name test
-msg
-Length of Item Name Test.
-The first gravestone has a item length of
-exactly 127 chars.
-The second has more as 127 chars.
-This is a test for the server/client below
-window function.
-endmsg
-x 1
-y 6
-end
 arch floor_ostone1
 x 1
 y 7
 end
-arch gravestone
-name 1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567
-x 1
-y 7
-end
 arch floor_ostone1
-x 1
-y 8
-end
-arch gravestone
-name 1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567 127 and some more!
 x 1
 y 8
 end
@@ -876,9 +854,9 @@ x 8
 y 5
 end
 arch handle_lever
-face lever.131
 direction 3
 connected 100
+face lever.131
 x 8
 y 5
 end
