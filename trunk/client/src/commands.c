@@ -1131,16 +1131,7 @@ void ItemXYCmd(char *data, int len, int bflag)
                 item_level = data[pos++];
                 item_skill = data[pos++];
             }
-            nlen = data[pos++];
-            /* For reasons I do not understand, nlen goes negative at 127 or
-             * greater (obviously signing, but why an 8-bit number?). A
-             * negative index is of course a bug.
-             * ABS(data[pos++]) breaks everything, so we use the following to
-             * turn a negative nlen positive. I doubt if this is an ideal fix,
-             * but it's better than crashing.
-             * -- Smacky 20090612 */
-            if (nlen < 0)
-                nlen = ABS(nlen);
+            nlen = ((unsigned char *)data)[pos++];
             memcpy(name, (char *) data + pos, nlen);
             pos += nlen;
             name[nlen] = '\0';
