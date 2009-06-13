@@ -1015,6 +1015,10 @@ int command_logs(object *op, char *params)
     return 0;
 }
 
+#if 0
+/* it seems pl->usekeys is unused -- a CF holdover? To find a key we call
+ * time.c/find_key().
+ * -- Smacky 20090613 */
 int command_usekeys(object *op, char *params)
 {
     usekeytype      oldtype = CONTR(op)->usekeys;
@@ -1046,6 +1050,7 @@ int command_usekeys(object *op, char *params)
 
     return 0;
 }
+#endif
 
 int command_resistances(object *op, char *params)
 {
