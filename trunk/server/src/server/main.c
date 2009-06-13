@@ -57,6 +57,12 @@ static char     days[7][4]  =
     "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"
 };
 */
+
+#if 0
+/* This will be moved to a help category (/help version) and thus eventually
+ * handled client-side. Sending a huge mass of NDIs from server to client like
+ * this is just a waste.
+ * -- Smacky 20090613 */
 void version(object *op)
 {
     new_draw_info_format(NDI_UNIQUE, 0, op, "This is Daimonin v%s", VERSION);
@@ -124,6 +130,7 @@ void version(object *op)
     new_draw_info(NDI_UNIQUE, 0, op, "The mighty Dink.");
     new_draw_info(NDI_UNIQUE, 0, op, "And many more!");
 }
+#endif
 
 void start_info(object *op)
 {
