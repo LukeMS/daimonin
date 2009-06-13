@@ -342,7 +342,6 @@ addme_login_msg             player_load(NewSocket *ns, const char *name);
 addme_login_msg             player_create(NewSocket *ns,player **pl_ret,char *name,int race,int gender,int skill_nr);
 void                        player_addme_failed(NewSocket *ns, int error_msg);
 /* main.c */
-void                        version(object *op);
 void                        start_info(object *op);
 char                       *crypt_string(char *str);
 int                         get_new_instance_num(void);

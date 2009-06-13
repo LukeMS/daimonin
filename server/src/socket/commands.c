@@ -86,6 +86,9 @@ CommArray_s Commands[] =
     {"usekeys",       command_usekeys,        1.0f, 0},
 #endif
     {"time",          command_time,           1.0f, 0},
+/* This will be moved to a help category (/help version) and thus eventually
+ * handled client-side.
+ * -- Smacky 20090613 */
     {"version",       command_version,        1.0f, 0},
     {"help",          command_help,           1.0f, 0},
     {"save",          command_save,           1.0f, 1},

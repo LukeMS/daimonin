@@ -927,7 +927,8 @@ int command_printlos(object *op, char *params)
 
 int command_version(object *op, char *params)
 {
-    version(op);
+    new_draw_info_format(NDI_UNIQUE | NDI_WHITE, 0, op, "This is Daimonin v%s.",
+                         VERSION);
 
     return 0;
 }

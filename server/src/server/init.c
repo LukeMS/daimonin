@@ -523,7 +523,13 @@ static void set_logfile(char *val)
 }
 static void call_version()
 {
-    version(NULL); exit(0);
+    if (VERSION_SC != VERSION_CS)
+        fprintf(stderr, "SC (%d) and CS (%d) protocols do not match as they should!\n",
+                VERSION_SC, VERSION_CS);
+
+    printf("This is %s v%s (protocol %d)\n\n",
+           VERSION_INFO, VERSION, VERSION_SC);
+    exit(0);
 }
 
 static void set_debug()
