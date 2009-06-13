@@ -61,11 +61,11 @@ _CmdMapping cs_commands[]    =
 CommArray_s Commands[] =
 {
     {"apply",         command_apply,          1.0f, 1}, /* should be variable */
-    {"target",        command_target,         0.1f, 1}, /* enter combat and attack object in reach */
-    {"combat",        command_combat,         0.1f, 1}, /* toggle attack mode of player */
+    {"target",        command_target,         0.1f, 0}, /* enter combat and attack object in reach */
+    {"combat",        command_combat,         0.1f, 0}, /* toggle attack mode of player */
     {"rest",          command_resting,        1.0f, 1},
-    {"run",           command_run,            1.0f, 1},
-    {"run_stop",      command_run_stop,       0.0f, 1},
+    {"run",           command_run,            1.0f, 0},
+    {"run_stop",      command_run_stop,       0.0f, 0},
     {"cast",          command_cast_spell,     0.0f, 1}, /* use time comes from spells! */
     {"push",          command_push_object,    1.0f, 1},
     {"right",         command_turn_right,     1.0f, 0},
@@ -75,13 +75,13 @@ CommArray_s Commands[] =
     {"shout",         command_shout,          1.0f, 0},
     {"tell",          command_tell,           1.0f, 0},
     {"talk",          command_talk,           1.0f, 1},
-    {"who",           command_who,            5.0f, 1},
-    {"qlist",         command_questlist,      5.0f, 1},
-    {"mapinfo",       command_mapinfo,        5.0f, 1},
-    {"motd",          command_motd,           5.0f, 1},
-    {"usekeys",       command_usekeys,        1.0f, 1},
-    {"time",          command_time,           1.0f, 1},
-    {"version",       command_version,        1.0f, 1},
+    {"who",           command_who,            5.0f, 0},
+    {"qlist",         command_questlist,      5.0f, 0},
+    {"mapinfo",       command_mapinfo,        5.0f, 0},
+    {"motd",          command_motd,           5.0f, 0},
+    {"usekeys",       command_usekeys,        1.0f, 0},
+    {"time",          command_time,           1.0f, 0},
+    {"version",       command_version,        1.0f, 0},
     {"help",          command_help,           1.0f, 0},
     {"save",          command_save,           1.0f, 1},
     {"use_skill",     command_uskill,         0.1f, 1},
@@ -94,7 +94,7 @@ CommArray_s Commands[] =
     {"leave",         command_party_leave,    4.0f, 1},
     {"remove",        command_party_remove,   4.0f, 1},
 #ifdef USE_CHANNELS
-    {"channel",       command_channel,        1.0f, 1}, /* channel system */
+    {"channel",       command_channel,        1.0f, 0}, /* channel system */
     {"createchannel", command_channel_create, 1.0f, 1}, /* channel system */
     {"deletechannel", command_channel_delete, 1.0f, 1}, /* channel system */
     {"channelmute",   command_channel_mute,   1.0f, 1}, /* channel system */
