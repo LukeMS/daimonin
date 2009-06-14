@@ -1233,14 +1233,14 @@ int command_setskill(object *op, char *params)
     if (!params ||
         sscanf(params, "%s %d %d", buf, &snr, &level) != 3)
     {
-//        int i;
-//        char buf[HUGE_BUF];
-//
-//        sprintf(buf, "Usage: setskill [who] [skill nr] [level]\nSkills/Nr: ");
-//        for(i=0;i<NROFSKILLS;i++)
-//            sprintf(strchr(buf, '\0'), ",%s(%d)", skills[i].name,i);
-//        new_draw_info(NDI_UNIQUE, 0, op, buf);
-        return 1;
+        int i;
+        char buf[HUGE_BUF];
+
+        sprintf(buf, "Usage: setskill [who] [skill nr] [level]\nSkills/Nr: ");
+        for(i=0;i<NROFSKILLS;i++)
+            sprintf(strchr(buf, '\0'), ",%s(%d)", skills[i].name,i);
+        new_draw_info(NDI_UNIQUE, 0, op, buf);
+        return 0;
     }
 
     if (!(pl = find_player(buf)))
@@ -1324,14 +1324,14 @@ int command_addexp(object *op, char *params)
 
     if (!params || sscanf(params, "%s %d %d", buf, &snr, &exp) != 3)
     {
-//        int i;
-//        char buf[HUGE_BUF];
-//
-//        sprintf(buf, "Usage: addexp [who] [skill nr] [exp]\nSkills/Nr: ");
-//        for(i=0;i<NROFSKILLS;i++)
-//            sprintf(strchr(buf, '\0'), "%s(%d), ", skills[i].name,i);
-//        new_draw_info(NDI_UNIQUE, 0, op, buf);
-        return 1;
+        int i;
+        char buf[HUGE_BUF];
+
+        sprintf(buf, "Usage: addexp [who] [skill nr] [exp]\nSkills/Nr: ");
+        for(i=0;i<NROFSKILLS;i++)
+            sprintf(strchr(buf, '\0'), "%s(%d), ", skills[i].name,i);
+        new_draw_info(NDI_UNIQUE, 0, op, buf);
+        return 0;
     }
 
     
