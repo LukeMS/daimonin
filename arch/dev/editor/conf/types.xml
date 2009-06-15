@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" standalone="no" ?>
+<?xml version="1.0" standalone="no" ?>
 <!--
 ######################################################################
 # types.xml - This is the definitions-file for all the different     #
@@ -2185,9 +2185,9 @@
   <attribute arch="no_pass" editor="blocking passage" type="bool">
     If set, the object cannot be passed by players nor monsters.
   </attribute>
-  <attribute arch="last_sp" editor="luminousness" type="int">
+  <attribute arch="last_sp" editor="luminosity" type="int">
   This value sets the basic light/darkness value of tile space. This is
-  how much this space is naturally glowing (luminousness). This is NOT
+  how much this space is naturally glowing (luminosity). This is NOT
   the light source value. This value can be negative (shadow) and is
   direct added to a tile light value.
   </attribute>
