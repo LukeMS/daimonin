@@ -166,8 +166,10 @@ extern int              check_path(const char *name, int prepend_dir);
 extern char            *normalize_path(const char *src, const char *dst, char *path);
 extern char            *normalize_path_direct(const char *src, const char *dst, char *path);
 extern mapstruct       *ready_inherited_map(mapstruct *orig_map, shstr *new_map_path, int flags);
-extern void             dump_map(mapstruct *m);
+extern void             dump_map(mapstruct *m, player *pl);
+#if 0
 extern void             dump_all_maps(void);
+#endif
 extern mapstruct       *get_linked_map(void);
 extern void             allocate_map(mapstruct *m);
 extern mapstruct       *get_empty_map(int sizex, int sizey);
@@ -395,6 +397,7 @@ extern int              buf_overflow(const char *buf1, const char *buf2, int buf
 extern int              transform_name_string(char *name);
 extern void             bitstostring(long bits, int num, char *str);
 extern int              clipped_percent(int a, int b);
+extern void             NDI_LOG(LogLevel logLevel, int flags, int pri, object *ob, char *format, ...);
 /* view_map.c */
 void            draw_client_map(object *pl);
 void            draw_client_map2(object *pl);

@@ -280,33 +280,135 @@ char *normalize_path_direct(const char *src, const char *dst, char *path)
     return path;
 }
 
-/*
- * Prints out debug-information about a map.
- * Dumping these at llevError doesn't seem right, but is
- * necessary to make sure the information is in fact logged.
- */
-
-void dump_map(mapstruct *m)
+/* Dumps the header info of m to the server log and, if pl is non-NULL, prints
+ * this info to the client as well.
+ *
+ * The amount of info given depends on the Gmaster mode of pl. If pl is a MW or
+ * MM (or NULL), the full header is dumped. Otherwise just enough for general
+ * info/bugfixing purposes (ie, to locate the player exactly).
+ *
+ * MWs/MMs/NULL also gets the number of players on the map.
+ *
+ * TODO: Map status, rest time, swap time.
+ * TODO: Somehow represent tiling (how?)
+ * TODO: A short form of (a subset of) the dump for, eg, dumping *all* maps. */
+void dump_map(mapstruct *m, player *pl)
 {
-    LOG(llevSystem, "Map %s status: %d.\n", m->path, m->in_memory);
-    LOG(llevSystem, "Size: %dx%d Start: %d,%d\n", MAP_WIDTH(m), MAP_HEIGHT(m), MAP_ENTER_X(m), MAP_ENTER_Y(m));
+    object *ob;
+    char    name[MAX_BUF],
+           *music;
 
-    if (m->msg != NULL)
-        LOG(llevSystem, "Message:\n%s", m->msg);
+    ob = (pl) ? pl->ob : NULL;
 
-    if (m->tmpname != NULL)
-        LOG(llevSystem, "Tmpname: %s\n", m->tmpname);
+    /* When we remove the media tag completely, there will be no need to
+     * split m->name. */
+    strncpy(name, m->name, sizeof(name));
 
-    LOG(llevSystem, "Tileset: %s\n", m->tileset_id);
-    if(m->tileset_id == 0)
-        LOG(llevSystem, "Tileset coords: %d,%d\n", m->tileset_x, m->tileset_y);
+    if ((music = strchr(name, '§')))
+        *music++ = '\0';
 
-    LOG(llevSystem, "Difficulty: %d\n", m->difficulty);
-    LOG(llevSystem, "Darkness: %d\n", m->darkness);
-    LOG(llevSystem, "Light: %d\n", m->light_value);
-    LOG(llevSystem, "Outdoor: %d\n", MAP_OUTDOORS(m));
+    NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Name~: %s", name);
+    NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Music~: %s", music);
+
+    if (ob &&
+        ob->map == m)
+        NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Position~: %d, %d",
+                ob->x, ob->y);
+
+    NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Path~: %s", m->path);
+    NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Orig Path~: %s", m->orig_path);
+
+    if (!pl ||
+        (pl->gmaster_mode == GMASTER_MODE_MW ||
+         pl->gmaster_mode == GMASTER_MODE_MM))
+    {
+        NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Type~: %s",
+                ((MAP_MULTI(m)) ? "Multiplayer" :
+                 ((MAP_UNIQUE(m)) ? "Unique" :
+                  ((MAP_INSTANCE(m)) ? "Instance" : "UNKNOWN"))));
+
+        if (m->msg)
+            NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Msg~: %s", m->msg);
+
+        NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Size~: %dx%d (%d, %d)",
+                MAP_WIDTH(m), MAP_HEIGHT(m), MAP_ENTER_X(m), MAP_ENTER_Y(m));
+        NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Darkness/Light~: %d/%d%s",
+                MAP_DARKNESS(m), MAP_LIGHT_VALUE(m),
+                (MAP_OUTDOORS(m)) ? " (outdoors)" : "");
+        NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Difficulty~: %d",
+                MAP_DIFFICULTY(m));
+
+        if (m->tileset_id)
+            NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Tileset ID/X/Y~: %d/%d/%d",
+                    m->tileset_id, m->tileset_x, m->tileset_y);
+
+        NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Flags~:%s%s%s%s%s%s%s%s%s%s%s",
+                (MAP_FIXED_RESETTIME(m)) ? " (fixed reset)" : "",
+                (MAP_NOSAVE(m)) ? " (no saving)" : "",
+                (MAP_NOMAGIC(m)) ? " (no spells)" : "",
+                (MAP_NOPRIEST(m)) ? " (no prayers)" : "",
+                (MAP_NOHARM(m)) ? " (no harmful magic)" : "",
+                (MAP_NOSUMMON(m)) ? " (no summoning)" : "",
+                (MAP_FIXEDLOGIN(m)) ? " (fixed login)" : "",
+                (MAP_PERMDEATH(m)) ? " (permanent death)" : "",
+                (MAP_ULTRADEATH(m)) ? " (ultra death)" : "",
+                (MAP_ULTIMATEDEATH(m)) ? " (ultimate death)" : "",
+                (MAP_PVP(m)) ? " (pvp)" : "");
+
+        NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Players~: %d",
+                players_on_map(m));
+    }
+
+#if 0
+#ifdef MAP_RESET
+    LOG(llevSystem, "Current time is: %02ld:%02ld:%02ld.\n", (sec % 86400) / 3600, (sec % 3600) / 60, sec % 60);
+
+    new_draw_info_format(NDI_UNIQUE, 0, op, "Current time is: %02ld:%02ld:%02ld.", (sec % 86400) / 3600,
+                         (sec % 3600) / 60, sec % 60);
+    new_draw_info(NDI_UNIQUE, 0, op, "Path               Pl PlM IM   TO Dif Reset");
+#else
+    new_draw_info(NDI_UNIQUE, 0, op, "Pl Pl-M IM   TO Dif");
+#endif
+
+    for (m = first_map; m != NULL; m = m->next)
+    {
+#ifndef MAP_RESET
+        if (m->in_memory == MAP_SWAPPED)
+            continue;
+#endif
+
+        /* Print out the last 18 characters of the map name... */
+        if (strlen(m->path) <= 18)
+            strcpy(map_path, m->path);
+        else
+            strcpy(map_path, m->path + strlen(m->path) - 18);
+
+#ifndef MAP_RESET
+        sprintf(buf, "%-18.18s %c %2d   %c %4ld %2ld", map_path,
+                m->in_memory ? (m->in_memory == MAP_IN_MEMORY ? 'm' : 's') : 'X', players_on_map(m), m->in_memory,
+                m->timeout, m->difficulty);
+#else
+        LOG(llevSystem, "%s (%s) pom:%d status:%c timeout:%d diff:%d  reset:%02d:%02d:%02d\n",
+            m->path, m->orig_path, players_on_map(m),
+            m->in_memory ? (m->in_memory == MAP_IN_MEMORY ? 'm' : 's') : 'X', m->timeout, m->difficulty,
+            (MAP_WHEN_RESET(m) % 86400) / 3600, (MAP_WHEN_RESET(m) % 3600) / 60, MAP_WHEN_RESET(m) % 60);
+/*        sprintf(buf, "%-18.18s %2d   %c %4d %2d  %02d:%02d:%02d", map_path, players_on_map(m),*/
+
+        if (!strcmp(m->path, m->orig_path))
+            sprintf(buf, "%s %2d   %c %4d %2d  %02d:%02d:%02d", m->path, players_on_map(m),
+                    m->in_memory ? (m->in_memory == MAP_IN_MEMORY ? 'm' : 's') : 'X', m->timeout, m->difficulty,
+                    (MAP_WHEN_RESET(m) % 86400) / 3600, (MAP_WHEN_RESET(m) % 3600) / 60, MAP_WHEN_RESET(m) % 60);
+        else
+            sprintf(buf, "%s (%s) %2d   %c %4d %2d  %02d:%02d:%02d", m->path, m->orig_path, players_on_map(m),
+                    m->in_memory ? (m->in_memory == MAP_IN_MEMORY ? 'm' : 's') : 'X', m->timeout, m->difficulty,
+                    (MAP_WHEN_RESET(m) % 86400) / 3600, (MAP_WHEN_RESET(m) % 3600) / 60, MAP_WHEN_RESET(m) % 60);
+#endif
+        new_draw_info(NDI_UNIQUE, 0, op, buf);
+    }
+#endif
 }
 
+#if 0
 /*
  * Prints out debug-information about all maps.
  * This basically just goes through all the maps and calls
@@ -318,9 +420,10 @@ void dump_all_maps()
     mapstruct  *m;
     for (m = first_map; m != NULL; m = m->next)
     {
-        dump_map(m);
+        dump_map(m, NULL);
     }
 }
+#endif
 
 /*
  * Allocates, initialises, and returns a pointer to a mapstruct.
