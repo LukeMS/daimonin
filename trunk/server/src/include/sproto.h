@@ -128,16 +128,13 @@ int                         command_cringe(object *op, char *params);
 int                         command_think(object *op, char *params);
 int                         command_me(object *op, char *params);
 /* c_misc.c */
-void                        map_info(object *op);
 int                         command_spell_reset(object *op, char *params);
 int                         command_motd(object *op, char *params);
 int                         command_bug(object *op, char *params);
 void                        malloc_info(object *op);
-void                        current_map_info(object *op);
 int                         command_who(object *op, char *params);
 int                         command_malloc(object *op, char *params);
 int                         command_mapinfo(object *op, char *params);
-int                         command_maps(object *op, char *params);
 int                         command_sstable(object *op, char *params);
 int                         command_time(object *op, char *params);
 int                         command_archs(object *op, char *params);
@@ -157,8 +154,10 @@ int                         command_dumpactivelist(object *op, char *params);
 int                         command_setmaplight(object *op, char *params);
 int                         command_restart(object *ob, char *params);
 int                         command_start_shutdown(object *op, char *params);
+#if 0
 int                         command_dumpmap(object *op, char *params);
 int                         command_dumpallmaps(object *op, char *params);
+#endif
 int                         command_printlos(object *op, char *params);
 int                         command_version(object *op, char *params);
 void                        bug_report(char *reportstring);

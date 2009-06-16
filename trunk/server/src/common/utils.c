@@ -27,6 +27,7 @@
  * General convenience functions for crossfire.
  */
 
+#include <stdarg.h>
 #include <global.h>
 
 
@@ -211,3 +212,19 @@ int clipped_percent(int a, int b)
 
     return rv;
 }
+
+void NDI_LOG(LogLevel logLevel, int flags, int pri, object *ob, char *format, ...)
+{
+    va_list ap;
+    char    buf[HUGE_BUF];
+
+    va_start(ap, format);
+    vsnprintf(buf, sizeof(buf), format, ap);
+    va_end(ap);
+
+    LOG(logLevel, "%s\n", buf);
+
+    if (ob &&
+        CONTR(ob))
+        new_draw_info(flags, pri, ob, buf);
+} 

@@ -70,6 +70,7 @@
  * on the map or in the code.
  */
 #define MAP_DARKNESS(m)     (m)->darkness
+#define MAP_LIGHT_VALUE(m)  (m)->light_value
 
 #define MAP_WIDTH(m)        (m)->width
 #define MAP_HEIGHT(m)       (m)->height

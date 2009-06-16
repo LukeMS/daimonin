@@ -30,54 +30,6 @@
  * who, etc.
  */
 
-void map_info(object *op)
-{
-    mapstruct  *m;
-    char        buf[MAX_BUF], map_path[MAX_BUF];
-    long        sec = seconds();
-#ifdef MAP_RESET
-    LOG(llevSystem, "Current time is: %02ld:%02ld:%02ld.\n", (sec % 86400) / 3600, (sec % 3600) / 60, sec % 60);
-
-    new_draw_info_format(NDI_UNIQUE, 0, op, "Current time is: %02ld:%02ld:%02ld.", (sec % 86400) / 3600,
-                         (sec % 3600) / 60, sec % 60);
-    new_draw_info(NDI_UNIQUE, 0, op, "Path               Pl PlM IM   TO Dif Reset");
-#else
-    new_draw_info(NDI_UNIQUE, 0, op, "Pl Pl-M IM   TO Dif");
-#endif
-    for (m = first_map; m != NULL; m = m->next)
-    {
-#ifndef MAP_RESET
-        if (m->in_memory == MAP_SWAPPED)
-            continue;
-#endif
-        /* Print out the last 18 characters of the map name... */
-        if (strlen(m->path) <= 18)
-            strcpy(map_path, m->path);
-        else
-            strcpy(map_path, m->path + strlen(m->path) - 18);
-#ifndef MAP_RESET
-        sprintf(buf, "%-18.18s %c %2d   %c %4ld %2ld", map_path,
-                m->in_memory ? (m->in_memory == MAP_IN_MEMORY ? 'm' : 's') : 'X', players_on_map(m), m->in_memory,
-                m->timeout, m->difficulty);
-#else
-        LOG(llevSystem, "%s (%s) pom:%d status:%c timeout:%d diff:%d  reset:%02d:%02d:%02d\n",
-            m->path, m->orig_path, players_on_map(m),
-            m->in_memory ? (m->in_memory == MAP_IN_MEMORY ? 'm' : 's') : 'X', m->timeout, m->difficulty,
-            (MAP_WHEN_RESET(m) % 86400) / 3600, (MAP_WHEN_RESET(m) % 3600) / 60, MAP_WHEN_RESET(m) % 60);
-/*        sprintf(buf, "%-18.18s %2d   %c %4d %2d  %02d:%02d:%02d", map_path, players_on_map(m),*/
-            if(!strcmp(m->path, m->orig_path))
-                sprintf(buf, "%s %2d   %c %4d %2d  %02d:%02d:%02d", m->path, players_on_map(m),
-                    m->in_memory ? (m->in_memory == MAP_IN_MEMORY ? 'm' : 's') : 'X', m->timeout, m->difficulty,
-                    (MAP_WHEN_RESET(m) % 86400) / 3600, (MAP_WHEN_RESET(m) % 3600) / 60, MAP_WHEN_RESET(m) % 60);
-            else
-                sprintf(buf, "%s (%s) %2d   %c %4d %2d  %02d:%02d:%02d", m->path, m->orig_path, players_on_map(m),
-                    m->in_memory ? (m->in_memory == MAP_IN_MEMORY ? 'm' : 's') : 'X', m->timeout, m->difficulty,
-                    (MAP_WHEN_RESET(m) % 86400) / 3600, (MAP_WHEN_RESET(m) % 3600) / 60, MAP_WHEN_RESET(m) % 60);
-#endif
-        new_draw_info(NDI_UNIQUE, 0, op, buf);
-    }
-}
-
 /* now redundant function */
 int command_spell_reset(object *op, char *params)
 {
@@ -282,41 +234,6 @@ void malloc_info(object *op)
     LOG(llevSystem, "%s\n", errmsg);
 }
 
-void current_map_info(object *op)
-{
-    mapstruct  *m   = op->map;
-#if 0
-    /* When we remove the media tag completely, there will be no need to split
-     * m->name. */
-
-    if (!m)
-        return;
-
-    new_draw_info_format(NDI_UNIQUE, 0, op, "%s (%s)\n",
-                         m->name, m->path);
-#else
-    char        buf[128], *tmp;
-
-    if (!m)
-        return;
-
-    strcpy(buf, m->name);
-    tmp = strchr(buf, '§');
-    if (tmp)
-        *tmp = 0;
-    new_draw_info_format(NDI_UNIQUE, 0, op, "%s (%s)", buf, m->path);
-#endif
-
-    if (QUERY_FLAG(op, FLAG_WIZ))
-    {
-        new_draw_info_format(NDI_UNIQUE, 0, op, "players:%d difficulty:%d size:%dx%d start:%dx%d timeout %ld",
-                             players_on_map(m), m->difficulty, MAP_WIDTH(m), MAP_HEIGHT(m), MAP_ENTER_X(m),
-                             MAP_ENTER_Y(m), MAP_TIMEOUT(m));
-    }
-    if (m->msg)
-        new_draw_info(NDI_UNIQUE, NDI_NAVY, op, m->msg);
-}
-
 int command_who(object *op, char *params)
 {
     player     *pl;
@@ -427,14 +344,17 @@ int command_malloc(object *op, char *params)
 
 int command_mapinfo(object *op, char *params)
 {
-    current_map_info(op);
+    char       buf[MAX_BUF],
+               map_path[MAX_BUF],
+              *tmp;
+    long       sec = seconds();
 
-    return 0;
-}
+    if (!op ||
+        !CONTR(op) ||
+        !op->map)
+        return 0;
 
-int command_maps(object *op, char *params)
-{
-    map_info(op);
+    dump_map(op->map, CONTR(op));
 
     return 0;
 }
@@ -901,10 +821,11 @@ int command_setmaplight(object *op, char *params)
     return 0;
 }
 
+#if 0
 int command_dumpmap(object *op, char *params)
 {
     if (op)
-        dump_map(op->map);
+        dump_map(op->map, CONTR(op));
 
     return 0;
 }
@@ -915,6 +836,7 @@ int command_dumpallmaps(object *op, char *params)
 
     return 0;
 }
+#endif
 
 int command_printlos(object *op, char *params)
 {
