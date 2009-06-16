@@ -344,9 +344,6 @@ int command_malloc(object *op, char *params)
 
 int command_mapinfo(object *op, char *params)
 {
-    char       buf[MAX_BUF],
-               map_path[MAX_BUF],
-              *tmp;
     long       sec = seconds();
 
     if (!op ||
@@ -1222,7 +1219,6 @@ int command_resting(object *op, char *params)
 
 int command_help(object *op, char *params)
 {
-    struct stat st;
     FILE       *fp;
     char        filename[MAX_BUF], line[MAX_BUF];
     int         len;
