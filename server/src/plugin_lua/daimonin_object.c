@@ -1717,7 +1717,6 @@ static int GameObject_ChannelMsg(lua_State *L)
     char       *channel;
     int mode = 0;
     char *message;
-    static char buf[HUGE_BUF];
 
     get_lua_args(L, "Oss|i", &self, &channel, &message, &mode);
 
@@ -4064,7 +4063,6 @@ static int GameObject_FindNextObject(lua_State *L)
     char       *arch_name = NULL,
                *name = NULL,
                *title = NULL;
-    archetype  *arch = NULL;
 
     get_lua_args(L, "Oi|iOsss", &self, &type, &mode, &whatptr, &arch_name, &name, &title);
     next = WHO;
