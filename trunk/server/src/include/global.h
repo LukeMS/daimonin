@@ -295,7 +295,16 @@ typedef signed long long   sint64;
 #define NPC_INTERFACE_MODE_NPC    1
 #define NPC_INTERFACE_MODE_QLIST  2
 
-/* number of connected maps from a tiled map */
+/* number of connected maps from a tiled map
+ * 0 North
+ * 1 East
+ * 2 South
+ * 3 West
+ * 4 Southeast
+ * 5 Southwest
+ * 6 Northeast
+ * 7 Northwest
+ */
 #define TILED_MAPS 8
 
 typedef enum
