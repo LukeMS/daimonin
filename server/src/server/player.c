@@ -623,29 +623,26 @@ void do_some_living(object *op)
 }
 
 /* Returns pointer to a static string containing gravestone text. */
-static sint8 *gravestone_text(object *op)
+static char *gravestone_text(object *op)
 {
-    static sint8 buf[MAX_BUF];
-    sint8        tmp_buf[MAX_BUF];
-    timeofday_t  tod;
-    uint8        day;
+    static char buf[MAX_BUF];
+    char        tmp_buf[MAX_BUF];
+    timeofday_t tod;
+    uint8       day;
 
     /* name */
-    sprintf(buf, "R.I.P.\n\n%s",
-            op->name);
+    sprintf(buf, "R.I.P.\n\n%s", STRING_OBJ_NAME(op));
 
     /* title */
     if (op->title)
     {
-        sprintf(tmp_buf, " %s",
-                op->title);
+        sprintf(tmp_buf, " %s", STRING_OBJ_TITLE(op));
         strcat(buf, tmp_buf);
     }
 
     /* race, level */
     sprintf(tmp_buf, " the %s\nwho was level %d\nwhen ",
-            op->race,
-            op->level);
+            STRING_OBJ_RACE(op), (int)op->level);
     strcat(buf, tmp_buf);
 
     /* gender */
@@ -722,11 +719,13 @@ void kill_player(object *op)
         tmp = arch_to_object(find_archetype("finger"));
         if (tmp != NULL)
         {
-            sprintf(buf, "%s's finger", op->name);
+            sprintf(buf, "%s's finger", STRING_OBJ_NAME(op));
             FREE_AND_COPY_HASH(tmp->name, buf);
             sprintf(buf, "  This finger has been cut off %s\n"
                          "  the %s, when he was defeated at\n  level %d by %s.\n",
-                    op->name, op->title?op->title:op->race, (int) (op->level), pl->killer?pl->killer:"bad luck");
+                    STRING_OBJ_NAME(op), (op->title) ? STRING_OBJ_TITLE(op) :
+                    STRING_OBJ_RACE(op), (int)op->level, (pl->killer) ?
+                    pl->killer : "bad luck");
             FREE_AND_COPY_HASH(tmp->msg, buf);
             tmp->value = 0, tmp->material = 0, tmp->type = 0;
             tmp->x = op->x, tmp->y = op->y;
