@@ -1464,10 +1464,10 @@ int command_abil(object *op, char *params)
 
     if (!params ||
         !sscanf(params, "%s %s %d", thing, thing2, &iii) ||
-        !thing)
+        thing[0] == '\0')
         return 1;
 
-    if (!thing2)
+    if (thing2[0] == '\0')
     {
         new_draw_info(NDI_UNIQUE, 0, op, "You can't change that.");
 
