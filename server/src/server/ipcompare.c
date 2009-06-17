@@ -37,7 +37,7 @@
 #define MASK_ONES 1
 
 /* parse a single IP address */
-int parse_ip(const char * ip, char ip_terms[], int mask_pos[])
+static int parse_ip(const char * ip, unsigned char ip_terms[], int mask_pos[])
 {
     char buffer[BUF_SZ];
     int index = 0;
