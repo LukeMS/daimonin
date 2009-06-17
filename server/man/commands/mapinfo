@@ -1,4 +1,10 @@
 ~Category~: Map
 
 ~Syntax~: /mapinfo
-~Purpose~: Shows technical info about the map you are on.
+~Purpose~: Shows detailed technical info about the map you are on. MWs and MMs get more info than others.
+
+~Syntax~: /mapinfo all
+~Purpose~: Shows brief technical info about all maps currently loaded in the game. Only available to MWs and MMs.
+
+~Syntax~: /mapinfo tiled
+~Purpose~: Shows detailed technical info about the map you are on and brief info about any maps in the eight directions surrounding it. Only availlable to MWs and MMs.
