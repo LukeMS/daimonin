@@ -77,7 +77,7 @@ CommArray_s Commands[] =
     {"talk",          command_talk,           1.0f, 1},
     {"who",           command_who,            5.0f, 0},
     {"qlist",         command_questlist,      5.0f, 0},
-    {"mapinfo",       command_mapinfo,        5.0f, 0},
+    {"mapinfo",       command_mapinfo,        5.0f, 1},
     {"motd",          command_motd,           5.0f, 0},
 #if 0
 /* it seems pl->usekeys is unused -- a CF holdover? To find a key we call
@@ -226,10 +226,6 @@ CommArray_s CommandsMM[] =
     {"dm_speed",     command_speed,             0.0f, 1},
     {"d_active",     command_dumpactivelist,    0.0f, 1},
     {"d_arches",     command_dumpallarchetypes, 0.0f, 1},
-#if 0
-    {"d_maps",       command_dumpallmaps,       0.0f, 1},
-    {"d_map",        command_dumpmap,           0.0f, 1},
-#endif
     {"d_objects",    command_dumpallobjects,    0.0f, 1},
     {"d_belowfull",  command_dumpbelowfull,     0.0f, 1},
     {"d_below",      command_dumpbelow,         0.0f, 1},

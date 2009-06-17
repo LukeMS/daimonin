@@ -342,14 +342,66 @@ int command_malloc(object *op, char *params)
     return 0;
 }
 
+/* Print and log map header info. */
 int command_mapinfo(object *op, char *params)
 {
+    mapstruct *m;
+    player    *pl;
+    int        i;
+
     if (!op ||
-        !CONTR(op) ||
-        !op->map)
+        !(pl = CONTR(op)) ||
+        !(m = op->map))
         return 0;
 
-    dump_map(op->map, CONTR(op));
+    if (params)
+    {
+        /* Only MWs/MMs can use the fancy commands. */
+        if (pl->gmaster_mode != GMASTER_MODE_MW &&
+            pl->gmaster_mode != GMASTER_MODE_MM)
+            return 1;
+
+        /* List all the loaded maps. */
+        if (!strcmp(params, "all"))
+        {
+            for (m = first_map, i = 1; m; m = m->next, i++)
+                dump_map(m, pl, i, NULL);
+
+            return 0;
+        }
+
+        /* Detail the current map and list all the immediately tiled ones. */
+        if (!strcmp(params, "tiled"))
+        {
+            char *compass[] = { "N", "E", "S", "W", "NE", "SE", "SW", "NW" };
+
+            dump_map(m, pl, 0, NULL);
+
+            for (i = 0; i < 8; i++)
+            {
+                if (!m->tile_path[i])
+                    continue;
+
+                if (!m->tile_map[i])
+                {
+                    NDI_LOG(llevSystem, NDI_UNIQUE, 0, op, "~%s Map~: NOT LOADED",
+                            compass[i]);
+
+                    continue;
+                }
+
+                dump_map(m->tile_map[i], pl, i + 1, compass[i]);
+            }
+
+            return 0;
+        }
+
+        return 1;
+    }
+
+    /* Detail the current map (amount of detail according to gmaster_mode,
+     * handled by dump_map). */
+    dump_map(m, pl, 0, NULL);
 
     return 0;
 }
