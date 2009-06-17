@@ -862,83 +862,83 @@ mapstruct * out_of_map(mapstruct *m, int *x, int *y)
     {
         if (*y < 0) /*  nw.. */
         {
-            if (!m->tile_path[7])
+            if (!m->tile_path[TILED_MAPS_NORTHWEST])
                 return NULL;
-            if (!m->tile_map[7] || m->tile_map[7]->in_memory != MAP_IN_MEMORY)
+            if (!m->tile_map[TILED_MAPS_NORTHWEST] || m->tile_map[TILED_MAPS_NORTHWEST]->in_memory != MAP_IN_MEMORY)
             {
-                if(!load_and_link_tiled_map(m, 7))
+                if(!load_and_link_tiled_map(m, TILED_MAPS_NORTHWEST))
                     return NULL;
             }
-            *y += MAP_HEIGHT(m->tile_map[7]);
-            *x += MAP_WIDTH(m->tile_map[7]);
-            return (out_of_map(m->tile_map[7], x, y));
+            *y += MAP_HEIGHT(m->tile_map[TILED_MAPS_NORTHWEST]);
+            *x += MAP_WIDTH(m->tile_map[TILED_MAPS_NORTHWEST]);
+            return (out_of_map(m->tile_map[TILED_MAPS_NORTHWEST], x, y));
         }
 
         if (*y >= MAP_HEIGHT(m)) /* sw */
         {
-            if (!m->tile_path[6])
+            if (!m->tile_path[TILED_MAPS_SOUTHWEST])
                 return NULL;
-            if (!m->tile_map[6] || m->tile_map[6]->in_memory != MAP_IN_MEMORY)
+            if (!m->tile_map[TILED_MAPS_SOUTHWEST] || m->tile_map[TILED_MAPS_SOUTHWEST]->in_memory != MAP_IN_MEMORY)
             {
-                if(!load_and_link_tiled_map(m, 6))
+                if(!load_and_link_tiled_map(m, TILED_MAPS_SOUTHWEST))
                     return NULL;
             }
             *y -= MAP_HEIGHT(m);
-            *x += MAP_WIDTH(m->tile_map[6]);
-            return (out_of_map(m->tile_map[6], x, y));
+            *x += MAP_WIDTH(m->tile_map[TILED_MAPS_SOUTHWEST]);
+            return (out_of_map(m->tile_map[TILED_MAPS_SOUTHWEST], x, y));
         }
 
 
-        if (!m->tile_path[3]) /* it MUST be west */
+        if (!m->tile_path[TILED_MAPS_WEST]) /* it MUST be west */
             return NULL;
-        if (!m->tile_map[3] || m->tile_map[3]->in_memory != MAP_IN_MEMORY)
+        if (!m->tile_map[TILED_MAPS_WEST] || m->tile_map[TILED_MAPS_WEST]->in_memory != MAP_IN_MEMORY)
         {
-            if(!load_and_link_tiled_map(m, 3))
+            if(!load_and_link_tiled_map(m, TILED_MAPS_WEST))
                 return NULL;
         }
-        *x += MAP_WIDTH(m->tile_map[3]);
-        return (out_of_map(m->tile_map[3], x, y));
+        *x += MAP_WIDTH(m->tile_map[TILED_MAPS_WEST]);
+        return (out_of_map(m->tile_map[TILED_MAPS_WEST], x, y));
     }
 
     if (*x >= MAP_WIDTH(m))  /* thatd e, ne or se (1 ,4 or 5) */
     {
         if (*y < 0) /*  ne.. */
         {
-            if (!m->tile_path[4])
+            if (!m->tile_path[TILED_MAPS_NORTHEAST])
                 return NULL;
-            if (!m->tile_map[4] || m->tile_map[4]->in_memory != MAP_IN_MEMORY)
+            if (!m->tile_map[TILED_MAPS_NORTHEAST] || m->tile_map[TILED_MAPS_NORTHEAST]->in_memory != MAP_IN_MEMORY)
             {
-                if(!load_and_link_tiled_map(m, 4))
+                if(!load_and_link_tiled_map(m, TILED_MAPS_NORTHEAST))
                     return NULL;
             }
-            *y += MAP_HEIGHT(m->tile_map[4]);
+            *y += MAP_HEIGHT(m->tile_map[TILED_MAPS_NORTHEAST]);
             *x -= MAP_WIDTH(m);
-            return (out_of_map(m->tile_map[4], x, y));
+            return (out_of_map(m->tile_map[TILED_MAPS_NORTHEAST], x, y));
         }
 
         if (*y >= MAP_HEIGHT(m)) /* se */
         {
-            if (!m->tile_path[5])
+            if (!m->tile_path[TILED_MAPS_SOUTHEAST])
                 return NULL;
-            if (!m->tile_map[5] || m->tile_map[5]->in_memory != MAP_IN_MEMORY)
+            if (!m->tile_map[TILED_MAPS_SOUTHEAST] || m->tile_map[TILED_MAPS_SOUTHEAST]->in_memory != MAP_IN_MEMORY)
             {
-                if(!load_and_link_tiled_map(m, 5))
+                if(!load_and_link_tiled_map(m, TILED_MAPS_SOUTHEAST))
                     return NULL;
             }
             *y -= MAP_HEIGHT(m);
             *x -= MAP_WIDTH(m);
-            return (out_of_map(m->tile_map[5], x, y));
+            return (out_of_map(m->tile_map[TILED_MAPS_SOUTHEAST], x, y));
         }
 
-        if (!m->tile_path[1])
+        if (!m->tile_path[TILED_MAPS_EAST])
             return NULL;
-        if (!m->tile_map[1] || m->tile_map[1]->in_memory != MAP_IN_MEMORY)
+        if (!m->tile_map[TILED_MAPS_EAST] || m->tile_map[TILED_MAPS_EAST]->in_memory != MAP_IN_MEMORY)
         {
-            if(!load_and_link_tiled_map(m, 1))
+            if(!load_and_link_tiled_map(m, TILED_MAPS_EAST))
                 return NULL;
         }
         *x -= MAP_WIDTH(m);
-        return (out_of_map(m->tile_map[1], x, y));
+        return (out_of_map(m->tile_map[TILED_MAPS_EAST], x, y));
     }
 
     /* because we have tested x above, we don't need to check
@@ -946,27 +946,27 @@ mapstruct * out_of_map(mapstruct *m, int *x, int *y)
     */
     if (*y < 0)
     {
-        if (!m->tile_path[0])
+        if (!m->tile_path[TILED_MAPS_NORTH])
             return NULL;
-        if (!m->tile_map[0] || m->tile_map[0]->in_memory != MAP_IN_MEMORY)
+        if (!m->tile_map[TILED_MAPS_NORTH] || m->tile_map[TILED_MAPS_NORTH]->in_memory != MAP_IN_MEMORY)
         {
-            if(!load_and_link_tiled_map(m, 0))
+            if(!load_and_link_tiled_map(m, TILED_MAPS_NORTH))
                 return NULL;
         }
-        *y += MAP_HEIGHT(m->tile_map[0]);
-        return (out_of_map(m->tile_map[0], x, y));
+        *y += MAP_HEIGHT(m->tile_map[TILED_MAPS_NORTH]);
+        return (out_of_map(m->tile_map[TILED_MAPS_NORTH], x, y));
     }
     if (*y >= MAP_HEIGHT(m))
     {
-        if (!m->tile_path[2])
+        if (!m->tile_path[TILED_MAPS_SOUTH])
             return NULL;
-        if (!m->tile_map[2] || m->tile_map[2]->in_memory != MAP_IN_MEMORY)
+        if (!m->tile_map[TILED_MAPS_SOUTH] || m->tile_map[TILED_MAPS_SOUTH]->in_memory != MAP_IN_MEMORY)
         {
-            if(!load_and_link_tiled_map(m, 2))
+            if(!load_and_link_tiled_map(m, TILED_MAPS_SOUTH))
                 return NULL;
         }
         *y -= MAP_HEIGHT(m);
-        return (out_of_map(m->tile_map[2], x, y));
+        return (out_of_map(m->tile_map[TILED_MAPS_SOUTH], x, y));
     }
     return NULL;
 }
@@ -996,101 +996,101 @@ mapstruct * out_of_map2(mapstruct *m, int *x, int *y)
     {
         if (*y < 0) /*  nw.. */
         {
-            if (!m->tile_path[7])
+            if (!m->tile_path[TILED_MAPS_NORTHWEST])
             {
                 *x = 0;
                 return NULL;
             }
-            if (!m->tile_map[7] || m->tile_map[7]->in_memory != MAP_IN_MEMORY)
+            if (!m->tile_map[TILED_MAPS_NORTHWEST] || m->tile_map[TILED_MAPS_NORTHWEST]->in_memory != MAP_IN_MEMORY)
             {
                 *x = -1;
                 return NULL;
             }
-            *y += MAP_HEIGHT(m->tile_map[7]);
-            *x += MAP_WIDTH(m->tile_map[7]);
-            return (out_of_map2(m->tile_map[7], x, y));
+            *y += MAP_HEIGHT(m->tile_map[TILED_MAPS_NORTHWEST]);
+            *x += MAP_WIDTH(m->tile_map[TILED_MAPS_NORTHWEST]);
+            return (out_of_map2(m->tile_map[TILED_MAPS_NORTHWEST], x, y));
         }
 
         if (*y >= MAP_HEIGHT(m)) /* sw */
         {
-            if (!m->tile_path[6])
+            if (!m->tile_path[TILED_MAPS_SOUTHWEST])
             {
                 *x = 0;
                 return NULL;
             }
-            if (!m->tile_map[6] || m->tile_map[6]->in_memory != MAP_IN_MEMORY)
+            if (!m->tile_map[TILED_MAPS_SOUTHWEST] || m->tile_map[TILED_MAPS_SOUTHWEST]->in_memory != MAP_IN_MEMORY)
             {
                 *x = -1;
                 return NULL;
             }
             *y -= MAP_HEIGHT(m);
-            *x += MAP_WIDTH(m->tile_map[6]);
-            return (out_of_map2(m->tile_map[6], x, y));
+            *x += MAP_WIDTH(m->tile_map[TILED_MAPS_SOUTHWEST]);
+            return (out_of_map2(m->tile_map[TILED_MAPS_SOUTHWEST], x, y));
         }
 
 
-        if (!m->tile_path[3]) /* it MUST be west */
+        if (!m->tile_path[TILED_MAPS_WEST]) /* it MUST be west */
         {
             *x = 0;
             return NULL;
         }
-        if (!m->tile_map[3] || m->tile_map[3]->in_memory != MAP_IN_MEMORY)
+        if (!m->tile_map[TILED_MAPS_WEST] || m->tile_map[TILED_MAPS_WEST]->in_memory != MAP_IN_MEMORY)
         {
             *x = -1;
             return NULL;
         }
-        *x += MAP_WIDTH(m->tile_map[3]);
-        return (out_of_map2(m->tile_map[3], x, y));
+        *x += MAP_WIDTH(m->tile_map[TILED_MAPS_WEST]);
+        return (out_of_map2(m->tile_map[TILED_MAPS_WEST], x, y));
     }
 
     if (*x >= MAP_WIDTH(m))  /* thatd e, ne or se (1 ,4 or 5) */
     {
         if (*y < 0) /*  ne.. */
         {
-            if (!m->tile_path[4])
+            if (!m->tile_path[TILED_MAPS_NORTHEAST])
             {
                 *x = 0;
                 return NULL;
             }
-            if (!m->tile_map[4] || m->tile_map[4]->in_memory != MAP_IN_MEMORY)
+            if (!m->tile_map[TILED_MAPS_NORTHEAST] || m->tile_map[TILED_MAPS_NORTHEAST]->in_memory != MAP_IN_MEMORY)
             {
                 *x = -1;
                 return NULL;
             }
-            *y += MAP_HEIGHT(m->tile_map[4]);
+            *y += MAP_HEIGHT(m->tile_map[TILED_MAPS_NORTHEAST]);
             *x -= MAP_WIDTH(m);
-            return (out_of_map2(m->tile_map[4], x, y));
+            return (out_of_map2(m->tile_map[TILED_MAPS_NORTHEAST], x, y));
         }
 
         if (*y >= MAP_HEIGHT(m)) /* se */
         {
-            if (!m->tile_path[5])
+            if (!m->tile_path[TILED_MAPS_SOUTHEAST])
             {
                 *x = 0;
                 return NULL;
             }
-            if (!m->tile_map[5] || m->tile_map[5]->in_memory != MAP_IN_MEMORY)
+            if (!m->tile_map[TILED_MAPS_SOUTHEAST] || m->tile_map[TILED_MAPS_SOUTHEAST]->in_memory != MAP_IN_MEMORY)
             {
                 *x = -1;
                 return NULL;
             }
             *y -= MAP_HEIGHT(m);
             *x -= MAP_WIDTH(m);
-            return (out_of_map2(m->tile_map[5], x, y));
+            return (out_of_map2(m->tile_map[TILED_MAPS_SOUTHEAST], x, y));
         }
 
-        if (!m->tile_path[1])
+        if (!m->tile_path[TILED_MAPS_EAST])
         {
             *x = 0;
             return NULL;
         }
-        if (!m->tile_map[1] || m->tile_map[1]->in_memory != MAP_IN_MEMORY)
+        if (!m->tile_map[TILED_MAPS_EAST] || m->tile_map[TILED_MAPS_EAST]->in_memory != MAP_IN_MEMORY)
         {
             *x = -1;
             return NULL;
         }
         *x -= MAP_WIDTH(m);
-        return (out_of_map2(m->tile_map[1], x, y));
+        return (out_of_map2(m->tile_map[TILED_MAPS_EAST], x, y));
     }
 
     /* because we have tested x above, we don't need to check
@@ -1098,33 +1098,33 @@ mapstruct * out_of_map2(mapstruct *m, int *x, int *y)
     */
     if (*y < 0)
     {
-        if (!m->tile_path[0])
+        if (!m->tile_path[TILED_MAPS_NORTH])
         {
             *x = 0;
             return NULL;
         }
-        if (!m->tile_map[0] || m->tile_map[0]->in_memory != MAP_IN_MEMORY)
+        if (!m->tile_map[TILED_MAPS_NORTH] || m->tile_map[TILED_MAPS_NORTH]->in_memory != MAP_IN_MEMORY)
         {
             *x = -1;
             return NULL;
         }
-        *y += MAP_HEIGHT(m->tile_map[0]);
-        return (out_of_map2(m->tile_map[0], x, y));
+        *y += MAP_HEIGHT(m->tile_map[TILED_MAPS_NORTH]);
+        return (out_of_map2(m->tile_map[TILED_MAPS_NORTH], x, y));
     }
     if (*y >= MAP_HEIGHT(m))
     {
-        if (!m->tile_path[2])
+        if (!m->tile_path[TILED_MAPS_SOUTH])
         {
             *x = 0;
             return NULL;
         }
-        if (!m->tile_map[2] || m->tile_map[2]->in_memory != MAP_IN_MEMORY)
+        if (!m->tile_map[TILED_MAPS_SOUTH] || m->tile_map[TILED_MAPS_SOUTH]->in_memory != MAP_IN_MEMORY)
         {
             *x = -1;
             return NULL;
         }
         *y -= MAP_HEIGHT(m);
-        return (out_of_map2(m->tile_map[2], x, y));
+        return (out_of_map2(m->tile_map[TILED_MAPS_SOUTH], x, y));
     }
     *x = 0;
     return NULL;
@@ -1219,30 +1219,30 @@ int get_rangevector_full(
         else
             return fail_rangevector(retval);
     }
-    else if (map1->tile_map[0] == map2) /* North */
+    else if (map1->tile_map[TILED_MAPS_NORTH] == map2) /* North */
         retval->distance_y -= MAP_HEIGHT(map2);
-    else if (map1->tile_map[1] == map2) /* East */
+    else if (map1->tile_map[TILED_MAPS_EAST] == map2) /* East */
         retval->distance_x += MAP_WIDTH(map1);
-    else if (map1->tile_map[2] == map2) /* South */
+    else if (map1->tile_map[TILED_MAPS_SOUTH] == map2) /* South */
         retval->distance_y += MAP_HEIGHT(map1);
-    else if (map1->tile_map[3] == map2) /* West */
+    else if (map1->tile_map[TILED_MAPS_WEST] == map2) /* West */
         retval->distance_x -= MAP_WIDTH(map2);
-    else if (map1->tile_map[4] == map2) /* Northeast */
+    else if (map1->tile_map[TILED_MAPS_NORTHEAST] == map2) /* Northeast */
     {
         retval->distance_x += MAP_WIDTH(map1);
         retval->distance_y -= MAP_HEIGHT(map2);
     }
-    else if (map1->tile_map[5] == map2) /* Southeast */
+    else if (map1->tile_map[TILED_MAPS_SOUTHEAST] == map2) /* Southeast */
     {
         retval->distance_x += MAP_WIDTH(map1);
         retval->distance_y += MAP_HEIGHT(map1);
     }
-    else if (map1->tile_map[6] == map2) /* Southwest */
+    else if (map1->tile_map[TILED_MAPS_SOUTHWEST] == map2) /* Southwest */
     {
         retval->distance_x -= MAP_WIDTH(map2);
         retval->distance_y += MAP_HEIGHT(map1);
     }
-    else if (map1->tile_map[7] == map2) /* Northwest */
+    else if (map1->tile_map[TILED_MAPS_NORTHWEST] == map2) /* Northwest */
     {
         retval->distance_x -= MAP_WIDTH(map2);
         retval->distance_y -= MAP_HEIGHT(map2);
@@ -1350,14 +1350,14 @@ int on_same_map(object *op1, object *op2)
         return FALSE;
 
     if (op1->map == op2->map
-        || op1->map->tile_map[0] == op2->map
-        || op1->map->tile_map[1] == op2->map
-        || op1->map->tile_map[2] == op2->map
-        || op1->map->tile_map[3] == op2->map
-        || op1->map->tile_map[4] == op2->map
-        || op1->map->tile_map[5] == op2->map
-        || op1->map->tile_map[6] == op2->map
-        || op1->map->tile_map[7] == op2->map)
+        || op1->map->tile_map[TILED_MAPS_NORTH] == op2->map
+        || op1->map->tile_map[TILED_MAPS_EAST] == op2->map
+        || op1->map->tile_map[TILED_MAPS_SOUTH] == op2->map
+        || op1->map->tile_map[TILED_MAPS_WEST] == op2->map
+        || op1->map->tile_map[TILED_MAPS_NORTHEAST] == op2->map
+        || op1->map->tile_map[TILED_MAPS_SOUTHEAST] == op2->map
+        || op1->map->tile_map[TILED_MAPS_SOUTHWEST] == op2->map
+        || op1->map->tile_map[TILED_MAPS_NORTHWEST] == op2->map)
         return TRUE;
 
     return FALSE;
