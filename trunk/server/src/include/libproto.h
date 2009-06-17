@@ -166,10 +166,7 @@ extern int              check_path(const char *name, int prepend_dir);
 extern char            *normalize_path(const char *src, const char *dst, char *path);
 extern char            *normalize_path_direct(const char *src, const char *dst, char *path);
 extern mapstruct       *ready_inherited_map(mapstruct *orig_map, shstr *new_map_path, int flags);
-extern void             dump_map(mapstruct *m, player *pl);
-#if 0
-extern void             dump_all_maps(void);
-#endif
+extern void             dump_map(mapstruct *m, player *pl, int list, char *ref);
 extern mapstruct       *get_linked_map(void);
 extern void             allocate_map(mapstruct *m);
 extern mapstruct       *get_empty_map(int sizex, int sizey);
