@@ -344,8 +344,6 @@ int command_malloc(object *op, char *params)
 
 int command_mapinfo(object *op, char *params)
 {
-    long       sec = seconds();
-
     if (!op ||
         !CONTR(op) ||
         !op->map)
