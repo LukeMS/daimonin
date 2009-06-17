@@ -813,7 +813,7 @@ void check_light_source_list(mapstruct *map)
 
     /*LOG(-1,"CHECK ALL LS for map:>%s<\n", map->path);*/
 
-    if ((t_map = map->tile_map[0])
+    if ((t_map = map->tile_map[TILED_MAPS_NORTH])
      && (t_map->in_memory == MAP_IN_MEMORY || t_map->in_memory == MAP_LOADING)
      && t_map->first_light)
     {
@@ -842,7 +842,7 @@ void check_light_source_list(mapstruct *map)
         }
     }
 
-    if ((t_map = map->tile_map[1])
+    if ((t_map = map->tile_map[TILED_MAPS_EAST])
      && (t_map->in_memory == MAP_IN_MEMORY || t_map->in_memory == MAP_LOADING)
      && t_map->first_light)
     {
@@ -871,7 +871,7 @@ void check_light_source_list(mapstruct *map)
         }
     }
 
-    if ((t_map = map->tile_map[2])
+    if ((t_map = map->tile_map[TILED_MAPS_SOUTH])
      && (t_map->in_memory == MAP_IN_MEMORY || t_map->in_memory == MAP_LOADING)
      && t_map->first_light)
     {
@@ -900,7 +900,7 @@ void check_light_source_list(mapstruct *map)
         }
     }
 
-    if ((t_map = map->tile_map[3])
+    if ((t_map = map->tile_map[TILED_MAPS_WEST])
      && (t_map->in_memory == MAP_IN_MEMORY || t_map->in_memory == MAP_LOADING)
      && t_map->first_light)
     {
@@ -929,7 +929,7 @@ void check_light_source_list(mapstruct *map)
         }
     }
 
-    if ((t_map = map->tile_map[4])
+    if ((t_map = map->tile_map[TILED_MAPS_NORTHEAST])
      && (t_map->in_memory == MAP_IN_MEMORY || t_map->in_memory == MAP_LOADING)
      && t_map->first_light)
     {
@@ -958,7 +958,7 @@ void check_light_source_list(mapstruct *map)
         }
     }
 
-    if ((t_map = map->tile_map[5])
+    if ((t_map = map->tile_map[TILED_MAPS_SOUTHEAST])
      && (t_map->in_memory == MAP_IN_MEMORY || t_map->in_memory == MAP_LOADING)
      && t_map->first_light)
     {
@@ -987,7 +987,7 @@ void check_light_source_list(mapstruct *map)
         }
     }
 
-    if ((t_map = map->tile_map[6])
+    if ((t_map = map->tile_map[TILED_MAPS_SOUTHWEST])
      && (t_map->in_memory == MAP_IN_MEMORY || t_map->in_memory == MAP_LOADING)
      && t_map->first_light)
     {
@@ -1016,7 +1016,7 @@ void check_light_source_list(mapstruct *map)
         }
     }
 
-    if ((t_map = map->tile_map[7])
+    if ((t_map = map->tile_map[TILED_MAPS_NORTHWEST])
      && (t_map->in_memory == MAP_IN_MEMORY || t_map->in_memory == MAP_LOADING)
      && t_map->first_light)
     {

@@ -154,77 +154,77 @@ void new_info_map(const int color, const mapstruct *const map, const int x, cons
         }
     }
 
-    if (map->tile_map[0] && map->tile_map[0]->in_memory == MAP_IN_MEMORY && map->tile_map[0]->player_first)
+    if (map->tile_map[TILED_MAPS_NORTH] && map->tile_map[TILED_MAPS_NORTH]->in_memory == MAP_IN_MEMORY && map->tile_map[TILED_MAPS_NORTH]->player_first)
     {
-        yt = y + MAP_HEIGHT(map->tile_map[0]);
-        for (tmp = map->tile_map[0]->player_first; tmp; tmp = CONTR(tmp)->map_above)
+        yt = y + MAP_HEIGHT(map->tile_map[TILED_MAPS_NORTH]);
+        for (tmp = map->tile_map[TILED_MAPS_NORTH]->player_first; tmp; tmp = CONTR(tmp)->map_above)
         {
             if ((POW2(tmp->x - x) + POW2(tmp->y - yt)) <= d)
                 new_draw_info(color, 0, tmp, str);
         }
     }
-    if (map->tile_map[1] && map->tile_map[1]->in_memory == MAP_IN_MEMORY && map->tile_map[1]->player_first)
+    if (map->tile_map[TILED_MAPS_EAST] && map->tile_map[TILED_MAPS_EAST]->in_memory == MAP_IN_MEMORY && map->tile_map[TILED_MAPS_EAST]->player_first)
     {
         xt = x - MAP_WIDTH(map);
-        for (tmp = map->tile_map[1]->player_first; tmp; tmp = CONTR(tmp)->map_above)
+        for (tmp = map->tile_map[TILED_MAPS_EAST]->player_first; tmp; tmp = CONTR(tmp)->map_above)
         {
             if ((POW2(tmp->x - xt) + POW2(tmp->y - y)) <= d)
                 new_draw_info(color, 0, tmp, str);
         }
     }
-    if (map->tile_map[2] && map->tile_map[2]->in_memory == MAP_IN_MEMORY && map->tile_map[2]->player_first)
+    if (map->tile_map[TILED_MAPS_SOUTH] && map->tile_map[TILED_MAPS_SOUTH]->in_memory == MAP_IN_MEMORY && map->tile_map[TILED_MAPS_SOUTH]->player_first)
     {
         yt = y - MAP_HEIGHT(map);
-        for (tmp = map->tile_map[2]->player_first; tmp; tmp = CONTR(tmp)->map_above)
+        for (tmp = map->tile_map[TILED_MAPS_SOUTH]->player_first; tmp; tmp = CONTR(tmp)->map_above)
         {
             if ((POW2(tmp->x - x) + POW2(tmp->y - yt)) <= d)
                 new_draw_info(color, 0, tmp, str);
         }
     }
-    if (map->tile_map[3] && map->tile_map[3]->in_memory == MAP_IN_MEMORY && map->tile_map[3]->player_first)
+    if (map->tile_map[TILED_MAPS_WEST] && map->tile_map[TILED_MAPS_WEST]->in_memory == MAP_IN_MEMORY && map->tile_map[TILED_MAPS_WEST]->player_first)
     {
-        xt = x + MAP_WIDTH(map->tile_map[3]);
-        for (tmp = map->tile_map[3]->player_first; tmp; tmp = CONTR(tmp)->map_above)
+        xt = x + MAP_WIDTH(map->tile_map[TILED_MAPS_WEST]);
+        for (tmp = map->tile_map[TILED_MAPS_WEST]->player_first; tmp; tmp = CONTR(tmp)->map_above)
         {
             if ((POW2(tmp->x - xt) + POW2(tmp->y - y)) <= d)
                 new_draw_info(color, 0, tmp, str);
         }
     }
-    if (map->tile_map[4] && map->tile_map[4]->in_memory == MAP_IN_MEMORY && map->tile_map[4]->player_first)
+    if (map->tile_map[TILED_MAPS_NORTHEAST] && map->tile_map[TILED_MAPS_NORTHEAST]->in_memory == MAP_IN_MEMORY && map->tile_map[TILED_MAPS_NORTHEAST]->player_first)
     {
-        yt = y + MAP_HEIGHT(map->tile_map[4]);
+        yt = y + MAP_HEIGHT(map->tile_map[TILED_MAPS_NORTHEAST]);
         xt = x - MAP_WIDTH(map);
-        for (tmp = map->tile_map[4]->player_first; tmp; tmp = CONTR(tmp)->map_above)
+        for (tmp = map->tile_map[TILED_MAPS_NORTHEAST]->player_first; tmp; tmp = CONTR(tmp)->map_above)
         {
             if ((POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
                 new_draw_info(color, 0, tmp, str);
         }
     }
-    if (map->tile_map[5] && map->tile_map[5]->in_memory == MAP_IN_MEMORY && map->tile_map[5]->player_first)
+    if (map->tile_map[TILED_MAPS_SOUTHEAST] && map->tile_map[TILED_MAPS_SOUTHEAST]->in_memory == MAP_IN_MEMORY && map->tile_map[TILED_MAPS_SOUTHEAST]->player_first)
     {
         xt = x - MAP_WIDTH(map);
         yt = y - MAP_HEIGHT(map);
-        for (tmp = map->tile_map[5]->player_first; tmp; tmp = CONTR(tmp)->map_above)
+        for (tmp = map->tile_map[TILED_MAPS_SOUTHEAST]->player_first; tmp; tmp = CONTR(tmp)->map_above)
         {
             if ((POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
                 new_draw_info(color, 0, tmp, str);
         }
     }
-    if (map->tile_map[6] && map->tile_map[6]->in_memory == MAP_IN_MEMORY && map->tile_map[6]->player_first)
+    if (map->tile_map[TILED_MAPS_SOUTHWEST] && map->tile_map[TILED_MAPS_SOUTHWEST]->in_memory == MAP_IN_MEMORY && map->tile_map[TILED_MAPS_SOUTHWEST]->player_first)
     {
-        xt = x + MAP_WIDTH(map->tile_map[6]);
+        xt = x + MAP_WIDTH(map->tile_map[TILED_MAPS_SOUTHWEST]);
         yt = y - MAP_HEIGHT(map);
-        for (tmp = map->tile_map[6]->player_first; tmp; tmp = CONTR(tmp)->map_above)
+        for (tmp = map->tile_map[TILED_MAPS_SOUTHWEST]->player_first; tmp; tmp = CONTR(tmp)->map_above)
         {
             if ((POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
                 new_draw_info(color, 0, tmp, str);
         }
     }
-    if (map->tile_map[7] && map->tile_map[7]->in_memory == MAP_IN_MEMORY && map->tile_map[7]->player_first)
+    if (map->tile_map[TILED_MAPS_NORTHWEST] && map->tile_map[TILED_MAPS_NORTHWEST]->in_memory == MAP_IN_MEMORY && map->tile_map[TILED_MAPS_NORTHWEST]->player_first)
     {
-        xt = x + MAP_WIDTH(map->tile_map[7]);
-        yt = y + MAP_HEIGHT(map->tile_map[7]);
-        for (tmp = map->tile_map[7]->player_first; tmp; tmp = CONTR(tmp)->map_above)
+        xt = x + MAP_WIDTH(map->tile_map[TILED_MAPS_NORTHWEST]);
+        yt = y + MAP_HEIGHT(map->tile_map[TILED_MAPS_NORTHWEST]);
+        for (tmp = map->tile_map[TILED_MAPS_NORTHWEST]->player_first; tmp; tmp = CONTR(tmp)->map_above)
         {
             if ((POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
                 new_draw_info(color, 0, tmp, str);
@@ -261,77 +261,77 @@ void new_info_map_except(const int color, const mapstruct *const map, const int 
         }
     }
 
-    if (map->tile_map[0] && map->tile_map[0]->in_memory == MAP_IN_MEMORY && map->tile_map[0]->player_first)
+    if (map->tile_map[TILED_MAPS_NORTH] && map->tile_map[TILED_MAPS_NORTH]->in_memory == MAP_IN_MEMORY && map->tile_map[TILED_MAPS_NORTH]->player_first)
     {
-        yt = y + MAP_HEIGHT(map->tile_map[0]);
-        for (tmp = map->tile_map[0]->player_first; tmp; tmp = CONTR(tmp)->map_above)
+        yt = y + MAP_HEIGHT(map->tile_map[TILED_MAPS_NORTH]);
+        for (tmp = map->tile_map[TILED_MAPS_NORTH]->player_first; tmp; tmp = CONTR(tmp)->map_above)
         {
             if (tmp != op && tmp != op1 && (POW2(tmp->x - x) + POW2(tmp->y - yt)) <= d)
                 new_draw_info(color, 0, tmp, str);
         }
     }
-    if (map->tile_map[1] && map->tile_map[1]->in_memory == MAP_IN_MEMORY && map->tile_map[1]->player_first)
+    if (map->tile_map[TILED_MAPS_EAST] && map->tile_map[TILED_MAPS_EAST]->in_memory == MAP_IN_MEMORY && map->tile_map[TILED_MAPS_EAST]->player_first)
     {
         xt = x - MAP_WIDTH(map);
-        for (tmp = map->tile_map[1]->player_first; tmp; tmp = CONTR(tmp)->map_above)
+        for (tmp = map->tile_map[TILED_MAPS_EAST]->player_first; tmp; tmp = CONTR(tmp)->map_above)
         {
             if (tmp != op && tmp != op1 && (POW2(tmp->x - xt) + POW2(tmp->y - y)) <= d)
                 new_draw_info(color, 0, tmp, str);
         }
     }
-    if (map->tile_map[2] && map->tile_map[2]->in_memory == MAP_IN_MEMORY && map->tile_map[2]->player_first)
+    if (map->tile_map[TILED_MAPS_SOUTH] && map->tile_map[TILED_MAPS_SOUTH]->in_memory == MAP_IN_MEMORY && map->tile_map[TILED_MAPS_SOUTH]->player_first)
     {
         yt = y - MAP_HEIGHT(map);
-        for (tmp = map->tile_map[2]->player_first; tmp; tmp = CONTR(tmp)->map_above)
+        for (tmp = map->tile_map[TILED_MAPS_SOUTH]->player_first; tmp; tmp = CONTR(tmp)->map_above)
         {
             if (tmp != op && tmp != op1 && (POW2(tmp->x - x) + POW2(tmp->y - yt)) <= d)
                 new_draw_info(color, 0, tmp, str);
         }
     }
-    if (map->tile_map[3] && map->tile_map[3]->in_memory == MAP_IN_MEMORY && map->tile_map[3]->player_first)
+    if (map->tile_map[TILED_MAPS_WEST] && map->tile_map[TILED_MAPS_WEST]->in_memory == MAP_IN_MEMORY && map->tile_map[TILED_MAPS_WEST]->player_first)
     {
-        xt = x + MAP_WIDTH(map->tile_map[3]);
-        for (tmp = map->tile_map[3]->player_first; tmp; tmp = CONTR(tmp)->map_above)
+        xt = x + MAP_WIDTH(map->tile_map[TILED_MAPS_WEST]);
+        for (tmp = map->tile_map[TILED_MAPS_WEST]->player_first; tmp; tmp = CONTR(tmp)->map_above)
         {
             if (tmp != op && tmp != op1 && (POW2(tmp->x - xt) + POW2(tmp->y - y)) <= d)
                 new_draw_info(color, 0, tmp, str);
         }
     }
-    if (map->tile_map[4] && map->tile_map[4]->in_memory == MAP_IN_MEMORY && map->tile_map[4]->player_first)
+    if (map->tile_map[TILED_MAPS_NORTHEAST] && map->tile_map[TILED_MAPS_NORTHEAST]->in_memory == MAP_IN_MEMORY && map->tile_map[TILED_MAPS_NORTHEAST]->player_first)
     {
-        yt = y + MAP_HEIGHT(map->tile_map[4]);
+        yt = y + MAP_HEIGHT(map->tile_map[TILED_MAPS_NORTHEAST]);
         xt = x - MAP_WIDTH(map);
-        for (tmp = map->tile_map[4]->player_first; tmp; tmp = CONTR(tmp)->map_above)
+        for (tmp = map->tile_map[TILED_MAPS_NORTHEAST]->player_first; tmp; tmp = CONTR(tmp)->map_above)
         {
             if (tmp != op && tmp != op1 && (POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
                 new_draw_info(color, 0, tmp, str);
         }
     }
-    if (map->tile_map[5] && map->tile_map[5]->in_memory == MAP_IN_MEMORY && map->tile_map[5]->player_first)
+    if (map->tile_map[TILED_MAPS_SOUTHEAST] && map->tile_map[TILED_MAPS_SOUTHEAST]->in_memory == MAP_IN_MEMORY && map->tile_map[TILED_MAPS_SOUTHEAST]->player_first)
     {
         xt = x - MAP_WIDTH(map);
         yt = y - MAP_HEIGHT(map);
-        for (tmp = map->tile_map[5]->player_first; tmp; tmp = CONTR(tmp)->map_above)
+        for (tmp = map->tile_map[TILED_MAPS_SOUTHEAST]->player_first; tmp; tmp = CONTR(tmp)->map_above)
         {
             if (tmp != op && tmp != op1 && (POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
                 new_draw_info(color, 0, tmp, str);
         }
     }
-    if (map->tile_map[6] && map->tile_map[6]->in_memory == MAP_IN_MEMORY && map->tile_map[6]->player_first)
+    if (map->tile_map[TILED_MAPS_SOUTHWEST] && map->tile_map[TILED_MAPS_SOUTHWEST]->in_memory == MAP_IN_MEMORY && map->tile_map[TILED_MAPS_SOUTHWEST]->player_first)
     {
-        xt = x + MAP_WIDTH(map->tile_map[6]);
+        xt = x + MAP_WIDTH(map->tile_map[TILED_MAPS_SOUTHWEST]);
         yt = y - MAP_HEIGHT(map);
-        for (tmp = map->tile_map[6]->player_first; tmp; tmp = CONTR(tmp)->map_above)
+        for (tmp = map->tile_map[TILED_MAPS_SOUTHWEST]->player_first; tmp; tmp = CONTR(tmp)->map_above)
         {
             if (tmp != op && tmp != op1 && (POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
                 new_draw_info(color, 0, tmp, str);
         }
     }
-    if (map->tile_map[7] && map->tile_map[7]->in_memory == MAP_IN_MEMORY && map->tile_map[7]->player_first)
+    if (map->tile_map[TILED_MAPS_NORTHWEST] && map->tile_map[TILED_MAPS_NORTHWEST]->in_memory == MAP_IN_MEMORY && map->tile_map[TILED_MAPS_NORTHWEST]->player_first)
     {
-        xt = x + MAP_WIDTH(map->tile_map[7]);
-        yt = y + MAP_HEIGHT(map->tile_map[7]);
-        for (tmp = map->tile_map[7]->player_first; tmp; tmp = CONTR(tmp)->map_above)
+        xt = x + MAP_WIDTH(map->tile_map[TILED_MAPS_NORTHWEST]);
+        yt = y + MAP_HEIGHT(map->tile_map[TILED_MAPS_NORTHWEST]);
+        for (tmp = map->tile_map[TILED_MAPS_NORTHWEST]->player_first; tmp; tmp = CONTR(tmp)->map_above)
         {
             if (tmp != op && tmp != op1 && (POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
                 new_draw_info(color, 0, tmp, str);
