@@ -257,12 +257,26 @@ void free_gmaster_list()
  */
 void set_gmaster_mode(player *pl, int mode)
 {
+#ifdef USE_CHANNELS
+    struct channels        *channel;
+    extern struct channels *channel_list_start;
+#endif
     /* remove first the old mode if there is one */
     if(pl->gmaster_mode != GMASTER_MODE_NO)
         remove_gmaster_mode(pl);
 
     pl->gmaster_mode = mode;
     pl->gmaster_node = add_gmaster_list(pl); /* link player to list of gmasters */
+
+#ifdef USE_CHANNELS
+    /* Add player to appropriate gmaster channels. */
+    for (channel = channel_list_start; channel; channel = channel->next)
+    {
+        if (channel->gmaster_mode != GMASTER_MODE_NO &&
+            check_channel_gmaster(channel->gmaster_mode, mode))
+            addPlayerToChannel(pl, channel->name, NULL);
+    }
+#endif
 
 #ifdef _TESTSERVER
     if (mode == GMASTER_MODE_MW || mode == GMASTER_MODE_MM)
@@ -323,13 +337,27 @@ void set_gmaster_mode(player *pl, int mode)
  */
 void remove_gmaster_mode(player *pl)
 {
-    int mode = pl->gmaster_mode;
+    int                     mode;
+#ifdef USE_CHANNELS
+    struct player_channel  *pl_channel;
+#endif
+
+    mode = pl->gmaster_mode;
 
     new_draw_info_format(NDI_UNIQUE, 0, pl->ob, "%s mode deactivated.",
         (mode == GMASTER_MODE_MM) ? "MM" : ((mode == GMASTER_MODE_GM) ? "GM" : ((mode == GMASTER_MODE_VOL) ? "VOL" : "MW")));
 
     remove_gmaster_list(pl);
     pl->gmaster_mode = GMASTER_MODE_NO;
+
+#ifdef USE_CHANNELS
+    /* Remove player from all gmaster channels. */
+    for (pl_channel = pl->channels; pl_channel; pl_channel = pl_channel->next_channel)
+    {
+        if (pl_channel->channel->gmaster_mode != GMASTER_MODE_NO)
+            removeChannelFromPlayer(pl, pl_channel);
+    }
+#endif
 
 #ifdef _TESTSERVER
     if (mode == GMASTER_MODE_MW || mode == GMASTER_MODE_MM)

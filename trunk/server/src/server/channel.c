@@ -27,6 +27,46 @@
 
 struct channels *channel_list_start = NULL;
 
+/* Returns TRUE if p has sufficient gmaster_mode to access c, FALSE if not. */
+int check_channel_gmaster(int c, int p)
+{
+    switch (c)
+    {
+        /* Only MMs can access an MM channel. */
+        case GMASTER_MODE_MM:
+            if (p == GMASTER_MODE_MM)
+                return TRUE;
+
+            return FALSE;
+
+        /* VOLs, GMs, MWs, and MMs can access a MW channel. */
+        case GMASTER_MODE_MW:
+            if (p != GMASTER_MODE_NO)
+                return TRUE;
+
+            return FALSE;
+
+        /* GMs and MMs can access a GM channel. */
+        case GMASTER_MODE_GM:
+            if  (p == GMASTER_MODE_MM ||
+                 p == GMASTER_MODE_GM)
+                return TRUE;
+
+            return FALSE;
+
+        /* VOLs, GMs, and MMs can acess a VOL channel. */
+        case GMASTER_MODE_VOL:
+            if (p != GMASTER_MODE_NO &&
+                p != GMASTER_MODE_MW)
+                return TRUE;
+
+            return FALSE;
+
+        /* This channel is not gmaster restricted. */
+        default:
+            return TRUE;
+    }
+}
 
 /** The Main Function
  */
@@ -91,16 +131,19 @@ int command_channel(object *ob, char *params)
             new_draw_info_format(NDI_UNIQUE, 0, ob, "These channels exists: ");
             for (channel=channel_list_start;channel;channel=channel->next)
             {
-                /* we don't diplsay channels we can't get on, >=VOL see always all channels, even if there lvl is to low*/
-                if (CONTR(ob)->gmaster_mode < GMASTER_MODE_VOL &&
-                   ((channel->enter_lvl==-1
+                /* We don't display channels we can't get on.
+                 * This may be by level restriction ot gmaster_mode.
+                 * VOLs, GMs, and MMs are not subject to level restrictions. */
+                if (!check_channel_gmaster(channel->gmaster_mode,
+                                       CONTR(ob)->gmaster_mode) ||
 /* Method stub for later to implement clan system
  * This function should return TRUE if the player is in that clan.
  * channel->clan will be some sort of pointer to the clan info...
  */
-//                    && !is_player_in_clan(channel->clan)
-
-                   ) || ob->level<channel->enter_lvl))
+//                  !is_player_in_clan(channel->clan) ||
+                    ((CONTR(ob)->gmaster_mode == GMASTER_MODE_NO ||
+                      CONTR(ob)->gmaster_mode == GMASTER_MODE_MW) &&
+                     ob->level < channel->enter_lvl))
                         continue;
                 if((pl_channel=findPlayerChannelFromName(CONTR(ob),CONTR(ob), channel->name, TRUE)))
                     new_draw_info_format(NDI_UNIQUE|channel->color, 0, ob, "*(%d) [%c] %s", channel->pl_count, pl_channel->shortcut, channel->name);
@@ -163,9 +206,10 @@ int command_channel(object *ob, char *params)
         {
             return 1;
         }
-        /* Check for lvl-post restrictions. Gmasters can always post. */
+        /* Check for lvl-post restrictions. VOLs, GMs, and MMs can always post. */
         if (ob->level<pl_channel->channel->post_lvl &&
-            CONTR(ob)->gmaster_mode == GMASTER_MODE_NO)
+            (CONTR(ob)->gmaster_mode == GMASTER_MODE_NO ||
+             CONTR(ob)->gmaster_mode == GMASTER_MODE_MW))
         {
             new_draw_info_format(NDI_UNIQUE, 0, ob, "You need at least level %d to post on this channel.",pl_channel->channel->post_lvl);
             return 0;
@@ -180,7 +224,10 @@ int command_channel(object *ob, char *params)
         {
             return 1;
         }
-        if (ob->level<pl_channel->channel->post_lvl && CONTR(ob)->gmaster_mode < GMASTER_MODE_VOL)
+        /* Check for lvl-post restrictions. VOLs, GMs, and MMs can always post. */
+        if (ob->level<pl_channel->channel->post_lvl &&
+            (CONTR(ob)->gmaster_mode == GMASTER_MODE_NO ||
+             CONTR(ob)->gmaster_mode == GMASTER_MODE_MW))
         {
             new_draw_info_format(NDI_UNIQUE, 0, ob, "You need at least level %d to post on this channel.",pl_channel->channel->post_lvl);
             return 0;
@@ -347,15 +394,18 @@ struct channels *findGlobalChannelFromName(player *pl, char *name, int mute)
     c=channel_list_start;
     while (c)
     {
-        if (pl->gmaster_mode < GMASTER_MODE_VOL &&
-            ((c->enter_lvl==-1
+                /* We don't display channels we can't get on.
+                 * This may be by level restriction ot gmaster_mode.
+                 * VOLs, GMs, and MMs are not subject to level restrictions. */
+                if (!check_channel_gmaster(c->gmaster_mode, pl->gmaster_mode) ||
 /* Method stub for later to implement clan system
  * This function should return TRUE if the player is in that clan.
  * channel->clan will be some sort of pointer to the clan info...
  */
-//           && !is_player_in_clan(c->clan)
-
-            ) || pl->ob->level<c->enter_lvl))
+//                  !is_player_in_clan(c->clan) ||
+                    ((pl->gmaster_mode == GMASTER_MODE_NO ||
+                      pl->gmaster_mode == GMASTER_MODE_MW) &&
+                     pl->ob->level < c->enter_lvl))
            {
                 c=c->next;
                 continue;
@@ -374,15 +424,18 @@ struct channels *findGlobalChannelFromName(player *pl, char *name, int mute)
     }
     for (tmp=c->next;tmp;tmp=tmp->next)
     {
-        if (pl->gmaster_mode < GMASTER_MODE_VOL &&
-            ((tmp->enter_lvl==-1
+                /* We don't display channels we can't get on.
+                 * This may be by level restriction ot gmaster_mode.
+                 * VOLs, GMs, and MMs are not subject to level restrictions. */
+                if (!check_channel_gmaster(tmp->gmaster_mode, pl->gmaster_mode) ||
 /* Method stub for later to implement clan system
  * This function should return TRUE if the player is in that clan.
  * channel->clan will be some sort of pointer to the clan info...
  */
-//             && !is_player_in_clan(tmp->clan)
-
-             ) || pl->ob->level<tmp->enter_lvl))
+//                  !is_player_in_clan(tmp->clan) ||
+                    ((pl->gmaster_mode == GMASTER_MODE_NO ||
+                      pl->gmaster_mode == GMASTER_MODE_MW) &&
+                     pl->ob->level < tmp->enter_lvl))
                 continue;
         if (!strncasecmp(tmp->name, name, strlen(name)))
         {
@@ -437,15 +490,19 @@ struct channels *getChannelFromGlobalShortcut(player *pl, char *name)
 
     for (channel=channel_list_start;channel;channel=channel->next)
     {
-        if (pl->gmaster_mode < GMASTER_MODE_VOL &&
-            ((channel->enter_lvl==-1
+                /* We don't display channels we can't get on.
+                 * This may be by level restriction ot gmaster_mode.
+                 * VOLs, GMs, and MMs are not subject to level restrictions. */
+                if (!check_channel_gmaster(channel->gmaster_mode,
+                                       pl->gmaster_mode) ||
 /* Method stub for later to implement clan system
  * This function should return TRUE if the player is in that clan.
  * channel->clan will be some sort of pointer to the clan info...
  */
-//           && !is_player_in_clan(channel->clan)
-
-            ) || pl->ob->level<channel->enter_lvl))
+//                  !is_player_in_clan(channel->clan) ||
+                    ((pl->gmaster_mode == GMASTER_MODE_NO ||
+                      pl->gmaster_mode == GMASTER_MODE_MW) &&
+                     pl->ob->level < channel->enter_lvl))
                 continue;/* restricted channel */
         if(channel->shortcut==name[0])
             return channel;
@@ -764,6 +821,11 @@ void loginAddPlayerToChannel(player *pl, char *channelname, char shortcut, unsig
      struct channels *channel;
      struct player_channel *cpl;
 
+     /* Don't add the gmaster channels at login. */
+     if ((channel = findGlobalChannelFromName(pl, channelname, (int)mute)) &&
+         channel->gmaster_mode != GMASTER_MODE_NO)
+         return;
+
      for (channel=channel_list_start;channel;channel=channel->next)
      {
          if (!strcasecmp(channel->name,channelname))
@@ -788,18 +850,22 @@ void load_channels()
     char    channelname[MAX_CHANNEL_NAME];
     int     channelcolor=-1;
     int     channelenterlevel=1, channelpostlevel=1;
+    int     channelgmastermode=GMASTER_MODE_NO;
     char    defaultshortcut='#';
 
     LOG(llevInfo,"loading channel_file....\n");
     sprintf(buf, "%s/channel_file", settings.localdir);
     if ((channelfile = fopen(buf, "r")) == NULL)
     {
-        LOG(llevDebug, "Could not find channel_file file Using default channels.\n");
-        final_addChannel("Auction",'a',2,2,1);
-        final_addChannel("Quest",'q',5,2,1);
-        final_addChannel("General",'g',-1,2,1);
-        final_addChannel("Help",'h',4,1,1);
-        final_addChannel("VOL",'V',3,1,-1);
+        LOG(llevDebug, "Could not find channel_file. Using default channels.\n");
+        final_addChannel("Auction",'a',2,2,1,GMASTER_MODE_NO);
+        final_addChannel("Quest",'q',5,2,1,GMASTER_MODE_NO);
+        final_addChannel("General",'g',-1,2,1,GMASTER_MODE_NO);
+        final_addChannel("Help",'h',4,1,1,GMASTER_MODE_NO);
+        final_addChannel("VOL",'V',3,1,1,GMASTER_MODE_VOL);
+        final_addChannel("GM",'G',3,1,1,GMASTER_MODE_GM);
+        final_addChannel("MW",'W',3,1,1,GMASTER_MODE_MW);
+        final_addChannel("MM",'M',3,1,1,GMASTER_MODE_MM);
         return;
     }
     while (fgets(line_buf, 160, channelfile) != NULL)
@@ -807,10 +873,15 @@ void load_channels()
         if (line_buf[0] == '#')
             continue;
 
-        if (sscanf(line_buf, "%s %c %d %d %d", channelname, &defaultshortcut, &channelcolor, &channelpostlevel, &channelenterlevel) < 5)
+        if (sscanf(line_buf, "%s %c %d %d %d %d",
+                   channelname, &defaultshortcut, &channelcolor,
+                   &channelpostlevel, &channelenterlevel,
+                   &channelgmastermode) < 6)
             LOG(llevBug, "BUG: malformed channelfile file entry: %s\n", line_buf);
         else
-            final_addChannel(channelname,defaultshortcut,channelcolor, channelpostlevel, channelenterlevel);
+            final_addChannel(channelname, defaultshortcut, channelcolor,
+                             channelpostlevel, channelenterlevel,
+                             channelgmastermode);
     }
 
     fclose(channelfile);
@@ -822,9 +893,10 @@ void load_channels()
  * @param name Name of channel
  * @param chortcut Defaultshortcut of channel/ '#' means no shortcut!
  * @param color default color for that channel / -1 default shout color (orange)
- * @param enter_lvl level for entering (-1 is VOL)
+ * @param enter_lvl level for entering
+ * @param gmaster_mode gmaster_mode of channel (see check_channel_gmaster())
  */
-struct channels *final_addChannel(char *name, char shortcut, int color, sint8 post_lvl, sint8 enter_lvl)
+struct channels *final_addChannel(char *name, char shortcut, int color, sint8 post_lvl, sint8 enter_lvl, int gmaster_mode)
 {
 
     struct channels *node;
@@ -847,6 +919,7 @@ struct channels *final_addChannel(char *name, char shortcut, int color, sint8 po
     node->pl_count=0;
     node->post_lvl = post_lvl;
     node->enter_lvl = enter_lvl;
+    node->gmaster_mode = gmaster_mode;
     /* First Element of List? */
     if(channel_list_start==NULL)
     {
@@ -972,11 +1045,11 @@ void save_channels(void)
     }
     fprintf(fp, "# CHANNEL_FILE (file is changed from server at runtime)\n");
     fprintf(fp, "# Take care when editing this file by hand:\n");
-    fprintf(fp, "# entry format is:\n# <channelname> <defaultshortcut> <defaultcolor> <postlevel> <enterlevel>\n");
+    fprintf(fp, "# entry format is:\n# <channelname> <defaultshortcut> <defaultcolor> <postlevel> <enterlevel> <gmastermode>\n");
 
     for (channel=channel_list_start;channel;channel=channel->next)
     {
-        fprintf(fp,"%s %c %d %d %d\n",channel->name,channel->shortcut, channel->color,channel->post_lvl,channel->enter_lvl);
+        fprintf(fp,"%s %c %d %d %d %d\n",channel->name,channel->shortcut, channel->color,channel->post_lvl,channel->enter_lvl,channel->gmaster_mode);
     }
 
     fclose(fp);
@@ -987,6 +1060,7 @@ int command_channel_create(object *ob, char *params)
     char    channelname[MAX_CHANNEL_NAME];
     int     channelcolor=-1;
     int     channelenterlevel=1, channelpostlevel=1;
+    int     channelgmastermode=GMASTER_MODE_NO;
     char    defaultshortcut='#';
     struct channels *channel;
 
@@ -994,15 +1068,15 @@ int command_channel_create(object *ob, char *params)
         return 0;
     if (!params)
     {
-        new_draw_info_format(NDI_UNIQUE, 0, ob, "Syntax: /createchannel <name> <defaultshortcut> <defaultcolor> <postlevel> <enterlevel>");
+        new_draw_info_format(NDI_UNIQUE, 0, ob, "Syntax: /createchannel <name> <defaultshortcut> <defaultcolor> <postlevel> <enterlevel> <gmastermode>");
         new_draw_info_format(NDI_UNIQUE, 0, ob, "set defaultshortcut to '#' for no defaultshortcut");
         new_draw_info_format(NDI_UNIQUE, 0, ob, "set defaultcolor to '-1' for no defaultcolor");
         return 1;
     }
 
-    if (sscanf(params, "%s %c %d %d %d", channelname, &defaultshortcut, &channelcolor, &channelpostlevel, &channelenterlevel) < 5)
+    if (sscanf(params, "%s %c %d %d %d %d", channelname, &defaultshortcut, &channelcolor, &channelpostlevel, &channelenterlevel, &channelgmastermode) < 6)
     {
-        new_draw_info_format(NDI_UNIQUE, 0, ob, "Syntax: /createchannel <name> <defaultshortcut> <defaultcolor> <postlevel> <enterlevel>");
+        new_draw_info_format(NDI_UNIQUE, 0, ob, "Syntax: /createchannel <name> <defaultshortcut> <defaultcolor> <postlevel> <enterlevel> <gmastermode>");
         new_draw_info_format(NDI_UNIQUE, 0, ob, "set defaultshortcut to '#' for no defaultshortcut");
         new_draw_info_format(NDI_UNIQUE, 0, ob, "set defaultcolor to '-1' for no defaultcolor");
         return 1;
@@ -1033,9 +1107,9 @@ int command_channel_create(object *ob, char *params)
                 return 1;
             }
         }
-        final_addChannel(channelname,defaultshortcut,channelcolor, channelpostlevel, channelenterlevel);
+        final_addChannel(channelname,defaultshortcut,channelcolor, channelpostlevel, channelenterlevel, channelgmastermode);
         new_draw_info_format(NDI_UNIQUE, 0, ob, "Channel %s is created.",channelname);
-        LOG(llevInfo, "CLOG Create:>%s<: %s, %d, %d\n", ob->name, channelname, channelpostlevel, channelenterlevel);
+        LOG(llevInfo, "CLOG Create:>%s<: %s, %d, %d\n", ob->name, channelname, channelpostlevel, channelenterlevel, channelgmastermode);
         save_channels();
     }
 
