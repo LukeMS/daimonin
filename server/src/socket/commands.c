@@ -75,10 +75,10 @@ CommArray_s Commands[] =
     {"shout",         command_shout,          1.0f, 0},
     {"tell",          command_tell,           1.0f, 0},
     {"talk",          command_talk,           1.0f, 1},
-    {"who",           command_who,            5.0f, 0},
-    {"qlist",         command_questlist,      5.0f, 0},
-    {"mapinfo",       command_mapinfo,        5.0f, 1},
-    {"motd",          command_motd,           5.0f, 0},
+    {"who",           command_who,            0.0f, 0},
+    {"qlist",         command_questlist,      0.0f, 0},
+    {"mapinfo",       command_mapinfo,        0.0f, 1},
+    {"motd",          command_motd,           0.0f, 0},
 #if 0
 /* it seems pl->usekeys is unused -- a CF holdover? To find a key we call
  * time.c/find_key().
@@ -89,9 +89,9 @@ CommArray_s Commands[] =
 /* This will be moved to a help category (/help version) and thus eventually
  * handled client-side.
  * -- Smacky 20090613 */
-    {"version",       command_version,        1.0f, 0},
-    {"help",          command_help,           1.0f, 0},
-    {"save",          command_save,           1.0f, 1},
+    {"version",       command_version,        0.0f, 0},
+    {"help",          command_help,           0.0f, 0},
+    {"save",          command_save,           0.0f, 1},
     {"use_skill",     command_uskill,         0.1f, 1},
     {"ready_skill",   command_rskill,         0.1f, 1},
     {"silent_login",  command_silent_login,   0.0f, 1},
@@ -103,17 +103,17 @@ CommArray_s Commands[] =
     {"remove",        command_party_remove,   4.0f, 1},
 #ifdef USE_CHANNELS
     {"channel",       command_channel,        1.0f, 0}, /* channel system */
-    {"createchannel", command_channel_create, 1.0f, 1}, /* channel system */
-    {"deletechannel", command_channel_delete, 1.0f, 1}, /* channel system */
-    {"channelmute",   command_channel_mute,   1.0f, 1}, /* channel system */
+    {"createchannel", command_channel_create, 0.0f, 1}, /* channel system */
+    {"deletechannel", command_channel_delete, 0.0f, 1}, /* channel system */
+    {"channelmute",   command_channel_mute,   0.0f, 1}, /* channel system */
 #endif
 #ifdef _TESTSERVER
     {"stuck",         command_stuck,          0.0f, 1},
 #endif
-    {"mm",            command_mm,             1.0f, 1},
-    {"gm",            command_gm,             1.0f, 1},
-    {"vol",           command_vol,            1.0f, 1},
-    {"mw",            command_mw,             1.0f, 1},
+    {"mm",            command_mm,             0.0f, 1},
+    {"gm",            command_gm,             0.0f, 1},
+    {"vol",           command_vol,            0.0f, 1},
+    {"mw",            command_mw,             0.0f, 1},
 };
 
 CommArray_s EmoteCommands[] =
@@ -177,20 +177,20 @@ CommArray_s EmoteCommands[] =
 
 CommArray_s CommandsVOL[] =
 {
-    {"mutelevel", command_mutelevel, 1.0f, 1},
-    {"dm_list",   command_dm_list,   1.0f, 1},
+    {"mutelevel", command_mutelevel, 0.0f, 1},
+    {"dm_list",   command_dm_list,   0.0f, 1},
     {"kick",      command_kick,      0.0f, 1},
-    {"mute",      command_mute,      1.0f, 1},
+    {"mute",      command_mute,      0.0f, 1},
     {"ip",        command_ip,        0.0f, 1},
 };
 
 CommArray_s CommandsGM[] =
 {
-    {"dm_connections", command_dm_connections, 1.0f, 1},
+    {"dm_connections", command_dm_connections, 0.0f, 1},
     {"generate",       command_generate,       0.0f, 1},
-    {"inventory",      command_inventory,      1.0f, 1},
-    {"summon",         command_summon,         1.0f, 1},
-    {"teleport",       command_teleport,       1.0f, 1},
+    {"inventory",      command_inventory,      0.0f, 1},
+    {"summon",         command_summon,         0.0f, 1},
+    {"teleport",       command_teleport,       0.0f, 1},
     {"ban",            command_ban,            0.0f, 1},
     {"silence",        command_silence,        0.0f, 1},
     {"gm_set",         command_gm_set,         0.0f, 1},
@@ -198,8 +198,8 @@ CommArray_s CommandsGM[] =
 
 CommArray_s CommandsMW[] =
 {
-    {"summon",        command_summon,      1.0f, 1},
-    {"teleport",      command_teleport,    1.0f, 1},
+    {"summon",        command_summon,      0.0f, 1},
+    {"teleport",      command_teleport,    0.0f, 1},
     {"resetmap",      command_reset,       0.0f, 1},
     {"goto",          command_goto,        0.0f, 1},
     {"addexp",        command_addexp,      0.0f, 1},
@@ -463,12 +463,12 @@ void cs_cmd_generic(char *buf, int len, NewSocket *ns)
         new_draw_info_format(NDI_UNIQUE | NDI_YELLOW, 0, ob, "/%s %s",
                              buf, (cp) ? cp : "");
 
-    ob->speed_left -= csp->time;
-
     /* command_foo() funcs return zero/non-zero to indicate success/failure. */
     if (csp->func(ob, cp))
         new_draw_info_format(NDI_UNIQUE | NDI_WHITE, 0, ob, "Syntax error: Try ~/help /%s~",
                              buf);
+    else
+        ob->speed_left -= csp->time;
 }
 
 /* This is the Setup cmd - easy first implementation */
