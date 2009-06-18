@@ -66,14 +66,17 @@ typedef struct channels
     char                     shortcut;                  /* default shortcut, at entering will be copyed to pl_channel_list struct */
     int                      color;                     /* default color */
     int                      pl_count;                  /* player count */
-    sint8                    post_lvl;                  /* lvl required to send message */
-    sint8                    enter_lvl;                /* lvl required to enter (-1 >=VOL only) */
+    sint8                    post_lvl;                  /* lvl required to send message (VOLs, GMs, and MMs are exempt) */
+    sint8                    enter_lvl;                 /* lvl required to enter (VOLs, GMs, and MMs are exempt) */
+    int                      gmaster_mode;              /* gmaster_mode required to enter */
 #ifdef CHANNEL_HIST
     char                     history[MAX_CHANNEL_HIST_LINES][MAX_CHANNEL_HIST_CHAR];
     uint8                    lines;
     uint8                    startline;
 #endif
 } _channels;
+
+int check_channel_gmaster(int c, int p);
 
 struct channels         *findGlobalChannelFromName(player *pl, char *name, int mute);
 struct channels         *getChannelFromGlobalShortcut(player *pl, char *name);
@@ -85,7 +88,7 @@ struct player_channel   *final_addChannelToPlayer(player *pl, struct channels *c
 void                    addPlayerToChannel(player *pl, char *name, char *params);
 void                    loginAddPlayerToChannel(player *pl, char *channelname, char shortcut, unsigned long mute);
 
-struct channels    *final_addChannel(char *name, char shortcut, int color, sint8 post_lvl, sint8 enter_lvl);
+struct channels    *final_addChannel(char *name, char shortcut, int color, sint8 post_lvl, sint8 enter_lvl, int gmaster_mode);
 void    addDefaultChannels(player *pl);
 void    load_channels();
 void    save_channels();
