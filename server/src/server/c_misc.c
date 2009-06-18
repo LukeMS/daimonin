@@ -347,7 +347,6 @@ int command_mapinfo(object *op, char *params)
 {
     mapstruct *m;
     player    *pl;
-    int        i;
 
     if (!op ||
         !(pl = CONTR(op)) ||
@@ -364,6 +363,8 @@ int command_mapinfo(object *op, char *params)
         /* List all the loaded maps. */
         if (!strcmp(params, "all"))
         {
+            int i;
+
             for (m = first_map, i = 1; m; m = m->next, i++)
                 dump_map(m, pl, i, NULL);
 
@@ -373,6 +374,7 @@ int command_mapinfo(object *op, char *params)
         /* Detail the current map and list all the immediately tiled ones. */
         if (!strcmp(params, "tiled"))
         {
+            int   i;
             char *compass[] = { "N", "E", "S", "W", "NE", "SE", "SW", "NW" };
 
             dump_map(m, pl, 0, NULL);
