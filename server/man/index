@@ -1,0 +1,9 @@
+Welcome to Daimonin's online help system.
+
+This system provides help on topics which fall into two broad subjects.
+
+The one is a category. Categories are broad overviews of a particular topic or element of gameplay. Category information is stored hierarchically. As you descend the hierarchy the information becomes more specific. For example, Magic/Casting/Spells.
+
+The other is a command. Commands are the instructions a player enters to tell the game to (try to) do something.
+
+Categories may link back to relevant commands and all commands list one or more relevant categories.
