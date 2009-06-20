@@ -309,6 +309,7 @@ void                        remove_gmaster_file_entry(objectlink *ol);
 int                            check_gmaster_list(player *pl, int mode);
 void                        set_gmaster_mode(player *pl, int mode);
 void                        remove_gmaster_mode(player *pl);
+int                         compare_gmaster_mode(int t, int p);
 void                        write_gmaster_file(void);
 void                        update_gmaster_file(void);
 void                        free_gmaster_list(void);

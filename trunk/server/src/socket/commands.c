@@ -304,58 +304,42 @@ CommArray_s *find_command(char *cmd, player *pl)
 
         return csp;
     }
-    else if((csp = find_command_element(cmd, Commands, CommandsSize, -1)))
+    else if((csp = find_command_element(cmd, Commands, CommandsSize)))
         return csp;
-    else if ((csp = find_command_element(cmd, EmoteCommands, EmoteCommandsSize, -1)))
-        return csp;
-    else if ((!pl ||
-              (pl->gmaster_mode == GMASTER_MODE_VOL ||
-               pl->gmaster_mode == GMASTER_MODE_GM ||
-               pl->gmaster_mode == GMASTER_MODE_MM)) &&
-            (csp = find_command_element(cmd, CommandsVOL, CommandsVOLSize, -1)))
+    else if ((csp = find_command_element(cmd, EmoteCommands, EmoteCommandsSize)))
         return csp;
     else if ((!pl ||
-              (pl->gmaster_mode == GMASTER_MODE_GM ||
-               pl->gmaster_mode == GMASTER_MODE_MM)) &&
-             (csp = find_command_element(cmd, CommandsGM, CommandsGMSize, -1)))
+              compare_gmaster_mode(GMASTER_MODE_VOL, pl->gmaster_mode)) &&
+             (csp = find_command_element(cmd, CommandsVOL, CommandsVOLSize)))
         return csp;
     else if ((!pl ||
-              (pl->gmaster_mode == GMASTER_MODE_MW ||
-               pl->gmaster_mode == GMASTER_MODE_MM)) &&
-             (csp = find_command_element(cmd, CommandsMW, CommandsMWSize, -1)))
+              compare_gmaster_mode(GMASTER_MODE_GM, pl->gmaster_mode)) &&
+             (csp = find_command_element(cmd, CommandsGM, CommandsGMSize)))
         return csp;
     else if ((!pl ||
-              pl->gmaster_mode == GMASTER_MODE_MM) &&
-             (csp = find_command_element(cmd, CommandsMM, CommandsMMSize, -1)))
+              compare_gmaster_mode(GMASTER_MODE_MW, pl->gmaster_mode)) &&
+             (csp = find_command_element(cmd, CommandsMW, CommandsMWSize)))
+        return csp;
+    else if ((!pl ||
+              compare_gmaster_mode(GMASTER_MODE_MM, pl->gmaster_mode)) &&
+             (csp = find_command_element(cmd, CommandsMM, CommandsMMSize)))
         return csp;
 
     return NULL;
 }
 
-CommArray_s *find_command_element(char *cmd, CommArray_s *commarray, int commsize, int i)
+CommArray_s *find_command_element(char *cmd, CommArray_s *commarray, int commsize)
 {
     CommArray_s    *asp, dummy;
     char           *cp;
-
-    if (i >= commsize)
-    {
-        LOG(llevBug, "BUG:: %s/find_command_element(): Invalid element!\n",
-            __FILE__);
-
-        return NULL;
-    }
 
     for (cp = cmd; *cp; cp++)
         *cp = tolower(*cp);
 
     dummy.name = cmd;
 
-    if (i >= 0)
-        asp = &commarray[i];
-    else
-        asp = (CommArray_s *)bsearch((void *)&dummy, (void *)commarray,
-                                      commsize, sizeof(CommArray_s),
-                                      compare_A);
+    asp = (CommArray_s *)bsearch((void *)&dummy, (void *)commarray, commsize,
+                                 sizeof(CommArray_s), compare_A);
 
     return asp;
 }

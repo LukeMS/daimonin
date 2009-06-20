@@ -27,47 +27,6 @@
 
 struct channels *channel_list_start = NULL;
 
-/* Returns TRUE if p has sufficient gmaster_mode to access c, FALSE if not. */
-int check_channel_gmaster(int c, int p)
-{
-    switch (c)
-    {
-        /* Only MMs can access an MM channel. */
-        case GMASTER_MODE_MM:
-            if (p == GMASTER_MODE_MM)
-                return TRUE;
-
-            return FALSE;
-
-        /* VOLs, GMs, MWs, and MMs can access a MW channel. */
-        case GMASTER_MODE_MW:
-            if (p != GMASTER_MODE_NO)
-                return TRUE;
-
-            return FALSE;
-
-        /* GMs and MMs can access a GM channel. */
-        case GMASTER_MODE_GM:
-            if  (p == GMASTER_MODE_MM ||
-                 p == GMASTER_MODE_GM)
-                return TRUE;
-
-            return FALSE;
-
-        /* VOLs, GMs, and MMs can acess a VOL channel. */
-        case GMASTER_MODE_VOL:
-            if (p != GMASTER_MODE_NO &&
-                p != GMASTER_MODE_MW)
-                return TRUE;
-
-            return FALSE;
-
-        /* This channel is not gmaster restricted. */
-        default:
-            return TRUE;
-    }
-}
-
 /** The Main Function
  */
 int command_channel(object *ob, char *params)
@@ -134,7 +93,7 @@ int command_channel(object *ob, char *params)
                 /* We don't display channels we can't get on.
                  * This may be by level restriction ot gmaster_mode.
                  * VOLs, GMs, and MMs are not subject to level restrictions. */
-                if (!check_channel_gmaster(channel->gmaster_mode,
+                if (!compare_gmaster_mode(channel->gmaster_mode,
                                        CONTR(ob)->gmaster_mode) ||
 /* Method stub for later to implement clan system
  * This function should return TRUE if the player is in that clan.
@@ -397,7 +356,7 @@ struct channels *findGlobalChannelFromName(player *pl, char *name, int mute)
                 /* We don't display channels we can't get on.
                  * This may be by level restriction ot gmaster_mode.
                  * VOLs, GMs, and MMs are not subject to level restrictions. */
-                if (!check_channel_gmaster(c->gmaster_mode, pl->gmaster_mode) ||
+                if (!compare_gmaster_mode(c->gmaster_mode, pl->gmaster_mode) ||
 /* Method stub for later to implement clan system
  * This function should return TRUE if the player is in that clan.
  * channel->clan will be some sort of pointer to the clan info...
@@ -427,7 +386,7 @@ struct channels *findGlobalChannelFromName(player *pl, char *name, int mute)
                 /* We don't display channels we can't get on.
                  * This may be by level restriction ot gmaster_mode.
                  * VOLs, GMs, and MMs are not subject to level restrictions. */
-                if (!check_channel_gmaster(tmp->gmaster_mode, pl->gmaster_mode) ||
+                if (!compare_gmaster_mode(tmp->gmaster_mode, pl->gmaster_mode) ||
 /* Method stub for later to implement clan system
  * This function should return TRUE if the player is in that clan.
  * channel->clan will be some sort of pointer to the clan info...
@@ -493,7 +452,7 @@ struct channels *getChannelFromGlobalShortcut(player *pl, char *name)
                 /* We don't display channels we can't get on.
                  * This may be by level restriction ot gmaster_mode.
                  * VOLs, GMs, and MMs are not subject to level restrictions. */
-                if (!check_channel_gmaster(channel->gmaster_mode,
+                if (!compare_gmaster_mode(channel->gmaster_mode,
                                        pl->gmaster_mode) ||
 /* Method stub for later to implement clan system
  * This function should return TRUE if the player is in that clan.
@@ -894,7 +853,7 @@ void load_channels()
  * @param chortcut Defaultshortcut of channel/ '#' means no shortcut!
  * @param color default color for that channel / -1 default shout color (orange)
  * @param enter_lvl level for entering
- * @param gmaster_mode gmaster_mode of channel (see check_channel_gmaster())
+ * @param gmaster_mode gmaster_mode of channel (see gmaster.c/compare_gmaster_mode())
  */
 struct channels *final_addChannel(char *name, char shortcut, int color, sint8 post_lvl, sint8 enter_lvl, int gmaster_mode)
 {
