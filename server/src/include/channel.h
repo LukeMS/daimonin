@@ -76,8 +76,6 @@ typedef struct channels
 #endif
 } _channels;
 
-int check_channel_gmaster(int c, int p);
-
 struct channels         *findGlobalChannelFromName(player *pl, char *name, int mute);
 struct channels         *getChannelFromGlobalShortcut(player *pl, char *name);
 

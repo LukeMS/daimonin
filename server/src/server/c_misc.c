@@ -1096,38 +1096,6 @@ static void help_topics(object *op, int what)
 
 static void show_commands(object *op)
 {
-#if 0
-    char         buf[MAX_BUF],
-                 head[MAX_BUF],
-                 line[MAX_BUF];
-    CommArray_s *csp;
-    int          i;
-
-    for (buf[0] = '\0', head[0] = '\0', line[0] = '\0', i = 0;
-         (csp = find_command(buf, CONTR(op), sizeof(buf), i));
-         buf[0] = '\0', i++ )
-    {
-        if (strcmp(head, buf))
-        {
-            strcpy(head, buf);
-            new_draw_info_format(NDI_UNIQUE | NDI_YELLOW, 0, op, "\n%s", head);
-        }
-
-        /* TODO: This calculation can be removed, and the following
-         * new_draw_info() moved to inside this for loop by having the
-         * client handle NDI_UNIQUE properly (well, at all).
-         * -- Smacky 20090604 */
-        if (strlen(line) + strlen(csp->name) > 42)
-        {
-            new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, line);
-            line[0] = '\0';
-        }
-
-        sprintf(strchr(line, '\0'), " /%s ~+~", csp->name);
-    }
-
-    new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, line);
-#else
     CommArray_s *ap[6];
     int          size[6],
                  i;
@@ -1237,7 +1205,6 @@ static void show_commands(object *op)
 
         new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, buf);
     }
-#endif
 }
 
 int command_resting(object *op, char *params)

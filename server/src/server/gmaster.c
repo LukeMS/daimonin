@@ -273,7 +273,7 @@ void set_gmaster_mode(player *pl, int mode)
     for (channel = channel_list_start; channel; channel = channel->next)
     {
         if (channel->gmaster_mode != GMASTER_MODE_NO &&
-            check_channel_gmaster(channel->gmaster_mode, mode))
+            compare_gmaster_mode(channel->gmaster_mode, mode))
             addPlayerToChannel(pl, channel->name, NULL);
     }
 #endif
@@ -415,6 +415,54 @@ void write_gmaster_file(void)
         fprintf(fp, "%s\n", ol->objlink.gm->entry);
 
     fclose(fp);
+}
+
+/* Returns TRUE if p has sufficient gmaster_mode to access t, FALSE if not. */
+int compare_gmaster_mode(int t, int p)
+{
+    switch (t)
+    {
+        /* Only MM p can access a MM t. */
+        case GMASTER_MODE_MM:
+            if (p == GMASTER_MODE_MM)
+                return TRUE;
+
+            return FALSE;
+
+        /* VOL, GM, MW, and MM p can access a MW t. */
+        case GMASTER_MODE_MW:
+            if (p != GMASTER_MODE_NO)
+                return TRUE;
+
+            return FALSE;
+
+        /* GM and MM p can access a GM t. */
+        case GMASTER_MODE_GM:
+            if  (p == GMASTER_MODE_MM ||
+                 p == GMASTER_MODE_GM)
+                return TRUE;
+
+            return FALSE;
+
+        /* VOL, GM, and MM p can access a VOL t. */
+        case GMASTER_MODE_VOL:
+            if (p != GMASTER_MODE_NO &&
+                p != GMASTER_MODE_MW)
+                return TRUE;
+
+            return FALSE;
+
+        /* t is not gmaster restricted. */
+        case GMASTER_MODE_NO:
+            return TRUE;
+
+        /* t is an unrecognised gmaster_mode, so restrict access. */
+        default:
+            LOG(llevBug, "BUG:: %s/compare_gmaster_mode(): Unrecognised gmaster_mode: %d!",
+                __FILE__, t);
+
+            return FALSE;
+    }
 }
 
 /* check the rights of all DM/VOL/GM
