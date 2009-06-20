@@ -355,7 +355,12 @@ void remove_gmaster_mode(player *pl)
     for (pl_channel = pl->channels; pl_channel; pl_channel = pl_channel->next_channel)
     {
         if (pl_channel->channel->gmaster_mode != GMASTER_MODE_NO)
-            removeChannelFromPlayer(pl, pl_channel);
+        {
+            char buf[MAX_BUF];
+
+            sprintf(buf, "You leave channel %s", pl_channel->channel->name);
+            removeChannelFromPlayer(pl, pl_channel, buf);
+        }
     }
 #endif
 
