@@ -1094,7 +1094,63 @@ static void help_topics(object *op, int what)
     closedir(dirp);
 }
 
-static void show_commands(object *op)
+int command_resting(object *op, char *params)
+{
+    player *pl = CONTR(op);
+
+    /* sitting is the way we enter resting */
+    if (pl->rest_sitting) /* we allready sit? stand up! */
+    {
+        new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, "You stop resting.");
+        pl->rest_mode = pl->rest_sitting = 0;
+        pl->resting_reg_timer = 0;
+    }
+    else
+    {
+        new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, "You start resting.");
+        remove_food_force(op); /* sitting will interrupt our eating - we enter resting */
+        pl->food_status = 1000;
+        pl->damage_timer = 0;
+
+        /* force a combat mode leave... we don't fight when sitting on our butt! */
+        pl->combat_mode = 1;
+        command_combat(op, NULL);
+
+        pl->rest_mode = pl->rest_sitting = 1;
+        pl->resting_reg_timer = RESTING_DEFAULT_SEC_TIMER;
+    }
+
+    return 0;
+}
+
+static void show_help(char *fname, player *pl)
+{
+    FILE *fp;
+    char  buf[MAX_BUF];
+
+    if ((fp = fopen(fname, "r")) == NULL)
+    {
+        new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, pl->ob, "No more available!");
+
+        return;
+    }
+
+    while (fgets(buf, (int)sizeof(buf), fp))
+    {
+        int len;
+
+        len = (int)strlen(buf) - 1;
+
+        if (buf[len] == '\n')
+            buf[len] = (len) ? '\0' : ' ';
+
+        new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, pl->ob, buf);
+    }
+
+    fclose(fp);
+}
+
+static void show_commands(player *pl)
 {
     CommArray_s *ap[6];
     int          size[6],
@@ -1106,7 +1162,7 @@ static void show_commands(object *op)
         size[i] = -1;
     }
 
-    switch (CONTR(op)->gmaster_mode)
+    switch (pl->gmaster_mode)
     {
         case GMASTER_MODE_VOL:
             ap[0] = Commands;
@@ -1169,17 +1225,17 @@ static void show_commands(object *op)
         char buf[MAX_BUF];
 
         if (ap[i] == Commands)
-            new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, op, "\nNormal Commands");
+            new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, pl->ob, "\nNormal Commands");
         else if (ap[i] == EmoteCommands)
-            new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, op, "\nEmotes");
+            new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, pl->ob, "\nEmotes");
         else if (ap[i] == CommandsVOL)
-            new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, op, "\nVOL Commands");
+            new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, pl->ob, "\nVOL Commands");
         else if (ap[i] == CommandsGM)
-            new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, op, "\nGM Commands");
+            new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, pl->ob, "\nGM Commands");
         else if (ap[i] == CommandsMW)
-            new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, op, "\nMW Commands");
+            new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, pl->ob, "\nMW Commands");
         else if (ap[i] == CommandsMM)
-            new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, op, "\nMM Commands");
+            new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, pl->ob, "\nMM Commands");
         else
         {
             LOG(llevDebug, "DEBUG:: %s/show_commands(): Unknown command structure!\n",
@@ -1196,101 +1252,42 @@ static void show_commands(object *op)
              * -- Smacky 20090604 */
             if (strlen(buf) + strlen(ap[i][j].name) > 42)
             {
-                new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, buf);
+                new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, pl->ob, buf);
                 buf[0] = '\0';
             }
 
             sprintf(strchr(buf, '\0'), " /%s ~+~", ap[i][j].name);
         }
 
-        new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, buf);
+        new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, pl->ob, buf);
     }
-}
-
-int command_resting(object *op, char *params)
-{
-    player *pl = CONTR(op);
-
-    /* sitting is the way we enter resting */
-    if (pl->rest_sitting) /* we allready sit? stand up! */
-    {
-        new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, "You stop resting.");
-        pl->rest_mode = pl->rest_sitting = 0;
-        pl->resting_reg_timer = 0;
-    }
-    else
-    {
-        new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, "You start resting.");
-        remove_food_force(op); /* sitting will interrupt our eating - we enter resting */
-        pl->food_status = 1000;
-        pl->damage_timer = 0;
-
-        /* force a combat mode leave... we don't fight when sitting on our butt! */
-        pl->combat_mode = 1;
-        command_combat(op, NULL);
-
-        pl->rest_mode = pl->rest_sitting = 1;
-        pl->resting_reg_timer = RESTING_DEFAULT_SEC_TIMER;
-    }
-
-    return 0;
 }
 
 int command_help(object *op, char *params)
 {
-    FILE       *fp;
-    char        filename[MAX_BUF], line[MAX_BUF];
-    int         len;
+    player *pl;
+    int     len;
 
-    /* Main help page?  */
+    if (!op ||
+        !(pl = CONTR(op)))
+        return 0;
+
+    /* Main help page */
     if (!params)
     {
-        sprintf(filename, "%s/def_help", HELPDIR);
+        char buf[MAX_BUF];
 
-        if ((fp = fopen(filename, "r")) == NULL)
-        {
-            LOG(llevBug, "BUG: Can't open %s\n", filename);
-            /*perror("Can't read default help");*/
-
-            return 0;
-        }
-
-        while (fgets(line, MAX_BUF, fp))
-        {
-            line[MAX_BUF - 1] = '\0';
-            len = strlen(line) - 1;
-
-            if (line[len] == '\n')
-                line[len] = '\0';
-            new_draw_info(NDI_UNIQUE, 0, op, line);
-        }
-        fclose(fp);
+        sprintf(buf, "%s/index", HELPDIR);
+        show_help(buf, pl);
 
         return 0;
     }
-    /* Topics list */
-    else if (!strcmp(params, "list"))
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "\n**** list of help topics ****");
-        help_topics(op, 3);
-        help_topics(op, 0);
 
-        if (QUERY_FLAG(op, FLAG_WIZ))
-            help_topics(op, 1);
-
-        return 0;
-    }
-    /* Commands list */
-    else if (!strcmp(params, "commands"))
-    {
-        show_commands(op);
-
-        return 0;
-    }
-    /* /command */
-    else if (params[0] == '/')
+    /* Individual /command */
+    if (params[0] == '/')
     {
         CommArray_s *csp;
+        char         buf[MAX_BUF];
 
 //        if (strpbrk(params + 1, " ./\\"))
 //        {
@@ -1299,86 +1296,43 @@ int command_help(object *op, char *params)
 //
 //            return 0;
 //        }
-        new_draw_info_format(NDI_UNIQUE | NDI_YELLOW, 0, op, "Help for command %s:",
+        new_draw_info_format(NDI_UNIQUE | NDI_YELLOW, 0, pl->ob, "Help for command %s:",
                              params);
 
         if (!(csp = find_command(params + 1, NULL)))
         {
-            new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "Unrecognised command!");
+            new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, pl->ob, "Unrecognised command!");
 
             return 0;
         }
 
-        sprintf(filename, "%s/commands/%s", HELPDIR, params + 1);
-
-        if ((fp = fopen(filename, "r")) == NULL)
-        {
-            new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "No more available!");
-
-            return 0;
-        }
-
-        while (fgets(line, (int)sizeof(line), fp))
-        {
-            len = (int)strlen(line) - 1;
-
-            if (line[len] == '\n')
-                line[len] = (len) ? '\0' : ' ';
-
-            new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, line);
-        }
-
-        fclose(fp);
+        sprintf(buf, "%s/commands/%s", HELPDIR, params + 1);
+        show_help(buf, pl);
 
         return 0;
     }
 
+    len = (int)strlen(params);
+
+    /* TODO: Categories list */
+    if (!strncasecmp("categories", params, len))
+        return 0;
+
+    /* Commands list */
+    if (!strncasecmp("commands", params, len))
+    {
+        show_commands(pl);
+
+        return 0;
+    }
+
+    /* TODO: Individual category. */
+
     /* Unknown topic */
-    new_draw_info_format(NDI_UNIQUE, 0, op, "No help available on '%s'",
+    new_draw_info_format(NDI_UNIQUE, 0, pl->ob, "No help available on '%s'",
                          params);
 
     return 0;
-#if 0
-    sprintf(filename, "%s/commands/%s", HELPDIR, params);
-    if (stat(filename, &st) || !S_ISREG(st.st_mode))
-    {
-        if (op)
-        {
-            sprintf(filename, "%s/help/%s", HELPDIR, params);
-            if (stat(filename, &st) || !S_ISREG(st.st_mode))
-            {
-                if (QUERY_FLAG(op, FLAG_WIZ))
-                {
-                    sprintf(filename, "%s/wizhelp/%s", HELPDIR, params);
-                    if (stat(filename, &st) || !S_ISREG(st.st_mode))
-                        goto nohelp;
-                }
-                else
-                    goto nohelp;
-            }
-        }
-    }
-
-    /*
-     * Found that. Just cat it to screen.
-     */
-    if ((fp = fopen(filename, "r")) == NULL)
-    {
-        LOG(llevBug, "BUG: Can't open %s\n", filename);
-        /*perror("Can't read helpfile");*/
-        return 0;
-    }
-    while (fgets(line, MAX_BUF, fp))
-    {
-        line[MAX_BUF - 1] = '\0';
-        len = strlen(line) - 1;
-        if (line[len] == '\n')
-            line[len] = '\0';
-        new_draw_info(NDI_UNIQUE, 0, op, line);
-    }
-    fclose(fp);
-    return 0;
-#endif
 }
 
 
