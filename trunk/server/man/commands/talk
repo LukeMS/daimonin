@@ -1,4 +1,4 @@
-~Category~: NPC
+~Category~: Mobs/Communication
 
 ~Syntax~: /talk <message>
 ~Purpose~: Communicates <message> to the NPC you have targeted.
