@@ -96,7 +96,7 @@ void    printChannelUsage(object *ob);
 
 int     channelname_ok(char *cp);
 
-void    removeChannelFromPlayer(player *pl, struct player_channel *pl_channel);
+void    removeChannelFromPlayer(player *pl, struct player_channel *pl_channel, char *msg);
 
 void    sendChannelMessage(player *pl,struct player_channel *pl_channel, char *params);
 void    sendChannelEmote(player *pl,struct player_channel *pl_channel, char *params);

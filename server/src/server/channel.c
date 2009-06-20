@@ -139,8 +139,9 @@ int command_channel(object *ob, char *params)
     /* lets get on with all the other stuff */
     if (mode=='-') /* leave a channel */
     {
-        removeChannelFromPlayer(CONTR(ob), pl_channel);
-        new_draw_info_format(NDI_UNIQUE, 0, ob, "You leave channel %s",pl_channel->channel->name);
+        char buf[MAX_BUF];
+        sprintf(buf, "You leave channel %s", pl_channel->channel->name);
+        removeChannelFromPlayer(CONTR(ob), pl_channel, buf);
         return 0;
     }
     else if (mode=='?') /* list players on channel */
@@ -649,8 +650,9 @@ struct player_channel *findPlayerChannelFromName(player *pl, player *wiz, char *
  * Removes the Player from the channel, frees the player_channel-link
  * @param pl PlayerStruct of Player
  * @param pl_channel player_channel-link for that player/channel
+ * @param msg Message to send to player (eg, reason for removal) or NULL for none.
  */
-void removeChannelFromPlayer(player *pl, struct player_channel *pl_channel)
+void removeChannelFromPlayer(player *pl, struct player_channel *pl_channel, char *msg)
 {
     struct player_channel *pl_node, *pl_tmp=NULL;
 
@@ -685,6 +687,9 @@ void removeChannelFromPlayer(player *pl, struct player_channel *pl_channel)
     pl->channel_count--;
 
     return_poolchunk(pl_channel,pool_player_channel);
+
+    if (msg)
+        new_draw_info(NDI_UNIQUE, 0, pl->ob, msg);
 
     return;
 }
@@ -922,7 +927,7 @@ void leaveAllChannels(player *pl)
     {
         tmp=node;
         node=node->next_channel;
-        removeChannelFromPlayer(pl, tmp);
+        removeChannelFromPlayer(pl, tmp, NULL);
     }
 //    LOG(llevDebug,"channel: leaveAll: %s\n",pl->ob->name);
     return;
@@ -1104,6 +1109,7 @@ void kickPlayerFromChannel(struct player_channel *cpl, char *params)
 {
     player *pl=NULL;
     struct player_channel *kick;
+    char buf[MAX_BUF];
 
     if (cpl->pl->gmaster_mode < GMASTER_MODE_VOL)
         return;
@@ -1119,9 +1125,9 @@ void kickPlayerFromChannel(struct player_channel *cpl, char *params)
     }
 
     kick=findPlayerChannelFromName(pl, cpl->pl, cpl->channel->name, TRUE);
-    removeChannelFromPlayer(pl, kick);
+    sprintf(buf, "You were kicked from channel %s by %s.", cpl->channel->name, cpl->pl->ob->name);
+    removeChannelFromPlayer(pl, kick, buf);
     new_draw_info_format(NDI_UNIQUE, 0, cpl->pl->ob, "You kicked player %s from channel %s.",pl->ob->name, cpl->channel->name);
-    new_draw_info_format(NDI_UNIQUE, 0, pl->ob, "You were kicked from channel %s by %s.",cpl->channel->name, cpl->pl->ob->name);
     LOG(llevInfo, "CLOG Pl >%s< kicked pl %s from channel %s\n", cpl->pl->ob->name, pl->ob->name, cpl->channel->name);
 
     return;
@@ -1217,8 +1223,9 @@ int command_channel_delete(object *ob, char *params)
 
     for (cpl=channel->players;cpl;cpl=cpl->next_player)
     {
-        new_draw_info_format(NDI_UNIQUE, 0, cpl->pl->ob, "Channel '%s' is now closed!",channel->name);
-        removeChannelFromPlayer(cpl->pl, cpl);
+        char buf[MAX_BUF];
+        sprintf(buf, "Channel '%s' is now closed!", channel->name);
+        removeChannelFromPlayer(cpl->pl, cpl, buf);
     }
     for (ch_ptr1=channel_list_start;ch_ptr1;ch_ptr1=ch_ptr1->next)
     {
