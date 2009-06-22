@@ -793,6 +793,7 @@ Boolean game_status_chain(void)
         srv_client_files[SRV_CLIENT_SETTINGS].status = SRV_CLIENT_STATUS_OK;
         srv_client_files[SRV_CLIENT_BMAPS].status = SRV_CLIENT_STATUS_OK;
         srv_client_files[SRV_CLIENT_ANIMS].status = SRV_CLIENT_STATUS_OK;
+        srv_client_files[SRV_CLIENT_SOUNDS].status = SRV_CLIENT_STATUS_OK;
         srv_client_files[SRV_CLIENT_SKILLS].status = SRV_CLIENT_STATUS_OK;
         srv_client_files[SRV_CLIENT_SPELLS].status = SRV_CLIENT_STATUS_OK;
         SendSetupCmd();
@@ -821,63 +822,74 @@ Boolean game_status_chain(void)
             else
                 request_file_chain = 2;
         }
-        else if (request_file_chain == 2) /* check spell list */
+        else if (request_file_chain == 2) /* check sound list */
         {
-            if (srv_client_files[SRV_CLIENT_SPELLS].status == SRV_CLIENT_STATUS_UPDATE)
+            if (srv_client_files[SRV_CLIENT_SOUNDS].status == SRV_CLIENT_STATUS_UPDATE)
             {
                 request_file_chain = 3;
-                RequestFile(csocket, SRV_CLIENT_SPELLS);
+                RequestFile(csocket, SRV_CLIENT_SOUNDS);
             }
             else
                 request_file_chain = 4;
         }
-        else if (request_file_chain == 4) /* check skill list */
+        else if (request_file_chain == 4) /* check spell list */
         {
-            if (srv_client_files[SRV_CLIENT_SKILLS].status == SRV_CLIENT_STATUS_UPDATE)
+            if (srv_client_files[SRV_CLIENT_SPELLS].status == SRV_CLIENT_STATUS_UPDATE)
             {
                 request_file_chain = 5;
-                RequestFile(csocket, SRV_CLIENT_SKILLS);
+                RequestFile(csocket, SRV_CLIENT_SPELLS);
             }
             else
                 request_file_chain = 6;
         }
-        else if (request_file_chain == 6)
+        else if (request_file_chain == 6) /* check skill list */
         {
-            if (srv_client_files[SRV_CLIENT_BMAPS].status == SRV_CLIENT_STATUS_UPDATE)
+            if (srv_client_files[SRV_CLIENT_SKILLS].status == SRV_CLIENT_STATUS_UPDATE)
             {
                 request_file_chain = 7;
-                RequestFile(csocket, SRV_CLIENT_BMAPS);
+                RequestFile(csocket, SRV_CLIENT_SKILLS);
             }
             else
                 request_file_chain = 8;
         }
         else if (request_file_chain == 8)
         {
-            if (srv_client_files[SRV_CLIENT_ANIMS].status == SRV_CLIENT_STATUS_UPDATE)
+            if (srv_client_files[SRV_CLIENT_BMAPS].status == SRV_CLIENT_STATUS_UPDATE)
             {
                 request_file_chain = 9;
-                RequestFile(csocket, SRV_CLIENT_ANIMS);
+                RequestFile(csocket, SRV_CLIENT_BMAPS);
             }
             else
                 request_file_chain = 10;
         }
-        else if (request_file_chain == 10) /* we have all files - start check */
+        else if (request_file_chain == 10)
         {
-            request_file_chain++; /* this ensure one loop tick and updating the messages */
+            if (srv_client_files[SRV_CLIENT_ANIMS].status == SRV_CLIENT_STATUS_UPDATE)
+            {
+                request_file_chain = 11;
+                RequestFile(csocket, SRV_CLIENT_ANIMS);
+            }
+            else
+                request_file_chain = 12;
         }
-        else if (request_file_chain == 11)
-        {
-            /* ok... now we check for bmap & anims processing... */
-            read_bmap_tmp();
-            read_anim_tmp();
-            load_settings();
-            request_file_chain++;
-        }
-        else if (request_file_chain == 12)
+        else if (request_file_chain == 12) /* we have all files - start check */
         {
             request_file_chain++; /* this ensure one loop tick and updating the messages */
         }
         else if (request_file_chain == 13)
+        {
+            /* ok... now we check for bmap & anims processing... */
+            read_bmap_tmp();
+            read_anim_tmp();
+            sound_loadall();
+            load_settings();
+            request_file_chain++;
+        }
+        else if (request_file_chain == 14)
+        {
+            request_file_chain++; /* this ensure one loop tick and updating the messages */
+        }
+        else if (request_file_chain == 15)
              GameStatus = GAME_STATUS_LOGIN_SELECT; /* now lets start the real login by asking "login" or "create" */
 // debug GameStatus = GAME_STATUS_ACCOUNT;
     }
@@ -1757,7 +1769,7 @@ int main(int argc, char *argv[])
     show_intro("start sound system");
     sound_init();
     show_intro("load sounds");
-    sound_loadall();
+    read_sounds();
     show_intro("load bitmaps");
     for (i = BITMAP_INTRO+1; i < BITMAP_MAX; i++) /* add later better error handling here*/
         load_bitmap(i);

@@ -201,6 +201,9 @@ void init_srv_files(void)
     sprintf(buf, "%s/client_bmaps", settings.localdir);
     load_srv_files(buf, SRV_CLIENT_BMAPS, DATA_CMD_BMAP_LIST);
 
+    sprintf(buf, "%s/client_sounds", settings.datadir);
+    load_srv_files(buf, SRV_CLIENT_SOUNDS, DATA_CMD_SOUND_LIST);
+
     sprintf(buf, "%s/client_skills", settings.datadir);
     load_srv_files(buf, SRV_CLIENT_SKILLS, DATA_CMD_SKILL_LIST);
 

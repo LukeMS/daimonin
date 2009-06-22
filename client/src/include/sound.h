@@ -234,6 +234,7 @@ void    sound_fillerup(void *unused, Uint8 *stream, int len);
 void    sound_init(void);
 void    sound_deinit(void);
 
+void    read_sounds(void);
 void    load_sounds(void);
 
 void    sound_loadall(void);

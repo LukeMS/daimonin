@@ -561,9 +561,10 @@ int Game_init(lua_State *L)
     int     index;
 
     // Try to open sound file
-    if (!(sf = fopen(SOUNDS_FILE, "r")))
+    sprintf(buf, "%s/client_sounds", hooks->settings->datadir);
+    if (!(sf = fopen(buf, "rb")))
     {
-        LOG(llevBug,"ERROR: Can't find file %s.\n", SOUNDS_FILE);
+        LOG(llevBug,"ERROR: Can't find file %s.\n", buf);
     }
     else
     {

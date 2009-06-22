@@ -476,10 +476,18 @@ int request_face(int pnum)
  */
 void SendSetupCmd(void)
 {
-    char buf[MAX_BUF];
+    char tmpbuf[TINY_BUF],
+         buf[MEDIUM_BUF];
 
-    sprintf(buf, "cs %s sc %s sn %d mz %dx%d skf %d|%x spf %d|%x bpf %d|%x stf %d|%x amf %d|%x",
-    VERSION_CS, VERSION_SC, SoundStatus, MapStatusX, MapStatusY, srv_client_files[SRV_CLIENT_SKILLS].len,
+    if (SoundStatus)
+        sprintf(tmpbuf, "%d|%x",
+                srv_client_files[SRV_CLIENT_SOUNDS].len,
+                srv_client_files[SRV_CLIENT_SOUNDS].crc);
+    else
+        strcpy(tmpbuf, "0");
+
+    sprintf(buf, "cs %s sc %s sn %s mz %dx%d skf %d|%x spf %d|%x bpf %d|%x stf %d|%x amf %d|%x",
+    VERSION_CS, VERSION_SC, tmpbuf, MapStatusX, MapStatusY, srv_client_files[SRV_CLIENT_SKILLS].len,
     srv_client_files[SRV_CLIENT_SKILLS].crc, srv_client_files[SRV_CLIENT_SPELLS].len,
     srv_client_files[SRV_CLIENT_SPELLS].crc, srv_client_files[SRV_CLIENT_BMAPS].len,
     srv_client_files[SRV_CLIENT_BMAPS].crc, srv_client_files[SRV_CLIENT_SETTINGS].len,

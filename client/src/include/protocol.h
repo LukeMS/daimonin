@@ -151,6 +151,7 @@ typedef enum addme_login_msg_struct {
 
 enum
 {
+    SRV_CLIENT_SOUNDS,
     SRV_CLIENT_SKILLS,
     SRV_CLIENT_SPELLS,
     SRV_CLIENT_SETTINGS,
@@ -167,6 +168,7 @@ enum
 enum
 {
     DATA_CMD_NO,
+    DATA_CMD_SOUND_LIST,
     DATA_CMD_SKILL_LIST,
     DATA_CMD_SPELL_LIST,
     DATA_CMD_SETTINGS_LIST,

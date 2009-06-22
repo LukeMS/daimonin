@@ -426,6 +426,7 @@ struct plugin_hooklist
     long *global_instance_id;
     New_Face **new_faces;
     unsigned long *pticks;
+    Settings *settings;
     struct shstr_constants *shstr_cons;
 };
 
