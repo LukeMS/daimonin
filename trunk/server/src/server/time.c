@@ -113,8 +113,12 @@ int open_door(object *op, mapstruct *m, int x, int y, int mode)
                     if (key)
                         new_draw_info_format(NDI_UNIQUE, NDI_BROWN, op, "You open the door with the %s.",
                                              query_short_name(key, op));
-                    else if (force)
-                        new_draw_info(NDI_UNIQUE, NDI_BROWN, op, "You force the door open.");
+
+                    /* Remove force message - it's usually inappropriate to say anything
+                     * when opening with a hidden marker (one-way doors for example) */
+                    /* else if (force)
+                     *    new_draw_info(NDI_UNIQUE, NDI_BROWN, op, "You force the door open.");
+                     */
                 }
             }
 
