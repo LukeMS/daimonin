@@ -26,11 +26,6 @@
 #define SOUNDS_H
 
 /*
- * The name of the sound definition file
- */
-#define SOUND_FILE "sounds.dat"
-
-/*
  * New sound system
  * Server only needs sound id and name for lookup.
  */

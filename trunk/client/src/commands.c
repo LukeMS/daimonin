@@ -329,7 +329,28 @@ void SetupCmd(char *buf, int len)
             }
         }
         else if (!strcmp(cmd, "sn")) /* sound */
-        {}
+        {
+            if (!strcmp(param, "FALSE"))
+            {
+                LOG(LOG_MSG, "Get sn:: %s\n", param);
+            }
+            else if (strcmp(param, "OK"))
+            {
+                char   *cp;
+
+                srv_client_files[SRV_CLIENT_SOUNDS].status = SRV_CLIENT_STATUS_UPDATE;
+                for (cp = param; *cp != 0; cp++)
+                {
+                    if (*cp == '|')
+                    {
+                        *cp = 0;
+                        srv_client_files[SRV_CLIENT_SOUNDS].server_len = atoi(param);
+                        srv_client_files[SRV_CLIENT_SOUNDS].server_crc = strtoul(cp + 1, NULL, 16);
+                        break;
+                    }
+                }
+            }
+        }
         else if (!strcmp(cmd, "mz")) /* mapsize */
         {}
         else
@@ -1969,6 +1990,18 @@ void DataCmd(char *data, int len)
 
     switch (data_type & ~DATA_PACKED_CMD)
     {
+        case DATA_CMD_SOUND_LIST:
+            if (data_comp)
+            {
+                LOG(LOG_DEBUG, "data cmd: compressed sound list(len:%d)\n", len);
+                uncompress(dest, &dest_len, (unsigned char *)data, len);
+                data = (char *)dest;
+                len = dest_len;
+            }
+            request_file_chain++;
+            save_data_cmd_file(FILE_CLIENT_SOUNDS, (unsigned char *)data, len);
+            read_sounds();
+            break;
         case DATA_CMD_SKILL_LIST:
             /* this is a server send skill list */
             /* uncompress when needed and save it */

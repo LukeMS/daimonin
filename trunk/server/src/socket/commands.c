@@ -538,8 +538,41 @@ void cs_cmd_setup(char *buf, int len, NewSocket *ns)
         }
         else if (!strcmp(cmd, "sn"))
         {
-            ns->sound = atoi(param);
-            strcat(cmdback, param);
+            char   *cp;
+            int     x   = -1;
+            uint32  y   = 0;
+
+            /* is x our files len and y the crc */
+            for (cp = param; *cp != 0; cp++)
+                if (*cp == '|')
+                {
+                    *cp = 0;
+                    x = atoi(param);
+                    y = strtoul(cp + 1, NULL, 16);
+                    break;
+                }
+
+            if (x == -1)
+            {
+                ns->sound = 0;
+                strcat(cmdback, "OK");
+            }
+            else
+            {
+                ns->sound = 1;
+
+                /* we check now the loaded file data - if different
+                * we tell it the client - if not, we skip here
+                */
+                if (SrvClientFiles[SRV_CLIENT_SOUNDS].len_ucomp != x || SrvClientFiles[SRV_CLIENT_SOUNDS].crc != y)
+                {
+                    sprintf(tmpbuf, "%d|%x", SrvClientFiles[SRV_CLIENT_SOUNDS].len_ucomp,
+                        SrvClientFiles[SRV_CLIENT_SOUNDS].crc);
+                    strcat(cmdback, tmpbuf);
+                }
+                else
+                    strcat(cmdback, "OK");
+            }
         }
         else if (!strcmp(cmd, "mz"))
         {

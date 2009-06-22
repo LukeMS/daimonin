@@ -48,7 +48,7 @@ void init_sounds()
     int     sound_count = 0;
     int     sound_index = -1;
 
-    sprintf(buf, "%s/%s", settings.datadir, SOUND_FILE);
+    sprintf(buf, "%s/client_sounds", settings.datadir);
     LOG(llevDebug, "Reading sound definitions from %s...", STRING_SAFE(buf));
     if ((fp = fopen(buf, "r")) == NULL)
         LOG(llevError, "ERROR: Can not open sound definitions file Filename=%s\n", STRING_SAFE(buf));

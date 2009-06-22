@@ -184,6 +184,7 @@ struct plugin_hooklist  hooklist    =
     &global_instance_id,
     &new_faces,
     &pticks,
+    &settings,
     &shstr_cons,
 };
 

@@ -68,6 +68,35 @@ char *str_dup(const char *str)
     return ret;
 }
 
+void read_sounds(void)
+{
+#ifdef INSTALL_SOUND
+    FILE       *stream;
+    unsigned char *temp_buf;
+    struct stat statbuf;
+    int         i;
+
+    srv_client_files[SRV_CLIENT_SOUNDS].len = 0;
+    srv_client_files[SRV_CLIENT_SOUNDS].crc = 0;
+    LOG(LOG_DEBUG, "Reading %s....", FILE_CLIENT_SOUNDS);
+    if ((stream = fopen_wrapper(FILE_CLIENT_SOUNDS, "rb")) != NULL)
+    {
+        /* temp load the file and get the data we need for compare with server */
+        fstat(fileno(stream), &statbuf);
+        i = (int) statbuf.st_size;
+        srv_client_files[SRV_CLIENT_SOUNDS].len = i;
+        temp_buf = malloc(i);
+        fread(temp_buf, sizeof(char), i, stream);
+        srv_client_files[SRV_CLIENT_SOUNDS].crc = crc32(1L, temp_buf, i);
+        free(temp_buf);
+        fclose(stream);
+        LOG(LOG_DEBUG, " found file!(%d/%x)", srv_client_files[SRV_CLIENT_SOUNDS].len,
+            srv_client_files[SRV_CLIENT_SOUNDS].crc);
+    }
+    LOG(LOG_DEBUG, "done.\n");
+#endif
+}
+
 /* Load the sounds file */
 void load_sounds(void)
 {
@@ -82,11 +111,9 @@ void load_sounds(void)
     int     sound_count = 0;
     int     sound_index = -1;
 
-
-
-    if (!(stream = fopen_wrapper(SOUNDS_FILE, "r")))
+    if (!(stream = fopen_wrapper(FILE_CLIENT_SOUNDS, "rb")))
     {
-        LOG(LOG_ERROR,"ERROR: Can't find file %s.\n", SOUNDS_FILE);
+        LOG(LOG_ERROR,"ERROR: Can't find file %s.\n", FILE_CLIENT_SOUNDS);
         return;
     }
     while (fgets(buf, sizeof(buf), stream) != NULL)
@@ -212,6 +239,7 @@ void sound_loadall(void)
         return;
 
     load_sounds();
+
     for (i = 0; i < sounds.count; i++)
     {
         for (j = 0; j < sounds.types[i].count; j++)
