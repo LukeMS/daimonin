@@ -60,7 +60,9 @@ _CmdMapping cs_commands[]    =
  */
 CommArray_s Commands[] =
 {
+#if 0
     {"apply",         command_apply,          1.0f, 1}, /* should be variable */
+#endif
     {"target",        command_target,         0.1f, 0}, /* enter combat and attack object in reach */
     {"combat",        command_combat,         0.1f, 0}, /* toggle attack mode of player */
     {"rest",          command_resting,        1.0f, 1},
