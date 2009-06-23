@@ -190,6 +190,7 @@ extern void             save_objects(mapstruct *m, FILE *fp, int flag);
 extern int              map_to_player_unlink(mapstruct *m);
 extern void             map_to_player_link(mapstruct *m, int x, int y, int flag);
 const char*             create_safe_mapname_sh(char const *mapname);
+extern int              is_any_player_on_map(mapstruct *m);
 /* map_tile.c */
 extern void             update_position(mapstruct *m, MapSpace *mspace,int x, int y);
 extern int              map_brightness(mapstruct *m, int x, int y);
