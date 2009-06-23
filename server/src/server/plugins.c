@@ -108,6 +108,7 @@ struct plugin_hooklist  hooklist    =
     insert_ob_in_map,
     insert_ob_in_ob,
     is_player_inv,
+    is_any_player_on_map,
     /* J */
     /* K */
     /* L */

@@ -32,6 +32,7 @@ static struct method_decl Map_methods[] =
     {"GetFirstObjectOnSquare", Map_GetFirstObjectOnSquare},
     {"GetBrightnessOnSquare",  Map_GetBrightnessOnSquare},
     {"IsWallOnSquare",         Map_IsWallOnSquare},
+    {"IsAnyPlayerOnMap",       Map_IsAnyPlayerOnMap},
     {"MapTileAt",              Map_MapTileAt},
     {"Message",                Map_Message},
     {"PlaySound",              Map_PlaySound},
@@ -393,6 +394,28 @@ static int Map_IsWallOnSquare(lua_State *L)
     get_lua_args(L, "Mii", &map, &x, &y);
 
     lua_pushboolean(L, hooks->wall(map->data.map, x, y));
+    return 1;
+}
+
+/*****************************************************************************/
+/* Name   : Map_IsAnyPlayerOnMap                                             */
+/* Lua    : map:IsAnyPlayerOnMap()                                           */
+/* Info   : returns true if any player is on the map                         */
+/* Status : Tested/Stable                                                    */
+/*                                                                           */
+/* A looping script, or a script triggered repeatedly by a timer, will stop  */
+/* the map from being saved, even if all players have left the map. This     */
+/* means the script continues forever and the map remains in memory. This    */
+/* function allows the script to clean up and exit (or to kill the timer)    */
+/* when all players have left.                                               */
+/*****************************************************************************/
+static int Map_IsAnyPlayerOnMap(lua_State *L)
+{
+    lua_object *map;
+
+    get_lua_args(L, "M", &map);
+
+    lua_pushboolean(L, hooks->is_any_player_on_map(map->data.map));
     return 1;
 }
 

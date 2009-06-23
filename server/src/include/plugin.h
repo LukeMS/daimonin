@@ -344,6 +344,7 @@ struct plugin_hooklist
                                 const int);
     object *(*insert_ob_in_ob)(object *, object *);
     object *(*is_player_inv)(object *);
+    int (*is_any_player_on_map)(mapstruct *);
     /* J */
     /* K */
     /* L */

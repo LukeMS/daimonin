@@ -2216,9 +2216,9 @@ void save_objects(mapstruct *m, FILE *fp, int flag)
     * so in the next game tick the spawn point can do action. Because we will save
     * now, that action will be called when the map is reloaded. All ok.
     * NOT ok is, that the button then (or any other from move apply called object)
-    * does a action IMMIDIALTY except it is a static effect (like we put a wall
+    * does an action IMMEDIATELY unless it is a static effect (like we put a wall
     * in somewhere).
-    * Absolut forbidden are dynamic effect like instant spawns of mobs on other maps
+    * Absolutely forbidden are dynamic effect like instant spawns of mobs on other maps
     * point - then our map will get messed up again. Teleporters are a bit critical here
     * and i fear the code and callings in move_apply() will need some more carefully
     * examination.
@@ -2654,3 +2654,17 @@ const char* create_safe_mapname_sh(char const *mapname)
 
    return p;
 }
+
+/*
+* Returns true if any player is on the map.
+* A looping script, or a script triggered repeatedly by a timer, will stop
+* the map from being saved, even if all players have left the map. This
+* means the script continues forever and the map remains in memory. This
+* function allows the script to clean up and exit (or to kill the timer)
+* when all players have left.
+*/
+int is_any_player_on_map(mapstruct *m)
+{
+    return (m->player_first ? 1 : 0);
+}
+
