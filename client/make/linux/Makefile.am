@@ -71,6 +71,7 @@ install-data-hook:
 #		exit 42; \
 #	fi;
 	$(MKDIR) -p $(d_datadir)/sfx
+	$(MKDIR) -p $(d_datadir)/man
 	$(MKDIR) -p $(d_datadir)/media
 	$(MKDIR) -p $(d_datadir)/cache
 	$(MKDIR) -p $(d_datadir)/logs
@@ -80,6 +81,7 @@ install-data-hook:
 	$(MKDIR) -p $(d_datadir)/settings
 	$(MKDIR) -p $(d_datadir)/update
 	$(CP) ../../sfx/*.* $(d_datadir)/sfx
+	$(CP) ../../man/* $(d_datadir)/man
 	$(CP) ../../media/*.* $(d_datadir)/media
 	$(CP) ../../cache/*.* $(d_datadir)/cache
 	$(CP) -R ../../skins/* $(d_datadir)/skins
