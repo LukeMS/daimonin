@@ -125,6 +125,7 @@ int command_egobind ( object *pl, char *params)
     return 0;
 }
 
+#if 0
 int command_apply(object *op, char *params)
 {
         enum apply_flag aflag   = 0;
@@ -167,8 +168,6 @@ int command_apply(object *op, char *params)
     return 0;
 }
 
-
-#if 0
 /* Command will drop all items that have not been locked */
 int command_dropall(object *op, char *params)
 {
