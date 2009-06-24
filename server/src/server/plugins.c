@@ -108,9 +108,10 @@ struct plugin_hooklist  hooklist    =
     insert_ob_in_map,
     insert_ob_in_ob,
     is_player_inv,
-    is_any_player_on_map,
     /* J */
     /* K */
+    kill_object,
+    kill_player,
     /* L */
     load_object_str,
     locate_beacon,
@@ -161,6 +162,7 @@ struct plugin_hooklist  hooklist    =
     reset_instance_data,
     return_poolchunk_array_real,
     /* S */
+    save_life,
     sell_item,
     set_personal_light,
     set_quest_status,

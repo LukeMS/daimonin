@@ -31,10 +31,11 @@ static struct method_decl Map_methods[] =
     {"Delete",                 Map_Delete},
     {"GetFirstObjectOnSquare", Map_GetFirstObjectOnSquare},
     {"GetBrightnessOnSquare",  Map_GetBrightnessOnSquare},
-    {"IsWallOnSquare",         Map_IsWallOnSquare},
     {"IsAnyPlayerOnMap",       Map_IsAnyPlayerOnMap},
+    {"IsWallOnSquare",         Map_IsWallOnSquare},
     {"MapTileAt",              Map_MapTileAt},
     {"Message",                Map_Message},
+    {"PlayersOnMap",           Map_PlayersOnMap},
     {"PlaySound",              Map_PlaySound},
     {"ReadyInheritedMap",      Map_ReadyInheritedMap},
     {"Save",                   Map_Save},
@@ -415,7 +416,8 @@ static int Map_IsAnyPlayerOnMap(lua_State *L)
 
     get_lua_args(L, "M", &map);
 
-    lua_pushboolean(L, hooks->is_any_player_on_map(map->data.map));
+    lua_pushboolean(L, (map->data.map->player_first) ? 1 : 0);
+
     return 1;
 }
 
@@ -539,6 +541,35 @@ static int Map_CreateObject(lua_State *L)
     free(CFR);
 
     return push_object(L, &GameObject, new_ob);
+}
+
+/*****************************************************************************/
+/* Name   : Map_PlayersOnMap                                                 */
+/* Lua    : map:PlayersOnMap()                                               */
+/* Info   : Returns a table of all the players on map, or nil.               */
+/* Status : Untested/Stable                                                  */
+/*****************************************************************************/
+static int Map_PlayersOnMap(lua_State *L)
+{
+    lua_object *map;
+    object     *ob;
+
+    get_lua_args(L, "M", &map);
+
+    /* No-one on this map, so return nil. */
+    if (!map->data.map->player_first)
+        return 0;
+
+    /* Build up our table. */
+    lua_newtable(L);
+
+    for (ob = map->data.map->player_first; ob; ob = CONTR(ob)->map_above)
+    {
+        push_object(L, &GameObject, ob);
+        lua_rawset(L, -2);
+    }
+
+    return 1;
 }
 
 

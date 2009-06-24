@@ -344,9 +344,10 @@ struct plugin_hooklist
                                 const int);
     object *(*insert_ob_in_ob)(object *, object *);
     object *(*is_player_inv)(object *);
-    int (*is_any_player_on_map)(mapstruct *);
     /* J */
     /* K */
+    int (*kill_object)(object *, int, object *, int);
+    void (*kill_player)(object *);
     /* L */
     object *(*load_object_str)(char *);
     object *(*locate_beacon)(shstr *);
@@ -402,6 +403,7 @@ struct plugin_hooklist
     void (*reset_instance_data)(player *pl);
     void (*return_poolchunk_array_real)(void *, uint32, struct mempool *);
     /* S */
+    int (*save_life)(object *);
     void (*sell_item)(object *, object *, sint64);
     void (*set_personal_light)(player *, int);
     void (*set_quest_status)(struct obj *, int, int);
