@@ -1818,8 +1818,7 @@ int count_used() {
  * dropping any inventory on the floor */
 void destruct_ob(object *op)
 {
-    if (op->inv)
-        drop_ob_inv(op);
+    drop_ob_inv(op);
     remove_ob(op);
     check_walk_off(op, NULL, MOVE_APPLY_DEFAULT);
 

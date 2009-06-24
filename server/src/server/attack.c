@@ -1433,9 +1433,10 @@ int kill_object(object *op, int dam, object *hitter, int typeX)
                     SET_FLAG(op, FLAG_STARTEQUIP);
                 }
             }
-            else
+            else /* aggroless kill (eg, script mob:Kill()) -- force empty corpse */
             {
                 op->enemy = NULL;
+                SET_FLAG(op, FLAG_CORPSE_FORCED);
                 SET_FLAG(op, FLAG_STARTEQUIP);
             }
 
