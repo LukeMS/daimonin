@@ -553,6 +553,7 @@ static int Map_PlayersOnMap(lua_State *L)
 {
     lua_object *map;
     object     *ob;
+    int         i;
 
     get_lua_args(L, "M", &map);
 
@@ -563,10 +564,11 @@ static int Map_PlayersOnMap(lua_State *L)
     /* Build up our table. */
     lua_newtable(L);
 
-    for (ob = map->data.map->player_first; ob; ob = CONTR(ob)->map_above)
+    for (ob = map->data.map->player_first, i = 1; ob;
+         ob = CONTR(ob)->map_above, i++)
     {
         push_object(L, &GameObject, ob);
-        lua_rawset(L, -2);
+        lua_rawseti(L, -2, i);
     }
 
     return 1;
