@@ -2060,7 +2060,7 @@ static int GameObject_Kill(lua_State *L)
         }
 
         /* Note the player's killer. */
-        if (WHAT) 
+        if (whatptr)
         {
             FREE_AND_COPY_HASH(CONTR(WHO)->killer, STRING_OBJ_NAME(WHAT));
         }
@@ -2084,7 +2084,7 @@ static int GameObject_Kill(lua_State *L)
         /* Kill the monster, returning true if he dies, false otherwise (it has
          * a life-saving DEATH script). */
         WHO->stats.hp = 0;
-        b = (hooks->kill_object(WHO, 0, WHAT, 0)) ? 1 : 0;
+        b = (hooks->kill_object(WHO, 0, (whatptr) ? WHAT : NULL, 0)) ? 1 : 0;
 
         lua_pushboolean(L, b);
 
