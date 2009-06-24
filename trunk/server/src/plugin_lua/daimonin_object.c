@@ -2015,44 +2015,83 @@ static int GameObject_Fix(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_Kill                                                  */
-/* Lua    : object:Kill(what, how)                                           */
-/* Status : Tested/Stable                                                    */
+/* Lua    : object:Kill(killer)                                              */
+/* Info   : Only works for player and monster objects. Other types generate  */
+/*          an error.                                                        */
+/*          Kills the object, awarding exp, creating a corpse, giving        */
+/*          deathsick, etc. as necessary.                                    */
+/*          Returns true if the object was good enough to die, false if it   */
+/*          had some method of saving its life, or nil if there was a        */
+/*          problem.                                                         */
+/* Status : Untested/Stable                                                  */
 /*****************************************************************************/
-/* add hooks before use! */
-
 static int GameObject_Kill(lua_State *L)
 {
-    lua_object *whatptr;
-    int         ktype;
-    int         k   = 1;
-    CFParm     *CFR, CFP;
-    lua_object *self;
+    lua_object *self,
+               *whatptr = NULL;
+    char       *killer = NULL;
 
-    get_lua_args(L, "OOi", &self, &whatptr, &ktype);
+    /* Get the arguments. */
+    if (lua_isuserdata(L, 2))
+        get_lua_args(L, "OO", &self, &whatptr);
+    else
+        get_lua_args(L, "O|s", &self, &killer);
 
-    WHAT->speed = 0;
-    WHAT->speed_left = 0.0;
-    CFP.Value[0] = (void *) (WHAT);
-    (PlugHooks[HOOK_UPDATESPEED]) (&CFP);
-    /* update_ob_speed(WHAT); */
+    /* Only players and monsters can be killed. */
+    if ((WHO->type != PLAYER ||
+         CONTR(WHO) == NULL) &&
+        WHO->type != MONSTER)
+        return luaL_error(L, "Kill() can only be called on a player or monster!");
 
-    if (QUERY_FLAG(WHAT, FLAG_REMOVED))
+    /* If WHO is already removed, don't try to kill it, return nil. */
+    if (QUERY_FLAG(WHO, FLAG_REMOVED))
+        return 0;
+
+    /* Player. */
+    if (WHO->type == PLAYER)
     {
-        LOG(llevDebug, "Warning (from KillObject): Trying to remove removed object\n");
-        luaL_error(L, "Trying to remove removed object");
+        /* The player has a way to save his life? Use it up and return
+         * false. */
+        if (hooks->save_life(WHO))
+        {
+            lua_pushboolean(L, 0);
+
+            return 1;
+        }
+
+        /* Note the player's killer. */
+        if (WHAT) 
+        {
+            FREE_AND_COPY_HASH(CONTR(WHO)->killer, STRING_OBJ_NAME(WHAT));
+        }
+        else if (killer)
+        {
+            FREE_AND_COPY_HASH(CONTR(WHO)->killer, STRING_SAFE(killer));
+        }
+
+        /* Kill him and return true. */
+        hooks->kill_player(WHO);
+
+        lua_pushboolean(L, 1);
+
+        return 1;
     }
+    /* Monster. */
     else
     {
-        WHAT->stats.hp = -1;
-        CFP.Value[0] = (void *) (WHAT);
-        CFP.Value[1] = (void *) (&k);
-        CFP.Value[2] = (void *) (WHO);
-        CFP.Value[3] = (void *) (&ktype);
+        int b;
 
-        CFR = (PlugHooks[HOOK_KILLOBJECT]) (&CFP);
-        free(CFR);
+        /* Kill the monster, returning true if he dies, false otherwise (it has
+         * a life-saving DEATH script). */
+        WHO->stats.hp = 0;
+        b = (hooks->kill_object(WHO, 0, WHAT, 0)) ? 1 : 0;
+
+        lua_pushboolean(L, b);
+
+        return 1;
     }
 
+    /* No idea what this is. */
     /* TODO: make sure this still works... */
     /* This is to avoid the attack routine to continue after we called
      * killObject, since the attacked object no longer exists.
@@ -2063,8 +2102,6 @@ static int GameObject_Kill(lua_State *L)
         {
             StackOther[StackPosition] = NULL;
         }*/
-
-    return 0;
 }
 
 /*****************************************************************************/
