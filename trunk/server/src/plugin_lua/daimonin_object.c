@@ -3863,7 +3863,8 @@ static int GameObject_GetGroup(lua_State *L)
     lua_object *self;
     object     *member,
                *leader;
-    int         nrof;
+    int         nrof,
+                i;
 
     get_lua_args(L, "O", &self);
 
@@ -3875,14 +3876,18 @@ static int GameObject_GetGroup(lua_State *L)
     if (!(leader = CONTR(WHO)->group_leader))
     {
         lua_pushnil(L);
+
         return 1;
     }
 
     lua_newtable(L);
-    for (member = leader, nrof = CONTR(leader)->group_nrof; member && nrof > 0;  member = CONTR(member)->group_next, nrof--)
+
+    for (member = leader, nrof = CONTR(leader)->group_nrof, i = 1;
+         member && i <= nrof;
+         member = CONTR(member)->group_next, i++)
     {
         push_object(L, &GameObject, member);
-        lua_rawset(L, -2);
+        lua_rawseti(L, -2, i);
     }
 
     return 1;
