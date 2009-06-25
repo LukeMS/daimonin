@@ -543,7 +543,7 @@ void get_lua_args(lua_State *L, const char *fmt, ...)
 
             case 'b':
               /* boolean */
-              luaL_checknumber(L, pos);
+              luaL_checktype(L, pos, LUA_TBOOLEAN);
               *va_arg(ap, int *) = lua_toboolean(L, pos);
               break;
 
