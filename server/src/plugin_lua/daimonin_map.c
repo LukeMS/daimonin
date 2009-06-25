@@ -400,8 +400,11 @@ static int Map_IsWallOnSquare(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : Map_IsAnyPlayerOnMap                                             */
-/* Lua    : map:IsAnyPlayerOnMap()                                           */
-/* Info   : returns true if any player is on the map                         */
+/* Lua    : map:IsAnyPlayerOnMap(tiling)                                     */
+/* Info   : Checks if at least one player is on the map.                     */
+/*          Tiling is optional. If true we also check the upto eight         */
+/*          surrounding maps.                                                */
+/*          Returns true if any player is found, false otherwise.            */
 /* Status : Tested/Stable                                                    */
 /*                                                                           */
 /* A looping script, or a script triggered repeatedly by a timer, will stop  */
@@ -413,10 +416,27 @@ static int Map_IsWallOnSquare(lua_State *L)
 static int Map_IsAnyPlayerOnMap(lua_State *L)
 {
     lua_object *map;
+    int         tiling = 0,
+                isthere,
+                i;
 
-    get_lua_args(L, "M", &map);
+    get_lua_args(L, "M|b", &map, &tiling);
 
-    lua_pushboolean(L, (map->data.map->player_first) ? 1 : 0);
+    isthere = (map->data.map->player_first) ? 1 : 0;
+
+    if (!isthere && tiling)
+        for (i = 0; i < TILED_MAPS; i++)
+        {
+            isthere = (map->data.map->tile_map[i] &&
+                       map->data.map->tile_map[i]->player_first) ? 1 : 0;
+
+            /* We only care if there is *any* player on the tiles, so at the
+             * first positive quit the loop. */
+            if (isthere)
+                break;
+        }
+
+    lua_pushboolean(L, isthere);
 
     return 1;
 }
