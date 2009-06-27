@@ -41,5 +41,6 @@ static int  Map_PlayersOnMap(lua_State *L);
 static int  Map_PlaySound(lua_State *L);
 static int  Map_ReadyInheritedMap(lua_State *L);
 static int  Map_Save(lua_State *L);
+static int  Map_SetDarkness(lua_State *L);
 
 #endif /* DAIMONIN_MAP_H*/

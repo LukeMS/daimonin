@@ -39,6 +39,7 @@ static struct method_decl Map_methods[] =
     {"PlaySound",              Map_PlaySound},
     {"ReadyInheritedMap",      Map_ReadyInheritedMap},
     {"Save",                   Map_Save},
+    {"SetDarkness",            Map_SetDarkness},
 
     {NULL, NULL}
 };
@@ -593,6 +594,41 @@ static int Map_PlayersOnMap(lua_State *L)
 
     return 1;
 }
+
+/*****************************************************************************/
+/* Name   : Map_SetDarkness                                                  */
+/* Lua    : map:SetDarkness()                                                */
+/* Info   : Sets the map-wide 'illumination' to value, normalised to the     */
+/*          range 0 <= value <= MAX_DARKNESS).                               */
+/*          value should be one of the game.MAP_DARKNESS_* constants, where: */
+/*            game.MAP_DARKNESS_TOTAL : 'true' darkness. Info about parts of */
+/*                                      the map the player cannot see is not */
+/*                                      even sent to the client, meaning this*/
+/*                                      is the only kind of map darkness that*/
+/*                                      can be used as a gameplay element;   */
+/*                                      all others are prone to client-side  */
+/*                                      'cheats'.                            */
+/*            game.MAP_DARKNESS_MIN : the darkest map darkness other than    */
+/*                                    true darkness.                         */
+/*            game.MAP_DARKNESS_MAX : the brightest map darkness (full       */
+/*                                    daylight).                             */
+/* Status : Untested/Stable                                                  */
+/* TODO   : Decide how to handle outdoors maps (currently we just ignore the */
+/*          flag, meaning the darkness will be set and becomes the new       */
+/*          maximum 'illumination' for variable lighting according to tod).  */
+/*****************************************************************************/
+static int Map_SetDarkness(lua_State *L)
+{
+    lua_object *map;
+    int         value;
+
+    get_lua_args(L, "Mi", &map, &value);
+
+    hooks->set_map_darkness(map->data.map, value);
+
+    return 0;
+}
+
 
 
 /* FUNCTIONEND -- End of the Lua plugin functions. */

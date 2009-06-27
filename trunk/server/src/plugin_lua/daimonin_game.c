@@ -502,7 +502,7 @@ static struct constant_decl preset_game_constants[] =
     {"TARGET_FRIEND", TARGET_FRIEND},
     {"TARGET_SELF",   TARGET_SELF},
 
-    /* Personal light (global.h) */
+    /* Map darkness (global.h) */
     /* Bizarrely higher numbers mean brighter so really MAX_DARKNESS means
      * MIN_DARKNESS. */
     /* FIXME: Currently there is some confusion about total darkness.
@@ -512,6 +512,11 @@ static struct constant_decl preset_game_constants[] =
      * is no good because maps would not stay synced to server changes -- total
      * dark must be a constant value.
      * -- Smacky 20090508 */
+    {"MAP_DARKNESS_TOTAL", 0},
+    {"MAP_DARKNESS_MIN",   1},
+    {"MAP_DARKNESS_MAX",   MAX_DARKNESS},
+
+    /* Personal light (global.h) */
     {"PERSONAL_LIGHT_OFF", 0},
     {"PERSONAL_LIGHT_MIN", 1},
     {"PERSONAL_LIGHT_MAX", MAX_DARKNESS},

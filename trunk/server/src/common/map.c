@@ -460,6 +460,20 @@ void dump_map(mapstruct *m, player *pl, int list, char *ref)
 #endif
 }
 
+/* set_map_darkness() sets m->darkness to 0 <= value <= MAX_DARKNESS and
+ * m->light_value to global_darkness_table[value]. */
+void set_map_darkness(mapstruct *m, int value)
+{
+    if (value < 0)
+        value += (((value / -MAX_DARKNESS) * MAX_DARKNESS)) + MAX_DARKNESS;
+
+    if (value > MAX_DARKNESS)
+        value -= (((value - 1) / MAX_DARKNESS)) * MAX_DARKNESS;
+
+    MAP_DARKNESS(m) = (sint32)value;
+    MAP_LIGHT_VALUE(m) = (sint32)global_darkness_table[value];
+}
+
 /*
  * Allocates, initialises, and returns a pointer to a mapstruct.
  * Modified to no longer take a path option which was not being
@@ -493,12 +507,7 @@ mapstruct * get_linked_map()
     MAP_RESET_TIMEOUT(map) = MAP_DEFAULT_RESET_TIME;
     MAP_TIMEOUT(map) = MAP_DEFAULT_SWAP_TIME;
     MAP_DIFFICULTY(map) = MAP_DEFAULT_DIFFICULTY;
-    MAP_DARKNESS(map) = MAP_DEFAULT_DARKNESS;
-
-    if (MAP_DEFAULT_DARKNESS == -1)
-        map->light_value = global_darkness_table[MAX_DARKNESS];
-    else
-        map->light_value = global_darkness_table[MAP_DEFAULT_DARKNESS];
+    set_map_darkness(map, MAP_DEFAULT_DARKNESS);
 
     /* We insert a dummy sentinel first in the activelist. This simplifies
      * work later */
@@ -792,8 +801,7 @@ static int load_map_header(FILE *fp, mapstruct *m, int flags)
             }
             else if (v != -1)
             {
-                m->darkness = v;
-                m->light_value = global_darkness_table[v];
+                set_map_darkness(m, v);
             }
         }
         /* light is a 'finer' way to set a map's ambient light levels. Mappers
@@ -808,7 +816,7 @@ static int load_map_header(FILE *fp, mapstruct *m, int flags)
                 LOG(llevBug, "BUG:: Illegal map light %d (must be positive, defaulting to 0)!\n",
                     v);
 
-            m->light_value = v;
+            MAP_LIGHT_VALUE(m) = v;
 
             /* i assume that the default map_flags settings is 0 - so we don't handle <flagset> 0 */
         }

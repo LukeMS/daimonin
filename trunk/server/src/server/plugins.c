@@ -164,6 +164,7 @@ struct plugin_hooklist  hooklist    =
     /* S */
     save_life,
     sell_item,
+    set_map_darkness,
     set_personal_light,
     set_quest_status,
     spring_trap,
