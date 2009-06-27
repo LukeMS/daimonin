@@ -464,11 +464,8 @@ void dump_map(mapstruct *m, player *pl, int list, char *ref)
  * m->light_value to global_darkness_table[value]. */
 void set_map_darkness(mapstruct *m, int value)
 {
-    if (value < 0)
-        value += (((value / -MAX_DARKNESS) * MAX_DARKNESS)) + MAX_DARKNESS;
-
-    if (value > MAX_DARKNESS)
-        value -= (((value - 1) / MAX_DARKNESS)) * MAX_DARKNESS;
+    if (value < 0 || value > MAX_DARKNESS)
+        value = MAX_DARKNESS;
 
     MAP_DARKNESS(m) = (sint32)value;
     MAP_LIGHT_VALUE(m) = (sint32)global_darkness_table[value];
