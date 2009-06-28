@@ -38,6 +38,7 @@ static struct method_decl GameObject_methods[] =
     {"AddQuest",               (lua_CFunction) GameObject_AddQuest},
     {"AddQuestItem",           (lua_CFunction) GameObject_AddQuestItem},
     {"AddQuestTarget",         (lua_CFunction) GameObject_AddQuestTarget},
+    {"AdjustLightSource",      (lua_CFunction) GameObject_AdjustLightSource},
     {"Apply",                  (lua_CFunction) GameObject_Apply},
     {"CastSpell",              (lua_CFunction) GameObject_CastSpell},
 #ifdef USE_CHANNELS
@@ -4200,6 +4201,66 @@ static int GameObject_SetPersonalLight(lua_State *L)
     return 1;
 }
 
+/*****************************************************************************/
+/* Name   : GameObject_AdjustLightSource                                     */
+/* Lua    : object:AdjustLightSource(value)                                  */
+/* Info   : Sets the object's glow radius to value.                          */
+/*          Any object can have a glow radius, though there are two specific */
+/*          light types (applyable and static). Applyable lights generally   */
+/*          give some sort of message when applied and can even be set up to */
+/*          not be applyable at all! This method ignores all that: An        */
+/*          applyable light adjusted with this method is always guaranteed to*/
+/*          turn on/off (depending on its previous state) and no message will*/
+/*          be generated.                                                    */
+/*          The mandatory value argument is an integer from -9 to 9.         */
+/*          The method returns nil.                                          */
+/* Status : Untested/Unstable                                                */
+/* Notes  : If you want to apply an applyable light according to normal      */
+/*          rules, this is the wrong method. Use object:Apply().             */
+/* TODO   : Unknown how well it handles actual light objects, particularly   */
+/*          player lights.                                                   */
+/*****************************************************************************/
+static int GameObject_AdjustLightSource(lua_State *L)
+{
+    lua_object *self;
+    int         value,
+                relative;
+
+    get_lua_args(L, "Oi", &self, &value);
+
+    /* Limit to range -9 <= value <= 9. */
+    value = MAX(-9, MIN(value, 9));
+
+    /* An actual light object? */
+    if (WHO->type == LIGHT_SOURCE ||
+        WHO->type == TYPE_LIGHT_APPLY)
+    {
+        /* Ensure it's off. */
+        if (WHO->glow_radius)
+            hooks->turn_off_light(WHO);
+
+        /* Turn it back on at value intensity. */
+        if (value)
+        {
+            WHO->last_sp = value;
+            hooks->turn_on_light(WHO);
+        }
+
+        return 0;
+    }
+
+    /* Already glowing at that value? All is well then. */
+    if (WHO->glow_radius == value)
+        return 0;
+
+    /* Adjust the map's light mask to the new glow radius. */
+    relative = -(WHO->glow_radius - value);
+    WHO->glow_radius = value;
+    hooks->adjust_light_source(WHO->map, WHO->x, WHO->y, relative);
+    hooks->update_object(WHO, UP_OBJ_FACE);
+
+    return 0;
+}
 
 
 /* FUNCTIONEND -- End of the GameObject methods. */

@@ -259,6 +259,7 @@ struct plugin_hooklist
     void (*add_quest_trigger)(object *, object *);
     const char *(*add_refcount)(const char *);
     const char *(*add_string)(const char *);
+    void (*adjust_light_source)(mapstruct *, int, int, int);
     object *(*arch_to_object)(archetype *);
     /* B */
     /* C */
@@ -412,9 +413,12 @@ struct plugin_hooklist
     char *(*strdup_local)(const char *);
     sint32 (*sum_weight)(object *);
     /* T */
+    void (*turn_off_light)(object *);
+    void (*turn_on_light)(object *);
     /* U */
     struct mob_known_obj *(*update_npc_knowledge)(object *, object *, int,
                                                   int);
+    void (*update_object)(object *, int);
     /* V */
     /* W */
     int (*wall)(mapstruct *, int, int);
