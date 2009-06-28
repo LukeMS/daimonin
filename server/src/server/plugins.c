@@ -42,6 +42,7 @@ struct plugin_hooklist  hooklist    =
     add_quest_trigger,
     add_refcount,
     add_string,
+    adjust_light_source,
     arch_to_object,
     /* B */
     /* C */
@@ -171,8 +172,11 @@ struct plugin_hooklist  hooklist    =
     strdup_local,
     sum_weight,
     /* T */
+    turn_off_light,
+    turn_on_light,
     /* U */
     update_npc_knowledge,
+    update_object,
     /* V */
     /* W */
     wall,
