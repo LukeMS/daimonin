@@ -4210,8 +4210,8 @@ static int GameObject_SetPersonalLight(lua_State *L)
 /*          give some sort of message when applied and can even be set up to */
 /*          not be applyable at all! This method ignores all that: An        */
 /*          applyable light adjusted with this method is always guaranteed to*/
-/*          turn on/off (depending on its previous state) and no message will*/
-/*          be generated.                                                    */
+/*          turn on/off (depending on value -- 0 means off, any other value  */
+/*          means on) and no message will be generated.                      */
 /*          The mandatory value argument is an integer from -9 to 9.         */
 /*          The method returns nil.                                          */
 /* Status : Untested/Unstable                                                */
