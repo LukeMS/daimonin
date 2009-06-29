@@ -4214,11 +4214,9 @@ static int GameObject_SetPersonalLight(lua_State *L)
 /*          means on) and no message will be generated.                      */
 /*          The mandatory value argument is an integer from -9 to 9.         */
 /*          The method returns nil.                                          */
-/* Status : Untested/Unstable                                                */
+/* Status : Untested/Stable                                                  */
 /* Notes  : If you want to apply an applyable light according to normal      */
 /*          rules, this is the wrong method. Use object:Apply().             */
-/* TODO   : Unknown how well it handles actual light objects, particularly   */
-/*          player lights.                                                   */
 /*****************************************************************************/
 static int GameObject_AdjustLightSource(lua_State *L)
 {
