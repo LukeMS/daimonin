@@ -674,7 +674,7 @@ int GameObject_init(lua_State *L)
 /*            game.INS_WITHIN_LOS - insert only within LOS of default spot.  */
 /*            game.INS_IGNORE_TERRAIN - ignore terrain when deciding if a    */
 /*              spot is free.                                                */
-/*          If none are given, the default is ignore terrain.                */ 
+/*          If none are given, the default is ignore terrain.                */
 /*          Examples:                                                        */
 /*          obj:SetPosition(x, y) - same as obj:SetPosition(obj.map, x,y)    */
 /*          obj:SetPosition(game:ReadyMap("/a_map"), x, y) - multiplayer map */
@@ -4214,7 +4214,7 @@ static int GameObject_SetPersonalLight(lua_State *L)
 /*          means on) and no message will be generated.                      */
 /*          The mandatory value argument is an integer from -9 to 9.         */
 /*          The method returns nil.                                          */
-/* Status : Untested/Stable                                                  */
+/* Status : Tested/Stable                                                  */
 /* Notes  : If you want to apply an applyable light according to normal      */
 /*          rules, this is the wrong method. Use object:Apply().             */
 /*****************************************************************************/
