@@ -133,7 +133,6 @@ extern void     show_menu(void);
 extern void     show_media(int x, int y);
 extern void     widget_show_range(int x, int y);
 extern void     widget_range_event(int x, int y, SDL_Event event, int MEvent);
-extern int      init_media_tag(char *tag);
 extern void     blt_inventory_face_from_tag(int tag, int x, int y);
 extern int      blt_window_slider(_Sprite *slider, int max_win, int winlen, int off, int len, int x, int y);
 extern void     do_keybind_input(void);

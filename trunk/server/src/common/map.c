@@ -305,18 +305,8 @@ void dump_map(mapstruct *m, player *pl, int list, char *ref)
 
     if (list <= 0)
     {
-        char  name[MAX_BUF],
-             *music;
-
-        /* When we remove the media tag completely, there will be no need to
-         * split m->name. */
-        strncpy(name, m->name, sizeof(name));
-
-        if ((music = strchr(name, '§')))
-            *music++ = '\0';
-
-        NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Name~: %s", name);
-        NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Music~: %s", music);
+        NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Name~: %s", m->name);
+        NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Music~: %s", STRING_SAFE(m->music));
 
         if (ob &&
             ob->map == m)

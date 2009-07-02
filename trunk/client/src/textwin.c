@@ -286,51 +286,6 @@ void draw_info(char *str, int flags)
         color = COLOR_HGOLD;
     }
 
-/* Eventually, it will no longer be necessary to worry about § characters, so
- * we can remove much of the following. */
-#if 1
-    /*
-     * first: we set all white spaces (char<32) to 32 to remove really all odd stuff.
-     * except 0x0a - this is EOL for us and will be set to
-     * 0 to mark C style end of string
-     */
-    for (i = 0; buf2[i] != 0; i++)
-    {
-        if ((unsigned char)buf2[i] < 32 && buf2[i] != 0x0a && buf2[i] != '§')
-        {
-            buf2[i] = 32;
-        }
-    }
-
-    /* We will mask out text between § and end-of-line */
-    while ((tag = strchr(buf2, '§')))
-    {
-        char *tagend = strchr(tag, 0x0a);
-
-        if (tagend == NULL)
-            tagend = tag + strlen(tag);
-
-        if (tagend > tag+1)
-        {
-            char savetagend;
-            savetagend = *tagend;
-            *tagend = '\0';
-
-            init_media_tag(tag);
-            *tagend = savetagend;
-            *tag = '\0';
-        }
-
-        /* Shift the string */
-        memmove(tag, tagend, strlen(tag+1));
-    }
-    /* we check if something is left after the tag (so tag only draw_infos won't produce a empty line) */
-    if (!buf2[0])
-    {
-        free(buf2);
-        return;
-    }
-#else
     /*
      * first: we set all white spaces (char<32) to 32 to remove really all odd stuff.
      * except 0x0a - this is EOL for us and will be set to
@@ -343,7 +298,6 @@ void draw_info(char *str, int flags)
             buf2[i] = 32;
         }
     }
-#endif
 
     /*
      * ok, here we must cut a string to make it fit in window

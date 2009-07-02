@@ -2123,7 +2123,11 @@ static void show_intro(char *text)
 
 
     if (text)
+#if 0
         StringBlt(ScreenSurface, &SystemFont, text, x+370, y+295, COLOR_DEFAULT, NULL, NULL);
+#else
+        StringBlt(ScreenSurface, &SystemFont, text, x+370, y+585, COLOR_DEFAULT, NULL, NULL);
+#endif
     else
         StringBlt(ScreenSurface, &SystemFont, "** Press Key **", x+375, y+585, COLOR_DEFAULT, NULL, NULL);
 
