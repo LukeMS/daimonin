@@ -1477,9 +1477,9 @@ void Map2Cmd(char *data, int len)
     sint16 height_2, height_3, height_4;
 
     char    pname1[64], pname2[64], pname3[64], pname4[64];
-    char mapname[256];
+    char mapname[SMALL_BUF],
+         music[SMALL_BUF];
     uint16  face;
-    char *media_tag;
 
     mapstat = (uint8) (data[pos++]);
     map_transfer_flag = 0;
@@ -1487,6 +1487,8 @@ void Map2Cmd(char *data, int len)
     {
         strcpy(mapname, (const char *)(data + pos));
         pos += strlen(mapname)+1;
+        strcpy(music, (const char *)(data + pos));
+        pos += strlen(music)+1;
         if (mapstat == MAP_UPDATE_CMD_NEW)
         {
             /*
@@ -1514,22 +1516,8 @@ void Map2Cmd(char *data, int len)
             remove_item_inventory(locate_item(0)); /* implicit clear below */
             display_mapscroll(xoff, yoff);
         }
-#if 0
         UpdateMapName(mapname);
-#else
-        /* We now split mapname at § here rather than in UpdateMapName(). */
-        if ((media_tag = strchr(mapname, '§')))
-        {
-            UpdateMapMusic(media_tag);
-            *media_tag = '\0';
-            UpdateMapName(mapname);
-        }
-        else
-        {
-            UpdateMapName(mapname);
-            sound_fadeout_music(0);
-        }
-#endif
+        UpdateMapMusic(music);
     }
     else
     {
