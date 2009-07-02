@@ -1,5 +1,6 @@
 arch map
-name Testmaps - Spells§spokyspace.ogg|0|-1
+name Testmaps - Spells
+background_music spokyspace.ogg|0|-1
 msg
 Created:  2003-04-13 Daimonin Map Editor
 endmsg

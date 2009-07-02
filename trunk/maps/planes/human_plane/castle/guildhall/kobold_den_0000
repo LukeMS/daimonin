@@ -1,5 +1,6 @@
 arch map
-name Kobold Den§100-dreamybells.ogg|0|-1
+name Kobold Den
+background_music 100-dreamybells.ogg|0|-1
 msg
 Created:  2004-03-22 Daimonin Map Editor
 Modified: 2009-03-30 smacky
