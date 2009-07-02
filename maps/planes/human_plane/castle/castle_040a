@@ -1,5 +1,6 @@
 arch map
-name Guild Hall§ColeForeverPiano.ogg|0|-1
+name Guild Hall
+background_music ColeForeverPiano.ogg|0|-1
 msg
 Creator: Daimonin Map Editor
 Date:    7/16/2004

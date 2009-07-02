@@ -1,5 +1,6 @@
 arch map
-name Stonehaven - Rat Infested Well§spokyspace.ogg|0|-1
+name Stonehaven - Rat Infested Well
+background_music spokyspace.ogg|0|-1
 msg
 Created:  2003-10-12 Daimonin Map Editor
 endmsg

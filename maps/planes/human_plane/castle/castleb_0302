@@ -1,5 +1,6 @@
 arch map
-name Woman's Basement§barrenlands.ogg|0|-1
+name Woman's Basement
+background_music barrenlands.ogg|0|-1
 msg
 Created:  2005-11-28 Unislash
 Modified: 2009-03-29 smacky

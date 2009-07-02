@@ -1,5 +1,6 @@
 arch map
-name Wilderness near Stonehaven§jungle1.ogg|0|-1
+name Wilderness near Stonehaven
+background_music jungle1.ogg|0|-1
 msg
 Created:  2004-07-13 Daimonin Map Editor
 endmsg

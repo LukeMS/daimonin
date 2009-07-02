@@ -1,5 +1,6 @@
 arch map
-name Cave§thonkdonk.ogg|0|-1
+name Cave
+background_music thonkdonk.ogg|0|-1
 msg
 Created:  2007-01-10 Sammy Broock
 Modified: 2009-03-29 smacky

@@ -1,5 +1,6 @@
 arch map
-name Stoneglow - Normal Apartment§110-keybd.ogg|0|-1
+name Stoneglow - Normal Apartment
+background_music 110-keybd.ogg|0|-1
 msg
 Created:  2003-10-26 Daimonin Map Editor
 Modified: 2009-03-30 smacky
