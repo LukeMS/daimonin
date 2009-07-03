@@ -1,6 +1,6 @@
 arch map
 name Near Guild Hall
-background_music jungle1.ogg|0|-1
+background_music jungle1.ogg
 msg
 Created:  2004-07-08 Daimonin Map Editor
 endmsg

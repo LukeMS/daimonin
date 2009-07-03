@@ -1,6 +1,6 @@
 arch map
 name Testmap - Connection Objects
-background_music rubberfreak.ogg|0|-1
+background_music rubberfreak.ogg
 msg
 Created:  2003-04-13 Daimonin Map Editor
 endmsg
