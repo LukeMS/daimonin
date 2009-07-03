@@ -1,6 +1,6 @@
 arch map
 name Western Marshes
-background_music swamp.ogg|0|-1
+background_music swamp.ogg
 msg
 Created:  2004-07-24 Daimonin Map Editor
 endmsg
