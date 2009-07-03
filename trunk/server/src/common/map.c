@@ -305,8 +305,10 @@ void dump_map(mapstruct *m, player *pl, int list, char *ref)
 
     if (list <= 0)
     {
-        NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Name~: %s", m->name);
-        NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Music~: %s", STRING_SAFE(m->music));
+        NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Name~: %s",
+                STRING_SAFE(m->name));
+        NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Music~: %s",
+                STRING_SAFE(m->music));
 
         if (ob &&
             ob->map == m)
@@ -326,7 +328,8 @@ void dump_map(mapstruct *m, player *pl, int list, char *ref)
                       ((MAP_INSTANCE(m)) ? "Instance" : "UNKNOWN"))));
 
             if (m->msg)
-                NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Msg~: %s", m->msg);
+                NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Msg~: %s",
+                        STRING_SAFE(m->msg));
 
             NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Size~: %dx%d (%d, %d)",
                     MAP_WIDTH(m), MAP_HEIGHT(m), MAP_ENTER_X(m), MAP_ENTER_Y(m));
@@ -638,6 +641,7 @@ static int load_map_header(FILE *fp, mapstruct *m, int flags)
         }
         else if (!strcmp(key,"background_music"))
         {
+            *end = 0;
             FREE_AND_COPY_HASH(m->music, value);
         }
         else if (!strcmp(key, "msg"))
