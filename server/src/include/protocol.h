@@ -21,6 +21,8 @@
     The author can be reached via e-mail to info@daimonin.net
 */
 
+#define PROTOCOL_VERSION 991029
+
 /* min & max length of player & account names & password
 * important - for a login server this must snyced up with it too
 */

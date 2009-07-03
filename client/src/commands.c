@@ -185,24 +185,28 @@ void SetupCmd(char *buf, int len)
         while (s < len && buf[s] == ' ')
             s++;
 
-        if (!strcmp(cmd, "sc") || !strcmp(cmd, "cs"))
+        if (!strcmp(cmd, "pv"))
         {
-            if( (!strcmp(cmd, "sc") && strcmp(param, VERSION_SC)) ||
-                                (!strcmp(cmd, "cs") && strcmp(param, VERSION_CS)) )
-            {
-                char tmpbuf[MAX_BUF];
+            unsigned int pv;
 
-                sprintf(tmpbuf, "Invalid version %s: %s   (CS:%s,SC:%s)", cmd, param, VERSION_CS, VERSION_SC);
-                draw_info(tmpbuf, COLOR_RED);
-                if (!strcmp(cmd, "cs"))
+            if ((pv = (unsigned int)strtoul(param, (char **)NULL, 10)) != PROTOCOL_VERSION)
+            {
+                char tmpbuf[TINY_BUF];
+
+                draw_info_format(COLOR_RED, "Mismatched protocol versions (server: %u, client: %u)",
+                                 pv, PROTOCOL_VERSION);
+
+                if (pv < PROTOCOL_VERSION)
                     sprintf(tmpbuf, "The server is outdated!\nSelect a different one!");
                 else
                     sprintf(tmpbuf, "Your client is outdated!\nUpdate your client!");
+
+                LOG(LOG_ERROR, "%s\n", tmpbuf);
                 draw_info(tmpbuf, COLOR_RED);
                 SOCKET_CloseSocket(csocket.fd);
                 GameStatus = GAME_STATUS_START;
-                LOG(LOG_ERROR, "%s\n", tmpbuf);
                 SDL_Delay(3250);
+
                 return;
             }
         }
