@@ -197,7 +197,6 @@ void draw_info(char *str, int flags)
     char        buf[4096];
     char       *text;
     int         actWin, z;
-    char       *tag;
 /*    unsigned char    actChar; // unused
  */
 
