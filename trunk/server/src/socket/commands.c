@@ -526,16 +526,10 @@ void cs_cmd_setup(char *buf, int len, NewSocket *ns)
         strcat(cmdback, cmd);
         strcat(cmdback, " ");
 
-        if (!strcmp(cmd, "cs"))
+        if (!strcmp(cmd, "pv"))
         {
-            ns->cs_version = atoi(param);
-            sprintf(tmpbuf, "%d", VERSION_CS);
-            strcat(cmdback, tmpbuf);
-        }
-        else if (!strcmp(cmd, "sc"))
-        {
-            ns->sc_version = atoi(param);
-            sprintf(tmpbuf, "%d", VERSION_SC);
+            ns->protocol_version = (uint32)strtoul(param, (char **)NULL, 10);
+            sprintf(tmpbuf, "%d", PROTOCOL_VERSION);
             strcat(cmdback, tmpbuf);
         }
         else if (!strcmp(cmd, "sn"))
@@ -756,10 +750,10 @@ void cs_cmd_setup(char *buf, int len, NewSocket *ns)
     /* lets check the client version is ok. If not, we send back the setup command
     * but then we go in zombie mode
     */
-    if (VERSION_SC != ns->sc_version || VERSION_SC != ns->cs_version)
+    if (PROTOCOL_VERSION != ns->protocol_version)
     {
-        LOG(llevInfo, "VERSION: version mismatch client:(%d,%d) server:(%d,%d)\n",
-            ns->sc_version, ns->cs_version, VERSION_SC, VERSION_CS);
+        LOG(llevInfo, "Protocol version mismatch client:(%u) server:(%u)\n",
+            ns->protocol_version, PROTOCOL_VERSION);
         ns->login_count = ROUND_TAG+(uint32)(10.0f * pticks_second);
         ns->status = Ns_Zombie; /* we hold the socket open for a *bit* */
         ns->idle_flag = 1;

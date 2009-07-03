@@ -303,7 +303,8 @@ int esrv_send_face(NewSocket *ns, short face_num, int nocache)
 		SockBuf_AddShort(ACTIVE_SOCKBUF(ns), face_num);
 		if (ns->image2)
 			SockBuf_AddChar(ACTIVE_SOCKBUF(ns), (char) fallback);
-		if (ns->sc_version >= 1026)
+                /* This must be a very old backwards compatibility hack. */
+		if (ns->protocol_version >= 1026)
 			SockBuf_AddInt(ACTIVE_SOCKBUF(ns), facesets[fallback].faces[face_num].checksum);
 		SockBuf_AddString(ACTIVE_SOCKBUF(ns), new_faces[face_num].name, strlen(new_faces[face_num].name));
 

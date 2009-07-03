@@ -521,14 +521,11 @@ static void set_logfile(char *val)
 {
     settings.logfilename = val;
 }
+
 static void call_version()
 {
-    if (VERSION_SC != VERSION_CS)
-        fprintf(stderr, "SC (%d) and CS (%d) protocols do not match as they should!\n",
-                VERSION_SC, VERSION_CS);
-
-    printf("This is %s v%s (protocol %d)\n\n",
-           VERSION_INFO, VERSION, VERSION_SC);
+    printf("This is Daimonin v%s (protocol version %d)\n\n",
+           VERSION, PROTOCOL_VERSION);
     exit(0);
 }
 

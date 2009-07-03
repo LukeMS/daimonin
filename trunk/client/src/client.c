@@ -486,8 +486,8 @@ void SendSetupCmd(void)
     else
         strcpy(tmpbuf, "0");
 
-    sprintf(buf, "cs %s sc %s sn %s mz %dx%d skf %d|%x spf %d|%x bpf %d|%x stf %d|%x amf %d|%x",
-    VERSION_CS, VERSION_SC, tmpbuf, MapStatusX, MapStatusY, srv_client_files[SRV_CLIENT_SKILLS].len,
+    sprintf(buf, "pv %u sn %s mz %dx%d skf %d|%x spf %d|%x bpf %d|%x stf %d|%x amf %d|%x",
+    PROTOCOL_VERSION, tmpbuf, MapStatusX, MapStatusY, srv_client_files[SRV_CLIENT_SKILLS].len,
     srv_client_files[SRV_CLIENT_SKILLS].crc, srv_client_files[SRV_CLIENT_SPELLS].len,
     srv_client_files[SRV_CLIENT_SPELLS].crc, srv_client_files[SRV_CLIENT_BMAPS].len,
     srv_client_files[SRV_CLIENT_BMAPS].crc, srv_client_files[SRV_CLIENT_SETTINGS].len,

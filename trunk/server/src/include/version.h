@@ -28,7 +28,3 @@
 #else
 #define VERSION "0.10.0"
 #endif
-
-#define VERSION_CS 991028
-#define VERSION_SC 991028
-#define VERSION_INFO "Daimonin Server"

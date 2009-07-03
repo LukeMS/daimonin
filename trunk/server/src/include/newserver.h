@@ -200,8 +200,7 @@ typedef struct NewSocket_struct
         uint32              login_count;        /* if someone is to long idle in the login, we kick him here! */
         int                 mapx, mapy;         /* How large a map the client wants */
         int                 mapx_2, mapy_2;     /* same like above but /2 */
-        uint32              cs_version;         /*client/server versions */
-        uint32              sc_version;
+        uint32              protocol_version;
         int                 pwd_try;            /* simple password guessing security */
         uint32              update_tile;        /* marker to see we must update the below windows of the tile the player is */
         char                ip_host[40];            /* IP as string */

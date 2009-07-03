@@ -53,9 +53,6 @@
 #define DEFAULT_SERVER_PORT 13327
 #define DEFAULT_METASERVER_PORT 13326
 
-#define VERSION_CS "991028"
-#define VERSION_SC "991028"
-
 #define KEYBIND_FILE "settings/keys.dat"
 #define OPTION_FILE  "settings/options.dat"
 #define ARCHDEF_FILE "archdef.dat"
