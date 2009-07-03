@@ -200,12 +200,8 @@ void UpdateMapName(char *name)
 
 void UpdateMapMusic(char *music)
 {
-    char    *p1,
-            *p2;
-
     if (!music ||
-        !(p1 = strchr(music, '|')) ||
-        !(p2 = strrchr(music, '|')))
+        !strcmp(music, ">NULL STR<"))
     {
         /* now a interesting problem - when we have some seconds before a fadeout
          * to a file (and not to "mute") and we want mute now - is it possible that
@@ -219,13 +215,10 @@ void UpdateMapMusic(char *music)
         return;
     }
 
-    *p1++ = '\0';
-    *p2++ = '\0';
-
     if (strstr(music, ".ogg"))
     {
-        sound_play_music(music, options.music_volume, 2000, atoi(p2),
-                         atoi(p1), MUSIC_MODE_NORMAL);
+        sound_play_music(music, options.music_volume, 2000, -1, 0,
+                         MUSIC_MODE_NORMAL);
         strcpy(MapData.music, music);
     }
     else
