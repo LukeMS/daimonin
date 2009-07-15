@@ -200,10 +200,12 @@
     A value of -1 will disable it and avoid every "material" setting or prefix
     when the object is loaded.
   </attribute>
-  <attribute arch="glow_radius" editor="glow radius" type="int">
-    If &lt;glow radius&gt; is set to a value greater zero, the object
-    appears lit up on dark maps. &lt;glow radius&gt; can be a value
-    between 0 and 9, the higher, the more light does the object emit.
+  <attribute arch="glow_radius" editor="glow intensity" type="int">
+    If the value is from 1 to 9, the object will emit light. The higher the
+    value, the more light is emitted.
+    If the value is from -1 to -9, the object will emit darkness. The lower
+    the value, the more darkness is emitted.
+    If the value is 0, the object emits neither light nor darkness.
   </attribute>
   <attribute arch="can_stack" editor="stackable" type="bool">
     If set, the item can be stacked. Careful, don't use on
@@ -644,14 +646,12 @@
       and unlighten it. This will allow to drop a light enlighted or not to the
       ground.]]>
   </description>
-  <attribute arch="last_sp" editor="glow radius" type="int">
-    If &lt;glow radius&gt; is set to a value not zero, the object
-    appears lit up on dark maps. &lt;glow radius&gt; As higher as
-    more light does the object emit. The current sensible max value is 9.
-    If the value is 0, the light can't be lighten and can't be applied.
-    If the value is negative, this object will invoke darkness!
-    A value of 0 means, that this light can't be lighten. This will
-    be true for permanent burned out lights like torches.
+  <attribute arch="last_sp" editor="glow intensity" type="int">
+    If the value is from 1 to 9, the object will emit light when applied. The
+    higher the value, the more light is emitted.
+    If the value is from -1 to -9, the object will emit darkness when applied.
+    The lower the value, the more darkness is emitted.
+    If the value is 0, the object is 'burnt out' and cannot be applied.
   </attribute>
   <attribute arch="glow_radius" editor="light on" type="int">
    Applyable light can be turned on or off. The value above will
