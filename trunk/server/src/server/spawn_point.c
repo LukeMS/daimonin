@@ -227,12 +227,12 @@ static inline int spawn_point_darkness(object *spoint, int darkness)
 
     if (darkness < 0)
     {
-        if (map_light < -darkness)
+        if (map_light <= -darkness)
             success = 1;
     }
     else
     {
-        if (map_light > darkness)
+        if (map_light >= darkness)
             success = 1;
     }
 
