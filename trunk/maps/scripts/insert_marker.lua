@@ -45,8 +45,11 @@ local marker_message  = options[6]
 local marker_replace  = options[7]
 local marker_stopped  = options[8]
 
+local marker_cmp      = nil
+local marker          = nil
+
 -- Search the player's inventory for an existing marker with the same name
-local marker_cmp = ac:CheckInventory(0, "player_force", marker_name)
+marker_cmp = ac:CheckInventory(0, "player_force", marker_name)
 
 -- If override mode is specified, check to see if we have an existing marker first
 if marker_replace == "1" and marker_cmp then
@@ -58,10 +61,10 @@ end
 if marker_cmp == nil then
     if marker_stopped == "0" then
         -- Create the marker force in the player's inventory. Add 1 food to the duration because a force created with food 1 instantly disappears.
-        local marker = ac:CreatePlayerForce(marker_name, marker_duration + 1)
+        marker = ac:CreatePlayerForce(marker_name, marker_duration + 1)
     else
         -- Stopped option is set, so create an infinite force
-        local marker = ac:CreatePlayerForce(marker_name, 0)
+        marker = ac:CreatePlayerForce(marker_name, 0)
     end
     if marker then
         -- Set the speed to 0.01 (same value as regular markers)
@@ -76,4 +79,3 @@ if marker_cmp == nil then
         end
     end
 end
-
