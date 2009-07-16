@@ -200,7 +200,7 @@
     A value of -1 will disable it and avoid every "material" setting or prefix
     when the object is loaded.
   </attribute>
-  <attribute arch="glow_radius" editor="glow intensity" type="int">
+  <attribute arch="glow_radius" editor="glow intensity" type="int" min="-9" max="9">
     If the value is from 1 to 9, the object will emit light. The higher the
     value, the more light is emitted.
     If the value is from -1 to -9, the object will emit darkness. The lower
@@ -622,10 +622,18 @@
   <import_type name="default_flags" />
   <ignore>
     <attribute arch="speed_left" />
+    <ignore_list name="system_object" />
   </ignore>
   <description><![CDATA[
 	Light Sources are system objects which used as a light/darkness set point. ]]>
   </description>
+  <attribute arch="glow_radius" editor="glow intensity" type="int" min="-9" max="9">
+    If the value is from 1 to 9, the object will emit light. The higher the
+    value, the more light is emitted.
+    If the value is from -1 to -9, the object will emit darkness. The lower
+    the value, the more darkness is emitted.
+    If the value is 0, the object emits neither light nor darkness.
+  </attribute>
   <attribute arch="connected" editor="connection" type="int">
   If set, the light can be controlled via the specified connection.
   </attribute>
@@ -646,14 +654,14 @@
       and unlighten it. This will allow to drop a light enlighted or not to the
       ground.]]>
   </description>
-  <attribute arch="last_sp" editor="glow intensity" type="int">
+  <attribute arch="last_sp" editor="glow intensity" type="int" min="-9" max="9">
     If the value is from 1 to 9, the object will emit light when applied. The
     higher the value, the more light is emitted.
     If the value is from -1 to -9, the object will emit darkness when applied.
     The lower the value, the more darkness is emitted.
     If the value is 0, the object is 'burnt out' and cannot be applied.
   </attribute>
-  <attribute arch="glow_radius" editor="light on" type="int">
+  <attribute arch="glow_radius" editor="light on" type="int" min="-9" max="9">
    Applyable light can be turned on or off. The value above will
    determine how and then its copied to this value. If this
    value is 0 (default) the light is off - every other value
@@ -2183,7 +2191,7 @@
   <attribute arch="no_pass" editor="blocking passage" type="bool">
     If set, the object cannot be passed by players nor monsters.
   </attribute>
-  <attribute arch="last_sp" editor="luminosity" type="int">
+  <attribute arch="last_sp" editor="luminosity" type="int" check_min="-1280" check_max="1280">
   This value sets the basic light/darkness value of tile space. This is
   how much this space is naturally glowing (luminosity). This is NOT
   the light source value. This value can be negative (shadow) and is
