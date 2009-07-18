@@ -324,8 +324,6 @@ typedef enum
 /* have a marker to all exp groups which define the real player level */
 #define NROFSKILLGROUPS_ACTIVE SKILLGROUP_MISC
 
-#define MAXLEVEL           110
-
 #define MONEYSTRING_NOTHING  0
 #define MONEYSTRING_AMOUNT   1
 #define MONEYSTRING_ALL     -1

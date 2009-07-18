@@ -80,7 +80,6 @@
  */
 #define MAX_FACE_TILES 20000
 
-
 /* Alderan 2008-04-23:
  * just to be sure i increase that value a bit, with the new client_anim code, anims are only really loaded
  * when used the first time, the base-structure memory overhead isn't that much
@@ -96,9 +95,3 @@
 /* The numbers of our dark levels */
 /* for each level-1 we store a own bitmap copy, so be careful */
 #define DARK_LEVELS 7
-
-/* maximum reachable level */
-/* NEVER EVER change that to a higher value than really possible */
-/* or your client will crash */
-#define MAX_LEVEL 110
-
