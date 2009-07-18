@@ -254,3 +254,6 @@ enum
 #define UPD_DIRECTION       0x100
 #define UPD_QUALITY         0x200
 #define UPD_ALL             0xffff
+
+/* maximum reachable level */
+#define MAXLEVEL 110

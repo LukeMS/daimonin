@@ -710,7 +710,7 @@ void widget_show_main_lvl(int x, int y)
         sprintf(buf, "%d", cpl.stats.level);
         if (cpl.stats.exp_level != cpl.stats.level)
             StringBlt(widgetSF[MAIN_LVL_ID], &BigFont, buf, 91 - get_string_pixel_length(buf, &BigFont), 4, COLOR_RED, NULL, NULL);
-        else if (cpl.stats.level == MAX_LEVEL)
+        else if (cpl.stats.level == MAXLEVEL)
             StringBlt(widgetSF[MAIN_LVL_ID], &BigFont, buf, 91 - get_string_pixel_length(buf, &BigFont), 4, COLOR_HGOLD, NULL, NULL);
         else
             StringBlt(widgetSF[MAIN_LVL_ID], &BigFont, buf, 91 - get_string_pixel_length(buf, &BigFont), 4, COLOR_WHITE, NULL, NULL);
@@ -877,7 +877,7 @@ void widget_show_skill_exp(int x, int y)
                         sprintf(buf, "(**.**%%) **");
                 break;
             }
-            if (skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level==MAX_LEVEL)
+            if (skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level==MAXLEVEL)
                 sprintf(buf, "more levels in 2 weeks (tm)");
             StringBlt(widgetSF[SKILL_EXP_ID], &SystemFont, buf, 28, 9, COLOR_WHITE, NULL, NULL);
             sprintf(buf, "%1.2f sec", cpl.action_timer);
