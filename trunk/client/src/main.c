@@ -171,8 +171,7 @@ _bitmap_name ;
 /* for loading, use BITMAP_xx in the other modules*/
 static _bitmap_name bitmap_name[BITMAP_INIT]    =
     {
-        {"palette.png", PIC_TYPE_PALETTE}
-        , {"font7x4.png", PIC_TYPE_PALETTE}, {"font6x3out.png", PIC_TYPE_PALETTE},
+        {"palette.png", PIC_TYPE_PALETTE}, {"font7x4.png", PIC_TYPE_PALETTE}, {"font6x3out.png", PIC_TYPE_PALETTE},
         {"font_big.png", PIC_TYPE_PALETTE}, {"font7x4out.png", PIC_TYPE_PALETTE}, {"font11x15.png", PIC_TYPE_PALETTE},
         {"font11x15out.png", PIC_TYPE_PALETTE}, {"intro.png", PIC_TYPE_DEFAULT},
         {"black_tile.png", PIC_TYPE_DEFAULT}, {"textwin.png", PIC_TYPE_DEFAULT},
@@ -1649,43 +1648,39 @@ int main(int argc, char *argv[])
 
     if (PHYSFS_addToSearchPath(PHYSFS_getBaseDir() , 1)==0)
         LOG(LOG_MSG,"PHYSFS_addPath (%s) failed: %s\n",PHYSFS_getBaseDir(),PHYSFS_getLastError());
-    if (PHYSFS_addToSearchPath(SYSPATH"skins/subred/", 1) == 0)
-        LOG(LOG_MSG,"PHYSFS_addPath (%s) failed: %s\n",SYSPATH"skins/subred/", PHYSFS_getLastError());
-    if (PHYSFS_addToSearchPath(SYSPATH"skins/subred.zip", 1) == 0)
-        LOG(LOG_MSG,"PHYSFS_addPath (%s) failed: %s\n",SYSPATH"/skins/subred.zip", PHYSFS_getLastError());
-    if (PHYSFS_addToSearchPath("skins/subred.zip", 0) == 0)
+
+    /* Append the default subred skin to the search path. First try the plain
+     * dir then a zip. */
+    if (PHYSFS_addToSearchPath(SYSPATH"skins/subred/", 1) ||
+        PHYSFS_addToSearchPath(SYSPATH"skins/subred.zip", 1))
+        newskin = TRUE;
+    else
+        LOG(LOG_MSG, "Default skin 'subred' not found!\n");
+
+    /* Prepend the option skin to the search path. First try the plain dir
+     * then a zip. */
+    if (strcmp(options.skin, "subred"))
     {
-        LOG(LOG_MSG,"Defaultskin (skins/subred.zip) not found. Your client will most likely crash!\n");
-    }
-    if (PHYSFS_addToSearchPath("skins/subred", 0) == 0)
-    {
-        LOG(LOG_MSG,"PHYSFS: skins/subred not found.\n");
-    }
-    if (options.skin[0])
-    {
-        sprintf(buf,"skins/%s.zip",options.skin);
-        if (PHYSFS_exists(buf))
-        {
-            if (PHYSFS_addToSearchPath(buf , 0)==0)
-                LOG(LOG_MSG,"PHYSFS_addPath (%s) failed: %s\n",buf,PHYSFS_getLastError());
-            else
-                newskin=TRUE;
-        }
-        sprintf(buf,"skins/%s",options.skin);
-        if (PHYSFS_isDirectory(buf))
-        {
-            if (PHYSFS_addToSearchPath(buf , 0)==0)
-                LOG(LOG_MSG,"PHYSFS_addPath (%s) failed: %s\n",buf,PHYSFS_getLastError());
-            else
-                newskin=TRUE;
-        }
-        if (!newskin)
-        {
-            LOG(LOG_MSG,"Skin '%s' not found!\n",options.skin);
-        }
+        char dir[TINY_BUF],
+             zip[TINY_BUF];
+
+        sprintf(dir, "%sskins/%s/", SYSPATH, options.skin);
+        sprintf(zip, "%sskins/%s.zip", SYSPATH, options.skin);
+
+        if (PHYSFS_addToSearchPath(dir, 0) ||
+            PHYSFS_addToSearchPath(zip, 0))
+            newskin = TRUE;
+        else
+            LOG(LOG_MSG, "Option skin '%s' not found!\n", options.skin);
     }
     else
-        strcpy(options.skin,"subred");
+        strcpy(options.skin, "subred");
+
+    if (!newskin)
+    {
+        LOG(LOG_ERROR, "ERROR: No skin could be found!\n");
+        exit(0);
+    }
 
     if (PHYSFS_addToSearchPath("facepack.zip",0)==0)
         LOG(LOG_MSG,"PHYSFS_addPath facepack.zip failed: %s\n",PHYSFS_getLastError());
