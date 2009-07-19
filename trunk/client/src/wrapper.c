@@ -83,12 +83,19 @@ void MSGLOG (char *msg)
 
 Boolean SYSTEM_Start(void)
 {
-    SDL_Surface    *icon;
-    char            buf[256];
+    char         buf[MEDIUM_BUF];
+    SDL_RWops   *rw;
+    SDL_Surface *icon;
 
     sprintf(buf, "%s%s", GetBitmapDirectory(), CLIENT_ICON_NAME);
-    if ((icon = IMG_Load_wrapper(buf)) != NULL)
+
+    if (PHYSFS_exists(buf) &&
+        (rw = PHYSFSRWOPS_openRead(buf)) &&
+        (icon = IMG_Load_RW(rw, 0)))
+    {
+        SDL_RWclose(rw);
         SDL_WM_SetIcon(icon, 0);
+    }
 
     SDL_WM_SetCaption(PACKAGE_NAME, PACKAGE_NAME);
 
