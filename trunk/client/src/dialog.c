@@ -1617,9 +1617,10 @@ void show_newplayer_server(void)
 void show_login_server(void)
 {
     SDL_Rect    box;
-    char        buf[256];
+    char        buf[MEDIUM_BUF];
     int         x, y, i;
     int         mx, my, mb, t;
+    int         progress;
 
     mb = SDL_GetMouseState(&mx, &my);
     /* background */
@@ -1676,6 +1677,21 @@ void show_login_server(void)
                   NULL);
     if (request_file_chain > 9)
         StringBlt(ScreenSurface, &SystemFont, "Sync files...", x + 2, y + 80, COLOR_WHITE, NULL, NULL);
+
+   /* Update the progress. This is essentially eye-candy, but also will calm
+    * impatient players ('it said updating but nothing happened for 30 seconds.
+    * It's broken!'). */
+    sprite_blt(Bitmaps[BITMAP_PROGRESS_BACK], x + 4,
+               y + (168 - Bitmaps[BITMAP_PROGRESS_BACK]->bitmap->h - 5), NULL,
+               NULL);
+    progress = MIN(100, request_file_chain * 10);
+    box.x = 0;
+    box.y = 0;
+    box.h = Bitmaps[BITMAP_PROGRESS]->bitmap->h;
+    box.w = (int)(Bitmaps[BITMAP_PROGRESS]->bitmap->w / 100 * progress);
+    sprite_blt(Bitmaps[BITMAP_PROGRESS], x + 4,
+               y + (168 - Bitmaps[BITMAP_PROGRESS]->bitmap->h - 5), &box,
+               NULL);
 
     /* login user part */
     if (GameStatus == GAME_STATUS_REQUEST_FILES)

@@ -174,6 +174,7 @@ static _bitmap_name bitmap_name[BITMAP_INIT]    =
         {"palette.png", PIC_TYPE_PALETTE}, {"font7x4.png", PIC_TYPE_PALETTE}, {"font6x3out.png", PIC_TYPE_PALETTE},
         {"font_big.png", PIC_TYPE_PALETTE}, {"font7x4out.png", PIC_TYPE_PALETTE}, {"font11x15.png", PIC_TYPE_PALETTE},
         {"font11x15out.png", PIC_TYPE_PALETTE}, {"intro.png", PIC_TYPE_DEFAULT},
+        {"progress.png", PIC_TYPE_DEFAULT}, {"progress_back.png", PIC_TYPE_DEFAULT},
         {"black_tile.png", PIC_TYPE_DEFAULT}, {"textwin.png", PIC_TYPE_DEFAULT},
         {"login_inp.png", PIC_TYPE_DEFAULT}, {"invslot.png", PIC_TYPE_TRANS},
         {"hp.png", PIC_TYPE_TRANS}, {"sp.png", PIC_TYPE_TRANS}, {"grace.png", PIC_TYPE_TRANS}, {"food.png", PIC_TYPE_TRANS},

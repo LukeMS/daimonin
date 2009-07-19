@@ -531,8 +531,9 @@ typedef enum _bitmap_index
     BITMAP_FONTMEDIUM,
     BITMAP_FONTMEDIUMOUT,
     BITMAP_INTRO,
+    BITMAP_PROGRESS,
+    BITMAP_PROGRESS_BACK,
     BITMAP_BLACKTILE,
-    /* blacktile for map*/
     BITMAP_TEXTWIN,
     BITMAP_LOGIN_INP,
     BITMAP_INVSLOT,
