@@ -1699,7 +1699,7 @@ void show_login_server(void)
     /* login user part */
     if (GameStatus == GAME_STATUS_REQUEST_FILES)
         return;
-    StringBlt(ScreenSurface, &SystemFont, "done.", x + 2, y + 92, COLOR_WHITE, NULL, NULL);
+    StringBlt(ScreenSurface, &SystemFont, "done.", x + 2, y + 104, COLOR_WHITE, NULL, NULL);
     y += 180;
     if (GameStatus <= GAME_STATUS_LOGIN_BREAK)
     {
