@@ -250,7 +250,7 @@ static void DisplayCustomCursor(void);
 
 static void         count_meta_server(void);
 static void         flip_screen(void);
-static void         show_intro(char *text);
+static void         show_intro(char *text, int progress);
 static void         delete_player_lists(void);
 
 /* Ensures that the username doesn't contain any invalid character */
@@ -1205,7 +1205,7 @@ void load_bitmaps(void)
 {
     int i;
 
-    for (i = 0; i <= BITMAP_INTRO; i++) /* add later better error handling here*/
+    for (i = 0; i <= BITMAP_PROGRESS_BACK; i++) /* add later better error handling here*/
         load_bitmap(i);
     CreateNewFont(Bitmaps[BITMAP_FONT1], &SystemFont, 16, 16, 1);
     CreateNewFont(Bitmaps[BITMAP_FONTMEDIUM], &MediumFont, 16, 16, 1);
@@ -1227,7 +1227,7 @@ Boolean load_bitmap(int index)
     if (bitmap_name[index].type == PIC_TYPE_TRANS)
         flags |= SURFACE_FLAG_COLKEY_16M;
 
-    if ((index>=BITMAP_INTRO) && (index!=BITMAP_TEXTWIN_MASK))
+    if ((index>=BITMAP_PROGRESS_BACK) && (index!=BITMAP_TEXTWIN_MASK))
         flags |= SURFACE_FLAG_DISPLAYFORMAT;
 
     Bitmaps[index] = sprite_load_file(buf, flags);
@@ -1762,30 +1762,30 @@ int main(int argc, char *argv[])
     SDL_EnableUNICODE(1);
     load_skindef();
     load_bitmaps();
-    show_intro("start sound system");
+    show_intro("start sound system", 9);
     sound_init();
-    show_intro("load sounds");
+    show_intro("load sounds", 18);
     read_sounds();
-    show_intro("load bitmaps");
-    for (i = BITMAP_INTRO+1; i < BITMAP_MAX; i++) /* add later better error handling here*/
+    show_intro("load bitmaps", 27);
+    for (i = BITMAP_PROGRESS_BACK+1; i < BITMAP_MAX; i++) /* add later better error handling here*/
         load_bitmap(i);
-    show_intro("load keys");
+    show_intro("load keys", 36);
     read_keybind_file(KEYBIND_FILE);
-    show_intro("load mapdefs");
+    show_intro("load mapdefs", 45);
     load_mapdef_dat();
-    show_intro("load picture data");
+    show_intro("load picture data", 54);
     read_bmaps_p0();
-    show_intro("load settings");
+    show_intro("load settings", 63);
     read_settings();
-    show_intro("load spells");
+    show_intro("load spells", 72);
     read_spells();
-    show_intro("load skills");
+    show_intro("load skills", 81);
     read_skills();
-    show_intro("load anims");
+    show_intro("load anims", 90);
     read_anims();
-    show_intro("load bmaps");
+    show_intro("load bmaps", 99);
     read_bmaps();
-    show_intro(NULL);
+    show_intro(NULL, 100);
     sound_play_music("orchestral.ogg", options.music_volume, 0, -1, 0, MUSIC_MODE_DIRECT);
     sprite_init_system();
     while (1)
@@ -2108,22 +2108,26 @@ int main(int argc, char *argv[])
     return(0);
 }
 
-static void show_intro(char *text)
+static void show_intro(char *text, int progress)
 {
-    int     x, y;
+    int      x,
+             y;
+    SDL_Rect box;
 
-    x=Screensize.xoff/2;
-    y=Screensize.yoff/2;
+    progress = MIN(100, MAX(0, progress));
+    x = Screensize.xoff / 2;
+    y = Screensize.yoff / 2;
+    box.x = 0;
+    box.y = 0;
+    box.h = Bitmaps[BITMAP_PROGRESS]->bitmap->h;
+    box.w = (int)(Bitmaps[BITMAP_PROGRESS]->bitmap->w / 100 * progress);
 
     sprite_blt(Bitmaps[BITMAP_INTRO], x, y, NULL, NULL);
-
+    sprite_blt(Bitmaps[BITMAP_PROGRESS_BACK], x + 310, y + 588, NULL, NULL);
+    sprite_blt(Bitmaps[BITMAP_PROGRESS], x + 310, y + 588, &box, NULL);
 
     if (text)
-#if 0
-        StringBlt(ScreenSurface, &SystemFont, text, x+370, y+295, COLOR_DEFAULT, NULL, NULL);
-#else
         StringBlt(ScreenSurface, &SystemFont, text, x+370, y+585, COLOR_DEFAULT, NULL, NULL);
-#endif
     else
         StringBlt(ScreenSurface, &SystemFont, "** Press Key **", x+375, y+585, COLOR_DEFAULT, NULL, NULL);
 
@@ -2302,7 +2306,7 @@ void reload_skin()
 
     free_bitmaps();
     load_bitmaps();
-    for (i = BITMAP_INTRO+1; i < BITMAP_MAX; i++) /* add later better error handling here*/
+    for (i = BITMAP_PROGRESS_BACK+1; i < BITMAP_MAX; i++) /* add later better error handling here*/
         load_bitmap(i);
     load_skindef();
 
