@@ -909,6 +909,22 @@ void map_draw_map(void)
             }
         }
     }
+
+#ifdef DEVELOPMENT
+    /* Draw a grid. */
+    if (options.grid)
+    {
+        for (y = 0; y < MapStatusY; y++)
+        {
+            for (x = 0; x < MapStatusX; x++)
+            {
+                xpos = MAP_START_XOFF + x * MAP_TILE_YOFF - y * MAP_TILE_YOFF;
+                ypos = 50 + x * MAP_TILE_XOFF + y * MAP_TILE_XOFF;
+                sprite_blt_map(Bitmaps[BITMAP_GRID], xpos, ypos, NULL, NULL, 0);
+            }
+        }
+    }
+#endif
 }
 
 

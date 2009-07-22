@@ -1,0 +1,4 @@
+~Category~: Mapping
+
+~Syntax~: /grid
+~Purpose~: Toggles the map grid. Only available in development clients.

@@ -577,6 +577,13 @@ int client_command_check(char *cmd)
         }
     }
 #endif
+#ifdef DEVELOPMENT
+    else if (!strnicmp(cmd, "/grid", strlen("/grid")))
+    {
+        options.grid =  (options.grid) ? FALSE : TRUE;
+        return TRUE;
+    }
+#endif
 
     return FALSE;
 }
