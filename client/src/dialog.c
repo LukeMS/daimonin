@@ -636,9 +636,9 @@ inline void optwin_draw_options(int x, int y)
                     int       o   = *((int *) opt[i].value);
                     int       p = 0, q = -1;
                     /* find start pos of string */
-                    while (o && opt[i].val_text[p])
+                    while (o > opt[i].minRange && opt[i].val_text[p])
                         if (opt[i].val_text[p++] == '#')
-                            o--;
+                            o -= opt[i].deltaRange;
                     /* find end pos of string */
                     while (q++ < MAX_LEN && opt[i].val_text[p])
                         if ((text[q] = opt[i].val_text[p++]) == '#')
