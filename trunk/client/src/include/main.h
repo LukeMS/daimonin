@@ -293,6 +293,8 @@ typedef struct _options
     Boolean                 sleepcounter;
     int                     anim_frame_time;
     int                     anim_check_time;
+
+    Boolean                 grid;
 }
 _options;
 
@@ -534,6 +536,7 @@ typedef enum _bitmap_index
     BITMAP_PROGRESS,
     BITMAP_PROGRESS_BACK,
     BITMAP_BLACKTILE,
+    BITMAP_GRID,
     BITMAP_TEXTWIN,
     BITMAP_LOGIN_INP,
     BITMAP_INVSLOT,
