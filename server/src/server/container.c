@@ -773,7 +773,7 @@ void drop_object(object *const op, object *tmp, const uint32 nrof)
             if (QUERY_FLAG(tmp, FLAG_UNPAID))
                 new_draw_info(NDI_UNIQUE, 0, op, "The shop magic put it back to the storage.");
             else
-                new_draw_info(NDI_UNIQUE, 0, op, "The °NO-DROP° item vanishes to nowhere as you drop it!");
+                new_draw_info(NDI_UNIQUE, 0, op, "The ~NO-DROP~ item vanishes to nowhere as you drop it!");
             esrv_del_item(CONTR(op), tmp->count, tmp->env);
         }
         FIX_PLAYER(op,"drop_object - startequip");
