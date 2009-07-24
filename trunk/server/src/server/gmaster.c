@@ -434,9 +434,10 @@ int compare_gmaster_mode(int t, int p)
 
             return FALSE;
 
-        /* VOL, GM, MW, and MM p can access a MW t. */
+        /* MW and MM p can access a MW t. */
         case GMASTER_MODE_MW:
-            if (p != GMASTER_MODE_NO)
+            if (p == GMASTER_MODE_MM ||
+                p == GMASTER_MODE_MW)
                 return TRUE;
 
             return FALSE;
