@@ -167,6 +167,7 @@ extern char            *normalize_path(const char *src, const char *dst, char *p
 extern char            *normalize_path_direct(const char *src, const char *dst, char *path);
 extern mapstruct       *ready_inherited_map(mapstruct *orig_map, shstr *new_map_path, int flags);
 extern void             dump_map(mapstruct *m, player *pl, int list, char *ref);
+extern void             dump_msp(mapstruct *m, int x, int y, player *pl);
 extern void             set_map_darkness(mapstruct *m, int value);
 extern mapstruct       *get_linked_map(void);
 extern void             allocate_map(mapstruct *m);

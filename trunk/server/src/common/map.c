@@ -34,7 +34,7 @@
 #define MAP_DEFAULT_RESET_TIME MIN(MAP_MAXRESET, 7200)
 #define MAP_DEFAULT_SWAP_TIME  MAX(MAP_MINTIMEOUT, 300)
 #define MAP_DEFAULT_DIFFICULTY 1
-#define MAP_DEFAULT_DARKNESS    -1
+#define MAP_DEFAULT_DARKNESS   -1
 
 int global_darkness_table[MAX_DARKNESS + 1] =
 {
@@ -451,6 +451,140 @@ void dump_map(mapstruct *m, player *pl, int list, char *ref)
         new_draw_info(NDI_UNIQUE, 0, op, buf);
     }
 #endif
+}
+
+/* Dumps the msp info of m, x, y to the server log and, if pl is non-NULL,
+ * prints this info to the client as well. */
+void dump_msp(mapstruct *m, int x, int y, player *pl)
+{
+    object *ob;
+    char    buf[MAX_BUF];
+    int     flags,
+            i;
+
+    ob = (pl) ? pl->ob : NULL;
+
+    /* Dump the light value. */
+    NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Light value~: %d (plus map light value of %d)",
+            GET_MAP_LIGHT_VALUE(m, x, y), MAP_LIGHT_VALUE(m));
+
+    /* Dump the flags. */
+    buf[0] = '\0';
+    flags = GET_MAP_FLAGS(m, x, y);
+
+    if ((flags & P_IS_PLAYER))
+        sprintf(strchr(buf, '\0'), "%c", '@');
+
+    if ((flags & P_OUT_OF_MAP))
+        sprintf(strchr(buf, '\0'), "%c", '#');
+
+    if ((flags & P_PLAYER_ONLY))
+        sprintf(strchr(buf, '\0'), "%c", 'O');
+
+    if ((flags & P_IS_PVP))
+        sprintf(strchr(buf, '\0'), "%c", '!');
+
+    if ((flags & P_IS_ALIVE))
+        sprintf(strchr(buf, '\0'), "%c", '*');
+
+    if ((flags & P_IS_PLAYER_PET))
+        sprintf(strchr(buf, '\0'), "%c", 'd');
+
+    if ((flags & P_BLOCKSVIEW))
+        sprintf(strchr(buf, '\0'), "%c", 'x');
+
+    if ((flags & P_NO_PASS))
+        sprintf(strchr(buf, '\0'), "%c", 'X');
+
+    if ((flags & P_PASS_THRU))
+        sprintf(strchr(buf, '\0'), "%c", '-');
+
+    if ((flags & P_PASS_ETHEREAL))
+        sprintf(strchr(buf, '\0'), "%c", '=');
+
+    if ((flags & P_DOOR_CLOSED))
+        sprintf(strchr(buf, '\0'), "%c", '+');
+
+    if ((flags & P_NO_MAGIC))
+        sprintf(strchr(buf, '\0'), "%c", '\\');
+
+    if ((flags & P_NO_CLERIC))
+        sprintf(strchr(buf, '\0'), "%c", '/');
+
+    if ((flags & P_WALK_ON))
+        sprintf(strchr(buf, '\0'), "%c", '>');
+
+    if ((flags & P_WALK_OFF))
+        sprintf(strchr(buf, '\0'), "%c", '<');
+
+    if ((flags & P_FLY_ON))
+        sprintf(strchr(buf, '\0'), "%c", '}');
+
+    if ((flags & P_FLY_OFF))
+        sprintf(strchr(buf, '\0'), "%c", '{');
+
+    if ((flags & P_REFL_MISSILE))
+        sprintf(strchr(buf, '\0'), "%c", ')');
+
+    if ((flags & P_REFL_SPELLS))
+        sprintf(strchr(buf, '\0'), "%c", '(');
+
+    if ((flags & P_MAGIC_EAR))
+        sprintf(strchr(buf, '\0'), "%c", '?');
+
+    if ((flags & P_CHECK_INV))
+        sprintf(strchr(buf, '\0'), "%c", '_');
+
+    NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Flags~: %s", buf);
+
+    /* Dump the move flags. */
+    buf[0] = '\0';
+    flags = GET_MAP_MOVE_FLAGS(m, x, y);
+
+    /* TODO: I think these terrain types are from CF and are not all
+     * particularly useful or used in Dai. We should rework these and possibly
+     * client-side play different footstep sounds according to the terrain
+     * (and no sound if the player is levitating, and swooshy sound if he is
+     * flying).
+     * -- Smacky 20090724 */
+    while (flags)
+    {
+        if ((flags & 0x1))
+        {
+            sprintf(strchr(buf, '\0'), "Land surface");
+            flags &= ~0x1;
+        }
+        else if ((flags & 0x2))
+        {
+            sprintf(strchr(buf, '\0'), "Water surface");
+            flags &= ~0x2;
+        }
+        else if ((flags & 0x4))
+        {
+            sprintf(strchr(buf, '\0'), "Under water");
+            flags &= ~0x4;
+        }
+        else if ((flags & 0x8))
+        {
+            sprintf(strchr(buf, '\0'), "Fire surface");
+            flags &= ~0x8;
+        }
+        else if ((flags & 0x10))
+        {
+            sprintf(strchr(buf, '\0'), "Under fire");
+            flags &= ~0x10;
+        }
+        else if ((flags & 0x20))
+        {
+            sprintf(strchr(buf, '\0'), "Cloud surface");
+            flags &= ~0x20;
+        }
+
+        if (flags)
+            sprintf(strchr(buf, '\0'), " ~+~ ");
+    }
+
+    NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Terrain~: %s", buf);
 }
 
 /* set_map_darkness() sets m->darkness to 0 <= value <= MAX_DARKNESS and

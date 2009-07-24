@@ -408,6 +408,23 @@ int command_mapinfo(object *op, char *params)
     return 0;
 }
 
+/* Print and log msp info. */
+int command_mspinfo(object *op, char *params)
+{
+    mapstruct *m;
+    player    *pl;
+
+    if (!op ||
+        !(pl = CONTR(op)) ||
+        !(m = op->map))
+        return 0;
+
+    /* Detail the current msp. */
+    dump_msp(m, op->x, op->y, pl);
+
+    return 0;
+}
+
 int command_sstable(object *op, char *params)
 {
     int     flags   = 0;
