@@ -213,6 +213,7 @@ CommArray_s CommandsMW[] =
     {"dm_light",      command_dm_light,    0.0f, 1},
     {"set_map_light", command_setmaplight, 0.0f, 1},
     {"generate",      command_generate,    0.0f, 1},
+    {"mspinfo",       command_mspinfo,     0.0f, 1},
 };
 
 CommArray_s CommandsMM[] =

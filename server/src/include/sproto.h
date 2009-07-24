@@ -135,6 +135,7 @@ void                        malloc_info(object *op);
 int                         command_who(object *op, char *params);
 int                         command_malloc(object *op, char *params);
 int                         command_mapinfo(object *op, char *params);
+int                         command_mspinfo(object *op, char *params);
 int                         command_sstable(object *op, char *params);
 int                         command_time(object *op, char *params);
 int                         command_archs(object *op, char *params);
