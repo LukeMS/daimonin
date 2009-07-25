@@ -370,7 +370,7 @@ int blocked(object *op, mapstruct *m, int x, int y, int terrain)
             || flags & P_IS_PVP || m->map_flags & MAP_FLAG_PVP)
             return (flags & (P_DOOR_CLOSED | P_NO_PASS | P_IS_ALIVE | P_IS_PLAYER | P_CHECK_INV | P_PASS_THRU| P_PASS_ETHEREAL));
     }
-    if (msp->floor_direction_block !=0)
+    if (op && msp->floor_direction_block != 0)
     {
         atmp = absdir(op->direction);
         if (msp->floor_direction_block & (1U << atmp))
