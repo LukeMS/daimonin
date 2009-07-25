@@ -200,7 +200,6 @@ CommArray_s CommandsGM[] =
 
 CommArray_s CommandsMW[] =
 {
-    {"summon",        command_summon,      0.0f, 1},
     {"teleport",      command_teleport,    0.0f, 1},
     {"resetmap",      command_reset,       0.0f, 1},
     {"goto",          command_goto,        0.0f, 1},
