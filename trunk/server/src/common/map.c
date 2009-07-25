@@ -280,6 +280,48 @@ char *normalize_path_direct(const char *src, const char *dst, char *path)
     return path;
 }
 
+static char *show_map_flags(mapstruct *m)
+{
+    static char buf[12];
+
+    buf[0] = '\0';
+
+    if (MAP_FIXED_RESETTIME(m))
+        sprintf(strchr(buf, '\0'), "%c", 'R');
+
+    if (MAP_NOSAVE(m))
+        sprintf(strchr(buf, '\0'), "%c", '$');
+
+    if (MAP_NOMAGIC(m))
+        sprintf(strchr(buf, '\0'), "%c", '\\');
+
+    if (MAP_NOPRIEST(m))
+        sprintf(strchr(buf, '\0'), "%c", '/');
+
+    if (MAP_NOHARM(m))
+        sprintf(strchr(buf, '\0'), "%c", 'X');
+
+    if (MAP_NOSUMMON(m))
+        sprintf(strchr(buf, '\0'), "%c", '#');
+
+    if (MAP_FIXEDLOGIN(m))
+        sprintf(strchr(buf, '\0'), "%c", 'L');
+
+    if (MAP_PERMDEATH(m))
+        sprintf(strchr(buf, '\0'), "%c", '_');
+
+    if (MAP_ULTRADEATH(m))
+        sprintf(strchr(buf, '\0'), "%c", '-');
+
+    if (MAP_ULTIMATEDEATH(m))
+        sprintf(strchr(buf, '\0'), "%c", '=');
+
+    if (MAP_PVP(m))
+        sprintf(strchr(buf, '\0'), "%c", '!');
+
+    return buf;
+}
+
 /* Dumps the header info of m to the server log and, if pl is non-NULL, prints
  * this info to the client as well.
  *
@@ -343,19 +385,8 @@ void dump_map(mapstruct *m, player *pl, int list, char *ref)
                 NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Tileset ID/X/Y~: %d/%d/%d",
                         m->tileset_id, m->tileset_x, m->tileset_y);
 
-            NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Flags~:%s%s%s%s%s%s%s%s%s%s%s",
-                    (MAP_FIXED_RESETTIME(m)) ? " (fixed reset)" : "",
-                    (MAP_NOSAVE(m)) ? " (no saving)" : "",
-                    (MAP_NOMAGIC(m)) ? " (no spells)" : "",
-                    (MAP_NOPRIEST(m)) ? " (no prayers)" : "",
-                    (MAP_NOHARM(m)) ? " (no harmful magic)" : "",
-                    (MAP_NOSUMMON(m)) ? " (no summoning)" : "",
-                    (MAP_FIXEDLOGIN(m)) ? " (fixed login)" : "",
-                    (MAP_PERMDEATH(m)) ? " (permanent death)" : "",
-                    (MAP_ULTRADEATH(m)) ? " (ultra death)" : "",
-                    (MAP_ULTIMATEDEATH(m)) ? " (ultimate death)" : "",
-                    (MAP_PVP(m)) ? " (pvp)" : "");
-
+            NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Flags~: %s",
+                    show_map_flags(m));
             NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Players~: %d",
                     players_on_map(m));
         }
@@ -382,25 +413,8 @@ void dump_map(mapstruct *m, player *pl, int list, char *ref)
         sprintf(strchr(buf, '\0'), ", %d", MAP_DIFFICULTY(m));
         sprintf(strchr(buf, '\0'), ", %d/%d/%d",
                 m->tileset_id, m->tileset_x, m->tileset_y);
-
-#if 0
-        NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Flags~:%s%s%s%s%s%s%s%s%s%s%s",
-                (MAP_FIXED_RESETTIME(m)) ? " (fixed reset)" : "",
-                (MAP_NOSAVE(m)) ? " (no saving)" : "",
-                (MAP_NOMAGIC(m)) ? " (no spells)" : "",
-                (MAP_NOPRIEST(m)) ? " (no prayers)" : "",
-                (MAP_NOHARM(m)) ? " (no harmful magic)" : "",
-                (MAP_NOSUMMON(m)) ? " (no summoning)" : "",
-                (MAP_FIXEDLOGIN(m)) ? " (fixed login)" : "",
-                (MAP_PERMDEATH(m)) ? " (permanent death)" : "",
-                (MAP_ULTRADEATH(m)) ? " (ultra death)" : "",
-                (MAP_ULTIMATEDEATH(m)) ? " (ultimate death)" : "",
-                (MAP_PVP(m)) ? " (pvp)" : "");
-
-        NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "~Players~: %d",
-                players_on_map(m));
-#endif
-
+        sprintf(strchr(buf, '\0'), ", %s", show_map_flags(m));
+        sprintf(strchr(buf, '\0'), ", @%d", players_on_map(m));
         NDI_LOG(llevSystem, NDI_UNIQUE, 0, ob, "%s", buf);
     }
 
@@ -2257,7 +2271,7 @@ void load_objects(mapstruct *m, FILE *fp, int mapflags)
         insert_ob_in_map(op, m, op, INS_NO_MERGE | INS_NO_WALK_ON);
 
         if (op->glow_radius)
-            adjust_light_source(op->map, op->x, op->y, op->glow_radius);
+            adjust_light_source(op->map, op->x, op->y, op->glow_radius, 0);
 
         /* this is from fix_auto_apply() which is removed now */
         if (QUERY_FLAG(op, FLAG_AUTO_APPLY))
@@ -2291,6 +2305,8 @@ next:
     update_map_tiles(m);
     m->map_flags &= ~MAP_FLAG_NO_UPDATE; /* turn tile updating on again */
     m->in_memory = MAP_IN_MEMORY;
+
+    add_light_masks(m);
 
     /* this is the only place we can insert this because the
     * recursive nature of load_objects().

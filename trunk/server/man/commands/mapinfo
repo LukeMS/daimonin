@@ -8,3 +8,5 @@
 
 ~Syntax~: /mapinfo tiled
 ~Purpose~: Shows detailed technical info about the map you are on and brief info about any maps in the eight directions surrounding it. Only availlable to MWs and MMs.
+
+~Notes~: For brevity the flags are shown as semi-roguelike ASCII characters, as detailed here: 'R' = fixed reset time, '$' = no saving, '\' = no spells, '/' = no prayers, 'X' = no harmful magic, '#' = no summoning magic, 'L' = fixed login, '_' = permanent death, '-' = ultra death, '=' = ultimate death, '!' = PvP enabled map.
