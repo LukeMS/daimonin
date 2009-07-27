@@ -468,15 +468,7 @@ op->oz= op->z;
 ^use_dmg_info{S}	SET_OR_CLEAR_FLAG(op, FLAG_USE_DMG_INFO, IVAL);
 ^no_magic{S} 	    SET_OR_CLEAR_FLAG(op, FLAG_NO_MAGIC, IVAL);
 ^no_cleric{S} 	    SET_OR_CLEAR_FLAG(op, FLAG_NO_CLERIC, IVAL);
-^wiz{S}  	    {	if (IVAL) {
-			    SET_FLAG(op, FLAG_WIZ);
-			    SET_FLAG(op, FLAG_WIZPASS);
-			}
-			else {
-			    CLEAR_FLAG(op, FLAG_WIZ);
-			    CLEAR_FLAG(op, FLAG_WIZPASS);
-			}
-		    }
+^wiz{S}  	    SET_OR_CLEAR_FLAG(op, FLAG_WIZ, IVAL);
 ^no_fix_player{S}   SET_OR_CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER, IVAL);
 ^tear_down{S}	    SET_OR_CLEAR_FLAG(op, FLAG_TEAR_DOWN, IVAL);
 ^run_away{S}	    op->run_away = IVAL;
@@ -989,7 +981,7 @@ NULL /*is_removed*/,"been_applied", NULL /* internal flag: HAS_MOVED */, "treasu
 "can_use_ring", NULL /* in_activlist*/, "has_ready_bow",		/* 60 */
 "xrays", NULL /*no_apply*/, "can_stack", "lifesave", "is_magical", "alive",
 "stand_still", "random_move", "only_attack", "wiz",	/* 70 */
- "stealth", NULL /*wizpass*/, NULL /*linked*/, "cursed", "damned",
+ "stealth", NULL /* free */, NULL /*linked*/, "cursed", "damned",
 "see_anywhere", "known_magical", "known_cursed", "can_open_door", "is_thrown",				/* 80 */
 NULL /*free*/, NULL /*free*/, "is_male",
 "is_female", "applied",  "inv_locked", "is_wooded",
