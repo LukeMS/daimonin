@@ -2556,3 +2556,19 @@ int command_ip(object *op, char *params)
 
     return 0;
 }
+
+/* Toggle wizpass (walk through walls, do not move apply, etc). */
+int command_wizpass(object *op, char *params)
+{
+    uint8 wizpass;
+
+    if (!op)
+        return 0;
+
+    wizpass = (CONTR(op)->wizpass) ? 0 : 1;
+
+    new_draw_info_format(NDI_UNIQUE, 0, op, "Wizpass set to %d.", wizpass);
+    CONTR(op)->wizpass = wizpass;
+
+    return 0;
+}

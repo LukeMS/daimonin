@@ -744,8 +744,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_ONLY_ATTACK    69 /* NPC will evaporate if there is no enemy */
 #define FLAG_WIZ            70 /* Object has special privilegies */
 #define FLAG_STEALTH        71 /* Will wake monsters with less range */
-
-#define FLAG_WIZPASS        72 /* The wizard can go through walls */
+/* flag 72 is free */
 #define FLAG_IS_LINKED      73 /* The object is linked with other objects */
 #define FLAG_CURSED         74 /* The object is cursed */
 #define FLAG_DAMNED         75 /* The object is _very_ cursed */

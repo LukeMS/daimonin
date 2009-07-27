@@ -142,7 +142,6 @@ int                         command_archs(object *op, char *params);
 int                         command_debug(object *op, char *params);
 int                         command_dumpbelowfull(object *op, char *params);
 int                         command_dumpbelow(object *op, char *params);
-int                         command_wizpass(object *op, char *params);
 int                         command_dumpallobjects(object *op, char *params);
 int                         command_dumpfriendlyobjects(object *op, char *params);
 int                         command_dumpallarchetypes(object *op, char *params);
@@ -175,7 +174,6 @@ int                         command_usekeys(object *op, char *params);
 int                         command_resistances(object *op, char *params);
 int                         command_resting(object *op, char *params);
 int                         command_help(object *op, char *params);
-int                         onoff_value(char *line);
 int                         command_save(object *op, char *params);
 int                         command_style_map_info(object *op, char *params);
 int                         command_silent_login(object *op, char *params);
@@ -273,6 +271,7 @@ int                         command_listplugins(object *op, char *params);
 int                         command_loadplugin(object *op, char *params);
 int                         command_unloadplugin(object *op, char *params);
 int                         command_ip(object *op, char *params);
+int                         command_wizpass(object *op, char *params);
 /* commands.c */
 void                        init_commands(void);
 /* container.c */
