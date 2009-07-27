@@ -2271,7 +2271,7 @@ void load_objects(mapstruct *m, FILE *fp, int mapflags)
         insert_ob_in_map(op, m, op, INS_NO_MERGE | INS_NO_WALK_ON);
 
         if (op->glow_radius)
-            adjust_light_source(op->map, op->x, op->y, op->glow_radius, 0);
+            adjust_light_source(op->map, op->x, op->y, op->glow_radius);
 
         /* this is from fix_auto_apply() which is removed now */
         if (QUERY_FLAG(op, FLAG_AUTO_APPLY))
@@ -2305,8 +2305,6 @@ next:
     update_map_tiles(m);
     m->map_flags &= ~MAP_FLAG_NO_UPDATE; /* turn tile updating on again */
     m->in_memory = MAP_IN_MEMORY;
-
-    add_light_masks(m);
 
     /* this is the only place we can insert this because the
     * recursive nature of load_objects().
