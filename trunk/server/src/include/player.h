@@ -39,10 +39,10 @@ enum
 {
     /* fire modes submited from client */
     FIRE_MODE_NONE = -1,
-	FIRE_MODE_BOW,
-	FIRE_MODE_SPELL,
-	FIRE_MODE_SKILL,
-	FIRE_MODE_INIT
+    FIRE_MODE_BOW,
+    FIRE_MODE_SPELL,
+    FIRE_MODE_SKILL,
+    FIRE_MODE_INIT
 };
 
 typedef enum usekeytype
@@ -136,23 +136,23 @@ typedef struct pl_player
     const char          *account_name;          /* name of the account this player is part of */
     /* hash strings end*/
 
-	uint32              name_changed        : 1;            /* If true, the player has set a name. */
-	uint32              update_los          : 1;                /* If true, update_los() in draw(), and clear */
-	uint32              combat_mode         : 1;            /* if true, player is in combat mode, attacking with weapon */
-	uint32              rest_mode           : 1;            /* if true, player is going "resting" - resting mode will be interrupted when player moves or get hit */
-	uint32              rest_sitting        : 1;            /* if true, player is sitting - sitting + rest mode = regeneration */
+    uint32              name_changed        : 1;            /* If true, the player has set a name. */
+    uint32              update_los          : 1;                /* If true, update_los() in draw(), and clear */
+    uint32              combat_mode         : 1;            /* if true, player is in combat mode, attacking with weapon */
+    uint32              rest_mode           : 1;            /* if true, player is going "resting" - resting mode will be interrupted when player moves or get hit */
+    uint32              rest_sitting        : 1;            /* if true, player is sitting - sitting + rest mode = regeneration */
 
-	/* some dm flags */
+    /* some dm flags */
     uint32              dm_invis            : 1;    /* 1= is invisible, see invisible */
-	uint32              dm_stealth          : 1;            /* 1= no "XX enter the game" and no entry in /who */
-	uint32              dm_removed_from_map : 1;    /* internal dm flag: player was removed from a map */
+    uint32              dm_stealth          : 1;            /* 1= no "XX enter the game" and no entry in /who */
+    uint32              dm_removed_from_map : 1;    /* internal dm flag: player was removed from a map */
 
-	uint32              personal_light      : 3;   /* must be enough bits to hold MAX_DARKNESS */
-	uint32              known_spell         : 1;   /* True if you know the spell of the wand */
-	uint32              last_known_spell    : 1;   /* What was last updated with draw_stats() */
-	uint32              update_skills       : 1;   /* update skill list when set */
+    uint32              personal_light      : 3;   /* must be enough bits to hold MAX_DARKNESS */
+    uint32              known_spell         : 1;   /* True if you know the spell of the wand */
+    uint32              last_known_spell    : 1;   /* What was last updated with draw_stats() */
+    uint32              update_skills       : 1;   /* update skill list when set */
 
-	uint32              silent_login        : 1;
+    uint32              silent_login        : 1;
 
     /* Instance system */
     long                instance_id;            /* instance_id is unique per server restart */
@@ -199,22 +199,22 @@ typedef struct pl_player
     object             *container_below;    /* same as above - if this is NULl, we are "last" looking the container */
 
 
-	int			        state;				/* player system state... PLAYING, LOGIN IN... */
+    int                    state;                /* player system state... PLAYING, LOGIN IN... */
     uint32              anim_enemy_count;   /* hm, this can be kicked now - i do it for a quick hack to
                                              * implement the animations. use is_melee_range() instead.
                                              * for the client: skill/weapon values for the distance weapon
                                              * - calculated in fix_player() */
-	int                 dist_dps;
-	int                 dist_last_dps;
-	int                 dist_wc;
-	int                 dist_last_wc;
-	int                 dist_action_time;
-	int                 dist_last_action_time;
+    int                 dist_dps;
+    int                 dist_last_dps;
+    int                 dist_wc;
+    int                 dist_last_wc;
+    int                 dist_action_time;
+    int                 dist_last_action_time;
 
-	int					carrying_last;			/* determinate we have to rebuild speed */
+    int                    carrying_last;            /* determinate we have to rebuild speed */
 
-	int                 dam_bonus;				/* damage bonus from equipment (additional to the weapons) */
-	int					wc_bonus;
+    int                 dam_bonus;                /* damage bonus from equipment (additional to the weapons) */
+    int                    wc_bonus;
     int                 dps;                    /* damge per second value from fix_player() for client and info */
     int                 last_dps;
     int                 target_hp;              /* for the client target HP marker - special shadow*/
@@ -269,10 +269,10 @@ typedef struct pl_player
     int                 map_tile_x, map_tile_y;     /* these is our last position of map we send to client */
     int                 map_off_x, map_off_y;       /* scroll offset between 2 maps of client update */
 
-	int                 speed_enc_base;				/* calculated in fix_player to recalc speed with changed weight */
-	int					speed_enc_limit;
-	int					speed_reduce_from_disease;
-	int                 speed_enc;                  /* fix_player(): % of the weight & armour encumbrance effecting speed. */
+    int                 speed_enc_base;                /* calculated in fix_player to recalc speed with changed weight */
+    int                    speed_enc_limit;
+    int                    speed_reduce_from_disease;
+    int                 speed_enc;                  /* fix_player(): % of the weight & armour encumbrance effecting speed. */
     int                 last_speed_enc;             /* last speed_enc value send to client */
 
     int                 spell_fumble;               /* fix_player(): chance to fumble a spell (armour effects or others) */
@@ -342,10 +342,10 @@ typedef struct pl_player
     char                levgrace[MAXLEVEL + 1];
     sint8               last_resist[NROFATTACKS];   /* shadow register for client update resist table */
 
-	char                quick_name[BIG_NAME*3];     /* thats rank + name +" the xxxx" */
-	char                ext_title[MAX_EXT_TITLE];   /* for client: <Rank> <Name>\n<Gender> <Race> <Profession> */
+    char                quick_name[BIG_NAME*3];     /* thats rank + name +" the xxxx" */
+    char                ext_title[MAX_EXT_TITLE];   /* for client: <Rank> <Name>\n<Gender> <Race> <Profession> */
 
-	usekeytype          usekeys;          /* Method for finding keys for doors */
+    usekeytype          usekeys;          /* Method for finding keys for doors */
 
     uint16              last_flags;         /* fire/run on flags for last tick */
     uint32              count;              /* Any numbers typed before a command */
@@ -357,7 +357,7 @@ typedef struct pl_player
     living              orig_stats;       /* Can be less in case of poisoning */
     living              last_stats;       /* Last stats drawn with draw_stats() */
     long                last_weight;
-    unsigned char       last_level;		/* client data: level player */
+    unsigned char       last_level;        /* client data: level player */
 
 
 #ifdef AUTOSAVE
