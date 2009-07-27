@@ -1257,6 +1257,8 @@ static void apply_sign(object *op, object *sign)
 /* 'victim' moves onto 'trap' (trap has FLAG_WALK_ON or FLAG_FLY_ON set) or
  * 'victim' leaves 'trap' (trap has FLAG_WALK_OFF or FLAG_FLY_OFF) set.
  *
+ * if victim is a player with wizpass, don't trigger the 'trap'.
+ *
  * originator: Player, monster or other object that caused 'victim' to move
  * onto 'trap'.  Will receive messages caused by this action.  May be NULL.
  * However, some types of traps require an originator to function.
@@ -1273,6 +1275,9 @@ void move_apply(object *const trap_obj, object *const victim, object *const orig
 {
     object *const trap = trap_obj->head ? trap_obj->head: trap_obj;
     static int  recursion_depth = 0;
+
+    if (victim->type == PLAYER && CONTR(victim)->wizpass)
+        return;
 
     /* move_apply() is the most likely candidate for causing unwanted and
      * possibly unlimited recursion. */

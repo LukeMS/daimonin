@@ -285,8 +285,7 @@ void set_gmaster_mode(player *pl, int mode)
 #endif
     {
         SET_FLAG(pl->ob, FLAG_WIZ);
-        SET_FLAG(pl->ob, FLAG_WIZPASS);
-        SET_MULTI_FLAG(pl->ob, FLAG_FLYING);
+        pl->wizpass = 1;
         esrv_send_inventory(pl->ob, pl->ob);
         clear_los(pl->ob);
         pl->socket.update_tile = 0; /* force a draw_look() */
@@ -372,8 +371,7 @@ void remove_gmaster_mode(player *pl)
     {
         /* remove the power settings */
         CLEAR_FLAG(pl->ob, FLAG_WIZ);
-        CLEAR_FLAG(pl->ob, FLAG_WIZPASS);
-        CLEAR_MULTI_FLAG(pl->ob, FLAG_FLYING);
+        pl->wizpass = 0;
         /* bit of a cheat, but by doing this we avoid a fix when going into wiz
          * mode and slight confusion. */
         pl->dm_invis = 0;

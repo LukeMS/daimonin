@@ -213,6 +213,7 @@ CommArray_s CommandsMW[] =
     {"set_map_light", command_setmaplight, 0.0f, 1},
     {"generate",      command_generate,    0.0f, 1},
     {"mspinfo",       command_mspinfo,     0.0f, 1},
+    {"wizpass",       command_wizpass,     0.0f, 1},
 };
 
 CommArray_s CommandsMM[] =
@@ -265,7 +266,6 @@ CommArray_s CommandsMM[] =
     {"set_god", command_setgod, 0.0},
     {"spellreset", command_spell_reset,0.0},
     {"style_info", command_style_map_info, 0.0},
-    {"wizpass", command_wizpass,0.0},
     */
 };
 

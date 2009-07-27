@@ -544,32 +544,6 @@ int command_dumpbelow(object *op, char *params)
     return 0;
 }
 
-int command_wizpass(object *op, char *params)
-{
-    int i;
-
-    if (!op)
-        return 0;
-
-    if (!params)
-        i = (QUERY_FLAG(op, FLAG_WIZPASS)) ? 0 : 1;
-    else
-        i = onoff_value(params);
-
-    if (i)
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "You will now walk through walls.\n");
-        SET_FLAG(op, FLAG_WIZPASS);
-    }
-    else
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "You will now be stopped by walls.\n");
-        CLEAR_FLAG(op, FLAG_WIZPASS);
-    }
-
-    return 0;
-}
-
 int command_dumpallobjects(object *op, char *params)
 {
 #ifdef MEMPOOL_TRACKING
@@ -1350,40 +1324,6 @@ int command_help(object *op, char *params)
                          params);
 
     return 0;
-}
-
-
-int onoff_value(char *line)
-{
-    int i;
-
-    if (sscanf(line, "%d", &i))
-        return (i != 0);
-    switch (line[0])
-    {
-        case 'o':
-          switch (line[1])
-          {
-              case 'n':
-                return 1;       /* on */
-              default:
-                return 0;       /* o[ff] */
-          }
-        case 'y':
-          /* y[es] */
-        case 'k':
-          /* k[ylla] */
-        case 's':
-        case 'd':
-          return 1;
-        case 'n':
-          /* n[o] */
-        case 'e':
-          /* e[i] */
-        case 'u':
-        default:
-          return 0;
-    }
 }
 
 int command_save(object *op, char *params)

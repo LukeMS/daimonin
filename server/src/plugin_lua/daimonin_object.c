@@ -409,7 +409,7 @@ static const char *GameObject_flags[NUM_FLAGS + 1 + 1] =
     /* 70 */
     "?f_wiz",
     "f_stealth",
-    "?f_wizpass",
+    NULL,
     "?f_is_linked",
     "f_cursed",
     "f_damned",
