@@ -259,4 +259,4 @@ enum
 #define UPD_ALL             0xffff
 
 /* maximum reachable level */
-#define MAXLEVEL           110
+#define MAXLEVEL 110
