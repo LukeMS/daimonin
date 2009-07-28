@@ -45,7 +45,6 @@
 #endif
 
 #define GET_CLIENT_FLAGS(_O_)   ((_O_)->flags[0]&0x7f)
-#define NO_FACE_SEND        (-1)
 
 /******************************************************************************
  *
@@ -244,7 +243,7 @@ void draw_client_map2(object *pl)
     object         *tmp = NULL, *tmph = NULL, *pname2 = NULL, *pname3 = NULL, *pname4 = NULL;
     int             x, y, ax, ay, d, nx, ny, probe_tmp;
     int             x_start, personal_light = 0;
-    int             dark, flag_tmp, special_vision;
+    int             flag_tmp, special_vision;
     int             quick_pos_1, quick_pos_2, quick_pos_3;
     int             inv_flag    = QUERY_FLAG(pl, FLAG_SEE_INVISIBLE) ? 0 : 1;
     uint16          face_num0, face_num1, face_num2, face_num3, face_num1m, face_num2m, face_num3m;
@@ -385,7 +384,6 @@ void draw_client_map2(object *pl)
                 /* this space is viewable */
                 pname_flag = 0,ext_flag = 0, dmg_flag = 0;
                 dmg_layer2 = 0,dmg_layer1 = 0,dmg_layer0 = 0;
-                dark = NO_FACE_SEND;
 #ifdef USE_TILESTRETCHER
                 z1 = 0;
 #endif
@@ -441,7 +439,6 @@ void draw_client_map2(object *pl)
                 if (mp->count != d)
                 {
                     mask |= 0x10;    /* darkness bit */
-                    dark = d;
                     mp->count = d;
                 }
 
@@ -860,10 +857,9 @@ void draw_client_map2(object *pl)
                     }
                 }
 
-                if (dark != NO_FACE_SEND)
-                {
-                    SockBuf_AddChar(sbptr, (char) dark);
-                }
+                if (mask & 0x10)
+                    SockBuf_AddChar(sbptr, (char)mp->count);
+
                 if (mask & 0x08)
                 {
                     SockBuf_AddShort(sbptr, face_num0);
