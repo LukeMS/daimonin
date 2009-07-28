@@ -394,9 +394,9 @@ int get_npc_object_attraction(object *op, object *other)
     }
 
     /* cursed object attitude */
-    if(attractions[AIPARAM_ATTRACTION_CURSEDTYPE].flags & AI_PARAM_PRESENT)
+    if(attractions[AIPARAM_ATTRACTION_CURSED].flags & AI_PARAM_PRESENT)
     {
-        for(tmp = &attractions[AIPARAM_ATTRACTION_CURSEDTYPE]; tmp != NULL;
+        for(tmp = &attractions[AIPARAM_ATTRACTION_CURSED]; tmp != NULL;
                 tmp = tmp->next)
         {
             if(is_cursed_or_damned(other))
