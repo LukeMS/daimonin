@@ -119,6 +119,9 @@ typedef enum server_client_cmd {
 /* define how much gender we have - needed to check client_settings gender entries */
 #define MAX_RACE_GENDER 4
 
+/* TODO: add start skill ids to client_settings including this define */
+#define MAX_START_SKILLS 4
+
 /* return values for account login */
 typedef enum account_status_enum
 {
