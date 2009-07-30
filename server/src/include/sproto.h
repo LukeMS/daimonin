@@ -203,10 +203,10 @@ int                         command_rskill(object *pl, char *params);
 int                         command_egobind ( object *pl, char *params);
 #if 0
 int                         command_apply(object *op, char *params);
-#endif
 int                         command_dropall(object *op, char *params);
-int                         command_drop(object *op, char *params);
 int                         command_examine(object *op, char *params);
+#endif
+int                         command_drop(object *op, char *params);
 object                     *find_marked_object(object *op);
 char                       *examine_monster(object *op, object *tmp, char *buf, int flag);
 char                       *long_desc(object *tmp, object *caller);

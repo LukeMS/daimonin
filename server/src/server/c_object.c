@@ -288,6 +288,33 @@ int command_dropall(object *op, char *params)
 
     return 0;
 }
+
+int command_examine(object *op, char *params)
+{
+    object *tmp;
+
+    if (op->type == PLAYER)
+        CONTR(op)->rest_mode = 0;
+
+    if (!params)
+    {
+        while ((tmp = op->below) &&
+               !LOOK_OBJ(tmp))
+            tmp = tmp->below;
+
+        if (tmp)
+            examine(op, tmp, TRUE);
+    }
+    else
+    {
+        if ((tmp = find_best_object_match(op, params)))
+            examine(op, tmp, TRUE);
+        else
+            new_draw_info_format(NDI_UNIQUE, 0, op, "Could not find an object that matches %s", params);
+    }
+
+    return 0;
+}
 #endif
 
 /* Object op wants to drop object(s) params.  params can be a
@@ -321,33 +348,6 @@ int command_drop(object *op, char *params)
 
     if (op->type == PLAYER)
         CONTR(op)->count = 0;
-
-    return 0;
-}
-
-int command_examine(object *op, char *params)
-{
-    object *tmp;
-
-    if (op->type == PLAYER)
-        CONTR(op)->rest_mode = 0;
-
-    if (!params)
-    {
-        while ((tmp = op->below) &&
-               !LOOK_OBJ(tmp))
-            tmp = tmp->below;
-
-        if (tmp)
-            examine(op, tmp, TRUE);
-    }
-    else
-    {
-        if ((tmp = find_best_object_match(op, params)))
-            examine(op, tmp, TRUE);
-        else
-            new_draw_info_format(NDI_UNIQUE, 0, op, "Could not find an object that matches %s", params);
-    }
 
     return 0;
 }
