@@ -91,8 +91,8 @@ no_send_cmd:
  */
 int client_command_check(char *cmd)
 {
-    char    tmp[256];
-    char    cpar1[256];
+    char    tmp[MEDIUM_BUF];
+    char    cpar1[MEDIUM_BUF];
     int     par1, par2;
 
     if (!strnicmp(cmd, "/ready_spell", strlen("/ready_spell")))
@@ -157,9 +157,54 @@ int client_command_check(char *cmd)
     }
 #endif
 	/* lets try out some things to load some work from the server to the client */
+        /* This is for /apply commands where the item is specified as a string (eg,
+         * /apply lamp) as opposed to ?M_APPLY commands where the item is
+         * always what is under the cursor.
+         *
+         * So with /apply you can bind the apply command to a key for example to always
+         * apply a lamp if it's in your inv or at your feet.
+         *
+         * For some unknown reason '/apply' on its own is bound to SPACE by default
+         * (?M_APPLY is A). Obviously this will never specify an item.
+         *
+         * In these circumstances (no item is specified) we act as if ?M_APPLY was
+         * issued and use the item under the cursor.
+         * -- Smacky 20090730 */
 	else if (!strnicmp(cmd, "/apply", strlen("/apply")))
 	{
-		return apply_command(cmd+6);
+            char *item;
+            int   tag;
+
+            item = cmd + 6;
+
+            while (isspace(*item))
+                item++;
+
+            if (*item)
+                tag = locate_item_tag_from_name(item);
+            else
+            {
+                if (cpl.inventory_win == IWIN_BELOW)
+                    tag = cpl.win_below_tag;
+                else
+                    tag = cpl.win_inv_tag;
+            }
+
+            if (tag == -1 || !locate_item(tag))
+            {
+                if (*item)
+                    draw_info_format(COLOR_DGOLD, "/apply %s", item);
+
+                draw_info_format(COLOR_DEFAULT, "No %sitem could be found!",
+                                 (*item) ? "such " : "");
+            }
+            else
+            {
+                draw_info_format(COLOR_DGOLD, "/apply %s", locate_item(tag)->s_name);
+                client_send_apply(tag);
+            }
+
+            return TRUE;
 	}
 	else if (!strnicmp(cmd, "/markdmbuster", strlen("makrdmbuster")))
 	{

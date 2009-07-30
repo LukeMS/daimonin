@@ -731,25 +731,3 @@ void examine_range_inv(void)
 			fire_mode_tab[FIRE_MODE_BOW].amun = tmp->tag;
     }
 }
-
-Boolean apply_command(char *item)
-{
-    char buf[256];
-    int tag;
-	while (isspace(*item))
-		item++;
-
-    if (strlen(item)==0)
-        return FALSE;
-
-    tag = locate_item_tag_from_name(item);
-
-    if(tag == -1 || !locate_item(tag))
-        return FALSE;
-
-    sprintf(buf,"/apply %s", locate_item(tag)->s_name);
-    draw_info(buf,COLOR_DGOLD);
-    client_send_apply(tag);
-    return TRUE;
-
-}

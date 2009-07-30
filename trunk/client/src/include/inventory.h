@@ -39,7 +39,5 @@ extern void     blt_inv_item(item *tmp, int x, int y);
 extern int      get_inventory_data(item *op, int *cflag, int *slot, int *start, int *count, int wxlen, int wylen);
 extern void     examine_range_inv(void);
 extern Boolean  blt_inv_item_centered(item *tmp, int x, int y);
-extern Boolean  apply_command(char* item);
-
 
 #endif
