@@ -60,9 +60,6 @@ _CmdMapping cs_commands[]    =
  */
 CommArray_s Commands[] =
 {
-#if 0
-    {"apply",         command_apply,          1.0f, 1}, /* should be variable */
-#endif
     {"target",        command_target,         0.1f, 0}, /* enter combat and attack object in reach */
     {"combat",        command_combat,         0.1f, 0}, /* toggle attack mode of player */
     {"rest",          command_resting,        1.0f, 1},
@@ -247,6 +244,7 @@ CommArray_s CommandsMM[] =
     {"listen", command_listen,    0.0}, // our channel system should work different
     {"drop", command_drop,    1.0},
     {"get", command_take,     1.0},
+    {"apply",         command_apply,          1.0f, 1}, // should be variable
     {"examine", command_examine,  0.5}, // should work in direction
     {"statistics", command_statistics,    0.0}, // will be send to client later in status
     {"archs", command_archs, 0.0},
