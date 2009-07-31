@@ -156,7 +156,7 @@ int client_command_check(char *cmd)
         return TRUE;
     }
 #endif
-	/* lets try out some things to load some work from the server to the client */
+        /* lets try out some things to load some work from the server to the client */
         /* This is for /apply commands where the item is specified as a string (eg,
          * /apply lamp) as opposed to ?M_APPLY commands where the item is
          * always what is under the cursor.
@@ -170,8 +170,8 @@ int client_command_check(char *cmd)
          * In these circumstances (no item is specified) we act as if ?M_APPLY was
          * issued and use the item under the cursor.
          * -- Smacky 20090730 */
-	else if (!strnicmp(cmd, "/apply", strlen("/apply")))
-	{
+        else if (!strnicmp(cmd, "/apply", strlen("/apply")))
+        {
             char *item;
             int   tag;
 
@@ -205,29 +205,29 @@ int client_command_check(char *cmd)
             }
 
             return TRUE;
-	}
-	else if (!strnicmp(cmd, "/markdmbuster", strlen("makrdmbuster")))
-	{
+        }
+        else if (!strnicmp(cmd, "/markdmbuster", strlen("makrdmbuster")))
+        {
         markdmbuster();
-	    return TRUE;
-	}
-	else if (!strnicmp(cmd, "/shout_off", strlen("/shout_off")))
-	{
-	    options.shoutoff=TRUE;
+            return TRUE;
+        }
+        else if (!strnicmp(cmd, "/shout_off", strlen("/shout_off")))
+        {
+            options.shoutoff=TRUE;
         draw_info_format(COLOR_RED,"Shout disabled");
         return TRUE;
-	}
-	else if (!strnicmp(cmd, "/shout_on", strlen("/shout_on")))
-	{
-	    options.shoutoff=FALSE;
+        }
+        else if (!strnicmp(cmd, "/shout_on", strlen("/shout_on")))
+        {
+            options.shoutoff=FALSE;
         draw_info_format(COLOR_GREEN,"Shout enabled");
         return TRUE;
-	}
-	else if (!strnicmp(cmd, "/buddy", strlen("/buddy")))
-	{
-		buddy_command(cmd+6);
-		return TRUE;
-	}
+        }
+        else if (!strnicmp(cmd, "/buddy", strlen("/buddy")))
+        {
+            buddy_command(cmd+6);
+            return TRUE;
+        }
     else if (!strnicmp(cmd, "/ignore", strlen("/ignore")))
     {
         ignore_command(cmd+7);
