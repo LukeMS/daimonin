@@ -65,6 +65,14 @@ Section "Client (required)"
   CreateDirectory $INSTDIR\logs
   SetOutPath $INSTDIR\logs
   File "logs\*.*"
+  ; man directory
+  CreateDirectory $INSTDIR\man
+  SetOutPath $INSTDIR\man
+  File "man\*.*"
+  ; man/commands directory
+  CreateDirectory $INSTDIR\man\commands
+  SetOutPath $INSTDIR\man\commands
+  File "man\commands\*.*"
   ; media directory
   CreateDirectory $INSTDIR\media
   SetOutPath $INSTDIR\media
