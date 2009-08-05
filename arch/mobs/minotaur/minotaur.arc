@@ -35,6 +35,7 @@ wc 15
 thac0 85
 thacm 5
 dam 80
+item_condition 10
 weapon_speed 3.5
 attack_cleave 100
 resist_acid 25

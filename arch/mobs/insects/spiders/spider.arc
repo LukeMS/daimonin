@@ -33,6 +33,7 @@ thacm 5
 resist_impact 10
 dam 52
 attack_pierce 100
+item_condition 10
 weapon_speed 3.5
 speed -0.06
 run_away 10

@@ -46,6 +46,7 @@ resist_confusion 40
 resist_cold 30
 resist_acid -40
 dam 82
+item_condition 10
 weapon_speed 3.5
 attack_impact 50
 attack_poison 50

@@ -37,6 +37,7 @@ resist_confusion 100
 resist_fear 100
 dam 39
 attack_impact 100
+item_condition 10
 weapon_speed 3.5
 speed -0.025
 level 1

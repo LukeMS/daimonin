@@ -42,6 +42,7 @@ resist_impact 30
 resist_cleave 30
 resist_fear 100
 attack_pierce 100
+item_condition 10
 weapon_speed 3.5
 speed -0.06
 run_away 6

@@ -38,6 +38,7 @@ resist_fear 100
 dam 42
 attack_poison 70
 attack_slash 30
+item_condition 10
 weapon_speed 3.5
 speed -0.04
 level 1
