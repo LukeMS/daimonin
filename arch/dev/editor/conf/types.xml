@@ -3791,7 +3791,7 @@
     mob in the spawn point means this mob is spawned always. A
     number of 5000 means a 50% chance to spawn.
   </attribute>
-  <attribute arch="last_eat" editor="darkness to spawn" type="int">
+  <attribute arch="last_eat" editor="darkness to spawn" type="int" min="-7" max="7">
     The monster will a.) only spawn when this dark settings are same
     like the map darkness or world darkness (outdoor flag set) is equal.
     b.) if the monster is set from the spawn point and the darkness change
