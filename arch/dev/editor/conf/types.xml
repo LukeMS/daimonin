@@ -3589,7 +3589,7 @@
     every active tick. -1 means no spawn try.
     Value >0 means spawn probability is 1/value+1 per active tick.
   </attribute>
-  <attribute arch="sp" editor="forced spawn" type="int">
+  <attribute arch="sp" editor="forced spawn" type="int" min="-1" max="9999">
     If -1 at start, the spawn point will do a normal spawn.
     If set to 0-9999, the spawn point will be forced to spawn
     the mob with the nearest set chance (lower or same value)
@@ -3784,7 +3784,7 @@
     the player won't ever notice whether a monster was asleep or not.
   </attribute>
 <section name="spawn-settings">
-  <attribute arch="object_int1" editor="chance to spawn" type="int">
+  <attribute arch="object_int1" editor="chance to spawn" type="int" min="-1" max="9999">
     The spawn point will use a random number between 0-9999 to
     find a usable mob to spawn. If this value is nearest but
     not higher, this mob is selected. A number of 0 and only one
