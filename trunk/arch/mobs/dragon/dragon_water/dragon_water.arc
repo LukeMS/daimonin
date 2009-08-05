@@ -33,6 +33,7 @@ thac0 85
 thacm 5
 resist_fear 50
 dam 75
+item_condition 10
 weapon_speed 3.5
 attack_slash 100
 speed -0.0225

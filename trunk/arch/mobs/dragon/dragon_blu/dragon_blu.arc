@@ -46,6 +46,7 @@ resist_confusion 40
 resist_cold 100
 resist_electricity -40
 dam 82
+item_condition 10
 weapon_speed 3.5
 attack_cleave 50
 attack_cold 50

@@ -38,6 +38,7 @@ wc 15
 thac0 85
 thacm 5
 dam 53
+item_condition 10
 weapon_speed 3.5
 resist_fear 100
 resist_paralyze 30

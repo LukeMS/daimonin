@@ -38,6 +38,7 @@ resist_fear 100
 dam 53
 attack_cleave 80
 attack_acid 20
+item_condition 10
 weapon_speed 3.5
 speed -0.05
 level 1

@@ -40,6 +40,7 @@ resist_cleave 10
 resist_pierce 10
 resist_slash 10
 dam 35
+item_condition 10
 weapon_speed 3.5
 attack_pierce 100
 speed -0.047

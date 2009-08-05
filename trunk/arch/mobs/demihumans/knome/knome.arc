@@ -34,6 +34,7 @@ thac0 85
 thacm 5
 can_see_in_dark 1
 dam 50
+item_condition 10
 weapon_speed 3.5
 resist_pierce 15
 resist_slash 15

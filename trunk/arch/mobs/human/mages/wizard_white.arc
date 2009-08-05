@@ -41,6 +41,7 @@ resist_pierce 10
 resist_slash 10
 resist_magic 50
 dam 35
+item_condition 10
 weapon_speed 3.5
 attack_pierce 20
 attack_magic 50

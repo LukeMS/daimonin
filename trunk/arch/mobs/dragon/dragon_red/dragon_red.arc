@@ -45,6 +45,7 @@ resist_fear 80
 resist_confusion 40
 resist_cold -30
 dam 82
+item_condition 10
 weapon_speed 3.5
 attack_slash 50
 attack_fire 50

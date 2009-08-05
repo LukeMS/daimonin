@@ -35,6 +35,7 @@ resist_impact 10
 dam 52
 attack_pierce 50
 attack_impact 50
+item_condition 10
 weapon_speed 3.5
 speed -0.06
 run_away 10

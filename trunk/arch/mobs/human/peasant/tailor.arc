@@ -36,6 +36,7 @@ wc 15
 thac0 85
 thacm 5
 dam 41
+item_condition 10
 weapon_speed 3.5
 attack_slash 100
 speed -0.047

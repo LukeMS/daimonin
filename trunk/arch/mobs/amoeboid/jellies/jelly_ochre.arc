@@ -39,6 +39,7 @@ resist_poison 100
 dam 52
 attack_acid 60
 attack_poison 40
+item_condition 10
 weapon_speed 3.5
 speed -0.05
 level 1
