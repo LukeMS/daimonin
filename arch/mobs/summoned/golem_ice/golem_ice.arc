@@ -41,6 +41,7 @@ resist_confusion 100
 attack_cold 100
 speed -0.045
 level 1
+item_quality 3
 weight 320000
 animation icegolem
 is_animated 1

@@ -38,6 +38,7 @@ weapon_speed 3.5
 speed -0.06
 run_away 10
 level 1
+item_quality 2
 weight 325000
 animation snake
 is_animated 1

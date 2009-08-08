@@ -47,6 +47,7 @@ weapon_speed 3.5
 speed -0.06
 run_away 6
 level 1
+item_quality 5
 weight 1350000
 animation oclunus
 is_animated 1

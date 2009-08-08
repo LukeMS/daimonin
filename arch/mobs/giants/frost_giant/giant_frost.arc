@@ -44,6 +44,7 @@ resist_cold 100
 resist_fire -25
 speed -0.054
 level 1
+item_quality 4
 weight 652500
 animation giant_frost
 is_animated 1

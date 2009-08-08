@@ -38,6 +38,7 @@ weapon_speed 3.5
 speed -0.06
 run_away 10
 level 1
+item_quality 3
 weight 325000
 animation rattle_snake
 is_animated 1

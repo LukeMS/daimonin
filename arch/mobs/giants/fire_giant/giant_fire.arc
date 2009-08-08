@@ -44,6 +44,7 @@ resist_fire 100
 resist_cold -25
 speed -0.054
 level 1
+item_quality 4
 weight 652500
 animation giant_fire
 is_animated 1

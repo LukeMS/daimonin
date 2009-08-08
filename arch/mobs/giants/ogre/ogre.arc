@@ -42,6 +42,7 @@ resist_poison 25
 resist_acid 25
 speed -0.053
 level 1
+item_quality 3
 weight 153250
 animation ogre
 is_animated 1

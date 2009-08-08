@@ -42,6 +42,7 @@ weapon_speed 3.5
 attack_slash 100
 speed -0.059
 level 1
+item_quality 2
 weight 61250
 animation elven_merchant
 is_animated 1

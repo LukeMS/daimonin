@@ -37,6 +37,7 @@ weapon_speed 3.5
 attack_cleave 100
 speed -0.053
 level 1
+item_quality 2
 weight 25500
 animation ant_soldier
 is_animated 1

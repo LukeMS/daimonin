@@ -46,6 +46,7 @@ attack_slash 50
 attack_drain 50
 speed -0.048
 level 1
+item_quality 3
 weight 12500
 animation wraith
 is_animated 1

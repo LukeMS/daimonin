@@ -47,6 +47,7 @@ attack_magic 30
 attack_weaponmagic 30
 speed -0.0495
 level 1
+item_quality 1
 weight 75000
 animation patron
 is_animated 1

@@ -40,6 +40,7 @@ weapon_speed 3.5
 attack_slash 100
 speed -0.048
 level 1
+item_quality 2
 weight 97000
 animation orc_warrior
 is_animated 1

@@ -45,6 +45,7 @@ attack_impact 10
 attack_electricity 90
 speed -0.06
 level 1
+item_quality 2
 weight 425000
 animation knome
 is_animated 1

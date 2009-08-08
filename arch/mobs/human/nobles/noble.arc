@@ -45,6 +45,7 @@ weapon_speed 3.5
 attack_slash 100
 speed -0.047
 level 1
+item_quality 3
 weight 67500
 animation noble
 is_animated 1

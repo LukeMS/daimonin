@@ -46,6 +46,7 @@ resist_cold -30
 attack_pierce 100
 speed -0.06
 level 1
+item_quality 3
 weight 425000
 animation wyvern
 is_animated 1

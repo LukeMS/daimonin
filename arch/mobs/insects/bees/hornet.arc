@@ -38,6 +38,7 @@ attack_pierce 90
 attack_poison 10
 speed -0.053
 level 1
+item_quality 1
 weight 11500
 animation hornet
 is_animated 1

@@ -48,6 +48,7 @@ attack_magic 25
 attack_weaponmagic 25
 speed -0.048
 level 1
+item_quality 4
 weight 82500
 animation guard_pole
 is_animated 1

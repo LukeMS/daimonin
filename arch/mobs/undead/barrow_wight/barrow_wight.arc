@@ -44,6 +44,7 @@ attack_slash 70
 attack_paralyze 30
 speed -0.047
 level 1
+item_quality 4
 weight 62500
 animation barrow_wight
 is_animated 1

@@ -41,6 +41,7 @@ weapon_speed 3.5
 attack_slash 100
 speed -0.059
 level 1
+item_quality 3
 weight 61250
 animation drow_fighter
 is_animated 1

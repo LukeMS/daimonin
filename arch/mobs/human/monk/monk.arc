@@ -47,6 +47,7 @@ attack_magic 20
 attack_weaponmagic 20
 speed -0.049
 level 1
+item_quality 2
 weight 65500
 animation monk
 is_animated 1

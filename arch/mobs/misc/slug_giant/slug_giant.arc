@@ -41,6 +41,7 @@ resist_poison 100
 resist_paralyze 100
 speed -0.040
 level 1
+item_quality 1
 weight 34250
 animation slug_giant
 is_animated 1

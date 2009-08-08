@@ -49,6 +49,7 @@ attack_magic 30
 attack_weaponmagic 10
 speed -0.049
 level 1
+item_quality 2
 weight 65000
 animation archer
 is_animated 1

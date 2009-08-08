@@ -8,6 +8,7 @@ material 32
 item_condition 10
 weapon_speed 1.0
 container 350000
+item_quality 1
 weight 50000
 food 20
 is_used_up 1

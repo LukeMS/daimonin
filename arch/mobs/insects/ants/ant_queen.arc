@@ -38,6 +38,7 @@ weapon_speed 3.5
 attack_cleave 100
 speed -0.053
 level 1
+item_quality 3
 weight 72500
 animation ant_queen
 is_animated 1

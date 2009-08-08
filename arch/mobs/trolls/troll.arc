@@ -49,6 +49,7 @@ resist_fire -30
 attack_impact 100
 speed -0.061
 level 1
+item_quality 3
 weight 365000
 animation troll
 is_animated 1

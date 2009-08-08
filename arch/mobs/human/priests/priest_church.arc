@@ -49,6 +49,7 @@ attack_magic 30
 attack_weaponmagic 10
 speed -0.048
 level 1
+item_quality 3
 weight 65000
 animation priest_church
 is_animated 1

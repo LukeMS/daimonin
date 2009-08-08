@@ -43,6 +43,7 @@ item_condition 10
 weapon_speed 3.5
 speed -0.05
 level 1
+item_quality 4
 weight 17250
 animation jelly_ochre
 is_animated 1

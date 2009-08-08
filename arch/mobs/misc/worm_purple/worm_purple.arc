@@ -46,6 +46,7 @@ attack_cleave 50
 attack_impact 50
 speed -0.0611
 level 1
+item_quality 4
 weight 452500
 animation worm_purple
 is_animated 1

@@ -40,6 +40,7 @@ weapon_speed 3.5
 attack_cleave 100
 speed -0.060
 level 1
+item_quality 5
 weight 162500
 animation oty
 is_animated 1

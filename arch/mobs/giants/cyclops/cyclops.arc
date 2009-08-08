@@ -40,6 +40,7 @@ weapon_speed 3.5
 attack_impact 100
 speed -0.058
 level 1
+item_quality 4
 weight 522500
 animation cyclops
 is_animated 1

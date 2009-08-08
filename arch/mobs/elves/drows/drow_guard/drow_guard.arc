@@ -41,6 +41,7 @@ weapon_speed 3.5
 attack_slash 100
 speed -0.058
 level 1
+item_quality 3
 weight 61500
 animation drow_guard
 is_animated 1

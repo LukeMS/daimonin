@@ -39,6 +39,7 @@ resist_confusion 100
 attack_impact 100
 speed -0.046
 level 1
+item_quality 3
 weight 185000
 animation black_golem_mage
 is_animated 1

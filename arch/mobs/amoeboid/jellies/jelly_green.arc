@@ -42,6 +42,7 @@ item_condition 10
 weapon_speed 3.5
 speed -0.05
 level 1
+item_quality 1
 weight 16250
 animation jelly_green
 is_animated 1

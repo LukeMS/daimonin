@@ -52,6 +52,7 @@ attack_cleave 50
 attack_cold 50
 speed -0.061
 level 1
+item_quality 4
 weight 950000
 animation dragon_blu
 is_animated 1

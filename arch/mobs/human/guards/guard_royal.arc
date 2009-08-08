@@ -48,6 +48,7 @@ attack_magic 35
 attack_weaponmagic 30
 speed -0.0485
 level 1
+item_quality 4
 weight 87000
 animation guard_royal
 is_animated 1
