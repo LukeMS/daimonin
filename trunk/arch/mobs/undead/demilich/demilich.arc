@@ -47,6 +47,7 @@ resist_confusion 100
 attack_cleave 100
 speed -0.054
 level 1
+item_quality 5
 weight 7500
 animation demilich
 is_animated 1

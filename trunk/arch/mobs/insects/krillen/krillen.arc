@@ -40,6 +40,7 @@ weapon_speed 3.5
 attack_cleave 100
 speed -0.060
 level 1
+item_quality 4
 weight 162500
 animation krillen
 is_animated 1

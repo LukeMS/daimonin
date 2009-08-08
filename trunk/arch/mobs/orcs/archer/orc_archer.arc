@@ -41,6 +41,7 @@ weapon_speed 3.5
 attack_pierce 100
 speed -0.048
 level 1
+item_quality 2
 weight 91500
 animation orc_archer
 is_animated 1

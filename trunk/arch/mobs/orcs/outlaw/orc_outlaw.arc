@@ -41,6 +41,7 @@ weapon_speed 3.5
 attack_impact 100
 speed -0.0486
 level 1
+item_quality 2
 weight 89500
 animation orc_outlaw
 is_animated 1

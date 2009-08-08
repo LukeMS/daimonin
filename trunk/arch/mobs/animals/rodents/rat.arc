@@ -38,6 +38,7 @@ weapon_speed 3.5
 speed -0.03
 run_away 10
 level 1
+item_quality 2
 weight 325000
 animation rat_a
 is_animated 1
@@ -85,6 +86,7 @@ weapon_speed 3.5
 speed -0.03
 run_away 10
 level 1
+item_quality 2
 weight 325000
 animation rat_b
 is_animated 1
@@ -132,6 +134,7 @@ weapon_speed 3.5
 speed -0.03
 run_away 10
 level 1
+item_quality 2
 weight 325000
 animation rat_c
 is_animated 1
@@ -179,6 +182,7 @@ weapon_speed 3.5
 speed -0.03
 run_away 10
 level 1
+item_quality 2
 weight 325000
 animation rat_d
 is_animated 1

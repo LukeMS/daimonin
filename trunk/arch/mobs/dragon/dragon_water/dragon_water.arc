@@ -38,6 +38,7 @@ weapon_speed 3.5
 attack_slash 100
 speed -0.0225
 level 1
+item_quality 3
 weight 295500
 animation dragon_water_small
 is_animated 1

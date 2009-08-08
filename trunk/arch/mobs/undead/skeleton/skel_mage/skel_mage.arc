@@ -46,6 +46,7 @@ resist_confusion 40
 attack_cleave 100
 speed -0.048
 level 1
+item_quality 4
 weight 28500
 animation skel_mage
 is_animated 1

@@ -47,6 +47,7 @@ attack_impact 50
 attack_weaponmagic 50
 speed -0.048
 level 1
+item_quality 3
 weight 65500
 animation smith
 is_animated 1

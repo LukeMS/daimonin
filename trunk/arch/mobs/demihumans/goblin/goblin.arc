@@ -41,6 +41,7 @@ weapon_speed 3.5
 attack_slash 100
 speed -0.061
 level 1
+item_quality 1
 weight 52500
 animation goblin
 is_animated 1

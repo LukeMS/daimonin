@@ -41,6 +41,7 @@ weapon_speed 3.5
 attack_pierce 100
 speed -0.060
 level 1
+item_quality 1
 weight 45500
 animation kobold_fighter
 is_animated 1

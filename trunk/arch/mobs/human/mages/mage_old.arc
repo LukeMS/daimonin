@@ -48,6 +48,7 @@ attack_magic 50
 attack_weaponmagic 30
 speed -0.047
 level 1
+item_quality 3
 weight 65000
 animation mage_old
 is_animated 1

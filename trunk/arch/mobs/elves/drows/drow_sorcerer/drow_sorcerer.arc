@@ -42,6 +42,7 @@ weapon_speed 3.5
 attack_pierce 100
 speed -0.061
 level 1
+item_quality 3
 weight 61500
 animation drow_sorcerer
 is_animated 1

@@ -43,6 +43,7 @@ item_condition 10
 weapon_speed 3.5
 speed -0.05
 level 1
+item_quality 6
 weight 16450
 animation jelly_spotted
 is_animated 1

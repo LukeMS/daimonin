@@ -48,6 +48,7 @@ attack_magic 30
 attack_weaponmagic 30
 speed -0.0495
 level 1
+item_quality 3
 weight 75000
 animation pirate_sorceress
 is_animated 1

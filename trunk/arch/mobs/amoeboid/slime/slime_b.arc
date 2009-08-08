@@ -43,6 +43,7 @@ item_condition 10
 weapon_speed 3.5
 speed -0.029
 level 1
+item_quality 2
 weight 17250
 animation slime_b
 is_animated 1

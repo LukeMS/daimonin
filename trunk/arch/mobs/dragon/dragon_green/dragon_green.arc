@@ -52,6 +52,7 @@ attack_impact 50
 attack_poison 50
 speed -0.061
 level 1
+item_quality 4
 weight 950000
 animation dragon_green
 is_animated 1

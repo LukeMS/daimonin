@@ -41,6 +41,7 @@ item_condition 10
 weapon_speed 3.5
 speed -0.025
 level 1
+item_quality 1
 weight 11250
 animation gray_ooze
 is_animated 1

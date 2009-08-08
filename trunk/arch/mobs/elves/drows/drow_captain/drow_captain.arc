@@ -41,6 +41,7 @@ weapon_speed 3.5
 attack_slash 100
 speed -0.061
 level 1
+item_quality 4
 weight 62500
 animation drow_captain
 is_animated 1

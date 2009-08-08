@@ -41,6 +41,7 @@ item_condition 10
 weapon_speed 3.5
 speed -0.04
 level 1
+item_quality 3
 weight 15750
 animation blob_quivering
 is_animated 1

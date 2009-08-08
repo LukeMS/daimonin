@@ -41,6 +41,7 @@ attack_impact 100
 resist_acid 25
 speed -0.054
 level 1
+item_quality 4
 weight 732500
 animation giant_stone
 is_animated 1

@@ -41,6 +41,7 @@ weapon_speed 3.5
 attack_slash 100
 speed -0.047
 level 1
+item_quality 1
 weight 68500
 animation traveller_parka
 is_animated 1

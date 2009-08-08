@@ -42,6 +42,7 @@ weapon_speed 3.5
 attack_pierce 100
 speed -0.061
 level 1
+item_quality 2
 weight 42500
 animation kobold_shaman
 is_animated 1

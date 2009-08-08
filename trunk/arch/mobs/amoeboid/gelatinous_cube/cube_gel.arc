@@ -41,6 +41,7 @@ item_condition 10
 weapon_speed 3.5
 speed -0.03
 level 1
+item_quality 2
 weight 8250
 animation cube_gel
 is_animated 1

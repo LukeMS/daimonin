@@ -45,6 +45,7 @@ resist_confusion 20
 attack_impact 100
 speed -0.057
 level 1
+item_quality 3
 weight 82250
 animation dwarf_fighter
 is_animated 1

@@ -36,6 +36,7 @@ weapon_speed 3.5
 attack_cleave 100
 speed -0.061
 level 1
+item_quality 3
 weight 35500
 animation elemental_ice
 is_animated 1

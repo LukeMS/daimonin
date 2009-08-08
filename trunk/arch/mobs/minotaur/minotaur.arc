@@ -43,6 +43,7 @@ resist_confusion 25
 resist_fear 25
 speed -0.057
 level 1
+item_quality 3
 weight 483250
 animation minotaur
 is_animated 1

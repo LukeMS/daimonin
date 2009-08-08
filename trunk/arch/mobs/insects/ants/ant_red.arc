@@ -39,6 +39,7 @@ weapon_speed 3.5
 attack_cleave 100
 speed -0.053
 level 1
+item_quality 1
 weight 22500
 animation ant_red
 is_animated 1

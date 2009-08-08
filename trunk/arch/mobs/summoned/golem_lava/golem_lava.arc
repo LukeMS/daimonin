@@ -41,6 +41,7 @@ resist_confusion 100
 attack_fire 100
 speed -0.045
 level 1
+item_quality 3
 weight 320000
 animation lavagolem
 is_animated 1

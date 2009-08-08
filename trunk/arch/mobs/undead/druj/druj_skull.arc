@@ -49,6 +49,7 @@ resist_confusion 100
 attack_cleave 100
 speed -0.054
 level 1
+item_quality 4
 weight 7500
 animation druj_skull
 is_animated 1

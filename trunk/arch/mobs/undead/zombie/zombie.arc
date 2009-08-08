@@ -41,6 +41,7 @@ resist_fear 100
 attack_slash 100
 speed -0.048
 level 1
+item_quality 3
 weight 27500
 animation zombie
 is_animated 1

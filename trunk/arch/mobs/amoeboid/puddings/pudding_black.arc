@@ -43,6 +43,7 @@ item_condition 10
 weapon_speed 3.5
 speed -0.03
 level 1
+item_quality 4
 weight 19250
 animation pudding_black
 is_animated 1
