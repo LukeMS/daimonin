@@ -2150,7 +2150,7 @@ int ai_bow_attack_enemy(object *op, struct mob_behaviour_param *params)
         object *new_arrow   = get_object();
         copy_object(arrow, new_arrow);
         CLEAR_FLAG(new_arrow, FLAG_SYS_OBJECT);
-        new_arrow->nrof = 0;
+        new_arrow->nrof = 1;
 
         /* now setup the self destruction */
         new_arrow->stats.food = 20;
