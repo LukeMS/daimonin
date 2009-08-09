@@ -473,8 +473,7 @@ void dump_msp(mapstruct *m, int x, int y, player *pl)
 {
     object *ob;
     char    buf[MAX_BUF];
-    int     flags,
-            i;
+    int     flags;
 
     ob = (pl) ? pl->ob : NULL;
 
