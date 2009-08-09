@@ -2080,11 +2080,8 @@ object *insert_ob_in_map(object *const op, mapstruct *m, object *const originato
     /* A stackable object with nrof 0 is junk.
      * We do this because otherwise objects marked for removal by merge_ob()
      * can be un-removed here. */
-
-    /* 2009-08-09 This change breaks archery, so comment out for now */
-/*  if (QUERY_FLAG(op, FLAG_CAN_STACK) && !op->nrof)
+    if (QUERY_FLAG(op, FLAG_CAN_STACK) && !op->nrof)
         return NULL;
-*/
 
 #ifdef POSITION_DEBUG
     op->ox = op->x;
