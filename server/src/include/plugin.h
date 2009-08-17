@@ -308,6 +308,7 @@ struct plugin_hooklist
     void (*free_string_shared)(const char *);
     /* G */
     object *(*get_archetype)(const char *);
+    int (*get_button_value)(object *);
     int (*get_friendship)(object *, object *);
     int (*get_money_from_string)(char *, struct _money_block *);
     uint32 (*get_nrof_quest_item)(const struct obj *, const char *,
@@ -409,6 +410,7 @@ struct plugin_hooklist
     void (*set_map_darkness)(mapstruct *, int);
     void (*set_personal_light)(player *, int);
     void (*set_quest_status)(struct obj *, int, int);
+    void (*signal_connection)(object *, object *, object *, mapstruct *);
     void (*spring_trap)(object *, object *);
     char *(*strdup_local)(const char *);
     sint32 (*sum_weight)(object *);

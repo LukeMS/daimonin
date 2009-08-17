@@ -75,6 +75,7 @@ static int  GameObject_GetAlignmentForce(lua_State *L);
 static int  GameObject_GetAnimation(lua_State *L);
 static int  GameObject_GetArchName(lua_State *L);
 static int  GameObject_GetCombatMode(lua_State *L);
+static int  GameObject_GetConnection(lua_State *L);
 static int  GameObject_GetEquipment(lua_State *L);
 static int  GameObject_GetFace(lua_State *L);
 static int  GameObject_GetGender(lua_State *L);

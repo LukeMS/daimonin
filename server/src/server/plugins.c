@@ -82,6 +82,7 @@ struct plugin_hooklist  hooklist    =
     free_string_shared,
     /* G */
     get_archetype,
+    get_button_value,
     get_friendship,
     get_money_from_string,
     get_nrof_quest_item,
@@ -168,6 +169,7 @@ struct plugin_hooklist  hooklist    =
     set_map_darkness,
     set_personal_light,
     set_quest_status,
+    signal_connection,
     spring_trap,
     strdup_local,
     sum_weight,
