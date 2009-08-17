@@ -27,10 +27,12 @@
 
 static struct method_decl Map_methods[] =
 {
+    {"ActivateConnection",     Map_ActivateConnection},
     {"CreateObject",           Map_CreateObject},
     {"Delete",                 Map_Delete},
     {"GetFirstObjectOnSquare", Map_GetFirstObjectOnSquare},
     {"GetBrightnessOnSquare",  Map_GetBrightnessOnSquare},
+    {"HasConnection",          Map_HasConnection},
     {"IsAnyPlayerOnMap",       Map_IsAnyPlayerOnMap},
     {"IsWallOnSquare",         Map_IsWallOnSquare},
     {"MapTileAt",              Map_MapTileAt},
@@ -629,6 +631,104 @@ static int Map_SetDarkness(lua_State *L)
     return 0;
 }
 
+/*****************************************************************************/
+/* Name   : Map_ActivateConnection                                           */
+/* Lua    : map:ActivateConnection(connected, activator, originator)         */
+/* Info   : Activates a connection on another map.                           */
+/*          map is (of course) the map to activate on.                       */
+/*          connected is the object (lever, etc) which started the process.  */
+/*          activator and originator (both optional) are objects which caused*/
+/*          connected to be activated (eg, activator might be the player who */
+/*          pulled the lever).                                               */
+/*          The connection activated on map will be the same one that        */
+/*          connected is connected to on its map (eg, if connected has       */
+/*          connection 1, connection 1 will be activated on map.             */
+/*          Note that this method does /not/ actually trigger connected. It  */
+/*          is assumed that that has already been done (ie, by a player).    */
+/*          Instead, this method merely passes on the fact that connected has*/
+/*          been triggered to the connection network on another map.         */
+/* Status : Untested/Stable                                                  */
+/*****************************************************************************/
+static int Map_ActivateConnection(lua_State *L)
+{
+    lua_object *self,
+               *connected,
+               *activator,
+               *originator;
+    int         connection;
+
+    activator = NULL;
+    originator = NULL;
+    get_lua_args(L, "MO|OO", &self, &connected, &activator, &originator);
+
+    if (!(connection = hooks->get_button_value(connected->data.object)))
+        return luaL_error(L, "map:ActivateConnection(): Arg #1 must be connected!");
+    else
+    {
+        oblinkpt *oblp;
+        int       flag;
+
+        for (oblp = self->data.map->buttons, flag = FALSE; oblp;
+             oblp = oblp->next)
+        {
+            if (oblp->value == connection)
+            {
+                flag = TRUE;
+                break;
+            }
+        }
+
+        if (!flag)
+            return luaL_error(L, "map:ActivateConnection(): Arg #1 has no connection on map!");
+    }
+
+    if (self->data.map == connected->data.object->map)
+        return luaL_error(L, "map:ActivateConnection(): Arg #1 must be on different map!");
+
+    hooks->signal_connection(connected->data.object, (activator) ?
+                             activator->data.object : NULL, (originator) ?
+                             originator->data.object : NULL, self->data.map);
+
+    return 0;
+}
+
+/*****************************************************************************/
+/* Name   : Map_HasConnection                                                */
+/* Lua    : map:HasConnection(connection)                                    */
+/* Info   : Checks if map has connection.                                    */
+/*          If it does, a numerical table of the connected objects is        */
+/*          If it doesn't, the return is nil.                                */
+/* Status : Untested/Stable                                                  */
+/*****************************************************************************/
+static int Map_HasConnection(lua_State *L)
+{
+    lua_object *self;
+    int         connection;
+    oblinkpt   *oblp;
+
+    get_lua_args(L, "Mi", &self, &connection);
+
+    for (oblp = self->data.map->buttons; oblp; oblp = oblp->next)
+    {
+        if (oblp->value == connection)
+        {
+            objectlink *olp;
+            int         i;
+
+            lua_newtable(L);
+
+            for (olp = oblp->objlink.link, i = 1; olp; olp = olp->next, i++)
+            {
+                push_object(L, &GameObject, olp->objlink.ob);
+                lua_rawseti(L, -2, i);
+            }
+
+            return 1;
+        }
+    }
+
+    return 0;
+}
 
 
 /* FUNCTIONEND -- End of the Lua plugin functions. */

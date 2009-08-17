@@ -74,6 +74,7 @@ static struct method_decl GameObject_methods[] =
     {"GetAnimation",           (lua_CFunction) GameObject_GetAnimation},
     {"GetArchName",            (lua_CFunction) GameObject_GetArchName},
     {"GetCombatMode",          (lua_CFunction) GameObject_GetCombatMode},
+    {"GetConnection",          (lua_CFunction) GameObject_GetConnection},
     {"GetEquipment",           (lua_CFunction) GameObject_GetEquipment},
     {"GetFace",                (lua_CFunction) GameObject_GetFace},
     {"GetGender",              (lua_CFunction) GameObject_GetGender},
@@ -4152,6 +4153,7 @@ static int GameObject_PlayerSave(lua_State *L)
 
     return 1;
 }
+
 /*****************************************************************************/
 /* Name   : GameObject_GetPersonalLight                                      */
 /* Lua    : object:GetPersonalLight()                                        */
@@ -4258,6 +4260,25 @@ static int GameObject_AdjustLightSource(lua_State *L)
     hooks->update_object(WHO, UP_OBJ_FACE);
 
     return 0;
+}
+
+/*****************************************************************************/
+/* Name   : GameObject_GetConnection                                         */
+/* Lua    : object:GetConnection()                                           */
+/* Info   : Gets an object's connection value.                               */
+/*          The function takes no arguments.                                 */
+/*          The return is the object's connection value (0 means none).      */
+/* Status : Untested/Stable                                                  */
+/*****************************************************************************/
+static int GameObject_GetConnection(lua_State *L)
+{
+    lua_object *self;
+
+    get_lua_args(L, "O", &self);
+
+    lua_pushnumber(L, hooks->get_button_value(WHO));
+
+    return 1;
 }
 
 

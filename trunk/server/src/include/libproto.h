@@ -36,6 +36,7 @@ extern void             give_artifact_abilities(object *op, artifact *art);
 extern int              generate_artifact(object *op, int difficulty, int t_style, int a_chance);
 extern void             free_artifactlist(artifactlist *al);
 /* button.c */
+extern void             signal_connection(object *op, object *activator, object *originator, mapstruct *m);
 extern void             push_button(object *op, object *pusher, object *originator);
 extern void             update_button(object *op, object *activator, object *originator);
 extern void             update_buttons(mapstruct *m);

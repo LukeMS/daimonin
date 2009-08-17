@@ -30,14 +30,39 @@
 static int ignore_trigger_events = 0;
 
 /* Send signal from op to connection ol */
-static void signal_connection(object *op, oblinkpt *olp, object *activator, object *originator)
+void signal_connection(object *op, object *activator, object *originator, mapstruct *m)
 {
+    objectlink *olp,
+               *ol;
     object     *tmp;
-    objectlink *ol;
     int         raceval = 0;
     int         sound_id;
 
     /* tmp->weight_limit == state of trigger */
+
+    if (m && m != op->map)
+    {
+        oblinkpt *oblp;
+        int       connection;
+
+        connection = get_button_value(op);
+
+        for (oblp = m->buttons; oblp; oblp = oblp->next)
+        {
+            if (oblp->value != connection)
+                continue;
+
+            olp = oblp->objlink.link;
+
+            if (olp->objlink.ob->type == TYPE_CONN_SENSOR &&
+                olp->objlink.ob->last_grace != oblp->value)
+                continue;
+
+            break;
+        }
+    }
+    else
+        olp = get_button_links(op);
 
     if(! ignore_trigger_events)
         if(trigger_object_plugin_event(EVENT_TRIGGER,
@@ -412,7 +437,7 @@ void update_buttons(mapstruct *m)
  */
 void push_button(object *op, object *pusher, object *originator)
 {
-    signal_connection(op, get_button_links(op), pusher, originator);
+    signal_connection(op, pusher, originator, op->map);
 }
 
 void use_trigger(object *op, object *user)
