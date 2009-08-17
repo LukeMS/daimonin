@@ -9,6 +9,7 @@ width 24
 height 24
 difficulty 1
 outdoor 1
+darkness -1
 tile_path_4 castle_0502
 tile_path_7 castle_0501
 end

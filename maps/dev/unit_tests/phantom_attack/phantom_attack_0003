@@ -6,6 +6,7 @@ endmsg
 width 10
 height 10
 difficulty 1
+darkness -1
 tile_path_1 phantom_attack_0002
 tile_path_2 phantom_attack_0103
 tile_path_4 phantom_attack_-103
