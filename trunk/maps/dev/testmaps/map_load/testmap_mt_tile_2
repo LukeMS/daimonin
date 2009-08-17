@@ -8,6 +8,7 @@ enter_y 1
 msg
 Created:  2003-04-13 Daimonin Map Editor
 endmsg
+darkness -1
 tile_path_3 /dev/testmaps/map_load/testmap_mt_tile_3
 tile_path_4 /dev/testmaps/map_load/testmap_mt_tile_1
 tile_path_7 /dev/testmaps/map_load/testmap_mt_tile_4

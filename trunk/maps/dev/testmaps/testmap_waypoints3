@@ -6,6 +6,7 @@ endmsg
 width 10
 height 24
 difficulty 1
+darkness -1
 tile_path_3 testmap_waypoints4
 tile_path_4 testmap_waypoints2
 end
