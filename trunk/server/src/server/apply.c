@@ -1068,12 +1068,12 @@ static int apply_altar(object *altar, object *sacrifice, object *originator)
             /* If it is connected, push the button.  Fixes some problems with
              * old maps.
              */
-            push_button(altar, sacrifice, originator);
+            signal_connection(altar, sacrifice, originator, altar->map);
         }
         else
         {
             altar->weight_limit = 1;  /* works only once */
-            push_button(altar, sacrifice, originator);
+            signal_connection(altar, sacrifice, originator, altar->map);
         }
         return sacrifice == NULL;
     }
@@ -2160,7 +2160,7 @@ int manual_apply(object *op, object *tmp, int aflag)
             tmp->weight_limit = tmp->weight_limit ? 0 : 1;
             SET_ANIMATION(tmp, ((NUM_ANIMATIONS(tmp) / NUM_FACINGS(tmp)) * tmp->direction) + tmp->weight_limit);
             update_object(tmp, UP_OBJ_FACE);
-            push_button(tmp, op, op);
+            signal_connection(tmp, op, op, tmp->map);
             return 4;
 
         case TRIGGER:
