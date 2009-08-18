@@ -1,9 +1,8 @@
 arch map
 name Guild Hall
-background_music ColeForeverPiano.ogg
 msg
 Created:  2004-07-16 Daimonin Map Editor
-Modified: 2009-03-30 smacky
+Modified: 2009-08-18 smacky
 endmsg
 width 24
 height 24
@@ -17,6 +16,7 @@ tile_path_3 castle_030b
 tile_path_4 castle_020a
 tile_path_5 castle_0400
 tile_path_8 castle_0200
+background_music ColeForeverPiano.ogg
 end
 arch grassd_2
 end
@@ -680,12 +680,10 @@ surrendered 1
 stand_still 1
 level 4
 arch event_obj
-name Lua
 sub_type 6
 race guildhall/frahak_say.lua
 end
 arch event_obj
-name Lua
 sub_type 13
 race guildhall/frahak.lua
 end
@@ -1718,25 +1716,44 @@ end
 arch shelf3a.111
 x 10
 y 6
-arch book_dai_vol7
+arch tome
+amask book_dai_vol10
 no_pick 1
 end
-arch book_dai_vol6
+arch tome
+amask book_dai_vol9
 no_pick 1
 end
-arch book_dai_vol5
+arch tome
+amask book_dai_vol8
 no_pick 1
 end
-arch book_dai_vol4
+arch tome
+amask book_dai_vol7
 no_pick 1
 end
-arch book_dai_vol3
+arch tome
+amask book_dai_vol6
 no_pick 1
 end
-arch book_dai_vol2
+arch tome
+amask book_dai_vol5
 no_pick 1
 end
-arch book_dai_vol1
+arch tome
+amask book_dai_vol4
+no_pick 1
+end
+arch tome
+amask book_dai_vol3
+no_pick 1
+end
+arch tome
+amask book_dai_vol2
+no_pick 1
+end
+arch tome
+amask book_dai_vol1
 no_pick 1
 end
 end
@@ -3150,7 +3167,6 @@ face box2.101
 x 18
 y 8
 arch event_obj
-name Lua
 sub_type 12
 race guildhall/boxes_examine.lua
 end
@@ -3165,7 +3181,6 @@ no_pass 0
 x 18
 y 9
 arch event_obj
-name Lua
 sub_type 12
 race guildhall/boxes_examine.lua
 end
@@ -3175,7 +3190,6 @@ x 18
 y 10
 end
 arch lantern_magic.131
-
 x 18
 y 10
 end
@@ -3204,7 +3218,6 @@ no_pass 0
 x 18
 y 13
 arch event_obj
-name Lua
 sub_type 12
 race guildhall/boxes_examine.lua
 end
@@ -3218,7 +3231,6 @@ no_pass 0
 x 18
 y 14
 arch event_obj
-name Lua
 sub_type 12
 race guildhall/boxes_examine.lua
 end
@@ -3417,7 +3429,6 @@ no_pass 0
 x 19
 y 9
 arch event_obj
-name Lua
 sub_type 12
 race guildhall/boxes_examine.lua
 end
@@ -3613,7 +3624,6 @@ no_pass 0
 x 20
 y 13
 arch event_obj
-name Lua
 sub_type 12
 race guildhall/boxes_examine.lua
 end
@@ -3786,7 +3796,6 @@ no_pass 0
 x 21
 y 13
 arch event_obj
-name Lua
 sub_type 12
 race guildhall/boxes_examine.lua
 end
@@ -4028,7 +4037,6 @@ bow_attack_enemy
 endmsg
 end
 arch event_obj
-name Lua
 sub_type 13
 race guildhall/training_ranger.lua
 end
