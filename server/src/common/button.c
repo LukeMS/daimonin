@@ -25,7 +25,7 @@
 
 #include <global.h>
 
-static objectlink * get_button_links(object *button);
+static objectlink * get_first_button_link(object *button);
 
 /* When a map is loaded, its buttons are synced. We don't want
  * to trigger scripts then so we use this global to indicate it */
@@ -64,7 +64,7 @@ void signal_connection(object *op, object *activator, object *originator, mapstr
         }
     }
     else
-        olp = get_button_links(op);
+        olp = get_first_button_link(op);
 
     if(! ignore_trigger_events)
         if(trigger_object_plugin_event(EVENT_TRIGGER,
@@ -325,7 +325,7 @@ void update_button(object *op, object *activator, object *originator)
     int         has_links = 0;
 
     /* LOG(llevDebug, "update_button: %s (%d)\n", op->name, op->count); */
-    for (ol = get_button_links(op); ol; ol = ol->next)
+    for (ol = get_first_button_link(op); ol; ol = ol->next)
     {
         has_links = 1;
         if (!ol->objlink.ob || ol->objlink.ob->count != ol->id)
@@ -803,7 +803,7 @@ void remove_button_link(object *op)
  * In the case of CONN_SENSORS, make sure it is the output link
  */
 
-static objectlink * get_button_links(object *button)
+static objectlink * get_first_button_link(object *button)
 {
     oblinkpt   *obp;
     objectlink *ol;
