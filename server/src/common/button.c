@@ -69,13 +69,13 @@ void signal_connection(object *op, object *activator, object *originator, mapstr
                 op, activator, originator, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
             return;
 
-    /*LOG(llevDebug, "push_button: %s (%d)\n", op->name, op->count);*/
+    /*LOG(llevDebug, "signal_connection: %s (%d)\n", op->name, op->count);*/
     for (ol = olp; ol; ol = ol->next)
     {
         tmp = ol->objlink.ob;
         if (!tmp || tmp->count != ol->id)
         {
-            LOG(llevBug, "BUG: Internal error in push_button (%s).\n", STRING_OBJ_NAME(op));
+            LOG(llevBug, "BUG: Internal error in signal_connection (%s).\n", STRING_OBJ_NAME(op));
             continue;
         }
 
@@ -352,7 +352,7 @@ void update_button(object *op, object *activator, object *originator)
     {
         SET_ANIMATION(op, ((NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction) + op->weight_limit);
         update_object(op, UP_OBJ_FACE);
-        push_button(op, activator, originator); /* Make all other buttons the same */
+        signal_connection(op, activator, originator, op->map); /* Make all other buttons the same */
     }
 }
 
@@ -419,7 +419,7 @@ void update_buttons(mapstruct *m)
 
                 case CF_HANDLE:
                 case TRIGGER:
-                    push_button(ol->objlink.ob, NULL, NULL);
+                    signal_connection(ol->objlink.ob, NULL, NULL, ol->objlink.ob->map);
                     break;
 
                 default:
@@ -431,20 +431,11 @@ void update_buttons(mapstruct *m)
     ignore_trigger_events = 0;
 }
 
-/*
- * Push the specified object.  This can affect other buttons/gates/handles
- * altars/pedestals/holes in the whole map.
- */
-void push_button(object *op, object *pusher, object *originator)
-{
-    signal_connection(op, pusher, originator, op->map);
-}
-
 void use_trigger(object *op, object *user)
 {
     /* Toggle value */
     op->weight_limit = !op->weight_limit;
-    push_button(op, user, user);
+    signal_connection(op, user, user, op->map);
 }
 
 /* We changed this function to fit in the anim system. This is used from
