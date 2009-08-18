@@ -25,6 +25,8 @@
 
 #include <global.h>
 
+static objectlink * get_button_links(object *button);
+
 /* When a map is loaded, its buttons are synced. We don't want
  * to trigger scripts then so we use this global to indicate it */
 static int ignore_trigger_events = 0;
@@ -801,7 +803,7 @@ void remove_button_link(object *op)
  * In the case of CONN_SENSORS, make sure it is the output link
  */
 
-objectlink * get_button_links(object *button)
+static objectlink * get_button_links(object *button)
 {
     oblinkpt   *obp;
     objectlink *ol;
