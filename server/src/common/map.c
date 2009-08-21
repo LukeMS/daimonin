@@ -34,7 +34,7 @@
 #define MAP_DEFAULT_RESET_TIME MIN(MAP_MAXRESET, 7200)
 #define MAP_DEFAULT_SWAP_TIME  MAX(MAP_MINTIMEOUT, 300)
 #define MAP_DEFAULT_DIFFICULTY 1
-#define MAP_DEFAULT_DARKNESS   -1
+#define MAP_DEFAULT_DARKNESS   0
 
 int global_darkness_table[MAX_DARKNESS + 1] =
 {
@@ -937,7 +937,7 @@ static int load_map_header(FILE *fp, mapstruct *m, int flags)
                 LOG(llevBug, "BUG:: Illegal map darkness %d (must be -1 to %d, defaulting to -1)!\n",
                     v, MAX_DARKNESS);
             }
-            else if (v != -1)
+            else if (v != MAP_DEFAULT_DARKNESS)
             {
                 set_map_darkness(m, v);
             }
