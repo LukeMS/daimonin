@@ -5,6 +5,7 @@ Created:  2006-02-28 Unknown Combat Dummy
 endmsg
 width 24
 height 24
+difficulty 1
 darkness 2
 end
 arch floor_fs_grey1a
