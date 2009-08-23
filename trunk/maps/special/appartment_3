@@ -8,6 +8,7 @@ endmsg
 width 9
 height 9
 difficulty 1
+darkness -1
 no_summon 1
 no_harm 1
 end
