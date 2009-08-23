@@ -5,6 +5,7 @@ Map for testing for testing how connections are triggered at map loading time
 endmsg
 width 24
 height 24
+difficulty 1
 darkness 5
 end
 arch handle_lever
