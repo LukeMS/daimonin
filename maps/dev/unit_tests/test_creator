@@ -8,6 +8,7 @@ endmsg
 width 24
 height 24
 difficulty 1
+darkness -1
 end
 arch handle_lever
 connected 1
