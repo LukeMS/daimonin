@@ -2637,7 +2637,7 @@ object * insert_ob_in_ob(object *op, object *where)
 
     if (op->more)
     {
-        LOG(llevError, "ERROR: Tried to insert multipart object %s (%d) in %s (%d)\n",
+        LOG(llevBug, "BUG: Tried to insert multipart object %s (%d) in %s (%d)\n",
             query_name(op), op->count, query_name(where), where->count);
         return op;
     }
@@ -2974,15 +2974,49 @@ object *present_arch_in_ob_temp(archetype *at, object *op)
  *
  * Add a check so we can't pick up invisible objects (0.93.8)
  */
+/* Prevent multiparts being picked up.
+ * Make function readable.
+ * -- Smacky 20090826 */
 
 int can_pick(object *who, object *item)
 {
-    return ((who->type == PLAYER && QUERY_FLAG(item, FLAG_NO_PICK) && QUERY_FLAG(item, FLAG_UNPAID))
-        ||  /* iam not sure about that weight >0... */
-      (item->weight > 0
-    && !QUERY_FLAG(item, FLAG_NO_PICK)
-    && (!IS_INVISIBLE(item, who) || QUERY_FLAG(who, FLAG_SEE_INVISIBLE))
-    && (who->type == PLAYER || item->weight < who->weight / 3)));
+    /* Multiparts can never be picked up. */
+    if (item->more || item->head)
+        return 0;
+
+    /* Normally no_picks can't be picked up, but unpaid no_picks can. */
+    /* This seems dodgy to me.
+     * -- Smacky 20090826 */
+    if (QUERY_FLAG(item, FLAG_NO_PICK))
+    {
+        if (who->type == PLAYER &&
+            QUERY_FLAG(item, FLAG_UNPAID))
+            return 1;
+
+        return 0;
+    }
+
+    /* Weightless objects currently can't be picked up. */
+    /* I am not sure about that weight >0... */
+    if (item->weight <= 0)
+        return 0;
+
+    /* If you can't see it, you can't pick it up. */
+    /* Is this sensible?
+     * -- Smacky 20090826 */
+    if (IS_INVISIBLE(item, who) &&
+        !QUERY_FLAG(who, FLAG_SEE_INVISIBLE))
+        return 0;
+
+    /* Players can't pick up objects which weigh more than 1/3 of their body
+     * weight. */
+    /* Nice idea, but shouldn't Str be involved?
+     * -- Smacky 20090826 */
+    if (who->type == PLAYER &&
+        item->weight >= who->weight / 3)
+        return 0;
+
+    return 1;
 }
 
 
