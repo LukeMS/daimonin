@@ -2984,18 +2984,6 @@ int can_pick(object *who, object *item)
     if (item->more || item->head)
         return 0;
 
-    /* Normally no_picks can't be picked up, but unpaid no_picks can. */
-    /* This seems dodgy to me.
-     * -- Smacky 20090826 */
-    if (QUERY_FLAG(item, FLAG_NO_PICK))
-    {
-        if (who->type == PLAYER &&
-            QUERY_FLAG(item, FLAG_UNPAID))
-            return 1;
-
-        return 0;
-    }
-
     /* Weightless objects currently can't be picked up. */
     /* I am not sure about that weight >0... */
     if (item->weight <= 0)
@@ -3014,6 +3002,14 @@ int can_pick(object *who, object *item)
      * -- Smacky 20090826 */
     if (who->type == PLAYER &&
         item->weight >= who->weight / 3)
+        return 0;
+
+    /* Normally no_picks can't be picked up, but unpaid no_picks can. */
+    /* This seems dodgy to me.
+     * -- Smacky 20090826 */
+    if (QUERY_FLAG(item, FLAG_NO_PICK) &&
+        !(who->type == PLAYER &&
+          QUERY_FLAG(item, FLAG_UNPAID)))
         return 0;
 
     return 1;
