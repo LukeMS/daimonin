@@ -2996,11 +2996,16 @@ int can_pick(object *who, object *item)
         !QUERY_FLAG(who, FLAG_SEE_INVISIBLE))
         return 0;
 
-    /* Players can't pick up objects which weigh more than 1/3 of their body
-     * weight. */
+    /* Non-players can't pick up objects which weigh more than 1/3 of their
+     * body weight. */
     /* Nice idea, but shouldn't Str be involved?
      * -- Smacky 20090826 */
-    if (who->type == PLAYER &&
+    /* I misinterpreted this. I had it only applying to players. The original
+     * code only applies it to non-players, so I have changed it back. But this
+     * seems illogical and I see no gameplay benefit either -- a hill giant
+     * can't pick up heavy stuff but a player can?
+     * -- Smacky 20090829 */
+    if (who->type != PLAYER &&
         item->weight >= who->weight / 3)
         return 0;
 
