@@ -49,7 +49,7 @@ void signal_connection(object *op, object *activator, object *originator, mapstr
 
         connection = get_button_value(op);
 
-        for (oblp = m->buttons; oblp; oblp = oblp->next)
+        for (oblp = m->buttons, olp = NULL; oblp; oblp = oblp->next)
         {
             if (oblp->value != connection)
                 continue;
@@ -58,13 +58,25 @@ void signal_connection(object *op, object *activator, object *originator, mapstr
 
             if (olp->objlink.ob->type == TYPE_CONN_SENSOR &&
                 olp->objlink.ob->last_grace != oblp->value)
+            {
+                olp = NULL;
+
                 continue;
+            }
 
             break;
         }
     }
     else
         olp = get_first_button_link(op);
+
+    if (!olp)
+    {
+        LOG(llevBug, "BUG:: %s/signal_connection(): No connected object found!",
+            __FILE__);
+
+       return;
+    }
 
     if(! ignore_trigger_events)
         if(trigger_object_plugin_event(EVENT_TRIGGER,
