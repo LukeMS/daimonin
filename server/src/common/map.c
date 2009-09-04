@@ -29,8 +29,8 @@
 #endif /* win32 */
 
 /* Default values for a few non-zero attributes. */
-#define MAP_DEFAULT_X          24
-#define MAP_DEFAULT_Y          24
+#define MAP_DEFAULT_WIDTH      24
+#define MAP_DEFAULT_HEIGHT     24
 #define MAP_DEFAULT_RESET_TIME MIN(MAP_MAXRESET, 7200)
 #define MAP_DEFAULT_SWAP_TIME  MAX(MAP_MINTIMEOUT, 300)
 #define MAP_DEFAULT_DIFFICULTY 1
@@ -639,8 +639,8 @@ mapstruct * get_linked_map()
     /* The maps used to pick up default x and y values from the
      * map archetype.  Mimic that behaviour.
      */
-    MAP_WIDTH(map) = MAP_DEFAULT_X;
-    MAP_HEIGHT(map) = MAP_DEFAULT_Y;
+    MAP_WIDTH(map) = MAP_DEFAULT_WIDTH;
+    MAP_HEIGHT(map) = MAP_DEFAULT_HEIGHT;
     MAP_RESET_TIMEOUT(map) = MAP_DEFAULT_RESET_TIME;
     MAP_TIMEOUT(map) = MAP_DEFAULT_SWAP_TIME;
     MAP_DIFFICULTY(map) = MAP_DEFAULT_DIFFICULTY;
@@ -812,35 +812,17 @@ static int load_map_header(FILE *fp, mapstruct *m, int flags)
             if (msgpos != 0)
                 FREE_AND_COPY_HASH(m->msg, msgbuf);
         }
-        /* enter_x is the default x (west-east) entry point. On a
-         * non-production server we assume a specific map width (see below) so
-         * we can also assume a range for this value. The default is 0, which
-         * is necessarily always the nothernmost row of squares. */
+        /* enter_x is the default x (west-east) entry point. */
         else if (!strcmp(key, "enter_x"))
         {
             int v = atoi(value);
 
-#ifndef PRODUCTION_SYSTEM
-            if (v < 0 || v >= MAP_DEFAULT_X)
-                LOG(llevDebug, "DEBUG:: Illegal map enter X coord %d (should be 0 to %d)!\n",
-                    v, (MAP_DEFAULT_X - 1));
-#endif
-
             m->enter_x = v;
         }
-        /* enter_y is the default y (north-south) entry point. On a
-         * non-production server we assume a specific map height (see below) so
-         * we can also assume a range for this value. The default is 0, which
-         * is necessarily always the westernmost column of squares. */
+        /* enter_y is the default y (north-south) entry point. */
         else if (!strcmp(key, "enter_y"))
         {
             int v = atoi(value);
-
-#ifndef PRODUCTION_SYSTEM
-            if (v < 0 || v >= MAP_DEFAULT_Y)
-                LOG(llevDebug, "DEBUG:: Illegal map enter Y coord %d (should be 0 to %d)!\n",
-                    v, (MAP_DEFAULT_Y - 1));
-#endif
 
             m->enter_y = v;
         }
@@ -855,9 +837,9 @@ static int load_map_header(FILE *fp, mapstruct *m, int flags)
             int v = atoi(value);
 
 #ifndef PRODUCTION_SYSTEM
-            if (v != MAP_DEFAULT_X)
-                LOG(llevDebug, "DEBUG:: Illegal map width %d (should be %d)!\n",
-                    v, MAP_DEFAULT_X);
+            if (v != MAP_DEFAULT_WIDTH)
+                LOG(llevDebug, "DEBUG:: Non-standard map width %d (should be %d)!\n",
+                    v, MAP_DEFAULT_WIDTH);
 #endif
 
             m->width = v;
@@ -873,9 +855,9 @@ static int load_map_header(FILE *fp, mapstruct *m, int flags)
             int v = atoi(value);
 
 #ifndef PRODUCTION_SYSTEM
-            if (v != MAP_DEFAULT_Y)
-                LOG(llevDebug, "DEBUG:: Illegal map height %d (should be %d)!\n",
-                    v, MAP_DEFAULT_Y);
+            if (v != MAP_DEFAULT_HEIGHT)
+                LOG(llevDebug, "DEBUG:: Non-standard map height %d (should be %d)!\n",
+                    v, MAP_DEFAULT_HEIGHT);
 #endif
 
             m->height = v;
@@ -1166,6 +1148,21 @@ static int load_map_header(FILE *fp, mapstruct *m, int flags)
         {
             LOG(llevBug, "BUG: Got unknown value in map header: %s %s\n", key, value);
         }
+    }
+
+    /* Ensure enter_x/y are sensible values. */
+    if (MAP_ENTER_X(m) >= MAP_WIDTH(m))
+    {
+        LOG(llevMapbug, "MAPBUG:: enter_x out of bounds: %d (should be 0 to %d), defaulting to 0!\n",
+            MAP_ENTER_X(m), MAP_WIDTH(m) - 1);
+        MAP_ENTER_X(m) = 0;
+    }
+
+    if (MAP_ENTER_Y(m) >= MAP_HEIGHT(m))
+    {
+        LOG(llevMapbug, "MAPBUG:: enter_y out of bounds: %d (should be 0 to %d), defaulting to 0!\n",
+            MAP_ENTER_Y(m), MAP_HEIGHT(m) - 1);
+        MAP_ENTER_Y(m) = 0;
     }
 
 #ifndef PRODUCTION_SYSTEM
