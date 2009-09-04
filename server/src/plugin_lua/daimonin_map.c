@@ -520,8 +520,9 @@ static int Map_PlaySound(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : Map_Message                                                      */
-/* Lua    : map:Message(x, y, distance, message, color)                      */
-/* Info   : Writes a message to all players on a map                         */
+/* Lua    : map:Message(x, y, distance, message, color, except1, except2)    */
+/* Info   : Writes a message to all players on a map, except the two         */
+/*          exceptions if specified.                                         */
 /*          Starting point x,y for all players in distance                   */
 /*          color should be one of the game.COLOR_xxx constants.             */
 /*          default color is game.COLOR_BLUE | game.COLOR_UNIQUE             */
@@ -530,13 +531,25 @@ static int Map_PlaySound(lua_State *L)
 
 static int Map_Message(lua_State *L)
 {
-    int             color = NDI_BLUE, x, y, d;
-    char        *message;
-    lua_object    *map;
+    lua_object *map,
+               *except1,
+               *except2;
+    int         x,
+                y,
+                d,
+                color;
+    char       *message;
 
-    get_lua_args(L, "Miiis|i", &map, &x, &y, &d, &message, &color);
+    color = NDI_BLUE;
+    except1 = NULL;
+    except2 = NULL;
+    get_lua_args(L, "Miiis|iOO", &map, &x, &y, &d, &message, &color, &except1,
+                 &except2);
 
-    hooks->new_info_map(NDI_UNIQUE | color, map->data.map, x, y, d, message);
+    hooks->new_info_map_except(NDI_UNIQUE | color, map->data.map, x, y, d,
+                               (except1) ? except1->data.object : NULL,
+                               (except2) ? except2->data.object : NULL,
+                               message);
 
     return 0;
 }
