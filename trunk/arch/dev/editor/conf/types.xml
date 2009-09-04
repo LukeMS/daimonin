@@ -2064,20 +2064,14 @@
     "the exit is closed".
   </attribute>
   <attribute arch="hp" editor="destination X" type="int">
-    The exit destinations define the (x, y)-coordinates where the exit
-    leads to.
-    If both are set to zero, the player will be transferred to the "default
-    enter location" of the destined map. The latter can be set in the map-
-    properties as "Enter X/Y". Though, please DO NOT use that.
-    It turned out to be a source for numerous map-bugs.
+    This defines the X square to which the exit leads.
+    If set to -1, the destination map's &lt;Enter X&gt; value will be
+    substituted.
   </attribute>
   <attribute arch="sp" editor="destination Y" type="int">
-    The exit destinations define the (x, y)-coordinates where the exit
-    leads to.
-    If both are set to zero, the player will be transferred to the "default
-    enter location" of the destined map. The latter can be set in the map-
-    properties as "Enter X/Y". Though, please DO NOT use that.
-    It turned out to be a source for numerous map-bugs.
+    This defines the Y square to which the exit leads.
+    If set to -1, the destination map's &lt;Enter Y&gt; value will be
+    substituted.
   </attribute>
   <attribute arch="last_eat" editor="map type" type="list_maptype">
     This most important setting defines as which type of map the destination map

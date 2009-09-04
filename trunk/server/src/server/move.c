@@ -624,9 +624,13 @@ mapstruct *enter_map_by_name(object *op, const char *path, const char *src_path,
 */
 int enter_map_by_exit(object *op, object *exit_ob)
 {
-    int flags, mstatus;
+    int         flags,
+                mstatus,
+                x,
+                y;
     mapstruct  *newmap;
-    const char *file_path = NULL, *dyn_path = NULL;
+    const char *file_path = NULL,
+               *dyn_path = NULL;
     shstr      *reference = NULL;
 
     if (op->head)
@@ -777,8 +781,13 @@ int enter_map_by_exit(object *op, object *exit_ob)
     if(EXIT_POS_RANDOM(exit_ob))
         flags |=  MAP_STATUS_RANDOM_POS;
 
-    /* if 1 was returned from enter_map() object was destroyed in the meantime! */
-    if(enter_map( op, NULL, newmap, EXIT_X(exit_ob), EXIT_Y(exit_ob), flags, INS_NO_FORCE | INS_WITHIN_LOS))
+    x = (EXIT_X(exit_ob) == -1) ? MAP_ENTER_X(newmap) : EXIT_X(exit_ob);
+    y = (EXIT_Y(exit_ob) == -1) ? MAP_ENTER_Y(newmap) : EXIT_Y(exit_ob);
+
+    /* if 1 was returned from enter_map() object was destroyed in the
+     * meantime! */
+    if (enter_map(op, NULL, newmap, x, y, flags,
+                  INS_NO_FORCE | INS_WITHIN_LOS))
         return FALSE;
 
     /* some "exits" like a pit will move you for sure to a new map - but for a price ... */

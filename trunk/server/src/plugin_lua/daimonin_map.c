@@ -54,6 +54,8 @@ static struct attribute_decl Map_attributes[] =
     {"difficulty",     FIELDTYPE_UINT16, offsetof(mapstruct, difficulty),    FIELDFLAG_READONLY, 0},
     {"height",         FIELDTYPE_UINT16, offsetof(mapstruct, height),        FIELDFLAG_READONLY, 0},
     {"width",          FIELDTYPE_UINT16, offsetof(mapstruct, width),         FIELDFLAG_READONLY, 0},
+    {"enter_x",        FIELDTYPE_UINT16, offsetof(mapstruct, enter_x),       FIELDFLAG_READONLY, 0},
+    {"enter_y",        FIELDTYPE_UINT16, offsetof(mapstruct, enter_y),       FIELDFLAG_READONLY, 0},
     {"darkness",       FIELDTYPE_SINT32, offsetof(mapstruct, darkness),      FIELDFLAG_READONLY, 0},
     {"light_value",    FIELDTYPE_SINT32, offsetof(mapstruct, light_value),   FIELDFLAG_READONLY, 0},
     {"path",           FIELDTYPE_SHSTR,  offsetof(mapstruct, path),          FIELDFLAG_READONLY, 0},
