@@ -123,8 +123,8 @@ extern int              cache_ref;
 
 /* Some practical stuff, often used in the plugin */
 #define WHO (self->data.object)
+#define WHERE (self->data.map)
 #define WHAT (whatptr->data.object)
-#define WHERE (whereptr->data.object)
 
 /* The declarations for the plugin interface. Every plugin should have those.*/
 extern MODULEAPI CFParm    *registerHook(CFParm *PParm);
