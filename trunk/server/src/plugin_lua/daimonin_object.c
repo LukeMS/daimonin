@@ -1329,11 +1329,11 @@ static int GameObject_SetGod(lua_State *L)
 /*****************************************************************************/
 static int GameObject_InsertInside(lua_State *L)
 {
-    lua_object *whereptr;
+    lua_object *whatptr;
     object     *myob, *tmp, *obenv;
     lua_object *self;
 
-    get_lua_args(L, "OO", &self, &whereptr);
+    get_lua_args(L, "OO", &self, &whatptr);
 
     myob = self->data.object;
     obenv = myob->env;
@@ -1345,8 +1345,8 @@ static int GameObject_InsertInside(lua_State *L)
         (PlugHooks[HOOK_REMOVEOBJECT]) (&CFP);
     }
 
-    myob = hooks->insert_ob_in_ob(myob, WHERE);
-    hooks->esrv_send_item(hooks->is_player_inv(WHERE), myob);
+    myob = hooks->insert_ob_in_ob(myob, WHAT);
+    hooks->esrv_send_item(hooks->is_player_inv(WHAT), myob);
 
     if((tmp = hooks->is_player_inv(obenv)))
         hooks->esrv_send_inventory(tmp, tmp);
@@ -2301,9 +2301,9 @@ static int GameObject_CreatePlayerForce(lua_State *L)
     char       *txt;
     object     *myob;
     int         time        = 0;
-    lua_object *whereptr;
+    lua_object *whatptr;
 
-    get_lua_args(L, "Os|i", &whereptr, &txt, &time);
+    get_lua_args(L, "Os|i", &whatptr, &txt, &time);
 
     myob = hooks->arch_to_object(hooks->find_archetype("player_force"));
 
@@ -2323,8 +2323,8 @@ static int GameObject_CreatePlayerForce(lua_State *L)
 
     /* setup the force and put it in activator */
     FREE_AND_COPY_HASH(myob->name, txt);
-    myob = hooks->insert_ob_in_ob(myob, WHERE);
-    hooks->esrv_send_item(hooks->is_player_inv(WHERE), myob);
+    myob = hooks->insert_ob_in_ob(myob, WHAT);
+    hooks->esrv_send_item(hooks->is_player_inv(WHAT), myob);
 
     return push_object(L, &GameObject, myob);
 }
@@ -2791,9 +2791,9 @@ static int GameObject_CreatePlayerInfo(lua_State *L)
 {
     char       *txt;
     object     *myob;
-    lua_object *whereptr;
+    lua_object *whatptr;
 
-    get_lua_args(L, "Os", &whereptr, &txt);
+    get_lua_args(L, "Os", &whatptr, &txt);
 
     myob = hooks->arch_to_object(hooks->find_archetype("player_info"));
 
@@ -2802,8 +2802,8 @@ static int GameObject_CreatePlayerInfo(lua_State *L)
 
     /* setup the info and put it in activator */
     FREE_AND_COPY_HASH(myob->name, txt);
-    myob = hooks->insert_ob_in_ob(myob, WHERE);
-    hooks->esrv_send_item(hooks->is_player_inv(WHERE), myob);
+    myob = hooks->insert_ob_in_ob(myob, WHAT);
+    hooks->esrv_send_item(hooks->is_player_inv(WHAT), myob);
 
     return push_object(L, &GameObject, myob);
 }
@@ -2871,10 +2871,10 @@ static int GameObject_CreateInvisibleInside(lua_State *L)
 {
     char       *txt;
     object     *myob;
-    lua_object *whereptr;
+    lua_object *whatptr;
     CFParm      CFP;
 
-    get_lua_args(L, "Os", &whereptr, &txt);
+    get_lua_args(L, "Os", &whatptr, &txt);
 
     myob = hooks->arch_to_object(hooks->find_archetype("force"));
 
@@ -2887,8 +2887,8 @@ static int GameObject_CreateInvisibleInside(lua_State *L)
 
     /*update_ob_speed(myob); */
     FREE_AND_COPY_HASH(myob->slaying, txt);
-    myob = hooks->insert_ob_in_ob(myob, WHERE);
-    hooks->esrv_send_item(hooks->is_player_inv(WHERE), myob);
+    myob = hooks->insert_ob_in_ob(myob, WHAT);
+    hooks->esrv_send_item(hooks->is_player_inv(WHAT), myob);
 
     return push_object(L, &GameObject, myob);
 }
@@ -2946,11 +2946,11 @@ static int GameObject_CreateObjectInside(lua_State *L)
     object *myob;
     int         value = -1, id = 0, nrof = 1;
     char       *txt;
-    lua_object *whereptr;
+    lua_object *whatptr;
 
-    get_lua_args(L, "Os|iii", &whereptr, &txt, &id, &nrof, &value);
+    get_lua_args(L, "Os|iii", &whatptr, &txt, &id, &nrof, &value);
 
-    myob = CreateObjectInside_body(L, WHERE, txt, id, nrof, value);
+    myob = CreateObjectInside_body(L, WHAT, txt, id, nrof, value);
 
     return push_object(L, &GameObject, myob);
 }
@@ -2971,11 +2971,11 @@ static int GameObject_CreateObjectInsideEx(lua_State *L)
     object     *myob, *pl;
     int         value = -1, id = 0, nrof = 1;
     char       *txt;
-    lua_object *whereptr;
+    lua_object *self;
 
-    get_lua_args(L, "Os|iii", &whereptr, &txt, &id, &nrof, &value);
+    get_lua_args(L, "Os|iii", &self, &txt, &id, &nrof, &value);
 
-    myob = CreateObjectInside_body(L, WHERE, txt, id, nrof, value);
+    myob = CreateObjectInside_body(L, WHO, txt, id, nrof, value);
 
     pl = hooks->is_player_inv(myob);
     if(pl)
@@ -3328,8 +3328,8 @@ static int GameObject_ShowCost(lua_State *L)
 
 static int GameObject_GetItemCost(lua_State *L)
 {
-    lua_object *self;
-    lua_object *whatptr;
+    lua_object *self,
+               *whatptr;
     int         flag;
     sint64      cost;
 
@@ -3434,8 +3434,8 @@ static int GameObject_GetMoney(lua_State *L)
 
 static int GameObject_PayForItem(lua_State *L)
 {
-    lua_object *self;
-    lua_object *whatptr;
+    lua_object *self,
+               *whatptr;
     int         val;
 
     get_lua_args(L, "OO", &self, &whatptr);

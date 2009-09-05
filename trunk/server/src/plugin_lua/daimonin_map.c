@@ -217,31 +217,32 @@ int Map_init(lua_State *s)
 /*****************************************************************************/
 static int Map_ReadyInheritedMap(lua_State *L)
 {
+    lua_object *self;
     char       *mapname;
-    const char *orig_path_sh, *path_sh = NULL;
-    int flags = 0;
-    lua_object *omap;
-    mapstruct *map, *new_map = NULL;
+    const char *orig_path_sh,
+               *path_sh = NULL;
+    int         flags = 0;
+    mapstruct  *new_map = NULL;
 
-    get_lua_args(L, "Ms|i", &omap, &mapname, &flags);
+    get_lua_args(L, "Ms|i", &self, &mapname, &flags);
 
     /* TODO: handle flags like game:ReadyMap() */
 
     /* we need a valid map status to know how to handle the map file */
-    if((map = omap->data.map) && MAP_STATUS_TYPE(map->map_status))
+    if(MAP_STATUS_TYPE(WHERE->map_status))
     {
         orig_path_sh = hooks->create_safe_mapname_sh(mapname);
 
         /* create the path prefix (./players/.. or ./instance/.. ) for non multi maps */
-        if(map->map_status & (MAP_STATUS_UNIQUE|MAP_STATUS_INSTANCE))
+        if(WHERE->map_status & (MAP_STATUS_UNIQUE|MAP_STATUS_INSTANCE))
         {
             char tmp_path[MAXPATHLEN];
 
-            path_sh = hooks->add_string( hooks->normalize_path_direct(map->path,
+            path_sh = hooks->add_string( hooks->normalize_path_direct(WHERE->path,
                                          hooks->path_to_name(orig_path_sh), tmp_path));
         }
 
-        new_map = hooks->ready_map_name(path_sh?path_sh:orig_path_sh, orig_path_sh, MAP_STATUS_TYPE(map->map_status), map->reference);
+        new_map = hooks->ready_map_name(path_sh?path_sh:orig_path_sh, orig_path_sh, MAP_STATUS_TYPE(WHERE->map_status), WHERE->reference);
 
         FREE_ONLY_HASH(orig_path_sh);
         if(path_sh)
@@ -262,47 +263,45 @@ static int Map_ReadyInheritedMap(lua_State *L)
 /*****************************************************************************/
 static int Map_Delete(lua_State *L)
 {
+    lua_object *self;
     char const *path_sh = NULL;
-    int         map_player = FALSE, flags = 0;
-    lua_object *mapobj;
-    mapstruct *map;
+    int         map_player = FALSE,
+                flags = 0;
 
-    get_lua_args(L, "M|i", &mapobj, &flags);
-
-    map = mapobj->data.map;
+    get_lua_args(L, "M|i", &self, &flags);
 
     /* sanity checks... we don't test "in_memory" because
      * we want remove perhaps swapped out maps too
      */
-    if (!map || !MAP_STATUS_TYPE(map->map_status))
+    if (!WHERE || !MAP_STATUS_TYPE(WHERE->map_status))
         return 0;
 
     if(flags) /* caller wants physical remove of the file too */
     {
         /* it only makes sense for unique or instance maps */
-        if(!(map->map_status & (MAP_STATUS_UNIQUE|MAP_STATUS_INSTANCE)) )
+        if(!(WHERE->map_status & (MAP_STATUS_UNIQUE|MAP_STATUS_INSTANCE)) )
             flags = FALSE; /* no remove for wrong map types */
         else
         {
-            if(!map->path || !(*map->path == '.')) /* last sanity test */
+            if(!WHERE->path || !(*WHERE->path == '.')) /* last sanity test */
             {
-                LOG(llevDebug, "Map_Delete(): non MULTI map without '.' path = %s\n", STRING_SAFE(map->path));
+                LOG(llevDebug, "Map_Delete(): non MULTI map without '.' path = %s\n", STRING_SAFE(WHERE->path));
                 flags = FALSE;
             }
             else
-                path_sh = hooks->add_refcount(map->path);
+                path_sh = hooks->add_refcount(WHERE->path);
         }
     }
 
-    if(map->player_first) /* we have players on the map? */
+    if(WHERE->player_first) /* we have players on the map? */
     {
-        hooks->map_to_player_unlink(map); /* remove player from map */
+        hooks->map_to_player_unlink(WHERE); /* remove player from map */
         map_player = TRUE;
     }
 
     /* remove map from /tmp and from memory */
-    hooks->clean_tmp_map(map);
-    hooks->delete_map(map);
+    hooks->clean_tmp_map(WHERE);
+    hooks->delete_map(WHERE);
 
     /* transfer players to the emergency map - why emergency?
      * because our bind point CAN be the same map we killed above!
@@ -329,14 +328,16 @@ static int Map_Delete(lua_State *L)
 /*****************************************************************************/
 static int Map_GetFirstObjectOnSquare(lua_State *L)
 {
-    int         x, y;
+    lua_object *self;
+    int         x,
+                y;
     object     *val;
-    CFParm     *CFR, CFP;
-    lua_object *map;
+    CFParm     *CFR,
+                CFP;
 
-    get_lua_args(L, "Mii", &map, &x, &y);
+    get_lua_args(L, "Mii", &self, &x, &y);
 
-    CFP.Value[0] = map->data.map;
+    CFP.Value[0] = WHERE;
     CFP.Value[1] = (void *) (&x);
     CFP.Value[2] = (void *) (&y);
     CFR = (PlugHooks[HOOK_GETMAPOBJECT]) (&CFP);
@@ -359,13 +360,16 @@ static int Map_GetFirstObjectOnSquare(lua_State *L)
 /*****************************************************************************/
 static int Map_GetBrightnessOnSquare(lua_State *L)
 {
-    int         x, y, mode = 0;
-    lua_object *map;
-    int brightness, i;
+    lua_object *self;
+    int         x,
+                y,
+                mode = 0,
+                brightness,
+                i;
 
-    get_lua_args(L, "Mii|i", &map, &x, &y, &mode);
+    get_lua_args(L, "Mii|i", &self, &x, &y, &mode);
 
-    brightness = hooks->map_brightness(map->data.map, x, y);
+    brightness = hooks->map_brightness(WHERE, x, y);
 
     if(mode == 0)
     {
@@ -394,12 +398,14 @@ static int Map_GetBrightnessOnSquare(lua_State *L)
 /*****************************************************************************/
 static int Map_IsWallOnSquare(lua_State *L)
 {
-    int         x, y;
-    lua_object *map;
+    lua_object *self;
+    int         x,
+                y;
 
-    get_lua_args(L, "Mii", &map, &x, &y);
+    get_lua_args(L, "Mii", &self, &x, &y);
 
-    lua_pushboolean(L, hooks->wall(map->data.map, x, y));
+    lua_pushboolean(L, hooks->wall(WHERE, x, y));
+
     return 1;
 }
 
@@ -420,20 +426,20 @@ static int Map_IsWallOnSquare(lua_State *L)
 /*****************************************************************************/
 static int Map_IsAnyPlayerOnMap(lua_State *L)
 {
-    lua_object *map;
+    lua_object *self;
     int         tiling = 0,
                 isthere,
                 i;
 
-    get_lua_args(L, "M|b", &map, &tiling);
+    get_lua_args(L, "M|b", &self, &tiling);
 
-    isthere = (map->data.map->player_first) ? 1 : 0;
+    isthere = (WHERE->player_first) ? 1 : 0;
 
     if (!isthere && tiling)
         for (i = 0; i < TILED_MAPS; i++)
         {
-            isthere = (map->data.map->tile_map[i] &&
-                       map->data.map->tile_map[i]->player_first) ? 1 : 0;
+            isthere = (WHERE->tile_map[i] &&
+                       WHERE->tile_map[i]->player_first) ? 1 : 0;
 
             /* We only care if there is *any* player on the tiles, so at the
              * first positive quit the loop. */
@@ -454,14 +460,16 @@ static int Map_IsAnyPlayerOnMap(lua_State *L)
 /*****************************************************************************/
 static int Map_MapTileAt(lua_State *L)
 {
-    int         x, y;
-    CFParm     *CFR, CFP;
+    lua_object *self;
+    int         x,
+                y;
+    CFParm     *CFR,
+                CFP;
     mapstruct  *result;
-    lua_object *map;
 
-    get_lua_args(L, "Mii", &map, &x, &y);
+    get_lua_args(L, "Mii", &self, &x, &y);
 
-    CFP.Value[0] = map->data.map;
+    CFP.Value[0] = WHERE;
     CFP.Value[1] = (void *) (&x);
     CFP.Value[2] = (void *) (&y);
     CFR = (PlugHooks[HOOK_OUTOFMAP]) (&CFP);
@@ -478,19 +486,19 @@ static int Map_MapTileAt(lua_State *L)
 /*****************************************************************************/
 static int Map_Save(lua_State *L)
 {
+    lua_object *self;
     int         flags = 0;
-    lua_object *map;
 
-    get_lua_args(L, "M|i", &map, &flags);
+    get_lua_args(L, "M|i", &self, &flags);
 
-    if (!map->data.map || map->data.map->in_memory != MAP_IN_MEMORY)
+    if (!WHERE || WHERE->in_memory != MAP_IN_MEMORY)
         return 0;
 
-    if (hooks->new_save_map(map->data.map, 0) == -1)
-        LOG(llevDebug, "MapSave(): failed to save map %s\n", STRING_SAFE(map->data.map->path));
+    if (hooks->new_save_map(WHERE, 0) == -1)
+        LOG(llevDebug, "MapSave(): failed to save map %s\n", STRING_SAFE(WHERE->path));
 
     if (flags)
-        map->data.map->in_memory = MAP_IN_MEMORY;
+        WHERE->in_memory = MAP_IN_MEMORY;
 
     return 0;
 }
@@ -508,12 +516,15 @@ static int Map_Save(lua_State *L)
 /*****************************************************************************/
 static int Map_PlaySound(lua_State *L)
 {
-    int         x, y, soundnumber, soundtype = SOUND_NORMAL;
-    lua_object *map;
+    lua_object *self;
+    int         x,
+                y,
+                soundnumber,
+                soundtype = SOUND_NORMAL;
 
-    get_lua_args(L, "Miii|i", &map, &x, &y, &soundnumber, &soundtype);
+    get_lua_args(L, "Miii|i", &self, &x, &y, &soundnumber, &soundtype);
 
-    hooks->play_sound_map(map->data.map, x, y, soundnumber, soundtype);
+    hooks->play_sound_map(WHERE, x, y, soundnumber, soundtype);
 
     return 0;
 }
@@ -531,7 +542,7 @@ static int Map_PlaySound(lua_State *L)
 
 static int Map_Message(lua_State *L)
 {
-    lua_object *map,
+    lua_object *self,
                *except1,
                *except2;
     int         x,
@@ -543,10 +554,10 @@ static int Map_Message(lua_State *L)
     color = NDI_BLUE;
     except1 = NULL;
     except2 = NULL;
-    get_lua_args(L, "Miiis|iOO", &map, &x, &y, &d, &message, &color, &except1,
+    get_lua_args(L, "Miiis|iOO", &self, &x, &y, &d, &message, &color, &except1,
                  &except2);
 
-    hooks->new_info_map_except(NDI_UNIQUE | color, map->data.map, x, y, d,
+    hooks->new_info_map_except(NDI_UNIQUE | color, WHERE, x, y, d,
                                (except1) ? except1->data.object : NULL,
                                (except2) ? except2->data.object : NULL,
                                message);
@@ -562,16 +573,18 @@ static int Map_Message(lua_State *L)
 /*****************************************************************************/
 static int Map_CreateObject(lua_State *L)
 {
+    lua_object *self;
     char       *txt;
-    int         x, y;
-    CFParm     *CFR, CFP;
-    lua_object *map;
+    int         x,
+                y;
+    CFParm     *CFR,
+                CFP;
     object     *new_ob;
 
-    get_lua_args(L, "Msii", &map, &txt, &x, &y);
+    get_lua_args(L, "Msii", &self, &txt, &x, &y);
 
     CFP.Value[0] = (void *) (txt);
-    CFP.Value[1] = (void *) (map->data.map);
+    CFP.Value[1] = (void *) (WHERE);
     CFP.Value[2] = (void *) (&x);
     CFP.Value[3] = (void *) (&y);
     CFR = (PlugHooks[HOOK_CREATEOBJECT]) (&CFP);
@@ -589,20 +602,20 @@ static int Map_CreateObject(lua_State *L)
 /*****************************************************************************/
 static int Map_PlayersOnMap(lua_State *L)
 {
-    lua_object *map;
+    lua_object *self;
     object     *ob;
     int         i;
 
-    get_lua_args(L, "M", &map);
+    get_lua_args(L, "M", &self);
 
     /* No-one on this map, so return nil. */
-    if (!map->data.map->player_first)
+    if (!WHERE->player_first)
         return 0;
 
     /* Build up our table. */
     lua_newtable(L);
 
-    for (ob = map->data.map->player_first, i = 1; ob;
+    for (ob = WHERE->player_first, i = 1; ob;
          ob = CONTR(ob)->map_above, i++)
     {
         push_object(L, &GameObject, ob);
@@ -636,12 +649,12 @@ static int Map_PlayersOnMap(lua_State *L)
 /*****************************************************************************/
 static int Map_SetDarkness(lua_State *L)
 {
-    lua_object *map;
+    lua_object *self;
     int         value;
 
-    get_lua_args(L, "Mi", &map, &value);
+    get_lua_args(L, "Mi", &self, &value);
 
-    hooks->set_map_darkness(map->data.map, value);
+    hooks->set_map_darkness(WHERE, value);
 
     return 0;
 }
@@ -683,7 +696,7 @@ static int Map_ActivateConnection(lua_State *L)
         oblinkpt *oblp;
         int       flag;
 
-        for (oblp = self->data.map->buttons, flag = FALSE; oblp;
+        for (oblp = WHERE->buttons, flag = FALSE; oblp;
              oblp = oblp->next)
         {
             if (oblp->value == connection)
@@ -697,12 +710,12 @@ static int Map_ActivateConnection(lua_State *L)
             return luaL_error(L, "map:ActivateConnection(): Arg #1 has no connection on map!");
     }
 
-    if (self->data.map == connected->data.object->map)
+    if (WHERE == connected->data.object->map)
         return luaL_error(L, "map:ActivateConnection(): Arg #1 must be on different map!");
 
     hooks->signal_connection(connected->data.object, (activator) ?
                              activator->data.object : NULL, (originator) ?
-                             originator->data.object : NULL, self->data.map);
+                             originator->data.object : NULL, WHERE);
 
     return 0;
 }
@@ -723,7 +736,7 @@ static int Map_HasConnection(lua_State *L)
 
     get_lua_args(L, "Mi", &self, &connection);
 
-    for (oblp = self->data.map->buttons; oblp; oblp = oblp->next)
+    for (oblp = WHERE->buttons; oblp; oblp = oblp->next)
     {
         if (oblp->value == connection)
         {
