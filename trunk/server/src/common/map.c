@@ -1219,6 +1219,12 @@ int new_save_map(mapstruct *m, int flag)
         return -1;
     }
 
+    /* if we don't do this, we leave the light mask part
+     * on a possible tiled map and when we reload, the area
+     * will be set with wrong light values.
+     */
+    remove_light_source_list(m);
+
     if (flag || MAP_UNIQUE(m) || MAP_INSTANCE(m))
     {
         if (MAP_UNIQUE(m) || MAP_INSTANCE(m))
@@ -1409,12 +1415,6 @@ void free_map(mapstruct *m, int flag)
         LOG(llevBug, "BUG: Trying to free freed map.\n");
         return;
     }
-
-    /* if we don't do this, we leave the light mask part
-     * on a possible tiled map and when we reload, the area
-     * will be set with wrong light values.
-     */
-    remove_light_source_list(m);
 
     /* remove linked spawn points (small list of objectlink *) */
     remove_linked_spawn_list(m);
