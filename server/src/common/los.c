@@ -822,7 +822,7 @@ void check_light_source_list(mapstruct *map)
         {
             if (!tmp->first)
             {
-                LOG(llevBug, "BUG: remove_light_source_list() map:>%s< - no object in mapspace of light source!\n",
+                LOG(llevBug, "BUG: check_light_source_list() map:>%s< - no object in mapspace of light source!\n",
                     t_map->path ? t_map->path : "NO T_MAP PATH?");
                 continue;
             }
@@ -851,7 +851,7 @@ void check_light_source_list(mapstruct *map)
         {
             if (!tmp->first)
             {
-                LOG(llevBug, "BUG: remove_light_source_list() map:>%s< - no object in mapspace of light source!\n",
+                LOG(llevBug, "BUG: check_light_source_list() map:>%s< - no object in mapspace of light source!\n",
                     t_map->path ? t_map->path : "NO MAP PATH?");
                 continue;
             }
@@ -880,7 +880,7 @@ void check_light_source_list(mapstruct *map)
         {
             if (!tmp->first)
             {
-                LOG(llevBug, "BUG: remove_light_source_list() map:>%s< - no object in mapspace of light source!\n",
+                LOG(llevBug, "BUG: check_light_source_list() map:>%s< - no object in mapspace of light source!\n",
                     t_map->path ? t_map->path : "NO T_MAP PATH?");
                 continue;
             }
@@ -909,7 +909,7 @@ void check_light_source_list(mapstruct *map)
         {
             if (!tmp->first)
             {
-                LOG(llevBug, "BUG: remove_light_source_list() map:>%s< - no object in mapspace of light source!\n",
+                LOG(llevBug, "BUG: check_light_source_list() map:>%s< - no object in mapspace of light source!\n",
                     t_map->path ? t_map->path : "NO T_MAP PATH?");
                 continue;
             }
@@ -938,7 +938,7 @@ void check_light_source_list(mapstruct *map)
         {
             if (!tmp->first)
             {
-                LOG(llevBug, "BUG: remove_light_source_list() map:>%s< - no object in mapspace of light source!\n",
+                LOG(llevBug, "BUG: check_light_source_list() map:>%s< - no object in mapspace of light source!\n",
                     t_map->path ? t_map->path : "NO T_MAP PATH?");
                 continue;
             }
@@ -967,7 +967,7 @@ void check_light_source_list(mapstruct *map)
         {
             if (!tmp->first)
             {
-                LOG(llevBug, "BUG: remove_light_source_list() map:>%s< - no object in mapspace of light source!\n",
+                LOG(llevBug, "BUG: check_light_source_list() map:>%s< - no object in mapspace of light source!\n",
                     t_map->path ? t_map->path : "NO MAP PATH?");
                 continue;
             }
@@ -996,7 +996,7 @@ void check_light_source_list(mapstruct *map)
         {
             if (!tmp->first)
             {
-                LOG(llevBug, "BUG: remove_light_source_list() map:>%s< - no object in mapspace of light source!\n",
+                LOG(llevBug, "BUG: check_light_source_list() map:>%s< - no object in mapspace of light source!\n",
                     t_map->path ? t_map->path : "NO T_MAP PATH?");
                 continue;
             }
@@ -1025,7 +1025,7 @@ void check_light_source_list(mapstruct *map)
         {
             if (!tmp->first)
             {
-                LOG(llevBug, "BUG: remove_light_source_list() map:>%s< - no object in mapspace of light source!\n",
+                LOG(llevBug, "BUG: check_light_source_list() map:>%s< - no object in mapspace of light source!\n",
                     t_map->path ? t_map->path : "NO T_MAP PATH?");
                 continue;
             }
