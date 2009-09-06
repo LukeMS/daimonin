@@ -543,15 +543,20 @@ static void emote_other(object *op, object *target, char *str, char *buf, char *
     if (target && target->name)
         name = target->name;
 
+#if 0
     /* Only GMs and MMs can emote stealthed MMs. FIXME: MWs too! */
-    if (target->type == PLAYER && CONTR(target) && CONTR(target)->dm_stealth &&
-        op->type == PLAYER && CONTR(op) &&
-        (CONTR(op)->gmaster_mode != GMASTER_MODE_GM &&
-         CONTR(op)->gmaster_mode != GMASTER_MODE_MM))
+    if ((target->type == PLAYER &&
+         CONTR(target) &&
+         CONTR(target)->dm_stealth) &&
+        (op->type == PLAYER &&
+         CONTR(op) &&
+         (CONTR(op)->gmaster_mode != GMASTER_MODE_GM &&
+          CONTR(op)->gmaster_mode != GMASTER_MODE_MM)))
        {
           new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
           return;
        }
+#endif
 
     switch (emotion)
     {
