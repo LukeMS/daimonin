@@ -1091,17 +1091,18 @@ void remove_light_source_list(mapstruct *map)
 {
     MapSpace   *tmp;
 
-    if (map->in_memory != MAP_IN_MEMORY && map->in_memory != MAP_LOADING)
-        return;
-
     /*LOG(-1,"REMOVE LSL-LIST of map:>%s<\n",map->path);*/
     for (tmp = map->first_light; tmp; tmp = tmp->next_light)
     {
         /* again - there MUST be at last ONE object in this map space */
         if (!tmp->first)
         {
-            LOG(llevBug, "BUG: remove_light_source_list() map:>%s< - no object in mapspace of light source!\n",
-                map->path ? map->path : "NO MAP PATH?");
+            /* During reset a map's objects get removed so it's only a bug to
+             * have an empty square while the map is properly in memory. */
+            if (map->in_memory == MAP_IN_MEMORY)
+                LOG(llevBug, "BUG: remove_light_source_list() map:>%s< - no object in mapspace of light source!\n",
+                    map->path ? map->path : "NO MAP PATH?");
+
             continue;
         }
         /*LOG(-1,"remove LSL: %d,%d ,map:>%s<\n", tmp->first->x,tmp->first->y,map->path);*/
