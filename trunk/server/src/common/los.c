@@ -1091,6 +1091,9 @@ void remove_light_source_list(mapstruct *map)
 {
     MapSpace   *tmp;
 
+    if (map->in_memory != MAP_IN_MEMORY && map->in_memory != MAP_LOADING)
+        return;
+
     /*LOG(-1,"REMOVE LSL-LIST of map:>%s<\n",map->path);*/
     for (tmp = map->first_light; tmp; tmp = tmp->next_light)
     {
