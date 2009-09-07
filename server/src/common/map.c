@@ -1637,7 +1637,8 @@ static mapstruct * load_temporary_map(mapstruct *m)
 
     if (!m->tmpname)
     {
-        LOG(llevBug, "BUG: No temporary filename for map %s! fallback to original!\n", m->path);
+        LOG(llevDebug, "DEBUG: %s/load_temporary_map(): No temporary filename for map %s! fallback to original!\n",
+            __FILE__, m->path);
         strcpy(buf, m->path);
         delete_map(m);
         m = load_map(NULL, buf, MAP_STATUS_MULTI, NULL);
