@@ -37,46 +37,52 @@ void signal_connection(object *op, object *activator, object *originator, mapstr
     objectlink *olp,
                *ol;
     object     *tmp;
-    int         raceval = 0;
-    int         sound_id;
+    int         raceval = 0,
+                sound_id,
+                connection;
 
     /* tmp->weight_limit == state of trigger */
 
-    if (m && m != op->map)
+    if ((connection = get_button_value(op)) == -1)
+        return; /* BUG logged in get_button_value() */
+
+    if (connection)
     {
-        oblinkpt *oblp;
-        int       connection;
-
-        connection = get_button_value(op);
-
-        for (oblp = m->buttons, olp = NULL; oblp; oblp = oblp->next)
+        if (m && m != op->map)
         {
-            if (oblp->value != connection)
-                continue;
+            oblinkpt *oblp;
 
-            olp = oblp->objlink.link;
-
-            if (olp->objlink.ob->type == TYPE_CONN_SENSOR &&
-                olp->objlink.ob->last_grace != oblp->value)
+            for (oblp = m->buttons, olp = NULL; oblp; oblp = oblp->next)
             {
-                olp = NULL;
+                if (oblp->value != connection)
+                    continue;
 
-                continue;
+                olp = oblp->objlink.link;
+
+                if (olp->objlink.ob->type == TYPE_CONN_SENSOR &&
+                    olp->objlink.ob->last_grace != oblp->value)
+                {
+                    olp = NULL;
+
+                    continue;
+                }
+
+                break;
             }
+        }
+        else
+            olp = get_first_button_link(op);
 
-            break;
+        if (!olp)
+        {
+            LOG(llevBug, "BUG:: %s/signal_connection(): No connected object found!",
+                __FILE__);
+
+           return;
         }
     }
     else
-        olp = get_first_button_link(op);
-
-    if (!olp)
-    {
-        LOG(llevBug, "BUG:: %s/signal_connection(): No connected object found!",
-            __FILE__);
-
-       return;
-    }
+        olp = NULL;
 
     if(! ignore_trigger_events)
         if(trigger_object_plugin_event(EVENT_TRIGGER,
@@ -843,12 +849,20 @@ int get_button_value(object *button)
     oblinkpt   *obp;
     objectlink *ol;
 
-    if (!button->map)
-        return 0;
+    if (!button || !button->map)
+    {
+        LOG(llevBug, "BUG:: %s/get_button_value(): !button or !button->map: %s[%d]\n",
+            __FILE__, (button) ? button->name : "NULL",
+            (button) ? button->count : 0);
+
+        return -1;
+    }
+
     for (obp = button->map->buttons; obp; obp = obp->next)
         for (ol = obp->objlink.link; ol; ol = ol->next)
             if (ol->objlink.ob == button && ol->id == button->count)
                 return obp->value;
+
     return 0;
 }
 
