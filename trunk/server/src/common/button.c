@@ -75,8 +75,9 @@ void signal_connection(object *op, object *activator, object *originator, mapstr
 
         if (!olp)
         {
-            LOG(llevBug, "BUG:: %s/signal_connection(): No connected object found!",
-                __FILE__);
+            LOG(llevMapbug, "MAPBUG:: %s/signal_connection(): No connected object found: %s[%d], connection %d on map '%s'!",
+                 __FILE__, op->name, op->count, connection,
+                (m && m != op->map) ? m->path : op->map->path);
 
            return;
         }
@@ -849,11 +850,18 @@ int get_button_value(object *button)
     oblinkpt   *obp;
     objectlink *ol;
 
-    if (!button || !button->map)
+    if (!button)
     {
-        LOG(llevBug, "BUG:: %s/get_button_value(): !button or !button->map: %s[%d]\n",
-            __FILE__, (button) ? button->name : "NULL",
-            (button) ? button->count : 0);
+        LOG(llevBug, "BUG:: %s/get_button_value(): button == NULL!\n",
+            __FILE__);
+
+        return -1;
+    }
+
+    if (!button->map)
+    {
+        LOG(llevMapbug, "MAPBUG:: %s/get_button_value(): Button not on map: %s[%d]!\n",
+            __FILE__, button->name, button->count);
 
         return -1;
     }
