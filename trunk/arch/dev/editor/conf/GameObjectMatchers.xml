@@ -80,18 +80,15 @@
         </And>
     </GameObjectMatcher>
 
-    <!-- The system attribute is not yet enabled to not break Gridarta
-         releases before r5023. -->
-
     <!-- Objects to be treated as floors in insertion tool -->
-    <GameObjectMatcher id="system_floor"> <!-- XXX: should be 'system="true"' to hide from the GUI -->
+    <GameObjectMatcher id="system_floor" system="true">
         <title xml:lang="en">Floor</title>
         <title xml:lang="de">Boden</title>
         <TypeNrs numbers="65 68 71" />
     </GameObjectMatcher>
 
     <!-- Objects to be put below the floor in insertion tool -->
-    <GameObjectMatcher id="system_below_floor"> <!-- XXX: should be 'system="true"' to hide from the GUI -->
+    <GameObjectMatcher id="system_below_floor" system="true">
         <title xml:lang="en">Below Floor</title>
         <title xml:lang="de">Unter Boden</title>
             <TypeNrs numbers="-666" />
@@ -99,7 +96,7 @@
     </GameObjectMatcher>
 
     <!-- Objects to be put below the floor in insertion tool -->
-    <GameObjectMatcher id="system_wall"> <!-- XXX: should be 'system="true"' to hide from the GUI -->
+    <GameObjectMatcher id="system_wall" system="true">
         <title xml:lang="en">Wall</title>
         <title xml:lang="de">Wand</title>
         <title xml:lang="fr">Murs</title>
@@ -111,7 +108,7 @@
     </GameObjectMatcher>
 
     <!-- Objects to be treated as monsters in insertion tool -->
-    <GameObjectMatcher id="system_monster"> <!-- XXX: should be 'system="true"' to hide from the GUI -->
+    <GameObjectMatcher id="system_monster" system="true">
         <title xml:lang="en">Monster</title>
         <title xml:lang="de">Monster</title>
         <title xml:lang="fr">Monstres</title>
@@ -124,7 +121,7 @@
     </GameObjectMatcher>
 
     <!-- Objects to be treated as exits by the GUI -->
-    <GameObjectMatcher id="system_exit"> <!-- XXX: should be 'system="true"' to hide from the GUI -->
+    <GameObjectMatcher id="system_exit" system="true">
         <title xml:lang="en">Exit</title>
         <title xml:lang="de">Ausgang</title>
         <title xml:lang="fr">Sorties</title>
@@ -134,19 +131,19 @@
 
     <!-- Objects to be checked by the "Critical slaying characters" map
          validator. -->
-    <GameObjectMatcher id="system_environment_sensor"> <!-- XXX: should be 'system="true"' to hide from the GUI -->
+    <GameObjectMatcher id="system_environment_sensor" system="true">
         <title xml:lang="en">Environment Sensor</title>
         <title xml:lang="de">Umgebungs-Sensor</title>
         <TypeNrs numbers="133" />
     </GameObjectMatcher>
 
-    <GameObjectMatcher id="system_monster_only"> <!-- XXX: should be 'system="true"' to hide from the GUI -->
+    <GameObjectMatcher id="system_monster_only" system="true">
         <title xml:lang="en">Monster Only</title>
         <title xml:lang="de">Nur Monster</title>
         <TypeNrs numbers="80 83" />
     </GameObjectMatcher>
 
-    <GameObjectMatcher id="system_combat_values_objects"> <!-- XXX: should be 'system="true"' to hide from the GUI -->
+    <GameObjectMatcher id="system_combat_values_objects" system="true">
         <title xml:lang="en">Objects using &quot;combat_values&quot;</title>
         <title xml:lang="de">Objekte mit &quot;combat_values&quot;</title>
         <TypeNrs numbers="5 6 7 13 39 54 62 72 73 80 83 154 158" />
