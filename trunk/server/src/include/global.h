@@ -346,7 +346,7 @@ typedef enum
 
 #define NUM_COLORS          13
 
-/** number of darkness level. Add +1 for "total dark" */
+/** number of darkness levels. 0 means total darkness. */
 #define MAX_DARKNESS         7
 
 /* define from shstr.h - hash table dump */
