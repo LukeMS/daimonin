@@ -102,7 +102,7 @@ static hashtable_size_t stats_string_hash(const hashtable_const_key_t key)
  * Initialises the hash-table used by the shared string library.
  */
 
-void init_hash_table()
+void init_hash_table(void)
 {
     shared_strings = string_hashtable_new(SHSTR_INITIAL_TABLE_SIZE);
 #ifdef SS_STATISTICS
