@@ -88,8 +88,8 @@ void                    loginAddPlayerToChannel(player *pl, char *channelname, c
 
 struct channels    *final_addChannel(char *name, char shortcut, int color, sint8 post_lvl, sint8 enter_lvl, int gmaster_mode);
 void    addDefaultChannels(player *pl);
-void    load_channels();
-void    save_channels();
+void    load_channels(void);
+void    save_channels(void);
 void    leaveAllChannels(player *pl);
 
 void    printChannelUsage(object *ob);

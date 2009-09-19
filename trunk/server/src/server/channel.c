@@ -806,7 +806,7 @@ void loginAddPlayerToChannel(player *pl, char *channelname, char shortcut, unsig
  * Loads the channels from the channel-savefile
  *
  */
-void load_channels()
+void load_channels(void)
 {
     FILE   *channelfile;
     char    buf[HUGE_BUF];
