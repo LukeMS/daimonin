@@ -1,0 +1,5 @@
+~Category~: Server
+
+~Syntax~: /serverspeed[ <number>]
+~Purpose~: Reports or sets serverspeed (depending on whether or not <number> is given). Only available to MMs and only on a server compiled with the _TESTSERVER flag.
+~Notes~: Never fiddle with the server speed on a public server unless you know exactly what you are doing. Faster (=lower) server speeds decrease the server's 'tolerance' which can result in unexpected crashes and noticeable slowdown as player numbers increase.

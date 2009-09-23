@@ -1385,22 +1385,26 @@ int command_addexp(object *op, char *params)
     return 0;
 }
 
-int command_speed(object *op, char *params)
+/* '/serverspeed' reports the current server speed.
+ * '/serverspeed <number>' sets server speed to <number>. */
+int command_serverspeed(object *op, char *params)
 {
     long i;
 
-    if (!params ||
-        !sscanf(params, "%ld", &i))
+    if (!params)
     {
-        new_draw_info_format(NDI_UNIQUE, 0, op, "Current speed is %ld ums (%f ticks/second)",
+        new_draw_info_format(NDI_UNIQUE, 0, op, "Current server speed is %ld ums (%f ticks/second)",
                              pticks_ums, pticks_second);
 
         return 0;
     }
 
+    if (!sscanf(params, "%ld", &i))
+        return 1;
+
     set_pticks_time(i);
     reset_sleep();
-    new_draw_info_format(NDI_UNIQUE, 0, op, "Set speed to %ld ums (%f ticks/second)",
+    new_draw_info_format(NDI_UNIQUE, 0, op, "Set server speed to %ld ums (%f ticks/second)",
                          pticks_ums, pticks_second);
 
     return 0;
