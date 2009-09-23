@@ -223,7 +223,9 @@ CommArray_s CommandsMM[] =
     {"plugout",      command_unloadplugin,      0.0f, 1},
     {"create",       command_create,            0.0f, 1},
     {"dump",         command_dump,              0.0f, 1},
-    {"dm_speed",     command_speed,             0.0f, 1},
+#ifdef _TESTSERVER
+    {"serverspeed",  command_serverspeed,       0.0f, 1},
+#endif
     {"d_active",     command_dumpactivelist,    0.0f, 1},
     {"d_arches",     command_dumpallarchetypes, 0.0f, 1},
     {"d_objects",    command_dumpallobjects,    0.0f, 1},

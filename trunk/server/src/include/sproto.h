@@ -248,7 +248,7 @@ int                         command_remove(object *op, char *params);
 int                         command_free(object *op, char *params);
 int                         command_setskill(object *op, char *params);
 int                         command_addexp(object *op, char *params);
-int                         command_speed(object *op, char *params);
+int                         command_serverspeed(object *op, char *params);
 int                         command_stats(object *op, char *params);
 int                         command_abil(object *op, char *params);
 int                         command_reset(object *op, char *params);
