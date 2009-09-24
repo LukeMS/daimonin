@@ -1168,7 +1168,6 @@ static int apply_shop_mat(object *shop_mat, object *op)
 static void apply_sign(object *op, object *sign)
 {
     int raceval = 0;
-    int sound_id;
 
     if (sign->stats.food)
     {
@@ -1240,15 +1239,26 @@ static void apply_sign(object *op, object *sign)
         }
     }
     /* magic mouth */
-    else if ((sign->msg || (raceval && sign->slaying)) && (sign->direction == 0 || sign->direction == op->direction))
+    else if (sign->msg ||
+             (raceval &&
+              sign->slaying))
     {
-        if (sign->msg)
-            new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, sign->msg);
-        if (raceval && sign->slaying)
+        if (sign->direction == 0 ||
+            sign->direction == op->direction ||
+            (QUERY_FLAG(sign, FLAG_SPLITTING) &&
+             (absdir(sign->direction + 1) == op->direction ||
+              absdir(sign->direction - 1) == op->direction)))
         {
-            sound_id = lookup_sound(raceval-1, sign->slaying);
-            if (sound_id >= 0)
-                play_sound_player_only(CONTR(op), sound_id, raceval-1, 0, 0);
+            if (sign->msg)
+                new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, sign->msg);
+
+            if (raceval && sign->slaying)
+            {
+                int sid;
+
+                if ((sid = lookup_sound(raceval - 1, sign->slaying)) >= 0)
+                    play_sound_player_only(CONTR(op), sid, raceval - 1, 0, 0);
+            }
         }
     }
 }

@@ -5148,6 +5148,14 @@
     Magic: default, acid, bomb, fireball1, manaball.
     Client: warn_food, warn_drain, warn_hp2, heartbeat.
   </attribute>
+  <attribute arch="splitting" editor="fan direction" type="bool">
+    Only affects magic mouths with non-zero direction.
+    A mouth with non-zero direction will normally be activated only by an
+    activator traveling in that direction.
+    If this flag is set, the mouth will also be activated if the activator is
+    traveling in that direction + or - 1. For example, when entering a room
+    through a doorway.
+  </attribute>
   <attribute arch="walk_on" editor="activate by walking" type="bool">
     If set, the player gets the message when walking on top of the object.
     This is the typical configuration
