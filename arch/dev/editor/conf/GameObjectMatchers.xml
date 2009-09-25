@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE GameObjectMatchers SYSTEM "GameObjectMatchers.dtd">
 <GameObjectMatchers>
+
     <GameObjectMatcher id="monster">
         <title xml:lang="en">Monster</title>
         <title xml:lang="de">Monster</title>
@@ -12,6 +13,7 @@
             <Attrib name="generator" />
         </Or>
     </GameObjectMatcher>
+
     <GameObjectMatcher id="floormask">
         <title xml:lang="en">Floormask</title>
         <title xml:lang="de">Bodenmasken</title>
@@ -20,6 +22,7 @@
             <Attrib name="layer" value="2" />
         </And>
     </GameObjectMatcher>
+
     <GameObjectMatcher id="floor">
         <title xml:lang="en">Floor</title>
         <title xml:lang="de">Boden</title>
@@ -28,6 +31,7 @@
             <Attrib name="layer" value="1" />
         </And>
     </GameObjectMatcher>
+
     <GameObjectMatcher id="wall">
         <title xml:lang="en">Wall</title>
         <title xml:lang="de">Wand</title>
@@ -38,6 +42,7 @@
             <Attrib name="no_pass" />
         </Or>
     </GameObjectMatcher>
+
     <GameObjectMatcher id="connected">
         <title xml:lang="en">Connected</title>
         <title xml:lang="de">Verbunden</title>
@@ -45,6 +50,7 @@
         <title xml:lang="sv">Anslutna</title>
         <Attrib name="connected" op="ne" value="" />
     </GameObjectMatcher>
+
     <GameObjectMatcher id="exit">
         <title xml:lang="en">Exit</title>
         <title xml:lang="de">Ausgang</title>
@@ -52,6 +58,7 @@
         <title xml:lang="sv">Utgångar</title>
         <TypeNrs numbers="41 66 69 94 95" />
     </GameObjectMatcher>
+
     <GameObjectMatcher id="treasure">
         <title xml:lang="en">Treasure</title>
         <title xml:lang="de">Schatz</title>
@@ -62,6 +69,7 @@
             <Attrib name="no_pick" value="" />
         </And>
     </GameObjectMatcher>
+
     <GameObjectMatcher id="door">
         <title xml:lang="en">Doors and Keys</title>
         <title xml:lang="de">Türen und Schlüssel</title>
@@ -69,6 +77,7 @@
         <title xml:lang="sv">Dörrar och Nycklar</title>
         <TypeNrs numbers="20 21 23 24 26 91" />
     </GameObjectMatcher>
+
     <GameObjectMatcher id="equipment">
         <title xml:lang="en">Equipment</title>
         <title xml:lang="de">Ausrüstung</title>
@@ -78,6 +87,14 @@
             <TypeNrs numbers="3 13 14 15 16 33 34 35 39 70 87 99 100 104 109 113 122" />
             <Attrib name="no_pick" value="" />
         </And>
+    </GameObjectMatcher>
+
+    <GameObjectMatcher id="event_object">
+        <title xml:lang="en">Event Object</title>
+        <title xml:lang="de">Ereignisgegenstand</title>
+        <title xml:lang="fr">Objet d'Événement</title>
+        <Env />
+        <TypeNrs numbers="118" />
     </GameObjectMatcher>
 
     <!-- Objects to be treated as floors in insertion tool -->
