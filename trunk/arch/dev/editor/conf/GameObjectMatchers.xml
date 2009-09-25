@@ -10,7 +10,6 @@
         <Or>
             <TypeNrs numbers="80 81 83" />
             <Attrib name="monster" />
-            <Attrib name="generator" />
         </Or>
     </GameObjectMatcher>
 
@@ -133,7 +132,6 @@
         <Or>
             <TypeNrs numbers="80 81 83" />
             <Attrib name="monster" />
-            <Attrib name="generator" />
         </Or>
     </GameObjectMatcher>
 
