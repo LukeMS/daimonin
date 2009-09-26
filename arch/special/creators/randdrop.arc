@@ -1,5 +1,6 @@
 Object rand_drop
-face creator.111
+name rand drop container
+face randdrop.111
 type 102
 layer 0
 sys_object 1
