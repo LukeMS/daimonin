@@ -147,7 +147,7 @@ elseif (msg == 'sound') then
     me:SayTo(activator, "I can imitate a teleporter");
     me.map:PlaySound(me.x, me.y, 32, 0);
 elseif (msg == 'tod') then
-    tod = game:GetTime()
+    tod = game:GetTimeAndDate()
     for k,v in tod do
         me:SayTo(activator, k .. ": " .. v);
     end
