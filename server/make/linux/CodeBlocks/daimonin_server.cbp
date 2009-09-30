@@ -190,9 +190,6 @@
 		<Unit filename="../../../src/common/stats.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../src/common/time.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Unit filename="../../../src/common/treasure.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -212,6 +209,7 @@
 		<Unit filename="../../../src/include/attack.h" />
 		<Unit filename="../../../src/include/behaviourdecl.h" />
 		<Unit filename="../../../src/include/book.h" />
+		<Unit filename="../../../src/include/calendar.h" />
 		<Unit filename="../../../src/include/channel.h" />
 		<Unit filename="../../../src/include/commands.h" />
 		<Unit filename="../../../src/include/config.h" />
@@ -256,7 +254,6 @@
 		<Unit filename="../../../src/include/stats.h" />
 		<Unit filename="../../../src/include/testproto.h" />
 		<Unit filename="../../../src/include/timeutils.h" />
-		<Unit filename="../../../src/include/tod.h" />
 		<Unit filename="../../../src/include/treasure.h" />
 		<Unit filename="../../../src/include/version.h" />
 		<Unit filename="../../../src/random_maps/decor.c">
@@ -457,7 +454,7 @@
 		<Unit filename="../../../src/server/time.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../src/server/weather.c">
+		<Unit filename="../../../src/server/calendar.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../../src/socket/account.c">

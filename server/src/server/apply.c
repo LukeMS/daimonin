@@ -24,7 +24,6 @@
 */
 
 #include <global.h>
-#include <tod.h>
 
 /* need math lib for double-precision and pow() in dragon_eat_flesh() */
 #include <math.h>
@@ -2343,19 +2342,16 @@ int manual_apply(object *op, object *tmp, int aflag)
         case CLOCK:
           if (op->type == PLAYER)
           {
-              char          buf[MAX_BUF];
-              timeofday_t   tod;
+              timeanddate_t tad;
 
               if(trigger_object_plugin_event(
                           EVENT_APPLY, tmp, op, NULL,
                           NULL, &aflag, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
                   return 4; /* 1 = do not write an error message to the player */
 
-              get_tod(&tod);
-              sprintf(buf, "It is %d minute%s past %d o'clock %s", tod.minute + 1, ((tod.minute + 1 < 2) ? "" : "s"),
-      ((tod.hour % (HOURS_PER_DAY / 2) == 0) ? (HOURS_PER_DAY / 2) : ((tod.hour) % (HOURS_PER_DAY / 2))),
-      ((tod.hour >= (HOURS_PER_DAY / 2)) ? "pm" : "am"));
-              new_draw_info(NDI_UNIQUE, 0, op, buf);
+              get_tad(&tad);
+              new_draw_info_format(NDI_UNIQUE, 0, op, "It is %s.",
+                                   print_tad(&tad, TAD_SHOWTIME));
               return 4;
           }
           return 0;

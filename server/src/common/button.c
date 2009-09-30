@@ -452,7 +452,7 @@ void update_buttons(mapstruct *m)
     ignore_trigger_events = 0;
 }
 
-void use_trigger(object *op, object *user)
+static void use_trigger(object *op, object *user)
 {
     /* Toggle value */
     op->weight_limit = !op->weight_limit;

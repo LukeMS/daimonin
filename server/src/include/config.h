@@ -145,6 +145,7 @@
 * DEBUG - more verbose message logging?
 * MAP_CLIENT_X, MAP_CLIENT_Y - determines max size client map will receive
 * MAX_TIME - how long an internal tick is in microseconds
+* PTICKS_PER_ARKHE_HOUR -how many pticks make up a game hour
 * MULTIPLE_GODS - adds numerous gods to the game, with different powers
 * NOT_PERMADEATH - should death be the final end or not?
 * RECYCLE_TMP_MAPS - use tmp maps across multiple runs?
@@ -250,6 +251,11 @@
  */
 /* thats 8 ticks per second now - 100.000 are 10 ticks */
 #define MAX_TIME    125000
+
+/* Arguably, this should be in calendar.h, but I have put it here so it is with
+ * MAX_TIME as you'll probably want to change both together. */
+/* 1 Arkhe hour = 5 real life minutes, or (1000000 / MAX_TIME) * 300 */
+#define PTICKS_PER_ARKHE_HOUR 2400
 
 /* NOT_PERMADEATH by Charles Henrich (henrich@crh.cl.msu.edu), April 9, 1993
  *

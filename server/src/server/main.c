@@ -550,7 +550,7 @@ void cleanup_without_exit()
     LOG(llevDebug, "Cleanup called.  freeing data.\n");
     clean_tmp_files(TRUE);
     write_book_archive();
-    write_todclock();   /* lets just write the clock here */
+    write_tadclock();   /* lets just write the clock here */
     save_ban_file();
 
     /* that must be redone: clear cleanup so we know 100% all memory is freed */
@@ -683,12 +683,19 @@ void dequeue_path_requests()
 
 void do_specials()
 {
+#ifdef DEBUG_CALENDAR
+    if (!(ROUND_TAG % (PTICKS_PER_ARKHE_HOUR / ARKHE_MES_PER_HR)) &&
+        first_player)
+        (void)command_time(first_player->ob, NULL);
+#endif
+
+    if (!(ROUND_TAG % PTICKS_PER_ARKHE_HOUR))
+        tick_tadclock();
+
     if (!(ROUND_TAG % 2))
         dequeue_path_requests();
 
     /*   if (!(ROUND_TAG % 20)) */ /*use this for debuging */
-    if (!(ROUND_TAG % PTICKS_PER_CLOCK))
-        tick_the_clock();
 
     if (!(ROUND_TAG % 509))
         flush_old_maps();    /* Clears the tmp-files of maps which have reset */
@@ -891,6 +898,66 @@ static void traverse_player_stats(char* start_dir)
 }
 #endif
 
+/* Calculate time until the next tick.
+ * returns 0 and steps forward time for the next tick if called after the time
+ * for the next tick, otherwise returns 1 and the delta time for next tick. */
+static inline int time_until_next_tick(struct timeval *out)
+{
+    struct timeval now, next_tick, tick_time;
+
+    /* next_tick = last_time + tick_time */
+    tick_time.tv_sec = 0;
+    tick_time.tv_usec = pticks_ums;
+
+    add_time(&next_tick, &last_time, &tick_time);
+
+    GETTIMEOFDAY(&now);
+
+    /* Time for the next tick? (timercmp does not work for <= / >=) */
+    /* if(timercmp(&next_tick, &now, <) || timercmp(&next_tick, &now, ==)) */
+
+    /* timercmp() seems be broken under windows. Well, this is even faster */
+    if( next_tick.tv_sec < now.tv_sec ||
+        (next_tick.tv_sec == now.tv_sec && next_tick.tv_usec <= now.tv_usec))
+    {
+        /* this must be now time and not next_tick.
+         * IF the last tick was really longer as pticks_ums,
+         * we need to come insync now again.
+         * Or, in bad cases, the more needed usecs will add up.
+         */
+        last_time.tv_sec = now.tv_sec;
+        last_time.tv_usec = now.tv_usec;
+
+        out->tv_sec = 0;
+        out->tv_usec = 0;
+
+        return 0;
+    }
+
+    /* time_until_next_tick = next_tick - now */
+    now.tv_sec = -now.tv_sec;
+    now.tv_usec = -now.tv_usec;
+    add_time(out, &next_tick, &now);
+
+    return 1;
+}
+
+/* sleep_delta checks how much time has elapsed since last tick. If it is less
+ * than pticks_ums, the remaining time is slept with select().
+ *
+ * Polls the sockets and handles or queues incoming requests returns at the
+ * time for the next tick. */
+static inline void sleep_delta()
+{
+    struct timeval timeout;
+
+    /* TODO: ideally we should use the return value from select to know if it
+     * timed out or returned because of some other reason, but this also
+     * works reasonably well... */
+    while(time_until_next_tick(&timeout))  /* fill timeout... */
+        doeric_server(SOCKET_UPDATE_CLIENT, &timeout);
+}
+
 void iterate_main_loop()
 {
     struct timeval timeout;
@@ -961,7 +1028,7 @@ int main(int argc, char **argv)
     compile_info();       /* its not a bad idea to show at start whats up */
 
     /*STATS_EVENT(STATS_EVENT_STARTUP);*/
-    reset_sleep(); /* init our last_time = start time - and lets go! */
+    GETTIMEOFDAY(&last_time); /* init our last_time = start time - and lets go! */
 
 #ifdef DEBUG_TRAVERSE_PLAYER_DIR
     traverse_player_stats("./data/players");

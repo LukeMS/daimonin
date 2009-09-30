@@ -105,6 +105,15 @@ void read_map_log()
     fclose(fp);
 }
 
+static inline long seconds()
+{
+    struct timeval now;
+
+    (void)GETTIMEOFDAY(&now);
+
+    return now.tv_sec;
+}
+
 /* if on the map and the direct attached maps no player and no perm_load
  * flag set, we can safely swap them out!
  * thats rewritten for beta 2.

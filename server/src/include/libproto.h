@@ -39,7 +39,6 @@ extern void             free_artifactlist(artifactlist *al);
 extern void             signal_connection(object *op, object *activator, object *originator, mapstruct *m);
 extern void             update_button(object *op, object *activator, object *originator);
 extern void             update_buttons(mapstruct *m);
-extern void             use_trigger(object *op, object *user);
 extern void             animate_turning(object *op);
 extern int              check_altar_sacrifice(object *altar, object *sacrifice);
 extern int              operate_altar(object *altar, object **sacrifice);
@@ -354,13 +353,6 @@ extern void             free_string_shared(const char *str);
 extern char            *ss_dump_statistics(char *msg);
 extern char            *ss_dump_table(int what);
 extern void             ss_get_totals(int *entries, int *refs, int *links);
-/* time.c */
-extern void             reset_sleep(void);
-extern void             sleep_delta(void);
-extern void             set_pticks_time(long t);
-extern void             get_tod(timeofday_t *tod);
-extern void             print_tod(object *op);
-extern long             seconds(void);
 /* treasure.c */
 extern void             load_treasures(void);
 extern treasurelist    *find_treasurelist(const char *name);

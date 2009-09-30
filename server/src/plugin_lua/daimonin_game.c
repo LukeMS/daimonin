@@ -33,12 +33,13 @@ static struct method_decl Game_methods[] =
     {"FindPlayer",       Game_FindPlayer},
     {"GetSkillNr",       Game_GetSkillNr},
     {"GetSpellNr",       Game_GetSpellNr},
-    {"GetTime",          Game_GetTime},
+    {"GetTimeAndDate",   Game_GetTimeAndDate},
     {"IsValid",          Game_IsValid},
     {"LoadObject",       Game_LoadObject},
     {"LocateBeacon",     Game_LocateBeacon},
     {"Log",              Game_Log},
     {"MatchString",      Game_MatchString},
+    {"PrintTimeAndDate", Game_PrintTimeAndDate},
     {"ReadyMap",         Game_ReadyMap},
 /*  {"RegisterCommand",  Game_RegisterCommand}, */
     {"UpgradeApartment", Game_UpgradeApartment},
@@ -514,6 +515,12 @@ static struct constant_decl preset_game_constants[] =
     {"PERSONAL_LIGHT_MIN", 1},
     {"PERSONAL_LIGHT_MAX", MAX_DARKNESS},
 
+    /* game:PrintTimeAndDate flags (calendar.h) */
+    {"TAD_SHOWTIME",   TAD_SHOWTIME},
+    {"TAD_SHOWDATE",   TAD_SHOWDATE},
+    {"TAD_SHOWSEASON", TAD_SHOWSEASON},
+    {"TAD_LONGFORM",   TAD_LONGFORM},
+
     /* SENTInce aware server? (config.h) */
 #ifndef SENTInce_SERVER
     {"SENTInce_SERVER", 0}
@@ -967,67 +974,126 @@ static int Game_LocateBeacon(lua_State *L)
 }
 
 /*****************************************************************************/
-/* Name   : Game_GetTime                                                     */
-/* Lua    : game:GetTime()                                                   */
+/* Name   : Game_GetTimeAndDate                                              */
+/* Lua    : game:GetTimeAndDate()                                            */
 /* Info   : Return a table with values on the current game time.             */
 /*          The table will have the following fields:                        */
-/*          year - year number                                               */
-/*          month - month number                                             */
-/*          day - day number in month                                        */
-/*          dayofweek - day number in week                                   */
-/*          hour - current time                                              */
-/*          minute - current time                                            */
-/*          weekofmonth - week in month                                      */
-/*          season - season number                                           */
-/*          dayofweek_name - weekday as string                               */
-/*          month_name - month as string                                     */
-/*          season_name - season as string                                   */
+/*          hour - hour in day as number                                     */
+/*          minute - minute in hour as number                                */
+/*          year - year as number                                            */
+/*          season - season in year as number                                */
+/*          month - month in season as number                                */
+/*          week - week in month as number                                   */
+/*          parweek - parweek in week as number                              */
+/*          day - day in parweek as number                                   */
+/*          intraholiday - intraholiday number TODO                          */
+/*          extraholiday - extraholiday in year as number                    */
+/*          season_name - season name as string                              */
+/*          month_name - month name as string                                */
+/*          parweek_name - parweek name as string                            */
+/*          day_name - day name as string                                    */
+/*          intraholiday_name - intraholiday name as string                  */
+/*          extraholiday_name - extraholiday name as string                  */
 /* Status : Tested/Stable                                                    */
 /*****************************************************************************/
-static int Game_GetTime(lua_State *L)
+static int Game_GetTimeAndDate(lua_State *L)
 {
-    timeofday_t tod;
-    lua_object *self;
+    lua_object    *self;
+    timeanddate_t  tad;
 
     get_lua_args(L, "G", &self);
 
-    hooks->get_tod(&tod);
+    hooks->get_tad(&tad);
 
     lua_newtable(L);
 
-    lua_pushliteral(L, "year");
-    lua_pushnumber(L, (lua_Number) tod.year);
-    lua_rawset(L, -3);
-    lua_pushliteral(L, "month");
-    lua_pushnumber(L, (lua_Number) tod.month);
-    lua_rawset(L, -3);
-    lua_pushliteral(L, "day");
-    lua_pushnumber(L, (lua_Number) tod.day);
-    lua_rawset(L, -3);
-    lua_pushliteral(L, "dayofweek");
-    lua_pushnumber(L, (lua_Number) tod.dayofweek);
-    lua_rawset(L, -3);
+    /* Time (numbers) */
     lua_pushliteral(L, "hour");
-    lua_pushnumber(L, (lua_Number) tod.hour);
+    lua_pushnumber(L, (lua_Number)tad.hour); /* 0 <= hour <= 23 */
     lua_rawset(L, -3);
     lua_pushliteral(L, "minute");
-    lua_pushnumber(L, (lua_Number) tod.minute);
-    lua_rawset(L, -3);
-    lua_pushliteral(L, "weekofmonth");
-    lua_pushnumber(L, (lua_Number) tod.weekofmonth);
-    lua_rawset(L, -3);
-    lua_pushliteral(L, "season");
-    lua_pushnumber(L, (lua_Number) tod.season);
+    lua_pushnumber(L, (lua_Number)tad.minute); /* 0 <= minute <= 59 */
     lua_rawset(L, -3);
 
-    lua_pushliteral(L, "dayofweek_name");
-    lua_pushstring(L, tod.dayofweek_name);
+    /* Date (numbers) */
+    lua_pushliteral(L, "year");
+    lua_pushnumber(L, (lua_Number)tad.year); /* -16383 <= year <= +16383 */
+    lua_rawset(L, -3);
+    lua_pushliteral(L, "season");
+
+    if (tad.season >= 0)
+        lua_pushnumber(L, (lua_Number)tad.season + 1); /* 1 <= season <= 4 */
+    else
+        lua_pushnil(L);
+
+    lua_rawset(L, -3);
+    lua_pushliteral(L, "month");
+
+    if (tad.month >= 0)
+        lua_pushnumber(L, (lua_Number)tad.month + 1); /* 1 <= month <= 3 */
+    else
+        lua_pushnil(L);
+
+    lua_rawset(L, -3);
+    lua_pushliteral(L, "week");
+
+    if (tad.week >= 0)
+        lua_pushnumber(L, (lua_Number)tad.week + 1); /* 1 <= week <= 3 */
+    else
+        lua_pushnil(L);
+
+    lua_rawset(L, -3);
+    lua_pushliteral(L, "parweek");
+
+    if (tad.parweek >= 0)
+        lua_pushnumber(L, (lua_Number)tad.parweek + 1); /* 1 <= parweek <= 3 */
+    else
+        lua_pushnil(L);
+
+    lua_rawset(L, -3);
+    lua_pushliteral(L, "day");
+
+    if (tad.day >= 0)
+        lua_pushnumber(L, (lua_Number)tad.day + 1); /* 1 <= day <= 3 */
+    else
+        lua_pushnil(L);
+
+    lua_rawset(L, -3);
+    lua_pushliteral(L, "intraholiday");
+
+    if (tad.intraholiday >= 0)
+        lua_pushnumber(L, (lua_Number)tad.intraholiday + 1); /* TODO */
+    else
+        lua_pushnil(L);
+
+    lua_rawset(L, -3);
+    lua_pushliteral(L, "extraholiday");
+
+    if (tad.extraholiday >= 0)
+        lua_pushnumber(L, (lua_Number)tad.extraholiday + 1); /* 1 <= extraholiday <= 12 */
+    else
+        lua_pushnil(L);
+
+    lua_rawset(L, -3);
+
+    /* Date (names) */
+    lua_pushliteral(L, "season_name");
+    lua_pushstring(L, tad.season_name);
     lua_rawset(L, -3);
     lua_pushliteral(L, "month_name");
-    lua_pushstring(L, tod.month_name);
+    lua_pushstring(L, tad.month_name);
     lua_rawset(L, -3);
-    lua_pushliteral(L, "season_name");
-    lua_pushstring(L, tod.season_name);
+    lua_pushliteral(L, "parweek_name");
+    lua_pushstring(L, tad.parweek_name);
+    lua_rawset(L, -3);
+    lua_pushliteral(L, "day_name");
+    lua_pushstring(L, tad.day_name);
+    lua_rawset(L, -3);
+    lua_pushliteral(L, "intraholiday_name");
+    lua_pushstring(L, tad.intraholiday_name);
+    lua_rawset(L, -3);
+    lua_pushliteral(L, "extraholiday_name");
+    lua_pushstring(L, tad.extraholiday_name);
     lua_rawset(L, -3);
 
     return 1;
@@ -1103,6 +1169,39 @@ static int Game_EnumerateCoins(lua_State *L)
     lua_pushliteral(L, "copper");
     lua_pushnumber(L, (lua_Number) copper);
     lua_rawset(L, -3);
+    return 1;
+}
+
+/*****************************************************************************/
+/* Name   : Game_PrintTimeAndDate                                            */
+/* Lua    : game:PrintTimeAndDate(flags, tad)                                */
+/* Info   : Returns the Arkhe time and/or date as a string, according to     */
+/*          flags.                                                           */
+/*          flags is optional. If specified, it should be some combination   */
+/*          of:                                                              */
+/*            game.TAD_SHOWTIME, game.TAD_SHOWDATE, game.TAD_SHOWSEASON, and */
+/*            game.TAD_LONGFORM.                                             */
+/*          If not specified, it defaults to all of them.                    */
+/*          tad is optional. Specifying tad allows you to print a time that  */
+/*          is not right now. UNIMPLEMENTED!                                 */
+/* Status : Untested/Stable                                                  */
+/* TODO   : Implement the tad argument.                                      */
+/*****************************************************************************/
+static int Game_PrintTimeAndDate(lua_State *L)
+{
+    lua_object    *self;
+    int            flags;
+    timeanddate_t  tad;
+
+    flags = 0;
+    get_lua_args(L, "G|i", &self, &flags);
+
+    if (flags <= 0)
+        flags = TAD_SHOWTIME | TAD_SHOWDATE | TAD_SHOWSEASON | TAD_LONGFORM;
+
+    hooks->get_tad(&tad);
+    lua_pushstring(L, hooks->print_tad(&tad, flags));
+
     return 1;
 }
 

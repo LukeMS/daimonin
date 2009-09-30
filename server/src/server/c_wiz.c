@@ -1403,7 +1403,7 @@ int command_serverspeed(object *op, char *params)
         return 1;
 
     set_pticks_time(i);
-    reset_sleep();
+    GETTIMEOFDAY(&last_time);
     new_draw_info_format(NDI_UNIQUE, 0, op, "Set server speed to %ld ums (%f ticks/second)",
                          pticks_ums, pticks_second);
 

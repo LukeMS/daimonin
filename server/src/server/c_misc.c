@@ -448,10 +448,41 @@ int command_sstable(object *op, char *params)
     return 0;
 }
 
-
+/* Writes the current tad to op.
+ * Eventually this command will also update the client's clock. */
 int command_time(object *op, char *params)
 {
-    print_tod(op);
+    timeanddate_t  tad;
+    char         *pp;
+    int           flags;
+
+    if (!op || op->type != PLAYER || !CONTR(op))
+        return 0;
+
+    get_tad(&tad);
+
+    /* This is only for testing. */
+    for (pp = params, flags = 0; pp && *pp; pp++)
+    {
+        if (!strncmp(pp, "showtime", 8))
+            flags |= TAD_SHOWTIME;
+        else if (!strncmp(pp, "showdate", 8))
+            flags |= TAD_SHOWDATE;
+        else if (!strncmp(pp, "showseason", 10))
+            flags |= TAD_SHOWSEASON;
+        else if (!strncmp(pp, "longform", 8))
+            flags |= TAD_LONGFORM;
+
+        if (!(pp = strchr(pp, ' ')))
+            break;
+    }
+
+    if (!flags)
+        flags = TAD_SHOWTIME | TAD_SHOWDATE | TAD_SHOWSEASON | TAD_LONGFORM;
+
+    /* Send the tad string to the player. */
+    new_draw_info_format(NDI_UNIQUE | NDI_NAVY, 0, op, "It is %s.",
+                         print_tad(&tad, flags));
 
     return 0;
 }

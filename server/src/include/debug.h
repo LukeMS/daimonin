@@ -97,6 +97,8 @@
 
 /* merge_ob(): object.c */
 /*#define DEBUG_MERGE_OB*/
+
+/*#define DEBUG_CALENDAR*/
 #endif /* ifndef PRODUCTION_SYSTEM */
 
 #ifdef DEBUG_FIX_PLAYER

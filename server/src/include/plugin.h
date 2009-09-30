@@ -317,7 +317,7 @@ struct plugin_hooklist
     int (*get_rangevector)(object *, object *, rv_vector *, int);
     int (*get_rangevector_from_mapcoords)(mapstruct *, int, int, mapstruct *,
                                           int, int, rv_vector *, int);
-    void (*get_tod)(struct _timeofday *);
+    void (*get_tad)(timeanddate_t *);
     char *(*get_word_from_string)(char *, int *);
     void (*give_artifact_abilities)(object *, artifact *);
     void (*gui_interface)(object *, int, const char *, const char *);
@@ -389,6 +389,7 @@ struct plugin_hooklist
     void (*play_sound_map)(mapstruct *, int, int, int, int);
     void (*play_sound_player_only)(player *, int, int, int, int);
     int (*player_save)(object *);
+    char *(*print_tad)(timeanddate_t *, int);
     /* Q */
     char *(*query_base_name)(object *, object *);
     sint64 (*query_cost)(object *, object *, int);
