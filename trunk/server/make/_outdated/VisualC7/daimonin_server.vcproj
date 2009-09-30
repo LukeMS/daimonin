@@ -696,7 +696,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\server\weather.c">
+					RelativePath="..\..\..\src\server\calendar.c">
 					<FileConfiguration
 						Name="ReleaseLog|Win32">
 						<Tool
@@ -1301,9 +1301,6 @@
 					RelativePath="..\..\..\src\common\stats.c">
 				</File>
 				<File
-					RelativePath="..\..\..\src\common\time.c">
-				</File>
-				<File
 					RelativePath="..\..\..\src\common\treasure.c">
 				</File>
 				<File
@@ -1347,6 +1344,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\book.h">
+			</File>
+			<File
+				RelativePath="..\..\..\src\include\calendar.h">
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\commands.h">
@@ -1473,9 +1473,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\timeutils.h">
-			</File>
-			<File
-				RelativePath="..\..\..\src\include\tod.h">
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\treasure.h">

@@ -73,7 +73,7 @@ SRCS = \
 	swap.c\
 	time.c\
 	pathfinder.c\
-	weather.c
+	calendar.c
 
 ALLFILES = $(SRCS) Makefile.in
 

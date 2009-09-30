@@ -625,57 +625,35 @@ void do_some_living(object *op)
 /* Returns pointer to a static string containing gravestone text. */
 static char *gravestone_text(object *op)
 {
-    static char buf[MAX_BUF];
-    char        tmp_buf[MAX_BUF];
-    timeofday_t tod;
-    uint8       day;
+    timeanddate_t tad;
 
     /* name */
-    sprintf(buf, "R.I.P.\n\n%s", STRING_OBJ_NAME(op));
+    sprintf(errmsg, "R.I.P.\n\n%s", STRING_OBJ_NAME(op));
 
     /* title */
     if (op->title)
-    {
-        sprintf(tmp_buf, " %s", STRING_OBJ_TITLE(op));
-        strcat(buf, tmp_buf);
-    }
+        sprintf(strchr(errmsg, '\0'), " %s", STRING_OBJ_TITLE(op));
 
     /* race, level */
-    sprintf(tmp_buf, " the %s\nwho was level %d\nwhen ",
+    sprintf(strchr(errmsg, '\0'), " the %s\nwho was level %d\nwhen ",
             STRING_OBJ_RACE(op), (int)op->level);
-    strcat(buf, tmp_buf);
 
     /* gender */
-    if (QUERY_FLAG(op, FLAG_IS_MALE))
-    {
-        if (QUERY_FLAG(op, FLAG_IS_FEMALE))
-            strcat(buf, "they were");
-        else
-            strcat(buf, "he was");
-    }
-    else if (QUERY_FLAG(op, FLAG_IS_FEMALE))
-       strcat(buf, "she was");
-    else
-       strcat(buf, "it was");
+    sprintf(strchr(errmsg, '\0'), "%s",
+            (QUERY_FLAG(op, FLAG_IS_MALE)) ?
+            ((QUERY_FLAG(op, FLAG_IS_FEMALE)) ? "they were" : "he was") :
+            ((QUERY_FLAG(op, FLAG_IS_FEMALE)) ? "she was" : "it was"));
 
     /* cause of death */
-    sprintf(tmp_buf, " killed by %s.\n\n",
+    sprintf(strchr(errmsg, '\0'), " killed by %s.\n\n",
             (CONTR(op)->killer) ? CONTR(op)->killer : "bad luck");
-    strcat(buf, tmp_buf);
 
     /* date */
-    get_tod(&tod);
-    day = (uint8)tod.day + 1;
-    sprintf(tmp_buf, "On %s, %d%s Day of the %s\n",
-           tod.dayofweek_name,
-           day,
-           ((day == 1 || (day > 20 && (day % 10) == 1)) ? "st" :
-            ((day == 2 || (day > 20 && (day % 10) == 2)) ? "nd" :
-             ((day == 3 || (day > 20 && (day % 10) == 3)) ? "rd" : "th"))),
-           tod.month_name);
-    strcat(buf, tmp_buf);
+    get_tad(&tad);
+    sprintf(strchr(errmsg, '\0'), "On %s\n",
+            print_tad(&tad, TAD_SHOWDATE | TAD_LONGFORM));
 
-    return buf;
+    return errmsg;
 }
 
 /* If the player should die (lack of hp, food, etc), we call this.

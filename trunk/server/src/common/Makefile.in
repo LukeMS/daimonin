@@ -60,7 +60,6 @@ SRCS = \
 	shstr_ng.c\
 	sounds.c\
 	stats.c\
-	time.c\
 	treasure.c\
 	utils.c\
 	view_inv.c\

@@ -1148,7 +1148,8 @@ void move_timer(object *op)
         op->stats.hp--;
         if(op->stats.hp < 0)
         {
-            use_trigger(op, NULL);
+            op->weight_limit = !op->weight_limit;
+            signal_connection(op, NULL, NULL, op->map);
 
             if(QUERY_FLAG(op, FLAG_CURSED))
                 op->stats.hp = op->stats.maxhp;
@@ -1162,15 +1163,15 @@ void move_timer(object *op)
 
 void move_environment_sensor(object *op)
 {
-    int trig_tod = 0, trig_dow = 0, trig_bright = 0;
-    timeofday_t tod;
+    int trig_tad = 0, trig_dow = 0, trig_bright = 0;
+    timeanddate_t tad;
 
     if(op->slaying || op->last_heal)
-        get_tod(&tod);
+        get_tad(&tad);
 
     /* Time of day triggered? */
     if(op->slaying == NULL)
-        trig_tod = 1;
+        trig_tad = 1;
     else
     {
         int hh1,mm1,hh2,mm2;
@@ -1179,14 +1180,14 @@ void move_environment_sensor(object *op)
             /* Simplify time comparisons */
             int t1 = CLAMP(hh1, 0, 23) * 60 + CLAMP(mm1, 0, 59);
             int t2 = CLAMP(hh2, 0, 23) * 60 + CLAMP(mm2, 0, 59);
-            int tnow = tod.hour*60 + tod.minute;
+            int tnow = tad.hour*60 + tad.minute;
 
             /* Two cases: interval either spans midnight or not */
             if( (t1 > t2 && (tnow >= t1 || tnow <= t2)) ||
                     (t1 <= t2 && (tnow >= t1 && tnow <= t2)))
-                    trig_tod = 1;
+                    trig_tad = 1;
 
-//            LOG(llevDebug, "tod: %02d:%02d, trig (%s): %d\n", tod.hour, tod.minute, op->slaying, trig_tod);
+//            LOG(llevDebug, "tad: %02d:%02d, trig (%s): %d\n", tad.hour, tad.minute, op->slaying, trig_tad);
         } else
         {
             /* Interval is obviously invalid, drop it */
@@ -1199,10 +1200,10 @@ void move_environment_sensor(object *op)
         trig_dow = 1;
     else
     {
-        if(op->last_heal & (1 << tod.dayofweek))
+        if(op->last_heal & (1 << tad.day)) // FIXME
             trig_dow = 1;
 
-        // LOG(llevDebug, "Weekday %d, trig (%d): %d\n", tod.dayofweek, op->last_grace, trig_dow);
+        // LOG(llevDebug, "Weekday %d, trig (%d): %d\n", tad.dayofweek, op->last_grace, trig_dow);
     }
 
     /* Brightness triggered? */
@@ -1237,14 +1238,14 @@ void move_environment_sensor(object *op)
 
     /* Trigger if sensor status changes (or when not initialized) */
     if(
-            ( (trig_tod && trig_dow && trig_bright) && op->weight_limit == 0) ||
-            (!(trig_tod && trig_dow && trig_bright) && op->weight_limit == 1) ||
+            ( (trig_tad && trig_dow && trig_bright) && op->weight_limit == 0) ||
+            (!(trig_tad && trig_dow && trig_bright) && op->weight_limit == 1) ||
             !QUERY_FLAG(op, FLAG_INITIALIZED))
     {
         SET_FLAG(op, FLAG_INITIALIZED);
 //        LOG(llevDebug, "env_sensor toggled from %d to %d\n", op->value, !op->value);
 
-        op->weight_limit = (trig_tod && trig_dow && trig_bright) ? 1 : 0;
+        op->weight_limit = (trig_tad && trig_dow && trig_bright) ? 1 : 0;
 
         signal_connection(op, NULL, NULL, op->map);
     }

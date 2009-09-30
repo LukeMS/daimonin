@@ -176,6 +176,30 @@ void free_strings()
         FREE_ONLY_HASH(ptr[i]);
 }
 
+/* set the pticks_xx but NOT pticks itself.
+ * pticks_ums = how "long" in ums is a server "round" (counted with ROUND_TAG).
+ * pticks_second = how many "round" are done in a second.
+ *
+ * The default ums is set in MAX_TIME in config.h and cank be changed with the
+ * /dm_time command. */
+/* TODO: send new pticks_xx to all plugins! */
+void set_pticks_time(long t)
+{
+    pticks_ums = t;
+    pticks_second = 1000000.0f;
+
+    if(t)
+        pticks_second = 1000000.0f/(float)t;
+
+    pticks_socket_idle = (uint32)((60.0f * 3.0f) * pticks_second);
+    pticks_player_idle1 = (uint32)((60.0f * 8.0f) * pticks_second);
+    pticks_player_idle2 = (uint32)((60.0f * 2.0f) * pticks_second);
+
+    /* LOG(llevDebug,"set_pticks_time(): t=%d ums:%d pticks_second:%f sock:%d idle1:%d idle2:%d\n",
+       t, pticks_ums, pticks_second, pticks_socket_idle, pticks_player_idle1, pticks_player_idle2);
+     */
+}
+
 /*
  * Initialises all global variables.
  * Might use environment-variables as default for some of them.
@@ -508,12 +532,12 @@ static void init_clocks()
     if ((fp = fopen(filename, "r")) == NULL)
     {
         LOG(llevBug, "BUG: Can't open %s.\n", filename);
-        todtick = 0;
-        write_todclock();
+        tadtick = 0;
+        write_tadclock();
         return;
     }
-    fscanf(fp, "%lu", &todtick);
-    LOG(llevDebug, "todtick=%lu\n", todtick);
+    fscanf(fp, "%lu", &tadtick);
+    LOG(llevDebug, "tadtick=%lu\n", tadtick);
     fclose(fp);
 }
 
@@ -1061,7 +1085,7 @@ void fatal_signal(int make_core, int close_sockets)
         /* kick_player(NULL); */
         clean_tmp_files(FALSE);
         write_book_archive();
-        write_todclock();   /* lets just write the clock here */
+        write_tadclock();   /* lets just write the clock here */
         save_ban_file();
     }
     if (make_core)
@@ -1179,7 +1203,6 @@ static void parse_args(int argc, char *argv[], int pass)
     }
 }
 
-
 static void init_beforeplay()
 {
     pool_mob_data->constructor = (chunk_constructor) initialize_mob_data;
@@ -1270,7 +1293,12 @@ void init(int argc, char **argv)
 
     init_library();             /* Must be called early */
     load_settings();            /* Load the settings file */
-    init_word_darkness();
+
+    /* So we don't add an hour every reboot. */
+    if (tadtick > 0)
+        tadtick--;
+
+    tick_tadclock();
     parse_args(argc, argv, 2);
 
 

@@ -383,7 +383,7 @@ typedef struct linked_char
 #include "arch.h"
 #include "spells.h"
 #include "map.h"
-#include "tod.h"
+#include "calendar.h"
 #include "pathfinder.h"
 #include "gmaster.h"
 #include "timeutils.h"
@@ -684,9 +684,6 @@ EXTERN MapLook                  blank_look;
 EXTERN New_Face                *blank_face, *next_item_face, *prev_item_face;
 
 EXTERN NewSocket               *init_sockets;
-
-EXTERN unsigned long            todtick; /* time of the day tick counter */
-EXTERN int                      world_darkness; /* daylight value. 0= totally dark. 7= daylight */
 
 EXTERN archetype               *wp_archetype;   /* Nice to have fast access to it */
 EXTERN archetype               *empty_archetype;    /* Nice to have fast access to it */

@@ -1,4 +1,4 @@
-~Category~: System/Server/Time
+~Category~: Calendar/Time
 
-~Syntax~: /time
-~Purpose~: Show the in-game date and time.
+~Syntax~: /time[ showtime][ showdate][ showseason][ longform]
+~Purpose~: Show the in-game date and time. The parmeters, which may be given in any order and combination, alter the format in which the time is given. They are for testing only.

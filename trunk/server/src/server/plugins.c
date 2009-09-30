@@ -89,7 +89,7 @@ struct plugin_hooklist  hooklist    =
     get_poolchunk_array_real,
     get_rangevector,
     get_rangevector_from_mapcoords,
-    get_tod,
+    get_tad,
     get_word_from_string,
     give_artifact_abilities,
     gui_interface,
@@ -148,6 +148,7 @@ struct plugin_hooklist  hooklist    =
     play_sound_map,
     play_sound_player_only,
     player_save,
+    print_tad,
     /* Q */
     query_base_name,
     query_cost,

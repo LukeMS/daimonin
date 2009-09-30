@@ -645,7 +645,7 @@ static int Map_PlayersOnMap(lua_State *L)
 /* Status : Untested/Stable                                                  */
 /* TODO   : Decide how to handle outdoors maps (currently we just ignore the */
 /*          flag, meaning the darkness will be set and becomes the new       */
-/*          maximum 'illumination' for variable lighting according to tod).  */
+/*          maximum 'illumination' for variable lighting according to tad).  */
 /*****************************************************************************/
 static int Map_SetDarkness(lua_State *L)
 {
