@@ -71,29 +71,35 @@ char *str_dup(const char *str)
 void read_sounds(void)
 {
 #ifdef INSTALL_SOUND
-    FILE       *stream;
-    unsigned char *temp_buf;
-    struct stat statbuf;
-    int         i;
+    FILE *stream;
 
     srv_client_files[SRV_CLIENT_SOUNDS].len = 0;
     srv_client_files[SRV_CLIENT_SOUNDS].crc = 0;
     LOG(LOG_DEBUG, "Reading %s....", FILE_CLIENT_SOUNDS);
+
     if ((stream = fopen_wrapper(FILE_CLIENT_SOUNDS, "rb")) != NULL)
     {
-        /* temp load the file and get the data we need for compare with server */
+        struct stat    statbuf;
+        int            i;
+        unsigned char *temp_buf;
+        size_t         dummy; // purely to avoid GCC's warn_unused_result warning
+
+        /* temp load the file and get the data we need for compare with
+         * server. */
         fstat(fileno(stream), &statbuf);
         i = (int) statbuf.st_size;
         srv_client_files[SRV_CLIENT_SOUNDS].len = i;
         temp_buf = malloc(i);
-        fread(temp_buf, sizeof(char), i, stream);
+        dummy = fread(temp_buf, sizeof(char), i, stream);
         srv_client_files[SRV_CLIENT_SOUNDS].crc = crc32(1L, temp_buf, i);
         free(temp_buf);
         fclose(stream);
-        LOG(LOG_DEBUG, " found file!(%d/%x)", srv_client_files[SRV_CLIENT_SOUNDS].len,
+        LOG(LOG_DEBUG, " found file!(%d/%x)",
+            srv_client_files[SRV_CLIENT_SOUNDS].len,
             srv_client_files[SRV_CLIENT_SOUNDS].crc);
     }
-    LOG(LOG_DEBUG, "done.\n");
+
+    LOG(LOG_DEBUG, " done.\n");
 #endif
 }
 

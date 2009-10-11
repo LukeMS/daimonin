@@ -1249,29 +1249,35 @@ int get_facenum_from_name(char * name)
 
 void read_anims(void)
 {
-    FILE       *stream;
-    unsigned char *temp_buf;
-    struct stat statbuf;
-    int         i;
+    FILE *stream;
 
     LOG(LOG_DEBUG, "Loading %s....", FILE_CLIENT_ANIMS);
     srv_client_files[SRV_CLIENT_ANIMS].len = 0;
     srv_client_files[SRV_CLIENT_ANIMS].crc = 0;
+
     if ((stream = fopen_wrapper(FILE_CLIENT_ANIMS, "rb")) != NULL)
     {
-        /* temp load the file and get the data we need for compare with server */
+        struct stat    statbuf;
+        int            i;
+        unsigned char *temp_buf;
+        size_t         dummy; // purely to suppress GCC's warn_unused_result warning
+
+        /* temp load the file and get the data we need for compare with
+         * server */
         fstat(fileno(stream), &statbuf);
-        i = (int) statbuf.st_size;
+        i = (int)statbuf.st_size;
         srv_client_files[SRV_CLIENT_ANIMS].len = i;
         temp_buf = malloc(i);
-        fread(temp_buf, sizeof(char), i, stream);
+        dummy = fread(temp_buf, sizeof(char), i, stream);
         srv_client_files[SRV_CLIENT_ANIMS].crc = crc32(1L, temp_buf, i);
-        free(temp_buf);
         fclose(stream);
-        LOG(LOG_DEBUG, " found file!(%d/%x)", srv_client_files[SRV_CLIENT_ANIMS].len,
+        free(temp_buf);
+        LOG(LOG_DEBUG, " found file!(%d/%x)",
+            srv_client_files[SRV_CLIENT_ANIMS].len,
             srv_client_files[SRV_CLIENT_ANIMS].crc);
     }
-    LOG(LOG_DEBUG, "done.\n");
+
+    LOG(LOG_DEBUG, " done.\n");
 }
 
 /* after we tested and/or created bmaps.p0 - load the data from it */
@@ -1345,6 +1351,8 @@ void read_bmaps_p0(void)
 
     while (fgets(buf, LARGE_BUF - 1, fpic) != NULL)
     {
+        size_t dummy; // purely to suppress GCC's warn_unused_result warning
+
         if (strncmp(buf, "IMAGE ", 6) != 0)
         {
             LOG(LOG_ERROR, "read_client_images:Bad image line - not IMAGE, instead\n%s", buf);
@@ -1380,9 +1388,8 @@ void read_bmaps_p0(void)
             temp_buf = malloc(bufsize);
         }
 
-        fread(temp_buf, 1, len, fpic);
+        dummy = fread(temp_buf, 1, len, fpic);
         crc = crc32(1L, temp_buf, len);
-
         /* now we got all we needed! */
         sprintf(line_buf, "%d %d %x %s", num, pos, crc, cp);
         fputs(line_buf, fbmap);
@@ -1526,36 +1533,39 @@ create_bmap_tmp:
 
 void read_bmaps(void)
 {
-    FILE          *stream;
-    unsigned char *temp_buf;
-    struct stat statbuf;
-    int         i;
+    FILE *stream;
 
     srv_client_files[SRV_CLIENT_BMAPS].len = 0;
     srv_client_files[SRV_CLIENT_BMAPS].crc = 0;
     LOG(LOG_DEBUG, "Reading %s....", FILE_CLIENT_BMAPS);
+
     if ((stream = fopen_wrapper(FILE_CLIENT_BMAPS, "rb")) != NULL)
     {
-        /* temp load the file and get the data we need for compare with server */
+        struct stat    statbuf;
+        int            i;
+        unsigned char *temp_buf;
+        size_t         dummy; // purely to suppress GCC's warn_unused_result warning
+
+        /* temp load the file and get the data we need for compare with
+         * server. */
         fstat(fileno(stream), &statbuf);
-        i = (int) statbuf.st_size;
+        i = (int)statbuf.st_size;
         srv_client_files[SRV_CLIENT_BMAPS].len = i;
         temp_buf = malloc(i);
-        fread(temp_buf, sizeof(char), i, stream);
+        dummy = fread(temp_buf, sizeof(char), i, stream);
         srv_client_files[SRV_CLIENT_BMAPS].crc = crc32(1L, temp_buf, i);
-        free(temp_buf);
         fclose(stream);
-        LOG(LOG_DEBUG, " found file!(%d/%x)", srv_client_files[SRV_CLIENT_BMAPS].len,
+        free(temp_buf);
+        LOG(LOG_DEBUG, " found file!(%d/%x)",
+            srv_client_files[SRV_CLIENT_BMAPS].len,
             srv_client_files[SRV_CLIENT_BMAPS].crc);
     }
     else
     {
         unlink(FILE_BMAPS_TMP);
-        LOG(LOG_DEBUG, "done.\n");
-        return;
     }
 
-    LOG(LOG_DEBUG, "done.\n");
+    LOG(LOG_DEBUG, " done.\n");
 }
 
 /* in the setting files we have a list of chars templates
@@ -1757,29 +1767,35 @@ void load_settings(void)
 
 void read_settings(void)
 {
-    FILE       *stream;
-    unsigned char *temp_buf;
-    struct stat statbuf;
-    int         i;
+    FILE *stream;
 
+    LOG(LOG_DEBUG, "Loading %s....", FILE_CLIENT_SETTINGS);
     srv_client_files[SRV_CLIENT_SETTINGS].len = 0;
     srv_client_files[SRV_CLIENT_SETTINGS].crc = 0;
-    LOG(LOG_DEBUG, "Reading %s....", FILE_CLIENT_SETTINGS);
+
     if ((stream = fopen_wrapper(FILE_CLIENT_SETTINGS, "rb")) != NULL)
     {
-        /* temp load the file and get the data we need for compare with server */
+        struct stat    statbuf;
+        int            i;
+        unsigned char *temp_buf;
+        size_t         dummy; // purely to suppress GCC's warn_unused_result warning
+
+        /* temp load the file and get the data we need for compare with
+         * server */
         fstat(fileno(stream), &statbuf);
-        i = (int) statbuf.st_size;
+        i = (int)statbuf.st_size;
         srv_client_files[SRV_CLIENT_SETTINGS].len = i;
         temp_buf = malloc(i);
-        fread(temp_buf, sizeof(char), i, stream);
+        dummy = fread(temp_buf, sizeof(char), i, stream);
         srv_client_files[SRV_CLIENT_SETTINGS].crc = crc32(1L, temp_buf, i);
-        free(temp_buf);
         fclose(stream);
-        LOG(LOG_DEBUG, " found file!(%d/%x)", srv_client_files[SRV_CLIENT_SETTINGS].len,
+        free(temp_buf);
+        LOG(LOG_DEBUG, " found file!(%d/%x)",
+            srv_client_files[SRV_CLIENT_SETTINGS].len,
             srv_client_files[SRV_CLIENT_SETTINGS].crc);
     }
-    LOG(LOG_DEBUG, "done.\n");
+
+    LOG(LOG_DEBUG, " done.\n");
 }
 
 void read_spells(void)
@@ -1810,12 +1826,15 @@ void read_spells(void)
     LOG(LOG_DEBUG, "Reading %s.... ", FILE_CLIENT_SPELLS);
     if ((stream = fopen_wrapper(FILE_CLIENT_SPELLS, "rb")) != NULL)
     {
-        /* temp load the file and get the data we need for compare with server */
+        size_t dummy; // purely to suppress GCC's warn_unused_result warning
+
+        /* temp load the file and get the data we need for compare with
+         * server */
         fstat(fileno(stream), &statbuf);
         i = (int) statbuf.st_size;
         srv_client_files[SRV_CLIENT_SPELLS].len = i;
         temp_buf = malloc(i);
-        fread(temp_buf, sizeof(char), i, stream);
+        dummy = fread(temp_buf, sizeof(char), i, stream);
         srv_client_files[SRV_CLIENT_SPELLS].crc = crc32(1L, temp_buf, i);
         free(temp_buf);
         rewind(stream);
@@ -1933,12 +1952,15 @@ void read_skills(void)
     LOG(LOG_DEBUG, "Reading %s....", FILE_CLIENT_SKILLS);
     if ((stream = fopen_wrapper(FILE_CLIENT_SKILLS, "rb")) != NULL)
     {
-        /* temp load the file and get the data we need for compare with server */
+        size_t dummy; // purely to suppress GCC's warn_unused_result warning
+
+        /* temp load the file and get the data we need for compare with
+         * server */
         fstat(fileno(stream), &statbuf);
         i = (int) statbuf.st_size;
         srv_client_files[SRV_CLIENT_SKILLS].len = i;
         temp_buf = malloc(i);
-        fread(temp_buf, sizeof(char), i, stream);
+        dummy = fread(temp_buf, sizeof(char), i, stream);
         srv_client_files[SRV_CLIENT_SKILLS].crc = crc32(1L, temp_buf, i);
         free(temp_buf);
         rewind(stream);
@@ -2392,10 +2414,11 @@ void load_quickslots_entrys()
     char        name[40], server[2048];
     _quickslot  quickslots[MAX_QUICK_SLOTS];
     FILE       *stream;
+    size_t      dummy; // purely to suppress GCC's warn_unused_result warning
 
     if (!(stream = fopen_wrapper(QUICKSLOT_FILE, "rb")))
         return;
-    fread(&header, sizeof(header), 1, stream);
+    dummy = fread(&header, sizeof(header), 1, stream);
     if (header != QUICKSLOT_FILE_HEADER)
     {
         fclose(stream);
@@ -2520,7 +2543,10 @@ void save_quickslots_entrys()
     }
     /* readNextQuickSlots has problems with wb+ and rb+ opened files */
     n = ftell(stream);
-    freopen(file_path(QUICKSLOT_FILE, "rb"),"rb",stream);
+
+    if (!(freopen(file_path(QUICKSLOT_FILE, "rb"),"rb",stream)))
+        return;
+
     fseek(stream,n,SEEK_SET);
     while ((size = readNextQuickSlots(stream, server, &n, name, quickslots)) != 0)
     {
@@ -2528,14 +2554,18 @@ void save_quickslots_entrys()
         {
             if ((n = w - size) != 0)
             {
-                char *buf;
-                long  pos = ftell(stream);
-                freopen(file_path(QUICKSLOT_FILE, "rb+"),"rb+",stream);
+                char  *buf;
+                long   pos = ftell(stream);
+                size_t dummy; // purely to suppress GCC's warn_unused_result warning
+
+                if (!(freopen(file_path(QUICKSLOT_FILE, "rb+"),"rb+",stream)))
+                    return;
+
                 fseek(stream, 0, SEEK_END);
                 w = ftell(stream) - pos;
                 buf = (char *)malloc(w);
                 fseek(stream, pos, SEEK_SET);
-                fread(buf, 1, w, stream);
+                dummy = fread(buf, 1, w, stream);
                 fseek(stream, pos + n, SEEK_SET);
                 fwrite(buf, 1, w, stream);
                 if (n < 0)
@@ -2543,8 +2573,11 @@ void save_quickslots_entrys()
                     w = ftell(stream);
                     rewind(stream);
                     buf = (char *)realloc(buf, w);
-                    fread(buf, 1, w, stream);
-                    freopen(file_path(QUICKSLOT_FILE, "wb+"), "wb+", stream);
+                    dummy = fread(buf, 1, w, stream);
+
+                    if (!(freopen(file_path(QUICKSLOT_FILE, "wb+"), "wb+", stream)))
+                        return;
+
                     fwrite(buf, 1, w, stream);
                 }
                 free(buf);
@@ -2571,7 +2604,10 @@ void save_quickslots_entrys()
             return;
         }
     }
-    freopen(file_path(QUICKSLOT_FILE, "rb+"),"rb+",stream);
+
+    if (!(freopen(file_path(QUICKSLOT_FILE, "rb+"),"rb+",stream)))
+        return;
+
     fseek(stream, 0, SEEK_END);
     fwrite(&ServerName, sizeof(char), strlen(ServerName) + 1, stream);
     fwrite(&ServerPort, sizeof(int), 1, stream);

@@ -139,6 +139,7 @@ int main(int argc, char *argv[])
     int version_nr, version_def_nr, patched=FALSE;
     char version[256], buf[256], *string_pos;
     char file_name[256], md5[64];
+    char *dummy; // purely to avoid GCC's warn_unused_result warning
 
 #ifndef WIN32
     /*    struct flock fl = { F_RDLCK, SEEK_SET, 0,       0,     0 };*/
@@ -221,7 +222,7 @@ int main(int argc, char *argv[])
         exit(-2);
     }
 
-    fgets(version, 128 - 1, version_handle);
+    dummy = fgets(version, 128 - 1, version_handle);
     /* we don't close the version file here because we need to hold the lock of it */
 
     adjust_string(version);
@@ -457,8 +458,15 @@ void clear_directory(char* start_dir)
     /* open the directory for reading */
     if (start_dir)
     {
-        dir = opendir(start_dir);
-        chdir(start_dir);
+        if ((dir = opendir(start_dir)))
+        {
+            if (chdir(start_dir) == -1)
+            {
+                fprintf(stderr, "Cannot chdir into '%s': ", start_dir);
+                perror("");
+                dir = NULL;
+            }
+        }
     }
     else
         dir = opendir(".");
@@ -521,7 +529,13 @@ void clear_directory(char* start_dir)
     closedir(dir);
 
     if (start_dir) /* clean restore */
-        chdir(cwd);
+    {
+        if (chdir(cwd) == -1)
+        {
+            fprintf(stderr, "Cannot chdir into '%s': ", cwd);
+            perror("");
+        }
+    }
 }
 
 
@@ -645,8 +659,15 @@ void copy_patch_files(char* start_dir)
             return;
         }
 
-        dir = opendir(start_dir);
-        chdir(start_dir);
+        if ((dir = opendir(start_dir)))
+        {
+            if (chdir(start_dir) == -1)
+            {
+                fprintf(stderr, "Cannot chdir into '%s': ", start_dir);
+                perror("");
+                dir = NULL;
+            }
+        }
     }
     else
         dir = opendir(".");
@@ -724,7 +745,12 @@ void copy_patch_files(char* start_dir)
     if (start_dir) /* clean restore */
     {
         printf(" done.\n");
-        chdir(base);
+
+        if (chdir(base) == -1)
+        {
+            fprintf(stderr, "Cannot chdir into '%s': ", base);
+            perror("");
+        }
     }
 }
 
