@@ -911,7 +911,7 @@ int process_patch_file(char *patch_file, int mode)
     return(0);
 }
 
-static int my_fwrite(void *buffer, size_t size, size_t nmemb, void *stream)
+static size_t my_fwrite(void *buffer, size_t size, size_t nmemb, void *stream)
 {
     struct FtpFile *out=(struct FtpFile *)stream;
     if(out && !out->stream) {
