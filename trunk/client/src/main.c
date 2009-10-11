@@ -1612,7 +1612,7 @@ int main(int argc, char *argv[])
             sprintf(tmp, "Usage: %s -account <accountname> -pass <password> [-server <n>]\n1 - daimonin.game-server.cc\n2-test-server.game-server.cc\n3-localhost\n", argv[0]);
 #endif
             LOG(LOG_MSG, "%s", tmp);
-            fprintf(stderr, tmp);
+            fprintf(stderr, "%s", tmp);
             exit(1);
         }
     }
