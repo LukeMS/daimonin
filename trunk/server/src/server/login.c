@@ -591,7 +591,9 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
             channelcount=value;
             for (i=1; (i<= value) && (i<256); i++)
             {
-                fgets(chantemp[i-1], MAX_BUF, fp);
+                char *dummy; // purely to suppres GCC's warn_unused_result
+
+                dummy = fgets(chantemp[i-1], MAX_BUF, fp);
             }
         }
 #endif
@@ -600,7 +602,12 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
             int j;
             for (i = 1; i <= value; i++)
             {
-                fscanf(fp, "%d\n", &j);
+                if (fscanf(fp, "%d\n", &j) != 1)
+                {
+                    LOG(llevBug, "BUG: %s/player_load(): Corrupt lev_hp value in save file '%s'\n",
+                        __FILE__, filename);
+                }
+
                 pl->levhp[i] = j;
             }
         }
@@ -609,7 +616,12 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
             int j;
             for (i = 1; i <= value; i++)
             {
-                fscanf(fp, "%d\n", &j);
+                if (fscanf(fp, "%d\n", &j) != 1)
+                {
+                    LOG(llevBug, "BUG: %s/player_load(): Corrupt lev_sp value in save file '%s'\n",
+                        __FILE__, filename);
+                }
+
                 pl->levsp[i] = j;
             }
         }
@@ -618,7 +630,12 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
             int j;
             for (i = 1; i <= value; i++)
             {
-                fscanf(fp, "%d\n", &j);
+                if (fscanf(fp, "%d\n", &j) != 1)
+                {
+                    LOG(llevBug, "BUG: %s/player_load(): Corrupt lev_grace value in save file '%s'\n",
+                        __FILE__, filename);
+                }
+
                 pl->levgrace[i] = j;
             }
         }

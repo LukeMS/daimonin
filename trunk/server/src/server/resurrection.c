@@ -229,7 +229,9 @@ int resurrect_player(object *op, char *playername, int rspell)
 
     while (!feof(deadplayer))
     {
-        fgets(buf, 255, deadplayer);
+        char *dummy; // purely to suppress GCC's warn_unused_result warning
+
+        dummy = fgets(buf, 255, deadplayer);
         sscanf(buf, "%s", buf2);
         if (!(strcmp(buf2, "exp")))
         {

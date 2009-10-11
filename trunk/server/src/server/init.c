@@ -529,15 +529,26 @@ static void init_clocks()
 
     sprintf(filename, "%s/clockdata", settings.localdir);
     LOG(llevDebug, "Reading clockdata from %s...", filename);
+
     if ((fp = fopen(filename, "r")) == NULL)
     {
         LOG(llevBug, "BUG: Can't open %s.\n", filename);
         tadtick = 0;
         write_tadclock();
+
         return;
     }
-    fscanf(fp, "%lu", &tadtick);
-    LOG(llevDebug, "tadtick=%lu\n", tadtick);
+
+    if (fscanf(fp, "%lu", &tadtick) != 1)
+    {
+        tadtick = 0;
+        LOG(llevDebug, "failed! tadtick defaults to %lu\n", tadtick);
+    }
+    else
+    {
+        LOG(llevDebug, "tadtick=%lu\n", tadtick);
+    }
+
     fclose(fp);
 }
 
