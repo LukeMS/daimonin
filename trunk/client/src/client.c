@@ -370,6 +370,7 @@ static int load_picture_from_pack(int num)
 {
     FILE       *stream;
     char       *pbuf;
+    size_t      dummy; // purely to avoid GCC's warn_unused_result warning
     SDL_RWops  *rwop;
 
     if ((stream = fopen_wrapper(FILE_DAIMONIN_P0, "rb")) == NULL)
@@ -378,16 +379,16 @@ static int load_picture_from_pack(int num)
     lseek(fileno(stream), bmaptype_table[num].pos, SEEK_SET);
 
     pbuf = malloc(bmaptype_table[num].len);
-    fread(pbuf, bmaptype_table[num].len, 1, stream);
-    fclose(stream);
-
+    dummy = fread(pbuf, bmaptype_table[num].len, 1, stream);
     rwop = SDL_RWFromMem(pbuf, bmaptype_table[num].len);
-
     FaceList[num].sprite = sprite_tryload_file(NULL, 0, rwop);
+
     if (FaceList[num].sprite)
         face_flag_extension(num, FaceList[num].name);
 
+    fclose(stream);
     free(pbuf);
+
     return 0;
 }
 /* we got a face - test we have it loaded.

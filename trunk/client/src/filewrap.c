@@ -87,6 +87,7 @@ char *file_path(const char *fname, const char *mode)
         {
             char otmp[256];
             char shtmp[517];
+            int  dummy; // purely to suppress GCC's warn_unused_result warning
 
             sprintf(otmp, "%s%s", SYSPATH, fname);
             if ((stmp=strrchr(tmp, '/')))
@@ -99,8 +100,7 @@ char *file_path(const char *fname, const char *mode)
 
             /* Copy base file to home directory */
             sprintf(shtmp, "cp %s %s", otmp, tmp);
-            system(shtmp);
-
+            dummy = system(shtmp);
         }
     }
     else
