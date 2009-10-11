@@ -946,7 +946,7 @@ int do_skill_attack(object *tmp, object *op, char *string)
 
     if (success && string != NULL)
     {
-        sprintf(buf, string);
+        sprintf(buf, "%s", string);
         if (op->type == PLAYER)
             new_draw_info_format(NDI_UNIQUE, 0, op, "You %s %s!", buf, name);
         else if (tmp->type == PLAYER)
