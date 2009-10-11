@@ -347,8 +347,15 @@ static void traverse_artifact_files(char* start_dir, int recursive, int mode)
     /* open the directory for reading */
     if(start_dir)
     {
-        dir = opendir(start_dir);
-        chdir(start_dir);
+        if ((dir = opendir(start_dir)))
+        {
+            if (chdir(start_dir) == -1)
+            {
+                fprintf(stderr, "Cannot chdir into '%s': ", start_dir);
+                perror("");
+                dir = NULL;
+            }
+        }
     }
     else
         dir = opendir(".");
@@ -425,7 +432,13 @@ static void traverse_artifact_files(char* start_dir, int recursive, int mode)
     closedir(dir);
 
     if(start_dir) /* clean restore */
-        chdir(cwd);
+    {
+        if (chdir(cwd) == -1)
+        {
+            fprintf(stderr, "Cannot chdir into '%s': ", cwd);
+            perror("");
+        }
+    }
 }
 
 void load_artifacts(int mode)

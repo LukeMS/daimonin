@@ -368,14 +368,16 @@ void read_skill_params()
 
     while (!feof(skill_params))
     {
+        char *dummy; // purely to suppress GCC's warn_unused_result warning
+
         /* Large buf, so that long comments don't kill it. */
-        fgets(skill_name, 255, skill_params);
+        dummy = fgets(skill_name, 255, skill_params);
         if (*skill_name == '#' || *skill_name == '\n' || *skill_name == '\r')
             continue;
         skillindex = lookup_skill_by_name(skill_name);
         if (skillindex == -1)
             LOG(llevError, "ERROR: skill_params has unrecognized skill: %s", skill_name);
-        fgets(skill_attrib, 255, skill_params);
+        dummy = fgets(skill_attrib, 255, skill_params);
         sscanf(skill_attrib, "%d %d %d %f %d %d %d", &cat, &time, &bexp, &lexp, &stat1, &stat2, &stat3);
         skills[skillindex].category = cat;
         skills[skillindex].time = time;
