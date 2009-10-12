@@ -624,13 +624,42 @@ int command_dm_dev(object *op, char *params)
  * mode/logs in. */
 int command_dm_invis(object *op, char *params)
 {
-    if (op->type != PLAYER)
+    player *pl;
+
+    if (op->type != PLAYER ||
+        !(pl = CONTR(op)))
         return 0;
 
-    CONTR(op)->dm_invis = (CONTR(op)->dm_invis) ? 0 : 1;
+    pl->dm_invis = (pl->dm_invis) ? 0 : 1;
     new_draw_info_format(NDI_UNIQUE, 0, op, "toggled dm_invis to %d",
-                         CONTR(op)->dm_invis);
+                         pl->dm_invis);
     FIX_PLAYER(op, "command dm_invis");
+
+    /* If we have turned off dm_invis, we need to update the client's view now
+     * so that the player immediately sees himself and doesn't see invisible
+     * things any more. */
+    if (!pl->dm_invis)
+    {
+        /* FIXME: I'm not clear why simply updating op's layer doesn't work,
+         * but it doesn't so lets reinsert op entirely (overkill, but it
+         * works).
+         * -- Smacky 20091012 */
+#if 0
+        update_object(op, UP_OBJ_LAYER);
+#else
+        remove_ob(op);
+
+        if (op->map)
+        {
+            insert_ob_in_map(op, op->map, NULL, 0);
+        }
+        else
+        {
+            insert_ob_in_ob(op, op->env);
+        }
+#endif
+        pl->socket.update_tile = 0;
+    }
 
     return 0;
 }
