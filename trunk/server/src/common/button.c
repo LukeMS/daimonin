@@ -25,7 +25,7 @@
 
 #include <global.h>
 
-static objectlink * get_first_button_link(object *button);
+static objectlink *get_first_button_link(object *button, uint8 mode);
 
 /* When a map is loaded, its buttons are synced. We don't want
  * to trigger scripts then so we use this global to indicate it */
@@ -71,11 +71,11 @@ void signal_connection(object *op, object *activator, object *originator, mapstr
             }
         }
         else
-            olp = get_first_button_link(op);
+            olp = get_first_button_link(op, 0);
 
         if (!olp)
         {
-            LOG(llevMapbug, "MAPBUG:: %s/signal_connection(): No connected object found: %s[%d], connection %d on map '%s'!",
+            LOG(llevMapbug, "MAPBUG:: %s/signal_connection(): No connected object found: %s[%d], connection %d on map '%s'!\n",
                  __FILE__, op->name, op->count, connection,
                 (m && m != op->map) ? m->path : op->map->path);
 
@@ -344,7 +344,7 @@ void update_button(object *op, object *activator, object *originator)
     int         has_links = 0;
 
     /* LOG(llevDebug, "update_button: %s (%d)\n", op->name, op->count); */
-    for (ol = get_first_button_link(op); ol; ol = ol->next)
+    for (ol = get_first_button_link(op, 1); ol; ol = ol->next)
     {
         has_links = 1;
         if (!ol->objlink.ob || ol->objlink.ob->count != ol->id)
@@ -817,26 +817,38 @@ void remove_button_link(object *op)
     }
 }
 
-/*
- * Return the first objectlink in the objects linked to this one
- * In the case of CONN_SENSORS, make sure it is the output link
- */
-
-static objectlink * get_first_button_link(object *button)
+/* Return the first objectlink in the objects linked to this one. mode is a bit
+ * of a hack. If 1 then in the case of CONN_SENSORS, make sure the return is
+ * the output link. */
+static objectlink *get_first_button_link(object *button, uint8 mode)
 {
     oblinkpt   *obp;
     objectlink *ol;
 
     if (!button->map)
+    {
         return NULL;
+    }
+
     for (obp = button->map->buttons; obp; obp = obp->next)
     {
-        if(button->type == TYPE_CONN_SENSOR && button->last_grace != obp->value)
+        if(mode &&
+           button->type == TYPE_CONN_SENSOR &&
+           button->last_grace != obp->value)
+        {
             continue;
+        }
+
         for (ol = obp->objlink.link; ol; ol = ol->next)
-            if (ol->objlink.ob == button && ol->id == button->count)
+        {
+            if (ol->objlink.ob == button &&
+                ol->id == button->count)
+            {
                 return obp->objlink.link;
+            }
+        }
     }
+
     return NULL;
 }
 
