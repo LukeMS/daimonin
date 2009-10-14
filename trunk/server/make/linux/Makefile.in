@@ -63,14 +63,12 @@ exec_prefix = @exec_prefix@
 
 NO_X = @no_x@
 
+VERSION = daimonin-B5
+
 ##############################################################################
 # End of configuration options - nothing below here should need to be
 # Changed.
 #
-
-EXTRA_CFLAGS =
-
-VERSION = daimonin-beta04-0.970pr5
 
 ARCHIVE = /tmp/$(VERSION)
 
