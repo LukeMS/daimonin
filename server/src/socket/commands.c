@@ -197,6 +197,9 @@ CommArray_s CommandsGM[] =
 
 CommArray_s CommandsMW[] =
 {
+#ifdef _TESTSERVER
+    {"summon",        command_summon,      0.0f, 1},
+#endif
     {"teleport",      command_teleport,    0.0f, 1},
     {"resetmap",      command_reset,       0.0f, 1},
     {"goto",          command_goto,        0.0f, 1},
