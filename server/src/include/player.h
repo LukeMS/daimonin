@@ -45,13 +45,6 @@ enum
     FIRE_MODE_INIT
 };
 
-typedef enum usekeytype
-{
-    key_inventory       = 0,
-    keyrings            = 1,
-    containers          = 2,
-}    usekeytype;
-
 /* used for item damage system */
 enum
 {
@@ -345,8 +338,6 @@ typedef struct pl_player
 
     char                quick_name[BIG_NAME*3];     /* thats rank + name +" the xxxx" */
     char                ext_title[MAX_EXT_TITLE];   /* for client: <Rank> <Name>\n<Gender> <Race> <Profession> */
-
-    usekeytype          usekeys;          /* Method for finding keys for doors */
 
     uint16              last_flags;         /* fire/run on flags for last tick */
     uint32              count;              /* Any numbers typed before a command */

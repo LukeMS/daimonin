@@ -165,12 +165,6 @@ int                         command_listen(object *op, char *params);
 int                         command_statistics(object *pl, char *params);
 int                         command_fix_me(object *op, char *params);
 int                         command_logs(object *op, char *params);
-#if 0
-/* it seems pl->usekeys is unused -- a CF holdover? To find a key we call
- * time.c/find_key().
- * -- Smacky 20090613 */
-int                         command_usekeys(object *op, char *params);
-#endif
 int                         command_resistances(object *op, char *params);
 int                         command_resting(object *op, char *params);
 int                         command_help(object *op, char *params);

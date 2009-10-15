@@ -1038,43 +1038,6 @@ int command_logs(object *op, char *params)
     return 0;
 }
 
-#if 0
-/* it seems pl->usekeys is unused -- a CF holdover? To find a key we call
- * time.c/find_key().
- * -- Smacky 20090613 */
-int command_usekeys(object *op, char *params)
-{
-    usekeytype      oldtype = CONTR(op)->usekeys;
-    static char    *types[] =
-    {
-        "inventory", "keyrings", "containers"
-    };
-
-    if (!params)
-    {
-        new_draw_info_format(NDI_UNIQUE, 0, op, "usekeys is set to %s",
-                             types[CONTR(op)->usekeys]);
-
-        return 0;
-    }
-
-    if (!strcmp(params, "inventory"))
-        CONTR(op)->usekeys = key_inventory;
-    else if (!strcmp(params, "keyrings"))
-        CONTR(op)->usekeys = keyrings;
-    else if (!strcmp(params, "containers"))
-        CONTR(op)->usekeys = containers;
-    else
-         return 1;
-
-    new_draw_info_format(NDI_UNIQUE, 0, op, "usekeys %s set to %s",
-                         (oldtype == CONTR(op)->usekeys ? "" : "now"),
-                         types[CONTR(op)->usekeys]);
-
-    return 0;
-}
-#endif
-
 int command_resistances(object *op, char *params)
 {
     int i;
