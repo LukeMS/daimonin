@@ -1,0 +1,10 @@
+~Category~: Players/Gmasters
+
+~Syntax~: /gmasterfile
+~Purpose~: Lists all the entries in gmaster_file. Only available to GMs and MMs.
+
+~Syntax~: /gmasterfile add <entry>
+~Purpose~: Adds <entry> to gmaster_file. See that file for the format of <entry>. Only available to GMs and MMs.
+
+~Syntax~: /gmasterfile remove <entry>
+~Purpose~: Removes <entry> from gmaster_file. See that file for the format of <entry>. Only available to GMs and MMs.

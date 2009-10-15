@@ -113,6 +113,7 @@ CommArray_s Commands[] =
     {"gm",            command_gm,             0.0f, 1},
     {"vol",           command_vol,            0.0f, 1},
     {"mw",            command_mw,             0.0f, 1},
+    {"gmasterlist",   command_gmasterlist,    0.0f, 1},
 };
 
 CommArray_s EmoteCommands[] =
@@ -177,7 +178,6 @@ CommArray_s EmoteCommands[] =
 CommArray_s CommandsVOL[] =
 {
     {"mutelevel", command_mutelevel, 0.0f, 1},
-    {"dm_list",   command_dm_list,   0.0f, 1},
     {"kick",      command_kick,      0.0f, 1},
     {"mute",      command_mute,      0.0f, 1},
     {"ip",        command_ip,        0.0f, 1},
@@ -192,7 +192,7 @@ CommArray_s CommandsGM[] =
     {"teleport",       command_teleport,       0.0f, 1},
     {"ban",            command_ban,            0.0f, 1},
     {"silence",        command_silence,        0.0f, 1},
-    {"gm_set",         command_gm_set,         0.0f, 1},
+    {"gmasterfile",    command_gmasterfile,    0.0f, 1},
 };
 
 CommArray_s CommandsMW[] =
@@ -218,7 +218,7 @@ CommArray_s CommandsMW[] =
 
 CommArray_s CommandsMM[] =
 {
-    {"dm_set",       command_dm_set,            0.0f, 1},
+    {"gmasterfile",  command_gmasterfile,       0.0f, 1},
     {"plugin",       command_loadplugin,        0.0f, 1},
     {"pluglist",     command_listplugins,       0.0f, 1},
     {"shutdown",     command_start_shutdown,    0.0f, 1},

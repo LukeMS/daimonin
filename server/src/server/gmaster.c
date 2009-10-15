@@ -99,6 +99,78 @@ void remove_gmaster_list(player *pl)
         objectlink_unlink(&gmaster_list_MM, NULL, pl->gmaster_node);
 }
 
+/* This performs some basic checks on the four parameters to make sure they all
+ * add up to a valid entry.
+ * If they do, GMASTER_MODE_FOO is returned according to <mode>. If they don't,
+ * GMASTER_MODE_NO is returned. */
+int validate_gmaster_params(char *name, char *passwd, char *host, char *mode)
+{
+    int mode_id,
+        len;
+
+    /* First validate mode and set mode_id. */
+    if (!strcmp(mode, "VOL"))
+    {
+        mode_id = GMASTER_MODE_VOL;
+    }
+    else if (!strcmp(mode, "GM"))
+    {
+        mode_id = GMASTER_MODE_GM;
+    }
+    else if (!strcmp(mode, "MW"))
+    {
+        mode_id = GMASTER_MODE_MW;
+    }
+    else if (!strcmp(mode, "MM"))
+    {
+        mode_id = GMASTER_MODE_MM;
+    }
+    else
+    {
+        mode_id = GMASTER_MODE_NO;
+        LOG(llevInfo, "INFO:: validate_gmaster_mode(): mode '%s' invalid!\n",
+            mode);
+    }
+
+    /* Validate name. */
+    if (!name ||
+        (((len = strlen(name)) == 1 &&
+          *name != '*') &&
+         (len < MIN_ACCOUNT_NAME ||
+          len > MAX_ACCOUNT_NAME)))
+    {
+        mode_id = GMASTER_MODE_NO;
+        LOG(llevInfo, "INFO:: validate_gmaster_mode(): invalid name '%s'!\n",
+            name);
+    }
+
+    /* Validate passwd. */
+    if (!passwd ||
+        (((len = strlen(passwd)) == 1 &&
+          *passwd != '*') &&
+         (len < MIN_ACCOUNT_PASSWORD ||
+          len > MAX_ACCOUNT_PASSWORD)))
+    {
+        mode_id = GMASTER_MODE_NO;
+        LOG(llevInfo, "INFO:: validate_gmaster_mode(): invalid password '%s'!\n",
+            passwd);
+    }
+
+    /* Validate host. */
+    if (!host ||
+        (((len = strlen(host)) == 1 &&
+          *host != '*') &&
+         (len <= 6 ||
+          len >= 120)))
+    {
+        mode_id = GMASTER_MODE_NO;
+        LOG(llevInfo, "INFO:: validate_gmaster_mode(): invalid host '%s'!\n",
+            host);
+    }
+
+    return mode_id;
+}
+
 /* check a file entry.
  * Return GMASTER_MODE_NO for a invalid entry.
  */
