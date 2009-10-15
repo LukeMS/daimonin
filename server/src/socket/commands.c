@@ -87,7 +87,7 @@ CommArray_s Commands[] =
     {"save",          command_save,           0.0f, 1},
     {"use_skill",     command_uskill,         0.1f, 1},
     {"ready_skill",   command_rskill,         0.1f, 1},
-    {"silent_login",  command_silent_login,   0.0f, 1},
+    {"privacy",       command_privacy,        0.0f, 1},
     {"egobind",       command_egobind,        1.0f, 1},
     {"invite",        command_party_invite,   4.0f, 1},
     {"join",          command_party_join,     0.1f, 1},
@@ -193,6 +193,7 @@ CommArray_s CommandsMW[] =
 {
 #ifdef _TESTSERVER
     {"summon",        command_summon,      0.0f, 1},
+    {"stealth",       command_stealth,     0.0f, 1},
 #endif
     {"teleport",      command_teleport,    0.0f, 1},
     {"resetmap",      command_reset,       0.0f, 1},
@@ -200,7 +201,6 @@ CommArray_s CommandsMW[] =
     {"addexp",        command_addexp,      0.0f, 1},
     {"setskill",      command_setskill,    0.0f, 1},
     {"restart",       command_restart,     0.0f, 1},
-    {"dm_stealth",    command_dm_stealth,  0.0f, 1},
     {"dm_invis",      command_dm_invis,    0.0f, 1},
     {"dm_dev",        command_dm_dev,      0.0f, 1},
     {"dm_light",      command_dm_light,    0.0f, 1},
@@ -212,6 +212,7 @@ CommArray_s CommandsMW[] =
 
 CommArray_s CommandsMM[] =
 {
+    {"stealth",      command_stealth,           0.0f, 1},
     {"gmasterfile",  command_gmasterfile,       0.0f, 1},
     {"plugin",       command_loadplugin,        0.0f, 1},
     {"pluglist",     command_listplugins,       0.0f, 1},

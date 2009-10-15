@@ -86,7 +86,7 @@ int command_party_invite(object *pl, char *params)
     if (!params)
         return 1;
 
-    if(!(target = find_player(params)) || target->dm_stealth)
+    if(!(target = find_player(params)) || target->privacy)
     {
         /* ok - its not a player we want invite.
          * now check for keywords like "on", "off" or "allow <name>".
@@ -118,7 +118,7 @@ int command_party_invite(object *pl, char *params)
             params = strchr(params,' ')+1; /* we KNOW there is a ' ' - that ptr+1 is start of name or '/0'*/
             if((target = find_player(params)))
             {
-                if(!target->dm_stealth)
+                if(!target->privacy)
                 {
                     if(activator->group_status & GROUP_STATUS_INVITE)
                         command_party_deny (pl, NULL); /* automatic /deny */

@@ -113,7 +113,7 @@ int     command_channel_delete(object *ob, char *params);
 int     command_channel_mute(object *ob, char *params);
 
 
-void    channel_dm_stealth(player *pl, int dm_stealth);
+void    channel_privacy(player *pl, int privacy);
 
 int     check_channel_mute(struct player_channel *cpl);
 void    modify_channel_params(struct player_channel *cpl, char *params);

@@ -147,7 +147,7 @@ int                         command_dumpfriendlyobjects(object *op, char *params
 int                         command_dumpallarchetypes(object *op, char *params);
 int                         command_dm_dev(object *op, char *params);
 int                         command_dm_invis(object *op, char *params);
-int                         command_dm_stealth(object *op, char *params);
+int                         command_stealth(object *op, char *params);
 int                         command_dm_light(object *op, char *params);
 int                         command_dm_password(object *op, char *params);
 int                         command_dumpactivelist(object *op, char *params);
@@ -170,7 +170,7 @@ int                         command_resting(object *op, char *params);
 int                         command_help(object *op, char *params);
 int                         command_save(object *op, char *params);
 int                         command_style_map_info(object *op, char *params);
-int                         command_silent_login(object *op, char *params);
+int                         command_privacy(object *op, char *params);
 char                        *get_subdir(const char *name);
 int                         command_stuck(object *op, char *params);
 /* c_move.c */

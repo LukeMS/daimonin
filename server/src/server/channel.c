@@ -154,7 +154,7 @@ int command_channel(object *ob, char *params)
          */
         for (cpl=pl_channel->channel->players;cpl;cpl=cpl->next_player)
         {
-            if (!cpl->pl->dm_stealth)
+            if (!cpl->pl->privacy)
                 new_draw_info_format(NDI_UNIQUE, 0, ob, "%s",cpl->pl->ob->name);
         }
         return 0;
@@ -555,7 +555,7 @@ struct player_channel *final_addChannelToPlayer(player *pl, struct channels *cha
         }
     }
 
-    if (!pl->dm_stealth)
+    if (!pl->privacy)
         channel->pl_count++;
     pl->channel_count++;
     return node;
@@ -682,7 +682,7 @@ void removeChannelFromPlayer(player *pl, struct player_channel *pl_channel, char
         pl_tmp = pl_node;
     }
 
-    if (!pl->dm_stealth)
+    if (!pl->privacy)
         pl_channel->channel->pl_count--;
     pl->channel_count--;
 
@@ -933,16 +933,16 @@ void leaveAllChannels(player *pl)
     return;
 }
 /**
- * called when DM changes stealth state...
+ * called when player changes privacy state...
  * @param pl Pointer to player struct
- * @param dm_stealth value of dm_stealth
+ * @param privacy value of privacy
  */
-void channel_dm_stealth(player *pl, int dm_stealth)
+void channel_privacy(player *pl, int privacy)
 {
     struct player_channel *pl_channel;
     for (pl_channel=pl->channels;pl_channel;pl_channel=pl_channel->next_channel)
     {
-        if (dm_stealth==1)
+        if (privacy)
             pl_channel->channel->pl_count--;
         else
             pl_channel->channel->pl_count++;
