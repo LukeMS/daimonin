@@ -2180,247 +2180,147 @@ int command_mm(object *op, char *params)
     return 0;
 }
 
-/* list all active GM/VOL/DM
- * gmaster actives only */
-int command_dm_list(object *op, char *params)
+/* Lists online VOLs, GMs, MWs and non-stealthed MMs. */
+int command_gmasterlist(object *op, char *params)
 {
     objectlink *ol;
 
-    new_draw_info(NDI_UNIQUE, 0, op, "MM/GM/VOL online");
+    if (params)
+        return 1;
+
+    new_draw_info(NDI_UNIQUE, 0, op, "Gmaster's online");
     new_draw_info(NDI_UNIQUE, 0, op, "--- --- ---");
 
-    for(ol = gmaster_list_MW; ol; ol = ol->next)
-        new_draw_info_format(NDI_UNIQUE, 0, op, "%s (%d)",
-                             CONTR(ol->objlink.ob)->quick_name,
-                             ol->objlink.ob->level);
-
     for(ol = gmaster_list_VOL; ol; ol = ol->next)
-        new_draw_info_format(NDI_UNIQUE, 0, op, "%s (%d)",
-                             CONTR(ol->objlink.ob)->quick_name,
-                             ol->objlink.ob->level);
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, CONTR(ol->objlink.ob)->quick_name);
+    }
 
     for(ol = gmaster_list_GM; ol; ol = ol->next)
-        new_draw_info_format(NDI_UNIQUE, 0, op, "%s (%d)",
-                             CONTR(ol->objlink.ob)->quick_name,
-                             ol->objlink.ob->level);
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, CONTR(ol->objlink.ob)->quick_name);
+    }
+
+    for(ol = gmaster_list_MW; ol; ol = ol->next)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, CONTR(ol->objlink.ob)->quick_name);
+    }
 
     for(ol = gmaster_list_MM; ol; ol = ol->next)
     {
         if(!CONTR(ol->objlink.ob)->dm_stealth)
-            new_draw_info_format(NDI_UNIQUE, 0, op, "%s (%d)",
-                                 CONTR(ol->objlink.ob)->quick_name,
-                                 ol->objlink.ob->level);
+        {
+            new_draw_info(NDI_UNIQUE, 0, op,
+                          CONTR(ol->objlink.ob)->quick_name);
+        }
     }
 
     return 0;
 }
 
-/* /dm_set command
- */
-int command_dm_set(object *op, char *params)
+/* Lists, adds, or removes entries in gmaster_file. */
+int command_gmasterfile(object *op, char *params)
 {
-    char *str;
+    player     *pl;
+    objectlink *ol;
+    char        name[MAX_BUF],
+                passwd[MAX_BUF],
+                host[MAX_BUF],
+                mode[MAX_BUF];
+    int         mode_id;
 
-    if (!params)
-        return 1;
-
-    /* list all entries of gmaster_file
-     */
-    if (!strcmp(params,"list"))
+    if (!op ||
+        op->type != PLAYER ||
+        !(pl = CONTR(op)))
     {
-        objectlink *ol;
+        return 0;
+    }
 
+    /* list all entries. */
+    if (!params)
+    {
         new_draw_info(NDI_UNIQUE, 0, op, "gmaster_file");
         new_draw_info(NDI_UNIQUE, 0, op, "--- --- ---");
 
         for (ol = gmaster_list; ol; ol = ol->next)
-            new_draw_info_format(NDI_UNIQUE, 0, op, "%s",
-                                 ol->objlink.gm->entry);
-
-        return 0;
-    }
-
-    if (!(str = strchr(params, ' ')))
-      	  return 1;
-
-    /* kill the space, and set string to the next param */
-    *str++ = '\0';
-
-    if (!strcmp(params, "add"))
-    {
-        char name[MAX_BUF],
-             passwd[MAX_BUF],
-             host[MAX_BUF],
-             mode[MAX_BUF],
-             dummy[MAX_BUF];
-
-        if (sscanf(str, "%[^/]/%[^/]/%[^/]/%s%[\n\r]",
-                   name, passwd, host, mode, dummy) < 3)
-            new_draw_info(NDI_UNIQUE, 0, op, "/dm_set: invalid parameter.");
-        else
         {
-            int mode_id;
-
-            if ((mode_id = check_gmaster_file_entry(name, passwd, host,
-                                                    mode)) == GMASTER_MODE_NO)
-            {
-                new_draw_info(NDI_UNIQUE, 0, op, "/dm_set: invalid parameter.");
-
-                return 0;
-            }
-
-            /* all ok, setup the gmaster node and add it to our list */
-            LOG(llevSystem, "GMASTER:: /dm_set add %s invoked by %s\n",
-                str, query_name(op));
-            new_draw_info_format(NDI_UNIQUE, 0, op, "/dm_set: add entry %s",
-                                 str);
-            add_gmaster_file_entry(name, passwd, host, mode_id);
-            new_draw_info(NDI_UNIQUE, 0, op, "write back gmaster_file...");
-            write_gmaster_file(); /* create a new file */
+            new_draw_info(NDI_UNIQUE, 0, op, ol->objlink.gm->entry);
         }
 
         return 0;
     }
-    else if (!strcmp(params, "remove"))
+    /* add an entry. */
+    else if (!strncmp(params, "add", 3))
     {
-        objectlink *ol;
+        if (sscanf(params + 4, "%[^/]/%[^/]/%[^/]/%s",
+                   name, passwd, host, mode) != 4 ||
+            (mode_id = validate_gmaster_params(name, passwd, host, mode)) ==
+            GMASTER_MODE_NO)
+        {
+new_draw_info_format(NDI_UNIQUE, 0, op, ">%s< >%s< >%s< >%s< %d", name, passwd, host, mode, mode_id);
+            new_draw_info(NDI_UNIQUE, 0, op, "Malformed or missing parameter.");
+
+            return 1;
+        }
+
+        if (!compare_gmaster_mode(mode_id, pl->gmaster_mode))
+        {
+            new_draw_info(NDI_UNIQUE, 0, op, "You have insufficient permission to add this entry.");
+
+            return 0;
+        }
+
+        /* all ok, setup the gmaster node and add it to our list */
+        LOG(llevInfo, "INFO:: /gmasterfile %s invoked by %s\n",
+            params, query_name(op));
+        add_gmaster_file_entry(name, passwd, host, mode_id);
+        write_gmaster_file();
+
+        return 0;
+    }
+    /* remove an entry. */
+    else if (!strncmp(params, "remove", 6))
+    {
+        if (sscanf(params + 7, "%[^/]/%[^/]/%[^/]/%s",
+                   name, passwd, host, mode) != 4 ||
+            (mode_id = validate_gmaster_params(name, passwd, host, mode)) ==
+            GMASTER_MODE_NO)
+        {
+            new_draw_info(NDI_UNIQUE, 0, op, "Malformed or missing parameter.");
+
+            return 1;
+        }
 
         for (ol = gmaster_list; ol; ol = ol->next)
         {
-            if (!strcmp(str, ol->objlink.gm->entry)) /* found a entry */
+            if (!strcmp(params + 7, ol->objlink.gm->entry))
             {
-                /* delete the entry... */
-                LOG(llevSystem, "GMASTER:: /dm_set remove %s invoked by %s\n",
-                    str, query_name(op));
+                if (!compare_gmaster_mode(ol->objlink.gm->mode,
+                                          pl->gmaster_mode))
+                {
+                    new_draw_info(NDI_UNIQUE, 0, op, "You have insufficient permission to remove this entry.");
 
-                new_draw_info_format(NDI_UNIQUE, 0, op, "/dm_set: remove entry %s",
-                                     str);
+                   return 0;
+                }
+
+                /* remove the entry... */
+                LOG(llevInfo, "INFO:: /gmasterfile %s invoked by %s\n",
+                    params, query_name(op));
                 remove_gmaster_file_entry(ol);
-                new_draw_info(NDI_UNIQUE, 0, op, "write back gmaster_file...");
-                write_gmaster_file(); /* create a new file */
-                new_draw_info(NDI_UNIQUE, 0, op, "update gmaster rights...");
-                update_gmaster_file(); /* control rights of all active VOL/GM/DM */
-                new_draw_info(NDI_UNIQUE, 0, op, "done.");
+                write_gmaster_file();
+                update_gmaster_file();
 
                 return 0;
             }
         }
-    }
 
-    return 0;
-}
-
-int command_gm_set(object *op, char *params)
-{
-    char *str;
-
-    if (!params)
-        return 1;
-
-    /* list all entries of gmaster_file
-     */
-    if (!strcmp(params, "list"))
-    {
-        objectlink *ol;
-
-        new_draw_info(NDI_UNIQUE, 0, op, "gmaster_file");
-        new_draw_info(NDI_UNIQUE, 0, op, "--- --- ---");
-
-        for (ol = gmaster_list; ol; ol = ol->next)
-            new_draw_info_format(NDI_UNIQUE, 0, op, "%s",
-                                 ol->objlink.gm->entry);
+        new_draw_info(NDI_UNIQUE, 0, op, "Entry could not be found!");
 
         return 0;
     }
 
-    if (!(str = strchr(params, ' ')))
-        return 1;
-
-    /* kill the space, and set string to the next param */
-    *str++ = '\0';
-
-    if (!strcmp(params, "add"))
-    {
-        char name[MAX_BUF],
-             passwd[MAX_BUF],
-             host[MAX_BUF],
-             mode[MAX_BUF],
-             dummy[MAX_BUF];
-
-        if (sscanf(str, "%[^/]/%[^/]/%[^/]/%s%[\n\r]",
-                   name, passwd, host, mode, dummy) < 3)
-            new_draw_info(NDI_UNIQUE, 0, op, "/gm_set: invalid parameter.");
-        else
-        {
-            int mode_id;
-
-            mode_id = check_gmaster_file_entry(name, passwd, host, mode);
-
-            if (mode_id != GMASTER_MODE_VOL &&
-                mode_id != GMASTER_MODE_GM)
-            {
-                new_draw_info(NDI_UNIQUE, 0, op, "/gm_set: invalid parameter.");
-
-                return 0;
-            }
-
-            /* all ok, setup the gmaster node and add it to our list */
-            LOG(llevSystem, "GMASTER:: /gm_set add %s invoked by %s\n",
-                str, query_name(op));
-            new_draw_info_format(NDI_UNIQUE, 0, op, "/gm_set: add entry %s",
-                                 str);
-            add_gmaster_file_entry(name, passwd, host, mode_id);
-            new_draw_info(NDI_UNIQUE, 0, op, "write back gmaster_file...");
-            write_gmaster_file(); /* create a new file */
-        }
-
-        return 0;
-    }
-    else if (!strcmp(params, "remove"))
-    {
-        objectlink *ol;
-
-        for (ol = gmaster_list; ol; ol = ol->next)
-        {
-            if (!strcmp(str, ol->objlink.gm->entry)) /* found a entry */
-            {
-                char name[MAX_BUF],
-                     passwd[MAX_BUF],
-                     host[MAX_BUF],
-                     mode[MAX_BUF];
-                int  mode_id;
-
-                mode_id = check_gmaster_file_entry(name, passwd, host, mode);
-
-                if (mode_id != GMASTER_MODE_VOL &&
-                    mode_id != GMASTER_MODE_GM)
-                {
-                    new_draw_info(NDI_UNIQUE, 0, op, "/gm_set: invalid parameter.");
-                }
-                else
-                {
-                    /* delete the entry... */
-                    LOG(llevSystem, "GMASTER:: /gm_set remove %s invoked by %s\n",
-                        str, query_name(op));
-
-                    new_draw_info_format(NDI_UNIQUE, 0, op, "/gm_set: remove entry %s",
-                                         str);
-                    remove_gmaster_file_entry(ol);
-                    new_draw_info(NDI_UNIQUE, 0, op, "write back gmaster_file...");
-                    write_gmaster_file(); /* create a new file */
-                    new_draw_info(NDI_UNIQUE, 0, op, "update gmaster rights...");
-                    update_gmaster_file(); /* control rights of all active VOL/GM/DM */
-                    new_draw_info(NDI_UNIQUE, 0, op, "done.");
-                }
-
-                return 0;
-            }
-        }
-    }
-
-    return 0;
+    return 1;
 }
-
 
 int command_invisible(object *op, char *params)
 {
@@ -2442,7 +2342,6 @@ int command_invisible(object *op, char *params)
 
     return 0;
 }
-
 
 static int command_learn_spell_or_prayer(object *op, char *params, int special_prayer)
 {
