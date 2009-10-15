@@ -88,10 +88,6 @@ int player_save(object *op)
                  pl->listening, pl->mode,
                  pl->base_skill_group[0],pl->base_skill_group[1],pl->base_skill_group[2]);
 
-    /* Match the enumerations but in string form */
-    fprintf(fp, "usekeys %s\n",
-            pl->usekeys == key_inventory ? "key_inventory" : (pl->usekeys == keyrings ? "keyrings" : "containers"));
-
     if (op->map != NULL)
         set_mappath_by_map(op);
 
@@ -572,19 +568,6 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
 #ifdef USE_CHANNELS
         else if (!strcmp(buf, "Channels_On"))
             pl->channels_on=value;
-#endif
-        else if (!strcmp(buf, "usekeys"))
-        {
-            if (!strcmp(bufall + 8, "key_inventory\n"))
-                pl->usekeys = key_inventory;
-            else if (!strcmp(bufall + 8, "keyrings\n"))
-                pl->usekeys = keyrings;
-            else if (!strcmp(bufall + 8, "containers\n"))
-                pl->usekeys = containers;
-            else
-                LOG(llevDebug, "load_player: got unknown usekeys type: %s\n", bufall + 8);
-        }
-#ifdef USE_CHANNELS
         else if (!strcmp(buf,"channels"))
         {
             with_channels = TRUE;

@@ -78,12 +78,6 @@ CommArray_s Commands[] =
     {"qlist",         command_questlist,      0.0f, 0},
     {"mapinfo",       command_mapinfo,        0.0f, 1},
     {"motd",          command_motd,           0.0f, 0},
-#if 0
-/* it seems pl->usekeys is unused -- a CF holdover? To find a key we call
- * time.c/find_key().
- * -- Smacky 20090613 */
-    {"usekeys",       command_usekeys,        1.0f, 0},
-#endif
     {"time",          command_time,           1.0f, 0},
 /* This will be moved to a help category (/help version) and thus eventually
  * handled client-side.
