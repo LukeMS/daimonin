@@ -83,8 +83,8 @@ int player_save(object *op)
     if(pl->mute_counter > pticks)
         fprintf(fp, "mute %d\n", (int)(pl->mute_counter-pticks)); /* should be not THAT long */
 
-    fprintf(fp, "dm_stealth %d\nsilent_login %d\np_ver %d\nlistening %d\npickup %d\nskill_group %d %d %d\n",
-                 pl->dm_stealth, pl->silent_login, pl->p_ver,
+    fprintf(fp, "stealth %d\nprivacy %d\np_ver %d\nlistening %d\npickup %d\nskill_group %d %d %d\n",
+                 pl->stealth, pl->privacy, pl->p_ver,
                  pl->listening, pl->mode,
                  pl->base_skill_group[0],pl->base_skill_group[1],pl->base_skill_group[2]);
 
@@ -498,10 +498,10 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
             pl->mute_counter = pticks+(unsigned long)value;
         else if (!strcmp(buf, "state"))
             pl->state = value; /* be sure to do all other state flag settings after this load */
-        else if (!strcmp(buf, "dm_stealth"))
-            pl->dm_stealth = value;
-        else if (!strcmp(buf, "silent_login"))
-            pl->silent_login = value;
+        else if (!strcmp(buf, "stealth"))
+            pl->stealth = value;
+        else if (!strcmp(buf, "privacy"))
+            pl->privacy = value;
         else if (!strcmp(buf, "p_ver"))
             pl->p_ver = value;
         else if (!strcmp(buf, "listening"))
@@ -851,42 +851,47 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
     /* and finally the player appears on the map */
     enter_map_by_name(op, pl->maplevel, pl->orig_map, pl->map_x, pl->map_y, pl->map_status);
 
-    /* announce the login */
-    if (!pl->dm_stealth)
+    /* If pl has not requested privacy, announcethe login to all players. */
+    if (!pl->privacy)
     {
-        if (!pl->silent_login) /* Inform all players of the login */
-            new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, NULL, "%s has entered the game.", query_name(pl->ob));
-        else    /* Inform only the DMs, GMs and VOLs that the player logged in */
+        new_draw_info_format(NDI_UNIQUE | NDI_ALL, 0, NULL, "%s has entered the game.",
+                             query_name(pl->ob));
+    }
+
+    /* Extra info for VOLs, GMs, and MMs (if any are online), but not if pl is
+     * a privacy-seeking MM. */
+    if ((gmaster_list_VOL ||
+         gmaster_list_GM ||
+         gmaster_list_MM) &&
+        !(pl->gmaster_mode == GMASTER_MODE_MM &&
+          pl->privacy))
+    {
+        char        buf[MAX_BUF];
+        objectlink *ol;
+
+        /* There is no privacy from VOLs, GMs, and MMs! */
+        if (pl->privacy)
         {
-            char buf[MAX_BUF];
-            objectlink *ol;
-
-            sprintf(buf, "%s has entered the game.", query_name(pl->ob));
-
-            for (ol = gmaster_list_MM; ol; ol = ol->next)
-                new_draw_info_format(NDI_UNIQUE, 5, ol->objlink.ob, "%s has entered the game from ip %s", query_name(pl->ob), pl->socket.ip_host);
-            for (ol = gmaster_list_GM; ol; ol = ol->next)
-                new_draw_info_format(NDI_UNIQUE, 5, ol->objlink.ob, "%s has entered the game from ip %s", query_name(pl->ob), pl->socket.ip_host);
-            for (ol = gmaster_list_VOL; ol; ol = ol->next)
-                new_draw_info_format(NDI_UNIQUE, 5, ol->objlink.ob, "%s has entered the game from ip %s", query_name(pl->ob), pl->socket.ip_host);
-            for (ol = gmaster_list_MW; ol; ol = ol->next)
-                new_draw_info(NDI_UNIQUE, 5, ol->objlink.ob, buf);
-
+            sprintf(buf, "%s has entered the game.\n", query_name(pl->ob));
         }
-        if(gmaster_list_MM || gmaster_list_GM || gmaster_list_VOL)
+
+        sprintf(strchr(buf, '\0'), "IP: %s. Players now playing: %d.",
+                pl->socket.ip_host, player_active);
+ 
+
+        for (ol = gmaster_list_VOL; ol; ol = ol->next)
         {
-            objectlink *ol;
-            char buf_dm[64];
+            new_draw_info(NDI_UNIQUE, 0, ol->objlink.ob, buf);
+        }
 
-            sprintf(buf_dm, "DM: %d players now playing.", player_active);
+        for (ol = gmaster_list_GM; ol; ol = ol->next)
+        {
+            new_draw_info(NDI_UNIQUE, 0, ol->objlink.ob, buf);
+        }
 
-            for(ol = gmaster_list_MM;ol;ol=ol->next)
-                new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, buf_dm);
-            for(ol = gmaster_list_GM;ol;ol=ol->next)
-                new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, buf_dm);
-            for(ol = gmaster_list_VOL;ol;ol=ol->next)
-                new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, buf_dm);
-
+        for (ol = gmaster_list_MM; ol; ol = ol->next)
+        {
+            new_draw_info(NDI_UNIQUE, 0, ol->objlink.ob, buf);
         }
     }
 

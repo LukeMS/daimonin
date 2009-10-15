@@ -246,9 +246,11 @@ int command_who(object *op, char *params)
 
     for (pl = first_player; pl != NULL; pl = pl->next)
     {
-        if (pl->dm_stealth &&
-            (CONTR(op)->gmaster_mode != GMASTER_MODE_GM &&
-             CONTR(op)->gmaster_mode != GMASTER_MODE_MM))
+        if (pl->privacy &&
+            (pl->gmaster_mode == GMASTER_MODE_MM ||
+             !(CONTR(op)->gmaster_mode == GMASTER_MODE_VOL ||
+               CONTR(op)->gmaster_mode == GMASTER_MODE_GM ||
+               CONTR(op)->gmaster_mode == GMASTER_MODE_MM)))
             continue;
 
         if (pl->ob->map == NULL)
@@ -664,31 +666,23 @@ int command_dm_invis(object *op, char *params)
     return 0;
 }
 
-/* '/dm_stealth' toggles whether the DM's presence is announced to players (ie,
- * on login, in /who, and as feedback in /tell) AND whether mobs can sense the
- * DM's presence. The former works also when a dm logs in WITHOUT /dm set or
- * when the player leave DM mode, but the latter is only effective while DM
- * mode is active. */
-int command_dm_stealth(object *op, char *params)
+/* This toggles whether mobs can sense the players presence. */
+int command_stealth(object *op, char *params)
 {
     if (op->type != PLAYER)
         return 0;
 
-   if (CONTR(op)->dm_stealth)
+   if (CONTR(op)->stealth)
    {
        new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, NULL, "%s has entered the game.",
                             query_name(op));
-       CONTR(op)->dm_stealth = 0;
+       CONTR(op)->stealth = 0;
    }
    else
-       CONTR(op)->dm_stealth = 1;
+       CONTR(op)->stealth = 1;
 
-   new_draw_info_format(NDI_UNIQUE, 0, op, "toggled dm_stealth to %d",
-                        CONTR(op)->dm_stealth);
-
-#ifdef USE_CHANNELS
-    channel_dm_stealth(CONTR(op), CONTR(op)->dm_stealth);
-#endif
+   new_draw_info_format(NDI_UNIQUE, 0, op, "toggled stealth to %d",
+                        CONTR(op)->stealth);
 
     return 0;
 }
@@ -1413,16 +1407,20 @@ int command_style_map_info(object *op, char *params)
     return 0;
 }
 
-int command_silent_login(object *op, char *params)
+int command_privacy(object *op, char *params)
 {
-    int new_status = !CONTR(op)->silent_login;
+    int new_status = !CONTR(op)->privacy;
 
-    CONTR(op)->silent_login = new_status;
+    CONTR(op)->privacy = new_status;
 
     if (new_status)
-        new_draw_info(NDI_UNIQUE, 0, op, "Silent login enabled.");
+        new_draw_info(NDI_UNIQUE, 0, op, "Privacy enabled.");
     else
-        new_draw_info(NDI_UNIQUE, 0, op, "Silent login disabled.");
+        new_draw_info(NDI_UNIQUE, 0, op, "Privacy disabled.");
+
+#ifdef USE_CHANNELS
+    channel_privacy(CONTR(op), CONTR(op)->privacy);
+#endif
 
     return 0;
 }

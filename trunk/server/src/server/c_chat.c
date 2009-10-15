@@ -353,58 +353,73 @@ int command_tell(object *op, char *params)
     {
         if (pl->ob->name == name_hash)
         {
-            sprintf(buf, "%s tells you: ", op->name);
-            strncat(buf, msg, MAX_BUF - strlen(buf) - 1);
-            buf[MAX_BUF - 1] = 0;
-
-            /* lets listen the GMs and DMs to the tells if they want
-             * Only way to find out/control abuse of this commands
-             * or we have to give many people access to the server logs (not a option)
-             */
-            if(gmaster_list_MM || gmaster_list_GM || gmaster_list_VOL)
+            /* VOLs, GMs, and MMs eavesdrop on tells, but not those from
+             * privacy-seeking MMs. Only way to find out/control various abuses
+             * without giving many people access to the server logs (not an
+             * option). */
+            if (!(pl->privacy &&
+                  pl->gmaster_mode == GMASTER_MODE_MM) &&
+                (gmaster_list_VOL ||
+                 gmaster_list_GM ||
+                 gmaster_list_MM))
             {
                 objectlink *ol;
 
-                sprintf(buf2, "%s tells %s: ", op->name, pl->ob->name);
-                strncat(buf2, msg, MAX_BUF - strlen(buf2) - 1);
-                buf2[MAX_BUF - 1] = 0;
-                for(ol = gmaster_list_MM;ol;ol=ol->next)
+                sprintf(buf2, "%s tells %s: %s", op->name, pl->ob->name, msg);
+
+                for (ol = gmaster_list_VOL; ol; ol = ol->next)
                 {
-                    if (pl->ob != ol->objlink.ob && op != ol->objlink.ob)
-                        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf2);
+                    if (pl->ob != ol->objlink.ob &&
+                        op != ol->objlink.ob)
+                    {
+                        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0,
+                                      ol->objlink.ob, buf2);
+                    }
                 }
 
-                for(ol = gmaster_list_GM;ol;ol=ol->next)
+                for (ol = gmaster_list_GM; ol; ol = ol->next)
                 {
-                    if (pl->ob != ol->objlink.ob && op != ol->objlink.ob)
-                        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf2);
+                    if (pl->ob != ol->objlink.ob &&
+                        op != ol->objlink.ob)
+                    {
+                        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0,
+                                      ol->objlink.ob, buf2);
+                    }
                 }
-                for(ol = gmaster_list_VOL;ol;ol=ol->next)
+
+                for (ol = gmaster_list_MM; ol; ol = ol->next)
                 {
-                    if (pl->ob != ol->objlink.ob && op != ol->objlink.ob)
-                        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf2);
-               }
+                    if (pl->ob != ol->objlink.ob &&
+                        op != ol->objlink.ob)
+                    {
+                        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0,
+                                      ol->objlink.ob, buf2);
+                    }
+                }
             }
 
-            /* Stealthed MMs still grt telss but do not reveal their presence
-             * to other than GMs and MMs. FIXME MWs can be stealthed too
-             * because dm_stealth combines two functions: hide from mobs, and
-             * hide from players. */
-            if (pl->dm_stealth &&
-                (CONTR(op)->gmaster_mode != GMASTER_MODE_GM &&
-                 CONTR(op)->gmaster_mode != GMASTER_MODE_MM))
+            /* If pl has requested privacy we send the msg but we don't reveal
+             * his presence, EXCEPT to VOLs, GMs, and MMs, UNLESS he is an MM! */
+            if (pl->privacy &&
+                (pl->gmaster_mode == GMASTER_MODE_MM ||
+                 !(CONTR(op)->gmaster_mode == GMASTER_MODE_VOL ||
+                   CONTR(op)->gmaster_mode == GMASTER_MODE_GM ||
+                   CONTR(op)->gmaster_mode == GMASTER_MODE_MM)))
             {
-                sprintf(buf, "%s tells you (dm_stealth): ", op->name);
-                strncat(buf, msg, MAX_BUF - strlen(buf) - 1);
-                buf[MAX_BUF - 1] = 0;
-                new_draw_info(NDI_TELL | NDI_PLAYER | NDI_UNIQUE | NDI_NAVY, 0, pl->ob, buf);
+                new_draw_info_format(NDI_TELL | NDI_PLAYER | NDI_UNIQUE |
+                                     NDI_NAVY, 0, pl->ob, "%s tells you (privacy mode): %s",
+                                     op->name, msg);
+
                 break; /* we send it but we kick the "no such player" on */
             }
             else
             {
-                sprintf(buf2, "You tell %s: %s", name, msg);
-                new_draw_info(NDI_PLAYER | NDI_UNIQUE, 0, op, buf2);
-                new_draw_info(NDI_TELL | NDI_PLAYER | NDI_UNIQUE | NDI_NAVY, 0, pl->ob, buf);
+                new_draw_info_format(NDI_PLAYER | NDI_UNIQUE, 0, op, "You tell %s: %s",
+                                     name, msg);
+                new_draw_info_format(NDI_TELL | NDI_PLAYER | NDI_UNIQUE |
+                                     NDI_NAVY, 0, pl->ob, "%s tells you: %s",
+                                     op->name, msg);
+
                 return 0;
             }
         }
@@ -547,7 +562,7 @@ static void emote_other(object *op, object *target, char *str, char *buf, char *
     /* Only GMs and MMs can emote stealthed MMs. FIXME: MWs too! */
     if ((target->type == PLAYER &&
          CONTR(target) &&
-         CONTR(target)->dm_stealth) &&
+         CONTR(target)->privacy) &&
         (op->type == PLAYER &&
          CONTR(op) &&
          (CONTR(op)->gmaster_mode != GMASTER_MODE_GM &&
@@ -1143,7 +1158,8 @@ static int basic_emote(object *op, char *params, int emotion)
                 for (pl = first_player; pl != NULL; pl = pl->next)
                 {
                     if (pl->ob->name == name_hash && (pl->state & ST_PLAYING) && !
-                        QUERY_FLAG(pl->ob,FLAG_REMOVED) && !pl->dm_stealth)
+                        QUERY_FLAG(pl->ob,FLAG_REMOVED) &&
+                        !pl->privacy) // FIXME: same deal as tells
                     {
                         rv_vector   rv; /* lets check range */
                         get_rangevector(op, pl->ob, &rv, 0);

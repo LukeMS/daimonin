@@ -2180,7 +2180,7 @@ int command_mm(object *op, char *params)
     return 0;
 }
 
-/* Lists online VOLs, GMs, MWs and non-stealthed MMs. */
+/* Lists online VOLs, GMs, MWs and MMs unless they have requested privacy. */
 int command_gmasterlist(object *op, char *params)
 {
     objectlink *ol;
@@ -2193,22 +2193,34 @@ int command_gmasterlist(object *op, char *params)
 
     for(ol = gmaster_list_VOL; ol; ol = ol->next)
     {
-        new_draw_info(NDI_UNIQUE, 0, op, CONTR(ol->objlink.ob)->quick_name);
+        if(!CONTR(ol->objlink.ob)->privacy)
+        {
+            new_draw_info(NDI_UNIQUE, 0, op,
+                          CONTR(ol->objlink.ob)->quick_name);
+        }
     }
 
     for(ol = gmaster_list_GM; ol; ol = ol->next)
     {
-        new_draw_info(NDI_UNIQUE, 0, op, CONTR(ol->objlink.ob)->quick_name);
+        if(!CONTR(ol->objlink.ob)->privacy)
+        {
+            new_draw_info(NDI_UNIQUE, 0, op,
+                          CONTR(ol->objlink.ob)->quick_name);
+        }
     }
 
     for(ol = gmaster_list_MW; ol; ol = ol->next)
     {
-        new_draw_info(NDI_UNIQUE, 0, op, CONTR(ol->objlink.ob)->quick_name);
+        if(!CONTR(ol->objlink.ob)->privacy)
+        {
+            new_draw_info(NDI_UNIQUE, 0, op,
+                          CONTR(ol->objlink.ob)->quick_name);
+        }
     }
 
     for(ol = gmaster_list_MM; ol; ol = ol->next)
     {
-        if(!CONTR(ol->objlink.ob)->dm_stealth)
+        if(!CONTR(ol->objlink.ob)->privacy)
         {
             new_draw_info(NDI_UNIQUE, 0, op,
                           CONTR(ol->objlink.ob)->quick_name);
