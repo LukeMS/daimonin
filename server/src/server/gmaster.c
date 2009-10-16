@@ -103,7 +103,7 @@ void remove_gmaster_list(player *pl)
  * add up to a valid entry.
  * If they do, GMASTER_MODE_FOO is returned according to <mode>. If they don't,
  * GMASTER_MODE_NO is returned. */
-int validate_gmaster_params(char *name, char *passwd, char *host, char *mode)
+int validate_gmaster_params(char *name, char *host, char *mode)
 {
     int mode_id,
         len;
@@ -144,18 +144,6 @@ int validate_gmaster_params(char *name, char *passwd, char *host, char *mode)
             name);
     }
 
-    /* Validate passwd. */
-    if (!passwd ||
-        (((len = strlen(passwd)) == 1 &&
-          *passwd != '*') &&
-         (len < MIN_ACCOUNT_PASSWORD ||
-          len > MAX_ACCOUNT_PASSWORD)))
-    {
-        mode_id = GMASTER_MODE_NO;
-        LOG(llevInfo, "INFO:: validate_gmaster_mode(): invalid password '%s'!\n",
-            passwd);
-    }
-
     /* Validate host. */
     if (!host ||
         (((len = strlen(host)) == 1 &&
@@ -174,7 +162,7 @@ int validate_gmaster_params(char *name, char *passwd, char *host, char *mode)
 /* check a file entry.
  * Return GMASTER_MODE_NO for a invalid entry.
  */
-int check_gmaster_file_entry(char *name, char *passwd, char *host, char *mode)
+int check_gmaster_file_entry(char *name, char *host, char *mode)
 {
     int mode_id = GMASTER_MODE_NO;
 
@@ -186,11 +174,6 @@ int check_gmaster_file_entry(char *name, char *passwd, char *host, char *mode)
     if(strlen(host) >= 120)
     {
         LOG(llevBug, "BUG: load_gmaster_file): host %s too long: %d\n", host, strlen(host));
-        return mode_id;
-    }
-    if(strlen(passwd) > MAX_ACCOUNT_PASSWORD)
-    {
-        LOG(llevBug, "BUG: load_gmaster_file): passwd %s too long: %d\n", passwd, strlen(passwd));
         return mode_id;
     }
 
@@ -216,7 +199,7 @@ int load_gmaster_file(void)
 {
     FILE   *dmfile;
     char    buf[HUGE_BUF];
-    char    line_buf[MAX_BUF], name[MAX_BUF], passwd[MAX_BUF], host[MAX_BUF], mode[MAX_BUF], dummy[MAX_BUF];
+    char    line_buf[MAX_BUF], name[MAX_BUF], host[MAX_BUF], mode[MAX_BUF], dummy[MAX_BUF];
 
     LOG(llevInfo,"loading gmaster_file....\n");
     sprintf(buf, "%s/%s", settings.localdir, GMASTER_FILE);
@@ -229,18 +212,18 @@ int load_gmaster_file(void)
     {
         if (line_buf[0] == '#')
             continue;
-        if (sscanf(line_buf, "%[^/]/%[^/]/%[^/]/%s%[\n\r]", name, passwd, host, mode, dummy) < 3)
+        if (sscanf(line_buf, "%[^/]/%[^/]/%s%[\n\r]", name, host, mode, dummy) < 3)
             LOG(llevBug, "BUG: malformed gmaster_file entry: %s\n", line_buf);
         else
         {
 
-            int mode_id = check_gmaster_file_entry(name, passwd, host, mode);
+            int mode_id = check_gmaster_file_entry(name, host, mode);
 
             if(mode_id == GMASTER_MODE_NO)
                 continue;
 
             /* all ok, setup the gmaster node and add it to our list */
-            add_gmaster_file_entry(name, passwd, host, mode_id);
+            add_gmaster_file_entry(name, host, mode_id);
         }
 
     }
@@ -250,16 +233,15 @@ int load_gmaster_file(void)
 
 /* add a gmaster entry to the gmaster file list
  */
-void add_gmaster_file_entry(char *name, char *passwd, char *host, int mode_id)
+void add_gmaster_file_entry(char *name, char *host, int mode_id)
 {
     objectlink *ol;
 
     ol = get_gmaster_node();
 
-    sprintf(ol->objlink.gm->entry, "%s/%s/%s/%s", name, passwd, host,
+    sprintf(ol->objlink.gm->entry, "%s/%s/%s", name, host,
             mode_id==GMASTER_MODE_MM?"MM":(mode_id==GMASTER_MODE_GM?"GM":(mode_id==GMASTER_MODE_VOL?"VOL":"MW")));
     strcpy(ol->objlink.gm->name,name);
-    strcpy(ol->objlink.gm->password,passwd);
     strcpy(ol->objlink.gm->host,host);
     ol->objlink.gm->mode = mode_id;
 
@@ -282,15 +264,10 @@ int check_gmaster_list(player *pl, int mode)
 
     for(ol = gmaster_list;ol;ol=ol->next)
     {
-        /*LOG(-1,"CHECK: %s - %s - %s -%d\n",ol->objlink.gm->name,
-                ol->objlink.gm->password,ol->objlink.gm->host,ol->objlink.gm->mode );*/
+        /*LOG(-1,"CHECK: %s - %s -%d\n",ol->objlink.gm->name,
+                ol->objlink.gm->host,ol->objlink.gm->mode );*/
         if ((!strcmp(ol->objlink.gm->name, "*") ||
              !strcasecmp(pl->account_name, ol->objlink.gm->name)) &&
-            (!strcmp(ol->objlink.gm->password, "*")
-#if 0 /* disabled by account patch */
-             || !strcmp(pl->socket.account.pwd, ol->objlink.gm->password)
-#endif
-            ) &&
            (!strcmp(ol->objlink.gm->host, "*") ||
             !strcasecmp(pl->socket.ip_host, ol->objlink.gm->host)))
         {
@@ -473,13 +450,10 @@ void write_gmaster_file(void)
     }
     fprintf(fp, "# GMASTER_FILE (file is changed from server at runtime)\n");
     fprintf(fp, "#\n");
-    fprintf(fp, "# <name>/<password>/<host>/<mode>\n");
+    fprintf(fp, "# <name>/<host>/<mode>\n");
     fprintf(fp, "#\n");
     fprintf(fp, "# <name> is a account name. May be '*' for any name. Must not contain the '/'\n");
     fprintf(fp, "# character.\n");
-    fprintf(fp, "#\n");
-    fprintf(fp, "# <password> is a login password. May be '*' for any password. Must not\n");
-    fprintf(fp, "# contain the '/' character.\n");
     fprintf(fp, "#\n");
     fprintf(fp, "# <host> is an IP address. May be '*' for any host. Must not contain the '/'\n");
     fprintf(fp, "# character.\n");

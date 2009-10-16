@@ -1,12 +1,9 @@
 # GMASTER_FILE (file is changed from server at runtime)
 #
-# <name>/<password>/<host>/<mode>
+# <name>/<host>/<mode>
 #
 # <name> is a account name. May be '*' for any name. Must not contain the '/'
 # character.
-#
-# <password> is a login password. May be '*' for any password. Must not
-# contain the '/' character.
 #
 # <host> is an IP address. May be '*' for any host. Must not contain the '/'
 # character.
@@ -15,4 +12,4 @@
 #
 # The following (which allows any player to be any type of gmaster) is useful
 # on local servers for testing. Just uncomment the next line:
-#*/*/*/MM
+#*/*/MM

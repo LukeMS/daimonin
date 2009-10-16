@@ -297,10 +297,10 @@ char                       *get_ego_item_name(object *ob);
 void                        create_ego_item(object *ob, const char *name, int mode);
 /* gmaster.c */
 void                        remove_gmaster_list(player *pl);
-int                         validate_gmaster_params(char *name, char *passwd, char *host, char *mode);
-int                         check_gmaster_file_entry(char *name, char *passwd, char *host, char *mode);
+int                         validate_gmaster_params(char *name, char *host, char *mode);
+int                         check_gmaster_file_entry(char *name, char *host, char *mode);
 int                         load_gmaster_file(void);
-void                        add_gmaster_file_entry(char *name, char *passwd, char *host, int mode_id);
+void                        add_gmaster_file_entry(char *name, char *host, int mode_id);
 void                        remove_gmaster_file_entry(objectlink *ol);
 int                         check_gmaster_list(player *pl, int mode);
 void                        set_gmaster_mode(player *pl, int mode);

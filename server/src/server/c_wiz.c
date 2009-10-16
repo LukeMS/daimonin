@@ -2233,7 +2233,6 @@ int command_gmasterfile(object *op, char *params)
     player     *pl;
     objectlink *ol;
     char        name[MAX_BUF],
-                passwd[MAX_BUF],
                 host[MAX_BUF],
                 mode[MAX_BUF];
     int         mode_id;
@@ -2258,10 +2257,8 @@ int command_gmasterfile(object *op, char *params)
     /* add an entry. */
     else if (!strncmp(params, "add", 3))
     {
-        if (sscanf(params + 4, "%[^/]/%[^/]/%[^/]/%s",
-                   name, passwd, host, mode) != 4 ||
-            (mode_id = validate_gmaster_params(name, passwd, host, mode)) ==
-            GMASTER_MODE_NO)
+        if (sscanf(params + 4, "%[^/]/%[^/]/%s", name, host, mode) != 3 ||
+            (mode_id = validate_gmaster_params(name, host, mode)) == GMASTER_MODE_NO)
         {
             new_draw_info(NDI_UNIQUE, 0, op, "Malformed or missing parameter.");
 
@@ -2278,7 +2275,7 @@ int command_gmasterfile(object *op, char *params)
         /* all ok, setup the gmaster node and add it to our list */
         LOG(llevInfo, "INFO:: /gmasterfile %s invoked by %s\n",
             params, query_name(op));
-        add_gmaster_file_entry(name, passwd, host, mode_id);
+        add_gmaster_file_entry(name, host, mode_id);
         write_gmaster_file();
 
         return 0;
@@ -2286,10 +2283,8 @@ int command_gmasterfile(object *op, char *params)
     /* remove an entry. */
     else if (!strncmp(params, "remove", 6))
     {
-        if (sscanf(params + 7, "%[^/]/%[^/]/%[^/]/%s",
-                   name, passwd, host, mode) != 4 ||
-            (mode_id = validate_gmaster_params(name, passwd, host, mode)) ==
-            GMASTER_MODE_NO)
+        if (sscanf(params + 7, "%[^/]/%[^/]/%s", name, host, mode) != 3 ||
+            (mode_id = validate_gmaster_params(name, host, mode)) == GMASTER_MODE_NO)
         {
             new_draw_info(NDI_UNIQUE, 0, op, "Malformed or missing parameter.");
 
