@@ -854,7 +854,7 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
     /* If pl has not requested privacy, announcethe login to all players. */
     if (!pl->privacy)
     {
-        new_draw_info_format(NDI_UNIQUE | NDI_ALL, 0, NULL, "%s has entered the game.",
+        new_draw_info_format(NDI_UNIQUE | NDI_ALL, 0, NULL, "~%s~ has entered the game.",
                              query_name(pl->ob));
     }
 
@@ -869,13 +869,15 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
         char        buf[MAX_BUF];
         objectlink *ol;
 
+        buf[0] = '\0';
+
         /* There is no privacy from VOLs, GMs, and MMs! */
         if (pl->privacy)
         {
-            sprintf(buf, "%s has entered the game (~privacy mode~).\n", query_name(pl->ob));
+            sprintf(buf, "~%s~ has entered the game (~privacy mode~).\n", query_name(pl->ob));
         }
 
-        sprintf(strchr(buf, '\0'), "IP: %s. Players now playing: %d.",
+        sprintf(strchr(buf, '\0'), "    (~IP~: %s).\nPlayers now playing: %d.",
                 pl->socket.ip_host, player_active);
  
 
