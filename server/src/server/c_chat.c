@@ -406,22 +406,18 @@ int command_tell(object *op, char *params)
                    CONTR(op)->gmaster_mode == GMASTER_MODE_GM ||
                    CONTR(op)->gmaster_mode == GMASTER_MODE_MM)))
             {
-                new_draw_info_format(NDI_TELL | NDI_PLAYER | NDI_UNIQUE |
-                                     NDI_NAVY, 0, pl->ob, "%s tells you (privacy mode): %s",
-                                     op->name, msg);
-
-                break; /* we send it but we kick the "no such player" on */
+                new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
             }
             else
             {
                 new_draw_info_format(NDI_PLAYER | NDI_UNIQUE, 0, op, "You tell %s: %s",
                                      name, msg);
-                new_draw_info_format(NDI_TELL | NDI_PLAYER | NDI_UNIQUE |
-                                     NDI_NAVY, 0, pl->ob, "%s tells you: %s",
-                                     op->name, msg);
-
-                return 0;
             }
+
+            new_draw_info_format(NDI_TELL | NDI_PLAYER | NDI_UNIQUE | NDI_NAVY,
+                                 0, pl->ob, "%s tells you: %s", op->name, msg);
+
+            return 0;
         }
     }
     new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
