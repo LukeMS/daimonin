@@ -234,86 +234,120 @@ void malloc_info(object *op)
     LOG(llevSystem, "%s\n", errmsg);
 }
 
+/* Lists online players, respecting privacy mode. */
 int command_who(object *op, char *params)
 {
-    player     *pl;
-    int         ip = 0, il = 0;
-    char        buf[MAX_BUF];
-    const char *sex;
+    player *pl;
+    int     ip,
+            il,
+            it;
+#ifdef _TESTSERVER
+    char    buf[MAX_BUF];
+    FILE   *fp;
+#endif
 
     if (!op)
+    {
         return 0;
+    }
 
-    for (pl = first_player; pl != NULL; pl = pl->next)
+    if (params)
+    {
+        return 1;
+    }
+
+    for (pl = first_player, ip = 0, il = 0; pl; pl = pl->next)
     {
         if (pl->privacy &&
             (pl->gmaster_mode == GMASTER_MODE_MM ||
              !(CONTR(op)->gmaster_mode == GMASTER_MODE_VOL ||
                CONTR(op)->gmaster_mode == GMASTER_MODE_GM ||
                CONTR(op)->gmaster_mode == GMASTER_MODE_MM)))
+        {
             continue;
+        }
 
-        if (pl->ob->map == NULL)
+        if (!pl->ob->map)
         {
             il++;
+
             continue;
         }
 
         ip++;
+
         if (pl->state & ST_PLAYING)
         {
-            if (QUERY_FLAG(pl->ob, FLAG_IS_MALE))
-                sex = QUERY_FLAG(pl->ob, FLAG_IS_FEMALE) ? "hermaphrodite" : "male";
-            else if (QUERY_FLAG(pl->ob, FLAG_IS_FEMALE))
-                sex = "female";
-            else
-                sex = "neuter";
+            new_draw_info_format(NDI_UNIQUE, 0, op, "~%s~ the %s %s (L:%d)",
+                                 pl->quick_name,
+                                 (QUERY_FLAG(pl->ob, FLAG_IS_MALE)) ?
+                                 ((QUERY_FLAG(pl->ob, FLAG_IS_FEMALE)) ? "hermaphrodite" : "male") :
+                                 ((QUERY_FLAG(pl->ob, FLAG_IS_FEMALE)) ? "female" : "neuter"),
+                                 pl->ob->race, pl->ob->level);
 
-            if (CONTR(op)->gmaster_mode == GMASTER_MODE_GM ||
+            if (CONTR(op)->gmaster_mode == GMASTER_MODE_VOL ||
+                CONTR(op)->gmaster_mode == GMASTER_MODE_GM ||
                 CONTR(op)->gmaster_mode == GMASTER_MODE_MM)
             {
-                int off = 0, tmp, tmp1;
-                if ((tmp = strlen(pl->ob->map->path)) > (22 - ((tmp1 = strlen(pl->ob->name)))))
-                    off = tmp - (22 - tmp1);
+                uint16 len,
+                       off;
 
-                sprintf(buf, "%s (%d) [@%s] [%s]", pl->quick_name, pl->ob->count, pl->socket.ip_host, pl->ob->map->path + off);
+                if ((len = strlen(pl->ob->map->path)) >= 16)
+                    off = len - 1 -12;
+                else
+                    off = 0;
+
+                new_draw_info_format(NDI_UNIQUE, 0, op, "    (~MAP~: %s%s %d,%d) (~IP~:%s)",
+                                     (off) ? "..." : "",
+                                     pl->ob->map->path + off, pl->ob->x,
+                                     pl->ob->y, pl->socket.ip_host);
             }
-            else if (CONTR(op)->gmaster_mode == GMASTER_MODE_VOL)
-                sprintf(buf, "%s the %s %s (lvl %d) [%s]", pl->quick_name, sex, pl->ob->race, pl->ob->level, pl->socket.ip_host);
-            else
-                sprintf(buf, "%s the %s %s (lvl %d)", pl->quick_name, sex, pl->ob->race, pl->ob->level);
-            new_draw_info(NDI_UNIQUE, 0, op, buf);
         }
     }
-    sprintf(buf, "There %s %d player%s online  (%d in login)", ip + il > 1 ? "are" : "is",ip + il,
-            ip + il > 1 ? "s" : "",il);
-    new_draw_info(NDI_UNIQUE, 0, op, buf);
+
+    it = ip + il;
+    new_draw_info_format(NDI_UNIQUE, 0, op, "There %s %d player%s online (%d in login).",
+                         (it > 1) ? "are" : "is", it, (it > 1) ? "s" : "", il);
 #ifdef _TESTSERVER
-    FILE *fp;
     LOG(llevSystem, "read stream file...\n");
     sprintf(buf, "%s/%s", settings.localdir, "stream");
+
     if ((fp = fopen(buf, "r")))
     {
         char *cp;
+
         if (!fgets(buf, MAX_BUF, fp))
         {
             LOG(llevBug, "BUG: error in stream file\n");
+
             return 0;
         }
+
         if ((cp = strchr(buf, '\n')))
+        {
             *cp = '\0';
+        }
+
         if (!strcmp(buf, "(null)"))
+        {
             new_draw_info(NDI_UNIQUE, 0, op, "Server compiled with trunk only.");
+        }
         else
         {
-            new_draw_info_format(NDI_UNIQUE, 0, op, "Server compiled with ~%s~ stream.", buf);
+            new_draw_info_format(NDI_UNIQUE, 0, op, "Server compiled with ~%s~ stream.",
+                                 buf);
+
             while (fgets(buf, MAX_BUF, fp))
             {
                 if ((cp = strchr(buf, '\n')))
+                {
                     *cp = '\0';
+                }
+
                 new_draw_info(NDI_UNIQUE, 0, op, buf);
             }
         }
+
         fclose(fp);
     }
 #endif
