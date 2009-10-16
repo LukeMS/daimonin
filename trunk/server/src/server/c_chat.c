@@ -400,22 +400,33 @@ int command_tell(object *op, char *params)
 
             /* If pl has requested privacy we send the msg but we don't reveal
              * his presence, EXCEPT to VOLs, GMs, and MMs, UNLESS he is an MM! */
-            if (pl->privacy &&
-                (pl->gmaster_mode == GMASTER_MODE_MM ||
-                 !(CONTR(op)->gmaster_mode == GMASTER_MODE_VOL ||
-                   CONTR(op)->gmaster_mode == GMASTER_MODE_GM ||
-                   CONTR(op)->gmaster_mode == GMASTER_MODE_MM)))
+            if (pl->privacy)
             {
-                new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
+                if (pl->gmaster_mode != GMASTER_MODE_MM &&
+                    (CONTR(op)->gmaster_mode == GMASTER_MODE_VOL ||
+                     CONTR(op)->gmaster_mode == GMASTER_MODE_GM ||
+                     CONTR(op)->gmaster_mode == GMASTER_MODE_MM))
+                {
+                    new_draw_info_format(NDI_PLAYER | NDI_UNIQUE, 0, op, "You tell %s (~privacy mode~): %s",
+                                         name, msg);
+                }
+                else
+                {
+                    new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
+                }
+
+                new_draw_info_format(NDI_TELL | NDI_PLAYER | NDI_UNIQUE |
+                                     NDI_NAVY, 0, pl->ob, "%s tells you (~privacy mode~): %s",
+                                     op->name, msg);
             }
             else
             {
                 new_draw_info_format(NDI_PLAYER | NDI_UNIQUE, 0, op, "You tell %s: %s",
                                      name, msg);
+                new_draw_info_format(NDI_TELL | NDI_PLAYER | NDI_UNIQUE |
+                                     NDI_NAVY, 0, pl->ob, "%s tells you: %s",
+                                     op->name, msg);
             }
-
-            new_draw_info_format(NDI_TELL | NDI_PLAYER | NDI_UNIQUE | NDI_NAVY,
-                                 0, pl->ob, "%s tells you: %s", op->name, msg);
 
             return 0;
         }

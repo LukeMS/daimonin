@@ -292,6 +292,11 @@ int command_who(object *op, char *params)
                 uint16 len,
                        off;
 
+                if (pl->privacy)
+                {
+                    new_draw_info(NDI_UNIQUE, 0, op, "    (~privacy mode~)");
+                }
+
                 if ((len = strlen(pl->ob->map->path)) >= 16)
                     off = len - 1 -12;
                 else
