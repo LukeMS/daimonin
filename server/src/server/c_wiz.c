@@ -2188,9 +2188,6 @@ int command_gmasterlist(object *op, char *params)
     if (params)
         return 1;
 
-    new_draw_info(NDI_UNIQUE, 0, op, "Gmaster's online");
-    new_draw_info(NDI_UNIQUE, 0, op, "--- --- ---");
-
     for(ol = gmaster_list_VOL; ol; ol = ol->next)
     {
         if(!CONTR(ol->objlink.ob)->privacy)
@@ -2251,9 +2248,6 @@ int command_gmasterfile(object *op, char *params)
     /* list all entries. */
     if (!params)
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "gmaster_file");
-        new_draw_info(NDI_UNIQUE, 0, op, "--- --- ---");
-
         for (ol = gmaster_list; ol; ol = ol->next)
         {
             new_draw_info(NDI_UNIQUE, 0, op, ol->objlink.gm->entry);
