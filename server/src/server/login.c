@@ -872,7 +872,7 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
         /* There is no privacy from VOLs, GMs, and MMs! */
         if (pl->privacy)
         {
-            sprintf(buf, "%s has entered the game.\n", query_name(pl->ob));
+            sprintf(buf, "%s has entered the game (~privacy mode~).\n", query_name(pl->ob));
         }
 
         sprintf(strchr(buf, '\0'), "IP: %s. Players now playing: %d.",
