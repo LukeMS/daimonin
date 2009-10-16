@@ -2263,7 +2263,6 @@ int command_gmasterfile(object *op, char *params)
             (mode_id = validate_gmaster_params(name, passwd, host, mode)) ==
             GMASTER_MODE_NO)
         {
-new_draw_info_format(NDI_UNIQUE, 0, op, ">%s< >%s< >%s< >%s< %d", name, passwd, host, mode, mode_id);
             new_draw_info(NDI_UNIQUE, 0, op, "Malformed or missing parameter.");
 
             return 1;
