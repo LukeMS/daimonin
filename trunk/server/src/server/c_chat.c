@@ -300,8 +300,8 @@ int command_shout(object *op, char *params)
 int command_tell(object *op, char *params)
 {
     const char *name_hash;
-    char        buf[MAX_BUF], *name = NULL, *msg = NULL;
-    char        buf2[MAX_BUF];
+    char       *name = NULL,
+               *msg = NULL;
     player     *pl;
 
     if(!check_mute(op, MUTE_MODE_SHOUT))
@@ -363,9 +363,10 @@ int command_tell(object *op, char *params)
                  gmaster_list_GM ||
                  gmaster_list_MM))
             {
+                char        buf[MAX_BUF];
                 objectlink *ol;
 
-                sprintf(buf2, "%s tells %s: %s", op->name, pl->ob->name, msg);
+                sprintf(buf, "%s tells %s: %s", op->name, pl->ob->name, msg);
 
                 for (ol = gmaster_list_VOL; ol; ol = ol->next)
                 {
@@ -373,7 +374,7 @@ int command_tell(object *op, char *params)
                         op != ol->objlink.ob)
                     {
                         new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0,
-                                      ol->objlink.ob, buf2);
+                                      ol->objlink.ob, buf);
                     }
                 }
 
@@ -383,7 +384,7 @@ int command_tell(object *op, char *params)
                         op != ol->objlink.ob)
                     {
                         new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0,
-                                      ol->objlink.ob, buf2);
+                                      ol->objlink.ob, buf);
                     }
                 }
 
@@ -393,7 +394,7 @@ int command_tell(object *op, char *params)
                         op != ol->objlink.ob)
                     {
                         new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0,
-                                      ol->objlink.ob, buf2);
+                                      ol->objlink.ob, buf);
                     }
                 }
             }
