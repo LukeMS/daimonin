@@ -2293,7 +2293,9 @@ int command_gmasterfile(object *op, char *params)
 
         for (ol = gmaster_list; ol; ol = ol->next)
         {
-            if (!strcmp(params + 7, ol->objlink.gm->entry))
+            if (!strcasecmp(name, ol->objlink.gm->name) &&
+                !strcmp(host, ol->objlink.gm->host) &&
+                mode_id == ol->objlink.gm->mode)
             {
                 if (!compare_gmaster_mode(ol->objlink.gm->mode,
                                           pl->gmaster_mode))
