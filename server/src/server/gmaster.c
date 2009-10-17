@@ -236,13 +236,23 @@ int load_gmaster_file(void)
 void add_gmaster_file_entry(char *name, char *host, int mode_id)
 {
     objectlink *ol;
+    uint8      i;
 
     ol = get_gmaster_node();
 
-    sprintf(ol->objlink.gm->entry, "%s/%s/%s", name, host,
-            mode_id==GMASTER_MODE_MM?"MM":(mode_id==GMASTER_MODE_GM?"GM":(mode_id==GMASTER_MODE_VOL?"VOL":"MW")));
-    strcpy(ol->objlink.gm->name,name);
-    strcpy(ol->objlink.gm->host,host);
+    *name = toupper(*name);
+
+    for (i = 1; *(name + i) != '\0'; i++)
+    {
+        *(name + i) = tolower(*(name + i));
+    }
+
+    sprintf(ol->objlink.gm->entry, "%s/%s/%s",
+            name, host, ((mode_id == GMASTER_MODE_VOL) ? "VOL" :
+                         ((mode_id == GMASTER_MODE_GM) ? "GM" :
+                          ((mode_id == GMASTER_MODE_MW) ? "MW" : "MM"))));
+    strcpy(ol->objlink.gm->name, name);
+    strcpy(ol->objlink.gm->host, host);
     ol->objlink.gm->mode = mode_id;
 
     /* lifo list */
