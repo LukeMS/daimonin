@@ -193,9 +193,7 @@ account_status account_load(Account *ac, char *name, char *pass)
         }
         else
         {
-            sscanf(bufall, "%s %d\n", buf, &val);
-
-            if(!buf) /* sanity check */
+            if (sscanf(bufall, "%s %d\n", buf, &val) != 2) /* sanity check */
                 ret = ACCOUNT_STATUS_CORRUPT;
             else if (!strcmp(buf, "lvl"))
             {
