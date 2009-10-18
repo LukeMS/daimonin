@@ -1094,7 +1094,7 @@ int command_resistances(object *op, char *params)
  * Those should be in small separate files (c_object.c, c_wiz.c, cmove.c,...)
  */
 
-
+#if 0
 static void help_topics(object *op, int what)
 {
     DIR            *dirp;
@@ -1140,6 +1140,7 @@ static void help_topics(object *op, int what)
     new_draw_info(NDI_UNIQUE, 0, op, line);
     closedir(dirp);
 }
+#endif
 
 int command_resting(object *op, char *params)
 {
