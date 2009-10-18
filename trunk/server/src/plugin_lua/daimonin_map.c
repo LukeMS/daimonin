@@ -125,11 +125,11 @@ static int Map_eq(struct lua_State *L)
     }
 
     /* Test for LHS invalidity. */
-    if (!lhs->class->isValid(L, lhs))
+    if (!lhs->class->isValid(lhs))
         return luaL_error(L, "Map_eq: LHS invalid!");
 
     /* Test for RHS invalidity. */
-    if (!rhs->class->isValid(L, rhs))
+    if (!rhs->class->isValid(rhs))
         return luaL_error(L, "Map_eq: RHS invalid!");
 
     /* Compare tags. */
@@ -161,7 +161,7 @@ static int Map_toString(lua_State *L)
 }
 
 /* Tests if a Map object is valid */
-static int Map_isValid(lua_State *L, lua_object *obj)
+static int Map_isValid(lua_object *obj)
 {
     return (obj->tag == obj->data.map->tag && obj->data.map->in_memory == MAP_IN_MEMORY);
 }

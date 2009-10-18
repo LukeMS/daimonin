@@ -587,11 +587,11 @@ static int GameObject_eq(struct lua_State *L)
     }
 
     /* Test for LHS invalidity. */
-    if (!lhs->class->isValid(L, lhs))
+    if (!lhs->class->isValid(lhs))
         return luaL_error(L, "GameObject_eq: LHS invalid!");
 
     /* Test for RHS invalidity. */
-    if (!rhs->class->isValid(L, rhs))
+    if (!rhs->class->isValid(rhs))
         return luaL_error(L, "GameObject_eq: RHS invalid!");
 
     /* Compare tags. */
@@ -614,7 +614,7 @@ static int GameObject_toString(lua_State *L)
 }
 
 /* Tests if an object is valid */
-static int GameObject_isValid(lua_State *L, lua_object *obj)
+static int GameObject_isValid(lua_object *obj)
 {
     return obj->data.object->count == obj->tag;
 }

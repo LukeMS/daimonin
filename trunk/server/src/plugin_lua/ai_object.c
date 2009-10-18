@@ -699,11 +699,11 @@ static int AI_eq(struct lua_State *L)
     }
 
     /* Test for LHS invalidity. */
-    if (!lhs->class->isValid(L, lhs))
+    if (!lhs->class->isValid(lhs))
         return luaL_error(L, "AI_eq: LHS invalid!");
 
     /* Test for RHS invalidity. */
-    if (!rhs->class->isValid(L, rhs))
+    if (!rhs->class->isValid(rhs))
         return luaL_error(L, "AI_eq: RHS invalid!");
 
     /* Compare tags. */
@@ -726,7 +726,7 @@ static int AI_toString(lua_State *L)
 }
 
 /* Tests if an AI object is valid */
-static int AI_isValid(lua_State *L, lua_object *obj)
+static int AI_isValid(lua_object *obj)
 {
     return obj->data.object->count == obj->tag;
 }

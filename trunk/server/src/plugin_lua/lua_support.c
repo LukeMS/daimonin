@@ -136,7 +136,7 @@ static int getObjectMember(lua_State *L)
 
             if ((member = lua_touserdata(L, -1)))
             {
-                if(! obj->class->isValid(L, obj))
+                if(! obj->class->isValid(obj))
                     luaL_error(L, "Invalid %s object", obj->class->name);
 
                 switch (member->class->type)
@@ -196,7 +196,7 @@ static int setObjectMember(lua_State *L)
 
             if ((member = lua_touserdata(L, -1)))
             {
-                if(! obj->class->isValid(L, obj))
+                if(! obj->class->isValid(obj))
                     luaL_error(L, "Invalid %s object", obj->class->name);
 
                 switch (member->class->type)
@@ -408,7 +408,7 @@ static inline lua_object * get_object_arg(lua_State *L, int pos, lua_class *clas
 
     if ((obj = lua_touserdata(L, pos)))
     {
-        if(! obj->class->isValid(L, obj))
+        if(! obj->class->isValid(obj))
             luaL_error(L, "Invalid %s object", obj->class->name);
 
         return obj;
@@ -644,9 +644,9 @@ int gc(struct lua_State *L)
 }
 
 /* Default object validator, always returns true */
-static int default_object_validator(struct lua_State *L, lua_object *obj)
+static int default_object_validator(lua_object *obj)
 {
-    return TRUE;
+    return (obj) ? TRUE : FALSE;
 }
 
 /* Set up new class data in the registry */
