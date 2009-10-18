@@ -502,7 +502,9 @@ static int GameObject_setAttribute(lua_State *L, lua_object *obj, struct attribu
 
     /* Pre-setting hook -- is this necessary? */
     if (before)
+    {
         ;
+    }
 
     /* recalculate carrying when a script changes an inventory object's
      * weight */
