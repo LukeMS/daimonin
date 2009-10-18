@@ -500,11 +500,9 @@ static int GameObject_setAttribute(lua_State *L, lua_object *obj, struct attribu
     object *who = obj->data.object;
     object *pl = hooks->is_player_inv(who);
 
-#if 0
     /* Pre-setting hook -- is this necessary? */
     if (before)
         ;
-#endif
 
     /* recalculate carrying when a script changes an inventory object's
      * weight */
