@@ -77,7 +77,7 @@ struct mempool *pool_luacontext;
  *   movement responses.
  */
 
-static int  Event_isValid(lua_State *L, lua_object *obj);
+static int  Event_isValid(lua_object *obj);
 
 static struct attribute_decl    Event_attributes[]  =
 {
@@ -1032,7 +1032,7 @@ MODULEAPI CFParm * postinitPlugin(CFParm *PParm)
 /*****************************************************************************/
 
 /* Tests if an event object is valid */
-static int Event_isValid(lua_State *L, lua_object *obj)
+static int Event_isValid(lua_object *obj)
 {
     return obj->data.context->tag == obj->tag;
 }

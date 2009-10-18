@@ -943,7 +943,7 @@ static int Game_IsValid(lua_State *L)
     }
     else
     {
-       lua_pushboolean(L, obj->class->isValid(L, obj));
+       lua_pushboolean(L, obj->class->isValid(obj));
     }
 
     return 1;
