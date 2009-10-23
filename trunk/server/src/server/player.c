@@ -103,22 +103,41 @@ void display_motd(object *op)
  */
 int player_name_valid(char *cp)
 {
-    char *tmp=cp;
+    int len,
+        i;
 
-    /* we want the format "Foo". Not allowed are "foo", "FOo" or "foO" */
-    if(*cp != toupper(*cp) || (!isalpha(*cp) && *cp != '-') )
-        return FALSE;
-
-    for(++cp;*cp!='\0';cp++)
+    if ((len = strlen(cp)) < MIN_PLAYER_NAME ||
+        len > MAX_PLAYER_NAME)
     {
-        if(*cp != tolower(*cp) || (!isalpha(*cp) && *cp != '-'))
+        return FALSE;
+    }
+
+    /* Capitalise as we go. */
+    /* FIXME: Only letters and '-' now? */
+    if (!isalpha(*cp) &&
+        *cp != '-')
+    {
+        return FALSE;
+    }
+
+    *cp = toupper(*cp);
+
+    for (i = 1; i < len; i++)
+    {
+        if (!isalpha(*(cp + i)) &&
+            *(cp + i) != '-')
+        {
             return FALSE;
+        }
+
+       *(cp + i) = tolower(*(cp + i));
     }
 
     /* we don't want some special names & keywords here. */
     /* TODO: add here a complete "forbidden name" mechanisn */
-    if(!strcasecmp(tmp,"fuck") || !strcasecmp(tmp,"off") || !strcasecmp(tmp,"allow"))
-        return FALSE;
+    /* FIXME: Do it properly or don't do it at all. */
+//    if(!strcasecmp(cp,"fuck") || !strcasecmp(cp,"off") || !strcasecmp(cp,"allow"))
+//        return FALSE;
 
     return TRUE;
 }
