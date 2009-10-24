@@ -3218,11 +3218,15 @@ static void beacon_initializer(object *op)
      * -- Smacky 20081211 */
     /*  The above would not work on uniques.
      *  -- Smacky 20090414 */
+    /* It seems we are trying to remove the beacon before it has been inserted,
+     * so lets not actually remove it. This means the object is still there on
+     * the map, which IIMO is not great, but it is not registered as a beacon.
+     * -- Smacky 20091024 */
     if (!MAP_MULTI(parent->map))
     {
-        LOG(llevDebug, "\nDEBUG:: %s/beacon_initializer(): Ignoring and removing beacon on instance (%s[%d]).\n",
+        LOG(llevDebug, "\nDEBUG:: %s/beacon_initializer(): Ignoring beacon on instance (%s[%d]).\n",
             __FILE__, STRING_OBJ_NAME(op), op->count);
-        remove_ob(op);
+        //remove_ob(op);
         return;
     }
 
