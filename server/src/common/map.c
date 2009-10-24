@@ -869,26 +869,48 @@ static int load_map_header(FILE *fp, mapstruct *m, int flags)
 #ifdef MAP_RESET
 #ifdef MAP_MAXRESET
             if (v < 0 || v > MAP_MAXRESET)
-                LOG(llevBug, "BUG:: Illegal map reset time %d (must be 0 to %d, defaulting to %d)!\n",
-                    v, MAP_DEFAULT_RESET_TIME, MAP_MAXRESET);
-#else
+            {
+                /* Don't log temp maps. */
+                if (!m->tmpname)
+                {
+                    LOG(llevMapbug, "MAPBUG:: '%s': Illegal map reset time %d (must be 0 to %d, defaulting to %d)!\n",
+                        m->orig_path, v, MAP_MAXRESET, MAP_DEFAULT_RESET_TIME);
+                }
+            }
+#else // ifdef MAP_MAXRESET
             if (v < 0)
-                LOG(llevBug, "BUG:: Illegal map reset time %d (must be positive, defaulting to %d)!\n",
-                    v, MAP_DEFAULT_RESET_TIME);
-#endif
+            {
+                /* Don't log temp maps. */
+                if (!m->tmpname)
+                {
+                    LOG(llevMapbug, "MAPBUG:: '%s': Illegal map reset time %d (must be positive, defaulting to %d)!\n",
+                        m->orig_path, v, MAP_DEFAULT_RESET_TIME);
+                }
+            }
+#endif // ifdef MAP_MAXRESET
             else
-#endif
+#endif // ifddef MAP_RESET
+            {
                 m->reset_timeout = v;
+            }
         }
         else if (!strcmp(key, "swap_time"))
         {
             int v = atoi(value);
 
             if (v < MAP_MINTIMEOUT || v > MAP_MAXTIMEOUT)
-                LOG(llevBug, "BUG:: Illegal map swap time %d (must be %d to %d, defaulting to %d)!\n",
-                    v, MAP_MINTIMEOUT, MAP_MAXTIMEOUT, MAP_DEFAULT_SWAP_TIME);
+            {
+                /* Don't log temp maps. */
+                if (!m->tmpname)
+                {
+                    LOG(llevMapbug, "MAPBUG:: '%s': Illegal map swap time %d (must be %d to %d, defaulting to %d)!\n",
+                        m->orig_path, v, MAP_MINTIMEOUT, MAP_MAXTIMEOUT, MAP_DEFAULT_SWAP_TIME);
+                }
+            }
             else
+            {
                 m->timeout = v;
+            }
         }
         /* difficulty is a 'recommended player level' for that map *for a
          * single player*, so follows the same restriction (1 to MAXLEVEL). It
