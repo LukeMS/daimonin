@@ -641,7 +641,9 @@ mapstruct * get_linked_map()
      */
     MAP_WIDTH(map) = MAP_DEFAULT_WIDTH;
     MAP_HEIGHT(map) = MAP_DEFAULT_HEIGHT;
+    MAP_WHEN_RESET(map) = MAP_DEFAULT_RESET_TIME;
     MAP_RESET_TIMEOUT(map) = MAP_DEFAULT_RESET_TIME;
+    MAP_SWAP_TIME(map) = MAP_DEFAULT_SWAP_TIME;
     MAP_TIMEOUT(map) = MAP_DEFAULT_SWAP_TIME;
     MAP_DIFFICULTY(map) = MAP_DEFAULT_DIFFICULTY;
     set_map_darkness(map, MAP_DEFAULT_DARKNESS);
@@ -891,6 +893,7 @@ static int load_map_header(FILE *fp, mapstruct *m, int flags)
             else
 #endif // ifddef MAP_RESET
             {
+                m->reset_time = v;
                 m->reset_timeout = v;
             }
         }
@@ -909,6 +912,7 @@ static int load_map_header(FILE *fp, mapstruct *m, int flags)
             }
             else
             {
+                m->swap_time = v;
                 m->timeout = v;
             }
         }
