@@ -1,0 +1,4 @@
+~Category~: Server
+
+~Syntax~: /shutdown[ <time>][ <reason>]
+~Purpose~: Causes the server to shutdown and not restart in <time> seconds (the default is 30) for the specified <reason>, if any. Only available to MMs.

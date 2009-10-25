@@ -261,17 +261,70 @@ int command_kick(object *op, char *params)
     return 0;
 }
 
-int command_shutdown(object *op, char *params)
+/* Reboots the server (recompile code, update arches and maps).
+ * On a test server the command is available for MWs and MMs on a 30 second
+ * counter. A stream name may be given -- ie, /restart stream -- to compile the
+ * trunk server with that stream added.
+ * On a normal server it's a MM-only command on a 5 min counter with no param.
+ */
+int command_restart(object *ob, char *params)
 {
-    if (op != NULL && !QUERY_FLAG(op, FLAG_WIZ))
+#ifdef _TESTSERVER
+    char  buf[MAX_BUF];
+    FILE *fp;
+
+    LOG(llevSystem,"write stream file...\n");
+    sprintf(buf, "%s/%s", settings.localdir, "stream");
+
+    if ((fp = fopen(buf, "w")) == NULL)
     {
-        /*new_draw_info(NDI_UNIQUE,0,op,"Sorry, you can't shutdown the server.");*/
+        LOG(llevBug, "BUG: Cannot open %s for writing\n", buf);
+
         return 0;
     }
 
-    LOG(llevSystem, "SERVER SHUTDOWN STARTED\n");
-    kick_player(NULL);
-    cleanup(EXIT_SHUTODWN);
+    if (params)
+        fprintf(fp, "%s", params);
+    else
+        fprintf(fp, "(null)");
+
+    fclose(fp);
+
+    sprintf(buf, "'/restart%s%s' issued by %s\nServer will recompile and arches and maps will be updated!",
+            (params) ? " " : "", (params) ? params : "", STRING_OBJ_NAME(ob));
+    LOG(llevSystem, buf);
+    shutdown_agent(30, EXIT_RESETMAP, buf);
+
+    return 0;
+#else
+    char buf[MAX_BUF];
+
+    sprintf(buf, "'/restart' issued by %s\nServer will recompile and arches and maps will be updated!",
+            STRING_OBJ_NAME(ob));
+    LOG(llevSystem, buf);
+    shutdown_agent(300, EXIT_RESETMAP, buf);
+
+    return 0;
+#endif
+}
+
+/* Shuts down the server. Does not reboot. */
+int command_shutdown(object *op, char *params)
+{
+    int  time;
+    char buf[MAX_BUF];
+
+    time = 30;
+
+    if (params)
+    {
+        sscanf(params, "%d", &time);
+    }
+
+    sprintf(buf, "'/shutdown%s%s' issued by %s\nServer will shutdown and not reboot!",
+            (params) ? " " : "", params, STRING_OBJ_NAME(op));
+    LOG(llevSystem, buf);
+    shutdown_agent(time, EXIT_SHUTODWN, buf);
     /* not reached - server will terminate itself before that line */
 
     return 0;
