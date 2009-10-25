@@ -261,17 +261,17 @@ int command_kick(object *op, char *params)
     return 0;
 }
 
-/* Reboots the server (recompile code, update arches and maps).
- * On a test server the command is available for MWs and MMs on a 30 second
- * counter. A stream name may be given -- ie, /restart stream -- to compile the
- * trunk server with that stream added.
- * On a normal server it's a MM-only command on a 5 min counter with no param.
- */
+/* Reboots the server (recompile code, update arches and maps). */
 int command_restart(object *ob, char *params)
 {
 #ifdef _TESTSERVER
+    int   time;
+    char *stream;
     char  buf[MAX_BUF];
     FILE *fp;
+
+    time = 30;
+    stream = NULL;
 
     LOG(llevSystem,"write stream file...\n");
     sprintf(buf, "%s/%s", settings.localdir, "stream");
@@ -284,25 +284,54 @@ int command_restart(object *ob, char *params)
     }
 
     if (params)
-        fprintf(fp, "%s", params);
-    else
-        fprintf(fp, "(null)");
+    {
+        if (sscanf(params, "%d", &time))
+        {
+            if ((stream = strchr(params, ' ')))
+            {
+                stream++;
+            }
+        }
+        else
+        {
+            stream = params;
+        }
 
+        /* Streams cannot have spaces. */
+        if (stream &&
+            strchr(stream, ' '))
+        {
+            fclose(fp);
+
+            return 1;
+        }
+    }
+
+    fprintf(fp, "%s", (stream) ? stream : "(null)");
     fclose(fp);
 
     sprintf(buf, "'/restart%s%s' issued by %s\nServer will recompile and arches and maps will be updated!",
             (params) ? " " : "", (params) ? params : "", STRING_OBJ_NAME(ob));
     LOG(llevSystem, buf);
-    shutdown_agent(30, EXIT_RESETMAP, buf);
+    shutdown_agent(time, EXIT_RESETMAP, buf);
 
     return 0;
 #else
+    int  time;
     char buf[MAX_BUF];
 
-    sprintf(buf, "'/restart' issued by %s\nServer will recompile and arches and maps will be updated!",
-            STRING_OBJ_NAME(ob));
+    time = 300;
+
+    if (params &&
+        !sscanf(params, "%d", &time))
+    {
+        return 1;
+    }
+
+    sprintf(buf, "'/restart%s%s' issued by %s\nServer will recompile and arches and maps will be updated!",
+            (params) ? " " : "", (params) ? params : "", STRING_OBJ_NAME(ob));
     LOG(llevSystem, buf);
-    shutdown_agent(300, EXIT_RESETMAP, buf);
+    shutdown_agent(time, EXIT_RESETMAP, buf);
 
     return 0;
 #endif
@@ -322,7 +351,7 @@ int command_shutdown(object *op, char *params)
     }
 
     sprintf(buf, "'/shutdown%s%s' issued by %s\nServer will shutdown and not reboot!",
-            (params) ? " " : "", params, STRING_OBJ_NAME(op));
+            (params) ? " " : "", (params) ? params : "", STRING_OBJ_NAME(op));
     LOG(llevSystem, buf);
     shutdown_agent(time, EXIT_SHUTODWN, buf);
     /* not reached - server will terminate itself before that line */
