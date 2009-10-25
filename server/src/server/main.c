@@ -712,7 +712,7 @@ void do_specials()
  */
 void shutdown_agent(int timer, int ret, char *reason)
 {
-    static int sd_timer = -1, m_count, real_count = -1, ret_signal = EXIT_NORMAL;
+    static int sd_timer = -1, m_count, real_count = -1;
     static struct timeval   tv1, tv2;
 
     if (timer == -1 && sd_timer == -1)
@@ -723,7 +723,7 @@ void shutdown_agent(int timer, int ret, char *reason)
             {
                 LOG(llevSystem, "SERVER SHUTDOWN STARTED\n");
                 kick_player(NULL);
-                cleanup(ret_signal);
+                cleanup(ret);
             }
         }
         return; /* nothing to do */
@@ -736,16 +736,15 @@ void shutdown_agent(int timer, int ret, char *reason)
         sd_timer = timer;
 
         new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "[Server]: ** SERVER SHUTDOWN STARTED **");
-        ret_signal = ret;
         if (reason)
             new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "[Server]: %s", reason);
 
         if (t_sec)
             new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL,
-            "[Server]: SERVER REBOOT in %d minutes and %d seconds", t_min, t_sec);
+            "[Server]: SERVER SHUTDOWN in %d minutes and %d seconds", t_min, t_sec);
         else
             new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL,
-            "[Server]: SERVER REBOOT in %d minutes", t_min);
+            "[Server]: SERVER SHUTDOWN in %d minutes", t_min);
         GETTIMEOFDAY(&tv1);
         m_count = timer / 60 - 1;
         real_count = -1;
@@ -776,10 +775,10 @@ void shutdown_agent(int timer, int ret, char *reason)
             m_count = t_min - 1;
             if (t_sec)
                 new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL,
-                "[Server]: SERVER REBOOT in %d minutes and %d seconds", t_min, t_sec);
+                "[Server]: SERVER SHUTDOWN in %d minutes and %d seconds", t_min, t_sec);
             else
                 new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL,
-                "[Server]: SERVER REBOOT in %d minutes", t_min);
+                "[Server]: SERVER SHUTDOWN in %d minutes", t_min);
         }
     }
 }

@@ -152,8 +152,6 @@ int                         command_dm_light(object *op, char *params);
 int                         command_dm_password(object *op, char *params);
 int                         command_dumpactivelist(object *op, char *params);
 int                         command_setmaplight(object *op, char *params);
-int                         command_restart(object *ob, char *params);
-int                         command_start_shutdown(object *op, char *params);
 #if 0
 int                         command_dumpmap(object *op, char *params);
 int                         command_dumpallmaps(object *op, char *params);
@@ -228,6 +226,7 @@ int                         command_dmload(object *op, char *params);
 int                         check_dmload(const char*name, const char *pwd);
 int                         command_setgod(object *op, char *params);
 int                         command_kick(object *op, char *params);
+int                         command_restart(object *ob, char *params);
 int                         command_shutdown(object *op, char *params);
 int                         command_goto(object *op, char *params);
 int                         command_generate(object *op, char *params);
