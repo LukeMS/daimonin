@@ -36,6 +36,34 @@
 #define ATTACK_HIT_DAMAGE(_op, _anum)       dam=dam*((double)_op->attack[_anum]*(double)0.01);dam>=1.0f?(damage=(int)dam):(damage=1)
 #define ATTACK_RESIST_DAMAGE(_op, _anum)    dam=dam*((double)(100-_op->resist[_anum])*(double)0.01)
 
+/* resist use the same names as attacks - they map 1:1 to it */
+char *attack_name[NROFATTACKS] =
+{
+    "impact", "slash", "cleave", "pierce",
+    "fire", "cold", "electricity", "poison", "acid", "sonic",
+    "magic", "psionic", "light", "shadow", "lifesteal",
+    "aether", "nether", "chaos", "death",
+    "weaponmagic", "godpower",
+    "drain", "depletion", "corruption",
+    "countermagic", "cancellation", "confusion",
+    "fear", "slow", "paralyze", "snare", "internal"
+};
+
+/* If you want to weight things so certain resistances show up more often than
+ * others, just add more entries in the table for the protections you want to
+ * show up. */
+int resist_table[] =
+{
+    ATNR_SLASH, ATNR_CLEAVE, ATNR_PIERCE, ATNR_PHYSICAL, ATNR_MAGIC, ATNR_FIRE, ATNR_ELECTRICITY, ATNR_COLD,
+    ATNR_CONFUSION, ATNR_ACID, ATNR_DRAIN, ATNR_SHADOW, ATNR_POISON, ATNR_SLOW, ATNR_PARALYZE, ATNR_LIGHT, ATNR_FEAR,
+    ATNR_SLASH, ATNR_DEPLETION, ATNR_CLEAVE, ATNR_SONIC, ATNR_PHYSICAL, ATNR_SNARE, ATNR_LIFESTEAL, ATNR_PSIONIC,
+    ATNR_NETHER, ATNR_PIERCE, ATNR_SLASH, ATNR_CLEAVE, ATNR_PIERCE, ATNR_PHYSICAL, ATNR_MAGIC, ATNR_FIRE,
+    ATNR_ELECTRICITY, ATNR_COLD, ATNR_CONFUSION, ATNR_ACID, ATNR_DRAIN, ATNR_LIGHT, ATNR_POISON, ATNR_SLOW,
+    ATNR_PARALYZE, ATNR_SNARE, ATNR_FEAR, ATNR_CANCELLATION, ATNR_DEPLETION, ATNR_COUNTERMAGIC, ATNR_SONIC, ATNR_CORRUPTION,
+    ATNR_SNARE, ATNR_LIFESTEAL, ATNR_PSIONIC, ATNR_NETHER, ATNR_AETHER, ATNR_DEATH, ATNR_CHAOS, ATNR_GODPOWER,
+    ATNR_WEAPONMAGIC
+};
+
 /* some static defines */
 static int  abort_attack(object *target, object *hitter, int env_attack);
 static void send_attack_msg(object *op, object *hitter, int attacknum, int dam, int damage);

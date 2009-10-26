@@ -96,47 +96,9 @@ typedef enum _attacks
 
 /* only the damage dealing attacks are covered by armour protections.
  * all attacks in the second part are effects and only covered from
- * resistance.
- */
-
-#ifndef INIT_C
-
-EXTERN int      resist_table[];
-EXTERN char    *attack_name[NROFATTACKS];
-
-#else
-
-/* resist use the same names as attacks - they map 1:1 to it */
-EXTERN char    *attack_name[NROFATTACKS]            =
-{
-    "impact", "slash", "cleave", "pierce",
-    "fire", "cold", "electricity", "poison", "acid", "sonic",
-    "magic", "psionic", "light", "shadow", "lifesteal",
-    "aether", "nether", "chaos", "death",
-    "weaponmagic", "godpower",
-    "drain", "depletion", "corruption",
-    "countermagic", "cancellation", "confusion",
-    "fear", "slow", "paralyze", "snare", "internal"
-};
-
-
-/* If you want to weight things so certain resistances show up more often than
- * others, just add more entries in the table for the protections you want to
- * show up.
- */
-EXTERN int      resist_table[]                      =
-{
-    ATNR_SLASH, ATNR_CLEAVE, ATNR_PIERCE, ATNR_PHYSICAL, ATNR_MAGIC, ATNR_FIRE, ATNR_ELECTRICITY, ATNR_COLD,
-    ATNR_CONFUSION, ATNR_ACID, ATNR_DRAIN, ATNR_SHADOW, ATNR_POISON, ATNR_SLOW, ATNR_PARALYZE, ATNR_LIGHT, ATNR_FEAR,
-    ATNR_SLASH, ATNR_DEPLETION, ATNR_CLEAVE, ATNR_SONIC, ATNR_PHYSICAL, ATNR_SNARE, ATNR_LIFESTEAL, ATNR_PSIONIC,
-    ATNR_NETHER, ATNR_PIERCE, ATNR_SLASH, ATNR_CLEAVE, ATNR_PIERCE, ATNR_PHYSICAL, ATNR_MAGIC, ATNR_FIRE,
-    ATNR_ELECTRICITY, ATNR_COLD, ATNR_CONFUSION, ATNR_ACID, ATNR_DRAIN, ATNR_LIGHT, ATNR_POISON, ATNR_SLOW,
-    ATNR_PARALYZE, ATNR_SNARE, ATNR_FEAR, ATNR_CANCELLATION, ATNR_DEPLETION, ATNR_COUNTERMAGIC, ATNR_SONIC, ATNR_CORRUPTION,
-    ATNR_SNARE, ATNR_LIFESTEAL, ATNR_PSIONIC, ATNR_NETHER, ATNR_AETHER, ATNR_DEATH, ATNR_CHAOS, ATNR_GODPOWER,
-    ATNR_WEAPONMAGIC
-};
-
-#endif
+ * resistance. */
+extern char *attack_name[NROFATTACKS];
+extern int   resist_table[];
 
 #define num_resist_table 58
 
