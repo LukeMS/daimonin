@@ -153,7 +153,6 @@
 * SECURE - Allow overriding values with run time flags?
 * SPELL_* - various spell related options
 * STAT_LOSS_ON_DEATH - toggle between stat loss or stat depletion
-* _TESTSERVER - enable certain features and commands useful for map/code testing
 * USE_CHANNELS - enables channel system
 * USE_LIGHTING - enable light/darkness & light sources
 * USE_TILESTRETCHER - enables tilestretcher for uneven ground surface
@@ -335,8 +334,6 @@
  */
 
 #define STAT_LOSS_ON_DEATH FALSE
-
-#define _TESTSERVER
 
 /* you HAVE to also enable this in the lua-plugin (plugin_lua.h)!!! */
 #define USE_CHANNELS
