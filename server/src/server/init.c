@@ -24,7 +24,6 @@
 */
 
 #define EXTERN
-#define INIT_C
 
 #include <global.h>
 
