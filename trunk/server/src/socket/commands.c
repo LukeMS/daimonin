@@ -1195,7 +1195,7 @@ void cs_cmd_login(char *buf, int len, NewSocket *ns)
     mode = GetChar_Buffer(buf);
 
     /* we have a char + 2 string, both with 0 as endmarker - check we have 2 valid strings */
-    if (strlen(buf) + MIN_ACCOUNT_PASSWORD + 3 > len)
+    if ((int)(strlen(buf) + MIN_ACCOUNT_PASSWORD + 3) > len)
     {
         ns->status = Ns_Dead;
         return;
