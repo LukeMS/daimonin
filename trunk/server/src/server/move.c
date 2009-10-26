@@ -236,53 +236,69 @@ void recursive_roll(object *op, int dir, object *pusher)
     return;
 }
 
-
-/*
- * this is not perfect yet.
- * it does not roll objects behind multipart objects properly.
- */
-
+/* Rolls (moves, means walks) <op> one space in <dir>. <op> must be rollable,
+ * the square in <dir> must be not blocked, and <pusher> must be strong enough.
+ * Return 1 on success, 0 on failure. */
+/* FIXME: this is not perfect yet. it does not roll objects behind multipart
+ * objects properly. */
+/* TODO: I fixed 'FS#12 - /push more than possible', but the ability for
+ * mappers to set objects that specifically CAN be pushed in trains might be
+ * nice (although usually, Sokoban-style single pushes are better). Probably
+ * best to add a new map square P_PUSH_TRAIN flag for this, for speed.
+ * TODO: It is possible to push an object diagonally through a gap in a wall
+ * or terrain which is visually too small. This needs addressing but make more
+ * sense with smooth imovement.
+ * TODO: No allowance for flying/levitating op ATM. ???
+ * -- Smacky 20091026 */
 int roll_ob(object *op, int dir, object *pusher)
 {
-    object     *tmp;
-    mapstruct  *m;
-    int         x, y;
+    mapstruct *m;
+    int        x,
+               y;
+    object    *tmp;
 
     if (op->head)
+    {
         op = op->head;
+    }
 
-    if (!QUERY_FLAG(op, FLAG_CAN_ROLL)
-     || (op->weight && random_roll(0, op->weight / 50000 - 1) > pusher->stats.Str))
+    if (!QUERY_FLAG(op, FLAG_CAN_ROLL) ||
+        (op->weight &&
+         random_roll(0, op->weight / 50000 - 1) > pusher->stats.Str))
+    {
         return 0;
+    }
 
     x = op->x + freearr_x[dir];
     y = op->y + freearr_y[dir];
-    if (!(m = out_of_map(op->map, &x, &y)))
-        return 0;
 
-    for (tmp = get_map_ob(m, x, y); tmp != NULL; tmp = tmp->above)
+    if (!(m = out_of_map(op->map, &x, &y)) ||
+        blocked_link_2(op, m, x, y))
     {
-        if (tmp->head == op)
-            continue;
-        tmp->direction = dir;
-        if (IS_LIVE(tmp) || (QUERY_FLAG(tmp, FLAG_NO_PASS) && !roll_ob(tmp, dir, pusher)))
-            return 0;
+        return 0;
     }
 
-    if(blocked_link(op, freearr_x[dir], freearr_y[dir]))
-        return 0;
     if (QUERY_FLAG(op, FLAG_ANIMATE))
-	{
-	    op->anim_moving_dir = dir;
+    {
+        op->anim_moving_dir = dir;
         op->direction = dir;
-	}
-    remove_ob(op);
-    if (check_walk_off(op, NULL, MOVE_APPLY_VANISHED) != CHECK_WALK_OK)
-        return 0;
+    }
 
-    for (tmp = op; tmp != NULL; tmp = tmp->more)
-        tmp->x += freearr_x[dir],tmp->y += freearr_y[dir];
+    remove_ob(op);
+
+    if (check_walk_off(op, NULL, MOVE_APPLY_VANISHED) != CHECK_WALK_OK)
+    {
+        return 0;
+    }
+
+    for (tmp = op; tmp; tmp = tmp->more)
+    {
+        tmp->x += freearr_x[dir];
+        tmp->y += freearr_y[dir];
+    }
+
     insert_ob_in_map(op, op->map, pusher, 0);
+
     return 1;
 }
 
