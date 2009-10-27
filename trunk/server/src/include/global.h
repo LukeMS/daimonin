@@ -478,6 +478,7 @@ typedef struct Settings
     uint8                           stat_loss_on_death; /* If true, chars lose a random stat when they die */
     uint8                           balanced_stat_loss; /* If true, Death stat depletion based on level etc */
     int                             reset_loc_time;     /* Number of seconds to put player back at home */
+    char                            admin_password[MAX_BUF]; /* password for bigtime admin actions */
 
     /* The meta_ is information for the metaserver.  These are set in
      * the lib/settings file.

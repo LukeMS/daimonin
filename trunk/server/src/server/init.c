@@ -57,6 +57,7 @@ struct Settings settings    =
     STAT_LOSS_ON_DEATH,     /* If true, chars lose a random stat when they die */
     BALANCED_STAT_LOSS,     /* If true, Death stat depletion based on level etc */
     RESET_LOCATION_TIME,    /* Number of seconds to put player back at home */
+    "",                     /* admin_password */
     0,                      /* True if we should send updates */
     "",                     /* Hostname/ip addr of the metaserver */
     "",                        /* name of the server */
@@ -363,6 +364,13 @@ static void load_settings()
         {
             if(*cp)
                 settings.login_ip = strdup_local(cp);
+        }
+        else if (!strcasecmp(buf, "admin_password"))
+        {
+            if (has_val)
+            {
+                strcpy(settings.admin_password, cp);
+            }
         }
         else if (!strcasecmp(buf, "metaserver_notification"))
         {
