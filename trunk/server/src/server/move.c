@@ -272,8 +272,9 @@ int roll_ob(object *op, int dir, object *pusher)
     x = op->x + freearr_x[dir];
     y = op->y + freearr_y[dir];
 
-    if (!(m = out_of_map(op->map, &x, &y)) ||
-        blocked_link_2(op, m, x, y))
+    if (!(m = out_of_map(op->map, &x, &y)) || // out of map
+        (op->more && blocked_link_2(op, m, x, y)) || // multi part
+        (!op->more && blocked(op, m, x, y, op->terrain_flag))) // single part
     {
         return 0;
     }
