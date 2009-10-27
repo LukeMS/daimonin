@@ -745,7 +745,7 @@ void ai_move_randomly(object *op, struct mob_behaviour_param *params, move_respo
                 continue;
         }
 
-        if (!blocked_link(op, freearr_x[r], freearr_y[r]))
+        if (!blocked_link(op, NULL, freearr_x[r], freearr_y[r]))
         {
             response->type = MOVE_RESPONSE_DIR;
             response->data.direction = r;
@@ -1220,7 +1220,7 @@ void ai_search_for_lost_enemy(object *op, struct mob_behaviour_param *params, mo
         {
             r = RANDOM() % 8 + 1;
 
-            if (!blocked_link(op, freearr_x[r], freearr_y[r]))
+            if (!blocked_link(op, NULL, freearr_x[r], freearr_y[r]))
             {
                 response->type = MOVE_RESPONSE_DIR;
                 response->data.direction = r;

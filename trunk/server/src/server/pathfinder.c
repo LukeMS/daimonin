@@ -427,11 +427,11 @@ int find_neighbours(path_node *node, path_node **open_list, path_node **closed_l
             searched_nodes++;
 #endif
 
-            /* Multi-arch or not? (blocked_link_2 works for normal archs too, but is more expensive) */
+            /* Multi-arch or not? (blocked_link works for normal archs too, but is more expensive) */
             if (op->head || op->more)
-                block = blocked_link_2(op, map, x2, y2);
+                block = blocked_link(op, map, x2, y2);
             /* TODO: handle doors for multi-archs. Will require some modification to
-             * blocked_link_2 i guess: (don't return as soon as we find a block: if
+             * blocked_link i guess: (don't return as soon as we find a block: if
              * that block is P_DOOR_CLOSED, keep searching and add P_DOOR_CLOSED to the return
              * value.)
              */

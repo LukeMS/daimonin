@@ -448,97 +448,89 @@ int blocked(object *op, mapstruct *m, int x, int y, int terrain)
 }
 
 
-/*
-* Returns true if the given coordinate is blocked by the
-* object passed is not blocking.  This is used with
-* multipart monsters - if we want to see if a 2x2 monster
-* can move 1 space to the left, we don't want its own area
-* to block it from moving there.
-* Returns TRUE if the space is blocked by something other than the
-* monster.
-*/
+/* Returns true if the given coordinate is blocked but the
+ * object passed is not blocking.  This is used with
+ * multipart monsters - if we want to see if a 2x2 monster
+ * can move 1 space to the left, we don't want its own area
+ * to block it from moving there.
+ * If <map> is NULL, <x> and <y> are taken as offsets, else absolute values.
+ * Returns TRUE if the space is blocked by something other than the
+ * monster. */
 /* why is controlling the own arch clone offsets with the new
-* freearr_[] offset a good thing?
-* a.) we don't must check any flags for tiles where we was before
-* b.) we don't block in moving when we got teleported in a no_pass somewhere
-* c.) no call to out_of_map() needed for all parts
-* d.) no checks of objects in every tile node of the multi arch
-* e.) no recursive call needed anymore
-* f.) the multi arch are handled in maps like the single arch
-* g.) no scaling by heavy map action when we move (more objects
-*     on the map don't interest us anymore here)
-*/
-int blocked_link(object *op, int xoff, int yoff)
+ * freearr_[] offset a good thing?
+ * a.) we don't must check any flags for tiles where we was before
+ * b.) we don't block in moving when we got teleported in a no_pass somewhere
+ * c.) no call to out_of_map() needed for all parts
+ * d.) no checks of objects in every tile node of the multi arch
+ * e.) no recursive call needed anymore
+ * f.) the multi arch are handled in maps like the single arch
+ * g.) no scaling by heavy map action when we move (more objects
+ *     on the map don't interest us anymore here) */
+int blocked_link(object *op, mapstruct *map, int x, int y)
 {
-    object     *tmp, *tmp2;
-    mapstruct  *m;
-    int         xtemp, ytemp;
+    object *tmp;
 
     for (tmp = op; tmp; tmp = tmp->more)
     {
+        int     xtemp,
+                ytemp;
+        object *tmp2;
+
         /* we search for this new position */
-        xtemp = tmp->arch->clone.x + xoff;
-        ytemp = tmp->arch->clone.y + yoff;
+        xtemp = tmp->arch->clone.x + x;
+        ytemp = tmp->arch->clone.y + y;
+
         /* lets check it match a different part of us */
         for (tmp2 = op; tmp2; tmp2 = tmp2->more)
         {
             /* if this is true, we can be sure this position is valid */
-            if (xtemp == tmp2->arch->clone.x && ytemp == tmp2->arch->clone.y)
-                break;
+            if (!map) // x and y are offsets
+            {
+                if (xtemp == tmp2->arch->clone.x &&
+                    ytemp == tmp2->arch->clone.y)
+                {
+                    break;
+                }
+            }
+            else // x and y are absolute
+            {
+                if (xtemp == tmp->x &&
+                    ytemp == tmp->y)
+                {
+                    break;
+                }
+            }
         }
+
         if (!tmp2) /* if this is NULL, tmp will move in a new node */
         {
-            xtemp = tmp->x + xoff;
-            ytemp = tmp->y + yoff;
+            mapstruct *m;
+
+            if (!map)
+            {
+                xtemp = tmp->x + x;
+                ytemp = tmp->y + y;
+            }
+
             /* if this new node is illegal - we can skip all */
-            if (!(m = out_of_map(tmp->map, &xtemp, &ytemp)))
+            if (!(m = out_of_map((!map) ? tmp->map : map, &xtemp, &ytemp)))
+            {
                 return -1;
+            }
+
             /* tricky: we use always head for tests - no need to copy any flags to the tail */
             /* we should kick in here the door test - but we need to diff we are
             * just testing here or we doing a real step!
             */
             if ((xtemp = blocked(op, m, xtemp, ytemp, op->terrain_flag)))
+            {
                 return xtemp;
+            }
         }
     }
+
     return 0; /* when we are here - then we can move */
 }
-
-/* As above, but using an absolute coordinate (map,x,y)-triplet
-* TODO: this function should really be combined with the above
-* to reduce code duplication...
-*/
-int blocked_link_2(object *op, mapstruct *map, int x, int y)
-{
-    object     *tmp, *tmp2;
-    int         xtemp, ytemp;
-    mapstruct  *m;
-
-    for (tmp = op; tmp; tmp = tmp->more)
-    {
-        /* we search for this new position */
-        xtemp = x + tmp->arch->clone.x;
-        ytemp = y + tmp->arch->clone.y;
-        /* lets check it match a different part of us */
-        for (tmp2 = op; tmp2; tmp2 = tmp2->more)
-        {
-            /* if this is true, we can be sure this position is valid */
-            if (xtemp == tmp2->x && ytemp == tmp2->y)
-                break;
-        }
-        if (!tmp2) /* if this is NULL, tmp will move in a new node */
-        {
-            /* if this new node is illegal - we can skip all */
-            if (!(m = out_of_map(map, &xtemp, &ytemp)))
-                return -1;
-            /* tricky: we use always head for tests - no need to copy any flags to the tail */
-            if ((xtemp = blocked(op, m, xtemp, ytemp, op->terrain_flag)))
-                return xtemp;
-        }
-    }
-    return 0; /* when we are here - then we can move */
-}
-
 
 /* blocked_tile()
 * return: 0= not blocked 1: blocked
