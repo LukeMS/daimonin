@@ -98,7 +98,7 @@ int move_ob(object *op, int dir, object *originator)
          * This needs to be done before we allow multi tile mobs to do
          * more fancy things.
          */
-        if (blocked_link(op, freearr_x[dir], freearr_y[dir]))
+        if (blocked_link(op, NULL, freearr_x[dir], freearr_y[dir]))
             return 0;
 
         remove_ob(op);
@@ -273,7 +273,7 @@ int roll_ob(object *op, int dir, object *pusher)
     y = op->y + freearr_y[dir];
 
     if (!(m = out_of_map(op->map, &x, &y)) || // out of map
-        (op->more && blocked_link_2(op, m, x, y)) || // multi part
+        (op->more && blocked_link(op, m, x, y)) || // multi part
         (!op->more && blocked(op, m, x, y, op->terrain_flag))) // single part
     {
         return 0;
