@@ -1208,9 +1208,9 @@ void cs_cmd_checkname(char *buf, int len, NewSocket *ns)
 /* login to a account or create it (create must have called checkname first to reserve the name */
 void cs_cmd_login(char *buf, int len, NewSocket *ns)
 {
-    char *pass;
-    account_status ret = ACCOUNT_STATUS_OK;
-    int mode, pass_len;
+    char           *pass;
+    account_status  ret = ACCOUNT_STATUS_OK;
+    int             mode;
 
     if (!buf || len<(PARM_SIZE_CHAR*5) || buf[len-1] || ns->status != Ns_Login)
     {
@@ -1228,12 +1228,11 @@ void cs_cmd_login(char *buf, int len, NewSocket *ns)
     }
 
     pass = buf + strlen(buf) + 1;
-    pass_len = strlen(pass);
-    /* is the password in right size? Don't allow pass = name and ensure name is valid */
-    if (pass_len < MIN_ACCOUNT_PASSWORD ||
-        pass_len > MAX_ACCOUNT_PASSWORD ||
-        !strcasecmp(buf,pass) ||
-        !account_name_valid(buf))
+
+    /* Ensure name and pass are valid and not the same. */
+    if (!account_name_valid(buf) ||
+        !password_valid(pass) ||
+        !strcasecmp(buf, pass))
     {
         ns->status = Ns_Dead;
         return;

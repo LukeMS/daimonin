@@ -263,5 +263,7 @@ enum
 
 extern int account_name_valid(char *cp);
 extern int account_char_valid(char c);
+extern int password_valid(char *cp);
+extern int password_char_valid(char c);
 extern int player_name_valid(char *cp);
 extern int player_char_valid(char c);

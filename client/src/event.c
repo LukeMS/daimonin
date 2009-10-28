@@ -1145,8 +1145,11 @@ static void key_string_event(SDL_KeyboardEvent *key)
 
                             case LOGIN_STEP_PASS1:
                             case LOGIN_STEP_PASS2:
-                                /* Allow full input for passwords, including
-                                 * shifted chars. */
+                                if (!password_char_valid(c))
+                                {
+                                    c = 0;
+                                }
+
                                 break;
 
                             default:
