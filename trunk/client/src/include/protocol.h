@@ -260,3 +260,6 @@ enum
 
 /* maximum reachable level */
 #define MAXLEVEL 110
+
+extern int account_name_valid(char *cp);
+extern int player_name_valid(char *cp);

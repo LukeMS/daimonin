@@ -68,7 +68,8 @@ am_daimonin_OBJECTS = ../../src/adler32.$(OBJEXT) \
 	../../src/kerbholz.$(OBJEXT) ../../src/main.$(OBJEXT) \
 	../../src/map.$(OBJEXT) ../../src/menu.$(OBJEXT) \
 	../../src/misc.$(OBJEXT) ../../src/physfsrwops.$(OBJEXT) \
-	../../src/player.$(OBJEXT) ../../src/socket.$(OBJEXT) \
+	../../src/player.$(OBJEXT) ../../src/protocol.$(OBJEXT) \
+        ../../src/socket.$(OBJEXT) \
 	../../src/sound.$(OBJEXT) ../../src/sprite.$(OBJEXT) \
 	../../src/textwin.$(OBJEXT) ../../src/tile_stretcher.$(OBJEXT) \
 	../../src/uncompr.$(OBJEXT) ../../src/wrapper.$(OBJEXT) \
@@ -247,6 +248,7 @@ daimonin_SOURCES = \
 	../../src/misc.c \
 	../../src/physfsrwops.c \
 	../../src/player.c \
+	../../src/protocol.c \
 	../../src/socket.c \
 	../../src/sound.c \
 	../../src/sprite.c \
@@ -415,6 +417,8 @@ clean-daimoninPROGRAMS:
 	../../src/$(DEPDIR)/$(am__dirstamp)
 ../../src/player.$(OBJEXT): ../../src/$(am__dirstamp) \
 	../../src/$(DEPDIR)/$(am__dirstamp)
+../../src/protocol.$(OBJEXT): ../../src/$(am__dirstamp) \
+	../../src/$(DEPDIR)/$(am__dirstamp)
 ../../src/socket.$(OBJEXT): ../../src/$(am__dirstamp) \
 	../../src/$(DEPDIR)/$(am__dirstamp)
 ../../src/sound.$(OBJEXT): ../../src/$(am__dirstamp) \
@@ -486,6 +490,7 @@ mostlyclean-compile:
 	-rm -f ../../src/misc.$(OBJEXT)
 	-rm -f ../../src/physfsrwops.$(OBJEXT)
 	-rm -f ../../src/player.$(OBJEXT)
+	-rm -f ../../src/protocol.$(OBJEXT)
 	-rm -f ../../src/socket.$(OBJEXT)
 	-rm -f ../../src/sound.$(OBJEXT)
 	-rm -f ../../src/sprite.$(OBJEXT)
@@ -530,6 +535,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/misc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/physfsrwops.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/player.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/protocol.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/socket.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/sound.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/sprite.Po@am__quote@

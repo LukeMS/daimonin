@@ -31,6 +31,9 @@
 	<File name="../../../src/include/player.h" open="0" top="0" tabpos="0">
 		<Cursor position="5181" topLine="149" />
 	</File>
+	<File name="../../../src/include/protocol.h" open="0" top="0" tabpos="0">
+		<Cursor position="5171" topLine="139" />
+	</File>
 	<File name="../../../src/include/sound.h" open="0" top="0" tabpos="5">
 		<Cursor position="4263" topLine="183" />
 	</File>

@@ -477,6 +477,11 @@
 	<include.h>
 	<math.h>
 
+1220922356 source:/mnt/hgfs/HD-F/Projects/daimonin/client/src/protocol.c
+	"protocol.h"
+	<ctype.h>
+	<string.h>
+
 1220922356 source:/mnt/hgfs/HD-F/Projects/daimonin/client/src/socket.c
 	<include.h>
 
@@ -780,6 +785,11 @@
 1221490727 source:/mnt/hgfs/Untitled-1/Projects/daimonin/client/src/player.c
 	<include.h>
 	<math.h>
+
+1221490727 source:/mnt/hgfs/Untitled-1/Projects/daimonin/client/src/protocol.c
+	"protocol.h"
+	<ctype.h>
+	<string.h>
 
 1221490727 source:/mnt/hgfs/Untitled-1/Projects/daimonin/client/src/socket.c
 	<include.h>
