@@ -72,6 +72,42 @@ int account_char_valid(char c)
     return 1;
 }
 
+/* Return 1 or 0 depending on whether we have valid password length and only
+ * valid chars in our password. */
+int password_valid(char *cp)
+{
+    int len,
+        i;
+
+    if ((len = strlen(cp)) < MIN_ACCOUNT_PASSWORD ||
+        len > MAX_ACCOUNT_PASSWORD)
+    {
+        return 0;
+    }
+
+    for (i = 0; i < len; i++)
+    {
+        if (!password_char_valid(*(cp + i)))
+        {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+/* Return 1 or 0 depending on whether we have only valid chars. */
+int password_char_valid(char c)
+{
+    /* fail if not printable (but grats on typing it) or space. */
+    if (!isgraph(c))
+    {
+        return 0;
+    }
+
+    return 1;
+}
+
 /* Return 1 or 0 depending on whether we have valid name length and only valid
  * chars in our name. */
 int player_name_valid(char *cp)
