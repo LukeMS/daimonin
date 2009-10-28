@@ -46,16 +46,27 @@ int account_name_valid(char *cp)
 
     for (i = 0; i < len; i++)
     {
-        /* fail if not alphabet letter or digit and not '-' or '_' */
-        if (!isalnum(*(cp + i)) &&
-            *(cp + i) != '-' &&
-            *(cp + i) != '_')
+        if (!account_char_valid(*(cp + i)))
         {
             return 0;
         }
 
-        /* Lowercase as we go. */
+        /* Lowercase. */
         *(cp + i) = tolower(*(cp + i));
+    }
+
+    return 1;
+}
+
+/* Return 1 or 0 depending on whether we have only valid chars. */
+int account_char_valid(char c)
+{
+    /* fail if not alphabet letter or digit and not '-' or '_' */
+    if (!isalnum(c) &&
+        c != '-' &&
+        c != '_')
+    {
+        return 0;
     }
 
     return 1;
@@ -74,32 +85,38 @@ int player_name_valid(char *cp)
         return 0;
     }
 
-    /* Capitalise as we go. */
-    /* FIXME: Only letters and '-' now? */
-    if (!isalpha(*cp) &&
-        *cp != '-')
+    for (i = len - 1; i >= 0; i--)
     {
-        return 0;
-    }
-
-    *cp = toupper(*cp);
-
-    for (i = 1; i < len; i++)
-    {
-        if (!isalpha(*(cp + i)) &&
-            *(cp + i) != '-')
+        if (!player_char_valid(*(cp + i)))
         {
             return 0;
         }
 
-       *(cp + i) = tolower(*(cp + i));
+        /* Lowercase. */
+        *(cp + i) = tolower(*(cp + i));
     }
+
+    /* Capitalise first character. */
+    *cp = toupper(*cp);
 
     /* we don't want some special names & keywords here. */
     /* TODO: add here a complete "forbidden name" mechanisn */
     /* FIXME: Do it properly or don't do it at all. */
 //    if(!strcasecmp(cp,"fuck") || !strcasecmp(cp,"off") || !strcasecmp(cp,"allow"))
 //        return 0;
+
+    return 1;
+}
+
+/* Return 1 or 0 depending on whether we have only valid chars. */
+int player_char_valid(char c)
+{
+    /* FIXME: Only letters and '-' now? */
+    if (!isalpha(c) &&
+        c != '-')
+    {
+        return 0;
+    }
 
     return 1;
 }
