@@ -202,6 +202,9 @@
 				RelativePath="..\..\..\src\player.c">
 			</File>
 			<File
+				RelativePath="..\..\..\src\protocol.c">
+			</File>
+			<File
 				RelativePath="..\..\..\src\socket.c">
 			</File>
 			<File
@@ -291,6 +294,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\player.h">
+			</File>
+			<File
+				RelativePath="..\..\..\src\include\protocol.h">
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\sdlsocket.h">

@@ -227,6 +227,9 @@
 		<Unit filename="..\..\..\src\player.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="..\..\..\src\protocol.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="..\..\..\src\socket.c">
 			<Option compilerVar="CC" />
 		</Unit>

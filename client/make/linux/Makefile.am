@@ -28,6 +28,7 @@ daimonin_SOURCES =  \
 	../../src/misc.c \
 	../../src/physfsrwops.c \
 	../../src/player.c \
+	../../src/protocol.c \
 	../../src/socket.c \
 	../../src/sound.c \
 	../../src/sprite.c \

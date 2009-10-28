@@ -97,51 +97,6 @@ void display_motd(object *op)
 #endif
 }
 
-/* same as above, just we check we have the right lower/upper name format 
- * and no forbidden names
- * only allow alphabet letters and the '-' for a name.
- */
-int player_name_valid(char *cp)
-{
-    int len,
-        i;
-
-    if ((len = strlen(cp)) < MIN_PLAYER_NAME ||
-        len > MAX_PLAYER_NAME)
-    {
-        return FALSE;
-    }
-
-    /* Capitalise as we go. */
-    /* FIXME: Only letters and '-' now? */
-    if (!isalpha(*cp) &&
-        *cp != '-')
-    {
-        return FALSE;
-    }
-
-    *cp = toupper(*cp);
-
-    for (i = 1; i < len; i++)
-    {
-        if (!isalpha(*(cp + i)) &&
-            *(cp + i) != '-')
-        {
-            return FALSE;
-        }
-
-       *(cp + i) = tolower(*(cp + i));
-    }
-
-    /* we don't want some special names & keywords here. */
-    /* TODO: add here a complete "forbidden name" mechanisn */
-    /* FIXME: Do it properly or don't do it at all. */
-//    if(!strcasecmp(cp,"fuck") || !strcasecmp(cp,"off") || !strcasecmp(cp,"allow"))
-//        return FALSE;
-
-    return TRUE;
-}
-
 void free_player(player *pl)
 {
     /* first, we removing the player from map or whatever */
