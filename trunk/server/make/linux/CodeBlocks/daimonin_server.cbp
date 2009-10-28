@@ -239,6 +239,7 @@
 		<Unit filename="../../../src/include/player.h" />
 		<Unit filename="../../../src/include/plugin.h" />
 		<Unit filename="../../../src/include/plugproto.h" />
+		<Unit filename="../../../src/include/protocol.h" />
 		<Unit filename="../../../src/include/quest.h" />
 		<Unit filename="../../../src/include/race.h" />
 		<Unit filename="../../../src/include/re-cmp.h" />
@@ -419,6 +420,9 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../../src/server/plugins.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/protocol.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../../src/server/resurrection.c">

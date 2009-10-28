@@ -400,6 +400,9 @@
 		<Unit filename="..\..\..\src\server\plugins.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="..\..\..\src\server\protocol.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="..\..\..\src\server\resurrection.c">
 			<Option compilerVar="CC" />
 		</Unit>
