@@ -537,6 +537,16 @@ static inline int aggro_exp_group(object *victim, object *aggro, char *kill_msg)
     object *leader = CONTR(aggro->enemy)->group_leader;
     object *high = leader, *tmp, *member;
     int exp=0, t;
+    object *force;
+    archetype *at;
+    int tmp_drain_level = 0, high_drain_level = 0;
+
+    at = find_archetype("drain");
+    if (!at)
+    {
+        LOG(llevBug, "BUG: Couldn't find archetype drain.\n");
+        return FALSE;
+    }
 
     /* here comes the bad news for group playing:
      * The maximal used exp is counted by the highest REAL level
@@ -552,8 +562,19 @@ static inline int aggro_exp_group(object *victim, object *aggro, char *kill_msg)
     /* first thing: we get the highest member */
     for(tmp=leader;tmp;tmp=CONTR(tmp)->group_next)
     {
-        if(high->level < tmp->level)
+        /* we need to take drain into account before we assume that is the level of the player.
+         * it's probably not the most efficient way of doing it as calculations involving drain
+         * should only be used with stats instead of drain affecting level system-wide.
+         * however, this is an emergency bugfix, so it's better just to fix the bug first... */
+        force = present_arch_in_ob(at, tmp);
+        if (force)
+            tmp_drain_level = force->level;
+
+        if(high->level + high_drain_level < tmp->level + tmp_drain_level)
+        {
             high = tmp;
+            high_drain_level = tmp_drain_level;
+        }
     }
 
 
@@ -561,13 +582,13 @@ static inline int aggro_exp_group(object *victim, object *aggro, char *kill_msg)
      * for killing low creatures with a high group member guarding/healing
      * them.
      */
-    calc_skill_exp(high, victim, 1.0f, high->level, &exp);
+    calc_skill_exp(high, victim, 1.0f, high->level + high_drain_level, &exp);
 
     t=exp;
     /* adjust exp for nrof group members */
     exp = (int)((float)exp*(0.9f+(0.1f*(float) CONTR(leader)->group_nrof)));
 #ifdef DEBUG_AGGRO
-    LOG(-1," high member: %s (level %d)\n--> exp: %d (%d) --> member exp: %d\n", query_name(high), high->level, exp, t ,exp/CONTR(leader)->group_nrof);
+    LOG(-1," high member: %s (level %d)\n--> exp: %d (%d) --> member exp: %d\n", query_name(high), high->level + high_drain_level, exp, t ,exp/CONTR(leader)->group_nrof);
 #endif
 
     /* exp is 0 - one member used a to high skill to kill */
