@@ -1130,12 +1130,17 @@ static void key_string_event(SDL_KeyboardEvent *key)
                         switch (LoginInputStep)
                         {
                             case LOGIN_STEP_NAME:
-                                /* Allow only these chars for account names. */
-                                if ((c < 'a' || c > 'z') &&
-                                    (c < 'A' || c > 'Z') &&
-                                    (c < '0' || c > '9') &&
-                                    (c != '-' && c != '_'))
+                                /* The tolower below is purely visual -- the
+                                 * server will force the correct case anyway. */
+                                if (!account_char_valid(c))
+                                {
                                     c = 0;
+                                }
+                                else
+                                {
+                                   c = tolower(c);
+                                }
+
                                 break;
 
                             case LOGIN_STEP_PASS1:
@@ -1151,15 +1156,20 @@ static void key_string_event(SDL_KeyboardEvent *key)
                     }
                     else if (GameStatus == GAME_STATUS_ACCOUNT_CHAR_NAME)
                     {
-                        /* Allow only these chars for player names. */
-                        if ((c < 'a' || c > 'z') &&
-                            (c < 'A' || c > 'Z') &&
-                            (c != '-' && c != '_'))
+                        /* The toupeper/tolower below is purely visual -- the
+                         * server will force the correct case anyway. */
+                        if (!player_char_valid(c))
+                        {
                             c = 0;
-                        else if (CurrentCursorPos == 0 && (c >= 'a' && c <= 'z'))
+                        }
+                        else if (CurrentCursorPos == 0)
+                        {
                             c = toupper(c);
-                        else if (c >= 'A' && c <= 'Z')
-                            c = tolower(c);
+                        }
+                        else
+                        {
+                           c = tolower(c);
+                        }
                     }
                     else if (cpl.input_mode == INPUT_MODE_NUMBER)
                     {
