@@ -205,7 +205,6 @@ int main(int argc, char **argv)
     if (!root->getRenderSystem()->getCapabilities()->hasCapability(RSC_VBO))
         Logger::log().error() << "Your gfx-card doesn't support hardware vertex/index buffer!";
     TexturePtr mTexture, mTextur2;
-
     Option::getSingleton().setIntValue(Option::HIGH_TEXTURE_DETAILS, true);
     Option::getSingleton().setIntValue(Option::HIGH_TILES_DETAILS, true);
     /*

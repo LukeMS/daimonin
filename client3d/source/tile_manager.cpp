@@ -21,18 +21,27 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
-#include <iostream>
-#include <OgreHardwarePixelBuffer.h>
+#include <OgreSceneManager.h>
+#include <OgreManualObject.h>
+#include <sys/stat.h>
 #include "logger.h"
-#include "define.h"
 #include "tile_chunk.h"
+#include "tile_decal.h"
 #include "tile_manager.h"
 
 using namespace Ogre;
 
-//#define LOG_TIMING
+#define LOG_TIMING
 
-Ogre::SceneManager *TileManager::mSceneManager = 0;
+#ifdef LOG_TIMING
+#include <OgreRoot.h>
+#include <OgreTimer.h>
+#endif
+
+String TileManager::LAND_PREFIX    = "Land";
+String TileManager::WATER_PREFIX   = "Water";
+String TileManager::MATERIAL_PREFIX= "Terrain/";
+const unsigned int RGB = 3; /**< Pixelsize. **/
 
 //////// Only for TESTING
 #include <stdio.h>
@@ -41,7 +50,7 @@ void TileManager::loadLvl()
     FILE *stream = fopen("client3d.lvl", "rb");
     fread(&mMap, sizeof(mMap), 1, stream);
     fclose(stream);
-    changeChunks();
+    updateChunks();
 }
 
 void TileManager::saveLvl()
@@ -52,259 +61,80 @@ void TileManager::saveLvl()
 }
 //////////////////////////
 
+SceneManager *TileManager::mSceneManager = 0;
+
+//================================================================================================
+// Constructor.
+//================================================================================================
+TileManager::TileManager()
+{
+    mMap = 0;
+}
+
+//================================================================================================
+// Destructor.
+//================================================================================================
+TileManager::~TileManager()
+{
+    if (mMap ) Logger::log().error() << "TileManager::freeRecources() was not called!";
+}
+
 //================================================================================================
 // Free all resources.
 //================================================================================================
 void TileManager::freeRecources()
 {
-    mMapchunk.freeRecources();
-    if (mSceneManager)
-        mSceneManager->destroyQuery(mRaySceneQuery);
+    if (!mMap) return; // Init(...) was never called.
+    mSceneManager->destroyQuery(mRaySceneQuery);
+    delete[] mMap; mMap = 0;
+    int count = TileDecal::getSumDecals();
+    if (count)
+    {
+        Logger::log().error() << count << " Decal(s) were created by 'new' but not destroyed by 'delete'. "
+        "(All decals must be deleted before TileManager::freeRecources() is called)";
+    }
 }
 
 //================================================================================================
 // Init the TileEngine.
 //================================================================================================
-void TileManager::Init(SceneManager* SceneMgr, int queryMaskLand, int queryMaskWater, int lod, bool createAtlas)
+void TileManager::Init(SceneManager *SceneMgr, int queryMaskLand, int queryMaskWater, const char *pathGfxTiles, int sizeWorldMap, int lod, bool createAtlas)
 {
     Logger::log().headline() << "Init TileEngine";
-    mShowGrid = false;
-    mQueryMaskLand = queryMaskLand;
-    mEditorActSelectedGfx = 0;
-    mMapScrollX = mMapScrollZ = 0;
-    mSelectedVertexX = mSelectedVertexZ = 0; // Tile picking.
     mSceneManager = SceneMgr;
     mRaySceneQuery = mSceneManager->createRayQuery(Ray());
-    mLod = lod&(SUM_ATLAS_RESOLUTIONS-1);
-    int textureSize = MAX_TEXTURE_SIZE >> mLod;
-    Logger::log().info() << "Setting LoD to " << mLod << ". Atlas size is " << textureSize << "x" << textureSize<< ".";
+    // Create the world map.
+    mMapSize = sizeWorldMap;
+    if (mMapSize <= CHUNK_SIZE_X*2 || mMapSize <= CHUNK_SIZE_Z*2)
+    {
+        Logger::log().info() << "WorldMapSize was increased to hold the visisble map data!";
+        if (mMapSize <= CHUNK_SIZE_X*2) mMapSize = (CHUNK_SIZE_X+1)*2;
+        if (mMapSize <= CHUNK_SIZE_Z*2) mMapSize = (CHUNK_SIZE_Z+1)*2;
+    }
+    mMap = new mapStruct[mMapSize*mMapSize];
+    mPathGfxTiles = pathGfxTiles;
+    mQueryMaskLand = queryMaskLand;
+    mEditorActSelectedGfx = 0;
+    mSelectedVertexX = mSelectedVertexZ = 0; // Tile picking.
+    int Lod = lod &(SUM_ATLAS_RESOLUTIONS-1);
+    mTextureSize = MAX_TEXTURE_SIZE >> Lod;
+    Logger::log().info() << "Setting LoD to " << Lod << ". Atlas size is " << mTextureSize << "x" << mTextureSize<< ".";
     if (createAtlas)
     {
         Logger::log().info() << "Creating atlas-texture...";
         createFilterTemplate();
-        createAtlasTexture(MAX_TEXTURE_SIZE, true);
+        createAtlasTexture(MAX_TEXTURE_SIZE, 0);
         Logger::log().success(true);
     }
     Logger::log().info() << "Creating tile chunk...";
-    mMapchunk.init(textureSize, queryMaskLand, queryMaskWater);
+    mMapchunk.init(queryMaskLand, queryMaskWater, mSceneManager);
+    setMapset(0, 0);
     Logger::log().success(true);
     Logger::log().info() << "Init done.";
 }
 
 //================================================================================================
-// Return the shadow number.
-//================================================================================================
-int TileManager::getMapShadow(unsigned int x, unsigned int z)
-{
-    if (!mShowGrid) return mMap[x][z].shadow;
-    return SHADOW_GRID + ((x&1)?SHADOW_MIRROX_X:0) + ((z&1)?0:SHADOW_MIRROX_Z);
-}
-
-//================================================================================================
-// Returns the gfx number of the shadow.
-// This MUST be done in the editor. Its only here because of testing...
-//================================================================================================
-unsigned short TileManager::calcShadow(int x, int z)
-{
-
-
-    return 0 + SHADOW_MIRROX_X; // delete me! (Mirror test)
-
-
-    int tl, tr, bl, br;
-    // ////////////////////////////////////////////////////////////////////
-    // I - III
-    // ////////////////////////////////////////////////////////////////////
-    bl = getMapHeight(x-1, z, VERTEX_BL);
-    br = getMapHeight(x-1, z, VERTEX_BR);
-    if (bl-br > 10 && bl-br < 100)
-    {
-        tl = getMapHeight(x-1, z, VERTEX_TL);
-        tr = getMapHeight(x-1, z, VERTEX_TR);
-        // ////////////////////////////////////////////////////////////////////
-        // II
-        // ////////////////////////////////////////////////////////////////////
-        if (bl-br < 64)
-        {
-            if (tl-tr >= 220) return 42;
-            if (tl-tr >= 180) return 32;
-            if (tl-tr >= 140) return 22;
-            if (tl-tr >= 100) return 12;
-            if (tl-tr >=  65) return  2;
-        }
-        bl = getMapHeight(x-1, z+1, VERTEX_BL);
-        br = getMapHeight(x-1, z+1, VERTEX_BR);
-        // ////////////////////////////////////////////////////////////////////
-        // I
-        // ////////////////////////////////////////////////////////////////////
-        if (bl-br < 10)
-        {
-            if (tl-tr >= 220) return 41;
-            if (tl-tr >= 180) return 31;
-            if (tl-tr >= 140) return 21;
-            if (tl-tr >= 100) return 11;
-            if (tl-tr >=  65) return  1;
-        }
-        // ////////////////////////////////////////////////////////////////////
-        // III
-        // ////////////////////////////////////////////////////////////////////
-        if (bl-br > 64)
-        {
-            if (tl-tr >= 220) return 43;
-            if (tl-tr >= 180) return 33;
-            if (tl-tr >= 140) return 23;
-            if (tl-tr >= 100) return 13;
-            if (tl-tr >=  65) return  3;
-        }
-    }
-    // ////////////////////////////////////////////////////////////////////
-    // IV
-    // ////////////////////////////////////////////////////////////////////
-    bl = getMapHeight(x, z+2, VERTEX_BL);
-    br = getMapHeight(x, z+2, VERTEX_BR);
-    tl = getMapHeight(x, z+2, VERTEX_TL);
-    tr = getMapHeight(x, z+2, VERTEX_TR);
-    if (bl < 64 && br < 64 && tl < 64 && tr < 64)
-    {
-        br =      getMapHeight(x-1, z+1, VERTEX_BR);
-        tl = br - getMapHeight(x-1, z+1, VERTEX_TL);
-        tr = br - getMapHeight(x-1, z+1, VERTEX_TR);
-        bl = br - getMapHeight(x-1, z+1, VERTEX_BL);
-        if (tl >= 220 && tr >= 220 && bl >= 220) return 44;
-        if (tl >= 180 && tr >= 180 && bl >= 180) return 34;
-        if (tl >= 140 && tr >= 140 && bl >= 140) return 24;
-        if (tl >= 100 && tr >= 100 && bl >= 100) return 14;
-        if (tl >= 65  && tr >=  65 && bl >=  65) return  4;
-    }
-    // ////////////////////////////////////////////////////////////////////
-    // V
-    // ////////////////////////////////////////////////////////////////////
-    // typo from red ????
-
-    // ////////////////////////////////////////////////////////////////////
-    // VI
-    // ////////////////////////////////////////////////////////////////////
-    bl = getMapHeight(x-2, z, VERTEX_BL);
-    br = getMapHeight(x-2, z, VERTEX_BR);
-    tl = getMapHeight(x-2, z, VERTEX_TL);
-    tr = getMapHeight(x-2, z, VERTEX_TR);
-    if (bl < 64 && br < 64 && tl < 64 && tr < 64)
-    {
-        br =      getMapHeight(x-1, z+1, VERTEX_BR);
-        tl = br - getMapHeight(x-1, z+1, VERTEX_TL);
-        tr = br - getMapHeight(x-1, z+1, VERTEX_TR);
-        bl = br - getMapHeight(x-1, z+1, VERTEX_BL);
-        if (tl >= 220 && tr >= 220 && bl >= 220) return 46;
-        if (tl >= 180 && tr >= 180 && bl >= 180) return 36;
-        if (tl >= 140 && tr >= 140 && bl >= 140) return 26;
-        if (tl >= 100 && tr >= 100 && bl >= 100) return 16;
-        if (tl >= 65  && tr >=  65 && bl >=  65) return  6;
-    }
-    // ////////////////////////////////////////////////////////////////////
-    // VII
-    // ////////////////////////////////////////////////////////////////////
-    bl = getMapHeight(x-1, z+1, VERTEX_BL);
-    tl = getMapHeight(x-1, z+1, VERTEX_TL);
-    if (bl-tl > 64)
-    {
-        bl = getMapHeight(x, z+1, VERTEX_BL);
-        br = getMapHeight(x, z+1, VERTEX_BR);
-        tl = getMapHeight(x, z+1, VERTEX_TL);
-        tr = getMapHeight(x, z+1, VERTEX_TR);
-        if (bl-tl >= 220 && br-tr >= 220) return 47;
-        if (bl-tl >= 180 && br-tr >= 180) return 37;
-        if (bl-tl >= 140 && br-tr >= 140) return 27;
-        if (bl-tl >= 100 && br-tr >= 100) return 17;
-        if (bl-tl >=  65 && br-tr >=  65) return  7;
-    }
-    // ////////////////////////////////////////////////////////////////////
-    // VIII
-    // ////////////////////////////////////////////////////////////////////
-    else if (bl-bl < 10)
-    {
-        bl = getMapHeight(x, z+1, VERTEX_BL);
-        br = getMapHeight(x, z+1, VERTEX_BR);
-        tl = getMapHeight(x, z+1, VERTEX_TL);
-        tr = getMapHeight(x, z+1, VERTEX_TR);
-        if (bl-tl >= 220 && br-tr >= 220) return 48;
-        if (bl-tl >= 180 && br-tr >= 180) return 38;
-        if (bl-tl >= 140 && br-tr >= 140) return 28;
-        if (bl-tl >= 100 && br-tr >= 100) return 18;
-        if (bl-tl >=  65 && br-tr >=  65) return  8;
-    }
-    // ////////////////////////////////////////////////////////////////////
-    // IX
-    // ////////////////////////////////////////////////////////////////////
-    bl = getMapHeight(x+1, z+2, VERTEX_BL);
-    br = getMapHeight(x+1, z+2, VERTEX_BR);
-    if (bl-tl > 10 && bl-tl < 65)
-    {
-        tl = getMapHeight(x, z+1, VERTEX_TL);
-        tr = getMapHeight(x, z+1, VERTEX_TR);
-        if (tl-tr >= 220) return 49;
-        if (tl-tr >= 180) return 39;
-        if (tl-tr >= 140) return 29;
-        if (tl-tr >= 100) return 19;
-        if (tl-tr >=  65) return  9;
-    }
-    // ////////////////////////////////////////////////////////////////////
-    // X
-    // ////////////////////////////////////////////////////////////////////
-
-    // ////////////////////////////////////////////////////////////////////
-    // No shadow.
-    // ////////////////////////////////////////////////////////////////////
-    return 66;
-}
-
-//================================================================================================
-// Copy a shadow into the atlastexture.
-//================================================================================================
-void TileManager::copyShadowToAtlas(uchar *dstBuf)
-{
-    unsigned int size = MAX_TEXTURE_SIZE/32;
-    unsigned int fixFilterSize = size/16;
-    uint32 *dst, *src;
-    Image srcImage;
-    String srcFilename;
-    int sumImages = 0;
-    for (int y = 0; y < 15; ++y)
-    {
-        dst = ((uint32*)dstBuf) + y*size*2*MAX_TEXTURE_SIZE + size*3/2*MAX_TEXTURE_SIZE + MAX_TEXTURE_SIZE/2+size*3/2;
-        for (int x = 0; x < 7; ++x)
-        {
-            srcFilename = "shadow_" + StringConverter::toString(sumImages++, 3, '0') + ".png";
-            if (!loadImage(srcImage, srcFilename)) return;
-            if ((srcImage.getWidth() != size-2*fixFilterSize) || (srcImage.getHeight() != size-2*fixFilterSize))
-            {
-                Logger::log().error() << "Gfx " << srcFilename << " has the wrong size! Only "
-                << size-2*fixFilterSize << "x" << size-2*fixFilterSize << " is supported";
-                return;
-            }
-            if (srcImage.getFormat()!=PF_A8R8G8B8)
-            {
-                Logger::log().error() << "Gfx " << srcFilename << " has the wrong pixelformat. Only A8R8G8B8 is supported for shadows.";
-                return;
-            }
-            src= (uint32*)srcImage.getData();
-            for (unsigned int posY = 0; posY < size; ++posY)
-            {
-                if (posY == size-fixFilterSize) src-= size-2*fixFilterSize;
-                for (unsigned int posX = 0; posX < size; ++posX)
-                {
-                    dst[posY*MAX_TEXTURE_SIZE + posX] = *src;
-                    if (posX >= fixFilterSize && posX < size-fixFilterSize-1) ++src;
-                }
-                ++src;
-                if (posY < fixFilterSize || posY >= size-fixFilterSize) src-= size-2*fixFilterSize;
-            }
-            dst+= 2*size;
-        }
-    }
-}
-
-//================================================================================================
-// Collect all tiles and filters into a single RGBA-image.
+// Collect all tiles and filters into a single RGB-image.
 //================================================================================================
 void TileManager::createAtlasTexture(int textureSize, unsigned int startGroup)
 {
@@ -315,16 +145,14 @@ void TileManager::createAtlasTexture(int textureSize, unsigned int startGroup)
         stopGroup  = MAX_MAP_SETS;
     }
     Image dstImage;
-    uchar *dstBuf = new uchar[textureSize * textureSize * RGBA];
+    uchar *dstBuf = new uchar[textureSize * textureSize * RGB];
     for (int nr = startGroup; nr < stopGroup; ++nr)
     {
         if (!copyTileToAtlas(dstBuf)) break;
-        copyFilterToAtlas(dstBuf);
-        copyShadowToAtlas(dstBuf);
+        copyMaskToAtlas(dstBuf);
         // Save the Atlastexture.
-        dstImage.loadDynamicImage(dstBuf, textureSize, textureSize, 1, PF_A8R8G8B8, true);
-        String dstFilename = PATH_GFX_TILES;
-        dstFilename+= "Atlas_"+ StringConverter::toString(nr,2,'0') + "_";
+        dstImage.loadDynamicImage(dstBuf, textureSize, textureSize, 1, PF_R8G8B8, true);
+        String dstFilename = mPathGfxTiles + LAND_PREFIX + "_" + StringConverter::toString(nr,2,'0') + "_";
         for (unsigned short s = textureSize; s >= textureSize/(1<<(SUM_ATLAS_RESOLUTIONS-1)); s/=2)
         {
             dstImage.save(dstFilename + StringConverter::toString(s, 4, '0') + ".png");
@@ -340,198 +168,294 @@ void TileManager::createAtlasTexture(int textureSize, unsigned int startGroup)
 bool TileManager::copyTileToAtlas(uchar *dstBuf)
 {
     static int nr = -1;
-    unsigned int tileSize = MAX_TEXTURE_SIZE / COLS_SRC_TILES;
-    unsigned int subSize = tileSize/2;
-    int pixelSize, sumImages= 0;
+    const unsigned int OFFSET = BORDER_SIZE*2+TILE_SIZE;
+    int sumImages= 0;
+    unsigned int maxX;
     Image srcImage;
     String srcFilename;
     ++nr;
-    for (int y = 0; y < COLS_SRC_TILES; ++y)
+    for (int y = 0; y < 7; ++y)
     {
-        for (int x = 0; x <= 2; x+=2)
+        for (unsigned int x = 0; x < 6; ++x)
         {
             srcFilename = "terrain_" + StringConverter::toString(nr, 2, '0') + "_" + StringConverter::toString(sumImages++, 2, '0') + ".png";
-            if (!loadImage(srcImage, srcFilename))
+            if (!loadImage(srcImage, srcFilename, false))
             {
                 if (sumImages==1) return false; // No Tiles found for this group.
                 return true;
             }
-            if ((srcImage.getWidth() != tileSize) || (srcImage.getHeight() != tileSize))
+            if ((srcImage.getWidth() != TILE_SIZE) || (srcImage.getHeight() != TILE_SIZE))
             {
-                Logger::log().error() << "Gfx " << srcFilename << " has the wrong size! Only " << tileSize << "x" << tileSize << " is supported";
+                Logger::log().error() << "Gfx " << srcFilename << " has the wrong size! Only " << (int)TILE_SIZE << "^2 is supported.";
                 return true;
             }
-
-            bool srcHasAlpha = srcImage.getFormat()==PF_A8R8G8B8;
-            pixelSize = (srcImage.getFormat()==PF_A8R8G8B8)?RGBA:RGB;
+            int alpha = (srcImage.getFormat()==PF_A8R8G8B8)?1:0; // Ignore alpha.
             uchar *src = srcImage.getData();
-            uchar *dst = dstBuf + (y*tileSize*MAX_TEXTURE_SIZE + x*tileSize)*RGBA;
-            // ////////////////////////////////////////////////////////////////////
-            // Texture unit 0
-            // ////////////////////////////////////////////////////////////////////
-            copySubTile(src, 0, 0, dst + 0*tileSize*RGBA, 0, 0, subSize/2, srcHasAlpha);
-            copySubTile(src, 1, 0, dst + 0*tileSize*RGBA, 1, 0, subSize/2, srcHasAlpha);
-            copySubTile(src, 2, 0, dst + 0*tileSize*RGBA, 2, 0, subSize/2, srcHasAlpha);
-            copySubTile(src, 3, 0, dst + 0*tileSize*RGBA, 3, 0, subSize/2, srcHasAlpha);
-            copySubTile(src, 0, 1, dst + 0*tileSize*RGBA, 0, 1, subSize/2, srcHasAlpha);
-            copySubTile(src, 1, 1, dst + 0*tileSize*RGBA, 1, 1, subSize/2, srcHasAlpha);
-            copySubTile(src, 2, 1, dst + 0*tileSize*RGBA, 2, 1, subSize/2, srcHasAlpha);
-            copySubTile(src, 3, 1, dst + 0*tileSize*RGBA, 3, 1, subSize/2, srcHasAlpha);
-            copySubTile(src, 0, 2, dst + 0*tileSize*RGBA, 0, 2, subSize/2, srcHasAlpha);
-            copySubTile(src, 1, 2, dst + 0*tileSize*RGBA, 1, 2, subSize/2, srcHasAlpha);
-            copySubTile(src, 2, 2, dst + 0*tileSize*RGBA, 2, 2, subSize/2, srcHasAlpha);
-            copySubTile(src, 3, 2, dst + 0*tileSize*RGBA, 3, 2, subSize/2, srcHasAlpha);
-            copySubTile(src, 0, 3, dst + 0*tileSize*RGBA, 0, 3, subSize/2, srcHasAlpha);
-            copySubTile(src, 1, 3, dst + 0*tileSize*RGBA, 1, 3, subSize/2, srcHasAlpha);
-            copySubTile(src, 2, 3, dst + 0*tileSize*RGBA, 2, 3, subSize/2, srcHasAlpha);
-            copySubTile(src, 3, 3, dst + 0*tileSize*RGBA, 3, 3, subSize/2, srcHasAlpha);
-            // ////////////////////////////////////////////////////////////////////
-            // Texture unit 1
-            // ////////////////////////////////////////////////////////////////////
-            copySubTile(src, 0, 0, dst + 1*tileSize*RGBA, 1, 1, subSize/2, srcHasAlpha);
-            copySubTile(src, 1, 0, dst + 1*tileSize*RGBA, 2, 1, subSize/2, srcHasAlpha);
-            copySubTile(src, 2, 0, dst + 1*tileSize*RGBA, 3, 1, subSize/2, srcHasAlpha);
-            copySubTile(src, 3, 0, dst + 1*tileSize*RGBA, 0, 1, subSize/2, srcHasAlpha);
-            copySubTile(src, 0, 1, dst + 1*tileSize*RGBA, 1, 2, subSize/2, srcHasAlpha);
-            copySubTile(src, 1, 1, dst + 1*tileSize*RGBA, 2, 2, subSize/2, srcHasAlpha);
-            copySubTile(src, 2, 1, dst + 1*tileSize*RGBA, 3, 2, subSize/2, srcHasAlpha);
-            copySubTile(src, 3, 1, dst + 1*tileSize*RGBA, 0, 2, subSize/2, srcHasAlpha);
-            copySubTile(src, 0, 2, dst + 1*tileSize*RGBA, 1, 3, subSize/2, srcHasAlpha);
-            copySubTile(src, 1, 2, dst + 1*tileSize*RGBA, 2, 3, subSize/2, srcHasAlpha);
-            copySubTile(src, 2, 2, dst + 1*tileSize*RGBA, 3, 3, subSize/2, srcHasAlpha);
-            copySubTile(src, 3, 2, dst + 1*tileSize*RGBA, 0, 3, subSize/2, srcHasAlpha);
-            copySubTile(src, 0, 3, dst + 1*tileSize*RGBA, 1, 0, subSize/2, srcHasAlpha);
-            copySubTile(src, 1, 3, dst + 1*tileSize*RGBA, 2, 0, subSize/2, srcHasAlpha);
-            copySubTile(src, 2, 3, dst + 1*tileSize*RGBA, 3, 0, subSize/2, srcHasAlpha);
-            copySubTile(src, 3, 3, dst + 1*tileSize*RGBA, 0, 0, subSize/2, srcHasAlpha);
-            // ////////////////////////////////////////////////////////////////////
-            // Texture unit 2.1 (Horizontal filters)
-            // ////////////////////////////////////////////////////////////////////
-            copySubTile(src, 0, 0, dst + 4*tileSize*RGBA, 0, 1, subSize/2, srcHasAlpha);
-            copySubTile(src, 1, 0, dst + 4*tileSize*RGBA, 1, 1, subSize/2, srcHasAlpha);
-            copySubTile(src, 2, 0, dst + 4*tileSize*RGBA, 2, 1, subSize/2, srcHasAlpha);
-            copySubTile(src, 3, 0, dst + 4*tileSize*RGBA, 3, 1, subSize/2, srcHasAlpha);
-            copySubTile(src, 0, 1, dst + 4*tileSize*RGBA, 0, 2, subSize/2, srcHasAlpha);
-            copySubTile(src, 1, 1, dst + 4*tileSize*RGBA, 1, 2, subSize/2, srcHasAlpha);
-            copySubTile(src, 2, 1, dst + 4*tileSize*RGBA, 2, 2, subSize/2, srcHasAlpha);
-            copySubTile(src, 3, 1, dst + 4*tileSize*RGBA, 3, 2, subSize/2, srcHasAlpha);
-            copySubTile(src, 0, 2, dst + 4*tileSize*RGBA, 0, 3, subSize/2, srcHasAlpha);
-            copySubTile(src, 1, 2, dst + 4*tileSize*RGBA, 1, 3, subSize/2, srcHasAlpha);
-            copySubTile(src, 2, 2, dst + 4*tileSize*RGBA, 2, 3, subSize/2, srcHasAlpha);
-            copySubTile(src, 3, 2, dst + 4*tileSize*RGBA, 3, 3, subSize/2, srcHasAlpha);
-            copySubTile(src, 0, 3, dst + 4*tileSize*RGBA, 0, 0, subSize/2, srcHasAlpha);
-            copySubTile(src, 1, 3, dst + 4*tileSize*RGBA, 1, 0, subSize/2, srcHasAlpha);
-            copySubTile(src, 2, 3, dst + 4*tileSize*RGBA, 2, 0, subSize/2, srcHasAlpha);
-            copySubTile(src, 3, 3, dst + 4*tileSize*RGBA, 3, 0, subSize/2, srcHasAlpha);
-            // ////////////////////////////////////////////////////////////////////
-            // Texture unit 2.2 (Vertical filters)
-            // ////////////////////////////////////////////////////////////////////
-            copySubTile(src, 0, 0, dst + 5*tileSize*RGBA, 1, 0, subSize/2, srcHasAlpha);
-            copySubTile(src, 1, 0, dst + 5*tileSize*RGBA, 2, 0, subSize/2, srcHasAlpha);
-            copySubTile(src, 2, 0, dst + 5*tileSize*RGBA, 3, 0, subSize/2, srcHasAlpha);
-            copySubTile(src, 3, 0, dst + 5*tileSize*RGBA, 0, 0, subSize/2, srcHasAlpha);
-            copySubTile(src, 0, 1, dst + 5*tileSize*RGBA, 1, 1, subSize/2, srcHasAlpha);
-            copySubTile(src, 1, 1, dst + 5*tileSize*RGBA, 2, 1, subSize/2, srcHasAlpha);
-            copySubTile(src, 2, 1, dst + 5*tileSize*RGBA, 3, 1, subSize/2, srcHasAlpha);
-            copySubTile(src, 3, 1, dst + 5*tileSize*RGBA, 0, 1, subSize/2, srcHasAlpha);
-            copySubTile(src, 0, 2, dst + 5*tileSize*RGBA, 1, 2, subSize/2, srcHasAlpha);
-            copySubTile(src, 1, 2, dst + 5*tileSize*RGBA, 2, 2, subSize/2, srcHasAlpha);
-            copySubTile(src, 2, 2, dst + 5*tileSize*RGBA, 3, 2, subSize/2, srcHasAlpha);
-            copySubTile(src, 3, 2, dst + 5*tileSize*RGBA, 0, 2, subSize/2, srcHasAlpha);
-            copySubTile(src, 0, 3, dst + 5*tileSize*RGBA, 1, 3, subSize/2, srcHasAlpha);
-            copySubTile(src, 1, 3, dst + 5*tileSize*RGBA, 2, 3, subSize/2, srcHasAlpha);
-            copySubTile(src, 2, 3, dst + 5*tileSize*RGBA, 3, 3, subSize/2, srcHasAlpha);
-            copySubTile(src, 3, 3, dst + 5*tileSize*RGBA, 0, 3, subSize/2, srcHasAlpha);
+            uchar *dst = dstBuf + (y*OFFSET*MAX_TEXTURE_SIZE + x*OFFSET)*RGB;
+            uchar *dst1= x?dst-BORDER_SIZE*1*RGB:dst;
+            for (unsigned int ty = 0; ty < TILE_SIZE; ++ty)
+            {
+                // Tile
+                for (unsigned int tx = 0; tx < TILE_SIZE; ++tx)
+                {
+                    *dst++= *src++; // R
+                    *dst++= *src++; // G
+                    *dst++= *src++; // B
+                    src+= alpha;    // A
+                }
+                // Right and left filter borders.
+                for (unsigned int tx = 0; tx < BORDER_SIZE; ++tx)
+                {
+                    for (unsigned int color = 0; color < RGB; ++color)
+                    {
+                        *dst = *(dst-TILE_SIZE*RGB); // Right filter border
+                        if (x)
+                            *(dst-(TILE_SIZE+2*tx+1)*RGB) = *(dst-(2*tx+1)*RGB); // Left filter border
+                        ++dst;
+                    }
+                }
+                dst+=(MAX_TEXTURE_SIZE-TILE_SIZE-BORDER_SIZE)*RGB;
+            }
+            // Top and bottom filter borders.
+            for (unsigned int ty = 0; ty < BORDER_SIZE; ++ty)
+            {
+                maxX = x?OFFSET*RGB:(OFFSET-BORDER_SIZE)*RGB;
+                for (unsigned int tx = 0; tx < maxX; ++tx)
+                    dst1[TILE_SIZE*MAX_TEXTURE_SIZE*RGB+tx] = dst1[tx]; // Bottom filter border
+                dst1+= MAX_TEXTURE_SIZE*RGB;
+            }
+            if (y)
+            {
+                dst1-= 2*BORDER_SIZE*MAX_TEXTURE_SIZE*RGB;
+                for (unsigned int ty = 0; ty < BORDER_SIZE; ++ty)
+                {
+                    maxX = x?OFFSET*RGB:(OFFSET-BORDER_SIZE)*RGB;
+                    for (unsigned int tx = 0; tx < maxX; ++tx)
+                        dst1[tx] = dst1[(TILE_SIZE*MAX_TEXTURE_SIZE)*RGB+tx]; // Top filter border
+                    dst1+= MAX_TEXTURE_SIZE*RGB;
+                }
+            }
         }
     }
     return true;
 }
 
 //================================================================================================
-//
+// Copy a terrain-mask into the atlastexture.
 //================================================================================================
-void TileManager::copySubTile(uchar* src, int srcX, int srcY, uchar *dst, int dstX, int dstY, int size, bool alpha)
+void TileManager::copyMaskToAtlas(uchar *dstBuf)
 {
-    int alphaPixel = alpha?RGBA:RGB;
-    src+= (srcY*size*size*4 + srcX*size) *alphaPixel;
-    dst+= (MAX_TEXTURE_SIZE * size * dstY + size*dstX) * RGBA;
-    for (int y = 0; y < size; ++y)
-    {
-        for (int x = 0; x < size; ++x)
-        {
-            *dst++ = *src++;
-            *dst++ = *src++;
-            *dst++ = *src++;
-            *dst++ = (alpha)?*src++:0xff;
-        }
-        src+= size*3*alphaPixel;
-        dst+= (MAX_TEXTURE_SIZE-size) * RGBA;
-    }
-}
-
-
-//================================================================================================
-// Copy a terrain-filter/shadow-filter into the alpha part of the atlastexture.
-//================================================================================================
-void TileManager::copyFilterToAtlas(uchar *dstBuf)
-{
-    int sumImages = 0;
-    unsigned int size = MAX_TEXTURE_SIZE / COLS_SRC_TILES * 2;
+    const unsigned int OFFSET = BORDER_SIZE*2+TILE_SIZE/2;
     Image srcImage;
     String srcFilename;
-    for (int y = 0; y < COLS_SRC_TILES; ++y)
+    uchar *src, *dst;
+    dstBuf+= 6*(BORDER_SIZE*2+TILE_SIZE)* RGB;
+    for (int sumFilter = 0; sumFilter < 7; ++sumFilter)
     {
-        for (int x = 0; x < 2; ++x)
+        srcFilename = "filter_" + StringConverter::toString(sumFilter, 2, '0') + ".png";
+        if (!loadImage(srcImage, srcFilename, false))
         {
-            srcFilename = "filter_" + StringConverter::toString(sumImages++, 2, '0') + ".png";
-            if (!loadImage(srcImage, srcFilename))
+            // Filter was not found, so we use the default filter.
+            if (!loadImage(srcImage, "filter_00.png", false))
             {
-                // Filter was not found, so we use the default filter.
-                if (!loadImage(srcImage, "filter_00.png"))
-                {
-                    Logger::log().error() << "The default tile-filter (filter_00.png) was not found.";
-                    return;
-                }
-            }
-            if ((srcImage.getWidth() != size) || (srcImage.getHeight() != size))
-            {
-                Logger::log().error() << "Gfx " << srcFilename << " has the wrong size! Only " << size << "x" << size << " is supported.";
+                Logger::log().error() << "The default tile-filter (filter_00.png) was not found.";
                 return;
-            }
-            if (srcImage.getFormat()!=PF_R8G8B8)
-            {
-                Logger::log().error() << "Gfx " << srcFilename << " has the wrong pixelformat. Only RGB is supported for filters.";
-                return;
-            }
-            uchar *src = srcImage.getData();
-            uchar *dst = dstBuf+(y*size/2*MAX_TEXTURE_SIZE + x *size) * RGBA;
-            for (unsigned int posY = 0; posY < size/2; ++posY)
-            {
-                for (unsigned int posX = 0; posX < size; ++posX)
-                {
-                    dst[0*size*RGBA+3] = *src; // alpha part of the atlastexture = red part of the filter.
-                    dst[2*size*RGBA+3] = src[size/2*size*RGB];
-                    dst+=RGBA;
-                    src+=RGB;
-                }
-                dst+= (MAX_TEXTURE_SIZE-size)*RGBA;
             }
         }
+        if ((srcImage.getWidth() != TILE_SIZE) || (srcImage.getHeight() != TILE_SIZE))
+        {
+            Logger::log().error() << "Gfx " << srcFilename << " has the wrong size! Only " << (int)TILE_SIZE << "^2 is supported.";
+            return;
+        }
+        if (srcImage.getFormat()!=PF_R8G8B8)
+        {
+            Logger::log().error() << "Gfx " << srcFilename << " has the wrong pixelformat. Only RGB is supported for filters.";
+            return;
+        }
+        // Erase the help lines from the filter template.
+        src = srcImage.getData();
+        for (unsigned int i = 0; i < TILE_SIZE*TILE_SIZE; ++i)
+        {
+            if (src[0] != src[1])
+            {
+                src[0] = 0x00; // R
+                src[1] = 0x00; // G
+                src[2] = 0x00; // B
+            }
+            src+=RGB;
+        }
+        // Copy filter 0 to the atlas-texture.
+        src = srcImage.getData();
+        dst = dstBuf;
+        for (unsigned int y = 0; y < TILE_SIZE/2; ++y)
+        {
+            for (unsigned int x = 0; x < TILE_SIZE/2; ++x)
+            {
+                dst[(                          2*OFFSET + x)*RGB+2] = src[x*RGB]; // Filter 2 - red.
+                dst[(OFFSET*MAX_TEXTURE_SIZE + 0*OFFSET + x)*RGB+1] = src[x*RGB]; // Filter 3 - green.
+                dst[(OFFSET*MAX_TEXTURE_SIZE + 1*OFFSET + x)*RGB+2] = src[x*RGB]; // Filter 4 - red.
+                dst[(OFFSET*MAX_TEXTURE_SIZE + 2*OFFSET + x)*RGB+1] = src[x*RGB]; // Filter 5 - green.
+            }
+            dst+= MAX_TEXTURE_SIZE*RGB;
+            src+= TILE_SIZE*RGB;
+        }
+        // Copy filter 1 to the atlas-texture.
+        src = srcImage.getData();
+        dst = dstBuf;
+        for (unsigned int y = 0; y < TILE_SIZE/4; ++y)
+        {
+            for (unsigned int x = 0; x < TILE_SIZE/4; ++x)
+            {
+                dst[(x                                          )*RGB+2] = src[(64*TILE_SIZE + 192 + x)*RGB]; // R (1 of 4)
+                dst[(x+TILE_SIZE/4                              )*RGB+2] = src[(64*TILE_SIZE + 128 + x)*RGB]; // R (2 of 4)
+                dst[(x             +TILE_SIZE/4*MAX_TEXTURE_SIZE)*RGB+2] = src[(               192 + x)*RGB]; // R (1 of 4)
+                dst[(x+TILE_SIZE/4 +TILE_SIZE/4*MAX_TEXTURE_SIZE)*RGB+2] = src[(               128 + x)*RGB]; // R (2 of 4)
+                dst[(1*OFFSET +x                                          )*RGB+1] = src[(64*TILE_SIZE + 192 + x)*RGB]; // G (1 of 4)
+                dst[(1*OFFSET +x+TILE_SIZE/4                              )*RGB+1] = src[(64*TILE_SIZE + 128 + x)*RGB]; // G (2 of 4)
+                dst[(1*OFFSET +x             +TILE_SIZE/4*MAX_TEXTURE_SIZE)*RGB+1] = src[(               192 + x)*RGB]; // G (1 of 4)
+                dst[(1*OFFSET +x+TILE_SIZE/4 +TILE_SIZE/4*MAX_TEXTURE_SIZE)*RGB+1] = src[(               128 + x)*RGB]; // G (2 of 4)
+
+                dst[(OFFSET*MAX_TEXTURE_SIZE+ 1*OFFSET +x                                          )*RGB+1] = src[(64*TILE_SIZE + 192 + x)*RGB]; // G (1 of 4)
+                dst[(OFFSET*MAX_TEXTURE_SIZE+ 1*OFFSET +x+TILE_SIZE/4                              )*RGB+1] = src[(64*TILE_SIZE + 128 + x)*RGB]; // G (2 of 4)
+                dst[(OFFSET*MAX_TEXTURE_SIZE+ 1*OFFSET +x             +TILE_SIZE/4*MAX_TEXTURE_SIZE)*RGB+1] = src[(               192 + x)*RGB]; // G (1 of 4)
+                dst[(OFFSET*MAX_TEXTURE_SIZE+ 1*OFFSET +x+TILE_SIZE/4 +TILE_SIZE/4*MAX_TEXTURE_SIZE)*RGB+1] = src[(               128 + x)*RGB]; // G (2 of 4)
+
+                dst[(OFFSET*MAX_TEXTURE_SIZE+ 2*OFFSET +x                                          )*RGB+2] = src[(64*TILE_SIZE + 192 + x)*RGB]; // R (1 of 4)
+                dst[(OFFSET*MAX_TEXTURE_SIZE+ 2*OFFSET +x+TILE_SIZE/4                              )*RGB+2] = src[(64*TILE_SIZE + 128 + x)*RGB]; // R (2 of 4)
+                dst[(OFFSET*MAX_TEXTURE_SIZE+ 2*OFFSET +x             +TILE_SIZE/4*MAX_TEXTURE_SIZE)*RGB+2] = src[(               192 + x)*RGB]; // R (1 of 4)
+                dst[(OFFSET*MAX_TEXTURE_SIZE+ 2*OFFSET +x+TILE_SIZE/4 +TILE_SIZE/4*MAX_TEXTURE_SIZE)*RGB+2] = src[(               128 + x)*RGB]; // R (2 of 4)
+            }
+            dst+= MAX_TEXTURE_SIZE*RGB;
+            src+= TILE_SIZE*RGB;
+        }
+        // Copy filter 2 (horizontal) to the atlas-texture.
+        src = srcImage.getData();
+        dst = dstBuf;
+        for (unsigned int y = 0; y < TILE_SIZE/4; ++y)
+        {
+            for (unsigned int x = 0; x < TILE_SIZE/2; ++x)
+            {
+                dst[(                                                       x)*RGB+1] = src[(192*TILE_SIZE + x)*RGB]; // G (1 of 4)
+                dst[(                         TILE_SIZE/4*MAX_TEXTURE_SIZE +x)*RGB+1] = src[(128*TILE_SIZE + x)*RGB]; // G (1 of 4)
+                dst[(OFFSET                                                +x)*RGB+2] = src[(192*TILE_SIZE + x)*RGB]; // R (1 of 4)
+                dst[(OFFSET                  +TILE_SIZE/4*MAX_TEXTURE_SIZE +x)*RGB+2] = src[(128*TILE_SIZE + x)*RGB]; // R (1 of 4)
+                dst[(OFFSET*2                                              +x)*RGB+1] = src[(192*TILE_SIZE + x)*RGB]; // G (1 of 4)
+                dst[(OFFSET*2                +TILE_SIZE/4*MAX_TEXTURE_SIZE +x)*RGB+1] = src[(128*TILE_SIZE + x)*RGB]; // G (1 of 4)
+                dst[(OFFSET*MAX_TEXTURE_SIZE                               +x)*RGB+2] = src[(192*TILE_SIZE + x)*RGB]; // R (1 of 4)
+                dst[(OFFSET*MAX_TEXTURE_SIZE +TILE_SIZE/4*MAX_TEXTURE_SIZE +x)*RGB+2] = src[(128*TILE_SIZE + x)*RGB]; // R (1 of 4)
+            }
+            dst+= MAX_TEXTURE_SIZE*RGB;
+            src+= TILE_SIZE*RGB;
+        }
+        // Copy filter 2 (vertical) to the atlas-texture.
+        src = srcImage.getData();
+        dst = dstBuf;
+        for (unsigned int y = 0; y < TILE_SIZE/2; ++y)
+        {
+            for (unsigned int x = 0; x < TILE_SIZE/4; ++x)
+            {
+                dst[(                                      x)*RGB+1]+= src[(128*TILE_SIZE +192+ x)*RGB]; // G (1 of 4)
+                dst[(                         TILE_SIZE/4 +x)*RGB+1]+= src[(128*TILE_SIZE +128+ x)*RGB]; // G (1 of 4)
+                dst[(OFFSET                               +x)*RGB+2]+= src[(128*TILE_SIZE +192+ x)*RGB]; // G (1 of 4)
+                dst[(OFFSET                  +TILE_SIZE/4 +x)*RGB+2]+= src[(128*TILE_SIZE +128+ x)*RGB]; // G (1 of 4)
+                dst[(OFFSET*2                             +x)*RGB+1]+= src[(128*TILE_SIZE +192+ x)*RGB]; // G (1 of 4)
+                dst[(OFFSET*2                +TILE_SIZE/4 +x)*RGB+1]+= src[(128*TILE_SIZE +128+ x)*RGB]; // G (1 of 4)
+                dst[(OFFSET*MAX_TEXTURE_SIZE              +x)*RGB+2]+= src[(128*TILE_SIZE +192+ x)*RGB]; // G (1 of 4)
+                dst[(OFFSET*MAX_TEXTURE_SIZE +TILE_SIZE/4 +x)*RGB+2]+= src[(128*TILE_SIZE +128+ x)*RGB]; // G (1 of 4)
+            }
+            dst+= MAX_TEXTURE_SIZE*RGB;
+            src+= TILE_SIZE*RGB;
+        }
+
+        // Draw the grid.
+        int gridColor;
+        src = srcImage.getData();
+        dst = dstBuf;
+        for (int i = 0; i < 2; ++i)
+        {
+            for (unsigned int y = 0; y < TILE_SIZE/2; ++y)
+            {
+                for (unsigned int x = 0; x < TILE_SIZE/2; ++x)
+                {
+                    gridColor = (!x || !y || x == TILE_SIZE/4 || y == TILE_SIZE/4 || x == y || x == TILE_SIZE/2-y)?0xff:0x00;
+                    dst[(0*OFFSET + x)*RGB+0] = gridColor; // B
+                    dst[(1*OFFSET + x)*RGB+0] = gridColor; // B
+                    dst[(2*OFFSET + x)*RGB+0] = gridColor; // B
+                }
+                dst+= MAX_TEXTURE_SIZE*RGB;
+            }
+            dst+= BORDER_SIZE*2*MAX_TEXTURE_SIZE*RGB;
+        }
+        // Create filter borders
+        // Vertical
+        for (int i =0; i < 3; ++i)
+        {
+            dst = dstBuf + i*(TILE_SIZE/2+BORDER_SIZE*2)* RGB;
+            for (unsigned int y = 0; y < BORDER_SIZE*2+TILE_SIZE; ++y)
+            {
+                for (unsigned int x = 1; x <= BORDER_SIZE; ++x)
+                {
+                    // Left border
+                    *(dst-x*RGB+0) = dst[0];
+                    *(dst-x*RGB+1) = dst[1];
+                    *(dst-x*RGB+2) = dst[2];
+                    // Right border
+                    if (i < 2)
+                    {
+                        *(dst+(TILE_SIZE/2+BORDER_SIZE-x)*RGB+0) = dst[(TILE_SIZE/2-1)*RGB+0];
+                        *(dst+(TILE_SIZE/2+BORDER_SIZE-x)*RGB+1) = dst[(TILE_SIZE/2-1)*RGB+1];
+                        *(dst+(TILE_SIZE/2+BORDER_SIZE-x)*RGB+2) = dst[(TILE_SIZE/2-1)*RGB+2];
+                    }
+                }
+                dst+= MAX_TEXTURE_SIZE*RGB;
+            }
+        }
+        // Horizontal
+        dst = dstBuf + (TILE_SIZE/2*MAX_TEXTURE_SIZE-BORDER_SIZE)* RGB;
+        for (int i =0; i < 2; ++i)
+        {
+            for (unsigned int y = 0; y < BORDER_SIZE; ++y)
+            {
+                for (unsigned int x = 0; x < BORDER_SIZE*5+TILE_SIZE/2*3; ++x)
+                {
+                    // Bottom border
+                    dst[(y*MAX_TEXTURE_SIZE+x)*RGB+0]= *(dst-(MAX_TEXTURE_SIZE-x)*RGB+0);
+                    dst[(y*MAX_TEXTURE_SIZE+x)*RGB+1]= *(dst-(MAX_TEXTURE_SIZE-x)*RGB+1);
+                    dst[(y*MAX_TEXTURE_SIZE+x)*RGB+2]= *(dst-(MAX_TEXTURE_SIZE-x)*RGB+2);
+                    // Top border
+                    if (i+sumFilter)
+                    {
+                        *(dst-((y+TILE_SIZE/2+1)*MAX_TEXTURE_SIZE-x)*RGB+0) = *(dst-((TILE_SIZE/2)*MAX_TEXTURE_SIZE-x)*RGB+0);
+                        *(dst-((y+TILE_SIZE/2+1)*MAX_TEXTURE_SIZE-x)*RGB+1) = *(dst-((TILE_SIZE/2)*MAX_TEXTURE_SIZE-x)*RGB+1);
+                        *(dst-((y+TILE_SIZE/2+1)*MAX_TEXTURE_SIZE-x)*RGB+2) = *(dst-((TILE_SIZE/2)*MAX_TEXTURE_SIZE-x)*RGB+2);
+                    }
+                }
+            }
+            dst+= (TILE_SIZE/2 + BORDER_SIZE*2)*MAX_TEXTURE_SIZE * RGB;
+        }
+        dstBuf+= (TILE_SIZE + BORDER_SIZE*4)*MAX_TEXTURE_SIZE * RGB;
     }
 }
 
 //================================================================================================
-// Load an existing image.
+// Load an existing image. Returns true on success.
 //================================================================================================
-bool TileManager::loadImage(Image &image, const Ogre::String &strFilename)
+bool TileManager::loadImage(Image &image, const Ogre::String &strFilename, bool logErrors)
 {
-    std::string strTemp = PATH_GFX_TILES + strFilename;
-    std::ifstream chkFile;
-    chkFile.open(strTemp.c_str());
-    if (!chkFile) return false;
-    chkFile.close();
-    image.load(strFilename, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-    return true;
+    struct stat fileInfo;
+    String strFile = mPathGfxTiles + strFilename;
+    if (!stat(strFile.c_str(), &fileInfo))
+    {
+        try
+        {
+            image.load(strFilename, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+            return true;
+        }
+        catch (Exception &) {}
+    }
+    if (logErrors)
+        Logger::log().error() << "Error on opening file " << strFile;
+    return false;
 }
 
 //================================================================================================
@@ -547,40 +471,40 @@ void TileManager::tileClick(float mouseX, float mouseY)
     if (result.size() >1)
     {
         Logger::log().error() << "BUG in tileClick(...): RaySceneQuery returned more than 1 result.";
-        Logger::log().error() << "(Perhaps you created Entities without setting a setQueryFlags(...) on them)";
+        Logger::log().error() << "(Perhaps you created Entities without setting a setQueryFlags() on them)";
         return;
     }
-    for (int x = 0; x < CHUNK_SIZE_X; ++x)
+    for (int x = 0; x < CHUNK_SIZE_X*2; ++x)
     {
-        for (int z = 0; z < CHUNK_SIZE_Z; ++z)
+        for (int z = 0; z < CHUNK_SIZE_Z*2; ++z)
         {
             if ((x+z)&1)
             {
                 // +-+
                 // |/
                 // +
-                mTris[0].x = (x+0)*TILE_SIZE;
-                mTris[0].y = getMapHeight(x, z, VERTEX_TL);
-                mTris[0].z = (z+0)*TILE_SIZE;
-                mTris[1].x = (x+0)*TILE_SIZE;
-                mTris[1].y = getMapHeight(x, z, VERTEX_BL);
-                mTris[1].z = (z+1)*TILE_SIZE;
-                mTris[2].x = (x+1)*TILE_SIZE;
-                mTris[2].y = getMapHeight(x, z, VERTEX_TR);
-                mTris[2].z = (z+0)*TILE_SIZE;
+                mVertex[0].x = (x+0)*TILE_RENDER_SIZE;
+                mVertex[0].y = getMapHeight(x, z);
+                mVertex[0].z = (z+0)*TILE_RENDER_SIZE;
+                mVertex[1].x = (x+0)*TILE_RENDER_SIZE;
+                mVertex[1].y = getMapHeight(x, z-1);
+                mVertex[1].z = (z+1)*TILE_RENDER_SIZE;
+                mVertex[2].x = (x+1)*TILE_RENDER_SIZE;
+                mVertex[2].y = getMapHeight(x-1, z);
+                mVertex[2].z = (z+0)*TILE_RENDER_SIZE;
                 if (vertexPick(&mouseRay, x, z, 0)) return; // We got a hit.
                 //   +
                 //  /|
                 // +-+
-                mTris[0].x = (x+1)*TILE_SIZE;
-                mTris[0].y = getMapHeight(x, z, VERTEX_TR);
-                mTris[0].z = (z+0)*TILE_SIZE;
-                mTris[1].x = (x+0)*TILE_SIZE;
-                mTris[1].y = getMapHeight(x, z, VERTEX_BL);
-                mTris[1].z = (z+1)*TILE_SIZE;
-                mTris[2].x = (x+1)*TILE_SIZE;
-                mTris[2].y = getMapHeight(x, z, VERTEX_BR);
-                mTris[2].z = (z+1)*TILE_SIZE;
+                mVertex[0].x = (x+1)*TILE_RENDER_SIZE;
+                mVertex[0].y = getMapHeight(x+1, z);
+                mVertex[0].z = (z+0)*TILE_RENDER_SIZE;
+                mVertex[1].x = (x+0)*TILE_RENDER_SIZE;
+                mVertex[1].y = getMapHeight(x, z-1);
+                mVertex[1].z = (z+1)*TILE_RENDER_SIZE;
+                mVertex[2].x = (x+1)*TILE_RENDER_SIZE;
+                mVertex[2].y = getMapHeight(x+1, z-1);
+                mVertex[2].z = (z+1)*TILE_RENDER_SIZE;
                 if (vertexPick(&mouseRay, x, z, 1)) return; // We got a hit.
             }
             else
@@ -589,28 +513,28 @@ void TileManager::tileClick(float mouseX, float mouseY)
                 //   +
                 //   |\.
                 //   +-+
-                mTris[0].x = (x+0.0)*TILE_SIZE;
-                mTris[0].y = getMapHeight(x, z, VERTEX_TL);
-                mTris[0].z = (z+0.0)*TILE_SIZE;
-                mTris[1].x = (x+0.0)*TILE_SIZE;
-                mTris[1].y = getMapHeight(x, z, VERTEX_BL);
-                mTris[1].z = (z+1.0)*TILE_SIZE;
-                mTris[2].x = (x+1.0)*TILE_SIZE;
-                mTris[2].y = getMapHeight(x, z, VERTEX_BR);
-                mTris[2].z = (z+1.0)*TILE_SIZE;
+                mVertex[0].x = (x+0.0)*TILE_RENDER_SIZE;
+                mVertex[0].y = getMapHeight(x, z);
+                mVertex[0].z = (z+0.0)*TILE_RENDER_SIZE;
+                mVertex[1].x = (x+0.0)*TILE_RENDER_SIZE;
+                mVertex[1].y = getMapHeight(x, z-1);
+                mVertex[1].z = (z+1.0)*TILE_RENDER_SIZE;
+                mVertex[2].x = (x+1.0)*TILE_RENDER_SIZE;
+                mVertex[2].y = getMapHeight(x+1, z-1);
+                mVertex[2].z = (z+1.0)*TILE_RENDER_SIZE;
                 if (vertexPick(&mouseRay, x, z, 2)) return; // We got a hit.
                 // +-+
                 //  \|
                 //   +
-                mTris[0].x = (x+1.0)*TILE_SIZE;
-                mTris[0].y = getMapHeight(x, z, VERTEX_BR);
-                mTris[0].z = (z+1.0)*TILE_SIZE;
-                mTris[1].x = (x+1.0)*TILE_SIZE;
-                mTris[1].y = getMapHeight(x, z, VERTEX_TR);
-                mTris[1].z = (z+0.0)*TILE_SIZE;
-                mTris[2].x = (x+0.0)*TILE_SIZE;
-                mTris[2].y = getMapHeight(x, z, VERTEX_TL);
-                mTris[2].z = (z+0.0)*TILE_SIZE;
+                mVertex[0].x = (x+1.0)*TILE_RENDER_SIZE;
+                mVertex[0].y = getMapHeight(x+1, z-1);
+                mVertex[0].z = (z+1.0)*TILE_RENDER_SIZE;
+                mVertex[1].x = (x+1.0)*TILE_RENDER_SIZE;
+                mVertex[1].y = getMapHeight(x+1, z);
+                mVertex[1].z = (z+0.0)*TILE_RENDER_SIZE;
+                mVertex[2].x = (x+0.0)*TILE_RENDER_SIZE;
+                mVertex[2].y = getMapHeight(x, z);
+                mVertex[2].z = (z+0.0)*TILE_RENDER_SIZE;
                 if (vertexPick(&mouseRay, x, z, 3))  return; // We got a hit.
             }
         }
@@ -623,10 +547,10 @@ void TileManager::tileClick(float mouseX, float mouseY)
 bool TileManager::vertexPick(Ray *mouseRay, int x, int z, int pos)
 {
     std::pair<bool, Real> Test;
-    Test = Math::intersects(*mouseRay, mTris[0], mTris[1], mTris[2]);
+    Test = Math::intersects(*mouseRay, mVertex[0], mVertex[1], mVertex[2]);
     if (!Test.first) return false;  // This tile piece was not clicked.
     // Test for Vertex 0
-    Test = Math::intersects(*mouseRay, mTris[0], (mTris[0] + mTris[2])/2, (mTris[0] + mTris[1])/2);
+    Test = Math::intersects(*mouseRay, mVertex[0], (mVertex[0] + mVertex[2])/2, (mVertex[0] + mVertex[1])/2);
     if (Test.first)
     {
         if      (pos == 0) highlightVertex(x  , z  );
@@ -636,7 +560,7 @@ bool TileManager::vertexPick(Ray *mouseRay, int x, int z, int pos)
         return true;
     }
     // Test for Vertex 1
-    Test = Math::intersects(*mouseRay, mTris[2], (mTris[0] + mTris[2])/2, (mTris[1] + mTris[2])/2);
+    Test = Math::intersects(*mouseRay, mVertex[2], (mVertex[0] + mVertex[2])/2, (mVertex[1] + mVertex[2])/2);
     if (Test.first)
     {
         if      (pos == 0) highlightVertex(x+1, z  );
@@ -646,7 +570,7 @@ bool TileManager::vertexPick(Ray *mouseRay, int x, int z, int pos)
         return true;
     }
     // Test for Vertex 2
-    Test = Math::intersects(*mouseRay, mTris[1], (mTris[0] + mTris[1])/2, (mTris[1] + mTris[2])/2);
+    Test = Math::intersects(*mouseRay, mVertex[1], (mVertex[0] + mVertex[1])/2, (mVertex[1] + mVertex[2])/2);
     if (Test.first)
     {
         if      (pos == 0) highlightVertex(x  , z+1);
@@ -674,52 +598,98 @@ void TileManager::updateHeighlightVertexPos(int deltaX, int deltaZ)
 void TileManager::highlightVertex(int x, int z)
 {
     static SceneNode *tcNode = 0;
+    if (!tcNode)
+    {
+        int size = TILE_RENDER_SIZE/6;
+        ManualObject *mob = static_cast<ManualObject*>(mSceneManager->createMovableObject("VertexHighlight", ManualObjectFactory::FACTORY_TYPE_NAME));
+        mob->begin("Terrain/VertexHighlight");
+        mob->position(-1.0*size, 1.5*size,-0.80*size);
+        mob->position( 0.0*size, 0.0*size, 0.00*size);
+        mob->position( 1.0*size, 1.5*size,-0.80*size);
+        mob->position( 0.0*size, 1.5*size, 0.94*size);
+        mob->triangle( 0,  1,  2);
+        mob->triangle( 2,  1,  3);
+        mob->triangle( 3,  1,  0);
+        mob->triangle( 0,  2,  3);
+        mob->position(-0.5*size, 1.5*size,-0.30*size);
+        mob->position( 0.5*size, 1.5*size,-0.30*size);
+        mob->position( 0.0*size, 1.5*size, 0.20*size);
+        mob->position(-0.5*size, 3.0*size,-0.30*size);
+        mob->position( 0.5*size, 3.0*size,-0.30*size);
+        mob->position( 0.0*size, 3.0*size, 0.20*size);
+        mob->triangle( 7,  8,  9);
+        mob->quad( 4,  7,  8,  5);
+        mob->quad( 8,  5,  6,  9);
+        mob->quad( 9,  6,  4,  7);
+        mob->setQueryFlags(0);
+        //mob->setRenderQueueGroup(RENDER_QUEUE_6); // See OgreRenderQueue.h
+        mob->end();
+        tcNode = mSceneManager->getRootSceneNode()->createChildSceneNode("Node/VertexHighlight");
+        tcNode->attachObject(mob);
+    }
     mSelectedVertexX = x;
     mSelectedVertexZ = z;
-    if (tcNode)
-    {
-        tcNode->detachAllObjects();
-        mSceneManager->destroyManualObject("SelTest");
-        mSceneManager->destroySceneNode("N1");
-    }
-    int y = getMapHeight(x, z, VERTEX_TL)+1;
-    x*= TILE_SIZE;
-    z*= TILE_SIZE;
-    int size = TILE_SIZE/8;
-    ManualObject* mob = static_cast<ManualObject*>(mSceneManager->createMovableObject("SelTest", ManualObjectFactory::FACTORY_TYPE_NAME));
-    mob->begin("TileEngine/VertexSelection");
-    mob->position(x-size, y, z-size); mob->normal(0,1,0); mob->textureCoord(0.0, 0.0);
-    mob->position(x-size, y, z+size); mob->normal(0,1,0); mob->textureCoord(0.0, 1.0);
-    mob->position(x+size, y, z-size); mob->normal(0,1,0); mob->textureCoord(1.0, 0.0);
-    mob->position(x+size, y, z+size); mob->normal(0,1,0); mob->textureCoord(1.0, 1.0);
-    mob->quad(0, 1, 3, 2);
-    mob->end();
-    tcNode = mSceneManager->getRootSceneNode()->createChildSceneNode("N1");
-    tcNode->attachObject(mob);
+    x*= TILE_RENDER_SIZE;
+    z*= TILE_RENDER_SIZE;
+    tcNode->setPosition(x, getTileHeight(x, z), z);
+}
+
+//================================================================================================
+// Set the values for a map position.
+//================================================================================================
+void TileManager::setMap(unsigned int x, unsigned int y, uchar height, uchar gfxLayer0, uchar waterLvl, uchar shadow, uchar gfxLayer1)
+{
+    if (x >= mMapSize || y >= mMapSize) return;
+    mMap[y*mMapSize + x].waterLvl = waterLvl;
+    mMap[y*mMapSize + x].gfxLayer0= gfxLayer0;
+    mMap[y*mMapSize + x].gfxLayer1= gfxLayer1;
+    mMap[y*mMapSize + x].height  = height;
+    mMap[y*mMapSize + x].shadow  = shadow;
 }
 
 //================================================================================================
 // Returns the height of a tile-vertex.
 //================================================================================================
-short TileManager::getMapHeight(unsigned int x, unsigned int z, int vertex)
+Ogre::ushort TileManager::getMapHeight(unsigned int x, unsigned int z)
 {
-    if (x >= MAP_SIZE || z >= MAP_SIZE) return 0;
-    if (vertex == VERTEX_TR) return mMap[x+1][z  ].height;
-    if (vertex == VERTEX_BL) return mMap[x  ][z+1].height;
-    if (vertex == VERTEX_BR) return mMap[x+1][z+1].height;
-    return mMap[x][z].height;
+    if (x >= mMapSize || z >= mMapSize) return 0;
+    return mMap[z*mMapSize + x].height;
+}
+
+//================================================================================================
+// Returns the water level
+//================================================================================================
+Ogre::ushort TileManager::getMapWater(unsigned int x, unsigned int z)
+{
+    if (x >= mMapSize || z >= mMapSize) return 0;
+    return mMap[z*mMapSize + x].waterLvl;
 }
 
 //================================================================================================
 // Returns the gfx of a tile-vertex.
 //================================================================================================
-char TileManager::getMapGfx(unsigned int x, unsigned int z, int vertex)
+uchar TileManager::getMapLayer0(unsigned int x, unsigned int z)
 {
-    if (x >= MAP_SIZE || z >= MAP_SIZE) return 0;
-    if (vertex == VERTEX_TR) return mMap[x+1][z  ].gfx;
-    if (vertex == VERTEX_BL) return mMap[x  ][z+1].gfx;
-    if (vertex == VERTEX_BR) return mMap[x+1][z+1].gfx;
-    return mMap[x][z].gfx;
+    if (x >= mMapSize || z >= mMapSize) return 0;
+    return mMap[z*mMapSize + x].gfxLayer0;
+}
+
+//================================================================================================
+// Returns the gfx of a tile-vertex.
+//================================================================================================
+uchar TileManager::getMapLayer1(unsigned int x, unsigned int z)
+{
+    if (x >= mMapSize || z >= mMapSize) return 0;
+    return mMap[z*mMapSize + x].gfxLayer1;
+}
+
+//================================================================================================
+// Returns the gfx of a tile-vertex.
+//================================================================================================
+Real TileManager::getMapShadow(unsigned int x, unsigned int z)
+{
+    if (x >= mMapSize || z >= mMapSize) return 1.0;
+    return Real(mMap[z*mMapSize + x].shadow) / 255.0;
 }
 
 //================================================================================================
@@ -729,31 +699,27 @@ void TileManager::scrollMap(int dx, int dz)
 {
     if (dx <0)
     {
-        mMapScrollX-=2;
-        for (int x = 0; x < CHUNK_SIZE_X; ++x)
-            for (int y = 0; y <= CHUNK_SIZE_Z; ++y)
-                mMap[x][y] = mMap[x+2][y];
+        for (unsigned int x = 0; x < mMapSize-2; ++x)
+            for (unsigned int y = 0; y < mMapSize; ++y)
+                mMap[y*mMapSize + x] = mMap[y*mMapSize + x+2];
     }
-    else if (dx >0)
+    else if (dx >0) // Player has moved left.
     {
-        mMapScrollX+=2;
-        for (int x = CHUNK_SIZE_X; x >0; --x)
-            for (int y = 0; y <= CHUNK_SIZE_Z; ++y)
-                mMap[x][y] = mMap[x-2][y];
+        for (unsigned int x = mMapSize-1; x >= 2; --x)
+            for (unsigned int y = 0; y < mMapSize; ++y)
+                mMap[y*mMapSize + x] = mMap[y*mMapSize + x-2];
     }
     if (dz <0)
     {
-        mMapScrollZ-=2;
-        for (int x = 0; x <= CHUNK_SIZE_X; ++x)
-            for (int y = 0; y < CHUNK_SIZE_Z; ++y)
-                mMap[x][y] = mMap[x][y+2];
+        for (unsigned int x = 0; x < mMapSize; ++x)
+            for (unsigned int y = 0; y < mMapSize-2; ++y)
+                mMap[y*mMapSize + x] = mMap[(y+2)*mMapSize + x];
     }
     else if (dz >0)
     {
-        mMapScrollZ+=2;
-        for (int x = 0; x <= CHUNK_SIZE_X; ++x)
-            for (int y = CHUNK_SIZE_Z; y > 0; --y)
-                mMap[x][y] = mMap[x][y-2];
+        for (unsigned int x = 0; x <= mMapSize; ++x)
+            for (unsigned int y = mMapSize-1; y >=2; --y)
+                mMap[y*mMapSize + x] = mMap[(y-2)*mMapSize + x];
     }
     mMapchunk.update();
 }
@@ -763,7 +729,7 @@ void TileManager::scrollMap(int dx, int dz)
 //================================================================================================
 void TileManager::updateTileHeight(int deltaHeight)
 {
-    mMap[mSelectedVertexX][mSelectedVertexZ].height+= deltaHeight;
+    mMap[mSelectedVertexZ*mMapSize+mSelectedVertexX].height+= deltaHeight;
     mMapchunk.update();
     highlightVertex(mSelectedVertexX, mSelectedVertexZ);
 }
@@ -773,8 +739,8 @@ void TileManager::updateTileHeight(int deltaHeight)
 //================================================================================================
 void TileManager::updateTileGfx(int deltaGfxNr)
 {
-    mMap[mSelectedVertexX][mSelectedVertexZ].gfx+= deltaGfxNr;
-    mEditorActSelectedGfx = mMap[mSelectedVertexX][mSelectedVertexZ].gfx;
+    mMap[mSelectedVertexZ*mMapSize + mSelectedVertexX].gfxLayer0+= deltaGfxNr;
+    mEditorActSelectedGfx = mMap[mSelectedVertexZ*mMapSize + mSelectedVertexX].gfxLayer0;
     mMapchunk.update();
     highlightVertex(mSelectedVertexX, mSelectedVertexZ);
 }
@@ -784,42 +750,31 @@ void TileManager::updateTileGfx(int deltaGfxNr)
 //================================================================================================
 void TileManager::setTileGfx()
 {
-    mMap[mSelectedVertexX][mSelectedVertexZ].gfx = mEditorActSelectedGfx;
+    mMap[mSelectedVertexZ*mMapSize + mSelectedVertexX].gfxLayer0 = mEditorActSelectedGfx;
     mMapchunk.update();
-}
-
-//================================================================================================
-// Set the values for a map position.
-//================================================================================================
-void TileManager::setMap(unsigned int x, unsigned int y, short height, char gfx, char shadow)
-{
-    mMap[x][y].height = height *10;
-    mMap[x][y].gfx    = gfx;
-    mMap[x][y].shadow = shadow;
 }
 
 //================================================================================================
 // Change all Chunks.
 //================================================================================================
-void TileManager::changeChunks()
+void TileManager::updateChunks()
 {
+#ifdef LOG_TIMING
     unsigned long time = Root::getSingleton().getTimer()->getMicroseconds();
-    // Shadow calculation is part of the editor. This is just for testing here.
-    {
-        for (int z = 0; z <= CHUNK_SIZE_Z; ++z)
-            for (int x = 0; x <= CHUNK_SIZE_X; ++x)
-                mMap[x][z].shadow = calcShadow(x, z);
-    }
+#endif
     mMapchunk.update();
+#ifdef LOG_TIMING
     Logger::log().error() << "Time to change terrain: " << (double)(Root::getSingleton().getTimer()->getMicroseconds() - time)/1000 << " ms";
+#endif
 }
 
 //================================================================================================
 // Change Tile and Environmet textures.
 //================================================================================================
-void TileManager::changeMapset(int landGroup, int waterGroup)
+void TileManager::setMapset(int landGroup, int waterGroup)
 {
-    mMapchunk.loadAtlasTexture(landGroup, waterGroup);
+    mMapchunk.setMaterial(true,  landGroup,  mTextureSize);
+    mMapchunk.setMaterial(false, waterGroup, mTextureSize/8);
 }
 
 //================================================================================================
@@ -827,44 +782,42 @@ void TileManager::changeMapset(int landGroup, int waterGroup)
 //================================================================================================
 int TileManager::calcHeight(int vert0, int vert1, int vert2, int posX, int posZ)
 {
-    if (posZ == TILE_SIZE) return vert1;
-    int h1 = ((vert1 - vert0) * posZ) / TILE_SIZE + vert0;
-    int h2 = ((vert1 - vert2) * posZ) / TILE_SIZE + vert2;
-    int maxX = TILE_SIZE - posZ;
+    if (posZ == TILE_RENDER_SIZE) return vert1;
+    int h1 = ((vert1 - vert0) * posZ) / TILE_RENDER_SIZE + vert0;
+    int h2 = ((vert1 - vert2) * posZ) / TILE_RENDER_SIZE + vert2;
+    int maxX = TILE_RENDER_SIZE - posZ;
     return ((h2 - h1) * posX) / maxX + h1;
 }
 
+#include "gui_manager.h"
 //================================================================================================
 // Return the exact height of a position within a tile.
 //================================================================================================
 short TileManager::getTileHeight(int posX, int posZ)
 {
-    int mapX, mapZ;
-    int TileX = posX / TILE_SIZE; // Get the Tile position within the map.
-    int TileZ = posZ / TILE_SIZE; // Get the Tile position within the map.
-    posX&= (TILE_SIZE-1);         // Lower part is the position within the tile.
-    posZ&= (TILE_SIZE-1);         // Lower part is the position within the tile.
-    getMapScroll(mapX, mapZ);
-    mapX += (mapZ&1);
+    int TileX = posX / TILE_RENDER_SIZE; // Get the Tile position within the map.
+    int TileZ = posZ / TILE_RENDER_SIZE; // Get the Tile position within the map.
+    posX&= (TILE_RENDER_SIZE-1);         // Lower part is the position within the tile.
+    posZ&= (TILE_RENDER_SIZE-1);         // Lower part is the position within the tile.
     //   +-+v2
     //   |/|
     // v1+-+
-    if (mapX&1)
+    if ((TileX+TileZ)&1)
     {
-        int v1 = getMapHeight(TileX, TileZ, VERTEX_BL);
-        int v2 = getMapHeight(TileX, TileZ, VERTEX_TR);
-        if (TILE_SIZE - posX > posZ)
-            return calcHeight(getMapHeight(TileX, TileZ, VERTEX_TL), v1, v2, posX, posZ);
-        return calcHeight(getMapHeight(TileX, TileZ, VERTEX_BR), v1, v2, TILE_SIZE-posZ, TILE_SIZE-posX);
+        int v1 = getMapHeight(TileX  , TileZ+1); // BL
+        int v2 = getMapHeight(TileX+1, TileZ  ); // TR
+        if (TILE_RENDER_SIZE - posX > posZ)
+            return calcHeight(getMapHeight(TileX, TileZ), v1, v2, posX, posZ); // TL
+        return calcHeight(getMapHeight(TileX+1, TileZ+1), v1, v2, TILE_RENDER_SIZE-posZ, TILE_RENDER_SIZE-posX); // BR
     }
     // v1+-+
     //   |\|
     //   +-+v2
-    int v1 = getMapHeight(TileX, TileZ, VERTEX_TL);
-    int v2 = getMapHeight(TileX, TileZ, VERTEX_BR);
+    int v1 = getMapHeight(TileX  , TileZ  ); // TL
+    int v2 = getMapHeight(TileX+1, TileZ+1); // BR
     if (posX < posZ)
-        return calcHeight(getMapHeight(TileX, TileZ, VERTEX_BL), v1, v2, posX, TILE_SIZE-posZ);
-    return calcHeight(getMapHeight(TileX, TileZ, VERTEX_TR), v1, v2, posZ, TILE_SIZE-posX);
+        return calcHeight(getMapHeight(TileX  , TileZ+1), v1, v2, posX, TILE_RENDER_SIZE-posZ); // BL
+    return calcHeight(getMapHeight(TileX+1, TileZ  ), v1, v2, posZ, TILE_RENDER_SIZE-posX); //TR
 }
 
 //================================================================================================
@@ -872,97 +825,79 @@ short TileManager::getTileHeight(int posX, int posZ)
 //================================================================================================
 void TileManager::createFilterTemplate()
 {
-    int size = MAX_TEXTURE_SIZE/4;
-    int lineSkip = size * RGB;
+    const unsigned char color[3] = {0xC6, 0x38, 0xDB};
+    int lineSkip = TILE_SIZE * RGB;
     const int UNUSED_SIZE = 16;
-    uchar *dstBuf = new uchar[size * size * RGB];
-    memset(dstBuf, 0x00, size * size * RGB);
+    uchar *dstBuf = new uchar[TILE_SIZE * TILE_SIZE * RGB];
+    memset(dstBuf, 0x00, TILE_SIZE * TILE_SIZE * RGB);
     Image dstImage;
-    dstImage.loadDynamicImage(dstBuf, size, size, 1, PF_R8G8B8);
-    // Horizontal borderlines
-    for (int y= 0; y < size/2; y+= size/4)
+    dstImage.loadDynamicImage(dstBuf, TILE_SIZE, TILE_SIZE, 1, PF_R8G8B8);
+    // vertical borderline
+    for (int y = 0; y < TILE_SIZE/2; ++y)
     {
-        for (int x = 0; x < size; ++x)
+        for (int c = 0; c < 3; ++c)
         {
-            dstBuf[(y*size+x)*RGB +0] = 0xC6;
-            dstBuf[(y*size+x)*RGB +1] = 0x38;
-            dstBuf[(y*size+x)*RGB +2] = 0xDB;
-        }
-    }
-    // vertical borderlines
-    for (int x= 0; x < size; x+= size/4)
-    {
-        for (int y = 0; y < size/2; ++y)
-        {
-            dstBuf[(y*size+x)*RGB +0] = 0xC6;
-            dstBuf[(y*size+x)*RGB +1] = 0x38;
-            dstBuf[(y*size+x)*RGB +2] = 0xDB;
+            dstBuf[(y*TILE_SIZE                )*RGB +c] = color[c];
+            dstBuf[(y*TILE_SIZE + TILE_SIZE-1  )*RGB +c] = color[c];
+            dstBuf[(y*TILE_SIZE + TILE_SIZE/2  )*RGB +c] = color[c];
+            dstBuf[(y*TILE_SIZE + TILE_SIZE/2-1)*RGB +c] = color[c];
         }
     }
     // Horizontal borderlines for karos
-    uchar *p = dstBuf + size/2*lineSkip;
+    uchar *p = dstBuf + TILE_SIZE/2*lineSkip;
     for (int i = 0; i < 2; ++i)
     {
         for (int height= 0; height < UNUSED_SIZE; ++height)
         {
-            for (int x = 0; x < size/2; ++x)
+            for (int x = 0; x < TILE_SIZE/2; ++x)
             {
-                // Top pos
-                p[(height*size+x)*RGB +0] = 0xC6;
-                p[(height*size+x)*RGB +1] = 0x38;
-                p[(height*size+x)*RGB +2] = 0xDB;
-                // Bottom pos
-                p[((size/4 - height-1)*size+x)*RGB +0] = 0xC6;
-                p[((size/4 - height-1)*size+x)*RGB +1] = 0x38;
-                p[((size/4 - height-1)*size+x)*RGB +2] = 0xDB;
+                for (int c = 0; c < 3; ++c)
+                {
+                    p[((height              )*TILE_SIZE+x)*RGB +c] = color[c]; // Top pos
+                    p[((TILE_SIZE/2-height-2)*TILE_SIZE+x)*RGB +c] = color[c]; // Bottom pos
+                }
             }
         }
-        p+= size/4*lineSkip;
+        p+= lineSkip;
     }
     // Vertical borderlines for karos
-    p = dstBuf + size/2*lineSkip + size/2*RGB;
+    p = dstBuf + TILE_SIZE/2*lineSkip + TILE_SIZE/2*RGB;
     for (int i = 0; i < 2; ++i)
     {
         for (int width= 0; width < UNUSED_SIZE; ++width)
         {
-            for (int y = 0; y < size/2; ++y)
+            for (int y = 0; y < TILE_SIZE/2; ++y)
             {
-                // Left pos
-                p[(y*size + width)*RGB +0] = 0xC6;
-                p[(y*size + width)*RGB +1] = 0x38;
-                p[(y*size + width)*RGB +2] = 0xDB;
-                // Right pos
-                p[(y*size - width + size/4-1)*RGB +0] = 0xC6;
-                p[(y*size - width + size/4-1)*RGB +1] = 0x38;
-                p[(y*size - width + size/4-1)*RGB +2] = 0xDB;
-            }
-        }
-        p+= size/4*RGB;
-    }
-    // Karos
-    int offset = 0;
-    p = dstBuf + lineSkip * size/2;
-    size/=4;
-    for (int y = 0; y < size; ++y)
-    {
-        for (int x = 0; x < size; ++x)
-        {
-            if ((x == size/2 - offset))
-                x+= 2*offset;
-            for (int row = 0; row < 2; ++row)
-            {
-                for (int col = 0; col < 4; ++col)
+                for (int c = 0; c < 3; ++c)
                 {
-                    p[size*lineSkip*row + (x+col*size)*RGB+ 0] = 0xC6; // R
-                    p[size*lineSkip*row + (x+col*size)*RGB+ 1] = 0x38; // G
-                    p[size*lineSkip*row + (x+col*size)*RGB+ 2] = 0xDB; // B
+                    p[(y*TILE_SIZE + width                )*RGB +c] = color[c]; // Left pos
+                    p[(y*TILE_SIZE - width + TILE_SIZE/2-2)*RGB +c] = color[c];// Right pos
                 }
             }
         }
-        if (y < size/2) ++offset; else --offset;
-        p+=4*size*RGB;
+        p+= lineSkip;
     }
-    String filename = PATH_GFX_TILES;
+    // Karos
+    int offset = 0;
+    p = dstBuf + lineSkip * TILE_SIZE/2;
+    int karoSize= TILE_SIZE/2;
+    for (int y = 0; y < karoSize; ++y)
+    {
+        for (int x = 0; x < karoSize; ++x)
+        {
+            if ((x == karoSize/2 - offset))
+                x+= 2*offset;
+            for (int col = 0; col < 2; ++col)
+            {
+                p[(x+col*karoSize)*RGB+ 0] = 0xC6; // R
+                p[(x+col*karoSize)*RGB+ 1] = 0x38; // G
+                p[(x+col*karoSize)*RGB+ 2] = 0xDB; // B
+            }
+        }
+        if (y < karoSize/2) ++offset; else --offset;
+        p+=lineSkip;
+    }
+    String filename = mPathGfxTiles;
     filename+= "TemplateFilter.png";
     dstImage.save(filename);
     delete[] dstBuf;

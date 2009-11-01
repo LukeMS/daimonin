@@ -209,7 +209,9 @@ int GuiElementScrollbar::mouseEvent(const int mouseAction, int mouseX, int mouse
             mDragging = false;
             mMouseButDown = false;
             if (mouseOverSlider(mouseX, mouseY))
+            {
                 if (setState(GuiImageset::STATE_ELEMENT_M_OVER)) draw();
+            }
             else
             {
                 if (setState(GuiImageset::STATE_ELEMENT_DEFAULT)) draw();

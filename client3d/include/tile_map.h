@@ -24,7 +24,8 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef TILE_MAP_H
 #define TILE_MAP_H
 
-#include "tile_manager.h"
+// This is a wrapper class for the map that was send by the server. It will be deleted soon!
+#include <Ogre.h>
 
 class TileMap
 {
@@ -71,7 +72,7 @@ public:
 
     typedef struct
     {
-        MapCell cells[TileManager::CHUNK_SIZE_X][TileManager::CHUNK_SIZE_Z];
+        MapCell cells[256][256]; // Someting big. Very bad hack, but this class will be deleted soon.
     }
     Map;
     Map the_map;

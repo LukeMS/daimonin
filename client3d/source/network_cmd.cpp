@@ -1075,8 +1075,8 @@ void Network::PlayerCmd(uchar *data, int len)
         obj.maxHP     = 150;
         obj.maxMana   = 150;
         obj.maxGrace  = 150;
-        obj.pos.x     = TileManager::TILE_SIZE * TileManager::CHUNK_SIZE_X/2;
-        obj.pos.z     = TileManager::TILE_SIZE *(TileManager::CHUNK_SIZE_Z-6) - TileManager::TILE_SIZE/2;
+        obj.pos.x     = 1*TileManager::TILE_RENDER_SIZE * TileManager::CHUNK_SIZE_X;
+        obj.pos.z     = 2*TileManager::TILE_RENDER_SIZE * (TileManager::CHUNK_SIZE_Z-3);
         obj.level     = 0;
         obj.facing    = -60;
         obj.particleNr=-1;
@@ -1279,21 +1279,22 @@ void Network::SetupCmd(uchar *buf, int len)
         if (pos >= len) break;
         buf[pos++] = '\0';
 
-        if (!strcmp((const char*)cmd, "cs"))
+        if (!strcmp((const char*)cmd, "pv"))
         {
-            if (VERSION_CS != atoi((const char*)param))
+            if (PROTOCOL_VERSION != atoi((const char*)param))
             {
                 GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "~Your client is outdated!~");
-                Logger::log().error() << "Client is outdated";
+                Logger::log().error() << "Protocol version client/server doesn't match!";
                 CloseClientSocket();
                 SDL_Delay(3250);
                 return;
             }
-            Logger::log().info() << "Client version confirmed";
+            Logger::log().info() << "Protocol version confirmed";
             continue;
         }
-        if (!strcmp((const char*)cmd, "sc"))
+        if (!strcmp((const char*)cmd, "sn"))
         {
+            /*
             if (VERSION_SC != atoi((const char*)param))
             {
                 GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "~The server is outdated!\nSelect a different one!~");
@@ -1301,7 +1302,8 @@ void Network::SetupCmd(uchar *buf, int len)
                 SDL_Delay(3250);
                 return;
             }
-            Logger::log().info() << "Server version confirmed";
+            */
+            Logger::log().info() << "Sound file outdated.";
             continue;
         }
         if (!strcmp((const char*)cmd, "ac"))

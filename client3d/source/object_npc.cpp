@@ -35,7 +35,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Ogre;
 
-const int   WALK_SPEED   =  70;
+const int   WALK_SPEED   =  TileManager::TILE_RENDER_SIZE;
 const int   TURN_SPEED   = 400;
 const Real  WALK_PRECISON= 1.0f;
 const float BIG_LAGGING  = 0.04f;
@@ -101,10 +101,9 @@ ObjectNPC::ObjectNPC(sObject &obj, bool spawn):ObjectStatic(obj)
     // ////////////////////////////////////////////////////////////////////
     if (!mIndex)
     {
-        Real test_size = 2.5; mNode->setScale(test_size, test_size, test_size); // DELETE ME!
-
+        Real test_size = TileManager::TILE_RENDER_SIZE/32; mNode->setScale(test_size, test_size, test_size); // DELETE ME!
         // Attach camera to players node.
-        // (Players Bounding box is increased by that and cant be used for collision detection anymore)
+        // (Players Bounding box is increased by that and can't be used for collision detection anymore)
         SceneNode *cNode = mNode->createChildSceneNode();
         cNode->attachObject(Events::getSingleton().getCamera());
         cNode->setInheritOrientation(false); // Camera needs no turning.
@@ -127,8 +126,8 @@ ObjectNPC::ObjectNPC(sObject &obj, bool spawn):ObjectStatic(obj)
     blob->triangle(3, 2, 1);
     blob->end();
     blob->convertToMesh("Blob_"+ StringConverter::toString(mIndex, 10, '0'));
-    blob->setQueryFlags(ObjectManager::QUERY_NPC_SELECT_MASK);
-    blob->setRenderQueueGroup(RENDER_QUEUE_6);
+    blob->setQueryFlags(0);
+    blob->setRenderQueueGroup(RENDER_QUEUE_6); // see OgreRenderQueue.h
     mNode->attachObject(blob);
 
     mCursorTurning =0;
@@ -148,19 +147,19 @@ ObjectNPC::ObjectNPC(sObject &obj, bool spawn):ObjectStatic(obj)
 void ObjectNPC::moveByCursor(Ogre::Real dTime)
 {
     if (mIndex) return;
-    static int oldX = (int)(mTilePos.x/TileManager::TILE_SIZE/2);
-    static int oldZ = (int)(mTilePos.z/TileManager::TILE_SIZE/2);
+    static int oldX = (int)(mTilePos.x/TileManager::TILE_RENDER_SIZE/2);
+    static int oldZ = (int)(mTilePos.z/TileManager::TILE_RENDER_SIZE/2);
     Real distance = WALK_SPEED * dTime;
     mTilePos.x+= Math::Sin(Degree(mFacing)) * distance;
     mTilePos.z+= Math::Cos(Degree(mFacing)) * distance;
     mTilePos.y = TileManager::getSingleton().getTileHeight((int)mTilePos.x, (int)mTilePos.z);
-    int dx = oldX - (int)(mTilePos.x/TileManager::TILE_SIZE/2);
-    int dz = oldZ - (int)(mTilePos.z/TileManager::TILE_SIZE/2);
+    int dx = oldX - (int)(mTilePos.x/TileManager::TILE_RENDER_SIZE/2);
+    int dz = oldZ - (int)(mTilePos.z/TileManager::TILE_RENDER_SIZE/2);
     // Player moved over a tile border.
     if (dx || dz)
     {
-        mTilePos.x+= dx * TileManager::TILE_SIZE*2;
-        mTilePos.z+= dz * TileManager::TILE_SIZE*2;
+        mTilePos.x+= dx * TileManager::TILE_RENDER_SIZE*2;
+        mTilePos.z+= dz * TileManager::TILE_RENDER_SIZE*2;
         TileManager::getSingleton().scrollMap(dx, dz);
         ObjectManager::getSingleton().synchToWorldPos(dx*2, dz*2);
         Events::getSingleton().setWorldPos(dx, dz);
@@ -500,8 +499,8 @@ bool ObjectNPC::update(const FrameEvent& event)
 //================================================================================================
 bool ObjectNPC::movePosition(int deltaX, int deltaZ)
 {
-    mTilePos.x += deltaX * TileManager::TILE_SIZE;
-    mTilePos.z += deltaZ * TileManager::TILE_SIZE;
+    mTilePos.x += deltaX * TileManager::TILE_RENDER_SIZE;
+    mTilePos.z += deltaZ * TileManager::TILE_RENDER_SIZE;
     setPosition(mTilePos);
     if (mActHP <=0) mNode->translate(Vector3(0, -mSpawnSize, 0));
     // if (pos out of playfield) return false;
