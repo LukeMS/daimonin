@@ -140,8 +140,9 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
                         sprintf(buf, "mv %d %d %d", loc, tag, nrof);
                         Network::getSingleton().cs_write_string(buf);
             */
-
-            TileManager::getSingleton().toggleGrid();
+            static bool grid = true;
+            TileManager::getSingleton().setGrid(grid);
+            grid = !grid;
             break;
         }
 
@@ -368,7 +369,7 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
             //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_WEAPON_HAND, 1);
             //static int color =0;
             //ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_TEXTURE, 0, ObjectNPC::TEXTURE_POS_SKIN, color++);
-            TileManager::getSingleton().updateTileHeight(+10);
+            TileManager::getSingleton().updateTileHeight(+1);
             break;
         }
 
@@ -377,7 +378,7 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
             //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_SHIELD_HAND, 1);
             //static int color =0;
             //ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_TEXTURE, 0,ObjectNPC::TEXTURE_POS_FACE, color++);
-            TileManager::getSingleton().updateTileHeight(-10);
+            TileManager::getSingleton().updateTileHeight(-1);
             break;
         }
 
@@ -432,7 +433,7 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
         }
 
         case OIS::KC_9:
-            TileManager::getSingleton().changeChunks();
+            TileManager::getSingleton().updateChunks();
             //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_BODY, 1);
             break;
 
@@ -495,21 +496,25 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
         }
         break;
 
-        case OIS::KC_F5:
+        case OIS::KC_HOME:
         {
             static int cAdd =0;
             ++cAdd;
             Logger::log().error() << "camera pitch add: " << cAdd;
             mCamera->pitch(Degree(+1));
+            mCamera->moveRelative (Vector3(0,-30, -30));
+
+            //mCameraRotating = FREEZE;
         }
         break;
 
-        case OIS::KC_F6:
+        case OIS::KC_END:
         {
             static int cAdd =0;
             ++cAdd;
             Logger::log().error() << "camera pitch sub: " << cAdd;
             mCamera->pitch(Degree(-1));
+            mCamera->moveRelative (Vector3(0, 30, 30));
         }
         break;
 
@@ -550,10 +555,6 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
 
         case OIS::KC_PGDOWN:
             mCameraRotating = NEGATIVE;
-            break;
-
-        case OIS::KC_HOME:
-            mCameraRotating = FREEZE;
             break;
 
             // ////////////////////////////////////////////////////////////////////
@@ -613,7 +614,6 @@ bool Events::keyReleased(const OIS::KeyEvent &e)
 
         case OIS::KC_PGUP:
         case OIS::KC_PGDOWN:
-        case OIS::KC_HOME:
             mCameraRotating = TURNBACK;
             break;
 

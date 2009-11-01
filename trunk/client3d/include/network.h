@@ -53,8 +53,7 @@ public:
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     enum {SC_NORMAL, SC_FIRERUN, SC_ALWAYS};
-    enum {VERSION_CS = 991027};
-    enum {VERSION_SC = 991027};
+    enum {PROTOCOL_VERSION = 991029};
 
     // List of client to server (cs) binary command tags.
     enum client_cmd

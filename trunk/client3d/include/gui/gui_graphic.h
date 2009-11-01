@@ -28,8 +28,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef GUI_GRAPHIC_H
 #define GUI_GRAPHIC_H
 
-#include <Ogre.h>
-
 class GuiGraphic
 {
 public:
@@ -41,11 +39,11 @@ public:
         static GuiGraphic Singleton;
         return Singleton;
     }
-    void restoreWindowBG(int w, int h, Ogre::uint32 *bak, Ogre::uint32 *dst, int bakRowSkip, int dstRowSkip);
-    void drawGfxToBuffer(int w, int h, int srcW, int srcH, Ogre::uint32 *src, Ogre::uint32 *bak, Ogre::uint32 *dst, int srcRowSkip, int bakRowSkip, int dstRowSkip);
-    void drawColorToBuffer(int w, int h, Ogre::uint32 color, Ogre::uint32 *dst, int dstRowSkip);
-    void drawColorToBuffer(int w, int h, Ogre::uint32 color, Ogre::uint32 *bak, Ogre::uint32 *dst, int bakRowSkip, int dstRowSkip);
-    Ogre::uint32 alphaBlend(const Ogre::uint32 bg, const Ogre::uint32 gfx);
+    void restoreWindowBG(int w, int h, unsigned int *bak, unsigned int *dst, int bakRowSkip, int dstRowSkip);
+    void drawGfxToBuffer(int w, int h, int srcW, int srcH, unsigned int *src, unsigned int *bak, unsigned int *dst, int srcRowSkip, int bakRowSkip, int dstRowSkip);
+    void drawColorToBuffer(int w, int h, unsigned int color, unsigned int *dst, int dstRowSkip);
+    void drawColorToBuffer(int w, int h, unsigned int color, unsigned int *bak, unsigned int *dst, int bakRowSkip, int dstRowSkip);
+    unsigned int alphaBlend(const unsigned int bg, const unsigned int gfx);
 
 private:
     // ////////////////////////////////////////////////////////////////////

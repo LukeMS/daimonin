@@ -42,8 +42,8 @@ static const unsigned int MIN_LEN_LOGIN_NAME =  3;
 static const unsigned int MAX_LEN_LOGIN_NAME = 12;
 static const unsigned int MIN_LEN_LOGIN_PSWD =  6;
 static const unsigned int MAX_LEN_LOGIN_PSWD = 17;
-const Real CAMERA_OFFSET = TileManager::TILE_SIZE*20;
-const Real CAMERA_RELA_Z = TileManager::TILE_SIZE*3;
+const Real CAMERA_POS_Y = TileManager::TILE_RENDER_SIZE * (TileManager::CHUNK_SIZE_Z+1);
+const Real CAMERA_POS_Z = TileManager::TILE_RENDER_SIZE * (TileManager::CHUNK_SIZE_Z-4)/2;
 const char *GUI_LOADING_OVERLAY = "GUI_LOADING_OVERLAY";
 const char *GUI_LOADING_OVERLAY_ELEMENT = "GUI_LOADING_OVERLAY_ELEMENT";
 const unsigned long SERVER_TIMEOUT = 5000; // Server timeout in ms.
@@ -99,6 +99,7 @@ void Events::freeRecources()
     GuiManager   ::getSingleton().freeRecources();
     Sound        ::getSingleton().freeRecources();
     ObjectVisuals::getSingleton().freeRecources();
+
 }
 
 //================================================================================================
@@ -147,13 +148,13 @@ bool Events::frameStarted(const FrameEvent& evt)
             // ////////////////////////////////////////////////////////////////////
             // Create one viewport, entire window.
             // ////////////////////////////////////////////////////////////////////
-            mCameraZoom = STD_CAMERA_ZOOM;
             mCamera = mSceneManager->createCamera("PlayerCam");
+            mCamera->setQueryFlags(ObjectManager::QUERY_CAMERA_MASK);
             Viewport *VP = mWindow->addViewport(mCamera);
             mCamera->setAspectRatio(Real(VP->getActualWidth()) / Real(VP->getActualHeight()));
+            mCameraZoom = STD_CAMERA_ZOOM;
             mCamera->setFOVy(Degree(mCameraZoom));
-            mCamera->setQueryFlags(ObjectManager::QUERY_CAMERA_MASK);
-            mCamera->setPosition(0, CAMERA_OFFSET, CAMERA_OFFSET+CAMERA_RELA_Z);
+            mCamera->setPosition(0, CAMERA_POS_Y, CAMERA_POS_Y+CAMERA_POS_Z);
             mCamera->pitch(Degree(-36));
             mWorld = mSceneManager->getRootSceneNode()->createChildSceneNode();
             // ////////////////////////////////////////////////////////////////////
@@ -254,6 +255,8 @@ bool Events::frameStarted(const FrameEvent& evt)
         {
             TileManager::getSingleton().Init(mSceneManager, ObjectManager::QUERY_TILES_LAND_MASK,
                                              ObjectManager::QUERY_TILES_WATER_MASK,
+                                             PATH_GFX_TILES,
+                                             64, // Map size
                                              Option::getSingleton().getIntValue(Option::CMDLINE_TILEENGINE_LOD),
                                              Option::getSingleton().getIntValue(Option::CMDLINE_CREATE_MEDIA)?true:false);
             Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_GUI);
@@ -341,9 +344,8 @@ bool Events::frameStarted(const FrameEvent& evt)
             ServerFile::getSingleton().checkFiles();
             std::stringstream strCmd;
             strCmd  <<
-            "cs "   << Network::VERSION_CS <<
-            " sc "  << Network::VERSION_SC <<
-            " sn "  << 1 <<
+            "pv "   << Network::PROTOCOL_VERSION <<
+            " sn "  << "0" << // Sounds
             " mz "  << 17 << "x" << 17 <<
             " skf " << ServerFile::getSingleton().getLength(ServerFile::FILE_SKILLS)  << "|" << std::hex<< ServerFile::getSingleton().getCRC(ServerFile::FILE_SKILLS)     << std::dec <<
             " spf " << ServerFile::getSingleton().getLength(ServerFile::FILE_SPELLS)  << "|" << std::hex<< ServerFile::getSingleton().getCRC(ServerFile::FILE_SPELLS)     << std::dec <<
@@ -629,12 +631,12 @@ bool Events::frameEnded(const FrameEvent& evt)
             {
                 cameraAngle+= step;
                 mCamera->yaw(Degree(step));
-                mCamera->setPosition(CAMERA_OFFSET*Math::Sin(Degree(cameraAngle)), actPos.y, CAMERA_OFFSET *Math::Cos(Degree(cameraAngle))+CAMERA_RELA_Z);
+                mCamera->setPosition(CAMERA_POS_Z*Math::Sin(Degree(cameraAngle)), actPos.y, CAMERA_POS_Z *Math::Cos(Degree(cameraAngle))+CAMERA_POS_Z);
             }
             else
             {
                 mCamera->yaw(Degree(-cameraAngle));
-                mCamera->setPosition(0, actPos.y, CAMERA_OFFSET+CAMERA_RELA_Z);
+                mCamera->setPosition(0, actPos.y, CAMERA_POS_Z+CAMERA_POS_Z);
                 mCameraRotating = NONE;
                 cameraAngle = 0;
             }
@@ -643,15 +645,15 @@ bool Events::frameEnded(const FrameEvent& evt)
         {
             cameraAngle+= step;
             mCamera->yaw(Degree(step));
-            mCamera->setPosition(CAMERA_OFFSET*Math::Sin(Degree(cameraAngle)), actPos.y, CAMERA_OFFSET *Math::Cos(Degree(cameraAngle))+CAMERA_RELA_Z);
+            mCamera->setPosition(CAMERA_POS_Z*Math::Sin(Degree(cameraAngle)), actPos.y, CAMERA_POS_Z *Math::Cos(Degree(cameraAngle)));
         }
         else if (mCameraRotating == NEGATIVE && cameraAngle >-45)
         {
             cameraAngle-= step;
             mCamera->yaw(Degree(-step));
-            mCamera->setPosition(CAMERA_OFFSET*Math::Sin(Degree(cameraAngle)), actPos.y, CAMERA_OFFSET *Math::Cos(Degree(cameraAngle))+CAMERA_RELA_Z);
+            mCamera->setPosition(CAMERA_POS_Z*Math::Sin(Degree(cameraAngle)), actPos.y, CAMERA_POS_Z *Math::Cos(Degree(cameraAngle)));
         }
-        TileManager::getSingleton().rotate(cameraAngle);
+        TileManager::getSingleton().rotateCamera(cameraAngle);
     }
     // ////////////////////////////////////////////////////////////////////
     // Update frame counter.

@@ -24,54 +24,52 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef TILE_CHUNK_H
 #define TILE_CHUNK_H
 
-#include "Ogre.h"
+#include <OgreVector3.h>
 
 /**
  ** TileEngine class which handles the tiles in a chunk.
+ ** Camera must be rotated at 180° to have the same z direction
+ ** in map and in the world.
  *****************************************************************************/
 class TileChunk
 {
 public:
     // ////////////////////////////////////////////////////////////////////
-    // Variables / Constants.
-    // ////////////////////////////////////////////////////////////////////
-
-    // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     TileChunk()  {}
     ~TileChunk() {}
-    void init(int textureSize, int queryMaskLand, int queryMaskWater);
-    void update();
-    void rotate(Ogre::Real cameraAngle);
-    void freeRecources();
-    void loadAtlasTexture(int landGroup, int waterGroup);
+    void init(int queryMaskLand, int queryMaskWater, Ogre::SceneManager *SceneManager);
+    void update()
+    {
+        updateLand();
+        updateWater();
+    }
+    void setGrid(bool visible);
+    void setDaylight(Ogre::Real brightness);
+    void setCameraRotation(Ogre::Real angle);
+    void setMaterial(bool land, int groupNr, int texSize);
+    void setWaveParameter(Ogre::Real alpha, Ogre::Real amplitude, Ogre::Real speed);
 
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    enum { X = 0, Z = 1 };                 /**< Only used for readability. **/
-    enum { MAX_TERRAIN_HEIGHT = 255 *10 }; /**< Height of the terrain is limited. **/
-    enum { WATERLEVEL         =  14 };     /**< At this height the water clips the land-tiles. **/
-    int mTextureSize;
+    bool mGrid;
     unsigned int mCameraRotation;
-    Ogre::MeshPtr mMeshLand, mMeshWater;
-    Ogre::Entity *mEntityLand, *mEntityWater;
-    Ogre::Vector3 mNormal, mVec1, mVec2, mVec3;
+    Ogre::SubMesh *mSubMeshLand, *mSubMeshWater;
+    Ogre::Real mDaylight;
+    Ogre::Vector3 mWaveParam;
     Ogre::Real *mPosVBuf;
-    Ogre::Real mTexPosInAtlas[8];
+    Ogre::Real mTexPosInAtlas[6];
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    /// The terrain must have a land- AND a waterSubmesh. If there is no data for it, we create a dummy.
-    void createDummySubMesh(Ogre::SubMesh *submesh);
-    void createIndexData(Ogre::SubMesh *submesh, int sumVertices);
-    void calcNormal(Ogre::Real x1, Ogre::Real z1, Ogre::Real x2, Ogre::Real z2, Ogre::Real x3, Ogre::Real z3);
-    void setVertex(const Ogre::Vector3 &pos, Ogre::Real posTexX, Ogre::Real posTexZ, Ogre::Real posShadowX, Ogre::Real posShadowZ, int offset);
-    void changeLand();
-    void changeWater();
-    int  calcTextureUnitSorting(int l0, int l1, int l2);
+    void updateLand();
+    void updateWater();
+    void setVertex(Ogre::Vector3 &pos, int maskNr, Ogre::Real offsetU, Ogre::Real offsetV, Ogre::Vector3 &normal);
+    void setTriangle(int x, int z, Ogre::Vector3 v1, Ogre::Vector3 v2, Ogre::Vector3 v3,int maskNr);
+    int  getMask(int gfxVertex0, int gfxVertex1, int gfxVertex2);
 };
 
 #endif

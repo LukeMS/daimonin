@@ -362,5 +362,12 @@ void GuiWindow::update(Ogre::Real timeSinceLastFrame)
 void GuiWindow::sendMsg(int elementNr, int message, String &text, uint32 &param, const char *text2)
 {
     if (!mvElement.empty())
+    {
+        if (elementNr <0 ||elementNr >= (int)mvElement.size())
+        {
+            Logger::log().error() << "Critical: GuiWindow::sendMsg: elementNr out of Range!";
+            return;
+        }
         mvElement[elementNr]->sendMsg((int)message, text, param, text2);
+    }
 }

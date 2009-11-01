@@ -23,7 +23,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef GUI_TEXTOUT_H
 #define GUI_TEXTOUT_H
 
-#include <Ogre.h>
+#include <OgreString.h>
 
 /**
  ** This class provides printing abilities for all gui elements.
@@ -55,11 +55,11 @@ public:
     static const char TXT_CMD_CHANGE_FONT; /**< Followed by 2 hex-chars to encode a font change in the text. **/
     static const char TXT_CMD_SOUND;       /**< Followed by a filename to encode a sound in the text. **/
     static const char CURSOR[];
-    static const Ogre::uint32 TXT_COLOR_DEFAULT;
-    static const Ogre::uint32 TXT_COLOR_LOWLIGHT;
-    static const Ogre::uint32 TXT_COLOR_HIGHLIGHT;
-    static const Ogre::uint32 TXT_COLOR_LINK;
-    static const Ogre::uint32 TXT_COLOR_INFO;
+    static const unsigned int TXT_COLOR_DEFAULT;
+    static const unsigned int TXT_COLOR_LOWLIGHT;
+    static const unsigned int TXT_COLOR_HIGHLIGHT;
+    static const unsigned int TXT_COLOR_LINK;
+    static const unsigned int TXT_COLOR_INFO;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
@@ -104,10 +104,10 @@ public:
      ** @param borderColor If set, the text will be printed with a colored border.
      *****************************************************************************/
     void printText(int width, int height,
-                   Ogre::uint32 *dst, int dstLineSkip,
-                   Ogre::uint32 colorBG,
+                   unsigned int *dst, int dstLineSkip,
+                   unsigned int colorBG,
                    const char *text, unsigned int fontNr,
-                   Ogre::uint32 fontColor = 0xffffffff, bool hideText = false, Ogre::uint32 borderColor = 0)
+                   unsigned int fontColor = 0xffffffff, bool hideText = false, unsigned int borderColor = 0)
     {
         printText(width, height, dst, dstLineSkip, &colorBG, 0, text, fontNr, fontColor, hideText, borderColor);
     }
@@ -124,9 +124,9 @@ public:
      ** @param borderColor If set, the text will be printed with a colored border.
      *****************************************************************************/
     void printText(int width, int height,
-                   Ogre::uint32 *dst, int dstLineSkip,
+                   unsigned int *dst, int dstLineSkip,
                    const char *text, unsigned int fontNr,
-                   Ogre::uint32 fontColor = 0xffffffff, bool hideText = false, Ogre::uint32 borderColor = 0)
+                   unsigned int fontColor = 0xffffffff, bool hideText = false, unsigned int borderColor = 0)
     {
         printText(width, height, dst, dstLineSkip, dst, dstLineSkip, text, fontNr, fontColor, hideText, borderColor);
     }
@@ -145,10 +145,10 @@ public:
      ** @param borderColor If set, the text will be printed with a colored border.
      *****************************************************************************/
     void printText(int width, int height,
-                   Ogre::uint32 *dst, int dstLineSkip,
-                   Ogre::uint32 *bak, int bakLineSkip,
+                   unsigned int *dst, int dstLineSkip,
+                   unsigned int *bak, int bakLineSkip,
                    const char *text, unsigned int fontNr,
-                   Ogre::uint32 fontColor = 0xffffffff, bool hideText = false, Ogre::uint32 borderColor = 0);
+                   unsigned int fontColor = 0xffffffff, bool hideText = false, unsigned int borderColor = 0);
 
     /** Returns the height (in pixel) for the given font-number.
      ** @param fontNr The font-number.
@@ -183,12 +183,12 @@ private:
 
     typedef struct
     {
-        Ogre::uint32 *data;
+        unsigned int *data;
         unsigned short textureWidth;
         unsigned short height;
         unsigned short baseline;
         unsigned short charStart[CHARS_IN_FONT];
-        Ogre::uchar  charWidth[CHARS_IN_FONT];
+        unsigned char  charWidth[CHARS_IN_FONT];
     }
     mFont;
     typedef struct
@@ -214,7 +214,7 @@ private:
      ** @param char   The character to check.
      ** @warning No bound check for the font-number is done.
      *****************************************************************************/
-    int getCharWidth(int fontNr, Ogre::uchar Char);
+    int getCharWidth(int fontNr, unsigned char Char);
 
     /** Converts a text with a hexadecimal value into a uint32 value.
      ** @param  text  The text to convert.
@@ -222,7 +222,7 @@ private:
      ** @param  value A container to store the result.
      ** @return Returns the number of the converted chars.
      *****************************************************************************/
-    int hexToInt(const char *text, int len, Ogre::uint32 &result);
+    int hexToInt(const char *text, int len, unsigned int &result);
 };
 
 #endif

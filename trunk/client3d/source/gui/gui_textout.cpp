@@ -21,6 +21,7 @@ You should have received a copy of the GNU General Public License along with
 this program; If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------*/
 
+#include <Ogre.h>
 #include <OgreFontManager.h>
 #include "logger.h"
 #include "gui_textout.h"
@@ -427,7 +428,8 @@ int GuiTextout::calcTextWidth(const char *text, unsigned int fontNr)
                         if (!*++text) break;
                 break;
             case TXT_CMD_CHANGE_FONT:
-                text+= hexToInt(++text, 2, fontNr);
+                ++text;
+                text+= hexToInt(text, 2, fontNr);
                 if (fontNr >= (unsigned int)mvFont.size()) fontNr = 0;
                 break;
             default:
@@ -465,7 +467,8 @@ int GuiTextout::getLastCharPosition(const char *text, unsigned int fontNr, int w
                         if (!text[++pos]) break;
                 break;
             case TXT_CMD_CHANGE_FONT:
-                pos+= hexToInt(text+ ++pos, 2, fontNr);
+                ++pos;
+                pos+= hexToInt(text+pos, 2, fontNr);
                 if (fontNr >= (unsigned int)mvFont.size()) fontNr = 0;
                 break;
             default:

@@ -109,8 +109,8 @@ ObjectStatic::ObjectStatic(sObject &obj)
 //================================================================================================
 bool ObjectStatic::movePosition(int deltaX, int deltaZ)
 {
-    mTilePos.x += deltaX * TileManager::TILE_SIZE;
-    mTilePos.z += deltaZ * TileManager::TILE_SIZE;
+    mTilePos.x += deltaX * TileManager::TILE_RENDER_SIZE;
+    mTilePos.z += deltaZ * TileManager::TILE_RENDER_SIZE;
     setPosition(mTilePos);
     // if (pos out of playfield) return false;
     return true;

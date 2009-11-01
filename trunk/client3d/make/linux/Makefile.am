@@ -47,6 +47,7 @@ client3d_SOURCES = \
 	../../source/gui/gui_textout.cpp \
 	../../source/gui/gui_window.cpp \
 	../../source/tile_chunk.cpp \
+	../../source/tile_decal.cpp \
 	../../source/tile_manager.cpp \
 	../../source/tile_map.cpp \
 	../../source/events.cpp \

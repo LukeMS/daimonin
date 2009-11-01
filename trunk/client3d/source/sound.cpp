@@ -122,6 +122,7 @@ bool Sound::Init()
 //================================================================================================
 void Sound::freeRecources()
 {
+    if (!mInit) return;
     for (unsigned int i = 0; i< SAMPLE_SUM; ++i)
     {
         FMOD_Sound_Release(mSoundFiles[i].sound);

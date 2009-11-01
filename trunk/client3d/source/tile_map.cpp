@@ -183,8 +183,6 @@ void TileMap::set_map_ext(int x, int y, int layer, int ext, int probe)
 //================================================================================================
 void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, char *name, int height)
 {
-    x+=12;
-    y+=20;
     enum {LAYER_TILES, LAYER_TODO1, LAYER_TODO2, LAYER_OBJECTS};
     // ////////////////////////////////////////////////////////////////////
     // Layer: Tiles.
@@ -192,18 +190,25 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
     if (layer == LAYER_TILES)
     {
         const char *strTile = ObjectWrapper::getSingleton().getMeshName(face & ~0x8000);
+
+        //Logger::log().info() << x << " " << y << " " << (uchar)(strTile[ 8]-'0') << " " << (uchar)(strTile[10]-'0');
+
         // Undefined tile.
         if (!strTile || !strTile[0])
         {
             //Logger::log().error() << "Unknown tile: " << face << " pos: " << x << ", " << y << "  " << strTile;
-            TileManager::getSingleton().setMap(x, y, height, 8, 0);
+            TileManager::getSingleton().setMap(x, y, height, 2, 20);
         }
         else
         {
-            TileManager::getSingleton().setMap(x, y,
-                                               (uchar)strTile[ 8]-'0',  // Height
-                                               (uchar)strTile[10]-'0',  // Gfx
-                                               (uchar)strTile[14]-'0'); // Shadow
+            int gfx = (uchar)(strTile[10]-'0');
+            int shadow = (gfx==2)?64:255;
+            TileManager::getSingleton().setMap(x, y, //(uchar)(strTile[ 8]-'0'),  // Height
+                                               gfx*16, // Height
+                                               gfx   , // Gfx
+                                               20    , // Water lvl
+                                               shadow // Shadow
+                                               );
             //Logger::log().error() << "Tile face: " << face << " pos: " << x << ", " << y << "  " << strTile << " height: " << ((uchar)strTile[ 8]-'0')*10;
         }
         mNeedsRedraw = true;
@@ -240,8 +245,8 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                 obj.maxHP     = 50;
                 obj.maxMana   = 50;
                 obj.maxGrace  = 50;
-                obj.pos.x     = x * TileManager::TILE_SIZE + 3 * 8;
-                obj.pos.z     = y * TileManager::TILE_SIZE + 3 * 8;
+                obj.pos.x     = x * TileManager::TILE_RENDER_SIZE/2 + 3 * 8;
+                obj.pos.z     = y * TileManager::TILE_RENDER_SIZE/2 + 3 * 8;
                 obj.level     = 0;
                 obj.facing    = 30;
                 obj.particleNr=-1;
@@ -266,8 +271,8 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                 obj.maxHP     = 50;
                 obj.maxMana   = 50;
                 obj.maxGrace  = 50;
-                obj.pos.x     = x * TileManager::TILE_SIZE + 3 * 8;
-                obj.pos.z     = y * TileManager::TILE_SIZE + 3 * 8;
+                obj.pos.x     = x * TileManager::TILE_RENDER_SIZE/2 + 3 * 8;
+                obj.pos.z     = y * TileManager::TILE_RENDER_SIZE/2 + 3 * 8;
                 obj.level     = 0;
                 obj.facing    = -60;
                 obj.particleNr=-1;
@@ -283,8 +288,8 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                 obj.maxHP     = 50;
                 obj.maxMana   = 50;
                 obj.maxGrace  = 50;
-                obj.pos.x     = (x+1) * TileManager::TILE_SIZE + 3 * 8;
-                obj.pos.z     = (y+4) * TileManager::TILE_SIZE + 3 * 8;
+                obj.pos.x     = (x+1) * TileManager::TILE_RENDER_SIZE/2 + 3 * 8;
+                obj.pos.z     = (y+4) * TileManager::TILE_RENDER_SIZE/2 + 3 * 8;
                 obj.level     = 0;
                 obj.facing    = -60;
                 obj.particleNr=-1;
@@ -300,8 +305,8 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                 obj.maxHP     = 50;
                 obj.maxMana   = 50;
                 obj.maxGrace  = 50;
-                obj.pos.x     = x * TileManager::TILE_SIZE + 3 * 8;
-                obj.pos.z     = (y+5) * TileManager::TILE_SIZE + 3 * 8;
+                obj.pos.x     = x * TileManager::TILE_RENDER_SIZE/2 + 3 * 8;
+                obj.pos.z     = (y+5) * TileManager::TILE_RENDER_SIZE/2 + 3 * 8;
                 obj.level     = 0;
                 obj.facing    = 120;
                 obj.particleNr=-1;
@@ -316,9 +321,9 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                     {
                         once = false;
                         Vector3 pos;
-                        pos.x = TileManager::TILE_SIZE * 8.5;
+                        pos.x = TileManager::TILE_RENDER_SIZE/2 * 8.5;
                         pos.y = 0;
-                        pos.z = TileManager::TILE_SIZE * 8.5;
+                        pos.z = TileManager::TILE_RENDER_SIZE/2 * 8.5;
                         ObjectManager::getSingleton().setPosition(ObjectNPC::HERO, pos);
                         Logger::log().error() << "we got the Hero face: " << face;
                     }
@@ -359,8 +364,8 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                 obj.maxHP     = 50;
                 obj.maxMana   = 50;
                 obj.maxGrace  = 50;
-                obj.pos.x     = x * TileManager::TILE_SIZE + 3 * 8;
-                obj.pos.z     = y * TileManager::TILE_SIZE + 3 * 8;
+                obj.pos.x     = x * TileManager::TILE_RENDER_SIZE/2 + 3 * 8;
+                obj.pos.z     = y * TileManager::TILE_RENDER_SIZE/2 + 3 * 8;
                 obj.level     = 0;
                 obj.facing    = -60;
                 obj.particleNr=-1;
@@ -384,8 +389,8 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                 obj.maxHP     = 50;
                 obj.maxMana   = 50;
                 obj.maxGrace  = 50;
-                obj.pos.x     = x * TileManager::TILE_SIZE + 3 * 8;
-                obj.pos.z     = y * TileManager::TILE_SIZE + 3 * 8;
+                obj.pos.x     = x * TileManager::TILE_RENDER_SIZE/2 + 3 * 8;
+                obj.pos.z     = y * TileManager::TILE_RENDER_SIZE/2 + 3 * 8;
                 obj.level     = 0;
                 obj.facing    = 35;
                 obj.particleNr=-1;
@@ -436,6 +441,6 @@ void TileMap::draw()
 {
     if (!mNeedsRedraw) return;
     //GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "TileMap::draw()");
-    TileManager::getSingleton().changeChunks();
+    TileManager::getSingleton().updateChunks();
     mNeedsRedraw = false;
 }
