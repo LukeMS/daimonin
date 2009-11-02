@@ -433,13 +433,104 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
         }
 
         case OIS::KC_9:
+        {
+            for (int y=0; y < 32; ++y)
+                for (int x=0; x < 32; ++x)
+                    TileManager::getSingleton().setMap(x, y, 60, 1, 0);
+
+            // Mask demo.
+            int gfxBG = 1, gfx0  = 2, gfx1  = 7, shadow = 255;
+            int x = 2, y = 4; // Mask 0
+            TileManager::getSingleton().setMap(x+0, y+0, 60, gfx0 , 0); TileManager::getSingleton().setMap(x+1, y+0, 60, gfx1 , 0); TileManager::getSingleton().setMap(x+2, y+0, 60, gfx0 , 0);
+            TileManager::getSingleton().setMap(x+0, y+1, 60, gfx1 , 0); TileManager::getSingleton().setMap(x+1, y+1, 60, gfxBG, 0); TileManager::getSingleton().setMap(x+2, y+1, 60, gfx1 , 0);
+            TileManager::getSingleton().setMap(x+0, y+2, 60, gfx0 , 0); TileManager::getSingleton().setMap(x+1, y+2, 60, gfx1 , 0); TileManager::getSingleton().setMap(x+2, y+2, 60, gfx0 , 0);
+            x+= 4;            // Mask 1
+            TileManager::getSingleton().setMap(x+0, y+0, 60, gfx1 , 0); TileManager::getSingleton().setMap(x+1, y+0, 60, gfx0 , 0); TileManager::getSingleton().setMap(x+2, y+0, 60, gfx1 , 0);
+            TileManager::getSingleton().setMap(x+0, y+1, 60, gfx0 , 0); TileManager::getSingleton().setMap(x+1, y+1, 60, gfxBG, 0); TileManager::getSingleton().setMap(x+2, y+1, 60, gfx0 , 0);
+            TileManager::getSingleton().setMap(x+0, y+2, 60, gfx1 , 0); TileManager::getSingleton().setMap(x+1, y+2, 60, gfx0 , 0); TileManager::getSingleton().setMap(x+2, y+2, 60, gfx1 , 0);
+            y+= 4; x= 2;      // Mask 2
+            TileManager::getSingleton().setMap(x+0, y+0, 60, gfxBG, 0); TileManager::getSingleton().setMap(x+1, y+0, 60, gfx1 , 0); TileManager::getSingleton().setMap(x+2, y+0, 60, gfxBG, 0);
+            TileManager::getSingleton().setMap(x+0, y+1, 60, gfx1 , 0); TileManager::getSingleton().setMap(x+1, y+1, 60, gfx0 , 0); TileManager::getSingleton().setMap(x+2, y+1, 60, gfx1 , 0);
+            TileManager::getSingleton().setMap(x+0, y+2, 60, gfxBG, 0); TileManager::getSingleton().setMap(x+1, y+2, 60, gfx1 , 0); TileManager::getSingleton().setMap(x+2, y+2, 60, gfxBG, 0);
+            x+= 4;            // Mask 3
+            TileManager::getSingleton().setMap(x+0, y+0, 60, gfxBG, 0); TileManager::getSingleton().setMap(x+1, y+0, 60, gfx0 , 0); TileManager::getSingleton().setMap(x+2, y+0, 60, gfxBG, 0);
+            TileManager::getSingleton().setMap(x+0, y+1, 60, gfx0 , 0); TileManager::getSingleton().setMap(x+1, y+1, 60, gfx1 , 0); TileManager::getSingleton().setMap(x+2, y+1, 60, gfx0 , 0);
+            TileManager::getSingleton().setMap(x+0, y+2, 60, gfxBG, 0); TileManager::getSingleton().setMap(x+1, y+2, 60, gfx0 , 0); TileManager::getSingleton().setMap(x+2, y+2, 60, gfxBG, 0);
+            y+= 4;  x= 2;     // Mask 4
+            TileManager::getSingleton().setMap(x+0, y+0, 60, gfx1 , 0); TileManager::getSingleton().setMap(x+1, y+0, 60, gfxBG, 0); TileManager::getSingleton().setMap(x+2, y+0, 60, gfx1 , 0);
+            TileManager::getSingleton().setMap(x+0, y+1, 60, gfxBG, 0); TileManager::getSingleton().setMap(x+1, y+1, 60, gfx0 , 0); TileManager::getSingleton().setMap(x+2, y+1, 60, gfxBG, 0);
+            TileManager::getSingleton().setMap(x+0, y+2, 60, gfx1 , 0); TileManager::getSingleton().setMap(x+1, y+2, 60, gfxBG, 0); TileManager::getSingleton().setMap(x+2, y+2, 60, gfx1 , 0);
+            x+= 4;            // Mask 5
+            TileManager::getSingleton().setMap(x+0, y+0, 60, gfx0 , 0); TileManager::getSingleton().setMap(x+1, y+0, 60, gfxBG, 0); TileManager::getSingleton().setMap(x+2, y+0, 60, gfx0 , 0);
+            TileManager::getSingleton().setMap(x+0, y+1, 60, gfxBG, 0); TileManager::getSingleton().setMap(x+1, y+1, 60, gfx1 , 0); TileManager::getSingleton().setMap(x+2, y+1, 60, gfxBG, 0);
+            TileManager::getSingleton().setMap(x+0, y+2, 60, gfx0 , 0); TileManager::getSingleton().setMap(x+1, y+2, 60, gfxBG, 0); TileManager::getSingleton().setMap(x+2, y+2, 60, gfx0 , 0);
+            // Hard edges demo.
+            x = 9, y = 5;
+            gfx0 = TileManager::getSingleton().getMapLayer0(x  , y  );  TileManager::getSingleton().setMap(x  , y  , 60, gfx0 ,0 ,shadow ,8);
+            gfx0 = TileManager::getSingleton().getMapLayer0(x  , y+1);  TileManager::getSingleton().setMap(x  , y+1, 60, gfx0 ,0 ,shadow ,8);
+            gfx0 = TileManager::getSingleton().getMapLayer0(x+1, y  );  TileManager::getSingleton().setMap(x+1, y  , 60, gfx0 ,0 ,shadow ,8);
+            gfx0 = TileManager::getSingleton().getMapLayer0(x+1, y+1);  TileManager::getSingleton().setMap(x+1, y+1, 60, gfx0 ,0 ,shadow ,8);
+            // Shadow demo.
+            x = 11, y = 8, gfx0 = 1, shadow = 80;
+            TileManager::getSingleton().setMap(x  , y  , 10, gfx0, 0, shadow); TileManager::getSingleton().setMap(x+1, y  , 10, gfx0, 0, shadow); TileManager::getSingleton().setMap(x+2, y  , 10, gfx0, 0, shadow);
+            TileManager::getSingleton().setMap(x  , y+1, 10, gfx0, 0, shadow); TileManager::getSingleton().setMap(x+1, y+1, 10, gfx0, 0, shadow); TileManager::getSingleton().setMap(x+2, y+1, 10, gfx0, 0, shadow);
+            TileManager::getSingleton().setMap(x  , y+2, 10, gfx0, 0, shadow); TileManager::getSingleton().setMap(x+1, y+2, 10, gfx0, 0, shadow); TileManager::getSingleton().setMap(x+2, y+2, 10, gfx0, 0, shadow);
+            // Some water.
+            x = 11, y = 14, gfx0 = 1, shadow = 0;
+            TileManager::getSingleton().setMap(x  ,  y  , 0, 6, 48);
+            TileManager::getSingleton().setMap(x  ,  y+1, 0, 6, 48);
+            TileManager::getSingleton().setMap(x+1,  y  , 0, 6, 48);
+            TileManager::getSingleton().setMap(x+1,  y+1, 0, 6, 48);
+            TileManager::getSingleton().setMap(x+2,  y  , 0, 6, 48);
+            TileManager::getSingleton().setMap(x+2,  y+1, 0, 6, 48);
+            /*
+                    // Some height.
+                    TileManager::getSingleton().setMap(5,  4,  99, 4, 0);
+                    TileManager::getSingleton().setMap(6,  4, 200, 4, 0);
+                    TileManager::getSingleton().setMap(5,  5,  60, 4, 0);
+                    TileManager::getSingleton().setMap(6,  5,  80, 4, 0);
+                    TileManager::getSingleton().setMap(7,  5,  80, 4, 0);
+            */
+            /*
+                    // Some water.
+                    TileManager::getSingleton().setMap(10,  4, 30, 6, 48);
+                    TileManager::getSingleton().setMap(11,  4, 30, 6, 48);
+                    TileManager::getSingleton().setMap(10,  5, 30, 6, 48);
+                    TileManager::getSingleton().setMap(11,  5, 30, 6, 48);
+                    TileManager::getSingleton().setMap(12,  5, 30, 6, 48);
+            */
+            // Some water.
+            /*
+                    TileManager::getSingleton().setMap(10,  8, 30, 6, 0, 200);
+                    TileManager::getSingleton().setMap(11,  8, 30, 6, 0, 200);
+                    TileManager::getSingleton().setMap(10,  9, 30, 6, 0, 200);
+                    TileManager::getSingleton().setMap(11,  9, 30, 6, 0, 200);
+                    TileManager::getSingleton().setMap(12,  9, 30, 6, 0, 200);
+            */
+            /*
+            TileManager::getSingleton().setMap(16,  2, 30, 6, 48, 200);
+
+            TileManager::getSingleton().setMap(10,  8, 30, 6, 48, 200);
+            TileManager::getSingleton().setMap(11,  8, 30, 6, 48, 200);
+            TileManager::getSingleton().setMap(10,  9, 30, 6, 48, 200);
+            TileManager::getSingleton().setMap(11,  9, 30, 6, 48, 200);
+            TileManager::getSingleton().setMap(12,  9, 30, 6, 48, 200);
+
+            TileManager::getSingleton().setMap(11,  4, 30, 6, 48, 200);
+            TileManager::getSingleton().setMap(12,  4, 30, 6, 48, 200);
+            TileManager::getSingleton().setMap(11,  5, 30, 6, 48, 200);
+            TileManager::getSingleton().setMap(12,  5, 30, 6, 48, 200);
+            TileManager::getSingleton().setMap(13,  5, 30, 6, 48, 200);
+            */
+
             TileManager::getSingleton().updateChunks();
             //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_BODY, 1);
-            break;
+        }
+        break;
 
-            // ////////////////////////////////////////////////////////////////////
-            // Player Movemment.
-            // ////////////////////////////////////////////////////////////////////
+        // ////////////////////////////////////////////////////////////////////
+        // Player Movemment.
+        // ////////////////////////////////////////////////////////////////////
         case OIS::KC_UP:
             ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_CURSOR_WALK, 0,  1);
             break;
@@ -579,7 +670,7 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
             break;
     }
     return true;
-    //e->consume();
+//e->consume();
 }
 
 //================================================================================================

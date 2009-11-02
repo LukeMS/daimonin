@@ -99,7 +99,6 @@ void Events::freeRecources()
     GuiManager   ::getSingleton().freeRecources();
     Sound        ::getSingleton().freeRecources();
     ObjectVisuals::getSingleton().freeRecources();
-
 }
 
 //================================================================================================
@@ -556,6 +555,9 @@ bool Events::frameStarted(const FrameEvent& evt)
                     GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~HOME~ to freeze camera rotation.");
                     GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~!keyi~ for Inventory.");
                     GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Example of user defined chars: :( :) :D :P !key-spc");
+                    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "---------------------------------------------------");
+                    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~9~ to load the mask demo!");
+                    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "---------------------------------------------------");
                     // Can crash the client...
                     //ObjectManager::getSingleton().setNameNPC(ObjectNPC::HERO, strAccountName.c_str());
                     //Sound::getSingleton().playStream(Sound::GREETS_VISITOR);
@@ -674,7 +676,10 @@ bool Events::frameEnded(const FrameEvent& evt)
         strBuf.rdbuf()->str(""); // delete stringstream buffer.
         strBuf << std::fixed << std::setprecision(1) << stats.triangleCount;
         GuiManager::getSingleton().setText(GuiManager::TEXTBOX_STAT_SUM_TRIS, strBuf.str().c_str());
-        skipFrames = 100;
+        strBuf.rdbuf()->str(""); // delete stringstream buffer.
+        strBuf << std::fixed << std::setprecision(1) << stats.batchCount;
+        GuiManager::getSingleton().setText(GuiManager::TEXTBOX_STAT_SUM_BATCH, strBuf.str().c_str());
+        skipFrames = (int)stats.lastFPS; // Refresh only once per second.
     }
     return true;
 }

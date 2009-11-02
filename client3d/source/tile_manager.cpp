@@ -112,6 +112,7 @@ void TileManager::Init(SceneManager *SceneMgr, int queryMaskLand, int queryMaskW
         if (mMapSize <= CHUNK_SIZE_Z*2) mMapSize = (CHUNK_SIZE_Z+1)*2;
     }
     mMap = new mapStruct[mMapSize*mMapSize];
+    Logger::log().info() << "mMap: " << mMap;
     mPathGfxTiles = pathGfxTiles;
     mQueryMaskLand = queryMaskLand;
     mEditorActSelectedGfx = 0;
@@ -377,7 +378,7 @@ void TileManager::copyMaskToAtlas(uchar *dstBuf)
             {
                 for (unsigned int x = 0; x < TILE_SIZE/2; ++x)
                 {
-                    gridColor = (!x || !y || x == TILE_SIZE/4 || y == TILE_SIZE/4 || x == y || x == TILE_SIZE/2-y)?0xff:0x00;
+                    gridColor = (!x || !y || x == TILE_SIZE/4 || y == TILE_SIZE/4 || x == y || x == TILE_SIZE/2-y)?0x00:0xff;
                     dst[(0*OFFSET + x)*RGB+0] = gridColor; // B
                     dst[(1*OFFSET + x)*RGB+0] = gridColor; // B
                     dst[(2*OFFSET + x)*RGB+0] = gridColor; // B
@@ -637,14 +638,14 @@ void TileManager::highlightVertex(int x, int z)
 //================================================================================================
 // Set the values for a map position.
 //================================================================================================
-void TileManager::setMap(unsigned int x, unsigned int y, uchar height, uchar gfxLayer0, uchar waterLvl, uchar shadow, uchar gfxLayer1)
+void TileManager::setMap(unsigned int x, unsigned int z, uchar height, uchar gfxLayer0, uchar waterLvl, uchar shadow, uchar gfxLayer1)
 {
-    if (x >= mMapSize || y >= mMapSize) return;
-    mMap[y*mMapSize + x].waterLvl = waterLvl;
-    mMap[y*mMapSize + x].gfxLayer0= gfxLayer0;
-    mMap[y*mMapSize + x].gfxLayer1= gfxLayer1;
-    mMap[y*mMapSize + x].height  = height;
-    mMap[y*mMapSize + x].shadow  = shadow;
+    if (x >= mMapSize || z >= mMapSize) return;
+    mMap[z*mMapSize + x].waterLvl = waterLvl;
+    mMap[z*mMapSize + x].gfxLayer0= gfxLayer0;
+    mMap[z*mMapSize + x].gfxLayer1= gfxLayer1;
+    mMap[z*mMapSize + x].height  = height;
+    mMap[z*mMapSize + x].shadow  = shadow;
 }
 
 //================================================================================================
@@ -700,26 +701,26 @@ void TileManager::scrollMap(int dx, int dz)
     if (dx <0)
     {
         for (unsigned int x = 0; x < mMapSize-2; ++x)
-            for (unsigned int y = 0; y < mMapSize; ++y)
-                mMap[y*mMapSize + x] = mMap[y*mMapSize + x+2];
+            for (unsigned int z = 0; z < mMapSize; ++z)
+                mMap[z*mMapSize + x] = mMap[z*mMapSize + x+2];
     }
     else if (dx >0) // Player has moved left.
     {
         for (unsigned int x = mMapSize-1; x >= 2; --x)
-            for (unsigned int y = 0; y < mMapSize; ++y)
-                mMap[y*mMapSize + x] = mMap[y*mMapSize + x-2];
+            for (unsigned int z = 0; z < mMapSize; ++z)
+                mMap[z*mMapSize + x] = mMap[z*mMapSize + x-2];
     }
     if (dz <0)
     {
         for (unsigned int x = 0; x < mMapSize; ++x)
-            for (unsigned int y = 0; y < mMapSize-2; ++y)
-                mMap[y*mMapSize + x] = mMap[(y+2)*mMapSize + x];
+            for (unsigned int z = 0; z < mMapSize-2; ++z)
+                mMap[z*mMapSize + x] = mMap[(z+2)*mMapSize + x];
     }
     else if (dz >0)
     {
-        for (unsigned int x = 0; x <= mMapSize; ++x)
-            for (unsigned int y = mMapSize-1; y >=2; --y)
-                mMap[y*mMapSize + x] = mMap[(y-2)*mMapSize + x];
+        for (unsigned int x = 0; x < mMapSize; ++x)
+            for (unsigned int z = mMapSize-1; z >=2; --z)
+                mMap[z*mMapSize + x] = mMap[(z-2)*mMapSize + x];
     }
     mMapchunk.update();
 }

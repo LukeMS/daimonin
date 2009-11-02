@@ -120,6 +120,7 @@ GuiManager::ElementID GuiManager::mStateStruct[ELEMENTS_SUM]=
     { -1, -1, "Engine_BestFPS",     TEXTBOX_STAT_BEST_FPS  },
     { -1, -1, "Engine_WorstFPS",    TEXTBOX_STAT_WORST_FPS },
     { -1, -1, "Engine_SumTris",     TEXTBOX_STAT_SUM_TRIS  },
+    { -1, -1, "Engine_BatchCount",  TEXTBOX_STAT_SUM_BATCH },
     { -1, -1, "Login_ServerInfo1",  TEXTBOX_SERVER_INFO1     },
     { -1, -1, "Login_ServerInfo2",  TEXTBOX_SERVER_INFO2     },
     { -1, -1, "Login_ServerInfo3",  TEXTBOX_SERVER_INFO3     },
