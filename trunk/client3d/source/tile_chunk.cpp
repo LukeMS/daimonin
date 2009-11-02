@@ -242,6 +242,7 @@ void TileChunk::setVertex(Vector3 &pos, int maskNr, Real offsetU, Real offsetV, 
 {
     static const int TEXTURE_UNIT_SORT[]= {0,2,4, 0,4,2, 2,0,4, 2,4,0, 4,0,2, 4,2,0, 4,4,4};
     int sorting = maskNr * 3;
+    // if (maskNr == 6) maskNr = 0;
     *mPosVBuf++ = pos.x;
     *mPosVBuf++ = pos.y;
     *mPosVBuf++ = pos.z;
@@ -474,10 +475,10 @@ void TileChunk::updateLand()
             }
             else
             {
-                gfxNrVert1 = TileManager::getSingleton().getMapLayer0(x+2, z  ) & 127;
-                maskNr = getMask(gfxNrVert0, gfxNrVert1, TileManager::getSingleton().getMapLayer0(x+1, z  ) & 127);
+                gfxNrVert1 = TileManager::getSingleton().getMapLayer0(x+2, z  );
+                maskNr = getMask(gfxNrVert0, gfxNrVert1, TileManager::getSingleton().getMapLayer0(x+1, z  ));
                 setTriangle(x, z, Vector3(2,0,0), Vector3(1,0,0), Vector3(1,0,1), maskNr); // Vertex 0,1,2
-                maskNr = getMask(gfxNrVert0, gfxNrVert1, TileManager::getSingleton().getMapLayer0(x+2, z+1) & 127);
+                maskNr = getMask(gfxNrVert0, gfxNrVert1, TileManager::getSingleton().getMapLayer0(x+2, z+1));
                 setTriangle(x, z, Vector3(1,0,1), Vector3(2,0,1), Vector3(2,0,0), maskNr); // Vertex 2,3,0
             }
         }
@@ -509,7 +510,12 @@ void TileChunk::updateWater()
             if (TileManager::getSingleton().getMapWater(x+2, z+2)) { ++numVertices; continue; }
         }
     }
-    if (!numVertices) return;
+    if (!numVertices)
+    {
+        mSubMeshWater->indexData->indexCount = 0;
+        mSubMeshWater->vertexData->vertexCount =  0;
+        return;
+    }
     mSubMeshWater->indexData->indexCount = numVertices*6;
     // ////////////////////////////////////////////////////////////////////
     // Update VertexData.
