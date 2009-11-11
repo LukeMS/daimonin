@@ -27,6 +27,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <OgreMeshManager.h>
 #include <OgreSceneManager.h>
 #include <OgreMaterialManager.h>
+#include <OgreStringConverter.h> // needed for Ogre 1.4.9.
 #include "logger.h"
 #include "tile_manager.h"
 

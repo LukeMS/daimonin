@@ -25,6 +25,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <OgreSubMesh.h>
 #include <OgreSceneManager.h>
 #include <OgreMeshManager.h>
+#include <OgreStringConverter.h> // needed for Ogre 1.4.9.
 #include "logger.h"
 #include "tile_decal.h"
 #include "tile_manager.h"
