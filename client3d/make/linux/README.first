@@ -30,3 +30,13 @@ same for the other libs.
 Depencies: OIS 
 Its an Object Oriented Input System.
 Get the latest version from sourceforge.
+
+//====================================================================
+// Ogre compiling tips (Ogre 1.6.1).
+//====================================================================
+configure may complain:
+    checking for X11/extensions/xf86vmode.h... no
+    configure: error: "libxf86vm headers not found"
+
+This requires the package libxxf86vm-dev (notte the double-x!):
+    sudo apt-get install libxxf86vm-dev
