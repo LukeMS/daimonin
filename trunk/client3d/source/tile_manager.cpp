@@ -23,6 +23,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <OgreSceneManager.h>
 #include <OgreManualObject.h>
+#include <OgreStringConverter.h> // needed for Ogre 1.4.9.
 #include <sys/stat.h>
 #include "logger.h"
 #include "tile_chunk.h"
