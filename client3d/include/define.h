@@ -30,7 +30,6 @@ const char PRG_NAME[] = "Daimonin Ogre3d Client";
 //================================================================================================
 const char PATH_GFX_FONTS[] = "./media/textures/fonts/";
 const char PATH_GFX_ITEMS[] = "./media/textures/items/"; /**< The item graphics to build the Item-Atlas-Texture. **/
-const char PATH_GFX_TILES[] = "./media/textures/tiles/"; /**< The tile graphics to build the Item-Atlas-Texture. **/
 const char PATH_GFX[]       = "./media/textures/";
 const char PATH_SND[]       = "./media/sound/";
 const char PATH_TXT[]       = "./media/xml/";
