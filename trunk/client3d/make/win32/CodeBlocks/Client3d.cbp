@@ -161,6 +161,7 @@
 		<Unit filename="..\..\..\include\spell_manager.h" />
 		<Unit filename="..\..\..\include\spell_range.h" />
 		<Unit filename="..\..\..\include\tile_chunk.h" />
+		<Unit filename="..\..\..\include\tile_decal.h" />
 		<Unit filename="..\..\..\include\tile_manager.h" />
 		<Unit filename="..\..\..\include\tile_map.h" />
 		<Unit filename="..\..\..\include\tile_map_wrapper.h" />
@@ -170,6 +171,8 @@
 		<Unit filename="ReadMe.txt">
 			<Option target="Release" />
 		</Unit>
+		<Unit filename="..\..\..\media\materials\Terrain.cg" />
+		<Unit filename="..\..\..\media\materials\Terrain.material" />
 		<Unit filename="..\..\..\media\xml\GUI_ImageSet.xml">
 			<Option target="Release" />
 		</Unit>
@@ -221,6 +224,7 @@
 		<Unit filename="..\..\..\source\spell_manager.cpp" />
 		<Unit filename="..\..\..\source\spell_range.cpp" />
 		<Unit filename="..\..\..\source\tile_chunk.cpp" />
+		<Unit filename="..\..\..\source\tile_decal.cpp" />
 		<Unit filename="..\..\..\source\tile_manager.cpp" />
 		<Unit filename="..\..\..\source\tile_map.cpp" />
 		<Extensions>

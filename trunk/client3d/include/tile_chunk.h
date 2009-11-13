@@ -28,8 +28,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 /**
  ** TileEngine class which handles the tiles in a chunk.
- ** Camera must be rotated at 180° to have the same z direction
- ** in map and in the world.
  *****************************************************************************/
 class TileChunk
 {
@@ -48,7 +46,7 @@ public:
     void setGrid(bool visible);
     void setDaylight(Ogre::Real brightness);
     void setCameraRotation(Ogre::Real angle);
-    void setMaterial(bool land, int groupNr, int texSize);
+    void setMaterial(int groupNr, int texSize);
     void setWaveParameter(Ogre::Real alpha, Ogre::Real amplitude, Ogre::Real speed);
 
 private:
@@ -68,7 +66,7 @@ private:
     void updateLand();
     void updateWater();
     void setVertex(Ogre::Vector3 &pos, int maskNr, Ogre::Real offsetU, Ogre::Real offsetV, Ogre::Vector3 &normal);
-    void setTriangle(int x, int z, Ogre::Vector3 v1, Ogre::Vector3 v2, Ogre::Vector3 v3,int maskNr);
+    void setTriangle(int x, int z, Ogre::Vector3 v1, Ogre::Vector3 v2, Ogre::Vector3 v3, int maskNr);
     int  getMask(int gfxVertex0, int gfxVertex1, int gfxVertex2);
 };
 

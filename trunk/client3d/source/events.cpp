@@ -254,8 +254,6 @@ bool Events::frameStarted(const FrameEvent& evt)
         {
             TileManager::getSingleton().Init(mSceneManager, ObjectManager::QUERY_TILES_LAND_MASK,
                                              ObjectManager::QUERY_TILES_WATER_MASK,
-                                             PATH_GFX_TILES,
-                                             64, // Map size
                                              Option::getSingleton().getIntValue(Option::CMDLINE_TILEENGINE_LOD),
                                              Option::getSingleton().getIntValue(Option::CMDLINE_CREATE_MEDIA)?true:false);
             Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_GUI);

@@ -25,7 +25,7 @@
   <!--WINDOW: Engine Statistics                    -->
   <!--#############################################-->
   <Window name= "Win_Statistics">
-    <Size width= "150" height= "88" />
+    <Size width= "150" height= "100" />
     <Pos  x= "5" y= "5" />
     <!--=============================================-->
     <!-- Borderlines                                 -->
@@ -33,7 +33,7 @@
     <Graphic>
       <Pos x= "0" y= "0" />
       <Color red= "200" green= "200" blue= "200" alpha = "255" />
-      <Size width= "150" height= "88" />
+      <Size width= "150" height= "100" />
     </Graphic>
     <!--=============================================-->
     <!-- Window Title                                -->
@@ -56,34 +56,39 @@
     <Graphic>
       <Pos x= "1" y= "19" />
       <Color red= "70" green= "90" blue= "50" alpha = "150" />
-      <Size width= "148" height= "68" />
+      <Size width= "148" height= "80" />
     </Graphic>
     <TextBox>
       <Label x=   "5" y= "25" font="02" text= "Current FPS:" />
     </TextBox>
     <TextBox name= "Engine_CurrentFPS">
-      <Label x= "100" y= "25" font="02" text= "000.0" />
+      <Label x= "100" y= "25" font="02" text= "000.0  " />
     </TextBox>
     <TextBox>
       <Label x=   "5" y= "40" font="02" text= "Best FPS:" />
     </TextBox>
     <TextBox name= "Engine_BestFPS">
-      <Label x= "100" y= "40" font="02" text= "000.0" />
+      <Label x= "100" y= "40" font="02" text= "000.0  " />
     </TextBox>
     <TextBox>
       <Label x=   "5" y= "55" font="02" text= "Worst FPS:" />
     </TextBox>
     <TextBox name= "Engine_WorstFPS">
-      <Label x= "100" y= "55" font="02" text= "000.0" />
+      <Label x= "100" y= "55" font="02" text= "000.0  " />
     </TextBox>
     <TextBox>
       <Label x=   "5" y= "70" font="02" text= "Triangles:" />
     </TextBox>
     <TextBox name= "Engine_SumTris">
-      <Label x= "100" y= "70" font="02" text= "0000" />
+      <Label x= "100" y= "70" font="02" text= "0000  " />
+    </TextBox>
+    <TextBox>
+      <Label x=   "5" y= "85" font="02" text= "Batch Count:" />
+    </TextBox>
+    <TextBox name= "Engine_BatchCount">
+      <Label x= "100" y= "85" font="02" text= "0000  " />
     </TextBox>
   </Window>
-
 
 
   <!--#############################################-->

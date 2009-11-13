@@ -27,7 +27,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #include <OgreMeshManager.h>
 #include <OgreSceneManager.h>
 #include <OgreMaterialManager.h>
-#include <OgreStringConverter.h> // needed for Ogre 1.4.9.
 #include "logger.h"
 #include "tile_manager.h"
 
@@ -35,9 +34,9 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 using namespace Ogre;
 
 const unsigned int SUM_CAMERA_POS  = 7;
-const Real HALF_TILE_SIZE  = 128.0          / TileManager::MAX_TEXTURE_SIZE; // Size of a subtile.
-const Real HALF_TILE_SPACE = (128.0 + 16.0) / TileManager::MAX_TEXTURE_SIZE; // Space between 2 subtiles.
-const Real FULL_TILE_SPACE = (256.0 + 16.0) / TileManager::MAX_TEXTURE_SIZE; // Space between 2 tiles.
+const Real HALF_TILE_SIZE  = 128.0          / (Real)TileManager::MAX_TEXTURE_SIZE; // Size of a subtile.
+const Real HALF_TILE_SPACE = (128.0 + 16.0) / (Real)TileManager::MAX_TEXTURE_SIZE; // Space between 2 subtiles.
+const Real FULL_TILE_SPACE = (256.0 + 16.0) / (Real)TileManager::MAX_TEXTURE_SIZE; // Space between 2 tiles.
 
 //================================================================================================
 // Holds the x-offset for each row of tiles.
@@ -64,6 +63,7 @@ int CHUNK_X_LENGTH[TileManager::CHUNK_SIZE_Z];
 
 //================================================================================================
 // Constructor.
+// Create index buffer for the max tile count. That way the buffer never needs to be updated.
 //================================================================================================
 void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneManager)
 {
@@ -79,7 +79,7 @@ void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneM
         }
         sumVertices*= SUM_QUAD_VERTICES;
     */
-    sumVertices= 4*6*TileManager::CHUNK_SIZE_X*TileManager::CHUNK_SIZE_Z; // 4 Subtiles/tile, 6 verticels/rectangle
+    sumVertices= 4*6*TileManager::CHUNK_SIZE_X*TileManager::CHUNK_SIZE_Z; // 4 Subtiles/tile, 6 vertices/subtile
     // ////////////////////////////////////////////////////////////////////
     // Build the land-tiles.
     // ////////////////////////////////////////////////////////////////////
@@ -105,7 +105,7 @@ void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneM
     mSubMeshLand->indexData->indexStart = 0;
     mSubMeshLand->indexData->indexCount = sumVertices;
     unsigned short *pIdx = static_cast<unsigned short*>(ibuf->lock(HardwareBuffer::HBL_DISCARD));
-    // There is no chance to optimize the vertex count, because every vertex needs its own filter.
+    // There is no chance to optimize the vertex count, because every vertex needs its own mask.
     for (unsigned short p=0; p < sumVertices;) *pIdx++ = p++;
     ibuf->unlock();
     MeshLand->_setBounds(aab);
@@ -127,10 +127,10 @@ void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneM
     vData->vertexCount = 0;
     vData->vertexDeclaration->addElement(0, 0, VET_FLOAT3, VES_POSITION);
     offset = VertexElement::getTypeSize(VET_FLOAT3);
-    vbuf = HardwareBufferManager::getSingleton().createVertexBuffer(offset, sumVertices, HardwareBuffer::HBU_STATIC_WRITE_ONLY, false);
+    sumVertices = 4*TileManager::CHUNK_SIZE_X*TileManager::CHUNK_SIZE_Z; // 4 Subtile/tile
+    vbuf = HardwareBufferManager::getSingleton().createVertexBuffer(offset, sumVertices*4, HardwareBuffer::HBU_STATIC_WRITE_ONLY, false);
     vData->vertexBufferBinding->setBinding(0, vbuf);
     mSubMeshWater->vertexData = vData;
-    sumVertices = TileManager::CHUNK_SIZE_X*TileManager::CHUNK_SIZE_Z;
     ibuf = HardwareBufferManager::getSingleton().createIndexBuffer(HardwareIndexBuffer::IT_16BIT, sumVertices*6, HardwareBuffer::HBU_STATIC_WRITE_ONLY, false);
     mSubMeshWater->indexData->indexBuffer = ibuf;
     mSubMeshWater->indexData->indexStart = 0;
@@ -139,12 +139,8 @@ void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneM
     // This could be optimized by using triangle lists.
     for (unsigned short p=0; sumVertices; --sumVertices)
     {
-        *pIdx++ = p+0;
-        *pIdx++ = p+1;
-        *pIdx++ = p+2;
-        *pIdx++ = p+2;
-        *pIdx++ = p+3;
-        *pIdx++ = p+0;
+        *pIdx++ = p+0; *pIdx++ = p+1; *pIdx++ = p+2;
+        *pIdx++ = p+2; *pIdx++ = p+3; *pIdx++ = p+0;
         p+= 4;
     }
     ibuf->unlock();
@@ -176,7 +172,7 @@ void TileChunk::setGrid(bool visible)
     MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName(TileManager::MATERIAL_PREFIX + TileManager::LAND_PREFIX);
     GpuProgramParametersSharedPtr para = tmpMaterial->getBestTechnique()->getPass(0)->getVertexProgramParameters();
     if (para->_findNamedConstantDefinition("para"))
-        para->setNamedConstant("para", Vector4(mDaylight,mGrid?1.0f:0.0f,1,1));
+        para->setNamedConstant("para", Vector4(mDaylight,mGrid?0.0f:1.0f,1,1));
 }
 
 //================================================================================================
@@ -188,7 +184,7 @@ void TileChunk::setDaylight(Real brightness)
     MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName(TileManager::MATERIAL_PREFIX + TileManager::LAND_PREFIX);
     GpuProgramParametersSharedPtr para = tmpMaterial->getBestTechnique()->getPass(0)->getVertexProgramParameters();
     if (para->_findNamedConstantDefinition("para"))
-        para->setNamedConstant("para", Vector4(mDaylight,mGrid?1.0f:0.0f,1,1));
+        para->setNamedConstant("para", Vector4(mDaylight,mGrid?0.0f:1.0f,1,1));
     tmpMaterial = MaterialManager::getSingleton().getByName(TileManager::MATERIAL_PREFIX + TileManager::WATER_PREFIX);
     para = tmpMaterial->getBestTechnique()->getPass(0)->getVertexProgramParameters();
     if (para->_findNamedConstantDefinition("para"))
@@ -212,15 +208,15 @@ void TileChunk::setWaveParameter(Real alpha, Real amplitude, Real speed)
 //================================================================================================
 // Set a new material.
 //================================================================================================
-void TileChunk::setMaterial(bool land, int groupNr, int texSize)
+void TileChunk::setMaterial(int groupNr, int texSize)
 {
-    String strTypPrefix = (land)?TileManager::LAND_PREFIX:TileManager::WATER_PREFIX;
-    String strMatFile = strTypPrefix;
-    strMatFile+= "_"+ StringConverter::toString(groupNr, 2, '0');
-    strMatFile+= "_"+ StringConverter::toString(texSize, 4, '0') + ".png";
-    MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName(TileManager::MATERIAL_PREFIX + strTypPrefix);
+    String strMatFile = "_"+ StringConverter::toString(groupNr, 2, '0')+"_"+ StringConverter::toString(texSize, 4, '0')+".png";
+    MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName(TileManager::MATERIAL_PREFIX + TileManager::LAND_PREFIX);
     for (int i=0; i < tmpMaterial->getBestTechnique()->getPass(0)->getNumTextureUnitStates(); ++i)
-        tmpMaterial->getBestTechnique()->getPass(0)->getTextureUnitState(i)->setTextureName(strMatFile);
+        tmpMaterial->getBestTechnique()->getPass(0)->getTextureUnitState(i)->setTextureName(TileManager::ATLAS_PREFIX + strMatFile);
+    tmpMaterial = MaterialManager::getSingleton().getByName(TileManager::MATERIAL_PREFIX + TileManager::WATER_PREFIX);
+    for (int i=0; i < tmpMaterial->getBestTechnique()->getPass(0)->getNumTextureUnitStates(); ++i)
+        tmpMaterial->getBestTechnique()->getPass(0)->getTextureUnitState(i)->setTextureName(TileManager::ATLAS_PREFIX + strMatFile);
 }
 
 //================================================================================================
@@ -341,14 +337,14 @@ void TileChunk::setTriangle(int x, int z, Vector3 v1, Vector3 v2, Vector3 v3,int
 int TileChunk::getMask(int gfxVertex0, int gfxVertex1, int gfxVertex2)
 {
     // Set the texture units with the default gfxNr.
-    // After we have choosen the filter, they are sorted.
+    // After we have choosen the mask, they are sorted.
     mTexPosInAtlas[0] = (gfxVertex0%6);
     mTexPosInAtlas[1] = (gfxVertex0/6);
     mTexPosInAtlas[2] = (gfxVertex1%6);
     mTexPosInAtlas[3] = (gfxVertex1/6);
     mTexPosInAtlas[4] = (gfxVertex2%6);
     mTexPosInAtlas[5] = (gfxVertex2/6);
-    // Calculate the needed filter.
+    // Calculate the needed mask.
     if (gfxVertex0 <= gfxVertex1)
     {
         if (gfxVertex0 <= gfxVertex2)
@@ -367,8 +363,7 @@ void TileChunk::updateLand()
 {
     HardwareVertexBufferSharedPtr vbuf = mSubMeshLand->vertexData->vertexBufferBinding->getBuffer(0);
     mPosVBuf = static_cast<Real*>(vbuf->lock(HardwareBuffer::HBL_DISCARD));
-    int maskNr;
-    int gfxNrVert0, gfxNrVert1, gfxNrIndoor;
+    int maskNr, gfxNrVert0, gfxNrVert1, gfxNrNoBlending;
     for (int z = 0; z < TileManager::CHUNK_SIZE_Z*2; z+=2)
     {
         for (int x = 0; x < TileManager::CHUNK_SIZE_X*2; x+=2)
@@ -381,11 +376,11 @@ void TileChunk::updateLand()
             //  |     |    |     |
             //  +-----+    +-----+
             gfxNrVert0 = TileManager::getSingleton().getMapLayer0(x+1, z+1);
-            gfxNrIndoor = TileManager::getSingleton().getMapLayer1(x  , z+2);
-            if (gfxNrIndoor)
+            gfxNrNoBlending = TileManager::getSingleton().getMapLayer1(x  , z+2);
+            if (gfxNrNoBlending)
             {   // Indoor tile -> No blending with the neighbour tiles.
-                mTexPosInAtlas[0] = (gfxNrIndoor%6);
-                mTexPosInAtlas[1] = (gfxNrIndoor/6);
+                mTexPosInAtlas[0] = gfxNrNoBlending%6;
+                mTexPosInAtlas[1] = gfxNrNoBlending/6;
                 mTexPosInAtlas[2] = mTexPosInAtlas[0];
                 mTexPosInAtlas[3] = mTexPosInAtlas[1];
                 mTexPosInAtlas[4] = mTexPosInAtlas[0];
@@ -408,11 +403,11 @@ void TileChunk::updateLand()
             //  |  0+-+3   |  0+-+2
             //  |     |    |     |
             //  +-----+    +-----+
-            gfxNrIndoor = TileManager::getSingleton().getMapLayer1(x+1, z+2);
-            if (gfxNrIndoor)
+            gfxNrNoBlending = TileManager::getSingleton().getMapLayer1(x+1, z+2);
+            if (gfxNrNoBlending)
             {   // Indoor tile -> No blending with the neighbour tiles.
-                mTexPosInAtlas[0] = (gfxNrIndoor%6);
-                mTexPosInAtlas[1] = (gfxNrIndoor/6);
+                mTexPosInAtlas[0] = gfxNrNoBlending%6;
+                mTexPosInAtlas[1] = gfxNrNoBlending/6;
                 mTexPosInAtlas[2] = mTexPosInAtlas[0];
                 mTexPosInAtlas[3] = mTexPosInAtlas[1];
                 mTexPosInAtlas[4] = mTexPosInAtlas[0];
@@ -435,11 +430,11 @@ void TileChunk::updateLand()
             // 1+-+2  |   2+-+0  |
             //  |/|   |    |/|   |
             // 0+-+3--+   1+-+2--+
-            gfxNrIndoor = TileManager::getSingleton().getMapLayer1(x, z+1);
-            if (gfxNrIndoor)
+            gfxNrNoBlending = TileManager::getSingleton().getMapLayer1(x, z+1);
+            if (gfxNrNoBlending)
             {   // Indoor tile -> No blending with the neighbour tiles.
-                mTexPosInAtlas[0] = (gfxNrIndoor%6);
-                mTexPosInAtlas[1] = (gfxNrIndoor/6);
+                mTexPosInAtlas[0] = gfxNrNoBlending%6;
+                mTexPosInAtlas[1] = gfxNrNoBlending/6;
                 mTexPosInAtlas[2] = mTexPosInAtlas[0];
                 mTexPosInAtlas[3] = mTexPosInAtlas[1];
                 mTexPosInAtlas[4] = mTexPosInAtlas[0];
@@ -462,11 +457,11 @@ void TileChunk::updateLand()
             //  |  2+-+3   |  0+-+2
             //  |   |\|    |   |\|
             //  +--1+-+0   +--2+-+1
-            gfxNrIndoor = TileManager::getSingleton().getMapLayer1(x+1, z+1);
-            if (gfxNrIndoor)
+            gfxNrNoBlending = TileManager::getSingleton().getMapLayer1(x+1, z+1);
+            if (gfxNrNoBlending)
             {   // Indoor tile -> No blending with the neighbour tiles.
-                mTexPosInAtlas[0] = (gfxNrIndoor%6);
-                mTexPosInAtlas[1] = (gfxNrIndoor/6);
+                mTexPosInAtlas[0] = gfxNrNoBlending%6;
+                mTexPosInAtlas[1] = gfxNrNoBlending/6;
                 mTexPosInAtlas[2] = mTexPosInAtlas[0];
                 mTexPosInAtlas[3] = mTexPosInAtlas[1];
                 mTexPosInAtlas[4] = mTexPosInAtlas[0];
@@ -496,19 +491,14 @@ void TileChunk::updateWater()
     // Count the Vertices in this chunk.
     // ////////////////////////////////////////////////////////////////////
     unsigned int numVertices = 0;
-    for (int x = 0; x < TileManager::CHUNK_SIZE_X*2; x+=2)
+    for (int x = 0; x < TileManager::CHUNK_SIZE_X*2; ++x)
     {
-        for (int z = 0; z < TileManager::CHUNK_SIZE_Z*2; z+=2)
+        for (int z = 0; z < TileManager::CHUNK_SIZE_Z*2; ++z)
         {
             if (TileManager::getSingleton().getMapWater(x  , z  )) { ++numVertices; continue; }
             if (TileManager::getSingleton().getMapWater(x+1, z  )) { ++numVertices; continue; }
-            if (TileManager::getSingleton().getMapWater(x+2, z  )) { ++numVertices; continue; }
             if (TileManager::getSingleton().getMapWater(x  , z+1)) { ++numVertices; continue; }
             if (TileManager::getSingleton().getMapWater(x+1, z+1)) { ++numVertices; continue; }
-            if (TileManager::getSingleton().getMapWater(x+2, z+1)) { ++numVertices; continue; }
-            if (TileManager::getSingleton().getMapWater(x  , z+2)) { ++numVertices; continue; }
-            if (TileManager::getSingleton().getMapWater(x+1, z+2)) { ++numVertices; continue; }
-            if (TileManager::getSingleton().getMapWater(x+2, z+2)) { ++numVertices; continue; }
         }
     }
     if (!numVertices)
@@ -534,42 +524,41 @@ void TileChunk::updateWater()
     vdata->vertexBufferBinding->setBinding(0, vbuf);
     Real height;
     Real *pReal = static_cast<Real*>(vbuf->lock(HardwareBuffer::HBL_DISCARD));
-    for (int z = 0; z < TileManager::CHUNK_SIZE_Z*2; z+=2) {
-        for (int x = 0; x < TileManager::CHUNK_SIZE_X*2; x+=2) {
+    const Real START_Z = TileManager::ATLAS_LAND_ROWS*FULL_TILE_SPACE;
+    for (int z = 0; z < TileManager::CHUNK_SIZE_Z*2; ++z)
+    {
+        Real offsetZ = (z&1)?FULL_TILE_SPACE:0.0;
+        for (int x = 0; x < TileManager::CHUNK_SIZE_X*2; ++x)
+        {
             if (!(height = TileManager::getSingleton().getMapWater(x  , z  )))
                 if (!(height = TileManager::getSingleton().getMapWater(x+1, z  )))
-                    if (!(height = TileManager::getSingleton().getMapWater(x+2, z  )))
-                        if (!(height = TileManager::getSingleton().getMapWater(x  , z+1)))
-                            if (!(height = TileManager::getSingleton().getMapWater(x+1, z+1)))
-                                if (!(height = TileManager::getSingleton().getMapWater(x+2, z+1)))
-                                    if (!(height = TileManager::getSingleton().getMapWater(x  , z+2)))
-                                        if (!(height = TileManager::getSingleton().getMapWater(x+1, z+2)))
-                                            if (!(height = TileManager::getSingleton().getMapWater(x+2, z+2)))
-                                                continue;
+                    if (!(height = TileManager::getSingleton().getMapWater(x  , z+1)))
+                        if (!(height = TileManager::getSingleton().getMapWater(x+1, z+1)))
+                            continue;
             {
-                *pReal++ = TileManager::TILE_RENDER_SIZE * x + 2*TileManager::TILE_RENDER_SIZE;
+                Real offsetX = (x&1)?offsetZ+HALF_TILE_SIZE:offsetZ;
+                *pReal++ = TileManager::TILE_RENDER_SIZE * x + TileManager::TILE_RENDER_SIZE;
                 *pReal++ = height;
                 *pReal++ = TileManager::TILE_RENDER_SIZE * z;
-                *pReal++ = 1;
-                *pReal++ = 0;
+                *pReal++ = offsetX+HALF_TILE_SIZE;
+                *pReal++ = START_Z;
                 *pReal++ = TileManager::TILE_RENDER_SIZE * x;
                 *pReal++ = height;
                 *pReal++ = TileManager::TILE_RENDER_SIZE * z;
-                *pReal++ = 0;
-                *pReal++ = 0;
+                *pReal++ = offsetX;
+                *pReal++ = START_Z;
                 *pReal++ = TileManager::TILE_RENDER_SIZE * x;
                 *pReal++ = height;
-                *pReal++ = TileManager::TILE_RENDER_SIZE * z+ 2*TileManager::TILE_RENDER_SIZE;
-                *pReal++ = 0;
-                *pReal++ = 1;
-                *pReal++ = TileManager::TILE_RENDER_SIZE * x+ 2*TileManager::TILE_RENDER_SIZE;
+                *pReal++ = TileManager::TILE_RENDER_SIZE * z+ TileManager::TILE_RENDER_SIZE;
+                *pReal++ = offsetX;
+                *pReal++ = START_Z+HALF_TILE_SIZE;
+                *pReal++ = TileManager::TILE_RENDER_SIZE * x+ TileManager::TILE_RENDER_SIZE;
                 *pReal++ = height;
-                *pReal++ = TileManager::TILE_RENDER_SIZE * z+ 2*TileManager::TILE_RENDER_SIZE;
-                *pReal++ = 1;
-                *pReal++ = 1;
+                *pReal++ = TileManager::TILE_RENDER_SIZE * z+ TileManager::TILE_RENDER_SIZE;
+                *pReal++ = offsetX+HALF_TILE_SIZE;
+                *pReal++ = START_Z+HALF_TILE_SIZE;
             }
         }
     }
     vbuf->unlock();
 }
-
