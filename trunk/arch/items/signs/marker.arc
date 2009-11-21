@@ -4,6 +4,7 @@ face marker_empty.101
 type 98
 layer 4
 no_pick 1
+nrof 1
 end
 
 Object marker0
@@ -15,6 +16,7 @@ is_turnable 1
 direction 1
 layer 4
 no_pick 1
+nrof 1
 end
 
 Object marker1
@@ -26,6 +28,7 @@ is_turnable 1
 direction 1
 layer 4
 no_pick 1
+nrof 1
 end
 
 Object marker2
@@ -37,6 +40,7 @@ is_turnable 1
 direction 1
 layer 4
 no_pick 1
+nrof 1
 end
 
 Object marker3
@@ -48,6 +52,7 @@ is_turnable 1
 direction 1
 layer 4
 no_pick 1
+nrof 1
 end
 
 Object marker4
@@ -56,4 +61,5 @@ face marker4.101
 type 98
 layer 4
 no_pick 1
+nrof 1
 end

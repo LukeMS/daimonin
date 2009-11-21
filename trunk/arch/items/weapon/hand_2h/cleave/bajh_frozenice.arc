@@ -17,4 +17,5 @@ material_real 65
 weight 2500
 value 750
 is_named 1
+nrof 1
 end

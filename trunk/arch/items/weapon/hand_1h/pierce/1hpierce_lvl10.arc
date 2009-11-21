@@ -15,6 +15,7 @@ material 2
 material_real 65
 weight 1075
 value 350
+nrof 1
 end
 Object saber_willow
 name willow leaf saber
@@ -33,6 +34,7 @@ material 2
 material_real 65
 weight 1075
 value 350
+nrof 1
 end
 Object shiavona
 name shiavona
@@ -51,6 +53,7 @@ material 2
 material_real 65
 weight 1075
 value 350
+nrof 1
 end
 Object spatha
 name spatha
@@ -69,4 +72,5 @@ material 2
 material_real 65
 weight 1075
 value 350
+nrof 1
 end

@@ -7,4 +7,5 @@ type 98
 material 1
 value 2
 weight 60
+nrof 1
 end

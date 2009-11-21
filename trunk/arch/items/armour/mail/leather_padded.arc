@@ -12,6 +12,7 @@ weight 2200
 value 15
 material 8
 material_real 193
+nrof 1
 end
 Object padded_cloth
 name padded cloth armour
@@ -37,4 +38,5 @@ weight 900
 value 15
 material 128
 material_real 450
+nrof 1
 end

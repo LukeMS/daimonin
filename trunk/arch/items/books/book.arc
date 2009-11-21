@@ -7,4 +7,5 @@ type 8
 material 1
 value 12
 weight 1200
+nrof 1
 end

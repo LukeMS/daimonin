@@ -15,6 +15,7 @@ dam 167
 wc 35
 weight 2250
 value 750
+nrof 1
 end
 Object forc
 name forc
@@ -33,6 +34,7 @@ dam 165
 wc 33
 weight 2250
 value 750
+nrof 1
 end
 Object forc_military
 name military forc
@@ -51,6 +53,7 @@ dam 165
 wc 35
 weight 2250
 value 750
+nrof 1
 end
 Object spear
 name spear
@@ -69,6 +72,7 @@ dam 160
 wc 34
 weight 2250
 value 750
+nrof 1
 end
 Object trident
 name trident
@@ -87,6 +91,7 @@ dam 175
 wc 36
 weight 2250
 value 750
+nrof 1
 end
 Object xuqiang
 name xu-qiang
@@ -105,4 +110,5 @@ dam 160
 wc 34
 weight 2250
 value 750
+nrof 1
 end

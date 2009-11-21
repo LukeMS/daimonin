@@ -14,4 +14,5 @@ container 1500
 weight 1500
 identified 1
 no_pick 1
+nrof 1
 end

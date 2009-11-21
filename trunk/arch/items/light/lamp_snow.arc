@@ -16,4 +16,5 @@ speed 0.15
 last_eat 1
 last_sp 5
 is_named 1
+nrof 1
 end

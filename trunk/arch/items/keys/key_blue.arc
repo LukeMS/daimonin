@@ -10,6 +10,7 @@ type 21
 value 100
 weight 100
 startequip 1
+nrof 1
 end
 Object key_wintersevent
 name Journan's Key
@@ -24,4 +25,5 @@ type 21
 value 100
 weight 100
 startequip 1
+nrof 1
 end

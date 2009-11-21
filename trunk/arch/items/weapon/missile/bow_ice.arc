@@ -16,4 +16,5 @@ face bow_ice.101
 weight 1300
 value 450
 is_named 1
+nrof 1
 end

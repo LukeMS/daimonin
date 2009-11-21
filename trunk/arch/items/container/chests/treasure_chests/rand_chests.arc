@@ -15,6 +15,7 @@ no_pick 1
 value 50
 weight 50000
 randomitems chest
+nrof 1
 end
 
 Object random_chest_black
@@ -34,6 +35,7 @@ material 18
 value 50
 weight 50000
 randomitems chest
+nrof 1
 end
 
 Object random_chest_metal
@@ -53,4 +55,5 @@ material 18
 value 50
 weight 50000
 randomitems chest
+nrof 1
 end

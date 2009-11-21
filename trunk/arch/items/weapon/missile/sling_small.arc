@@ -13,4 +13,5 @@ wc 45
 last_sp 3
 weight 250
 value 250
+nrof 1
 end

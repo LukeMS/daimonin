@@ -17,4 +17,5 @@ material 2
 value 75
 weight 750
 is_named 1
+nrof 1
 end

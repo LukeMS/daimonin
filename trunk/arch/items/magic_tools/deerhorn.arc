@@ -14,4 +14,5 @@ value 50
 weight 600
 material 2
 level 1
+nrof 1
 end

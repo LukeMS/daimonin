@@ -23,4 +23,5 @@ value 75
 material_real 449
 material 128
 weight 100
+nrof 1
 end

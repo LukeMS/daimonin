@@ -18,4 +18,5 @@ resist_cold 10
 weight 29500
 value 2600
 is_named 1
+nrof 1
 end

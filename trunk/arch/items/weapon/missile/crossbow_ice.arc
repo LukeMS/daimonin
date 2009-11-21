@@ -16,4 +16,5 @@ wc 45
 last_sp 5
 value 450
 is_named 1
+nrof 1
 end

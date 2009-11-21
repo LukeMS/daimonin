@@ -15,6 +15,7 @@ resist_cleave 8
 type 99
 material 2
 material_real 65
+nrof 1
 end
 Object leggings_scale
 name scale leggings
@@ -33,4 +34,5 @@ resist_cleave 10
 type 99
 material 2
 material_real 65
+nrof 1
 end

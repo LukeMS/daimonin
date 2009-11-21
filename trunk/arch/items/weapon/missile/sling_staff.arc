@@ -16,4 +16,5 @@ last_sp 5
 weight 1700
 value 950
 sp 6
+nrof 1
 end

@@ -7,4 +7,5 @@ weight 20
 type 70
 material_real 641
 material 1024
+nrof 1
 end

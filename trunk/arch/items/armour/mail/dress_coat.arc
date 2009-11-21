@@ -22,6 +22,7 @@ weight 900
 value 15
 material 128
 material_real 450
+nrof 1
 end
 Object coat_expensive
 name coat
@@ -47,6 +48,7 @@ weight 900
 value 15
 material 128
 material_real 450
+nrof 1
 end
 Object coat_simple
 name coat
@@ -72,6 +74,7 @@ weight 900
 value 15
 material 128
 material_real 450
+nrof 1
 end
 Object coat_mage
 name mage coat
@@ -98,4 +101,5 @@ weight 1100
 value 150
 material 128
 material_real 450
+nrof 1
 end

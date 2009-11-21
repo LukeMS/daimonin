@@ -15,4 +15,5 @@ wc 45
 last_sp 5
 weight 400
 value 850
+nrof 1
 end

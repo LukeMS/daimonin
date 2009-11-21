@@ -15,6 +15,7 @@ material 16
 material_real 258
 weight 1750
 value 750
+nrof 1
 end
 Object club_giant
 layer 3
@@ -33,6 +34,7 @@ material 16
 material_real 258
 weight 1750
 value 750
+nrof 1
 end
 Object club_giant_spiked
 layer 3
@@ -51,6 +53,7 @@ material 16
 material_real 258
 weight 1750
 value 750
+nrof 1
 end
 Object hammer_giant
 layer 3
@@ -69,6 +72,7 @@ material 18
 material_real 65
 weight 1750
 value 750
+nrof 1
 end
 Object hammer_swar_giant
 layer 3
@@ -87,6 +91,7 @@ material 18
 material_real 65
 weight 1750
 value 750
+nrof 1
 end
 Object hammer_war_giant
 layer 3
@@ -105,6 +110,7 @@ material 18
 material_real 65
 weight 1750
 value 750
+nrof 1
 end
 Object mstar_2h
 layer 3
@@ -123,6 +129,7 @@ material 18
 material_real 65
 weight 1750
 value 750
+nrof 1
 end
 Object quaterstaff
 layer 3
@@ -141,4 +148,5 @@ material 16
 material_real 258
 weight 1750
 value 750
+nrof 1
 end

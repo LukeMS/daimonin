@@ -12,6 +12,7 @@ material 2
 material_real 65
 weight 520
 value 150
+nrof 1
 end
 Object dagger_large
 name large dagger
@@ -27,6 +28,7 @@ material 2
 material_real 65
 weight 520
 value 150
+nrof 1
 end
 Object dagger_small
 name small dagger
@@ -42,4 +44,5 @@ material 2
 material_real 65
 weight 520
 value 150
+nrof 1
 end

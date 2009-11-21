@@ -13,6 +13,7 @@ value 350
 container 15000
 weight 15000
 weapon_speed 1.0
+nrof 1
 end
 
 Object shelf2.111
@@ -30,6 +31,7 @@ value 350
 container 15000
 weight 15000
 weapon_speed 1.0
+nrof 1
 end
 
 Object shelf3.111
@@ -47,6 +49,7 @@ value 350
 container 15000
 weight 15000
 weapon_speed 1.0
+nrof 1
 end
 
 Object shelf3a.111
@@ -64,6 +67,7 @@ value 350
 container 15000
 weight 15000
 weapon_speed 1.0
+nrof 1
 end
 
 Object shelf3b.111
@@ -81,6 +85,7 @@ value 350
 container 15000
 weight 15000
 weapon_speed 1.0
+nrof 1
 end
 
 Object shelf3c.111
@@ -98,6 +103,7 @@ value 350
 container 15000
 weight 15000
 weapon_speed 1.0
+nrof 1
 end
 
 Object shelf3_dem1.111
@@ -115,6 +121,7 @@ value 350
 container 15000
 weight 15000
 weapon_speed 1.0
+nrof 1
 end
 
 Object shelf3_dem2.111
@@ -132,6 +139,7 @@ value 350
 container 15000
 weight 15000
 weapon_speed 1.0
+nrof 1
 end
 
 Object shelf3_dem3.111
@@ -149,4 +157,5 @@ value 350
 container 15000
 weight 15000
 weapon_speed 1.0
+nrof 1
 end

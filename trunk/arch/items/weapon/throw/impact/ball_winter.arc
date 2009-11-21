@@ -17,4 +17,5 @@ animation ball_winter
 anim_speed 5
 is_turnable 1
 is_thrown 1
+nrof 1
 end

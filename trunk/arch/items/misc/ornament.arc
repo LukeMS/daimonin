@@ -8,6 +8,7 @@ material 4
 layer 3
 value 10
 weight 50
+nrof 1
 end
 Object ornament_b
 name ornament
@@ -19,6 +20,7 @@ material 4
 layer 3
 value 10
 weight 50
+nrof 1
 end
 Object ornament_c
 name ornament
@@ -30,6 +32,7 @@ material 4
 layer 3
 value 10
 weight 50
+nrof 1
 end
 Object ornament_d
 name ornament
@@ -41,4 +44,5 @@ material 4
 layer 3
 value 10
 weight 50
+nrof 1
 end

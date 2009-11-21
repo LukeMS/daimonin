@@ -13,4 +13,5 @@ last_sp 5
 glow_radius 5
 weight 100000
 food 1
+nrof 1
 end

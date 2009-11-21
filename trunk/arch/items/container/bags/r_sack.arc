@@ -11,4 +11,5 @@ value 35
 weight 300
 container 85000
 weapon_speed 1.0
+nrof 1
 end

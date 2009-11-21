@@ -15,6 +15,7 @@ material 18
 material_real 65
 weight 1750
 value 350
+nrof 1
 end
 Object cleaver_battle
 name battle cleaver
@@ -33,4 +34,5 @@ material 18
 material_real 65
 weight 1250
 value 35
+nrof 1
 end

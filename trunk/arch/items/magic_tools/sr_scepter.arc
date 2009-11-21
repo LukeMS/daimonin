@@ -14,4 +14,5 @@ weight 925
 material 70
 hp 5
 maxhp 5
+nrof 1
 end

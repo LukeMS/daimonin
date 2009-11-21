@@ -14,6 +14,7 @@ material 18
 material_real 65
 weight 1750
 value 350
+nrof 1
 end
 Object axe_hand
 name hand axe
@@ -31,6 +32,7 @@ material 18
 material_real 65
 weight 1250
 value 35
+nrof 1
 end
 Object axe_war
 name war axe
@@ -48,6 +50,7 @@ material 18
 material_real 65
 weight 1750
 value 350
+nrof 1
 end
 Object cleaver_war
 name war cleaver
@@ -65,4 +68,5 @@ material 18
 material_real 65
 weight 1250
 value 35
+nrof 1
 end

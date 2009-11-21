@@ -10,4 +10,5 @@ type 156
 weight 3
 value 3000000
 material 64
+nrof 1
 end

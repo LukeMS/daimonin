@@ -16,6 +16,7 @@ wc 22
 ac 7
 weight 4500
 value 875
+nrof 1
 end
 Object guisarme
 name guisarme
@@ -35,6 +36,7 @@ wc 22
 ac 7
 weight 4500
 value 875
+nrof 1
 end
 Object partisan
 name partisan
@@ -54,6 +56,7 @@ wc 23
 ac 8
 weight 4500
 value 875
+nrof 1
 end
 Object pike
 name pike
@@ -73,6 +76,7 @@ wc 20
 ac 6
 weight 4500
 value 875
+nrof 1
 end
 Object ranseur
 name ranseur
@@ -92,4 +96,5 @@ wc 22
 ac 6
 weight 4500
 value 875
+nrof 1
 end

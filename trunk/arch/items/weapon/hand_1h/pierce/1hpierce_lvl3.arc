@@ -14,6 +14,7 @@ material 2
 material_real 65
 weight 520
 value 150
+nrof 1
 end
 Object cutlass
 name cutlass
@@ -31,6 +32,7 @@ material 2
 material_real 65
 weight 1075
 value 350
+nrof 1
 end
 Object sai
 name sai
@@ -48,6 +50,7 @@ material 2
 material_real 65
 weight 1075
 value 350
+nrof 1
 end
 Object tanto
 name tanto
@@ -65,4 +68,5 @@ material 2
 material_real 65
 weight 1075
 value 350
+nrof 1
 end

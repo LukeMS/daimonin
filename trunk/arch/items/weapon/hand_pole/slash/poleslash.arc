@@ -16,6 +16,7 @@ wc 23
 ac 9
 weight 4500
 value 875
+nrof 1
 end
 Object glaive
 name glaive
@@ -35,6 +36,7 @@ wc 22
 ac 7
 weight 4500
 value 875
+nrof 1
 end
 Object naginata
 name naginata
@@ -54,6 +56,7 @@ wc 23
 ac 5
 weight 4500
 value 875
+nrof 1
 end
 Object zuidao
 name zui-dao
@@ -73,6 +76,7 @@ wc 22
 ac 8
 weight 4900
 value 875
+nrof 1
 end
 Object zuipudao
 name zui-pudao
@@ -92,4 +96,5 @@ wc 22
 ac 8
 weight 4500
 value 875
+nrof 1
 end

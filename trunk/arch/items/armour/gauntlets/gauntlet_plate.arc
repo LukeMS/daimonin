@@ -14,6 +14,7 @@ material_real 65
 material 2
 value 90
 weight 1250
+nrof 1
 end
 Object gauntlets_plate
 name plate gauntlets
@@ -32,4 +33,5 @@ material_real 65
 material 2
 value 90
 weight 1250
+nrof 1
 end

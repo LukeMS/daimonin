@@ -16,6 +16,7 @@ material_real 65
 material 2
 weight 1500
 value 120
+nrof 1
 end
 Object shield_battle
 name battle shield
@@ -34,6 +35,7 @@ material_real 65
 material 2
 weight 1500
 value 310
+nrof 1
 end
 Object blade_stopper
 name blade stopper
@@ -52,6 +54,7 @@ material_real 65
 material 2
 weight 1350
 value 320
+nrof 1
 end
 Object small_shield
 name small shield
@@ -69,6 +72,7 @@ resist_cleave 6
 resist_pierce 6
 weight 940
 value 25
+nrof 1
 end
 Object shield_round
 name round shield
@@ -87,6 +91,7 @@ material_real 258
 material 16
 weight 1600
 value 115
+nrof 1
 end
 Object buckler
 name buckler
@@ -103,6 +108,7 @@ material_real 258
 material 16
 weight 1500
 value 20
+nrof 1
 end
 Object net_cloth
 name net
@@ -131,6 +137,7 @@ material 128
 material_real 449
 weight 700
 value 120
+nrof 1
 end
 Object shield
 name shield
@@ -149,6 +156,7 @@ material_real 65
 material 2
 weight 1500
 value 120
+nrof 1
 end
 Object shield_bone
 name bone shield
@@ -166,6 +174,7 @@ material 2048
 material_real 705
 weight 1100
 value 130
+nrof 1
 end
 Object shield_chitin
 name shield
@@ -183,6 +192,7 @@ material 32
 material_real 323
 weight 1100
 value 130
+nrof 1
 end
 Object shield_defender
 name defender
@@ -201,6 +211,7 @@ material_real 65
 material 2
 weight 1500
 value 324
+nrof 1
 end
 Object shield_demon
 name demon shield
@@ -220,6 +231,7 @@ material_real 65
 material 2
 weight 1500
 value 110
+nrof 1
 end
 Object shield_protector
 name protector
@@ -238,6 +250,7 @@ material_real 65
 material 2
 weight 1600
 value 150
+nrof 1
 end
 Object shield_war
 name war shield
@@ -256,6 +269,7 @@ material_real 65
 material 2
 weight 1550
 value 100
+nrof 1
 end
 Object shield_eye
 name eye shield
@@ -274,6 +288,7 @@ material_real 65
 material 2
 weight 1500
 value 175
+nrof 1
 end
 Object shield_heater
 name heater shield
@@ -292,6 +307,7 @@ material_real 65
 material 2
 weight 1250
 value 110
+nrof 1
 end
 Object shield_high
 name high shield
@@ -310,6 +326,7 @@ material_real 65
 material 2
 weight 1300
 value 150
+nrof 1
 end
 Object shield_kite
 name kite shield
@@ -328,6 +345,7 @@ material_real 65
 material 2
 weight 1350
 value 115
+nrof 1
 end
 Object shield_scale
 name shield
@@ -346,6 +364,7 @@ material 32
 material_real 324
 weight 1300
 value 100
+nrof 1
 end
 Object shield_holy
 name holy shield
@@ -364,6 +383,7 @@ material_real 65
 material 2
 weight 1500
 value 110
+nrof 1
 end
 Object shield_skull
 name skull shield
@@ -383,4 +403,5 @@ material_real 65
 material 2
 weight 2000
 value 110
+nrof 1
 end

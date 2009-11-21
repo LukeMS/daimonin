@@ -12,6 +12,7 @@ material 18
 material_real 65
 weight 1750
 value 350
+nrof 1
 end
 Object pick_axe
 name pick axe
@@ -27,6 +28,7 @@ material 18
 material_real 65
 weight 1750
 value 350
+nrof 1
 end
 Object whip
 name whip
@@ -42,4 +44,5 @@ material 8
 material_real 193
 weight 1750
 value 350
+nrof 1
 end

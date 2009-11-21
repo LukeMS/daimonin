@@ -15,6 +15,7 @@ food 5500
 speed 0.15
 last_eat 1
 last_sp 3
+nrof 1
 end
 
 Object candle_purp_burnt

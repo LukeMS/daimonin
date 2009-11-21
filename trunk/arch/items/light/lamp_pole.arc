@@ -12,4 +12,5 @@ last_sp 5
 weight 1250
 material 144
 food 1
+nrof 1
 end

@@ -11,4 +11,5 @@ material_real 193
 material 8
 value 15
 weight 200
+nrof 1
 end

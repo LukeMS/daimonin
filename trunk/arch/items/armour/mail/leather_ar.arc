@@ -12,4 +12,5 @@ weight 3450
 value 30
 material_real 194
 material 8
+nrof 1
 end

@@ -13,6 +13,7 @@ value 350
 container 15000
 weight 15000
 weapon_speed 1.0
+nrof 1
 end
 
 Object locker2.111
@@ -30,6 +31,7 @@ value 350
 container 15000
 weight 15000
 weapon_speed 1.0
+nrof 1
 end
 
 Object locker3.111
@@ -47,4 +49,5 @@ value 350
 container 15000
 weight 15000
 weapon_speed 1.0
+nrof 1
 end

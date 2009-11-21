@@ -13,4 +13,5 @@ resist_slash 8
 resist_pierce 8
 value 100
 weight 950
+nrof 1
 end

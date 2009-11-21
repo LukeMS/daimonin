@@ -16,4 +16,5 @@ resist_cleave 30
 resist_pierce 40
 weight 24000
 value 4150
+nrof 1
 end

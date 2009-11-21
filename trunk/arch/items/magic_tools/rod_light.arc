@@ -15,4 +15,5 @@ material 70
 hp 5
 maxhp 5
 level 1
+nrof 1
 end

@@ -15,4 +15,5 @@ wc 40
 last_sp 4
 weight 550
 value 200
+nrof 1
 end

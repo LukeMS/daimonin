@@ -17,4 +17,5 @@ weight 1250
 material 144
 food 1
 speed -0.02
+nrof 1
 end

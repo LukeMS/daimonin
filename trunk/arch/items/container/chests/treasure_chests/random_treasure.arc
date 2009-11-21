@@ -4,4 +4,5 @@ layer 3
 type 4
 randomitems chest
 auto_apply 1
+nrof 1
 end

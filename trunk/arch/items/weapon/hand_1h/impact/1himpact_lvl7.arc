@@ -14,6 +14,7 @@ material 18
 material_real 258
 weight 1900
 value 350
+nrof 1
 end
 Object hammer_war
 name war hammer
@@ -31,6 +32,7 @@ material 18
 material_real 65
 weight 1900
 value 350
+nrof 1
 end
 Object mace_battle
 name battle mace
@@ -48,6 +50,7 @@ material 18
 material_real 65
 weight 1900
 value 350
+nrof 1
 end
 Object mace_spiked_war
 name spiked war mace
@@ -65,6 +68,7 @@ material 18
 material_real 65
 weight 1900
 value 350
+nrof 1
 end
 Object mace_war
 name war mace
@@ -82,6 +86,7 @@ material 18
 material_real 65
 weight 1900
 value 350
+nrof 1
 end
 Object mstar_large
 name large morningstar
@@ -99,6 +104,7 @@ material 18
 material_real 65
 weight 1900
 value 350
+nrof 1
 end
 Object shootingstar
 name shootingstar
@@ -116,4 +122,5 @@ material 18
 material_real 65
 weight 1900
 value 350
+nrof 1
 end

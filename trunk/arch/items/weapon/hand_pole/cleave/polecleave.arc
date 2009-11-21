@@ -16,6 +16,7 @@ material 18
 material_real 65
 weight 4600
 value 875
+nrof 1
 end
 Object fuji
 name fu-ji
@@ -35,6 +36,7 @@ material 18
 material_real 65
 weight 4600
 value 875
+nrof 1
 end
 Object halberd
 name halberd
@@ -54,6 +56,7 @@ material 18
 material_real 65
 weight 4600
 value 875
+nrof 1
 end
 Object spetum
 name spetum
@@ -73,6 +76,7 @@ material 18
 material_real 65
 weight 4600
 value 875
+nrof 1
 end
 Object taiji
 name tai-ji
@@ -92,6 +96,7 @@ material 18
 material_real 65
 weight 4750
 value 875
+nrof 1
 end
 Object voulge
 name voulge
@@ -111,4 +116,5 @@ material 18
 material_real 65
 weight 4600
 value 875
+nrof 1
 end

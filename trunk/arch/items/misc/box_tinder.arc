@@ -7,4 +7,5 @@ material_real -1
 material 18
 value 100
 weight 400
+nrof 1
 end

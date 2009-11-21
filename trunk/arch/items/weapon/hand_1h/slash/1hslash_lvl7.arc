@@ -14,6 +14,7 @@ material 2
 material_real 65
 weight 1300
 value 350
+nrof 1
 end
 Object katana
 name katana
@@ -31,6 +32,7 @@ material 2
 material_real 65
 weight 1300
 value 350
+nrof 1
 end
 Object kopis
 name kopis
@@ -48,6 +50,7 @@ material 2
 material_real 65
 weight 1250
 value 350
+nrof 1
 end
 Object longsword
 name longsword
@@ -65,6 +68,7 @@ material 2
 material_real 65
 weight 1300
 value 350
+nrof 1
 end
 Object scimitar
 name scimitar
@@ -82,6 +86,7 @@ material 2
 material_real 65
 weight 1300
 value 350
+nrof 1
 end
 Object scythe_military
 name military scythe
@@ -99,6 +104,7 @@ material 18
 material_real 65
 weight 1300
 value 350
+nrof 1
 end
 Object taiqiang
 name tai-qiang
@@ -116,6 +122,7 @@ material 2
 material_real 65
 weight 1300
 value 350
+nrof 1
 end
 Object tsurugi
 name tsurugi
@@ -133,4 +140,5 @@ material 2
 material_real 65
 weight 1300
 value 350
+nrof 1
 end

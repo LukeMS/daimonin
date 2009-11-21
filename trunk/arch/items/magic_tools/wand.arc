@@ -11,4 +11,5 @@ type 109
 value 7
 weight 450
 material 16
+nrof 1
 end

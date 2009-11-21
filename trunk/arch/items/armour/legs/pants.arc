@@ -23,4 +23,5 @@ resist_snare 4
 value 5
 material_real 449
 material 128
+nrof 1
 end
