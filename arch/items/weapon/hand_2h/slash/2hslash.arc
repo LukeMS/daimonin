@@ -15,6 +15,7 @@ dam 170
 wc 35
 weight 2150
 value 750
+nrof 1
 end
 Object fujian
 name fu-jian
@@ -33,6 +34,7 @@ dam 178
 wc 36
 weight 2050
 value 800
+nrof 1
 end
 Object no_dachi
 name no-dachi
@@ -51,6 +53,7 @@ dam 175
 wc 36
 weight 2150
 value 750
+nrof 1
 end
 Object panzerstecher
 name Panzerstecher
@@ -69,6 +72,7 @@ dam 180
 wc 36
 weight 2150
 value 750
+nrof 1
 end
 Object scythe_war
 name war scythe
@@ -87,6 +91,7 @@ dam 172
 wc 34
 weight 2150
 value 750
+nrof 1
 end
 Object sword2h
 name two-handed sword
@@ -105,6 +110,7 @@ dam 173
 wc 36
 weight 2150
 value 750
+nrof 1
 end
 Object sword_double
 name double sword
@@ -123,6 +129,7 @@ dam 174
 wc 37
 weight 2150
 value 750
+nrof 1
 end
 Object sword_great
 name great sword
@@ -141,4 +148,5 @@ dam 175
 wc 34
 weight 2150
 value 750
+nrof 1
 end

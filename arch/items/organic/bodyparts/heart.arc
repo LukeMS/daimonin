@@ -10,6 +10,7 @@ material 32
 type 86
 weight 500
 value 200
+nrof 1
 end
 
 Object heart_beating
@@ -27,4 +28,5 @@ material_real -1
 material 32
 weight 500
 value 200
+nrof 1
 end

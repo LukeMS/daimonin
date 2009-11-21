@@ -11,4 +11,5 @@ can_stack 1
 type 86
 weight 600
 value 150
+nrof 1
 end

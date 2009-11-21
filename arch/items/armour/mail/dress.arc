@@ -21,6 +21,7 @@ weight 500
 value 20
 material 128
 material_real 450
+nrof 1
 end
 Object dress_evening_blue
 name dress
@@ -46,6 +47,7 @@ weight 500
 value 20
 material 128
 material_real 450
+nrof 1
 end
 Object dress_evening_red
 name dress
@@ -71,6 +73,7 @@ weight 500
 value 20
 material 128
 material_real 450
+nrof 1
 end
 Object dress_midnight
 name dress
@@ -96,4 +99,5 @@ weight 500
 value 20
 material 128
 material_real 450
+nrof 1
 end

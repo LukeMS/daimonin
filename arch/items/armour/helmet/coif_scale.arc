@@ -15,4 +15,5 @@ resist_pierce 8
 value 38
 material_real 65
 material 2
+nrof 1
 end

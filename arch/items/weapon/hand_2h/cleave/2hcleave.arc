@@ -15,6 +15,7 @@ material 18
 material_real 65
 weight 2500
 value 750
+nrof 1
 end
 Object axe_2h_battle
 name 2h battle axe
@@ -33,6 +34,7 @@ material 18
 material_real 65
 weight 2500
 value 750
+nrof 1
 end
 Object axe_2h_great
 name 2h great axe
@@ -51,6 +53,7 @@ material 18
 material_real 65
 weight 2500
 value 750
+nrof 1
 end
 Object axe_2h_war
 name 2h war axe
@@ -69,6 +72,7 @@ material 18
 material_real 65
 weight 2500
 value 750
+nrof 1
 end
 Object doubleji
 name double ji
@@ -87,6 +91,7 @@ material 18
 material_real 65
 weight 1750
 value 350
+nrof 1
 end
 Object mattock
 name mattock
@@ -105,4 +110,5 @@ material 18
 material_real 65
 weight 2500
 value 750
+nrof 1
 end

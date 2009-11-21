@@ -7,4 +7,5 @@ material 2048
 material_real 705
 value 10
 weight 150
+nrof 1
 end

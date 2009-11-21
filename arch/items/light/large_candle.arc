@@ -13,6 +13,7 @@ weight 10000
 maxhp 200
 food 200
 last_eat 1
+nrof 1
 end
 
 Object large_candle_b
@@ -31,6 +32,7 @@ weight 7000
 maxhp 200
 food 200
 last_eat 1
+nrof 1
 end
 
 Object large_candle_c
@@ -49,6 +51,7 @@ weight 4000
 maxhp 200
 food 200
 last_eat 1
+nrof 1
 end
 
 Object large_candle_burnt
@@ -59,4 +62,5 @@ sub_type 2
 layer 3
 no_pick 1
 weight 1000
+nrof 1
 end

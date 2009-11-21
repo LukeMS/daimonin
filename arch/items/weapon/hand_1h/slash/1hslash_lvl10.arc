@@ -15,6 +15,7 @@ material 2
 material_real 65
 weight 1300
 value 350
+nrof 1
 end
 Object falchion
 name falchion
@@ -33,6 +34,7 @@ material 2
 material_real 65
 weight 1300
 value 350
+nrof 1
 end
 Object muleijian
 name mulei-jian
@@ -51,6 +53,7 @@ material 2
 material_real 65
 weight 1450
 value 350
+nrof 1
 end
 Object zuijian
 name zui-jian
@@ -69,4 +72,5 @@ material 2
 material_real 65
 weight 1350
 value 350
+nrof 1
 end

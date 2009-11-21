@@ -14,6 +14,7 @@ material 2
 material_real 65
 weight 1300
 value 350
+nrof 1
 end
 Object ninjato
 name ninjato
@@ -31,6 +32,7 @@ material 2
 material_real 65
 weight 1300
 value 350
+nrof 1
 end
 Object sword
 name sword
@@ -48,6 +50,7 @@ material 2
 material_real 65
 weight 1300
 value 350
+nrof 1
 end
 Object sword_curved
 name curved sword
@@ -65,6 +68,7 @@ material 2
 material_real 65
 weight 1300
 value 350
+nrof 1
 end
 Object wakizashi
 name wakizashi
@@ -82,4 +86,5 @@ material 2
 material_real 65
 weight 1300
 value 350
+nrof 1
 end

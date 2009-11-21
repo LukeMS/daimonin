@@ -15,4 +15,5 @@ food 1000
 speed 0.15
 last_eat 1
 last_sp 5
+nrof 1
 end

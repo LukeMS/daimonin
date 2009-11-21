@@ -16,6 +16,7 @@ material 18
 material_real 65
 weight 4500
 value 875
+nrof 1
 end
 Object lucern_hammer
 layer 3
@@ -35,4 +36,5 @@ material 18
 material_real 65
 weight 4500
 value 875
+nrof 1
 end

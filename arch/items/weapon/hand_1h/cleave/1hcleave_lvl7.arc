@@ -14,6 +14,7 @@ material 18
 material_real 65
 weight 1750
 value 350
+nrof 1
 end
 Object axe_broad
 name broad axe
@@ -31,6 +32,7 @@ material 18
 material_real 65
 weight 1750
 value 350
+nrof 1
 end
 Object axe_double
 name double axe
@@ -48,6 +50,7 @@ material 18
 material_real 65
 weight 1750
 value 350
+nrof 1
 end
 Object whip_war
 name war whip
@@ -65,4 +68,5 @@ material 8
 material_real 194
 weight 1750
 value 350
+nrof 1
 end

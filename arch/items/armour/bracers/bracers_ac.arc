@@ -14,6 +14,7 @@ value 75
 material_real 65
 material 2
 weight 250
+nrof 1
 end
 Object bracers_wintersevent
 name winters event bracers
@@ -34,4 +35,5 @@ weight 250
 item_quality 87
 item_condition 87
 magic 1
+nrof 1
 end

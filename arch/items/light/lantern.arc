@@ -18,6 +18,7 @@ no_fix_player 1
 msg
 There is no obvious way for you to operate the lantern.
 endmsg
+nrof 1
 end
 
 Object lantern2_magic.131
@@ -40,4 +41,5 @@ no_fix_player 1
 msg
 There is no obvious way for you to operate the lantern.
 endmsg
+nrof 1
 end

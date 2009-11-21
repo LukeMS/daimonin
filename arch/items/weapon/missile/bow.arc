@@ -15,4 +15,5 @@ material_real 258
 face bow.101
 weight 1300
 value 450
+nrof 1
 end

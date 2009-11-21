@@ -15,4 +15,5 @@ resist_cleave 12
 type 99
 material 2
 material_real 65
+nrof 1
 end

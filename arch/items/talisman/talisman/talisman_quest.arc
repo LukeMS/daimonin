@@ -7,6 +7,7 @@ material_real 641
 material 1024
 weight 500
 value 450
+nrof 1
 end
 Object talisman_quest_p2
 name talisman piece
@@ -17,6 +18,7 @@ material_real 641
 material 1024
 weight 500
 value 450
+nrof 1
 end
 Object talisman_quest_p3
 name talisman piece
@@ -27,6 +29,7 @@ material_real 641
 material 1024
 weight 500
 value 450
+nrof 1
 end
 Object talisman_quest_p4
 name talisman piece
@@ -37,6 +40,7 @@ material_real 641
 material 1024
 weight 500
 value 450
+nrof 1
 end
 Object talisman_quest_p5
 name talisman piece
@@ -47,6 +51,7 @@ material_real 641
 material 1024
 weight 500
 value 450
+nrof 1
 end
 Object talisman_quest
 name talisman
@@ -57,4 +62,5 @@ material_real 641
 material 1024
 weight 500
 value 450
+nrof 1
 end

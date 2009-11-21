@@ -15,4 +15,5 @@ dam 46
 wc 45
 last_sp 5
 value 1450
+nrof 1
 end

@@ -11,4 +11,5 @@ material 256
 value 35
 weight 100
 food 1
+nrof 1
 end

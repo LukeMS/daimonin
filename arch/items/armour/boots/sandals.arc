@@ -11,4 +11,5 @@ resist_slash 4
 type 99
 material_real 193
 material 8
+nrof 1
 end

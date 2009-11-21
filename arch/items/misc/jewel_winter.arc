@@ -8,6 +8,7 @@ material 2
 value 10
 weight 150
 is_named 1
+nrof 1
 end
 Object coal_lump
 name lump
@@ -20,4 +21,5 @@ material 2
 value 10
 weight 150
 is_named 1
+nrof 1
 end

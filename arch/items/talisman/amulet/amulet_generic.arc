@@ -7,4 +7,5 @@ material_real 641
 material 1024
 weight 500
 value 450
+nrof 1
 end

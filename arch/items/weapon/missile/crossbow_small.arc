@@ -13,4 +13,5 @@ last_grace 10
 wc 45
 last_sp 4
 value 250
+nrof 1
 end

@@ -11,4 +11,5 @@ material 32
 type 86
 weight 450
 value 180
+nrof 1
 end

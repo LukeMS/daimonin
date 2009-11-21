@@ -16,6 +16,7 @@ resist_cleave 17
 resist_pierce 35
 weight 19500
 value 2550
+nrof 1
 end
 Object plate_scale_armour
 name plate scale armour
@@ -36,6 +37,7 @@ resist_pierce 50
 resist_corruption 10
 weight 19500
 value 255000
+nrof 1
 end
 Object dragon_plate_armour
 name dragon plate armour
@@ -56,6 +58,7 @@ resist_pierce 45
 resist_godpower 10
 weight 19500
 value 255000
+nrof 1
 end
 Object dragon_chain_armour
 name dragon chain armour
@@ -76,4 +79,5 @@ resist_pierce 50
 resist_aether 10
 weight 19500
 value 255000
+nrof 1
 end

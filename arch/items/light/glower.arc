@@ -16,4 +16,5 @@ animation glower.101
 msg
 There is no obvious way for you to operate the glower.
 endmsg
+nrof 1
 end

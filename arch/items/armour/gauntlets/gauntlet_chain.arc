@@ -14,4 +14,5 @@ material_real 65
 material 2
 value 75
 weight 750
+nrof 1
 end

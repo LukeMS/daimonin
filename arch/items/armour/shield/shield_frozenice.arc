@@ -26,4 +26,5 @@ material_real 449
 weight 700
 value 120
 is_named 1
+nrof 1
 end

@@ -13,4 +13,5 @@ value 7
 weight 450
 material 16
 is_named 1
+nrof 1
 end

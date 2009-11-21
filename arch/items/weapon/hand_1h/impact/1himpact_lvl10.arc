@@ -15,6 +15,7 @@ material 18
 material_real 65
 weight 1900
 value 350
+nrof 1
 end
 Object hammer_battle
 name battle hammer
@@ -33,4 +34,5 @@ material 18
 material_real 65
 weight 1900
 value 350
+nrof 1
 end

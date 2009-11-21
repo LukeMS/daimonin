@@ -6,4 +6,5 @@ weight 800
 material 18
 value 65
 layer 3
+nrof 1
 end

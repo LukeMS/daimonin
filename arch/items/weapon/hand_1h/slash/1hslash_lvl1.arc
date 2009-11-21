@@ -12,6 +12,7 @@ material 2
 material_real 65
 weight 1300
 value 350
+nrof 1
 end
 Object shortsword
 name shortsword
@@ -27,6 +28,7 @@ material 2
 material_real 65
 weight 1300
 value 350
+nrof 1
 end
 Object tulwar
 name tulwar
@@ -42,4 +44,5 @@ material 2
 material_real 65
 weight 1300
 value 350
+nrof 1
 end

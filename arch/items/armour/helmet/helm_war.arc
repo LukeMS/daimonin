@@ -15,4 +15,5 @@ weight 1140
 value 800
 material_real 65
 material 2
+nrof 1
 end

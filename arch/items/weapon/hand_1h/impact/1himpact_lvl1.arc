@@ -12,6 +12,7 @@ material 16
 material_real 258
 weight 3000
 value 50
+nrof 1
 end
 Object hammer_small
 name small hammer
@@ -27,6 +28,7 @@ material 18
 material_real 65
 weight 1900
 value 350
+nrof 1
 end
 Object mstar_small
 name small morningstar
@@ -42,6 +44,7 @@ material 18
 material_real 65
 weight 1900
 value 350
+nrof 1
 end
 Object nunchacu
 name nunchacu
@@ -57,4 +60,5 @@ material 18
 material_real 258
 weight 1900
 value 350
+nrof 1
 end

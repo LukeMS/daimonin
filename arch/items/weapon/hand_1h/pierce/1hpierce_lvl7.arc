@@ -14,6 +14,7 @@ material 2
 material_real 65
 weight 1075
 value 350
+nrof 1
 end
 Object pallasch
 name pallasch
@@ -31,6 +32,7 @@ material 2
 material_real 65
 weight 1075
 value 350
+nrof 1
 end
 Object rapier
 name rapier
@@ -48,6 +50,7 @@ material 2
 material_real 65
 weight 1075
 value 350
+nrof 1
 end
 Object saber
 name saber
@@ -65,4 +68,5 @@ material 2
 material_real 65
 weight 1075
 value 350
+nrof 1
 end

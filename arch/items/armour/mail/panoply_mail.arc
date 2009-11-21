@@ -16,6 +16,7 @@ resist_cleave 30
 resist_pierce 45
 weight 20000
 value 252600
+nrof 1
 end
 Object dragon_ring_mail
 name dragon ring mail
@@ -39,6 +40,7 @@ resist_pierce 30
 resist_death 10
 weight 20000
 value 252600
+nrof 1
 end
 Object demon_plate_mail
 name demon plate mail
@@ -64,4 +66,5 @@ resist_pierce 30
 resist_lifesteal 10
 weight 20000
 value 252600
+nrof 1
 end

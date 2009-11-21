@@ -21,4 +21,5 @@ resist_paralyze 4
 resist_snare 4
 material_real 449
 material 128
+nrof 1
 end
