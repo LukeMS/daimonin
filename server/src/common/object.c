@@ -1451,23 +1451,33 @@ void drop_ob_inv(object *ob)
     if (ob->type == PLAYER)
     {
         /* we don't handle players here */
-        LOG(llevBug, "BUG: drop_ob_inv() - try to drop items of %s\n", ob->name);
+        LOG(llevBug, "BUG: drop_ob_inv() - try to drop items of %s\n",
+            ob->name);
+
         return;
     }
 
-    if (ob->env == NULL && (ob->map == NULL || ob->map->in_memory != MAP_IN_MEMORY))
+    if (!ob->env &&
+        (!ob->map ||
+         ob->map->in_memory != MAP_IN_MEMORY))
     {
         /* TODO */
-        LOG(llevDebug, "BUG: drop_ob_inv() - can't drop inventory of objects not in map yet: %s (%x)\n", ob->name,
-            ob->map);
+        LOG(llevDebug, "BUG: drop_ob_inv() - can't drop inventory of objects not in map yet: %s (%x)\n",
+            ob->name, ob->map);
+
         return;
     }
 
-    if(ob->enemy && ob->enemy->type == PLAYER && ob->enemy_count == ob->enemy->count)
+    if (ob->enemy &&
+        ob->enemy->type == PLAYER &&
+        ob->enemy_count == ob->enemy->count)
+    {
         pl = CONTR(ob->enemy);
+    }
 
     /* create corpse and/or drop stuff to floor */
-    if ((QUERY_FLAG(ob, FLAG_CORPSE) && !QUERY_FLAG(ob, FLAG_STARTEQUIP)) ||
+    if ((QUERY_FLAG(ob, FLAG_CORPSE) &&
+         !QUERY_FLAG(ob, FLAG_STARTEQUIP)) ||
         QUERY_FLAG(ob, FLAG_CORPSE_FORCED))
     {
         char buf[MAX_BUF];
@@ -1475,7 +1485,8 @@ void drop_ob_inv(object *ob)
         /* Create the corpse object. */
         /* TODO: Change the corpse attribute from boolean to an arch name so
          * that the corpse arch can be variable (ie, different capacities for a
-         * gnat and a demon) and not hardwired in to the code -- Smacky 20090302 */
+         * gnat and a demon) and not hardwired in to the code.
+         * -- Smacky 20090302 */
         corpse = get_archetype("corpse_default");
 
         /* Give thie corpse the correct face -- this is the 0th entry of the
@@ -1486,71 +1497,83 @@ void drop_ob_inv(object *ob)
         strcpy(buf, new_faces[animations[ob->animation_id].faces[0]].name);
 
         if (strcmp(buf, "dummy.111"))
+        {
             corpse->face = &new_faces[animations[ob->animation_id].faces[0]];
+        }
 
         /* The corpse will go on the same square as (m)ob->head. */
         corpse->map = ob->map;
         corpse->x = ob->x;
         corpse->y = ob->y;
-
         /* ALL corpses are half the weight of the living mob! */
         corpse->weight = (sint32)(ob->weight * 0.50);
     }
 
-    tmp_op = ob->inv;
-    while (tmp_op != NULL)
+    for (tmp_op = ob->inv; tmp_op; tmp_op = tmp)
     {
         tmp = tmp_op->below;
         remove_ob(tmp_op); /* Inv-no check off / This will be destroyed in next loop of object_gc() */
+
         /* if we recall spawn mobs, we don't want drop their items as free.
          * So, marking the mob itself with "FLAG_STARTEQUIP" will kill
          * all inventory and not dropping it on the map.
          * This also happens when a player slays a to low mob/non exp mob.
          * Don't drop any sys_object in inventory... I can't think about
          * any use... when we do it, a disease needle for example
-         * is dropping his disease force and so on.
-         */
-
-        if(tmp_op->type==TYPE_QUEST_TRIGGER)
+         * is dropping his disease force and so on. */
+        if(tmp_op->type == TYPE_QUEST_TRIGGER)
         {
             /* legal, non freed enemy */
             if (pl)
             {
-                if(!(pl->group_status & GROUP_STATUS_GROUP))
+                if (!(pl->group_status & GROUP_STATUS_GROUP))
+                {
                     insert_quest_item(tmp_op, pl->ob); /* single player */
+                }
                 else
                 {
-                    for(gtmp=pl->group_leader;gtmp;gtmp=CONTR(gtmp)->group_next)
+                    for(gtmp = pl->group_leader; gtmp; gtmp = CONTR(gtmp)->group_next)
                     {
                         /* check for out of (kill) range */
                         if(!(CONTR(gtmp)->group_status & GROUP_STATUS_NOQUEST))
+                        {
                            insert_quest_item(tmp_op, gtmp); /* give it to member */
+                        }
                     }
                 }
             }
         }
-        else if (!(QUERY_FLAG(ob, FLAG_STARTEQUIP)
-                || (tmp_op->type != RUNE
-                 && (QUERY_FLAG(tmp_op, FLAG_SYS_OBJECT)
-                  || QUERY_FLAG(tmp_op, FLAG_STARTEQUIP)
-                  || QUERY_FLAG(tmp_op, FLAG_NO_DROP)))))
+        else if (!(QUERY_FLAG(ob, FLAG_STARTEQUIP) ||
+                   (tmp_op->type != RUNE &&
+                    (QUERY_FLAG(tmp_op, FLAG_SYS_OBJECT) ||
+                     QUERY_FLAG(tmp_op, FLAG_STARTEQUIP) ||
+                     QUERY_FLAG(tmp_op, FLAG_NO_DROP)))))
         {
-            tmp_op->x = ob->x,tmp_op->y = ob->y;
+            tmp_op->x = ob->x;
+            tmp_op->y = ob->y;
             CLEAR_FLAG(tmp_op, FLAG_APPLIED);
 
             /* if we have a corpse put the item in it */
             if (corpse)
             {
-                if(!tmp_op->item_level && !tmp_op->level && tmp_op->type != RING && tmp_op->type != AMULET)
+                if(!tmp_op->item_level &&
+                   !tmp_op->level &&
+                   tmp_op->type != RING &&
+                   tmp_op->type != AMULET)
                 {
                     SET_FLAG(tmp_op, FLAG_IDENTIFIED);
 
                     if (is_magical(tmp_op))
+                    {
                         SET_FLAG(tmp_op, FLAG_KNOWN_MAGICAL);
+                    }
 
                     if (is_cursed_or_damned(tmp_op))
+                    {
                         SET_FLAG(tmp_op, FLAG_KNOWN_CURSED);
+                    }
                 }
+
                 insert_ob_in_ob(tmp_op, corpse);
             }
             else
@@ -1558,35 +1581,49 @@ void drop_ob_inv(object *ob)
                 /* don't drop traps from a container to the floor.
                  * removing the container where a trap is applied will
                  * neutralize the trap too
-                 * Also not drop it in env - be safe here
-                 */
+                 * Also not drop it in env - be safe here */
                 if (tmp_op->type != RUNE)
                 {
-                    if(!tmp_op->item_level && !tmp_op->level && tmp_op->type != RING && tmp_op->type != AMULET)
+                    if (!tmp_op->item_level &&
+                        !tmp_op->level &&
+                        tmp_op->type != RING &&
+                        tmp_op->type != AMULET)
                     {
                         SET_FLAG(tmp_op, FLAG_IDENTIFIED);
 
                         if (is_magical(tmp_op))
+                        {
                             SET_FLAG(tmp_op, FLAG_KNOWN_MAGICAL);
+                        }
 
                         if (is_cursed_or_damned(tmp_op))
+                        {
                             SET_FLAG(tmp_op, FLAG_KNOWN_CURSED);
+                        }
                     }
+
                     if (ob->env)
                     {
                         insert_ob_in_ob(tmp_op, ob->env);
+
                         /* this should handle in future insert_ob_in_ob() */
                         if (ob->env->type == PLAYER)
+                        {
                             esrv_send_item(ob->env, tmp_op);
+                        }
                         else if (ob->env->type == CONTAINER)
+                        {
                             esrv_send_item(ob->env, tmp_op);
+                        }
                     }
                     else
-                        insert_ob_in_map(tmp_op, ob->map, NULL, 0); /* Insert in same map as the env*/
+                    {
+                        /* Insert in same map as the env*/
+                        insert_ob_in_map(tmp_op, ob->map, NULL, 0);
+                    }
                 }
             }
         }
-        tmp_op = tmp;
     }
 
     if (corpse)
@@ -1594,17 +1631,15 @@ void drop_ob_inv(object *ob)
         /* drop the corpse when something is in OR corpse_forced is set */
         /* i changed this to drop corpse always even they have no items
          * inside (player get confused when corpse don't drop. To avoid
-         * clear corpses, change below "||corpse " to "|| corpse->inv"
-         */
-        if (QUERY_FLAG(ob, FLAG_CORPSE_FORCED) || corpse)
+         * clear corpses, change below "||corpse " to "|| corpse->inv" */
+        if (QUERY_FLAG(ob, FLAG_CORPSE_FORCED) ||
+            corpse)
         {
             /* ok... we have a corpse AND we insert something in.
              * now check enemy and/or attacker to find a player.
              * if there is one - personlize this corpse container.
              * this gives the player the chance to grap this stuff first
-             * - and looter will be stopped.
-             */
-
+             * - and looter will be stopped. */
             if (pl)
             {
                 FREE_AND_ADD_REF_HASH(corpse->slaying, pl->ob->name);
@@ -1614,8 +1649,7 @@ void drop_ob_inv(object *ob)
                 /* normallly only player drop corpse. But in some cases
                  * npc can do it too. Then its smart to remove that corpse fast.
                  * It will not harm anything because we never deal for NPC with
-                 * bounty.
-                 */
+                 * bounty. */
                 corpse->stats.food = 6;
             }
 
@@ -1627,26 +1661,37 @@ void drop_ob_inv(object *ob)
                     corpse->sub_type1 = ST1_CONTAINER_CORPSE_group;
                 }
                 else
+                {
                     corpse->sub_type1 = ST1_CONTAINER_CORPSE_player;
+                }
             }
 
             if (ob->env)
             {
                 insert_ob_in_ob(corpse, ob->env);
+
                 /* this should handle in future insert_ob_in_ob() */
                 if (ob->env->type == PLAYER)
+                {
                     esrv_send_item(ob->env, corpse);
+                }
                 else if (ob->env->type == CONTAINER)
+                {
                     esrv_send_item(ob->env, corpse);
+                }
             }
             else
+            {
                 insert_ob_in_map(corpse, ob->map, NULL, 0);
+            }
         }
         else /* disabled */
         {
             /* if we are here, our corpse mob had something in inv but its nothing to drop */
             if (!QUERY_FLAG(corpse, FLAG_REMOVED))
+            {
                 remove_ob(corpse); /* no check off - not put in the map here */
+            }
         }
     }
 }
