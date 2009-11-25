@@ -77,6 +77,7 @@ typedef signed char     sint8;
 
 #include <protocol.h> /* shared header between server & client */
 
+#include <font.h>
 #include <client.h>
 #include <sdlsocket.h>
 #include <chatfilter.h>

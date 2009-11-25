@@ -107,34 +107,34 @@ static void show_inventory_item_stats(item *tmp, int x, int y)
         sprintf(buf, "%d %s", tmp->nrof, tmp->s_name);
     else
         sprintf(buf, "%s", tmp->s_name);
-    StringBlt(ScreenSurface, &SystemFont, buf, x + 23, y - 26, COLOR_HGOLD, &tmp_rect, NULL);
+    StringBlt(ScreenSurface, &font_small, buf, x + 23, y - 26, COLOR_HGOLD, &tmp_rect, NULL);
 
     sprintf(buf, "weight: %4.3f", (float)tmp->weight/1000.0f);
-    StringBlt(ScreenSurface, &SystemFont, buf, x + 170, y - 14, COLOR_HGOLD, NULL, NULL);
+    StringBlt(ScreenSurface, &font_small, buf, x + 170, y - 14, COLOR_HGOLD, NULL, NULL);
 
 
     if (tmp->item_qua == 255) /* this comes from server when not identified */
-        StringBlt(ScreenSurface, &SystemFont, "not identified", x + 23, y - 14, COLOR_RED, NULL, NULL);
+        StringBlt(ScreenSurface, &font_small, "not identified", x + 23, y - 14, COLOR_RED, NULL, NULL);
     else
     {
-        StringBlt(ScreenSurface, &SystemFont, "con: ", x + 23, y - 14, COLOR_HGOLD, NULL, NULL);
+        StringBlt(ScreenSurface, &font_small, "con: ", x + 23, y - 14, COLOR_HGOLD, NULL, NULL);
         sprintf(buf, "%d", tmp->item_qua);
-        StringBlt(ScreenSurface, &SystemFont, buf, x + 57 - get_string_pixel_length(buf, &SystemFont), y - 14,
+        StringBlt(ScreenSurface, &font_small, buf, x + 57 - get_string_pixel_length(buf, &font_small), y - 14,
                   COLOR_HGOLD, NULL, NULL);
         sprintf(buf, "(%d)", tmp->item_con);
-        StringBlt(ScreenSurface, &SystemFont, buf, x + 60, y - 14, COLOR_HGOLD, NULL, NULL);
+        StringBlt(ScreenSurface, &font_small, buf, x + 60, y - 14, COLOR_HGOLD, NULL, NULL);
 
         if (tmp->item_level)
         {
             sprintf(buf, "allowed: lvl %d %s", tmp->item_level, skill_level_name[tmp->item_skill]);
             if ((!tmp->item_skill && tmp->item_level <= cpl.stats.level)
                     || (tmp->item_skill && tmp->item_level <= cpl.stats.skill_level[tmp->item_skill - 1]))
-                StringBlt(ScreenSurface, &SystemFont, buf, x + 100 , y - 14, COLOR_HGOLD, NULL, NULL);
+                StringBlt(ScreenSurface, &font_small, buf, x + 100 , y - 14, COLOR_HGOLD, NULL, NULL);
             else
-                StringBlt(ScreenSurface, &SystemFont, buf, x + 100, y - 14, COLOR_RED, NULL, NULL);
+                StringBlt(ScreenSurface, &font_small, buf, x + 100, y - 14, COLOR_RED, NULL, NULL);
         }
         else
-            StringBlt(ScreenSurface, &SystemFont, "allowed: all", x + 100, y - 14, COLOR_HGOLD, NULL, NULL);
+            StringBlt(ScreenSurface, &font_small, "allowed: all", x + 100, y - 14, COLOR_HGOLD, NULL, NULL);
     }
 }
 
@@ -277,13 +277,13 @@ void widget_show_inventory_window(int x, int y)
             cur_widget[PDOLL_ID].show = FALSE;
         cur_widget[MAIN_INV_ID].ht = 32;
         sprite_blt(Bitmaps[BITMAP_INV_BG], x, y, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont, "Carry", x+140, y+4, COLOR_HGOLD, NULL, NULL);
+        StringBlt(ScreenSurface, &font_small, "Carry", x+140, y+4, COLOR_HGOLD, NULL, NULL);
         sprintf(buf, "%4.3f kg", (float)cpl.real_weight/1000.0f);
-        StringBlt(ScreenSurface, &SystemFont, buf, x+140 + 35, y+4, COLOR_DEFAULT, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont, "Limit", x+140, y+15, COLOR_HGOLD, NULL, NULL);
+        StringBlt(ScreenSurface, &font_small, buf, x+140 + 35, y+4, COLOR_DEFAULT, NULL, NULL);
+        StringBlt(ScreenSurface, &font_small, "Limit", x+140, y+15, COLOR_HGOLD, NULL, NULL);
         sprintf(buf, "%4.3f kg", (float) cpl.weight_limit / 1000.0);
-        StringBlt(ScreenSurface, &SystemFont, buf, x+140 + 35, y+15, COLOR_DEFAULT, NULL, NULL);
-        StringBlt(ScreenSurface, &Font6x3Out, "(SHIFT for inventory)", x+32, y+ 9, COLOR_DEFAULT, NULL, NULL);
+        StringBlt(ScreenSurface, &font_small, buf, x+140 + 35, y+15, COLOR_DEFAULT, NULL, NULL);
+        StringBlt(ScreenSurface, &font_tiny_out, "(SHIFT for inventory)", x+32, y+ 9, COLOR_DEFAULT, NULL, NULL);
         return;
     }
 
@@ -482,7 +482,7 @@ void widget_show_below_window(item *op, int x, int y)
                 sprintf(buf, "%d %s", tmp->nrof, tmp->s_name);
             else
                 sprintf(buf, "%s", tmp->s_name);
-            StringBlt(ScreenSurface, &SystemFont, buf, x + 6, y + 5, COLOR_HGOLD, &tmp_rect, NULL);
+            StringBlt(ScreenSurface, &font_small, buf, x + 6, y + 5, COLOR_HGOLD, &tmp_rect, NULL);
         }
         i++;
         /* we have a open container - 'insert' the items inside in the panel */
@@ -507,7 +507,7 @@ jump_in_container2:
                         sprintf(buf, "%d %s", tmpc->nrof, tmpc->s_name);
                     else
                         sprintf(buf, "%s", tmpc->s_name);
-                    StringBlt(ScreenSurface, &SystemFont, buf, x + 6, y + 4, COLOR_HGOLD, &tmp_rect, NULL);
+                    StringBlt(ScreenSurface, &font_small, buf, x + 6, y + 4, COLOR_HGOLD, &tmp_rect, NULL);
                 }
                 sprite_blt(Bitmaps[BITMAP_CMARK_MIDDLE], x + (i % INVITEMBELOWXLEN) * 32 + 5,
                            y + (i / INVITEMBELOWXLEN) * 32 + 19, NULL, NULL);
@@ -688,8 +688,8 @@ void blt_inv_item(item *tmp, int x, int y)
             strcpy(buf, "many");
         else
             sprintf(buf, "%d", tmp->nrof);
-        StringBlt(ScreenSurface, &Font6x3Out, buf,
-                  x + (ICONDEFLEN / 2) - (get_string_pixel_length(buf, &Font6x3Out) / 2), y + 18, COLOR_WHITE, NULL,
+        StringBlt(ScreenSurface, &font_tiny_out, buf,
+                  x + (ICONDEFLEN / 2) - (get_string_pixel_length(buf, &font_tiny_out) / 2), y + 18, COLOR_WHITE, NULL,
                   NULL);
     }
 

@@ -13,6 +13,7 @@ daimonin_SOURCES =  \
 	../../src/dialog.c \
 	../../src/event.c \
 	../../src/filewrap.c \
+	../../src/font.c \
 	../../src/group.c \
 	../../src/ignore.c \
 	../../src/inffast.c \

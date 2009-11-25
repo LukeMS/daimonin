@@ -74,7 +74,7 @@ static int interface_cmd_head(_gui_interface_head *head, char *data, int *pos)
                 if (!(buf = get_parameter_string(data, pos, 128)))
                     return -1;
                 strcpy(head->body_text, buf);
-                if (StringWidthOffset(&MediumFont, head->body_text, &tmp, 260))
+                if (StringWidthOffset(&font_medium, head->body_text, &tmp, 260))
                 {
 #ifdef DEVELOPMENT
                     draw_info_format(COLOR_RED,"Script-Warning: Too long header title:\n%s\nHeader-Title will be truncated!\n",head->body_text);
@@ -123,7 +123,7 @@ static int interface_cmd_link(_gui_interface_link *head, char *data, int *pos)
                 if (!(buf = get_parameter_string(data, pos, 128)))
                     return -1;
                 strcpy(head->link, buf);
-                if (StringWidthOffset(&MediumFont, head->link, &tmp, 295))
+                if (StringWidthOffset(&font_medium, head->link, &tmp, 295))
                 {
 #ifdef DEVELOPMENT
                     draw_info_format(COLOR_RED,"Script-Warning: Too long Link-Title:\n%s\nLink-Title will be truncated!\n",head->link);
@@ -221,7 +221,7 @@ static int interface_cmd_reward(_gui_interface_reward *head, char *data, int *po
                 if (!(buf = get_parameter_string(data, pos, 128)))
                     return -1;
                 strcpy(head->title, buf);
-                if (StringWidthOffset(&BigFont, head->title, &tmp, 295))
+                if (StringWidthOffset(&font_big_out, head->title, &tmp, 295))
                 {
 #ifdef DEVELOPMENT
                     draw_info_format(COLOR_RED,"Script-Warning: Too long Reward-Title:\n%s\nReward-Title will be truncated!\n",head->title);
@@ -298,7 +298,7 @@ static int interface_cmd_message(_gui_interface_message *msg, char *data, int *p
                 if (!(buf = get_parameter_string(data, pos, 128)))
                     return -1;
                 strcpy(msg->title, buf);
-                if (StringWidthOffset(&BigFont, msg->title, &tmp, 295))
+                if (StringWidthOffset(&font_big_out, msg->title, &tmp, 295))
                 {
 #ifdef DEVELOPMENT
                     draw_info_format(COLOR_RED,"Script-Warning: Too long Message-Title:\n%s\nMessage-Title will be truncated!\n",msg->title);
@@ -456,7 +456,7 @@ static int interface_cmd_button(_gui_interface_button *head, char *data, int *po
                 if (!(buf = get_parameter_string(data, pos, 64)))
                     return -1;
                 strcpy(head->title, buf);
-                if (StringWidthOffset(&SystemFont, head->title, &tmp, 55))
+                if (StringWidthOffset(&font_small, head->title, &tmp, 55))
                 {
 #ifdef DEVELOPMENT
                     draw_info_format(COLOR_RED,"Script-Warning: Too long Button-Title:\n%s\nButton-Title will be truncated!\n",head->title);
@@ -624,7 +624,7 @@ static _gui_interface_struct *format_gui_interface(_gui_interface_struct *gui_in
                 /* lets do automatic line breaks */
                 gui_int->message.lines[gui_int->message.line_count][c]=gui_int->message.body_text[i];
 
-                if (StringWidthOffset(&MediumFont, gui_int->message.lines[gui_int->message.line_count], &len, 270))
+                if (StringWidthOffset(&font_medium, gui_int->message.lines[gui_int->message.line_count], &len, 270))
                 {
                     char tmp_line[INTERFACE_MAX_CHAR];
                     int ii;
@@ -728,7 +728,7 @@ static _gui_interface_struct *format_gui_interface(_gui_interface_struct *gui_in
                 /* lets do automatic line breaks */
                 gui_int->reward.lines[gui_int->reward.line_count][c]=gui_int->reward.body_text[i];
 
-                if (StringWidthOffset(&MediumFont, gui_int->reward.lines[gui_int->reward.line_count], &len, 270))
+                if (StringWidthOffset(&font_medium, gui_int->reward.lines[gui_int->reward.line_count], &len, 270))
                 {
                     char tmp_line[INTERFACE_MAX_CHAR];
                     int ii;
@@ -1209,7 +1209,7 @@ int get_interface_line(int *element, int *index, char **keyword, int x, int y, i
                         {
                             if (gui_interface_npc->message.lines[i][s] != '~' &&
                                     gui_interface_npc->message.lines[i][s] != '°' && gui_interface_npc->message.lines[i][s] != '|')
-                                xt += MediumFont.c[(unsigned char)gui_interface_npc->message.lines[i][s]].w + MediumFont.char_offset;
+                                xt += font_medium.c[(unsigned char)gui_interface_npc->message.lines[i][s]].w + font_medium.char_offset;
 
                             if (flag && mx>=xs && mx <=xt) /* only when we have a active keyword part */
                             {
@@ -1268,7 +1268,7 @@ int get_interface_line(int *element, int *index, char **keyword, int x, int y, i
                             {
                                 if (gui_interface_npc->reward.lines[i][s] != '~' &&
                                         gui_interface_npc->reward.lines[i][s] != '°' && gui_interface_npc->reward.lines[i][s] != '|')
-                                    xt += MediumFont.c[(unsigned char)gui_interface_npc->reward.lines[i][s]].w + MediumFont.char_offset;
+                                    xt += font_medium.c[(unsigned char)gui_interface_npc->reward.lines[i][s]].w + font_medium.char_offset;
 
                                 if (flag && mx>=xs && mx <=xt) /* only when we have a active keyword part */
                                 {
@@ -1360,7 +1360,7 @@ int get_interface_line(int *element, int *index, char **keyword, int x, int y, i
         for (i=0;i<gui_interface_npc->link_count;i++,yoff+=15)
             if (my >= yoff && my <=yoff+15)
             {
-                int len =  get_string_pixel_length(gui_interface_npc->link[i].link, &MediumFont);
+                int len =  get_string_pixel_length(gui_interface_npc->link[i].link, &font_medium);
 
                 if (mx>=x+40 && mx<=x+40+len)
                 {
@@ -1480,9 +1480,9 @@ void show_interface_npc(int mark)
     {
         /* print head */
         /*sprintf(xxbuf, "%s (%d,%d)", keyword?keyword:"--", mx, my);
-        StringBlt(ScreenSurface,&MediumFont , xxbuf, x+75, y+48, COLOR_WHITE, NULL, NULL);
+        StringBlt(ScreenSurface,&font_medium , xxbuf, x+75, y+48, COLOR_WHITE, NULL, NULL);
         */
-        StringBlt(ScreenSurface,&MediumFont , gui_interface_npc->head.body_text, x+80, y+50, COLOR_WHITE, NULL, NULL);
+        StringBlt(ScreenSurface,&font_medium , gui_interface_npc->head.body_text, x+80, y+50, COLOR_WHITE, NULL, NULL);
 
         if (gui_interface_npc->head.face>=0 && FaceList[gui_interface_npc->head.face].sprite != NULL)
         {
@@ -1536,10 +1536,10 @@ void show_interface_npc(int mark)
 
     if (gui_interface_npc->used_flag&GUI_INTERFACE_MESSAGE)
     {
-        /*len =  get_string_pixel_length(gui_interface_npc->message.title, &BigFont);
-        StringBlt(ScreenSurface, &BigFont, gui_interface_npc->message.title, x+width2-len/2, y+yoff, COLOR_WHITE, NULL, NULL);
+        /*len =  get_string_pixel_length(gui_interface_npc->message.title, &font_big_out);
+        StringBlt(ScreenSurface, &font_big_out, gui_interface_npc->message.title, x+width2-len/2, y+yoff, COLOR_WHITE, NULL, NULL);
         */
-        StringBlt(ScreenSurface, &BigFont, gui_interface_npc->message.title, x+40, y+yoff, COLOR_HGOLD, NULL, NULL);
+        StringBlt(ScreenSurface, &font_big_out, gui_interface_npc->message.title, x+40, y+yoff, COLOR_HGOLD, NULL, NULL);
         yoff+=25;
 
     for (i=0;i<gui_interface_npc->message.line_count;i++)
@@ -1548,7 +1548,7 @@ void show_interface_npc(int mark)
                 yoff += 5;
             else
             {
-                StringBlt(ScreenSurface, &MediumFont, gui_interface_npc->message.lines[i], x+40, y+yoff, COLOR_WHITE, NULL, NULL);
+                StringBlt(ScreenSurface, &font_medium, gui_interface_npc->message.lines[i], x+40, y+yoff, COLOR_WHITE, NULL, NULL);
                 yoff += 15;
             }
         }
@@ -1569,14 +1569,14 @@ void show_interface_npc(int mark)
                 strcpy(buf, gui_interface_npc->reward.title);
             else
                 strcpy(buf, "Description"); /* default title */
-            StringBlt(ScreenSurface, &BigFont, buf, x + 40, y + yoff, COLOR_HGOLD, NULL, NULL);
-            /*StringBlt(ScreenSurface, &BigFont, xbuf, x+40, y+yoff, COLOR_WHITE, NULL, NULL);*/
+            StringBlt(ScreenSurface, &font_big_out, buf, x + 40, y + yoff, COLOR_HGOLD, NULL, NULL);
+            /*StringBlt(ScreenSurface, &font_big_out, xbuf, x+40, y+yoff, COLOR_WHITE, NULL, NULL);*/
             yoff += 25;
             for (i=0;i<gui_interface_npc->reward.line_count;i++)
             {
                 if (gui_interface_npc->reward.lines[i][0] != '\0')
                 {
-                    StringBlt(ScreenSurface, &MediumFont, gui_interface_npc->reward.lines[i], x+40, y+yoff, COLOR_WHITE, NULL, NULL);
+                    StringBlt(ScreenSurface, &font_medium, gui_interface_npc->reward.lines[i], x+40, y+yoff, COLOR_WHITE, NULL, NULL);
                     yoff += 15;
                 }
                 else
@@ -1585,7 +1585,7 @@ void show_interface_npc(int mark)
         }
         else if (gui_interface_npc->reward.title[0] != '\0')
         {
-            StringBlt(ScreenSurface, &BigFont, gui_interface_npc->reward.title, x + 40, y + yoff, COLOR_HGOLD, NULL, NULL);
+            StringBlt(ScreenSurface, &font_big_out, gui_interface_npc->reward.title, x + 40, y + yoff, COLOR_HGOLD, NULL, NULL);
             yoff += 25;
         }
 
@@ -1604,12 +1604,12 @@ void show_interface_npc(int mark)
                 if (gui_interface_npc->reward.mithril < 0)
                 {
                     sprintf(buf, "%d", gui_interface_npc->reward.mithril);
-                    StringBlt(ScreenSurface, &SystemFontOut, buf, x+65, y+yoff+18, COLOR_RED, NULL, NULL);
+                    StringBlt(ScreenSurface, &font_small_out, buf, x+65, y+yoff+18, COLOR_RED, NULL, NULL);
                 }
                 else
                 {
                     sprintf(buf, "+%d", gui_interface_npc->reward.mithril);
-                    StringBlt(ScreenSurface, &SystemFontOut, buf, x+65, y+yoff+18, COLOR_GREEN, NULL, NULL);
+                    StringBlt(ScreenSurface, &font_small_out, buf, x+65, y+yoff+18, COLOR_GREEN, NULL, NULL);
                 }
             }
             if (gui_interface_npc->reward.gold)
@@ -1618,12 +1618,12 @@ void show_interface_npc(int mark)
                 if (gui_interface_npc->reward.gold < 0)
                 {
                     sprintf(buf, "%d", gui_interface_npc->reward.gold);
-                    StringBlt(ScreenSurface, &SystemFontOut, buf, x+125, y+yoff+18, COLOR_RED, NULL, NULL);
+                    StringBlt(ScreenSurface, &font_small_out, buf, x+125, y+yoff+18, COLOR_RED, NULL, NULL);
                 }
                 else
                 {
                     sprintf(buf, "+%d", gui_interface_npc->reward.gold);
-                    StringBlt(ScreenSurface, &SystemFontOut, buf, x+125, y+yoff+18, COLOR_GREEN, NULL, NULL);
+                    StringBlt(ScreenSurface, &font_small_out, buf, x+125, y+yoff+18, COLOR_GREEN, NULL, NULL);
                 }
             }
             if (gui_interface_npc->reward.silver)
@@ -1632,12 +1632,12 @@ void show_interface_npc(int mark)
                 if (gui_interface_npc->reward.silver < 0)
                 {
                     sprintf(buf, "%d", gui_interface_npc->reward.silver);
-                    StringBlt(ScreenSurface, &SystemFontOut, buf, x+185, y+yoff+18, COLOR_RED, NULL, NULL);
+                    StringBlt(ScreenSurface, &font_small_out, buf, x+185, y+yoff+18, COLOR_RED, NULL, NULL);
                 }
                 else
                 {
                     sprintf(buf, "+%d", gui_interface_npc->reward.silver);
-                    StringBlt(ScreenSurface, &SystemFontOut, buf, x+185, y+yoff+18, COLOR_GREEN, NULL, NULL);
+                    StringBlt(ScreenSurface, &font_small_out, buf, x+185, y+yoff+18, COLOR_GREEN, NULL, NULL);
                 }
             }
             if (gui_interface_npc->reward.copper)
@@ -1646,12 +1646,12 @@ void show_interface_npc(int mark)
                 if (gui_interface_npc->reward.copper < 0)
                 {
                     sprintf(buf, "%d", gui_interface_npc->reward.copper);
-                    StringBlt(ScreenSurface, &SystemFontOut, buf, x+245, y+yoff+18, COLOR_RED, NULL, NULL);
+                    StringBlt(ScreenSurface, &font_small_out, buf, x+245, y+yoff+18, COLOR_RED, NULL, NULL);
                 }
                 else
                 {
                     sprintf(buf, "+%d", gui_interface_npc->reward.copper);
-                    StringBlt(ScreenSurface, &SystemFontOut, buf, x+245, y+yoff+18, COLOR_GREEN, NULL, NULL);
+                    StringBlt(ScreenSurface, &font_small_out, buf, x+245, y+yoff+18, COLOR_GREEN, NULL, NULL);
                 }
             }
             yoff+=30;
@@ -1690,12 +1690,12 @@ void show_interface_npc(int mark)
                 else if (gui_interface_npc->icon[i].picture)
                     sprite_blt(gui_interface_npc->icon[i].picture, x + 40, y + yoff, NULL, NULL);
 
-                StringBlt(ScreenSurface, &MediumFont, gui_interface_npc->icon[i].title, x+80, y+yoff-3, COLOR_WHITE, NULL, NULL);
+                StringBlt(ScreenSurface, &font_medium, gui_interface_npc->icon[i].title, x+80, y+yoff-3, COLOR_WHITE, NULL, NULL);
                 yoff+=10;
-                StringBlt(ScreenSurface, &SystemFont, gui_interface_npc->icon[i].body_text, x+80, y+yoff, COLOR_WHITE, NULL, NULL);
+                StringBlt(ScreenSurface, &font_small, gui_interface_npc->icon[i].body_text, x+80, y+yoff, COLOR_WHITE, NULL, NULL);
                 yoff+=10;
                 if (gui_interface_npc->icon[i].second_line)
-                    StringBlt(ScreenSurface, &SystemFont, gui_interface_npc->icon[i].second_line, x+80, y+yoff+1, COLOR_WHITE, NULL, NULL);
+                    StringBlt(ScreenSurface, &font_small, gui_interface_npc->icon[i].second_line, x+80, y+yoff+1, COLOR_WHITE, NULL, NULL);
                 yoff+=24;
             }
         }
@@ -1703,7 +1703,7 @@ void show_interface_npc(int mark)
         if (flag_s)
         {
 /*
- *            StringBlt(ScreenSurface, &MediumFont, "And one of these:", x+40, y+yoff, COLOR_WHITE, NULL, NULL);
+ *            StringBlt(ScreenSurface, &font_medium, "And one of these:", x+40, y+yoff, COLOR_WHITE, NULL, NULL);
  *            yoff+=20;
  */
             yoff += 15;
@@ -1723,12 +1723,12 @@ void show_interface_npc(int mark)
                     else if (gui_interface_npc->icon[i].picture)
                         sprite_blt(gui_interface_npc->icon[i].picture, x + 40, y + yoff, NULL, NULL);
 
-                    StringBlt(ScreenSurface, &MediumFont, gui_interface_npc->icon[i].title, x+80, y+yoff-3, COLOR_WHITE, NULL, NULL);
+                    StringBlt(ScreenSurface, &font_medium, gui_interface_npc->icon[i].title, x+80, y+yoff-3, COLOR_WHITE, NULL, NULL);
                     yoff+=10;
-                    StringBlt(ScreenSurface, &SystemFont, gui_interface_npc->icon[i].body_text, x+80, y+yoff, COLOR_WHITE, NULL, NULL);
+                    StringBlt(ScreenSurface, &font_small, gui_interface_npc->icon[i].body_text, x+80, y+yoff, COLOR_WHITE, NULL, NULL);
                     yoff+=10;
                     if (gui_interface_npc->icon[i].second_line)
-                        StringBlt(ScreenSurface, &SystemFont, gui_interface_npc->icon[i].second_line, x+80, y+yoff+1, COLOR_WHITE, NULL, NULL);
+                        StringBlt(ScreenSurface, &font_small, gui_interface_npc->icon[i].second_line, x+80, y+yoff+1, COLOR_WHITE, NULL, NULL);
                     yoff+=24;
                 }
             }
@@ -1737,10 +1737,10 @@ void show_interface_npc(int mark)
         if (gui_interface_npc->icon_select)
         {
 /*
- *             StringBlt(ScreenSurface, &MediumFont, "And one of these (select one):", x+40, y+yoff, COLOR_WHITE, NULL, NULL);
+ *             StringBlt(ScreenSurface, &font_medium, "And one of these (select one):", x+40, y+yoff, COLOR_WHITE, NULL, NULL);
  *             yoff+=20;
  */
-            StringBlt(ScreenSurface, &Font6x3Out, "--- Select an item below ---", x + 120, y + yoff - 5, COLOR_GREEN, NULL, NULL);
+            StringBlt(ScreenSurface, &font_tiny_out, "--- Select an item below ---", x + 120, y + yoff - 5, COLOR_GREEN, NULL, NULL);
             yoff += 15;
             for (i=0;i<gui_interface_npc->icon_count;i++)
             {
@@ -1765,16 +1765,16 @@ void show_interface_npc(int mark)
                     else if (gui_interface_npc->icon[i].picture)
                         sprite_blt(gui_interface_npc->icon[i].picture, x + 40, y + yoff, NULL, NULL);
 
-                    StringBlt(ScreenSurface, &MediumFont, gui_interface_npc->icon[i].title, x+80, y+yoff-3, COLOR_WHITE, NULL, NULL);
+                    StringBlt(ScreenSurface, &font_medium, gui_interface_npc->icon[i].title, x+80, y+yoff-3, COLOR_WHITE, NULL, NULL);
                     yoff+=10;
-                    StringBlt(ScreenSurface, &SystemFont, gui_interface_npc->icon[i].body_text, x+78, y+yoff-1, COLOR_WHITE, NULL, NULL);
+                    StringBlt(ScreenSurface, &font_small, gui_interface_npc->icon[i].body_text, x+78, y+yoff-1, COLOR_WHITE, NULL, NULL);
                     yoff+=10;
                     if (gui_interface_npc->icon[i].second_line)
-                        StringBlt(ScreenSurface, &SystemFont, gui_interface_npc->icon[i].second_line, x+78, y+yoff, COLOR_WHITE, NULL, NULL);
+                        StringBlt(ScreenSurface, &font_small, gui_interface_npc->icon[i].second_line, x+78, y+yoff, COLOR_WHITE, NULL, NULL);
                     yoff+=24;
                 }
             }
-            StringBlt(ScreenSurface, &Font6x3Out, "--- Select an item above ---", x + 120, y + yoff - 5, COLOR_GREEN, NULL, NULL);
+            StringBlt(ScreenSurface, &font_tiny_out, "--- Select an item above ---", x + 120, y + yoff - 5, COLOR_GREEN, NULL, NULL);
         }
     yoff+=15;
     }
@@ -1784,9 +1784,9 @@ void show_interface_npc(int mark)
         for (i=0;i<gui_interface_npc->link_count;i++,yoff+=15)
         {
             if (gui_interface_npc->link_selected == i+1)
-                StringBlt(ScreenSurface, &MediumFont, gui_interface_npc->link[i].link, x+40, y+yoff, COLOR_DK_NAVY, NULL, NULL);
+                StringBlt(ScreenSurface, &font_medium, gui_interface_npc->link[i].link, x+40, y+yoff, COLOR_DK_NAVY, NULL, NULL);
             else
-                StringBlt(ScreenSurface, &MediumFont, gui_interface_npc->link[i].link, x+40, y+yoff, COLOR_TURQUOISE, NULL, NULL);
+                StringBlt(ScreenSurface, &font_medium, gui_interface_npc->link[i].link, x+40, y+yoff, COLOR_TURQUOISE, NULL, NULL);
         }
     }
 
@@ -2002,13 +2002,13 @@ void show_interface_npc(int mark)
         box.w = 180;
         if (gui_interface_npc->input_flag)
         {
-            StringBlt(ScreenSurface, &SystemFont, "~Return~ to send, ~ESC~ to cancel", x+130, y+437, COLOR_WHITE, NULL, NULL);
+            StringBlt(ScreenSurface, &font_small, "~Return~ to send, ~ESC~ to cancel", x+130, y+437, COLOR_WHITE, NULL, NULL);
             SDL_FillRect(ScreenSurface, &box, 0);
-            StringBlt(ScreenSurface, &MediumFont, show_input_string(InputString, &MediumFont,box.w-10),box.x+5 ,box.y, COLOR_WHITE, NULL, NULL);
+            StringBlt(ScreenSurface, &font_medium, show_input_string(InputString, &font_medium,box.w-10),box.x+5 ,box.y, COLOR_WHITE, NULL, NULL);
         }
         else
         {
-            StringBlt(ScreenSurface, &SystemFont, "~Return~ to talk", x+155, y+437, COLOR_WHITE, NULL, NULL);
+            StringBlt(ScreenSurface, &font_small, "~Return~ to talk", x+155, y+437, COLOR_WHITE, NULL, NULL);
 
             if (gui_interface_npc->link_selected)
             {
@@ -2018,30 +2018,30 @@ void show_interface_npc(int mark)
                 if (!strncmp(gui_interface_npc->link[gui_interface_npc->link_selected-1].cmd, "/talk ", 6))
                     cmdoff = 6;
                 box.w=175;
-                if (StringWidthOffset(&MediumFont, (gui_interface_npc->link[gui_interface_npc->link_selected-1].cmd)+cmdoff, &tmp, 175))
+                if (StringWidthOffset(&font_medium, (gui_interface_npc->link[gui_interface_npc->link_selected-1].cmd)+cmdoff, &tmp, 175))
                 {
                     strncpy(cmd_tmp,(gui_interface_npc->link[gui_interface_npc->link_selected-1].cmd)+cmdoff,tmp-2);
                     cmd_tmp[tmp-2]='\0';
                     strcat(cmd_tmp,"...");
-                    StringBlt(ScreenSurface, &MediumFont, cmd_tmp, box.x+3, box.y-1, COLOR_DK_NAVY, &box, NULL);
+                    StringBlt(ScreenSurface, &font_medium, cmd_tmp, box.x+3, box.y-1, COLOR_DK_NAVY, &box, NULL);
                 }
                 else
-                    StringBlt(ScreenSurface, &MediumFont, (gui_interface_npc->link[gui_interface_npc->link_selected-1].cmd)+cmdoff, box.x+3, box.y-1, COLOR_DK_NAVY, &box, NULL);
+                    StringBlt(ScreenSurface, &font_medium, (gui_interface_npc->link[gui_interface_npc->link_selected-1].cmd)+cmdoff, box.x+3, box.y-1, COLOR_DK_NAVY, &box, NULL);
             }
             if (gui_interface_npc->keyword_selected)
             {
                 char cmd_tmp[128];
                 int tmp;
                 box.w=175;
-                if (StringWidthOffset(&MediumFont, gui_interface_npc->keywords[gui_interface_npc->keyword_selected-1], &tmp, 175))
+                if (StringWidthOffset(&font_medium, gui_interface_npc->keywords[gui_interface_npc->keyword_selected-1], &tmp, 175))
                 {
                     strncpy(cmd_tmp,gui_interface_npc->keywords[gui_interface_npc->keyword_selected-1],tmp-2);
                     cmd_tmp[tmp-2]='\0';
                     strcat(cmd_tmp,"...");
-                    StringBlt(ScreenSurface, &MediumFont, cmd_tmp, box.x+3, box.y-1, COLOR_DK_NAVY, &box, NULL);
+                    StringBlt(ScreenSurface, &font_medium, cmd_tmp, box.x+3, box.y-1, COLOR_DK_NAVY, &box, NULL);
                 }
                 else
-                    StringBlt(ScreenSurface, &MediumFont, gui_interface_npc->keywords[gui_interface_npc->keyword_selected-1], box.x+3, box.y-1, COLOR_DK_NAVY, &box, NULL);
+                    StringBlt(ScreenSurface, &font_medium, gui_interface_npc->keywords[gui_interface_npc->keyword_selected-1], box.x+3, box.y-1, COLOR_DK_NAVY, &box, NULL);
             }
         }
     }

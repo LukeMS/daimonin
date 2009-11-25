@@ -32,12 +32,6 @@ _server_char        new_character; /* if we login as new char, thats the values 
 SDL_Surface        *ScreenSurface; /* THE main surface (backbuffer)*/
 SDL_Surface        *ScreenSurfaceMap; /* THE map surface (backbuffer)*/
 SDL_Surface        *zoomed = NULL;
-_Font               SystemFont;         /* our main font*/
-_Font               SystemFontOut;      /* our main font - black outlined*/
-_Font               BigFont;            /* bigger special font*/
-_Font               MediumFont;
-_Font               Font6x3Out;     /* our main font with shadow*/
-_Font               MediumFontOut;
 struct sockaddr_in  insock; /* Server's attributes */
 ClientSocket        csocket;
 int                 SocketStatusErrorNr;        /* if an socket error, this is it */
@@ -1207,12 +1201,6 @@ void load_bitmaps(void)
 
     for (i = 0; i <= BITMAP_PROGRESS_BACK; i++) /* add later better error handling here*/
         load_bitmap(i);
-    CreateNewFont(Bitmaps[BITMAP_FONT1], &SystemFont, 16, 16, 1);
-    CreateNewFont(Bitmaps[BITMAP_FONTMEDIUM], &MediumFont, 16, 16, 1);
-    CreateNewFont(Bitmaps[BITMAP_FONT1OUT], &SystemFontOut, 16, 16, 1);
-    CreateNewFont(Bitmaps[BITMAP_FONT6x3OUT], &Font6x3Out, 16, 16, -1);
-    CreateNewFont(Bitmaps[BITMAP_BIGFONT], &BigFont, 11, 16, 1);
-    CreateNewFont(Bitmaps[BITMAP_FONTMEDIUMOUT], &MediumFontOut,16,16,0);
 }
 
 Boolean load_bitmap(int index)
@@ -1762,6 +1750,7 @@ int main(int argc, char *argv[])
     SDL_EnableUNICODE(1);
     load_skindef();
     load_bitmaps();
+    font_init();
     show_intro("start sound system", 9);
     sound_init();
     show_intro("load sounds", 18);
@@ -1945,7 +1934,7 @@ int main(int argc, char *argv[])
         }
 
         if (map_transfer_flag)
-                StringBlt(ScreenSurface, &SystemFont, "Transfer Character to Map...", 300, 300, COLOR_DEFAULT, NULL, NULL);
+                StringBlt(ScreenSurface, &font_small, "Transfer Character to Map...", 300, 300, COLOR_DEFAULT, NULL, NULL);
 
         /* show the current dragged item */
         if (cpl.menustatus == MENU_NO && (drag = draggingInvItem(DRAG_GET_STATUS)))
@@ -2059,7 +2048,7 @@ int main(int argc, char *argv[])
                 rec.y = 122;
                 rec.h = 14;
                 rec.w = 225;
-                StringBlt(ScreenSurface, &SystemFont, buf, rec.x, rec.y, COLOR_DEFAULT, NULL, NULL);
+                StringBlt(ScreenSurface, &font_small, buf, rec.x, rec.y, COLOR_DEFAULT, NULL, NULL);
             }
         }
         /* TODO: This should be moved to the anim functions, but for that we
@@ -2081,8 +2070,8 @@ int main(int argc, char *argv[])
                 if (LastTick-vim.starttick>2000)
                     bmbltfx.alpha -= (int)(255.0f*((float)(LastTick-vim.starttick-2000)/1000.0f));
 
-                StringBlt(ScreenSurface, &BigFont, vim.msg, 400-(StringWidth(&BigFont,vim.msg)/2) , 300-bmoff, COLOR_BLACK, NULL, &bmbltfx);
-                StringBlt(ScreenSurface, &BigFont, vim.msg, 400-(StringWidth(&BigFont,vim.msg)/2)-2 , 300-2-bmoff, COLOR_GREEN, NULL, &bmbltfx);
+                StringBlt(ScreenSurface, &font_big_out, vim.msg, 400-(StringWidth(&font_big_out,vim.msg)/2) , 300-bmoff, COLOR_BLACK, NULL, &bmbltfx);
+                StringBlt(ScreenSurface, &font_big_out, vim.msg, 400-(StringWidth(&font_big_out,vim.msg)/2)-2 , 300-2-bmoff, COLOR_GREEN, NULL, &bmbltfx);
             }
             else
                 vim.active = FALSE;
@@ -2127,9 +2116,9 @@ static void show_intro(char *text, int progress)
     sprite_blt(Bitmaps[BITMAP_PROGRESS], x + 310, y + 588, &box, NULL);
 
     if (text)
-        StringBlt(ScreenSurface, &SystemFont, text, x+370, y+585, COLOR_DEFAULT, NULL, NULL);
+        StringBlt(ScreenSurface, &font_small, text, x+370, y+585, COLOR_DEFAULT, NULL, NULL);
     else
-        StringBlt(ScreenSurface, &SystemFont, "** Press Key **", x+375, y+585, COLOR_DEFAULT, NULL, NULL);
+        StringBlt(ScreenSurface, &font_small, "** Press Key **", x+375, y+585, COLOR_DEFAULT, NULL, NULL);
 
     flip_screen();
 }
@@ -2148,7 +2137,7 @@ static void flip_screen(void)
                 ""
 #endif
                 );
-        StringBlt(ScreenSurface, &SystemFont, buf, (Screensize.xoff/2)+10, (Screensize.yoff/2)+585, COLOR_DEFAULT, NULL, NULL);
+        StringBlt(ScreenSurface, &font_small, buf, (Screensize.xoff/2)+10, (Screensize.yoff/2)+585, COLOR_DEFAULT, NULL, NULL);
     }
 
 #ifdef INSTALL_OPENGL
@@ -2306,6 +2295,7 @@ void reload_skin()
 
     free_bitmaps();
     load_bitmaps();
+    font_init();
     for (i = BITMAP_PROGRESS_BACK+1; i < BITMAP_MAX; i++) /* add later better error handling here*/
         load_bitmap(i);
     load_skindef();

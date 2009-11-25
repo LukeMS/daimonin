@@ -66,7 +66,7 @@ static char * get_keyword_start(int actWin, int mouseX, int *row)
         int index   = -1;
         text = txtwin[actWin].text[pos].buf;
         while (text[++index] && pos2 <= mouseX && text[index] != '^')
-            pos2 += SystemFont.c[(int) text[index]].w + SystemFont.char_offset;
+            pos2 += font_small.c[(int) text[index]].w + font_small.char_offset;
         if (text[index] != '^')
         {
             /* clipped keyword was clicked, so we must start one row before */
@@ -96,7 +96,7 @@ row2 : text = txtwin[actWin].text[pos].buf;
                 key_start = -1; /* end of a key */
             continue;
         }
-        pos2 += SystemFont.c[(int) text[pos]].w + SystemFont.char_offset;
+        pos2 += font_small.c[(int) text[pos]].w + font_small.char_offset;
     }
     if (key_start < 0)
         return NULL; /* no keyword here */
@@ -308,7 +308,7 @@ void draw_info(char *str, int flags)
     {
 
         if (buf2[i] != '^')
-            len += SystemFont.c[(uint8) (buf2[i])].w + SystemFont.char_offset;
+            len += font_small.c[(uint8) (buf2[i])].w + font_small.char_offset;
 
         if (len >= winlen || buf2[i] == 0x0a || buf2[i] == 0)
         {
@@ -429,7 +429,7 @@ static void show_window(int actWin, int x, int y, _BLTFX *bltfx)
             if (temp < 0)
                 temp = TEXT_WIN_MAX + temp;
         }
-        StringBlt(bltfx->surface, &SystemFont, &txtwin[actWin].text[temp].buf[0], x + 2,
+        StringBlt(bltfx->surface, &font_small, &txtwin[actWin].text[temp].buf[0], x + 2,
                   (y + 1 + i * 10) | txtwin[actWin].text[temp].key_clipped, txtwin[actWin].text[temp].color, NULL, NULL);
     }
 

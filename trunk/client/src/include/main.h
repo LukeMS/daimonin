@@ -526,10 +526,10 @@ enum
 typedef enum _bitmap_index
 {
     BITMAP_PALETTE,
-    BITMAP_FONT1,
-    BITMAP_FONT6x3OUT,
-    BITMAP_BIGFONT,
-    BITMAP_FONT1OUT,
+    BITMAP_FONTSMALL,
+    BITMAP_FONTTINYOUT,
+    BITMAP_FONTBIGOUT,
+    BITMAP_FONTSMALLOUT,
     BITMAP_FONTMEDIUM,
     BITMAP_FONTMEDIUMOUT,
     BITMAP_INTRO,
@@ -714,12 +714,6 @@ extern struct gui_interface_struct *gui_interface_npc;
 
 extern _face_struct         FaceList[MAX_FACE_TILES];   /* face data */
 
-extern struct _Font         BigFont;            /* bigger font */
-extern struct _Font         MediumFont;
-extern struct _Font         SystemFont;         /* our main font*/
-extern struct _Font         SystemFontOut;          /* our main font*/
-extern struct _Font         Font6x3Out;         /* 6x3 mini font */
-extern struct _Font         MediumFontOut;
 extern SDL_Surface         *ScreenSurface;      /* our main bla and so on surface */
 extern SDL_Surface         *ScreenSurfaceMap;      /* our main bla and so on surface */
 extern SDL_Surface         *zoomed;                /* tem surface for zoomed data */

@@ -1023,7 +1023,7 @@ static void key_string_event(SDL_KeyboardEvent *key)
                 box.w = 180;
 
                 SDL_FillRect(ScreenSurface, &box, 0);
-                StringBlt(ScreenSurface, &SystemFont, show_input_string(InputString, &SystemFont,box.w-10),box.x+5 ,box.y, COLOR_WHITE, NULL, NULL);
+                StringBlt(ScreenSurface, &font_small, show_input_string(InputString, &font_small,box.w-10),box.x+5 ,box.y, COLOR_WHITE, NULL, NULL);
             }
             break;
 
@@ -1059,7 +1059,7 @@ static void key_string_event(SDL_KeyboardEvent *key)
                 box.h = 12;
                 box.w = 180;
                 SDL_FillRect(ScreenSurface, &box, 0);
-                StringBlt(ScreenSurface, &SystemFont, show_input_string(InputString, &SystemFont,box.w-10),box.x+5 ,box.y, COLOR_WHITE, NULL, NULL);
+                StringBlt(ScreenSurface, &font_small, show_input_string(InputString, &font_small,box.w-10),box.x+5 ,box.y, COLOR_WHITE, NULL, NULL);
             }
             break;
 

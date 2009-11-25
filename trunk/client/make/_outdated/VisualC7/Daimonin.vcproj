@@ -166,6 +166,9 @@
 				RelativePath="..\..\..\src\filewrap.c">
 			</File>
 			<File
+				RelativePath="..\..\..\src\font.c">
+			</File>
+			<File
 				RelativePath="..\..\..\src\group.c">
 			</File>
 			<File
@@ -255,6 +258,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\filewrap.h">
+			</File>
+			<File
+				RelativePath="..\..\..\src\include\font.h">
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\group.h">
