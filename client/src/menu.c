@@ -636,7 +636,7 @@ int client_command_check(char *cmd)
 void widget_show_console(int x, int y)
 {
     sprite_blt(Bitmaps[BITMAP_TEXTINPUT],x, y, NULL, NULL);
-    StringBlt(ScreenSurface, &SystemFont, show_input_string(InputString, &SystemFont, 239), x+9, y+7, COLOR_WHITE, NULL,
+    StringBlt(ScreenSurface, &font_small, show_input_string(InputString, &font_small, 239), x+9, y+7, COLOR_WHITE, NULL,
               NULL);
 }
 
@@ -767,9 +767,9 @@ void widget_show_number(int x, int y)
 
     sprite_blt(Bitmaps[BITMAP_NUMBER], x, y, NULL, NULL);
     sprintf(buf, "%s how many from %d %s", cpl.nummode == NUM_MODE_GET ? "get" : "drop", cpl.nrof, cpl.num_text);
-    StringBlt(ScreenSurface, &SystemFont, buf, x + 8, y + 6, COLOR_HGOLD, &tmp, NULL);
-    StringBlt(ScreenSurface, &SystemFont,
-              show_input_string(InputString, &SystemFont, Bitmaps[BITMAP_NUMBER]->bitmap->w - 22), x + 8, y + 25,
+    StringBlt(ScreenSurface, &font_small, buf, x + 8, y + 6, COLOR_HGOLD, &tmp, NULL);
+    StringBlt(ScreenSurface, &font_small,
+              show_input_string(InputString, &font_small, Bitmaps[BITMAP_NUMBER]->bitmap->w - 22), x + 8, y + 25,
               COLOR_WHITE, &tmp, NULL);
 }
 
@@ -777,9 +777,9 @@ static inline void print_resist(char *name, int x, int y, int num)
 {
     char    buf[16];
 
-    StringBlt(widgetSF[RESIST_ID], &SystemFont, name, x+5, y, (num>ATNR_GODPOWER)?COLOR_DGOLD:COLOR_HGOLD, NULL, NULL);
+    StringBlt(widgetSF[RESIST_ID], &font_small, name, x+5, y, (num>ATNR_GODPOWER)?COLOR_DGOLD:COLOR_HGOLD, NULL, NULL);
     sprintf(buf, "%02d", cpl.stats.protection[num]);
-    StringBlt(widgetSF[RESIST_ID], &SystemFont, buf, x + 17, y, cpl.stats.protection[num] ? (cpl.stats.protection[num]<0?COLOR_RED:(cpl.stats.protection[num]>=100?COLOR_ORANGE:COLOR_WHITE)) : COLOR_GREY,NULL, NULL);
+    StringBlt(widgetSF[RESIST_ID], &font_small, buf, x + 17, y, cpl.stats.protection[num] ? (cpl.stats.protection[num]<0?COLOR_RED:(cpl.stats.protection[num]>=100?COLOR_ORANGE:COLOR_WHITE)) : COLOR_GREY,NULL, NULL);
 }
 
 void widget_show_resist(int x, int y)
@@ -799,7 +799,7 @@ void widget_show_resist(int x, int y)
         bltfx.alpha=0;
 
         sprite_blt(Bitmaps[BITMAP_RESIST_BG], 0, 0, NULL, &bltfx);
-        StringBlt(widgetSF[RESIST_ID], &Font6x3Out, "Resistance Table", 5,  1, COLOR_HGOLD, NULL, NULL);
+        StringBlt(widgetSF[RESIST_ID], &font_tiny_out, "Resistance Table", 5,  1, COLOR_HGOLD, NULL, NULL);
 
         print_resist("IM", 68, 3, ATNR_PHYSICAL);
         print_resist("SL", 98, 3, ATNR_SLASH);
@@ -959,14 +959,14 @@ void widget_show_range(int x, int y)
                 if (!tmp2)
                 {
                     LOG(LOG_DEBUG,"BUG: applied range weapon don't exist\n");
-                    StringBlt(ScreenSurface, &SystemFont, "using Nothing", x + 5, y + 36, COLOR_WHITE, &rec_range, NULL);
+                    StringBlt(ScreenSurface, &font_small, "using Nothing", x + 5, y + 36, COLOR_WHITE, &rec_range, NULL);
                 }
                 else
                 {
                     sprintf(buf, "using %s", tmp2->s_name);
                     blt_inventory_face_from_tag(fire_mode_tab[FIRE_MODE_BOW].item, x + 5, y + 2);
 
-                    StringBlt(ScreenSurface, &SystemFont, buf, x + 5, y + 36, COLOR_WHITE, &rec_range, NULL);
+                    StringBlt(ScreenSurface, &font_small, buf, x + 5, y + 36, COLOR_WHITE, &rec_range, NULL);
                 }
 
                 if (fire_mode_tab[FIRE_MODE_BOW].amun != FIRE_ITEM_NO)
@@ -995,12 +995,12 @@ void widget_show_range(int x, int y)
 //                    sprintf(buf, "Type: %d",tmp2->itype);
                     buf[0]=0;
 
-                StringBlt(ScreenSurface, &SystemFont, buf, x + 5, y + 47, COLOR_WHITE, &rec_item, NULL);
+                StringBlt(ScreenSurface, &font_small, buf, x + 5, y + 47, COLOR_WHITE, &rec_item, NULL);
             }
             else
             {
                 sprintf(buf, "no range weapon applied");
-                StringBlt(ScreenSurface, &SystemFont, buf, x + 5, y + 36, COLOR_WHITE, &rec_range, NULL);
+                StringBlt(ScreenSurface, &font_small, buf, x + 5, y + 36, COLOR_WHITE, &rec_range, NULL);
             }
 
             sprite_blt(Bitmaps[BITMAP_RANGE_MARKER], x + 5, y + 2, NULL, NULL);
@@ -1014,7 +1014,7 @@ void widget_show_range(int x, int y)
                 if (fire_mode_tab[FIRE_MODE_SKILL].skill->flag != -1)
                 {
                     sprite_blt(fire_mode_tab[FIRE_MODE_SKILL].skill->icon, x + 45, y + 2, NULL, NULL);
-                    StringBlt(ScreenSurface, &SystemFont, fire_mode_tab[FIRE_MODE_SKILL].skill->name, x + 5, y + 47,
+                    StringBlt(ScreenSurface, &font_small, fire_mode_tab[FIRE_MODE_SKILL].skill->name, x + 5, y + 47,
                               COLOR_WHITE, &rec_item, NULL);
                 }
                 else
@@ -1024,10 +1024,10 @@ void widget_show_range(int x, int y)
             {
                 sprite_blt(Bitmaps[BITMAP_RANGE_SKILL_NO], x + 5, y + 2, NULL, NULL);
                 sprintf(buf, "no skill selected");
-                StringBlt(ScreenSurface, &SystemFont, buf, x + 5, y + 47, COLOR_WHITE, &rec_item, NULL);
+                StringBlt(ScreenSurface, &font_small, buf, x + 5, y + 47, COLOR_WHITE, &rec_item, NULL);
             }
             sprintf(buf, "use skill");
-            StringBlt(ScreenSurface, &SystemFont, buf, x + 5, y + 36, COLOR_WHITE, &rec_range, NULL);
+            StringBlt(ScreenSurface, &font_small, buf, x + 5, y + 36, COLOR_WHITE, &rec_range, NULL);
 
             break;
         case FIRE_MODE_SPELL:
@@ -1038,7 +1038,7 @@ void widget_show_range(int x, int y)
                 if (fire_mode_tab[FIRE_MODE_SPELL].spell->flag != -1)
                 {
                     sprite_blt(fire_mode_tab[FIRE_MODE_SPELL].spell->icon, x + 45, y + 2, NULL, NULL);
-                    StringBlt(ScreenSurface, &SystemFont, fire_mode_tab[FIRE_MODE_SPELL].spell->name, x + 5, y + 47,
+                    StringBlt(ScreenSurface, &font_small, fire_mode_tab[FIRE_MODE_SPELL].spell->name, x + 5, y + 47,
                               COLOR_WHITE, &rec_item, NULL);
                 }
                 else
@@ -1048,10 +1048,10 @@ void widget_show_range(int x, int y)
             {
                 sprite_blt(Bitmaps[BITMAP_RANGE_WIZARD_NO], x + 5, y + 2, NULL, NULL);
                 sprintf(buf, "no spell selected");
-                StringBlt(ScreenSurface, &SystemFont, buf, x + 5, y + 47, COLOR_WHITE, &rec_item, NULL);
+                StringBlt(ScreenSurface, &font_small, buf, x + 5, y + 47, COLOR_WHITE, &rec_item, NULL);
             }
             sprintf(buf, "cast spell");
-            StringBlt(ScreenSurface, &SystemFont, buf, x + 5, y + 36, COLOR_WHITE, &rec_range, NULL);
+            StringBlt(ScreenSurface, &font_small, buf, x + 5, y + 36, COLOR_WHITE, &rec_range, NULL);
 
             break;
     };
@@ -1135,7 +1135,7 @@ void show_media(int x, int y)
 
 void widget_show_mapname(int x, int y)
 {
-    StringBlt(ScreenSurface, &BigFont, MapData.name, x, y, COLOR_HGOLD, NULL, NULL);
+    StringBlt(ScreenSurface, &font_big_out, MapData.name, x, y, COLOR_HGOLD, NULL, NULL);
 }
 
 
@@ -2108,7 +2108,7 @@ void show_quickslots(int x, int y)
             }
         }
         sprintf(buf, "F%d", i + 1);
-        StringBlt(ScreenSurface, &Font6x3Out, buf, x + quickslots_pos[i][qsx]+xoff + 12, y + quickslots_pos[i][qsy] - 6,
+        StringBlt(ScreenSurface, &font_tiny_out, buf, x + quickslots_pos[i][qsx]+xoff + 12, y + quickslots_pos[i][qsy] - 6,
                   COLOR_DEFAULT, NULL, NULL);
     }
 }
@@ -2175,7 +2175,7 @@ void widget_quickslots(int x, int y)
             }
         }
         sprintf(buf, "F%d", i + 1);
-        StringBlt(ScreenSurface, &Font6x3Out, buf, x + quickslots_pos[i][qsx]+xoff + 12, y + quickslots_pos[i][qsy] - 6,
+        StringBlt(ScreenSurface, &font_tiny_out, buf, x + quickslots_pos[i][qsx]+xoff + 12, y + quickslots_pos[i][qsy] - 6,
                   COLOR_DEFAULT, NULL, NULL);
     }
 }
@@ -2715,7 +2715,7 @@ void widget_show_target(int x, int y)
         {
             /* BEGIN modified robed's HP-%-patch */
             /* Draw the name of the target */
-             StringBlt(ScreenSurface, &SystemFont, cpl.target_name, x + 35, y+3, cpl.target_color, NULL, NULL);
+             StringBlt(ScreenSurface, &font_small, cpl.target_name, x + 35, y+3, cpl.target_color, NULL, NULL);
             /* Either draw HP remaining percent and description... */
             if (hp_tmp)
             {
@@ -2730,14 +2730,14 @@ void widget_show_target(int x, int y)
                 else if (hp_tmp > 10) hp_color = COLOR_YELLOW;
                 else                  hp_color = COLOR_RED;
 
-               StringBlt(ScreenSurface, &SystemFont, hp_text, x + 35, y + 14, hp_color, NULL, NULL);
+               StringBlt(ScreenSurface, &font_small, hp_text, x + 35, y + 14, hp_color, NULL, NULL);
                xhpoffset=50;
 
-                StringBlt(ScreenSurface, &SystemFont, ptr, x + 35 + xhpoffset, y + 14, cpl.target_color, NULL, NULL);
+                StringBlt(ScreenSurface, &font_small, ptr, x + 35 + xhpoffset, y + 14, cpl.target_color, NULL, NULL);
             }
             /* ...or draw just the description */
             else
-                StringBlt(ScreenSurface, &SystemFont, ptr, x + 35, y + 14, cpl.target_color, NULL, NULL);
+                StringBlt(ScreenSurface, &font_small, ptr, x + 35, y + 14, cpl.target_color, NULL, NULL);
             /* END modified robed's HP-%-patch */
         }
     }

@@ -244,44 +244,8 @@ void sprite_free_sprite(_Sprite *sprite)
     FreeMemory(&tmp_free);
 }
 
-/* init this font structure with gfx data from sprite bitmap */
-void CreateNewFont(_Sprite *sprite, _Font *font, int xlen, int ylen, int c32len)
-{
-    register int i, y;
-    int flag;
-
-    SDL_LockSurface(sprite->bitmap);
-    font->sprite = sprite;
-
-    for (i = 0; i < 256; i++)
-    {
-        font->c[i].x = (i % 32) * (xlen + 1) + 1;
-        font->c[i].y = (i / 32) * (ylen + 1) + 1;
-        font->c[i].h = ylen;
-        font->c[i].w = xlen;
-        flag = 0;
-        while (1) /* better no error in font bitmap... or this will lock up*/
-        {
-            for (y = font->c[i].h - 1; y >= 0; y--)
-            {
-                if (GetSurfacePixel(sprite->bitmap, font->c[i].x + font->c[i].w - 1, font->c[i].y + y))
-                {
-                    flag = 1;
-                    break;
-                }
-            }
-            if (flag)
-                break;
-            font->c[i].w--;
-        }
-    }
-
-    SDL_UnlockSurface(sprite->bitmap);
-    font->char_offset = c32len;
-}
-
 /* Calculate the displayed width of the text */
-int StringWidth(_Font *font, char *text)
+int StringWidth(_font *font, char *text)
 {
     int w = 0, i;
 
@@ -304,7 +268,7 @@ int StringWidth(_Font *font, char *text)
     return w;
 }
 /* Calculate the displayed chars for a given width*/
-int StringWidthOffset(_Font *font, char *text, int *line, int len)
+int StringWidthOffset(_font *font, char *text, int *line, int len)
 {
     int w = 0, i, c, flag = FALSE;
 
@@ -336,7 +300,7 @@ int StringWidthOffset(_Font *font, char *text, int *line, int len)
     return flag;
 }
 
-void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col, SDL_Rect *area, _BLTFX *bltfx)
+void StringBlt(SDL_Surface *surf, _font *font, char *text, int x, int y, int col, SDL_Rect *area, _BLTFX *bltfx)
 {
     register int i,tmp, line_clip = -1,line_count = 0;
     register Boolean gflag;
@@ -454,7 +418,7 @@ void show_tooltip(int mx, int my, char *text)
         return;
     rec.w = 3;
     while (*text)
-        rec.w += SystemFont.c[(int) * text++].w + SystemFont.char_offset;
+        rec.w += font_small.c[(int) * text++].w + font_small.char_offset;
     rec.x = mx + 9;
     rec.y = my + 17;
     rec.h = 12;
@@ -463,7 +427,7 @@ void show_tooltip(int mx, int my, char *text)
         rec.x -= (rec.x + rec.w + 1) - Screensize.x;
 
     SDL_FillRect(ScreenSurface, &rec, -1);
-    StringBlt(ScreenSurface, &SystemFont, tooltip, rec.x + 2, rec.y - 1, COLOR_BLACK, NULL, NULL);
+    StringBlt(ScreenSurface, &font_small, tooltip, rec.x + 2, rec.y - 1, COLOR_BLACK, NULL, NULL);
 }
 
 static Boolean GetBitmapBorders(SDL_Surface *Surface, int *up, int *down, int *left, int *right, UINT32 ckey)
@@ -571,7 +535,7 @@ Uint32 GetSurfacePixel(SDL_Surface *Surface, Sint32 X, Sint32 Y)
 }
 
 
-int get_string_pixel_length(char *text, struct _Font *font)
+int get_string_pixel_length(char *text, struct _font *font)
 {
     register int i, len = 0;
 
@@ -902,13 +866,13 @@ void play_anims(int mx, int my)
                         if (anim->value<0)
                         {
                             sprintf(buf, "%d", abs(anim->value));
-                            StringBlt(ScreenSurface, &SystemFontOut, buf, xpos + anim->x, ypos + tmp_y, COLOR_GREEN, NULL,
+                            StringBlt(ScreenSurface, &font_small_out, buf, xpos + anim->x, ypos + tmp_y, COLOR_GREEN, NULL,
                                           NULL);
                         }
                         else
                         {
                             sprintf(buf, "%d", anim->value);
-                            StringBlt(ScreenSurface, &SystemFontOut, buf, xpos + anim->x, ypos + tmp_y, COLOR_ORANGE, NULL,
+                            StringBlt(ScreenSurface, &font_small_out, buf, xpos + anim->x, ypos + tmp_y, COLOR_ORANGE, NULL,
                                           NULL);
                         }
                     }
@@ -943,7 +907,7 @@ void play_anims(int mx, int my)
                         else if (anim->value < 10000)
                             tmp_off = -12;
 
-                        StringBlt(ScreenSurface, &SystemFontOut, buf, xpos + anim->x + tmp_off, ypos + tmp_y,
+                        StringBlt(ScreenSurface, &font_small_out, buf, xpos + anim->x + tmp_off, ypos + tmp_y,
                                   COLOR_ORANGE, NULL, NULL);
                     }
                     break;
@@ -952,13 +916,13 @@ void play_anims(int mx, int my)
                     if (anim->value<0)
                     {
                         sprintf(buf, "%d", abs(anim->value));
-                        StringBlt(ScreenSurface, &SystemFontOut, buf, anim->mapx + anim->x, anim->mapy + tmp_y, COLOR_GREEN, NULL,
+                        StringBlt(ScreenSurface, &font_small_out, buf, anim->mapx + anim->x, anim->mapy + tmp_y, COLOR_GREEN, NULL,
                                 NULL);
                     }
                     else
                     {
                         sprintf(buf, "%d", anim->value);
-                        StringBlt(ScreenSurface, &SystemFontOut, buf, anim->mapx + anim->x, anim->mapy + tmp_y, COLOR_RED, NULL,
+                        StringBlt(ScreenSurface, &font_small_out, buf, anim->mapx + anim->x, anim->mapy + tmp_y, COLOR_RED, NULL,
                                           NULL);
                     }
                 break;

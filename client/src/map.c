@@ -193,8 +193,8 @@ void UpdateMapName(char *name)
     if (name == NULL)
         return;
 
-    cur_widget[MAPNAME_ID].wd = get_string_pixel_length(name, &BigFont);
-    cur_widget[MAPNAME_ID].ht = BigFont.c[0].h;
+    cur_widget[MAPNAME_ID].wd = get_string_pixel_length(name, &font_big_out);
+    cur_widget[MAPNAME_ID].ht = font_big_out.c[0].h;
     strcpy(MapData.name, name);
 }
 
@@ -793,7 +793,7 @@ void map_draw_map(void)
                                             break;
                                         }
                                     }
-                                    StringBlt(ScreenSurfaceMap, &Font6x3Out, map->pname[k],
+                                    StringBlt(ScreenSurfaceMap, &font_tiny_out, map->pname[k],
                                               xpos - (strlen(map->pname[k]) * 2) + 22, ypos - 48, col, NULL, NULL);
                                 }
                             }
@@ -891,14 +891,14 @@ void map_draw_map(void)
 
                                         /* Draw the name of target if it's not a player */
                                         if (!(options.player_names && map->pname[k][0]))
-                                            StringBlt(ScreenSurfaceMap, &Font6x3Out, cpl.target_name, xpos - (strlen(cpl.target_name)*2) + 22, yl - 26, cpl.target_color, NULL, NULL);
+                                            StringBlt(ScreenSurfaceMap, &font_tiny_out, cpl.target_name, xpos - (strlen(cpl.target_name)*2) + 22, yl - 26, cpl.target_color, NULL, NULL);
                                         /* Draw HP remaining percent */
                                         if (cpl.target_hp>0)
                                         {
                                             char hp_text[9];
                                             int hp_len;
                                             hp_len = sprintf((char *)hp_text, "HP: %d%%", cpl.target_hp);
-                                            StringBlt(ScreenSurfaceMap, &Font6x3Out, hp_text, xpos - hp_len*2 + 22, yl - 36, hp_col, NULL, NULL);
+                                            StringBlt(ScreenSurfaceMap, &font_tiny_out, hp_text, xpos - hp_len*2 + 22, yl - 36, hp_col, NULL, NULL);
                                         }
                                     }
                                 }

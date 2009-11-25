@@ -61,6 +61,7 @@ am_daimonin_OBJECTS = ../../src/adler32.$(OBJEXT) \
 	../../src/client.$(OBJEXT) ../../src/commands.$(OBJEXT) \
 	../../src/crc32.$(OBJEXT) ../../src/dialog.$(OBJEXT) \
 	../../src/event.$(OBJEXT) ../../src/filewrap.$(OBJEXT) \
+	../../src/font.$(OBJEXT) \
 	../../src/group.$(OBJEXT) ../../src/ignore.$(OBJEXT) \
 	../../src/inffast.$(OBJEXT) ../../src/inflate.$(OBJEXT) \
 	../../src/inftrees.$(OBJEXT) ../../src/interface.$(OBJEXT) \
@@ -233,6 +234,7 @@ daimonin_SOURCES = \
 	../../src/dialog.c \
 	../../src/event.c \
 	../../src/filewrap.c \
+	../../src/font.c \
 	../../src/group.c \
 	../../src/ignore.c \
 	../../src/inffast.c \
@@ -387,6 +389,8 @@ clean-daimoninPROGRAMS:
 	../../src/$(DEPDIR)/$(am__dirstamp)
 ../../src/filewrap.$(OBJEXT): ../../src/$(am__dirstamp) \
 	../../src/$(DEPDIR)/$(am__dirstamp)
+../../src/font.$(OBJEXT): ../../src/$(am__dirstamp) \
+	../../src/$(DEPDIR)/$(am__dirstamp)
 ../../src/group.$(OBJEXT): ../../src/$(am__dirstamp) \
 	../../src/$(DEPDIR)/$(am__dirstamp)
 ../../src/ignore.$(OBJEXT): ../../src/$(am__dirstamp) \
@@ -475,6 +479,7 @@ mostlyclean-compile:
 	-rm -f ../../src/dialog.$(OBJEXT)
 	-rm -f ../../src/event.$(OBJEXT)
 	-rm -f ../../src/filewrap.$(OBJEXT)
+	-rm -f ../../src/font.$(OBJEXT)
 	-rm -f ../../src/group.$(OBJEXT)
 	-rm -f ../../src/ignore.$(OBJEXT)
 	-rm -f ../../src/inffast.$(OBJEXT)
@@ -520,6 +525,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/dialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/event.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/filewrap.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/font.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/group.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/ignore.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/inffast.Po@am__quote@

@@ -90,7 +90,7 @@ void FreeMemory(void **p)
     *p = NULL;
 }
 
-char * show_input_string(char *text, struct _Font *font, int wlen)
+char * show_input_string(char *text, struct _font *font, int wlen)
 {
     register int i, j,len;
 

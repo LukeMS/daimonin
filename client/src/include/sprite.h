@@ -81,16 +81,6 @@ typedef struct _Sprite
 }
 _Sprite;
 
-
-
-typedef struct _Font
-{
-    _Sprite    *sprite; /* don't free this, we link here a Bitmaps[x] ptr*/
-    int         char_offset;    /* space in pixel between 2 chars in a word */
-    SDL_Rect    c[256];
-}
-_Font;
-
 #define ANIM_DAMAGE         1
 #define ANIM_KILL           2
 #define ANIM_SELF_DAMAGE    3
@@ -149,15 +139,14 @@ extern Boolean          sprite_deinit_system(void);
 extern _Sprite         *sprite_load_file(char *fname, UINT32 flags);
 extern _Sprite         *sprite_tryload_file(char *fname, UINT32 flags, SDL_RWops *rwob);
 extern void             sprite_free_sprite(_Sprite *sprite);
-extern int              get_string_pixel_length(char *text, struct _Font *font);
+extern int              get_string_pixel_length(char *text, _font *font);
 extern void             sprite_blt(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx);
 extern void             sprite_blt_map(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx, Uint32 stretch);
 
 extern Uint32           GetSurfacePixel(SDL_Surface *Surface, Sint32 X, Sint32 Y);
-extern void             CreateNewFont(_Sprite *sprite, _Font *font, int xlen, int ylen, int c32len);
-extern int    StringWidth(_Font *font, char *text);
-extern int    StringWidthOffset(_Font *font, char *text, int *line, int len);
-extern void             StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col, SDL_Rect *area,
+extern int              StringWidth(_font *font, char *text);
+extern int              StringWidthOffset(_font *font, char *text, int *line, int len);
+extern void             StringBlt(SDL_Surface *surf, _font *font, char *text, int x, int y, int col, SDL_Rect *area,
                                       _BLTFX *bltfx);
 extern int              sprite_collision(int x1, int y1, int x2, int y2, _Sprite *sprite1, _Sprite *sprite2);
 extern Uint32           getpixel(SDL_Surface *surface, int x, int y);

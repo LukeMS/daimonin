@@ -49,6 +49,7 @@
 	<dialog.h>
 	<group.h>
 	<filewrap.h>
+	<font.h>
 	<widget.h>
 	<physfs.h>
 	<physfsrwops.h>
@@ -362,6 +363,8 @@
 
 1220922356 /mnt/hgfs/HD-F/Projects/daimonin/client/src/include/filewrap.h
 
+1220922356 /mnt/hgfs/HD-F/Projects/daimonin/client/src/include/font.h
+
 1220922356 /mnt/hgfs/HD-F/Projects/daimonin/client/src/include/widget.h
 
 1220922356 /mnt/hgfs/HD-F/Projects/daimonin/client/src/include/physfsrwops.h
@@ -411,6 +414,9 @@
 
 1220922356 source:/mnt/hgfs/HD-F/Projects/daimonin/client/src/filewrap.c
 	<include.h>
+
+1220922356 source:/mnt/hgfs/HD-F/Projects/daimonin/client/src/font.c
+	"include.h"
 
 1220922356 source:/mnt/hgfs/HD-F/Projects/daimonin/client/src/group.c
 	<include.h>
@@ -559,6 +565,7 @@
 	<dialog.h>
 	<group.h>
 	<filewrap.h>
+	<font.h>
 	<widget.h>
 	<physfs.h>
 	<physfsrwops.h>
@@ -675,6 +682,8 @@
 
 1221490727 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/filewrap.h
 
+1221490727 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/font.h
+
 1221490727 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/widget.h
 
 1221490727 /mnt/hgfs/Untitled-1/Projects/daimonin/client/src/include/physfsrwops.h
@@ -724,6 +733,9 @@
 
 1221490727 source:/mnt/hgfs/Untitled-1/Projects/daimonin/client/src/filewrap.c
 	<include.h>
+
+1221490727 source:/mnt/hgfs/Untitled-1/Projects/daimonin/client/src/font.c
+	"include.h"
 
 1221490727 source:/mnt/hgfs/Untitled-1/Projects/daimonin/client/src/group.c
 	<include.h>
