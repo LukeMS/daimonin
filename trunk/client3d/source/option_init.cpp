@@ -62,5 +62,6 @@ std::string Option::optValue[SUM_OPTIONS - SEPARATOR-1] =
     "1", // CMDLINE_TILEENGINE_LOD
     "0", // CMDLINE_OFF_SOUND
     "0", // CMDLINE_SHOW_BOUNDING_BOX
+    "0", // ERROR_NO_SHADERS
 };
 

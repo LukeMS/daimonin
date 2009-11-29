@@ -70,7 +70,7 @@ void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneM
     AxisAlignedBox aab(AxisAlignedBox(-10000, -10000, -10000, 10000, 10000, 10000));
     int cameraStandardPos = 3; // 0° rotation of the camera in CHUNK_START_OFFSET[][] table.
     mCameraRotation = cameraStandardPos;
-    int sumVertices = 0;
+    unsigned int sumIndices, sumVertices = 0;
     /*
         for (int i=0; i < TileManager::CHUNK_SIZE_Z; ++i)
         {
@@ -82,6 +82,7 @@ void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneM
     sumVertices= 4*6*TileManager::CHUNK_SIZE_X*TileManager::CHUNK_SIZE_Z; // 4 Subtiles/tile, 6 vertices/subtile
     // ////////////////////////////////////////////////////////////////////
     // Build the land-tiles.
+    // There is no chance to optimize the vertex count, because every vertex needs its own mask.
     // ////////////////////////////////////////////////////////////////////
     MeshPtr MeshLand = MeshManager::getSingleton().createManual("Mesh_Land", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
     mSubMeshLand = MeshLand->createSubMesh();
@@ -92,7 +93,7 @@ void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneM
     VertexDeclaration *vdec = vData->vertexDeclaration;
     size_t offset = 0;
     vdec->addElement(0, offset, VET_FLOAT3, VES_POSITION);               offset+= VertexElement::getTypeSize(VET_FLOAT3);
-    vdec->addElement(0, offset, VET_FLOAT3, VES_NORMAL);                 offset+= VertexElement::getTypeSize(VET_FLOAT3);
+    vdec->addElement(0, offset, VET_FLOAT4, VES_DIFFUSE);                offset+= VertexElement::getTypeSize(VET_FLOAT4);
     vdec->addElement(0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 0); offset+= VertexElement::getTypeSize(VET_FLOAT2);
     vdec->addElement(0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 1); offset+= VertexElement::getTypeSize(VET_FLOAT2);
     vdec->addElement(0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 2); offset+= VertexElement::getTypeSize(VET_FLOAT2);
@@ -100,14 +101,25 @@ void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneM
     HardwareVertexBufferSharedPtr vbuf = HardwareBufferManager::getSingleton().createVertexBuffer(offset, sumVertices, HardwareBuffer::HBU_STATIC_WRITE_ONLY);
     vData->vertexBufferBinding->setBinding(0, vbuf);
     mSubMeshLand->vertexData = vData;
-    HardwareIndexBufferSharedPtr ibuf = HardwareBufferManager::getSingleton().createIndexBuffer(HardwareIndexBuffer::IT_16BIT, sumVertices, HardwareBuffer::HBU_STATIC_WRITE_ONLY, false);
-    mSubMeshLand->indexData->indexBuffer = ibuf;
     mSubMeshLand->indexData->indexStart = 0;
-    mSubMeshLand->indexData->indexCount = sumVertices;
-    unsigned short *pIdx = static_cast<unsigned short*>(ibuf->lock(HardwareBuffer::HBL_DISCARD));
-    // There is no chance to optimize the vertex count, because every vertex needs its own mask.
-    for (unsigned short p=0; p < sumVertices;) *pIdx++ = p++;
+    sumIndices = sumVertices;
+    mSubMeshLand->indexData->indexCount = sumIndices;
+    HardwareIndexBufferSharedPtr ibuf;
+    if (sumIndices > 65526)
+    {
+        Logger::log().warning() << "You want to create a HardwareBuffer with " << sumIndices << " entries. Switching to 32bit index buffer. This can crash older gfx-cards!";
+        ibuf = HardwareBufferManager::getSingleton().createIndexBuffer(HardwareIndexBuffer::IT_32BIT, sumIndices, HardwareBuffer::HBU_STATIC_WRITE_ONLY, false);
+        unsigned int *pIdx = static_cast<unsigned int*>(ibuf->lock(HardwareBuffer::HBL_DISCARD));
+        for (unsigned int p=0; p < sumIndices;) *pIdx++ = p++;
+    }
+    else
+    {
+        ibuf = HardwareBufferManager::getSingleton().createIndexBuffer(HardwareIndexBuffer::IT_16BIT, sumIndices, HardwareBuffer::HBU_STATIC_WRITE_ONLY, false);
+        unsigned short *pIdx = static_cast<unsigned short*>(ibuf->lock(HardwareBuffer::HBL_DISCARD));
+        for (unsigned short p=0; p < sumIndices;) *pIdx++ = p++;
+    }
     ibuf->unlock();
+    mSubMeshLand->indexData->indexBuffer = ibuf;
     MeshLand->_setBounds(aab);
     //MeshLand->_setBoundingSphereRadius(Real radius);
     MeshLand->load();
@@ -118,6 +130,7 @@ void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneM
     MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName(TileManager::MATERIAL_PREFIX + TileManager::LAND_PREFIX);
     // ////////////////////////////////////////////////////////////////////
     // Build the water-tiles.
+    // This could be optimized by using triangle lists.
     // ////////////////////////////////////////////////////////////////////
     MeshPtr MeshWater = MeshManager::getSingleton().createManual("Mesh_Water", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
     mSubMeshWater = MeshWater->createSubMesh();
@@ -131,18 +144,32 @@ void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneM
     vbuf = HardwareBufferManager::getSingleton().createVertexBuffer(offset, sumVertices*4, HardwareBuffer::HBU_STATIC_WRITE_ONLY, false);
     vData->vertexBufferBinding->setBinding(0, vbuf);
     mSubMeshWater->vertexData = vData;
-    ibuf = HardwareBufferManager::getSingleton().createIndexBuffer(HardwareIndexBuffer::IT_16BIT, sumVertices*6, HardwareBuffer::HBU_STATIC_WRITE_ONLY, false);
+    if (sumVertices > 65526)
+    {
+        Logger::log().warning() << "You want to create a HardwareBuffer with " << sumVertices << " entries. Switching to 32bit index buffer. This can crash older gfx-cards!";
+        ibuf = HardwareBufferManager::getSingleton().createIndexBuffer(HardwareIndexBuffer::IT_32BIT, sumVertices*6, HardwareBuffer::HBU_STATIC_WRITE_ONLY, false);
+        unsigned int *pIdx = static_cast<unsigned int*>(ibuf->lock(HardwareBuffer::HBL_DISCARD));
+        for (unsigned int p=0; sumVertices; --sumVertices)
+        {
+            *pIdx++ = p+0; *pIdx++ = p+1; *pIdx++ = p+2;
+            *pIdx++ = p+2; *pIdx++ = p+3; *pIdx++ = p+0;
+            p+= 4;
+        }
+    }
+    else
+    {
+        ibuf = HardwareBufferManager::getSingleton().createIndexBuffer(HardwareIndexBuffer::IT_16BIT, sumVertices*6, HardwareBuffer::HBU_STATIC_WRITE_ONLY, false);
+        unsigned short *pIdx = static_cast<unsigned short*>(ibuf->lock(HardwareBuffer::HBL_DISCARD));
+        for (unsigned short p=0; sumVertices; --sumVertices)
+        {
+            *pIdx++ = p+0; *pIdx++ = p+1; *pIdx++ = p+2;
+            *pIdx++ = p+2; *pIdx++ = p+3; *pIdx++ = p+0;
+            p+= 4;
+        }
+    }
     mSubMeshWater->indexData->indexBuffer = ibuf;
     mSubMeshWater->indexData->indexStart = 0;
     mSubMeshWater->indexData->indexCount = 0;
-    pIdx = static_cast<unsigned short*>(ibuf->lock(HardwareBuffer::HBL_DISCARD));
-    // This could be optimized by using triangle lists.
-    for (unsigned short p=0; sumVertices; --sumVertices)
-    {
-        *pIdx++ = p+0; *pIdx++ = p+1; *pIdx++ = p+2;
-        *pIdx++ = p+2; *pIdx++ = p+3; *pIdx++ = p+0;
-        p+= 4;
-    }
     ibuf->unlock();
     MeshWater->_setBounds(aab);
     //MeshWater->_setBoundingSphereRadius(Real radius);
@@ -158,9 +185,6 @@ void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneM
     node->setPosition(0,0,0);
     node->attachObject(EntityLand);
     node->attachObject(EntityWater);
-    setWaveParameter(0.5, TileManager::HEIGHT_STRETCH, 1.0);
-    setDaylight(1.0f);
-    setGrid(false);
 }
 
 //================================================================================================
@@ -178,7 +202,7 @@ void TileChunk::setGrid(bool visible)
 //================================================================================================
 // Set the shader parameter for the level of darkness.
 //================================================================================================
-void TileChunk::setDaylight(Real brightness)
+void TileChunk::setLight(Real brightness)
 {
     mDaylight = brightness;
     MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName(TileManager::MATERIAL_PREFIX + TileManager::LAND_PREFIX);
@@ -194,7 +218,7 @@ void TileChunk::setDaylight(Real brightness)
 //================================================================================================
 // Set the parameter for the waves on the water.
 //================================================================================================
-void TileChunk::setWaveParameter(Real alpha, Real amplitude, Real speed)
+void TileChunk::setWave(Real alpha, Real amplitude, Real speed)
 {
     mWaveParam.x = alpha;
     mWaveParam.y = amplitude;
@@ -235,7 +259,7 @@ void TileChunk::setCameraRotation(Real cameraAngle)
 //================================================================================================
 // Set all data for a vertex
 //================================================================================================
-void TileChunk::setVertex(Vector3 &pos, int maskNr, Real offsetU, Real offsetV, Vector3 &normal)
+void TileChunk::setVertex(Vector3 &pos, int maskNr, Real offsetU, Real offsetV, Vector4 &params)
 {
     static const int TEXTURE_UNIT_SORT[]= {0,2,4, 0,4,2, 2,0,4, 2,4,0, 4,0,2, 4,2,0, 4,4,4};
     int sorting = maskNr * 3;
@@ -243,9 +267,10 @@ void TileChunk::setVertex(Vector3 &pos, int maskNr, Real offsetU, Real offsetV, 
     *mPosVBuf++ = pos.x;
     *mPosVBuf++ = pos.y;
     *mPosVBuf++ = pos.z;
-    *mPosVBuf++ = normal.x;
-    *mPosVBuf++ = normal.y;
-    *mPosVBuf++ = normal.z;
+    *mPosVBuf++ = params.x; // Faked shadow
+    *mPosVBuf++ = params.y; // Faked shadow
+    *mPosVBuf++ = params.z; // Faked shadow
+    *mPosVBuf++ = params.w; // Spotlight
     // Sort the texture units (the higher the gfxNr, the higher the used texture unit)
     // Pos in Atlastexture for Texture #0
     *mPosVBuf++ = mTexPosInAtlas[TEXTURE_UNIT_SORT[  sorting]+0] * FULL_TILE_SPACE + offsetU;
@@ -274,37 +299,55 @@ void TileChunk::setTriangle(int x, int z, Vector3 v1, Vector3 v2, Vector3 v3,int
     Real offsetV2 = v2.z*HALF_TILE_SIZE;
     Real offsetU3 = v3.x*HALF_TILE_SIZE;
     Real offsetV3 = v3.z*HALF_TILE_SIZE;
-#ifdef FAKE_SHADOWS
     v1.y = TileManager::getSingleton().getMapHeight((int)(x+v1.x), (int)(z+v1.z));
     v2.y = TileManager::getSingleton().getMapHeight((int)(x+v2.x), (int)(z+v2.z));
     v3.y = TileManager::getSingleton().getMapHeight((int)(x+v3.x), (int)(z+v3.z));
-    Vector3 normal;
+    Vector4 params;
     if ((v1.y <= v2.y) && (v1.y <= v3.y))
     {
-        normal.x = v1.y;
-        normal.y = TileManager::getSingleton().getMapShadow((int)(x+v1.x), (int)(z+v1.z));
+        params.x = v1.y;
+        params.y = TileManager::getSingleton().getMapShadow((int)(x+v1.x), (int)(z+v1.z));
         if (v2.y >= v3.y)
-            normal.z = (v2.y == normal.x)?0:(TileManager::getSingleton().getMapShadow((int)(x+v2.x), (int)(z+v2.z)) - normal.y)/ (v2.y-normal.x);
+        {
+            params.z = (v2.y == params.x)?0:(TileManager::getSingleton().getMapShadow((int)(x+v2.x), (int)(z+v2.z)) - params.y)/ (v2.y-params.x);
+            params.w = TileManager::getSingleton().getMapSpotLight((int)(x+v2.x), (int)(z+v2.z))?1:0;
+        }
         else
-            normal.z = (v3.y == normal.x)?0:(TileManager::getSingleton().getMapShadow((int)(x+v3.x), (int)(z+v3.z)) - normal.y)/ (v3.y-normal.x);
+        {
+            params.z = (v3.y == params.x)?0:(TileManager::getSingleton().getMapShadow((int)(x+v3.x), (int)(z+v3.z)) - params.y)/ (v3.y-params.x);
+            params.w = TileManager::getSingleton().getMapSpotLight((int)(x+v3.x), (int)(z+v3.z))?1:0;
+        }
     }
     else if ((v2.y <= v1.y) && (v2.y <= v3.y))
     {
-        normal.x = v2.y;
-        normal.y = TileManager::getSingleton().getMapShadow((int)(x+v2.x), (int)(z+v2.z));
+        params.x = v2.y;
+        params.y = TileManager::getSingleton().getMapShadow((int)(x+v2.x), (int)(z+v2.z));
         if (v1.y >= v3.y)
-            normal.z = (v1.y == normal.x)?0:(TileManager::getSingleton().getMapShadow((int)(x+v1.x), (int)(z+v1.z)) - normal.y)/ (v1.y-normal.x);
+        {
+            params.z = (v1.y == params.x)?0:(TileManager::getSingleton().getMapShadow((int)(x+v1.x), (int)(z+v1.z)) - params.y)/ (v1.y-params.x);
+            params.w = TileManager::getSingleton().getMapSpotLight((int)(x+v1.x), (int)(z+v1.z))?1:0;
+        }
         else
-            normal.z = (v3.y == normal.x)?0:(TileManager::getSingleton().getMapShadow((int)(x+v3.x), (int)(z+v3.z)) - normal.y)/ (v3.y-normal.x);
+        {
+            params.z = (v3.y == params.x)?0:(TileManager::getSingleton().getMapShadow((int)(x+v3.x), (int)(z+v3.z)) - params.y)/ (v3.y-params.x);
+            params.w = TileManager::getSingleton().getMapSpotLight((int)(x+v3.x), (int)(z+v3.z))?1:0;
+        }
     }
     else if ((v3.y <= v1.y) && (v3.y <= v2.y))
     {
-        normal.x = v3.y;
-        normal.y = TileManager::getSingleton().getMapShadow((int)(x+v3.x), (int)(z+v3.z));
+        params.x = v3.y;
+        params.y = TileManager::getSingleton().getMapShadow((int)(x+v3.x), (int)(z+v3.z));
         if (v1.y >= v2.y)
-            normal.z = (v1.y == normal.x)?0:(TileManager::getSingleton().getMapShadow((int)(x+v1.x), (int)(z+v1.z)) - normal.y)/ (v1.y-normal.x);
+        {
+            params.z = (v1.y == params.x)?0:(TileManager::getSingleton().getMapShadow((int)(x+v1.x), (int)(z+v1.z)) - params.y)/ (v1.y-params.x);
+            params.w = TileManager::getSingleton().getMapSpotLight((int)(x+v1.x), (int)(z+v1.z))?1:0;
+        }
         else
-            normal.z = (v2.y == normal.x)?0:(TileManager::getSingleton().getMapShadow((int)(x+v3.x), (int)(z+v2.z)) - normal.y)/ (v2.y-normal.x);
+        {
+            params.z = (v2.y == params.x)?0:(TileManager::getSingleton().getMapShadow((int)(x+v3.x), (int)(z+v2.z)) - params.y)/ (v2.y-params.x);
+            //params.w = TileManager::getSingleton().getMapSpotLight((int)(x+v3.x), (int)(z+v2.z))?1:0;
+            params.w = TileManager::getSingleton().getMapSpotLight((int)(x+v3.x), (int)(z+v3.z))?1:0;
+        }
     }
     v3.x = (x+v3.x) * TileManager::TILE_RENDER_SIZE;
     v3.z = (z+v3.z) * TileManager::TILE_RENDER_SIZE;
@@ -312,23 +355,9 @@ void TileChunk::setTriangle(int x, int z, Vector3 v1, Vector3 v2, Vector3 v3,int
     v1.z = (z+v1.z) * TileManager::TILE_RENDER_SIZE;
     v2.x = (x+v2.x) * TileManager::TILE_RENDER_SIZE;
     v2.z = (z+v2.z) * TileManager::TILE_RENDER_SIZE;
-#else
-    v1.y = TileManager::getSingleton().getMapHeight((int)(x+v1.x), (int)(z+v1.z));
-    v1.x = (x+v1.x) * TileManager::TILE_RENDER_SIZE;
-    v1.z = (z+v1.z) * TileManager::TILE_RENDER_SIZE;
-    v2.y = TileManager::getSingleton().getMapHeight((int)(x+v2.x), (int)(z+v2.z));
-    v2.x = (x+v2.x) * TileManager::TILE_RENDER_SIZE;
-    v2.z = (z+v2.z) * TileManager::TILE_RENDER_SIZE;
-    v3.y = TileManager::getSingleton().getMapHeight((int)(x+v3.x), (int)(z+v3.z));
-    v3.x = (x+v3.x) * TileManager::TILE_RENDER_SIZE;
-    v3.z = (z+v3.z) * TileManager::TILE_RENDER_SIZE;
-    Vector3 normal = v2 - v1;
-    normal = normal.crossProduct(v3 - v1);
-    normal.normalise();
-#endif
-    setVertex(v1, maskNr, offsetU1, offsetV1, normal);
-    setVertex(v2, maskNr, offsetU2, offsetV2, normal);
-    setVertex(v3, maskNr, offsetU3, offsetV3, normal);
+    setVertex(v1, maskNr, offsetU1, offsetV1, params);
+    setVertex(v2, maskNr, offsetU2, offsetV2, params);
+    setVertex(v3, maskNr, offsetU3, offsetV3, params);
 }
 
 //================================================================================================
@@ -378,7 +407,8 @@ void TileChunk::updateLand()
             gfxNrVert0 = TileManager::getSingleton().getMapLayer0(x+1, z+1);
             gfxNrNoBlending = TileManager::getSingleton().getMapLayer1(x  , z+2);
             if (gfxNrNoBlending)
-            {   // Indoor tile -> No blending with the neighbour tiles.
+            {
+                // Indoor tile -> No blending with the neighbour tiles.
                 mTexPosInAtlas[0] = gfxNrNoBlending%6;
                 mTexPosInAtlas[1] = gfxNrNoBlending/6;
                 mTexPosInAtlas[2] = mTexPosInAtlas[0];
@@ -405,7 +435,8 @@ void TileChunk::updateLand()
             //  +-----+    +-----+
             gfxNrNoBlending = TileManager::getSingleton().getMapLayer1(x+1, z+2);
             if (gfxNrNoBlending)
-            {   // Indoor tile -> No blending with the neighbour tiles.
+            {
+                // Indoor tile -> No blending with the neighbour tiles.
                 mTexPosInAtlas[0] = gfxNrNoBlending%6;
                 mTexPosInAtlas[1] = gfxNrNoBlending/6;
                 mTexPosInAtlas[2] = mTexPosInAtlas[0];
@@ -432,7 +463,8 @@ void TileChunk::updateLand()
             // 0+-+3--+   1+-+2--+
             gfxNrNoBlending = TileManager::getSingleton().getMapLayer1(x, z+1);
             if (gfxNrNoBlending)
-            {   // Indoor tile -> No blending with the neighbour tiles.
+            {
+                // Indoor tile -> No blending with the neighbour tiles.
                 mTexPosInAtlas[0] = gfxNrNoBlending%6;
                 mTexPosInAtlas[1] = gfxNrNoBlending/6;
                 mTexPosInAtlas[2] = mTexPosInAtlas[0];
@@ -459,7 +491,8 @@ void TileChunk::updateLand()
             //  +--1+-+0   +--2+-+1
             gfxNrNoBlending = TileManager::getSingleton().getMapLayer1(x+1, z+1);
             if (gfxNrNoBlending)
-            {   // Indoor tile -> No blending with the neighbour tiles.
+            {
+                // Indoor tile -> No blending with the neighbour tiles.
                 mTexPosInAtlas[0] = gfxNrNoBlending%6;
                 mTexPosInAtlas[1] = gfxNrNoBlending/6;
                 mTexPosInAtlas[2] = mTexPosInAtlas[0];
@@ -562,3 +595,8 @@ void TileChunk::updateWater()
     }
     vbuf->unlock();
 }
+
+
+
+
+

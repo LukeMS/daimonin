@@ -24,7 +24,6 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 #ifndef DEFINE_H
 #define DEFINE_H
 
-const char PRG_NAME[] = "Daimonin Ogre3d Client";
 //================================================================================================
 // All pathes of the whole project MUST be placed here!
 //================================================================================================
@@ -40,10 +39,6 @@ const char PATH_SRV[]       = "./srv_files/";
 //================================================================================================
 const char FILE_NPC_VISUALS[]     = "NPC_Visuals.xml";
 const char FILE_OPTIONS[]         = "./options.dat";
-//const char FILE_BMAPS_P0[]        = "./bmaps.p0";
-//const char FILE_DAIMONIN_P0[]     = "./daimonin.p0";
-//const char FILE_ARCHDEF[]         = "./archdef.dat";
-
 const char FILE_CLIENT_SPELLS[]   = "./srv_files/client_spells";
 const char FILE_CLIENT_SKILLS[]   = "./srv_files/client_skills";
 const char FILE_CLIENT_SETTINGS[] = "./srv_files/client_settings";
@@ -52,6 +47,9 @@ const char FILE_CLIENT_ANIMS[]    = "./srv_files/client_anims";
 const char FILE_BMAPS_UNIQUE[]    = "./srv_files/bmaps_unique";    /**< The objects from bmaps without animation states */
 const char FILE_BMAPS_CONVERT[]   = "./srv_files/bmaps_convert";   /**< This file holds the unique client2d and client3d obj names */
 const char FILE_BMAPS_CLIENT3D[]  = "./srv_files/bmaps_3d";        /**< The final client3d object file */
+//const char FILE_BMAPS_P0[]        = "./bmaps.p0";
+//const char FILE_DAIMONIN_P0[]     = "./daimonin.p0";
+//const char FILE_ARCHDEF[]         = "./archdef.dat";
 //const char FILE_BMAPS_TMP[]          = "./srv_files/bmaps.tmp";
 //const char FILE_ANIMS_TMP[]          = "./srv_files/anims.tmp";
 

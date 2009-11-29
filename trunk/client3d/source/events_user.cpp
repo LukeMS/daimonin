@@ -477,12 +477,39 @@ bool Events::keyPressed( const OIS::KeyEvent &e)
             TileManager::getSingleton().setMap(x  , y+2, 10, gfx0, 0, shadow); TileManager::getSingleton().setMap(x+1, y+2, 10, gfx0, 0, shadow); TileManager::getSingleton().setMap(x+2, y+2, 10, gfx0, 0, shadow);
             // Some water.
             x = 11, y = 14, gfx0 = 1, shadow = 0;
-            TileManager::getSingleton().setMap(x  ,  y  , 0, 6, 48);
-            TileManager::getSingleton().setMap(x  ,  y+1, 0, 6, 48);
-            TileManager::getSingleton().setMap(x+1,  y  , 0, 6, 48);
-            TileManager::getSingleton().setMap(x+1,  y+1, 0, 6, 48);
-            TileManager::getSingleton().setMap(x+2,  y  , 0, 6, 48);
-            TileManager::getSingleton().setMap(x+2,  y+1, 0, 6, 48);
+            TileManager::getSingleton().setMap(x  ,  y  , 0, 6, 40);
+            TileManager::getSingleton().setMap(x  ,  y+1, 0, 6, 40);
+            TileManager::getSingleton().setMap(x+1,  y  , 0, 6, 40);
+            TileManager::getSingleton().setMap(x+1,  y+1, 0, 6, 40);
+            TileManager::getSingleton().setMap(x+2,  y  , 0, 6, 40);
+            TileManager::getSingleton().setMap(x+2,  y+1, 0, 6, 40);
+
+            // x,  z    h, gfx, h, shadow, hard edge, spot
+/*
+            TileManager::getSingleton().setMap(2, 17, 60, 1, 0, 255, 0, true);
+            TileManager::getSingleton().setMap(4, 17, 60, 1, 0, 255, 0, true);
+            TileManager::getSingleton().setMap(6, 17, 60, 1, 0, 255, 0, true);
+
+            TileManager::getSingleton().setMap(2, 19, 60, 1, 0, 255, 0, true);
+            TileManager::getSingleton().setMap(4, 19, 60, 1, 0, 255, 0, true);
+            TileManager::getSingleton().setMap(7, 19, 60, 1, 0, 255, 0, true);
+
+            TileManager::getSingleton().setMap(1, 1, 60, 1, 0, 255, 0, true);
+            TileManager::getSingleton().setMap(2, 2, 60, 1, 0, 255, 0, true);
+            TileManager::getSingleton().setMap(1, 3, 60, 1, 0, 255, 0, true);
+*/
+/*
+            TileManager::getSingleton().setMap(3, 19, 60, 1, 0, 0, 0, true);
+            TileManager::getSingleton().setMap(5, 19, 60, 1, 0, 0, 0, true);
+            TileManager::getSingleton().setMap(7, 19, 60, 1, 0, 0, 0, true);
+*/
+            //TileManager::getSingleton().setMap(18,  9,  60,   2, 0, 0,      0, true);
+
+            TileManager::getSingleton().setMap(2, 19, 60, 1, 0, 255, 0, true);
+            TileManager::getSingleton().setMap(4, 19, 60, 1, 0, 255, 0, true);
+            TileManager::getSingleton().setMap(3, 18, 60, 1, 0, 255, 0, true);
+            TileManager::getSingleton().setMap(3, 20, 60, 1, 0, 255, 0, true);
+
             /*
                     // Some height.
                     TileManager::getSingleton().setMap(5,  4,  99, 4, 0);

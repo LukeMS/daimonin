@@ -365,7 +365,8 @@ void GuiWindow::sendMsg(int elementNr, int message, String &text, uint32 &param,
     {
         if (elementNr <0 ||elementNr >= (int)mvElement.size())
         {
-            Logger::log().error() << "Critical: GuiWindow::sendMsg: elementNr out of Range!";
+            Logger::log().error() << "Critical: GuiWindow::sendMsg: elementNr out of Range! (MessageID = " << message <<")";
+            //Logger::log().error() << "Ignoring Message: (text)" << text.c_str() << " (text2) " << text2;
             return;
         }
         mvElement[elementNr]->sendMsg((int)message, text, param, text2);
