@@ -23,7 +23,7 @@ this program; If not, see <http://www.gnu.org/licenses/>.
 
 #include <Ogre.h>
 #include "logger.h"
-#include "define.h"
+//#include "define.h"
 #include "events.h"
 #include "option.h"
 
@@ -191,7 +191,7 @@ int main(int argc, char **argv)
             delete root;
             return 0;
         }
-        window = root->initialise(true, PRG_NAME);
+        window = root->initialise(true, "Daimonin Ogre3d Client");
     }
     catch (Exception &e)
     {
@@ -202,8 +202,13 @@ int main(int argc, char **argv)
     // ////////////////////////////////////////////////////////////////////
     // Check for GFX-Hardware.
     // ////////////////////////////////////////////////////////////////////
-    if (!root->getRenderSystem()->getCapabilities()->hasCapability(RSC_VBO))
-        Logger::log().error() << "Your gfx-card doesn't support hardware vertex/index buffer!";
+    if (!root->getRenderSystem()->getCapabilities()->hasCapability(RSC_FRAGMENT_PROGRAM)
+            || (!root->getRenderSystem()->getCapabilities()->hasCapability(RSC_VERTEX_PROGRAM)))
+    {
+        Logger::log().error() << "Your gfx-card doesn't support shader programs!";
+        Option::getSingleton().setIntValue(Option::ERROR_NO_SHADRES, true);
+    }
+
     TexturePtr mTexture, mTextur2;
     Option::getSingleton().setIntValue(Option::HIGH_TEXTURE_DETAILS, true);
     Option::getSingleton().setIntValue(Option::HIGH_TILES_DETAILS, true);

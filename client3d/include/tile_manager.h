@@ -62,14 +62,14 @@ public:
     static Ogre::String WATER_PREFIX;
     static Ogre::String ATLAS_PREFIX;
     static Ogre::String MATERIAL_PREFIX;
-    enum {CHUNK_SIZE_X         =  10};                /**< Size of the visible part of the world on x-axis. **/
-    enum {CHUNK_SIZE_Z         =  10};                /**< Size of the visible part of the world on z-axis. **/
-    enum {HEIGHT_STRETCH       =   2};                /**< Stretch the map height by this factor. **/
-    enum {TILE_RENDER_SIZE     = 1<< 6};              /**< Rendersize of a tile. **/
-    enum {MAX_TEXTURE_SIZE     = 1<<11};              /**< Atlassize for high quality. **/
-    enum {TILE_SIZE            = MAX_TEXTURE_SIZE/8}; /**< Tilesize for high quality. **/
-    enum {BORDER_SIZE          = TILE_SIZE/32};       /**< Bordersize for high quality (Border is used to fix filtering errors). **/
-    enum {ATLAS_LAND_ROWS      =   7};                /**< Rows of Landtiles in the altlastexture. **/
+    enum {CHUNK_SIZE_X     =  12};                /**< Size of the visible part of the world on x-axis. **/
+    enum {CHUNK_SIZE_Z     =  12};                /**< Size of the visible part of the world on z-axis. **/
+    enum {HEIGHT_STRETCH   =   2};                /**< Stretch the map height by this factor. **/
+    enum {TILE_RENDER_SIZE = 1<< 6};              /**< Rendersize of a tile. **/
+    enum {MAX_TEXTURE_SIZE = 1<<11};              /**< Atlassize for high quality. **/
+    enum {TILE_SIZE        = MAX_TEXTURE_SIZE/8}; /**< Tilesize for high quality. **/
+    enum {BORDER_SIZE      = TILE_SIZE/32};       /**< Bordersize for high quality (Border is used to fix filtering errors). **/
+    enum {ATLAS_LAND_ROWS  =   7};                /**< Rows of Landtiles in the altlastexture. **/
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
@@ -96,27 +96,26 @@ public:
      ** @param x           The x-pos within the map.
      ** @param z           The z-pos within the map.
      ** @param height      The new height of the top/left vertex of this map pos.
-     ** @param gfx         The tile-gfx number.
-                           Any number higher than atlas texture's amount stands for fog of war.
+     ** @param gfx         The tile-gfx number (0...41, while 41 is always a complete black gfx for fog of war).
      ** @param waterLvl    The height of the water surface. 0 means no water on this tile.
      ** @param shadow      The amount of the darkening for this tile. Used to fake shadows.
      ** @param gfxHardEdge The tile-gfx number with hard edge e.g. for indoor tiles.
+     ** @param spotLight   True for a spotlight (Spotlights can only be placed in the middle of the border to a
+                           horizontal or vertical neighbour tile).
      *****************************************************************************/
-    void setMap(unsigned int x, unsigned int z, Ogre::uchar height, Ogre::uchar gfxLayer0, Ogre::uchar waterLvl =0, Ogre::uchar shadow = 255, Ogre::uchar gfxHardEdge = 0);
+    void setMap(unsigned int x, unsigned int z, Ogre::uchar height, Ogre::uchar gfxLayer0, Ogre::uchar waterLvl =0,
+                Ogre::uchar shadow = 255, Ogre::uchar gfxHardEdge = 0, bool spotLight = false);
     Ogre::uchar  getMapLayer0(unsigned int x, unsigned int z);
     Ogre::uchar  getMapLayer1(unsigned int x, unsigned int z);
-    Ogre::Real   getMapShadow(unsigned int x, unsigned int z);
     Ogre::ushort getMapWater (unsigned int x, unsigned int z);
+    Ogre::Real   getMapShadow(unsigned int x, unsigned int z);
+    bool         getMapSpotLight(unsigned int x, unsigned int z);
     /** Get the height of the Top/Left vertex of a subtile.
      ** @param posX The x-pos.
      ** @param posZ The z-pos.
      *****************************************************************************/
     Ogre::ushort getMapHeight(unsigned int x, unsigned int z);
     void setMapset(int landGroup, int waterGroup);
-    void setGrid(bool visible)
-    {
-        mMapchunk.setGrid(visible);
-    }
     void scrollMap(int x, int z);
     void updateChunks();
     void rotateCamera(Ogre::Real cameraAngle)
@@ -134,9 +133,17 @@ public:
     void updateTileHeight(int deltaHeight);
     void updateTileGfx(int deltaGfxNr);
     void setTileGfx();
-    void setDaylight(float level)
+    void setWave(Ogre::Real alpha, Ogre::Real amplitude, Ogre::Real speed)
     {
-        mMapchunk.setDaylight(level);
+        mMapchunk.setWave(alpha, amplitude, speed);
+    }
+    void setGrid(bool visible)
+    {
+        mMapchunk.setGrid(visible);
+    }
+    void setLight(Ogre::Real brightness)
+    {
+        mMapchunk.setLight(brightness);
     }
     Ogre::SceneManager *getSceneManager()
     {
@@ -152,8 +159,8 @@ private:
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     enum {SUM_ATLAS_RESOLUTIONS= 1<< 2}; /**< How many resolutions of the atlastexture to create. **/
-    enum {ATLAS_LAND_COLS      =   6};   /**< Cols of Landtiles in the altlastexture. **/
-    enum {MAX_MAP_SETS         =  16};   /**< The maximum numbers of AtlasTextures to be created by createAtlasTexture(...).
+    enum {ATLAS_LAND_COLS      =     6}; /**< Cols of Landtiles in the altlastexture. **/
+    enum {MAX_MAP_SETS         =    16}; /**< The maximum numbers of AtlasTextures to be created by createAtlasTexture(...).
                                               Must be < 100, because its encoded as a 2 chars wide number in the filename. **/
     /**  TileEngine struct which holds the worldmap. **/
     typedef struct _mapStruct
@@ -163,6 +170,7 @@ private:
         Ogre::uchar heightLand;  /**< Height  of the Top/Left vertex. **/
         Ogre::uchar heightWater; /**< Height of the water surface (0 -> no water). **/
         Ogre::uchar shadow;      /**< The darkening amount to simulate terrain shadows. **/
+        Ogre::uchar spotLight;   /**< If >0 the subtile is lighten by by a spotlight. **/
     } mapStruct;
     mapStruct *mMap;
     TileChunk mMapchunk;
@@ -190,6 +198,7 @@ private:
     void createAtlasTexture(int maxTextureSize, unsigned int groupNr = MAX_MAP_SETS);
     bool copyTileToAtlas(Ogre::uchar *dstBuf); /**< 41 Standard tiles. **/
     void copyFlowToAtlas(Ogre::uchar *dstBuf); /**<  3 Special tiles with a flow effect (Water/Lava/etc). **/
+    void copySpotToAtlas(Ogre::uchar *dstBuf);
     void copyMaskToAtlas(Ogre::uchar *dstBuf);
     bool vertexPick(Ogre::Ray *mouseRay, int x, int z, int pos);
     int  calcHeight(int vert0, int vert1, int vert2, int posX, int posZ);

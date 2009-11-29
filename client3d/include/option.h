@@ -71,7 +71,9 @@ public:
 
         GAME_STATUS_WAITFORPLAY,       /**< we simply wait for game start means, this is not a serial stepping here **/
         GAME_STATUS_QUIT,              /**< we are in quit menu **/
-        GAME_STATUS_PLAY,              /**< we play now!! **/
+        GAME_STATUS_PLAY,              /**< Prepare for the game loop **/
+        GAME_STATUS_GAME_LOOP,
+        GAME_STATUS_CRITICAL_ERROR,    /**< A critical error was detected. Wait for user to quit **/
         GAME_STATUS_SUM
     };
 
@@ -95,6 +97,7 @@ public:
         CMDLINE_TILEENGINE_LOD,
         CMDLINE_OFF_SOUND,
         CMDLINE_SHOW_BOUNDING_BOX,
+        ERROR_NO_SHADRES,
         SUM_OPTIONS
     };
     enum enumLoginType

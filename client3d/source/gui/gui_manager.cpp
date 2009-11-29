@@ -109,11 +109,11 @@ GuiManager::ElementID GuiManager::mStateStruct[ELEMENTS_SUM]=
     { -1, -1, "List_Chat",          LIST_CHATWIN   },
     { -1, -1, "List_NPC",           LIST_NPC       },
     // Statusbar.
-    { -1, -1, "Bar_PlayerMana",     STATUSBAR_NPC_MANA      },
-    { -1, -1, "Bar_PlayerGrace",    STATUSBAR_NPC_GRACE     },
+    { -1, -1, "Bar_Mana",           STATUSBAR_NPC_MANA      },
+    { -1, -1, "Bar_Grace",          STATUSBAR_NPC_GRACE     },
     { -1, -1, "Bar_Health",         STATUSBAR_NPC_HEALTH    },
-    { -1, -1, "Bar_Mana",           STATUSBAR_PLAYER_MANA   },
-    { -1, -1, "Bar_Grace",          STATUSBAR_PLAYER_GRACE  },
+    { -1, -1, "Bar_PlayerMana",     STATUSBAR_PLAYER_MANA   },
+    { -1, -1, "Bar_PlayerGrace",    STATUSBAR_PLAYER_GRACE  },
     { -1, -1, "Bar_PlayerHealth",   STATUSBAR_PLAYER_HEALTH },
     // TextValues.
     { -1, -1, "Engine_CurrentFPS",  TEXTBOX_STAT_CUR_FPS   },
@@ -140,7 +140,7 @@ GuiManager::ElementID GuiManager::mStateStruct[ELEMENTS_SUM]=
     // Table
     { -1, -1, "Table_Server",       TABLE },
     // Combobox.
-    { -1, -1, "ComboBoxTest",       COMBOBOX_TEST  },
+//    { -1, -1, "ComboBoxTest",       COMBOBOX_TEST  },
     // Element_Slot
     { -1, -1, "Slot_Quickslot",     SLOT_QUICKSLOT      },
     { -1, -1, "Slot_Equipment",     SLOT_EQUIPMENT      },

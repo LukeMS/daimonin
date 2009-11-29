@@ -91,7 +91,7 @@ public:
         // Table
         TABLE,
         // Combobox
-        COMBOBOX_TEST,
+//        COMBOBOX_TEST,
         // Slots
         SLOT_QUICKSLOT,
         SLOT_EQUIPMENT,
@@ -151,19 +151,19 @@ public:
     };
     typedef enum
     {
-        MSG_CLOSE_PARENT,
-        MSG_CLEAR,
-        MSG_REDRAW,
-        MSG_ADD_ROW,
-        MSG_ADD_ITEM,
-        MSG_DEL_ITEM,
-        MSG_GET_USERBREAK,
-        MSG_GET_SELECTION,
-        MSG_GET_ACTIVATED,
-        MSG_SET_TEXT,
-        MSG_SET_VALUE,
-        MSG_SET_VISIBLE,
-        MSG_GET_KEYWORD
+        MSG_CLOSE_PARENT,  //  0
+        MSG_CLEAR,         //  1
+        MSG_REDRAW,        //  2
+        MSG_ADD_ROW,       //  3
+        MSG_ADD_ITEM,      //  4
+        MSG_DEL_ITEM,      //  5
+        MSG_GET_USERBREAK, //  6
+        MSG_GET_SELECTION, //  7
+        MSG_GET_ACTIVATED, //  8
+        MSG_SET_TEXT,      //  9
+        MSG_SET_VALUE,     // 10
+        MSG_SET_VISIBLE,   // 11
+        MSG_GET_KEYWORD    // 12
     }Message;
 
     /// Actual state of the mouse cursor:

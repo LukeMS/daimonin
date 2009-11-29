@@ -43,11 +43,11 @@ public:
         updateLand();
         updateWater();
     }
+    void setWave(Ogre::Real alpha, Ogre::Real amplitude, Ogre::Real speed);
     void setGrid(bool visible);
-    void setDaylight(Ogre::Real brightness);
+    void setLight(Ogre::Real brightness);
     void setCameraRotation(Ogre::Real angle);
     void setMaterial(int groupNr, int texSize);
-    void setWaveParameter(Ogre::Real alpha, Ogre::Real amplitude, Ogre::Real speed);
 
 private:
     // ////////////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ private:
     // ////////////////////////////////////////////////////////////////////
     void updateLand();
     void updateWater();
-    void setVertex(Ogre::Vector3 &pos, int maskNr, Ogre::Real offsetU, Ogre::Real offsetV, Ogre::Vector3 &normal);
+    void setVertex(Ogre::Vector3 &pos, int maskNr, Ogre::Real offsetU, Ogre::Real offsetV, Ogre::Vector4 &params);
     void setTriangle(int x, int z, Ogre::Vector3 v1, Ogre::Vector3 v2, Ogre::Vector3 v3, int maskNr);
     int  getMask(int gfxVertex0, int gfxVertex1, int gfxVertex2);
 };

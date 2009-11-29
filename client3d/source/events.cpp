@@ -61,21 +61,16 @@ void Events::Init(RenderWindow* win, SceneManager *SceneMgr)
     mWindow = win;
     size_t windowHnd =0;
     mWindow->getCustomAttribute("WINDOW", &windowHnd);
-    std::ostringstream windowHndStr;
-    windowHndStr << windowHnd;
     OIS::ParamList pl;
-    pl.insert(std::make_pair(std::string("WINDOW"), windowHndStr.str()));
+    pl.insert(std::make_pair(std::string("WINDOW"), StringConverter::toString(windowHnd)));
     mInputManager = OIS::InputManager::createInputSystem(pl);
     mInputKeyboard= static_cast<OIS::Keyboard*>(mInputManager->createInputObject(OIS::OISKeyboard, true));
     mInputKeyboard->setEventCallback(this);
     mInputMouse= static_cast<OIS::Mouse*>(mInputManager->createInputObject(OIS::OISMouse, true));
     mInputMouse->setEventCallback(this);
-    unsigned int width, height, depth;
-    int left, top;
-    mWindow->getMetrics(width, height, depth, left, top);
     const OIS::MouseState &ms = mInputMouse->getMouseState();
-    ms.width = width;
-    ms.height = height;
+    ms.width = mWindow->getWidth();
+    ms.height = mWindow->getHeight();
     mIdleTime =0;
     mMouse = Vector3::ZERO;
     mQuitGame = false;
@@ -170,12 +165,18 @@ bool Events::frameStarted(const FrameEvent& evt)
             element->setMetricsMode(GMM_RELATIVE);
             element->setPosition(0.0, 0.0);
             element->setDimensions(0.5, 1.0);
-            if (Root::getSingleton().getTimer()->getMilliseconds() & 1)
-                element->setMaterialName("GUI/LoadScreen1");
-            else
-                element->setMaterialName("GUI/LoadScreen2");
+            element->setMaterialName("GUI/LoadScreen" + StringConverter::toString((Root::getSingleton().getTimer()->getMilliseconds()&1)+1));
             overlay->add2D(static_cast<OverlayContainer*>(element));
             overlay->show();
+            if (Option::getSingleton().getIntValue(Option::ERROR_NO_SHADRES))
+            {
+                Option::getSingleton().setGameStatus(Option::GAME_STATUS_CRITICAL_ERROR);
+                GuiManager::getSingleton().displaySystemMessage("*** Critical Error ***");
+                GuiManager::getSingleton().displaySystemMessage("Your gfx-card has no shader support.");
+                GuiManager::getSingleton().displaySystemMessage("Client3d will not run on your system.");
+                GuiManager::getSingleton().displaySystemMessage("Press ESC to quit the client.");
+                break;
+            }
             GuiManager::getSingleton().displaySystemMessage("* Welcome to Daimonin *");
             Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_SOUND);
             GuiManager::getSingleton().displaySystemMessage("Starting the sound-manager...");
@@ -527,44 +528,45 @@ bool Events::frameStarted(const FrameEvent& evt)
         case Option::GAME_STATUS_PLAY:
         {
             static bool once = false;
-            ObjectManager::getSingleton().update(ObjectManager::OBJECT_NPC, evt);
-            mIdleTime += evt.timeSinceLastFrame;
-            if (mIdleTime > 1.0)
+            if (!once)
+            {
+                once = true;
+                ObjectManager::getSingleton().init();
+                ObjectVisuals::getSingleton().Init();
+                GuiManager::getSingleton().showWindow(GuiManager::WIN_STATISTICS, true);
+                GuiManager::getSingleton().showWindow(GuiManager::WIN_PLAYERINFO, true);
+                mWindow->resetStatistics();
+                GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Client3d commands:");
+                GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~1 ... 8~ to change cloth.");
+                GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Hold shift for a ranged attack.");
+                GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~!keyg~ for grid. ");
+                GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~!keya~ to change Idle animation.");
+                GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~!keyb~ to change Attack animation.");
+                GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~!keyc~ to change Agility animation.");
+                GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~!keyp~ to ready/unready primary weapon.");
+                GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~!keys~ to ready/unready secondary weapon.");
+                GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~!keyq~ to start attack animation.");
+                GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~PGUP/PGDN~ to rotate camera.");
+                GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~HOME~ to freeze camera rotation.");
+                GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~!keyi~ for Inventory.");
+                GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Example of user defined chars: :( :) :D :P !key-spc");
+                GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "---------------------------------------------------");
+                GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~9~ to load the mask demo!");
+                GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "---------------------------------------------------");
+                // Can crash the client...
+                //ObjectManager::getSingleton().setNameNPC(ObjectNPC::HERO, strAccountName.c_str());
+                //Sound::getSingleton().playStream(Sound::GREETS_VISITOR);
+            }
+            Option::getSingleton().setGameStatus(Option::GAME_STATUS_GAME_LOOP);
+            break;
+        }
+
+        case Option::GAME_STATUS_GAME_LOOP:
+        {
+            if ((mIdleTime += evt.timeSinceLastFrame) > 1.0)
             {
                 mIdleTime = 0;
-                if (!once)
-                {
-                    ObjectManager::getSingleton().init();
-                    ObjectVisuals::getSingleton().Init();
-                    GuiManager::getSingleton().showWindow(GuiManager::WIN_STATISTICS, true);
-                    GuiManager::getSingleton().showWindow(GuiManager::WIN_PLAYERINFO, true);
-                    mWindow->resetStatistics();
-                    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Client3d commands:");
-                    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~1 ... 8~ to change cloth.");
-                    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Hold shift for a ranged attack.");
-                    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~!keyg~ for grid. ");
-                    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~!keya~ to change Idle animation.");
-                    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~!keyb~ to change Attack animation.");
-                    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~!keyc~ to change Agility animation.");
-                    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~!keyp~ to ready/unready primary weapon.");
-                    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~!keys~ to ready/unready secondary weapon.");
-                    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~!keyq~ to start attack animation.");
-                    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~PGUP/PGDN~ to rotate camera.");
-                    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~HOME~ to freeze camera rotation.");
-                    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~!keyi~ for Inventory.");
-                    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Example of user defined chars: :( :) :D :P !key-spc");
-                    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "---------------------------------------------------");
-                    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "Press ~9~ to load the mask demo!");
-                    GuiManager::getSingleton().print(GuiManager::LIST_MSGWIN, "---------------------------------------------------");
-                    // Can crash the client...
-                    //ObjectManager::getSingleton().setNameNPC(ObjectNPC::HERO, strAccountName.c_str());
-                    //Sound::getSingleton().playStream(Sound::GREETS_VISITOR);
-                    once = true;
-                }
-                else
-                {
-                    //  Sound::getSingleton().playStream(Sound::PLAYER_IDLE);
-                }
+                Sound::getSingleton().playStream(Sound::PLAYER_IDLE);
                 break;
             }
 
@@ -575,8 +577,7 @@ bool Events::frameStarted(const FrameEvent& evt)
                 mRaySceneQuery->setRay(mCamera->getCameraToViewportRay(mMouse.x / mWindow->getWidth(), mMouse.y / mWindow->getHeight()));
                 mRaySceneQuery->setQueryMask(ObjectManager::QUERY_NPC_MASK | ObjectManager::QUERY_CONTAINER);
                 RaySceneQueryResult &result = mRaySceneQuery->execute();
-                if (!result.empty() && !GuiManager::getSingleton().mouseInsideGui()
-                   )
+                if (!result.empty() && !GuiManager::getSingleton().mouseInsideGui())
                 {
                     // Mouse is over an object.
                     RaySceneQueryResult::iterator itr = result.begin();
@@ -590,6 +591,7 @@ bool Events::frameStarted(const FrameEvent& evt)
                 mSceneManager->destroyQuery(mRaySceneQuery);
                 time = Root::getSingleton().getTimer()->getMilliseconds();
             }
+            ObjectManager::getSingleton().update(ObjectManager::OBJECT_NPC, evt);
             ParticleManager::getSingleton().update(evt.timeSinceLastFrame);
             TileMap::getSingleton().update();
             break;
@@ -681,3 +683,4 @@ bool Events::frameEnded(const FrameEvent& evt)
     }
     return true;
 }
+
