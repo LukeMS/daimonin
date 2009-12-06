@@ -20,7 +20,6 @@ use_dmg_info 1
 glow_radius 1
 walk_on 1
 fly_on 1
-speed 1
 wc 80
 dam 85
 thac0 0
