@@ -6,7 +6,6 @@ layer 3
 last_heal 0
 weight 400
 ac 4
-last_heal -44
 item_level 1
 resist_impact 3
 resist_cleave 3
