@@ -6,7 +6,6 @@ layer 3
 attack_impact 100
 last_grace 15
 last_sp 7
-weight 100
 dam 50
 can_stack 1
 wc 35

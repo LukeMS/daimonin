@@ -20,7 +20,6 @@ face key_wintersevent.111
 item_quality 100
 item_condition 100
 slaying 887744
-face key_blue.111
 type 21
 value 100
 weight 100

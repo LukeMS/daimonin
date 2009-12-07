@@ -30,7 +30,6 @@ ac 28
 wc 15
 thac0 85
 thacm 5
-resist_impact 15
 resist_pierce 20
 resist_paralyze 25
 resist_confusion 100
