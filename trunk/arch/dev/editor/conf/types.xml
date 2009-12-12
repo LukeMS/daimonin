@@ -142,7 +142,7 @@
   <attribute arch="is_turnable" editor="is turnable" type="bool">
   System flag. Object can be turned to the directions.
   </attribute>
-  <attribute arch="direction" editor="direction" type="int">
+  <attribute arch="direction" editor="direction" type="int" min="0" max="8">
   The object's direction.
   </attribute>
   <attribute arch="terrain_flag" editor="can move on" type="bitmask_terrain">
