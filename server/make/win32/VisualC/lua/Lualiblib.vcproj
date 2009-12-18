@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="9,00"
 	Name="Lualiblib"
 	ProjectGUID="{A179CC7C-0092-415E-8E60-575F3ED1CF3B}"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform

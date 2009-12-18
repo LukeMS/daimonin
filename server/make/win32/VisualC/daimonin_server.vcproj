@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="9,00"
 	Name="daimonin_server"
 	ProjectGUID="{6A3BD0B7-270E-4B12-B4ED-13F63FE5E136}"
 	RootNamespace="daimonin_server"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -20,7 +21,7 @@
 			IntermediateDirectory=".\ReleaseLog"
 			ConfigurationType="1"
 			UseOfMFC="1"
-			ATLMinimizesCRunTimeLibraryUsage="true"
+			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="2"
 			WholeProgramOptimization="1"
 			BuildLogFile=""
@@ -89,6 +90,8 @@
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -107,9 +110,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -191,6 +191,8 @@
 				GenerateMapFile="true"
 				MapFileName=".\Debug/daimonin_server.map"
 				SubSystem="1"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -209,9 +211,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -511,6 +510,26 @@
 				</File>
 				<File
 					RelativePath="..\..\..\src\server\c_wiz.c"
+					>
+					<FileConfiguration
+						Name="ReleaseLog|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\ReleaseLog\server/"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\server/"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\src\server\calendar.c"
 					>
 					<FileConfiguration
 						Name="ReleaseLog|Win32"
@@ -1013,26 +1032,6 @@
 						/>
 					</FileConfiguration>
 				</File>
-				<File
-					RelativePath="..\..\..\src\server\calendar.c"
-					>
-					<FileConfiguration
-						Name="ReleaseLog|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\server/"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\server/"
-						/>
-					</FileConfiguration>
-				</File>
 			</Filter>
 			<Filter
 				Name="common"
@@ -1122,7 +1121,7 @@
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="..\..\..\..\dev\win32\flex.exe -i  -o$(InputDir)$(InputName).c $(InputPath)&#x0D;&#x0A;"
+							CommandLine="..\..\..\..\dev\win32\flex.exe -i  -o&quot;$(InputDir)$(InputName).c&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;"
 							Outputs="$(InputDir)$(InputName).c"
 						/>
 					</FileConfiguration>
@@ -1464,7 +1463,7 @@
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="..\..\..\..\dev\win32\flex.exe -i -Prmap -o$(InputDir)$(InputName).c $(InputPath)&#x0D;&#x0A;"
+							CommandLine="..\..\..\..\dev\win32\flex.exe -i -Prmap -o&quot;$(InputDir)$(InputName).c&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;"
 							Outputs="$(InputDir)$(InputName).c"
 						/>
 					</FileConfiguration>
