@@ -1,5 +1,5 @@
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual C++ Express 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "client", "Daimonin.vcproj", "{029B7383-4C4F-4660-BB6E-F471A85986E5}"
 	ProjectSection(ProjectDependencies) = postProject
 		{B0ECC11F-F5EB-4081-A7C0-65C5A88CF9BD} = {B0ECC11F-F5EB-4081-A7C0-65C5A88CF9BD}
