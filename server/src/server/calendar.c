@@ -186,9 +186,11 @@ static const char *day_name[] =
     "Lappodein",
 };
 
+/*
 static const char *intraholiday_name[] =
 {
 };
+*/
 
 static const char *extraholiday_name[] =
 {
@@ -258,8 +260,8 @@ void get_tad(timeanddate_t *tad)
 
     /* Time (numbers) */
     tad->hour = tadtick % ARKHE_HRS_PER_DY;
-    tad->minute = (ROUND_TAG % PTICKS_PER_ARKHE_HOUR) /
-                  (PTICKS_PER_ARKHE_HOUR / (ARKHE_MES_PER_HR - 1));
+    tad->minute = (uint8)((ROUND_TAG % PTICKS_PER_ARKHE_HOUR) /
+                  (PTICKS_PER_ARKHE_HOUR / (ARKHE_MES_PER_HR - 1)));
 
     /* Date (numbers) */
     day = (tadtick % ARKHE_HRS_PER_YR) / ARKHE_HRS_PER_DY;
@@ -277,9 +279,10 @@ void get_tad(timeanddate_t *tad)
     tad->month_name = (tad->month >= 0) ? month_name[tad->month] : "";
     tad->parweek_name = (tad->parweek >= 0) ? parweek_name[tad->parweek] : "";
     tad->day_name = (tad->day >= 0) ? day_name[tad->day] : "";
-    tad->intraholiday_name = (tad->intraholiday >= 0) ?
-                             intraholiday_name[tad->intraholiday] : ""; /* TODO */
-    tad->extraholiday_name = (tad->extraholiday >= 0) ?
+/*    tad->intraholiday_name = (tad->intraholiday >= 0) ?
+                             intraholiday_name[tad->intraholiday] : ""; *//* TODO */
+	tad->intraholiday_name = ""; // hotfix until intraholiday_name[] is declared right
+	tad->extraholiday_name = (tad->extraholiday >= 0) ?
                              extraholiday_name[tad->extraholiday] : "";
 }
 
