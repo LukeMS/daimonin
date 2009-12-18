@@ -398,8 +398,7 @@ void cs_cmd_generic(char *buf, int len, NewSocket *ns)
 {
     player      *pl;
     object      *ob;
-    char        *cp,
-                 tmp[MAX_BUF];
+    char        *cp;
     CommArray_s *csp;
 
     /* we assume that our slash command is always a zero terminated string */

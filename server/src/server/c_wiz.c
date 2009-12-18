@@ -102,6 +102,7 @@ int command_confirmme(object *op, char *params)
 {
     new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_PURPLE | NDI_VIM, 0, op, "%s tests the /admin command!",
                          query_name(op));
+    return 0;
 }
 
 /*
