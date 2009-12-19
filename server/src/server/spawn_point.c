@@ -326,25 +326,25 @@ void spawn_point(object *op)
      * with that "trick" we force for map loading the
      * default spawns of the map because sp is 0 as default.
      */
-    /*LOG(-1,"SPAWN...(%d,%d)",op->x, op->y);*/
+    /*LOG(llevNoLog,"SPAWN...(%d,%d)",op->x, op->y);*/
     if (op->stats.sp == -1)
     {
         int gg;
         /* now lets decide we will have a spawn event */
         if (op->last_grace <= -1) /* never */
         {
-            /*LOG(-1," closed (-1)\n");*/
+            /*LOG(llevNoLog," closed (-1)\n");*/
             return;
         }
         if (op->last_grace && (gg = (RANDOM() % (op->last_grace + 1)))) /* if >0 and random%x is NOT null ... */
         {
-            /*LOG(-1," chance: %d (%d)\n",gg,op->last_grace);*/
+            /*LOG(llevNoLog," chance: %d (%d)\n",gg,op->last_grace);*/
             return;
         }
 
         op->stats.sp = (RANDOM() % SPAWN_RANDOM_RANGE);
     }
-    /*LOG(-1," hit!: %d\n",op->stats.sp);*/
+    /*LOG(llevNoLog," hit!: %d\n",op->stats.sp);*/
 
     if (!op->inv) /* spawn point without inventory! */
     {

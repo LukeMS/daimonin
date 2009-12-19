@@ -242,7 +242,7 @@ void animate_object(object *op, int count)
     {
         if (op->type == PLAYER)
         {
-/*            LOG(-1,"ppA: %s fdir:%d mdir:%d ldir:%d (%d %d %d) state:%d\n",op->name,
+/*            LOG(llevNoLog,"ppA: %s fdir:%d mdir:%d ldir:%d (%d %d %d) state:%d\n",op->name,
                         op->anim_enemy_dir,op->anim_moving_dir,op->anim_last_facing,
                         CONTR(op)->anim_flags & PLAYER_AFLAG_ENEMY,
                         CONTR(op)->anim_flags & PLAYER_AFLAG_ADDFRAME,
@@ -328,7 +328,7 @@ void animate_object(object *op, int count)
                 op->state = 0;
                 CONTR(op)->anim_flags &= ~PLAYER_AFLAG_FIGHT; /* clear always fight flag */
             }
-/*            LOG(-1, "ppB: %s(%d)::dir:%d face:%d (%d) ->%d (%d) / %d\n", op->name,count,op->direction, op->facing,op->anim_last_facing, base_state, op->state, dir); */
+/*            LOG(llevNoLog, "ppB: %s(%d)::dir:%d face:%d (%d) ->%d (%d) / %d\n", op->name,count,op->direction, op->facing,op->anim_last_facing, base_state, op->state, dir); */
         }
         else /* mobs & non player anims */
         {
@@ -375,7 +375,7 @@ void animate_object(object *op, int count)
         if (op->state >= max_state)
             op->state = 0;
     }
-/*    LOG(-1, "B: %s(%d)::dir:%d face:%d (%d) ->%d (%d) / %d\n", op->name,count,op->direction, op->facing,op->anim_last_facing, base_state, op->state, dir); */
+/*    LOG(llevNoLog, "B: %s(%d)::dir:%d face:%d (%d) ->%d (%d) / %d\n", op->name,count,op->direction, op->facing,op->anim_last_facing, base_state, op->state, dir); */
 
     SET_ANIMATION(op, op->state + base_state);
     /* this will force a "below windows update" - NOT a map face update.

@@ -350,10 +350,10 @@ void party_add_member(player *leader, player *member)
     }
 
 #ifdef DEBUG_GROUP
-    LOG(-1,"PARTY_ADD: START dump!\n");
+    LOG(llevNoLog,"PARTY_ADD: START dump!\n");
     party_dump(leader->ob);
     party_dump(member->ob);
-    LOG(-1,"PARTY_ADD: START adding!\n");
+    LOG(llevNoLog,"PARTY_ADD: START adding!\n");
 #endif
 
     if(!(tmp=leader->group_next)) /* new group! */
@@ -367,13 +367,13 @@ void party_add_member(player *leader, player *member)
         member->group_prev = leader->ob;
         member->group_next = NULL;
 #ifdef DEBUG_GROUP
-        LOG(-1,"PARTY_ADD: new group!\n");
+        LOG(llevNoLog,"PARTY_ADD: new group!\n");
 #endif
     }
     else /* existing group, attach our player */
     {
 #ifdef DEBUG_GROUP
-        LOG(-1,"PARTY_ADD: add to group!\n");
+        LOG(llevNoLog,"PARTY_ADD: add to group!\n");
 #endif
         /* get last valid member of the group */
         for(;CONTR(tmp)->group_next;tmp=CONTR(tmp)->group_next)
@@ -426,7 +426,7 @@ void party_remove_member(player *member, int flag)
     }
 
 #ifdef DEBUG_GROUP
-    LOG(-1,"PARTY_REM: remove member - start\n");
+    LOG(llevNoLog,"PARTY_REM: remove member - start\n");
     party_dump(member->ob);
 #endif
 
@@ -440,7 +440,7 @@ void party_remove_member(player *member, int flag)
     if(CONTR(member->group_leader)->group_nrof == 2)
     {
 #ifdef DEBUG_GROUP
-        LOG(-1,"PARTY_REM: kill group!\n");
+        LOG(llevNoLog,"PARTY_REM: kill group!\n");
 #endif
         party_client_group_kill(member->group_leader);
         party_client_group_kill((tmp=CONTR(member->group_leader)->group_next));
@@ -456,7 +456,7 @@ void party_remove_member(player *member, int flag)
     if(member->group_leader == member->ob) /* we are leader */
     {
 #ifdef DEBUG_GROUP
-        LOG(-1,"PARTY_REM: remove member1!\n");
+        LOG(llevNoLog,"PARTY_REM: remove member1!\n");
 #endif
         CONTR(member->group_next)->group_prev = NULL; /* unlink the leader */
 
@@ -468,7 +468,7 @@ void party_remove_member(player *member, int flag)
     else /* we are member 2+ */
     {
 #ifdef DEBUG_GROUP
-        LOG(-1,"PARTY_REM: remove member2!\n");
+        LOG(llevNoLog,"PARTY_REM: remove member2!\n");
 #endif
         /* MUST be legal because we are not first member */
         CONTR(member->group_prev)->group_next = member->group_next;
@@ -570,7 +570,7 @@ void party_client_group_update(object *member, int flag)
 
     plm = CONTR(member);
 #ifdef DEBUG_GROUP_UPDATE
-    LOG(-1,"GROUP UPDATE: %s (id:%d nr:%d)\n", query_name(member), plm->group_id, plm->group_nr);
+    LOG(llevNoLog,"GROUP UPDATE: %s (id:%d nr:%d)\n", query_name(member), plm->group_id, plm->group_nr);
     party_dump(member);
 #endif
     sprintf(buf2,"|%d %d %d %d %d %d %d %d\n",plm->group_nr,
@@ -586,7 +586,7 @@ void party_client_group_update(object *member, int flag)
         if((pl = CONTR(tmp))->update_ticker != ROUND_TAG)
         {
 #ifdef DEBUG_GROUP_UPDATE
-            LOG(-1,"GROUP UPDATE (tag): %s (id:%d nr:%d)\n", query_name(tmp), CONTR(tmp)->group_id, CONTR(tmp)->group_nr);
+            LOG(llevNoLog,"GROUP UPDATE (tag): %s (id:%d nr:%d)\n", query_name(tmp), CONTR(tmp)->group_id, CONTR(tmp)->group_nr);
 #endif
             /* TODO: use GROUP_UPDATE_xxx for a binary cmd which really holds
              * only the different data!

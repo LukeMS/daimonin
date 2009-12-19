@@ -171,7 +171,7 @@ struct objectlink *add_ban_entry(char *banned, char *ip, int ticks, int ticks_le
     if(banned)
         FREE_AND_COPY_HASH(ol->objlink.ban->name, banned);
 
-    LOG(-1,"Banning: %s (IP: %s) for %d seconds (%d sec left).\n", STRING_SAFE(ol->objlink.ban->name),
+    LOG(llevNoLog,"Banning: %s (IP: %s) for %d seconds (%d sec left).\n", STRING_SAFE(ol->objlink.ban->name),
             STRING_SAFE(ip), ticks/8,ol->objlink.ban->ticks_init==-1?-1:(int)(ol->objlink.ban->ticks-pticks)/8);
 
     if(banned) /* add to name list */
@@ -219,7 +219,7 @@ int check_banned(NewSocket *ns, const char *name, char *ip)
         {
             ol_tmp = ol->next;
             /* lets check the entry is still valid */
-            /*LOG(-1,"CHECK-NAME: %s with %s (pticks: %d to %d)\n", name, STRING_SAFE(ol->objlink.ban->name),
+            /*LOG(llevNoLog,"CHECK-NAME: %s with %s (pticks: %d to %d)\n", name, STRING_SAFE(ol->objlink.ban->name),
               pticks, ol->objlink.ban->ticks);*/
             if(ol->objlink.ban->ticks_init != -1 &&  pticks >= ol->objlink.ban->ticks)
                 remove_ban_entry(ol); /* is not valid anymore, gc it on the fly */
@@ -361,7 +361,7 @@ int check_banned(NewSocket *ns, const char *name, char *ip)
                 }
             }
 
-            LOG(-1,"***BANNED IP Login: %s\n", ns->ip_host);
+            LOG(llevNoLog,"***BANNED IP Login: %s\n", ns->ip_host);
             Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, ban_buf_ip, strlen(ban_buf_ip));
             player_addme_failed(ns, ADDME_MSG_DISCONNECT); /* tell client something is wrong and we leave */
             ns->login_count = ROUND_TAG+(uint32)(5.0f * pticks_second);

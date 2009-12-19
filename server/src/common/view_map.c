@@ -367,7 +367,7 @@ void draw_client_map2(object *pl)
                 {
                     if (!d) /* now its visible? */
                     {
-                        /*LOG(-1,"SET_BV(%d,%d): was bv is now %d\n", nx,ny,d);*/
+                        /*LOG(llevNoLog,"SET_BV(%d,%d): was bv is now %d\n", nx,ny,d);*/
                         pl_ptr->update_los = 1;
                     }
                 }
@@ -375,7 +375,7 @@ void draw_client_map2(object *pl)
                 {
                     if (d & BLOCKED_LOS_BLOCKSVIEW)
                     {
-                        /*LOG(-1,"SET_BV(%d,%d): was visible is now %d\n", nx,ny,d);*/
+                        /*LOG(llevNoLog,"SET_BV(%d,%d): was visible is now %d\n", nx,ny,d);*/
                         pl_ptr->update_los = 1;
                     }
                 }

@@ -454,7 +454,7 @@ int damage_ob(object *op, int dam, object *hitter, int env_attack)
     {
         if (hitter->attack[attacknum])
         {
-            /*          LOG(-1, "hitter: %f - %s (dam:%d/%d) (wc:%d/%d)(ac:%d/%d) ap:%d\n",hitter->speed,
+            /*          LOG(llevNoLog, "hitter: %f - %s (dam:%d/%d) (wc:%d/%d)(ac:%d/%d) ap:%d\n",hitter->speed,
                             hitter->name,hitter->stats.dam,op->stats.dam, hitter->stats.wc,op->stats.wc,
                             hitter->stats.ac,op->stats.ac,hitter->attack[attacknum]);
             */
@@ -511,7 +511,7 @@ int damage_ob(object *op, int dam, object *hitter, int env_attack)
     }
     op->last_damage += maxdam;
 
-    /*LOG(-1,"DMG: %d\n", maxdam);*/
+    /*LOG(llevNoLog,"DMG: %d\n", maxdam);*/
     op->stats.hp -= maxdam; /* thats the damage the target got */
 
     /* lets kill, kill, kill... */
@@ -1526,7 +1526,7 @@ object * hit_with_arrow(object *op, object *victim)
     if(!trigger_object_plugin_event(EVENT_ATTACK,
                 hitter, hitter, victim, NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL))
     {
-        /*LOG(-1, "hit: %s (%d %d)\n", hitter->name, op->stats.dam, op->stats.wc);*/
+        /*LOG(llevNoLog, "hit: %s (%d %d)\n", hitter->name, op->stats.dam, op->stats.wc);*/
         hit_something = attack_ob(victim, hitter, op);
     }
 

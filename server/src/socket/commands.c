@@ -1061,7 +1061,7 @@ void cs_cmd_mark(char *data, int len, NewSocket *ns)
         pl->mark_count = op->count;
     }
 
-    /*LOG(-1,"MARKITEM2 (%d) (%d)\n", tag, op->count);*/
+    /*LOG(llevNoLog,"MARKITEM2 (%d) (%d)\n", tag, op->count);*/
     SOCKBUF_REQUEST_BUFFER(&pl->socket, SOCKET_SIZE_SMALL);
     SockBuf_AddInt(ACTIVE_SOCKBUF(&pl->socket),  pl->mark_count);
     SOCKBUF_REQUEST_FINISH(&pl->socket, BINARY_CMD_MARK, SOCKBUF_DYNAMIC);
@@ -1090,7 +1090,7 @@ void cs_cmd_talk(char *data, int len, NewSocket *ns)
     else
     {
         data[len]='\0'; /* sanity string end */
-        LOG(-1,"TX-CMD: unknown tag (len %d) from player %s: >%s<\n", len, query_name(pl->ob),data);
+        LOG(llevNoLog,"TX-CMD: unknown tag (len %d) from player %s: >%s<\n", len, query_name(pl->ob),data);
     }
 }
 
@@ -1307,7 +1307,7 @@ void cs_cmd_addme(char *buf, int len, NewSocket *ns)
         pl = ns->pl;
         ns->pl = NULL;
 
-        /*LOG(-1,"Socket: pl->socket: %x fd:%d :: ns: %x fd:%d\n", &pl->socket, pl->socket.fd, ns, ns->fd);*/
+        /*LOG(llevNoLog,"Socket: pl->socket: %x fd:%d :: ns: %x fd:%d\n", &pl->socket, pl->socket.fd, ns, ns->fd);*/
     }
 
     FREE_AND_CLEAR_HASH(hash_name); /* clear this reference */

@@ -149,7 +149,7 @@ void esrv_draw_look(object *pl)
      || OUT_OF_REAL_MAP(pl->map,pl->x,pl->y))
         return;
 
-    /*LOG(-1,"send look of: %s\n", query_name(pl));*/
+    /*LOG(llevNoLog,"send look of: %s\n", query_name(pl));*/
     /* another layer feature: grap last (top) object without browsing the objects */
     tmp = GET_MAP_OB_LAST(pl->map, pl->x, pl->y);
 
@@ -460,7 +460,7 @@ void esrv_close_container(object *op)
 {
     NewSocket *ns = &CONTR(op)->socket;
 
-    /*LOG(-1,"close container of: %s\n", query_name(op));*/
+    /*LOG(llevNoLog,"close container of: %s\n", query_name(op));*/
     SOCKBUF_REQUEST_BUFFER(ns, SOCKET_SIZE_SMALL);
     SockBuf_AddInt(ACTIVE_SOCKBUF(ns), -1); /* container mode flag */
     SockBuf_AddInt(ACTIVE_SOCKBUF(ns), -1);
@@ -865,7 +865,7 @@ static void esrv_send_item_send(object *pl, object *op)
             return;
     }
 
-    /*LOG(-1,"send item: %s\n", query_name(op));*/
+    /*LOG(llevNoLog,"send item: %s\n", query_name(op));*/
 
     SOCKBUF_REQUEST_BUFFER(ns, SOCKET_SIZE_MEDIUM);
     sbptr = ACTIVE_SOCKBUF(ns);
@@ -1120,7 +1120,7 @@ void esrv_move_object(object *pl, tag_t to, tag_t tag, long nrof)
         if (op->map && !op->env)
             return;
 
-        /*LOG(-1,"drop it... (%d)\n",check_container(pl,op));*/
+        /*LOG(llevNoLog,"drop it... (%d)\n",check_container(pl,op));*/
         CLEAR_FLAG(pl, FLAG_INV_LOCKED); /* funny trickm see check container */
         if ((tmp = check_container(pl, op)))
             new_draw_info(NDI_UNIQUE, 0, pl, "Remove first all ~NO-DROP~ items from this container!");
@@ -1137,7 +1137,7 @@ void esrv_move_object(object *pl, tag_t to, tag_t tag, long nrof)
             return;
 
         CONTR(pl)->count = nrof;
-        /*LOG(-1,"pick up...\n");*/
+        /*LOG(llevNoLog,"pick up...\n");*/
         pick_up(pl, op); /* it goes in player inv or readied container */
         return ;
     }
@@ -1154,7 +1154,7 @@ void esrv_move_object(object *pl, tag_t to, tag_t tag, long nrof)
     /* player have for example a opend container in the inventory */
     if (env->type == CONTAINER && can_pick(pl, op) && sack_can_hold(pl, env, op, nrof))
     {
-        /*LOG(-1,"put in sack...\n");*/
+        /*LOG(llevNoLog,"put in sack...\n");*/
         CLEAR_FLAG(pl, FLAG_INV_LOCKED); /* funny trickm see check container */
         tmp = check_container(pl, op);
         if (QUERY_FLAG(pl, FLAG_INV_LOCKED) && env->env != pl)

@@ -274,7 +274,7 @@ int check_gmaster_list(player *pl, int mode)
 
     for(ol = gmaster_list;ol;ol=ol->next)
     {
-        /*LOG(-1,"CHECK: %s - %s -%d\n",ol->objlink.gm->name,
+        /*LOG(llevNoLog,"CHECK: %s - %s -%d\n",ol->objlink.gm->name,
                 ol->objlink.gm->host,ol->objlink.gm->mode );*/
         if ((!strcmp(ol->objlink.gm->name, "*") ||
              !strcasecmp(pl->account_name, ol->objlink.gm->name)) &&

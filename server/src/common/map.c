@@ -74,7 +74,7 @@ mapstruct *has_been_loaded_sh(const char *name)
 
     for (map = first_map; map; map = map->next)
     {
-        /*LOG(-1,"check map: >%s< find: >%s<\n", name, map->path);*/
+        /*LOG(llevNoLog,"check map: >%s< find: >%s<\n", name, map->path);*/
         if (name == map->path)
             break;
     }

@@ -837,11 +837,11 @@ int calc_skill_exp(object *who, object *op, float mod, int level, int *real)
         else if(*real == 0)
             *real = op_exp;
     }
-    /*LOG(-1,"real exp = %d\n",op_exp);*/
+    /*LOG(llevNoLog,"real exp = %d\n",op_exp);*/
     tmp = ((float) (new_levels[who_lvl + 1] - new_levels[who_lvl]) * 0.1f) * max_mul;
     if ((float) op_exp > tmp)
     {
-        /*LOG(-1,"exp to high(%d)! adjusted to: %d",op_exp, (int)tmp);*/
+        /*LOG(llevNoLog,"exp to high(%d)! adjusted to: %d",op_exp, (int)tmp);*/
         op_exp = (int) tmp;
     }
 

@@ -689,7 +689,7 @@ objectlink * link_treasurelists(char *liststring, uint32 flags)
     if (!first_treasurelist)
         return NULL;
 
-    /*LOG(-1,"LINK list: %s - ",liststring);*/
+    /*LOG(llevNoLog,"LINK list: %s - ",liststring);*/
     do
     {
         if ((tmp = strchr(liststring, ';')))
@@ -733,7 +733,7 @@ objectlink * link_treasurelists(char *liststring, uint32 flags)
                         list->flags |= flags;
                         if (flags & OBJLNK_FLAG_REF)
                             list->ref_count++;
-                        /*LOG(-1," --> %x (%d)\n",list->flags,list->ref_count);*/
+                        /*LOG(llevNoLog," --> %x (%d)\n",list->flags,list->ref_count);*/
                     }
 
                     list->objlink.tl = tl;
@@ -774,7 +774,7 @@ objectlink * link_treasurelists(char *liststring, uint32 flags)
  */
 void unlink_treasurelists(objectlink *list, int flag)
 {
-    /*LOG(-1,"unlink list: %s (%x - %d)\n",list->objlink.tl->listname, list->flags, list->ref_count );*/
+    /*LOG(llevNoLog,"unlink list: %s (%x - %d)\n",list->objlink.tl->listname, list->flags, list->ref_count );*/
     if (list && (list->flags & OBJLNK_FLAG_REF))
         list->ref_count--;
 
@@ -783,13 +783,13 @@ void unlink_treasurelists(objectlink *list, int flag)
      */
     if (!list || list->ref_count || ((list->flags & OBJLNK_FLAG_STATIC) && !flag))
     {
-        /*LOG(-1,"skiped listpart: %s\n",list->objlink.tl->listname);*/
+        /*LOG(llevNoLog,"skiped listpart: %s\n",list->objlink.tl->listname);*/
         return;
     }
 
     do
     {
-        /*LOG(-1,"freed listpat: %s\n",list->objlink.tl->listname); */
+        /*LOG(llevNoLog,"freed listpat: %s\n",list->objlink.tl->listname); */
         if(list->parmlink.tl_tweak)
         {
             FREE_ONLY_HASH(list->parmlink.tl_tweak->name);
@@ -987,8 +987,8 @@ int create_all_treasures(treasure *t, object *op, int flag, int difficulty, int 
     int     ret = FALSE;
     object *tmp;
 
-    /*  LOG(-1,"-CAT-: %s (%d)\n", STRING_SAFE(t->name),change_arch?t->change_arch.material_quality:9999); */
-    /* LOG(-1,"CAT: cs: %d (%d)(%s)\n", t->chance_fix, t->chance, t->name); */
+    /*  LOG(llevNoLog,"-CAT-: %s (%d)\n", STRING_SAFE(t->name),change_arch?t->change_arch.material_quality:9999); */
+    /* LOG(llevNoLog,"CAT: cs: %d (%d)(%s)\n", t->chance_fix, t->chance, t->name); */
     if (t->t_style != T_STYLE_UNSET)
         t_style = t->t_style;
     if (t->artifact_chance != ART_CHANCE_UNSET)
@@ -998,10 +998,10 @@ int create_all_treasures(treasure *t, object *op, int flag, int difficulty, int 
      || (int) t->chance >= 100
      || ((RANDOM() % 100 + 1) < (int) t->chance))
     {
-        /*LOG(-1,"CAT22: cs: %d (%d)(%s)\n", t->chance_fix, t->chance, t->name);*/
+        /*LOG(llevNoLog,"CAT22: cs: %d (%d)(%s)\n", t->chance_fix, t->chance, t->name);*/
         if (t->tlist && difficulty >= t->difficulty)
         {
-            /*  LOG(-1,"-CAT2: %s (%d)\n", STRING_SAFE(t->name),change_arch?t->change_arch.material_quality:9999); */
+            /*  LOG(llevNoLog,"-CAT2: %s (%d)\n", STRING_SAFE(t->name),change_arch?t->change_arch.material_quality:9999); */
             ret = create_treasure(t->tlist, op, flag, difficulty, t_style, a_chance,
                 t->magic!=T_MAGIC_UNSET?magic:t->magic,
                 t->magic_chance!=T_MAGIC_CHANCE_UNSET?magic_chance:t->magic_chance,
@@ -1014,7 +1014,7 @@ int create_all_treasures(treasure *t, object *op, int flag, int difficulty, int 
                 ret = TRUE; /* we have generated an item! */
                 if (t->item->clone.type != TYPE_WEALTH)
                 {
-                    /*LOG(-1,"*CAT*: %s (%d)\n", t->item->clone.name,change_arch?t->change_arch.material_quality:9999); */
+                    /*LOG(llevNoLog,"*CAT*: %s (%d)\n", t->item->clone.name,change_arch?t->change_arch.material_quality:9999); */
                     tmp = arch_to_object(t->item);
                     if (t->nrof && tmp->nrof <= 1)
                         tmp->nrof = RANDOM() % ((int) t->nrof) + 1;
@@ -1095,8 +1095,8 @@ int create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty, 
     treasure   *t;
     object     *tmp;
 
-    /*LOG(-1,"-COT-: %s (%d)\n", tl->name,change_arch?tl->items->change_arch.material_quality:9999); */
-    /*LOG(-1,"COT: cs: %d (%s)\n", tl->chance_fix, tl->name );*/
+    /*LOG(llevNoLog,"-COT-: %s (%d)\n", tl->name,change_arch?tl->items->change_arch.material_quality:9999); */
+    /*LOG(llevNoLog,"COT: cs: %d (%s)\n", tl->chance_fix, tl->name );*/
     if (tries++ > 100)
         return ret;
 
@@ -1113,7 +1113,7 @@ int create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty, 
         {
             if (!(RANDOM() % t->chance_fix))
             {
-                /* LOG(-1,"COT: HIT: cs: %d (%s)\n", t->chance_fix, t->name);*/
+                /* LOG(llevNoLog,"COT: HIT: cs: %d (%s)\n", t->chance_fix, t->name);*/
                 /* only when allowed, we go on! */
                 if (difficulty >= t->difficulty)
                 {
@@ -1178,7 +1178,7 @@ int create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty, 
         ret = TRUE;
         if (t->item->clone.type != TYPE_WEALTH)
         {
-            /*LOG(-1,"*COT*: %s (%d)\n", t->item->clone.name,change_arch?t->change_arch.material_quality:9999); */
+            /*LOG(llevNoLog,"*COT*: %s (%d)\n", t->item->clone.name,change_arch?t->change_arch.material_quality:9999); */
             tmp = arch_to_object(t->item);
             if (t->nrof && tmp->nrof <= 1)
                 tmp->nrof = RANDOM() % ((int) t->nrof) + 1;

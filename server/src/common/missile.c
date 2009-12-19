@@ -177,7 +177,7 @@ object *create_missile(object * const owner, const object * const bow, object * 
 	{
 		if(!owner->chosen_skill) /* sanity check */
 		{
-			LOG(-1, "create_missle: No chosen_skill for player %s\n", query_name(owner));
+			LOG(llevNoLog, "create_missle: No chosen_skill for player %s\n", query_name(owner));
 			return NULL;
 		}
 
@@ -212,7 +212,7 @@ object *create_missile(object * const owner, const object * const bow, object * 
 	if (arrow->stats.dam < 0)
 		arrow->stats.dam = 0;
 
-	/*LOG(-1, "create_missile(%d): range=%d dam:%d(%d) wc:%d(%d)\n",arrow->level, arrow->last_sp, arrow->stats.dam, arrow->stats.hp,
+	/*LOG(llevNoLog, "create_missile(%d): range=%d dam:%d(%d) wc:%d(%d)\n",arrow->level, arrow->last_sp, arrow->stats.dam, arrow->stats.hp,
 		arrow->stats.wc,arrow->stats.maxhp);*/
 
 	arrow->stats.grace = arrow->last_sp; /* temp. buffer for "tiles to fly" */
