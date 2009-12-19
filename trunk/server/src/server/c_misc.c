@@ -1344,36 +1344,6 @@ int command_save(object *op, char *params)
 }
 
 
-int command_style_map_info(object *op, char *params)
-{
-    extern mapstruct               *styles;
-    mapstruct  *mp;
-    int         maps_used = 0, mapmem = 0, objects_used = 0, x, y;
-    object     *tmp;
-
-    for (mp = styles; mp != NULL; mp = mp->next)
-    {
-        maps_used++;
-        mapmem += MAP_WIDTH(mp) * MAP_HEIGHT(mp) * (sizeof(object *) + sizeof(MapSpace)) + sizeof(mapstruct);
-        for (x = 0; x < MAP_WIDTH(mp); x++)
-        {
-            for (y = 0; y < MAP_HEIGHT(mp); y++)
-            {
-                for (tmp = get_map_ob(mp, x, y); tmp != NULL; tmp = tmp->above)
-                    objects_used++;
-            }
-        }
-    }
-
-    new_draw_info_format(NDI_UNIQUE, 0, op, "Style maps loaded:    %d", maps_used);
-    new_draw_info(NDI_UNIQUE, 0, op, "Memory used, not");
-    new_draw_info_format(NDI_UNIQUE, 0, op, "including objects:    %d", mapmem);
-    new_draw_info_format(NDI_UNIQUE, 0, op, "Style objects:        %d", objects_used);
-    new_draw_info_format(NDI_UNIQUE, 0, op, "Mem for objects:      %d", objects_used * sizeof(object));
-
-    return 0;
-}
-
 int command_privacy(object *op, char *params)
 {
     int new_status = !CONTR(op)->privacy;

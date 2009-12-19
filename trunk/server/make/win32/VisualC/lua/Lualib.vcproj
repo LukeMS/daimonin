@@ -73,7 +73,6 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalOptions="/LTCG"
 				OutputFile="ReleaseLog\lua.lib"
 				SuppressStartupBanner="true"
 				IgnoreAllDefaultLibraries="true"
