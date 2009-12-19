@@ -79,7 +79,6 @@
 			<Tool
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="true"
-				AdditionalOptions="/MACHINE:I386"
 				AdditionalDependencies="lua.lib lualib.lib winmm.lib"
 				OutputFile=".\ReleaseLog/plugin_lua.dll"
 				LinkIncremental="1"
@@ -177,7 +176,6 @@
 			<Tool
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="true"
-				AdditionalOptions="/MACHINE:I386 /FIXED:NO"
 				AdditionalDependencies="luad.lib lualibd.lib winmm.lib"
 				OutputFile=".\Debug/plugin_lua.dll"
 				LinkIncremental="1"

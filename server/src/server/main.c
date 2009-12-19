@@ -555,7 +555,6 @@ void cleanup_without_exit()
 
     /* that must be redone: clear cleanup so we know 100% all memory is freed */
     free_all_maps();
-    free_style_maps();
     free_all_object_data();
     free_all_archs();
     free_all_treasures();
