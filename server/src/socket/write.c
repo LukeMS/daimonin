@@ -228,19 +228,19 @@ sockbuf_struct *socket_buffer_get(int len)
 {
 	sockbuf_struct *tmp;
 
-	if(len <=256)
+	if(len <=248)
 	{
 		tmp = get_poolchunk(pool_sockbuf_small);
 		tmp->pool = pool_sockbuf_small;
 		tmp->bufsize = 256;
 	}
-	else if(len <=2048)
+	else if(len <=2040)
 	{
 		tmp = get_poolchunk(pool_sockbuf_medium);
 		tmp->pool = pool_sockbuf_medium;
 		tmp->bufsize = 2048;
 	}
-	else if(len <=4096)
+	else if(len <=4088)
 	{
 		tmp = get_poolchunk(pool_sockbuf_huge);
 		tmp->pool = pool_sockbuf_huge;
@@ -250,7 +250,7 @@ sockbuf_struct *socket_buffer_get(int len)
 	{
 		tmp = get_poolchunk(pool_sockbuf_dynamic);
 		tmp->pool = pool_sockbuf_dynamic;
-		tmp->bufsize = ((len/256)+1)*256;
+		tmp->bufsize = (((len/256)+1)*256)+256;
 		tmp->buf = malloc(tmp->bufsize);
 		if(!tmp->buf)
 			LOG(llevError, "dynamic sockbuf: malloc returned zero for %d(%d) bytes\n", len, tmp->bufsize);
