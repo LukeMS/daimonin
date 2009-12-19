@@ -24,7 +24,7 @@
 VPATH = @srcdir@
 srcdir = @srcdir@
 
-LOCAL_LIBRARIES = ../tests/libtest.a ../common/libcross.a ../random_maps/random_map.a ../socket/socket.a ../zlib/zlib.a ../common/libcross.a
+LOCAL_LIBRARIES = ../tests/libtest.a ../common/libcross.a ../socket/socket.a ../zlib/zlib.a ../common/libcross.a
 
 SRCS = \
 	@SERVER_SYSTEM_SRCS@ \
@@ -111,9 +111,6 @@ daimonin_server: $(OBJS) $(LOCAL_LIBRARIES)
 
 ../common/libcross.a:
 	(cd ../common; $(MAKE) $(MFLAGS) all)
-
-../random_maps/random_map.a:
-	(cd ../random_maps; $(MAKE) $(MFLAGS) all)
 
 ../socket/socket.a:
 	(cd ../socket; $(MAKE) $(MFLAGS) all)

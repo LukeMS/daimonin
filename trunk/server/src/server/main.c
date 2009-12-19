@@ -40,10 +40,6 @@
 /* #include <Mmsystem.h> swing time debug */
 #include <pathfinder.h>
 
-#include <../random_maps/random_map.h>
-#include <../random_maps/rproto.h>
-
-
 #ifdef DEBUG_MEMPOOL_OBJECT_TRACKING
 extern void check_use_object_list(void);
 #endif
