@@ -311,7 +311,7 @@ static void process_map_events(mapstruct *map)
             continue;
         }
 
-        /*LOG(-1,"POBJ: %s (%s) s:%f sl:%f (%f)\n",query_name(op),op->arch->clone.name, op->speed,op->speed_left,op->arch->clone.speed_left);*/
+        /*LOG(llevNoLog,"POBJ: %s (%s) s:%f sl:%f (%f)\n",query_name(op),op->arch->clone.name, op->speed,op->speed_left,op->arch->clone.speed_left);*/
         if (!op->speed)
         {
             LOG(llevBug,
@@ -769,7 +769,7 @@ void shutdown_agent(int timer, int ret, char *reason)
         t_sec = (sd_timer - (int) (tv2.tv_sec - tv1.tv_sec))
             - (int) ((sd_timer - (int) (tv2.tv_sec - tv1.tv_sec)) / 60) * 60;
 
-        /*LOG(-1,"SEC: %d (%d - %d)\n", tv2.tv_sec-tv1.tv_sec,t_min,t_sec);*/
+        /*LOG(llevNoLog,"SEC: %d (%d - %d)\n", tv2.tv_sec-tv1.tv_sec,t_min,t_sec);*/
         if ((t_min == m_count && !t_sec))
         {
             m_count = t_min - 1;

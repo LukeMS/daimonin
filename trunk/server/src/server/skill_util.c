@@ -140,7 +140,7 @@ int do_skill(object *op, int dir, char *string)
     int skill   = op->chosen_skill->stats.sp;
     float ticks = 0.0f;
 
-    /*LOG(-1,"DO SKILL: skill %s ->%d\n", op->chosen_skill->name, get_skill_time(op,skill));*/
+    /*LOG(llevNoLog,"DO SKILL: skill %s ->%d\n", op->chosen_skill->name, get_skill_time(op,skill));*/
 
     switch (skill)
     {

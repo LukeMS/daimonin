@@ -1263,7 +1263,7 @@ void update_object(object *op, int action)
     MapSpace   *msp;
     int         flags, newflags;
 
-    /*LOG(-1, "update_object: %s (%d,%d) - action %x\n", op->name, op->x, op->y,action);*/
+    /*LOG(llevNoLog, "update_object: %s (%d,%d) - action %x\n", op->name, op->x, op->y,action);*/
     if (op == NULL)
     {
         /* this should never happen */

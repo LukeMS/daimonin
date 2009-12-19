@@ -627,7 +627,7 @@ static inline struct obj * find_quest_nr(struct obj *pl, int tag, char *cmd)
         }
     }
 
-    LOG(-1,"QLIST-CMD: unknown quest tag from player %s: %s\n", query_name(pl),cmd);
+    LOG(llevNoLog,"QLIST-CMD: unknown quest tag from player %s: %s\n", query_name(pl),cmd);
     return NULL;
 }
 
@@ -754,5 +754,5 @@ void quest_list_command(struct obj *pl, char *cmd)
         }
     }
     else
-        LOG(-1,"QLIST-CMD: unknown tag from player %s: %s\n", query_name(pl),cmd);
+        LOG(llevNoLog,"QLIST-CMD: unknown tag from player %s: %s\n", query_name(pl),cmd);
 }

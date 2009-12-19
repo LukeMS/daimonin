@@ -2275,7 +2275,7 @@ static int monster_cast_spell(object *op, object *part, int dir, object *target,
         op->enemy_count = target->count;
     }
 
-//    LOG(-1,"CAST2 %s: spell_item=%s, dir=%d, target=%s\n",STRING_OBJ_NAME(op), STRING_OBJ_NAME(spell_item), dir, STRING_OBJ_NAME(target) );
+//    LOG(llevNoLog,"CAST2 %s: spell_item=%s, dir=%d, target=%s\n",STRING_OBJ_NAME(op), STRING_OBJ_NAME(spell_item), dir, STRING_OBJ_NAME(target) );
 
     /* TODO: what does the return value of cast_spell do ? */
     cast_spell(part, part, dir, sp_type, ability, spellNormal, NULL);

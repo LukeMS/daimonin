@@ -2453,7 +2453,7 @@ void set_mobile_speed(object *op, int factor)
 
     op->speed = base->speed_left * CLAMP(actual_factor, 1, 5);
 
-     //LOG(-1,"SET SPEED: %s ->%f (=%d*%f) o:%f\n", query_name(op), op->speed, actual_factor, base->speed_left, old_speed);
+     //LOG(llevNoLog,"SET SPEED: %s ->%f (=%d*%f) o:%f\n", query_name(op), op->speed, actual_factor, base->speed_left, old_speed);
     /* update speed if needed */
     if ((old_speed && !op->speed) || (!old_speed && op->speed))
         update_ob_speed(op);

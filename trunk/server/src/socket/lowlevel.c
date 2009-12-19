@@ -63,7 +63,7 @@ int read_socket_buffer(NewSocket *ns)
 	stat_ret = read(ns->fd, sl->buf + tmp, read_bytes);
 #endif
 
-    LOG(-1,"READ(tick: %d)(FD: %x / %d): %d\n", ROUND_TAG, ns, ns->fd, stat_ret);
+    LOG(llevNoLog,"READ(tick: %d)(FD: %x / %d): %d\n", ROUND_TAG, ns, ns->fd, stat_ret);
 
 	if (stat_ret > 0)
 		sl->len += stat_ret;
@@ -128,7 +128,7 @@ void write_socket_buffer(NewSocket *ns)
 	*/
 
 	amt = send(ns->fd, ns->sockbuf_end->buf + ns->sockbuf_pos, max, MSG_DONTWAIT);
-//	LOG(-1,"WRITE(%d)(%d): %d (%d)\n", ROUND_TAG, ns->fd, amt, max);
+//	LOG(llevNoLog,"WRITE(%d)(%d): %d (%d)\n", ROUND_TAG, ns->fd, amt, max);
 
 	/* following this link: http://www-128.ibm.com/developerworks/linux/library/l-sockpit/#N1019D
 	* send() with MSG_DONTWAIT under linux can return 0 which means the data

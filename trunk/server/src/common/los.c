@@ -407,7 +407,7 @@ static void check_wall(object *op, int x, int y)
     if (ax < 0 || ay < 0 || ax >= CONTR(op)->socket.mapx || ay >= CONTR(op)->socket.mapy)
         return;
 
-    /*LOG(-1,"SET_LOS: %d,%d\n", ax,ay);*/
+    /*LOG(llevNoLog,"SET_LOS: %d,%d\n", ax,ay);*/
     /* If this space is already blocked, prune the processing - presumably
      * whatever has set this space to be blocked has done the work and already
      * done the dependency chain.
@@ -756,7 +756,7 @@ void adjust_light_source(mapstruct *map, int x, int y, int light)
 
             /* debug
                     for(msp1=map->first_light;msp1;msp1 = msp1->next_light)
-                        LOG(-1,"L-LIST add: (%d,%d) of >%s<\n",msp1->first->x,msp1->first->y,msp1->first->map->path);
+                        LOG(llevNoLog,"L-LIST add: (%d,%d) of >%s<\n",msp1->first->x,msp1->first->y,msp1->first->map->path);
                     */
         }
     }
@@ -811,7 +811,7 @@ void check_light_source_list(mapstruct *map)
     MapSpace   *tmp;
     int         x, y, mid;
 
-    /*LOG(-1,"CHECK ALL LS for map:>%s<\n", map->path);*/
+    /*LOG(llevNoLog,"CHECK ALL LS for map:>%s<\n", map->path);*/
 
     if ((t_map = map->tile_map[TILED_MAPS_NORTH])
      && (t_map->in_memory == MAP_IN_MEMORY || t_map->in_memory == MAP_LOADING)
@@ -833,11 +833,11 @@ void check_light_source_list(mapstruct *map)
                      */
             x = tmp->first->x;
             y = tmp->first->y;
-            /*LOG(-1,"check LSL: %d,%d map:>%s< (%d - %d)\n", x,y,t_map->path,y+light_mask_width[mid],MAP_HEIGHT(t_map));*/
+            /*LOG(llevNoLog,"check LSL: %d,%d map:>%s< (%d - %d)\n", x,y,t_map->path,y+light_mask_width[mid],MAP_HEIGHT(t_map));*/
             /* only light sources reaching in this map */
             if (y + light_mask_width[abs(mid)] < MAP_HEIGHT(t_map))
                 continue;
-            /*LOG(-1,"restore LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
+            /*LOG(llevNoLog,"restore LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
             restore_light_mask(map, t_map, x, y, mid);
         }
     }
@@ -862,11 +862,11 @@ void check_light_source_list(mapstruct *map)
                      */
             x = tmp->first->x;
             y = tmp->first->y;
-            /*LOG(-1,"check LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
+            /*LOG(llevNoLog,"check LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
             /* only light sources reaching in this map */
             if (x - light_mask_width[abs(mid)] >= 0)
                 continue;
-            /*LOG(-1,"restore LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
+            /*LOG(llevNoLog,"restore LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
             restore_light_mask(map, t_map, x, y, mid);
         }
     }
@@ -891,11 +891,11 @@ void check_light_source_list(mapstruct *map)
                      */
             x = tmp->first->x;
             y = tmp->first->y;
-            /*LOG(-1,"check LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
+            /*LOG(llevNoLog,"check LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
             /* only light sources reaching in this map */
             if (y - light_mask_width[abs(mid)] >= 0)
                 continue;
-            /*LOG(-1,"restore LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
+            /*LOG(llevNoLog,"restore LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
             restore_light_mask(map, t_map, x, y, mid);
         }
     }
@@ -920,11 +920,11 @@ void check_light_source_list(mapstruct *map)
                      */
             x = tmp->first->x;
             y = tmp->first->y;
-            /*LOG(-1,"check LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
+            /*LOG(llevNoLog,"check LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
             /* only light sources reaching in this map */
             if (x + light_mask_width[abs(mid)] < MAP_WIDTH(t_map))
                 continue;
-            /*LOG(-1,"restore LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
+            /*LOG(llevNoLog,"restore LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
             restore_light_mask(map, t_map, x, y, mid);
         }
     }
@@ -949,11 +949,11 @@ void check_light_source_list(mapstruct *map)
                      */
             x = tmp->first->x;
             y = tmp->first->y;
-            /*LOG(-1,"check LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
+            /*LOG(llevNoLog,"check LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
             /* only light sources reaching in this map */
             if ((y + light_mask_width[abs(mid)]) < MAP_HEIGHT(t_map) || (x - light_mask_width[abs(mid)]) >= 0)
                 continue;
-            /*LOG(-1,"restore LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
+            /*LOG(llevNoLog,"restore LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
             restore_light_mask(map, t_map, x, y, mid);
         }
     }
@@ -978,11 +978,11 @@ void check_light_source_list(mapstruct *map)
                      */
             x = tmp->first->x;
             y = tmp->first->y;
-            /*LOG(-1,"check LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
+            /*LOG(llevNoLog,"check LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
             /* only light sources reaching in this map */
             if ((x - light_mask_width[abs(mid)]) >= 0 || (y - light_mask_width[abs(mid)]) >= 0)
                 continue;
-            /*LOG(-1,"restore LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
+            /*LOG(llevNoLog,"restore LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
             restore_light_mask(map, t_map, x, y, mid);
         }
     }
@@ -1007,11 +1007,11 @@ void check_light_source_list(mapstruct *map)
                      */
             x = tmp->first->x;
             y = tmp->first->y;
-            /*LOG(-1,"check LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
+            /*LOG(llevNoLog,"check LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
             /* only light sources reaching in this map */
             if ((y - light_mask_width[abs(mid)]) >= 0 || (x + light_mask_width[abs(mid)]) < MAP_WIDTH(t_map))
                 continue;
-            /*LOG(-1,"restore LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
+            /*LOG(llevNoLog,"restore LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
             restore_light_mask(map, t_map, x, y, mid);
         }
     }
@@ -1036,12 +1036,12 @@ void check_light_source_list(mapstruct *map)
                      */
             x = tmp->first->x;
             y = tmp->first->y;
-            /*LOG(-1,"check LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
+            /*LOG(llevNoLog,"check LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
             /* only light sources reaching in this map */
             if ((y + light_mask_width[abs(mid)]) < MAP_HEIGHT(t_map)
              || (x + light_mask_width[abs(mid)]) < MAP_WIDTH(t_map))
                 continue;
-            /*LOG(-1,"restore LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
+            /*LOG(llevNoLog,"restore LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
             restore_light_mask(map, t_map, x, y, mid);
         }
     }
@@ -1091,7 +1091,7 @@ void remove_light_source_list(mapstruct *map)
 {
     MapSpace   *tmp;
 
-    /*LOG(-1,"REMOVE LSL-LIST of map:>%s<\n",map->path);*/
+    /*LOG(llevNoLog,"REMOVE LSL-LIST of map:>%s<\n",map->path);*/
     for (tmp = map->first_light; tmp; tmp = tmp->next_light)
     {
         /* again - there MUST be at last ONE object in this map space */
@@ -1101,7 +1101,7 @@ void remove_light_source_list(mapstruct *map)
                 map->path ? map->path : "NO MAP PATH?");
             continue;
         }
-        /*LOG(-1,"remove LSL: %d,%d ,map:>%s<\n", tmp->first->x,tmp->first->y,map->path);*/
+        /*LOG(llevNoLog,"remove LSL: %d,%d ,map:>%s<\n", tmp->first->x,tmp->first->y,map->path);*/
         remove_light_mask_other(map, tmp->first->x, tmp->first->y, get_real_light_source_value(tmp->light_source));
     }
     map->first_light = NULL;
