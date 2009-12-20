@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
-	<ActiveTarget name="All" />
+	<ActiveTarget name="Release" />
 	<File name="../../../../src/plugin_lua/ai_object.c" open="0" top="0" tabpos="2">
 		<Cursor position="3012" topLine="42" />
 	</File>
