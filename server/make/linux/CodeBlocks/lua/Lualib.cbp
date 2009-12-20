@@ -19,6 +19,7 @@
 					<Add option="-O3" />
 					<Add option="-ffast-math" />
 					<Add option="-funroll-loops" />
+					<Add option="-fPIC" />
 					<Add option="-DLINUX" />
 					<Add option="-DNDEBUG" />
 					<Add option="-D_LIB" />
@@ -35,6 +36,7 @@
 				<Option createDefFile="1" />
 				<Option projectResourceIncludeDirsRelation="2" />
 				<Compiler>
+					<Add option="-fPIC" />
 					<Add option="-DLINUX" />
 					<Add option="-D_DEBUG" />
 					<Add option="-D_LIB" />
@@ -47,9 +49,9 @@
 			<Add alias="All" targets="Release;Debug;" />
 		</VirtualTargets>
 		<Compiler>
-			<Add option="-W" />
-			<Add option="-g" />
 			<Add option="-fomit-frame-pointer" />
+			<Add option="-g" />
+			<Add option="-W" />
 		</Compiler>
 		<Linker>
 			<Add library="m" />

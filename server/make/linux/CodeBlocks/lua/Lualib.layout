@@ -4,4 +4,7 @@
 	<File name="../../../../src/lua/include/lua.h" open="0" top="0" tabpos="1">
 		<Cursor position="1652" topLine="67" />
 	</File>
+	<File name="../../../../src/lua/ltable.c" open="1" top="1" tabpos="1">
+		<Cursor position="2779" topLine="100" />
+	</File>
 </CodeBlocks_layout_file>

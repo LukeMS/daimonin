@@ -34,8 +34,8 @@
 				<Option compiler="gcc" />
 				<Option projectResourceIncludeDirsRelation="1" />
 				<Compiler>
-					<Add option="-W" />
 					<Add option="-g" />
+					<Add option="-W" />
 					<Add option="-D_CONSOLE" />
 					<Add option="-DDEBUG" />
 					<Add option="-DDEBUG_MOVEATTACK" />
@@ -68,10 +68,8 @@
 			<Add alias="All" targets="Release;Debug;" />
 		</VirtualTargets>
 		<Compiler>
-			<Add option="-W" />
 			<Add option="-g" />
 			<Add directory="../../../src/include" />
-			<Add directory="../../../src/random_maps" />
 		</Compiler>
 		<Linker>
 			<Add library="dl" />
@@ -80,7 +78,6 @@
 			<Add library="crypt" />
 		</Linker>
 		<ExtraCommands>
-			<Add before="flex -i -Prmap -t ../../../src/random_maps/reader.l &gt; ../../../src/random_maps/reader.c" />
 			<Add before="flex -i -t ../../../src/common/loader.l &gt; ../../../src/common/loader.c" />
 		</ExtraCommands>
 		<Unit filename="readme.txt" />
@@ -257,66 +254,7 @@
 		<Unit filename="../../../src/include/timeutils.h" />
 		<Unit filename="../../../src/include/treasure.h" />
 		<Unit filename="../../../src/include/version.h" />
-		<Unit filename="../../../src/random_maps/decor.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../../src/random_maps/door.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../../src/random_maps/exit.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../../src/random_maps/expand2x.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../../src/random_maps/expand2x.h" />
-		<Unit filename="../../../src/random_maps/floor.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../../src/random_maps/maze_gen.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../../src/random_maps/maze_gen.h" />
-		<Unit filename="../../../src/random_maps/monster.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../../src/random_maps/random_map.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../../src/random_maps/random_map.h" />
-		<Unit filename="../../../src/random_maps/reader.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Unit filename="../../../src/random_maps/reader.l" />
-		<Unit filename="../../../src/random_maps/rogue_layout.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../../src/random_maps/room_gen.h" />
-		<Unit filename="../../../src/random_maps/room_gen_onion.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../../src/random_maps/room_gen_spiral.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../../src/random_maps/rproto.h" />
-		<Unit filename="../../../src/random_maps/snake.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../../src/random_maps/special.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../../src/random_maps/square_spiral.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../../src/random_maps/style.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../../src/random_maps/treasure.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../../src/random_maps/wall.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Unit filename="../../../src/server/aiconfig.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -354,6 +292,9 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../../src/server/c_wiz.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/server/calendar.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../../src/server/channel.c">
@@ -456,9 +397,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../../src/server/time.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../../src/server/calendar.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../../src/socket/account.c">
