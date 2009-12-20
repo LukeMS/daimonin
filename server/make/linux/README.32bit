@@ -1,0 +1,7 @@
+Under a 64bit system you can force a 32bit server by using
+
+make LDFLAGS="-m32" CFLAGS="-m32" all
+
+That also works with the -m64 flags to force a 64bit system.
+
+Note: configure will select the default target depending on the hardware and installed OS.
