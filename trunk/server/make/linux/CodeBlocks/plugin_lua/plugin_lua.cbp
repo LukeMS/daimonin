@@ -18,6 +18,7 @@
 					<Add option="-O3" />
 					<Add option="-ffast-math" />
 					<Add option="-funroll-loops" />
+					<Add option="-fPIC" />
 					<Add option='-DNO_REDISTRIBUTION=&quot;&quot;' />
 					<Add option="-DLUA_PLUGIN_EXPORTS" />
 					<Add option="-DLINUX" />
@@ -41,6 +42,7 @@
 				<Option createDefFile="1" />
 				<Option createStaticLib="1" />
 				<Compiler>
+					<Add option="-fPIC" />
 					<Add option="-DLUA_PLUGIN_EXPORTS" />
 					<Add option="-DLINUX" />
 					<Add option="-DDEBUG_MOVEATTACK" />
