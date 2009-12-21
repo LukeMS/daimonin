@@ -136,11 +136,13 @@ void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneM
     mSubMeshWater = MeshWater->createSubMesh();
     mSubMeshWater->operationType = RenderOperation::OT_TRIANGLE_LIST;
     mSubMeshWater->useSharedVertices = false;
-    vData = new VertexData(); // The 'delete' will be done by Ogre::Submesh.
-    vData->vertexCount = 0;
-    vData->vertexDeclaration->addElement(0, 0, VET_FLOAT3, VES_POSITION);
-    offset = VertexElement::getTypeSize(VET_FLOAT3);
     sumVertices = 4*TileManager::CHUNK_SIZE_X*TileManager::CHUNK_SIZE_Z; // 4 Subtile/tile
+    vData = new VertexData(); // The 'delete' will be done by Ogre::Submesh.
+    vData->vertexCount = sumVertices;
+    vdec = vData->vertexDeclaration;
+    offset = 0;
+    vdec->addElement(0, offset, VET_FLOAT3, VES_POSITION);               offset+= VertexElement::getTypeSize(VET_FLOAT3);
+    vdec->addElement(0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 0); offset+= VertexElement::getTypeSize(VET_FLOAT2);
     vbuf = HardwareBufferManager::getSingleton().createVertexBuffer(offset, sumVertices*4, HardwareBuffer::HBU_STATIC_WRITE_ONLY, false);
     vData->vertexBufferBinding->setBinding(0, vbuf);
     mSubMeshWater->vertexData = vData;
@@ -167,10 +169,11 @@ void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneM
             p+= 4;
         }
     }
-    mSubMeshWater->indexData->indexBuffer = ibuf;
-    mSubMeshWater->indexData->indexStart = 0;
-    mSubMeshWater->indexData->indexCount = 0;
     ibuf->unlock();
+    mSubMeshWater->indexData->indexBuffer = ibuf;
+    mSubMeshWater->indexData->indexStart  = 0;
+    mSubMeshWater->indexData->indexCount  = 0;
+    mSubMeshLand->vertexData->vertexCount = 0;
     MeshWater->_setBounds(aab);
     //MeshWater->_setBoundingSphereRadius(Real radius);
     MeshWater->load();
@@ -520,45 +523,12 @@ void TileChunk::updateLand()
 //================================================================================================
 void TileChunk::updateWater()
 {
-    // ////////////////////////////////////////////////////////////////////
-    // Count the Vertices in this chunk.
-    // ////////////////////////////////////////////////////////////////////
-    unsigned int numVertices = 0;
-    for (int x = 0; x < TileManager::CHUNK_SIZE_X*2; ++x)
-    {
-        for (int z = 0; z < TileManager::CHUNK_SIZE_Z*2; ++z)
-        {
-            if (TileManager::getSingleton().getMapWater(x  , z  )) { ++numVertices; continue; }
-            if (TileManager::getSingleton().getMapWater(x+1, z  )) { ++numVertices; continue; }
-            if (TileManager::getSingleton().getMapWater(x  , z+1)) { ++numVertices; continue; }
-            if (TileManager::getSingleton().getMapWater(x+1, z+1)) { ++numVertices; continue; }
-        }
-    }
-    if (!numVertices)
-    {
-        mSubMeshWater->indexData->indexCount = 0;
-        mSubMeshWater->vertexData->vertexCount =  0;
-        return;
-    }
-    mSubMeshWater->indexData->indexCount = numVertices*6;
-    // ////////////////////////////////////////////////////////////////////
-    // Update VertexData.
-    // ////////////////////////////////////////////////////////////////////
-    VertexData *vdata = mSubMeshWater->vertexData;
-    vdata->vertexCount = numVertices*4;
-    VertexDeclaration *vdec = vdata->vertexDeclaration;
-    size_t offset = 0;
-    vdec->addElement(0, offset, VET_FLOAT3, VES_POSITION);
-    offset+= VertexElement::getTypeSize(VET_FLOAT3);
-    vdec->addElement(0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 0);
-    offset+= VertexElement::getTypeSize(VET_FLOAT2);
-    HardwareVertexBufferSharedPtr vbuf;
-    vbuf = HardwareBufferManager::getSingleton().createVertexBuffer(offset, vdata->vertexCount, HardwareBuffer::HBU_STATIC_WRITE_ONLY, false);
-    vdata->vertexBufferBinding->setBinding(0, vbuf);
+    HardwareVertexBufferSharedPtr vbuf = mSubMeshWater->vertexData->vertexBufferBinding->getBuffer(0);
     Real height;
     Real *pReal = static_cast<Real*>(vbuf->lock(HardwareBuffer::HBL_DISCARD));
     const Real START_Z = TileManager::ATLAS_LAND_ROWS*FULL_TILE_SPACE;
-    for (int z = 0; z < TileManager::CHUNK_SIZE_Z*2; ++z)
+	unsigned int numVertices = 0;
+	for (int z = 0; z < TileManager::CHUNK_SIZE_Z*2; ++z)
     {
         Real offsetZ = (z&1)?FULL_TILE_SPACE:0.0;
         for (int x = 0; x < TileManager::CHUNK_SIZE_X*2; ++x)
@@ -590,13 +560,12 @@ void TileChunk::updateWater()
                 *pReal++ = TileManager::TILE_RENDER_SIZE * z+ TileManager::TILE_RENDER_SIZE;
                 *pReal++ = offsetX+HALF_TILE_SIZE;
                 *pReal++ = START_Z+HALF_TILE_SIZE;
+				++numVertices;
             }
         }
     }
     vbuf->unlock();
+    mSubMeshWater->indexData->indexCount = numVertices*6;
+    mSubMeshWater->vertexData->vertexCount = numVertices*4;
 }
-
-
-
-
 
