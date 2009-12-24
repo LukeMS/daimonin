@@ -570,6 +570,8 @@ void initPlugins(void)
                     initOnePlugin(buf2);
                 }
             }
+            if (namelist[n] != NULL)
+                free(namelist[n]);
         }
     if (namelist != NULL)
         free(namelist);
