@@ -71,7 +71,6 @@ void Events::Init(RenderWindow* win, SceneManager *SceneMgr)
     const OIS::MouseState &ms = mInputMouse->getMouseState();
     ms.width = mWindow->getWidth();
     ms.height = mWindow->getHeight();
-    mIdleTime =0;
     mMouse = Vector3::ZERO;
     mQuitGame = false;
     Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_VIEWPORT);
@@ -185,6 +184,31 @@ bool Events::frameStarted(const FrameEvent& evt)
 
         case Option::GAME_STATUS_INIT_SOUND:
         {
+/*
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////
+            //////////////////////// TESTING /////////////////////////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////
+            Image img1, img2;
+            img1.load("Smitty_DATA.png",      ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+            img2.load("Smitty_MASK.png", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+            uchar *src = img1.getData();
+            uchar *dst = img2.getData();
+            for (size_t i = 0; i < img1.getWidth() * img1.getHeight(); ++i)
+            {
+                src+= 3;
+                *src++ = *dst++;
+                dst+= 3;
+            }
+            img1.save("c:/Smitty.png");
+            //
+            static SceneNode *mNode = mSceneManager->getRootSceneNode()->createChildSceneNode();
+            mNode->attachObject(mSceneManager->createEntity("Entity_Smitty", "Smitty.mesh"));
+            mNode->setPosition(830, 80, 1200);
+            mNode->scale(2, 2, 2);
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////
+*/
             // ////////////////////////////////////////////////////////////////////
             // Init the sound and play the background music.
             // ////////////////////////////////////////////////////////////////////
@@ -557,13 +581,14 @@ bool Events::frameStarted(const FrameEvent& evt)
                 //ObjectManager::getSingleton().setNameNPC(ObjectNPC::HERO, strAccountName.c_str());
                 //Sound::getSingleton().playStream(Sound::GREETS_VISITOR);
             }
+            mIdleTime =0;
             Option::getSingleton().setGameStatus(Option::GAME_STATUS_GAME_LOOP);
             break;
         }
 
         case Option::GAME_STATUS_GAME_LOOP:
         {
-            if ((mIdleTime += evt.timeSinceLastFrame) > 1.0)
+            if ((mIdleTime += evt.timeSinceLastFrame) > 20.0)
             {
                 mIdleTime = 0;
                 Sound::getSingleton().playStream(Sound::PLAYER_IDLE);
@@ -683,4 +708,3 @@ bool Events::frameEnded(const FrameEvent& evt)
     }
     return true;
 }
-
