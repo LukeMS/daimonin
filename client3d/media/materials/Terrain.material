@@ -1,0 +1,186 @@
+//================================================================================================
+// Land: Vertex Program (Lod 0).
+//================================================================================================
+vertex_program VP_Land_Lod0 cg
+{
+    source Terrain.cg
+    entry_point MainVP_Land_Lod0
+    profiles arbvp1 vs_1_1
+}
+
+//================================================================================================
+// Land: Pixel shader (Lod 0).
+//================================================================================================
+fragment_program FP_Land_Lod0 cg
+{
+    source Terrain.cg
+    entry_point MainFP_Land_Lod0
+    profiles arbfp1 ps_2_0
+}
+
+//================================================================================================
+// Land: Pixel shader (Lod 1).
+//================================================================================================
+fragment_program FP_Land_Lod1 cg
+{
+    source Terrain.cg
+    entry_point MainFP_Land_Lod1
+    profiles fp20
+}
+
+//================================================================================================
+// Land: Material.
+//================================================================================================
+material Terrain/Land
+{
+    technique arbfp1 ps_2_0
+    {
+        pass
+        {
+            vertex_program_ref VP_Land_Lod0
+            {
+                param_named para float3 1 0 1
+                param_named_auto worldViewProj worldviewproj_matrix
+            }
+            fragment_program_ref FP_Land_Lod0
+            {
+            }
+            texture_unit { tex_address_mode clamp }
+            texture_unit { tex_address_mode clamp }
+            texture_unit { tex_address_mode clamp }
+            texture_unit { tex_address_mode clamp }
+        }
+    }
+    technique fp20
+    {
+        pass
+        {
+            vertex_program_ref VP_Land_Lod0
+            {
+                param_named para float3 1 0 1
+                param_named_auto worldViewProj worldviewproj_matrix
+            }
+            fragment_program_ref FP_Land_Lod1
+            {
+            }
+            texture_unit { tex_address_mode clamp }
+            texture_unit { tex_address_mode clamp }
+            texture_unit { tex_address_mode clamp }
+            texture_unit { tex_address_mode clamp }
+        }
+    }
+}
+
+
+
+//================================================================================================
+// Water: Vertex Program (Lod 0).
+//================================================================================================
+vertex_program VP_Water_Lod0 cg
+{
+    source Terrain.cg
+    entry_point MainVP_Water_Lod0
+    profiles arbvp1 vs_1_1
+}
+
+//================================================================================================
+// Water: Pixel shader (Lod 0).
+//================================================================================================
+fragment_program FP_Water_Lod0 cg
+{
+    source Terrain.cg
+    entry_point MainFP_Water_Lod0
+    profiles arbfp1 fp20 ps_1_3
+}
+
+//================================================================================================
+// Water: Material.
+//================================================================================================
+material Terrain/Water
+{
+    technique arbfp1 fp20 ps_1_3
+    {
+        pass
+        {
+            vertex_program_ref VP_Water_Lod0
+            {
+                param_named para float4 1 1 1 1
+                param_named_auto Time time
+                param_named_auto worldViewProj worldviewproj_matrix
+            }
+            fragment_program_ref FP_Water_Lod0
+            {
+            }
+            scene_blend alpha_blend
+            texture_unit { tex_address_mode clamp }
+        }
+    }
+}
+
+
+
+//================================================================================================
+// Vertexselection: Vertex Program (Lod 0).
+//================================================================================================
+vertex_program VP_VSelection cg
+{
+    source Terrain.cg
+    entry_point MainVP_VSelection
+    profiles arbvp1 vs_1_1
+}
+
+//================================================================================================
+// Vertexselection: Pixel shader (Lod 0).
+//================================================================================================
+fragment_program FP_VSelection cg
+{
+    source Terrain.cg
+    entry_point MainFP_VSelection
+    profiles arbfp1 fp20 ps_2_0
+}
+
+//================================================================================================
+// Vertexselection: Material.
+//================================================================================================
+material Terrain/VertexHighlight
+{
+    technique
+    {
+        pass
+        {
+            cull_hardware none
+            vertex_program_ref VP_VSelection
+            {
+                param_named_auto worldViewProj worldviewproj_matrix
+            }
+            fragment_program_ref FP_VSelection
+            {
+            }
+            texture_unit { }
+        }
+    }
+}
+
+
+
+//================================================================================================
+// Decal: Material.
+//================================================================================================
+material Terrain/Decal
+{
+    technique
+    {
+        pass
+        {
+            scene_blend alpha_blend
+            texture_unit
+            {
+                // tex_address_mode clamp does not guarantee a correct border
+                // when used with mipmaps, so tex_address_mode border is used.
+                tex_border_colour 1.0 1.0 1.0 0.0
+                tex_address_mode border
+                texture Decal.png
+            }
+        }
+    }
+}

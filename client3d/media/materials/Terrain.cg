@@ -1,0 +1,134 @@
+//================================================================================================
+// Vertex Program (Land Lod 0)
+//================================================================================================
+void MainVP_Land_Lod0(
+    float4 inPos : POSITION,
+    float2 inTex0: TEXCOORD0, // Profile arbfp1 needs only TEXUNIT0,
+    float2 inTex1: TEXCOORD1, // because all units refer to the same
+    float2 inTex2: TEXCOORD2, // atlas. But e.g fp20 needs all units
+    float2 inMask: TEXCOORD3, // to be defined.
+    float4 params: COLOR0,
+    out float4 outPos : POSITION,
+    out float2 outTex0: TEXCOORD0,
+    out float2 outTex1: TEXCOORD1,
+    out float2 outTex2: TEXCOORD2,
+    out float2 outMask: TEXCOORD3,
+    out float4 outPara: COLOR0,
+    uniform float3   para,
+    uniform float4x4 worldViewProj,
+    uniform float4x4 worldInverseTranspose)
+{
+    outPos  = mul(worldViewProj, inPos);
+    outTex0 = inTex0;
+    outTex1 = inTex1;
+    outTex2 = inTex2;
+    outMask = inMask;
+    outPara.rg= para.rg;  // Daylight Level, grid
+    outPara.b = params.w; // Spotlight
+    outPara.a = params.y + (inPos.y-params.x) * params.z; // Faked shadow.
+}
+
+//================================================================================================
+// Fragment Program (Land Lod 0)
+//================================================================================================
+float4 MainFP_Land_Lod0(
+    float2 tex0: TEXCOORD0,
+    float2 tex1: TEXCOORD1,
+    float2 tex2: TEXCOORD2,
+    float2 mask: TEXCOORD3,
+    float4 para: COLOR0,        // r=daylight(float), g=Grid(bool), b=Spotlight(bool), a=fakedShadow(float)
+    uniform sampler2D texture0, // Profile arbfp1 needs only TEXUNIT0,
+    uniform sampler2D texture1, // because all units refer to the same atlas.
+    uniform sampler2D texture2,
+    uniform sampler2D texture3) : COLOR
+{
+    float4 maskColor =  tex2D(texture3, mask);
+    float4 color     =  tex2D(texture0, tex0);               // Ground Layer 0
+    color = lerp(color, tex2D(texture1, tex1), maskColor.r); // Ground Layer 1
+    color = lerp(color, tex2D(texture2, tex2), maskColor.g); // Ground Layer 2
+    color*= max(para.g, maskColor.b) * para.a;               // Grid + Faked shadow
+    color*= max(para.r, para.b * maskColor.a);               // Daylight + Spotlight
+    return color;
+}
+
+//================================================================================================
+// Fragment Program (Land Lod 1)
+//================================================================================================
+float4 MainFP_Land_Lod1(
+    float2 tex0: TEXCOORD0,
+    float2 tex1: TEXCOORD1,
+    float2 tex2: TEXCOORD2,
+    float2 mask: TEXCOORD3,
+    float4 para: COLOR0,
+    // Profile fp20 needs all units to be defined.
+    uniform sampler2D texture0,
+    uniform sampler2D texture1,
+    uniform sampler2D texture2,
+    uniform sampler2D texture3) : COLOR
+{
+    float4 maskColor =  tex2D(texture3, mask);
+    float4 color     =  tex2D(texture0, tex0);                // Ground Layer 0
+    color = lerp(color, tex2D(texture1, tex1), maskColor.r);  // Ground Layer 1
+    color = lerp(color, tex2D(texture2, tex2), maskColor.g);  // Ground Layer 2
+    color*= para.r * para.a * saturate(para.g +maskColor.b);  // Daylight + Faked shadow + Grid
+    color+= float4(para.b,para.b,para.b, 1.0) *maskColor.a/4; // Spotlight
+    return color;
+}
+
+
+
+//================================================================================================
+// Vertex Program (Water Lod 0)
+//================================================================================================
+float2 MainVP_Water_Lod0(
+    float4 inPos : POSITION,
+    float2 inTex0: TEXCOORD0,
+    out float4 outPos : POSITION,
+    out float2 outTex0: TEXCOORD0,
+    uniform float4 para,  // daylight, alpha, wave-height, wave-speed
+    uniform float Time,
+    uniform float4x4 worldViewProj) : COLOR
+{
+    inPos.y += sin(sin(inPos.x*8) + cos(inPos.z*8) + Time * para.a)*para.b;
+    outPos   = mul(worldViewProj, inPos);
+    outTex0  = inTex0;
+    return para.rg;
+}
+
+//================================================================================================
+// Fragment Program (Water Lod 0)
+//================================================================================================
+float4 MainFP_Water_Lod0(
+    float2 tex0: TEXCOORD0,
+    float2 para: COLOR0, // daylight level, alpha
+    uniform sampler2D texture0:
+    TEXUNIT0) : COLOR
+{
+    float4 color = tex2D(texture0, tex0);
+    color *= para.r; // daylight
+    color.a= para.g; // alpha
+    return color;
+}
+
+
+
+//================================================================================================
+// Vertex Program (Vertexselection)
+//================================================================================================
+void MainVP_VSelection(
+    float4 inPos : POSITION,
+    out float4 outPos : POSITION,
+    out float4 outDark: COLOR0,
+    uniform float4x4 worldViewProj)
+{
+    outDark = float4(inPos.x/4, inPos.y/4, inPos.z/4, 1.0);
+    outPos = mul(worldViewProj, inPos);
+}
+
+//================================================================================================
+// Fragment Program (Vertexselection)
+//================================================================================================
+float4 MainFP_VSelection(float4 color : COLOR0) : COLOR
+{
+    return color;
+}

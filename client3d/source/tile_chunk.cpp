@@ -68,18 +68,16 @@ int CHUNK_X_LENGTH[TileManager::CHUNK_SIZE_Z];
 void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneManager)
 {
     AxisAlignedBox aab(AxisAlignedBox(-10000, -10000, -10000, 10000, 10000, 10000));
-    int cameraStandardPos = 3; // 0° rotation of the camera in CHUNK_START_OFFSET[][] table.
-    mCameraRotation = cameraStandardPos;
-    unsigned int sumIndices, sumVertices = 0;
+    mCameraRotation = 3; // 0° rotation of the camera in CHUNK_START_OFFSET[][] table.
+    size_t sumIndices, sumVertices = 0;
     /*
         for (int i=0; i < TileManager::CHUNK_SIZE_Z; ++i)
         {
-            CHUNK_X_LENGTH[i] = TileManager::CHUNK_SIZE_X - 2*CHUNK_START_OFFSET[cameraStandardPos][i];
+            CHUNK_X_LENGTH[i] = TileManager::CHUNK_SIZE_X - 2*CHUNK_START_OFFSET[mCameraRotation][i];
             sumVertices+= CHUNK_X_LENGTH[i];
         }
         sumVertices*= SUM_QUAD_VERTICES;
     */
-    sumVertices= 4*6*TileManager::CHUNK_SIZE_X*TileManager::CHUNK_SIZE_Z; // 4 Subtiles/tile, 6 vertices/subtile
     // ////////////////////////////////////////////////////////////////////
     // Build the land-tiles.
     // There is no chance to optimize the vertex count, because every vertex needs its own mask.
@@ -89,7 +87,7 @@ void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneM
     mSubMeshLand->operationType = RenderOperation::OT_TRIANGLE_LIST;
     mSubMeshLand->useSharedVertices = false;
     VertexData *vData = new VertexData(); // The 'delete' will be done by Ogre::Submesh.
-    vData->vertexCount = sumVertices;
+    vData->vertexCount = 4*6*TileManager::CHUNK_SIZE_X*TileManager::CHUNK_SIZE_Z; // 4 Subtiles/tile, 6 vertices/subtile;
     VertexDeclaration *vdec = vData->vertexDeclaration;
     size_t offset = 0;
     vdec->addElement(0, offset, VET_FLOAT3, VES_POSITION);               offset+= VertexElement::getTypeSize(VET_FLOAT3);
@@ -98,11 +96,11 @@ void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneM
     vdec->addElement(0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 1); offset+= VertexElement::getTypeSize(VET_FLOAT2);
     vdec->addElement(0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 2); offset+= VertexElement::getTypeSize(VET_FLOAT2);
     vdec->addElement(0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 3); offset+= VertexElement::getTypeSize(VET_FLOAT2);
-    HardwareVertexBufferSharedPtr vbuf = HardwareBufferManager::getSingleton().createVertexBuffer(offset, sumVertices, HardwareBuffer::HBU_STATIC_WRITE_ONLY);
+    HardwareVertexBufferSharedPtr vbuf = HardwareBufferManager::getSingleton().createVertexBuffer(offset, vData->vertexCount, HardwareBuffer::HBU_STATIC_WRITE_ONLY, false);
     vData->vertexBufferBinding->setBinding(0, vbuf);
     mSubMeshLand->vertexData = vData;
     mSubMeshLand->indexData->indexStart = 0;
-    sumIndices = sumVertices;
+    sumIndices = vData->vertexCount;
     mSubMeshLand->indexData->indexCount = sumIndices;
     HardwareIndexBufferSharedPtr ibuf;
     if (sumIndices > 65526)
@@ -127,7 +125,6 @@ void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneM
     EntityLand->setMaterialName(TileManager::MATERIAL_PREFIX + TileManager::LAND_PREFIX);
     EntityLand->setQueryFlags(queryMaskLand);
     EntityLand->setRenderQueueGroup(RENDER_QUEUE_1); // See OgreRenderQueue.h
-    MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName(TileManager::MATERIAL_PREFIX + TileManager::LAND_PREFIX);
     // ////////////////////////////////////////////////////////////////////
     // Build the water-tiles.
     // This could be optimized by using triangle lists.
@@ -136,8 +133,8 @@ void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneM
     mSubMeshWater = MeshWater->createSubMesh();
     mSubMeshWater->operationType = RenderOperation::OT_TRIANGLE_LIST;
     mSubMeshWater->useSharedVertices = false;
-    sumVertices = 4*TileManager::CHUNK_SIZE_X*TileManager::CHUNK_SIZE_Z; // 4 Subtile/tile
     vData = new VertexData(); // The 'delete' will be done by Ogre::Submesh.
+    sumVertices = 4*TileManager::CHUNK_SIZE_X*TileManager::CHUNK_SIZE_Z; // 4 Subtile/tile
     vData->vertexCount = sumVertices;
     vdec = vData->vertexDeclaration;
     offset = 0;
@@ -173,7 +170,7 @@ void TileChunk::init(int queryMaskLand, int queryMaskWater, SceneManager *sceneM
     mSubMeshWater->indexData->indexBuffer = ibuf;
     mSubMeshWater->indexData->indexStart  = 0;
     mSubMeshWater->indexData->indexCount  = 0;
-    mSubMeshLand->vertexData->vertexCount = 0;
+    mSubMeshWater->vertexData->vertexCount = 0;
     MeshWater->_setBounds(aab);
     //MeshWater->_setBoundingSphereRadius(Real radius);
     MeshWater->load();
@@ -527,8 +524,8 @@ void TileChunk::updateWater()
     Real height;
     Real *pReal = static_cast<Real*>(vbuf->lock(HardwareBuffer::HBL_DISCARD));
     const Real START_Z = TileManager::ATLAS_LAND_ROWS*FULL_TILE_SPACE;
-	unsigned int numVertices = 0;
-	for (int z = 0; z < TileManager::CHUNK_SIZE_Z*2; ++z)
+    unsigned int numVertices = 0;
+    for (int z = 0; z < TileManager::CHUNK_SIZE_Z*2; ++z)
     {
         Real offsetZ = (z&1)?FULL_TILE_SPACE:0.0;
         for (int x = 0; x < TileManager::CHUNK_SIZE_X*2; ++x)
@@ -560,7 +557,7 @@ void TileChunk::updateWater()
                 *pReal++ = TileManager::TILE_RENDER_SIZE * z+ TileManager::TILE_RENDER_SIZE;
                 *pReal++ = offsetX+HALF_TILE_SIZE;
                 *pReal++ = START_Z+HALF_TILE_SIZE;
-				++numVertices;
+                ++numVertices;
             }
         }
     }
