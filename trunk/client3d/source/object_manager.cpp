@@ -113,15 +113,10 @@ void ObjectManager::synchToWorldPos(int deltaX, int deltaZ)
 //================================================================================================
 void ObjectManager::Event(int obj_type, int action, int id, int val1, int val2)
 {
-    if (obj_type < OBJECT_NPC)
-    {
-        ;
-    }
-    else
+    if (obj_type >= OBJECT_NPC)
     {
         if (id >= (int) mvNPC.size()) return;
-        // if (action == OBJ_WALK) mvNPC[id]->walking(val1);
-        if (action == OBJ_GOTO)
+        if (action == EVT_GOTO)
         {
             /*
             TilePosOLD pos;
@@ -132,18 +127,13 @@ void ObjectManager::Event(int obj_type, int action, int id, int val1, int val2)
             mvNPC[ObjectNPC::HERO]->moveToDistantTile(pos);
             */
         }
-        if (action == OBJ_TEXTURE    )
-            mvNPC[id]->mEquip->setTexture(val1, val2);
-        if (action == OBJ_HIT        )
-            mvNPC[id]->setDamage(val1);
-        if (action == OBJ_TURN       )
-            mvNPC[id]->turning(val1, false);
-        if (action == OBJ_CURSOR_TURN)
-            mvNPC[id]->turning(val1, true);
-        if (action == OBJ_CURSOR_WALK)
-            mvNPC[id]->walking(val1, true);
-        if (action == OBJ_ANIMATION  )
-            mvNPC[id]->toggleAnimation(val1, val2);
+      //else if (action == EVT_WALK)        mvNPC[id]->walking(val1);
+        else if (action == EVT_SKINCOLOR)   mvNPC[id]->setSkinColor(val1);
+        else if (action == EVT_ANIMATION)   mvNPC[id]->toggleAnimation(val1, val2);
+        else if (action == EVT_HIT)         mvNPC[id]->setDamage(val1);
+        else if (action == EVT_TURN)        mvNPC[id]->turning(val1, false);
+        else if (action == EVT_CURSOR_TURN) mvNPC[id]->turning(val1, true);
+        else if (action == EVT_CURSOR_WALK) mvNPC[id]->walking(val1, true);
     }
 }
 

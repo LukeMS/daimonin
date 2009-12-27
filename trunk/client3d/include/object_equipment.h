@@ -36,14 +36,6 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    typedef struct
-    {
-        short w, h;             /**< width and height of the image. **/
-        short dstX, dstY;       /**< pos of the image in the model-texture. **/
-        short srcX, srcY;       /**< pos of the image in the race-template-texture. **/
-        short offsetX, offsetY; /**< offset for the next source image. **/
-    }
-    sPicture;
     enum
     {
         PARTICLE_FX_FIRE,
@@ -76,21 +68,11 @@ public:
         BONE_LTOES,       BONE_RTOES,
         BONE_SUM
     };
-    enum
-    {
-        TEXTURE_POS_SKIN, TEXTURE_POS_FACE, TEXTURE_POS_HAIR,
-        TEXTURE_POS_LEGS, TEXTURE_POS_BODY,
-        TEXTURE_POS_BELT, TEXTURE_POS_SHOES, TEXTURE_POS_HANDS
-    };
-
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     ObjectEquipment(Ogre::Entity *parent);
-    ~ObjectEquipment();
-    void freeRecources();
-    void setTexture(int pos, int textureColor, int textureNr =0);
-    void drawBopyPart(sPicture &picPart, Ogre::uint32 texColor, Ogre::uint32 texNumber);
+    ~ObjectEquipment() {}
     void dropItem(int bone);
     void equipItem(unsigned int bone, int type, int itemID, int particleID =-1);
 
@@ -98,15 +80,6 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    static sPicture picHands[4], picArms[4], picShoes[2], picBody[2], picLegs[2], picFace, picHair, picBelt[2];
-    static Ogre::uchar *mTexImageBuf;
-    static Ogre::Image shadowImage;
-    enum
-    {
-        SIDE_BACK,
-        SIDE_FRONT
-    };
-    Ogre::TexturePtr mTexture;
     struct _mItem
     {
         Ogre::Entity *entity;
@@ -114,7 +87,6 @@ private:
     }
     mItem[BONE_SUM];
     Ogre::Entity *mParentEntity;
-    static unsigned long mIndex;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////

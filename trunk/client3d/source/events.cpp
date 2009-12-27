@@ -186,10 +186,10 @@ bool Events::frameStarted(const FrameEvent& evt)
         {
 /*
             //////////////////////////////////////////////////////////////////////////////////////////////////////////
-            //////////////////////// TESTING /////////////////////////////////////////////////////////////////////////
+            //////////////////////// TESTING (Create the alpha values for a NPC texture) /////////////////////////////
             //////////////////////////////////////////////////////////////////////////////////////////////////////////
             Image img1, img2;
-            img1.load("Smitty_DATA.png",      ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+            img1.load("Smitty_DATA.png", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
             img2.load("Smitty_MASK.png", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
             uchar *src = img1.getData();
             uchar *dst = img2.getData();

@@ -51,12 +51,6 @@ public:
     {
         HERO /**< HERO (mIndex == 0) is our Hero. **/
     };
-    enum
-    {
-        TEXTURE_POS_SKIN, TEXTURE_POS_FACE, TEXTURE_POS_HAIR,
-        TEXTURE_POS_LEGS, TEXTURE_POS_BODY,
-        TEXTURE_POS_BELT, TEXTURE_POS_SHOES, TEXTURE_POS_HANDS
-    };
 
     class ObjectEquipment *mEquip;
     // ////////////////////////////////////////////////////////////////////
@@ -89,6 +83,10 @@ public:
     {
         return mAutoMoving;
     }
+    /** Set the shader parameters for the skincolor.
+     ** @param color The rgb-value (24bit) for the new skin color.
+     *****************************************************************************/
+    void setSkinColor(int color);
     void setDamage(int hp);
     void attackShortRange(ObjectNPC *mEnemyObject);
     void attackLongRange(ObjectNPC *mEnemyObject);

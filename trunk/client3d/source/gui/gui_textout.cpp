@@ -578,7 +578,8 @@ void GuiTextout::printText(int width, int height, uint32 *dst, int dstLineSkip, 
                 color = (color!= fontColor)?fontColor:TXT_COLOR_HIGHLIGHT;
                 break;
             case TXT_CMD_CHANGE_FONT:
-                text+= hexToInt(++text, 2, fontNr);
+                ++text;
+                text+= hexToInt(text, 2, fontNr);
                 if (fontNr >= (unsigned int)mvFont.size()) fontNr = 0;
                 continue;
             default:

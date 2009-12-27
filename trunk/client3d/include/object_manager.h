@@ -53,13 +53,13 @@ public:
     };
     enum
     {
-        OBJ_WALK, OBJ_CURSOR_WALK,
-        OBJ_TURN, OBJ_CURSOR_TURN,
-        OBJ_TEXTURE,
-        OBJ_ANIMATION,
-        OBJ_GOTO,
-        OBJ_HIT,
-        OBJ_SUM
+        EVT_WALK, EVT_CURSOR_WALK,
+        EVT_TURN, EVT_CURSOR_TURN,
+        EVT_SKINCOLOR,
+        EVT_ANIMATION,
+        EVT_GOTO,
+        EVT_HIT,
+        EVT_SUM
     };
     enum
     {
@@ -109,7 +109,7 @@ public:
     void deleteNPC   (int number);
     void update(int type, const Ogre::FrameEvent& evt);
     void mousePressed(Ogre::MovableObject *mob, bool modifier);
-    void Event(int obj_type, int action, int val1=0, int val2=0, int val3=0);
+    void Event(int obj_type, int action, int id, int val0=0, int val1=0);
     void setEquipment(int npcID, int bone, int type, int itemID);
     void highlightObject(Ogre::MovableObject *mob, bool highlight);
     void shoot(int missle, ObjectNPC *srcMob, ObjectNPC *dstMob);
@@ -148,6 +148,10 @@ public:
     void setPosition(int npc, Ogre::Vector3 pos)
     {
         mvNPC[npc]->setPosition(pos);
+    }
+    void setSkinColor(int npc, Ogre::uint32 color)
+    {
+        mvNPC[npc]->setSkinColor(color);
     }
     const Ogre::Vector3& getPosition(int npc)
     {

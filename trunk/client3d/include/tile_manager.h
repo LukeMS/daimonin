@@ -170,7 +170,7 @@ private:
         Ogre::uchar heightLand;  /**< Height  of the Top/Left vertex. **/
         Ogre::uchar heightWater; /**< Height of the water surface (0 -> no water). **/
         Ogre::uchar shadow;      /**< The darkening amount to simulate terrain shadows. **/
-        Ogre::uchar spotLight;   /**< If >0 the subtile is lighten by by a spotlight. **/
+        bool spotLight;          /**< If >0 the subtile is lighten by by a spotlight. **/
     } mapStruct;
     mapStruct *mMap;
     TileChunk mMapchunk;

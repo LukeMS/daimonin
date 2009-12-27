@@ -244,7 +244,7 @@ void TileChunk::setMaterial(int groupNr, int texSize)
 }
 
 //================================================================================================
-//
+// Set the camera rotation.
 //================================================================================================
 void TileChunk::setCameraRotation(Real cameraAngle)
 {
@@ -386,7 +386,8 @@ int TileChunk::getMask(int gfxVertex0, int gfxVertex1, int gfxVertex2)
 }
 
 //================================================================================================
-// Every subtile holds the map-data for the top/left vertex.
+// Update hardware buffers for land.
+// (Every subtile holds the map-data for the top/left vertex).
 //================================================================================================
 void TileChunk::updateLand()
 {
@@ -516,7 +517,7 @@ void TileChunk::updateLand()
 }
 
 //================================================================================================
-// Create hardware buffers for water.
+// Update hardware buffers for water.
 //================================================================================================
 void TileChunk::updateWater()
 {
@@ -530,6 +531,7 @@ void TileChunk::updateWater()
         Real offsetZ = (z&1)?FULL_TILE_SPACE:0.0;
         for (int x = 0; x < TileManager::CHUNK_SIZE_X*2; ++x)
         {
+            // Only draw a water if this or a neighbour-tile has water on it.
             if (!(height = TileManager::getSingleton().getMapWater(x  , z  )))
                 if (!(height = TileManager::getSingleton().getMapWater(x+1, z  )))
                     if (!(height = TileManager::getSingleton().getMapWater(x  , z+1)))
@@ -562,7 +564,6 @@ void TileChunk::updateWater()
         }
     }
     vbuf->unlock();
-    mSubMeshWater->indexData->indexCount = numVertices*6;
-    mSubMeshWater->vertexData->vertexCount = numVertices*4;
+    mSubMeshWater->indexData->indexCount = numVertices*2*3; // 2 tris/subtile * 3 vertices/triangle.
+    mSubMeshWater->vertexData->vertexCount = numVertices*4; // 4 vertices/subtile.
 }
-
