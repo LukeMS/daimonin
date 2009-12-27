@@ -182,7 +182,7 @@ void TileManager::setMap(unsigned int x, unsigned int z, uchar heightLand, uchar
 //================================================================================================
 Ogre::ushort TileManager::getMapHeight(unsigned int x, unsigned int z)
 {
-    return mMap[((mMapSPosZ + z)&mMapMaskZ)*mMapSizeX + ((mMapSPosX + x)&mMapMaskX)].heightLand;
+    return mMap[((mMapSPosZ + z)&mMapMaskZ)*mMapSizeX + ((mMapSPosX + x)&mMapMaskX)].heightLand * HEIGHT_STRETCH;
 }
 
 //================================================================================================

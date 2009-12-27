@@ -1,0 +1,30 @@
+//================================================================================================
+// Vertex Program (NPC)
+//================================================================================================
+void MainVP_NPC(
+    float4 inPos : POSITION,
+    float2 inUV  : TEXCOORD0,
+    out float4 outPos  : POSITION,
+    out float2 outUV   : TEXCOORD0,
+    out float4 outCol0 : COLOR0,
+    uniform float4 skinColor,
+    uniform float4x4 worldViewProj)
+{
+    outUV  = inUV;
+    outPos = mul(worldViewProj, inPos);
+    outCol0 = skinColor;
+}
+
+//================================================================================================
+// Fragment Program (NPC)
+// This is used to vary tbe skin color of a NPC.
+//================================================================================================
+float4 MainFP_NPC(
+    float2 tex0: TEXCOORD0,
+    float4 col0: COLOR0,
+    uniform sampler2D texture0
+    ) : COLOR
+{
+    float4 color = tex2D(texture0, tex0);
+    return lerp(color, col0, color.a);
+}

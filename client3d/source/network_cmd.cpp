@@ -1066,7 +1066,7 @@ void Network::PlayerCmd(uchar *data, int len)
         once = false;
         ObjectStatic::sObject obj;
         obj.nickName  = "Polyveg";
-        obj.meshName  = "Human_M_Fighter.mesh";
+        obj.meshName  = "Smitty.mesh";
         obj.type      = ObjectManager::OBJECT_PLAYER;
         obj.boundingRadius = 2;
         obj.friendly  = 100;
@@ -1077,6 +1077,23 @@ void Network::PlayerCmd(uchar *data, int len)
         obj.maxGrace  = 150;
         obj.pos.x     = 1*TileManager::TILE_RENDER_SIZE * TileManager::CHUNK_SIZE_X;
         obj.pos.z     = 2*TileManager::TILE_RENDER_SIZE * (TileManager::CHUNK_SIZE_Z-3);
+        obj.level     = 0;
+        obj.facing    = -60;
+        obj.particleNr=-1;
+        ObjectManager::getSingleton().addMobileObject(obj);
+
+        obj.nickName  = "Polyveg2";
+        obj.meshName  = "Smitty.mesh";
+        obj.type      = ObjectManager::OBJECT_NPC;
+        obj.boundingRadius = 2;
+        obj.friendly  = 100;
+        obj.attack    = 100;
+        obj.defend    = 100;
+        obj.maxHP     = 150;
+        obj.maxMana   = 150;
+        obj.maxGrace  = 150;
+        obj.pos.x     = TileManager::TILE_RENDER_SIZE * TileManager::CHUNK_SIZE_X/2;
+        obj.pos.z     = TileManager::TILE_RENDER_SIZE * TileManager::CHUNK_SIZE_Z*2;
         obj.level     = 0;
         obj.facing    = -60;
         obj.particleNr=-1;

@@ -1,0 +1,85 @@
+//================================================================================================
+// NPC: Vertex Program.
+//================================================================================================
+vertex_program VP_NPC cg
+{
+    source NPC.cg
+    entry_point MainVP_NPC
+    profiles arbvp1 vs_1_1
+}
+
+//================================================================================================
+// NPC: Pixel shader (Lod 0).
+//================================================================================================
+fragment_program FP_NPC cg
+{
+    source NPC.cg
+    entry_point MainFP_NPC
+    profiles arbfp1 fp20 ps_1_3
+}
+
+//================================================================================================
+// NPC: Smitty
+//================================================================================================
+material NPC_001
+{
+    technique
+    {
+        pass
+        {
+            vertex_program_ref VP_NPC
+            {
+                param_named_auto worldViewProj worldviewproj_matrix
+                param_named_auto skinColor custom 0
+            }
+            fragment_program_ref FP_NPC {}
+            texture_unit
+            {
+                texture Smitty.png
+            }
+        }
+    }
+}
+
+//================================================================================================
+// NPC: Visuals
+//================================================================================================
+material NPC_Visuals
+{
+  technique
+  {
+    pass
+    {
+         lighting off
+         scene_blend alpha_blend
+         alpha_rejection greater_equal 128
+         depth_check off
+         depth_write on
+         texture_unit
+         {
+             filtering none
+         }
+    }
+  }
+}
+
+//================================================================================================
+// NPC: Blob_Shadow
+//================================================================================================
+material Material_blob_shadow
+{
+  technique
+  {
+    pass
+    {
+         //lighting off
+         scene_blend alpha_blend
+         //alpha_rejection greater_equal 128
+         depth_check off
+         texture_unit
+         {
+             texture shadow_blob.png
+         }
+    }
+  }
+}

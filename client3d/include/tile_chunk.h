@@ -43,10 +43,18 @@ public:
         updateLand();
         updateWater();
     }
+    /** Set the shader parameters for the waves on the water.
+     ** @param alpha     The alpha value for the water.
+     ** @param amplitude The height amplitude for the waves.
+     ** @param speed     The speed for the waves.
+     *****************************************************************************/
     void setWave(Ogre::Real alpha, Ogre::Real amplitude, Ogre::Real speed);
+    /** Set the shader parameter for the grid. */
     void setGrid(bool visible);
+    /** Set the shader parameter for the ambient light. */
     void setLight(Ogre::Real brightness);
     void setCameraRotation(Ogre::Real angle);
+    /** Set a new atlastexture for the terrain. */
     void setMaterial(int groupNr, int texSize);
 
 private:
