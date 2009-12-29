@@ -1329,7 +1329,9 @@ void cs_cmd_addme(char *buf, int len, NewSocket *ns)
         display_motd(pl->ob);
 #ifdef USE_CHANNELS
 #ifdef ANNOUNCE_CHANNELS
-        new_draw_info(NDI_UNIQUE | NDI_RED, 0, pl->ob, "We are testing out a new channel-system!\nMake sure you have a client with channel-support.\nSee forums on www.daimonin.org!");
+        /* TODO: We should instead give useful info here like which channels
+         * are available.
+        new_draw_info(NDI_UNIQUE | NDI_RED, 0, pl->ob, "We are testing out a new channel-system!\nMake sure you have a client with channel-support.\nSee forums on www.daimonin.org!"); */
 #endif
 #endif
     }
