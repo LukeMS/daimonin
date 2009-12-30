@@ -2101,7 +2101,6 @@ int main(int argc, char *argv[])
             draw_info("As this is your first time playing, you may be asking this question.\n", COLOR_DEFAULT);
             draw_info("The character nearby is called ~Fanrir~. His job is to help new players get started in the game. You should talk to him.\n", COLOR_DEFAULT);
             draw_info("Do this by pressing the ~T~ key. He will tell you how to do a lot of things and give you a lot of things to do, so pay attention to him and good luck! :)\n", COLOR_DEFAULT);
-            draw_info("Visit the Daimonin website, wiki, and forums for more information about the game: |www.daimonin.net|", COLOR_DEFAULT);
         }
 
         if((GameStatus  >= GAME_STATUS_WAITFORPLAY) && options.sleepcounter )
